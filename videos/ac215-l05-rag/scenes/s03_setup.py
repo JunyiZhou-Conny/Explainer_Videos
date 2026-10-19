@@ -5,9 +5,10 @@ Beats (script.md "## S03", one voiceover block each):
  0  TRACKER Prereq 1 · extra. The house terminal (10 rows, `laptop`, prompt ~/AC215) types
     `docker --version; docker compose version` (extra) -> laptop/01 lines 2-3; the command row is
     64 of the 65 columns (beside() would clamp the tag over "version"), so its extra tag sits at
-    the right end of the output row below (the pilot's under_row; QA_FOLLOWUPS S03). 29.8.2 and v5.6.0 underline GREY under one bracket + tag "at the time of
-    recording"; the space in
-    `docker compose` flashes YELLOW. GREY note under the terminal, in two halves as named:
+    the right end of the output row below (the pilot's under_row; QA_FOLLOWUPS S03). 29.8.2 and
+    v5.6.0 underline GREY under one bracket + tag "at the time of recording"; the space in
+    `docker compose` flashes YELLOW (a block in the gap between the glyphs, clear of both
+    words). GREY note under the terminal, in two halves as named:
     "Mac: zsh, prompt ends in %" · "Windows: WSL or Git Bash".
  1  TRACKER Prereq 2. The terminal settles on the bottom edge; README chip (top band)
     README.md · line 48 "Cloned this repository". `git clone https://github.com/dlops-io/llm-rag.git`
@@ -468,12 +469,17 @@ class KeyAndProject(VoiceScene):
             vo.wait_until("the script needs docker compose")
             line = cmd0
             sp = len(P_WS) + 1 + DOCKER_CHECK.index("docker compose") + len("docker")
-            gap = cbox(line, sp, sp + 1, TURN, pad=0.02)
-            gap.set_fill(TURN, 0.75)
+            # a filled block in the space itself, between the glyphs of "docker" and "compose"
+            # (a whole-cell box covered the arm of the "r", and a 1.35 pulse ate into both
+            # words): 0.045 clear of each glyph, so the 1.2 pulse stays inside the gap
+            x_r = glyph_range(line, sp - 1, sp).get_right()[0]
+            x_c = glyph_range(line, sp + 1, sp + 2).get_left()[0]
+            gap = box(x_c - x_r - 0.09, 0.3, TURN, fill_opacity=0.75, radius=0.05, stroke=3)
+            gap.move_to([(x_r + x_c) / 2, line.strut.get_center()[1], 0])
             words = glyph_range(line, sp - len("docker"), sp + len(" compose"))
-            self.play(FadeIn(gap, scale=1.6), words.animate.set_color(TURN), run_time=0.4)
-            self.play(Indicate(gap, color=TURN, scale_factor=1.35), run_time=0.6)
-            self.play(Indicate(gap, color=TURN, scale_factor=1.35), run_time=0.6)
+            self.play(FadeIn(gap, scale=1.2), words.animate.set_color(TURN), run_time=0.4)
+            self.play(Indicate(gap, color=TURN, scale_factor=1.2), run_time=0.6)
+            self.play(Indicate(gap, color=TURN, scale_factor=1.2), run_time=0.6)
             self.play(FadeOut(gap), words.animate.set_color(INK), run_time=0.4)
 
             vo.wait_until("On a Mac")

@@ -39,7 +39,8 @@ Beats (script.md "## S08", one voiceover block each):
  8  A second GREY card "if it fails (with your key)", rows writing in as named: the retry message
     (cli.py lines 117–118), key file not found (the strip's error rows flash), PERMISSION_DENIED,
     SERVICE_DISABLED.
- 9  TRACKER Embed 2. The strip types python cli.py --embed --chunk_type recursive-split (no output).
+ 9  TRACKER Embed 2. The strip clears (step 1's error does not linger above the new command) and
+    types python cli.py --embed --chunk_type recursive-split (no output).
     ▶ your turn on a GREY card listing both embed commands and "each run sleeps 5 s per book"; a
     two-row GOLD tag: ≈ 89 / ≈ 148 calls, cents by our estimate, check the current price list.
     Hold 2 s.
@@ -689,7 +690,10 @@ class Embeddings(VoiceScene):
 
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(fcard), FadeOut(nk), tr.goto(2), run_time=0.5)
-            cmd2 = type_cmd(self, t, EMB2_CMD, type_time=1.5)
+            # the strip clears first: step 1's missing-key error (and its GOLD tag) must not sit
+            # above step 2's command through the ▶ hold
+            t.clear(self, run_time=0.3)
+            cmd2 = type_cmd(self, t, EMB2_CMD, type_time=1.4)
             assert hasattr(cmd2, "rows") and len(cmd2.rows) == 2
             vo.wait_until("Pause and run both")
             self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.6)

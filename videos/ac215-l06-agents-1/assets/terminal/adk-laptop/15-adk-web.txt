@@ -11,11 +11,11 @@ This is OFF by default. You can opt out at any time using the 'adk telemetry dis
 able' command or Web UI user settings.
 
 Enable telemetry? [Y/n]: n
-2026-10-18 23:25:39,128 - INFO - service_factory.py:333 - Using in-memory memory
+2026-10-18 23:32:21,361 - INFO - service_factory.py:333 - Using in-memory memory
  service
-2026-10-18 23:25:39,130 - INFO - local_storage.py:89 - Using per-agent session s
+2026-10-18 23:32:21,363 - INFO - local_storage.py:89 - Using per-agent session s
 torage rooted at /home/student/AC215/llm-agent-google-adk
-2026-10-18 23:25:39,130 - INFO - local_storage.py:121 - Using per-agent artifact
+2026-10-18 23:32:21,364 - INFO - local_storage.py:121 - Using per-agent artifact
  storage rooted at /home/student/AC215/llm-agent-google-adk
 /home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/goog
 le/adk/cli/fast_api.py:304: UserWarning: [EXPERIMENTAL] InMemoryCredentialServic
@@ -39,9 +39,9 @@ INFO:     Waiting for application startup.
 
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:56422 - "HEAD / HTTP/1.1" 405 Method Not Allowed
-INFO:     127.0.0.1:56434 - "GET /list-apps HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56444 - "GET /dev/apps/1-baseline/build_graph HTTP/1.1" 404
+INFO:     127.0.0.1:36778 - "GET / HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:36780 - "GET /list-apps HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36792 - "GET /dev/apps/1-baseline/build_graph HTTP/1.1" 404
 Not Found
 ^CINFO:     Shutting down
 INFO:     Waiting for application shutdown.

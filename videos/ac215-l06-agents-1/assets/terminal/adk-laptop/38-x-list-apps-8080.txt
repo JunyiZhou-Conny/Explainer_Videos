@@ -1,0 +1,3 @@
+$ curl -s http://localhost:8080/list-apps; echo
+["2-litellm","4-production-ready.app","6-rag.1-vertex-rag-engine","6-rag.2-custom-chromadb-rag","baseline","custom_agent","mcp_tools"]
+[exit 0]

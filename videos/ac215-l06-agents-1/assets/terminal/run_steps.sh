@@ -184,12 +184,13 @@ python -c 'from google.genai import types; print(repr(types.FunctionCallingConfi
 XEOF
 )
 # ---------------- Python for the ADK extras (uv run python - <<'EOF') ----------------
-# 3-mcp-tools without a model: the agent's own MCPToolset (3-mcp-tools/agent.py:20-29) starts the npx filesystem server
-# over stdio, lists the tools it lets through tool_filter, and calls list_directory once.
+# 3-mcp-tools without a model: the agent's own MCPToolset (3-mcp-tools/agent.py:20-29; the folder is mcp_tools/ after the
+# rename fix) starts the npx filesystem server over stdio, lists the tools it lets through tool_filter, then lists all the
+# server's tools and calls list_directory once through the same MCP session.
 PY_MCP=$(cat <<'XEOF'
 uv run python - <<'EOF'
 import asyncio, importlib.util
-spec = importlib.util.spec_from_file_location("mcp_tools_agent", "3-mcp-tools/agent.py")
+spec = importlib.util.spec_from_file_location("mcp_tools_agent", "mcp_tools/agent.py")
 agent = importlib.util.module_from_spec(spec); spec.loader.exec_module(agent)
 async def main():
     tools = await agent.toolset.get_tools()
@@ -281,43 +282,53 @@ adk)  # ===================== dlops-io/llm-agent-google-adk, README.md (the whol
   tstep $F 12-uv-sync $A "" "uv sync"                                  # README.md:100, again, with the pin
   step $F 13-x-adk-version $A "uv run adk --version"
   step $F 14-x-packages $A "uv pip list 2>/dev/null | grep -E '^(google-adk|google-genai|litellm|fastapi|uvicorn|mcp|chromadb|sentence-transformers|torch|onnxruntime) '; du -sh .venv"
-  # Running Agents, option 1 (README.md:111-119): `uv run adk web`, then http://localhost:8000 in a browser
+  # Running Agents, option 1 (README.md:111-119): `uv run adk web`, then http://localhost:8000 in a browser. The first
+  # run in a terminal asks about telemetry; the capture answers n.
   server_start $F 15-adk-web $A "Uvicorn running on" n "uv run adk web"
-  step $F 16-x-root-page $A "curl -sI http://localhost:8000/ | head -3"
+  step $F 16-x-dev-ui $A "curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}\\n' http://localhost:8000/"
   step $F 17-x-list-apps $A "curl -s http://localhost:8000/list-apps; echo"
   step $F 18-x-select-1-baseline $A "curl -s http://localhost:8000/dev/apps/1-baseline/build_graph; echo"
   session_end
-  # The fix of digest G1 (not in the README): pin ADK below 1.28, which still accepts folder names like 1-baseline
-  tstep $F 19-x-uv-add-pin $A "" 'uv add "google-adk>=1.8.0,<1.28"'
-  step $F 20-x-adk-version-pinned $A "uv run adk --version"
-  step $F 21-x-diff-pyproject $A "git diff pyproject.toml"
-  server_start $F 22-adk-web-pinned $A "Uvicorn running on" "" "uv run adk web"
-  step $F 23-x-list-apps $A "curl -s http://localhost:8000/list-apps; echo"
-  step $F 24-x-select-1-baseline $A "curl -s http://localhost:8000/dev/build_graph/1-baseline; echo"
-  step $F 25-x-new-session $A "curl -s -X POST http://localhost:8000/apps/1-baseline/users/student/sessions; echo"
-  step $F 26-x-send-placeholder-key $A "SID=\$(curl -s -X POST http://localhost:8000/apps/1-baseline/users/student/sessions | grep -o '\"id\":\"[^\"]*\"' | head -1 | cut -d'\"' -f4); curl -s -X POST http://localhost:8000/run -H 'Content-Type: application/json' -d '{\"app_name\": \"1-baseline\", \"user_id\": \"student\", \"session_id\": \"'\$SID'\", \"new_message\": {\"role\": \"user\", \"parts\": [{\"text\": \"2 adults, Boston to Montreal, Oct 30 - Nov 2, 1500 dollars, train preferred\"}]}}'; echo"
-  session_end
   # QUICKSTART.md:24 (digest G9) and README variants without `web` (digest G10)
-  step $F 27-x-quickstart-file $A "uv run adk web 1-baseline/agent.py"
-  step $F 28-x-adk-without-web $A "uv run adk"
+  step $F 19-x-quickstart-file $A "uv run adk web 1-baseline/agent.py"
+  step $F 20-x-adk-without-web $A "uv run adk"
+  # The fix of digest G1 (not in the README): pin ADK below 1.28. Not enough: the loader accepts 1-baseline, but the
+  # web server's App(name=...) rejects it.
+  tstep $F 21-x-uv-add-pin $A "" 'uv add "google-adk>=1.8.0,<1.28"'
+  step $F 22-x-adk-version-pinned $A "uv run adk --version"
+  step $F 23-x-diff-pyproject $A "git diff pyproject.toml"
+  server_start $F 24-x-adk-web-pinned $A "Uvicorn running on" "" "uv run adk web"
+  step $F 25-x-list-apps-pinned $A "curl -s http://localhost:8000/list-apps; echo"
+  step $F 26-x-select-1-baseline-pinned $A "curl -s http://localhost:8000/dev/build_graph/1-baseline; echo"
+  session_end
+  step $F 27-x-undo-pin $A "git checkout pyproject.toml; uv sync --upgrade-package google-adk"
+  # The fix that works with today's ADK: folder names that are Python identifiers
+  step $F 28-x-rename $A "mv 1-baseline baseline; mv 3-mcp-tools mcp_tools; mv 5-custom-agent custom_agent; ls"
+  server_start $F 29-x-adk-web-renamed $A "Uvicorn running on" "" "uv run adk web"
+  step $F 30-x-list-apps-renamed $A "curl -s http://localhost:8000/list-apps; echo"
+  step $F 31-x-select-baseline $A "curl -s http://localhost:8000/dev/apps/baseline/build_graph | uv run python -c \"import json, sys; r = json.load(sys.stdin)['root_agent']; print(r['name'], '|', r['description']); [print('  ', a['name'], '| model', a['model'], '| output_key', a['output_key'], '|', a['instruction']) for a in r['sub_agents']]\""
+  step $F 32-x-new-session $A "curl -s -X POST http://localhost:8000/apps/baseline/users/student/sessions; echo"
+  step $F 33-x-send-placeholder-key $A "SID=\$(curl -s -X POST http://localhost:8000/apps/baseline/users/student/sessions | grep -o '\"id\":\"[^\"]*\"' | head -1 | cut -d'\"' -f4); curl -s -X POST http://localhost:8000/run -H 'Content-Type: application/json' -d '{\"app_name\": \"baseline\", \"user_id\": \"student\", \"session_id\": \"'\$SID'\", \"new_message\": {\"role\": \"user\", \"parts\": [{\"text\": \"2 adults, Boston to Montreal, Oct 30 - Nov 2, 1500 dollars, train preferred\"}]}}'; echo"
+  session_end
   # 3-mcp-tools (module README): MCP over stdio, without a model
-  step $F 29-x-node $A "node --version; npx --version"
-  step $F 30-x-mcp-toolset $A "$PY_MCP"
+  step $F 34-x-node $A "node --version; npx --version"
+  step $F 35-x-mcp-toolset $A "$PY_MCP"
   # digest G3: llm-rag's Chroma still holds port 8000 (stand-in: a chromadb/chroma container in this laptop's network)
   # (CHROMA_IMAGE: the recording machine's copy of chromadb/chroma, by id, so nothing is pulled; default: latest)
   docker run -d --rm --name l06-adk-chroma --network container:$L "${CHROMA_IMAGE:-chromadb/chroma:latest}" >/dev/null
   sleep 5
-  step $F 31-x-port-8000-busy $A "curl -s http://localhost:8000/api/v2/heartbeat; echo; uv run adk web"
-  server_start $F 32-x-adk-web-port-8080 $A "Uvicorn running on" "" "uv run adk web --port 8080"
-  step $F 33-x-list-apps-8080 $A "curl -s http://localhost:8080/list-apps; echo"
+  step $F 36-x-port-8000-busy $A "curl -s http://localhost:8000/api/v2/heartbeat; echo; uv run adk web"
+  server_start $F 37-x-adk-web-port-8080 $A "Uvicorn running on" "" "uv run adk web --port 8080"
+  step $F 38-x-list-apps-8080 $A "curl -s http://localhost:8080/list-apps; echo"
   session_end
   docker rm -f l06-adk-chroma >/dev/null 2>&1 || true
-  step $F 34-x-git-status $A "git status --short; git status --short --ignored | grep '^!!'"
+  step $F 39-x-git-status $A "git status --short; git status --short --ignored | grep '^!!'"
   # ---- mcp-remote/: the Cheese Quiz's remote MCP server (Colab cell 54), spoken to with curl (extras) ----
-  step $M 01-x-browser-get "" "curl -si $MCP_URL | head -12"
+  # (--suppress-connect-headers hides the recording proxy's own "200 Connection Established" reply; capture-only)
+  step $M 01-x-browser-get "" "curl -si --suppress-connect-headers $MCP_URL | sed 's/^\\(mcp-session-id: \\).*/\\1<id>/' | head -12"
   step $M 02-x-initialize "" "curl -s -D /tmp/mcp-headers -X POST $MCP_URL $MCP_H -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{},\"clientInfo\":{\"name\":\"curl\",\"version\":\"8\"}}}'; echo; grep -i '^mcp-session-id' /tmp/mcp-headers | sed 's/: .*/: <id>/'"
-  step $M 03-x-tools-list "" "SID=\$(grep -i '^mcp-session-id' /tmp/mcp-headers | cut -d' ' -f2 | tr -d '\r'); curl -s -X POST $MCP_URL $MCP_H -H \"mcp-session-id: \$SID\" -H 'mcp-protocol-version: 2025-06-18' -d '{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}'; curl -s -X POST $MCP_URL $MCP_H -H \"mcp-session-id: \$SID\" -H 'mcp-protocol-version: 2025-06-18' -d '{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\"}'; echo"
-  step $M 04-x-tools-call "" "SID=\$(grep -i '^mcp-session-id' /tmp/mcp-headers | cut -d' ' -f2 | tr -d '\r'); curl -s -X POST $MCP_URL $MCP_H -H \"mcp-session-id: \$SID\" -H 'mcp-protocol-version: 2025-06-18' -d '{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"pavlos_fun_fact_mcp\",\"arguments\":{}}}'; echo"
+  step $M 03-x-tools-list "" "SID=\$(grep -i '^mcp-session-id' /tmp/mcp-headers | cut -d' ' -f2 | tr -d '\\r'); curl -s -X POST $MCP_URL $MCP_H -H \"mcp-session-id: \$SID\" -H 'mcp-protocol-version: 2025-06-18' -d '{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}'; curl -s -X POST $MCP_URL $MCP_H -H \"mcp-session-id: \$SID\" -H 'mcp-protocol-version: 2025-06-18' -d '{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\"}'; echo"
+  step $M 04-x-tools-call "" "SID=\$(grep -i '^mcp-session-id' /tmp/mcp-headers | cut -d' ' -f2 | tr -d '\\r'); curl -s -X POST $MCP_URL $MCP_H -H \"mcp-session-id: \$SID\" -H 'mcp-protocol-version: 2025-06-18' -d '{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"pavlos_fun_fact_mcp\",\"arguments\":{}}}'; echo"
   ;;
 esac
 rm -f "$SIG/up" "$SIG/stop"; rmdir "$SIG" 2>/dev/null || true

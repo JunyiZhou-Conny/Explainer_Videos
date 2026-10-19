@@ -27,10 +27,11 @@ Beats (script.md "## S09", one voiceover block each):
     recorded-embeddings/01 lines 2–12, 19–22, …, 152–153 (wrapped; the first rows scroll):
     line 5 and line 8 YELLOW, the embedding column GREEN; above the terminal a GREEN counter adds
     the books up to 8,248; "Inserted 500 items..." lights at "in batches of 500".
- 6  TRACKER Load 2. python cli.py --load --chunk_type recursive-split -> recorded-embeddings/02
-    lines 2 (cut), 3–8, …, 163–164 (wrapped). The terminal shrinks to the strip; the counter
-    becomes char-split-collection's count, recursive-split-collection stacks beside it (14,228);
-    ▶ your turn card: both load commands and the Chroma UI link (step 3, below). Hold 2 s.
+ 6  TRACKER Load 2. The terminal clears; python cli.py --load --chunk_type recursive-split ->
+    recorded-embeddings/02 lines 2 (cut), 3–8, …, 163–164 (wrapped). The terminal shrinks to the
+    strip; the counter becomes char-split-collection's count, recursive-split-collection stacks
+    beside it (14,228); ▶ your turn card: both load commands and the Chroma UI link (step 3,
+    below). Hold 2 s.
  7  TRACKER Load 2 · extra. The second laptop terminal (9 rows) types the curl … | grep … line of
     recorded-embeddings/03 (extra; folds) -> lines 2–5, both "dimension":256 YELLOW; above, a
     GREY ghost of laptop/17b line 3 "dimension":null (tag "before the first insert").
@@ -64,7 +65,9 @@ Deviations from SHOW (see the scene report):
   not at the end of beat 1.
 - Beats 4–6 use one 13-row terminal (SHOW: 10 rows, then 13): type_cmd puts the command on the
   row under the prompt, and 10 rows would scroll it away. Beat 6 cuts recorded-embeddings/02
-  line 2 with … (as S08 does) so the 13 rows keep the typed command; beat 5's counter sits in
+  line 2 with … (as S08 does) so the 13 rows keep the typed command. Beat 6 clears the terminal
+  first, as beat 5 does (SHOW does not say so): its rows hold only step 2's command and output,
+  never a line of the char-split run (review-bot item, QA_FOLLOWUPS.md); beat 5's counter sits in
   the band above the terminal, right of the tracker. Tags on a typed command sit on its prompt
   row (the command row has no room).
 - Beat 6's strip keeps the first wrapped row of recorded-embeddings/02 line 164; its last
@@ -565,12 +568,14 @@ class LoadChroma(VoiceScene):
 
         with self.voiceover(SAY[6]) as vo:
             self.play(tr.goto(2), run_time=0.4)
+            t.clear(self)                  # the char-split run leaves before step 2 is typed (as in beat 5)
             cmd3 = type_cmd(self, t, LOAD2_CMD, type_time=1.3)
             stf2 = staff_tag()
             pin(self, cmd3.rows[0], beside(stf2, t, cmd3.rows[0], buff=0.5), run_time=0.3)
             out3 = t.print(self, REC2_OUT, wrap=True, run_time=0.6)
-            # the 13 rows hold only this command and its output (nothing of the char-split run)
-            assert len(t.lines) == 13 and t.lines[0] is cmd3.rows[0], len(t.lines)
+            # the 13 rows hold only this command and its output (nothing of the char-split run), and
+            # the output fills them exactly: nothing scrolls
+            assert len(t.lines) == 13 and t.lines[0] is cmd3.rows[0] and len(out3) == 11, len(t.lines)
             fin = row_with(out3, "Finished inserting 35")
             # in the strip the line keeps only its first wrapped row: its last character becomes …
             assert len(fin.text) == 65 and fin.text.endswith("'recursive-split-coll"), fin.text

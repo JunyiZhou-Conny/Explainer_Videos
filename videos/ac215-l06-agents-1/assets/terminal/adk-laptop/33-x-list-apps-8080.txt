@@ -1,3 +1,0 @@
-$ curl -s http://localhost:8080/list-apps; echo
-["1-baseline","2-litellm","3-mcp-tools","5-custom-agent"]
-[exit 0]

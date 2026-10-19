@@ -116,7 +116,8 @@ for nb, (fname, title, link, when) in NOTEBOOKS.items():
         notes = " Course staff's names and e-mail addresses replaced by <reader1>.. / <email>." if body != "\n\n".join(parts) else ""
         header = (f"# recorded: Colab notebook \"{title}\" ({fname}; {link}), cell {i} (0-based index in the .ipynb; "
                   f"first line: {first!r}). Saved output of the staff's last run, {when}; not run here (needs an "
-                  f"OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed).{notes}\n")
+                  f"OpenAI API key). Extracted by assets/terminal/colab_outputs.py: the saved text, ANSI codes removed, an HTML "
+                  f"output reduced to its text (or its embedded quiz data).{notes}\n")
         with open(os.path.join(exp_dir, f"colab-{nb}-c{i:02d}-{slug}.txt"), "w") as f:
             f.write(header + body.rstrip() + "\n")
 print("ok")

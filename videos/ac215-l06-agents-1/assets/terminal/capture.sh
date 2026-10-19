@@ -3,7 +3,8 @@
 #   bash assets/terminal/capture.sh rag   -> laptop/ + cli-container/: dlops-io/llm-rag (main), README "Agents"
 #                                            (README.md:242-271) and the L05 steps it stands on, plus extras
 #   bash assets/terminal/capture.sh adk   -> adk-laptop/ + mcp-remote/: dlops-io/llm-agent-google-adk (main), the
-#                                            whole root README, plus extras (the version pin, MCP, port 8000)
+#                                            whole root README, plus extras (the Python pin, the ADK pin, the folder
+#                                            rename, MCP over stdio, port 8000, the remote MCP server)
 # Needs Docker with privileged containers, and python3 with `pyte` (pip install pyte; set PYTHON to it) so the live
 # progress views of `docker compose`, `uv` and `adk web` render as a terminal shows them. Behind the recording proxy
 # also export CA_BUNDLE (a PEM file with the proxy's CA). Each part removes its laptop at the end (KEEP=1 keeps it).
@@ -27,7 +28,7 @@
 #    https apt sources (capture-only/base-python-3.12-slim-bookworm.Dockerfile, L05's file), so the tutorial's own
 #    Dockerfile builds unchanged. The laptop's engine pulls Docker Hub images through mirror.gcr.io and stores
 #    images with the classic overlay2 driver (containerd-snapshotter off) to halve its disk use; pull and build
-#    lines read the same.
+#    lines read the same, except the wording of Compose's failed pull of llm-rag-cli (ASSETS.md).
 #  - adk: the README's first `uv sync` runs as written and fails (CPython 3.15, see ASSETS.md). After the Python pin and
 #    `uv sync --dry-run` (the plan a Linux PC gets), run_steps.sh removes the lockfile that sync wrote and puts
 #    index-strategy = "unsafe-best-match" and an extra index https://download.pytorch.org/whl/cpu into the student's

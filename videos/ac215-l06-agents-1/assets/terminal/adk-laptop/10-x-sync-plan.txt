@@ -1,7 +1,7 @@
 $ uv sync --dry-run
 Using CPython 3.13.16
 Would replace project environment at: .venv
-Resolved 189 packages in 2ms
+Resolved 189 packages in 4ms
 Found up-to-date lockfile at: uv.lock
 Would download 167 packages
 Would install 167 packages

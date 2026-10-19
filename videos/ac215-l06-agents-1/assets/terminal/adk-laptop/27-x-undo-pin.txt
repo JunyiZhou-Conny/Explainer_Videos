@@ -1,0 +1,60 @@
+$ git checkout pyproject.toml; uv sync --upgrade-package google-adk
+Updated 1 path from the index
+Resolved 167 packages in 1.13s
+Prepared 1 package in 1ms
+Uninstalled 44 packages in 72ms
+Installed 9 packages in 24ms
+ - alembic==1.20.0
+ - google-adk==1.27.5
+ + google-adk==2.12.0
+ - google-api-python-client==2.201.0
+ - google-auth-httplib2==0.4.4
+ - google-cloud-appengine-logging==1.11.0
+ - google-cloud-audit-log==0.6.2
+ - google-cloud-bigquery-storage==2.43.0
+ - google-cloud-bigtable==2.50.1
+ - google-cloud-dataplex==2.21.0
+ - google-cloud-discoveryengine==0.13.12
+ - google-cloud-logging==3.17.0
+ - google-cloud-monitoring==2.32.0
+ - google-cloud-pubsub==2.43.0
+ - google-cloud-secret-manager==2.31.0
+ - google-cloud-spanner==3.71.0
+ - google-cloud-speech==2.41.0
+ - google-cloud-trace==1.21.0
+ - google-genai==1.75.0
+ + google-genai==2.31.0
+ - grpc-interceptor==0.15.4
+ - httpcore2==2.14.0
+ - httplib2==0.32.0
+ - httpx2==2.14.0
+ - mako==1.4.3
+ - mcp-types==2.3.0
+ - opentelemetry-api==1.38.0
+ + opentelemetry-api==1.42.1
+ - opentelemetry-exporter-gcp-logging==1.11.0a0
+ - opentelemetry-exporter-gcp-monitoring==1.15.0a0
+ - opentelemetry-exporter-gcp-trace==1.15.0
+ - opentelemetry-exporter-otlp-proto-common==1.38.0
+ + opentelemetry-exporter-otlp-proto-common==1.42.1
+ - opentelemetry-exporter-otlp-proto-grpc==1.38.0
+ + opentelemetry-exporter-otlp-proto-grpc==1.42.1
+ - opentelemetry-exporter-otlp-proto-http==1.38.0
+ - opentelemetry-proto==1.38.0
+ + opentelemetry-proto==1.42.1
+ - opentelemetry-resourcedetector-gcp==1.14.0
+ - opentelemetry-sdk==1.38.0
+ + opentelemetry-sdk==1.42.1
+ - opentelemetry-semantic-conventions==0.59b0
+ + opentelemetry-semantic-conventions==0.63b1
+ - pyarrow==26.0.0
+ - pyparsing==3.3.3
+ - sqlalchemy==2.1.5
+ - sqlalchemy-spanner==1.20.1
+ - sqlparse==0.6.0
+ - starlette==0.52.1
+ + starlette==1.9.0
+ - truststore==0.10.5
+ - tzlocal==5.4.4
+ - uritemplate==4.2.0
+[exit 0]

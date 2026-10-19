@@ -1,8 +1,8 @@
 $ uv add "google-adk>=1.8.0,<1.28"
-Resolved 200 packages in 2.05s
-Prepared 44 packages in 2.86s
-Uninstalled 12 packages in 47ms
-Installed 44 packages in 46ms
+Resolved 200 packages in 1.94s
+Prepared 44 packages in 3.63s
+Uninstalled 12 packages in 33ms
+Installed 44 packages in 39ms
  + alembic==1.20.0
  - google-adk==2.12.0
  + google-adk==1.27.5

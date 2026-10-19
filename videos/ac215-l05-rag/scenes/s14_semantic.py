@@ -633,9 +633,11 @@ class SemanticSplit(VoiceScene):
             vo.wait_until("Try one book first")
             self.play(FadeIn(tip, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("Look for a chunk count")
-            self.play(FadeOut(tip), row1.animate.move_to([-6.3 + row1.width / 2, GOLD_Y_LOW[0], 0]),
-                      row2.animate.move_to([-6.3 + row2.width / 2, GOLD_Y_LOW[1], 0]), run_time=0.6)
-            self.play(FadeIn(lf.frame), FadeIn(lf.title), run_time=0.3)
+            # the tip leaves first: the GOLD rows then move down through the band it held (not across its text)
+            self.play(FadeOut(tip), run_time=0.25)
+            self.play(row1.animate.move_to([-6.3 + row1.width / 2, GOLD_Y_LOW[0], 0]),
+                      row2.animate.move_to([-6.3 + row2.width / 2, GOLD_Y_LOW[1], 0]), run_time=0.45)
+            self.play(FadeIn(lf.frame), FadeIn(lf.title), run_time=0.25)
             self.play(lf.write_item(0))
             self.play(lf.write_item(1))
             vo.wait_until("and finally")
@@ -660,8 +662,9 @@ class SemanticSplit(VoiceScene):
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(lf, n429, row1, row2, t, nk)), run_time=0.5)
+            # 1.0 s (not 1.2): the GREY note below then lands on "and even a single-topic book"
             self.play(LaggedStart(*[GrowFromEdge(b, LEFT) for b in bars], lag_ratio=0.15), FadeIn(ill8),
-                      FadeIn(cap8), run_time=1.2)
+                      FadeIn(cap8), run_time=1.0)
             self.play(Indicate(bars[long_i], color=DATA, scale_factor=1.05),
                       Indicate(bars[short_i], color=TURN, scale_factor=1.1),
                       FadeIn(n_long, shift=LEFT * 0.1), FadeIn(n_short, shift=LEFT * 0.1), run_time=0.8)

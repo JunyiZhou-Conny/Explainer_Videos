@@ -1,0 +1,10 @@
+# expected (README text, not program output): dlops-io/llm-agent-google-adk, main @ f89faa79de744f6a046e30dff24b3b6f1d73720b, 4-production-ready/README.md:54-62 ("API Endpoints"), unchanged: the shapes the FastAPI wrapper documents (not run here: POST /chat needs a Gemini key).
+## API Endpoints
+
+- `GET /health` - Health check
+- `POST /chat` - Send message, get complete response
+  - Request: `{"user_message": "your message"}`
+  - Response: `{"response": "agent response"}`
+- `POST /chat/stream` - Stream response chunks
+  - Request: `{"user_message": "your message"}`
+  - Response: NDJSON stream of `{"chunk": "..."}`

@@ -636,9 +636,10 @@ class FinalPrompt(VoiceScene):
             self.play(FadeOut(VGroup(lf, qbox, etag, t)), run_time=0.5)
             self.play(FadeIn(win), FadeIn(q), FadeIn(bars), Write(qmark), run_time=0.8)
             vo.wait_until("The story is fiction")
-            self.play(ReplacementTransform(qmark, src), FadeIn(ill, shift=LEFT * 0.15), run_time=0.8)
-            self.play(LaggedStart(*[Create(a) for a in links], lag_ratio=0.3), run_time=0.8)
-            self.play(*[bars[b].animate.set_fill(DATA, 0.85).set_stroke(DATA, 1.6) for b in grounded], run_time=0.5)
+            # 1.45 s in all: "an answer about Mara" follows "The story is fiction" by ~1.56 s
+            self.play(ReplacementTransform(qmark, src), FadeIn(ill, shift=LEFT * 0.15), run_time=0.6)
+            self.play(LaggedStart(*[Create(a) for a in links], lag_ratio=0.3), run_time=0.55)
+            self.play(*[bars[b].animate.set_fill(DATA, 0.85).set_stroke(DATA, 1.6) for b in grounded], run_time=0.3)
             vo.wait_until("an answer about Mara")
             self.play(FadeIn(gt_head), FadeIn(left.frame), FadeIn(left.items[0]), FadeIn(left.items[1]),
                       run_time=0.6)

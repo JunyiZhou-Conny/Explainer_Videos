@@ -22,10 +22,11 @@ Beats (script.md "## S12", one voiceover block each):
     "an extra Python check · query with a stored vector" (the staff tag beside it):
     TERM(recorded-embeddings/09: 16–17 word-folded, the chunk id PINK, the stand-in dot flashes).
     "Without filters": the mask lifts and the PINK beam reaches the stand-in's ten nearest, inside
-    the Tolminc cluster (its label flashes). At "at distances" the picture leaves, the terminal grows
-    to 11 rows: TERM(09: 18–28): 0.0000 boxed with the GREY tag "itself", 0.1627 boxed YELLOW.
+    the Tolminc cluster (its label flashes). On "story" the picture leaves, the terminal grows to 11
+    rows: TERM(09: 18–28) during "at distances from 0": 0.0000 boxed with the GREY tag "itself",
+    0.1627 boxed YELLOW.
  4  The terminal clears: TERM(09: 29–39); the book names of the ten rows boxed YELLOW, 0.2833 and
-    0.3123 boxed YELLOW. The terminal shrinks to the strip while the cloud returns as beat 3 left it
+    0.3123 boxed YELLOW. The terminal shrinks to the strip, then the cloud returns as beat 3 left it
     (unmasked, the beam inside the Tolminc cluster). "The filters act first": the mask returns,
     and the beam stretches past the dimmed cluster to the far, lit survivors, labelled "all 10: The
     Complete Book of Cheese" under the cloud; the long beam flashes ("however far").
@@ -61,6 +62,13 @@ too small for their 20 pt labels). The `$contains` chip says "(later)" for "(S15
 are not on screen anywhere. Additions: PINK chips naming the two filters under the beat-0 panel
 and the filter chips in beat 2's row (the SAY names them), "64 bright dots = 64 chunks" (the 64
 brighter dots would contradict "1 dot ≈ 8 chunks"), ten result cards out of Querying in beat 5.
+
+ANCHORS: Kokoro gives sentence marks only, so an anchor inside a sentence is interpolated by its
+character offset. Spoken numerals take far longer than their characters ("8,248", "1,355", "0.28 to
+0.31", "0.16"), so in beats 2–4 the clause-start anchors fired up to 0.9 s early (beat 2) or 0.7–2 s
+late (beats 3–4), measured against the clause starts heard in the clip (the pauses in its audio,
+2026-10-18). Those few anchors start a word or two earlier in the text
+so that their interpolated time falls on the clause start that is heard; each says which.
 """
 
 import numpy as np
@@ -344,10 +352,10 @@ class FiltersFirst(VoiceScene):
             self.play(FadeIn(ck, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Of 8,248 chunks")
             self.play(FadeIn(cnt, shift=LEFT * 0.1), run_time=0.5)
-            vo.wait_until("the book filter keeps")
+            vo.wait_until("filter keeps 1,355")         # lands on "the book filter" (see ANCHORS)
             self.play(FadeIn(f_book, shift=RIGHT * 0.1), run_time=0.4)
             self.play(*mask_to(dc, "book"), cnt.count_to(COUNTS["book"]), run_time=1.1)
-            vo.wait_until("the word Italian keeps")
+            vo.wait_until("Italian keeps 64")           # lands on "the word Italian"
             self.play(FadeIn(f_ital, shift=RIGHT * 0.1), run_time=0.4)
             self.play(*mask_to(dc, "italian"), cnt.count_to(COUNTS["italian"]), Transform(cap[1], cap2),
                       run_time=1.1)
@@ -393,15 +401,20 @@ class FiltersFirst(VoiceScene):
             vo.wait_until("its 10 nearest")
             self.play(Indicate(tl, color=TURN, scale_factor=1.15),
                       ShowPassingFlash(beam.copy().set_stroke(TURN, 4), time_width=0.6), run_time=0.8)
-            vo.wait_until("at distances from 0")        # quick: the numbers are in before "the chunk itself"
-            self.play(FadeOut(VGroup(dc, beam, ill, cap)), run_time=0.35)
+            # on "story" the picture and the stand-in rows leave in one fade (taken out of the
+            # terminal, so resize() has no second fade): the distances print during "at distances from 0"
+            vo.wait_until("from the story")
+            self.play(FadeOut(VGroup(dc, beam, ill, cap, *o16)), run_time=0.35)
+            for ln in o16:
+                t.lines.remove(ln)
+                self.remove(ln)
             resize(self, t, 11, keep=0, run_time=0.45, extra=[ck2.animate.move_to(ck2_hi), stf.animate.move_to(stf_hi)])
             o18 = t.print(self, Q.at((18, 28)), run_time=0.5)
-            vo.wait_until("the chunk itself")
+            vo.wait_until("from 0, the chunk itself")   # lands on "the chunk itself"
             z0 = col_box(o18[1], 0, 6, S.GREY)
             pin(self, o18[1], z0, anim=Create(z0), run_time=0.3)
             pin(self, o18[1], beside(grey_tag("itself"), t, o18[1], buff=0.45), run_time=0.3)
-            vo.wait_until("up to 0.16")
+            vo.wait_until("itself, up to 0.16")         # lands on "up to 0.16"
             z1 = col_box(o18[10], 0, 6, TURN)
             pin(self, o18[10], z1, anim=Create(z1), run_time=0.4)
 
@@ -416,21 +429,26 @@ class FiltersFirst(VoiceScene):
             t.clear(self, run_time=0.25)
             o29 = t.print(self, [Q.line(29)], run_time=0.3)
             self.play(Indicate(o29[0], color=TURN, scale_factor=1.04), run_time=0.6)   # "the code's filters"
-            vo.wait_until("all 10 results")
+            vo.wait_until("filters, all 10 results")    # lands on "all 10 results" (see ANCHORS)
             o30 = t.print(self, Q.at((30, 39)), run_time=0.7)
-            vo.wait_until("The Complete Book of Cheese")
+            vo.wait_until("results come from The Complete Book of Cheese")   # lands on "The Complete Book"
             bk = rows_box(list(o30), 8, 8 + len(BOOK), TURN)
             self.play(Create(bk), run_time=0.6)
-            vo.wait_until("at 0.28")
+            vo.wait_until("Complete Book of Cheese, at 0.28")    # lands on "at 0.28"
             z2 = col_box(o30[0], 0, 6, TURN)
             pin(self, o30[0], z2, anim=Create(z2), run_time=0.35)
-            vo.wait_until("to 0.31")
+            vo.wait_until("at 0.28 to 0.31")            # lands on "0.31"
             z3 = col_box(o30[9], 0, 6, TURN)
-            pin(self, o30[9], z3, anim=AnimationGroup(Create(z3), FadeOut(bk), FadeOut(ck2)), run_time=0.3)
-            # the picture comes back as beat 3 left it (no mask, the beam in the story) while the
-            # terminal shrinks (in sequence the mask came 1.2 s after "The filters act first") ...
-            resize(self, t, 3, run_time=0.4, extra=[stf.animate.move_to(stf_lo),
-                                                    FadeIn(VGroup(dc, ill, cap, beam), rate_func=lambda a: a * a)])
+            gone = VGroup(o29[0], *o30[:7])             # the rows above the strip's last three go with
+            pin(self, o30[9], z3, anim=AnimationGroup(Create(z3), FadeOut(bk), FadeOut(ck2), FadeOut(gone)),
+                run_time=0.3)
+            for ln in gone:                             # out of the terminal too (no second fade in resize)
+                t.lines.remove(ln)
+                self.remove(ln)
+            # the terminal shrinks, THEN the picture comes back as beat 3 left it (no mask, the beam in
+            # the story): fading it in during the shrink slid the staff tag through its caption ...
+            resize(self, t, 3, run_time=0.4, extra=[stf.animate.move_to(stf_lo)])
+            self.play(FadeIn(VGroup(dc, ill, cap, beam)), run_time=0.35)
             vo.wait_until("The filters act first")      # ... and the filters act first: the mask returns
             self.play(*mask_to(dc, "italian", shrink=near0), Transform(cap[1], cap2), run_time=0.8)
             vo.wait_until("and top K fills")
@@ -461,9 +479,9 @@ class FiltersFirst(VoiceScene):
         caption = note("Chroma: filter, then rank · 10 results, wrong cheese").move_to([0, -0.55, 0])
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(dc, beam, ill, cap, surv_lab, t, stf)), FadeOut(sti),
-                      FadeIn(lr), run_time=0.6)
-            self.play(FadeIn(st, shift=UP * 0.1), run_time=0.6)
+            # the stand-in tag leaves before the lecture tag takes its place (a cross-fade stacked them)
+            self.play(FadeOut(VGroup(dc, beam, ill, cap, surv_lab, t, stf)), FadeOut(sti), run_time=0.6)
+            self.play(FadeIn(st, shift=UP * 0.1), FadeIn(lr), run_time=0.6)
             vo.wait_until("metadata filtering")
             self.play(Indicate(filt, color=TURN, scale_factor=1.12), run_time=0.7)
             vo.wait_until("after ranking")              # the ranked results come out of Querying

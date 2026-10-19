@@ -16,6 +16,8 @@ Commands:
   eval_set     Manage Eval Sets.
   migrate      ADK migration commands.
   optimize     Optimizes the root agent instructions using the GEPA...
-  run          Runs an interactive CLI for a certain agent.
+  run          Runs an agent.
+  telemetry    Manage telemetry settings.
+  test         Runs pytest on agent test JSON files under the specified...
   web          Starts a FastAPI server with Web UI for agents.
 [exit 2]

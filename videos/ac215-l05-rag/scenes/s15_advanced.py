@@ -515,8 +515,8 @@ class BeyondNaive(VoiceScene):
 
         # ========================================================== 3 · reciprocal rank fusion
         # pad: a breath after "0.42", so the closing chip "tutorial: $contains only filters" can be read
-        # before the picture folds into its chips
-        with self.voiceover(SAY[3], pad=1.0) as vo:
+        # (~1.3 s still) before the picture folds into its chips
+        with self.voiceover(SAY[3], pad=1.5) as vo:
             self.play(Write(h.formula), run_time=0.9)
             vo.wait_until("gives each paragraph")
             self.play(FadeIn(h.knote, shift=DOWN * 0.15), run_time=0.6)
@@ -532,8 +532,9 @@ class BeyondNaive(VoiceScene):
             self.play(h.cards[0].frame.animate.set_stroke(TURN, 4),
                       *[b[0].animate.set_stroke(TURN, 3) for b in h.blocks[0]],
                       Indicate(h.cards[0][1][1], color=TURN, scale_factor=1.06), run_time=0.8)
-            vo.wait_until("wins with")
-            self.play(FadeIn(h.first, shift=LEFT * 0.15), h.totals[0].animate.set_color(TURN), run_time=0.5)
+            # "wins" follows "The near paraphrase" at once; no anchor here: the spoken numbers are long, so
+            # interpolating "wins with" inside the sentence fired ~1.5 s late, after "0.75" had been said
+            self.play(FadeIn(h.first, shift=LEFT * 0.15), h.totals[0].animate.set_color(TURN), run_time=0.6)
             # each runner-up lights as it is said (the numbers are long to say: 0.42 comes ~1.6 s later)
             vo.wait_until("ahead of")
             self.play(Indicate(h.totals[1], color=TURN, scale_factor=1.15), run_time=0.7)

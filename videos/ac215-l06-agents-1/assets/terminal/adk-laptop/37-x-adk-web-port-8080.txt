@@ -1,12 +1,17 @@
 $ uv run adk web --port 8080
-2026-10-18 23:26:18,220 - INFO - service_factory.py:266 - Using in-memory memory
+2026-10-18 23:33:05,570 - INFO - service_factory.py:333 - Using in-memory memory
  service
-2026-10-18 23:26:18,221 - INFO - local_storage.py:84 - Using per-agent session s
+2026-10-18 23:33:05,571 - INFO - local_storage.py:89 - Using per-agent session s
 torage rooted at /home/student/AC215/llm-agent-google-adk
-2026-10-18 23:26:18,221 - INFO - local_storage.py:110 - Using file artifact serv
-ice at /home/student/AC215/llm-agent-google-adk/.adk/artifacts
+2026-10-18 23:33:05,571 - WARNING - service_factory.py:387 - Found legacy shared
+ artifacts at /home/student/AC215/llm-agent-google-adk/.adk/artifacts. Artifacts
+ now persist per-agent under <agent>/.adk/artifacts and legacy artifacts remain
+readable via fallback. To migrate, move the 'users' directory into the agent's .
+adk/artifacts folder.
+2026-10-18 23:33:05,571 - INFO - local_storage.py:121 - Using per-agent artifact
+ storage rooted at /home/student/AC215/llm-agent-google-adk
 /home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/goog
-le/adk/cli/fast_api.py:192: UserWarning: [EXPERIMENTAL] InMemoryCredentialServic
+le/adk/cli/fast_api.py:304: UserWarning: [EXPERIMENTAL] InMemoryCredentialServic
 e: This feature is experimental and may change or be removed in future versions
 without notice. It may introduce breaking changes at any time.
   credential_service = InMemoryCredentialService()
@@ -16,7 +21,7 @@ le/adk/auth/credential_service/in_memory_credential_service.py:33: UserWarning:
 e or be removed in future versions without notice. It may introduce breaking cha
 nges at any time.
   super().__init__()
-INFO:     Started server process [4125]
+INFO:     Started server process [4201]
 INFO:     Waiting for application startup.
 
 +-----------------------------------------------------------------------------+
@@ -27,7 +32,7 @@ INFO:     Waiting for application startup.
 
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
-INFO:     127.0.0.1:52608 - "GET /list-apps HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53310 - "GET /list-apps HTTP/1.1" 200 OK
 ^CINFO:     Shutting down
 INFO:     Waiting for application shutdown.
 
@@ -36,7 +41,7 @@ INFO:     Waiting for application shutdown.
 +-----------------------------------------------------------------------------+
 
 INFO:     Application shutdown complete.
-INFO:     Finished server process [4125]
+INFO:     Finished server process [4201]
 
 Aborted!
 [exit 1]
