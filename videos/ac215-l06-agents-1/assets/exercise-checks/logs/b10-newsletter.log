@@ -1,0 +1,33 @@
+$ python -W ignore b10_newsletter.py
+== stand-in orchestrator: says-done
+Generating newsletter for Summerville · 2026-10
+  RuntimeError: No successful tool receipt. Orchestrator response: Newsletter sent successfully!
+== stand-in orchestrator: sends
+Generating newsletter for Summerville · 2026-10
+  editor's draft reviewed: {'status': 'ready'}
+  [tool] send_email: validating and saving HTML (mock)
+  send_email -> {'status': 'saved', 'email_sent': False, 'path': '/tmp/newsletter_output/sends-2026-10-check.html', 'bytes': 3014}
+Saved HTML: /tmp/newsletter_output/sends-2026-10-check.html (3014 bytes). No email sent.
+== stand-in orchestrator: file-gone
+Generating newsletter for Summerville · 2026-10
+  editor's draft reviewed: {'status': 'ready'}
+  [tool] send_email: validating and saving HTML (mock)
+  send_email -> {'status': 'saved', 'email_sent': False, 'path': '/tmp/newsletter_output/file-gone-2026-10-check.html', 'bytes': 3022}
+  RuntimeError: The mock email receipt points to a file that does not exist.
+
+== the editor's rule as a check: five lines added at the end of validate_newsletter (cell 18)
+    URL = re.compile(r"https?://|www\.", re.IGNORECASE)
+    for text in [draft.subject, draft.introduction, draft.offers_note, draft.closing,
+                 *(f"{item.title} {item.summary}" for item in [*draft.news, *draft.offers])]:
+        if URL.search(text):
+            raise ValueError("Remove embedded URLs from the newsletter text; sources are linked by ID.")
+review_draft -> {'status': 'error', 'message': 'Remove embedded URLs from the newsletter text; sources are linked by ID.'}
+  [tool] send_email: validating and saving HTML (mock)
+send_email   -> {'status': 'error', 'message': 'Remove embedded URLs from the newsletter text; sources are linked by ID.'} | receipt: None
+without the URL: review_draft -> ready
+
+== Settings checks the USERS entries before any API call
+  recipient 'reader@example.com': ok
+  recipient '<email>': ValueError: Use a single email-shaped preview recipient, such as reader@example.com.
+  recipient 'sam at example.com': ValueError: Use a single email-shaped preview recipient, such as reader@example.com.
+[exit 0]

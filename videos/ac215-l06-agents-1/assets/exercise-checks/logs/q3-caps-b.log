@@ -1,0 +1,22 @@
+$ P=/colab/nl/lib/python3.12/site-packages/agent_framework; grep -rn 'max_iterations' $P/*.py $P/_*/*.py 2>/dev/null | grep -v '^\s*#' | head -20
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:1428:    - ``max_iterations``: Limits the number of **LLM roundtrips** (iterations).
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:1462:        ``max_iterations``, ``max_function_calls``, and ``max_duration_seconds``
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:1463:        are complementary limits. ``max_iterations`` caps the number of model
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:1479:            client.function_invocation_configuration["max_iterations"] = 5
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:1485:    max_iterations: int
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:1499:        "max_iterations": DEFAULT_MAX_ITERATIONS,
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:1509:    if normalized["max_iterations"] < 1:
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:1510:        raise ValueError("max_iterations must be at least 1.")
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:3605:        max_iterations = self.function_invocation_configuration.get("max_iterations", DEFAULT_MAX_ITERATIONS)
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:3664:        for attempt_idx in range(attempt_start, max_iterations):
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:3738:                max_iterations,
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:3789:        max_iterations = self.function_invocation_configuration.get("max_iterations", DEFAULT_MAX_ITERATIONS)
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:3846:        for attempt_idx in range(attempt_start, max_iterations):
+/colab/nl/lib/python3.12/site-packages/agent_framework/_tools.py:3994:                max_iterations,
+/colab/nl/lib/python3.12/site-packages/agent_framework/_harness/_agent.py:348:    loop_max_iterations: int | None = DEFAULT_MAX_ITERATIONS,
+/colab/nl/lib/python3.12/site-packages/agent_framework/_harness/_agent.py:520:            for as long as the predicate returns ``True``, up to ``loop_max_iterations``. If an
+/colab/nl/lib/python3.12/site-packages/agent_framework/_harness/_agent.py:526:        loop_max_iterations: Safety cap on the number of loop iterations. ``None`` means unbounded;
+/colab/nl/lib/python3.12/site-packages/agent_framework/_harness/_agent.py:666:                max_iterations=loop_max_iterations,
+/colab/nl/lib/python3.12/site-packages/agent_framework/_harness/_loop.py:19:   ``max_iterations`` bounds the loop as a safety cap.
+/colab/nl/lib/python3.12/site-packages/agent_framework/_harness/_loop.py:121:# Default iteration cap applied when ``max_iterations`` is not provided. Loops are bounded by
+[exit 0]
