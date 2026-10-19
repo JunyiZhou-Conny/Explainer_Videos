@@ -133,3 +133,15 @@ transhumance: {ipa: "tɹænzhjˈuːməns", say: "tranz-hyoo-mence"}
 "0.67": {ipa: "zˈiəɹoʊ pɔɪnt sˈɪks sˈɛvən", say: "zero point six seven"}
 "0.75": {ipa: "zˈiəɹoʊ pɔɪnt sˈɛvən fˈaɪv", say: "zero point seven five"}
 "0.57, 0.77, 0.43, 0.93": {ipa: "zˈiəɹoʊ pɔɪnt fˈaɪv sˈɛvən, zˈiəɹoʊ pɔɪnt sˈɛvən sˈɛvən, zˈiəɹoʊ pɔɪnt fˈɔːɹ θɹˈiː, zˈiəɹoʊ pɔɪnt nˈaɪn θɹˈiː", say: "zero point five seven, zero point seven seven, zero point four three, zero point nine three"}
+# AC215 L06
+ADK: {ipa: "ˌeɪdˌiːkˈeɪ", say: "A-D-K"}
+enum: {ipa: "ˈiːnʌm", say: "ee-num"}
+Colab: {ipa: "kˈoʊlæb", say: "co-lab"}
+CUDA: {ipa: "kˈuːdə", say: "koo-duh"}
+Havarti: {ipa: "həvˈɑːɹɾi", say: "huh-var-tee"}
+"1.6": {ipa: "wˈʌn pɔɪnt sˈɪks", say: "one point six"}
+"2.12": {ipa: "tˈuː pɔɪnt twˈɛlv", say: "two point twelve"}
+"2.12.0": {ipa: "tˈuː pɔɪnt twˈɛlv pɔɪnt zˈiəɹoʊ", say: "two point twelve point zero"}
+"1.27.5": {ipa: "wˈʌn pɔɪnt twˈɛnti sˈɛvən pɔɪnt fˈaɪv", say: "one point twenty-seven point five"}
+"3.10": {ipa: "θɹˈiː pɔɪnt tˈɛn", say: "three point ten"}
+"406": {ipa: "fˈɔːɹ ˈoʊ sˈɪks", say: "four oh six"}
