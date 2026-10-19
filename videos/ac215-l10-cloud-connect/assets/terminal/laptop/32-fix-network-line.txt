@@ -1,0 +1,3 @@
+$ sed -i 's|^docker network create cheese-app-network$|docker network inspect cheese-app-network >/dev/null 2>\&1 \|\| docker network create cheese-app-network|' docker-shell.sh && sed -n '14p' docker-shell.sh
+docker network inspect cheese-app-network >/dev/null 2>&1 || docker network create cheese-app-network
+[exit 0]
