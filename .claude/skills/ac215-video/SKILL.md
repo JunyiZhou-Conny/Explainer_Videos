@@ -203,6 +203,10 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
   declined every edit. Every agent prompt says what the task is, who assigned it, and that user
   messages arriving during the run are for the coordinator. After a user message, read the running
   workflows' results for "out of scope" refusals before relying on them.
+- **Name the git baseline in prompts.** The hourly WIP checkpoint commits agents' edits while a
+  run is going, so "`git diff` against the last commit" can come back empty for a verifier (L05's
+  S12 verifier had to dig out the earlier commit). Pass the commit from before the run and have
+  agents diff against it.
 - **Agents never kill processes they did not start.** A planner's `pkill` pattern killed the
   coordinator's check; the same pattern could kill a stitch. Stop your own process by its PID.
 - **Agents write evidence under `build/`, never in the episode folder itself.** The WIP checkpoint
