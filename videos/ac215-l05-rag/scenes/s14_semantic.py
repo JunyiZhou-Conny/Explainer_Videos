@@ -35,16 +35,19 @@ Beats (script.md "## S14", one voiceover block each):
     load=True" underlined, tag `real run · no key` in the title bar; line 75 RED; the five File frames
     light in a PINK chain (cli.py 212 → splitter 275 → 229 → 206 → cli.py 98); the book underlined;
     GREY chip "nothing saved" (cli-container/61: its command and line 2, `0`).
- 7  The terminal shrinks to the strip (the command and line 75's end). GOLD tags write in at the
+ 7  The terminal shrinks to the strip (the command and line 75's end from "File": "…File
+    /secrets/llm-service-account.json was not found."). GOLD tags write in at the
     top ("≈ 528 embedding calls just to chunk the corpus", "≈ 90 more to embed the chunks",
-    "10–20 min", GREY tag "our estimate"); the GREY tip card. At "Look for" the tip leaves, the GOLD
-    tags move down above the strip and the "with your key, look for" card writes in (three items,
-    cli.py lines 215, 240, 161) with the GREY 429 note under it.
- 8  The cards leave. Seven GREEN bars: the story's chunks under this seismograph, very uneven (tag
-    `our illustration`), the longest and the shortest flash with their character counts; GREY note
-    "a single-topic book still gets its top 5 % cut"; the ▶ your-turn
-    card: the README command (header "your turn · with your key") and the extra chat command after
-    the load. Hold 2 s, then everything fades: empty frame.
+    "10–20 min", GREY tag "our estimate"); the GREY tip card (try one book first: move the others
+    out of `input-datasets/books` / then put them back and run the command again). At "Look for"
+    the tip leaves, the GOLD tags move down above the strip and the "with your key, look for" card
+    writes in (three items, cli.py lines 215, 240, 161) with the GREY 429 note under it.
+ 8  The cards leave. Seven GREEN bars of very uneven length, one per chunk (tag `our
+    illustration`, no numbers: no run saved a semantic chunk); the longest and the shortest flash;
+    GREY note "a single-topic book still gets its top 5 % cut"; the ▶ your-turn card: the README
+    command (header "your turn · with your key"), the GREY 429 row under it (it stays through the
+    hold and the viewer's pause), and the extra chat command after the load. Hold 2 s, then
+    everything fades: empty frame.
 
 Deviations from SHOW (see the scene report): the V8 row shows 7 tiles (sentences 73–79, row 12.7
 wide), not 9: three words of a sentence at 20 pt need two rows in a tile 1.68 wide (the scene
@@ -57,8 +60,10 @@ mini-map leaves when V8 takes the full width (its band and arrows need the botto
 The GOLD "tick per batch of 50" is a GOLD coin. Beat 4 moves the tile row up and hides the spikes
 so the two cards fit above the ponder card. Beat 7's GOLD tags move down above the strip while the
 "look for" card takes the top (all three groups would not fit otherwise); the tip card leaves
-then. Beat 8's bars come from the whole story under this illustration's distances (our
-illustration), not from a measurement.
+then. Beat 8's bars are illustrative lengths (CHUNK_CHARS), not a measurement: no capture holds a
+semantic chunk (cli-container/60 fails before one is saved), and the story under this
+illustration's distances cuts only at its chapter headings, which gives chunks within 1.8x of each
+other, not the "very uneven" the SAY describes (digest C7: some run to thousands of characters).
 """
 
 import numpy as np
@@ -93,7 +98,6 @@ from common import (
     DATA,
     EMBED_MODEL,
     ERR,
-    GAP_THRESHOLD,
     GAP_VALUES,
     INK,
     LOOKUP,
@@ -134,7 +138,7 @@ from common import (
     under,
 )
 from explainer import style as S
-from explainer.devops import CAPTION, Terminal, box, label, mono, substring
+from explainer.devops import CAPTION, Terminal, box, label, mono, mono_line, substring
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S14"]
@@ -145,6 +149,9 @@ CHAT = "python cli.py --chat --chunk_type semantic-split"                   # ex
 assert CMD in excerpt("README.md", 220, 236), "README command changed"
 RUN = capture("60", "cli-container")
 assert RUN.cmd == CMD, RUN.cmd
+L75 = RUN.line(75)
+END75 = "…" + L75[L75.index("File /secrets/"):]     # the strip keeps line 75's end, cut at a word
+assert END75.endswith("was not found."), END75
 SAVED = capture("61", "cli-container")
 assert SAVED.line(2) == "0", SAVED.line(2)
 REGEX = r"(?<=[.?!])\s+"
@@ -259,12 +266,16 @@ def key_card(name: str, color: str, mark) -> VGroup:
     return g
 
 
+# beat 8: our illustration of a book's semantic chunks, in characters. Not a measurement: no capture
+# holds a semantic chunk (the run fails before one is saved). Uneven on purpose, as the SAY and the
+# digest (C7: "some will be thousands of characters") describe; never shown as numbers.
+CHUNK_CHARS = (1480, 260, 2350, 610, 3120, 140, 920)
+
+
 def chunk_bars() -> tuple[VGroup, list[int]]:
-    """The story cut at every gap above the line (this illustration's distances): one GREEN bar
-    per chunk, its length proportional to the chunk's characters. Returns (bars, lengths)."""
-    ks = [k for k, v in enumerate(GAP_VALUES) if v > GAP_THRESHOLD]
-    cuts = [0] + [k + 1 for k in ks] + [len(SENTENCES)]
-    lens = [sum(len(s) for s in SENTENCES[a:b]) for a, b in zip(cuts, cuts[1:])]
+    """One GREEN bar per chunk of CHUNK_CHARS (our illustration), its length proportional to the
+    chunk's characters. Returns (bars, lengths)."""
+    lens = list(CHUNK_CHARS)
     scale = 5.2 / max(lens)
     bars = VGroup(*[Rectangle(width=n * scale, height=0.24, stroke_color=DATA, stroke_width=2)
                     .set_fill(DATA, 0.55) for n in lens])
@@ -579,11 +590,10 @@ class SemanticSplit(VoiceScene):
             r.move_to([-6.3 + r.width / 2, y, 0])
         est_at = est.get_center()
         est.move_to([-6.3 + est.width / 2, GOLD_Y[1], 0])         # moves aside when 10–20 min arrives
-        tip_row = mixed(["try one book first: move the others out of", "`input-datasets/books`"])
-        tip_row.add(label(", and back afterwards", CAPTION, INK).next_to(tip_row, RIGHT, buff=0.04)
-                    .align_to(tip_row[0], DOWN))
-        tip = card_rows([tip_row])
-        tip.move_to([0, 1.05, 0])
+        # two rows: a viewer who stops after the one-book trial would chat against a one-book collection
+        tip = card_rows([mixed(["try one book first: move the others out of", "`input-datasets/books`"]),
+                         "then put them back and run the command again"])
+        tip.move_to([0, 1.45 - tip.height / 2, 0])     # top where the one-row card's was, clear of the GOLD rows
         lf = LookFor([
             (mixed(["per book:", "`Number of chunks: …`", "far fewer than char-split"]), "cli.py · line 215"),
             (mixed(["`embed():`", "`Processing file: outputs/chunks-semantic-split-…`"], buff=0.22), "line 240"),
@@ -597,31 +607,33 @@ class SemanticSplit(VoiceScene):
                     "the first book")
         n429.move_to([-6.3 + n429.width / 2, lf.get_bottom()[1] - 0.12 - n429.height / 2, 0])
 
-        def shrink_to_strip(keep, extra=()):
-            """The terminal shrinks to 3 rows: the command (its rows come back) and `keep`."""
+        def shrink_to_strip(row, extra=()):
+            """The terminal shrinks to 3 rows: the command (its rows come back) and `row`, a new
+            line that fades in on the third row."""
             ref = Terminal(prompt=t.prompt, width=t.box.width, rows=3, size=t.size, title="x")
             ref.shift(np.array([t.box.get_center()[0] - ref.box.get_center()[0],
                                 t.box.get_bottom()[1] - ref.box.get_bottom()[1], 0]))
             # keep the live frame colour (TEAL inside the container), as the house resize() does
             ref.box.set_stroke(t.box.get_stroke_color(), t.box.get_stroke_width())
-            gone = [ln for ln in t.lines.submobjects if ln is not keep]
+            gone = list(t.lines.submobjects)
             self.play(FadeOut(VGroup(*gone)), FadeOut(nsg), FadeOut(VGroup(spine, *dots, *boxes, ub)), run_time=0.3)
             for ln in gone:
                 t.lines.remove(ln)
             for i, c in enumerate(cmd_copy):
                 c.shift(ref._slot(i) - c.strut.get_corner(UP + LEFT))
+            row.shift(ref._slot(2) - row.strut.get_corner(UP + LEFT))
             self.play(Transform(t.box, ref.box), Transform(t.bar, ref.bar), t.dots.animate.move_to(ref.dots),
                       t.title.animate.move_to(ref.title),
-                      keep.animate.shift(ref._slot(2) - keep.strut.get_corner(UP + LEFT)),
-                      FadeIn(VGroup(*cmd_copy)), *extra, run_time=0.8)
-            t.lines.remove(keep)
+                      FadeIn(VGroup(*cmd_copy)), FadeIn(row), *extra, run_time=0.8)
             for c in cmd_copy:
                 t.lines.add(c)
-            t.lines.add(keep)
+            t.lines.add(row)
             t.rows = 3
 
         with self.voiceover(SAY[7]) as vo:
-            shrink_to_strip(tail[2], extra=[nk.animate.set_y(STRIP_TOP - t.bar_h / 2)])
+            # line 75's end from "File": one readable row, not the fold's fragment "-service-account…"
+            assert len(END75) <= t.max_chars, (len(END75), t.max_chars)
+            shrink_to_strip(mono_line(END75, t.size, ERR), extra=[nk.animate.set_y(STRIP_TOP - t.bar_h / 2)])
             vo.wait_until("by our estimate")
             self.play(FadeIn(est, shift=RIGHT * 0.15), run_time=0.4)
             vo.wait_until("about 528 embedding calls")
@@ -646,17 +658,19 @@ class SemanticSplit(VoiceScene):
 
         # ========================================================== 8 · uneven chunks; your turn
         bars, lens = chunk_bars()
-        bars.move_to([-6.2 + bars.width / 2, 1.1, 0])
+        bars.move_to([-6.2 + bars.width / 2, 1.4, 0])     # clear of the taller ▶ card below
         ill8 = our_illustration_tag()
         ill8.move_to([bars.get_right()[0] + 0.35 + ill8.width / 2, bars.get_top()[1] - ill8.height / 2, 0])
-        cap8 = note("the story's chunks under this seismograph").next_to(bars, DOWN, buff=0.15).align_to(bars, LEFT)
+        # "seven of": a whole book gives far more chunks (digest: ≈ 1,300 for the 11 books)
+        cap8 = note("seven of one book's chunks · bar length = characters").next_to(bars, DOWN, buff=0.15).align_to(bars, LEFT)
+        # "very uneven" without numbers (the lengths are illustrative): the longest and the shortest flash
         long_i, short_i = int(np.argmax(lens)), int(np.argmin(lens))
-        # "very uneven", in numbers: the longest and the shortest chunk's characters at their bar's end
-        n_long = note(f"{lens[long_i]:,} characters").next_to(bars[long_i], RIGHT, buff=0.15)
-        n_short = note(f"{lens[short_i]:,} characters").next_to(bars[short_i], RIGHT, buff=0.15)
         single = note("a single-topic book still gets its top 5 % cut")
-        single.move_to([6.3 - single.width / 2, bars[-1].get_center()[1], 0])   # below the count labels
-        tc = turn_card([CMD, (Prose("extra, after the load finishes:"), S.GREY), (CHAT, "extra")],
+        single.move_to([6.3 - single.width / 2, bars[-1].get_center()[1], 0])
+        # the 429 advice rides on the card the viewer pauses on (beat 7's note is up for ~4 s only)
+        tc = turn_card([CMD, (Prose("429 retries are normal · stopped after 5? wait, then rerun: it starts over"),
+                              S.GREY),
+                        (Prose("extra, after the load finishes:"), S.GREY), (CHAT, "extra")],
                        header="your turn · with your key")
         tc.move_to([0, -3.45 + tc.height / 2, 0])
 
@@ -666,8 +680,7 @@ class SemanticSplit(VoiceScene):
             self.play(LaggedStart(*[GrowFromEdge(b, LEFT) for b in bars], lag_ratio=0.15), FadeIn(ill8),
                       FadeIn(cap8), run_time=1.0)
             self.play(Indicate(bars[long_i], color=DATA, scale_factor=1.05),
-                      Indicate(bars[short_i], color=TURN, scale_factor=1.1),
-                      FadeIn(n_long, shift=LEFT * 0.1), FadeIn(n_short, shift=LEFT * 0.1), run_time=0.8)
+                      Indicate(bars[short_i], color=TURN, scale_factor=1.1), run_time=0.8)
             vo.wait_until("and even a single-topic book")
             self.play(FadeIn(single, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("Afterwards, an extra")
@@ -676,5 +689,5 @@ class SemanticSplit(VoiceScene):
             self.play(Indicate(tc.tag, color=TURN, scale_factor=1.15), run_time=0.7)
         self.wait(2)                                   # ▶ beat: hold the frame
 
-        self.play(FadeOut(VGroup(tr, bars, ill8, cap8, n_long, n_short, single, tc)), run_time=0.8)
+        self.play(FadeOut(VGroup(tr, bars, ill8, cap8, single, tc)), run_time=0.8)
         self.wait(0.3)

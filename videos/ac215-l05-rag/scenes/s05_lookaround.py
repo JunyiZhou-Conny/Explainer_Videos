@@ -45,8 +45,8 @@ Beats (script.md "## S05", one voiceover block each):
     your container". Above: docker-compose.yml · line 19 `image: chromadb/chroma:latest` (latest
     underlined), three version chips "tag 1.5.9" · "chroma 1.4.4" (laptop/11b line 2) · 'API
     "1.0.0"' (laptop/11 line 2), each with its GREY source under it ("Docker Hub: latest = 1.5.9",
-    `chroma --version` "(server)", `GET /api/v2/version`), "at the time of recording", GREY "team tip: pin a tag in
-    docker-compose.yml · line 19". Then ▶ your turn on a static GREY card in two groups
+    `chroma --version` "(server)", `GET /api/v2/version`), "at the time of recording", GREY
+    "team tip: pin a tag in docker-compose.yml · line 19". Then ▶ your turn on a static GREY card in two groups
     (container: the env check; second terminal, in llm-rag: docker ps · curl · ls) with a GOLD
     note "yours: llm-service-account.json listed" (the env check folded at its "; " so the card's rows
     paste back as one valid command). Hold 2 s, empty frame.
@@ -661,6 +661,12 @@ class NamesAndMounts(VoiceScene):
         img = excerpt_chip(i19, f"{COMPOSE} · line 19", line=excerpt(COMPOSE, 19, 19))
         chips = VGroup(*[chip(s, CTR, size=CAPTION, font=MONO) for s in
                          (f"tag {HUB_TAG}", VERSION_SERVER, f"API {VERSION_API}")])
+        # chip() centres each text's ink box, so the g of "tag" lifts that line ~0.03 above the other two:
+        # put the three version numbers on the baseline of "chroma 1.4.4" (no descender)
+        nums = (HUB_TAG, VERSION_SERVER.split()[-1], VERSION_API.strip('"'))
+        d0 = text_sub(chips[1].text, nums[1]).get_bottom()[1] - chips[1].box.get_center()[1]
+        for c, num in zip(chips, nums):
+            c.text.shift(UP * (c.box.get_center()[1] + d0 - text_sub(c.text, num).get_bottom()[1]))
         # where each number comes from (a GREY line under its chip): Docker Hub's tag list (ASSETS.md),
         # laptop/11b (chroma --version run in the Chroma container) and laptop/11 (the version endpoint)
         assert "chroma --version" in capture("11b", "laptop").cmd
@@ -717,7 +723,7 @@ class NamesAndMounts(VoiceScene):
             self.play(FadeIn(tip, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Pause and try these checks")
             self.play(FadeOut(VGroup(vcard, u_latest, rec, tip)), run_time=0.4)   # one card leaves, then
-            self.play(FadeIn(turn, shift=UP * 0.2), run_time=0.5)                          # the other comes
+            self.play(FadeIn(turn, shift=UP * 0.2), run_time=0.5)                 # the other comes
             vo.wait_until("your key in slash secrets")
             self.play(Indicate(turn.rows[2], color=COST, scale_factor=1.06), run_time=0.8)
         self.wait(2)                                   # ▶ beat: hold the frame

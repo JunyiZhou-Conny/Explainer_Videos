@@ -12,7 +12,8 @@ Beats (script.md "## S08", one voiceover block each):
     lecture example) and becomes a PINK arrow; the three candidates appear as GREEN arrows (tag
     sketch · not to scale: A 10° away and short, B 25° away and 1.4× longer, C 45° away); YELLOW
     angle arcs; a podium "cosine similarity": A 0.986 · B 0.976 · C 0.886, A's medal card gets a
-    GREEN tick.
+    GREEN tick. A GREY caption "lecture game: who is most like the instructor?" (in at the question,
+    beside the table; over the arrows once they are drawn; out when beat 2's measures table comes).
  2  LECTURE A44–A47. A second podium "dot product" (tag computed from the lecture's table · not on
     the slides): B's longer arrow pulses and the A and B medal cards swap (B 81.2 · A 80.2). A
     three-row table: cosine (the angle), Euclidean (the distance), dot product (angle and length);
@@ -58,8 +59,9 @@ Beats (script.md "## S08", one voiceover block each):
     and a YELLOW dashed mark at ≈ 0.4 across the arrow tips ("lengths 0.369–0.402"); "length 1"
     at the circle.
 12  The strip, card and ruler leave; the dashed circle and the short arrows stay, a PINK query arrow
-    joins; one arrow stretches to length 1 and back; chip "hnsw:space": "cosine" (cli.py line 288).
-    PONDER 8 s in the lower third.
+    joins; one arrow stretches to length 1 and back; chip "hnsw:space": "cosine" (cli.py line 288)
+    with a GREY note "the measure, set at load (next scene)". PONDER 8 s in the lower third ("Our
+    database will compare by cosine (set when we load)." …).
 13  The other arrows dim; the stretched arrow keeps its YELLOW angle arc to the query ("cosine:
     same"); a GREY "what if · straight-line distance" inset on the right (tag illustration): the RED
     distance to the query grows as the arrow stretches ("distance: changes"; "Chroma's default:
@@ -80,7 +82,9 @@ distinct; a PINK query arrow joins V4 in beat 12, so that beat 13 has a query to
 and the distance against. QA 2026-10-19: beat 8's PERMISSION_DENIED row names where each fix lives
 (SHOW's "or the role in docker-shell.sh" sent newcomers looking for a role in the script; the role
 is granted in IAM, S03); beat 10's card gets the GREY "no key yet?" pointer to the study guide's copy
-command (the command itself stays untyped, as BRIEF says).
+command (the command itself stays untyped, as BRIEF says); beat 1 shows the game's question, and
+beat 12's chip note and ponder card say "database" and "set at load" (collection and HNSW come in
+S09; script.md's PONDER line still says "Our collection compares by cosine").
 """
 
 import numpy as np
@@ -207,8 +211,10 @@ assert abs(float(_I @ _B) - 81.24) < 1e-9 and abs(float(_I @ _A) - 80.15) < 1e-9
 COSINE = [("A", "0.986"), ("B", "0.976"), ("C", "0.886")]
 DOT = {"A": "80.2", "B": "81.2"}
 
-PONDER_Q = ("Our collection compares by cosine.\nThese vectors are shorter than 1, and not all the "
-            "same length.\nDoes that change which chunks count as nearest?")
+# "collection" and HNSW are introduced only in S09: the card says "database" and that the measure
+# is set when we load, as SAY[12] does
+PONDER_Q = ("Our database will compare by cosine (set when we load).\nThese vectors are shorter than 1, "
+            "and not all the same length.\nDoes that change which chunks count as nearest?")
 
 # ------------------------------------------------------------------ layout
 TOPICS = ["curd", "milk", "license", "curd", "whey", "license"]         # beat 0's chunk cards
@@ -394,6 +400,13 @@ class Embeddings(VoiceScene):
         pc = podium("cosine similarity", 3, x0=0.6, base=1.15)
         med_c = {k: medal(k, s).move_to(pc.slots[i]) for i, (k, s) in enumerate(COSINE)}
         tick = check_mark(0.3, DATA).next_to(med_c["A"], LEFT, buff=0.1)
+        # the game's question: beside the table while it is asked, then over the arrows once the
+        # table has become the instructor's arrow (it leaves when the measures table takes its place)
+        game_q = note("lecture game: who is most like the instructor?")
+        game_q.move_to([table.get_right()[0] + 0.35 + game_q.width / 2, 0.75, 0])
+        game_q_over = game_q.copy().move_to([-6.35 + game_q.width / 2, 0.75, 0])
+        assert game_q.get_right()[0] < 6.3 and game_q_over.get_right()[0] < pc.blocks.get_left()[0] - 0.2
+        assert game_q_over.get_bottom()[1] > l_c["C"].get_top()[1] + 0.15
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(vs, arrows0, lab_cheese, lab_lic, cap0, ill0, sent, emb)), run_time=0.5)
@@ -402,6 +415,8 @@ class Embeddings(VoiceScene):
                       FadeIn(ex), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(VGroup(*row), shift=RIGHT * 0.1) for row in table.cells], lag_ratio=0.2),
                       run_time=1.2)
+            vo.wait_until("which of three candidates")
+            self.play(FadeIn(game_q, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Five scores make each person")
             # each value pulses about its own centre (a column-wide Indicate pushed 4.8 into the header)
             self.play(LaggedStart(*[Indicate(v, color=LOOKUP, scale_factor=1.15) for v in values], lag_ratio=0.1),
@@ -411,7 +426,8 @@ class Embeddings(VoiceScene):
                       FadeOut(ex), run_time=1.1)
             ex.move_to([pc.title.get_right()[0] + 0.3 + ex.width / 2, pc.title.get_center()[1], 0])
             self.play(LaggedStart(*[GrowArrow(a_c[k]) for k in "ABC"], lag_ratio=0.3),
-                      LaggedStart(*[FadeIn(l_c[k]) for k in "ABC"], lag_ratio=0.3), FadeIn(sk_tag), run_time=1.0)
+                      LaggedStart(*[FadeIn(l_c[k]) for k in "ABC"], lag_ratio=0.3), FadeIn(sk_tag),
+                      game_q.animate.move_to(game_q_over), run_time=1.0)
             vo.wait_until("Cosine similarity compares only the angle")
             self.play(LaggedStart(*[Create(arcs[k]) for k in "ABC"], lag_ratio=0.35), run_time=1.0)
             vo.wait_until("and picks the first candidate")
@@ -463,6 +479,7 @@ class Embeddings(VoiceScene):
                       med_d["B"].animate(path_arc=-PI / 3).move_to(pd.slots[0]), run_time=0.9)
             self.play(flash(a_c["B"]), Indicate(med_d["B"], color=TURN, scale_factor=1.1), run_time=0.7)
             vo.wait_until("So a measure is a choice")
+            self.play(FadeOut(game_q), run_time=0.3)       # first: it sits on the measures table's foot
             self.play(FadeIn(measures.frame), FadeIn(measures[1]), *[FadeIn(h) for h in measures.heads], run_time=0.4)
             self.play(LaggedStart(*[FadeIn(VGroup(*row), shift=RIGHT * 0.1) for row in measures.cells],
                                   lag_ratio=0.3), run_time=1.0)
@@ -830,6 +847,10 @@ class Embeddings(VoiceScene):
         l_q = label("query", CAPTION, LOOKUP).next_to(a_q.get_end(), LEFT, buff=0.12)
         hn = excerpt_chip(HNSW, "cli.py · line 288 (excerpt)", line=excerpt("cli.py", 288, 288))
         hn.move_to([3.45, 1.55, 0])
+        # the chip's line runs at load time (S09), not yet: a note says so
+        hn_note = note("the measure, set at load (next scene)").next_to(hn.chip, DOWN, buff=0.12)
+        hn_note.align_to(hn.chip, LEFT).shift(RIGHT * 0.08)
+        assert hn_note.get_right()[0] < 6.3
         picked = fan[k_pick]
         d_pick, l_pick = float(degs[k_pick]), float(lengths[k_pick])
         long_ = thin_arrow(v4, d_pick, 1.0, stroke=4)
@@ -838,7 +859,8 @@ class Embeddings(VoiceScene):
         with self.voiceover(SAY[12]) as vo:
             self.play(FadeOut(VGroup(t, st, ck, ruler, r04, r1, mark04, rng_lab)), caption_extra(tr, False),
                       run_time=0.5)
-            self.play(FadeIn(hn, shift=UP * 0.1), GrowArrow(a_q), FadeIn(l_q), run_time=0.6)
+            self.play(FadeIn(hn, shift=UP * 0.1), FadeIn(hn_note, shift=UP * 0.1), GrowArrow(a_q), FadeIn(l_q),
+                      run_time=0.6)
             self.play(Indicate(hn.text, color=TURN, scale_factor=1.06), run_time=0.7)
             vo.wait_until("and these arrows are shorter than 1")
             self.play(Transform(picked, long_), run_time=0.8)
@@ -875,7 +897,7 @@ class Embeddings(VoiceScene):
         game_chip.move_to([-0.6, -2.75, 0])
 
         with self.voiceover(SAY[13]) as vo:
-            self.play(FadeOut(card), FadeOut(hn), others.animate.set_opacity(0.25),
+            self.play(FadeOut(card), FadeOut(hn), FadeOut(hn_note), others.animate.set_opacity(0.25),
                       fan_tag.animate.move_to([v4.point(180, 1.0)[0] + fan_tag.width / 2, V4_O[1] - 0.45, 0]),
                       run_time=0.5)                       # the inset needs the top right; the card has gone
             self.play(Create(arc), FadeIn(same_lab), run_time=0.6)

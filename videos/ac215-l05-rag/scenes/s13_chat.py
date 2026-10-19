@@ -27,13 +27,15 @@ Beats (script.md "## S13", one voiceover block each):
     · line 373, embedding the question"; GOLD tag "per question: one embedding call + one Gemini
     call", a GOLD coin on the mini-map's embedding and LLM boxes.
  7  The GREY "with your key, look for" card above the strip, items writing in as named (cli.py lines
-    365–399); the "??" boxed, a two-row tag "erratum · harmless / the README shows one".
+    365–399); the "??" boxed, a two-row tag "erratum · harmless / the README shows one". The full
+    card holds 1 s after the clip.
  8  S01's chat box returns (the question, RED-edged answer bars, the YELLOW "?"). The "?" resolves
     into four GREEN chunk cards; three bars draw thin arrows to them and turn GREEN (tag
     "illustration · a shape, not an answer"). The grounding test card: GREEN "from your chunks" (Mara
     · her grandfather · the curd; excerpt chip `Tolminc Cheese.txt · line 4` "A fictional tale") and
     RED "not in your chunks" (real-world rules for Tolminc; GREY note: only 3 char-split chunks
-    contain the word); GREY note "compare the char-split and recursive-split answers".
+    contain the word); GREY note "compare the char-split and recursive-split answers", held 1 s
+    after the clip.
  9  TRACKER Chat 3. S01's chat box becomes a GREY browser frame (tag illustration) at
     ac215-llm-rag.dlops.io/chat with a schematic chat page, GREY note "use Chrome"; the ▶ your-turn card: both chat commands, the link,
     "your own question: cli.py · line 372 · no rebuild", "404 NOT_FOUND for the model? change
@@ -582,6 +584,7 @@ class FinalPrompt(VoiceScene):
             self.play(lf.write_item(5))
             vo.wait_until("and the model's response")
             self.play(lf.write_item(6))
+        self.wait(1.0)                                 # hold the full card: its last row came in ~1 s before the clip ended
 
         # ========================================================== 8 · the opening question, answered
         win = chat_window("a chat with an LLM", 6.4, 2.7).move_to([-3.1, 1.45, 0])
@@ -653,6 +656,7 @@ class FinalPrompt(VoiceScene):
             self.play(FadeIn(only3, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Compare both chunk types")
             self.play(FadeIn(cmp_note, shift=UP * 0.1), run_time=0.5)
+        self.wait(1.0)                                 # hold the note: it lands ~1 s before the clip ends
 
         # ========================================================== 9 · step 3: the chat tool; your turn
         br = chat_window(CHAT_URL, 6.8, 2.5).move_to([-2.95, 1.5, 0])

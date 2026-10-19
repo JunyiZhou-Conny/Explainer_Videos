@@ -337,7 +337,7 @@ user glyph; a PINK arrow "question" into a PURPLE cluster of three gears labelle
 it a PINK arrow up to a TEAL cylinder "vector database" and a GREEN arrow "retrieved texts" back
 down; from the gears a GREEN elbow arrow "full prompt" into a BLUE box "LLM"; a BLUE arrow "response"
 back to the user. A thin RED dotted line between cylinder and LLM gets a RED cross: "never talk".
-SAY: Here's RAG in five boxes. The user's question goes to the RAG code, which asks a vector database for related texts. The code joins question and texts into one full prompt, and the model's response goes back. The database never talks to the model.
+SAY: Here's RAG in four boxes. The user's question goes to the RAG code, which asks a vector database for related texts. The code joins question and texts into one full prompt, and the model's response goes back. The database never talks to the model.
 
 SHOW: LECTURE A16. The gears open up and V1 grows out of them, full width. Top lane, left to right:
 a stack of GREEN book pages "knowledge base" → a PURPLE ruler glyph "chunking" → a tall BLUE box
@@ -421,7 +421,7 @@ at right (header `.gitignore · lines 1–5`); a GREY dashed ghost line "secrets
 GREY tag "not here". The two folders pulse: the key sits *beside* the repo. Then L04's three gates
 in miniature, three small BLUE gates in a row labelled "who?" (the GOLD key), "may?" (a role chip),
 "switched on?" (an API switch, still off).
-SAY: That key spends your project's money; the git ignore file has no secrets line, so it's safe only beside the repo. Remember lecture 4's three gates: the key says who you are, the role what you may do, and the API must be switched on.
+SAY: That key spends your project's money; the git ignore file has no secrets line, so it's safe only beside the repo. Remember the three gates from lecture 4: the key says who you are, the role what you may do, and the API must be switched on.
 
 SHOW: The two README role chips get an `erratum` tag: "Storage Admin" dims to GREY with a note "no
 storage call in this code". Then the third gate: a schematic "APIs & Services › Vertex AI API ·
@@ -745,7 +745,7 @@ example`), then becomes an arrow; the three candidates appear directly as arrows
 the second at 25° and 1.4× longer, the third at 45°). A YELLOW angle arc between the instructor's
 arrow and each candidate's. A small podium: "cosine: A 0.986 · B 0.976 · C 0.886"; the first
 candidate's medal card gets a GREEN tick.
-SAY: The personality game from lecture makes this concrete. Five scores make each person a five-number vector. Cosine similarity compares only the angle, and picks the first candidate.
+SAY: The personality game from lecture makes this concrete: which of three candidates is most like the instructor? Five scores make each person a five-number vector. Cosine similarity compares only the angle, and picks the first candidate.
 
 SHOW: LECTURE A44–A47. A second podium: "dot product: B 81.2 · A 80.2" (tag "computed from the
 lecture's table · not on the slides", SLIDES.md A40–A43); the second candidate's longer arrow
@@ -814,7 +814,7 @@ SHOW: The dashed unit circle and the short arrows stay; one arrow is stretched t
 A GREY chip `"hnsw:space": "cosine"` (`cli.py:288`, used in S09). The ponder card sits in the lower
 third.
 PONDER(8 s, "Our collection compares by cosine.\nThese vectors are shorter than 1, and not all the same length.\nDoes that change which chunks count as nearest?")
-SAY: Our collection compares by cosine, and these arrows are shorter than 1. Does that change which chunks count as nearest?
+SAY: When we load them, the database will compare by cosine, and these arrows are shorter than 1. Does that change which chunks count as nearest?
 
 SHOW: The stretched arrow keeps its angle arc unchanged (YELLOW "cosine: same"). Then a GREY "what if"
 inset (tag `illustration`): with straight-line distance, the stretched arrow's distance to the
@@ -897,7 +897,7 @@ page through the GREY door `:8000` to the Chroma box. Beside it, two short strip
 `access-control-allow-origin: https://ac215-llm-rag.dlops.io` (GREEN) and a GREY ghost "no such line
 for another site" (from `laptop/12b`), headed "curl -si -H 'Origin: …' localhost:8000 (extra)". A
 GREY note on the browser frame: "if Chrome asks to reach your local network, allow it".
-SAY: Step 3 is a link to the course's Chroma UI. Opened in Chrome, it reads your local database through port 8000; Chroma's settings allow that one site.
+SAY: Step 3 is a link to the course's Chroma UI. Opened in Chrome, it reads your local database through port 8000; Chroma's settings let the course's site in.
 
 SHOW: The full V1 returns; its top lane glows end to end, GREEN ticks on chunk, embed, load. A
 caption "part 1: the index is built". Fade to an empty frame (end of part 1).
@@ -964,7 +964,7 @@ SAY: Now the bottom lane. The question goes through the same embedding model and
 SHOW: LECTURE A48–A53. V6, first half: a column of stored vectors (GREEN bars) and the PINK query
 vector; similarity scores write in one by one beside four rows: 0.57, 0.77, 0.43, 0.93 (tag `lecture
 example`). The column re-sorts by score; a YELLOW line cuts it under the top rows, "top K".
-SAY: The lecture scores every stored vector against the query: 0.57, 0.77, 0.43, 0.93. Sort by score, and keep the top K, with K fixed in advance. This code uses 10.
+SAY: The lecture scores every stored vector against the query. 0.57, 0.77, 0.43, 0.93. Sort by score, and keep the top K, with K fixed in advance. This code uses 10.
 
 SHOW: The flip: each score becomes 1 − score (0.07, 0.23, 0.43, 0.57) and the arrow labelled "better"
 beside the column turns upside down; header changes from "similarity (lecture)" to "cosine distance
@@ -1002,7 +1002,7 @@ question". The terminal shrinks; a GREY "with your key, look for" card writes in
 … 256 numbers" (`cli.py:320`); "Query: How is tolminc cheese made?" (`:360`); "Results: a dict of
 lists of lists" (`:361`), with four GREY empty slots "ids · distances · metadatas · documents", each
 holding one inner list (no values).
-SAY: Step 2 runs it on recursive split; pause and run both. With your key, look for 256 embedding values, the query, and the results. The results are lists of lists: one list per query, holding IDs, distances, metadata and documents.
+SAY: Step 2 runs it on recursive split. With your key, look for 256 embedding values, the query, and the results. The results are lists of lists: one list per query, holding IDs, distances, metadata and documents. Pause and run both.
 
 SHOW: A chip `cli.py · line 386 · in chat()` `results["documents"][0]` with `[0]` highlighted YELLOW
 and pointing at the first inner list. A GREY note "no results were recorded: next, we ask the

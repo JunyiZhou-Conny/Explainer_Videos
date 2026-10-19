@@ -1,6 +1,6 @@
 # zh narration for S10-S16 (part 2, group g2: ask the index — query, filters, chat, semantic chunking, the
 # lecture's advanced RAG, teardown and recap), sentence-aligned to script.md v2: one zh sentence per English
-# sentence (explainer.voice.split_sentences; 58 SAY lines, 155 sentences). Terms and rules: ../GLOSSARY.md,
+# sentence (explainer.voice.split_sentences; 58 SAY lines, 157 sentences). Terms and rules: ../GLOSSARY.md,
 # ../glossary.yaml (binding); the glossary's S10-S16 first_use sentences are used as written.
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8).
@@ -62,9 +62,10 @@ S11:
   - "现在看下面那条通道。"
   - "问题经过同一个 embedding 模型，变成一个查询向量，和那些 chunk 在同一个空间里。"
   - "查询就是找它的最近邻。"
-- en: "The lecture scores every stored vector against the query: 0.57, 0.77, 0.43, 0.93. Sort by score, and keep the top K, with K fixed in advance. This code uses 10."
+- en: "The lecture scores every stored vector against the query. 0.57, 0.77, 0.43, 0.93. Sort by score, and keep the top K, with K fixed in advance. This code uses 10."
   zh:
-  - "课上拿查询给每个存好的向量打分：0.57、0.77、0.43、0.93。"
+  - "课上拿查询给每个存好的向量打分。"
+  - "0.57、0.77、0.43、0.93。"
   - "按分数排序，保留 top K，K 是事先定好的。"
   - "这份代码用的是 10。"
 - en: "One difference: the lecture ranks by similarity, where higher is better. Chroma reports cosine distance, one minus the similarity, where smaller is closer. Same order, opposite direction."
@@ -91,13 +92,15 @@ S11:
 - en: "The question must become a vector before the database can compare it, and only the same Google model makes one in the same space."
   zh:
   - "问题必须先变成向量，数据库才能拿它来比较，而只有同一个 Google 模型才能做出同一个空间里的向量。"
-- en: "Step 2 runs it on recursive split; pause and run both. With your key, look for 256 embedding values, the query, and the results. The results are lists of lists: one list per query, holding IDs, distances, metadata and documents."
+- en: "Step 2 runs it on recursive split. With your key, look for 256 embedding values, the query, and the results. The results are lists of lists: one list per query, holding IDs, distances, metadata and documents. Pause and run both."
   zh:
-  - "第 2 步用 recursive-split 再跑一次；暂停一下，两条都跑一遍。"
-  - "有密钥的话，要找的是 256 个 embedding 值、查询，以及结果。"
+  - "第 2 步用 recursive-split 再跑一次。"
+  - "有密钥的话，要找的是：256 个 embedding 值、查询，以及结果。"
   - "结果是列表套列表：每个查询一个列表，里面装着 ID、距离、元数据和文档。"
+  - "暂停一下，两条都跑一遍。"
   en_display:
-  - "Step 2 runs it on recursive-split; pause and run both."
+  - "Step 2 runs it on recursive-split."
+  - null
   - null
   - null
 - en: "That's why chat, later, reads documents, item zero. No results were recorded, so next we ask the loaded database directly."
@@ -134,7 +137,7 @@ S12:
   - "过滤先起作用，top K 再用剩下的东西填满 10 个位置，不管有多远。"
 - en: "The lecture puts metadata filtering after ranking: here, that would drop all 10 story chunks and return nothing. Chroma filters first, so you get 10 results, about the wrong cheese."
   zh:
-  - "课上把元数据过滤放在排序之后：放在这里，就会把故事的 10 个 chunk 全部丢掉，什么也不返回。"
+  - "课上把元数据过滤放在排序之后：放在这里，故事的 10 个 chunk 就会全部被丢掉，什么也不返回。"
   - "Chroma 先过滤，所以你会拿到 10 个结果，讲的却是别的奶酪。"
 - en: "A small slip: the README promises various filters, but only variant 4 runs; variants 1 to 3 are commented out. Uncomment the first, with no filter, and every chunk competes. And contains is a keyword filter, not a keyword ranking."
   zh:
@@ -158,7 +161,7 @@ S13:
 - en: "Now generation. The lecture's final prompt has three parts: a system prompt that says how to behave, the user's query, and the context retrieved from the database."
   zh:
   - "接下来是生成。"
-  - "课上最终的 prompt 有三部分：告诉模型该怎么表现的 system prompt、用户的查询，以及从数据库检索到的上下文。"
+  - "课上最终的 prompt 有三部分：规定模型行为的 system prompt、用户的查询，以及从数据库检索到的上下文。"
 - en: "In chat, the code queries again, this time with no filter, for 10 results."
   zh:
   - "到了 chat 这一步，代码再查询一次，这次不加过滤，要 10 个结果。"
@@ -197,17 +200,17 @@ S13:
 - en: "With your key, look for the query, printed with two question marks, a harmless slip, and its 256 embedding values. Then the results, the number 10, the input prompt with your chunks, and the model's response."
   zh:
   - "有密钥的话，要找的是查询，它打印出来带两个问号，一个无害的小疏漏，还有它的 256 个 embedding 值。"
-  - "然后是结果、数字 10、带着你的 chunk 的 input prompt，以及模型的回答。"
+  - "然后是结果、数字 10、input prompt，里面有你的 chunk，以及模型的回答。"
 - en: "Remember the opening question? The story is fiction, so an answer about Mara, her grandfather and the curd came from your chunks. Real-world rules for Tolminc came from the model's memory. Compare both chunk types."
   zh:
   - "还记得开头那个问题吗？"
-  - "这个故事是虚构的，所以讲到 Mara、她祖父和凝乳的回答，来自你的 chunk。"
+  - "这个故事是虚构的，所以回答里讲到 Mara、她祖父和凝乳的内容，来自你的 chunk。"
   - "关于 Tolminc 的现实规定，来自模型的记忆。"
   - "比较两种 chunk type 的结果。"
 - en: "Step 3 is a link to the course's chat tool, in Chrome. Pause: run both chat commands with your key, then try the tool. For your own question, change line 372 of cli.py."
   zh:
   - "第 3 步是一个链接，指向课程的对话工具，用 Chrome 打开。"
-  - "暂停一下：用你的密钥把两条 chat 命令都跑一遍，再试试这个工具。"
+  - "暂停一下：用你的密钥，把两条 chat 命令都跑一遍，再试试这个工具。"
   - "想问你自己的问题，就改 cli.py 的第 372 行。"
 S14:
 - en: "Back to chunking, with the lecture's best answer: cut where the meaning changes. On the slides, an anchor walks through the sentences and joins neighbors while their similarity stays above 0.8."
@@ -217,7 +220,7 @@ S14:
 - en: "The code uses the same ingredients with a different rule. Every sentence gets a window, itself and one neighbor on each side, and each window is embedded."
   zh:
   - "代码用的是同样的材料，规则却不一样。"
-  - "每个句子都有一个窗口，包括它自己和两边各一个相邻的句子，每个窗口都要向量化。"
+  - "每个句子都有一个窗口：它自己，加上两边各一个相邻的句子；每个窗口都要向量化。"
 - en: "Then it measures the distance between each window and the next, and plots it over the text, like a seismograph."
   zh:
   - "然后它量出每个窗口和下一个窗口之间的距离，画在文本上方，就像地震仪一样。"

@@ -10,7 +10,8 @@ Beats (script.md "## S12", one voiceover block each):
     collection · 1 dot ≈ 8 chunks", tag "our illustration"); the PINK question card (top right)
     drops into the cloud as a PINK point inside the cluster labelled "Tolminc story". PONDER (8 s)
     in the lower third, the cloud above it.
- 2  GREY card "an extra Python check · counts with the query's filters". Under the cloud a filter
+ 2  GREY card "an extra Python check · counts with the query's filters · code: study guide, Step 9"
+    (the pointer GREY). Under the cloud a filter
     row: the counter "chunks: 8,248"; the PINK chip "book = The Complete Book of Cheese" appears and
     the mask dims all but the book's dots (1,355); the PINK chip `$contains "Italian"` appears and
     the mask dims all but 64 brighter dots (caption "64 bright dots = 64 chunks"). The card gives
@@ -19,7 +20,7 @@ Beats (script.md "## S12", one voiceover block each):
     "mentioning Tolminc: 0" on the fully dimmed Tolminc cluster.
  3  After "Now a search." the filter row leaves and the question card flashes, then becomes the tag
     "stand-in query · a stored story chunk's vector"; the strip grows to 4 rows under the card
-    "an extra Python check · query with a stored vector" (the staff tag beside it):
+    "an extra Python check · code: study guide, Step 9" (the pointer GREY; the staff tag beside it):
     TERM(recorded-embeddings/09: 16–17 word-folded, the chunk id PINK, the stand-in dot flashes).
     "Without filters": the mask lifts and the PINK beam reaches the stand-in's ten nearest, inside
     the Tolminc cluster (its label flashes). On "story" the picture leaves, the terminal grows to 11
@@ -48,13 +49,18 @@ Beats (script.md "## S12", one voiceover block each):
     copies of the ten ids become ten cards ("-0" … "-9") in a row beside the cylinder, bracketed
     "-0 to -2 / Gutenberg header" (RED), "-3 to -5 / title page, contents" (GREY), "-6 to -9 /
     chapter one begins" (GREEN); the RED cards flash, the cylinder pulses ("indexed like any text");
-    last, the GREEN fix card "strip outside the START/END markers / then chunk, embed, load again"
-    bottom left on the strip, beside the staff tag. Everything fades: empty frame.
+    last, the GREEN fix card "the fix: keep only the text between the / `*** START OF` and `*** END
+    OF` lines / then chunk, embed, load again" bottom left on the strip, beside the staff tag; it
+    stays 3 s after the words. Everything fades: empty frame.
 
 Deviations from SHOW (see the scene report): the "extra Python check" cards are one-line GREY cards
 with the SHOW's own wording (the two-line check_card does not fit above an 11-row terminal under
-the tracker band). Beat 3 prints lines 16–17 in a 4-row strip under the picture first (the beam
-needs the picture), and the 11-row terminal only for the distances (18–28). Beat 7's
+the tracker band), each ending in the GREY pointer "· code: study guide, Step 9" (the guide holds
+both heredocs); beat 3's card drops "query with a stored vector" for it (one line beside the staff
+tag holds one or the other; the stand-in tag right above says what the query is). The fix card
+names the marker lines ("START/END markers" alone did not say what to strip) as the files and the
+exercise patch spell them. Beat 3 prints lines 16–17 in a 4-row strip under the picture first (the
+beam needs the picture), and the 11-row terminal only for the distances (18–28). Beat 7's
 terminal has 10 rows (the folded command, the folded Namespace line and the four ids rows need
 10), and it shrinks to a 4-row strip so all ten ids stay on screen while they become cards; the
 ten cards stand in a row beside the cylinder (ten cards stacked inside it would be 0.22 tall,
@@ -92,6 +98,7 @@ from manim import (
 )
 
 from common import (
+    ASSETS,
     BOOK,
     COUNTS,
     DATA,
@@ -230,9 +237,27 @@ def rows_box(lines, a: int, b: int, color: str = TURN, pad: float = 0.05):
     return r.move_to([x0 + (b - a) * cw / 2, (top + bot) / 2, 0])
 
 
+GUIDE = "· code: study guide, Step 9"      # where both checks' heredocs are (MLOps_Learning L05 guide)
+
+
 def one_line_card(text: str):
-    """The GREY "an extra Python check · …" card, on one line (its code is never shown)."""
-    return card_rows([text])
+    """The GREY "an extra Python check · …" card on one line (its code is never shown), ending in
+    the GREY pointer to the study guide step that holds the code."""
+    row = VGroup(note(text, INK), note(GUIDE)).arrange(RIGHT, buff=0.12)
+    row[1].align_to(row[0], UP)                         # ascenders in both: their tops line up
+    return card_rows([row])
+
+
+def fix_rows() -> list:
+    """The fix card's rows: the marker lines Project Gutenberg puts around a book's text (10 of
+    the 11 books; the exercise patch cuts at the same two strings), then the pipeline again."""
+    r1 = VGroup(note("the fix:"), note("keep only the text between the", INK)).arrange(RIGHT, buff=0.12)
+    r1[1].align_to(r1[0], UP)                           # ascenders in both ("keep" has a descender)
+    r2 = VGroup(mono("*** START OF", CAPTION, INK), note("and", INK), mono("*** END OF", CAPTION, INK),
+                note("lines", INK)).arrange(RIGHT, buff=0.14)
+    for m in r2[1:]:
+        m.align_to(r2[0], DOWN)                         # caps and serif without descenders: one baseline
+    return [r1, r2, "then chunk, embed, load again"]
 
 
 def survivors(dc) -> VGroup:
@@ -372,7 +397,9 @@ class FiltersFirst(VoiceScene):
 
         # ========================================================== 3 · a stand-in query, no filter
         st4 = strip_top(4)
-        ck2 = one_line_card("an extra Python check · query with a stored vector")
+        # its purpose is the stand-in tag's, right above it: the card's room beside the staff tag
+        # holds "an extra Python check" and the pointer, not both and the purpose
+        ck2 = one_line_card("an extra Python check")
         ck2_hi = [-6.3 + ck2.width / 2, CARD_Y, 0]                          # above an 11-row terminal
         ck2.move_to([-6.3 + ck2.width / 2, st4 + 0.06 + ck2.height / 2, 0])  # above the 4-row strip
         stf_4 = [6.3 - stf.width / 2, st4 + 0.06 + stf.height / 2, 0]
@@ -571,12 +598,15 @@ class FiltersFirst(VoiceScene):
             lb.next_to(br, DOWN, buff=0.14)
             brackets.add(br)
             labels.add(lb)
-        fix = card_rows(["strip outside the START/END markers", "then chunk, embed, load again"],
-                        header="the fix", frame_color=DATA)
+        fix = card_rows(fix_rows(), frame_color=DATA)
         # bottom left, on the 4-row strip beside the staff tag (centred under the cards, its header
-        # sat 0.2 under the RED "Gutenberg header" label)
+        # sat 0.2 under the RED "Gutenberg header" label); "the fix:" leads the first row, since a
+        # header above the three rows would touch the cylinder
         fix.move_to([-6.3 + fix.width / 2, st4 + 0.08 + fix.height / 2, 0])
         assert fix.get_right()[0] < stf7_4[0] - stf7.width / 2 - 0.4, "the fix card would touch the staff tag"
+        assert fix.get_top()[1] < cyl.get_bottom()[1] - 0.2, "the fix card would touch the cylinder"
+        patch = (ASSETS / "exercise-checks/logs/b3-strip.patch.py").read_text()    # exercise B3's cut
+        assert 'find("*** START OF")' in patch and 'find("*** END OF")' in patch, "the fix card's markers"
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(p2, hbox, err, rm, unc, cont_g)), run_time=0.5)
@@ -617,5 +647,6 @@ class FiltersFirst(VoiceScene):
             vo.wait_until("strip them before chunking")
             self.play(FadeIn(fix, shift=UP * 0.15), run_time=0.6)
 
+        self.wait(3.0)                          # the fix card's three rows stay readable after the words
         self.play(FadeOut(VGroup(tr, tg, stf7, cyl, cards, brackets, labels, fix)), run_time=0.8)
         self.wait(0.3)

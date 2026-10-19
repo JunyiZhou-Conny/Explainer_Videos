@@ -657,7 +657,7 @@ class KeyAndProject(VoiceScene):
             self.play(Indicate(fo.sec, color=TURN, scale_factor=1.15),
                       Indicate(fo.sec_name, color=TURN, scale_factor=1.1), run_time=0.7)
 
-            vo.wait_until("Remember lecture 4")
+            vo.wait_until("Remember the three gates")
             self.play(LaggedStart(*[Create(g.posts) for g in gates], lag_ratio=0.25), run_time=0.9)
             self.play(*[FadeIn(g.barrier) for g in gates], run_time=0.4)
             vo.wait_until("the key says who you are")

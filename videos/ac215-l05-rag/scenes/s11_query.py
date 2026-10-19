@@ -31,11 +31,12 @@ Beats (script.md "## S11", one voiceover block each):
     title bar) types `python cli.py --query --chunk_type char-split` (on the row under the long
     prompt); GOLD tag "one embedding call per question · your project pays" on the prompt row.
     cli-container/40 lines 2–3: line 3
-    `load()` boxed YELLOW + erratum tag "a copy-paste label · cli.py · line 310"; then …, 9–13, …,
-    64 (RED, wrapped). The terminal shrinks to the strip (the command and the error's last row);
+    `load()` boxed YELLOW; then …, 9–13, …, 64 (RED, wrapped) right away, so the whole traceback
+    is up while the load slip is explained; erratum tag "a copy-paste label · cli.py · line 310".
+    The terminal shrinks to a 4-row strip (the command and both rows of the error line);
     above it the BLUE embedding box, the PINK question card and the TEAL Chroma cylinder, which
     blinks ("connected · cli.py · line 313"); the question card drops onto the BLUE box and stops,
-    RED cross, the strip's error row flashes; "no search ran" under the cylinder.
+    RED cross, the strip's error rows flash; "no search ran" under the cylinder.
  6  The question card slides at the cylinder and bumps off an arrow-shaped PINK slot (flashing
     RED); chip "Chroma takes vectors, not words". It returns to the BLUE box; a dashed PINK arrow
     (what the box would make) slides out and fits the slot; it fades, a dashed GOLD key outline
@@ -43,30 +44,32 @@ Beats (script.md "## S11", one voiceover block each):
     model makes a vector in the same space".
  7  TRACKER Query 2. The picture leaves; the strip is cleared and loses its `real run · no key` tag
     (this command was not run here), then types `python cli.py --query --chunk_type
-    recursive-split` (no output). ▶ your turn on a GREY card listing both query commands (GOLD tag
-    "one embedding call per question"). The strip leaves and the card moves down to its place; a
+    recursive-split` (no output). The strip leaves; a
     GREY "with your key, look for" card writes in its rows as named (cli.py lines 320, 360, 361);
     under it four GREY slots `ids` `distances` `metadatas` `documents`, each holding one dashed
-    inner list (no values); the inner lists flash on "one list per query", the keys as named.
-    Hold 2 s.
+    inner list (no values); the inner lists flash on "one list per query", the keys as named. On
+    "Pause and run both" (the SAY's last sentence): ▶ your turn on a GREY card listing both query
+    commands (GOLD tag "one embedding call per question"), at the bottom. Hold 2 s.
  8  The turn card leaves. Chip `results["documents"][0]` (cli.py · line 386 · in chat()), its
     `[0]` boxed YELLOW, a YELLOW arrow to the documents slot's inner list, which turns YELLOW (the
     chip's header sits under it, so the arrow crosses no text). GREY note "no results
     were recorded: next, we ask the loaded database directly". Fade to an empty frame.
 
-Timing: beat 1's four numbers are one lexicon entry inside one sentence, so character
-interpolation would put them about 4 s late; they are placed at the pauses measured in the cached
-clip (`_at`: 3.5, 5.4, 7.2, 8.9 s). Everything else is anchored with vo.wait_until at sentence or
-clause starts.
+Timing: beat 1's four numbers are one lexicon entry, a sentence of their own (it starts at an
+exact mark), so character interpolation inside it would still miss the later ones; they are placed
+at the pauses measured in the cached clip (`_at`: 3.51, 5.23, 7.02, 8.69 s). Everything else is
+anchored with vo.wait_until at sentence or clause starts.
 
 Deviations from SHOW (see the scene report): the terminal of beat 5 has 13 rows, not 11, and
 cli-container/40 line 2 is cut with … instead of wrapped (as S08 does with the same line of
 cli-container/20): wrapped, the 15 rows would scroll the typed command and its GOLD tag away. The
-strip keeps the error's second row (`-service-account.json was not found.`), as S08's does. The
+strip has 4 rows, not 3: it keeps the whole error line (`google.auth.exceptions.DefaultCredentialsError:
+File /secrets/llm-service-account.json was not found.`, two wrapped rows), so a viewer can compare it
+with theirs while "stops at the key" is spoken; the picture above it sits one row higher. The
 mini-map stays hidden from beat 4 on (code panel, 13-row terminal, the picture above the strip,
 then the cards leave no free corner). Beat 3 has no animated "every row is far away" picture: the
 SHOW's note text carries it ("near or far, 10 rows come back"), next to the K-line. In beat 7 the
-3-row strip leaves (it "shrinks" away) after the second command is typed, and the turn card takes
+4-row strip leaves (it "shrinks" away) after the second command is typed, and the turn card takes
 its place at the bottom, so the turn card, the look-for card and the four result slots fit
 together; the turn card stays up through the 2-s hold. Additions that SHOW does not name: a
 "query" label on the PINK bar (beat 1), the GREEN `char-split-collection` chip (beat 4: what
@@ -142,6 +145,7 @@ from common import (
     resize,
     sans,
     src_panel,
+    strip_top,
     term,
     tracker,
     turn_card,
@@ -180,12 +184,14 @@ FAR = (44, 148, 157, 165, 172, 262, 270, 281, 289)
 TO_CARDS = (148, 66, 281, 56)            # arrows that fly into rows 0..3 (0.57, 0.77, 0.43, 0.93)
 CARDS_AT = np.array([-0.2, 0.85, 0])     # V6's card column centre (beat 1)
 QBAR_X = -3.65                           # the PINK query bar, left of the column
-SCORE_T = (3.54, 5.38, 7.2, 8.88)        # measured starts of 0.57, 0.77, 0.43, 0.93 in SAY[1]
+SCORE_T = (3.51, 5.23, 7.02, 8.69)       # measured starts of 0.57, 0.77, 0.43, 0.93 in SAY[1]
 
-BOX_AT = np.array([-2.2, 0.0, 0])        # beat 5-6 picture above the strip
-CARD_HOME = np.array([-2.2, 2.2, 0])
-CYL_AT = np.array([4.3, 0.75, 0])
-SLOT_Y = 0.95
+STRIP4 = strip_top(4)                    # beats 5-7: a 4-row strip (the command + the whole error line)
+UP4 = STRIP4 - STRIP_TOP                 # so the picture sits one row higher than over a 3-row strip
+BOX_AT = np.array([-2.2, 0.0 + UP4, 0])  # beat 5-6 picture above the strip
+CARD_HOME = np.array([-2.2, 2.35, 0])    # card top clear of the tracker caption
+CYL_AT = np.array([4.3, 0.75 + UP4, 0])
+SLOT_Y = 0.95 + UP4
 
 
 def _at(scene, vo, t: float):
@@ -469,19 +475,21 @@ class NearestNeighbours(VoiceScene):
             vo.wait_until("it prints the word load")
             cb = col_box(l3, 0, 6)
             pin(self, l3, cb, anim=Create(cb), run_time=0.4)
-            vo.wait_until("a label copied")
-            pin(self, l3, beside(err_tag, t, l3, buff=0.5), run_time=0.4)
+            # the whole traceback comes at once, so it is up for the rest of the load sentence
             t.print(self, Q_REST, run_time=0.5)
             err = t.print(self, [(Q_ERR, ERR)], wrap=True, run_time=0.4)
             assert len(err) == 2 and len(t.lines) <= 13, (len(err), len(t.lines))
+            vo.wait_until("a label copied")
+            pin(self, l3, beside(err_tag, t, l3, buff=0.5), run_time=0.4)
             vo.wait_until("Then it connects to Chroma")
-            resize(self, t, 3, keep=[cmd.rows[0], cmd.rows[1], err[1]], run_time=0.55,
-                   extra=[nk.animate.set_y(STRIP_TOP - t.bar_h / 2)])
+            # a 4-row strip: the command and the whole error line stay readable through "stops at the key"
+            resize(self, t, 4, keep=[cmd.rows[0], cmd.rows[1], err[0], err[1]], run_time=0.55,
+                   extra=[nk.animate.set_y(STRIP4 - t.bar_h / 2)])
             self.play(FadeIn(emb), FadeIn(card), FadeIn(cyl), FadeIn(cyl_lab), run_time=0.3)
             self.play(Indicate(cyl, color=CTR, scale_factor=1.1), FadeIn(conn, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("but stops at the key")
             self.play(card.animate.move_to(stop_at), run_time=0.8)
-            self.play(Create(x5), Indicate(err[1], color=ERR, scale_factor=1.04), run_time=0.7)
+            self.play(Create(x5), Indicate(VGroup(err[0], err[1]), color=ERR, scale_factor=1.02), run_time=0.7)
             vo.wait_until("before it searches")
             self.play(FadeIn(nosearch, shift=UP * 0.1), run_time=0.6)
 
@@ -521,7 +529,7 @@ class NearestNeighbours(VoiceScene):
         g2 = cost_tag("one embedding call per question")
         g2.move_to(tc.frame.get_corner(DOWN + RIGHT) + np.array([-0.3 - g2.width / 2, 0, 0]))
         tc.add(g2)
-        tc.move_to([0, (STRIP_TOP + 2.75) / 2, 0])
+        tc.move_to([0, (STRIP4 + 2.75) / 2, 0])
         tc_low = tc.copy()
         tc_low.shift(UP * (BOTTOM + 0.12 - tc_low.get_bottom()[1]))
 
@@ -545,11 +553,8 @@ class NearestNeighbours(VoiceScene):
                 t.lines.remove(m)
             cmd2 = type_cmd(self, t, Q2, type_time=1.4)
             assert hasattr(cmd2, "rows") and len(cmd2.rows) == 2
-            vo.wait_until("pause and run both")
-            self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("With your key")
-            self.play(FadeOut(t), run_time=0.3)          # the strip goes first: the card never crosses it
-            self.play(Transform(tc, tc_low), run_time=0.5)
+            self.play(FadeOut(t), run_time=0.3)          # the strip leaves before the turn card takes its band
             self.play(FadeIn(lf), run_time=0.3)
             vo.wait_until("look for 256")
             self.play(lf.write_item(0))
@@ -567,6 +572,9 @@ class NearestNeighbours(VoiceScene):
             for s, phrase in zip(slots, ("holding IDs", "distances", "metadata", "and documents")):
                 vo.wait_until(phrase)                  # each key flashes as it is named
                 self.play(Indicate(s.key, color=TURN, scale_factor=1.15), run_time=0.55)
+            vo.wait_until("Pause and run both")        # the pause comes last: the viewer knows what to check
+            tc.move_to(tc_low)
+            self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.5)
         self.wait(2)                                   # ▶ beat: hold the frame
 
         # ========================================================== 8 · documents, item zero

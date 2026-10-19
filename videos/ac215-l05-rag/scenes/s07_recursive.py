@@ -25,8 +25,8 @@ Beats (script.md "## S07", one voiceover block each):
  4  TRACKER Chunk 3 · extra. The bars go; the terminal grows to 12 rows and types the one-liner
     of cli-container/15 (extra; it folds onto 5 rows, the row that continues the file name at
     column 0, see literal_safe_rows) before the narration starts, and holds it ~3 s (to pause on
-    and copy); at "Chunk 1 starts again" -> lines 8–16, wrapped (12 rows: the command scrolls
-    away). A GREY row tag on the --- line says which side is chunk 0's end and
+    and copy); at "Chunk 1 starts again" the command clears and -> lines 8–16, wrapped (12
+    rows). A GREY row tag on the --- line says which side is chunk 0's end and
     which is chunk 1; chunk 1's first two lines (line 12's `## Chapter One: The First Slice` and
     line 14's sentence) turn YELLOW, then the same two lines at chunk 0's end (8, 10), joined by
     a PINK bracket "repeated". Top right: the chip "library default: chunk_overlap = 200"
@@ -45,8 +45,9 @@ Beats (script.md "## S07", one voiceover block each):
     part 2" all the way. The mini-map's "chunking" gets a GREEN tick. Fade to an empty frame.
 
 Deviations from SHOW (see the scene report): the cli-container/15 one-liner folds onto 5 rows and
-its 12 output rows scroll it away (the tracker's "· extra" stays), so it is typed in the quiet after
-the ponder and stays complete on screen ~3 s before they print; its fold breaks inside the
+its 12 output rows need the whole terminal (the tracker's "· extra" stays), so it is typed in the
+quiet after the ponder and stays complete on screen ~3 s; then it clears in place (a 5-row scroll
+would sweep over the title bar) and the output prints; its fold breaks inside the
 '...' file name, so that continuation row starts at column 0 (the house 4-space indent would
 put four spaces into the file name); the two arrows of beat 6 start
 at a PURPLE "recursive-split" scissors chip, because the strip at that point holds output, not a
@@ -520,7 +521,7 @@ class RecursiveSplit(VoiceScene):
         err.move_to([6.45 - err.width / 2, 2.6, 0])
 
         # card, bars and the strip's lines leave together (t.clear, folded into one play). The
-        # one-liner is typed before the narration starts: its 12 output rows scroll it away, so it
+        # one-liner is typed before the narration starts: its 12 output rows take its place, so it
         # must stay readable (to pause on and copy) until "Chunk 1 starts again" prints them, about
         # 3 s after it is complete. Typed inside the block, it ran past that anchor.
         self.play(FadeOut(card), FadeOut(VGroup(bars, nums, labs, ins)), FadeOut(t.lines), run_time=0.35)
@@ -533,6 +534,9 @@ class RecursiveSplit(VoiceScene):
 
         with self.voiceover(SAY[4]) as vo:
             vo.wait_until("Chunk 1 starts again")
+            # the command (and its tag) fades in place: scrolled up five rows by the print, it swept
+            # over the title bar (as S06 says of its 12-row scroll). The output fills the 12 rows.
+            t.clear(self, run_time=0.35)
             rows = t.print(self, FIRST_OUT, wrap=True, run_time=0.5)
             assert len(rows) == 12 and rows[0].text == HEAD and rows[4].text == HEAD
             assert rows[2].text == SENT and rows[6].text == SENT

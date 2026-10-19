@@ -47,7 +47,8 @@ Beats (script.md "## S10", one voiceover block each):
     indent after it, so the rows join into the captured line) -> laptop/24 lines 2–5: the collection
     names GREEN, both "dimension":256 boxed YELLOW. The container terminal (6 rows): `python cli.py
     --get --chunk_type char-split` (extra; GREY note "not in the README · S12") -> cli-container/70
-    line 6 cut after the ids list's "]" (word-folded); above it the PANEL of
+    line 6 cut after the ids list's "]" (word-folded; a GREY " …" after the "]": the line goes on
+    with 'embeddings', 'metadatas', 'documents'); above it the PANEL of
     recorded-embeddings/05 line 6 cut the same way, header "the same command before exit" + tag
     "recorded · the staff's vectors (68e0bde)". The first and last id of each list turn GREEN with
     GREEN ticks in the margin; GREEN chip "10 of 10 match". The terminals leave; the band picture
@@ -259,6 +260,16 @@ def word_fold(s: str, n: int = 65) -> list[str]:
 
 IDS_ROWS = word_fold(IDS)
 assert len(IDS_ROWS) == 4 and FIRST_ID in IDS_ROWS[0] and LAST_ID in IDS_ROWS[-1], IDS_ROWS
+# both captured lines go on after the ids' "]" (", 'embeddings': None, 'metadatas': [..."; the rest
+# of line 6 is never shown, so only cut() reads it): the scene marks the cut with a GREY " …"
+
+
+def more_mark(row) -> VGroup:
+    """A GREY ' …' after a row printed only up to its cut (the captured line goes on): the "…"
+    glyph of a twin line row.text + ' …' laid over the row, so it sits one cell after it."""
+    twin = mono_line(row.text + " …", row.pt, S.GREY)
+    twin.shift(row.strut.get_corner(UP + LEFT) - twin.strut.get_corner(UP + LEFT))
+    return glyph_range(twin, len(row.text) + 1)
 
 
 def polyline(points, color: str = LOOKUP, stroke: float = 4):
@@ -693,7 +704,11 @@ class IndexSurvives(VoiceScene):
                                   tc.box.get_top()[1] + 0.3 - panel.frame.get_bottom()[1], 0]))
             stf.next_to(panel.header, RIGHT, buff=0.35)
             match.move_to(panel.header).align_to(panel.frame, RIGHT)
-            self.play(FadeIn(panel, shift=DOWN * 0.15), FadeIn(stf), run_time=0.45)
+            # both lists are cut after the ids' "]": a GREY " …" says the line goes on
+            panel.add(more_mark(panel.rows[-1]))
+            more_t = more_mark(got[-1])
+            self.play(FadeIn(panel, shift=DOWN * 0.15), FadeIn(stf), FadeIn(more_t), run_time=0.45)
+            stick(self, got[-1], more_t)
             marks = VGroup()
             colour = []
             for rows in (panel.rows, got):

@@ -1,7 +1,7 @@
 """S02 · Two lanes, one database (concept scene: no README tracker). Lecture: A12–A16, B5–B6.
 
 Beats (script.md "## S02", one voiceover block each):
-0. LECTURE A12–A14. Our redrawing of A12 in five boxes, built as named: a GREY user glyph; a PINK
+0. LECTURE A12–A14. Our redrawing of A12 in four boxes, built as named: a GREY user glyph; a PINK
    arrow "question" into a PURPLE cluster of three gears "RAG code"; a PINK arrow up to a TEAL
    cylinder "vector database" and a GREEN arrow "retrieved texts" back down; a GREEN elbow arrow
    "full prompt" into a BLUE "LLM" box; a BLUE arrow "response" back to the user. A thin RED
@@ -152,7 +152,7 @@ class TwoLanes(VoiceScene):
     def construct(self):
         assert len(SAY) == 7, len(SAY)
 
-        # ========================================================== 0. A12 in five boxes
+        # ========================================================== 0. A12 in four boxes
         lr = lref("A12–A14")
         u_pos = np.array([-5.0, YB, 0])
         g_pos = np.array([-0.8, YB, 0])
