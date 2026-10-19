@@ -46,6 +46,11 @@
       "bvid": "BV1DVnJ6oE2P",
       "title": "AC215 第4讲跟练 · 容器进阶 II：build 还是 pull，端口与 Compose",
       "pubdate": 1792406585
+    },
+    "ac215-l03-mega-pipeline": {
+      "bvid": "BV1kyJ966ESH",
+      "title": "AC215 第3讲跟练 · 容器进阶：五个容器，一个 bucket",
+      "pubdate": 1792423579
     }
   },
   "unmatched": []
