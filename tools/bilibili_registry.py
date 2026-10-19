@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import time
 import urllib.request
@@ -53,12 +54,20 @@ def record(reg: dict, slug: str, bvid: str, title: str, pubdate: int) -> bool:
 
 
 def known_titles(root: Path = ROOT) -> dict[str, str]:
-    """title_zh -> slug, from every episode.json project's script.json."""
+    """title_zh -> slug, from script.json (episode route) and video.yaml publish blocks
+    (legacy route). The worker uploads publish titles capped at 80 characters, so the
+    legacy titles are capped the same way. Parsed with a regex, not a YAML library:
+    the daily sync workflow runs on a bare python3."""
     titles = {}
     for script in sorted((root / "videos").glob("*/script.json")):
         title = json.loads(script.read_text(encoding="utf-8")).get("title_zh")
         if title:
             titles[title.strip()] = script.parent.name
+    for spec in sorted((root / "videos").glob("*/video.yaml")):
+        m = re.search(r'^\s+title_zh:\s*"([^"]+)"', spec.read_text(encoding="utf-8"),
+                      re.MULTILINE)
+        if m:
+            titles[m.group(1).strip()[:80]] = spec.parent.name
     return titles
 
 

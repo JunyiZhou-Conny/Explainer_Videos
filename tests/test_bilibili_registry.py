@@ -49,6 +49,21 @@ def test_known_titles_reads_script_json(tmp_path):
     assert reg_mod.known_titles(tmp_path) == {"演示": "demo"}
 
 
+def test_known_titles_reads_legacy_publish_blocks(tmp_path):
+    # Legacy (video.yaml) episodes carry their Bilibili title in the publish block;
+    # the worker uploads it capped at 80 chars, so the sync must match that form.
+    ep = tmp_path / "videos" / "legacy-ep"
+    ep.mkdir(parents=True)
+    long_tail = "很" * 100
+    (ep / "video.yaml").write_text(
+        'title: internal\npublish:\n  title_zh: "AC215 跟练 · ' + long_tail + '"\n'
+        '  description_zh: |\n    两行\n    说明\n', encoding="utf-8")
+    titles = reg_mod.known_titles(tmp_path)
+    assert list(titles.values()) == ["legacy-ep"]
+    key = next(iter(titles))
+    assert key.startswith("AC215 跟练") and len(key) == 80
+
+
 def test_risk_control_refusal_is_unavailable(monkeypatch):
     def refuse(*a, **k):
         raise urllib.error.HTTPError("u", 412, "Precondition Failed", {}, None)
