@@ -1,0 +1,29 @@
+$ curl -s http://localhost:8000/api/v2/heartbeat; echo; uv run adk web
+{"nanosecond heartbeat":1792366382210298100}
+2026-10-18 23:33:03,476 - INFO - service_factory.py:333 - Using in-memory memory service
+2026-10-18 23:33:03,477 - INFO - local_storage.py:89 - Using per-agent session storage rooted at /home/student/AC215/llm-agent-google-adk
+2026-10-18 23:33:03,477 - WARNING - service_factory.py:387 - Found legacy shared artifacts at /home/student/AC215/llm-agent-google-adk/.adk/artifacts. Artifacts now persist per-agent under <agent>/.adk/artifacts and legacy artifacts remain readable via fallback. To migrate, move the 'users' directory into the agent's .adk/artifacts folder.
+2026-10-18 23:33:03,477 - INFO - local_storage.py:121 - Using per-agent artifact storage rooted at /home/student/AC215/llm-agent-google-adk
+/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/cli/fast_api.py:304: UserWarning: [EXPERIMENTAL] InMemoryCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  credential_service = InMemoryCredentialService()
+/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/auth/credential_service/in_memory_credential_service.py:33: UserWarning: [EXPERIMENTAL] BaseCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  super().__init__()
+INFO:     Started server process [4187]
+INFO:     Waiting for application startup.
+
++-----------------------------------------------------------------------------+
+| ADK Web Server started                                                      |
+|                                                                             |
+| For local testing, access at http://127.0.0.1:8000.                         |
++-----------------------------------------------------------------------------+
+
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('127.0.0.1', 8000): address already in use
+INFO:     Waiting for application shutdown.
+
++-----------------------------------------------------------------------------+
+| ADK Web Server shutting down...                                             |
++-----------------------------------------------------------------------------+
+
+INFO:     Application shutdown complete.
+[exit 3]

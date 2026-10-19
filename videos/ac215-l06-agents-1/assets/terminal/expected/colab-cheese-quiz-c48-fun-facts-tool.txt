@@ -1,0 +1,5 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 48 (0-based index in the .ipynb; first line: '# --- Fun Facts data ---'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted by assets/terminal/colab_outputs.py: the saved text, ANSI codes removed, an HTML output reduced to its text (or its embedded quiz data).
+[stdout]
+{'fact': 'Gruyère and Emmental are classics for fondue thanks to their smooth melt.', 'generated_at': 1790132526}
+{'fact': 'Mozzarella is the most consumed cheese in the U.S., largely due to pizza.', 'generated_at': 1790132526}
+{'fact': 'Taleggio’s washed rind brings savory depth and melts well.', 'generated_at': 1790132526}

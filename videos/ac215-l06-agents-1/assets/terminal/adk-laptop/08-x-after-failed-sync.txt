@@ -1,0 +1,34 @@
+$ ls -a; grep -c '^name = ' uv.lock; grep -A1 '^name = "google-adk"' uv.lock; grep -A1 '^name = "onnxruntime"' uv.lock; head -3 .venv/pyvenv.cfg
+.
+..
+.env
+.env.example
+.git
+.gitignore
+.venv
+1-baseline
+2-litellm
+3-mcp-tools
+4-production-ready
+5-custom-agent
+6-rag
+QUICKSTART.md
+README.md
+demo.gif
+pyproject.toml
+uv.lock
+189
+name = "google-adk"
+version = "2.11.0"
+--
+name = "google-adk"
+version = "2.12.0"
+name = "onnxruntime"
+version = "1.23.2"
+--
+name = "onnxruntime"
+version = "1.31.0"
+home = /home/student/.local/share/uv/python/cpython-3.15-linux-x86_64-gnu/bin
+implementation = CPython
+uv = 0.13.1
+[exit 0]

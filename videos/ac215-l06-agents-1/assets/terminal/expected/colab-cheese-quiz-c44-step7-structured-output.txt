@@ -1,0 +1,21 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 44 (0-based index in the .ipynb; first line: '# @title Step 7: Structured Output'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted by assets/terminal/colab_outputs.py: the saved text, ANSI codes removed, an HTML output reduced to its text (or its embedded quiz data).
+[stdout]
+======================================================================
+Step 7: With Structured Output
+======================================================================
+
+[display: markdown]
+```json
+{
+  "top_recommendation": "Whole Foods Mild Cheddar",
+  "alternatives": [
+    "Kraft American Singles"
+  ],
+  "cooking_tips": [
+    "Use a non-stick pan to prevent sticking and ensure even browning.",
+    "Cook on medium-low heat to allow the cheese to melt thoroughly without burning the bread.",
+    "Butter the outside of the bread for a crispy, golden crust."
+  ],
+  "why_this_works": "Whole Foods Mild Cheddar is a great choice because it has a natural ingredient list, is naturally low in lactose, and provides a rich flavor that kids enjoy. It melts well, making it suitable for grilled cheese, and fits within the budget. While it may have slight oil separation at high heat, cooking at medium-low heat can mitigate this issue."
+}
+```

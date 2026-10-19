@@ -1,0 +1,25 @@
+$ git status --short; git status --short --ignored | grep '^!!'
+ D 1-baseline/.env.example
+ D 1-baseline/README.md
+ D 1-baseline/agent.py
+ D 1-baseline/pyproject.toml
+ D 3-mcp-tools/.env.example
+ D 3-mcp-tools/README.md
+ D 3-mcp-tools/agent.py
+ D 3-mcp-tools/pyproject.toml
+ D 5-custom-agent/.env.example
+ D 5-custom-agent/README.md
+ D 5-custom-agent/agent.py
+ D 5-custom-agent/conditional_agent.py
+ D 5-custom-agent/pyproject.toml
+ D 5-custom-agent/simple_custom_agent.py
+?? .python-version
+?? baseline/
+?? custom_agent/
+?? mcp_tools/
+!! .env
+!! .venv/
+!! baseline/__pycache__/
+!! mcp_tools/__pycache__/
+!! uv.lock
+[exit 0]

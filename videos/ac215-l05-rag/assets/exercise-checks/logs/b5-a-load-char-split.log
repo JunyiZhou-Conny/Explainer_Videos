@@ -1,0 +1,30 @@
+$ python cli.py --load --chunk_type char-split
+load()
+Creating collection: char-split-collection
+Collection 'char-split-collection' did not exist. Creating new.
+Created new empty collection 'char-split-collection'
+Collection: Collection(name=char-split-collection)
+Number of files to process: 11
+Processing file: outputs/embeddings-char-split-The Complete Book of Cheese.jsonl
+Finished inserting 1355 items into collection 'char-split-collection'
+Processing file: outputs/embeddings-char-split-The book of The Cheese Being traits and stories of Ye Olde Cheshire Cheese.jsonl
+Finished inserting 522 items into collection 'char-split-collection'
+Processing file: outputs/embeddings-char-split-The Book of Cheese.jsonl
+Finished inserting 2047 items into collection 'char-split-collection'
+Processing file: outputs/embeddings-char-split-Theres Pippins and Cheese to Come.jsonl
+Finished inserting 636 items into collection 'char-split-collection'
+Processing file: outputs/embeddings-char-split-Hand-book on cheese making.jsonl
+Finished inserting 395 items into collection 'char-split-collection'
+Processing file: outputs/embeddings-char-split-Cheese and its economical uses in the diet.jsonl
+Finished inserting 401 items into collection 'char-split-collection'
+Processing file: outputs/embeddings-char-split-Cottage Cheese Recipe Book.jsonl
+Finished inserting 178 items into collection 'char-split-collection'
+Processing file: outputs/embeddings-char-split-Womans Institute Library of Cookery.jsonl
+Finished inserting 1505 items into collection 'char-split-collection'
+Processing file: outputs/embeddings-char-split-Dairying exemplified, or, The business of cheese-making.jsonl
+Finished inserting 545 items into collection 'char-split-collection'
+Processing file: outputs/embeddings-char-split-Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer.jsonl
+Finished inserting 640 items into collection 'char-split-collection'
+Processing file: outputs/embeddings-char-split-Tolminc Cheese.jsonl
+Finished inserting 24 items into collection 'char-split-collection'
+[exit 0]

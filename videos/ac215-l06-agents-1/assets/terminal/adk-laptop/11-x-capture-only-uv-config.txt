@@ -1,0 +1,8 @@
+$ cat ~/.config/uv/uv.toml; ls uv.lock
+# capture-only (ASSETS.md): CPU-only PyTorch wheels instead of the CUDA build
+index-strategy = "unsafe-best-match"
+
+[[index]]
+url = "https://download.pytorch.org/whl/cpu"
+ls: cannot access 'uv.lock': No such file or directory
+[exit 2]

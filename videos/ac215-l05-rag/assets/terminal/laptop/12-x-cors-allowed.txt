@@ -1,0 +1,9 @@
+$ curl -si -H 'Origin: https://ac215-llm-rag.dlops.io' http://localhost:8000/api/v2/heartbeat
+HTTP/1.1 200 OK
+content-type: application/json
+vary: origin, access-control-request-method, access-control-request-headers
+access-control-allow-origin: https://ac215-llm-rag.dlops.io
+content-length: 44
+date: Fri, 16 Oct 2026 00:53:53 GMT
+
+{"nanosecond heartbeat":1792112033906811676}[exit 0]

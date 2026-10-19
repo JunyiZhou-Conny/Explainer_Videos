@@ -1,0 +1,17 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 38 (0-based index in the .ipynb; first line: '# @title Step 1: Basic prompt'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted by assets/terminal/colab_outputs.py: the saved text, ANSI codes removed, an HTML output reduced to its text (or its embedded quiz data).
+[stdout]
+======================================================================
+Step 1: Basic Prompt
+======================================================================
+
+[display: markdown]
+The best cheese for a grilled cheese sandwich often depends on personal preference, but some popular choices include:
+
+1. **Cheddar**: A classic choice, cheddar melts well and offers a sharp, tangy flavor.
+2. **American**: Known for its excellent melting properties and creamy texture, American cheese is a favorite for many.
+3. **Gruyère**: This Swiss cheese adds a nutty, slightly sweet flavor and melts beautifully.
+4. **Monterey Jack**: Mild and creamy, it melts smoothly and pairs well with other cheeses.
+5. **Provolone**: Offers a mild, slightly smoky flavor and melts nicely.
+6. **Mozzarella**: Provides a gooey texture and mild flavor, great for mixing with other cheeses.
+
+For a more complex flavor, you can mix different cheeses. For example, combining cheddar with Gruyère or adding a bit of blue cheese for a tangy kick can elevate your grilled cheese sandwich.

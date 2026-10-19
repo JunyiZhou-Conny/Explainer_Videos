@@ -1,0 +1,13 @@
+$ docker compose down -v 2>&1 | grep -v level=warning; ls -la docker-volumes/chromadb; docker volume ls -q | wc -l
+ Container l05ex-rag-chromadb Stopping 
+ Container l05ex-rag-chromadb Stopped 
+ Container l05ex-rag-chromadb Removing 
+ Container l05ex-rag-chromadb Removed 
+ Network l05ex-rag-network Removing 
+ Network l05ex-rag-network Removed 
+total 192
+drwxr-xr-x 2 root root   4096 Oct 16 15:47 .
+drwxr-xr-x 3 root root   4096 Oct 16 15:47 ..
+-rw-r--r-- 1 root root 188416 Oct 16 15:47 chroma.sqlite3
+0
+[exit 0]

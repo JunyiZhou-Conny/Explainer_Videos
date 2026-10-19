@@ -1,0 +1,26 @@
+$ python cli.py --agent --chunk_type char-split
+CLI Arguments: Namespace(chunk=False, embed=False, load=False, query=False, chat=False, get=False, agent=True, chunk_type='char-split')
+agent()
+Traceback (most recent call last):
+  File "/app/cli.py", line 551, in <module>
+    main(args)
+  File "/app/cli.py", line 503, in main
+    agent(method=args.chunk_type)
+  File "/app/cli.py", line 429, in agent
+    collection = client.get_collection(name=collection_name)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/chromadb/api/client.py", line 201, in get_collection
+    model = self._server.get_collection(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/chromadb/telemetry/opentelemetry/__init__.py", line 150, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/chromadb/api/fastapi.py", line 286, in get_collection
+    resp_json = self._make_request(
+                ^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/chromadb/api/fastapi.py", line 112, in _make_request
+    BaseHTTPClient._raise_chroma_error(response)
+  File "/.venv/lib/python3.12/site-packages/chromadb/api/base_http_client.py", line 97, in _raise_chroma_error
+    raise chroma_error
+chromadb.errors.NotFoundError: Collection [char-split-collection] does not exist
+[exit 1]

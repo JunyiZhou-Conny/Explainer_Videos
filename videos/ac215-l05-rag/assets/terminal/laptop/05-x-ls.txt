@@ -1,0 +1,8 @@
+$ ls -a; git log --oneline -1
+.           Dockerfile      docker-compose.yml    input-datasets        uv.lock
+..          README.md       docker-entrypoint.sh  out.txt
+.git        agent_tools.py  docker-shell.sh       pyproject.toml
+.gitignore  cli.py          images                semantic_splitter.py
+e17a39f (HEAD -> main, origin/main, origin/HEAD) Merge pull request #2 from obal
+atel/revert-1-demo-podcast
+[exit 0]

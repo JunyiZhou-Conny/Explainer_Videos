@@ -1,0 +1,57 @@
+$ uv run adk web
+Help improve the ADK (CLI and Web UI) by allowing Google to collect pseudonymize
+d usage data?
+
+What is collected: Names of subcommands and flags (no user-provided values or ar
+guments), execution metrics (duration, exit state), environment specs (OS, Pytho
+n version), and aggregated Web UI feature interactions. No personally identifiab
+le information (PII) is collected.
+
+This is OFF by default. You can opt out at any time using the 'adk telemetry dis
+able' command or Web UI user settings.
+
+Enable telemetry? [Y/n]: n
+2026-10-18 23:32:21,361 - INFO - service_factory.py:333 - Using in-memory memory
+ service
+2026-10-18 23:32:21,363 - INFO - local_storage.py:89 - Using per-agent session s
+torage rooted at /home/student/AC215/llm-agent-google-adk
+2026-10-18 23:32:21,364 - INFO - local_storage.py:121 - Using per-agent artifact
+ storage rooted at /home/student/AC215/llm-agent-google-adk
+/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/goog
+le/adk/cli/fast_api.py:304: UserWarning: [EXPERIMENTAL] InMemoryCredentialServic
+e: This feature is experimental and may change or be removed in future versions
+without notice. It may introduce breaking changes at any time.
+  credential_service = InMemoryCredentialService()
+/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/goog
+le/adk/auth/credential_service/in_memory_credential_service.py:33: UserWarning:
+[EXPERIMENTAL] BaseCredentialService: This feature is experimental and may chang
+e or be removed in future versions without notice. It may introduce breaking cha
+nges at any time.
+  super().__init__()
+INFO:     Started server process [3865]
+INFO:     Waiting for application startup.
+
++-----------------------------------------------------------------------------+
+| ADK Web Server started                                                      |
+|                                                                             |
+| For local testing, access at http://127.0.0.1:8000.                         |
++-----------------------------------------------------------------------------+
+
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:36778 - "GET / HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:36780 - "GET /list-apps HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36792 - "GET /dev/apps/1-baseline/build_graph HTTP/1.1" 404
+Not Found
+^CINFO:     Shutting down
+INFO:     Waiting for application shutdown.
+
++-----------------------------------------------------------------------------+
+| ADK Web Server shutting down...                                             |
++-----------------------------------------------------------------------------+
+
+INFO:     Application shutdown complete.
+INFO:     Finished server process [3865]
+
+Aborted!
+[exit 1]

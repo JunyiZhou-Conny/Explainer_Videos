@@ -1,0 +1,8 @@
+$ sh docker-shell.sh
+[+] run 2/2
+ ✔ Network llm-rag-network    Created                                       0.0s
+ ✔ Container llm-rag-chromadb Created                                       0.0s
+Container llm-rag-main-llm-rag-cli-run-5ccb3414d5d2 Creating
+Container llm-rag-main-llm-rag-cli-run-5ccb3414d5d2 Created
+/bin/bash: docker-entrypoint.sh: No such file or directory
+[exit 127]

@@ -1,0 +1,40 @@
+00-x-env	23:31:52 UTC	0.3s
+01-clone	23:31:53 UTC	1.0s
+02-cd-as-written	23:31:53 UTC	0.1s
+03-cd	23:31:53 UTC	0.1s
+04-x-ls.txt	exit=+0.1s
+05-cp-env	23:31:53 UTC	0.1s
+06-x-env-file	23:31:53 UTC	0.1s
+07-uv-sync.txt	exit=+5.6s
+08-x-after-failed-sync	23:31:59 UTC	0.1s
+09-x-python-pin.txt	exit=+1.9s
+10-x-sync-plan	23:32:02 UTC	0.5s
+11-x-capture-only-uv-config	23:32:02 UTC	0.1s
+12-uv-sync.txt	exit=+11.5s
+13-x-adk-version	23:32:17 UTC	0.9s
+14-x-packages	23:32:17 UTC	0.2s
+16-x-dev-ui	23:32:22 UTC	0.1s
+17-x-list-apps	23:32:22 UTC	0.1s
+18-x-select-1-baseline	23:32:23 UTC	0.1s
+15-adk-web.txt	ctrl-c=+6.6s exit=+7.2s
+19-x-quickstart-file	23:32:25 UTC	0.3s
+20-x-adk-without-web	23:32:25 UTC	0.3s
+21-x-uv-add-pin.txt	exit=+5.9s
+22-x-adk-version-pinned	23:32:35 UTC	3.6s
+23-x-diff-pyproject	23:32:35 UTC	0.1s
+25-x-list-apps-pinned	23:32:37 UTC	0.1s
+26-x-select-1-baseline-pinned	23:32:37 UTC	0.1s
+24-x-adk-web-pinned.txt	ctrl-c=+3.4s exit=+4.0s
+27-x-undo-pin	23:32:41 UTC	1.5s
+28-x-rename	23:32:41 UTC	0.1s
+30-x-list-apps-renamed	23:32:44 UTC	0.1s
+31-x-select-baseline	23:32:44 UTC	0.2s
+32-x-new-session	23:32:44 UTC	0.1s
+33-x-send-placeholder-key	23:32:45 UTC	0.7s
+29-x-adk-web-renamed.txt	ctrl-c=+5.3s exit=+5.9s
+34-x-node	23:32:47 UTC	0.3s
+35-x-mcp-toolset	23:32:56 UTC	9.0s
+36-x-port-8000-busy	23:33:04 UTC	2.1s
+38-x-list-apps-8080	23:33:06 UTC	0.1s
+37-x-adk-web-port-8080.txt	ctrl-c=+3.3s exit=+3.9s
+39-x-git-status	23:33:08 UTC	0.2s

@@ -1,0 +1,5 @@
+$ python /checks/dim_check.py
+collection: char-split-collection | count: 8248
+query with 256 numbers: OK, 10 results
+query with 768 numbers: chromadb.errors.InvalidArgumentError: Collection expecting embedding with dimension of 256, got 768
+[exit 0]

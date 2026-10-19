@@ -60,6 +60,15 @@ repos with branch and commit, guide link), `script.md`, `scenes/`, `exercises.md
    Chinese text lives in `i18n/zh/` (glossary + sentence-aligned `narration/*.yaml`, as in
    `docs/LANGUAGES.md`); there is no Chinese voice and no Chinese on-screen text, so scenes need no
    language changes. Terminal panels and code are never translated.
+9. **The lecture behind the tutorial.** Each video folder has `SLIDES.md`: a digest of the
+   instructor's lecture slides in our own words, with slide numbers, and a map of which scenes
+   stand on which slides (gaps, conflicts and proposals included). The slides are course material
+   the student provides for study: the PDFs and slide images never enter a repository or a frame.
+   When a scene teaches an idea the lecture covered, a GREY `lecture_ref(n, "a–b")` tag
+   (`explainer.devops`, top right) says "Lecture n · slides a–b"; diagrams echo the lecture's
+   structure and terms in the series style, and the narration may bridge in one short sentence
+   ("this is the namespaces slide from lecture, at your terminal"). Where the slides and today's
+   captures disagree, the captures decide what the video shows, and the video says so kindly.
 
 ## Series colours (keep across all videos)
 
@@ -89,3 +98,7 @@ repos with branch and commit, guide link), `script.md`, `scenes/`, `exercises.md
    narration, `python -m explainer.i18n check`), then render English with `--burn`; write
    `exercises.md` and `README.md`.
 6. Update the course map in MLOps_Learning (`video_status` in `course/lectures.yaml`).
+7. Release: each lecture merges from its own `episode/ac215-lNN-<topic>` PR; then
+   `.github/workflows/legacy-release.yml` renders it in Actions, tags `episode/<id>-vN` with the
+   deliverables and the PUBLISH manifest, and the Mac publish worker uploads `<id>.zh-en.mp4` to
+   Bilibili with the `publish:` block of `video.yaml` ([PUBLISHING.md](PUBLISHING.md)).

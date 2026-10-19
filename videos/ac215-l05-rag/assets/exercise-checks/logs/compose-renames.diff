@@ -1,0 +1,26 @@
+3c3
+<         name: llm-rag-network
+---
+>         name: l05ex-rag-network
+7c7
+<         image: llm-rag-cli
+---
+>         image: l05ex-cli
+9c9
+<         container_name: llm-rag-cli
+---
+>         container_name: l05ex-rag-cli
+12c12
+<             - ../llm-rag:/app
+---
+>             - ../l05ex-rag:/app
+19,20c19,20
+<         image: chromadb/chroma:latest
+<         container_name: llm-rag-chromadb
+---
+>         image: chromadb/chroma@sha256:1e0b73a187a28757c572acba508c46f48c9e8b0acaf5c20e6d95cdedce1acdf6
+>         container_name: l05ex-rag-chromadb
+22c22
+<             - 8000:8000
+---
+>             - 18766:8000

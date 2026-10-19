@@ -1,0 +1,348 @@
+# zh narration for S10-S16 (part 2, group g2: ask the index — query, filters, chat, semantic chunking, the
+# lecture's advanced RAG, teardown and recap), sentence-aligned to script.md v2: one zh sentence per English
+# sentence (explainer.voice.split_sentences; 58 SAY lines, 155 sentences). Terms and rules: ../GLOSSARY.md,
+# ../glossary.yaml (binding); the glossary's S10-S16 first_use sentences are used as written.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8).
+# Underscore names and refused symbols are written the way the SAY speaks them, with a Chinese noun (rules A6,
+# B3: chunk type 用 char-split, generate text embeddings 这个函数, load 这个词, documents 的第 0 项,
+# 1 减去相似度, 二分之一除以它的排名). No brackets (B2). Numbers as on screen, without thousands separators
+# (C1: 8248, 1355, 64). Commands sit at the end of a clause, after a full-width colon (G3). Sentences never open
+# with an artifact or a lower-case kept-English word (A5). The ponder lines S12[1] and S14[4] give nothing
+# away (A9).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: docker ps -a,
+# docker-volumes/, outputs/, --get, --query, --chunk_type char-split, load(), recursive-split, documents[0],
+# $contains, gemini-3.1-flash-lite, --chat, char-split, semantic-split, generate_text_embeddings,
+# semantic-split-collection); null = the SAY text. S14[4] sentence 0 (char-split, as on the ponder card) is
+# added to the review_spoken scan.
+S10:
+- en: "In part 1, we built the index: chunk, embed, load. Part 2 asks it questions. But first, a test: does the index survive closing the laptop?"
+  zh:
+  - "第一部分，我们建好了索引：分块、向量化、加载。"
+  - "第二部分向它提问。"
+  - "不过先测试一下：合上笔记本，索引还在吗？"
+- en: "Leaving isn't in the README. Type exit, and on the laptop, list every container with docker ps dash a. The CLI container is gone, removed on exit, but Chroma is still up, and port 8000 is still taken."
+  zh:
+  - "怎么离开，README 里没写。"
+  - "输入 exit，再在笔记本上列出所有 container：docker ps -a。"
+  - "CLI container 已经没了，退出时就被删掉了；但 Chroma 还在运行，port 8000 也还被占着。"
+  en_display:
+  - null
+  - "Type exit, and on the laptop, list every container with docker ps -a."
+  - null
+- en: "To stop it, run docker compose down from the repo folder. Two warnings say the variables aren't set. They're harmless: only the script sets them, and the down command needs neither. Then Chroma and the network are removed."
+  zh:
+  - "要停掉它，在 repo 目录里运行：docker compose down。"
+  - "有两条警告，说这两个变量没有设置。"
+  - "它们无害：只有脚本会设置这两个变量，而 down 这条命令两个都不需要。"
+  - "然后 Chroma 和网络就删掉了。"
+- en: "Nothing is running now. But the docker volumes folder on your disk still holds the database file and both index folders, and your chunk files in outputs are untouched."
+  zh:
+  - "现在什么都没在运行了。"
+  - "但你磁盘上的 docker-volumes 目录里，数据库文件和两个索引目录都还在；outputs 目录里的 chunk 文件也原封未动。"
+  en_display:
+  - null
+  - "But the docker-volumes/ folder on your disk still holds the database file and both index folders, and your chunk files in outputs/ are untouched."
+- en: "Back another day: sh docker-shell.sh again. No pull, no build: the image exists. After a git pull that changes the dependencies or the Dockerfile, run docker compose build first. Pause and restart."
+  zh:
+  - "改天回来，再跑一次：sh docker-shell.sh。"
+  - "不 pull，也不构建：image 已经有了。"
+  - "要是 git pull 改了依赖或 Dockerfile，就先运行：docker compose build。"
+  - "暂停一下，重新启动。"
+- en: "Two extra checks: both collections are back, with dimension 256, and an extra command called get returns the same 10 record IDs. The container was disposable; the data never lived in it."
+  zh:
+  - "两个额外检查：两个 collection 都回来了，维度都是 256；一条叫 --get 的额外命令，返回的还是那 10 条记录的 ID。"
+  - "那个 container 是一次性的；数据从来不住在它里面。"
+  en_display:
+  - "Two extra checks: both collections are back, with dimension 256, and an extra command called --get returns the same 10 record IDs."
+  - null
+S11:
+- en: "Now the bottom lane. The question goes through the same embedding model and becomes a query vector, in the same space as the chunks. Querying means finding its nearest neighbors."
+  zh:
+  - "现在看下面那条通道。"
+  - "问题经过同一个 embedding 模型，变成一个查询向量，和那些 chunk 在同一个空间里。"
+  - "查询就是找它的最近邻。"
+- en: "The lecture scores every stored vector against the query: 0.57, 0.77, 0.43, 0.93. Sort by score, and keep the top K, with K fixed in advance. This code uses 10."
+  zh:
+  - "课上拿查询给每个存好的向量打分：0.57、0.77、0.43、0.93。"
+  - "按分数排序，保留 top K，K 是事先定好的。"
+  - "这份代码用的是 10。"
+- en: "One difference: the lecture ranks by similarity, where higher is better. Chroma reports cosine distance, one minus the similarity, where smaller is closer. Same order, opposite direction."
+  zh:
+  - "有一点不同：课上按相似度排名，越高越好。"
+  - "Chroma 报的是余弦距离，也就是 1 减去相似度，越小越近。"
+  - "顺序一样，方向相反。"
+- en: "And a query returns K results whenever K chunks are available, relevant or not. Nothing in this code sets a distance threshold."
+  zh:
+  - "而且一次查询总会返回 K 个结果，只要有 K 个 chunk 可用，不管相关不相关。"
+  - "这份代码里没有任何地方设置距离阈值。"
+- en: "In the code, the query function sets the question, turns it into a vector with the same Google model, and opens the chunk type's collection."
+  zh:
+  - "代码里，query 函数先设定问题，用同一个 Google 模型把它变成向量，再打开这个 chunk type 的 collection。"
+- en: "Step 1: python cli.py, dash dash query, chunk type char split. A small slip first: it prints the word load, a label copied from the load code. Then it connects to Chroma, but stops at the key while embedding the question, before it searches."
+  zh:
+  - "第 1 步：python cli.py --query，chunk type 用 char-split。"
+  - "先说一个小疏漏：它打印的是 load 这个词，这个标签是从加载的代码里抄过来的。"
+  - "然后它连上了 Chroma，但在把问题向量化时卡在了密钥上，还没开始搜索。"
+  en_display:
+  - "Step 1: python cli.py --query --chunk_type char-split."
+  - "A small slip first: it prints load(), a label copied from the load code."
+  - null
+- en: "The question must become a vector before the database can compare it, and only the same Google model makes one in the same space."
+  zh:
+  - "问题必须先变成向量，数据库才能拿它来比较，而只有同一个 Google 模型才能做出同一个空间里的向量。"
+- en: "Step 2 runs it on recursive split; pause and run both. With your key, look for 256 embedding values, the query, and the results. The results are lists of lists: one list per query, holding IDs, distances, metadata and documents."
+  zh:
+  - "第 2 步用 recursive-split 再跑一次；暂停一下，两条都跑一遍。"
+  - "有密钥的话，要找的是 256 个 embedding 值、查询，以及结果。"
+  - "结果是列表套列表：每个查询一个列表，里面装着 ID、距离、元数据和文档。"
+  en_display:
+  - "Step 2 runs it on recursive-split; pause and run both."
+  - null
+  - null
+- en: "That's why chat, later, reads documents, item zero. No results were recorded, so next we ask the loaded database directly."
+  zh:
+  - "所以后面 chat 这一步读的是 documents 的第 0 项。"
+  - "我们没有录到任何结果，所以接下来直接去问加载好的数据库。"
+  en_display:
+  - "That's why chat, later, reads documents[0]."
+  - null
+S12:
+- en: "Here's the query the code sends: 10 results and two filters. The metadata filter keeps one book, The Complete Book of Cheese. The document filter keeps chunks that contain Italian."
+  zh:
+  - "代码发出的查询是这样的：10 个结果，加两个过滤条件。"
+  - "元数据过滤只留一本书：The Complete Book of Cheese。"
+  - "文档过滤留下包含 Italian 的 chunk。"
+- en: "The question is about Tolminc. What will the 10 results be about?"
+  zh:
+  - "问题问的是 Tolminc。"
+  - "那 10 个结果会讲什么？"
+- en: "An extra check counts them in the loaded collection. Of 8,248 chunks, the book filter keeps 1,355; the word Italian keeps 64. How many mention Tolminc? None."
+  zh:
+  - "额外检查一下：在加载好的 collection 里数一数。"
+  - "在 8248 个 chunk 里，按书过滤留下 1355 个；Italian 这个词留下 64 个。"
+  - "有多少提到 Tolminc？"
+  - "一个都没有。"
+- en: "Now a search. The real question needs Google to become a vector, so we use a stand-in: the stored vector of one story chunk. Without filters, its 10 nearest are all from the story, at distances from 0, the chunk itself, up to 0.16."
+  zh:
+  - "现在来搜索。"
+  - "真正的问题要靠 Google 才能变成向量，所以我们用一个替身：故事里一个 chunk 存好的向量。"
+  - "不加过滤，它最近的 10 个全都来自这个故事，距离从 0，也就是这个 chunk 自己，到 0.16。"
+- en: "With the code's filters, all 10 results come from The Complete Book of Cheese, at 0.28 to 0.31. The filters act first, and top K fills its 10 places with whatever survives, however far."
+  zh:
+  - "加上代码里的过滤，10 个结果全都来自 The Complete Book of Cheese，距离在 0.28 到 0.31 之间。"
+  - "过滤先起作用，top K 再用剩下的东西填满 10 个位置，不管有多远。"
+- en: "The lecture puts metadata filtering after ranking: here, that would drop all 10 story chunks and return nothing. Chroma filters first, so you get 10 results, about the wrong cheese."
+  zh:
+  - "课上把元数据过滤放在排序之后：放在这里，就会把故事的 10 个 chunk 全部丢掉，什么也不返回。"
+  - "Chroma 先过滤，所以你会拿到 10 个结果，讲的却是别的奶酪。"
+- en: "A small slip: the README promises various filters, but only variant 4 runs; variants 1 to 3 are commented out. Uncomment the first, with no filter, and every chunk competes. And contains is a keyword filter, not a keyword ranking."
+  zh:
+  - "一个小疏漏：README 说有各种过滤，但只有第 4 种会运行；第 1 到 3 种都被注释掉了。"
+  - "把第 1 种取消注释：不加过滤，每个 chunk 都来竞争。"
+  - "还有，$contains 是关键词过滤，不是关键词排序。"
+  en_display:
+  - null
+  - null
+  - "And $contains is a keyword filter, not a keyword ranking."
+- en: "The get command from the restart check uses the same book filter, but no question, so no distances. Its 10 records start with the Gutenberg header, then the title page and contents. That header, and each book's closing license, are indexed like any text: strip them before chunking."
+  zh:
+  - "重启后检查用的那条 --get 命令，用了同样的按书过滤，但没有问题，所以也没有距离。"
+  - "这 10 条记录，最前面是 Gutenberg 的开头声明，接着是书名页和书的目录。"
+  - "这段声明，还有每本书结尾的许可证，都会像普通文本一样被建进索引：先把它们去掉，再分块。"
+  en_display:
+  - "The --get command from the restart check uses the same book filter, but no question, so no distances."
+  - null
+  - null
+S13:
+- en: "Now generation. The lecture's final prompt has three parts: a system prompt that says how to behave, the user's query, and the context retrieved from the database."
+  zh:
+  - "接下来是生成。"
+  - "课上最终的 prompt 有三部分：告诉模型该怎么表现的 system prompt、用户的查询，以及从数据库检索到的上下文。"
+- en: "In chat, the code queries again, this time with no filter, for 10 results."
+  zh:
+  - "到了 chat 这一步，代码再查询一次，这次不加过滤，要 10 个结果。"
+- en: "Then it builds the input prompt: the question, followed by the 10 chunks, joined by newlines. The prompt goes to Gemini 3.1 Flash Lite."
+  zh:
+  - "然后它拼出 input prompt：先是问题，后面跟着 10 个 chunk，用换行符连起来。"
+  - "这个 prompt 发给 gemini-3.1-flash-lite。"
+  en_display:
+  - null
+  - "The prompt goes to gemini-3.1-flash-lite."
+- en: "So where's the system prompt? Line 40 defines one: answer only from the chunks, and say so when they don't contain enough. But look at the call. It's never sent."
+  zh:
+  - "那 system prompt 在哪儿？"
+  - "第 40 行定义了一个：只根据 chunk 回答，chunk 里的信息不够时就直说。"
+  - "可是看看这次调用。"
+  - "它从来没被发出去。"
+- en: "A small slip, with a one-line fix: pass it in a config argument. The older pipenv branch did send it. Without it, the README's promise of grounded answers rests on the chunks alone."
+  zh:
+  - "一个小疏漏，改一行就能修好：通过一个 config 参数把它传进去。"
+  - "更早的 pipenv 分支确实把它发出去了。"
+  - "没有它，README 承诺的有依据的回答就只能靠这些 chunk 了。"
+- en: "And notice what didn't change: the model itself. No weights moved. Delete the collection, and the knowledge is gone."
+  zh:
+  - "再注意一下什么没变：模型本身。"
+  - "权重一个都没动。"
+  - "把 collection 删掉，这些知识就没了。"
+- en: "Steps 1 and 2: python cli.py, dash dash chat, for char split and for recursive split. Without a key, both stop embedding the question. Each question costs one embedding call and one Gemini call."
+  zh:
+  - "第 1 步和第 2 步：python cli.py --chat，分别用 char-split 和 recursive-split。"
+  - "没有密钥，两条都停在把问题向量化这一步。"
+  - "每个问题要一次 embedding 调用，加一次 Gemini 调用。"
+  en_display:
+  - "Steps 1 and 2: python cli.py --chat, for char-split and for recursive-split."
+  - null
+  - null
+- en: "With your key, look for the query, printed with two question marks, a harmless slip, and its 256 embedding values. Then the results, the number 10, the input prompt with your chunks, and the model's response."
+  zh:
+  - "有密钥的话，要找的是查询，它打印出来带两个问号，一个无害的小疏漏，还有它的 256 个 embedding 值。"
+  - "然后是结果、数字 10、带着你的 chunk 的 input prompt，以及模型的回答。"
+- en: "Remember the opening question? The story is fiction, so an answer about Mara, her grandfather and the curd came from your chunks. Real-world rules for Tolminc came from the model's memory. Compare both chunk types."
+  zh:
+  - "还记得开头那个问题吗？"
+  - "这个故事是虚构的，所以讲到 Mara、她祖父和凝乳的回答，来自你的 chunk。"
+  - "关于 Tolminc 的现实规定，来自模型的记忆。"
+  - "比较两种 chunk type 的结果。"
+- en: "Step 3 is a link to the course's chat tool, in Chrome. Pause: run both chat commands with your key, then try the tool. For your own question, change line 372 of cli.py."
+  zh:
+  - "第 3 步是一个链接，指向课程的对话工具，用 Chrome 打开。"
+  - "暂停一下：用你的密钥把两条 chat 命令都跑一遍，再试试这个工具。"
+  - "想问你自己的问题，就改 cli.py 的第 372 行。"
+S14:
+- en: "Back to chunking, with the lecture's best answer: cut where the meaning changes. On the slides, an anchor walks through the sentences and joins neighbors while their similarity stays above 0.8."
+  zh:
+  - "回到分块，看看课上最好的答案：在意思变化的地方切开。"
+  - "在课件上，一个锚点沿着这些句子一路往前走，把相邻的句子并进来，前提是相似度保持在 0.8 以上。"
+- en: "The code uses the same ingredients with a different rule. Every sentence gets a window, itself and one neighbor on each side, and each window is embedded."
+  zh:
+  - "代码用的是同样的材料，规则却不一样。"
+  - "每个句子都有一个窗口，包括它自己和两边各一个相邻的句子，每个窗口都要向量化。"
+- en: "Then it measures the distance between each window and the next, and plots it over the text, like a seismograph."
+  zh:
+  - "然后它量出每个窗口和下一个窗口之间的距离，画在文本上方，就像地震仪一样。"
+- en: "Next, it draws a line at the 95th percentile, and cuts at every spike above it. So the biggest 5 percent of gaps become chunk boundaries."
+  zh:
+  - "接着它在第 95 百分位画一条线，在每个超过这条线的尖峰处切开。"
+  - "所以最大的那 5% 的落差，就成了 chunk 边界。"
+- en: "Char split ran the chunk step without a key. Can semantic split?"
+  zh:
+  - "用 char-split 时，chunk 这一步没有密钥也跑通了。"
+  - "那 semantic-split 行吗？"
+  en_display:
+  - "char-split ran the chunk step without a key."
+  - "Can semantic-split?"
+- en: "No. To find where the meaning shifts, it has to embed every sentence window first. Look at the function the chunker is handed: generate text embeddings, the same one the embed step uses."
+  zh:
+  - "不行。"
+  - "要找出意思在哪里转折，它得先把每个句子窗口都向量化。"
+  - "看看交给分块器的那个函数：generate text embeddings，和 embed 这一步用的是同一个。"
+  en_display:
+  - null
+  - null
+  - "Look at the function the chunker is handed: generate_text_embeddings, the same one the embed step uses."
+- en: "The README's command runs all three steps with chunk type semantic split. On our machine it fails inside the chunk step, on the first book, before a single chunk is saved."
+  zh:
+  - "README 里的命令用 semantic-split 这个 chunk type，把三步一起跑。"
+  - "在我们的机器上，它在 chunk 这一步里就失败了，卡在第一本书，一个 chunk 都还没保存。"
+  en_display:
+  - "The README's command runs all three steps with --chunk_type semantic-split."
+  - null
+- en: "With your key, budget for it: by our estimate, about 528 embedding calls to chunk the corpus, about 90 more to embed the chunks, and 10 to 20 minutes. Try one book first, then put the others back. Look for a chunk count per book, and finally, finished inserting into the semantic split collection."
+  zh:
+  - "有密钥的话，先做好预算：按我们的估算，给语料分块大约要 528 次 embedding 调用，向量化这些 chunk 还要大约 90 次，再加 10 到 20 分钟。"
+  - "先只放一本书试试，再把其他的放回去。"
+  - "要找的是每本书的 chunk 数，最后是插入 semantic-split-collection 完成的那一行。"
+  en_display:
+  - null
+  - null
+  - "Look for a chunk count per book, and finally, finished inserting into the semantic-split-collection."
+- en: "The chunks come out very uneven, and even a single-topic book gets cut at its biggest gaps. Afterwards, an extra: chat works the same way. Pause and try it, with your key."
+  zh:
+  - "切出来的 chunk 长短很不均匀；就连只讲一个主题的书，也会在它最大的几处落差上被切开。"
+  - "之后再加一个额外步骤：chat 这一步也一样能用。"
+  - "暂停一下，用你的密钥试试。"
+S15:
+- en: "The lecture goes further. Its frame adds a pre-retrieval stage and a post-retrieval stage. Semantic chunking sits in pre-retrieval: the one advanced lever this tutorial implements. Here are three more, as ideas only."
+  zh:
+  - "课上走得更远。"
+  - "它的框架加了一个检索前阶段和一个检索后阶段。"
+  - "语义分块属于检索前：这是这个教程唯一实现了的进阶手段。"
+  - "下面再讲三个，只讲思路。"
+- en: "Also before retrieval: query rewriting. A model turns a cluttered question into a clean one, like where do dolphins live. But hand it a vague question, and the rewrite can invent details."
+  zh:
+  - "同样在检索之前：查询改写。"
+  - "用一个模型把杂乱的问题改写成干净的问题，比如“海豚住在哪里”。"
+  - "但要是给它一个含糊的问题，改写可能会编造细节。"
+- en: "In retrieval: hybrid search. Keywords pin down names and rare words; vectors catch meaning. Take the question: Chester went to the bank of the river in the morning. The two rank three paragraphs differently."
+  zh:
+  - "检索阶段：混合检索。"
+  - "关键词能锁定名字和罕见词；向量能抓住意思。"
+  - "拿这个问题来说：Chester went to the bank of the river in the morning。"
+  - "两种方法给三个段落排出的顺序不一样。"
+- en: "Reciprocal rank fusion gives each paragraph one half divided by its rank, in each list, and adds them up. The near paraphrase wins with 0.75, ahead of 0.67 and 0.42."
+  zh:
+  - "倒数排名融合给每个段落记二分之一除以它的排名，每个列表各记一次，再加起来。"
+  - "和问题几乎同义的那一段以 0.75 胜出，领先 0.67 和 0.42。"
+- en: "After retrieval: re-ranking. A fast retriever, whose vectors were made before the question existed, returns 25 candidates with the right ones scattered. A slower model reads each question and chunk together and reorders them."
+  zh:
+  - "检索之后：重排序。"
+  - "一个快速的检索器，向量在问题出现之前就做好了，它返回 25 个候选，对的那几个散落在其中。"
+  - "再由一个更慢的模型，把问题和每个 chunk 放在一起读，重新排序。"
+- en: "None of these is in cli.py. They're what you reach for when naive retrieval brings back the wrong chunks; our filtered query only needed its filter removed."
+  zh:
+  - "这些都不在 cli.py 里。"
+  - "你会用上它们，是在朴素检索取回了错的 chunk 的时候；而我们那个带过滤的查询，只需要把过滤去掉。"
+S16:
+- en: "Time to tear down. Type exit, then docker compose down from the repo folder: the same harmless warnings, then Chroma and the network are gone."
+  zh:
+  - "该拆掉了。"
+  - "输入 exit，再在 repo 目录里运行：docker compose down；还是那些无害的警告，然后 Chroma 和网络就没了。"
+- en: "The images stay: 2.11 gigabytes for the CLI image, its Python base included, and 826 megabytes for Chroma."
+  zh:
+  - "这些 image 还在：CLI 的 image 有 2.11 GB，包括它的 Python base image；Chroma 的有 826 MB。"
+- en: "Now git status shows only your edit to docker-shell.sh. The outputs and docker volumes folders are ignored, and stay on your disk."
+  zh:
+  - "现在 git status 只显示你对 docker-shell.sh 的改动。"
+  - "而 outputs 和 docker-volumes 两个目录都被忽略，留在你的磁盘上。"
+  en_display:
+  - null
+  - "The outputs/ and docker-volumes/ folders are ignored, and stay on your disk."
+- en: "Nothing keeps running in Google Cloud; you paid only for what you sent. Keep the key beside the repo: inside it, git wouldn't ignore the key, and the image would copy it. Delete it when the course ends. Pause and tear down now, so port 8000 is free next time."
+  zh:
+  - "Google Cloud 上没有任何东西一直在运行；你只为发送过的内容付了费。"
+  - "把密钥放在 repo 旁边：放在里面的话，git 不会忽略它，image 也会把它复制进去。"
+  - "课程结束后，把它删掉。"
+  - "现在就暂停，把它拆掉，这样下次 port 8000 就是空着的。"
+- en: "One last lesson, from the staff's recorded run of next lecture's agent. It retrieved text about transhumance from an older Tolminc book, replaced that same day. The database answers from what was loaded: when the books change, rebuild the index."
+  zh:
+  - "最后一个教训，来自课程团队留下的下节课 agent 的运行记录。"
+  - "它检索到的是讲转场放牧的文本，来自一本更早的 Tolminc 书，当天就被换掉了。"
+  - "数据库只根据加载进去的内容回答：书一变，就要重建索引。"
+- en: "Next lecture runs this command with an agent. In the staff's run, the model chose which retrieval tool to call. The lecture's Self-RAG goes further: the model decides whether to retrieve at all, then checks what it found."
+  zh:
+  - "下节课会用一个 agent 来跑这条命令。"
+  - "在课程团队的那次运行里，模型自己选了要调用哪个检索工具。"
+  - "课上讲的 Self-RAG 走得更远：由模型决定到底要不要检索，然后再检查它找到的东西。"
+- en: "And the four questions? An embedding is a direction for meaning. A vector database stores records, with an index to search them. A query finds the question's nearest neighbors. The context is the chunks you paste into the prompt."
+  zh:
+  - "那四个问题呢？"
+  - "所谓 embedding，就是表示意思的一个方向。"
+  - "向量数据库存的是记录，再用一个索引来搜索它们。"
+  - "查询找的是问题的最近邻。"
+  - "上下文，就是你贴进 prompt 里的那些 chunk。"
+- en: "Five questions to test yourself. One: which flags belong to each lane, and what must both lanes share? Two: why does the CLI reach the database by name, and who uses port 8000?"
+  zh:
+  - "五道题，自测一下。"
+  - "第一题：哪些参数属于哪条通道，两条通道又必须共用什么？"
+  - "第二题：为什么 CLI 按名字就能找到数据库，又是谁在用 port 8000？"
+- en: "Three: what does overlap buy and cost? And why did the recursive splitter make more chunks? Four: why did the README's query return no Tolminc text? Five: what is the prompt missing, and what's the fix?"
+  zh:
+  - "第三题：重叠有什么好处，又有什么代价？"
+  - "还有，为什么递归切分器切出了更多 chunk？"
+  - "第四题：README 里的查询为什么没返回任何 Tolminc 文本？"
+  - "第五题：这个 prompt 少了什么，又该怎么修？"
+- en: "The answers are in the exercises, and every command is in the study guide, in the MLOps Learning repo. Next time: agents."
+  zh:
+  - "答案在练习里，每条命令都在学习指南里，就在 MLOps Learning 这个 repo 里。"
+  - "下节课：agent。"

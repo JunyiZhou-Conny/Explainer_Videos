@@ -1,0 +1,377 @@
+$ uv run adk web
+2026-10-18 23:32:43,504 - INFO - service_factory.py:333 - Using in-memory memory
+ service
+2026-10-18 23:32:43,506 - INFO - local_storage.py:89 - Using per-agent session s
+torage rooted at /home/student/AC215/llm-agent-google-adk
+2026-10-18 23:32:43,506 - WARNING - service_factory.py:387 - Found legacy shared
+ artifacts at /home/student/AC215/llm-agent-google-adk/.adk/artifacts. Artifacts
+ now persist per-agent under <agent>/.adk/artifacts and legacy artifacts remain
+readable via fallback. To migrate, move the 'users' directory into the agent's .
+adk/artifacts folder.
+2026-10-18 23:32:43,507 - INFO - local_storage.py:121 - Using per-agent artifact
+ storage rooted at /home/student/AC215/llm-agent-google-adk
+/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/goog
+le/adk/cli/fast_api.py:304: UserWarning: [EXPERIMENTAL] InMemoryCredentialServic
+e: This feature is experimental and may change or be removed in future versions
+without notice. It may introduce breaking changes at any time.
+  credential_service = InMemoryCredentialService()
+/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/goog
+le/adk/auth/credential_service/in_memory_credential_service.py:33: UserWarning:
+[EXPERIMENTAL] BaseCredentialService: This feature is experimental and may chang
+e or be removed in future versions without notice. It may introduce breaking cha
+nges at any time.
+  super().__init__()
+INFO:     Started server process [4067]
+INFO:     Waiting for application startup.
+
++-----------------------------------------------------------------------------+
+| ADK Web Server started                                                      |
+|                                                                             |
+| For local testing, access at http://127.0.0.1:8000.                         |
++-----------------------------------------------------------------------------+
+
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:42402 - "GET /list-apps HTTP/1.1" 200 OK
+2026-10-18 23:32:44,748 - INFO - envs.py:83 - Loaded .env file for baseline at /
+home/student/AC215/llm-agent-google-adk/.env
+2026-10-18 23:32:44,750 - INFO - agent_loader.py:189 - Found root_agent in basel
+ine.agent
+INFO:     127.0.0.1:42412 - "GET /dev/apps/baseline/build_graph HTTP/1.1" 200 OK
+2026-10-18 23:32:44,937 - INFO - local_storage.py:65 - Creating local session se
+rvice at /home/student/AC215/llm-agent-google-adk/baseline/.adk/session.db
+2026-10-18 23:32:44,940 - INFO - api_server.py:1262 - New session created: df359
+f87-50e3-41fd-8409-2c4296b4ba20
+INFO:     127.0.0.1:42424 - "POST /apps/baseline/users/student/sessions HTTP/1.1
+" 200 OK
+2026-10-18 23:32:45,054 - INFO - api_server.py:1262 - New session created: 403e0
+8be-eb94-4245-8b97-624a0e486130
+INFO:     127.0.0.1:42428 - "POST /apps/baseline/users/student/sessions HTTP/1.1
+" 200 OK
+2026-10-18 23:32:45,405 - INFO - google_llm.py:263 - Sending out request, model:
+ gemini-2.5-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+2026-10-18 23:32:45,405 - INFO - models.py:8514 - AFC is enabled with max remote
+ calls: 10.
+INFO:     127.0.0.1:42438 - "POST /run HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/cli/api_server.py", line 543, in __call__
+    await self._app(scope, receive, send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/cli/api_server.py", line 509, in __call__
+    await self._app(scope, receive, send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/starlette/routing.py", line 678, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/fastapi/routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/starlette/routing.py", line 284, in handle
+    await self.app(scope, receive, send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/fastapi/routing.py", line 352, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/cli/api_server.py", line 2116, in run_agent
+    events = await worker_task
+             ^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/cli/api_server.py", line 2090, in worker
+    return [public_event(event) async for event in agen]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/runners.py", line 1391, in run_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/telemetry/_instrumentation.py", line 164, in stream_in_scope
+    item = await _drive(owned.__anext__())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/telemetry/_instrumentation.py", line 152, in _drive
+    return await step
+           ^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/runners.py", line 1359, in _run_with_trace
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/runners.py", line 1593, in _exec_with_plugin
+    async for event in agen:
+    ...<5 lines>...
+      yield output_event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/runners.py", line 1346, in execute
+    async for event in agen:
+    ...<2 lines>...
+        break
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/agents/base_agent.py", line 359, in run_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/agents/base_agent.py", line 460, in _run_with_lifecycle
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/telemetry/_instrumentation.py", line 164, in stream_in_scope
+    item = await _drive(owned.__anext__())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/telemetry/_instrumentation.py", line 152, in _drive
+    return await step
+           ^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/agents/base_agent.py", line 423, in _run
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/agents/sequential_agent.py", line 135, in _run_async_impl
+    async for event in agen:
+    ...<2 lines>...
+        pause_invocation = True
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/agents/base_agent.py", line 359, in run_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/agents/base_agent.py", line 460, in _run_with_lifecycle
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/telemetry/_instrumentation.py", line 164, in stream_in_scope
+    item = await _drive(owned.__anext__())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/telemetry/_instrumentation.py", line 152, in _drive
+    return await step
+           ^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/agents/base_agent.py", line 423, in _run
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/agents/llm_agent.py", line 638, in _run_async_impl
+    async for event in agen:
+    ...<8 lines>...
+        should_pause = True
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/flows/llm_flows/base_llm_flow.py", line 343, in run_async
+    async for event in agen:
+    ...<3 lines>...
+        break
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/flows/llm_flows/base_llm_flow.py", line 425, in _run_one_step_asy
+nc
+    async for llm_response in agen:
+    ...<23 lines>...
+          yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/flows/llm_flows/base_llm_flow.py", line 619, in _call_llm_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/flows/llm_flows/core/_model_call.py", line 316, in call_llm_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/telemetry/_instrumentation.py", line 164, in stream_in_scope
+    item = await _drive(owned.__anext__())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/telemetry/_instrumentation.py", line 152, in _drive
+    return await step
+           ^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/flows/llm_flows/core/_model_call.py", line 277, in _call_llm_with
+_tracing
+    async for llm_response in agen:
+    ...<20 lines>...
+      yield llm_response
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/flows/llm_flows/base_llm_flow.py", line 669, in _run_and_handle_e
+rror
+    async for response in agen:
+      yield response
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/flows/llm_flows/core/_finalizer.py", line 397, in run_and_handle_
+error
+    raise model_error
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/flows/llm_flows/core/_finalizer.py", line 370, in run_and_handle_
+error
+    async for llm_response in agen:
+      tel_ctx.record_llm_response(invocation_context, llm_response)
+      yield llm_response
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/models/google_llm.py", line 383, in generate_content_async
+    raise ce
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/adk/models/google_llm.py", line 355, in generate_content_async
+    response = await self.api_client.aio.models.generate_content(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/genai/models.py", line 8547, in generate_content
+    response = await self._generate_content_with_continuation(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        model=model, contents=contents, config=final_parsed_config_to_call
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/genai/models.py", line 8346, in _generate_content_with_continuation
+    response = await self._generate_content(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        model=model, contents=contents, config=call_config
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/genai/models.py", line 6944, in _generate_content
+    response = await self._api_client.async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        'post', path, request_dict, http_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/genai/_api_client.py", line 1885, in async_request
+    result = await self._async_request(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        http_request=http_request, http_options=http_options, stream=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/genai/_api_client.py", line 1818, in _async_request
+    return await self._async_retry(  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self._async_request_once, http_request, stream
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/tenacity/asyncio/__init__.py", line 112, in __call__
+    do = await self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/tenacity/asyncio/__init__.py", line 157, in iter
+    result = await action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/tenacity/_utils.py", line 111, in inner
+    return call(*args, **kwargs)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ~~~~~~~~~~~~~~~~~^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/student/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/li
+b/python3.13/concurrent/futures/_base.py", line 453, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/home/student/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/li
+b/python3.13/concurrent/futures/_base.py", line 402, in __get_result
+    raise self._exception
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/tenacity/asyncio/__init__.py", line 116, in __call__
+    result = await fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/genai/_api_client.py", line 1746, in _async_request_once
+    await errors.APIError.raise_for_async_response(response)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/genai/errors.py", line 265, in raise_for_async_response
+    await cls.raise_error_async(status_code, response_json, response)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packa
+ges/google/genai/errors.py", line 287, in raise_error_async
+    raise ClientError(status_code, response_json, response)
+google.genai.errors.ClientError: 400 INVALID_ARGUMENT. {'error': {'code': 400, '
+message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_
+ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 're
+ason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'g
+enerativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.L
+ocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass
+a valid API key.'}]}}
+^CINFO:     Shutting down
+INFO:     Waiting for application shutdown.
+
++-----------------------------------------------------------------------------+
+| ADK Web Server shutting down...                                             |
++-----------------------------------------------------------------------------+
+
+2026-10-18 23:32:46,935 - INFO - runners.py:2335 - Closing runner...
+2026-10-18 23:32:46,935 - INFO - runners.py:2348 - Runner closed.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [4067]
+
+Aborted!
+[exit 1]

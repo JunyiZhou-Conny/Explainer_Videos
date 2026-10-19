@@ -1,0 +1,55 @@
+id: ac215-l05-rag
+title: "AC215 · Lecture 5 — Introduction to RAG (follow-along: llm-rag)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 5
+  lecture_title: "Introduction to RAG"
+  ed: https://edstem.org/us/courses/97373/lessons/182195/
+  repos:
+    - {repo: dlops-io/llm-rag, branch: main, commit: e17a39f35bc07b440f573def480adaf4703f8b91,
+       sections: ["What you'll build", "Prerequisites", "Setup GCP Service Account", "Run LLM RAG Container",
+                  "Chunk Documents", "Generate Embeddings", "Load Embeddings into Vector Database",
+                  "Query the Vector Database", "Chat with LLM",
+                  "Advanced RAG: Semantic Chunking (Semantic Splitting)"]}
+    # quoted for comparison only, not followed:
+    #   Agents (README.md:242-271) is L06's tutorial: a one-command preview in S16;
+    #   68e0bde = the staff's committed outputs/ (their gemini-embedding-001 vectors, loaded for real
+    #   in S09-S12; removed again in 58dd602 but still in every clone's history);
+    #   96d5fd7 = the Tolminc book before 85bba32 replaced it (the stale-index beat, S16);
+    #   pipenv = last year's version, which still sent SYSTEM_INSTRUCTION (S13).
+    - {repo: dlops-io/llm-rag, branch: main, commit: 68e0bdecba017b506c7646d710b1fbf1bc6b31fc,
+       sections: ["llmrag/outputs/embeddings-*.jsonl"]}
+    - {repo: dlops-io/llm-rag, branch: main, commit: 96d5fd78d24607e20ae84d5339ed62abaadff17d,
+       sections: ["input-datasets/books/Tolminc Cheese.txt"]}
+    - {repo: dlops-io/llm-rag, branch: pipenv, commit: 0b671ede29d4b37ecd530da493485b015adad4da,
+       sections: ["cli.py"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L05-rag.md
+audience: "AC215 student who has done L1–L4 (VMs and uv, Dockerfiles and Docker Hub, a service-account key mounted from ../secrets, docker-shell.sh, container networks, ports and Compose); knows Python and basic ML and has used an LLM, but has never built a retrieval system or used a vector database; watching with their own clone of llm-rag open, pausing to run each command"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,       cls: Hook,              title: "A model that never read the book"}
+  - {file: scenes/s02_map.py,        cls: TwoLanes,          title: "Two lanes, one database"}
+  - {file: scenes/s03_setup.py,      cls: KeyAndProject,     title: "Your key, your folders, your project"}
+  - {file: scenes/s04_compose.py,    cls: TwoContainers,     title: "One script, two containers"}
+  - {file: scenes/s05_lookaround.py, cls: NamesAndMounts,    title: "Names, mounts, and two traps"}
+  - {file: scenes/s06_charsplit.py,  cls: CharSplit,         title: "Cutting the books: a ruler"}
+  - {file: scenes/s07_recursive.py,  cls: RecursiveSplit,    title: "Recursive split and its hidden overlap"}
+  - {file: scenes/s08_embed.py,      cls: Embeddings,        title: "Meaning as direction: embeddings"}
+  - {file: scenes/s09_load.py,       cls: LoadChroma,        title: "Load: records, an index, a folder on your disk"}
+  - {file: scenes/s10_persist.py,    cls: IndexSurvives,     title: "Exit, and the index survives"}
+  - {file: scenes/s11_query.py,      cls: NearestNeighbours, title: "Asking the database: rank and cut"}
+  - {file: scenes/s12_filters.py,    cls: FiltersFirst,      title: "Filters come first"}
+  - {file: scenes/s13_chat.py,       cls: FinalPrompt,       title: "Chat: the prompt is the whole trick"}
+  - {file: scenes/s14_semantic.py,   cls: SemanticSplit,     title: "Semantic chunking: cut where meaning shifts"}
+  - {file: scenes/s15_advanced.py,   cls: BeyondNaive,       title: "Beyond naïve RAG: what the lecture adds"}
+  - {file: scenes/s16_recap.py,      cls: Recap,             title: "Tear down, a stale index, recap"}
+parts:
+  - id: part1
+    title: "AC215 · L5, part 1: build the index — chunk, embed, load"
+    scenes: [s01_hook, s02_map, s03_setup, s04_compose, s05_lookaround, s06_charsplit, s07_recursive, s08_embed, s09_load]
+  - id: part2
+    title: "AC215 · L5, part 2: ask the index — query, filters, chat, semantic chunking"
+    scenes: [s10_persist, s11_query, s12_filters, s13_chat, s14_semantic, s15_advanced, s16_recap]

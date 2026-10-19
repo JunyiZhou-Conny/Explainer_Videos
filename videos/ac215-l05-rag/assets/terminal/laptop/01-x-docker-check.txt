@@ -1,0 +1,4 @@
+$ docker --version; docker compose version
+Docker version 29.8.2, build 7fc2dff
+Docker Compose version v5.6.0
+[exit 0]

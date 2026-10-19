@@ -1,0 +1,4 @@
+$ git ls-tree -z --name-only 68e0bde llmrag/outputs/ | tr "\0" "\n" | grep "/embeddings-" | while IFS= read -r f; do git show "68e0bde:$f" > "outputs/${f##*/}"; done; ls outputs | grep "^embeddings-" | wc -l; du -ch outputs/embeddings-* | tail -1
+22
+82M	total
+[exit 0]

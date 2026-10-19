@@ -1,0 +1,16 @@
+00:00 A model that never read the book
+01:39 Two lanes, one database
+03:14 Your key, your folders, your project
+05:14 One script, two containers
+07:18 Names, mounts, and two traps
+09:08 Cutting the books: a ruler
+11:20 Recursive split and its hidden overlap
+12:54 Meaning as direction: embeddings
+15:46 Load: records, an index, a folder on your disk
+17:59 Exit, and the index survives
+19:24 Asking the database: rank and cut
+21:16 Filters come first
+23:16 Chat: the prompt is the whole trick
+25:13 Semantic chunking: cut where meaning shifts
+27:05 Beyond naïve RAG: what the lecture adds
+28:30 Tear down, a stale index, recap

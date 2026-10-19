@@ -1,0 +1,7 @@
+$ curl -s -D /tmp/mcp-headers -X POST https://pavlos-fun-facts.dlops.io/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"curl","version":"8"}}}'; echo; grep -i '^mcp-session-id' /tmp/mcp-headers | sed 's/: .*/: <id>/'
+event: message
+data: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2025-06-18","capabilities":{"experimental":{},"prompts":{"listChanged":true},"resources":{"subscribe":false,"listChanged":true},"tools":{"listChanged":true}},"serverInfo":{"name":"Pavlos Cheese MCP","version":"1.16.0"}}}
+
+
+mcp-session-id: <id>
+[exit 0]

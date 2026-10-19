@@ -1,0 +1,23 @@
+# trimmed BuildKit plain log of scripts/bld.sh (step headers, context size, timings, uv/pip summaries); the full log was 213 lines
+#1 DONE 0.1s
+#2 DONE 0.0s
+#3 transferring context: 2B done
+#3 DONE 0.1s
+#5 DONE 1.6s
+#4 transferring context: 112.07MB 2.5s done
+#4 DONE 2.6s
+#6 [1/6] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &&     apt-get update &&     apt-get upgrade -y &&     apt-get install -y --no-install-recommends build-essential curl libpq5 &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     pip install --no-cache-dir --upgrade pip &&     pip install uv &&     useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     chown app:app /app &&     mkdir -p /.venv &&     chown app:app /.venv
+#6 CACHED
+#7 [2/6] WORKDIR /app
+#7 CACHED
+#8 [3/6] COPY --chown=app:app pyproject.toml uv.lock* ./
+#8 DONE 0.3s
+#9 [4/6] RUN uv sync --frozen
+#9 27.77 Prepared 124 packages in 26.51s
+#9 42.98 Installed 124 packages in 15.21s
+#9 43.08  + rank-bm25==0.2.2
+#9 DONE 45.4s
+#10 [5/6] COPY --chown=app:app . ./
+#10 DONE 1.7s
+#11 naming to docker.io/library/l05ex-cli-bm25:latest done
+#11 DONE 126.9s

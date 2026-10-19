@@ -1,0 +1,14 @@
+$ python /checks/semantic_calls.py
+Cheese and its economical uses in the di sentences  1404  chunk-phase calls  29  chunks   72  embed-phase calls   5  chunk length min 14 median 1116 max 12921
+Cottage Cheese Recipe Book.txt           sentences   559  chunk-phase calls  12  chunks   29  embed-phase calls   2  chunk length min 61 median 1120 max 9096
+Dairying exemplified, or, The business o sentences   782  chunk-phase calls  16  chunks   40  embed-phase calls   3  chunk length min 49 median 2630 max 20107
+Hand-book on cheese making.txt           sentences   982  chunk-phase calls  20  chunks   50  embed-phase calls   4  chunk length min 51 median 1465 max 11806
+Hints on cheese-making, for the dairyman sentences  1739  chunk-phase calls  35  chunks   88  embed-phase calls   6  chunk length min 23 median 1630 max 10844
+The Book of Cheese.txt                   sentences  8363  chunk-phase calls 168  chunks  420  embed-phase calls  28  chunk length min 4 median 765 max 19789
+The Complete Book of Cheese.txt          sentences  4015  chunk-phase calls  81  chunks  202  embed-phase calls  14  chunk length min 12 median 1311 max 13344
+The book of The Cheese Being traits and  sentences  1247  chunk-phase calls  25  chunks   64  embed-phase calls   5  chunk length min 130 median 1718 max 14644
+Theres Pippins and Cheese to Come.txt    sentences  2102  chunk-phase calls  43  chunks  106  embed-phase calls   8  chunk length min 0 median 1354 max 12252
+Tolminc Cheese.txt                       sentences   108  chunk-phase calls   3  chunks    7  embed-phase calls   1  chunk length min 203 median 952 max 2840
+Womans Institute Library of Cookery. Vol sentences  4779  chunk-phase calls  96  chunks  240  embed-phase calls  16  chunk length min 17 median 1300 max 24180
+total: {'sentences': 26080, 'chunk_calls': 528, 'chunks': 1318, 'embed_calls': 92}
+[exit 0]

@@ -1,0 +1,100 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 31 (0-based index in the .ipynb; first line: '# Initialize'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted by assets/terminal/colab_outputs.py: the saved text, ANSI codes removed, an HTML output reduced to its text (or its embedded quiz data).
+[stdout]
+==================================================
+AGENT: gpt-4o
+==================================================
+
+🤖 SimpleAgent: Running with web_search for 'What's the best cheese for a grilled cheese sandwich?'
+Final Response:
+
+[display: markdown]
+Here’s the research plan I followed:
+
+**Plan — Key Sub‑questions**
+1. What essential qualities make a cheese ideal for grilled‑cheese sandwiches?
+2. Which cheeses are most commonly recommended—both as single choices and in blends?
+3. What blends or variations elevate both melt and flavor?
+4. What practical tips improve grilling technique and result?
+
+---
+
+## Research Findings
+
+### Search 1: "best cheese for grilled cheese sandwich what cheese melts best"
+Key sources:
+- **KnowTheCheese** emphasizes American cheese as the most reliable single choice for fast, even melting; natural cheeses like young cheddar, Gruyère, and Jack for more flavor, and blending for best results ([knowthecheese.com](https://knowthecheese.com/best-for/grilled-cheese/?utm_source=openai)).
+- **The Sandwich App** underlines that meltability and flavor seldom coexist in one cheese and advises blending a quick melter (like American, Monterey Jack, Havarti) with a flavor-forward cheese (like sharp cheddar or Gruyère) ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).
+
+### Search 2: "best grocery store cheeses for grilled cheese"
+Key sources:
+- **Eat This, Not That** cites Tillamook Medium Cheddar for balanced melt and flavor; also recommends pairing sharper, aged cheddar with a creamier melter like Havarti or provolone ([eatthis.com](https://www.eatthis.com/best-grocery-store-cheeses-grilled-cheese/?utm_source=openai)).
+
+---
+
+## Synthesis & Verification
+
+Based on multiple reputable and recent sources, these critical points emerge consistently:
+
+- **Meltability** depends on cheese moisture, fat, emulsifiers, and age. Younger, moister cheeses (e.g., American, Monterey Jack, Havarti) melt smoothly. Aged cheeses (sharp cheddar, aged Gouda) offer flavor but risk oiling or graininess unless used sparingly or in a blend ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).
+- **Flavor** comes often from harder or aged cheeses. Neither alone can deliver ideal melt and flavor simultaneously; blending is the key strategy ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).
+- **Blending** pairs a melter with a flavor cheese—e.g., American or Monterey Jack base plus sharp cheddar or Gruyère for depth. Many sources recommend around a 2:1 ratio (melter to flavor cheese) ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).
+- **Single best choices**:
+  - **American cheese**: fastest, creamiest melt; safe go-to ([knowthecheese.com](https://knowthecheese.com/best-for/grilled-cheese/?utm_source=openai)).
+  - **Tillamook Medium Cheddar**: great all-around melt plus savory cheddar flavor ([eatthis.com](https://www.eatthis.com/best-grocery-store-cheeses-grilled-cheese/?utm_source=openai)).
+  - **Natural options**: Gruyère (nutty), Havarti (smooth, buttery), Fontina, and Monterey Jack are often cited for both melt and character ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).
+
+---
+
+## Final Answer
+
+### Summary  
+The best cheese for a grilled‑cheese sandwich balances two things: meltability and flavor. For dependable melty success, American cheese is the classic go-to; for richer taste, pair it—or another good melter—with a sharper cheese in a blend.
+
+---
+
+### Key Criteria / How to Choose  
+- **Meltability**: Look for cheese with moderate moisture, fat content, and—ideally—emulsifiers (e.g., American cheese). Younger cheeses melt more evenly; aged ones may split or weep without assistance ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).  
+- **Flavor**: Aged or tangy cheeses (cheddar, Gruyère, aged Gouda) offer complexity but typically need a melting partner ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).  
+- **Timing**: Your cheese should melt within the same timeframe that the bread toasts. If it melts too fast, it may ooze; too slow, and the bread burns ([knowthecheese.com](https://knowthecheese.com/best-for/grilled-cheese/?utm_source=openai)).
+
+---
+
+### Top Recommendations  
+1. **American cheese** — the most reliable for smooth, edge‑to‑edge melting and forgiving timing ([knowthecheese.com](https://knowthecheese.com/best-for/grilled-cheese/?utm_source=openai)).  
+2. **Tillamook Medium Cheddar** — all‑around performer with good melt and satisfying cheddar taste ([eatthis.com](https://www.eatthis.com/best-grocery-store-cheeses-grilled-cheese/?utm_source=openai)).  
+3. **Gruyère** — nutty, sophisticated melt; great upgrade for thicker bread and slower heat ([knowthecheese.com](https://knowthecheese.com/best-for/grilled-cheese/?utm_source=openai)).  
+4. **Havarti** — buttery, smooth, and melts beautifully ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).  
+5. **Monterey Jack** — mild, creamy, excellent melt; perfect base for blending ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).
+
+---
+
+### Smart Variations or Blends  
+- **Classic blend**: American cheese + sharp cheddar (approx. 2:1 ratio) for both melt and flavor ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).  
+- **Elevated blend**: Gruyère + Fontina or Havarti for a richer, Swiss‑style sandwich ([knowthecheese.com](https://knowthecheese.com/best-for/grilled-cheese/?utm_source=openai)).  
+- **Stretchy combo**: Low‑moisture mozzarella with young provolone or cheddar for pull factor and bold taste ([knowthecheese.com](https://knowthecheese.com/best-for/grilled-cheese/?utm_source=openai)).
+
+---
+
+### Practical Tips  
+- **Grate or thin‑slice cheese** — increases surface area for faster, even melting; avoid pre‑shredded (anti‑caking agents impede melt) ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).  
+- **Bring cheese closer to room temperature** — helps it soften more quickly once the sandwich hits the pan ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).  
+- **Cook low and slow** — use a heavy skillet or cast iron, optionally cover briefly to trap heat and melt before the bread over‑browns ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).  
+- **Spread outside of bread with mayo, not butter** — mayonnaise browns more evenly and crisps reliably ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai)).  
+- **Use appropriate bread thickness** — thin white bread melts faster; thick sourdough benefits from richer melt (e.g., Gruyère) ([knowthecheese.com](https://knowthecheese.com/best-for/grilled-cheese/?utm_source=openai)).
+
+---
+
+### Sources  
+- Best Cheese for Grilled Cheese: 9 Picks | KnowTheCheese — KnowTheCheese ([knowthecheese.com](https://knowthecheese.com/best-for/grilled-cheese/?utm_source=openai))  
+- The Best Cheese for Grilled Cheese — The Sandwich App ([thesandwichapp.com](https://www.thesandwichapp.com/guides/best-cheese-for-grilled-cheese?utm_source=openai))  
+- 5 Best Grocery Store Cheeses for Grilled Cheese, According to Chefs — Eat This, Not That ([eatthis.com](https://www.eatthis.com/best-grocery-store-cheeses-grilled-cheese/?utm_source=openai))  
+- Best Cheese for Grilled Cheese Sandwich: 9 That Melt Perfect – Gardners Wisconsin Cheese and Sausage ([gardnerswisconsincheese.com](https://www.gardnerswisconsincheese.com/blogs/articles/the-best-cheese-for-a-grilled-cheese-sandwich-9-cheeses-that-melt-like-a-dream?utm_source=openai))  
+- Best Cheese for Grilled Cheese: Melt, Flavor, and Sandwich Structure — Sandwich Lovers ([sdlovers.com](https://sdlovers.com/journal/best-cheese-for-grilled-cheese?utm_source=openai))
+
+---
+
+If any uncertainty remains—such as preference for vegan cheeses or specific dietary constraints—I’d be happy to explore further!
+
+[stdout]
+Tools used: 1
+Time: 13.29s

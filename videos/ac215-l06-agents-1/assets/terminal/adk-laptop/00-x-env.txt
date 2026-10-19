@@ -1,0 +1,10 @@
+$ date -u '+%Y-%m-%d %H:%M UTC'; uname -sm; head -1 /etc/os-release; uv --version; git --version; node --version; npm --version; command -v python3 python || echo 'no python3 on PATH'
+2026-10-18 23:31 UTC
+Linux x86_64
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+uv 0.13.1 (x86_64-unknown-linux-gnu)
+git version 2.39.5
+v24.22.0
+11.19.1
+no python3 on PATH
+[exit 0]

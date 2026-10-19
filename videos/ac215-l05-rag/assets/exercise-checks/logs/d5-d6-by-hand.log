@@ -1,0 +1,12 @@
+$ python3 scripts/by_hand.py
+D6 personality game (A41): measure per candidate
+  A: cosine 0.9866  dot 80.15  euclidean 1.673  length 8.630
+  B: cosine 0.9756  dot 81.24  euclidean 2.093  length 8.845
+  C: cosine 0.8861  dot 60.50  euclidean 4.498  length 7.253
+D5 RRF, slides (k=0, w=0.5): ranks (BM25, vector) -> score
+  paragraph 1 (2, 1): 0.7500
+  paragraph 2 (1, 3): 0.6667
+  paragraph 3 (3, 2): 0.4167
+D5 with a 4th paragraph 2nd in both lists, k=0: 1(3, 1)=0.666667, 2(1, 4)=0.625000, 3(4, 3)=0.291667, 4(2, 2)=0.500000 -> order 1 2 4 3
+D5 with a 4th paragraph 2nd in both lists, k=60: 1(3, 1)=0.016133, 2(1, 4)=0.016009, 3(4, 3)=0.015749, 4(2, 2)=0.016129 -> order 1 4 2 3
+[exit 0]

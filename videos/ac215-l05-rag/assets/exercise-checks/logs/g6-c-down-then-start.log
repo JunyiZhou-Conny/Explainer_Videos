@@ -1,0 +1,29 @@
+$ docker compose down; sh docker-shell.sh; sleep 3; docker port l05ex-rag-chromadb; docker inspect l05ex-rag-chromadb --format 'networks: {{range $k, $v := .NetworkSettings.Networks}}{{$k}} {{end}}'; curl -sS --max-time 3 http://localhost:18766/api/v2/heartbeat; echo
+time="2026-10-16T15:47:16Z" level=warning msg="The \"GOOGLE_APPLICATION_CREDENTIALS\" variable is not set. Defaulting to a blank string."
+time="2026-10-16T15:47:16Z" level=warning msg="The \"GCP_PROJECT\" variable is not set. Defaulting to a blank string."
+ Container l05ex-rag-chromadb Stopping 
+ Container l05ex-rag-chromadb Stopped 
+ Container l05ex-rag-chromadb Removing 
+ Container l05ex-rag-chromadb Removed 
+ Network l05ex-rag-network Removing 
+ Network l05ex-rag-network Removed 
+ Network l05ex-rag-network Creating 
+ Network l05ex-rag-network Creating 
+ Network l05ex-rag-network Created 
+ Network l05ex-rag-network Created 
+ Container l05ex-rag-chromadb Creating 
+ Container l05ex-rag-chromadb Created 
+ Container l05ex-rag-chromadb Starting 
+ Container l05ex-rag-chromadb Started 
+ Container l05ex-rag-llm-rag-cli-run-a9cf3d4b85ef Creating 
+ Container l05ex-rag-llm-rag-cli-run-a9cf3d4b85ef Created 
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.15
+UV version: uv 0.13.1 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+8000/tcp -> 0.0.0.0:18766
+networks: l05ex-rag-network 
+{"nanosecond heartbeat":1792165642834216093}
+[exit 0]

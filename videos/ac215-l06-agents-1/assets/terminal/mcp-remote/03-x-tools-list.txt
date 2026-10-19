@@ -1,0 +1,6 @@
+$ SID=$(grep -i '^mcp-session-id' /tmp/mcp-headers | cut -d' ' -f2 | tr -d '\r'); curl -s -X POST https://pavlos-fun-facts.dlops.io/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -H "mcp-session-id: $SID" -H 'mcp-protocol-version: 2025-06-18' -d '{"jsonrpc":"2.0","method":"notifications/initialized"}'; curl -s -X POST https://pavlos-fun-facts.dlops.io/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -H "mcp-session-id: $SID" -H 'mcp-protocol-version: 2025-06-18' -d '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'; echo
+event: message
+data: {"jsonrpc":"2.0","id":2,"result":{"tools":[{"name":"pavlos_fun_fact_mcp","description":"Return one random fun fact from Pavlos about cheese. Call multiple times if you want several facts.","inputSchema":{"properties":{},"type":"object"},"outputSchema":{"additionalProperties":true,"type":"object"},"_meta":{"_fastmcp":{"tags":[]}}}]}}
+
+
+[exit 0]

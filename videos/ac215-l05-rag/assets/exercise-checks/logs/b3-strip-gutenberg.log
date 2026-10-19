@@ -1,0 +1,8 @@
+$ python cli.py --chunk --chunk_type char-split > /tmp/out.txt; grep -c '^Number of chunks' /tmp/out.txt; wc -l outputs/chunks-char-split-*.jsonl | tail -1; python -c "
+import glob, json
+n = [(f.split('chunks-char-split-')[1], i) for f in sorted(glob.glob('outputs/chunks-char-split-*.jsonl')) for i, l in enumerate(open(f)) if 'Project Gutenberg' in json.loads(l)['chunk']]
+print('chunks still mentioning Project Gutenberg:', n)"
+11
+   7656 total
+chunks still mentioning Project Gutenberg: [('Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer.jsonl', 579), ('The Book of Cheese.jsonl', 0)]
+[exit 0]

@@ -1,0 +1,8 @@
+$ docker compose down 2>&1 | grep -v level=warning
+ Container l05ex-rag-chromadb Stopping 
+ Container l05ex-rag-chromadb Stopped 
+ Container l05ex-rag-chromadb Removing 
+ Container l05ex-rag-chromadb Removed 
+ Network l05ex-rag-network Removing 
+ Network l05ex-rag-network Removed 
+[exit 0]

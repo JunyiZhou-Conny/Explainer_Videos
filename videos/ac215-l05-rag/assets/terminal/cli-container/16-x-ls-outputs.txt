@@ -1,0 +1,8 @@
+$ ls outputs | head -4; ls outputs | wc -l; du -sh outputs
+chunks-char-split-Cheese and its economical uses in the diet.jsonl
+chunks-char-split-Cottage Cheese Recipe Book.jsonl
+chunks-char-split-Dairying exemplified, or, The business of cheese-making.jsonl
+chunks-char-split-Hand-book on cheese making.jsonl
+22
+8.2M	outputs
+[exit 0]

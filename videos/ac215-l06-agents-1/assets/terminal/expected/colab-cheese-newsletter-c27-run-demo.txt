@@ -1,0 +1,48 @@
+# recorded: Colab notebook "Cheese Newsletter - Harness" (L06_cheese_newsletter_harness.ipynb; https://colab.research.google.com/drive/1nnHrJ4Si3tpgUQl6HqlcwxKymV1-ecPv), cell 27 (0-based index in the .ipynb; first line: '# @title Run Demo'). Saved output of the staff's last run, 2026-09-20 13:27 UTC (footer of the saved HTML); not run here (needs an OpenAI API key). Extracted by assets/terminal/colab_outputs.py: the saved text, ANSI codes removed, an HTML output reduced to its text (or its embedded quiz data). Course staff's names and e-mail addresses replaced by <reader1>.. / <email>.
+[stdout]
+[agent] Building orchestrator...
+Generating newsletter for Summerville · 2026-09
+  [tool] researcher_agent
+  [tool] editor_agent
+  [tool] editor_agent
+  [tool] editor_agent
+  [tool] editor_agent
+  [tool] send_email: validating and saving HTML (mock)
+Saved HTML: /content/newsletter_output/<reader1>-2026-09-25fd23e3.html (8005 bytes). No email sent.
+Generating newsletter for Charlotte · 2026-09
+  [tool] researcher_agent
+  [tool] editor_agent
+  [tool] send_email: validating and saving HTML (mock)
+Saved HTML: /content/newsletter_output/<reader2>-2026-09-25fd23e3.html (5696 bytes). No email sent.
+Generating newsletter for Atlanta · 2026-09
+  [tool] researcher_agent
+  [tool] editor_agent
+  [tool] send_email: validating and saving HTML (mock)
+Saved HTML: /content/newsletter_output/<reader3>-2026-09-25fd23e3.html (5005 bytes). No email sent.
+Generating newsletter for Cambridge · 2026-09
+  [tool] researcher_agent
+  [tool] editor_agent
+  [tool] editor_agent
+  [tool] editor_agent
+  [tool] send_email: validating and saving HTML (mock)
+Saved HTML: /content/newsletter_output/<reader4>-2026-09-25fd23e3.html (5937 bytes). No email sent.
+
+Created 4 mock emails. No email was sent.
+
+[display]
+[{'status': 'saved',
+  'email_sent': False,
+  'path': '/content/newsletter_output/<reader1>-2026-09-25fd23e3.html',
+  'bytes': 8005},
+ {'status': 'saved',
+  'email_sent': False,
+  'path': '/content/newsletter_output/<reader2>-2026-09-25fd23e3.html',
+  'bytes': 5696},
+ {'status': 'saved',
+  'email_sent': False,
+  'path': '/content/newsletter_output/<reader3>-2026-09-25fd23e3.html',
+  'bytes': 5005},
+ {'status': 'saved',
+  'email_sent': False,
+  'path': '/content/newsletter_output/<reader4>-2026-09-25fd23e3.html',
+  'bytes': 5937}]

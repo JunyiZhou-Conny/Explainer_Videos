@@ -1,0 +1,6 @@
+01-x-g5-compose-run-direct.txt	exit=+8.6s
+02-x-g5-compose-down.txt	exit=+0.5s
+03-x-g1-clone-as-main	00:56:01 UTC	4.4s
+04-x-g1-docker-shell.txt	exit=+0.9s
+05-x-g1-stray-folder	00:56:02 UTC	0.1s
+06-x-g1-compose-down.txt	exit=+0.5s

@@ -1,0 +1,33 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 59 (0-based index in the .ipynb; first line: '# MCP Server'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted by assets/terminal/colab_outputs.py: the saved text, ANSI codes removed, an HTML output reduced to its text (or its embedded quiz data).
+[stdout]
+INFO:     127.0.0.1:49802 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49802 - "POST /mcp HTTP/1.1" 200 OK
+Pavlos Fun Fact Tool Called
+INFO:     127.0.0.1:49802 - "POST /mcp HTTP/1.1" 200 OK
+Pavlos Fun Fact Tool Called
+INFO:     127.0.0.1:49802 - "POST /mcp HTTP/1.1" 200 OK
+Pavlos Fun Fact Tool Called
+INFO:     127.0.0.1:49802 - "POST /mcp HTTP/1.1" 200 OK
+
+[display: markdown]
+For the perfect grilled cheese sandwich, consider using a combination of cheeses to achieve the ideal melt and flavor:
+
+1. **American Cheese**: Known for its smooth melting properties, American cheese is engineered to melt at lower temperatures, making it a classic choice for grilled cheese. It provides a creamy texture and mild flavor that many people love.
+
+2. **Cheddar**: A sharp cheddar adds a robust flavor to your sandwich. It melts well, especially when combined with other cheeses. Opt for a medium or sharp cheddar to balance the flavors.
+
+3. **Gruyère**: This cheese is famous for its smooth melt, similar to its use in fondue. Gruyère adds a nutty and slightly sweet flavor, enhancing the overall taste of your sandwich.
+
+4. **Fontina**: High-moisture cheeses like fontina melt especially evenly, providing a creamy texture. Fontina has a mild, buttery flavor that complements other cheeses well.
+
+### Practical Tips:
+- **Combination**: Try mixing American cheese with cheddar or Gruyère for a balanced flavor and perfect melt.
+- **Temperature**: Cook your sandwich on medium-low heat to ensure the cheese melts thoroughly without burning the bread.
+- **Bread Choice**: Use a hearty bread like sourdough or a classic white bread for the best texture.
+
+### Fun Facts:
+- Gruyère and Emmental are classics for fondue thanks to their smooth melt.
+- American slices are engineered to melt at lower temperatures.
+- High-moisture cheeses like young gouda, fontina, and jack melt especially evenly.
+
+These combinations and tips will help you create a deliciously gooey and flavorful grilled cheese sandwich!

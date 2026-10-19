@@ -1,0 +1,9 @@
+$ sh docker-shell.sh
+ Network l05ex-rag-network Creating 
+ Network l05ex-rag-network Creating 
+ Network l05ex-rag-network Created 
+ Network l05ex-rag-network Created 
+ Container l05ex-rag-chromadb Creating 
+ service:chromadb:1 Error response from daemon: Conflict. The container name "/l05ex-rag-chromadb" is already in use by container "5d365fbf8994a9ae29bcc789d70f94f7f429a9234983df5f08747fb6f4e59e7e". You have to remove (or rename) that container to be able to reuse that name. 
+Error response from daemon: Conflict. The container name "/l05ex-rag-chromadb" is already in use by container "5d365fbf8994a9ae29bcc789d70f94f7f429a9234983df5f08747fb6f4e59e7e". You have to remove (or rename) that container to be able to reuse that name.
+[exit 1]

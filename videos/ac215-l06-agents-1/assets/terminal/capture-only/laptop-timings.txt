@@ -1,0 +1,16 @@
+00-x-env	22:58:30 UTC	0.5s
+01-clone	22:58:36 UTC	5.7s
+02-x-mkdir-secrets.txt	exit=+0.1s
+03-cd	22:58:36 UTC	0.1s
+04-x-git-log	22:58:36 UTC	0.1s
+05-x-edit-gcp-project	22:58:36 UTC	0.1s
+07-x-docker-ps	22:59:37 UTC	0.1s
+08-x-copy-staff-embeddings	22:59:51 UTC	0.3s
+09-x-book-changed	23:00:21 UTC	0.1s
+10-x-old-words	23:00:21 UTC	0.1s
+11-x-hosted-agent	23:00:22 UTC	0.8s
+06-docker-shell.txt	exit=+107.1s
+12-x-ps-after-exit	23:00:25 UTC	0.1s
+13-x-compose-down.txt	exit=+0.5s
+14-x-git-status	23:00:26 UTC	0.1s
+11-x-hosted-agent	23:01:12 UTC	(re-run alone after the fix of its command)

@@ -1,0 +1,31 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 49 (0-based index in the .ipynb; first line: '# System Prompt'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted by assets/terminal/colab_outputs.py: the saved text, ANSI codes removed, an HTML output reduced to its text (or its embedded quiz data).
+[stdout]
+==================================================
+Culinary Expert Agent (with fun facts tool call): gpt-4o
+==================================================
+I am a tool
+I am a tool
+I am a tool
+Final Response:
+
+[display: markdown]
+For a perfect grilled cheese sandwich, consider using a combination of cheeses to achieve the ideal melt and flavor. Here are some top choices:
+
+1. **American Cheese**: Known for its excellent melting properties, American cheese provides a creamy texture and mild flavor. It's a classic choice for grilled cheese and widely available in grocery stores.
+
+2. **Cheddar**: Opt for a medium or sharp cheddar for a more pronounced flavor. Cheddar melts well, especially when combined with a higher moisture cheese. It adds a nice tang to the sandwich.
+
+3. **Fontina**: This cheese is known for its smooth melting qualities due to its high moisture content. It has a mild, nutty flavor that complements other cheeses well.
+
+4. **Gouda**: Young gouda is another high-moisture cheese that melts evenly. It offers a slightly sweet and creamy taste, enhancing the overall flavor profile of your sandwich.
+
+### Practical Tips:
+- **Combination**: Mix American cheese with cheddar or gouda to balance meltability and flavor.
+- **Temperature**: Cook your sandwich on medium heat to ensure the cheese melts thoroughly without burning the bread.
+- **Butter**: Spread butter on the outside of the bread for a crispy, golden crust.
+
+### Fun Facts:
+- Salt plays a crucial role in cheesemaking by controlling moisture and rind formation.
+- High-moisture cheeses like young gouda and fontina melt especially evenly, making them ideal for grilled cheese.
+
+These choices and tips will help you craft a delicious, gooey grilled cheese sandwich with a satisfying flavor and texture. Enjoy!

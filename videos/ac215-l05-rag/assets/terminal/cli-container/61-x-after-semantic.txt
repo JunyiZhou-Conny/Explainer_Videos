@@ -1,0 +1,3 @@
+$ ls outputs | grep semantic | wc -l
+0
+[exit 0]

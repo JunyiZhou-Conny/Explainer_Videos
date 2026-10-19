@@ -44,13 +44,20 @@ tutorials (repo, branch, README section, Colab), pinned commits, guide path and 
 ## Folder layout (per video)
 
 `videos/ac215-lNN-<topic>/`: `video.yaml` (with a `course:` block), `digest.md`, `BRIEF.md`,
-`ASSETS.md`, `assets/source/` (tutorial files at the pinned commit, unchanged), `assets/terminal/`
+`SLIDES.md` (the lecture slides: digest + scene map), `ASSETS.md`, `assets/source/` (tutorial files at
+the pinned commit, unchanged), `assets/terminal/`
 (real captures + `capture.sh`/`run_steps.sh`), `script.md`, `scenes/` (`common.py` + one file per
 scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `README.md`, `output/`,
 `build/` (gitignored: reviews, renders, contact sheets).
 
 ## Pipeline and gates
 
+0. **Lecture slides** (`SLIDES.md`): the student provides the instructor's slides (PDFs; text and
+   page images in the session scratchpad under `slides/LNN/`, never in git). An agent writes the
+   digest in our own words with slide numbers, a second maps it against the video (or its plan) and
+   the study guide, a third checks every slide citation (`ac215-slides.js`). The brief, script,
+   scenes and guide treat it as a binding source next to the tutorial digest (docs/AC215_SERIES.md
+   rule 9: `lecture_ref` tags, diagrams that echo the lecture, captures win on conflicts).
 1. **Digest** (`digest.md`): research agent + adversarial verifier against the repo (every `path:line`
    checked with `sed -n`, every command verbatim, README order). Gate: verifier's corrections applied.
 2. **Captures** (`assets/terminal/`, `assets/source/`, `ASSETS.md`). Run every README command of the
@@ -114,14 +121,30 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
    final MP4 in full (`ffmpeg -v error -i X -f null -`) and ffprobe it. Write the video's
    `REVIEW.md`: the AGENTS.md content gates, decode/metadata, visual sampling, the ASR round trip
    and the owner's listening sign-off as separate lines; never claim a listen that did not happen.
-   Cloud sessions cannot create releases: a GitHub Actions job, whose token can, uploads the
-   deliverables after the episode merges and the catalog (`catalog/videos.json`,
-   `docs/VIDEOS.md`) points at the release. Fill durations and chapters into the README; set
+   Cloud sessions cannot create releases: after the episode PR merges, run **Release a video.yaml
+   episode** (`.github/workflows/legacy-release.yml`; inputs `videos/<id>` and the issue number).
+   It renders each scene in its own job with the pinned engine
+   (`setup/requirements-legacy.lock.txt`), stitches `--crf 27 --burn`, and
+   `tools/release_episode.py` tags `episode/<id>-vN`, uploads the cuts, parts, subtitles, chapters
+   and its measured `<id>.validation.json`, and writes the PUBLISH manifest for the Mac worker.
+   The asset sent to Bilibili is `<id>.zh-en.mp4`. The workflow refuses to start without the sign-off line in
+   `REVIEW.md` and a `publish:` block in `video.yaml` (`title_zh`, `description_zh` with the
+   course attribution, `tags_zh`, `tid: 231`, 科技 › 计算机技术). The catalog (`catalog/videos.json`,
+   `docs/VIDEOS.md`) then points at the release. Series decisions (Conny, 2026-10-15, recorded on
+   Explainer_Videos#29): each finished lecture gets its own issue, `episode/ac215-lNN-<topic>`
+   branch and draft PR touching only its folder (shared changes go in a separate toolkit PR); the
+   lectures are published to Bilibili through the Mac publish worker; the per-lecture full listen is
+   waived ("不需要，我现在对视频质量很满意的") — quote that waiver as the human-review line of
+   `REVIEW.md` ("Listening sign-off: waived by Conny for the AC215 series …"), never as a listen. Fill durations and chapters into the README; set
    `video_status` in `MLOps_Learning/course/lectures.yaml`, run `uv run tools/course_map.py`, and
    refresh the lecture's study guide from the captures (commands, real outputs).
 
 ## Scene-code pitfalls (each cost time on L1)
 
+- Debug with `print()` while you work, but remove every call before you return: a leftover
+  lands in every render log, including the release job's. `explainer.check` reports each one as
+  `PRINT file:line` (the scene file and its helpers; `t.print(...)` is scene code and is fine),
+  so a scene with one does not pass. Bugbot caught two in L02 S14 and L04 S15.
 - Never assign Mobject property names on a VGroup subclass (`width`, `height`, `color`, `depth`):
   Manim treats them as properties. Use `level`, `hi_color`, `shelf_w`, `line_w` etc.
 - `capture(...).pick(i)` uses 0-based indices = file line − 1; `capture()` already strips `\r`.
@@ -132,14 +155,15 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
 - One `with self.voiceover(SAY[i]) as vo:` per SAY line, in order; `assert len(SAY) == n` at the top.
   Time animations with `vo.wait_until("phrase")`.
 - Prefer transforms that show what became what over fade-out/fade-in.
-- `FadeOut` restores the mobject's opacity after removing it, and it removes only the mobject you pass. So
-  `FadeOut(VGroup(a, b))` on a throwaway wrapper whose members are still on the scene through another parent
-  (e.g. `a` is a child of a panel that is on the scene) makes `a` and `b` snap back. Fade out the object
-  that is actually on the scene, or `self.remove(...)` the members after the fade.
+- `FadeOut(g)` takes `g` and its whole family off the scene (Manim splits any parent on the scene that held
+  them), then restores their opacity. A member that is still a child of a parent is therefore invisible
+  only until that parent is added or animated again: then it snaps back at full opacity. After fading a
+  throwaway wrapper of a panel's parts, take the parts out of the panel too (`panel.remove(...)`, as
+  `scroll()` in L02 S12 does with `t.lines.remove`), or fade the panel itself. Tested on Manim 0.22.
 - Deterministic: seed randomness; avoid `always_redraw` on big groups; clear updaters.
 - Never message an agent that runs inside a workflow (SendMessage to its id): it does not reach that
   agent, it starts a second copy from its transcript, and the two then edit the same file. Review
-  findings that arrive while scenes are being built go into the video's `build/qa_followups.md` for the
+  findings that arrive while scenes are being built go into the video's `QA_FOLLOWUPS.md` (tracked, so a successor sees them) for the
   whole-video QA pass instead.
 - An agent inside a workflow returns its final message when its turn ends. Run `explainer.check` and
   `explainer.preview` in the foreground (long timeout, or `--at`/`-q l` for long scenes); never end the turn
@@ -147,8 +171,61 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
 - Agents working in parallel never edit shared files (`explainer/*.py`, `scenes/common.py` once
   scenes start); they put requests in their report.
 
+## Coordinator lessons (L02–L05: each cost hours)
+
+- **Finish before starting.** Four videos in flight split 4 CPUs and drained the usage limit faster,
+  and every limit pause (~2 h) stopped all of them. A video in final review or release has priority;
+  keep at most one other in production.
+- **Never interrupt an encode.** A stitch killed mid-encode left a truncated cached scene encode
+  (`build/stitch_h/NN_<Cls>_crf27.mp4`) that the next stitch reused: L03's subtitles from 22:52 on
+  ran 94 s early. normalize/burn now write `.partial` and rename. Run stitches and full renders
+  detached (`setsid nohup … &`, then wait on the log), never as a harness background task: its
+  default 30-minute limit killed an L02 stitch mid-burn. If one stops anyway, compare every cached
+  encode's duration with its scene render before stitching again.
+- **Don't commit a video's `output/` while it stitches.** Full-cut subtitles are written first, the
+  parts minutes later; a mid-stitch checkpoint shipped mismatched part-2 subtitles. The checkpoint
+  script skips `output/` while that video's build runs or a `.partial.mp4` exists.
+- **Read every caller before changing a shared helper's contract.** Making `beside()` raise broke
+  L04's `fit_tag`, which probes 22 pt, then 20 pt, then falls back: false alarms and a restarted
+  finishing run. Enforce at the point of use (`pin()` refuses a tag that `covers_text()`; outline
+  boxes are fine), and run `explainer.check` on every scene before launching agents that rely on it.
+- **Workflow prompts never embed an earlier agent's text.** On resume only an unchanged prefix
+  replays; a verifier whose prompt quotes the fixer's report gets a new cache key and re-runs, with
+  everything after it. Pass reports as files and name the path. Right after any resume, read the
+  journal; if finished agents start again, stop it and launch only the pending ones.
+  Workflow agents refuse to write report files ("return findings as text") and a script cannot
+  write files, so the coordinator saves them: run the producing agents as one workflow, write each
+  returned text from its journal to a file, then run the consumers as a second workflow that reads
+  those paths (`ac215-final-review.js` stage `checks`, then stage `write`). L04's single-run review
+  got five refusals, and its writer wrote REVIEW.md without the reports.
+- **State each workflow's scope in its prompts.** A user message sent mid-run reaches the running
+  agents: L04's whole finishing run (28 agents) read a status question about L02/L03 as its task and
+  declined every edit. Every agent prompt says what the task is, who assigned it, and that user
+  messages arriving during the run are for the coordinator. After a user message, read the running
+  workflows' results for "out of scope" refusals before relying on them.
+- **Name the git baseline in prompts.** The hourly WIP checkpoint commits agents' edits while a
+  run is going, so "`git diff` against the last commit" can come back empty for a verifier (L05's
+  S12 verifier had to dig out the earlier commit). Pass the commit from before the run and have
+  agents diff against it.
+- **Agents never kill processes they did not start.** A planner's `pkill` pattern killed the
+  coordinator's check; the same pattern could kill a stitch. Stop your own process by its PID.
+- **Agents write evidence under `build/`, never in the episode folder itself.** The WIP checkpoint
+  adds everything under `videos/`, so a scratch file left beside `script.md` ships (L03's
+  `snap_s08.json` reached the episode PR). Before an episode PR, list the tracked files outside
+  scenes/, assets/, i18n/ and output/ and remove anything that is not a deliverable.
+- **The scratchpad belongs to the coordinator.** One agent's `rm -rf scratchpad/*` erased the tools,
+  clones and slides. Keep master copies outside it, lock it, and tell every agent: delete only files
+  you created, by exact path, never with a wildcard.
+- **Chinese keeps the English clause order.** The builder pairs zh and en clause by clause; a
+  condition-first Chinese sentence (如果…，就…) swaps meaning between two neighbouring cues.
+- **Measure before changing an encode setting.** `TP=-2` on one-pass loudnorm made peaks worse
+  (−0.5 dBTP); a limiter after it fixed them. Test on the real joined audio first.
+- **Numbers in comments come from files.** Count from the output JSON before posting; write
+  "queued" for something queued, "fixed" only after frames show it.
+
 ## Never
 
-No GCP/Google logos or console screenshots (schematic drawings tagged `illustration`); no real
+No slide images or PDF pages in a frame or a repository (re-draw the idea, cite the slide number);
+no GCP/Google logos or console screenshots (schematic drawings tagged `illustration`); no real
 person's name on screen (the prompt user is `student`); no hand-typed "output"; no command spelled
 differently from the README; no credentials, keys or project ids that look real.

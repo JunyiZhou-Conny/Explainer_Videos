@@ -1,0 +1,3 @@
+$ curl -s http://localhost:8000/dev/apps/1-baseline/build_graph; echo
+{"detail":"Invalid agent name: '1-baseline'. Agent names must be valid Python identifiers or paths separated by dots (letters, digits, underscores, and dots)."}
+[exit 0]

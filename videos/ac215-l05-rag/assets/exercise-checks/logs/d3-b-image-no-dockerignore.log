@@ -1,0 +1,6 @@
+$ docker run --rm --entrypoint bash l05ex-cli-noignore -c "for d in /app /app/.git /app/outputs /app/docker-volumes; do du -sh \$d; done"
+247M	/app
+103M	/app/.git
+82M	/app/outputs
+58M	/app/docker-volumes
+[exit 0]

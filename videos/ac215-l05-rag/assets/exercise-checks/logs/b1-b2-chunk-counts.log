@@ -1,0 +1,11 @@
+$ python /checks/chunk_counts.py
+Tolminc characters: 7808
+char-split 350/20 (cli.py:185-189): Tolminc 24, total 8248
+char-split 700/100: Tolminc 13, total 4537
+char-split 700/20: Tolminc 12, total 4007
+recursive-split 350, default overlap (cli.py:199-200): Tolminc 35, total 14228
+recursive-split 350, chunk_overlap=20: Tolminc 28, total 10551
+recursive-split 350, chunk_overlap=0: Tolminc 28, total 10542
+formula 1 + ceil((len - 350) / 330) matches every book: True
+RecursiveCharacterTextSplitter default chunk_overlap: 200 separators: ['\n\n', '\n', ' ', '']
+[exit 0]

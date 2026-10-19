@@ -1,0 +1,3 @@
+$ python /checks/small_collection.py
+records: 7 | n_results=10 -> 7 documents
+[exit 0]

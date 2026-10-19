@@ -1,0 +1,72 @@
+name: Legacy route runtime
+description: >
+  The video.yaml route's renderer on an Ubuntu runner: the system packages of setup/install.sh,
+  Python 3.13 with the engine pinned by setup/requirements-legacy.lock.txt (the exact set the
+  AC215 videos were rendered and reviewed with) and the Kokoro voice, checked against
+  assets/manifest.json.
+inputs:
+  latex:
+    description: Install the TeX packages (only scenes that typeset maths need them)
+    default: "true"
+  voice:
+    description: Fetch the Kokoro model (scene renders need it; stitching does not)
+    default: "true"
+runs:
+  using: composite
+  steps:
+    - name: System packages and fonts (as setup/install.sh)
+      shell: bash
+      env:
+        LATEX: ${{ inputs.latex }}
+      run: |
+        set -euo pipefail
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          ffmpeg pkg-config libcairo2-dev libpango1.0-dev espeak-ng \
+          fonts-cmu fonts-dejavu-core fonts-noto-cjk fonts-noto-core fonts-noto-mono \
+          fonts-montserrat fonts-inter fonts-ebgaramond
+        if [ "$LATEX" = true ]; then
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-fonts-recommended \
+            texlive-science dvisvgm cm-super texlive-xetex texlive-lang-chinese
+        fi
+    - id: py
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.13"
+    - name: Cache the engine
+      uses: actions/cache@v4
+      with:
+        path: .venv
+        key: legacy-venv-${{ runner.os }}-${{ steps.py.outputs.python-version }}-${{ hashFiles('setup/requirements-legacy.lock.txt') }}
+    - name: Engine (pinned)
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ ! -x .venv/bin/python ]; then
+          python -m venv .venv
+          .venv/bin/pip install -q --upgrade pip
+          .venv/bin/pip install -q -r setup/requirements-legacy.lock.txt
+        fi
+        .venv/bin/python -c "import manim; print('manim', manim.__version__)"
+    - name: Cache the voice model
+      if: inputs.voice == 'true'
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/explainer/kokoro
+        key: kokoro-${{ hashFiles('assets/manifest.json') }}
+    - name: Voice model (Kokoro v1.0, checksums from assets/manifest.json)
+      if: inputs.voice == 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        dir="$HOME/.cache/explainer/kokoro"
+        mkdir -p "$dir"
+        for f in kokoro-v1.0.onnx voices-v1.0.bin; do
+          want=$(python -c "import json,sys; print(json.load(open('assets/manifest.json'))['assets/tts-models/kokoro/' + sys.argv[1]]['sha256'])" "$f")
+          if [ ! -s "$dir/$f" ] || [ "$(sha256sum "$dir/$f" | cut -d' ' -f1)" != "$want" ]; then
+            curl -L --fail -sS -o "$dir/$f" \
+              "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/$f"
+          fi
+          echo "$want  $dir/$f" | sha256sum -c -
+        done

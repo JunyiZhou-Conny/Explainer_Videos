@@ -1,0 +1,10 @@
+$ curl -si --suppress-connect-headers https://pavlos-fun-facts.dlops.io/mcp | sed 's/^\(mcp-session-id: \).*/\1<id>/' | head -12
+HTTP/2 406 
+content-type: application/json
+mcp-session-id: <id>
+x-cloud-trace-context: b28e2ef30920c4de1a7d83784f5c4f3a;o=1
+date: Sun, 18 Oct 2026 23:33:09 GMT
+server: Google Frontend
+content-length: 126
+
+{"jsonrpc":"2.0","id":"server-error","error":{"code":-32600,"message":"Not Acceptable: Client must accept text/event-stream"}}[exit 0]

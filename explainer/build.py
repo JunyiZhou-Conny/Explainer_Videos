@@ -58,7 +58,6 @@ import json
 import os
 import subprocess
 import sys
-import textwrap
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -217,17 +216,21 @@ def normalize(src: Path, dst: Path, crf: int | None = None) -> None:
     """Same audio layout for every scene (48 kHz stereo AAC, padded to video length).
 
     With `crf`, the video is re-encoded once here (x264, tuned for flat animation), so the full
-    video and every part are later joined without re-encoding."""
+    video and every part are later joined without re-encoding. The result is written beside `dst`
+    and renamed into place only when FFmpeg succeeds: the stitch reuses an existing `dst`, so an
+    interrupted encode must not leave a truncated one behind."""
     vcodec = ["-c:v", "copy"] if crf is None else [
         "-c:v", "libx264", "-preset", "medium", "-tune", "animation", "-crf", str(crf), "-pix_fmt", "yuv420p"]
+    tmp = dst.with_name(dst.stem + ".partial" + dst.suffix)
     if has_audio(src):
         cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), *vcodec, "-af",
-               "aresample=48000,apad", "-ac", "2", "-c:a", "aac", "-b:a", "192k", "-shortest", str(dst)]
+               "aresample=48000,apad", "-ac", "2", "-c:a", "aac", "-b:a", "192k", "-shortest", str(tmp)]
     else:
         cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), "-f", "lavfi", "-i",
                "anullsrc=r=48000:cl=stereo", *vcodec, "-c:a", "aac", "-b:a", "192k",
-               "-shortest", str(dst)]
+               "-shortest", str(tmp)]
     subprocess.run(cmd, check=True)
+    os.replace(tmp, dst)
 
 
 def fmt_srt(t: float) -> str:
@@ -239,7 +242,9 @@ def fmt_srt(t: float) -> str:
 
 
 def fmt_chapter(t: float) -> str:
-    t = int(t)
+    # Down to the second, so a chapter never points past its scene, but after rounding to the
+    # millisecond: an offset is a sum of ffprobe durations, and 1004.999999 is 16:45 (L04's S09), not 16:44.
+    t = int(round(t, 3))
     return f"{t // 3600}:{t % 3600 // 60:02d}:{t % 60:02d}" if t >= 3600 else f"{t // 60:02d}:{t % 60:02d}"
 
 
@@ -260,12 +265,15 @@ def _split_sentence(sent: str, width: int, lines: int, min_units: float = 0.0) -
 
 
 def split_cues(start: float, end: float, text: str, width: int = 44, lines: int = 2,
-               marks: list | None = None, min_dur: float = 1.0):
+               marks: list | None = None, min_dur: float = 1.0, sentences: list | None = None):
     """Break one narration clip into readable cues (<= 2 lines each), never across sentences.
 
     With `marks` ((char offset, seconds) of each sentence start, from the voice clip), every
     sentence's cues sit exactly where that sentence is spoken; without them, the whole clip is
-    timed proportionally to characters. Inside a sentence, cues are timed by characters. Cues
+    timed proportionally to characters. `sentences` ((offset, sentence) pairs) replaces the split
+    of `text` when the caller already knows the sentence boundaries (_english_display: a displayed
+    sentence starting with "--rm" is not a boundary split_sentences would find). Inside a sentence,
+    cues are timed by characters. Cues
     shorter than `min_dur` are merged with a neighbour when the result still fits: one of the same
     sentence first, and across a sentence end only when the merged cue ends at a sentence end
     ("…fit its time limit. It didn't.") or a whole short sentence starts it ("Why? On a log scale,"),
@@ -277,7 +285,7 @@ def split_cues(start: float, end: float, text: str, width: int = 44, lines: int 
     one at a time," + "and counts the leaves it reaches."). Lines: _lines."""
     from .voice import SENTENCE_GAP, split_sentences
 
-    sentences = split_sentences(text) or [(0, text)]
+    sentences = sentences or split_sentences(text) or [(0, text)]   # given: displayed sentences
     if marks and [int(o) for o, _ in marks] == [o for o, _ in sentences]:
         starts = [start + float(t) for _, t in marks]
         spans = [(a, (starts[i + 1] - SENTENCE_GAP) if i + 1 < len(starts) else end)
@@ -349,9 +357,10 @@ def split_cues(start: float, end: float, text: str, width: int = 44, lines: int 
 def _lines(cue: str, width: int, lines: int) -> list[str]:
     """The lines of one cue: balanced and kept off mid-phrase breaks (subtitles.wrap_en: "The earlier
     framework's sharper analysis / got this down…", not the greedy "…analysis got / this down…")
-    when that fits `lines` lines of `width` characters, else greedy."""
+    when that fits `lines` lines of `width` characters, else greedy; never inside a placeholder
+    (<USER NAME>: subtitles.in_placeholder, subtitles.wrap_greedy)."""
     ls = list(subs.wrap_en(" ".join(cue.split()), width * 0.55))
-    return ls if len(ls) <= lines and all(len(x) <= width for x in ls) else textwrap.wrap(cue, width)
+    return ls if len(ls) <= lines and all(len(x) <= width for x in ls) else subs.wrap_greedy(cue, width)
 
 
 def main(argv=None):
@@ -472,6 +481,39 @@ def _scene_title(s: dict, meta: dict) -> str:
     return titles.get(Path(s["file"]).stem) or titles.get(s["cls"]) or s.get("title", s["cls"])
 
 
+def _english_display(cue: dict, translations: dict) -> tuple[str, list | None, list | None]:
+    """The English subtitle text of one narration clip, its sentence marks, and its sentences.
+
+    A sentence with an `en_display` override (the clip's own, or a translation's: the form an
+    artifact takes on screen, "--rm" for a SAY line that spells "dash dash rm") is shown in that
+    form, as the bilingual track already does (subtitles.sentence_pairs). Each mark keeps its time
+    and moves to its sentence's offset in the displayed text. The sentences are returned too (None
+    when nothing changed): a displayed sentence may not start the way split_sentences expects."""
+    from .voice import split_sentences
+
+    text, marks = cue["text"], cue.get("marks")
+    display = list(cue.get("en_display") or [])
+    if not any(display):
+        for table in translations.values():
+            line = table.get(" ".join(text.split()))
+            if line is not None and any(line.en_display):
+                display = list(line.en_display)
+                break
+    sentences = split_sentences(text)
+    if not any(display) or not sentences:
+        return text, marks, None
+    pieces = [d or s for (_, s), d in zip(sentences, display + [None] * len(sentences))]
+    shown, offsets = "", []
+    for k, piece in enumerate(pieces):
+        if k:
+            shown += " "
+        offsets.append(len(shown))
+        shown += piece.strip()
+    if marks and [int(o) for o, _ in marks] == [o for o, _ in sentences]:
+        marks = [(o, t) for o, (_, t) in zip(offsets, marks)]
+    return shown, marks, [(o, piece.strip()) for o, piece in zip(offsets, pieces)]
+
+
 def _clips_with_marks(subs_file: Path, env: dict | None) -> list[dict]:
     """Narration clips of one scene; English clips rendered before sentence marks were recorded get
     their marks from the (cached) voice, so subtitles still land on each sentence."""
@@ -522,7 +564,8 @@ def mix_music(joined: Path, final: Path, music: dict, project: Path, build: Path
         "[voice][ducked]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.89[a]",
     ])
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), *inputs, "-filter_complex", graph,
-                    "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-ar", "48000", "-c:a", "aac", "-b:a", "160k",
+                    "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-ar", "48000", "-c:a", "aac", "-aac_pns", "0",
+                    "-b:a", "160k",
                     "-movflags", "+faststart", str(final)], check=True)
 
 
@@ -561,8 +604,9 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
                 own_pairs += subs.sentence_pairs(cue, offset, own_table.get(" ".join(cue["text"].split())))
             else:
                 transcript.append(cue["text"] + "\n")
-                srt.extend(split_cues(offset + cue["start"], offset + cue["end"], cue["text"],
-                                      marks=cue.get("marks")))
+                shown, shown_marks, shown_sents = _english_display(cue, translations)
+                srt.extend(split_cues(offset + cue["start"], offset + cue["end"], shown,
+                                      marks=shown_marks, sentences=shown_sents))
                 for code, table in translations.items():
                     line = table.get(" ".join(cue["text"].split()))
                     pairs[code] += subs.sentence_pairs(cue, offset, line)
@@ -582,8 +626,15 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
             # composed scores (explainer.music) are mixed after stitching by add_music()
             mix_music(joined, final, music_spec, project, build, offset)
         else:
+            # One-pass loudnorm overshoots its TP once encoded, and AAC adds its own overshoot on top
+            # of any sample-peak limit (~1.1 dB at 128k, ~0.4 dB at 192k), so: a limit at 0.71
+            # (−3 dBFS) and 192k. Measured on L02/L03 (31 min each, full cuts and parts): −2.3 to
+            # −2.7 dBTP at −16.1 LUFS, LRA unchanged; 0.79 at 128k gave −0.9. No perceptual noise
+            # substitution: its random noise put a +0.9 dBTP spike into L03 part 2, and only when
+            # decoded from the start, so a seek never shows it.
             subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
-                            "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
+                            "loudnorm=I=-16:TP=-1.5:LRA=11,alimiter=limit=0.71:level=disabled",
+                            "-ar", "48000", "-c:a", "aac", "-aac_pns", "0", "-b:a", "192k",
                             "-movflags", "+faststart", str(final)], check=True)
             if ctx.get("music"):               # the same narration before AAC: the music is mixed from it,
                 voice_wav = build / f"voice_{stem.name}.wav"                 # so the voice is encoded once

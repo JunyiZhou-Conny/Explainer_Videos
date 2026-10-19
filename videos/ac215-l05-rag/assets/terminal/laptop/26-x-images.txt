@@ -1,0 +1,6 @@
+$ docker images
+IMAGE                       ID             DISK USAGE   CONTENT SIZE   EXTRA
+chromadb/chroma:latest      1e0b73a187a2        826MB          176MB        
+llm-rag-cli:latest          3b31b15cf50b       2.11GB          537MB        
+python:3.12-slim-bookworm   60c8fd1dbf1f        198MB         47.8MB        
+[exit 0]

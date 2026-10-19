@@ -1,0 +1,25 @@
+$ python -c "import json; c = [json.loads(l)['chunk'] for l in open('outputs/chunks-recursive-split-Tolminc Cheese.jsonl')]; print(len(c)); print(c[0]); print('---'); print(c[1]); print('---'); print(c[2])"
+35
+Author: Pavlos Protopapas
+
+# Tolminc: A Cheese, a Valley, and the Art of Waiting
+*A fictional tale inspired by Alpine cheesemaking*
+
+## Chapter One: The First Slice
+
+The first thing Mara noticed was that nobody hurried.
+---
+## Chapter One: The First Slice
+
+The first thing Mara noticed was that nobody hurried.
+
+She had arrived at her grandfather’s house with a suitcase, a laptop, and a carefully organized list of things she intended to accomplish during her visit. Before she could explain any of them, he placed a wooden board on the kitchen table.
+---
+On it sat bread, two apples, and a wedge of cheese.
+
+“Tolminc,” he said.
+
+“I know what it is.”
+
+“Then sit down.”
+[exit 0]

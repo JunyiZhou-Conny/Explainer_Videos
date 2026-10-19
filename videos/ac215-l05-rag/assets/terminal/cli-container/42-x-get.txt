@@ -1,0 +1,7 @@
+$ python cli.py --get --chunk_type char-split
+CLI Arguments: Namespace(chunk=False, embed=False, load=False, query=False, chat=False, get=True, agent=False, chunk_type='char-split')
+get()
+
+
+Results: {'ids': [], 'embeddings': None, 'metadatas': [], 'documents': [], 'data': None, 'uris': None, 'included': ['metadatas', 'documents']}
+[exit 0]

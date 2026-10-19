@@ -1,0 +1,12 @@
+$ uv sync
+Using CPython 3.15.0
+Creating virtual environment at: .venv
+Resolved 189 packages in 3.46s
+error: Distribution `onnxruntime==1.31.0 @ registry+https://pypi.org/simple`
+       can't be installed because it doesn't have a source distribution or wheel
+       for the current platform
+
+hint: You're using CPython 3.15 (`cp315`), but `onnxruntime` (v1.31.0) only has
+wheels with the following Python ABI tags: `cp311`, `cp312`, `cp313`, `cp313t`,
+`cp314`, `cp314t`
+[exit 2]

@@ -1,0 +1,3 @@
+$ python -c "import rank_bm25; print(rank_bm25.__file__)"   (new container of the rebuilt image)
+/.venv/lib/python3.12/site-packages/rank_bm25.py
+[exit 0]

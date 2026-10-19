@@ -1,0 +1,234 @@
+$ python - <<'EOF'
+import ast, json, re, cli, agent_tools
+from google.genai import types
+from google.genai.types import Content, Part
+collection = cli.chromadb.HttpClient(host=cli.CHROMADB_HOST, port=cli.CHROMADB_PORT).get_collection("char-split-collection")
+t = collection.get(where={"book": "Tolminc Cheese"}, include=["embeddings", "documents"])
+i = next(k for k, d in enumerate(t["documents"]) if "curd" in d)
+print("stand-in embed_func: returns the stored vector of chunk", t["ids"][i], "(Tolminc Cheese)")
+stand_in = lambda text: t["embeddings"][i]
+# the model's turn, from the staff's recorded run
+rec = open("out.txt").read().splitlines()
+sig = ast.literal_eval(rec[27].strip().removeprefix("thought_signature=").rstrip(","))
+call = types.FunctionCall(id="call_1212960", name="get_book_by_author",
+                          args={"author": "Pavlos Protopapas", "search_content": "cheese making importance location"})
+model_turn = Content(role="model", parts=[Part(function_call=call, thought_signature=sig)])
+print("Function calls:", [call])
+function_responses = agent_tools.execute_function_calls([call], collection, embed_func=stand_in)
+print()
+print("function_responses: %d part, name=%r, response keys=%s, %d characters" % (
+    len(function_responses), function_responses[0].function_response.name,
+    list(function_responses[0].function_response.response), len(function_responses[0].function_response.response["content"])))
+print()
+api = cli.llm_client._api_client
+def show(method, path, body, http_options=None):     # stands in for the HTTPS request
+    req = api._build_request(method, path, body, http_options)
+    print(method.upper(), req.url)
+    print(json.dumps(body, indent=2))
+    raise SystemExit("-- stopped here: nothing was sent to Vertex AI --")
+api.request = show
+user_prompt_content = Content(role="user", parts=[Part(text="Describe where cheese making is important in Pavlos's book?")])
+cli.llm_client.models.generate_content(          # the call of cli.py:465-477, with the same arguments
+    model=cli.GENERATIVE_MODEL,
+    contents=[user_prompt_content, model_turn, Content(parts=function_responses)],
+    config=types.GenerateContentConfig(tools=[agent_tools.cheese_expert_tool]))
+EOF
+stand-in embed_func: returns the stored vector of chunk 8440accaceb0ce96-6 (Tolminc Cheese)
+Function calls: [FunctionCall(
+  args={
+    'author': 'Pavlos Protopapas',
+    'search_content': 'cheese making importance location'
+  },
+  id='call_1212960',
+  name='get_book_by_author'
+)]
+Function: get_book_by_author
+
+
+Calling function with args: Pavlos Protopapas , cheese making importance location
+
+
+Response: is ready?” Mara asked.
+
+“For what?”
+
+“For the next step.”
+
+Anja smiled. “That is a better question.”
+
+Over the following hours, Mara began to understand how many decisions could hide inside a process that sounded simple when described at a kitchen table. Milk became curd. The curd was cut, stirred, and handled with care. Liquid separated from solid
+separated from solids. What had filled the vat gradually became something that could be gathered and shaped.
+
+Anja used instruments, but she also watched closely, touched carefully, and occasionally waited when Mara thought there was nothing left to wait for.
+
+“People like to ask for the secret,” she said. “Usually, they are disappointed when I tel
+small differences she would not have noticed a week earlier.
+
+Anja lifted one wheel, examined it, and returned it to the shelf.
+
+“This one needs attention.”
+
+“What is wrong with it?”
+
+“Nothing yet.”
+
+Mara helped turn the cheeses. The work required more strength than she expected and more care than the repeated movement suggested. After a while, she
+top.”
+
+“That may be less useful.”
+
+Anja handed Mara an apron.
+
+The room was warm, and the windows had clouded around the edges. There were buckets to move, surfaces to clean, and equipment whose purpose Mara could not immediately identify. She stood beside a large vat and watched Anja examine the milk.
+
+“How do you know when it is ready?” Mara aske
+ written. There were measurements now, but also questions. She had recorded the feel of curd, the weight of a wheel, and Anja’s habit of checking a surface twice before deciding it was clean.
+
+Near the end, she found a sentence she had written after Sunday lunch:
+
+*Ask who does the work.*
+
+Back in her apartment, Mara unpacked the cheese before her 
+ph.
+
+“What did the curd feel like?”
+
+She had not written that down.
+
+## Chapter Four: The Room of Wheels
+
+The aging room was cooler than the dairy.
+
+Wheels of cheese rested on shelves in rows that looked orderly from the doorway and less identical when Mara approached them. Some were lighter, some darker. Their surfaces carried small differences sh
+h do you want another piece of?”
+
+Mara reached for the older cheese.
+
+Anja pushed the board toward her.
+
+## Chapter Five: At the Table
+
+On Sunday, the kitchen filled with people.
+
+A neighbor arrived carrying bread. Anja brought a wheel wrapped for the journey. Someone produced a bowl of pears, and Mara’s grandfather objected that there was already 
+r and more crowded. Mara ran her finger beneath a line without touching the ink. She had imagined that inherited knowledge would arrive in clear instructions: a complete method, carefully preserved, explaining exactly what to do.
+
+Instead, she found fragments.
+
+A temperature. A change in the weather. A batch that behaved differently. A reminder to 
+ work.”
+
+Later, they tasted two cheeses of different ages. Mara preferred the younger one at first. It was gentler, easier to eat in another quick bite. The older cheese demanded more attention. Its flavor developed slowly and remained longer.
+
+“Which is better?” she asked.
+
+“What are you eating it with?”
+
+“Nothing.”
+
+“Then which do you want anothe
+he kitchen smelled of coffee and the wood her grandfather had brought in that morning. He cut the cheese into uneven pieces with a knife whose handle had become smooth from years of use.
+
+Mara tasted a piece. It was firm at first, then softer as she chewed. There was a gentle sweetness, followed by something savory that stayed after she swallowed.
+
+
+function_responses: 1 part, name='get_book_by_author', response keys=['content'], 3509 characters
+
+POST https://aiplatform.googleapis.com/v1beta1/projects/your-project-id/locations/global/publishers/google/models/gemini-3.1-flash-lite:generateContent
+{
+  "contents": [
+    {
+      "parts": [
+        {
+          "text": "Describe where cheese making is important in Pavlos's book?"
+        }
+      ],
+      "role": "user"
+    },
+    {
+      "parts": [
+        {
+          "thoughtSignature": "AY89a186Eu6171rjNqS7OzpmU4hnUcAY5FbOd3QYq422hqyGEqK0R4d8qn8oe83A7FTU5CB_lJvHRgVlrxayBrCXT_5If1xCb7G9wNRls-vOmv8=",
+          "functionCall": {
+            "id": "call_1212960",
+            "args": {
+              "author": "Pavlos Protopapas",
+              "search_content": "cheese making importance location"
+            },
+            "name": "get_book_by_author"
+          }
+        }
+      ],
+      "role": "model"
+    },
+    {
+      "parts": [
+        {
+          "functionResponse": {
+            "name": "get_book_by_author",
+            "response": {
+              "content": "is ready?\u201d Mara asked.\n\n\u201cFor what?\u201d\n\n\u201cFor the next step.\u201d\n\nAnja smiled. \u201cThat is a better question.\u201d\n\nOver the following hours, Mara began to understand how many decisions could hide inside a process that sounded simple when described at a kitchen table. Milk became curd. The curd was cut, stirred, and handled with care. Liquid separated from solid\nseparated from solids. What had filled the vat gradually became something that could be gathered and shaped.\n\nAnja used instruments, but she also watched closely, touched carefully, and occasionally waited when Mara thought there was nothing left to wait for.\n\n\u201cPeople like to ask for the secret,\u201d she said. \u201cUsually, they are disappointed when I tel\nsmall differences she would not have noticed a week earlier.\n\nAnja lifted one wheel, examined it, and returned it to the shelf.\n\n\u201cThis one needs attention.\u201d\n\n\u201cWhat is wrong with it?\u201d\n\n\u201cNothing yet.\u201d\n\nMara helped turn the cheeses. The work required more strength than she expected and more care than the repeated movement suggested. After a while, she\ntop.\u201d\n\n\u201cThat may be less useful.\u201d\n\nAnja handed Mara an apron.\n\nThe room was warm, and the windows had clouded around the edges. There were buckets to move, surfaces to clean, and equipment whose purpose Mara could not immediately identify. She stood beside a large vat and watched Anja examine the milk.\n\n\u201cHow do you know when it is ready?\u201d Mara aske\n written. There were measurements now, but also questions. She had recorded the feel of curd, the weight of a wheel, and Anja\u2019s habit of checking a surface twice before deciding it was clean.\n\nNear the end, she found a sentence she had written after Sunday lunch:\n\n*Ask who does the work.*\n\nBack in her apartment, Mara unpacked the cheese before her \nph.\n\n\u201cWhat did the curd feel like?\u201d\n\nShe had not written that down.\n\n## Chapter Four: The Room of Wheels\n\nThe aging room was cooler than the dairy.\n\nWheels of cheese rested on shelves in rows that looked orderly from the doorway and less identical when Mara approached them. Some were lighter, some darker. Their surfaces carried small differences sh\nh do you want another piece of?\u201d\n\nMara reached for the older cheese.\n\nAnja pushed the board toward her.\n\n## Chapter Five: At the Table\n\nOn Sunday, the kitchen filled with people.\n\nA neighbor arrived carrying bread. Anja brought a wheel wrapped for the journey. Someone produced a bowl of pears, and Mara\u2019s grandfather objected that there was already \nr and more crowded. Mara ran her finger beneath a line without touching the ink. She had imagined that inherited knowledge would arrive in clear instructions: a complete method, carefully preserved, explaining exactly what to do.\n\nInstead, she found fragments.\n\nA temperature. A change in the weather. A batch that behaved differently. A reminder to \n work.\u201d\n\nLater, they tasted two cheeses of different ages. Mara preferred the younger one at first. It was gentler, easier to eat in another quick bite. The older cheese demanded more attention. Its flavor developed slowly and remained longer.\n\n\u201cWhich is better?\u201d she asked.\n\n\u201cWhat are you eating it with?\u201d\n\n\u201cNothing.\u201d\n\n\u201cThen which do you want anothe\nhe kitchen smelled of coffee and the wood her grandfather had brought in that morning. He cut the cheese into uneven pieces with a knife whose handle had become smooth from years of use.\n\nMara tasted a piece. It was firm at first, then softer as she chewed. There was a gentle sweetness, followed by something savory that stayed after she swallowed.\n"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "functionDeclarations": [
+        {
+          "description": "Get the book chunks filtered by author name",
+          "name": "get_book_by_author",
+          "parameters": {
+            "properties": {
+              "author": {
+                "description": "The author name",
+                "enum": [
+                  "C. F. Langworthy and Caroline Louisa Hunt",
+                  "J. Twamley",
+                  "George E. Newell",
+                  "T. D. Curtis",
+                  "Charles Thom and W. W. Fisk",
+                  "Thomas Wilson Reid",
+                  "Bob Brown",
+                  "Charles S. Brooks",
+                  "Pavlos Protopapas"
+                ],
+                "type": "STRING"
+              },
+              "search_content": {
+                "description": "The search text to filter content from books. The search term is compared against the book text based on cosine similarity. Expand the search term to a a sentence or two to get better matches",
+                "type": "STRING"
+              }
+            },
+            "required": [
+              "author",
+              "search_content"
+            ],
+            "type": "OBJECT"
+          }
+        },
+        {
+          "description": "Get the book chunks filtered by search terms",
+          "name": "get_book_by_search_content",
+          "parameters": {
+            "properties": {
+              "search_content": {
+                "description": "The search text to filter content from books. The search term is compared against the book text based on cosine similarity. Expand the search term to a a sentence or two to get better matches",
+                "type": "STRING"
+              }
+            },
+            "required": [
+              "search_content"
+            ],
+            "type": "OBJECT"
+          }
+        }
+      ]
+    }
+  ],
+  "generationConfig": {}
+}
+-- stopped here: nothing was sent to Vertex AI --
+[exit 1]

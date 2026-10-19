@@ -1,0 +1,5 @@
+$ ls -a
+.             .git        2-litellm           5-custom-agent  README.md
+..            .gitignore  3-mcp-tools         6-rag           demo.gif
+.env.example  1-baseline  4-production-ready  QUICKSTART.md   pyproject.toml
+[exit 0]

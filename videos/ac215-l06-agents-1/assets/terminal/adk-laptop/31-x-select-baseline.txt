@@ -1,0 +1,6 @@
+$ curl -s http://localhost:8000/dev/apps/baseline/build_graph | uv run python -c "import json, sys; r = json.load(sys.stdin)['root_agent']; print(r['name'], '|', r['description']); [print('  ', a['name'], '| model', a['model'], '| output_key', a['output_key'], '|', a['instruction']) for a in r['sub_agents']]"
+TravelPlannerPipeline | Sequential itinerary planning pipeline
+   ItineraryValidator | model gemini-2.5-flash | output_key itinerary_validation | You validate trip requests. Extract traveler count, origin, destinations, dates, budget, and constraints from the input.
+   TravelPlanner | model gemini-2.5-flash | output_key travel_plan | Using {itinerary_validation}, design a realistic multi-day travel plan with routing, daily schedule, estimated costs, and key booking recommendations.
+   TripSummarizer | model gemini-2.5-flash | output_key trip_summary | Provide a concise, traveler-friendly summary based on {travel_plan}. Include total estimated cost and a highlights list.
+[exit 0]

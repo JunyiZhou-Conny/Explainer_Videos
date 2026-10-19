@@ -1,0 +1,4 @@
+$ docker exec llm-rag-chromadb chroma --version; docker image inspect chromadb/chroma:latest --format '{{index .RepoDigests 0}} created {{.Created}}'
+chroma 1.4.4
+chromadb/chroma@sha256:1e0b73a187a28757c572acba508c46f48c9e8b0acaf5c20e6d95cdedce1acdf6 created 2026-05-05T01:49:45.652638163Z
+[exit 0]

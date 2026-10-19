@@ -1,0 +1,5 @@
+# recorded: Colab notebook "Cheese Newsletter - Harness" (L06_cheese_newsletter_harness.ipynb; https://colab.research.google.com/drive/1nnHrJ4Si3tpgUQl6HqlcwxKymV1-ecPv), cell 8 (0-based index in the .ipynb; first line: '# @title Install Microsoft Agent Framework'). Saved output of the staff's last run, 2026-09-20 13:27 UTC (footer of the saved HTML); not run here (needs an OpenAI API key). Extracted by assets/terminal/colab_outputs.py: the saved text, ANSI codes removed, an HTML output reduced to its text (or its embedded quiz data).
+[stdout]
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 712.9/712.9 kB 10.8 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 68.8/68.8 kB 2.5 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 225.1/225.1 kB 7.9 MB/s eta 0:00:00

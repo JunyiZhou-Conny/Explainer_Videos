@@ -1,0 +1,40 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 39 (0-based index in the .ipynb; first line: '# @title Step 2: Prompt Engineering'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted by assets/terminal/colab_outputs.py: the saved text, ANSI codes removed, an HTML output reduced to its text (or its embedded quiz data).
+[stdout]
+======================================================================
+Step 2: With Prompt Engineering
+======================================================================
+
+[display: markdown]
+When crafting the perfect grilled cheese sandwich, the choice of cheese is crucial for achieving that ideal combination of meltability, flavor, and texture. Here are some top recommendations:
+
+1. **American Cheese**:
+   - **Melting Properties**: American cheese is known for its excellent melting properties, creating a smooth and creamy texture when heated. It melts at a relatively low temperature, around 130°F (54°C).
+   - **Flavor Profile**: It has a mild, slightly tangy flavor that pairs well with various breads and additional ingredients.
+   - **Availability**: Widely available in most grocery stores, often found pre-sliced in the dairy section.
+   - **Practical Cooking Techniques**: Its uniform melting makes it easy to achieve a consistent texture throughout the sandwich. Simply layer a few slices between your bread of choice and grill until golden brown.
+
+2. **Cheddar Cheese**:
+   - **Melting Properties**: Cheddar melts well, especially when aged for a shorter period (mild to medium cheddar). It melts at around 150°F (66°C).
+   - **Flavor Profile**: Offers a range from mild to sharp, allowing you to customize the intensity of your sandwich. Sharp cheddar provides a more pronounced flavor.
+   - **Availability**: Readily available in blocks, slices, or shredded form in most grocery stores.
+   - **Practical Cooking Techniques**: For a smoother melt, grate the cheese before adding it to the sandwich. This helps it melt evenly and quickly.
+
+3. **Gruyère Cheese**:
+   - **Melting Properties**: Gruyère is known for its excellent melting qualities, often used in fondue. It melts at around 135°F (57°C).
+   - **Flavor Profile**: Offers a nutty, slightly sweet flavor that becomes more pronounced as it ages.
+   - **Availability**: Available in most grocery stores, though it may be slightly more expensive than other options.
+   - **Practical Cooking Techniques**: Slice thinly or grate to ensure even melting. Gruyère pairs well with additional ingredients like caramelized onions or ham for a more gourmet grilled cheese.
+
+4. **Mozzarella Cheese**:
+   - **Melting Properties**: Mozzarella melts beautifully, creating a stretchy, gooey texture. It melts at around 130°F (54°C).
+   - **Flavor Profile**: Mild and creamy, allowing it to blend well with other flavors.
+   - **Availability**: Easily found in most grocery stores, available in blocks, pre-sliced, or shredded.
+   - **Practical Cooking Techniques**: Use fresh mozzarella for a creamier texture or low-moisture mozzarella for a more traditional grilled cheese. Combine with a more flavorful cheese like cheddar for added depth.
+
+5. **Provolone Cheese**:
+   - **Melting Properties**: Provolone melts smoothly, making it a great choice for grilled cheese. It melts at around 140°F (60°C).
+   - **Flavor Profile**: Offers a mild to slightly tangy flavor, depending on its age.
+   - **Availability**: Commonly available in deli sections and pre-packaged slices.
+   - **Practical Cooking Techniques**: Layer with other cheeses like mozzarella or cheddar for a complex flavor profile.
+
+For the ultimate grilled cheese experience, consider combining two or more cheeses to balance meltability and flavor. A classic combination is cheddar and mozzarella, which provides both sharpness and creaminess. Remember to use a good quality bread, butter the outside for a crispy crust, and cook on medium-low heat to ensure the cheese melts thoroughly without burning the bread.

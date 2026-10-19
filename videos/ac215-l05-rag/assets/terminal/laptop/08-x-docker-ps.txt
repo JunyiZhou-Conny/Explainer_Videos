@@ -1,0 +1,5 @@
+$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED              STATUS              PORTS                    NAMES
+92c5bfd26089   llm-rag-cli              "/bin/bash docker-en…"   4 seconds ago        Up 1 second                                  llm-rag-llm-rag-cli-run-90678535ddef
+38d414943c8a   chromadb/chroma:latest   "dumb-init -- chroma…"   About a minute ago   Up About a minute   0.0.0.0:8000->8000/tcp   llm-rag-chromadb
+[exit 0]

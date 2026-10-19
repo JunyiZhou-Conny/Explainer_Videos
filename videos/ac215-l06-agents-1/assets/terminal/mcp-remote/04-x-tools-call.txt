@@ -1,0 +1,6 @@
+$ SID=$(grep -i '^mcp-session-id' /tmp/mcp-headers | cut -d' ' -f2 | tr -d '\r'); curl -s -X POST https://pavlos-fun-facts.dlops.io/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -H "mcp-session-id: $SID" -H 'mcp-protocol-version: 2025-06-18' -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"pavlos_fun_fact_mcp","arguments":{}}}'; echo
+event: message
+data: {"jsonrpc":"2.0","id":3,"result":{"content":[{"type":"text","text":"{\"fact\":\"Fresh cheeses (ricotta, chèvre) soften but don’t stretch like mozzarella.\",\"generated_at\":1792366391}"}],"structuredContent":{"fact":"Fresh cheeses (ricotta, chèvre) soften but don’t stretch like mozzarella.","generated_at":1792366391},"isError":false}}
+
+
+[exit 0]

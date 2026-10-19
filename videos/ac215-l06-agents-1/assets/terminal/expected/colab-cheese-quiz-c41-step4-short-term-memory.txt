@@ -1,0 +1,14 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 41 (0-based index in the .ipynb; first line: '# @title Step 4: Adding Short-term Memory'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted by assets/terminal/colab_outputs.py: the saved text, ANSI codes removed, an HTML output reduced to its text (or its embedded quiz data).
+[stdout]
+======================================================================
+Step 4: With Conversation State/History (Short-term Memory)
+======================================================================
+
+[display: markdown]
+For a grilled cheese sandwich with mild flavors, I recommend using a combination of mild cheddar and mozzarella. 
+
+- **Mild Cheddar**: It melts well and has a creamy texture with a gentle flavor that kids usually enjoy. It starts melting around 150°F (65°C), making it perfect for a quick sandwich.
+
+- **Mozzarella**: Known for its excellent melting properties, mozzarella adds a gooey texture and a mild, milky taste. It melts at a slightly lower temperature, around 130°F (54°C), which complements the cheddar nicely.
+
+Both cheeses are readily available in most grocery stores. You can use them in equal parts for a balanced flavor and texture. Make sure to shred the cheese for even melting. Cook the sandwich on medium-low heat to ensure the cheese melts thoroughly without burning the bread. Enjoy!

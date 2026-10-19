@@ -1,0 +1,13 @@
+$ docker ps -a; docker network ls; ls -la docker-volumes/chromadb
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+NETWORK ID     NAME      DRIVER    SCOPE
+cd5f6cc0ba21   bridge    bridge    local
+7919486b2391   host      host      local
+9e7ff530c1c6   none      null      local
+total 58184
+drwxr-sr-x 4 root root     4096 Oct 16 00:55 .
+drwxr-sr-x 3 root root     4096 Oct 16 00:52 ..
+drwxr-sr-x 2 root root     4096 Oct 16 00:54 ab125f80-4e2e-4751-8eb4-8d7d06c87e93
+-rw-r--r-- 1 root root 59781120 Oct 16 00:55 chroma.sqlite3
+drwxr-sr-x 2 root root     4096 Oct 16 00:54 f460d2ab-cd69-4809-a914-a9e03d4e9ec4
+[exit 0]

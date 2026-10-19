@@ -1,0 +1,10 @@
+$ sh docker-shell.sh
+ Network l05ex-rag-network Creating 
+ Network l05ex-rag-network Creating 
+ Network l05ex-rag-network Created 
+ Network l05ex-rag-network Created 
+ Container l05ex-rag-chromadb Creating 
+ Container l05ex-rag-chromadb Created 
+ Container l05ex-rag-chromadb Starting 
+Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint l05ex-rag-chromadb (e96b5051d7d7bb5f02389512bd37022639c7a115f710244021dcfa334c4d122c): Bind for 0.0.0.0:18766 failed: port is already allocated
+[exit 1]

@@ -95,12 +95,18 @@ ENV: {ipa: "ˌiːˌɛnvˈiː", say: "E-N-V"}
 ENTRYPOINT: {ipa: "ˈɛntɹi pˌɔɪnt", say: "entry point"}
 entrypoint: {ipa: "ˈɛntɹi pˌɔɪnt", say: "entry point"}
 buildx: {ipa: "bˈɪld ˈɛks", say: "build-ex"}
+rerun: {ipa: "ɹˌiːɹˈʌn", say: "re-run"}
+reruns: {ipa: "ɹˌiːɹˈʌnz", say: "re-runs"}
+"image's": {ipa: "ˈɪmɪdʒᵻz", say: "image's"}
+dlops: {ipa: "dˌiːˈɛl ˈɑːps", say: "D-L ops"}
 # AC215 L04
 mega-pipeline.json: {ipa: "mˈɛɡə pˈaɪplaɪn dˈɑːt dʒˈeɪsˈɑːn", say: "mega pipeline dot JSON"}
 mega-pipeline-sa: {ipa: "mˈɛɡə pˈaɪplaɪn ˈɛs ˈeɪ", say: "mega pipeline S-A"}
 docker-compose.yml: {ipa: "dˈɑːkɚ kəmpˈoʊz dˈɑːt jˈæməl", say: "docker compose dot yaml"}
 toynet: {ipa: "tˈɔɪ nˈɛt", say: "toy net"}
 "toynet's": {ipa: "tˈɔɪ nˈɛts", say: "toy net's"}
+"port toy": {ipa: "pˈɔːɹt tˈoɪ", say: "port toy"}
+"Port toy": {ipa: "pˈɔːɹt tˈoɪ", say: "Port toy"}
 "3.8": {ipa: "θɹˈiː pɔɪnt ˈeɪt", say: "three point eight"}
 "3.8.17": {ipa: "θɹˈiː pɔɪnt ˈeɪt pɔɪnt sˈɛvəntˌiːn", say: "three point eight point seventeen"}
 "3.14.8": {ipa: "θɹˈiː pɔɪnt fˈɔːɹtiːn pɔɪnt ˈeɪt", say: "three point fourteen point eight"}
@@ -113,3 +119,29 @@ toynet: {ipa: "tˈɔɪ nˈɛt", say: "toy net"}
 "9100": {ipa: "nˈaɪnti wˈʌn hˈʌndɹɪd", say: "ninety-one hundred"}
 "9200": {ipa: "nˈaɪnti tˈuː hˈʌndɹɪd", say: "ninety-two hundred"}
 "9300": {ipa: "nˈaɪnti θɹˈiː hˈʌndɹɪd", say: "ninety-three hundred"}
+# AC215 L05
+RAG: {ipa: "ɹˈæɡ", say: "rag"}
+Self-RAG: {ipa: "sˈɛlf ɹˈæɡ", say: "self rag"}
+Tolminc: {ipa: "tˈoʊlmɪnts", say: "tole-mints"}
+transhumance: {ipa: "tɹænzhjˈuːməns", say: "tranz-hyoo-mence"}
+"0.13.1": {ipa: "zˈiəɹoʊ pɔɪnt θˈɜːtiːn pɔɪnt wˈʌn", say: "zero point thirteen point one"}
+"3.1": {ipa: "θɹˈiː pɔɪnt wˈʌn", say: "three point one"}
+"0.16": {ipa: "zˈiəɹoʊ pɔɪnt sˈɪkstiːn", say: "zero point sixteen"}
+"0.31": {ipa: "zˈiəɹoʊ pɔɪnt θˈɜːɾi wˈʌn", say: "zero point thirty-one"}
+"0.8": {ipa: "zˈiəɹoʊ pɔɪnt ˈeɪt", say: "zero point eight"}
+"0.42": {ipa: "zˈiəɹoʊ pɔɪnt fˈɔːɹ tˈuː", say: "zero point four two"}
+"0.67": {ipa: "zˈiəɹoʊ pɔɪnt sˈɪks sˈɛvən", say: "zero point six seven"}
+"0.75": {ipa: "zˈiəɹoʊ pɔɪnt sˈɛvən fˈaɪv", say: "zero point seven five"}
+"0.57, 0.77, 0.43, 0.93": {ipa: "zˈiəɹoʊ pɔɪnt fˈaɪv sˈɛvən, zˈiəɹoʊ pɔɪnt sˈɛvən sˈɛvən, zˈiəɹoʊ pɔɪnt fˈɔːɹ θɹˈiː, zˈiəɹoʊ pɔɪnt nˈaɪn θɹˈiː", say: "zero point five seven, zero point seven seven, zero point four three, zero point nine three"}
+# AC215 L06
+ADK: {ipa: "ˌeɪdˌiːkˈeɪ", say: "A-D-K"}
+enum: {ipa: "ˈiːnʌm", say: "ee-num"}
+Colab: {ipa: "kˈoʊlæb", say: "co-lab"}
+CUDA: {ipa: "kˈuːdə", say: "koo-duh"}
+Havarti: {ipa: "həvˈɑːɹɾi", say: "huh-var-tee"}
+"1.6": {ipa: "wˈʌn pɔɪnt sˈɪks", say: "one point six"}
+"2.12": {ipa: "tˈuː pɔɪnt twˈɛlv", say: "two point twelve"}
+"2.12.0": {ipa: "tˈuː pɔɪnt twˈɛlv pɔɪnt zˈiəɹoʊ", say: "two point twelve point zero"}
+"1.27.5": {ipa: "wˈʌn pɔɪnt twˈɛnti sˈɛvən pɔɪnt fˈaɪv", say: "one point twenty-seven point five"}
+"3.10": {ipa: "θɹˈiː pɔɪnt tˈɛn", say: "three point ten"}
+"406": {ipa: "fˈɔːɹ ˈoʊ sˈɪks", say: "four oh six"}

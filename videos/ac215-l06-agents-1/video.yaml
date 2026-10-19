@@ -1,0 +1,62 @@
+id: ac215-l06-agents-1
+title: "AC215 · Lecture 6 — LLM: Agents I (follow-along: llm-rag, llm-agent-google-adk)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 6
+  lecture_title: "LLM: Agents I"
+  ed: https://edstem.org/us/courses/97373/lessons/166030/
+  repos:
+    # L06's README section; S05 repeats the three L05 steps it stands on (Prerequisites,
+    # Run LLM RAG Container, Load Embeddings into Vector Database) for a viewer starting fresh.
+    - {repo: dlops-io/llm-rag, branch: main, commit: e17a39f35bc07b440f573def480adaf4703f8b91,
+       sections: ["Agents", "Prerequisites", "Run LLM RAG Container", "Load Embeddings into Vector Database"]}
+    # quoted for comparison only, not followed:
+    #   68e0bde = the staff's committed char-split embeddings (stand in for --embed, loaded for real in S05);
+    #   96d5fd7 = the Tolminc book before 85bba32 rewrote it (out.txt quotes this old text, S07).
+    - {repo: dlops-io/llm-rag, branch: main, commit: 68e0bdecba017b506c7646d710b1fbf1bc6b31fc,
+       sections: ["llmrag/outputs/embeddings-char-split-*.jsonl"]}
+    - {repo: dlops-io/llm-rag, branch: main, commit: 96d5fd78d24607e20ae84d5339ed62abaadff17d,
+       sections: ["input-datasets/books/Tolminc Cheese.txt"]}
+    # the whole root README; module READMEs and code quoted for orientation:
+    #   1-baseline (S11), 3-mcp-tools (S12), 4-production-ready/app/runner.py (S08), 5-custom-agent (S13).
+    - {repo: dlops-io/llm-agent-google-adk, branch: main, commit: f89faa79de744f6a046e30dff24b3b6f1d73720b,
+       sections: ["Getting Started", "Running Agents"]}
+  colab:
+    # notebooks have no commit: the copies used are in assets/source/colab/ (downloaded 2026-10-17),
+    # their saved outputs in assets/terminal/expected/colab-*.txt (tagged "recorded").
+    - {name: "Cheese Quiz", url: "https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm?usp=sharing",
+       sections: ["Prerequisites", "LLM to Agent", "Managing LLM Inputs", "Tools, MCP", "Cheese Quiz Guild"]}
+    - {name: "Travel Planner", url: "https://colab.research.google.com/drive/1I_jJEHJsVkGxNoSC1c4wEoVF2QL6vCVY?usp=sharing",
+       sections: ["Prerequisites", "Define Tools", "Business Logic", "Travel Planner Agent in Action"]}
+    - {name: "Cheese Newsletter · Harness", url: "https://colab.research.google.com/drive/1nnHrJ4Si3tpgUQl6HqlcwxKymV1-ecPv?usp=sharing",
+       sections: ["Prerequisites", "Demo Newsletter Catalog", "Define Sub Agents", "Setup Agent", "Agent in Action", "Agent Outputs"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L06-agents-1.md
+audience: "AC215 student who has done L1–L5 (uv and lockfiles, containers and docker-shell.sh with a mounted service-account key, L05's RAG pipeline and its ChromaDB collection); reads Python and has used a chat assistant, but has never written a tool for an LLM, used an agent framework or heard of MCP; watching with their llm-rag clone, a fresh llm-agent-google-adk clone and a Colab copy of the Cheese Quiz open, pausing to run each command"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,       cls: Hook,               title: "Who searched your database?"}
+  - {file: scenes/s02_steering.py,   cls: SteeringWheel,      title: "Who holds the steering wheel?"}
+  - {file: scenes/s03_envelope.py,   cls: Envelope,           title: "Everything the model knows is in the envelope"}
+  - {file: scenes/s04_menu.py,       cls: ToolMenu,           title: "A menu of two tools"}
+  - {file: scenes/s05_container.py,  cls: BackInTheContainer, title: "Back in the container: the agent needs an index"}
+  - {file: scenes/s06_call1.py,      cls: CallOne,            title: "Call 1: the model writes the call"}
+  - {file: scenes/s07_call2.py,      cls: CallTwo,            title: "Call 2: your code ran it, the model answers"}
+  - {file: scenes/s08_loop.py,       cls: TheLoop,            title: "From two calls to a loop"}
+  - {file: scenes/s09_adk_setup.py,  cls: AdkSetup,           title: "ADK: clone, configure, and a sync that fails"}
+  - {file: scenes/s10_adk_web.py,    cls: AdkWeb,             title: "adk web and the folder names"}
+  - {file: scenes/s11_state.py,      cls: SharedState,        title: "Runner, session, state: the shared whiteboard"}
+  - {file: scenes/s12_mcp.py,        cls: McpPlugs,           title: "Tools you didn't write: MCP"}
+  - {file: scenes/s13_many.py,       cls: ManyAgents,         title: "Many agents: who plans the order?"}
+  - {file: scenes/s14_approval.py,   cls: ApprovalGate,       title: "The harness: only a human says yes"}
+  - {file: scenes/s15_receipt.py,    cls: Receipt,            title: "The harness: success is a receipt"}
+  - {file: scenes/s16_recap.py,      cls: Recap,              title: "Tear down, recap, and what's next"}
+parts:
+  - id: part1
+    title: "AC215 · L6, part 1: what an agent is, and function calling by hand (llm-rag)"
+    scenes: [s01_hook, s02_steering, s03_envelope, s04_menu, s05_container, s06_call1, s07_call2, s08_loop]
+  - id: part2
+    title: "AC215 · L6, part 2: frameworks own the loop — ADK, MCP, many agents and the harness"
+    scenes: [s09_adk_setup, s10_adk_web, s11_state, s12_mcp, s13_many, s14_approval, s15_receipt, s16_recap]

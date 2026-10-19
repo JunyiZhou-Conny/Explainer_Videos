@@ -1,0 +1,18 @@
+$ python cli.py --help
+usage: cli.py [-h] [--chunk] [--embed] [--load] [--query] [--chat] [--get]
+              [--agent] [--chunk_type CHUNK_TYPE]
+
+CLI
+
+options:
+  -h, --help            show this help message and exit
+  --chunk               Chunk text
+  --embed               Generate embeddings
+  --load                Load embeddings to vector db
+  --query               Query vector db
+  --chat                Chat with LLM
+  --get                 Get documents from vector db
+  --agent               Chat with LLM Agent
+  --chunk_type CHUNK_TYPE
+                        char-split | recursive-split | semantic-split
+[exit 0]
