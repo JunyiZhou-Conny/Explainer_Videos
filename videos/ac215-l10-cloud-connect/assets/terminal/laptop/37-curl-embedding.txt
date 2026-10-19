@@ -1,0 +1,8 @@
+$ curl -s -i 'http://localhost:9000/rag/embedding?text=hello'
+HTTP/1.1 500 Internal Server Error
+date: Mon, 19 Oct 2026 22:17:48 GMT
+server: uvicorn
+content-length: 21
+content-type: text/plain; charset=utf-8
+
+Internal Server Error[exit 0]

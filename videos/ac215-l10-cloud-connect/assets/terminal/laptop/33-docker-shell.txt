@@ -1,1 +1,174 @@
 $ sh docker-shell.sh
+
+[+] Building 188.2s (11/11) FINISHED                                                           docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 1.52kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim-bookworm                             0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => CACHED [1/6] FROM docker.io/library/python:3.12-slim-bookworm@sha256:a321435ba68a4c1b50c76ad9e6a8a1  0.0s
+ => => resolve docker.io/library/python:3.12-slim-bookworm@sha256:a321435ba68a4c1b50c76ad9e6a8a1711dd65  0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 422.18kB                                                                    0.0s
+ => [2/6] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &&     apt-  27.7s
+ => [3/6] WORKDIR /app                                                                                   0.1s
+ => [4/6] ADD --chown=app:app Pipfile Pipfile.lock /app/                                                 0.0s
+ => [5/6] RUN pipenv sync                                                                               90.3s
+ => [6/6] ADD --chown=app:app . /app                                                                     0.3s
+ => exporting to image                                                                                  69.5s
+ => => exporting layers                                                                                 47.0s
+ => => exporting manifest sha256:3a8c1e9212f40c3d5368280d0567734adc3939f7875ebef346a68783c79c55ce        0.0s
+ => => exporting config sha256:359249505bed9b1327a0645c8154f4d81c74efb0c77873651abad1fd319831f5          0.0s
+ => => exporting attestation manifest sha256:efac28aa4d7b70241bb77062571d33736e18a9198ec7125ba03781657a  0.0s
+ => => exporting manifest list sha256:f792354f5ae731c2a8be85e0ff524e5d7dc8a0126bd91e9e2555a4fd1e3ed7ca   0.0s
+ => => naming to docker.io/library/llm-rag-analysis-api-service:latest                                   0.0s
+ => => unpacking to docker.io/library/llm-rag-analysis-api-service:latest                               22.5s
+Container is running!!!
+
+The following commands are available:
+    uvicorn_server
+        Run the Uvicorn Server
+
+Launching subshell in virtual environment...
+
+(app) app@ed21c759d782:/app$ uvicorn_server
+INFO:     Will watch for changes in these directories: ['/app/api']
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+INFO:     Started reloader process [16] using WatchFiles
+INFO:     Started server process [18]
+INFO:     Waiting for application startup.
+Startup tasks
+INFO:     Application startup complete.
+INFO:     172.19.0.1:43804 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.1:37746 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.1:37760 - "GET /docs HTTP/1.1" 200 OK
+INFO:     172.19.0.1:37770 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     172.19.0.1:37772 - "GET /rag/embedding?text=hello HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/applications.py", line 1215, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/telemetry/_asgi.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/routing.py", line 2786, in app
+    await route.handle(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/routing.py", line 1817, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/routing.py", line 2869, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/routing.py", line 1843, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/routing.py", line 1308, in handle
+    await effective_context.app(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/routing.py", line 165, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/routing.py", line 151, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/routing.py", line 727, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/fastapi/routing.py", line 360, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/api/routers/rag.py", line 222, in get_text_embedding
+    embedding = generate_query_embedding(text)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/api/routers/rag.py", line 90, in generate_query_embedding
+    response = llm_client.models.embed_content(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/google/genai/models.py", line 6141, in embed_content
+    return self._embed_content(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/google/genai/models.py", line 4935, in _embed_content
+    response = self._api_client.request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/google/genai/_api_client.py", line 1757, in request
+    response = self._request(http_request, http_options, stream=False)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/google/genai/_api_client.py", line 1544, in _request
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/google/genai/_api_client.py", line 1471, in _request_once
+    http_request.headers['Authorization'] = f'Bearer {self._access_token()}'
+                                                      ^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/google/genai/_api_client.py", line 1310, in _access_token
+    self._credentials, project = load_auth(project=self.project)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/google/genai/_api_client.py", line 227, in load_auth
+    credentials, loaded_project_id = google.auth.default(  # type: ignore[no-untyped-call]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/google/auth/_default.py", line 716, in default
+    credentials, project_id = checker()
+                              ^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/google/auth/_default.py", line 709, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/google/auth/_default.py", line 352, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.12/site-packages/google/auth/_default.py", line 178, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+google.auth.exceptions.DefaultCredentialsError: File /secrets/llm-service-account.json was not found.
+INFO:     172.19.0.1:37776 - "OPTIONS /rag/llm-response HTTP/1.1" 200 OK
+INFO:     172.19.0.1:37790 - "GET /capture-done HTTP/1.1" 404 Not Found
+^C
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [18]
+INFO:     Stopping reloader process [16]
+(app) app@ed21c759d782:/app$
+(app) app@ed21c759d782:/app$ exit
+exit
+[exit 0]

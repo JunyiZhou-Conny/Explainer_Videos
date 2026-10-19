@@ -1,0 +1,8 @@
+$ curl -s http://localhost:9000/openapi.json | python3 -c 'import sys, json; [print(m.upper(), p) for p, ms in json.load(sys.stdin)["paths"].items() for m in ms]'
+GET /
+GET /rag/embedding
+POST /rag/llm-response
+GET /rag/agent_call
+POST /rag/llm-agent-response
+POST /rag/fine-tune-llm-response
+[exit 0]
