@@ -1,0 +1,12 @@
+$ tree -L 2 .
+.
+├── cheese-app-v0
+│   ├── README.md
+│   ├── api-service
+│   ├── frontend-ai-chatbot
+│   └── llm-rag
+└── secrets
+    └── llm-service-account.json
+
+6 directories, 2 files
+[exit 0]
