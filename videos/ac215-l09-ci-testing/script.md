@@ -592,7 +592,8 @@ SHOW: TRACKER E3. V4 funnel reprise: a RED findings bar steps down as chips type
 terminal: `uv run ruff check --statistics` (walk step-02) → TERM(babykev/s02-12: 2–6, …, 14–15),
 `Found 70 errors.`; then `just lint --fix` → TERM(babykev/s02-14: 692), `70 errors, 1 fixed, 69
 remaining`; then `just lint --fix --unsafe-fixes` → TERM(babykev/s02-15: 360), `32 fixed, 37
-remaining`. The bar settles at 37 with the caption "the rest need a person". A GREEN card:
+remaining`. A faint first notch above 70 carries a GREY chip `recorded · walk.md: 79 before just
+fmt` (slide 31; not spoken). The bar settles at 37 with the caption "the rest need a person". A GREEN card:
 CODE(babykev/pyproject.toml: 60–65), `line-length = 100` highlighted. Fade out.
 SAY: Step 2 is format and lint at scale, with ruff in both roles. After formatting, the linter counts 70 findings. Safe automatic fixes remove one. Unsafe fixes, applied deliberately, remove 32 more; 37 remain, and those need a person. And the width war from part 1 is settled in one line, line length 100, written once in pyproject.toml and read by the formatter and the linter alike.
 
@@ -680,8 +681,8 @@ SHOW: The coverage highlighter sweeps every line of a `branch_mask` panel GREEN 
 stay wrong beside it.
 SAY: No. Coverage counts lines that ran, never whether anyone checked what they produced. It is necessary, and never sufficient.
 
-SHOW: TRACKER E6 · extra. It types `uv run ty check` (extra at this step; the walk runs it here
-too) → TERM(babykev/s05-07: 2–3, …, 55). `Found 6 diagnostics` RED. Then `just check` (walk
+SHOW: TRACKER E6. It types `uv run ty check` (walk step-05) → TERM(babykev/s05-07: 2–3, …, 55).
+`Found 6 diagnostics` RED. Then `just check` (walk
 step-05) → TERM(babykev/s05-11: 2–6, 22–23), `92 passed`, `Required test coverage of 90% reached`
 GREEN; a YELLOW bracket pairs the GREEN check with the RED diagnostics.
 SAY: Also green and blind: the type checker. Running ty finds 6 diagnostics, and just check is green anyway: types are not in the gate yet, and a check outside the gate protects nobody.
