@@ -435,7 +435,9 @@ SHOW: V1: the gate table slides in and its first row fills (YELLOW, then GREEN):
 integration tests / pytest in the image / docker run … pytest / yes — hermetic". TRACKER C9. Strip
 terminal types `sh docker-shell.sh` (README.md line 210) → TERM(laptop/part3-opt3-01: 31–33);
 TRACKER C10: at the prompt `app@f738c22fed33:/app$` it types the four README commands in turn
-(README.md lines 216–225), showing only the last: `pytest tests/unit/ --cov=api --cov-report=html`
+(README.md lines 216–225), showing only the last: `pytest tests/unit/ -v`, `pytest tests/integration/ -v` and
+`pytest tests/unit/ tests/integration/ -v`, each collapsed to its summary line
+(TERM(laptop/part3-opt3-01: 56), (78), (111)), then `pytest tests/unit/ --cov=api --cov-report=html`
 → TERM(laptop/part3-opt3-01: 137–138), then `ls htmlcov/ | head -4` (extra) →
 TERM(laptop/part3-opt3-01: 140–143), then `exit`. A RED dashed box around the `htmlcov` listing,
 caption "inside a --rm container · gone on exit".
@@ -455,7 +457,9 @@ SAY: This image ships its dev tools as runtime dependencies, with open ended pin
 
 SHOW: TRACKER C6. A title card, slide 94's question redrawn: "can anything but our code make it
 fail?" over the GREEN dashed border. GREY tag `Lecture 9 · slides 94–97` (top right, whole scene).
-The terminal types `docker run -d --name api-server -p 9000:9000 -e DEV=1 cheese-app-api:local`
+A small GREY chip "the README repeats the build first (line 190) — already built, all CACHED
+(`laptop/part3-opt2-01`)". The terminal types
+`docker run -d --name api-server -p 9000:9000 -e DEV=1 cheese-app-api:local`
 (README.md line 193; folds) → TERM(laptop/part3-opt2-02: 2). `▶ your turn`.
 SAY: Option 2 is the system test, and the lecture's question for it: can anything but our code make it fail? Start a live server, detached, named api-server, publishing port 9000, with DEV equals 1. All you get back is a container ID. Pause and run it.
 
