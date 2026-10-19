@@ -1,0 +1,31 @@
+$ just check
+uv run ruff format "$@"
+9 files already formatted
+uv run ruff check "$@"
+All checks passed!
+uv run pytest "$@"
+.....................................................................    [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                      Stmts   Miss  Cover   Missing
+-------------------------------------------------------
+src/babykev/__init__.py       0      0   100%
+src/babykev/api.py           75      0   100%
+src/babykev/cli.py           12      0   100%
+src/babykev/docs.py         228      7    97%   75, 192, 201, 205, 208, 221, 248
+-------------------------------------------------------
+TOTAL                       315      7    98%
+Required test coverage of 90% reached. Total coverage: 97.78%
+69 passed in 0.57s
+babykev.api                       12 of  12
+babykev.cli                        1 of   1
+babykev.docs                      26 of  26
+tests/unit/test_api.py            29 of  29
+tests/unit/test_cli.py             4 of   4
+tests/unit/test_docs.py           16 of  16
+
+88 of 88 functions, methods and classes are typed and documented
+Valid file: pyproject.toml
+Resolved 30 packages in 1ms
+[exit 0]

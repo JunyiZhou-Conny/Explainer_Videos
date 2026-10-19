@@ -1,0 +1,3 @@
+$ just --version
+just 1.59.0
+[exit 0]

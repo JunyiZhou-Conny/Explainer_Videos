@@ -1,0 +1,9 @@
+step-00         Where we start
+step-01         The contract: api.py, and its tests
+step-02         Fix the two test errors, and format and lint
+step-03         Clean code:  formatted, linted, typed, docstrings, import order, test coverage
+step-04         Documentation from the code
+step-04b        Every function documented
+step-05         A second file: model.py
+step-05a        The tests that could tell
+step-05b        Two images from one lockfile

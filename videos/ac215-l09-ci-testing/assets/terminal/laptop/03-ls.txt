@@ -1,0 +1,18 @@
+$ ls -la
+total 76
+drwxrwsrwx    7 student  student       4096 Oct 19 21:21 .
+drwxr-sr-x    5 student  student       4096 Oct 19 21:21 ..
+drwxrwsrwx    7 student  student       4096 Oct 19 21:21 .git
+drwxrwsrwx    3 student  student       4096 Oct 19 21:21 .github
+-rw-rw-rw-    1 student  student        431 Oct 19 21:21 .gitignore
+-rw-rw-rw-    1 student  student       1279 Oct 19 21:21 .pre-commit-config.yaml
+-rw-rw-rw-    1 student  student       1212 Oct 19 21:21 Dockerfile
+-rw-rw-rw-    1 student  student      17154 Oct 19 21:21 README.md
+drwxrwsrwx    2 student  student       4096 Oct 19 21:21 assets
+-rwxrwxrwx    1 student  student        585 Oct 19 21:21 docker-entrypoint.sh
+-rwxrwxrwx    1 student  student        463 Oct 19 21:21 docker-shell.sh
+-rw-rw-rw-    1 student  student        440 Oct 19 21:21 pyproject.toml
+-rw-rw-rw-    1 student  student        515 Oct 19 21:21 pytest.ini
+drwxrwsrwx    3 student  student       4096 Oct 19 21:21 src
+drwxrwsrwx    5 student  student       4096 Oct 19 21:21 tests
+[exit 0]

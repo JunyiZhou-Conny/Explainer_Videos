@@ -1,0 +1,28 @@
+$ git commit -m "Your commit message"
+[INFO] Initializing environment for https://github.com/pre-commit/pre-commit-hooks.
+[WARNING] repo `https://github.com/pre-commit/pre-commit-hooks` uses deprecated stage names (commit, push) which will be removed in a future version.  Hint: often `pre-commit autoupdate --repo https://github.com/pre-commit/pre-commit-hooks` will fix this.  if it does not -- consider reporting an issue to that repo.
+[INFO] Initializing environment for https://github.com/psf/black.
+[INFO] Initializing environment for https://github.com/PyCQA/flake8.
+[INFO] Installing environment for https://github.com/pre-commit/pre-commit-hooks.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+[INFO] Installing environment for https://github.com/psf/black.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+[INFO] Installing environment for https://github.com/PyCQA/flake8.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+Trim trailing whitespace.............................(no files to check)Skipped
+Fix end of files.....................................(no files to check)Skipped
+Check YAML syntax....................................(no files to check)Skipped
+Check for large files................................(no files to check)Skipped
+Check JSON syntax....................................(no files to check)Skipped
+Check for merge conflicts............................(no files to check)Skipped
+Detect private keys..................................(no files to check)Skipped
+Format Python code with Black........................(no files to check)Skipped
+Check Python code with Flake8........................(no files to check)Skipped
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+[exit 1]

@@ -1,0 +1,6 @@
+$ just setup
+Resolved 30 packages in 1ms
+Checked 29 packages in 0.38ms
+pre-commit installed at .git/hooks/pre-commit
+Quarto is not on this machine; just docs needs it: https://quarto.org/docs/get-started/
+[exit 0]

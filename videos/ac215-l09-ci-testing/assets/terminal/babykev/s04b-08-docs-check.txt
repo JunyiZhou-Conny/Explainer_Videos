@@ -1,0 +1,11 @@
+$ just docs check
+babykev.api                       11 of  12
+babykev.cli                        1 of   1
+babykev.docs                      26 of  26
+tests/unit/test_api.py            29 of  29
+tests/unit/test_cli.py             4 of   4
+tests/unit/test_docs.py           16 of  16
+
+babykev.api:render(indent): no docment
+87 of 88 functions, methods and classes are typed and documented
+[exit 1]

@@ -1,0 +1,3 @@
+$ sed -n '140p' src/babykev/model.py
+    same = torch.ones_like(causal) | (s[None, :] == 0)
+[exit 0]

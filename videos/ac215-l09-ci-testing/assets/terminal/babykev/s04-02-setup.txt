@@ -1,0 +1,13 @@
+$ just setup
+Resolved 30 packages in 1ms
+   Building babykev @ file:///home/student/babykev
+warning: `build_system.requires = ["uv-build>=0.12.13,<0.13.0"]` does not contain the current uv version 0.13.2
+      Built babykev @ file:///home/student/babykev
+Prepared 1 package in 7ms
+Uninstalled 1 package in 0.99ms
+Installed 2 packages in 5ms
+ ~ babykev==0.1.0 (from file:///home/student/babykev)
+ + fastcore==2.2.32
+pre-commit installed at .git/hooks/pre-commit
+Quarto is not on this machine; just docs needs it: https://quarto.org/docs/get-started/
+[exit 0]

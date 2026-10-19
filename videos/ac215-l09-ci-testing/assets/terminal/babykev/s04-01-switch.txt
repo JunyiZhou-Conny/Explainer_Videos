@@ -1,0 +1,4 @@
+$ git switch --detach step-04
+Previous HEAD position was 651cd62 step-03: format and lint, and docstrings and types everywhere, comprehensive checks, and hooks
+HEAD is now at d27a7f1 step-04: the documentation comes from the code; a docs command and a site
+[exit 0]

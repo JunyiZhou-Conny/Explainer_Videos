@@ -1,0 +1,35 @@
+$ uv run validate-pyproject pyproject.toml
+warning: No `requires-python` value found in the workspace. Defaulting to `>=3.13`.
+   Building babykev @ file:///home/student/babykev
+warning: `build_system.requires = ["uv-build>=0.12.13,<0.13.0"]` does not contain the current uv version 0.13.2
+      Built babykev @ file:///home/student/babykev
+Uninstalled 1 package in 0.86ms
+Installed 1 package in 2ms
+[ERROR] `project` must not contain {'requires_python'} properties
+Traceback (most recent call last):
+  File "/home/student/babykev/.venv/lib/python3.13/site-packages/validate_pyproject/cli.py", line 200, in exceptions2exit
+    yield
+  File "/home/student/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "/home/student/babykev/.venv/lib/python3.13/site-packages/validate_pyproject/cli.py", line 241, in run
+    exceptions.raise_if_any()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/student/babykev/.venv/lib/python3.13/site-packages/validate_pyproject/cli.py", line 309, in raise_if_any
+    raise self._members[0][1]
+  File "/home/student/babykev/.venv/lib/python3.13/site-packages/validate_pyproject/cli.py", line 237, in run
+    _run_on_file(validator, params, file)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/babykev/.venv/lib/python3.13/site-packages/validate_pyproject/cli.py", line 251, in _run_on_file
+    validator(toml_equivalent)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/student/babykev/.venv/lib/python3.13/site-packages/validate_pyproject/api.py", line 277, in __call__
+    with detailed_errors():
+         ~~~~~~~~~~~~~~~^^
+  File "/home/student/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/home/student/babykev/.venv/lib/python3.13/site-packages/validate_pyproject/error_reporting.py", line 95, in detailed_errors
+    raise ValidationError._from_jsonschema(ex) from None
+validate_pyproject.error_reporting.ValidationError: `project` must not contain {'requires_python'} properties
+Invalid file: pyproject.toml
+[exit 1]

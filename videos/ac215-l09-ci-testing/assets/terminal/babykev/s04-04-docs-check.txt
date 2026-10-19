@@ -1,0 +1,94 @@
+$ just docs check
+babykev.api                        0 of  12
+babykev.cli                        1 of   1
+babykev.docs                      26 of  26
+tests/unit/test_api.py            23 of  29
+tests/unit/test_cli.py             0 of   4
+tests/unit/test_docs.py            0 of  16
+
+babykev.api:Noul.type: no description
+babykev.api:Noul.instructions: no description
+babykev.api:Noul.criteria: no description
+babykev.api:Choice.type: no description
+babykev.api:Choice.instructions: no description
+babykev.api:Choice.criteria: no description
+babykev.api:Choice._check: no docstring
+babykev.api:Choice._check: no return docment
+babykev.api:Score.type: no description
+babykev.api:Score.instructions: no description
+babykev.api:Score.criteria: no description
+babykev.api:SystemOneRequest.state: no description
+babykev.api:SystemOneRequest.questions: no description
+babykev.api:render(v): no docment
+babykev.api:render(indent): no docment
+babykev.api:render: no return docment
+babykev.api:option_text(name): no docment
+babykev.api:option_text(desc): no docment
+babykev.api:option_text: no return docment
+babykev.api:to_record(req): no docment
+babykev.api:to_record: no return docment
+babykev.api:choice_confidence(p): no docment
+babykev.api:choice_confidence: no return docment
+babykev.api:score_confidence(p): no docment
+babykev.api:score_confidence: no return docment
+babykev.api:round_prob(x): no docment
+babykev.api:round_prob: no return docment
+babykev.api:to_answers(probs): no docment
+babykev.api:to_answers(meta): no docment
+babykev.api:to_answers: no return docment
+tests/unit/test_api.py:cheese_request: no return docment
+tests/unit/test_api.py:test_sample_line_fits_the_contract(line): no docment
+tests/unit/test_api.py:test_sample_line_has_a_usable_label_on_every_question(line): no docment
+tests/unit/test_api.py:test_render_flattens_json_into_text(value): no docment
+tests/unit/test_api.py:test_render_flattens_json_into_text(text): no docment
+tests/unit/test_api.py:test_option_text_adds_a_description_only_when_there_is_one(name): no docment
+tests/unit/test_api.py:test_option_text_adds_a_description_only_when_there_is_one(description): no docment
+tests/unit/test_api.py:test_option_text_adds_a_description_only_when_there_is_one(text): no docment
+tests/unit/test_api.py:test_score_confidence_is_one_when_certain(level): no docment
+tests/unit/test_cli.py:run(monkeypatch): no docment
+tests/unit/test_cli.py:run(words): no docment
+tests/unit/test_cli.py:test_help_is_printed_for_help_and_for_no_words(monkeypatch): no docment
+tests/unit/test_cli.py:test_help_is_printed_for_help_and_for_no_words(capsys): no docment
+tests/unit/test_cli.py:test_help_is_printed_for_help_and_for_no_words(words): no docment
+tests/unit/test_cli.py:test_an_unknown_command_is_refused_with_exit_code_2(monkeypatch): no docment
+tests/unit/test_cli.py:test_an_unknown_command_is_refused_with_exit_code_2(capsys): no docment
+tests/unit/test_cli.py:test_docs_is_passed_to_the_docs_command(monkeypatch): no docment
+tests/unit/test_cli.py:test_docs_is_passed_to_the_docs_command(capsys): no docment
+tests/unit/test_docs.py:example(tmp_path): no docment
+tests/unit/test_docs.py:example(monkeypatch): no docment
+tests/unit/test_docs.py:example: no return docment
+tests/unit/test_docs.py:test_inventory_lists_the_public_symbols_in_source_order(tmp_path): no docment
+tests/unit/test_docs.py:test_inventory_lists_the_public_symbols_in_source_order(monkeypatch): no docment
+tests/unit/test_docs.py:test_inventory_knows_the_line_of_each_symbol(tmp_path): no docment
+tests/unit/test_docs.py:test_inventory_knows_the_line_of_each_symbol(monkeypatch): no docment
+tests/unit/test_docs.py:test_markdown_has_a_heading_a_signature_a_docstring_and_a_table_per_function(tmp_path): no docment
+tests/unit/test_docs.py:test_markdown_has_a_heading_a_signature_a_docstring_and_a_table_per_function(monkeypatch): no docment
+tests/unit/test_docs.py:test_markdown_writes_a_type_alias_by_its_name(tmp_path): no docment
+tests/unit/test_docs.py:test_markdown_writes_a_type_alias_by_its_name(monkeypatch): no docment
+tests/unit/test_docs.py:test_markdown_shows_a_class_and_its_public_methods_only(tmp_path): no docment
+tests/unit/test_docs.py:test_markdown_shows_a_class_and_its_public_methods_only(monkeypatch): no docment
+tests/unit/test_docs.py:test_markdown_shows_a_pydantic_model_as_a_table_of_fields(tmp_path): no docment
+tests/unit/test_docs.py:test_markdown_shows_a_pydantic_model_as_a_table_of_fields(monkeypatch): no docment
+tests/unit/test_docs.py:test_markdown_has_no_links_and_no_ids(tmp_path): no docment
+tests/unit/test_docs.py:test_markdown_has_no_links_and_no_ids(monkeypatch): no docment
+tests/unit/test_docs.py:test_an_unknown_module_is_a_lookup_error(tmp_path): no docment
+tests/unit/test_docs.py:test_an_unknown_module_is_a_lookup_error(monkeypatch): no docment
+tests/unit/test_docs.py:test_gaps_names_what_each_symbol_is_missing(tmp_path): no docment
+tests/unit/test_docs.py:test_gaps_names_what_each_symbol_is_missing(monkeypatch): no docment
+tests/unit/test_docs.py:test_a_return_that_is_not_none_needs_a_docment(tmp_path): no docment
+tests/unit/test_docs.py:test_a_return_that_is_not_none_needs_a_docment(monkeypatch): no docment
+tests/unit/test_docs.py:test_check_prints_a_count_per_module_then_every_gap_and_fails(tmp_path): no docment
+tests/unit/test_docs.py:test_check_prints_a_count_per_module_then_every_gap_and_fails(monkeypatch): no docment
+tests/unit/test_docs.py:test_check_prints_a_count_per_module_then_every_gap_and_fails(capsys): no docment
+tests/unit/test_docs.py:test_check_holds_the_tests_to_the_convention_too(tmp_path): no docment
+tests/unit/test_docs.py:test_check_holds_the_tests_to_the_convention_too(monkeypatch): no docment
+tests/unit/test_docs.py:test_check_holds_the_tests_to_the_convention_too(capsys): no docment
+tests/unit/test_docs.py:test_list_prints_one_line_per_symbol(tmp_path): no docment
+tests/unit/test_docs.py:test_list_prints_one_line_per_symbol(monkeypatch): no docment
+tests/unit/test_docs.py:test_list_prints_one_line_per_symbol(capsys): no docment
+tests/unit/test_docs.py:test_module_prints_the_markdown_and_an_unknown_name_is_refused(tmp_path): no docment
+tests/unit/test_docs.py:test_module_prints_the_markdown_and_an_unknown_name_is_refused(monkeypatch): no docment
+tests/unit/test_docs.py:test_module_prints_the_markdown_and_an_unknown_name_is_refused(capsys): no docment
+tests/unit/test_docs.py:test_help_and_a_bad_word(capsys): no docment
+50 of 88 functions, methods and classes are typed and documented
+[exit 1]

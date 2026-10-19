@@ -1,0 +1,2 @@
+$ git restore --staged src/api-service/api/service.py && git restore src/api-service/api/service.py
+[exit 0]

@@ -1,0 +1,43 @@
+$ uv run babykev docs list
+module    babykev.api                    The contract: request and answer shapes, mapped onto the single pointer primitive.
+class     babykev.api.Noul               A yes-or-no question.
+class     babykev.api.Choice             A question answered by picking one of several named options.
+class     babykev.api.Score              A question answered with a level on an ordered scale.
+class     babykev.api.SystemOneRequest   One request: a state, and the questions to answer about it.
+function  babykev.api.render             Flatten str | object | array into text the model sees. Field names are kept as labels.
+function  babykev.api.option_text        Write one option as the model sees it.
+function  babykev.api.to_record          -> internal record for encode(), plus per-question metadata to map probabilities back.
+function  babykev.api.choice_confidence  Measure how far the most likely option stands above a guess among `len(p)` options.
+function  babykev.api.score_confidence   Measure how closely a score's probabilities sit around the most likely level.
+function  babykev.api.round_prob         Round a number for output.
+function  babykev.api.to_answers         Turn the model's probabilities into answers of each question's type.
+module    babykev.cli                    The babykev command. `babykev help` says what it can do; every command arrives here.
+function  babykev.cli.main               Run the command named by the first word, print the help, or refuse any other word.
+module    babykev.docs                   What the code says about itself, as plain Markdown: every symbol, one module, or the gaps.
+class     babykev.docs.Symbol            One line of the inventory: a module, a class, a method or a function, and where it is.
+function  babykev.docs.package_modules   Import every public module of a package, in name order.
+function  babykev.docs.file_modules      Import every Python file under a folder as a module of its own, named by its path.
+function  babykev.docs.module            Find one module of the package by its short name or its full name.
+function  babykev.docs.doc               Read an object's own docstring, cleaned of its indentation; empty when there is none.
+function  babykev.docs.summary           Read the first line of an object's docstring.
+function  babykev.docs.line_of           Find the line a symbol's definition starts on, to keep symbols in source order.
+function  babykev.docs.own               List the functions and classes a module defines itself, in source order; not its imports.
+function  babykev.docs.is_dunder         Tell whether a name is one of Python's own, such as `__init__`: a dataclass writes those.
+function  babykev.docs.methods           List the methods a class defines itself, in source order, not what it inherits.
+function  babykev.docs.held              List everything `check` holds to the convention: every function, class and method.
+function  babykev.docs.inventory         List every public module, class, method and function of a package, with its summary.
+function  babykev.docs.name_of           Find what a module calls a type: an alias such as `JSONContent`, or the name it imported.
+function  babykev.docs.type_text         Write a type the way the source does: `JSONContent`, not the union it stands for.
+function  babykev.docs.signature         Write a signature as one line of Python: each parameter with its type and default.
+function  babykev.docs.cell              Make text safe inside a Markdown table cell.
+function  babykev.docs.table             Write a Markdown table, or nothing when there are no rows.
+function  babykev.docs.params_table      Describe a function by its parameters and its return: type, default, docment.
+function  babykev.docs.fields_table      Describe a pydantic model by its fields, because its constructor signature says nothing.
+function  babykev.docs.has_init          Tell whether a class has a constructor of its own to show, as a dataclass does.
+function  babykev.docs.entry             Write one symbol: a heading, its signature, its docstring and the table of its parameters.
+function  babykev.docs.markdown          Write one module as plain Markdown: its docstring, then an entry for each public symbol.
+function  babykev.docs.gaps_of           Find what one symbol is missing: a docstring, a type, a docment, or a field description.
+function  babykev.docs.gaps              Find every gap in a module, under the module's name and then under each symbol's.
+function  babykev.docs.check             Print how much of each module is typed and documented, then every gap, then the total.
+function  babykev.docs.main              Run one docs command and return its exit code.
+[exit 0]

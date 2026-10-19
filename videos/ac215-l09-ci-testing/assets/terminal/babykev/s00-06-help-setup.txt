@@ -1,0 +1,3 @@
+$ just help setup
+Install Python and every dependency into .venv, exactly as the lockfile says
+[exit 0]

@@ -1,0 +1,41 @@
+$ pip install black flake8
+Collecting black
+  Downloading black-26.10.1-py3-none-any.whl.metadata (108 kB)
+Collecting flake8
+  Downloading flake8-7.4.1-py2.py3-none-any.whl.metadata (3.8 kB)
+Collecting click>=8.0.0 (from black)
+  Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting mypy-extensions>=0.4.3 (from black)
+  Downloading mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)
+Collecting packaging>=22.0 (from black)
+  Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pathspec>=1.0.0 (from black)
+  Downloading pathspec-1.1.1-py3-none-any.whl.metadata (14 kB)
+Collecting platformdirs>=2 (from black)
+  Downloading platformdirs-4.13.5-py3-none-any.whl.metadata (5.5 kB)
+Collecting pytokens~=0.4.0 (from black)
+  Downloading pytokens-0.4.1-cp314-cp314-musllinux_1_2_x86_64.whl.metadata (3.8 kB)
+Collecting mccabe<0.8.0,>=0.7.0 (from flake8)
+  Downloading mccabe-0.7.0-py2.py3-none-any.whl.metadata (5.0 kB)
+Collecting pycodestyle<2.16.0,>=2.15.0 (from flake8)
+  Downloading pycodestyle-2.15.0-py2.py3-none-any.whl.metadata (4.5 kB)
+Collecting pyflakes<4.1.0,>=4.0.0 (from flake8)
+  Downloading pyflakes-4.0.3-py2.py3-none-any.whl.metadata (3.7 kB)
+Downloading black-26.10.1-py3-none-any.whl (239 kB)
+Downloading pytokens-0.4.1-cp314-cp314-musllinux_1_2_x86_64.whl (271 kB)
+Downloading flake8-7.4.1-py2.py3-none-any.whl (57 kB)
+Downloading mccabe-0.7.0-py2.py3-none-any.whl (7.3 kB)
+Downloading pycodestyle-2.15.0-py2.py3-none-any.whl (31 kB)
+Downloading pyflakes-4.0.3-py2.py3-none-any.whl (66 kB)
+Downloading click-8.5.0-py3-none-any.whl (125 kB)
+Downloading mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)
+Downloading packaging-26.3-py3-none-any.whl (129 kB)
+Downloading pathspec-1.1.1-py3-none-any.whl (57 kB)
+Downloading platformdirs-4.13.5-py3-none-any.whl (32 kB)
+Installing collected packages: pytokens, pyflakes, pycodestyle, platformdirs, pathspec, packaging, mypy-extensions, mccabe, click, flake8, black
+
+Successfully installed black-26.10.1 click-8.5.0 flake8-7.4.1 mccabe-0.7.0 mypy-extensions-1.1.0 packaging-26.3 pathspec-1.1.1 platformdirs-4.13.5 pycodestyle-2.15.0 pyflakes-4.0.3 pytokens-0.4.1
+
+[notice] A new release of pip is available: 26.1.1 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+[exit 0]

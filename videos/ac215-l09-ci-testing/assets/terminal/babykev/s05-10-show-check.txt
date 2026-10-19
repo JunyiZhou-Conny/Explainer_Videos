@@ -1,0 +1,14 @@
+$ just --show check
+# Everything a commit must pass: format, lint, the tests over the coverage floor, the docs, the config files
+[group('quality')]
+[no-exit-message]
+check *args:
+    #!/usr/bin/env sh
+    set -e
+    if [ "$*" = help ]; then just help check; exit 0; fi
+    just fmt --check
+    just lint
+    just test -q --cov-fail-under=90
+    just docs check
+    just lint-config
+[exit 0]

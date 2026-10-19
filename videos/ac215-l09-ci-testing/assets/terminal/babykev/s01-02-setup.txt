@@ -1,0 +1,23 @@
+$ just setup
+uv sync --locked
+Resolved 14 packages in 1ms
+   Building babykev @ file:///home/student/babykev
+warning: `build_system.requires = ["uv-build>=0.12.13,<0.13.0"]` does not contain the current uv version 0.13.2
+      Built babykev @ file:///home/student/babykev
+Prepared 3 packages in 271ms
+Uninstalled 1 package in 0.86ms
+Installed 13 packages in 11ms
+ + annotated-types==0.8.0
+ ~ babykev==0.1.0 (from file:///home/student/babykev)
+ + coverage==7.16.2
+ + iniconfig==2.3.0
+ + packaging==26.3
+ + pluggy==1.6.0
+ + pydantic==2.13.5
+ + pydantic-core==2.46.5
+ + pygments==2.21.0
+ + pytest==9.1.1
+ + pytest-cov==7.1.0
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.4
+[exit 0]

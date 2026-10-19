@@ -1,0 +1,2 @@
+$ echo '"""babykev: a small decision model."""' > src/babykev/__init__.py
+[exit 0]

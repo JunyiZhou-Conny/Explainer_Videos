@@ -1,0 +1,2 @@
+$ perl -ni -e 'print unless /^# hadolint ignore=DL3008$/' Dockerfile
+[exit 0]

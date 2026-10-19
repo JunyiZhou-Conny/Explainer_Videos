@@ -1,0 +1,12 @@
+$ uv run python - <<'EOF'
+from babykev.model import branch_mask
+picture = ["#...", "##..", "#.#.", "#..#"]
+mask = branch_mask([0, 1, 2, 3], "cpu")[0, 0] == 0
+rows = ["".join("#" if ok else "." for ok in row) for row in mask]
+for want, got in zip(picture, rows, strict=True): print(want, got, "ok" if want == got else "WRONG")
+EOF
+#... #... ok
+##.. ##.. ok
+#.#. #.#. ok
+#..# ##.# WRONG
+[exit 0]

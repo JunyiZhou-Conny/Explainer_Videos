@@ -1,0 +1,11 @@
+$ uv sync --locked
+Using CPython 3.13.16
+Creating virtual environment at: .venv
+Resolved 1 package in 1ms
+   Building babykev @ file:///home/student/babykev
+warning: `build_system.requires = ["uv-build>=0.12.13,<0.13.0"]` does not contain the current uv version 0.13.2
+      Built babykev @ file:///home/student/babykev
+Prepared 1 package in 6ms
+Installed 1 package in 2ms
+ + babykev==0.1.0 (from file:///home/student/babykev)
+[exit 0]

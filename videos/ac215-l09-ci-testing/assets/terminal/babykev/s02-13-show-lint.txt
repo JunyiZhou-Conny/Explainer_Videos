@@ -1,0 +1,7 @@
+$ just --show lint
+# Check the code against the rules in pyproject.toml. Extra arguments go to ruff: just lint --statistics
+[group('quality')]
+[no-exit-message]
+lint *args:
+    {{ if args == "help" { "just help lint" } else { 'uv run ruff check "$@"' } }}
+[exit 0]

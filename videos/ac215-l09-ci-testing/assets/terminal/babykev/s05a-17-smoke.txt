@@ -1,0 +1,33 @@
+$ just smoke local
+babykev smoke: Qwen/Qwen2.5-0.5B on cpu
+Loading weights: 100%|███████████████████████████████████████████| 290/290 [00:01<00:00, 147.38it/s]
+loaded in 3.7 s: 503M parameters, 9.3M of them trainable
+
+cheese: Coquetdale   [162 tokens, 464 ms]
+  --  vegetarian   noul    says no (0.14)                    label: yes
+  --  intensity    score   says level 0 (score 0.03)         label: level 1
+  ok  milk         choice  says cow (0.99)                   label: cow
+
+ARDSALLAGH SMOKED CHEESE. Carrigtwohill. natural rind. smooth. white.    [145 tokens, 360 ms]
+  ok  has_rind     noul    says yes (0.78)                   label: yes
+  --  milk         choice  says sheep (0.99)                 label: goat
+  --  firmness     score   says level 0 (score 0.00)         label: level 2
+
+cheese: Alisia-Victoria   [158 tokens, 393 ms]
+  --  fresh        noul    says yes (1.00)                   label: no
+  --  origin       choice  says United States or Canada (1.00) label: elsewhere in Europe
+  --  firmness     score   says level 0 (score 0.00)         label: level 3
+
+cheese: Amou   [115 tokens, 318 ms]
+  ok  vegetarian   noul    says no (0.00)                    label: no
+  --  milk         choice  says mixed (1.00)                 label: sheep
+  --  firmness     score   says level 0 (score 0.00)         label: level 3
+
+LOMA ALTA. soft-ripened. mould-ripened rind. firm. white. taste: butte   [156 tokens, 430 ms]
+  --  origin       choice  says elsewhere in Europe (0.93)   label: United States or Canada
+  ok  no_cow       noul    says no (0.30)                    label: no
+  --  intensity    score   says level 3 (score 2.98)         label: level 1
+
+4 of 15 right, 393 ms a request.
+Nothing is trained yet: these are guesses.
+[exit 0]

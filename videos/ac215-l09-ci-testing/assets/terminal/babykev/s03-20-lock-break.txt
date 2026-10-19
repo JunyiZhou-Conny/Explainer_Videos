@@ -1,0 +1,2 @@
+$ sed -i 's/"pydantic>=2.11"/"pydantic>=2.12"/' pyproject.toml
+[exit 0]

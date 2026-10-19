@@ -1,0 +1,9 @@
+$ just lint-config
+   Building babykev @ file:///home/student/babykev
+warning: `build_system.requires = ["uv-build>=0.12.13,<0.13.0"]` does not contain the current uv version 0.13.2
+      Built babykev @ file:///home/student/babykev
+Uninstalled 1 package in 1ms
+Installed 1 package in 2ms
+Valid file: pyproject.toml
+Resolved 29 packages in 1ms
+[exit 0]

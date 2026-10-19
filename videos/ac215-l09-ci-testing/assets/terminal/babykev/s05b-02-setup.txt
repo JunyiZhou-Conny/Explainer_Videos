@@ -1,0 +1,15 @@
+$ just setup
+Resolved 67 packages in 1ms
+   Building babykev @ file:///home/student/babykev
+warning: `build_system.requires = ["uv-build>=0.12.13,<0.13.0"]` does not contain the current uv version 0.13.2
+      Built babykev @ file:///home/student/babykev
+Downloading hadolint-bin (11.6MiB)
+ Downloaded hadolint-bin
+Prepared 2 packages in 861ms
+Uninstalled 1 package in 1ms
+Installed 2 packages in 2ms
+ ~ babykev==0.1.0 (from file:///home/student/babykev)
+ + hadolint-bin==2.15.1
+pre-commit installed at .git/hooks/pre-commit
+Quarto is not on this machine; just docs needs it: https://quarto.org/docs/get-started/
+[exit 0]

@@ -1,0 +1,6 @@
+$ docker run --rm cheese-app-api:local flake8 --max-line-length=120 api/
+Container is running!!!
+Executing command: flake8 --max-line-length=120 api/
+api/utils.py:7:15: E231 missing whitespace after ','
+api/utils.py:13:1: E303 too many blank lines (3)
+[exit 1]

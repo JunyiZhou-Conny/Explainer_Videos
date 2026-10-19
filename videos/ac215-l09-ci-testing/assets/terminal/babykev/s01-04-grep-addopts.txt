@@ -1,0 +1,4 @@
+$ grep -n -B1 addopts pyproject.toml
+30-# Every run measures how much of src/babykev the tests touch and lists the lines they do not
+31:addopts = "--cov=babykev --cov-report=term-missing"
+[exit 0]

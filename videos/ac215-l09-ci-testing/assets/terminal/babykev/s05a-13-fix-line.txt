@@ -1,0 +1,3 @@
+$ sed -n '151p' src/babykev/model.py
+    same = (s[None, :] == s[:, None]) | (s[None, :] == 0)
+[exit 0]

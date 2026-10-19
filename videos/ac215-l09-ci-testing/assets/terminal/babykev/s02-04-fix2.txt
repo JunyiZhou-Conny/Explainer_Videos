@@ -1,0 +1,24 @@
+$ just test -k rounded_probabilities
+uv run pytest "$@"
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/student/babykev
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0
+collected 52 items / 51 deselected / 1 selected
+
+tests/unit/test_api.py .                                                 [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                      Stmts   Miss  Cover   Missing
+-------------------------------------------------------
+src/babykev/__init__.py       0      0   100%
+src/babykev/api.py           71     32    55%   27-28, 47-51, 55, 60-74, 88-94, 107, 112-113
+src/babykev/cli.py            8      5    38%   17-21
+-------------------------------------------------------
+TOTAL                        79     37    53%
+======================= 1 passed, 51 deselected in 0.17s =======================
+[exit 0]

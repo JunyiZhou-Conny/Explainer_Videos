@@ -1,0 +1,39 @@
+$ pip install pre-commit
+Collecting pre-commit
+  Downloading pre_commit-4.7.0-py2.py3-none-any.whl.metadata (1.2 kB)
+Collecting cfgv>=2.0.0 (from pre-commit)
+  Downloading cfgv-3.5.0-py2.py3-none-any.whl.metadata (8.9 kB)
+Collecting identify>=1.0.0 (from pre-commit)
+  Downloading identify-2.6.20-py2.py3-none-any.whl.metadata (4.4 kB)
+Collecting nodeenv>=0.11.1 (from pre-commit)
+  Downloading nodeenv-1.11.0-py2.py3-none-any.whl.metadata (40 kB)
+Collecting pyyaml>=5.1 (from pre-commit)
+  Downloading pyyaml-6.0.3-cp314-cp314-musllinux_1_2_x86_64.whl.metadata (2.4 kB)
+Collecting virtualenv>=20.10.0 (from pre-commit)
+  Downloading virtualenv-21.14.11-py3-none-any.whl.metadata (4.1 kB)
+Collecting distlib<1,>=0.4.3 (from virtualenv>=20.10.0->pre-commit)
+  Downloading distlib-0.4.4-py2.py3-none-any.whl.metadata (5.3 kB)
+Collecting filelock<5,>=3.24.2 (from virtualenv>=20.10.0->pre-commit)
+  Downloading filelock-4.2.4-py3-none-any.whl.metadata (2.0 kB)
+Requirement already satisfied: packaging>=26.3 in /home/student/venv/lib/python3.14/site-packages (from virtualenv>=20.10.0->pre-commit) (26.3)
+Requirement already satisfied: platformdirs<5,>=4.4 in /home/student/venv/lib/python3.14/site-packages (from virtualenv>=20.10.0->pre-commit) (4.13.5)
+Collecting python-discovery>=1.6.1 (from virtualenv>=20.10.0->pre-commit)
+  Downloading python_discovery-1.6.4-py3-none-any.whl.metadata (5.1 kB)
+Downloading pre_commit-4.7.0-py2.py3-none-any.whl (226 kB)
+Downloading cfgv-3.5.0-py2.py3-none-any.whl (7.4 kB)
+Downloading identify-2.6.20-py2.py3-none-any.whl (99 kB)
+Downloading nodeenv-1.11.0-py2.py3-none-any.whl (34 kB)
+Downloading pyyaml-6.0.3-cp314-cp314-musllinux_1_2_x86_64.whl (789 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 789.2/789.2 kB 17.2 MB/s  0:00:00
+Downloading virtualenv-21.14.11-py3-none-any.whl (5.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.5/5.5 MB 41.3 MB/s  0:00:00
+Downloading distlib-0.4.4-py2.py3-none-any.whl (472 kB)
+Downloading filelock-4.2.4-py3-none-any.whl (162 kB)
+Downloading python_discovery-1.6.4-py3-none-any.whl (39 kB)
+Installing collected packages: distlib, pyyaml, nodeenv, identify, filelock, cfgv, python-discovery, virtualenv, pre-commit
+
+Successfully installed cfgv-3.5.0 distlib-0.4.4 filelock-4.2.4 identify-2.6.20 nodeenv-1.11.0 pre-commit-4.7.0 python-discovery-1.6.4 pyyaml-6.0.3 virtualenv-21.14.11
+
+[notice] A new release of pip is available: 26.1.1 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+[exit 0]

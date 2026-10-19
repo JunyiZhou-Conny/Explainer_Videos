@@ -1,0 +1,4 @@
+$ just fmt
+uv run ruff format "$@"
+1 file reformatted, 5 files left unchanged
+[exit 0]

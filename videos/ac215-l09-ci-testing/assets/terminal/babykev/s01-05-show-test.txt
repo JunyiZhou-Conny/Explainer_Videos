@@ -1,0 +1,7 @@
+$ just --show test
+# Run the tests, with coverage of src/babykev. Extra arguments go to pytest: just test -k render
+[group('quality')]
+[no-exit-message]
+test *args:
+    {{ if args == "help" { "just help test" } else { 'uv run pytest "$@"' } }}
+[exit 0]
