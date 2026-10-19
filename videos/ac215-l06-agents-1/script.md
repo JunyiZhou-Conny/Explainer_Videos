@@ -223,7 +223,21 @@ Conventions
   the `google-adk<1.28` pin as a fix; invented `LLM Response:` values, ADK events, State-tab values, model
   replies or notebook outputs; `cli-container/31` or `33` as sent; `33`'s ten chunks as what the real query
   returns.
-- Running length and parts: see "Length" below (filled from `python -m explainer.script`).
+- Length and parts: narration 4,292 words (`python -m explainer.script`, v1; BRIEF.md: 3,900–4,300,
+  plan ~4,250). Part 1 = S01–S08 (what an agent is, and function calling by hand) 2,127 words; part 2 =
+  S09–S16 (frameworks own the loop) 2,165 words. Per scene (BRIEF.md budget ±15 %):
+
+  | scene | S01 | S02 | S03 | S04 | S05 | S06 | S07 | S08 | S09 | S10 | S11 | S12 | S13 | S14 | S15 | S16 |
+  | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+  | budget | 260 | 280 | 200 | 290 | 250 | 280 | 300 | 270 | 360 | 300 | 270 | 280 | 240 | 260 | 200 | 210 |
+  | words | 256 | 272 | 199 | 291 | 259 | 272 | 304 | 274 | 362 | 303 | 268 | 292 | 230 | 261 | 210 | 239 |
+
+  `explainer.script` assumes 155 wpm and BRIEF.md 174; L04/L05 measured 144–151 wpm for af_heart at 0.9,
+  which would make ≈ 28.5–30 min of voice and, with typing, outputs, five ponders and the `▶` holds,
+  ≈ 34–35 min: at the top of the series range, so the review lenses should not grow the script (trim
+  rather than add). After the merge, run `python -m explainer.script videos/ac215-l06-agents-1/script.md
+  --synth` when the CPUs are free and put the measured total here. Part 1 ends on the teardown of S08
+  (empty frame); part 2 opens on a fresh laptop picture in S09. Each part ends on an empty frame.
 - Notes for scene authors.
   - `Capture.pick()` indexes the output body: pick index = file line − 1. `expected/*.txt` line 1 is a `#`
     source header (never printed).
@@ -232,7 +246,7 @@ Conventions
     prompt with `exit` typed after it; S05 stops at that prompt (cut before `exit`), S08 types `exit` and
     prints line 42.
   - Captures wrapped at 80 columns (join before printing): `laptop/06` 7–9, `laptop/13` 2–3,
-    `adk-laptop/07` 5–7 and 9–11, `15` 2–3, 5–8, 10–11, 44–45, `24` 131–134, `29` 36–37, 38–39, 41–42,
+    `adk-laptop/07` 5–7 and 9–11, `15` 2–3, 5–8, 10–11, 44–45, `24` 132–134, `29` 36–37, 38–39, 41–42,
     357–363. `adk-laptop/36` and `cli-container/` files are not wrapped (fold them with `wrap`).
   - `adk-laptop/12`: print only the lines the SHOW lists; lines 5–7 and 140 carry the capture-only CPU
     index's numbers (`Resolved 171`, `148 packages`, `+cpu`) and are never printed.
@@ -356,7 +370,7 @@ captions: GREY "reasoning workflow: many calls, ordered by your code" and a GREY
 own thinking: inside one call · S07".
 SAY: The lecture calls a multi-call system like this a reasoning engine. Here your Python orders the calls, so it's a reasoning workflow, not a reasoning model.
 
-SHOW: TRACKER CQ-Agent 3. Lane 3 builds under lane 2: the decision diamond now sits *inside* the BLUE
+SHOW: TRACKER CQ-Agent 3. The lecture tag leaves. Lane 3 builds under lane 2: the decision diamond now sits *inside* the BLUE
 `gpt-4o` chip; the model reaches into a GREY toolbox, takes a BLUE `web_search` chip (hosted, GOLD tick),
 twice — the two search texts of RECORDED(expected/colab-cheese-quiz-c31-simple-agent.txt: 23, 28) fly
 out as small PINK chips — returns, and stops; "13.29 s". CODE(colab/cheese-quiz/cell-30.py: 13–16, 30–35)
@@ -424,7 +438,7 @@ SAY: Swap those two roles before comparing; from step 3 on, they're right. Pause
 
 SHOW: The "tool outputs" sheet glows YELLOW in the envelope; a GREY "?" chip appears beside it: "how does
 a model ask for a tool?" The envelope fades.
-SAY: And notice step 6: a tool's output went into the envelope. But how does a model ask for a tool in the first place?
+SAY: And notice step 6: a tool's output went into the envelope. But how does a model ask for a tool?
 
 ---
 
@@ -437,7 +451,7 @@ SHOW: LECTURE 8–14. No tracker yet. V3's first half: L05's strip (slide 8) wri
 our words) fly in one after another as named and stack into a column between two BLUE LLM boxes (slide
 13): "pre-retrieval", "post-retrieval", "retrieval decision", "document grading", "query rewrite", "web
 search".
-SAY: Lecture 5's RAG was a straight line: question, retrieval, model, response. The recap adds smarter retrieval: steps before and after the search, deciding whether to retrieve, grading results, rewriting the query, searching the web.
+SAY: Lecture 5's RAG was a straight line: question, retrieval, model, response. The lecture's recap adds smarter retrieval: steps before and after the search, deciding whether to retrieve, grading results, rewriting the query, searching the web.
 
 SHOW: The first BLUE LLM box gets a YELLOW label "chooses"; a GREY caption "agentic RAG".
 SAY: Agentic RAG puts a model in front of that menu, and lets it choose.
@@ -504,9 +518,9 @@ SAY: The model never gets your database. It gets a menu.
 Lecture: none.
 
 SHOW: TRACKER Prereq 1. Terminal (full width, 8 rows, title `laptop`, prompt `student@laptop:~/AC215$`).
-A GREY caption "fresh start only · README.md · line 48 links the repo". It types
+A GREY caption "fresh start only · README.md · line 48 links the repo" and a GOLD key chip "also: the service-account key in secrets/ (lecture 5 · README.md · lines 52–69)". It types
 `git clone https://github.com/dlops-io/llm-rag.git` → TERM(laptop/01-clone.txt: 2).
-SAY: Lecture 5 ended on one command; today we run it. If you're starting fresh, clone L-L-M rag, which the README links; if you kept lecture 5's folder, just go there.
+SAY: Lecture 5 ended on one command; today we run it. Starting fresh? Clone L-L-M rag, and set up the service account key as in lecture 5; otherwise, go to your folder.
 
 SHOW: TRACKER Run 1. It types `cd llm-rag` → (no output); the prompt becomes
 `student@laptop:~/AC215/llm-rag$`. TRACKER Run 2: PANEL(laptop/05-x-edit-gcp-project.txt: 10–11, "docker-shell.sh · line 7 · your edit"),
@@ -561,7 +575,7 @@ SAY: Then the load step: python cli.py, dash dash load, chunk type char split. 1
 
 ## S06 · Call 1: the model writes the call — `s06_call1.py` · `CallOne`
 
-Lecture: 10–13, then 35.
+Lecture: 35, then 10–13.
 
 SHOW: TRACKER Agents 1. The mini-map shows, Tools lit. CODE(cli.py: 431–437) (header `cli.py · lines
 431–437`; line 435 through `unname`): `Content(role="user", parts=[Part(text=…)])`, the question PINK. Then
@@ -583,9 +597,9 @@ SHOW: LECTURE 10–13. V3's column returns small with its GREY dashed "retrieval
 a GREY dashed Self-RAG box "Retrieve?" with yes/no branches (tag `concept · lecture only`). A RED line
 crosses out "retrieval decision"; caption "chooses which search · never whether". A GREY chip "exercise:
 delete tool_config, then greet it".
-SAY: In the lecture, a good agent may decide not to search at all; Self-RAG starts with that very decision. Ours can't: mode any makes it call a tool every time. It chooses which search, never whether.
+SAY: In the lecture, a good agent may decide not to search at all; Self-RAG starts with that decision. Ours can't: mode any forces a tool call every time. It chooses which search, never whether.
 
-SHOW: V2: an envelope opens onto the real request. An extra card: "runs agent() unchanged · prints the
+SHOW: The lecture tag leaves. V2: an envelope opens onto the real request. An extra card: "runs agent() unchanged · prints the
 request instead of sending it"; then a full-width terminal at the container prompt prints
 TERM(cli-container/31-x-call1-request.txt: 20; wrap, 21–31, 32–34, 35–41 folded to one row `{
 "description": "Get the book chunks filtered by author name", "name": "get_book_by_author", … }`, 42–52
@@ -602,7 +616,7 @@ SHOW: TRACKER Agents 1. Terminal (full width, TEAL). It types `python cli.py --a
 char-split` → TERM(cli-container/30-agent.txt: 2–3, 8–10, 16–17, …, 71; wrap), tag `real run · no key`;
 lines 8–10 (masked) get a GREEN tag "the lookup passed"; line 71 RED. A GREY "with your key, look for"
 card: "`LLM Response:` with a function_call · cli.py line 454".
-SAY: Now step 1 again, with the collection loaded. The lookup passes and the question prints; then the first model call needs your key: default credentials error, file not found. With your key, the model's response prints next.
+SAY: Now step 1 again, with the collection loaded. The lookup passes and the question prints, but the first model call needs your key: default credentials error, file not found.
 
 SHOW: PANEL(expected/out-txt-agent-run.txt: 15, 17–28, 34) (header `out.txt · lines 14–33 (excerpt)`,
 line 23 masked, tag `recorded · the staff's run, September 22, 2026`); line 29 appears as
@@ -663,7 +677,7 @@ SAY: Call 2 sends three things: the question, the model's own turn, unchanged, a
 SHOW: LECTURE 39: the duty chip "interpret its outputs" lights. V2's second envelope opens: a full-width
 terminal prints TERM(cli-container/33-x-dispatch-recorded-call.txt: 137; wrap, 138–147 folded to `{
 "contents": [ { … "role": "user" },`, 148–163, 164–169, 170 cut after `"content": "is ready?” Mara
-asked.` + `…"`, 171–175, …, 231–232), tag `built, not sent`. Line 151 `"thoughtSignature":` boxed BLUE,
+asked.` + `…"`, 171–175, …, 231–233), tag `built, not sent`. Line 151 `"thoughtSignature":` boxed BLUE,
 its value cut to `"AY89a186…",`; the BLUE seal from V3 lands on it. Line 167 `"functionResponse"` TEAL;
 line 231 `"generationConfig": {}` GREY.
 SAY: Inside, the model's turn carries its thought signature: Gemini's thinking models sign their turn, and want it back exactly as sent. Resending the turn unchanged keeps the seal.
@@ -671,10 +685,10 @@ SAY: Inside, the model's turn carries its thought signature: Gemini's thinking m
 SHOW: PANEL(expected/out-txt-agent-run.txt: 99, 105 cut after "Alpine region,", 111 cut after "cattle
 rearing", 112 cut after "(the seasonal movement of livestock)") (header `out.txt · lines 98–111
 (excerpt)`, masked, tag `recorded · the staff's run · old book`); "transhumance" highlights YELLOW. Two
-GOLD chips: "247 tokens" (line 50) and "1,269 tokens" (line 136).
+GOLD chips: "247 tokens" (`out.txt` line 49, file line 50) and "1,269 tokens" (`out.txt` line 135, file line 136).
 SAY: The staff's answer? An Alpine valley, its caves, and transhumance, the seasonal movement of livestock. The two calls used 247 and 1,269 tokens.
 
-SHOW: TRACKER Agents 1 · extra. A strip (title `laptop · second terminal`): it types
+SHOW: TRACKER Agents 1 · extra. The lecture tag leaves. A strip (title `laptop · second terminal`): it types
 `git show --stat --format='%h %ad %s' --date=short 85bba32; head -4 'input-datasets/books/Tolminc Cheese.txt'`
 (extra; folds) → TERM(laptop/09-x-book-changed.txt: 2 cut after "2026-09-22", 4–6). Then an extra card:
 "count four of the answer's words in out.txt, today's book, and the book before 85bba32" →
@@ -688,7 +702,7 @@ SAY: Your run on today's book draws on passages like these: Mara, the curd, the 
 
 SHOW: An `erratum` README chip (header `README.md · line 266`, tag `expected`): "Displays the LLM's
 response"; beside it CODE(cli.py: 478) and a GREEN fix chip `print(response.text)` "just the answer".
-SAY: One small slip: line 478 prints the whole response object, not just the response the README promises. Print response dot text instead.
+SAY: One small slip: the README promises the response, but line 478 prints the whole response object. Print response dot text for just the answer.
 
 SHOW: TRACKER Agents 2. A GREY browser frame (tag `illustration`) at `ac215-llm-rag.dlops.io/agent` with
 an empty chat box; a README chip (header `README.md · line 271`, tag `expected`) "Use Chrome browser for
@@ -769,7 +783,7 @@ SAY: Your index stays on disk, and part 2's web server wants port 8000 too. Paus
 
 ## S09 · ADK: clone, configure, and a sync that fails — `s09_adk_setup.py` · `AdkSetup`
 
-Lecture: none.
+Lecture: 35 (the model-line beat only).
 
 SHOW: A new picture: the GREY laptop with a GREY dashed "no Docker this time" chip, a PURPLE uv glyph and
 an empty `.venv` box; across a dashed boundary, a BLUE chip "Gemini API", reached with a GOLD key "AI
@@ -780,7 +794,7 @@ SHOW: TRACKER Start 1. A README chip (header `README.md · line 77`, tag `expect
 <repository-url>`. It types `git clone https://github.com/dlops-io/llm-agent-google-adk.git` →
 TERM(adk-laptop/01-clone.txt: 2); a GREY caption "the README's placeholder, filled in". TRACKER Start 2:
 it types `cd google-adk-tutorial` → TERM(adk-laptop/02-cd-as-written.txt: 2), RED, tag `erratum`.
-SAY: Getting started, step 1: clone; the README writes a placeholder for the address. Step 2 says cd google ADK tutorial, but no such folder exists.
+SAY: Step 1: clone; the README writes a placeholder for the address. Step 2 says cd google ADK tutorial, but no such folder exists.
 
 SHOW: It types `cd llm-agent-google-adk` → (no output); the prompt becomes
 `student@laptop:~/AC215/llm-agent-google-adk$`; the folder name flashes GREEN "named after the repo".
@@ -804,15 +818,16 @@ and the GOLD key glyph slots in after `=`. A GREY note "README: the key's source
 paste it here".
 SAY: Step 4: create a key in Google AI Studio and paste it into dot env, after Google API key equals.
 
-SHOW: On the `.env` card, the `GEMINI_MODEL=` line highlights YELLOW; `gemini-2.5-flash` slides out and
+SHOW: LECTURE 35 (this beat only; it leaves with the next). On the `.env` card, the `GEMINI_MODEL=` line highlights YELLOW; `gemini-2.5-flash` slides out and
 `gemini-3.1-flash-lite` slides in, GREEN, tag "your edit · the model llm-rag uses (cli.py · line 27)".
 SAY: Also change the model line. Choosing the LLM core is the lecture's first design decision, and here it's one line: a current model, like Gemini 3.1 Flash-Lite.
 
 SHOW: Two GREY chips under the card: "the code's fallback: gemini-2.0-flash (`1-baseline/agent.py · line
 12`) · shut down" and "gemini-2.5-flash · limited to earlier users", tag "Google's model pages, checked
 October 18, 2026"; an `erratum` tag on both. A GREY dashed card: "module .env.example files · don't copy
-them: only the nearest .env is loaded".
-SAY: Google lists the code's fallback, Gemini 2.0 Flash, as shut down, and limits 2.5 Flash to earlier users. Keep everything in this root file: only the nearest dot env is loaded.
+them: only the nearest .env is loaded". `▶ your turn` on a static GREY card "cp .env.example .env ·
+GOOGLE_API_KEY=<your key> · GEMINI_MODEL=gemini-3.1-flash-lite". Hold 2 s.
+SAY: Google lists the code's fallback, Gemini 2.0 Flash, as shut down, and limits 2.5 Flash to earlier users. Keep everything in this root file: only the nearest dot env is loaded. Pause, and set up yours.
 
 SHOW: CODE(llm-agent-google-adk/pyproject.toml: 8–19) (header `pyproject.toml · lines 8–19`): line 8
 `requires-python = ">=3.10"` GREEN; line 10 `"google-adk>=1.8.0",` YELLOW "no upper bound"; lines 18–19
@@ -863,7 +878,7 @@ Lecture: none.
 SHOW: TRACKER RunAg 1. Terminal (full width, 12 rows), prompt `student@laptop:~/AC215/llm-agent-google-adk$`.
 It types `uv run adk web` → TERM(adk-laptop/15-adk-web.txt: 2–3 joined, 10–11 joined, 13 cut after
 "[Y/n]:"; wrap). A tag `erratum` "not in the README".
-SAY: Running agents, step 1, from the repository root: uv run ADK web. Before starting, version 2.12 asks a question the README doesn't mention: may Google collect usage data?
+SAY: Running agents, step 1, from the repository root: uv run ADK web. First, version 2.12 asks a question the README doesn't mention: may Google collect usage data?
 
 SHOW: "This is OFF by default." underlines GREY; `[Y/n]` is boxed YELLOW with a tag "Enter = yes". After
 a 0.6 s pause the terminal types `n` (as the capture did), and a GREY chip appears: "`adk telemetry
@@ -892,7 +907,7 @@ SAY: Why? The web server imports each folder as a Python module, folder dot agen
 
 SHOW: A RED dashed frame `what if · just watch`: it types `uv add "google-adk>=1.8.0,<1.28"` (extra) →
 TERM(adk-laptop/21-x-uv-add-pin.txt: 7–8); a strip shows TERM(adk-laptop/25-x-list-apps-pinned.txt: 2)
-(four folders, GREEN), then TERM(adk-laptop/24-x-adk-web-pinned.txt: 131–134 joined, cut after
+(four folders, GREEN), then TERM(adk-laptop/24-x-adk-web-pinned.txt: 131, 132–134 joined cut after
 "underscores."; wrap) RED. It types `git checkout pyproject.toml; uv sync --upgrade-package google-adk`
 (extra) → TERM(adk-laptop/27-x-undo-pin.txt: 8–9). The frame closes; caption "back in your terminal".
 SAY: An older version, 1.27.5, lists only the four folders, but picking one still fails, as an invalid app name. So a version pin doesn't help; undo it.
@@ -914,7 +929,7 @@ write in: (a) a README chip (header `QUICKSTART.md · line 24`, tag `expected`) 
 1-baseline/agent.py` → the line of TERM(adk-laptop/19-x-quickstart-file.txt: 5) RED; (b) a README chip
 (header `2-litellm/README.md · line 74`, tag `expected`) `uv run adk` → TERM(adk-laptop/20-x-adk-without-web.txt: 2)
 "prints help · starts nothing".
-SAY: Git now sees deleted and new folders, which is fine. Two more slips: the quick start passes a file where a folder is expected, and the module READMEs drop the word web.
+SAY: Git now sees deleted and new folders, which is fine. Two more slips: the quick start passes a file where a folder is expected, and the module READMEs drop the word web, so it only prints help.
 
 SHOW: A RED dashed frame `what if · just watch`, captioned "llm-rag's Chroma still on port 8000":
 TERM(adk-laptop/36-x-port-8000-busy.txt: 21; wrap) RED; then it types `uv run adk web --port 8080`
@@ -936,7 +951,7 @@ mini-map grows to the right third and labels the constructor's arguments with sl
 `output_key=` → Memory "within one session".
 SAY: You picked three LLM agents, each with a model, an instruction, and an output key. In the lecture's blocks: the LLM core, the instructions, and no tools at all.
 
-SHOW: CODE(1-baseline/agent.py: 28–39) (header `1-baseline/agent.py · lines 28–39`); lines 35–39
+SHOW: CODE(llm-agent-google-adk/1-baseline/agent.py: 28–39) (header `1-baseline/agent.py · lines 28–39`); lines 35–39
 `SequentialAgent(…)` highlight PURPLE, and the mini-map's Dynamic Control fills PURPLE "Runner +
 SequentialAgent". Then an extra card: "ask the server for the agent tree the UI loads", and a full-width
 terminal prints TERM(adk-laptop/31-x-select-baseline.txt: 2–5; each line cut after its instruction's
@@ -955,7 +970,7 @@ instruction card) answers, and its reply (a blank GREEN card, no text) flies int
 `output_key`; an event block stacks in the column. `TravelPlanner`'s instruction card shows
 `Using {itinerary_validation}, …` with a PINK hole; cell 1's card flies into the hole before its BLUE chip
 lights; its reply fills cell 2.
-SAY: Here's what the Runner does once you add your key. The validator's reply is written into the state, under its output key. Before the planner runs, its instruction's placeholder is filled from that cell.
+SAY: Once you add your key, the Runner does this. The validator's reply goes into the state, under its output key; before the planner runs, its instruction's placeholder is filled from that cell.
 
 SHOW: `TripSummarizer` reads `{travel_plan}` the same way and fills cell 3; three event blocks stand in
 the column, labelled "the Events tab". Between the agents, a GREY crossed-out arrow "no messages". A GREY
@@ -996,7 +1011,7 @@ SHOW: LECTURE 51. No tracker. Three bins write in (slide 51, our words): "data �
 something", "orchestration · hand work to an agent". Tool chips drop in as named: `get_book_by_author`,
 `web_search`, `read_file` → data; `finalize_itinerary`, `send_email` → action (GREY tags "S14", "S15");
 `research_facts`, `researcher_agent` → orchestration.
-SAY: The lecture sorts tools into three families: data tools fetch, like our book searches; action tools change something, like booking or sending; orchestration tools hand work to another agent.
+SAY: The lecture sorts tools into three families. Data tools fetch, like our book searches; action tools change something, like finalizing a trip or sending email; orchestration tools hand work to another agent.
 
 SHOW: LECTURE 52. One agent box with four tool pills; ten GREY wires fan out to ten service boxes, each
 with its own protocol label (our redrawing: "email · SMTP", "calendar · CalDAV", "database · SQL", "drive
@@ -1096,8 +1111,8 @@ SAY: Its instructions say: follow the assembly line strictly, at most 2 review r
 SHOW: TRACKER CQ-Guild 3. RECORDED(expected/colab-cheese-quiz-c75-guild-star-wars.txt: 3–5, 7, 13) (the
 display line as a GREY label "a quiz widget", then the first question's text): three RED
 `ERROR:openai.agents:Error getting response` lines, then a GREY tag "a quiz anyway". In the Guild tree,
-three hops flash RED and the orchestrator routes around them; GOLD ticks on every hop.
-SAY: The staff's saved run logged three errors getting a response, and still produced a quiz: the orchestrator worked around failed calls. Every hop adds cost, time, and a way to fail.
+three hops flash RED and the orchestrator routes around them; GOLD ticks on every hop, a GOLD tag "hosted web search · paid". `▶ your turn` on a static GREY card "Cheese Quiz Guild: cells 60–77". Hold 2 s.
+SAY: The staff's saved run logged three errors getting a response, and still produced a quiz: the orchestrator worked around failed calls. Every hop adds cost, time, and a way to fail; pause, and run the Guild.
 
 SHOW: Slot 3: CODE(llm-agent-google-adk/5-custom-agent/conditional_agent.py: 84–94), then 94–102 (header
 `5-custom-agent/conditional_agent.py · lines 84–102`, ≤ 12 lines at a time); line 85
@@ -1196,9 +1211,9 @@ file): the four `[tool] editor_agent` lines get a YELLOW bracket "×4"; line 10 
 `Saved HTML: … (8005 bytes). No email sent.`. A chip CODE(colab/cheese-newsletter/cell-16.redacted.py:
 114–116) "every draft is validated · errors go back as the tool's result". Then line 30 `Created 4 mock
 emails. No email was sent.` with a GREY tag "saved run: 4 readers · today's list: 2".
-SAY: In the staff's saved run, the first city took four editor calls: the code validates each draft and returns any errors as the tool's result. Then send email saved the HTML, for four readers; today's list makes two.
+SAY: In the staff's saved run, the first city took four editor calls: the code validates each draft and returns any errors as the tool's result. Then send email saved the HTML. That run had four readers; today's list makes two.
 
-SHOW: V8: a newsletter draft card and the BLUE orchestrator's speech bubble "done!"; a door marked
+SHOW: LECTURE 36–37. V8: a newsletter draft card and the BLUE orchestrator's speech bubble "done!"; a door marked
 SUCCESS stays shut. CODE(colab/cheese-newsletter/cell-18.py: 117–125) (header `Cheese Newsletter · cell 18
 · lines 117–125`, subtitle "Business Logic"): line 119 `if context.receipt is None:` → RED "no receipt →
 error"; line 123 `if not Path(receipt["path"]).is_file():` → RED "file missing → error"; line 120's
@@ -1229,7 +1244,7 @@ SHOW: TRACKER RunAg 1 · extra. The ADK terminal (strip): Ctrl+C → TERM(adk-la
 `ADK Web Server shutting down...`. It types `git status --short; git status --short --ignored | grep '^!!'`
 (extra; folds) → TERM(adk-laptop/39-x-git-status.txt: 2, …, 16–21, 24) in a 12-row terminal: `?? .python-version`
 GREEN "your pin"; `!! .env`, `!! .venv/`, `!! uv.lock` GREY "ignored".
-SAY: Time to tear down: control C stops the web server. An extra git status shows the renamed folders and your Python pin; dot env, the environment and the lock file are ignored.
+SAY: Time to tear down: control C stops the web server. An extra git status shows the renamed folders and your Python pin; dot env, the virtual environment and the lock file are ignored.
 
 SHOW: A RED-outlined ghost folder `baseline/.adk/` "sessions · not in .gitignore" (from the log line
 `29` lines 41–42); a GREY chip "add .adk/ to your ignore file (exercises)"; a GREY chip ".venv · 1.6 GB".
@@ -1267,4 +1282,4 @@ SHOW: Q5 "In the last two notebooks, what decides that a run succeeded, and why 
 text?" Then the questions shrink to the top; footer cards "Answers: exercises.md", "Study guide + every
 command: github.com/JunyiZhou-Conny/MLOps_Learning · guides/L06-agents-1.md" and a GREY dashed chip
 "Lecture 7 · Agents II: the harness". Everything fades to an empty frame (end of part 2).
-SAY: Five: in the harness notebooks, what decides that a run succeeded? Answers and every command are in the exercises and the study guide. Next lecture: the harness itself.
+SAY: Five: what decides that a harness run succeeded, and why not the model's word? Answers and every command are in the exercises and the study guide. Next lecture: the harness itself.

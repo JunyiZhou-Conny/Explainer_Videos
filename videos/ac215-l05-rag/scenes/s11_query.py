@@ -528,7 +528,7 @@ class NearestNeighbours(VoiceScene):
         lf = LookFor([(mixed(["`Embedding values:`", "… 256 numbers"]), "cli.py · line 320"),
                       (mixed([f"`Query: {QUESTION}`"]), "cli.py · line 360"),
                       (mixed(["`Results:`", "a dict of lists of lists"]), "cli.py · line 361")])
-        lf.move_to([0, 2.78 - lf.height / 2, 0])
+        lf.move_to([0, 2.62 - lf.height / 2, 0])     # top at 2.62: clear of the tracker caption
         slots = VGroup(*[result_slot(k) for k in ("ids", "distances", "metadatas", "documents")])
         slots.arrange(RIGHT, buff=0.32)
         slot_top = lf.get_bottom()[1] - 0.25
@@ -536,7 +536,9 @@ class NearestNeighbours(VoiceScene):
 
         with self.voiceover(SAY[7]) as vo:
             # the strip is cleared (the first run's error would sit above the new command) and loses
-            # its `real run · no key` tag: the second command was not run here
+            # its `real run · no key` tag: the second command was not run here. This is Terminal.clear
+            # inside the same play: the old lines leave t.lines, the rows typed next belong to t, and
+            # the FadeOut(t) below takes them (no row is left in the band the turn card moves into)
             self.play(FadeOut(VGroup(emb, card, cyl, cyl_lab, conn, nosearch, slot, vtw, key, kx, k_lab, same)),
                       FadeOut(t.lines), FadeOut(nk), tr.goto(2), run_time=0.5)
             for m in list(t.lines):
@@ -546,7 +548,8 @@ class NearestNeighbours(VoiceScene):
             vo.wait_until("pause and run both")
             self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("With your key")
-            self.play(FadeOut(t), Transform(tc, tc_low), run_time=0.7)
+            self.play(FadeOut(t), run_time=0.3)          # the strip goes first: the card never crosses it
+            self.play(Transform(tc, tc_low), run_time=0.5)
             self.play(FadeIn(lf), run_time=0.3)
             vo.wait_until("look for 256")
             self.play(lf.write_item(0))
@@ -561,9 +564,9 @@ class NearestNeighbours(VoiceScene):
             self.play(LaggedStart(*[Create(s.inner) for s in slots], lag_ratio=0.1), run_time=0.7)
             self.play(LaggedStart(*[Indicate(s.inner, color=TURN, scale_factor=1.06) for s in slots], lag_ratio=0.1),
                       run_time=0.7)
-            vo.wait_until("holding IDs")
-            self.play(LaggedStart(*[Indicate(s.key, color=TURN, scale_factor=1.15) for s in slots], lag_ratio=0.35),
-                      run_time=2.0)
+            for s, phrase in zip(slots, ("holding IDs", "distances", "metadata", "and documents")):
+                vo.wait_until(phrase)                  # each key flashes as it is named
+                self.play(Indicate(s.key, color=TURN, scale_factor=1.15), run_time=0.55)
         self.wait(2)                                   # ▶ beat: hold the frame
 
         # ========================================================== 8 · documents, item zero

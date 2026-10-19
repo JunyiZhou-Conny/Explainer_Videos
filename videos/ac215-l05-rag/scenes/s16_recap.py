@@ -814,9 +814,11 @@ class Recap(VoiceScene):
             vo.wait_until("Delete it when the course ends")
             inset = VGroup(w.frame, w.card, w.head, w.files, w.key, w.key_name, w.not_ignored, w.image,
                            w.copy_label, w.copy_where, w.arrow, rider, x_)
-            # the inset cross-fades into the card, so the course-over row lights on its own words
-            self.play(FadeOut(inset), FadeIn(card.frame), FadeIn(card.header), FadeIn(VGroup(*card.items[:-1])),
-                      FadeTransform(gold, card.gold), run_time=0.6)
+            # the inset leaves, then the card comes in (the GOLD tag becomes its GOLD row): quick, so the
+            # course-over row still lights on its own words, and the two text-heavy layers never blend
+            self.play(FadeOut(inset), run_time=0.3)
+            self.play(FadeIn(card.frame), FadeIn(card.header), FadeIn(VGroup(*card.items[:-1])),
+                      FadeTransform(gold, card.gold), run_time=0.45)
             self.play(card.rows[4].animate.set_color(TURN), Create(card.ticks[4]),
                       Indicate(key, color=COST, scale_factor=1.5), run_time=0.6)
             vo.wait_until("Pause and tear down now")
@@ -1003,8 +1005,10 @@ class Recap(VoiceScene):
             # YELLOW things on screen while "share" is said
             # (each flag = VGroup(frame, words): the frame keeps its opaque fill, so the boxes
             # behind a flag stay hidden while its outline and words dim)
+            # the embedding box is lit on itself too: RagMap.light() wraps it in an AnimationGroup,
+            # whose Group the scene adds on top, so the box's strokes would cross the Embed flag
             flags = [rm.parts[n] for n in RagMap.FLAGS]
-            self.play(q_span(q1, "share").animate.set_color(TURN), rm.light("embedding"),
+            self.play(q_span(q1, "share").animate.set_color(TURN), rm.item("embedding").animate.set_stroke(TURN, 5),
                       *[m.animate.set_stroke(TURN, 5) for m in db_strokes],
                       *[f[0].animate.set_stroke(opacity=0.3) for f in flags],
                       *[f[1].animate.set_opacity(0.3) for f in flags],
@@ -1018,7 +1022,7 @@ class Recap(VoiceScene):
             self.remove(q1, q1.flat)
             self.add(small1)
             self.play(FadeIn(q2, shift=UP * 0.15), run_time=0.6)
-            vo.wait_until("by name")
+            vo.wait_until("database by name")          # measured: "by name" fired 0.7 s after "by"
             self.play(q_span(q2, "llm-rag-chromadb:8000").animate.set_color(TURN), run_time=0.5)
             vo.wait_until("who uses port 8000")
             self.play(q_span(q2, "published").animate.set_color(TURN),
@@ -1050,7 +1054,7 @@ class Recap(VoiceScene):
             q4, top4 = step(q3, 3, top3)
             vo.wait_until("query return")
             self.play(q_span(q4, "--query").animate.set_color(TURN), run_time=0.4)
-            vo.wait_until("no Tolminc text")
+            vo.wait_until("return no Tolminc")         # measured: "no Tolminc text" fired 0.6 s after "no"
             self.play(q_span(q4, "no Tolminc text?").animate.set_color(TURN), run_time=0.4)
             vo.wait_until("Five:")
             q5, top5 = step(q4, 4, top4)

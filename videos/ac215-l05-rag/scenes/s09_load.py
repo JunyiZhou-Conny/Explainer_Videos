@@ -29,7 +29,7 @@ Beats (script.md "## S09", one voiceover block each):
     the books up to 8,248; "Inserted 500 items..." lights at "in batches of 500".
  6  TRACKER Load 2. The terminal clears; python cli.py --load --chunk_type recursive-split ->
     recorded-embeddings/02 lines 2 (cut), 3–8, …, 163–164 (wrapped). The terminal shrinks to the
-    strip; the counter becomes char-split-collection's count, recursive-split-collection stacks
+    strip as the counter becomes char-split-collection's count; recursive-split-collection stacks
     beside it (14,228); ▶ your turn card: both load commands and the Chroma UI link (step 3,
     below). Hold 2 s.
  7  TRACKER Load 2 · extra. The second laptop terminal (9 rows) types the curl … | grep … line of
@@ -100,6 +100,7 @@ from manim import (
     Dot,
     FadeIn,
     FadeOut,
+    FadeTransform,
     GrowArrow,
     Indicate,
     LaggedStart,
@@ -580,14 +581,21 @@ class LoadChroma(VoiceScene):
             # in the strip the line keeps only its first wrapped row: its last character becomes …
             assert len(fin.text) == 65 and fin.text.endswith("'recursive-split-coll"), fin.text
             last = glyph_range(fin, 64)[0]
+            # the label leaves first (in the pause before the anchor): the number travels left through the
+            # label's place, and morphing "records: 8,248" as a whole into "8,248" smears the glyphs mid-flight
+            self.play(FadeOut(counter.label, shift=UP * 0.15), run_time=0.3)
             vo.wait_until("14,228 records")
             counter.freeze()
-            resize(self, t, 3, keep=[cmd3.rows[0], cmd3.rows[1], fin], run_time=0.7)
+            # the number cross-fades into char-split-collection's count as it travels, while the terminal
+            # shrinks (it stays above the shrinking frame), so recursive-split-collection's 14,228 lands while
+            # "14,228 records" is still being said (in this line's clip the number runs from 2.5 s to 5.1 s; the
+            # anchor, interpolated by characters, sits at 3.6 s), not after it
+            resize(self, t, 3, keep=[cmd3.rows[0], cmd3.rows[1], fin], run_time=0.7,
+                   extra=(FadeTransform(counter.num, c1.count),))
             ell = mono_line("…", t.size, OUTPUT).align_to(fin.strut, UP)
             ell.shift(RIGHT * (last.get_center()[0] - ell.glyphs.get_center()[0]))
-            self.play(ReplacementTransform(counter, c1.count), FadeIn(VGroup(c1.stack, c1.name)),
-                      Transform(last, ell.glyphs[0]), run_time=0.6)
-            self.play(FadeIn(c2, shift=LEFT * 0.3), run_time=0.5)
+            self.play(LaggedStart(FadeIn(VGroup(c1.stack, c1.name)), FadeIn(c2, shift=LEFT * 0.3), lag_ratio=0.35),
+                      Transform(last, ell.glyphs[0]), run_time=0.7)
             vo.wait_until("Pause and run both loads")
             self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.5)
         self.wait(2)                                   # ▶ beat: hold the frame
