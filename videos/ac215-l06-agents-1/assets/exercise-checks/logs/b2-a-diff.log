@@ -1,0 +1,23 @@
+--- llm-rag/cli.py	2026-10-08 01:34:23.000000000 +0000
++++ b2/cli.py	2026-10-19 10:25:56.838309381 +0000
+@@ -432,7 +432,7 @@
+     user_prompt_content = Content(
+         role="user",
+         parts=[
+-            Part(text="Describe where cheese making is important in <instructor>'s book?"),
++            Part(text="Hi! Who are you?"),
+         ],
+     )
+ 
+@@ -444,11 +444,6 @@
+         config=types.GenerateContentConfig(
+             temperature=0,
+             tools=[agent_tools.cheese_expert_tool],
+-            tool_config=types.ToolConfig(
+-                function_calling_config=types.FunctionCallingConfig(
+-                    mode="any"
+-                )
+-            )
+         )
+     )
+     print("\n\n\n\nLLM Response:", response)

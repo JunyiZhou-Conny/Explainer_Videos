@@ -1,0 +1,59 @@
+$ P=.venv/lib/python3.13/site-packages/google/adk; sed -n 1105,1160p $P/agents/llm_agent.py; grep -rn 'def validate_schema' $P/ | head -3
+    if event.is_final_response() and event.content and event.content.parts:
+
+      # Skip if no text parts at all to avoid overwriting state_delta values
+      # already set (e.g. after_tool_callback with skip_summarization
+      # on function_response-only events).
+      has_text_part = any(
+          part.text is not None and not part.thought
+          for part in event.content.parts
+      )
+
+      if not has_text_part:
+        return
+
+      result = ''.join(
+          part.text
+          for part in event.content.parts
+          if part.text and not part.thought
+      )
+      if self.output_schema:
+        # If the result from the final chunk is just whitespace or empty,
+        # it means this is an empty final chunk of a stream.
+        # Do not attempt to parse it as JSON.
+        if not result.strip():
+          return
+        result = validate_schema(self.output_schema, result)
+      event.actions.state_delta[self.output_key] = result
+
+  def __maybe_accumulate_streaming_output(
+      self, event: Event, accumulator: str
+  ) -> str:
+    """Accumulates output_key text across a streaming model turn.
+
+    Streaming with tool calls produces non-partial events that carry text
+    alongside a function_call. is_final_response() rejects those, so
+    __maybe_save_output_to_state skips them and the text on those events
+    is dropped from output_key. Accumulate every non-partial text-bearing
+    event from this agent across the model turn so the segments survive
+    in session state.
+
+    No-op when accumulation doesn't apply (different author, no
+    output_key, output_schema set, partial event, no content, no text).
+    For applicable events, appends the event's text to ``accumulator``
+    and writes the running value to state_delta[output_key], overwriting
+    any value __maybe_save_output_to_state set on the same event.
+    Returns the new accumulator value.
+    """
+    if (
+        not self.output_key
+        or getattr(self, 'mode', None) == _AgentMode.TASK
+        or self.output_schema
+        or event.author != self.name
+        or event.partial
+        or not event.content
+        or not event.content.parts
+    ):
+      return accumulator
+.venv/lib/python3.13/site-packages/google/adk/utils/_schema_utils.py:235:def validate_schema(schema: SchemaType, json_text: str) -> Any:
+[exit 0]

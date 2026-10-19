@@ -1,0 +1,14 @@
+$ cd 4-production-ready && uv run --project .. python -W ignore /checks/b6_sessions.py
+agent model from the root .env: gemini-3.1-flash-lite
+== POST /chat {'user_message': 'My name is Sam.'}
+  [model call] system instruction: 'You are a helpful AI assistant. You are an agent. Your internal name is "assistant".'
+  [model call]   user: 'My name is Sam.'
+Skipping missing token usage metadata for agent assistant and model stand-in
+   response: (stand-in reply)
+== POST /chat {'user_message': 'What is my name?'}
+  [model call] system instruction: 'You are a helpful AI assistant. You are an agent. Your internal name is "assistant".'
+  [model call]   user: 'What is my name?'
+Skipping missing token usage metadata for agent assistant and model stand-in
+   response: (stand-in reply)
+sessions in the service: 2 for users: 2
+[exit 0]

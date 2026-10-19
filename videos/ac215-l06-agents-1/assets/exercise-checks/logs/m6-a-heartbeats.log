@@ -1,0 +1,4 @@
+$ python /checks/m6_chroma.py
+/api/v1/heartbeat -> 410 {"error":"Unimplemented","message":"The v1 API is deprecated. Please use /v2 apis"}
+/api/v2/heartbeat -> 200 {"nanosecond heartbeat":1792405700129136503}
+[exit 0]

@@ -1,0 +1,52 @@
+# Chinese (zh-CN) metadata for ac215-l06-agents-1 (read by explainer/i18n.py meta(), used by explainer/build.py for
+# the subtitles' chapters and the zh descriptions): video title, part titles, chapter titles keyed by scene file
+# stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 仓库, 克隆, 智能体, 会话, 提示词; A4), questions keep
+# their question mark, the English colon structure is kept (第 1 次调用：……, ADK：……, harness：……), commands, folder
+# and file names stay as they are (adk web in lower case, as L1's "apt、git 和仓库"; meta.yaml is not read by
+# `explainer.i18n check`, so brackets and underscores are fine here), and the core-concept chapters carry their
+# English short name for search (智能体（agent）, 会话（session）), as L1, L3 and L5 do. harness stays English in
+# writing too (no settled Chinese term; it is L07's topic).
+# LLM: Agents I → LLM 智能体 I (as L2's 容器 I); what an agent is, and function calling by hand → 智能体是什么，以及
+# 手写函数调用; frameworks own the loop → 循环交给框架 (the subtitles say 循环归框架管); many agents → 多智能体 /
+# 多个智能体; a receipt → 回执 (A7); the steering wheel → 方向盘, the envelope → 信封, the menu → 菜单, the whiteboard →
+# 白板 (the video's metaphors, A3). 跟练 = follow-along.
+title: "AC215 · 第 6 讲：LLM 智能体 I（跟练：llm-rag、llm-agent-google-adk）"
+
+parts:
+  part1: "AC215 · 第 6 讲（上）：智能体是什么，以及手写函数调用（llm-rag）"
+  part2: "AC215 · 第 6 讲（下）：循环交给框架——ADK、MCP、多智能体与 harness"
+
+chapters:
+  s01_hook: "是谁搜索了你的数据库？"
+  s02_steering: "谁握着方向盘？"
+  s03_envelope: "模型知道的一切，都在信封里"
+  s04_menu: "只有两个工具的菜单"
+  s05_container: "回到容器：智能体（agent）需要索引"
+  s06_call1: "第 1 次调用：模型写出调用"
+  s07_call2: "第 2 次调用：你的代码执行，模型作答"
+  s08_loop: "从两次调用到一个循环"
+  s09_adk_setup: "ADK：克隆、配置，和一次失败的 sync"
+  s10_adk_web: "adk web 与目录名"
+  s11_state: "Runner、会话（session）与状态：共享白板"
+  s12_mcp: "不是你写的工具：MCP"
+  s13_many: "多个智能体：顺序由谁来定？"
+  s14_approval: "harness：只有人能说 yes"
+  s15_receipt: "harness：成功要有回执"
+  s16_recap: "清理、回顾与下节预告"
+
+# Two or three sentences (rule H2), written register. Facts: video.yaml course: dlops-io/llm-rag's Agents section
+# (main @ e17a39f; S05 repeats the three L05 steps it stands on), dlops-io/llm-agent-google-adk (main @ f89faa7:
+# Getting Started, Running Agents, 1-baseline, 3-mcp-tools, 5-custom-agent as code) and three Colab notebooks
+# (Cheese Quiz, Travel Planner, Cheese Newsletter · Harness). llm-rag's --agent forces one tool call (mode any) and
+# makes two model calls; uv sync fails when uv picks CPython 3.15 (onnxruntime has no cp315 wheel) and works after
+# uv python pin 3.13 (an extra, not in the README); ADK needs folder names that are Python identifiers (the rename,
+# an extra); Runner, session, state and output_key in 1-baseline; MCP over stdio (npx filesystem server) and HTTP
+# (the remote fun-facts server); three ways to order agents (code, model, Python reading a label); the harness of
+# the last two notebooks (Python-built budget, an approval gate only a later human turn opens, success as a receipt
+# for a file on disk). Recorded October 18, 2026 without keys (script.md S01[7]): Docker, Chroma, uv, the ADK web
+# server and two MCP servers ran for real; model answers are the staff's saved outputs. Paste the chapter
+# timestamps from output/chapters.txt and the study guide, tutorial repos and Ed links (video.yaml course:) under it
+# when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 6 讲“LLM：智能体 I”的跟练视频：先在 Cheese Quiz 这个 Colab 笔记本（notebook）里分清普通的 LLM 调用、推理工作流和智能体（agent），再照着 dlops-io/llm-rag 的 Agents 一节，在第 5 讲的向量数据库上运行 python cli.py --agent，逐步拆开函数调用：函数声明、强制的工具调用、由你的代码执行的检索、带着 thought signature 的第二次调用，以及把两次调用变成循环的停止规则和轮数上限。第二部分用 Google 的 Agent Development Kit（dlops-io/llm-agent-google-adk）让框架接管循环：uv sync 在 Python 3.15 上失败与 uv python pin 3.13、合法的目录名、Runner、会话（session）与状态、MCP 工具、多智能体由谁决定顺序，最后用 Travel Planner 和 Cheese Newsletter 两个笔记本讲清 harness 的思路（由 Python 计算的预算、只有人能打开的审批关卡、以磁盘上的文件回执判定成功，以及为什么写在提示词里的规则不等于检查）。英文旁白，配中文和中英双语字幕；终端输出录于 2026-10-18，录制时没有任何密钥，所以模型的回答都是课程团队保存的输出，需要密钥的步骤展示命令、真实的报错和该看什么。
