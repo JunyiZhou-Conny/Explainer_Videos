@@ -1,6 +1,6 @@
 """S16 · Tear down, a stale index, recap (the end of part 2: README "Run Container" step 3 with extras,
 then "Agents (L06)" as a preview; the four questions; five test-yourself questions). Lecture:
-B74–B76, A63 (script: B68–B76, A63).
+B68–B76, A63.
 
 Beats (script.md "## S16", one voiceover block each):
  0  No lecture tag. TRACKER Run 3 · extra. V2 above the strip (fit_top), as the restart of S10 left
@@ -53,9 +53,12 @@ Beats (script.md "## S16", one voiceover block each):
     --agent --chunk_type char-split` (tag preview · L06; not typed, no output). PANEL
     expected/out-txt-agent-run.txt line 65 (header `out.txt · line 64`, tag recorded) `Function:
     get_book_by_author`, the tool name YELLOW; GREY note "must call a tool: which one is its choice"
-    with the excerpt chip `mode="any"` (cli.py · line 449 (excerpt)). LECTURE B74–B76: card and panel
+    with the excerpt chip `mode="any"` (cli.py · line 449 (excerpt)). LECTURE B68–B76: card and panel
     dim; a GREY dashed "Retrieve?" diamond (tag concept), caption "a related idea, further: whether
     to retrieve"; its No branch to "answer", its Yes branch to "retrieve", then "check what it found".
+    B68's limits on it: on "Our chat opens the book" the Yes branch and "retrieve" flash YELLOW, GREY
+    note "our chat: every question" right of Yes; on "and checks nothing" the check box dims, GREY
+    note "our chat: no check" (two rows) right of it. Hold 1 s.
  6  LECTURE A63. S01's blurred map returns (dimmed, tag "illustration · our redrawing") with its four
     questions dim; each lights up YELLOW as answered, with a tiny glyph-only thumbnail (above the top
     two, below the bottom two) and a GREEN tick beside it: V4's arrows (S08's angles), V5's
@@ -84,8 +87,8 @@ repo" is shown. Beat 3 opens on a Google Cloud picture (BRIEF.md: no VM, no buck
 follows the SAY's order (the GOLD tag first). The git command folds after "git status;" (one valid
 line when joined). The COPY arrow carries the Dockerfile's real line 48, `COPY --chown=app:app .
 ./`, not the shorthand `COPY . ./`. The tear-down card's GOLD row has a coin instead of a checkbox.
-The "check what it found" box after the Yes branch illustrates the SAY's last clause (critique
-tokens, B78, under the B74–B76 tag). "Test yourself" is a title, not a card; V1 is shown full size
+The "check what it found" box after the Yes branch illustrates "then checks what it found" (critique
+tokens, B78, under the B68–B76 tag). "Test yourself" is a title, not a card; V1 is shown full size
 (scaled down, its flags collide). The "next" box sits top right (the footer row has no room). The
 "Answers" card names the study guide's §8 as well as exercises.md (the file is not in llm-rag/).
 """
@@ -958,6 +961,12 @@ class Recap(VoiceScene):
         note5 = VGroup(n1, mode_g).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
         place(note5, left=fpanel.frame.get_right()[0] + 0.45, cy=fpanel.frame.get_center()[1] + 0.1)
         d = retrieve_diamond()
+        # between the concept tag (bottom -1.98) and the boxes (top -2.70); the second note right of
+        # "check what it found" in two rows (no room under the boxes)
+        chat_every = place(note("our chat: every question", size=22), left=d.yes[1].get_right()[0] + 0.2, cy=-2.35)
+        chat_none = VGroup(note("our chat:", size=22), note("no check", size=22))
+        chat_none.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+        place(chat_none, left=d.check.get_right()[0] + 0.25, cy=d.check.get_center()[1])
 
         with self.voiceover(SAY[5]) as vo:
             clear_stage(self, keep=[tr], run_time=0.5)
@@ -970,7 +979,7 @@ class Recap(VoiceScene):
             self.play(tool.animate.set_color(TURN), run_time=0.5)
             self.play(FadeIn(note5, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("The lecture's Self-RAG goes further")
-            lr = lref("B74–B76")
+            lr = lref("B68–B76")
             self.play(FadeIn(lr), *[m.animate.fade(0.55) for m in (card5, pv, fpanel, frec, note5)],
                       FadeIn(d.caption, shift=UP * 0.1), run_time=0.6)
             self.play(Create(d.diamond[0]), FadeIn(d.diamond[1]), FadeIn(d.tag), run_time=0.8)
@@ -980,6 +989,14 @@ class Recap(VoiceScene):
             self.play(GrowArrow(d.yes[0]), FadeIn(d.yes[1]), FadeIn(d.retrieve), run_time=0.5)
             vo.wait_until("then checks what it found")
             self.play(GrowArrow(d.then), FadeIn(d.check, shift=LEFT * 0.1), run_time=0.7)
+            # B68's limits on our chat: it always takes the Yes branch, and it skips the check
+            vo.wait_until("Our chat opens the book")
+            self.play(Indicate(d.yes, color=TURN, scale_factor=1.06),
+                      Indicate(d.retrieve, color=TURN, scale_factor=1.08),
+                      FadeIn(chat_every, shift=LEFT * 0.1), run_time=1.0)
+            vo.wait_until("and checks nothing")
+            self.play(d.check.animate.fade(0.5), FadeIn(chat_none, shift=LEFT * 0.1), run_time=0.7)
+        self.wait(1.0)                                 # the last note is read before the stage clears
 
         # ========================================================== 6 · the four questions, answered
         mp = blur_map()

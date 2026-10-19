@@ -79,7 +79,7 @@ its chunk step without a key. Five test-yourself questions close the video (answ
    goes after; three roads (paste every book into the prompt, fine-tune, or hand the model the most
    relevant pages: an open-book exam); the lecture's four questions (embedding, vector database,
    query, context); how to follow along, and what a recording without a Google key shows.
-2. **Two lanes, one database** — RAG in five boxes, where the database never talks to the model; the
+2. **Two lanes, one database** — RAG in four boxes, where the database never talks to the model; the
    two lanes: books → chunks → embedding model → vectors → database once, offline; question → the
    same model → query vector → nearest chunks → prompt → LLM for every question; the lecture's three
    phases (indexing, retrieval, augmentation and generation); one `cli.py` flag per box; why both

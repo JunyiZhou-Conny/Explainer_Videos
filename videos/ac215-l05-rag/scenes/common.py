@@ -56,7 +56,8 @@ Running example
 README tracker (top-left, YELLOW)
     tracker(key, step=None)  keys Prereq Account Run Chunk Embed Load Query Chat Semantic Agents;
         step None = no step lit yet ("TRACKER Embed (no step lit yet)"). SECTIONS[key]
-    self.play(tr.goto(k))     caption_extra(tr, on) -> Transform " · extra"
+    self.play(tr.goto(k))     caption_extra(tr, on) -> anim (" · extra" on/off); both cross-fade
+        the caption in place (tracker() returns a CrossFadeTracker) and rebind tr.caption
     tr = switch_section(self, tr, "Chunk", 1)   old tracker lifts away, new one drops in
     lref("A16–A19") = lecture_ref(5, ...) top right;  lref_swap(scene, old, "A19–A22") -> new
 
@@ -152,7 +153,7 @@ Set pieces: Piece = VGroup + named parts (as in L03/L04)
        (TEAL frame "Chroma container"), loc_disk (GREY folder "on your laptop" + PINK route under
        the cylinder). Show the locations without the labels/lanes (they share space).
        .light(name, color=TURN) / .unlight(name) -> anim   .tick(name) -> GREEN tick (not added)
-       .pulse_lane("top"|"bottom", color) -> anim (a flash along the lane)
+       .pulse_lane("top"|"bottom", color) -> anim (a flash along the lane, lit on its arrows only)
     MiniMap(center=MINI_CENTER)  glyph-only copy, 3.3 x 1.45 (a plain VGroup: FadeIn/FadeOut it,
        mm.animate.move_to(MINI_ABOVE_STRIP)). .light(name) -> anim (unlights the previous; names
        as RagMap.BOXES) .unlight() -> anim .tick(name) -> GREEN tick (not added: FadeIn it, then
@@ -172,9 +173,10 @@ Set pieces: Piece = VGroup + named parts (as in L03/L04)
        .blink(route) -> anim (folder and window blink at once)
        .fill_slots() / .empty_slots() -> [anims]   .light(box) / .unlight(box) -> anim
        .remove_cli() / .remove_chroma() / .new_boxes() -> [anims]   .row(name) .window(name)
-       .fit_top(k=0.84) -> self: shrinks (text keeps its size) to x -5.5..5.6, y -1.38..2.95,
-       just above the 3-row strip or a 3-line code strip (S04's "V2 owns the top"):
-       cv.fit_top() before showing it, or self.play(cv.animate.fit_top()).
+       .fit_top(k=0.84) -> self: squeezes the shapes to k of the height (text, windows, chips and
+       glyphs keep their size, so the width stays) and re-lays what touches, to x -6.38..6.48,
+       y -1.38..3.07, just above the 3-row strip or a 3-line code strip (S04's "V2 owns the
+       top"): cv.fit_top() before showing it, or self.play(cv.animate.fit_top()).
     V3 Ribbon(view=(STORY_START, STORY_START + 1000), width=12.4, breaks=False, blocks=True)
        the story as GREEN word blocks (no text), 12.4 x 0.24 at ORIGIN; ~1,000 chars span 12.4
        (350 chars ≈ 4.34, 20 ≈ 0.25). STORY_START = 27 (line 3; lines 1-2 never shown).
@@ -241,6 +243,7 @@ from manim import (
     RIGHT,
     TAU,
     UP,
+    Animation,
     AnimationGroup,
     Arc,
     Arrow,
@@ -272,6 +275,7 @@ from manim import (
     VMobject,
     always_redraw,
     linear,
+    smooth,
 )
 
 from explainer import style as S
@@ -286,6 +290,7 @@ from explainer.devops import (  # noqa: F401  (re-exported for the scenes)
     SMALL,
     TAG,
     TERM_BG,
+    ReadmeTracker,
     Terminal,
     box,
     browser_window,
@@ -402,12 +407,72 @@ def place_tracker(tr):
     return tr
 
 
+def _in_first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def _out_second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
+
+
+def _out_early(t: float) -> float:
+    return smooth(min(1.0, t / 0.55))
+
+
+def _in_late(t: float) -> float:
+    return smooth(max(0.0, (t - 0.45) / 0.55))
+
+
+def _swap_caption(tr, new, steady: bool) -> list:
+    """Cross-fade tr's caption into the Text `new`, in place next to tr.dots, and make `new`
+    tr.caption at once (it takes the old caption's slot in tr; the old one leaves tr, so its
+    FadeOut takes it off the scene for good). A Transform between two captions of different
+    lengths scrambled the letters for 0.3-0.6 s, and from the blank caption the label flew in from
+    a point. steady=True (the same step, ' · extra' on or off): the new caption fades in over the
+    first half on top of the old one, then the old one fades out, so the shared 'step k of N: …'
+    never dims. steady=False (another step): the old one fades out, then the new one in, with a
+    short overlap, so the two never show at full strength together. Returns the two animations
+    (the caller wraps them)."""
+    old = tr.caption
+    inked = any(m.has_points() for m in old.get_family())
+    new.next_to(tr.dots, RIGHT, buff=0.25)
+    if steady and inked:
+        new.align_to(old, LEFT)          # the shared prefix exactly on the old one's glyphs
+    if old in tr.submobjects:
+        i = tr.submobjects.index(old)
+        tr.remove(old)
+        tr.insert(i, new)
+    else:
+        tr.add(new)
+    tr.caption = new
+    if not inked:                        # from the blank caption: the label fades in where it stays
+        return [FadeOut(old), FadeIn(new)]
+    if steady:
+        return [FadeIn(new, rate_func=_in_first_half), FadeOut(old, rate_func=_out_second_half)]
+    return [FadeOut(old, rate_func=_out_early), FadeIn(new, rate_func=_in_late)]
+
+
+class CrossFadeTracker(ReadmeTracker):
+    """explainer.devops.ReadmeTracker whose goto(k) cross-fades the caption in place (see
+    _swap_caption) instead of Transforming it; the dots move as before. Same contract: goto
+    returns one AnimationGroup, tr.k / tr.caption / tr.dots / tr._caption(k) as before (S13's
+    tracker_to builds on them)."""
+
+    def goto(self, k: int, run_time: float = 0.5):
+        anims = []
+        for i, d in enumerate(self.dots, start=1):
+            col = self.hi_color if i == k else (S.GREY if i < k else S.GREY_DARK)
+            anims.append(d.animate.set_color(col).scale((1.5 if i == k else 1.0) / (d.width / 0.12)))
+        anims += _swap_caption(self, self._caption(k), steady=(k == self.k))
+        self.k = k
+        return AnimationGroup(*anims, run_time=run_time)
+
+
 def tracker(key: str, step: int | None = None):
     """The README tracker for section `key` (see SECTIONS), top-left, at `step` (None: no step
-    lit yet, an empty caption)."""
-    from explainer.devops import ReadmeTracker
+    lit yet, an empty caption). A CrossFadeTracker: its captions cross-fade."""
     section, steps = SECTIONS[key]
-    t = ReadmeTracker(section, steps)
+    t = CrossFadeTracker(section, steps)
     if step:
         t.set_step(step)
     t.key = key
@@ -415,8 +480,10 @@ def tracker(key: str, step: int | None = None):
 
 
 def caption_extra(tr, on: bool = True):
-    """Transform: the tracker caption with (or without) ' · extra' while a command the README
-    doesn't have is on screen."""
+    """The tracker caption with (or without) ' · extra' while a command the README doesn't have
+    is on screen: one AnimationGroup that cross-fades the caption in place (the shared
+    'step k of N: …' stays put and never dims; see _swap_caption) and makes the new Text
+    tr.caption."""
     k = tr.k
     s = f"step {k} of {len(tr.steps)}: {tr.steps[k - 1]}" if k else ""
     if on:
@@ -424,8 +491,7 @@ def caption_extra(tr, on: bool = True):
                     t2c={"· extra": S.GREY, "extra": S.GREY} if not s else {"· extra": S.GREY})
     else:
         new = label(s or " ", tr.size, tr.hi_color)
-    new.next_to(tr.dots, RIGHT, buff=0.25)
-    return Transform(tr.caption, new)
+    return AnimationGroup(*_swap_caption(tr, new, steady=True))
 
 
 def switch_section(scene, old, key: str, step: int | None = 1, run_time: float = 0.8):
@@ -437,7 +503,12 @@ def switch_section(scene, old, key: str, step: int | None = 1, run_time: float =
 
 
 def lref(slides: str) -> VGroup:
-    """The GREY 'Lecture 5 · slides A16–A19' tag, top right (A = main deck, B = supplement)."""
+    """The GREY 'Lecture 5 · slides A16–A19' tag, top right (A = main deck, B = supplement). One
+    slide reads 'slide B78': lecture_ref's single-slide test only knows digits, so lettered slide
+    numbers are handled here (explainer/ waits until L02–L04 are released)."""
+    if re.fullmatch(r"[A-Z]\d+", slides.split("·")[0].strip()):
+        g = tag(f"Lecture 5 · slide {slides}", S.GREY)
+        return g.move_to([6.6 - g.width / 2, 3.6 - g.height / 2, 0])
     return lecture_ref(5, slides)
 
 
@@ -2435,6 +2506,34 @@ def _tab2(lines, color: str = S.GREY, size: float = TAG) -> VGroup:
     return _keep(g)
 
 
+class _LaneFlash(Animation):
+    """ShowPassingFlash along a broken path: `segs` [(start, end), …] in order, the gaps between
+    them part of the path's length but never drawn. The flash (time_width of the whole length)
+    runs at an even speed; on each segment it shows the part of its window that lies there."""
+
+    def __init__(self, segs, color: str, time_width: float = 0.5, stroke: float = 8, **kw):
+        lines = VGroup(*[Line(a, b).set_stroke(color, stroke) for a, b in segs])
+        pts = np.array([p for ab in segs for p in ab], dtype=float)
+        acc = np.concatenate([[0.0], np.cumsum(np.linalg.norm(np.diff(pts, axis=0), axis=1))])
+        acc = acc / max(acc[-1], 1e-6)
+        self.spans = [(acc[2 * i], acc[2 * i + 1]) for i in range(len(segs))]
+        self.time_width = time_width
+        super().__init__(lines, introducer=True, remover=True, **kw)
+
+    def interpolate_mobject(self, alpha: float) -> None:
+        upper = self.rate_func(alpha) * (1 + self.time_width)
+        lower = upper - self.time_width
+        for seg, start, (s0, s1) in zip(self.mobject.submobjects, self.starting_mobject.submobjects,
+                                        self.spans):
+            span = max(s1 - s0, 1e-6)
+            a = float(np.clip((lower - s0) / span, 0, 1))
+            b = float(np.clip((upper - s0) / span, 0, 1))
+            if b - a < 1e-4:
+                seg.clear_points()            # the window is elsewhere: nothing on this arrow
+            else:
+                seg.pointwise_become_partial(start, a, b)
+
+
 # ------------------------------------------------------------------ V1 · two lanes, one database
 class RagMap(Piece):
     """V1: the lecture's naïve-RAG pipeline (A16, B5) redrawn with the README's steps.
@@ -2613,15 +2712,14 @@ class RagMap(Piece):
         return _tick(color, 0.32).move_to(b.get_corner(UP + RIGHT) + np.array([0.05, 0.05, 0]))
 
     def pulse_lane(self, lane: str = "top", color: str = TURN, run_time: float = 1.2):
-        """A flash running along the lane's arrows (nothing stays behind)."""
+        """A flash running along the lane's arrows (nothing stays behind). It runs the lane at an
+        even speed but lights only the arrows: between two arrows it passes behind the box (one
+        path through the arrows' end points drew a thick bar across the boxes, through the text
+        of the 'prompt + query + context' card). One Animation, as before."""
         names = ("a_books", "a_chunks", "a_embed", "a_vectors") if lane == "top" else \
             ("a_question", "a_query", "a_qdb", "a_context", "a_prompt")
-        pts = []
-        for n in names:
-            a = self.parts[n]
-            pts += [a.get_start(), a.get_end()]
-        path = VMobject().set_points_as_corners(pts).set_stroke(color, 8)
-        return ShowPassingFlash(path, time_width=0.5, run_time=run_time)
+        segs = [(self.parts[n].get_start(), self.parts[n].get_end()) for n in names]
+        return _LaneFlash(segs, color, time_width=0.5, run_time=run_time)
 
 
 class MiniMap(VGroup):
@@ -2867,13 +2965,116 @@ class ComposeView(Piece):
         return _keep(g)
 
     def fit_top(self, k: float = 0.84, bottom: float | None = None):
-        """Shrink by k (text keeps its size) and sit with the bottom edge at `bottom` (default just
-        above the 3-row strip / a 3-line code strip): about y -1.38..2.9, x -5.4..5.5. Returns self:
-        self.play(cv.animate.fit_top()) or cv.fit_top() before showing it."""
+        """Squeeze to k of the height and sit with the bottom edge at `bottom` (default just above
+        the 3-row strip / a 3-line code strip): x -6.38..6.48, y -1.38..3.07 for S16's parts (the
+        name tag on top, right of the tracker band; the Vertex AI line above it). Returns self:
+        self.play(cv.animate.fit_top()) or cv.fit_top() before showing it.
+
+        Only the shapes squeeze, and only in height: every text, window, chip and glyph keeps its
+        size (text >= 20 pt), and they need the boxes' full width (shrunk by k both ways, the
+        titles touched their box's edge, docker-volumes/ ran out of the laptop zone, /.venv
+        overlapped /app and the windows stuck out of the CLI box). Then the parts that the squeeze
+        pulled together move apart, every label >= 0.1 inside its box, and the routes are redrawn
+        to their moved ends (the recipe of S04's fit_v2). Not laid out for it: the phone book (it
+        would sit on the lowered data route; no caller shows it with fit_top)."""
         bottom = STRIP_TOP + 0.06 if bottom is None else bottom
-        self.rescale(k)
+        units: list = []
+
+        def walk(m):
+            if getattr(m, "keep_size", False) or isinstance(m, Text) or hasattr(m, "pt"):
+                units.append(m)
+                return
+            for s in m.submobjects:
+                walk(s)
+
+        for s in self.submobjects:
+            walk(s)
+        self.stretch(k, 1, about_point=self.get_center())
+        P = self.parts
+        for u in units + [P["door"][0]]:             # the door glyph keeps its shape too
+            u.stretch(1 / k, 1)
+        self._relayout_fit()
         self.shift(np.array([0.05 - self.get_center()[0], bottom - self.get_bottom()[1], 0]))
         return self
+
+    def _relayout_fit(self, pad: float = 0.1):
+        """After fit_top's squeeze: move apart what touches, redraw the routes."""
+        P = self.parts
+        zf, zt = P["zone"][0], P["zone"][1]
+        # the zone's title >= 0.12 under the zone's top edge
+        zt.shift(UP * min(0.0, zf.get_top()[1] - 0.12 - zt.get_top()[1]))
+        # the folder rows centred across the zone (docker-volumes/, the widest, is 0.11 from both
+        # edges; it ended 0.02 from the right edge); docker-volumes/ and chromadb/ a little lower,
+        # so the data route from chromadb/ passes >= 0.1 under the rail's label
+        r1, r2, r3a, r3b = (self.rows[n] for n in ("repo", "secrets", "volumes", "chromadb"))
+        widest = max(r.width for r in (r1, r2, r3a))
+        x0 = zf.get_left()[0] + max(pad, (zf.width - widest) / 2)
+        for r in (r1, r2):
+            r.shift(RIGHT * (x0 - r.get_left()[0]))
+        P["row_volumes"].shift(RIGHT * (x0 - r3a.get_left()[0]))
+        rl = P["rail"][1]
+        P["row_volumes"].shift(UP * min(0.0, rl.get_bottom()[1] - 0.12 - r3b.get_center()[1]))
+        # the CLI box: its windows >= 0.12 inside the left edge; /app (a short name) gives up 0.09
+        # of width on its right, /secrets widens to its text + 2 pad; the /.venv box fits its text
+        # + 2 pad and sits centred between /app and the box's right edge (its "/" sat on the border
+        # of a 1.0-wide box)
+        cb = P["cli"].frame
+        w_app, w_sec, w_data = self.windows["app"], self.windows["secrets"], self.windows["data"]
+        for w in (w_app, w_sec):
+            w.shift(RIGHT * max(0.0, cb.get_left()[0] + 0.125 - w.get_left()[0]))
+        w_app.frame.stretch_to_fit_width(w_app.frame.width - 0.09, about_edge=LEFT)
+        w_app.text.move_to(w_app.frame)
+        w_sec.frame.stretch_to_fit_width(max(w_sec.frame.width, w_sec.text.width + 2 * pad), about_edge=LEFT)
+        w_sec.text.move_to(w_sec.frame)
+        venv = P["venv"]
+        venv[0].stretch_to_fit_width(venv[1].width + 2 * pad)
+        venv.move_to([(w_app.frame.get_right()[0] + cb.get_right()[0]) / 2, w_app.get_center()[1], 0])
+        venv[1].move_to(venv[0])
+        P["build"].shift(RIGHT * max(0.0, cb.get_left()[0] + 0.18 - P["build"].get_left()[0]) + DOWN * 0.06)
+        # the titles >= 0.1 inside their box (left and top)
+        hb = P["chroma"].frame
+        for title, frame in ((P["cli"][1], cb), (P["chroma"][1], hb)):
+            title.shift(RIGHT * max(0.0, frame.get_left()[0] + 0.15 - title.get_left()[0])
+                        + DOWN * max(0.0, title.get_top()[1] - (frame.get_top()[1] - 0.1)))
+        # the Chroma box: /data >= 0.12 inside, the cylinder clear of the :8000 chip, the chip back
+        # inside the box's right edge (with its route's tip), the name 0.1 above the box
+        w_data.shift(RIGHT * max(0.0, hb.get_left()[0] + 0.125 - w_data.get_left()[0]))
+        pc = P["port_chip"]
+        dx = min(0.0, hb.get_right()[0] - 0.03 - pc.get_right()[0])
+        pc.shift(RIGHT * dx)
+        tip = P["route_port"][1]                     # its point 0.02 under the chip, as before
+        tip.shift(RIGHT * dx + UP * (pc.get_bottom()[1] - 0.02 - tip.get_top()[1]))
+        self.cyl.shift(UP * max(0.0, pc.get_top()[1] + 0.15 - self.cyl.get_bottom()[1]))
+        plug = P["plug_chroma"]                      # the plug clear of the chip's left end
+        plug.shift(RIGHT * min(0.0, pc.get_left()[0] - 0.12 - plug.get_center()[0]))
+        nm = P["name"]
+        nm.shift(UP * (hb.get_top()[1] + 0.1 - nm.get_bottom()[1]))
+        # the Vertex AI line (and the riding key) >= 0.12 above the name
+        vl = P["vertex"]
+        lift = max(0.0, nm.get_top()[1] + 0.12 - vl[1].get_center()[1])
+        if lift:
+            vl[1].shift(UP * lift)
+            for v in (vl[0], vl[2]):
+                v.stretch_to_fit_height(v.height + lift, about_edge=DOWN)
+            P["key_ride"].shift(UP * lift)
+        # "depends" / "on": the squeeze pulled the two lines into each other
+        dlab = P["depends"][2]
+        dc = dlab.get_center()
+        dlab.arrange(DOWN, buff=0.08).move_to(dc)
+        # Docker Hub: the shelf's board and the image chip clear of the rail and of each other
+        P["image"].shift(DOWN * 0.1)
+        VGroup(P["hub"], P["image"]).shift(DOWN * 0.2)
+        # the routes to their moved ends
+        self.routes["app"].set_points_as_corners([[r1.get_right()[0] + 0.1, r1.get_center()[1], 0],
+                                                  [w_app.get_left()[0] - 0.02, w_app.get_center()[1], 0]])
+        self.routes["secrets"].set_points_as_corners([[r2.get_right()[0] + 0.1, r2.get_center()[1], 0],
+                                                      [w_sec.get_left()[0] - 0.02, w_sec.get_center()[1], 0]])
+        yd, xd = r3b.get_center()[1], w_data.get_center()[0]
+        self.routes["data"].set_points_as_corners([[r3b.get_right()[0] + 0.1, yd, 0], [xd, yd, 0],
+                                                   [xd, w_data.get_bottom()[1] - 0.02, 0]])
+        rp = self.routes["port"]
+        a, xp = rp.get_start(), pc.get_center()[0]
+        rp.set_points_as_corners([a, [xp, a[1], 0], [xp, pc.get_bottom()[1] - 0.02, 0]])
 
     def row(self, name: str):
         return self.rows[name]

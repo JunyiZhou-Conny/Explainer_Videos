@@ -43,8 +43,9 @@ Beats (script.md "## S12", one voiceover block each):
     filter (case-sensitive) · not keyword ranking (later)".
  7  Container terminal (TEAL, 10 rows): `python cli.py --get --chunk_type char-split` (tag extra +
     GREY note "not in the README · cli.py · lines 402–418") -> recorded-embeddings/05 lines 2–3
-    (word-folded) and line 6 cut after the ids list's "]" (word-folded), tag "recorded · the
-    staff's vectors (68e0bde)", GREY note "no distances: no ranking" (on "so no distances"). The
+    (word-folded) and line 6 cut after the ids list's "]" (word-folded; a GREY " …" after the "]",
+    as in S10), tag "recorded · the staff's vectors (68e0bde)", GREY note "no distances: no
+    ranking" (on "so no distances"). The
     terminal shrinks to a 4-row strip holding the ids and a TEAL cylinder appears; "Its 10 records":
     copies of the ten ids become ten cards ("-0" … "-9") in a row beside the cylinder, bracketed
     "-0 to -2 / Gutenberg header" (RED), "-3 to -5 / title page, contents" (GREY), "-6 to -9 /
@@ -75,6 +76,13 @@ character offset. Spoken numerals take far longer than their characters ("8,248"
 late (beats 3–4), measured against the clause starts heard in the clip (the pauses in its audio,
 2026-10-18). Those few anchors start a word or two earlier in the text
 so that their interpolated time falls on the clause start that is heard; each says which.
+Beat 4 since the distances became their own sentence (re-measured 2026-10-19, ASR base.en and
+large-v3-turbo plus the clip's pauses): sentence 0 has no long numerals, so its anchors are the
+clause starts ("all 10 results" 1.53 s, heard 1.62; "The Complete Book of Cheese" 3.06 s, heard
+2.94). In "Their distances run from 0.28 to 0.31." (4.84–9.66 s) the two numbers take 2.8 of the
+4.8 s: "run from 0.28" fires at 6.82 s, inside the heard "0.28" (6.12–7.14 s), and "0.28 to 0.31"
+at 7.93 s, on the heard "0.31" (from 7.84 s, after a pause at 7.48–7.84 s); "to 0.31" would fire at
+8.55 s, near the end of "0.31", and leave the returning picture 0.06 s before the mask.
 """
 
 import numpy as np
@@ -144,7 +152,17 @@ from common import (
     under,
 )
 from explainer import style as S
-from explainer.devops import CAPTION, MONO, cell_width, chip, cross_mark, mono, substring
+from explainer.devops import (
+    CAPTION,
+    MONO,
+    cell_width,
+    chip,
+    cross_mark,
+    glyph_range,
+    mono,
+    mono_line,
+    substring,
+)
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S12"]
@@ -195,6 +213,18 @@ IDS = GET.cut(6, "]")
 IDS_ROWS = word_fold(IDS)
 ID_BASE = "1021665fac86c5a5-"
 assert len(ARGS_ROWS) == 3 and len(IDS_ROWS) == 4 and IDS.count(ID_BASE) == 10, (ARGS_ROWS, IDS_ROWS)
+# the captured line goes on after the ids' "]" (", 'embeddings': None, 'metadatas': [..."; the rest
+# of line 6 is never shown, so only cut() reads it): the scene marks the cut with a GREY " …", as S10
+# does for the same line (more_mark is S10's, copied: common.py is not edited during scene work)
+
+
+def more_mark(row) -> VGroup:
+    """A GREY ' …' after a row printed only up to its cut (the captured line goes on): the "…"
+    glyph of a twin line row.text + ' …' laid over the row, so it sits one cell after it."""
+    twin = mono_line(row.text + " …", row.pt, S.GREY)
+    twin.shift(row.strut.get_corner(UP + LEFT) - twin.strut.get_corner(UP + LEFT))
+    return glyph_range(twin, len(row.text) + 1)
+
 
 # cli.py lines this scene quotes (checked: the panels below would fail on a different file)
 assert excerpt("cli.py", 356, 356).strip() == "n_results=10,"
@@ -456,15 +486,16 @@ class FiltersFirst(VoiceScene):
             t.clear(self, run_time=0.25)
             o29 = t.print(self, [Q.line(29)], run_time=0.3)
             self.play(Indicate(o29[0], color=TURN, scale_factor=1.04), run_time=0.6)   # "the code's filters"
-            vo.wait_until("filters, all 10 results")    # lands on "all 10 results" (see ANCHORS)
+            # the distances are their own sentence now (no numerals in sentence 0): clause anchors
+            vo.wait_until("all 10 results")             # 1.53 s (ASR: "all" at 1.62 s, 2026-10-19)
             o30 = t.print(self, Q.at((30, 39)), run_time=0.7)
-            vo.wait_until("results come from The Complete Book of Cheese")   # lands on "The Complete Book"
+            vo.wait_until("The Complete Book of Cheese")    # 3.07 s (ASR: "the complete" 2.94 s)
             bk = rows_box(list(o30), 8, 8 + len(BOOK), TURN)
             self.play(Create(bk), run_time=0.6)
-            vo.wait_until("Complete Book of Cheese, at 0.28")    # lands on "at 0.28"
+            vo.wait_until("run from 0.28")              # lands in "0.28" (6.82 s; heard 6.12–7.14 s; see ANCHORS)
             z2 = col_box(o30[0], 0, 6, TURN)
             pin(self, o30[0], z2, anim=Create(z2), run_time=0.35)
-            vo.wait_until("at 0.28 to 0.31")            # lands on "0.31"
+            vo.wait_until("0.28 to 0.31")               # lands on "0.31" (7.93 s; heard from 7.84 s; see ANCHORS)
             z3 = col_box(o30[9], 0, 6, TURN)
             gone = VGroup(o29[0], *o30[:7])             # the rows above the strip's last three go with
             pin(self, o30[9], z3, anim=AnimationGroup(Create(z3), FadeOut(bk), FadeOut(ck2), FadeOut(gone)),
@@ -620,8 +651,14 @@ class FiltersFirst(VoiceScene):
             tg.print(self, ARGS_ROWS + [GET.line(3)], run_time=0.5)
             self.play(FadeIn(stf7, shift=DOWN * 0.1), run_time=0.3)
             ids = tg.print(self, IDS_ROWS, run_time=0.5)
+            # the line goes on after the "]": the GREY " …", part of its row (pin), so it follows the
+            # row through the shrink and leaves with the strip
+            more_g = more_mark(ids[3])
+            pin(self, ids[3], more_g, anim=FadeIn(more_g), run_time=0.25)
             vo.wait_until("so no distances")
-            pin(self, ids[3], beside(nd, tg, ids[3], buff=0.5), run_time=0.4)
+            beside(nd, tg, ids[3], buff=0.7)            # the " …" ends 0.43 right of the "]"
+            assert nd.get_left()[0] - more_g.get_right()[0] >= 0.15, "the note would touch the ' …'"
+            pin(self, ids[3], nd, run_time=0.4)
             # the strip and the cylinder are ready before "Its 10 records start" (in sequence after
             # it, the RED "Gutenberg header" label came 0.75 s after the words)
             resize(self, tg, 4, keep=list(ids), run_time=0.55, extra=[stf7.animate.move_to(stf7_4), FadeIn(cyl)])

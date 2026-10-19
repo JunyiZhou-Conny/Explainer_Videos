@@ -713,7 +713,7 @@ class LoadChroma(VoiceScene):
             self.remove(zoom)
             path = VGroup(route.copy(), bend.copy()).set_stroke(LOOKUP, 9)
             self.play(ShowPassingFlash(path[0], time_width=0.6), Indicate(cyl9, color=DATA, scale_factor=1.08),
-                      Indicate(win, color=TURN, scale_factor=1.1),
+                      Indicate(win[1], color=TURN, scale_factor=1.2),  # the label only (the filled frame went solid)
                       Indicate(VGroup(fold, fold_name), color=TURN, scale_factor=1.06), run_time=0.55)
             cmd5 = type_cmd(self, tl, VOL.cmd, type_time=0.9)
             assert hasattr(cmd5, "rows") and len(cmd5.rows) == 2

@@ -454,7 +454,9 @@ class BeyondNaive(VoiceScene):
         p = rewriting_picture()
         panel = dbox(13.0, PANEL_TOP - PANEL_BOT, fill_op=0.0).move_to([0, (PANEL_TOP + PANEL_BOT) / 2, 0])
         title = panel_title("query rewriting")
-        with self.voiceover(SAY[1]) as vo:
+        # pad: a breath after "can invent details", so the three red phrases can be read before the
+        # picture folds into slot 1
+        with self.voiceover(SAY[1], pad=1.3) as vo:
             ref2 = lref("B36–B39")
             self.play(
                 ReplacementTransform(m.pre, c.pre), ReplacementTransform(m.pre_lab, c.pre_lab),

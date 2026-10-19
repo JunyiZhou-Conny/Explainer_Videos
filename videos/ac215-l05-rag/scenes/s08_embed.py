@@ -84,7 +84,7 @@ and the distance against. QA 2026-10-19: beat 8's PERMISSION_DENIED row names wh
 is granted in IAM, S03); beat 10's card gets the GREY "no key yet?" pointer to the study guide's copy
 command (the command itself stays untyped, as BRIEF says); beat 1 shows the game's question, and
 beat 12's chip note and ponder card say "database" and "set at load" (collection and HNSW come in
-S09; script.md's PONDER line still says "Our collection compares by cosine").
+S09; script.md's PONDER line now says the same).
 """
 
 import numpy as np
@@ -825,20 +825,16 @@ class Embeddings(VoiceScene):
             out = t.print(self, NORMS_OUT, run_time=0.6)
             bare_prompt(self, t)
             self.play(FadeIn(st), FadeIn(v4), Create(circ), FadeIn(fan_tag), run_time=0.6)
-            # ANCHORS: Kokoro gives sentence marks only, and this one-sentence line is interpolated by
-            # character offset; its spoken numbers ("24", "256", "0.369 to 0.402") take far longer
-            # than their characters, so "24 rows of 256 numbers" and "with lengths from" fired 1.8 s
-            # and 1.1 s late (clip pauses: "24" is heard at 2.72 s, "with" at 6.24 s; 2026-10-19).
-            # As in S12, each anchor starts a word or two earlier in the text.
-            vo.wait_until("story's vectors")           # 2.57 s: lands on "24" (the plays above end ≈ 2.8 s)
+            # ANCHORS: "24 rows" and "Their lengths" start sentences, so Kokoro's marks for them are exact.
+            vo.wait_until("24 rows")                   # 2.65 s; "24" sounds at 2.68 s (the plays above end at 2.47 s)
             self.play(substring(out[0], "24 rows").animate.set_color(TURN),
                       substring(out[0], "256 numbers").animate.set_color(TURN),
                       LaggedStart(*[GrowArrow(a) for a in fan], lag_ratio=0.06), run_time=1.4)
-            vo.wait_until("numbers, with lengths")     # 6.30 s: lands on "with lengths from"
+            vo.wait_until("Their lengths")             # 6.10 s; "Their" sounds at 6.18 s
             self.play(substring(out[2], "min 0.369, max 0.402").animate.set_color(TURN),
                       Create(ruler), FadeIn(r04), FadeIn(r1), run_time=0.7)
             self.play(Create(mark04), FadeIn(rng_lab, shift=LEFT * 0.1), run_time=0.7)
-            vo.wait_until("not 1")
+            vo.wait_until("not 1")                     # 11.20 s (interpolated); "not" sounds at 11.33 s
             self.play(Indicate(circ, color=INK, scale_factor=1.02), Indicate(r1, color=INK), FadeIn(len1),
                       run_time=0.7)
 

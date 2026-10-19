@@ -89,6 +89,7 @@ from manim import (
     ShowPassingFlash,
     Transform,
     VGroup,
+    there_and_back,
 )
 
 from common import (
@@ -452,8 +453,10 @@ class IndexSurvives(VoiceScene):
             vo.wait_until("chunk, embed, load")
             for tk in ticks:
                 self.play(Create(tk), run_time=0.35)
-            vo.wait_until("Part 2 asks it questions")
-            self.play(rm.pulse_lane("bottom", TURN), Indicate(part2, color=TURN, scale_factor=1.15), run_time=1.1)
+            vo.wait_until("Part 2 puts it to work")
+            # the pill's outline and text flash YELLOW (Indicate on the whole tag fills it YELLOW: text unreadable)
+            self.play(rm.pulse_lane("bottom", TURN), Indicate(part2.text, color=TURN, scale_factor=1.15),
+                      part2.box.animate(rate_func=there_and_back).set_stroke(TURN, 4), run_time=1.1)
             vo.wait_until("But first, a test")
             self.add(db)
             self.play(FadeOut(rm), FadeOut(part2), *[FadeOut(tk) for tk in ticks],

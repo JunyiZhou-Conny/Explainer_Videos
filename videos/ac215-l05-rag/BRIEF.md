@@ -169,7 +169,7 @@ never drawn.
   and cylinder), Augmentation & Generation (prompt and LLM). Then the README's steps pin under the
   boxes with their flags: Chunk `--chunk`, Embed `--embed`, Load `--load` | Query `--query`, Chat
   `--chat`; its two step titles (`README.md:5`, `:9`) label the lanes. The shared box gets one rule:
-  "same model, same 256 numbers, both lanes". A second layer says where each box runs: the chunker
+  "same model, same kind of vector, both lanes". A second layer says where each box runs: the chunker
   in the CLI container (no network), both models at Google (pay per call, your key), the cylinder
   in its own container with its data on your laptop. From S06 on, a small copy sits bottom right
   with the active box lit, as the deck walks its pipeline.
@@ -308,7 +308,8 @@ weaknesses as four quick chips (A6: stale training data, no specialised knowledg
 sources; A7: RAG fixes the first two). Three roads (A8–A10) as three paths from a pile of books to
 the BLUE LLM: paste everything (the prompt overflows: "garbage", RED cross), fine-tune (a slow
 clock; "that's lecture 8", GREY dashed), RAG: a librarian hands the model ten relevant pages — an
-open-book exam (digest C1, B69). The lecture's crowded map of RAG techniques (A11) as a blurred
+open-book exam (digest C1; our image, untagged: deck B uses the exam for another point, paid off
+in S16). The lecture's crowded map of RAG techniques (A11) as a blurred
 GREY sketch with four glowing questions — *what is an embedding? a vector database? a query? the
 context?* — "this video answers all four, with commands". How to follow along: the README tracker
 (top left), `lecture_ref` (top right; A = the main deck, B = the supplement), code panels with

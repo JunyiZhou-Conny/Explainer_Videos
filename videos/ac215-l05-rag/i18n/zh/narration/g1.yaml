@@ -1,5 +1,5 @@
 # zh narration for S01-S09 (part 1, group g1: build the index — chunk, embed, load), sentence-aligned to
-# script.md v2: one zh sentence per English sentence (explainer.voice.split_sentences; 82 SAY lines, 203
+# script.md v2: one zh sentence per English sentence (explainer.voice.split_sentences; 82 SAY lines, 205
 # sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml (binding).
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8).
@@ -410,7 +410,7 @@ S08:
   - null
   - "PERMISSION_DENIED: fix the Project ID or the role, then exit and start the script again."
   - "SERVICE_DISABLED: switch on the API."
-- en: "Step 2 does the same for recursive split. Pause and run both, with your key: about 89 and 148 calls, cents by our estimate. Check the current price list."
+- en: "Step 2 does the same for recursive split. Pause and run both, with your key: about 89 and 148 calls, a few cents by our estimate. Check the current price list."
   zh:
   - "第 2 步对 recursive-split 做同样的事。"
   - "暂停一下，用你的密钥两条都跑一遍：大约 89 次和 148 次调用，按我们的估算只要几美分。"
@@ -423,9 +423,11 @@ S08:
   zh:
   - "视频接下来用课程团队自己的输出，它们曾经 commit 过，至今还在每个 clone 的历史里。"
   - "他们的 chunk 文件和我们的逐字节相同，所以他们的向量就是这条命令会生成的向量。"
-- en: "An extra check on the story's vectors: 24 rows of 256 numbers, with lengths from 0.369 to 0.402, not 1."
+- en: "An extra check on the story's vectors. 24 rows of 256 numbers. Their lengths run from 0.369 to 0.402, not 1."
   zh:
-  - "额外检查一下故事的向量：24 行，每行 256 个数，长度在 0.369 到 0.402 之间，不是 1。"
+  - "额外检查一下故事的向量。"
+  - "24 行，每行 256 个数。"
+  - "它们的长度在 0.369 到 0.402 之间，不是 1。"
 - en: "When we load them, the database will compare by cosine, and these arrows are shorter than 1. Does that change which chunks count as nearest?"
   zh:
   - "等我们加载这些向量时，数据库会按余弦来比较，而这些箭头的长度都不到 1。"
