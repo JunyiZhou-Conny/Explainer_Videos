@@ -1,23 +1,29 @@
-$ P=.venv/lib/python3.13/site-packages/google/adk; uv run adk --version; grep -n '_DEFAULT_MAX_LLM_CALLS = \|ADK_MAX_LLM_CALLS' $P/agents/run_config.py | head -3; grep -n -A16 'def is_final_response' $P/events/event.py
+$ P=.venv/lib/python3.13/site-packages/google/adk; uv run adk --version; grep -n '_DEFAULT_MAX_LLM_CALLS = \|ADK_MAX_LLM_CALLS' $P/agents/run_config.py | head -3; awk 'NR>=286 && NR<=308 {printf "%d: %s\n", NR, $0}' $P/events/event.py
 adk, version 2.12.0
 38:_DEFAULT_MAX_LLM_CALLS = 500
 43:  if env_val := os.getenv('ADK_MAX_LLM_CALLS'):
 48:          'Invalid value for ADK_MAX_LLM_CALLS env var: %s. Using default %s.',
-286:  def is_final_response(self) -> bool:
-287-    """Returns whether the event is the final response of an agent.
-288-
-289-    Application and UI layers can rely on this helper to detect a complete,
-290-    user-facing response instead of replicating its logic.
-291-
-292-    Note that when multiple agents participate in one invocation, there could be
-293-    one event has `is_final_response()` as True for each participating agent.
-294-    """
-295-    if self.actions.skip_summarization or self.long_running_tool_ids:
-296-      return True
-297-    if (
-298-        bool(self.error_code)
-299-        and not self.partial
-300-        and not self.get_function_calls()
-301-    ):
-302-      return True
+286:   def is_final_response(self) -> bool:
+287:     """Returns whether the event is the final response of an agent.
+288: 
+289:     Application and UI layers can rely on this helper to detect a complete,
+290:     user-facing response instead of replicating its logic.
+291: 
+292:     Note that when multiple agents participate in one invocation, there could be
+293:     one event has `is_final_response()` as True for each participating agent.
+294:     """
+295:     if self.actions.skip_summarization or self.long_running_tool_ids:
+296:       return True
+297:     if (
+298:         bool(self.error_code)
+299:         and not self.partial
+300:         and not self.get_function_calls()
+301:     ):
+302:       return True
+303:     return (
+304:         not self.get_function_calls()
+305:         and not self.get_function_responses()
+306:         and not self.partial
+307:         and not self.has_trailing_code_execution_result()
+308:     )
 [exit 0]
