@@ -204,6 +204,11 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
   interruption, save the finished agents' results from the journal and launch a continuation script
   with only the pending agents (`ac215-l06-rest.js`). `ac215-final-review.js` takes `only: [keys]`
   to re-run just the checks a limit cut off.
+  A resume can also miss the cache with the same script and args: after a worker restart on
+  2026-10-20, resuming L06's QA started the watchers again with new cache keys (stopped after a
+  minute). Read the journal's first new `started` lines right after any resume and stop at once
+  if a finished agent shows up; the reliable route is a continuation script with the finished
+  agents' results embedded in it (`ac215-l06-qa-verify.js`).
 - **Run one token-heavy workflow at a time, and put the nearest-to-release lecture first.** The
   usage limit is a token budget per window: two workflows at once spend it twice as fast, and every
   agent still running when it runs out loses its work. On 2026-10-20, L05's final-review checks and
