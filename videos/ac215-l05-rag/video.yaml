@@ -53,3 +53,19 @@ parts:
   - id: part2
     title: "AC215 · L5, part 2: ask the index — query, filters, chat, semantic chunking"
     scenes: [s10_persist, s11_query, s12_filters, s13_chat, s14_semantic, s15_advanced, s16_recap]
+publish:
+  title_zh: "AC215 第5讲跟练 · RAG 入门：切块、向量化、入库、检索与对话"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 5 讲教程 dlops-io/llm-rag 的逐条命令跟练。
+    第一部分搭好索引：配好服务账号密钥和项目，用一个脚本通过 Docker Compose 起两个容器（CLI 和 Chroma），
+    把书切成块（char-split 的尺子和 recursive-split 里没写在 README 里的重叠），用 Gemini embedding 把每块变成向量，再装进 Chroma，看清索引落在你硬盘上的哪个文件夹。
+    第二部分向索引提问：退出容器后索引还在，按距离排序和截断，先过滤再检索，
+    看清 chat 时发给模型的完整 prompt，试试按语义切块，最后对照课件看 RAG 的进阶做法，清理干净，并认出过期的索引。
+    边看边暂停，在自己的电脑上跑每一条命令。英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/llm-rag
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L05-rag.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, RAG, 向量数据库, Chroma, Embedding, Gemini, Docker Compose, 哈佛, 教程跟练]
+  tid: 231
