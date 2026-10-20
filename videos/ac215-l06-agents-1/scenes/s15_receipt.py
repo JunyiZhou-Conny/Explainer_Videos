@@ -11,7 +11,7 @@ Beats (script.md "## S15", one voiceover block each):
 1. TRACKER NL 4. CODE(cell-25: 5, 8, 12–16, 25) folded (subtitle "Orchestrator Agent", 11 rows):
    `gpt-5.6-luna` BLUE; lines 13–15 GREEN one by one as the SAY names them (line 13 with a BLUE
    "web search" tag and the GOLD cost tag); `"max_iterations": 16` PURPLE; line 25 PURPLE bar, tag
-   "one at a time".
+   "one at a time" under the panel, below that bar.
 2. TRACKER NL 5, tag recorded · the staff's last saved run. RECORDED(c27: 4–9) in an output box: the
    four `[tool] editor_agent` rows bracketed YELLOW "×4". CODE(cell-16.redacted: 114–116) under it
    (20 pt, wrapped): 114 GREEN bar and tag "every draft is validated", 116 YELLOW bar, GREY tag
@@ -31,8 +31,9 @@ Beats (script.md "## S15", one voiceover block each):
    turns GREEN "on disk ✓", the gate turns GREEN and opens, the draft passes.
 4. TRACKER NL 6. The editor's GREY prompt card left of the open gate. CODE(cell-22: 16) (subtitle
    "Editor Agent", plain text: it is prose in a string): GREY bar, "embedded URLs" YELLOW, becomes
-   a GREY sticky note "no embedded URLs" on the prompt; the note drifts through the gate,
-   unchecked. RECORDED(c30: 26 folded to `…Promotion URL: https://…`), the URL RED, tag erratum · a rule that matters belongs in
+   a GREY sticky note "no embedded URLs" on the prompt. At "The saved preview": RECORDED(c30: 26
+   folded to `…Promotion URL: https://…`), the URL RED; at "because no code checks for it" the note
+   drifts through the gate, unchecked, then the tag erratum · a rule that matters belongs in
    validate_newsletter; caption "a note is not a check".
 5. LECTURE 10–12. Two GREY dashed concept boxes (tag concept · lecture only): "Self-RAG: relevant?
    supported? useful?", "Corrective RAG: grade the documents"; caption "don't trust: check"; a GREY
@@ -95,7 +96,6 @@ from manim import (
     ReplacementTransform,
     RoundedRectangle,
     SurroundingRectangle,
-    TransformFromCopy,
     VGroup,
     VMobject,
     there_and_back,
@@ -214,6 +214,13 @@ def at_row_right(m, p, n: int, k: int = 0, pad: float = 0.22):
     place(m, right=p.code.background.get_right()[0] - pad, cy=r.get_center()[1])
     assert m.get_left()[0] > r.get_right()[0] + 0.2, (n, k, m.get_left(), r.get_right())
     return m
+
+
+def row_outline(m, color: str, bx: float = 0.06, by: float = 0.014, stroke: float = 2.2):
+    """An outline hugging one 20 pt code row: tight vertically, so it never touches the next row."""
+    r = SurroundingRectangle(m, color=color, buff=bx, stroke_width=stroke)
+    r.stretch_to_fit_height(m.height + 2 * by)
+    return r.move_to(m)
 
 
 def obox(rows, header, width=None):
@@ -364,9 +371,10 @@ class Receipt(VoiceScene):
         iters_box = SurroundingRectangle(iters, color=TOOL, buff=0.06, stroke_width=3)
         bar25 = p25.bar(25, TOOL, 0.2)
         one = tag("one at a time", TOOL)
-        gap_row = p25.code.code_lines[p25.rows_of(25)[0] - 1]          # the '…' row above line 25
-        place(one, right=p25.code.background.get_right()[0] - 0.22, cy=gap_row.get_center()[1])
-        assert one.get_left()[0] > gap_row.get_right()[0] + 0.3
+        # under the panel, right below line 25's bar: the rows are too close for a tag between them
+        # (on the '…' row it covered the top of line 25's "False")
+        place(one, right=p25.code.background.get_right()[0] - 0.22, top=p25.code.background.get_bottom()[1] - 0.1)
+        assert one.get_bottom()[1] > cf.frame.get_bottom()[1] + 0.2, one.get_bottom()
         inside(p25, web, paid, one)
         assert paid.get_right()[0] < p25.code.background.get_right()[0] - 0.1
         assert p25.get_bottom()[1] > cf.frame.get_bottom()[1] + 0.15, p25.get_bottom()
@@ -504,8 +512,12 @@ class Receipt(VoiceScene):
             b.next_to(r, RIGHT, buff=0.3)              # right after the condition's colon
             badges.add(b)
         # outlines and underlines, not bars: the 20 pt rows leave no room for a note between bars
-        bar119 = SurroundingRectangle(row_of(p18, 119), color=TURN, buff=0.05, stroke_width=2.5)
-        bar123 = SurroundingRectangle(row_of(p18, 123), color=TURN, buff=0.05, stroke_width=2.5)
+        bar119 = row_outline(row_of(p18, 119), TURN)
+        bar123 = row_outline(row_of(p18, 123), TURN)
+        for n, ol in ((119, bar119), (123, bar123)):     # the outline stays off the rows above and below
+            k = p18.rows_of(n)[0]
+            assert ol.get_bottom()[1] > p18.code.code_lines[k + 1].get_top()[1] + 0.01, n
+            assert ol.get_top()[1] < p18.code.code_lines[k - 1].get_bottom()[1] - 0.01, n
         raise120 = under(p18.span(120, "raise RuntimeError"), ERR, stroke=3, buff=0.04)
         raise124 = under(p18.span(124, "raise RuntimeError"), ERR, stroke=3, buff=0.04)
         apart(words, bar123, 0.02)
@@ -519,8 +531,8 @@ class Receipt(VoiceScene):
         apart(words, no_rec, 0.05)
         apart(words, no_file, 0.05)
         slot = gate.slot
-        # after the gate opens, the draft passes: its left edge just right of the right post
-        pass_dx = (gate.rpost.get_center()[0] + 0.35) - (draft.get_left()[0] + push)
+        # after the gate opens, the draft passes: its left edge well clear of the slot on the right post
+        pass_dx = (slot.get_right()[0] + 0.35) - (draft.get_left()[0] + push)
         assert draft.get_right()[0] + push + pass_dx < fgrp.get_left()[0] - 0.3
         with self.voiceover(SAY[3]) as vo:
             self.play(*[FadeOut(m) for m in (cf, saved, box_c, ul_saved, x4, four)], FadeIn(lr), run_time=0.6)
@@ -553,6 +565,7 @@ class Receipt(VoiceScene):
                                                  FadeTransform(on_disk, on_disk_ok), Create(tick)),
                                   lag_ratio=0.6), run_time=0.8)
             self.remove(tok)
+            fgrp.remove(on_disk)            # replaced by on_disk_ok: never bring "on disk?" back in a fade
             gate.bar.set_color(DATA)
             self.play(gate.open(run_time=0.4), gate.caption.animate.set_color(DATA), run_time=0.4)
             self.play(draft.animate.shift(RIGHT * pass_dx), run_time=0.6)
@@ -567,7 +580,7 @@ class Receipt(VoiceScene):
         urls = p22.span(16, "embedded URLs")
         sticky = sticky_note("no embedded URLs")
         sticky.rotate(-0.06)
-        sticky.move_to(pcard.frame.get_corner(DOWN + RIGHT) + np.array([-0.35, 0.05, 0]))
+        sticky.move_to(pcard.frame.get_corner(DOWN + RIGHT) + np.array([-0.35, 0.2, 0]))
         drift_to = np.array([2.6, Y_PIC + 0.05, 0])
         assert sticky.get_left()[0] + (drift_to[0] - sticky.get_center()[0]) > gate.rpost.get_center()[0] + 0.2
         prev = obox([URL_ROW], "Cheese Newsletter · cell 30 · saved preview (excerpt)")
@@ -582,6 +595,7 @@ class Receipt(VoiceScene):
         inside(pcard, sticky, p22, prev, prev_tag, err, cap)
         apart(pcard, gate, 0.3)
         apart(prev_tag, p22, 0.05)
+        apart(sticky, p22, 0.1)                # on the prompt card, clear of the panel header under it
         apart(cap, err, 0.1)
         assert p22.get_top()[1] < gate.get_bottom()[1] - 0.1, (p22.get_top(), gate.get_bottom())
         with self.voiceover(SAY[4]) as vo:
@@ -594,13 +608,13 @@ class Receipt(VoiceScene):
             self.play(FadeIn(rule_bar), run_time=0.4)
             vo.wait_until("no embedded URLs")
             self.play(urls.animate.set_color(TURN), run_time=0.4)
-            self.play(TransformFromCopy(urls, sticky), run_time=0.9)
+            self.play(FadeTransform(urls.copy(), sticky), run_time=0.9)     # the rule becomes a note
             vo.wait_until("The saved preview has one anyway")
-            self.play(sticky.animate.move_to(drift_to).set_opacity(0.6), run_time=1.2)
             self.play(FadeIn(prev, shift=UP * 0.1), FadeIn(prev_tag), run_time=0.5)
             self.play(url.animate.set_color(ERR), run_time=0.4)
             vo.wait_until("because no code checks for it")
-            self.play(FadeIn(err, shift=UP * 0.1), run_time=0.5)
+            self.play(sticky.animate.move_to(drift_to).set_opacity(0.6), run_time=1.0)   # through, unchecked
+            self.play(FadeIn(err, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("a note is not a check")
             self.play(FadeIn(cap, shift=LEFT * 0.1), run_time=0.5)
 

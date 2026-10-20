@@ -5,7 +5,8 @@ questions). Lecture: 41 (and 32–33).
 Beats (script.md "## S16", one voiceover block each):
 0. TRACKER RunAg 1 (" · extra" from the git status on). The ADK laptop terminal as the 3-row strip,
    the restarted server running (its `uv run adk web` row, then adk-laptop/29 line 40 wrapped, as S10
-   left it). Ctrl+C -> 29 lines 364, 367–369 (the 79-column box rows cut with …; "^C" flashes). The
+   left it). Ctrl+C -> 29 lines 364, 367–369 (the 79-column box rows cut with …; "^C" flashes while
+   the server's log rows fade in place, so the box doesn't slide them up over the title bar). The
    strip grows to 12 rows (its old rows fade first) and types the extra `git status --short; git
    status --short --ignored | grep '^!!'` (folded under the prompt, tag extra) -> 39 lines 2, …,
    16–21, 24. The renamed folders' rows flash YELLOW; `?? .python-version` GREEN + GREEN tag "your
@@ -30,10 +31,12 @@ Beats (script.md "## S16", one voiceover block each):
    "message history", "session state · one session".
 4. Dynamic Control lights, then fills PURPLE with `Runner`, `max_turns=12`; the TEAL chip "llm-rag:
    two calls by hand" joins them. LECTURE 32–33: the formula writes in under the anatomy (our words)
-   "agent ≈ LLM + reasoning + instructions + tools"; two GREEN chips append: "+ a loop the framework
-   runs" (the PURPLE bar flashes) and "+ checks your code enforces".
+   "agent ≈ LLM + reasoning + instructions + tools", term by term as said, each term lighting its
+   block (LLM + reasoning: the core, SLIDES.md's terms table; instructions; tools); two GREEN chips
+   append: "+ a loop the framework runs" (the PURPLE bar flashes) and "+ checks your code enforces".
 5. The lecture tag and the anatomy leave. "Test yourself" (YELLOW underline); Q1 writes in, its key
-   words YELLOW as said; Q2 writes in below as Q1 turns small and GREY.
+   words YELLOW as said; Q2 writes in below as Q1 turns small and GREY (glyph for glyph; words that
+   move up a row on the re-wrap dip under it on an arc, so no glyphs cross).
 6. Q3, Q4 the same way.
 7. Q5 the same way; then it turns small too, the five questions stay at the top; the footer cards
    "Answers: exercises.md · study guide §8" and "Study guide + every command:
@@ -281,7 +284,10 @@ def end_note(col) -> VGroup:
 
 def tick_row(names) -> VGroup:
     items = [VGroup(check_mark(0.26, DATA), label(n, 24, INK)).arrange(RIGHT, buff=0.14) for n in names]
-    return VGroup(*items).arrange(RIGHT, buff=0.75)
+    row = VGroup(*items).arrange(RIGHT, buff=0.75)
+    for it in items[1:]:         # one baseline: every name has an ascender ("Quiz" has a tail)
+        it[1].align_to(items[0][1], UP)
+    return row
 
 
 # ------------------------------------------------------------------ beats 5–7: question text (L05's helpers)
@@ -357,6 +363,25 @@ def question(i: int, size: float, color: str, badge_color: str) -> VGroup:
     return g
 
 
+def _glyph_rows(q: VGroup) -> list:
+    """The row index of every member of q.flat (None for the badge)."""
+    return [None] + [k for k, r in enumerate(q.lines) for _ in r.glyphs]
+
+
+def shrink(q_big: VGroup, q_small: VGroup, arc: float = 1.0) -> AnimationGroup:
+    """Question q_big becomes q_small glyph for glyph. A glyph that moves up to the end of the row
+    above (the small question re-wraps) travels on an arc that dips below the chord, so it passes
+    under the row it joins instead of through its glyphs."""
+    anims = []
+    for a, b, ra, rb in zip(q_big.flat, q_small.flat, _glyph_rows(q_big), _glyph_rows(q_small)):
+        if ra is not None and ra != rb:
+            dx = b.get_center()[0] - a.get_center()[0]
+            anims.append(Transform(a, b, path_arc=arc if dx >= 0 else -arc))
+        else:
+            anims.append(Transform(a, b))
+    return AnimationGroup(*anims)
+
+
 def q_at(q: VGroup, top: float) -> VGroup:
     return q.shift(UP * (top - q.lines[0].strut.get_top()[1]))
 
@@ -415,7 +440,13 @@ class Recap(VoiceScene):
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(t, shift=UP * 0.2), run_time=0.8)
             vo.wait_until("control C stops")
             stop = t.print(self, [STOP[0]], run_time=0.4)
-            self.play(Indicate(substring(stop[0], "^C"), color=TURN, scale_factor=1.5), run_time=0.6)
+            # the server's log rows fade where they are while ^C flashes: printing the 3-row box
+            # into the full strip would slide all three rows up over the title bar
+            old = list(t.lines.submobjects[:-1])
+            self.play(Indicate(substring(stop[0], "^C"), color=TURN, scale_factor=1.5),
+                      FadeOut(VGroup(*old)), run_time=0.6)
+            for m in old:
+                t.lines.remove(m)
             t.print(self, STOP[1:], run_time=0.5)
             vo.wait_until("An extra git status")
             self.play(caption_extra(tr, True), run_time=0.3)
@@ -540,6 +571,11 @@ class Recap(VoiceScene):
 
         # ========================================================== 4 · the loop; the lecture's formula
         f_text = label(FORMULA, 24, INK)
+        assert len(f_text.submobjects) == len("".join(FORMULA.split())), len(f_text.submobjects)
+        # written term by term as the SAY names them; each term lights its block (the lecture's
+        # "reasoning" is the LLM core's own thinking: SLIDES.md terms table)
+        f_terms = [(text_span(f_text, "agent≈"), None), (text_span(f_text, "LLM+reasoning"), "core"),
+                   (text_span(f_text, "+instructions"), "instructions"), (text_span(f_text, "+tools"), "tools")]
         g1 = _keep(chip("+ a loop the framework runs", DATA, size=20, pad_y=0.09))
         g2 = _keep(chip("+ checks your code enforces", DATA, size=20, pad_y=0.09))
         VGroup(g1, g2).arrange(RIGHT, buff=0.3)
@@ -556,10 +592,18 @@ class Recap(VoiceScene):
             self.play(canims[3], run_time=0.5)
             vo.wait_until("The lecture's formula")
             lr = lref_swap(self, lr, "32–33", run_time=0.5)
-            self.play(Write(f_text), run_time=1.6)
+            self.play(Write(f_terms[0][0]), run_time=0.5)
+            for (part, blk), phrase, rt in zip(f_terms[1:], ("LLM plus reasoning", "instructions and tools",
+                                                             "tools, gains"), (0.7, 0.6, 0.5)):
+                vo.wait_until(phrase)
+                self.play(Write(part), A.light(blk), run_time=rt)
+            self.remove(*[p for p, _ in f_terms])
+            self.add(f_text)
+            vo.wait_until("gains two pieces")
+            self.play(Indicate(f_text, color=INK, scale_factor=1.06), run_time=0.6)
             vo.wait_until("a loop the framework runs")
-            self.play(FadeIn(g1, shift=LEFT * 0.15), Indicate(A.parts["control_fill"], color=TOOL,
-                                                                scale_factor=1.03), run_time=0.7)
+            self.play(FadeIn(g1, shift=LEFT * 0.15), A.unlight(), Indicate(A.parts["control_fill"], color=TOOL,
+                                                                             scale_factor=1.03), run_time=0.7)
             vo.wait_until("and checks your code enforces")
             self.play(FadeIn(g2, shift=LEFT * 0.15), run_time=0.6)
 
@@ -577,7 +621,7 @@ class Recap(VoiceScene):
             small = q_at(question(i_cur, Q_SMALL, S.GREY, S.GREY), top_cur)
             top_new = q_bottom(small) - 0.3
             q_new = q_at(question(i_cur + 1, Q_BIG, INK, TURN), top_new)
-            self.play(Transform(q_cur.flat, small.flat), run_time=0.5)
+            self.play(shrink(q_cur, small), run_time=0.6)
             self.remove(q_cur, q_cur.flat)
             self.add(small)
             smalls.append(small)
@@ -630,7 +674,7 @@ class Recap(VoiceScene):
             self.play(q_span(q5, "not the model's final text?").animate.set_color(TURN), run_time=0.4)
             vo.wait_until("Answers and every command")
             small5 = q_at(question(5, Q_SMALL, S.GREY, S.GREY), top5)
-            self.play(Transform(q5.flat, small5.flat), run_time=0.5)
+            self.play(shrink(q5, small5), run_time=0.6)
             self.remove(q5, q5.flat)
             self.add(small5)
             smalls.append(small5)

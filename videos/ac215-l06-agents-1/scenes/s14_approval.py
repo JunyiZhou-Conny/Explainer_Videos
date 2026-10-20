@@ -8,7 +8,7 @@ Beats (script.md "## S14", one voiceover block each):
    GREEN with the tag "pinned". "Paris shrinks": the request card becomes a small GREY box "mock
    catalog" (3 cities · 6 hotels · prices in cents / 5 search tools + finalize, counted from cells
    12, 14 and 21:28–34; no code chips), its rows written as named; a GREY excerpt chip of
-   RECORDED(c27: 5) "Nothing has been booked."
+   RECORDED(c27: 5) "Nothing has been booked." with the GREY tag "recorded".
 1. TRACKER TP 4 → 6; the lecture tag leaves. Tags on the frame: recorded · the staff's last saved
    run, and GOLD "paid · every turn". One turn card at a time; each earlier card compacts into a
    chip "Turn k · <its Kind line>": Turn 1 RECORDED(c24: 3, 4 cut after "Los Angeles?", wrapped);
@@ -26,21 +26,27 @@ Beats (script.md "## S14", one voiceover block each):
    "pending → approved". PONDER (8 s): just before the card comes up the panel folds to lines 55
    and 61 (5 rows), so the card in the lower third covers none of it (8 rows and the card don't
    both fit under the tracker).
-4. CODE(cell-18: 105–109): line 106 YELLOW with its `prompt` PINK, line 109 GREY, a GREY arrow
-   "runs first". On the turnstile the model pushes twice; the PENDING stamp flashes each time.
+4. CODE(cell-18: 105–109): line 106 YELLOW with its `prompt` PINK (it and the human flash on "the
+   human's message"), line 109 GREY, a GREY arrow "runs first". "Inside turn 3": the turnstile comes
+   down from the corner into the lower half, 1.6× larger; the model pushes twice; the PENDING stamp
+   flashes each time.
 5. TRACKER TP 7. CODE(cell-27: 2) with the GREY human beside it: `"yes"` types in. The turnstile
    moves to the middle; the stamp flips GREEN APPROVED; the bar swings up and the card passes.
    V8's calculator (BudgetTape, c27's costs_usd) builds 880 + 1,000 + 600 + 150 + 60 = 2,690 of
-   6,000 row by row; RECORDED(c27: 32) `"total_usd": 2690.0` GREEN beside it. The gate leaves; the
+   6,000 row by row; RECORDED(c27: 32) `"total_usd": 2690.0` GREEN beside it (tag "recorded").
+   The gate leaves; the
    chip CODE(cell-27: 6) "the notebook's own test", its 2690.0 GREEN.
-6. RECORDED(c27: 4–6) above the tape (the reply Python rendered): "checked" and "computed by
+6. RECORDED(c27: 4–6) above the tape (the reply Python rendered; tag "recorded · the staff's
+   last saved run"): "checked" and "computed by
    Python" underlined GREEN. Then CODE(cell-18: 129–135) (11 rows): 129–131 RED "hard guardrail:
    raise"; 133–135 YELLOW "soft guardrail: warn".
 7. LECTURE 36–37. Two GREY cards (our words): "instructions" with a sticky note "success criteria"
    (slide 36), "decision maker" with "guardrails" (slide 37); GREEN copies "Python's budget",
    "checked render", "approval gate" drop into a row "in code:"; the gate sits on the action tool
-   `finalize_itinerary`. Cards and tag fade; TRACKER TP 8; ▶ your turn on a static GREY card, its
-   last line GOLD "OpenAI calls · every turn". Hold 2 s. Empty frame.
+   `finalize_itinerary`. Cards and tag fade; TRACKER TP 8; ▶ your turn on a static GREY card (it
+   names the titled cell Start an interactive conversation "and the cell after it": that cell only
+   defines chat_loop(), the last one runs it), its last line GOLD "OpenAI calls · every turn",
+   arriving with "Every turn is paid". Hold 2 s. Empty frame.
 """
 
 import re
@@ -76,6 +82,7 @@ from common import (
     note,
     output_box,
     ponder_at,
+    recorded_tag,
     saved_run_tag,
     source_text,
     src_panel,
@@ -184,11 +191,17 @@ PONDER_Q = ("In turn 3 the model got needs_confirmation.\n"
 # our words for slide 20 (the same request card as the hook) and slides 36-37
 REQUEST = ["5 days in Paris", "flights and hotels within budget", "activities you'd enjoy",
            "replan if it rains or a flight is late"]
+# the ▶ card: script.md says "the last cell, Start an interactive conversation, is optional", but that
+# titled cell (28) only defines chat_loop(); the notebook's last cell (29, "# Run the Agent") runs it,
+# so the card names both
 TURN_ROWS = ["Travel Planner: every cell in order,", "Install OpenAI Agents SDK to Turn 4",
-             "the last cell, Start an interactive conversation,"]
+             "optional: Start an interactive conversation"]
 assert excerpt(TP + "cell-08.py", 1, 1) == "# @title Install OpenAI Agents SDK"
 assert excerpt(TP + "cell-27.py", 1, 1).startswith("# Turn 4:")
 assert excerpt(TP + "cell-28.py", 1, 1) == "# @title Start an interactive conversation"
+assert "async def chat_loop():" in source_text(TP + "cell-28.py")
+assert source_text(TP + "cell-29.py").split() == ["#", "Run", "the", "Agent", "await", "chat_loop()"]
+assert "'exit' or 'quit' to leave" in source_text(TP + "cell-28.py")
 
 TOP = 2.88            # under the tracker band (its bottom is 2.97)
 RIGHT_EDGE = 6.45
@@ -380,11 +393,15 @@ class ApprovalGate(VoiceScene):
         place(cat, left=-6.0, bottom=-2.9)
         booked = excerpt_chip(BOOKED, "Travel Planner · cell 27 · saved output (excerpt)", line=C27.line(5))
         place(booked, left=cat.get_right()[0] + 0.6, cy=cat.frame.get_center()[1])
-        inside(req, mp, keyrow, p08, pinned, cat, booked)
+        rec0 = recorded_tag()                                  # RECORDED: the staff's saved output
+        place(rec0, left=booked.chip.get_right()[0] + 0.25, cy=booked.chip.get_center()[1])
+        apart(rec0, booked.header, 0.08)
+        inside(req, mp, keyrow, p08, pinned, cat, booked, rec0)
         apart(keyrow, mp, 0.3)
         apart(p08, req, 0.3)
         apart(cat, booked, 0.3)
         assert keyrow.get_right()[0] < RIGHT_EDGE and booked.get_right()[0] < RIGHT_EDGE
+        assert rec0.get_right()[0] < RIGHT_EDGE and rec0.get_bottom()[1] > cf.frame.get_bottom()[1] + 0.1
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(cf), run_time=0.8)
             self.play(FadeIn(lr), FadeIn(req.frame), FadeIn(req.header), run_time=0.5)
@@ -408,7 +425,7 @@ class ApprovalGate(VoiceScene):
             vo.wait_until("5 search tools")
             self.play(tr.goto(3), FadeIn(cat.parts[2], shift=UP * 0.1), run_time=0.6)
             vo.wait_until("booking nothing")
-            self.play(FadeIn(booked, shift=LEFT * 0.15), run_time=0.6)
+            self.play(FadeIn(booked, shift=LEFT * 0.15), FadeIn(rec0, shift=LEFT * 0.15), run_time=0.6)
 
         # ============================================================ 1 · the staff's saved run: turns 1-3
         saved = saved_run_tag()
@@ -435,7 +452,7 @@ class ApprovalGate(VoiceScene):
         assert t3.get_bottom()[1] > cf.frame.get_bottom()[1] + 0.2
         assert badges.get_right()[0] < cf.frame.get_right()[0] - 0.1
         with self.voiceover(SAY[1]) as vo:
-            self.play(*[FadeOut(m) for m in (lr, mp, keyrow, p08, pin_box, pinned, cat, booked)],
+            self.play(*[FadeOut(m) for m in (lr, mp, keyrow, p08, pin_box, pinned, cat, booked, rec0)],
                       tr.goto(4), run_time=0.6)
             self.play(FadeIn(saved), FadeIn(paid), FadeIn(t1, shift=UP * 0.15), run_time=0.7)
             self.play(Indicate(t1.rows[1], color=INK, scale_factor=1.03), run_time=0.8)
@@ -533,11 +550,17 @@ class ApprovalGate(VoiceScene):
         p18b = src_panel(TP + "cell-18.py", [55, 61], size=20,
                          wrap={55: ["context:"], 61: ["context.pending"]})
         _with_header(p18b, "Travel Planner · cell 18 · lines 55–61 (folded)", subtitle="Business Logic")
+        bg_b = p18b.code.background                        # as wide as p18, so the tag stays on the panel
+        pad = p18.code.code_lines.get_left()[0] - p18.code.background.get_left()[0]
+        bg_b.stretch_to_fit_width(p18.code.background.width)
+        bg_b.shift(RIGHT * ((p18b.code.code_lines.get_left()[0] - pad) - bg_b.get_left()[0]))
         place(p18b, left=-6.45, top=TOP)
         p18b.span(55, "prompt").set_color(LOOKUP)
         bar61b = p18b.bar(61, DATA, 0.2)
         tag61b = tag61.copy()
-        place(tag61b, left=row_of(p18b, 61).get_right()[0] + 0.25, cy=row_of(p18b, 61).get_center()[1])
+        place(tag61b, right=p18b.code.get_right()[0] - 0.08, cy=row_of(p18b, 61).get_center()[1])
+        assert abs(p18b.get_right()[0] - p18.get_right()[0]) < 0.02, (p18b.get_right(), p18.get_right())
+        assert tag61b.get_left()[0] > row_of(p18b, 61).get_right()[0] + 0.2
         apart(tag61b, mini, 0.2)
         apart(tag61b, VGroup(human, h_lab), 0.2)
         assert p18b.get_bottom()[1] > 0.0, p18b.get_bottom()
@@ -576,19 +599,41 @@ class ApprovalGate(VoiceScene):
         inside(p105, arrow, runs)
         apart(runs, mini, 0.1)
         apart(runs, VGroup(human, h_lab), 0.1)
+        # "every retry gets the same stamp": the turnstile comes down from the corner into the empty
+        # lower half, K4 times larger, so the retries are the thing on screen
+        K4 = 1.6
+        row4 = -2.05                                          # the card's centre line
+        g4 = gate_target(gate, K4, [0, 0, 0])
+        g4.shift(UP * ((row4 - 0.1 * K4) - g4.bar.get_center()[1]))      # bar vs card as in the corner
+        cg4 = card_glyph(1.8 * K4, 0.66 * K4)
+        cg4.move_to([g4.lpost.get_center()[0] - 0.1 * K4 - cg4.width / 2, row4, 0])
+        mg4 = model_glyph(0.38 * K4)
+        mg4.move_to([cg4.get_left()[0] - 0.08 * K4 - mg4.width / 2, row4, 0])
+        pend4 = pend_mini.copy().scale(K4).move_to(cg4)
+        big = VGroup(mg4, cg4, pend4, g4)
+        big.shift(LEFT * big.get_center()[0])
+        inside(big)
+        apart(big, p105, 0.3)
+        apart(big, VGroup(arrow, runs, human, h_lab), 0.3)
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(card), ReplacementTransform(p18b, p105), FadeOut(bar61b), FadeOut(tag61b),
                       run_time=0.8)
             self.play(FadeIn(bar106), *recolor(prompt106, LOOKUP), run_time=0.5)
+            vo.wait_until("runs on the human's message")
+            self.play(Indicate(human, color=INK, scale_factor=1.12), *flash(prompt106, LOOKUP, 1.15),
+                      run_time=0.7)
             vo.wait_until("before the agent starts")
             self.play(FadeIn(bar109), Create(arrow), run_time=0.7)
             self.play(FadeIn(runs, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("Inside turn 3")
-            self.play(Indicate(gate.caption, color=TURN, scale_factor=1.1), run_time=0.6)
+            self.play(Transform(mg, mg4), Transform(cg, cg4), Transform(gate, g4), Transform(pend_mini, pend4),
+                      run_time=1.0)
+            vo.wait_until("nothing is approved")
+            self.play(Indicate(gate.bar, color=TURN, scale_factor=1.05), run_time=0.5)
             vo.wait_until("so every retry gets the same stamp")
             for _ in range(2):
-                bump(self, [mg, cg, pend_mini], back=0.35, run_time=0.5)
-                self.play(Indicate(pend_mini, color=TURN, scale_factor=1.15), run_time=0.45)
+                bump(self, [mg, cg, pend_mini], back=0.5, run_time=0.55)
+                self.play(Indicate(pend_mini, color=TURN, scale_factor=1.12), run_time=0.45)
 
         # ============================================================ 5 · turn 4: yes, APPROVED, Python's budget
         p27 = src_panel(TP + "cell-27.py", 2, wrap={2: ["session"]})
@@ -600,14 +645,16 @@ class ApprovalGate(VoiceScene):
         h_to = np.array([p27.get_right()[0] + 0.6, row_of(p27, 2).get_center()[1], 0])
         h_lab_to = h_lab.copy()
         place(h_lab_to, left=h_to[0] + 0.45, cy=h_to[1])
-        # the turnstile in the middle row, with room for the card to pass
+        # the turnstile in the middle row, back at its corner size, with room for the card to pass
         row_b = 0.05                                          # the card's centre line
         x_g = -1.6                                            # the gate's centre (between its posts)
-        posts = VGroup(gate.lpost, gate.rpost)
-        g_shift = np.array([x_g - posts.get_center()[0], row_b - cg.get_center()[1], 0])   # keeps bar vs card
-        half_g = posts.width / 2
+        g5 = gate_target(gate, 1 / K4, [x_g, 0, 0])
+        g5.shift(UP * ((row_b - 0.1) - g5.bar.get_center()[1]))           # bar vs card as in the corner
+        half_g = (g5.rpost.get_center()[0] - g5.lpost.get_center()[0]) / 2
         cg_b = card_glyph(2.15, 0.66).move_to([x_g - half_g - 0.1 - 2.15 / 2, row_b, 0])
-        mg_b = mg.copy().move_to([cg_b.get_left()[0] - 0.08 - mg.width / 2, row_b, 0])
+        mg_b = model_glyph(0.38)
+        mg_b.move_to([cg_b.get_left()[0] - 0.08 - mg_b.width / 2, row_b, 0])
+        pend_b = pend_mini.copy().scale(1 / K4).move_to(cg_b)
         pass_dx = (x_g + half_g + 0.25 + 2.15 / 2) - cg_b.get_center()[0]
         assert cg_b.get_right()[0] + pass_dx < 1.5 and mg_b.get_left()[0] > -6.3
         tape = BudgetTape()
@@ -615,17 +662,23 @@ class ApprovalGate(VoiceScene):
         tot = obox([TOTAL_ROW], "cell 27 · saved output")
         place(tot, left=tape.get_right()[0] + 0.6, bottom=-3.45)
         tot_num = substring(tot.rows[0], '"total_usd": 2690.0')
+        rec5 = recorded_tag()                                  # RECORDED: the staff's saved output
+        place(rec5, left=tot.header.get_right()[0] + 0.25, bottom=tot.frame.get_top()[1] + 0.06)
+        assert rec5.get_right()[0] < RIGHT_EDGE
+        tot_g = VGroup(tot, rec5)
         test = excerpt_chip(TEST, "Travel Planner · cell 27 · line 6", line=TEST)
         place(test, left=-6.35, cy=row_b - 0.1)
         own = note("the notebook's own test", size=22)
         place(own, left=test.get_right()[0] + 0.3, cy=test.chip.get_center()[1])
         test_num = text_span(test.text, "2690.0")
-        inside(p27, tape, tot, test, own)
-        apart(tot, tape, 0.3)
+        inside(p27, tape, tot, rec5, test, own)
+        apart(tot_g, tape, 0.3)
+        apart(tot_g, test, 0.2)
+        apart(tot_g, own, 0.2)
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(p105), FadeOut(bar106), FadeOut(bar109), FadeOut(arrow), FadeOut(runs),
-                      tr.goto(7), gate.animate.shift(g_shift), Transform(cg, cg_b), Transform(mg, mg_b),
-                      pend_mini.animate.move_to(cg_b), human.animate.move_to(h_to),
+                      tr.goto(7), Transform(gate, g5), Transform(cg, cg_b), Transform(mg, mg_b),
+                      Transform(pend_mini, pend_b), human.animate.move_to(h_to),
                       h_lab.animate.move_to(h_lab_to), run_time=0.9)
             inside(VGroup(mg, cg, gate), human, h_lab)
             apart(gate, p27, 0.15)
@@ -646,7 +699,7 @@ class ApprovalGate(VoiceScene):
                 self.play(a, run_time=0.45)
             vo.wait_until("2,690 dollars out of 6,000")
             self.play(rows[-1], run_time=0.5)
-            self.play(FadeIn(tot, shift=LEFT * 0.1), run_time=0.5)
+            self.play(FadeIn(tot, shift=LEFT * 0.1), FadeIn(rec5, shift=LEFT * 0.1), run_time=0.5)
             self.play(*recolor(tot_num, DATA), run_time=0.4)
             vo.wait_until("The notebook's own test")
             self.play(FadeOut(VGroup(mg, cg, appr, gate)), FadeIn(test, shift=UP * 0.1),
@@ -660,6 +713,10 @@ class ApprovalGate(VoiceScene):
         assert t4.get_bottom()[1] > tape.get_top()[1] + 0.3, (t4.get_bottom(), tape.get_top())
         ul_checked = under(substring(t4.rows[1], "checked"), DATA, stroke=3)
         ul_python = under(substring(t4.rows[-1], "computed by Python"), DATA, stroke=3)
+        rec6 = saved_run_tag()                                 # RECORDED: the staff's saved output
+        place(rec6, right=t4.frame.get_right()[0], bottom=t4.frame.get_top()[1] + 0.06)
+        assert rec6.get_left()[0] > t4.header.get_right()[0] + 0.3 and rec6.get_top()[1] < 3.3
+        apart(rec6, tr, 0.15)
         p129 = src_panel(TP + "cell-18.py", 129, 135, wrap=True)
         _with_header(p129, "Travel Planner · cell 18 · lines 129–135")
         place(p129, left=-6.35, top=TOP)
@@ -677,11 +734,11 @@ class ApprovalGate(VoiceScene):
                                             row_of(p129, 134).get_right()[0]) + 0.2
         with self.voiceover(SAY[6]) as vo:
             self.play(*[FadeOut(m) for m in (p27, human, h_lab, test, own)], run_time=0.5)
-            self.play(FadeIn(t4, shift=DOWN * 0.15), run_time=0.6)
+            self.play(FadeIn(t4, shift=DOWN * 0.15), FadeIn(rec6, shift=DOWN * 0.15), run_time=0.6)
             self.play(Create(ul_checked), run_time=0.5)
             self.play(Create(ul_python), run_time=0.5)
             vo.wait_until("An itinerary that skipped the check")
-            self.play(*[FadeOut(m) for m in (t4, ul_checked, ul_python, tape, tot)], run_time=0.5)
+            self.play(*[FadeOut(m) for m in (t4, rec6, ul_checked, ul_python, tape, tot, rec5)], run_time=0.5)
             self.play(FadeIn(p129, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("a hard guardrail")
             self.play(FadeIn(hard), FadeIn(hard_tag, shift=LEFT * 0.1), run_time=0.6)
@@ -731,8 +788,8 @@ class ApprovalGate(VoiceScene):
         apart(note_a, code_row, 0.3)
         your = your_card([
             TURN_ROWS[0], TURN_ROWS[1], TURN_ROWS[2],
-            VGroup(label("is optional: type", 20, INK), mono("exit", 20, INK), label("to leave", 20, INK))
-            .arrange(RIGHT, buff=0.14),
+            VGroup(label("and the cell after it · type", 20, INK), mono("exit", 20, INK),
+                   label("to leave", 20, INK)).arrange(RIGHT, buff=0.14),
             ("OpenAI calls · every turn", COST),
         ])
         your.move_to([0, 0.2, 0])
@@ -755,10 +812,11 @@ class ApprovalGate(VoiceScene):
             vo.wait_until("on the action tool")
             self.play(Indicate(tool, color=DATA, scale_factor=1.08), Indicate(g_small.bar, color=TURN),
                       run_time=0.8)
-            vo.wait_until("Every turn is paid")
+            # the cards leave as the sentence ends, so the card's GOLD line is up while "Every turn is
+            # paid" is said, and the ▶ tag before "pause"
             self.play(*[FadeOut(m) for m in (card_a, card_b, note_a, note_b, code_row, tool_grp, g_small, lr2)],
-                      tr.goto(8), run_time=0.6)
-            vo.wait_until("pause, and run the four turns")
+                      tr.goto(8), run_time=0.5)
+            vo.wait_until("Every turn is paid")
             self.play(FadeIn(your, shift=UP * 0.15), run_time=0.6)
         self.wait(2)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
