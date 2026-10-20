@@ -737,7 +737,9 @@ class CallTwo(VoiceScene):
             self.play(FadeOut(ghost_env, scale=0.5), Indicate(md, color=CLOUD, scale_factor=1.1), run_time=0.4)
             prose.scale(0.5)
             self.add(prose)
-            back = np.array([lap.get_left()[0] + 0.2 + prose.width / 2, margin_y, 0])
+            # prose is at half size here: its full-size half-width is prose.width, so it lands with
+            # its left edge 0.2 inside the laptop frame (not across the frame's border)
+            back = np.array([lap.get_left()[0] + 0.2 + prose.width, margin_y, 0])
             self.play(prose.animate.scale(2.0).move_to(back), run_time=0.5)
             self.play(FadeTransform(prose, lp), FadeIn(stf), FadeOut(st6), FadeOut(env_tag), run_time=0.6)
             vo.wait_until("An Alpine valley")
@@ -821,17 +823,18 @@ class CallTwo(VoiceScene):
             self.play(Create(reds[0]), run_time=0.4)
             vo.wait_until("nor three other words")
             self.play(LaggedStart(*[Create(r) for r in reds[1:]], lag_ratio=0.3), run_time=0.7)
-            resize(self, t8, 13, run_time=0.6,
-                   extra=(FadeOut(xc8, shift=UP * 0.15), *[r.animate.shift(UP * dy8) for r in reds]))
+            # the card stays until the narration turns to the commit (about 4 s to read it)
             vo.wait_until("the commit that added")
-            cmd8 = type_cmd(self, t8, GIT_CMD, 1.6)
+            resize(self, t8, 13, run_time=0.5,
+                   extra=(FadeOut(xc8, shift=UP * 0.15), *[r.animate.shift(UP * dy8) for r in reds]))
+            cmd8 = type_cmd(self, t8, GIT_CMD, 1.5)
             pin(self, cmd8, beside(extra_tag(), t8, cmd8), run_time=0.3)
             out8 = t8.print(self, OUT8, run_time=0.6)
             assert len(t8.lines) == 13 and t8.lines[0] is tab[0]      # the table is still on screen
             u_hash = under(substring(out8[0], "85bba32"), TURN, 3)
             u_book = under(substring(out8[1], "input-datasets/books/Tolminc Cheese.txt"), TURN, 3)
             u_out = under(substring(out8[2], "out.txt"), TURN, 3)
-            self.play(Create(u_hash), Create(u_book), Create(u_out), run_time=0.6)
+            self.play(Create(u_hash), Create(u_book), Create(u_out), run_time=0.5)
             pin(self, out8[5], beside(label("← today's book", 20, S.GREY), t8, out8[5], buff=0.4), run_time=0.3)
             vo.wait_until("The staff's index")
             greens = []

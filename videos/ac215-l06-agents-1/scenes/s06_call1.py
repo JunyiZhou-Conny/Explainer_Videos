@@ -42,7 +42,7 @@ Beats (script.md "## S06", one voiceover block each):
    the trust boundary (extended down), unopened; caption "Gemini wrote arguments · nothing has run
    yet". A GOLD tick "1 paid call" (so far) after the call strip. ▶ your turn on a static two-column
    GREY card (with your key: the command; look for, in order; if it fails with your key; GOLD
-   "2 Gemini calls + 1 embedding call · paid": the whole run, as S07's GOLD tag).
+   "2 Gemini calls + 1 embedding call per run · paid": the whole run, as S07's GOLD tag).
    Hold 2 s. Everything fades: empty frame.
 """
 
@@ -316,7 +316,8 @@ def turn_card_two_cols(size=20):
         _ind(s("start with"), m("sh docker-shell.sh")),
     ).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
     cols = VGroup(left, right).arrange(RIGHT, aligned_edge=UP, buff=0.55)
-    cost = s("2 Gemini calls + 1 embedding call · paid", COST)   # the whole run, as S07's GOLD tag
+    # the whole run, as S07's GOLD tag ("per run": the "1 paid call" chip beside it counts call 1)
+    cost = s("2 Gemini calls + 1 embedding call per run · paid", COST)
     body = VGroup(top, cols, cost).arrange(DOWN, aligned_edge=LEFT, buff=0.26)
     fr = box(body.width + 0.6, body.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.97, radius=0.14)
     fr.move_to(body)
@@ -623,9 +624,10 @@ class CallOne(VoiceScene):
         with self.voiceover(SAY[9]) as vo:
             # the card leaves for the boundary while its panel goes, so it never crosses line 51's
             self.play(FadeOut(VGroup(t_four, grp33, u_name, u_auth, sig, stf, lp)),
-                      cc.animate.move_to(cc_to), Create(gate), run_time=0.9)
-            self.play(FadeIn(lp52, shift=UP * 0.15), FadeIn(stf52), run_time=0.4)
-            self.play(Create(u52), FadeIn(sdk, shift=LEFT * 0.1), run_time=0.5)
+                      cc.animate.move_to(cc_to), Create(gate), run_time=0.7)
+            # line 51 and its tag together, so "the SDK ran nothing" is up as the clause ends
+            self.play(FadeIn(lp52), FadeIn(stf52), Create(u52),     # no shift: u52 is drawn in place
+                      FadeIn(sdk, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("it only has declarations")
             self.play(FadeIn(sdk_why, shift=UP * 0.1), run_time=0.5)
             self.play(FadeIn(cap9, shift=UP * 0.1), Indicate(cc.rows, color=CLOUD, scale_factor=1.05),
