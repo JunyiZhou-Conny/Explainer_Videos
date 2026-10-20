@@ -10,14 +10,57 @@ $ sh docker-shell.sh
  => => resolve docker.io/library/node:20-alpine@sha256:f77c26b23c961440a3214a461fa25d6b31b423779738d365  0.0s
  => CACHED [2/3] RUN set -ex;     apk update &&     apk add --no-cache bash &&     mkdir -p /app         0.0s
  => CACHED [3/3] WORKDIR /app                                                                            0.0s
- => exporting to image                                                                                   0.0s
+ => exporting to image                                                                                   0.1s
  => => exporting layers                                                                                  0.0s
  => => exporting manifest sha256:3a436ced979446315bc05ce0ee4d6163334d9f5ba279a30125b269af1b911c83        0.0s
  => => exporting config sha256:efa7a189d37dd07819db06d4d65443b93eadcfc0471d26497735ba97cbe045c1          0.0s
- => => exporting attestation manifest sha256:da7ea1711806d26c8ce0e37be5c1d1d89b6ae9275fd16d51f8809a8009  0.0s
- => => exporting manifest list sha256:77c0cece85ee10de8fb7fdc077a49a9765de3ac10a9d627a1033c1b9eddeb880   0.0s
+ => => exporting attestation manifest sha256:c3a56c574cf2fc0f3f3e4370ebccb9238b081bde176749c9bc09dc73a4  0.0s
+ => => exporting manifest list sha256:b7e07f90d0a382ad7c84f963cf0518a94a4319e8460dc378fd36d1be574e1166   0.0s
  => => naming to docker.io/library/llm-rag-analysis-frontend-ai-chatbot:latest                           0.0s
  => => unpacking to docker.io/library/llm-rag-analysis-frontend-ai-chatbot:latest                        0.0s
-7dffbe0d52be:/app#
-[ptyrun: timed out waiting for /bash-[0-9.]+# $/]
-[exit 137]
+6c23fe52ca92:/app# npm run dev
+
+> frontend-app-nextjs@5.0.0 dev
+> WATCHPACK_POLLING=true next dev
+
+  ▲ Next.js 14.2.4
+  - Local:        http://localhost:3000
+  - Environments: .env.development
+
+ ✓ Starting...
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+ ✓ Ready in 1648ms
+ ○ Compiling / ...
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled / in 5.5s (592 modules)
+ GET / 200 in 5800ms
+ GET / 200 in 53ms
+ GET / 200 in 40ms
+ ○ Compiling /chunkviz ...
+ ✓ Compiled /chunkviz in 6.4s (2326 modules)
+ GET /chunkviz 200 in 6798ms
+ ○ Compiling /chromaui ...
+ ✓ Compiled /chromaui in 4.6s (3851 modules)
+ GET /chromaui 200 in 4951ms
+ ○ Compiling /chat ...
+ ✓ Compiled /chat in 1868ms (4321 modules)
+ GET /chat 200 in 2105ms
+ ✓ Compiled /_not-found in 454ms (4314 modules)
+ GET /capture-done 404 in 541ms
+^C
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+6c23fe52ca92:/app#
+6c23fe52ca92:/app# exit
+exit
+[exit 0]

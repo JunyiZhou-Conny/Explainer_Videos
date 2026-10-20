@@ -1,3 +1,5 @@
 $ curl -s --max-time 300 -o /tmp/l10-chromaui.html -w 'HTTP %{http_code}\n' http://localhost:3200/chromaui && grep -o '<title>[^<]*</title>' /tmp/l10-chromaui.html
-HTTP 000
-[exit 56]
+HTTP 200
+<title>RAG App</title>
+<title>RAG App</title>
+[exit 0]

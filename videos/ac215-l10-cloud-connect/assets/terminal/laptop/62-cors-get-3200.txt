@@ -1,0 +1,9 @@
+$ curl -s -D - -o /dev/null -H 'Origin: http://localhost:3200' http://localhost:8000/api/v2/version
+HTTP/1.1 200 OK
+content-type: application/json
+vary: origin, access-control-request-method, access-control-request-headers
+access-control-allow-origin: http://localhost:3200
+content-length: 7
+date: Tue, 20 Oct 2026 01:48:28 GMT
+
+[exit 0]
