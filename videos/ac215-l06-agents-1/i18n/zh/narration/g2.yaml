@@ -6,9 +6,15 @@
 # command in S09[2]; A9: no 只 the English lacks in S12[6] and S13[3]; D9: no comma before the main verb after
 # 课程结束时 in S16[2]; G2: .env 文件 at the end of S09[4]; G1: a comma after Agent Development Kit in S09[0], so
 # the band cuts there and not between 跑 and 在). Every sentence was run through subtitles.split_balanced at the
-# band width (30) and the .zh.srt width (22): no command, model ID or kept-English name is split. The proofread
-# (subtitles step 3) ran explainer.subtitles.tracks on the English timing and re-punctuated S12[6], S12[7], S13[4],
+# band width (30) and the .zh.srt width (22): no command, model ID or kept-English name is split. Proofread
+# (subtitles step 3), in two sessions: the first, cut off by a usage limit, re-punctuated S12[6], S12[7], S13[4],
 # S14[7] and S16[0] so each Chinese clause sits over its own English clause, and smoothed S10[8], S14[4], S15[3].
+# The second (2026-10-20) checked every sentence against script.md and the glossary, kept those edits, and ran all
+# 165 sentences through explainer.subtitles.tracks(timing="en") on an estimated English timing (2.9 words/s, no
+# renders yet). It changed S09[1] (README 里的地址), S09[7] (又把 gemini-2.5-flash 限定给老用户使用: Google is the
+# subject of both clauses, and no band cue opens on a model ID), S09[13] (再跑一次), S10[1] (提示文字说), S14[7]
+# (the ； now joins two full clauses: 代码就放在行动工具上) and S16[3] (block first, as the anatomy fills: 核心是……；
+# 指令是……；记忆是消息历史和 session 状态, so no cue opens on prompt). Repeat that check on the rendered timing.
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8, D9:
 # 所以这一步只要 uv 选中 3.15 就会失败; 用完以后把 1.6 GB 的虚拟环境删掉).
@@ -33,7 +39,7 @@ S09:
   - "打开一个新终端，进到你放 clone 的地方。"
 - en: "Step 1: clone; the README writes a placeholder for the address. The next line says cd google ADK tutorial, but no such folder exists."
   zh:
-  - "第 1 步：clone；README 给地址写的是一个占位符。"
+  - "第 1 步：clone；README 里的地址写的是一个占位符。"
   - "下一行写的是：cd google-adk-tutorial，可是并没有这个目录。"
   en_display:
   - null
@@ -69,7 +75,7 @@ S09:
   - "Choosing the LLM core is the lecture's first design decision, and here it's one line: a current model, like gemini-3.1-flash-lite."
 - en: "Google lists the code's fallback, Gemini 2.0 Flash, as shut down, and limits 2.5 Flash to earlier users. Keep everything in this root file: only the nearest dot env is loaded. Pause, and set up yours."
   zh:
-  - "Google 把代码里的后备模型 gemini-2.0-flash 列为已停用，gemini-2.5-flash 也只限老用户使用。"
+  - "Google 把代码里的后备模型 gemini-2.0-flash 列为已停用，又把 gemini-2.5-flash 限定给老用户使用。"
   - "所有设置都放在根目录这个文件里：只会加载离得最近的那个 .env 文件。"
   - "暂停一下，把你的设置好。"
   en_display:
@@ -101,7 +107,7 @@ S09:
   - "修复办法是一条额外的命令：uv python pin 3.13。"
 - en: "Then uv sync again: CPython 3.13 this time, and it installs, ADK 2.12.0 included. PyTorch makes it big: about 1.6 gigabytes, plus about 3 gigabytes for CUDA on a Linux PC."
   zh:
-  - "然后再来一次：uv sync，这次用的是 CPython 3.13，安装成功，ADK 2.12.0 也装上了。"
+  - "然后再跑一次：uv sync，这次用的是 CPython 3.13，安装成功，ADK 2.12.0 也装上了。"
   - "PyTorch 让它变得很大：大约 1.6 GB，在 Linux 电脑上还要再加大约 3 GB 的 CUDA。"
 - en: "An extra check, uv run ADK dash dash version, says 2.12.0, at the time of recording. Pause, and get your sync to succeed."
   zh:
@@ -120,7 +126,7 @@ S10:
   - null
 - en: "The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with ADK telemetry disable."
   zh:
-  - "文字说遥测默认是关闭的，可大写的 Y 意味着直接按回车就是回答 yes。"
+  - "提示文字说遥测默认是关闭的，可大写的 Y 意味着直接按回车就是回答 yes。"
   - "怎么回答都行；以后可以用这条命令改：adk telemetry disable。"
   en_display:
   - null
@@ -354,7 +360,7 @@ S14:
 - en: "The lecture puts success criteria in the instructions, and guardrails in the decision maker. This notebook keeps both in code the model can't talk its way past, on the action tool. Every turn is paid; pause, and run the four turns."
   zh:
   - "课上把成功标准放在指令里，把护栏放在决策者里。"
-  - "这个 notebook 把两者都写进代码，模型怎么说都绕不过去；就放在行动工具上。"
+  - "这个 notebook 把两者都写进代码，模型怎么说都绕不过去；代码就放在行动工具上。"
   - "每一轮都要付费；暂停一下，把这四轮跑一遍。"
 S15:
 - en: "The last notebook writes a cheese newsletter per reader, with Microsoft's Agent Framework, pinned. In the users cell, put in yourself and a friend, and keep two entries. Email is preview only; nothing is sent."
@@ -424,7 +430,7 @@ S16:
 - en: "Here's the lecture's anatomy, filled with today's code. Gemini and OpenAI models as the core; prompts and output types as instructions; tools by hand, decorated, or over MCP; history and session state as memory."
   zh:
   - "这是课上的 agent 结构图，填上了今天的代码。"
-  - "Gemini 和 OpenAI 的模型是核心；prompt 和输出类型是指令；工具有手写的、加装饰器的，或者走 MCP 的；历史和 session 状态是记忆。"
+  - "核心是 Gemini 和 OpenAI 的模型；指令是 prompt 和输出类型；工具有手写的、加装饰器的，或者走 MCP 的；记忆是消息历史和 session 状态。"
 - en: "Dynamic control is the framework's loop, or two calls by hand. The lecture's formula, LLM plus reasoning, instructions and tools, gains two pieces: a loop the framework runs, and checks your code enforces."
   zh:
   - "动态控制就是框架的循环，或者手写的两次调用。"

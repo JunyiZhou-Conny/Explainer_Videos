@@ -13,10 +13,14 @@
 # llm-rag, MLOps_Learning, gpt-4o, LLM, GCP_PROJECT, python cli.py --agent / --load --chunk_type char-split,
 # docker-volumes/, --get, tool_config, mode="any", "mode": "ANY", DefaultCredentialsError, response.text);
 # null = the SAY text.
-# Proofread (subtitles step 3): every sentence was run through explainer.subtitles.tracks on the English timing.
-# Where the band paired a Chinese clause with the wrong English one, or a .zh.srt line broke inside a word, the
-# sentence was re-punctuated or reordered inside itself (S01[6], S01[7], S03[1], S03[2], S04[6], S05[7], S06[2],
-# S06[4], S07[7]); no command, model ID or kept-English name is split across lines or cues.
+# Proofread (subtitles step 3), in two sessions. The first, cut off by a usage limit, re-punctuated or reworded
+# S01[4]-[7], S02[0], S02[5], S03[1], S03[2], S04[6], S05[7], S05[8], S06[2]-[4], S06[8], S07[7]-[9], S08[2], S08[5]
+# and S08[8]. The second (2026-10-20) checked every sentence against script.md and the glossary, kept those edits,
+# and ran all 172 sentences through explainer.subtitles.tracks(timing="en") on an estimated English timing (2.9
+# words/s, no renders yet) at the band width (30) and the .zh.srt width (22): each band piece sits over its own
+# English clause, and no command, model ID or kept-English name is split across lines or cues. It changed S03[1]
+# (每一步改的是输入), S03[3] (并不是模型记住的), S05[1] (把两件事都做了, D6) and S05[7] (a comma, so the band cuts
+# after embed 这一步). Repeat that check on the rendered timing before publishing.
 S01:
 - en: "Here's a question for a cheese expert: describe where cheese making is important in the instructor's book. In the staff's recorded run, these two lines print before the answer: a function called get book by author, and its arguments."
   zh:
@@ -110,7 +114,7 @@ S03:
   - "每次调用都是一个全新的信封，模型只知道信封里的东西。"
 - en: "The notebook keeps the model and question fixed, and changes the inputs each step. A system prompt, retrieved documents, earlier turns, a profile from past sessions, a tool's output, an output schema."
   zh:
-  - "这个 notebook 固定模型和问题，每一步改变输入。"
+  - "这个 notebook 固定模型和问题，每一步改的是输入。"
   - "先是 system prompt、检索到的文档、之前几轮，再是以往 session 的用户画像、工具的输出和输出 schema。"
 - en: "Watch the top pick change: cheddar, American, then mild cheeses for kids, then Havarti. Then a mild cheddar from Whole Foods, and finally the same pick as strict JSON."
   zh:
@@ -119,7 +123,7 @@ S03:
 - en: "Step 4 shows what memory really is. The earlier turns aren't remembered: the code sends them again, every time. Memory is paper you put back in the envelope."
   zh:
   - "第 4 步展示了记忆到底是什么。"
-  - "之前几轮对话不是记住的：代码每次都把它们重新发一遍。"
+  - "之前几轮对话并不是模型记住的：代码每次都把它们重新发一遍。"
   - "记忆，就是你放回信封里的纸。"
 - en: "The lecture groups these sheets into two building blocks: instructions and memory. Next lecture names the craft: context engineering."
   zh:
@@ -206,7 +210,7 @@ S05:
   zh:
   - "第 1 步：cd llm-rag。"
   - "第 2 步：编辑 docker-shell.sh，把 GCP project 变量改成你自己的项目 ID；我们用的是占位值。"
-  - "暂停一下，两件事都做了。"
+  - "暂停一下，把两件事都做了。"
   en_display:
   - "Step 1: cd llm-rag."
   - "Step 2: edit docker-shell.sh, and set GCP_PROJECT to your own project ID; we used a placeholder."
@@ -246,7 +250,7 @@ S05:
   - null
 - en: "We had no key, so the staff's committed embeddings stood in for the embed step."
   zh:
-  - "我们没有密钥，所以 embed 这一步用的是课程团队 commit 过的 embedding。"
+  - "我们没有密钥，所以 embed 这一步，用的是课程团队 commit 过的 embedding。"
 - en: "Then the load step: python cli.py, dash dash load, chunk type char split. 11 books, 8,248 chunks; the instructor's story is just 24 of them. An extra get command confirms the collection answers; pause, and load yours."
   zh:
   - "然后是 load 这一步：python cli.py --load，chunk type 用 char-split。"

@@ -98,8 +98,10 @@ from manim import (
     rush_into,
 )
 
+from pygments.token import Punctuation, String
+
 from explainer import style as S
-from explainer.devops import box, check_mark, chip, label, step_badge
+from explainer.devops import HOUSE_CODE_STYLE, box, check_mark, chip, label, step_badge
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S03"]
@@ -160,9 +162,11 @@ W_PROF, W_TOOLS = "user preferences: a profile from past sessions", "contexts: t
 W_SCHEMA = "output schema"
 
 # ------------------------------------------------------------------ layout
-ENV_C = np.array([-3.25, 0.0, 0])          # the main envelope (6.4 wide, 5 slots: y -1.67..1.67)
-CHIP_C = np.array([3.4, 1.2, 0])           # the gpt-4o chip
-CARD_C = np.array([3.4, -0.55, 0])         # the top-pick card
+ENV_C = np.array([-3.25, -0.3, 0])         # the main envelope (6.4 wide, 5 slots: y -1.97..1.37)
+CHIP_C = np.array([3.4, 0.9, 0])           # the gpt-4o chip
+CARD_C = np.array([3.4, -0.85, 0])         # the top-pick card
+STR_HEX = "#" + HOUSE_CODE_STYLE.style_for_token(String)["color"]
+PUN_HEX = "#" + HOUSE_CODE_STYLE.style_for_token(Punctuation)["color"]
 COL_X = 0.55                               # the picks column: badge x; chips start at COL_X + 0.7
 
 
@@ -208,6 +212,33 @@ def pick_frame():
     return g
 
 
+def string_rows(panel, *nums):
+    """Workaround (src_panel wraps before lexing, so the lexer reads each continuation row on its
+    own and a wrapped "content" string comes out half-coloured): colour the string of file lines
+    `nums` as the one string it is, from its opening quote to its closing quote; the GREY ↪ and the
+    closing '},' keep their colours."""
+    rows = panel.code.source.split("\n")
+
+    def glyphs(k, a, b):
+        row = rows[k]
+        i, j = len("".join(row[:a].split())), len("".join(row[:b].split()))
+        return VGroup(*panel.code.code_lines[k][i:j])
+
+    for n in nums:
+        ks = panel.rows_of(n)
+        first = rows[ks[0]]
+        a = first.index('"content": "') + len('"content": ')
+        glyphs(ks[0], a, len(first)).set_color(STR_HEX)
+        for k in ks[1:]:
+            row = rows[k]
+            a = row.index("↪") + 1
+            q = row.rfind('"')
+            b = q + 1 if q > a else len(row)
+            glyphs(k, a, b).set_color(STR_HEX)
+            glyphs(k, b, len(row)).set_color(PUN_HEX)
+    return panel
+
+
 def role_label(role: str):
     lbl = VGroup(note("role"), S.text(f'"{role}"', 20, INK, font=MONO)).arrange(RIGHT, buff=0.12)
     return lbl
@@ -227,7 +258,7 @@ class Envelope(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             tr = switch_section(self, None, "CQ-Inputs", 1)
             gpt = model_chip("gpt-4o").move_to(CHIP_C)
-            env1 = place(EnvelopePiece(width=2.6, slots=1), [-3.25, 0.2, 0])
+            env1 = place(EnvelopePiece(width=2.6, slots=1), [-3.25, -0.1, 0])
             q1 = sheet_of(env1, W_USER, LOOKUP)
             q1.move_to(env1.slot_point(0))
             env1.sheet_group.add(q1)
@@ -281,7 +312,7 @@ class Envelope(VoiceScene):
                 """Tracker to step k: `drop` slides out, `sheet` slides in glowing, the pick changes."""
                 nonlocal ptxt, last
                 new = pick_text(PICKS[k - 1], card.frame.get_center() + DOWN * 0.16)
-                anims = [tr.goto(k), ReplacementTransform(ptxt, new), *extra]
+                anims = [tr.goto(k), FadeOut(ptxt, shift=UP * 0.2), FadeIn(new, shift=UP * 0.2), *extra]
                 if last is not None:
                     anims.append(unglow(last))
                 ptxt = new
@@ -360,7 +391,7 @@ class Envelope(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(env), FadeOut(cap1), *[FadeOut(r) for r in rows], FadeOut(col_tag),
                       tr.goto(4), run_time=0.7)
-            p41a = src_panel(_C41, 18, 22, wrap=True)
+            p41a = string_rows(src_panel(_C41, 18, 22, wrap=True), 20, 21, 22)
             _with_header(p41a, "Cheese Quiz · cell 41 · lines 18–22",
                          subtitle="Step 4: Adding Short-term Memory")
             p41a.align_to([-6.45, 0, 0], LEFT).align_to([0, -3.56, 0], DOWN)
@@ -392,7 +423,7 @@ class Envelope(VoiceScene):
                 pile.append(sh)
                 if i == 0:
                     env4.sheets.append(sh)
-            p41b = src_panel(_C41, 22, 25, wrap=True)
+            p41b = string_rows(src_panel(_C41, 22, 25, wrap=True), 22, 23)
             _with_header(p41b, "Cheese Quiz · cell 41 · lines 22–25",
                          subtitle="Step 4: Adding Short-term Memory")
             p41b.align_to(p41a, LEFT).align_to(p41a, DOWN)
@@ -429,8 +460,9 @@ class Envelope(VoiceScene):
                        radius=0.16)
             fr_r = box(col_r.width + 0.5, col_r.height + 0.45, S.GREY, fill=S.BG, fill_opacity=0.0,
                        radius=0.16)
-            fr_l.move_to([-6.45 + fr_l.width / 2, 2.6 - fr_l.height / 2, 0])
-            fr_r.move_to([6.45 - fr_r.width / 2, 2.6 - fr_r.height / 2, 0])
+            top = 2.0
+            fr_l.move_to([-6.45 + fr_l.width / 2, top - fr_l.height / 2, 0])
+            fr_r.move_to([6.45 - fr_r.width / 2, top - fr_r.height / 2, 0])
             col_l.move_to(fr_l)
             col_r.move_to(fr_r).align_to(fr_r, UP).shift(DOWN * 0.225)
             for s in list(env4.sheet_group):                # the sheets leave the envelope
@@ -447,7 +479,8 @@ class Envelope(VoiceScene):
             vo.wait_until("and memory")
             self.play(Create(fr_r), FadeIn(h_r), run_time=0.6)
             vo.wait_until("Next lecture")
-            l7 = concept_box("Lecture 7: context engineering").move_to([fr_r.get_center()[0], -0.6, 0])
+            l7 = concept_box("Lecture 7: context engineering")
+            l7.move_to([fr_r.get_center()[0], fr_r.get_bottom()[1] - 0.75, 0])
             self.play(FadeIn(l7, shift=UP * 0.15), run_time=0.6)
 
         # ============================================================ 5 · spot it
@@ -474,7 +507,7 @@ class Envelope(VoiceScene):
 
         # ============================================================ 6 · the swapped roles
         with self.voiceover(SAY[6]) as vo:
-            env2 = EnvelopePiece(width=4.8, slots=2)
+            env2 = EnvelopePiece(width=4.8, slots=2, pitch=0.46, margin=0.32)
             place(env2, [6.43 - 2.4, -3.56 + env2.env_h / 2, 0])
             s2_sys = sheet_of(env2, W_SYS)
             s2_user = sheet_of(env2, W_USER, LOOKUP)

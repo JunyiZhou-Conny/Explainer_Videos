@@ -221,9 +221,17 @@ def coin_row(n, right, y, pitch=0.21):
     return coins
 
 
-def your_card(rows, header="your turn"):
-    """turn_card's look for rows that mix serif and mono (card_rows + the YELLOW ▶ tag)."""
-    c = card_rows(rows, header=header, buff=0.18)
+def your_card(rows, header=None):
+    """turn_card's look for rows that mix serif and mono (card_rows + the YELLOW ▶ tag; no GREY
+    "your turn" header above it: the tag already says so, and beat 1 needs the room)."""
+    c = card_rows(rows, header=header, buff=0.13)
+    # a taller frame (0.14 more at the top), so the ▶ tag straddling the edge clears the first row
+    fr = c.frame
+    tall = box(fr.width, fr.height + 0.14, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
+    tall.move_to(fr).align_to(fr, DOWN)
+    c.remove(fr)
+    c.add_to_back(tall)
+    c.frame = tall
     tg = your_turn().move_to(c.frame.get_corner(UP + RIGHT)).shift(LEFT * 1.0)
     c.add(tg)
     c.tag = tg
@@ -273,7 +281,7 @@ class SteeringWheel(VoiceScene):
                       FadeOut(hl_code), tr.goto(3), run_time=0.6)
             p10 = src_panel(CELL10, 3, subtitle=True)
             p10.move_to([X0, 0, 0], aligned_edge=LEFT)
-            p10.shift(UP * (2.25 - p10.get_top()[1]))
+            p10.shift(UP * (cf.title.get_bottom()[1] - 0.2 - p10.get_top()[1]))   # clear of the tab
             self.play(FadeIn(p10, shift=UP * 0.15), run_time=0.6)
             pk = p10.span(3, "fastmcp openai-agents")
             rd = p10.span(3, "> /dev/null 2>&1")
@@ -295,27 +303,28 @@ class SteeringWheel(VoiceScene):
 
             ob = output_box(DL_OUT, header="Cheese Quiz · cell 13 · output", width=DL_W)
             ob.move_to([X0, 0, 0], aligned_edge=LEFT)
-            ob.shift(UP * (-0.12 - ob.get_top()[1]))
+            sv = saved_run_tag().next_to(ob.header, RIGHT, buff=0.25)
+            VGroup(ob, sv).shift(UP * (hide.box.get_bottom()[1] - 0.2 - VGroup(ob, sv).get_top()[1]))
             to_bars = VGroup(*[Rectangle(width=ob.rows[i].width + 0.16, height=0.34, stroke_width=0)
                                .set_fill(TURN, 0.18).move_to(ob.rows[i]) for i in (0, 3)])
-            sv = saved_run_tag().next_to(ob.header, RIGHT, buff=0.25)
-            look = VGroup(label("look for both To: lines", 20, TURN), label("missing? rerun Download", 20, TURN))
-            look.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
-            look.next_to(ob.frame, DOWN, buff=0.15).align_to(ob.frame, LEFT)
+            look = label("look for both To: lines · missing? rerun Download", 20, TURN)
+            look.next_to(ob.frame, DOWN, buff=0.12).align_to(ob.frame, LEFT)
+            assert look.get_bottom()[1] > cf.frame.get_bottom()[1] + 0.12
             vo.wait_until("Then download the quiz files")
             self.play(tr.goto(4), FadeIn(ob, shift=UP * 0.1), run_time=0.7)
             self.play(FadeIn(to_bars), FadeIn(sv), FadeIn(look, shift=UP * 0.1), run_time=0.6)
 
             card = your_card([
                 "Prerequisites: save a copy",
-                VGroup(label("Secrets:", 20, INK), mono("OPENAI_API_KEY", 20, INK),
-                       label("· notebook access on", 20, INK)).arrange(RIGHT, buff=0.14),
+                VGroup(label("Secrets:", 20, INK), mono("OPENAI_API_KEY", 20, INK)).arrange(RIGHT, buff=0.14),
+                "with notebook access on",
                 "run Install Packages, Imports,",
                 "Set Up OpenAI Key, Download",
             ])
             card.move_to([0, 0, 0])
-            card.shift(np.array([6.3 - card.frame.get_right()[0], -3.3 - card.frame.get_bottom()[1], 0]))
-            assert card.frame.get_left()[0] > ob.frame.get_right()[0] + 0.2
+            card.shift(np.array([6.3 - card.frame.get_right()[0], -3.36 - card.frame.get_bottom()[1], 0]))
+            assert card.frame.get_top()[1] < sv.get_bottom()[1] - 0.12
+            assert card.frame.get_left()[0] > max(ob.frame.get_right()[0], look.get_right()[0]) + 0.2
             vo.wait_until("and pause to run the setup")
             self.play(FadeIn(card, shift=UP * 0.15), run_time=0.6)
         self.wait(2)
@@ -380,7 +389,7 @@ class SteeringWheel(VoiceScene):
             badge = VGroup(RoundedRectangle(width=bt.width + 0.22, height=0.36, corner_radius=0.14,
                                             stroke_color=S.GREY, stroke_width=2).set_fill(S.BG, 1), bt)
             bt.move_to(badge[0])
-            badge.move_to(sts[2].get_corner(DOWN + RIGHT) + np.array([-0.12, -0.04, 0]))
+            badge.move_to(sts[2].get_corner(DOWN + RIGHT) + np.array([0.1, -0.1, 0]))   # clear of the descenders
             arrows2 = VGroup(*[arr(a.get_right(), b.get_left())
                                for a, b in zip([d2] + sts[:-1], sts)])
             m2 = model_chip(MODEL_CQ, 22).move_to(m1)
@@ -497,7 +506,7 @@ class SteeringWheel(VoiceScene):
             ex_tools = excerpt_chip("tools=[web_tool],", "Cheese Quiz · cell 30 · line 34 (excerpt)",
                                     line=TOOLS_LINE)
             ex_tools.move_to([NAME_X + ex_tools.width / 2, 0, 0])
-            ex_tools.shift(UP * (-3.42 - ex_tools.get_bottom()[1]))
+            ex_tools.shift(UP * (-3.5 - ex_tools.get_bottom()[1]))
             w3 = chip("web_search", CLOUD, size=22, font=MONO)
             w3_at = np.array([w_box.get_x(), y3 - 0.95, 0])
             w3.move_to(w3_at)
@@ -634,7 +643,7 @@ class SteeringWheel(VoiceScene):
             smart.move_to(dc.frame)
             self.play(FadeOut(dc), FadeOut(und), FadeIn(smart), run_time=0.6)
             vo.wait_until("isn't a smarter model")
-            st_line = strike(smart.rows[0])
+            st_line = strike(smart.rows[0], stroke=3)
             self.play(Create(st_line), run_time=0.5)
             th_chips = [th_m1, th_m2]
             vo.wait_until("the model was the same")
