@@ -6,7 +6,8 @@ Beats (script.md "## S12", one voiceover block each):
    "action · change something", "orchestration · hand work to an agent". GREY tool chips drop in
    as each family is named: get_book_by_author, web_search, read_file -> data; finalize_itinerary
    and send_email (each with its GREY source tag "trip planner" / "newsletter" under it) ->
-   action; research_facts, researcher_agent -> orchestration.
+   action; research_facts, researcher_agent -> orchestration. The narrated examples light up
+   YELLOW (get_book_by_author; finalize_itinerary, then send_email).
 1. LECTURE 52. The bins leave; ServiceFan: one agent box with four tool pills, ten GREY wires fan
    out to ten service boxes ("email · SMTP/IMAP" … "messages · messaging API", no brands). A GREY
    caption "Do you see a problem?" under the agent. In the 5 s of silence after the SAY, a GREY
@@ -22,9 +23,9 @@ Beats (script.md "## S12", one voiceover block each):
    label becomes the caption "one protocol · one connection per server". The lecture tag stays.
 4. Plug 1 flashes YELLOW, then the picture and the lecture tag leave. TRACKER Mcp 1. A README card
    (3-mcp-tools/README.md · lines 56–63, tag expected), not typed: brew install node (macOS) ·
-   sudo apt install nodejs npm (Ubuntu) · Windows: nodejs.org. A 4-row strip (laptop · second
-   terminal) types `node --version; npx --version` (tag extra) -> adk-laptop/34 lines 2–3, tag "at
-   the time of recording".
+   sudo apt install nodejs npm (Ubuntu) · Windows: nodejs.org, with a 4-row strip (laptop · second
+   terminal); on "Install Node" the strip types `node --version; npx --version` (tag extra) ->
+   adk-laptop/34 lines 2–3, tag "at the time of recording". 1.5 s hold to read them.
 5. The card and the strip leave. CODE(3-mcp-tools/agent.py: 20–29) at 20 pt in the left two
    thirds (header "3-mcp-tools/agent.py · lines 20–29 · your copy: mcp_tools/agent.py"; lines 24
    and 28 wrapped): lines 23–24 PURPLE as the server starts, line 28 YELLOW (tool_filter) at the
@@ -33,12 +34,14 @@ Beats (script.md "## S12", one voiceover block each):
    down and back up.
 6. The panel and the picture leave. The extra card "ask the agent's own toolset for its tools · no
    model involved" (top right) and a 4-row strip (laptop · second terminal) print adk-laptop/35
-   lines 21 ("on stdio" PINK), 30 (wrap), 31 cut after "14 [" + "…]". V7's sieve: 14 GREY tool
+   lines 21 ("on stdio" PINK), 30 (folded at its last space, so the three names stay whole), 31
+   cut after "14 [" + "…]". V7's sieve: 14 GREY tool
    chips fall onto `tool_filter` ("14" underlined YELLOW); write_file and edit_file flash and bounce
    off RED; list_directory, read_file, search_files pass GREEN (line 30 underlined GREEN).
-   TRACKER Mcp 2: the sieve and the card leave, the strip grows to 7 rows and prints lines 32
-   (cut), 33–37; a GREY card "with your key:" — pick mcp_tools · ask "List files in this
-   directory" → a list_directory call in the Events tab, and the five entries printed below.
+   TRACKER Mcp 2: the sieve and the card leave; a GREY card "with your key:" — pick mcp_tools ·
+   ask "List files in this directory" → a list_directory call in the Events tab, and the five
+   entries printed below; the strip grows to 7 rows and prints lines 32 (cut), 33–37. 2 s hold
+   to read them.
 7. TRACKER CQ-Tools 1. A BLUE Colab frame (Cheese Quiz, illustration) in the left 10.25 units.
    RECORDED(c50: 3–6) small (name masked) + tag recorded · the staff's last saved run; caption
    "step 1: a Python function with @function_tool (cell 48)"; GREY chip "Colab disconnected? rerun
@@ -48,14 +51,16 @@ Beats (script.md "## S12", one voiceover block each):
    PINK; line 27 YELLOW with the YELLOW tag "not tools=". The picture: a short PINK HTTPS line from
    the frame's edge to a BLUE "remote MCP server" box at the top right.
 8. The panel leaves; the Colab frame shrinks to the top left and the HTTPS line stretches across.
-   The extra card (built as common.extra_card) lists the four requests: a browser's plain GET,
-   initialize, tools/list, tools/call. A 3-row strip (laptop · second terminal) prints
+   Under it, the extra card as one row (common.extra_card's look) lists the four requests: a
+   browser's plain GET · initialize · tools/list · tools/call, each lit YELLOW in turn. A 3-row
+   strip (laptop · second terminal) prints
    mcp-remote/01 lines 2 and 10 (wrap; the glued "[exit 0]" marker dropped): HTTP/2 406 RED,
    "Client must accept text/event-stream" RED, while a GREY "GET" envelope bounces off the server
-   (RED tag "406"). The strip leaves; three PINK envelopes travel the line, each returning with an
-   excerpt card in the right column: initialize -> "protocolVersion":"2025-06-18" … "version":
-   "1.16.0" (02 line 3); tools/list -> "name":"‹instructor›_fun_fact_mcp" (03 line 3); tools/call
-   -> the "fact" text of 04 line 3, tag "your numbers will differ" + "a new fact each call".
+   (RED tag "406"). The strip leaves; three PINK envelopes travel the line (on "initialize", "list
+   tools", "call"), each returning with an excerpt card below: initialize -> "protocolVersion":
+   "2025-06-18" … "version":"1.16.0" (02 line 3); tools/list -> "name":"‹instructor›_fun_fact_mcp"
+   (03 line 3); tools/call -> the "fact" text of 04 line 3, tag "your numbers will differ" + "a new
+   fact each call". 1.5 s hold to read them.
 9. TRACKER CQ-Tools 3. The picture and the cards leave; the Colab frame grows back.
    CODE(cell-57: 2, 5–6, 11, 14) folded (header "Cheese Quiz · cell 57 · lines 2–14 (folded)",
    subtitle "Build your own MCP Server (Optional)", names masked, line 11 without its emoji): line
@@ -65,7 +70,8 @@ Beats (script.md "## S12", one voiceover block each):
    older version of the cell". Then the panel leaves: RECORDED(c59: 3–10) prints on the left
    (tag recorded · the staff's last saved run) beside the picture on the right: a PURPLE agent ·
    client and a PURPLE FastMCP thread on PINK 127.0.0.1:8001, inside the BLUE Colab VM, an
-   envelope travelling between them.
+   envelope travelling between them; the three "Fun Fact Tool Called" rows flash PURPLE. No SAY
+   covers the log, so it prints quickly (about 4 s after the voice).
 10. The three plugs side by side (stacked rows): in each, a BLUE model chip only emits a small
    BLUE call card into a PURPLE client, and the clients do all the talking: PINK envelopes along
    the PINK lines (stdio, HTTPS, HTTP · :8001) to the servers. Then ▶ on a static GREY "your turn"
@@ -100,6 +106,7 @@ from common import (
     ToolBins,
     _mono_rows,
     _with_header,
+    beside,
     capture,
     card_rows,
     colab_frame,
@@ -117,7 +124,6 @@ from common import (
     note,
     output_box,
     pin,
-    beside,
     readme_card,
     recording_tag,
     saved_run_tag,
@@ -134,10 +140,10 @@ from common import (
 )
 from manim import (
     DOWN,
-    AnimationGroup,
     LEFT,
     RIGHT,
     UP,
+    AnimationGroup,
     Create,
     Dot,
     FadeIn,
@@ -145,6 +151,7 @@ from manim import (
     Indicate,
     LaggedStart,
     Line,
+    Rectangle,
     ReplacementTransform,
     Transform,
     VGroup,
@@ -158,7 +165,6 @@ from explainer.devops import (
     box,
     chip,
     label,
-    line_pitch,
     mono,
     substring,
     tag,
@@ -178,6 +184,9 @@ ON_STDIO = TS.line(21)
 assert ON_STDIO == "Secure MCP Filesystem Server running on stdio", ON_STDIO
 SEES = TS.line(30)
 assert SEES == "tools the agent sees: ['list_directory', 'read_file', 'search_files']", SEES
+_k30 = SEES.rfind(" ", 0, 66)                       # 69 characters: fold at the last space that fits,
+SEES_ROWS = [SEES[:_k30], SEES[_k30 + 1:]]          # so the three kept names stay whole
+assert SEES_ROWS == ["tools the agent sees: ['list_directory', 'read_file',", "'search_files']"], SEES_ROWS
 OFFERS = TS.cut(31, "14 [") + "…]"
 assert OFFERS == "tools the server offers: 14 […]", OFFERS
 LISTED = TS.line(32)
@@ -208,7 +217,8 @@ C57_ROW = C57.line(3)
 assert C57_ROW == "FastMCP server starting on http://127.0.0.1:8000/mcp", C57_ROW
 C59 = capture("expected/colab-cheese-quiz-c59-local-mcp.txt")
 C59_ROWS = C59.at((3, 10))
-assert C59_ROWS[0].endswith('"POST /mcp HTTP/1.1" 200 OK') and C59_ROWS[2] == MASK + " Fun Fact Tool Called"
+assert C59_ROWS[0].endswith('"POST /mcp HTTP/1.1" 200 OK') and len(C59_ROWS) == 8, C59_ROWS
+assert all(C59_ROWS[k] == MASK + " Fun Fact Tool Called" for k in (2, 4, 6)), C59_ROWS
 
 AGENT = "llm-agent-google-adk/3-mcp-tools/agent.py"
 assert excerpt(AGENT, 23, 23).strip() == "command='npx',"
@@ -234,17 +244,18 @@ TURN_ROWS = [
 ]
 
 # ------------------------------------------------------------------ layout
-TOP_Y = 2.78                       # nothing above this but the tracker band / lecture tag
 STRIP4_TOP = strip_top(4)
-STRIP3_TOP = strip_top(3)
-BINS_Y = -0.75                     # the bins' centre
+BINS_H = 2.5                       # tall enough for two chips with their source tags under them
+BINS_Y = -0.75 - (BINS_H - 2.25) / 2   # the bins' centre (their top stays at y = 0.375)
 PLUG_YS = (0.8, 0.0, -0.8)         # beat 3: the three plugs
 X_HOST = -3.7                      # the host box's right edge (ServiceFan's agent box)
 SRV_X0 = 3.15                      # the services' left edge (ServiceFan)
-CF7_R = 3.75                       # beat 7: the Colab frame's right edge
-SRV_BOX = (4.7, 6.5, 2.2)          # the remote server box: left, right, centre y (beats 7–8)
-CF8_R = -1.9                       # beat 8: the shrunken frame's right edge
-CF8_BOTTOM = 1.6
+CF_TOP = 2.55                      # the Colab frame's top edge (its tab clears the tracker, as in S02)
+PANEL_TOP = 2.15                   # a panel inside the Colab frame starts under the frame's tab
+CF7_R = 3.45                       # beat 7: the Colab frame's right edge
+SRV_BOX = (4.7, 6.5, 1.95)         # the remote server box: left, right, centre y (beats 7–8)
+CF8_R = -1.6                       # beat 8: the shrunken frame's right edge
+CF8_BOTTOM = 1.35
 ROW_YS = (2.25, 1.35, 0.45)        # beat 10: the three plugs, stacked
 
 
@@ -363,12 +374,42 @@ def quote_card(rows, header, line, size=CAPTION):
     return g
 
 
+def req_strip():
+    """Beat 8's extra card as one row (common.extra_card's look): the four requests, the `extra` tag
+    and "an extra check · in the study guide" above. .items (lit one by one) .frame .header"""
+    items = [label("a browser's plain GET", CAPTION, INK)] + \
+        [mono(s, CAPTION, INK) for s in ("initialize", "tools/list", "tools/call")]
+    row = []
+    for k, it in enumerate(items):
+        if k:
+            row.append(label("·", CAPTION, S.GREY))
+        row.append(it)
+    r = VGroup(*row).arrange(RIGHT, buff=0.22)
+    fr = box(r.width + 0.6, r.height + 0.36, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
+    r.move_to(fr)
+    hd = VGroup(extra_tag(), note("an extra check · in the study guide")).arrange(RIGHT, buff=0.2)
+    hd.next_to(fr, UP, buff=0.08).align_to(fr, LEFT).shift(RIGHT * 0.1)
+    g = VGroup(fr, r, hd)
+    g.items, g.frame, g.header = items, fr, hd
+    return g
+
+
 def call_glyph(color=CLOUD):
     """The model's call as a small BLUE card ({…}): it only writes calls."""
     t = mono("{…}", CAPTION, INK)
     fr = box(t.width + 0.3, t.height + 0.2, color, fill=color, fill_opacity=0.25, radius=0.08)
     t.move_to(fr)
     return VGroup(fr, t)
+
+
+def solid_bar(p, lines, color, opacity):
+    """One translucent bar over all the rows of the given (adjacent) file lines of a src_panel.
+    p.bar() draws a bar per row, and on a wrapped line the neighbouring bars overlap in a brighter
+    seam; this spans the same rows in a single rectangle."""
+    rows = VGroup(*[b for n in lines for b in p.bar(n, color, opacity)])
+    top, bot = rows.get_top()[1], rows.get_bottom()[1]
+    r = Rectangle(width=rows.width, height=top - bot, stroke_width=0).set_fill(color, opacity)
+    return r.move_to([rows.get_center()[0], (top + bot) / 2, 0])
 
 
 def code_row(p, n, k=0):
@@ -400,13 +441,17 @@ def drop_chars(chars):
 def plug_row(model, client, transport, server, srv_color, y):
     """Beat 10: one plug as a row: BLUE model chip | PURPLE client | PINK line + transport | server.
     .model .client .line .label .server .y"""
-    m = model_chip(model).move_to([-5.75, y, 0])
-    c = text_box([client], TOOL, w=2.45, h=0.5).move_to([-3.15, y, 0])
-    s = text_box([server], srv_color, w=4.3, h=0.5).move_to([4.3, y, 0])
+    m = model_chip(model)
+    place(m, left=-6.45, cy=y)
+    c = text_box([client], TOOL, w=2.4, h=0.5)
+    place(c, left=-3.75, cy=y)
+    s = text_box([server], srv_color, w=4.2, h=0.5)
+    place(s, right=6.45, cy=y)
+    ar = Line([m.get_right()[0] + 0.1, y, 0], [c.get_left()[0] - 0.1, y, 0], color=S.GREY, stroke_width=2)
     ln = Line([c.get_right()[0], y, 0], [s.get_left()[0], y, 0], color=LOOKUP, stroke_width=4)
     lb = label(transport, CAPTION, LOOKUP).next_to(ln, UP, buff=0.06)
-    g = VGroup(m, c, ln, lb, s)
-    g.model, g.client, g.line, g.label, g.server, g.y = m, c, ln, lb, s, y
+    g = VGroup(m, ar, c, ln, lb, s)
+    g.model, g.arrow, g.client, g.line, g.label, g.server, g.y = m, ar, c, ln, lb, s, y
     return g
 
 
@@ -415,7 +460,7 @@ class McpPlugs(VoiceScene):
         # ============================================================ 0 · three families (slide 51)
         with self.voiceover(SAY[0]) as vo:
             ref = lref("51")
-            bins = ToolBins(bin_h=2.25)
+            bins = ToolBins(bin_h=BINS_H)
             bins.shift(UP * (BINS_Y - bins.bin("data").shape.get_center()[1]))
             names = ("data", "action", "orchestration")
             self.play(FadeIn(ref), run_time=0.4)
@@ -432,10 +477,12 @@ class McpPlugs(VoiceScene):
                 tg = tag(src, S.GREY, size=CAPTION).next_to(c, DOWN, buff=0.06)
                 a_chips.append(VGroup(c, tg))
             o_chips = [fresh(n) for n in ("research_facts", "researcher_agent")]
-            start_y = bins.get_top()[1] + 0.55
+            start_y = bins.get_top()[1] + 0.2
             for grp, nm in ((d_chips, "data"), (a_chips, "action"), (o_chips, "orchestration")):
-                for c in grp:
-                    c.move_to([bins.bin(nm).shape.get_center()[0], start_y, 0])
+                y = start_y
+                for c in grp:                       # a column above the bin, first chip lowest
+                    c.move_to([bins.bin(nm).shape.get_center()[0], y + c.height / 2, 0])
+                    y += c.height + 0.12
             # the action bin holds two chips with their source tags under them (own slots)
             a_shape = bins.bin("action").shape
             a_top = a_shape.get_top()[1] - 0.12
@@ -451,12 +498,18 @@ class McpPlugs(VoiceScene):
                 title = bins.bin(nm).title[0]
                 self.play(Indicate(title, color=TURN, scale_factor=1.15),
                           *[FadeIn(c, shift=DOWN * 0.25) for c in grp], run_time=0.6)
-                lag_play(self, anims, lag_ratio=0.25, run_time=0.9)
+                lag_play(self, anims[::-1], lag_ratio=0.25, run_time=0.9)   # lowest chip first: no crossing
 
             vo.wait_until("Data tools fetch")
             drop_in("data", d_chips)
+            vo.wait_until("like our book searches")        # the narrated example lights up
+            self.play(Indicate(d_chips[0], color=TURN, scale_factor=1.1), run_time=0.6)
             vo.wait_until("action tools change")
             drop_in("action", a_chips, a_ys)
+            vo.wait_until("like finalizing a trip")
+            self.play(Indicate(a_chips[0], color=TURN, scale_factor=1.08), run_time=0.6)
+            vo.wait_until("or sending email")
+            self.play(Indicate(a_chips[1], color=TURN, scale_factor=1.08), run_time=0.6)
             vo.wait_until("orchestration tools hand")
             drop_in("orchestration", o_chips)
 
@@ -467,8 +520,10 @@ class McpPlugs(VoiceScene):
         counter = CallCounter(0, unit="integration", color=INK)
         counter.move_to(ask.get_center() + DOWN * 0.6)
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(bins), *[FadeOut(c) for c in d_chips + a_chips + o_chips], run_time=0.5)
-            ref = lref_swap(self, ref, "52", run_time=0.4)
+            ref52 = lref("52")
+            self.play(FadeOut(bins), *[FadeOut(c) for c in d_chips + a_chips + o_chips], FadeOut(ref),
+                      FadeIn(ref52), run_time=0.5)
+            ref = ref52
             self.play(FadeIn(fan), run_time=0.6)
             play_drop(self, *fan.parts_in("wires", anim=lambda m: LaggedStart(*[Create(w) for w in m],
                                                                                 lag_ratio=0.12)),
@@ -513,8 +568,8 @@ class McpPlugs(VoiceScene):
             parts = {n: fan.parts[n] for n in ("agent", "pills", "services", "wires", "customs", "host",
                                                 "trunk", "adapters")}
             self.remove(fan)
-            for n in parts:
-                fan.remove(parts[n])
+            for part in parts.values():
+                fan.remove(part)
             self.add(*[parts[n] for n in ("agent", "pills", "services", "host", "trunk", "adapters")])
             cover, host_t, ports, clients = explode(self, parts["host"])
             explode(self, parts["trunk"])
@@ -553,30 +608,31 @@ class McpPlugs(VoiceScene):
                       run_time=0.7)
             tr = tracker("Mcp", 1)
             self.play(FadeOut(plug_pic), FadeOut(ref), FadeIn(tr, shift=DOWN * 0.25), run_time=0.6)
-            self.play(FadeIn(rd, shift=DOWN * 0.15), run_time=0.5)
-            vo.wait_until("Install Node")
             t4 = term(P_ADK, rows=4, title=SECOND, top=STRIP4_TOP)
-            self.play(FadeIn(t4, shift=UP * 0.3), run_time=0.4)
+            self.play(FadeIn(rd, shift=DOWN * 0.15), FadeIn(t4, shift=UP * 0.3), run_time=0.5)
+            vo.wait_until("Install Node")
             cmd = type_cmd(self, t4, NODE.cmd)
             pin(self, cmd, beside(extra_tag(), t4, cmd), run_time=0.3)
             out = t4.print(self, NODE.at(2, 3), run_time=0.4)
             pin(self, out[0], beside(recording_tag(), t4, out[0]), run_time=0.3)
+        self.wait(1.5)                    # the two versions and their tag stay up to be read
 
         # ============================================================ 5 · plug 1: the stdio child process
         pa = src_panel(AGENT, 20, 29, size=20, wrap={24: ["/server-filesystem'"], 28: ["'list_directory'"]})
         _with_header(pa, "3-mcp-tools/agent.py · lines 20–29", subtitle=your_copy(AGENT))
         place(pa, left=-6.5, top=2.6)
-        bars_npx = VGroup(pa.bar(23, TOOL, 0.22), pa.bar(24, TOOL, 0.22))
-        bar_tf = pa.bar(28, TURN, 0.22)
+        bars_npx = solid_bar(pa, (23, 24), TOOL, 0.22)
+        bar_tf = solid_bar(pa, (28,), TURN, 0.22)
         zl, zr = pa.code.get_right()[0] + 0.25, 6.5
-        zone = laptop_zone(zr - zl, 5.6, caption="your laptop")
-        place(zone, left=zl, top=2.6)
+        z_top = pa.code.get_top()[1]
+        zone = laptop_zone(zr - zl, z_top + 3.35, caption="your laptop")
+        place(zone, left=zl, top=z_top)
         zc = (zl + zr) / 2
-        adk = text_box(["ADK process", "`MCPToolset`"], TOOL, w=zr - zl - 0.5).move_to([zc, 1.45, 0])
+        adk = text_box(["ADK process", "`MCPToolset`"], TOOL, w=zr - zl - 0.5).move_to([zc, 1.3, 0])
         kid = text_box([("child process", S.GREY), "`npx …`", "`server-filesystem`"], TOOL,
                        w=zr - zl - 0.5).move_to([zc, -1.55, 0])
         pipe = Line(adk.get_bottom() + DOWN * 0.05, kid.get_top() + UP * 0.05, color=LOOKUP, stroke_width=8)
-        pipe_l = label("stdio", 22, LOOKUP).next_to(pipe, RIGHT, buff=0.2)
+        pipe_l = label("stdio", 22, LOOKUP).next_to(pipe, RIGHT, buff=0.36)   # clear of the envelope
         env5 = mini_envelope(None, LOOKUP, w=0.42).move_to(pipe.get_top() + DOWN * 0.3)
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(rd), FadeOut(t4), run_time=0.4)
@@ -602,13 +658,20 @@ class McpPlugs(VoiceScene):
         t6 = term(P_ADK, rows=4, title=SECOND)
         sv = Sieve()
         place(sv, cx=0, top=xc.frame.get_bottom()[1] - 0.15)
+        # the `tool_filter` label sits under the mesh's right end, where sift() puts the kept row:
+        # move it to the right of that row (same arithmetic as Sieve.sift)
+        kept_w = VGroup(*[sv.chips[n].copy() for n in MCP_KEPT]).arrange(RIGHT, buff=0.3).width
+        tf_lab = sv.parts["sieve"][1]
+        tf_lab.move_to([sv.mesh.get_center()[0] + kept_w / 2 + 0.35 + tf_lab.width / 2,
+                        sv.mesh.get_bottom()[1] - 0.6, 0])
+        assert tf_lab.get_right()[0] < 6.5, tf_lab.get_right()
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(pa), FadeOut(bars_npx), FadeOut(bar_tf), FadeOut(zone), FadeOut(adk),
                       FadeOut(kid), FadeOut(pipe), FadeOut(pipe_l), run_time=0.5)
             self.play(FadeIn(xc, shift=DOWN * 0.15), FadeIn(t6, shift=UP * 0.3), run_time=0.6)
             r21 = t6.print(self, [ON_STDIO], run_time=0.4)
             self.play(substring(r21[0], "on stdio").animate.set_color(LOOKUP), run_time=0.3)
-            r30 = t6.print(self, [SEES], wrap=True, run_time=0.4)
+            r30 = t6.print(self, SEES_ROWS, run_time=0.4)
             r31 = t6.print(self, [OFFERS], run_time=0.3)
             vo.wait_until("The server offers 14")
             u14 = under(substring(r31[0], "14"), TURN)
@@ -624,9 +687,7 @@ class McpPlugs(VoiceScene):
             u30 = VGroup(*[under(r, DATA) for r in r30])
             self.play(Create(u30), run_time=0.4)
             vo.wait_until("With your key")
-            self.play(tr.goto(2), FadeOut(sv), FadeOut(xc), FadeOut(u14), FadeOut(u30), run_time=0.5)
-            common.resize(self, t6, 7, run_time=0.5)
-            t6.print(self, [LISTED] + ENTRIES, run_time=0.6)
+            # the narrated card first (over the 7-row terminal's top edge), then the entries it names
             key = card_rows([
                 VGroup(label("pick", CAPTION, INK), mono("mcp_tools", CAPTION, INK),
                        label("· ask “List files in this directory”", CAPTION, INK)).arrange(RIGHT, buff=0.12),
@@ -634,17 +695,22 @@ class McpPlugs(VoiceScene):
                        label("call in the Events tab,", CAPTION, INK)).arrange(RIGHT, buff=0.12),
                 label("and the five entries printed below", CAPTION, INK),
             ], header="with your key:")
-            place(key, left=-6.4, bottom=t6.box.get_top()[1] + 0.2)
+            place(key, left=-6.4, bottom=strip_top(7) + 0.2)
+            self.play(tr.goto(2), FadeOut(sv), FadeOut(xc), FadeOut(u14), FadeOut(u30), run_time=0.5)
             self.play(FadeIn(key, shift=DOWN * 0.15), run_time=0.5)
+            common.resize(self, t6, 7, run_time=0.5)
+            assert abs(t6.box.get_top()[1] - strip_top(7)) < 0.02, t6.box.get_top()
+            t6.print(self, [LISTED] + ENTRIES, run_time=0.6)
+        self.wait(2.0)                    # the card and the five entries stay up to be read
 
         # ============================================================ 7 · plug 2: a remote server by URL
         w7 = CF7_R + 6.5
-        cf = colab_frame("Cheese Quiz", width=w7)
+        cf = colab_frame("Cheese Quiz", width=w7, top=CF_TOP)
         cf.shift(RIGHT * (CF7_R - cf.frame.get_right()[0]))
         ob = output_box(C50_ROWS, header="Cheese Quiz · cell 50 · output")
         sv50 = saved_run_tag().next_to(ob.header, RIGHT, buff=0.25)
         g50 = VGroup(ob, sv50)
-        place(g50, left=-6.1, top=2.15)
+        place(g50, left=-6.1, top=PANEL_TOP - 0.1)
         step1 = VGroup(note("step 1: a Python function with"), mono("@function_tool", CAPTION, S.GREY),
                        note("(cell 48)")).arrange(RIGHT, buff=0.12)
         place(step1, left=-6.0, top=ob.frame.get_bottom()[1] - 0.25)
@@ -653,8 +719,8 @@ class McpPlugs(VoiceScene):
         p54 = src_panel(CELL54, [2, (10, 13), (26, 27)], size=20,
                         wrap={2: ['"https'], 13: ["# MCP"], 26: ["mcp_servers (not"]})
         _with_header(p54, "Cheese Quiz · cell 54 · lines 2–27 (folded)")
-        place(p54, left=-6.2, top=2.3)
-        pink = VGroup(p54.bar(11, LOOKUP, 0.2), p54.bar(13, LOOKUP, 0.2))
+        place(p54, left=-6.2, top=PANEL_TOP)
+        pink = VGroup(p54.bar(11, LOOKUP, 0.3), solid_bar(p54, (13,), LOOKUP, 0.3))
         yel = p54.bar(27, TURN, 0.22)
         nt = tag("not tools=", TURN, size=CAPTION)
         r27 = code_row(p54, 27)
@@ -678,40 +744,36 @@ class McpPlugs(VoiceScene):
             self.play(FadeIn(yel), FadeIn(nt, shift=LEFT * 0.15), run_time=0.6)
 
         # ============================================================ 8 · four requests, with curl
-        cf8 = colab_frame("Cheese Quiz", width=CF8_R + 6.5, top=2.75, bottom=CF8_BOTTOM)
+        cf8 = colab_frame("Cheese Quiz", width=CF8_R + 6.5, top=CF_TOP, bottom=CF8_BOTTOM)
         cf8.shift(RIGHT * (CF8_R - cf8.frame.get_right()[0]))
         https8 = Line([CF8_R, sy, 0], [sl, sy, 0], color=LOOKUP, stroke_width=4)
-        https8_l = label("HTTPS", CAPTION, LOOKUP).next_to(https8, UP, buff=0.08)
-        req = card_rows(["a browser's plain GET", "`initialize`", "`tools/list`", "`tools/call`"], buff=0.14)
-        rh = VGroup(extra_tag(), note("an extra check · in the study guide")).arrange(RIGHT, buff=0.2)
-        rh.next_to(req.frame, UP, buff=0.08).align_to(req.frame, LEFT).shift(RIGHT * 0.1)
-        req.add(rh)
-        place(req, left=-6.4, top=CF8_BOTTOM - 0.25)
+        https8_l = label("HTTPS", CAPTION, LOOKUP).next_to(https8, UP, buff=0.2)   # the envelopes pass under it
+        req = req_strip()
+        place(req, left=-6.4, top=CF8_BOTTOM - 0.12)
         t8 = term(P_ADK, rows=3, title=SECOND)
-        assert req.frame.get_bottom()[1] > t8.box.get_top()[1] + 0.1, (req.frame.get_bottom(), t8.box.get_top())
-        col_l = req.frame.get_right()[0] + 0.45
         q_init = quote_card(INIT_Q, "initialize · reply (excerpt)", INIT)
         q_list = quote_card(LIST_Q, "tools/list · reply (excerpt)", LIST)
         q_call = quote_card(CALL_Q, "tools/call · reply (excerpt)", CALL)
-        place(q_init, left=col_l, top=sy - 0.75)
-        place(q_list, left=col_l, top=q_init.get_bottom()[1] - 0.25)
-        place(q_call, left=col_l, top=q_list.get_bottom()[1] - 0.25)
-        dif = VGroup(differ_tag(), note("a new fact each call")).arrange(RIGHT, buff=0.25)
-        place(dif, left=col_l, top=q_call.get_bottom()[1] - 0.15)
+        place(q_init, left=-6.4, top=req.frame.get_bottom()[1] - 0.3)
+        place(q_list, left=q_init.get_right()[0] + 0.4, top=q_init.get_top()[1])
+        place(q_call, left=-6.4, top=q_init.get_bottom()[1] - 0.2)
+        dif = VGroup(differ_tag(), note("a new fact each call")).arrange(DOWN, buff=0.12, aligned_edge=LEFT)
+        place(dif, left=q_call.get_right()[0] + 0.35, cy=q_call.frame.get_center()[1])
+        assert q_list.get_right()[0] < 6.5 and dif.get_right()[0] < 6.5 and q_call.get_bottom()[1] > -3.5
         a_pt, b_pt = np.array([CF8_R + 0.35, sy, 0]), np.array([sl - 0.35, sy, 0])
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(p54), FadeOut(pink), FadeOut(yel), FadeOut(nt), run_time=0.4)
             self.play(Transform(cf, cf8), Transform(https7, https8), Transform(https_l, https8_l), run_time=1.0)
             self.play(FadeIn(req, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("A browser's plain request")
-            self.play(FadeIn(t8, shift=UP * 0.3), req.rows[0].animate.set_color(TURN), run_time=0.5)
+            self.play(FadeIn(t8, shift=UP * 0.3), req.items[0].animate.set_color(TURN), run_time=0.5)
             env_g = mini_envelope("GET", S.GREY, w=0.45)
-            env_g.move_to(a_pt + DOWN * 0.12)
+            env_g.move_to(a_pt + DOWN * 0.2)
             self.play(FadeIn(env_g, scale=0.6), run_time=0.25)
-            self.play(env_g.animate.move_to(b_pt + DOWN * 0.12), run_time=0.8)
+            self.play(env_g.animate.move_to(b_pt + DOWN * 0.2), run_time=0.8)
             st = t8.print(self, [(GET_STATUS, ERR)], run_time=0.3)
             r406 = tag("406", ERR, size=CAPTION).next_to(srv, DOWN, buff=0.15)
-            self.play(FadeIn(r406, scale=1.3), env_g.animate.move_to(a_pt + DOWN * 0.12).set_color(ERR),
+            self.play(FadeIn(r406, scale=1.3), env_g.animate.move_to(a_pt + DOWN * 0.2).set_color(ERR),
                       run_time=0.8)
             vo.wait_until("the server is up")
             body = t8.print(self, [GET_BODY], wrap=True, run_time=0.4)
@@ -720,50 +782,52 @@ class McpPlugs(VoiceScene):
             self.play(substring(hit[0], NOT_ACC).animate.set_color(ERR), FadeOut(env_g), run_time=0.5)
             assert st[0].text == GET_STATUS
             vo.wait_until("Then initialize")
-            self.play(FadeOut(t8), FadeOut(r406), req.rows[0].animate.set_color(S.GREY), run_time=0.4)
-            for k, (nm, card) in enumerate((("initialize", q_init), ("tools/list", q_list),
-                                            ("tools/call", q_call))):
+            self.play(FadeOut(t8), FadeOut(r406), req.items[0].animate.set_color(INK), run_time=0.4)
+            for k, (cue, card) in enumerate((("Then initialize", q_init), ("list tools", q_list),
+                                             ("call: one tool", q_call))):
+                vo.wait_until(cue)
                 env = mini_envelope(None, LOOKUP, w=0.45).move_to(a_pt)
-                self.play(FadeIn(env, scale=0.6), req.rows[k + 1].animate.set_color(TURN), run_time=0.2)
-                self.play(env.animate.move_to(b_pt), run_time=0.45)
-                self.play(env.animate.move_to(a_pt), run_time=0.45)
-                self.play(FadeOut(env), FadeIn(card, shift=DOWN * 0.2), req.rows[k + 1].animate.set_color(INK),
-                          run_time=0.4)
+                self.play(FadeIn(env, scale=0.6), req.items[k + 1].animate.set_color(TURN), run_time=0.15)
+                self.play(env.animate.move_to(b_pt), run_time=0.32)
+                self.play(env.animate.move_to(a_pt), run_time=0.32)
+                self.play(FadeOut(env), FadeIn(card, shift=DOWN * 0.2), req.items[k + 1].animate.set_color(INK),
+                          run_time=0.35)
             vo.wait_until("one cheese fact per call")
             self.play(FadeIn(dif, shift=UP * 0.1), run_time=0.5)
+        self.wait(1.5)                    # the three replies stay up to be read
 
         # ============================================================ 9 · plug 3: your own FastMCP server
-        cf9 = colab_frame("Cheese Quiz")
+        cf9 = colab_frame("Cheese Quiz", top=CF_TOP, bottom=-3.56)
         with drop_chars("♀"):
             p57 = src_panel(CELL57, [2, (5, 6), 11, 14], strip_emoji=True)
         assert "♀" not in p57.code.source and "# Run the server over HTTP on port 8000" in p57.code.source
         _with_header(p57, "Cheese Quiz · cell 57 · lines 2–14 (folded)", subtitle=SECTION57)
-        place(p57, cx=0, top=2.35)
+        place(p57, cx=0, top=PANEL_TOP)
         bar2 = p57.bar(2, TOOL, 0.22)
         u_thr = under(p57.span(11, "in a background thread"), TOOL, stroke=3)
         b8001 = span_box(p57.span(14, "port=8001"), DATA)
         u8000 = under(p57.span(11, "port 8000"), ERR, stroke=4)
         err = erratum_tag("the comment says port 8000")
-        place(err, left=p57.span(11, "port 8000").get_left()[0] - 0.3, top=p57.code.get_bottom()[1] - 0.12)
+        place(err, left=p57.span(11, "port 8000").get_left()[0] - 0.3, top=p57.code.get_bottom()[1] - 0.1)
         ob57 = output_box([C57_ROW], header="Cheese Quiz · cell 57 · saved output")
         old = grey_tag("saved from an older version of the cell").next_to(ob57.header, RIGHT, buff=0.25)
         g57 = VGroup(ob57, old)
-        place(g57, left=-6.1, top=err.get_bottom()[1] - 0.16)
-        assert g57.get_bottom()[1] > -3.42, g57.get_bottom()
+        place(g57, left=-6.1, top=err.get_bottom()[1] - 0.12)
+        assert g57.get_bottom()[1] > -3.43, g57.get_bottom()
         u57 = under(substring(ob57.rows[0], "8000"), ERR, stroke=4)
         # the picture after the panel: c59's log beside the thread inside the Colab VM
         ob59 = output_box(C59_ROWS, header="Cheese Quiz · cell 59 · output")
         sv59 = saved_run_tag().next_to(ob59.header, RIGHT, buff=0.25)
         g59 = VGroup(ob59, sv59)
-        place(g59, left=-6.1, top=2.2)
+        place(g59, left=-6.1, top=PANEL_TOP - 0.05)
         px = (ob59.frame.get_right()[0] + 6.45) / 2
         pw = 6.3 - ob59.frame.get_right()[0] - 0.3
-        cli9 = text_box(["agent · client", ("Agents SDK", S.GREY)], TOOL, w=pw).move_to([px, 1.3, 0])
+        cli9 = text_box(["agent · client", ("Agents SDK", S.GREY)], TOOL, w=pw).move_to([px, 1.2, 0])
         fm9 = text_box(["FastMCP server", ("in a thread", S.GREY)], TOOL, w=pw).move_to([px, -1.35, 0])
         port9 = mono("127.0.0.1:8001", CAPTION, LOOKUP)
         port9.next_to(fm9, DOWN, buff=0.15)
         http9 = Line(cli9.get_bottom() + DOWN * 0.05, fm9.get_top() + UP * 0.05, color=LOOKUP, stroke_width=4)
-        http9_l = label("HTTP", CAPTION, LOOKUP).next_to(http9, RIGHT, buff=0.15)
+        http9_l = label("HTTP", CAPTION, LOOKUP).next_to(http9, RIGHT, buff=0.35)
         with self.voiceover(SAY[9]) as vo:
             self.play(tr.goto(3), FadeOut(req), FadeOut(q_init), FadeOut(q_list), FadeOut(q_call), FadeOut(dif),
                       FadeOut(srv), FadeOut(https7), FadeOut(https_l), run_time=0.5)
@@ -784,17 +848,20 @@ class McpPlugs(VoiceScene):
             self.play(Create(u57), run_time=0.4)
             vo.wait_until("saved output")
             self.wait(vo.remaining(0.05) + 0.4)
+            # no narration covers c59's log: keep this silent stretch short (it moves throughout)
             self.play(FadeOut(p57), FadeOut(bar2), FadeOut(u_thr), FadeOut(b8001), FadeOut(u8000), FadeOut(err),
-                      FadeOut(g57), FadeOut(u57), run_time=0.5)
-            self.play(FadeIn(cli9), FadeIn(fm9), FadeIn(port9), Create(http9), FadeIn(http9_l), run_time=0.7)
-            self.play(FadeIn(sv59), FadeIn(ob59.frame), FadeIn(ob59.rule), FadeIn(ob59.header), run_time=0.3)
+                      FadeOut(g57), FadeOut(u57), run_time=0.4)
+            self.play(FadeIn(cli9), FadeIn(fm9), FadeIn(port9), Create(http9), FadeIn(http9_l),
+                      FadeIn(sv59), FadeIn(ob59.frame), FadeIn(ob59.rule), FadeIn(ob59.header), run_time=0.6)
             env9 = mini_envelope(None, LOOKUP, w=0.42).move_to(http9.get_top() + DOWN * 0.3)
             self.play(FadeIn(env9, scale=0.6), run_time=0.2)
             for k in range(0, len(C59_ROWS), 2):
-                self.play(FadeIn(ob59.rows[k]), env9.animate.move_to(http9.get_bottom() + UP * 0.3), run_time=0.45)
+                self.play(FadeIn(ob59.rows[k]), env9.animate.move_to(http9.get_bottom() + UP * 0.3), run_time=0.3)
                 self.play(FadeIn(ob59.rows[k + 1]), env9.animate.move_to(http9.get_top() + DOWN * 0.3),
-                          run_time=0.45)
-            self.play(FadeOut(env9), run_time=0.2)
+                          run_time=0.3)
+            self.play(FadeOut(env9), Indicate(ob59.rows[2], color=TOOL, scale_factor=1.04),
+                      Indicate(ob59.rows[4], color=TOOL, scale_factor=1.04),
+                      Indicate(ob59.rows[6], color=TOOL, scale_factor=1.04), run_time=0.6)
             settle(self, g59)
 
         # ============================================================ 10 · who does the talking; your turn
@@ -813,21 +880,27 @@ class McpPlugs(VoiceScene):
                      run_time=1.0)
             vo.wait_until("your client process")
             self.play(*[Indicate(r.client, color=TOOL, scale_factor=1.08) for r in rows], run_time=0.6)
-            envs = [mini_envelope(None, LOOKUP, w=0.42).move_to(r.line.get_left() + RIGHT * 0.35) for r in rows]
+            hang = DOWN * 0.1                # the envelopes ride just under the line, clear of its label
+            envs = [mini_envelope(None, LOOKUP, w=0.38).move_to(r.line.get_left() + RIGHT * 0.35 + hang)
+                    for r in rows]
             self.play(*[FadeIn(e, scale=0.6) for e in envs], run_time=0.2)
-            self.play(*[e.animate.move_to(r.line.get_right() + LEFT * 0.35) for e, r in zip(envs, rows)],
+            self.play(*[e.animate.move_to(r.line.get_right() + LEFT * 0.35 + hang) for e, r in zip(envs, rows)],
                       run_time=0.8)
-            self.play(*[e.animate.move_to(r.line.get_left() + RIGHT * 0.35) for e, r in zip(envs, rows)],
+            self.play(*[e.animate.move_to(r.line.get_left() + RIGHT * 0.35 + hang) for e, r in zip(envs, rows)],
                       run_time=0.8)
             self.play(*[FadeOut(e) for e in envs], run_time=0.2)
             vo.wait_until("MCP gives the model")
-            calls = [call_glyph().move_to(r.model) for r in rows]
-            self.play(*[FadeIn(c, scale=0.5) for c in calls], run_time=0.4)
-            self.play(*[c.animate.move_to(r.client.get_left() + RIGHT * 0.1) for c, r in zip(calls, rows)],
-                      run_time=0.8)
+            calls = [call_glyph() for r in rows]
+            for c, r in zip(calls, rows):
+                place(c, left=r.model.get_right()[0] + 0.12, cy=r.y)
+            self.play(*[FadeIn(c, shift=RIGHT * 0.2) for c in calls],
+                      *[Indicate(r.model, color=CLOUD, scale_factor=1.08) for r in rows], run_time=0.5)
+            self.play(*[c.animate.move_to(r.client.get_left() + LEFT * (c.width / 2 + 0.06))
+                        for c, r in zip(calls, rows)], run_time=0.8)
             vo.wait_until("it still only writes")
-            self.play(*[Indicate(r.model, color=CLOUD, scale_factor=1.1) for r in rows],
-                      *[FadeOut(c, scale=0.6) for c in calls], run_time=0.8)
+            self.play(*[Indicate(c, color=CLOUD, scale_factor=1.2) for c in calls], run_time=0.6)
+            self.play(*[FadeOut(c, scale=0.6, target_position=r.client) for c, r in zip(calls, rows)],
+                      *[Indicate(r.client, color=TOOL, scale_factor=1.06) for r in rows], run_time=0.6)
             vo.wait_until("Pause, and run")
             self.play(FadeIn(card, shift=UP * 0.15), run_time=0.6)
         self.wait(2)

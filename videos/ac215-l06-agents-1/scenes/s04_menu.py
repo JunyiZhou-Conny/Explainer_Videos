@@ -10,20 +10,23 @@ Beats (script.md "## S04", one voiceover block each):
    decision" stays behind dashed; the V1 mini-map comes in bottom right, Tools lit YELLOW. L05's
    strip gives way to the README chip `README.md · line 244 (excerpt)` "let the LLM decide how to
    retrieve" (tag `expected`); each card is ringed as the SAY names it.
-3. The mini-map, the lecture tag and the column leave; the first card fades into CODE(agent_tools.py:
-   9–19) (line 12 wrapped; every panel of the scene gets the full 12.9 width, so the notes on its
-   lines sit inside it): line 10 GREEN + note "← the name the model writes back"; line 11 GREEN +
+3. The mini-map, the lecture tag and the column leave; the first card moves to where its
+   declaration starts and fades into CODE(agent_tools.py: 9–19) (line 12 wrapped; every panel
+   of the scene gets the full 12.9 width, so the notes on its lines sit inside it): line 10 GREEN + note "← the name the model writes back"; line 11 GREEN +
    note "↑ the model's documentation, with the parameter descriptions" (line 18 GREEN too); lines
    13–15 bracketed, tag "JSON schema". Notes on code lines are plain text (a framed tag is taller
    than a code row).
-4. The panel cross-fades (FadeTransform) to CODE(19–30): the nine names (line 28 masked) get a GREEN bracket "enum:
-   only these 9"; the names fold to one "… 9 names …" row; Transforms to CODE(31–37): line 33
-   (wrapped) YELLOW, its "a a" underlined with the GREY tag "erratum · typo in the source"; line 36
-   GREEN.
-5. CODE(41–49) (lines 41 and 47 wrapped): `collection, embed_func` underlined TEAL "your code
-   supplies these"; `author, search_content` underlined GREEN "from the model"; line 47's
-   `n_results=10, where={"author": author}` PINK. After the SAY it Transforms to CODE(78–81) at the
-   bottom, note "one Tool, two declarations" (1.6 s without voice).
+4. Panel changes are scrolls (morph_panel: the frame resizes, rows that stay Transform, the
+   others drift up and fade or rise into place). CODE(19–30), line 19 carried over: the nine
+   names (line 28 masked) get a GREEN bracket "enum: only these 9"; the nine name rows fold into
+   one "… 9 names …" row, the bracket and its tag with them; scroll to CODE(31–37): line 33
+   (wrapped) YELLOW, its "a a" underlined with the GREY tag "erratum · typo in the source";
+   line 36 GREEN.
+5. CODE(41–49) (lines 41 and 47 wrapped): `collection, embed_func` underlined TEAL, each flashed
+   as named, "your code supplies these"; `author, search_content` underlined GREEN "from the
+   model", then line 47's `n_results=10, where={"author": author}` PINK; "and the search text"
+   flashes line 43's `search_content` PINK. After the SAY the panel moves to CODE(78–81) at the
+   bottom, note "one Tool, two declarations" (about 2 s without voice).
 6. LECTURE 39. A GREY heading "a tool-using agent must", then three GREY dashed duty chips (slide
    39, our words) write in as named (CODE 78–81 stays at the bottom); the first two
    attach to a BLUE pen "the model writes", the third gets a GREY tag "call 2"; a TEAL gear "your
@@ -35,10 +38,12 @@ Beats (script.md "## S04", one voiceover block each):
 8. The lists expand again for the answer, the books now in the enum's order (cli.py:61-71 maps book
    to author) and the two orphans at the bottom. The extra card "count the chunks per author" (one
    row, top right) and the 3-row container strip print TERM(cli-container/34: 15, 26–28; line 28
-   wrapped so its "None" stays readable). GREEN lines join nine books to nine names; Cottage Cheese
-   Recipe Book gets the GREY tag "author not in the list · 178 chunks", the Woman's Institute book a
-   RED-edged tag "author = None · 1,505 chunks · lecture 5's file-name slip" (in the empty author
-   slots, left of each book); the strip's matching rows are marked.
+   folded before "author = None", so the word stays whole). Each part is marked as the SAY names
+   it: the links and the cottage cheese book, row 27 at "178 chunks", its tag, the Woman's
+   Institute book, row 28 at "1,505 chunks", its tag. GREEN lines join nine books to nine
+   names; Cottage Cheese Recipe Book gets the GREY tag "author not in the list · 178 chunks", the
+   Woman's Institute book a RED-edged tag "author = None · 1,505 chunks · lecture 5's file-name
+   slip" (in the empty author slots, left of each book).
 9. The strip and the card leave; the GREEN card get_book_by_search_content comes in under the lists
    and two PINK arrows reach the two orphans, "still reachable". Then V3's stage builds as named:
    Google's cloud with Gemini · location global, the laptop with the two TEAL containers, the
@@ -102,7 +107,6 @@ from manim import (
     Create,
     FadeIn,
     FadeOut,
-    FadeTransform,
     GrowArrow,
     Indicate,
     LaggedStart,
@@ -110,12 +114,13 @@ from manim import (
     ReplacementTransform,
     Rotate,
     RoundedRectangle,
+    Transform,
     VGroup,
     VMobject,
 )
 
 from explainer import style as S
-from explainer.devops import box, chip, label, line_bar, mono, tag
+from explainer.devops import box, chip, label, line_bar, mono, substring, tag
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S04"]
@@ -159,6 +164,9 @@ assert "'Cottage Cheese Recipe Book': 178 chunks" in OUT_27
 assert OUT_28.endswith("'Womans Institute Library of Cookery': 1505 chunks, author = None")
 N_COTTAGE = int(re.search(r"(\d+) chunks", OUT_27).group(1))     # 178
 N_WOMANS = int(re.search(r"(\d+) chunks", OUT_28).group(1))      # 1505
+# line 28 is longer than a row: fold it at the word before "author" (a plain wrap splits "None")
+_k = OUT_28.index(" author = None")
+OUT_28_ROWS = [OUT_28[:_k], "    " + OUT_28[_k + 1:]]
 
 # ------------------------------------------------------------------ layout
 PANEL_L, PANEL_TOP = -6.45, 2.75
@@ -192,6 +200,39 @@ def widen(p, w=12.9):
 def at_top_left(p):
     widen(p)
     return p.align_to([PANEL_L, 0, 0], LEFT).align_to([0, PANEL_TOP, 0], UP)
+
+
+def morph_panel(scene, old, new, pairs=(), drift=0.45, run_time=0.8, extra=()):
+    """old -> new (two src_panels of the same file): the background resizes in place, paired rows
+    Transform into their new places (pairs: (old row indices, new row indices[, extra targets])),
+    every other old row drifts up and fades while every other new row rises into place: a scroll
+    down the file, or a fold. The headers swap in place. Leaves `new` on the scene as one group."""
+    oc, nc = old.code.code_lines, new.code.code_lines
+    used_o, used_n, anims, wrappers = set(), set(), [], []
+    anims.append(ReplacementTransform(old.code.background, new.code.background))
+    anims += [FadeOut(old.header), FadeIn(new.header)]
+    for pair in pairs:
+        o, n = pair[0], pair[1]
+        more = list(pair[2]) if len(pair) > 2 else []
+        used_o.update(o)
+        used_n.update(n)
+        dst = VGroup(*[nc[i] for i in n], *more)
+        wrappers.append(dst)
+        anims.append(ReplacementTransform(VGroup(*[oc[i] for i in o]), dst))
+    anims += [FadeOut(r, shift=UP * drift) for i, r in enumerate(oc) if i not in used_o]
+    anims += [FadeIn(r, shift=UP * drift) for i, r in enumerate(nc) if i not in used_n]
+    tops = list(scene.mobjects)
+    above = tops[tops.index(old) + 1:] if old in tops else []    # drawn over the old panel
+    scene.play(*anims, *extra, run_time=run_time)
+    scene.remove(old, new, *wrappers)
+    scene.add(new)
+    still = [m for m in above if m in scene.mobjects]
+    if still:                                # e.g. a bracket and its tag: keep them over the panel
+        scene.bring_to_front(*still)
+    for w in wrappers:                       # extra targets (e.g. the "9 names" note) stay up
+        for m in w.submobjects:
+            if m not in new.get_family():
+                scene.add(m)
 
 
 def gtag(s, color=DATA, size=20, text_color=None):
@@ -343,9 +384,11 @@ class ToolMenu(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             m0 = mc.parts["menu0"].copy()
             self.add(m0)
+            # the first card leaves the menu and lands where its declaration will start
             self.play(FadeOut(mc), FadeOut(rc), FadeOut(ref), FadeOut(mm), FadeOut(r1),
-                      FadeOut(m0, target_position=c1[0].get_center()), FadeIn(p1, shift=UP * 0.2),
-                      run_time=1.0)
+                      m0.animate.align_to(c1[0], LEFT).align_to(c1[0], UP).shift(LEFT * 0.1),
+                      run_time=0.7)
+            self.play(FadeIn(p1, shift=UP * 0.1), FadeOut(m0), run_time=0.6)
             vo.wait_until("a name, which")
             b10 = p1.bar(10, DATA)
             tA = line_note("the name the model writes back").next_to(c1[1], RIGHT, buff=0.35)
@@ -370,24 +413,31 @@ class ToolMenu(VoiceScene):
         p2 = at_top_left(src_panel(AT, 19, 30))
         c2 = p2.code.code_lines
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(b10, b11, b18, tA, tB, br, tC)), FadeTransform(p1, p2),
-                      run_time=0.8)
+            self.play(FadeOut(VGroup(b10, b11, b18, tA, tB, br, tC)), run_time=0.3)
+            morph_panel(self, p1, p2, pairs=[(p1.rows_of(19), p2.rows_of(19))], run_time=0.8)
             vo.wait_until("9 names in an enum")
             names = [c2[k] for k in range(1, 10)]
             bx = max(r.get_right()[0] for r in names) + 0.25
             br2 = rbracket(names, bx)
             tE = gtag("enum: only these 9").next_to(br2, RIGHT, buff=0.15)
             self.play(Create(br2), FadeIn(tE, shift=LEFT * 0.1), run_time=0.6)
-            vo.wait_until("The search text's description")
+            self.wait(0.15)
+            # the nine name rows fold into one row; the bracket and its tag fold with them
             p2f = at_top_left(src_panel(AT, [19, 29, 30]))
             gap = p2f.code.code_lines[1]
             nine = mono("9 names …", 22, S.GREY).next_to(gap, RIGHT, buff=0.18)
             nine.align_to(gap, DOWN)
-            self.play(FadeOut(br2), FadeOut(tE), FadeTransform(p2, p2f), run_time=0.5)
-            self.play(FadeIn(nine, shift=LEFT * 0.1), run_time=0.3)     # after p2f: on top of it
-            self.wait(0.5)
+            names_rows = [k for n in range(20, 29) for k in p2.rows_of(n)]
+            fold = [(p2.rows_of(n), p2f.rows_of(n)) for n in (19, 29, 30)]
+            fold.append((names_rows, [1], [nine]))
+            br2f = rbracket([gap, nine], nine.get_right()[0] + 0.25)
+            morph_panel(self, p2, p2f, pairs=fold, run_time=0.7,
+                        extra=[Transform(br2, br2f), tE.animate.next_to(br2f, RIGHT, buff=0.15)])
+            vo.wait_until("The search text's description")
+            self.wait(0.4)
             p3 = at_top_left(src_panel(AT, 31, 37, wrap=True))
-            self.play(FadeTransform(p2f, p3), FadeOut(nine), run_time=0.7)
+            morph_panel(self, p2f, p3, run_time=0.7,
+                        extra=[FadeOut(VGroup(nine, br2, tE), shift=UP * 0.45)])
             vo.wait_until("even coaches the model")
             b33 = p3.bar(33, TURN)
             self.play(FadeIn(b33), run_time=0.5)
@@ -410,11 +460,16 @@ class ToolMenu(VoiceScene):
         p4 = at_top_left(src_panel(AT, 41, 49, wrap={41: ["collection"], 47: ["n_results"]}))
         c4 = p4.code.code_lines
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(b33, u_aa, tErr, b36)), FadeTransform(p3, p4), run_time=0.8)
+            self.play(FadeOut(VGroup(b33, u_aa, tErr, b36)), run_time=0.3)
+            morph_panel(self, p3, p4, run_time=0.8)
             vo.wait_until("Two more arguments")
             code_args = p4.span(41, "collection, embed_func")
             u_code = under(code_args, CTR, 4)
             self.play(Create(u_code), run_time=0.5)
+            vo.wait_until("the collection and")
+            self.play(Indicate(p4.span(41, "collection"), color=CTR, scale_factor=1.12), run_time=0.6)
+            vo.wait_until("an embedding function")
+            self.play(Indicate(p4.span(41, "embed_func"), color=CTR, scale_factor=1.12), run_time=0.6)
             vo.wait_until("your code supplies them")
             tCode = line_note("your code supplies these", CTR).next_to(c4[1], RIGHT, buff=0.35)
             self.play(FadeIn(tCode, shift=LEFT * 0.15), run_time=0.5)
@@ -423,18 +478,20 @@ class ToolMenu(VoiceScene):
             u_model = under(model_args, DATA, 4)
             tModel = line_note("from the model").next_to(c4[0], RIGHT, buff=0.35)
             self.play(Create(u_model), FadeIn(tModel, shift=LEFT * 0.15), run_time=0.6)
-            vo.wait_until("and the search text")
-            b47 = line_bar(p4.code, p4.rows_of(47)[1], LOOKUP, 0.22)
+            b47 = line_bar(p4.code, p4.rows_of(47)[1], LOOKUP, 0.22)    # where={"author": author}
             self.play(FadeIn(b47), run_time=0.5)
+            vo.wait_until("and the search text")
+            self.play(Indicate(p4.span(43, "search_content"), color=LOOKUP, scale_factor=1.12),
+                      run_time=0.6)
         p5 = widen(src_panel(AT, 78, 81, wrap={80: ["get_book_by_search_content_func"]}))
         p5.align_to([PANEL_L, 0, 0], LEFT).align_to([0, -3.45, 0], DOWN)
         c5 = p5.code.code_lines
         tTool = line_note("one Tool, two declarations").next_to(c5[3], RIGHT, buff=0.35)
         b80 = p5.bar(80, DATA)
-        self.play(FadeOut(VGroup(u_code, tCode, u_model, tModel, b47)), FadeTransform(p4, p5),
-                  run_time=0.9)
+        self.play(FadeOut(VGroup(u_code, tCode, u_model, tModel, b47)), run_time=0.3)
+        morph_panel(self, p4, p5, run_time=0.9)
         self.play(FadeIn(b80), FadeIn(tTool, shift=LEFT * 0.15), run_time=0.6)
-        self.wait(0.5)
+        self.wait(0.3)
 
         # ============================================================ 6 · slide 39's three duties
         duties = VGroup(concept_box("pick the tool"), concept_box("format its inputs"),
@@ -527,22 +584,25 @@ class ToolMenu(VoiceScene):
             self.play(FadeOut(card), FadeOut(menus), FadeOut(n_lab), FadeOut(b_lab),
                       *[ReplacementTransform(s, n) for s, n in zip(n_stack, names8)],
                       *[ReplacementTransform(s, by_title[b]) for s, b in zip(b_stack, BOOKS)],
-                      run_time=1.0)
-            self.play(FadeIn(xc, shift=DOWN * 0.15), FadeIn(t, shift=UP * 0.3), run_time=0.6)
+                      FadeIn(xc, shift=DOWN * 0.15), FadeIn(t, shift=UP * 0.3), run_time=1.0)
             t.print(self, [OUT_15, OUT_26, OUT_27], run_time=0.5)
-            out28 = t.print(self, [OUT_28], wrap=True, run_time=0.4)
+            out28 = t.print(self, OUT_28_ROWS, run_time=0.4)
             vo.wait_until("The cottage cheese")
-            lag_play(self, [Create(ln) for ln in links8], owner=links8, lag_ratio=0.15, run_time=1.2)
-            self.play(c_book.animate.set_color(INK), run_time=0.3)
-            vo.wait_until("has an author who")
+            lag_play(self, [Create(ln) for ln in links8], owner=links8, lag_ratio=0.15, run_time=1.1,
+                     extra=[c_book.animate.set_color(INK)])
+            vo.wait_until("178 chunks")
             row27 = t.find("Cottage")
-            u27 = under(row27, S.GREY, 3)
-            self.play(FadeIn(t_cot, shift=RIGHT * 0.15), Create(u27), run_time=0.6)
+            u27 = under(substring(row27, f"'{COTTAGE}': {N_COTTAGE} chunks"), S.GREY, 3)
+            self.play(Create(u27), run_time=0.4)
+            vo.wait_until("has an author who")
+            self.play(FadeIn(t_cot, shift=RIGHT * 0.15), run_time=0.5)
             vo.wait_until("The Woman's Institute")
-            self.play(w_book.animate.set_color(INK), run_time=0.3)
+            self.play(w_book.animate.set_color(INK), run_time=0.4)
+            vo.wait_until("1,505 chunks")
+            u28 = VGroup(*[under(substring(r, r.text.strip()), ERR, 3) for r in out28])
+            self.play(Create(u28), run_time=0.5)
             vo.wait_until("has no author at all")
-            u28 = VGroup(*[under(r, ERR, 3) for r in out28])
-            self.play(FadeIn(t_wom, shift=RIGHT * 0.15), Create(u28), run_time=0.6)
+            self.play(FadeIn(t_wom, shift=RIGHT * 0.15), run_time=0.5)
             vo.wait_until("a file name slip")
             self.play(Indicate(t_wom.text, color=ERR, scale_factor=1.04), run_time=0.7)
 
@@ -590,8 +650,7 @@ class ToolMenu(VoiceScene):
             st.reveal(self, "lock", run_time=0.5, extra=[FadeIn(itag)])
             self.play(FadeIn(call1, shift=UP * 0.2), FadeIn(lab), FadeIn(tick1), run_time=0.6)
             vo.wait_until("only a menu")
-            self.play(Indicate(mn, color=DATA, scale_factor=1.05), run_time=0.6)
-            lag_play(self, [absorb(m) for m in (q1, mn[0], mn[1])], lag_ratio=0.15, run_time=1.0)
+            lag_play(self, [absorb(m) for m in (mn[0], mn[1], q1)], lag_ratio=0.15, run_time=0.9)
             self.remove(call1, q1, *mn)
             vo.wait_until("Call 1 returns")
             self.play(*st.light("model"), run_time=0.3)
@@ -606,8 +665,8 @@ class ToolMenu(VoiceScene):
             tc.next_to(cc, RIGHT, buff=0.18)
             st.reveal(self, "gear", run_time=0.3)
             self.play(Rotate(st.parts["gear"], angle=-TAU / 3), GrowArrow(dip),
-                      FadeIn(chunks, scale=0.6, lag_ratio=0.08), run_time=0.8)
-            self.play(ReplacementTransform(chunks, tc), FadeOut(dip), run_time=0.6)
+                      FadeIn(chunks, scale=0.6, lag_ratio=0.08), run_time=0.75)
+            self.play(ReplacementTransform(chunks, tc), FadeOut(dip), run_time=0.5)
             vo.wait_until("call 2 sends back")
             q2 = chip("question", LOOKUP, size=20).next_to(tc, RIGHT, buff=0.18)   # clear of HTTPS
             lab2 = label("call 2", 22, S.GREY).move_to(lab)
@@ -622,8 +681,9 @@ class ToolMenu(VoiceScene):
 
         cs = CallStrip()
         trip = VGroup(st, ans, lab2, tick2, itag)
-        self.play(FadeOut(trip, target_position=cs.get_center(), scale=0.3), FadeIn(cs, scale=1.6),
-                  run_time=1.1)
+        # the trip shrinks toward the call strip, which takes over as it vanishes
+        lag_play(self, [FadeOut(trip, target_position=cs.get_center(), scale=0.25),
+                        FadeIn(cs, scale=0.85)], owner=cs, lag_ratio=0.6, run_time=1.2)
         mm2 = AnatomyMini(center=MINI_CENTER)
         self.play(FadeIn(mm2), run_time=0.5)
         self.play(mm2.light("tools"), run_time=0.5)

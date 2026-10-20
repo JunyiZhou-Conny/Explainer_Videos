@@ -1,8 +1,8 @@
 """S01 · Who searched your database? (cold open of AC215 L6). Lecture: 20–22.
 
 Beats (script.md "## S01", one voiceover block each):
-0. Black frame, no tracker. Top left a GREY question card types in the staff's question
-   (expected/out-txt-agent-run.txt line 9, masked); top right the tag "recorded · the staff's run,
+0. Black frame, no tracker. Top left a GREY question card types in the staff's question in PINK
+   (the user's question, as in S02 and S06; expected/out-txt-agent-run.txt line 9, masked); top right the tag "recorded · the staff's run,
    September 22, 2026". Bottom centre the GREY laptop zone holding the TEAL llm-rag-chromadb
    container (a cylinder, PINK localhost:8000); far right the BLUE cloud "Google Cloud" with the
    BLUE chip "Gemini". Between them PANEL(expected/out-txt-agent-run.txt: 65, 68), header
@@ -34,10 +34,12 @@ Beats (script.md "## S01", one voiceover block each):
    ▶ your turn (held 2 s). Then a row of tags writes in above the strip: recorded · expected ·
    illustration · extra · stand-in (PINK, as it appears later) · no key · built, not sent.
 6. A "You need" checklist writes in row by row as named (GOLD keys for the three keys).
-7. A card "Recorded October 18, 2026 · no Google or OpenAI keys", three rows as named: GREEN check
-   real runs; GREY crossed-out key model calls; tag recorded model answers.
-8. The GREY ‹instructor› chip with "the instructor's name, hidden on screen"; the footer card
-   "every command: MLOps_Learning · guides/L06-agents-1.md". Fade to an empty frame.
+7. A card "Recorded October 18, 2026" ("· no Google or OpenAI keys" types in at "without keys"),
+   three rows as named: GREEN check real runs (its two lines as named, the check pulses at "ran for
+   real"); GREY crossed-out key model calls; tag recorded model answers.
+8. The GREY ‹instructor› chip with "the instructor's name, hidden on screen" (the chip pulses at "your
+   terminal shows it"); the footer card "every command: MLOps_Learning · guides/L06-agents-1.md",
+   MLOps_Learning underlined YELLOW as the repo is named. Fade to an empty frame.
 """
 
 import numpy as np
@@ -158,7 +160,8 @@ REC_ROWS = [["real runs: Docker, Chroma, uv,", "the ADK web server, two MCP serv
             ["model answers: the teaching staff's saved outputs"]]
 
 SAFE_X, SAFE_Y = 6.5, 3.5
-QCARD_TOP, QCARD_RIGHT = 2.75, 6.5             # the YELLOW questions card, from beat 2 on
+QCARD_TOP, QCARD_RIGHT = 2.62, 6.5             # the YELLOW questions card, from beat 2 on (clear of
+                                               # the lecture tag's caption above it)
 
 
 # ------------------------------------------------------------------ small helpers
@@ -211,6 +214,15 @@ def type_in(glyphs, run_time: float):
 def text_glyphs(t) -> list:
     """The glyph mobjects of a Text, or of a mono_line (its .glyphs)."""
     return list(t.glyphs) if hasattr(t, "glyphs") else list(t.submobjects)
+
+
+def text_part(t, s: str, sub: str) -> VGroup:
+    """The glyphs of substring `sub` of a Text t made from string s (spaces have no glyphs)."""
+    gl = list(t.submobjects)
+    assert len(gl) == len("".join(s.split())), (len(gl), s)
+    i = s.index(sub)
+    a = len("".join(s[:i].split()))
+    return VGroup(*gl[a:a + len("".join(sub.split()))])
 
 
 def clear_stage(scene, keep=(), anims=(), run_time: float = 0.6):
@@ -282,7 +294,7 @@ class Hook(VoiceScene):
         assert len(SAY) == 9, len(SAY)
 
         # ========================================================== 0. the question, the picture
-        q_rows = VGroup(*[mtext(s, 20, INK) for s in Q_ROWS]).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
+        q_rows = VGroup(*[mtext(s, 20, LOOKUP) for s in Q_ROWS]).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
         q_fr = card_frame(q_rows.width + 0.5, q_rows.height + 0.36)
         q_rows.move_to(q_fr).align_to(q_fr, LEFT).shift(RIGHT * 0.25)
         qcard = VGroup(q_fr, q_rows)
@@ -329,7 +341,7 @@ class Hook(VoiceScene):
         inside_frame(qcard, staff, panel, lap, sky)
         apart(panel, lap, 0.6)
 
-        cur = Rectangle(width=0.035, height=0.3, stroke_width=0).set_fill(INK, 1)
+        cur = Rectangle(width=0.035, height=0.3, stroke_width=0).set_fill(LOOKUP, 1)
         cur.move_to(q_rows[0].get_left() + RIGHT * 0.03)
 
         with self.voiceover(SAY[0]) as vo:
@@ -518,7 +530,7 @@ class Hook(VoiceScene):
         assert bands.get_bottom()[1] > -SAFE_Y, bands.get_bottom()
         apart(bands, ycard, 0.1)
         # the Cheese Quiz along the left edge, spanning both parts
-        cq_txt = VGroup(note("ideas along the way:"), note("the Cheese Quiz notebook")) \
+        cq_txt = VGroup(note("ideas along the way:", size=22), note("the Cheese Quiz notebook", size=22)) \
             .arrange(DOWN, buff=0.1).rotate(PI / 2)
         cq_fr = box(cq_txt.width + 0.3, bands.height, S.GREY, fill_opacity=0.08, radius=0.14)
         place(cq_fr, right=bx0 - 0.12, cy=bands.get_center()[1])
@@ -564,13 +576,14 @@ class Hook(VoiceScene):
         apart(tag_row, ycard, 0.2)
 
         with self.voiceover(SAY[5]) as vo:
-            clear_stage(self, keep=(ycard,), run_time=0.6)
             vo.wait_until("The tracker, top left")
-            self.play(FadeIn(trs[0], shift=DOWN * 0.15), Create(halo), run_time=0.6)
-            self.play(pulse(halo, TURN, 1.03, 0.5))
-            self.play(FadeTransform(trs[0], trs[1]), run_time=0.6)
-            self.play(pulse(halo, TURN, 1.03, 0.5))
-            self.play(FadeTransform(trs[1], trs[2]), run_time=0.6)
+            # the tracker arrives as the bands leave, so its three heads fit before "the gray tag"
+            clear_stage(self, keep=(ycard,), anims=(FadeIn(trs[0], shift=DOWN * 0.15), Create(halo)),
+                        run_time=0.6)
+            self.wait(0.25)
+            self.play(FadeTransform(trs[0], trs[1]), pulse(halo, TURN, 1.03), run_time=0.5)
+            self.wait(0.25)
+            self.play(FadeTransform(trs[1], trs[2]), pulse(halo, TURN, 1.03), run_time=0.5)
             vo.wait_until("the gray tag, top right")
             self.play(FadeOut(trs[2]), FadeOut(halo), FadeIn(sample), run_time=0.5)
             self.remove(trs[2], halo)
@@ -604,7 +617,7 @@ class Hook(VoiceScene):
         need_fr = card_frame(need_all.width + 0.8, need_all.height + 0.6)
         need_all.move_to(need_fr)
         need = VGroup(need_fr, need_all)
-        place(need, cx=-0.9, cy=-0.75)
+        place(need, cx=-0.9, cy=-0.85)
         inside_frame(need)
         apart(need, ycard, 0.1)
         anchors6 = ["the database and key", "the database and key", "Docker", "uv, Node", "Node, and two",
@@ -639,11 +652,22 @@ class Hook(VoiceScene):
         inside_frame(rec)
         apart(rec, ycard, 0.1)
 
+        head_date = text_part(r_head, REC_HEAD, "Recorded October 18, 2026")
+        head_keys = text_part(r_head, REC_HEAD, "· no Google or OpenAI keys")
+
         with self.voiceover(SAY[7]) as vo:
             clear_stage(self, keep=(ycard,), run_time=0.6)
+            head_keys.set_opacity(0)                       # "without keys" writes it in
             self.play(FadeIn(r_fr), FadeIn(r_head, shift=UP * 0.1), run_time=0.6)
+            self.play(Indicate(head_date, color=INK, scale_factor=1.04), run_time=0.7)
+            vo.wait_until("without keys")
+            self.play(type_in(head_keys, 0.7))
             vo.wait_until("Docker, Chroma")
-            self.play(Create(tick), FadeIn(r_rows[0], shift=RIGHT * 0.15), run_time=0.6)
+            self.play(Create(tick), FadeIn(r_rows[0][0], shift=RIGHT * 0.15), run_time=0.6)
+            vo.wait_until("the ADK web server")
+            self.play(FadeIn(r_rows[0][1], shift=RIGHT * 0.15), run_time=0.5)
+            vo.wait_until("ran for real")
+            self.play(Indicate(tick, color=DATA, scale_factor=1.3), run_time=0.6)
             vo.wait_until("every model call")
             self.play(FadeIn(kg), Create(kx), FadeIn(r_rows[1], shift=RIGHT * 0.15), run_time=0.6)
             vo.wait_until("Model answers")
@@ -661,13 +685,18 @@ class Hook(VoiceScene):
         place(foot, cx=0, cy=-1.4)
         inside_frame(m_row, foot)
         apart(m_row, ycard, 0.1)
+        repo_ul = under(text_part(foot_txt[1], GUIDE, "MLOps_Learning"), TURN)
 
         with self.voiceover(SAY[8]) as vo:
             clear_stage(self, keep=(ycard,), run_time=0.6)
             vo.wait_until("On screen we hide")
             self.play(FadeIn(m_chip, scale=0.9), run_time=0.5)
             self.play(FadeIn(m_cap, shift=RIGHT * 0.15), run_time=0.5)
+            vo.wait_until("your terminal shows it")
+            self.play(Indicate(m_chip, color=INK, scale_factor=1.12), run_time=0.7)
             vo.wait_until("Every command is in")
             self.play(FadeIn(foot, shift=UP * 0.15), run_time=0.6)
+            vo.wait_until("in the MLOps Learning repo")
+            self.play(Create(repo_ul), run_time=0.5)
         self.wait(1.0)
         clear_stage(self, run_time=0.8)

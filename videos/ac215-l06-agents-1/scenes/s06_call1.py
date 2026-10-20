@@ -13,9 +13,9 @@ Beats (script.md "## S06", one voiceover block each):
    "the model must answer with a function call".
 3. LECTURE 10–13. V3's column returns (the two GREEN menu cards, the GREY dashed "retrieval
    decision" card); beside it a GREY dashed Self-RAG box: "Retrieve?" with yes/no branches, tag
-   `concept · lecture only`. A RED line crosses out "retrieval decision"; a YELLOW ring hops over the
-   two menu cards; caption "chooses which search · never whether"; GREY chip "exercise: delete
-   tool_config, then greet it".
+   `concept · lecture only`. A RED line crosses out "retrieval decision"; a YELLOW ring holds both
+   menu cards ("forces a tool call"), then shrinks onto one and hops to the other; caption
+   "chooses which search · never whether"; GREY chip "exercise: delete tool_config, then greet it".
 4. The lecture tag leaves. V2: a closed envelope "call 1" opens and becomes a full-width TEAL
    terminal; the extra card "runs agent() unchanged · prints the request instead of sending it"
    (top right, TRACKER · extra); TERM(cli-container/31: 20 wrap, the six folds of script.md, 95
@@ -102,6 +102,7 @@ from manim import (
     GrowArrow,
     Indicate,
     Polygon,
+    ReplacementTransform,
     RoundedRectangle,
     VGroup,
 )
@@ -254,11 +255,10 @@ def ghost_card(size=20):
     row1 = VGroup(key, err).arrange(RIGHT, buff=0.35)
     row2 = label("defined at cli.py lines 40–58 · never sent (as in lecture 5)", size, S.GREY)
     rows = VGroup(row1, row2).arrange(DOWN, aligned_edge=LEFT, buff=0.16)
-    fr = box(rows.width + 0.5, rows.height + 0.36, S.GREY, dashed=True, fill=S.BG, fill_opacity=0.95,
-             radius=0.12)
+    fr = box(rows.width + 0.5, rows.height + 0.26, S.GREY, dashed=True, radius=0.12)
     fr.move_to(rows)
     g = VGroup(fr, rows)
-    g.err = err
+    g.err, g.rows = err, rows
     return g
 
 
@@ -383,9 +383,9 @@ class CallOne(VoiceScene):
             src = VGroup(p1.span(449, 'mode="any"').copy(), any_box)
             self.remove(any_box)
             self.play(FadeOut(VGroup(p1, b445, b446, b447, menu_n, core)), FadeOut(ref),
-                      FadeTransform(src, chip), caption_extra(tr, True), run_time=0.9)
-            self.play(FadeIn(t2, shift=UP * 0.3), run_time=0.5)
-            cmd2 = type_cmd(self, t2, C32.cmd, 1.6)
+                      FadeTransform(src, chip), caption_extra(tr, True), run_time=0.8)
+            self.play(FadeIn(t2, shift=UP * 0.3), run_time=0.4)
+            cmd2 = type_cmd(self, t2, C32.cmd, 1.4)
             pin(self, cmd2, beside(extra_tag(), t2, cmd2), run_time=0.3)
             out2 = t2.print(self, C32.at(2, 3, 4), run_time=0.5)
             vo.wait_until("the enum value ANY")
@@ -419,20 +419,28 @@ class CallOne(VoiceScene):
         ex_fr.move_to(ex)
         exc = VGroup(ex_fr, ex)
         place(exc, right=6.45, bottom=-3.45)
+        # "mode any forces a tool call": a YELLOW ring holds both menu cards (one must be called),
+        # then shrinks onto one card and hops ("which search")
+        must = ring(VGroup(mc.parts["menu0"], mc.parts["menu1"]), TURN, buff=0.08)
+        # Indicate recolours fill too: flash only the outlines and words of the filled concept boxes
+        no_flash = VGroup(*sr.no_branch[:2], sr.no.box, sr.no.text)
+        dec_flash = VGroup(dec.box, dec.text)
         with self.voiceover(SAY[3]) as vo:
             ref = lref("10–13")
             self.play(FadeOut(VGroup(t2, chip, arr, cap2)), caption_extra(tr, False), FadeIn(ref),
                       FadeIn(mc), run_time=0.8)
             self.play(FadeIn(sr, shift=LEFT * 0.2), FadeIn(ctag), run_time=0.7)
-            self.play(Indicate(sr.no_branch, color=TURN, scale_factor=1.05), run_time=0.8)
+            self.play(Indicate(no_flash, color=TURN, scale_factor=1.05), run_time=0.8)
             vo.wait_until("Self-RAG starts")
             self.play(Indicate(sr.diamond, color=TURN, scale_factor=1.1), run_time=0.7)
-            self.play(Indicate(dec, color=TURN, scale_factor=1.08), run_time=0.6)
+            self.play(Indicate(dec_flash, color=TURN, scale_factor=1.08), run_time=0.6)
             vo.wait_until("Ours can't")
             self.play(Create(cross), run_time=0.6)
+            vo.wait_until("mode any forces")
+            self.play(Create(must), run_time=0.6)
             vo.wait_until("It chooses which search")
             hop = ring(mc.parts["menu0"], TURN, buff=0.06)
-            self.play(Create(hop), run_time=0.4)
+            self.play(ReplacementTransform(must, hop), run_time=0.4)
             self.play(hop.animate.move_to(mc.parts["menu1"]), FadeIn(cap3, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("never whether")
             self.play(Indicate(cross, color=ERR, scale_factor=1.05), FadeIn(exc, shift=UP * 0.15),
@@ -488,11 +496,12 @@ class CallOne(VoiceScene):
 
         # ============================================================ 5 · no system instruction
         gc = ghost_card()
-        place(gc, right=BAND_R, cy=(xc.get_top()[1] + xc.get_bottom()[1]) / 2 - 0.05)
+        place(gc, right=BAND_R, top=BAND_TOP - 0.04)          # clear of the terminal's top edge
+        assert gc.get_bottom()[1] > t4.box.get_top()[1] + 0.12, (gc.get_bottom(), t4.box.get_top())
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(xc, shift=UP * 0.15), FadeIn(gc, shift=LEFT * 1.2), run_time=0.8)
             vo.wait_until("as in lecture 5")
-            self.play(Indicate(gc.err, color=S.GREY, scale_factor=1.08), run_time=0.7)
+            self.play(Indicate(gc.rows[1], color=INK, scale_factor=1.04), run_time=0.7)
             vo.wait_until("never sends it")
             self.play(Indicate(gc[0], color=S.GREY, scale_factor=1.03), run_time=0.7)
 
@@ -501,6 +510,7 @@ class CallOne(VoiceScene):
         place(lf, right=BAND_R, top=BAND_TOP)
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(gc), caption_extra(tr, False), run_time=0.5)
+            self.play(Indicate(tr.caption, color=TURN, scale_factor=1.1), run_time=0.6)  # "step 1 again"
             t4.clear(self, run_time=0.4)
             type_cmd(self, t4, AGENT_CMD, 1.2)
             vo.wait_until("The lookup passes")
@@ -515,9 +525,8 @@ class CallOne(VoiceScene):
             out_b = t4.print(self, items_b, wrap=True, run_time=0.7)
             vo.wait_until("default credentials error")
             r71 = rows_of_line(out_b, items_b, 3)
-            err71 = VGroup(*wrapped_span(r71, C30.line(71), "DefaultCredentialsError"),
-                           *wrapped_span(r71, C30.line(71), "was not found."))
-            self.play(Indicate(err71, color=ERR, scale_factor=1.1), run_time=0.8)
+            # the whole error line pulses (a pulsing sub-span would swell over its neighbours)
+            self.play(Indicate(VGroup(*r71), color=ERR, scale_factor=1.04), run_time=0.8)
             self.play(FadeIn(lf, shift=DOWN * 0.15), run_time=0.6)
 
         # ============================================================ 7 · what the staff saw
@@ -544,9 +553,9 @@ class CallOne(VoiceScene):
             for ln in list(t4.lines):
                 t4.lines.remove(ln)
                 self.remove(ln)
-            self.play(FadeOut(t4), cs.animate.move_to(cs_to), run_time=0.6)
-            self.play(FadeIn(st, shift=DOWN * 0.2), run_time=0.6)
-            self.play(FadeIn(lp, shift=UP * 0.2), FadeIn(stf), run_time=0.6)
+            self.play(FadeOut(t4), cs.animate.move_to(cs_to), run_time=0.5)
+            self.play(FadeIn(st, shift=DOWN * 0.2), run_time=0.5)
+            self.play(FadeIn(lp, shift=UP * 0.2), FadeIn(stf), run_time=0.5)
             vo.wait_until("The model's whole answer")
             self.play(FadeIn(bub, scale=0.4), run_time=0.4)
             self.play(FadeTransform(bub, cc), Indicate(rows[1], color=CLOUD, scale_factor=1.04),
@@ -599,15 +608,17 @@ class CallOne(VoiceScene):
         card = turn_card_two_cols()
         place(card, cx=0, top=2.75)
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(t_four, grp33, u_name, u_auth, sig, stf, lp)), FadeIn(lp52),
-                      FadeIn(stf52), run_time=0.8)
+            # the card leaves for the boundary while its panel goes, so it never crosses line 51's
+            self.play(FadeOut(VGroup(t_four, grp33, u_name, u_auth, sig, stf, lp)),
+                      cc.animate.move_to(cc_to), Create(gate), run_time=0.9)
+            self.play(FadeIn(lp52, shift=UP * 0.15), FadeIn(stf52), run_time=0.4)
             afc = substring(lp52.rows[0], "automatic_function_calling_history=[]")
             u52 = under(afc, S.GREY, 4)
             sdk = grey_tag("the SDK ran nothing").next_to(lp52.rows[0], RIGHT, buff=0.4)
-            self.play(Create(u52), FadeIn(sdk, shift=LEFT * 0.1), run_time=0.6)
+            self.play(Create(u52), FadeIn(sdk, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("it only has declarations")
-            self.play(Create(gate), cc.animate.move_to(cc_to), run_time=0.9)
             self.play(FadeIn(cap9, shift=UP * 0.1), run_time=0.5)
+            self.play(Indicate(cc.rows, color=CLOUD, scale_factor=1.05), run_time=0.6)
             vo.wait_until("So far, one paid call")
             self.play(FadeIn(tick, scale=1.5), FadeIn(paid, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("Pause here")

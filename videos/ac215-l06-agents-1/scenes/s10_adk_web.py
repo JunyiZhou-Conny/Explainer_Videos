@@ -29,7 +29,7 @@ Beats (script.md "## S10", one voiceover block each):
    strip inside types the extra `uv add "google-adk>=1.8.0,<1.28"` -> 21 lines 7–8 (1.27.5 flashes);
    `uv run adk web` (24's command); the page's dropdown shows the four folders of 25 line 2 (GREEN);
    picking 1-baseline -> 24 line 131, 132–133 joined cut after "underscores." (wrap) RED, the row
-   turns RED. The extra `git checkout pyproject.toml; uv sync --upgrade-package google-adk` -> 27
+   turns RED; "Invalid app name" flashes at "as an invalid app name". The extra `git checkout pyproject.toml; uv sync --upgrade-package google-adk` -> 27
    lines 8–9. The frame closes; the server strip returns with the GREY caption "back in your
    terminal".
 6. TRACKER RunAg 1 · extra. The caption leaves as the terminal grows (13 rows): Ctrl+C -> 15 lines 46, 49–51 ("^C"
@@ -37,17 +37,18 @@ Beats (script.md "## S10", one voiceover block each):
    prompt, so only the bare prompt scrolls away) with the tags "extra" and "fix · not in the README"
    -> 28 lines 2–12; baseline, custom_agent, mcp_tools GREEN.
 7. `uv run adk web` (29's command); the terminal shrinks to the strip; TRACKER RunAg 2: the browser
-   again (localhost:8000/dev-ui/); TRACKER · extra: the second strip types the list-apps curl -> 30
-   line 2 (cut); the dropdown lists its seven entries; the cursor picks baseline, GREEN; a GREY card
-   beside the list "this video: baseline, mcp_tools / custom_agent as code · 2, 4, 6: exercises.md".
-   The strip and the browser leave; the terminal grows (9 rows): 29 lines 36–37 joined, 38–39
-   joined, 40 (wrap); the root .env path PINK in a PINK box, PINK tag "the root .env" above the
+   again (localhost:8000/dev-ui/), reloaded with the dropdown open on its seven entries; TRACKER ·
+   extra: the second strip types the list-apps curl -> 30 line 2 (cut); the cursor picks baseline,
+   GREEN; a GREY card beside the list "this video: baseline, mcp_tools / custom_agent as code · 2, 4,
+   6: exercises.md". At "The log says" the terminal grows (9 rows) behind the strip, the page and
+   then the strip leave, and the card moves under the tracker (it stays there, readable, until the
+   next beat): 29 lines 36–37 joined, 38–39 joined, 40 (wrap); the root .env path PINK in a PINK box, PINK tag "the root .env" above the
    terminal; "baseline.agent" and "200 OK" GREEN.
 8. The terminal shrinks to the strip. GREY chip in the band right of the tracker "git status: 3
    folders deleted, 3 new · fine for your copy (teardown)" (adk-laptop/39); two erratum cards write
    in: QUICKSTART.md · line 24 `uv run adk web 1-baseline/agent.py` (expected) -> 19 line 5 RED;
    2-litellm/README.md · line 74 `uv run adk` (expected) -> 20 line 2 + "prints help · starts
-   nothing".
+   nothing". "is a file." flashes at "where a folder is expected".
 9. A RED dashed "what if · just watch" frame, note "llm-rag's Chroma still on port 8000"; a picture
    (illustration): Chroma (TEAL) holds 127.0.0.1:8000 (PINK); the 4-row strip types `uv run adk
    web` -> 36 line 21 (wrap) RED, adk web's arrow to :8000 gets a RED cross. GREY chip "docker
@@ -83,6 +84,7 @@ from common import (
     capture,
     caption_extra,
     col_box,
+    covers_text,
     erratum_tag,
     excerpt,
     expected_tag,
@@ -123,6 +125,7 @@ from manim import (
     Transform,
     TransformFromCopy,
     VGroup,
+    smooth,
     there_and_back,
 )
 
@@ -310,10 +313,30 @@ def cursor(h: float = 0.4) -> Polygon:
                    stroke_width=2).set_fill(INK, 1)
 
 
-def tip_to(cur, row):
-    """The shift that puts the cursor's tip on the right part of a dropdown row's text."""
-    target = np.array([row.glyphs.get_right()[0] - 0.25, row.strut.get_center()[1] - 0.04, 0.0])
+def tip_to(cur, menu, name: str):
+    """The shift that puts the cursor's tip on dropdown row `name`, just right of its text and of
+    the next row's text, so the pointer's body (it hangs down-right, over the next row) hides no
+    entry."""
+    i = menu.entries.index(name)
+    row = menu.rows[i]
+    x = row.glyphs.get_right()[0] + 0.15
+    if i + 1 < len(menu.rows):
+        x = max(x, menu.rows[i + 1].glyphs.get_right()[0] + 0.1)
+    x = min(x, menu.lst.get_right()[0] - 0.4)
+    target = np.array([x, row.strut.get_center()[1] - 0.04, 0.0])
     return target - cur.get_corner(UL)
+
+
+def pin_with(scene, line, mob, *others, run_time: float = 0.4):
+    """pin() that plays other animations alongside the tag's FadeIn (same rules: the tag must not
+    cover its row's text; it becomes part of the row, so it scrolls and fades with it)."""
+    row = last_row(line)
+    assert not covers_text(mob, row), "the tag would cover its row's text"
+    scene.play(FadeIn(mob, shift=LEFT * 0.1), *others, run_time=run_time)
+    scene.remove(mob)
+    row.add(mob)
+    scene.add(row)
+    return mob
 
 
 def click(cur):
@@ -515,7 +538,7 @@ class AdkWeb(VoiceScene):
             p0 = bare_prompt(self, t)
             vo.wait_until("from the repository root")
             root_dir = glyph_range(p0, P_ADK.index("~"), len(P_ADK) - 1)
-            self.play(Indicate(root_dir, color=TURN, scale_factor=1.08), run_time=0.9)
+            self.play(Indicate(root_dir, color=TURN, scale_factor=1.03), run_time=0.9)   # no overlap with ":" / "$"
             vo.wait_until("uv run ADK web")
             type_cmd(self, t, WEB.cmd, 0.7)
             vo.wait_until("First, version 2.12")
@@ -605,7 +628,7 @@ class AdkWeb(VoiceScene):
             self.play(*[m.animate.set_color(TURN) for m in mods], FadeIn(nest_note, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("Pick 1 baseline")
             self.play(*[m.animate.set_color(INK) for m in mods], FadeOut(nest_note), FadeIn(cur), run_time=0.4)
-            self.play(cur.animate.shift(tip_to(cur, menu.row("1-baseline"))), run_time=0.6)
+            self.play(cur.animate.shift(tip_to(cur, menu, "1-baseline")), run_time=0.6)
             hl3, anims = menu.pick("1-baseline", TURN)
             self.play(*anims, click(cur), run_time=0.4)
             vo.wait_until("and the page refuses")
@@ -655,23 +678,27 @@ class AdkWeb(VoiceScene):
         back = note("back in your terminal")
         place(back, left=-6.25, bottom=STRIP_TOP + 0.15)
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(why), FadeOut(t), run_time=0.5)
+            self.play(FadeOut(why), FadeOut(t), run_time=0.35)
             self.play(Create(wf.frame), FadeIn(wf.title), FadeIn(tw, shift=UP * 0.2), caption_extra(tr, True),
-                      run_time=0.7)
+                      run_time=0.5)
             bare_prompt(self, tw)
-            c21 = type_cmd(self, tw, PIN_ADD.cmd, 1.0)
-            pin(self, last_row(c21), beside(extra_tag(), tw, c21), run_time=0.3)
-            o21 = tw.print(self, PIN_ADD.at(7, 8), run_time=0.4)
-            self.play(Indicate(substring(o21[1], "1.27.5"), color=TURN, scale_factor=1.2), run_time=0.5)
+            c21 = type_cmd(self, tw, PIN_ADD.cmd, 0.7)
+            o21 = tw.print(self, PIN_ADD.at(7, 8), run_time=0.3)
+            pin_with(self, c21, beside(extra_tag(), tw, c21),
+                     Indicate(substring(o21[1], "1.27.5"), color=TURN, scale_factor=1.2), run_time=0.5)
             vo.wait_until("lists only the four folders")
-            type_cmd(self, tw, PINNED.cmd, 0.5)
-            self.play(FadeIn(br5, shift=UP * 0.1), FadeIn(menu5), run_time=0.6)
+            type_cmd(self, tw, PINNED.cmd, 0.4)
+            self.play(FadeIn(br5, shift=UP * 0.1), FadeIn(menu5), run_time=0.5)
             vo.wait_until("but picking one still fails")
-            self.play(FadeIn(cur5), cur5.animate.shift(tip_to(cur5, menu5.row("1-baseline"))), run_time=0.6)
+            self.play(FadeIn(cur5), cur5.animate.shift(tip_to(cur5, menu5, "1-baseline")), run_time=0.5)
             hl5, anims = menu5.pick("1-baseline", TURN)
-            self.play(*anims, click(cur5), run_time=0.4)
-            tw.print(self, [(PINNED.line(131), ERR), (PINNED_ERR, ERR)], wrap=True, run_time=0.5)
+            self.play(*anims, click(cur5), run_time=0.35)
+            e24 = tw.print(self, [(PINNED.line(131), ERR), (PINNED_ERR, ERR)], wrap=True, run_time=0.5)
             self.play(*menu5.recolor("1-baseline", hl5, ERR), run_time=0.4)
+            vo.wait_until("as an invalid app name")
+            bad = [r for r in e24 if "Invalid app name" in r.text]
+            self.play(*[Indicate(substring(r, "Invalid app name"), color=ERR, scale_factor=1.1) for r in bad],
+                      run_time=0.7)
             vo.wait_until("So a version pin doesn't help")
             c27 = type_cmd(self, tw, UNDO.cmd, 1.2)
             pin(self, last_row(c27), beside(extra_tag(), tw, c27), run_time=0.3)
@@ -715,24 +742,30 @@ class AdkWeb(VoiceScene):
         fr7.move_to(card7)
         card7 = VGroup(fr7, card7)
         place(card7, left=menu7.get_right()[0] + 0.5, bottom=menu7.get_bottom()[1])
+        card7_up = card7.copy()               # where the card waits while the log prints: under the tracker
+        place(card7_up, left=-6.2, top=TOP_Y - 0.05)
         with self.voiceover(SAY[7]) as vo:
-            self.play(caption_extra(tr, False), run_time=0.3)
-            type_cmd(self, t, WEB2.cmd, 0.6)
-            resize(self, t, 3, run_time=0.5, extra=[tr.goto(2), FadeIn(br7, shift=UP * 0.1), FadeIn(menu7.field)])
-            self.play(caption_extra(tr, True), run_time=0.2)
-            t7 = second_terminal(self, P_ADK, rows=3, top=STRIP_TOP, run_time=0.4)
-            c30 = type_cmd(self, t7, LIST2.cmd, 0.7)
-            pin(self, last_row(c30), beside(extra_tag(), t7, c30), run_time=0.2)
-            t7.print(self, [LIST2.line(2)], run_time=0.3)
-            self.play(FadeIn(menu7.lst), LaggedStart(*[FadeIn(r, shift=DOWN * 0.05) for r in menu7.rows],
-                                                      lag_ratio=0.12), FadeIn(cur7), run_time=0.6)
-            self.play(cur7.animate.shift(tip_to(cur7, menu7.row("baseline"))), run_time=0.5)
+            self.play(caption_extra(tr, False), run_time=0.15)
+            type_cmd(self, t, WEB2.cmd, 0.4)
+            # the page reloads with the dropdown open (the entries of 30 line 2)
+            resize(self, t, 3, run_time=0.5, extra=[tr.goto(2), FadeIn(br7, shift=UP * 0.1), FadeIn(menu7),
+                                                    FadeIn(cur7)])
+            t7 = second_terminal(self, P_ADK, rows=3, top=STRIP_TOP, run_time=0.25)
+            c30 = type_cmd(self, t7, LIST2.cmd, 0.4)
+            t7.print(self, [LIST2.line(2)], run_time=0.2)
+            pin_with(self, c30, beside(extra_tag(), t7, c30), caption_extra(tr, True),
+                     cur7.animate.shift(tip_to(cur7, menu7, "baseline")), run_time=0.35)
             hl7, anims = menu7.pick("baseline", DATA)
-            self.play(*anims, click(cur7), FadeIn(card7, shift=LEFT * 0.1), run_time=0.45)
+            self.play(*anims, click(cur7), FadeIn(card7, shift=LEFT * 0.1), run_time=0.3)
             vo.wait_until("The log says")
-            resize(self, t, 9, run_time=0.5, extra=[FadeOut(t7, shift=DOWN * 0.3), caption_extra(tr, False),
-                                                    FadeOut(VGroup(br7, menu7, hl7, cur7, card7))])
-            log = t.print(self, [ENV_LOG, AGENT_LOG, WEB2.line(40)], wrap=True, run_time=0.6)
+            # the terminal grows behind the second strip: its kept lines slide up out from under it,
+            # and the strip fades only in the second half, when they have left its rows; the page
+            # fades in the first half, before the growing frame reaches it
+            resize(self, t, 9, run_time=0.5, extra=[FadeOut(VGroup(br7, menu7, hl7, cur7),
+                                                            rate_func=lambda a: smooth(min(1.0, 2 * a))),
+                                                    Transform(card7, card7_up), caption_extra(tr, False),
+                                                    FadeOut(t7, rate_func=lambda a: smooth(max(0.0, 2 * a - 1)))])
+            log = t.print(self, [ENV_LOG, AGENT_LOG, WEB2.line(40)], wrap=True, run_time=0.3)
             env_row = rows_with(log, ROOT_ENV)[0]
             a = env_row.text.index(ROOT_ENV)
             pbox = col_box(env_row, a, a + len(ROOT_ENV), LOOKUP)
@@ -760,11 +793,13 @@ class AdkWeb(VoiceScene):
         place(slip_b, left=-6.2, top=slip_a.get_bottom()[1] - 0.4)
         VGroup(slip_a, slip_b).set_x(0)
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(root), run_time=0.3)
+            self.play(FadeOut(root), FadeOut(card7), run_time=0.3)
             resize(self, t, 3, run_time=0.5, extra=[FadeIn(git, shift=DOWN * 0.1)])
             vo.wait_until("the quick start passes a file")
             self.play(FadeIn(VGroup(slip_a.head, slip_a.chip, slip_a.tags), shift=RIGHT * 0.1), run_time=0.5)
             self.play(FadeIn(VGroup(slip_a.arrow, slip_a.out), shift=RIGHT * 0.1), run_time=0.5)
+            vo.wait_until("where a folder is expected")
+            self.play(Indicate(substring(slip_a.rows[1], "is a file."), color=ERR, scale_factor=1.1), run_time=0.7)
             vo.wait_until("and the module READMEs drop")
             self.play(FadeIn(VGroup(slip_b.head, slip_b.chip, slip_b.tags), shift=RIGHT * 0.1), run_time=0.5)
             self.play(FadeIn(VGroup(slip_b.arrow, slip_b.out), shift=RIGHT * 0.1), run_time=0.5)
@@ -798,16 +833,14 @@ class AdkWeb(VoiceScene):
             self.play(FadeIn(compose, shift=RIGHT * 0.1), run_time=0.5)
             vo.wait_until("or add dash dash port 8080")
             self.play(caption_extra(tr, True), run_time=0.2)
-            c37 = type_cmd(self, tw9, P8080.cmd, 0.6)
-            pin(self, last_row(c37), beside(extra_tag(), tw9, c37), run_time=0.3)
+            c37 = type_cmd(self, tw9, P8080.cmd, 0.5)
             l34 = tw9.print(self, [P8080.line(34)], run_time=0.3)[0]
-            self.play(substring(l34, "http://127.0.0.1:8080").animate.set_color(LOOKUP), FadeIn(clash.p8080),
-                      GrowArrow(clash.ok), run_time=0.5)
-            self.play(FadeIn(clash.okc, scale=1.3), run_time=0.3)
+            pin_with(self, c37, beside(extra_tag(), tw9, c37),
+                     substring(l34, "http://127.0.0.1:8080").animate.set_color(LOOKUP), FadeIn(clash.p8080),
+                     GrowArrow(clash.ok), FadeIn(clash.okc, scale=1.3), run_time=0.5)
             vo.wait_until("Pause, and get the dev UI open")
-            self.play(FadeOut(VGroup(wf9, tw9, clash, compose)), caption_extra(tr, False), run_time=0.5)
-            self.play(FadeIn(t), FadeIn(back, shift=UP * 0.1), run_time=0.4)
-            self.play(FadeIn(card, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeOut(VGroup(wf9, tw9, clash, compose)), caption_extra(tr, False), run_time=0.45)
+            self.play(FadeIn(t), FadeIn(back, shift=UP * 0.1), FadeIn(card, shift=UP * 0.15), run_time=0.5)
         self.wait(2)                                    # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tr, t, card, back)), run_time=0.8)
         self.wait(0.3)

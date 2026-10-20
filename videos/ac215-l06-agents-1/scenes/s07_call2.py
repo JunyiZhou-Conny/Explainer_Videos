@@ -17,7 +17,8 @@ Beats (script.md "## S07", one voiceover block each):
    a dashed PINK vector glyph rises out of the cylinder (stand-in, "a stored chunk's vector"); the
    query `collection.query(…, n_results=10, where={"author": …})` writes in (the vector into its "…",
    the card's author into where=) with a PINK arrow up into the cylinder; GREY "which 10 may differ".
-3. TERM(33: 51–57, …, 135; wrap) scrolls through the strip. Ten GREEN chunk cards drop out of the
+3. TERM(33: 51–57, …, 135; wrap) scrolls through the strip (51–53, then pairs, so two lines of text
+   always show). Ten GREEN chunk cards drop out of the
    cylinder into the band; the first opens into a card with lines 51, 57, 59's first words (Mara and
    Anja YELLOW). They merge into one GREEN string, "3509 characters" (line 135) YELLOW, which becomes
    the TEAL {"content": …} card "3,509 characters", stapled to the BLUE call card. The cylinder never
@@ -54,7 +55,8 @@ Beats (script.md "## S07", one voiceover block each):
    CODE(cli.py: 478), `response` underlined RED; then the GREEN fix chip `print(response.text)` "just
    the answer".
 11. TRACKER Agents 2 (· extra while the curl is up). A GREY browser frame (illustration) at
-   ac215-llm-rag.dlops.io/agent with an empty chat box; a 3-row strip types the curl (extra, folds) →
+   ac215-llm-rag.dlops.io/agent with an empty chat box; a 4-row strip (laptop · second terminal: the
+   container still runs) types the curl (extra on its first row, folds) →
    TERM(laptop/11: 2), `at the time of recording`; the README chip (README.md · line 271, expected)
    "Use Chrome browser for best performance". Hold, then everything fades: empty frame.
 """
@@ -132,9 +134,10 @@ from manim import (
     Polygon,
     VMobject,
     ReplacementTransform,
+    Transform,
     TransformFromCopy,
     RoundedRectangle,
-        VGroup,
+    VGroup,
     Write,
 )
 
@@ -540,14 +543,17 @@ class CallTwo(VoiceScene):
             self.add(cards)
             self.play(LaggedStart(*[c.animate.scale(2.5).move_to(p) for c, p in zip(cards, targets)],
                                   lag_ratio=0.08), run_time=1.2)
-            t1.print(self, D_RESP[0:3], run_time=0.4)
+            # lines 52, 54 and 56 are empty: print in pairs after the first three, so the 3-row
+            # strip always shows two lines of text (51/53, 53/55, 55/57)
+            t1.print(self, D_RESP[0:3], run_time=0.4)          # 51-53
             vo.wait_until("from today's story")
             self.play(TransformFromCopy(cards[0], txt), run_time=0.7)
-            t1.print(self, D_RESP[3:6], run_time=0.4)
+            t1.print(self, D_RESP[3:5], run_time=0.4)          # 54-55
             vo.wait_until("about Mara and Anja")
             self.play(mara.animate.set_color(TURN), run_time=0.35)
+            t1.print(self, D_RESP[5:7], run_time=0.4)          # 56-57: Anja smiled.
             self.play(anja.animate.set_color(TURN), run_time=0.35)
-            t1.print(self, D_RESP[6:8], run_time=0.4)
+            t1.print(self, D_RESP[7:8], run_time=0.3)          # …
             vo.wait_until("Joined into one string")
             self.play(FadeOut(txt, shift=DOWN * 0.2), run_time=0.4)
             self.play(ReplacementTransform(cards, string), FadeIn(one_s, shift=UP * 0.1), run_time=0.8)
@@ -558,7 +564,8 @@ class CallTwo(VoiceScene):
             self.play(FadeOut(one_s), ReplacementTransform(string, rc), run_time=0.8)
             vo.wait_until("they're stapled")
             self.play(rc.animate.move_to(rc_to.get_center()), run_time=0.8)
-            self.play(Create(stp), Indicate(cc.frame, color=CLOUD, scale_factor=1.02), run_time=0.6)
+            self.play(Create(stp), run_time=0.3)                # the staple is the narrated thing
+            self.play(Indicate(stp, color=TURN, scale_factor=1.5), run_time=0.5)
 
         # ============================================================ 4 · call 2 sends three things
         p4 = src_panel("cli.py", 464, 477, join=[(470, 472)], cut_comments=True, size=20)
@@ -635,7 +642,15 @@ class CallTwo(VoiceScene):
                       FadeOut(VGroup(p4, b468, b469, b470, b475, gnote, glead)), caption_extra(tr, True),
                       run_time=0.6)
             self.play(duty.box.animate.set_stroke(TURN), duty.text.animate.set_color(TURN), run_time=0.3)
-            self.play(FadeTransform(VGroup(env, env_l, ghost, menu, clip), t5), run_time=0.7)
+            # the envelope's frame becomes the terminal (its sheets fade: their rows print next)
+            shell = env.parts["body"].copy()
+            chrome = VGroup(t5.bar, t5.dots, t5.title)
+            self.add(shell)
+            self.play(FadeOut(VGroup(env, env_l, ghost, menu, clip)), Transform(shell, t5.box.copy()),
+                      run_time=0.5)
+            self.play(FadeIn(chrome), run_time=0.25)
+            self.remove(shell, chrome)
+            self.add(t5)
             out5 = t5.print(self, REQ, run_time=0.7, lag=0.06)
             self.play(substring(out5[7], '"functionResponse"').animate.set_color(CTR),
                       out5[11].animate.set_color(S.GREY), run_time=0.3)
@@ -804,14 +819,16 @@ class CallTwo(VoiceScene):
         assert slot.get_left()[0] > cl9.get_right()[0] + 0.2
         link = Line(cy9.get_right() + RIGHT * 0.06, [slot.get_left()[0] - 0.04, cy9.get_center()[1], 0],
                     color=CTR, stroke_width=3)
-        old = grid(3, 4)
+        card_kw = dict(w=0.78, h=0.42, gap=0.14)    # 24 cards fill the slot: 3 rows of 8
+        old = grid(3, 4, **card_kw)
         old.move_to(slot)
         ghosts = VGroup(*[ghost_card(c) for c in old])
-        ghost_to = ghosts.copy()
+        ghost_to = ghosts.copy().scale(0.8)
         place(ghost_to, left=slot.get_left()[0] + 0.3, top=slot.get_bottom()[1] - 0.3)
         old_tag = tag("old book", S.GREY).next_to(ghost_to, LEFT, buff=0.3)
-        new = grid(4, 6)
+        new = grid(3, 8, **card_kw)
         new.move_to(slot)
+        assert new.width < slot.width - 0.5 and new.height < slot.height - 0.3
         new_l = label("today's book · 24 chunks", 20, DATA)
         place(new_l, right=slot.get_right()[0], bottom=slot.get_top()[1] + 0.12)
         words = VGroup(*[chip(w, DATA, size=20, fill_opacity=0.12) for w in ("Mara", "the curd", "the wheels")])
@@ -826,7 +843,7 @@ class CallTwo(VoiceScene):
                       run_time=0.5)
             self.play(FadeIn(cy9), FadeIn(cl9), Create(link), FadeIn(slot), FadeIn(old), run_time=0.6)
             self.play(FadeOut(old), FadeIn(ghosts), run_time=0.5)
-            self.play(ghosts.animate.move_to(ghost_to), FadeIn(old_tag, shift=UP * 0.1), run_time=0.6)
+            self.play(ghosts.animate.scale(0.8).move_to(ghost_to), FadeIn(old_tag, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("draws on passages")
             self.play(LaggedStart(*[FadeIn(c, shift=LEFT * 1.0) for c in new], lag_ratio=0.03),
                       FadeIn(new_l), run_time=1.1)
@@ -881,7 +898,7 @@ class CallTwo(VoiceScene):
         place(cb, cx=bw.get_center()[0], bottom=bw.frame.get_bottom()[1] + 0.3)
         ill = illustration_tag()
         place(ill, left=bw.get_right()[0] + 0.25, top=bw.get_top()[1])
-        t11 = term(rows=4)
+        t11 = term(P_REPO, rows=4, title=SECOND)     # the container still runs (S08 types exit)
         assert bw.get_bottom()[1] > t11.box.get_top()[1] + 0.05
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(VGroup(top10, p478, u_resp, fx_arrow, fix_row)), tr.goto(2), run_time=0.5)
@@ -889,7 +906,10 @@ class CallTwo(VoiceScene):
             vo.wait_until("hosted Cheese Agent Tool")
             self.play(FadeIn(t11, shift=UP * 0.3), caption_extra(tr, True), run_time=0.4)
             cmd11 = type_cmd(self, t11, CURL_CMD, 1.4)
-            pin(self, cmd11, beside(extra_tag(), t11, cmd11), run_time=0.3)
+            # beside the command's first row: on its last row the tag would sit right above the
+            # "at the time of recording" tag of the output row and touch it
+            row11 = cmd11.rows[0] if hasattr(cmd11, "rows") else cmd11
+            pin(self, row11, beside(extra_tag(), t11, row11), run_time=0.3)
             out11 = t11.print(self, [C11.line(2)], run_time=0.4)
             pin(self, out11[0], beside(recording_tag(), t11, out11[0], buff=0.4), run_time=0.3)
             vo.wait_until("try it in Chrome")

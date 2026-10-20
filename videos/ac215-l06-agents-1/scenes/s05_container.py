@@ -34,17 +34,19 @@ Beats (script.md "## S05", one voiceover block each):
 6. The code panel leaves; "char-split-collection" flashes in the strip. Two GREY cards above the
    strip, one per path (stacked: the README commands need the full width): "kept lecture 5's
    database?" docker-volumes/chromadb · skip ahead, GREY note "chunked before September 22, 2026?
-   git pull, then chunk → embed → load / the book changed (explained soon)"; "no database?" (GREY
-   README.md · lines 103, 129 + expected) with the chunk and embed commands (embed: "needs your
-   key") and "then the load step".
+   git pull, then chunk → embed → load / the book changed (explained soon)" ("git pull, then …"
+   flashes at "pull and rebuild it"); "no database?" (GREY README.md · lines 103, 129 + expected)
+   with the chunk and embed commands (embed: "needs your key") and "then the load step".
 7. The first card leaves, the second rises; a GOLD key lands on the embed row; PANEL(laptop/08: 2–3,
-   header "outputs/embeddings-char-split-*" over "copied from commit 68e0bde") slides in under it
-   with a GREY arrow up to the key, tag "recorded · the staff's vectors".
+   header "outputs/embeddings-char-split-*" over "copied from commit 68e0bde"; a GREY serif "files"
+   label beside the bare 11) slides in under it with a GREY arrow up to the key, tag "recorded ·
+   the staff's vectors".
 8. TRACKER Load 1. The terminal grows (12 rows, leaving a band under the tracker for the README chip
-   "README.md · line 152: recursive-split too · the agent uses char-split" + expected):
-   `python cli.py --load --chunk_type char-split` -> cli-container/20 lines 2–8, then "…", 142,
-   152–153 (wrap; two prints), the prompt returns. GREY tag "8,248 chunks in 11 books · 24 from the
-   instructor's story" on the "…" row; 11, 24 and Tolminc flash. TRACKER Load 1 · extra: `python
+   "README.md · line 152: recursive-split too · the agent uses char-split" + expected, which comes
+   in once the load command is typed): `python cli.py --load --chunk_type char-split` ->
+   cli-container/20 lines 2–8, then "…", 142, 152–153 (wrap; two prints), the prompt returns. GREY
+   tag "8,248 chunks in 11 books · 24 from the instructor's story" on the "…" row; 11, then Tolminc,
+   then 24 flash as they are said. TRACKER Load 1 · extra: `python
    cli.py --get --chunk_type char-split` (extra) -> cli-container/21 line 6 cut after
    '1021665fac86c5a5-0', + "…". The chip leaves, the terminal shrinks to the strip; ▶ on a static
    GREY card (load, or keep yours; get). Hold 2 s. Fade to an empty frame.
@@ -282,8 +284,12 @@ def staff_panel() -> VGroup:
     sub = note("copied from commit 68e0bde")
     sub.next_to(p.frame, UP, buff=0.1).align_to(p.header, LEFT)
     p.header.next_to(sub, UP, buff=0.08).align_to(sub, LEFT)
-    p.add(sub)
-    p.sub = sub
+    # the capture's `ls outputs | wc -l` prints a bare "11": a GREY serif label (not output) says
+    # what it counts, in the column of the "total" that `du -ch` prints on the row below
+    files = note("files")
+    files.align_to(substring(p.rows[1], "total"), LEFT).set_y(p.rows[0].strut.get_center()[1])
+    p.add(sub, files)
+    p.sub, p.files = sub, files
     return p
 
 
@@ -460,7 +466,7 @@ class BackInTheContainer(VoiceScene):
             tr = switch_section(self, tr, "Agents", 1, run_time=0.6)
             resize(self, t, 13, run_time=0.6)
             vo.wait_until("python cli.py, dash dash agent")
-            cmd5 = type_cmd(self, t, AGENT.cmd, 1.2)
+            cmd5 = type_cmd(self, t, AGENT.cmd, 2.2)       # typed while the command is spoken
             vo.wait_until("On a fresh clone")
             out5 = t.print(self, [AGENT.line(2), AGENT.line(3), AGENT.line(9), AGENT.line(10), "…",
                                   (AGENT.line(25), ERR)], wrap=True, run_time=0.8)
@@ -487,7 +493,10 @@ class BackInTheContainer(VoiceScene):
         # ========================================================== 6 · two ways to the index
         dvol = VGroup(mono("docker-volumes/chromadb", CAPTION, INK), label("· skip ahead", CAPTION, INK))
         dvol.arrange(RIGHT, buff=0.14)
-        dnote = VGroup(note("chunked before September 22, 2026? git pull, then chunk → embed → load"),
+        dn_when = note("chunked before September 22, 2026?")
+        dn_fix = note("git pull, then chunk → embed → load")
+        dn_fix.next_to(dn_when, RIGHT, buff=0.14, aligned_edge=DOWN)
+        dnote = VGroup(VGroup(dn_when, dn_fix),
                        note("the book changed (explained soon)")).arrange(DOWN, aligned_edge=LEFT,
                                                                          buff=0.1)
         card_a = path_card("kept lecture 5's database?", [dvol, dnote])
@@ -511,6 +520,8 @@ class BackInTheContainer(VoiceScene):
             self.play(Indicate(dvol[0], color=TURN, scale_factor=1.06), run_time=0.6)
             vo.wait_until("if you chunked before September 22")
             self.play(FadeIn(dnote, shift=RIGHT * 0.1), run_time=0.6)
+            vo.wait_until("pull and rebuild it")
+            self.play(Indicate(dn_fix, color=TURN, scale_factor=1.05), run_time=0.8)
             vo.wait_until("Otherwise, chunk, embed and load again")
             self.play(FadeIn(card_b.frame), FadeIn(card_b.title, shift=RIGHT * 0.1), FadeIn(bhead),
                       run_time=0.5)
@@ -526,7 +537,9 @@ class BackInTheContainer(VoiceScene):
             dy = TOP_Y - card_b.get_top()[1]
             self.play(FadeOut(card_a), card_b.animate.shift(UP * dy), run_time=0.7)
             kg.next_to(e_cmd, RIGHT, buff=0.25)
-            self.play(e_note.animate.next_to(kg, RIGHT, buff=0.25), FadeIn(kg, scale=1.3), run_time=0.5)
+            # the note makes room first, then the key lands (together they crossed each other)
+            self.play(e_note.animate.next_to(kg, RIGHT, buff=0.25), run_time=0.3)
+            self.play(FadeIn(kg, scale=1.3), run_time=0.35)
             self.play(Indicate(kg, color=TURN, scale_factor=1.3), run_time=0.5)
             vo.wait_until("the staff's committed embeddings")
             place(staff, left=-6.15, top=card_b.get_bottom()[1] - 0.3)
@@ -544,9 +557,10 @@ class BackInTheContainer(VoiceScene):
             tr = switch_section(self, tr, "Load", 1, run_time=0.6)
             resize(self, t, LOAD_ROWS, run_time=0.6)
             place(chip8, left=-6.3, cy=(t.box.get_top()[1] + tr.get_bottom()[1]) / 2)   # under the tracker
-            self.play(FadeIn(chip8, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("python cli.py, dash dash load")
             type_cmd(self, t, LOAD.cmd, 1.2)
+            # README.md:151 is this command; the chip is about its next line (152), so it comes now
+            self.play(FadeIn(chip8, shift=DOWN * 0.1), run_time=0.5)
             # two prints: Terminal.print makes room for one batch only up to the terminal's height
             out8 = t.print(self, LOAD.at((2, 8)), wrap=True, run_time=0.6)
             out8 = VGroup(*out8, *t.print(self, LOAD.at("…", 142, 152, 153), wrap=True, run_time=0.5))
@@ -559,11 +573,12 @@ class BackInTheContainer(VoiceScene):
             cnt = beside(tag("8,248 chunks in 11 books · 24 from the instructor's story", S.GREY,
                              size=CAPTION), t, dots, buff=0.4)
             pin(self, dots, cnt, run_time=0.5)
-            vo.wait_until("the instructor's story is just 24")
             r153 = rows_with(out8, "Finished inserting 24")[0]
             r142 = rows_with(out8, "Tolminc")[0]
-            self.play(Indicate(substring(r153, "24"), color=TURN, scale_factor=1.3),
-                      Indicate(substring(r142, "Tolminc"), color=TURN, scale_factor=1.1), run_time=0.8)
+            vo.wait_until("the instructor's story")
+            self.play(Indicate(substring(r142, "Tolminc"), color=TURN, scale_factor=1.1), run_time=0.8)
+            vo.wait_until("just 24 of them")
+            self.play(Indicate(substring(r153, "24"), color=TURN, scale_factor=1.3), run_time=0.8)
             vo.wait_until("An extra get command")
             self.play(caption_extra(tr, True), run_time=0.4)
             g8 = type_cmd(self, t, GET.cmd, 1.0)

@@ -87,7 +87,8 @@ COUNT_R = 4.75                  # right edge of each lane's GOLD counter
 Y1, Y2 = 2.3, 0.4               # lane rows; lane 2 slides up by LIFT when lane 3 starts
 LIFT = 0.95
 Y3_PRE, Y3 = -2.85, -0.35       # lane 3's name waits low (lane 2's notes go between), its row
-SUB = -0.68                     # lane 2's sub-row (diamond caption, ticks, counter) below its stations
+SUB = -0.8                      # lane 2's sub-row (diamond caption, ticks, counter) below its stations
+                                # (low enough that the ×4 badge clears the counter's digits)
 X2 = ROW_X0 + 0.2               # lane 2's row starts a little further right (its longer name)
 FR_TOP = 2.55                   # the Colab frame's top edge (its tab clears the tracker)
 X0 = -6.15                      # left edge of the notebook content inside the frame
@@ -466,9 +467,9 @@ class SteeringWheel(VoiceScene):
             self.play(Indicate(d2, scale_factor=1.35, color=INK), Indicate(dcap, scale_factor=1.05, color=INK),
                       run_time=1.0)
             wf = label("reasoning workflow: many calls, ordered by your code", 22, S.GREY)
-            wf.move_to([0.4, Y2 + SUB - 1.2, 0])
+            wf.move_to([0.4, Y2 + SUB - 1.15, 0])
             rm = concept_box("a reasoning model thinks inside one call · more with Gemini, later")
-            rm.move_to([0.4, Y2 + SUB - 1.8, 0])
+            rm.move_to([0.4, Y2 + SUB - 1.72, 0])
             vo.wait_until("so it's a reasoning workflow")
             self.play(FadeIn(wf, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("not a reasoning model")
@@ -594,11 +595,18 @@ class SteeringWheel(VoiceScene):
             vo.wait_until("defines an agent")
             self.play(FadeIn(dc.frame), Write(dc.rows[0]), run_time=1.0)
             vo.wait_until("an LLM")
-            ctl_at = A.parts["control_dash"].get_center()
+            # the diamond rides along inside the LLM core (it was inside the model in lane 3) until
+            # it stretches into the Dynamic Control bar; lane 3's question and answer step out to
+            # the ends, where Task / Goal and Task completion will form (the answer card sat
+            # where the Instructions block now is)
+            core_fr = A.frames["core"]
+            d3_at = np.array([core_fr.get_right()[0] - 0.45, core_fr.get_y(), 0])
             self.play(FadeIn(A.parts["box"]), FadeIn(A.parts["head"]),
                       ReplacementTransform(m3, A.parts["core"]),
-                      d3.animate.scale(1.5).move_to(ctl_at), FadeOut(a3b),
+                      d3.animate.scale(1.2).move_to(d3_at), FadeOut(a3b),
+                      q3.animate.move_to(A.parts["task"]), ans3.animate.move_to(A.parts["done"]),
                       run_time=0.8)
+            self.bring_to_front(d3)                  # above the core's tinted fill
             vo.wait_until("given instructions")
             self.play(ReplacementTransform(note, A.parts["instructions"], path_arc=-PI / 2), run_time=0.8)
             vo.wait_until("and tools")

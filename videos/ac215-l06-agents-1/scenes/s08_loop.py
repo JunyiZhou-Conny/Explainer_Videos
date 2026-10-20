@@ -10,7 +10,8 @@ Beats (script.md "## S08", one voiceover block each):
    ponder card fill the frame). CODE(cli.py: 474–481), 8 rows: lines 474–476 YELLOW with a GREY
    dashed ghost "no tool_config" inside line 476; line 478 GREY; line 481 GREY with the label
    "agent() ends here". PONDER (8 s) in the lower third.
-2. The panel moves down, the one-lap line returns on top. Line 478 YELLOW; a BLUE function-call
+2. The panel moves down, the one-lap line returns on top. Line 478 YELLOW (the 474–476 bar steps
+   back to GREY: line 478 is the narrated line); a BLUE function-call
    card {name, args} drops out of "call 2" (GREY "no text"); "end" flashes with line 481; the card's
    frame turns RED, tag "never run"; a GREY dashed arrow loops from the card back to "your code
    runs it", caption "a loop would run it and ask again".
@@ -220,21 +221,21 @@ def morph_track(scene, src, dst, names=("track", "model", "tools", "token"), ext
     return dst
 
 
-def tick(lt, k: int, color: str = INK):
+def tick(lt, k: int, color: str = INK, run_time: float = 0.25):
     """Animation: LoopTrack lt's counter jumps to k (its number in `color`)."""
     lt.count = k
     cnt = lt.parts["counter"]
     new = lt._counter_text(k).move_to(cnt)
     new[0].set_color(color)
-    return Transform(cnt, new, run_time=0.25)
+    return Transform(cnt, new, run_time=run_time)
 
 
-def run_lap(scene, lt, run_time: float = 1.0, color: str = INK):
+def run_lap(scene, lt, run_time: float = 1.0, color: str = INK, tick_time: float = 0.25):
     """One clockwise lap of the token, then the counter ticks (two plays: LoopTrack.lap()'s
     Succession adds a wrapper group to the scene that draws the token over the stations)."""
     scene.play(Rotate(lt.parts["token"], angle=-TAU, about_point=lt._c.get_center(), rate_func=linear),
                run_time=run_time)
-    scene.play(tick(lt, lt.count + 1, color))
+    scene.play(tick(lt, lt.count + 1, color, tick_time))
 
 
 def lap_to_model(lt, run_time: float = 0.5):
@@ -305,7 +306,9 @@ class TheLoop(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(card), anno.animate.shift(DOWN * (p1.get_bottom()[1] + 3.5)),
                       FadeIn(row), run_time=0.8)
-            self.play(bar478.animate.set_fill(TURN, 0.22), run_time=0.4)
+            # line 478 is the narrated line now: the config bar steps back to GREY
+            self.play(bar478.animate.set_fill(TURN, 0.22), bars_cfg.animate.set_fill(S.GREY, 0.14),
+                      run_time=0.4)
             self.play(FadeIn(fc, target_position=call2.get_center(), scale=0.4), run_time=0.8)
             vo.wait_until("with no text")
             self.play(FadeIn(nt, shift=LEFT * 0.1), run_time=0.4)
@@ -364,15 +367,16 @@ class TheLoop(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             self.play(*lt.parts_in("token", "counter"), run_time=0.4)
             self.add(lt)                           # the token back under the stations (z-order)
-            run_lap(self, lt, 0.9)
-            run_lap(self, lt, 0.9)
+            run_lap(self, lt, 0.75)                # lap 1 under "What ends the loop?"
             vo.wait_until("The stop rule")
-            self.play(*lt.parts_in("exit", "gate"), FadeIn(stop[0], shift=UP * 0.1), run_time=0.6)
+            # lap 2 runs while the exit, the gate and "stop rule:" arrive (on the words)
+            self.play(Rotate(lt.parts["token"], angle=-TAU, about_point=lt._c.get_center(), rate_func=linear),
+                      *lt.parts_in("exit", "gate"), FadeIn(stop[0], shift=UP * 0.1), run_time=0.8)
             self.add(lt)
+            self.play(tick(lt, 2))
             vo.wait_until("a reply with no function call")
-            self.play(lap_to_model(lt, 0.5))
-            self.play(tick(lt, 3), FadeIn(reply, shift=RIGHT * 0.2), FadeIn(stop[1], shift=UP * 0.1),
-                      run_time=0.5)
+            self.play(lap_to_model(lt), FadeIn(stop[1], shift=UP * 0.1), run_time=0.5)
+            self.play(tick(lt, 3), FadeIn(reply, shift=RIGHT * 0.2), run_time=0.5)
             self.play(reply.animate.set_x(before_gate), run_time=0.8)
             vo.wait_until("is the final response")
             self.play(gate.open(run_time=0.6))
@@ -384,16 +388,17 @@ class TheLoop(VoiceScene):
         lt5 = LoopTrack(radius=0.7, show=("track", "model", "tools", "token"))
         for n in ("counter", "exit", "gate"):          # the compact track has no counter and no gate
             lt5.remove(lt5.parts[n])
-        lt5.shift(np.array([-5.3, 2.0, 0]) - lt5._c.get_center())
+        lt5.shift(np.array([-5.3, 2.22, 0]) - lt5._c.get_center())    # clear of the panel header
         cap5 = VGroup(label("inside ADK, simplified:", 22, TOOL),
                       label("model → tools, until the reply is final", 22, TOOL))
         cap5.arrange(DOWN, aligned_edge=LEFT, buff=0.12)
-        cap5.move_to([0, 2.0, 0]).align_to(np.array([-4.2, 0, 0]), LEFT)
+        cap5.move_to([0, 2.22, 0]).align_to(np.array([-4.2, 0, 0]), LEFT)
         ill = illustration_tag().next_to(cap5[0], RIGHT, buff=0.35)
         p5 = src_panel(RUNNER, 39, 48)
         p5.shift(RIGHT * (-6.45 - p5.get_left()[0]) + UP * (-3.5 - p5.get_bottom()[1]))
         mod4 = chip("ADK repo · module 4 · code only", S.GREY, size=20)
         mod4.next_to(p5.header, RIGHT, buff=0.4)
+        mod4.shift(UP * max(0.0, p5.code.get_top()[1] + 0.08 - mod4.get_bottom()[1]))   # clear of the code box
         bar40 = p5.bar(40, TOOL, 0.22)
         lab40 = VGroup(label("the Runner", 22, TOOL), label("streams events", 22, TOOL))
         lab40.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
@@ -405,7 +410,8 @@ class TheLoop(VoiceScene):
         lab45.set_y((code_row(p5, 45).get_center()[1] + code_row(p5, 46).get_center()[1]) / 2)
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(stop), FadeOut(reply), run_time=0.4)
-            morph_track(self, lt, lt5, extra=[FadeIn(cap5, shift=RIGHT * 0.1), FadeIn(ill)], run_time=1.0)
+            morph_track(self, lt, lt5, run_time=1.0)        # the caption follows: the shrinking track crosses its place
+            self.play(FadeIn(cap5, shift=RIGHT * 0.1), FadeIn(ill), run_time=0.4)
             self.play(FadeIn(p5, shift=UP * 0.15), FadeIn(mod4, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("the ADK Runner streams events")
             self.play(FadeIn(bar40), FadeIn(lab40, shift=LEFT * 0.1),
@@ -446,10 +452,10 @@ class TheLoop(VoiceScene):
             for _ in range(2):
                 run_lap(self, lt6, 0.4)
             vo.wait_until("Hitting the Agents SDK cap")
-            while lt6.count < 11:
-                run_lap(self, lt6, 0.25)
-            run_lap(self, lt6, 0.25, ERR)
-            self.play(lt6.gate.open(run_time=0.25))
+            while lt6.count < 11:                  # the race: 6 fast laps, the slam on "ends the run"
+                run_lap(self, lt6, 0.15, tick_time=0.1)
+            run_lap(self, lt6, 0.15, ERR, tick_time=0.1)
+            self.play(lt6.gate.open(run_time=0.2))
             self.play(lt6.gate.slam(ERR, "MaxTurnsExceeded"))
             vo.wait_until("ends the run with an error")
             self.play(Indicate(lt6.gate.caption, color=ERR, scale_factor=1.1), run_time=0.8)
@@ -466,9 +472,10 @@ class TheLoop(VoiceScene):
             lr = lref_swap(self, lr, "41", run_time=0.4)
             self.play(FadeOut(c71), FadeOut(c25), FadeOut(bx71), FadeOut(bx25), FadeOut(lt6.gate.caption),
                       *lt6.parts_out("counter", "exit", "gate"), run_time=0.5)
-            self.play(trk.animate.move_to([4.95, -0.3, 0]), FadeIn(A, shift=RIGHT * 0.2), run_time=0.9)
+            self.play(trk.animate.move_to([4.95, -0.3, 0]), run_time=0.7)     # out of the anatomy's way first
+            self.play(FadeIn(A, shift=RIGHT * 0.2), run_time=0.6)
             vo.wait_until("gray out dynamic control")
-            self.play(A.names["control"].animate.set_color(S.GREY_DARK),
+            self.play(A.names["control"].animate.set_color(S.GREY),     # grayed, still readable
                       Indicate(bar, color=S.GREY, scale_factor=1.03), run_time=0.7)
             for name, phrase in (("core", "You configure the model"), ("instructions", "instructions, tools"),
                                  ("tools", "tools and memory"), ("memory", "and memory")):
@@ -526,8 +533,8 @@ class TheLoop(VoiceScene):
         idx = mixed_chip(["`docker-volumes/`", ": your index stays"], DATA)
         prt = mixed_chip(["port 8000 → free for part 2"], LOOKUP)
         VGroup(idx, prt).arrange(RIGHT, buff=0.5).move_to([0, 1.6, 0])
-        your = turn_card([("exit", "extra"), ("docker compose down", "extra")])
-        your.move_to([0, 1.8, 0])                     # between the tracker (2.94) and the terminal (0.58)
+        your = turn_card([("exit", "extra"), ("docker compose down", "extra")], header=None)
+        your.move_to([0, 1.62, 0])                    # between the tracker (2.94) and the terminal (0.58)
         with self.voiceover(SAY[9]) as vo:
             self.play(Write(idx), run_time=0.9)
             vo.wait_until("and part 2 also needs port 8000")

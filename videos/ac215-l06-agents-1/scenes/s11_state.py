@@ -26,7 +26,9 @@ Beats (script.md "## S11", one voiceover block each):
    three LlmAgents (BLUE name chip over the GREY instruction card, cut with …) stand between them, the
    GREY message card (the request text of adk-laptop/33 line 1) at the top. A PURPLE Runner chip takes
    it; a PURPLE frame (the Runner's turn) surrounds ItineraryValidator; its chip lights (GOLD tick per
-   call); a blank GREEN reply card flies along the label output_key into cell 1; an event block stacks.
+   call); a blank GREEN reply card flies into cell 1 ("goes into the state") and an event block stacks;
+   at "under its output key" the GREEN label output_key and its arrow trace the route and the cell's
+   name itinerary_validation flashes GREEN.
    The frame moves to TravelPlanner; the PINK hole {itinerary_validation} flashes and a copy of cell
    1's card flies into it before the chip lights; its reply fills cell 2.
 4. TripSummarizer reads {travel_plan} the same way and fills cell 3; three event blocks stand in the
@@ -34,7 +36,8 @@ Beats (script.md "## S11", one voiceover block each):
    agents"; the board flashes GREEN; thin GREY lines run from the events column into each instruction
    card, labelled "history". The picture dims under a GREY dashed coda (tag concept · module README
    only): ParallelAgent fills three cells at once on three branch lines.
-5. LECTURE 20–22. The picture leaves but the three agents, which slide left; the lecture's request
+5. LECTURE 20–22. The picture fades under the coda's scrim, then the scrim lifts off the three agents
+   as they slide left (no flash of the full picture); the lecture's request
    card (from S01, in our words) appears at the right with the GREY dashed chips "live systems" and
    "tools that act"; each agent shows a GREY dashed "tools= none"; the two chips slide toward the
    pipeline, find nothing to attach to and dim. Caption "costs: the model's own estimates"; a GREY
@@ -46,14 +49,19 @@ Beats (script.md "## S11", one voiceover block each):
    holds the sheet "a profile from past sessions", tag "typed into the notebook (cell 42)".
 7. TRACKER · extra. Extra card "send a trip request with the placeholder key (POST /run)"; a 2-row
    second terminal prints adk-laptop/33 line 2 "Internal Server Error" (tag real run · placeholder
-   key); the server strip (laptop) prints adk-laptop/29 lines 357–363 joined, cut after "Please pass a
-   valid API key." (wrap), RED; "API key not valid", "google.genai" and "400 INVALID_ARGUMENT" flash
-   as named.
-8. The "with your key, look for" card writes in its two items as named; PANEL(adk-laptop/29: 41–42
-   joined, "adk web log", wrapped with GREY ↪) with baseline/.adk/session.db PINK and the PINK tag "a
-   file in the agent's folder". ▶ your turn on a static GREY card (pick baseline · the trip request;
-   GOLD last line "3 Gemini calls per request · free tier has limits"). Hold 2 s. Fade to an empty
-   frame.
+   key); in the band between the two terminals a small route: GREY "adk web · your laptop" holding the
+   GOLD key "placeholder key", a PINK arrow across a GREY dashed boundary to the BLUE "Gemini API". The
+   server strip (laptop) prints adk-laptop/29 lines 357–363 joined, cut after "Please pass a valid API
+   key." (wrap), RED; "API key not valid" flashes; at "The placeholder reached Google" the key travels
+   to the Gemini API ("google.genai" underlined); at "and was refused" a RED arrow "400" comes back, a
+   RED cross lands on the key and "400 INVALID_ARGUMENT" flashes.
+8. The "with your key, look for" card writes in its two items as named, each citing the code line
+   behind it (agent.py · line 37, the sub_agents order; lines 18, 25, 32, the output_key= lines);
+   PANEL(adk-laptop/29: 41–42 joined, "adk web log", wrapped with GREY ↪) with baseline/.adk/session.db
+   PINK and the PINK tag "a file in the agent's folder" under the path. ▶ your turn on a static GREY
+   card (pick baseline · the trip request; GOLD last line "3 Gemini calls per request · free tier has
+   limits"); the PINK tag fades as it enters, so no tags stack over the ▶. Hold 2 s. Fade to an
+   empty frame.
 """
 
 import numpy as np
@@ -92,6 +100,7 @@ from common import (
     extra_tag,
     grey_tag,
     illustration_tag,
+    key_glyph,
     log_panel,
     lref,
     note,
@@ -116,6 +125,7 @@ from manim import (
     Arrow,
     Circle,
     Create,
+    DashedLine,
     FadeIn,
     FadeOut,
     FadeTransform,
@@ -129,6 +139,7 @@ from manim import (
     Transform,
     TransformFromCopy,
     VGroup,
+    there_and_back,
 )
 from pygments.token import Punctuation, String
 
@@ -241,12 +252,40 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
     return m
 
 
+def pop(m, k: float = 1.08):
+    """A colour-safe emphasis (Indicate would flood a filled box with its colour): m swells and
+    settles back."""
+    return m.animate(rate_func=there_and_back).scale(k)
+
+
+def flare(frame, color: str, width: float = 6):
+    """A frame's border flares (thicker, in `color`) and settles back."""
+    return frame.animate(rate_func=there_and_back).set_stroke(color, width)
+
+
 def attach(scene, row, *mobs):
     """Make mobs (already on screen) part of terminal row `row`: they scroll and fade with it."""
     for m in mobs:
         scene.remove(m)
         row.add(m)
     scene.add(row)
+
+
+def scene_level(scene, *mobs) -> list:
+    """The mobjects in mobs' families that sit on the scene at top level. Fading these one by one
+    keeps their place in the drawing order; FadeOut of a wrapper group re-adds it on top."""
+    out = []
+
+    def walk(m):
+        if any(m is s for s in scene.mobjects):
+            out.append(m)
+        else:
+            for s in m.submobjects:
+                walk(s)
+
+    for m in mobs:
+        walk(m)
+    return out
 
 
 def dashed_card(w: float, h: float, color: str = S.GREY, radius: float = 0.16) -> VGroup:
@@ -439,6 +478,40 @@ def memory_box() -> VGroup:
     return g
 
 
+def route_row(top: float, bottom: float) -> VGroup:
+    """Beat 7, in the band between the two terminals: adk web on your laptop (GREY) holds the GOLD
+    placeholder key; a PINK route crosses the dashed boundary to the BLUE Gemini API; the RED
+    "400" comes back. .web .lap .gem .bnd .out .back .key .no .key_to (where the key lands)"""
+    yc = (top + bottom) / 2 + 0.02
+    web = chip("adk web", S.GREY, size=CAPTION, font=MONO)
+    gem = chip("Gemini API", S.BLUE, size=CAPTION)
+    place(web, cx=-4.2, cy=yc)
+    place(gem, cx=4.2, cy=yc)
+    lap = note("your laptop")
+    place(lap, cx=web.get_x(), top=web.get_bottom()[1] - 0.1)
+    xa, xb = web.get_right()[0] + 0.14, gem.get_left()[0] - 0.14
+    out = Arrow([xa, yc + 0.09, 0], [xb, yc + 0.09, 0], buff=0.0, color=LOOKUP, stroke_width=4,
+                max_tip_length_to_length_ratio=0.1, tip_length=0.18)
+    back = Arrow([xb, yc - 0.13, 0], [xa, yc - 0.13, 0], buff=0.0, color=ERR, stroke_width=4,
+                 max_tip_length_to_length_ratio=0.1, tip_length=0.18)
+    key = VGroup(key_glyph(0.3), label("placeholder key", CAPTION, COST)).arrange(RIGHT, buff=0.14)
+    place(key, left=xa + 0.25, bottom=yc + 0.25)
+    key_to = key.copy()
+    place(key_to, right=xb - 0.3)
+    bx = (xa + xb) / 2
+    bnd = DashedLine([bx, top - 0.12, 0], [bx, bottom + 0.12, 0], color=S.GREY, stroke_width=2.5,
+                     dash_length=0.12)
+    no = mono("400", CAPTION, ERR)
+    place(no, cx=(bx + xb) / 2, top=yc - 0.13 - 0.18)
+    g = VGroup(bnd, web, lap, gem, out, key, back, no)
+    g.web, g.lap, g.gem, g.bnd, g.out, g.back, g.key, g.no, g.key_to = web, lap, gem, bnd, out, back, key, no, key_to
+    assert key.get_top()[1] < top - 0.1 and min(lap.get_bottom()[1], no.get_bottom()[1]) > bottom + 0.1, \
+        (key.get_top(), lap.get_bottom(), no.get_bottom(), top, bottom)
+    assert key.get_left()[0] > xa and key.get_right()[0] < bx - 0.1 and key_to.get_left()[0] > bx + 0.1, \
+        (key.get_left(), key.get_right(), key_to.get_left(), bx)
+    return g
+
+
 def board_only(title: str, filled: bool):
     """A session board without its events column (beat 6), optionally with its three reply cards.
     Returns (group, whiteboard)."""
@@ -525,7 +598,7 @@ class SharedState(VoiceScene):
             for r0, bx, _ in boxes:
                 attach(self, r0, bx)
             vo.wait_until("set yours")
-            self.play(Indicate(env_tag, color=TURN, scale_factor=1.06), run_time=0.7)
+            self.play(pop(env_tag, 1.08), run_time=0.7)
 
         # ========================================================== 2 · a new session: empty state, no events
         wb = Whiteboard(events_w=EV_W, cell_pitch=1.1)
@@ -593,7 +666,7 @@ class SharedState(VoiceScene):
         ticks = [cost_tick().next_to(a.model, RIGHT, buff=0.18) for a in ags]
         replies = [wb.blank_card(i) for i in range(3)]
         for c, a in zip(replies, ags):          # each reply emerges, small, at its card's right end
-            c.scale(0.35).move_to(a.card.get_right()).set_z_index(2)
+            c.scale(0.35).move_to(a.card.get_right())
         ok_lbl = mono("output_key", CAPTION, DATA)
         place(ok_lbl, left=ticks[0].get_right()[0] + 0.3, cy=ags[0].model.get_y())
         assert ok_lbl.get_right()[0] < BOARD_L - 0.1, ok_lbl.get_right()
@@ -601,7 +674,7 @@ class SharedState(VoiceScene):
         def fly(i):
             """Animations: reply card i (shown at its agent's card) flies into board cell i, growing to
             the cell's card size."""
-            target = wb.blank_card(i).move_to(wb.slot(i)).set_z_index(2)
+            target = wb.blank_card(i).move_to(wb.slot(i))
             return [Transform(replies[i], target)]
 
         def glow(i):
@@ -611,10 +684,10 @@ class SharedState(VoiceScene):
         def into_hole(i):
             """A copy of board cell i-1's card flies into agent i's PINK hole (its {key})."""
             src = replies[i - 1]
-            cp = src.copy().set_z_index(3)
+            cp = src.copy()
             h = ags[i].hole
             self.add(cp)
-            target = cp.copy().stretch_to_fit_width(h.width - 0.12).stretch_to_fit_height(h.height * 0.72).move_to(h)
+            target = cp.copy().stretch_to_fit_width(h.width - 0.06).stretch_to_fit_height(h.height - 0.03).move_to(h)
             self.play(Transform(cp, target), h.animate.set_fill(LOOKUP, 0.3), run_time=0.8)
             self.remove(cp)
             ags[i].add(cp)
@@ -630,15 +703,16 @@ class SharedState(VoiceScene):
                       FadeIn(msg, shift=DOWN * 0.1), run_time=0.9)
             vo.wait_until("the Runner does this")
             self.play(FadeIn(runner, shift=RIGHT * 0.15), run_time=0.4)
-            self.play(Indicate(msg.frame, color=TOOL, scale_factor=1.03), Create(cur), run_time=0.7)
+            self.play(flare(msg.frame, TOOL, 4), Create(cur), run_time=0.7)
             vo.wait_until("The validator's reply")
-            self.play(*glow(0), run_time=0.6)
-            self.play(FadeIn(replies[0], shift=RIGHT * 0.15), run_time=0.3)
-            vo.wait_until("under its output key")
-            self.play(FadeIn(ok_lbl, shift=DOWN * 0.05), GrowArrow(ok_arrow), run_time=0.4)
-            self.play(*fly(0), run_time=0.7)
+            self.play(*glow(0), run_time=0.5)
+            self.play(FadeIn(replies[0], shift=RIGHT * 0.15), run_time=0.25)
+            self.play(*fly(0), run_time=0.6)                     # "goes into the state"
             e0 = wb.event_block("validator")
             self.play(FadeIn(e0, shift=DOWN * 0.1), run_time=0.3)
+            vo.wait_until("under its output key")              # the route it took, and the cell's name
+            self.play(FadeIn(ok_lbl, shift=DOWN * 0.05), GrowArrow(ok_arrow),
+                      Indicate(wb.cells[0].key, color=DATA, scale_factor=1.1), run_time=0.7)
             vo.wait_until("before the planner runs")
             self.play(Transform(cur, runner_frame(ags[1])), run_time=0.5)
             vo.wait_until("its instruction's placeholder")
@@ -680,10 +754,10 @@ class SharedState(VoiceScene):
             self.play(FadeOut(cur), LaggedStart(*[GrowArrow(c[0]) for c in calls], lag_ratio=0.3), run_time=0.6)
             self.play(*[FadeIn(c[1], scale=1.4) for c in calls], FadeIn(no_calls, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("in its state")
-            self.play(Indicate(wb.board_frame, color=DATA, scale_factor=1.03), run_time=0.7)
+            self.play(flare(wb.board_frame, DATA, 8), run_time=0.7)
             vo.wait_until("and its history of events")
             self.play(LaggedStart(*[Create(h) for h in hist], lag_ratio=0.25), FadeIn(hist_lbl),
-                      Indicate(wb.events_frame, color=S.GREY, scale_factor=1.03), run_time=0.9)
+                      flare(wb.events_frame, INK, 5), run_time=0.9)
             vo.wait_until("A parallel agent")
             self.play(FadeIn(scrim), FadeIn(VGroup(coda.frame, coda.chip, coda.cells, coda.tag), scale=0.96),
                       run_time=0.6)
@@ -701,8 +775,10 @@ class SharedState(VoiceScene):
         v6_rest = VGroup(wb, e0, e1, e2, *replies, ev_lbl, calls, no_calls, hist, hist_lbl, ok_lbl, ok_arrow,
                          runner, msg, *ticks, cap, ill)
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(coda, scrim)), FadeOut(v6_rest), FadeIn(lr20), run_time=0.6)
-            self.play(*[a.animate.shift(shift5) for a in ags], run_time=0.7)
+            # the picture fades under the scrim (FadeOut of the wrapper would lift it above the scrim
+            # first: a flash), then the scrim lifts off the three agents as they slide left
+            self.play(FadeOut(coda), *[FadeOut(m) for m in scene_level(self, v6_rest)], run_time=0.6)
+            self.play(FadeOut(scrim), *[a.animate.shift(shift5) for a in ags], FadeIn(lr20), run_time=0.7)
             for g, a in zip(ghosts, ags):
                 place(g, left=a.model.get_right()[0] + 0.3, cy=a.model.get_y())
             place(cost_note, left=ags[2].get_left()[0], top=ags[2].get_bottom()[1] - 0.3)
@@ -713,10 +789,11 @@ class SharedState(VoiceScene):
             vo.wait_until("this pipeline has no tools")
             self.play(LaggedStart(*[FadeIn(g, shift=RIGHT * 0.1) for g in ghosts], lag_ratio=0.15), run_time=0.6)
             # the two chips reach for the pipeline: nothing to plug into
-            goal = ghosts[1].get_right() + RIGHT * 0.3
+            stop_x = max(a.card.get_right()[0] for a in ags) + 0.5      # short of the pipeline
             c0, c1 = req.chips
-            self.play(c0.animate.move_to(goal + RIGHT * (c0.width / 2) + UP * 0.32),
-                      c1.animate.move_to(goal + RIGHT * (c1.width / 2) + DOWN * 0.32), run_time=0.8)
+            assert req.card.get_bottom()[1] > ags[1].card.get_top()[1] + 0.2, req.card.get_bottom()
+            self.play(c0.animate.move_to([stop_x + c0.width / 2, ags[1].card.get_y(), 0]),
+                      c1.animate.move_to([stop_x + c1.width / 2, ags[2].model.get_y(), 0]), run_time=0.8)
             self.play(*[Indicate(g, color=S.GREY, scale_factor=1.08) for g in ghosts], run_time=0.5)
             self.play(req.chips.animate.set_opacity(0.35), run_time=0.4)
             vo.wait_until("so its prices are")
@@ -752,13 +829,14 @@ class SharedState(VoiceScene):
             self.play(FadeIn(VGroup(mem.frame, mem.rows), shift=LEFT * 0.15), run_time=0.6)
             self.play(FadeIn(mem.sheet, shift=RIGHT * 0.2), FadeIn(mem.tag), run_time=0.5)
             vo.wait_until("which none of today's runs")
-            self.play(Indicate(mem.rows[2], color=S.GREY, scale_factor=1.1), run_time=0.7)
+            self.play(Indicate(mem.rows[2], color=TURN, scale_factor=1.1), run_time=0.7)
 
         # ========================================================== 7 · a trip request with the placeholder key
         xc7 = extra_card("send a trip request with the placeholder key (POST /run)")
         place(xc7, right=SAFE_X, top=3.55)
         t2 = term(P_ADK, rows=2, title=SECOND, top=xc7.get_bottom()[1] - 0.2)
         srv = term(P_ADK, rows=3, title="laptop")
+        route = route_row(t2.get_bottom()[1], srv.get_top()[1])
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(rc, b1, b2, dim1, nothing, mem)), FadeOut(lr40), run_time=0.5)
             self.play(FadeIn(xc7, shift=DOWN * 0.15), caption_extra(tr, True), FadeIn(t2, shift=UP * 0.15),
@@ -766,7 +844,10 @@ class SharedState(VoiceScene):
             ise = t2.print(self, [RUN.line(2)], run_time=0.3)[0]
             pin(self, ise, beside(placeholder_tag(), t2, ise, buff=0.4), run_time=0.3)
             vo.wait_until("an internal server error")
-            self.play(Indicate(ise, color=ERR, scale_factor=1.06), run_time=0.6)
+            self.play(Indicate(ise.glyphs, color=ERR, scale_factor=1.06), run_time=0.6)
+            # between the terminals: who holds the key, and where the request goes
+            self.play(FadeIn(VGroup(route.bnd, route.web, route.lap, route.gem)), GrowArrow(route.out),
+                      FadeIn(route.key, shift=RIGHT * 0.1), run_time=0.7)
             vo.wait_until("The server log says why")
             self.play(FadeIn(srv, shift=UP * 0.15), run_time=0.4)
             err = srv.print(self, [(ERR_ROW, ERR)], wrap=True, run_time=0.5)
@@ -783,30 +864,37 @@ class SharedState(VoiceScene):
             vo.wait_until("The placeholder reached Google")
             g_span = span_in(err, "google.genai")
             u_g = under(g_span, S.GREY, stroke=3)
-            self.play(Create(u_g), Indicate(g_span, color=INK, scale_factor=1.1), run_time=0.6)
+            self.play(route.key.animate.move_to(route.key_to), Create(u_g),
+                      Indicate(g_span, color=INK, scale_factor=1.1), run_time=0.8)
             attach(self, err[0], u_g)
             vo.wait_until("and was refused")
-            self.play(Indicate(span_in(err, "400 INVALID_ARGUMENT"), color=ERR, scale_factor=1.12), run_time=0.7)
+            no_x = cross_mark(0.3, ERR, stroke=4).move_to(route.key[0])
+            self.play(GrowArrow(route.back), FadeIn(route.no, shift=LEFT * 0.1), FadeIn(no_x, scale=1.4),
+                      Indicate(span_in(err, "400 INVALID_ARGUMENT"), color=ERR, scale_factor=1.12), run_time=0.7)
+        self.wait(0.8)                                  # let the refusal land before the frame clears
 
         # ========================================================== 8 · with your key; the session file; ▶
-        lf = LookFor(["three replies, in order",
-                      VGroup(label("State tab:", CAPTION, INK),
-                             mono(" · ".join(STATE_KEYS), CAPTION, INK)).arrange(RIGHT, buff=0.15)])
-        place(lf, left=-6.4, top=2.75)
+        lf = LookFor([("three replies, in order", "agent.py · line 37"),           # sub_agents=[…]
+                      (VGroup(label("State tab:", CAPTION, INK),
+                              mono(" · ".join(STATE_KEYS), CAPTION, INK)).arrange(RIGHT, buff=0.15),
+                       "lines 18, 25, 32")])                                        # the three output_key=
+        place(lf, left=-6.4, top=tr.get_bottom()[1] - 0.12)
+        assert lf.get_right()[0] < SAFE_X, lf.get_right()
+        assert all(f'output_key="{k}"' in excerpt(AGENT_PY, n, n) for k, n in zip(STATE_KEYS, (18, 25, 32)))
         lp = log_panel(LOG_ROWS, "adk web log")
-        place(lp, cx=0, top=lf.get_bottom()[1] - 0.25)
+        place(lp, cx=0, top=lf.get_bottom()[1] - 0.18)
         for r in lp.rows[1:]:
             substring(r, "↪").set_color(S.GREY)
         db_row = lp.rows[2]
         db_span = substring(db_row, "baseline/.adk/session.db")
         db_tag = tag("a file in the agent's folder", LOOKUP)
-        place(db_tag, right=lp.frame.get_right()[0] - 0.1, bottom=lp.frame.get_top()[1] + 0.08)
+        place(db_tag, right=lp.frame.get_right()[0] - 0.1, top=lp.frame.get_bottom()[1] - 0.1)   # under the path
         card = turn_card([Prose("pick baseline · send a trip request, e.g."), Prose(f"“{MSG}”"),
                           (Prose("3 Gemini calls per request · free tier has limits"), COST)], header=None)
-        place(card, cx=0, bottom=-3.5)
-        assert card.get_top()[1] < lp.frame.get_bottom()[1] - 0.15, (card.get_top(), lp.frame.get_bottom())
+        place(card, cx=0, bottom=-3.55)
+        assert card.get_top()[1] < db_tag.get_bottom()[1] - 0.08, (card.get_top(), db_tag.get_bottom(), tr.get_bottom())
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(xc7, t2, srv)), caption_extra(tr, False), run_time=0.5)
+            self.play(FadeOut(VGroup(xc7, t2, srv, route, no_x)), caption_extra(tr, False), run_time=0.5)
             self.play(FadeIn(lf.frame), FadeIn(lf.title), run_time=0.4)
             vo.wait_until("three replies in order")
             self.play(lf.write_item(0))
@@ -814,11 +902,11 @@ class SharedState(VoiceScene):
             self.play(lf.write_item(1))
             vo.wait_until("the session is a file")
             self.play(FadeIn(lp, shift=UP * 0.1), run_time=0.5)
-            self.play(db_span.animate.set_color(LOOKUP), FadeIn(db_tag, shift=UP * 0.08), run_time=0.5)
+            self.play(db_span.animate.set_color(LOOKUP), FadeIn(db_tag, shift=DOWN * 0.08), run_time=0.5)
             vo.wait_until("Each request is three model calls")
-            self.play(FadeIn(card, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeOut(db_tag), FadeIn(card, shift=UP * 0.15), run_time=0.6)   # no tag stack over the ▶
             vo.wait_until("pause, and plan a trip")
-            self.play(Indicate(card.tag, color=TURN, scale_factor=1.1), run_time=0.6)
+            self.play(pop(card.tag, 1.12), run_time=0.6)
         self.wait(2)                                    # ▶ beat: hold the frame
-        self.play(FadeOut(VGroup(tr, lf, lp, db_tag, card)), run_time=0.8)
+        self.play(FadeOut(VGroup(tr, lf, lp, card)), run_time=0.8)
         self.wait(0.3)

@@ -88,6 +88,7 @@ from manim import (
     LaggedStart,
     Line,
     ManimColor,
+    MoveToTarget,
     ReplacementTransform,
     Transform,
     UpdateFromAlphaFunc,
@@ -96,6 +97,8 @@ from manim import (
     interpolate_color,
     linear,
     rush_into,
+    smooth,
+    squish_rate_func,
 )
 
 from pygments.token import Punctuation, String
@@ -168,6 +171,8 @@ CARD_C = np.array([3.4, -0.85, 0])         # the top-pick card
 STR_HEX = "#" + HOUSE_CODE_STYLE.style_for_token(String)["color"]
 PUN_HEX = "#" + HOUSE_CODE_STYLE.style_for_token(Punctuation)["color"]
 COL_X = 0.55                               # the picks column: badge x; chips start at COL_X + 0.7
+SLIDE = LEFT * 0.4                         # sheets slide in / out of the main envelope by this much:
+                                           # their left edge (-6.2) stays inside the safe frame
 
 
 def place(env, center):
@@ -239,6 +244,31 @@ def string_rows(panel, *nums):
     return panel
 
 
+def scroll_panel(scene, a, b, line: int, fade=(), run_time: float = 1.0):
+    """Panel `a` scrolls to panel `b` (same place, same row count): the rows of file `line`, shown
+    in both, travel from their row in `a` to their row in `b`; a's other rows leave upward, b's new
+    rows come up from below; the frame and the header change in place; `fade` (a's line bars)
+    leaves with a's rows. (A glyph-by-glyph ReplacementTransform of two code windows scrambles the
+    text mid-way.) Ends with `b` whole on the scene."""
+    ra, rb = a.code.code_lines, b.code.code_lines
+    ka, kb = a.rows_of(line), b.rows_of(line)
+    assert [a.code.source.split("\n")[k] for k in ka] == [b.code.source.split("\n")[k] for k in kb]
+    d = UP * 0.35
+    out_, move_, in_ = (squish_rate_func(smooth, 0, 0.35), squish_rate_func(smooth, 0.2, 0.75),
+                        squish_rate_func(smooth, 0.65, 1))   # staged, so no rows cross
+    scene.remove(a)
+    scene.add(a.code.background, *ra, a.header)
+    scene.play(*[FadeOut(ra[k], shift=d, rate_func=out_) for k in range(len(ra)) if k not in ka],
+               ReplacementTransform(a.code.background, b.code.background, rate_func=move_),
+               FadeTransform(a.header, b.header, rate_func=move_),
+               *[ReplacementTransform(ra[i], rb[j], rate_func=move_) for i, j in zip(ka, kb)],
+               *[FadeIn(rb[k], shift=d, rate_func=in_) for k in range(len(rb)) if k not in kb],
+               *[FadeOut(m, rate_func=out_) for m in fade], run_time=run_time)
+    scene.remove(b.code.background, *rb, b.header)
+    scene.add(b)
+    return b
+
+
 def role_label(role: str):
     lbl = VGroup(note("role"), S.text(f'"{role}"', 20, INK, font=MONO)).arrange(RIGHT, buff=0.12)
     return lbl
@@ -298,7 +328,7 @@ class Envelope(VoiceScene):
             rec = saved_run_tag().next_to(card, DOWN, buff=0.25)
             ptxt = pick_text(PICKS[0], card.frame.get_center() + DOWN * 0.16)
             s_user = glow(sheet_of(env, W_USER, LOOKUP))
-            env.add_sheet(self, s_user, start=env.slot_point(0) + LEFT * 1.2, run_time=0.7,
+            env.add_sheet(self, s_user, start=env.slot_point(0) + SLIDE, run_time=0.7,
                           extra=[FadeOut(ec), FadeIn(ref), Create(a_in)])
             self.play(Create(a_out), FadeIn(card), FadeIn(ptxt), FadeIn(rec), run_time=0.7)
             vo.wait_until("keeps the model and question fixed")
@@ -317,12 +347,12 @@ class Envelope(VoiceScene):
                     anims.append(unglow(last))
                 ptxt = new
                 if drop is not None:
-                    env.remove_sheet(self, drop, shift=LEFT * 1.0, run_time=0.5, extra=anims)
+                    env.remove_sheet(self, drop, shift=SLIDE, run_time=0.5, extra=anims)
                     anims = []
                 if sheet is not None:
                     glow(sheet)
                     tgt = env.slot_point(len(env.sheets))
-                    env.add_sheet(self, sheet, start=tgt + LEFT * 1.2, run_time=0.6, extra=anims)
+                    env.add_sheet(self, sheet, start=tgt + SLIDE, run_time=0.6, extra=anims)
                     last = sheet
 
             vo.wait_until("A system prompt")
@@ -427,7 +457,7 @@ class Envelope(VoiceScene):
             _with_header(p41b, "Cheese Quiz · cell 41 · lines 22–25",
                          subtitle="Step 4: Adding Short-term Memory")
             p41b.align_to(p41a, LEFT).align_to(p41a, DOWN)
-            self.play(*[FadeOut(b) for b in bars4], ReplacementTransform(p41a, p41b), run_time=0.6)
+            scroll_panel(self, p41a, p41b, 22, fade=bars4)
             vo.wait_until("the code sends them again")
             b23, sh = fly(p41b, TURNS[3][0], TURNS[3][1], 1, 3)
             pile.append(sh)
@@ -508,7 +538,10 @@ class Envelope(VoiceScene):
         # ============================================================ 6 · the swapped roles
         with self.voiceover(SAY[6]) as vo:
             env2 = EnvelopePiece(width=4.8, slots=2, pitch=0.46, margin=0.32)
-            place(env2, [6.43 - 2.4, -3.56 + env2.env_h / 2, 0])
+            # right under lines 19-20 while the roles swap; beat 7 moves it bottom right, beside
+            # the fix chip
+            place(env2, [p39.code.get_center()[0], p39.get_bottom()[1] - 0.45 - env2.env_h / 2, 0])
+            end2 = np.array([6.43 - 2.4, -3.56 + env2.env_h / 2, 0])
             s2_sys = sheet_of(env2, W_SYS)
             s2_user = sheet_of(env2, W_USER, LOOKUP)
             for i, s in enumerate((s2_sys, s2_user)):
@@ -534,27 +567,33 @@ class Envelope(VoiceScene):
         # ============================================================ 7 · the fix, your turn
         with self.voiceover(SAY[7]) as vo:
             err = erratum_tag().next_to(p39.header, RIGHT, buff=0.35)
+            d2 = end2 - env2.parts["body"].get_center()
             ok = check_mark(0.34, S.GREEN)
-            ok.move_to([to_spot(r_sys, s2_sys)[0], env2.parts["body"].get_top()[1] + 0.3, 0])
+            ok.move_to([to_spot(r_sys, s2_sys)[0], env2.parts["body"].get_top()[1] + 0.3, 0]).shift(d2)
             self.play(FadeIn(err),
                       r_sys.animate(path_arc=PI * 0.6).move_to(to_spot(r_sys, s2_sys)),
                       r_user.animate(path_arc=PI * 0.6).move_to(to_spot(r_user, s2_user)),
                       run_time=0.9)
-            self.play(s2_sys.frame.animate.set_stroke(S.GREY, 2), s2_user.frame.animate.set_stroke(LOOKUP, 2),
-                      FadeOut(red_rings), FadeOut(rbars), Create(ok), run_time=0.6)
+            env2.generate_target()                  # the red goes, the envelope makes room for the fix
+            env2.target.shift(d2)
+            env2.target.sheets[0].frame.set_stroke(S.GREY, 2)
+            env2.target.sheets[1].frame.set_stroke(LOOKUP, 2)
+            self.play(MoveToTarget(env2), r_sys.animate.shift(d2), r_user.animate.shift(d2),
+                      FadeOut(red_rings), FadeOut(rbars), run_time=0.8)
             fix = card_rows([f"`{FIX[0]}`", f"`{FIX[1]}`"], header="cell 39 · lines 19–20 · your edit",
                             frame_color=DATA)
             fix.align_to([-6.45, 0, 0], LEFT).align_to([0, p39.get_bottom()[1] - 0.25, 0], UP)
             differs = grey_tag("your step 2 answer will differ from the saved one")
             differs.next_to(fix, DOWN, buff=0.25).align_to(fix, LEFT)
-            self.play(FadeIn(fix, shift=UP * 0.15), FadeIn(differs), run_time=0.7)
+            self.play(FadeIn(fix, shift=UP * 0.15), FadeIn(differs), Create(ok), run_time=0.7)
             vo.wait_until("from step 3 on")
             cap7 = note("swap the roles, then compare · steps 3–7 are right")
             cap7.next_to(differs, DOWN, buff=0.3).align_to(fix, LEFT)
             self.play(FadeIn(cap7), run_time=0.5)
             vo.wait_until("Pause")
             card7 = turn_card([Prose("Managing LLM Inputs:"), Prose("swap the roles in step 2"),
-                               Prose("run steps 1–7"), (Prose("paid per call"), COST)], width=4.3)
+                               Prose("run steps 1–7"), (Prose("paid per call"), COST)], width=4.3,
+                              header=None)         # the YELLOW ▶ your turn tag says it once
             card7.shift([6.43 - card7.frame.get_right()[0], -3.5 - card7.frame.get_bottom()[1], 0])
             self.play(FadeOut(env2), FadeOut(r_sys), FadeOut(r_user), FadeOut(ok), run_time=0.4)
             self.play(FadeIn(card7, shift=UP * 0.15), run_time=0.6)

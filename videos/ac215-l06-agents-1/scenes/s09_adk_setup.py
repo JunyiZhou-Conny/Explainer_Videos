@@ -2,9 +2,10 @@
 "Getting Started", steps 1–6). Part 2 opens here. Lecture: 35 (beat 6 only).
 
 Beats (script.md "## S09", one voiceover block each):
-0. A new picture: the GREY laptop zone with a GREY dashed "no Docker this time" chip, a PURPLE uv
-   chip and an empty GREEN `.venv` box; across a dashed boundary a BLUE "Gemini API" chip, reached
-   by a PINK arrow carrying the GOLD key "AI Studio key". Below, the terminal (5 rows, title laptop,
+0. A new picture, centred while it is alone: the GREY laptop zone with a GREY dashed "no Docker this
+   time" chip, a PURPLE uv chip and an empty GREEN `.venv` box; across a dashed boundary a BLUE
+   "Gemini API" chip, reached by a PINK arrow carrying the GOLD key "AI Studio key". At "Open a new
+   terminal" the picture rises; below it the terminal (5 rows, title laptop,
    prompt student@laptop:~/AC215$) fades in with the GREY caption "a new terminal · the folder that
    holds your clones · not inside llm-rag"; ~/AC215 flashes.
 1. The picture leaves. TRACKER Start 1; the terminal grows to 12 rows; the README chip
@@ -15,7 +16,7 @@ Beats (script.md "## S09", one voiceover block each):
    types `cd google-adk-tutorial` -> 02 line 2, RED; tag `erratum` on the command.
 2. "llm-agent-google-adk" in the clone's output flashes GREEN; it types `cd llm-agent-google-adk`
    (no output), the prompt becomes ~/AC215/llm-agent-google-adk$ and its new part flashes GREEN; a
-   GREEN tag "named after the repo" on the cd line.
+   GREEN tag "named after the repo" on that new prompt row (it fades as beat 3 starts).
 3. The chip leaves. TRACKER Start 2 · extra. `ls -a` (extra) -> 04 lines 2–4: the rows are 70–76
    characters, so each folds at its last column gap (a GREY ↪ row; names never split). The six
    module folders get GREY boxes, pyproject.toml turns GREEN; a GREY dashed ghost `uv.lock`
@@ -46,8 +47,9 @@ Beats (script.md "## S09", one voiceover block each):
 10. TRACKER Start 6. The terminal returns (9 rows, under the number line): `uv sync` -> 07 lines
     2–4; a PURPLE download arrow drops CPython 3.15.0 at the newest end; tag "at the time of
     recording" on "Using CPython 3.15.0". (9 rows, not 12: the number line must stay in view.)
-11. 07 lines 5–7 joined and 9–11 joined (wrap), RED; `onnxruntime` flashes in the hint. The
-    terminal shrinks to the strip (the hint's three rows);
+11. 07 lines 5–7 joined and 9–11 joined, re-wrapped at spaces as uv wraps them (the error's rows
+    with uv's 7-space hanging indent; 4 + 3 rows, so "Using CPython 3.15.0" scrolls off), RED;
+    `onnxruntime` flashes in the hint. The terminal shrinks to the strip (the hint's three rows);
     above it the wheel shelf (onnxruntime 1.31.0: cp311 … cp314t, an empty cp315 slot) with a GREY
     arrow from the excerpt chip `"chromadb>=0.5.0",` (pyproject.toml · line 18); cp315 turns RED.
 12. GREY tag "erratum · fails whenever uv picks 3.15" beside the tracker; GREY note "uv tries the
@@ -58,11 +60,14 @@ Beats (script.md "## S09", one voiceover block each):
 13. TRACKER Start 6. The picture leaves; the terminal grows to 12 rows: `uv sync` -> 12 lines 2–4,
     …, 38, …, 89, …, 155; "CPython 3.13.16", google-adk==2.12.0 and onnxruntime==1.31.0 GREEN. A GREY
     card in the terminal's empty right part: ".venv: about 1.6 GB (du -sh .venv, extra) · on a Linux
-    PC: about 3 GB more of CUDA packages · a Mac: none" (adk-laptop/14 line 12, 10).
+    PC: about 3 GB more of CUDA packages · a Mac: none" (adk-laptop/14 line 12, 10); its frame starts
+    around the first row and grows as the other two write in.
 14. TRACKER Start 6 · extra: `uv run adk --version` (extra) -> 13 line 2, tags extra and "at the time
     of recording". The terminal shrinks to the strip; ▶ on a static GREY card (cd, cp, key +
     GEMINI_MODEL in .env, uv python pin 3.13 (extra), uv sync). Hold 2 s. Empty frame.
 """
+
+import textwrap
 
 import numpy as np
 from common import (
@@ -87,8 +92,8 @@ from common import (
     WheelShelf,
     bare_prompt,
     beside,
-    capture,
     caption_extra,
+    capture,
     cd_prompt,
     col_box,
     erratum_tag,
@@ -182,6 +187,22 @@ ERR_ROW = SYNC1.join(5, 6, 7)
 HINT_ROW = SYNC1.join(9, 10, 11)
 assert "onnxruntime==1.31.0" in ERR_ROW and "`cp315`" in HINT_ROW, (ERR_ROW, HINT_ROW)
 assert all(f"`{w}`" in HINT_ROW for w in WHEEL_TAGS), HINT_ROW
+
+
+def uv_wrap(s: str, limit: int = 65, indent: int = 0) -> list[str]:
+    """One uv message re-wrapped for a 65-column terminal the way uv wraps its own (07 lines 5-7
+    and 9-11: at spaces, the error's rows with a 7-space hanging indent). Nothing is added or cut:
+    the asserts check the words and their order."""
+    rows = textwrap.wrap(s, limit, subsequent_indent=" " * indent, break_long_words=False,
+                         break_on_hyphens=False)
+    assert " ".join(r.strip() for r in rows) == " ".join(s.split()), rows
+    assert all(len(r) <= limit for r in rows), rows
+    return rows
+
+
+ERR_ROWS = uv_wrap(ERR_ROW, 65, 7)            # 4 rows ("…@" / "registry+https://pypi.org/simple` …")
+HINT_ROWS = uv_wrap(HINT_ROW, 65)             # 3 rows; "(v1.31.0)" and every tag stay whole
+assert len(HINT_ROWS) == 3 and "`onnxruntime`" in HINT_ROWS[0], HINT_ROWS
 PIN = capture("09", "adk-laptop")
 assert PIN.cmd == "uv python pin 3.13" and PIN.line(2) == "Pinned `.python-version` to `3.13`", PIN.lines
 PLAN = capture("10", "adk-laptop")          # uv sync --dry-run on a Linux PC: the CUDA packages
@@ -212,6 +233,7 @@ AXIS_Y = 1.95                  # the V5 number line, beats 9–12 (tick labels e
 RUN_ROWS = 9                   # the failing sync's terminal: its top (0.98) stays under the ticks
 GAP_Y = STRIP_TOP + 0.14       # the lowest y a picture above the 3-row strip may use
 TOP_Y = 2.8                    # nothing above this but the tracker band
+LIFT0 = 1.6                    # beat 0: the picture starts this much lower (centred), then rises
 
 
 # ------------------------------------------------------------------ small helpers
@@ -360,13 +382,17 @@ def mixed_row(parts) -> VGroup:
 
 
 def nearest_card() -> VGroup:
-    """The GREY dashed card: keep everything in the root .env. .rows (the last one PINK)"""
+    """The GREY dashed card: keep everything in the root .env. .rows .nearest (the PINK words)"""
+    s3, hot = "only the nearest .env is loaded", "the nearest .env"
+    r3 = label(s3, CAPTION, INK, t2c={hot: LOOKUP})     # one Text: the words share a baseline
+    assert len(r3.submobjects) == len("".join(s3.split())), len(r3.submobjects)
+    a = len("".join(s3[:s3.index(hot)].split()))
     rows = VGroup(
-        mixed_row([("module READMEs' Setup steps (", "s", INK), ("uv sync", "m", INK), (",", "s", INK),
-                   ("cp .env.example .env", "m", INK), ("): skip them", "s", INK)]),
+        mixed_row([("module READMEs' Setup steps (", "s", INK), ("uv sync, cp .env.example .env", "m", INK),
+                   ("): skip them", "s", INK)]),
         mixed_row([("the root sync and the root", "s", INK), (".env", "m", INK),
                    ("cover every module", "s", INK)]),
-        mixed_row([("only", "s", INK), ("the nearest .env", "s", LOOKUP), ("is loaded", "s", INK)]),
+        r3,
     ).arrange(DOWN, aligned_edge=LEFT, buff=0.16)
     fr = box(rows.width + 0.7, rows.height + 0.46, S.GREY, dashed=True, radius=0.14)
     bg = RoundedRectangle(width=fr.width, height=fr.height, corner_radius=0.14, stroke_width=0) \
@@ -374,6 +400,7 @@ def nearest_card() -> VGroup:
     rows.move_to(fr).align_to(fr, LEFT).shift(RIGHT * 0.35)
     g = VGroup(bg, fr, rows)
     g.frame, g.rows = fr, rows
+    g.nearest = VGroup(*r3.submobjects[a:a + len("".join(hot.split()))])
     return g
 
 
@@ -435,6 +462,7 @@ class AdkSetup(VoiceScene):
         key0 = key_glyph(0.34).move_to([kmid, 2.3, 0])
         key0_l = label("AI Studio key", CAPTION, COST).move_to([kmid, 1.42, 0])
         picture = VGroup(zone, nodock, uvc, uv_arrow, venv, bnd, gem, link, key0, key0_l)
+        picture.shift(DOWN * LIFT0)          # centred while it is alone; it rises for the terminal
 
         t = term(P_WS, rows=5, title="laptop")
         cap0 = note("a new terminal · the folder that holds your clones · not inside llm-rag")
@@ -452,7 +480,8 @@ class AdkSetup(VoiceScene):
             vo.wait_until("on your laptop")
             self.play(Indicate(zone.caption, color=TURN, scale_factor=1.15), run_time=0.8)
             vo.wait_until("Open a new terminal")
-            self.play(FadeIn(t, shift=UP * 0.2), FadeIn(cap0, shift=UP * 0.1), run_time=0.7)
+            self.play(picture.animate.shift(UP * LIFT0), run_time=0.6)
+            self.play(FadeIn(t, shift=UP * 0.2), FadeIn(cap0, shift=UP * 0.1), run_time=0.6)
             p0 = bare_prompt(self, t)
             vo.wait_until("where you keep your clones")
             self.play(Indicate(substring(p0, "~/AC215"), color=TURN, scale_factor=1.15), run_time=0.8)
@@ -488,14 +517,17 @@ class AdkSetup(VoiceScene):
             self.play(Indicate(nm, color=DATA, scale_factor=1.12), run_time=0.9)
             self.play(nm.animate.set_color(DATA), run_time=0.4)
             vo.wait_until("Type cd")
-            c3 = type_cmd(self, t, CD.cmd, 0.7)
-            named = beside(tag("named after the repo", DATA), t, c3, buff=0.5)
-            pin(self, c3, named, run_time=0.4)
-            cd_prompt(self, t, P_ADK, color=DATA)
+            type_cmd(self, t, CD.cmd, 0.7)
+            p3 = cd_prompt(self, t, P_ADK, color=DATA)
+            # the tag sits on the new prompt, beside the folder name that just turned GREEN (on the
+            # cd row it touched the error row above and, later, the `extra` tag of `ls -a` below)
+            named = beside(tag("named after the repo", DATA), t, p3, buff=0.5)
+            pin(self, p3, named, run_time=0.4)
 
         # ========================================================== 3 · ls -a: six modules, no lock file
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(rc78), caption_extra(tr, True), run_time=0.5)
+            self.play(FadeOut(rc78), FadeOut(named), caption_extra(tr, True), run_time=0.5)
+            p3.remove(named)                    # the bare prompt row is replaced when ls -a is typed
             c4 = type_cmd(self, t, LS.cmd, 0.4)
             pin(self, c4, beside(extra_tag(), t, c4, buff=0.4), run_time=0.3)
             rows = [r for n in (2, 3, 4) for r in column_fold(LS.line(n), t.max_chars)]
@@ -610,8 +642,8 @@ class AdkSetup(VoiceScene):
         r1 = VGroup(ch1, src1, e1).arrange(RIGHT, buff=0.2)
         src7 = grey_tag("Google's model pages, checked October 18, 2026")
         r2 = VGroup(ch2, e2).arrange(RIGHT, buff=0.2)
-        chips = VGroup(r1, r2, src7).arrange(DOWN, buff=0.13)
-        place(chips, cx=0, top=envc.frame.get_bottom()[1] - 0.22)
+        chips = VGroup(r1, r2, src7).arrange(DOWN, buff=0.11)
+        place(chips, cx=0, top=envc.frame.get_bottom()[1] - 0.18)    # 0.35 clear of the strip
         dcard = nearest_card()
         place(dcard, cx=0, top=envc.frame.get_bottom()[1] - 0.4)
         card7 = turn_card([CLONE.cmd, CD.cmd, CP.cmd,
@@ -633,7 +665,7 @@ class AdkSetup(VoiceScene):
             self.play(FadeOut(chips), run_time=0.4)
             self.play(FadeIn(dcard, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("only the nearest dot env")
-            self.play(Indicate(dcard.rows[2][1], color=LOOKUP, scale_factor=1.08), run_time=0.8)
+            self.play(Indicate(dcard.nearest, color=LOOKUP, scale_factor=1.08), run_time=0.8)
             vo.wait_until("Pause, and set up yours")
             self.play(FadeOut(VGroup(envc, dcard)), run_time=0.4)
             self.play(FadeIn(card7, shift=UP * 0.15), run_time=0.6)
@@ -673,6 +705,12 @@ class AdkSetup(VoiceScene):
             if line8 in f.submobjects:
                 f.remove(line8)
         nopy = excerpt_chip(ENV.line(9), "command -v python3 python", line=ENV.line(9))
+        assert "command -v python3 python ||" in ENV.cmd, ENV.cmd
+        hdr = mono("command -v python3 python", CAPTION, S.GREY)    # a command: mono, as everywhere
+        hdr.move_to(nopy.header).align_to(nopy.header, LEFT)
+        nopy.remove(nopy.header)
+        nopy.add(hdr)
+        nopy.header = hdr
         exn = extra_tag().next_to(nopy.header, RIGHT, buff=0.2)
         nopy.add(exn)
         place(nopy, left=0.6, bottom=vl.band.get_top()[1] + 0.12)
@@ -728,8 +766,9 @@ class AdkSetup(VoiceScene):
         with self.voiceover(SAY[11]) as vo:
             self.play(Indicate(out10[2], color=TURN, scale_factor=1.04), run_time=0.7)
             vo.wait_until("then fails")
-            err = t.print(self, [(ERR_ROW, ERR), (HINT_ROW, ERR)], wrap=True, run_time=0.8)
-            hint_rows = [r for r in err if r is not None][-3:]
+            assert t.max_chars == 65, t.max_chars
+            err = t.print(self, [(r, ERR) for r in ERR_ROWS + HINT_ROWS], run_time=0.9)
+            hint_rows = list(err)[-3:]
             assert hint_rows[0].text.startswith("hint:"), [r.text for r in err]
             vo.wait_until("O-N-N-X runtime")
             self.play(Indicate(substring(hint_rows[0], "`onnxruntime`"), color=TURN, scale_factor=1.1),
@@ -791,12 +830,18 @@ class AdkSetup(VoiceScene):
                       substring(onnx_row, "onnxruntime==1.31.0").animate.set_color(DATA), run_time=0.6)
             self.play(Indicate(substring(adk_row, "google-adk==2.12.0"), color=DATA, scale_factor=1.08),
                       run_time=0.7)
-            place(sc, right=6.35, top=-1.0)                 # over the short rows only
+            place(sc, right=t.box.get_right()[0] - 0.15, top=-1.0)   # inside the frame, over short rows only
+            r0 = sc.rows[0]                                 # the card starts as large as its first row
+            fr1 = box(r0.width + 0.6, r0.height + 0.5, S.GREY, fill=S.BG, fill_opacity=0.97, radius=0.14)
+            place(fr1, left=sc.frame.get_left()[0], top=sc.frame.get_top()[1])
             vo.wait_until("PyTorch makes it big")
-            self.play(FadeIn(sc.frame), FadeIn(sc.rows[0], shift=UP * 0.1), run_time=0.6)
+            self.play(FadeIn(fr1), FadeIn(r0, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("plus about 3 gigabytes")
-            self.play(FadeIn(sc.rows[1], shift=UP * 0.1), run_time=0.5)
+            self.play(Transform(fr1, sc.frame), FadeIn(sc.rows[1], shift=UP * 0.1), run_time=0.6)
             self.play(FadeIn(sc.rows[2], shift=UP * 0.1), run_time=0.5)
+            sc.remove(sc.frame)                             # fr1 now draws the frame: it leaves with sc
+            sc.add_to_back(fr1)
+            sc.frame = fr1
 
         # ========================================================== 14 · uv run adk --version; ▶
         card14 = turn_card([CD.cmd, CP.cmd, Prose("your key + GEMINI_MODEL in .env"),
