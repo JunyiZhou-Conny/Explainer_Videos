@@ -225,8 +225,8 @@ fe1)
   # typed inside. node_modules lands in the host folder through the bind mount, so it survives
   # the exit for fe2.
   PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=2400 hub_retry istep 50-docker-shell-npm-install "sh docker-shell.sh" \
-    'bash-[0-9.]+# $' 'npm install' \
-    'bash-[0-9.]+# $' 'exit'
+    ':/app# $' 'npm install' \
+    ':/app# $' 'exit'
   ;;
 fe2)
   cd cheese-app-v0/frontend-ai-chatbot
@@ -247,9 +247,9 @@ fe2)
   ) &
   CURLS=$!
   PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 51-npm-run-dev "sh docker-shell.sh" \
-    'bash-[0-9.]+# $' 'npm run dev' \
+    ':/app# $' 'npm run dev' \
     'capture-done|/_not-found' "$CTRLC" \
-    'bash-[0-9.]+# $' 'exit'
+    ':/app# $' 'exit'
   wait $CURLS
   ;;
 cors)
