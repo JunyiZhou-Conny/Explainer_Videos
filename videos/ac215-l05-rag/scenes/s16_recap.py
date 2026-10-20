@@ -659,11 +659,13 @@ def wrap_lines(s: str, size: float, width: float, code=()) -> list:
     return [ln.replace(NBSP, " ") for ln in lines + [cur]]
 
 
-def question(i: int, size: float, color: str, badge_color: str) -> VGroup:
-    """Question i (1-based): wrapped rows, a numbered badge left of the first row; the text's
-    top-left at (Q_X, 0). .badge .lines .strs .flat (badge + glyphs, for glyph-to-glyph transforms)"""
+def question(i: int, size: float, color: str, badge_color: str, wrap: float | None = None) -> VGroup:
+    """Question i (1-based): wrapped rows (at size `wrap`'s line breaks when given: a dimmed question
+    keeps its rows, so its glyphs shrink in place instead of crossing to another row), a numbered
+    badge left of the first row; the text's top-left at (Q_X, 0). .badge .lines .strs .flat (badge +
+    glyphs, for glyph-to-glyph transforms)"""
     s, code = QUESTIONS[i - 1]
-    strs = wrap_lines(s, size, Q_W, code)
+    strs = wrap_lines(s, wrap or size, Q_W, code)
     assert " ".join(strs) == s, (strs, s)
     rows = [text_line(ln, size, color, code) for ln in strs]
     pitch = rows[0].strut.height * 1.22
@@ -804,11 +806,14 @@ class Recap(VoiceScene):
         lin = linux_chip().move_to([0, CHIP_Y, 0])
 
         with self.voiceover(SAY[2]) as vo:
-            t.clear(self, run_time=0.3)
-            self.play(FadeOut(hdr), run_time=0.2)
-            gs = _type_rows(self, t, GIT_TYPED, len(P_REPO) + 1, 0.9, len(GIT.cmd))
-            pin(self, gs, beside(extra_tag(), t, gs), run_time=0.25)
-            mod, m_row, pyc, vol, out_row = t.print(self, GIT_ROWS, run_time=0.5)
+            # the header leaves with the lines (t.clear's fade) and the command types faster, so the
+            # edit's box lands on "shows only your edit" (it came 0.9 s after it)
+            self.play(FadeOut(t.lines), FadeOut(hdr), run_time=0.3)
+            for m in list(t.lines):
+                t.lines.remove(m)
+            gs = _type_rows(self, t, GIT_TYPED, len(P_REPO) + 1, 0.6, len(GIT.cmd))
+            pin(self, gs, beside(extra_tag(), t, gs), run_time=0.2)
+            mod, m_row, pyc, vol, out_row = t.print(self, GIT_ROWS, run_time=0.35)
             vo.wait_until("shows only your edit")
             eb = col_box(m_row, 1, len(m_row.text), S.GREY)
             beside(your_edit, t, m_row, buff=0.45)
@@ -1072,7 +1077,7 @@ class Recap(VoiceScene):
             self.play(q_span(q1, "share").animate.set_color(TURN), run_time=0.4)
             self.play(rm.pulse_lane("top", DATA), rm.pulse_lane("bottom", LOOKUP), run_time=1.0)
             vo.wait_until("Two:")
-            small1 = q_at(question(1, Q_SMALL, S.GREY, S.GREY), Q_TOP)
+            small1 = q_at(question(1, Q_SMALL, S.GREY, S.GREY, wrap=Q_BIG), Q_TOP)
             top2 = q_bottom(small1) - 0.34
             q2 = q_at(question(2, Q_BIG, INK, TURN), top2)
             self.play(Transform(q1.flat, small1.flat), FadeOut(rm), *[FadeOut(tk) for tk in fticks], run_time=0.6)
@@ -1091,7 +1096,7 @@ class Recap(VoiceScene):
         def step(q_cur, i_cur, top_cur):
             """Demote question i_cur (it turns small and GREY at top_cur); question i_cur + 1 writes in
             under it. Returns (small, new question, its top)."""
-            small = q_at(question(i_cur, Q_SMALL, S.GREY, S.GREY), top_cur)
+            small = q_at(question(i_cur, Q_SMALL, S.GREY, S.GREY, wrap=Q_BIG), top_cur)
             top_new = q_bottom(small) - 0.34
             q_new = q_at(question(i_cur + 1, Q_BIG, INK, TURN), top_new)
             self.play(Transform(q_cur.flat, small.flat), run_time=0.5)
@@ -1121,7 +1126,7 @@ class Recap(VoiceScene):
             self.play(q_span(q5, "one-line fix?").animate.set_color(TURN), run_time=0.4)
 
         # ========================================================== 9 · answers, the guide, next time
-        small5 = q_at(question(5, Q_SMALL, S.GREY, S.GREY), top5)
+        small5 = q_at(question(5, Q_SMALL, S.GREY, S.GREY, wrap=Q_BIG), top5)
         foot = footer_cards()
         nxt = VGroup(label("next:", 24, S.GREY), label("agents · L06", 24, INK)).arrange(RIGHT, buff=0.15)
         nxt_box = box(nxt.width + 0.6, nxt.height + 0.28, S.GREY, dashed=True)

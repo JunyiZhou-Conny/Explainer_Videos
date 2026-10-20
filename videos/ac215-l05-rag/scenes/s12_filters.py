@@ -47,7 +47,7 @@ Beats (script.md "## S12", one voiceover block each):
     as in S10), tag "recorded · the staff's vectors (68e0bde)", GREY note "no distances: no
     ranking" (on "so no distances"). The
     terminal shrinks to a 4-row strip holding the ids and a TEAL cylinder appears; "Its 10 records":
-    copies of the ten ids become ten cards ("-0" … "-9") in a row beside the cylinder, bracketed
+    the ten ids flash GREEN in turn as ten cards ("-0" … "-9") fade in, in a row beside the cylinder, bracketed
     "-0 to -2 / Gutenberg header" (RED), "-3 to -5 / title page, contents" (GREY), "-6 to -9 /
     chapter one begins" (GREEN); the RED cards flash, the cylinder pulses ("indexed like any text");
     last, the GREEN fix card "the fix: keep only the text between the / `*** START OF` and `*** END
@@ -83,6 +83,9 @@ clause starts ("all 10 results" 1.53 s, heard 1.62; "The Complete Book of Cheese
 4.8 s: "run from 0.28" fires at 6.82 s, inside the heard "0.28" (6.12–7.14 s), and "0.28 to 0.31"
 at 7.93 s, on the heard "0.31" (from 7.84 s, after a pause at 7.48–7.84 s); "to 0.31" would fire at
 8.55 s, near the end of "0.31", and leave the returning picture 0.06 s before the mask.
+Beat 2 since "The word Italian keeps 64." became its own sentence (fix round 1, 2026-10-20, ASR
+base.en on the new clip): that anchor is its sentence mark (10.09 s, heard "The" 9.92 s), and "book
+filter keeps 1,355" fires at 6.49 s, inside the heard "the book" (6.34–6.64 s).
 """
 
 import numpy as np
@@ -331,9 +334,16 @@ class FiltersFirst(VoiceScene):
         panel = src_panel("cli.py", 352, 361).move_to([0, 0.5, 0])
         b356 = panel.bar(356, TURN)
         b357 = pink_bar(panel, 357)
+        # line 357's box starts in the 5 px gap under line 356 (the full bar's top edge ran above
+        # n_results=10's underline, which then read as line 357's); its bottom stays (u_book inside)
+        r356, r357 = (panel.code.code_lines[panel.rows_of(n)[0]] for n in (356, 357))
+        top357, bot357 = (r356.get_bottom()[1] + r357.get_top()[1]) / 2, b357.get_bottom()[1]
+        b357.stretch_to_fit_height(top357 - bot357).align_to([0, bot357, 0], DOWN)
         b358 = pink_bar(panel, 358)
         b353 = panel.bar(353, LOOKUP, 0.12)
-        u_ten = under(panel.span(356, "n_results=10"), TURN)
+        # on the baseline ("10"'s bottom, not the "_"'s): 4 px clear of line 357's box
+        u_ten = under(panel.span(356, "n_results=10"), TURN, stroke=3)
+        u_ten.set_y(panel.span(356, "10").get_bottom()[1] - 0.03)
         u_book = under(panel.span(357, '"The Complete Book of Cheese"'), LOOKUP)
         u_ital = under(panel.span(353, '"Italian"'), LOOKUP)
         c_meta = chip("metadata filter · keeps one book", LOOKUP, size=CAPTION)
@@ -407,10 +417,10 @@ class FiltersFirst(VoiceScene):
             self.play(FadeIn(ck, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Of 8,248 chunks")
             self.play(FadeIn(cnt, shift=LEFT * 0.1), run_time=0.5)
-            vo.wait_until("filter keeps 1,355")         # lands on "the book filter" (see ANCHORS)
+            vo.wait_until("book filter keeps 1,355")    # 6.49 s, on "the book filter" (heard 6.34-7.06 s)
             self.play(FadeIn(f_book, shift=RIGHT * 0.1), run_time=0.4)
             self.play(*mask_to(dc, "book"), cnt.count_to(COUNTS["book"]), run_time=1.1)
-            vo.wait_until("Italian keeps 64")           # lands on "the word Italian"
+            vo.wait_until("The word Italian")           # its own sentence since T2: an exact mark
             self.play(FadeIn(f_ital, shift=RIGHT * 0.1), run_time=0.4)
             self.play(*mask_to(dc, "italian"), cnt.count_to(COUNTS["italian"]), Transform(cap[1], cap2),
                       run_time=1.1)
@@ -662,13 +672,17 @@ class FiltersFirst(VoiceScene):
             # the strip and the cylinder are ready before "Its 10 records start" (in sequence after
             # it, the RED "Gutenberg header" label came 0.75 s after the words)
             resize(self, tg, 4, keep=list(ids), run_time=0.55, extra=[stf7.animate.move_to(stf7_4), FadeIn(cyl)])
-            flying = VGroup()
+            # each id flashes GREEN in place as its card fades in, in the same order (copies flying up
+            # from the strip crossed its rows, its title and the staff tag: garbled text)
+            id_glyphs = []
             for k in range(10):
                 sid = f"'{ID_BASE}{k}'"
                 row = next(r for r in ids if sid in r.text)
-                flying.add(substring(row, sid).copy())
+                id_glyphs.append(substring(row, sid))
             vo.wait_until("Its 10 records start")
-            self.play(*[ReplacementTransform(flying[k], cards[k]) for k in range(10)], run_time=1.0)
+            self.play(LaggedStart(*[AnimationGroup(Indicate(id_glyphs[k], color=DATA, scale_factor=1.0),
+                                                   FadeIn(cards[k], shift=DOWN * 0.1)) for k in range(10)],
+                                  lag_ratio=0.1), run_time=1.0)
             vo.wait_until("with the Gutenberg header")
             self.play(Create(brackets[0]), FadeIn(labels[0], shift=DOWN * 0.1),
                       *[cards[k][0].animate.set_stroke(ERR) for k in range(3)], run_time=0.5)
