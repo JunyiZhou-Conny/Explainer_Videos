@@ -119,6 +119,7 @@ from manim import (
     Transform,
     VGroup,
     VMobject,
+    smooth,
     there_and_back,
 )
 
@@ -214,6 +215,14 @@ def attach(scene, row, *mobs):
 def strip(a: int, b: int, wrap=None):
     """A code strip of docker-compose.yml lines a–b along the bottom edge."""
     return at_bottom(src_panel(COMPOSE, a, b, wrap=wrap))
+
+
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
 
 
 def value_chip(s: str, pad_x: float = 0.24, pad_y: float = 0.12) -> VGroup:
@@ -654,7 +663,10 @@ class TwoContainers(VoiceScene):
         nreb.move_to([cli_box.get_center()[0], cli_box.get_top()[1] + 0.3, 0])
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(cors), FadeOut(web), FadeIn(pair, shift=UP * 0.2), run_time=0.6)
+            # the compose strip leaves in the first half, the Dockerfile pair arrives in the second (faded at
+            # once, the two headers and code rows read on top of each other)
+            self.play(FadeOut(cors, rate_func=first_half), FadeOut(web, rate_func=first_half),
+                      FadeIn(pair, shift=UP * 0.2, rate_func=second_half), run_time=0.6)
             vo.wait_until("the virtual environment")
             self.play(Indicate(d18.span(18, "/.venv"), color=DATA, scale_factor=1.2),
                       *cv.parts_in("venv"), run_time=0.8)

@@ -69,13 +69,13 @@ from manim import (
     LEFT,
     RIGHT,
     UP,
+    AnimationGroup,
     Arrow,
     Circle,
     Create,
     DashedVMobject,
     FadeIn,
     FadeOut,
-    FadeTransform,
     GrowFromEdge,
     Indicate,
     LaggedStart,
@@ -86,11 +86,11 @@ from manim import (
     RoundedRectangle,
     Succession,
     Transform,
-    TransformFromCopy,
     VGroup,
     Write,
     linear,
     smooth,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -127,6 +127,12 @@ LEFT_X = -6.2                                        # left edge of panel conten
 def arrow(a, b, color=GREY, stroke=3, tip=0.15):
     return Arrow(np.array([*a, 0.0]), np.array([*b, 0.0]), buff=0, color=color, stroke_width=stroke,
                  tip_length=tip, max_tip_length_to_length_ratio=0.5)
+
+
+def cell_flash(cell) -> list:
+    """A rank cell's outline and digit flash TURN in place (two animations: the cell stays readable)."""
+    return [cell[0].animate(rate_func=there_and_back).set_stroke(TURN, 4),
+            Indicate(cell[1], color=TURN, scale_factor=1.2)]
 
 
 def dbox(w, h, color=GREY, fill_op=0.06, radius=0.14, stroke=2.5, bg=None):
@@ -467,7 +473,10 @@ class BeyondNaive(VoiceScene):
                 ReplacementTransform(m.a_idx, c.a1), ReplacementTransform(m.a_ret, c.a2),
                 ReplacementTransform(m.seis, c.seis[0]), ReplacementTransform(m.seis_frame, c.seis[1]),
                 *[ReplacementTransform(a, b) for a, b in zip(m.slots, c.slots)],
-                FadeOut(VGroup(m.books, m.a_books, m.idx, m.a_ag, m.answer, m.q_lab, m.a_q, m.tick, m.caption)),
+                # the parts with no compact twin are gone in the first third (fading over the whole morph,
+                # "Indexing" read "①ndexing" as the step mark and the icon flew across it)
+                FadeOut(VGroup(m.books, m.a_books, m.idx, m.a_ag, m.answer, m.q_lab, m.a_q, m.tick, m.caption),
+                        rate_func=lambda t: smooth(min(1.0, 3 * t))),
                 Succession(FadeOut(ref), FadeIn(ref2)),     # one tag after the other: no overlap
                 run_time=1.3)
             self.play(FadeIn(c.a3), light(c.pre), Create(panel.dash), FadeIn(title), run_time=0.8)
@@ -478,13 +487,18 @@ class BeyondNaive(VoiceScene):
             vo.wait_until("A model turns")
             self.play(FadeIn(p.clutter, shift=RIGHT * 0.2), run_time=0.6)
             vo.wait_until("into a clean one")
-            self.play(GrowFromEdge(p.a1, LEFT), FadeTransform(p.clutter.copy(), p.clean), run_time=1.0)
+            # the question's outline flashes in place as its rewrite fades in at the arrow's head (a copy
+            # morphing across doubled its own text, then ran garbled into the rewrite)
+            self.play(GrowFromEdge(p.a1, LEFT),
+                      p.clutter.frame.animate(rate_func=there_and_back).set_stroke(LOOKUP, 5),
+                      FadeIn(p.clean, shift=RIGHT * 0.2), run_time=1.0)
             vo.wait_until("like where do dolphins live")
             self.play(Create(p.tick), Indicate(p.clean, color=DATA, scale_factor=1.06), run_time=0.7)
             vo.wait_until("But hand it a vague question")
             self.play(FadeIn(p.vague, shift=RIGHT * 0.2), FadeIn(p.vnote), run_time=0.6)
             vo.wait_until("and the rewrite")
-            self.play(GrowFromEdge(p.a2, LEFT), FadeTransform(p.vague.copy(), p.rewrite), run_time=1.0)
+            self.play(GrowFromEdge(p.a2, LEFT), p.vague.box.animate(rate_func=there_and_back).set_stroke(LOOKUP, 5),
+                      FadeIn(p.rewrite, shift=RIGHT * 0.2), run_time=1.0)       # as above
             vo.wait_until("can invent details")
             self.play(*[g.animate.set_color(ERR) for g in p.marks], Create(p.unders), FadeIn(p.invented),
                       run_time=0.7)
@@ -528,10 +542,14 @@ class BeyondNaive(VoiceScene):
             vo.wait_until("gives each paragraph")
             self.play(FadeIn(h.knote, shift=DOWN * 0.15), run_time=0.6)
             vo.wait_until("one half divided by its rank")
-            self.play(LaggedStart(*[ReplacementTransform(h.kw_cells[i].copy(), h.blocks[i][0]) for i in range(3)],
+            # each rank cell flashes in place as its block fades in on the bar (copies flying right crossed the
+            # vectors column and the blocks already placed: garbled digits)
+            self.play(LaggedStart(*[AnimationGroup(*cell_flash(h.kw_cells[i]),
+                                                   FadeIn(h.blocks[i][0], shift=RIGHT * 0.15)) for i in range(3)],
                                   lag_ratio=0.3), run_time=1.3)
             vo.wait_until("in each list")
-            self.play(LaggedStart(*[ReplacementTransform(h.vec_cells[i].copy(), h.blocks[i][1]) for i in range(3)],
+            self.play(LaggedStart(*[AnimationGroup(*cell_flash(h.vec_cells[i]),
+                                                   FadeIn(h.blocks[i][1], shift=RIGHT * 0.15)) for i in range(3)],
                                   lag_ratio=0.3), run_time=1.2)
             vo.wait_until("and adds them up")
             self.play(LaggedStart(*[FadeIn(t, shift=LEFT * 0.15) for t in h.totals], lag_ratio=0.2), run_time=0.8)
@@ -575,7 +593,11 @@ class BeyondNaive(VoiceScene):
             vo.wait_until("with the right ones scattered")
             self.play(*[r.rows[k].animate.set_fill(TURN, 0.95) for k in RELEVANT], FadeIn(r.legend), run_time=0.8)
             vo.wait_until("A slower model")
-            self.play(FadeIn(r.dia, scale=0.85), TransformFromCopy(r.q, r.q2), run_time=0.7)
+            # the question flashes in place as its copy fades in above the cross-encoder (a copy flying across
+            # crossed the lecture-example tag and the bars: garbled text)
+            self.play(FadeIn(r.dia, scale=0.85), r.q.box.animate(rate_func=there_and_back).set_stroke(LOOKUP, 5),
+                      Indicate(r.q.text, color=LOOKUP, scale_factor=1.06), FadeIn(r.q2, shift=DOWN * 0.1),
+                      run_time=0.7)
             self.play(GrowFromEdge(r.a_q2, UP), run_time=0.35)
             # the cross-encoder reads one (question, chunk) pair at a time
             vo.wait_until("reads each question")

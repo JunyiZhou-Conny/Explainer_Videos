@@ -89,6 +89,7 @@ from manim import (
     ShowPassingFlash,
     Transform,
     VGroup,
+    smooth,
     there_and_back,
 )
 
@@ -226,6 +227,14 @@ UNUSED_V2 = ("slots", "build", "depends", "book", "cloud", "vertex", "key_ride",
 
 
 # ------------------------------------------------------------------ small helpers
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
+
+
 def left_at(m, x: float, y: float):
     """Put m's left edge at x and its centre at height y."""
     return m.shift(np.array([x - m.get_left()[0], y - m.get_center()[1], 0]))
@@ -486,8 +495,10 @@ class IndexSurvives(VoiceScene):
             gcop = [g.copy() for g in gone]
             self.remove(cv, q0)
             self.add(*srcs[:-1], *gcop, srcs[-1])
-            self.play(*[ReplacementTransform(s, b) for s, (_, b) in zip(srcs, pairs)],
-                      *[FadeOut(g) for g in gcop], run_time=1.0)
+            # the parts with no compact twin fade out in place first: fading during the shrink, the
+            # secrets/ row and its key stood half-transparent while the folder labels rose through them
+            self.play(*[FadeOut(g) for g in gcop], run_time=0.3)
+            self.play(*[ReplacementTransform(s, b) for s, (_, b) in zip(srcs, pairs)], run_time=1.0)
             self.remove(*[b for _, b in pairs])
             self.add(*c.order)
 
@@ -557,8 +568,10 @@ class IndexSurvives(VoiceScene):
             gone = print_build(self, t, [DOWN_.line(n) for n in (5, 6, 7)], run_time=0.5)
             self.play(FadeOut(VGroup(c.chroma, c.name, c.port_chip, c.plug_chroma, c.route_data, c.route_port,
                                      ghost)), *light_door(c, LAPTOP),
-                      Indicate(gone[1], color=TURN, scale_factor=1.03), run_time=0.7)
-            self.play(FadeOut(c.rail), Indicate(gone[2], color=TURN, scale_factor=1.03), run_time=0.5)
+                      *[Indicate(g, color=TURN, scale_factor=1.03) for g in gone[1].glyphs], run_time=0.7)
+            # the rows' glyphs pulse, not the rows: Indicate on a row filled its GREY time tag YELLOW ("0.2s" lost)
+            self.play(FadeOut(c.rail), *[Indicate(g, color=TURN, scale_factor=1.03) for g in gone[2].glyphs],
+                      run_time=0.5)
 
         # ========================================================== 3 · nothing runs; the folder holds the data
         band = right_at(file_row("docker-volumes/chromadb/"), BAND_RIGHT, BAND_Y)
@@ -672,8 +685,9 @@ class IndexSurvives(VoiceScene):
         match = chip("10 of 10 match", DATA, size=CAPTION)
 
         # after the ▶ hold (silent): the second terminal opens in ~, the caption says cd first
-        self.play(caption_extra(tr, True), FadeOut(VGroup(t, idt, yt, gnote)), FadeIn(t2, shift=UP * 0.2),
-                  run_time=0.6)
+        # one terminal leaves, then the other arrives (faded at once, both titles and rows read together)
+        self.play(caption_extra(tr, True), FadeOut(VGroup(t, idt, yt, gnote), rate_func=first_half),
+                  FadeIn(t2, shift=UP * 0.2, rate_func=second_half), run_time=0.6)
         self.play(Indicate(glyph_range(ln, ti, ti + 1), color=TURN, scale_factor=1.4),
                   FadeIn(cap2, shift=DOWN * 0.1), run_time=0.6)
         with self.voiceover(SAY[5]) as vo:
@@ -698,7 +712,8 @@ class IndexSurvives(VoiceScene):
             for k, b in zip((1, 3), dims):
                 stick(self, o[k], b)
             vo.wait_until("and an extra command called get")
-            self.play(FadeOut(VGroup(t2, cap2)), FadeIn(tc, shift=UP * 0.2), run_time=0.5)
+            self.play(FadeOut(VGroup(t2, cap2), rate_func=first_half),
+                      FadeIn(tc, shift=UP * 0.2, rate_func=second_half), run_time=0.5)   # old out, then new in
             g = type_cmd(self, tc, GET.cmd, 0.7)
             ext = beside(extra_tag(), tc, g)
             beside(rmnote, tc, g.rows[0], buff=0.4)

@@ -77,10 +77,11 @@ from manim import (
     Polygon,
     Rectangle,
     RoundedRectangle,
-    TransformFromCopy,
     VGroup,
     VMobject,
+    smooth,
     there_and_back,
+    there_and_back_with_pause,
 )
 
 from common import (
@@ -183,6 +184,14 @@ PAPER_L = np.array([-5.2, -1.8, 0])     # beat 1: the ruler paper
 PAPER_R = np.array([-2.2, -1.8, 0])     # beat 1: one chunk per section
 BIG_K = 1.75
 PAPER_BIG = np.array([3.55, 0.45, 0])    # beat 6
+
+
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
 
 
 def row_tag(s: str, color: str = S.GREY, text_color: str | None = None, h: float = 0.36) -> VGroup:
@@ -499,8 +508,13 @@ class RecursiveSplit(VoiceScene):
             resize(self, t, 3, keep=keep, run_time=0.7)
             self.play(LaggedStart(*[GrowFromEdge(b, LEFT) for b in bars], lag_ratio=0.3),
                       FadeIn(labs), run_time=0.9)
+            # the terminal's 14228 flashes in place as its count fades in by the bar (a copy flying up
+            # crossed the command row and the terminal's title: garbled text); one animation per glyph
+            # (a new wrapper VGroup would be added to the scene and split the terminal)
             self.play(FadeIn(ins), FadeIn(nums[0]),
-                      TransformFromCopy(substring(ltot, "14228"), nums[1]), run_time=0.7)
+                      *[g.animate(rate_func=there_and_back_with_pause).set_color(INK)
+                        for g in substring(ltot, "14228")],
+                      FadeIn(nums[1]), run_time=0.7)
             vo.wait_until("So why")
             self.play(Indicate(nums[1], color=TURN, scale_factor=1.2),
                       bars[1].animate(rate_func=there_and_back).set_fill(opacity=0.7), run_time=0.8)
@@ -636,8 +650,11 @@ class RecursiveSplit(VoiceScene):
         tick = mm.tick("chunking")
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(t, rb2, cards, nos, bands, coins, paid, cap2, h_chip, d_chip)),
-                      FadeIn(lr2), caption_extra(tr, False), run_time=0.6)
+            # the old beat leaves in the first half, the lecture tag arrives in the second (faded at once,
+            # it read on top of the chunk_overlap chip)
+            self.play(FadeOut(VGroup(t, rb2, cards, nos, bands, coins, paid, cap2, h_chip, d_chip),
+                              rate_func=first_half),
+                      FadeIn(lr2, rate_func=second_half), caption_extra(tr, False), run_time=0.6)
             self.play(FadeIn(mm), FadeIn(gp), run_time=0.5)
             self.play(gp.animate.scale(big_k).move_to(PAPER_BIG), run_time=1.0)
             for name, bx in zip(("title", "abstract", "methods"), gp.boxes):

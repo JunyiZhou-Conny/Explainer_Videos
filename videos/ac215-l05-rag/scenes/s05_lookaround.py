@@ -62,6 +62,7 @@ from manim import (
     LEFT,
     RIGHT,
     UP,
+    AnimationGroup,
     Create,
     DashedVMobject,
     FadeIn,
@@ -72,10 +73,10 @@ from manim import (
     ReplacementTransform,
     RoundedRectangle,
     ShowIncreasingSubsets,
-    TransformFromCopy,
     VGroup,
     VMobject,
     linear,
+    there_and_back_with_pause,
 )
 
 from common import (
@@ -366,6 +367,12 @@ def print_rows(scene, t, rows: list, run_time: float = 0.6, lag: float = 0.12) -
     return new
 
 
+def flash(glyphs, color: str = TURN) -> list:
+    """Each on-screen glyph's colour to `color` and back, one animation per glyph (as S06: animating
+    a new wrapper VGroup would add it to the scene and split the terminal that holds the glyphs)."""
+    return [g.animate(rate_func=there_and_back_with_pause).set_color(color) for g in glyphs]
+
+
 def card_text(lines, size: float = CAPTION, color: str = INK):
     return VGroup(*[note(s, color, size) for s in lines]).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
 
@@ -461,7 +468,9 @@ class NamesAndMounts(VoiceScene):
             path = substring(cred, SECRETS_PATH)
             self.play(path.animate.set_color(LOOKUP), FadeIn(VGroup(sp.board, sp.post, sp.foot), shift=UP * 0.1),
                       run_time=0.4)
-            self.play(TransformFromCopy(path, sp.text[0]), run_time=0.7)   # the board first: the text on top
+            # the board first, the text on top; the path flashes in place while its text fades in on the
+            # board (a copy flying up crossed the GOOGLE_APPLICATION_CREDENTIALS rows: garbled text)
+            self.play(*flash(path), FadeIn(sp.text[0], shift=UP * 0.1), run_time=0.7)
             vo.wait_until("Our secrets folder is empty")
             self.play(FadeIn(sec, shift=LEFT * 0.15), Indicate(VGroup(out[3], out[4]), color=TURN, scale_factor=1.03),
                       run_time=0.7)
@@ -480,10 +489,14 @@ class NamesAndMounts(VoiceScene):
             pin(self, gc, beside(extra_tag(), tc, gc), run_time=0.3)
             hosts, beat = tc.print(self, BYNAME.at(2, 3), run_time=0.4)
             self.play(hosts.animate.set_color(LOOKUP), Create(book_link), FadeIn(book.frame), run_time=0.4)
-            # the phone book's line is the hosts line read the other way round: name -> address
-            self.play(TransformFromCopy(substring(hosts, "llm-rag-chromadb"), text_sub(book.text, "llm-rag-chromadb")),
-                      TransformFromCopy(substring(hosts, "172.19.0.2"), text_sub(book.text, "172.19.0.2")),
-                      FadeIn(text_sub(book.text, "→")),
+            # the phone book's line is the hosts line read the other way round: name -> address. Each
+            # part flashes in place in the hosts line as it fades in on the card, the name first (copies
+            # flying up crossed the ls rows and the terminal's title: garbled text)
+            self.play(LaggedStart(AnimationGroup(*flash(substring(hosts, "llm-rag-chromadb")),
+                                                 FadeIn(text_sub(book.text, "llm-rag-chromadb"))),
+                                  FadeIn(text_sub(book.text, "→")),
+                                  AnimationGroup(*flash(substring(hosts, "172.19.0.2")),
+                                                 FadeIn(text_sub(book.text, "172.19.0.2"))), lag_ratio=0.3),
                       Indicate(th.parts["rail"], color=LOOKUP, scale_factor=1.0), run_time=0.9)
             pin(self, beat, beside(differ_tag(), tc, beat), run_time=0.3)
             vo.wait_until("From your laptop")
@@ -515,7 +528,9 @@ class NamesAndMounts(VoiceScene):
             ex4 = extra_tag()            # the typed row is full: the tag sits at the end of the row under it
             ex4.move_to(lv[0].strut).align_to(t2.box, RIGHT).shift(LEFT * 0.12)
             pin(self, lv[0], ex4, run_time=0.3)
-            self.play(TransformFromCopy(th.rows["chromadb"], vol_row), th.pulse("data"), run_time=0.9)
+            # the thumbnail's folder flashes in place as its full-size row fades in beside it (a copy
+            # morphing across the CLI and Chroma boxes read as garbled text over the picture)
+            self.play(*flash(th.rows["chromadb"]), FadeIn(vol_row, shift=RIGHT * 0.1), th.pulse("data"), run_time=0.9)
             self.play(FadeIn(made, shift=UP * 0.1), Indicate(th.rows["chromadb"], color=TURN, scale_factor=1.3),
                       run_time=0.7)
             vo.wait_until("owned by root")
@@ -617,9 +632,11 @@ class NamesAndMounts(VoiceScene):
             pin(self, gl, beside(extra_tag(), tz, gl), run_time=0.3)
             co = tz.print(self, CLONE.at((2, 4)), run_time=0.4)
             beside(unpacks, tz, co[1], buff=0.6)
+            # the two names flash in place as their folder rows fade in above (copies lifting out
+            # crossed "Cloning into" and the terminal's title: garbled text)
             self.play(FadeIn(unpacks, shift=LEFT * 0.1), Create(zone), FadeIn(zlab),
-                      TransformFromCopy(VGroup(*co[1].glyphs), r_main.text), FadeIn(r_main.glyph),
-                      TransformFromCopy(VGroup(*co[2].glyphs), r_sec.text), FadeIn(r_sec.glyph), run_time=0.8)
+                      *flash(co[1].glyphs), FadeIn(r_main.text), FadeIn(r_main.glyph),
+                      *flash(co[2].glyphs), FadeIn(r_sec.text), FadeIn(r_sec.glyph), run_time=0.8)
             attach(self, co[1], unpacks)
             bare = cd_prompt(self, tz, P_ZIP_REPO, LAPTOP, run_time=0.5)    # not narrated: no anchor
             beside(after_cd, tz, bare, buff=0.5)

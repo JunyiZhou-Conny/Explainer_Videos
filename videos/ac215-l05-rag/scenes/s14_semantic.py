@@ -686,7 +686,10 @@ class SemanticSplit(VoiceScene):
             vo.wait_until("Afterwards, an extra")
             self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("Pause and try it")
-            self.play(Indicate(tc.tag, color=TURN, scale_factor=1.15), run_time=0.7)
+            # the tag's outline and text flash (Indicate on the whole tag filled it YELLOW: text unreadable);
+            # 1.08, not 1.15: the outline no longer grows with the text, and at 1.15 the ▶ met its round end
+            self.play(tc.tag.box.animate(rate_func=there_and_back).set_stroke(TURN, 4),
+                      Indicate(tc.tag.text, color=TURN, scale_factor=1.08), run_time=0.7)
         self.wait(2)                                   # ▶ beat: hold the frame
 
         self.play(FadeOut(VGroup(tr, bars, ill8, cap8, single, tc)), run_time=0.8)

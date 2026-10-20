@@ -113,6 +113,7 @@ from manim import (
     ShowPassingFlash,
     Transform,
     VGroup,
+    smooth,
 )
 
 from common import (
@@ -204,6 +205,14 @@ REC1 = capture("01", "recorded-embeddings")            # the same command on the
 assert REC1.cmd == LOAD_CMD and REC1.exit == 0
 assert REC1.line(5).startswith("Deleted existing collection") and REC1.line(8).endswith(": 11")
 assert REC1.line(19) == "Inserted 500 items..." and REC1.line(153).startswith("Finished inserting 24")
+
+
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
 
 
 def no_bom(s: str) -> str:
@@ -456,7 +465,9 @@ class LoadChroma(VoiceScene):
             vo.wait_until("and creates it again")
             self.play(FadeIn(new_bars), *[s.animate.set_stroke(DATA) for s in slabs], run_time=0.6)
             vo.wait_until("with cosine")
-            self.play(FadeOut(c_chip, shift=UP * 0.2), FadeIn(h_chip, shift=UP * 0.2),
+            # one chip leaves, then the next arrives (faded at once, both chips and headers read together)
+            self.play(FadeOut(c_chip, shift=UP * 0.2, rate_func=first_half),
+                      FadeIn(h_chip, shift=UP * 0.2, rate_func=second_half),
                       Indicate(cos_span, color=TURN, scale_factor=1.15), run_time=0.8)
             vo.wait_until("every load is a full rebuild")
             self.play(LaggedStart(*[s.animate.set_fill(opacity=1) for s in slabs], lag_ratio=0.15), run_time=1.0)
@@ -476,8 +487,11 @@ class LoadChroma(VoiceScene):
         ill.move_to([HNSW_C[0] + HNSW_W / 2 - ill.width / 2, HNSW_C[1] + HNSW_GAP + 0.6, 0])
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(p2, del_bar, new_bars, coll, h_chip)), FadeIn(lr), FadeIn(mm),
-                      FadeIn(st), run_time=0.6)
+            # the code beat leaves in the first half, the stage strip arrives in the second (faded at once,
+            # the stage names read over the collection label and the chip)
+            self.play(FadeOut(VGroup(p2, del_bar, new_bars, coll, h_chip), rate_func=first_half),
+                      FadeIn(lr, rate_func=second_half), FadeIn(mm, rate_func=second_half),
+                      FadeIn(st, rate_func=second_half), run_time=0.6)
             self.play(idx_frame.animate.set_stroke(TURN, 4), FadeIn(sc), run_time=0.4)
             self.play(*sc.walk(8248, run_time=1.6))
             sc.counter.freeze()
@@ -666,7 +680,8 @@ class LoadChroma(VoiceScene):
             pin(self, out5[0], beside(staff_tag(), t, out5[0], buff=0.6), run_time=0.3)
             pin(self, out5[2], beside(erratum_tag(), t, out5[2], buff=0.5), run_time=0.4)
             vo.wait_until("a small slip")
-            self.play(FadeOut(ck), FadeIn(sp_chip, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeOut(ck, rate_func=first_half), FadeIn(sp_chip, shift=DOWN * 0.1, rate_func=second_half),
+                      run_time=0.5)                # one chip after the other: no stacked text
             self.play(FadeIn(fname_head), FadeIn(fname), run_time=0.5)
             vo.wait_until("at the first dot")
             self.play(Create(cut), lost.animate.set_color(S.GREY_DARK), kept.animate.set_color(TURN),
@@ -707,7 +722,8 @@ class LoadChroma(VoiceScene):
             # the output must be printed before "a 60-megabyte" (≈3.4 s into this line): the terminal comes in
             # with the picture, and the route's pulse and both blinks share one play (pre-roll ≈3.3 s; it
             # was ≈4.5 s, and the highlight landed on "file")
-            self.play(FadeOut(VGroup(t, sp_chip, fname_head, fname, cut, fix_card)), FadeIn(zoom), run_time=0.5)
+            self.play(FadeOut(VGroup(t, sp_chip, fname_head, fname, cut, fix_card), rate_func=first_half),
+                      FadeIn(zoom, rate_func=second_half), run_time=0.5)    # old out, then the picture in
             self.play(zoom.animate.scale(0.12).move_to(cyl9).set_opacity(0), FadeIn(pic),
                       FadeIn(tl, shift=UP * 0.2), run_time=0.7)
             self.remove(zoom)

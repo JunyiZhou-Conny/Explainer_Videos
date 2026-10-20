@@ -111,8 +111,8 @@ from manim import (
     ShowPassingFlash,
     Succession,
     Transform,
-    TransformFromCopy,
     VGroup,
+    smooth,
     there_and_back,
 )
 
@@ -421,7 +421,10 @@ class Embeddings(VoiceScene):
             # each value pulses about its own centre (a column-wide Indicate pushed 4.8 into the header)
             self.play(LaggedStart(*[Indicate(v, color=LOOKUP, scale_factor=1.15) for v in values], lag_ratio=0.1),
                       run_time=0.7)
-            self.play(FadeIn(gs), ReplacementTransform(values, a_ins), Transform(table.heads[1], l_ins),
+            # the header waits for the first half, then moves to the arrow (moving at once, "instructor" slid
+            # through its own column of numbers: garbled)
+            self.play(FadeIn(gs), ReplacementTransform(values, a_ins),
+                      Transform(table.heads[1], l_ins, rate_func=lambda t: smooth(max(0.0, 2 * t - 1))),
                       FadeOut(VGroup(table.frame, table[1], table.heads[0], *[row[0] for row in table.cells])),
                       FadeOut(ex), run_time=1.1)
             ex.move_to([pc.title.get_right()[0] + 0.3 + ex.width / 2, pc.title.get_center()[1], 0])
@@ -463,11 +466,12 @@ class Embeddings(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             lr = lref_swap(self, lr, "A44–A47")
-            # the cards' frames and letters copy down; the new scores write in (a digit-by-digit
-            # morph of 0.986 into 80.2 reads as noise)
+            # the cards' frames flash in place as their dot-product twins fade in below (copies flying down
+            # crossed the scores and the "dot product" heading: garbled letters); the new scores write in
+            # (a digit-by-digit morph of 0.986 into 80.2 reads as noise)
             self.play(FadeIn(pd), FadeIn(dtag),
-                      *[TransformFromCopy(VGroup(med_c[k].frame, med_c[k].name), VGroup(med_d[k].frame, med_d[k].name))
-                        for k in "AB"],
+                      *[med_c[k].frame.animate(rate_func=there_and_back).set_stroke(TURN, 4) for k in "AB"],
+                      *[FadeIn(VGroup(med_d[k].frame, med_d[k].name), shift=DOWN * 0.1) for k in "AB"],
                       *[FadeIn(med_d[k].score, shift=DOWN * 0.1) for k in "AB"], run_time=0.9)
             for k in "AB":
                 self.remove(med_d[k].frame, med_d[k].name, med_d[k].score)
@@ -477,7 +481,10 @@ class Embeddings(VoiceScene):
             self.play(flash(a_c["B"]), run_time=0.7)
             self.play(med_d["A"].animate(path_arc=-PI / 3).move_to(pd.slots[1]),
                       med_d["B"].animate(path_arc=-PI / 3).move_to(pd.slots[0]), run_time=0.9)
-            self.play(flash(a_c["B"]), Indicate(med_d["B"], color=TURN, scale_factor=1.1), run_time=0.7)
+            # the card's outline and its letter and score flash (Indicate on the whole card filled it
+            # YELLOW: "B 81.2" unreadable)
+            self.play(flash(a_c["B"]), med_d["B"].frame.animate(rate_func=there_and_back).set_stroke(TURN, 4),
+                      Indicate(med_d["B"][1], color=TURN, scale_factor=1.1), run_time=0.7)
             vo.wait_until("So a measure is a choice")
             self.play(FadeOut(game_q), run_time=0.3)       # first: it sits on the measures table's foot
             self.play(FadeIn(measures.frame), FadeIn(measures[1]), *[FadeIn(h) for h in measures.heads], run_time=0.4)

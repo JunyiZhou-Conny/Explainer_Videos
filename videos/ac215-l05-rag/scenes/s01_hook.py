@@ -95,7 +95,6 @@ from manim import (
     DashedLine,
     FadeIn,
     FadeOut,
-    FadeTransform,
     Group,
     GrowArrow,
     GrowFromEdge,
@@ -115,6 +114,7 @@ from manim import (
     VMobject,
     Write,
     linear,
+    smooth,
     there_and_back,
 )
 
@@ -156,6 +156,14 @@ ROWS6 = ["Docker, chunking, Chroma: real runs", "embeddings: the staff's recorde
 
 
 # ------------------------------------------------------------------ small helpers
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
+
+
 def clear_stage(scene, *anims, run_time: float = 0.6):
     """Fade out everything on screen (together with `anims`), then drop it from the scene."""
     old = list(scene.mobjects)
@@ -588,7 +596,10 @@ class Hook(VoiceScene):
             clear_stage(self, run_time=0.7)
             self.play(FadeIn(readme, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("Top left, the tracker")
-            self.play(FadeTransform(readme, tr), run_time=0.7)
+            # the label flies to the corner and fades, then the tracker fades in there (a FadeTransform
+            # showed "llm-rag/README.md" and the tracker's step caption on top of each other)
+            self.play(FadeOut(readme, target_position=tr, rate_func=first_half),
+                      FadeIn(tr, rate_func=second_half), run_time=0.7)
             self.remove(readme)
             self.play(GrowArrow(ptr), run_time=0.5)
             lit = tr.dots[tr.k - 1]

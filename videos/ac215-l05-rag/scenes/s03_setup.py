@@ -123,6 +123,8 @@ from manim import (
     VGroup,
     VMobject,
     linear,
+    smooth,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -209,6 +211,14 @@ GATE_X = (-5.0, -1.6, 5.0)   # the third far right: beat 4's Storage Admin row r
 
 
 # ------------------------------------------------------------------ small helpers
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
+
+
 def at_left(m, x: float, y: float):
     """Put m's left edge at x and its centre at height y."""
     return m.shift(np.array([x - m.get_left()[0], y - m.get_center()[1], 0]))
@@ -573,13 +583,16 @@ class KeyAndProject(VoiceScene):
             self.play(Indicate(pages[0].button, color=TURN, scale_factor=1.08), run_time=0.7)
 
             def page_to(k, old, new, *extra):
-                """The crumb slides to page k's, `old` parts leave and `new` parts arrive."""
+                """The crumb slides to page k's, `old` parts leave and `new` parts arrive: old out in the
+                first half, new in the second (faded at once, both pages' crumbs and fields read on top
+                of each other)."""
                 nonlocal cr
-                anims = [tr.goto(k), FadeOut(cr, shift=LEFT * 0.25), FadeIn(pages[k - 1][0], shift=LEFT * 0.25)]
+                anims = [tr.goto(k), FadeOut(cr, shift=LEFT * 0.25, rate_func=first_half),
+                         FadeIn(pages[k - 1][0], shift=LEFT * 0.25, rate_func=second_half)]
                 if old:
-                    anims.append(FadeOut(VGroup(*old)))
+                    anims.append(FadeOut(VGroup(*old), rate_func=first_half))
                 if new:
-                    anims.append(FadeIn(VGroup(*new), shift=UP * 0.1))
+                    anims.append(FadeIn(VGroup(*new), shift=UP * 0.1, rate_func=second_half))
                 self.play(*anims, *extra, run_time=0.6)
                 cr = pages[k - 1][0]
 
@@ -608,14 +621,16 @@ class KeyAndProject(VoiceScene):
             vo.wait_until("and save it in secrets")
             dl = pages[4].dl
             self.play(tr.goto(6), run_time=0.4)
+            # the key flies; the old name fades in place and the new one fades in under secrets/ (the
+            # name morphing along the key's path ran garbled across the JSON chip)
             self.play(dl.key.animate(path_arc=-0.9).move_to(fo.sec.get_center() + DOWN * 0.06),
-                      Transform(dl.name, key_name), FadeOut(dl.frame), run_time=1.2)
+                      FadeOut(dl.name), FadeIn(key_name), FadeOut(dl.frame), run_time=1.2)
             self.remove(dl)
-            self.add(dl.key, dl.name)
+            self.add(dl.key, key_name)
             self.play(Indicate(fo.sec, color=COST, scale_factor=1.1), run_time=0.6)
 
         # ========================================================== 3 · money, .gitignore, three gates
-        key, key_lbl = dl.key, dl.name
+        key, key_lbl = dl.key, key_name
         drop = VGroup(fo, key, key_lbl)
         gi = src_panel(".gitignore", 1, 5)
         gi.move_to([3.6, 1.55, 0])
@@ -821,7 +836,10 @@ class KeyAndProject(VoiceScene):
             self.play(FadeIn(yt, shift=DOWN * 0.1), Create(arr), run_time=0.5)
             attach(self, l11, pid, arr, yt)
             vo.wait_until("the ID, not the name")
-            self.play(Indicate(yt, color=TURN, scale_factor=1.08), run_time=0.7)
+            # the tag's outline and text flash (Indicate on the whole tag filled it YELLOW: text unreadable);
+            # 1.04: the outline no longer grows with the text, and at 1.08 the "y" and "e" met its round ends
+            self.play(yt.box.animate(rate_func=there_and_back).set_stroke(TURN, 4),
+                      Indicate(yt.text, color=TURN, scale_factor=1.04), run_time=0.7)
 
             vo.wait_until("Leave line 8 alone")
             l12, l13 = out6[6], out6[7]

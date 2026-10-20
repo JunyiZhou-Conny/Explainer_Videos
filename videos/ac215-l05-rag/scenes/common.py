@@ -58,7 +58,7 @@ README tracker (top-left, YELLOW)
         step None = no step lit yet ("TRACKER Embed (no step lit yet)"). SECTIONS[key]
     self.play(tr.goto(k))     caption_extra(tr, on) -> anim (" · extra" on/off); both cross-fade
         the caption in place (tracker() returns a CrossFadeTracker) and rebind tr.caption
-    tr = switch_section(self, tr, "Chunk", 1)   old tracker lifts away, new one drops in
+    tr = switch_section(self, tr, "Chunk", 1)   old tracker lifts away, then the new one drops in
     lref("A16–A19") = lecture_ref(5, ...) top right;  lref_swap(scene, old, "A19–A22") -> new
 
 Terminal helpers (Terminal from explainer.devops: .type .print .run .clear .find .last)
@@ -417,11 +417,11 @@ def _out_second_half(t: float) -> float:
 
 
 def _out_early(t: float) -> float:
-    return smooth(min(1.0, t / 0.55))
+    return smooth(min(1.0, t / 0.45))
 
 
 def _in_late(t: float) -> float:
-    return smooth(max(0.0, (t - 0.45) / 0.55))
+    return smooth(max(0.0, (t - 0.55) / 0.45))
 
 
 def _swap_caption(tr, new, steady: bool) -> list:
@@ -432,7 +432,7 @@ def _swap_caption(tr, new, steady: bool) -> list:
     a point. steady=True (the same step, ' · extra' on or off): the new caption fades in over the
     first half on top of the old one, then the old one fades out, so the shared 'step k of N: …'
     never dims. steady=False (another step): the old one fades out, then the new one in, with a
-    short overlap, so the two never show at full strength together. Returns the two animations
+    short gap (an overlap left both captions half-readable for 0.25 s: L05 fix round 2 sweep). Returns the two animations
     (the caller wraps them)."""
     old = tr.caption
     inked = any(m.has_points() for m in old.get_family())
@@ -496,10 +496,13 @@ def caption_extra(tr, on: bool = True):
 
 
 def switch_section(scene, old, key: str, step: int | None = 1, run_time: float = 0.8):
-    """The tracker switches to another README section: the old one lifts away, the new one drops
-    in. Returns the new tracker (on screen)."""
+    """The tracker switches to another README section: the old one lifts away, then the new one
+    drops in (as lref_swap), in the same run_time, one half each. Returns the new tracker (on
+    screen). Faded at once, both headers read together for ~0.25 s (final review: "README ›
+    Run C…(L06)")."""
     new = tracker(key, step)
-    scene.play(FadeOut(old, shift=UP * 0.25), FadeIn(new, shift=DOWN * 0.25), run_time=run_time)
+    scene.play(Succession(FadeOut(old, shift=UP * 0.25), FadeIn(new, shift=DOWN * 0.25)),
+               run_time=run_time)
     return new
 
 

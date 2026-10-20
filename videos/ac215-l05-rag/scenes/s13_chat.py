@@ -329,7 +329,10 @@ class FinalPrompt(VoiceScene):
         spout = cyl.get_bottom() + UP * 0.2
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(ps, shift=UP * 0.2), FadeOut(mm), FadeIn(p1, shift=UP * 0.2), FadeIn(cyl),
+            # the prompt stack leaves in the first half, the code panel arrives in the second (faded at once,
+            # the stack's labels read over the code)
+            self.play(FadeOut(ps, shift=UP * 0.2, rate_func=first_half), FadeOut(mm, rate_func=first_half),
+                      FadeIn(p1, shift=UP * 0.2, rate_func=second_half), FadeIn(cyl, rate_func=second_half),
                       run_time=0.6)
             vo.wait_until("the code queries again")
             self.play(FadeIn(bars1), Indicate(cyl, color=CTR, scale_factor=1.06), run_time=0.6)
@@ -378,7 +381,8 @@ class FinalPrompt(VoiceScene):
             vo.wait_until("joined by newlines")
             self.play(Create(u_nl), FadeIn(py, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("The prompt goes to Gemini")
-            swap_panel(self, p2, p3, FadeOut(VGroup(b389, b390, u_nl, py)), FadeIn(llm))
+            # the bars and the Python tag leave with the old code (first half), before the new code row arrives
+            swap_panel(self, p2, p3, FadeOut(VGroup(b389, b390, u_nl, py), rate_func=first_half), FadeIn(llm))
             fly = pc.copy()
             self.play(fly.animate.scale(0.15).move_to(llm).set_opacity(0), Create(feed),
                       FadeIn(mchip, shift=LEFT * 0.15), FadeIn(l27), run_time=0.8)

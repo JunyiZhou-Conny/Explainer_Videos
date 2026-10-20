@@ -106,6 +106,7 @@ from manim import (
     ShowPassingFlash,
     Transform,
     VGroup,
+    there_and_back,
 )
 
 from common import (
@@ -334,17 +335,27 @@ class FiltersFirst(VoiceScene):
         panel = src_panel("cli.py", 352, 361).move_to([0, 0.5, 0])
         b356 = panel.bar(356, TURN)
         b357 = pink_bar(panel, 357)
-        # line 357's box starts in the 5 px gap under line 356 (the full bar's top edge ran above
-        # n_results=10's underline, which then read as line 357's); its bottom stays (u_book inside)
-        r356, r357 = (panel.code.code_lines[panel.rows_of(n)[0]] for n in (356, 357))
-        top357, bot357 = (r356.get_bottom()[1] + r357.get_top()[1]) / 2, b357.get_bottom()[1]
-        b357.stretch_to_fit_height(top357 - bot357).align_to([0, bot357, 0], DOWN)
         b358 = pink_bar(panel, 358)
+        # each filter box spans its row from half-gap to half-gap: 357's starts in the 5 px gap under
+        # line 356 (the full bar's top edge ran above n_results=10's underline, which then read as
+        # line 357's), and 357 and 358 share one edge in the gap between them (the full bars
+        # overlapped there: a double PINK line, with u_book merged into 357's bottom edge); 358's bottom
+        # edge runs 0.04 under its underscores (at the half-gap to ")", whose box reaches above its ink,
+        # the "_" of where_document and search_string sat on the edge), over the tip of ")" as before
+        r356, r357, r358 = (panel.code.code_lines[panel.rows_of(n)[0]] for n in (356, 357, 358))
+
+        def half_gap(a, b):
+            return (a.get_bottom()[1] + b.get_top()[1]) / 2
+        for bar, top, bot in ((b357, half_gap(r356, r357), half_gap(r357, r358)),
+                              (b358, half_gap(r357, r358), r358.get_bottom()[1] - 0.04)):
+            bar.stretch_to_fit_height(top - bot).set_y((top + bot) / 2)
         b353 = panel.bar(353, LOOKUP, 0.12)
         # on the baseline ("10"'s bottom, not the "_"'s): 4 px clear of line 357's box
         u_ten = under(panel.span(356, "n_results=10"), TURN, stroke=3)
         u_ten.set_y(panel.span(356, "10").get_bottom()[1] - 0.03)
-        u_book = under(panel.span(357, '"The Complete Book of Cheese"'), LOOKUP)
+        # on the baseline too (the "p" of Complete crosses it), inside 357's box: 4 px clear of the shared edge
+        u_book = under(panel.span(357, '"The Complete Book of Cheese"'), LOOKUP, stroke=3)
+        u_book.set_y(panel.span(357, "The").get_bottom()[1] - 0.025)
         u_ital = under(panel.span(353, '"Italian"'), LOOKUP)
         c_meta = chip("metadata filter · keeps one book", LOOKUP, size=CAPTION)
         c_doc = chip("document filter · keeps chunks that contain “Italian”", LOOKUP, size=CAPTION)
@@ -551,7 +562,9 @@ class FiltersFirst(VoiceScene):
             self.play(FadeOut(VGroup(dc, beam, ill, cap, surv_lab, t, stf)), FadeOut(sti), run_time=0.6)
             self.play(FadeIn(st, shift=UP * 0.1), FadeIn(lr), run_time=0.6)
             vo.wait_until("metadata filtering")
-            self.play(Indicate(filt, color=TURN, scale_factor=1.12), run_time=0.7)
+            # the box's outline and its text flash (Indicate on the whole box filled it YELLOW: text unreadable)
+            self.play(filt[0].animate(rate_func=there_and_back).set_stroke(TURN, 5),
+                      Indicate(filt[1], color=TURN, scale_factor=1.1), run_time=0.7)
             vo.wait_until("after ranking")              # the ranked results come out of Querying
             self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.25) for c in story], lag_ratio=0.08),
                       FadeIn(s_lab), run_time=0.9)
@@ -595,7 +608,9 @@ class FiltersFirst(VoiceScene):
             vo.wait_until("the README promises")
             self.play(FadeIn(rm, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("but only variant 4 runs")
-            self.play(Indicate(err, color=TURN, scale_factor=1.15), run_time=0.7)
+            # the tag's outline and text flash (Indicate on the whole tag filled it YELLOW: text unreadable)
+            self.play(err.box.animate(rate_func=there_and_back).set_stroke(TURN, 4),
+                      Indicate(err.text, color=TURN, scale_factor=1.08), run_time=0.7)
             vo.wait_until("variants 1 to 3")
             # each '#' pulses in place (one Indicate on the whole column stretched it off its rows)
             self.play(FadeIn(hbox), LaggedStart(*[Indicate(h, color=INK, scale_factor=1.4) for h in hashes],
@@ -691,7 +706,9 @@ class FiltersFirst(VoiceScene):
                       *[cards[k][0].animate.set_stroke(S.GREY) for k in range(3, 6)], run_time=0.5)
             self.play(Create(brackets[2]), FadeIn(labels[2], shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("That header")
-            self.play(*[Indicate(cards[k], color=ERR, scale_factor=1.15) for k in range(3)],
+            # the cards' outlines and ids flash (Indicate on a whole card filled it RED: its id unreadable)
+            self.play(*[cards[k][0].animate(rate_func=there_and_back).set_stroke(ERR, 5) for k in range(3)],
+                      *[Indicate(cards[k][1], color=ERR, scale_factor=1.15) for k in range(3)],
                       Indicate(labels[0], color=ERR, scale_factor=1.06), run_time=0.9)
             vo.wait_until("are indexed like any text")
             self.play(Indicate(cyl, color=DATA, scale_factor=1.08), run_time=0.8)
