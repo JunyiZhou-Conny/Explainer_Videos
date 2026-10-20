@@ -23,7 +23,8 @@ Beats (script.md "## S04", one voiceover block each):
     llm-rag-chromadb (line 20). CODE(21–22): the GREY street door :8000 and the PINK 8000:8000
     arrow. CODE(23–24): docker-volumes/chromadb/ appears on the laptop with the PINK route to /data.
     The strip becomes an excerpt chip of line 26 with a GREY tag "lets the course's web tools in
-    · S09".
+    · Load, step 3" (script.md writes "· S09": scene numbers are never on screen; the tracker
+    names that moment Load, step 3 of 3: Chroma UI).
  5  The strip leaves; CODE(Dockerfile: 18) and CODE(Dockerfile: 45) as two one-line panels. The
     GREEN /.venv appears inside the CLI box, outside /app; the /app route pulses and a GREY sheet
     "your repo" covers /app only (/.venv stays visible). A pencil edits a cli.py row on the laptop,
@@ -118,6 +119,7 @@ from manim import (
     Transform,
     VGroup,
     VMobject,
+    smooth,
     there_and_back,
 )
 
@@ -213,6 +215,14 @@ def attach(scene, row, *mobs):
 def strip(a: int, b: int, wrap=None):
     """A code strip of docker-compose.yml lines a–b along the bottom edge."""
     return at_bottom(src_panel(COMPOSE, a, b, wrap=wrap))
+
+
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
 
 
 def value_chip(s: str, pad_x: float = 0.24, pad_y: float = 0.12) -> VGroup:
@@ -605,7 +615,7 @@ class TwoContainers(VoiceScene):
         bar24 = s23.bar(24, LOOKUP, 0.2)
         cors = excerpt_chip(CORS, f"{COMPOSE} · line 26 (excerpt)", line=excerpt(COMPOSE, 26, 26))
         cors.move_to([0, 0, 0]).shift(np.array([-6.3 - cors.get_left()[0], BOTTOM - cors.get_bottom()[1], 0]))
-        web = grey_tag("lets the course's web tools in · S09")
+        web = grey_tag("lets the course's web tools in · Load, step 3")
         web.move_to([6.3 - web.width / 2, cors.chip.get_top()[1] + 0.32, 0])
 
         with self.voiceover(SAY[4]) as vo:
@@ -653,7 +663,10 @@ class TwoContainers(VoiceScene):
         nreb.move_to([cli_box.get_center()[0], cli_box.get_top()[1] + 0.3, 0])
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(cors), FadeOut(web), FadeIn(pair, shift=UP * 0.2), run_time=0.6)
+            # the compose strip leaves in the first half, the Dockerfile pair arrives in the second (faded at
+            # once, the two headers and code rows read on top of each other)
+            self.play(FadeOut(cors, rate_func=first_half), FadeOut(web, rate_func=first_half),
+                      FadeIn(pair, shift=UP * 0.2, rate_func=second_half), run_time=0.6)
             vo.wait_until("the virtual environment")
             self.play(Indicate(d18.span(18, "/.venv"), color=DATA, scale_factor=1.2),
                       *cv.parts_in("venv"), run_time=0.8)
@@ -792,10 +805,10 @@ class TwoContainers(VoiceScene):
             at_left(err_t, par.get_left()[0], sq_lab.get_center()[1])
             hide = note("the mounts hide both at run time")
             at_left(hide, par.get_left()[0] + 0.1, err_t.get_bottom()[1] - 0.24)
-            vo.wait_until("mostly git history")
+            vo.wait_until("Most of it is git history")
             self.play(Create(par), FadeIn(phead, shift=DOWN * 0.1), run_time=0.5)
             self.play(FadeIn(git, scale=0.9), FadeIn(git_lab), run_time=0.5)
-            vo.wait_until("that still holds")
+            vo.wait_until("which still holds")
             self.play(FadeIn(old_db, shift=DOWN * 0.15), FadeIn(old_lab), run_time=0.6)
             self.play(FadeIn(rest), FadeIn(rest_lab), FadeIn(sq), Create(sq_lead), FadeIn(sq_lab), run_time=0.6)
             vo.wait_until("With no docker ignore")

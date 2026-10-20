@@ -47,7 +47,8 @@ Beats (script.md "## S10", one voiceover block each):
     indent after it, so the rows join into the captured line) -> laptop/24 lines 2–5: the collection
     names GREEN, both "dimension":256 boxed YELLOW. The container terminal (6 rows): `python cli.py
     --get --chunk_type char-split` (extra; GREY note "not in the README · S12") -> cli-container/70
-    line 6 cut after the ids list's "]" (word-folded); above it the PANEL of
+    line 6 cut after the ids list's "]" (word-folded; a GREY " …" after the "]": the line goes on
+    with 'embeddings', 'metadatas', 'documents'); above it the PANEL of
     recorded-embeddings/05 line 6 cut the same way, header "the same command before exit" + tag
     "recorded · the staff's vectors (68e0bde)". The first and last id of each list turn GREEN with
     GREEN ticks in the margin; GREEN chip "10 of 10 match". The terminals leave; the band picture
@@ -88,6 +89,8 @@ from manim import (
     ShowPassingFlash,
     Transform,
     VGroup,
+    smooth,
+    there_and_back,
 )
 
 from common import (
@@ -224,6 +227,14 @@ UNUSED_V2 = ("slots", "build", "depends", "book", "cloud", "vertex", "key_ride",
 
 
 # ------------------------------------------------------------------ small helpers
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
+
+
 def left_at(m, x: float, y: float):
     """Put m's left edge at x and its centre at height y."""
     return m.shift(np.array([x - m.get_left()[0], y - m.get_center()[1], 0]))
@@ -259,6 +270,16 @@ def word_fold(s: str, n: int = 65) -> list[str]:
 
 IDS_ROWS = word_fold(IDS)
 assert len(IDS_ROWS) == 4 and FIRST_ID in IDS_ROWS[0] and LAST_ID in IDS_ROWS[-1], IDS_ROWS
+# both captured lines go on after the ids' "]" (", 'embeddings': None, 'metadatas': [..."; the rest
+# of line 6 is never shown, so only cut() reads it): the scene marks the cut with a GREY " …"
+
+
+def more_mark(row) -> VGroup:
+    """A GREY ' …' after a row printed only up to its cut (the captured line goes on): the "…"
+    glyph of a twin line row.text + ' …' laid over the row, so it sits one cell after it."""
+    twin = mono_line(row.text + " …", row.pt, S.GREY)
+    twin.shift(row.strut.get_corner(UP + LEFT) - twin.strut.get_corner(UP + LEFT))
+    return glyph_range(twin, len(row.text) + 1)
 
 
 def polyline(points, color: str = LOOKUP, stroke: float = 4):
@@ -441,20 +462,23 @@ class IndexSurvives(VoiceScene):
             vo.wait_until("chunk, embed, load")
             for tk in ticks:
                 self.play(Create(tk), run_time=0.35)
-            vo.wait_until("Part 2 asks it questions")
-            self.play(rm.pulse_lane("bottom", TURN), Indicate(part2, color=TURN, scale_factor=1.15), run_time=1.1)
-            vo.wait_until("But first, a test")
+            vo.wait_until("Part 2 puts it to work")
+            # the pill's outline and text flash YELLOW (Indicate on the whole tag fills it YELLOW: text unreadable)
+            self.play(rm.pulse_lane("bottom", TURN), Indicate(part2.text, color=TURN, scale_factor=1.15),
+                      part2.box.animate(rate_func=there_and_back).set_stroke(TURN, 4), run_time=1.1)
+            # V1 leaves right after the flash and the routes draw with the parts, so V2 stands
+            # (and the "?" lands) by "does the index survive"
             self.add(db)
             self.play(FadeOut(rm), FadeOut(part2), *[FadeOut(tk) for tk in ticks],
-                      db.animate.scale(1.3).move_to([db.get_center()[0], 0.2, 0]), run_time=0.6)
-            self.play(Transform(db, cyl_target), *[FadeIn(m) for m in forming], run_time=0.7)
+                      db.animate.scale(1.3).move_to([db.get_center()[0], 0.2, 0]), run_time=0.5)
+            vo.wait_until("But first, a test")
+            self.play(Transform(db, cyl_target), *[FadeIn(m) for m in forming], run_time=0.6)
             self.remove(db, *forming)
             self.add(cv)
             self.play(*cv.parts_in("rail", "plug_chroma", "name", "port_chip", "cli", "venv", "plug_cli",
                                    "zone", "row_repo", "row_secrets", "row_volumes", "key", "door"),
+                      *cv.parts_in("route_app", "route_secrets", "route_data", "route_port", anim=Create),
                       run_time=0.6)
-            self.play(*cv.parts_in("route_app", "route_secrets", "route_data", "route_port", anim=Create),
-                      run_time=0.45)
             vo.wait_until("does the index survive")
             self.play(FadeIn(q0, scale=1.4), Indicate(r_chroma, color=TURN, scale_factor=1.1), run_time=0.55)
             # V2 shrinks to the top: each part becomes its compact twin
@@ -471,8 +495,10 @@ class IndexSurvives(VoiceScene):
             gcop = [g.copy() for g in gone]
             self.remove(cv, q0)
             self.add(*srcs[:-1], *gcop, srcs[-1])
-            self.play(*[ReplacementTransform(s, b) for s, (_, b) in zip(srcs, pairs)],
-                      *[FadeOut(g) for g in gcop], run_time=1.0)
+            # the parts with no compact twin fade out in place first: fading during the shrink, the
+            # secrets/ row and its key stood half-transparent while the folder labels rose through them
+            self.play(*[FadeOut(g) for g in gcop], run_time=0.3)
+            self.play(*[ReplacementTransform(s, b) for s, (_, b) in zip(srcs, pairs)], run_time=1.0)
             self.remove(*[b for _, b in pairs])
             self.add(*c.order)
 
@@ -507,13 +533,17 @@ class IndexSurvives(VoiceScene):
             self.play(FadeIn(rmt, scale=0.9), run_time=0.5)
             vo.wait_until("but Chroma is still up")
             up = col_box(crow, 0, len("Up 2 minutes"), TURN)
+            # the box's outline and title flash (Indicate on the whole box fills /data YELLOW: label lost)
             self.play(Create(up), substring(crow, "llm-rag-chromadb").animate.set_color(TURN),
-                      Indicate(c.chroma, color=TURN, scale_factor=1.05), run_time=0.8)
+                      c.chroma[0].animate(rate_func=there_and_back).set_stroke(TURN, 5),
+                      Indicate(c.chroma[1], color=TURN, scale_factor=1.08), run_time=0.8)
             stick(self, crow, up)
             vo.wait_until("and port 8000 is still taken")
             self.play(substring(crow, "0.0.0.0:8000->8000/tcp").animate.set_color(LOOKUP),
                       *light_door(c, LOOKUP), run_time=0.6)
-            self.play(flash(c.route_port_line), Indicate(c.port_chip, color=LOOKUP, scale_factor=1.1), run_time=1.0)
+            # the chip's outline and text flash PINK (Indicate on the chip fills it PINK: text lost)
+            self.play(flash(c.route_port_line), c.port_chip.box.animate(rate_func=there_and_back).set_stroke(LOOKUP, 4),
+                      Indicate(c.port_chip.text, color=LOOKUP, scale_factor=1.1), run_time=1.0)
 
         # ========================================================== 2 · docker compose down
         warn_rows = word_fold(WARN_CREDS) + word_fold(WARN_PROJ)
@@ -538,8 +568,10 @@ class IndexSurvives(VoiceScene):
             gone = print_build(self, t, [DOWN_.line(n) for n in (5, 6, 7)], run_time=0.5)
             self.play(FadeOut(VGroup(c.chroma, c.name, c.port_chip, c.plug_chroma, c.route_data, c.route_port,
                                      ghost)), *light_door(c, LAPTOP),
-                      Indicate(gone[1], color=TURN, scale_factor=1.03), run_time=0.7)
-            self.play(FadeOut(c.rail), Indicate(gone[2], color=TURN, scale_factor=1.03), run_time=0.5)
+                      *[Indicate(g, color=TURN, scale_factor=1.03) for g in gone[1].glyphs], run_time=0.7)
+            # the rows' glyphs pulse, not the rows: Indicate on a row filled its GREY time tag YELLOW ("0.2s" lost)
+            self.play(FadeOut(c.rail), *[Indicate(g, color=TURN, scale_factor=1.03) for g in gone[2].glyphs],
+                      run_time=0.5)
 
         # ========================================================== 3 · nothing runs; the folder holds the data
         band = right_at(file_row("docker-volumes/chromadb/"), BAND_RIGHT, BAND_Y)
@@ -592,7 +624,7 @@ class IndexSurvives(VoiceScene):
         # a command shown, not output: a pill slim enough to sit on one terminal row
         build_chip = chip("docker compose build", S.GREY, size=CAPTION, font=MONO, pad_x=0.14, pad_y=0.04)
         assert build_chip.height < 0.36, build_chip.height
-        g2 = VGroup(note("or the Dockerfile:"), build_chip).arrange(RIGHT, buff=0.15)
+        g2 = VGroup(note("or the Dockerfile:"), build_chip).arrange(RIGHT, buff=0.3)   # gap kept at the 1.08 pulse
         gnote = VGroup(g1, g2)
         idt = grey_tag("container id · your numbers will differ")
         yt = your_turn()
@@ -653,8 +685,9 @@ class IndexSurvives(VoiceScene):
         match = chip("10 of 10 match", DATA, size=CAPTION)
 
         # after the ▶ hold (silent): the second terminal opens in ~, the caption says cd first
-        self.play(caption_extra(tr, True), FadeOut(VGroup(t, idt, yt, gnote)), FadeIn(t2, shift=UP * 0.2),
-                  run_time=0.6)
+        # one terminal leaves, then the other arrives (faded at once, both titles and rows read together)
+        self.play(caption_extra(tr, True), FadeOut(VGroup(t, idt, yt, gnote), rate_func=first_half),
+                  FadeIn(t2, shift=UP * 0.2, rate_func=second_half), run_time=0.6)
         self.play(Indicate(glyph_range(ln, ti, ti + 1), color=TURN, scale_factor=1.4),
                   FadeIn(cap2, shift=DOWN * 0.1), run_time=0.6)
         with self.voiceover(SAY[5]) as vo:
@@ -679,7 +712,8 @@ class IndexSurvives(VoiceScene):
             for k, b in zip((1, 3), dims):
                 stick(self, o[k], b)
             vo.wait_until("and an extra command called get")
-            self.play(FadeOut(VGroup(t2, cap2)), FadeIn(tc, shift=UP * 0.2), run_time=0.5)
+            self.play(FadeOut(VGroup(t2, cap2), rate_func=first_half),
+                      FadeIn(tc, shift=UP * 0.2, rate_func=second_half), run_time=0.5)   # old out, then new in
             g = type_cmd(self, tc, GET.cmd, 0.7)
             ext = beside(extra_tag(), tc, g)
             beside(rmnote, tc, g.rows[0], buff=0.4)
@@ -693,7 +727,11 @@ class IndexSurvives(VoiceScene):
                                   tc.box.get_top()[1] + 0.3 - panel.frame.get_bottom()[1], 0]))
             stf.next_to(panel.header, RIGHT, buff=0.35)
             match.move_to(panel.header).align_to(panel.frame, RIGHT)
-            self.play(FadeIn(panel, shift=DOWN * 0.15), FadeIn(stf), run_time=0.45)
+            # both lists are cut after the ids' "]": a GREY " …" says the line goes on
+            panel.add(more_mark(panel.rows[-1]))
+            more_t = more_mark(got[-1])
+            self.play(FadeIn(panel, shift=DOWN * 0.15), FadeIn(stf), FadeIn(more_t), run_time=0.45)
+            stick(self, got[-1], more_t)
             marks = VGroup()
             colour = []
             for rows in (panel.rows, got):

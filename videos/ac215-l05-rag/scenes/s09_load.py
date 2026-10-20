@@ -52,8 +52,9 @@ Beats (script.md "## S09", one voiceover block each):
 10  TRACKER Load 3. A GREY browser frame (tag illustration) at ac215-llm-rag.dlops.io/chromaui with a
     schematic collection list and the GREY note "if Chrome asks to reach your local network,
     allow it"; a PINK arrow from the page through the GREY door :8000 to the TEAL Chroma box.
-    Below, headed curl -si -H 'Origin: …' localhost:8000 (extra): laptop/12 line 5 (GREEN) and
-    a GREY ghost "no such line for another site" (laptop/12b).
+    Below, headed by laptop/12's command in full (folded onto two rows; extra): laptop/12 line 5
+    (GREEN) and a GREY ghost "no such line for another site, e.g. Origin: https://example.com"
+    (laptop/12b).
 11  The full V1 returns; its top lane glows end to end, GREEN ticks on chunking, embedding and the
     database; caption "part 1: the index is built"; the bottom lane pulses PINK at "In part 2".
     Fade to an empty frame (end of part 1).
@@ -85,6 +86,8 @@ Deviations from SHOW (see the scene report):
   tag (script conventions: every panel from recorded-embeddings/01–09); the fix card carries
   "fix · not in the repo".
 - Beat 10's two strips sit under the browser frame (a 58-character line does not fit beside it).
+- Beat 10's heading is the captured command in full (SHOW: "curl -si -H 'Origin: …' localhost:8000"),
+  so a viewer can run it; the ghost names the Origin laptop/12b sent (whole-video QA).
 - recorded-embeddings/01 line 12's invisible byte-order mark is dropped before printing (it has
   no glyph and would shift every highlight on that row).
 """
@@ -110,6 +113,7 @@ from manim import (
     ShowPassingFlash,
     Transform,
     VGroup,
+    smooth,
 )
 
 from common import (
@@ -203,6 +207,14 @@ assert REC1.line(5).startswith("Deleted existing collection") and REC1.line(8).e
 assert REC1.line(19) == "Inserted 500 items..." and REC1.line(153).startswith("Finished inserting 24")
 
 
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
+
+
 def no_bom(s: str) -> str:
     """Line 12 holds an invisible byte-order mark (the book file's first character): it has no
     glyph, so it would shift every highlight on that row. Nothing visible changes."""
@@ -261,7 +273,14 @@ CORS_LINE = CORS.line(5)
 assert CORS_LINE == "access-control-allow-origin: https://ac215-llm-rag.dlops.io"
 CORS_B = capture("12b", "laptop")                      # another site: no such line
 assert not any(s.startswith("access-control-allow-origin") for s in CORS_B.lines)
-CORS_HEAD = "curl -si -H 'Origin: …' localhost:8000"
+# the captured command in full (a viewer can run it), folded before its URL with " \" + 4-space indent
+_ck = CORS.cmd.index(" http://")
+CORS_ROWS = [CORS.cmd[:_ck] + " \\", "    " + CORS.cmd[_ck + 1:]]
+assert CORS.cmd.startswith("curl -si -H 'Origin: https://ac215-llm-rag.dlops.io' http://localhost:8000/")
+assert " ".join("\n".join(CORS_ROWS).replace("\\\n", "").split()) == CORS.cmd
+OTHER_ORIGIN = "Origin: https://example.com"              # the header laptop/12b sends instead
+assert f"'{OTHER_ORIGIN}'" in CORS_B.cmd and CORS_B.cmd.replace(OTHER_ORIGIN, "") == CORS.cmd.replace(
+    "Origin: https://ac215-llm-rag.dlops.io", "")
 
 COLL_CHIP = 'f"{method}-collection"'
 assert COLL_CHIP in excerpt("cli.py", 277, 277)
@@ -446,7 +465,9 @@ class LoadChroma(VoiceScene):
             vo.wait_until("and creates it again")
             self.play(FadeIn(new_bars), *[s.animate.set_stroke(DATA) for s in slabs], run_time=0.6)
             vo.wait_until("with cosine")
-            self.play(FadeOut(c_chip, shift=UP * 0.2), FadeIn(h_chip, shift=UP * 0.2),
+            # one chip leaves, then the next arrives (faded at once, both chips and headers read together)
+            self.play(FadeOut(c_chip, shift=UP * 0.2, rate_func=first_half),
+                      FadeIn(h_chip, shift=UP * 0.2, rate_func=second_half),
                       Indicate(cos_span, color=TURN, scale_factor=1.15), run_time=0.8)
             vo.wait_until("every load is a full rebuild")
             self.play(LaggedStart(*[s.animate.set_fill(opacity=1) for s in slabs], lag_ratio=0.15), run_time=1.0)
@@ -466,8 +487,11 @@ class LoadChroma(VoiceScene):
         ill.move_to([HNSW_C[0] + HNSW_W / 2 - ill.width / 2, HNSW_C[1] + HNSW_GAP + 0.6, 0])
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(p2, del_bar, new_bars, coll, h_chip)), FadeIn(lr), FadeIn(mm),
-                      FadeIn(st), run_time=0.6)
+            # the code beat leaves in the first half, the stage strip arrives in the second (faded at once,
+            # the stage names read over the collection label and the chip)
+            self.play(FadeOut(VGroup(p2, del_bar, new_bars, coll, h_chip), rate_func=first_half),
+                      FadeIn(lr, rate_func=second_half), FadeIn(mm, rate_func=second_half),
+                      FadeIn(st, rate_func=second_half), run_time=0.6)
             self.play(idx_frame.animate.set_stroke(TURN, 4), FadeIn(sc), run_time=0.4)
             self.play(*sc.walk(8248, run_time=1.6))
             sc.counter.freeze()
@@ -656,12 +680,14 @@ class LoadChroma(VoiceScene):
             pin(self, out5[0], beside(staff_tag(), t, out5[0], buff=0.6), run_time=0.3)
             pin(self, out5[2], beside(erratum_tag(), t, out5[2], buff=0.5), run_time=0.4)
             vo.wait_until("a small slip")
-            self.play(FadeOut(ck), FadeIn(sp_chip, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeOut(ck, rate_func=first_half), FadeIn(sp_chip, shift=DOWN * 0.1, rate_func=second_half),
+                      run_time=0.5)                # one chip after the other: no stacked text
             self.play(FadeIn(fname_head), FadeIn(fname), run_time=0.5)
             vo.wait_until("at the first dot")
             self.play(Create(cut), lost.animate.set_color(S.GREY_DARK), kept.animate.set_color(TURN),
                       Indicate(sp_chip.text, color=ERR, scale_factor=1.06), run_time=0.7)
-            self.play(Indicate(out5[2], color=ERR, scale_factor=1.04), run_time=0.55)
+            # the row's text only: Indicate on the row would also paint its pinned erratum tag solid RED
+            self.play(Indicate(out5[2].glyphs, color=ERR, scale_factor=1.04), run_time=0.55)
             vo.wait_until("Split off only the extension")
             self.play(FadeIn(fix_fr), FadeIn(fx_tag), FadeIn(fix_rows[0], shift=RIGHT * 0.15), run_time=0.6)
             vo.wait_until("delete that book's old files")
@@ -693,21 +719,24 @@ class LoadChroma(VoiceScene):
         rd_chip.move_to([6.3 - rd_chip.width / 2, 3.22, 0])
 
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(t, sp_chip, fname_head, fname, cut, fix_card)), FadeIn(zoom), run_time=0.5)
-            self.play(zoom.animate.scale(0.12).move_to(cyl9).set_opacity(0), FadeIn(pic), run_time=0.8)
+            # the output must be printed before "a 60-megabyte" (≈3.4 s into this line): the terminal comes in
+            # with the picture, and the route's pulse and both blinks share one play (pre-roll ≈3.3 s; it
+            # was ≈4.5 s, and the highlight landed on "file")
+            self.play(FadeOut(VGroup(t, sp_chip, fname_head, fname, cut, fix_card), rate_func=first_half),
+                      FadeIn(zoom, rate_func=second_half), run_time=0.5)    # old out, then the picture in
+            self.play(zoom.animate.scale(0.12).move_to(cyl9).set_opacity(0), FadeIn(pic),
+                      FadeIn(tl, shift=UP * 0.2), run_time=0.7)
             self.remove(zoom)
             path = VGroup(route.copy(), bend.copy()).set_stroke(LOOKUP, 9)
             self.play(ShowPassingFlash(path[0], time_width=0.6), Indicate(cyl9, color=DATA, scale_factor=1.08),
-                      run_time=0.5)
-            self.play(Indicate(win, color=TURN, scale_factor=1.1), Indicate(VGroup(fold, fold_name), color=TURN,
-                                                                            scale_factor=1.06), run_time=0.55)
-            self.play(FadeIn(tl, shift=UP * 0.2), run_time=0.3)
-            cmd5 = type_cmd(self, tl, VOL.cmd, type_time=1.0)
+                      Indicate(win[1], color=TURN, scale_factor=1.2),  # the label only (the filled frame went solid)
+                      Indicate(VGroup(fold, fold_name), color=TURN, scale_factor=1.06), run_time=0.55)
+            cmd5 = type_cmd(self, tl, VOL.cmd, type_time=0.9)
             assert hasattr(cmd5, "rows") and len(cmd5.rows) == 2
-            pin(self, cmd5.rows[-1], beside(extra_tag(), tl, cmd5.rows[-1], buff=0.5), run_time=0.3)
-            out6 = tl.print(self, VOL_OUT, run_time=0.5)
+            pin(self, cmd5.rows[-1], beside(extra_tag(), tl, cmd5.rows[-1], buff=0.5), run_time=0.25)
+            out6 = tl.print(self, VOL_OUT, run_time=0.4)
             total, _, _, u1, sq, u2, du = out6
-            vo.wait_until("a 60-megabyte SQLite file")
+            vo.wait_until("holds a 60-megabyte")             # interpolates to ≈3.4 s, where "a 60" is spoken
             self.play(substring(sq, "59781120").animate.set_color(TURN), substring(sq, "chroma.sqlite3")
                       .animate.set_color(TURN), substring(du, "82M").animate.set_color(TURN), run_time=0.6)
             pin(self, du, beside(staff_tag(), tl, du, buff=0.6), run_time=0.3)
@@ -746,7 +775,11 @@ class LoadChroma(VoiceScene):
         chroma10 = VGroup(chb10, cht10, cyl10)
         ar = Arrow([br.frame.get_right()[0] + 0.05, 1.2, 0], [chb10.get_left()[0] - 0.05, 1.2, 0], buff=0,
                    color=LOOKUP, stroke_width=5, tip_length=0.2, max_tip_length_to_length_ratio=0.1)
-        s_head = VGroup(mono(CORS_HEAD, CAPTION, S.GREY), extra_tag()).arrange(RIGHT, buff=0.3)
+        h_rows = VGroup(*[mono_line(r, CAPTION, S.GREY) for r in CORS_ROWS]).arrange(DOWN, aligned_edge=LEFT,
+                                                                                        buff=0.04)
+        # beside the first row: under it the pill would touch that row's letters (the rows sit a line apart)
+        h_tag = extra_tag().next_to(h_rows[0].glyphs, RIGHT, buff=0.3).set_y(h_rows[0].strut.get_center()[1])
+        s_head = VGroup(h_rows, h_tag)
         s1_txt = mono(CORS_LINE, CAPTION, DATA)
         _k = CORS_LINE.index("https://")                        # the one site (Text glyphs skip spaces)
         site = s1_txt[_k - CORS_LINE[:_k].count(" "):]
@@ -754,11 +787,13 @@ class LoadChroma(VoiceScene):
         s1 = VGroup(box(s1_txt.width + 0.5, 0.5, S.GREY_DARK, fill=S.GREY_DARKER, fill_opacity=1, radius=0.1),
                     s1_txt)
         s1_txt.move_to(s1[0])
-        s2_txt = label("no such line for another site", CAPTION, S.GREY)
+        # laptop/12b's ghost names the Origin it sent, so a viewer can rerun it
+        s2_txt = mixed(["no such line for another site, e.g.", f"`{OTHER_ORIGIN}`"], color=S.GREY)
         s2 = VGroup(box(s1[0].width, 0.5, S.GREY, dashed=True, stroke=2), s2_txt)
         s2_txt.move_to(s2[0])
+        assert s2_txt.width < s2[0].width - 0.4
         strips = VGroup(s_head, s1, s2).arrange(DOWN, aligned_edge=LEFT, buff=0.18)
-        strips.move_to([-6.3 + strips.width / 2, -1.85, 0])
+        strips.move_to([-6.3 + strips.width / 2, -1.95, 0])
 
         with self.voiceover(SAY[10]) as vo:
             self.play(FadeOut(VGroup(tl, pic, idx_lab, rd_chip)), caption_extra(tr, False), run_time=0.5)
@@ -777,7 +812,7 @@ class LoadChroma(VoiceScene):
             vo.wait_until("Chroma's settings")
             self.play(FadeIn(s_head), FadeIn(s1, shift=UP * 0.1), run_time=0.5)
             self.play(FadeIn(s2, shift=UP * 0.1), run_time=0.4)
-            vo.wait_until("allow that one site")
+            vo.wait_until("let the course's site in")
             self.play(Indicate(site, color=TURN, scale_factor=1.05), run_time=0.8)
 
         # ========================================================== 11 · part 1 done: the index is built

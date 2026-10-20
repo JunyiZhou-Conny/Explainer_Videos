@@ -1,6 +1,6 @@
 """S16 · Tear down, a stale index, recap (the end of part 2: README "Run Container" step 3 with extras,
 then "Agents (L06)" as a preview; the four questions; five test-yourself questions). Lecture:
-B74–B76, A63 (script: B68–B76, A63).
+B68–B76, A63.
 
 Beats (script.md "## S16", one voiceover block each):
  0  No lecture tag. TRACKER Run 3 · extra. V2 above the strip (fit_top), as the restart of S10 left
@@ -9,11 +9,11 @@ Beats (script.md "## S16", one voiceover block each):
     the PINK routes. The TEAL 3-row strip (container · llm-rag-cli, app@390fe47a277a:/app$) types
     `exit` (extra) -> laptop/23 line 14 (session); the CLI box, its routes and plug dissolve while
     the frame turns GREY (title laptop, prompt student@laptop:~/AC215/llm-rag$). `docker compose
-    down` (extra) -> laptop/25 lines 2–3 joined and 4 (GREY, cut at 65 with …; a GREY "harmless"
-    tag in the strip's title bar), then 5–7 (Compose rows, times as GREY tags 0.36 tall, as in
-    S04, so neighbouring tags don't touch): with line 6 the Chroma box, its name, port, /data and
-    :8000 routes dissolve and "harmless" leaves (line 7 scrolls the last WARN line out); with line
-    7 the rail. The GREY
+    down` (extra) -> laptop/25 lines 2–3 joined, word-folded (GREY), then line 4 word-folded (GREY),
+    as S10 prints them, with a GREY "harmless" tag beside its last row; then 5–7 (Compose rows,
+    times as GREY tags 0.36 tall, as in S04, so neighbouring tags don't touch): with line 6 the
+    Chroma box, its name, port, /data and :8000 routes dissolve; line 7 scrolls the last WARN row
+    and its "harmless" tag out, and the rail goes. The GREY
     laptop zone stays; it re-lays itself as a band along the top while the strip grows to 7 rows.
  1  `docker images` (extra) -> laptop/26 lines 2–5 as the column view (IMAGE, DISK USAGE; GREY header
     "docker images · IMAGE and DISK USAGE" just above the terminal). `2.11GB` boxed YELLOW as said,
@@ -23,8 +23,9 @@ Beats (script.md "## S16", one voiceover block each):
  2  The terminal clears. `git status; git status --short --ignored` (extra; folded after
     "git status;") -> laptop/27 lines 8, 11–14. ` M docker-shell.sh` boxed GREY + GREY tag "your
     edit"; `!! docker-volumes/` and `!! outputs/` GREEN + GREEN tag "ignored · stays on your disk";
-    in the band outputs/ appears and both folders get a GREEN tick. The chip becomes "Linux: sudo rm
-    -rf docker-volumes".
+    in the band outputs/ appears and both folders get a GREEN tick. The chip becomes "only to delete
+    the index later (Linux, root-owned): sudo rm -rf docker-volumes"; the GREEN tag flashes on
+    "and stay on your disk".
  3  The terminal leaves. A BLUE cloud "Google Cloud" with the GREY note "no VM · no bucket · no
     endpoint", then the GOLD tag "nothing runs in Google Cloud · you paid only for what you sent".
     The cloud goes and the GOLD tag moves up; the GOLD key in the band's secrets/ (beside llm-rag/)
@@ -52,37 +53,44 @@ Beats (script.md "## S16", one voiceover block each):
     --agent --chunk_type char-split` (tag preview · L06; not typed, no output). PANEL
     expected/out-txt-agent-run.txt line 65 (header `out.txt · line 64`, tag recorded) `Function:
     get_book_by_author`, the tool name YELLOW; GREY note "must call a tool: which one is its choice"
-    with the excerpt chip `mode="any"` (cli.py · line 449 (excerpt)). LECTURE B74–B76: card and panel
+    with the excerpt chip `mode="any"` (cli.py · line 449 (excerpt)). LECTURE B68–B76: card and panel
     dim; a GREY dashed "Retrieve?" diamond (tag concept), caption "a related idea, further: whether
     to retrieve"; its No branch to "answer", its Yes branch to "retrieve", then "check what it found".
+    B68's limits on it: on "Our chat opens the book" the Yes branch and "retrieve" flash YELLOW, GREY
+    note "our chat: every question" right of Yes; on "and checks nothing" the check box dims, GREY
+    note "our chat: no check" (two rows) right of it. Hold 1 s.
  6  LECTURE A63. S01's blurred map returns (dimmed, tag "illustration · our redrawing") with its four
     questions dim; each lights up YELLOW as answered, with a tiny glyph-only thumbnail (above the top
     two, below the bottom two) and a GREEN tick beside it: V4's arrows (S08's angles), V5's
     cylinder, V6's beam, V7's prompt card.
  7  No lecture tag, no tracker. "Test yourself" (YELLOW underline). Q1 with V1 under it, full size
-    (both lanes, the five flags; each flag gets a GREEN tick; "flags" and "share" turn YELLOW, the
-    embedding box and the cylinder light YELLOW while the flags and ticks step back, and both
-    lanes pulse on "what must both lanes share"). Q2 writes in below as Q1 turns small and GREY
+    (both lanes, the five flags; each flag gets a GREEN tick off its border: right of it, under
+    Query, whose right side is the cylinder; Chunk and Embed part a little; "flags" and "share"
+    turn YELLOW, and both lanes pulse on "what must both lanes share": nothing on V1 lights, so
+    the picture does not answer the question). Q2 writes in below as Q1 turns small and GREY
     (V1 leaves); its code and
     "published port 8000" turn YELLOW as said.
  8  Q3, Q4, Q5 the same way, their key words YELLOW as said.
- 9  Q5 turns small; the five questions sit at the top; the footer cards "Answers: exercises.md" and
+ 9  Q5 turns small; the five questions sit at the top; the footer cards "Answers: study guide §8
+    (exercises.md)" (as L03; exercises.md is in this repo, not in the viewer's llm-rag clone) and
     "Study guide + every command: github.com/JunyiZhou-Conny/MLOps_Learning · guides/L05-rag.md"
     (MLOps_Learning underlined YELLOW) under them; a GREY dashed "next: agents · L06" top right.
     Everything fades: empty frame (end of part 2).
 
-Deviations from SHOW (see the scene report): laptop/25's WARN lines are cut at 65 with … (the script's
-rule without `wrap`; S10 word-folded them), and the "harmless" tag sits in the strip's title bar (a
-cut row has no room for a tag). The column view's header sits above the terminal like a panel
+Deviations from SHOW (see the scene report): laptop/25's WARN lines are word-folded as in S10, so the
+3-row strip scrolls (the first WARN line shows whole, then the second). The Linux chip says when
+and why ("only to delete the index later", root-owned files): the tear-down card says to keep the
+index. The column view's header sits above the terminal like a panel
 header (no row has room for it). V2's laptop zone stays as a band along the top for beats 1–3 (the
 terminal grows to 7 rows for docker images and git status), which is also where the key "beside the
 repo" is shown. Beat 3 opens on a Google Cloud picture (BRIEF.md: no VM, no bucket, no endpoint) and
 follows the SAY's order (the GOLD tag first). The git command folds after "git status;" (one valid
 line when joined). The COPY arrow carries the Dockerfile's real line 48, `COPY --chown=app:app .
 ./`, not the shorthand `COPY . ./`. The tear-down card's GOLD row has a coin instead of a checkbox.
-The "check what it found" box after the Yes branch illustrates the SAY's last clause (critique
-tokens, B78, under the B74–B76 tag). "Test yourself" is a title, not a card; V1 is shown full size
-(scaled down, its flags collide). The "next" box sits top right (the footer row has no room).
+The "check what it found" box after the Yes branch illustrates "then checks what it found" (critique
+tokens, B78, under the B68–B76 tag). "Test yourself" is a title, not a card; V1 is shown full size
+(scaled down, its flags collide). The "next" box sits top right (the footer row has no room). The
+"Answers" card names the study guide's §8 as well as exercises.md (the file is not in llm-rag/).
 """
 
 from types import SimpleNamespace
@@ -292,11 +300,6 @@ def stick(scene, line, *mobs):
     scene.add(row)
 
 
-def in_title_bar(mob, t):
-    """A tag at the right end of the terminal's title bar (a row too full for a tag beside it)."""
-    return place(mob, right=t.box.get_right()[0] - 0.18, cy=t.box.get_top()[1] - t.bar_h / 2)
-
-
 def clear_stage(scene, keep=(), extra=(), run_time: float = 0.6):
     """Fade out everything on screen except `keep` (and their families), then drop it."""
     fam = set()
@@ -362,6 +365,25 @@ def print_rows(scene, t, rows: list, **kw) -> VGroup:
         _common.time_tag = orig
 
 
+def word_fold(s: str, n: int = 65) -> list[str]:
+    """A long output line folded at spaces into rows of at most n characters (no token is cut);
+    s10_persist.py prints the same WARN lines this way."""
+    rows, cur = [], ""
+    for w in s.split(" "):
+        if cur and len(cur) + 1 + len(w) > n:
+            rows.append(cur)
+            cur = w
+        else:
+            cur = f"{cur} {w}" if cur else w
+    rows.append(cur)
+    assert all(len(r) <= n for r in rows), rows
+    return rows
+
+
+WARN_ROWS = (word_fold(WARN_CREDS), word_fold(WARN_PROJ))
+assert [len(r) for r in WARN_ROWS] == [2, 2] and WARN_ROWS[0][1].startswith("set."), WARN_ROWS
+
+
 def checkbox(s: float = 0.32) -> RoundedRectangle:
     return RoundedRectangle(width=s, height=s, corner_radius=0.06, stroke_color=S.GREY,
                             stroke_width=2.5).set_fill(S.BG, 1)
@@ -395,7 +417,8 @@ def need_chip() -> VGroup:
 
 
 def linux_chip() -> VGroup:
-    return grey_chip([("Linux:", "serif"), ("sudo rm -rf docker-volumes", "mono")])
+    return grey_chip([("only to delete the index later (Linux, root-owned):", "serif"),
+                      ("sudo rm -rf docker-volumes", "mono")])
 
 
 def what_if_inset() -> SimpleNamespace:
@@ -561,6 +584,29 @@ def icon_prompt() -> VGroup:
     return prompt_card(n=5, w=1.2)
 
 
+# ------------------------------------------------------------------ beat 7: V1's flags, ticked
+def flag_ticks(rm: RagMap) -> list:
+    """A GREEN tick just right of each flag, off its border (RagMap.tick() centres it on the corner).
+    Chunk and Embed sit 0.24 apart, so they part a little to make room; right of Query is the
+    cylinder, so its tick sits under the flag's right end, clear of the cylinder and the arrow."""
+    f = {n: rm.parts[n] for n in RagMap.FLAGS}
+    tw = rm.tick("flag_chunk").width
+    need = tw + 0.08 + 0.15 - (f["flag_embed"].get_left()[0] - f["flag_chunk"].get_right()[0])
+    if need > 0:
+        f["flag_chunk"].shift(LEFT * need / 2)
+        f["flag_embed"].shift(RIGHT * need / 2)
+    ticks = []
+    for n in RagMap.FLAGS:
+        tk = rm.tick(n)
+        if n == "flag_query":
+            tk.next_to(f[n], DOWN, buff=0.06)
+            tk.set_x(min(f[n].get_right()[0], rm.parts["database"].get_left()[0] - 0.1) - tw / 2)
+        else:
+            tk.next_to(f[n], RIGHT, buff=0.08)
+        ticks.append(tk)
+    return ticks
+
+
 # ------------------------------------------------------------------ beats 7–9: question text (L04's helpers)
 def text_line(s: str, size: float, color: str, code=()) -> VGroup:
     """One line of house-font text whose code spans use the code font, with a FIXED vertical extent
@@ -613,11 +659,13 @@ def wrap_lines(s: str, size: float, width: float, code=()) -> list:
     return [ln.replace(NBSP, " ") for ln in lines + [cur]]
 
 
-def question(i: int, size: float, color: str, badge_color: str) -> VGroup:
-    """Question i (1-based): wrapped rows, a numbered badge left of the first row; the text's
-    top-left at (Q_X, 0). .badge .lines .strs .flat (badge + glyphs, for glyph-to-glyph transforms)"""
+def question(i: int, size: float, color: str, badge_color: str, wrap: float | None = None) -> VGroup:
+    """Question i (1-based): wrapped rows (at size `wrap`'s line breaks when given: a dimmed question
+    keeps its rows, so its glyphs shrink in place instead of crossing to another row), a numbered
+    badge left of the first row; the text's top-left at (Q_X, 0). .badge .lines .strs .flat (badge +
+    glyphs, for glyph-to-glyph transforms)"""
     s, code = QUESTIONS[i - 1]
-    strs = wrap_lines(s, size, Q_W, code)
+    strs = wrap_lines(s, wrap or size, Q_W, code)
     assert " ".join(strs) == s, (strs, s)
     rows = [text_line(ln, size, color, code) for ln in strs]
     pitch = rows[0].strut.height * 1.22
@@ -653,10 +701,12 @@ def q_span(q: VGroup, sub: str) -> VGroup:
 
 
 def footer_cards() -> VGroup:
-    """Beat 9: "Answers: exercises.md" and "Study guide + every command:" (the link and the guide's
-    path), side by side. .answers .guide .repo"""
-    a_body = VGroup(label("Answers:", 24, INK), mono("exercises.md", 22, INK)).arrange(DOWN, aligned_edge=LEFT,
-                                                                                       buff=0.14)
+    """Beat 9: "Answers: study guide §8 (exercises.md)" (as L03: the file is in this repo, not in the
+    viewer's llm-rag clone) and "Study guide + every command:" (the link and the guide's path), side
+    by side. .answers .guide .repo"""
+    a_body = VGroup(label("Answers:", 24, INK), label("study guide §8", 24, INK),
+                    _keep(S.text("(exercises.md)", 22, INK, t2f={"exercises.md": MONO})))
+    a_body.arrange(DOWN, aligned_edge=LEFT, buff=0.12)
     g_url = mono(GUIDE_REPO, 20, INK)
     g_body = VGroup(label("Study guide + every command:", 24, INK), g_url,
                     mono(GUIDE_PATH, 20, INK)).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
@@ -696,15 +746,17 @@ class Recap(VoiceScene):
             dn = type_cmd(self, t, DOWN_.cmd, 0.6)
             pin(self, dn, beside(extra_tag(), t, dn), run_time=0.25)
             vo.wait_until("the same harmless warnings")
-            t.print(self, [(WARN_CREDS, S.GREY), (WARN_PROJ, S.GREY)], run_time=0.5)
-            in_title_bar(harm, t)
-            self.play(FadeIn(harm, shift=LEFT * 0.1), run_time=0.4)
+            # word-folded as S10 prints them: the first WARN line shows whole, then the second
+            t.print(self, [(r, S.GREY) for r in WARN_ROWS[0]], run_time=0.3)
+            self.wait(0.45)
+            w2 = t.print(self, [(r, S.GREY) for r in WARN_ROWS[1]], run_time=0.3)
+            pin(self, w2[-1], beside(harm, t, w2[-1], buff=0.4), run_time=0.25)
             vo.wait_until("then Chroma and the network")
             print_rows(self, t, [DOWN_.line(5)], run_time=0.3)
             print_rows(self, t, [DOWN_.line(6)], run_time=0.3)
-            # "harmless" leaves with the last WARN line, which line 7 scrolls out of the strip
+            # "harmless" is part of the last WARN row: line 7 scrolls both out of the strip
             self.play(*cv.parts_out("chroma", "name", "port_chip", "plug_chroma", "route_data", "route_port"),
-                      FadeOut(harm), run_time=0.7)
+                      run_time=0.7)
             print_rows(self, t, [DOWN_.line(7)], run_time=0.3)
             self.play(*cv.parts_out("rail"), run_time=0.6)
             # the laptop zone stays: it re-lays itself as a band along the top; the terminal grows
@@ -754,11 +806,14 @@ class Recap(VoiceScene):
         lin = linux_chip().move_to([0, CHIP_Y, 0])
 
         with self.voiceover(SAY[2]) as vo:
-            t.clear(self, run_time=0.3)
-            self.play(FadeOut(hdr), run_time=0.2)
-            gs = _type_rows(self, t, GIT_TYPED, len(P_REPO) + 1, 0.9, len(GIT.cmd))
-            pin(self, gs, beside(extra_tag(), t, gs), run_time=0.25)
-            mod, m_row, pyc, vol, out_row = t.print(self, GIT_ROWS, run_time=0.5)
+            # the header leaves with the lines (t.clear's fade) and the command types faster, so the
+            # edit's box lands on "shows only your edit" (it came 0.9 s after it)
+            self.play(FadeOut(t.lines), FadeOut(hdr), run_time=0.3)
+            for m in list(t.lines):
+                t.lines.remove(m)
+            gs = _type_rows(self, t, GIT_TYPED, len(P_REPO) + 1, 0.6, len(GIT.cmd))
+            pin(self, gs, beside(extra_tag(), t, gs), run_time=0.2)
+            mod, m_row, pyc, vol, out_row = t.print(self, GIT_ROWS, run_time=0.35)
             vo.wait_until("shows only your edit")
             eb = col_box(m_row, 1, len(m_row.text), S.GREY)
             beside(your_edit, t, m_row, buff=0.45)
@@ -772,8 +827,14 @@ class Recap(VoiceScene):
             self.play(Create(ticks[0]), Create(ticks[1]),
                       Indicate(P["row_volumes"][0], color=DATA, scale_factor=1.06),
                       Indicate(outs, color=DATA, scale_factor=1.06), run_time=0.8)
+            # the Linux chip says when it applies (later, only to delete the index), and comes early
+            # enough to be read before the frame changes; one chip after the other (two chips
+            # cross-fading in one place read as a jumble)
+            self.play(FadeOut(need, shift=DOWN * 0.1), run_time=0.3)
+            self.play(FadeIn(lin, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("and stay on your disk")
-            self.play(FadeOut(need, shift=DOWN * 0.1), FadeIn(lin, shift=UP * 0.1), run_time=0.6)
+            # (the tag pulses as a whole: Indicate would paint its opaque fill GREEN)
+            self.play(ignored.animate(rate_func=there_and_back).scale(1.1), run_time=0.7)
 
         # ========================================================== 3 · nothing in the cloud; the key; ▶ tear down
         gold = _keep(cost_tag("nothing runs in Google Cloud · you paid only for what you sent"))
@@ -905,6 +966,12 @@ class Recap(VoiceScene):
         note5 = VGroup(n1, mode_g).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
         place(note5, left=fpanel.frame.get_right()[0] + 0.45, cy=fpanel.frame.get_center()[1] + 0.1)
         d = retrieve_diamond()
+        # between the concept tag (bottom -1.98) and the boxes (top -2.70); the second note right of
+        # "check what it found" in two rows (no room under the boxes)
+        chat_every = place(note("our chat: every question", size=22), left=d.yes[1].get_right()[0] + 0.2, cy=-2.35)
+        chat_none = VGroup(note("our chat:", size=22), note("no check", size=22))
+        chat_none.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+        place(chat_none, left=d.check.get_right()[0] + 0.25, cy=d.check.get_center()[1])
 
         with self.voiceover(SAY[5]) as vo:
             clear_stage(self, keep=[tr], run_time=0.5)
@@ -917,7 +984,7 @@ class Recap(VoiceScene):
             self.play(tool.animate.set_color(TURN), run_time=0.5)
             self.play(FadeIn(note5, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("The lecture's Self-RAG goes further")
-            lr = lref("B74–B76")
+            lr = lref("B68–B76")
             self.play(FadeIn(lr), *[m.animate.fade(0.55) for m in (card5, pv, fpanel, frec, note5)],
                       FadeIn(d.caption, shift=UP * 0.1), run_time=0.6)
             self.play(Create(d.diamond[0]), FadeIn(d.diamond[1]), FadeIn(d.tag), run_time=0.8)
@@ -927,6 +994,14 @@ class Recap(VoiceScene):
             self.play(GrowArrow(d.yes[0]), FadeIn(d.yes[1]), FadeIn(d.retrieve), run_time=0.5)
             vo.wait_until("then checks what it found")
             self.play(GrowArrow(d.then), FadeIn(d.check, shift=LEFT * 0.1), run_time=0.7)
+            # B68's limits on our chat: it always takes the Yes branch, and it skips the check
+            vo.wait_until("Our chat opens the book")
+            self.play(Indicate(d.yes, color=TURN, scale_factor=1.06),
+                      Indicate(d.retrieve, color=TURN, scale_factor=1.08),
+                      FadeIn(chat_every, shift=LEFT * 0.1), run_time=1.0)
+            vo.wait_until("and checks nothing")
+            self.play(d.check.animate.fade(0.5), FadeIn(chat_none, shift=LEFT * 0.1), run_time=0.7)
+        self.wait(1.0)                                 # the last note is read before the stage clears
 
         # ========================================================== 6 · the four questions, answered
         mp = blur_map()
@@ -984,7 +1059,7 @@ class Recap(VoiceScene):
         rm = RagMap(show=RagMap.TOP + RagMap.BOTTOM + RagMap.FLAGS)
         vis = VGroup(*[rm.parts[n] for n in RagMap.TOP + RagMap.BOTTOM + RagMap.FLAGS])
         rm.shift(np.array([-vis.get_center()[0], q_bottom(q1) - 0.85 - vis.get_top()[1], 0]))   # mid-gap
-        fticks = [rm.tick(n) for n in RagMap.FLAGS]
+        fticks = flag_ticks(rm)
 
         with self.voiceover(SAY[7]) as vo:
             clear_stage(self, run_time=0.6)
@@ -992,30 +1067,17 @@ class Recap(VoiceScene):
             vo.wait_until("Five questions")
             self.play(Create(t_ul), run_time=0.5)
             vo.wait_until("One:")
-            self.play(FadeIn(q1, shift=UP * 0.15), run_time=0.6)
-            self.play(FadeIn(rm), run_time=0.7)
+            # Q1 and V1 together, so "flags" lights as it is said
+            self.play(FadeIn(q1, shift=UP * 0.15), FadeIn(rm), run_time=0.6)
             vo.wait_until("which flags belong")
             self.play(q_span(q1, "flags").animate.set_color(TURN), run_time=0.3)
-            self.play(LaggedStart(*[Create(tk) for tk in fticks], lag_ratio=0.3), run_time=1.3)
+            self.play(LaggedStart(*[Create(tk) for tk in fticks], lag_ratio=0.3), run_time=1.2)
             vo.wait_until("what must both lanes share")
-            # the cylinder's strokes one by one: RagMap.light("database") animates the helper group
-            # cylinder.frame, which the scene would add on top of the flags
-            db_strokes = list(rm.item("database").frame.submobjects)
-            # the flags (YELLOW chips) and their ticks step back, so the two shared boxes are the
-            # YELLOW things on screen while "share" is said
-            # (each flag = VGroup(frame, words): the frame keeps its opaque fill, so the boxes
-            # behind a flag stay hidden while its outline and words dim)
-            # the embedding box is lit on itself too: RagMap.light() wraps it in an AnimationGroup,
-            # whose Group the scene adds on top, so the box's strokes would cross the Embed flag
-            flags = [rm.parts[n] for n in RagMap.FLAGS]
-            self.play(q_span(q1, "share").animate.set_color(TURN), rm.item("embedding").animate.set_stroke(TURN, 5),
-                      *[m.animate.set_stroke(TURN, 5) for m in db_strokes],
-                      *[f[0].animate.set_stroke(opacity=0.3) for f in flags],
-                      *[f[1].animate.set_opacity(0.3) for f in flags],
-                      *[tk.animate.set_stroke(opacity=0.3) for tk in fticks], run_time=0.6)
+            # nothing on V1 lights: the picture must not answer the question (exercises, guide §8)
+            self.play(q_span(q1, "share").animate.set_color(TURN), run_time=0.4)
             self.play(rm.pulse_lane("top", DATA), rm.pulse_lane("bottom", LOOKUP), run_time=1.0)
             vo.wait_until("Two:")
-            small1 = q_at(question(1, Q_SMALL, S.GREY, S.GREY), Q_TOP)
+            small1 = q_at(question(1, Q_SMALL, S.GREY, S.GREY, wrap=Q_BIG), Q_TOP)
             top2 = q_bottom(small1) - 0.34
             q2 = q_at(question(2, Q_BIG, INK, TURN), top2)
             self.play(Transform(q1.flat, small1.flat), FadeOut(rm), *[FadeOut(tk) for tk in fticks], run_time=0.6)
@@ -1034,7 +1096,7 @@ class Recap(VoiceScene):
         def step(q_cur, i_cur, top_cur):
             """Demote question i_cur (it turns small and GREY at top_cur); question i_cur + 1 writes in
             under it. Returns (small, new question, its top)."""
-            small = q_at(question(i_cur, Q_SMALL, S.GREY, S.GREY), top_cur)
+            small = q_at(question(i_cur, Q_SMALL, S.GREY, S.GREY, wrap=Q_BIG), top_cur)
             top_new = q_bottom(small) - 0.34
             q_new = q_at(question(i_cur + 1, Q_BIG, INK, TURN), top_new)
             self.play(Transform(q_cur.flat, small.flat), run_time=0.5)
@@ -1064,7 +1126,7 @@ class Recap(VoiceScene):
             self.play(q_span(q5, "one-line fix?").animate.set_color(TURN), run_time=0.4)
 
         # ========================================================== 9 · answers, the guide, next time
-        small5 = q_at(question(5, Q_SMALL, S.GREY, S.GREY), top5)
+        small5 = q_at(question(5, Q_SMALL, S.GREY, S.GREY, wrap=Q_BIG), top5)
         foot = footer_cards()
         nxt = VGroup(label("next:", 24, S.GREY), label("agents · L06", 24, INK)).arrange(RIGHT, buff=0.15)
         nxt_box = box(nxt.width + 0.6, nxt.height + 0.28, S.GREY, dashed=True)

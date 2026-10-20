@@ -1,0 +1,522 @@
+[Script Info]
+Title: AC215 · Lecture 5 — Introduction to RAG (follow-along: llm-rag)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:04.95,Bilingual,,0,0,0,,这个教程要问语言模型一个问题：Tolminc 奶酪是怎么做的？\N{\fs33\c&H00C8C0B8&\bord1.4}Here's the question this tutorial asks a language model: how is Tolminc cheese made?
+Dialogue: 0,0:00:05.27,0:00:07.50,Bilingual,,0,0,0,,Tolminc 是一种真实的阿尔卑斯奶酪\N{\fs33\c&H00C8C0B8&\bord1.4}Tolminc is a real Alpine cheese,
+Dialogue: 0,0:00:07.50,0:00:11.14,Bilingual,,0,0,0,,但我们要的答案在某一篇特定的文本里\N{\fs33\c&H00C8C0B8&\bord1.4}but the answer we want lives in one particular text.
+Dialogue: 0,0:00:11.38,0:00:13.68,Bilingual,,0,0,0,,知识库一共是 11 本书\N{\fs33\c&H00C8C0B8&\bord1.4}The knowledge base is eleven books:
+Dialogue: 0,0:00:13.68,0:00:16.57,Bilingual,,0,0,0,,10 本 Project Gutenberg 上讲奶酪的老书\N{\fs33\c&H00C8C0B8&\bord1.4}ten old cheese books from Project Gutenberg,
+Dialogue: 0,0:00:16.57,0:00:19.92,Bilingual,,0,0,0,,加上授课老师写的一个短篇故事，一个虚构的故事\N{\fs33\c&H00C8C0B8&\bord1.4}and the instructor's short story, a fictional tale.
+Dialogue: 0,0:00:20.24,0:00:25.98,Bilingual,,0,0,0,,在这个故事出现之前训练的模型从没读过它，所以它的回答来自别处\N{\fs33\c&H00C8C0B8&\bord1.4}A model trained before that story existed has never read it, so it answers from somewhere else.
+Dialogue: 0,0:00:26.30,0:00:29.73,Bilingual,,0,0,0,,怎样让它根据这个故事回答，又不用重新训练？\N{\fs33\c&H00C8C0B8&\bord1.4}How do we make it answer from this story, without retraining it?
+Dialogue: 0,0:00:29.97,0:00:32.27,Bilingual,,0,0,0,,课上列出了四个弱点\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture lists four weaknesses:
+Dialogue: 0,0:00:32.27,0:00:37.50,Bilingual,,0,0,0,,训练数据过时、缺少专业知识、幻觉，以及没有出处\N{\fs33\c&H00C8C0B8&\bord1.4}stale training data, no specialized knowledge, hallucination, and no sources.
+Dialogue: 0,0:00:37.82,0:00:42.06,Bilingual,,0,0,0,,RAG，也就是检索增强生成，针对的是前两个\N{\fs33\c&H00C8C0B8&\bord1.4}RAG, retrieval augmented generation, goes after the first two.
+Dialogue: 0,0:00:42.30,0:00:45.82,Bilingual,,0,0,0,,把 11 本书全贴进 prompt，得到的是一堆垃圾\N{\fs33\c&H00C8C0B8&\bord1.4}Paste all eleven books into the prompt, and you get garbage.
+Dialogue: 0,0:00:46.14,0:00:49.38,Bilingual,,0,0,0,,微调模型呢，又很慢；那是第 8 讲的内容\N{\fs33\c&H00C8C0B8&\bord1.4}Fine-tune the model, and it's slow; that's lecture 8.
+Dialogue: 0,0:00:49.70,0:00:55.08,Bilingual,,0,0,0,,或者让一位图书管理员，把最相关的 10 页递给它：一场开卷考试\N{\fs33\c&H00C8C0B8&\bord1.4}Or let a librarian hand it the ten most relevant pages: an open-book exam.
+Dialogue: 0,0:00:55.40,0:00:56.62,Bilingual,,0,0,0,,这就是 RAG\N{\fs33\c&H00C8C0B8&\bord1.4}That's RAG.
+Dialogue: 0,0:00:56.67,0:01:01.42,Bilingual,,0,0,0,,课上那张 RAG 技术全景图很拥挤，但它是从四个问题出发的\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's map of RAG techniques is crowded, but it starts from four questions.
+Dialogue: 0,0:01:01.74,0:01:05.56,Bilingual,,0,0,0,,什么是 embedding、向量数据库、查询，以及上下文？\N{\fs33\c&H00C8C0B8&\bord1.4}What is an embedding, a vector database, a query, the context?
+Dialogue: 0,0:01:05.88,0:01:07.74,Bilingual,,0,0,0,,这期视频四个都会回答\N{\fs33\c&H00C8C0B8&\bord1.4}This video answers all four.
+Dialogue: 0,0:01:07.98,0:01:10.27,Bilingual,,0,0,0,,把 README 打开，放在视频旁边\N{\fs33\c&H00C8C0B8&\bord1.4}Open the README beside this video.
+Dialogue: 0,0:01:10.59,0:01:16.45,Bilingual,,0,0,0,,左上角的进度条显示当前步骤；右上角的灰色标签指向课件\N{\fs33\c&H00C8C0B8&\bord1.4}Top left, the tracker shows its step; top right, the gray tag points to the lecture slides.
+Dialogue: 0,0:01:16.77,0:01:20.82,Bilingual,,0,0,0,,看到黄色的 your turn 标签，就暂停，自己跑一遍命令\N{\fs33\c&H00C8C0B8&\bord1.4}When the yellow your-turn tag appears, pause and run the command;
+Dialogue: 0,0:01:20.82,0:01:23.07,Bilingual,,0,0,0,,额外的命令 README 里没有\N{\fs33\c&H00C8C0B8&\bord1.4}extra commands aren't in the README.
+Dialogue: 0,0:01:25.30,0:01:27.41,Bilingual,,0,0,0,,我们录制时没有 Google 的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}We recorded without a Google key.
+Dialogue: 0,0:01:27.73,0:01:30.83,Bilingual,,0,0,0,,Docker、分块和数据库都是真实运行的\N{\fs33\c&H00C8C0B8&\bord1.4}Docker, chunking and the database ran for real;
+Dialogue: 0,0:01:30.83,0:01:34.00,Bilingual,,0,0,0,,embedding 用的是课程团队留下的向量\N{\fs33\c&H00C8C0B8&\bord1.4}the embeddings are the staff's recorded vectors.
+Dialogue: 0,0:01:34.32,0:01:35.89,Bilingual,,0,0,0,,凡是代码调用 Google 的地方\N{\fs33\c&H00C8C0B8&\bord1.4}Where the code calls Google,
+Dialogue: 0,0:01:35.89,0:01:39.14,Bilingual,,0,0,0,,你会看到命令、真实的报错，以及该看什么\N{\fs33\c&H00C8C0B8&\bord1.4}you see the command, the real error, and what to look for.
+Dialogue: 0,0:01:40.18,0:01:42.06,Bilingual,,0,0,0,,用四个方框讲清 RAG\N{\fs33\c&H00C8C0B8&\bord1.4}Here's RAG in four boxes.
+Dialogue: 0,0:01:42.38,0:01:47.93,Bilingual,,0,0,0,,用户的问题先到 RAG 代码，代码去向量数据库里要相关的文本\N{\fs33\c&H00C8C0B8&\bord1.4}The user's question goes to the RAG code, which asks a vector database for related texts.
+Dialogue: 0,0:01:48.25,0:01:51.68,Bilingual,,0,0,0,,代码把问题和这些文本拼成一个完整的 prompt\N{\fs33\c&H00C8C0B8&\bord1.4}The code joins question and texts into one full prompt,
+Dialogue: 0,0:01:51.68,0:01:53.86,Bilingual,,0,0,0,,模型的回答再送回去\N{\fs33\c&H00C8C0B8&\bord1.4}and the model's response goes back.
+Dialogue: 0,0:01:54.18,0:01:56.59,Bilingual,,0,0,0,,数据库从不和模型直接对话\N{\fs33\c&H00C8C0B8&\bord1.4}The database never talks to the model.
+Dialogue: 0,0:01:56.83,0:01:59.33,Bilingual,,0,0,0,,打开 RAG 这个方框，里面是两条通道\N{\fs33\c&H00C8C0B8&\bord1.4}Open the RAG box and you get two lanes.
+Dialogue: 0,0:01:59.65,0:02:01.82,Bilingual,,0,0,0,,上面，先把书切成 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}On top, books are cut into chunks,
+Dialogue: 0,0:02:01.82,0:02:07.44,Bilingual,,0,0,0,,embedding 模型把每个 chunk 变成一个向量，向量再存进数据库\N{\fs33\c&H00C8C0B8&\bord1.4}an embedding model turns each chunk into a vector, and the vectors go into the database.
+Dialogue: 0,0:02:07.76,0:02:13.37,Bilingual,,0,0,0,,下面，问题经过同一个模型，只有它的向量会到达数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Below, the question goes through the same model, and only its vector reaches the database.
+Dialogue: 0,0:02:13.62,0:02:17.29,Bilingual,,0,0,0,,这就是课上那页讲 pipeline 的课件，分三个阶段\N{\fs33\c&H00C8C0B8&\bord1.4}This is the pipeline slide from lecture, with three phases.
+Dialogue: 0,0:02:17.61,0:02:19.72,Bilingual,,0,0,0,,索引阶段就是上面整条通道\N{\fs33\c&H00C8C0B8&\bord1.4}Indexing is the whole top lane.
+Dialogue: 0,0:02:20.04,0:02:25.76,Bilingual,,0,0,0,,检索阶段把上下文带进 prompt，模型负责增强和生成\N{\fs33\c&H00C8C0B8&\bord1.4}Retrieval brings the context to the prompt, and the model does augmentation and generation.
+Dialogue: 0,0:02:26.00,0:02:29.75,Bilingual,,0,0,0,,README 把两条通道叫作 Step 1 和 Step 2\N{\fs33\c&H00C8C0B8&\bord1.4}The README calls the two lanes step 1 and step 2,
+Dialogue: 0,0:02:29.75,0:02:32.67,Bilingual,,0,0,0,,并给每个方框配了 cli.py 的一个参数\N{\fs33\c&H00C8C0B8&\bord1.4}and gives each box one flag of cli.py:
+Dialogue: 0,0:02:32.67,0:02:35.35,Bilingual,,0,0,0,,上面是 --chunk、--embed 和 --load\N{\fs33\c&H00C8C0B8&\bord1.4}--chunk, --embed and --load on top,
+Dialogue: 0,0:02:35.35,0:02:37.26,Bilingual,,0,0,0,,下面是 --query 和 --chat\N{\fs33\c&H00C8C0B8&\bord1.4}--query and --chat below.
+Dialogue: 0,0:02:37.50,0:02:38.77,Bilingual,,0,0,0,,两条规则\N{\fs33\c&H00C8C0B8&\bord1.4}Two rules.
+Dialogue: 0,0:02:38.82,0:02:41.79,Bilingual,,0,0,0,,上面的通道只跑一次，离线跑，而且很慢\N{\fs33\c&H00C8C0B8&\bord1.4}The top lane runs once, offline, and it's slow.
+Dialogue: 0,0:02:42.11,0:02:44.54,Bilingual,,0,0,0,,下面的通道每个问题都要跑一次\N{\fs33\c&H00C8C0B8&\bord1.4}The bottom lane runs for every question.
+Dialogue: 0,0:02:44.86,0:02:47.86,Bilingual,,0,0,0,,而且两条通道必须用同一个 embedding 模型\N{\fs33\c&H00C8C0B8&\bord1.4}And both lanes must use the same embedding model,
+Dialogue: 0,0:02:47.86,0:02:51.54,Bilingual,,0,0,0,,不然问题和这些 chunk 就不在同一个空间里\N{\fs33\c&H00C8C0B8&\bord1.4}or the question and the chunks don't live in the same space.
+Dialogue: 0,0:02:51.78,0:02:53.38,Bilingual,,0,0,0,,每个方框在哪儿运行？\N{\fs33\c&H00C8C0B8&\bord1.4}Where does each box run?
+Dialogue: 0,0:02:53.55,0:02:55.96,Bilingual,,0,0,0,,分块器在你自己的 container 里运行\N{\fs33\c&H00C8C0B8&\bord1.4}The chunker runs in your own container.
+Dialogue: 0,0:02:56.28,0:02:57.88,Bilingual,,0,0,0,,两个模型都在 Google 那边运行\N{\fs33\c&H00C8C0B8&\bord1.4}Both models run at Google:
+Dialogue: 0,0:02:57.88,0:03:02.32,Bilingual,,0,0,0,,你用自己的密钥，按发送的文本付费，那边没有任何东西一直开着\N{\fs33\c&H00C8C0B8&\bord1.4}you pay for the text you send, with your key, and nothing keeps running there.
+Dialogue: 0,0:03:02.64,0:03:07.16,Bilingual,,0,0,0,,数据库在第二个 container 里运行，文件放在你的笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}The database runs in a second container, with its files on your laptop.
+Dialogue: 0,0:03:07.40,0:03:10.59,Bilingual,,0,0,0,,每一步都是一条 python cli.py 命令\N{\fs33\c&H00C8C0B8&\bord1.4}Every step is one python cli.py command,
+Dialogue: 0,0:03:10.59,0:03:12.82,Bilingual,,0,0,0,,在第一个 container 里运行\N{\fs33\c&H00C8C0B8&\bord1.4}inside that first container.
+Dialogue: 0,0:03:13.14,0:03:15.08,Bilingual,,0,0,0,,所以，先把它跑起来\N{\fs33\c&H00C8C0B8&\bord1.4}So first, let's get it running.
+Dialogue: 0,0:03:15.32,0:03:17.45,Bilingual,,0,0,0,,先看 Prerequisites 一节：Docker\N{\fs33\c&H00C8C0B8&\bord1.4}Prerequisites first: Docker.
+Dialogue: 0,0:03:17.77,0:03:20.10,Bilingual,,0,0,0,,这个额外检查会打印它的版本号\N{\fs33\c&H00C8C0B8&\bord1.4}This extra check prints its versions;
+Dialogue: 0,0:03:20.10,0:03:23.00,Bilingual,,0,0,0,,脚本要的是中间带空格的 docker compose\N{\fs33\c&H00C8C0B8&\bord1.4}the script needs docker compose, with a space.
+Dialogue: 0,0:03:23.32,0:03:26.09,Bilingual,,0,0,0,,在 Mac 上，提示符看起来不一样\N{\fs33\c&H00C8C0B8&\bord1.4}On a Mac your prompt looks different;
+Dialogue: 0,0:03:26.09,0:03:28.48,Bilingual,,0,0,0,,在 Windows 上，用 WSL 或 Git Bash\N{\fs33\c&H00C8C0B8&\bord1.4}on Windows, use WSL or Git Bash.
+Dialogue: 0,0:03:28.72,0:03:33.30,Bilingual,,0,0,0,,README 给了 repo 的链接，但没写 clone 命令，所以命令在这里\N{\fs33\c&H00C8C0B8&\bord1.4}The README links the repo but doesn't print the clone command, so here it is.
+Dialogue: 0,0:03:33.62,0:03:37.88,Bilingual,,0,0,0,,然后额外做一件事：在 clone 旁边建一个 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Then, as an extra, make a secrets folder beside the clone,
+Dialogue: 0,0:03:37.88,0:03:40.96,Bilingual,,0,0,0,,并且让 clone 的名字一字不差地叫 llm-rag\N{\fs33\c&H00C8C0B8&\bord1.4}and keep the clone's name exactly llm-rag.
+Dialogue: 0,0:03:41.28,0:03:43.63,Bilingual,,0,0,0,,暂停一下，在你的课程目录里把两件事都做了\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do both, in your course folder.
+Dialogue: 0,0:03:45.87,0:03:49.11,Bilingual,,0,0,0,,接下来是服务账号，在 Google Cloud 控制台里\N{\fs33\c&H00C8C0B8&\bord1.4}Now the service account, in the Google Cloud console.
+Dialogue: 0,0:03:49.43,0:03:52.27,Bilingual,,0,0,0,,建一个叫 llm-service-account 的账号\N{\fs33\c&H00C8C0B8&\bord1.4}Create one called llm-service-account,
+Dialogue: 0,0:03:52.27,0:03:55.12,Bilingual,,0,0,0,,授予它两个角色：Storage Admin\N{\fs33\c&H00C8C0B8&\bord1.4}and grant it two roles: Storage Admin,
+Dialogue: 0,0:03:55.12,0:03:58.26,Bilingual,,0,0,0,,还有 Gemini Enterprise Agent Platform User\N{\fs33\c&H00C8C0B8&\bord1.4}and Gemini Enterprise Agent Platform User.
+Dialogue: 0,0:03:58.58,0:04:01.51,Bilingual,,0,0,0,,打开它的 KEYS 标签页，添加一个 JSON 密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Open its keys tab, add a JSON key,
+Dialogue: 0,0:04:01.51,0:04:05.90,Bilingual,,0,0,0,,存进 secrets 目录，命名为 llm-service-account.json\N{\fs33\c&H00C8C0B8&\bord1.4}and save it in secrets as llm-service-account.json.
+Dialogue: 0,0:04:06.13,0:04:08.62,Bilingual,,0,0,0,,这个密钥花的是你项目的钱\N{\fs33\c&H00C8C0B8&\bord1.4}That key spends your project's money;
+Dialogue: 0,0:04:08.62,0:04:11.31,Bilingual,,0,0,0,,.gitignore 文件里没有 secrets 这一行\N{\fs33\c&H00C8C0B8&\bord1.4}the .gitignore file has no secrets line,
+Dialogue: 0,0:04:11.31,0:04:13.60,Bilingual,,0,0,0,,所以它只有放在 repo 旁边才安全\N{\fs33\c&H00C8C0B8&\bord1.4}so it's safe only beside the repo.
+Dialogue: 0,0:04:13.92,0:04:16.52,Bilingual,,0,0,0,,还记得第 4 讲的三道关卡吗\N{\fs33\c&H00C8C0B8&\bord1.4}Remember the three gates from lecture 4:
+Dialogue: 0,0:04:16.52,0:04:21.98,Bilingual,,0,0,0,,密钥说明你是谁，角色说明你能做什么，API 还必须打开\N{\fs33\c&H00C8C0B8&\bord1.4}the key says who you are, the role what you may do, and the API must be switched on.
+Dialogue: 0,0:04:22.23,0:04:23.74,Bilingual,,0,0,0,,两个小疏漏\N{\fs33\c&H00C8C0B8&\bord1.4}Two small slips.
+Dialogue: 0,0:04:23.79,0:04:25.86,Bilingual,,0,0,0,,这里没有任何东西用到 Cloud Storage\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing here uses Cloud Storage,
+Dialogue: 0,0:04:25.86,0:04:28.63,Bilingual,,0,0,0,,所以真正要紧的是 Agent Platform 这个角色\N{\fs33\c&H00C8C0B8&\bord1.4}so the Agent Platform role is what matters.
+Dialogue: 0,0:04:28.95,0:04:33.13,Bilingual,,0,0,0,,而且 README 一直没说要启用 Vertex AI API\N{\fs33\c&H00C8C0B8&\bord1.4}And the README never says to enable the Vertex AI API;
+Dialogue: 0,0:04:33.13,0:04:36.39,Bilingual,,0,0,0,,没有它，第一次 embedding 调用就会失败\N{\fs33\c&H00C8C0B8&\bord1.4}without it, the first embedding call fails
+Dialogue: 0,0:04:36.39,0:04:39.41,Bilingual,,0,0,0,,重试 5 次后报 service disabled\N{\fs33\c&H00C8C0B8&\bord1.4}with SERVICE_DISABLED, after 5 retries.
+Dialogue: 0,0:04:39.73,0:04:43.78,Bilingual,,0,0,0,,现在就暂停，全部弄好：账号、角色、密钥和 API\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it all now: account, roles, key, and API.
+Dialogue: 0,0:04:46.02,0:04:49.45,Bilingual,,0,0,0,,下一节的第 1 步：cd llm-rag\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1 of the next section: cd llm-rag.
+Dialogue: 0,0:04:49.77,0:04:54.10,Bilingual,,0,0,0,,额外看一眼，能看到这些脚本、compose 文件、cli.py\N{\fs33\c&H00C8C0B8&\bord1.4}An extra look shows the scripts, the compose file, cli.py,
+Dialogue: 0,0:04:54.10,0:04:57.24,Bilingual,,0,0,0,,以及这期视频录制时用的 commit\N{\fs33\c&H00C8C0B8&\bord1.4}and the commit this video was recorded on.
+Dialogue: 0,0:04:57.48,0:04:59.37,Bilingual,,0,0,0,,第 2 步在编辑器里做\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2: in your editor,
+Dialogue: 0,0:04:59.37,0:05:03.40,Bilingual,,0,0,0,,把第 7 行的 GCP project 变量改成自己的项目 ID\N{\fs33\c&H00C8C0B8&\bord1.4}set GCP_PROJECT on line 7 to your own Project ID,
+Dialogue: 0,0:05:03.40,0:05:05.12,Bilingual,,0,0,0,,是 ID，不是项目名称\N{\fs33\c&H00C8C0B8&\bord1.4}the ID, not the name.
+Dialogue: 0,0:05:05.44,0:05:07.04,Bilingual,,0,0,0,,第 8 行别动\N{\fs33\c&H00C8C0B8&\bord1.4}Leave line 8 alone.
+Dialogue: 0,0:05:07.34,0:05:10.73,Bilingual,,0,0,0,,跳过这一步，你的调用就会发到课程的项目上，然后失败\N{\fs33\c&H00C8C0B8&\bord1.4}Skip this, and your calls go to the course's project and fail.
+Dialogue: 0,0:05:11.05,0:05:12.65,Bilingual,,0,0,0,,暂停一下，改好它\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and edit.
+Dialogue: 0,0:05:15.57,0:05:18.48,Bilingual,,0,0,0,,第 4 讲把两个 container 放在一个网络上\N{\fs33\c&H00C8C0B8&\bord1.4}Lecture 4 put two containers on one network;
+Dialogue: 0,0:05:18.48,0:05:21.33,Bilingual,,0,0,0,,第 3 讲通过挂载把密钥带了进来\N{\fs33\c&H00C8C0B8&\bord1.4}lecture 3 brought a key in through a mount.
+Dialogue: 0,0:05:21.65,0:05:24.06,Bilingual,,0,0,0,,今天：两件事一起做，只用一条命令\N{\fs33\c&H00C8C0B8&\bord1.4}Today: both at once, with one command.
+Dialogue: 0,0:05:24.30,0:05:27.69,Bilingual,,0,0,0,,这个脚本 docker-shell.sh 导出三个值\N{\fs33\c&H00C8C0B8&\bord1.4}The script, docker-shell.sh, exports three values:
+Dialogue: 0,0:05:27.69,0:05:32.43,Bilingual,,0,0,0,,你的项目、密钥在 container 里的路径，还有 image 名\N{\fs33\c&H00C8C0B8&\bord1.4}your project, the key's path inside the container, and the image name.
+Dialogue: 0,0:05:32.75,0:05:37.74,Bilingual,,0,0,0,,然后它调用 docker compose run，加上 --rm，只跑那一个服务\N{\fs33\c&H00C8C0B8&\bord1.4}Then it calls docker compose run, with --rm, for that one service.
+Dialogue: 0,0:05:37.98,0:05:40.72,Bilingual,,0,0,0,,这个 compose 文件把整张图都画出来了\N{\fs33\c&H00C8C0B8&\bord1.4}The compose file draws the whole picture:
+Dialogue: 0,0:05:40.72,0:05:43.93,Bilingual,,0,0,0,,一个网络，按名字指定，上面是 CLI 服务\N{\fs33\c&H00C8C0B8&\bord1.4}one network, by name, and the CLI service on it,
+Dialogue: 0,0:05:43.93,0:05:47.14,Bilingual,,0,0,0,,image 没有的话就用这个目录构建\N{\fs33\c&H00C8C0B8&\bord1.4}with an image built from this folder if missing.
+Dialogue: 0,0:05:47.38,0:05:51.74,Bilingual,,0,0,0,,两个挂载把这个 repo 放到 /app，把 secrets 放到 /secrets\N{\fs33\c&H00C8C0B8&\bord1.4}Two mounts put the repo onto /app and secrets onto /secrets.
+Dialogue: 0,0:05:52.06,0:05:56.13,Bilingual,,0,0,0,,两个空位接收脚本给的值，这个服务还依赖 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}Two slots take the script's values, and the service depends on Chroma.
+Dialogue: 0,0:05:56.37,0:05:59.70,Bilingual,,0,0,0,,Chroma 服务运行的是来自 Docker Hub 的数据库\N{\fs33\c&H00C8C0B8&\bord1.4}The Chroma service runs the database from Docker Hub,
+Dialogue: 0,0:05:59.70,0:06:01.16,Bilingual,,0,0,0,,用一个固定的名字\N{\fs33\c&H00C8C0B8&\bord1.4}under a fixed name.
+Dialogue: 0,0:06:01.21,0:06:03.73,Bilingual,,0,0,0,,它把 port 8000 发布到你的笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}It publishes port 8000 to your laptop,
+Dialogue: 0,0:06:03.73,0:06:09.10,Bilingual,,0,0,0,,把数据放在 docker-volumes 目录里，还让课程的网页工具连进来\N{\fs33\c&H00C8C0B8&\bord1.4}keeps its data in the docker-volumes/ folder, and lets the course's web tools in.
+Dialogue: 0,0:06:09.35,0:06:13.98,Bilingual,,0,0,0,,再看 Dockerfile：虚拟环境在 /.venv\N{\fs33\c&H00C8C0B8&\bord1.4}From the Dockerfile: the virtual environment lives in /.venv,
+Dialogue: 0,0:06:13.98,0:06:17.48,Bilingual,,0,0,0,,在 /app 外面，所以代码的挂载盖不住它\N{\fs33\c&H00C8C0B8&\bord1.4}outside /app, so the code mount can't hide it.
+Dialogue: 0,0:06:17.80,0:06:21.85,Bilingual,,0,0,0,,在笔记本上改 cli.py，再跑一次就行；不用重新构建\N{\fs33\c&H00C8C0B8&\bord1.4}Edit cli.py on your laptop and rerun; no rebuild.
+Dialogue: 0,0:06:22.10,0:06:24.89,Bilingual,,0,0,0,,第 3 步：sh docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: sh docker-shell.sh.
+Dialogue: 0,0:06:25.21,0:06:27.09,Bilingual,,0,0,0,,Compose 会 pull Chroma 的 image\N{\fs33\c&H00C8C0B8&\bord1.4}Compose pulls Chroma's image,
+Dialogue: 0,0:06:27.09,0:06:30.89,Bilingual,,0,0,0,,建好网络，并且先建 Chroma 的 container\N{\fs33\c&H00C8C0B8&\bord1.4}creates the network, and creates the Chroma container first.
+Dialogue: 0,0:06:31.13,0:06:33.86,Bilingual,,0,0,0,,然后是这个：看起来像报错，其实不是\N{\fs33\c&H00C8C0B8&\bord1.4}Then this, which looks like an error but isn't.
+Dialogue: 0,0:06:34.18,0:06:39.79,Bilingual,,0,0,0,,Compose 在 Docker Hub 上没找到叫 llm-rag-cli 的 image\N{\fs33\c&H00C8C0B8&\bord1.4}Compose first asks Docker Hub for an image called llm-rag-cli, finds none,
+Dialogue: 0,0:06:39.79,0:06:41.46,Bilingual,,0,0,0,,就改为自己构建\N{\fs33\c&H00C8C0B8&\bord1.4}and builds it instead.
+Dialogue: 0,0:06:41.70,0:06:43.70,Bilingual,,0,0,0,,这里构建用了 81 秒\N{\fs33\c&H00C8C0B8&\bord1.4}The build took 81 seconds here.
+Dialogue: 0,0:06:44.02,0:06:46.86,Bilingual,,0,0,0,,构建上下文有 112 MB\N{\fs33\c&H00C8C0B8&\bord1.4}Its context was 112 megabytes.
+Dialogue: 0,0:06:47.18,0:06:52.17,Bilingual,,0,0,0,,其中大部分是 git 历史，里面还留着课程团队数据库的旧拷贝\N{\fs33\c&H00C8C0B8&\bord1.4}Most of it is git history, which still holds an old copy of the staff's database.
+Dialogue: 0,0:06:52.49,0:06:55.59,Bilingual,,0,0,0,,因为没有 .dockerignore 文件，image 会把它留下来\N{\fs33\c&H00C8C0B8&\bord1.4}With no .dockerignore file, the image keeps it.
+Dialogue: 0,0:06:55.83,0:07:03.53,Bilingual,,0,0,0,,然后是横幅：Python 3.12.15 和 uv 0.13.1，都是录制时的版本\N{\fs33\c&H00C8C0B8&\bord1.4}Then the banner: Python 3.12.15 and uv 0.13.1, at the time of recording.
+Dialogue: 0,0:07:03.85,0:07:07.20,Bilingual,,0,0,0,,它在激活之前就说已经激活了：只是显示问题\N{\fs33\c&H00C8C0B8&\bord1.4}It says activated before it activates: cosmetic.
+Dialogue: 0,0:07:07.45,0:07:09.23,Bilingual,,0,0,0,,你现在到了 container 的提示符\N{\fs33\c&H00C8C0B8&\bord1.4}You're at the container's prompt.
+Dialogue: 0,0:07:09.50,0:07:14.43,Bilingual,,0,0,0,,提示符里 @ 符号后面是 container ID；每次运行都会变\N{\fs33\c&H00C8C0B8&\bord1.4}The part after the at sign is the container's ID; it changes every run.
+Dialogue: 0,0:07:14.75,0:07:16.50,Bilingual,,0,0,0,,暂停一下，走到这个提示符\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and get to this prompt.
+Dialogue: 0,0:07:19.83,0:07:22.14,Bilingual,,0,0,0,,用额外检查核对这张图\N{\fs33\c&H00C8C0B8&\bord1.4}Check the picture with extras:
+Dialogue: 0,0:07:22.14,0:07:25.98,Bilingual,,0,0,0,,在笔记本上开第二个终端，cd 进 llm-rag\N{\fs33\c&H00C8C0B8&\bord1.4}open a second laptop terminal and cd into llm-rag.
+Dialogue: 0,0:07:26.30,0:07:28.63,Bilingual,,0,0,0,,用 docker ps 这条命令可以看到 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}The docker ps command shows Chroma
+Dialogue: 0,0:07:28.63,0:07:30.35,Bilingual,,0,0,0,,port 8000 已经发布出去了\N{\fs33\c&H00C8C0B8&\bord1.4}with port 8000 published.
+Dialogue: 0,0:07:30.67,0:07:34.47,Bilingual,,0,0,0,,但 CLI container 并不叫 llm-rag-cli\N{\fs33\c&H00C8C0B8&\bord1.4}But the CLI container isn't called llm-rag-cli:
+Dialogue: 0,0:07:34.47,0:07:36.90,Bilingual,,0,0,0,,compose run 会忽略这个名字\N{\fs33\c&H00C8C0B8&\bord1.4}compose run ignores that name.
+Dialogue: 0,0:07:37.13,0:07:38.53,Bilingual,,0,0,0,,再用 docker inspect\N{\fs33\c&H00C8C0B8&\bord1.4}And docker inspect,
+Dialogue: 0,0:07:38.53,0:07:41.27,Bilingual,,0,0,0,,带上 docker ps 给出的名字，就能列出挂载\N{\fs33\c&H00C8C0B8&\bord1.4}with the name from docker ps, lists the mounts.
+Dialogue: 0,0:07:41.59,0:07:44.85,Bilingual,,0,0,0,,这个 repo 在 /app，secrets 在 /secrets\N{\fs33\c&H00C8C0B8&\bord1.4}The repo is on /app, secrets on /secrets,
+Dialogue: 0,0:07:44.85,0:07:48.74,Bilingual,,0,0,0,,docker-volumes 目录在 Chroma 的 /data\N{\fs33\c&H00C8C0B8&\bord1.4}and the docker-volumes/ folder on Chroma's /data.
+Dialogue: 0,0:07:49.10,0:07:53.32,Bilingual,,0,0,0,,在 container 里，你的项目 ID 和密钥的路径都传进来了\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the container, your Project ID and the key's path arrived.
+Dialogue: 0,0:07:53.64,0:07:56.65,Bilingual,,0,0,0,,我们的 secrets 目录是空的，没有密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Our secrets folder is empty, with no key;
+Dialogue: 0,0:07:56.65,0:07:59.00,Bilingual,,0,0,0,,你的应该能列出那个 JSON 文件\N{\fs33\c&H00C8C0B8&\bord1.4}yours should list the JSON file.
+Dialogue: 0,0:07:59.23,0:08:03.01,Bilingual,,0,0,0,,CLI 通过网络的电话簿，按名字找到 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}The CLI finds Chroma by name, through the network's phone book.
+Dialogue: 0,0:08:03.33,0:08:07.36,Bilingual,,0,0,0,,在你的笔记本上，心跳通过 localhost:8000 回来\N{\fs33\c&H00C8C0B8&\bord1.4}From your laptop, the heartbeat comes through localhost:8000,
+Dialogue: 0,0:08:07.36,0:08:10.26,Bilingual,,0,0,0,,这就是发布出去的那扇门，给你和你的浏览器用\N{\fs33\c&H00C8C0B8&\bord1.4}the published door for you and your browser.
+Dialogue: 0,0:08:10.50,0:08:14.30,Bilingual,,0,0,0,,Docker 已经在你的笔记本上建好了 Chroma 的数据目录\N{\fs33\c&H00C8C0B8&\bord1.4}Docker already created Chroma's data folder on your laptop,
+Dialogue: 0,0:08:14.30,0:08:17.14,Bilingual,,0,0,0,,属主是 root，数据库文件就在里面\N{\fs33\c&H00C8C0B8&\bord1.4}owned by root, with the database file in it.
+Dialogue: 0,0:08:17.46,0:08:20.27,Bilingual,,0,0,0,,在 Linux 上，以后删它要用 sudo\N{\fs33\c&H00C8C0B8&\bord1.4}On Linux, deleting it later will need sudo.
+Dialogue: 0,0:08:20.52,0:08:22.56,Bilingual,,0,0,0,,接下来是两个陷阱，我们故意踩一下\N{\fs33\c&H00C8C0B8&\bord1.4}Now two traps, hit on purpose.
+Dialogue: 0,0:08:22.88,0:08:25.70,Bilingual,,0,0,0,,陷阱一：自己敲 compose 命令\N{\fs33\c&H00C8C0B8&\bord1.4}Trap one: typing the compose command yourself.
+Dialogue: 0,0:08:26.02,0:08:30.72,Bilingual,,0,0,0,,两个变量都是空的，连分块都在启动时就挂了\N{\fs33\c&H00C8C0B8&\bord1.4}Both variables come out blank, and even chunking dies at startup,
+Dialogue: 0,0:08:30.72,0:08:33.53,Bilingual,,0,0,0,,cli.py 在那里创建 Google 客户端\N{\fs33\c&H00C8C0B8&\bord1.4}where cli.py creates its Google client,
+Dialogue: 0,0:08:33.53,0:08:36.13,Bilingual,,0,0,0,,去找一个没有名字的密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}looking for a key file with no name.
+Dialogue: 0,0:08:36.45,0:08:38.20,Bilingual,,0,0,0,,一定要通过脚本启动\N{\fs33\c&H00C8C0B8&\bord1.4}Always start through the script.
+Dialogue: 0,0:08:38.45,0:08:40.64,Bilingual,,0,0,0,,陷阱二：clone 用了别的名字\N{\fs33\c&H00C8C0B8&\bord1.4}Trap two: a clone with another name,
+Dialogue: 0,0:08:40.64,0:08:43.14,Bilingual,,0,0,0,,比如下载 zip 包解压出来的那种目录\N{\fs33\c&H00C8C0B8&\bord1.4}like the folder a zip download gives you.
+Dialogue: 0,0:08:43.46,0:08:46.72,Bilingual,,0,0,0,,这个 compose 文件挂载的是名叫 llm-rag 的目录\N{\fs33\c&H00C8C0B8&\bord1.4}The compose file mounts a folder named llm-rag,
+Dialogue: 0,0:08:46.72,0:08:51.02,Bilingual,,0,0,0,,所以 Docker 会建一个空目录，属主是 root，盖在你的代码上\N{\fs33\c&H00C8C0B8&\bord1.4}so Docker creates an empty one, owned by root, over your code.
+Dialogue: 0,0:08:51.34,0:08:53.92,Bilingual,,0,0,0,,名字保持不变，再把多出来的那个目录删掉\N{\fs33\c&H00C8C0B8&\bord1.4}Keep the name, and delete the stray folder.
+Dialogue: 0,0:08:54.17,0:09:00.05,Bilingual,,0,0,0,,最后一个怪现象：image 的 tag 叫 latest，而三个版本号对不上\N{\fs33\c&H00C8C0B8&\bord1.4}One last oddity: the image tag called latest, and three version numbers that don't match;
+Dialogue: 0,0:09:00.05,0:09:01.65,Bilingual,,0,0,0,,团队应该 pin 一个固定的 tag\N{\fs33\c&H00C8C0B8&\bord1.4}a team should pin a tag.
+Dialogue: 0,0:09:01.95,0:09:06.24,Bilingual,,0,0,0,,暂停一下，试试这些检查；最要紧的是你放在 /secrets 里的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try these checks; your key in /secrets matters most.
+Dialogue: 0,0:09:09.58,0:09:11.35,Bilingual,,0,0,0,,建索引从分块开始\N{\fs33\c&H00C8C0B8&\bord1.4}Indexing starts with chunking.
+Dialogue: 0,0:09:11.67,0:09:14.69,Bilingual,,0,0,0,,一整本书只用一个向量，会把书里的话题平均掉\N{\fs33\c&H00C8C0B8&\bord1.4}One vector for a whole book averages its topics,
+Dialogue: 0,0:09:14.69,0:09:17.26,Bilingual,,0,0,0,,于是每个问题都会取回整本书\N{\fs33\c&H00C8C0B8&\bord1.4}so every question fetches the whole book.
+Dialogue: 0,0:09:17.58,0:09:21.94,Bilingual,,0,0,0,,每次都发 11 本书，又慢又贵，得到的还是垃圾\N{\fs33\c&H00C8C0B8&\bord1.4}Sending 11 books each time is slow, costly, and gives garbage.
+Dialogue: 0,0:09:22.26,0:09:25.03,Bilingual,,0,0,0,,一个 chunk 小到可以被找到，也小到可以贴进去\N{\fs33\c&H00C8C0B8&\bord1.4}A chunk is small enough to find, and to paste.
+Dialogue: 0,0:09:26.87,0:09:30.17,Bilingual,,0,0,0,,第 1 步是一个链接：README 里的 chunk 可视化工具\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1 is a link: the README's chunk visualizer.
+Dialogue: 0,0:09:30.49,0:09:34.82,Bilingual,,0,0,0,,在 Chrome 里打开，拖拖滑块；它展示的想法是这样的\N{\fs33\c&H00C8C0B8&\bord1.4}Open it in Chrome and play with the sliders; here's the idea it shows.
+Dialogue: 0,0:09:35.67,0:09:37.57,Bilingual,,0,0,0,,按字符切分就是一把尺子\N{\fs33\c&H00C8C0B8&\bord1.4}Character splitting is a ruler.
+Dialogue: 0,0:09:37.89,0:09:43.69,Bilingual,,0,0,0,,第 185 和 186 行设定了 350 个字符的窗口\N{\fs33\c&H00C8C0B8&\bord1.4}Lines 185 and 186 set windows of 350 characters,
+Dialogue: 0,0:09:43.69,0:09:45.86,Bilingual,,0,0,0,,相邻窗口重叠 20 个\N{\fs33\c&H00C8C0B8&\bord1.4}overlapping by 20.
+Dialogue: 0,0:09:46.18,0:09:52.63,Bilingual,,0,0,0,,分隔符是空的，所以它数的是字符，不是单词，每次前进 330 个\N{\fs33\c&H00C8C0B8&\bord1.4}The separator is empty, so it counts characters, not words, stepping 330 at a time.
+Dialogue: 0,0:09:52.93,0:09:57.16,Bilingual,,0,0,0,,授课老师的故事长 7808 个字符\N{\fs33\c&H00C8C0B8&\bord1.4}The instructor's story is 7,808 characters long.
+Dialogue: 0,0:09:57.48,0:10:02.09,Bilingual,,0,0,0,,窗口大小 350，重叠 20：会切出多少个 chunk？\N{\fs33\c&H00C8C0B8&\bord1.4}Windows of 350 that overlap by 20: how many chunks?
+Dialogue: 0,0:10:10.93,0:10:17.29,Bilingual,,0,0,0,,第一个窗口取 350 个字符，之后每个窗口新增 330 个\N{\fs33\c&H00C8C0B8&\bord1.4}The first window takes 350 characters, and each one after it adds 330 new ones.
+Dialogue: 0,0:10:17.61,0:10:23.97,Bilingual,,0,0,0,,剩下的 7458 个字符还要 23 个窗口：一共 24 个 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}7,458 more characters need 23 more windows: 24 chunks.
+Dialogue: 0,0:10:25.03,0:10:30.30,Bilingual,,0,0,0,,第 2 步：python cli.py --chunk，用 char-split\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2: python cli.py --chunk --chunk_type char-split.
+Dialogue: 0,0:10:30.62,0:10:35.57,Bilingual,,0,0,0,,它读入 11 本书，打印每本书的 chunk 数；故事得到 24 个\N{\fs33\c&H00C8C0B8&\bord1.4}It reads 11 books and prints each book's chunk count; the story gets 24.
+Dialogue: 0,0:10:35.89,0:10:38.90,Bilingual,,0,0,0,,不需要密钥：代码里的这个分支从不调用 Google\N{\fs33\c&H00C8C0B8&\bord1.4}No key needed: this branch never calls Google.
+Dialogue: 0,0:10:39.22,0:10:40.82,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:10:42.62,0:10:49.89,Bilingual,,0,0,0,,额外数一下 chunk 文件的行数：故事是 24 行，一共 8248 行\N{\fs33\c&H00C8C0B8&\bord1.4}An extra line count of the chunk files: 24 for the story, and 8,248 in total.
+Dialogue: 0,0:10:50.13,0:10:51.75,Bilingual,,0,0,0,,额外看一眼接缝\N{\fs33\c&H00C8C0B8&\bord1.4}An extra look at the seam.
+Dialogue: 0,0:10:52.07,0:10:55.19,Bilingual,,0,0,0,,第 0 个 chunk 停在 accomplish 这个词的前两个字母上\N{\fs33\c&H00C8C0B8&\bord1.4}Chunk 0 stops two letters into the word accomplish.
+Dialogue: 0,0:10:55.51,0:10:57.52,Bilingual,,0,0,0,,第 1 个 chunk 往回退 20 个字符\N{\fs33\c&H00C8C0B8&\bord1.4}Chunk 1 backs up 20 characters,
+Dialogue: 0,0:10:57.52,0:11:01.33,Bilingual,,0,0,0,,退到 things 的最后一个字母，所以 accomplish 又完整了\N{\fs33\c&H00C8C0B8&\bord1.4}to the last letter of things, so accomplish is whole again.
+Dialogue: 0,0:11:01.65,0:11:04.90,Bilingual,,0,0,0,,课上的例子里，切出的块首尾相接，没有重叠\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's pieces sit end to end, with no overlap.
+Dialogue: 0,0:11:05.13,0:11:07.33,Bilingual,,0,0,0,,这些 chunk 文件落在 outputs 目录里\N{\fs33\c&H00C8C0B8&\bord1.4}The chunk files land in outputs/,
+Dialogue: 0,0:11:07.33,0:11:09.78,Bilingual,,0,0,0,,就在你的笔记本上，git 会忽略它们\N{\fs33\c&H00C8C0B8&\bord1.4}on your laptop, and git ignores them.
+Dialogue: 0,0:11:10.10,0:11:11.81,Bilingual,,0,0,0,,一本 Gutenberg 书的第 0 行\N{\fs33\c&H00C8C0B8&\bord1.4}Row 0 of a Gutenberg book
+Dialogue: 0,0:11:11.81,0:11:16.19,Bilingual,,0,0,0,,是 Project Gutenberg 的开头声明：这些书开头是声明\N{\fs33\c&H00C8C0B8&\bord1.4}is the Project Gutenberg header: these books start with a header
+Dialogue: 0,0:11:16.19,0:11:19.68,Bilingual,,0,0,0,,结尾是许可证，两者都和正文一样切成了 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}and end with a license, both chunked like the rest.
+Dialogue: 0,0:11:21.62,0:11:26.29,Bilingual,,0,0,0,,递归切分只给了 chunk 大小，还是 350\N{\fs33\c&H00C8C0B8&\bord1.4}Recursive splitting gets only a chunk size, the same 350.
+Dialogue: 0,0:11:26.61,0:11:28.21,Bilingual,,0,0,0,,没有指定重叠\N{\fs33\c&H00C8C0B8&\bord1.4}No overlap is given.
+Dialogue: 0,0:11:29.00,0:11:31.67,Bilingual,,0,0,0,,它就像一把会找最佳缝隙的剪刀\N{\fs33\c&H00C8C0B8&\bord1.4}It works like scissors that look for the best gap.
+Dialogue: 0,0:11:31.99,0:11:35.72,Bilingual,,0,0,0,,先找段落之间的空行，再找换行\N{\fs33\c&H00C8C0B8&\bord1.4}First a blank line between paragraphs, then a line break,
+Dialogue: 0,0:11:35.72,0:11:39.64,Bilingual,,0,0,0,,再找空格，实在不行才切在单个字符上\N{\fs33\c&H00C8C0B8&\bord1.4}then a space, and only as a last resort, a single character.
+Dialogue: 0,0:11:39.96,0:11:42.01,Bilingual,,0,0,0,,所以每个切点都落在单词之间\N{\fs33\c&H00C8C0B8&\bord1.4}So every cut falls between words.
+Dialogue: 0,0:11:42.65,0:11:46.30,Bilingual,,0,0,0,,第 3 步：同一条命令，chunk type 换成 recursive-split\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: the same command with --chunk_type recursive-split.
+Dialogue: 0,0:11:46.62,0:11:53.89,Bilingual,,0,0,0,,故事现在切出 35 个 chunk，额外数一下行数，一共 14228 个\N{\fs33\c&H00C8C0B8&\bord1.4}The story now makes 35 chunks, and an extra line count gives 14,228 in total.
+Dialogue: 0,0:11:54.21,0:11:55.81,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:11:57.60,0:12:00.20,Bilingual,,0,0,0,,同样的 chunk 大小，350\N{\fs33\c&H00C8C0B8&\bord1.4}Same chunk size, 350.
+Dialogue: 0,0:12:00.52,0:12:06.56,Bilingual,,0,0,0,,那为什么是 14228 个 chunk，而不是 8248 个？\N{\fs33\c&H00C8C0B8&\bord1.4}So why 14,228 chunks instead of 8,248?
+Dialogue: 0,0:12:18.35,0:12:19.95,Bilingual,,0,0,0,,看看前几个 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the first chunks.
+Dialogue: 0,0:12:20.14,0:12:22.59,Bilingual,,0,0,0,,第 1 个 chunk 又从 Chapter One 开始\N{\fs33\c&H00C8C0B8&\bord1.4}Chunk 1 starts again with Chapter One,
+Dialogue: 0,0:12:22.59,0:12:24.45,Bilingual,,0,0,0,,重复了第 0 个 chunk 的结尾\N{\fs33\c&H00C8C0B8&\bord1.4}repeating the end of chunk 0.
+Dialogue: 0,0:12:24.77,0:12:26.79,Bilingual,,0,0,0,,这个切分器的库默认\N{\fs33\c&H00C8C0B8&\bord1.4}The splitter's library default
+Dialogue: 0,0:12:26.79,0:12:31.58,Bilingual,,0,0,0,,最多重叠 200 个字符，README 从没提过\N{\fs33\c&H00C8C0B8&\bord1.4}is an overlap of up to 200 characters, which the README never mentions.
+Dialogue: 0,0:12:31.90,0:12:34.54,Bilingual,,0,0,0,,在边界处切开，也会让 chunk 变短\N{\fs33\c&H00C8C0B8&\bord1.4}Cutting at boundaries also makes chunks shorter.
+Dialogue: 0,0:12:34.78,0:12:38.15,Bilingual,,0,0,0,,重叠是一份保险，防止把一个意思切成两半\N{\fs33\c&H00C8C0B8&\bord1.4}Overlap is insurance against cutting an idea in half.
+Dialogue: 0,0:12:38.47,0:12:42.27,Bilingual,,0,0,0,,但每个重复的字符都要向量化、存储，还要付钱\N{\fs33\c&H00C8C0B8&\bord1.4}But every repeated character is embedded, stored, and paid for.
+Dialogue: 0,0:12:42.59,0:12:45.94,Bilingual,,0,0,0,,想要别的值，就自己设置 chunk overlap 参数\N{\fs33\c&H00C8C0B8&\bord1.4}If you want a different value, set chunk_overlap yourself.
+Dialogue: 0,0:12:46.18,0:12:50.68,Bilingual,,0,0,0,,课上的观点是：理想的 chunk 应该顺着文档自身的结构\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's point is that ideal chunks follow the document's own structure.
+Dialogue: 0,0:12:51.00,0:12:54.44,Bilingual,,0,0,0,,递归切分做到了一部分，靠的是段落\N{\fs33\c&H00C8C0B8&\bord1.4}Recursive splitting goes part of the way, using paragraphs.
+Dialogue: 0,0:12:54.76,0:12:57.55,Bilingual,,0,0,0,,第二部分的语义分块走得更远\N{\fs33\c&H00C8C0B8&\bord1.4}Semantic chunking, in part 2, goes further.
+Dialogue: 0,0:12:59.50,0:13:01.16,Bilingual,,0,0,0,,接下来是 embedding 模型\N{\fs33\c&H00C8C0B8&\bord1.4}Next, the embedding model.
+Dialogue: 0,0:13:01.48,0:13:05.26,Bilingual,,0,0,0,,它把每个 chunk 变成一个向量，也就是一串数字\N{\fs33\c&H00C8C0B8&\bord1.4}It turns each chunk into one vector, a list of numbers,
+Dialogue: 0,0:13:05.26,0:13:08.55,Bilingual,,0,0,0,,让意思相近的指向相近的方向\N{\fs33\c&H00C8C0B8&\bord1.4}so similar meanings point in similar directions:
+Dialogue: 0,0:13:08.55,0:13:12.32,Bilingual,,0,0,0,,在这张示意图里，讲凝乳的挨着讲凝乳的，许可证文本在别处\N{\fs33\c&H00C8C0B8&\bord1.4}in this sketch, curd near curd, license text elsewhere.
+Dialogue: 0,0:13:12.87,0:13:16.22,Bilingual,,0,0,0,,课上的性格游戏把这件事讲得很具体\N{\fs33\c&H00C8C0B8&\bord1.4}The personality game from lecture makes this concrete:
+Dialogue: 0,0:13:16.22,0:13:19.57,Bilingual,,0,0,0,,三个候选人中哪个最像授课老师？\N{\fs33\c&H00C8C0B8&\bord1.4}which of three candidates is most like the instructor?
+Dialogue: 0,0:13:19.89,0:13:23.17,Bilingual,,0,0,0,,五个分数把每个人变成一个五维向量\N{\fs33\c&H00C8C0B8&\bord1.4}Five scores make each person a five-number vector.
+Dialogue: 0,0:13:23.49,0:13:28.20,Bilingual,,0,0,0,,余弦相似度只比较夹角，选中的是第一个候选人\N{\fs33\c&H00C8C0B8&\bord1.4}Cosine similarity compares only the angle, and picks the first candidate.
+Dialogue: 0,0:13:28.45,0:13:34.15,Bilingual,,0,0,0,,点积还会算上长度，会选中第二个候选人，也就是箭头更长的那个\N{\fs33\c&H00C8C0B8&\bord1.4}The dot product also counts length, and would pick the second candidate, whose arrow is longer.
+Dialogue: 0,0:13:34.47,0:13:38.65,Bilingual,,0,0,0,,所以度量是一个选择；对文本来说，常用的是余弦\N{\fs33\c&H00C8C0B8&\bord1.4}So a measure is a choice; for text, cosine is the usual one.
+Dialogue: 0,0:13:39.18,0:13:46.54,Bilingual,,0,0,0,,教程用的模型是 gemini-embedding-001，原生返回 3072 个数\N{\fs33\c&H00C8C0B8&\bord1.4}The tutorial's model, gemini-embedding-001, natively returns 3,072 numbers.
+Dialogue: 0,0:13:46.86,0:13:49.59,Bilingual,,0,0,0,,代码只要前 256 个\N{\fs33\c&H00C8C0B8&\bord1.4}The code asks for the first 256.
+Dialogue: 0,0:13:49.91,0:13:53.20,Bilingual,,0,0,0,,模型训练时就让这段前缀单独也能用\N{\fs33\c&H00C8C0B8&\bord1.4}The model is trained to make that prefix useful alone.
+Dialogue: 0,0:13:53.43,0:13:56.44,Bilingual,,0,0,0,,这些 chunk 每批 100 个发给模型\N{\fs33\c&H00C8C0B8&\bord1.4}Chunks go to the model in batches of 100.
+Dialogue: 0,0:13:56.76,0:13:59.91,Bilingual,,0,0,0,,遇到 API 错误，它最多重试 5 次\N{\fs33\c&H00C8C0B8&\bord1.4}On an API error, it retries up to 5 times,
+Dialogue: 0,0:13:59.91,0:14:02.39,Bilingual,,0,0,0,,等待时间从 5 秒开始逐次翻倍\N{\fs33\c&H00C8C0B8&\bord1.4}doubling the wait from 5 seconds.
+Dialogue: 0,0:14:02.63,0:14:05.51,Bilingual,,0,0,0,,你的问题之后也会用这同一个模型\N{\fs33\c&H00C8C0B8&\bord1.4}Your question will use this same model, later.
+Dialogue: 0,0:14:05.83,0:14:08.52,Bilingual,,0,0,0,,现在是 chunk，之后是问题：同一个模型\N{\fs33\c&H00C8C0B8&\bord1.4}Chunks now, questions later: one model.
+Dialogue: 0,0:14:08.77,0:14:14.14,Bilingual,,0,0,0,,第 1 步：python cli.py --embed，用 char-split\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1: python cli.py --embed --chunk_type char-split.
+Dialogue: 0,0:14:14.46,0:14:16.19,Bilingual,,0,0,0,,这是首次调用 Google\N{\fs33\c&H00C8C0B8&\bord1.4}It's the first call to Google.
+Dialogue: 0,0:14:16.51,0:14:20.91,Bilingual,,0,0,0,,在我们的机器上，它读入第一本书，然后停住了：没有密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}On our machine it reads the first book, then stops at the missing key file.
+Dialogue: 0,0:14:21.23,0:14:22.83,Bilingual,,0,0,0,,在你的机器上，它能跑通\N{\fs33\c&H00C8C0B8&\bord1.4}On yours, it runs.
+Dialogue: 0,0:14:22.90,0:14:25.54,Bilingual,,0,0,0,,有密钥的话，要找的是每本书的文件\N{\fs33\c&H00C8C0B8&\bord1.4}With your key, look for each book's file,
+Dialogue: 0,0:14:25.54,0:14:28.82,Bilingual,,0,0,0,,5 秒的停顿、一张带 embedding 列的表\N{\fs33\c&H00C8C0B8&\bord1.4}a 5-second pause, a table with an embedding column,
+Dialogue: 0,0:14:28.82,0:14:31.58,Bilingual,,0,0,0,,以及 chunk 旁边新出现的 embeddings 文件\N{\fs33\c&H00C8C0B8&\bord1.4}and new embeddings files beside the chunks.
+Dialogue: 0,0:14:31.82,0:14:34.97,Bilingual,,0,0,0,,如果你那边失败了，或者一直在重试，就去读报错\N{\fs33\c&H00C8C0B8&\bord1.4}If yours fails, or keeps retrying, read the error.
+Dialogue: 0,0:14:35.29,0:14:38.43,Bilingual,,0,0,0,,找不到密钥文件：检查 secrets 目录里它的名字\N{\fs33\c&H00C8C0B8&\bord1.4}Key file not found: check its name in secrets.
+Dialogue: 0,0:14:38.75,0:14:40.25,Bilingual,,0,0,0,,报 permission denied\N{\fs33\c&H00C8C0B8&\bord1.4}PERMISSION_DENIED:
+Dialogue: 0,0:14:40.25,0:14:44.62,Bilingual,,0,0,0,,改好项目 ID 或角色，然后退出，重新运行脚本\N{\fs33\c&H00C8C0B8&\bord1.4}fix the Project ID or the role, then exit and start the script again.
+Dialogue: 0,0:14:44.94,0:14:47.82,Bilingual,,0,0,0,,报 service disabled：把 API 打开\N{\fs33\c&H00C8C0B8&\bord1.4}SERVICE_DISABLED: switch on the API.
+Dialogue: 0,0:14:48.07,0:14:50.75,Bilingual,,0,0,0,,第 2 步对 recursive-split 做同样的事\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2 does the same for recursive-split.
+Dialogue: 0,0:14:51.07,0:14:53.92,Bilingual,,0,0,0,,暂停一下，用你的密钥两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both, with your key:
+Dialogue: 0,0:14:53.92,0:14:58.26,Bilingual,,0,0,0,,大约 89 次和 148 次调用，按我们的估算只要几美分\N{\fs33\c&H00C8C0B8&\bord1.4}about 89 and 148 calls, a few cents by our estimate.
+Dialogue: 0,0:14:58.58,0:15:00.18,Bilingual,,0,0,0,,具体以现行的价目表为准\N{\fs33\c&H00C8C0B8&\bord1.4}Check the current price list.
+Dialogue: 0,0:15:02.40,0:15:05.33,Bilingual,,0,0,0,,视频接下来用课程团队自己的输出\N{\fs33\c&H00C8C0B8&\bord1.4}The video goes on with the staff's own outputs,
+Dialogue: 0,0:15:05.33,0:15:08.44,Bilingual,,0,0,0,,它们曾经 commit 过，至今还在每个 clone 的历史里\N{\fs33\c&H00C8C0B8&\bord1.4}once committed and still in every clone's history.
+Dialogue: 0,0:15:08.76,0:15:11.26,Bilingual,,0,0,0,,他们的 chunk 文件和我们的逐字节相同\N{\fs33\c&H00C8C0B8&\bord1.4}Their chunk files match ours byte for byte,
+Dialogue: 0,0:15:11.26,0:15:13.88,Bilingual,,0,0,0,,所以他们的向量就是这条命令会生成的向量\N{\fs33\c&H00C8C0B8&\bord1.4}so their vectors are what this command makes.
+Dialogue: 0,0:15:14.12,0:15:16.44,Bilingual,,0,0,0,,额外检查一下故事的向量\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check on the story's vectors.
+Dialogue: 0,0:15:16.76,0:15:19.90,Bilingual,,0,0,0,,24 行，每行 256 个数\N{\fs33\c&H00C8C0B8&\bord1.4}24 rows of 256 numbers.
+Dialogue: 0,0:15:20.22,0:15:26.11,Bilingual,,0,0,0,,它们的长度在 0.369 到 0.402 之间，不是 1\N{\fs33\c&H00C8C0B8&\bord1.4}Their lengths run from 0.369 to 0.402, not 1.
+Dialogue: 0,0:15:26.35,0:15:29.74,Bilingual,,0,0,0,,等我们加载这些向量时，数据库会按余弦来比较\N{\fs33\c&H00C8C0B8&\bord1.4}When we load them, the database will compare by cosine,
+Dialogue: 0,0:15:29.74,0:15:31.96,Bilingual,,0,0,0,,而这些箭头的长度都不到 1\N{\fs33\c&H00C8C0B8&\bord1.4}and these arrows are shorter than 1.
+Dialogue: 0,0:15:32.28,0:15:34.65,Bilingual,,0,0,0,,这会改变哪些 chunk 算是最近的吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Does that change which chunks count as nearest?
+Dialogue: 0,0:15:43.48,0:15:45.85,Bilingual,,0,0,0,,不会：余弦只看夹角\N{\fs33\c&H00C8C0B8&\bord1.4}No: cosine only sees the angle.
+Dialogue: 0,0:15:46.17,0:15:49.01,Bilingual,,0,0,0,,要是用直线距离，也就是 Chroma 的默认值\N{\fs33\c&H00C8C0B8&\bord1.4}With straight-line distance, Chroma's default,
+Dialogue: 0,0:15:49.01,0:15:53.45,Bilingual,,0,0,0,,或者用点积，长度就会渗进排名：这就是那个游戏的教训\N{\fs33\c&H00C8C0B8&\bord1.4}or a dot product, length would leak into the ranking: the game's lesson.
+Dialogue: 0,0:15:56.28,0:15:59.45,Bilingual,,0,0,0,,普通数据库回答的是精确的问题\N{\fs33\c&H00C8C0B8&\bord1.4}An ordinary database answers precise questions,
+Dialogue: 0,0:15:59.45,0:16:05.39,Bilingual,,0,0,0,,比如价格在 10 到 50 之间，但它找不到意思和问题相近的行\N{\fs33\c&H00C8C0B8&\bord1.4}like a price between 10 and 50, but it can't find rows whose meaning is like a question.
+Dialogue: 0,0:16:05.71,0:16:07.31,Bilingual,,0,0,0,,向量数据库可以\N{\fs33\c&H00C8C0B8&\bord1.4}A vector database can.
+Dialogue: 0,0:16:07.55,0:16:09.39,Bilingual,,0,0,0,,每个 chunk 变成一条记录\N{\fs33\c&H00C8C0B8&\bord1.4}Each chunk becomes a record:
+Dialogue: 0,0:16:09.39,0:16:13.91,Bilingual,,0,0,0,,一个 ID，文本，包含书名、作者和年份的元数据，还有向量\N{\fs33\c&H00C8C0B8&\bord1.4}an ID, the text, metadata with book, author and year, and the vector.
+Dialogue: 0,0:16:14.23,0:16:18.13,Bilingual,,0,0,0,,这个 ID 是对书名加行号做哈希得到的，所以是稳定的\N{\fs33\c&H00C8C0B8&\bord1.4}The ID hashes the book's name plus the row number, so it's stable.
+Dialogue: 0,0:16:18.37,0:16:21.46,Bilingual,,0,0,0,,记录放进一个 collection，每种 chunk type 一个\N{\fs33\c&H00C8C0B8&\bord1.4}Records go into a collection, one per chunk type.
+Dialogue: 0,0:16:21.78,0:16:24.85,Bilingual,,0,0,0,,而 load 这一步先删掉它，再重新创建\N{\fs33\c&H00C8C0B8&\bord1.4}The load step deletes it and creates it again,
+Dialogue: 0,0:16:24.85,0:16:28.65,Bilingual,,0,0,0,,用余弦作为度量：每次 load 都是完全重建\N{\fs33\c&H00C8C0B8&\bord1.4}with cosine as its measure: every load is a full rebuild.
+Dialogue: 0,0:16:28.88,0:16:32.17,Bilingual,,0,0,0,,拿问题和每个向量逐一比较，数据量一大就很慢\N{\fs33\c&H00C8C0B8&\bord1.4}Comparing a question with every vector is slow at scale.
+Dialogue: 0,0:16:32.49,0:16:36.50,Bilingual,,0,0,0,,所以数据库会建一个索引，就是这几页课件说的那种\N{\fs33\c&H00C8C0B8&\bord1.4}So the database builds an index, in these slides' sense:
+Dialogue: 0,0:16:36.50,0:16:41.45,Bilingual,,0,0,0,,一张叫 HNSW 的分层图，搜索几步就能一层层跳下来\N{\fs33\c&H00C8C0B8&\bord1.4}a layered graph called HNSW, where a search hops down in a few steps.
+Dialogue: 0,0:16:41.68,0:16:46.93,Bilingual,,0,0,0,,第 1 步：python cli.py --load，chunk type 用 char-split\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1: python cli.py --load --chunk_type char-split.
+Dialogue: 0,0:16:47.25,0:16:50.29,Bilingual,,0,0,0,,我们第一次运行时还没有 embedding\N{\fs33\c&H00C8C0B8&\bord1.4}On our first run there were no embeddings yet:
+Dialogue: 0,0:16:50.29,0:16:53.33,Bilingual,,0,0,0,,它建了一个空的 collection，找到 0 个文件\N{\fs33\c&H00C8C0B8&\bord1.4}it made an empty collection and found 0 files.
+Dialogue: 0,0:16:53.65,0:16:56.51,Bilingual,,0,0,0,,如果你看到 0，说明你的 embed 那一步没跑完\N{\fs33\c&H00C8C0B8&\bord1.4}If you see 0, your embed step didn't finish.
+Dialogue: 0,0:16:56.75,0:17:01.94,Bilingual,,0,0,0,,用课程团队留下的向量，同一条命令会删掉那个空的 collection\N{\fs33\c&H00C8C0B8&\bord1.4}On the staff's recorded vectors, the same command deletes that empty collection
+Dialogue: 0,0:17:01.94,0:17:04.84,Bilingual,,0,0,0,,读入 11 个带 embedding 列的文件\N{\fs33\c&H00C8C0B8&\bord1.4}and reads 11 files with an embedding column.
+Dialogue: 0,0:17:05.16,0:17:10.32,Bilingual,,0,0,0,,它插入 8248 条记录，每批 500 条\N{\fs33\c&H00C8C0B8&\bord1.4}It inserts 8,248 records, in batches of 500.
+Dialogue: 0,0:17:10.57,0:17:15.71,Bilingual,,0,0,0,,第 2 步加载 recursive-split，14228 条记录\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2 loads recursive-split, 14,228 records.
+Dialogue: 0,0:17:16.03,0:17:17.73,Bilingual,,0,0,0,,暂停一下，两次 load 都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both loads.
+Dialogue: 0,0:17:19.98,0:17:21.21,Bilingual,,0,0,0,,额外检查一下\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check:
+Dialogue: 0,0:17:21.21,0:17:26.70,Bilingual,,0,0,0,,两个 collection 现在的维度都是 256，由第一次插入决定\N{\fs33\c&H00C8C0B8&\bord1.4}both collections now have dimension 256, fixed by the first insert.
+Dialogue: 0,0:17:26.95,0:17:29.24,Bilingual,,0,0,0,,还有一本书没有作者和年份\N{\fs33\c&H00C8C0B8&\bord1.4}And one book has no author or year:
+Dialogue: 0,0:17:29.24,0:17:32.45,Bilingual,,0,0,0,,一个小疏漏，代码在第一个点就把文件名截断了\N{\fs33\c&H00C8C0B8&\bord1.4}a small slip cuts its file name at the first dot.
+Dialogue: 0,0:17:32.77,0:17:37.70,Bilingual,,0,0,0,,只去掉扩展名，删掉 outputs 目录里这本书的旧文件\N{\fs33\c&H00C8C0B8&\bord1.4}Split off only the extension, delete that book's old files in outputs/,
+Dialogue: 0,0:17:37.70,0:17:39.98,Bilingual,,0,0,0,,然后重新分块、向量化、加载\N{\fs33\c&H00C8C0B8&\bord1.4}then chunk, embed and load again.
+Dialogue: 0,0:17:40.23,0:17:43.28,Bilingual,,0,0,0,,你笔记本上的 docker-volumes 目录里\N{\fs33\c&H00C8C0B8&\bord1.4}The docker-volumes/ folder on your laptop
+Dialogue: 0,0:17:43.28,0:17:47.59,Bilingual,,0,0,0,,现在有一个 60 MB 的 SQLite 文件，还有两个索引目录\N{\fs33\c&H00C8C0B8&\bord1.4}now holds a 60-megabyte SQLite file and two index folders,
+Dialogue: 0,0:17:47.59,0:17:50.11,Bilingual,,0,0,0,,每个 collection 一个，属主都是 root\N{\fs33\c&H00C8C0B8&\bord1.4}one per collection, owned by root.
+Dialogue: 0,0:17:50.43,0:17:52.31,Bilingual,,0,0,0,,README 说它是持久化的\N{\fs33\c&H00C8C0B8&\bord1.4}The README calls it persistent.
+Dialogue: 0,0:17:52.55,0:17:55.62,Bilingual,,0,0,0,,第 3 步是一个链接，指向课程的 Chroma UI\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3 is a link to the course's Chroma UI.
+Dialogue: 0,0:17:55.94,0:18:00.32,Bilingual,,0,0,0,,在 Chrome 里打开，它会通过 port 8000 读取你本地的数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Opened in Chrome, it reads your local database through port 8000;
+Dialogue: 0,0:18:00.32,0:18:03.22,Bilingual,,0,0,0,,Chroma 的设置放行了课程的网站\N{\fs33\c&H00C8C0B8&\bord1.4}Chroma's settings let the course's site in.
+Dialogue: 0,0:18:03.47,0:18:06.09,Bilingual,,0,0,0,,上面这条通道完成了：索引建好了\N{\fs33\c&H00C8C0B8&\bord1.4}The top lane is done: the index is built.
+Dialogue: 0,0:18:06.41,0:18:08.57,Bilingual,,0,0,0,,第二部分，我们来向它提问\N{\fs33\c&H00C8C0B8&\bord1.4}In part 2, we ask it questions.
+Dialogue: 0,0:18:09.90,0:18:13.46,Bilingual,,0,0,0,,第一部分，我们建好了索引：分块、向量化、加载\N{\fs33\c&H00C8C0B8&\bord1.4}In part 1, we built the index: chunk, embed, load.
+Dialogue: 0,0:18:13.78,0:18:15.38,Bilingual,,0,0,0,,第二部分让它派上用场\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 puts it to work.
+Dialogue: 0,0:18:15.70,0:18:19.58,Bilingual,,0,0,0,,不过先测试一下：合上笔记本，索引还在吗？\N{\fs33\c&H00C8C0B8&\bord1.4}But first, a test: does the index survive closing the laptop?
+Dialogue: 0,0:18:19.83,0:18:21.65,Bilingual,,0,0,0,,怎么离开，README 里没写\N{\fs33\c&H00C8C0B8&\bord1.4}Leaving isn't in the README.
+Dialogue: 0,0:18:21.97,0:18:27.06,Bilingual,,0,0,0,,输入 exit，再在笔记本上列出所有 container：docker ps -a\N{\fs33\c&H00C8C0B8&\bord1.4}Type exit, and on the laptop, list every container with docker ps -a.
+Dialogue: 0,0:18:27.38,0:18:30.72,Bilingual,,0,0,0,,CLI container 已经没了，退出时就被删掉了\N{\fs33\c&H00C8C0B8&\bord1.4}The CLI container is gone, removed on exit,
+Dialogue: 0,0:18:30.72,0:18:34.83,Bilingual,,0,0,0,,但 Chroma 还在运行，port 8000 也还被占着\N{\fs33\c&H00C8C0B8&\bord1.4}but Chroma is still up, and port 8000 is still taken.
+Dialogue: 0,0:18:35.07,0:18:38.74,Bilingual,,0,0,0,,要停掉它，在 repo 目录里运行：docker compose down\N{\fs33\c&H00C8C0B8&\bord1.4}To stop it, run docker compose down from the repo folder.
+Dialogue: 0,0:18:39.06,0:18:41.51,Bilingual,,0,0,0,,有两条警告，说这两个变量没有设置\N{\fs33\c&H00C8C0B8&\bord1.4}Two warnings say the variables aren't set.
+Dialogue: 0,0:18:41.83,0:18:44.35,Bilingual,,0,0,0,,它们无害：只有脚本会设置这两个变量\N{\fs33\c&H00C8C0B8&\bord1.4}They're harmless: only the script sets them,
+Dialogue: 0,0:18:44.35,0:18:46.35,Bilingual,,0,0,0,,而 down 这条命令两个都不需要\N{\fs33\c&H00C8C0B8&\bord1.4}and the down command needs neither.
+Dialogue: 0,0:18:46.67,0:18:49.02,Bilingual,,0,0,0,,然后 Chroma 和网络就删掉了\N{\fs33\c&H00C8C0B8&\bord1.4}Then Chroma and the network are removed.
+Dialogue: 0,0:18:49.27,0:18:50.87,Bilingual,,0,0,0,,现在什么都没在运行了\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing is running now.
+Dialogue: 0,0:18:51.08,0:18:53.88,Bilingual,,0,0,0,,但你磁盘上的 docker-volumes 目录里\N{\fs33\c&H00C8C0B8&\bord1.4}But the docker-volumes/ folder on your disk
+Dialogue: 0,0:18:53.88,0:18:57.32,Bilingual,,0,0,0,,数据库文件和两个索引目录都还在\N{\fs33\c&H00C8C0B8&\bord1.4}still holds the database file and both index folders,
+Dialogue: 0,0:18:57.32,0:19:00.38,Bilingual,,0,0,0,,outputs 目录里的 chunk 文件也原封未动\N{\fs33\c&H00C8C0B8&\bord1.4}and your chunk files in outputs/ are untouched.
+Dialogue: 0,0:19:00.62,0:19:04.33,Bilingual,,0,0,0,,改天回来，再跑一次：sh docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Back another day: sh docker-shell.sh again.
+Dialogue: 0,0:19:04.65,0:19:07.21,Bilingual,,0,0,0,,不 pull，也不构建：image 已经有了\N{\fs33\c&H00C8C0B8&\bord1.4}No pull, no build: the image exists.
+Dialogue: 0,0:19:07.53,0:19:12.04,Bilingual,,0,0,0,,要是 git pull 改了依赖或 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}After a git pull that changes the dependencies or the Dockerfile,
+Dialogue: 0,0:19:12.04,0:19:14.18,Bilingual,,0,0,0,,先运行：docker compose build\N{\fs33\c&H00C8C0B8&\bord1.4}run docker compose build first.
+Dialogue: 0,0:19:14.50,0:19:16.10,Bilingual,,0,0,0,,暂停一下，重新启动\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and restart.
+Dialogue: 0,0:19:19.27,0:19:24.27,Bilingual,,0,0,0,,两个额外检查：两个 collection 都回来了，维度都是 256\N{\fs33\c&H00C8C0B8&\bord1.4}Two extra checks: both collections are back, with dimension 256,
+Dialogue: 0,0:19:24.27,0:19:29.36,Bilingual,,0,0,0,,一条叫 --get 的额外命令，返回的还是那 10 条记录的 ID\N{\fs33\c&H00C8C0B8&\bord1.4}and an extra command called --get returns the same 10 record IDs.
+Dialogue: 0,0:19:29.68,0:19:33.13,Bilingual,,0,0,0,,那个 container 是一次性的；数据从来不住在它里面\N{\fs33\c&H00C8C0B8&\bord1.4}The container was disposable; the data never lived in it.
+Dialogue: 0,0:19:34.48,0:19:36.08,Bilingual,,0,0,0,,现在看下面那条通道\N{\fs33\c&H00C8C0B8&\bord1.4}Now the bottom lane.
+Dialogue: 0,0:19:36.21,0:19:39.34,Bilingual,,0,0,0,,问题经过同一个 embedding 模型\N{\fs33\c&H00C8C0B8&\bord1.4}The question goes through the same embedding model
+Dialogue: 0,0:19:39.34,0:19:43.10,Bilingual,,0,0,0,,变成一个查询向量，和那些 chunk 在同一个空间里\N{\fs33\c&H00C8C0B8&\bord1.4}and becomes a query vector, in the same space as the chunks.
+Dialogue: 0,0:19:43.42,0:19:45.90,Bilingual,,0,0,0,,查询就是找它的最近邻\N{\fs33\c&H00C8C0B8&\bord1.4}Querying means finding its nearest neighbors.
+Dialogue: 0,0:19:46.13,0:19:49.29,Bilingual,,0,0,0,,课上拿查询给每个存好的向量打分\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture scores every stored vector against the query.
+Dialogue: 0,0:19:49.61,0:19:56.16,Bilingual,,0,0,0,,0.57、0.77、0.43、0.93\N{\fs33\c&H00C8C0B8&\bord1.4}0.57, 0.77, 0.43, 0.93.
+Dialogue: 0,0:19:56.48,0:20:00.36,Bilingual,,0,0,0,,按分数排序，保留 top K，K 是事先定好的\N{\fs33\c&H00C8C0B8&\bord1.4}Sort by score, and keep the top K, with K fixed in advance.
+Dialogue: 0,0:20:00.68,0:20:02.28,Bilingual,,0,0,0,,这份代码用的是 10\N{\fs33\c&H00C8C0B8&\bord1.4}This code uses 10.
+Dialogue: 0,0:20:02.35,0:20:06.77,Bilingual,,0,0,0,,有一点不同：课上按相似度排名，越高越好\N{\fs33\c&H00C8C0B8&\bord1.4}One difference: the lecture ranks by similarity, where higher is better.
+Dialogue: 0,0:20:07.09,0:20:12.57,Bilingual,,0,0,0,,Chroma 报的是余弦距离，也就是 1 减去相似度，越小越近\N{\fs33\c&H00C8C0B8&\bord1.4}Chroma reports cosine distance, one minus the similarity, where smaller is closer.
+Dialogue: 0,0:20:12.89,0:20:15.02,Bilingual,,0,0,0,,顺序一样，方向相反\N{\fs33\c&H00C8C0B8&\bord1.4}Same order, opposite direction.
+Dialogue: 0,0:20:15.27,0:20:17.32,Bilingual,,0,0,0,,而且一次查询总会返回 K 个结果\N{\fs33\c&H00C8C0B8&\bord1.4}And a query returns K results
+Dialogue: 0,0:20:17.32,0:20:20.79,Bilingual,,0,0,0,,只要有 K 个 chunk 可用，不管相关不相关\N{\fs33\c&H00C8C0B8&\bord1.4}whenever K chunks are available, relevant or not.
+Dialogue: 0,0:20:21.11,0:20:23.86,Bilingual,,0,0,0,,这份代码里没有任何地方设置距离阈值\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing in this code sets a distance threshold.
+Dialogue: 0,0:20:24.10,0:20:27.22,Bilingual,,0,0,0,,代码里，query 函数先设定问题\N{\fs33\c&H00C8C0B8&\bord1.4}In the code, the query function sets the question,
+Dialogue: 0,0:20:27.22,0:20:30.35,Bilingual,,0,0,0,,用同一个 Google 模型把它变成向量\N{\fs33\c&H00C8C0B8&\bord1.4}turns it into a vector with the same Google model,
+Dialogue: 0,0:20:30.35,0:20:32.72,Bilingual,,0,0,0,,再打开这个 chunk type 的 collection\N{\fs33\c&H00C8C0B8&\bord1.4}and opens the chunk type's collection.
+Dialogue: 0,0:20:32.97,0:20:38.28,Bilingual,,0,0,0,,第 1 步：python cli.py --query，用 char-split\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1: python cli.py --query --chunk_type char-split.
+Dialogue: 0,0:20:38.60,0:20:41.17,Bilingual,,0,0,0,,先说一个小疏漏：它打印的是 load 这个词\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip first: it prints load(),
+Dialogue: 0,0:20:41.17,0:20:43.53,Bilingual,,0,0,0,,这个标签是从加载的代码里抄过来的\N{\fs33\c&H00C8C0B8&\bord1.4}a label copied from the load code.
+Dialogue: 0,0:20:43.85,0:20:45.43,Bilingual,,0,0,0,,然后它连上了 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}Then it connects to Chroma,
+Dialogue: 0,0:20:45.43,0:20:49.52,Bilingual,,0,0,0,,但在把问题向量化时卡在了密钥上，还没开始搜索\N{\fs33\c&H00C8C0B8&\bord1.4}but stops at the key while embedding the question, before it searches.
+Dialogue: 0,0:20:49.77,0:20:54.18,Bilingual,,0,0,0,,问题必须先变成向量，数据库才能拿它来比较\N{\fs33\c&H00C8C0B8&\bord1.4}The question must become a vector before the database can compare it,
+Dialogue: 0,0:20:54.18,0:20:57.96,Bilingual,,0,0,0,,而只有同一个 Google 模型才能做出同一个空间里的向量\N{\fs33\c&H00C8C0B8&\bord1.4}and only the same Google model makes one in the same space.
+Dialogue: 0,0:20:58.20,0:21:00.63,Bilingual,,0,0,0,,第 2 步用 recursive-split 再跑一次\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2 runs it on recursive-split.
+Dialogue: 0,0:21:00.95,0:21:06.61,Bilingual,,0,0,0,,有密钥的话，要找的是：256 个 embedding 值、查询，以及结果\N{\fs33\c&H00C8C0B8&\bord1.4}With your key, look for 256 embedding values, the query, and the results.
+Dialogue: 0,0:21:06.93,0:21:10.52,Bilingual,,0,0,0,,结果是列表套列表：每个查询一个列表\N{\fs33\c&H00C8C0B8&\bord1.4}The results are lists of lists: one list per query,
+Dialogue: 0,0:21:10.52,0:21:13.84,Bilingual,,0,0,0,,里面装着 ID、距离、元数据和文档\N{\fs33\c&H00C8C0B8&\bord1.4}holding IDs, distances, metadata and documents.
+Dialogue: 0,0:21:14.16,0:21:15.76,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:21:17.70,0:21:21.16,Bilingual,,0,0,0,,所以后面 chat 这一步读的是 documents 的第 0 项\N{\fs33\c&H00C8C0B8&\bord1.4}That's why chat, later, reads documents[0].
+Dialogue: 0,0:21:21.48,0:21:25.89,Bilingual,,0,0,0,,我们没有录到任何结果，所以接下来直接去问加载好的数据库\N{\fs33\c&H00C8C0B8&\bord1.4}No results were recorded, so next we ask the loaded database directly.
+Dialogue: 0,0:21:27.23,0:21:30.88,Bilingual,,0,0,0,,代码发出的查询是这样的：10 个结果，加两个过滤条件\N{\fs33\c&H00C8C0B8&\bord1.4}Here's the query the code sends: 10 results and two filters.
+Dialogue: 0,0:21:31.20,0:21:35.08,Bilingual,,0,0,0,,元数据过滤只留一本书：The Complete Book of Cheese\N{\fs33\c&H00C8C0B8&\bord1.4}The metadata filter keeps one book, The Complete Book of Cheese.
+Dialogue: 0,0:21:35.40,0:21:38.69,Bilingual,,0,0,0,,文档过滤留下包含 Italian 的 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}The document filter keeps chunks that contain Italian.
+Dialogue: 0,0:21:38.93,0:21:40.90,Bilingual,,0,0,0,,问题问的是 Tolminc\N{\fs33\c&H00C8C0B8&\bord1.4}The question is about Tolminc.
+Dialogue: 0,0:21:41.22,0:21:43.14,Bilingual,,0,0,0,,那 10 个结果会讲什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What will the 10 results be about?
+Dialogue: 0,0:21:51.98,0:21:55.08,Bilingual,,0,0,0,,额外检查一下：在加载好的 collection 里数一数\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check counts them in the loaded collection.
+Dialogue: 0,0:21:55.40,0:22:01.75,Bilingual,,0,0,0,,在 8248 个 chunk 里，按书过滤留下 1355 个\N{\fs33\c&H00C8C0B8&\bord1.4}Of 8,248 chunks, the book filter keeps 1,355.
+Dialogue: 0,0:22:02.07,0:22:04.20,Bilingual,,0,0,0,,再按 Italian 这个词过滤，留下 64 个\N{\fs33\c&H00C8C0B8&\bord1.4}The word Italian keeps 64.
+Dialogue: 0,0:22:04.42,0:22:06.02,Bilingual,,0,0,0,,有多少提到 Tolminc？\N{\fs33\c&H00C8C0B8&\bord1.4}How many mention Tolminc?
+Dialogue: 0,0:22:06.32,0:22:08.37,Bilingual,,0,0,0,,一个都没有。现在来搜索\N{\fs33\c&H00C8C0B8&\bord1.4}None. Now a search.
+Dialogue: 0,0:22:08.69,0:22:11.92,Bilingual,,0,0,0,,真正的问题要靠 Google 才能变成向量\N{\fs33\c&H00C8C0B8&\bord1.4}The real question needs Google to become a vector,
+Dialogue: 0,0:22:11.92,0:22:15.73,Bilingual,,0,0,0,,所以我们用一个替身：故事里一个 chunk 存好的向量\N{\fs33\c&H00C8C0B8&\bord1.4}so we use a stand-in: the stored vector of one story chunk.
+Dialogue: 0,0:22:16.05,0:22:20.54,Bilingual,,0,0,0,,不加过滤，它最近的 10 个全都来自这个故事\N{\fs33\c&H00C8C0B8&\bord1.4}Without filters, its 10 nearest are all from the story,
+Dialogue: 0,0:22:20.54,0:22:24.63,Bilingual,,0,0,0,,距离从 0，也就是这个 chunk 自己，到 0.16\N{\fs33\c&H00C8C0B8&\bord1.4}at distances from 0, the chunk itself, up to 0.16.
+Dialogue: 0,0:22:24.87,0:22:26.28,Bilingual,,0,0,0,,加上代码里的过滤\N{\fs33\c&H00C8C0B8&\bord1.4}With the code's filters,
+Dialogue: 0,0:22:26.28,0:22:29.39,Bilingual,,0,0,0,,10 个结果全都来自 The Complete Book of Cheese\N{\fs33\c&H00C8C0B8&\bord1.4}all 10 results come from The Complete Book of Cheese.
+Dialogue: 0,0:22:29.71,0:22:34.21,Bilingual,,0,0,0,,它们的距离在 0.28 到 0.31 之间\N{\fs33\c&H00C8C0B8&\bord1.4}Their distances run from 0.28 to 0.31.
+Dialogue: 0,0:22:34.53,0:22:36.06,Bilingual,,0,0,0,,过滤先起作用\N{\fs33\c&H00C8C0B8&\bord1.4}The filters act first,
+Dialogue: 0,0:22:36.06,0:22:40.63,Bilingual,,0,0,0,,top K 再用剩下的东西填满 10 个位置，不管有多远\N{\fs33\c&H00C8C0B8&\bord1.4}and top K fills its 10 places with whatever survives, however far.
+Dialogue: 0,0:22:40.87,0:22:44.11,Bilingual,,0,0,0,,课上把元数据过滤放在排序之后\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture puts metadata filtering after ranking:
+Dialogue: 0,0:22:44.11,0:22:48.08,Bilingual,,0,0,0,,放在这里，故事的 10 个 chunk 就会全部被丢掉，什么也不返回\N{\fs33\c&H00C8C0B8&\bord1.4}here, that would drop all 10 story chunks and return nothing.
+Dialogue: 0,0:22:48.40,0:22:52.32,Bilingual,,0,0,0,,Chroma 先过滤，所以你会拿到 10 个结果，讲的却是别的奶酪\N{\fs33\c&H00C8C0B8&\bord1.4}Chroma filters first, so you get 10 results, about the wrong cheese.
+Dialogue: 0,0:22:52.57,0:22:58.32,Bilingual,,0,0,0,,一个小疏漏：README 说有各种过滤，但只有第 4 种会运行\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the README promises various filters, but only variant 4 runs;
+Dialogue: 0,0:22:58.32,0:23:00.93,Bilingual,,0,0,0,,第 1 到 3 种都被注释掉了\N{\fs33\c&H00C8C0B8&\bord1.4}variants 1 to 3 are commented out.
+Dialogue: 0,0:23:01.25,0:23:05.17,Bilingual,,0,0,0,,把第 1 种取消注释：不加过滤，每个 chunk 都来竞争\N{\fs33\c&H00C8C0B8&\bord1.4}Uncomment the first, with no filter, and every chunk competes.
+Dialogue: 0,0:23:05.49,0:23:08.97,Bilingual,,0,0,0,,还有，$contains 是关键词过滤，不是关键词排序\N{\fs33\c&H00C8C0B8&\bord1.4}And $contains is a keyword filter, not a keyword ranking.
+Dialogue: 0,0:23:09.22,0:23:11.83,Bilingual,,0,0,0,,重启后检查用的那条 --get 命令\N{\fs33\c&H00C8C0B8&\bord1.4}The --get command from the restart check
+Dialogue: 0,0:23:11.83,0:23:15.74,Bilingual,,0,0,0,,用了同样的按书过滤，但没有问题，所以也没有距离\N{\fs33\c&H00C8C0B8&\bord1.4}uses the same book filter, but no question, so no distances.
+Dialogue: 0,0:23:16.06,0:23:18.98,Bilingual,,0,0,0,,这 10 条记录，最前面是 Gutenberg 的开头声明\N{\fs33\c&H00C8C0B8&\bord1.4}Its 10 records start with the Gutenberg header,
+Dialogue: 0,0:23:18.98,0:23:21.04,Bilingual,,0,0,0,,接着是书名页和书的目录\N{\fs33\c&H00C8C0B8&\bord1.4}then the title page and contents.
+Dialogue: 0,0:23:21.36,0:23:24.13,Bilingual,,0,0,0,,这段声明，还有每本书结尾的许可证\N{\fs33\c&H00C8C0B8&\bord1.4}That header, and each book's closing license,
+Dialogue: 0,0:23:24.13,0:23:27.46,Bilingual,,0,0,0,,都会像普通文本一样被建进索引：先把它们去掉，再分块\N{\fs33\c&H00C8C0B8&\bord1.4}are indexed like any text: strip them before chunking.
+Dialogue: 0,0:23:31.80,0:23:33.35,Bilingual,,0,0,0,,接下来是生成\N{\fs33\c&H00C8C0B8&\bord1.4}Now generation.
+Dialogue: 0,0:23:33.40,0:23:36.22,Bilingual,,0,0,0,,课上最终的 prompt 有三部分\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's final prompt has three parts:
+Dialogue: 0,0:23:36.22,0:23:40.01,Bilingual,,0,0,0,,规定模型行为的 system prompt、用户的查询\N{\fs33\c&H00C8C0B8&\bord1.4}a system prompt that says how to behave, the user's query,
+Dialogue: 0,0:23:40.01,0:23:42.89,Bilingual,,0,0,0,,以及从数据库检索到的上下文\N{\fs33\c&H00C8C0B8&\bord1.4}and the context retrieved from the database.
+Dialogue: 0,0:23:43.13,0:23:45.27,Bilingual,,0,0,0,,到了 chat 这一步，代码再查询一次\N{\fs33\c&H00C8C0B8&\bord1.4}In chat, the code queries again,
+Dialogue: 0,0:23:45.27,0:23:48.02,Bilingual,,0,0,0,,这次不加过滤，要 10 个结果\N{\fs33\c&H00C8C0B8&\bord1.4}this time with no filter, for 10 results.
+Dialogue: 0,0:23:48.42,0:23:50.49,Bilingual,,0,0,0,,然后它拼出 input prompt\N{\fs33\c&H00C8C0B8&\bord1.4}Then it builds the input prompt:
+Dialogue: 0,0:23:50.49,0:23:54.39,Bilingual,,0,0,0,,先是问题，后面跟着 10 个 chunk，用换行符连起来\N{\fs33\c&H00C8C0B8&\bord1.4}the question, followed by the 10 chunks, joined by newlines.
+Dialogue: 0,0:23:54.71,0:23:57.85,Bilingual,,0,0,0,,这个 prompt 发给 gemini-3.1-flash-lite\N{\fs33\c&H00C8C0B8&\bord1.4}The prompt goes to gemini-3.1-flash-lite.
+Dialogue: 0,0:23:58.08,0:23:59.75,Bilingual,,0,0,0,,那 system prompt 在哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}So where's the system prompt?
+Dialogue: 0,0:24:00.07,0:24:03.24,Bilingual,,0,0,0,,第 40 行定义了一个：只根据 chunk 回答\N{\fs33\c&H00C8C0B8&\bord1.4}Line 40 defines one: answer only from the chunks,
+Dialogue: 0,0:24:03.24,0:24:05.95,Bilingual,,0,0,0,,chunk 里的信息不够时就直说\N{\fs33\c&H00C8C0B8&\bord1.4}and say so when they don't contain enough.
+Dialogue: 0,0:24:06.27,0:24:07.72,Bilingual,,0,0,0,,可是看看这次调用\N{\fs33\c&H00C8C0B8&\bord1.4}But look at the call.
+Dialogue: 0,0:24:07.77,0:24:09.12,Bilingual,,0,0,0,,它从来没被发出去\N{\fs33\c&H00C8C0B8&\bord1.4}It's never sent.
+Dialogue: 0,0:24:09.17,0:24:13.48,Bilingual,,0,0,0,,一个小疏漏，改一行就能修好：通过一个 config 参数把它传进去\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip, with a one-line fix: pass it in a config argument.
+Dialogue: 0,0:24:13.80,0:24:15.99,Bilingual,,0,0,0,,更早的 pipenv 分支确实把它发出去了\N{\fs33\c&H00C8C0B8&\bord1.4}The older pipenv branch did send it.
+Dialogue: 0,0:24:16.31,0:24:21.26,Bilingual,,0,0,0,,没有它，README 承诺的有依据的回答就只能靠这些 chunk 了\N{\fs33\c&H00C8C0B8&\bord1.4}Without it, the README's promise of grounded answers rests on the chunks alone.
+Dialogue: 0,0:24:21.50,0:24:24.46,Bilingual,,0,0,0,,再注意一下什么没变：模型本身\N{\fs33\c&H00C8C0B8&\bord1.4}And notice what didn't change: the model itself.
+Dialogue: 0,0:24:24.78,0:24:26.33,Bilingual,,0,0,0,,权重一个都没动\N{\fs33\c&H00C8C0B8&\bord1.4}No weights moved.
+Dialogue: 0,0:24:26.38,0:24:29.14,Bilingual,,0,0,0,,把 collection 删掉，这些知识就没了\N{\fs33\c&H00C8C0B8&\bord1.4}Delete the collection, and the knowledge is gone.
+Dialogue: 0,0:24:29.38,0:24:32.66,Bilingual,,0,0,0,,第 1 步和第 2 步：python cli.py --chat\N{\fs33\c&H00C8C0B8&\bord1.4}Steps 1 and 2: python cli.py --chat,
+Dialogue: 0,0:24:32.66,0:24:36.21,Bilingual,,0,0,0,,分别用 char-split 和 recursive-split\N{\fs33\c&H00C8C0B8&\bord1.4}for char-split and for recursive-split.
+Dialogue: 0,0:24:36.53,0:24:39.35,Bilingual,,0,0,0,,没有密钥，两条都停在把问题向量化这一步\N{\fs33\c&H00C8C0B8&\bord1.4}Without a key, both stop embedding the question.
+Dialogue: 0,0:24:39.67,0:24:43.63,Bilingual,,0,0,0,,每个问题要一次 embedding 调用，加一次 Gemini 调用\N{\fs33\c&H00C8C0B8&\bord1.4}Each question costs one embedding call and one Gemini call.
+Dialogue: 0,0:24:43.88,0:24:48.84,Bilingual,,0,0,0,,有密钥的话，要找的是查询，它打印出来带两个问号\N{\fs33\c&H00C8C0B8&\bord1.4}With your key, look for the query, printed with two question marks,
+Dialogue: 0,0:24:48.84,0:24:52.25,Bilingual,,0,0,0,,一个无害的小疏漏，还有它的 256 个 embedding 值\N{\fs33\c&H00C8C0B8&\bord1.4}a harmless slip, and its 256 embedding values.
+Dialogue: 0,0:24:52.57,0:24:55.40,Bilingual,,0,0,0,,然后是结果、数字 10、input prompt\N{\fs33\c&H00C8C0B8&\bord1.4}Then the results, the number 10, the input prompt
+Dialogue: 0,0:24:55.40,0:24:57.88,Bilingual,,0,0,0,,里面有你的 chunk，以及模型的回答\N{\fs33\c&H00C8C0B8&\bord1.4}with your chunks, and the model's response.
+Dialogue: 0,0:24:59.12,0:25:00.82,Bilingual,,0,0,0,,还记得开头那个问题吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Remember the opening question?
+Dialogue: 0,0:25:01.14,0:25:02.45,Bilingual,,0,0,0,,这个故事是虚构的\N{\fs33\c&H00C8C0B8&\bord1.4}The story is fiction,
+Dialogue: 0,0:25:02.45,0:25:07.01,Bilingual,,0,0,0,,所以回答里讲到 Mara、她祖父和凝乳的内容，来自你的 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}so an answer about Mara, her grandfather and the curd came from your chunks.
+Dialogue: 0,0:25:07.33,0:25:10.98,Bilingual,,0,0,0,,关于 Tolminc 的现实规定，来自模型的记忆\N{\fs33\c&H00C8C0B8&\bord1.4}Real-world rules for Tolminc came from the model's memory.
+Dialogue: 0,0:25:11.30,0:25:12.92,Bilingual,,0,0,0,,比较两种 chunk type 的结果\N{\fs33\c&H00C8C0B8&\bord1.4}Compare both chunk types.
+Dialogue: 0,0:25:14.10,0:25:17.51,Bilingual,,0,0,0,,第 3 步是一个链接，指向课程的对话工具，用 Chrome 打开\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3 is a link to the course's chat tool, in Chrome.
+Dialogue: 0,0:25:17.83,0:25:18.83,Bilingual,,0,0,0,,暂停一下\N{\fs33\c&H00C8C0B8&\bord1.4}Pause:
+Dialogue: 0,0:25:18.83,0:25:21.72,Bilingual,,0,0,0,,用你的密钥，把两条 chat 命令都跑一遍，再试试这个工具\N{\fs33\c&H00C8C0B8&\bord1.4}run both chat commands with your key, then try the tool.
+Dialogue: 0,0:25:22.04,0:25:27.30,Bilingual,,0,0,0,,想问你自己的问题，就改 cli.py 的第 372 行\N{\fs33\c&H00C8C0B8&\bord1.4}For your own question, change line 372 of cli.py.
+Dialogue: 0,0:25:30.65,0:25:35.34,Bilingual,,0,0,0,,回到分块，看看课上最好的答案：在意思变化的地方切开\N{\fs33\c&H00C8C0B8&\bord1.4}Back to chunking, with the lecture's best answer: cut where the meaning changes.
+Dialogue: 0,0:25:35.66,0:25:39.27,Bilingual,,0,0,0,,在课件上，一个锚点沿着这些句子一路往前走\N{\fs33\c&H00C8C0B8&\bord1.4}On the slides, an anchor walks through the sentences
+Dialogue: 0,0:25:39.27,0:25:43.36,Bilingual,,0,0,0,,把相邻的句子并进来，前提是相似度保持在 0.8 以上\N{\fs33\c&H00C8C0B8&\bord1.4}and joins neighbors while their similarity stays above 0.8.
+Dialogue: 0,0:25:43.60,0:25:46.84,Bilingual,,0,0,0,,代码用的是同样的材料，规则却不一样\N{\fs33\c&H00C8C0B8&\bord1.4}The code uses the same ingredients with a different rule.
+Dialogue: 0,0:25:47.16,0:25:51.51,Bilingual,,0,0,0,,每个句子都有一个窗口：它自己，加上两边各一个相邻的句子\N{\fs33\c&H00C8C0B8&\bord1.4}Every sentence gets a window, itself and one neighbor on each side,
+Dialogue: 0,0:25:51.51,0:25:53.33,Bilingual,,0,0,0,,每个窗口都要向量化\N{\fs33\c&H00C8C0B8&\bord1.4}and each window is embedded.
+Dialogue: 0,0:25:53.57,0:25:57.22,Bilingual,,0,0,0,,然后它量出每个窗口和下一个窗口之间的距离\N{\fs33\c&H00C8C0B8&\bord1.4}Then it measures the distance between each window and the next,
+Dialogue: 0,0:25:57.22,0:25:59.94,Bilingual,,0,0,0,,画在文本上方，就像地震仪一样\N{\fs33\c&H00C8C0B8&\bord1.4}and plots it over the text, like a seismograph.
+Dialogue: 0,0:26:00.18,0:26:05.58,Bilingual,,0,0,0,,接着它在第 95 百分位画一条线，在每个超过这条线的尖峰处切开\N{\fs33\c&H00C8C0B8&\bord1.4}Next, it draws a line at the 95th percentile, and cuts at every spike above it.
+Dialogue: 0,0:26:05.90,0:26:09.27,Bilingual,,0,0,0,,所以最大的那 5% 的落差，就成了 chunk 边界\N{\fs33\c&H00C8C0B8&\bord1.4}So the biggest 5 percent of gaps become chunk boundaries.
+Dialogue: 0,0:26:09.52,0:26:12.28,Bilingual,,0,0,0,,用 char-split 时，chunk 这一步没有密钥也跑通了\N{\fs33\c&H00C8C0B8&\bord1.4}char-split ran the chunk step without a key.
+Dialogue: 0,0:26:12.38,0:26:13.98,Bilingual,,0,0,0,,那 semantic-split 行吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Can semantic-split?
+Dialogue: 0,0:26:22.60,0:26:28.32,Bilingual,,0,0,0,,不行。要找出意思在哪里转折，它得先把每个句子窗口都向量化\N{\fs33\c&H00C8C0B8&\bord1.4}No. To find where the meaning shifts, it has to embed every sentence window first.
+Dialogue: 0,0:26:28.64,0:26:31.51,Bilingual,,0,0,0,,看看交给分块器的那个函数\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the function handed to the chunker:
+Dialogue: 0,0:26:31.51,0:26:35.44,Bilingual,,0,0,0,,generate text embeddings，和 embed 这一步用的是同一个\N{\fs33\c&H00C8C0B8&\bord1.4}generate_text_embeddings, the same one the embed step uses.
+Dialogue: 0,0:26:35.68,0:26:40.29,Bilingual,,0,0,0,,README 里的命令，用 semantic-split 把三步一起跑\N{\fs33\c&H00C8C0B8&\bord1.4}The README's command runs all three steps with --chunk_type semantic-split.
+Dialogue: 0,0:26:40.61,0:26:43.47,Bilingual,,0,0,0,,在我们的机器上，它在 chunk 这一步里就失败了\N{\fs33\c&H00C8C0B8&\bord1.4}On our machine it fails inside the chunk step,
+Dialogue: 0,0:26:43.47,0:26:46.58,Bilingual,,0,0,0,,卡在第一本书，一个 chunk 都还没保存\N{\fs33\c&H00C8C0B8&\bord1.4}on the first book, before a single chunk is saved.
+Dialogue: 0,0:26:46.83,0:26:49.10,Bilingual,,0,0,0,,有密钥的话，先做好预算\N{\fs33\c&H00C8C0B8&\bord1.4}With your key, budget for it:
+Dialogue: 0,0:26:49.10,0:26:54.02,Bilingual,,0,0,0,,按我们的估算，给语料分块大约要 528 次 embedding 调用\N{\fs33\c&H00C8C0B8&\bord1.4}by our estimate, about 528 embedding calls to chunk the corpus,
+Dialogue: 0,0:26:54.02,0:26:58.40,Bilingual,,0,0,0,,向量化这些 chunk 还要大约 90 次，再加 10 到 20 分钟\N{\fs33\c&H00C8C0B8&\bord1.4}about 90 more to embed the chunks, and 10 to 20 minutes.
+Dialogue: 0,0:26:58.72,0:27:02.26,Bilingual,,0,0,0,,先只放一本书试试，再把其他的放回去，重新跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Try one book first, then put the others back and run it again.
+Dialogue: 0,0:27:02.58,0:27:04.47,Bilingual,,0,0,0,,要找的是每本书的 chunk 数\N{\fs33\c&H00C8C0B8&\bord1.4}Look for a chunk count per book,
+Dialogue: 0,0:27:04.47,0:27:08.44,Bilingual,,0,0,0,,最后是插入 semantic-split-collection 完成的那一行\N{\fs33\c&H00C8C0B8&\bord1.4}and finally, finished inserting into the semantic-split-collection.
+Dialogue: 0,0:27:08.68,0:27:10.80,Bilingual,,0,0,0,,切出来的 chunk 长短很不均匀\N{\fs33\c&H00C8C0B8&\bord1.4}The chunks come out very uneven,
+Dialogue: 0,0:27:10.80,0:27:14.63,Bilingual,,0,0,0,,就连只讲一个主题的书，也会在它最大的几处落差上被切开\N{\fs33\c&H00C8C0B8&\bord1.4}and even a single-topic book gets cut at its biggest gaps.
+Dialogue: 0,0:27:14.95,0:27:17.94,Bilingual,,0,0,0,,之后再加一个额外步骤：chat 这一步也一样能用\N{\fs33\c&H00C8C0B8&\bord1.4}Afterwards, an extra: chat works the same way.
+Dialogue: 0,0:27:18.26,0:27:20.07,Bilingual,,0,0,0,,暂停一下，用你的密钥试试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try it, with your key.
+Dialogue: 0,0:27:23.42,0:27:25.02,Bilingual,,0,0,0,,课上走得更远\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture goes further.
+Dialogue: 0,0:27:25.23,0:27:29.43,Bilingual,,0,0,0,,它的框架加了一个检索前阶段和一个检索后阶段\N{\fs33\c&H00C8C0B8&\bord1.4}Its frame adds a pre-retrieval stage and a post-retrieval stage.
+Dialogue: 0,0:27:29.75,0:27:35.49,Bilingual,,0,0,0,,语义分块属于检索前：这是这个教程唯一实现了的进阶手段\N{\fs33\c&H00C8C0B8&\bord1.4}Semantic chunking sits in pre-retrieval: the one advanced lever this tutorial implements.
+Dialogue: 0,0:27:35.81,0:27:38.24,Bilingual,,0,0,0,,下面再讲三个，只讲思路\N{\fs33\c&H00C8C0B8&\bord1.4}Here are three more, as ideas only.
+Dialogue: 0,0:27:38.48,0:27:41.28,Bilingual,,0,0,0,,同样在检索之前：查询改写\N{\fs33\c&H00C8C0B8&\bord1.4}Also before retrieval: query rewriting.
+Dialogue: 0,0:27:41.60,0:27:46.53,Bilingual,,0,0,0,,用一个模型把杂乱的问题改写成干净的问题，比如“海豚住在哪里”\N{\fs33\c&H00C8C0B8&\bord1.4}A model turns a cluttered question into a clean one, like where do dolphins live.
+Dialogue: 0,0:27:46.85,0:27:50.52,Bilingual,,0,0,0,,但要是给它一个含糊的问题，改写可能会编造细节\N{\fs33\c&H00C8C0B8&\bord1.4}But hand it a vague question, and the rewrite can invent details.
+Dialogue: 0,0:27:51.80,0:27:53.87,Bilingual,,0,0,0,,检索阶段：混合检索\N{\fs33\c&H00C8C0B8&\bord1.4}In retrieval: hybrid search.
+Dialogue: 0,0:27:54.19,0:27:58.01,Bilingual,,0,0,0,,关键词能锁定名字和罕见词；向量能抓住意思\N{\fs33\c&H00C8C0B8&\bord1.4}Keywords pin down names and rare words; vectors catch meaning.
+Dialogue: 0,0:27:58.33,0:27:59.73,Bilingual,,0,0,0,,拿这个问题来说\N{\fs33\c&H00C8C0B8&\bord1.4}Take the question:
+Dialogue: 0,0:27:59.73,0:28:02.51,Bilingual,,0,0,0,,Chester went to the bank of the river in the morning\N{\fs33\c&H00C8C0B8&\bord1.4}Chester went to the bank of the river in the morning.
+Dialogue: 0,0:28:02.57,0:28:04.92,Bilingual,,0,0,0,,两种方法给三个段落排出的顺序不一样\N{\fs33\c&H00C8C0B8&\bord1.4}The two rank three paragraphs differently.
+Dialogue: 0,0:28:05.17,0:28:09.93,Bilingual,,0,0,0,,倒数排名融合给每个段落记二分之一除以它的排名\N{\fs33\c&H00C8C0B8&\bord1.4}Reciprocal rank fusion gives each paragraph one half divided by its rank,
+Dialogue: 0,0:28:09.93,0:28:11.95,Bilingual,,0,0,0,,每个列表各记一次，再加起来\N{\fs33\c&H00C8C0B8&\bord1.4}in each list, and adds them up.
+Dialogue: 0,0:28:12.27,0:28:19.44,Bilingual,,0,0,0,,和问题几乎同义的那一段以 0.75 胜出，领先 0.67 和 0.42\N{\fs33\c&H00C8C0B8&\bord1.4}The near paraphrase wins with 0.75, ahead of 0.67 and 0.42.
+Dialogue: 0,0:28:20.93,0:28:23.02,Bilingual,,0,0,0,,检索之后：重排序\N{\fs33\c&H00C8C0B8&\bord1.4}After retrieval: re-ranking.
+Dialogue: 0,0:28:23.34,0:28:27.89,Bilingual,,0,0,0,,一个快速的检索器，向量在问题出现之前就做好了\N{\fs33\c&H00C8C0B8&\bord1.4}A fast retriever, whose vectors were made before the question existed,
+Dialogue: 0,0:28:27.89,0:28:31.26,Bilingual,,0,0,0,,它返回 25 个候选，对的那几个散落在其中\N{\fs33\c&H00C8C0B8&\bord1.4}returns 25 candidates with the right ones scattered.
+Dialogue: 0,0:28:31.58,0:28:35.89,Bilingual,,0,0,0,,再由一个更慢的模型，把问题和每个 chunk 放在一起读，重新排序\N{\fs33\c&H00C8C0B8&\bord1.4}A slower model reads each question and chunk together and reorders them.
+Dialogue: 0,0:28:37.18,0:28:39.57,Bilingual,,0,0,0,,这些都不在 cli.py 里\N{\fs33\c&H00C8C0B8&\bord1.4}None of these is in cli.py.
+Dialogue: 0,0:28:39.89,0:28:44.70,Bilingual,,0,0,0,,你会用上它们，是在朴素检索取回了错的 chunk 的时候\N{\fs33\c&H00C8C0B8&\bord1.4}They're what you reach for when naive retrieval brings back the wrong chunks;
+Dialogue: 0,0:28:44.70,0:28:47.83,Bilingual,,0,0,0,,而我们那个带过滤的查询，只需要把过滤去掉\N{\fs33\c&H00C8C0B8&\bord1.4}our filtered query only needed its filter removed.
+Dialogue: 0,0:28:50.67,0:28:52.27,Bilingual,,0,0,0,,该拆掉了\N{\fs33\c&H00C8C0B8&\bord1.4}Time to tear down.
+Dialogue: 0,0:28:52.33,0:28:56.07,Bilingual,,0,0,0,,输入 exit，再在 repo 目录里运行：docker compose down\N{\fs33\c&H00C8C0B8&\bord1.4}Type exit, then docker compose down from the repo folder:
+Dialogue: 0,0:28:56.07,0:29:00.33,Bilingual,,0,0,0,,还是那些无害的警告，然后 Chroma 和网络就没了\N{\fs33\c&H00C8C0B8&\bord1.4}the same harmless warnings, then Chroma and the network are gone.
+Dialogue: 0,0:29:02.25,0:29:03.75,Bilingual,,0,0,0,,这些 image 还在\N{\fs33\c&H00C8C0B8&\bord1.4}The images stay:
+Dialogue: 0,0:29:03.75,0:29:08.99,Bilingual,,0,0,0,,CLI 的 image 有 2.11 GB，包括它的 Python base image\N{\fs33\c&H00C8C0B8&\bord1.4}2.11 gigabytes for the CLI image, its Python base included,
+Dialogue: 0,0:29:08.99,0:29:11.59,Bilingual,,0,0,0,,Chroma 的有 826 MB\N{\fs33\c&H00C8C0B8&\bord1.4}and 826 megabytes for Chroma.
+Dialogue: 0,0:29:11.83,0:29:16.10,Bilingual,,0,0,0,,现在 git status 只显示你对 docker-shell.sh 的改动\N{\fs33\c&H00C8C0B8&\bord1.4}Now git status shows only your edit to docker-shell.sh.
+Dialogue: 0,0:29:16.42,0:29:19.54,Bilingual,,0,0,0,,而 outputs 和 docker-volumes 两个目录都被忽略\N{\fs33\c&H00C8C0B8&\bord1.4}The outputs/ and docker-volumes/ folders are ignored,
+Dialogue: 0,0:29:19.54,0:29:21.03,Bilingual,,0,0,0,,留在你的磁盘上\N{\fs33\c&H00C8C0B8&\bord1.4}and stay on your disk.
+Dialogue: 0,0:29:21.08,0:29:23.39,Bilingual,,0,0,0,,Google Cloud 上没有任何东西一直在运行\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing keeps running in Google Cloud;
+Dialogue: 0,0:29:23.39,0:29:25.33,Bilingual,,0,0,0,,你只为发送过的内容付了费\N{\fs33\c&H00C8C0B8&\bord1.4}you paid only for what you sent.
+Dialogue: 0,0:29:25.65,0:29:27.48,Bilingual,,0,0,0,,把密钥放在 repo 旁边\N{\fs33\c&H00C8C0B8&\bord1.4}Keep the key beside the repo:
+Dialogue: 0,0:29:27.48,0:29:31.77,Bilingual,,0,0,0,,放在里面的话，git 不会忽略它，image 也会把它复制进去\N{\fs33\c&H00C8C0B8&\bord1.4}inside it, git wouldn't ignore the key, and the image would copy it.
+Dialogue: 0,0:29:32.09,0:29:33.69,Bilingual,,0,0,0,,课程结束后，把它删掉\N{\fs33\c&H00C8C0B8&\bord1.4}Delete it when the course ends.
+Dialogue: 0,0:29:34.01,0:29:38.06,Bilingual,,0,0,0,,现在就暂停，把它拆掉，这样下次 port 8000 就是空着的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and tear down now, so port 8000 is free next time.
+Dialogue: 0,0:29:40.30,0:29:44.91,Bilingual,,0,0,0,,最后一个教训，来自课程团队留下的下节课 agent 的运行记录\N{\fs33\c&H00C8C0B8&\bord1.4}One last lesson, from the staff's recorded run of next lecture's agent.
+Dialogue: 0,0:29:45.23,0:29:47.46,Bilingual,,0,0,0,,它检索到的是讲转场放牧的文本\N{\fs33\c&H00C8C0B8&\bord1.4}It retrieved text about transhumance
+Dialogue: 0,0:29:47.46,0:29:50.62,Bilingual,,0,0,0,,来自一本更早的 Tolminc 书，当天就被换掉了\N{\fs33\c&H00C8C0B8&\bord1.4}from an older Tolminc book, replaced that same day.
+Dialogue: 0,0:29:50.94,0:29:56.00,Bilingual,,0,0,0,,数据库只根据加载进去的内容回答：书一变，就要重建索引\N{\fs33\c&H00C8C0B8&\bord1.4}The database answers from what was loaded: when the books change, rebuild the index.
+Dialogue: 0,0:29:56.25,0:29:59.13,Bilingual,,0,0,0,,下节课会用一个 agent 来跑这条命令\N{\fs33\c&H00C8C0B8&\bord1.4}Next lecture runs this command with an agent.
+Dialogue: 0,0:29:59.45,0:30:03.27,Bilingual,,0,0,0,,在课程团队的那次运行里，模型自己选了要调用哪个检索工具\N{\fs33\c&H00C8C0B8&\bord1.4}In the staff's run, the model chose which retrieval tool to call.
+Dialogue: 0,0:30:03.59,0:30:05.79,Bilingual,,0,0,0,,课上讲的 Self-RAG 走得更远\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's Self-RAG goes further:
+Dialogue: 0,0:30:05.79,0:30:10.20,Bilingual,,0,0,0,,由模型决定到底要不要检索，然后再检查它找到的东西\N{\fs33\c&H00C8C0B8&\bord1.4}the model decides whether to retrieve at all, then checks what it found.
+Dialogue: 0,0:30:10.52,0:30:14.13,Bilingual,,0,0,0,,我们的 chat 每个问题都要翻书，而且什么都不检查\N{\fs33\c&H00C8C0B8&\bord1.4}Our chat opens the book for every question, and checks nothing.
+Dialogue: 0,0:30:15.37,0:30:16.97,Bilingual,,0,0,0,,那四个问题呢？\N{\fs33\c&H00C8C0B8&\bord1.4}And the four questions?
+Dialogue: 0,0:30:17.09,0:30:19.53,Bilingual,,0,0,0,,所谓 embedding，就是表示意思的一个方向\N{\fs33\c&H00C8C0B8&\bord1.4}An embedding is a direction for meaning.
+Dialogue: 0,0:30:19.85,0:30:23.56,Bilingual,,0,0,0,,向量数据库存的是记录，再用一个索引来搜索它们\N{\fs33\c&H00C8C0B8&\bord1.4}A vector database stores records, with an index to search them.
+Dialogue: 0,0:30:23.88,0:30:26.63,Bilingual,,0,0,0,,查询找的是问题的最近邻\N{\fs33\c&H00C8C0B8&\bord1.4}A query finds the question's nearest neighbors.
+Dialogue: 0,0:30:26.95,0:30:30.13,Bilingual,,0,0,0,,上下文，就是你贴进 prompt 里的那些 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}The context is the chunks you paste into the prompt.
+Dialogue: 0,0:30:30.37,0:30:32.37,Bilingual,,0,0,0,,五道题，自测一下\N{\fs33\c&H00C8C0B8&\bord1.4}Five questions to test yourself.
+Dialogue: 0,0:30:32.69,0:30:36.87,Bilingual,,0,0,0,,第一题：哪些参数属于哪条通道，两条通道又必须共用什么？\N{\fs33\c&H00C8C0B8&\bord1.4}One: which flags belong to each lane, and what must both lanes share?
+Dialogue: 0,0:30:37.19,0:30:41.13,Bilingual,,0,0,0,,第二题：为什么 CLI 按名字就能找到数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Two: why does the CLI reach the database by name,
+Dialogue: 0,0:30:41.13,0:30:42.97,Bilingual,,0,0,0,,又是谁在用 port 8000？\N{\fs33\c&H00C8C0B8&\bord1.4}and who uses port 8000?
+Dialogue: 0,0:30:43.22,0:30:45.54,Bilingual,,0,0,0,,第三题：重叠有什么好处，又有什么代价？\N{\fs33\c&H00C8C0B8&\bord1.4}Three: what does overlap buy and cost?
+Dialogue: 0,0:30:45.86,0:30:48.83,Bilingual,,0,0,0,,还有，为什么递归切分器切出了更多 chunk？\N{\fs33\c&H00C8C0B8&\bord1.4}And why did the recursive splitter make more chunks?
+Dialogue: 0,0:30:49.15,0:30:52.80,Bilingual,,0,0,0,,第四题：README 里的查询为什么没返回任何 Tolminc 文本？\N{\fs33\c&H00C8C0B8&\bord1.4}Four: why did the README's query return no Tolminc text?
+Dialogue: 0,0:30:53.12,0:30:56.23,Bilingual,,0,0,0,,第五题：这个 prompt 少了什么，又该怎么修？\N{\fs33\c&H00C8C0B8&\bord1.4}Five: what is the prompt missing, and what's the fix?
+Dialogue: 0,0:30:56.47,0:31:01.65,Bilingual,,0,0,0,,答案在练习里，每条命令都在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}The answers are in the exercises, and every command is in the study guide,
+Dialogue: 0,0:31:01.65,0:31:03.55,Bilingual,,0,0,0,,就在 MLOps Learning 这个 repo 里\N{\fs33\c&H00C8C0B8&\bord1.4}in the MLOps Learning repo.
+Dialogue: 0,0:31:03.87,0:31:05.49,Bilingual,,0,0,0,,下节课：agent\N{\fs33\c&H00C8C0B8&\bord1.4}Next time: agents.

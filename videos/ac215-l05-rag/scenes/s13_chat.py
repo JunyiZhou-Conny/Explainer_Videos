@@ -1,4 +1,4 @@
-"""S13 · Chat: the prompt is the whole trick (README "Chat"). Lecture: A57–A62.
+"""S13 · Chat: the prompt is the whole trick (README "Chat"). Lecture: A57–A62, B78.
 
 Beats (script.md "## S13", one voiceover block each):
  0  LECTURE A57–A59. TRACKER Chat (no step lit yet). The mini-map, its prompt and LLM boxes lit.
@@ -27,13 +27,16 @@ Beats (script.md "## S13", one voiceover block each):
     · line 373, embedding the question"; GOLD tag "per question: one embedding call + one Gemini
     call", a GOLD coin on the mini-map's embedding and LLM boxes.
  7  The GREY "with your key, look for" card above the strip, items writing in as named (cli.py lines
-    365–399); the "??" boxed, a two-row tag "erratum · harmless / the README shows one".
+    365–399); the "??" boxed, a two-row tag "erratum · harmless / the README shows one". The full
+    card holds 1 s after the clip.
  8  S01's chat box returns (the question, RED-edged answer bars, the YELLOW "?"). The "?" resolves
     into four GREEN chunk cards; three bars draw thin arrows to them and turn GREEN (tag
     "illustration · a shape, not an answer"). The grounding test card: GREEN "from your chunks" (Mara
     · her grandfather · the curd; excerpt chip `Tolminc Cheese.txt · line 4` "A fictional tale") and
     RED "not in your chunks" (real-world rules for Tolminc; GREY note: only 3 char-split chunks
-    contain the word); GREY note "compare the char-split and recursive-split answers".
+    contain the word); GREY note "compare the char-split and recursive-split answers", held 1 s
+    after the clip. LECTURE B78 comes in with the card, whose heading reads "a grounding test · the
+    lecture's IsSUP check, done by eye"; the tag leaves with the card in beat 9's first fade.
  9  TRACKER Chat 3. S01's chat box becomes a GREY browser frame (tag illustration) at
     ac215-llm-rag.dlops.io/chat with a schematic chat page, GREY note "use Chrome"; the ▶ your-turn card: both chat commands, the link,
     "your own question: cli.py · line 372 · no rebuild", "404 NOT_FOUND for the model? change
@@ -52,8 +55,7 @@ edge. Beat 5 removes the ghost and its (fixed) cable so the picture shows the co
 draws the mini-map large above the strip (where the run stops, where the two paid calls are) and
 types the two commands one after the other in a cleared strip: with no output shown, a second
 prompt right under the first would read as "it printed nothing". Tracker steps cross-fade their
-caption (tracker_to): the shared goto() flies the first caption in from the empty one's place. SLIDES.md's optional "IsSUP ·
-slide B78" tag at the grounding test is not drawn: the script's SHOW does not adopt it.
+caption (tracker_to): the shared goto() flies the first caption in from the empty one's place.
 """
 
 import numpy as np
@@ -327,7 +329,10 @@ class FinalPrompt(VoiceScene):
         spout = cyl.get_bottom() + UP * 0.2
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(ps, shift=UP * 0.2), FadeOut(mm), FadeIn(p1, shift=UP * 0.2), FadeIn(cyl),
+            # the prompt stack leaves in the first half, the code panel arrives in the second (faded at once,
+            # the stack's labels read over the code)
+            self.play(FadeOut(ps, shift=UP * 0.2, rate_func=first_half), FadeOut(mm, rate_func=first_half),
+                      FadeIn(p1, shift=UP * 0.2, rate_func=second_half), FadeIn(cyl, rate_func=second_half),
                       run_time=0.6)
             vo.wait_until("the code queries again")
             self.play(FadeIn(bars1), Indicate(cyl, color=CTR, scale_factor=1.06), run_time=0.6)
@@ -376,7 +381,8 @@ class FinalPrompt(VoiceScene):
             vo.wait_until("joined by newlines")
             self.play(Create(u_nl), FadeIn(py, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("The prompt goes to Gemini")
-            swap_panel(self, p2, p3, FadeOut(VGroup(b389, b390, u_nl, py)), FadeIn(llm))
+            # the bars and the Python tag leave with the old code (first half), before the new code row arrives
+            swap_panel(self, p2, p3, FadeOut(VGroup(b389, b390, u_nl, py), rate_func=first_half), FadeIn(llm))
             fly = pc.copy()
             self.play(fly.animate.scale(0.15).move_to(llm).set_opacity(0), Create(feed),
                       FadeIn(mchip, shift=LEFT * 0.15), FadeIn(l27), run_time=0.8)
@@ -582,6 +588,7 @@ class FinalPrompt(VoiceScene):
             self.play(lf.write_item(5))
             vo.wait_until("and the model's response")
             self.play(lf.write_item(6))
+        self.wait(1.0)                                 # hold the full card: its last row came in ~1 s before the clip ended
 
         # ========================================================== 8 · the opening question, answered
         win = chat_window("a chat with an LLM", 6.4, 2.7).move_to([-3.1, 1.45, 0])
@@ -625,12 +632,15 @@ class FinalPrompt(VoiceScene):
             g.items.align_to(g.frame, UP).shift(DOWN * 0.25)
         cols = VGroup(left, right).arrange(RIGHT, buff=0.3, aligned_edge=UP)
         cols.move_to([0, -0.42 - cols.height / 2, 0])
-        gt_head = note("a grounding test").next_to(cols, UP, buff=0.08).align_to(cols, LEFT).shift(RIGHT * 0.12)
+        gt_head = note("a grounding test · the lecture's IsSUP check, done by eye")
+        gt_head.next_to(cols, UP, buff=0.08).align_to(cols, LEFT).shift(RIGHT * 0.12)
         cmp_note = note("compare the char-split and recursive-split answers")
         cmp_note.next_to(cols, DOWN, buff=0.18)
         # the heading clears the chat window above it; the note stays inside the safe frame
         assert gt_head.get_top()[1] < win.get_bottom()[1] - 0.15, (gt_head.get_top(), win.get_bottom())
         assert cmp_note.get_bottom()[1] > -3.45, cmp_note.get_bottom()
+        lr8 = lref("B78")                                  # pinned top right, above the illustration tag
+        assert lr8.get_bottom()[1] > ill.get_top()[1] + 0.1, (lr8.get_bottom(), ill.get_top())
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(lf, qbox, etag, t)), run_time=0.5)
@@ -641,8 +651,8 @@ class FinalPrompt(VoiceScene):
             self.play(LaggedStart(*[Create(a) for a in links], lag_ratio=0.3), run_time=0.55)
             self.play(*[bars[b].animate.set_fill(DATA, 0.85).set_stroke(DATA, 1.6) for b in grounded], run_time=0.3)
             vo.wait_until("an answer about Mara")
-            self.play(FadeIn(gt_head), FadeIn(left.frame), FadeIn(left.items[0]), FadeIn(left.items[1]),
-                      run_time=0.6)
+            self.play(FadeIn(gt_head), FadeIn(lr8), FadeIn(left.frame), FadeIn(left.items[0]),
+                      FadeIn(left.items[1]), run_time=0.6)
             self.play(FadeIn(chip4, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("came from your chunks")
             self.play(Indicate(left.items[0], color=DATA, scale_factor=1.08),
@@ -653,6 +663,7 @@ class FinalPrompt(VoiceScene):
             self.play(FadeIn(only3, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Compare both chunk types")
             self.play(FadeIn(cmp_note, shift=UP * 0.1), run_time=0.5)
+        self.wait(1.0)                                 # hold the note: it lands ~1 s before the clip ends
 
         # ========================================================== 9 · step 3: the chat tool; your turn
         br = chat_window(CHAT_URL, 6.8, 2.5).move_to([-2.95, 1.5, 0])
@@ -681,7 +692,7 @@ class FinalPrompt(VoiceScene):
 
         with self.voiceover(SAY[9]) as vo:
             # the opening chat box becomes the course's chat tool: the window moves, its address swaps
-            self.play(FadeOut(VGroup(bars, src, links, ill, cols, gt_head, cmp_note)),
+            self.play(FadeOut(VGroup(bars, src, links, ill, cols, gt_head, cmp_note, lr8)),
                       FadeOut(VGroup(win.address, win.content, win.answer)), run_time=0.5)
             self.play(*tracker_to(tr, 3), ReplacementTransform(shell(win, q), shell(br, bq)),
                       FadeIn(br.address, rate_func=second_half), FadeIn(ill9), run_time=0.8)

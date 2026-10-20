@@ -37,10 +37,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l05-rag.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l05-rag.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 31:07 (1867.3 s), 107 MB. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l05-rag.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l05-rag_part1.mp4` | part 1, DURATION_P1: build the index — chunk, embed, load (S01–S09). Not in Git: rebuilt with `--no-render` |
-| `output/ac215-l05-rag_part2.mp4` | part 2, DURATION_P2: ask the index — query, filters, chat, semantic chunking (S10–S16). Not in Git: rebuilt with `--no-render` |
+| `output/ac215-l05-rag_part1.mp4` | part 1, 18:09 (1090.0 s): build the index — chunk, embed, load (S01–S09). Not in Git: rebuilt with `--no-render` |
+| `output/ac215-l05-rag_part2.mp4` | part 2, 12:57 (777.4 s): ask the index — query, filters, chat, semantic chunking (S10–S16). Not in Git: rebuilt with `--no-render` |
 | `output/ac215-l05-rag.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l05-rag.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l05-rag.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -59,7 +59,38 @@ Git keeps the subtitles, the chapter files and the transcript; the MP4s are rele
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts).
+
+```
+00:00 A model that never read the book
+01:40 Two lanes, one database
+03:15 Your key, your folders, your project
+05:15 One script, two containers
+07:19 Names, mounts, and two traps
+09:09 Cutting the books: a ruler
+11:21 Recursive split and its hidden overlap
+12:59 Meaning as direction: embeddings
+15:56 Load: records, an index, a folder on your disk
+18:09 Exit, and the index survives
+19:34 Asking the database: rank and cut
+21:27 Filters come first
+23:31 Chat: the prompt is the whole trick
+25:30 Semantic chunking: cut where meaning shifts
+27:23 Beyond naïve RAG: what the lecture adds
+28:49 Tear down, a stale index, recap
+```
+
+Part 1 uses the first nine lines as they are. Part 2 starts its clock at 0:00:
+
+```
+00:00 Exit, and the index survives
+01:24 Asking the database: rank and cut
+03:17 Filters come first
+05:21 Chat: the prompt is the whole trick
+07:20 Semantic chunking: cut where meaning shifts
+09:13 Beyond naïve RAG: what the lecture adds
+10:39 Tear down, a stale index, recap
+```
 
 ## What you'll learn
 
@@ -79,7 +110,7 @@ its chunk step without a key. Five test-yourself questions close the video (answ
    goes after; three roads (paste every book into the prompt, fine-tune, or hand the model the most
    relevant pages: an open-book exam); the lecture's four questions (embedding, vector database,
    query, context); how to follow along, and what a recording without a Google key shows.
-2. **Two lanes, one database** — RAG in five boxes, where the database never talks to the model; the
+2. **Two lanes, one database** — RAG in four boxes, where the database never talks to the model; the
    two lanes: books → chunks → embedding model → vectors → database once, offline; question → the
    same model → query vector → nearest chunks → prompt → LLM for every question; the lecture's three
    phases (indexing, retrieval, augmentation and generation); one `cli.py` flag per box; why both

@@ -44,8 +44,9 @@ Beats (script.md "## S05", one voiceover block each):
  7  The frame leaves; the TEAL container terminal returns as a 3-row strip, GREY caption "back in
     your container". Above: docker-compose.yml · line 19 `image: chromadb/chroma:latest` (latest
     underlined), three version chips "tag 1.5.9" · "chroma 1.4.4" (laptop/11b line 2) · 'API
-    "1.0.0"' (laptop/11 line 2), "at the time of recording", GREY "team tip: pin a tag in
-    docker-compose.yml · line 19". Then ▶ your turn on a static GREY card in two groups
+    "1.0.0"' (laptop/11 line 2), each with its GREY source under it ("Docker Hub: latest = 1.5.9",
+    `chroma --version` "(server)", `GET /api/v2/version`), "at the time of recording", GREY
+    "team tip: pin a tag in docker-compose.yml · line 19". Then ▶ your turn on a static GREY card in two groups
     (container: the env check; second terminal, in llm-rag: docker ps · curl · ls) with a GOLD
     note "yours: llm-service-account.json listed" (the env check folded at its "; " so the card's rows
     paste back as one valid command). Hold 2 s, empty frame.
@@ -61,6 +62,7 @@ from manim import (
     LEFT,
     RIGHT,
     UP,
+    AnimationGroup,
     Create,
     DashedVMobject,
     FadeIn,
@@ -71,10 +73,10 @@ from manim import (
     ReplacementTransform,
     RoundedRectangle,
     ShowIncreasingSubsets,
-    TransformFromCopy,
     VGroup,
     VMobject,
     linear,
+    there_and_back_with_pause,
 )
 
 from common import (
@@ -365,6 +367,12 @@ def print_rows(scene, t, rows: list, run_time: float = 0.6, lag: float = 0.12) -
     return new
 
 
+def flash(glyphs, color: str = TURN) -> list:
+    """Each on-screen glyph's colour to `color` and back, one animation per glyph (as S06: animating
+    a new wrapper VGroup would add it to the scene and split the terminal that holds the glyphs)."""
+    return [g.animate(rate_func=there_and_back_with_pause).set_color(color) for g in glyphs]
+
+
 def card_text(lines, size: float = CAPTION, color: str = INK):
     return VGroup(*[note(s, color, size) for s in lines]).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
 
@@ -460,7 +468,9 @@ class NamesAndMounts(VoiceScene):
             path = substring(cred, SECRETS_PATH)
             self.play(path.animate.set_color(LOOKUP), FadeIn(VGroup(sp.board, sp.post, sp.foot), shift=UP * 0.1),
                       run_time=0.4)
-            self.play(TransformFromCopy(path, sp.text[0]), run_time=0.7)   # the board first: the text on top
+            # the board first, the text on top; the path flashes in place while its text fades in on the
+            # board (a copy flying up crossed the GOOGLE_APPLICATION_CREDENTIALS rows: garbled text)
+            self.play(*flash(path), FadeIn(sp.text[0], shift=UP * 0.1), run_time=0.7)
             vo.wait_until("Our secrets folder is empty")
             self.play(FadeIn(sec, shift=LEFT * 0.15), Indicate(VGroup(out[3], out[4]), color=TURN, scale_factor=1.03),
                       run_time=0.7)
@@ -479,10 +489,14 @@ class NamesAndMounts(VoiceScene):
             pin(self, gc, beside(extra_tag(), tc, gc), run_time=0.3)
             hosts, beat = tc.print(self, BYNAME.at(2, 3), run_time=0.4)
             self.play(hosts.animate.set_color(LOOKUP), Create(book_link), FadeIn(book.frame), run_time=0.4)
-            # the phone book's line is the hosts line read the other way round: name -> address
-            self.play(TransformFromCopy(substring(hosts, "llm-rag-chromadb"), text_sub(book.text, "llm-rag-chromadb")),
-                      TransformFromCopy(substring(hosts, "172.19.0.2"), text_sub(book.text, "172.19.0.2")),
-                      FadeIn(text_sub(book.text, "→")),
+            # the phone book's line is the hosts line read the other way round: name -> address. Each
+            # part flashes in place in the hosts line as it fades in on the card, the name first (copies
+            # flying up crossed the ls rows and the terminal's title: garbled text)
+            self.play(LaggedStart(AnimationGroup(*flash(substring(hosts, "llm-rag-chromadb")),
+                                                 FadeIn(text_sub(book.text, "llm-rag-chromadb"))),
+                                  FadeIn(text_sub(book.text, "→")),
+                                  AnimationGroup(*flash(substring(hosts, "172.19.0.2")),
+                                                 FadeIn(text_sub(book.text, "172.19.0.2"))), lag_ratio=0.3),
                       Indicate(th.parts["rail"], color=LOOKUP, scale_factor=1.0), run_time=0.9)
             pin(self, beat, beside(differ_tag(), tc, beat), run_time=0.3)
             vo.wait_until("From your laptop")
@@ -514,7 +528,9 @@ class NamesAndMounts(VoiceScene):
             ex4 = extra_tag()            # the typed row is full: the tag sits at the end of the row under it
             ex4.move_to(lv[0].strut).align_to(t2.box, RIGHT).shift(LEFT * 0.12)
             pin(self, lv[0], ex4, run_time=0.3)
-            self.play(TransformFromCopy(th.rows["chromadb"], vol_row), th.pulse("data"), run_time=0.9)
+            # the thumbnail's folder flashes in place as its full-size row fades in beside it (a copy
+            # morphing across the CLI and Chroma boxes read as garbled text over the picture)
+            self.play(*flash(th.rows["chromadb"]), FadeIn(vol_row, shift=RIGHT * 0.1), th.pulse("data"), run_time=0.9)
             self.play(FadeIn(made, shift=UP * 0.1), Indicate(th.rows["chromadb"], color=TURN, scale_factor=1.3),
                       run_time=0.7)
             vo.wait_until("owned by root")
@@ -616,9 +632,11 @@ class NamesAndMounts(VoiceScene):
             pin(self, gl, beside(extra_tag(), tz, gl), run_time=0.3)
             co = tz.print(self, CLONE.at((2, 4)), run_time=0.4)
             beside(unpacks, tz, co[1], buff=0.6)
+            # the two names flash in place as their folder rows fade in above (copies lifting out
+            # crossed "Cloning into" and the terminal's title: garbled text)
             self.play(FadeIn(unpacks, shift=LEFT * 0.1), Create(zone), FadeIn(zlab),
-                      TransformFromCopy(VGroup(*co[1].glyphs), r_main.text), FadeIn(r_main.glyph),
-                      TransformFromCopy(VGroup(*co[2].glyphs), r_sec.text), FadeIn(r_sec.glyph), run_time=0.8)
+                      *flash(co[1].glyphs), FadeIn(r_main.text), FadeIn(r_main.glyph),
+                      *flash(co[2].glyphs), FadeIn(r_sec.text), FadeIn(r_sec.glyph), run_time=0.8)
             attach(self, co[1], unpacks)
             bare = cd_prompt(self, tz, P_ZIP_REPO, LAPTOP, run_time=0.5)    # not narrated: no anchor
             beside(after_cd, tz, bare, buff=0.5)
@@ -659,16 +677,38 @@ class NamesAndMounts(VoiceScene):
         i19 = excerpt(COMPOSE, 19, 19).strip()
         img = excerpt_chip(i19, f"{COMPOSE} · line 19", line=excerpt(COMPOSE, 19, 19))
         chips = VGroup(*[chip(s, CTR, size=CAPTION, font=MONO) for s in
-                         (f"tag {HUB_TAG}", VERSION_SERVER, f"API {VERSION_API}")]).arrange(RIGHT, buff=0.35)
+                         (f"tag {HUB_TAG}", VERSION_SERVER, f"API {VERSION_API}")])
+        # chip() centres each text's ink box, so the g of "tag" lifts that line ~0.03 above the other two:
+        # put the three version numbers on the baseline of "chroma 1.4.4" (no descender)
+        nums = (HUB_TAG, VERSION_SERVER.split()[-1], VERSION_API.strip('"'))
+        d0 = text_sub(chips[1].text, nums[1]).get_bottom()[1] - chips[1].box.get_center()[1]
+        for c, num in zip(chips, nums):
+            c.text.shift(UP * (c.box.get_center()[1] + d0 - text_sub(c.text, num).get_bottom()[1]))
+        # where each number comes from (a GREY line under its chip): Docker Hub's tag list (ASSETS.md),
+        # laptop/11b (chroma --version run in the Chroma container) and laptop/11 (the version endpoint)
+        assert "chroma --version" in capture("11b", "laptop").cmd
+        assert capture("11", "laptop").cmd.endswith("/api/v2/version")
+        src_hub = note(f"Docker Hub: latest = {HUB_TAG}")
+        src_cmd, src_srv = mono("chroma --version", CAPTION, S.GREY), note("(server)")
+        src_api = mono("GET /api/v2/version", CAPTION, S.GREY)
+        srcs = VGroup(src_hub, VGroup(src_cmd, src_srv).arrange(RIGHT, buff=0.12), src_api)
+        cols = VGroup(*[VGroup(c, s).arrange(DOWN, buff=0.12) for c, s in zip(chips, srcs)])
+        cols.arrange(RIGHT, buff=0.45, aligned_edge=UP)
+        # one baseline for the three lines (fonts and descenders differ): the bottoms of glyphs that
+        # sit on it ("Docker Hub…", "chroma --version", "server", "GET")
+        base = src_hub.get_bottom()[1]
+        srcs[1].shift(UP * (base - src_cmd.get_bottom()[1]))
+        src_srv.shift(UP * (base - text_sub(src_srv, "server").get_bottom()[1]))
+        src_api.shift(UP * (base - text_sub(src_api, "GET").get_bottom()[1]))
         rec = recording_tag()
         tip = note("team tip: pin a tag in docker-compose.yml · line 19")
-        vcard_rows = VGroup(img, chips, VGroup(rec, tip).arrange(RIGHT, buff=0.4)).arrange(DOWN, buff=0.38)
+        vcard_rows = VGroup(img, cols, VGroup(rec, tip).arrange(RIGHT, buff=0.4)).arrange(DOWN, buff=0.32)
         vcard_rows[1].align_to(vcard_rows[0], LEFT)
         vcard_rows[2].align_to(vcard_rows[0], LEFT)
         vfr = box(vcard_rows.width + 0.7, vcard_rows.height + 0.6, S.GREY, fill_opacity=0.0, radius=0.14)  # no fill:
         # it fades in after the image chip, and nothing lies behind it
         vfr.move_to(vcard_rows)
-        vcard = VGroup(vfr, vcard_rows).move_to([0, 0.55, 0])
+        vcard = VGroup(vfr, vcard_rows).move_to([0, 0.76, 0])   # midway between the tracker (2.97) and the strip
         latest = text_sub(img.text, "latest")
         u_latest = under(latest, TURN)
 
@@ -693,12 +733,14 @@ class NamesAndMounts(VoiceScene):
             self.play(Create(u_latest), latest.animate.set_color(TURN), run_time=0.6)
             vo.wait_until("and three version numbers")
             self.play(FadeIn(vfr), *[FadeIn(c, shift=UP * 0.15) for c in chips], run_time=0.8)
-            self.play(*[Indicate(c, color=TURN, scale_factor=1.08) for c in chips], FadeIn(rec), run_time=0.8)
+            self.play(*[Indicate(c, color=TURN, scale_factor=1.08) for c in chips],
+                      LaggedStart(*[FadeIn(s, shift=UP * 0.1) for s in srcs], lag_ratio=0.3), FadeIn(rec),
+                      run_time=1.0)
             vo.wait_until("a team should pin a tag")
             self.play(FadeIn(tip, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Pause and try these checks")
-            self.play(FadeOut(VGroup(vcard, u_latest, chips, rec, tip)), run_time=0.4)   # one card leaves, then
-            self.play(FadeIn(turn, shift=UP * 0.2), run_time=0.5)                          # the other comes
+            self.play(FadeOut(VGroup(vcard, u_latest, rec, tip)), run_time=0.4)   # one card leaves, then
+            self.play(FadeIn(turn, shift=UP * 0.2), run_time=0.5)                 # the other comes
             vo.wait_until("your key in slash secrets")
             self.play(Indicate(turn.rows[2], color=COST, scale_factor=1.06), run_time=0.8)
         self.wait(2)                                   # ▶ beat: hold the frame

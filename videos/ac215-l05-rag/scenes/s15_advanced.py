@@ -14,7 +14,8 @@ Beats (script.md "## S15", one voiceover block each):
    columns (the dock). Pre-Retrieval lights YELLOW; a big GREY dashed panel "query rewriting".
    A long, cluttered PINK question card shrinks (a copy) into "Where do dolphins live?" + GREEN tick;
    a short vague card "asked of a company's annual report" balloons into a long rewrite whose
-   invented parts turn RED, tag "invented".
+   invented parts turn RED and are underlined, tag "invented" (the rewrite's rows are spaced wider
+   so the underline under "in the past year" clears the next row's tall letters).
 2. LECTURE B42–B48. The rewriting picture shrinks into slot 1, which becomes the GREY dashed chip
    "query rewriting". Retrieval lights; panel "hybrid search". Column headers "keyword / BM25"
    (GREY) and "vectors / cosine" (PINK) write in as named, with a GREY card "rare words weigh most:
@@ -26,7 +27,8 @@ Beats (script.md "## S15", one voiceover block each):
    w = 0.5". Each rank cell sends 0.5 / rank to its paragraph's fused bar (GREY keyword blocks,
    PINK vector blocks): 0.75, 0.67, 0.42. The near paraphrase (paragraph 1) lights YELLOW with its
    bar, "1st"; the Tolminc card becomes the GREY chip "tutorial: $contains only filters".
-4. LECTURE B51–B65. The hybrid picture shrinks into slot 2 (chips "hybrid search", "rank fusion").
+4. LECTURE B51–B65. The hybrid picture shrinks into slot 2 (one chip "hybrid search + rank fusion":
+   the narration promises three ideas, so the closing row shows three chips).
    Post-Retrieval lights; panel "re-ranking". PINK "What is cheese?" (lecture example) → GREY dashed
    "fast retriever" with the card "bi-encoder: vectors made before the question · like our 8,248";
    arrow "top K = 25" → a column of 25 GREEN rows; five turn YELLOW (rows 1, 2, 11, 17, 22, as on
@@ -34,7 +36,7 @@ Beats (script.md "## S15", one voiceover block each):
    reads the rows one pair at a time ("slower: one model run per pair"); the column reorders and
    the YELLOW rows rise to the top, with the caption "fast + accurate: strong together" (a 1.3 s
    pad after the line lets it be read before the fold).
-5. The re-ranking picture shrinks into slot 3 ("re-ranking"); the lecture tag leaves. The four
+5. The re-ranking picture shrinks into slot 3 ("re-ranking"); the lecture tag leaves. The three
    GREY dashed chips gather into a row with a `cli.py` file glyph and a GREY "not here". The strip's
    Retrieval box flashes RED ("the wrong chunks"); S12's PINK-edged "metadata filter" box returns
    with the GREY note "our query: remove the filter" and fades to a dashed ghost (its name stays,
@@ -67,13 +69,13 @@ from manim import (
     LEFT,
     RIGHT,
     UP,
+    AnimationGroup,
     Arrow,
     Circle,
     Create,
     DashedVMobject,
     FadeIn,
     FadeOut,
-    FadeTransform,
     GrowFromEdge,
     Indicate,
     LaggedStart,
@@ -82,12 +84,13 @@ from manim import (
     Rectangle,
     ReplacementTransform,
     RoundedRectangle,
+    Succession,
     Transform,
-    TransformFromCopy,
     VGroup,
     Write,
     linear,
     smooth,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -126,6 +129,12 @@ def arrow(a, b, color=GREY, stroke=3, tip=0.15):
                  tip_length=tip, max_tip_length_to_length_ratio=0.5)
 
 
+def cell_flash(cell) -> list:
+    """A rank cell's outline and digit flash TURN in place (two animations: the cell stays readable)."""
+    return [cell[0].animate(rate_func=there_and_back).set_stroke(TURN, 4),
+            Indicate(cell[1], color=TURN, scale_factor=1.2)]
+
+
 def dbox(w, h, color=GREY, fill_op=0.06, radius=0.14, stroke=2.5, bg=None):
     """A GREY dashed box (a lecture concept with no code here) over a faint fill. .bg .dash"""
     r = min(radius, h / 2, w / 2)
@@ -150,9 +159,9 @@ def slot(n):
     return VGroup(c, d, t)
 
 
-def qcard(lines, size=20, color=LOOKUP):
+def qcard(lines, size=20, color=LOOKUP, buff=0.1):
     """A PINK question card of serif rows (a lecture example, our words). .frame .lines"""
-    rows = VGroup(*[label(s, size, INK) for s in lines]).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+    rows = VGroup(*[label(s, size, INK) for s in lines]).arrange(DOWN, aligned_edge=LEFT, buff=buff)
     fr = box(rows.width + 0.44, rows.height + 0.34, color, fill_opacity=0.1, radius=0.12)
     rows.move_to(fr)
     g = VGroup(fr, rows)
@@ -289,7 +298,9 @@ def rewriting_picture():
     left_at(p.vague, LEFT_X, -1.6)
     p.vnote = note("asked of a company's annual report").next_to(p.vague, DOWN, buff=0.14)
     p.vnote.align_to(p.vague, LEFT).shift(RIGHT * 0.1)
-    p.rewrite = qcard(REWRITE)
+    # wider rows: an underline under a row with descenders ("in the past year") then clears the next
+    # row's tall letters by ~0.14 (at buff 0.1 it sat 0.04 above "reasons behind")
+    p.rewrite = qcard(REWRITE, buff=0.2)
     left_at(p.rewrite, 0.75, -1.75)
     p.a2 = arrow((-0.9, -1.6), (0.55, -1.6))
     p.marks, p.unders = VGroup(), VGroup()
@@ -450,7 +461,9 @@ class BeyondNaive(VoiceScene):
         p = rewriting_picture()
         panel = dbox(13.0, PANEL_TOP - PANEL_BOT, fill_op=0.0).move_to([0, (PANEL_TOP + PANEL_BOT) / 2, 0])
         title = panel_title("query rewriting")
-        with self.voiceover(SAY[1]) as vo:
+        # pad: a breath after "can invent details", so the three red phrases can be read before the
+        # picture folds into slot 1
+        with self.voiceover(SAY[1], pad=1.3) as vo:
             ref2 = lref("B36–B39")
             self.play(
                 ReplacementTransform(m.pre, c.pre), ReplacementTransform(m.pre_lab, c.pre_lab),
@@ -460,8 +473,11 @@ class BeyondNaive(VoiceScene):
                 ReplacementTransform(m.a_idx, c.a1), ReplacementTransform(m.a_ret, c.a2),
                 ReplacementTransform(m.seis, c.seis[0]), ReplacementTransform(m.seis_frame, c.seis[1]),
                 *[ReplacementTransform(a, b) for a, b in zip(m.slots, c.slots)],
-                FadeOut(VGroup(m.books, m.a_books, m.idx, m.a_ag, m.answer, m.q_lab, m.a_q, m.tick, m.caption)),
-                FadeOut(ref), FadeIn(ref2),
+                # the parts with no compact twin are gone in the first third (fading over the whole morph,
+                # "Indexing" read "①ndexing" as the step mark and the icon flew across it)
+                FadeOut(VGroup(m.books, m.a_books, m.idx, m.a_ag, m.answer, m.q_lab, m.a_q, m.tick, m.caption),
+                        rate_func=lambda t: smooth(min(1.0, 3 * t))),
+                Succession(FadeOut(ref), FadeIn(ref2)),     # one tag after the other: no overlap
                 run_time=1.3)
             self.play(FadeIn(c.a3), light(c.pre), Create(panel.dash), FadeIn(title), run_time=0.8)
             # light the slot's dashes and number only: Indicate recolours fills too, and the slot's
@@ -471,13 +487,18 @@ class BeyondNaive(VoiceScene):
             vo.wait_until("A model turns")
             self.play(FadeIn(p.clutter, shift=RIGHT * 0.2), run_time=0.6)
             vo.wait_until("into a clean one")
-            self.play(GrowFromEdge(p.a1, LEFT), FadeTransform(p.clutter.copy(), p.clean), run_time=1.0)
+            # the question's outline flashes in place as its rewrite fades in at the arrow's head (a copy
+            # morphing across doubled its own text, then ran garbled into the rewrite)
+            self.play(GrowFromEdge(p.a1, LEFT),
+                      p.clutter.frame.animate(rate_func=there_and_back).set_stroke(LOOKUP, 5),
+                      FadeIn(p.clean, shift=RIGHT * 0.2), run_time=1.0)
             vo.wait_until("like where do dolphins live")
             self.play(Create(p.tick), Indicate(p.clean, color=DATA, scale_factor=1.06), run_time=0.7)
             vo.wait_until("But hand it a vague question")
             self.play(FadeIn(p.vague, shift=RIGHT * 0.2), FadeIn(p.vnote), run_time=0.6)
             vo.wait_until("and the rewrite")
-            self.play(GrowFromEdge(p.a2, LEFT), FadeTransform(p.vague.copy(), p.rewrite), run_time=1.0)
+            self.play(GrowFromEdge(p.a2, LEFT), p.vague.box.animate(rate_func=there_and_back).set_stroke(LOOKUP, 5),
+                      FadeIn(p.rewrite, shift=RIGHT * 0.2), run_time=1.0)       # as above
             vo.wait_until("can invent details")
             self.play(*[g.animate.set_color(ERR) for g in p.marks], Create(p.unders), FadeIn(p.invented),
                       run_time=0.7)
@@ -485,18 +506,18 @@ class BeyondNaive(VoiceScene):
         # ========================================================== 2 · hybrid search (B42–B48)
         h = hybrid_picture()
         chip1 = concept_tag("query rewriting").move_to(c.slots[0])
-        pair = VGroup(concept_tag("hybrid search"), concept_tag("rank fusion")).arrange(RIGHT, buff=0.15)
-        pair.move_to([DOCK_X[1], DOCK_Y, 0])
-        level_boxes([chip1, *pair], DOCK_Y)
-        for ch, s in ((chip1, "query rewriting"), (pair[0], "hybrid search"), (pair[1], "rank fusion")):
+        # one chip per numbered slot: the narration promises three ideas, so rank fusion rides with
+        # hybrid search instead of making a fourth chip in the closing row
+        chip2 = concept_tag("hybrid search + rank fusion").move_to([DOCK_X[1], DOCK_Y, 0])
+        level_boxes([chip1, chip2], DOCK_Y)
+        for ch, s in ((chip1, "query rewriting"), (chip2, "hybrid search + rank fusion")):
             seat_text(ch, s)
-        chip2, chip3 = pair[0], pair[1]
         title2 = panel_title("hybrid search")
         with self.voiceover(SAY[2]) as vo:
             ref3 = lref("B42–B48")
             self.play(FadeOut(p.all, scale=0.15, target_position=c.slots[0].get_center()),
                       ReplacementTransform(c.slots[0], chip1), light(c.pre, False), light(c.ret),
-                      Transform(title, title2), FadeOut(ref2), FadeIn(ref3), run_time=1.2)
+                      Transform(title, title2), Succession(FadeOut(ref2), FadeIn(ref3)), run_time=1.2)
             self.play(Indicate(VGroup(*c.slots[1][1:]), color=TURN, scale_factor=1.25), run_time=0.6)
             vo.wait_until("Keywords pin down")
             self.play(FadeIn(h.kw, shift=DOWN * 0.2), run_time=0.5)
@@ -521,10 +542,14 @@ class BeyondNaive(VoiceScene):
             vo.wait_until("gives each paragraph")
             self.play(FadeIn(h.knote, shift=DOWN * 0.15), run_time=0.6)
             vo.wait_until("one half divided by its rank")
-            self.play(LaggedStart(*[ReplacementTransform(h.kw_cells[i].copy(), h.blocks[i][0]) for i in range(3)],
+            # each rank cell flashes in place as its block fades in on the bar (copies flying right crossed the
+            # vectors column and the blocks already placed: garbled digits)
+            self.play(LaggedStart(*[AnimationGroup(*cell_flash(h.kw_cells[i]),
+                                                   FadeIn(h.blocks[i][0], shift=RIGHT * 0.15)) for i in range(3)],
                                   lag_ratio=0.3), run_time=1.3)
             vo.wait_until("in each list")
-            self.play(LaggedStart(*[ReplacementTransform(h.vec_cells[i].copy(), h.blocks[i][1]) for i in range(3)],
+            self.play(LaggedStart(*[AnimationGroup(*cell_flash(h.vec_cells[i]),
+                                                   FadeIn(h.blocks[i][1], shift=RIGHT * 0.15)) for i in range(3)],
                                   lag_ratio=0.3), run_time=1.2)
             vo.wait_until("and adds them up")
             self.play(LaggedStart(*[FadeIn(t, shift=LEFT * 0.15) for t in h.totals], lag_ratio=0.2), run_time=0.8)
@@ -555,8 +580,8 @@ class BeyondNaive(VoiceScene):
         with self.voiceover(SAY[4], pad=1.3) as vo:
             ref4 = lref("B51–B65")
             self.play(FadeOut(hybrid_all, scale=0.15, target_position=c.slots[1].get_center()),
-                      ReplacementTransform(c.slots[1], pair), light(c.ret, False), light(c.post),
-                      Transform(title, title3), FadeOut(ref3), FadeIn(ref4), run_time=1.2)
+                      ReplacementTransform(c.slots[1], chip2), light(c.ret, False), light(c.post),
+                      Transform(title, title3), Succession(FadeOut(ref3), FadeIn(ref4)), run_time=1.2)
             self.play(FadeIn(r.q, shift=RIGHT * 0.2), FadeIn(r.ex), run_time=0.6)
             vo.wait_until("A fast retriever")
             self.play(GrowFromEdge(r.a_q, UP), FadeIn(r.ret, shift=DOWN * 0.15), run_time=0.7)
@@ -568,7 +593,11 @@ class BeyondNaive(VoiceScene):
             vo.wait_until("with the right ones scattered")
             self.play(*[r.rows[k].animate.set_fill(TURN, 0.95) for k in RELEVANT], FadeIn(r.legend), run_time=0.8)
             vo.wait_until("A slower model")
-            self.play(FadeIn(r.dia, scale=0.85), TransformFromCopy(r.q, r.q2), run_time=0.7)
+            # the question flashes in place as its copy fades in above the cross-encoder (a copy flying across
+            # crossed the lecture-example tag and the bars: garbled text)
+            self.play(FadeIn(r.dia, scale=0.85), r.q.box.animate(rate_func=there_and_back).set_stroke(LOOKUP, 5),
+                      Indicate(r.q.text, color=LOOKUP, scale_factor=1.06), FadeIn(r.q2, shift=DOWN * 0.1),
+                      run_time=0.7)
             self.play(GrowFromEdge(r.a_q2, UP), run_time=0.35)
             # the cross-encoder reads one (question, chunk) pair at a time
             vo.wait_until("reads each question")
@@ -591,7 +620,7 @@ class BeyondNaive(VoiceScene):
         # ========================================================== 5 · none of this is in cli.py
         rerank_all = VGroup(r.q, r.ex, r.ret, r.a_q, r.bi, r.a_k, r.k_lab, r.rows, r.legend, r.dia, r.q2,
                             r.a_q2, r.slow, r.together)
-        chips = VGroup(chip1, chip2, chip3, chip4)
+        chips = VGroup(chip1, chip2, chip4)
         row = chips.copy().arrange(RIGHT, buff=0.25)
         cli = VGroup(file_glyph(0.55, GREY), mono("cli.py", 24, INK)).arrange(RIGHT, buff=0.15)
         not_here = note("not here", size=22)

@@ -20,8 +20,9 @@ Beats (script.md "## S01", one voiceover block each):
 3. LECTURE A8–A10. The chips shrink to the top. Three roads run from a pile of GREEN books (left)
    to the BLUE LLM box (right), drawn one at a time as named. Road 1: every page pours into the
    prompt, which overflows; a RED cross and "garbage". Road 2: GREY dashed, a slow clock glyph, a
-   tag "fine-tuning · lecture 8". Road 3: the lecture tag leaves; a librarian glyph picks ten pages
-   (GREEN cards) from the pile and hands them over; a YELLOW tag "open-book exam · our image";
+   tag "fine-tuning · lecture 8". Road 3 (the lecture tag stays; beat 4 hands it over to A11): a
+   librarian glyph picks ten pages (GREEN cards) from the pile and hands them over; a YELLOW tag
+   "open-book exam · our image";
    "That's RAG" lights road 3.
 4. LECTURE A11. The roads fade. A crowded GREY sketch of boxes and arrows fills the frame, blurred
    (our redrawing of the lecture's map of RAG techniques, no labels; tag "illustration · our
@@ -94,7 +95,6 @@ from manim import (
     DashedLine,
     FadeIn,
     FadeOut,
-    FadeTransform,
     Group,
     GrowArrow,
     GrowFromEdge,
@@ -108,11 +108,13 @@ from manim import (
     RoundedRectangle,
     ShowIncreasingSubsets,
     ShowPassingFlash,
+    Succession,
     Transform,
     VGroup,
     VMobject,
     Write,
     linear,
+    smooth,
     there_and_back,
 )
 
@@ -154,6 +156,14 @@ ROWS6 = ["Docker, chunking, Chroma: real runs", "embeddings: the staff's recorde
 
 
 # ------------------------------------------------------------------ small helpers
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
+
+
 def clear_stage(scene, *anims, run_time: float = 0.6):
     """Fade out everything on screen (together with `anims`), then drop it from the scene."""
     old = list(scene.mobjects)
@@ -491,7 +501,8 @@ class Hook(VoiceScene):
             tgt = top_grp.copy().scale(ks)
             tgt.move_to([-0.25, 3.48 - tgt.height / 2, 0])
             lr_new = lref("A8–A10")
-            self.play(FadeOut(lr), FadeIn(lr_new), top_grp.animate.scale(ks).move_to(tgt),
+            # the tag swaps in turn (old out, then new in): faded at once, the two texts overlapped
+            self.play(Succession(FadeOut(lr), FadeIn(lr_new)), top_grp.animate.scale(ks).move_to(tgt),
                       FadeIn(pile), FadeIn(pile_l), FadeIn(llm3), run_time=0.8)
             self.remove(lr)
             lr = lr_new
@@ -511,8 +522,9 @@ class Hook(VoiceScene):
                       Rotate(clock[1], angle=-PI, about_point=clock[0].get_center(), rate_func=linear),
                       run_time=0.9)
             vo.wait_until("Or let a librarian")
-            self.play(FadeOut(lr), Create(road3), run_time=0.6)
-            self.remove(lr)
+            # the A8–A10 tag stays while road 3 (A10: RAG) is drawn; beat 4's clear_stage takes it
+            # out before the A11 tag fades in
+            self.play(Create(road3), run_time=0.6)
             self.play(FadeIn(lib, shift=UP * 0.15), run_time=0.4)
             vo.wait_until("hand it the ten")
             self.add(cards)
@@ -584,7 +596,10 @@ class Hook(VoiceScene):
             clear_stage(self, run_time=0.7)
             self.play(FadeIn(readme, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("Top left, the tracker")
-            self.play(FadeTransform(readme, tr), run_time=0.7)
+            # the label flies to the corner and fades, then the tracker fades in there (a FadeTransform
+            # showed "llm-rag/README.md" and the tracker's step caption on top of each other)
+            self.play(FadeOut(readme, target_position=tr, rate_func=first_half),
+                      FadeIn(tr, rate_func=second_half), run_time=0.7)
             self.remove(readme)
             self.play(GrowArrow(ptr), run_time=0.5)
             lit = tr.dots[tr.k - 1]

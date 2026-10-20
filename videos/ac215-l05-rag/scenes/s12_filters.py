@@ -10,7 +10,8 @@ Beats (script.md "## S12", one voiceover block each):
     collection · 1 dot ≈ 8 chunks", tag "our illustration"); the PINK question card (top right)
     drops into the cloud as a PINK point inside the cluster labelled "Tolminc story". PONDER (8 s)
     in the lower third, the cloud above it.
- 2  GREY card "an extra Python check · counts with the query's filters". Under the cloud a filter
+ 2  GREY card "an extra Python check · counts with the query's filters · code: study guide, Step 9"
+    (the pointer GREY). Under the cloud a filter
     row: the counter "chunks: 8,248"; the PINK chip "book = The Complete Book of Cheese" appears and
     the mask dims all but the book's dots (1,355); the PINK chip `$contains "Italian"` appears and
     the mask dims all but 64 brighter dots (caption "64 bright dots = 64 chunks"). The card gives
@@ -19,7 +20,7 @@ Beats (script.md "## S12", one voiceover block each):
     "mentioning Tolminc: 0" on the fully dimmed Tolminc cluster.
  3  After "Now a search." the filter row leaves and the question card flashes, then becomes the tag
     "stand-in query · a stored story chunk's vector"; the strip grows to 4 rows under the card
-    "an extra Python check · query with a stored vector" (the staff tag beside it):
+    "an extra Python check · code: study guide, Step 9" (the pointer GREY; the staff tag beside it):
     TERM(recorded-embeddings/09: 16–17 word-folded, the chunk id PINK, the stand-in dot flashes).
     "Without filters": the mask lifts and the PINK beam reaches the stand-in's ten nearest, inside
     the Tolminc cluster (its label flashes). On "story" the picture leaves, the terminal grows to 11
@@ -42,19 +43,25 @@ Beats (script.md "## S12", one voiceover block each):
     filter (case-sensitive) · not keyword ranking (later)".
  7  Container terminal (TEAL, 10 rows): `python cli.py --get --chunk_type char-split` (tag extra +
     GREY note "not in the README · cli.py · lines 402–418") -> recorded-embeddings/05 lines 2–3
-    (word-folded) and line 6 cut after the ids list's "]" (word-folded), tag "recorded · the
-    staff's vectors (68e0bde)", GREY note "no distances: no ranking" (on "so no distances"). The
+    (word-folded) and line 6 cut after the ids list's "]" (word-folded; a GREY " …" after the "]",
+    as in S10), tag "recorded · the staff's vectors (68e0bde)", GREY note "no distances: no
+    ranking" (on "so no distances"). The
     terminal shrinks to a 4-row strip holding the ids and a TEAL cylinder appears; "Its 10 records":
-    copies of the ten ids become ten cards ("-0" … "-9") in a row beside the cylinder, bracketed
+    the ten ids flash GREEN in turn as ten cards ("-0" … "-9") fade in, in a row beside the cylinder, bracketed
     "-0 to -2 / Gutenberg header" (RED), "-3 to -5 / title page, contents" (GREY), "-6 to -9 /
     chapter one begins" (GREEN); the RED cards flash, the cylinder pulses ("indexed like any text");
-    last, the GREEN fix card "strip outside the START/END markers / then chunk, embed, load again"
-    bottom left on the strip, beside the staff tag. Everything fades: empty frame.
+    last, the GREEN fix card "the fix: keep only the text between the / `*** START OF` and `*** END
+    OF` lines / then chunk, embed, load again" bottom left on the strip, beside the staff tag; it
+    stays 3 s after the words. Everything fades: empty frame.
 
 Deviations from SHOW (see the scene report): the "extra Python check" cards are one-line GREY cards
 with the SHOW's own wording (the two-line check_card does not fit above an 11-row terminal under
-the tracker band). Beat 3 prints lines 16–17 in a 4-row strip under the picture first (the beam
-needs the picture), and the 11-row terminal only for the distances (18–28). Beat 7's
+the tracker band), each ending in the GREY pointer "· code: study guide, Step 9" (the guide holds
+both heredocs); beat 3's card drops "query with a stored vector" for it (one line beside the staff
+tag holds one or the other; the stand-in tag right above says what the query is). The fix card
+names the marker lines ("START/END markers" alone did not say what to strip) as the files and the
+exercise patch spell them. Beat 3 prints lines 16–17 in a 4-row strip under the picture first (the
+beam needs the picture), and the 11-row terminal only for the distances (18–28). Beat 7's
 terminal has 10 rows (the folded command, the folded Namespace line and the four ids rows need
 10), and it shrinks to a 4-row strip so all ten ids stay on screen while they become cards; the
 ten cards stand in a row beside the cylinder (ten cards stacked inside it would be 0.22 tall,
@@ -69,6 +76,16 @@ character offset. Spoken numerals take far longer than their characters ("8,248"
 late (beats 3–4), measured against the clause starts heard in the clip (the pauses in its audio,
 2026-10-18). Those few anchors start a word or two earlier in the text
 so that their interpolated time falls on the clause start that is heard; each says which.
+Beat 4 since the distances became their own sentence (re-measured 2026-10-19, ASR base.en and
+large-v3-turbo plus the clip's pauses): sentence 0 has no long numerals, so its anchors are the
+clause starts ("all 10 results" 1.53 s, heard 1.62; "The Complete Book of Cheese" 3.06 s, heard
+2.94). In "Their distances run from 0.28 to 0.31." (4.84–9.66 s) the two numbers take 2.8 of the
+4.8 s: "run from 0.28" fires at 6.82 s, inside the heard "0.28" (6.12–7.14 s), and "0.28 to 0.31"
+at 7.93 s, on the heard "0.31" (from 7.84 s, after a pause at 7.48–7.84 s); "to 0.31" would fire at
+8.55 s, near the end of "0.31", and leave the returning picture 0.06 s before the mask.
+Beat 2 since "The word Italian keeps 64." became its own sentence (fix round 1, 2026-10-20, ASR
+base.en on the new clip): that anchor is its sentence mark (10.09 s, heard "The" 9.92 s), and "book
+filter keeps 1,355" fires at 6.49 s, inside the heard "the book" (6.34–6.64 s).
 """
 
 import numpy as np
@@ -89,9 +106,11 @@ from manim import (
     ShowPassingFlash,
     Transform,
     VGroup,
+    there_and_back,
 )
 
 from common import (
+    ASSETS,
     BOOK,
     COUNTS,
     DATA,
@@ -137,7 +156,17 @@ from common import (
     under,
 )
 from explainer import style as S
-from explainer.devops import CAPTION, MONO, cell_width, chip, cross_mark, mono, substring
+from explainer.devops import (
+    CAPTION,
+    MONO,
+    cell_width,
+    chip,
+    cross_mark,
+    glyph_range,
+    mono,
+    mono_line,
+    substring,
+)
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S12"]
@@ -188,6 +217,18 @@ IDS = GET.cut(6, "]")
 IDS_ROWS = word_fold(IDS)
 ID_BASE = "1021665fac86c5a5-"
 assert len(ARGS_ROWS) == 3 and len(IDS_ROWS) == 4 and IDS.count(ID_BASE) == 10, (ARGS_ROWS, IDS_ROWS)
+# the captured line goes on after the ids' "]" (", 'embeddings': None, 'metadatas': [..."; the rest
+# of line 6 is never shown, so only cut() reads it): the scene marks the cut with a GREY " …", as S10
+# does for the same line (more_mark is S10's, copied: common.py is not edited during scene work)
+
+
+def more_mark(row) -> VGroup:
+    """A GREY ' …' after a row printed only up to its cut (the captured line goes on): the "…"
+    glyph of a twin line row.text + ' …' laid over the row, so it sits one cell after it."""
+    twin = mono_line(row.text + " …", row.pt, S.GREY)
+    twin.shift(row.strut.get_corner(UP + LEFT) - twin.strut.get_corner(UP + LEFT))
+    return glyph_range(twin, len(row.text) + 1)
+
 
 # cli.py lines this scene quotes (checked: the panels below would fail on a different file)
 assert excerpt("cli.py", 356, 356).strip() == "n_results=10,"
@@ -230,9 +271,27 @@ def rows_box(lines, a: int, b: int, color: str = TURN, pad: float = 0.05):
     return r.move_to([x0 + (b - a) * cw / 2, (top + bot) / 2, 0])
 
 
+GUIDE = "· code: study guide, Step 9"      # where both checks' heredocs are (MLOps_Learning L05 guide)
+
+
 def one_line_card(text: str):
-    """The GREY "an extra Python check · …" card, on one line (its code is never shown)."""
-    return card_rows([text])
+    """The GREY "an extra Python check · …" card on one line (its code is never shown), ending in
+    the GREY pointer to the study guide step that holds the code."""
+    row = VGroup(note(text, INK), note(GUIDE)).arrange(RIGHT, buff=0.12)
+    row[1].align_to(row[0], UP)                         # ascenders in both: their tops line up
+    return card_rows([row])
+
+
+def fix_rows() -> list:
+    """The fix card's rows: the marker lines Project Gutenberg puts around a book's text (10 of
+    the 11 books; the exercise patch cuts at the same two strings), then the pipeline again."""
+    r1 = VGroup(note("the fix:"), note("keep only the text between the", INK)).arrange(RIGHT, buff=0.12)
+    r1[1].align_to(r1[0], UP)                           # ascenders in both ("keep" has a descender)
+    r2 = VGroup(mono("*** START OF", CAPTION, INK), note("and", INK), mono("*** END OF", CAPTION, INK),
+                note("lines", INK)).arrange(RIGHT, buff=0.14)
+    for m in r2[1:]:
+        m.align_to(r2[0], DOWN)                         # caps and serif without descenders: one baseline
+    return [r1, r2, "then chunk, embed, load again"]
 
 
 def survivors(dc) -> VGroup:
@@ -277,9 +336,26 @@ class FiltersFirst(VoiceScene):
         b356 = panel.bar(356, TURN)
         b357 = pink_bar(panel, 357)
         b358 = pink_bar(panel, 358)
+        # each filter box spans its row from half-gap to half-gap: 357's starts in the 5 px gap under
+        # line 356 (the full bar's top edge ran above n_results=10's underline, which then read as
+        # line 357's), and 357 and 358 share one edge in the gap between them (the full bars
+        # overlapped there: a double PINK line, with u_book merged into 357's bottom edge); 358's bottom
+        # edge runs 0.04 under its underscores (at the half-gap to ")", whose box reaches above its ink,
+        # the "_" of where_document and search_string sat on the edge), over the tip of ")" as before
+        r356, r357, r358 = (panel.code.code_lines[panel.rows_of(n)[0]] for n in (356, 357, 358))
+
+        def half_gap(a, b):
+            return (a.get_bottom()[1] + b.get_top()[1]) / 2
+        for bar, top, bot in ((b357, half_gap(r356, r357), half_gap(r357, r358)),
+                              (b358, half_gap(r357, r358), r358.get_bottom()[1] - 0.04)):
+            bar.stretch_to_fit_height(top - bot).set_y((top + bot) / 2)
         b353 = panel.bar(353, LOOKUP, 0.12)
-        u_ten = under(panel.span(356, "n_results=10"), TURN)
-        u_book = under(panel.span(357, '"The Complete Book of Cheese"'), LOOKUP)
+        # on the baseline ("10"'s bottom, not the "_"'s): 4 px clear of line 357's box
+        u_ten = under(panel.span(356, "n_results=10"), TURN, stroke=3)
+        u_ten.set_y(panel.span(356, "10").get_bottom()[1] - 0.03)
+        # on the baseline too (the "p" of Complete crosses it), inside 357's box: 4 px clear of the shared edge
+        u_book = under(panel.span(357, '"The Complete Book of Cheese"'), LOOKUP, stroke=3)
+        u_book.set_y(panel.span(357, "The").get_bottom()[1] - 0.025)
         u_ital = under(panel.span(353, '"Italian"'), LOOKUP)
         c_meta = chip("metadata filter · keeps one book", LOOKUP, size=CAPTION)
         c_doc = chip("document filter · keeps chunks that contain “Italian”", LOOKUP, size=CAPTION)
@@ -352,10 +428,10 @@ class FiltersFirst(VoiceScene):
             self.play(FadeIn(ck, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Of 8,248 chunks")
             self.play(FadeIn(cnt, shift=LEFT * 0.1), run_time=0.5)
-            vo.wait_until("filter keeps 1,355")         # lands on "the book filter" (see ANCHORS)
+            vo.wait_until("book filter keeps 1,355")    # 6.49 s, on "the book filter" (heard 6.34-7.06 s)
             self.play(FadeIn(f_book, shift=RIGHT * 0.1), run_time=0.4)
             self.play(*mask_to(dc, "book"), cnt.count_to(COUNTS["book"]), run_time=1.1)
-            vo.wait_until("Italian keeps 64")           # lands on "the word Italian"
+            vo.wait_until("The word Italian")           # its own sentence since T2: an exact mark
             self.play(FadeIn(f_ital, shift=RIGHT * 0.1), run_time=0.4)
             self.play(*mask_to(dc, "italian"), cnt.count_to(COUNTS["italian"]), Transform(cap[1], cap2),
                       run_time=1.1)
@@ -372,7 +448,9 @@ class FiltersFirst(VoiceScene):
 
         # ========================================================== 3 · a stand-in query, no filter
         st4 = strip_top(4)
-        ck2 = one_line_card("an extra Python check · query with a stored vector")
+        # its purpose is the stand-in tag's, right above it: the card's room beside the staff tag
+        # holds "an extra Python check" and the pointer, not both and the purpose
+        ck2 = one_line_card("an extra Python check")
         ck2_hi = [-6.3 + ck2.width / 2, CARD_Y, 0]                          # above an 11-row terminal
         ck2.move_to([-6.3 + ck2.width / 2, st4 + 0.06 + ck2.height / 2, 0])  # above the 4-row strip
         stf_4 = [6.3 - stf.width / 2, st4 + 0.06 + stf.height / 2, 0]
@@ -429,15 +507,16 @@ class FiltersFirst(VoiceScene):
             t.clear(self, run_time=0.25)
             o29 = t.print(self, [Q.line(29)], run_time=0.3)
             self.play(Indicate(o29[0], color=TURN, scale_factor=1.04), run_time=0.6)   # "the code's filters"
-            vo.wait_until("filters, all 10 results")    # lands on "all 10 results" (see ANCHORS)
+            # the distances are their own sentence now (no numerals in sentence 0): clause anchors
+            vo.wait_until("all 10 results")             # 1.53 s (ASR: "all" at 1.62 s, 2026-10-19)
             o30 = t.print(self, Q.at((30, 39)), run_time=0.7)
-            vo.wait_until("results come from The Complete Book of Cheese")   # lands on "The Complete Book"
+            vo.wait_until("The Complete Book of Cheese")    # 3.07 s (ASR: "the complete" 2.94 s)
             bk = rows_box(list(o30), 8, 8 + len(BOOK), TURN)
             self.play(Create(bk), run_time=0.6)
-            vo.wait_until("Complete Book of Cheese, at 0.28")    # lands on "at 0.28"
+            vo.wait_until("run from 0.28")              # lands in "0.28" (6.82 s; heard 6.12–7.14 s; see ANCHORS)
             z2 = col_box(o30[0], 0, 6, TURN)
             pin(self, o30[0], z2, anim=Create(z2), run_time=0.35)
-            vo.wait_until("at 0.28 to 0.31")            # lands on "0.31"
+            vo.wait_until("0.28 to 0.31")               # lands on "0.31" (7.93 s; heard from 7.84 s; see ANCHORS)
             z3 = col_box(o30[9], 0, 6, TURN)
             gone = VGroup(o29[0], *o30[:7])             # the rows above the strip's last three go with
             pin(self, o30[9], z3, anim=AnimationGroup(Create(z3), FadeOut(bk), FadeOut(ck2), FadeOut(gone)),
@@ -483,7 +562,9 @@ class FiltersFirst(VoiceScene):
             self.play(FadeOut(VGroup(dc, beam, ill, cap, surv_lab, t, stf)), FadeOut(sti), run_time=0.6)
             self.play(FadeIn(st, shift=UP * 0.1), FadeIn(lr), run_time=0.6)
             vo.wait_until("metadata filtering")
-            self.play(Indicate(filt, color=TURN, scale_factor=1.12), run_time=0.7)
+            # the box's outline and its text flash (Indicate on the whole box filled it YELLOW: text unreadable)
+            self.play(filt[0].animate(rate_func=there_and_back).set_stroke(TURN, 5),
+                      Indicate(filt[1], color=TURN, scale_factor=1.1), run_time=0.7)
             vo.wait_until("after ranking")              # the ranked results come out of Querying
             self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.25) for c in story], lag_ratio=0.08),
                       FadeIn(s_lab), run_time=0.9)
@@ -527,7 +608,9 @@ class FiltersFirst(VoiceScene):
             vo.wait_until("the README promises")
             self.play(FadeIn(rm, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("but only variant 4 runs")
-            self.play(Indicate(err, color=TURN, scale_factor=1.15), run_time=0.7)
+            # the tag's outline and text flash (Indicate on the whole tag filled it YELLOW: text unreadable)
+            self.play(err.box.animate(rate_func=there_and_back).set_stroke(TURN, 4),
+                      Indicate(err.text, color=TURN, scale_factor=1.08), run_time=0.7)
             vo.wait_until("variants 1 to 3")
             # each '#' pulses in place (one Indicate on the whole column stretched it off its rows)
             self.play(FadeIn(hbox), LaggedStart(*[Indicate(h, color=INK, scale_factor=1.4) for h in hashes],
@@ -571,12 +654,15 @@ class FiltersFirst(VoiceScene):
             lb.next_to(br, DOWN, buff=0.14)
             brackets.add(br)
             labels.add(lb)
-        fix = card_rows(["strip outside the START/END markers", "then chunk, embed, load again"],
-                        header="the fix", frame_color=DATA)
+        fix = card_rows(fix_rows(), frame_color=DATA)
         # bottom left, on the 4-row strip beside the staff tag (centred under the cards, its header
-        # sat 0.2 under the RED "Gutenberg header" label)
+        # sat 0.2 under the RED "Gutenberg header" label); "the fix:" leads the first row, since a
+        # header above the three rows would touch the cylinder
         fix.move_to([-6.3 + fix.width / 2, st4 + 0.08 + fix.height / 2, 0])
         assert fix.get_right()[0] < stf7_4[0] - stf7.width / 2 - 0.4, "the fix card would touch the staff tag"
+        assert fix.get_top()[1] < cyl.get_bottom()[1] - 0.2, "the fix card would touch the cylinder"
+        patch = (ASSETS / "exercise-checks/logs/b3-strip.patch.py").read_text()    # exercise B3's cut
+        assert 'find("*** START OF")' in patch and 'find("*** END OF")' in patch, "the fix card's markers"
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(p2, hbox, err, rm, unc, cont_g)), run_time=0.5)
@@ -590,18 +676,28 @@ class FiltersFirst(VoiceScene):
             tg.print(self, ARGS_ROWS + [GET.line(3)], run_time=0.5)
             self.play(FadeIn(stf7, shift=DOWN * 0.1), run_time=0.3)
             ids = tg.print(self, IDS_ROWS, run_time=0.5)
+            # the line goes on after the "]": the GREY " …", part of its row (pin), so it follows the
+            # row through the shrink and leaves with the strip
+            more_g = more_mark(ids[3])
+            pin(self, ids[3], more_g, anim=FadeIn(more_g), run_time=0.25)
             vo.wait_until("so no distances")
-            pin(self, ids[3], beside(nd, tg, ids[3], buff=0.5), run_time=0.4)
+            beside(nd, tg, ids[3], buff=0.7)            # the " …" ends 0.43 right of the "]"
+            assert nd.get_left()[0] - more_g.get_right()[0] >= 0.15, "the note would touch the ' …'"
+            pin(self, ids[3], nd, run_time=0.4)
             # the strip and the cylinder are ready before "Its 10 records start" (in sequence after
             # it, the RED "Gutenberg header" label came 0.75 s after the words)
             resize(self, tg, 4, keep=list(ids), run_time=0.55, extra=[stf7.animate.move_to(stf7_4), FadeIn(cyl)])
-            flying = VGroup()
+            # each id flashes GREEN in place as its card fades in, in the same order (copies flying up
+            # from the strip crossed its rows, its title and the staff tag: garbled text)
+            id_glyphs = []
             for k in range(10):
                 sid = f"'{ID_BASE}{k}'"
                 row = next(r for r in ids if sid in r.text)
-                flying.add(substring(row, sid).copy())
+                id_glyphs.append(substring(row, sid))
             vo.wait_until("Its 10 records start")
-            self.play(*[ReplacementTransform(flying[k], cards[k]) for k in range(10)], run_time=1.0)
+            self.play(LaggedStart(*[AnimationGroup(Indicate(id_glyphs[k], color=DATA, scale_factor=1.0),
+                                                   FadeIn(cards[k], shift=DOWN * 0.1)) for k in range(10)],
+                                  lag_ratio=0.1), run_time=1.0)
             vo.wait_until("with the Gutenberg header")
             self.play(Create(brackets[0]), FadeIn(labels[0], shift=DOWN * 0.1),
                       *[cards[k][0].animate.set_stroke(ERR) for k in range(3)], run_time=0.5)
@@ -610,12 +706,15 @@ class FiltersFirst(VoiceScene):
                       *[cards[k][0].animate.set_stroke(S.GREY) for k in range(3, 6)], run_time=0.5)
             self.play(Create(brackets[2]), FadeIn(labels[2], shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("That header")
-            self.play(*[Indicate(cards[k], color=ERR, scale_factor=1.15) for k in range(3)],
+            # the cards' outlines and ids flash (Indicate on a whole card filled it RED: its id unreadable)
+            self.play(*[cards[k][0].animate(rate_func=there_and_back).set_stroke(ERR, 5) for k in range(3)],
+                      *[Indicate(cards[k][1], color=ERR, scale_factor=1.15) for k in range(3)],
                       Indicate(labels[0], color=ERR, scale_factor=1.06), run_time=0.9)
             vo.wait_until("are indexed like any text")
             self.play(Indicate(cyl, color=DATA, scale_factor=1.08), run_time=0.8)
             vo.wait_until("strip them before chunking")
             self.play(FadeIn(fix, shift=UP * 0.15), run_time=0.6)
 
+        self.wait(3.0)                          # the fix card's three rows stay readable after the words
         self.play(FadeOut(VGroup(tr, tg, stf7, cyl, cards, brackets, labels, fix)), run_time=0.8)
         self.wait(0.3)

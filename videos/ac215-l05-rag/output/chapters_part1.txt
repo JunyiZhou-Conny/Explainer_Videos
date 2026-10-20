@@ -1,9 +1,9 @@
 00:00 A model that never read the book
-01:39 Two lanes, one database
-03:14 Your key, your folders, your project
-05:14 One script, two containers
-07:18 Names, mounts, and two traps
-09:08 Cutting the books: a ruler
-11:20 Recursive split and its hidden overlap
-12:54 Meaning as direction: embeddings
-15:46 Load: records, an index, a folder on your disk
+01:40 Two lanes, one database
+03:15 Your key, your folders, your project
+05:15 One script, two containers
+07:19 Names, mounts, and two traps
+09:09 Cutting the books: a ruler
+11:21 Recursive split and its hidden overlap
+12:59 Meaning as direction: embeddings
+15:56 Load: records, an index, a folder on your disk
