@@ -89,6 +89,7 @@ from manim import (
     Write,
     linear,
     there_and_back,
+    there_and_back_with_pause,
 )
 
 from common import (
@@ -288,6 +289,12 @@ def bar_tag(t, mob):
     return mob.move_to([t.box.get_right()[0] - 0.22 - mob.width / 2, y, 0])
 
 
+def flash(glyphs, color: str = TOOL) -> list:
+    """Each on-screen glyph's colour to `color` and back, as one animation per glyph (animating a
+    new wrapper VGroup would add it to the scene and split the terminal that holds them)."""
+    return [g.animate(rate_func=there_and_back_with_pause).set_color(color) for g in glyphs]
+
+
 def with_bg(m, pad: float = 0.08):
     """m on an opaque background patch (a label sitting on a line)."""
     bg = Rectangle(width=m.width + 2 * pad, height=m.height + 2 * pad, stroke_width=0).set_fill(S.BG, 1)
@@ -299,7 +306,8 @@ def with_bg(m, pad: float = 0.08):
 class ChunkViz(VGroup):
     """The schematic page of the chunk visualizer: a paragraph of GREY word blocks, GREEN chunk
     bands (two shades, alternating) with YELLOW where two windows overlap, and two sliders. The
-    bands and knobs follow the ValueTrackers .size and .overlap (updaters: call .stop())."""
+    bands and knobs follow the ValueTrackers .size and .overlap (updaters: the bands' from
+    .start(), once the page has faded in; .stop() clears them all)."""
 
     S_RANGE = (40.0, 140.0)
     O_RANGE = (0.0, 30.0)
@@ -335,7 +343,6 @@ class ChunkViz(VGroup):
         self.overlap = ValueTracker(ov0)
         self.bands = VGroup(*[Rectangle(width=0.01, height=0.34, stroke_width=0).set_fill(DATA, 0)
                               for _ in range(56)])
-        self.bands.add_updater(lambda m: self._layout(m))
         self._layout(self.bands)
         sliders = VGroup()
         self.knobs = []
@@ -391,6 +398,11 @@ class ChunkViz(VGroup):
                          .set_fill(c, op).move_to([(x0 + x1) / 2, y, 0]))
             else:
                 r.set_fill(opacity=0)
+
+    def start(self):
+        """The bands' updater, attached after the FadeIn: FadeIn's faded starting copy keeps a
+        copy of it, which reset that copy's fill every frame (bars at full opacity in the fade)."""
+        self.bands.add_updater(lambda m: self._layout(m))
 
     def stop(self):
         self.bands.clear_updaters()
@@ -494,6 +506,7 @@ class CharSplit(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(br), FadeIn(viz), FadeIn(bill), run_time=0.7)
+            viz.start()                        # the bars fade in with the window, then follow
             self.play(FadeIn(chip95, shift=UP * 0.1), run_time=0.5)
             self.play(viz.size.animate.set_value(60), run_time=1.6)
             vo.wait_until("Open it in Chrome")
@@ -767,18 +780,15 @@ class CharSplit(VoiceScene):
             assert len(t.lines) == seam_rows          # the command's 5 rows + 3 output lines
             resize(self, t, seam_rows, run_time=0.6)  # nothing drops: the command stays readable
             vo.wait_until("Chunk 0 stops")
-            tgt_a = VGroup(*glyph_range(row_a, 1))
-            self.play(TransformFromCopy(substring(s_lines[1], ROW_A[1:]), tgt_a),
-                      FadeIn(glyph_range(row_a, 0, 1)), FadeIn(win_a), FadeIn(lab_a), run_time=0.9)
-            self.remove(tgt_a, *row_a.glyphs)
-            self.add(row_a)
+            # a cross-fade, not a copy that flies up (it crossed the command's rows and garbled
+            # them): the source in the output flashes PURPLE while its row rises in above
+            self.play(*flash(substring(s_lines[1], ROW_A[1:])), FadeIn(row_a, shift=UP * 0.15),
+                      FadeIn(win_a), FadeIn(lab_a), run_time=0.9)
             self.play(Create(u_ac), Indicate(substring(row_a, "ac"), color=TURN, scale_factor=1.3),
                       run_time=0.6)
             vo.wait_until("Chunk 1 backs up")
-            tgt_b = VGroup(*glyph_range(row_b, 0, len(ROW_B) - 1))
-            self.play(TransformFromCopy(substring(s_lines[2], ROW_B[:-1]), tgt_b),
-                      FadeIn(glyph_range(row_b, len(ROW_B) - 1)), FadeIn(win_b), FadeIn(lab_b), run_time=0.9)
-            self.remove(tgt_b, *row_b.glyphs)
+            self.play(*flash(substring(s_lines[2], ROW_B[:-1])), FadeIn(row_b, shift=UP * 0.15),
+                      FadeIn(win_b), FadeIn(lab_b), run_time=0.9)
             self.add(seam_band, row_a, row_b)
             self.play(FadeIn(seam_band), FadeIn(lab_same), run_time=0.6)
             vo.wait_until("to the last letter of things")

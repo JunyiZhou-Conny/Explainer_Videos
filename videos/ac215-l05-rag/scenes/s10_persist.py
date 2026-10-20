@@ -457,18 +457,19 @@ class IndexSurvives(VoiceScene):
             # the pill's outline and text flash YELLOW (Indicate on the whole tag fills it YELLOW: text unreadable)
             self.play(rm.pulse_lane("bottom", TURN), Indicate(part2.text, color=TURN, scale_factor=1.15),
                       part2.box.animate(rate_func=there_and_back).set_stroke(TURN, 4), run_time=1.1)
-            vo.wait_until("But first, a test")
+            # V1 leaves right after the flash and the routes draw with the parts, so V2 stands
+            # (and the "?" lands) by "does the index survive"
             self.add(db)
             self.play(FadeOut(rm), FadeOut(part2), *[FadeOut(tk) for tk in ticks],
-                      db.animate.scale(1.3).move_to([db.get_center()[0], 0.2, 0]), run_time=0.6)
-            self.play(Transform(db, cyl_target), *[FadeIn(m) for m in forming], run_time=0.7)
+                      db.animate.scale(1.3).move_to([db.get_center()[0], 0.2, 0]), run_time=0.5)
+            vo.wait_until("But first, a test")
+            self.play(Transform(db, cyl_target), *[FadeIn(m) for m in forming], run_time=0.6)
             self.remove(db, *forming)
             self.add(cv)
             self.play(*cv.parts_in("rail", "plug_chroma", "name", "port_chip", "cli", "venv", "plug_cli",
                                    "zone", "row_repo", "row_secrets", "row_volumes", "key", "door"),
+                      *cv.parts_in("route_app", "route_secrets", "route_data", "route_port", anim=Create),
                       run_time=0.6)
-            self.play(*cv.parts_in("route_app", "route_secrets", "route_data", "route_port", anim=Create),
-                      run_time=0.45)
             vo.wait_until("does the index survive")
             self.play(FadeIn(q0, scale=1.4), Indicate(r_chroma, color=TURN, scale_factor=1.1), run_time=0.55)
             # V2 shrinks to the top: each part becomes its compact twin
@@ -521,13 +522,17 @@ class IndexSurvives(VoiceScene):
             self.play(FadeIn(rmt, scale=0.9), run_time=0.5)
             vo.wait_until("but Chroma is still up")
             up = col_box(crow, 0, len("Up 2 minutes"), TURN)
+            # the box's outline and title flash (Indicate on the whole box fills /data YELLOW: label lost)
             self.play(Create(up), substring(crow, "llm-rag-chromadb").animate.set_color(TURN),
-                      Indicate(c.chroma, color=TURN, scale_factor=1.05), run_time=0.8)
+                      c.chroma[0].animate(rate_func=there_and_back).set_stroke(TURN, 5),
+                      Indicate(c.chroma[1], color=TURN, scale_factor=1.08), run_time=0.8)
             stick(self, crow, up)
             vo.wait_until("and port 8000 is still taken")
             self.play(substring(crow, "0.0.0.0:8000->8000/tcp").animate.set_color(LOOKUP),
                       *light_door(c, LOOKUP), run_time=0.6)
-            self.play(flash(c.route_port_line), Indicate(c.port_chip, color=LOOKUP, scale_factor=1.1), run_time=1.0)
+            # the chip's outline and text flash PINK (Indicate on the chip fills it PINK: text lost)
+            self.play(flash(c.route_port_line), c.port_chip.box.animate(rate_func=there_and_back).set_stroke(LOOKUP, 4),
+                      Indicate(c.port_chip.text, color=LOOKUP, scale_factor=1.1), run_time=1.0)
 
         # ========================================================== 2 · docker compose down
         warn_rows = word_fold(WARN_CREDS) + word_fold(WARN_PROJ)
@@ -606,7 +611,7 @@ class IndexSurvives(VoiceScene):
         # a command shown, not output: a pill slim enough to sit on one terminal row
         build_chip = chip("docker compose build", S.GREY, size=CAPTION, font=MONO, pad_x=0.14, pad_y=0.04)
         assert build_chip.height < 0.36, build_chip.height
-        g2 = VGroup(note("or the Dockerfile:"), build_chip).arrange(RIGHT, buff=0.15)
+        g2 = VGroup(note("or the Dockerfile:"), build_chip).arrange(RIGHT, buff=0.3)   # gap kept at the 1.08 pulse
         gnote = VGroup(g1, g2)
         idt = grey_tag("container id · your numbers will differ")
         yt = your_turn()
