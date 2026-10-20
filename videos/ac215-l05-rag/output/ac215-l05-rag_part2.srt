@@ -1,0 +1,1001 @@
+1
+00:00:00,000 --> 00:00:03,563
+In part 1, we built the index:
+chunk, embed, load.
+
+2
+00:00:03,883 --> 00:00:05,483
+Part 2 puts it to work.
+
+3
+00:00:05,803 --> 00:00:09,685
+But first, a test:
+does the index survive closing the laptop?
+
+4
+00:00:09,933 --> 00:00:11,746
+Leaving isn't in the README.
+
+5
+00:00:12,066 --> 00:00:17,165
+Type exit, and on the laptop,
+list every container with docker ps -a.
+
+6
+00:00:17,485 --> 00:00:20,820
+The CLI container is gone, removed on exit,
+
+7
+00:00:20,820 --> 00:00:24,931
+but Chroma is still up,
+and port 8000 is still taken.
+
+8
+00:00:25,167 --> 00:00:28,836
+To stop it, run docker compose down
+from the repo folder.
+
+9
+00:00:29,156 --> 00:00:31,610
+Two warnings say the variables aren't set.
+
+10
+00:00:31,930 --> 00:00:36,452
+They're harmless: only the script sets them,
+and the down command needs neither.
+
+11
+00:00:36,772 --> 00:00:39,119
+Then Chroma and the network are removed.
+
+12
+00:00:39,367 --> 00:00:40,860
+Nothing is running now.
+
+13
+00:00:41,180 --> 00:00:45,895
+But the docker-volumes/ folder
+on your disk still holds the database file
+
+14
+00:00:45,895 --> 00:00:47,402
+and both index folders,
+
+15
+00:00:47,402 --> 00:00:50,481
+and your chunk files
+in outputs/ are untouched.
+
+16
+00:00:50,717 --> 00:00:54,429
+Back another day: sh docker-shell.sh again.
+
+17
+00:00:54,749 --> 00:00:57,309
+No pull, no build: the image exists.
+
+18
+00:00:57,629 --> 00:01:00,868
+After a git pull
+that changes the dependencies
+
+19
+00:01:00,868 --> 00:01:02,136
+or the Dockerfile,
+
+20
+00:01:02,136 --> 00:01:04,285
+run docker compose build first.
+
+21
+00:01:04,605 --> 00:01:05,927
+Pause and restart.
+
+22
+00:01:09,367 --> 00:01:14,373
+Two extra checks: both collections are back,
+with dimension 256,
+
+23
+00:01:14,373 --> 00:01:19,458
+and an extra command called --get
+returns the same 10 record IDs.
+
+24
+00:01:19,778 --> 00:01:23,233
+The container was disposable;
+the data never lived in it.
+
+25
+00:01:24,583 --> 00:01:25,991
+Now the bottom lane.
+
+26
+00:01:26,311 --> 00:01:29,444
+The question goes
+through the same embedding model
+
+27
+00:01:29,444 --> 00:01:33,202
+and becomes a query vector,
+in the same space as the chunks.
+
+28
+00:01:33,522 --> 00:01:35,996
+Querying means finding
+its nearest neighbors.
+
+29
+00:01:36,233 --> 00:01:39,390
+The lecture scores every stored vector
+against the query.
+
+30
+00:01:39,710 --> 00:01:46,260
+0.57, 0.77, 0.43, 0.93.
+
+31
+00:01:46,580 --> 00:01:50,462
+Sort by score, and keep the top K,
+with K fixed in advance.
+
+32
+00:01:50,782 --> 00:01:52,212
+This code uses 10.
+
+33
+00:01:52,450 --> 00:01:55,436
+One difference:
+the lecture ranks by similarity,
+
+34
+00:01:55,436 --> 00:01:56,866
+where higher is better.
+
+35
+00:01:57,186 --> 00:01:59,285
+Chroma reports cosine distance,
+
+36
+00:01:59,285 --> 00:02:02,669
+one minus the similarity,
+where smaller is closer.
+
+37
+00:02:02,989 --> 00:02:05,122
+Same order, opposite direction.
+
+38
+00:02:05,366 --> 00:02:10,891
+And a query returns K results whenever
+K chunks are available, relevant or not.
+
+39
+00:02:11,211 --> 00:02:13,964
+Nothing in this code
+sets a distance threshold.
+
+40
+00:02:14,200 --> 00:02:17,323
+In the code,
+the query function sets the question,
+
+41
+00:02:17,323 --> 00:02:20,445
+turns it into a vector
+with the same Google model,
+
+42
+00:02:20,445 --> 00:02:22,818
+and opens the chunk type's collection.
+
+43
+00:02:23,066 --> 00:02:28,378
+Step 1: python cli.py --query
+--chunk_type char-split.
+
+44
+00:02:28,698 --> 00:02:33,626
+A small slip first: it prints load(),
+a label copied from the load code.
+
+45
+00:02:33,946 --> 00:02:35,526
+Then it connects to Chroma,
+
+46
+00:02:35,526 --> 00:02:38,494
+but stops at the key
+while embedding the question,
+
+47
+00:02:38,494 --> 00:02:39,621
+before it searches.
+
+48
+00:02:39,866 --> 00:02:44,282
+The question must become a vector
+before the database can compare it,
+
+49
+00:02:44,282 --> 00:02:48,058
+and only the same Google model
+makes one in the same space.
+
+50
+00:02:48,300 --> 00:02:50,732
+Step 2 runs it on recursive-split.
+
+51
+00:02:51,052 --> 00:02:54,585
+With your key,
+look for 256 embedding values,
+
+52
+00:02:54,585 --> 00:02:56,705
+the query, and the results.
+
+53
+00:02:57,025 --> 00:03:00,622
+The results are lists of lists:
+one list per query,
+
+54
+00:03:00,622 --> 00:03:03,937
+holding IDs,
+distances, metadata and documents.
+
+55
+00:03:04,257 --> 00:03:05,558
+Pause and run both.
+
+56
+00:03:07,800 --> 00:03:11,256
+That's why chat, later, reads documents[0].
+
+57
+00:03:11,576 --> 00:03:15,992
+No results were recorded,
+so next we ask the loaded database directly.
+
+58
+00:03:17,333 --> 00:03:20,981
+Here's the query the code sends:
+10 results and two filters.
+
+59
+00:03:21,301 --> 00:03:25,184
+The metadata filter keeps one book,
+The Complete Book of Cheese.
+
+60
+00:03:25,504 --> 00:03:28,789
+The document filter keeps chunks
+that contain Italian.
+
+61
+00:03:29,033 --> 00:03:30,996
+The question is about Tolminc.
+
+62
+00:03:31,316 --> 00:03:33,236
+What will the 10 results be about?
+
+63
+00:03:42,083 --> 00:03:45,176
+An extra check counts them
+in the loaded collection.
+
+64
+00:03:45,496 --> 00:03:51,094
+Of 8,248 chunks,
+the book filter keeps 1,355;
+
+65
+00:03:51,094 --> 00:03:54,328
+the word Italian keeps 64.
+
+66
+00:03:54,648 --> 00:03:57,272
+How many mention Tolminc? None.
+
+67
+00:03:57,516 --> 00:03:58,604
+Now a search.
+
+68
+00:03:58,924 --> 00:04:02,154
+The real question needs Google
+to become a vector,
+
+69
+00:04:02,154 --> 00:04:05,964
+so we use a stand-in:
+the stored vector of one story chunk.
+
+70
+00:04:06,284 --> 00:04:10,777
+Without filters,
+its 10 nearest are all from the story,
+
+71
+00:04:10,777 --> 00:04:14,860
+at distances from 0,
+the chunk itself, up to 0.16.
+
+72
+00:04:15,100 --> 00:04:19,623
+With the code's filters, all 10 results come
+from The Complete Book of Cheese.
+
+73
+00:04:19,943 --> 00:04:24,444
+Their distances run from 0.28 to 0.31.
+
+74
+00:04:24,764 --> 00:04:26,290
+The filters act first,
+
+75
+00:04:26,290 --> 00:04:30,865
+and top K fills its 10 places
+with whatever survives, however far.
+
+76
+00:04:31,100 --> 00:04:34,349
+The lecture puts metadata
+filtering after ranking:
+
+77
+00:04:34,349 --> 00:04:38,311
+here, that would drop all 10 story
+chunks and return nothing.
+
+78
+00:04:38,631 --> 00:04:42,556
+Chroma filters first, so you get 10 results,
+about the wrong cheese.
+
+79
+00:04:42,800 --> 00:04:46,688
+A small slip:
+the README promises various filters,
+
+80
+00:04:46,688 --> 00:04:48,555
+but only variant 4 runs;
+
+81
+00:04:48,555 --> 00:04:51,163
+variants 1 to 3 are commented out.
+
+82
+00:04:51,483 --> 00:04:55,408
+Uncomment the first, with no filter,
+and every chunk competes.
+
+83
+00:04:55,728 --> 00:04:59,205
+And $contains is a keyword filter,
+not a keyword ranking.
+
+84
+00:04:59,450 --> 00:05:03,824
+The --get command from the restart
+check uses the same book filter,
+
+85
+00:05:03,824 --> 00:05:05,978
+but no question, so no distances.
+
+86
+00:05:06,298 --> 00:05:09,219
+Its 10 records start
+with the Gutenberg header,
+
+87
+00:05:09,219 --> 00:05:11,269
+then the title page and contents.
+
+88
+00:05:11,589 --> 00:05:14,363
+That header,
+and each book's closing license,
+
+89
+00:05:14,363 --> 00:05:17,690
+are indexed like any text:
+strip them before chunking.
+
+90
+00:05:22,033 --> 00:05:23,313
+Now generation.
+
+91
+00:05:23,633 --> 00:05:29,095
+The lecture's final prompt has three parts:
+a system prompt that says how to behave,
+
+92
+00:05:29,095 --> 00:05:33,126
+the user's query,
+and the context retrieved from the database.
+
+93
+00:05:33,366 --> 00:05:38,252
+In chat, the code queries again,
+this time with no filter, for 10 results.
+
+94
+00:05:38,650 --> 00:05:41,637
+Then it builds the input prompt:
+the question,
+
+95
+00:05:41,637 --> 00:05:44,623
+followed by the 10 chunks,
+joined by newlines.
+
+96
+00:05:44,943 --> 00:05:48,079
+The prompt goes to gemini-3.1-flash-lite.
+
+97
+00:05:48,316 --> 00:05:49,980
+So where's the system prompt?
+
+98
+00:05:50,300 --> 00:05:53,471
+Line 40 defines one:
+answer only from the chunks,
+
+99
+00:05:53,471 --> 00:05:56,188
+and say so when they don't contain enough.
+
+100
+00:05:56,508 --> 00:05:57,681
+But look at the call.
+
+101
+00:05:58,001 --> 00:05:59,154
+It's never sent.
+
+102
+00:05:59,400 --> 00:06:03,709
+A small slip, with a one-line fix:
+pass it in a config argument.
+
+103
+00:06:04,029 --> 00:06:06,227
+The older pipenv branch did send it.
+
+104
+00:06:06,547 --> 00:06:09,847
+Without it,
+the README's promise of grounded answers
+
+105
+00:06:09,847 --> 00:06:11,496
+rests on the chunks alone.
+
+106
+00:06:11,733 --> 00:06:14,698
+And notice what didn't change:
+the model itself.
+
+107
+00:06:15,018 --> 00:06:16,298
+No weights moved.
+
+108
+00:06:16,618 --> 00:06:19,370
+Delete the collection,
+and the knowledge is gone.
+
+109
+00:06:19,616 --> 00:06:26,443
+Steps 1 and 2: python cli.py --chat,
+for char-split and for recursive-split.
+
+110
+00:06:26,763 --> 00:06:29,579
+Without a key,
+both stop embedding the question.
+
+111
+00:06:29,899 --> 00:06:33,867
+Each question costs one embedding call
+and one Gemini call.
+
+112
+00:06:34,116 --> 00:06:39,075
+With your key, look for the query,
+printed with two question marks,
+
+113
+00:06:39,075 --> 00:06:42,479
+a harmless slip,
+and its 256 embedding values.
+
+114
+00:06:42,799 --> 00:06:46,668
+Then the results, the number 10,
+the input prompt with your chunks,
+
+115
+00:06:46,668 --> 00:06:48,111
+and the model's response.
+
+116
+00:06:49,350 --> 00:06:51,057
+Remember the opening question?
+
+117
+00:06:51,377 --> 00:06:54,159
+The story is fiction,
+so an answer about Mara,
+
+118
+00:06:54,159 --> 00:06:57,243
+her grandfather
+and the curd came from your chunks.
+
+119
+00:06:57,563 --> 00:07:01,211
+Real-world rules for Tolminc came
+from the model's memory.
+
+120
+00:07:01,531 --> 00:07:03,088
+Compare both chunk types.
+
+121
+00:07:04,333 --> 00:07:07,746
+Step 3 is a link to the course's chat tool,
+in Chrome.
+
+122
+00:07:08,066 --> 00:07:11,949
+Pause: run both chat commands with your key,
+then try the tool.
+
+123
+00:07:12,269 --> 00:07:17,538
+For your own question,
+change line 372 of cli.py.
+
+124
+00:07:20,883 --> 00:07:23,794
+Back to chunking,
+with the lecture's best answer:
+
+125
+00:07:23,794 --> 00:07:25,576
+cut where the meaning changes.
+
+126
+00:07:25,896 --> 00:07:30,892
+On the slides, an anchor walks
+through the sentences and joins neighbors
+
+127
+00:07:30,892 --> 00:07:33,598
+while their similarity stays above 0.8.
+
+128
+00:07:33,833 --> 00:07:37,076
+The code uses the same ingredients
+with a different rule.
+
+129
+00:07:37,396 --> 00:07:39,278
+Every sentence gets a window,
+
+130
+00:07:39,278 --> 00:07:43,561
+itself and one neighbor on each side,
+and each window is embedded.
+
+131
+00:07:43,800 --> 00:07:47,453
+Then it measures the distance
+between each window and the next,
+
+132
+00:07:47,453 --> 00:07:50,178
+and plots it over the text,
+like a seismograph.
+
+133
+00:07:50,416 --> 00:07:53,530
+Next, it draws a line
+at the 95th percentile,
+
+134
+00:07:53,530 --> 00:07:55,813
+and cuts at every spike above it.
+
+135
+00:07:56,133 --> 00:07:59,504
+So the biggest 5 percent of gaps
+become chunk boundaries.
+
+136
+00:07:59,750 --> 00:08:02,289
+char-split ran the chunk step without a key.
+
+137
+00:08:02,609 --> 00:08:03,995
+Can semantic-split?
+
+138
+00:08:12,833 --> 00:08:18,550
+No. To find where the meaning shifts,
+it has to embed every sentence window first.
+
+139
+00:08:18,870 --> 00:08:21,740
+Look at the function handed to the chunker:
+
+140
+00:08:21,740 --> 00:08:25,676
+generate_text_embeddings,
+the same one the embed step uses.
+
+141
+00:08:25,916 --> 00:08:30,524
+The README's command runs all three steps
+with --chunk_type semantic-split.
+
+142
+00:08:30,844 --> 00:08:33,707
+On our machine it fails
+inside the chunk step,
+
+143
+00:08:33,707 --> 00:08:36,818
+on the first book,
+before a single chunk is saved.
+
+144
+00:08:37,066 --> 00:08:40,660
+With your key, budget for it:
+by our estimate,
+
+145
+00:08:40,660 --> 00:08:44,254
+about 528 embedding calls
+to chunk the corpus,
+
+146
+00:08:44,254 --> 00:08:48,629
+about 90 more to embed the chunks,
+and 10 to 20 minutes.
+
+147
+00:08:48,949 --> 00:08:52,490
+Try one book first,
+then put the others back and run it again.
+
+148
+00:08:52,810 --> 00:08:54,707
+Look for a chunk count per book,
+
+149
+00:08:54,707 --> 00:08:58,677
+and finally, finished inserting
+into the semantic-split-collection.
+
+150
+00:08:58,916 --> 00:09:01,033
+The chunks come out very uneven,
+
+151
+00:09:01,033 --> 00:09:04,868
+and even a single-topic book
+gets cut at its biggest gaps.
+
+152
+00:09:05,188 --> 00:09:08,175
+Afterwards, an extra:
+chat works the same way.
+
+153
+00:09:08,495 --> 00:09:10,308
+Pause and try it, with your key.
+
+154
+00:09:13,650 --> 00:09:15,143
+The lecture goes further.
+
+155
+00:09:15,463 --> 00:09:19,666
+Its frame adds a pre-retrieval stage
+and a post-retrieval stage.
+
+156
+00:09:19,986 --> 00:09:22,595
+Semantic chunking sits in pre-retrieval:
+
+157
+00:09:22,595 --> 00:09:25,725
+the one advanced lever
+this tutorial implements.
+
+158
+00:09:26,045 --> 00:09:28,477
+Here are three more, as ideas only.
+
+159
+00:09:28,717 --> 00:09:31,512
+Also before retrieval: query rewriting.
+
+160
+00:09:31,832 --> 00:09:35,035
+A model turns a cluttered question
+into a clean one,
+
+161
+00:09:35,035 --> 00:09:36,760
+like where do dolphins live.
+
+162
+00:09:37,080 --> 00:09:40,749
+But hand it a vague question,
+and the rewrite can invent details.
+
+163
+00:09:42,033 --> 00:09:44,102
+In retrieval: hybrid search.
+
+164
+00:09:44,422 --> 00:09:48,241
+Keywords pin down names and rare words;
+vectors catch meaning.
+
+165
+00:09:48,561 --> 00:09:52,486
+Take the question: Chester went
+to the bank of the river in the morning.
+
+166
+00:09:52,806 --> 00:09:55,153
+The two rank three paragraphs differently.
+
+167
+00:09:55,400 --> 00:10:00,162
+Reciprocal rank fusion gives
+each paragraph one half divided by its rank,
+
+168
+00:10:00,162 --> 00:10:02,184
+in each list, and adds them up.
+
+169
+00:10:02,504 --> 00:10:09,672
+The near paraphrase wins with 0.75,
+ahead of 0.67 and 0.42.
+
+170
+00:10:11,167 --> 00:10:13,258
+After retrieval: re-ranking.
+
+171
+00:10:13,578 --> 00:10:14,697
+A fast retriever,
+
+172
+00:10:14,697 --> 00:10:18,119
+whose vectors were made
+before the question existed,
+
+173
+00:10:18,119 --> 00:10:21,492
+returns 25 candidates
+with the right ones scattered.
+
+174
+00:10:21,812 --> 00:10:26,121
+A slower model reads each question and chunk
+together and reorders them.
+
+175
+00:10:27,417 --> 00:10:29,806
+None of these is in cli.py.
+
+176
+00:10:30,126 --> 00:10:34,938
+They're what you reach for when naive
+retrieval brings back the wrong chunks;
+
+177
+00:10:34,938 --> 00:10:38,062
+our filtered query
+only needed its filter removed.
+
+178
+00:10:40,900 --> 00:10:42,244
+Time to tear down.
+
+179
+00:10:42,564 --> 00:10:46,302
+Type exit, then docker compose down
+from the repo folder:
+
+180
+00:10:46,302 --> 00:10:50,564
+the same harmless warnings,
+then Chroma and the network are gone.
+
+181
+00:10:52,483 --> 00:10:56,933
+The images stay:
+2.11 gigabytes for the CLI image,
+
+182
+00:10:56,933 --> 00:11:01,827
+its Python base included,
+and 826 megabytes for Chroma.
+
+183
+00:11:02,067 --> 00:11:06,334
+Now git status shows only your edit
+to docker-shell.sh.
+
+184
+00:11:06,654 --> 00:11:09,774
+The outputs/ and docker-volumes/
+folders are ignored,
+
+185
+00:11:09,774 --> 00:11:11,069
+and stay on your disk.
+
+186
+00:11:11,317 --> 00:11:15,562
+Nothing keeps running in Google Cloud;
+you paid only for what you sent.
+
+187
+00:11:15,882 --> 00:11:17,713
+Keep the key beside the repo:
+
+188
+00:11:17,713 --> 00:11:22,005
+inside it, git wouldn't ignore the key,
+and the image would copy it.
+
+189
+00:11:22,325 --> 00:11:23,925
+Delete it when the course ends.
+
+190
+00:11:24,245 --> 00:11:28,298
+Pause and tear down now,
+so port 8000 is free next time.
+
+191
+00:11:30,533 --> 00:11:31,586
+One last lesson,
+
+192
+00:11:31,586 --> 00:11:35,141
+from the staff's recorded run
+of next lecture's agent.
+
+193
+00:11:35,461 --> 00:11:39,431
+It retrieved text about transhumance
+from an older Tolminc book,
+
+194
+00:11:39,431 --> 00:11:40,858
+replaced that same day.
+
+195
+00:11:41,178 --> 00:11:46,235
+The database answers from what was loaded:
+when the books change, rebuild the index.
+
+196
+00:11:46,483 --> 00:11:49,363
+Next lecture runs this command
+with an agent.
+
+197
+00:11:49,683 --> 00:11:53,502
+In the staff's run, the model chose
+which retrieval tool to call.
+
+198
+00:11:53,822 --> 00:11:56,026
+The lecture's Self-RAG goes further:
+
+199
+00:11:56,026 --> 00:11:58,821
+the model decides
+whether to retrieve at all,
+
+200
+00:11:58,821 --> 00:12:00,435
+then checks what it found.
+
+201
+00:12:00,755 --> 00:12:04,361
+Our chat opens the book for every question,
+and checks nothing.
+
+202
+00:12:05,600 --> 00:12:07,008
+And the four questions?
+
+203
+00:12:07,328 --> 00:12:09,760
+An embedding is a direction for meaning.
+
+204
+00:12:10,080 --> 00:12:13,792
+A vector database stores records,
+with an index to search them.
+
+205
+00:12:14,112 --> 00:12:16,864
+A query finds
+the question's nearest neighbors.
+
+206
+00:12:17,184 --> 00:12:20,363
+The context is the chunks
+you paste into the prompt.
+
+207
+00:12:20,600 --> 00:12:22,605
+Five questions to test yourself.
+
+208
+00:12:22,925 --> 00:12:27,107
+One: which flags belong to each lane,
+and what must both lanes share?
+
+209
+00:12:27,427 --> 00:12:31,361
+Two:
+why does the CLI reach the database by name,
+
+210
+00:12:31,361 --> 00:12:33,208
+and who uses port 8000?
+
+211
+00:12:33,450 --> 00:12:35,775
+Three: what does overlap buy and cost?
+
+212
+00:12:36,095 --> 00:12:39,061
+And why did the recursive splitter
+make more chunks?
+
+213
+00:12:39,381 --> 00:12:43,029
+Four: why did the README's query
+return no Tolminc text?
+
+214
+00:12:43,349 --> 00:12:46,463
+Five: what is the prompt missing,
+and what's the fix?
+
+215
+00:12:46,700 --> 00:12:49,014
+The answers are in the exercises,
+
+216
+00:12:49,014 --> 00:12:53,783
+and every command is in the study guide,
+in the MLOps Learning repo.
+
+217
+00:12:54,103 --> 00:12:55,724
+Next time: agents.
+

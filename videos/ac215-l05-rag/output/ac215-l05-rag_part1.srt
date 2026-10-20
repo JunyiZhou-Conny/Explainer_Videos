@@ -1,0 +1,1361 @@
+1
+00:00:00,000 --> 00:00:03,339
+Here's the question
+this tutorial asks a language model:
+
+2
+00:00:03,339 --> 00:00:04,949
+how is Tolminc cheese made?
+
+3
+00:00:05,269 --> 00:00:07,504
+Tolminc is a real Alpine cheese,
+
+4
+00:00:07,504 --> 00:00:11,136
+but the answer we want lives
+in one particular text.
+
+5
+00:00:11,383 --> 00:00:16,594
+The knowledge base is eleven books:
+ten old cheese books from Project Gutenberg,
+
+6
+00:00:16,594 --> 00:00:19,916
+and the instructor's short story,
+a fictional tale.
+
+7
+00:00:20,236 --> 00:00:23,899
+A model trained before that story
+existed has never read it,
+
+8
+00:00:23,899 --> 00:00:25,975
+so it answers from somewhere else.
+
+9
+00:00:26,295 --> 00:00:29,730
+How do we make it answer from this story,
+without retraining it?
+
+10
+00:00:29,967 --> 00:00:33,699
+The lecture lists four weaknesses:
+stale training data,
+
+11
+00:00:33,699 --> 00:00:37,498
+no specialized knowledge,
+hallucination, and no sources.
+
+12
+00:00:37,818 --> 00:00:42,063
+RAG, retrieval augmented generation,
+goes after the first two.
+
+13
+00:00:42,300 --> 00:00:45,820
+Paste all eleven books into the prompt,
+and you get garbage.
+
+14
+00:00:46,140 --> 00:00:49,383
+Fine-tune the model, and it's slow;
+that's lecture 8.
+
+15
+00:00:49,703 --> 00:00:53,753
+Or let a librarian hand it
+the ten most relevant pages:
+
+16
+00:00:53,753 --> 00:00:55,079
+an open-book exam.
+
+17
+00:00:55,399 --> 00:00:56,423
+That's RAG.
+
+18
+00:00:56,667 --> 00:00:59,427
+The lecture's map of RAG
+techniques is crowded,
+
+19
+00:00:59,427 --> 00:01:01,424
+but it starts from four questions.
+
+20
+00:01:01,744 --> 00:01:05,563
+What is an embedding,
+a vector database, a query, the context?
+
+21
+00:01:05,883 --> 00:01:07,739
+This video answers all four.
+
+22
+00:01:07,983 --> 00:01:10,266
+Open the README beside this video.
+
+23
+00:01:10,586 --> 00:01:12,998
+Top left, the tracker shows its step;
+
+24
+00:01:12,998 --> 00:01:16,452
+top right,
+the gray tag points to the lecture slides.
+
+25
+00:01:16,772 --> 00:01:20,823
+When the yellow your-turn tag appears,
+pause and run the command;
+
+26
+00:01:20,823 --> 00:01:23,066
+extra commands aren't in the README.
+
+27
+00:01:25,300 --> 00:01:27,412
+We recorded without a Google key.
+
+28
+00:01:27,732 --> 00:01:30,835
+Docker,
+chunking and the database ran for real;
+
+29
+00:01:30,835 --> 00:01:34,004
+the embeddings
+are the staff's recorded vectors.
+
+30
+00:01:34,324 --> 00:01:37,071
+Where the code calls Google,
+you see the command,
+
+31
+00:01:37,071 --> 00:01:39,145
+the real error, and what to look for.
+
+32
+00:01:40,183 --> 00:01:42,060
+Here's RAG in four boxes.
+
+33
+00:01:42,380 --> 00:01:44,965
+The user's question goes to the RAG code,
+
+34
+00:01:44,965 --> 00:01:47,927
+which asks a vector database
+for related texts.
+
+35
+00:01:48,247 --> 00:01:51,676
+The code joins question
+and texts into one full prompt,
+
+36
+00:01:51,676 --> 00:01:53,858
+and the model's response goes back.
+
+37
+00:01:54,178 --> 00:01:56,588
+The database never talks to the model.
+
+38
+00:01:56,833 --> 00:01:59,329
+Open the RAG box and you get two lanes.
+
+39
+00:01:59,649 --> 00:02:01,837
+On top, books are cut into chunks,
+
+40
+00:02:01,837 --> 00:02:05,055
+an embedding model turns each chunk
+into a vector,
+
+41
+00:02:05,055 --> 00:02:07,436
+and the vectors go into the database.
+
+42
+00:02:07,756 --> 00:02:10,782
+Below, the question goes
+through the same model,
+
+43
+00:02:10,782 --> 00:02:13,366
+and only its vector reaches the database.
+
+44
+00:02:13,616 --> 00:02:17,285
+This is the pipeline slide from lecture,
+with three phases.
+
+45
+00:02:17,605 --> 00:02:19,717
+Indexing is the whole top lane.
+
+46
+00:02:20,037 --> 00:02:22,769
+Retrieval brings the context to the prompt,
+
+47
+00:02:22,769 --> 00:02:25,755
+and the model
+does augmentation and generation.
+
+48
+00:02:26,000 --> 00:02:29,730
+The README calls the two lanes
+step 1 and step 2,
+
+49
+00:02:29,730 --> 00:02:32,622
+and gives each box one flag of cli.py:
+
+50
+00:02:32,622 --> 00:02:37,264
+--chunk, --embed and --load on top,
+--query and --chat below.
+
+51
+00:02:37,500 --> 00:02:38,503
+Two rules.
+
+52
+00:02:38,823 --> 00:02:41,788
+The top lane runs once, offline,
+and it's slow.
+
+53
+00:02:42,108 --> 00:02:44,540
+The bottom lane runs for every question.
+
+54
+00:02:44,860 --> 00:02:47,862
+And both lanes must use
+the same embedding model,
+
+55
+00:02:47,862 --> 00:02:51,537
+or the question
+and the chunks don't live in the same space.
+
+56
+00:02:51,783 --> 00:02:53,234
+Where does each box run?
+
+57
+00:02:53,554 --> 00:02:55,964
+The chunker runs in your own container.
+
+58
+00:02:56,284 --> 00:02:59,594
+Both models run at Google:
+you pay for the text you send,
+
+59
+00:02:59,594 --> 00:03:02,322
+with your key,
+and nothing keeps running there.
+
+60
+00:03:02,642 --> 00:03:07,164
+The database runs in a second container,
+with its files on your laptop.
+
+61
+00:03:07,400 --> 00:03:12,819
+Every step is one python cli.py command,
+inside that first container.
+
+62
+00:03:13,139 --> 00:03:15,080
+So first, let's get it running.
+
+63
+00:03:15,317 --> 00:03:17,450
+Prerequisites first: Docker.
+
+64
+00:03:17,770 --> 00:03:20,100
+This extra check prints its versions;
+
+65
+00:03:20,100 --> 00:03:22,997
+the script needs docker compose,
+with a space.
+
+66
+00:03:23,317 --> 00:03:28,480
+On a Mac your prompt looks different;
+on Windows, use WSL or Git Bash.
+
+67
+00:03:28,717 --> 00:03:30,226
+The README links the repo
+
+68
+00:03:30,226 --> 00:03:33,304
+but doesn't print the clone command,
+so here it is.
+
+69
+00:03:33,624 --> 00:03:37,880
+Then, as an extra,
+make a secrets folder beside the clone,
+
+70
+00:03:37,880 --> 00:03:40,962
+and keep the clone's name exactly llm-rag.
+
+71
+00:03:41,282 --> 00:03:43,629
+Pause and do both, in your course folder.
+
+72
+00:03:45,867 --> 00:03:49,110
+Now the service account,
+in the Google Cloud console.
+
+73
+00:03:49,430 --> 00:03:54,031
+Create one called llm-service-account,
+and grant it two roles:
+
+74
+00:03:54,031 --> 00:03:58,262
+Storage Admin,
+and Gemini Enterprise Agent Platform User.
+
+75
+00:03:58,582 --> 00:04:01,508
+Open its keys tab, add a JSON key,
+
+76
+00:04:01,508 --> 00:04:05,899
+and save it in secrets
+as llm-service-account.json.
+
+77
+00:04:06,134 --> 00:04:08,600
+That key spends your project's money;
+
+78
+00:04:08,600 --> 00:04:13,601
+the .gitignore file has no secrets line,
+so it's safe only beside the repo.
+
+79
+00:04:13,921 --> 00:04:18,212
+Remember the three gates from lecture 4:
+the key says who you are,
+
+80
+00:04:18,212 --> 00:04:21,984
+the role what you may do,
+and the API must be switched on.
+
+81
+00:04:22,234 --> 00:04:23,471
+Two small slips.
+
+82
+00:04:23,791 --> 00:04:28,634
+Nothing here uses Cloud Storage,
+so the Agent Platform role is what matters.
+
+83
+00:04:28,954 --> 00:04:33,104
+And the README never says
+to enable the Vertex AI API;
+
+84
+00:04:33,104 --> 00:04:39,407
+without it, the first embedding call fails
+with SERVICE_DISABLED, after 5 retries.
+
+85
+00:04:39,727 --> 00:04:43,780
+Pause and do it all now:
+account, roles, key, and API.
+
+86
+00:04:46,017 --> 00:04:49,452
+Step 1 of the next section: cd llm-rag.
+
+87
+00:04:49,772 --> 00:04:54,102
+An extra look shows the scripts,
+the compose file, cli.py,
+
+88
+00:04:54,102 --> 00:04:57,238
+and the commit this video was recorded on.
+
+89
+00:04:57,484 --> 00:05:03,415
+Step 2: in your editor, set GCP_PROJECT
+on line 7 to your own Project ID,
+
+90
+00:05:03,415 --> 00:05:05,121
+the ID, not the name.
+
+91
+00:05:05,441 --> 00:05:07,020
+Leave line 8 alone.
+
+92
+00:05:07,340 --> 00:05:10,732
+Skip this, and your calls go
+to the course's project and fail.
+
+93
+00:05:11,052 --> 00:05:12,225
+Pause and edit.
+
+94
+00:05:15,567 --> 00:05:21,327
+Lecture 4 put two containers on one network;
+lecture 3 brought a key in through a mount.
+
+95
+00:05:21,647 --> 00:05:24,058
+Today: both at once, with one command.
+
+96
+00:05:24,300 --> 00:05:27,686
+The script,
+docker-shell.sh, exports three values:
+
+97
+00:05:27,686 --> 00:05:31,122
+your project,
+the key's path inside the container,
+
+98
+00:05:31,122 --> 00:05:32,428
+and the image name.
+
+99
+00:05:32,748 --> 00:05:37,740
+Then it calls docker compose run,
+with --rm, for that one service.
+
+100
+00:05:37,984 --> 00:05:42,162
+The compose file draws the whole picture:
+one network, by name,
+
+101
+00:05:42,162 --> 00:05:43,909
+and the CLI service on it,
+
+102
+00:05:43,909 --> 00:05:47,136
+with an image built
+from this folder if missing.
+
+103
+00:05:47,384 --> 00:05:51,736
+Two mounts put the repo onto /app
+and secrets onto /secrets.
+
+104
+00:05:52,056 --> 00:05:56,130
+Two slots take the script's values,
+and the service depends on Chroma.
+
+105
+00:05:56,367 --> 00:06:00,890
+The Chroma service runs the database
+from Docker Hub, under a fixed name.
+
+106
+00:06:01,210 --> 00:06:03,730
+It publishes port 8000 to your laptop,
+
+107
+00:06:03,730 --> 00:06:06,752
+keeps its data
+in the docker-volumes/ folder,
+
+108
+00:06:06,752 --> 00:06:09,103
+and lets the course's web tools in.
+
+109
+00:06:09,350 --> 00:06:13,983
+From the Dockerfile:
+the virtual environment lives in /.venv,
+
+110
+00:06:13,983 --> 00:06:17,478
+outside /app,
+so the code mount can't hide it.
+
+111
+00:06:17,798 --> 00:06:21,852
+Edit cli.py on your laptop and rerun;
+no rebuild.
+
+112
+00:06:22,100 --> 00:06:24,895
+Step 3: sh docker-shell.sh.
+
+113
+00:06:25,215 --> 00:06:28,403
+Compose pulls Chroma's image,
+creates the network,
+
+114
+00:06:28,403 --> 00:06:30,890
+and creates the Chroma container first.
+
+115
+00:06:31,134 --> 00:06:33,865
+Then this,
+which looks like an error but isn't.
+
+116
+00:06:34,185 --> 00:06:39,792
+Compose first asks Docker Hub
+for an image called llm-rag-cli, finds none,
+
+117
+00:06:39,792 --> 00:06:41,459
+and builds it instead.
+
+118
+00:06:41,700 --> 00:06:43,705
+The build took 81 seconds here.
+
+119
+00:06:44,025 --> 00:06:46,328
+Its context was 112 megabytes,
+
+120
+00:06:46,328 --> 00:06:51,855
+mostly git history that still holds
+an old copy of the staff's database.
+
+121
+00:06:52,175 --> 00:06:55,268
+With no .dockerignore file,
+the image keeps it.
+
+122
+00:06:55,517 --> 00:06:57,252
+Then the banner:
+
+123
+00:06:57,252 --> 00:07:03,218
+Python 3.12.15 and uv 0.13.1,
+at the time of recording.
+
+124
+00:07:03,538 --> 00:07:06,888
+It says activated before it activates:
+cosmetic.
+
+125
+00:07:07,134 --> 00:07:08,862
+You're at the container's prompt.
+
+126
+00:07:09,182 --> 00:07:12,631
+The part after the at sign
+is the container's ID;
+
+127
+00:07:12,631 --> 00:07:14,110
+it changes every run.
+
+128
+00:07:14,430 --> 00:07:16,179
+Pause, and get to this prompt.
+
+129
+00:07:19,517 --> 00:07:21,821
+Check the picture with extras:
+
+130
+00:07:21,821 --> 00:07:25,661
+open a second laptop terminal
+and cd into llm-rag.
+
+131
+00:07:25,981 --> 00:07:30,034
+The docker ps command shows Chroma
+with port 8000 published.
+
+132
+00:07:30,354 --> 00:07:34,156
+But the CLI container
+isn't called llm-rag-cli:
+
+133
+00:07:34,156 --> 00:07:36,584
+compose run ignores that name.
+
+134
+00:07:36,817 --> 00:07:38,008
+And docker inspect,
+
+135
+00:07:38,008 --> 00:07:40,956
+with the name from docker ps,
+lists the mounts.
+
+136
+00:07:41,276 --> 00:07:44,531
+The repo is on /app, secrets on /secrets,
+
+137
+00:07:44,531 --> 00:07:48,422
+and the docker-volumes/
+folder on Chroma's /data.
+
+138
+00:07:48,784 --> 00:07:53,008
+Inside the container,
+your Project ID and the key's path arrived.
+
+139
+00:07:53,328 --> 00:07:58,682
+Our secrets folder is empty, with no key;
+yours should list the JSON file.
+
+140
+00:07:58,917 --> 00:08:02,693
+The CLI finds Chroma by name,
+through the network's phone book.
+
+141
+00:08:03,013 --> 00:08:07,040
+From your laptop,
+the heartbeat comes through localhost:8000,
+
+142
+00:08:07,040 --> 00:08:09,946
+the published door for you and your browser.
+
+143
+00:08:10,184 --> 00:08:13,984
+Docker already created
+Chroma's data folder on your laptop,
+
+144
+00:08:13,984 --> 00:08:16,819
+owned by root, with the database file in it.
+
+145
+00:08:17,139 --> 00:08:19,954
+On Linux, deleting it later will need sudo.
+
+146
+00:08:20,200 --> 00:08:22,248
+Now two traps, hit on purpose.
+
+147
+00:08:22,568 --> 00:08:25,384
+Trap one:
+typing the compose command yourself.
+
+148
+00:08:25,704 --> 00:08:30,365
+Both variables come out blank,
+and even chunking dies at startup,
+
+149
+00:08:30,365 --> 00:08:35,816
+where cli.py creates its Google client,
+looking for a key file with no name.
+
+150
+00:08:36,136 --> 00:08:37,886
+Always start through the script.
+
+151
+00:08:38,134 --> 00:08:42,827
+Trap two: a clone with another name,
+like the folder a zip download gives you.
+
+152
+00:08:43,147 --> 00:08:46,403
+The compose file mounts
+a folder named llm-rag,
+
+153
+00:08:46,403 --> 00:08:50,699
+so Docker creates an empty one,
+owned by root, over your code.
+
+154
+00:08:51,019 --> 00:08:53,600
+Keep the name, and delete the stray folder.
+
+155
+00:08:53,850 --> 00:08:56,823
+One last oddity:
+the image tag called latest,
+
+156
+00:08:56,823 --> 00:09:01,317
+and three version numbers that don't match;
+a team should pin a tag.
+
+157
+00:09:01,637 --> 00:09:05,925
+Pause and try these checks;
+your key in /secrets matters most.
+
+158
+00:09:09,267 --> 00:09:11,038
+Indexing starts with chunking.
+
+159
+00:09:11,358 --> 00:09:14,372
+One vector for a whole book
+averages its topics,
+
+160
+00:09:14,372 --> 00:09:16,947
+so every question fetches the whole book.
+
+161
+00:09:17,267 --> 00:09:21,619
+Sending 11 books each time is slow, costly,
+and gives garbage.
+
+162
+00:09:21,939 --> 00:09:24,712
+A chunk is small enough to find,
+and to paste.
+
+163
+00:09:26,550 --> 00:09:29,857
+Step 1 is a link:
+the README's chunk visualizer.
+
+164
+00:09:30,177 --> 00:09:34,508
+Open it in Chrome and play with the sliders;
+here's the idea it shows.
+
+165
+00:09:35,350 --> 00:09:37,249
+Character splitting is a ruler.
+
+166
+00:09:37,569 --> 00:09:43,371
+Lines 185 and 186 set
+windows of 350 characters,
+
+167
+00:09:43,371 --> 00:09:45,547
+overlapping by 20.
+
+168
+00:09:45,867 --> 00:09:49,638
+The separator is empty,
+so it counts characters,
+
+169
+00:09:49,638 --> 00:09:52,310
+not words, stepping 330 at a time.
+
+170
+00:09:52,617 --> 00:09:56,841
+The instructor's story
+is 7,808 characters long.
+
+171
+00:09:57,161 --> 00:10:01,769
+Windows of 350 that overlap by 20:
+how many chunks?
+
+172
+00:10:10,617 --> 00:10:16,974
+The first window takes 350 characters,
+and each one after it adds 330 new ones.
+
+173
+00:10:17,294 --> 00:10:23,652
+7,458 more characters need 23 more windows:
+24 chunks.
+
+174
+00:10:24,717 --> 00:10:29,986
+Step 2: python cli.py --chunk
+--chunk_type char-split.
+
+175
+00:10:30,306 --> 00:10:34,001
+It reads 11 books
+and prints each book's chunk count;
+
+176
+00:10:34,001 --> 00:10:35,256
+the story gets 24.
+
+177
+00:10:35,576 --> 00:10:38,584
+No key needed:
+this branch never calls Google.
+
+178
+00:10:38,904 --> 00:10:40,056
+Pause and run it.
+
+179
+00:10:42,300 --> 00:10:49,575
+An extra line count of the chunk files:
+24 for the story, and 8,248 in total.
+
+180
+00:10:49,817 --> 00:10:51,438
+An extra look at the seam.
+
+181
+00:10:51,758 --> 00:10:54,873
+Chunk 0 stops two letters
+into the word accomplish.
+
+182
+00:10:55,193 --> 00:10:57,199
+Chunk 1 backs up 20 characters,
+
+183
+00:10:57,199 --> 00:11:01,017
+to the last letter of things,
+so accomplish is whole again.
+
+184
+00:11:01,337 --> 00:11:04,580
+The lecture's pieces sit end to end,
+with no overlap.
+
+185
+00:11:04,817 --> 00:11:09,468
+The chunk files land in outputs/,
+on your laptop, and git ignores them.
+
+186
+00:11:09,788 --> 00:11:13,728
+Row 0 of a Gutenberg book
+is the Project Gutenberg header:
+
+187
+00:11:13,728 --> 00:11:15,859
+these books start with a header
+
+188
+00:11:15,859 --> 00:11:19,366
+and end with a license,
+both chunked like the rest.
+
+189
+00:11:21,300 --> 00:11:25,972
+Recursive splitting gets only a chunk size,
+the same 350.
+
+190
+00:11:26,292 --> 00:11:27,849
+No overlap is given.
+
+191
+00:11:28,683 --> 00:11:31,350
+It works like scissors
+that look for the best gap.
+
+192
+00:11:31,670 --> 00:11:35,401
+First a blank line between paragraphs,
+then a line break,
+
+193
+00:11:35,401 --> 00:11:39,328
+then a space, and only as a last resort,
+a single character.
+
+194
+00:11:39,648 --> 00:11:41,697
+So every cut falls between words.
+
+195
+00:11:42,333 --> 00:11:45,981
+Step 3: the same command
+with --chunk_type recursive-split.
+
+196
+00:11:46,301 --> 00:11:49,173
+The story now makes 35 chunks,
+
+197
+00:11:49,173 --> 00:11:53,576
+and an extra line count
+gives 14,228 in total.
+
+198
+00:11:53,896 --> 00:11:55,048
+Pause and run it.
+
+199
+00:11:57,283 --> 00:11:59,886
+Same chunk size, 350.
+
+200
+00:12:00,206 --> 00:12:06,243
+So why 14,228 chunks instead of 8,248?
+
+201
+00:12:18,033 --> 00:12:19,505
+Look at the first chunks.
+
+202
+00:12:19,825 --> 00:12:24,134
+Chunk 1 starts again with Chapter One,
+repeating the end of chunk 0.
+
+203
+00:12:24,454 --> 00:12:29,104
+The splitter's library default
+is an overlap of up to 200 characters,
+
+204
+00:12:29,104 --> 00:12:31,260
+which the README never mentions.
+
+205
+00:12:31,580 --> 00:12:34,225
+Cutting at boundaries
+also makes chunks shorter.
+
+206
+00:12:34,467 --> 00:12:37,838
+Overlap is insurance
+against cutting an idea in half.
+
+207
+00:12:38,158 --> 00:12:41,955
+But every repeated character is embedded,
+stored, and paid for.
+
+208
+00:12:42,275 --> 00:12:45,624
+If you want a different value,
+set chunk_overlap yourself.
+
+209
+00:12:45,867 --> 00:12:50,368
+The lecture's point is that ideal chunks
+follow the document's own structure.
+
+210
+00:12:50,688 --> 00:12:54,123
+Recursive splitting goes part of the way,
+using paragraphs.
+
+211
+00:12:54,443 --> 00:12:57,237
+Semantic chunking, in part 2, goes further.
+
+212
+00:12:59,183 --> 00:13:00,847
+Next, the embedding model.
+
+213
+00:13:01,167 --> 00:13:04,940
+It turns each chunk into one vector,
+a list of numbers,
+
+214
+00:13:04,940 --> 00:13:08,232
+so similar meanings point
+in similar directions:
+
+215
+00:13:08,232 --> 00:13:12,004
+in this sketch, curd near curd,
+license text elsewhere.
+
+216
+00:13:12,550 --> 00:13:15,900
+The personality game
+from lecture makes this concrete:
+
+217
+00:13:15,900 --> 00:13:19,249
+which of three candidates
+is most like the instructor?
+
+218
+00:13:19,569 --> 00:13:22,854
+Five scores make each person
+a five-number vector.
+
+219
+00:13:23,174 --> 00:13:27,888
+Cosine similarity compares only the angle,
+and picks the first candidate.
+
+220
+00:13:28,133 --> 00:13:30,254
+The dot product also counts length,
+
+221
+00:13:30,254 --> 00:13:33,829
+and would pick the second candidate,
+whose arrow is longer.
+
+222
+00:13:34,149 --> 00:13:38,330
+So a measure is a choice;
+for text, cosine is the usual one.
+
+223
+00:13:38,866 --> 00:13:45,739
+The tutorial's model, gemini-embedding-001,
+natively returns 3,072 numbers;
+
+224
+00:13:45,739 --> 00:13:48,707
+the code asks for the first 256,
+
+225
+00:13:48,707 --> 00:13:53,437
+a prefix the model is trained
+to make useful alone.
+
+226
+00:13:53,683 --> 00:13:56,691
+Chunks go to the model in batches of 100.
+
+227
+00:13:57,011 --> 00:14:02,643
+On an API error, it retries up to 5 times,
+doubling the wait from 5 seconds.
+
+228
+00:14:02,883 --> 00:14:05,763
+Your question will use
+this same model, later.
+
+229
+00:14:06,083 --> 00:14:08,771
+Chunks now, questions later: one model.
+
+230
+00:14:09,016 --> 00:14:13,916
+Step 1: python cli.py --embed
+--chunk_type char-split:
+
+231
+00:14:13,916 --> 00:14:16,184
+the first call to Google.
+
+232
+00:14:16,504 --> 00:14:20,899
+On our machine it reads the first book,
+then stops at the missing key file.
+
+233
+00:14:21,219 --> 00:14:22,648
+On yours, it runs.
+
+234
+00:14:22,883 --> 00:14:25,520
+With your key, look for each book's file,
+
+235
+00:14:25,520 --> 00:14:28,801
+a 5-second pause,
+a table with an embedding column,
+
+236
+00:14:28,801 --> 00:14:31,566
+and new embeddings files beside the chunks.
+
+237
+00:14:31,800 --> 00:14:34,957
+If yours fails,
+or keeps retrying, read the error.
+
+238
+00:14:35,277 --> 00:14:38,413
+Key file not found:
+check its name in secrets.
+
+239
+00:14:38,733 --> 00:14:42,105
+PERMISSION_DENIED:
+fix the Project ID or the role,
+
+240
+00:14:42,105 --> 00:14:44,600
+then exit and start the script again.
+
+241
+00:14:44,920 --> 00:14:47,800
+SERVICE_DISABLED: switch on the API.
+
+242
+00:14:48,050 --> 00:14:50,738
+Step 2 does the same for recursive-split.
+
+243
+00:14:51,058 --> 00:14:53,900
+Pause and run both, with your key:
+
+244
+00:14:53,900 --> 00:14:58,247
+about 89 and 148 calls,
+a few cents by our estimate.
+
+245
+00:14:58,567 --> 00:15:00,146
+Check the current price list.
+
+246
+00:15:02,383 --> 00:15:05,308
+The video goes
+on with the staff's own outputs,
+
+247
+00:15:05,308 --> 00:15:08,420
+once committed and still
+in every clone's history.
+
+248
+00:15:08,740 --> 00:15:11,242
+Their chunk files match ours byte for byte,
+
+249
+00:15:11,242 --> 00:15:13,860
+so their vectors
+are what this command makes.
+
+250
+00:15:14,100 --> 00:15:16,425
+An extra check on the story's vectors.
+
+251
+00:15:16,745 --> 00:15:19,881
+24 rows of 256 numbers.
+
+252
+00:15:20,201 --> 00:15:26,089
+Their lengths run
+from 0.369 to 0.402, not 1.
+
+253
+00:15:26,333 --> 00:15:29,725
+When we load them,
+the database will compare by cosine,
+
+254
+00:15:29,725 --> 00:15:31,944
+and these arrows are shorter than 1.
+
+255
+00:15:32,264 --> 00:15:34,632
+Does that change
+which chunks count as nearest?
+
+256
+00:15:43,466 --> 00:15:45,834
+No: cosine only sees the angle.
+
+257
+00:15:46,154 --> 00:15:50,100
+With straight-line distance,
+Chroma's default, or a dot product,
+
+258
+00:15:50,100 --> 00:15:53,429
+length would leak into the ranking:
+the game's lesson.
+
+259
+00:15:56,267 --> 00:15:59,462
+An ordinary database
+answers precise questions,
+
+260
+00:15:59,462 --> 00:16:01,569
+like a price between 10 and 50,
+
+261
+00:16:01,569 --> 00:16:05,376
+but it can't find rows
+whose meaning is like a question.
+
+262
+00:16:05,696 --> 00:16:07,296
+A vector database can.
+
+263
+00:16:07,534 --> 00:16:10,483
+Each chunk becomes a record:
+an ID, the text,
+
+264
+00:16:10,483 --> 00:16:13,891
+metadata with book, author and year,
+and the vector.
+
+265
+00:16:14,211 --> 00:16:18,115
+The ID hashes the book's name plus
+the row number, so it's stable.
+
+266
+00:16:18,350 --> 00:16:21,443
+Records go into a collection,
+one per chunk type.
+
+267
+00:16:21,763 --> 00:16:24,831
+The load step deletes it
+and creates it again,
+
+268
+00:16:24,831 --> 00:16:28,633
+with cosine as its measure:
+every load is a full rebuild.
+
+269
+00:16:28,867 --> 00:16:32,152
+Comparing a question
+with every vector is slow at scale.
+
+270
+00:16:32,472 --> 00:16:36,486
+So the database builds an index,
+in these slides' sense:
+
+271
+00:16:36,486 --> 00:16:41,432
+a layered graph called HNSW,
+where a search hops down in a few steps.
+
+272
+00:16:41,667 --> 00:16:46,915
+Step 1: python cli.py --load
+--chunk_type char-split.
+
+273
+00:16:47,235 --> 00:16:50,275
+On our first run there
+were no embeddings yet:
+
+274
+00:16:50,275 --> 00:16:53,315
+it made an empty collection
+and found 0 files.
+
+275
+00:16:53,635 --> 00:16:56,494
+If you see 0, your embed step didn't finish.
+
+276
+00:16:56,734 --> 00:16:58,854
+On the staff's recorded vectors,
+
+277
+00:16:58,854 --> 00:17:01,903
+the same command deletes
+that empty collection
+
+278
+00:17:01,903 --> 00:17:04,819
+and reads 11 files with an embedding column.
+
+279
+00:17:05,139 --> 00:17:10,302
+It inserts 8,248 records, in batches of 500.
+
+280
+00:17:10,550 --> 00:17:15,691
+Step 2 loads recursive-split,
+14,228 records.
+
+281
+00:17:16,011 --> 00:17:17,718
+Pause and run both loads.
+
+282
+00:17:19,967 --> 00:17:21,196
+An extra check:
+
+283
+00:17:21,196 --> 00:17:26,687
+both collections now have dimension 256,
+fixed by the first insert.
+
+284
+00:17:26,934 --> 00:17:29,227
+And one book has no author or year:
+
+285
+00:17:29,227 --> 00:17:32,438
+a small slip cuts its file name
+at the first dot.
+
+286
+00:17:32,758 --> 00:17:37,680
+Split off only the extension,
+delete that book's old files in outputs/,
+
+287
+00:17:37,680 --> 00:17:39,968
+then chunk, embed and load again.
+
+288
+00:17:40,217 --> 00:17:45,892
+The docker-volumes/ folder on your laptop
+now holds a 60-megabyte SQLite file
+
+289
+00:17:45,892 --> 00:17:50,094
+and two index folders,
+one per collection, owned by root.
+
+290
+00:17:50,414 --> 00:17:52,292
+The README calls it persistent.
+
+291
+00:17:52,534 --> 00:17:55,606
+Step 3 is a link to the course's Chroma UI.
+
+292
+00:17:55,926 --> 00:17:57,089
+Opened in Chrome,
+
+293
+00:17:57,089 --> 00:18:00,304
+it reads your local database
+through port 8000;
+
+294
+00:18:00,304 --> 00:18:03,200
+Chroma's settings let the course's site in.
+
+295
+00:18:03,450 --> 00:18:06,074
+The top lane is done: the index is built.
+
+296
+00:18:06,394 --> 00:18:08,549
+In part 2, we ask it questions.
+
