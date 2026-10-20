@@ -37,10 +37,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l05-rag.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 31:07 (1867.4 s), 108 MB. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l05-rag.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 31:07 (1867.3 s), 107 MB. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l05-rag.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Not in Git: rebuild it with `--no-render` (see Rebuild) |
 | `output/ac215-l05-rag_part1.mp4` | part 1, 18:09 (1090.0 s): build the index — chunk, embed, load (S01–S09). Not in Git: rebuilt with `--no-render` |
-| `output/ac215-l05-rag_part2.mp4` | part 2, 12:57 (777.5 s): ask the index — query, filters, chat, semantic chunking (S10–S16). Not in Git: rebuilt with `--no-render` |
+| `output/ac215-l05-rag_part2.mp4` | part 2, 12:57 (777.4 s): ask the index — query, filters, chat, semantic chunking (S10–S16). Not in Git: rebuilt with `--no-render` |
 | `output/ac215-l05-rag.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l05-rag.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l05-rag.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -86,7 +86,7 @@ Part 1 uses the first nine lines as they are. Part 2 starts its clock at 0:00:
 00:00 Exit, and the index survives
 01:24 Asking the database: rank and cut
 03:17 Filters come first
-05:22 Chat: the prompt is the whole trick
+05:21 Chat: the prompt is the whole trick
 07:20 Semantic chunking: cut where meaning shifts
 09:13 Beyond naïve RAG: what the lecture adds
 10:39 Tear down, a stale index, recap
