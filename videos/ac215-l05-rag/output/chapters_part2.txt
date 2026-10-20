@@ -1,7 +1,7 @@
 00:00 Exit, and the index survives
 01:24 Asking the database: rank and cut
 03:17 Filters come first
-05:22 Chat: the prompt is the whole trick
+05:21 Chat: the prompt is the whole trick
 07:20 Semantic chunking: cut where meaning shifts
 09:13 Beyond naïve RAG: what the lecture adds
 10:39 Tear down, a stale index, recap

@@ -36,7 +36,7 @@ The Chroma service runs the database from Docker Hub, under a fixed name. It pub
 From the Dockerfile: the virtual environment lives in slash dot venv, outside slash app, so the code mount can't hide it. Edit cli.py on your laptop and rerun; no rebuild.
 Step 3: sh docker-shell.sh. Compose pulls Chroma's image, creates the network, and creates the Chroma container first.
 Then this, which looks like an error but isn't. Compose first asks Docker Hub for an image called L-L-M rag CLI, finds none, and builds it instead.
-The build took 81 seconds here. Its context was 112 megabytes, mostly git history that still holds an old copy of the staff's database. With no docker ignore file, the image keeps it.
+The build took 81 seconds here. Its context was 112 megabytes. Most of it is git history, which still holds an old copy of the staff's database. With no docker ignore file, the image keeps it.
 Then the banner: Python 3.12.15 and uv 0.13.1, at the time of recording. It says activated before it activates: cosmetic.
 You're at the container's prompt. The part after the at sign is the container's ID; it changes every run. Pause, and get to this prompt.
 
@@ -74,10 +74,10 @@ The lecture's point is that ideal chunks follow the document's own structure. Re
 Next, the embedding model. It turns each chunk into one vector, a list of numbers, so similar meanings point in similar directions: in this sketch, curd near curd, license text elsewhere.
 The personality game from lecture makes this concrete: which of three candidates is most like the instructor? Five scores make each person a five-number vector. Cosine similarity compares only the angle, and picks the first candidate.
 The dot product also counts length, and would pick the second candidate, whose arrow is longer. So a measure is a choice; for text, cosine is the usual one.
-The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers; the code asks for the first 256, a prefix the model is trained to make useful alone.
+The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers. The code asks for the first 256. The model is trained to make that prefix useful alone.
 Chunks go to the model in batches of 100. On an API error, it retries up to 5 times, doubling the wait from 5 seconds.
 Your question will use this same model, later. Chunks now, questions later: one model.
-Step 1: python cli.py, dash dash embed, chunk type char split: the first call to Google. On our machine it reads the first book, then stops at the missing key file. On yours, it runs.
+Step 1: python cli.py, dash dash embed, chunk type char split. It's the first call to Google. On our machine it reads the first book, then stops at the missing key file. On yours, it runs.
 With your key, look for each book's file, a 5-second pause, a table with an embedding column, and new embeddings files beside the chunks.
 If yours fails, or keeps retrying, read the error. Key file not found: check its name in secrets. Permission denied: fix the Project ID or the role, then exit and start the script again. Service disabled: switch on the API.
 Step 2 does the same for recursive split. Pause and run both, with your key: about 89 and 148 calls, a few cents by our estimate. Check the current price list.
@@ -122,7 +122,7 @@ That's why chat, later, reads documents, item zero. No results were recorded, so
 ## 21:27 — Filters come first
 Here's the query the code sends: 10 results and two filters. The metadata filter keeps one book, The Complete Book of Cheese. The document filter keeps chunks that contain Italian.
 The question is about Tolminc. What will the 10 results be about?
-An extra check counts them in the loaded collection. Of 8,248 chunks, the book filter keeps 1,355; the word Italian keeps 64. How many mention Tolminc? None.
+An extra check counts them in the loaded collection. Of 8,248 chunks, the book filter keeps 1,355. The word Italian keeps 64. How many mention Tolminc? None.
 Now a search. The real question needs Google to become a vector, so we use a stand-in: the stored vector of one story chunk. Without filters, its 10 nearest are all from the story, at distances from 0, the chunk itself, up to 0.16.
 With the code's filters, all 10 results come from The Complete Book of Cheese. Their distances run from 0.28 to 0.31. The filters act first, and top K fills its 10 places with whatever survives, however far.
 The lecture puts metadata filtering after ranking: here, that would drop all 10 story chunks and return nothing. Chroma filters first, so you get 10 results, about the wrong cheese.
