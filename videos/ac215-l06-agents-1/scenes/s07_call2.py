@@ -89,7 +89,6 @@ from common import (
     erratum_tag,
     excerpt,
     excerpt_chip,
-    expected_tag,
     extra_card,
     extra_tag,
     fix_chip,
@@ -110,6 +109,7 @@ from common import (
     standin_tag,
     switch_section,
     term,
+    tracker,
     type_cmd,
     under,
 )
@@ -308,12 +308,12 @@ def two_line_extra(lines, size=20):
     return c
 
 
-def dashed_vector(color=LOOKUP, length=0.75):
+def dashed_vector(color=LOOKUP, length=0.85):
     """A dashed query-vector glyph (the stand-in): a dashed shaft and a solid tip."""
     d = np.array([np.cos(np.radians(28)), np.sin(np.radians(28)), 0])
     tip_pt = d * length
-    shaft = DashedLine(np.array([0, 0, 0]), tip_pt - d * 0.16, color=color, stroke_width=4,
-                       dash_length=0.08)
+    shaft = DashedLine(np.array([0, 0, 0]), tip_pt - d * 0.16, color=color, stroke_width=5,
+                       dash_length=0.09)
     n = np.array([-d[1], d[0], 0])
     tip = Polygon(tip_pt, tip_pt - d * 0.2 + n * 0.09, tip_pt - d * 0.2 - n * 0.09, stroke_width=0) \
         .set_fill(color, 1)
@@ -368,8 +368,9 @@ class CallTwo(VoiceScene):
         # ============================================================ 0 · the dispatcher
         tr = switch_section(self, None, "Agents", 1, run_time=0.5)
         cs = CallStrip()
-        cs_left = -2.27 + 0.3                       # right of the tracker even with " · extra"
-        place(cs, left=cs_left, cy=tr.get_center()[1] - 0.02)
+        probe = tracker("Agents", 1)                # right of the tracker even with " · extra"
+        probe.caption.become(caption_extra(probe, True).target_mobject)
+        place(cs, left=probe.get_right()[0] + 0.3, cy=tr.get_center()[1] - 0.02)
         cs.steps[0].set_color(TURN)                 # where S06 left it: call 1
         chip459 = excerpt_chip(SUB459, "cli.py · line 459 (excerpt)", line=L459)
         place(chip459, left=SAFE_L, top=TOP_Y)
@@ -461,15 +462,17 @@ class CallTwo(VoiceScene):
         au_glyphs = substring(cc.rows[1], "author")
         cyl = st.parts["chroma"].cyl
         vec = dashed_vector()
-        vec_at = np.array([cc.get_right()[0] + 0.75, 0.3, 0])
-        vec_tag = standin_tag().move_to([vec_at[0], -0.22, 0])
+        vec_at = np.array([cc.frame.get_right()[0] + 0.95, sc_glyphs.get_center()[1] + 0.05, 0])
+        vec_tag = standin_tag()
+        place(vec_tag, cx=vec_at[0] - 0.05, bottom=vec_at[1] + 0.35)
         vec_arrow = Arrow([cc.frame.get_right()[0] + 0.02, sc_glyphs.get_center()[1], 0],
-                          vec_at + LEFT * 0.45 + DOWN * 0.12, buff=0.04, color=LOOKUP, stroke_width=3,
-                          max_tip_length_to_length_ratio=0.3, tip_length=0.14)
+                          [vec_at[0] - 0.42, sc_glyphs.get_center()[1], 0], buff=0.04, color=LOOKUP,
+                          stroke_width=3, max_tip_length_to_length_ratio=0.3, tip_length=0.14)
         q1 = mono_line("collection.query(…, n_results=10,", 20, INK)
         q2 = mono_line('    where={"author": …})', 20, INK)
         qlab = VGroup(q1, q2).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
-        place(qlab, left=vec_at[0] + 0.75, top=band_top - 0.3)
+        place(qlab, left=max(vec_at[0] + 0.75, vec_tag.get_right()[0] + 0.3), top=band_top - 0.3)
+        assert qlab.get_right()[0] < SAFE_R - 0.1 and vec_tag.get_top()[1] < band_top - 0.05
         q_dots = substring(q1, "…")
         q_auth = substring(q2, '"author"')
         q_arrow = Arrow([cyl.get_center()[0], qlab.get_top()[1] + 0.02, 0],
@@ -522,7 +525,7 @@ class CallTwo(VoiceScene):
         assert txt.get_top()[1] < band_top - 0.05
         mara = substring(txt.rows[0], "Mara")
         anja = substring(txt.rows[1], "Anja")
-        string = RoundedRectangle(width=cards.get_right()[0] - (targets[0][0] - 0.3), height=0.22,
+        string = RoundedRectangle(width=targets[-1][0] - targets[0][0] + 0.6, height=0.22,
                                   corner_radius=0.11, stroke_color=DATA, stroke_width=2).set_fill(DATA, 0.45)
         place(string, left=targets[0][0] - 0.3, cy=row_y)
         one_s = label("one string", 20, DATA).next_to(string, UP, buff=0.12).align_to(string, LEFT)
@@ -623,6 +626,7 @@ class CallTwo(VoiceScene):
         duty = concept_box("interpret its outputs", h=0.42)
         place(duty, right=SAFE_R, top=ref.get_bottom()[1] - 0.06)
         t5 = term(rows=13, container=True)
+        t5.shift(DOWN * 0.05)
         assert duty.get_bottom()[1] > t5.box.get_top()[1] + 0.01
         seal_fly = s_m.seal.copy()
         with self.voiceover(SAY[5]) as vo:
@@ -660,10 +664,13 @@ class CallTwo(VoiceScene):
         st6 = TrustStage(compact=True)
         st6.shift(UP * (2.8 - st6.get_top()[1]))
         md = st6.parts["model"]
-        small = Envelope(width=1.3, slots=1, pitch=0.3, margin=0.2)
-        small.move_to([st6._bx.get_center()[0] + 1.2, md.get_center()[1], 0])
-        prose_fr = box(1.5, 0.8, CLOUD, fill=S.BG, fill_opacity=1.0, radius=0.12)
-        prose = VGroup(prose_fr, answer_bars(3, 1.0, CLOUD).move_to(prose_fr))
+        lap = st6.parts["laptop"]
+        cli_fr = st6.parts["cli"].frame
+        margin_y = (cli_fr.get_bottom()[1] + lap.get_bottom()[1]) / 2
+        small = Envelope(width=0.9, slots=1, pitch=0.2, margin=0.12)
+        small.move_to([st6._bx.get_center()[0] + 0.75, margin_y + 0.08, 0])
+        prose_fr = box(1.1, 0.5, CLOUD, fill=S.BG, fill_opacity=1.0, radius=0.1)
+        prose = VGroup(prose_fr, answer_bars(3, 0.75, CLOUD, h=0.07).move_to(prose_fr))
         prose.move_to(md)
         maxc = int((12.9 - 0.5) / 0.1667) - 1
         a_rows = [A99] + wrap_words(A105, maxc) + wrap_words(A111, maxc) + wrap_words(A112, maxc)
@@ -693,7 +700,7 @@ class CallTwo(VoiceScene):
             self.play(FadeOut(small, scale=0.5), Indicate(md, color=CLOUD, scale_factor=1.1), run_time=0.4)
             prose.scale(0.5)
             self.add(prose)
-            back = np.array([st6._bx.get_center()[0] + 0.3 + prose.width, md.get_center()[1], 0])
+            back = np.array([st6._bx.get_center()[0] + 0.25 + prose.width, margin_y, 0])
             self.play(prose.animate.scale(2.0).move_to(back), run_time=0.6)
             self.play(FadeTransform(prose, lp), FadeIn(stf), FadeOut(st6), run_time=0.7)
             vo.wait_until("An Alpine valley")
@@ -720,7 +727,8 @@ class CallTwo(VoiceScene):
         a2h = label("Gemini wrote the call", 28, CLOUD)
         ar1 = label("→", 28, S.GREY)
         ar2 = label("→", 28, S.GREY)
-        qx, ax = -5.2, 0.35
+        qx = -5.2
+        ax = qx + q1h.width + 1.0
         q1h.move_to([qx, 1.3, 0], aligned_edge=LEFT)
         q2h.move_to([qx, 0.4, 0], aligned_edge=LEFT)
         ar1.move_to([ax - 0.45, 1.3, 0])
@@ -791,8 +799,9 @@ class CallTwo(VoiceScene):
         cy9.move_to([-4.7, 0.75, 0])
         cl9 = mono("char-split-collection", 20, CTR).next_to(cy9, DOWN, buff=0.22)
         place(cl9, left=max(SAFE_L, cl9.get_left()[0]))
-        slot = dashed_frame(9.1, 2.1, CTR, stroke=2, radius=0.16)
-        place(slot, right=SAFE_R - 0.4, cy=0.75)
+        slot = dashed_frame(8.9, 2.1, CTR, stroke=2, radius=0.16)
+        place(slot, right=SAFE_R - 0.05, cy=0.75)
+        assert slot.get_left()[0] > cl9.get_right()[0] + 0.2
         link = Line(cy9.get_right() + RIGHT * 0.06, [slot.get_left()[0] - 0.04, cy9.get_center()[1], 0],
                     color=CTR, stroke_width=3)
         old = grid(3, 4)
@@ -849,9 +858,10 @@ class CallTwo(VoiceScene):
         with self.voiceover(SAY[10]) as vo:
             self.play(FadeOut(VGroup(cy9, cl9, link, slot, ghosts, old_tag, new, new_l, words, cap9)),
                       run_time=0.5)
-            self.play(FadeIn(err10, shift=DOWN * 0.1), run_time=0.4)
-            vo.wait_until("the README promises")
             self.play(FadeIn(rc266, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeIn(err10, shift=LEFT * 0.1), run_time=0.4)
+            vo.wait_until("the README promises")
+            self.play(Indicate(rc266.phrase, color=TURN, scale_factor=1.06), run_time=0.7)
             vo.wait_until("but line 478")
             self.play(FadeIn(p478, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("the whole response object")
