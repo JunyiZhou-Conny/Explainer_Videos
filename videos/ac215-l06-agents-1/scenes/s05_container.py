@@ -2,11 +2,12 @@
 "Agents" step 1, and lecture 5's "Load"). Lecture: none (no lecture tag).
 
 Beats (script.md "## S05", one voiceover block each):
-0. TRACKER Prereq 1. Terminal (full width, 8 rows, title laptop, prompt student@laptop:~/AC215$).
-   A GREY caption "fresh start only · README.md · line 48 links the repo". It types
-   `git clone https://github.com/dlops-io/llm-rag.git` -> laptop/01 line 2; then `mkdir secrets; ls`
-   (extra tag) -> laptop/02 line 2; a GOLD key chip "llm-service-account.json -> secrets/ · beside
-   llm-rag, never inside · lecture 5 · README.md · lines 62–69".
+0. TRACKER Prereq 1. The tracker, then (at "today we run it") the terminal (full width, 8 rows,
+   title laptop, prompt student@laptop:~/AC215$). A GREY caption "fresh start only · README.md ·
+   line 48 links the repo". It types `git clone https://github.com/dlops-io/llm-rag.git` ->
+   laptop/01 line 2; then `mkdir secrets; ls` (extra tag) -> laptop/02 line 2; a GOLD key chip
+   "llm-service-account.json -> secrets/ · beside llm-rag, never inside · lecture 5 · README.md ·
+   lines 62–69"; "secrets" and the key flash.
 1. TRACKER Run 1: `cd llm-rag`, the prompt becomes ~/AC215/llm-rag$. TRACKER Run 2: the terminal
    shrinks to the 3-row strip; above it PANEL(laptop/05: 10–11, "docker-shell.sh · line 7 · your
    edit"), line 10 RED, line 11 GREEN; `your-project-id` underlined YELLOW with the YELLOW tag "your
@@ -14,36 +15,39 @@ Beats (script.md "## S05", one voiceover block each):
    key inside; then cd llm-rag, set GCP_PROJECT in docker-shell.sh). Hold 2 s.
 2. TRACKER Run 3. The terminal grows to 13 rows: `sh docker-shell.sh` -> laptop/06 lines 2–5 (Compose
    rows, times as GREY tags; Chroma's rows flash), 6 and 7–9 joined (wrapped) RED, then GREY with the
-   tag "harmless · its wording depends on your Docker setup"; 10–11 (11 + "at the time of
-   recording"), "…", 32–34.
+   tag "harmless · wording depends on Docker setup"; 10–11 (11 + "at the time of recording"), "…",
+   32–34.
 3. "40.5s" flashes; lines 35–40; 3.12.15 and 0.13.1 underlined GREY, "at the time of recording" on
    line 38. Line 41's prompt alone (cut before `exit`): the frame turns TEAL, title "container ·
    llm-rag-cli"; abcf218747d0 underlined, GREY tag "container ID · your numbers will differ";
    ▶ your turn beside it. Hold 2 s.
-4. TRACKER Run 3 · extra. A second terminal slides over (title "laptop · second terminal", prompt
-   ~/AC215/llm-rag$): `docker ps --format 'table {{.Names}}\\t{{.Image}}\\t{{.Ports}}'` (extra; folds
-   onto two rows) -> laptop/07 lines 2–4, shown as the NAMES and PORTS columns (GREY tag "IMAGE
-   column not shown": the full rows are 86 characters, the house terminal holds 65);
-   0.0.0.0:8000->8000/tcp turns PINK in a PINK box, PINK tag "port 8000 · remember for part 2" under
-   it. The second terminal slides away.
-5. TRACKER Agents 1. In the TEAL terminal: `python cli.py --agent --chunk_type char-split` ->
-   cli-container/10 lines 2–3, 9–10, "…", 25 (wrap), GREY tag "real run · fresh clone"; line 25 RED.
-   The terminal shrinks to a strip (lines 9 and 25); above it CODE(cli.py: 427–429), line 429 RED.
-6. Two GREY cards above the strip, one per path (stacked: the README commands need the full width):
-   "kept lecture 5's database?" docker-volumes/chromadb · skip ahead, GREY note "chunked before
-   September 22, 2026? git pull, then chunk → embed → load · the book changed (explained soon)";
-   "no database?" (GREY README.md · lines 103, 129 + expected) with the chunk and embed commands
-   (embed: "needs your key") and "then the load step".
+4. TRACKER Run 3 · extra. The container terminal shrinks to the 3-row strip; a second terminal slides
+   in above it (title "laptop · second terminal", prompt ~/AC215/llm-rag$): `docker ps --format
+   'table {{.Names}}\\t{{.Image}}\\t{{.Ports}}'` (extra; folds onto two rows) -> laptop/07 lines 2–4,
+   shown as the NAMES and PORTS columns (GREY tag "IMAGE not shown": the full rows are 86
+   characters, the house terminal holds 65); 0.0.0.0:8000->8000/tcp turns PINK in a PINK box, PINK
+   tag "port 8000 · remember for part 2" under it. The second terminal slides away.
+5. TRACKER Agents 1. The TEAL terminal grows back (13 rows): `python cli.py --agent --chunk_type
+   char-split` -> cli-container/10 lines 2–3, 9–10, "…", 25 (wrap), GREY tag "real run · fresh
+   clone"; line 25 RED. The terminal shrinks to a strip (lines 9 and 25); above it CODE(cli.py:
+   427–429), line 429 RED.
+6. The code panel leaves; "char-split-collection" flashes in the strip. Two GREY cards above the
+   strip, one per path (stacked: the README commands need the full width): "kept lecture 5's
+   database?" docker-volumes/chromadb · skip ahead, GREY note "chunked before September 22, 2026?
+   git pull, then chunk → embed → load / the book changed (explained soon)"; "no database?" (GREY
+   README.md · lines 103, 129 + expected) with the chunk and embed commands (embed: "needs your
+   key") and "then the load step".
 7. The first card leaves, the second rises; a GOLD key lands on the embed row; PANEL(laptop/08: 2–3,
-   "outputs/embeddings-char-split-* · copied from commit 68e0bde") slides in under it with a GREY
-   arrow up to that row, tag "recorded · the staff's vectors".
-8. TRACKER Load 1. The terminal grows (13 rows): `python cli.py --load --chunk_type char-split` ->
-   cli-container/20 lines 2–8, "…", 142, 152–153 (wrap). README chip in the top band (README.md ·
-   line 152: recursive-split too · the agent uses char-split). GREY tag "8,248 chunks in 11 books · 24
-   from the instructor's story" on the "…" row. TRACKER Load 1 · extra: `python cli.py --get
-   --chunk_type char-split` (extra) -> cli-container/21 line 6 cut after '1021665fac86c5a5-0', + "…".
-   The chips leave, the terminal shrinks to the strip; ▶ on a static GREY card (load, or keep yours;
-   get). Hold 2 s. Fade to an empty frame.
+   header "outputs/embeddings-char-split-*" over "copied from commit 68e0bde") slides in under it
+   with a GREY arrow up to the key, tag "recorded · the staff's vectors".
+8. TRACKER Load 1. The terminal grows (12 rows, leaving a band under the tracker for the README chip
+   "README.md · line 152: recursive-split too · the agent uses char-split" + expected):
+   `python cli.py --load --chunk_type char-split` -> cli-container/20 lines 2–8, then "…", 142,
+   152–153 (wrap; two prints), the prompt returns. GREY tag "8,248 chunks in 11 books · 24 from the
+   instructor's story" on the "…" row; 11, 24 and Tolminc flash. TRACKER Load 1 · extra: `python
+   cli.py --get --chunk_type char-split` (extra) -> cli-container/21 line 6 cut after
+   '1021665fac86c5a5-0', + "…". The chip leaves, the terminal shrinks to the strip; ▶ on a static
+   GREY card (load, or keep yours; get). Hold 2 s. Fade to an empty frame.
 """
 
 from common import (
@@ -169,6 +173,7 @@ README_152 = "python cli.py --load --chunk_type recursive-split"  # README.md:15
 
 # ------------------------------------------------------------------ layout
 TOP_Y = 2.78                  # nothing above this but the tracker band
+LOAD_ROWS = 12                # the load step's terminal: 12 rows leave a band for the README chip
 GAP_Y = STRIP_TOP + 0.14      # the lowest y a picture above the 3-row strip may use
 
 
@@ -230,7 +235,7 @@ def key_chip() -> VGroup:
     return g
 
 
-def path_card(title, rows, width: float = 12.9, right=None) -> VGroup:
+def path_card(title, rows, width: float = 12.6, right=None) -> VGroup:
     """A GREY card for one path of the fork: a title row (with optional `right` GREY header bits at
     its right end), then `rows` (mobjects) left-aligned. .frame .title .rows"""
     t = label(title, CAPTION + 2, INK)
@@ -269,6 +274,19 @@ def flash(text, border, color: str = TURN, k: float = 1.06) -> list:
             border.animate(rate_func=there_and_back).set_stroke(color, w + 1.5)]
 
 
+def staff_panel() -> VGroup:
+    """PANEL(laptop/08: 2–3): the staff's committed embeddings (11 files, 31M total). The header
+    "outputs/embeddings-char-split-* · copied from commit 68e0bde" sits on two lines above the
+    frame, so the panel stays narrow. .frame .rows .header .sub"""
+    p = log_panel([COPY.line(2), COPY.line(3)], "outputs/embeddings-char-split-*", width=3.2)
+    sub = note("copied from commit 68e0bde")
+    sub.next_to(p.frame, UP, buff=0.1).align_to(p.header, LEFT)
+    p.header.next_to(sub, UP, buff=0.08).align_to(sub, LEFT)
+    p.add(sub)
+    p.sub = sub
+    return p
+
+
 class BackInTheContainer(VoiceScene):
     def construct(self):
         assert len(SAY) == 9, len(SAY)
@@ -281,7 +299,9 @@ class BackInTheContainer(VoiceScene):
         kc = key_chip()
         place(kc, left=-6.3, bottom=cap0.get_top()[1] + 0.3)
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(t, shift=UP * 0.2), run_time=0.8)
+            self.play(FadeIn(tr, shift=DOWN * 0.25), run_time=0.6)
+            vo.wait_until("today we run it")
+            self.play(FadeIn(t, shift=UP * 0.2), run_time=0.8)
             bare_prompt(self, t)
             vo.wait_until("Starting fresh?")
             self.play(FadeIn(cap0, shift=DOWN * 0.1), run_time=0.5)
@@ -350,8 +370,10 @@ class BackInTheContainer(VoiceScene):
             l6 = t.print(self, [(RUN.line(6), ERR)], run_time=0.3)[0]
             err = t.print(self, [(PULL_MSG, ERR)], wrap=True, run_time=0.5)
             vo.wait_until("but is harmless")
-            hm = tag("harmless · its wording depends on your Docker setup", S.GREY, size=CAPTION)
-            beside(hm, t, l6, buff=0.4)
+            # 5.8 wide: it ends left of the "2.0s" time tag on the row above (the full SHOW wording,
+            # "its wording depends on your Docker setup", is 6.8 wide and touches it)
+            hm = tag("harmless · wording depends on Docker setup", S.GREY, size=CAPTION)
+            beside(hm, t, l6, buff=0.3)
             self.play(*[r.animate.set_color(S.GREY) for r in (l6, *err)], run_time=0.6)
             pin(self, l6, hm, run_time=0.4)
             vo.wait_until("there's no such image online")
@@ -393,10 +415,10 @@ class BackInTheContainer(VoiceScene):
             self.play(Create(uid), Indicate(cid, color=TURN, scale_factor=1.12), run_time=0.7)
             attach(self, pr, uid)
             vo.wait_until("new every run")
-            idt = beside(grey_tag("container ID · your numbers will differ"), t, pr, buff=0.35)
+            idt = beside(grey_tag("container ID · your numbers will differ"), t, pr, buff=0.25)
             pin(self, pr, idt, run_time=0.4)
             vo.wait_until("pause, and get to this prompt")
-            yt3 = your_turn().next_to(idt, RIGHT, buff=0.25)
+            yt3 = your_turn().next_to(idt, RIGHT, buff=0.18)     # ends inside the frame
             pin(self, pr, yt3, run_time=0.5, anim=FadeIn(yt3, scale=1.2))
         self.wait(2)                                    # ▶ beat: hold the frame
 
@@ -405,14 +427,16 @@ class BackInTheContainer(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             detach(self, pr, idt, yt3, uid)
             self.play(FadeOut(VGroup(idt, yt3, uid)), caption_extra(tr, True), run_time=0.5)
-            t2 = second_terminal(self, P_REPO, rows=6, top=2.3)
+            resize(self, t, 3, run_time=0.6)            # a second panel goes above the strip
+            t2 = second_terminal(self, P_REPO, rows=6)
             vo.wait_until("docker ps")
             cmd2 = type_cmd(self, t2, PS.cmd, 1.4)
-            ex2 = beside(extra_tag(), t2, cmd2)
-            pin(self, cmd2, ex2, run_time=0.3)
+            row2 = cmd2.rows[0] if hasattr(cmd2, "rows") else cmd2     # the prompt row has room
+            ex2 = beside(extra_tag(), t2, row2, buff=0.4)
+            pin(self, row2, ex2, run_time=0.3)
             out2 = t2.print(self, ps_rows, run_time=0.6)
             hd, row_ch = out2[0], out2[2]
-            img = beside(grey_tag("IMAGE column not shown"), t2, hd, buff=0.5)
+            img = beside(grey_tag("IMAGE not shown"), t2, hd, buff=0.4)
             pin(self, hd, img, run_time=0.3)
             p2 = bare_prompt(self, t2)
             vo.wait_until("Chroma publishes port 8000")
@@ -434,6 +458,7 @@ class BackInTheContainer(VoiceScene):
         # ========================================================== 5 · --agent on a fresh clone fails
         with self.voiceover(SAY[5]) as vo:
             tr = switch_section(self, tr, "Agents", 1, run_time=0.6)
+            resize(self, t, 13, run_time=0.6)
             vo.wait_until("python cli.py, dash dash agent")
             cmd5 = type_cmd(self, t, AGENT.cmd, 1.2)
             vo.wait_until("On a fresh clone")
@@ -462,8 +487,9 @@ class BackInTheContainer(VoiceScene):
         # ========================================================== 6 · two ways to the index
         dvol = VGroup(mono("docker-volumes/chromadb", CAPTION, INK), label("· skip ahead", CAPTION, INK))
         dvol.arrange(RIGHT, buff=0.14)
-        dnote = note("chunked before September 22, 2026? git pull, then chunk → embed → load · "
-                     "the book changed (explained soon)")
+        dnote = VGroup(note("chunked before September 22, 2026? git pull, then chunk → embed → load"),
+                       note("the book changed (explained soon)")).arrange(DOWN, aligned_edge=LEFT,
+                                                                         buff=0.1)
         card_a = path_card("kept lecture 5's database?", [dvol, dnote])
         c_chunk = mono(README_CHUNK, CAPTION, INK)
         e_cmd = mono(README_EMBED, CAPTION, INK)
@@ -476,6 +502,8 @@ class BackInTheContainer(VoiceScene):
         place(card_b, cx=0, bottom=GAP_Y)
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(code, bar)), run_time=0.4)
+            self.play(Indicate(substring(r25, "char-split-collection"), color=TURN, scale_factor=1.08),
+                      run_time=0.9)
             vo.wait_until("Kept that database?")
             self.play(FadeIn(card_a.frame), FadeIn(card_a.title, shift=RIGHT * 0.1), run_time=0.5)
             vo.wait_until("It's in the docker volumes folder")
@@ -492,36 +520,37 @@ class BackInTheContainer(VoiceScene):
 
         # ========================================================== 7 · the staff's embeddings stand in
         kg = key_glyph(0.3)
-        staff = log_panel([COPY.line(2), COPY.line(3)],
-                          "outputs/embeddings-char-split-* · copied from commit 68e0bde", width=4.0)
+        staff = staff_panel()
         rec7 = grey_tag("recorded · the staff's vectors")
         with self.voiceover(SAY[7]) as vo:
             dy = TOP_Y - card_b.get_top()[1]
             self.play(FadeOut(card_a), card_b.animate.shift(UP * dy), run_time=0.7)
             kg.next_to(e_cmd, RIGHT, buff=0.25)
-            self.play(e_note.animate.next_to(kg, RIGHT, buff=0.25), run_time=0.3)
-            self.play(FadeIn(kg, scale=1.3), run_time=0.4)
+            self.play(e_note.animate.next_to(kg, RIGHT, buff=0.25), FadeIn(kg, scale=1.3), run_time=0.5)
             self.play(Indicate(kg, color=TURN, scale_factor=1.3), run_time=0.5)
             vo.wait_until("the staff's committed embeddings")
-            place(staff, left=-6.3, top=card_b.get_bottom()[1] - 0.3)
-            rec7.next_to(staff.frame, RIGHT, buff=0.3).align_to(staff.frame, DOWN)
-            arr = Arrow(staff.frame.get_right() + RIGHT * 0.05 + UP * 0.1,
-                        kg.get_bottom() + DOWN * 0.05, color=S.GREY, stroke_width=3, buff=0.05,
-                        max_tip_length_to_length_ratio=0.12)
+            place(staff, left=-6.15, top=card_b.get_bottom()[1] - 0.3)
+            rec7.next_to(staff.frame, RIGHT, buff=0.35).align_to(staff.frame, DOWN)
+            arr = Arrow(staff.frame.get_right() + RIGHT * 0.08,
+                        kg.get_bottom() + DOWN * 0.04, color=S.GREY, stroke_width=3, buff=0.04,
+                        max_tip_length_to_length_ratio=0.08)
             self.play(FadeIn(staff, shift=LEFT * 0.6), run_time=0.6)
             self.play(GrowArrow(arr), FadeIn(rec7, shift=LEFT * 0.1), run_time=0.6)
 
         # ========================================================== 8 · load, get, ▶
         chip8 = load_chip()
-        place(chip8, right=6.5, cy=tr.head.get_center()[1] - 0.1)
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(card_b, kg, staff, rec7, arr)), run_time=0.5)
             tr = switch_section(self, tr, "Load", 1, run_time=0.6)
-            resize(self, t, 13, run_time=0.6)
+            resize(self, t, LOAD_ROWS, run_time=0.6)
+            place(chip8, left=-6.3, cy=(t.box.get_top()[1] + tr.get_bottom()[1]) / 2)   # under the tracker
             self.play(FadeIn(chip8, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("python cli.py, dash dash load")
             type_cmd(self, t, LOAD.cmd, 1.2)
-            out8 = t.print(self, LOAD.at((2, 8), "…", 142, 152, 153), wrap=True, run_time=1.0)
+            # two prints: Terminal.print makes room for one batch only up to the terminal's height
+            out8 = t.print(self, LOAD.at((2, 8)), wrap=True, run_time=0.6)
+            out8 = VGroup(*out8, *t.print(self, LOAD.at("…", 142, 152, 153), wrap=True, run_time=0.5))
+            bare_prompt(self, t)                         # the command is done: the prompt returns
             vo.wait_until("11 books")
             r8 = rows_with(out8, "Number of files to process")[0]
             self.play(Indicate(substring(r8, "11"), color=TURN, scale_factor=1.3), run_time=0.6)
