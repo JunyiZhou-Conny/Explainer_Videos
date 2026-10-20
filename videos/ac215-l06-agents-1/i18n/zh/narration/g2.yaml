@@ -6,7 +6,9 @@
 # command in S09[2]; A9: no 只 the English lacks in S12[6] and S13[3]; D9: no comma before the main verb after
 # 课程结束时 in S16[2]; G2: .env 文件 at the end of S09[4]; G1: a comma after Agent Development Kit in S09[0], so
 # the band cuts there and not between 跑 and 在). Every sentence was run through subtitles.split_balanced at the
-# band width (30) and the .zh.srt width (22): no command, model ID or kept-English name is split.
+# band width (30) and the .zh.srt width (22): no command, model ID or kept-English name is split. The proofread
+# (subtitles step 3) ran explainer.subtitles.tracks on the English timing and re-punctuated S12[6], S12[7], S13[4],
+# S14[7] and S16[0] so each Chinese clause sits over its own English clause, and smoothed S10[8], S14[4], S15[3].
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8, D9:
 # 所以这一步只要 uv 选中 3.15 就会失败; 用完以后把 1.6 GB 的虚拟环境删掉).
@@ -166,7 +168,7 @@ S10:
   - "The log says it loaded the root .env file, and found the root_agent in baseline.agent."
 - en: "Two more slips: the quick start passes a file where a folder is expected, and the module READMEs drop the word web, so it only prints help."
   zh:
-  - "还有两个小疏漏：快速入门在该传目录的地方传了一个文件，各模块的 README 又漏了 web 这个词，所以它只打印帮助信息。"
+  - "还有两个小疏漏：快速入门在该传目录的地方传了一个文件，各模块的 README 又漏了 web 这个词，所以命令只会打印帮助信息。"
 - en: "And if L-L-M rag's Chroma still holds port 8000, they clash; ours stopped: address already in use. Run docker compose down first, or add dash dash port 8080. Pause, and get the dev UI open on baseline."
   zh:
   - "如果 llm-rag 的 Chroma 还占着 port 8000，两边就会冲突；我们这边直接停了：address already in use。"
@@ -251,12 +253,12 @@ S12:
 - en: "An extra script asks that toolset for its tools, with no model involved. The server offers 14, including write and edit, and the filter lets three through. With your key, ask the agent to list files."
   zh:
   - "一个额外的脚本向这个工具集要它的工具列表，完全不涉及模型。"
-  - "这个 server 提供 14 个工具，包括写入和编辑，过滤器放行了其中三个。"
+  - "这个 server 提供 14 个，包括写入和编辑，过滤器放行了三个。"
   - "有密钥的话，让 agent 列出文件。"
 - en: "Plug 2 is back in the Cheese Quiz. After a first tool written as a plain function, the notebook connects to a remote MCP server by URL, passed as MCP servers, not tools."
   zh:
   - "第 2 个插头回到 Cheese Quiz 里。"
-  - "先是一个写成普通函数的工具，然后 notebook 通过 URL 连上一个远程 MCP server，作为 MCP servers 参数传进去，而不是 tools。"
+  - "先是第一个工具，写成普通函数；然后 notebook 按 URL 连上一个远程 MCP server，作为 MCP servers 参数传进去，而不是 tools。"
   en_display:
   - null
   - "After a first tool written as a plain function, the notebook connects to a remote MCP server by URL, passed as mcp_servers, not tools."
@@ -296,7 +298,7 @@ S13:
 - en: "The staff's saved run logged three errors getting a response, and still produced a quiz; the log doesn't say which calls failed. Every hop adds cost, time, and a way to fail; pause, and run the Guild."
   zh:
   - "课程团队保存的运行报了三次获取回复的错误，却还是生成了一份测验；日志没说是哪些调用失败了。"
-  - "每多一跳，就多一份成本、多一段时间、多一种失败的可能；暂停一下，跑一遍 Guild。"
+  - "每多一跳，就多一份成本、一段时间和一种失败的可能；暂停一下，跑一遍 Guild。"
 - en: "Third answer: Python, reading the model's label. In this custom agent, a classifier writes one word into the state, and plain if statements pick the handler."
   zh:
   - "第三种答案：Python，读取模型给的标签。"
@@ -335,7 +337,7 @@ S14:
   - "Approval lives in a separate function, apply_confirmation: only an explicit yes copies pending to approved."
 - en: "Because apply confirmation runs on the human's message, before the agent starts. Inside turn 3, nothing is approved, so every retry gets the same stamp."
   zh:
-  - "因为 apply confirmation 运行在人发来的消息上，赶在 agent 启动之前。"
+  - "因为 apply confirmation 处理的是人发来的消息，在 agent 启动之前运行。"
   - "在第 3 轮里，什么都没被批准，所以每次重试都会盖上同一个印章。"
   en_display:
   - "Because apply_confirmation runs on the human's message, before the agent starts."
@@ -352,7 +354,7 @@ S14:
 - en: "The lecture puts success criteria in the instructions, and guardrails in the decision maker. This notebook keeps both in code the model can't talk its way past, on the action tool. Every turn is paid; pause, and run the four turns."
   zh:
   - "课上把成功标准放在指令里，把护栏放在决策者里。"
-  - "这个 notebook 把两者都写进代码，模型怎么说都绕不过去，就放在行动工具上。"
+  - "这个 notebook 把两者都写进代码，模型怎么说都绕不过去；就放在行动工具上。"
   - "每一轮都要付费；暂停一下，把这四轮跑一遍。"
 S15:
 - en: "The last notebook writes a cheese newsletter per reader, with Microsoft's Agent Framework, pinned. In the users cell, put in yourself and a friend, and keep two entries. Email is preview only; nothing is sent."
@@ -384,7 +386,7 @@ S15:
   zh:
   - "现在来看 harness。"
   - "编排 agent 停下来以后，Python 不管它说了什么，检查两件事：有没有来自 send email 的回执，那个文件在不在磁盘上？"
-  - "如果没有，这次运行就算失败；成功是一张回执，而不是一句声称。"
+  - "如果没有，这次运行就算失败；成功看的是回执，而不是它声称了什么。"
   en_display:
   - null
   - "When the orchestrator stops, Python ignores its words and checks two things: is there a receipt from send_email, and is that file on disk?"
@@ -403,7 +405,7 @@ S16:
 - en: "Tear down: control C stops the web server. An extra git status shows the renamed folders and your Python pin; dot env, the virtual environment and the lock file are ignored."
   zh:
   - "该拆掉了：按 Ctrl-C 停掉 web 服务器。"
-  - "额外的 git status 显示了改名后的目录，还有你的 Python pin；而 .env、虚拟环境和 lock 文件都被忽略了。"
+  - "额外的 git status 显示了改名后的目录，还有你的 Python pin；而 .env 文件、虚拟环境和 lock 文件，都被忽略了。"
   en_display:
   - "Tear down: Ctrl+C stops the web server."
   - "An extra git status shows the renamed folders and your Python pin; .env, the virtual environment and the lock file are ignored."

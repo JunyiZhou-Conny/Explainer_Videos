@@ -13,6 +13,10 @@
 # llm-rag, MLOps_Learning, gpt-4o, LLM, GCP_PROJECT, python cli.py --agent / --load --chunk_type char-split,
 # docker-volumes/, --get, tool_config, mode="any", "mode": "ANY", DefaultCredentialsError, response.text);
 # null = the SAY text.
+# Proofread (subtitles step 3): every sentence was run through explainer.subtitles.tracks on the English timing.
+# Where the band paired a Chinese clause with the wrong English one, or a .zh.srt line broke inside a word, the
+# sentence was re-punctuated or reordered inside itself (S01[6], S01[7], S03[1], S03[2], S04[6], S05[7], S06[2],
+# S06[4], S07[7]); no command, model ID or kept-English name is split across lines or cues.
 S01:
 - en: "Here's a question for a cheese expert: describe where cheese making is important in the instructor's book. In the staff's recorded run, these two lines print before the answer: a function called get book by author, and its arguments."
   zh:
@@ -36,21 +40,21 @@ S01:
 - en: "Today we climb toward that in three steps. By hand, with L-L-M rag's agent; with a framework, Google's Agent Development Kit; and with a harness, in Colab notebooks."
   zh:
   - "今天我们分三步，一步步向它靠近。"
-  - "手写，用 llm-rag 的 agent；用框架，Google 的 Agent Development Kit；再用 harness，在 Colab notebook 里。"
+  - "先手写，用 llm-rag 的 agent；再用框架，Google 的 Agent Development Kit；最后用 harness，在 Colab notebook 里。"
   en_display:
   - null
   - "By hand, with llm-rag's agent; with a framework, Google's Agent Development Kit; and with a harness, in Colab notebooks."
 - en: "The tracker, top left, shows the step; the gray tag, top right, names the lecture slides. Pause at each yellow your-turn tag, and run the command."
   zh:
-  - "左上角的进度条显示当前步骤；右上角的灰色标签指向课件。"
+  - "左上角的进度条显示当前步骤；右上角的灰色标签标出对应的课件。"
   - "看到黄色的 your turn 标签就暂停，自己跑一遍命令。"
 - en: "You'll need the database and key from lecture 5, Docker, uv, Node, and two more keys: one from Google AI Studio, one from OpenAI, with billing on."
   zh:
-  - "你需要第 5 讲的数据库和密钥、Docker、uv、Node，再加两个密钥：一个来自 Google AI Studio，一个来自 OpenAI，并且开通计费。"
+  - "你需要第 5 讲的数据库和密钥，Docker、uv、Node，再加两个密钥：一个来自 Google AI Studio，一个来自 OpenAI，并且开通计费。"
 - en: "We recorded on October 18, 2026, without keys. Docker, Chroma, uv, the ADK web server and two MCP servers ran for real; every model call stopped unsent, or was refused. Model answers are the staff's saved outputs."
   zh:
   - "我们在 2026 年 10 月 18 日录制，没有任何密钥。"
-  - "Docker、Chroma、uv、ADK 的 web 服务器和两个 MCP server 都是真实运行的；每次模型调用都没发出去就停了，或者被拒绝了。"
+  - "Docker、Chroma、uv，ADK 的 web 服务器和两个 MCP server，都是真实运行的；每次模型调用都没发出去就停了，或者被拒绝了。"
   - "模型的回答都是课程团队保存的输出。"
 - en: "On screen we hide the instructor's name; your terminal shows it. Every command is in the study guide, in the MLOps Learning repo."
   zh:
@@ -62,8 +66,8 @@ S01:
 S02:
 - en: "First the ideas, in the Cheese Quiz. Save a copy in Drive, then add your OpenAI key in the Secrets panel, under the name shown, with notebook access on."
   zh:
-  - "先讲概念，用的是 Cheese Quiz。"
-  - "先 Save a copy in Drive，再在 Secrets 面板里用画面上的名字添加你的 OpenAI 密钥，并打开 Notebook access。"
+  - "先讲概念，在 Cheese Quiz 里。"
+  - "点 Save a copy in Drive，再在 Secrets 面板里用画面上的名字添加你的 OpenAI 密钥，并打开 Notebook access。"
 - en: "The install cell installs two packages, unpinned, and hides all output: if imports fail later, rerun it without that redirect. Then download the quiz files, and pause to run the setup."
   zh:
   - "安装单元格装两个包，没有 pin 版本，还隐藏了全部输出：如果后面 import 失败，就去掉那个重定向再跑一次。"
@@ -87,8 +91,8 @@ S02:
 - en: "Lane 3, the agent: the same model, plus instructions and a web search tool that OpenAI hosts. Its answer reports two searches, and it stopped on its own after 13 seconds. It also reports one tool used, but that counts tools configured, not calls."
   zh:
   - "第 3 条通道，agent：同一个模型，加上指令和一个 OpenAI 托管的网页搜索工具。"
-  - "它的回答报告了两次搜索，13 秒后它自己停了下来。"
-  - "它还报告用了一个工具，但那数的是配置了几个工具，不是调用次数。"
+  - "它的回答显示做了两次搜索，13 秒后它自己停了下来。"
+  - "它还显示用了一个工具，但这个数统计的是配置的工具，不是调用次数。"
 - en: "The lecture defines an agent as an LLM, given instructions and tools, that runs on its own until the task is done. Of its five blocks, one decides the next step: dynamic control, the steering wheel."
   zh:
   - "课上对 agent 的定义是：一个 LLM，给它指令和工具，它自己运行，直到任务完成。"
@@ -107,10 +111,10 @@ S03:
 - en: "The notebook keeps the model and question fixed, and changes the inputs each step. A system prompt, retrieved documents, earlier turns, a profile from past sessions, a tool's output, an output schema."
   zh:
   - "这个 notebook 固定模型和问题，每一步改变输入。"
-  - "依次是 system prompt、检索到的文档、之前几轮对话、来自以往 session 的用户画像、工具的输出，以及输出 schema。"
+  - "先是 system prompt、检索到的文档、之前几轮，再是以往 session 的用户画像、工具的输出和输出 schema。"
 - en: "Watch the top pick change: cheddar, American, then mild cheeses for kids, then Havarti. Then a mild cheddar from Whole Foods, and finally the same pick as strict JSON."
   zh:
-  - "看首选怎么变：切达，美式奶酪，然后是给孩子吃的温和奶酪，然后是哈瓦蒂。"
+  - "注意看首选的变化：切达、美式奶酪，然后是给孩子吃的温和奶酪，再然后是哈瓦蒂。"
   - "接着是 Whole Foods 的一款温和切达，最后是同一个首选，写成严格的 JSON。"
 - en: "Step 4 shows what memory really is. The earlier turns aren't remembered: the code sends them again, every time. Memory is paper you put back in the envelope."
   zh:
@@ -169,8 +173,8 @@ S04:
   - "模型能控制的只有作者和搜索文本。"
 - en: "The lecture says a tool-using agent must pick the right tool, format its inputs, and interpret its outputs. Here the model picks and formats only by writing; your code runs the tool."
   zh:
-  - "课上说，会用工具的 agent 必须选对工具、整理好输入格式、解读输出。"
-  - "在这里，模型选工具、整理格式，靠的只是写；运行工具的是你的代码。"
+  - "课上说，会用工具的 agent 必须选对工具，整理好输入格式，并解读输出。"
+  - "在这里，模型选工具、整理格式，全靠写出来；运行工具的是你的代码。"
 - en: "Here are the 11 books in the collection, beside the 9 names in the enum."
   zh:
   - "这是 collection 里的 11 本书，旁边是 enum 里的 9 个名字。"
@@ -242,12 +246,12 @@ S05:
   - null
 - en: "We had no key, so the staff's committed embeddings stood in for the embed step."
   zh:
-  - "我们没有密钥，所以用课程团队 commit 过的 embedding 代替了 embed 这一步。"
+  - "我们没有密钥，所以 embed 这一步用的是课程团队 commit 过的 embedding。"
 - en: "Then the load step: python cli.py, dash dash load, chunk type char split. 11 books, 8,248 chunks; the instructor's story is just 24 of them. An extra get command confirms the collection answers; pause, and load yours."
   zh:
   - "然后是 load 这一步：python cli.py --load，chunk type 用 char-split。"
   - "11 本书，8248 个 chunk；授课老师的故事只占其中 24 个。"
-  - "一条额外的 --get 命令确认 collection 能应答；暂停一下，加载你自己的。"
+  - "一条额外的 --get 命令确认 collection 能正常响应；暂停一下，加载你自己的。"
   en_display:
   - "Then the load step: python cli.py --load --chunk_type char-split."
   - null
@@ -268,7 +272,7 @@ S06:
   - null
 - en: "An extra one-liner shows what mode any becomes: the enum value ANY. The model must answer with a function call."
   zh:
-  - "一行额外的命令显示 mode 设为 any 变成了什么：enum 值 ANY。"
+  - "一行额外的命令显示，mode 设为 any 变成了什么：enum 值 ANY。"
   - "模型必须用一个函数调用来回答。"
   en_display:
   - "An extra one-liner shows what mode=\"any\" becomes: the enum value ANY."
@@ -277,7 +281,7 @@ S06:
   zh:
   - "在课上，一个好的 agent 可能决定根本不去搜索；Self-RAG 就是从这个决定开始的。"
   - "我们的不行：在第 1 次调用里，mode 设为 any 会强制调用工具。"
-  - "它选的是哪个搜索，从不选要不要搜。"
+  - "它选的是搜哪一个，从来不是搜不搜。"
   en_display:
   - null
   - "Ours can't: on call 1, mode=\"any\" forces a tool call."
@@ -286,7 +290,7 @@ S06:
   zh:
   - "Gemini 实际收到的是什么？"
   - "一个额外的脚本运行同样的代码，但把请求打印出来，而不是发出去。"
-  - "一个信封：问题、带着 enum 的两个声明、mode 为 ANY、temperature 为 0。"
+  - "一个信封：问题、带着 enum 的两个声明，mode 为 ANY，temperature 为 0。"
   en_display:
   - null
   - null
@@ -310,7 +314,7 @@ S06:
   - "The model's whole answer is a function call: get_book_by_author, with the instructor as author, and the search text, cheese making importance location."
 - en: "Four words, though the description asked for a sentence or two. There's also an ID, and a thought signature; we'll meet it again."
   zh:
-  - "四个词，尽管描述要求的是一两句话。"
+  - "四个词，而描述要求的是一两句话。"
   - "还有一个 ID，以及一个 thought signature；我们之后还会再见到它。"
 - en: "The SDK ran nothing; it only has declarations. So far, one paid call. Pause here, and run step 1 with your key."
   zh:
@@ -351,15 +355,15 @@ S07:
   zh:
   - "所以，是谁搜索了你的数据库？"
   - "Gemini 写出了调用，选了那本书；你的 Python 运行了它，就在你的笔记本上。"
-  - "每个问题要两次模型调用和一次 embedding 调用，全都要付费。"
+  - "每个问题要两次模型调用，加一次 embedding 调用，全都要付费。"
 - en: "But today's book never says transhumance, nor three other words from this run: the commit that added this output also rewrote the book. The staff's index was built from the old text."
   zh:
-  - "可今天这本书里从没出现过转场放牧，这次运行里的另外三个词也没有：加入这份输出的那个 commit，同时重写了这本书。"
+  - "可今天这一版的书里从没出现过转场放牧，这次运行里的另外三个词也没有：加入这份输出的那个 commit，同时重写了这本书。"
   - "课程团队的索引是用旧文本建的。"
 - en: "Your run on today's book draws on passages like these: Mara, the curd, the wheels. An index answers from what was loaded."
   zh:
-  - "你在今天这本书上跑，会用到这样的段落：Mara、凝乳、奶酪轮。"
-  - "索引只根据加载进去的内容回答。"
+  - "你在今天这一版书上跑，会用到这样的段落：Mara、凝乳、奶酪轮。"
+  - "索引按加载进去的内容来回答。"
 - en: "One small slip: the README promises the response, but line 478 prints the whole response object. Print response dot text for just the answer."
   zh:
   - "一个小疏漏：README 说会打印回答，但第 478 行打印的是整个 response 对象。"
@@ -386,7 +390,7 @@ S08:
 - en: "It prints a response whose only part is a function call, with no text, and the program ends. Nothing runs that call; a loop would run it, and ask again."
   zh:
   - "它打印出的 response 只有一个部分，就是函数调用，没有文本，然后程序就结束了。"
-  - "没有任何东西去执行这个调用；循环则会执行它，然后再问一次。"
+  - "没有任何东西去执行这个调用；换成循环，就会执行它，再问一次。"
 - en: "The lecture draws the agent as a hub: the core and its instructions become a decision maker, with spokes to a planner, tools, and memory. Unroll the spoke to the tools into a loop."
   zh:
   - "课上把 agent 画成一个轮毂：核心和它的指令成为决策者，辐条通向规划器、工具和记忆。"
@@ -398,7 +402,7 @@ S08:
   - "模型认定自己做完了，办法就是用纯文本回答。"
 - en: "In code you see the loop from outside: the ADK Runner streams events, this wrapper keeps the final response, and the loop runs inside the library."
   zh:
-  - "在代码里，你只能从外面看到这个循环：ADK 的 Runner 以流的形式输出事件，这个包装函数留下最终回复，循环本身在库里面运行。"
+  - "在代码里，你是从外面看这个循环的：ADK 的 Runner 以流的形式输出事件，这个包装函数留下最终回复，循环本身在库里面运行。"
 - en: "You also cap it, in case it never stops: 12 turns in the Cheese Quiz Guild, 16 iterations in the newsletter. Hitting the Agents SDK cap ends the run with an error."
   zh:
   - "你还要给它设个上限，以防它永远不停：Cheese Quiz Guild 里是 12 轮，简报里是 16 次迭代。"
@@ -411,7 +415,7 @@ S08:
   zh:
   - "第二部分之前，先把它拆掉。"
   - "输入 exit；再用一条额外的 docker ps，会看到 Chroma 还在运行，在 port 8000 上。"
-  - "然后运行 docker compose down：两条无害的警告，然后它就停了。"
+  - "然后运行 docker compose down：两条无害的警告之后，它就停了。"
 - en: "Your index stays on disk, and part 2 also needs port 8000. Pause and tear down. In part 2, a framework runs this loop for us."
   zh:
   - "你的索引会留在磁盘上，而第二部分也要用 port 8000。"
