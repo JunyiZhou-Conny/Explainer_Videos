@@ -1,0 +1,6 @@
+$ docker inspect agent-harness --format '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{println}}{{end}}'; docker inspect agent-harness --format 'ports: {{json .NetworkSettings.Ports}}  user: {{.Config.User}}  workdir: {{.Config.WorkingDir}}'
+/home/student/AC215/agent-harness -> /app
+/home/student/AC215/secrets -> /secrets
+
+ports: {}  user: app  workdir: /app
+[exit 0]

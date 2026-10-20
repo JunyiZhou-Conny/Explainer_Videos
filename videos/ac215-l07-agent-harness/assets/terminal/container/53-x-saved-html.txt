@@ -1,0 +1,24 @@
+$ ls -la outputs/f64b285442fb4c7eaa9fe259a3ed8ec7/; sed -n 1,60p outputs/f64b285442fb4c7eaa9fe259a3ed8ec7/vendor-email-*.html
+total 16
+drwxrwxrwx 2 app app    80 Oct 20 20:23 .
+drwxrwxrwx 7 app app   180 Oct 20 20:23 ..
+-rw-r--r-- 1 app app 12288 Oct 20 20:23 memory.sqlite
+-rw-rw-rw- 1 app app   632 Oct 20 20:23 vendor-email-55bc77e1e2f4417294f85b00641a5f2d.html
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Formaggio vendor inquiry</title></head>
+<body>
+<h1>Formaggio sourcing inquiry</h1>
+<p>Mock email preview — nothing transmitted.</p>
+<p>To: vendor@example.com</p>
+<h2>Availability inquiry — corporate cheese tasting</h2>
+<pre>Hello,
+Please confirm availability for our corporate tasting:
+- Époisses: 300 g additional
+Destination: NY. Confirmed allergy constraints: nuts.
+Please provide current pricing and delivery timing. This is an inquiry, not a purchase order.
+Thank you.</pre>
+<footer>Availability and delivery remain unconfirmed.</footer>
+</body>
+</html>
+[exit 0]

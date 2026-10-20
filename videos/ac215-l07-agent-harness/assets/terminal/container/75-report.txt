@@ -1,0 +1,13 @@
+$ python cli.py --report context-fixture-1
+
+FIXTURE EVALUATION context-fixture-1: 4/4 scheduled runs passed
+Version: 9ed9f39729cc2befad03c7f82617b6744a7797aa3480c430ff4e9511a4930c71
+Failures: 0; errors: 0; missing: 0.
+standard:basic: 2/2 passed; 1 structured outcome variants; 1 tool paths.
+standard:enriched: 2/2 passed; 1 structured outcome variants; 1 tool paths.
+PASS standard:basic #1 — run aac39f4b2404478d86eca8a2ce7d0891
+PASS standard:basic #2 — run f7c58f2cd1ab45778cb8a938c19fc8a6
+PASS standard:enriched #1 — run 1ab3d275110d4dbf8b82e34916931031
+PASS standard:enriched #2 — run f5f3d867d72149f7b4cea87b107076a6
+Pass rate uses all scheduled runs. Variants measure structured outcomes, not prose identity. Human prose review is separate; small samples do not establish reliability.
+[exit 0]

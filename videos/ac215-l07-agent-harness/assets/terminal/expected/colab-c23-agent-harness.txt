@@ -1,0 +1,70 @@
+# recorded (saved output of the course Colab "Agent Harness", not re-run here): https://colab.research.google.com/drive/1ZYMsbG0gqsbs-6Pcj8WtT3WhEa4f80EZ, cell 23 ("Agent + Harness"), execution count 14; the notebook stores no date.
+
+🧪 Act 1 · BASIC context · scenario: standard
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · gpt-5.6-luna
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  📤 Requested tools: get_catalog
+  ⏱️ 1.53s · 1942 input tokens · 38 output tokens
+  🔧 Tool call 1: get_catalog
+  📋 Arguments: none
+  📦 Result (0.04s): products: 12 entries
+
+🤖 Model call 2 · Shop assistant · gpt-5.6-luna
+  📥 Input: 3 conversation messages.
+  ↳ Latest tool results in context: get_catalog
+  📤 Requested tools: check_stock
+  ⏱️ 3.87s · 3013 input tokens · 308 output tokens
+  🔧 Tool call 2: check_stock
+  📋 Arguments: items: product: epoisses; grams: 400 / product: bucheron; grams: 400 / product: mimolette; grams: 400
+  📦 Result (0.03s): ok: yes; violations: 0 entries; items: 3 entries; scope: Stock and identity only; not a complete order validation.
+
+🤖 Model call 3 · Shop assistant · gpt-5.6-luna
+  📥 Input: 5 conversation messages.
+  ↳ Latest tool results in context: check_stock
+  📤 Requested tools: price_order
+  ⏱️ 3.04s · 3401 input tokens · 46 output tokens
+  🔧 Tool call 3: price_order
+  📋 Arguments: items: product: epoisses; grams: 400 / product: bucheron; grams: 400 / product: mimolette; grams: 400
+  📦 Result (0.03s): items: 3 entries; line totals cents: 3 entries; subtotal cents: 6400; needs manager approval: no; scope: Quote only; not stock reservation, validation, or approval.
+
+🤖 Model call 4 · Shop assistant · gpt-5.6-luna
+  📥 Input: 7 conversation messages.
+  ↳ Latest tool results in context: price_order
+  📤 Requested tools: get_pairings
+  ⏱️ 1.54s · 3554 input tokens · 47 output tokens
+  🔧 Tool call 4: get_pairings
+  📋 Arguments: items: product: epoisses; grams: 400 / product: bucheron; grams: 400 / product: mimolette; grams: 400
+  📦 Result (0.03s): bucheron: 3 entries; epoisses: 5 entries; mimolette: 4 entries
+
+🤖 Model call 5 · Shop assistant · gpt-5.6-luna
+  📥 Input: 9 conversation messages.
+  ↳ Latest tool results in context: get_pairings
+  📤 Requested tools: preview_order
+  ⏱️ 1.47s · 4412 input tokens · 57 output tokens
+  🔧 Tool call 5: preview_order
+  📋 Arguments: items: product: epoisses; grams: 400 / product: bucheron; grams: 400 / product: mimolette; grams: 400
+  📦 Result (0.03s): status: unvalidated_proposal; order placed: no; items: 3 entries
+
+🤖 Model call 6 · Shop assistant · gpt-5.6-luna
+  📥 Input: 11 conversation messages.
+  ↳ Latest tool results in context: preview_order
+  📤 Response received; no tool calls requested.
+  ⏱️ 5.60s · 4540 input tokens · 399 output tokens
+
+🧾 BASIC CONTEXT — run 5a53caf916294bc4b6b9db6b34d29384
+
+💬 Agent's response:
+Proposed tasting for 12 guests: 1,200 g total (100 g per guest), within your 1,5000¢ budget. It includes French cheeses and at least one cheese at funk 4 or above: Époisses (funk 5), plus Bûcheron and Mimolette Extra-Vieille. All selected cheeses are listed with milk as the only allergen, so they have no listed nut allergens. Shop inventory supports the requested quantities. Cheese subtotal: 6,400¢, excluding tax, shipping, and pairing costs. Suggested pairings are apple slices, cornichons, and sparkling water. Wheat crackers list wheat as an allergen, and Dry Riesling lists sulfites. The order has not been placed; this is an unvalidated proposal, and manager approval is not indicated as needed for this subtotal.
+
+🔍 Independent cart check (no automatic repair):
+  1200 g; cheese subtotal $64.00
+  bucheron: 400 g
+  epoisses: 400 g
+  mimolette: 400 g
+  ✅ Cart satisfies the shop rules.
+📊 Model calls: 6. Tool calls: 5.
+🛡️ No order was placed.
