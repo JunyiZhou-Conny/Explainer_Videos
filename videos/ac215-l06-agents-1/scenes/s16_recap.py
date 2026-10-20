@@ -6,17 +6,19 @@ Beats (script.md "## S16", one voiceover block each):
 0. TRACKER RunAg 1 (" · extra" from the git status on). The ADK laptop terminal as the 3-row strip,
    the restarted server running (its `uv run adk web` row, then adk-laptop/29 line 40 wrapped, as S10
    left it). Ctrl+C -> 29 lines 364, 367–369 (the 79-column box rows cut with …; "^C" flashes while
-   the server's log rows fade in place, so the box doesn't slide them up over the title bar). The
-   strip grows to 12 rows (its old rows fade first) and types the extra `git status --short; git
-   status --short --ignored | grep '^!!'` (folded under the prompt, tag extra) -> 39 lines 2, …,
-   16–21, 24. The renamed folders' rows flash YELLOW; `?? .python-version` GREEN + GREEN tag "your
-   pin"; `!! .env`, `!! .venv/`, `!! uv.lock` GREY with a GREY bracket and the tag "ignored".
+   the server's log rows fade in place, so the box doesn't slide them up over the title bar; the
+   box prints right after). The strip grows to 12 rows keeping the box (it scrolls away under the
+   output) and types the extra `git status --short; git status --short --ignored | grep '^!!'`
+   (folded under the prompt, tag extra) -> 39 lines 2, …, 16–21, …, 24. The renamed folders' rows
+   flash YELLOW; `?? .python-version` GREEN + GREEN tag "your pin"; `!! .env`, `!! .venv/`, the '…'
+   (two __pycache__/ rows) and `!! uv.lock` GREY with a GREY bracket and the tag "ignored".
 1. The terminal keeps its last 7 rows. Above it: the excerpt chip `baseline/.adk/session.db` (header
    "uv run adk web · log (excerpt)", 29 lines 41–42 joined), its ".adk/" RED; the RED-outlined
    (dashed) ghost folder `baseline/.adk/` grows out of it with the RED tag "sessions · not in
    .gitignore"; in the terminal `baseline/` gets a RED box. A GREY chip "add .adk/ to your ignore
-   file (exercises)" under it; top right a GREY chip ".venv · 1.6 GB · delete when done"
-   (adk-laptop/14 line 12) while the `!! .venv/` row flashes.
+   file (exercises)" under it; top right a GREY two-row chip ".venv · 1.6 GB · delete when done /
+   on a Linux PC: about 3 GB more (CUDA)" (adk-laptop/14 line 12; S09's CUDA note) while the
+   `!! .venv/` row flashes.
 2. The terminal, the tracker and the chips leave. A BLUE Colab frame "Colab · every notebook" (tag
    illustration): Runtime › Disconnect and delete runtime (lit YELLOW), ticked three times: Cheese
    Quiz, Travel Planner, Newsletter. Three GOLD keys: "service account · in secrets/ beside llm-rag"
@@ -46,11 +48,14 @@ Beats (script.md "## S16", one voiceover block each):
 
 Deviations from SHOW (see the scene report): the strip opens on the server's `uv run adk web` row and
 its last log line from S10 (29 line 40), so the Ctrl+C has something to stop; the 12-row terminal
-starts empty (the shutdown box would scroll half out of it). The Tools block shows `@function_tool`
+keeps the shutdown box until the git status output scrolls it away. The git status shows a second
+'…' for capture lines 22–23 (script.md's TERM lists 2, …, 16–21, 24), so the ignored list doesn't
+look complete. The Tools block shows `@function_tool`
 in place of `.as_tool`: the SAY names "by hand, decorated, or over MCP" and `.as_tool` does not fit
 beside the other three. The "delete or cap" note sits under the AI Studio and OpenAI keys only (the
 SAY: "the other two keys"); the service account key's line says where it stays. The .venv chip adds
-"delete when done" (the SAY's instruction, readable when paused). The GOLD 6-rag chip is a two-row
+"delete when done" (the SAY's instruction, readable when paused) and a row with S09's Linux CUDA
+note (1.6 GB is the CPU-only capture). The GOLD 6-rag chip is a two-row
 card (one row would be 11.5 wide). "Test yourself" is a title, as in L05; a question that turns
 small re-wraps to one row (Q5: two), so all five and the footer fit. The Answers card also names the
 study guide's §8, which holds the same answers.
@@ -134,10 +139,10 @@ assert "Creating local session service at" in SESS_LOG and SESS_LOG.endswith(
 
 GIT = capture("39", "adk-laptop")                  # extra: git status after the rename
 assert GIT.cmd == "git status --short; git status --short --ignored | grep '^!!'", GIT.cmd
-GIT_OUT = GIT.at(2, "…", (16, 21), 24)
+GIT_OUT = GIT.at(2, "…", (16, 21), "…", 24)     # the second '…': the two __pycache__/ rows (22-23)
 assert GIT_OUT[0] == " D 1-baseline/.env.example", GIT_OUT[0]
 assert GIT_OUT[2:] == ["?? .python-version", "?? baseline/", "?? custom_agent/", "?? mcp_tools/",
-                       "!! .env", "!! .venv/", "!! uv.lock"], GIT_OUT
+                       "!! .env", "!! .venv/", "…", "!! uv.lock"], GIT_OUT
 VENV_SIZE = capture("14", "adk-laptop").line(12)   # du: the virtual environment's size
 assert VENV_SIZE.split() == ["1.6G", ".venv"], VENV_SIZE
 
@@ -439,22 +444,24 @@ class Recap(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(t, shift=UP * 0.2), run_time=0.8)
             vo.wait_until("control C stops")
-            stop = t.print(self, [STOP[0]], run_time=0.4)
+            stop = t.print(self, [STOP[0]], run_time=0.35)
             # the server's log rows fade where they are while ^C flashes: printing the 3-row box
             # into the full strip would slide all three rows up over the title bar
             old = list(t.lines.submobjects[:-1])
             self.play(Indicate(substring(stop[0], "^C"), color=TURN, scale_factor=1.5),
-                      FadeOut(VGroup(*old)), run_time=0.6)
+                      FadeOut(VGroup(*old)), run_time=0.5)
             for m in old:
                 t.lines.remove(m)
-            t.print(self, STOP[1:], run_time=0.5)
+            # the shutdown box right away (the ^C row scrolls out of the strip): the terminal keeps it
+            # while it grows and the git status is typed, and it scrolls away with that output
+            t.print(self, STOP[1:], run_time=0.3)
             vo.wait_until("An extra git status")
-            self.play(caption_extra(tr, True), run_time=0.3)
-            resize(self, t, 12, keep=[], run_time=0.6)
-            cg = type_cmd(self, t, GIT.cmd, 1.4)
+            resize(self, t, 12, keep=3, run_time=0.6, extra=[caption_extra(tr, True)])
+            cg = type_cmd(self, t, GIT.cmd, 1.2)
             pin(self, cg.rows[0], beside(extra_tag(), t, cg.rows[0], buff=0.4), run_time=0.3)
-            out = t.print(self, GIT_OUT, run_time=0.8)
-            renamed, pin_row, ignored = [out[0], out[3], out[4], out[5]], out[2], [out[6], out[7], out[8]]
+            out = t.print(self, GIT_OUT, run_time=0.7)
+            # out[1] and out[8] are '…' rows (the deleted files; the two ignored __pycache__/ folders)
+            renamed, pin_row, ignored = [out[0], out[3], out[4], out[5]], out[2], [out[6], out[7], out[9]]
             vo.wait_until("the renamed folders")
             self.play(LaggedStart(*[Indicate(r.glyphs, color=TURN, scale_factor=1.06) for r in renamed],
                                   lag_ratio=0.2), run_time=1.0)
@@ -462,10 +469,10 @@ class Recap(VoiceScene):
             self.play(pin_row.glyphs.animate.set_color(DATA), run_time=0.4)
             pin(self, pin_row, beside(_keep(tag("your pin", DATA)), t, pin_row), run_time=0.4)
             vo.wait_until("dot env, the virtual environment")
-            self.play(*[r.glyphs.animate.set_color(S.GREY) for r in ignored], run_time=0.5)
+            self.play(*[r.glyphs.animate.set_color(S.GREY) for r in ignored + [out[8]]], run_time=0.5)
             bx = max(r.glyphs.get_right()[0] for r in ignored) + 0.35
-            br = rbracket(ignored, bx)
-            ig = _keep(tag("ignored", S.GREY)).next_to(br, RIGHT, buff=0.15).set_y(ignored[1].strut.get_center()[1])
+            br = rbracket(ignored, bx)          # spans the '…' row between .venv/ and uv.lock
+            ig = _keep(tag("ignored", S.GREY)).next_to(br, RIGHT, buff=0.15).set_y(br.get_center()[1])
             pin(self, ignored[1], VGroup(br, ig), anim=AnimationGroup(Create(br), FadeIn(ig, shift=LEFT * 0.1)),
                 run_time=0.5)
 
@@ -480,8 +487,10 @@ class Recap(VoiceScene):
         red = _keep(tag("sessions · not in .gitignore", ERR)).next_to(gh, RIGHT, buff=0.3)
         fix = mixed_chip(["add", "`.adk/`", "to your ignore file (exercises)"])
         place(fix, left=-6.2, top=gh.get_bottom()[1] - 0.3)
-        venv = mixed_chip(["`.venv`", "· 1.6 GB · delete when done"])
-        place(venv, right=6.3, cy=ex.chip.get_center()[1])
+        # 1.6 GB is this capture's CPU-only torch (a Mac's too); S09: a Linux PC adds the CUDA packages
+        venv = mixed_chip([["`.venv`", "· 1.6 GB · delete when done"],
+                           ["on a Linux PC: about 3 GB more (CUDA)"]])
+        place(venv, right=6.3, top=ex.get_top()[1])
         with self.voiceover(SAY[1]) as vo:
             resize(self, t, 7, keep=7, run_time=0.7)
             base_row = out[3]
@@ -604,7 +613,7 @@ class Recap(VoiceScene):
             vo.wait_until("a loop the framework runs")
             self.play(FadeIn(g1, shift=LEFT * 0.15), A.unlight(), Indicate(A.parts["control_fill"], color=TOOL,
                                                                              scale_factor=1.03), run_time=0.7)
-            vo.wait_until("and checks your code enforces")
+            vo.wait_until("and checks that your own code enforces")
             self.play(FadeIn(g2, shift=LEFT * 0.15), run_time=0.6)
 
         # ========================================================== 5 · test yourself: Q1, Q2

@@ -3,7 +3,9 @@ Lecture: 16–18, then 25–27.
 
 Beats (script.md "## S02", one voiceover block each):
  0  TRACKER CQ-Pre 1. The BLUE Colab frame "Cheese Quiz" (illustration); the menu path File › Save a
-    copy in Drive, its second chip YELLOW. TRACKER CQ-Pre 2: the schematic Secrets panel slides in (a
+    copy in Drive, its second chip YELLOW; beside it a GREY caption where the original notebook is
+    (course site · Lecture 6 · Tutorial 1, or the study guide's link; it stays through beat 0).
+    TRACKER CQ-Pre 2: the schematic Secrets panel slides in (a
     key icon; one row: Notebook access toggle, Name OPENAI_API_KEY, Value ••••••; a GOLD key beside
     it). Under it CODE(colab/cheese-quiz/cell-12.py: 3–4) "Set Up OpenAI Key"; the name and
     userdata.get('OPENAI_API_KEY') light YELLOW together; the toggle switches on.
@@ -248,13 +250,24 @@ class SteeringWheel(VoiceScene):
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(cf), run_time=1.0)
             mp = menu_path(["File", "Save a copy in Drive"])
             mp.move_to([X0, 1.85, 0], aligned_edge=LEFT)
-            self.play(FadeIn(mp, shift=DOWN * 0.1), run_time=0.6)
+            # where the original notebook is: the course site (Lecture 6 · Tutorial 1, Colab link,
+            # tutorials_demo.md:85-88) and the study guide's Cheese Quiz checklist link the same
+            # Colab. Ed itself was never opened, so it is not named.
+            where = VGroup(label("first open it: course site · Lecture 6 · Tutorial 1,", 20, S.GREY),
+                           label("or the Cheese Quiz link in the study guide", 20, S.GREY)) \
+                .arrange(DOWN, aligned_edge=LEFT, buff=0.08)
+            where.next_to(mp, RIGHT, buff=0.55).set_y(mp.get_y())
+            assert where.get_right()[0] < cf.tag.get_right()[0]
+            assert where.get_top()[1] < cf.tag.get_bottom()[1] - 0.1
+            vo.wait_until("in the Cheese Quiz")
+            self.play(FadeIn(mp, shift=DOWN * 0.1), FadeIn(where, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("Save a copy")
             self.play(mp.light(1), run_time=0.6)
 
             sec = secrets_panel()
             sec.move_to([X0, 0.0, 0], aligned_edge=LEFT).align_to(mp, LEFT)
             sec.shift(UP * (1.25 - sec.get_top()[1]))
+            assert where.get_bottom()[1] > sec.get_top()[1] + 0.12
             gk = key_glyph(0.32).next_to(sec.frame, RIGHT, buff=0.3)
             gk.set_y(sec.name.get_y())
             vo.wait_until("then add your OpenAI key")
@@ -278,8 +291,8 @@ class SteeringWheel(VoiceScene):
 
         # ============================================================ 1 · install, download
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(mp), FadeOut(sec), FadeOut(gk), FadeOut(p12), FadeOut(hl_name),
-                      FadeOut(hl_code), tr.goto(3), run_time=0.6)
+            self.play(FadeOut(mp), FadeOut(where), FadeOut(sec), FadeOut(gk), FadeOut(p12),
+                      FadeOut(hl_name), FadeOut(hl_code), tr.goto(3), run_time=0.6)
             p10 = src_panel(CELL10, 3, subtitle=True)
             p10.move_to([X0, 0, 0], aligned_edge=LEFT)
             p10.shift(UP * (cf.title.get_bottom()[1] - 0.2 - p10.get_top()[1]))   # clear of the tab

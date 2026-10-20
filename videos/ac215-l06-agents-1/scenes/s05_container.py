@@ -19,10 +19,12 @@ Beats (script.md "## S05", one voiceover block each):
    32–34.
 3. "40.5s" flashes; lines 35–40; 3.12.15 and 0.13.1 underlined GREY, "at the time of recording" on
    line 38. Line 41's prompt alone (cut before `exit`): the frame turns TEAL, title "container ·
-   llm-rag-cli"; abcf218747d0 underlined, GREY tag "container ID · your numbers will differ";
-   ▶ your turn beside it. Hold 2 s.
-4. TRACKER Run 3 · extra. The container terminal shrinks to the 3-row strip; a second terminal slides
-   in above it (title "laptop · second terminal", prompt ~/AC215/llm-rag$): `docker ps --format
+   llm-rag-cli"; abcf218747d0 underlined, GREY tag "container ID · your numbers will differ". At
+   "pause" the terminal shrinks to the 3-row strip (UV version, Activating, the prompt with its
+   tag); `sh docker-shell.sh` scrolled off long ago, so ▶ goes on a static GREY card above the
+   strip (`sh docker-shell.sh` · "until the app@…:/app$ prompt"). Hold 2 s.
+4. TRACKER Run 3 · extra. The card and the prompt's tags leave; a second terminal slides
+   in above the strip (title "laptop · second terminal", prompt ~/AC215/llm-rag$): `docker ps --format
    'table {{.Names}}\\t{{.Image}}\\t{{.Ports}}'` (extra; folds onto two rows) -> laptop/07 lines 2–4,
    shown as the NAMES and PORTS columns (GREY tag "IMAGE not shown": the full rows are 86
    characters, the house terminal holds 65); 0.0.0.0:8000->8000/tcp turns PINK in a PINK box, PINK
@@ -91,7 +93,6 @@ from common import (
     turn_card,
     type_cmd,
     under,
-    your_turn,
 )
 from manim import (
     DOWN,
@@ -394,6 +395,7 @@ class BackInTheContainer(VoiceScene):
             t.print(self, ["…", RUN.line(32), RUN.line(33), RUN.line(34)], run_time=0.5)
 
         # ========================================================== 3 · the banner, the container's prompt, ▶
+        card3 = turn_card([(RUN.cmd, "until the app@…:/app$ prompt")], header=None)
         with self.voiceover(SAY[3]) as vo:
             s40 = substring(l11, "40.5s")
             u40 = under(s40, S.GREY, stroke=3)
@@ -424,16 +426,19 @@ class BackInTheContainer(VoiceScene):
             idt = beside(grey_tag("container ID · your numbers will differ"), t, pr, buff=0.25)
             pin(self, pr, idt, run_time=0.4)
             vo.wait_until("pause, and get to this prompt")
-            yt3 = your_turn().next_to(idt, RIGHT, buff=0.18)     # ends inside the frame
-            pin(self, pr, yt3, run_time=0.5, anim=FadeIn(yt3, scale=1.2))
+            # `sh docker-shell.sh` scrolled off long ago: the ▶ goes on a static card listing it
+            # (script.md conventions), above the strip that keeps the prompt to reach
+            resize(self, t, 3, keep=[l39, ban[5], pr], run_time=0.6)
+            place(card3, cx=0, cy=(TOP_Y + GAP_Y) / 2)
+            self.play(FadeIn(card3, shift=UP * 0.15), run_time=0.6)
         self.wait(2)                                    # ▶ beat: hold the frame
 
         # ========================================================== 4 · docker ps from a second terminal
         ps_rows = ps_columns(PS)
         with self.voiceover(SAY[4]) as vo:
-            detach(self, pr, idt, yt3, uid)
-            self.play(FadeOut(VGroup(idt, yt3, uid)), caption_extra(tr, True), run_time=0.5)
-            resize(self, t, 3, run_time=0.6)            # a second panel goes above the strip
+            detach(self, pr, idt, uid)
+            # the terminal is already the 3-row strip: the card leaves, the second terminal comes in
+            self.play(FadeOut(VGroup(card3, idt, uid)), caption_extra(tr, True), run_time=0.5)
             t2 = second_terminal(self, P_REPO, rows=6)
             vo.wait_until("docker ps")
             cmd2 = type_cmd(self, t2, PS.cmd, 1.4)

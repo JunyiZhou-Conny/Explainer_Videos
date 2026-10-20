@@ -13,8 +13,8 @@ Beats (script.md "## S04", one voiceover block each):
 3. The mini-map, the lecture tag and the column leave; the first card moves to where its
    declaration starts and fades into CODE(agent_tools.py: 9–19) (line 12 wrapped; every panel
    of the scene gets the full 12.9 width, so the notes on its lines sit inside it): line 10 GREEN + note "← the name the model writes back"; line 11 GREEN +
-   note "↑ the model's documentation, with the parameter descriptions" (line 18 GREEN too); lines
-   13–15 bracketed, tag "JSON schema". Notes on code lines are plain text (a framed tag is taller
+   note "↑ the model's documentation, with the parameter descriptions" (line 18 GREEN too;
+   both bars pulse with the note at "the only documentation"); lines 13–15 bracketed, tag "JSON schema". Notes on code lines are plain text (a framed tag is taller
    than a code row).
 4. Panel changes are scrolls (morph_panel: the frame resizes, rows that stay Transform, the
    others drift up and fade or rise into place). CODE(19–30), line 19 carried over: the nine
@@ -117,6 +117,7 @@ from manim import (
     Transform,
     VGroup,
     VMobject,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -402,6 +403,11 @@ class ToolMenu(VoiceScene):
             vo.wait_until("with the parameter descriptions")
             b18 = p1.bar(18, DATA)
             self.play(FadeIn(b18), Indicate(tB[1], color=DATA, scale_factor=1.05), run_time=0.7)
+            vo.wait_until("the only documentation")
+            # the two description bars brighten and settle back as the narration names them
+            self.play(Indicate(tB[0], color=DATA, scale_factor=1.06),
+                      VGroup(b11, b18).animate(rate_func=there_and_back).set_fill(opacity=0.42),
+                      run_time=0.8)
             vo.wait_until("Parameters come as")
             rows = [c1[k] for k in (5, 6, 7)]
             bx = max(r.get_right()[0] for r in rows) + 0.3

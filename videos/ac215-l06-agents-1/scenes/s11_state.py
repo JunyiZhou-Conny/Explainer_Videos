@@ -15,7 +15,9 @@ Beats (script.md "## S11", one voiceover block each):
    the agent tree the UI loads" (top right), and a full-width 11-row terminal (laptop · second
    terminal) prints adk-laptop/31 lines 2–5, each cut after its instruction's first sentence (wrap);
    "model gemini-2.5-flash" boxed YELLOW in the three agent rows, YELLOW tag "from your root .env ·
-   set your model there" above the terminal.
+   yours: the model you set" above the terminal, then the GREY tag "the capture kept
+   .env.example's 2.5-flash" beside the tree's last row (the viewer set gemini-3.1-flash-lite in S09);
+   the YELLOW tag pops at "set yours".
 2. The second terminal types `curl -s -X POST http://localhost:8000/apps/baseline/users/student/
    sessions; echo` (extra; folds) -> adk-laptop/32 line 2 (wrap); "state":{} and "events":[] GREEN;
    the session id underlined GREY, tag "your numbers will differ". The terminal shrinks to the 3-row
@@ -94,6 +96,7 @@ from common import (
     concept_box,
     concept_tag,
     cost_tick,
+    covers_text,
     differ_tag,
     excerpt,
     extra_card,
@@ -569,9 +572,10 @@ class SharedState(VoiceScene):
         xc1 = extra_card("ask the server for the agent tree the UI loads")
         place(xc1, right=SAFE_X, top=3.55)
         t = term(P_ADK, rows=11, title=SECOND)
-        env_tag = tag("from your root .env · set your model there", TURN)
-        place(env_tag, left=-6.35, bottom=t.box.get_top()[1] + 0.12)
-        assert env_tag.get_right()[0] < xc1.get_left()[0] - 0.1
+        env_tag = tag("from your root .env · yours: the model you set", TURN)
+        place(env_tag, left=-6.5, bottom=t.box.get_top()[1] + 0.12)
+        assert env_tag.get_right()[0] < xc1.get_left()[0] - 0.1, env_tag.get_right()
+        kept_tag = grey_tag("the capture kept .env.example's 2.5-flash")   # S09 set gemini-3.1-flash-lite
         with self.voiceover(SAY[1]) as vo:
             self.play(ReplacementTransform(p21, p35), run_time=0.8)
             self.play(p35.span(35, "SequentialAgent").animate.set_color(TOOL), *an.fill_control(), run_time=0.7)
@@ -597,6 +601,10 @@ class SharedState(VoiceScene):
                       FadeIn(env_tag, shift=DOWN * 0.1), run_time=0.6)
             for r0, bx, _ in boxes:
                 attach(self, r0, bx)
+            beside(kept_tag, t, printed[-1][-1])
+            assert not covers_text(kept_tag, printed[-1][-1])
+            assert kept_tag.get_right()[0] < t.box.get_right()[0] - 0.1, kept_tag.get_right()
+            self.play(FadeIn(kept_tag, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("set yours")
             self.play(pop(env_tag, 1.08), run_time=0.7)
 
@@ -609,7 +617,7 @@ class SharedState(VoiceScene):
         place(wb, cx=0, top=STRIP_TOP + 0.14 + wb.height)
         assert wb.get_top()[1] < 2.8, wb.get_top()
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(xc1), FadeOut(env_tag), run_time=0.3)
+            self.play(FadeOut(xc1), FadeOut(env_tag), FadeOut(kept_tag), run_time=0.3)
             cmd = type_cmd(self, t, SESS.cmd, 1.2)
             pin(self, cmd, beside(extra_tag(), t, cmd), run_time=0.3)
             out = t.print(self, [SESS_OUT], wrap=True, run_time=0.4)

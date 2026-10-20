@@ -1,10 +1,12 @@
 """S14 · The harness: only a human says yes (Colab · Travel Planner; lecture slides 20–22, then 36–37).
 
 Beats (script.md "## S14", one voiceover block each):
-0. TRACKER TP 1 → 3. The BLUE Colab frame "Travel Planner" (tag illustration). LECTURE 20–22: the
-   GREY trip-request card of the hook (our words, slide 20) writes in at the bottom. "Copy it, add
-   your key": GREY menu path File › Save a copy in Drive, the GOLD key and `OPENAI_API_KEY` (cell 10
-   line 4). CODE(cell-08: 2) `%pip install -q "openai-agents==0.3.2"`, the pinned package boxed
+0. TRACKER TP 1 → 3. The BLUE Colab frame "Travel Planner" (tag illustration; top 2.55 as in S02 and
+   S12). LECTURE 20–22: the GREY trip-request card of the hook (our words, slide 20) writes in at the
+   bottom. "Copy it, add your key": GREY menu path File › Save a copy in Drive with S02's GREY
+   caption where the original is (course site · Lecture 6 · Tutorial 2, or the study guide's link),
+   then the GOLD key and `OPENAI_API_KEY` (cell 10 line 4) under it. CODE(cell-08: 2)
+   `%pip install -q "openai-agents==0.3.2"`, the pinned package boxed
    GREEN with the tag "pinned". "Paris shrinks": the request card becomes a small GREY box "mock
    catalog" (3 cities · 6 hotels · prices in cents / 5 search tools + finalize, counted from cells
    12, 14 and 21:28–34; no code chips), its rows written as named; a GREY excerpt chip of
@@ -14,16 +16,20 @@ Beats (script.md "## S14", one voiceover block each):
    chip "Turn k · <its Kind line>": Turn 1 RECORDED(c24: 3, 4 cut after "Los Angeles?", wrapped);
    Turn 2 the five `[tool]` lines (c25: 3, 31, 59, 73, 87; header "(folded)") counted 1–5 by YELLOW
    badges, then line 109 `Kind: options`; Turn 3 RECORDED(c26: 3–5, line 5 wrapped): the `[tool]
-   finalize_plan` line underlined, "reply with 'yes' to approve it" YELLOW.
+   finalize_plan` line underlined, "Please review this exact proposed plan" pulses on "shows the
+   exact plan", "reply with 'yes' to approve it" YELLOW on "asks for a yes".
 2. V8. The frame and chips leave; Turn 3's card becomes the GREEN plan card (c26: 7–9 + "…", the
-   exact proposal, folded); the BLUE model pushes it to the YELLOW gate FINAL; the bar stops it and
-   stamps it YELLOW PENDING. CODE(cell-15: 36–42) (subtitle "Finalize Plan Tool", 8 rows): line 36
+   exact proposal, folded; GREY "recorded" on its bottom border); the BLUE model pushes it to the
+   YELLOW gate FINAL; the bar stops it and stamps it YELLOW PENDING. CODE(cell-15: 36–42) (subtitle
+   "Finalize Plan Tool", 8 rows; GREY tag "called by the tool finalize_itinerary" on its empty
+   bottom right, so the log's finalize_plan and the ponder's finalize_itinerary are one tool): line 36
    YELLOW, line 37 (the pending proposal) YELLOW, "needs_confirmation" boxed. The model pushes
    again: the same stamp.
 3. The turnstile shrinks to the top right (BLUE model glyph, the GREEN card glyph with its PENDING
    stamp, the gate), the GREY human (person_icon) under it. CODE(cell-18: 55, 59–61) folded
    (subtitle "Business Logic", 8 rows, 20 pt): `prompt` PINK; `"yes"` flashes; line 61 GREEN, tag
-   "pending → approved". PONDER (8 s): just before the card comes up the panel folds to lines 55
+   "pending → approved" (row_tag: inside row 0's band, clear of "↪ …copy()"). PONDER (8 s): just
+   before the card comes up the panel folds to lines 55
    and 61 (5 rows), so the card in the lower third covers none of it (8 rows and the card don't
    both fit under the tracker).
 4. CODE(cell-18: 105–109): line 106 YELLOW with its `prompt` PINK (it and the human flash on "the
@@ -74,6 +80,7 @@ from common import (
     excerpt,
     excerpt_chip,
     fix_chip,
+    grey_tag,
     json_card,
     key_glyph,
     lref,
@@ -204,6 +211,7 @@ assert source_text(TP + "cell-29.py").split() == ["#", "Run", "the", "Agent", "a
 assert "'exit' or 'quit' to leave" in source_text(TP + "cell-28.py")
 
 TOP = 2.88            # under the tracker band (its bottom is 2.97)
+CF_TOP = 2.55         # the Colab frame's top edge, as in S02 and S12 (its tab clears the tracker)
 RIGHT_EDGE = 6.45
 
 
@@ -269,6 +277,19 @@ def mixed_chip(parts, color: str = S.GREY, size: float = 20) -> VGroup:
     row.move_to(b)
     g = VGroup(b, row)
     g.box, g.text = b, row
+    return g
+
+
+def row_tag(s: str, color: str, h: float, size: float = 20) -> VGroup:
+    """tag()'s look for a code row: the text in `color` on an opaque dark pill only `h` tall and
+    without an outline, so it stays inside one row's band (a 20 pt tag()'s box is taller than the
+    row pitch). .box .text"""
+    t = label(s, size, color)
+    assert t.height < h, (t.height, h)
+    b = RoundedRectangle(width=t.width + 0.3, height=h, corner_radius=h / 2, stroke_width=0).set_fill(S.BG, 0.92)
+    t.move_to(b)
+    g = VGroup(b, t)
+    g.box, g.text = b, t
     return g
 
 
@@ -374,17 +395,27 @@ class ApprovalGate(VoiceScene):
 
         # ============================================================ 0 · the notebook; Paris shrinks
         tr = tracker("TP")
-        cf = colab_frame("Travel Planner")
+        cf = colab_frame("Travel Planner", top=CF_TOP)
+        assert cf.title.get_top()[1] < tr.get_bottom()[1] - 0.1, (cf.title.get_top(), tr.get_bottom())
         lr = lref("20–22")
         req = request_card()
         place(req, left=-6.0, bottom=-3.2)
         mp = menu_path(["File", "Save a copy in Drive"])
-        place(mp, left=-6.0, cy=1.95)
+        place(mp, left=-6.0, cy=1.9)
+        # where the original notebook is, as S02 says it for the Cheese Quiz: the course site
+        # (Lecture 6 · Tutorial 2, Colab link, tutorials_demo.md:92-94) and the study guide's Travel
+        # Planner checklist link the same Colab. Ed itself was never opened, so it is not named.
+        where = VGroup(label("first open it: course site · Lecture 6 · Tutorial 2,", 20, S.GREY),
+                       label("or the Travel Planner link in the study guide", 20, S.GREY))
+        where.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
+        place(where, left=mp.get_right()[0] + 0.55, cy=mp.get_y())
+        assert where.get_right()[0] < cf.tag.get_right()[0]
+        assert where.get_top()[1] < cf.tag.get_bottom()[1] - 0.1
         keyrow = VGroup(key_glyph(0.3), mono(KEY_NAME, 22, INK), note("in Colab Secrets", size=22))
         keyrow.arrange(RIGHT, buff=0.2)
-        place(keyrow, left=mp.get_right()[0] + 0.7, cy=1.95)
+        place(keyrow, left=-6.0, top=min(mp.get_bottom()[1], where.get_bottom()[1]) - 0.25)
         p08 = src_panel(TP + "cell-08.py", 2, subtitle=True)
-        place(p08, left=-6.0, top=mp.get_bottom()[1] - 0.35)
+        place(p08, left=-6.0, top=keyrow.get_bottom()[1] - 0.3)
         pin_box = SurroundingRectangle(p08.span(2, '"openai-agents==0.3.2"'), color=DATA, buff=0.06,
                                        stroke_width=3)
         pinned = tag("pinned", DATA)
@@ -396,8 +427,10 @@ class ApprovalGate(VoiceScene):
         rec0 = recorded_tag()                                  # RECORDED: the staff's saved output
         place(rec0, left=booked.chip.get_right()[0] + 0.25, cy=booked.chip.get_center()[1])
         apart(rec0, booked.header, 0.08)
-        inside(req, mp, keyrow, p08, pinned, cat, booked, rec0)
-        apart(keyrow, mp, 0.3)
+        inside(req, mp, where, keyrow, p08, pinned, cat, booked, rec0)
+        apart(mp, cf.title, 0.08)
+        apart(keyrow, mp, 0.2)
+        apart(keyrow, where, 0.2)
         apart(p08, req, 0.3)
         apart(cat, booked, 0.3)
         assert keyrow.get_right()[0] < RIGHT_EDGE and booked.get_right()[0] < RIGHT_EDGE
@@ -408,7 +441,7 @@ class ApprovalGate(VoiceScene):
             self.play(LaggedStart(*[FadeIn(VGroup(d, r), shift=RIGHT * 0.15)
                                     for d, r in zip(req.dots, req.rows)], lag_ratio=0.4), run_time=1.4)
             vo.wait_until("Copy it")
-            self.play(tr.goto(1), FadeIn(mp, shift=DOWN * 0.1), run_time=0.6)
+            self.play(tr.goto(1), FadeIn(mp, shift=DOWN * 0.1), FadeIn(where, shift=LEFT * 0.1), run_time=0.6)
             self.play(mp.light(1), run_time=0.4)
             vo.wait_until("add your key")
             self.play(FadeIn(keyrow, shift=LEFT * 0.15), run_time=0.5)
@@ -431,7 +464,7 @@ class ApprovalGate(VoiceScene):
         saved = saved_run_tag()
         saved.move_to([cf.tag.get_left()[0] - 0.3 - saved.width / 2, cf.frame.get_top()[1], 0])
         paid = cost_tag("paid · every turn")
-        place(paid, right=6.15, cy=2.1)
+        place(paid, right=6.15, cy=1.9)
         t1 = obox(T1_ROWS, "Turn 1 · cell 24 · output")
         place(t1, left=-6.1, cy=-0.6)
         t2 = obox(T2_TOOLS + [T2_KIND], "Turn 2 · cell 25 · output (folded)")
@@ -442,17 +475,22 @@ class ApprovalGate(VoiceScene):
         t3 = obox(T3_ROWS, "Turn 3 · cell 26 · output")
         place(t3, left=-6.1, cy=-0.6)
         chip1 = mixed_chip(["Turn 1 ·", f"`{T1_KIND}`"])
-        place(chip1, left=-6.1, cy=2.1)
+        place(chip1, left=-6.1, cy=1.9)
         chip2 = mixed_chip(["Turn 2 ·", f"`{T2_KIND}`"])
-        place(chip2, left=chip1.get_right()[0] + 0.3, cy=2.1)
+        place(chip2, left=chip1.get_right()[0] + 0.3, cy=1.9)
         tool_ul = under(substring(t3.rows[0], "[tool] finalize_plan"), TURN, stroke=3)
         ask = substring(t3.rows[3], T3_ASK)
+        assert "exact proposed plan" in T3_ROWS[2], T3_ROWS
         inside(saved, paid, t1, t2, badges, t3, chip1, chip2)
+        apart(chip1, cf.title, 0.08)
+        apart(paid, cf.tag, 0.1)
         apart(chip2, paid, 0.2)
+        for m in (t1, t2, t3):
+            apart(m, VGroup(chip1, chip2, paid), 0.2)
         assert t3.get_bottom()[1] > cf.frame.get_bottom()[1] + 0.2
         assert badges.get_right()[0] < cf.frame.get_right()[0] - 0.1
         with self.voiceover(SAY[1]) as vo:
-            self.play(*[FadeOut(m) for m in (lr, mp, keyrow, p08, pin_box, pinned, cat, booked, rec0)],
+            self.play(*[FadeOut(m) for m in (lr, mp, where, keyrow, p08, pin_box, pinned, cat, booked, rec0)],
                       tr.goto(4), run_time=0.6)
             self.play(FadeIn(saved), FadeIn(paid), FadeIn(t1, shift=UP * 0.15), run_time=0.7)
             self.play(Indicate(t1.rows[1], color=INK, scale_factor=1.03), run_time=0.8)
@@ -469,10 +507,20 @@ class ApprovalGate(VoiceScene):
             vo.wait_until("the model calls finalize")
             self.play(Create(tool_ul), run_time=0.5)
             vo.wait_until("and the reply shows the exact plan")
+            self.play(Indicate(t3.rows[2], color=INK, scale_factor=1.04), run_time=0.8)
+            vo.wait_until("and asks for a yes")
             self.play(*recolor(ask, TURN), run_time=0.6)
 
         # ============================================================ 2 · V8: the gate stamps PENDING
         plan = json_card(PLAN_ROWS, DATA, header=PLAN_HEAD)
+        # RECORDED: the staff's saved output (cell 26). The header leaves no room before the gate's
+        # FINAL, so the tag sits on the card's bottom border at the left, part of the card (it moves
+        # with the pushes and shrinks into the glyph with it)
+        rec2 = recorded_tag()
+        rec2.move_to([plan.frame.get_left()[0] + 1.25 + rec2.width / 2, plan.frame.get_bottom()[1], 0])
+        assert rec2.get_left()[0] > plan.rows[-1].get_right()[0] + 0.3, (rec2.get_left(), plan.rows[-1].get_right())
+        assert rec2.get_top()[1] < plan.rows[-2].get_bottom()[1] - 0.05, (rec2.get_top(), plan.rows[-2].get_bottom())
+        plan.add(rec2)
         gate = Gate("FINAL", TURN, gate_w=1.5, gate_h=2.0)
         gate.move_to([4.75, 0, 0])
         model = model_box("model", w=1.2, h=0.8)
@@ -482,6 +530,9 @@ class ApprovalGate(VoiceScene):
         gate.shift(UP * (plan_y - VGroup(gate.lpost, gate.rpost).get_center()[1]))
         stop_x = post_x - 0.1 - plan.frame.width / 2           # the card's centre when it hits the post
         plan.shift(RIGHT * (stop_x - plan.frame.get_center()[0]))
+        pend = stamp("PENDING", TURN)                          # bottom right: clear of the header and rows
+        pend.move_to(plan.frame.get_corner(DOWN + RIGHT) + np.array([-pend.width / 2 - 0.25, 0, 0]))
+        apart(pend, rec2, 0.3)
         model.move_to([plan.frame.get_left()[0] - 0.12 - model.width / 2, plan_y, 0])
         walk = 1.8
         model.shift(LEFT * walk)
@@ -489,9 +540,24 @@ class ApprovalGate(VoiceScene):
         inside(model, plan, gate)
         p15 = src_panel(TP + "cell-15.py", 36, 42, wrap=True, subtitle=True)
         _with_header(p15, "Travel Planner · cell 15 · lines 36–42", subtitle="Finalize Plan Tool")
-        place(p15, left=-6.3, top=min(plan.frame.get_bottom()[1], gate.get_bottom()[1]) - 0.35)
+        place(p15, left=-6.3, top=min(plan.frame.get_bottom()[1], rec2.get_bottom()[1], gate.get_bottom()[1]) - 0.3)
         inside(p15)
         assert p15.get_bottom()[1] > -3.5, p15.get_bottom()
+        # the two names of one tool: turn 3 logs `[tool] finalize_plan` and this panel is inside
+        # def finalize_plan (cell 15 line 3); the agent's tool is finalize_itinerary (cell 21 line 4),
+        # which returns finalize_plan(...) (line 10), the name the ponder and S12 use
+        assert excerpt(TP + "cell-15.py", 3, 3).startswith("def finalize_plan(")
+        assert excerpt(TP + "cell-21.py", 4, 4).startswith("def finalize_itinerary(")
+        assert excerpt(TP + "cell-21.py", 10, 10).strip().startswith("return finalize_plan(")
+        # on the panel's empty bottom right (rows 41's continuation and 42 are short): beside the
+        # header it would sit right under the PENDING stamp
+        via = grey_tag("called by the tool finalize_itinerary")
+        r41, r41b, r42 = row_of(p15, 41, 0), row_of(p15, 41, 1), row_of(p15, 42)
+        place(via, right=p15.code.get_right()[0] - 0.2, cy=(r41b.get_center()[1] + r42.get_center()[1]) / 2)
+        inside(via)
+        assert via.get_top()[1] < r41.get_bottom()[1] - 0.06, (via.get_top(), r41.get_bottom())
+        assert via.get_left()[0] > max(r41b.get_right()[0], r42.get_right()[0]) + 0.3
+        assert via.get_bottom()[1] > p15.code.get_bottom()[1] + 0.06, (via.get_bottom(), p15.code.get_bottom())
         bar36 = p15.bar(36, TURN, 0.18)
         bar37 = p15.bar(37, TURN, 0.18)
         nbox = SurroundingRectangle(p15.span(39, '"needs_confirmation"'), color=TURN, buff=0.06, stroke_width=3)
@@ -501,11 +567,9 @@ class ApprovalGate(VoiceScene):
             self.play(FadeIn(gate), FadeIn(model, shift=RIGHT * 0.2), run_time=0.5)
             vo.wait_until("A finalize call from the model")
             self.play(model.animate.shift(RIGHT * walk), plan.animate.shift(RIGHT * walk), run_time=1.0)
-            pend = stamp("PENDING", TURN)                      # bottom right: clear of the header and rows
-            pend.move_to(plan.frame.get_corner(DOWN + RIGHT) + np.array([-pend.width / 2 - 0.25, 0, 0]))
             self.play(Indicate(gate.bar, color=TURN, scale_factor=1.05),
                       FadeIn(pend, scale=1.6), run_time=0.5)
-            self.play(FadeIn(p15, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeIn(p15, shift=UP * 0.15), FadeIn(via, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("if the plan isn't the approved one")
             self.play(FadeIn(bar36), run_time=0.5)
             vo.wait_until("the code stores it as pending")
@@ -542,9 +606,14 @@ class ApprovalGate(VoiceScene):
         prompt55 = p18.span(55, "prompt")
         yes60 = p18.span(60, '"yes"')
         bar61 = p18.bar(61, DATA, 0.2)
-        tag61 = tag("pending → approved", DATA, size=20)
+        # a full tag (mono('|') + 0.16 tall) is taller than a 20 pt code row and would cover the tops
+        # of the continuation row "↪ context.pending_proposal.copy()": this one stays inside row 0
+        pitch = row_of(p18, 61, 0).get_y() - row_of(p18, 61, 1).get_y()
+        tag61 = row_tag("pending → approved", DATA, pitch - 0.04)
         place(tag61, right=p18.code.get_right()[0] - 0.08, cy=row_of(p18, 61).get_center()[1])
         assert tag61.get_left()[0] > row_of(p18, 61).get_right()[0] + 0.2
+        assert tag61.get_bottom()[1] > row_of(p18, 61, 1).get_top()[1] + 0.02, (tag61.get_bottom(), row_of(p18, 61, 1).get_top())
+        assert tag61.get_top()[1] < row_of(p18, 60, 1).get_bottom()[1] - 0.02, (tag61.get_top(), row_of(p18, 60, 1).get_bottom())
         inside(p18, mini, human, h_lab, tag61)
         # the panel the ponder card leaves room for: lines 55 and 61 only (5 rows)
         p18b = src_panel(TP + "cell-18.py", [55, 61], size=20,
@@ -560,12 +629,14 @@ class ApprovalGate(VoiceScene):
         tag61b = tag61.copy()
         place(tag61b, right=p18b.code.get_right()[0] - 0.08, cy=row_of(p18b, 61).get_center()[1])
         assert abs(p18b.get_right()[0] - p18.get_right()[0]) < 0.02, (p18b.get_right(), p18.get_right())
+        assert abs((row_of(p18b, 61, 0).get_y() - row_of(p18b, 61, 1).get_y()) - pitch) < 0.005
         assert tag61b.get_left()[0] > row_of(p18b, 61).get_right()[0] + 0.2
+        assert tag61b.get_bottom()[1] > row_of(p18b, 61, 1).get_top()[1] + 0.02, (tag61b.get_bottom(), row_of(p18b, 61, 1).get_top())
         apart(tag61b, mini, 0.2)
         apart(tag61b, VGroup(human, h_lab), 0.2)
         assert p18b.get_bottom()[1] > 0.0, p18b.get_bottom()
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(p15), FadeOut(bar36), FadeOut(bar37), FadeOut(nbox),
+            self.play(FadeOut(p15), FadeOut(via), FadeOut(bar36), FadeOut(bar37), FadeOut(nbox),
                       FadeTransform(plan, cg), FadeTransform(model, mg),
                       Transform(gate, g_t), Transform(pend, pend_t), run_time=1.0)
             self.add(pend)                                     # the stamp on top of the card glyph

@@ -34,20 +34,24 @@ Beats (script.md "## S07", one voiceover block each):
    168, 170 cut, …, 231, 233), `built, not sent`; `"thoughtSignature":` boxed BLUE and the seal from the
    BLUE sheet lands on it; `"functionResponse"` TEAL; `"generationConfig": {}` GREY; a BLUE rule and
    "the model's own turn" beside rows 148–163; "unchanged · seal kept" at the last sentence.
-6. The terminal folds into a small envelope; V3's compact stage returns: the envelope crosses into the
-   cloud, a BLUE prose card comes back and unfolds into PANEL(expected/out-txt-agent-run.txt: 99, 105
+6. Our request stays unsent: the terminal fades in place and V3's compact stage returns; a GREY dashed
+   envelope (the staff's recorded call 2, tag "recorded · the staff's call 2, September 22, 2026"
+   under the stage) crosses into the cloud, a BLUE prose card comes back and unfolds into
+   PANEL(expected/out-txt-agent-run.txt: 99, 105
    cut, 111 cut, 112 cut; wrapped at spaces, GREY ↪) (out.txt · lines 98–111 (excerpt), staff tag with
    "old book") while the stage leaves; Alpine region, limestone caves underlined, transhumance YELLOW,
-   the seasonal movement underlined; then two GOLD chips "247 tokens" / "1,269 tokens" (out.txt lines
-   49, 135).
+   the seasonal movement underlined; then two GOLD chips "247 tokens" / "1,269 tokens" and under them
+   the GREY note "printed as `total_token_count` · out.txt · lines 49, 135".
 7. The hook's YELLOW card, centre: "Who searched your database?" / "Who chose the book?"; BLUE "Gemini
    wrote the call" then GREEN "your Python, on your laptop" as said; GOLD tag "2 Gemini calls + 1
    embedding call per question", GREY source note (agent_tools.py · line 43 → cli.py · lines 75–84).
 8. TRACKER Agents 1 · extra. The lecture tag and the call strip leave. A 10-row second terminal (20 pt
    so the table's 70 columns fit) under the extra card "count four of the answer's words …": in the
-   narration's order, TERM(laptop/10: 2–5) first, "book today 0" boxed RED; then it types the git show …;
-   head -4 … command (extra, folds) → TERM(laptop/09: 2 cut after "2026-09-22", 4–6), the commit and
-   both files underlined YELLOW; at "The staff's index" the "book before 85bba32" column boxed GREEN.
+   narration's order, TERM(laptop/10: 2–5) first, "book today 0" boxed RED; the card leaves and the
+   terminal grows to 13 rows (the table stays); it types the git show …;
+   head -4 … command (extra, folds) → TERM(laptop/09: 2 cut after "2026-09-22", 4–6, … (7–8: the author
+   line is never shown), 9), the commit and both files underlined YELLOW, GREY "← today's book" beside
+   line 9; at "The staff's index" the "book before 85bba32" column boxed GREEN.
 9. The TEAL cylinder with the staff's index: its cards turn GREY dashed "old book"; today's 24 GREEN
    cards slide in, "Mara", "the curd", "the wheels" as said; caption "an index answers from what was
    loaded · lecture 5".
@@ -102,6 +106,7 @@ from common import (
     notsent_tag,
     pin,
     readme_chip,
+    recorded_tag,
     recording_tag,
     resize,
     response_card,
@@ -326,6 +331,14 @@ def dashed_vector(color=LOOKUP, length=0.85):
 def dashed_frame(w, h, color, stroke=2, radius=0.14, dashes=None):
     r = RoundedRectangle(width=w, height=h, corner_radius=radius)
     return DashedVMobject(r, num_dashes=dashes or int((w + h) * 7), dashed_ratio=0.55).set_stroke(color, stroke)
+
+
+def dashed_envelope(w=1.0, h=0.5, color=S.GREY):
+    """A GREY dashed envelope glyph: a call that is only on record (the staff's run), not ours."""
+    fr = dashed_frame(w, h, color, stroke=3, radius=0.06, dashes=18)
+    v = VMobject().set_points_as_corners([[-w / 2, h / 2, 0], [0, -h * 0.05, 0], [w / 2, h / 2, 0]])
+    flap = DashedVMobject(v, num_dashes=9, dashed_ratio=0.55).set_stroke(color, 3)
+    return VGroup(fr, flap)
 
 
 def ghost_sheet(env, text):
@@ -682,8 +695,14 @@ class CallTwo(VoiceScene):
         lap = st6.parts["laptop"]
         cli_fr = st6.parts["cli"].frame
         margin_y = (cli_fr.get_bottom()[1] + lap.get_bottom()[1]) / 2
-        small = Envelope(width=0.9, slots=1, pitch=0.2, margin=0.12)
-        small.move_to([st6._bx.get_center()[0] + 0.75, margin_y + 0.08, 0])
+        # our request was built, not sent: what crosses is the staff's recorded call 2 (a GREY dashed
+        # envelope, tagged), and what comes back is their answer about the old book
+        ghost_env = dashed_envelope()
+        place(ghost_env, left=lap.get_left()[0] + 0.2, cy=margin_y)
+        assert ghost_env.get_top()[1] < cli_fr.get_bottom()[1] - 0.03
+        env_tag = recorded_tag("recorded · the staff's call 2, September 22, 2026")
+        place(env_tag, left=lap.get_left()[0], top=lap.get_bottom()[1] - 0.15)
+        assert env_tag.get_right()[0] < SAFE_R
         prose_fr = box(1.1, 0.5, CLOUD, fill=S.BG, fill_opacity=1.0, radius=0.1)
         prose = VGroup(prose_fr, answer_bars(3, 0.75, CLOUD, h=0.07).move_to(prose_fr))
         prose.move_to(md)
@@ -702,22 +721,25 @@ class CallTwo(VoiceScene):
         mov = phrase_glyphs(lp.rows, "the seasonal movement of livestock")
         g1 = VGroup(label("call 1", 20, S.GREY), tag("247 tokens", COST)).arrange(RIGHT, buff=0.15)
         g2 = VGroup(label("call 2", 20, S.GREY), tag("1,269 tokens", COST)).arrange(RIGHT, buff=0.15)
-        src6 = note("out.txt · lines 49, 135")
-        golds = VGroup(g1, g2, src6).arrange(RIGHT, buff=0.5)
+        # the word a viewer finds in out.txt is the field name, not "tokens"
+        src6 = VGroup(label("printed as", 20, S.GREY), mono("total_token_count", 20, S.GREY),
+                      label("· out.txt · lines 49, 135", 20, S.GREY)).arrange(RIGHT, buff=0.12)
+        src6[1].align_to(src6[0], DOWN)
+        golds = VGroup(VGroup(g1, g2).arrange(RIGHT, buff=0.5), src6).arrange(DOWN, buff=0.2)
         place(golds, cx=0, top=lp.frame.get_bottom()[1] - 0.35)
         assert golds.get_bottom()[1] > -3.55
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(box_ts, rule, turn_l, kept)), FadeOut(duty), caption_extra(tr, False),
-                      FadeTransform(t5, small), seal_fly.animate.move_to(small).scale(0.5).set_opacity(0),
-                      FadeIn(st6, shift=DOWN * 0.2), run_time=0.7)
-            self.remove(seal_fly)
-            self.play(small.animate.move_to(md.get_center()).scale(0.5), run_time=0.6)
-            self.play(FadeOut(small, scale=0.5), Indicate(md, color=CLOUD, scale_factor=1.1), run_time=0.4)
+            # our request stays unsent: its terminal fades in place, the staff's recorded call crosses
+            self.play(FadeOut(VGroup(t5, seal_fly, box_ts, rule, turn_l, kept)), FadeOut(duty),
+                      caption_extra(tr, False), FadeIn(st6, shift=DOWN * 0.2), FadeIn(ghost_env),
+                      FadeIn(env_tag, shift=UP * 0.1), run_time=0.7)
+            self.play(ghost_env.animate.move_to(md.get_center()).scale(0.7), run_time=0.7)
+            self.play(FadeOut(ghost_env, scale=0.5), Indicate(md, color=CLOUD, scale_factor=1.1), run_time=0.4)
             prose.scale(0.5)
             self.add(prose)
-            back = np.array([st6._bx.get_center()[0] + 0.25 + prose.width, margin_y, 0])
-            self.play(prose.animate.scale(2.0).move_to(back), run_time=0.6)
-            self.play(FadeTransform(prose, lp), FadeIn(stf), FadeOut(st6), run_time=0.7)
+            back = np.array([lap.get_left()[0] + 0.2 + prose.width / 2, margin_y, 0])
+            self.play(prose.animate.scale(2.0).move_to(back), run_time=0.5)
+            self.play(FadeTransform(prose, lp), FadeIn(stf), FadeOut(st6), FadeOut(env_tag), run_time=0.6)
             vo.wait_until("An Alpine valley")
             u_alp = VGroup(*[under(g, CLOUD, 3) for g in alp])
             self.play(Create(u_alp), run_time=0.4)
@@ -733,7 +755,7 @@ class CallTwo(VoiceScene):
             vo.wait_until("The two calls used")
             self.play(FadeIn(g1, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("and 1,269 tokens")
-            self.play(FadeIn(g2, shift=UP * 0.1), FadeIn(src6), run_time=0.5)
+            self.play(FadeIn(g2, shift=UP * 0.1), FadeIn(src6, shift=UP * 0.1), run_time=0.5)
 
         # ============================================================ 7 · who searched, who chose
         q1h = label("Who searched your database?", 28, TURN)
@@ -781,6 +803,11 @@ class CallTwo(VoiceScene):
         place(xc8, cx=0, top=TOP_Y + 0.04)
         t8 = term(P_REPO, rows=11, title=SECOND, size=20)
         assert xc8.get_bottom()[1] > t8.box.get_top()[1] + 0.1
+        # once the table has answered the card, the card leaves and the terminal grows to the house
+        # maximum (13 rows): the table (4), the command (3), git show's lines (4), '…' for the
+        # author line and its blank (file lines 7-8, never shown), head's title line (9)
+        dy8 = term(P_REPO, rows=13, title=SECOND, size=20).box.get_top()[1] - t8.box.get_top()[1]
+        OUT8 = [G2] + C09.at(4, 5, 6, "…", 9)
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(hook, gold7, src7)), FadeOut(ref), FadeOut(cs), caption_extra(tr, True),
                       run_time=0.5)
@@ -794,14 +821,18 @@ class CallTwo(VoiceScene):
             self.play(Create(reds[0]), run_time=0.4)
             vo.wait_until("nor three other words")
             self.play(LaggedStart(*[Create(r) for r in reds[1:]], lag_ratio=0.3), run_time=0.7)
+            resize(self, t8, 13, run_time=0.6,
+                   extra=(FadeOut(xc8, shift=UP * 0.15), *[r.animate.shift(UP * dy8) for r in reds]))
             vo.wait_until("the commit that added")
-            cmd8 = type_cmd(self, t8, GIT_CMD, 1.8)
+            cmd8 = type_cmd(self, t8, GIT_CMD, 1.6)
             pin(self, cmd8, beside(extra_tag(), t8, cmd8), run_time=0.3)
-            out8 = t8.print(self, [G2] + C09.at(4, 5, 6), run_time=0.5)
+            out8 = t8.print(self, OUT8, run_time=0.6)
+            assert len(t8.lines) == 13 and t8.lines[0] is tab[0]      # the table is still on screen
             u_hash = under(substring(out8[0], "85bba32"), TURN, 3)
             u_book = under(substring(out8[1], "input-datasets/books/Tolminc Cheese.txt"), TURN, 3)
             u_out = under(substring(out8[2], "out.txt"), TURN, 3)
             self.play(Create(u_hash), Create(u_book), Create(u_out), run_time=0.6)
+            pin(self, out8[5], beside(label("← today's book", 20, S.GREY), t8, out8[5], buff=0.4), run_time=0.3)
             vo.wait_until("The staff's index")
             greens = []
             for ln in tab:
@@ -839,7 +870,7 @@ class CallTwo(VoiceScene):
                       label("· lecture 5", 24, S.GREY)).arrange(RIGHT, buff=0.15)
         place(cap9, cx=0, cy=-2.75)
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(xc8, t8, *reds, *greens, u_hash, u_book, u_out)), caption_extra(tr, False),
+            self.play(FadeOut(VGroup(t8, *reds, *greens, u_hash, u_book, u_out)), caption_extra(tr, False),
                       run_time=0.5)
             self.play(FadeIn(cy9), FadeIn(cl9), Create(link), FadeIn(slot), FadeIn(old), run_time=0.6)
             self.play(FadeOut(old), FadeIn(ghosts), run_time=0.5)

@@ -145,3 +145,12 @@ Havarti: {ipa: "həvˈɑːɹɾi", say: "huh-var-tee"}
 "1.27.5": {ipa: "wˈʌn pɔɪnt twˈɛnti sˈɛvən pɔɪnt fˈaɪv", say: "one point twenty-seven point five"}
 "3.10": {ipa: "θɹˈiː pɔɪnt tˈɛn", say: "three point ten"}
 "406": {ipa: "fˈɔːɹ ˈoʊ sˈɪks", say: "four oh six"}
+# L06 whole-video ASR pass: phrases only L06 speaks. espeak reads "tear down" as tˈɪɹ (crying) in these
+# sentences; L05's "Pause and tear down now" has the same slip and is left to L05's owner.
+"Before part 2, tear down": {ipa: "bᵻfˌɔːɹ pˈɑːɹt tˈuː, tˈɛɹ dˈaʊn", say: "Before part 2, tare down"}
+"and tear down.": {ipa: "ænd tˈɛɹ dˈaʊn.", say: "and tare down."}
+"Tear down": {ipa: "tˈɛɹ dˈaʊn", say: "Tare down"}
+"Approval lives": {ipa: "ɐpɹˈuːvəl lˈɪvz", say: "approval livz"}
+Resending: {ipa: "ɹiːsˈɛndɪŋ", say: "ree-sending"}
+"Kept that database": {ipa: "kˈɛpt ðæt dˈeɪtəbˌeɪs", say: "kept that day-tuh-base"}
+"use agents": {ipa: "jˈuːz ˈeɪdʒənts", say: "yooz agents"}

@@ -17,15 +17,20 @@ Beats (script.md "## S12", one voiceover block each):
    counter fade, the PINK trunk "same protocol" (a line, never a box) grows from the agent; the
    agent becomes the "MCP host" with PINK "clients" ports; an "MCP server" adapter clicks onto each
    service.
-3. "same protocol" flashes PINK. The trunk splits into three separate PINK plugs, each its own
-   connection from its own client port: "stdio · a child process", "HTTPS · a remote URL", "HTTP ·
-   a thread on :8001", to three servers (filesystem PURPLE, remote BLUE, FastMCP PURPLE); the
-   label becomes the caption "one protocol · one connection per server". The lecture tag stays.
+3. "same protocol" flashes PINK. The other seven services, their adapters and branches fade; the
+   trunk splits into three separate PINK plugs, each its own connection from its own client port:
+   "stdio · a child process", "HTTPS · a remote URL", "HTTP · a thread on :8001", while three
+   service + adapter pairs (files, maps, chat: the same top-to-bottom order as their targets, so no
+   pair crosses another) rise into the three servers (filesystem PURPLE, remote BLUE, FastMCP
+   PURPLE); the label fades into the caption "one protocol · one connection per server". The
+   lecture tag stays.
 4. Plug 1 flashes YELLOW, then the picture and the lecture tag leave. TRACKER Mcp 1. A README card
    (3-mcp-tools/README.md · lines 56–63, tag expected), not typed: brew install node (macOS) ·
-   sudo apt install nodejs npm (Ubuntu) · Windows: nodejs.org, with a 4-row strip (laptop · second
-   terminal); on "Install Node" the strip types `node --version; npx --version` (tag extra) ->
-   adk-laptop/34 lines 2–3, tag "at the time of recording". 1.5 s hold to read them.
+   sudo apt install nodejs npm (Ubuntu) · Windows: nodejs.org, a GREY chip under it "Ubuntu 22.04's
+   apt Node is v12: too old for MCP servers · use nodejs.org (recorded with v24.22.0)", with a
+   4-row strip (laptop · second terminal); on "Install Node" the strip types `node --version; npx
+   --version` (tag extra) -> adk-laptop/34 lines 2–3, tag "at the time of recording". 2 s hold to
+   read them.
 5. The card and the strip leave. CODE(3-mcp-tools/agent.py: 20–29) at 20 pt in the left two
    thirds (header "3-mcp-tools/agent.py · lines 20–29 · your copy: mcp_tools/agent.py"; lines 24
    and 28 wrapped): lines 23–24 PURPLE as the server starts, line 28 YELLOW (tool_filter) at the
@@ -40,8 +45,9 @@ Beats (script.md "## S12", one voiceover block each):
    off RED; list_directory, read_file, search_files pass GREEN (line 30 underlined GREEN).
    TRACKER Mcp 2: the sieve and the card leave; a GREY card "with your key:" — pick mcp_tools ·
    ask "List files in this directory" → a list_directory call in the Events tab, and the five
-   entries printed below; the strip grows to 7 rows and prints lines 32 (cut), 33–37. 2 s hold
-   to read them.
+   entries below, plus [DIR] .adk (the session folder: picking the agent in the dev UI creates
+   it, adk-laptop/29 line 42; capture 35 is a script run without it); the strip grows to 7 rows
+   and prints lines 32 (cut), 33–37. 2 s hold to read them.
 7. TRACKER CQ-Tools 1. A BLUE Colab frame (Cheese Quiz, illustration) in the left 10.25 units.
    RECORDED(c50: 3–6) small (name masked) + tag recorded · the staff's last saved run; caption
    "step 1: a Python function with @function_tool (cell 48)"; GREY chip "Colab disconnected? rerun
@@ -74,11 +80,13 @@ Beats (script.md "## S12", one voiceover block each):
    covers the log, so it prints quickly (about 4 s after the voice).
 10. The three plugs side by side (stacked rows): in each, a BLUE model chip only emits a small
    BLUE call card into a PURPLE client, and the clients do all the talking: PINK envelopes along
-   the PINK lines (stdio, HTTPS, HTTP · :8001) to the servers. Then ▶ on a static GREY "your turn"
-   card: node --version; npx --version (extra) · dev UI: pick mcp_tools, ask "List files in this
-   directory" (with your key) · Cheese Quiz › Tools, MCP: every cell (Build your own MCP Server is
-   optional) · GREY "first run times out? …" · GOLD "OpenAI calls · paid". Hold 2 s; everything
-   fades: empty frame.
+   the PINK lines (stdio, HTTPS, HTTP · :8001) to the servers. Then ▶ on a static GREY card (no
+   GREY "your turn" header: the YELLOW ▶ tag says it, as on the other ▶ cards): no Node? brew
+   install node · or nodejs.org · node --version; npx --version (extra) · dev UI: pick mcp_tools,
+   ask "List files in this directory" (with your key) · Cheese Quiz › Tools, MCP: every cell (Build
+   your own MCP Server is optional) · GREY "first run times out? warm the npx cache once:" ·
+   npx -y @modelcontextprotocol/server-filesystem . (Ctrl+C, then retry; digest G12) · GOLD "OpenAI
+   calls · paid". Hold 2 s; everything fades: empty frame.
 """
 
 from contextlib import contextmanager
@@ -97,6 +105,7 @@ from common import (
     NARRATION,
     P_ADK,
     SECOND,
+    SERVICES,
     TOOL,
     TURN,
     CallCounter,
@@ -137,6 +146,7 @@ from common import (
     under,
     unname,
     your_copy,
+    your_turn,
 )
 from manim import (
     DOWN,
@@ -148,6 +158,7 @@ from manim import (
     Dot,
     FadeIn,
     FadeOut,
+    FadeTransform,
     Indicate,
     LaggedStart,
     Line,
@@ -235,13 +246,21 @@ assert excerpt(CELL57, 14, 14).strip() == 'mcp.run(transport="http", host="127.0
 SECTION57 = "Build your own MCP Server (Optional)"
 assert "Build your own MCP Server" in excerpt("colab/cheese-quiz/cell-55.md", 1, 1)
 
+assert excerpt(AGENT, 24, 24).strip().startswith("args=['-y', '@modelcontextprotocol/server-filesystem'")
+WARM = "npx -y @modelcontextprotocol/server-filesystem ."    # digest G12: warm the npx cache once
+NO_NODE = ("no Node?", "brew install node", "· or nodejs.org")   # README lines 57 and 63
 TURN_ROWS = [
+    NO_NODE,                                         # a serif + mono row: built in turn_card_tight()
     (NODE.cmd, "extra"),
     Prose("dev UI: pick mcp_tools, ask “List files in this directory” · with your key"),
     Prose("Cheese Quiz › Tools, MCP: every cell (Build your own MCP Server is optional)"),
-    (Prose("first run times out? npx was still downloading: run it once, Ctrl+C, retry"), S.GREY),
+    (Prose("first run times out? warm the npx cache once:"), S.GREY),
+    (WARM, "Ctrl+C, then retry"),
     (Prose("OpenAI calls · paid"), COST),
 ]
+# beat 4: the version the capture used, under the README card's apt line
+APT_NOTE = (f"Ubuntu 22.04's apt Node is v12: too old for MCP servers · use nodejs.org "
+            f"(recorded with {NODE.at(2, 3)[0]})")
 
 # ------------------------------------------------------------------ layout
 STRIP4_TOP = strip_top(4)
@@ -256,7 +275,11 @@ CF7_R = 3.45                       # beat 7: the Colab frame's right edge
 SRV_BOX = (4.7, 6.5, 1.95)         # the remote server box: left, right, centre y (beats 7–8)
 CF8_R = -1.6                       # beat 8: the shrunken frame's right edge
 CF8_BOTTOM = 1.35
-ROW_YS = (2.25, 1.35, 0.45)        # beat 10: the three plugs, stacked
+ROW_YS = (2.35, 1.53, 0.71)        # beat 10: the three plugs, stacked (the 7-row ▶ card fits under them)
+KEEP = tuple(SERVICES.index(s) for s in ("files · File I/O", "maps · Maps API", "chat · chat API"))
+# beat 3: the pairs that rise into the filesystem, remote and FastMCP servers. files must be one
+# (filesystem); the other two sit below it, so the three keep their top-to-bottom order and no pair
+# crosses another on its way up ("an API · REST" is above files: it would pass through it)
 
 
 # ------------------------------------------------------------------ small helpers
@@ -316,12 +339,32 @@ def settle(scene, owner):
     scene.add(owner)
 
 
-def gather(scene, *mobs):
-    """Top-level mobjects -> one VGroup on the scene in their place (to ReplacementTransform them
-    as one; nothing of them stays behind)."""
-    scene.remove(*mobs)
-    g = VGroup(*mobs)
-    scene.add(g)
+def mixed_row(words, size=CAPTION):
+    """One card row of serif words with a mono command among them: (serif, `mono`, serif)."""
+    a, cmd, b = words
+    return VGroup(label(a, size, INK), mono(cmd, size, INK), label(b, size, INK)).arrange(RIGHT, buff=0.15)
+
+
+def turn_card_tight(rows, buff=0.15):
+    """common.turn_card's static ▶ card (no GREY header: the YELLOW ▶ tag says "your turn") with its
+    rows closer together than turn_card's fixed 0.2, so seven rows fit under beat 10's plug rows; a
+    row may also be a (serif, mono, serif) triple, which turn_card's rows cannot hold. Every other
+    row is built by turn_card itself. .frame .rows .tag"""
+    items = VGroup()
+    for r in rows:
+        if isinstance(r, tuple) and len(r) == 3:
+            items.add(mixed_row(r))
+            continue
+        c = turn_card([r], header=None)
+        m = c.rows[0]
+        c.rows.remove(m)
+        items.add(m)
+    items.arrange(DOWN, aligned_edge=LEFT, buff=buff)
+    fr = box(items.width + 0.6, items.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
+    items.move_to(fr).align_to(fr, LEFT).shift(RIGHT * 0.3)
+    tg = your_turn().move_to(fr.get_corner(UP + RIGHT)).shift(LEFT * 1.0)
+    g = VGroup(fr, items, tg)
+    g.frame, g.rows, g.tag = fr, items, tg
     return g
 
 
@@ -573,6 +616,9 @@ class McpPlugs(VoiceScene):
             self.add(*[parts[n] for n in ("agent", "pills", "services", "host", "trunk", "adapters")])
             cover, host_t, ports, clients = explode(self, parts["host"])
             explode(self, parts["trunk"])
+            adapters = explode(self, parts["adapters"])
+            services = explode(self, parts["services"])
+            twigs = explode(self, branches)
             new_ports = VGroup(*[Dot(radius=0.07, color=LOOKUP).move_to([X_HOST, y, 0]) for y in PLUG_YS])
             plugs = VGroup(*[Line([X_HOST, y, 0], [SRV_X0, y, 0], color=LOOKUP, stroke_width=4)
                              for y in PLUG_YS])
@@ -585,12 +631,26 @@ class McpPlugs(VoiceScene):
                                                        "HTTP · a thread on :8001"))])
             cap3 = label("one protocol · one connection per server", 22, S.GREY)
             cap3.move_to([0.4, -1.75, 0])
-            old_lines = gather(self, trunk_line, branches)
-            old_boxes = gather(self, parts["adapters"], parts["services"])
-            self.play(ReplacementTransform(old_lines, plugs),
-                      ReplacementTransform(old_boxes, servers),
-                      ReplacementTransform(ports, new_ports),
-                      ReplacementTransform(same, cap3), run_time=1.5)
+            # first the seven services the tutorial does not use leave, with their adapters and branches
+            others = [k for k in range(len(services)) if k not in KEEP]
+            self.play(*[FadeOut(m) for k in others for m in (adapters[k], services[k], twigs[k])],
+                      run_time=0.7)
+            # then the trunk splits into three plugs, and each kept service with its adapter rises
+            # into its server: the service's frame becomes the server's frame, its name fades into
+            # the server's name (same size: no glyph scramble), and the "MCP server" adapter slides
+            # in onto the words "MCP server" of that name
+            pieces = [trunk_line.copy() for _ in PLUG_YS]
+            self.remove(trunk_line)
+            self.add(*pieces)
+            morph = [ReplacementTransform(p, q) for p, q in zip(pieces, plugs)]
+            for k, srv_k in zip(KEEP, servers):
+                s_box, s_lab = explode(self, services[k])
+                words = srv_k.rows.get_left() + RIGHT * adapters[k][1].width / 2
+                morph += [FadeOut(twigs[k]), ReplacementTransform(s_box, srv_k.frame),
+                          FadeTransform(s_lab, srv_k.rows, stretch=False),
+                          FadeOut(adapters[k], target_position=words)]
+            self.play(*morph, ReplacementTransform(ports, new_ports),
+                      FadeTransform(same, cap3, stretch=False), run_time=1.4)
             lag_play(self, [FadeIn(lb, shift=UP * 0.1) for lb in p_labels], lag_ratio=0.35, run_time=1.2)
         plug_pic = VGroup(parts["agent"], parts["pills"], cover, host_t, clients, new_ports, plugs, servers,
                           p_labels, cap3)
@@ -602,7 +662,11 @@ class McpPlugs(VoiceScene):
         rd = readme_card("3-mcp-tools/README.md · lines 56–63", rd_rows)
         ex = expected_tag().next_to(rd.header, RIGHT, buff=0.25)
         rd.add(ex)
-        place(rd, cx=0, top=1.55)
+        place(rd, cx=0, top=2.05)
+        # a viewer on Ubuntu 22.04 (WSL too) gets Node 12 from apt: too old for the MCP servers
+        apt = chip(APT_NOTE, S.GREY, size=CAPTION, fill_opacity=0.08)
+        place(apt, cx=0, top=rd.frame.get_bottom()[1] - 0.2)
+        assert apt.get_bottom()[1] > STRIP4_TOP + 0.12 and apt.width < 12.8, (apt.get_bottom(), apt.width)
         with self.voiceover(SAY[4]) as vo:
             self.play(Indicate(plugs[0], color=TURN, scale_factor=1.0), Indicate(p_labels[0], color=TURN),
                       run_time=0.7)
@@ -610,12 +674,13 @@ class McpPlugs(VoiceScene):
             self.play(FadeOut(plug_pic), FadeOut(ref), FadeIn(tr, shift=DOWN * 0.25), run_time=0.6)
             t4 = term(P_ADK, rows=4, title=SECOND, top=STRIP4_TOP)
             self.play(FadeIn(rd, shift=DOWN * 0.15), FadeIn(t4, shift=UP * 0.3), run_time=0.5)
+            self.play(FadeIn(apt, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Install Node")
             cmd = type_cmd(self, t4, NODE.cmd)
             pin(self, cmd, beside(extra_tag(), t4, cmd), run_time=0.3)
             out = t4.print(self, NODE.at(2, 3), run_time=0.4)
             pin(self, out[0], beside(recording_tag(), t4, out[0]), run_time=0.3)
-        self.wait(1.5)                    # the two versions and their tag stay up to be read
+        self.wait(2.0)                    # the two versions, their tag and the apt note stay up to be read
 
         # ============================================================ 5 · plug 1: the stdio child process
         pa = src_panel(AGENT, 20, 29, size=20, wrap={24: ["/server-filesystem'"], 28: ["'list_directory'"]})
@@ -635,7 +700,7 @@ class McpPlugs(VoiceScene):
         pipe_l = label("stdio", 22, LOOKUP).next_to(pipe, RIGHT, buff=0.36)   # clear of the envelope
         env5 = mini_envelope(None, LOOKUP, w=0.42).move_to(pipe.get_top() + DOWN * 0.3)
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(rd), FadeOut(t4), run_time=0.4)
+            self.play(FadeOut(rd), FadeOut(apt), FadeOut(t4), run_time=0.4)
             self.play(FadeIn(pa, shift=UP * 0.15), FadeIn(zone), FadeIn(adk, shift=DOWN * 0.1), run_time=0.7)
             vo.wait_until("starts a filesystem server")
             self.play(FadeIn(bars_npx), run_time=0.5)
@@ -693,7 +758,10 @@ class McpPlugs(VoiceScene):
                        label("· ask “List files in this directory”", CAPTION, INK)).arrange(RIGHT, buff=0.12),
                 VGroup(label("→ a", CAPTION, INK), mono("list_directory", CAPTION, INK),
                        label("call in the Events tab,", CAPTION, INK)).arrange(RIGHT, buff=0.12),
-                label("and the five entries printed below", CAPTION, INK),
+                # picking the agent creates its session folder first (adk-laptop/29 line 42 for
+                # baseline): your listing has a sixth entry that the script run below does not
+                VGroup(label("and the five entries below, plus", CAPTION, INK), mono("[DIR] .adk", CAPTION, INK),
+                       label("(the session folder)", CAPTION, INK)).arrange(RIGHT, buff=0.12),
             ], header="with your key:")
             place(key, left=-6.4, bottom=strip_top(7) + 0.2)
             self.play(tr.goto(2), FadeOut(sv), FadeOut(xc), FadeOut(u14), FadeOut(u30), run_time=0.5)
@@ -870,8 +938,9 @@ class McpPlugs(VoiceScene):
             plug_row("gpt-4o", "Agents SDK client", "HTTPS", "remote MCP server", CLOUD, ROW_YS[1]),
             plug_row("gpt-4o", "Agents SDK client", "HTTP · :8001", "FastMCP thread", TOOL, ROW_YS[2]),
         )
-        card = turn_card(TURN_ROWS)
+        card = turn_card_tight(TURN_ROWS)
         place(card, cx=0, bottom=-3.5)
+        assert card.width < 12.6, card.width
         assert card.get_top()[1] < rows.get_bottom()[1] - 0.12, (card.get_top(), rows.get_bottom())
         with self.voiceover(SAY[10]) as vo:
             self.play(FadeOut(cf), FadeOut(g59), FadeOut(cli9), FadeOut(fm9), FadeOut(port9), FadeOut(http9),

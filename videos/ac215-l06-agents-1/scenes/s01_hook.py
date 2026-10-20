@@ -30,13 +30,18 @@ Beats (script.md "## S01", one voiceover block each):
    "ideas along the way: the Cheese Quiz notebook"; "part 1" / "part 2" markers at the right edge.
 5. Layout preview, each step clearing the last: the tracker top left, its head cycling llm-rag,
    ADK, Colab inside a pulsing YELLOW ring; a GREY lecture_ref(6, "51–53") sample top right; a
-   3-row container strip (tag preview) with `python cli.py --agent --chunk_type char-split` and
-   ▶ your turn (held 2 s). Then a row of tags writes in above the strip: recorded · expected ·
-   illustration · extra · stand-in (PINK, as it appears later) · no key · built, not sent.
+   3-row container strip (tag preview, with the GREY caption "a sample · you'll run it later,
+   inside the container" beside it: there is no container until S05) with
+   `python cli.py --agent --chunk_type char-split` and ▶ your turn (held 2 s). Then a row of tags
+   writes in above the strip: recorded · expected · illustration · extra · stand-in (PINK, as it
+   appears later) · no key · built, not sent; under it two GREY gloss rows write in, each tag
+   pulsing with its gloss: recorded = the staff's saved output · expected = README text / extra =
+   not in the README · built, not sent = printed, never sent.
 6. A "You need" checklist writes in row by row as named (GOLD keys for the three keys).
 7. A card "Recorded October 18, 2026" ("· no Google or OpenAI keys" types in at "without keys"),
-   three rows as named: GREEN check real runs (its two lines as named, the check pulses at "ran for
-   real"); GREY crossed-out key model calls; tag recorded model answers.
+   three rows as named: GREEN check real runs (its three lines as named, the last one "two MCP
+   servers (tool servers · part 2)" with the bracket GREY, since MCP is taught in S12; the check
+   pulses at "ran for real"); GREY crossed-out key model calls; tag recorded model answers.
 8. The GREY ‹instructor› chip with "the instructor's name, hidden on screen" (the chip pulses at "your
    terminal shows it"); the footer card "every command: MLOps_Learning · guides/L06-agents-1.md",
    MLOps_Learning underlined YELLOW as the repo is named. Fade to an empty frame.
@@ -155,7 +160,12 @@ NEED = [("lecture 5's char-split collection (or the load step)", None),
         ("Google AI Studio key", "key"),
         ("OpenAI key · billing on", "key")]
 REC_HEAD = "Recorded October 18, 2026 · no Google or OpenAI keys"
-REC_ROWS = [["real runs: Docker, Chroma, uv,", "the ADK web server, two MCP servers"],
+SAMPLE_CAP = "a sample · you'll run it later, inside the container"
+# what the tags that are not self-explanatory mean (two rows: one row at 20 pt is too wide)
+GLOSS = [[("recorded", "the staff's saved output"), ("expected", "README text")],
+         [("extra", "not in the README"), ("built, not sent", "printed, never sent")]]
+MCP_GLOSS = "(tool servers · part 2)"                  # MCP is taught in S12; a placeholder meaning
+REC_ROWS = [["real runs: Docker, Chroma, uv,", "the ADK web server,", f"two MCP servers {MCP_GLOSS}"],
             ["model calls: stopped before sending, or refused"],
             ["model answers: the teaching staff's saved outputs"]]
 
@@ -217,10 +227,13 @@ def text_glyphs(t) -> list:
 
 
 def text_part(t, s: str, sub: str) -> VGroup:
-    """The glyphs of substring `sub` of a Text t made from string s (spaces have no glyphs)."""
+    """The glyphs of substring `sub` of a Text t made from string s (spaces have no glyphs, except
+    with disable_ligatures=True, where every character, space included, has one)."""
     gl = list(t.submobjects)
-    assert len(gl) == len("".join(s.split())), (len(gl), s)
     i = s.index(sub)
+    if len(gl) == len(s) and len(s) != len("".join(s.split())):
+        return VGroup(*gl[i:i + len(sub)])
+    assert len(gl) == len("".join(s.split())), (len(gl), s)
     a = len("".join(s[:i].split()))
     return VGroup(*gl[a:a + len("".join(sub.split()))])
 
@@ -569,11 +582,29 @@ class Hook(VoiceScene):
         t = term(P_CTR, rows=3, container=True)
         prev = preview_tag()
         place(prev, right=t.box.get_right()[0] - 0.2, bottom=t.box.get_top()[1] + 0.1)
+        sample_cap = note(SAMPLE_CAP)                  # the command is a sample: no container yet (S05)
+        place(sample_cap, right=prev.get_left()[0] - 0.2, cy=prev.get_center()[1])
         tag_row = VGroup(recorded_tag(), expected_tag(), illustration_tag(), extra_tag(), standin_tag(),
                          grey_tag("no key"), notsent_tag()).arrange(RIGHT, buff=0.18)
-        place(tag_row, cx=0, bottom=prev.get_top()[1] + 0.35)
-        inside_frame(halo, sample, t, tag_row)
+        tag_of = {"recorded": tag_row[0], "expected": tag_row[1], "extra": tag_row[3],
+                  "built, not sent": tag_row[6]}
+        gloss_lines, gloss_steps = VGroup(), []        # gloss_steps: (its tag, the glyphs that write in)
+        for pairs in GLOSS:
+            s = " · ".join(f"{k} = {v}" for k, v in pairs)
+            gl = label(s, 20, S.GREY, disable_ligatures=True)   # a note(); no "ff" ligature: one glyph
+            gloss_lines.add(gl)                                  # per character for text_part()
+            for j, (k, v) in enumerate(pairs):
+                part = text_part(gl, s, f"{k} = {v}")
+                if j:
+                    part = VGroup(*text_part(gl, s, "·"), *part)
+                gloss_steps.append((tag_of[k], part))
+        gloss_lines.arrange(DOWN, buff=0.14)
+        place(gloss_lines, cx=0, bottom=prev.get_top()[1] + 0.45)
+        place(tag_row, cx=0, bottom=gloss_lines.get_top()[1] + 0.22)
+        inside_frame(halo, sample, t, tag_row, gloss_lines, sample_cap)
         apart(tag_row, ycard, 0.2)
+        apart(sample_cap, prev, 0.1)
+        apart(sample_cap, gloss_lines, 0.2)
 
         with self.voiceover(SAY[5]) as vo:
             vo.wait_until("The tracker, top left")
@@ -589,13 +620,20 @@ class Hook(VoiceScene):
             self.remove(trs[2], halo)
             self.play(sample.box.animate(rate_func=there_and_back).set_stroke(TURN, 5), run_time=0.8)
             vo.wait_until("Pause at each yellow")
-            self.play(FadeOut(sample), FadeIn(t), FadeIn(prev), run_time=0.5)
+            self.play(FadeOut(sample), FadeIn(t), FadeIn(prev), FadeIn(sample_cap, shift=LEFT * 0.1),
+                      run_time=0.5)
             self.remove(sample)
             ln = type_cmd(self, t, CMD, type_time=1.2)
             pin(self, ln, beside(your_turn(), t, ln))
         self.wait(2)
-        self.play(LaggedStart(*[FadeIn(m, shift=UP * 0.12) for m in tag_row], lag_ratio=0.25), run_time=1.6)
-        self.wait(1.0)
+        self.play(LaggedStart(*[FadeIn(m, shift=UP * 0.12) for m in tag_row], lag_ratio=0.25), run_time=1.3)
+        # the glosses write in under the row, each as its tag pulses
+        hidden(*[p for _, p in gloss_steps])
+        self.add(gloss_lines)
+        for tg, part in gloss_steps:
+            self.play(part.animate.set_opacity(1), Indicate(tg.text, color=INK, scale_factor=1.15),
+                      tg.box.animate(rate_func=there_and_back).set_stroke(INK, 3), run_time=0.5)
+        self.wait(2.2)
 
         # ========================================================== 6. what you need
         icons, rows = VGroup(), VGroup()
@@ -639,6 +677,7 @@ class Hook(VoiceScene):
         tick = check_mark(0.36, DATA)
         kg = key_glyph(0.34, S.GREY)
         kx = cross_mark(0.44, S.GREY, stroke=4).move_to(kg)
+        text_part(r_rows[0][2], REC_ROWS[0][2], MCP_GLOSS).set_color(S.GREY)   # a gloss, not a run
         r_icons = [tick, VGroup(kg, kx), rec_tag]
         for ic, r in zip(r_icons, r_rows):
             ic.move_to([r_rows.get_left()[0] - 0.3 - col_w / 2, r[0].get_center()[1], 0])
@@ -666,6 +705,8 @@ class Hook(VoiceScene):
             self.play(Create(tick), FadeIn(r_rows[0][0], shift=RIGHT * 0.15), run_time=0.6)
             vo.wait_until("the ADK web server")
             self.play(FadeIn(r_rows[0][1], shift=RIGHT * 0.15), run_time=0.5)
+            vo.wait_until("and two MCP servers")
+            self.play(FadeIn(r_rows[0][2], shift=RIGHT * 0.15), run_time=0.5)
             vo.wait_until("ran for real")
             self.play(Indicate(tick, color=DATA, scale_factor=1.3), run_time=0.6)
             vo.wait_until("every model call")

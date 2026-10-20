@@ -1396,7 +1396,7 @@ SHOW: Dynamic Control fills PURPLE with `Runner`, `max_turns=12`, and a TEAL chi
 hand". LECTURE 32–33: the lecture's formula writes in under it (our words):
 "agent ≈ LLM + reasoning + instructions + tools"; two GREEN chips append: "+ a loop the framework runs",
 "+ checks your code enforces".
-SAY: Dynamic control is the framework's loop, or two calls by hand. The lecture's formula, LLM plus reasoning, instructions and tools, gains two pieces: a loop the framework runs, and checks your code enforces.
+SAY: Dynamic control is the framework's loop, or two calls by hand. The lecture's formula, LLM plus reasoning, instructions and tools, gains two pieces: a loop the framework runs, and checks that your own code enforces.
 
 SHOW: The lecture tag leaves. A card "Test yourself", questions appearing one at a time (each stays as the
 next fades in below, smaller): Q1 "In function calling, who runs the function, and what travels back to

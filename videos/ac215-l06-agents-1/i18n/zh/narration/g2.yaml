@@ -69,7 +69,7 @@ S09:
 - en: "Also change the model line. Choosing the LLM core is the lecture's first design decision, and here it's one line: a current model, like Gemini 3.1 Flash-Lite."
   zh:
   - "模型那一行也要改。"
-  - "选 LLM 核心是课上的第一个设计决定，在这里只是一行：换成一个当前的模型，比如 gemini-3.1-flash-lite。"
+  - "选 LLM 核心是课上的第一个设计决定，而在这里它只是一行：换成当前的模型，比如 gemini-3.1-flash-lite。"
   en_display:
   - null
   - "Choosing the LLM core is the lecture's first design decision, and here it's one line: a current model, like gemini-3.1-flash-lite."
@@ -122,7 +122,7 @@ S10:
   - "Running Agents 一节的第 1 步，在 repo 根目录下：uv run adk web。"
   - "首先，2.12 版会问一个问题，README 里没提：可以让 Google 收集使用数据吗？"
   en_display:
-  - "Running agents, step 1, from the repository root: uv run adk web."
+  - "Running Agents, step 1, from the repository root: uv run adk web."
   - null
 - en: "The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with ADK telemetry disable."
   zh:
@@ -228,6 +228,10 @@ S11:
   - "没有真正的密钥，旅行请求会得到 Internal Server Error。"
   - "服务器日志说明了原因：API key not valid。"
   - "占位密钥发到了 Google，被拒绝了。"
+  en_display:
+  - "Without a real key, a trip request gets an Internal Server Error."
+  - null
+  - null
 - en: "With your key, look for three replies in order, and three new entries in the State tab; the session is a file in the agent's folder. Each request is three model calls: pause, and plan a trip."
   zh:
   - "有密钥的话，要找的是：按顺序的三条回复，以及 State 标签页里新增的三项；这个 session 是 agent 目录里的一个文件。"
@@ -255,7 +259,7 @@ S12:
   - "安装 Node。"
 - en: "The agent's toolset starts a filesystem server with npx, as a child process, talking over standard input and output."
   zh:
-  - "这个 agent 的工具集用 npx 启动一个文件系统 server，作为子进程，通过标准输入输出通信。"
+  - "这个 agent 的工具集用 npx 启动一个文件系统 server，作为子进程；它通过标准输入输出通信。"
 - en: "An extra script asks that toolset for its tools, with no model involved. The server offers 14, including write and edit, and the filter lets three through. With your key, ask the agent to list files."
   zh:
   - "一个额外的脚本向这个工具集要它的工具列表，完全不涉及模型。"
@@ -431,7 +435,7 @@ S16:
   zh:
   - "这是课上的 agent 结构图，填上了今天的代码。"
   - "核心是 Gemini 和 OpenAI 的模型；指令是 prompt 和输出类型；工具有手写的、加装饰器的，或者走 MCP 的；记忆是消息历史和 session 状态。"
-- en: "Dynamic control is the framework's loop, or two calls by hand. The lecture's formula, LLM plus reasoning, instructions and tools, gains two pieces: a loop the framework runs, and checks your code enforces."
+- en: "Dynamic control is the framework's loop, or two calls by hand. The lecture's formula, LLM plus reasoning, instructions and tools, gains two pieces: a loop the framework runs, and checks that your own code enforces."
   zh:
   - "动态控制就是框架的循环，或者手写的两次调用。"
   - "课上的公式，LLM 加上推理、指令和工具，多了两块：框架运行的循环，以及由你的代码强制执行的检查。"

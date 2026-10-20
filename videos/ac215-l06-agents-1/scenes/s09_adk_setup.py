@@ -44,7 +44,8 @@ Beats (script.md "## S09", one voiceover block each):
 9. V5: line 8 becomes the number line's GREEN `>=3.10` label; axis 3.10 … 3.16, the band glows to
    the right edge; no ORANGE dot; GREY chip "no python3 on PATH" (adk-laptop/00 line 9, extra).
    PONDER(6 s) in the lower third.
-10. TRACKER Start 6. The terminal returns (9 rows, under the number line): `uv sync` -> 07 lines
+10. TRACKER Start 6. The terminal returns empty (the beat-4 grep rows are stale after the key and
+    model edits) at 9 rows, under the number line: `uv sync` -> 07 lines
     2–4; a PURPLE download arrow drops CPython 3.15.0 at the newest end; tag "at the time of
     recording" on "Using CPython 3.15.0". (9 rows, not 12: the number line must stay in view.)
 11. 07 lines 5–7 joined and 9–11 joined, re-wrapped at spaces as uv wraps them (the error's rows
@@ -736,6 +737,9 @@ class AdkSetup(VoiceScene):
         drop.arrow = short
         drop.text.next_to(drop.arrow, RIGHT, buff=0.15).set_y(drop.arrow.get_center()[1])
         with self.voiceover(SAY[10]) as vo:
+            for ln in list(t.lines):    # beat-4 grep rows: stale after the key and model edits of beats 5-6
+                t.lines.remove(ln)      # (off screen since beat 8's FadeOut(t), so nothing visible fades)
+                self.remove(ln)
             self.play(FadeOut(card9), FadeIn(t), tr.goto(6), run_time=0.6)
             resize(self, t, RUN_ROWS, run_time=0.6)
             vo.wait_until("uv sync")

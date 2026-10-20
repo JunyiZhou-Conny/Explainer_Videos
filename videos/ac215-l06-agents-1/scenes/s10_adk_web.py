@@ -6,8 +6,9 @@ Beats (script.md "## S10", one voiceover block each):
    repository root in the prompt flashes) types `uv run adk web` -> adk-laptop/15 lines 2–3 joined, 10–11 joined, 13 cut after "[Y/n]:" (wrap);
    GREY tag "erratum · not in the README" beside the question.
 1. "This is OFF by default." underlined GREY; [Y/n] boxed YELLOW, the capital Y flashes, YELLOW tag
-   "Enter = yes"; after a 0.6 s pause the terminal types `n` (as captured); a GREY chip "adk
-   telemetry disable · change it later" in the band right of the tracker.
+   "Enter = yes"; after a 0.6 s pause the terminal types `n` (as captured); a GREY chip "uv run adk
+   telemetry disable · change it later" in the band right of the tracker (`uv run`, as every adk
+   command here: adk lives only in the project's .venv, so the bare form is "command not found").
 2. 15 lines 34–38, 41 (cut); the URL on line 41 turns PINK. TRACKER RunAg 2: the terminal shrinks
    to the 3-row strip; a GREY browser (illustration) opens at localhost:8000 with the dev UI's agent
    field, and its address becomes localhost:8000/dev-ui/. TRACKER · extra: a second strip (laptop ·
@@ -30,8 +31,8 @@ Beats (script.md "## S10", one voiceover block each):
    `uv run adk web` (24's command); the page's dropdown shows the four folders of 25 line 2 (GREEN);
    picking 1-baseline -> 24 line 131, 132–133 joined cut after "underscores." (wrap) RED, the row
    turns RED; "Invalid app name" flashes at "as an invalid app name". The extra `git checkout pyproject.toml; uv sync --upgrade-package google-adk` -> 27
-   lines 8–9. The frame closes; the server strip returns with the GREY caption "back in your
-   terminal".
+   lines 8–9 ("2.12.0" flashes; held 1.2 s so the proof can be read). The frame closes; the server
+   strip returns with the GREY caption "back in your terminal".
 6. TRACKER RunAg 1 · extra. The caption leaves as the terminal grows (13 rows): Ctrl+C -> 15 lines 46, 49–51 ("^C"
    flashes), the prompt returns; the extra `mv 1-baseline baseline; …; ls` (folded under the
    prompt, so only the bare prompt scrolls away) with the tags "extra" and "fix · not in the README"
@@ -53,7 +54,7 @@ Beats (script.md "## S10", one voiceover block each):
    (illustration): Chroma (TEAL) holds 127.0.0.1:8000 (PINK); the 4-row strip types `uv run adk
    web` -> 36 line 21 (wrap) RED, adk web's arrow to :8000 gets a RED cross. GREY chip "docker
    compose down · in llm-rag · frees port 8000"; TRACKER · extra: `uv run adk web --port 8080`
-   (extra) -> 37 line 34 (cut), 8080 PINK, a PINK :8080 port with a GREEN check. The frame closes;
+   (extra) -> 37 line 34 (cut), 8080 PINK, a PINK :8080 port with a GREEN check (held 1 s). The frame closes;
    back in the viewer's terminal (the strip), ▶ on a static GREY card (Ctrl+C · the mv line · uv
    run adk web · reload localhost:8000, pick baseline). Hold 2 s. Fade to an empty frame.
 """
@@ -553,7 +554,7 @@ class AdkWeb(VoiceScene):
 
         # ========================================================== 1 · Enter answers yes; we typed n
         cw = cell_width(t.size)
-        tchip = grey_chip(["`adk telemetry disable`", "· change it later"])
+        tchip = grey_chip(["`uv run adk telemetry disable`", "· change it later"])   # adk is in .venv only
         place(tchip, right=6.4, cy=2.62)
         with self.voiceover(SAY[1]) as vo:
             offr = off[0]
@@ -700,9 +701,12 @@ class AdkWeb(VoiceScene):
             self.play(*[Indicate(substring(r, "Invalid app name"), color=ERR, scale_factor=1.1) for r in bad],
                       run_time=0.7)
             vo.wait_until("So a version pin doesn't help")
-            c27 = type_cmd(self, tw, UNDO.cmd, 1.2)
+            c27 = type_cmd(self, tw, UNDO.cmd, 0.8)
             pin(self, last_row(c27), beside(extra_tag(), tw, c27), run_time=0.3)
-            tw.print(self, UNDO.at(8, 9), run_time=0.4)
+            o27 = tw.print(self, UNDO.at(8, 9), run_time=0.4)
+            # "we undid ours": hold the proof (2.12.0 is back) before the frame closes
+            self.play(Indicate(substring(o27[1], "2.12.0"), color=TURN, scale_factor=1.2), run_time=0.7)
+            self.wait(0.5)
             self.play(FadeOut(VGroup(wf, tw, br5, menu5, hl5, cur5)), run_time=0.5)
             self.play(FadeIn(t), FadeIn(back, shift=UP * 0.1), caption_extra(tr, False), run_time=0.5)
 
@@ -838,6 +842,7 @@ class AdkWeb(VoiceScene):
             pin_with(self, c37, beside(extra_tag(), tw9, c37),
                      substring(l34, "http://127.0.0.1:8080").animate.set_color(LOOKUP), FadeIn(clash.p8080),
                      GrowArrow(clash.ok), FadeIn(clash.okc, scale=1.3), run_time=0.5)
+            self.wait(1.0)                              # the :8080 success state stays readable
             vo.wait_until("Pause, and get the dev UI open")
             self.play(FadeOut(VGroup(wf9, tw9, clash, compose)), caption_extra(tr, False), run_time=0.45)
             self.play(FadeIn(t), FadeIn(back, shift=UP * 0.1), FadeIn(card, shift=UP * 0.15), run_time=0.5)

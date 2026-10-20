@@ -6,9 +6,11 @@ Beats (script.md "## S13", one voiceover block each):
    redrawing; title "deep research" + dashed tag "concept · lecture example"): lead agent → planner
    → three parallel "web search" → synthesis → report, each node writing in as it is named. Right,
    two tutorial trees with plain-word nodes: "Cheese Quiz Guild", a BLUE orchestrator over GREEN
-   chips facts · write · review · vegan; "Cheese Newsletter", a BLUE orchestrator over researcher ·
-   editor · send_email (the tools of cell-25's orchestrator).
-1. LECTURE 38. The trees fade. The YELLOW question "Who plans the order?" writes in at the top; three
+   chips facts · write · review · vegan (title line "Cheese Quiz Guild · 4 of its 6 tools": cell 70's
+   orchestrator also holds format_quiz_json and ask_head_cheesemonger); "Cheese Newsletter", a BLUE
+   orchestrator over researcher · editor · send_email (the tools of cell-25's orchestrator).
+1. LECTURE 38. The planner pulses YELLOW as it is named; at "raises the question" the trees fade while
+   the YELLOW question "Who plans the order?" writes in at the top; three
    empty dashed slots in a row under it: "the code", "the model", "Python reading the model's
    label". Slot 1 lights alone: CODE(1-baseline/agent.py: 35–39) (subtitle "your copy:
    baseline/agent.py"), SequentialAgent PURPLE, and an assembly line of three GREY stations
@@ -476,6 +478,12 @@ class ManyAgents(VoiceScene):
         lt = lecture_tree()
         guild = agent_tree(("facts", "write", "review", "vegan"), 3.45, 1.5, 0.45,
                            title="Cheese Quiz Guild", title_y=2.3)
+        # the four chips are a selection: cell 70's orchestrator holds six tools (format_quiz_json
+        # and ask_head_cheesemonger are not drawn), so the title line says so
+        part = label("· 4 of its 6 tools", 20, S.GREY)
+        VGroup(guild.title, part).arrange(RIGHT, buff=0.15).move_to([3.45, 2.3, 0])
+        part.shift(UP * (guild.title[1].get_bottom()[1] - part[3].get_bottom()[1]))   # "h" and "f": one baseline
+        guild.add(part)
         news = agent_tree(("researcher", "editor", "send_email"), 3.45, -1.25, -2.3,
                           title="Cheese Newsletter", title_y=-0.5, mono_names=("send_email",))
         lr = lref("44–49")
@@ -498,7 +506,8 @@ class ManyAgents(VoiceScene):
             self.play(FadeIn(guild.title), FadeIn(guild.orch, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("the Cheese Quiz Guild")
             pl(self, LaggedStart(*[AnimationGroup(Create(e), FadeIn(c, shift=DOWN * 0.1))
-                                   for e, c in zip(guild.edges, guild.chips)], lag_ratio=0.2), run_time=0.9)
+                                   for e, c in zip(guild.edges, guild.chips)],
+                                 FadeIn(part, shift=LEFT * 0.1), lag_ratio=0.2), run_time=1.0)
             vo.wait_until("and the newsletter")
             self.play(FadeIn(news.title), FadeIn(news.orch, shift=DOWN * 0.1), run_time=0.4)
             pl(self, LaggedStart(*[AnimationGroup(Create(e), FadeIn(c, shift=DOWN * 0.1))
@@ -517,9 +526,11 @@ class ManyAgents(VoiceScene):
         al = assembly_line().move_to([0, -2.15, 0])
         with self.voiceover(SAY[1]) as vo:
             lr38 = lref("38")
-            self.play(*[FadeOut(m) for m in trees], FadeOut(lr), FadeIn(lr38), run_time=0.6)
+            # the three trees stay up while the lecture's planner is named; they leave as the
+            # question it raises writes in
+            self.play(Indicate(lt.plan, color=TURN, scale_factor=1.1), run_time=0.8)
             vo.wait_until("raises the question")
-            self.play(Write(q), run_time=0.9)
+            self.play(*[FadeOut(m) for m in trees], FadeOut(lr), FadeIn(lr38), Write(q), run_time=0.9)
             vo.wait_until("who plans the order")
             pl(self, LaggedStart(*[FadeIn(s, shift=DOWN * 0.15) for s in slots], lag_ratio=0.3),
                run_time=1.0)

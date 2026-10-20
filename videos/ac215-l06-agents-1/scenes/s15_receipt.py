@@ -306,14 +306,14 @@ class Receipt(VoiceScene):
 
         # ============================================================ 0 · the notebook; the USERS cell
         tr = tracker("NL", 1)                 # step 1 lit from the start (an empty caption sits at ORIGIN)
-        cf = colab_frame("Cheese Newsletter · Harness")
+        cf = colab_frame("Cheese Newsletter · Harness", top=2.55)   # the tab clears the tracker caption
         mp = menu_path(["File", "Save a copy in Drive"])          # step 1: copy it, add the key
-        place(mp, left=-6.0, cy=2.1)
+        place(mp, left=-6.0, cy=1.9)
         keyrow = VGroup(key_glyph(0.3), mono(KEY_NAME, 22, INK), note("in Colab Secrets", size=22))
         keyrow.arrange(RIGHT, buff=0.2)
-        place(keyrow, left=mp.get_right()[0] + 0.7, cy=2.1)
+        place(keyrow, left=mp.get_right()[0] + 0.7, cy=1.9)
         p08 = src_panel(NL + "cell-08.py", 3, subtitle=True)
-        place(p08, left=-6.0, top=mp.get_bottom()[1] - 0.25)
+        place(p08, left=-6.0, top=mp.get_bottom()[1] - 0.15)
         pin_box = SurroundingRectangle(p08.span(3, '"agent-framework-core==1.18.0"'), color=DATA, buff=0.06,
                                        stroke_width=3)
         pinned = tag("pinned", DATA)
@@ -321,7 +321,7 @@ class Receipt(VoiceScene):
         p16 = src_panel(NL + "cell-16.redacted.py", 6, 12, size=20, wrap={6: ["Email is"]})
         _with_header(p16, "Cheese Newsletter · cell 16 · lines 6–12",
                      subtitle=cell_title(NL + "cell-16.redacted.py"))
-        place(p16, left=-6.15, top=p08.get_bottom()[1] - 0.25)
+        place(p16, left=-6.15, top=p08.get_bottom()[1] - 0.15)
         bars_you = VGroup(p16.bar(8, TURN, 0.2), p16.bar(9, TURN, 0.2))
         bars_off = VGroup(p16.bar(10, S.GREY, 0.22), p16.bar(11, S.GREY, 0.22))
         you = tag("you and a friend", TURN)
@@ -334,6 +334,8 @@ class Receipt(VoiceScene):
         inside(cf, mp, keyrow, p08, pinned, p16)
         assert keyrow.get_right()[0] < cf.frame.get_right()[0] - 0.3
         assert mp.get_top()[1] < cf.title.get_bottom()[1] - 0.1
+        assert keyrow.get_top()[1] < cf.title.get_bottom()[1] - 0.1
+        apart(tr, cf.title, 0.1)               # the caption's descenders stay off the tab's top border
         apart(you, row_of(p16, 8), 0.04)
         apart(you, row_of(p16, 6, 1), 0.1)
         apart(off, row_of(p16, 11), 0.04)
@@ -360,7 +362,7 @@ class Receipt(VoiceScene):
 
         # ============================================================ 1 · the orchestrator: three tools, 16 iterations
         p25 = src_panel(NL + "cell-25.py", [5, 8, (12, 16), 25], subtitle=True)
-        place(p25, left=-6.0, top=2.35)
+        place(p25, left=-6.0, top=2.15)
         model = p25.span(5, '"gpt-5.6-luna"')
         tool_bars = [p25.bar(n, DATA, 0.2) for n in (13, 14, 15)]
         web = tag("web search", CLOUD)
@@ -378,6 +380,7 @@ class Receipt(VoiceScene):
         inside(p25, web, paid, one)
         assert paid.get_right()[0] < p25.code.background.get_right()[0] - 0.1
         assert p25.get_bottom()[1] > cf.frame.get_bottom()[1] + 0.15, p25.get_bottom()
+        assert p25.get_top()[1] < cf.title.get_bottom()[1] - 0.1, p25.get_top()
         with self.voiceover(SAY[1]) as vo:
             self.play(*[FadeOut(m) for m in (mp, keyrow, p08, pin_box, pinned, p16, bars_you, bars_off, you,
                                              off, ul_preview)], tr.goto(4), run_time=0.6)
@@ -406,14 +409,14 @@ class Receipt(VoiceScene):
         box_a = obox(RUN_A, head, width=w_box)
         box_b = obox(RUN_A + [SEND, SAVED], head, width=w_box)
         for b in (box_a, box_b, box_c):
-            place(b, left=-6.0, top=2.4)
+            place(b, left=-6.0, top=2.18)
         for i in range(len(RUN_A)):
             assert np.allclose(box_a.rows[i].get_center(), box_c.rows[i].get_center(), atol=1e-3)
         x4 = right_bracket(box_a.rows[2:6], "×4", TURN)
         p16b = src_panel(NL + "cell-16.redacted.py", 114, 116, size=20, wrap=True)
         _with_header(p16b, "Cheese Newsletter · cell 16 · lines 114–116",
                      subtitle=cell_title(NL + "cell-16.redacted.py"))
-        place(p16b, left=-6.0, top=box_a.get_bottom()[1] - 0.25)
+        place(p16b, left=-6.0, top=box_a.get_bottom()[1] - 0.12)
         widen(p16b, 6.15)
         bar114 = p16b.bar(114, DATA, 0.2)
         bar116 = p16b.bar(116, TURN, 0.15)
@@ -428,6 +431,7 @@ class Receipt(VoiceScene):
         assert x4.get_right()[0] < box_a.frame.get_right()[0] - 0.1
         assert p16b.get_bottom()[1] > cf.frame.get_bottom()[1] + 0.1, p16b.get_bottom()
         assert box_c.get_bottom()[1] > cf.frame.get_bottom()[1] + 0.15
+        assert box_c.get_top()[1] < cf.title.get_bottom()[1] - 0.1, box_c.get_top()
         assert four.get_right()[0] < cf.frame.get_right()[0] - 0.15
         with self.voiceover(SAY[2]) as vo:
             self.play(*[FadeOut(m) for m in (p25, model, iters_box, bar25, one, web, paid, *tool_bars)],

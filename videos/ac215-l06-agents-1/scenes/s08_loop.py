@@ -29,7 +29,8 @@ Beats (script.md "## S08", one voiceover block each):
 6. The track returns full size on the left with its counter (0 / 12), the gate along the top.
    CODE(Cheese Quiz · cell 71: 5–7) `max_turns=12` and CODE(Cheese Newsletter · cell 25: 8, GREY
    subtitle “Orchestrator Agent”) `"max_iterations": 16` write in bottom right and are boxed YELLOW
-   as named. Replay: the token races to 12 / 12 (RED), the gate slams RED "MaxTurnsExceeded".
+   as named; a PURPLE chip on each header row names the framework (OpenAI Agents SDK: this Runner
+   is not ADK's; Microsoft Agent Framework). Replay: the token races to 12 / 12 (RED), the gate slams RED "MaxTurnsExceeded".
 7. LECTURE 41. V1's anatomy (slide 41: no Task/Goal ends), the track beside it: Dynamic Control
    GREY dashed, its name grays out; the four blocks light (white outline) as named; the track flies
    into the bar, which fills PURPLE; caption "the framework writes this part".
@@ -113,6 +114,7 @@ from manim import (
     VGroup,
     Write,
     linear,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -345,8 +347,12 @@ class TheLoop(VoiceScene):
             vo.wait_until("and memory")
             self.play(*hs.parts_in("memory", "sp_memory"), run_time=0.5)
             vo.wait_until("Unroll the spoke")
+            # the node's frame is filled S.BG at 1.0: Indicate on the whole node floods it YELLOW and
+            # hides "tools"; pulse the label and the border instead (as S05's flash())
             self.play(Indicate(hs.parts["sp_tools"], color=TURN, scale_factor=1.1),
-                      Indicate(hs.parts["tools"], color=TURN, scale_factor=1.06), run_time=0.6)
+                      Indicate(hs.parts["tools"][1], color=TURN, scale_factor=1.06),
+                      hs.parts["tools"].frame.animate(rate_func=there_and_back).set_stroke(TURN, 4.5),
+                      run_time=0.6)
             pairs = {"hub": "model", "tools": "tools", "sp_tools": "track"}
             fades = [hs.parts[n] for n in ("planner", "memory", "sp_planner", "sp_memory")]
             self.play(*[ReplacementTransform(hs.parts[a], lt.parts[b]) for a, b in pairs.items()],
@@ -431,7 +437,19 @@ class TheLoop(VoiceScene):
         c71 = src_panel("colab/cheese-quiz/cell-71.py", 5, 7)
         c25 = src_panel("colab/cheese-newsletter/cell-25.py", 8, subtitle=True)   # “Orchestrator Agent”
         c25.shift(UP * (-3.5 - c25.get_bottom()[1]) + RIGHT * (6.45 - c25.get_right()[0]))
-        c71.shift(UP * (c25.get_top()[1] + 0.15 - c71.get_bottom()[1]) + RIGHT * (6.45 - c71.get_right()[0]))
+        # two different frameworks, each named on its header row (PURPLE: the loop a framework
+        # runs): the quiz's Runner is the OpenAI Agents SDK's, not ADK's (cell 11 imports `agents`);
+        # the newsletter's max_iterations is Microsoft Agent Framework's (cell 9, `agent_framework`)
+        fw71 = chip("OpenAI Agents SDK", TOOL, size=20)
+        fw25 = chip("Microsoft Agent Framework", TOOL, size=20, pad_x=0.16)
+        fw25.align_to(c25.code, RIGHT)
+        fw25.shift(UP * (c25.code.get_top()[1] + 0.06 - fw25.get_bottom()[1]))
+        # c71 sits clear above the c25 chip (the c25 header row is one chip tall now)
+        c71.shift(UP * (fw25.get_top()[1] + 0.14 - c71.get_bottom()[1]) + RIGHT * (6.45 - c71.get_right()[0]))
+        fw71.align_to(c71.code, RIGHT)
+        fw71.shift(UP * (c71.code.get_top()[1] + 0.06 - fw71.get_bottom()[1]))
+        assert fw25.get_left()[0] - c25.header.get_right()[0] > 0.15, "c25 chip on its header"
+        assert fw71.get_left()[0] - c71.header.get_right()[0] > 0.15, "c71 chip on its header"
         bx71 = SurroundingRectangle(c71.span(6, "max_turns=12"), color=TURN, buff=0.06, stroke_width=3)
         bx25 = SurroundingRectangle(c25.span(8, '"max_iterations": 16'), color=TURN, buff=0.06, stroke_width=3)
         with self.voiceover(SAY[6]) as vo:
@@ -442,16 +460,16 @@ class TheLoop(VoiceScene):
             for _ in range(2):
                 run_lap(self, lt6, 0.4)
             vo.wait_until("12 turns in the Cheese Quiz Guild")
-            self.play(FadeIn(c71, shift=UP * 0.15), run_time=0.5)
+            self.play(FadeIn(c71, shift=UP * 0.15), FadeIn(fw71, shift=UP * 0.15), run_time=0.5)
             self.play(Create(bx71), run_time=0.4)
             for _ in range(2):
                 run_lap(self, lt6, 0.4)
             vo.wait_until("16 iterations")
-            self.play(FadeIn(c25, shift=UP * 0.15), run_time=0.5)
+            self.play(FadeIn(c25, shift=UP * 0.15), FadeIn(fw25, shift=UP * 0.15), run_time=0.5)
             self.play(Create(bx25), run_time=0.4)
             for _ in range(2):
                 run_lap(self, lt6, 0.4)
-            vo.wait_until("Hitting the Agents SDK cap")
+            vo.wait_until("Hitting the")           # also holds if SAY[6] gains "OpenAI" before "Agents SDK"
             while lt6.count < 11:                  # the race: 6 fast laps, the slam on "ends the run"
                 run_lap(self, lt6, 0.15, tick_time=0.1)
             run_lap(self, lt6, 0.15, ERR, tick_time=0.1)
@@ -470,7 +488,8 @@ class TheLoop(VoiceScene):
         fw.next_to(A, RIGHT, buff=0.45).set_y(bar.get_center()[1])
         with self.voiceover(SAY[7]) as vo:
             lr = lref_swap(self, lr, "41", run_time=0.4)
-            self.play(FadeOut(c71), FadeOut(c25), FadeOut(bx71), FadeOut(bx25), FadeOut(lt6.gate.caption),
+            self.play(FadeOut(c71), FadeOut(c25), FadeOut(fw71), FadeOut(fw25), FadeOut(bx71), FadeOut(bx25),
+                      FadeOut(lt6.gate.caption),
                       *lt6.parts_out("counter", "exit", "gate"), run_time=0.5)
             self.play(trk.animate.move_to([4.95, -0.3, 0]), run_time=0.7)     # out of the anatomy's way first
             self.play(FadeIn(A, shift=RIGHT * 0.2), run_time=0.6)
@@ -543,6 +562,8 @@ class TheLoop(VoiceScene):
             self.play(FadeOut(idx), FadeOut(prt), run_time=0.4)
             self.play(FadeIn(your, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("In part 2")
-            self.play(Indicate(your.tag, color=TURN, scale_factor=1.1), run_time=0.8)
+            # the tag's box is filled S.BG at 0.92: pulse its text and border, not the fill
+            self.play(Indicate(your.tag.text, color=TURN, scale_factor=1.1),
+                      your.tag.box.animate(rate_func=there_and_back).set_stroke(TURN, 3.5), run_time=0.8)
         self.wait(2)
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)

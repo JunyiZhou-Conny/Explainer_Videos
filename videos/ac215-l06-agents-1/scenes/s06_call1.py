@@ -37,10 +37,12 @@ Beats (script.md "## S06", one voiceover block each):
 8. The search text flashes, GREY tag "4 words"; "the description asked for" + excerpt chip
    agent_tools.py · line 33 "a sentence or two". The id row and the seal pulse.
 9. The panel becomes PANEL(out.txt line 52, "out.txt · line 51"): automatic_function_calling_
-   history=[] GREY + tag "the SDK ran nothing". The BLUE card moves to the trust boundary
-   (extended down), unopened; caption "Gemini wrote arguments · nothing has run yet". A GOLD tick
-   "1 paid call" after the call strip. ▶ your turn on a static two-column GREY card (with your
-   key: the command; look for, in order; if it fails with your key; GOLD "1 Gemini call · paid").
+   history=[] GREY + tag "the SDK ran nothing"; under the panel, at "it only has declarations", a
+   GREY caption: it runs functions itself only when given Python functions. The BLUE card moves to
+   the trust boundary (extended down), unopened; caption "Gemini wrote arguments · nothing has run
+   yet". A GOLD tick "1 paid call" (so far) after the call strip. ▶ your turn on a static two-column
+   GREY card (with your key: the command; look for, in order; if it fails with your key; GOLD
+   "2 Gemini calls + 1 embedding call · paid": the whole run, as S07's GOLD tag).
    Hold 2 s. Everything fades: empty frame.
 """
 
@@ -314,7 +316,7 @@ def turn_card_two_cols(size=20):
         _ind(s("start with"), m("sh docker-shell.sh")),
     ).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
     cols = VGroup(left, right).arrange(RIGHT, aligned_edge=UP, buff=0.55)
-    cost = s("1 Gemini call · paid", COST)
+    cost = s("2 Gemini calls + 1 embedding call · paid", COST)   # the whole run, as S07's GOLD tag
     body = VGroup(top, cols, cost).arrange(DOWN, aligned_edge=LEFT, buff=0.26)
     fr = box(body.width + 0.6, body.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.97, radius=0.14)
     fr.move_to(body)
@@ -593,8 +595,17 @@ class CallOne(VoiceScene):
 
         # ============================================================ 9 · nothing has run yet; your turn
         lp52 = log_panel([L52], "out.txt · line 51")
-        place(lp52, cx=0, bottom=-3.55)
+        place(lp52, cx=0, bottom=-3.1)                  # room under it for the SDK caption
         stf52 = staff_run_tag().next_to(lp52.header, RIGHT, buff=0.35)
+        afc = substring(lp52.rows[0], "automatic_function_calling_history=[]")
+        u52 = under(afc, S.GREY, 4)
+        sdk = grey_tag("the SDK ran nothing").next_to(lp52.rows[0], RIGHT, buff=0.4)
+        # why "ran nothing": automatic function calling needs Python callables, not declarations
+        sdk_why = note("it runs functions itself only when you pass Python functions · "
+                       "here: declarations only")
+        sdk_why.next_to(lp52.frame, DOWN, buff=0.12).align_to(sdk, RIGHT)
+        assert sdk_why.get_bottom()[1] > -3.55 and sdk_why.get_left()[0] > -6.45, \
+            sdk_why.get_corner(DOWN + LEFT)
         bx = st._bx.get_center()[0]
         cc_to = cc.copy()
         cc_to.move_to([bx, -0.3, 0])
@@ -603,6 +614,8 @@ class CallOne(VoiceScene):
         gate.set_z_index(-1)
         cap9 = label("Gemini wrote arguments · nothing has run yet", 22, INK)
         cap9.next_to(cc_to, DOWN, buff=0.3).set_x(bx)
+        assert lp52.header.get_top()[1] < cap9.get_bottom()[1] - 0.25, \
+            (lp52.header.get_top(), cap9.get_bottom())
         tick = cost_tick().next_to(cs_to, RIGHT, buff=0.3)
         paid = label("1 paid call", 20, COST).next_to(tick, RIGHT, buff=0.12)
         card = turn_card_two_cols()
@@ -612,17 +625,15 @@ class CallOne(VoiceScene):
             self.play(FadeOut(VGroup(t_four, grp33, u_name, u_auth, sig, stf, lp)),
                       cc.animate.move_to(cc_to), Create(gate), run_time=0.9)
             self.play(FadeIn(lp52, shift=UP * 0.15), FadeIn(stf52), run_time=0.4)
-            afc = substring(lp52.rows[0], "automatic_function_calling_history=[]")
-            u52 = under(afc, S.GREY, 4)
-            sdk = grey_tag("the SDK ran nothing").next_to(lp52.rows[0], RIGHT, buff=0.4)
             self.play(Create(u52), FadeIn(sdk, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("it only has declarations")
-            self.play(FadeIn(cap9, shift=UP * 0.1), run_time=0.5)
-            self.play(Indicate(cc.rows, color=CLOUD, scale_factor=1.05), run_time=0.6)
+            self.play(FadeIn(sdk_why, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeIn(cap9, shift=UP * 0.1), Indicate(cc.rows, color=CLOUD, scale_factor=1.05),
+                      run_time=0.7)
             vo.wait_until("So far, one paid call")
             self.play(FadeIn(tick, scale=1.5), FadeIn(paid, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("Pause here")
-            self.play(FadeOut(VGroup(st, cc, gate, cap9, lp52, stf52, u52, sdk)),
+            self.play(FadeOut(VGroup(st, cc, gate, cap9, lp52, stf52, u52, sdk, sdk_why)),
                       FadeIn(card, shift=UP * 0.15), run_time=0.8)
         self.wait(2)                                    # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tr, cs, tick, paid, card)), run_time=0.8)
