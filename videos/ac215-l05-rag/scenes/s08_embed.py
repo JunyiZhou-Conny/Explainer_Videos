@@ -519,11 +519,11 @@ class Embeddings(VoiceScene):
                       run_time=1.0)
             self.add(cb)
             self.play(FadeIn(len_lab), FadeIn(us), Create(u_circ), GrowArrow(a_full), FadeIn(one), run_time=0.8)
-            vo.wait_until("the code asks for the first 256")
+            vo.wait_until("The code asks for the first 256")
             self.play(Indicate(dim256, color=TURN, scale_factor=1.3), *cb.parts_in("keep"), run_time=0.7)
             self.play(*cb.cut(), Transform(a_full, a_256), FadeIn(keep_lab, shift=UP * 0.1),
                       ReplacementTransform(len_lab, len04), run_time=1.0)
-            vo.wait_until("a prefix the model is trained")
+            vo.wait_until("The model is trained")
             self.play(Indicate(cb.parts["keep"], color=TURN, scale_factor=1.15), run_time=0.9)
             self.play(flash(a_full), Indicate(keep_lab, color=TURN, scale_factor=1.05), run_time=1.1)
 

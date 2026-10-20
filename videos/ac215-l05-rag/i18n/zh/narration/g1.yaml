@@ -1,5 +1,5 @@
 # zh narration for S01-S09 (part 1, group g1: build the index — chunk, embed, load), sentence-aligned to
-# script.md v2: one zh sentence per English sentence (explainer.voice.split_sentences; 82 SAY lines, 205
+# script.md v2: one zh sentence per English sentence (explainer.voice.split_sentences; 82 SAY lines, 209
 # sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml (binding).
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8).
@@ -190,16 +190,18 @@ S04:
 - en: "Then this, which looks like an error but isn't. Compose first asks Docker Hub for an image called L-L-M rag CLI, finds none, and builds it instead."
   zh:
   - "然后是这个：看起来像报错，其实不是。"
-  - "Compose 先去 Docker Hub 找一个叫 llm-rag-cli 的 image，没找到，就改为自己构建。"
+  - "Compose 在 Docker Hub 上没找到叫 llm-rag-cli 的 image，就改为自己构建。"
   en_display:
   - null
   - "Compose first asks Docker Hub for an image called llm-rag-cli, finds none, and builds it instead."
-- en: "The build took 81 seconds here. Its context was 112 megabytes, mostly git history that still holds an old copy of the staff's database. With no docker ignore file, the image keeps it."
+- en: "The build took 81 seconds here. Its context was 112 megabytes. Most of it is git history, which still holds an old copy of the staff's database. With no docker ignore file, the image keeps it."
   zh:
   - "这里构建用了 81 秒。"
-  - "构建上下文有 112 MB，大部分是留着课程团队数据库旧拷贝的 git 历史。"
+  - "构建上下文有 112 MB。"
+  - "其中大部分是 git 历史，里面还留着课程团队数据库的旧拷贝。"
   - "因为没有 .dockerignore 文件，image 会把它留下来。"
   en_display:
+  - null
   - null
   - null
   - "With no .dockerignore file, the image keeps it."
@@ -292,7 +294,7 @@ S06:
   - "剩下的 7458 个字符还要 23 个窗口：一共 24 个 chunk。"
 - en: "Step 2: python cli.py, dash dash chunk, chunk type char split. It reads 11 books and prints each book's chunk count; the story gets 24. No key needed: this branch never calls Google. Pause and run it."
   zh:
-  - "第 2 步：python cli.py --chunk，chunk type 用 char-split。"
+  - "第 2 步：python cli.py --chunk，用 char-split。"
   - "它读入 11 本书，打印每本书的 chunk 数；故事得到 24 个。"
   - "不需要密钥：代码里的这个分支从不调用 Google。"
   - "暂停一下，自己跑一遍。"
@@ -344,7 +346,7 @@ S07:
   zh:
   - "看看前几个 chunk。"
   - "第 1 个 chunk 又从 Chapter One 开始，重复了第 0 个 chunk 的结尾。"
-  - "这个切分器所在的库，默认值是最多重叠 200 个字符，README 从没提过。"
+  - "这个切分器的库默认最多重叠 200 个字符，README 从没提过。"
   - "在边界处切开，也会让 chunk 变短。"
 - en: "Overlap is insurance against cutting an idea in half. But every repeated character is embedded, stored, and paid for. If you want a different value, set chunk overlap yourself."
   zh:
@@ -374,11 +376,15 @@ S08:
   zh:
   - "点积还会算上长度，会选中第二个候选人，也就是箭头更长的那个。"
   - "所以度量是一个选择；对文本来说，常用的是余弦。"
-- en: "The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers; the code asks for the first 256, a prefix the model is trained to make useful alone."
+- en: "The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers. The code asks for the first 256. The model is trained to make that prefix useful alone."
   zh:
-  - "教程用的模型是 gemini-embedding-001，原生返回 3072 个数；代码只要前 256 个，模型训练时就让这段前缀单独也能用。"
+  - "教程用的模型是 gemini-embedding-001，原生返回 3072 个数。"
+  - "代码只要前 256 个。"
+  - "模型训练时就让这段前缀单独也能用。"
   en_display:
-  - "The tutorial's model, gemini-embedding-001, natively returns 3,072 numbers; the code asks for the first 256, a prefix the model is trained to make useful alone."
+  - "The tutorial's model, gemini-embedding-001, natively returns 3,072 numbers."
+  - null
+  - null
 - en: "Chunks go to the model in batches of 100. On an API error, it retries up to 5 times, doubling the wait from 5 seconds."
   zh:
   - "这些 chunk 每批 100 个发给模型。"
@@ -387,13 +393,15 @@ S08:
   zh:
   - "你的问题之后也会用这同一个模型。"
   - "现在是 chunk，之后是问题：同一个模型。"
-- en: "Step 1: python cli.py, dash dash embed, chunk type char split: the first call to Google. On our machine it reads the first book, then stops at the missing key file. On yours, it runs."
+- en: "Step 1: python cli.py, dash dash embed, chunk type char split. It's the first call to Google. On our machine it reads the first book, then stops at the missing key file. On yours, it runs."
   zh:
-  - "第 1 步：python cli.py --embed，chunk type 用 char-split，首次调用 Google。"
+  - "第 1 步：python cli.py --embed，用 char-split。"
+  - "这是首次调用 Google。"
   - "在我们的机器上，它读入第一本书，然后停住了：没有密钥文件。"
   - "在你的机器上，它能跑通。"
   en_display:
-  - "Step 1: python cli.py --embed --chunk_type char-split: the first call to Google."
+  - "Step 1: python cli.py --embed --chunk_type char-split."
+  - null
   - null
   - null
 - en: "With your key, look for each book's file, a 5-second pause, a table with an embedding column, and new embeddings files beside the chunks."

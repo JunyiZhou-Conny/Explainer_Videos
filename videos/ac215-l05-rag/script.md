@@ -215,14 +215,14 @@ Conventions
   The question `How is tolminc cheese made?` (`cli.py:318`); chat's copy has two question marks
   (`cli.py:372`). The knowledge base: 11 books, ten from Project Gutenberg and the instructor's short
   story `Tolminc Cheese.txt` (7,808 characters). The stand-in query chunk `8440accaceb0ce96-6`.
-- Length and parts: narration 4,296 words (`python -m explainer.script`, v2; v1 4,262; BRIEF.md:
-  3,900–4,300, plan ~4,240). Part 1 = S01–S09 (build the index) 2,510 words; part 2 = S10–S16 (ask
-  the index) 1,786 words. Per scene (BRIEF.md budget ±15 %):
+- Length and parts: narration 4,339 words (`python -m explainer.script`, v2; v1 4,262; BRIEF.md:
+  3,900–4,300, plan ~4,240). Part 1 = S01–S09 (build the index) 2,534 words; part 2 = S10–S16 (ask
+  the index) 1,805 words. Per scene (BRIEF.md budget ±15 %):
 
   | scene | S01 | S02 | S03 | S04 | S05 | S06 | S07 | S08 | S09 | S10 | S11 | S12 | S13 | S14 | S15 | S16 |
   | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
   | budget | 220 | 260 | 270 | 290 | 240 | 280 | 220 | 330 | 300 | 190 | 290 | 290 | 280 | 270 | 210 | 300 |
-  | words | 248 | 251 | 283 | 295 | 270 | 272 | 191 | 378 | 322 | 195 | 262 | 265 | 285 | 266 | 190 | 323 |
+  | words | 248 | 251 | 285 | 298 | 270 | 272 | 191 | 396 | 323 | 196 | 262 | 268 | 285 | 270 | 190 | 334 |
 
   S08 sits at the top of its band: it carries the first paid call's recovery card (follow-along
   must-fix). `explainer.script` assumes 155 wpm; the series docs assume ~174, but a sample of this
@@ -518,7 +518,7 @@ times as GREY tags). Line 10's `81.5s` tag highlights; `[2/6]`, `[5/6]`, `[6/6]`
 `laptop/05b` line 2), a tiny GREEN block "chroma.sqlite3" (`laptop/14b`) and a small sliver "the
 rest"; one chip `erratum · no .dockerignore → exercises` and a GREY caption "the mounts hide both at
 run time".
-SAY: The build took 81 seconds here. Its context was 112 megabytes, mostly git history that still holds an old copy of the staff's database. With no docker ignore file, the image keeps it.
+SAY: The build took 81 seconds here. Its context was 112 megabytes. Most of it is git history, which still holds an old copy of the staff's database. With no docker ignore file, the image keeps it.
 
 SHOW: The terminal grows back. TERM(laptop/07-docker-shell.txt: 37–44; session). Line 38's container
 name `llm-rag-llm-rag-cli-run-90678535ddef` underlines GREY (S05 comes back to it); lines 42–43 get
@@ -759,7 +759,7 @@ SHOW: CODE(cli.py: 22–27) (header `cli.py · lines 22–27`); lines 24–26 hi
 3,072 cells (GREY labels "the model's full output" and "length 1") is cut after its first 256
 cells, which turn GREEN: "output_dimensionality = 256"; the 256-cell arrow shrinks to ≈ 0.4 of a
 dashed unit circle.
-SAY: The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers; the code asks for the first 256, a prefix the model is trained to make useful alone.
+SAY: The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers. The code asks for the first 256. The model is trained to make that prefix useful alone.
 
 SHOW: CODE(cli.py: 96–106) (the mini-map hides). A stack of GREEN chunk cards goes to the BLUE box in
 batches of 100 (chip `cli.py · lines 252–253`, `batch_size=100`), a GOLD tick per batch. A GREY chip
@@ -776,7 +776,7 @@ SHOW: TRACKER Embed 1. V1 shrinks back to the mini-map. Terminal (full width, 12
 `python cli.py --embed --chunk_type char-split` → TERM(cli-container/20-embed-char-split.txt: 2–6, …,
 21–22, …, 73; wrap) with the tag `real run · no key`. Line 73 prints RED. A GOLD tag on the command:
 "first Google call · your project pays".
-SAY: Step 1: python cli.py, dash dash embed, chunk type char split: the first call to Google. On our machine it reads the first book, then stops at the missing key file. On yours, it runs.
+SAY: Step 1: python cli.py, dash dash embed, chunk type char split. It's the first call to Google. On our machine it reads the first book, then stops at the missing key file. On yours, it runs.
 
 SHOW: The terminal shrinks to the strip. A GREY "with your key, look for" card, items writing in as
 named: "Processing file: outputs/chunks-char-split-… · per book" (`cli.py:240`); "a 5-second pause"
@@ -1039,7 +1039,7 @@ filter dims all but "1,355" (also `cli-container/11` line 8, the book's chunk fi
 "Italian"` dims all but "64" (`08` line 13), shown as 64 separate brighter dots → a YELLOW counter
 "mentioning Tolminc: 0" (`08` line 14). A strip prints TERM(recorded-embeddings/08-x-filter-counts.txt:
 13–15). The Tolminc cluster is fully dimmed.
-SAY: An extra check counts them in the loaded collection. Of 8,248 chunks, the book filter keeps 1,355; the word Italian keeps 64. How many mention Tolminc? None.
+SAY: An extra check counts them in the loaded collection. Of 8,248 chunks, the book filter keeps 1,355. The word Italian keeps 64. How many mention Tolminc? None.
 
 SHOW: Tag `stand-in query · a stored story chunk's vector`. A GREY card "an extra Python check ·
 code: study guide, Step 9"; terminal (11 rows) → TERM(recorded-embeddings/09-x-query-by-chunk-vector.txt:

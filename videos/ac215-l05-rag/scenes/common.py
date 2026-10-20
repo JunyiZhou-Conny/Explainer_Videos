@@ -276,6 +276,7 @@ from manim import (
     always_redraw,
     linear,
     smooth,
+    squish_rate_func,
 )
 
 from explainer import style as S
@@ -513,12 +514,14 @@ def lref(slides: str) -> VGroup:
 
 
 def lref_swap(scene, old, slides: str, run_time: float = 0.5) -> VGroup:
-    """Replace the lecture tag (old may be None). Returns the new tag (on screen)."""
+    """Replace the lecture tag (old may be None). Returns the new tag (on screen). The old tag
+    fades out, then the new one fades in (as S02 does), in the same run_time: faded at once,
+    the two texts overlapped mid-swap (final review: "Lecture 55 · slides A86 A17")."""
     new = lref(slides)
     if old is None:
         scene.play(FadeIn(new), run_time=run_time)
     else:
-        scene.play(FadeOut(old), FadeIn(new), run_time=run_time)
+        scene.play(Succession(FadeOut(old), FadeIn(new)), run_time=run_time)
     return new
 
 
@@ -913,6 +916,31 @@ def at_bottom(mob, y: float = BOTTOM, x: float = 0.0):
 
 
 # ------------------------------------------------------------------ terminal helpers
+def _l05_make_room(self, scene, n_new: int, run_time: float = 0.35) -> None:
+    """Terminal._make_room for L05 (rebound below; same signature, run_time and end state).
+    explainer/devops.py fades the scrolled-off lines out WHILE shifting them up a row, so for
+    2-5 frames they are drawn over the title bar and above the top border (final review F1:
+    8:11.95 in S05, 26:41.2 in S14). Here they fade out in place in the first 40% of the same
+    single play, then the staying lines shift up: nothing crosses the top border and no row is
+    drawn over a fading one. explainer/ stays untouched this round (its fix is planned apart)."""
+    overflow = len(self.lines) + n_new - self.rows
+    if overflow <= 0:
+        return
+    gone = VGroup(*self.lines.submobjects[:overflow])
+    stay = VGroup(*self.lines.submobjects[overflow:])
+    split = 0.4 if len(stay) else 1.0
+    anims = [FadeOut(gone, rate_func=squish_rate_func(smooth, 0.0, split))]
+    if len(stay):
+        anims.append(stay.animate(rate_func=squish_rate_func(smooth, split, 1.0))
+                     .shift(UP * self.pitch * overflow))
+    scene.play(*anims, run_time=run_time)
+    for m in gone:
+        self.lines.remove(m)
+
+
+Terminal._make_room = _l05_make_room
+
+
 def term(prompt: str = P_REPO, rows: int = 12, title: str | None = None, container: bool = False,
          top: float | None = None, width: float = TERM_W, size: float = TERM_PT) -> Terminal:
     """The house terminal (full width, 22 pt, 65 characters a row), bottom edge at BOTTOM, or its

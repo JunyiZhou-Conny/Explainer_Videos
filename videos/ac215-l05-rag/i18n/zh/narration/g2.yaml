@@ -1,6 +1,6 @@
 # zh narration for S10-S16 (part 2, group g2: ask the index — query, filters, chat, semantic chunking, the
 # lecture's advanced RAG, teardown and recap), sentence-aligned to script.md v2: one zh sentence per English
-# sentence (explainer.voice.split_sentences; 58 SAY lines, 159 sentences). Terms and rules: ../GLOSSARY.md,
+# sentence (explainer.voice.split_sentences; 58 SAY lines, 160 sentences). Terms and rules: ../GLOSSARY.md,
 # ../glossary.yaml (binding); the glossary's S10-S16 first_use sentences are used as written.
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8).
@@ -47,7 +47,7 @@ S10:
   zh:
   - "改天回来，再跑一次：sh docker-shell.sh。"
   - "不 pull，也不构建：image 已经有了。"
-  - "要是 git pull 改了依赖或 Dockerfile，就先运行：docker compose build。"
+  - "要是 git pull 改了依赖或 Dockerfile，先运行：docker compose build。"
   - "暂停一下，重新启动。"
 - en: "Two extra checks: both collections are back, with dimension 256, and an extra command called get returns the same 10 record IDs. The container was disposable; the data never lived in it."
   zh:
@@ -82,7 +82,7 @@ S11:
   - "代码里，query 函数先设定问题，用同一个 Google 模型把它变成向量，再打开这个 chunk type 的 collection。"
 - en: "Step 1: python cli.py, dash dash query, chunk type char split. A small slip first: it prints the word load, a label copied from the load code. Then it connects to Chroma, but stops at the key while embedding the question, before it searches."
   zh:
-  - "第 1 步：python cli.py --query，chunk type 用 char-split。"
+  - "第 1 步：python cli.py --query，用 char-split。"
   - "先说一个小疏漏：它打印的是 load 这个词，这个标签是从加载的代码里抄过来的。"
   - "然后它连上了 Chroma，但在把问题向量化时卡在了密钥上，还没开始搜索。"
   en_display:
@@ -120,10 +120,11 @@ S12:
   zh:
   - "问题问的是 Tolminc。"
   - "那 10 个结果会讲什么？"
-- en: "An extra check counts them in the loaded collection. Of 8,248 chunks, the book filter keeps 1,355; the word Italian keeps 64. How many mention Tolminc? None."
+- en: "An extra check counts them in the loaded collection. Of 8,248 chunks, the book filter keeps 1,355. The word Italian keeps 64. How many mention Tolminc? None."
   zh:
   - "额外检查一下：在加载好的 collection 里数一数。"
-  - "在 8248 个 chunk 里，按书过滤留下 1355 个；Italian 这个词留下 64 个。"
+  - "在 8248 个 chunk 里，按书过滤留下 1355 个。"
+  - "再按 Italian 这个词过滤，留下 64 个。"
   - "有多少提到 Tolminc？"
   - "一个都没有。"
 - en: "Now a search. The real question needs Google to become a vector, so we use a stand-in: the stored vector of one story chunk. Without filters, its 10 nearest are all from the story, at distances from 0, the chunk itself, up to 0.16."
@@ -247,7 +248,7 @@ S14:
   - "Look at the function handed to the chunker: generate_text_embeddings, the same one the embed step uses."
 - en: "The README's command runs all three steps with chunk type semantic split. On our machine it fails inside the chunk step, on the first book, before a single chunk is saved."
   zh:
-  - "README 里的命令用 semantic-split 这个 chunk type，把三步一起跑。"
+  - "README 里的命令，用 semantic-split 把三步一起跑。"
   - "在我们的机器上，它在 chunk 这一步里就失败了，卡在第一本书，一个 chunk 都还没保存。"
   en_display:
   - "The README's command runs all three steps with --chunk_type semantic-split."

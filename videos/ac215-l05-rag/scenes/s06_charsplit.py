@@ -480,7 +480,8 @@ class CharSplit(VoiceScene):
             self.play(hit[0].frame.animate(rate_func=there_and_back).set_stroke(LOOKUP, 6), run_time=0.5)
             self.play(TransformFromCopy(hit[0], in_prompt), FadeIn(rule, shift=UP * 0.1), run_time=0.8)
         self.wait(1.0)
-        self.play(FadeOut(VGroup(cards, q_cards, q_hit, in_prompt, pframe, plab, rule, ill)), run_time=0.6)
+        # the A19-A22 tag leaves with beat 0's picture: the script names it for beat 0 only
+        self.play(FadeOut(VGroup(cards, q_cards, q_hit, in_prompt, pframe, plab, rule, ill, lr)), run_time=0.6)
 
         # ========================================================== 1 · step 1: the visualizer
         br = browser_window(VIZ_URL, width=9.6, height=4.3).move_to([0, 0.6, 0])
@@ -662,7 +663,7 @@ class CharSplit(VoiceScene):
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(whole, run, trail, l350, l330, eq, br_up, l7458, br_dn, l23, cnt,
-                                     m_line, m_lab, mm, lr)), tr.goto(2), run_time=0.7)
+                                     m_line, m_lab, mm)), tr.goto(2), run_time=0.7)
             self.play(FadeIn(t), run_time=0.4)
             cmd = t.type(self, CHUNK_CMD)
             p_lines = t.print(self, CHUNK_OUT, run_time=0.6)
@@ -758,8 +759,8 @@ class CharSplit(VoiceScene):
         assert lec_note.get_bottom()[1] > strip_top(3) + 0.3                # the example clears the 3
 
         with self.voiceover(SAY[7]) as vo:
+            t.clear(self, run_time=0.25)              # the wc output clears before the tag lands
             self.play(FadeIn(lr2), FadeOut(x_wc), run_time=0.4)
-            t.clear(self, run_time=0.25)
             sl = type_cmd(self, t, SEAM.cmd, type_time=1.4)
             pin(self, sl, beside(extra_tag(), t, sl, buff=0.4))
             s_lines = t.print(self, SEAM_OUT, run_time=0.4)

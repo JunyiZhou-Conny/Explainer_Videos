@@ -84,6 +84,7 @@ from manim import (
     Rectangle,
     ReplacementTransform,
     RoundedRectangle,
+    Succession,
     Transform,
     TransformFromCopy,
     VGroup,
@@ -467,7 +468,7 @@ class BeyondNaive(VoiceScene):
                 ReplacementTransform(m.seis, c.seis[0]), ReplacementTransform(m.seis_frame, c.seis[1]),
                 *[ReplacementTransform(a, b) for a, b in zip(m.slots, c.slots)],
                 FadeOut(VGroup(m.books, m.a_books, m.idx, m.a_ag, m.answer, m.q_lab, m.a_q, m.tick, m.caption)),
-                FadeOut(ref), FadeIn(ref2),
+                Succession(FadeOut(ref), FadeIn(ref2)),     # one tag after the other: no overlap
                 run_time=1.3)
             self.play(FadeIn(c.a3), light(c.pre), Create(panel.dash), FadeIn(title), run_time=0.8)
             # light the slot's dashes and number only: Indicate recolours fills too, and the slot's
@@ -502,7 +503,7 @@ class BeyondNaive(VoiceScene):
             ref3 = lref("B42–B48")
             self.play(FadeOut(p.all, scale=0.15, target_position=c.slots[0].get_center()),
                       ReplacementTransform(c.slots[0], chip1), light(c.pre, False), light(c.ret),
-                      Transform(title, title2), FadeOut(ref2), FadeIn(ref3), run_time=1.2)
+                      Transform(title, title2), Succession(FadeOut(ref2), FadeIn(ref3)), run_time=1.2)
             self.play(Indicate(VGroup(*c.slots[1][1:]), color=TURN, scale_factor=1.25), run_time=0.6)
             vo.wait_until("Keywords pin down")
             self.play(FadeIn(h.kw, shift=DOWN * 0.2), run_time=0.5)
@@ -562,7 +563,7 @@ class BeyondNaive(VoiceScene):
             ref4 = lref("B51–B65")
             self.play(FadeOut(hybrid_all, scale=0.15, target_position=c.slots[1].get_center()),
                       ReplacementTransform(c.slots[1], chip2), light(c.ret, False), light(c.post),
-                      Transform(title, title3), FadeOut(ref3), FadeIn(ref4), run_time=1.2)
+                      Transform(title, title3), Succession(FadeOut(ref3), FadeIn(ref4)), run_time=1.2)
             self.play(FadeIn(r.q, shift=RIGHT * 0.2), FadeIn(r.ex), run_time=0.6)
             vo.wait_until("A fast retriever")
             self.play(GrowFromEdge(r.a_q, UP), FadeIn(r.ret, shift=DOWN * 0.15), run_time=0.7)
