@@ -1,0 +1,3 @@
+$ docker exec llm-rag-analysis-frontend-ai-chatbot wget -qO- -T 10 http://localhost:3000/ | grep -o '<title>[^<]*</title>'
+wget: can't connect to remote host (127.0.0.1): Connection refused
+[exit 1]

@@ -1,0 +1,3 @@
+$ curl -s --max-time 300 -o /tmp/l10-home.html -w 'HTTP %{http_code}\n' http://localhost:3200/ && grep -o '<title>[^<]*</title>' /tmp/l10-home.html
+HTTP 000
+[exit 56]
