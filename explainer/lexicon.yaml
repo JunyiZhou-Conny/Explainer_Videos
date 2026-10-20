@@ -145,3 +145,21 @@ Havarti: {ipa: "həvˈɑːɹɾi", say: "huh-var-tee"}
 "1.27.5": {ipa: "wˈʌn pɔɪnt twˈɛnti sˈɛvən pɔɪnt fˈaɪv", say: "one point twenty-seven point five"}
 "3.10": {ipa: "θɹˈiː pɔɪnt tˈɛn", say: "three point ten"}
 "406": {ipa: "fˈɔːɹ ˈoʊ sˈɪks", say: "four oh six"}
+# AC215 L09 (videos/ac215-l09-ci-testing); verified against Kokoro af_heart phonemes
+pytest: {ipa: "pˈaɪtˌɛst", say: "pie-test"}
+pytest.ini: {ipa: "pˈaɪtˌɛst dˈɑːt ˌaɪˌɛnˈaɪ", say: "pie-test dot I-N-I"}
+babykev: {ipa: "bˈeɪbi kˈɛv", say: "baby-kev"}
+logits: {ipa: "lˈoʊdʒɪts", say: "low-jits"}
+yamllint: {ipa: "jˈæməl lˈɪnt", say: "yaml lint"}
+F401: {ipa: "ˈɛf fˈɔːɹ ˈoʊ wˈʌn", say: "F four oh one"}
+cheese-app-ci-cd: {ipa: "tʃˈiːz ˈæp sˌiːˈaɪ sˌiːdˈiː", say: "cheese app C-I C-D"}
+cheese-app-api: {ipa: "tʃˈiːz ˈæp ˌeɪpˌiːˈaɪ", say: "cheese app A-P-I"}
+utils.py: {ipa: "jˈuːtɪlz dˈɑːt pˈaɪ", say: "utils dot pie"}
+service.py: {ipa: "sˈɜːvɪs dˈɑːt pˈaɪ", say: "service dot pie"}
+0.13.2: {ipa: "zˈiəɹoʊ pɔɪnt θˈɜːtiːn pɔɪnt tˈuː", say: "zero point thirteen point two"}
+1.59.0: {ipa: "wˈʌn pɔɪnt fˈɪfti nˈaɪn pɔɪnt zˈiəɹoʊ", say: "one point fifty-nine point zero"}
+3.13.16: {ipa: "θɹˈiː pɔɪnt θˈɜːtiːn pɔɪnt sˈɪkstiːn", say: "three point thirteen point sixteen"}
+2.14.1: {ipa: "tˈuː pɔɪnt fˈɔːɹtiːn pɔɪnt wˈʌn", say: "two point fourteen point one"}
+26.10.1: {ipa: "twˈɛnti sˈɪks pɔɪnt tˈɛn pɔɪnt wˈʌn", say: "twenty-six point ten point one"}
+4.7.0: {ipa: "fˈɔːɹ pɔɪnt sˈɛvən pɔɪnt zˈiəɹoʊ", say: "four point seven point zero"}
+7.4.1: {ipa: "sˈɛvən pɔɪnt fˈɔːɹ pɔɪnt wˈʌn", say: "seven point four point one"}
