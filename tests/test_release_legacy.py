@@ -123,3 +123,25 @@ def test_preflight_lists_the_scenes_and_sees_no_latex(episode):
     (ep / "REVIEW.md").write_text("pending\n")
     with pytest.raises(SystemExit, match="human-review"):
         rel.legacy_preflight(ep)
+
+
+@pytest.mark.parametrize("line", [
+    "self.num = DecimalNumber(value, num_decimal_places=0)",   # L05's and L06's counters
+    "n = Integer(3)",
+    "line = NumberLine(x_range=[0, 10], include_numbers=True)",
+    "ax.add_coordinates()",
+    "label = brace.get_tex('n')",
+])
+def test_preflight_sees_latex_behind_numbers_and_labels(episode, line):
+    """DecimalNumber and friends typeset with LaTeX: missing them sent L05's release runners without TeX."""
+    ep, _ = episode
+    (ep / "scenes").mkdir()
+    (ep / "scenes" / "common.py").write_text(line + "\n")
+    assert rel.legacy_preflight(ep)["latex"] is True
+
+
+def test_preflight_ignores_plain_text_counters(episode):
+    ep, _ = episode
+    (ep / "scenes").mkdir()
+    (ep / "scenes" / "common.py").write_text("n = Text('14,228'); title = 'Integer overflow'\n")
+    assert rel.legacy_preflight(ep)["latex"] is False
