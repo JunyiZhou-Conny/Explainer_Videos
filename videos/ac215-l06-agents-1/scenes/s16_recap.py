@@ -455,16 +455,20 @@ class Recap(VoiceScene):
             # the shutdown box right away (the ^C row scrolls out of the strip): the terminal keeps it
             # while it grows and the git status is typed, and it scrolls away with that output
             t.print(self, STOP[1:], run_time=0.3)
-            vo.wait_until("An extra git status")
+            # the strip grows right away (the box stays, " · extra" lands as "An extra" is said), so
+            # the git status output is up by "the renamed folders" rather than a phrase late
             resize(self, t, 12, keep=3, run_time=0.6, extra=[caption_extra(tr, True)])
-            cg = type_cmd(self, t, GIT.cmd, 1.2)
-            pin(self, cg.rows[0], beside(extra_tag(), t, cg.rows[0], buff=0.4), run_time=0.3)
-            out = t.print(self, GIT_OUT, run_time=0.7)
+            vo.wait_until("An extra git status")
+            cg = type_cmd(self, t, GIT.cmd, 1.0)
+            out = t.print(self, GIT_OUT, run_time=0.6)
             # out[1] and out[8] are '…' rows (the deleted files; the two ignored __pycache__/ folders)
             renamed, pin_row, ignored = [out[0], out[3], out[4], out[5]], out[2], [out[6], out[7], out[9]]
             vo.wait_until("the renamed folders")
-            self.play(LaggedStart(*[Indicate(r.glyphs, color=TURN, scale_factor=1.06) for r in renamed],
-                                  lag_ratio=0.2), run_time=1.0)
+            xt = beside(extra_tag(), t, cg.rows[0], buff=0.4)     # the extra tag joins the flash
+            pin(self, cg.rows[0], xt, anim=AnimationGroup(
+                FadeIn(xt, shift=LEFT * 0.1),
+                LaggedStart(*[Indicate(r.glyphs, color=TURN, scale_factor=1.06) for r in renamed], lag_ratio=0.2)),
+                run_time=1.0)
             vo.wait_until("and your Python pin")
             self.play(pin_row.glyphs.animate.set_color(DATA), run_time=0.4)
             pin(self, pin_row, beside(_keep(tag("your pin", DATA)), t, pin_row), run_time=0.4)

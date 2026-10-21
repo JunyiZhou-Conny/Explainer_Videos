@@ -17,7 +17,7 @@ Beats (script.md "## S11", one voiceover block each):
    "model gemini-2.5-flash" boxed YELLOW in the three agent rows, YELLOW tag "from your root .env ·
    yours: the model you set" above the terminal, then the GREY tag "the capture kept
    .env.example's 2.5-flash" beside the tree's last row (the viewer set gemini-3.1-flash-lite in S09);
-   the YELLOW tag pops at "set yours".
+   the YELLOW tag's border flares at "set yours".
 2. The second terminal types `curl -s -X POST http://localhost:8000/apps/baseline/users/student/
    sessions; echo` (extra; folds) -> adk-laptop/32 line 2 (wrap); "state":{} and "events":[] GREEN;
    the session id underlined GREY, tag "your numbers will differ". The terminal shrinks to the 3-row
@@ -606,7 +606,9 @@ class SharedState(VoiceScene):
             assert kept_tag.get_right()[0] < t.box.get_right()[0] - 0.1, kept_tag.get_right()
             self.play(FadeIn(kept_tag, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("set yours")
-            self.play(pop(env_tag, 1.08), run_time=0.7)
+            # a flare, not pop(): the tag fills the room between x = -6.5 and the extra card, and a
+            # 1.08 swell crossed the safe edge and touched the card's corner at its peak
+            self.play(flare(env_tag.box, TURN, 6), run_time=0.7)
 
         # ========================================================== 2 · a new session: empty state, no events
         wb = Whiteboard(events_w=EV_W, cell_pitch=1.1)
