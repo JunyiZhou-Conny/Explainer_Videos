@@ -205,7 +205,8 @@ kept in separate sections.
    3); the visual pass read the burned-in copy every 3 s. Fix round 1 fixed T02 and T08: in the
    re-stitched cut A8–A10 stays on through road 3 and A19–A22 leaves with beat 0's picture ("Fixed",
    items 2 and 3).
-3. **Pause-and-ponder moments and a recap** ⚠ partly met.
+3. **Pause-and-ponder moments and a recap** ✔ by Conny's decision for the series (2026-10-21, see
+   below): five ponders, against AGENTS.md's aim of one every 2 minutes.
    - **Ponders:** five cards, each a 0.6 s fade-in and an 8 s silent timer; each answer starts as its
      timer ends or after it (`recheck/measured.json` `ponder`). No English cue plays during a timer:
      the five longest cue gaps (8.8–11.8 s) are these five windows.
@@ -230,8 +231,9 @@ kept in separate sections.
      the answers and the study guide (30:56.5–31:05.5). Part 1 closes on "The top lane is done: the
      index is built. In part 2, we ask it questions." (18:03.5–18:08.6) and part 2 reopens with a
      one-line recap (18:09.9).
-   - **Open question for Conny (as for L03 and L04):** does the series format, five ponders plus a
-     spoken recap and five questions, satisfy this gate for AC215?
+   - **Decided by Conny (2026-10-21, in the session that produced this episode):** 「我觉得可以保留现在
+     的密度」 — keep the current density. The AC215 series keeps 3–5 ponders per lecture plus a spoken
+     recap and test questions; this answers the question asked in L03's and L04's records too.
 4. **Narration written for the ear, with word-anchored cues** ✔.
    - **Spoken style:** script.md's conventions apply: commands, flags and paths are said in words
      ("dash dash chunk", "chunk type char split", "slash app"), versions that will change are said
@@ -1141,7 +1143,7 @@ The other picture fixes appear only in its 2 s contact sheets, where nothing was
 **Release and format**
 
 20. **Gate 3 shortfall:** five ponders against the aim of about 15.6. Not planned: it matches BRIEF.md
-    and the series rule of 3–5; see gate 3, with its question for Conny.
+    and the series rule of 3–5, which Conny confirmed on 2026-10-21 (see gate 3).
 21. **Narration over its budget:** 4,339 words against BRIEF.md's 3,900–4,300 (39 over; T1–T4 added
     four); part 1 has 2,534 against its plan of about 2,410 (5 % over). Not planned: the runtime,
     31:07, is inside 25–35 min.
