@@ -77,6 +77,7 @@ from manim import (
     FadeOut,
     GrowArrow,
     Indicate,
+    Rectangle,
     RoundedRectangle,
     VGroup,
 )
@@ -249,6 +250,9 @@ class OneContainer(VoiceScene):
         k0 = min(1.0, avail / stage.height)
         stage.rescale(k0)
         place(stage, cx=0, top=3.55)
+        # rescaled, the stage keeps its text size: "live: your edits show inside" would end under the
+        # mount arrow, so it sits a little lower (still between agent-harness/ and secrets/)
+        stage.parts["mount_app"][1].shift(DOWN * 0.15)
         # my additions to the stage (members, so they shrink and grow with it)
         sec_note = stage.parts["secrets"][2]                       # "empty"
         nreads = note("· nothing reads it").next_to(sec_note, RIGHT, buff=0.12)
@@ -399,9 +403,7 @@ class OneContainer(VoiceScene):
             base = tag("base image", SYSTEM)
             base.move_to(rdots.strut).set_x(img.get_center()[0])
             pre = grey_tag("pre-pulled here")
-            pre.move_to(rdots.strut).align_to(t.box, RIGHT).shift(LEFT * 0.15)
-            if base.get_right()[0] > pre.get_left()[0] - 0.15:
-                base.next_to(pre, LEFT, buff=0.15)
+            pre.move_to(rdots.strut).next_to(base, LEFT, buff=0.2)
             self.play(img.animate.set_color(SYSTEM), run_time=0.4)
             pin(self, rdots, base, run_time=0.4, anim=FadeIn(base, shift=DOWN * 0.08))
             pin(self, rdots, pre, run_time=0.4)
@@ -457,7 +459,7 @@ class OneContainer(VoiceScene):
             ucid = under(cid, LOOKUP, stroke=4)
             self.play(flash(cid, LOOKUP, 1.15), run_time=0.6)
             pin(self, pr, ucid, run_time=0.4, anim=Create(ucid))
-            pin(self, pr, beside(differ_tag(), t, pr, buff=0.3), run_time=0.4)
+            pin(self, pr, beside(grey_tag("container ID · your numbers will differ"), t, pr, buff=0.3), run_time=0.4)
             self.play(cid.animate.set_color(LOOKUP), run_time=0.3)
 
         # ========================================================== 7 · inside the container from now on; ▶
@@ -483,9 +485,11 @@ class OneContainer(VoiceScene):
         n8 = note("the agent framework installs every integration")
         place(n8, left=-6.25, cy=BAND1_Y)
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(card7), t.animate.set_opacity(0.3), run_time=0.5)
+            veil = Rectangle(width=t.box.width + 0.08, height=t.box.height + 0.08).set_stroke(width=0)
+            veil.set_fill(S.BG, 0.7).move_to(t.box)
+            self.play(FadeOut(card7), FadeIn(veil), run_time=0.5)
             self.play(FadeIn(t2, shift=UP * 0.4), run_time=0.6)
-            self.remove(t)                              # covered by the second terminal
+            self.remove(t, veil)                        # covered by the second terminal
             bare_prompt(self, t2)
             self.play(caption_extra(tr, True), run_time=0.4)
             vo.wait_until("Docker ps")
@@ -545,8 +549,7 @@ class OneContainer(VoiceScene):
         q110 = quote_card(110, lines=["not automatically forwarded", "by `docker exec`"],
                           header="README.md · line 110 (excerpt)", expected=False)
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(cap9), caption_extra(tr, False), run_time=0.4)
-            self.play(tr.goto(4), run_time=0.5)
+            self.play(FadeOut(cap9), tr.goto(4), run_time=0.5)
             resize(self, t2, 3, run_time=0.6)
             # the badge grows back, glyph only; what isn't about the key fades so the key story reads
             top = 3.52
@@ -585,7 +588,7 @@ class OneContainer(VoiceScene):
         # ========================================================== 11 · step 4's three lines; ▶
         card11 = turn_card([BUILD.cmd, READ, KEY_EXPORT, AGAIN.typed(12), Prose("keep working in this shell"),
                             (Prose("offline · free"), HARNESS)],
-                           header="only if you changed the key while the container ran:")
+                           header="only if you changed the key while the container ran:", width=9.0)
         place(card11, cx=0, cy=-0.2)
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(VGroup(stage, old, nkg, xm, dx, dx_t, p10, bar15, noe, q110)), run_time=0.5)

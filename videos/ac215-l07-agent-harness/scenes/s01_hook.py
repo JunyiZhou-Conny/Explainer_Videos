@@ -606,18 +606,20 @@ class Hook(VoiceScene):
                   "cross": lambda: cross_mark(0.3, ERR, stroke=5),
                   "book": lambda: notebook_glyph(0.42, CLOUD, check=False)}
         rows7 = VGroup()
-        for kind, lead, rest, col in LIMIT_ROWS:
+        y = 0.0
+        for kind, lead, rest, col in LIMIT_ROWS:          # glyphs in one column, texts from one x
             txt = rich(f"{lead} {rest}", 22, INK, lead=(len(lead), col))
+            place(txt, left=0.62, top=y)
             gl = glyphs[kind]()
-            gl.move_to(txt.get_left() + LEFT * 0.5)
+            gl.move_to([0.22, txt.get_center()[1], 0])
             rows7.add(VGroup(gl, txt))
+            y = txt.get_bottom()[1] - 0.34
         row3b = rich(LIMIT_ROW3B, 22, INK)
         r3 = rows7[2][1]
         k_rec = len("live answers:".replace(" ", ""))          # the glyph index of "recorded"
         place(row3b, top=r3.get_bottom()[1] - 0.14)
         row3b.align_to(r3[k_rec], LEFT)
         rows7[2].add(row3b)
-        rows7.arrange(DOWN, aligned_edge=LEFT, buff=0.36)
         body = VGroup(head, rows7).arrange(DOWN, aligned_edge=LEFT, buff=0.45)
         card7 = box(body.width + 0.9, body.height + 0.8, S.GREY, fill_opacity=0.0, radius=0.14)  # outline: drawn
                                                                     # after its header, it must not cover it
