@@ -260,6 +260,23 @@ def check_box() -> VGroup:
 
 
 class HarnessLayers(VoiceScene):
+    def play(self, *anims, **kw):
+        """Scene.play, then drop the wrapper groups an animation left on the scene (a LaggedStart's
+        group, a substring's glyph group): their members are drawn by their owners, and a wrapper
+        left behind would keep them on screen after their owner leaves (as in S01)."""
+        super().play(*anims, **kw)
+        self._prune()
+
+    def _prune(self):
+        for m in list(self.mobjects):
+            others = set()
+            for o in self.mobjects:
+                if o is not m:
+                    others.update(o.get_family())
+            fam = [f for f in m.get_family() if f is not m]
+            if fam and all(f in others for f in fam):
+                self.remove(m)
+
     def construct(self):
         assert len(SAY) == 11, len(SAY)
 
@@ -747,6 +764,9 @@ class HarnessLayers(VoiceScene):
             self.play(FadeIn(tc, shift=UP * 0.1), run_time=0.5)
         self.wait(2)                                    # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tr, tc)), run_time=0.6)
+        with open("/tmp/claude-0/-home-user/83ecda33-6884-51ab-9d37-743efd89ce6b/scratchpad/l07s05/left.txt", "w") as fh:  # DEBUG
+            for m in self.mobjects:  # DEBUG
+                if m.width > 0: fh.write(f"{type(m).__name__} {m.get_center()} {m.width:.2f}x{m.height:.2f} {[getattr(f, 'text', type(f).__name__) for f in m.get_family() if hasattr(f, 'text')][:4]}\n")  # DEBUG
         self.wait(0.3)
 
 

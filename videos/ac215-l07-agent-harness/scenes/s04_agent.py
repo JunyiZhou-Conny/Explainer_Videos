@@ -36,7 +36,7 @@ Beats (script.md "## S04", one voiceover block each):
     `products: 12 entries` comes back and goes in (stack 3, meter 3,013, a second tick). Round 2's
     request `check_stock` leaves the model and waits there.
  5  V2 dims to 20 % (Piece.dim_to; an opaque band behind the strip takes the dimmed meter and first
-    paddle under it whole). RECORDED(c23: 16–23) in a box (12.4 wide, 8 rows, lines 22–23 cut at
+    paddle under it whole). RECORDED(c23: 16–23) in a box (12.6 wide, 8 rows, lines 22–23 cut at
     the box edge), its own recorded tag; a PINK dashed seam drawn across the
     box between lines 20 and 21 (a seam between two rows runs across them); slide 21's six-step
     strip above the box (Think → Reason → Plan | Execute → Verify → Response, PINK seam). "Plan"
@@ -169,8 +169,8 @@ CARD_GAP = 0.9                                  # a card stops this far left of 
 DIM = 0.2                                        # beat 5: V2 dims to 20 %
 STRIP_Y = 2.25                                   # ... slide 21's strip
 BAND_LOW = 1.6                                   # ... the bottom of the opaque band behind it
-BOX16_TOP = 1.0                                  # ... the saved-output box's frame top
-BOX16_W = 12.4                                   # ... its width (it covers the dimmed V2's middle)
+BOX16_TOP = 1.1                                  # ... the saved-output box's frame top
+BOX16_W = 12.6                                   # ... its width (it covers the dimmed V2's middle)
 
 
 # ------------------------------------------------------------------ small helpers
@@ -545,7 +545,7 @@ class AgentLoop(VoiceScene):
             held = hold_updaters(lm)
             lm.add(card1, rtag4)                                   # they dim with V2 (taken out again in 6)
             self.play(lm.dim_to(DIM), run_time=0.4)
-            self.play(FadeIn(box16, shift=UP * 0.1), FadeIn(backing), FadeIn(strip), run_time=0.6)
+            self.play(FadeIn(backing), FadeIn(strip), FadeIn(box16, shift=UP * 0.1), run_time=0.6)
             self.play(Create(bseam), run_time=0.5)
             self.play(flash(strip.seam, LOOKUP, 1.1), flash(bseam, LOOKUP, 1.05), run_time=0.7)
             vo.wait_until("The model's plan")
