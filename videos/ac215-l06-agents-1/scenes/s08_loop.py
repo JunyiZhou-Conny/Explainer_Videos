@@ -114,8 +114,11 @@ from manim import (
     VGroup,
     Write,
     linear,
+    smooth,
+    squish_rate_func,
     there_and_back,
 )
+from manim.animation.animation import prepare_animation
 
 from explainer import style as S
 from explainer.devops import box, chip, label, mono, substring, tag
@@ -215,8 +218,11 @@ def morph_track(scene, src, dst, names=("track", "model", "tools", "token"), ext
     leaves the scene and dst is on it as one piece."""
     keep = [src.parts[n] for n in names]
     rest = [m for m in src.submobjects if m not in keep]
-    scene.play(*[ReplacementTransform(src.parts[n], dst.parts[n]) for n in names],
-               *[FadeOut(m) for m in rest], *extra, run_time=run_time)
+    # the rest fades first, then the parts travel (the shrinking track crossed the fading counter)
+    scene.play(*[ReplacementTransform(src.parts[n], dst.parts[n], rate_func=squish_rate_func(smooth, 0.3, 1.0))
+                 for n in names],
+               *[FadeOut(m, rate_func=squish_rate_func(smooth, 0.0, 0.4)) for m in rest], *extra,
+               run_time=run_time)
     scene.remove(*src.get_family())
     scene.remove(*[dst.parts[n] for n in names])
     scene.add(dst)
@@ -306,8 +312,10 @@ class TheLoop(VoiceScene):
         nt = note("no text", size=22).next_to(fc, RIGHT, buff=0.3)
         never = tag("never run", ERR).next_to(fc, DOWN, buff=0.2)
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(card), anno.animate.shift(DOWN * (p1.get_bottom()[1] + 3.5)),
-                      FadeIn(row), run_time=0.8)
+            # the ponder card leaves first, then the panel slides down through its place
+            self.play(FadeOut(card, rate_func=squish_rate_func(smooth, 0.0, 0.4)),
+                      anno.animate(rate_func=squish_rate_func(smooth, 0.3, 1.0)).shift(DOWN * (p1.get_bottom()[1] + 3.5)),
+                      FadeIn(row, rate_func=squish_rate_func(smooth, 0.6, 1.0)), run_time=0.8)
             # line 478 is the narrated line now: the config bar steps back to GREY
             self.play(bar478.animate.set_fill(TURN, 0.22), bars_cfg.animate.set_fill(S.GREY, 0.14),
                       run_time=0.4)
@@ -339,7 +347,14 @@ class TheLoop(VoiceScene):
             vo.wait_until("become a decision maker")
             self.play(*hs.parts_in("becomes"), run_time=0.4)
             self.wait(0.3)
-            self.play(*hs.merge(), *hs.parts_out("becomes"), run_time=0.9)
+            # "becomes" leaves first, then the core and the sheet sink into the hub (they crossed it)
+            sink = [prepare_animation(a) for a in hs.merge()]
+            for a in sink:
+                a.rate_func = squish_rate_func(smooth, 0.25, 1.0)
+            fade = [prepare_animation(a) for a in hs.parts_out("becomes")]
+            for a in fade:
+                a.rate_func = squish_rate_func(smooth, 0.0, 0.35)
+            self.play(*sink, *fade, run_time=0.9)
             vo.wait_until("a planner")
             self.play(*hs.parts_in("planner", "sp_planner"), run_time=0.5)
             vo.wait_until("tools, and memory")
@@ -454,7 +469,8 @@ class TheLoop(VoiceScene):
         bx25 = SurroundingRectangle(c25.span(8, '"max_iterations": 16'), color=TURN, buff=0.06, stroke_width=3)
         with self.voiceover(SAY[6]) as vo:
             gone5 = [p5, mod4, bar40, lab40, bar45, lab45, cap5, ill]
-            morph_track(self, lt5, lt6, extra=[FadeOut(m) for m in gone5], run_time=1.0)
+            morph_track(self, lt5, lt6, extra=[FadeOut(m, rate_func=squish_rate_func(smooth, 0.0, 0.4))
+                                               for m in gone5], run_time=1.0)
             self.play(*lt6.parts_in("counter", "exit", "gate"), run_time=0.4)
             self.add(lt6)
             for _ in range(2):

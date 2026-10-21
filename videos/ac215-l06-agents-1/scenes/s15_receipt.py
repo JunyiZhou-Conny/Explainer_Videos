@@ -2,8 +2,10 @@
 
 Beats (script.md "## S15", one voiceover block each):
 0. TRACKER NL 1 → 3. The BLUE Colab frame "Cheese Newsletter · Harness" (tag illustration). For
-   step 1 (not in the SHOW; as S14): GREY menu path File › Save a copy in Drive, the GOLD key and
-   `OPENAI_API_KEY` in Colab Secrets (cell 10 line 4). CODE(cell-08: 3)
+   step 1 (as S14): GREY menu path File › Save a copy in Drive, the GOLD key and `OPENAI_API_KEY` in
+   Colab Secrets (cell 10 line 4); with the menu path, the GREY two-line caption "first open it:
+   course site · Lecture 6 · Tutorial 3, / or the Cheese Newsletter link in the study guide" under
+   the cell-8 chip's place (no room beside the menu path), until "In the users cell". CODE(cell-08: 3)
    `"agent-framework-core==1.18.0" \\` (subtitle "Install Microsoft Agent Framework"), the pinned
    package boxed GREEN with the tag "pinned". CODE(cell-16.redacted: 6–12) (20 pt, line 6
    wrapped before "Email is"): lines 8–9 YELLOW, tag "you and a friend"; lines 10–11 GREY, note
@@ -30,8 +32,8 @@ Beats (script.md "## S15", one voiceover block each):
    bars). The GREEN receipt token (c27 line 35's path, folded) drops into the slot, the file glyph
    turns GREEN "on disk ✓", the gate turns GREEN and opens, the draft passes.
 4. TRACKER NL 6. The editor's GREY prompt card left of the open gate. CODE(cell-22: 16) (subtitle
-   "Editor Agent", plain text: it is prose in a string): GREY bar, "embedded URLs" YELLOW, becomes
-   a GREY sticky note "no embedded URLs" on the prompt. At "The saved preview": RECORDED(c30: 26
+   "Editor Agent", plain text: it is prose in a string): GREY bar, "embedded URLs" YELLOW, flashes
+   as a GREY sticky note "no embedded URLs" fades in on the prompt. At "The saved preview": RECORDED(c30: 26
    folded to `…Promotion URL: https://…`), the URL RED; at "because no code checks for it" the note
    drifts through the gate, unchecked, then the tag erratum · a rule that matters belongs in
    validate_newsletter; caption "a note is not a check".
@@ -88,7 +90,6 @@ from manim import (
     Create,
     FadeIn,
     FadeOut,
-    FadeTransform,
     Group,
     Indicate,
     LaggedStart,
@@ -98,6 +99,8 @@ from manim import (
     SurroundingRectangle,
     VGroup,
     VMobject,
+    smooth,
+    squish_rate_func,
     there_and_back,
 )
 
@@ -318,6 +321,15 @@ class Receipt(VoiceScene):
                                        stroke_width=3)
         pinned = tag("pinned", DATA)
         place(pinned, left=p08.code.background.get_right()[0] + 0.3, cy=row_of(p08, 3).get_center()[1])
+        # where the original notebook is, as S02 and S14 say it: the course site (Lecture 6 · Tutorial 3,
+        # Colab link, tutorials_demo.md "Tutorial 3: Cheese Newsletter - Harness") and the study guide's
+        # Cheese Newsletter checklist link the same Colab. Ed itself was never opened, so it is not named.
+        # No room beside the menu path (the key row fills it): under the chip, where p16 goes later; it
+        # leaves at "In the users cell", just before p16 comes in (a crossfade muddled the two).
+        where = VGroup(label("first open it: course site · Lecture 6 · Tutorial 3,", 20, S.GREY),
+                       label("or the Cheese Newsletter link in the study guide", 20, S.GREY))
+        where.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
+        place(where, left=-6.0, top=p08.get_bottom()[1] - 0.3)
         p16 = src_panel(NL + "cell-16.redacted.py", 6, 12, size=20, wrap={6: ["Email is"]})
         _with_header(p16, "Cheese Newsletter · cell 16 · lines 6–12",
                      subtitle=cell_title(NL + "cell-16.redacted.py"))
@@ -326,31 +338,36 @@ class Receipt(VoiceScene):
         bars_off = VGroup(p16.bar(10, S.GREY, 0.22), p16.bar(11, S.GREY, 0.22))
         you = tag("you and a friend", TURN)
         at_row_right(you, p16, 7)
-        you.shift(UP * 0.1)                    # clear of line 8's text below it
+        you.shift(UP * 0.14)                   # clear of line 8's text and YELLOW bar below it
         off = note("commented out", size=22)
         at_row_right(off, p16, 12)
         preview = p16.span(6, "Email is preview-only")
         ul_preview = under(preview, DATA, stroke=3)
-        inside(cf, mp, keyrow, p08, pinned, p16)
+        inside(cf, mp, keyrow, p08, pinned, p16, where)
+        apart(where, p08, 0.2)
+        apart(where, pinned, 0.2)
+        apart(where, mp, 0.2)
         assert keyrow.get_right()[0] < cf.frame.get_right()[0] - 0.3
         assert mp.get_top()[1] < cf.title.get_bottom()[1] - 0.1
         assert keyrow.get_top()[1] < cf.title.get_bottom()[1] - 0.1
         apart(tr, cf.title, 0.1)               # the caption's descenders stay off the tab's top border
         apart(you, row_of(p16, 8), 0.04)
+        apart(you, bars_you[0], 0.02)          # the tag's border stays off line 8's bar
         apart(you, row_of(p16, 6, 1), 0.1)
         apart(off, row_of(p16, 11), 0.04)
         assert pinned.get_right()[0] < cf.tag.get_right()[0]
         assert p16.get_bottom()[1] > cf.frame.get_bottom()[1] + 0.15, p16.get_bottom()
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(cf), run_time=0.8)
-            self.play(FadeIn(mp, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeIn(mp, shift=DOWN * 0.1), FadeIn(where, shift=LEFT * 0.1), run_time=0.5)
             self.play(mp.light(1), FadeIn(keyrow, shift=LEFT * 0.15), run_time=0.6)
             vo.wait_until("with Microsoft's Agent Framework")
             self.play(tr.goto(2), FadeIn(p08, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("pinned")
             self.play(Create(pin_box), FadeIn(pinned, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("In the users cell")
-            self.play(tr.goto(3), FadeIn(p16, shift=UP * 0.15), run_time=0.6)
+            self.play(tr.goto(3), FadeOut(where), run_time=0.4)   # gone before p16 takes its place
+            self.play(FadeIn(p16, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("put in yourself and a friend")
             self.play(FadeIn(bars_you), FadeIn(you, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("and keep two entries")
@@ -568,8 +585,12 @@ class Receipt(VoiceScene):
             vo.wait_until("success is a receipt")
             self.play(FadeOut(tok_lab), tok.animate.move_to(slot).scale(0.12).set_opacity(0),
                       LaggedStart(slot.animate.set_stroke(DATA, 3).set_fill(DATA, 0.6),
+                                  # "on disk?" out, then "on disk" and the tick in ("?" and the
+                                  # tick shared a place; the squeezed cross-fade read both)
                                   AnimationGroup(fglyph.animate.set_color(DATA),
-                                                 FadeTransform(on_disk, on_disk_ok), Create(tick)),
+                                                 FadeOut(on_disk, rate_func=squish_rate_func(smooth, 0.0, 0.45)),
+                                                 FadeIn(on_disk_ok, rate_func=squish_rate_func(smooth, 0.55, 1.0)),
+                                                 Create(tick, rate_func=squish_rate_func(smooth, 0.55, 1.0))),
                                   lag_ratio=0.6), run_time=0.8)
             self.remove(tok)
             fgrp.remove(on_disk)            # replaced by on_disk_ok: never bring "on disk?" back in a fade
@@ -615,7 +636,10 @@ class Receipt(VoiceScene):
             self.play(FadeIn(rule_bar), run_time=0.4)
             vo.wait_until("no embedded URLs")
             self.play(urls.animate.set_color(TURN), run_time=0.4)
-            self.play(FadeTransform(urls.copy(), sticky), run_time=0.9)     # the rule becomes a note
+            # the rule flashes in the code and the note fades in on the prompt card (a flying copy
+            # crossed the panel's header)
+            self.play(Indicate(urls, color=TURN, scale_factor=1.1, rate_func=squish_rate_func(there_and_back, 0.0, 0.5)),
+                      FadeIn(sticky, rate_func=squish_rate_func(smooth, 0.3, 1.0)), run_time=0.9)
             vo.wait_until("The saved preview has one anyway")
             self.play(FadeIn(prev, shift=UP * 0.1), FadeIn(prev_tag), run_time=0.5)
             self.play(url.animate.set_color(ERR), run_time=0.4)

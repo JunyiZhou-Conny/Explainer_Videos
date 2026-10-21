@@ -7,7 +7,7 @@ Beats (script.md "## S11", one voiceover block each):
    map fits beside it); a YELLOW bar walks model=, instruction=, output_key= as they are named; the
    panel becomes lines 21–26. LECTURE 40–41: the mini-map appears bottom right and grows into the
    right third (V1, compact, glyphs named); as each block is named it lights YELLOW and the argument
-   flies out of the code to label it: model= over the LLM core (BLUE), instruction= over Instructions,
+   flashes in the code as its label fades in on the map: model= over the LLM core (BLUE), instruction= over Instructions,
    a GREY dashed "tools= · none here" under Tools, output_key= and "within one session" under Memory.
 1. The panel becomes lines 35–39; SequentialAgent turns PURPLE and the map's Dynamic Control fills
    PURPLE with the chip "Runner + SequentialAgent"; validator, processor, summarizer flash in turn.
@@ -17,7 +17,7 @@ Beats (script.md "## S11", one voiceover block each):
    "model gemini-2.5-flash" boxed YELLOW in the three agent rows, YELLOW tag "from your root .env ·
    yours: the model you set" above the terminal, then the GREY tag "the capture kept
    .env.example's 2.5-flash" beside the tree's last row (the viewer set gemini-3.1-flash-lite in S09);
-   the YELLOW tag's border flares at "set yours".
+   the YELLOW tag's border flares at "check yours".
 2. The second terminal types `curl -s -X POST http://localhost:8000/apps/baseline/users/student/
    sessions; echo` (extra; folds) -> adk-laptop/32 line 2 (wrap); "state":{} and "events":[] GREEN;
    the session id underlined GREY, tag "your numbers will differ". The terminal shrinks to the 3-row
@@ -141,8 +141,9 @@ from manim import (
     ReplacementTransform,
     RoundedRectangle,
     Transform,
-    TransformFromCopy,
     VGroup,
+    smooth,
+    squish_rate_func,
     there_and_back,
 )
 from pygments.token import Punctuation, String
@@ -558,13 +559,17 @@ class SharedState(VoiceScene):
             self.play(FadeIn(lr), FadeIn(mini, scale=0.9), run_time=0.4)
             self.play(FadeTransform(mini, an), run_time=0.9)
             vo.wait_until("the LLM core")
-            self.play(an.light("core"), TransformFromCopy(p21.span(23, "model="), lab["core"]), run_time=0.7)
+            # each argument flashes on its line and its label fades in on the map (flying copies
+            # crossed the code and the map's labels)
+            self.play(an.light("core"), Indicate(p21.span(23, "model="), color=TURN, scale_factor=1.1),
+                      FadeIn(lab["core"], rate_func=squish_rate_func(smooth, 0.3, 1.0)), run_time=0.7)
             vo.wait_until("the instructions")
-            self.play(an.light("instructions"), TransformFromCopy(p21.span(24, "instruction="), lab["instructions"]),
-                      run_time=0.7)
+            self.play(an.light("instructions"), Indicate(p21.span(24, "instruction="), color=TURN, scale_factor=1.1),
+                      FadeIn(lab["instructions"], rate_func=squish_rate_func(smooth, 0.3, 1.0)), run_time=0.7)
             vo.wait_until("and no tools at all")
             self.play(an.light("tools"), FadeIn(lab["tools"], shift=UP * 0.1), run_time=0.6)
-            self.play(an.light("memory"), TransformFromCopy(p21.span(25, "output_key="), lab["memory_key"]),
+            self.play(an.light("memory"), Indicate(p21.span(25, "output_key="), color=TURN, scale_factor=1.1),
+                      FadeIn(lab["memory_key"], rate_func=squish_rate_func(smooth, 0.3, 1.0)),
                       FadeIn(lab["memory_note"], shift=UP * 0.1), run_time=0.7)
         self.play(an.unlight(), run_time=0.3)
 
@@ -606,7 +611,7 @@ class SharedState(VoiceScene):
             assert not covers_text(kept_tag, printed[-1][-1])
             assert kept_tag.get_right()[0] < t.box.get_right()[0] - 0.1, kept_tag.get_right()
             self.play(FadeIn(kept_tag, shift=LEFT * 0.1), run_time=0.4)
-            vo.wait_until("set yours")
+            vo.wait_until("check yours")
             # a flare, not pop(): the tag fills the room between x = -6.5 and the extra card, and a
             # 1.08 swell crossed the safe edge and touched the card's corner at its peak
             self.play(flare(env_tag.box, TURN, 6), run_time=0.7)

@@ -78,7 +78,7 @@ from common import (
     lref,
     mini_bin,
     output_box,
-    ponder_at,
+    ponder_card,
     _with_header,
     ring,
     saved_run_tag,
@@ -110,6 +110,10 @@ from manim import (
     Transform,
     VGroup,
     Write,
+    linear,
+    smooth,
+    squish_rate_func,
+    there_and_back,
 )
 from pygments.token import Punctuation, String
 
@@ -211,6 +215,25 @@ def unwrap(scene, anims):
             i = scene.mobjects.index(g)
             scene.mobjects[i:i + 1] = list(g.submobjects)
         unwrap(scene, a.animations)
+
+
+OUT_HALF = squish_rate_func(smooth, 0.0, 0.45)   # a swap in one play: the old text leaves first,
+IN_HALF = squish_rate_func(smooth, 0.55, 1.0)    # then the new one comes in (same run_time)
+
+
+def ponder_staged(scene, question: str, seconds: float, hide=()):
+    """common.ponder_at (same card, place, plays and run_times), but `hide` fades out before the
+    card fades in: at once, the card came in over them and both read mid-fade."""
+    card = ponder_card(question, width=10.2).move_to([0, -2.2, 0])
+    card[0].set_fill(S.BG, 1)
+    if card.get_bottom()[1] < -3.55:
+        card.shift(UP * (-3.55 - card.get_bottom()[1]))
+    scene.play(FadeIn(card, scale=0.95, rate_func=IN_HALF), *[FadeOut(m, rate_func=OUT_HALF) for m in hide],
+               run_time=0.6)
+    bar = card[3]
+    scene.play(bar.animate(rate_func=linear).become(bar.copy().scale(0.001, about_point=bar.get_start())),
+               run_time=seconds)
+    return card
 
 
 def pl(scene, *anims, **kw):
@@ -449,19 +472,24 @@ class ManyAgents(VoiceScene):
         sl.add_to_back(hl)
         sl.hl = hl
 
-    def close_slot(self, sl, pairs, icon, follow=(), fade=(), extra=(), run_time=0.9, instant=False):
+    def close_slot(self, sl, pairs, icon, follow=(), fade=(), extra=(), run_time=0.9, instant=False,
+                   stage=False):
         """The open slot's picture shrinks into its slot: each (source, icon part) pair morphs, the
         rest of `icon` grows in, each (text, icon part) in `follow` flies with its box into that part
         while it fades and shrinks, `fade` fades in place; the slot's frame turns solid GREY
-        (instant=True: set at once, for a row that is off screen and fades in with `extra`)."""
+        (instant=True: set at once, for a row that is off screen and fades in with `extra`).
+        stage=True: `fade` leaves first and the rest moves after it (same run_time), for a picture
+        that would cross the fading panel."""
         place(icon, right=sl.icon_right, cy=ROW_Y)
         targets = {id(b) for _, b in pairs}
         leaves = [m for m in icon.get_family() if not m.submobjects]
         rest = [m for m in leaves if id(m) not in targets]
-        anims = [ReplacementTransform(a, b) for a, b in pairs]
-        anims += [FadeIn(m, scale=1.6) for m in rest]
-        anims += [FadeOut(m, target_position=b.get_center(), scale=0.2) for m, b in follow]
-        anims += [FadeOut(m) for m in fade]
+        mv = {"rate_func": squish_rate_func(smooth, 0.3, 1.0)} if stage else {}
+        out = {"rate_func": squish_rate_func(smooth, 0.0, 0.4)} if stage else {}
+        anims = [ReplacementTransform(a, b, **mv) for a, b in pairs]
+        anims += [FadeIn(m, scale=1.6, **mv) for m in rest]
+        anims += [FadeOut(m, target_position=b.get_center(), scale=0.2, **mv) for m, b in follow]
+        anims += [FadeOut(m, **out) for m in fade]
         if instant:
             sl.hl.set_stroke(S.GREY, 2.5).set_fill(S.GREY, 0.08)
             sl.frame.set_stroke(opacity=0)
@@ -530,7 +558,8 @@ class ManyAgents(VoiceScene):
             # question it raises writes in
             self.play(Indicate(lt.plan, color=TURN, scale_factor=1.1), run_time=0.8)
             vo.wait_until("raises the question")
-            self.play(*[FadeOut(m) for m in trees], FadeOut(lr), FadeIn(lr38), Write(q), run_time=0.9)
+            self.play(*[FadeOut(m) for m in trees], FadeOut(lr, rate_func=OUT_HALF), FadeIn(lr38, rate_func=IN_HALF),
+                      Write(q), run_time=0.9)
             vo.wait_until("who plans the order")
             pl(self, LaggedStart(*[FadeIn(s, shift=DOWN * 0.15) for s in slots], lag_ratio=0.3),
                run_time=1.0)
@@ -559,7 +588,7 @@ class ManyAgents(VoiceScene):
                         [(s.box, ic1.sqs[i]) for i, s in enumerate(st_parts)]
                         + [(al.arrows[i], ic1.arrows[i]) for i in range(2)] + [(al.belt, ic1.belt)],
                         ic1, follow=[(s.text, ic1.sqs[i]) for i, s in enumerate(st_parts)]
-                        + [(al.token, ic1.sqs[2])], fade=[p1, u_order])
+                        + [(al.token, ic1.sqs[2])], fade=[p1, u_order], stage=True)   # crossed p1
 
         # ============================================================ 2 · slot 2: the model (agents as tools)
         tr = tracker("CQ-Guild", 1)
@@ -610,7 +639,8 @@ class ManyAgents(VoiceScene):
         place(c71, left=-6.4, cy=STRIP_Y + 0.2)
         u_cap = under(c71.chip.text[len("orchestrator,prompt,"):], TURN, stroke=3)
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(p68), *[FadeOut(u) for u in u_tools], FadeIn(p70, shift=UP * 0.15), run_time=0.7)
+            self.play(FadeOut(p68, rate_func=OUT_HALF), *[FadeOut(u, rate_func=OUT_HALF) for u in u_tools],
+                      FadeIn(p70, shift=UP * 0.15, rate_func=IN_HALF), run_time=0.7)
             vo.wait_until("follow the assembly line strictly")
             self.play(s_strict.animate.set_color(TURN), Create(u_strict), run_time=0.5)
             vo.wait_until("at most 2 review rounds")
@@ -618,7 +648,10 @@ class ManyAgents(VoiceScene):
             vo.wait_until("That's a rule in prose")
             self.play(FadeIn(prose, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("no code enforces it")
-            self.play(Indicate(prose, color=INK, scale_factor=1.05), run_time=0.6)
+            # the outline flares and the words pulse (Indicate filled the tag WHITE: its words vanished)
+            self.play(Indicate(prose.text, color=INK, scale_factor=1.05),
+                      # the outline swells with the words (alone, the 1.05 words touched the tight outline)
+                      prose.box.animate(rate_func=there_and_back).scale(1.05).set_stroke(INK, 3), run_time=0.6)
             vo.wait_until("except a cap of 12 turns")
             self.play(FadeIn(c71, shift=RIGHT * 0.15), run_time=0.5)
             self.play(Create(u_cap), run_time=0.4)
@@ -648,8 +681,9 @@ class ManyAgents(VoiceScene):
         ticks = [VGroup(Dot(radius=0.11, color=S.BG), cost_tick()).move_to(h) for h in hops]   # the edge stops under the coin
         card = turn_card(TURN_ROWS).move_to([0, -0.4, 0])
         with self.voiceover(SAY[4]) as vo:
-            pl(self, tr.goto(3), FadeOut(p70), FadeOut(u_strict), FadeOut(u_rounds), FadeOut(prose),
-               FadeOut(c71), FadeOut(u_cap), FadeOut(ptr), FadeIn(ob), FadeIn(srt), run_time=0.7)
+            pl(self, tr.goto(3), *[FadeOut(m, rate_func=OUT_HALF) for m in (p70, u_strict, u_rounds, prose, c71,
+                                                                            u_cap, ptr)],
+               FadeIn(ob, rate_func=IN_HALF), FadeIn(srt, rate_func=IN_HALF), run_time=0.7)
             vo.wait_until("logged three errors")
             pl(self, LaggedStart(*[FadeIn(r, shift=RIGHT * 0.1) for r in ob_rows[:3]], lag_ratio=0.45),
                run_time=1.3)
@@ -729,7 +763,7 @@ class ManyAgents(VoiceScene):
             pl(self, LaggedStart(*[AnimationGroup(FadeIn(bars[n]), FadeIn(labs[n], shift=LEFT * 0.1))
                                    for n in (89, 94, 99)], lag_ratio=0.35), run_time=1.1)
             self.play(FadeIn(only, shift=UP * 0.1), run_time=0.4)
-        pcard = ponder_at(self, PONDER_Q, 6, hide=(clf, only))
+        pcard = ponder_staged(self, PONDER_Q, 6, hide=(clf, only))
 
         # ============================================================ 6 · the answer: the else branch
         ifans = label("if the classifier answers", 22, S.GREY)
@@ -748,8 +782,13 @@ class ManyAgents(VoiceScene):
         fx_note.align_to(fx.text, DOWN)
         place(only, left=p3.code.get_left()[0], cy=-3.1)
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(pcard), FadeIn(ifans), FadeIn(tok, shift=UP * 0.1), run_time=0.4)
-            self.play(mover.animate.move_to([token_x, row_y[89], 0]), run_time=0.35)
+            self.play(FadeOut(pcard, rate_func=OUT_HALF), FadeIn(ifans, rate_func=IN_HALF),
+                      FadeIn(tok, shift=UP * 0.1, rate_func=IN_HALF), run_time=0.4)
+            # the token flashes and its copy fades in on line 89 (flying up, it crossed the
+            # subtitle and the code)
+            mover.move_to([token_x, row_y[89], 0])
+            self.play(Indicate(tok, color=LOOKUP, scale_factor=1.08),
+                      FadeIn(mover, rate_func=squish_rate_func(smooth, 0.3, 1.0)), run_time=0.35)
             self.play(Create(crosses[89]), labs[89].animate.set_opacity(0.45), run_time=0.25)
             self.play(mover.animate.move_to([token_x, row_y[94], 0]), run_time=0.3)
             self.play(Create(crosses[94]), labs[94].animate.set_opacity(0.45), run_time=0.25)

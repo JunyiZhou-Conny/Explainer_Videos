@@ -220,9 +220,10 @@ S05:
   - "第 3 步：sh docker-shell.sh。"
   - "Compose 先启动 Chroma。"
   - "后面那条 pull 的消息看起来像报错，其实无害：网上没有这个 image，所以 Compose 自己构建。"
-- en: "After about 40 seconds of building, the banner: Python 3.12.15 and uv 0.13.1, at the time of recording. After the at sign comes the container's ID, new every run; pause, and get to this prompt."
+- en: "After about 40 seconds of building, the banner prints. Python 3.12.15 and uv 0.13.1, at the time of recording. After the at sign comes the container's ID, new every run; pause, and get to this prompt."
   zh:
-  - "构建大约 40 秒后，出现横幅：录制时是 Python 3.12.15 和 uv 0.13.1。"
+  - "构建大约 40 秒后，出现横幅。"
+  - "录制时是 Python 3.12.15 和 uv 0.13.1。"
   - "提示符里 @ 符号后面是 container ID，每次运行都不一样；暂停一下，走到这个提示符。"
 - en: "An extra check from a second terminal: docker ps. Chroma publishes port 8000; remember that port for part 2."
   zh:

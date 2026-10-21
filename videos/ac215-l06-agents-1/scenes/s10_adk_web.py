@@ -23,7 +23,7 @@ Beats (script.md "## S10", one voiceover block each):
    server strip prints 15 lines 44–45 joined (wrap), "404 Not Found" RED.
 4. Why, as a picture (illustration), in place of the browser: a GREY folder 1-baseline/ holding
    agent.py -> a PURPLE arrow "adk web" -> a GREY chip app name = "1-baseline" (the folder's name
-   flies into it) -> the check card "Python identifier?" with its two rules, and under it the GREY
+   flashes and fades in there) -> the check card "Python identifier?" with its two rules, and under it the GREY
    tag "ADK 2.12 checks when it loads the agent · 1.27.5 checks later, in App(name=…)"; the leading
    1 and the - turn RED, a RED cross on each rule.
 5. A RED dashed "what if · just watch" frame; the server strip hides (one strip at a time); a 4-row
@@ -124,9 +124,10 @@ from manim import (
     Polygon,
     RoundedRectangle,
     Transform,
-    TransformFromCopy,
+    UpdateFromAlphaFunc,
     VGroup,
     smooth,
+    squish_rate_func,
     there_and_back,
 )
 
@@ -259,6 +260,22 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
     if cy is not None:
         m.set_y(cy)
     return m
+
+
+def refade(m, target, out=(0.0, 0.45), into=(0.55, 1.0)):
+    """Transform(m, target)'s end state, reached by fading: m fades out where it is, then fades
+    back in as `target` (moving, it crossed the text between). m keeps its identity."""
+    snap, goal = m.copy(), target.copy()
+
+    def upd(mob, a):
+        if a < into[0]:
+            k = 1 - smooth(min(1.0, max(0.0, (a - out[0]) / (out[1] - out[0]))))
+            mob.become(snap.copy().fade(1 - k))
+        else:
+            k = smooth(min(1.0, (a - into[0]) / (into[1] - into[0])))
+            mob.become(goal.copy().fade(1 - k))
+
+    return UpdateFromAlphaFunc(m, upd)
 
 
 def attach(scene, row, *mobs):
@@ -654,7 +671,10 @@ class AdkWeb(VoiceScene):
             vo.wait_until("Each folder name")
             self.play(GrowArrow(why.arrow), FadeIn(why.alabel), run_time=0.6)
             self.play(FadeIn(why.chip[0]), FadeIn(substring(why.cline, "app name =")),
-                      TransformFromCopy(substring(why.fname, "1-baseline"), substring(why.cline, "1-baseline")),
+                      # the folder name flashes in place and fades in on the code line (a flying copy
+                      # crossed its own name and "app name =")
+                      Indicate(substring(why.fname, "1-baseline"), color=TURN, scale_factor=1.1),
+                      FadeIn(substring(why.cline, "1-baseline"), rate_func=squish_rate_func(smooth, 0.3, 1.0)),
                       FadeIn(glyph_range(why.cline, len(why.cline.text) - 1)),
                       FadeIn(glyph_range(why.cline, why.cline.text.index('"'), why.cline.text.index('"') + 1)),
                       run_time=0.8)
@@ -715,7 +735,8 @@ class AdkWeb(VoiceScene):
             self.play(tr.goto(1), run_time=0.5)
             self.play(caption_extra(tr, True), run_time=0.3)
             vo.wait_until("which isn't in the README either")
-            resize(self, t, 13, run_time=0.7, extra=[FadeOut(back)])
+            # the caption is gone before the growing frame reaches it (the rows slid through it)
+            resize(self, t, 13, run_time=0.7, extra=[FadeOut(back, rate_func=squish_rate_func(smooth, 0.0, 0.2))])
             vo.wait_until("Stop the server with control C")
             stop = t.print(self, WEB.at(46, (49, 51)), run_time=0.6)
             self.play(Indicate(substring(stop[0], "^C"), color=TURN, scale_factor=1.5), run_time=0.6)
@@ -767,7 +788,10 @@ class AdkWeb(VoiceScene):
             # fades in the first half, before the growing frame reaches it
             resize(self, t, 9, run_time=0.5, extra=[FadeOut(VGroup(br7, menu7, hl7, cur7),
                                                             rate_func=lambda a: smooth(min(1.0, 2 * a))),
-                                                    Transform(card7, card7_up), caption_extra(tr, False),
+                                                    # the card fades out with the page and back in at the
+                                                    # top (moving, it crossed the menu or the terminal title)
+                                                    refade(card7, card7_up, into=(0.7, 1.0)),
+                                                    caption_extra(tr, False),
                                                     FadeOut(t7, rate_func=lambda a: smooth(max(0.0, 2 * a - 1)))])
             log = t.print(self, [ENV_LOG, AGENT_LOG, WEB2.line(40)], wrap=True, run_time=0.3)
             env_row = rows_with(log, ROOT_ENV)[0]
@@ -828,10 +852,11 @@ class AdkWeb(VoiceScene):
             vo.wait_until("they clash")
             type_cmd(self, tw9, PINNED.cmd, 0.5)
             self.play(FadeIn(clash.adk), GrowArrow(clash.try_), run_time=0.5)
-            vo.wait_until("ours stopped")
+            vo.wait_until("the web server stopped")
             busy = tw9.print(self, [(BUSY.line(21), ERR)], wrap=True, run_time=0.4)
-            self.play(FadeIn(clash.x, scale=1.3),
-                      Indicate(substring(busy[-1], "address already in use"), color=ERR, scale_factor=1.1),
+            self.play(FadeIn(clash.x, scale=1.3), run_time=0.4)
+            vo.wait_until("address already in use")         # spoken ~1.3 s after "stopped"
+            self.play(Indicate(substring(busy[-1], "address already in use"), color=ERR, scale_factor=1.1),
                       run_time=0.7)
             vo.wait_until("Run docker compose down first")
             self.play(FadeIn(compose, shift=RIGHT * 0.1), run_time=0.5)

@@ -16,12 +16,12 @@ Beats (script.md "## S03", one voiceover block each):
    by a thin line to its step badge; a YELLOW ring lights each pick as it is named. Tag
    "recorded · the staff's last saved run".
 3. TRACKER CQ-Inputs 4. CODE(cell-41.py: 18–22) at the bottom, a fresh 3-slot envelope above it
-   holding the system prompt; lines 20, 21, 22 highlight GREY and fly in as sheets onto one pile;
-   the panel Transforms into CODE(cell-41.py: 22–25), line 23 flies onto the pile and line 24 (the
-   question) into the last slot. Caption "memory = paper you put back, every call".
+   holding the system prompt; lines 20, 21, 22 highlight GREY, each bar flashes as its sheet fades
+   in onto one pile; the panel scrolls to CODE(cell-41.py: 22–25), line 23's sheet joins the pile
+   and line 24's (the question) the last slot. Caption "memory = paper you put back, every call".
 4. The sheets regroup into two GREY-framed blocks under slide 41's headers: "Instructions: system
    & user prompts · contexts · output schema" (five sheets) and "Memory: user sessions · user
-   preferences" (the pile becomes "user sessions: earlier turns"). A GREY dashed chip "Lecture 7:
+   preferences" (the pile fades, "user sessions: earlier turns" fades in). A GREY dashed chip "Lecture 7:
    context engineering".
 5. The lecture tag leaves. TRACKER CQ-Inputs 2. CODE(cell-39.py: 16–21) top left, a YELLOW
    "Spot it" card beside it (no timer); lines 19–20 get YELLOW bars. After the SAY, 4 s with the
@@ -84,7 +84,6 @@ from manim import (
     Create,
     FadeIn,
     FadeOut,
-    FadeTransform,
     LaggedStart,
     Line,
     ManimColor,
@@ -99,6 +98,7 @@ from manim import (
     rush_into,
     smooth,
     squish_rate_func,
+    there_and_back,
 )
 
 from pygments.token import Punctuation, String
@@ -260,7 +260,9 @@ def scroll_panel(scene, a, b, line: int, fade=(), run_time: float = 1.0):
     scene.add(a.code.background, *ra, a.header)
     scene.play(*[FadeOut(ra[k], shift=d, rate_func=out_) for k in range(len(ra)) if k not in ka],
                ReplacementTransform(a.code.background, b.code.background, rate_func=move_),
-               FadeTransform(a.header, b.header, rate_func=move_),
+               # the header's line numbers change: old out, then new in (a cross-fade showed both)
+               FadeOut(a.header, rate_func=squish_rate_func(smooth, 0.15, 0.45)),
+               FadeIn(b.header, rate_func=squish_rate_func(smooth, 0.5, 0.8)),
                *[ReplacementTransform(ra[i], rb[j], rate_func=move_) for i, j in zip(ka, kb)],
                *[FadeIn(rb[k], shift=d, rate_func=in_) for k in range(len(rb)) if k not in kb],
                *[FadeOut(m, rate_func=out_) for m in fade], run_time=run_time)
@@ -342,7 +344,9 @@ class Envelope(VoiceScene):
                 """Tracker to step k: `drop` slides out, `sheet` slides in glowing, the pick changes."""
                 nonlocal ptxt, last
                 new = pick_text(PICKS[k - 1], card.frame.get_center() + DOWN * 0.16)
-                anims = [tr.goto(k), FadeOut(ptxt, shift=UP * 0.2), FadeIn(new, shift=UP * 0.2), *extra]
+                # old pick out, then the new one in (faded at once, both picks read mid-swap)
+                anims = [tr.goto(k), FadeOut(ptxt, shift=UP * 0.2, rate_func=squish_rate_func(smooth, 0.0, 0.45)),
+                         FadeIn(new, shift=UP * 0.2, rate_func=squish_rate_func(smooth, 0.55, 1.0)), *extra]
                 if last is not None:
                     anims.append(unglow(last))
                 ptxt = new
@@ -435,12 +439,15 @@ class Envelope(VoiceScene):
             pile = []
 
             def fly(panel, n, text, slot, offset=0):
-                """Line n gets a GREY bar; a sheet flies from it into `slot` of the envelope."""
+                """Line n gets a GREY bar, which flashes while the sheet fades in at `slot` of the
+                envelope (a sheet flying from the bar crossed the panel's header and code)."""
                 bar = panel.bar(n, S.GREY, 0.3)
                 self.play(FadeIn(bar), run_time=0.2)
                 sh = sheet_of(env4, text, LOOKUP if text == W_USER else S.GREY)
                 sh.move_to(env4.slot_point(slot) + np.array([0.06 * offset, 0.02 * offset, 0]))
-                self.play(FadeTransform(bar.copy(), sh), run_time=0.45)
+                self.play(bar.animate(rate_func=there_and_back).set_fill(opacity=0.5),
+                          FadeIn(sh, shift=DOWN * 0.12, rate_func=squish_rate_func(smooth, 0.25, 1.0)),
+                          run_time=0.45)
                 self.remove(sh)
                 env4.sheet_group.add(sh)
                 return bar, sh
@@ -498,11 +505,18 @@ class Envelope(VoiceScene):
             for s in list(env4.sheet_group):                # the sheets leave the envelope
                 env4.sheet_group.remove(s)
                 self.add(s)
-            self.play(FadeOut(p41b), FadeOut(b23), FadeOut(b24), FadeOut(cap4), FadeOut(pile_ring),
-                      FadeOut(env4),
-                      ReplacementTransform(s4_sys, left[0]), ReplacementTransform(s4_user, left[1]),
-                      ReplacementTransform(VGroup(*pile), right[0]),
-                      *[FadeIn(s, shift=DOWN * 0.15) for s in (left[2], left[3], left[4], right[1])],
+            # staged in the same 1.4 s: the panel, the caption and the envelope leave first, then the
+            # two sheets travel (they crossed the fading caption and code), the pile fades and the
+            # new sheets come in (a pile -> sheet morph scrambled the letters)
+            out_, move_, in_ = (squish_rate_func(smooth, 0.0, 0.4), squish_rate_func(smooth, 0.3, 1.0),
+                                squish_rate_func(smooth, 0.5, 1.0))
+            self.play(*[FadeOut(m, rate_func=out_) for m in (p41b, b23, b24, cap4, pile_ring, env4, *pile)],
+                      ReplacementTransform(s4_sys, left[0], rate_func=move_),
+                      ReplacementTransform(s4_user, left[1], rate_func=move_),
+                      *[FadeIn(s, shift=DOWN * 0.15, rate_func=in_) for s in (left[2], left[3], left[4])],
+                      # the Memory column comes in once the two sheets have passed its place
+                      *[FadeIn(s, shift=DOWN * 0.15, rate_func=squish_rate_func(smooth, 0.8, 1.0))
+                        for s in (right[0], right[1])],
                       run_time=1.4)
             vo.wait_until("instructions and memory")
             self.play(Create(fr_l), FadeIn(h_l), run_time=0.6)

@@ -25,14 +25,15 @@ Beats (script.md "## S02", one voiceover block each):
     "sequential processing" lights the arrows; the diamond pulses; GREY caption "reasoning workflow:
     …" and a GREY dashed chip "a reasoning model thinks inside one call · more with Gemini, later".
  5  TRACKER CQ-Agent 3. The lecture tag and lane 2's notes leave; lanes 2–3 slide up, lane 2 dims.
-    Lane 3: the same gpt-4o slides down, lane 2's diamond slides into it; a GREY instructions note
-    clips on; the excerpt chip tools=[web_tool], (cell 30 · line 34) hands it a BLUE web_search,
-    "hosted by OpenAI"; two reaches (GOLD ticks), the two search texts (c31: 23, 28) fly out PINK;
+    Lane 3: lane 2's gpt-4o flashes and the same gpt-4o fades in on lane 3, lane 2's diamond slides
+    into it; a GREY instructions note clips on; the excerpt chip tools=[web_tool], (cell 30 · line
+    34) flashes and a BLUE web_search fades in under the model,
+    "hosted by OpenAI"; two reaches (GOLD ticks), the two search texts (c31: 23, 28) grow in PINK;
     the answer and "13.29 s" (c31: 100); the excerpt Tools used: 1 (c31: 99) + erratum "tools
     configured (cell 30 · line 71), not calls".
  6  LECTURE 25–27. Lanes 1–2 shrink to a thumbnail under the tracker; lane 3 becomes V1 (Anatomy)
-    part by part: gpt-4o → LLM core, the note → Instructions, web_search → Tools, the question →
-    Task / Goal, the answer → Task completion; the definition (slide 26, our words) above; an empty
+    part by part: gpt-4o → LLM core (the note fades), Instructions fades in, web_search → Tools,
+    the question → Task / Goal, the answer → Task completion; the definition (slide 26, our words) above; an empty
     Memory; the diamond stretches into the dashed Dynamic Control bar, which lights YELLOW: a
     steering wheel and "who decides the next step".
  7  "agent = a smarter model" gets a RED strike; the thumbnail's gpt-4o chips and the LLM core light
@@ -81,6 +82,9 @@ assert C31.line(23).startswith("### Search 1:") and C31.line(28).startswith("###
 TOOLS_USED = C31.line(99)
 assert TOOLS_USED == "Tools used: 1"
 T3 = re.fullmatch(r"Time: ([\d.]+)s", C31.line(100)).group(1) + " s"                        # 13.29 s
+
+OUT_HALF = squish_rate_func(smooth, 0.0, 0.45)   # a swap in one play: the old text leaves first,
+IN_HALF = squish_rate_func(smooth, 0.55, 1.0)    # then the new one comes in (same run_time)
 
 # ------------------------------------------------------------------ layout
 NAME_X = -6.45                  # lane names, left column
@@ -347,7 +351,9 @@ class SteeringWheel(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             tr2 = tracker("CQ-Agent", 1)
             setup = [cf, p10, pk_ul, unp, ul, hide, ob, to_bars, sv, look, card]
-            self.play(FadeOut(tr, shift=UP * 0.25), FadeIn(tr2, shift=DOWN * 0.25),
+            # the old tracker lifts away, then the new one drops in (at once, both read mid-swap)
+            self.play(FadeOut(tr, shift=UP * 0.25, rate_func=OUT_HALF),
+                      FadeIn(tr2, shift=DOWN * 0.25, rate_func=IN_HALF),
                       *[FadeOut(m) for m in setup], run_time=0.8)
             tr = tr2
             q1 = lines_chip(["best cheese for a grilled", "cheese sandwich?"], LOOKUP, size=20)
@@ -508,7 +514,11 @@ class SteeringWheel(VoiceScene):
             w_txt = m3.text.copy().move_to(w_box.get_left() + RIGHT * (0.3 + m3.text.width / 2))
             note.move_to([w_box.get_left()[0] - note.width / 2 + 0.12, y3 + 0.1, 0])
             vo.wait_until("the same model")
-            self.play(FadeIn(q3), m3.animate.move_to([m3_x, y3, 0]), run_time=0.8)
+            # lane 2's model flashes in place and the same model fades in on lane 3 (flying down,
+            # the chip crossed "synthesize" and the "11 calls" counter)
+            m3.move_to([m3_x, y3, 0])
+            self.play(FadeIn(q3), Indicate(m2, color=CLOUD, scale_factor=1.08),
+                      FadeIn(m3, rate_func=squish_rate_func(smooth, 0.3, 1.0)), run_time=0.8)
             d3 = diamond(w=0.42).move_to(d2)
             self.play(Transform(m3.box, w_box), Transform(m3.text, w_txt), run_time=0.4)
             self.play(d3.animate.move_to(w_box.get_right() + LEFT * 0.42), run_time=0.8)
@@ -528,7 +538,11 @@ class SteeringWheel(VoiceScene):
             host.move_to([w3_at[0] + w3.width / 2 + 0.2 + host.width / 2, w3_at[1], 0])
             vo.wait_until("and a web search tool")
             self.play(FadeIn(ex_tools, shift=UP * 0.1), run_time=0.5)
-            self.play(TransformFromCopy(ex_tools.chip, w3), run_time=0.8)
+            # the excerpt flashes in place, web_search fades in under the model (a flying copy
+            # crossed the excerpt's header and scrambled its letters)
+            self.play(Indicate(ex_tools.chip.text, color=CLOUD, scale_factor=1.08),
+                      ex_tools.chip.box.animate(rate_func=there_and_back).set_stroke(CLOUD, 4),
+                      FadeIn(w3, rate_func=squish_rate_func(smooth, 0.3, 1.0)), run_time=0.8)
             vo.wait_until("that OpenAI hosts")
             self.play(FadeIn(host, shift=LEFT * 0.1), run_time=0.5)
 
@@ -549,7 +563,9 @@ class SteeringWheel(VoiceScene):
                          tip_length=0.12, max_tip_length_to_length_ratio=0.5).shift(RIGHT * 0.25)
             vo.wait_until("Its answer reports two searches")
             for k in range(2):
-                start = sch[k].copy().scale(0.3).move_to(w3_at)
+                # each search text grows in its own place (flying out of web_search, the cards
+                # crossed its name and each other)
+                start = sch[k].copy().scale(0.3).move_to(sch[k])
                 self.play(GrowArrow(down), run_time=0.35)
                 self.play(ReplacementTransform(start, sch[k]), FadeIn(coins3[k], scale=1.8),
                           GrowArrow(back), run_time=0.6)
@@ -566,7 +582,8 @@ class SteeringWheel(VoiceScene):
             cfg = erratum_tag("tools configured (cell 30 · line 71), not calls")
             cfg.next_to(ex_used.chip, RIGHT, buff=0.25)
             vo.wait_until("It also reports one tool used")
-            self.play(FadeOut(ex_tools, shift=DOWN * 0.1), FadeIn(ex_used, shift=UP * 0.1), run_time=0.6)
+            self.play(FadeOut(ex_tools, shift=DOWN * 0.1, rate_func=OUT_HALF),
+                      FadeIn(ex_used, shift=UP * 0.1, rate_func=IN_HALF), run_time=0.6)
             vo.wait_until("tools configured")
             self.play(FadeIn(cfg, shift=LEFT * 0.1), run_time=0.6)
 
@@ -616,12 +633,15 @@ class SteeringWheel(VoiceScene):
             d3_at = np.array([core_fr.get_right()[0] - 0.45, core_fr.get_y(), 0])
             self.play(FadeIn(A.parts["box"]), FadeIn(A.parts["head"]),
                       ReplacementTransform(m3, A.parts["core"]),
+                      # the note leaves before the growing core reaches it (it covered the note)
+                      FadeOut(note, rate_func=squish_rate_func(smooth, 0.0, 0.35)),
                       d3.animate.scale(1.2).move_to(d3_at), FadeOut(a3b),
                       q3.animate.move_to(A.parts["task"]), ans3.animate.move_to(A.parts["done"]),
                       run_time=0.8)
             self.bring_to_front(d3)                  # above the core's tinted fill
             vo.wait_until("given instructions")
-            self.play(ReplacementTransform(note, A.parts["instructions"], path_arc=-PI / 2), run_time=0.8)
+            # the Instructions block fades in where it stays (the note's arc crossed the "Agent" head)
+            self.play(FadeIn(A.parts["instructions"], scale=0.9), run_time=0.8)
             vo.wait_until("and tools")
             self.play(ReplacementTransform(w3, A.parts["tools"]), run_time=0.7)
             vo.wait_until("that runs on its own")
@@ -651,7 +671,9 @@ class SteeringWheel(VoiceScene):
             who.next_to(nm_to, RIGHT, buff=0.35)
             assert who.get_right()[0] < bar.get_right()[0] - 0.1
             vo.wait_until("dynamic control")
-            self.play(nm.animate.move_to(nm_to), FadeIn(wh, scale=0.5), FadeIn(who, shift=LEFT * 0.1),
+            # the caption comes in once the name has slid past its place (they crossed)
+            self.play(nm.animate.move_to(nm_to), FadeIn(wh, scale=0.5),
+                      FadeIn(who, shift=LEFT * 0.1, rate_func=squish_rate_func(smooth, 0.65, 1.0)),
                       run_time=0.5)
             self.play(A.light("control"), run_time=0.4)
             vo.wait_until("the steering wheel")
@@ -662,7 +684,8 @@ class SteeringWheel(VoiceScene):
         with self.voiceover(SAY[7]) as vo:
             smart = card_rows(["agent = a smarter model"])
             smart.move_to(dc.frame)
-            self.play(FadeOut(dc), FadeOut(und), FadeIn(smart), run_time=0.6)
+            self.play(FadeOut(dc, rate_func=OUT_HALF), FadeOut(und, rate_func=OUT_HALF),
+                      FadeIn(smart, rate_func=IN_HALF), run_time=0.6)
             vo.wait_until("isn't a smarter model")
             st_line = strike(smart.rows[0], stroke=3)
             self.play(Create(st_line), run_time=0.5)

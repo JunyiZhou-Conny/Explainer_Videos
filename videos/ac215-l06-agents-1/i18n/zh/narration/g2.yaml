@@ -82,11 +82,13 @@ S09:
   - "Google lists the code's fallback, gemini-2.0-flash, as shut down, and limits gemini-2.5-flash to earlier users."
   - "Keep everything in this root file: only the nearest .env is loaded."
   - null
-- en: "The project file asks for Python 3.10 or newer, and ADK 1.8 or newer, with no upper bound, plus Chroma and sentence transformers."
+- en: "The project file wants Python 3.10 or newer and ADK 1.8 or newer, with no upper bound. It also lists Chroma and sentence transformers."
   zh:
-  - "项目文件要求 Python 3.10 及以上、ADK 1.8 及以上，没有上限，另外还有 Chroma 和 sentence-transformers。"
+  - "项目文件要求 Python 3.10 及以上、ADK 1.8 及以上，没有上限。"
+  - "文件里还列了 Chroma 和 sentence-transformers。"
   en_display:
-  - "The project file asks for Python 3.10 or newer, and ADK 1.8 or newer, with no upper bound, plus Chroma and sentence-transformers."
+  - null
+  - "It also lists Chroma and sentence-transformers."
 - en: "One more fact: this laptop has no Python at all."
   zh:
   - "再补充一点：这台笔记本上根本没有 Python。"
@@ -124,13 +126,13 @@ S10:
   en_display:
   - "Running Agents, step 1, from the repository root: uv run adk web."
   - null
-- en: "The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with ADK telemetry disable."
+- en: "The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with uv run ADK telemetry disable."
   zh:
   - "提示文字说遥测默认是关闭的，可大写的 Y 意味着直接按回车就是回答 yes。"
-  - "怎么回答都行；以后可以用这条命令改：adk telemetry disable。"
+  - "怎么回答都行；以后可以用这条命令改：uv run adk telemetry disable。"
   en_display:
   - null
-  - "Answer as you like; change it later with adk telemetry disable."
+  - "Answer as you like; change it later with uv run adk telemetry disable."
 - en: "Then the server starts, on port 8000. Step 2: open localhost 8000 in your browser; an extra curl shows the redirect to the dev UI."
   zh:
   - "然后服务器启动了，在 port 8000 上。"
@@ -154,9 +156,10 @@ S10:
   - null
   - null
   - "The name 1-baseline breaks both rules."
-- en: "An older version, 1.27.5, lists only the four folders, but picking one still fails, as an invalid app name. So a version pin doesn't help; we undid ours."
+- en: "An older version, 1.27.5, lists only the four folders. But picking one still fails, as an invalid app name. So a version pin doesn't help; we undid ours."
   zh:
-  - "旧版本 1.27.5 只列出那四个目录，但选一个还是失败，原因是 app 名不合法。"
+  - "旧版本 1.27.5 只列出那四个目录。"
+  - "但选一个还是失败，原因是 app 名不合法。"
   - "所以 pin 版本没用；我们也把自己的 pin 撤掉了。"
 - en: "What works is renaming, which isn't in the README either. Stop the server with control C, then drop each leading number, and turn hyphens into underscores."
   zh:
@@ -175,13 +178,13 @@ S10:
 - en: "Two more slips: the quick start passes a file where a folder is expected, and the module READMEs drop the word web, so it only prints help."
   zh:
   - "还有两个小疏漏：快速入门在该传目录的地方传了一个文件，各模块的 README 又漏了 web 这个词，所以命令只会打印帮助信息。"
-- en: "And if L-L-M rag's Chroma still holds port 8000, they clash; ours stopped: address already in use. Run docker compose down first, or add dash dash port 8080. Pause, and get the dev UI open on baseline."
+- en: "And if L-L-M rag's Chroma still holds port 8000, they clash; the web server stopped: address already in use. Run docker compose down first, or add dash dash port 8080. Pause, and get the dev UI open on baseline."
   zh:
-  - "如果 llm-rag 的 Chroma 还占着 port 8000，两边就会冲突；我们这边直接停了：address already in use。"
+  - "如果 llm-rag 的 Chroma 还占着 port 8000，两边就会冲突；web 服务器停了：address already in use。"
   - "先运行 docker compose down，或者加上 --port 8080。"
   - "暂停一下，在 dev UI 里打开 baseline。"
   en_display:
-  - "And if llm-rag's Chroma still holds port 8000, they clash; ours stopped: address already in use."
+  - "And if llm-rag's Chroma still holds port 8000, they clash; the web server stopped: address already in use."
   - "Run docker compose down first, or add --port 8080."
   - null
 S11:
@@ -192,13 +195,13 @@ S11:
   en_display:
   - "Baseline holds three LLM agents, each with a model, an instruction, and an output_key."
   - null
-- en: "A sequential agent runs them in order: validator, planner, summarizer. An extra request shows the tree the UI loads, with the model from your root dot env; set yours."
+- en: "A sequential agent runs them in order: validator, planner, summarizer. An extra request shows the tree the UI loads, with the model from your root dot env; check yours."
   zh:
   - "顺序 agent 依次运行它们：校验器、规划器、总结器。"
-  - "一个额外的请求显示了 UI 加载的那棵树，模型来自你根目录的 .env；把你的设好。"
+  - "一个额外的请求显示了 UI 加载的那棵树，模型来自你根目录的 .env；核对一下你的。"
   en_display:
   - null
-  - "An extra request shows the tree the UI loads, with the model from your root .env; set yours."
+  - "An extra request shows the tree the UI loads, with the model from your root .env; check yours."
 - en: "Another extra request creates a session: an empty state, and no events yet. Think of the state as a shared whiteboard."
   zh:
   - "另一个额外的请求创建了一个 session：状态是空的，也还没有事件。"
@@ -352,7 +355,7 @@ S14:
   en_display:
   - "Because apply_confirmation runs on the human's message, before the agent starts."
   - null
-- en: "Turn 4: the human types yes. The stamp flips to approved, finalize runs, and Python builds the budget line by line: 2,690 dollars out of 6,000. The notebook's own test checks Python's number."
+- en: "Turn 4: the human types yes. The stamp flips to approved, finalize runs, and Python builds the budget line by line: 2,690 of the 6,000 dollars. The notebook's own test checks Python's number."
   zh:
   - "第 4 轮：人输入 yes。"
   - "印章翻成已批准，finalize 运行，Python 逐行算出预算：2690 美元，上限 6000。"

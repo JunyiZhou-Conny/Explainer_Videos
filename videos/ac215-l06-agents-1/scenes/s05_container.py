@@ -106,6 +106,8 @@ from manim import (
     GrowArrow,
     Indicate,
     VGroup,
+    smooth,
+    squish_rate_func,
     there_and_back,
 )
 
@@ -540,7 +542,9 @@ class BackInTheContainer(VoiceScene):
         rec7 = grey_tag("recorded · the staff's vectors")
         with self.voiceover(SAY[7]) as vo:
             dy = TOP_Y - card_b.get_top()[1]
-            self.play(FadeOut(card_a), card_b.animate.shift(UP * dy), run_time=0.7)
+            # card A leaves first, then card B slides up into its place (they crossed mid-fade)
+            self.play(FadeOut(card_a, rate_func=squish_rate_func(smooth, 0.0, 0.4)),
+                      card_b.animate(rate_func=squish_rate_func(smooth, 0.3, 1.0)).shift(UP * dy), run_time=0.7)
             kg.next_to(e_cmd, RIGHT, buff=0.25)
             # the note makes room first, then the key lands (together they crossed each other)
             self.play(e_note.animate.next_to(kg, RIGHT, buff=0.25), run_time=0.3)

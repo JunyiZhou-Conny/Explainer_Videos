@@ -3,8 +3,8 @@
 
 Beats (script.md "## S12", one voiceover block each):
 0. LECTURE 51. No tracker. V7's three bins write in (slide 51, our words): "data · fetch",
-   "action · change something", "orchestration · hand work to an agent". GREY tool chips drop in
-   as each family is named: get_book_by_author, web_search, read_file -> data; finalize_itinerary
+   "action · change something", "orchestration · hand work to an agent". GREY tool chips fade into
+   their bin as each family is named: get_book_by_author, web_search, read_file -> data; finalize_itinerary
    and send_email (each with its GREY source tag "trip planner" / "newsletter" under it) ->
    action; research_facts, researcher_agent -> orchestration. The narrated examples light up
    YELLOW (get_book_by_author; finalize_itinerary, then send_email).
@@ -22,7 +22,7 @@ Beats (script.md "## S12", one voiceover block each):
    "stdio · a child process", "HTTPS · a remote URL", "HTTP · a thread on :8001", while three
    service + adapter pairs (files, maps, chat: the same top-to-bottom order as their targets, so no
    pair crosses another) rise into the three servers (filesystem PURPLE, remote BLUE, FastMCP
-   PURPLE); the label fades into the caption "one protocol · one connection per server". The
+   PURPLE); the label fades out, then the caption "one protocol · one connection per server" fades in. The
    lecture tag stays.
 4. Plug 1 flashes YELLOW, then the picture and the lecture tag leave. TRACKER Mcp 1. A README card
    (3-mcp-tools/README.md · lines 56–63, tag expected), not typed: brew install node (macOS) ·
@@ -159,7 +159,6 @@ from manim import (
     Dot,
     FadeIn,
     FadeOut,
-    FadeTransform,
     Indicate,
     LaggedStart,
     Line,
@@ -168,6 +167,9 @@ from manim import (
     Transform,
     VGroup,
     Wiggle,
+    smooth,
+    squish_rate_func,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -299,6 +301,18 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
     if cy is not None:
         m.set_y(cy)
     return m
+
+
+OUT_HALF = squish_rate_func(smooth, 0.0, 0.45)   # a swap in one play: the old text leaves first,
+IN_HALF = squish_rate_func(smooth, 0.55, 1.0)    # then the new one comes in (same run_time)
+
+
+def flash_tagged(g, color=TURN):
+    """An action chip with its source tag under it: the chip flashes, the tag's outline flares and
+    its words pulse (Indicate on the whole group filled the tag's dark box: its words vanished)."""
+    c, tg = g[0], g[1]
+    return [Indicate(c, color=color, scale_factor=1.08), Indicate(tg.text, color=color, scale_factor=1.08),
+            tg.box.animate(rate_func=there_and_back).set_stroke(color, 3)]
 
 
 def lag_play(scene, anims, owner=None, lag_ratio=0.3, run_time=1.0, extra=()):
@@ -533,16 +547,19 @@ class McpPlugs(VoiceScene):
             a_ys = [a_top - a_chips[0].height / 2, a_top - a_chips[0].height * 1.5 - 0.14]
 
             def drop_in(nm, grp, ys=None):
-                anims = []
+                """The bin's title flashes and its chips fade into their slots one by one (dropped
+                from a column above the bin, they crossed its title). Same 1.5 s as before."""
                 for k, c in enumerate(grp):
                     if ys is None:
-                        anims.append(bins.drop(c, nm))
+                        bins.drop(c, nm)                 # an .animate: it leaves the slot in c.target
+                        c.move_to(c.target)
                     else:
-                        anims.append(c.animate.move_to([a_shape.get_center()[0], ys[k], 0]))
+                        c.move_to([a_shape.get_center()[0], ys[k], 0])
                 title = bins.bin(nm).title[0]
-                self.play(Indicate(title, color=TURN, scale_factor=1.15),
-                          *[FadeIn(c, shift=DOWN * 0.25) for c in grp], run_time=0.6)
-                lag_play(self, anims[::-1], lag_ratio=0.25, run_time=0.9)   # lowest chip first: no crossing
+                play_drop(self, Indicate(title, color=TURN, scale_factor=1.15,
+                                         rate_func=squish_rate_func(there_and_back, 0.0, 0.4)),
+                          LaggedStart(*[FadeIn(c, shift=DOWN * 0.2) for c in grp], lag_ratio=0.25),
+                          run_time=1.5)
 
             vo.wait_until("Data tools fetch")
             drop_in("data", d_chips)
@@ -551,9 +568,9 @@ class McpPlugs(VoiceScene):
             vo.wait_until("action tools change")
             drop_in("action", a_chips, a_ys)
             vo.wait_until("like finalizing a trip")
-            self.play(Indicate(a_chips[0], color=TURN, scale_factor=1.08), run_time=0.6)
+            self.play(*flash_tagged(a_chips[0]), run_time=0.6)
             vo.wait_until("or sending email")
-            self.play(Indicate(a_chips[1], color=TURN, scale_factor=1.08), run_time=0.6)
+            self.play(*flash_tagged(a_chips[1]), run_time=0.6)
             vo.wait_until("orchestration tools hand")
             drop_in("orchestration", o_chips)
 
@@ -565,8 +582,8 @@ class McpPlugs(VoiceScene):
         counter.move_to(ask.get_center() + DOWN * 0.6)
         with self.voiceover(SAY[1]) as vo:
             ref52 = lref("52")
-            self.play(FadeOut(bins), *[FadeOut(c) for c in d_chips + a_chips + o_chips], FadeOut(ref),
-                      FadeIn(ref52), run_time=0.5)
+            self.play(FadeOut(bins), *[FadeOut(c) for c in d_chips + a_chips + o_chips],
+                      FadeOut(ref, rate_func=OUT_HALF), FadeIn(ref52, rate_func=IN_HALF), run_time=0.5)
             ref = ref52
             self.play(FadeIn(fan), run_time=0.6)
             play_drop(self, *fan.parts_in("wires", anim=lambda m: LaggedStart(*[Create(w) for w in m],
@@ -586,8 +603,13 @@ class McpPlugs(VoiceScene):
         customs = fan.parts["customs"]
         with self.voiceover(SAY[2]) as vo:
             ref = lref_swap(self, ref, "53", run_time=0.4)
-            play_drop(self, LaggedStart(*[Indicate(c, color=ERR, scale_factor=1.12) for c in customs],
-                                        lag_ratio=0.08),
+            # each block's border flares and its words pulse RED (Indicate on the block filled its
+            # opaque box RED: "custom code" vanished). Box first, words second: play_drop puts the
+            # wrapper's members back in this order, so the words stay drawn over the opaque box. The
+            # words change colour only: the box is tight, and at 1.12 "custom code" touched its border
+            play_drop(self, LaggedStart(*[AnimationGroup(c[0].animate(rate_func=there_and_back).set_stroke(ERR, 3),
+                                                         Indicate(c[1], color=ERR, scale_factor=1.0))
+                                          for c in customs], lag_ratio=0.08),
                       Indicate(counter, color=ERR, scale_factor=1.1), run_time=1.4)
             vo.wait_until("MCP, the Model")
             play_drop(self, *fan.parts_out("wires", "customs"), FadeOut(ask), FadeOut(counter),
@@ -648,10 +670,13 @@ class McpPlugs(VoiceScene):
                 s_box, s_lab = explode(self, services[k])
                 words = srv_k.rows.get_left() + RIGHT * adapters[k][1].width / 2
                 morph += [FadeOut(twigs[k]), ReplacementTransform(s_box, srv_k.frame),
-                          FadeTransform(s_lab, srv_k.rows, stretch=False),
-                          FadeOut(adapters[k], target_position=words)]
+                          # the service's name out, then the server's name in (a cross-fade read both)
+                          FadeOut(s_lab, rate_func=OUT_HALF), FadeIn(srv_k.rows, rate_func=IN_HALF),
+                          # the adapter lands and is gone by the time the name comes in (fading over
+                          # the whole run, its "MCP server" ghosted under the new name, offset)
+                          FadeOut(adapters[k], target_position=words, rate_func=squish_rate_func(smooth, 0.0, 0.6))]
             self.play(*morph, ReplacementTransform(ports, new_ports),
-                      FadeTransform(same, cap3, stretch=False), run_time=1.4)
+                      FadeOut(same, rate_func=OUT_HALF), FadeIn(cap3, rate_func=IN_HALF), run_time=1.4)
             lag_play(self, [FadeIn(lb, shift=UP * 0.1) for lb in p_labels], lag_ratio=0.35, run_time=1.2)
         plug_pic = VGroup(parts["agent"], parts["pills"], cover, host_t, clients, new_ports, plugs, servers,
                           p_labels, cap3)
@@ -969,7 +994,8 @@ class McpPlugs(VoiceScene):
                         for c, r in zip(calls, rows)], run_time=0.8)
             vo.wait_until("it still only writes")
             self.play(*[Indicate(c, color=CLOUD, scale_factor=1.2) for c in calls], run_time=0.6)
-            self.play(*[FadeOut(c, scale=0.6, target_position=r.client) for c, r in zip(calls, rows)],
+            # absorbed at the client's left border (toward its centre, the fading {…} lay over "Agents")
+            self.play(*[FadeOut(c, scale=0.6, target_position=r.client.get_left()) for c, r in zip(calls, rows)],
                       *[Indicate(r.client, color=TOOL, scale_factor=1.06) for r in rows], run_time=0.6)
             vo.wait_until("Pause, and run")
             self.play(FadeIn(card, shift=UP * 0.15), run_time=0.6)

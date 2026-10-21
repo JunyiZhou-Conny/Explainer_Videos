@@ -3,7 +3,8 @@
 Beats (script.md "## S04", one voiceover block each):
 0. LECTURE 8–14, no tracker yet. V3's first half (MenuColumn): L05's strip (slide 8) writes left
    to right, question → Retrieval → LLM → Response; two BLUE LLM boxes open slide 13's column and
-   the six GREY dashed technique boxes (slides 9–12, our words) fly in from Retrieval as named.
+   the six GREY dashed technique boxes (slides 9–12, our words) drop into their slots as named,
+   Retrieval flashing with each.
 1. "agentic RAG" (GREY) beside the first LLM, which gets the YELLOW label "chooses"; a YELLOW ring
    hops down the menu.
 2. TRACKER Agents (no step lit). The column shrinks to llm-rag's two GREEN menu cards, "retrieval
@@ -17,7 +18,7 @@ Beats (script.md "## S04", one voiceover block each):
    both bars pulse with the note at "the only documentation"); lines 13–15 bracketed, tag "JSON schema". Notes on code lines are plain text (a framed tag is taller
    than a code row).
 4. Panel changes are scrolls (morph_panel: the frame resizes, rows that stay Transform, the
-   others drift up and fade or rise into place). CODE(19–30), line 19 carried over: the nine
+   others drift up and fade, then the new ones rise into place). CODE(19–30), line 19 carried over: the nine
    names (line 28 masked) get a GREEN bracket "enum: only these 9"; the nine name rows fold into
    one "… 9 names …" row, the bracket and its tag with them; scroll to CODE(31–37): line 33
    (wrapped) YELLOW, its "a a" underlined with the GREY tag "erratum · typo in the source";
@@ -117,6 +118,8 @@ from manim import (
     Transform,
     VGroup,
     VMobject,
+    smooth,
+    squish_rate_func,
     there_and_back,
 )
 
@@ -187,6 +190,42 @@ def lag_play(scene, anims, owner=None, lag_ratio=0.3, run_time=1.0, extra=()):
         scene.remove(g.group)
 
 
+OUT_HALF = squish_rate_func(smooth, 0.0, 0.45)   # a swap in one play: the old text leaves first,
+IN_HALF = squish_rate_func(smooth, 0.55, 1.0)    # then the new one comes in (same run_time)
+
+
+def drop_in(mc, i):
+    """Technique box i fades in at its slot with a short drop (MenuColumn.fly_in from the Retrieval
+    box carried each box across the LLM and the boxes already in the column). The drop (0.1) is
+    shorter than the gap above the slot (~0.14), so the fading box never overlaps the one above."""
+    return mc.fly_in(i, start=mc.parts[f"box{i}"].get_center() + UP * 0.1)
+
+
+def via(c0, c1, *waypoints):
+    """path_func for a mobject whose centre goes from c0 to c1: its centre travels the polyline
+    c0 -> waypoints -> c1 (evenly in arc length) instead of the straight line, every point offset
+    alike (the shape still morphs as in a straight Transform). A card absorbed into the cloud, or
+    coming back out of it, keeps to the corridor between "call 1" and the HTTPS label and stays
+    above the laptop's titles (a straight path crossed HTTPS and llm-rag-cli)."""
+    pts = [np.array(p, dtype=float) for p in (c0, *waypoints, c1)]
+    seg = [np.linalg.norm(q - p) for p, q in zip(pts[:-1], pts[1:])]
+    total = sum(seg) or 1.0
+
+    def centre(alpha):
+        d = alpha * total
+        for p, q, ln in zip(pts[:-1], pts[1:], seg):
+            if d <= ln and ln > 0:
+                return p + (q - p) * (d / ln)
+            d -= ln
+        return pts[-1]
+
+    def path(start, end, alpha):
+        straight = start + alpha * (end - start)
+        return straight + (centre(alpha) - (pts[0] + alpha * (pts[-1] - pts[0])))
+
+    return path
+
+
 def widen(p, w=12.9):
     """Give a code panel's background the full width (text unchanged), so every panel of the
     scene has the same frame and the notes on its lines sit inside it."""
@@ -210,8 +249,12 @@ def morph_panel(scene, old, new, pairs=(), drift=0.45, run_time=0.8, extra=()):
     down the file, or a fold. The headers swap in place. Leaves `new` on the scene as one group."""
     oc, nc = old.code.code_lines, new.code.code_lines
     used_o, used_n, anims, wrappers = set(), set(), [], []
+    # staged in the same run_time (faded at once, the old and new headers and rows read together):
+    # the old rows and header leave first, paired rows travel, then the new rows and header come in
+    out_, move_, in_ = (squish_rate_func(smooth, 0.0, 0.35), squish_rate_func(smooth, 0.3, 0.8),
+                        squish_rate_func(smooth, 0.75, 1.0))
     anims.append(ReplacementTransform(old.code.background, new.code.background))
-    anims += [FadeOut(old.header), FadeIn(new.header)]
+    anims += [FadeOut(old.header, rate_func=out_), FadeIn(new.header, rate_func=in_)]
     for pair in pairs:
         o, n = pair[0], pair[1]
         more = list(pair[2]) if len(pair) > 2 else []
@@ -219,9 +262,9 @@ def morph_panel(scene, old, new, pairs=(), drift=0.45, run_time=0.8, extra=()):
         used_n.update(n)
         dst = VGroup(*[nc[i] for i in n], *more)
         wrappers.append(dst)
-        anims.append(ReplacementTransform(VGroup(*[oc[i] for i in o]), dst))
-    anims += [FadeOut(r, shift=UP * drift) for i, r in enumerate(oc) if i not in used_o]
-    anims += [FadeIn(r, shift=UP * drift) for i, r in enumerate(nc) if i not in used_n]
+        anims.append(ReplacementTransform(VGroup(*[oc[i] for i in o]), dst, rate_func=move_))
+    anims += [FadeOut(r, shift=UP * drift, rate_func=out_) for i, r in enumerate(oc) if i not in used_o]
+    anims += [FadeIn(r, shift=UP * drift, rate_func=in_) for i, r in enumerate(nc) if i not in used_n]
     tops = list(scene.mobjects)
     above = tops[tops.index(old) + 1:] if old in tops else []    # drawn over the old panel
     scene.play(*anims, *extra, run_time=run_time)
@@ -340,15 +383,18 @@ class ToolMenu(VoiceScene):
             self.play(Indicate(boxes[1], color=TURN, scale_factor=1.1), run_time=0.7)
             self.play(*mc.parts_in("llm_top", "llm_bot"), run_time=0.6)
             vo.wait_until("steps around the search")
-            lag_play(self, [mc.fly_in(0), mc.fly_in(1)], owner=mc, lag_ratio=0.5, run_time=0.9)
+            # each technique box fades in at its slot as the Retrieval box flashes (flying out of it,
+            # the boxes crossed the LLM and the boxes already there)
+            lag_play(self, [drop_in(mc, 0), drop_in(mc, 1)], owner=mc, lag_ratio=0.5, run_time=0.9,
+                     extra=[Indicate(boxes[1], color=DATA, scale_factor=1.06)])
             vo.wait_until("whether to retrieve")
-            self.play(mc.fly_in(2), run_time=0.5)
+            self.play(drop_in(mc, 2), Indicate(boxes[1], color=DATA, scale_factor=1.06), run_time=0.5)
             vo.wait_until("grading")
-            self.play(mc.fly_in(3), run_time=0.45)
+            self.play(drop_in(mc, 3), Indicate(boxes[1], color=DATA, scale_factor=1.06), run_time=0.45)
             vo.wait_until("rewriting")
-            self.play(mc.fly_in(4), run_time=0.45)
+            self.play(drop_in(mc, 4), Indicate(boxes[1], color=DATA, scale_factor=1.06), run_time=0.45)
             vo.wait_until("and web search")
-            self.play(mc.fly_in(5), run_time=0.45)
+            self.play(drop_in(mc, 5), Indicate(boxes[1], color=DATA, scale_factor=1.06), run_time=0.45)
 
         # ============================================================ 1 · a model in front of the menu
         with self.voiceover(SAY[1]) as vo:
@@ -371,7 +417,8 @@ class ToolMenu(VoiceScene):
             self.play(FadeIn(mm), run_time=0.5)
             self.play(mm.light("tools"), run_time=0.5)
             vo.wait_until("Its README says")
-            self.play(FadeOut(cp), FadeIn(rc, shift=DOWN * 0.15), run_time=0.7)
+            self.play(FadeOut(cp, rate_func=OUT_HALF), FadeIn(rc, shift=DOWN * 0.15, rate_func=IN_HALF),
+                      run_time=0.7)
             vo.wait_until("Search one author's book")
             r0 = ring(mc.parts["menu0"], TURN, buff=0.06)
             self.play(Create(r0), run_time=0.5)
@@ -386,10 +433,14 @@ class ToolMenu(VoiceScene):
             m0 = mc.parts["menu0"].copy()
             self.add(m0)
             # the first card leaves the menu and lands where its declaration will start
-            self.play(FadeOut(mc), FadeOut(rc), FadeOut(ref), FadeOut(mm), FadeOut(r1),
-                      m0.animate.align_to(c1[0], LEFT).align_to(c1[0], UP).shift(LEFT * 0.1),
+            # the menu leaves first, then the card travels (it crossed the fading labels)
+            out_ = squish_rate_func(smooth, 0.0, 0.4)
+            self.play(*[FadeOut(m, rate_func=out_) for m in (mc, rc, ref, mm, r1)],
+                      m0.animate(rate_func=squish_rate_func(smooth, 0.3, 1.0))
+                      .align_to(c1[0], LEFT).align_to(c1[0], UP).shift(LEFT * 0.1),
                       run_time=0.7)
-            self.play(FadeIn(p1, shift=UP * 0.1), FadeOut(m0), run_time=0.6)
+            self.play(FadeOut(m0, rate_func=OUT_HALF), FadeIn(p1, shift=UP * 0.1, rate_func=IN_HALF),
+                      run_time=0.6)
             vo.wait_until("a name, which")
             b10 = p1.bar(10, DATA)
             tA = line_note("the name the model writes back").next_to(c1[1], RIGHT, buff=0.35)
@@ -437,8 +488,12 @@ class ToolMenu(VoiceScene):
             fold = [(p2.rows_of(n), p2f.rows_of(n)) for n in (19, 29, 30)]
             fold.append((names_rows, [1], [nine]))
             br2f = rbracket([gap, nine], nine.get_right()[0] + 0.25)
+            # the bracket and its tag move in step with the folding rows (morph_panel's paired rows
+            # travel in 0.3–0.8 of the run; moving over the whole run, the bracket crossed "Hunt")
+            fold_ = squish_rate_func(smooth, 0.3, 0.8)
             morph_panel(self, p2, p2f, pairs=fold, run_time=0.7,
-                        extra=[Transform(br2, br2f), tE.animate.next_to(br2f, RIGHT, buff=0.15)])
+                        extra=[Transform(br2, br2f, rate_func=fold_),
+                               tE.animate(rate_func=fold_).next_to(br2f, RIGHT, buff=0.15)])
             vo.wait_until("The search text's description")
             self.wait(0.4)
             p3 = at_top_left(src_panel(AT, 31, 37, wrap=True))
@@ -565,8 +620,11 @@ class ToolMenu(VoiceScene):
         menus.move_to([0, 2.15, 0])
         self.play(*[ReplacementTransform(n, s) for n, s in zip(names7, n_stack)],
                   *[ReplacementTransform(b, s) for b, s in zip(books7, b_stack)],
-                  ReplacementTransform(h_names, n_lab), ReplacementTransform(h_books, b_lab),
-                  FadeIn(menus, shift=DOWN * 0.15), run_time=1.0)
+                  # the headers swap old out, new in (a Transform scrambled the letters); the menu
+                  # comes in once the lists have left the top
+                  FadeOut(h_names, rate_func=OUT_HALF), FadeIn(n_lab, rate_func=IN_HALF),
+                  FadeOut(h_books, rate_func=OUT_HALF), FadeIn(b_lab, rate_func=IN_HALF),
+                  FadeIn(menus, shift=DOWN * 0.15, rate_func=IN_HALF), run_time=1.0)
         card = ponder_at(self, PONDER_Q, 8)
 
         # ============================================================ 8 · two books
@@ -587,10 +645,13 @@ class ToolMenu(VoiceScene):
         t_wom = gtag(f"author = None · {N_WOMANS:,} chunks · lecture 5's file-name slip", ERR, text_color=INK)
         t_wom.move_to([w_book.get_left()[0] - 0.25 - t_wom.width / 2, w_book.get_center()[1], 0])
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(card), FadeOut(menus), FadeOut(n_lab), FadeOut(b_lab),
-                      *[ReplacementTransform(s, n) for s, n in zip(n_stack, names8)],
-                      *[ReplacementTransform(s, by_title[b]) for s, b in zip(b_stack, BOOKS)],
-                      FadeIn(xc, shift=DOWN * 0.15), FadeIn(t, shift=UP * 0.3), run_time=1.0)
+            # the ponder card and the menu leave first, the terminal comes in after (at once, the
+            # card's question and the terminal read together)
+            move_ = squish_rate_func(smooth, 0.3, 1.0)
+            self.play(*[FadeOut(m, rate_func=OUT_HALF) for m in (card, menus, n_lab, b_lab)],
+                      *[ReplacementTransform(s, n, rate_func=move_) for s, n in zip(n_stack, names8)],
+                      *[ReplacementTransform(s, by_title[b], rate_func=move_) for s, b in zip(b_stack, BOOKS)],
+                      FadeIn(xc, shift=DOWN * 0.15), FadeIn(t, shift=UP * 0.3, rate_func=IN_HALF), run_time=1.0)
             t.print(self, [OUT_15, OUT_26, OUT_27], run_time=0.5)
             out28 = t.print(self, OUT_28_ROWS, run_time=0.4)
             vo.wait_until("The cottage cheese")
@@ -649,19 +710,34 @@ class ToolMenu(VoiceScene):
         cc.move_to(model_c)
         cc_spot = np.array([0.3, LANE, 0])
 
-        def absorb(m):
-            return m.animate.move_to(model_c).scale(0.15).set_opacity(0)
+        # The corridor between "call 1" (bottom 3.14) and HTTPS (top 2.13) is about 1.0 high. Each card
+        # takes its own lane in it (y), entering at x = xa, and goes down into the cloud only after
+        # x = -3.0, past HTTPS's left end. Straight, the cards crossed HTTPS and llm-rag-cli; on
+        # lanes at their own rows and turning down at x = -2.5, the top menu card crossed "call 1"
+        # and the call card and the wide second menu card still clipped HTTPS.
+        mid = (lab.get_bottom()[1] + st.parts["https"].get_top()[1]) / 2            # 2.64
+
+        def absorb(m, y, xa=0.3):
+            return m.animate(path_func=via(m.get_center(), model_c, [xa, y, 0], [-3.0, y, 0])) \
+                .move_to(model_c).scale(0.15).set_opacity(0)
+
+        # up out of the cloud, along the corridor's middle (the answer card is 0.98 high), then down
+        # into place clear of HTTPS's right end
+        rise = via(model_c, cc_spot, [model_c[0], mid, 0], [cc_spot[0], mid, 0])
 
         with self.voiceover(SAY[10]) as vo:
             st.reveal(self, "lock", run_time=0.5, extra=[FadeIn(itag)])
             self.play(FadeIn(call1, shift=UP * 0.2), FadeIn(lab), FadeIn(tick1), run_time=0.6)
             vo.wait_until("only a menu")
-            lag_play(self, [absorb(m) for m in (mn[0], mn[1], q1)], lag_ratio=0.15, run_time=0.9)
+            # the leftmost card leaves first, so none passes over another on the way
+            lag_play(self, [absorb(q1, q1.get_y(), -0.3),
+                            absorb(mn[0], lab.get_bottom()[1] - mn[0].height / 2, 0.5),   # under "call 1"
+                            absorb(mn[1], mn[1].get_y(), -0.3)], lag_ratio=0.15, run_time=0.9)
             self.remove(call1, q1, *mn)
             vo.wait_until("Call 1 returns")
             self.play(*st.light("model"), run_time=0.3)
             self.play(FadeIn(cc, scale=0.4), *st.unlight("model"), run_time=0.4)
-            self.play(cc.animate.move_to(cc_spot), run_time=0.9)
+            self.play(cc.animate(path_func=rise).move_to(cc_spot), run_time=0.9)
             vo.wait_until("a function name")
             self.play(Indicate(cc[2], color=CLOUD, scale_factor=1.08), run_time=0.6)
             vo.wait_until("Your code runs it")
@@ -679,11 +755,14 @@ class ToolMenu(VoiceScene):
             tick2 = cost_tick().next_to(lab2, RIGHT, buff=0.15)
             self.play(FadeIn(q2, shift=DOWN * 0.1), ReplacementTransform(lab, lab2),
                       ReplacementTransform(tick1, tick2), run_time=0.4)
-            lag_play(self, [absorb(m) for m in (q2, cc, tc)], lag_ratio=0.12, run_time=0.9)
+            lag_play(self, [absorb(cc, mid + 0.02), absorb(tc, mid - 0.01), absorb(q2, mid - 0.04)],
+                     lag_ratio=0.12, run_time=0.9)
             self.remove(q2, cc, tc)
-            ans = answer_card().move_to(model_c)
+            # 0.85: 0.84 high, it rises through the 1.0-high corridor with room on both sides (at
+            # 0.98 high it grazed "call 2" and HTTPS)
+            ans = answer_card().scale(0.85).move_to(model_c)
             self.play(FadeIn(ans, scale=0.4), run_time=0.35)
-            self.play(ans.animate.move_to(cc_spot), run_time=0.8)
+            self.play(ans.animate(path_func=rise).move_to(cc_spot), run_time=0.8)
 
         cs = CallStrip()
         trip = VGroup(st, ans, lab2, tick2, itag)

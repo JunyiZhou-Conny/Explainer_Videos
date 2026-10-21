@@ -15,8 +15,8 @@ Beats (script.md "## S07", one voiceover block each):
    3-row strip (line 36 kept), V3's compact stage comes in above, with a TEAL dashed band under it
    ("inside llm-rag-cli", the CLI box lit) holding the BLUE call card: its search_content turns PINK and
    a dashed PINK vector glyph rises out of the cylinder (stand-in, "a stored chunk's vector"); the
-   query `collection.query(…, n_results=10, where={"author": …})` writes in (the vector into its "…",
-   the card's author into where=) with a PINK arrow up into the cylinder; GREY "which 10 may differ".
+   query `collection.query(…, n_results=10, where={"author": …})` writes in (the vector and the card's
+   author flash; its "…" turns PINK and "author" fades into where=) with a PINK arrow up into the cylinder; GREY "which 10 may differ".
 3. TERM(33: 51–57, …, 135; wrap) scrolls through the strip (51–53, then pairs, so two lines of text
    always show). Ten GREEN chunk cards drop out of the
    cylinder into the band; the first opens into a card with lines 51, 57, 59's first words (Mara and
@@ -24,9 +24,9 @@ Beats (script.md "## S07", one voiceover block each):
    the TEAL {"content": …} card "3,509 characters", stapled to the BLUE call card. The cylinder never
    moves toward the cloud.
 4. CODE(cli.py: 464–477) at 20 pt, comment cut, lines 470–472 as one row; the call strip lights
-   "call 2"; a fresh V2 envelope "call 2" beside it. As named: line 468 GREY → sheet "the question";
-   469 BLUE → sheet "the model's turn" with its seal; the function_responses row TEAL → sheet "your
-   function responses"; line 475 GREEN → the GREEN "the menu" card clips on; a GREY dashed ghost sheet
+   "call 2"; a fresh V2 envelope "call 2" beside it. As named (each line's bar flashes, its sheet drops into
+   the envelope): line 468 GREY → sheet "the question"; 469 BLUE → sheet "the model's turn" with its
+   seal; the function_responses row TEAL → sheet "your function responses"; line 475 GREEN → the GREEN "the menu" card clips on; a GREY dashed ghost sheet
    "no tool config" and a GREY dashed ghost under the panel "no tool_config → mode back to
    automatic", dashed to line 474.
 5. LECTURE 39 + the duty chip "interpret its outputs" lit YELLOW under it. TRACKER · extra. The
@@ -36,10 +36,10 @@ Beats (script.md "## S07", one voiceover block each):
    "the model's own turn" beside rows 148–163; "unchanged · seal kept" at the last sentence.
 6. Our request stays unsent: the terminal fades in place and V3's compact stage returns; a GREY dashed
    envelope (the staff's recorded call 2, tag "recorded · the staff's call 2, September 22, 2026"
-   under the stage) crosses into the cloud, a BLUE prose card comes back and unfolds into
-   PANEL(expected/out-txt-agent-run.txt: 99, 105
+   under the stage) crosses into the cloud, a BLUE prose card comes back; it and the stage leave,
+   then PANEL(expected/out-txt-agent-run.txt: 99, 105
    cut, 111 cut, 112 cut; wrapped at spaces, GREY ↪) (out.txt · lines 98–111 (excerpt), staff tag with
-   "old book") while the stage leaves; Alpine region, limestone caves underlined, transhumance YELLOW,
+   "old book") fades in; Alpine region, limestone caves underlined, transhumance YELLOW,
    the seasonal movement underlined; then two GOLD chips "247 tokens" / "1,269 tokens" and under them
    the GREY note "printed as `total_token_count` · out.txt · lines 49, 135".
 7. The hook's YELLOW card, centre: "Who searched your database?" / "Who chose the book?"; BLUE "Gemini
@@ -133,7 +133,6 @@ from manim import (
     DashedVMobject,
     FadeIn,
     FadeOut,
-    FadeTransform,
     GrowArrow,
     Indicate,
     LaggedStart,
@@ -146,6 +145,9 @@ from manim import (
     RoundedRectangle,
     VGroup,
     Write,
+    smooth,
+    squish_rate_func,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -156,6 +158,9 @@ SAY = NARRATION["S07"]
 
 # ------------------------------------------------------------------ the real sources
 C33 = capture("33", "cli-container")          # the extra script: the staff's call through the dispatcher
+OUT_HALF = squish_rate_func(smooth, 0.0, 0.45)   # a swap in one play: the old text leaves first,
+IN_HALF = squish_rate_func(smooth, 0.55, 1.0)    # then the new one comes in (same run_time)
+
 OUT = capture("out-txt-agent-run", "expected")  # the staff's run (out.txt = file line - 1)
 C09 = capture("09", "laptop")                 # extra: git show 85bba32; head -4 the book
 C10 = capture("10", "laptop")                 # extra: four of the answer's words, counted
@@ -409,7 +414,9 @@ class CallTwo(VoiceScene):
             self.play(Indicate(p0.span(88, 'function_call.name == "get_book_by_author"'), color=TURN,
                                scale_factor=1.05), run_time=0.7)
             vo.wait_until("runs the real function")
-            self.play(FadeOut(VGroup(b88, n88)), FadeTransform(p0, p1), run_time=0.8)
+            # old code out, then the new code in (a cross-fade showed both panels at once)
+            self.play(FadeOut(VGroup(b88, n88), rate_func=OUT_HALF), FadeOut(p0, rate_func=OUT_HALF),
+                      FadeIn(p1, rate_func=IN_HALF), run_time=0.8)
             self.play(FadeIn(b95), FadeIn(n95, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("and wraps the result")
             self.play(FadeIn(b103), FadeIn(n103, shift=LEFT * 0.15), run_time=0.5)
@@ -509,12 +516,12 @@ class CallTwo(VoiceScene):
             vo.wait_until("and the 10 chunks")
             q_auth.set_opacity(0)
             self.play(FadeIn(qlab, shift=LEFT * 0.15), run_time=0.5)
-            v_copy, a_copy = vec.copy(), au_glyphs.copy()
-            self.add(v_copy, a_copy)
-            self.play(v_copy.animate.scale(0.3).move_to(q_dots).set_opacity(0), q_dots.animate.set_color(LOOKUP),
-                      a_copy.animate.move_to(q_auth), run_time=0.7)
-            q_auth.set_opacity(1)
-            self.remove(v_copy, a_copy)
+            # the vector and the author flash in place; the dots turn PINK and "author" fades in
+            # at its slot (flying copies crossed the stand-in tag and "where=")
+            self.play(Indicate(vec, color=LOOKUP, scale_factor=1.1),
+                      Indicate(au_glyphs, color=LOOKUP, scale_factor=1.1), q_dots.animate.set_color(LOOKUP),
+                      *[g.animate(rate_func=squish_rate_func(smooth, 0.3, 1.0)).set_opacity(1) for g in q_auth],
+                      run_time=0.7)
             self.play(GrowArrow(q_arrow), run_time=0.5)
             self.play(FadeIn(differ, shift=UP * 0.1), run_time=0.4)
 
@@ -564,7 +571,14 @@ class CallTwo(VoiceScene):
             vo.wait_until("of 3,509 characters")
             n3509 = wrapped_span(list(out135), D135, "3509 characters")
             self.play(n3509.animate.set_color(TURN), run_time=0.4)
-            self.play(FadeOut(one_s), ReplacementTransform(string, rc), run_time=0.8)
+            # "one string" leaves first (the bar grew through it: GREEN on GREEN), the bar becomes the
+            # card's frame, then the card's rows fade in (a bar -> text morph scrambled them)
+            shell = VGroup(rc.frame, rc[1])
+            self.play(FadeOut(one_s, rate_func=squish_rate_func(smooth, 0.0, 0.3)),
+                      ReplacementTransform(string, shell, rate_func=squish_rate_func(smooth, 0.2, 0.75)),
+                      FadeIn(rc.rows, rate_func=squish_rate_func(smooth, 0.7, 1.0)), run_time=0.8)
+            self.remove(shell, rc.rows)
+            self.add(rc)
             vo.wait_until("they're stapled")
             self.play(rc.animate.move_to(rc_to.get_center()), run_time=0.8)
             self.play(Create(stp), run_time=0.3)                # the staple is the narrated thing
@@ -603,8 +617,14 @@ class CallTwo(VoiceScene):
         glead = DashedVMobject(lead, num_dashes=18, dashed_ratio=0.55).set_stroke(S.GREY, 2)
 
         def fly(row_bar, sheet):
-            sheet.move_to(row_bar.get_center()).align_to(row_bar, RIGHT)
-            return FadeTransform(row_bar.copy(), sheet)
+            """The line's bar flashes in place; its sheet then fades in at its slot (slot_drop):
+            a sheet flying from the row crossed the code."""
+            return row_bar.animate(rate_func=there_and_back).set_fill(opacity=0.4)
+
+        def slot_drop():
+            # a short drop: less than the 0.1 gap between two sheets (from 0.3 up, the fading sheet
+            # lay over the one above it and both labels read at once)
+            return env.slot_point(len(env.sheets)) + UP * 0.08
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(st, band, legend, cc, rc, stp, t1)), caption_extra(tr, False),
@@ -614,15 +634,15 @@ class CallTwo(VoiceScene):
             vo.wait_until("the question")
             self.play(FadeIn(b468), run_time=0.3)
             self.play(fly(b468, s_q), run_time=0.4)
-            env.add_sheet(self, s_q, run_time=0.5)
+            env.add_sheet(self, s_q, start=slot_drop(), run_time=0.5)
             vo.wait_until("the model's own turn")
             self.play(FadeIn(b469), run_time=0.3)
             self.play(fly(b469, s_m), run_time=0.4)
-            env.add_sheet(self, s_m, run_time=0.5)
+            env.add_sheet(self, s_m, start=slot_drop(), run_time=0.5)
             vo.wait_until("and your function responses")
             self.play(FadeIn(b470), run_time=0.3)
             self.play(fly(b470, s_r), run_time=0.4)
-            env.add_sheet(self, s_r, run_time=0.5)
+            env.add_sheet(self, s_r, start=slot_drop(), run_time=0.5)
             vo.wait_until("The tools go along again")
             self.play(FadeIn(b475), run_time=0.3)
             self.play(FadeIn(menu, shift=UP * 0.2), Create(clip), run_time=0.5)
@@ -720,9 +740,10 @@ class CallTwo(VoiceScene):
         assert golds.get_bottom()[1] > -3.55
         with self.voiceover(SAY[6]) as vo:
             # our request stays unsent: its terminal fades in place, the staff's recorded call crosses
-            self.play(FadeOut(VGroup(t5, seal_fly, box_ts, rule, turn_l, kept)), FadeOut(duty),
-                      caption_extra(tr, False), FadeIn(st6, shift=DOWN * 0.2), FadeIn(ghost_env),
-                      FadeIn(env_tag, shift=UP * 0.1), run_time=0.7)
+            self.play(FadeOut(VGroup(t5, seal_fly, box_ts, rule, turn_l, kept), rate_func=OUT_HALF),
+                      FadeOut(duty, rate_func=OUT_HALF), caption_extra(tr, False),
+                      FadeIn(st6, shift=DOWN * 0.2, rate_func=IN_HALF), FadeIn(ghost_env, rate_func=IN_HALF),
+                      FadeIn(env_tag, shift=UP * 0.1, rate_func=IN_HALF), run_time=0.7)
             self.play(ghost_env.animate.move_to(md.get_center()).scale(0.7), run_time=0.7)
             self.play(FadeOut(ghost_env, scale=0.5), Indicate(md, color=CLOUD, scale_factor=1.1), run_time=0.4)
             prose.scale(0.5)
@@ -731,7 +752,11 @@ class CallTwo(VoiceScene):
             # its left edge 0.2 inside the laptop frame (not across the frame's border)
             back = np.array([lap.get_left()[0] + 0.2 + prose.width, margin_y, 0])
             self.play(prose.animate.scale(2.0).move_to(back), run_time=0.5)
-            self.play(FadeTransform(prose, lp), FadeIn(stf), FadeOut(st6), FadeOut(env_tag), run_time=0.6)
+            # the stage and the answer leave, then the panel comes in (growing into the panel, the
+            # answer crossed the stage's labels and tags)
+            self.play(FadeOut(prose, rate_func=OUT_HALF), FadeOut(st6, rate_func=OUT_HALF),
+                      FadeOut(env_tag, rate_func=OUT_HALF), FadeIn(lp, rate_func=IN_HALF),
+                      FadeIn(stf, rate_func=IN_HALF), run_time=0.6)
             vo.wait_until("An Alpine valley")
             u_alp = VGroup(*[under(g, CLOUD, 3) for g in alp])
             self.play(Create(u_alp), run_time=0.4)
@@ -788,7 +813,10 @@ class CallTwo(VoiceScene):
             vo.wait_until("and one embedding call")
             self.play(FadeIn(src7, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("all paid")
-            self.play(Indicate(gold7, color=COST, scale_factor=1.06), run_time=0.6)
+            # the outline flares and the words pulse (Indicate filled the tag GOLD: the words vanished)
+            # the outline swells with the words (alone, the 1.06 words touched the tight outline)
+            self.play(Indicate(gold7.text, color=COST, scale_factor=1.06),
+                      gold7.box.animate(rate_func=there_and_back).scale(1.06).set_stroke(COST, 4), run_time=0.6)
 
         # ============================================================ 8 · the book changed under the run
         xc8 = extra_card("count four of the answer's words in out.txt, today's book, and the book before 85bba32")

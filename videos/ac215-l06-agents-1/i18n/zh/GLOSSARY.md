@@ -214,7 +214,7 @@
 | dot env / dot env dot example / the root file / root dot env / only the nearest dot env is loaded | .env / .env.example / 根目录的 .env | S09[4]：接下来，把 .env.example 复制成 .env 文件。 | 文件名照写（en_display：.env、.env.example）。 |
 | Google API key / a placeholder Google API key / Google API key equals / create a key in Google AI Studio | Google API key / Google API 密钥 / Google AI Studio / 密钥 | S09[5]：然后在 Google AI Studio 里创建一个密钥，粘贴到 .env 里 Google API key 的等号后面。 | A6：GOOGLE_API_KEY= → Google API key 的等号后面（变量名，按 SAY 写）；a placeholder Google API key（变量的值）→ 一个占位的 Google API 密钥。单说 key → 密钥（A7）。 |
 | the model line / a current model / the code's fallback / shut down / limits 2.5 Flash to earlier users | 后备模型 / 已停用 / 老用户 | S09[7]：Google 把代码里的后备模型 gemini-2.0-flash 列为已停用，又把 gemini-2.5-flash 限定给老用户使用。 | C2（同第 5 讲）：模型 ID 照代码写，中英两行一致（en_display：Gemini 2.0 Flash → gemini-2.0-flash，2.5 Flash → gemini-2.5-flash）。 |
-| the project file / Python 3.10 or newer / ADK 1.8 or newer / no upper bound / sentence transformers | 项目文件 / 及以上 / 上限 / sentence-transformers | S09[8]：项目文件要求 Python 3.10 及以上、ADK 1.8 及以上，没有上限，另外还有 Chroma 和 sentence-transformers。 | 第 1 讲：or newer → 及以上。the project file（画面上的 pyproject.toml）→ 项目文件；包名 sentence-transformers 照写（en_display）。 |
+| the project file / Python 3.10 or newer / ADK 1.8 or newer / no upper bound / sentence transformers | 项目文件 / 及以上 / 上限 / sentence-transformers | S09[8]：项目文件要求 Python 3.10 及以上、ADK 1.8 及以上，没有上限。文件里还列了 Chroma 和 sentence-transformers。 | 第 1 讲：or newer → 及以上。the project file（画面上的 pyproject.toml）→ 项目文件；包名 sentence-transformers 照写（en_display）。 |
 | uv sync / no Python at all / downloads the newest / CPython 3.15.0 / resolves 189 packages | uv sync / CPython 3.15.0 / 包 | S09[10]：和第 1 讲一样，周围没有 Python，uv 就下载最新的：录制时是 CPython 3.15.0。 | 第 1 讲：package → 包；at the time of recording → 录制时（A9）。 |
 | O-N-N-X runtime / wheels / only up to Python 3.14 / which Chroma pulls in | onnxruntime / wheel / 引入 | S09[11]：Chroma 引入的 onnxruntime，只有到 Python 3.14 为止的 wheel。 | 第 1 讲：wheel 照说。pulls in（依赖）→ 引入，绝不写 pull（A7）。en_display：onnxruntime。 |
 | uv python pin 3.13 / the fix / a version pin / your Python pin / pinned / unpinned | uv python pin 3.13 / pin / Python pin | S09[12]：修复办法是一条额外的命令：uv python pin 3.13。 | 第 1 讲：pin 照说（pin 住）。pinned → pin 了版本 / 版本 pin 住了；unpinned → 没有 pin 版本；a version pin doesn't help → pin 版本没用。 |
@@ -226,7 +226,7 @@
 | English | 字幕 | 首次出现 | 说明 |
 |---|---|---|---|
 | uv run ADK web / Running agents / the repository root / version 2.12 / may Google collect usage data | uv run adk web / Running Agents / repo 根目录 / 使用数据 | S10[0]：Running Agents 一节的第 1 步，在 repo 根目录下：uv run adk web。 | README 标题照写（Running Agents、Agents；A11）；en_display：uv run adk web。 |
-| telemetry / off by default / the capital Y / pressing enter / answers yes / ADK telemetry disable | 遥测 / 大写的 Y / 回车 / yes / adk telemetry disable | S10[1]：提示文字说遥测默认是关闭的，可大写的 Y 意味着直接按回车就是回答 yes。 | en_display：adk telemetry disable。 |
+| telemetry / off by default / the capital Y / pressing enter / answers yes / uv run ADK telemetry disable | 遥测 / 大写的 Y / 回车 / yes / uv run adk telemetry disable | S10[1]：提示文字说遥测默认是关闭的，可大写的 Y 意味着直接按回车就是回答 yes。 | en_display：uv run adk telemetry disable。 |
 | web server / the server / server log / the browser / localhost 8000 / curl / redirect / dev UI | web 服务器 / 服务器 / 服务器日志 / 浏览器 / localhost:8000 / curl / 重定向 / dev UI | S10[2]：第 2 步：在浏览器里打开 localhost:8000；额外的 curl 显示它重定向到了 dev UI。 | A7：MCP 以外的 server → 服务器。dev UI 照写（ADK 的名字，画面上是 /dev-ui/）。en_display：localhost 8000 → localhost:8000。 |
 | agent dropdown / 7 entries / the nested ones / pick 1 baseline / the page refuses / valid Python identifiers | 下拉菜单 / 1-baseline / 标识符 | S10[3]：按它的 README 选 1-baseline，页面拒绝了：agent 名必须是合法的 Python 标识符。 | 目录名照写（en_display：1-baseline）。 |
 | folder name / the app's name / an identifier / letters, digits and underscores / never starting with a digit / an invalid app name | 目录名 / app 名 / 字母 / 数字 / 下划线 | S10[4]：每个目录名都会变成 app 名，而标识符只能包含字母、数字和下划线，并且不能以数字开头。 | 第 1 讲 A6：app 是名字，不是概念：app 名。 |
@@ -244,7 +244,7 @@
 | the three LLM agents / a model / an instruction / an output key / no tools at all | LLM agent / 指令 / output key | S11[0]：在 baseline 里，有三个 LLM agent，每个都有一个模型、一条指令和一个 output key。 | A6：output_key → output key；en_display：output_key。 |
 | sequential agent / validator / planner / summarizer / in order / parallel agent | 顺序 agent / 校验器 / 规划器 / 总结器 / 并行 agent | S11[1]：顺序 agent 依次运行它们：校验器、规划器、总结器。 | 画面上是 SequentialAgent / ParallelAgent，SAY 用普通说法。三个 agent（ItineraryValidator、TravelPlanner、TripSummarizer）按作用称呼。 |
 | placeholder / its instruction's placeholder / filled from that cell / goes into the state | 占位符 | S11[3]：校验器的回复写进状态，放在它的 output key 下面；规划器运行之前，它指令里的占位符会用那一格的内容填上。 | {key} 那个洞 → 占位符。 |
-| the tree the UI loads / an extra request / another extra request is | 树 / 请求 | S11[1]：一个额外的请求显示了 UI 加载的那棵树，模型来自你根目录的 .env；把你的设好。 | D6 的额外检查句式。 |
+| the tree the UI loads / an extra request / another extra request is | 树 / 请求 | S11[1]：一个额外的请求显示了 UI 加载的那棵树，模型来自你根目录的 .env；核对一下你的。 | D6 的额外检查句式。 |
 | the lecture's planner / prices / the model's guesses / sums from Python | 课上的旅行规划 / 价格 | S11[5]：课上的旅行规划需要实时系统；这条 pipeline 没有工具，所以里面的价格都是模型猜的。 | A7：这里指课上的旅行规划例子（课件 20–22）。pipeline 照说（系列）。 |
 | Internal Server Error / API key not valid / the server log / the placeholder reached Google / refused | Internal Server Error / API key not valid / 占位密钥 / 拒绝 | S11[7]：服务器日志说明了原因：API key not valid。 | 终端原文照写（A1 a）。 |
 | State tab / three replies in order / the three new entries / the session is a file / plan a trip | State 标签页 / 回复 / 规划 | S11[8]：每个请求是三次模型调用：暂停一下，规划一次旅行。 | entries → 项，绝不写“密钥”或“键”（review_spoken 第 7.4 条）。 |
@@ -284,7 +284,7 @@
 | the gate / finalize / a finalize call / propose / the approved one / pending / needs confirmation | 关卡 / finalize / 提议 / 已批准 / 待批准 / needs confirmation | S14[2]：这就是关卡。 | gate → 关卡（同一个意思同一个词；第 4 讲的三道关卡也是“关卡”）。finalize（finalize_itinerary，按 SAY 说）照写；needs_confirmation → needs confirmation（A6）。pending / approved → 待批准 / 已批准（画面上黄色的 PENDING、绿色的 APPROVED 印章保持英文）。 |
 | approval / apply confirmation / an explicit yes / copies pending to approved / the human's message | 批准 / apply confirmation / 明确的 yes | S14[3]：批准放在另一个函数 apply confirmation 里：只有明确的 yes，才会把待批准的计划复制为已批准。 | A6：apply_confirmation → apply confirmation；en_display：apply_confirmation。A9：S14[3] 后面是思考题：不能说它只在人的消息上运行。 |
 | stamp / every retry gets the same stamp / the stamp flips to approved | 印章 / 重试 | S14[4]：在第 3 轮里，什么都没被批准，所以每次重试都会盖上同一个印章。 | V8。 |
-| the budget / line by line / 2,690 dollars out of 6,000 / the notebook's own test | 预算 / 美元 / 测试 | S14[5]：印章翻成已批准，finalize 运行，Python 逐行算出预算：2690 美元，上限 6000。 | C1、C2。 |
+| the budget / line by line / 2,690 of the 6,000 dollars / the notebook's own test | 预算 / 美元 / 测试 | S14[5]：印章翻成已批准，finalize 运行，Python 逐行算出预算：2690 美元，上限 6000。 | C1、C2。 |
 | checked state / the model's prose / an itinerary that skipped the check / raises an error / prints a warning | 行程 / 抛出异常 / 警告 | S14[6]：用户看到的内容来自检查过的状态，而不是模型写的文字。 | raises an error → 抛出异常（第 4 讲：异常 = Python 的 exception）。 |
 | can't talk its way past / on the action tool | 绕不过去 / 行动工具 | S14[7]：这个 notebook 把两者都写进代码，模型怎么说都绕不过去；代码就放在行动工具上。 |  |
 | a cheese newsletter per reader / Microsoft's Agent Framework / the users cell / preview only / nothing is sent | 简报 / 读者 / Agent Framework / USERS 单元格 / 预览 | S15[0]：最后一个 notebook 给每位读者写一份奶酪简报，用的是 Microsoft 的 Agent Framework，版本 pin 住了。 | the users cell → USERS 单元格（en_display：the USERS cell）。newsletter → 简报（notebook 标题 Cheese Newsletter 在画面上照旧）。 |
@@ -329,7 +329,7 @@
 |---|---|---|---|
 | line 429 / line 478 / step 1 / step 6 / Turn 4 | 第 429 行 / 第 478 行 / 第 1 步 / 第 4 轮 | S05[5]：那是第 429 行，在任何 Gemini 调用之前。 | C1。 |
 | counts: 10 passages / 9 names / 11 books / 178 chunks / 1,505 chunks / 8,248 chunks / 3,509 characters / 189 packages / 7 entries / 14 tools / 12 turns / 16 iterations | 10 个段落 / 178 个 chunk / 1505 个 chunk / 3509 个字符 | S04[8]：那本茅屋奶酪食谱，178 个 chunk，作者不在名单上。 | C1：不加千位分隔符。 |
-| sizes, times and money: 40 seconds / 3 seconds / 39 seconds / 13 seconds / 1.6 gigabytes / 3 gigabytes / 2,690 dollars / 6,000 | 40 秒 / 1.6 GB / 3 GB / 2690 美元 | S05[3]：构建大约 40 秒后，出现横幅：录制时是 Python 3.12.15 和 uv 0.13.1。 | C2。 |
+| sizes, times and money: 40 seconds / 3 seconds / 39 seconds / 13 seconds / 1.6 gigabytes / 3 gigabytes / 2,690 / 6,000 dollars | 40 秒 / 1.6 GB / 3 GB / 2690 美元 | S05[3]：构建大约 40 秒后，出现横幅。 | C2。 |
 | versions and models: Python 3.12.15 / uv 0.13.1 / CPython 3.15.0 / CPython 3.13 / Python 3.14 / ADK 1.8 / ADK 2.12.0 / 1.27.5 / GPT-4o / Gemini 2.5 Flash / Gemini 3.1 Flash-Lite / Gemini 2.0 Flash | Python 3.12.15 / uv 0.13.1 / CPython 3.15.0 / ADK 2.12.0 / gpt-4o / gemini-2.5-flash / gemini-3.1-flash-lite / gemini-2.0-flash | S09[6]：选 LLM 核心是课上的第一个设计决定，在这里只是一行：换成一个当前的模型，比如 gemini-3.1-flash-lite。 | C2：模型 ID 照代码写，中英两行一致（en_display）。 |
 | dates: October 18, 2026 / September 22 | 2026 年 10 月 18 日 / 9 月 22 日 | S05[6]：它在 docker-volumes 目录里；如果你是在 9 月 22 日之前分块的，先 pull，再重建它。 | C2。 |
 

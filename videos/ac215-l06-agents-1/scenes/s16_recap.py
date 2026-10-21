@@ -77,11 +77,13 @@ from manim import (
     Line,
     Rectangle,
     Transform,
-    TransformFromCopy,
     VGroup,
     VMobject,
     Write,
+    smooth,
+    squish_rate_func,
 )
+from manim.animation.animation import prepare_animation
 
 from common import (
     COST,
@@ -503,8 +505,10 @@ class Recap(VoiceScene):
             vo.wait_until("The sessions in the agent")
             self.play(FadeIn(ex, shift=DOWN * 0.15), run_time=0.5)
             self.play(adk_part.animate.set_color(ERR), run_time=0.3)
-            self.play(TransformFromCopy(VGroup(*ex.text.submobjects[:a + len(".adk/")]), gh.text),
-                      Create(gh.glyph), run_time=0.8)
+            # the folder name flashes in the chip and fades in on the ghost row (a flying copy
+            # slid across the chip's own text); glyph by glyph, so the chip is not split
+            self.play(*[Indicate(g, color=TURN, scale_factor=1.06) for g in ex.text.submobjects[:a + len(".adk/")]],
+                      FadeIn(gh.text, rate_func=squish_rate_func(smooth, 0.3, 1.0)), Create(gh.glyph), run_time=0.8)
             self.play(FadeIn(red, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("aren't ignored")
             rb = col_box(base_row, 3, len("?? baseline/"), ERR)
@@ -602,7 +606,12 @@ class Recap(VoiceScene):
             self.play(*A.fill_control(), run_time=0.6)
             cchips, canims = A.fill("control", ["`Runner`", "`max_turns=12`",
                                                 _keep(chip("llm-rag: two calls by hand", CTR, size=20))])
-            self.play(canims[0], canims[1], canims[2], run_time=0.6)
+            # the name slides left first, then the chips fade in beside it (they crossed)
+            name_mv = prepare_animation(canims[0])
+            name_mv.rate_func = squish_rate_func(smooth, 0.0, 0.7)
+            for c in canims[1:3]:
+                c.rate_func = squish_rate_func(smooth, 0.65, 1.0)
+            self.play(name_mv, canims[1], canims[2], run_time=0.6)
             vo.wait_until("or two calls by hand")
             self.play(canims[3], run_time=0.5)
             vo.wait_until("The lecture's formula")

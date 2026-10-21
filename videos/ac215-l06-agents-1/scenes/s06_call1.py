@@ -7,8 +7,8 @@ Beats (script.md "## S06", one voiceover block each):
 1. Line 445 YELLOW; line 446 GREEN "← the menu"; lines 447–451 YELLOW, mode="any" boxed. LECTURE 35
    at "The lecture lists": a GREY dashed chip (slide 35, our words) "LLM core: model · parameters ·
    response format" beside line 445; temperature=0 flashes.
-2. TRACKER Agents 1 · extra. The lecture tag leaves; the boxed mode="any" becomes an excerpt chip
-   (cli.py · line 449); a 6-row TEAL container terminal types the extra one-liner (folds, `extra`
+2. TRACKER Agents 1 · extra. The lecture tag leaves; the boxed mode="any" flashes, then an excerpt
+   chip (cli.py · line 449) fades in; a 6-row TEAL container terminal types the extra one-liner (folds, `extra`
    tag) → TERM(cli-container/32: 2–4). Both ANY turn YELLOW; a GREY arrow from the chip, caption
    "the model must answer with a function call".
 3. LECTURE 10–13. V3's column returns (the two GREEN menu cards, the GREY dashed "retrieval
@@ -28,10 +28,10 @@ Beats (script.md "## S06", one voiceover block each):
    → TERM(cli-container/30: 2–3, 8–10, 16–17, …, 71; wrap); `real run · no key` beside agent();
    GREEN tag "the lookup passed" beside line 10; line 71 RED. A GREY "with your key, look for"
    card (top right): `LLM Response:` with a function_call · cli.py line 454.
-7. The terminal clears and leaves; the call strip moves up beside the tracker; V3's stage
+7. The terminal clears and leaves; the call strip fades over to beside the tracker; V3's stage
    (compact) returns in the upper part; PANEL(expected/out-txt-agent-run.txt: 15 cut + " …",
    21–28, 29 cut) in the lower part (header "out.txt · lines 14–28 (excerpt)", 10 rows, line 23
-   masked, staff tag on its header row). The BLUE model's speech bubble becomes the BLUE call card
+   masked, staff tag on its header row). The BLUE model's speech bubble gives way to the BLUE call card
    {name, args} with its seal ("thought signature"), beside the rows it summarises; the name, the
    author and the PINK search text are marked as named.
 8. The search text flashes, GREY tag "4 words"; "the description asked for" + excerpt chip
@@ -108,7 +108,10 @@ from manim import (
     Polygon,
     ReplacementTransform,
     RoundedRectangle,
+    UpdateFromAlphaFunc,
     VGroup,
+    smooth,
+    squish_rate_func,
 )
 
 from explainer import style as S
@@ -116,6 +119,24 @@ from explainer.devops import box, label, mono, substring, tag
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S06"]
+
+OUT_HALF = squish_rate_func(smooth, 0.0, 0.45)   # a swap in one play: the old text leaves first,
+IN_HALF = squish_rate_func(smooth, 0.55, 1.0)    # then the new one comes in (same run_time)
+
+
+def fade_to(m, to):
+    """Animation: m fades out where it is, then fades back in centred at `to` (moved, it crossed
+    the text between). m keeps its identity and ends exactly as it was, at `to`."""
+    snap, c0, to = m.copy(), m.get_center().copy(), to.copy()
+
+    def upd(mob, a):
+        if a < 0.5:
+            k, at = 1 - smooth(min(1.0, a / 0.45)), c0
+        else:
+            k, at = smooth(max(0.0, (a - 0.55) / 0.45)), to
+        mob.become(snap.copy().move_to(at).fade(1 - k))
+
+    return UpdateFromAlphaFunc(m, upd)
 
 # ------------------------------------------------------------------ the real sources
 C32 = capture("32", "cli-container")          # the extra one-liner: mode="any" -> ANY
@@ -338,7 +359,9 @@ class CallOne(VoiceScene):
             b433 = p0.bar(433, TURN)
             self.play(FadeIn(b433), run_time=0.5)
             vo.wait_until("Then comes the first call")
-            self.play(FadeOut(b433), FadeTransform(p0, p1), run_time=0.9)
+            # old code out, then the new code in (a cross-fade showed both panels at once)
+            self.play(FadeOut(b433, rate_func=OUT_HALF), FadeOut(p0, rate_func=OUT_HALF),
+                      FadeIn(p1, rate_func=IN_HALF), run_time=0.9)
             self.play(Indicate(p1.span(441, "llm_client.models.generate_content"), color=CLOUD,
                                scale_factor=1.05), run_time=0.8)
 
@@ -372,10 +395,12 @@ class CallOne(VoiceScene):
         place(chip, cx=0, top=TOP_Y - 0.1)
         t2 = term(rows=6, container=True)
         with self.voiceover(SAY[2]) as vo:
-            src = VGroup(p1.span(449, 'mode="any"').copy(), any_box)
-            self.remove(any_box)
-            self.play(FadeOut(VGroup(p1, b445, b446, b447, menu_n, core)), FadeOut(ref),
-                      FadeTransform(src, chip), caption_extra(tr, True), run_time=0.8)
+            # mode="any" flashes in place; the panel leaves, then the chip fades in at the top (a
+            # flying copy crossed the code and the tag); the same 0.8 s in two plays
+            self.play(Indicate(p1.span(449, 'mode="any"'), color=TURN, scale_factor=1.15), run_time=0.35)
+            self.play(FadeOut(VGroup(p1, b445, b446, b447, menu_n, core, any_box), rate_func=OUT_HALF),
+                      FadeOut(ref, rate_func=OUT_HALF), FadeIn(chip, rate_func=IN_HALF),
+                      caption_extra(tr, True), run_time=0.45)
             self.play(FadeIn(t2, shift=UP * 0.3), run_time=0.4)
             cmd2 = type_cmd(self, t2, C32.cmd, 1.4)
             pin(self, cmd2, beside(extra_tag(), t2, cmd2), run_time=0.3)
@@ -419,8 +444,8 @@ class CallOne(VoiceScene):
         dec_flash = VGroup(dec.box, dec.text)
         with self.voiceover(SAY[3]) as vo:
             ref = lref("10–13")
-            self.play(FadeOut(VGroup(t2, chip, arr, cap2)), caption_extra(tr, False), FadeIn(ref),
-                      FadeIn(mc), run_time=0.8)
+            self.play(FadeOut(VGroup(t2, chip, arr, cap2), rate_func=OUT_HALF), caption_extra(tr, False),
+                      FadeIn(ref, rate_func=IN_HALF), FadeIn(mc, rate_func=IN_HALF), run_time=0.8)
             self.play(FadeIn(sr, shift=LEFT * 0.2), FadeIn(ctag), run_time=0.7)
             self.play(Indicate(no_flash, color=TURN, scale_factor=1.05), run_time=0.8)
             vo.wait_until("Self-RAG starts")
@@ -491,7 +516,8 @@ class CallOne(VoiceScene):
         place(gc, right=BAND_R, top=BAND_TOP - 0.04)          # clear of the terminal's top edge
         assert gc.get_bottom()[1] > t4.box.get_top()[1] + 0.12, (gc.get_bottom(), t4.box.get_top())
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(xc, shift=UP * 0.15), FadeIn(gc, shift=LEFT * 1.2), run_time=0.8)
+            self.play(FadeOut(xc, shift=UP * 0.15, rate_func=OUT_HALF),
+                      FadeIn(gc, shift=LEFT * 1.2, rate_func=IN_HALF), run_time=0.8)
             vo.wait_until("as in lecture 5")
             self.play(Indicate(gc.rows[1], color=INK, scale_factor=1.04), run_time=0.7)
             vo.wait_until("never sends it")
@@ -545,13 +571,16 @@ class CallOne(VoiceScene):
             for ln in list(t4.lines):
                 t4.lines.remove(ln)
                 self.remove(ln)
-            self.play(FadeOut(t4), cs.animate.move_to(cs_to), run_time=0.5)
+            # the strip fades out and back in beside the tracker (moving, it crossed the caption)
+            self.play(FadeOut(t4), fade_to(cs, cs_to.get_center()), run_time=0.5)
             self.play(FadeIn(st, shift=DOWN * 0.2), run_time=0.5)
             self.play(FadeIn(lp, shift=UP * 0.2), FadeIn(stf), run_time=0.5)
             vo.wait_until("The model's whole answer")
             self.play(FadeIn(bub, scale=0.4), run_time=0.4)
-            self.play(FadeTransform(bub, cc), Indicate(rows[1], color=CLOUD, scale_factor=1.04),
-                      run_time=0.9)
+            # the bubble leaves, the card fades in beside the rows (flying, it crossed the staff
+            # tag and the rows)
+            self.play(FadeOut(bub, rate_func=OUT_HALF), FadeIn(cc, scale=0.9, rate_func=IN_HALF),
+                      Indicate(rows[1], color=CLOUD, scale_factor=1.04), run_time=0.9)
             self.play(FadeIn(sig, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("get book by author")
             u_name = under(substring(rows[7], "name='get_book_by_author'"), CLOUD, 4)
@@ -612,8 +641,17 @@ class CallOne(VoiceScene):
         place(card, cx=0, top=2.75)
         with self.voiceover(SAY[9]) as vo:
             # the card leaves for the boundary while its panel goes, so it never crosses line 51's
-            self.play(FadeOut(VGroup(t_four, grp33, u_name, u_auth, sig, stf, lp)),
-                      cc.animate.move_to(cc_to), Create(gate), run_time=0.7)
+            # the panel leaves first, then the card travels (it crossed the fading rows)
+            # lp is no longer whole on the scene (a member left it earlier), so FadeOut(lp) re-added it
+            # on top: for two frames the opaque panel hid its tags, underlines and the card, which
+            # then showed through it as it faded. Make it whole now, under the pieces drawn on it, and
+            # fade each piece where it is (a wrapper group would go on top again, the panel last).
+            self.add(lp)
+            self.bring_to_front(t_four, grp33, u_name, u_auth, sig, cc)
+            self.play(*[FadeOut(m, rate_func=squish_rate_func(smooth, 0.0, 0.4))
+                        for m in (t_four, grp33, u_name, u_auth, sig, stf, lp)],
+                      cc.animate(rate_func=squish_rate_func(smooth, 0.3, 1.0)).move_to(cc_to), Create(gate),
+                      run_time=0.7)
             # line 51 and its tag together, so "the SDK ran nothing" is up as the clause ends
             self.play(FadeIn(lp52), FadeIn(stf52), Create(u52),     # no shift: u52 is drawn in place
                       FadeIn(sdk, shift=LEFT * 0.1), run_time=0.5)
@@ -624,8 +662,8 @@ class CallOne(VoiceScene):
             vo.wait_until("So far, one paid call")
             self.play(FadeIn(tick, scale=1.5), FadeIn(paid, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("Pause here")
-            self.play(FadeOut(VGroup(st, cc, gate, cap9, lp52, stf52, u52, sdk, sdk_why)),
-                      FadeIn(card, shift=UP * 0.15), run_time=0.8)
+            self.play(FadeOut(VGroup(st, cc, gate, cap9, lp52, stf52, u52, sdk, sdk_why), rate_func=OUT_HALF),
+                      FadeIn(card, shift=UP * 0.15, rate_func=IN_HALF), run_time=0.8)
         self.wait(2)                                    # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tr, cs, tick, paid, card)), run_time=0.8)
         self.wait(0.3)

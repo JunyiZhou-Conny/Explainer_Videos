@@ -140,6 +140,9 @@ from manim import (
     RoundedRectangle,
     Transform,
     VGroup,
+    linear,
+    smooth,
+    squish_rate_func,
 )
 
 from explainer import style as S
@@ -505,7 +508,9 @@ class AdkSetup(VoiceScene):
             pin(self, out1, fill, run_time=0.5)
             self.play(Indicate(rc77[1][1], color=TURN, scale_factor=1.05), run_time=0.7)
             vo.wait_until("The next line says")
-            self.play(tr.goto(2), FadeOut(rc77, shift=UP * 0.15), FadeIn(rc78, shift=UP * 0.15), run_time=0.6)
+            # line 77 out, then line 78 in (at once, the two README chips read together)
+            self.play(tr.goto(2), FadeOut(rc77, shift=UP * 0.15, rate_func=squish_rate_func(smooth, 0.0, 0.45)),
+                      FadeIn(rc78, shift=UP * 0.15, rate_func=squish_rate_func(smooth, 0.55, 1.0)), run_time=0.6)
             c2 = type_cmd(self, t, CD_BAD.cmd, 0.7)
             vo.wait_until("but no such folder exists")
             t.print(self, [(CD_BAD.line(2), ERR)], run_time=0.4)
@@ -692,7 +697,7 @@ class AdkSetup(VoiceScene):
                       run_time=0.7)
             vo.wait_until("with no upper bound")
             self.play(FadeIn(nb, shift=LEFT * 0.15), run_time=0.5)
-            vo.wait_until("plus Chroma")
+            vo.wait_until("It also lists Chroma")
             self.play(FadeIn(bar18), run_time=0.5)
             self.play(FadeIn(pulls, shift=LEFT * 0.15), run_time=0.5)
 
@@ -716,9 +721,12 @@ class AdkSetup(VoiceScene):
         nopy.add(exn)
         place(nopy, left=0.6, bottom=vl.band.get_top()[1] + 0.12)
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(pp, bar8, bar10, bar18, nb, pulls)),
-                      ReplacementTransform(line8, vl.band_label), Create(vl.axis),
-                      LaggedStart(*[FadeIn(tk, shift=UP * 0.1) for tk in vl.ticks], lag_ratio=0.1),
+            # the panel leaves first, then the axis and its ticks come in (they faded in over the code)
+            self.play(FadeOut(VGroup(pp, bar8, bar10, bar18, nb, pulls), rate_func=squish_rate_func(smooth, 0.0, 0.45)),
+                      ReplacementTransform(line8, vl.band_label),
+                      Create(vl.axis, rate_func=squish_rate_func(smooth, 0.4, 1.0)),
+                      LaggedStart(*[FadeIn(tk, shift=UP * 0.1) for tk in vl.ticks], lag_ratio=0.1,
+                                  rate_func=squish_rate_func(linear, 0.45, 1.0)),
                       run_time=1.2)
             self.play(Transform(vl.band, band_full), run_time=0.8)
             self.remove(vl.axis, vl.band, vl.band_label, *vl.ticks)
@@ -740,7 +748,10 @@ class AdkSetup(VoiceScene):
             for ln in list(t.lines):    # beat-4 grep rows: stale after the key and model edits of beats 5-6
                 t.lines.remove(ln)      # (off screen since beat 8's FadeOut(t), so nothing visible fades)
                 self.remove(ln)
-            self.play(FadeOut(card9), FadeIn(t), tr.goto(6), run_time=0.6)
+            # the card leaves first, then the terminal comes in (at once, its title read through the
+            # card's question lines)
+            self.play(FadeOut(card9, rate_func=squish_rate_func(smooth, 0.0, 0.45)),
+                      FadeIn(t, rate_func=squish_rate_func(smooth, 0.55, 1.0)), tr.goto(6), run_time=0.6)
             resize(self, t, RUN_ROWS, run_time=0.6)
             vo.wait_until("uv sync")
             type_cmd(self, t, SYNC1.cmd, 0.4)

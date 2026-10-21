@@ -118,7 +118,11 @@ from manim import (
     SurroundingRectangle,
     Transform,
     Rectangle,
+    UpdateFromAlphaFunc,
     VGroup,
+    smooth,
+    squish_rate_func,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -127,6 +131,34 @@ from explainer.devops import box, chip, label, mono, step_badge, substring, tag
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S14"]
+
+OUT_HALF = squish_rate_func(smooth, 0.0, 0.45)   # a swap in one play: the old text leaves first,
+IN_HALF = squish_rate_func(smooth, 0.55, 1.0)    # then the new one comes in (same run_time)
+
+
+def stamp_flash(st, k: float = 1.12, color=None):
+    """A stamp's outline flares and its word pulses (Indicate filled the stamp's dark box with the
+    word's own colour: PENDING vanished for a few frames)."""
+    color = color or st.text.get_color()
+    # the outline swells with the word (alone, the swelled word touched the stamp's border)
+    return [Indicate(st.text, color=color, scale_factor=k),
+            st.frame.animate(rate_func=there_and_back).scale(k).set_stroke(color, 5)]
+
+
+def refade(m, target, out=(0.0, 0.45), into=(0.55, 1.0)):
+    """Transform(m, target)'s end state, reached by fading: m fades out where it is, then fades
+    back in as `target` (moving, it crossed text on the way). m keeps its identity."""
+    snap, goal = m.copy(), target.copy()
+
+    def upd(mob, a):
+        if a < into[0]:
+            k = 1 - smooth(min(1.0, max(0.0, (a - out[0]) / (out[1] - out[0]))))
+            mob.become(snap.copy().fade(1 - k))
+        else:
+            k = smooth(min(1.0, (a - into[0]) / (into[1] - into[0])))
+            mob.become(goal.copy().fade(1 - k))
+
+    return UpdateFromAlphaFunc(m, upd)
 TP = "colab/travel-planner/"
 
 # ------------------------------------------------------------------ the real sources
@@ -495,14 +527,16 @@ class ApprovalGate(VoiceScene):
             self.play(FadeIn(saved), FadeIn(paid), FadeIn(t1, shift=UP * 0.15), run_time=0.7)
             self.play(Indicate(t1.rows[1], color=INK, scale_factor=1.03), run_time=0.8)
             vo.wait_until("Turn 2 runs five searches")
-            self.play(tr.goto(5), ReplacementTransform(t1, chip1), run_time=0.7)
+            # the card out, then its chip in (collapsing, the card's rows smeared into the chip)
+            self.play(tr.goto(5), FadeOut(t1, rate_func=OUT_HALF), FadeIn(chip1, rate_func=IN_HALF), run_time=0.7)
             self.play(FadeIn(t2.frame), FadeIn(t2.rule), FadeIn(t2.header), run_time=0.3)
             self.play(LaggedStart(*[FadeIn(VGroup(t2.rows[i], badges[i]), shift=RIGHT * 0.1)
                                     for i in range(5)], lag_ratio=0.45), run_time=1.8)
             vo.wait_until("and offers options")
             self.play(FadeIn(t2.rows[5], shift=RIGHT * 0.1), run_time=0.4)
             vo.wait_until("In turn 3 the user picks")
-            self.play(tr.goto(6), ReplacementTransform(VGroup(t2, badges), chip2), run_time=0.7)
+            self.play(tr.goto(6), FadeOut(VGroup(t2, badges), rate_func=OUT_HALF), FadeIn(chip2, rate_func=IN_HALF),
+                      run_time=0.7)
             self.play(FadeIn(t3, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("the model calls finalize")
             self.play(Create(tool_ul), run_time=0.5)
@@ -562,8 +596,8 @@ class ApprovalGate(VoiceScene):
         bar37 = p15.bar(37, TURN, 0.18)
         nbox = SurroundingRectangle(p15.span(39, '"needs_confirmation"'), color=TURN, buff=0.06, stroke_width=3)
         with self.voiceover(SAY[2]) as vo:
-            self.play(*[FadeOut(m) for m in (cf, saved, paid, chip1, chip2, tool_ul)],
-                      FadeTransform(t3, plan), run_time=0.9)
+            self.play(*[FadeOut(m, rate_func=OUT_HALF) for m in (cf, saved, paid, chip1, chip2, tool_ul, t3)],
+                      FadeIn(plan, rate_func=IN_HALF), run_time=0.9)
             self.play(FadeIn(gate), FadeIn(model, shift=RIGHT * 0.2), run_time=0.5)
             vo.wait_until("A finalize call from the model")
             self.play(model.animate.shift(RIGHT * walk), plan.animate.shift(RIGHT * walk), run_time=1.0)
@@ -573,11 +607,11 @@ class ApprovalGate(VoiceScene):
             vo.wait_until("if the plan isn't the approved one")
             self.play(FadeIn(bar36), run_time=0.5)
             vo.wait_until("the code stores it as pending")
-            self.play(FadeIn(bar37), Indicate(pend, color=TURN, scale_factor=1.12), run_time=0.6)
+            self.play(FadeIn(bar37), *stamp_flash(pend, 1.12), run_time=0.6)
             vo.wait_until("and returns needs confirmation")
             self.play(Create(nbox), run_time=0.5)
             bump(self, [model, plan, pend])
-            self.play(Indicate(pend, color=TURN, scale_factor=1.15), run_time=0.5)
+            self.play(*stamp_flash(pend, 1.15), run_time=0.5)
 
         # ============================================================ 3 · apply_confirmation; PONDER
         p18 = src_panel(TP + "cell-18.py", [55, (59, 61)], size=20,
@@ -687,8 +721,10 @@ class ApprovalGate(VoiceScene):
         apart(big, p105, 0.3)
         apart(big, VGroup(arrow, runs, human, h_lab), 0.3)
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(card), ReplacementTransform(p18b, p105), FadeOut(bar61b), FadeOut(tag61b),
-                      run_time=0.8)
+            # old code out, then the new code in (a glyph-by-glyph Transform scrambled the two windows)
+            # the ponder card leaves with the old code (over the whole run, it still showed under the new panel)
+            self.play(FadeOut(card, rate_func=OUT_HALF), FadeOut(p18b, rate_func=OUT_HALF), FadeIn(p105, rate_func=IN_HALF),
+                      FadeOut(bar61b, rate_func=OUT_HALF), FadeOut(tag61b, rate_func=OUT_HALF), run_time=0.8)
             self.play(FadeIn(bar106), *recolor(prompt106, LOOKUP), run_time=0.5)
             vo.wait_until("runs on the human's message")
             self.play(Indicate(human, color=INK, scale_factor=1.12), *flash(prompt106, LOOKUP, 1.15),
@@ -697,14 +733,16 @@ class ApprovalGate(VoiceScene):
             self.play(FadeIn(bar109), Create(arrow), run_time=0.7)
             self.play(FadeIn(runs, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("Inside turn 3")
-            self.play(Transform(mg, mg4), Transform(cg, cg4), Transform(gate, g4), Transform(pend_mini, pend4),
+            # the corner turnstile fades out and comes back large in the lower half (moving down,
+            # it crossed "runs first" and "the human")
+            self.play(refade(mg, mg4), refade(cg, cg4), refade(gate, g4), refade(pend_mini, pend4),
                       run_time=1.0)
             vo.wait_until("nothing is approved")
             self.play(Indicate(gate.bar, color=TURN, scale_factor=1.05), run_time=0.5)
             vo.wait_until("so every retry gets the same stamp")
             for _ in range(2):
                 bump(self, [mg, cg, pend_mini], back=0.5, run_time=0.55)
-                self.play(Indicate(pend_mini, color=TURN, scale_factor=1.12), run_time=0.45)
+                self.play(*stamp_flash(pend_mini, 1.12), run_time=0.45)
 
         # ============================================================ 5 · turn 4: yes, APPROVED, Python's budget
         p27 = src_panel(TP + "cell-27.py", 2, wrap={2: ["session"]})
@@ -747,10 +785,14 @@ class ApprovalGate(VoiceScene):
         apart(tot_g, test, 0.2)
         apart(tot_g, own, 0.2)
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(p105), FadeOut(bar106), FadeOut(bar109), FadeOut(arrow), FadeOut(runs),
-                      tr.goto(7), Transform(gate, g5), Transform(cg, cg_b), Transform(mg, mg_b),
-                      Transform(pend_mini, pend_b), human.animate.move_to(h_to),
-                      h_lab.animate.move_to(h_lab_to), run_time=0.9)
+            # the panel leaves first, then the turnstile and the human move (they crossed the fading
+            # code and "runs first"); the label fades over to its side of the icon (it crossed it)
+            out_, mv_ = squish_rate_func(smooth, 0.0, 0.4), squish_rate_func(smooth, 0.3, 0.8)
+            self.play(*[FadeOut(m, rate_func=out_) for m in (p105, bar106, bar109, arrow, runs)],
+                      tr.goto(7), Transform(gate, g5, rate_func=mv_), Transform(cg, cg_b, rate_func=mv_),
+                      Transform(mg, mg_b, rate_func=mv_), Transform(pend_mini, pend_b, rate_func=mv_),
+                      human.animate(rate_func=mv_).move_to(h_to),
+                      refade(h_lab, h_lab_to, out=(0.0, 0.3), into=(0.8, 1.0)), run_time=0.9)
             inside(VGroup(mg, cg, gate), human, h_lab)
             apart(gate, p27, 0.15)
             self.play(FadeIn(p27, shift=UP * 0.1), run_time=0.5)
@@ -768,7 +810,7 @@ class ApprovalGate(VoiceScene):
             rows = tape.row_anims()
             for a in rows[:-1]:
                 self.play(a, run_time=0.45)
-            vo.wait_until("2,690 dollars out of 6,000")
+            vo.wait_until("2,690 of the 6,000 dollars")
             self.play(rows[-1], run_time=0.5)
             self.play(FadeIn(tot, shift=LEFT * 0.1), FadeIn(rec5, shift=LEFT * 0.1), run_time=0.5)
             self.play(*recolor(tot_num, DATA), run_time=0.4)
@@ -879,7 +921,8 @@ class ApprovalGate(VoiceScene):
                 FadeIn(c_render, target_position=note_a.get_center(), scale=0.6),
                 FadeIn(c_gate, target_position=note_b.get_center(), scale=0.6), lag_ratio=0.4), run_time=1.4)
             self.play(FadeIn(tool_grp, shift=UP * 0.1), run_time=0.5)
-            self.play(FadeIn(g_small, target_position=c_gate.get_center(), scale=0.7), run_time=0.7)
+            # it grows from under the chip, not out of its words
+            self.play(FadeIn(g_small, target_position=c_gate.get_bottom() + DOWN * 0.5, scale=0.7), run_time=0.7)
             vo.wait_until("on the action tool")
             self.play(Indicate(tool, color=DATA, scale_factor=1.08), Indicate(g_small.bar, color=TURN),
                       run_time=0.8)

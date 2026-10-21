@@ -37,7 +37,9 @@ Beats (script.md "## S01", one voiceover block each):
    appears later) · no key · built, not sent; under it two GREY gloss rows write in, each tag
    pulsing with its gloss: recorded = the staff's saved output · expected = README text / extra =
    not in the README · built, not sent = printed, never sent.
-6. A "You need" checklist writes in row by row as named (GOLD keys for the three keys).
+6. A "You need" checklist writes in row by row as named (GOLD keys for the three keys), then a GREY
+   row, not spoken, at "with billing on": "three Colab notebooks · links in the study guide" (held
+   1 s after the line so it can be read).
 7. A card "Recorded October 18, 2026" ("· no Google or OpenAI keys" types in at "without keys"),
    three rows as named: GREEN check real runs (its three lines as named, the last one "two MCP
    servers (tool servers · part 2)" with the bracket GREY, since MCP is taught in S12; the check
@@ -102,7 +104,6 @@ from manim import (
     DashedLine,
     FadeIn,
     FadeOut,
-    FadeTransform,
     GrowArrow,
     Group,
     Indicate,
@@ -114,6 +115,8 @@ from manim import (
     VGroup,
     VMobject,
     Write,
+    smooth,
+    squish_rate_func,
     there_and_back,
 )
 
@@ -130,6 +133,9 @@ from explainer.devops import (
     substring,
 )
 from explainer.scene import VoiceScene
+
+OUT_HALF = squish_rate_func(smooth, 0.0, 0.45)   # a swap: the old text leaves first
+IN_HALF = squish_rate_func(smooth, 0.55, 1.0)    # then the new one comes in (same run_time)
 
 SAY = NARRATION["S01"]
 
@@ -158,7 +164,8 @@ NEED = [("lecture 5's char-split collection (or the load step)", None),
         ("service-account key · lecture 5", "key"),
         ("Docker", None), ("uv", None), ("Node.js", None),
         ("Google AI Studio key", "key"),
-        ("OpenAI key · billing on", "key")]
+        ("OpenAI key · billing on", "key"),
+        ("three Colab notebooks · links in the study guide", "note")]
 REC_HEAD = "Recorded October 18, 2026 · no Google or OpenAI keys"
 SAMPLE_CAP = "a sample · you'll run it later, inside the container"
 # what the tags that are not self-explanatory mean (two rows: one row at 20 pt is too wide)
@@ -612,9 +619,12 @@ class Hook(VoiceScene):
             clear_stage(self, keep=(ycard,), anims=(FadeIn(trs[0], shift=DOWN * 0.15), Create(halo)),
                         run_time=0.6)
             self.wait(0.25)
-            self.play(FadeTransform(trs[0], trs[1]), pulse(halo, TURN, 1.03), run_time=0.5)
+            # old heading out, then the new one in (FadeTransform: both readable at once mid-swap)
+            self.play(FadeOut(trs[0], rate_func=OUT_HALF), FadeIn(trs[1], rate_func=IN_HALF),
+                      pulse(halo, TURN, 1.03), run_time=0.5)
             self.wait(0.25)
-            self.play(FadeTransform(trs[1], trs[2]), pulse(halo, TURN, 1.03), run_time=0.5)
+            self.play(FadeOut(trs[1], rate_func=OUT_HALF), FadeIn(trs[2], rate_func=IN_HALF),
+                      pulse(halo, TURN, 1.03), run_time=0.5)
             vo.wait_until("the gray tag, top right")
             self.play(FadeOut(trs[2]), FadeOut(halo), FadeIn(sample), run_time=0.5)
             self.remove(trs[2], halo)
@@ -638,14 +648,14 @@ class Hook(VoiceScene):
         # ========================================================== 6. what you need
         icons, rows = VGroup(), VGroup()
         for s, kind in NEED:
-            rows.add(label(s, 24, INK))
+            rows.add(label(s, 22, S.GREY) if kind == "note" else label(s, 24, INK))
             if kind == "key":
                 icons.add(key_glyph(0.3))
             else:
                 icons.add(RoundedRectangle(width=0.26, height=0.26, corner_radius=0.04,
                                            stroke_color=S.GREY, stroke_width=2.5).set_fill(opacity=0))
         for i, r in enumerate(rows):                       # a fixed pitch: short words sit evenly
-            r.move_to([0, -i * 0.56, 0], aligned_edge=LEFT)
+            r.move_to([0, -i * 0.50, 0], aligned_edge=LEFT)
         for ic, r in zip(icons, rows):
             ic.move_to([rows.get_left()[0] - 0.5, r.get_center()[1], 0])
         need_head = label("You need", 26, INK)
@@ -655,11 +665,11 @@ class Hook(VoiceScene):
         need_fr = card_frame(need_all.width + 0.8, need_all.height + 0.6)
         need_all.move_to(need_fr)
         need = VGroup(need_fr, need_all)
-        place(need, cx=-0.9, cy=-0.85)
+        place(need, cx=-0.9, cy=-0.95)
         inside_frame(need)
         apart(need, ycard, 0.1)
         anchors6 = ["the database and key", "the database and key", "Docker", "uv, Node", "Node, and two",
-                    "one from Google AI Studio", "one from OpenAI"]
+                    "one from Google AI Studio", "one from OpenAI", "with billing on"]
 
         with self.voiceover(SAY[6]) as vo:
             clear_stage(self, keep=(ycard,), run_time=0.6)
@@ -667,6 +677,7 @@ class Hook(VoiceScene):
             for i, a in enumerate(anchors6):
                 vo.wait_until(a)
                 self.play(FadeIn(icons[i]), FadeIn(rows[i], shift=RIGHT * 0.15), run_time=0.4)
+        self.wait(1.0)                                     # the unspoken GREY row needs time to be read
 
         # ========================================================== 7. how this was recorded
         r_head = label(REC_HEAD, 26, INK)
