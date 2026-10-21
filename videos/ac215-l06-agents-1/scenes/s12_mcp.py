@@ -145,6 +145,7 @@ from common import (
     type_cmd,
     under,
     unname,
+    wrapped_glyphs,
     your_copy,
     your_turn,
 )
@@ -818,7 +819,8 @@ class McpPlugs(VoiceScene):
         https8_l = label("HTTPS", CAPTION, LOOKUP).next_to(https8, UP, buff=0.2)   # the envelopes pass under it
         req = req_strip()
         place(req, left=-6.4, top=CF8_BOTTOM - 0.12)
-        t8 = term(P_ADK, rows=3, title=SECOND)
+        t8 = term(P_ADK, rows=4, title=SECOND)   # 4 rows: the status row stays above the body, which folds
+                                                  # into 3 rows at word boundaries (common.wrap_output)
         q_init = quote_card(INIT_Q, "initialize · reply (excerpt)", INIT)
         q_list = quote_card(LIST_Q, "tools/list · reply (excerpt)", LIST)
         q_call = quote_card(CALL_Q, "tools/call · reply (excerpt)", CALL)
@@ -845,9 +847,8 @@ class McpPlugs(VoiceScene):
                       run_time=0.8)
             vo.wait_until("the server is up")
             body = t8.print(self, [GET_BODY], wrap=True, run_time=0.4)
-            hit = [r for r in body if NOT_ACC in r.text]
-            assert hit, [r.text for r in body]
-            self.play(substring(hit[0], NOT_ACC).animate.set_color(ERR), FadeOut(env_g), run_time=0.5)
+            # folded at word boundaries, the phrase may span two rows: colour its glyphs on both
+            self.play(wrapped_glyphs(body, NOT_ACC).animate.set_color(ERR), FadeOut(env_g), run_time=0.5)
             assert st[0].text == GET_STATUS
             vo.wait_until("Then initialize")
             self.play(FadeOut(t8), FadeOut(r406), req.items[0].animate.set_color(INK), run_time=0.4)

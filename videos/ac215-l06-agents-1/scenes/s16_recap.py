@@ -117,6 +117,7 @@ from common import (
     tracker,
     type_cmd,
     under,
+    wrap_output,
 )
 from explainer import style as S
 from explainer.devops import MONO, box, check_mark, chip, folder_glyph, label, mono, mono_line, step_badge, \
@@ -207,8 +208,9 @@ def preload(t, cmd: str, rows) -> None:
 
 
 def wrap_rows(s: str, n: int) -> list:
-    """A long output line folded at the terminal's edge (Terminal.print(wrap=True))."""
-    return [s[i:i + n] for i in range(0, len(s), n)]
+    """A long output line folded as the house terminal's print(wrap=True) folds it (at word
+    boundaries, a hanging indent: common.wrap_output)."""
+    return [row for row, *_ in wrap_output(s, n)]
 
 
 def mixed(parts, size: float = 20, color: str = INK):

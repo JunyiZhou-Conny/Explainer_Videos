@@ -99,6 +99,7 @@ from common import (
     extra_tag,
     fix_chip,
     illustration_tag,
+    item_rows,
     json_card,
     log_panel,
     lref,
@@ -119,6 +120,7 @@ from common import (
     tracker,
     type_cmd,
     under,
+    wrapped_glyphs,
 )
 from manim import (
     DOWN,
@@ -147,7 +149,7 @@ from manim import (
 )
 
 from explainer import style as S
-from explainer.devops import box, browser_window, chip, glyph_range, label, mono, mono_line, substring, tag
+from explainer.devops import box, browser_window, chip, label, mono, mono_line, substring, tag
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S07"]
@@ -238,32 +240,20 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
 
 
 def wrapped_span(rows, full: str, sub: str, occurrence: int = 0, width: int = COLS) -> VGroup:
-    """The glyphs of `sub` in a line Terminal.print(wrap=True) split into `rows`."""
-    i = -1
-    for _ in range(occurrence + 1):
-        i = full.find(sub, i + 1)
-    if i < 0:
-        raise ValueError(f"{sub!r} not in {full!r}")
-    j = i + len(sub)
-    out = VGroup()
-    for r, row in enumerate(rows):
-        a, b = r * width, (r + 1) * width
-        lo, hi = max(i, a), min(j, b)
-        if lo < hi:
-            out.add(*glyph_range(row, lo - a, hi - a))
-    return out
+    """The glyphs of `sub` in a line Terminal.print(wrap=True) folded into `rows` (the house
+    terminal folds at word boundaries with a hanging indent; common.wrapped_glyphs). `width` is
+    unused (kept for the callers)."""
+    assert rows[0].src == full, (rows[0].src, full)
+    return wrapped_glyphs(rows, sub, occurrence)
 
 
 def rows_of_line(printed, items, k, width: int = COLS):
-    """The printed rows (a list) of item k, given the items as passed to Terminal.print(wrap=True)."""
-    start = 0
-    for n, s in enumerate(items):
-        s = s if isinstance(s, str) else s[0]
-        cnt = max(1, -(-len(s) // width))
-        if n == k:
-            return list(printed[start:start + cnt])
-        start += cnt
-    raise IndexError(k)
+    """The printed rows (a list) of item k, given the items as passed to Terminal.print(wrap=True)
+    (common.item_rows: each row carries its item's index). `width` is unused."""
+    rows = item_rows(printed, k)
+    s = items[k] if isinstance(items[k], str) else items[k][0]
+    assert rows[0].src == s, (rows[0].src, s)
+    return rows
 
 
 def line_note(s, color=DATA, size=20, arrow="←"):

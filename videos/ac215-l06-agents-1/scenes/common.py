@@ -107,8 +107,9 @@ Panels and cards
     readme_chip(where, phrase, expected=False) one line (<= 9 wide)   readme_card(where, lines)
     excerpt_chip(sub, header, line=None)  exact sub-string chip   cmd_chip(cmd, note_=None)
     note(text) GREY caption  sans(text)  mtext(s, size, colour, font=MONO) masked text  fix_chip(text)
-    turn_card(rows, header="your turn")  rows: "cmd" (mono), (cmd, "extra"), (cmd, note),
-        Prose("…"), (Prose("paid per call"), COST) for the GOLD last line
+    turn_card(rows, header=None)  rows: "cmd" (mono), (cmd, "extra"), (cmd, note),
+        Prose("…"), (Prose("paid per call"), COST) for the GOLD last line, ["`code`", "prose"] one
+        mixed row (no GREY header by default: the YELLOW ▶ tag says "your turn")
     card_rows(items, header=None)  LookFor(items) .write_item(i)  table_card(headers, rows)
     extra_card(purpose) the GREY "extra · an extra check · in the study guide" card (code never
         shown)  what_if_frame() RED dashed "what if · just watch" (built in place)
@@ -161,7 +162,8 @@ Set pieces: Piece = VGroup + named parts (as in L05). A part not shown yet is a 
        the block's name (control: one row after its name); raises if they don't fit (S16:
        Anatomy(box_w=11.8, block_h=1.75, ends=False) holds the recap's chips)
        .block(name) .frames[name] .names[name]. Compact: Anatomy(box_w=4.6, block_h=0.8,
-       ends=False, size=20) is 4.6 x 3.5 (S11's labelled map).
+       ends=False, size=20) is 4.6 x 3.7 (bar_h 0.72); S11's labelled map adds bar_h=1.0: 4.6 x
+       3.98. Build fill() only after a light() on the same block has played (see fill()).
        definition_card(): slide 26's sentence (S02, S08)
     AnatomyMini(center=MINI_CENTER)  the mini-map, 3.2 x 1.6 (x 3.38..6.58), glyph only (a plain VGroup:
        FadeIn/FadeOut it, mm.animate.move_to(MINI_ABOVE_STRIP)). .light(name) .unlight()
@@ -277,7 +279,6 @@ from manim import (
     Mobject,
     Polygon,
     Rectangle,
-    ReplacementTransform,
     Rotate,
     RoundedRectangle,
     Succession,
@@ -289,6 +290,8 @@ from manim import (
     always_redraw,
     linear,
     rush_into,
+    smooth,
+    squish_rate_func,
 )
 
 from explainer import style as S
@@ -303,6 +306,7 @@ from explainer.devops import (  # noqa: F401  (re-exported for the scenes)
     SMALL,
     TAG,
     TERM_BG,
+    ReadmeTracker,
     Terminal,
     box,
     browser_window,
@@ -485,12 +489,116 @@ def place_tracker(tr):
     return tr
 
 
+def _out_early(t: float) -> float:
+    """rate_func: done in the first 45% of the run (the old text of a swap leaves first)."""
+    return smooth(min(1.0, t / 0.45))
+
+
+def _in_late(t: float) -> float:
+    """rate_func: starts at 55% of the run (the new text of a swap, after a short gap)."""
+    return smooth(max(0.0, (t - 0.55) / 0.45))
+
+
+def _in_first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def _out_second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
+
+
+class _SwapOut(FadeOut):
+    """The FadeOut of a text a swap replaces: the text stays a member of `parent` (and visible)
+    until this fade is over, then leaves it for good (a member left behind at full opacity would
+    snap back when the parent is next added or animated)."""
+
+    def __init__(self, mob, parent, **kw):
+        super().__init__(mob, **kw)
+        self.swap_parent = parent
+
+    def clean_up_from_scene(self, scene) -> None:
+        super().clean_up_from_scene(scene)
+        if self.mobject in self.swap_parent.submobjects:
+            self.swap_parent.remove(self.mobject)
+
+
+class _SwapIn(FadeIn):
+    """The FadeIn of the text a swap brings: a member from the moment the swap is built, but at
+    opacity 0 until this animation begins (a swap built early, e.g. passed as resize(extra=...),
+    whose caller plays something else first, showed the new text in that play: S10 at 28.4 s)."""
+
+    def begin(self) -> None:
+        _set_op(self.mobject, attr="_swop")
+        super().begin()
+
+
+def _stage_swap(parent, old, new) -> None:
+    """`new` joins `parent` right after `old` (so it takes old's slot once old leaves), invisible
+    until its _SwapIn begins; `old` stays until its _SwapOut is over."""
+    _save_op(new, "_swop")
+    _set_op(new, 0, "_swop")
+    if old in parent.submobjects:
+        parent.insert(parent.submobjects.index(old) + 1, new)
+    else:
+        parent.add(new)
+
+
+def _swap_text(parent, old, new) -> list:
+    """Sequential text swap in ONE play (L05 final review: faded at once, both texts were
+    half-readable mid-swap; a Transform between different strings scrambled the letters): `old`
+    fades out in the first 45% of the run, `new` fades in from 55% (rate_funcs inside the same
+    run_time, so the caller's timing is unchanged). `new` joins `parent` now (invisible until the
+    swap plays) and `old` leaves it when its fade is over. Returns the two animations."""
+    _stage_swap(parent, old, new)
+    return [_SwapOut(old, parent, rate_func=_out_early), _SwapIn(new, rate_func=_in_late)]
+
+
+def _swap_caption(tr, new, steady: bool) -> list:
+    """Cross-fade tr's caption into the Text `new`, in place next to tr.dots, and make `new`
+    tr.caption at once (it takes the old caption's slot in tr; the old one leaves tr after its
+    FadeOut takes it off the scene for good; built early, the swap shows the old caption until it
+    plays: _stage_swap). Ported from L05: a Transform between two captions of
+    different lengths scrambled the letters for 0.3-0.6 s (QA: "its caption morphs glyph by
+    glyph"). steady=True (the same step, ' · extra' on or off): the new caption, its shared
+    'step k of N: …' exactly on the old glyphs, fades in over the first half, then the old one
+    fades out, so the shared text never dims. steady=False (another step): the old one fades out,
+    then the new one in, with a short gap. Returns the two animations (the caller wraps them)."""
+    old = tr.caption
+    inked = any(m.has_points() for m in old.get_family())
+    new.next_to(tr.dots, RIGHT, buff=0.25)
+    if steady and inked:
+        new.align_to(old, LEFT)          # the shared prefix exactly on the old one's glyphs
+    _stage_swap(tr, old, new)
+    tr.caption = new
+    if not inked:                        # from the blank caption: the label fades in where it stays
+        return [_SwapOut(old, tr), _SwapIn(new)]
+    if steady:
+        return [_SwapIn(new, rate_func=_in_first_half), _SwapOut(old, tr, rate_func=_out_second_half)]
+    return [_SwapOut(old, tr, rate_func=_out_early), _SwapIn(new, rate_func=_in_late)]
+
+
+class CrossFadeTracker(ReadmeTracker):
+    """explainer.devops.ReadmeTracker whose goto(k) cross-fades the caption in place (see
+    _swap_caption) instead of Transforming it; the dots move as before. Same contract: goto
+    returns one AnimationGroup (run_time 0.5 by default); tr.k, tr.caption (the new Text right
+    after the call), tr.dots, tr._caption(k) as before."""
+
+    def goto(self, k: int, run_time: float = 0.5):
+        anims = []
+        for i, d in enumerate(self.dots, start=1):
+            col = self.hi_color if i == k else (S.GREY if i < k else S.GREY_DARK)
+            anims.append(d.animate.set_color(col).scale((1.5 if i == k else 1.0) / (d.width / 0.12)))
+        anims += _swap_caption(self, self._caption(k), steady=(k == self.k))
+        self.k = k
+        return AnimationGroup(*anims, run_time=run_time)
+
+
 def tracker(key: str, step: int | None = None):
     """The tracker for `key` (see SECTIONS), top-left: "<source> › <section>", one dot per step,
-    "step k of N: <title>" (step None: no step lit yet, an empty caption)."""
-    from explainer.devops import ReadmeTracker
+    "step k of N: <title>" (step None: no step lit yet, an empty caption). A CrossFadeTracker:
+    goto() and caption_extra() swap the caption in place (old out, then new in)."""
     src, section, steps = SECTIONS[key]
-    t = ReadmeTracker(section, steps)
+    t = CrossFadeTracker(section, steps)
     head = t.head
     new_src = mono(src, t.size, S.GREY) if _looks_code(src) else label(src, t.size, S.GREY)
     new_sec = mono(section, t.size, INK) if _looks_code(section) else label(section, t.size, INK)
@@ -506,8 +614,11 @@ def tracker(key: str, step: int | None = None):
 
 
 def caption_extra(tr, on: bool = True):
-    """Transform: the tracker caption with (or without) ' · extra' while a command the README
-    doesn't have is on screen."""
+    """The tracker caption with (or without) ' · extra' while a command the README doesn't have
+    is on screen: one AnimationGroup that cross-fades the caption in place (the shared 'step k of
+    N: …' stays put and never dims; see _swap_caption) and makes the new Text tr.caption at once.
+    .target_mobject is the new caption, placed (as the Transform this returned before: S07 and
+    S09 measure it)."""
     k = tr.k
     s = f"step {k} of {len(tr.steps)}: {tr.steps[k - 1]}" if k else ""
     if on:
@@ -515,18 +626,21 @@ def caption_extra(tr, on: bool = True):
                     t2c={"· extra": S.GREY, "extra": S.GREY} if not s else {"· extra": S.GREY})
     else:
         new = label(s or " ", tr.size, tr.hi_color)
-    new.next_to(tr.dots, RIGHT, buff=0.25)
-    return Transform(tr.caption, new)
+    g = AnimationGroup(*_swap_caption(tr, new, steady=True))
+    g.target_mobject = new
+    return g
 
 
 def switch_section(scene, old, key: str, step: int | None = 1, run_time: float = 0.8):
-    """The tracker switches to another section: the old one lifts away, the new one drops in.
-    Returns the new tracker (on screen). old may be None."""
+    """The tracker switches to another section: the old one lifts away, then the new one drops in
+    (as lref_swap), in the same run_time, one half each. Returns the new tracker (on screen). old
+    may be None. Faded at once, both headers read together mid-swap (L05 final review)."""
     new = tracker(key, step)
     if old is None:
         scene.play(FadeIn(new, shift=DOWN * 0.25), run_time=run_time)
     else:
-        scene.play(FadeOut(old, shift=UP * 0.25), FadeIn(new, shift=DOWN * 0.25), run_time=run_time)
+        scene.play(Succession(FadeOut(old, shift=UP * 0.25), FadeIn(new, shift=DOWN * 0.25)),
+                   run_time=run_time)
     return new
 
 
@@ -536,12 +650,14 @@ def lref(slides: str) -> VGroup:
 
 
 def lref_swap(scene, old, slides: str, run_time: float = 0.5) -> VGroup:
-    """Replace the lecture tag (old may be None). Returns the new tag (on screen)."""
+    """Replace the lecture tag (old may be None). Returns the new tag (on screen). The old tag
+    fades out, then the new one fades in, in the same run_time (faded at once, the two texts
+    overlapped mid-swap: L05 final review)."""
     new = lref(slides)
     if old is None:
         scene.play(FadeIn(new), run_time=run_time)
     else:
-        scene.play(FadeOut(old), FadeIn(new), run_time=run_time)
+        scene.play(Succession(FadeOut(old), FadeIn(new)), run_time=run_time)
     return new
 
 
@@ -948,13 +1064,145 @@ def at_bottom(mob, y: float = BOTTOM, x: float = 0.0):
 
 
 # ------------------------------------------------------------------ terminal helpers
+WRAP_REACH = 20          # wrap_output: a break may come up to this many characters before the column
+WRAP_HANG = 2            # wrap_output: continuation rows hang this far under the line's own indent
+
+
+def wrap_output(s: str, width: int, reach: int = WRAP_REACH, hang: int = WRAP_HANG) -> list:
+    """Fold one output line for a `width`-column terminal at a word boundary (QA: the fixed-column
+    fold cut words and identifiers, "ad|k telemetry disable", "H|TTP/1.1", "itine|rary_validation"):
+    at the last space within `reach` characters of the column, else after the last ',' there, else
+    after the last '/', else after the last '_', '-' or '.', and at the column only when none is
+    in reach. Continuation rows hang `hang` spaces under the line's own indent. Returns
+    [(row, a, b, indent)] with row == " " * indent + s[a:b] (the spaces at a break are dropped)."""
+    if len(s) <= width:
+        return [(s, 0, len(s), 0)]
+    lead = len(s) - len(s.lstrip(" "))
+    ind = min(lead + hang, width // 3)
+    out, pos, indent = [], 0, 0
+    while len(s) - pos + indent > width:
+        room = width - indent
+        lo = pos + max(1, room - reach)                 # the earliest row end allowed
+        hi = pos + room                                 # the latest: a full row
+        cut = nxt = None
+        spaces = [j for j in range(lo, min(hi, len(s) - 1) + 1) if s[j] == " " and s[j - 1] != " "]
+        if spaces:
+            cut = nxt = spaces[-1]
+            while nxt < len(s) and s[nxt] == " ":
+                nxt += 1
+        else:
+            for seps in (",", "/", "_-."):
+                after = [j + 1 for j in range(lo - 1, hi) if s[j] in seps and j + 1 < len(s)]
+                if after:
+                    cut = nxt = after[-1]
+                    break
+        if cut is None:                                 # nothing in reach: at the column
+            cut = nxt = hi
+        out.append((" " * indent + s[pos:cut], pos, cut, indent))
+        pos, indent = nxt, ind
+    out.append((" " * indent + s[pos:], pos, len(s), indent))
+    return out
+
+
+def item_rows(printed, k: int) -> list:
+    """The rows that _L6Terminal.print printed for item k of its `lines` (one row, or the rows a
+    wrap=True line folded into), in order."""
+    rows = [r for r in printed if getattr(r, "src_item", None) == k]
+    if not rows:
+        raise IndexError(f"no printed rows for item {k}")
+    return rows
+
+
+def _src_find(rows, sub: str, occurrence: int = 0) -> tuple[int, int]:
+    full = rows[0].src
+    i = -1
+    for _ in range(occurrence + 1):
+        i = full.find(sub, i + 1)
+    if i < 0:
+        raise ValueError(f"{sub!r} not in {full!r}")
+    return i, i + len(sub)
+
+
+def wrapped_glyphs(rows, sub: str, occurrence: int = 0) -> VGroup:
+    """The glyphs of `sub` in ONE printed line, across the rows it folded into (rows: that line's
+    rows, e.g. item_rows(printed, k), or the whole return of a one-line print)."""
+    i, j = _src_find(rows, sub, occurrence)
+    out = VGroup()
+    for r in rows:
+        a, b = r.src_span
+        lo, hi = max(i, a), min(j, b)
+        if lo < hi:
+            out.add(*glyph_range(r, lo - a + r.src_indent, hi - a + r.src_indent))
+    return out
+
+
+def wrapped_at(rows, sub: str, occurrence: int = 0):
+    """(row, column) of `sub` in ONE printed line: the row that holds all of it and the column it
+    starts at in that row's text (for col_box / glyph_range). Raises if the fold split it."""
+    i, j = _src_find(rows, sub, occurrence)
+    for r in rows:
+        a, b = r.src_span
+        if a <= i and j <= b:
+            return r, i - a + r.src_indent
+    raise ValueError(f"{sub!r} is split across rows: {[r.text for r in rows]}")
+
+
 class _L6Terminal(Terminal):
-    """The house Terminal; every line it places has MASK and '…' drawn GREY."""
+    """The house Terminal; every line it places has MASK and '…' drawn GREY; print(wrap=True)
+    folds at word boundaries (wrap_output); scrolling never crosses the title bar (_make_room)."""
 
     def _place(self, line, i):
         super()._place(line, i)
         grey_masks(line)
         return line
+
+    def _make_room(self, scene, n_new: int, run_time: float = 0.35) -> None:
+        """Terminal._make_room with the same signature, run_time and end state. explainer/devops.py
+        fades the scrolled-off lines out WHILE shifting them up a row, so for 2-5 frames they
+        cross the title bar and the top border (L05 final review). Here they fade out in place in
+        the first 40% of the same single play, then the staying lines shift up (ported from L05's
+        _l05_make_room): nothing crosses the top border, no row is drawn over a fading one."""
+        overflow = len(self.lines) + n_new - self.rows
+        if overflow <= 0:
+            return
+        gone = VGroup(*self.lines.submobjects[:overflow])
+        stay = VGroup(*self.lines.submobjects[overflow:])
+        split = 0.4 if len(stay) else 1.0
+        anims = [FadeOut(gone, rate_func=squish_rate_func(smooth, 0.0, split))]
+        if len(stay):
+            anims.append(stay.animate(rate_func=squish_rate_func(smooth, split, 1.0))
+                         .shift(UP * self.pitch * overflow))
+        scene.play(*anims, run_time=run_time)
+        for m in gone:
+            self.lines.remove(m)
+
+    def print(self, scene, lines, color: str = OUTPUT, run_time: float = 0.5, wrap: bool = False,
+              lag: float = 0.15) -> VGroup:
+        """Terminal.print (same arguments, one play, returns the new rows), but wrap=True folds a
+        long line with wrap_output (at a space or after , / _ - . within reach of the column, a
+        hanging indent on continuation rows) instead of at the fixed column. Every row carries
+        .src (its line's full text), .src_item (the line's index in `lines`), .src_span (a, b) and
+        .src_indent: item_rows / wrapped_glyphs / wrapped_at find text across folded rows."""
+        items = []
+        for k, x in enumerate([lines] if isinstance(lines, (str, tuple)) else lines):
+            s, col = (x, color) if isinstance(x, str) else x
+            if wrap and len(s) > self.max_chars:
+                items += [(row, col, k, s, a, b, ind) for row, a, b, ind in wrap_output(s, self.max_chars)]
+            else:
+                c = self._cut(s)
+                items.append((c, col, k, s, 0, len(c) if c == s else len(c) - 1, 0))
+        if not items:
+            return VGroup()
+        self._make_room(scene, len(items))
+        new = VGroup()
+        for row, col, k, s, a, b, ind in items:
+            ln = mono_line(row, self.size, col)
+            self._place(ln, len(self.lines))
+            ln.src, ln.src_item, ln.src_span, ln.src_indent = s, k, (a, b), ind
+            self.lines.add(ln)
+            new.add(ln)
+        scene.play(LaggedStart(*[FadeIn(m) for m in new], lag_ratio=lag), run_time=run_time)
+        return new
 
 
 def term(prompt: str = P_REPO, rows: int = 12, title: str | None = None, container: bool = False,
@@ -996,24 +1244,32 @@ def _strip_top_at_import(rows: int = 3, tries: int = 4) -> float:
 STRIP_TOP = _strip_top_at_import(3)
 
 
+def _swap_title(t: Terminal, new) -> list:
+    """The terminal's title text swaps in place, old out then new in (_swap_text); t.title is the
+    new Text afterwards (a Transform between the two titles scrambled the letters)."""
+    old = t.title
+    t.title = new
+    return _swap_text(t, old, new)
+
+
 def enter_container(t: Terminal, prompt: str = P_CTR, title: str = CTR_TITLE) -> list:
-    """Animations: the frame turns TEAL, the title becomes "container · llm-rag-cli"; the prompt
-    becomes `prompt` for the next typed line."""
+    """Animations: the frame turns TEAL, the title becomes "container · llm-rag-cli" (old title
+    out, then the new one in); the prompt becomes `prompt` for the next typed line."""
     t.set_prompt(prompt)
     new = mono(title, CAPTION, CTR).move_to(t.title)
-    return [t.box.animate.set_stroke(CTR, 3), Transform(t.title, new)]
+    return [t.box.animate.set_stroke(CTR, 3), *_swap_title(t, new)]
 
 
 def leave_container(t: Terminal, prompt: str = P_REPO, title: str = "laptop") -> list:
-    """Animations: back on the laptop (GREY frame, title `title`, prompt `prompt`)."""
+    """Animations: back on the laptop (GREY frame, title `title` swapped in, prompt `prompt`)."""
     t.set_prompt(prompt)
     new = mono(title, CAPTION, S.GREY).move_to(t.title)
-    return [t.box.animate.set_stroke(S.GREY_DARK, 2), Transform(t.title, new)]
+    return [t.box.animate.set_stroke(S.GREY_DARK, 2), *_swap_title(t, new)]
 
 
-def retitle(t: Terminal, title: str, color: str = S.GREY) -> Transform:
-    """Animation: the terminal's title text changes."""
-    return Transform(t.title, mono(title, CAPTION, color).move_to(t.title))
+def retitle(t: Terminal, title: str, color: str = S.GREY) -> AnimationGroup:
+    """Animation: the terminal's title text changes (old out, then new in)."""
+    return AnimationGroup(*_swap_title(t, mono(title, CAPTION, color).move_to(t.title)))
 
 
 def resize(scene, t: Terminal, rows: int, keep=None, run_time: float = 0.8, extra=(),
@@ -1332,8 +1588,18 @@ def build_row(row: str, width: int = 58) -> tuple[str, str | None]:
 
 
 def time_tag(time: str) -> VGroup:
-    """The GREY tag holding a BuildKit row's time (see build_row)."""
-    return _keep(tag(time, S.GREY))
+    """The GREY tag holding a BuildKit row's time (see build_row). Its pill is 0.08 shorter than
+    the terminal's row pitch, so the tags of neighbouring rows don't touch (the shared tag() pill,
+    0.47 tall, overlapped the next row's by 0.06; S05 critic). .box .text as tag()."""
+    g = tag(time, S.GREY)
+    h = line_pitch(TERM_PT) - 0.08
+    if g.box.height > h:
+        b = RoundedRectangle(width=g.box.width, height=h, corner_radius=h / 2, stroke_color=S.GREY,
+                             stroke_width=2).set_fill(S.BG, 0.92).move_to(g.box)
+        g.submobjects[g.submobjects.index(g.box)] = b
+        g.box = b
+        g.text.move_to(b)
+    return _keep(g)
 
 
 def place_time(tg, t: Terminal, line) -> VGroup:
@@ -1627,6 +1893,44 @@ def _auto_wrap(line: str, limit: int = 65) -> list[str]:
     return rows
 
 
+def _lex_whole(code, code_rows, whole, spots, language: str, size: float) -> None:
+    """Colour the rows of each wrapped line as the lexer colours the WHOLE line (S03, S11, S13
+    critics: src_panel wrapped before lexing, so a wrapped string's continuation row was lexed as
+    code and came out half-coloured). `whole` is the panel's rows with every wrapped line in one
+    piece; spots = {file line: (its row in `whole`, its rows in the panel)}. A reference
+    code_block of `whole` (same language and style, lexed in context) lends its glyph colours to
+    the wrapped rows, the ↪ marks skipped (they turn GREY afterwards). A line whose glyphs don't
+    pair up one to one is left as it was."""
+    ref = code_block("\n".join(whole), language, size)
+    for r, ks in spots.values():
+        src = [g for g in ref.code_lines[r]]
+        dst = []
+        for k in ks:
+            txt = "".join(code_rows[k].split())
+            glyphs = list(code.code_lines[k]) if k < len(code.code_lines) else []
+            if len(glyphs) != len(txt):
+                dst = None
+                break
+            dst += [g for c, g in zip(txt, glyphs) if not (c == "↪" and k != ks[0])]
+        if dst is None or len(dst) != len(src):
+            continue
+        for d, g in zip(dst, src):
+            d.set_color(g.get_color())
+
+
+def _line_bars(code, ks, color, opacity) -> VGroup:
+    """src_panel's .bar(n): a VGroup of line bars over rows ks; the rows of ONE wrapped line get a
+    single bar from the first row's top to the last row's bottom (one bar per row overlapped in a
+    brighter seam: S12 critic)."""
+    bars = [line_bar(code, k, color, opacity) for k in ks]
+    if len(bars) < 2:
+        return VGroup(*bars)
+    top = max(b.get_top()[1] for b in bars)
+    bot = min(b.get_bottom()[1] for b in bars)
+    one = Rectangle(width=bars[0].width, height=top - bot, stroke_width=0).set_fill(color, opacity)
+    return VGroup(one.move_to([bars[0].get_center()[0], (top + bot) / 2, 0]))
+
+
 def _spec_lines(spec) -> list[int]:
     out: list[int] = []
     for s in spec:
@@ -1665,6 +1969,7 @@ def src_panel(name: str, first, last: int | None = None, cut_comments: bool = Fa
         for n in range(a + 1, b + 1):
             joined_into[n] = a
     rows, rows_of, wrapped, gap_rows = [], {}, [], []
+    whole, whole_row = [], {}          # the same rows with each wrapped line whole (lexed in context)
     prev = None
     for n in nums:
         if n in joined_into:
@@ -1676,6 +1981,7 @@ def src_panel(name: str, first, last: int | None = None, cut_comments: bool = Fa
             indent = ln[:len(ln) - len(ln.lstrip())]
             gap_rows.append(len(rows))
             rows.append(indent + "…")
+            whole.append(indent + "…")
         if isinstance(wrap, dict) and n in wrap:
             parts = _wrap_line(ln, wrap[n])
         elif wrap is True:
@@ -1686,6 +1992,8 @@ def src_panel(name: str, first, last: int | None = None, cut_comments: bool = Fa
             wrapped.append(n)
         rows_of[n] = list(range(len(rows), len(rows) + len(parts)))
         rows += parts
+        whole_row[n] = len(whole)
+        whole.append(ln)
         prev = n
     if len(rows) > max_rows:
         raise ValueError(f"{name} {lo}-{hi}: {len(rows)} rows (at most {max_rows} on screen): "
@@ -1709,6 +2017,9 @@ def src_panel(name: str, first, last: int | None = None, cut_comments: bool = Fa
         subtitle = cell_title(name)
     _with_header(p, " · ".join([shown, where, *extra]), subtitle=subtitle or None)
     code_rows = p.code.source.split("\n")
+    if wrapped:
+        _lex_whole(p.code, code_rows, whole, {n: (whole_row[n], rows_of[n]) for n in wrapped},
+                   language or _lang(src_path(name)), size)
     for k in range(len(code_rows)):                 # GREY ↪ marks, '…' gap rows and the mask
         for sub in ("↪", "…", MASK):
             if sub == "↪" and k not in [r for ks in rows_of.values() for r in ks[1:]]:
@@ -1731,8 +2042,7 @@ def src_panel(name: str, first, last: int | None = None, cut_comments: bool = Fa
                         p.code.code_lines[k].set_opacity(0.3)
     p.source_name, p.first, p.rows_map = name, lo, rows_of
     p.rows_of = lambda n: rows_of[n]
-    p.bar = lambda n, color=TURN, opacity=0.18: VGroup(*[line_bar(p.code, k, color, opacity)
-                                                         for k in rows_of[n]])
+    p.bar = lambda n, color=TURN, opacity=0.18: _line_bars(p.code, rows_of[n], color, opacity)
 
     def span(n, sub, occurrence=0):
         for k in rows_of[n]:
@@ -1890,17 +2200,38 @@ def cmd_chip(cmd: str, note_: str | None = None, color: str = S.GREY, size: floa
     return _keep(g)
 
 
-def turn_card(rows, width: float | None = None, header: str | None = "your turn",
+def _mixed_row(parts, size: float = CAPTION, color: str = INK) -> Text:
+    """One row mixing mono ("`code`") and serif pieces as ONE Text (one baseline), pieces joined
+    by a space (none before a piece that starts with , . : ? ; or ·…)."""
+    s, spans = "", []
+    for p in parts:
+        code = len(p) > 1 and p.startswith("`") and p.endswith("`")
+        txt = unname(p[1:-1] if code else p)
+        if s and (code or txt[0] not in ",.:?;"):
+            s += " "
+        if code:
+            spans.append((len(s), len(s) + len(txt)))
+        s += txt
+    t2c = {MASK: S.GREY} if MASK in s else {}
+    return S.text(s, size, color, t2f={f"[{a}:{b}]": MONO for a, b in spans}, t2c=t2c)
+
+
+def turn_card(rows, width: float | None = None, header: str | None = None,
               size: float = CAPTION) -> VGroup:
     """The static GREY "your turn" card (a ▶ that stays readable when paused). rows: a str is a
     command typed exactly as on screen (mono; "\\n" splits it into rows), (cmd, "extra") adds the
     extra tag, (cmd, note) a GREY note, Prose("…") a serif row, (Prose("…"), colour) a coloured
-    serif row (the GOLD cost line last). The YELLOW ▶ your turn tag sits on the top-right corner
-    (.tag). .frame .rows .tag"""
+    serif row (the GOLD cost line last), a list ["`uv sync`", "in the repo root"] one row mixing
+    mono ("`code`") and serif pieces on one baseline. The YELLOW ▶ your turn tag sits on the
+    top-right corner (.tag). header: an optional GREY line above the card; None by default (QA:
+    a GREY "your turn" header only repeated the YELLOW tag). .frame .rows .tag"""
     items = VGroup()
     for r in rows:
         if isinstance(r, Prose):
             items.add(label(str(r), size, INK))
+            continue
+        if isinstance(r, list):
+            items.add(_mixed_row(r, size))
             continue
         if isinstance(r, tuple) and isinstance(r[0], Prose):
             items.add(label(str(r[0]), size, r[1]))
@@ -2197,13 +2528,14 @@ def pick_card(text: str, header: str = "top pick", size: float = 22, width: floa
     return g
 
 
-def repick(card, text: str, size: float = 22):
-    """Animation: the pick card's text becomes `text` (card.text is the new text afterwards)."""
+def repick(card, text: str, size: float = 22, run_time: float = 1.0):
+    """Animation: the pick card's text becomes `text` (card.text is the new text afterwards, and
+    a member of the card in the old one's place): old out, then new in (_swap_text)."""
     t = _cell(text, size).move_to(card.frame.get_center() + DOWN * 0.14)
     if t.width > card.frame.width - 0.3:
         raise ValueError(f"pick {text!r} is {t.width:.1f} wide: widen the card")
     old, card.text = card.text, t
-    return ReplacementTransform(old, t)
+    return AnimationGroup(*_swap_text(card, old, t), run_time=run_time)
 
 
 class Dropdown(VGroup):
@@ -2972,7 +3304,10 @@ class Anatomy(Piece):
         """(chips, anims): the items (a "`mono`" str, a serif str, or a mobject) laid out in rows
         under the block's name (which moves to the block's top). Raises if they don't fit: build
         the Anatomy with a larger block_h / box_w. The chips are not members (attach them if the
-        piece will move)."""
+        piece will move).
+        WARNING: call fill() only AFTER any light() / unlight() of the same block has PLAYED. The
+        name's move is a .animate built here from the name as it is now, so a light() played in
+        between is undone when these animations play (the name snaps back to its old colour)."""
         fr, nm = self.frames[name], self.names[name]
         chips = [self._item_chip(it, size) for it in items]
         if name == "control":                  # the wide bar: name at the left, one row after it
@@ -3519,12 +3854,16 @@ class Gate(VGroup):
         self.is_open = False
         return Rotate(self.bar, angle=-PI / 2, about_point=self.pivot(), run_time=run_time)
 
-    def relabel(self, text: str, color: str | None = None):
-        """Animation: the label above the gate changes (.caption is the new label afterwards)."""
+    def relabel(self, text: str, color: str | None = None, run_time: float = 1.0):
+        """Animation: the label above the gate changes (.caption is the new label afterwards),
+        old label out, then the new one in (_swap_text; the glyph morph of a ReplacementTransform
+        scrambled the letters). The new label takes the old one's place among the gate's members
+        at once (S08 builder: relabel left the gate holding the old label), so it moves and fades
+        with the gate. run_time 1.0, as the ReplacementTransform's default."""
         col = color or self.bar.get_color()
         new = sans(text, self.size, col, weight="BOLD").move_to(self.caption)
         old, self.caption = self.caption, new
-        return ReplacementTransform(old, new)
+        return AnimationGroup(*_swap_text(self, old, new), run_time=run_time)
 
     def slam(self, color: str = ERR, text: str | None = None, run_time: float = 0.35):
         """Animation: the bar turns `color` and slams down (if open); the label becomes `text`."""
@@ -3593,13 +3932,16 @@ class LoopTrack(Piece):
         return VGroup(n, t)
 
     def lap(self, run_time: float = 1.6):
-        """Animation: the token runs one clockwise lap, then the counter ticks (k / cap)."""
+        """Animation: the token runs one clockwise lap, then the counter ticks (k / cap). The
+        Succession's group is the track itself: a wrapper group (Manim's default) was added to the
+        scene on top and drew the token over the stations (S08 builder; S08 plays two animations
+        in its run_lap instead)."""
         self.count += 1
         cnt = self.parts["counter"]
         new = self._counter_text(self.count).move_to(cnt)
         return Succession(Rotate(self.parts["token"], angle=-TAU, about_point=self._c.get_center(),
                                  run_time=run_time, rate_func=linear),
-                          Transform(cnt, new, run_time=0.25))
+                          Transform(cnt, new, run_time=0.25), group=self)
 
     def set_count(self, k: int):
         """Jump the counter to k (no animation; for the replay)."""

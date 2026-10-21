@@ -118,6 +118,7 @@ from common import (
     turn_card,
     type_cmd,
     under,
+    wrapped_at,
     your_copy,
 )
 from manim import (
@@ -626,10 +627,8 @@ class SharedState(VoiceScene):
             vo.wait_until("an empty state")
             hl = []
             for sub in ('"state":{}', '"events":[]'):
-                i = SESS_OUT.index(sub)
-                k, c = divmod(i, t.max_chars)
-                assert (i + len(sub) - 1) // t.max_chars == k, sub
-                hl.append((out[k], col_box(out[k], c, c + len(sub), DATA), glyph_range(out[k], c, c + len(sub))))
+                r, c = wrapped_at(out, sub)        # the row that holds it (word-boundary fold)
+                hl.append((r, col_box(r, c, c + len(sub), DATA), glyph_range(r, c, c + len(sub))))
             r, bx, g = hl[0]
             self.play(Create(bx), g.animate.set_color(DATA), run_time=0.4)
             attach(self, r, bx)
@@ -637,11 +636,10 @@ class SharedState(VoiceScene):
             r, bx, g = hl[1]
             self.play(Create(bx), g.animate.set_color(DATA), run_time=0.4)
             attach(self, r, bx)
-            i = SESS_OUT.index(SESS_ID)
-            k, c = divmod(i, t.max_chars)
-            u_id = under(glyph_range(out[k], c, c + len(SESS_ID)), S.GREY, stroke=3)
+            r_id, c = wrapped_at(out, SESS_ID)
+            u_id = under(glyph_range(r_id, c, c + len(SESS_ID)), S.GREY, stroke=3)
             self.play(Create(u_id), run_time=0.3)
-            attach(self, out[k], u_id)
+            attach(self, r_id, u_id)
             pin(self, out[-1], beside(differ_tag(), t, out[-1], buff=0.4), run_time=0.3)
             vo.wait_until("Think of the state")
             resize(self, t, 3, run_time=0.6, extra=[caption_extra(tr, False)])
@@ -863,11 +861,8 @@ class SharedState(VoiceScene):
             err = srv.print(self, [(ERR_ROW, ERR)], wrap=True, run_time=0.5)
 
             def span_in(rows, sub):
-                text = "".join(r.text for r in rows)
-                i = text.index(sub)
-                k, c = divmod(i, srv.max_chars)
-                assert (i + len(sub) - 1) // srv.max_chars == k, sub
-                return glyph_range(rows[k], c, c + len(sub))
+                r, c = wrapped_at(rows, sub)       # the row that holds it (word-boundary fold)
+                return glyph_range(r, c, c + len(sub))
 
             vo.wait_until("API key not valid")
             self.play(Indicate(span_in(err, "API key not valid."), color=ERR, scale_factor=1.12), run_time=0.7)
