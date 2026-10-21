@@ -158,8 +158,8 @@ assert R155 in source_line("README.md", 155)
 T_ROWS = 10                    # the laptop terminal in beats 1-3 (top 1.38: two band rows above)
 BUILD_ROWS = 12                # the build and the banner (top 2.19)
 BAND1_Y, BAND2_Y = 1.85, 2.5   # rows of the band between a 10-row terminal and the tracker
-BADGE_W = 2.4
-BADGE_C = np.array([6.45 - BADGE_W / 2, 3.12, 0])    # top right (no lecture tag in this scene)
+BADGE_W = 2.2
+BADGE_C = np.array([6.45 - BADGE_W / 2, 3.2, 0])     # top right (no lecture tag in this scene)
 GAP_Y = STRIP_TOP + 0.12       # the lowest y a picture above the 3-row strip uses
 
 
@@ -253,7 +253,9 @@ class OneContainer(VoiceScene):
         # rescaled, the stage keeps its text size: "live: your edits show inside" would end under the
         # mount arrow, so it sits a little lower (still between agent-harness/ and secrets/)
         stage.parts["mount_app"][1].shift(DOWN * 0.15)
-        # my additions to the stage (members, so they shrink and grow with it)
+        lz = stage.parts["laptop"]                                  # and the zone's caption inside its frame
+        lz.caption.shift(RIGHT * (lz.frame.get_left()[0] + 0.2 - lz.caption.get_left()[0]))
+        # this scene's additions to the stage (members, so they shrink and grow with it)
         sec_note = stage.parts["secrets"][2]                       # "empty"
         nreads = note("· nothing reads it").next_to(sec_note, RIGHT, buff=0.12)
         stage.part("nreads", nreads, shown=False)
@@ -446,7 +448,10 @@ class OneContainer(VoiceScene):
             t.set_prompt(P_CTR)
             pr = bare_prompt(self, t)
             self.play(*enter_container(t), run_time=0.6)
-            self.play(flash(substring(r23, "activated"), TURN, 1.2), run_time=0.6)
+            act = substring(r23, "activated")
+            uact = under(act, TURN, stroke=3)
+            self.play(act.animate.set_color(TURN), run_time=0.4)
+            pin(self, r23, uact, run_time=0.4, anim=Create(uact))
             vo.wait_until("before the script")
             resize(self, t, 3, keep=[r23, r26, pr], run_time=0.6)
             self.play(FadeIn(p6, shift=UP * 0.15), run_time=0.5)
@@ -488,8 +493,9 @@ class OneContainer(VoiceScene):
             veil = Rectangle(width=t.box.width + 0.08, height=t.box.height + 0.08).set_stroke(width=0)
             veil.set_fill(S.BG, 0.7).move_to(t.box)
             self.play(FadeOut(card7), FadeIn(veil), run_time=0.5)
-            self.play(FadeIn(t2, shift=UP * 0.4), run_time=0.6)
-            self.remove(t, veil)                        # covered by the second terminal
+            # the first terminal leaves under the second (Scene.remove would miss a terminal whose rows
+            # pin() re-added to the scene: it only removes top-level mobjects)
+            self.play(FadeIn(t2, shift=UP * 0.4), FadeOut(t), FadeOut(veil), run_time=0.6)
             bare_prompt(self, t2)
             self.play(caption_extra(tr, True), run_time=0.4)
             vo.wait_until("Docker ps")
@@ -503,7 +509,7 @@ class OneContainer(VoiceScene):
             assert rd.text[a:b].strip() == "", rd.text
             pbx = cell_box(rc, rd, a, b, TURN)
             self.play(Create(pbx), substring(rc, "PORTS").animate.set_color(TURN), run_time=0.5)
-            nothing = beside(note("nothing published"), t2, rd, buff=0.4)
+            nothing = beside(label("nothing published", CAPTION, TURN), t2, rd, buff=0.3)
             self.play(FadeIn(nothing, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("Docker images")
             iml = type_cmd(self, t2, IMG.cmd, 0.5)
@@ -553,7 +559,7 @@ class OneContainer(VoiceScene):
             resize(self, t2, 3, run_time=0.6)
             # the badge grows back, glyph only; what isn't about the key fades so the key story reads
             top = 3.52
-            bottom = p10.get_top()[1] + 0.12
+            bottom = max(p10.get_top()[1], noe.get_top()[1]) + 0.14
             h10 = top - bottom
             w10 = h10 * stage.width / stage.height
             c10 = np.array([6.4 - w10 / 2, (top + bottom) / 2, 0])

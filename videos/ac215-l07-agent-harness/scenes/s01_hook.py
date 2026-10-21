@@ -24,24 +24,28 @@ Beats (script.md "## S01", one voiceover block each):
    the sentence was garbled": the ring pulses and the GREEN caption "checks the items · not the
    prose" writes in left of the box's "Cart satisfies" row. "Nothing checked": card A gets the GREY
    dashed tag "bare agent · no final cart check".
-4. LECTURE 21 (the recorded tag leaves first). V1 opens: card A slides down; at "the model
-   proposes" the BLUE column "the model proposes" fades in as card B slides left into it; at "the
-   harness decides" the GREEN column "the harness decides" fades in as the check box rises into
-   it; the dim YELLOW stamp "a human decides" sits at its lower right. At "The harness is the code
+4. LECTURE 21 (the recorded tag leaves first). V1 opens: card A slides down, card B slides left at
+   its own height (clear of the box) and drops into the slot above it; at "the model proposes" the
+   BLUE column "the model proposes" fades in around them (after B has landed: the column title sits
+   on B's path); at "the harness decides" the GREEN column "the harness decides" fades in as the
+   check box rises into it; the dim YELLOW stamp "a human decides" sits at its lower right. At "The harness is the code
    around the model" the GREEN column pulses; the four GREEN words write in as named (the loop ·
    its limits · its context · its checks); at "Today we sort" both columns pulse.
 5. LECTURE 3. The cards, the box, the words and the stamp fade; the columns shrink to a band at the
    top. Below, our drawing of the map: GREY "Lecture 7 · outline" (slide 3's seven sections) left,
    `README.md · lines 13–21` (the tutorial activities) right; seven PINK links draw in row order at
    "in order"; at "six acts" the five act chips turn YELLOW; at "in a fictional cheese shop" the
-   excerpt chip `README.md · line 27 (excerpt)` writes in at the bottom.
+   excerpt chip `README.md · line 27 (excerpt)` writes in at the bottom, and at "where nothing is
+   really bought" its "mock, in-memory" gets a YELLOW underline.
 6. The map clears. Layout preview, piece by piece as named: the tracker top left ("README › Setup ›
-   Start container", 4 dots, none lit) inside a pulsing YELLOW ring; the GREY lecture_ref(7, "21")
-   tag top right, pulsing once; a 2-row laptop terminal strip (GREY "preview" tag on its title bar)
-   types `mkdir -p ../secrets` and the YELLOW ▶ your turn tag pins beside it. 2 s hold.
+   Start container", 4 dots, none lit) inside a pulsing YELLOW ring, GREY caption "the README
+   step" under it; the GREY lecture_ref(7, "21") tag top right, pulsing once, GREY caption "the
+   lecture slides" under it; a 2-row laptop terminal strip types `mkdir -p ../secrets`; its title
+   bar carries the GREY "preview" tag and then the YELLOW ▶ your turn tag (the prompt and command
+   fill the row to x 4.56, so the 2.0-wide tag cannot sit beside the command). 2 s hold.
 7. The preview clears. The honest-limit card: "One honest limit" with the GREY chip "recorded
-   October 20, 2026" (at the date) and the GREY "no key" tag (at "without an OpenAI key"); its rows
-   write in as named: GREEN "ran for real: the build · the tests · every offline and scripted
+   October 20, 2026" (at the date) and the GREY "no key" tag (at "without an OpenAI key"); the
+   card's outline draws with its first row, and its rows write in as named: GREEN "ran for real: the build · the tests · every offline and scripted
    command", RED "every live command: up to its first model call, then a 401 (no key)", BLUE "live
    answers: `recorded` = the staff's saved Colab run · `expected` = the README's own words".
 8. The card clears. The GOLD tag `live · billed per token` over "the only cost: OpenAI tokens · no
