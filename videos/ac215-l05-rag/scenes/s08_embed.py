@@ -12,7 +12,8 @@ Beats (script.md "## S08", one voiceover block each):
     lecture example) and becomes a PINK arrow; the three candidates appear as GREEN arrows (tag
     sketch · not to scale: A 10° away and short, B 25° away and 1.4× longer, C 45° away); YELLOW
     angle arcs; a podium "cosine similarity": A 0.986 · B 0.976 · C 0.886, A's medal card gets a
-    GREEN tick.
+    GREEN tick. A GREY caption "lecture game: who is most like the instructor?" (in at the question,
+    beside the table; over the arrows once they are drawn; out when beat 2's measures table comes).
  2  LECTURE A44–A47. A second podium "dot product" (tag computed from the lecture's table · not on
     the slides): B's longer arrow pulses and the A and B medal cards swap (B 81.2 · A 80.2). A
     three-row table: cosine (the angle), Euclidean (the distance), dot product (angle and length);
@@ -37,8 +38,8 @@ Beats (script.md "## S08", one voiceover block each):
     GREY "with your key, look for" card above it, four items writing in as named (cli.py lines
     240, 256, 259–260, 262–264).
  8  A second GREY card "if it fails (with your key)", rows writing in as named: the retry message
-    (cli.py lines 117–118), key file not found (the strip's error rows flash), PERMISSION_DENIED,
-    SERVICE_DISABLED.
+    (cli.py lines 117–118), key file not found (the strip's error rows flash), PERMISSION_DENIED
+    ("fix GCP_PROJECT in docker-shell.sh, or the role in IAM (console)"), SERVICE_DISABLED.
  9  TRACKER Embed 2. The strip clears (step 1's error does not linger above the new command) and
     types python cli.py --embed --chunk_type recursive-split (no output).
     ▶ your turn on a GREY card listing both embed commands and "each run sleeps 5 s per book"; a
@@ -48,7 +49,8 @@ Beats (script.md "## S08", one voiceover block each):
     outputs/" -> d9ced19 struck RED "reverted · merged in e17a39f" -> "still in every clone's
     history"; 58dd602 "their database removed too"; 22 files · 82 MB (recorded-embeddings/00 lines
     2–3, shown as "embeddings-* · 22 files · 82 MB"); GREEN check "their 22 chunk files = ours, byte
-    for byte". The strip's command flashes.
+    for byte"; a GREY row along the card's foot "no key yet? the study guide shows how to copy these
+    into outputs/" (in the pause after "history"). The strip's command flashes.
 11  TRACKER Embed 2 · extra. GREY card "an extra Python check · in the study guide": "Tolminc's
     vectors: count, first five, lengths" (code not shown); the strip grows to 4 rows ->
     recorded-embeddings/06 lines 9–11 (tag recorded · the staff's vectors (68e0bde), just above the
@@ -57,8 +59,9 @@ Beats (script.md "## S08", one voiceover block each):
     and a YELLOW dashed mark at ≈ 0.4 across the arrow tips ("lengths 0.369–0.402"); "length 1"
     at the circle.
 12  The strip, card and ruler leave; the dashed circle and the short arrows stay, a PINK query arrow
-    joins; one arrow stretches to length 1 and back; chip "hnsw:space": "cosine" (cli.py line 288).
-    PONDER 8 s in the lower third.
+    joins; one arrow stretches to length 1 and back; chip "hnsw:space": "cosine" (cli.py line 288)
+    with a GREY note "the measure, set at load (next scene)". PONDER 8 s in the lower third ("Our
+    database will compare by cosine (set when we load)." …).
 13  The other arrows dim; the stretched arrow keeps its YELLOW angle arc to the query ("cosine:
     same"); a GREY "what if · straight-line distance" inset on the right (tag illustration): the RED
     distance to the query grows as the arrow stretches ("distance: changes"; "Chroma's default:
@@ -76,7 +79,12 @@ prompt row (the command row, folded under the long container prompt, has no room
 11–13 draw only the upper half of the dashed unit circle (every arrow points up; the full circle
 would run into the strip and the ponder card), at a size where 24 arrows of length 0.4 stay
 distinct; a PINK query arrow joins V4 in beat 12, so that beat 13 has a query to measure the angle
-and the distance against.
+and the distance against. QA 2026-10-19: beat 8's PERMISSION_DENIED row names where each fix lives
+(SHOW's "or the role in docker-shell.sh" sent newcomers looking for a role in the script; the role
+is granted in IAM, S03); beat 10's card gets the GREY "no key yet?" pointer to the study guide's copy
+command (the command itself stays untyped, as BRIEF says); beat 1 shows the game's question, and
+beat 12's chip note and ponder card say "database" and "set at load" (collection and HNSW come in
+S09; script.md's PONDER line now says the same).
 """
 
 import numpy as np
@@ -103,8 +111,8 @@ from manim import (
     ShowPassingFlash,
     Succession,
     Transform,
-    TransformFromCopy,
     VGroup,
+    smooth,
     there_and_back,
 )
 
@@ -203,8 +211,10 @@ assert abs(float(_I @ _B) - 81.24) < 1e-9 and abs(float(_I @ _A) - 80.15) < 1e-9
 COSINE = [("A", "0.986"), ("B", "0.976"), ("C", "0.886")]
 DOT = {"A": "80.2", "B": "81.2"}
 
-PONDER_Q = ("Our collection compares by cosine.\nThese vectors are shorter than 1, and not all the "
-            "same length.\nDoes that change which chunks count as nearest?")
+# "collection" and HNSW are introduced only in S09: the card says "database" and that the measure
+# is set when we load, as SAY[12] does
+PONDER_Q = ("Our database will compare by cosine (set when we load).\nThese vectors are shorter than 1, "
+            "and not all the same length.\nDoes that change which chunks count as nearest?")
 
 # ------------------------------------------------------------------ layout
 TOPICS = ["curd", "milk", "license", "curd", "whey", "license"]         # beat 0's chunk cards
@@ -231,6 +241,15 @@ def mixed(parts, size: float = CAPTION, color: str = INK) -> VGroup:
         else:
             mobs.append(label(s, size, col))
     return VGroup(*mobs).arrange(RIGHT, buff=0.1)
+
+
+def perm_row() -> VGroup:
+    """Beat 8's PERMISSION_DENIED row; its comma hugs `docker-shell.sh` (mixed() puts a gap before
+    every piece)."""
+    row = mixed(["`PERMISSION_DENIED`", "→ fix", "`GCP_PROJECT`", "in", "`docker-shell.sh`",
+                 ", or the role in IAM (console)"])
+    row[-1].shift(LEFT * 0.08)
+    return row
 
 
 def two_row_tag(rows, color: str = S.GREY) -> VGroup:
@@ -381,6 +400,13 @@ class Embeddings(VoiceScene):
         pc = podium("cosine similarity", 3, x0=0.6, base=1.15)
         med_c = {k: medal(k, s).move_to(pc.slots[i]) for i, (k, s) in enumerate(COSINE)}
         tick = check_mark(0.3, DATA).next_to(med_c["A"], LEFT, buff=0.1)
+        # the game's question: beside the table while it is asked, then over the arrows once the
+        # table has become the instructor's arrow (it leaves when the measures table takes its place)
+        game_q = note("lecture game: who is most like the instructor?")
+        game_q.move_to([table.get_right()[0] + 0.35 + game_q.width / 2, 0.75, 0])
+        game_q_over = game_q.copy().move_to([-6.35 + game_q.width / 2, 0.75, 0])
+        assert game_q.get_right()[0] < 6.3 and game_q_over.get_right()[0] < pc.blocks.get_left()[0] - 0.2
+        assert game_q_over.get_bottom()[1] > l_c["C"].get_top()[1] + 0.15
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(vs, arrows0, lab_cheese, lab_lic, cap0, ill0, sent, emb)), run_time=0.5)
@@ -389,16 +415,22 @@ class Embeddings(VoiceScene):
                       FadeIn(ex), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(VGroup(*row), shift=RIGHT * 0.1) for row in table.cells], lag_ratio=0.2),
                       run_time=1.2)
+            vo.wait_until("which of three candidates")
+            self.play(FadeIn(game_q, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Five scores make each person")
             # each value pulses about its own centre (a column-wide Indicate pushed 4.8 into the header)
             self.play(LaggedStart(*[Indicate(v, color=LOOKUP, scale_factor=1.15) for v in values], lag_ratio=0.1),
                       run_time=0.7)
-            self.play(FadeIn(gs), ReplacementTransform(values, a_ins), Transform(table.heads[1], l_ins),
+            # the header waits for the first half, then moves to the arrow (moving at once, "instructor" slid
+            # through its own column of numbers: garbled)
+            self.play(FadeIn(gs), ReplacementTransform(values, a_ins),
+                      Transform(table.heads[1], l_ins, rate_func=lambda t: smooth(max(0.0, 2 * t - 1))),
                       FadeOut(VGroup(table.frame, table[1], table.heads[0], *[row[0] for row in table.cells])),
                       FadeOut(ex), run_time=1.1)
             ex.move_to([pc.title.get_right()[0] + 0.3 + ex.width / 2, pc.title.get_center()[1], 0])
             self.play(LaggedStart(*[GrowArrow(a_c[k]) for k in "ABC"], lag_ratio=0.3),
-                      LaggedStart(*[FadeIn(l_c[k]) for k in "ABC"], lag_ratio=0.3), FadeIn(sk_tag), run_time=1.0)
+                      LaggedStart(*[FadeIn(l_c[k]) for k in "ABC"], lag_ratio=0.3), FadeIn(sk_tag),
+                      game_q.animate.move_to(game_q_over), run_time=1.0)
             vo.wait_until("Cosine similarity compares only the angle")
             self.play(LaggedStart(*[Create(arcs[k]) for k in "ABC"], lag_ratio=0.35), run_time=1.0)
             vo.wait_until("and picks the first candidate")
@@ -434,11 +466,12 @@ class Embeddings(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             lr = lref_swap(self, lr, "A44–A47")
-            # the cards' frames and letters copy down; the new scores write in (a digit-by-digit
-            # morph of 0.986 into 80.2 reads as noise)
+            # the cards' frames flash in place as their dot-product twins fade in below (copies flying down
+            # crossed the scores and the "dot product" heading: garbled letters); the new scores write in
+            # (a digit-by-digit morph of 0.986 into 80.2 reads as noise)
             self.play(FadeIn(pd), FadeIn(dtag),
-                      *[TransformFromCopy(VGroup(med_c[k].frame, med_c[k].name), VGroup(med_d[k].frame, med_d[k].name))
-                        for k in "AB"],
+                      *[med_c[k].frame.animate(rate_func=there_and_back).set_stroke(TURN, 4) for k in "AB"],
+                      *[FadeIn(VGroup(med_d[k].frame, med_d[k].name), shift=DOWN * 0.1) for k in "AB"],
                       *[FadeIn(med_d[k].score, shift=DOWN * 0.1) for k in "AB"], run_time=0.9)
             for k in "AB":
                 self.remove(med_d[k].frame, med_d[k].name, med_d[k].score)
@@ -448,8 +481,12 @@ class Embeddings(VoiceScene):
             self.play(flash(a_c["B"]), run_time=0.7)
             self.play(med_d["A"].animate(path_arc=-PI / 3).move_to(pd.slots[1]),
                       med_d["B"].animate(path_arc=-PI / 3).move_to(pd.slots[0]), run_time=0.9)
-            self.play(flash(a_c["B"]), Indicate(med_d["B"], color=TURN, scale_factor=1.1), run_time=0.7)
+            # the card's outline and its letter and score flash (Indicate on the whole card filled it
+            # YELLOW: "B 81.2" unreadable)
+            self.play(flash(a_c["B"]), med_d["B"].frame.animate(rate_func=there_and_back).set_stroke(TURN, 4),
+                      Indicate(med_d["B"][1], color=TURN, scale_factor=1.1), run_time=0.7)
             vo.wait_until("So a measure is a choice")
+            self.play(FadeOut(game_q), run_time=0.3)       # first: it sits on the measures table's foot
             self.play(FadeIn(measures.frame), FadeIn(measures[1]), *[FadeIn(h) for h in measures.heads], run_time=0.4)
             self.play(LaggedStart(*[FadeIn(VGroup(*row), shift=RIGHT * 0.1) for row in measures.cells],
                                   lag_ratio=0.3), run_time=1.0)
@@ -489,11 +526,11 @@ class Embeddings(VoiceScene):
                       run_time=1.0)
             self.add(cb)
             self.play(FadeIn(len_lab), FadeIn(us), Create(u_circ), GrowArrow(a_full), FadeIn(one), run_time=0.8)
-            vo.wait_until("the code asks for the first 256")
+            vo.wait_until("The code asks for the first 256")
             self.play(Indicate(dim256, color=TURN, scale_factor=1.3), *cb.parts_in("keep"), run_time=0.7)
             self.play(*cb.cut(), Transform(a_full, a_256), FadeIn(keep_lab, shift=UP * 0.1),
                       ReplacementTransform(len_lab, len04), run_time=1.0)
-            vo.wait_until("a prefix the model is trained")
+            vo.wait_until("The model is trained")
             self.play(Indicate(cb.parts["keep"], color=TURN, scale_factor=1.15), run_time=0.9)
             self.play(flash(a_full), Indicate(keep_lab, color=TURN, scale_factor=1.05), run_time=1.1)
 
@@ -646,7 +683,9 @@ class Embeddings(VoiceScene):
             item(mixed(["`File /secrets/llm-service-account.json was not found`"]),
                  mixed(["→ not in", "`../secrets`", "under that name · check:", "`ls -la /secrets`",
                         "in the container"])),
-            item(mixed(["`PERMISSION_DENIED`", "→ fix", "`GCP_PROJECT`", "or the role in", "`docker-shell.sh`"]),
+            # the Project ID is set in docker-shell.sh, the role in IAM (S03's console path): one row
+            # that put both "in docker-shell.sh" sent newcomers looking for a role in the script
+            item(perm_row(),
                  mixed(["then", "`exit`", "and", "`sh docker-shell.sh`", "again"])),
             mixed(["`SERVICE_DISABLED`", "→ enable the Vertex AI API, wait a minute, rerun"]),
         ]
@@ -719,13 +758,20 @@ class Embeddings(VoiceScene):
         same_files.arrange(RIGHT, buff=0.2)
         right = VGroup(db_chip, size_lab, same_files).arrange(DOWN, aligned_edge=LEFT, buff=0.42)
         content = VGroup(left, right).arrange(RIGHT, buff=0.6, aligned_edge=UP)
+        # the command that copies them stays untyped (BRIEF); a viewer without a key gets a pointer
+        # to it (study guide, §4 Step 6 "No key yet?", recorded-embeddings/00)
+        no_key = mixed(["no key yet? the study guide shows how to copy these into", "`outputs/`"], color=S.GREY)
+        no_key.next_to(content, DOWN, buff=0.32, aligned_edge=LEFT)
+        body = VGroup(content, no_key)
         d1 = Arrow(c1[0].get_bottom(), c2[0].get_top(), buff=0.06, color=S.GREY, stroke_width=3, tip_length=0.12)
         d2 = Arrow(c2[0].get_bottom(), [c2[0].get_center()[0], c3.get_top()[1], 0], buff=0.06, color=S.GREY,
                    stroke_width=3, tip_length=0.12)
-        s_frame = box(content.width + 0.5, content.height + 0.8, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
-        s_card = VGroup(s_frame, content, d1, d2)
-        s_frame.move_to(content)
+        s_frame = box(body.width + 0.5, body.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
+        s_card = VGroup(s_frame, body, d1, d2)
+        s_frame.move_to(body)
         s_card.move_to([0, (s4 + 2.75) / 2, 0])
+        assert s_frame.get_top()[1] < 2.72 and s_frame.get_bottom()[1] > s4 + 0.15, (
+            s_frame.get_top()[1], s_frame.get_bottom()[1])          # clear of the tracker and the strip
         stf = staff_tag()
         stf.move_to(s_frame.get_corner(UP + RIGHT) + np.array([-0.3 - stf.width / 2, 0, 0]))
 
@@ -738,6 +784,7 @@ class Embeddings(VoiceScene):
             self.play(GrowArrow(d1), FadeIn(c2_chip), FadeIn(c2[1]), run_time=0.5)
             self.play(Create(c2_strike), run_time=0.3)
             self.play(GrowArrow(d2), FadeIn(c3, shift=DOWN * 0.1), FadeIn(db_chip, shift=LEFT * 0.1), run_time=0.6)
+            self.play(FadeIn(no_key, shift=UP * 0.1), run_time=0.5)     # in the pause after "history"
             vo.wait_until("Their chunk files match ours")
             self.play(FadeIn(size_lab), run_time=0.4)
             self.play(Create(same_files[0]), FadeIn(same_files[1], shift=RIGHT * 0.1), run_time=0.6)
@@ -785,15 +832,16 @@ class Embeddings(VoiceScene):
             out = t.print(self, NORMS_OUT, run_time=0.6)
             bare_prompt(self, t)
             self.play(FadeIn(st), FadeIn(v4), Create(circ), FadeIn(fan_tag), run_time=0.6)
-            vo.wait_until("24 rows of 256 numbers")
+            # ANCHORS: "24 rows" and "Their lengths" start sentences, so Kokoro's marks for them are exact.
+            vo.wait_until("24 rows")                   # 2.65 s; "24" sounds at 2.68 s (the plays above end at 2.47 s)
             self.play(substring(out[0], "24 rows").animate.set_color(TURN),
                       substring(out[0], "256 numbers").animate.set_color(TURN),
                       LaggedStart(*[GrowArrow(a) for a in fan], lag_ratio=0.06), run_time=1.4)
-            vo.wait_until("with lengths from")
+            vo.wait_until("Their lengths")             # 6.10 s; "Their" sounds at 6.18 s
             self.play(substring(out[2], "min 0.369, max 0.402").animate.set_color(TURN),
                       Create(ruler), FadeIn(r04), FadeIn(r1), run_time=0.7)
             self.play(Create(mark04), FadeIn(rng_lab, shift=LEFT * 0.1), run_time=0.7)
-            vo.wait_until("not 1")
+            vo.wait_until("not 1")                     # 11.20 s (interpolated); "not" sounds at 11.33 s
             self.play(Indicate(circ, color=INK, scale_factor=1.02), Indicate(r1, color=INK), FadeIn(len1),
                       run_time=0.7)
 
@@ -802,6 +850,10 @@ class Embeddings(VoiceScene):
         l_q = label("query", CAPTION, LOOKUP).next_to(a_q.get_end(), LEFT, buff=0.12)
         hn = excerpt_chip(HNSW, "cli.py · line 288 (excerpt)", line=excerpt("cli.py", 288, 288))
         hn.move_to([3.45, 1.55, 0])
+        # the chip's line runs at load time (S09), not yet: a note says so
+        hn_note = note("the measure, set at load (next scene)").next_to(hn.chip, DOWN, buff=0.12)
+        hn_note.align_to(hn.chip, LEFT).shift(RIGHT * 0.08)
+        assert hn_note.get_right()[0] < 6.3
         picked = fan[k_pick]
         d_pick, l_pick = float(degs[k_pick]), float(lengths[k_pick])
         long_ = thin_arrow(v4, d_pick, 1.0, stroke=4)
@@ -810,7 +862,8 @@ class Embeddings(VoiceScene):
         with self.voiceover(SAY[12]) as vo:
             self.play(FadeOut(VGroup(t, st, ck, ruler, r04, r1, mark04, rng_lab)), caption_extra(tr, False),
                       run_time=0.5)
-            self.play(FadeIn(hn, shift=UP * 0.1), GrowArrow(a_q), FadeIn(l_q), run_time=0.6)
+            self.play(FadeIn(hn, shift=UP * 0.1), FadeIn(hn_note, shift=UP * 0.1), GrowArrow(a_q), FadeIn(l_q),
+                      run_time=0.6)
             self.play(Indicate(hn.text, color=TURN, scale_factor=1.06), run_time=0.7)
             vo.wait_until("and these arrows are shorter than 1")
             self.play(Transform(picked, long_), run_time=0.8)
@@ -847,7 +900,7 @@ class Embeddings(VoiceScene):
         game_chip.move_to([-0.6, -2.75, 0])
 
         with self.voiceover(SAY[13]) as vo:
-            self.play(FadeOut(card), FadeOut(hn), others.animate.set_opacity(0.25),
+            self.play(FadeOut(card), FadeOut(hn), FadeOut(hn_note), others.animate.set_opacity(0.25),
                       fan_tag.animate.move_to([v4.point(180, 1.0)[0] + fan_tag.width / 2, V4_O[1] - 0.45, 0]),
                       run_time=0.5)                       # the inset needs the top right; the card has gone
             self.play(Create(arc), FadeIn(same_lab), run_time=0.6)

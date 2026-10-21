@@ -24,8 +24,9 @@ Beats (script.md "## S07", one voiceover block each):
     labelled "chunk size 350". PONDER (8 s): the card in the lower third, above the strip.
  4  TRACKER Chunk 3 · extra. The bars go; the terminal grows to 12 rows and types the one-liner
     of cli-container/15 (extra; it folds onto 5 rows, the row that continues the file name at
-    column 0, see literal_safe_rows), holds it 0.9 s -> lines 8–16, wrapped (12 rows: the
-    command scrolls away). A GREY row tag on the --- line says which side is chunk 0's end and
+    column 0, see literal_safe_rows) before the narration starts, and holds it ~3 s (to pause on
+    and copy); at "Chunk 1 starts again" the command clears and -> lines 8–16, wrapped (12
+    rows). A GREY row tag on the --- line says which side is chunk 0's end and
     which is chunk 1; chunk 1's first two lines (line 12's `## Chapter One: The First Slice` and
     line 14's sentence) turn YELLOW, then the same two lines at chunk 0's end (8, 10), joined by
     a PINK bracket "repeated". Top right: the chip "library default: chunk_overlap = 200"
@@ -44,7 +45,9 @@ Beats (script.md "## S07", one voiceover block each):
     part 2" all the way. The mini-map's "chunking" gets a GREEN tick. Fade to an empty frame.
 
 Deviations from SHOW (see the scene report): the cli-container/15 one-liner folds onto 5 rows and
-its 12 output rows scroll it away (the tracker's "· extra" stays); its fold breaks inside the
+its 12 output rows need the whole terminal (the tracker's "· extra" stays), so it is typed in the
+quiet after the ponder and stays complete on screen ~3 s; then it clears in place (a 5-row scroll
+would sweep over the title bar) and the output prints; its fold breaks inside the
 '...' file name, so that continuation row starts at column 0 (the house 4-space indent would
 put four spaces into the file name); the two arrows of beat 6 start
 at a PURPLE "recursive-split" scissors chip, because the strip at that point holds output, not a
@@ -74,10 +77,11 @@ from manim import (
     Polygon,
     Rectangle,
     RoundedRectangle,
-    TransformFromCopy,
     VGroup,
     VMobject,
+    smooth,
     there_and_back,
+    there_and_back_with_pause,
 )
 
 from common import (
@@ -180,6 +184,14 @@ PAPER_L = np.array([-5.2, -1.8, 0])     # beat 1: the ruler paper
 PAPER_R = np.array([-2.2, -1.8, 0])     # beat 1: one chunk per section
 BIG_K = 1.75
 PAPER_BIG = np.array([3.55, 0.45, 0])    # beat 6
+
+
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
 
 
 def row_tag(s: str, color: str = S.GREY, text_color: str | None = None, h: float = 0.36) -> VGroup:
@@ -496,8 +508,13 @@ class RecursiveSplit(VoiceScene):
             resize(self, t, 3, keep=keep, run_time=0.7)
             self.play(LaggedStart(*[GrowFromEdge(b, LEFT) for b in bars], lag_ratio=0.3),
                       FadeIn(labs), run_time=0.9)
+            # the terminal's 14228 flashes in place as its count fades in by the bar (a copy flying up
+            # crossed the command row and the terminal's title: garbled text); one animation per glyph
+            # (a new wrapper VGroup would be added to the scene and split the terminal)
             self.play(FadeIn(ins), FadeIn(nums[0]),
-                      TransformFromCopy(substring(ltot, "14228"), nums[1]), run_time=0.7)
+                      *[g.animate(rate_func=there_and_back_with_pause).set_color(INK)
+                        for g in substring(ltot, "14228")],
+                      FadeIn(nums[1]), run_time=0.7)
             vo.wait_until("So why")
             self.play(Indicate(nums[1], color=TURN, scale_factor=1.2),
                       bars[1].animate(rate_func=there_and_back).set_fill(opacity=0.7), run_time=0.8)
@@ -517,21 +534,28 @@ class RecursiveSplit(VoiceScene):
         err = erratum_tag("the README says overlapping, not how much")
         err.move_to([6.45 - err.width / 2, 2.6, 0])
 
+        # card, bars and the strip's lines leave together (t.clear, folded into one play). The
+        # one-liner is typed before the narration starts: its 12 output rows take its place, so it
+        # must stay readable (to pause on and copy) until "Chunk 1 starts again" prints them, about
+        # 3 s after it is complete. Typed inside the block, it ran past that anchor.
+        self.play(FadeOut(card), FadeOut(VGroup(bars, nums, labs, ins)), FadeOut(t.lines), run_time=0.35)
+        for m in list(t.lines):
+            t.lines.remove(m)
+        resize(self, t, 12, run_time=0.45)
+        ol = type_literal_safe(self, t, FIRST.cmd, type_time=1.0)
+        pin(self, ol, beside(extra_tag(), t, ol, buff=0.4), run_time=0.25)
+        self.wait(0.9)
+
         with self.voiceover(SAY[4]) as vo:
-            # card, bars and the strip's lines leave together (t.clear, folded into one play)
-            self.play(FadeOut(card), FadeOut(VGroup(bars, nums, labs, ins)), FadeOut(t.lines), run_time=0.35)
-            for m in list(t.lines):
-                t.lines.remove(m)
-            resize(self, t, 12, run_time=0.45)
-            ol = type_literal_safe(self, t, FIRST.cmd, type_time=1.0)
-            pin(self, ol, beside(extra_tag(), t, ol, buff=0.4), run_time=0.25)
-            self.wait(0.9)                     # let the command read: its output scrolls it away
+            vo.wait_until("Chunk 1 starts again")
+            # the command (and its tag) fades in place: scrolled up five rows by the print, it swept
+            # over the title bar (as S06 says of its 12-row scroll). The output fills the 12 rows.
+            t.clear(self, run_time=0.35)
             rows = t.print(self, FIRST_OUT, wrap=True, run_time=0.5)
             assert len(rows) == 12 and rows[0].text == HEAD and rows[4].text == HEAD
             assert rows[2].text == SENT and rows[6].text == SENT
             sep_tag = row_tag("above: the end of chunk 0  ·  below: chunk 1")
             beside(sep_tag, t, rows[3], buff=0.4)
-            vo.wait_until("Chunk 1 starts again")
             # chunk 1's start (heading + first sentence), then the same two lines at chunk 0's end
             h1, h0 = substring(rows[4], HEAD), substring(rows[0], HEAD)
             s1, s0 = substring(rows[6], SENT), substring(rows[2], SENT)
@@ -626,8 +650,11 @@ class RecursiveSplit(VoiceScene):
         tick = mm.tick("chunking")
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(t, rb2, cards, nos, bands, coins, paid, cap2, h_chip, d_chip)),
-                      FadeIn(lr2), caption_extra(tr, False), run_time=0.6)
+            # the old beat leaves in the first half, the lecture tag arrives in the second (faded at once,
+            # it read on top of the chunk_overlap chip)
+            self.play(FadeOut(VGroup(t, rb2, cards, nos, bands, coins, paid, cap2, h_chip, d_chip),
+                              rate_func=first_half),
+                      FadeIn(lr2, rate_func=second_half), caption_extra(tr, False), run_time=0.6)
             self.play(FadeIn(mm), FadeIn(gp), run_time=0.5)
             self.play(gp.animate.scale(big_k).move_to(PAPER_BIG), run_time=1.0)
             for name, bx in zip(("title", "abstract", "methods"), gp.boxes):

@@ -1,5 +1,5 @@
 # zh narration for S01-S09 (part 1, group g1: build the index — chunk, embed, load), sentence-aligned to
-# script.md v2: one zh sentence per English sentence (explainer.voice.split_sentences; 82 SAY lines, 203
+# script.md v2: one zh sentence per English sentence (explainer.voice.split_sentences; 82 SAY lines, 209
 # sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml (binding).
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8).
@@ -32,7 +32,7 @@ S01:
   zh:
   - "把 11 本书全贴进 prompt，得到的是一堆垃圾。"
   - "微调模型呢，又很慢；那是第 8 讲的内容。"
-  - "或者让一位图书管理员把最相关的 10 页递给它：一场开卷考试。"
+  - "或者让一位图书管理员，把最相关的 10 页递给它：一场开卷考试。"
   - "这就是 RAG。"
 - en: "The lecture's map of RAG techniques is crowded, but it starts from four questions. What is an embedding, a vector database, a query, the context? This video answers all four."
   zh:
@@ -50,9 +50,9 @@ S01:
   - "Docker、分块和数据库都是真实运行的；embedding 用的是课程团队留下的向量。"
   - "凡是代码调用 Google 的地方，你会看到命令、真实的报错，以及该看什么。"
 S02:
-- en: "Here's RAG in five boxes. The user's question goes to the RAG code, which asks a vector database for related texts. The code joins question and texts into one full prompt, and the model's response goes back. The database never talks to the model."
+- en: "Here's RAG in four boxes. The user's question goes to the RAG code, which asks a vector database for related texts. The code joins question and texts into one full prompt, and the model's response goes back. The database never talks to the model."
   zh:
-  - "用五个方框讲清 RAG。"
+  - "用四个方框讲清 RAG。"
   - "用户的问题先到 RAG 代码，代码去向量数据库里要相关的文本。"
   - "代码把问题和这些文本拼成一个完整的 prompt，模型的回答再送回去。"
   - "数据库从不和模型直接对话。"
@@ -111,7 +111,7 @@ S03:
   - null
   - "Create one called llm-service-account, and grant it two roles: Storage Admin, and Gemini Enterprise Agent Platform User."
   - "Open its keys tab, add a JSON key, and save it in secrets as llm-service-account.json."
-- en: "That key spends your project's money; the git ignore file has no secrets line, so it's safe only beside the repo. Remember lecture 4's three gates: the key says who you are, the role what you may do, and the API must be switched on."
+- en: "That key spends your project's money; the git ignore file has no secrets line, so it's safe only beside the repo. Remember the three gates from lecture 4: the key says who you are, the role what you may do, and the API must be switched on."
   zh:
   - "这个密钥花的是你项目的钱；.gitignore 文件里没有 secrets 这一行，所以它只有放在 repo 旁边才安全。"
   - "还记得第 4 讲的三道关卡吗：密钥说明你是谁，角色说明你能做什么，API 还必须打开。"
@@ -138,7 +138,7 @@ S03:
   - null
 - en: "Step 2: in your editor, set GCP project on line 7 to your own Project ID, the ID, not the name. Leave line 8 alone. Skip this, and your calls go to the course's project and fail. Pause and edit."
   zh:
-  - "第 2 步：在编辑器里，把第 7 行的 GCP project 变量改成自己的项目 ID，是 ID，不是项目名称。"
+  - "第 2 步在编辑器里做：把第 7 行的 GCP project 变量改成自己的项目 ID，是 ID，不是项目名称。"
   - "第 8 行别动。"
   - "跳过这一步，你的调用就会发到课程的项目上，然后失败。"
   - "暂停一下，改好它。"
@@ -190,16 +190,18 @@ S04:
 - en: "Then this, which looks like an error but isn't. Compose first asks Docker Hub for an image called L-L-M rag CLI, finds none, and builds it instead."
   zh:
   - "然后是这个：看起来像报错，其实不是。"
-  - "Compose 先去 Docker Hub 找一个叫 llm-rag-cli 的 image，没找到，就改为自己构建。"
+  - "Compose 在 Docker Hub 上没找到叫 llm-rag-cli 的 image，就改为自己构建。"
   en_display:
   - null
   - "Compose first asks Docker Hub for an image called llm-rag-cli, finds none, and builds it instead."
-- en: "The build took 81 seconds here. Its context was 112 megabytes, mostly git history that still holds an old copy of the staff's database. With no docker ignore file, the image keeps it."
+- en: "The build took 81 seconds here. Its context was 112 megabytes. Most of it is git history, which still holds an old copy of the staff's database. With no docker ignore file, the image keeps it."
   zh:
   - "这里构建用了 81 秒。"
-  - "构建上下文有 112 MB，大部分是 git 历史，里面还留着课程团队数据库的一份旧拷贝。"
+  - "构建上下文有 112 MB。"
+  - "其中大部分是 git 历史，里面还留着课程团队数据库的旧拷贝。"
   - "因为没有 .dockerignore 文件，image 会把它留下来。"
   en_display:
+  - null
   - null
   - null
   - "With no .dockerignore file, the image keeps it."
@@ -292,7 +294,7 @@ S06:
   - "剩下的 7458 个字符还要 23 个窗口：一共 24 个 chunk。"
 - en: "Step 2: python cli.py, dash dash chunk, chunk type char split. It reads 11 books and prints each book's chunk count; the story gets 24. No key needed: this branch never calls Google. Pause and run it."
   zh:
-  - "第 2 步：python cli.py --chunk，chunk type 用 char-split。"
+  - "第 2 步：python cli.py --chunk，用 char-split。"
   - "它读入 11 本书，打印每本书的 chunk 数；故事得到 24 个。"
   - "不需要密钥：代码里的这个分支从不调用 Google。"
   - "暂停一下，自己跑一遍。"
@@ -312,7 +314,7 @@ S06:
   - "课上的例子里，切出的块首尾相接，没有重叠。"
 - en: "The chunk files land in outputs, on your laptop, and git ignores them. Row 0 of a Gutenberg book is the Project Gutenberg header: these books start with a header and end with a license, both chunked like the rest."
   zh:
-  - "这些 chunk 文件落在你笔记本上的 outputs 目录里，git 会忽略它们。"
+  - "这些 chunk 文件落在 outputs 目录里，就在你的笔记本上，git 会忽略它们。"
   - "一本 Gutenberg 书的第 0 行，是 Project Gutenberg 的开头声明：这些书开头是声明，结尾是许可证，两者都和正文一样切成了 chunk。"
   en_display:
   - "The chunk files land in outputs/, on your laptop, and git ignores them."
@@ -344,7 +346,7 @@ S07:
   zh:
   - "看看前几个 chunk。"
   - "第 1 个 chunk 又从 Chapter One 开始，重复了第 0 个 chunk 的结尾。"
-  - "这个切分器所在的库，默认值是最多重叠 200 个字符，README 从没提过。"
+  - "这个切分器的库默认最多重叠 200 个字符，README 从没提过。"
   - "在边界处切开，也会让 chunk 变短。"
 - en: "Overlap is insurance against cutting an idea in half. But every repeated character is embedded, stored, and paid for. If you want a different value, set chunk overlap yourself."
   zh:
@@ -365,20 +367,24 @@ S08:
   zh:
   - "接下来是 embedding 模型。"
   - "它把每个 chunk 变成一个向量，也就是一串数字，让意思相近的指向相近的方向：在这张示意图里，讲凝乳的挨着讲凝乳的，许可证文本在别处。"
-- en: "The personality game from lecture makes this concrete. Five scores make each person a five-number vector. Cosine similarity compares only the angle, and picks the first candidate."
+- en: "The personality game from lecture makes this concrete: which of three candidates is most like the instructor? Five scores make each person a five-number vector. Cosine similarity compares only the angle, and picks the first candidate."
   zh:
-  - "课上的性格游戏把这件事讲得很具体。"
+  - "课上的性格游戏把这件事讲得很具体：三个候选人中哪个最像授课老师？"
   - "五个分数把每个人变成一个五维向量。"
   - "余弦相似度只比较夹角，选中的是第一个候选人。"
 - en: "The dot product also counts length, and would pick the second candidate, whose arrow is longer. So a measure is a choice; for text, cosine is the usual one."
   zh:
   - "点积还会算上长度，会选中第二个候选人，也就是箭头更长的那个。"
   - "所以度量是一个选择；对文本来说，常用的是余弦。"
-- en: "The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers; the code asks for the first 256, a prefix the model is trained to make useful alone."
+- en: "The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers. The code asks for the first 256. The model is trained to make that prefix useful alone."
   zh:
-  - "教程用的模型 gemini-embedding-001 原生返回 3072 个数；代码只要前 256 个，模型训练时就让这段前缀单独也能用。"
+  - "教程用的模型是 gemini-embedding-001，原生返回 3072 个数。"
+  - "代码只要前 256 个。"
+  - "模型训练时就让这段前缀单独也能用。"
   en_display:
-  - "The tutorial's model, gemini-embedding-001, natively returns 3,072 numbers; the code asks for the first 256, a prefix the model is trained to make useful alone."
+  - "The tutorial's model, gemini-embedding-001, natively returns 3,072 numbers."
+  - null
+  - null
 - en: "Chunks go to the model in batches of 100. On an API error, it retries up to 5 times, doubling the wait from 5 seconds."
   zh:
   - "这些 chunk 每批 100 个发给模型。"
@@ -387,13 +393,15 @@ S08:
   zh:
   - "你的问题之后也会用这同一个模型。"
   - "现在是 chunk，之后是问题：同一个模型。"
-- en: "Step 1: python cli.py, dash dash embed, chunk type char split: the first call to Google. On our machine it reads the first book, then stops at the missing key file. On yours, it runs."
+- en: "Step 1: python cli.py, dash dash embed, chunk type char split. It's the first call to Google. On our machine it reads the first book, then stops at the missing key file. On yours, it runs."
   zh:
-  - "第 1 步：python cli.py --embed，chunk type 用 char-split：第一次调用 Google。"
+  - "第 1 步：python cli.py --embed，用 char-split。"
+  - "这是首次调用 Google。"
   - "在我们的机器上，它读入第一本书，然后停住了：没有密钥文件。"
   - "在你的机器上，它能跑通。"
   en_display:
-  - "Step 1: python cli.py --embed --chunk_type char-split: the first call to Google."
+  - "Step 1: python cli.py --embed --chunk_type char-split."
+  - null
   - null
   - null
 - en: "With your key, look for each book's file, a 5-second pause, a table with an embedding column, and new embeddings files beside the chunks."
@@ -410,7 +418,7 @@ S08:
   - null
   - "PERMISSION_DENIED: fix the Project ID or the role, then exit and start the script again."
   - "SERVICE_DISABLED: switch on the API."
-- en: "Step 2 does the same for recursive split. Pause and run both, with your key: about 89 and 148 calls, cents by our estimate. Check the current price list."
+- en: "Step 2 does the same for recursive split. Pause and run both, with your key: about 89 and 148 calls, a few cents by our estimate. Check the current price list."
   zh:
   - "第 2 步对 recursive-split 做同样的事。"
   - "暂停一下，用你的密钥两条都跑一遍：大约 89 次和 148 次调用，按我们的估算只要几美分。"
@@ -423,12 +431,14 @@ S08:
   zh:
   - "视频接下来用课程团队自己的输出，它们曾经 commit 过，至今还在每个 clone 的历史里。"
   - "他们的 chunk 文件和我们的逐字节相同，所以他们的向量就是这条命令会生成的向量。"
-- en: "An extra check on the story's vectors: 24 rows of 256 numbers, with lengths from 0.369 to 0.402, not 1."
+- en: "An extra check on the story's vectors. 24 rows of 256 numbers. Their lengths run from 0.369 to 0.402, not 1."
   zh:
-  - "额外检查一下故事的向量：24 行，每行 256 个数，长度在 0.369 到 0.402 之间，不是 1。"
-- en: "Our collection compares by cosine, and these arrows are shorter than 1. Does that change which chunks count as nearest?"
+  - "额外检查一下故事的向量。"
+  - "24 行，每行 256 个数。"
+  - "它们的长度在 0.369 到 0.402 之间，不是 1。"
+- en: "When we load them, the database will compare by cosine, and these arrows are shorter than 1. Does that change which chunks count as nearest?"
   zh:
-  - "我们的 collection 按余弦来比较，而这些箭头的长度都不到 1。"
+  - "等我们加载这些向量时，数据库会按余弦来比较，而这些箭头的长度都不到 1。"
   - "这会改变哪些 chunk 算是最近的吗？"
 - en: "No: cosine only sees the angle. With straight-line distance, Chroma's default, or a dot product, length would leak into the ranking: the game's lesson."
   zh:
@@ -486,15 +496,15 @@ S09:
   - "Split off only the extension, delete that book's old files in outputs/, then chunk, embed and load again."
 - en: "The docker volumes folder on your laptop now holds a 60-megabyte SQLite file and two index folders, one per collection, owned by root. The README calls it persistent."
   zh:
-  - "你笔记本上的 docker-volumes 目录里，现在有一个 60 MB 的 SQLite 文件和两个索引目录，每个 collection 一个，属主都是 root。"
+  - "你笔记本上的 docker-volumes 目录里，现在有一个 60 MB 的 SQLite 文件，还有两个索引目录，每个 collection 一个，属主都是 root。"
   - "README 说它是持久化的。"
   en_display:
   - "The docker-volumes/ folder on your laptop now holds a 60-megabyte SQLite file and two index folders, one per collection, owned by root."
   - null
-- en: "Step 3 is a link to the course's Chroma UI. Opened in Chrome, it reads your local database through port 8000; Chroma's settings allow that one site."
+- en: "Step 3 is a link to the course's Chroma UI. Opened in Chrome, it reads your local database through port 8000; Chroma's settings let the course's site in."
   zh:
   - "第 3 步是一个链接，指向课程的 Chroma UI。"
-  - "在 Chrome 里打开，它会通过 port 8000 读取你本地的数据库；Chroma 的设置放行了这一个网站。"
+  - "在 Chrome 里打开，它会通过 port 8000 读取你本地的数据库；Chroma 的设置放行了课程的网站。"
 - en: "The top lane is done: the index is built. In part 2, we ask it questions."
   zh:
   - "上面这条通道完成了：索引建好了。"

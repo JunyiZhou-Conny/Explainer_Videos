@@ -1,7 +1,7 @@
 """S02 · Two lanes, one database (concept scene: no README tracker). Lecture: A12–A16, B5–B6.
 
 Beats (script.md "## S02", one voiceover block each):
-0. LECTURE A12–A14. Our redrawing of A12 in five boxes, built as named: a GREY user glyph; a PINK
+0. LECTURE A12–A14. Our redrawing of A12 in four boxes, built as named: a GREY user glyph; a PINK
    arrow "question" into a PURPLE cluster of three gears "RAG code"; a PINK arrow up to a TEAL
    cylinder "vector database" and a GREEN arrow "retrieved texts" back down; a GREEN elbow arrow
    "full prompt" into a BLUE "LLM" box; a BLUE arrow "response" back to the user. A thin RED
@@ -24,7 +24,7 @@ Beats (script.md "## S02", one voiceover block each):
    text, no emoji) drop under their boxes as named, each box pulsing as its chip lands.
 4. The top lane pulses once, slowly ("once · offline · slow" under it); the bottom lane pulses
    quickly three times ("every question"). The shared BLUE box gets a YELLOW edge and a rule card
-   writes above it: "same model · same 256 numbers · both lanes" / "chunks before, questions
+   writes above it: "same model · same kind of vector · both lanes" / "chunks before, questions
    later". A small RED "what if" inset right of the top lane's end (tag illustration): a
    different BLUE box, "another model", feeds a sketch of the space in which its question vector
    points away from the GREEN chunk vectors, into an empty region; RED cross.
@@ -152,7 +152,7 @@ class TwoLanes(VoiceScene):
     def construct(self):
         assert len(SAY) == 7, len(SAY)
 
-        # ========================================================== 0. A12 in five boxes
+        # ========================================================== 0. A12 in four boxes
         lr = lref("A12–A14")
         u_pos = np.array([-5.0, YB, 0])
         g_pos = np.array([-0.8, YB, 0])
@@ -325,7 +325,7 @@ class TwoLanes(VoiceScene):
         # ========================================================== 4. two rules
         once = grey_tag("once · offline · slow").move_to([-4.6, YT - 0.88, 0])
         every = grey_tag("every question").move_to([-3.75, YB - 0.52, 0])
-        rule = card([sans("same model · same 256 numbers · both lanes", 22, INK),
+        rule = card([sans("same model · same kind of vector · both lanes", 22, INK),
                      sans("chunks before, questions later", 20, S.GREY)], TURN)
         rule.move_to([-1.75, 2.76, 0])                 # clear of the top labels (y ≤ 2.05)
         # the "what if" inset, right of the top lane's end: another model puts the question where

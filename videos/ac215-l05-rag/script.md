@@ -215,14 +215,14 @@ Conventions
   The question `How is tolminc cheese made?` (`cli.py:318`); chat's copy has two question marks
   (`cli.py:372`). The knowledge base: 11 books, ten from Project Gutenberg and the instructor's short
   story `Tolminc Cheese.txt` (7,808 characters). The stand-in query chunk `8440accaceb0ce96-6`.
-- Length and parts: narration 4,296 words (`python -m explainer.script`, v2; v1 4,262; BRIEF.md:
-  3,900–4,300, plan ~4,240). Part 1 = S01–S09 (build the index) 2,510 words; part 2 = S10–S16 (ask
-  the index) 1,786 words. Per scene (BRIEF.md budget ±15 %):
+- Length and parts: narration 4,339 words (`python -m explainer.script`, v2; v1 4,262; BRIEF.md:
+  3,900–4,300, plan ~4,240). Part 1 = S01–S09 (build the index) 2,534 words; part 2 = S10–S16 (ask
+  the index) 1,805 words. Per scene (BRIEF.md budget ±15 %):
 
   | scene | S01 | S02 | S03 | S04 | S05 | S06 | S07 | S08 | S09 | S10 | S11 | S12 | S13 | S14 | S15 | S16 |
   | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
   | budget | 220 | 260 | 270 | 290 | 240 | 280 | 220 | 330 | 300 | 190 | 290 | 290 | 280 | 270 | 210 | 300 |
-  | words | 248 | 251 | 283 | 295 | 270 | 272 | 191 | 378 | 322 | 195 | 262 | 265 | 285 | 266 | 190 | 323 |
+  | words | 248 | 251 | 285 | 298 | 270 | 272 | 191 | 396 | 323 | 196 | 262 | 268 | 285 | 270 | 190 | 334 |
 
   S08 sits at the top of its band: it carries the first paid call's recovery card (follow-along
   must-fix). `explainer.script` assumes 155 wpm; the series docs assume ~174, but a sample of this
@@ -332,12 +332,12 @@ SAY: We recorded without a Google key. Docker, chunking and the database ran for
 
 Lecture: A12–A16, B5–B6.
 
-SHOW: LECTURE A12–A14. No tracker (concept scene). Five boxes build left to right as named: a GREY
+SHOW: LECTURE A12–A14. No tracker (concept scene). Four boxes build left to right as named: a GREY
 user glyph; a PINK arrow "question" into a PURPLE cluster of three gears labelled "RAG code"; from
 it a PINK arrow up to a TEAL cylinder "vector database" and a GREEN arrow "retrieved texts" back
 down; from the gears a GREEN elbow arrow "full prompt" into a BLUE box "LLM"; a BLUE arrow "response"
 back to the user. A thin RED dotted line between cylinder and LLM gets a RED cross: "never talk".
-SAY: Here's RAG in five boxes. The user's question goes to the RAG code, which asks a vector database for related texts. The code joins question and texts into one full prompt, and the model's response goes back. The database never talks to the model.
+SAY: Here's RAG in four boxes. The user's question goes to the RAG code, which asks a vector database for related texts. The code joins question and texts into one full prompt, and the model's response goes back. The database never talks to the model.
 
 SHOW: LECTURE A16. The gears open up and V1 grows out of them, full width. Top lane, left to right:
 a stack of GREEN book pages "knowledge base" → a PURPLE ruler glyph "chunking" → a tall BLUE box
@@ -365,7 +365,7 @@ SAY: The README calls the two lanes step 1 and step 2, and gives each box one fl
 
 SHOW: The top lane pulses once slowly with a GREY tag "once · offline · slow"; the bottom lane
 pulses quickly three times, "every question". Then the shared BLUE box glows YELLOW-edged and a rule
-card writes beside it: "same model · same 256 numbers · both lanes" and, under it, "chunks before,
+card writes above it: "same model · same kind of vector · both lanes" and, under it, "chunks before,
 questions later". A small RED "what if" inset (tag `illustration`): a second, different BLUE box in
 the bottom lane makes the query vector point off into an empty region, RED cross.
 SAY: Two rules. The top lane runs once, offline, and it's slow. The bottom lane runs for every question. And both lanes must use the same embedding model, or the question and the chunks don't live in the same space.
@@ -421,10 +421,10 @@ at right (header `.gitignore · lines 1–5`); a GREY dashed ghost line "secrets
 GREY tag "not here". The two folders pulse: the key sits *beside* the repo. Then L04's three gates
 in miniature, three small BLUE gates in a row labelled "who?" (the GOLD key), "may?" (a role chip),
 "switched on?" (an API switch, still off).
-SAY: That key spends your project's money; the git ignore file has no secrets line, so it's safe only beside the repo. Remember lecture 4's three gates: the key says who you are, the role what you may do, and the API must be switched on.
+SAY: That key spends your project's money; the git ignore file has no secrets line, so it's safe only beside the repo. Remember the three gates from lecture 4: the key says who you are, the role what you may do, and the API must be switched on.
 
-SHOW: The two README role chips get an `erratum` tag: "Storage Admin" dims to GREY with a note "no
-storage call in this code". Then the third gate: a schematic "APIs & Services › Vertex AI API ·
+SHOW: The `erratum` tag goes on the "Storage Admin" chip only: it dims to GREY with a note "no
+storage call in this code", and the Agent Platform chip gets a GREEN tick "needed". Then the third gate: a schematic "APIs & Services › Vertex AI API ·
 aiplatform.googleapis.com › Enable" screen (tag `illustration`), TRACKER Account 6 · extra; the
 switch flips and the third gate opens with a white tick. Under it a RED chip, dimmed, "without it:
 SERVICE_DISABLED on the first embed, after 5 retries". Then the console leaves and `▶ your turn`
@@ -489,7 +489,7 @@ SHOW: The strip goes on the same way: CODE(docker-compose.yml: 18–20) fills th
 tag `llm-rag-chromadb`; CODE(docker-compose.yml: 21–22) draws a PINK `8000:8000` arrow through a GREY
 street door on the laptop's edge; CODE(docker-compose.yml: 23–24) a third PINK route
 `./docker-volumes/chromadb → /data`; line 26 as an excerpt chip gets a GREY tag "lets the course's
-web tools in · S09".
+web tools in · Load, step 3".
 SAY: The Chroma service runs the database from Docker Hub, under a fixed name. It publishes port 8000 to your laptop, keeps its data in the docker volumes folder, and lets the course's web tools in.
 
 SHOW: The strip leaves. CODE(Dockerfile: 18) and CODE(Dockerfile: 45) as two excerpt chips. Inside
@@ -518,7 +518,7 @@ times as GREY tags). Line 10's `81.5s` tag highlights; `[2/6]`, `[5/6]`, `[6/6]`
 `laptop/05b` line 2), a tiny GREEN block "chroma.sqlite3" (`laptop/14b`) and a small sliver "the
 rest"; one chip `erratum · no .dockerignore → exercises` and a GREY caption "the mounts hide both at
 run time".
-SAY: The build took 81 seconds here. Its context was 112 megabytes, mostly git history that still holds an old copy of the staff's database. With no docker ignore file, the image keeps it.
+SAY: The build took 81 seconds here. Its context was 112 megabytes. Most of it is git history, which still holds an old copy of the staff's database. With no docker ignore file, the image keeps it.
 
 SHOW: The terminal grows back. TERM(laptop/07-docker-shell.txt: 37–44; session). Line 38's container
 name `llm-rag-llm-rag-cli-run-90678535ddef` underlines GREY (S05 comes back to it); lines 42–43 get
@@ -744,8 +744,9 @@ example`), then becomes an arrow; the three candidates appear directly as arrows
 (tag `sketch · not to scale`, angles and lengths exaggerated: the first candidate at 10° and short,
 the second at 25° and 1.4× longer, the third at 45°). A YELLOW angle arc between the instructor's
 arrow and each candidate's. A small podium: "cosine: A 0.986 · B 0.976 · C 0.886"; the first
-candidate's medal card gets a GREEN tick.
-SAY: The personality game from lecture makes this concrete. Five scores make each person a five-number vector. Cosine similarity compares only the angle, and picks the first candidate.
+candidate's medal card gets a GREEN tick. A GREY caption "lecture game: who is most like the instructor?"
+comes in on "which of three candidates" and leaves before the measures table.
+SAY: The personality game from lecture makes this concrete: which of three candidates is most like the instructor? Five scores make each person a five-number vector. Cosine similarity compares only the angle, and picks the first candidate.
 
 SHOW: LECTURE A44–A47. A second podium: "dot product: B 81.2 · A 80.2" (tag "computed from the
 lecture's table · not on the slides", SLIDES.md A40–A43); the second candidate's longer arrow
@@ -758,7 +759,7 @@ SHOW: CODE(cli.py: 22–27) (header `cli.py · lines 22–27`); lines 24–26 hi
 3,072 cells (GREY labels "the model's full output" and "length 1") is cut after its first 256
 cells, which turn GREEN: "output_dimensionality = 256"; the 256-cell arrow shrinks to ≈ 0.4 of a
 dashed unit circle.
-SAY: The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers; the code asks for the first 256, a prefix the model is trained to make useful alone.
+SAY: The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers. The code asks for the first 256. The model is trained to make that prefix useful alone.
 
 SHOW: CODE(cli.py: 96–106) (the mini-map hides). A stack of GREEN chunk cards goes to the BLUE box in
 batches of 100 (chip `cli.py · lines 252–253`, `batch_size=100`), a GOLD tick per batch. A GREY chip
@@ -775,7 +776,7 @@ SHOW: TRACKER Embed 1. V1 shrinks back to the mini-map. Terminal (full width, 12
 `python cli.py --embed --chunk_type char-split` → TERM(cli-container/20-embed-char-split.txt: 2–6, …,
 21–22, …, 73; wrap) with the tag `real run · no key`. Line 73 prints RED. A GOLD tag on the command:
 "first Google call · your project pays".
-SAY: Step 1: python cli.py, dash dash embed, chunk type char split: the first call to Google. On our machine it reads the first book, then stops at the missing key file. On yours, it runs.
+SAY: Step 1: python cli.py, dash dash embed, chunk type char split. It's the first call to Google. On our machine it reads the first book, then stops at the missing key file. On yours, it runs.
 
 SHOW: The terminal shrinks to the strip. A GREY "with your key, look for" card, items writing in as
 named: "Processing file: outputs/chunks-char-split-… · per book" (`cli.py:240`); "a 5-second pause"
@@ -787,34 +788,36 @@ SHOW: A second GREY card above the strip, "if it fails (with your key)", rows wr
 "File /secrets/llm-service-account.json was not found → not in ../secrets under that name · check:
 ls -la /secrets in the container"; "API error (code: 403) … Retrying in 5 seconds (attempt 1/5) →
 the message names the cause · gives up after 5 tries, ~2.5 min (`cli.py · lines 117–118`)";
-"PERMISSION_DENIED → fix GCP_PROJECT or the role in docker-shell.sh · then exit and sh
-docker-shell.sh again"; "SERVICE_DISABLED → enable the Vertex AI API, wait a minute, rerun".
+"PERMISSION_DENIED → fix GCP_PROJECT in docker-shell.sh, or the role in IAM (console) · then exit
+and sh docker-shell.sh again"; "SERVICE_DISABLED → enable the Vertex AI API, wait a minute, rerun".
 SAY: If yours fails, or keeps retrying, read the error. Key file not found: check its name in secrets. Permission denied: fix the Project ID or the role, then exit and start the script again. Service disabled: switch on the API.
 
 SHOW: TRACKER Embed 2. The cards leave. It types `python cli.py --embed --chunk_type recursive-split`
 (no output panel). `▶ your turn` on a GREY card listing both embed commands, with a GREY row "each
 run sleeps 5 s per book (cli.py · line 256)". A GOLD tag: "≈ 89 calls (char-split) · ≈ 148 calls
 (recursive-split) · cents, by our estimate · check the current price list".
-SAY: Step 2 does the same for recursive split. Pause and run both, with your key: about 89 and 148 calls, cents by our estimate. Check the current price list.
+SAY: Step 2 does the same for recursive split. Pause and run both, with your key: about 89 and 148 calls, a few cents by our estimate. Check the current price list.
 
 SHOW: A card (tag `recorded · the staff's vectors (68e0bde)`): a GREY commit chip `68e0bde` "the staff
 committed their outputs/" → a RED strike chip `d9ced19` "reverted · merged in e17a39f" → a GREY note
 "still in every clone's history"; a small GREY chip `58dd602` "their database removed too"; under it
 `22 files · 82 MB` (from `recorded-embeddings/00` lines 2–3) and a GREEN check "their 22 chunk files
-= ours, byte for byte". The command that copied them is not shown.
+= ours, byte for byte". The command that copied them is not shown. A GREY row along the card's foot:
+"no key yet? the study guide shows how to copy these into outputs/".
 SAY: The video goes on with the staff's own outputs, once committed and still in every clone's history. Their chunk files match ours byte for byte, so their vectors are what this command makes.
 
 SHOW: TRACKER Embed 2 · extra. A GREY card "an extra Python check · Tolminc's vectors: count, first
 five, lengths" (code not shown); terminal (strip, 4 rows) → TERM(recorded-embeddings/06-x-vector-norms.txt:
 9–11) with the tag `recorded · the staff's vectors (68e0bde)`. Above, V4's arrows: each GREEN arrow
 gets a ruler mark at about 0.4 of a dashed unit circle.
-SAY: An extra check on the story's vectors: 24 rows of 256 numbers, with lengths from 0.369 to 0.402, not 1.
+SAY: An extra check on the story's vectors. 24 rows of 256 numbers. Their lengths run from 0.369 to 0.402, not 1.
 
 SHOW: The dashed unit circle and the short arrows stay; one arrow is stretched to length 1 and back.
-A GREY chip `"hnsw:space": "cosine"` (`cli.py:288`, used in S09). The ponder card sits in the lower
+A GREY chip `"hnsw:space": "cosine"` (`cli.py:288`) with a GREY note "the measure, set at load
+(next scene)". The ponder card sits in the lower
 third.
-PONDER(8 s, "Our collection compares by cosine.\nThese vectors are shorter than 1, and not all the same length.\nDoes that change which chunks count as nearest?")
-SAY: Our collection compares by cosine, and these arrows are shorter than 1. Does that change which chunks count as nearest?
+PONDER(8 s, "Our database will compare by cosine (set when we load).\nThese vectors are shorter than 1, and not all the same length.\nDoes that change which chunks count as nearest?")
+SAY: When we load them, the database will compare by cosine, and these arrows are shorter than 1. Does that change which chunks count as nearest?
 
 SHOW: The stretched arrow keeps its angle arc unchanged (YELLOW "cosine: same"). Then a GREY "what if"
 inset (tag `illustration`): with straight-line distance, the stretched arrow's distance to the
@@ -895,9 +898,11 @@ SHOW: TRACKER Load 3. A GREY browser frame (tag `illustration`), address
 `ac215-llm-rag.dlops.io/chromaui`, a schematic collection list (no screenshot); a PINK arrow from the
 page through the GREY door `:8000` to the Chroma box. Beside it, two short strips: `laptop/12` line 5
 `access-control-allow-origin: https://ac215-llm-rag.dlops.io` (GREEN) and a GREY ghost "no such line
-for another site" (from `laptop/12b`), headed "curl -si -H 'Origin: …' localhost:8000 (extra)". A
+for another site, e.g. `Origin: https://example.com`" (from `laptop/12b`), headed by the whole command
+on two rows, `curl -si -H 'Origin: https://ac215-llm-rag.dlops.io' \` / `    http://localhost:8000/api/v2/heartbeat`
+(extra). A
 GREY note on the browser frame: "if Chrome asks to reach your local network, allow it".
-SAY: Step 3 is a link to the course's Chroma UI. Opened in Chrome, it reads your local database through port 8000; Chroma's settings allow that one site.
+SAY: Step 3 is a link to the course's Chroma UI. Opened in Chrome, it reads your local database through port 8000; Chroma's settings let the course's site in.
 
 SHOW: The full V1 returns; its top lane glows end to end, GREEN ticks on chunk, embed, load. A
 caption "part 1: the index is built". Fade to an empty frame (end of part 1).
@@ -913,7 +918,7 @@ SHOW: Part 2 opens. V1 full width as S09 left it: the top lane GREEN with ticks 
 load, the bottom lane GREY with the caption "part 2". The TEAL cylinder grows and Transforms into
 V2's Chroma box on the rail, its PINK `/data` route reaching the GREY `docker-volumes/chromadb/`
 folder, with the CLI box beside it; a YELLOW "?" over the folder. V2 then shrinks to the top.
-SAY: In part 1, we built the index: chunk, embed, load. Part 2 asks it questions. But first, a test: does the index survive closing the laptop?
+SAY: In part 1, we built the index: chunk, embed, load. Part 2 puts it to work. But first, a test: does the index survive closing the laptop?
 
 SHOW: TRACKER Run 3 · extra. Container terminal (strip, TEAL, prompt `app@92c5bfd26089:/app$`): it
 types `exit` (extra) → TERM(laptop/07-docker-shell.txt: 46). The CLI box dissolves (`--rm`). The same
@@ -964,7 +969,7 @@ SAY: Now the bottom lane. The question goes through the same embedding model and
 SHOW: LECTURE A48–A53. V6, first half: a column of stored vectors (GREEN bars) and the PINK query
 vector; similarity scores write in one by one beside four rows: 0.57, 0.77, 0.43, 0.93 (tag `lecture
 example`). The column re-sorts by score; a YELLOW line cuts it under the top rows, "top K".
-SAY: The lecture scores every stored vector against the query: 0.57, 0.77, 0.43, 0.93. Sort by score, and keep the top K, with K fixed in advance. This code uses 10.
+SAY: The lecture scores every stored vector against the query. 0.57, 0.77, 0.43, 0.93. Sort by score, and keep the top K, with K fixed in advance. This code uses 10.
 
 SHOW: The flip: each score becomes 1 − score (0.07, 0.23, 0.43, 0.57) and the arrow labelled "better"
 beside the column turns upside down; header changes from "similarity (lecture)" to "cosine distance
@@ -1002,7 +1007,7 @@ question". The terminal shrinks; a GREY "with your key, look for" card writes in
 … 256 numbers" (`cli.py:320`); "Query: How is tolminc cheese made?" (`:360`); "Results: a dict of
 lists of lists" (`:361`), with four GREY empty slots "ids · distances · metadatas · documents", each
 holding one inner list (no values).
-SAY: Step 2 runs it on recursive split; pause and run both. With your key, look for 256 embedding values, the query, and the results. The results are lists of lists: one list per query, holding IDs, distances, metadata and documents.
+SAY: Step 2 runs it on recursive split. With your key, look for 256 embedding values, the query, and the results. The results are lists of lists: one list per query, holding IDs, distances, metadata and documents. Pause and run both.
 
 SHOW: A chip `cli.py · line 386 · in chat()` `results["documents"][0]` with `[0]` highlighted YELLOW
 and pointing at the first inner list. A GREY note "no results were recorded: next, we ask the
@@ -1027,16 +1032,17 @@ dots labelled "Tolminc story". The ponder card sits in the lower third, the clou
 PONDER(8 s, "The question is about Tolminc.\nThe query keeps one book, and only chunks containing 'Italian'.\nWhat will the ten results be about?")
 SAY: The question is about Tolminc. What will the 10 results be about?
 
-SHOW: A GREY card "an extra Python check · counts with the query's filters" (tag `recorded`); the
+SHOW: A GREY card "an extra Python check · counts with the query's filters · code: study guide,
+Step 9" (tag `recorded`); the
 mask animates on the dots with each count: "8,248" (`recorded-embeddings/08` line 11) → the book
 filter dims all but "1,355" (also `cli-container/11` line 8, the book's chunk file) → `$contains
 "Italian"` dims all but "64" (`08` line 13), shown as 64 separate brighter dots → a YELLOW counter
 "mentioning Tolminc: 0" (`08` line 14). A strip prints TERM(recorded-embeddings/08-x-filter-counts.txt:
 13–15). The Tolminc cluster is fully dimmed.
-SAY: An extra check counts them in the loaded collection. Of 8,248 chunks, the book filter keeps 1,355; the word Italian keeps 64. How many mention Tolminc? None.
+SAY: An extra check counts them in the loaded collection. Of 8,248 chunks, the book filter keeps 1,355. The word Italian keeps 64. How many mention Tolminc? None.
 
 SHOW: Tag `stand-in query · a stored story chunk's vector`. A GREY card "an extra Python check ·
-query with a stored vector"; terminal (11 rows) → TERM(recorded-embeddings/09-x-query-by-chunk-vector.txt:
+code: study guide, Step 9"; terminal (11 rows) → TERM(recorded-embeddings/09-x-query-by-chunk-vector.txt:
 16–28; wrap). `0.0000` gets a GREY tag "itself"; `0.1627` highlights. Above (after the print, strip
 mode), the PINK beam from the stand-in point reaches its ten nearest, all inside the Tolminc
 cluster.
@@ -1045,7 +1051,7 @@ SAY: Now a search. The real question needs Google to become a vector, so we use 
 SHOW: TERM(recorded-embeddings/09-x-query-by-chunk-vector.txt: 29–39) (the terminal clears first).
 `0.2833` and `0.3123` highlight. In the picture the mask returns: the beam has to stretch past the
 dimmed cluster to the far, lit survivors, all labelled "The Complete Book of Cheese".
-SAY: With the code's filters, all 10 results come from The Complete Book of Cheese, at 0.28 to 0.31. The filters act first, and top K fills its 10 places with whatever survives, however far.
+SAY: With the code's filters, all 10 results come from The Complete Book of Cheese. Their distances run from 0.28 to 0.31. The filters act first, and top K fills its 10 places with whatever survives, however far.
 
 SHOW: LECTURE A54–A55. The lecture's four-stage strip (Indexing → Vector Database → Querying → Post
 Processing), with a box "metadata filter" sitting in Post Processing: the ten story results pass
@@ -1062,11 +1068,12 @@ SAY: A small slip: the README promises various filters, but only variant 4 runs;
 
 SHOW: TRACKER Query 2 · extra. Terminal (TEAL, 9 rows): it types `python cli.py --get --chunk_type char-split`
 (extra; GREY note "not in the README · cli.py · lines 402–418") → TERM(recorded-embeddings/05-x-get.txt:
-2–3, 6 cut after the ids list's `]`; wrap) with the tag `recorded`; a GREY note "no distances: no
+2–3, 6 cut after the ids list's `]`, a GREY " …" after it; wrap) with the tag `recorded`; a GREY note "no distances: no
 ranking". The terminal shrinks to the strip as the ten returned ids become ten cards in the
 cylinder, labelled as `recorded-embeddings/05`'s documents are: "-0 to -2 Gutenberg header" (RED),
-"-3 to -5 title page, contents" (GREY), "-6 to -9 chapter one begins" (GREEN). Last, the fix card:
-"strip outside the START/END markers · chunk, embed, load again". The documents of `05` line 6 are
+"-3 to -5 title page, contents" (GREY), "-6 to -9 chapter one begins" (GREEN). Last, the GREEN fix card:
+"the fix: keep only the text between the `*** START OF` and `*** END OF` lines · then chunk, embed,
+load again". The documents of `05` line 6 are
 never printed (names of the book's producers and author).
 SAY: The get command from the restart check uses the same book filter, but no question, so no distances. Its 10 records start with the Gutenberg header, then the title page and contents. That header, and each book's closing license, are indexed like any text: strip them before chunking.
 
@@ -1074,7 +1081,7 @@ SAY: The get command from the restart check uses the same book filter, but no qu
 
 ## S13 · Chat: the prompt is the whole trick — `s13_chat.py` · `FinalPrompt`
 
-Lecture: A57–A62.
+Lecture: A57–A62, B78.
 
 SHOW: LECTURE A57–A59. TRACKER Chat (no step lit yet). Mini-map, the prompt card and the LLM lit.
 V7: three blocks write in, stacked: "system prompt · how to behave" (GREY), "query · the user's
@@ -1131,6 +1138,8 @@ Left, GREEN: "from your chunks: Mara · her grandfather · the curd" (from the s
 Cheese.txt` lines 8, 10, 102; chip line 4 *A fictional tale*). Right, RED: "not in your chunks:
 real-world rules for Tolminc" (a GREY note: only 3 char-split chunks contain the word "Tolminc",
 `recorded-embeddings/08` line 15). A GREY note "compare the char-split and recursive-split answers".
+LECTURE B78 as the grounding test card comes in; its heading reads "a grounding test · the lecture's
+IsSUP check, done by eye"; the tag leaves with the card.
 SAY: Remember the opening question? The story is fiction, so an answer about Mara, her grandfather and the curd came from your chunks. Real-world rules for Tolminc came from the model's memory. Compare both chunk types.
 
 SHOW: TRACKER Chat 3. A GREY browser frame (tag `illustration`), address
@@ -1179,7 +1188,7 @@ SHOW: The "?" turns into a RED cross; the window bracket and the BLUE box flash:
 embedded before a single cut". Then CODE(cli.py: 207–215) (header `cli.py · lines 207–215`); line 210
 `embedding_function=generate_text_embeddings` highlights, with a BLUE glyph of the shared embedding
 box and a GOLD tag "a Google call".
-SAY: No. To find where the meaning shifts, it has to embed every sentence window first. Look at the function the chunker is handed: generate text embeddings, the same one the embed step uses.
+SAY: No. To find where the meaning shifts, it has to embed every sentence window first. Look at the function handed to the chunker: generate text embeddings, the same one the embed step uses.
 
 SHOW: TRACKER Semantic 1. Terminal (full width, 12 rows, TEAL). It types
 `python cli.py --chunk --embed --load --chunk_type semantic-split` (folds onto two rows) →
@@ -1189,16 +1198,17 @@ TERM(cli-container/60-semantic-split.txt: 2–5, …, 11, 14, 17, 20, 23, …, 7
 SAY: The README's command runs all three steps with chunk type semantic split. On our machine it fails inside the chunk step, on the first book, before a single chunk is saved.
 
 SHOW: The terminal shrinks to the strip. GOLD tags write in: "≈ 528 embedding calls just to chunk
-the corpus" · "≈ 90 more to embed the chunks" · "10–20 min" (tag "our estimate"). A GREY tip card:
-"try one book first: move the others out of input-datasets/books, and back afterwards". A GREY
+the corpus" · "≈ 90 more to embed the chunks" · "10–20 min" (tag "our estimate"). A GREY tip card, two rows:
+"try one book first: move the others out of input-datasets/books" / "then put them back and run the
+command again". A GREY
 "with your key, look for" card, three rows: "per book: Number of chunks: … (cli.py · line 215), far
 fewer than char-split" · "embed(): Processing file: outputs/chunks-semantic-split-… (line 240)" ·
 "load(): Finished inserting … into collection 'semantic-split-collection' (line 161)". Under it a
-GREY note: "429 retries are normal · stopped after 5 retries? wait, then rerun: it starts over from
-the first book".
-SAY: With your key, budget for it: by our estimate, about 528 embedding calls to chunk the corpus, about 90 more to embed the chunks, and 10 to 20 minutes. Try one book first, then put the others back. Look for a chunk count per book, and finally, finished inserting into the semantic split collection.
+GREY note: "429 retries are normal · stopped after 5? wait, then rerun: it starts over"; it also
+sits as a GREY row on the ▶ card in the next beat.
+SAY: With your key, budget for it: by our estimate, about 528 embedding calls to chunk the corpus, about 90 more to embed the chunks, and 10 to 20 minutes. Try one book first, then put the others back and run it again. Look for a chunk count per book, and finally, finished inserting into the semantic split collection.
 
-SHOW: The cards leave. V8's chunks of very different lengths line up as bars; a GREY note "a
+SHOW: The cards leave. Seven GREEN bars of very different lengths (tag `our illustration`, no numbers); a GREY note "a
 single-topic book still gets its top 5 % cut". `▶ your turn` on a GREY card with the README command,
 "with your key", and a second row "(extra, after the load finishes) python cli.py --chat
 --chunk_type semantic-split". Hold 2 s, then fade out.
@@ -1241,7 +1251,8 @@ our 8,248". A slower GREY diamond "cross-encoder" reads each (question, chunk) p
 column: the YELLOW rows rise to the top. Caption "fast + accurate: strong together".
 SAY: After retrieval: re-ranking. A fast retriever, whose vectors were made before the question existed, returns 25 candidates with the right ones scattered. A slower model reads each question and chunk together and reorders them.
 
-SHOW: The four ideas shrink into a row of GREY dashed chips; a `cli.py` file glyph beside them with
+SHOW: The three ideas shrink into a row of three GREY dashed chips (query rewriting · hybrid search + rank
+fusion · re-ranking); a `cli.py` file glyph beside them with
 a GREY "not here". A small GREY note under S12's filter box: "our query: remove the filter". Fade out.
 SAY: None of these is in cli.py. They're what you reach for when naive retrieval brings back the wrong chunks; our filtered query only needed its filter removed.
 
@@ -1265,7 +1276,8 @@ SAY: The images stay: 2.11 gigabytes for the CLI image, its Python base included
 
 SHOW: It types `git status; git status --short --ignored` (extra) → TERM(laptop/27-x-git-status.txt:
 8, 11–14). ` M docker-shell.sh` highlights GREY ("your edit"); `!! docker-volumes/` and `!! outputs/`
-GREEN ("ignored · stays on your disk"); a GREY chip "Linux: sudo rm -rf docker-volumes".
+GREEN ("ignored · stays on your disk"); the chip becomes "only to delete the index
+later (Linux, root-owned): sudo rm -rf docker-volumes".
 SAY: Now git status shows only your edit to docker-shell.sh. The outputs and docker volumes folders are ignored, and stay on your disk.
 
 SHOW: The GOLD key glyph in `secrets/` beside the repo. A RED "what if" inset (tag `illustration`):
@@ -1276,7 +1288,7 @@ named: `exit` (in the container) · `docker compose down` (laptop, in ~/AC215/ll
 `docker image rm llm-rag-cli chromadb/chroma:latest` · "keep docker-volumes/ and outputs/: your
 index" · "course over: IAM › Service accounts › KEYS › delete"; a GOLD row "nothing to delete in
 Google Cloud". Hold 2 s.
-SAY: Nothing keeps running in Google Cloud; you paid only for what you sent. Keep the key beside the repo: inside it, git wouldn't ignore the key, and the image would copy it. Delete it when the course ends. Pause and tear down now, so port 8000 is free next time.
+SAY: Nothing keeps running in Google Cloud; you paid only for what you sent. Keep the key beside the repo: inside it, git wouldn't ignore the key, and the image would copy it. Delete it when the course ends. Pause, then tear down, so port 8000 is free next time.
 
 SHOW: The stale index. A PANEL of `expected/out-txt-agent-run.txt` line 74 cut after "economic life"
 (header `out.txt · line 73 (excerpt)`, tag `recorded · the staff's agent run, September 22, 2026`),
@@ -1291,9 +1303,11 @@ SHOW: TRACKER Agents 1. A static GREY card "next lecture · inside the container
 `python cli.py --agent --chunk_type char-split` (tag `preview · L06`; not typed into a terminal, no
 output). A PANEL of `expected/out-txt-agent-run.txt` line 65 (header `out.txt · line 64`, tag
 `recorded`) `Function: get_book_by_author`, with a GREY note "must call a tool: which one is its
-choice" (`cli.py · line 449`, `mode="any"`). LECTURE B74–B76: a GREY dashed "Retrieve?" diamond with
+choice" (`cli.py · line 449`, `mode="any"`). LECTURE B68–B76: a GREY dashed "Retrieve?" diamond with
 Yes/No branches (tag `concept`), caption "a related idea, further: whether to retrieve".
-SAY: Next lecture runs this command with an agent. In the staff's run, the model chose which retrieval tool to call. The lecture's Self-RAG goes further: the model decides whether to retrieve at all, then checks what it found.
+On "Our chat opens the book" the Yes branch flashes YELLOW with a GREY note "our chat: every
+question"; on "and checks nothing" a GREY note "our chat: no check" by "check what it found".
+SAY: Next lecture runs this command with an agent. In the staff's run, the model chose which retrieval tool to call. The lecture's Self-RAG goes further: the model decides whether to retrieve at all, then checks what it found. Our chat opens the book for every question, and checks nothing.
 
 SHOW: LECTURE A63. The blurred map from S01 returns; its four YELLOW questions light up one by one,
 each with a tiny thumbnail of the picture that answered it (glyph-only: V4's arrows, V5's cylinder,
@@ -1312,7 +1326,7 @@ SHOW: Q3 "What does chunk_overlap buy and cost, and why did recursive-split make
 compared with the lecture's final prompt, and what is the one-line fix?"
 SAY: Three: what does overlap buy and cost? And why did the recursive splitter make more chunks? Four: why did the README's query return no Tolminc text? Five: what is the prompt missing, and what's the fix?
 
-SHOW: The questions shrink to the top. Two footer cards: "Answers: exercises.md" and "Study guide +
+SHOW: The questions shrink to the top. Two footer cards: "Answers: study guide §8 (exercises.md)" and "Study guide +
 every command: github.com/JunyiZhou-Conny/MLOps_Learning · guides/L05-rag.md". Then everything fades
 to an empty frame (end of part 2).
 SAY: The answers are in the exercises, and every command is in the study guide, in the MLOps Learning repo. Next time: agents.

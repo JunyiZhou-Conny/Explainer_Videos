@@ -31,8 +31,10 @@ Beats (script.md "## S03", one voiceover block each):
     gates in miniature along the bottom, BLUE, each label and item as named: "who?" + GOLD key,
     "may?" + the two role chips, "switched on?" + an API switch (off).
  4  The top half clears and the gates rise to the middle (they go back down when the Vertex AI
-    screen arrives above them). An erratum tag beside the two role chips; Storage Admin dims to GREY with
-    a note "no storage call in this code"; the Agent Platform chip flashes. TRACKER Account 6 ·
+    screen arrives above them). An erratum tag on the Storage Admin row (the README's slip: beside the
+    other chip it read as "this role is the mistake"); Storage Admin dims to GREY with a note "no
+    storage call in this code" after the tag; the Agent Platform chip flashes and gets a GREEN
+    "✓ needed". The third gate sits far right so that row clears the switch. TRACKER Account 6 ·
     extra: a schematic "APIs & Services › Vertex AI API" screen (aiplatform.googleapis.com, a BLUE
     Enable button; tag illustration); Enable pulses, the switch flips on, the third gate opens with
     a white tick. A dimmed RED chip under the screen: "without it: SERVICE_DISABLED on the first
@@ -42,7 +44,8 @@ Beats (script.md "## S03", one voiceover block each):
     "account, roles, key, and API" are named. Hold 2 s.
  5  TRACKER Run 1. A 10-row terminal (9 rows of output + a row for the commit tag) at ~/AC215 types `cd llm-rag` (no output); the prompt becomes
     ~/AC215/llm-rag, the new path part flashing GREY. TRACKER Run 1 · extra: `ls -a; git log
-    --oneline -1` (extra) -> laptop/05 lines 2-5 (wrapped), line 6 cut after "origin/HEAD)".
+    --oneline -1` (extra) -> laptop/05 lines 2-5 (captured 80 wide: the two long rows wrap at their
+    last column gap, so no name splits), line 6 cut after "origin/HEAD)".
     docker-shell.sh, docker-compose.yml and cli.py box GREEN one by one as named; e17a39f gets a
     GREY box and the GREY tag "↑ the commit this video was recorded on" on the empty row under
     it (the commit row is full; on the row above, the tag would touch the cli.py box).
@@ -56,6 +59,8 @@ Beats (script.md "## S03", one voiceover block each):
     error" low on the left. The card sits top right (the tracker owns the top left); the pencil
     rests to its left, where ▶ your turn replaces it; hold 2 s; fade to empty.
 """
+
+import re
 
 import numpy as np
 from common import (
@@ -118,6 +123,8 @@ from manim import (
     VGroup,
     VMobject,
     linear,
+    smooth,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -170,7 +177,7 @@ assert _cd.cmd == CD and _cd.exit == 0, _cd.cmd         # no output
 
 _ls = capture("05", "laptop")
 assert _ls.cmd == LS, _ls.cmd
-LS_OUT = _ls.at((2, 5))                                 # the ls -a columns (wrapped at 65)
+LS_OUT = _ls.at((2, 5))                                 # the ls -a columns (80 wide: see gap_wrap)
 LOG = _ls.cut(6, "origin/HEAD)")                        # e17a39f (HEAD -> main, origin/main, origin/HEAD)
 assert LOG.startswith("e17a39f "), LOG
 
@@ -200,10 +207,18 @@ URL = "console.cloud.google.com"
 TERM0_BOTTOM = -2.95          # beat 0: room for the GREY note under the terminal
 RX = 4.68                     # centre of the right column (folders) in beats 1-2
 GATE_Y = -1.55                # centre of the three gates (beats 3-4)
-GATE_X = (-5.0, -1.6, 4.2)
+GATE_X = (-5.0, -1.6, 5.0)   # the third far right: beat 4's Storage Admin row runs to x ~ 4
 
 
 # ------------------------------------------------------------------ small helpers
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
+
+
 def at_left(m, x: float, y: float):
     """Put m's left edge at x and its centre at height y."""
     return m.shift(np.array([x - m.get_left()[0], y - m.get_center()[1], 0]))
@@ -238,6 +253,23 @@ def col_x(line, j: float) -> float:
         gi += 1
     x0 = float(np.median(offs)) if offs else line.strut.get_left()[0]
     return x0 + j * cw
+
+
+def gap_wrap(rows: list[str], limit: int) -> list[str]:
+    """Captured `ls` rows wider than the terminal, each broken at its last column gap (two or
+    more spaces) that fits, the rest on its own row from column 0: a hard fold at the edge split
+    'semantic_splitter.py' into 'semantic_splitt' / 'er.py'. Every name is the capture's text."""
+    out = []
+    for s in rows:
+        s = s.rstrip()
+        while len(s) > limit:
+            cuts = [m.start() for m in re.finditer(r" {2,}", s) if m.start() <= limit]
+            if not cuts:
+                raise ValueError(f"no column gap within {limit} columns: {s!r}")
+            out.append(s[:cuts[-1]])
+            s = s[cuts[-1]:].lstrip()
+        out.append(s)
+    return out
 
 
 def cbox(line, a: int, b: int, color: str = TURN, pad: float = 0.04) -> VMobject:
@@ -551,13 +583,16 @@ class KeyAndProject(VoiceScene):
             self.play(Indicate(pages[0].button, color=TURN, scale_factor=1.08), run_time=0.7)
 
             def page_to(k, old, new, *extra):
-                """The crumb slides to page k's, `old` parts leave and `new` parts arrive."""
+                """The crumb slides to page k's, `old` parts leave and `new` parts arrive: old out in the
+                first half, new in the second (faded at once, both pages' crumbs and fields read on top
+                of each other)."""
                 nonlocal cr
-                anims = [tr.goto(k), FadeOut(cr, shift=LEFT * 0.25), FadeIn(pages[k - 1][0], shift=LEFT * 0.25)]
+                anims = [tr.goto(k), FadeOut(cr, shift=LEFT * 0.25, rate_func=first_half),
+                         FadeIn(pages[k - 1][0], shift=LEFT * 0.25, rate_func=second_half)]
                 if old:
-                    anims.append(FadeOut(VGroup(*old)))
+                    anims.append(FadeOut(VGroup(*old), rate_func=first_half))
                 if new:
-                    anims.append(FadeIn(VGroup(*new), shift=UP * 0.1))
+                    anims.append(FadeIn(VGroup(*new), shift=UP * 0.1, rate_func=second_half))
                 self.play(*anims, *extra, run_time=0.6)
                 cr = pages[k - 1][0]
 
@@ -586,14 +621,16 @@ class KeyAndProject(VoiceScene):
             vo.wait_until("and save it in secrets")
             dl = pages[4].dl
             self.play(tr.goto(6), run_time=0.4)
+            # the key flies; the old name fades in place and the new one fades in under secrets/ (the
+            # name morphing along the key's path ran garbled across the JSON chip)
             self.play(dl.key.animate(path_arc=-0.9).move_to(fo.sec.get_center() + DOWN * 0.06),
-                      Transform(dl.name, key_name), FadeOut(dl.frame), run_time=1.2)
+                      FadeOut(dl.name), FadeIn(key_name), FadeOut(dl.frame), run_time=1.2)
             self.remove(dl)
-            self.add(dl.key, dl.name)
+            self.add(dl.key, key_name)
             self.play(Indicate(fo.sec, color=COST, scale_factor=1.1), run_time=0.6)
 
         # ========================================================== 3 · money, .gitignore, three gates
-        key, key_lbl = dl.key, dl.name
+        key, key_lbl = dl.key, key_name
         drop = VGroup(fo, key, key_lbl)
         gi = src_panel(".gitignore", 1, 5)
         gi.move_to([3.6, 1.55, 0])
@@ -635,7 +672,7 @@ class KeyAndProject(VoiceScene):
             self.play(Indicate(fo.sec, color=TURN, scale_factor=1.15),
                       Indicate(fo.sec_name, color=TURN, scale_factor=1.1), run_time=0.7)
 
-            vo.wait_until("Remember lecture 4")
+            vo.wait_until("Remember the three gates")
             self.play(LaggedStart(*[Create(g.posts) for g in gates], lag_ratio=0.25), run_time=0.9)
             self.play(*[FadeIn(g.barrier) for g in gates], run_time=0.4)
             vo.wait_until("the key says who you are")
@@ -654,8 +691,12 @@ class KeyAndProject(VoiceScene):
         # back down when the Vertex AI screen arrives above them
         LIFT = UP * 1.75
         gate_row = VGroup(*gates, g_key, roles, sw)
-        err_tag = erratum_tag().next_to(c_vert, RIGHT, buff=0.3).shift(LIFT)
-        no_store = note("no storage call in this code").next_to(c_store, RIGHT, buff=0.3).shift(LIFT)
+        # the erratum is the Storage Admin line (QA: beside the Agent Platform chip it read as
+        # "this role is the mistake"); that chip gets a GREEN "✓ needed" instead
+        err_tag = erratum_tag().next_to(c_store, RIGHT, buff=0.25).shift(LIFT)
+        no_store = note("no storage call in this code").next_to(err_tag, RIGHT, buff=0.25)
+        need = VGroup(check_mark(0.3, DATA), label("needed", TAG, DATA)).arrange(RIGHT, buff=0.12)
+        need.next_to(c_vert, RIGHT, buff=0.3).shift(LIFT)
         vx = vertex_console([-0.75, 1.55, 0])
         sw_on = toggle(True, CLOUD, w=0.62).move_to(sw)
         tick = check_mark(0.42, INK).move_to(gates[2].posts.get_center() + DOWN * 0.05)
@@ -680,15 +721,16 @@ class KeyAndProject(VoiceScene):
             self.play(FadeOut(VGroup(drop, money, gi, ghost, not_here)), run_time=0.45)
             self.play(gate_row.animate.shift(LIFT), run_time=0.6)
             self.play(FadeIn(err_tag, shift=LEFT * 0.1),
-                      Indicate(roles, color=TURN, scale_factor=1.04), run_time=0.6)
+                      Indicate(c_store, color=TURN, scale_factor=1.06), run_time=0.6)
             vo.wait_until("Nothing here uses Cloud Storage")
             self.play(c_store.box.animate.set_stroke(S.GREY), c_store.text.animate.set_color(S.GREY),
                       FadeIn(no_store, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("so the Agent Platform role")
-            self.play(Indicate(c_vert, color=TURN, scale_factor=1.08), run_time=0.8)
+            self.play(Indicate(c_vert, color=TURN, scale_factor=1.08),
+                      FadeIn(need, shift=LEFT * 0.1), run_time=0.8)
 
             vo.wait_until("And the README never says")
-            self.play(caption_extra(tr, True), VGroup(gate_row, err_tag, no_store).animate.shift(-LIFT),
+            self.play(caption_extra(tr, True), VGroup(gate_row, err_tag, no_store, need).animate.shift(-LIFT),
                       FadeIn(vx, shift=DOWN * 0.15), run_time=0.8)
             vo.wait_until("to enable the Vertex AI API")
             self.play(Indicate(vx.enable, color=TURN, scale_factor=1.2), run_time=0.6)
@@ -702,7 +744,7 @@ class KeyAndProject(VoiceScene):
             self.play(red.animate.set_opacity(0.5), run_time=0.6)
 
             vo.wait_until("Pause and do it all now")
-            self.play(FadeOut(VGroup(vx, red, *gates, g_key, roles, sw, tick, err_tag, no_store)),
+            self.play(FadeOut(VGroup(vx, red, *gates, g_key, roles, sw, tick, err_tag, no_store, need)),
                       run_time=0.5)
             self.play(*[d.animate.set_color(TURN) for d in tr.dots], FadeIn(card4, shift=UP * 0.15),
                       run_time=0.7)
@@ -726,7 +768,9 @@ class KeyAndProject(VoiceScene):
             # 59 of 65 columns: beside() clamps the tag to the terminal's right end, still ~0.17
             # clear of "-1" (pin() would refuse a cover); the row below is full ls output
             pin(self, cmd5, beside(extra_tag(), t5, cmd5), run_time=0.25)
-            log = t5.print(self, LS_OUT + [LOG], run_time=0.5, wrap=True)[-1]     # LOG fits a row
+            ls_rows = gap_wrap(LS_OUT, t5.max_chars)              # 4 rows -> 6, no name split
+            assert len(ls_rows) == 6 and "semantic_splitter.py" in ls_rows and "uv.lock" in ls_rows, ls_rows
+            log = t5.print(self, ls_rows + [LOG], run_time=0.5)[-1]                 # LOG fits a row
             assert log.text == LOG, log.text
             hl = []
             for name, anchor in (("docker-shell.sh", "the scripts"), ("docker-compose.yml", "the compose file"),
@@ -792,7 +836,10 @@ class KeyAndProject(VoiceScene):
             self.play(FadeIn(yt, shift=DOWN * 0.1), Create(arr), run_time=0.5)
             attach(self, l11, pid, arr, yt)
             vo.wait_until("the ID, not the name")
-            self.play(Indicate(yt, color=TURN, scale_factor=1.08), run_time=0.7)
+            # the tag's outline and text flash (Indicate on the whole tag filled it YELLOW: text unreadable);
+            # 1.04: the outline no longer grows with the text, and at 1.08 the "y" and "e" met its round ends
+            self.play(yt.box.animate(rate_func=there_and_back).set_stroke(TURN, 4),
+                      Indicate(yt.text, color=TURN, scale_factor=1.04), run_time=0.7)
 
             vo.wait_until("Leave line 8 alone")
             l12, l13 = out6[6], out6[7]
