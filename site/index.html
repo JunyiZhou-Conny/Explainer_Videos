@@ -24,13 +24,15 @@
 </main>
 <script>
 const REPO = 'JunyiZhou-Conny/Explainer_Videos';
+// Conny does not review samples or full cuts himself (QA passes + review bots carry that),
+// so the review states fold into 制作中 and the lanes that light up are the ones that
+// genuinely need him: a question, or the merge-and-release moment.
 const LANES = [
-  ['state:scripting', '制作中'],
-  ['state:sample-review', '等你审样片', true],
-  ['state:full-review', '等你听全片', true],
-  ['blocked:question', '等你答复', true],
-  ['state:publishing', '发布中'],
-  ['state:published', '已上 B 站'],
+  ['制作中', ['state:scripting', 'state:sample-review'], false],
+  ['等你答复', ['blocked:question'], true],
+  ['等你发布', ['state:full-review'], true],
+  ['发布中', ['state:publishing'], true],
+  ['已上 B 站', ['state:published'], false],
 ];
 // fetch with retries: raw.githubusercontent / api.github.com drop connections now and then.
 async function fetchJSON(url, tries = 3){
@@ -80,23 +82,30 @@ async function loadProtocol(){
       const at = Date.parse(c.created_at);
       const claim = line.match(/^Claiming\.?\s*Model:\s*([^,]+)/i);
       const mark = line.match(/^(CHECKPOINT|HANDOFF)\b\s*([\w-]*)/i);
-      if(claim && !s.claim) s.claim = {model: claim[1].trim(), at};
+      const branch = line.match(/branch\s+([\w./-]+)/i);
+      if(claim && !s.claim) s.claim = {model: claim[1].trim(), at,
+                                       branch: branch ? branch[1].replace(/[.]+$/, '') : null};
       if(mark && !s.mark) s.mark = {kind: mark[1].toUpperCase(), stage: mark[2], at};
       status.set(n, s);
     }
   }catch(e){ /* the board still renders without protocol details */ }
   return status;
 }
-function protocolHtml(s, open){
+function protocolHtml(s, open, branchLatest){
   if(!s || (!s.claim && !s.mark)) return '';
   const parts = [];
   const released = s.mark && s.mark.kind === 'HANDOFF' && (!s.claim || s.mark.at >= s.claim.at);
   if(released) parts.push('已交接，待认领');
-  else if(s.claim) parts.push(`认领：${esc(s.claim.model)}`);
-  if(s.mark && s.mark.kind === 'CHECKPOINT') parts.push(`检查点 ${esc(s.mark.stage || '')} · ${ago(s.mark.at)}`);
-  const last = Math.max(s.claim?.at || 0, s.mark?.at || 0);
+  else if(s.claim) parts.push(`制作中：${esc(s.claim.model)}`);
+  if(s.mark && s.mark.kind === 'CHECKPOINT') parts.push(`这集上次推进到「${esc(s.mark.stage || '?')}」· ${ago(s.mark.at)}`);
+  // A batch session works its episodes one after another, so a quiet episode is fine as
+  // long as a sibling on the SAME branch moved recently; only a silent whole branch is
+  // suspicious.
+  const own = Math.max(s.claim?.at || 0, s.mark?.at || 0);
+  const last = s.claim?.branch ? (branchLatest.get(s.claim.branch) || own) : own;
   const stale = open && !released && Date.now() - last > STALE_MS;
-  return `<div class="meta">${parts.join(' · ')}</div>` + (stale ? '<span class="chip q">可能停滞</span>' : '');
+  return `<div class="meta">${parts.join(' · ')}</div>`
+    + (stale ? '<span class="chip q">停滞超一天（session 可能撞了用量限制）</span>' : '');
 }
 async function load(){
   clearTimeout(window.__retryTimer); // a manual 立即重试 must not leave the auto-retry armed
@@ -108,22 +117,36 @@ async function load(){
       fetchJSON(`https://api.github.com/repos/${REPO}/pulls?state=open&per_page=30`).catch(() => null),
     ]);
     const issues = rawIssues.filter(i => !i.pull_request);
+    // The latest activity per batch branch, so pipelined episodes are judged together.
+    const branchLatest = new Map();
+    for(const s of protocol.values()){
+      const b = s.claim?.branch;
+      if(!b) continue;
+      const last = Math.max(s.claim?.at || 0, s.mark?.at || 0);
+      branchLatest.set(b, Math.max(branchLatest.get(b) || 0, last));
+    }
     board.innerHTML = '';
-    for(const [label, name, attention] of LANES){
-      const items = issues.filter(i => i.labels.some(l => l.name === label));
+    const seen = new Set();
+    for(const [name, labels, attention] of LANES){
+      const items = issues.filter(i => !seen.has(i.number)
+        && i.labels.some(l => labels.includes(l.name)));
+      items.forEach(i => seen.add(i.number));
       const lane = document.createElement('div');
       lane.className = 'lane' + (attention && items.length ? ' attention' : '');
       lane.innerHTML = `<h2><span>${name}</span><span class="count">${items.length}</span></h2>`;
       for(const i of items){
-        const extra = i.labels.filter(l => !['episode', 'blocked:question', label].includes(l.name)).map(l => `<span class="chip">${esc(l.name)}</span>`).join('');
-        const q = i.labels.some(l => l.name === 'blocked:question') && label !== 'blocked:question'
+        const hide = ['episode', 'blocked:question', ...labels];
+        const extra = i.labels.filter(l => !hide.includes(l.name)).map(l => `<span class="chip">${esc(l.name)}</span>`).join('');
+        const q = i.labels.some(l => l.name === 'blocked:question') && !labels.includes('blocked:question')
           ? '<span class="chip q">blocked:question</span>' : '';
+        const sample = name === '制作中' && i.labels.some(l => l.name === 'state:sample-review')
+          ? '<span class="chip">样片可看</span>' : '';
         lane.insertAdjacentHTML('beforeend', `
           <div class="card">
             <a class="title" href="${i.html_url}" target="_blank" rel="noopener">${esc(i.title)}</a>
             <div class="meta">#${i.number} · ${new Date(i.updated_at).toLocaleDateString('zh-CN')} 更新</div>
-            ${protocolHtml(protocol.get(i.number), i.state === 'open' && label !== 'state:published')}
-            ${q}${extra}
+            ${protocolHtml(protocol.get(i.number), i.state === 'open' && !labels.includes('state:published'), branchLatest)}
+            ${q}${sample}${extra}
           </div>`);
       }
       if(!items.length) lane.insertAdjacentHTML('beforeend', '<div class="card meta" style="color:var(--gray)">空</div>');
