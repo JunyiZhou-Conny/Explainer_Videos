@@ -494,29 +494,29 @@ Dialogue: 0,0:29:23.39,0:29:25.33,Bilingual,,0,0,0,,你只为发送过的内容�
 Dialogue: 0,0:29:25.65,0:29:27.48,Bilingual,,0,0,0,,把密钥放在 repo 旁边\N{\fs33\c&H00C8C0B8&\bord1.4}Keep the key beside the repo:
 Dialogue: 0,0:29:27.48,0:29:31.77,Bilingual,,0,0,0,,放在里面的话，git 不会忽略它，image 也会把它复制进去\N{\fs33\c&H00C8C0B8&\bord1.4}inside it, git wouldn't ignore the key, and the image would copy it.
 Dialogue: 0,0:29:32.09,0:29:33.69,Bilingual,,0,0,0,,课程结束后，把它删掉\N{\fs33\c&H00C8C0B8&\bord1.4}Delete it when the course ends.
-Dialogue: 0,0:29:34.01,0:29:38.06,Bilingual,,0,0,0,,现在就暂停，把它拆掉，这样下次 port 8000 就是空着的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and tear down now, so port 8000 is free next time.
-Dialogue: 0,0:29:40.30,0:29:44.91,Bilingual,,0,0,0,,最后一个教训，来自课程团队留下的下节课 agent 的运行记录\N{\fs33\c&H00C8C0B8&\bord1.4}One last lesson, from the staff's recorded run of next lecture's agent.
-Dialogue: 0,0:29:45.23,0:29:47.46,Bilingual,,0,0,0,,它检索到的是讲转场放牧的文本\N{\fs33\c&H00C8C0B8&\bord1.4}It retrieved text about transhumance
-Dialogue: 0,0:29:47.46,0:29:50.62,Bilingual,,0,0,0,,来自一本更早的 Tolminc 书，当天就被换掉了\N{\fs33\c&H00C8C0B8&\bord1.4}from an older Tolminc book, replaced that same day.
-Dialogue: 0,0:29:50.94,0:29:56.00,Bilingual,,0,0,0,,数据库只根据加载进去的内容回答：书一变，就要重建索引\N{\fs33\c&H00C8C0B8&\bord1.4}The database answers from what was loaded: when the books change, rebuild the index.
-Dialogue: 0,0:29:56.25,0:29:59.13,Bilingual,,0,0,0,,下节课会用一个 agent 来跑这条命令\N{\fs33\c&H00C8C0B8&\bord1.4}Next lecture runs this command with an agent.
-Dialogue: 0,0:29:59.45,0:30:03.27,Bilingual,,0,0,0,,在课程团队的那次运行里，模型自己选了要调用哪个检索工具\N{\fs33\c&H00C8C0B8&\bord1.4}In the staff's run, the model chose which retrieval tool to call.
-Dialogue: 0,0:30:03.59,0:30:05.79,Bilingual,,0,0,0,,课上讲的 Self-RAG 走得更远\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's Self-RAG goes further:
-Dialogue: 0,0:30:05.79,0:30:10.20,Bilingual,,0,0,0,,由模型决定到底要不要检索，然后再检查它找到的东西\N{\fs33\c&H00C8C0B8&\bord1.4}the model decides whether to retrieve at all, then checks what it found.
-Dialogue: 0,0:30:10.52,0:30:14.13,Bilingual,,0,0,0,,我们的 chat 每个问题都要翻书，而且什么都不检查\N{\fs33\c&H00C8C0B8&\bord1.4}Our chat opens the book for every question, and checks nothing.
-Dialogue: 0,0:30:15.37,0:30:16.97,Bilingual,,0,0,0,,那四个问题呢？\N{\fs33\c&H00C8C0B8&\bord1.4}And the four questions?
-Dialogue: 0,0:30:17.09,0:30:19.53,Bilingual,,0,0,0,,所谓 embedding，就是表示意思的一个方向\N{\fs33\c&H00C8C0B8&\bord1.4}An embedding is a direction for meaning.
-Dialogue: 0,0:30:19.85,0:30:23.56,Bilingual,,0,0,0,,向量数据库存的是记录，再用一个索引来搜索它们\N{\fs33\c&H00C8C0B8&\bord1.4}A vector database stores records, with an index to search them.
-Dialogue: 0,0:30:23.88,0:30:26.63,Bilingual,,0,0,0,,查询找的是问题的最近邻\N{\fs33\c&H00C8C0B8&\bord1.4}A query finds the question's nearest neighbors.
-Dialogue: 0,0:30:26.95,0:30:30.13,Bilingual,,0,0,0,,上下文，就是你贴进 prompt 里的那些 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}The context is the chunks you paste into the prompt.
-Dialogue: 0,0:30:30.37,0:30:32.37,Bilingual,,0,0,0,,五道题，自测一下\N{\fs33\c&H00C8C0B8&\bord1.4}Five questions to test yourself.
-Dialogue: 0,0:30:32.69,0:30:36.87,Bilingual,,0,0,0,,第一题：哪些参数属于哪条通道，两条通道又必须共用什么？\N{\fs33\c&H00C8C0B8&\bord1.4}One: which flags belong to each lane, and what must both lanes share?
-Dialogue: 0,0:30:37.19,0:30:41.13,Bilingual,,0,0,0,,第二题：为什么 CLI 按名字就能找到数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Two: why does the CLI reach the database by name,
-Dialogue: 0,0:30:41.13,0:30:42.97,Bilingual,,0,0,0,,又是谁在用 port 8000？\N{\fs33\c&H00C8C0B8&\bord1.4}and who uses port 8000?
-Dialogue: 0,0:30:43.22,0:30:45.54,Bilingual,,0,0,0,,第三题：重叠有什么好处，又有什么代价？\N{\fs33\c&H00C8C0B8&\bord1.4}Three: what does overlap buy and cost?
-Dialogue: 0,0:30:45.86,0:30:48.83,Bilingual,,0,0,0,,还有，为什么递归切分器切出了更多 chunk？\N{\fs33\c&H00C8C0B8&\bord1.4}And why did the recursive splitter make more chunks?
-Dialogue: 0,0:30:49.15,0:30:52.80,Bilingual,,0,0,0,,第四题：README 里的查询为什么没返回任何 Tolminc 文本？\N{\fs33\c&H00C8C0B8&\bord1.4}Four: why did the README's query return no Tolminc text?
-Dialogue: 0,0:30:53.12,0:30:56.23,Bilingual,,0,0,0,,第五题：这个 prompt 少了什么，又该怎么修？\N{\fs33\c&H00C8C0B8&\bord1.4}Five: what is the prompt missing, and what's the fix?
-Dialogue: 0,0:30:56.47,0:31:01.65,Bilingual,,0,0,0,,答案在练习里，每条命令都在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}The answers are in the exercises, and every command is in the study guide,
-Dialogue: 0,0:31:01.65,0:31:03.55,Bilingual,,0,0,0,,就在 MLOps Learning 这个 repo 里\N{\fs33\c&H00C8C0B8&\bord1.4}in the MLOps Learning repo.
-Dialogue: 0,0:31:03.87,0:31:05.49,Bilingual,,0,0,0,,下节课：agent\N{\fs33\c&H00C8C0B8&\bord1.4}Next time: agents.
+Dialogue: 0,0:29:34.01,0:29:38.02,Bilingual,,0,0,0,,先暂停，再把它拆掉，这样下次 port 8000 就是空着的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, then tear down, so port 8000 is free next time.
+Dialogue: 0,0:29:40.27,0:29:44.87,Bilingual,,0,0,0,,最后一个教训，来自课程团队留下的下节课 agent 的运行记录\N{\fs33\c&H00C8C0B8&\bord1.4}One last lesson, from the staff's recorded run of next lecture's agent.
+Dialogue: 0,0:29:45.19,0:29:47.43,Bilingual,,0,0,0,,它检索到的是讲转场放牧的文本\N{\fs33\c&H00C8C0B8&\bord1.4}It retrieved text about transhumance
+Dialogue: 0,0:29:47.43,0:29:50.59,Bilingual,,0,0,0,,来自一本更早的 Tolminc 书，当天就被换掉了\N{\fs33\c&H00C8C0B8&\bord1.4}from an older Tolminc book, replaced that same day.
+Dialogue: 0,0:29:50.91,0:29:55.97,Bilingual,,0,0,0,,数据库只根据加载进去的内容回答：书一变，就要重建索引\N{\fs33\c&H00C8C0B8&\bord1.4}The database answers from what was loaded: when the books change, rebuild the index.
+Dialogue: 0,0:29:56.22,0:29:59.10,Bilingual,,0,0,0,,下节课会用一个 agent 来跑这条命令\N{\fs33\c&H00C8C0B8&\bord1.4}Next lecture runs this command with an agent.
+Dialogue: 0,0:29:59.42,0:30:03.24,Bilingual,,0,0,0,,在课程团队的那次运行里，模型自己选了要调用哪个检索工具\N{\fs33\c&H00C8C0B8&\bord1.4}In the staff's run, the model chose which retrieval tool to call.
+Dialogue: 0,0:30:03.56,0:30:05.76,Bilingual,,0,0,0,,课上讲的 Self-RAG 走得更远\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's Self-RAG goes further:
+Dialogue: 0,0:30:05.76,0:30:10.17,Bilingual,,0,0,0,,由模型决定到底要不要检索，然后再检查它找到的东西\N{\fs33\c&H00C8C0B8&\bord1.4}the model decides whether to retrieve at all, then checks what it found.
+Dialogue: 0,0:30:10.49,0:30:14.09,Bilingual,,0,0,0,,我们的 chat 每个问题都要翻书，而且什么都不检查\N{\fs33\c&H00C8C0B8&\bord1.4}Our chat opens the book for every question, and checks nothing.
+Dialogue: 0,0:30:15.33,0:30:16.93,Bilingual,,0,0,0,,那四个问题呢？\N{\fs33\c&H00C8C0B8&\bord1.4}And the four questions?
+Dialogue: 0,0:30:17.06,0:30:19.49,Bilingual,,0,0,0,,所谓 embedding，就是表示意思的一个方向\N{\fs33\c&H00C8C0B8&\bord1.4}An embedding is a direction for meaning.
+Dialogue: 0,0:30:19.81,0:30:23.53,Bilingual,,0,0,0,,向量数据库存的是记录，再用一个索引来搜索它们\N{\fs33\c&H00C8C0B8&\bord1.4}A vector database stores records, with an index to search them.
+Dialogue: 0,0:30:23.85,0:30:26.60,Bilingual,,0,0,0,,查询找的是问题的最近邻\N{\fs33\c&H00C8C0B8&\bord1.4}A query finds the question's nearest neighbors.
+Dialogue: 0,0:30:26.92,0:30:30.10,Bilingual,,0,0,0,,上下文，就是你贴进 prompt 里的那些 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}The context is the chunks you paste into the prompt.
+Dialogue: 0,0:30:30.33,0:30:32.34,Bilingual,,0,0,0,,五道题，自测一下\N{\fs33\c&H00C8C0B8&\bord1.4}Five questions to test yourself.
+Dialogue: 0,0:30:32.66,0:30:36.84,Bilingual,,0,0,0,,第一题：哪些参数属于哪条通道，两条通道又必须共用什么？\N{\fs33\c&H00C8C0B8&\bord1.4}One: which flags belong to each lane, and what must both lanes share?
+Dialogue: 0,0:30:37.16,0:30:41.09,Bilingual,,0,0,0,,第二题：为什么 CLI 按名字就能找到数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Two: why does the CLI reach the database by name,
+Dialogue: 0,0:30:41.09,0:30:42.94,Bilingual,,0,0,0,,又是谁在用 port 8000？\N{\fs33\c&H00C8C0B8&\bord1.4}and who uses port 8000?
+Dialogue: 0,0:30:43.18,0:30:45.51,Bilingual,,0,0,0,,第三题：重叠有什么好处，又有什么代价？\N{\fs33\c&H00C8C0B8&\bord1.4}Three: what does overlap buy and cost?
+Dialogue: 0,0:30:45.83,0:30:48.79,Bilingual,,0,0,0,,还有，为什么递归切分器切出了更多 chunk？\N{\fs33\c&H00C8C0B8&\bord1.4}And why did the recursive splitter make more chunks?
+Dialogue: 0,0:30:49.11,0:30:52.76,Bilingual,,0,0,0,,第四题：README 里的查询为什么没返回任何 Tolminc 文本？\N{\fs33\c&H00C8C0B8&\bord1.4}Four: why did the README's query return no Tolminc text?
+Dialogue: 0,0:30:53.08,0:30:56.20,Bilingual,,0,0,0,,第五题：这个 prompt 少了什么，又该怎么修？\N{\fs33\c&H00C8C0B8&\bord1.4}Five: what is the prompt missing, and what's the fix?
+Dialogue: 0,0:30:56.43,0:31:01.62,Bilingual,,0,0,0,,答案在练习里，每条命令都在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}The answers are in the exercises, and every command is in the study guide,
+Dialogue: 0,0:31:01.62,0:31:03.52,Bilingual,,0,0,0,,就在 MLOps Learning 这个 repo 里\N{\fs33\c&H00C8C0B8&\bord1.4}in the MLOps Learning repo.
+Dialogue: 0,0:31:03.84,0:31:05.46,Bilingual,,0,0,0,,下节课：agent\N{\fs33\c&H00C8C0B8&\bord1.4}Next time: agents.

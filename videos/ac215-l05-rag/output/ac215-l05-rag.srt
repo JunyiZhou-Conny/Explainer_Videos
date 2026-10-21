@@ -2236,131 +2236,131 @@ and the image would copy it.
 Delete it when the course ends.
 
 487
-00:29:34,012 --> 00:29:38,065
-Pause and tear down now,
+00:29:34,012 --> 00:29:38,022
+Pause, then tear down,
 so port 8000 is free next time.
 
 488
-00:29:40,300 --> 00:29:41,353
+00:29:40,267 --> 00:29:41,320
 One last lesson,
 
 489
-00:29:41,353 --> 00:29:44,908
+00:29:41,320 --> 00:29:44,875
 from the staff's recorded run
 of next lecture's agent.
 
 490
-00:29:45,228 --> 00:29:49,198
+00:29:45,195 --> 00:29:49,165
 It retrieved text about transhumance
 from an older Tolminc book,
 
 491
-00:29:49,198 --> 00:29:50,625
+00:29:49,165 --> 00:29:50,592
 replaced that same day.
 
 492
-00:29:50,945 --> 00:29:56,002
+00:29:50,912 --> 00:29:55,968
 The database answers from what was loaded:
 when the books change, rebuild the index.
 
 493
-00:29:56,250 --> 00:29:59,130
+00:29:56,217 --> 00:29:59,097
 Next lecture runs this command
 with an agent.
 
 494
-00:29:59,450 --> 00:30:03,269
+00:29:59,417 --> 00:30:03,236
 In the staff's run, the model chose
 which retrieval tool to call.
 
 495
-00:30:03,589 --> 00:30:05,793
+00:30:03,556 --> 00:30:05,760
 The lecture's Self-RAG goes further:
 
 496
-00:30:05,793 --> 00:30:08,587
+00:30:05,760 --> 00:30:08,554
 the model decides
 whether to retrieve at all,
 
 497
-00:30:08,587 --> 00:30:10,202
+00:30:08,554 --> 00:30:10,169
 then checks what it found.
 
 498
-00:30:10,522 --> 00:30:14,128
+00:30:10,489 --> 00:30:14,094
 Our chat opens the book for every question,
 and checks nothing.
 
 499
-00:30:15,367 --> 00:30:16,775
+00:30:15,334 --> 00:30:16,742
 And the four questions?
 
 500
-00:30:17,095 --> 00:30:19,527
+00:30:17,062 --> 00:30:19,494
 An embedding is a direction for meaning.
 
 501
-00:30:19,847 --> 00:30:23,559
+00:30:19,814 --> 00:30:23,526
 A vector database stores records,
 with an index to search them.
 
 502
-00:30:23,879 --> 00:30:26,631
+00:30:23,846 --> 00:30:26,598
 A query finds
 the question's nearest neighbors.
 
 503
-00:30:26,951 --> 00:30:30,130
+00:30:26,918 --> 00:30:30,096
 The context is the chunks
 you paste into the prompt.
 
 504
-00:30:30,367 --> 00:30:32,372
+00:30:30,334 --> 00:30:32,339
 Five questions to test yourself.
 
 505
-00:30:32,692 --> 00:30:36,874
+00:30:32,659 --> 00:30:36,841
 One: which flags belong to each lane,
 and what must both lanes share?
 
 506
-00:30:37,194 --> 00:30:41,128
+00:30:37,161 --> 00:30:41,095
 Two:
 why does the CLI reach the database by name,
 
 507
-00:30:41,128 --> 00:30:42,975
+00:30:41,095 --> 00:30:42,942
 and who uses port 8000?
 
 508
-00:30:43,217 --> 00:30:45,542
+00:30:43,184 --> 00:30:45,509
 Three: what does overlap buy and cost?
 
 509
-00:30:45,862 --> 00:30:48,828
+00:30:45,829 --> 00:30:48,795
 And why did the recursive splitter
 make more chunks?
 
 510
-00:30:49,148 --> 00:30:52,796
+00:30:49,115 --> 00:30:52,763
 Four: why did the README's query
 return no Tolminc text?
 
 511
-00:30:53,116 --> 00:30:56,230
+00:30:53,083 --> 00:30:56,197
 Five: what is the prompt missing,
 and what's the fix?
 
 512
-00:30:56,467 --> 00:30:58,781
+00:30:56,434 --> 00:30:58,748
 The answers are in the exercises,
 
 513
-00:30:58,781 --> 00:31:03,550
+00:30:58,748 --> 00:31:03,517
 and every command is in the study guide,
 in the MLOps Learning repo.
 
 514
-00:31:03,870 --> 00:31:05,491
+00:31:03,837 --> 00:31:05,458
 Next time: agents.
 

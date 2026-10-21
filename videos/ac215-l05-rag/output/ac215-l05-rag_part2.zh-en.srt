@@ -939,131 +939,131 @@ inside it, git wouldn't ignore the key, and the image would copy it.
 Delete it when the course ends.
 
 189
-00:11:24,112 --> 00:11:28,165
-现在就暂停，把它拆掉，这样下次 port 8000 就是空着的
-Pause and tear down now, so port 8000 is free next time.
+00:11:24,112 --> 00:11:28,122
+先暂停，再把它拆掉，这样下次 port 8000 就是空着的
+Pause, then tear down, so port 8000 is free next time.
 
 190
-00:11:30,400 --> 00:11:35,008
+00:11:30,367 --> 00:11:34,975
 最后一个教训，来自课程团队留下的下节课 agent 的运行记录
 One last lesson, from the staff's recorded run of next lecture's agent.
 
 191
-00:11:35,328 --> 00:11:37,561
+00:11:35,295 --> 00:11:37,528
 它检索到的是讲转场放牧的文本
 It retrieved text about transhumance
 
 192
-00:11:37,561 --> 00:11:40,725
+00:11:37,528 --> 00:11:40,692
 来自一本更早的 Tolminc 书，当天就被换掉了
 from an older Tolminc book, replaced that same day.
 
 193
-00:11:41,045 --> 00:11:46,102
+00:11:41,012 --> 00:11:46,068
 数据库只根据加载进去的内容回答：书一变，就要重建索引
 The database answers from what was loaded: when the books change, rebuild the index.
 
 194
-00:11:46,350 --> 00:11:49,230
+00:11:46,317 --> 00:11:49,197
 下节课会用一个 agent 来跑这条命令
 Next lecture runs this command with an agent.
 
 195
-00:11:49,550 --> 00:11:53,369
+00:11:49,517 --> 00:11:53,336
 在课程团队的那次运行里，模型自己选了要调用哪个检索工具
 In the staff's run, the model chose which retrieval tool to call.
 
 196
-00:11:53,689 --> 00:11:55,893
+00:11:53,656 --> 00:11:55,860
 课上讲的 Self-RAG 走得更远
 The lecture's Self-RAG goes further:
 
 197
-00:11:55,893 --> 00:12:00,302
+00:11:55,860 --> 00:12:00,269
 由模型决定到底要不要检索，然后再检查它找到的东西
 the model decides whether to retrieve at all, then checks what it found.
 
 198
-00:12:00,622 --> 00:12:04,228
+00:12:00,589 --> 00:12:04,194
 我们的 chat 每个问题都要翻书，而且什么都不检查
 Our chat opens the book for every question, and checks nothing.
 
 199
-00:12:05,467 --> 00:12:07,067
+00:12:05,434 --> 00:12:07,034
 那四个问题呢？
 And the four questions?
 
 200
-00:12:07,195 --> 00:12:09,627
+00:12:07,162 --> 00:12:09,594
 所谓 embedding，就是表示意思的一个方向
 An embedding is a direction for meaning.
 
 201
-00:12:09,947 --> 00:12:13,659
+00:12:09,914 --> 00:12:13,626
 向量数据库存的是记录，再用一个索引来搜索它们
 A vector database stores records, with an index to search them.
 
 202
-00:12:13,979 --> 00:12:16,731
+00:12:13,946 --> 00:12:16,698
 查询找的是问题的最近邻
 A query finds the question's nearest neighbors.
 
 203
-00:12:17,051 --> 00:12:20,230
+00:12:17,018 --> 00:12:20,196
 上下文，就是你贴进 prompt 里的那些 chunk
 The context is the chunks you paste into the prompt.
 
 204
-00:12:20,467 --> 00:12:22,472
+00:12:20,434 --> 00:12:22,439
 五道题，自测一下
 Five questions to test yourself.
 
 205
-00:12:22,792 --> 00:12:26,974
+00:12:22,759 --> 00:12:26,941
 第一题：哪些参数属于哪条通道，两条通道又必须共用什么？
 One: which flags belong to each lane, and what must both lanes share?
 
 206
-00:12:27,294 --> 00:12:31,228
+00:12:27,261 --> 00:12:31,195
 第二题：为什么 CLI 按名字就能找到数据库
 Two: why does the CLI reach the database by name,
 
 207
-00:12:31,228 --> 00:12:33,075
+00:12:31,195 --> 00:12:33,042
 又是谁在用 port 8000？
 and who uses port 8000?
 
 208
-00:12:33,317 --> 00:12:35,642
+00:12:33,284 --> 00:12:35,609
 第三题：重叠有什么好处，又有什么代价？
 Three: what does overlap buy and cost?
 
 209
-00:12:35,962 --> 00:12:38,928
+00:12:35,929 --> 00:12:38,895
 还有，为什么递归切分器切出了更多 chunk？
 And why did the recursive splitter make more chunks?
 
 210
-00:12:39,248 --> 00:12:42,896
+00:12:39,215 --> 00:12:42,863
 第四题：README 里的查询为什么没返回任何 Tolminc 文本？
 Four: why did the README's query return no Tolminc text?
 
 211
-00:12:43,216 --> 00:12:46,330
+00:12:43,183 --> 00:12:46,297
 第五题：这个 prompt 少了什么，又该怎么修？
 Five: what is the prompt missing, and what's the fix?
 
 212
-00:12:46,567 --> 00:12:51,750
+00:12:46,534 --> 00:12:51,717
 答案在练习里，每条命令都在学习指南里
 The answers are in the exercises, and every command is in the study guide,
 
 213
-00:12:51,750 --> 00:12:53,650
+00:12:51,717 --> 00:12:53,617
 就在 MLOps Learning 这个 repo 里
 in the MLOps Learning repo.
 
 214
-00:12:53,970 --> 00:12:55,591
+00:12:53,937 --> 00:12:55,558
 下节课：agent
 Next time: agents.
