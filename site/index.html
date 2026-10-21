@@ -126,11 +126,18 @@ async function load(){
       branchLatest.set(b, Math.max(branchLatest.get(b) || 0, last));
     }
     board.innerHTML = '';
-    const seen = new Set();
+    // blocked:question rides on top of a state label, so lanes are ASSIGNED in priority
+    // order (a question wins over any state) but still DISPLAYED in LANES order.
+    const lanesByPriority = [...LANES].sort((a, b) =>
+      (b[1].includes('blocked:question') ? 1 : 0) - (a[1].includes('blocked:question') ? 1 : 0));
+    const laneOf = new Map();
+    for(const [name, labels] of lanesByPriority){
+      for(const i of issues){
+        if(!laneOf.has(i.number) && i.labels.some(l => labels.includes(l.name))) laneOf.set(i.number, name);
+      }
+    }
     for(const [name, labels, attention] of LANES){
-      const items = issues.filter(i => !seen.has(i.number)
-        && i.labels.some(l => labels.includes(l.name)));
-      items.forEach(i => seen.add(i.number));
+      const items = issues.filter(i => laneOf.get(i.number) === name);
       const lane = document.createElement('div');
       lane.className = 'lane' + (attention && items.length ? ' attention' : '');
       lane.innerHTML = `<h2><span>${name}</span><span class="count">${items.length}</span></h2>`;
