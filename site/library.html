@@ -56,24 +56,43 @@ async function load(){
       if(!byEp.has(a.episode)) byEp.set(a.episode, []);
       byEp.get(a.episode).push(a);
     }
+    // Series by slug prefix. AC215 reads in lecture order; the rest newest first.
+    const SERIES = [
+      ['ac215-', 'AC215 · MLOps 课程跟练'],
+      ['careonex-', 'CareOneX 代码讲解'],
+      ['speciesot-', 'speciesOT 代码讲解'],
+      [null, '单集'],
+    ];
+    const groups = new Map(SERIES.map(([, name]) => [name, []]));
+    for(const ep of [...byEp.keys()].reverse()){
+      const [, name] = SERIES.find(([p]) => p === null || ep.startsWith(p));
+      groups.get(name).push(ep);
+    }
+    groups.get('AC215 · MLOps 课程跟练').sort();
     let html = '';
-    for(const [ep, arts] of [...byEp.entries()].reverse()){
-      const title = arts.find(a => a.title)?.title || ep;
-      const bili = reg?.episodes?.[ep];
-      const badge = !reg ? '<span class="badge none">B 站状态未知</span>'
-        : bili ? `<a class="badge bili" href="https://www.bilibili.com/video/${esc(bili.bvid)}/" target="_blank" rel="noopener">B 站 ↗</a>`
-        : '<span class="badge none">未上 B 站</span>';
-      html += `<h2 style="margin:26px 0 8px;font-size:1.15rem">${esc(title)} ${badge}</h2>
-        <table><tr><th>版本</th><th>时长</th><th>大小</th><th>下载</th></tr>`;
-      for(const a of arts){
-        html += `<tr>
-          <td><span class="variant">${esc(a.variant || '—')}</span></td>
-          <td>${dur(a.duration_seconds)}</td>
-          <td>${mb(a.bytes)}</td>
-          <td><a href="${a.download_url}">MP4</a></td>
-        </tr>`;
+    for(const [, name] of SERIES){
+      const eps = groups.get(name);
+      if(!eps.length) continue;
+      html += `<h2 class="strip-h" style="margin:40px 0 4px"><span>${name}</span><span style="color:var(--red)">${eps.length}</span></h2>`;
+      for(const ep of eps){
+        const arts = byEp.get(ep);
+        const title = arts.find(a => a.title)?.title || ep;
+        const bili = reg?.episodes?.[ep];
+        const badge = !reg ? '<span class="badge none">B 站状态未知</span>'
+          : bili ? `<a class="badge bili" href="https://www.bilibili.com/video/${esc(bili.bvid)}/" target="_blank" rel="noopener">B 站 ↗</a>`
+          : '<span class="badge none">未上 B 站</span>';
+        html += `<h3 style="margin:22px 0 8px;font-size:1.05rem">${esc(title)} ${badge}</h3>
+          <table><tr><th>版本</th><th>时长</th><th>大小</th><th>下载</th></tr>`;
+        for(const a of arts){
+          html += `<tr>
+            <td><span class="variant">${esc(a.variant || '—')}</span></td>
+            <td>${dur(a.duration_seconds)}</td>
+            <td>${mb(a.bytes)}</td>
+            <td><a href="${a.download_url}">MP4</a></td>
+          </tr>`;
+        }
+        html += '</table>';
       }
-      html += '</table>';
     }
     const stray = reg?.unmatched || [];
     if(stray.length){
