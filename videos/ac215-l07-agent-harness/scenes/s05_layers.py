@@ -512,13 +512,13 @@ class HarnessLayers(VoiceScene):
         rec = recorded_tag()
         place(rec, right=SAFE_X, top=chk.get_bottom()[1] - 0.1)
         # GREEN arrows: the check reads the three item lines (rows 3-5)
-        item_rows = [chk.rows[k] for k in (3, 4, 5)]
-        x_bar = max(r.glyphs.get_right()[0] for r in item_rows) + 0.75
-        spine = Line([x_bar, item_rows[0].get_center()[1], 0], [x_bar, item_rows[-1].get_center()[1], 0],
+        items5 = [chk.rows[k] for k in (3, 4, 5)]
+        x_bar = max(r.glyphs.get_right()[0] for r in items5) + 0.75
+        spine = Line([x_bar, items5[0].get_center()[1], 0], [x_bar, items5[-1].get_center()[1], 0],
                      color=HARNESS, stroke_width=4)
         arrows = VGroup(*[Arrow([x_bar, r.get_center()[1], 0], [r.glyphs.get_right()[0] + 0.08, r.get_center()[1], 0],
                                 buff=0, color=HARNESS, stroke_width=4, tip_length=0.16,
-                                max_tip_length_to_length_ratio=0.5) for r in item_rows])
+                                max_tip_length_to_length_ratio=0.5) for r in items5])
         items_g = VGroup(spine, arrows)
         assert x_bar < chk.frame.get_right()[0] - 0.1
         # the GREY dashed arrow to the prose, "not read"
