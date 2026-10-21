@@ -1,0 +1,58 @@
+$ PYTHONPATH=. python /checks/q1_without_trace.py
+harness layers: ['trace', 'budget', 'context', 'cart_check']
+lite layers:    ['budget', 'context', 'cart_check']
+same object? False
+
+--- lite: model_calls=2 tool_calls=1 cart_check_status=passed
+  run.started            ['act', 'mode']
+  context.mode           ['mode']
+  context.selected       ['excluded_products', 'mode', 'note', 'sources']
+  tool.requested         ['invocation_id', 'name']
+  tool.permitted         ['invocation_id', 'name']
+  tool.started           ['invocation_id', 'name']
+  proposal.submitted     ['items', 'order_placed', 'status']
+  tool.completed         ['invocation_id', 'name']
+  agent.result           ['cart_check_status', 'cart_report', 'items', 'message', 'order_placed']
+  run.finished           ['error', 'status']
+  spans: []
+
+--- harness: model_calls=2 tool_calls=1 cart_check_status=passed
+  run.started            ['act', 'mode']
+  context.mode           ['mode']
+  context.selected       ['excluded_products', 'mode', 'note', 'sources']
+  model.request          ['call_number', 'messages', 'options', 'tools']
+  model.response         ['call_number', 'finish_reason', 'messages', 'model', 'usage']
+  tool.requested         ['arguments', 'invocation_id', 'name']
+  tool.permitted         ['invocation_id', 'name']
+  tool.started           ['invocation_id', 'name']
+  proposal.submitted     ['items', 'order_placed', 'status']
+  tool.completed         ['invocation_id', 'name', 'result']
+  model.request          ['call_number', 'messages', 'options', 'tools']
+  model.response         ['call_number', 'finish_reason', 'messages', 'model', 'usage']
+  agent.result           ['cart_check_status', 'cart_report', 'items', 'message', 'order_placed']
+  run.finished           ['error', 'status']
+  spans: [('chat gpt-5.6-luna', 2), ('execute_tool preview_order', 1), ('invoke_agent FormaggioAssistant', 1), ('agent.context_demo', 1)]
+
+harness.without('cartcheck') -> ValueError: No layer named 'cartcheck'.
+Budget(model_calls=0) -> ValueError: Call budgets must be positive integers.
+
+squeezed layers: ['trace', 'context', 'cart_check', 'budget']
+
+🧪 Act 1 · BASIC context · scenario: standard
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · gpt-5.6-luna
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  📤 Requested tools: preview_order
+  ⏱️ 0.01s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: preview_order
+  📋 Arguments: items: product: epoisses; grams: 300 / product: bucheron; grams: 350 / product: taleggio; grams: 350
+  📦 Result (0.00s): status: unvalidated_proposal; order placed: no; items: 3 entries
+
+squeezed run raised MiddlewareFailure: Maximum of 1 model calls reached.
+last run: {'run_id': 'b7cdd5dea228436b92b6d82de7507366', 'status': 'error', 'error': 'Maximum of 1 model calls reached.'}
+events: ['run.started', 'context.mode', 'context.selected', 'model.request', 'model.response', 'tool.requested', 'tool.permitted', 'tool.started', 'proposal.submitted', 'tool.completed', 'span.event', 'span.event', 'run.finished']
+[exit 0]
+

@@ -1,0 +1,26 @@
+$ sed -i 's|<body>|<body><p><a href="https://example.com">link</a></p>|' skills/vendor-outreach/assets/email-template.html && grep -n 'href' skills/vendor-outreach/assets/email-template.html
+4:<body><p><a href="https://example.com">link</a></p>
+[exit 0]
+
+$ python cli.py --act 5 --fixture --email-decision approve > /tmp/b9.txt 2>&1; echo "cli.py exit status: $?"; grep -E 'Skill loaded|Skills available|Run stopped|Inspect|HARNESS|HTML file|^Traceback|Error' /tmp/b9.txt | cut -c1-160
+cli.py exit status: 1
+Traceback (most recent call last):
+    raise ValueError("Email template contains an unsupported element.")
+ValueError: Email template contains an unsupported element.
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Skills available (metadata only): tasting-planning, vendor-outreach
+Skill loaded: tasting-planning/SKILL.md
+Skill loaded: tasting-planning/references/serving-guide.md
+Skill loaded: tasting-planning/assets/tasting-plan.md
+Skill loaded: vendor-outreach/SKILL.md
+Skill loaded: vendor-outreach/references/vendor-guide.md
+Run stopped: Harness tool or required audit failed: Required skill read/audit failed: Email template contains an unsupported element.
+Inspect the recorded error with --list-runs and --inspect-run. Database: /app/outputs/observability.sqlite
+[exit 0]
+
+$ find outputs -name '*.html' | wc -l
+0
+[exit 0]
+

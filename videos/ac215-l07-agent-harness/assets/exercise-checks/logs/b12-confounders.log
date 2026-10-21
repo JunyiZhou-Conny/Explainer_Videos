@@ -1,0 +1,62 @@
+$ python cli.py --act 2 --evaluate core --fixture --case standard --repeats 1 --label ex-a | tail -n 4
+PASS standard:basic #1 — run de9c614e914e4a559bb69a97e77f97fe
+PASS standard:enriched #1 — run e0aeffe4b38f4423a0f6d29f12b2c60e
+Pass rate uses all scheduled runs. Variants measure structured outcomes, not prose identity. Human prose review is separate; small samples do not establish reliability.
+Recorded in /app/outputs/observability.sqlite. Inspect with --report ex-a or --inspect-run RUN_ID.
+[exit 0]
+
+$ printf 'print("scratch")\n' > scratch.py
+[exit 0]
+
+$ python cli.py --act 2 --evaluate core --fixture --case standard --repeats 1 --label ex-b | tail -n 4
+PASS standard:basic #1 — run c16963a80acf478aa150a3f22287b5e7
+PASS standard:enriched #1 — run 6d97b9db6c70401cbf926d60e927ac54
+Pass rate uses all scheduled runs. Variants measure structured outcomes, not prose identity. Human prose review is separate; small samples do not establish reliability.
+Recorded in /app/outputs/observability.sqlite. Inspect with --report ex-b or --inspect-run RUN_ID.
+[exit 0]
+
+$ python cli.py --compare ex-a ex-b | python -c 'import json,sys; r=json.load(sys.stdin); print({k: r[k] for k in ("changed_configuration", "confounding_changes", "evaluator_changed")}); print(sorted({x["outcome"] for x in r["results"]})); print(r.get("interpretation"))'
+{'changed_configuration': ['source_hashes'], 'confounding_changes': ['source_hashes'], 'evaluator_changed': False}
+['unchanged']
+Matched repetitions are observations, not matched random seeds. Prompt/skill edits can be compared; code, data, model or settings changes are confounders. Inspect changed paths and coverage before attributing improvements.
+[exit 0]
+
+$ rm scratch.py && sed -i 's/"cents_per_100g": 690/"cents_per_100g": 700/' data/catalog.json && grep -c '"cents_per_100g": 700' data/catalog.json
+1
+[exit 0]
+
+$ python cli.py --act 2 --evaluate core --fixture --case standard --repeats 1 --label ex-c | tail -n 4
+PASS standard:basic #1 — run dab9d773ff514d99a0495ad6ce226960
+PASS standard:enriched #1 — run df3cda84d488452e83178e5b738bc59b
+Pass rate uses all scheduled runs. Variants measure structured outcomes, not prose identity. Human prose review is separate; small samples do not establish reliability.
+Recorded in /app/outputs/observability.sqlite. Inspect with --report ex-c or --inspect-run RUN_ID.
+[exit 0]
+
+$ python cli.py --compare ex-a ex-c | python -c 'import json,sys; r=json.load(sys.stdin); print({k: r[k] for k in ("changed_configuration", "confounding_changes", "evaluator_changed")}); print(sorted({x["outcome"] for x in r["results"]})); print(r.get("interpretation"))'
+{'changed_configuration': ['data'], 'confounding_changes': ['data'], 'evaluator_changed': False}
+['unchanged']
+Matched repetitions are observations, not matched random seeds. Prompt/skill edits can be compared; code, data, model or settings changes are confounders. Inspect changed paths and coverage before attributing improvements.
+[exit 0]
+
+$ python cli.py --compare ex-a
+usage: cli.py [-h] [--act {1,2,3,4,5,6}] [--preview-context] [--foundation]
+              [--compare [LABEL ...]] [--report LABEL] [--view-report LABEL]
+              [--inspect-run RUN_ID] [--list-runs] [--backup DESTINATION]
+              [--db DB] [--label LABEL] [--repeats REPEATS]
+              [--evaluate {core}] [--case CASE_IDS]
+              [--prompt-file PROMPT_FILE]
+              [--proposer-prompt-file PROPOSER_PROMPT_FILE]
+              [--skills-dir SKILLS_DIR] [--json-output JSON_OUTPUT]
+              [--html-output PATH] [--scenario SCENARIO]
+              [--context {basic,enriched,both}] [--model MODEL] [--show-json]
+              [--show-context] [--fixture]
+              [--manager-decision {approve,decline}]
+              [--email-decision {approve,decline}]
+              [--vendor-document {clean,malicious,benign,quoted}]
+              [--demo-compaction] [--simulate-detector-miss]
+              [--customer {pavlos,shivas}]
+              [--remember-preference REMEMBER_PREFERENCE]
+              [--memory-db MEMORY_DB]
+cli.py: error: Use --act 2 --compare, or --compare BEFORE AFTER alone for saved evaluations.
+[exit 2]
+

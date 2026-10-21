@@ -1,0 +1,5 @@
+$ python --version; python cli.py --list-runs 2>&1 | tail -n 1
+Python 3.13.16
+ModuleNotFoundError: No module named 'pydantic'
+[exit 0]
+
