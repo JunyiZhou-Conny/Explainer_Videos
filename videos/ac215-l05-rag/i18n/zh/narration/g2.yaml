@@ -313,12 +313,12 @@ S16:
   en_display:
   - null
   - "The outputs/ and docker-volumes/ folders are ignored, and stay on your disk."
-- en: "Nothing keeps running in Google Cloud; you paid only for what you sent. Keep the key beside the repo: inside it, git wouldn't ignore the key, and the image would copy it. Delete it when the course ends. Pause and tear down now, so port 8000 is free next time."
+- en: "Nothing keeps running in Google Cloud; you paid only for what you sent. Keep the key beside the repo: inside it, git wouldn't ignore the key, and the image would copy it. Delete it when the course ends. Pause, then tear down, so port 8000 is free next time."
   zh:
   - "Google Cloud 上没有任何东西一直在运行；你只为发送过的内容付了费。"
   - "把密钥放在 repo 旁边：放在里面的话，git 不会忽略它，image 也会把它复制进去。"
   - "课程结束后，把它删掉。"
-  - "现在就暂停，把它拆掉，这样下次 port 8000 就是空着的。"
+  - "先暂停，再把它拆掉，这样下次 port 8000 就是空着的。"
 - en: "One last lesson, from the staff's recorded run of next lecture's agent. It retrieved text about transhumance from an older Tolminc book, replaced that same day. The database answers from what was loaded: when the books change, rebuild the index."
   zh:
   - "最后一个教训，来自课程团队留下的下节课 agent 的运行记录。"

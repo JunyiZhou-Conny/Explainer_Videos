@@ -164,7 +164,7 @@ None of these is in cli.py. They're what you reach for when naive retrieval brin
 Time to tear down. Type exit, then docker compose down from the repo folder: the same harmless warnings, then Chroma and the network are gone.
 The images stay: 2.11 gigabytes for the CLI image, its Python base included, and 826 megabytes for Chroma.
 Now git status shows only your edit to docker-shell.sh. The outputs and docker volumes folders are ignored, and stay on your disk.
-Nothing keeps running in Google Cloud; you paid only for what you sent. Keep the key beside the repo: inside it, git wouldn't ignore the key, and the image would copy it. Delete it when the course ends. Pause and tear down now, so port 8000 is free next time.
+Nothing keeps running in Google Cloud; you paid only for what you sent. Keep the key beside the repo: inside it, git wouldn't ignore the key, and the image would copy it. Delete it when the course ends. Pause, then tear down, so port 8000 is free next time.
 One last lesson, from the staff's recorded run of next lecture's agent. It retrieved text about transhumance from an older Tolminc book, replaced that same day. The database answers from what was loaded: when the books change, rebuild the index.
 Next lecture runs this command with an agent. In the staff's run, the model chose which retrieval tool to call. The lecture's Self-RAG goes further: the model decides whether to retrieve at all, then checks what it found. Our chat opens the book for every question, and checks nothing.
 And the four questions? An embedding is a direction for meaning. A vector database stores records, with an index to search them. A query finds the question's nearest neighbors. The context is the chunks you paste into the prompt.

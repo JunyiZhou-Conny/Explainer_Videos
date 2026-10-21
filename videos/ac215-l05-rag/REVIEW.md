@@ -223,7 +223,7 @@ kept in separate sections.
      these five. None falls in the first 10 minutes: the longest gaps are 00:00–10:02 (S01 to the
      middle of S06) and 15:43–21:43.
    - **Follow-along pauses:** separately, 14 spoken "Pause …" lines tell the viewer to stop and run a
-     step, from "Pause and do both, in your course folder." (03:41.3) to "Pause and tear down now, so
+     step, from "Pause and do both, in your course folder." (03:41.3) to "Pause, then tear down, so
      port 8000 is free next time." (29:34.0). They are not ponders.
    - **Recap** ✔: S16 answers the four opening questions in speech, "An embedding is a direction for
      meaning…" (30:15.4–30:30.1), asks five test-yourself questions (30:30.4–30:56.2) and points to
@@ -1374,6 +1374,35 @@ loudness, true peak, subtitles and chapters (`recheck2/measured.json`
     the Vertex AI API, Vertex AI answering, and the course web tools (`/chunkviz`, `/chromaui`,
     `/chat`) are schematic drawings; the CORS check behind them is real. Lecture slides are redrawn
     in our pictures, never shown.
+
+## Post-review change (2026-10-21): S16 "Pause, then tear down"
+
+- **What:** the S16 sentence "Pause and tear down now, so port 8000 is free next time." became "Pause,
+  then tear down, so port 8000 is free next time." In that sentence the TTS said *tear* as in crying
+  (Kokoro's phonemes `tˈɪɹ dˌaʊn`); the new wording gives `tˈɛɹ dˈaʊn`. "Time to tear down." (S16,
+  28:50.7) was already right. Found by L06's S16 verifier, which fixed the same slip in L06; checked
+  with `KokoroBackend.phonemize`. Changed: `script.md`, `i18n/zh/narration/g2.yaml` (en; zh 「先暂停，
+  再把它拆掉，这样下次 port 8000 就是空着的。」), the anchor in `scenes/s16_recap.py`. No lexicon
+  change, so the release does not depend on a shared file.
+- **Re-render:** S16 only, at 1080p60, then a re-stitch (`--no-render --crf 27 --burn`).
+  `explainer.check` OK (S16 ends at 137.8 s, empty frame); `explainer.i18n check --lang zh` OK.
+- **Heard:** the final cut's audio at 29:33.5–29:41.5, cut out and transcribed by base.en and by
+  large-v3-turbo: both "Pause, then tear down, so port 8000 is free next time. One last lesson."
+  (`build/tearfix/clip.wav`). This is a machine check; no human listened.
+- **Seen:** frames at 29:34.05, 29:34.6, 29:35.2 and 29:37.0 (`build/tearfix/sheet.png`): the
+  "▶ your turn" tag fades in on the new words, the tear-down ticks run as before, nothing overlaps.
+- **Subtitles:** the one cue's text changed ("Pause, then tear down,"; 29:34.012–29:38.022) and the
+  S16 cues after it start 0.033 s earlier; cue counts unchanged (514 / 424 / 508); chapters
+  unchanged (S16 is the last scene).
+- **Measured** (ffprobe and one `ebur128=peak=true` pass per file; the tables above describe the
+  round-2 cut):
+
+  | File | Size | Duration | Video frames | Loudness | LRA | True peak |
+  |---|---|---|---|---|---|---|
+  | `ac215-l05-rag.mp4` | 107,800,272 B | 1867.296 s | 112,032 | −16.0 LUFS | 2.4 LU | −2.6 dBTP |
+  | `ac215-l05-rag.zh-en.mp4` | 106,700,945 B | 1867.296 s | 112,033 | −16.0 LUFS | 2.4 LU | −2.6 dBTP |
+  | `ac215-l05-rag_part1.mp4` | 62,141,137 B | 1089.988 s | 65,394 | −16.1 LUFS | 2.3 LU | −2.8 dBTP |
+  | `ac215-l05-rag_part2.mp4` | 45,665,626 B | 777.322 s | 46,638 | −16.1 LUFS | 2.4 LU | −2.6 dBTP |
 
 ## Not claimed
 

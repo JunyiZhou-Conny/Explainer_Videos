@@ -1288,7 +1288,7 @@ named: `exit` (in the container) · `docker compose down` (laptop, in ~/AC215/ll
 `docker image rm llm-rag-cli chromadb/chroma:latest` · "keep docker-volumes/ and outputs/: your
 index" · "course over: IAM › Service accounts › KEYS › delete"; a GOLD row "nothing to delete in
 Google Cloud". Hold 2 s.
-SAY: Nothing keeps running in Google Cloud; you paid only for what you sent. Keep the key beside the repo: inside it, git wouldn't ignore the key, and the image would copy it. Delete it when the course ends. Pause and tear down now, so port 8000 is free next time.
+SAY: Nothing keeps running in Google Cloud; you paid only for what you sent. Keep the key beside the repo: inside it, git wouldn't ignore the key, and the image would copy it. Delete it when the course ends. Pause, then tear down, so port 8000 is free next time.
 
 SHOW: The stale index. A PANEL of `expected/out-txt-agent-run.txt` line 74 cut after "economic life"
 (header `out.txt · line 73 (excerpt)`, tag `recorded · the staff's agent run, September 22, 2026`),

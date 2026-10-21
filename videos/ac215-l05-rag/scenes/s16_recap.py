@@ -882,7 +882,7 @@ class Recap(VoiceScene):
                       FadeTransform(gold, card.gold), run_time=0.45)
             self.play(card.rows[4].animate.set_color(TURN), Create(card.ticks[4]),
                       Indicate(key, color=COST, scale_factor=1.5), run_time=0.6)
-            vo.wait_until("Pause and tear down now")
+            vo.wait_until("Pause, then tear down")
             self.play(FadeIn(card.tag, scale=1.2), card.rows[4].animate.set_color(INK), run_time=0.4)
             self.play(LaggedStart(*[Create(card.ticks[k]) for k in range(4)], lag_ratio=0.35), run_time=1.2)
             vo.wait_until("so port 8000 is free")
