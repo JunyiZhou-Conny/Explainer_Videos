@@ -80,7 +80,8 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
    genuinely short), colours (series table), the 4–8 visual set pieces (V1…: the mechanisms that
    deserve animation — the concept before the command), the README step tracker steps, the scene
    plan (12–16 scenes, word budget each, which captures/source lines each shows), the ponder
-   questions (3–5, answerable at that point), the errata to state kindly with the fix, and the
+   questions (3–5, answerable at that point; Conny confirmed this density for the series on
+   2026-10-21, so REVIEW.md marks gate 3 met with that decision), the errata to state kindly with the fix, and the
    things never to do. The scene list (file, class, title) is fixed after the brief.
 4. **Script** (`script.md`): conventions header + `## Snn · Title — \`snn_x.py\` · \`Cls\`` sections of
    SHOW/SAY pairs, as in L1. Review with four independent lenses — technical accuracy (against
