@@ -1,0 +1,1146 @@
+1
+00:00:00,000 --> 00:00:02,285
+Here's a question for a cheese expert:
+
+2
+00:00:02,285 --> 00:00:06,315
+describe where cheese making is important
+in the instructor's book.
+
+3
+00:00:06,635 --> 00:00:10,992
+In the staff's recorded run,
+these two lines print before the answer:
+
+4
+00:00:10,992 --> 00:00:14,528
+a function called get_book_by_author,
+and its arguments.
+
+5
+00:00:15,200 --> 00:00:19,253
+Ten passages came back,
+all from one book, filtered by author.
+
+6
+00:00:19,573 --> 00:00:24,288
+But Gemini runs in Google's data center,
+where localhost means nothing.
+
+7
+00:00:24,608 --> 00:00:27,509
+So who searched your database,
+and who chose the book?
+
+8
+00:00:27,750 --> 00:00:30,026
+The lecture asks a bigger version:
+
+9
+00:00:30,026 --> 00:00:34,577
+plan five days in Paris,
+and replan if it rains or a flight is late.
+
+10
+00:00:34,897 --> 00:00:36,489
+A model can draft a plan,
+
+11
+00:00:36,489 --> 00:00:39,355
+and RAG can fetch facts,
+but neither can act.
+
+12
+00:00:40,000 --> 00:00:43,027
+What's missing:
+live systems, tools that act,
+
+13
+00:00:43,027 --> 00:00:44,843
+and the autonomy to decide.
+
+14
+00:00:45,083 --> 00:00:47,643
+Today we climb toward that in three steps.
+
+15
+00:00:47,963 --> 00:00:51,354
+By hand, with llm-rag's agent;
+with a framework,
+
+16
+00:00:51,354 --> 00:00:56,369
+Google's Agent Development Kit;
+and with a harness, in Colab notebooks.
+
+17
+00:00:57,417 --> 00:00:59,821
+The tracker, top left, shows the step;
+
+18
+00:00:59,821 --> 00:01:02,985
+the gray tag,
+top right, names the lecture slides.
+
+19
+00:01:03,305 --> 00:01:06,654
+Pause at each yellow your-turn tag,
+and run the command.
+
+20
+00:01:14,400 --> 00:01:18,055
+You'll need the database
+and key from lecture 5,
+
+21
+00:01:18,055 --> 00:01:20,796
+Docker, uv, Node, and two more keys:
+
+22
+00:01:20,796 --> 00:01:25,365
+one from Google AI Studio,
+one from OpenAI, with billing on.
+
+23
+00:01:26,600 --> 00:01:31,037
+We recorded on October 18, 2026,
+without keys.
+
+24
+00:01:31,357 --> 00:01:37,501
+Docker, Chroma, uv, the ADK web server
+and two MCP servers ran for real;
+
+25
+00:01:37,501 --> 00:01:41,597
+every model call stopped unsent,
+or was refused.
+
+26
+00:01:41,917 --> 00:01:44,563
+Model answers are the staff's saved outputs.
+
+27
+00:01:44,800 --> 00:01:48,448
+On screen we hide the instructor's name;
+your terminal shows it.
+
+28
+00:01:48,768 --> 00:01:53,056
+Every command is in the study guide,
+in the MLOps_Learning repo.
+
+29
+00:01:55,100 --> 00:01:57,361
+First the ideas, in the Cheese Quiz.
+
+30
+00:01:57,681 --> 00:01:59,205
+Save a copy in Drive,
+
+31
+00:01:59,205 --> 00:02:02,542
+then add your OpenAI key
+in the Secrets panel,
+
+32
+00:02:02,542 --> 00:02:05,831
+under the name shown,
+with notebook access on.
+
+33
+00:02:06,067 --> 00:02:09,579
+The install cell installs two packages,
+unpinned,
+
+34
+00:02:09,579 --> 00:02:11,084
+and hides all output:
+
+35
+00:02:11,084 --> 00:02:14,899
+if imports fail later,
+rerun it without that redirect.
+
+36
+00:02:15,219 --> 00:02:18,568
+Then download the quiz files,
+and pause to run the setup.
+
+37
+00:02:20,817 --> 00:02:23,647
+Now the notebook
+asks one question three ways,
+
+38
+00:02:23,647 --> 00:02:25,492
+with the same model each time:
+
+39
+00:02:25,492 --> 00:02:28,710
+what's the best cheese
+for a grilled cheese sandwich?
+
+40
+00:02:29,030 --> 00:02:35,686
+Lane 1, the base LLM: one call to gpt-4o,
+one answer, in under 3 seconds.
+
+41
+00:02:35,933 --> 00:02:40,498
+Lane 2, the reasoning LLM:
+Python methods run in a fixed order.
+
+42
+00:02:40,818 --> 00:02:46,280
+Analyze, split into 4 sub-questions,
+answer and verify each, then combine.
+
+43
+00:02:46,600 --> 00:02:51,763
+That's 11 calls and 39 seconds,
+and its token total is only an estimate.
+
+44
+00:02:52,000 --> 00:02:56,267
+The lecture calls a multi-call system
+like this a reasoning engine.
+
+45
+00:02:56,587 --> 00:02:58,586
+Here your Python orders the calls,
+
+46
+00:02:58,586 --> 00:03:01,643
+so it's a reasoning workflow,
+not a reasoning model.
+
+47
+00:03:02,883 --> 00:03:05,485
+Lane 3, the agent: the same model,
+
+48
+00:03:05,485 --> 00:03:09,923
+plus instructions
+and a web search tool that OpenAI hosts.
+
+49
+00:03:10,243 --> 00:03:15,320
+Its answer reports two searches,
+and it stopped on its own after 13 seconds.
+
+50
+00:03:15,640 --> 00:03:20,761
+It also reports one tool used,
+but that counts tools configured, not calls.
+
+51
+00:03:21,000 --> 00:03:25,989
+The lecture defines an agent
+as an LLM, given instructions and tools,
+
+52
+00:03:25,989 --> 00:03:29,171
+that runs on its own until the task is done.
+
+53
+00:03:29,491 --> 00:03:32,471
+Of its five blocks,
+one decides the next step:
+
+54
+00:03:32,471 --> 00:03:34,803
+dynamic control, the steering wheel.
+
+55
+00:03:35,050 --> 00:03:39,935
+So an agent isn't a smarter model:
+the model was the same in all three lanes.
+
+56
+00:03:40,255 --> 00:03:42,687
+What changed is who steers, and the tools.
+
+57
+00:03:43,007 --> 00:03:46,271
+Every call is paid;
+pause, and run the three lanes.
+
+58
+00:03:49,317 --> 00:03:52,112
+Next section: managing the model's inputs.
+
+59
+00:03:52,432 --> 00:03:54,522
+LLMs are stateless functions.
+
+60
+00:03:54,842 --> 00:03:59,088
+Every call is a fresh envelope,
+and the model knows only what's inside.
+
+61
+00:03:59,334 --> 00:04:02,204
+The notebook keeps
+the model and question fixed,
+
+62
+00:04:02,204 --> 00:04:04,177
+and changes the inputs each step.
+
+63
+00:04:04,497 --> 00:04:08,006
+A system prompt,
+retrieved documents, earlier turns,
+
+64
+00:04:08,006 --> 00:04:12,326
+a profile from past sessions,
+a tool's output, an output schema.
+
+65
+00:04:12,567 --> 00:04:14,314
+Watch the top pick change:
+
+66
+00:04:14,314 --> 00:04:18,348
+cheddar, American,
+then mild cheeses for kids, then Havarti.
+
+67
+00:04:18,668 --> 00:04:23,788
+Then a mild cheddar from Whole Foods,
+and finally the same pick as strict JSON.
+
+68
+00:04:24,034 --> 00:04:26,295
+Step 4 shows what memory really is.
+
+69
+00:04:26,615 --> 00:04:30,989
+The earlier turns aren't remembered:
+the code sends them again, every time.
+
+70
+00:04:31,309 --> 00:04:34,018
+Memory is paper you put back
+in the envelope.
+
+71
+00:04:34,267 --> 00:04:37,765
+The lecture groups these sheets
+into two building blocks:
+
+72
+00:04:37,765 --> 00:04:39,238
+instructions and memory.
+
+73
+00:04:39,558 --> 00:04:42,928
+Next lecture names the craft:
+context engineering.
+
+74
+00:04:43,167 --> 00:04:45,535
+Now look closely at the code of step 2.
+
+75
+00:04:45,855 --> 00:04:47,242
+Can you spot the slip?
+
+76
+00:04:51,484 --> 00:04:54,051
+The system prompt goes
+in with the role user,
+
+77
+00:04:54,051 --> 00:04:56,220
+and the question with the role system.
+
+78
+00:04:56,467 --> 00:05:00,755
+Swap those two roles before comparing;
+from step 3 on, they're right.
+
+79
+00:05:01,075 --> 00:05:03,059
+Pause, and run the seven steps.
+
+80
+00:05:05,300 --> 00:05:06,525
+And notice step 6:
+
+81
+00:05:06,525 --> 00:05:09,929
+the code pasted a tool's output
+into the envelope.
+
+82
+00:05:10,249 --> 00:05:12,212
+But how does a model ask for a tool?
+
+83
+00:05:13,850 --> 00:05:19,226
+In lecture 5, RAG was a straight line:
+question, retrieval, model, response.
+
+84
+00:05:19,546 --> 00:05:23,750
+The lecture's recap makes retrieval smarter:
+steps around the search,
+
+85
+00:05:23,750 --> 00:05:27,589
+whether to retrieve at all,
+grading, rewriting, and web search.
+
+86
+00:05:27,833 --> 00:05:30,811
+Agentic RAG puts a model
+in front of that menu,
+
+87
+00:05:30,811 --> 00:05:32,015
+and lets it choose.
+
+88
+00:05:32,250 --> 00:05:37,029
+llm-rag's Agents section
+is Agentic RAG with a menu of two.
+
+89
+00:05:37,349 --> 00:05:40,997
+Its README says:
+let the LLM decide how to retrieve.
+
+90
+00:05:41,317 --> 00:05:44,005
+Search one author's book,
+or search all books.
+
+91
+00:05:44,250 --> 00:05:47,125
+Here's the first menu item, written by hand:
+
+92
+00:05:47,125 --> 00:05:50,981
+a name, which the model will write back,
+and a description;
+
+93
+00:05:50,981 --> 00:05:55,621
+with the parameter descriptions,
+the only documentation the model sees.
+
+94
+00:05:55,941 --> 00:05:58,245
+Parameters come as a JSON schema.
+
+95
+00:05:58,483 --> 00:06:01,363
+The author must be one of 9 names
+in an enum.
+
+96
+00:06:01,683 --> 00:06:05,075
+The search text's description
+even coaches the model:
+
+97
+00:06:05,075 --> 00:06:07,891
+expand the search term to a sentence or two.
+
+98
+00:06:08,211 --> 00:06:09,918
+And both fields are required.
+
+99
+00:06:10,167 --> 00:06:11,660
+Now the real function.
+
+100
+00:06:11,980 --> 00:06:15,580
+Two more arguments,
+the collection and an embedding function,
+
+101
+00:06:15,580 --> 00:06:18,295
+aren't in the schema:
+your code supplies them.
+
+102
+00:06:18,615 --> 00:06:21,857
+The model controls only the author
+and the search text.
+
+103
+00:06:24,200 --> 00:06:28,042
+The lecture says
+a tool-using agent must pick the right tool,
+
+104
+00:06:28,042 --> 00:06:30,877
+format its inputs,
+and interpret its outputs.
+
+105
+00:06:31,197 --> 00:06:34,405
+Here the model picks
+and formats only by writing;
+
+106
+00:06:34,405 --> 00:06:35,976
+your code runs the tool.
+
+107
+00:06:36,217 --> 00:06:40,803
+Here are the 11 books in the collection,
+beside the 9 names in the enum.
+
+108
+00:06:50,650 --> 00:06:51,650
+Two books.
+
+109
+00:06:51,909 --> 00:06:57,861
+The cottage cheese recipe book, 178 chunks,
+has an author who isn't on the list.
+
+110
+00:06:58,181 --> 00:07:03,759
+The Woman's Institute book,
+1,505 chunks, has no author at all:
+
+111
+00:07:03,759 --> 00:07:06,415
+a file name slip in lecture 5.
+
+112
+00:07:06,650 --> 00:07:09,807
+Both stay reachable
+by the search across all books.
+
+113
+00:07:10,127 --> 00:07:12,805
+Now the stage: Gemini in Google's cloud,
+
+114
+00:07:12,805 --> 00:07:16,421
+two containers on your laptop,
+and a boundary between.
+
+115
+00:07:16,667 --> 00:07:19,718
+The model never gets your database,
+only a menu.
+
+116
+00:07:20,038 --> 00:07:23,643
+Call 1 returns an order:
+a function name and arguments.
+
+117
+00:07:23,963 --> 00:07:27,163
+Your code runs it;
+call 2 sends back the result.
+
+118
+00:07:32,750 --> 00:07:36,334
+Lecture 5 ended on one command;
+today we run it.
+
+119
+00:07:36,654 --> 00:07:37,806
+Starting fresh?
+
+120
+00:07:38,126 --> 00:07:41,378
+Clone llm-rag,
+and put the service account key
+
+121
+00:07:41,378 --> 00:07:43,500
+in a secrets folder beside it;
+
+122
+00:07:43,500 --> 00:07:45,550
+otherwise, go to your folder.
+
+123
+00:07:45,783 --> 00:07:48,130
+Step 1: cd llm-rag.
+
+124
+00:07:48,450 --> 00:07:54,548
+Step 2: edit docker-shell.sh,
+and set GCP_PROJECT to your own project ID;
+
+125
+00:07:54,548 --> 00:07:56,386
+we used a placeholder.
+
+126
+00:07:56,706 --> 00:07:58,029
+Pause, and do both.
+
+127
+00:08:00,267 --> 00:08:03,062
+Step 3: sh docker-shell.sh.
+
+128
+00:08:03,382 --> 00:08:05,152
+Compose starts Chroma first.
+
+129
+00:08:05,472 --> 00:08:08,408
+The pull message
+after it looks like an error
+
+130
+00:08:08,408 --> 00:08:09,452
+but is harmless:
+
+131
+00:08:09,452 --> 00:08:12,725
+there's no such image online,
+so Compose builds it.
+
+132
+00:08:13,033 --> 00:08:16,190
+After about 40 seconds of building,
+the banner prints.
+
+133
+00:08:16,510 --> 00:08:23,081
+Python 3.12.15 and uv 0.13.1,
+at the time of recording.
+
+134
+00:08:23,401 --> 00:08:27,310
+After the at sign comes the container's ID,
+new every run;
+
+135
+00:08:27,310 --> 00:08:29,332
+pause, and get to this prompt.
+
+136
+00:08:31,567 --> 00:08:35,023
+An extra check from a second terminal:
+docker ps.
+
+137
+00:08:35,343 --> 00:08:39,673
+Chroma publishes port 8000;
+remember that port for part 2.
+
+138
+00:08:40,600 --> 00:08:43,529
+Now the Agents section, step 1:
+
+139
+00:08:43,529 --> 00:08:47,875
+python cli.py --agent
+--chunk_type char-split.
+
+140
+00:08:48,195 --> 00:08:52,120
+On a fresh clone it fails at once:
+the collection does not exist.
+
+141
+00:08:52,440 --> 00:08:56,301
+That's line 429, before any call to Gemini.
+
+142
+00:08:56,550 --> 00:08:59,387
+The agent needs the index from lecture 5.
+
+143
+00:08:59,707 --> 00:09:01,094
+Kept that database?
+
+144
+00:09:01,414 --> 00:09:03,687
+It's in the docker-volumes/ folder;
+
+145
+00:09:03,687 --> 00:09:07,323
+if you chunked before September 22,
+pull and rebuild it.
+
+146
+00:09:07,643 --> 00:09:10,182
+Otherwise, chunk, embed and load again.
+
+147
+00:09:10,417 --> 00:09:15,025
+We had no key, so the staff's committed
+embeddings stood in for the embed step.
+
+148
+00:09:15,267 --> 00:09:16,971
+Then the load step:
+
+149
+00:09:16,971 --> 00:09:21,006
+python cli.py --load
+--chunk_type char-split.
+
+150
+00:09:21,326 --> 00:09:27,982
+11 books, 8,248 chunks;
+the instructor's story is just 24 of them.
+
+151
+00:09:28,302 --> 00:09:31,821
+An extra --get command
+confirms the collection answers;
+
+152
+00:09:31,821 --> 00:09:33,229
+pause, and load yours.
+
+153
+00:09:36,650 --> 00:09:41,107
+After the collection lookup,
+the agent function builds the user's turn:
+
+154
+00:09:41,107 --> 00:09:43,178
+the question, with the role user.
+
+155
+00:09:43,498 --> 00:09:45,781
+Then comes the first call to Gemini.
+
+156
+00:09:46,017 --> 00:09:49,384
+Three settings:
+temperature zero, the menu as tools,
+
+157
+00:09:49,384 --> 00:09:51,585
+and a tool_config with mode="any".
+
+158
+00:09:51,905 --> 00:09:54,785
+The lecture lists temperature
+as a design choice.
+
+159
+00:09:55,105 --> 00:09:57,750
+Zero keeps the tool
+choice nearly repeatable.
+
+160
+00:09:57,983 --> 00:10:02,356
+An extra one-liner shows
+what mode="any" becomes: the enum value ANY.
+
+161
+00:10:02,676 --> 00:10:04,959
+The model must answer with a function call.
+
+162
+00:10:05,200 --> 00:10:09,199
+In the lecture, a good agent
+may decide not to search at all;
+
+163
+00:10:09,199 --> 00:10:11,493
+Self-RAG starts with that decision.
+
+164
+00:10:11,813 --> 00:10:15,291
+Ours can't: on call 1,
+mode="any" forces a tool call.
+
+165
+00:10:15,611 --> 00:10:17,723
+It chooses which search, never whether.
+
+166
+00:10:17,967 --> 00:10:20,143
+What does Gemini actually receive?
+
+167
+00:10:20,463 --> 00:10:22,619
+An extra script runs the same code,
+
+168
+00:10:22,619 --> 00:10:25,391
+but prints the request instead
+of sending it.
+
+169
+00:10:25,711 --> 00:10:29,453
+One envelope: the question,
+both declarations with the enum;
+
+170
+00:10:29,453 --> 00:10:31,449
+"mode": "ANY", temperature zero.
+
+171
+00:10:31,683 --> 00:10:38,510
+And no system instruction: as in lecture 5,
+cli.py defines one and never sends it.
+
+172
+00:10:38,750 --> 00:10:41,459
+Now step 1 again,
+with the collection loaded.
+
+173
+00:10:41,779 --> 00:10:47,134
+The lookup passes and the question prints,
+but the first model call needs your key:
+
+174
+00:10:47,134 --> 00:10:49,715
+DefaultCredentialsError, file not found.
+
+175
+00:10:49,950 --> 00:10:51,422
+Here's what the staff saw.
+
+176
+00:10:51,742 --> 00:10:54,596
+The model's whole answer is a function call:
+
+177
+00:10:54,596 --> 00:10:57,839
+get_book_by_author,
+with the instructor as author,
+
+178
+00:10:57,839 --> 00:11:01,406
+and the search text,
+cheese making importance location.
+
+179
+00:11:01,650 --> 00:11:05,042
+Four words, though the description
+asked for a sentence or two.
+
+180
+00:11:05,362 --> 00:11:09,159
+There's also an ID, and a thought signature;
+we'll meet it again.
+
+181
+00:11:09,400 --> 00:11:12,899
+The SDK ran nothing;
+it only has declarations.
+
+182
+00:11:13,219 --> 00:11:15,032
+So far, one paid call.
+
+183
+00:11:15,352 --> 00:11:17,827
+Pause here, and run step 1 with your key.
+
+184
+00:11:21,667 --> 00:11:25,418
+Back in your Python,
+a dispatcher matches each call's name,
+
+185
+00:11:25,418 --> 00:11:28,597
+runs the real function
+with the model's arguments,
+
+186
+00:11:28,597 --> 00:11:31,395
+and wraps the result as a function response.
+
+187
+00:11:31,634 --> 00:11:35,431
+Without a key, an extra script
+feeds the staff's recorded call
+
+188
+00:11:35,431 --> 00:11:39,228
+through the tutorial's own dispatcher,
+against our collection.
+
+189
+00:11:39,467 --> 00:11:43,351
+One stand-in: without Google
+we can't embed the search text,
+
+190
+00:11:43,351 --> 00:11:45,746
+so a stored chunk's vector stands in,
+
+191
+00:11:45,746 --> 00:11:48,918
+and the 10 chunks may differ
+from a real query's.
+
+192
+00:11:49,167 --> 00:11:53,263
+Out come 10 passages from today's story,
+about Mara and Anja.
+
+193
+00:11:53,583 --> 00:12:00,388
+Joined into one string of 3,509 characters,
+they're stapled to the call as its response.
+
+194
+00:12:00,634 --> 00:12:04,837
+Call 2 sends three things:
+the question, the model's own turn,
+
+195
+00:12:04,837 --> 00:12:07,482
+unchanged, and your function responses.
+
+196
+00:12:07,802 --> 00:12:10,745
+The tools go along again,
+but no tool_config:
+
+197
+00:12:10,745 --> 00:12:12,708
+the mode is back to automatic.
+
+198
+00:12:12,950 --> 00:12:16,506
+Inside, the model's turn
+carries its thought signature:
+
+199
+00:12:16,506 --> 00:12:21,355
+Gemini's thinking models sign their turn,
+and want it back exactly as sent.
+
+200
+00:12:21,675 --> 00:12:24,406
+Resending the turn unchanged keeps the seal.
+
+201
+00:12:24,650 --> 00:12:25,887
+The staff's answer?
+
+202
+00:12:26,207 --> 00:12:29,248
+An Alpine valley,
+its caves, and transhumance,
+
+203
+00:12:29,248 --> 00:12:31,562
+the seasonal movement of livestock.
+
+204
+00:12:31,882 --> 00:12:37,493
+The two calls used 247 and 1,269 tokens.
+
+205
+00:12:37,734 --> 00:12:39,590
+So, who searched your database?
+
+206
+00:12:39,910 --> 00:12:44,795
+Gemini wrote the call and chose the book;
+your Python ran it, on your laptop.
+
+207
+00:12:45,115 --> 00:12:46,481
+That's two model calls
+
+208
+00:12:46,481 --> 00:12:49,339
+and one embedding call per question,
+all paid.
+
+209
+00:12:49,584 --> 00:12:54,551
+But today's book never says transhumance,
+nor three other words from this run:
+
+210
+00:12:54,551 --> 00:12:58,117
+the commit that added this output
+also rewrote the book.
+
+211
+00:12:58,437 --> 00:13:01,061
+The staff's index
+was built from the old text.
+
+212
+00:13:01,300 --> 00:13:04,884
+Your run on today's book draws
+on passages like these:
+
+213
+00:13:04,884 --> 00:13:06,676
+Mara, the curd, the wheels.
+
+214
+00:13:06,996 --> 00:13:09,215
+An index answers from what was loaded.
+
+215
+00:13:09,450 --> 00:13:13,488
+One small slip:
+the README promises the response,
+
+216
+00:13:13,488 --> 00:13:17,279
+but line 478 prints
+the whole response object.
+
+217
+00:13:17,599 --> 00:13:20,245
+Print response.text for just the answer.
+
+218
+00:13:20,484 --> 00:13:24,031
+Step 2 links to the course's hosted
+Cheese Agent Tool,
+
+219
+00:13:24,031 --> 00:13:27,054
+up at the time of recording;
+try it in Chrome.
+
+220
+00:13:29,400 --> 00:13:32,472
+The lecture's agent runs
+until the task is done.
+
+221
+00:13:32,792 --> 00:13:37,443
+llm-rag's agent ran one lap:
+a forced tool call, then an answer.
+
+222
+00:13:37,763 --> 00:13:39,612
+The README calls it an agent;
+
+223
+00:13:39,612 --> 00:13:43,437
+by the lecture's definition,
+it's the smallest piece of one.
+
+224
+00:13:43,683 --> 00:13:45,902
+Here's a question about that one lap.
+
+225
+00:13:54,750 --> 00:13:58,295
+It prints a response
+whose only part is a function call,
+
+226
+00:13:58,295 --> 00:14:00,510
+with no text, and the program ends.
+
+227
+00:14:00,830 --> 00:14:04,414
+Nothing runs that call;
+a loop would run it, and ask again.
+
+228
+00:14:04,650 --> 00:14:07,106
+The lecture draws the agent as a hub:
+
+229
+00:14:07,106 --> 00:14:10,690
+the core and its instructions
+become a decision maker,
+
+230
+00:14:10,690 --> 00:14:13,610
+with spokes to a planner, tools, and memory.
+
+231
+00:14:13,930 --> 00:14:16,362
+Unroll the spoke to the tools into a loop.
+
+232
+00:14:16,600 --> 00:14:17,837
+What ends the loop?
+
+233
+00:14:18,157 --> 00:14:22,893
+The stop rule: a reply
+with no function call is the final response.
+
+234
+00:14:23,213 --> 00:14:26,733
+The model decides it's done
+by answering in plain text.
+
+235
+00:14:26,983 --> 00:14:31,592
+In code you see the loop from outside:
+the ADK Runner streams events,
+
+236
+00:14:31,592 --> 00:14:36,669
+this wrapper keeps the final response,
+and the loop runs inside the library.
+
+237
+00:14:36,917 --> 00:14:39,764
+You also cap it, in case it never stops:
+
+238
+00:14:39,764 --> 00:14:44,533
+12 turns in the Cheese Quiz Guild,
+16 iterations in the newsletter.
+
+239
+00:14:44,853 --> 00:14:48,522
+Hitting the Agents SDK cap
+ends the run with an error.
+
+240
+00:14:48,767 --> 00:14:52,074
+The lecture's building blocks
+gray out dynamic control.
+
+241
+00:14:52,394 --> 00:14:55,977
+You configure the model,
+instructions, tools and memory;
+
+242
+00:14:55,977 --> 00:14:59,113
+the loop is the block
+a framework writes for you.
+
+243
+00:14:59,350 --> 00:15:01,227
+Before part 2, tear down.
+
+244
+00:15:01,547 --> 00:15:07,350
+Type exit; an extra docker ps
+then shows Chroma still up, on port 8000.
+
+245
+00:15:07,670 --> 00:15:11,553
+Then docker compose down:
+two harmless warnings, and it stops.
+
+246
+00:15:11,867 --> 00:15:16,368
+Your index stays on disk,
+and part 2 also needs port 8000.
+
+247
+00:15:16,688 --> 00:15:18,011
+Pause and tear down.
+
+248
+00:15:18,331 --> 00:15:21,253
+In part 2,
+a framework runs this loop for us.
+

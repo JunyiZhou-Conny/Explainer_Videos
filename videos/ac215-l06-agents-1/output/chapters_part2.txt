@@ -1,8 +1,8 @@
 00:00 ADK: clone, configure, and a sync that fails
-02:54 adk web and the folder names
-04:55 Runner, session, state: the shared whiteboard
-06:43 Tools you didn't write: MCP
-09:04 Many agents: who plans the order?
-10:47 The harness: only a human says yes
-12:44 The harness: success is a receipt
-14:05 Tear down, recap, and what's next
+02:55 adk web and the folder names
+04:58 Runner, session, state: the shared whiteboard
+06:46 Tools you didn't write: MCP
+09:07 Many agents: who plans the order?
+10:50 The harness: only a human says yes
+12:47 The harness: success is a receipt
+14:09 Tear down, recap, and what's next
