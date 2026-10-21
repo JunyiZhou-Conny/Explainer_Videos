@@ -223,7 +223,7 @@ kept in separate sections.
      these five. None falls in the first 10 minutes: the longest gaps are 00:00–10:02 (S01 to the
      middle of S06) and 15:43–21:43.
    - **Follow-along pauses:** separately, 14 spoken "Pause …" lines tell the viewer to stop and run a
-     step, from "Pause and do both, in your course folder." (03:41.3) to "Pause and tear down now, so
+     step, from "Pause and do both, in your course folder." (03:41.3) to "Pause, then tear down, so
      port 8000 is free next time." (29:34.0). They are not ponders.
    - **Recap** ✔: S16 answers the four opening questions in speech, "An embedding is a direction for
      meaning…" (30:15.4–30:30.1), asks five test-yourself questions (30:30.4–30:56.2) and points to
