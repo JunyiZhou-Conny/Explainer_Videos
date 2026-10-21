@@ -77,7 +77,6 @@ from manim import (
     PI,
     RIGHT,
     UP,
-    AnimationGroup,
     Arrow,
     Create,
     DashedLine,
@@ -98,7 +97,7 @@ from manim import (
 
 from common import *  # noqa: F401,F403
 from explainer import style as S
-from explainer.devops import label, mono, substring, tag
+from explainer.devops import label, substring, tag
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S04"]

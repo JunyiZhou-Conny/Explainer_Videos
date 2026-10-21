@@ -46,10 +46,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l06-agents-1.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l06-agents-1.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 31:12 (1872.1 s), 110 MB. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l06-agents-1.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l06-agents-1_part1.mp4` | part 1, DURATION_P1: what an agent is, and function calling by hand with llm-rag (S01–S08). Not in Git: rebuilt with `--no-render` |
-| `output/ac215-l06-agents-1_part2.mp4` | part 2, DURATION_P2: frameworks own the loop — ADK, MCP, many agents and the harness (S09–S16). Not in Git: rebuilt with `--no-render` |
+| `output/ac215-l06-agents-1_part1.mp4` | part 1, 15:24 (924.3 s): what an agent is, and function calling by hand with llm-rag (S01–S08). Not in Git: rebuilt with `--no-render` |
+| `output/ac215-l06-agents-1_part2.mp4` | part 2, 15:47 (947.8 s): frameworks own the loop — ADK, MCP, many agents and the harness (S09–S16). Not in Git: rebuilt with `--no-render` |
 | `output/ac215-l06-agents-1.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l06-agents-1.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l06-agents-1.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -68,7 +68,39 @@ Git keeps the subtitles, the chapter files and the transcript; the MP4s are rele
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts).
+
+```
+00:00 Who searched your database?
+01:55 Who holds the steering wheel?
+03:49 Everything the model knows is in the envelope
+05:13 A menu of two tools
+07:32 Back in the container: the agent needs an index
+09:36 Call 1: the model writes the call
+11:21 Call 2: your code ran it, the model answers
+13:29 From two calls to a loop
+15:24 ADK: clone, configure, and a sync that fails
+18:19 adk web and the folder names
+20:22 Runner, session, state: the shared whiteboard
+22:11 Tools you didn't write: MCP
+24:31 Many agents: who plans the order?
+26:15 The harness: only a human says yes
+28:12 The harness: success is a receipt
+29:33 Tear down, recap, and what's next
+```
+
+Part 1 uses the first eight lines as they are. Part 2 starts its clock at 0:00:
+
+```
+00:00 ADK: clone, configure, and a sync that fails
+02:55 adk web and the folder names
+04:58 Runner, session, state: the shared whiteboard
+06:46 Tools you didn't write: MCP
+09:07 Many agents: who plans the order?
+10:50 The harness: only a human says yes
+12:47 The harness: success is a receipt
+14:09 Tear down, recap, and what's next
+```
 
 ## What you'll learn
 
