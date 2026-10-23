@@ -501,7 +501,7 @@ bounces off a GREY bouncer at the browser's door (V3 teaser). A GREY card, slide
 made precise: "no outside labeling company sees your data · the photos stay in your bucket · your
 browser fetches them straight from Google". Cliff-hanger: a task grid with broken thumbnails
 (`illustration`) beside a README card (`README.md · line 151`). Fade out.
-SAY: With a signed ticket. For each photo, Label Studio signs a web address with the key: permission for one object, for a short time. Your browser carries that ticket straight to Google, and the key stays in the container. So private means no outside labeling company sees your data. Then the thumbnails break, and the README warns you: it is CORS.
+SAY: With a signed ticket. For each photo, Label Studio signs a web address with the key: permission for one photo, for a short time. Your browser carries that ticket straight to Google, and the key stays in the container. So private means no outside labeling company sees your data. Then the thumbnails break, and the README warns you: it is CORS.
 
 ---
 
