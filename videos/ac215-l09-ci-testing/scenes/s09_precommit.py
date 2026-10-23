@@ -371,7 +371,8 @@ class PreCommitGate(VoiceScene):
                       run_time=1.1)
 
         # ========================================================== 2. the config: nine hooks
-        small = Turnstile(9, None, arch_w=0.6, arch_h=1.0, gap=0.18)        # shorter: room for 10 lines
+        small = Turnstile(9, None, arch_w=0.66, arch_h=1.0, gap=0.26)       # shorter: room for 10 lines;
+        # the gate's 0.92 pitch, so "large files" and "merge markers" read as two names
         names = small.name_labels(CHEESE_HOOKS)
         sg = VGroup(small, names)
         sg.move_to([0, 0, 0])
@@ -586,9 +587,9 @@ class PreCommitGate(VoiceScene):
             s_ln = typ(self, t, staged.cmd, type_time=0.6)
             s_row, s_tag = tag_on(self, s_ln, turn_row, anim=track(tr, 5))
             vo.wait_until("checks only staged files")
-            out(self, t, fit(staged.at((2, 10))), run_time=1.0)
+            self.play(gate.turnstile.mark_all(["skip"] * 9, run_time=0.8), run_time=0.8)
             vo.wait_until("everything skips")
-            self.play(gate.turnstile.mark_all(["skip"] * 9, run_time=0.9), run_time=0.9)
+            out(self, t, fit(staged.at((2, 10))), run_time=0.8)
 
         # ========================================================== 7. the refusal (D5 · extra), end of part 1
         mac = mac_chip()
