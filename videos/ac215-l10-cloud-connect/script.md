@@ -329,7 +329,7 @@ line 10's value shown above it, `"/secrets/llm-service-account.json"`. The label
 `GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account.json` slides along the tube and snaps
 onto the file, where a small GREY "Google library" chip inside the silhouette reads it. Two
 captions: "host path" (GREY, under the tree) and "container path" (TEAL, under the silhouette).
-SAY: Then a dash v flag mounts that host folder at slash secrets, inside the container. The secrets directory is a path on your laptop. The Google application credentials variable, which tells Google's library where the key file is, points to slash secrets, a path inside the container. Two filesystems, one folder, and that variable only makes sense after the mount.
+SAY: Then a dash v flag mounts that host folder at slash secrets, inside the container. The secrets directory is a path on your laptop. The Google application credentials variable, which tells Google's library where the key is, points to slash secrets, a path inside the container. Two filesystems, one folder, and that variable only makes sense after the mount.
 
 SHOW: CODE(cheese-app-v0/llm-rag/docker-compose.yml: 10–12), line 11 `- ../../secrets:/secrets`
 highlighted; the same tube redraws from `llm-rag/`, two hops to the same `secrets/`. A GREY note:
@@ -349,12 +349,12 @@ SAY: Make the folder beside your clone, as an extra, then move the download in a
 
 SHOW: CODE(cheese-app-v0/.gitignore: 1–7); lines 6–7 highlight GREY; a RED dashed slot below
 line 7 where no `secrets/` rule exists, caption "no rule for secrets/".
-SAY: Now a quiet trap. The repo's gitignore lists the Docker volumes and the outputs. It has no rule for secrets. Nothing protects a key you put inside the repo.
+SAY: Now a quiet trap. The repo's gitignore lists the Docker volumes and the outputs. It has no rule for secrets. Nothing protects a key inside the repo.
 
 SHOW: The tree with a misplaced key: `cheese-app-v0/secrets/llm-service-account.json` (RED
 outline); `AC215/secrets/` beside the repo is absent.
 PONDER(8 s, "You save the key inside the repo,\ncheese-app-v0/secrets/llm-service-account.json,\nthen run sh docker-shell.sh from api-service/.\nWhat is in /secrets, and what happens\non the first embedding call?")
-SAY: Something to ponder. Suppose you save the key inside the repo instead, in cheese-app-v0 slash secrets, and run the API script from api-service. What does the container find in slash secrets, and what happens on the first embedding call?
+SAY: Something to ponder. Suppose you save the key inside the repo, in cheese-app-v0 slash secrets, and run the API script from api-service. What does the container find in slash secrets, and what happens on the first embedding call?
 
 SHOW: V3 replay: the cursor still climbs two levels to `AC215/`, finds no `secrets/`; an empty
 GREEN-outlined folder pops into existence there with a chip "created by Docker, empty"; the tube
@@ -387,7 +387,7 @@ CODE(cheese-app-v0/llm-rag/docker-shell.sh: 6–12), line 7 `export GCP_PROJECT=
 RED. A strip types the edit, shown small with the GREY tag "our editor; use yours" (the `sed` of
 TERM laptop/20's line 1; folds) → TERM(laptop/20: 2–5), line 3 `export GCP_PROJECT="your-gcp-project"`
 GREEN. `▶ your turn`.
-SAY: In the llm-rag folder, the shell script ships with a default project name that is not yours. Update the GCP project variable to your own project ID; we use the sed tool, you use any editor. Pause and edit it. The API needs the same edit later.
+SAY: In llm-rag, the shell script ships with a default project that is not yours. Update the GCP project variable to your own project ID; we use the sed tool, you use any editor. Pause and edit it. The API needs the same edit later.
 
 SHOW: TRACKER B2. It types `sh docker-shell.sh` (README.md line 88) → TERM(laptop/21: 2–8, …, 34,
 …, 37–41). Lines 3–5 (`chromadb/chroma:latest Pulled`, `Network llm-rag-network Created`,
@@ -396,7 +396,7 @@ outline turns solid PINK and the Chroma house lights TEAL. Lines 6–8 (`pull ac
 on Docker Hub → built locally". Lines 38 `Architecture: x86_64` and 40 `Python version: Python
 3.12.15` highlight, with `at the time of recording`. CODE(cheese-app-v0/llm-rag/docker-compose.yml:
 1–3) small: "every service joins this network". `▶ your turn`.
-SAY: Now the README's command: sh docker-shell.sh. Pause and run it. Compose pulls Chroma, creates a network called llm-rag-network, and starts the database on it. Every service in this compose file joins that network automatically. The line that says pull access denied is harmless: that image is not on Docker Hub, so Compose builds it locally. The container's architecture is x86 here; Apple Silicon says aarch64, and needs no special flags.
+SAY: Now the README's command: sh docker-shell.sh. Pause and run it. Compose pulls Chroma, creates a network called llm-rag-network, and starts the database on it. Every service in this file joins it automatically. The line that says pull access denied is harmless: that image is not on Docker Hub, so Compose builds it locally. The container's architecture is x86 here; Apple Silicon says aarch64, and needs no special flags.
 
 SHOW: TRACKER B2 · extra. At the capture's prompt `app@3c41bc0606ad:/app$` it types
 `ls -la /secrets` (extra) → TERM(laptop/21: 44–47), the file name highlighted (not its size); V3's
@@ -412,40 +412,43 @@ removed before the cloud steps." On "fails exactly the way a missing key fails",
 small V1 outline as a teaser; then a GREY `recorded` chip ("a success you will see on your
 machine · source named") settles under the card. The terminal's `exit` (laptop/21: 50–51)
 is not shown: S06 continues inside a container.
-SAY: One honest note about this recording. This machine has no Google account. The key file you just saw is an obviously invalid stand-in. It is there so the folder listings match the README, and it was removed before the cloud steps. So from here on, every cloud call fails exactly the way a missing key fails. That is the most common mistake in this lecture, and you will learn it on sight. Every success you will see on your machine is tagged recorded, with its source.
+SAY: One honest note about this recording. This machine has no Google account. The key file you just saw is an obviously invalid stand-in. It is there so the folder listings match the README, and it was removed before the cloud steps. So from here on, every cloud call fails exactly the way a missing key fails. That is the most common mistake in this lecture, and you will learn it on sight. Every success you should expect is tagged recorded, with its source.
 
 ---
 
 ## S06 · Chunks for free, embeddings need a key — `s06_chunks.py` · `ChunksNeedAKey`
 
-SHOW: TRACKER B3. Terminal at the capture's prompt `app@f9965bfbee29:/app$`; a GREY chip: "our
-capture opened a fresh container for each command · staying in one works too". It types
+SHOW: TRACKER B3. Terminal at the capture's prompt `app@f9965bfbee29:/app$`. It types
 `python cli.py --chunk --embed --load --chunk_type char-split` (README.md line 94; the capture's
 line 12; folds) → TERM(laptop/24: 14–17, …, 43–44). Line 15 `Number of files to process: 11` and
-lines 43–44 (`Processing file: …/Tolminc Cheese.txt`, `Number of chunks: 24`) highlight.
-`▶ your turn` (the GOLD tag of the next block lands on the same command line).
-SAY: Inside the container, the README's first command chunks, embeds and loads, with char split. The ID in the prompt changes every run. Chunking runs for real: 11 books, cut into short passages, and the Tolminc book becomes 24 chunks.
+lines 43–44 (`Processing file: …/Tolminc Cheese.txt`, `Number of chunks: 24`) highlight. No
+`▶ your turn` yet: it lands on this command line after the GOLD beat (fourth block).
+SAY: Inside the container, the README's first command does three jobs: it chunks, embeds and loads, with char split. The ID in the prompt changes every run. Chunking runs for real: 11 books, and the Tolminc book becomes 24 chunks.
 
 SHOW: The GOLD beat, before the next lines print: GOLD `cost_tag()` "this bills your project" on
 the command line; a small GOLD meter; slide 13's warning redrawn as one line, "an unprotected AI
 endpoint invites runaway bills". GREY tag `lecture_ref(10, "13")` top right during this block only.
-SAY: Before the next step, a gold tag. The embed step sends every chunk to Google's embedding model, about 7 million characters across both runs, by our estimate. That bills your project; check the current pricing page. The lecture warns about runaway bills, and this is where they start.
+SAY: A gold tag first. The embed step sends every chunk to Google's embedding model, about 7 million characters across both runs, by our estimate. That bills your project; check the current pricing page.
 
 SHOW: TERM(laptop/24: 115–117, …, 125, …, 165–166, …, 185; wrap). Line 166
 `http_request.headers['Authorization'] = f'Bearer {self._access_token()}'` YELLOW; line 185 RED.
-V1 teaser above the terminal strip: five link slots, left to right (key file · ADC's magnifying
-glass · signed JWT · token desk · bearer ticket); the glass looks into an empty `/secrets`, finds
-nothing, and the whole chain greys out. Then `exit` (line 186) → the laptop prompt returns.
-SAY: Here is that missing-key failure. The embed step stops while building its authorization header, a bearer token, which needs a key. Default credentials error: file slash secrets slash llm-service-account dot json was not found. No key, no token, so the very first cloud request dies at authentication.
+V1 teaser above the terminal strip: only the GREEN key-file slot, then four hollow, unlabelled
+slots; the glass looks into an empty `/secrets`, finds nothing, and the whole chain greys out. The
+terminal stops at line 185: the capture's `exit` (line 186) is not typed (the README stays in one
+container for both commands).
+SAY: The embed step stops while building the header named Authorization. Despite its name, that header carries proof of who you are, a bearer token, and a token needs a key. Default credentials error: file slash secrets slash llm-service-account dot json was not found. No key, no token: the first cloud request dies at authentication. The next scene builds that chain, link by link.
 
-SHOW: A GREY card, tag `recorded · cli.py prints (231, 236, 278, 285, 159–160) + README.md:98–105`,
+SHOW: A GREY card, tag `recorded · cli.py prints (231, 236, 278, 285, 160–161) + README.md:98–105`,
 the success checkpoints as plain lines in the code's own words: `embed()` · `Number of files to
 process: 11` · `Creating collection: char-split-collection` · `Collection 'char-split-collection'
 did not exist. Creating new.` · `Finished inserting N items into collection
-'char-split-collection'` (a literal N). No timings, no counts.
-SAY: On your machine, with a real key, the run continues. It embeds every book, creates the char split collection, and finishes inserting the items, book by book.
+'char-split-collection'` (a literal N). No timings, no counts. Then `▶ your turn` beside the
+char-split command line (B3), after the cost has been said.
+SAY: With a real key, the run continues: it embeds every book, creates the char split collection, and finishes inserting. Pause and run it; with your key, it takes a while.
 
-SHOW: TRACKER B4. At the capture's prompt `app@ae87a706e772:/app$` it types
+SHOW: TRACKER B4. A straight cut, with no `exit` and no new `sh docker-shell.sh` typed, to the
+capture's prompt `app@ae87a706e772:/app$`, under a GREY chip: "our capture: a fresh container for
+each command · stay in yours". It types
 `python cli.py --chunk --embed --load --chunk_type recursive-split` (README.md line 95; folds) →
 TERM(laptop/25: 14–17, …, 185; wrap); line 17 `Number of chunks: 2147` and line 185 highlighted, the
 GOLD tag again. `▶ your turn`. TRACKER B5: it types `exit` (README.md line 106's "after you exit";
@@ -454,16 +457,19 @@ the capture's line 186) → TERM(laptop/25: 187), and the laptop prompt
 `wc -l outputs/chunks-char-split-*.jsonl | tail -1; wc -l outputs/chunks-recursive-split-*.jsonl | tail -1`
 (extra; folds) → TERM(laptop/27: 2–3), `8248` and `14228` highlighted with `at the time of
 recording`; CODE(cheese-app-v0/llm-rag/cli.py: 184–200) small, lines 186 (`chunk_overlap = 20`) and
-199–200 (no overlap given) highlighted, caption "default overlap: 200".
-SAY: The second command does the same with recursive split. Pause and run both, then type exit. An extra count shows 8,248 chunks for char split and 14,228 for recursive split, at the time of recording. Recursive split makes more chunks because it keeps a default overlap of 200 characters.
+199–200 (no overlap given) highlighted, caption "default overlap: up to 200 · cuts at paragraph
+and word breaks".
+SAY: The second command does the same with recursive split. Pause and run it, then type exit. An extra count shows 8,248 chunks for char split and 14,228 for recursive split, at the time of recording. Recursive split makes more chunks, mostly because it keeps a default overlap of up to 200 characters, and it cuts at paragraph and word breaks.
 
-SHOW: TRACKER B5 · extra. It types `ls -la outputs | head -16` (extra) → TERM(laptop/26: 5–15);
-line 15 `chunks-char-split-Womans Institute Library of Cookery.jsonl` highlights YELLOW. A kind
-card, tag `erratum`: CODE(cheese-app-v0/llm-rag/cli.py: 177–178), `filename.split(".")[0]` RED,
-caption "cut at the first dot → no author metadata · fix: os.path.splitext". Then
+SHOW: TRACKER B5 · extra. On "app mount", V3's tube flashes for a second between the container's
+`/app` and the laptop's `llm-rag/outputs/`. It types `ls -la outputs | head -16` (extra) →
+TERM(laptop/26: 5–15); line 15 `chunks-char-split-Womans Institute Library of Cookery.jsonl`
+highlights YELLOW. A kind card, tag `erratum`: CODE(cheese-app-v0/llm-rag/cli.py: 177–178),
+`filename.split(".")[0]` RED, caption "cut at the first dot → no author metadata · fix:
+os.path.splitext". Then
 `head -1 'outputs/chunks-char-split-Tolminc Cheese.jsonl' | cut -c1-300` (extra; folds) →
 TERM(laptop/28: 2; wrap), caption "the book the opening question asks about".
-SAY: The chunk files land on your laptop through the app mount. One small slip shows here: a book title is cut at its first dot, so its chunks get no author, and the agent's author filter never finds them. The fix is splitext. Last, one real Tolminc chunk.
+SAY: The chunk files land on your laptop through the app mount. One small slip shows here. A book title is cut at its first dot, so its chunks get no author, and the agent's author filter never finds them. The fix is a Python function, splitext. Last, one real Tolminc chunk: the kind of passage the chat hands to Gemini.
 
 SHOW: TRACKER B5 · extra. A README card (`README.md · line 106`): "ChromaDB keeps running after you
 exit the CLI container … To stop it, run docker compose down inside llm-rag", GREY chip "we stop it
@@ -472,7 +478,7 @@ in part 2". It types `docker ps` (extra) → TERM(laptop/22: 2–3; squeeze), th
 `8000→8000` opens in the laptop wall. `curl -s http://localhost:8000/api/v2/version` (extra) →
 TERM(laptop/23: 2), `"1.0.0"` with `at the time of recording`. A GREY note: "Optional: LLM RAG
 Tutorial (README.md:110–122) · L05 material · exercises.md". Fade out.
-SAY: After that exit, the README says ChromaDB keeps running, and an extra docker ps confirms it, on port 8000. An extra curl asks for its version: 1.0.0, at the time of recording. The README also says how to stop it, with docker compose down; that comes at the very end. Its optional RAG tutorial is lecture 5 material.
+SAY: The README says ChromaDB keeps running after you exit, and an extra docker ps confirms it, on port 8000. An extra curl asks for its version: 1.0.0, at the time of recording. Stopping it comes at the very end. The README's optional RAG tutorial is lecture 5 material.
 
 ---
 
@@ -483,40 +489,45 @@ CODE(cheese-app-v0/api-service/api/routers/rag.py: 14–27); line 26
 `llm_client = genai.Client(vertexai=True, project=GCP_PROJECT, location="global")` YELLOW; a GREY
 chip "no key path anywhere". Slide 42's chain redrawn beside it: "mounted key → env var → client →
 ?? → IAM check"; the "??" box opens into V1.
-SAY: So what failed, exactly? Look at the line that builds the API's Google client. It names a project and a location, and nothing else. Nothing in this repo ever opens the key file. A library does it for you, by a convention called application default credentials, or ADC.
+SAY: So what failed? The line that builds the API's Google client names a project and a location, and nothing else. Nothing in this repo opens the key file. A library does it for you, by a convention called application default credentials, or ADC.
 
 SHOW: V1's magnifying glass walks three slots: (1) "the file named by
 GOOGLE_APPLICATION_CREDENTIALS · a service-account key · this tutorial" GREEN; (2) "gcloud auth
 application-default login · you, through a consent screen" GREY; (3) "the metadata server · the
 account attached to a VM, a Cloud Run service, a pod" GREY dashed, chip "L13–L15". A TEAL container
 outline closes around the slots: slots 2 and 3 inside it are empty boxes.
-SAY: ADC looks in three places, in order. First, the file named by the Google application credentials variable: a service account key, which is this tutorial. Second, a login file that the gcloud tool writes for you, as a person. Third, the metadata server, when your code runs inside Google's cloud. Inside these containers, only the first place exists.
+SAY: ADC looks in three places, in order. First, the file named by the Google application credentials variable: a service account key, which is what this tutorial uses. Second, a login file that the gcloud tool writes for you, as a person. Third, the metadata server, when your code runs inside Google's cloud. ADC moves to the next place only when the one before is not set. Inside these containers, only the first place exists.
 
-SHOW: Slot 1 lights. The key card slides out; its `private_key` field morphs into a pen and signs a
-small envelope labelled "JWT · signed". The envelope flies to a BLUE desk labelled
-`oauth2.googleapis.com/token` (the key card's own `token_uri` glows as it passes), and a small BLUE
-ticket returns with a timer "≈ 60 min". The ticket staples onto three outgoing HTTPS requests
+SHOW: Slot 1 lights. The key card slides out; a small envelope labelled "JWT" is written, then
+the `private_key` field morphs into a pen and seals it ("signed"). The envelope flies to a BLUE desk
+labelled `oauth2.googleapis.com/token` (the key card's own `token_uri` glows as it passes). At the
+desk sits the matching public key, BLUE, chip "Google keeps this half"; it checks the envelope's
+seal (a GREEN tick) before a small BLUE ticket returns with a timer "≈ 60 min". The ticket staples onto three outgoing HTTPS requests
 labelled `Authorization: Bearer …`; the pen and the key card stay on the laptop side, GREEN.
-SAY: Now the clever part. The library signs a small note with your private key, a JSON web token, and sends it to Google's token desk, the address written in your key file. Back comes an access token, valid for about an hour. That token rides on every request as a bearer header. Your private key never leaves your machine; only the short-lived ticket travels.
+SAY: The library writes a small note, a JSON web token, and signs it with your private key. It sends that note to Google's token desk, the address written in your key file. Google holds the matching public key, so it checks your signature without ever seeing the private one. Back comes an access token, valid for about an hour. That token rides on every request as a bearer header. Your private key never leaves your machine; only the short-lived ticket travels.
 
 SHOW: The ticket's timer runs out; the ticket greys, and a fresh one mints itself through the same
-chain. A GREY bridge card: the lecture's OAuth flow (slides 19–23 redrawn, small) ending at the
-same desk, its consent-screen step crossed out, caption "same desk · no person, no consent screen".
-SAY: When the hour runs out, the library quietly gets a new token. This is the same token desk that the lecture's OAuth diagram ends at. The consent screen simply drops out, because no person is there to consent.
+chain. A GREY bridge card, the lecture's OAuth flow (slides 19–23) reduced to three boxes: person →
+consent screen → the same BLUE desk → ticket; the first two boxes are then crossed out, caption
+"same desk · no person, no consent screen".
+SAY: When the hour runs out, the library quietly gets a new token. The lecture's OAuth diagram ends at this same desk; the consent screen drops out, because no person is there.
 
 SHOW: Strip terminal, prompt `student@laptop:~/cheese-app-v0/llm-rag$`. It types
-`sh docker-shell.sh` → TERM(laptop/29: 6–7), then at the capture's prompt `app@bccd254e50ae:/app$`
+`sh docker-shell.sh` (extra: the README's command, re-used for this check) → TERM(laptop/29: 6–7), then at the capture's prompt `app@bccd254e50ae:/app$`
 `ls -la /secrets` (extra) → TERM(laptop/29: 13–15), no file; then the one-liner (extra; folds)
 `python -c "import google.auth; c, p = google.auth.default(); print(type(c).__name__, getattr(c, 'service_account_email', None), p)"`
-→ TERM(laptop/29: 17, …, 25–26, …, 30; wrap); line 30 RED. On V1, slot 1 points at an empty
-`/secrets`; slots 2 and 3 stay empty. Then `exit` (line 31) → laptop prompt.
-SAY: Here is ADC caught in the act, as an extra. With slash secrets empty, a one-line Python check asks ADC who we are. The first place points at a missing file, and the other two do not exist in a container, so it gives up with the same error.
+→ TERM(laptop/29: 17, …, 25–26, …, 30; wrap); line 30 RED (the traceback's `checker()` →
+`_get_explicit_environ_credentials` → `load_credentials_from_file` frames, lines 19–30, show the
+stop happening at place 1). On V1, the glass stops at slot 1: it flashes RED on the empty
+`/secrets` and the chain greys out; the glass never walks on, and slots 2 and 3 stay dimmed,
+unvisited (a GREY chip: "variable set → no fallback"). Then `exit` (line 31) → laptop prompt.
+SAY: Here is ADC caught in the act, as an extra. With slash secrets empty, a one-line Python check asks ADC who we are. The variable is set, so ADC opens that path, finds no file, and stops right there, with the same error. A variable that points nowhere never falls back to the other two places. With your key in place, it names your service account instead.
 
 SHOW: A misconception card: a GREY laptop terminal with
 `export GOOGLE_APPLICATION_CREDENTIALS=~/secrets/llm-service-account.json` crossed out RED, caption
 "on your Mac: authenticates nothing in a container"; beside it the correct pair, host folder → mount
 → container path, drawn as V3's tube. Fade out.
-SAY: One common mix-up. Setting that variable on your Mac authenticates nothing inside a container. The path must exist inside the container. That is why the scripts set a container path, and mount the host folder separately.
+SAY: One common mix-up: setting that variable on your Mac authenticates nothing inside a container, where the path must exist. That is why the scripts set a container path, and mount the host folder separately.
 
 ---
 
@@ -524,37 +535,40 @@ SAY: One common mix-up. Setting that variable on your Mac authenticates nothing 
 
 SHOW: No tracker (concept scene). GREY tag `lecture_ref(10, "26, 35, 42, 45")` top right, whole
 scene. A title card: "authentication: who are you? · authorization: what may you do, and where?".
-V2: the grid. Rows (principals): `you`, `llm-service-account`, "the instructor's account". Columns
-(resources): `your-gcp-project`, `ac215-project`, `project 129349313346`. A GREEN role token
-`roles/aiplatform.user` drops into (llm-service-account, your-gcp-project); a GREY token "Storage
-Admin · granted, unused by v0" lands beside it.
-SAY: Authentication proved who you are. Authorization decides what you may do, and where. Google calls this IAM: a grid of identities, roles, and resources. Your service account holds the Gemini user role in your project, and that green cell does all the work. Storage Admin sits beside it, granted but never used by this app.
+V2: the grid. Rows (principals): `you`, `llm-service-account`. Columns (resources):
+`your-gcp-project`, `ac215-project`, `project 129349313346`. The `you` row holds one GREY "Owner"
+token in `your-gcp-project`, chip "you own the project · your code wears its own badge" (not
+spoken). A GREEN role token `roles/aiplatform.user` drops into (llm-service-account,
+your-gcp-project); a GREY token "Storage Admin · granted, unused by v0" lands beside it.
+SAY: Authentication proved who your code is. Authorization decides what it may do, and where. Google calls this IAM: a grid of identities, roles, and resources. Your service account holds the Gemini user role in your project, and that green cell does the work. Storage Admin sits beside it, granted but never used by this app.
 
 SHOW: Three PINK request arrows fire in turn. (1) embed → `your-gcp-project`: GREEN check. (2) the
 same embed with the unedited default, CODE(cheese-app-v0/api-service/docker-shell.sh: 9) beside it
-(`ac215-project` RED) → RED "403". (3) a tuned-model call → `project 129349313346` → RED "403",
-parked with a GREY pin "part 2".
-SAY: Three requests test three cells. An embedding in your own project is allowed. The same call with the script's unedited default project is refused with a 403, because your account has no role there. That is why you edit both scripts. The third arrow waits for part 2.
+(`ac215-project` RED) → RED "403"; on "writes that name", the request's resource path
+`projects/<GCP_PROJECT>/…` glows on arrow (2) as the client fills it in. (3) a tuned-model call →
+`project 129349313346` → RED "403", parked with a GREY pin "part 2".
+SAY: Three requests test three cells. IAM checks the resource the request names; for an embedding, the client writes that name from your project variable. An embedding in your own project is allowed. The same call with the script's unedited default project is refused with a 403, because your account has no role there. That is why you edit both scripts. The third arrow waits for part 2.
 
 SHOW: The error ladder, a two-rung card. Lower rung, RED: "DefaultCredentialsError, or 401 →
-authentication: no token · check the path, the mount, the file name". Upper rung, RED: "403 →
+authentication: no valid token · check the path, the mount, the file name". Upper rung, RED: "403 →
 authentication worked, authorization failed · missing role · wrong project · API not enabled".
-SAY: Now the error ladder. A default credentials error, or a 401, means no token at all: check the path, the mount, and the file name. A 403 means authentication worked, but authorization failed. The cause is a missing role, the wrong project, or an API that is not enabled.
+SAY: A default credentials error, or a 401, means no valid token: check the path, the mount, and the file name. A 403 means authentication worked, but authorization failed. The cause: a missing role, the wrong project, or an API that is not enabled.
 
 SHOW: A kind card, tag `erratum`: "no README in this repo says to enable the Vertex AI API ·
 probably done in an earlier lecture · if not, the 403 says so, with an enable link". Under it a
 small GREY `extra` chip: `gcloud services enable aiplatform.googleapis.com`.
-SAY: That last cause is a small gap: no README here tells you to enable the Vertex AI API. It was probably done in an earlier lecture. If not, the 403 names it, with a link, and one extra gcloud command enables it.
+SAY: That last cause is a small gap: no README here tells you to enable the Vertex AI API. If you never did, the 403 names it, and one extra gcloud command enables it.
 
 SHOW: The grid returns; arrow (3)'s target column pulses.
 PONDER(8 s, "Your key works for embeddings. You paste the\ninstructor's endpoint projects/129349313346/….\nWhich part decides whose IAM is checked:\nGCP_PROJECT, the key's project_id, or the path?")
 SAY: Something to ponder. Your key works for embeddings. Now you paste the instructor's fine-tuned endpoint, which begins with projects and a long number. Which part decides whose IAM is checked: the project variable, the project inside your key, or the endpoint path?
 
-SHOW: The endpoint path lights as the resource; arrow (3) lands in column `project 129349313346`,
-row `llm-service-account`: an empty cell, RED 403. Then a closing picture: one GREEN badge, two
+SHOW: The endpoint path lights as the resource; the two distractors grey out in turn (the key's
+`project_id` chip "where the badge was issued", the `GCP_PROJECT` chip "overridden by the path");
+arrow (3) lands in column `project 129349313346`, row `llm-service-account`: an empty cell, RED 403. Then a closing picture: one GREEN badge, two
 doors, a Vertex door ("Gemini role") and a GREY dashed bucket door ("storage role"), caption "one
 badge · grants differ". Fade out.
-SAY: The path. The endpoint is the resource, and it names someone else's project, where your account has no role. So it is a 403; part 2 shows it. And one badge can open many doors: the same identity reaches Vertex through one role, and a storage bucket through another. Grants differ; the badge does not.
+SAY: The path. Not the key's project: that only says where the badge was issued. Not the variable: the endpoint path already names a project, and that name wins. It is someone else's project, where your account has no role, so it is a 403; part 2 draws it. One badge, many doors, each with its own grant.
 
 ---
 
@@ -572,9 +586,10 @@ SAY: Then the README's command, sh docker-shell.sh. Pause and run it. It dies at
 
 SHOW: TRACKER C2 · extra. A kind card, tag `erratum`. CODE(cheese-app-v0/api-service/docker-shell.sh:
 1–16): line 4 `set -e` YELLOW, line 14 `docker network create cheese-app-network` RED. S05's sticky
-note returns beside it: "inspect … || create". A strip types the fix (extra; shown small, folds)
-→ TERM(laptop/32: 2), the new line 14 GREEN.
-SAY: This is the biggest slip in the repo, and it is not your fault. Line 14 creates the network unconditionally, and set dash e, on line 4, stops the script at the first error. So it fails every time the network exists, including right after the README's own network step. The line arrived in the repo's very last commit. The fix is the shape you met earlier: make line 14 the README's inspect-or-create command. This fix is ours, an extra.
+note returns beside it: "inspect … || create". A strip types the fix (extra; shown small, folds;
+GREY tag "our editor; use yours"). Then the resulting line, TERM(laptop/32: 2), is shown large,
+GREEN, caption "your new line 14", with `▶ your turn` beside it.
+SAY: This is the biggest slip in the repo, and it is not your fault. Line 14 creates the network unconditionally, and set dash e, on line 4, stops the script at the first error. So it fails every time the network exists, including right after the README's own network step. The fix is the shape you met earlier: make line 14 the README's inspect-or-create command. Pause and make that edit in your editor; the sed is ours, an extra.
 
 SHOW: TRACKER C2. It types `sh docker-shell.sh` again → TERM(laptop/33: 3, 16, …, 26–32), then the
 prompt `(app) app@ed21c759d782:/app$`. Line 3 `Building 188.2s` and line 16 `RUN pipenv sync`
@@ -583,16 +598,17 @@ highlight with `at the time of recording`; the GREEN help text (lines 28–30) l
 TERM(laptop/33: 35–41). Line 36 `Uvicorn running on http://0.0.0.0:9000` is ringed GREY ("hold
 0.0.0.0 for part 2"); line 41 `Application startup complete.` GREEN. On the map the API house
 lights, and a neutral GREY door `9000→9000` opens in the laptop wall. `▶ your turn` on both.
-SAY: Run the script again. The first build installs 170 pinned packages from Pipfile.lock, which took about three minutes at the time of recording. You land in a pipenv shell. Type uvicorn server, and the API starts on port 9000, listening on 0.0.0.0. Pause and run both.
+SAY: Run the script again. The first build installs 170 pinned packages from Pipfile.lock, which took about three minutes at the time of recording. You land in the pipenv shell. Type uvicorn server, and the API starts on port 9000, listening on 0.0.0.0. Pause and run both.
 
 SHOW: TRACKER C3 · extra. A second terminal (title `laptop · second terminal`, prompt
 `student@laptop:~/cheese-app-v0/api-service$`) types
-`curl -s -i 'http://localhost:9000/rag/embedding?text=hello'` (extra) → TERM(laptop/37: 2, 8) RED.
+`curl -s -i 'http://localhost:9000/rag/embedding?text=hello'` (extra; a small GOLD `cost_tag()` on
+the command line: with a real key this is one paid embedding call) → TERM(laptop/37: 2, 8) RED.
 The server terminal prints TERM(laptop/33: 46, …, 104–105, …, 143, …, 162; wrap): the access line
 `"GET /rag/embedding?text=hello HTTP/1.1" 500 Internal Server Error`, the frame in `rag.py`, the
 bearer line YELLOW, the final `DefaultCredentialsError` RED. V1 above the strip: the first link
 greys out again.
-SAY: The server started cleanly with an empty secrets folder, because the Google client is built without credentials. The failure waits for the first real request. An extra curl asks for an embedding and gets a 500. The server log shows the same default credentials error, raised while building the bearer header. A green startup is not an authenticated startup.
+SAY: The server started cleanly with an empty secrets folder, because the Google client does not look for credentials until its first request. In a second terminal, an extra curl asks for an embedding and gets a 500. The server log shows the same default credentials error, raised while building the bearer header. A green startup is not an authenticated startup.
 
 SHOW: A GREY card, tag `recorded · rag.py:218–223 · EMBEDDING_DIMENSION = 256 (rag.py:17)`:
 `{"embedding": [ … 256 floats … ]}` drawn as 256 thin BLUE bars, no values; CODE(cheese-app-v0/llm-rag/cli.py:
@@ -602,16 +618,18 @@ SAY: With a real key, the same request returns a list of 256 numbers, the embedd
 
 SHOW: TRACKER C4 · extra. The second terminal types `curl -s http://localhost:9000/` (extra) →
 TERM(laptop/34: 2); `curl -s -o /dev/null -w '%{http_code} %{content_type}\n' http://localhost:9000/docs`
-(extra; folds) → TERM(laptop/35: 2), with a schematic Swagger page (tag `illustration`) beside it;
+(extra; folds) → TERM(laptop/35: 2), with a schematic Swagger page (tag `illustration`, address
+bar `localhost:9000/docs`) beside it;
 then the route list (extra; the `curl … openapi.json | python3 -c …` line, shown small, folds) →
 TERM(laptop/36: 2–7) beside a README card (`README.md · lines 263–269`). `▶ your turn` on the
 README's `/docs` step (README.md line 149).
-SAY: The README's last step here: open localhost 9000 slash docs in your browser. Pause and look. Extra curls show the welcome message, the docs page, and the README's five routes, plus a root route.
+SAY: The README's last step here: open localhost 9000 slash docs in your browser. Pause and look. Extra curls show the welcome message, the docs page, and the README's five routes, plus one more at the root.
 
-SHOW: End of part 1 on V6: the BLUE building's door opens for the badge; the API house glows on
-its street. A YELLOW question card slides in: "The API is up on your laptop. How does a web page
+SHOW: End of part 1 on V6: the BLUE building's door opens for the badge, under a GREY tag
+`recorded · rag.py:218–223` (the same source as the card before); the API house glows on its
+street. A YELLOW question card slides in: "The API is up on your laptop. How does a web page
 find it, and who else can?" Fade to an empty frame (end of part 1).
-SAY: The auth chain is complete, and the API is answering on your laptop. Leave it running. Part 2 asks two questions: how does a web page find this API, and who else can?
+SAY: On your machine, with a real key, the auth chain is now complete, and the API answers on your laptop. Leave it running. Part 2 asks two questions: how does a web page find this API, and who else can?
 
 ---
 
@@ -622,26 +640,27 @@ whole scene. V4: one Chroma box, two arrows in. A PINK arrow `llm-rag-chromadb:8
 house, along the `llm-rag-network` street, with CODE(cheese-app-v0/llm-rag/cli.py: 30–31) beside it.
 A GREY arrow `localhost:8000` from the browser on the laptop floor, through the wall door
 `8000→8000`.
-SAY: Part 2 starts with addresses, and this scene has no README steps: every command is an extra. The loader dialed the database by name: llm-rag-chromadb, port 8000. Your browser will ring localhost 8000, through a door in the laptop wall. One server, two addresses. Why can they not swap?
+SAY: Part 2 starts with addresses, and this scene has no README steps: every command is an extra. The loader dials the database by name: llm-rag-chromadb, port 8000. Your browser will ring localhost 8000, through a door in the laptop wall. One server, two addresses. Why can they not swap?
 
 SHOW: Each TEAL house grows its own small loop arrow "localhost" (slide 5's rule, now from inside a
 container). Then a phone book on each street (slide 10 redrawn): `llm-rag-network` lists
 `llm-rag-chromadb`, `cheese-app-network` lists `llm-rag-analysis-api-service`. A strip shows
 `docker network inspect cheese-app-network` (extra) → TERM(laptop/40: 30–37), line 35
-`"IPv4Address": "172.19.0.2/16"` highlighted, caption "the API's address on its street · yours will
-differ".
-SAY: Each container has its own network namespace, so each one has its own localhost. Inside a container, localhost means that container. Names work through Docker DNS, a phone book on each street. Addresses change when containers restart, but names do not. This extra inspect shows the API's address on its street. Yours will differ, which is the point: dial names, not addresses.
+`"IPv4Address": "172.19.0.2/16"` highlighted, caption "the API's IP address on its street · yours
+will differ". Last, the browser figure on the laptop floor looks around for a phone book and finds
+none (a GREY "?" where a book would be).
+SAY: Each container is its own house, with its own localhost. Inside a container, localhost means that container. Names work through Docker DNS, a phone book on each street. IP addresses change when containers restart, but names do not. This extra inspect shows the API's IP address on its street. Yours will differ, which is the point: dial names, not IP addresses. And your laptop is not on any street, so it has no phone book: that name means nothing to your browser.
 
 SHOW: Strip terminal, second terminal prompt `student@laptop:~/cheese-app-v0/api-service$` (the API
 still running). It types
 `docker exec llm-rag-analysis-api-service python -c "import urllib.request; print(urllib.request.urlopen('http://llm-rag-chromadb:8000/api/v2/version', timeout=10).read())"`
 (extra; shown small, folds) → TERM(laptop/41: 47) RED. On the map, a probe from the API house finds
 no `llm-rag-chromadb` in its street's phone book.
-SAY: Now the proof, all extras. From inside the API container, ask for the database by name. Name or service not known. The API's street has no entry for that name.
+SAY: Now the proof, all extras. From inside the API container, ask for the database by name. The answer: name or service not known. The API's street has no entry for that name.
 
 SHOW: The API house pulses with a YELLOW "?".
-PONDER(8 s, "You want the API itself to query Chroma.\nWhat URL does it use, and what single\nDocker command makes that name resolvable?")
-SAY: Something to ponder. Suppose you want the API itself to query the database. What address would it use, and what single Docker command makes that name resolve?
+PONDER(8 s, "You want the API itself to query Chroma.\nWhat URL does it use, and what must change\non the map for that name to resolve?")
+SAY: Something to ponder. Suppose you want the API itself to query the database. What address would it use, and what must change on the map for that name to resolve?
 
 SHOW: It types `docker network connect cheese-app-network llm-rag-chromadb` (extra) →
 TERM(laptop/42: → (no output)); on the map the Chroma house grows a second door onto
@@ -649,7 +668,7 @@ TERM(laptop/42: → (no output)); on the map the Chroma house grows a second doo
 TERM(laptop/43: 2), `b'"1.0.0"'` GREEN. Then the localhost variant
 `docker exec llm-rag-analysis-api-service python -c "import urllib.request; print(urllib.request.urlopen('http://localhost:8000/api/v2/version', timeout=10).read())"`
 (extra; folds) → TERM(laptop/44: 45) RED; the probe loops back into the API house itself.
-SAY: Connect the database to the API's network as well, and the same name answers with Chroma's version. Docker DNS works on a shared street. And localhost 8000, from inside the API? Connection refused. Inside a container, localhost is that container, and nothing there listens on 8000.
+SAY: Put the database on the API's street as well, with an extra docker network connect, and the same name answers with Chroma's version. Docker DNS works on a shared street. And localhost 8000, from inside the API? Connection refused. Inside a container, localhost is that container, and nothing there listens on 8000.
 
 SHOW: It types `docker network disconnect cheese-app-network llm-rag-chromadb` (extra) →
 TERM(laptop/45: → (no output)); the second door vanishes, caption "back to the tutorial's state". A
@@ -674,46 +693,50 @@ SAY: Leave the API running, and open a new terminal in the frontend folder. Run 
 SHOW: TRACKER D2. At the prompt it types `npm install` (README.md line 167) → TERM(laptop/50:
 22–26, …, 28; wrap); the deprecation lines GREY, line 28 `added 773 packages, and audited 774
 packages in 1m` with `at the time of recording`. A small V3 echo: `node_modules/` appears in the
-host folder through the `/app` tube. `exit` (line 50) → laptop prompt; `sh docker-shell.sh` again
-→ prompt `6c23fe52ca92:/app#` (the capture ran each step in its own session). TRACKER D3: it types
+host folder through the `/app` tube. No `exit` (line 50) and no second `sh docker-shell.sh` are
+typed: a straight cut, and the prompt becomes `6c23fe52ca92:/app#` under a GREY chip "our capture:
+a fresh session for each step · one session (the README's way) works the same: node_modules is on
+your disk". TRACKER D3: it types
 `npm run dev` (README.md line 168) → TERM(laptop/51: 23–36); the telemetry notice (31–34) prints
 GREY; line 26 `▲ Next.js 14.2.4` with `at the time of recording`; line 27
 `- Local:        http://localhost:3000` ringed RED-dashed, caption "the container's view"; line 36
 `✓ Ready in 1648ms` GREEN. `▶ your turn` on both.
-SAY: Then npm install: 773 packages at the time of recording, with deprecation warnings you will see too. They land in your folder through the mount, so run npm only inside the container. Then npm run dev. Next.js says ready, version 14.2.4 at the time of recording, and prints the line that fools everyone: local, localhost 3000. Pause and run both.
+SAY: Then npm install: 773 packages at the time of recording, with deprecation warnings you will see too. They land in your folder through the mount, which is why our capture could step out and back in without losing them. Then npm run dev. The Next.js server says ready, version 14.2.4 at the time of recording, and prints the line that fools everyone: local, localhost 3000. Pause and run both.
 
 SHOW: TRACKER D4 · extra. A second terminal (prompt `student@laptop:~/cheese-app-v0/frontend-ai-chatbot$`)
 shows three angles, stacked: (a) `curl -sS --max-time 10 http://localhost:3000/` (extra) →
 TERM(laptop/53: 2) RED; (b) `curl -s --max-time 300 -o /tmp/l10-home.html -w 'HTTP %{http_code}\n' http://localhost:3200/ && grep -o '<title>[^<]*</title>' /tmp/l10-home.html`
 (extra; shown small, folds) → TERM(laptop/52: 2–3) GREEN; (c)
 `docker exec llm-rag-analysis-frontend-ai-chatbot wget -qO- -T 10 http://localhost:3000/ | grep -o '<title>[^<]*</title>'`
-(extra; shown small, folds) → TERM(laptop/55: 2) GREEN. Then a schematic browser at
-`localhost:3200` (tag `illustration`). `▶ your turn` on the README's step (README.md line 177).
-SAY: Three extra checks, from three angles. From your laptop, localhost 3000 fails to connect. From your laptop, localhost 3200 answers with the RAG app. And from inside the container, localhost 3000 answers with the same page. Now open localhost 3200 in your browser; pause and look.
+(extra; shown small, folds) → TERM(laptop/55: 2) GREEN. Before (a) prints, a YELLOW "?" is held
+2 s on the spoken prediction. Then a schematic browser at `localhost:3200` (tag `illustration`),
+with a small GREY caption under it quoting README.md · lines 179–180, "Use Chrome browser for best
+performance · likely inherited from the hosted L05 site". `▶ your turn` on the README's step
+(README.md line 177).
+SAY: In a second terminal, three extra checks, from three angles. First, predict: will localhost 3000 answer from your laptop? No, it fails to connect. From your laptop, localhost 3200 answers with the RAG app. And from inside the container, localhost 3000 answers with the same page. Now open localhost 3200 in your browser; the README suggests Chrome. Pause and look.
 
 SHOW: V4 part 2: the wall door `3200→3000`; an arrow from the browser passes through and the
 number riding on it morphs 3200 → 3000 (slide 9's tunnel). Then `docker ps` (extra) →
 TERM(laptop/54: 2–3; squeeze) — the frontend row only, its `0.0.0.0:3200->3000/tcp` cell
 highlighted (the Chroma row is not printed: its uptime is a capture artifact).
-SAY: That is the tunnel. The flag dash p, 3200 colon 3000, means that host port 3200 forwards to container port 3000. Next listens on 3000 inside its own house, and your browser knocks on 3200 outside. One server, two addresses. An extra docker ps shows the same door.
+SAY: That is the tunnel. The flag dash p, 3200 colon 3000, means that host port 3200 forwards to container port 3000. The Next server listens on 3000 inside its own house, and your browser knocks on 3200 outside. One server, two addresses. An extra docker ps shows the same door.
 
 SHOW: The 0–65535 number line (10 s): three bands, "0–1023 · system" (22, 80, 443), "1024–49151 ·
 registered · pick yours here" (3000, 3200, 8000, 9000 drop in), "49152–65535 · dynamic · a
 throw-away port the OS picks for each outgoing call".
-SAY: Port numbers come in three bands. The low ones belong to the system, like 80 and 443. The middle band is where you pick yours: 3000, 3200, 8000, and 9000. The top band holds throw-away ports that your computer picks for every outgoing call.
+SAY: Port numbers come in three bands. The low ones belong to the system, like 80 and 443. The middle band is where you pick yours: 3000, 3200, 8000, and 9000. The top band is reserved for the throw-away ports computers pick for outgoing calls.
 
 SHOW: The honest beat, 0.0.0.0 twice. Left: CODE(cheese-app-v0/api-service/docker-entrypoint.sh:
-6–9), `--host 0.0.0.0` highlighted, caption "listen: every interface of the container". Right: the
-`0.0.0.0:3200->3000/tcp` cell, caption "publish: every interface of the laptop". On the map the
+6–9), `--host 0.0.0.0` highlighted, caption "listen: every side of the container"; beside it the
+TEAL API house with its loop arrow and its street-side door: the tunnel arrives at the street
+door, and a server ear drawn on the loop alone stays deaf to it, until it widens to every side.
+Right: the
+`0.0.0.0:3200->3000/tcp` cell, caption "publish: every side of the laptop". On the map the
 wall doors face two sides, the laptop's loopback and a "Wi-Fi" street; a GREY neighbour figure on
 the Wi-Fi street walks up to door 9000 (all doors neutral GREY, never GREEN). Then a diagram only,
 no capture: `-p 127.0.0.1:9000:9000` bricks up the Wi-Fi side of door 9000; GREY caption "port_toy
-(L04) wrote 127.0.0.1:".
-SAY: Now 0.0.0.0 has appeared twice, and they are different facts. The API server listens on all of the container's interfaces, so the tunnel can reach it. Docker publishes on all of your laptop's interfaces, unless you add a prefix. The ports lecture wrote 127.0.0.1 before its port, but this app writes none. So these doors face your Wi-Fi too, and anyone on that network can knock. Adding 127.0.0.1 before the host port bricks up that side.
-
-SHOW: A small GREY note card: README.md · lines 179–180, "Use Chrome browser for best
-performance", caption "likely inherited from the hosted L05 site". Fade out.
-SAY: The README also says to use Chrome. Locally, other browsers should work too, but stick with the instructions.
+(L04) wrote 127.0.0.1:". Fade out.
+SAY: Now 0.0.0.0 has appeared twice, and they are different facts. Inside the container, the tunnel arrives at the street side, not at the loopback, so the API server listens on every side. Docker publishes on every side of your laptop, unless you add a prefix. The ports lecture wrote 127.0.0.1 before its port, but this app writes none. So these doors face your Wi-Fi too, and anyone on that network can knock. Adding 127.0.0.1 before the host port closes that side.
 
 ---
 

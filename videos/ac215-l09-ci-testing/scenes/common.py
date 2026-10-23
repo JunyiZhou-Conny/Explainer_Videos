@@ -1072,13 +1072,13 @@ class GateTable(VGroup):
         xs = [x0 + sum(self.col_w[:j]) + 0.15 for j in range(4)]      # left edge of each column's text
         y = 0.0
         self.header = VGroup(*[h.move_to([xs[j] + h.width / 2, y, 0]) for j, h in enumerate(heads)])
-        y -= 0.78                     # room for the arch icon between the header and the frame
+        y -= 0.95                     # room for the arch icon between the header and the frame
         n_in = max(len(self.inside), 0 if keys else 2)
         frame_h = n_in * row_h + 0.2
         self.frame = RoundedRectangle(width=total + 0.16, height=max(frame_h, 0.3), corner_radius=0.12,
                                       stroke_color=S.GREY, stroke_width=3)
         self.frame.move_to([0, y - frame_h / 2 + 0.25, 0])
-        icon = Arch(0.32, 0.5, stroke=3.5)
+        icon = Arch(0.28, 0.42, stroke=3.5)
         icon.remove(icon.beam)
         icon.move_to(self.frame.get_corner(UL) + RIGHT * 0.4, aligned_edge=DOWN)
         self.icon = icon
@@ -1469,7 +1469,7 @@ class FixtureWiring(VGroup):
         self.conftest.frame, self.conftest.title = frame, cf_title
         self.asks = VGroup(*[Arrow(t.get_left(), self.fixture.get_right(), buff=0.12, color=S.GREY,
                                    stroke_width=2.5, tip_length=0.15) for t in self.tests])
-        self.ask_label = note("asks for", 20).move_to(
+        self.ask_label = note("asks for").move_to(
             [(frame.get_right()[0] + self.tests.get_left()[0]) / 2, self.tests[0].get_top()[1] + 0.2, 0])
         self.add(self.conftest, self.fixture, self.tests, self.asks)
 
@@ -1477,11 +1477,13 @@ class FixtureWiring(VGroup):
         return chip("TestClient(app)", INTEG, size=self.size, font=MONO)
 
     def session(self):
-        """-> (instance, animations): one instance, built once (scope='session'), lines to all tests."""
+        """-> (instance + its link, animations): one instance, built once (scope='session') under the
+        conftest box and tied to `client`; every 'asks for' arrow lights TEAL: all tests share it."""
         inst = self._instance().next_to(self.conftest.frame, DOWN, buff=0.35)
-        links = VGroup(*[Line(inst.get_right(), t.get_left(), color=INTEG, stroke_width=2.5) for t in self.tests])
-        g = VGroup(inst, links)
-        return g, [FadeIn(inst, shift=DOWN * 0.2), LaggedStart(*[Create(ln) for ln in links], lag_ratio=0.2)]
+        link = Line(self.fixture.get_bottom(), inst.get_top(), color=INTEG, stroke_width=3)
+        g = VGroup(inst, link)
+        return g, [FadeIn(inst, shift=DOWN * 0.2), Create(link),
+                   LaggedStart(*[a.animate.set_color(INTEG) for a in self.asks], lag_ratio=0.2)]
 
     def per_test(self):
         """-> (copies + links, animations): a column of fresh instances under the conftest box, one
@@ -1900,7 +1902,7 @@ class MaskGrid(VGroup):
         return blocked, opened
 
 
-def sequence_bar(seg, cell: float = 0.7, size: float = 20) -> VGroup:
+def sequence_bar(seg, cell: float = 0.8, size: float = 20) -> VGroup:
     """A packed request as a row of token boxes (state GREEN, questions TEAL), a label under each
     segment ('state', 'question 1' …; 'q1' … when a segment is too short for the long name).
     .tokens .labels"""
@@ -1909,7 +1911,7 @@ def sequence_bar(seg, cell: float = 0.7, size: float = 20) -> VGroup:
                     .set_fill(VENV if s == 0 else IMAGE, 0.35) for s in seg]).arrange(RIGHT, buff=cell * 0.1)
     labs = VGroup()
     groups = [(s, VGroup(*[toks[k] for k, v in enumerate(seg) if v == s])) for s in sorted(set(seg))]
-    short = any(label(f"question {s}", size).width > g.width + 0.1 for s, g in groups if s)
+    short = any(label(f"question {s}", size).width > g.width - 0.15 for s, g in groups if s)
     for s, grp in groups:
         name = "state" if s == 0 else (f"q{s}" if short else f"question {s}")
         labs.add(label(name, size, VENV if s == 0 else IMAGE).next_to(grp, DOWN, buff=0.12))
