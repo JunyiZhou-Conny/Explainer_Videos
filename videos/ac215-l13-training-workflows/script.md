@@ -130,7 +130,7 @@ Conventions
 - `TRACKER B3`: the `ReadmeTracker`, top-left, in every walkthrough scene, moves to that step.
   `TRACKER B3 · extra`: same step, caption gets " · extra" while a command the README (or the
   notebook) doesn't have is on screen (variants `extra · local stand-in`, `extra · clean-up`).
-  Seven trackers (BRIEF), titled with the notebook and README headings (notebook A's typo
+  Seven trackers (BRIEF), titled with the notebook and README headings (the typo in notebook A,
   "Image Classificaton Models" is written correctly); README = `model-training/README.md` @
   `b9aee1c`:
   - A = "Notebook A › Cheese Classification Models", 6 steps: 1 Setup Notebook · 2 Dataset ·
@@ -198,7 +198,7 @@ Conventions
   | your laptop: host shell, host filesystem, the `secrets/` folder's home, the browser | GREY |
   | remote machines and services: the GCP project boundary, the bucket, Vertex AI, the job's VM, Cloud Logging, the Colab runtime (T4); `wandb.ai` as a separate BLUE building outside the GCP boundary | BLUE |
   | containers and images: `model-training-cli` (the cockpit), Google's prebuilt `tf-cpu.2-17.py310` / `tf-gpu.*` containers in the job VM, the stand-in containers (dashed) | TEAL |
-  | system-wide, provided, not yours: Debian base images (bullseye → bookworm), apt packages (`google-cloud-sdk` → `google-cloud-cli`), what the prebuilt image is assumed to provide (TensorFlow, scikit-learn, requests), the service agent's badge | ORANGE |
+  | system-wide, provided, not yours: Debian base images (bullseye → bookworm), apt packages (`google-cloud-sdk` → `google-cloud-cli`), what the prebuilt image is assumed to provide (TensorFlow, scikit-learn: expected, not verified here; `requests` arrives with wandb), the service agent's badge | ORANGE |
   | project-owned, pinned, protected: `package/` (`setup.py`, `trainer/`), `wandb==0.15.11`, `uv.lock`, the tarball, the `model-trainer.json` key, the W&B key while it sits in your shell, a run's `config` | GREEN |
   | tools: docker, gcloud, gsutil, uv, pip, tar/gzip, the `wandb` library, `tf.distribute` | PURPLE |
   | errors and exposure: the 404s, `no installation candidate`, auth errors, `KeyError`, `no-tty`, `yours was 2`, `Conflict`, the W&B key once visible in `--args`, the config that went to a loose dict | RED |
@@ -459,7 +459,7 @@ URL masked), GREY chip "tell runs apart by run id". Then a small notebook cell, 
 SAY: Both MobileNet runs share one name, so tell them apart by run ID. No cell finishes the last run, so add wandb finish after cell 52, an extra.
 
 SHOW: TRACKER B5. NB(B: 1703–1715) (cell 55, cropped to `name · epochs · accuracy`) slides in
-beside notebook A's table: the hook's second winner, YELLOW; the fine-tuned rows' `epochs` 10 vs 15
+beside the table from notebook A: the hook's second winner, YELLOW; the fine-tuned rows' `epochs` 10 vs 15
 glow, chip "not like for like". On "the frozen MobileNet", both frozen rows ring YELLOW — A's
 `mobilenetv2_train_base_False · 15 · 67.24%` (NB(A: 1285, 1292)) and B's `mobilenetv2_train_base_False
 · 15 · 68.97%` (NB(B: 1704, 1711)) — with the chip "same settings · 15 epochs · 2 photos apart"; S03's
@@ -960,7 +960,7 @@ SHOW: The answer, ticked on V2's columns: model ✓ (hyperparameters); environme
 charts and run metadata · not the image tag (cli.sh)"); metrics ✗ ("execution_time is in config · no
 metric logged"); artifacts ◐ ("logs ✓ · weights ✗", a dashed hole); code ✗ ("no commit"); data ✗
 ("a fixed release zip · an unseeded split"); notes ✗. On "notebook A", the hook's two tables slide
-in small beside the ledger and notebook A's folder card gets the same three ✗. On "cannot crown",
+in small beside the ledger and the folder card from notebook A gets the same three ✗. On "cannot crown",
 S01's YELLOW question card returns small and its "?" resolves to "can't tell · yet". GREY chips:
 "exercise 1: a LambdaCallback" · "exercise 3: seed the split". Fade out.
 SAY: The model and its settings, yes. The environment only partly: system charts, while the image tag sits in cli.sh. Metrics, none: the execution time goes into the config. Logs yes, weights no. Code, data and notes, no: no commit, a fixed zip, and an unseeded split. The folder from notebook A misses the same three. So the verdict: these tables cannot crown a recipe. Seed the split, match the epochs, keep the code version, then compare. Exercise 1 adds a small callback.
@@ -1104,11 +1104,13 @@ and update the Colab secret `WandB` · the old export lives on in that terminal:
 `▶ your turn`.
 SAY: Time to shut down; pause and work through the list. From inside the cockpit, or in the console, make sure no custom job is running or pending. Remove the tarball and experiment folders too. Then exit; an extra docker ps shows nothing left. Finish the last W and B run, and disconnect the Colab runtimes. At the end of term, delete the model trainer key and rotate your W and B key, which traveled in a job.
 
-SHOW: The recap on V1, complete: pieces relight one by one as each is named: the folder of runs and
-the WHITE ledger (V2); the shared axis with its one PURPLE pipe; the drawer with config inside
-`init` (V3); the GREEN tarball crossing while the TEAL cockpit stays home (V4); the job spec with the
-RED key; the three badges (V5); the three switches (V6); the two replicas in step (V7). Then
-everything unlit.
+SHOW: The recap on V1, complete: one lit group per sentence (same relight order as before): "what
+it keeps" → the folder of runs and the WHITE ledger with its seven columns (V2); "callback ·
+config" → the shared axis with its one PURPLE pipe, and the drawer with config inside `init` (V3);
+"Only the tarball travels" → the GREEN tarball crossing into Google's ORANGE-banded image while the
+TEAL cockpit stays home (V4), the ORANGE service-agent badge (V5) and the job spec with the RED key;
+"three switches · split the batch" → the three switches (V6) and the two replicas on their
+all-reduce link (V7). Then everything unlit.
 SAY: The whole lecture on one map. A run is only as useful as what it keeps. Curves need a callback; config goes into wandb init. Only the tarball travels, into Google's image, run as the service agent, your key in its arguments. One GPU needs three switches; two GPUs split the batch and average gradients.
 
 SHOW: A card "Test yourself". One question at a time (≥ 24 pt, ≤ 3 lines), each with a thumbnail of

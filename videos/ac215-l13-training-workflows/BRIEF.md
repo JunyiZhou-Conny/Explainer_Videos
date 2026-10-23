@@ -15,7 +15,7 @@ none). The decisions below were taken by the coordinator and are not re-opened i
 | the Vertex job's logs | digest B12 lists expected lines, incl. epochs, `loss ≈ 100`, timings | **no job log exists anywhere.** Only the code's own prints plus the counts recorded in both notebooks (1156; 936/104/116), tagged `recorded` / `illustration`. **No epoch, loss or timing panels for the repo trainer** |
 | W&B dashboard | slide 16: a screenshot full of curves (an earlier app's project) | **schematic only, from notebook B's stored outputs**, names masked (`<W&B user>`, `<team>`, run ids cropped). The repo run's W&B side is shown from its *code* (what `task.py` sends), never as a dashboard with values |
 | W&B "logged in" line in a job | digest B12: none at `wandb.login`; ASSETS finding 7: probably one | **unverified either way: never on screen as job output.** The stand-in's offline `Appending key … /root/.netrc` (`86`) is live and tagged; notebook B's `Currently logged in as` is `recorded` (Colab, not a job) |
-| W&B key length | digest: "`40` for a classic key" | `40` is the **placeholder's** length and what wandb 0.15.11 accepts (`86` vs `87`: "yours was 47"). Today's key format could not be checked: **never claim a length for a real key**; the check that matters is "not 0" (`11`) |
+| W&B key length | digest: "`40` for a classic key" | `40` is the **placeholder's** length and what wandb 0.15.11 accepts (`86` vs `87`: "yours was 47"). Today's key format could not be checked: **never claim a length for a real key**. The check: "not 0" (`11`), **and 40 for the trainer's pinned wandb 0.15.11** — a fact about the pin (`84:14`, `87:14`), said in S07, checked again in S09 and before S10's billed submit (coordinator, v2 merge, follow-along F1) |
 | prices | digest §2: dollar figures "from memory" | **no prices anywhere.** GOLD cost tags without numbers, pointing to the Vertex AI pricing page; the video still says what bills, what keeps running and what to cancel |
 | `sh -x cli.sh` | not in the digest | **live** (`40:63-77`): the GPU image is set, then overridden by `tf-cpu.2-17.py310`, and **the W&B key travels inside `--args`** (digest E18). Shown briefly, as the security point |
 | `python cli.py` | digest B16/gotcha 3: predicted | **live** (`60`): `KeyError: 'GCP_REGION'`, then (after `export`) the missing-key error at `cli.py:23`. Shown briefly, as the bridge to L15 |
@@ -85,7 +85,7 @@ Colab lane lit and the repo lane drawn dashed, the key in a variable and a bucke
 | your laptop: host shell, host filesystem, the `secrets/` folder's home, the browser | GREY |
 | remote machines and services: the GCP project boundary, the bucket, Vertex AI, the job's VM, Cloud Logging, the Colab runtime (T4); `wandb.ai` as a **separate** BLUE building outside the GCP boundary | BLUE |
 | containers and images: `model-training-cli` (the cockpit), Google's prebuilt `tf-cpu.2-17.py310` / `tf-gpu.*` containers inside the job VM, the stand-in containers (dashed) | TEAL |
-| system-wide, provided, not yours: Debian base images (bullseye → bookworm), apt packages (`google-cloud-sdk` → `google-cloud-cli`), what the prebuilt image is *assumed* to provide (TensorFlow, scikit-learn, requests), the Google-managed service agent's badge | ORANGE |
+| system-wide, provided, not yours: Debian base images (bullseye → bookworm), apt packages (`google-cloud-sdk` → `google-cloud-cli`), what the prebuilt image is *assumed* to provide (TensorFlow, scikit-learn: expected, not verified here; `requests` arrives with wandb), the Google-managed service agent's badge | ORANGE |
 | project-owned, pinned, protected: `package/` (`setup.py`, `trainer/`), `install_requires = wandb==0.15.11`, `uv.lock`, the tarball, the `model-trainer.json` key, the W&B key while it sits in your shell, a run's `config` | GREEN |
 | tools: docker, gcloud, gsutil, uv, pip, tar/gzip, the `wandb` library, `tf.distribute` | PURPLE |
 | errors and exposure: the 404s, `no installation candidate`, auth errors, `KeyError`, `no-tty`, `yours was 2`, `Conflict`, the W&B key once it is visible inside `--args`, the config that went to a loose dict | RED |
@@ -177,8 +177,7 @@ Class names in `scenes/common.py`; none collides with a scene class (`video.yaml
   with `wandb.init(config={...})`: the four keys drop straight into the drawer, `update` adds the
   fifth → `C38b`. One line, visual: Python assignment rebinds a name; it never fills the box the
   name used to point at.
-- **V4 · `TarballTrip` — what travels from laptop to Vertex (S06 overview, S09 pack, S10 submit,
-  S11 unpack, S15 the model that never comes back).** (1) Slide 23 redrawn with real names:
+- **V4 · `TarballTrip` — what travels from laptop to Vertex (S06 overview, where the whole trip is said once and step 4 plays as a drawn miniature; S09 pack; S10 submit, the spec card assembling over the `cli.sh` review and flying at the submit; S11 unpack: step 4 drawn once, tagged `what Vertex does · drawn, not recorded`, then the local stand-in replaces the VM; S15 the model that never comes back).** (1) Slide 23 redrawn with real names:
   notebook globals (`epochs = 15`, `batch_size = 32`, the model choice) peel off and come back up
   into `task.py` as flags (`--epochs`, `--batch_size`, `--model_name`, `--train_base`,
   `--wandb_key`). (2) `task.py` + `__init__.py` drop into `trainer/`, `setup.py` clips on as a
@@ -187,8 +186,7 @@ Class names in `scenes/common.py`; none collides with a scene class (`video.yaml
   (fixed name → a new upload overwrites the old one). (3) The job spec card — `--worker-pool-spec`
   chips `machine-type=n1-standard-4` · `replica-count=1` · `executor-image-uri=…tf-cpu.2-17.py310`
   · `python-module=trainer.task`, plus `--python-package-uris` and `--args` — flies to Vertex. (4)
-  A VM materialises (GOLD meter starts, no numbers); Google's TEAL image drops in (ORANGE layers:
-  TensorFlow, scikit-learn, requests — *provided*, not declared); the tarball unwraps; `pip
+  A VM materialises (GOLD meter starts, no numbers); Google's TEAL image drops in (ORANGE layers: TensorFlow, scikit-learn — *expected*, not declared, and not verified here: the image was too big to pull; `requests` rides in with wandb); the tarball unwraps; `pip
   install` adds wandb; `python -m trainer.task --model_name=mobilenetv2 --train_base --epochs=2
   --batch_size=32 --wandb_key=…` (gcloud splits `--args` on commas into `sys.argv`); a PINK
   stdout stream to logs and a PINK stream to `wandb.ai`. (5) The script exits, the VM dissolves,
@@ -202,7 +200,7 @@ Class names in `scenes/common.py`; none collides with a scene class (`video.yaml
   tarball from your bucket, and holds **no key of yours** — the key file never crosses to BLUE.
   GREEN W&B key: a badge for a **different building** (`wandb.ai`), carried *by hand* inside
   `--args`; as it enters the job spec it turns RED and a viewer icon looks over its shoulder
-  (anyone who can view the project's jobs can read it — rotate).
+  (anyone who can view the project's jobs can read it — rotate). In S11 badges 1 and 3 come first and the middle lanyard stays empty; badge 2 is ponder 8's answer, labelled "Vertex AI Custom Code Service Agent · service-…@gcp-sa-aiplatform-cc" (digest §3.5).
 - **V6 · `GpuSwitchboard` — three switches for one GPU (S13).** Inside a job tile, three switches
   in a row: **accelerator** (`accelerator-type=NVIDIA_TESLA_T4,accelerator-count=1` in the worker
   pool), **image** (`tf-gpu.*` with CUDA vs `tf-cpu.*`), **quota** (T4s for custom training in
@@ -210,15 +208,14 @@ Class names in `scenes/common.py`; none collides with a scene class (`video.yaml
   Replays: CPU image + accelerator → a T4 sits in the slot, dark, while the GOLD meter still counts
   it (`GPU Available:  []`, `task.py:67`, `illustration`); quota 0 in the region → the job never
   starts; both `gcloud ai custom-jobs create` blocks live → two tiles with the same name.
-- **V7 · `MirroredReplicas` — data-parallel multi-GPU (S14).** Slide 27's ladder first, three rows:
+- **V7 · `MirroredReplicas` — data-parallel multi-GPU (S14, played before the code it explains: ladder → V7 → `cli-multi-gpu.sh` → `task_multi_gpu.py`).** Slide 27's ladder first, three rows:
   one machine · one GPU (One Device), one machine · many GPUs (Mirrored — "you are here"), many
   machines (Multi Worker Mirrored, GREY dashed). Then one `n1-standard-32` box with two T4s, each
   holding an identical replica of the network (same colours). A global batch of 64 tiles
   (`global_batch_size = batch_size × num_workers`, `task_multi_gpu.py:293`) splits 32 + 32; each
   GPU computes gradients on its half (two arrows rise); the arrows meet on a PINK **all-reduce**
   link, average, and return; both replicas update with the same colour change — the copies stay
-  identical. `with strategy.scope():` is drawn as a frame around model + optimizer + compile: the
-  variables created inside become mirrored (twin) variables; a model built outside stays single.
+  identical. `with strategy.scope():` is drawn as a frame around model + optimizer + compile: the variables created inside become mirrored (twin) variables; a model built outside is not mirrored (said so: no source here backs "not copied").
   Caption, not a claim of speed: "2 GPUs ≠ 2× faster" (start-up, download and image pull don't
   shrink; learning rate unchanged at 0.001, `:275`).
 
@@ -253,8 +250,7 @@ image manifests (`09`), `echo ${#WANDB_KEY}` (`10`, `11`), **the two Dockerfile 
 `gcloud ai custom-jobs list`, the un-exported-key shell and the second shell (`70`, `71`),
 **`python cli.py`** (`60`), the stand-ins (`80`–`87`, tag `extra · local stand-in`), notebook B's
 `wandb.finish()`, the clean-up (`90`, `91`, `gsutil rm`, `gcloud ai custom-jobs cancel`). S01, S02,
-S06 are concept scenes with no tracker; S11's identity beat has none; S15's teardown uses an
-`extra · clean-up` tracker (the README has no clean-up section).
+S06 are concept scenes with no tracker; S11's identity beat has none; S15's teardown uses an `extra · clean-up` tracker (the README has no clean-up section), 3 steps in this order: jobs & bucket (cockpit-only lines, or the console) · cockpit & images (`exit` last) · notebooks & keys. S11 also types `81` (`docker commit … trainer-standin`) so the stand-in runs can be repeated.
 
 ## Scene plan
 
@@ -283,8 +279,7 @@ winner leaves Colab, gets packed into a 4-kilobyte tarball and trains on a machi
 minutes, from one command — and that command carries a line we'll read together: the `--args`
 of `40:75` with the key in RED (placeholder). How to follow along: two Colab copies (free T4), a
 W&B account (free tier), Docker, a GCP project with billing (GOLD: Vertex jobs bill while they run
-— no amounts in this video, check the pricing page); seven trackers, `▶ your turn`, the study
-guide has every command. Slide 8 in one line: *reproducibility*, *accountability* — today's two
+— no amounts in this video, check the pricing page); `▶ your turn` (the only tag previewed; the others explain themselves on first use), the study guide has every command. Slide 8 in one line: *reproducibility*, *accountability* — today's two
 words.
 
 **S02 · Three levers and a missing row (~220) — `s02_levers.py` · `LeversAndRecord`.** No tracker;
@@ -316,11 +311,9 @@ tracker. Cell 54's table assembles (`nbA:1283-1295`), cell 56 picks `best_model`
 (`nbA:1304`). Kindly, one line (E22): the table formats accuracy as text *before* sorting, so it
 sorts strings — fine here, wrong for a `9.50%`. **The hook's first answer**: this folder records
 settings and scores, but not *which* 116 photos were the test set — the split has no seed, so
-every run grades on a different 116; one photo is 0.86 points, and copy A's winning margin is
-**two photos**. ▶ Cells 62–66: `auth.authenticate_user()`, edit cell 63 (`GCP_PROJECT`,
+every run grades on a different 116; one photo is 0.86 points, and copy A's winning margin is **two photos** (said "the winner in notebook A leads by two photos" — never "notebook A's": the lexicon key would leave a bare "'s"). ▶ cells 54–59, through the predictions. ▶ Cells 62–66: `auth.authenticate_user()`, edit cell 63 (`GCP_PROJECT`,
 `GCS_BUCKET_NAME` are the instructors' — use yours), upload → `recorded` lines `uploading file
-experiment_1760994796/…` (`nbA:1437-1450`, first lines). GOLD: the uploaded folder is stored in
-your bucket (model files of 10–104 MB each, the table's own `model_size`).
+experiment_1760994796/…` (`nbA:1437-1450`, first lines). Any bucket of yours works (chip: one from L11, or create it now — S07 shows how). GOLD: the uploaded folder is stored in your bucket (weights of 10–104 MB per model, the table's own `model_size`, plus a `.keras` copy of each).
 
 **S04 · Runs on a shared axis (~290) — `s04_wandb.py` · `SharedAxis`.** Tracker B1→B6;
 `lecture_ref(13, "12–13, 16–17")`. ▶ Cell 5 `!pip install -q wandb -U`: our signed-out stand-in,
@@ -336,15 +329,11 @@ cells: each calls `wandb.init(project='cheese-app-demo')` → `recorded` banners
 runs/…`). V2: the five rows become runs in one project; the shared epoch axis appears. Only
 `2_block` draws curves — its recorded "Run history" (`nbB:1009-1022`). **PONDER 2 (6 s)**: "Five
 runs in one project, but only one has loss and accuracy curves. What do the other four lack?"
-Answer: a callback — only cell 38 passes `callbacks=[WandbCallback(…)]` (the PURPLE pipe; its
+Before the timer, cell 38's `model.fit` (`nbB:710-716`) sits beside cell 42's (`nbB:940-945`), neither highlighted, so the answer is visible. Answer: a callback (code `model.fit` calls after every epoch) — only cell 38 passes `callbacks=[WandbCallback(…)]` (the PURPLE pipe; its
 `WandbCallback is deprecated` warning, `nbB:782`, is harmless); `wandb.init` alone records the
 config and system metrics, never your curves. The two MobileNet runs share one display name,
 `mobilenetv2_train_base` (`nbB:1629`): tell runs apart by id. No cell calls `wandb.finish()` —
-run it yourself after cell 52 (`extra`). ▶ Cells 55–60 (copy B's table, `nbB:1703-1715` — the
-hook's second winner; note `epochs` 10 vs 15 for the fine-tuned row: not a like-for-like
-comparison), ▶ cells 64 and 66: no stored output (the instructors didn't run them); the bucket
-and project are hard-coded inside cell 13's `upload_experiment` — edit them there. Slide 16 in
-one line (Conflict 5): the lecture's screenshot is an earlier year's project; yours says *cheese*.
+run it yourself after cell 52 (`extra`). Cells 55–60 (copy B's table, cell 55, `nbB:1703-1715` — the hook's second winner; note `epochs` 10 vs 15 for the fine-tuned row: not a like-for-like comparison) and **the hook's evidence**: the frozen MobileNet, same settings and 15 epochs in both tables, scores 67.24 % in A (`nbA:1285, 1292`) and 68.97 % in B (`nbB:1704, 1711`) — two photos apart by chance alone, the size of A's winning margin. ▶ Upload, its own block: the bucket and project are hard-coded inside cell 13's `upload_experiment` — edit them there **and run cell 13 again** (it already ran during setup), then cells 64 and 66 (no stored output: the instructors didn't run them). Slide 16 (Conflict 5) is a chip only, not spoken: the lecture's screenshot is an earlier year's project; yours says *cheese*.
 
 **S05 · Three lines, and an assignment that goes nowhere (~240) — `s05_config.py` · `ThreeLines`.**
 Tracker B4 (held); `lecture_ref(13, "14–15")`. Slide 14 → 15 redrawn: plain training code, then
@@ -374,7 +363,7 @@ job tile, no numbers. V4 steps 1–2 as the plan of part 2: slide 23's *Move cod
 and *Pass arguments* with the real flag names (Conflict 6: the slide's `epochs=25` is schematic;
 `cli.sh` sends `--epochs=2`); slide 24's layers lit on V1 — cockpit packages & uploads & submits,
 the bucket holds the code, Vertex runs each job in its own container with hardware chosen per
-job (one tile "CPU, RAM", one with a T4). The two facts that drive everything after: the job
+job (one tile "CPU, RAM", one with a T4). **The serverless trip is told once, here, as one chain**: the cockpit asks Vertex AI for a job; Vertex AI starts a machine (CPU only or one T4), loads Google's prebuilt TensorFlow image, installs your tarball, runs your trainer with your flags, and deletes the machine — V4 step 4 as a drawn miniature on the CPU tile. The two facts that drive everything after: the job
 **can't see your laptop** (its data comes from the internet — `task.py:96-100`, a GitHub release —
 and anything it should keep must be written somewhere durable), and **the image that runs is
 Google's, not yours**. **Quick predict (4 s)**: "Your laptop has no GPU and no TensorFlow. Which
@@ -389,7 +378,7 @@ PNGs — console screenshots this video redraws). ▶ Vertex AI API (README:19-2
 labels — filter `Quota: Custom model training`, `Custom model training Nvidia T4 GPUs per region`,
 select regions, `EDIT QUOTAS` → new limit → `NEXT` → `SUBMIT REQUEST`; README:43-44 "usually a few
 hours … based on how new your account is, you may not be approved". "Today's `cli.sh` runs on CPU,
-so you can finish without it; file the request now if you want a GPU later." ▶ `secrets` folder
+so you can finish without it; file the request now if you want a GPU later." Quota is an allowance per region: include `us-central1`, `cli.sh`'s region (`cli.sh:14`). ▶ `secrets` folder
 next to the clone (README:50-58) → `04`, `05`. ▶ Service account `model-trainer`, roles Storage
 Admin, AI Platform Admin, Vertex AI Administrator, *Manage keys → JSON*, renamed
 `secrets/model-trainer.json` (README:60-64) — `illustration`; extra `06`: the file is there,
@@ -399,8 +388,7 @@ does not exist` — our placeholder is nobody's) and `08` (the README's `cheese-
 `401 Anonymous caller does not have storage.buckets.get access…` — it exists and belongs to someone
 else: bucket names are global, pick your own). GOLD: the bucket stores your tarball (tiny) and
 any experiment folders. ▶ W&B key (README:73-81): *User settings → API keys* `illustration` (dots),
-then **`export WANDB_KEY=...`** in the **host** terminal → `10` (placeholder; extra `echo
-${#WANDB_KEY}` → `40`, "the placeholder's length — the check that matters is that it isn't zero").
+then **`export WANDB_KEY=...`** in the **host** terminal → `10` (placeholder; extra `echo ${#WANDB_KEY}` → `40`, the placeholder's length: it must not be 0, and the trainer's pinned wandb 0.15.11 accepts exactly 40 characters — a fact about the pin, `84:14`/`87:14`, never a claim about today's keys; optional chip `read -rs WANDB_KEY && export WANDB_KEY`, tagged `extra · not captured`).
 **PONDER 4 (6 s)**: "You exported the key, closed the terminal, opened a new one. What does
 `echo ${#WANDB_KEY}` print now?" → extra `11`: **`0`** — exported variables live in one shell
 (S10 shows what that costs). Part-1 close on V1 (Length and parts).
@@ -409,7 +397,7 @@ ${#WANDB_KEY}` → `40`, "the placeholder's length — the check that matters is
 
 **S08 · The cockpit that won't build: two one-line fixes (~340) — `s08_build.py` · `TwoFixes`.**
 Tracker D1→D2 (+ the two `extra` rows); `lecture_ref(13, "24")` on the cockpit box (the build
-itself is tutorial-only, said so). ▶ Edit `docker-shell.sh` lines 8-9 (README:93-94 "[REPLACE WITH
+itself is tutorial-only, said so). Opens with part 2's purpose: ship the trainer — build the cockpit, pack the code, send one job. ▶ on both fixes and both re-runs (everyone's build fails today); the `sed -i` lines are GNU syntax (chip: macOS `sed -i ''`; "our editor; use yours"). ▶ Edit `docker-shell.sh` lines 8-9 (README:93-94 "[REPLACE WITH
 …]") → `20` (sed is our editor; you use yours). Kindly (erratum 3): the README's listing
 (README:89-112) is not the real file — bracketed notes on shell lines, a broken continuation at
 :110, an arm64 line — edit `docker-shell.sh` itself. CODE(docker-shell.sh: 12-24) briefly: `set -e`
@@ -441,13 +429,12 @@ fact (`docker-entrypoint.sh:13` vs `:19`).
 
 **S09 · What goes in the tarball (~300) — `s09_package.py` · `InsideTheTarball`.** Tracker E1→E3;
 `lecture_ref(13, "23–24")`. Extras first, inside the cockpit (`26:42-69`): `/secrets` empty (the
-sandbox), `your-gcp-project gs://your-bucket-placeholder 40`, `which python gcloud gsutil uv`,
+sandbox), `your-gcp-project gs://your-bucket-placeholder 40`, ▶ there: the last number must be 40, not 0 (0? exit, export, start the cockpit again), `which python gcloud gsutil uv`,
 `Google Cloud SDK 590.0.0`, aiplatform `1.120.0`, and **`ModuleNotFoundError: No module named
 'tensorflow'`** — V1's cockpit gets its stamp: it submits, it never trains. Extra `27`: 2.59 GB on
 disk. ▶ Review `setup.py` — CODE(package/setup.py: 5-13): the only declared dependency is
 `wandb==0.15.11` (GREEN); `find_packages()` finds `trainer` because `__init__.py` exists, which is
-why `python -m trainer.task` works. TensorFlow, scikit-learn and requests are *assumed* from
-Google's image (ORANGE, erratum 12 — S11 proves it). ▶ Review `task.py` — CODE(package/trainer/
+why `python -m trainer.task` works. TensorFlow and scikit-learn are *assumed* from Google's image (ORANGE, erratum 12 — S11 shows the tarball lacks them; what the image holds was not verified); `requests` arrives only as a wandb dependency (`80:69-70`, `82:19`). One line on what `setup.py` is for: the label pip uses to install the tarball. ▶ Review `task.py` — CODE(package/trainer/
 task.py: 45-54): the notebook's globals as flags, and **`--wandb_key` defaulting to `"16"`** (S11
 pays off); one line each on `:96-100` (the data comes from a GitHub release — the job can't see
 your laptop) and `:153` (`wandb.login` runs *after* the data download). V4 step 2: the box,
@@ -458,8 +445,7 @@ Gcloud storage CLI … instead of gsutil` (new, harmless, cropped at the frame),
 placeholder bucket; with yours, the object appears (no panel: no source records gsutil's success
 lines — "look for `cheese-app-trainer.tar.gz` in your bucket"). CODE(package-trainer.sh: 1-4):
 line 4's fixed object name means every upload **overwrites** the last. Extras `30:53-63`:
-**4016 bytes**, `tar tzvf` with sizes (`task.py` 10253 …); extra `31`: on the host the tarball is
-owned by root (the container wrote it) and git-ignored (`.gitignore:4`). **PONDER 6 (6 s)**: "You
+**4016 bytes**, `tar tzvf` with sizes (`task.py` 10253 …); extra `31`: on the host the tarball is owned by root on the recording's Linux engine (the container wrote it; on Docker Desktop, your user) and git-ignored (`.gitignore:4`). **PONDER 6 (6 s)**: "You
 fix a typo in `task.py`. Rebuild the Docker image, re-run `package-trainer.sh`, or both?" → only
 `sh package-trainer.sh`: Vertex runs the tarball in the bucket; the image never travels, and
 `/app` is mounted so the cockpit already sees your edit. GOLD: the tarball is stored in your bucket
@@ -473,7 +459,7 @@ F1→F3; `lecture_ref(13, "22, 24–25")`. ▶ Review `cli.sh` — CODE(cli.sh: 
 `tf-cpu.2-17.py310`, and the one `gcloud ai custom-jobs create` that runs. Kindly (erratum 4): the
 README presents GPU first and CPU as "optional — edit `cli.sh` to not pass the accelerator"
 (README:152-154); the script already does (commit `3efb2d5`). README's accelerator list
-(README:136-142) may be out of date — check Google's current list. ▶ `sh cli.sh` (README:150) →
+(README:136-142) may be out of date — check Google's current list. GOLD **before** the submit: from provisioning until the script exits, the job's VM bills — no amounts; the Vertex AI pricing page. Then the key check: your length must be 40 for the pinned wandb; if not, watch S11 first. ▶ `sh cli.sh` (README:150) →
 `40:42-55`: **`Using endpoint [https://us-central1-aiplatform.googleapis.com/]`** (live), then
 `ERROR: (gcloud.ai.custom-jobs.create) You do not currently have an active account selected.` —
 the key that never loaded in S08; extra `40:56-62` `gcloud auth list` → `No credentialed
@@ -489,33 +475,30 @@ where the key was never exported): `echo ${#WANDB_KEY}` → `0`; the `--args` en
 **`--wandb_key=`** — the job would start, download its data, and fail at login (S11 shows the
 message). Fix: `exit`, `export`, `sh docker-shell.sh`; extra `71:34` if the old shell is still
 open: `Conflict. The container name "/model-training-cli" is already in use` (id cropped) — exit
-that one first. GOLD: from submission until the script exits, the job's VM bills — no amounts;
-the Vertex AI pricing page. V4 step 3: the spec card flies.
+that one first. V4 step 3: the spec card assembles over the `cli.sh` review ("your tarball in the bucket and the module to run"; the worker pool spec glossed as the job's machine order, one replica = one machine) and flies at the submit.
 
 **S11 · Who submits, who runs (~300) — `s11_identity.py` · `WhoRunsIt`.** Tracker F2 (held,
-`extra · local stand-in` captions); `lecture_ref(13, "24")`. V5 in full: the submitter, the runner,
-the third badge. **PONDER 8 (8 s)**: "The job `pip install`s your package from your private bucket
+`extra · local stand-in` captions); `lecture_ref(13, "24")`. V5: the submitter, then the third badge; the middle lanyard stays empty until **PONDER 8 (8 s)**: "The job `pip install`s your package from your private bucket
 — but your key file never left your laptop. How?" Answer: by default the job runs as your
 project's Vertex AI service agent, a Google-managed identity that can read buckets in the same
 project; your key only proved who *submitted* (digest §3.5; "if the job ever gets a 403 on your
-bucket, that's the identity to grant"). Then V4 step 4, the job's first minute, honestly: "we
+bucket, that's the identity to grant"). Then V4 step 4 drawn once (`what Vertex does · drawn, not recorded`: the VM, Google's image, the tarball unwrapping, `pip install`, `python -m trainer.task` with `--args` split into argv), then honestly: "we
 can't run Vertex here, so we replay its first step locally — tagged" → `80:1-2, 68-70` (cropped):
 `Processing /tmp/trainer.tar.gz` … `Successfully installed … cheese-app-trainer-0.0.1 …
 wandb-0.15.11` — in a plain `python:3.10` container, not Google's image. `82` (cropped to the
 relevant rows): wandb 0.15.11, requests, **no tensorflow, no scikit-learn** — the ORANGE layer
-must come from Google's image (it is still served, `09`: `tf-cpu.2-17.py310`, 4.31 GB compressed,
+must come from Google's image (expected there, not verified: too big to pull; it is still served, `09`: `tf-cpu.2-17.py310`, 4.31 GB compressed,
 at the time of recording). `83`: `python -m trainer.task --help` → **`No module named
 'tensorflow'`** — the trainer can't even print its flags outside a TF image. Then the trainer's
 first W&B step (`task.py:153`) with three keys, three outcomes, ProxyError lines cropped: `85` —
 the empty key from S10 → **`api_key not configured (no-tty). call wandb.login(key=[your_api_key])`**
 (and on Vertex that happens after the data download: minutes you've paid for); `84` — the `"16"`
 default → **`API key must be 40 characters long, yours was 2`**; `86` — a 40-character placeholder
-→ `Appending key for api.wandb.ai to your netrc file: /root/.netrc`, exit 0. One line, `87`: this
-wandb pin accepts exactly 40 characters ("yours was 47"); if your key is a different length, bump
-the pin in `setup.py` — we couldn't check today's key format.
+→ `Appending key for api.wandb.ai to your netrc file: /root/.netrc`, exit 0. — only the offline length check passed; nothing asked W&B whether the key is real (`86:4` YELLOW, not GREEN). One line, `87`: this
+wandb pin accepts exactly 40 characters ("yours was 47"); if your key is a different length, the study guide carries the workaround (raise the pin, re-package; no version was verified here) — we couldn't check today's key format.
 
 **S12 · What the job prints, what W&B can show (~290) — `s12_logs.py` · `WhatTheJobSays`.** Tracker
-F4→F5; `lecture_ref(13, "9–10, 15–16, 25")`. ▶ View Jobs (README:156-158, slide 25's link):
+F4→F5; `lecture_ref(13, "9–10, 15–16, 25")`. ▶ View Jobs (README:156-158, slide 25's link): follow the job's logs link and wait for `Training Job Complete` (`:341`, the code's own print; console labels `illustration`);
 Vertex AI → Training → **Custom jobs**, `illustration` — one row, `cheese_training_job_<hex>`, the
 README's words "ready to be provisioned to run"; no durations, no numbers (Conflict 8: `cli.sh`
 makes a custom job, not a training pipeline). The log, as an `illustration` built **only from the
@@ -534,9 +517,8 @@ row, **from `task.py` only, no dashboard chrome**: project `cheese-training-vert
 category, not drawn with data; curve slots ghost (no callback, `:326-331`). **PONDER 9 (8 s)**,
 slide 9's checklist: "Of the seven things a run record should hold, which does this run record?"
 Answer, ticked on V2's columns: model + hyperparameters ✓; environment partly (system metrics;
-the image tag lives only in `cli.sh`); metrics only `execution_time`; artifacts — logs yes,
-**weights no**; code ✗ (no commit), data ✗ (a fixed release zip, an unseeded split), notes ✗. Hook
-callback: that is exactly why tables A and B can't be compared. Exercise 1 adds a `LambdaCallback`
+the image tag lives only in `cli.sh`); metrics none (`execution_time` goes to the config: `task.py:336`); artifacts — logs yes,
+**weights no**; code ✗ (no commit), data ✗ (a fixed release zip, an unseeded split), notes ✗. **Hook verdict**: the folder from notebook A misses the same three, so these tables cannot crown a recipe — seed the split (exercise 3), match the epochs, keep the code version, then compare; S01's question card returns, its "?" resolving to "can't tell · yet". Exercise 1 adds a `LambdaCallback`
 (one line here).
 
 **S13 · Three switches for one GPU (~230) — `s13_gpu.py` · `ThreeSwitches`.** Tracker F3 (the
@@ -546,15 +528,13 @@ the T4 lights only when all three agree. The quota console reprise from S07 (`il
 `09`: the prebuilt images are still served — `tf-cpu.2-17.py310`, `tf-gpu.2-17.py310`,
 `tf-gpu.2-14.py310` with their layer counts and compressed sizes (at the time of recording).
 To switch: uncomment lines 22–27 **and** comment out 30–37 — leave both and you submit two jobs
-with the same name (V6 replay). Honest line: "this recording has no GPU quota and no account; the
-GPU block runs the same `gcloud ai custom-jobs create` that failed in S10, so there's nothing new
-to show — and nothing we'd fake." GOLD: a GPU adds to the job's bill for every minute it is
+with the same name (V6 replay). Honest line, short: "here the GPU block would fail the same way as in S10, with no active account, so there's nothing new to show — and nothing we fake." The image sizes are on screen, not spoken. GOLD: a GPU adds to the job's bill for every minute it is
 attached, used or not. **PONDER 10 (6 s)**: "You add `accelerator-type` to the *CPU* block. The job
 runs, and its log says `GPU Available:  []`. Why?" → line 31's `tf-cpu` image has no CUDA: the T4
 is attached, idle and billed (V6 dark-chip replay; exercise 5).
 
 **S14 · Two GPUs, one model (~300) — `s14_multigpu.py` · `TwoGpusOneModel`.** Tracker G1→G4;
-`lecture_ref(13, "26–30")`. V7 opens with slide 27's ladder; "you are here: one machine, two
+`lecture_ref(13, "26–30")`. **Order (picture before code)**: ladder → V7 → ▶ `cli-multi-gpu.sh` → ▶ `task_multi_gpu.py` (the slides' three call-outs) → PONDER 11 → caveats → quota → GOLD → ▶ `sh cli-multi-gpu.sh` (optional: only with GPU quota). V7 opens with slide 27's ladder; "you are here: one machine, two
 GPUs". Kindly (Conflict 9): `task.py:60`'s `MirroredStrategy` only *counts* replicas — the
 single-GPU trainer builds its model outside any scope, the lecture's one-device case. Slide 28 → 29
 as three edits over ▶ Review `task_multi_gpu.py` — CODE(package/trainer/task_multi_gpu.py:
@@ -584,7 +564,7 @@ weights evaporate — nothing calls `model.save`, `--model-dir` is parsed and ig
 V2's artifacts cell stays "?"; L15 saves the model to a bucket (GREY dashed; exercise 4 does it
 today). **Teardown checklist (GOLD)**, below — with extras `90` (`docker ps -a`: nothing left,
 `--rm`) and `91` (the images that stay on your disk; console 2.59 GB, at the time of recording).
-V1 complete, then unlit. "Test yourself", five questions one at a time with a thumbnail of their
+V1 complete, then unlit. The recap is said as content, one sentence per lit group (what a run keeps; callback and config; only the tarball travels, into Google's image, run as the service agent, the key in its arguments; three switches and a split batch). "Test yourself", five questions one at a time with a thumbnail of their
 picture (answers in exercises.md) — see Recap questions. Footer cards: exercises.md and the study
 guide (`MLOps_Learning · guides/L13-training-workflows.md`). Next, GREY dashed: L14 serves
 containers serverlessly; L15 saves this model and chains the steps in Pipelines (slide 21's third
@@ -615,15 +595,15 @@ Each is answerable from the picture or capture shown just before it.
 | # | scene | question (as on the card) | answer (said right after the timer) |
 | --- | --- | --- | --- |
 | 1 | S03 (8 s) | "The cell sets `validation_percent = 0.2`.\nYet validation is 104 of 1,156.\nWhat did the code actually do?" | Both splits use `test_percent`: 10 % of 1,156 → 116 test, 10 % of 1,040 → 104 validation, 936 train (`nbA:431-447`; digest E4; same in `task.py:134-146`) |
-| 2 | S04 (6 s) | "Five runs in one project, but only one\nhas loss and accuracy curves.\nWhat do the other four lack?" | A callback in `model.fit` — only cell 38 passes `WandbCallback`; `wandb.init` records config and system metrics, not curves (`nbB:1009-1022` vs the other runs; digest E15) |
+| 2 | S04 (6 s) | "Five runs in one project, but only one\nhas loss and accuracy curves.\nWhat do the other four lack?" | A callback in `model.fit` (code it calls after every epoch; cells 38 and 42's `model.fit` side by side before the timer) — only cell 38 passes `WandbCallback`; `wandb.init` records config and system metrics, not curves (`nbB:1009-1022` vs the other runs; digest E15) |
 | 3 | S05 (8 s) | "After `wandb.config = {…}` and\n`wandb.config.update(…)`, what does\nthe run's config hold?" | Nothing: `{}` — the assignment rebinds the name to a loose dict (`C38:16-17`); fix `wandb.init(config=…)` (`C38b`) |
 | q | S06 (4 s) | "Your laptop has no GPU and no TensorFlow.\nWhich machines here will ever\nimport TensorFlow?" | The Colab runtime and the Vertex job's prebuilt container — never the cockpit (`26:65-69`, shown in S09) |
 | 4 | S07 (6 s) | "You exported the key, closed the terminal,\nopened a new one. What does\n`echo ${#WANDB_KEY}` print?" | `0` (`11`): an exported variable lives in that one shell and its children |
 | 5 | S08 (8 s) | "Every error is a 404 from a Debian mirror,\nand your internet works. Which line of\nthe Dockerfile picks your Debian?" | Line 2, `FROM python:3.13-slim-bullseye` (Debian 11, whose security pool no longer serves those files); fix → bookworm (`21`, `22`) |
 | 6 | S09 (6 s) | "You fix a typo in `task.py`.\nRebuild the image, re-run\n`package-trainer.sh`, or both?" | Only `sh package-trainer.sh`: Vertex installs the tarball from the bucket; your image never travels and `/app` is mounted (digest gotcha 10, exercise 7) |
 | 7 | S10 (8 s) | "Your W&B key is now part of the\njob's arguments. Who can read it later?" | Anyone who can view the project's jobs (the spec keeps `--args`), plus your shell history if typed inline; rotate it, use a dedicated key (`40:75`; digest E18, gotcha 14) |
-| 8 | S11 (8 s) | "The job installs your package from your\nprivate bucket, but your key never left\nyour laptop. How?" | It runs as your project's Vertex AI service agent (by default), which can read same-project buckets; your key only identified the submitter (digest §3.5) |
-| 9 | S12 (8 s) | "Of the seven things a run record\nshould hold, which does this run record?" | Model + hyperparameters yes; environment partly; metrics only `execution_time`; logs yes, weights no; code, data, notes no (SLIDES gap 1; `task.py:313-338`) |
+| 8 | S11 (8 s) | "The job installs your package from your\nprivate bucket, but your key never left\nyour laptop. How?" | Badge 2, shown only now: it runs as your project's Vertex AI service agent (the Custom Code Service Agent, by default), which can read same-project buckets (digest.md:102); your key only identified the submitter (digest §3.5) |
+| 9 | S12 (8 s) | "Of the seven things a run record\nshould hold, which does this run record?" | Model + hyperparameters yes; environment partly; metrics none (`execution_time` sits in the config); logs yes, weights no; code, data, notes no — and the hook's verdict (SLIDES gap 1; `task.py:313-338`) |
 | 10 | S13 (6 s) | "You add `accelerator-type` to the CPU block.\nThe job runs; its log says\n`GPU Available:  []`. Why?" | Line 31's `tf-cpu.2-17.py310` has no CUDA: the T4 is attached, idle and still billed (digest gotcha 8, exercise 5) |
 | 11 | S14 (8 s) | "Two GPUs, `--batch_size=32`, 936 training\nimages. Steps per epoch? Images per GPU\nper step?" | Global batch 64 → 15 steps (last one partial); 32 per GPU per full step (`task_multi_gpu.py:293`; digest ponder 3) |
 
@@ -662,16 +642,13 @@ for two machines?" goes to exercises.md.)
 6. **The trained model is never saved** (no `model.save`, no artifact; the VM takes it) (S15).
 7. **Dead flags**: `--model-dir`, `--lr` parsed and ignored (`task.py:27-30`, `:274`) (S15, one
    line).
-8. **The W&B key travels in `--args`** (`40:75`): visible in the job spec — dedicated key, rotate,
-   or Secret Manager (exercise) (S10). The `"16"` default (`task.py:52`) fails wandb's length check
-   (`84`); wandb 0.15.11 accepts exactly 40 characters (`86`/`87`) (S11).
+8. **The W&B key travels in `--args`** (`40:75`): visible in the job spec — dedicated key, rotate, or Secret Manager (exercise) (S10). The `"16"` default (`task.py:52`) fails wandb's length check (`84`); wandb 0.15.11 accepts exactly 40 characters (`86`/`87`) (S11; said first in S07 and checked before S10's submit).
 9. **Label order is not deterministic** (`task.py:106`; the notebooks printed two orders) and no
    label map is saved (S12).
 10. **Multi-GPU uses an older image** (`tf-gpu.2-14.py310`, `cli-multi-gpu.sh:8`; `cli.py:21`) than
     `cli.sh`'s 2.17 (S14).
 11. **`cli.py`** (not in the README): `KeyError: 'GCP_REGION'` (`60`); no `--wandb_key` (S15).
-12. **Undeclared dependencies**: TensorFlow, scikit-learn, requests come only from Google's image
-    (`82`, `83`) (S09, S11).
+12. **Undeclared dependencies**: TensorFlow and scikit-learn are expected only from Google's image (`82`, `83`; the image's contents not verified); `requests` arrives only as a wandb dependency (`80:69-70`, `82:19`) (S09, S11).
 13. **"Virtual environment activated."** is echoed before the activation (`docker-entrypoint.sh:13`
     vs `:19`) (S08, one line).
 14. **Notebook B**: `wandb.config = {...}` drops config and `execution_time` (`C38`); only `2_block`
@@ -693,27 +670,30 @@ for two machines?" goes to exercises.md.)
 This lecture **bills a Vertex AI custom job for as long as it runs** and stores a little data in
 GCS. Colab (free T4, quota-limited) and W&B (free tier) cost nothing here. **No prices on screen**:
 GOLD tags name what bills and point to the Vertex AI and Cloud Storage pricing pages.
-- **S03, S07, S09**: bucket storage — experiment folders (models of 10–104 MB each, the notebook's
-  own `model_size`), the tarball (4 KB).
-- **S10**: the job's `n1-standard-4` VM, from provisioning until the script exits. The real risk is
+- **S03, S07, S09**: bucket storage — experiment folders (weights of 10–104 MB per model, the notebook's own `model_size`, plus a `.keras` copy of each), the tarball (4 KB).
+- **S10**: the job's `n1-standard-4` VM, from provisioning until the script exits (tag shown before the submit). The real risk is
   a job that fails late (after the data download) and gets resubmitted again and again.
 - **S13**: a GPU, billed for every minute it is attached, used or not.
 - **S14**: `n1-standard-32` + 2 × T4 — the biggest machine of the lecture.
 Nothing in this tutorial keeps running after a job ends: no endpoint, no always-on VM, the cockpit
 is `--rm`.
 
-Teardown, captured where possible: `docker ps -a` empty (`90`), images left on disk (`91`). The
-checklist card (S15):
-- `exit` the cockpit (`--rm` removes it); delete the images if you need the disk (`docker image
-  rm …`, at the time of recording 2.59 GB for the cockpit);
-- Vertex AI → Training → Custom jobs: **nothing `RUNNING` or `PENDING`**; cancel a stuck one with
-  *Cancel* or `gcloud ai custom-jobs cancel JOB_ID --region=us-central1` (extra, not in the README;
-  shown, not run); if you tried `cli.py`, also check *Training pipelines*;
-- in the cockpit, `gsutil rm $GCS_BUCKET_URI/cheese-app-trainer.tar.gz` (extra, shown, not run), or
-  delete the bucket; and the `experiment_<ts>/` folders the notebooks uploaded;
+Teardown, captured where possible: `docker ps -a` empty (`90`), images left on disk (`91`). The checklist card (S15), in this order (the cockpit-only lines come before `exit`; every command
+shown, not run):
+- **in the cockpit**: `gcloud ai custom-jobs list --region=us-central1` (finds the `JOB_ID`; the
+  typed line of `40:91`) and `gcloud ai custom-jobs cancel JOB_ID --region=us-central1`: **nothing
+  `RUNNING` or `PENDING`**; if you tried `cli.py`, also check *Training pipelines*;
+  `gsutil rm $GCS_BUCKET_URI/cheese-app-trainer.tar.gz`, the `experiment_<ts>/` folders (notebook
+  B's sit under your account's folder, `nbB:269-281`), or delete the bucket;
+- **or in the console**: Custom jobs → *Cancel*; the bucket → delete;
+- **then** `exit` the cockpit (`--rm` removes it); if you need the disk, `docker image rm
+  model-training-cli python:3.13-slim-bookworm python:3.13-slim-bullseye` (plus `trainer-standin
+  python:3.10-slim-bookworm` if you ran the extras; names from `91`; at the time of recording 2.59
+  GB for the cockpit); on Linux the root-owned `trainer.tar.gz` needs `sudo rm`;
 - notebook B: `wandb.finish()`; both notebooks: *Runtime → Disconnect and delete runtime*;
-- end of term: delete the `model-trainer` key (IAM → Service accounts → Keys) and **rotate your
-  W&B key** — it travelled in a job's arguments.
+- end of term: delete the `model-trainer` key in IAM **and its JSON in `secrets/`**, and **rotate
+  your W&B key** — it travelled in a job's arguments — then update the Colab secret `WandB` and
+  re-export in a new terminal.
 
 ## README commands checklist (for the follow-along review)
 
@@ -779,8 +759,7 @@ Every README and notebook instruction, verbatim, in order.
   claim for a real W&B key; the `Currently logged in as` line as job output.
 - `istep` captures (`26`, `30`, `40`, `50`, `60`, `70`) hold whole sessions: pick line ranges per
   typed command (ranges above). Tracebacks: first line, `…`, last two lines. `21` (189 lines) and
-  `23` (380 lines): only the ranges named in S08. `80`: lines 1–2 and 68–70, the install line
-  cropped at the frame. `40:77` and `30:51` are long: fold with `wrap` or crop from the meaningful
+  `23` (380 lines): only the ranges named in S08. `80`: lines 2, 68 and 70, the install line folded with `wrap` (six rows) so the two highlighted packages are visible (accuracy A7). `84`: only line 14 (line 3 is printed before the check). `40:77` and `30:51` are long: fold with `wrap` or crop from the meaningful
   phrase on.
 - `gsutil cp`'s success, `gcloud ai custom-jobs create`'s success, the console's job page and the
   W&B pages: **no output panels**; describe what to look for.
