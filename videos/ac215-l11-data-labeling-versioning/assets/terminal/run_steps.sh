@@ -350,8 +350,18 @@ b-build)
   ;;
 b-v20)
   cd data-versioning
-  # --- README "Create the first dataset version" (README:255-303), inside the container
-  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 90-dvc-v20 "sh docker-shell.sh" \
+  # --- README "Create the first dataset version" (README:255-303), inside the container.
+  # On a Linux engine the container's root meets a repo owned by your user: dvc's git library
+  # refuses it (digest §10 open question, answered live). Docker Desktop on macOS may differ.
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 90-dvc-init-ownership "sh docker-shell.sh" \
+    ':/app# $' 'dvc init' \
+    ':/app# $' 'ls -A' \
+    ':/app# $' 'exit'
+  # the fix (extra, Linux hosts): remove the half-made .dvc/ (root-owned, hence sudo), then mark
+  # /app as safe in ~/.gitconfig -- the file docker-shell.sh mounts as the container's /etc/gitconfig
+  step 91-clean-partial-init "sudo rm -rf .dvc .dvcignore && ls -A"
+  step 92-safe-directory "git config --global --add safe.directory /app && cat ~/.gitconfig"
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 93-dvc-v20 "sh docker-shell.sh" \
     ':/app# $' 'dvc init' \
     ':/app# $' 'dvc remote add -d cheese_dataset gs://your-bucket-placeholder/dvc_store' \
     ':/app# $' 'cat .dvc/config' \
@@ -362,11 +372,11 @@ b-v20)
   # capture-only stand-in for the bucket's images/ folder (no bucket can be mounted here): the
   # four photos the class's dataset_v20 was made of (digest §3.5) go into the folder DVC tracks.
   # The folder was created by the container's root, hence sudo.
-  step 91-standin-images "sudo cp ../cheeses_unlabeled/Image_1.jpg ../cheeses_unlabeled/Image_2.jpg ../cheeses_unlabeled/Image_3.jpg ../cheeses_unlabeled/Image_4.jpg cheese_dataset/ && ls -la cheese_dataset"
+  step 94-standin-images "sudo cp ../cheeses_unlabeled/Image_1.jpg ../cheeses_unlabeled/Image_2.jpg ../cheeses_unlabeled/Image_3.jpg ../cheeses_unlabeled/Image_4.jpg cheese_dataset/ && ls -la cheese_dataset"
   # the README's dvc add + dvc push again, now on four real images; extras: the pointer file, the
   # cache layout, and a push to a local stand-in remote (config.local, git-ignored) to show what
   # dvc push would upload
-  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 92-dvc-add-push-v20 "sh docker-shell.sh" \
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 95-dvc-add-push-v20 "sh docker-shell.sh" \
     ':/app# $' 'ls cheese_dataset' \
     ':/app# $' 'dvc add cheese_dataset' \
     ':/app# $' 'cat cheese_dataset.dvc' \
@@ -379,20 +389,20 @@ b-v20)
 b-git20)
   cd data-versioning
   # --- README "Update Git to track the DVC metadata" (README:305-321), outside the container
-  step 93-git-status "git status"
-  step 94-git-add "git add ."
-  step 95-git-commit "git commit -m \"Track initial cheese dataset with DVC\""
-  step 96-git-tag "git tag -a dataset_v20 -m \"First version of cheese dataset\""
-  step 97-git-push "git push --atomic origin main dataset_v20"
-  step 98-git-log "git log --oneline --decorate"          # extra
-  step 99-git-show-v20 "git show dataset_v20:cheese_dataset.dvc"   # extra: what the tag pins
+  step 96-git-status "git status"
+  step 97-git-add "git add ."
+  step 98-git-commit "git commit -m \"Track initial cheese dataset with DVC\""
+  step 99-git-tag "git tag -a dataset_v20 -m \"First version of cheese dataset\""
+  step 100-git-push "git push --atomic origin main dataset_v20"
+  step 101-git-log "git log --oneline --decorate"         # extra
+  step 102-git-show-v20 "git show dataset_v20:cheese_dataset.dvc"   # extra: what the tag pins
   ;;
 b-v21)
   cd data-versioning
   # --- README "Create an updated dataset version: dataset_v21" (README:330-369). Upload step:
   # capture-only stand-in again -- one more photo into the tracked folder
-  step 100-standin-new-image "sudo cp ../cheeses_unlabeled/Image_5.jpg cheese_dataset/ && ls -la cheese_dataset"
-  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 101-dvc-add-push-v21 "sh docker-shell.sh" \
+  step 103-standin-new-image "sudo cp ../cheeses_unlabeled/Image_5.jpg cheese_dataset/ && ls -la cheese_dataset"
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 104-dvc-add-push-v21 "sh docker-shell.sh" \
     ':/app# $' 'ls cheese_dataset' \
     ':/app# $' 'dvc add cheese_dataset' \
     ':/app# $' 'cat cheese_dataset.dvc' \
@@ -402,62 +412,62 @@ b-v21)
   ;;
 b-git21)
   cd data-versioning
-  step 102-git-status "git status"
-  step 103-git-add "git add ."
-  step 104-git-commit "git commit -m \"Add images to cheese dataset\""
-  step 105-git-tag "git tag -a dataset_v21 -m \"Updated cheese dataset with additional images\""
-  step 106-git-push "git push --atomic origin main dataset_v21"
-  step 107-git-diff "git diff HEAD~1 -- cheese_dataset.dvc"   # extra: digest B13 checkpoint
-  step 108-git-log "git log --oneline --decorate"         # extra
-  step 109-git-tag-n "git tag -n"                         # extra
-  step 110-remote-add-again "git remote add origin git@github.com:YOUR_GITHUB_USERNAME/data-versioning.git"   # extra: what README:372 warns about (the old ac215 README repeats it)
+  step 105-git-status "git status"
+  step 106-git-add "git add ."
+  step 107-git-commit "git commit -m \"Add images to cheese dataset\""
+  step 108-git-tag "git tag -a dataset_v21 -m \"Updated cheese dataset with additional images\""
+  step 109-git-push "git push --atomic origin main dataset_v21"
+  step 110-git-diff "git diff HEAD~1 -- cheese_dataset.dvc"   # extra: digest B13 checkpoint
+  step 111-git-log "git log --oneline --decorate"         # extra
+  step 112-git-tag-n "git tag -n"                         # extra
+  step 113-remote-add-again "git remote add origin git@github.com:YOUR_GITHUB_USERNAME/data-versioning.git"   # extra: what README:372 warns about (the old ac215 README repeats it)
   # extra: time travel without Colab -- the tag's pointer file, then dvc checkout from the cache
-  step 111-checkout-v20-pointer "git checkout dataset_v20 -- cheese_dataset.dvc && git status --short"
-  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1200 istep 112-dvc-checkout-v20 "sh docker-shell.sh" \
+  step 114-checkout-v20-pointer "git checkout dataset_v20 -- cheese_dataset.dvc && git status --short"
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1200 istep 115-dvc-checkout-v20 "sh docker-shell.sh" \
     ':/app# $' 'dvc checkout' \
     ':/app# $' 'ls cheese_dataset' \
     ':/app# $' 'exit'
-  step 113-back-to-main "git checkout main -- cheese_dataset.dvc && git status --short"
-  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1200 istep 114-dvc-checkout-main "sh docker-shell.sh" \
+  step 116-back-to-main "git checkout main -- cheese_dataset.dvc && git status --short"
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1200 istep 117-dvc-checkout-main "sh docker-shell.sh" \
     ':/app# $' 'dvc checkout' \
     ':/app# $' 'ls cheese_dataset' \
     ':/app# $' 'exit'
   ;;
 b-up)
   # extras: the class repo's own tags and pointer files (digest §3.5, §3.6), and its bucket
-  step 115-ls-remote-tags "git ls-remote --tags https://github.com/dlops-io/data-versioning"
-  step 116-clone-class-repo "git clone -q https://github.com/dlops-io/data-versioning class-data-versioning && git -C class-data-versioning log -1 --format='%H %ci'"
-  step 117-class-v20-v21 "git -C class-data-versioning show dataset_v20:cheese_dataset.dvc; echo ---; git -C class-data-versioning show dataset_v21:cheese_dataset.dvc"
-  step 118-compare-v20 "diff <(git -C class-data-versioning show dataset_v20:cheese_dataset.dvc) <(git -C data-versioning show dataset_v20:cheese_dataset.dvc) && echo identical"
-  step 119-class-bucket-anonymous "curl -s -w '\nHTTP %{http_code}\n' 'https://storage.googleapis.com/storage/v1/b/cheese-app-data-versioning/o?prefix=dvc_store/'"
+  step 118-ls-remote-tags "git ls-remote --tags https://github.com/dlops-io/data-versioning"
+  step 119-clone-class-repo "git clone -q https://github.com/dlops-io/data-versioning class-data-versioning && git -C class-data-versioning log -1 --format='%H %ci'"
+  step 120-class-v20-v21 "git -C class-data-versioning show dataset_v20:cheese_dataset.dvc; echo ---; git -C class-data-versioning show dataset_v21:cheese_dataset.dvc"
+  step 121-compare-v20 "diff <(git -C class-data-versioning show dataset_v20:cheese_dataset.dvc) <(git -C data-versioning show dataset_v20:cheese_dataset.dvc) && echo identical"
+  step 122-class-bucket-anonymous "curl -s -w '\nHTTP %{http_code}\n' 'https://storage.googleapis.com/storage/v1/b/cheese-app-data-versioning/o?prefix=dvc_store/'"
   ;;
 t-repo)
   # ===== route T: the data-versioning README as it reads today (@ 2515e5e, 2026-10-13) =====
   mkdir -p today/secrets && cd today
   # --- README:76-120 today: clone -b main (SSH, then the new HTTPS section), cd, cd, rm, init
-  step 120-clone-ssh-main "git clone -b main git@github.com:dlops-io/data-versioning.git"
-  step 121-clone-https-main "git clone -b main https://github.com/dlops-io/data-versioning.git"
-  step 122-cd "cd data-versioning"                        # README:97
+  step 130-clone-ssh-main "git clone -b main git@github.com:dlops-io/data-versioning.git"
+  step 131-clone-https-main "git clone -b main https://github.com/dlops-io/data-versioning.git"
+  step 132-cd "cd data-versioning"                        # README:97
   cd data-versioning
-  step 123-cd-again "cd data-versioning"                  # README:105, the second 'cd data-versioning'
-  step 124-git-log "git log -1 --format='%H %ci'"         # extra: today's head of main
-  step 125-rm-git "rm -rf .git"
-  step 126-git-init "git init"
-  step 127-ls-A "ls -A"                                   # extra: .dvc/ and cheese_dataset.dvc came with main
+  step 133-cd-again "cd data-versioning"                  # README:105, the second 'cd data-versioning'
+  step 134-git-log "git log -1 --format='%H %ci'"         # extra: today's head of main
+  step 135-rm-git "rm -rf .git"
+  step 136-git-init "git init"
+  step 137-ls-A "ls -A"                                   # extra: .dvc/ and cheese_dataset.dvc came with main
   # README:133-138 "Or, if you are using HTTPS, use this instead": the README's line carries a
   # teaching assistant's own GitHub user; YOUR_GITHUB_USERNAME stands in (ASSETS.md)
-  step 128-remote-set-url "git remote set-url origin https://github.com/YOUR_GITHUB_USERNAME/data-versioning.git"
-  step 129-git-branch-M "git branch -M main"
-  step 130-git-remote-add "git remote add origin git@github.com:YOUR_GITHUB_USERNAME/data-versioning.git"
-  step 131-git-add "git add ."
-  step 132-git-commit "git commit -m \"Initial commit\""
-  step 133-git-push "git push -u origin main"
+  step 138-remote-set-url "git remote set-url origin https://github.com/YOUR_GITHUB_USERNAME/data-versioning.git"
+  step 139-git-branch-M "git branch -M main"
+  step 140-git-remote-add "git remote add origin git@github.com:YOUR_GITHUB_USERNAME/data-versioning.git"
+  step 141-git-add "git add ."
+  step 142-git-commit "git commit -m \"Initial commit\""
+  step 143-git-push "git push -u origin main"
   ;;
 t-dvc)
   cd today/data-versioning
-  step 134-edit-docker-shell "sed -i -e 's|^export GCS_BUCKET_NAME=.*|export GCS_BUCKET_NAME=\"your-bucket-placeholder\"|' -e 's|^export GCP_PROJECT=.*|export GCP_PROJECT=\"your-gcp-project\"|' -e 's|^export GCP_ZONE=.*|export GCP_ZONE=\"us-central1-a\"|' docker-shell.sh && sed -n '5,10p' docker-shell.sh"
+  step 144-edit-docker-shell "sed -i -e 's|^export GCS_BUCKET_NAME=.*|export GCS_BUCKET_NAME=\"your-bucket-placeholder\"|' -e 's|^export GCP_PROJECT=.*|export GCP_PROJECT=\"your-gcp-project\"|' -e 's|^export GCP_ZONE=.*|export GCP_ZONE=\"us-central1-a\"|' docker-shell.sh && sed -n '5,10p' docker-shell.sh"
   # README:256-268 + 288-328 today: sh docker-shell.sh, then dvc init / remote add / add / push
-  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=3600 hub_retry istep 135-docker-shell-dvc "sh docker-shell.sh" \
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=3600 hub_retry istep 145-docker-shell-dvc "sh docker-shell.sh" \
     ':/app# $' 'dvc init' \
     ':/app# $' 'dvc remote add -d cheese_dataset gs://your-bucket-placeholder/dvc_store' \
     ':/app# $' 'cat .dvc/config' \
@@ -468,9 +478,9 @@ t-dvc)
   ;;
 bclean)
   # --- README "Docker Cleanup" (README:403-425 @ b240b1a; 427-449 today)
-  step 140-docker-container-ls "docker container ls"
-  PTY_COLS=110 PTY_ROWS=30 istep 141-docker-system-prune "docker system prune" 'y/N\] $' 'y'
-  step 142-docker-image-ls "docker image ls"
+  step 150-docker-container-ls "docker container ls"
+  PTY_COLS=110 PTY_ROWS=30 istep 151-docker-system-prune "docker system prune" 'y/N\] $' 'y'
+  step 152-docker-image-ls "docker image ls"
   ;;
 colab)
   # ===== the Colab notebook linked from README @ b240b1a (Drive id 1RRQ1SlHq5lKK76R8LoQdi5LjCnND3jTq),

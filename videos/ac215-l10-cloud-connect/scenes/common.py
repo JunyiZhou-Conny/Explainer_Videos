@@ -1224,13 +1224,14 @@ def _poly(points, color, stroke: float = 3, tip: bool = True, dashed: bool = Fal
     """A polyline route through `points` ending in an arrow tip. .path (the whole route, for
     travel()) .line .tip_arrow"""
     pts = [np.array(p, dtype=float) for p in points]
-    path = VMobject().set_points_as_corners(pts)
+    # the travel path rides inside the group (invisible), so shift/move_to carry it along
+    path = VMobject(stroke_width=0, stroke_opacity=0, fill_opacity=0).set_points_as_corners(pts)
     line = VMobject(stroke_color=color, stroke_width=stroke).set_points_as_corners(pts[:-1] + [pts[-1]])
     if dashed:
         line = DashedVMobject(line, num_dashes=max(8, int(sum(np.linalg.norm(b - a) for a, b in
                                                             zip(pts, pts[1:])) * 5)))
         line.set_stroke(color, stroke)
-    g = VGroup(line)
+    g = VGroup(path, line)
     g.path, g.line, g.tip_arrow = path, line, None
     if tip:
         a, b = pts[-2], pts[-1]
@@ -1562,10 +1563,10 @@ PRINCIPALS = ("you", SA_NAME)
 RESOURCES = (PROJECT_ID, "ac215-project", "129349313346")
 
 
-class IamGrid(Rig):
+class IamGridRig(Rig):
     """V2 · IAM as a grid: rows = principals ('you', 'llm-service-account'), columns = resources
     ('your-gcp-project', 'ac215-project', 'project 129349313346'). ~12.9 × 3.5: centre at x = 0.
-        g = IamGrid(); self.play(FadeIn(g))
+        g = IamGridRig(); self.play(FadeIn(g))
         tok = g.token("roles/aiplatform.user", PASS)                   # a role token (not added)
         self.play(g.drop(tok, 1, 0, slot=0, of=2))                     # into (SA, your project)
         self.play(g.drop(g.token("Storage Admin", S.GREY, mono_font=False), 1, 0, slot=1, of=2))
@@ -1588,8 +1589,8 @@ class IamGrid(Rig):
                 heads.append(mono(r, size, INK))
         names = [label(p, size, INK) if p == "you" else mono(p, size, INK) for p in principals]
         tok_w = mono("roles/aiplatform.user", size).width + 0.48
-        name_w = max(n.width for n in names) + 0.3
-        col_w = [max(h.width + 0.35, tok_w + 0.25 if c == 0 else 0) for c, h in enumerate(heads)]
+        name_w = max(n.width for n in names) + 0.25
+        col_w = [max(h.width + 0.3, tok_w + 0.2 if c == 0 else 0) for c, h in enumerate(heads)]
         head_h = 0.55
         total_w = name_w + sum(col_w)
         x0 = -total_w / 2
@@ -1710,12 +1711,12 @@ def _tree(entries, size: float = 20, indent: float = 0.36, buff: float = 0.1) ->
     return tree
 
 
-class SecretsPortal(Rig):
+class SecretsPortalRig(Rig):
     """V3 · two filesystems, one folder. Left: the host tree AC215/ (caption 'your course folder ·
     here: ~') holding cheese-app-v0/ (llm-rag/, api-service/, frontend-ai-chatbot/) and, beside the
     repo, secrets/ (GREEN) with the key. Right: a TEAL container silhouette with /secrets/ (and the
     key file inside when it is there) and a GREY 'Google library' chip. ~12.6 × 3.6.
-        sp = SecretsPortal(); self.play(FadeIn(sp.tree), FadeIn(sp.caption))
+        sp = SecretsPortalRig(); self.play(FadeIn(sp.tree), FadeIn(sp.caption))
         ring_ = sp.climb(self)                     # plays: $(pwd) at api-service/, '..', '..', secrets/
         self.play(FadeIn(sp.box)); self.play(sp.connect())       # the GREEN tube
         sp.snap(self)                              # plays: the key flows, the env var points at the file
@@ -2093,7 +2094,11 @@ class CorsBouncer(Rig):
         if k == 3 and self.captions.get(1) in scene.mobjects:
             scene.play(FadeOut(self.captions[1]), run_time=0.3)
         p = self.packet(k).move_to(r.path.get_start())
-        scene.play(Create(r), FadeIn(cap, shift=DOWN * 0.1), FadeIn(p, scale=0.6), run_time=0.6)
+        drawn = r in scene.mobjects                     # preflight() may have drawn route 2 already
+        anims = [] if drawn else [Create(r)]
+        if cap not in scene.mobjects:
+            anims.append(FadeIn(cap, shift=DOWN * 0.1))
+        scene.play(*anims, FadeIn(p, scale=0.6), run_time=0.6)
         scene.play(MoveAlongPath(p, r.path), run_time=run_time)
         tgt = self.api if k != 2 else self.chroma
         scene.play(Indicate(tgt.text, color=INK, scale_factor=1.2), run_time=0.5)
@@ -2198,14 +2203,20 @@ class CorsBouncer(Rig):
         return self.curl_fig
 
     def restamp(self, origin: str, run_time: float = 0.6):
-        """Animation: the page is now served from localhost:<origin> (the address cross-fades)."""
+        """Animation: the page is now served from localhost:<origin>: the address cross-fades in
+        place (old out, new in; the URL stays the same mobject inside .page)."""
         self.origin = origin
-        new = mono(f"localhost:{origin}", self.size, S.GREY).move_to(self.page.url)
-        old = self.page.url
-        self.page.url = new
-        self.page.remove(old)
-        self.page.add(new)
-        return FadeTransform(old, new, run_time=run_time)
+        url = self.page.url
+        old = url.copy()
+        new = mono(f"localhost:{origin}", self.size, S.GREY).move_to(url)
+
+        def swap(m, a):
+            src, f = (old if a < 0.5 else new), abs(1 - 2 * a)
+            c = src.copy()
+            for g, g0 in zip(c.family_members_with_points(), src.family_members_with_points()):
+                g.set_fill(opacity=g0.get_fill_opacity() * f).set_stroke(opacity=g0.get_stroke_opacity() * f)
+            m.become(c)
+        return UpdateFromAlphaFunc(url, swap, run_time=run_time)
 
 
 class PacketReplay(CorsBouncer):
@@ -2507,7 +2518,7 @@ class ChatWireframe(Rig):
     added) .drawer .rows (not added) .row_head (not added) .fun (not added)"""
 
     def __init__(self, url: str = "localhost:3200/chat", question: str = QUESTION, picker: str | None = None,
-                 row_head: str | None = None, fun_fact: bool = False, win_w: float = 9.6, win_h: float = 6.3,
+                 row_head: str | None = None, fun_fact: bool = False, win_w: float = 9.6, win_h: float = 6.0,
                  size: float = 22, **kw):
         super().__init__(**kw)
         from explainer.devops import browser_window

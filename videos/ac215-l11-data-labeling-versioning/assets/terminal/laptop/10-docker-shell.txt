@@ -1,3 +1,0 @@
-$ sh docker-shell.sh
-b1f2d7d84b3d2dac538b8edf07c1f90f3f129974aa9d0cde3d005688e4a8ca3f
-[exit 0]
