@@ -343,3 +343,7 @@ S12); `picker='char-split-collection ▾'` (S12/S13); `fun_fact=True` (S13: last
   `IamGridRig.fire()` arrow stops at the cell edge, and chip/arrow/verdict as separate steps (S08).
 - A ponder card over other content needs an opaque frame fill (the default 0.96 lets grid words
   ghost through) (S08 critic). Request arrows into empty grid cells run to the cell's middle.
+- A code line too wide even at 20 pt (rag.py:26, 81 chars) may wrap once inside its parentheses
+  (whitespace only, asserted to join back) with a GREY note "line N · wrapped to fit" (S07).
+- Pending common.py wishes (after the builds): `key_card().body`; `envelope(sealed=True)` with the
+  seal already a child (a separately grown seal stays on screen); `code(wrap={line: ...})` (S07).
