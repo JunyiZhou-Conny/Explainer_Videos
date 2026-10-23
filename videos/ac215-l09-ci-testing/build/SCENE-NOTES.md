@@ -280,3 +280,6 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
   command whose spaces are all inside quotes soft-wraps at column 72 instead (rows join back to
   the exact command; assert it) (S13).
 - `MaskGrid.flash_rows()` with a YELLOW flash floods the whole row: pulse a stroke box instead (S13).
+- `Text.text` drops spaces, so `substring()` fails on `label()`/`mono()` Text: index via
+  `original_text` (S14's local `part()`). This manim has no `Scene.add_to_back`: insert behind a
+  row with `row.submobjects.insert(0, bar)` (S14).

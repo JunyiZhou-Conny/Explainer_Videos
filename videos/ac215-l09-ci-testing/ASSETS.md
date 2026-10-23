@@ -322,3 +322,8 @@ page). No output was invented; the three capture-only logs are under `capture-on
   8 findings (F401, E302 ×2, E225, E231 ×2, E501 187 > 120, W391); after `black --line-length 120`
   the same file has 2 (F401 `os` unused; E501 147 > 120). Matches digest.md:190. Not a terminal
   panel, so no capture file; the measurement is recorded here.
+- **S14 image bars, "1.15 GB" and "1.84 GB".** From the walk's own record of the two images built
+  from one lockfile, `assets/source/babykev-walk/walk.md:711` (the recording sandbox has no
+  Docker). Shown on a card tagged `recorded · walk.md`.
+- **S14 "Milestone 5 · at least 70%".** From the course's Milestone 5 handout (`milestone5.md:48`,
+  course material, not in the repository), as cited in digest.md:227 and :876 and SLIDES.md:964.
