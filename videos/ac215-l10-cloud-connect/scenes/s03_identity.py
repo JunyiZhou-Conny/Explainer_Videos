@@ -102,7 +102,7 @@ def stamp(s: str, color) -> VGroup:
     return tag(s, color).rotate(0.12)
 
 
-def console_window(ref: str, win_w: float = 12.6, win_h: float = 3.7, nav_w: float = 3.2) -> VGroup:
+def console_window(ref: str, win_w: float = 12.6, win_h: float = 3.8, nav_w: float = 3.2) -> VGroup:
     """The schematic console (no logo, no screenshot): GREY frame, a title bar 'Cloud console ·
     <README ref>' with the illustration tag at its right end, a nav column 'IAM & Admin' >
     'Service accounts'. Centre at the origin. .frame .title .tag .nav (.iam .sa) .sep .div"""
@@ -175,12 +175,12 @@ class IdentityForCode(VoiceScene):
         ref = lref("24–25, 31–38")
 
         # ========================================================== 0. an identity for software
-        server = server_box().move_to([-3.4, 1.55, 0])
+        server = server_box().move_to([-3.4, 0.95, 0])
         bdg = id_badge().move_to([0.6, 0.2, 0])
         hang = bdg.copy().move_to([server.get_center()[0], 0, 0]).align_to(server, UP).shift(DOWN * 1.75)
         lanyard = Line(server.body.get_bottom(), hang.clip.get_top(), color=KEY, stroke_width=3)
-        gb = google_building(2.4, 3.0, door=False, meter_=False).move_to([4.75, -1.15, 0], aligned_edge=DOWN)
-        y_call = 1.45
+        gb = google_building(2.4, 3.0, door=False, meter_=False).move_to([4.75, -1.75, 0], aligned_edge=DOWN)
+        y_call = 0.85
         call = Arrow([server.body.get_right()[0], y_call, 0], [gb.frame.get_left()[0] + 0.12, y_call, 0], buff=0.1,
                      color=CLOUD, stroke_width=4, tip_length=0.22, max_tip_length_to_length_ratio=0.1)
         rider = RoundedRectangle(width=0.36, height=0.26, corner_radius=0.05, stroke_color=KEY,
@@ -209,7 +209,6 @@ class IdentityForCode(VoiceScene):
             vo.wait_until("with no login screen")
             self.play(FadeIn(login, shift=DOWN * 0.15), run_time=0.4)
             self.play(Create(no_login), run_time=0.4)
-            self.play(FadeOut(VGroup(login, no_login)), run_time=0.5)
 
         # ========================================================== 1. slide 31's rule, walked
         rc = rule_card().move_to([0.35, 0.95, 0])
@@ -227,7 +226,7 @@ class IdentityForCode(VoiceScene):
         st_lap = stamp("nobody vouches", S.GREY).next_to(lap, DOWN, buff=0.15)
         kg = key_glyph(0.9).next_to(lap, RIGHT, buff=0.7)
         kl = label("a key file", 22, KEY).next_to(kg, DOWN, buff=0.25)
-        old0 = VGroup(server, bdg, lanyard, gb, call, rider)
+        old0 = VGroup(server, bdg, lanyard, gb, call, rider, login, no_login)
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(old0, shift=UP * 0.2), run_time=0.5)
@@ -269,16 +268,16 @@ class IdentityForCode(VoiceScene):
         step_a = VGroup(h1, lab1, fld)
         # step b: grant
         h2 = label("Grant this service account access to project", 24, INK)
-        h2.move_to([px, py - 0.2, 0], aligned_edge=LEFT)
+        h2.move_to([px, py - 0.12, 0], aligned_edge=LEFT)
         role1 = field_box(label("Storage Admin", 22, INK), 7.0, caret=True)
         role2 = field_box(label("Gemini Enterprise Agent Platform User", 22, INK), 7.0, caret=True)
         r1 = VGroup(note("Role"), role1).arrange(RIGHT, buff=0.3)
         r2 = VGroup(note("Role"), role2).arrange(RIGHT, buff=0.3)
-        r1.next_to(h2, DOWN, buff=0.3).align_to(h2, LEFT)
-        r2.next_to(r1, DOWN, buff=0.15).align_to(h2, LEFT)
+        r1.next_to(h2, DOWN, buff=0.22).align_to(h2, LEFT)
+        r2.next_to(r1, DOWN, buff=0.1).align_to(h2, LEFT)
         was = two_line_chip("formerly Vertex AI User · role ID roles/aiplatform.user",
                             "llm-finetuning README.md:44–46")
-        was.next_to(role2, DOWN, buff=0.15).align_to(role2, LEFT)
+        was.next_to(role2, DOWN, buff=0.1).align_to(role2, LEFT)
         yt = your_turn().move_to([-5.3, -1.75, 0])
         xc = card([VGroup(extra_tag(), note("the same from a terminal · suggested, not in the repo"))
                    .arrange(RIGHT, buff=0.25),
@@ -286,7 +285,7 @@ class IdentityForCode(VoiceScene):
                    mono("  llm-service-account --project=YOUR_PROJECT_ID", 20, INK),
                    mono("gcloud projects add-iam-policy-binding \\", 20, INK),
                    mono("  YOUR_PROJECT_ID --member=… --role=…", 20, INK)], size=20, buff=0.1)
-        xc.move_to([6.5, -1.07, 0], aligned_edge=UR)
+        xc.move_to([6.5, -1.1, 0], aligned_edge=UR)
         old1 = VGroup(rc, ptr, r3, ci, lap, st_ci, st_lap, kg, kl)
 
         with self.voiceover(SAY[2]) as vo:
