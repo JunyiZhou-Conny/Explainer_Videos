@@ -319,6 +319,7 @@ S12); `picker='char-split-collection ▾'` (S12/S13); `fun_fact=True` (S13: last
 - Terminal rows keep their words verbatim. Only whitespace may change, the house way: table
   gutters via `squeeze`/`squash` (S02 re-spaced `ls -la` columns the same way, asserting the words);
   anything else over-wide gets the house `cut()` "…", or use 20 pt (72 columns).
-- Pending common.py change (coordinator, after the scene builds): `AppMap.call("browser", k)`
+- Pending common.py changes (coordinator, after the scene builds): `key_card()` drops the comma
+  after its last field (S03); `AppMap.call("browser", k)`
   starts all three browser arrows at one point, so the frontend/API arrows nearly overlap; their
   start points will be spread across the browser's top edge. Don't work around it locally.
