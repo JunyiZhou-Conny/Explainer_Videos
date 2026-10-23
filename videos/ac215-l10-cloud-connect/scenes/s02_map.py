@@ -250,8 +250,7 @@ class TheMap(VoiceScene):
                     mono("2bc29dd", 22, INK)).arrange(RIGHT, buff=0.14)
         for w in l2:
             w.align_to(l2[0], DOWN)
-        l2[1].shift(DOWN * 0.02)
-        l2[3].shift(DOWN * 0.02)
+        l2[1].shift(DOWN * 0.07)                        # 'p', 'y' descend: sit the word on the baseline
         text_col = VGroup(et, l1, l2).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
         body = VGroup(mini, text_col).arrange(RIGHT, buff=0.55)
         frame = RoundedRectangle(width=body.width + 0.7, height=body.height + 0.4, corner_radius=0.16,
