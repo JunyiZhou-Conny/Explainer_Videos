@@ -314,7 +314,7 @@ No complaint: flake8 says `Passed` (`laptop/part4-04`, line 18) because both bla
 see files that match `^src/.*\.py$` (`.pre-commit-config.yaml:35`, `:44`), and CI lints only the
 image's `api/` folder (`ci.yml:61`, `:66`). With the wider pattern, flake8 reports two findings,
 `F401 'time' imported but unused` (line 8) and `E722 do not use bare 'except'` (line 20), and black
-reformats two test files: a blank line at the end of `test_system_api.py`, and `power(8, 1/3)` →
+reformats two test files: the two blank lines after the imports of `test_system_api.py` (lines 9–10) become one, and `power(8, 1/3)` →
 `power(8, 1 / 3)` at `test_utils.py:59`. These were measured on copies of the `tests/` folder with
 the hooks' arguments (flake8 7.4.1 and black 26.5.1 at the time of recording, not the hooks' pinned
 versions), not captured from a pre-commit run: run it and compare. Undo with
