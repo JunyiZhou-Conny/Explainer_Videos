@@ -25,7 +25,8 @@ for the whole scene):
    this repo says to enable the Vertex AI API · probably done in an earlier lecture · if not, the
    403 says so, with an enable link'; under it a GREY chip `gcloud services enable
    aiplatform.googleapis.com` with the GREY `extra` tag.
-4. The grid returns as it was; the check of (1) flashes, column 3 pulses, path (3) flashes; the
+4. The grid returns as it was; the check of (1) flashes, column 3 pulses, path (3) flashes, then
+   its number, and the empty (SA, column 3) cell pulses on "whose IAM is checked"; the
    three candidates appear on their words (`GCP_PROJECT` chip, the key's `project_id` chip, the
    path). PONDER 2 (8 s) on the left, column 3 and the candidates stay visible.
 5. The path rings YELLOW and column 3's head lights (the resource); the key's `project_id` greys
@@ -40,6 +41,7 @@ from manim import *  # noqa: I001  (manim first, then common: common must win)
 
 from explainer.scene import VoiceScene
 from explainer.components import ponder_card
+from explainer.devops import check_mark
 
 from common import (CLOUD, ERR, FUTURE, INK, KEY, LAPTOP, MONO, NARRATION, PASS, PROJECT_ID, ROUTE,
                     SA_EMAIL, SAY_COUNT, TURN, IamGridRig, arrow, badge, card, chip, code, code_span,
@@ -78,17 +80,22 @@ def req_chip(g: IamGridRig, c: int, text: str) -> VGroup:
 
 
 def req_arrow(g: IamGridRig, req, r: int, c: int) -> Arrow:
-    """The request's arrow up into cell (r, c) (as IamGridRig.fire draws it)."""
+    """The request's arrow up into cell (r, c): to the edge of column 0's stacked tokens, into the
+    middle of an empty cell (else it is a tick under the grid; the verdict stays top-right)."""
     cell = g.cells[r][c]
-    return Arrow(req.get_top(), [cell.get_center()[0], cell.get_bottom()[1] + 0.02, 0], buff=0.05,
+    end_y = cell.get_bottom()[1] + 0.02 if c == 0 else cell.get_center()[1] + 0.05
+    return Arrow(req.get_top(), [cell.get_center()[0], end_y, 0], buff=0.05,
                  color=ROUTE, stroke_width=4, tip_length=0.18, max_tip_length_to_length_ratio=0.5)
 
 
 def land(scene, g: IamGridRig, r: int, c: int, ok: bool) -> VGroup:
     """Plays: the cell flashes and the verdict lands (GREEN check / RED 403). Returns the mark."""
     mark = g.verdict(r, c, ok)
-    if c == 0:
-        mark.shift(UP * 0.07)          # column 0's token is as wide as the cell: keep the check off it
+    if c == 0 and ok:                  # column 0's token is as wide as the cell: a smaller check, centred
+        cell = g.cells[r][c]           # in the gap between the top token and the cell's top edge
+        tok_top = g.slot_point(r, c, 0, 2)[1] + 0.25
+        mark = VGroup(check_mark(0.27, PASS))
+        mark.move_to([cell.get_right()[0] - 0.1 - mark.width / 2, (tok_top + cell.get_top()[1]) / 2, 0])
     flash = g.cells[r][c].copy().set_stroke(PASS if ok else ERR, 5)
     scene.play(FadeIn(mark, scale=1.3), FadeIn(flash), run_time=0.45)
     scene.play(FadeOut(flash), run_time=0.3)
@@ -162,6 +169,7 @@ def bucket_door() -> VGroup:
 def ponder_at(scene, question: str, seconds: float, card_w: float, center) -> VGroup:
     """pause_and_ponder, placed (left of column 3, above the candidates)."""
     pc = ponder_card(question, width=card_w).move_to(center)
+    pc[0].set_fill(opacity=1)          # opaque: the grid's words must not ghost through the card
     scene.play(FadeIn(pc, scale=0.95), run_time=0.6)
     bar = pc[3]
     target = bar.copy().scale(0.001, about_point=bar.get_start())
@@ -381,6 +389,12 @@ class IamGrid(VoiceScene):
             self.play(g.pulse_col(2))
             vo.wait_until("which begins with projects")
             self.play(Indicate(p3, color=TURN, scale_factor=1.08), run_time=0.8)
+            vo.wait_until("and a long number")
+            self.play(Indicate(p3.middle, color=TURN, scale_factor=1.12), run_time=0.7)
+            vo.wait_until("whose IAM is checked")
+            target = g.cells[1][2].copy().set_stroke(TURN, 5)
+            self.play(FadeIn(target, rate_func=there_and_back), run_time=0.9)
+            self.remove(target)
             vo.wait_until("the project variable")
             self.play(FadeIn(c_var, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("the project inside your key")
@@ -423,12 +437,14 @@ class IamGrid(VoiceScene):
             vo.wait_until("part 2 draws it")
             flash_tag(self, pin3, S.GREY)
 
-        self.play(FadeOut(VGroup(grid_all, a3, mark3, p_ring, c_var, c_key, cap_var, cap_key)), run_time=0.6)
+        # silent closing picture, kept short (~4 s) and moving until the last 0.8 s
+        self.play(FadeOut(VGroup(grid_all, a3, mark3, p_ring, c_var, c_key, cap_var, cap_key)), run_time=0.45)
         self.remove(grid_all, a3, mark3, p_ring, c_var, c_key, cap_var, cap_key)
-        self.play(FadeIn(bdg, scale=1.1), run_time=0.6)
-        self.play(GrowArrow(ar_v), FadeIn(vd, shift=LEFT * 0.2), run_time=0.7)
-        self.play(Create(ar_b), FadeIn(bd, shift=LEFT * 0.2), run_time=0.7)
-        self.play(FadeIn(moral, shift=UP * 0.15), run_time=0.6)
-        self.wait(1.2)
-        self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
+        self.play(FadeIn(bdg, scale=1.1), run_time=0.5)
+        self.play(LaggedStart(AnimationGroup(GrowArrow(ar_v), FadeIn(vd, shift=LEFT * 0.2)),
+                              AnimationGroup(Create(ar_b), FadeIn(bd, shift=LEFT * 0.2)), lag_ratio=0.5),
+                  run_time=1.1)
+        self.play(FadeIn(moral, shift=UP * 0.15), run_time=0.5)
+        self.wait(0.8)
+        self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
         self.remove(*self.mobjects)
