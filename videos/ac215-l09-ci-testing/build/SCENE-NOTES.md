@@ -240,3 +240,7 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
   animate a `.copy()` out of the terminal and fade the terminal instead (S04 critic).
 - `FixtureWiring.per_test()` fades its copies in one at a time and adds each to the scene: removing
   only the returned group leaves them behind. Remove/fade each copy (S06).
+- `pin()`/`attach()` re-add rows to the scene, which splits the parent terminal in the scene list. A
+  later bare `FadeOut(t)` then redraws `t` on top of overlays (rings, `hl_bar`) and they flicker
+  out for a few frames. Fade terminal and overlays together: `FadeOut(VGroup(t, bar, ring))` (S05
+  critic).
