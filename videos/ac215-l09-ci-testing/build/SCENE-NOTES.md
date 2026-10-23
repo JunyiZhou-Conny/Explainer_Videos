@@ -236,3 +236,5 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
   never moved). Use separate `self.play` calls for there-and-back moves.
 - `TransformFromCopy` between differently shaped text smears into a blob mid-morph: fly a copy of
   the text, then draw the box around it (S02 critic).
+- Removing a printed row from `t.lines` right before animating it makes it vanish for a few frames:
+  animate a `.copy()` out of the terminal and fade the terminal instead (S04 critic).

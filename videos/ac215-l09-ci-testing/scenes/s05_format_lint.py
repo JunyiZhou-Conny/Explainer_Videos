@@ -68,6 +68,11 @@ def text_span(t, s: str, sub: str) -> VGroup:
     return VGroup(*t[start:start + len(sub.replace(" ", ""))])
 
 
+def tail(row) -> VGroup:
+    """The glyphs after the last '/' of a wrapped path row (the file name's first part)."""
+    return substring(row, row.text[row.text.rindex("/") + 1:])
+
+
 def find_in(line, sub: str) -> VGroup:
     """The glyphs of `sub` in a typed line, or in whichever row of a folded command holds it."""
     for row in getattr(line, "rows", [line]):
@@ -220,8 +225,8 @@ class FormatterLinter(VoiceScene):
             vo.wait_until("Pause and run it")
             self.play(FadeOut(VGroup(*marks)), run_time=0.3)
             self.remove(*marks)
-            yt2 = beside(turn_row(), f_line)
-            pin(self, f_line, yt2)
+            yt2 = beside(turn_row(), f_line.rows[0])       # row 2 is too long for the tag
+            pin(self, f_line.rows[0], yt2)
             self.play(Indicate(yt2, color=TURN, scale_factor=1.15), run_time=0.6)
             f_out = t.print(self, f8.at((2, 5)), run_time=0.7)
             vo.wait_until("Two findings in utils.py")
@@ -247,8 +252,8 @@ class FormatterLinter(VoiceScene):
             cd_ring = ring(find_in(k_line, "--check --diff"), INK, buff=0.05, stroke=2.5)
             self.play(Create(cd_ring), run_time=0.5)
             vo.wait_until("Pause and run it")
-            yt3 = beside(turn_row(), k_line)
-            pin(self, k_line, yt3, anim=AnimationGroup(FadeIn(yt3, shift=LEFT * 0.1), FadeOut(cd_ring)))
+            yt3 = beside(turn_row(), k_line.rows[0])
+            pin(self, k_line.rows[0], yt3, anim=AnimationGroup(FadeIn(yt3, shift=LEFT * 0.1), FadeOut(cd_ring)))
             self.remove(cd_ring)
             k_out = t.print(self, blk.at((2, 3), "…", (12, 13), "…", 21, 39, "…", 42), run_time=1.2, lag=0.12)
             vo.wait_until("It reports 2 files")
@@ -260,7 +265,7 @@ class FormatterLinter(VoiceScene):
             pin(self, last, q)
             self.play(Indicate(q, color=TURN, scale_factor=1.3), run_time=0.6)
             vo.wait_until("gives black no width")
-            unpin(self, k_line, yt3)
+            unpin(self, k_line.rows[0], yt3)
             nw = beside(row_tag("no width → 88", S.GREY), k_line)
             pin(self, k_line, nw)
             vo.wait_until("its default of 88")
@@ -401,8 +406,8 @@ class FormatterLinter(VoiceScene):
             pin(self, l6, yt7)
             o6 = t.print(self, blk_local.at("…", 19, 37, "…", 40), run_time=0.9, lag=0.12, wrap=True)
             vo.wait_until("the same two files changed")
-            files = VGroup(substring(o6[1], "utils.py"), substring(o6[3], "service.py"))
-            r_files = VGroup(*[ring(f, INK, buff=0.05, stroke=2.5) for f in files])
+            r_files = VGroup(*[under(g, INK, stroke=3) for g in
+                               (tail(o6[1]), o6[2].glyphs, tail(o6[3]), o6[4].glyphs)])
             self.play(Create(r_files), run_time=0.6)
             self.play(Indicate(o6[-1], color=INK, scale_factor=1.04), run_time=0.7)
         self.wait(1.0)
