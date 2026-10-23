@@ -2093,7 +2093,7 @@ class CorsBouncer(Rig):
         if k == 2:
             a, b = self._starts["down"], self.doors["8000"][0].get_left() + LEFT * 0.05
             r = _poly([a, [a[0] + 0.9, b[1], 0], b], color, 4, dashed=dashed)
-            cap = mono(CALLS[2], self.size, color).move_to([(a[0] + b[0]) / 2 + 0.75, b[1] - 0.62, 0])
+            cap = mono(CALLS[2], self.size, color).move_to([(a[0] + b[0]) / 2 + 0.3, b[1] - 0.62, 0])
         else:
             a, b = self._starts["up"], self.doors["9000"][0].get_left() + LEFT * 0.05
             if k == 3:                                   # beside route 1, not on top of it
