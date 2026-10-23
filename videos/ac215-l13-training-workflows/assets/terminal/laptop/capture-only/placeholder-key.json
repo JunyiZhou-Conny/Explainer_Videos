@@ -1,0 +1,9 @@
+{
+  "type": "service_account",
+  "project_id": "your-gcp-project",
+  "private_key_id": "0000000000000000000000000000000000000000",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nPLACEHOLDER-THIS-IS-NOT-A-REAL-KEY\n-----END PRIVATE KEY-----\n",
+  "client_email": "model-trainer@your-gcp-project.iam.gserviceaccount.com",
+  "client_id": "000000000000000000000",
+  "token_uri": "https://oauth2.googleapis.com/token"
+}

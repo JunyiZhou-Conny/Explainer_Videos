@@ -1,0 +1,6 @@
+$ date -u '+%Y-%m-%d %H:%M UTC'; uname -sm; docker version --format 'Docker client {{.Client.Version}}, engine {{.Server.Version}}'; git --version
+2026-10-23 12:19 UTC
+Linux x86_64
+Docker client 29.8.2, engine 29.8.2
+git version 2.54.0
+[exit 0]
