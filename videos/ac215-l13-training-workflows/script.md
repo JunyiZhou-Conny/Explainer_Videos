@@ -229,7 +229,7 @@ Conventions
   repo lane dashed, the key chip in a variable and the bucket named; S08–S14 light the repo lane piece
   by piece (the cockpit gets its "submits · never trains" stamp in S09); S15 shows it complete, then
   unlit. The cockpit has exactly two arrows (package & upload; create job) and none into a job.
-- Length and parts: narration **4,292** words after the v2 review merge (`python -m
+- Length and parts: narration **4,295** words after the v2 review merge (`python -m
   explainer.script`, which counts SAY words; its minute figure assumes 155 wpm and is ignored;
   ceiling 4,300). At Kokoro af_heart speed 0.9 (≈174 wpm) that is ≈24.7 min of narration, ≈29–31
   min with typing, outputs, three builds and the ponder timers. Part 1 = S01–S07 (track it, then
@@ -241,12 +241,12 @@ Conventions
   | S01 Hook | 205 (220) | S08 TwoFixes | 333 (340) |
   | S02 LeversAndRecord | 190 (220) | S09 InsideTheTarball | 311 (300) |
   | S03 FolderTracker | 317 (280) | S10 OneCommand | 339 (310) |
-  | S04 SharedAxis | 325 (290) | S11 WhoRunsIt | 318 (300) |
+  | S04 SharedAxis | 325 (290) | S11 WhoRunsIt | 321 (300) |
   | S05 ThreeLines | 242 (240) | S12 WhatTheJobSays | 297 (290) |
   | S06 RentTheMachine | 259 (250) | S13 ThreeSwitches | 205 (230) |
   | S07 KeysAndBucket | 321 (290) | S14 TwoGpusOneModel | 332 (300) |
   |  |  | S15 Recap | 298 (270) |
-  | **part 1** | **1,859** (1,790) | **part 2** | **2,433** (2,340) |
+  | **part 1** | **1,859** (1,790) | **part 2** | **2,436** (2,340) |
 
   Every scene is within the BRIEF's ±15 %. Tight edges: S02 (floor 187), S03 (cap 322), S04 (cap
   333), S07 (cap 333), S15 (cap 310) and the total (8 words under 4,300): any later addition there
@@ -909,9 +909,9 @@ SAY: Then the trainer's first W and B step, line 153, with three keys. The empty
 
 SHOW: One more strip: `… wandb.login(key='PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000_LONGER')"`
 (extra; folds) → TERM(laptop/87: 14), `yours was 47` RED. A GREY card: "wandb 0.15.11 accepts
-exactly 40 characters · today's key format: not checked · a different length? raise the pin, then
-sh package-trainer.sh again · a tested route: see the study guide". Fade out.
-SAY: One more: this old wandb pin accepts exactly 40 characters, and 47 fails. We could not check which key format W and B gives out today. If yours differs, the study guide has a workaround.
+exactly 40 characters · today's key format: not checked · a different length: this pin refuses
+it · check before you submit". Fade out.
+SAY: One more: this old wandb pin accepts exactly 40 characters, and 47 fails. We could not check which key format W and B gives out today. If yours differs, this pin refuses it, so check before you submit.
 
 ---
 

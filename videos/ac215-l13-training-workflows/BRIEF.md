@@ -495,7 +495,7 @@ the empty key from S10 → **`api_key not configured (no-tty). call wandb.login(
 (and on Vertex that happens after the data download: minutes you've paid for); `84` — the `"16"`
 default → **`API key must be 40 characters long, yours was 2`**; `86` — a 40-character placeholder
 → `Appending key for api.wandb.ai to your netrc file: /root/.netrc`, exit 0. — only the offline length check passed; nothing asked W&B whether the key is real (`86:4` YELLOW, not GREEN). One line, `87`: this
-wandb pin accepts exactly 40 characters ("yours was 47"); if your key is a different length, the study guide carries the workaround (raise the pin, re-package; no version was verified here) — we couldn't check today's key format.
+wandb pin accepts exactly 40 characters ("yours was 47"); if your key is a different length, this pin refuses it, so the video says to check before submitting (no newer pin was verified here) — we couldn't check today's key format.
 
 **S12 · What the job prints, what W&B can show (~290) — `s12_logs.py` · `WhatTheJobSays`.** Tracker
 F4→F5; `lecture_ref(13, "9–10, 15–16, 25")`. ▶ View Jobs (README:156-158, slide 25's link): follow the job's logs link and wait for `Training Job Complete` (`:341`, the code's own print; console labels `illustration`);
