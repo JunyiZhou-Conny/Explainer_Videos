@@ -308,7 +308,10 @@ class FormatterLinter(VoiceScene):
             self.play(rb.unfold(run_time=1.0))
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(t), FadeOut(q), FadeOut(bar42), FadeOut(s_ring), FadeOut(nw), run_time=0.6)
+            # one group, terminal first: pins split `t` in the scene list, so a bare FadeOut(t)
+            # re-adds it on top and its opaque box hid the bar and ring for the first frames
+            # (q and nw are pinned into t's rows and fade with it)
+            self.play(FadeOut(VGroup(t, bar42, s_ring)), run_time=0.6)
             self.remove(t, q, bar42, s_ring, nw)
             vo.wait_until("Watch the trap")
             self.play(FadeIn(rb, shift=UP * 0.2), FadeIn(r_name, shift=UP * 0.2), run_time=0.8)
@@ -338,8 +341,10 @@ class FormatterLinter(VoiceScene):
         # ================================================== 5. Option B: pip install on the host
         t = term(P_LAPTOP, rows=9, title=T_LAPTOP, size=PT, width=13.0)   # room for the turn tags
         band_hi, band_lo = 2.25, 1.35
-        pep = grey_chip("pip refuses? (PEP 668, Homebrew/Debian) → any venv, or pipx · study guide")
+        PEP = "pip refuses? (PEP 668, Homebrew/Debian) → any venv, or pipx · study guide"
+        pep = grey_chip(PEP)
         pep.move_to([0, band_lo, 0])
+        assert len(pep.text) == len(PEP.replace(" ", "")), (len(pep.text), PEP)   # text_span indexing
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(rb, r_name, post, card, err)), track(tr, 4), run_time=0.7)
@@ -377,10 +382,15 @@ class FormatterLinter(VoiceScene):
             self.play(Indicate(yt5, color=TURN, scale_factor=1.15), run_time=0.6)
             vo.wait_until("If pip refuses")
             self.play(FadeIn(pep, shift=DOWN * 0.15), run_time=0.6)
+            vo.wait_until("as Homebrew Pythons do")
+            self.play(Indicate(text_span(pep.text, PEP, "Homebrew/Debian"), color=INK, scale_factor=1.12),
+                      run_time=0.7)
             vo.wait_until("use any lecture 3 virtual environment")
-            self.play(Indicate(pep.text, color=INK, scale_factor=1.05), run_time=0.8)
+            self.play(Indicate(text_span(pep.text, PEP, "any venv, or pipx"), color=INK, scale_factor=1.1),
+                      run_time=0.8)
             vo.wait_until("the study guide has the one-liner")
-            self.play(Indicate(pep, color=S.GREY, scale_factor=1.06), run_time=0.8)
+            self.play(Indicate(text_span(pep.text, PEP, "study guide"), color=INK, scale_factor=1.12),
+                      run_time=0.8)
 
         # ================================================== 6. flake8 and black on the host
         with self.voiceover(SAY[6]) as vo:
