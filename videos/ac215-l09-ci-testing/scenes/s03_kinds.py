@@ -28,7 +28,7 @@ right, whole scene).
    1–4), the header's `system` folder underlined BLUE, line 2 "Integration tests" struck YELLOW
    with "system" written above it; CODE(pytest.ini: 19–23) with the GREY caption "markers defined,
    never used". Tag `erratum` beside the first card.
-6. The cards fade; the empty gate table (built at 26 pt) slides in; its four headers light YELLOW
+6. The cards fade; the empty gate table (built at 30 pt) slides in; its four headers light YELLOW
    in turn; it shrinks (a Transform into the 20 pt table, never a scale) to its resting place and
    everything fades.
 """
@@ -106,7 +106,7 @@ class ThreeKinds(VoiceScene):
             vo.wait_until("A unit test skips the app")
             # the chip comes loose from the handler
             self.play(FadeOut(to_pw), pw.animate.shift(DOWN * 1.1 + RIGHT * 0.3), run_time=0.8)
-            self.play(rest.animate.set_opacity(0.3), tok.animate.set_opacity(0.5), run_time=0.5)
+            self.play(rest.animate.fade(0.7), tok.animate.fade(0.5), run_time=0.5)
             vo.wait_until("calls that one function alone")
             # the zoom: the app swells past the frame and fades; the chip becomes the unit box,
             # the token becomes just its numbers
@@ -134,7 +134,7 @@ class ThreeKinds(VoiceScene):
         tok2 = RequestToken().move_to([-6.3 + RequestToken().width / 2, 2.55, 0])
         dot = Dot(radius=0.12, color=ROUTE)
         hops = [c.get_top() + UP * 0.2 for c in ichain.chips]
-        entry = np.array([ibox.frame.get_left()[0] + 0.25, hops[0][1], 0])
+        entry = np.array([ibox.frame.get_left()[0] + 0.3, ichain.get_center()[1], 0])
         dot.move_to(entry)
         json = chip(RESPONSE, ROUTE, size=22, font=MONO).move_to([3.6, 2.55, 0])
         cap = note("in-process · no socket", S.GREY, 24).next_to(ibox.frame, DOWN, buff=0.35)
@@ -242,12 +242,12 @@ class ThreeKinds(VoiceScene):
         # ========================================================== 4. the hermetic border
         nk = NestedKinds().move_to([0, 0.45, 0])
         herm = note("hermetic: only your code can make it fail", UNIT, 24).move_to([0, -2.4, 0])
-        down = cross_mark(0.36, ERR, 6).move_to(nk.server)
+        down = cross_mark(0.36, ERR, 6).next_to(nk.server, UP, buff=0.15)
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(cost, cost_t)), ReplacementTransform(lay["unit"], nk.unit),
-                      ReplacementTransform(lay["integration"], nk.integration),
-                      ReplacementTransform(lay["system"], nk.system), run_time=1.3)
+            self.play(FadeOut(VGroup(cost, cost_t)), FadeTransform(lay["unit"], nk.unit),
+                      FadeTransform(lay["integration"], nk.integration),
+                      FadeTransform(lay["system"], nk.system), run_time=1.3)
             self.remove(nk.unit, nk.integration, nk.system)
             self.add(nk.system, nk.integration, nk.unit)
             self.play(Create(nk.wire), FadeIn(nk.server), run_time=0.6)
@@ -271,7 +271,7 @@ class ThreeKinds(VoiceScene):
 
         # ========================================================== 5. faint rows, and an erratum
         pyr2 = TestPyramid().move_to([0, 0.95, 0])
-        extra = pyr2.extra_rows().set_opacity(0.7)
+        extra = pyr2.extra_rows()
         lay2 = pyr2.layers
 
         sysc = code(SYS_FILE, 1, 4).to_corner(UL, buff=0.6).shift(DOWN * 0.15)
@@ -289,9 +289,9 @@ class ThreeKinds(VoiceScene):
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(nk.border, nk.wire, nk.server, down, herm)),
-                      ReplacementTransform(nk.unit, lay2["unit"]),
-                      ReplacementTransform(nk.integration, lay2["integration"]),
-                      ReplacementTransform(nk.system, lay2["system"]), run_time=1.2)
+                      FadeTransform(nk.unit, lay2["unit"]),
+                      FadeTransform(nk.integration, lay2["integration"]),
+                      FadeTransform(nk.system, lay2["system"]), run_time=1.2)
             vo.wait_until("a smoke test")
             self.play(FadeIn(extra[0], shift=UP * 0.15), run_time=0.6)
             vo.wait_until("acceptance tests")
@@ -316,7 +316,7 @@ class ThreeKinds(VoiceScene):
             self.play(Indicate(never, color=INK, scale_factor=1.08), run_time=0.8)
 
         # ========================================================== 6. the empty gate table
-        big = GateTable(size=26, row_h=0.62).move_to([0, 0.3, 0])
+        big = GateTable(size=30, row_h=0.75).move_to([0, 0.4, 0])
         small = GateTable().move_to([0, -1.2, 0])
 
         with self.voiceover(SAY[6]) as vo:
