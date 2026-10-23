@@ -292,8 +292,7 @@ class PytestInside(VoiceScene):
                       LaggedStart(*[Indicate(a, color=TOOL, scale_factor=1.0) for a in fw.asks], lag_ratio=0.2),
                       run_time=1.0)
             vo.wait_until("each test gets a fresh one")
-            self.play(*per_anims, run_time=1.0)
-            self.play(FadeIn(fresh, shift=UP * 0.1), run_time=0.5)
+            self.play(*per_anims, FadeIn(fresh, shift=UP * 0.1), run_time=1.0)
             vo.wait_until("the whole run shares one")
             inst, sess_anims = fw.session()
             shared = grey_chip('scope="session" · one, shared', size=20, mono_font=True)
@@ -302,7 +301,7 @@ class PytestInside(VoiceScene):
             chips3, links3 = copies
             self.play(*[c.animate.move_to(inst[0]) for c in chips3], FadeOut(links3),
                       FadeTransform(fresh, shared), run_time=0.8)
-            self.remove(chips3, links3, fresh)
+            self.remove(*chips3, *links3, chips3, links3, fresh)   # each copy was added on its own
             self.add(inst[0])
             self.play(*sess_anims[1:], run_time=0.8)
             vo.wait_until("And parametrize")
