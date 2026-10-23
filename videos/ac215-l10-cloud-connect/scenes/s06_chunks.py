@@ -106,7 +106,7 @@ def mount_picture(size: float = 24) -> VGroup:
     cont_rows = VGroup(row("/app/", IMAGE, 0), row("outputs/", IMAGE, 1))
     cont_rows.arrange(DOWN, aligned_edge=LEFT, buff=0.32)
     cont_rows[1].shift(RIGHT * 0.45)
-    fr = outline_box(4.6, 2.7, IMAGE, solid=True, fill_opacity=0.05).move_to([3.7, 0.55, 0])
+    fr = outline_box(4.6, 2.7, IMAGE, solid=True, fill_opacity=0.05).move_to([3.7, 0.1, 0])
     title = label("container", 22, IMAGE).move_to(fr.get_corner(UL) + np.array([0.25, -0.3, 0]), aligned_edge=LEFT)
     cont_rows.move_to(fr.get_center() + np.array([0, -0.2, 0])).align_to(fr, LEFT).shift(RIGHT * 0.5)
     cont = VGroup(fr, title, cont_rows)
@@ -121,7 +121,7 @@ def mount_picture(size: float = 24) -> VGroup:
     tube = VGroup(glow, core)
     tube.core, tube.glow = core, glow
     spec = VGroup(mono("../llm-rag:/app", 22, INK), note("docker-compose.yml · line 12"))
-    spec.arrange(DOWN, buff=0.12).next_to(core, DOWN, buff=0.75)
+    spec.arrange(DOWN, buff=0.12).move_to([core.get_center()[0], fr.get_bottom()[1] - 0.55, 0])
 
     def files(rw, color):
         return VGroup(*[file_glyph(0.3, color) for _ in range(3)]).arrange(RIGHT, buff=0.12) \
