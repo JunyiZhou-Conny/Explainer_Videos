@@ -182,7 +182,7 @@ planner's model can't approve its own plan. Five test-yourself questions close t
    3.15.0, and `onnxruntime` has wheels only up to 3.14; `uv python pin 3.13`; a 1.6 GB environment
    (plus about 3 GB of CUDA packages on a Linux PC); ADK 2.12.0.
 10. **adk web and the folder names** — `uv run adk web` from the repository root; the telemetry question
-    the README doesn't mention (Enter means yes; `adk telemetry disable`); port 8000 and the dev UI; seven
+    the README doesn't mention (Enter means yes; `uv run adk telemetry disable`); port 8000 and the dev UI; seven
     entries in the dropdown; agent names must be Python identifiers, so `1-baseline` is refused, and an
     older ADK refuses it too; the fix: rename the folders; the root `.env` and `baseline.agent` in the
     log; the quick start's file argument and the module READMEs' missing `web`; the port clash with
@@ -238,7 +238,7 @@ because `onnxruntime` has no wheel for it (`uv python pin 3.13`); module folder 
 identifiers, which today's ADK refuses and a version pin doesn't fix (rename them); retired model
 defaults, `gemini-2.0-flash` in the code and `gemini-2.5-flash` in `.env.example` (set `GEMINI_MODEL` to
 a current model in the root `.env`, and skip the module READMEs' Setup steps, since only the nearest
-`.env` is loaded); ADK 2.12's telemetry question, where Enter means yes (`adk telemetry disable`);
+`.env` is loaded); ADK 2.12's telemetry question, where Enter means yes (`uv run adk telemetry disable`);
 `QUICKSTART.md` passing a file to `adk web`, and the module READMEs' `uv run adk` without `web`; the
 README's "memory", which is session state; and sessions saved in each agent's `.adk/` folder, which the
 `.gitignore` doesn't cover (add `.adk/`). In the notebooks: the Cheese Quiz installs unpinned packages
