@@ -112,6 +112,17 @@ def ponder_right(scene, question: str, seconds: float, card_w: float, center) ->
     return pc
 
 
+def clear_but(scene, *keep, anims=(), run_time: float = 0.6):
+    """Plays: everything on screen fades except the families of `keep` (the tracker and the lecture
+    tag; a track() animation may have split the tracker into parts on the scene), then `keep` is
+    re-added whole."""
+    ids = {id(f) for k in keep for f in k.get_family()}
+    drop = [x for x in scene.mobjects if not any(id(f) in ids for f in x.get_family())]
+    scene.play(FadeOut(Group(*drop)), *anims, run_time=run_time)
+    scene.remove(*drop)
+    scene.add(*keep)
+
+
 class SecretsPortal(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S04"] == 7, len(SAY)
@@ -122,7 +133,7 @@ class SecretsPortal(VoiceScene):
         sp = SecretsPortalRig()
         rows = sp.tree.rows
         sp.tree.shift(DOWN * 2.05)                       # tree low, the card / panel above it
-        sp.caption.next_to(rows[0], RIGHT, buff=1.3)
+        sp.caption.next_to(rows[0], RIGHT, buff=0.9)
         shown = VGroup(*rows[:5])
         sec_rows = VGroup(rows[5], rows[6])
         q = label("?", 40, TURN).move_to(rows[5].name_text).align_to(rows[5].name_text, LEFT)
@@ -293,12 +304,13 @@ class SecretsPortal(VoiceScene):
         tree_cap, ls_cap = capture("05"), capture("06")
         assert mk.cmd == "mkdir ../secrets" and not mk.lines, mk.cmd
         dl = VGroup(folder_glyph(0.5, LAPTOP), label("Downloads", 24, LAPTOP)).arrange(DOWN, buff=0.15)
-        dl.move_to([-3.6, 0.9, 0])
+        dl.move_to([-4.6, 0.55, 0])
         sf = VGroup(folder_glyph(0.5, KEY), mono("secrets/", 24, KEY)).arrange(DOWN, buff=0.15)
-        sf.move_to([2.6, 0.9, 0])
+        sf.move_to([-0.9, 0.55, 0])
         beside_repo = note("~/secrets/ · beside cheese-app-v0/").next_to(sf, DOWN, buff=0.25)
-        f_icon = file_glyph(0.5, LAPTOP).next_to(dl[0], UP, buff=0.0).shift(RIGHT * 0.05)
-        f_lab = label("the downloaded key", 22, S.GREY).next_to(dl, DOWN, buff=0.3)
+        f_icon = file_glyph(0.5, LAPTOP).next_to(dl[0], UP, buff=0.05)
+        f_lab = label("the downloaded key", 22, S.GREY).next_to(f_icon, RIGHT, buff=0.3)
+        landing = sf[0].get_center() + UP * 0.12
         ill = illustration_tag().move_to([5.4, -0.95, 0])
 
         with self.voiceover(SAY[3]) as vo:
@@ -316,23 +328,23 @@ class SecretsPortal(VoiceScene):
             self.play(FadeIn(m.drawer, scale=0.6), run_time=0.6)
             self.play(Indicate(m.drawer.text, color=KEY, scale_factor=1.25), run_time=0.7)
             vo.wait_until("then move the download in")
-            self.play(FadeOut(m), FadeOut(bar_note), track(tr, 3), run_time=0.5)
-            self.remove(m, bar_note)
+            self.play(FadeOut(m), FadeOut(m.drawer), FadeOut(bar_note), track(tr, 3), run_time=0.5)
+            self.remove(m, m.drawer, bar_note)
             self.play(FadeIn(dl), FadeIn(sf), FadeIn(beside_repo), FadeIn(ill), FadeIn(f_icon, shift=UP * 0.2),
                       FadeIn(f_lab), run_time=0.6)
-            path = ArcBetweenPoints(f_icon.get_center(), sf[0].get_center() + UP * 0.62, angle=-0.6)
-            self.play(MoveAlongPath(f_icon, path), f_lab.animate.next_to(sf[0].get_center() + UP * 0.62, UP,
-                                                                         buff=0.32), run_time=1.1)
+            path = ArcBetweenPoints(f_icon.get_center(), landing, angle=-0.7)
+            self.play(MoveAlongPath(f_icon, path), f_lab.animate.next_to(sf[0], RIGHT, buff=0.45), run_time=1.1)
             vo.wait_until("and rename it")
-            new_name = mono("llm-service-account.json", 24, KEY).next_to(f_icon, UP, buff=0.22)
+            new_name = mono("llm-service-account.json", 24, KEY).next_to(sf[0], RIGHT, buff=0.45)
             self.play(FadeTransform(f_lab, new_name), f_icon.animate.set_color(KEY), run_time=0.8)
             vo.wait_until("Check that name")
             nr = ring(new_name, TURN, buff=0.1)
             self.play(Create(nr), run_time=0.5)
             vo.wait_until("hidden extensions")
-            bad = mono("llm-service-account.json.json", 24, ERR).next_to(dl, UP, buff=0.5).shift(RIGHT * 0.3)
+            bad = mono("llm-service-account.json.json", 24, ERR).next_to(new_name, DOWN, buff=0.5)
+            bad.align_to(new_name, LEFT)
             bad_x = strike(bad)
-            hid = note("hidden extension").next_to(bad, DOWN, buff=0.12)
+            hid = note("hidden extensions").next_to(bad, DOWN, buff=0.12).align_to(bad, LEFT)
             self.play(FadeIn(bad, shift=DOWN * 0.15), FadeIn(hid), run_time=0.5)
             self.play(Create(bad_x), run_time=0.4)
             vo.wait_until("An extra tree view")
@@ -349,9 +361,9 @@ class SecretsPortal(VoiceScene):
             tc = tree_card()
             tc.move_to([strip.box.get_right()[0] - 0.15 - tc.width / 2, 0.0, 0])
             tc.align_to(t_rows[1].strut, UP).shift(UP * 0.2)
-            self.play(FadeIn(tc, shift=LEFT * 0.2), run_time=0.6)
-            vo.wait_until("Pause and match it")
+            self.play(FadeIn(tc, shift=LEFT * 0.2), run_time=0.5)
             self.play(t_rows[2].animate.fade(0.65), run_time=0.4)          # README.md: not in the README's tree
+            vo.wait_until("Pause and match it")
             links = VGroup()
             for ri, ci in ((1, 0), (3, 2), (4, 3), (5, 1), (6, 4), (7, 5)):
                 a = t_rows[ri].glyphs.get_right() + RIGHT * 0.12
@@ -359,14 +371,13 @@ class SecretsPortal(VoiceScene):
                 lk = Line(a, b, color=TURN, stroke_width=2.5)
                 links.add(lk)
                 self.play(Create(lk), Indicate(t_rows[ri].glyphs, color=TURN, scale_factor=1.06),
-                          Indicate(tc.rows[ci], color=TURN, scale_factor=1.06), run_time=0.5)
+                          Indicate(tc.rows[ci], color=TURN, scale_factor=1.06), run_time=0.4)
             chk = grey_chip("no tree? ls -la secrets (next line) checks the same thing")
             chk.move_to([strip.box.get_left()[0] + chk.width / 2, 2.3, 0])
             self.play(FadeIn(chk, shift=DOWN * 0.1), run_time=0.5)
-            self.wait(0.8)
             self.play(FadeOut(VGroup(tc, links)), run_time=0.4)
             self.remove(tc, links)
-            ln_ls = type_cmd(self, strip, ls_cap.cmd, type_time=0.5)
+            ln_ls = type_cmd(self, strip, ls_cap.cmd, type_time=0.4)
             xt3 = beside(extra_row(), ln_ls)
             pin(self, ln_ls, xt3)
             out(self, strip, ls_cap.at((2, 5)), wrap=True)
@@ -377,9 +388,8 @@ class SecretsPortal(VoiceScene):
             chk2 = grey_chip("not .json.json · llm-finetuning README.md:67")
             chk2.move_to(chk, aligned_edge=LEFT)
             yt = your_turn().next_to(chk2, RIGHT, buff=0.4)
-            self.play(FadeOut(chk), FadeIn(chk2), run_time=0.5)
+            self.play(FadeOut(chk), FadeIn(chk2), FadeIn(yt, shift=LEFT * 0.1), run_time=0.5)
             self.remove(chk)
-            self.play(FadeIn(yt, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, yt, TURN)
 
         # ========================================================== 4. the quiet trap: .gitignore
@@ -391,8 +401,7 @@ class SecretsPortal(VoiceScene):
         no_rule = label("no rule for secrets/", 24, ERR).next_to(slot, RIGHT, buff=0.35)
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(Group(*[x for x in self.mobjects if x not in (tr, ref)])), track(tr, 4), run_time=0.6)
-            self.remove(*[x for x in self.mobjects if x not in (tr, ref)])
+            clear_but(self, tr, ref, anims=[track(tr, 4)])
             self.play(FadeIn(gi, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("the repo's gitignore")
             self.play(FadeIn(bars), run_time=0.5)
@@ -405,7 +414,7 @@ class SecretsPortal(VoiceScene):
         # ========================================================== 5. ponder 1: the key inside the repo
         sk = SecretsPortalRig(key_inside=True)
         krows = sk.tree.rows
-        sk.caption.next_to(krows[0], RIGHT, buff=1.3)
+        sk.caption.next_to(krows[0], RIGHT, buff=0.9)
         bad_ring = ring(VGroup(krows[5], krows[6]), ERR, buff=0.08)
 
         with self.voiceover(SAY[5]) as vo:
