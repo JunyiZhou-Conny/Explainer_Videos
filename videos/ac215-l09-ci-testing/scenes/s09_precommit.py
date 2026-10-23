@@ -546,7 +546,7 @@ class PreCommitGate(VoiceScene):
             bare_prompt(self, t)
             vo.wait_until("Commit again")
             unpin(self, g_row, g_tag)
-            k_ln = typ(self, t, again.cmd, type_time=0.9)
+            typ(self, t, again.cmd, type_time=0.9)
             self.play(track(tr, 3, extra=False), run_time=0.4)
             k_out = out(self, t, fit(again.at((2, 12))), run_time=0.9)
             vo.wait_until("seven hooks pass")
