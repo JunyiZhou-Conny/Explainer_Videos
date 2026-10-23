@@ -21,11 +21,11 @@ from pathlib import Path
 
 import numpy as np
 import yaml
-from manim import (DL, DOWN, DR, LEFT, ORIGIN, PI, RIGHT, UL, UP, UR, AnimationGroup, Arc, Arrow,
+from manim import (DL, DOWN, DR, LEFT, ORIGIN, PI, RIGHT, UL, UP, AnimationGroup, Arc, Arrow,
                    Brace, Circle, Create, DashedVMobject, Dot, FadeIn, FadeOut, FadeTransform,
                    Indicate, LaggedStart, Line, MoveAlongPath, Polygon, Rectangle, ReplacementTransform,
                    Rotate, RoundedRectangle, Square, Succession, Text, Transform, VGroup, VMobject,
-                   Wiggle, linear)
+                   linear)
 
 from explainer import style as S
 from explainer.components import pause_and_ponder, person_icon, ponder_card  # noqa: F401 (re-export)
@@ -1054,8 +1054,8 @@ class GateTable(VGroup):
         gt.settle(self, "system")          # final colours (verdict GREEN, or all GREY outside)
     GateTable() with no keys: the empty S03 table (header + an empty frame of two blank rows).
     rows={key: (what, how, cmd, verdict, hermetic)} overrides or adds rows. Columns size to the
-    longest text: 12.6 wide with 'tests' alone, 13.1 with 'system' (centre it: x = 0). Overrides must
-    not be longer than the default texts.
+    longest text: 11.8 wide with 'tests' alone, 12.8 with 'system', 13.1 with all six (centre it at
+    x = 0; never scale it). Overrides must not be longer than the default texts.
     .header (4 labels) .frame .rows{key} (each .cells .bar .outline) .slot(key) .header_pulse(i)"""
 
     def __init__(self, keys=(), filled=(), rows=None, size: float = 20, row_h: float = 0.52, **kw):

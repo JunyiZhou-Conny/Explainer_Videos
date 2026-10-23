@@ -1,4 +1,4 @@
-# AC215 · Lecture 10 — Connecting to the cloud: who checks that it's you, and how does a page find a database? — narration script & visual plan (v1)
+# AC215 · Lecture 10 — Connecting to the cloud: who checks that it's you, and how does a page find a database? — narration script & visual plan (v2, review merge)
 
 Audience: an AC215 student who has done L1–L9 (a GCP project, images and containers, bind mounts,
 Compose, published ports, the L5 RAG stack, L8 fine-tuning, the L9 pre-commit gate). New to them:
@@ -171,9 +171,9 @@ Conventions
 - V6, the running map (BRIEF): built in S02 and kept as persistent state (`AppMap`); each scene
   lights its piece (streets S05, Chroma S05, API S09, frontend S11, doors S06/S09/S11, the secrets
   drawer S04) and S15 shows it complete, then unlit.
-- Length and parts: narration 4,280 words (`python -m explainer.script`, which counts words; its
-  minute figure assumes 155 wpm and is ignored; part 1 = 2,559, part 2 = 1,721). At Kokoro
-  af_heart speed 0.9 (≈174 wpm raw) that is ≈24.5 min of narration, ≈28–30 min with typing,
+- Length and parts: narration 4,297 words after the review merge (`python -m explainer.script`,
+  which counts words; its minute figure assumes 155 wpm and is ignored; part 1 = 2,531, part 2 =
+  1,766). At Kokoro af_heart speed 0.9 (≈174 wpm raw) that is ≈24.7 min of narration, ≈28–30 min with typing,
   outputs and ponder timers. Part 1 = S01–S09
   (identity and the cloud, ending when the auth chain closes), part 2 = S10–S15 (addresses and the
   browser). Each part ends on an empty frame.
@@ -207,7 +207,7 @@ cheese made?" (README.md · line 215). Below it an answer frame and a collapsed 
 "References · 10 chunks". On "appears", 4–5 GREY skeleton bars (no glyphs) grow into the answer
 frame; on "ten book passages", the drawer slides open to 10 empty GREY rows: no answer text
 anywhere.
-SAY: Here is a cheese chatbot, running on your own laptop. You ask it how Tolminc cheese is made. An answer appears, with ten book passages as references.
+SAY: Here is a cheese chatbot, running on your laptop. You ask it how Tolminc cheese is made. An answer appears, with ten book passages as references.
 
 SHOW: Freeze. The page dims; the browser figure steps out of the window. Three PINK arrows leave
 the browser one after another, numbered ① `:9000`, ② `:8000`, ③ `:9000` (V5 teaser). Arrows ① and
@@ -263,7 +263,7 @@ SHOW: TRACKER A1 · extra. It types `git log -1 --format='%H %ci'` (extra) → T
 `cb6fb945…` and `2026-10-08` highlight. Then `ls -la` (extra) → TERM(laptop/03: 2–11);
 `llm-rag` (line 11), `api-service` (9) and `frontend-ai-chatbot` (10) highlight in turn, each
 flying a small TEAL chip to its house on the map.
-SAY: An extra git log shows the commit this video uses, from October 8th, 2026; if yours is newer, details may differ. A listing shows llm-rag, api-service, and frontend-ai-chatbot: one folder per house.
+SAY: An extra git log shows the commit this video uses, from October 8th, 2026; if yours is newer, details may differ. An extra listing shows llm-rag, api-service, and frontend-ai-chatbot: one folder per house.
 
 SHOW: A kind card, tag `erratum`: a GREY dashed miniature of a hosted setup (a web server on a
 cloud machine) crossed out, caption "the app's home page animates the hosted version · its
@@ -299,7 +299,7 @@ SAY: Open IAM and Admin, then Service accounts. Create one named llm-service-acc
 SHOW: A kind card, tag `erratum`, three lines: "slides: data-service-account, one storage role →
 next week's account (L11)" · "this app: the Gemini role does the work; Storage Admin rides along for
 L08 reuse" · "slide 45: Storage Object Admin, and only when needed".
-SAY: Two notes on the slides. Their demo account, with one storage role, is next week's. And this app never touches storage; that role rides along from the fine-tuning lecture. Grant both anyway, as the README says. The lecture's rule, least privilege, meaning only the access you need, would grant less; part 2 comes back to it.
+SAY: Two notes on the slides. The slides' demo account, with one storage role, is next week's. And this app never touches storage; that role rides along from the fine-tuning lecture. Grant both anyway, as the README says. The lecture's rule, least privilege, meaning only the access you need, would grant less; part 2 comes back to it.
 
 SHOW: TRACKER A3. Console continued (`illustration`, README.md · lines 54–55): the account → tab
 "KEYS" → "ADD Key (Create New Key)" → "JSON"; a file icon downloads. Two banners redrawn in our own
@@ -403,7 +403,7 @@ SHOW: TRACKER B2 · extra. At the capture's prompt `app@3c41bc0606ad:/app$` it t
 tube lights on the map. Then `echo $GOOGLE_APPLICATION_CREDENTIALS $GCP_PROJECT` (extra) →
 TERM(laptop/21: 49). CODE(cheese-app-v0/llm-rag/docker-compose.yml: 13–15) small, caption "copied
 from the shell that runs compose".
-SAY: Two extra checks inside. The key file shows up in slash secrets, through the portal. And both variables are set, copied by Compose from the launching script, which is why you always start through it.
+SAY: Two extra checks inside. The key file shows up in slash secrets, through the portal. And both variables are set, copied by Compose from the launching script, which is why you always start there.
 
 SHOW: A GREY card whose three lines build on their sentences: "This recording machine has no
 Google account. · The key file in the folder listings is an obviously invalid stand-in. · It was
@@ -496,7 +496,7 @@ GOOGLE_APPLICATION_CREDENTIALS · a service-account key · this tutorial" GREEN;
 application-default login · you, through a consent screen" GREY; (3) "the metadata server · the
 account attached to a VM, a Cloud Run service, a pod" GREY dashed, chip "L13–L15". A TEAL container
 outline closes around the slots: slots 2 and 3 inside it are empty boxes.
-SAY: ADC looks in three places, in order. First, the file named by the Google application credentials variable: a service account key, as in this tutorial. Second, a login file the gcloud tool writes for you, a person. Third, the metadata server, when your code runs inside Google's cloud. ADC moves to the next place only when the one before is not set. Inside these containers, only the first place exists.
+SAY: ADC looks in three places, in order. First, the file named by the Google application credentials variable: a service account key, as in this tutorial. Second, a login file the gcloud tool writes for you, as a person. Third, the metadata server, when your code runs inside Google's cloud. ADC moves to the next place only when the one before is not set. Inside these containers, only the first place exists.
 
 SHOW: Slot 1 lights. The key card slides out; a small envelope labelled "JWT" is written, then
 the `private_key` field morphs into a pen and seals it ("signed"). The envelope flies to a BLUE desk
@@ -510,7 +510,7 @@ SHOW: The ticket's timer runs out; the ticket greys, and a fresh one mints itsel
 chain. A GREY bridge card, the lecture's OAuth flow (slides 19–23) reduced to three boxes: person →
 consent screen → the same BLUE desk → ticket; the first two boxes are then crossed out, caption
 "same desk · no person, no consent screen".
-SAY: When the hour runs out, the library quietly gets a new one. The lecture's OAuth diagram ends at this same desk, minus the consent screen: no person is there.
+SAY: When the hour runs out, the library gets a new one. The lecture's OAuth diagram ends at this same desk, minus the consent screen: no person is there.
 
 SHOW: Strip terminal, prompt `student@laptop:~/cheese-app-v0/llm-rag$`. It types
 `sh docker-shell.sh` (extra: the README's command, re-used for this check) → TERM(laptop/29: 6–7), then at the capture's prompt `app@bccd254e50ae:/app$`
@@ -656,7 +656,7 @@ still running). It types
 `docker exec llm-rag-analysis-api-service python -c "import urllib.request; print(urllib.request.urlopen('http://llm-rag-chromadb:8000/api/v2/version', timeout=10).read())"`
 (extra; shown small, folds) → TERM(laptop/41: 47) RED. On the map, a probe from the API house finds
 no `llm-rag-chromadb` in its street's phone book.
-SAY: Now the proof, all extras. From inside the API container, ask for the database by name. The answer: name or service not known. The API's street has no entry for that name.
+SAY: Now the proof. From inside the API container, ask for the database by name. The answer: name or service not known. The API's street has no entry for that name.
 
 SHOW: The API house pulses with a YELLOW "?".
 PONDER(8 s, "You want the API itself to query Chroma.\nWhat URL does it use, and what must change\non the map for that name to resolve?")
@@ -701,7 +701,7 @@ your disk". TRACKER D3: it types
 GREY; line 26 `▲ Next.js 14.2.4` with `at the time of recording`; line 27
 `- Local:        http://localhost:3000` ringed RED-dashed, caption "the container's view"; line 36
 `✓ Ready in 1648ms` GREEN. `▶ your turn` on both.
-SAY: Then npm install: 773 packages at the time of recording, with deprecation warnings. They land in your folder through the mount, so our capture could step out and back in without losing them. Then npm run dev. The Next.js server says ready, version 14.2.4 at the time of recording, and prints the line that fools everyone: local, localhost 3000. Pause and run both.
+SAY: Then npm install: 773 packages at the time of recording, plus deprecation warnings. They land in your folder through the mount, so our capture could step out and back in without losing them. Then npm run dev. The Next.js server says ready, version 14.2.4 at the time of recording, and prints the line that fools everyone: local, localhost 3000. Pause and run both.
 
 SHOW: TRACKER D4 · extra. A second terminal (prompt `student@laptop:~/cheese-app-v0/frontend-ai-chatbot$`)
 shows three angles, stacked: (a) `curl -sS --max-time 10 http://localhost:3000/` (extra) →
@@ -719,12 +719,12 @@ SHOW: V4 part 2: the wall door `3200→3000`; an arrow from the browser passes t
 number riding on it morphs 3200 → 3000 (slide 9's tunnel). Then `docker ps` (extra) →
 TERM(laptop/54: 2–3; squeeze) — the frontend row only, its `0.0.0.0:3200->3000/tcp` cell
 highlighted (the Chroma row is not printed: its uptime is a capture artifact).
-SAY: That is the tunnel. The flag dash p, 3200 colon 3000, means that host port 3200 forwards to container port 3000. The Next server listens on 3000 inside its own house, and your browser knocks on 3200 outside. One server, two addresses. An extra docker ps shows the same door.
+SAY: That is the tunnel. The flag dash p, 3200 colon 3000, means host port 3200 forwards to container port 3000. The Next server listens on 3000 inside its own house, and your browser knocks on 3200 outside. One server, two addresses. An extra docker ps shows the same door.
 
 SHOW: The 0–65535 number line (10 s): three bands, "0–1023 · system" (22, 80, 443), "1024–49151 ·
 registered · pick yours here" (3000, 3200, 8000, 9000 drop in), "49152–65535 · dynamic · a
 throw-away port the OS picks for each outgoing call".
-SAY: Port numbers come in three bands. The low ones belong to the system, like 80 and 443. The middle band is where you pick yours: 3000, 3200, 8000, and 9000. The top band holds throw-away ports for outgoing calls.
+SAY: Port numbers come in three bands. The low ones belong to the system, like 80 and 443. Pick yours from the middle band: 3000, 3200, 8000, and 9000. The top band holds throw-away ports for outgoing calls.
 
 SHOW: The honest beat, 0.0.0.0 twice. Left: CODE(cheese-app-v0/api-service/docker-entrypoint.sh:
 6–9), `--host 0.0.0.0` highlighted, caption "listen: every side of the container"; beside it the
@@ -736,7 +736,7 @@ wall doors face two sides, the laptop's loopback and a "Wi-Fi" street; a GREY ne
 the Wi-Fi street walks up to door 9000 (all doors neutral GREY, never GREEN). Then a diagram only,
 no capture: `-p 127.0.0.1:9000:9000` bricks up the Wi-Fi side of door 9000; GREY caption "port_toy
 (L04) wrote 127.0.0.1:". Fade out.
-SAY: Now 0.0.0.0 has appeared twice, and they are different facts. Inside the container, the tunnel arrives at the street side, not at the loopback, so the API server listens on every side. Docker publishes on every side of your laptop, unless you add a prefix. The ports lecture wrote 127.0.0.1 before its port, but this app writes none. So these doors face your Wi-Fi too, and anyone on that network can knock. Adding 127.0.0.1 before the host port closes that side.
+SAY: 0.0.0.0 has now appeared twice, as two different facts. Inside the container, the tunnel arrives at the street side, not at the loopback, so the API server listens on every side. Docker publishes on every side of your laptop, unless you add a prefix. The ports lecture wrote 127.0.0.1 before its port, but this app writes none. So these doors face your Wi-Fi too, and anyone on that network can knock. Adding 127.0.0.1 before the host port closes that side.
 
 ---
 
@@ -776,14 +776,14 @@ with CODE(cheese-app-v0/frontend-ai-chatbot/src/services/DataService.js: 34–43
 `http://localhost:3200` · `:9000` · `:8000`, "scheme + host + port: three origins".
 SAY: Call two asks the database for the 10 nearest chunks. An origin is scheme, host and port, so a page from 3200 calling 8000 crosses origins.
 
-SHOW: No code panel. A rule card: "default: a page may not read another origin's replies · CORS:
+SHOW: No code panel. A rule card: "default: a page may not see another origin's replies · CORS:
 the server names who may". Then the mechanism: the guest list sits on the Chroma house as a
 two-line card (the course's hosted site · `http://localhost:3200`, docker-compose.yml lines 25–26)
 and never moves. A small OPTIONS packet carries the page's `Origin: http://localhost:3200` stamp to
 door 8000; Chroma checks the stamp against its list, and a small pass reading `localhost:3200`
 comes back; the bouncer figure at the browser's edge compares pass and stamp and waves packet ②
 through. Ten chunk cards return.
-SAY: By default, a browser will not let a page read replies from another origin. A server can allow named origins; that is CORS, and it keeps other websites from reading your local services. So the browser first knocks with a preflight carrying the page's origin. The database checks its guest list, the course's site and localhost 3200, and returns a pass, or nothing. Your browser is the bouncer: no pass, no query.
+SAY: By default, a browser will not let a page see replies from another origin. A server can allow named origins; that is CORS, and it keeps other websites from reading your local services. So the browser first sends a preflight with the page's origin. The database checks its guest list, the course's site and localhost 3200, and returns a pass, or nothing. Your browser is the bouncer: no pass, no query.
 
 SHOW: Packet ③ `POST :9000/rag/llm-response` (lines 165–171): the question plus ten chunks; the
 answer frame returns with GREY skeleton bars (no text). The V5 `recorded` tag fades. A strip on
@@ -836,7 +836,7 @@ SHOW: The answer frame (`illustration`) with GREY skeleton bars (no glyphs), its
 drawn as an amber box labelled "Pavlos' fun fact" (README.md · line 239;
 CODE(cheese-app-v0/frontend-ai-chatbot/src/components/chat/ChatComponent.jsx: 22–28) small, line 24
 highlighted). No answer text.
-SAY: Look for an answer that ends with a highlighted fun fact paragraph.
+SAY: Look for an answer ending in a highlighted fun fact paragraph.
 
 SHOW: TRACKER E5. CODE(cheese-app-v0/api-service/api/routers/rag.py: 14–27), line 22
 `FINE_TUNE_GENERATIVE_MODEL = "projects/129349313346/locations/us/endpoints/7652952773041848320"`
@@ -943,7 +943,7 @@ piece's thumbnail: `DefaultCredentialsError` → path and mount (V3) · `401` �
 `403` → role, project, API (V2) · `Failed to fetch` or a CORS line in the console → origin (V5) ·
 `port is already allocated` or a name conflict → doors and names (V4) · "the script dies on the
 network" → line 14.
-SAY: When something breaks, find its layer. A credentials error: the path or the mount. A 401: no valid token. A 403: role, project, or API. A CORS line: the page's origin. A taken port: the doors. A dying script: line 14.
+SAY: When something breaks, find its layer. A credentials error: the path or the mount. A 401: no valid token. A 403: role, project, or API. A CORS line: the origin. A taken port: the doors. A dying script: line 14.
 
 SHOW: A card "Test yourself". One question at a time (≥ 24 pt, ≤ 3 lines), each with a thumbnail of
 its picture; earlier ones collapse into a label list at left. Q1 "Name ADC's three places, and the

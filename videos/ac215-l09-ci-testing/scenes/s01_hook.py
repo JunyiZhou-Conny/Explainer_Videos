@@ -27,8 +27,7 @@ Beats (script.md, ## S01; one voiceover block each):
    No footer. Fade to an empty frame.
 """
 
-import numpy as np  # noqa: I001  (manim first, then common: common must win)
-from manim import *
+from manim import *  # noqa: I001  (manim first, then common: common must win)
 
 from explainer.scene import VoiceScene
 
