@@ -3,12 +3,14 @@
 Beats (script.md, ## S01; one voiceover block each):
 0. Black frame, no tracker. CODE(cheese-app-ci-cd-history/c3b227f-service.py: 38–48), header
    `c3b227f · service.py · lines 38–48` (the script's 38–50 crops to 11 lines: 49 is 78 characters
-   and the panel may not exceed the frame or 12 lines). On "The distance from a point" the
-   docstring's `sqrt(x^2 + y^2)` (line 40) is underlined WHITE; on "This line takes" line 44
-   `result = math.sqrt(2 * z)` glows RED; on "just wrong" its `2 *` wiggles. A GREY chip under the
-   panel: "committed live, in class" (source: git-log-oneline.txt, c3b227f "demo class 1").
+   and the panel may not exceed the frame or 12 lines). Line 44 gets a faint WHITE bar at once
+   ("Here is a line of code"). On "The distance from a point" the docstring's `sqrt(x^2 + y^2)`
+   (line 40) is underlined WHITE; on "This line takes" line 44 `result = math.sqrt(2 * z)` glows
+   RED (the bar turns RED); on "just wrong" its `2 *` wiggles. A GREY chip under the panel:
+   "committed live, in class" (source: git-log-oneline.txt, c3b227f "demo class 1").
 1. The lecture tag `Lecture 9 · slides 41, 98–99` (top right, until the checklist). The panel dims
-   and turns into a GREY envelope "your commit" (V1, CommitGate(5)) beside a HISTORY vault; on
+   and folds into the bare GREY envelope, whose name "your commit" then fades in (V1, CommitGate(5);
+   folding into the labelled envelope stretched its name across the frame) beside a HISTORY vault; on
    "Before that commit exists" it slides toward the vault; on "who gets to say no" an unlabeled
    turnstile of five empty arches drops between them and the envelope stops. On "a gate," a GREY
    label "a gate" lands on the turnstile. On "watch it refuse" the envelope passes two arches
@@ -21,9 +23,12 @@ Beats (script.md, ## S01; one voiceover block each):
    ✓ Python 3.9 or newer (GREY checks: your laptop) · GREEN ✗ no cloud, no credentials, no bill.
 4. Layout preview: tracker A (step 1) top-left in a YELLOW ring; the ring cycles the six trackers
    A–D (on "4 from the cheese README"), E ("1 for the guest lecture"), F ("1 for cleanup", where
-   it stays: step 1 of 3: container ls). A 2-row strip (GREY tag "preview", prompt
+   it stays: step 1 of 3: container ls). A centred row of six GREY chips (Part 1-4 | guest lecture |
+   cleanup, brace "cheese README" under the first four) counts along: the chip of the tracker in
+   the ring is YELLOW; it fades before the strip. A 2-row strip (GREY tag "preview", prompt
    student@laptop:~$) types `docker container ls` with the YELLOW `▶ your turn` row tag; that tag
    clears, then `ls -la` with the GREY `extra` row tag (the tracker caption gains " · extra").
+   Each tag flashes its word and outline only (Indicate on the whole tag fills it and hides the word).
    No footer. Fade to an empty frame.
 """
 
@@ -226,29 +231,42 @@ class Hook(VoiceScene):
         strip = term(P_LAPTOP_HOME, rows=2, title="laptop")
         prev = preview_tag()
         prev.next_to(strip.box, UP, buff=0.15).align_to(strip.box, LEFT)
+        chips, brace = section_row()                 # "6 sections today: 4 ... 1 ... 1", counted
+        VGroup(chips, brace).move_to([0, 0.3, 0])
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(card), run_time=0.5)
             self.remove(card)
             self.play(FadeIn(tr, shift=DOWN * 0.15), Create(rng), run_time=0.8)
             vo.wait_until("6 sections today")
-            self.play(Indicate(rng, color=TURN, scale_factor=1.03), run_time=0.7)
+            self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in chips], lag_ratio=0.12),
+                      Indicate(rng, color=TURN, scale_factor=1.03), run_time=0.9)
+            self.play(light(chips[0], True), run_time=0.4)
             vo.wait_until("4 from the cheese README")
-            for k in "BCD":
+            self.play(FadeIn(brace, shift=UP * 0.1), run_time=0.5)
+            for i, k in enumerate("BCD", start=1):
                 new = trs[k]
-                tr = swap_tracker(self, tr, new, Transform(rng, tracker_ring(new)), run_time=0.45)
+                tr = swap_tracker(self, tr, new, Transform(rng, tracker_ring(new)), light(chips[i - 1], False),
+                                  light(chips[i], True), run_time=0.45)
             vo.wait_until("1 for the guest lecture")
-            tr = swap_tracker(self, tr, trs["E"], Transform(rng, tracker_ring(trs["E"])), run_time=0.5)
+            tr = swap_tracker(self, tr, trs["E"], Transform(rng, tracker_ring(trs["E"])), light(chips[3], False),
+                              light(chips[4], True), run_time=0.5)
             vo.wait_until("1 for cleanup")
-            tr = swap_tracker(self, tr, trs["F"], Transform(rng, tracker_ring(trs["F"])), run_time=0.5)
+            tr = swap_tracker(self, tr, trs["F"], Transform(rng, tracker_ring(trs["F"])), light(chips[4], False),
+                              light(chips[5], True), run_time=0.5)
             vo.wait_until("When the yellow")
+            self.play(FadeOut(VGroup(chips, brace)), run_time=0.5)
+            self.remove(chips, brace)
             self.play(FadeIn(strip), FadeIn(prev, shift=RIGHT * 0.2), rng.animate.set_stroke(opacity=0.35),
                       run_time=0.6)
             ln1 = type_cmd(self, strip, "docker container ls", type_time=0.8)
             yt = beside(turn_row(), ln1)
             pin(self, ln1, yt)
             vo.wait_until("pause and run")
-            self.play(Indicate(yt, color=TURN, scale_factor=1.15), run_time=0.8)
+            # flash the word and the outline only: Indicate on the whole tag also fills its box
+            # with the text's colour, and the word vanishes for the length of the flash
+            self.play(Indicate(yt.text, color=TURN, scale_factor=1.2),
+                      yt.box.animate(rate_func=there_and_back).set_stroke(width=4), run_time=0.8)
             vo.wait_until("A gray extra tag")
             unpin(self, ln1, yt)
             ln2 = type_cmd(self, strip, "ls -la", type_time=0.5)
@@ -256,7 +274,8 @@ class Hook(VoiceScene):
             pin(self, ln2, xt, anim=AnimationGroup(FadeIn(xt, shift=LEFT * 0.1), track(tr, extra=True),
                                                    Transform(rng, tracker_ring(tracker("F", 1, True), opacity=0.35))))
             vo.wait_until("marks a check")
-            self.play(Indicate(xt, color=S.GREY, scale_factor=1.15), run_time=0.8)
+            self.play(Indicate(xt.text, color=INK, scale_factor=1.2),
+                      xt.box.animate(rate_func=there_and_back).set_stroke(INK, width=4), run_time=0.8)
             vo.wait_until("Every command")
             self.play(FadeOut(rng), run_time=0.6)
             self.remove(rng)
