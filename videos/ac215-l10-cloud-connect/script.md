@@ -747,7 +747,7 @@ CODE(cheese-app-v0/frontend-ai-chatbot/.env.development: 1–4), line 4
 `NEXT_PUBLIC_BASE_API_URL=http://localhost:9000` YELLOW; CODE(cheese-app-v0/frontend-ai-chatbot/src/services/Common.js:
 1–2) below it. An arrow carries the address out of the container into a JavaScript bundle, which
 flies to the browser on the laptop floor.
-SAY: Where does the page learn the API's address? From this setting, baked into the JavaScript your browser downloads. So it must be an address your browser can reach: localhost 9000, never a container name.
+SAY: This setting, baked into the JavaScript your browser downloads, gives the page the API's address. So it must be one your browser can reach: localhost 9000, never a container name.
 
 SHOW: TRACKER E1. A schematic browser at `localhost:3200/chunkviz` (`illustration`): book text
 splits into coloured chunks inside the window; no arrow leaves the laptop. A strip shows TERM(laptop/56:
@@ -759,51 +759,62 @@ A strip on `student@laptop:~$` types
 `curl -s http://localhost:8000/api/v2/tenants/default_tenant/databases/default_database/collections`
 (extra; folds) → TERM(laptop/63: 2), `[]`, caption "ours: empty"; beside it a GREY card, tag
 `recorded · README.md:103, 206`: "char-split-collection · recursive-split-collection". `▶ your turn`.
-SAY: Step 1 of 5, text chunking, runs entirely in your browser: no API, no cloud, no bill. Step 2 is the vector database UI: connect to localhost 8000 with the defaults. Pause and try both. Our extra listing is empty, because nothing could be embedded here; yours shows two collections.
+SAY: Step 1 of 5, text chunking, runs in your browser, with no bill. Step 2, the database UI, connects to localhost 8000. Pause and try both. Our extra listing is empty; yours shows two collections.
 
-SHOW: TRACKER E3. The browser at `localhost:3200/chat` (`illustration`), the README's example
-question typed; GOLD `cost_tag()` "each question: 1 embedding + 1 generation". V5 in full beside
-CODE(cheese-app-v0/frontend-ai-chatbot/src/components/chat/ChatComponent.jsx: 161–173): packet ①
-`GET :9000/rag/embedding` (line 163) carries the question to door 9000; a BLUE bearer ticket rides
-on to the BLUE building; 256 small bars return. `▶ your turn`.
-SAY: Step 3 is the chat, with a gold tag: each question costs one embedding and one Gemini answer. Pause and ask one. Now follow it as three calls. Call one goes to the API, which asks Google, and 256 numbers come back.
+SHOW: TRACKER E3. The browser at `localhost:3200/chat` (`illustration`) with a collection picker
+(`char-split-collection ▾`), the README's example question typed; GOLD `cost_tag()` "each question:
+1 embedding + 1 generation". `▶ your turn`. Then V5 in full, under one GREY tag for the whole flow
+(this and the next three blocks): `recorded · README.md:217–222 · ChatComponent.jsx:161–173`.
+Beside it CODE(cheese-app-v0/frontend-ai-chatbot/src/components/chat/ChatComponent.jsx: 161–173):
+packet ① `GET :9000/rag/embedding` (line 163) carries the question to door 9000; a BLUE bearer
+ticket rides on to the BLUE building; 256 small bars return.
+SAY: Step 3, the chat, has a gold tag: one embedding and one Gemini answer per question. Pause, pick a collection, and ask one. On your machine, it makes three calls. Call one goes to the API, which asks Google, and 256 numbers come back.
 
-SHOW: Packet ② `POST :8000/…/collections/<id>/query` (line 164), with
-CODE(cheese-app-v0/frontend-ai-chatbot/src/services/DataService.js: 34–43), line 36
-`"n_results": 10` highlighted. An origin card: `http://localhost:3200` · `:9000` · `:8000`,
-"scheme + host + port: three origins". A small OPTIONS packet knocks first at door 8000; Chroma
-hands back its two-line guest list, CODE(cheese-app-v0/llm-rag/docker-compose.yml: 25–26); the
-bouncer figure stands at the browser's edge and checks the page's `Origin: http://localhost:3200`
-stamp against it. Ten chunk cards return.
-SAY: Call two sends those numbers to the database, for the 10 nearest chunks. An origin is scheme, host and port, so a page from 3200 calling 8000 crosses origins. The browser first knocks with a preflight, and the database answers from its guest list: the course's hosted site, and localhost 3200. Your browser is the bouncer that enforces it.
+SHOW: Two beats, one group each. (a) Packet ② `POST :8000/…/collections/<id>/query` (line 164),
+with CODE(cheese-app-v0/frontend-ai-chatbot/src/services/DataService.js: 34–43), line 36
+`"n_results": 10` highlighted; the panel then clears. (b) The origin card alone:
+`http://localhost:3200` · `:9000` · `:8000`, "scheme + host + port: three origins".
+SAY: Call two asks the database for the 10 nearest chunks. An origin is scheme, host and port, so a page from 3200 calling 8000 crosses origins.
 
-SHOW: Packet ③ `POST :9000/rag/llm-response` (lines 165–171): the question plus ten chunks; an
-empty answer frame returns (no text). A strip on `student@laptop:~$` types the preflight (extra;
-shown small, folds)
+SHOW: No code panel. A rule card: "default: a page may not read another origin's replies · CORS:
+the server names who may". Then the mechanism: the guest list sits on the Chroma house as a
+two-line card (the course's hosted site · `http://localhost:3200`, docker-compose.yml lines 25–26)
+and never moves. A small OPTIONS packet carries the page's `Origin: http://localhost:3200` stamp to
+door 8000; Chroma checks the stamp against its list, and a small pass reading `localhost:3200`
+comes back; the bouncer figure at the browser's edge compares pass and stamp and waves packet ②
+through. Ten chunk cards return.
+SAY: By default, a browser will not let a page read replies from another origin. A server can allow named origins; that is CORS, and it keeps other websites from reading your local services. So the browser first knocks with a preflight carrying the page's origin. The database checks its guest list, the course's site and localhost 3200, and returns a pass, or nothing. Your browser is the bouncer: no pass, no query.
+
+SHOW: Packet ③ `POST :9000/rag/llm-response` (lines 165–171): the question plus ten chunks; the
+answer frame returns with GREY skeleton bars (no text). The V5 `recorded` tag fades. A strip on
+`student@laptop:~$` types the preflight (extra; shown small, folds)
 `curl -s -D - -o /dev/null -X OPTIONS -H 'Origin: http://localhost:3200' -H 'Access-Control-Request-Method: POST' http://localhost:8000/api/v2/tenants/default_tenant/databases/default_database/collections`
-→ TERM(laptop/60: 2, 6) GREEN; then the same with `Origin: http://localhost:3300` (extra) →
-TERM(laptop/61: 2–6), a RED dashed gap where line 6 of the first answer stood, caption "no
-access-control-allow-origin". Then TERM(laptop/38: 2, 6) (extra; the preflight to the API from part
-1's second terminal, `Origin: http://localhost:3300`): `access-control-allow-origin: *`, with
+→ TERM(laptop/60: 2, 6), line 6 GREEN ("the pass"), the typed `-H 'Origin: …'` ringed GREY
+("curl writes its own"); then the same with `Origin: http://localhost:3300` (extra) →
+TERM(laptop/61: 2–6), a RED dashed gap where line 6 of the first answer stood, caption "no pass".
+Line 2 `HTTP/1.1 200 OK` is ringed GREY in both answers ("the server answers everyone"). Then
+TERM(laptop/38: 2, 6) (extra; the preflight to the API from the second terminal of part 1,
+`Origin: http://localhost:3300`): `access-control-allow-origin: *`, with
 CODE(cheese-app-v0/api-service/api/service.py: 13–20) small.
-SAY: Call three sends the question and ten chunks to the API, and the answer returns. An extra preflight from origin 3200 gets the allow origin header; from 3300, it is missing. The API answers with a star: any page may use its replies.
+SAY: Call three sends the question and ten chunks to the API, and the answer returns. An extra curl writes its own Origin header, posing as a page. Both preflights get 200 OK, but only 3200 gets a pass; to a browser, no pass is a refusal.
 
 SHOW: Both doors pulse; a `:3300` stamp hovers over a fresh packet.
 PONDER(8 s, "You republish the frontend at -p 3300:3000\nand ask a question. Which of the three calls\nfails, and does curl care?")
-SAY: Something to ponder. You republish the frontend on port 3300 and ask a question. Which of the three calls fails, and does curl care?
+SAY: Something to ponder. You republish the frontend on port 3300. Which of the three calls fails, and does curl care?
 
-SHOW: V5 replay with the `:3300` stamp: ① GREEN (the API's `*`); ② the bouncer at the browser
-refuses to hand Chroma's reply to the page, RED; ③ never leaves the browser, GREY dashed, caption
-"awaits call 2 · ChatComponent.jsx:163–171". A `curl` figure walks straight to door 8000, past no
-bouncer, and gets an answer. A last chip: "127.0.0.1:3200 ≠ localhost:3200".
-SAY: Call one works, because the API allows anyone. Call two is blocked by the browser. Call three is never sent, because the code waits for call two. And curl ignores all of it. CORS is enforced by the browser, configured by the server, and keyed on the page's origin.
+SHOW: V5 replay with the `:3300` stamp: ① GREEN (the API's `*`); ② the OPTIONS knock returns from
+door 8000 with no pass (`61`); the bouncer at the browser stops the query packet before it
+leaves, RED; ③ never leaves the browser, GREY dashed, caption "awaits call 2 ·
+ChatComponent.jsx:163–171". A `curl` figure walks straight to door 8000, past no bouncer, and gets
+an answer. A last chip: "127.0.0.1:3200 ≠ localhost:3200".
+SAY: Call one works: the API allows any origin. Call two never leaves the browser. Call three waits for it, so it is never sent. And curl ignores it all. CORS is enforced by the browser, configured by the server, and keyed on the page's origin.
 
-SHOW: The chat wireframe (`illustration`): an answer area and a "References" drawer of ten rows
-labelled book · author · dist (README.md:217–222), all empty outlines, caption "what to look for".
-Then the closing beat: the map's door 9000, neutral GREY, with a GOLD meter beside it; slide 13's
-warning redrawn: "an unprotected AI endpoint". GREY tag `lecture_ref(10, "11, 13")` top right during
-this block. Fade out.
-SAY: On screen, look for an answer and a drawer of ten references, with book, author and distance. Last thought: CORS decides which page may see a reply, but nothing here decides who may call. An open AI endpoint, spending your key, is running on your laptop.
+SHOW: The chat wireframe (`illustration`): the collection picker, an answer area with GREY
+skeleton bars (no glyphs) and a "References" drawer of ten empty GREY rows labelled book · author ·
+dist (README.md:217–222), caption "what to look for". Then the closing beat: the map's door 9000,
+neutral GREY, with a GOLD meter beside it; slide 13's warning redrawn: "an unprotected AI
+endpoint". GREY tag `lecture_ref(10, "11, 13")` top right during this block. Fade out.
+SAY: Look for an answer and ten references, with book, author and distance, where smaller is closer. Last thought: CORS decides which page may see a reply; nothing here decides who may call. An unprotected AI endpoint, spending your key, is running on your laptop.
 
 ---
 
