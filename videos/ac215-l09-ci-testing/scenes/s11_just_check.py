@@ -395,12 +395,12 @@ class JustCheck(VoiceScene):
 
         # ========================================================== 1. four hooks; just check = four checks
         panels = [cfg_panel(a, b) for a, b in WINDOWS]
-        ch = Turnstile(9, None, arch_w=0.6, arch_h=0.75, gap=0.18)
+        ch = Turnstile(9, None, arch_w=0.6, arch_h=0.75, gap=0.23)
         ch_names = ch.name_labels(CHEESE_HOOKS, color=S.GREY)
         bk = Turnstile(4, None, arch_w=0.6, arch_h=0.75, gap=0.45)
         bk_names = bk.name_labels(BABYKEV_HOOKS)
         chg, bkg = VGroup(ch, ch_names), VGroup(bk, bk_names)
-        pair = VGroup(chg, bkg).arrange(RIGHT, buff=0.6, aligned_edge=DOWN)
+        pair = VGroup(chg, bkg).arrange(RIGHT, buff=0.5, aligned_edge=DOWN)
         pair.move_to([0, 0, 0]).shift(UP * (-3.45 - pair.get_bottom()[1]))
         y_cap = (panels[0].get_bottom()[1] + pair.get_top()[1]) / 2
         ch_cap = note("cheese-app-ci-cd · 9 hooks", S.GREY, 20).move_to([chg.get_center()[0], y_cap, 0])
@@ -691,10 +691,14 @@ class JustCheck(VoiceScene):
             self.play(FadeOut(t2), run_time=0.4)
             self.remove(t2, *t2.get_family())
             self.play(FadeIn(cc, shift=UP * 0.2), run_time=0.4)
-            c_rows = cc.print(self, cc_lines, run_time=0.6, lag=0.1)
+            c_rows = cc.print(self, cc_lines, run_time=0.4, lag=0.08)
             self.play(c_rows[0].animate.set_color(ERR), substring(c_rows[4], "no docment").animate.set_color(ERR),
                       substring(c_rows[5], "87 of 88").animate.set_color(ERR), FadeIn(cc_chip, shift=UP * 0.15),
-                      run_time=0.6)
+                      run_time=0.5)
+            self.play(Indicate(substring(c_rows[0], "Failed"), color=ERR, scale_factor=1.2),
+                      Indicate(substring(c_rows[4], "babykev.api:render(indent)"), color=ERR, scale_factor=1.1),
+                      run_time=0.9)
+            self.wait(0.6)
             vo.wait_until("Two rows join the table.")
             self.play(FadeOut(VGroup(cc, cc_chip)), run_time=0.5)
             self.remove(cc, cc_chip, *cc.get_family())
