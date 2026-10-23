@@ -266,14 +266,13 @@ class RunTheApp(VoiceScene):
 
         # ================================================== 4. the erratum: a JSON object, not 5.0
         dist = outs[2]
-        big_json = mono(cut(json_line("part1-04"), '"message":') + "}", 28, INK).move_to([0, 1.9, 0])
+        big_json = mono(cut(json_line("part1-04"), '"message":') + "}", 28, INK).move_to([0, 2.15, 0])
         span = big_json[big_json.text.index('"distance"'): big_json.text.index('"distance"') + 14]
         r_card = readme_card(90, "Calculate Euclidean distance (returns 5.0)")
-        r_card.move_to([-3.25, -0.35, 0])
-        err = erratum_tag().next_to(r_card, UP, buff=0.12).align_to(r_card, RIGHT)
+        r_card.move_to([0, 0.75, 0])
+        err = erratum_tag().next_to(r_card, RIGHT, buff=0.2)
         panel = code(SERVICE, 45, 48)
-        panel.move_to([3.45, -0.35, 0])
-        panel.shift(LEFT * max(0.0, panel.get_right()[0] - 6.45))
+        panel.move_to([0, 0, 0]).shift(UP * (-0.45 - panel.get_top()[1]))
         bar = line_bar(panel.code, 3, INK, 0.16)
         dspan = code_span(panel.code, 3, '"distance": result')
 
