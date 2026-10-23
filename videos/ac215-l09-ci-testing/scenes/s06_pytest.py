@@ -312,8 +312,9 @@ class PytestInside(VoiceScene):
             m = pz.merged
             rest = pz.cards[1:]
             self.play(*[c.text.animate.set_opacity(0) for c in rest], run_time=0.3)
-            self.play(*[c.animate.move_to(pz.cards[0].get_center() + np.array([0.1, -0.1, 0]) * (i + 1))
-                        for i, c in enumerate(rest)], run_time=0.6)
+            spot = m.get_center()
+            self.play(*[c.animate.move_to(spot + np.array([0.1, -0.1, 0]) * (i - 1.5))
+                        for i, c in enumerate(pz.cards)], run_time=0.6)
             vo.wait_until("into one function")
             self.play(FadeOut(pz.cards), FadeIn(m.frame), FadeIn(m.head, shift=DOWN * 0.1),
                       LaggedStart(*[FadeIn(ch, shift=DOWN * 0.2) for ch in m.chips], lag_ratio=0.2), run_time=1.1)
