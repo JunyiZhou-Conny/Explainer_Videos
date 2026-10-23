@@ -1,0 +1,19 @@
+$ curl -s -w '\nHTTP %{http_code}\n' 'https://storage.googleapis.com/storage/v1/b/cheese-app-data-versioning/o?prefix=dvc_store/'
+{
+  "error": {
+    "code": 401,
+    "message": "Anonymous caller does not have storage.objects.list access to the Google Cloud Storage bucket. Permission 'storage.objects.list' denied on resource '//storage.googleapis.com/projects/_/buckets/cheese-app-data-versioning' (or it may not exist).",
+    "errors": [
+      {
+        "message": "Anonymous caller does not have storage.objects.list access to the Google Cloud Storage bucket. Permission 'storage.objects.list' denied on resource '//storage.googleapis.com/projects/_/buckets/cheese-app-data-versioning' (or it may not exist).",
+        "domain": "global",
+        "reason": "required",
+        "locationType": "header",
+        "location": "Authorization"
+      }
+    ]
+  }
+}
+
+HTTP 401
+[exit 0]

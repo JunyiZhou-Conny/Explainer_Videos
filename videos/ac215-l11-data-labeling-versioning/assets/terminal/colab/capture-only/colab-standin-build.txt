@@ -1,0 +1,40 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 670B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#4 resolve docker.io/library/python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258 0.1s done
+#4 DONE 0.1s
+
+#5 [internal] load build context
+#5 transferring context: 187.25kB 0.0s done
+#5 DONE 0.0s
+
+#6 [2/4] COPY capture-ca.crt /usr/local/share/ca-certificates/capture-ca.crt
+#6 CACHED
+
+#7 [3/4] RUN cat /usr/local/share/ca-certificates/capture-ca.crt >> /etc/ssl/certs/ca-certificates.crt  && sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources  && apt-get update -qq && apt-get install -y -qq --no-install-recommends git >/dev/null  && mkdir /content
+#7 CACHED
+
+#8 [4/4] WORKDIR /content
+#8 CACHED
+
+#9 exporting to image
+#9 exporting layers done
+#9 exporting manifest sha256:1c5db9f53d59b70761723f78b5ae5023a6c9fe85428fe3cd990b6f0717b22077 done
+#9 exporting config sha256:fe2f52d8f371e39fee0d6a596c8803d56c23642b2c474aec9e4678a924c18f57 done
+#9 exporting attestation manifest sha256:bb7cc944fc1c623e9b4fa2707090751ec71c05090141ce6d3c72aae55337b601 0.0s done
+#9 exporting manifest list sha256:624a40bf8979125d1372b51dbfb5b523e0453575466faaa40bbcb7bd7bc13f56 0.0s done
+#9 naming to docker.io/library/l11-colab-standin:latest
+#9 naming to docker.io/library/l11-colab-standin:latest done
+#9 unpacking to docker.io/library/l11-colab-standin:latest 0.0s done
+#9 DONE 0.2s

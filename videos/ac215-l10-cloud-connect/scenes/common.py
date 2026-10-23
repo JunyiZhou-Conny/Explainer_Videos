@@ -739,12 +739,15 @@ def cost_row(s: str = "this bills your project") -> VGroup:
     return row_tag(s, COST)
 
 
-def flash_tag(tg, color=None, scale: float = 1.15, run_time: float = 0.8):
-    """Animation: flash a tag's words and pulse its outline. Never Indicate a whole tag: its dark
-    fill floods with the text colour and the word vanishes (L09 trap)."""
+def flash_tag(scene, tg, color=None, scale: float = 1.15, run_time: float = 0.8, *extra) -> None:
+    """Plays: flash a tag's words and pulse an unfilled copy of its outline (then drops the copy).
+    Never Indicate a whole tag, and never animate tg.box itself: the scene re-adds the box above its
+    own word and the filled box hides the word for good (L09 trap, seen again in L10 S01)."""
     color = color or tg.text.get_color()
-    return AnimationGroup(Indicate(tg.text, color=color, scale_factor=scale),
-                          tg.box.animate(rate_func=there_and_back).set_stroke(width=4), run_time=run_time)
+    edge = tg.box.copy().set_fill(opacity=0)
+    scene.play(Indicate(tg.text, color=color, scale_factor=scale),
+               edge.animate(rate_func=there_and_back).set_stroke(width=4), *extra, run_time=run_time)
+    scene.remove(edge)
 
 
 def each(pieces, color, scale: float = 1.1, lag: float = 0.15):
