@@ -255,6 +255,12 @@ def step_to(scene, gate, i: int, state: str, run_time: float = 0.25):
                run_time=run_time)
 
 
+def late_in(m, start: float = 0.65):
+    """FadeIn over the last part of a resize: the shrinking terminal's top edge has passed below the
+    gate before the gate shows (both in one play crossed the arches)."""
+    return FadeIn(m, rate_func=lambda x: smooth(max(0.0, (x - start) / (1 - start))))
+
+
 def quick_pass(scene, gate: CommitGate, states, step_time: float = 0.16, *with_shut) -> None:
     """CommitGate.pass_through with a shorter door (the narration names the arches and the vault in
     about three seconds): through every arch, the door opens, the envelope goes in, the door shuts
@@ -498,7 +504,7 @@ class PreCommitGate(VoiceScene):
             vo.wait_until("Pause and run it")
             self.play(flash(a_tag, TURN), run_time=0.6)
             drop_tag(self, a_row, a_tag)
-            resize(self, t, 3, keep=[black_ln, mod_ln, ref_ln], extra=[FadeIn(gpic)], run_time=0.6)
+            resize(self, t, 3, keep=[black_ln, mod_ln, ref_ln], extra=[late_in(gpic)], run_time=0.7)
             vo.wait_until("Six hooks pass")
             for i, s in enumerate(["pass", "pass", "pass", "pass", "skip", "pass", "pass"]):
                 step_to(self, gate, i, s, run_time=0.15)
@@ -587,7 +593,7 @@ class PreCommitGate(VoiceScene):
             k_out = out(self, t, fit(again.at((2, 12))), run_time=0.6, chunk=11)
             vo.wait_until("seven hooks pass")
             gpic = VGroup(gate, gate.turnstile.labels)
-            resize(self, t, 3, keep=[k_out[8], k_out[9], k_out[10]], extra=[FadeIn(gpic)], run_time=0.6)
+            resize(self, t, 3, keep=[k_out[8], k_out[9], k_out[10]], extra=[late_in(gpic)], run_time=0.7)
             main = k_out[9]
             mid = substring(main, "[main b72d50d]")
             mring = ring(mid, PASS, buff=0.05)
@@ -642,8 +648,8 @@ class PreCommitGate(VoiceScene):
             reset_arches(gate)
             env = gate.new_envelope("import os")
             gpic = VGroup(gate, gate.turnstile.labels)
-            resize(self, t, 3, keep=[b9, b18, b22], extra=[FadeOut(mac), FadeOut(ref), FadeIn(gpic)],
-                   run_time=0.6)
+            resize(self, t, 3, keep=[b9, b18, b22], extra=[FadeOut(mac), FadeOut(ref), late_in(gpic)],
+                   run_time=0.7)
             self.remove(mac, ref)
             vo.wait_until("which no formatter can fix")
             for i, s in enumerate(["pass", "pass", "skip", "pass", "skip", "pass", "pass"]):

@@ -432,7 +432,6 @@ class JustCheck(VoiceScene):
             b14 = line_bar(p0.code, 14 - 5, TURN, 0.18)
             self.play(FadeIn(b14), FadeIn(bk_names[2], shift=UP * 0.1), light(bk.arches[2]), run_time=0.5)
             vo.wait_until("refusing any dot env file")
-            p1.shift(DOWN * 0.3)
             self.play(FadeOut(VGroup(p0, b9, b11, b14), shift=UP * 0.3), FadeIn(p1, shift=UP * 0.3), run_time=0.6)
             b16 = line_bar(p1.code, 16 - 15, TURN, 0.18)
             b18 = line_bar(p1.code, 18 - 15, TURN, 0.18)
