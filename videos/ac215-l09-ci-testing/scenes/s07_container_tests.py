@@ -28,8 +28,8 @@ Beats (script.md, ## S07; one voiceover block each):
    TEAL; the `>=` pins flash), dimmed behind the TEAL left column "this image: …" with `erratum`;
    right a GREEN dashed "part 2: dev tools in groups · one lockfile". Then the GREY host file
    `utils.py` glows with an edit (YELLOW "edited"); a crossed dashed arrow to the TEAL `api/`
-   slab, "yesterday's copy"; a rebuild arrow and only the four COPY slabs are replaced; caption
-   "packages before code". Fade out.
+   slab, "yesterday's copy"; a rebuild arrow and only the four COPY slabs are replaced (the "edited"
+   tag moves onto the fresh api/ slab); caption "packages before code". Fade out.
 
 Deviations (reported to the coordinator): CODE(Dockerfile) is 31–41, not 27–41 (15 lines; the
 panel takes at most 12; 27–30 are USER/WORKDIR, not narrated); CODE(pyproject.toml) is 7–18, not
@@ -236,32 +236,31 @@ class TestsInImage(VoiceScene):
         t = term(P_LAPTOP, rows=13)
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(entry, path_bar, exec_bar, row, arrows)), run_time=0.5)
-            self.play(FadeIn(t), run_time=0.5)
-            b_ln = type_cmd(self, t, build.cmd, type_time=1.0)
+            self.play(FadeOut(VGroup(entry, path_bar, exec_bar, row, arrows)), FadeIn(t), run_time=0.6)
+            b_ln = type_cmd(self, t, build.cmd, type_time=0.8)
             b_row, b_tag = turn_on(self, b_ln)
-            out = t.print(self, build.at(2, "…", (23, 24), "…", 59), run_time=0.9, lag=0.2)
+            out = t.print(self, build.at(2, "…", (23, 24), "…", 59), run_time=0.7, lag=0.2)
             cached = substring(out[3], "CACHED")
             vo.wait_until("all cached")
             cring = ring(cached, IMAGE, buff=0.06)
-            self.play(Create(cring), run_time=0.5)
+            self.play(Create(cring), run_time=0.4)
             attach(self, out[3], cring)
             vo.wait_until("then run the unit tests")
-            self.play(track(tr, 2), run_time=0.5)
-            u_ln = type_cmd(self, t, unit.cmd, type_time=1.3)
+            self.play(track(tr, 2), run_time=0.3)
+            u_ln = type_cmd(self, t, unit.cmd, type_time=1.0)
             u_row, u_tag = turn_on(self, u_ln)
             for anchor, sub, col in (("docker run,", "docker run", TURN), ("dash dash rm", "--rm", TURN),
                                      ("the image", "cheese-app-api:local", IMAGE),
                                      ("pytest tests slash unit", "pytest tests/unit/", TURN)):
                 vo.wait_until(anchor)
-                self.play(Indicate(find_in(u_ln, sub), color=col, scale_factor=1.04), run_time=0.6)
-            t.print(self, unit.at(2, 3, 11), run_time=0.5)
-            t.print(self, soft(unit.at(13, "…", 23), t.max_chars), run_time=0.6, lag=0.2)
-            u_sum = t.print(self, [(summary(unit, 25), PASS)], run_time=0.4)[0]
+                self.play(Indicate(find_in(u_ln, sub), color=col, scale_factor=1.04), run_time=0.4)
+            t.print(self, unit.at(2, 3, 11), run_time=0.4)
+            t.print(self, soft(unit.at(13, "…", 23), t.max_chars), run_time=0.5, lag=0.15)
+            u_sum = t.print(self, [(summary(unit, 25), PASS)], run_time=0.3)[0]
             vo.wait_until("11 passed")
-            self.play(Indicate(substring(u_sum, "11 passed"), color=PASS, scale_factor=1.15), run_time=0.7)
+            self.play(Indicate(substring(u_sum, "11 passed"), color=PASS, scale_factor=1.15), run_time=0.5)
             vo.wait_until("Pause and run both")
-            self.play(Indicate(u_tag, color=TURN, scale_factor=1.15), run_time=0.8)
+            self.play(Indicate(u_tag, color=TURN, scale_factor=1.15), run_time=0.6)
 
         # ========================================================== 2. integration, then both
         with self.voiceover(SAY[2]) as vo:
@@ -340,23 +339,23 @@ class TestsInImage(VoiceScene):
             vo.wait_until("Option 2 waits")
             self.play(Indicate(VGroup(*tr.dots[5:8]), color=S.GREY, scale_factor=1.6), run_time=0.8)
             vo.wait_until("Option 3 is the same")
-            self.play(track(tr, 9), run_time=0.5)
+            self.play(track(tr, 9), run_time=0.3)
             vo.wait_until("docker-shell again")
-            type_cmd(self, t, shell.cmd, type_time=0.7)
-            t.print(self, shell.at((31, 33)), run_time=0.5, lag=0.15)
+            type_cmd(self, t, shell.cmd, type_time=0.5)
+            t.print(self, shell.at((31, 33)), run_time=0.4, lag=0.15)
             vo.wait_until("the same pytest commands")
-            self.play(track(tr, 10), run_time=0.4)
+            self.play(track(tr, 10), run_time=0.3)
             for ln, out_n in ((34, [56]), (57, [78]), (79, [111]), (112, [137, 138])):
-                istep(self, t, shell.line(ln), type_time=0.6)
+                istep(self, t, shell.line(ln), type_time=0.4)
                 outs = [shell.line(n) if n == 137 else (summary(shell, n), PASS) for n in out_n]
-                t.print(self, outs, run_time=0.35)
+                t.print(self, outs, run_time=0.25)
             vo.wait_until("One trap:")
             resize(self, t, 10, keep=2, extra=[FadeOut(gt)])
             self.remove(gt)
-            ls_ln = istep(self, t, shell.line(139), type_time=0.7)
+            ls_ln = istep(self, t, shell.line(139), type_time=0.5)
             x_tag = beside(extra_row(), ls_ln)
             pin(self, ls_ln, x_tag, anim=AnimationGroup(FadeIn(x_tag, shift=LEFT * 0.1), track(tr, extra=True)))
-            listing = t.print(self, shell.at((140, 143)), run_time=0.6, lag=0.12)
+            listing = t.print(self, shell.at((140, 143)), run_time=0.5, lag=0.12)
             vo.wait_until("lands inside a container")
             lw = max(r.glyphs.get_right()[0] for r in listing) - listing.get_left()[0]
             red = outline_box(lw + 0.4, listing.height - 0.04, ERR)
@@ -372,12 +371,13 @@ class TestsInImage(VoiceScene):
             t.print(self, shell.at(145), run_time=0.3)
             t.set_prompt(P_LAPTOP)
             bare_prompt(self, t)
-            self.play(*[r.glyphs.animate.set_opacity(0.25) for r in listing], run_time=0.7)
+            self.play(*[r.glyphs.animate.set_opacity(0.25) for r in listing], run_time=0.5)
             vo.wait_until("Prefer the terminal report")
             pref = grey_chip("--cov-report=term", size=22, mono_font=True, color=PASS)
             pref.next_to(cap, DOWN, buff=0.35).align_to(cap, LEFT)
-            self.play(FadeIn(pref, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeIn(pref, shift=UP * 0.15), run_time=0.5)
             attach(self, listing[0], pref)
+            self.play(Indicate(pref, color=PASS, scale_factor=1.08), run_time=0.8)
 
         # ========================================================== 5. what the image ships, and when
         pp = code(PYPROJECT, P0, P1, font_size=20)
@@ -447,9 +447,10 @@ class TestsInImage(VoiceScene):
                               angle=PI / 2, color=TURN, stroke_width=4, tip_length=0.2)
             rlab = label("rebuild", 22, TURN).next_to(reb, RIGHT, buff=0.15)
             self.play(Create(reb), FadeIn(rlab), FadeOut(VGroup(link, x, old)), run_time=0.6)
-            st2.rebuild(self, copies, run_time=1.2)
-            self.play(uf.box.frame.animate.set_stroke(LAPTOP), FadeOut(edited), run_time=0.4)
-            self.remove(edited)
+            fresh = st2.rebuild(self, copies, run_time=1.2)
+            # the edit now travels with the fresh api/ copy
+            self.play(edited.animate.next_to(fresh[0].box, LEFT, buff=0.2), uf.box.frame.animate.set_stroke(LAPTOP),
+                      run_time=0.7)
             vo.wait_until("or you test the past")
             pbc = note("packages before code", S.GREY, 24).next_to(VGroup(s2[0], s2[1]), LEFT, buff=0.4)
             self.play(FadeIn(pbc, shift=RIGHT * 0.15), Indicate(VGroup(s2[0].box, s2[1].box), color=SYSTEM,

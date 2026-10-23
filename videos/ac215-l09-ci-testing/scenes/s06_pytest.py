@@ -11,13 +11,15 @@ top right for the whole scene.
    `broken` glyphs fly out of the card into the unit folder as a dark chip. PONDER (8 s).
 3. Second sweep: `broken` stays dark beside a GREY ruler `python_functions = test_*` (cross between),
    a GREEN `test_broken` lights up past a check, `erratum` tag on the README card.
-4. Two illustration cards (assert shows both values · approx for floats) above
+4. Two illustration cards, each tagged (assert shows both values · approx for floats: a value a
+   hair off 2.0 falls inside the default rel 1e-6 band, drawn wide) above
    CODE(tests/unit/test_utils.py: 69–72) with `pytest.raises(TypeError)` GREEN; on "the invalid tray
    from earlier" S02's invalid tray returns with `power("3", 4)` in it.
 5. CODE(tests/integration/test_api.py: 7–11), line 11 highlighted; `client` flies into a conftest.py
    box (V3 FixtureWiring, GREY caption "what it could look like · not this repo's code"): tests ask
    for it, fresh copies per test (default), then one shared instance (scope="session"); then
-   Parametrize folds the four power() asserts into one function. Fade to an empty frame.
+   Parametrize's four power() assert cards (top) fold into one function (below): each card's inputs
+   fly into its input chip (shows what became what; no text morph). Fade to an empty frame.
 """
 
 import numpy as np  # noqa: I001  (manim first, then common: common must win)
@@ -26,7 +28,7 @@ from manim import *
 from explainer.scene import VoiceScene
 from explainer import style as S
 
-from common import (ERR, INK, MONO, NARRATION, PASS, TOOL, TURN, UNIT, Collector, FixtureWiring,
+from common import (ERR, INK, MONO, NARRATION, PARAM_CASES, PASS, TOOL, TURN, UNIT, Collector, FixtureWiring,
                     Parametrize, check_mark, chip, code, code_span, cross_mark, erratum_tag, grey_chip,
                     illustration_tag, label, line_bar, lref, ring, mono, mono_line, note, pause_and_ponder, readme,
                     readme_card, substring, tool_chip, under)
@@ -50,6 +52,14 @@ def bin_tray(name: str, tray_w: float = 2.9, wall_h: float = 0.6) -> VGroup:
     g.spot = Dot(radius=0.001, fill_opacity=0).move_to([0, 0.3, 0])
     g.add(g.spot)
     return g
+
+
+def glyphs_of(t: Text, full: str, sub: str) -> VGroup:
+    """The glyphs of `sub` inside a chip's Text built from `full` (Text drops spaces and their glyphs)."""
+    assert len(t.submobjects) == len("".join(full.split())), full
+    i = full.index(sub)
+    a, n = len("".join(full[:i].split())), len("".join(sub.split()))
+    return VGroup(*t.submobjects[a:a + n])
 
 
 def mini_card(title: str, card_w: float = 5.9, card_h: float = 2.8) -> VGroup:
@@ -156,7 +166,7 @@ class PytestInside(VoiceScene):
             self.play(FadeIn(dark.box, scale=1.15), ReplacementTransform(fly, dark.text), run_time=0.4)
             vo.wait_until("Will the unit test run go red?")
             unit_tiles = col.columns["unit"].tiles
-            self.play(Indicate(VGroup(unit_tiles, dark), color=ERR, scale_factor=1.03), run_time=0.9)
+            self.play(Indicate(VGroup(unit_tiles, dark), color=TURN, scale_factor=1.03), run_time=0.9)
         ponder = pause_and_ponder(self, "README Part 6 appends def broken(): assert False\n"
                                         "to a test file. Will the unit tests go red?", seconds=8, width=11.6)
 
@@ -177,6 +187,8 @@ class PytestInside(VoiceScene):
             # back to full strength (the dark chip is not part of the tree)
             col.saved_state.shift(UP * (col.get_top()[1] - col.saved_state.get_top()[1]))
             self.play(Restore(col), dline.animate.set_stroke(opacity=0.4), run_time=0.6)
+            sx = col.scanner.get_x()           # the scanner now reaches down past the appended chip
+            col.scanner.put_start_and_end_on([sx, col.get_top()[1] + 0.1, 0], [sx, dark.get_bottom()[1] - 0.1, 0])
             col.sweep(self, run_time=2.2, again=True)
             vo.wait_until("stays dark")
             self.play(Indicate(dark, color=S.GREY, scale_factor=1.2), run_time=0.8)
@@ -195,6 +207,7 @@ class PytestInside(VoiceScene):
         ca = mini_card("assert shows both values").move_to([-3.25, 1.5, 0])
         cb = mini_card("approx for floats").move_to([3.25, 1.5, 0])
         ill = illustration_tag().next_to(ca.frame, UP, buff=0.12).align_to(ca.frame, LEFT)
+        ill2 = illustration_tag().next_to(cb.frame, UP, buff=0.12).align_to(cb.frame, LEFT)
         # card A: a failed compare, both sides printed under it (illustration)
         expr = mono_line("assert power(2, 3) == 9", 24, INK)
         expr.move_to(ca.frame).shift(UP * 0.1)
@@ -209,7 +222,7 @@ class PytestInside(VoiceScene):
         band = Rectangle(width=1.4, height=0.5, stroke_color=PASS, stroke_width=2).set_fill(PASS, 0.18)
         band.move_to(axis)
         want = Dot(axis.get_center(), radius=0.09, color=INK)
-        got = Dot(axis.get_center() + RIGHT * 1.9, radius=0.09, color=TURN)
+        got = Dot(axis.get_center() + RIGHT * 0.32, radius=0.09, color=S.GREY)   # a hair off 2.0
         appr = mono_line("== pytest.approx(2.0)", 24, INK).next_to(band, UP, buff=0.32)
         rel = note("rel 1e-6", S.GREY, 20).next_to(band, DOWN, buff=0.12)
         # card C: the real code
@@ -228,7 +241,7 @@ class PytestInside(VoiceScene):
             self.play(FadeOut(old), run_time=0.6)
             self.remove(old)
             self.play(LaggedStart(FadeIn(ca, shift=UP * 0.2), FadeIn(cb, shift=UP * 0.2), lag_ratio=0.3),
-                      FadeIn(ill), run_time=0.9)
+                      FadeIn(ill), FadeIn(ill2), run_time=0.9)
             vo.wait_until("A plain assert")
             self.play(FadeIn(expr, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("shows both values")
@@ -237,8 +250,7 @@ class PytestInside(VoiceScene):
             vo.wait_until("For floats")
             self.play(Create(axis), FadeIn(want), FadeIn(got), FadeIn(appr), run_time=0.7)
             vo.wait_until("compares with a tolerance")
-            self.play(FadeIn(band), FadeIn(rel), got.animate.move_to(axis.get_center() + RIGHT * 0.32),
-                      run_time=0.8)
+            self.play(GrowFromCenter(band), FadeIn(rel, shift=UP * 0.1), run_time=0.8)
             self.play(got.animate.set_color(PASS), band.animate.set_fill(PASS, 0.32), run_time=0.4)
             vo.wait_until("And pytest dot raises")
             self.play(FadeIn(pc, shift=UP * 0.2), run_time=0.6)
@@ -265,7 +277,7 @@ class PytestInside(VoiceScene):
         copies, per_anims = fw.per_test()
         fresh = grey_chip('scope="function" · the default', size=20, mono_font=True)
         fresh.next_to(copies, DOWN, buff=0.25).align_to(fw.conftest.frame, LEFT)
-        verbs4 = VGroup(ca, cb, ill, expr, v_l, v_r, neq, links, axis, band, want, got, appr, rel, pc, bar71, tray, inv)
+        verbs4 = VGroup(ca, cb, ill, ill2, expr, v_l, v_r, neq, links, axis, band, want, got, appr, rel, pc, bar71, tray, inv)
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(verbs4), run_time=0.6)
@@ -292,7 +304,8 @@ class PytestInside(VoiceScene):
                       LaggedStart(*[Indicate(a, color=TOOL, scale_factor=1.0) for a in fw.asks], lag_ratio=0.2),
                       run_time=1.0)
             vo.wait_until("each test gets a fresh one")
-            self.play(*per_anims, FadeIn(fresh, shift=UP * 0.1), run_time=1.0)
+            # the 'asks for' arrows step back so each copy's own line to its test reads clearly
+            self.play(*per_anims, FadeIn(fresh, shift=UP * 0.1), fw.asks.animate.set_opacity(0.25), run_time=1.0)
             vo.wait_until("the whole run shares one")
             inst, sess_anims = fw.session()
             shared = grey_chip('scope="session" · one, shared', size=20, mono_font=True)
@@ -300,28 +313,31 @@ class PytestInside(VoiceScene):
             # the fresh copies collapse into one shared instance; the per-test links give way to one
             chips3, links3 = copies
             self.play(*[c.animate.move_to(inst[0]) for c in chips3], FadeOut(links3),
-                      FadeTransform(fresh, shared), run_time=0.8)
+                      FadeTransform(fresh, shared), fw.asks.animate.set_opacity(1), run_time=0.6)
             self.remove(*chips3, *links3, chips3, links3, fresh)   # each copy was added on its own
             self.add(inst[0])
-            self.play(*sess_anims[1:], run_time=0.8)
+            self.play(*sess_anims[1:], run_time=0.6)
             vo.wait_until("And parametrize")
+            # four would-be copies of one test (test_utils.py:15-18) above; the one function below
             pz = Parametrize()
-            pz.move_to([0, 0.1, 0])
-            pz.merged.move_to(pz.cards)
-            self.play(FadeOut(VGroup(fw, fw.ask_label, inst, shared)), run_time=0.6)
-            self.remove(fw, fw.ask_label, inst, shared)
-            self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in pz.cards], lag_ratio=0.15), run_time=0.8)
-            # four copies stack into one: the lower cards' words fade, the cards slide under the first
+            pz.cards.move_to([0, 1.45, 0])
             m = pz.merged
-            rest = pz.cards[1:]
-            self.play(*[c.text.animate.set_opacity(0) for c in rest], run_time=0.3)
-            spot = m.get_center()
-            self.play(*[c.animate.move_to(spot + np.array([0.1, -0.1, 0]) * (i - 1.5))
-                        for i, c in enumerate(pz.cards)], run_time=0.6)
+            m.move_to([0, -0.95, 0])
+            self.play(FadeOut(VGroup(fw, fw.ask_label, inst, shared)), run_time=0.5)
+            self.remove(fw, fw.ask_label, inst, shared)
+            self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in pz.cards], lag_ratio=0.15), run_time=0.7)
             vo.wait_until("into one function")
-            self.play(FadeOut(pz.cards), FadeIn(m.frame), FadeIn(m.head, shift=DOWN * 0.1),
-                      LaggedStart(*[FadeIn(ch, shift=DOWN * 0.2) for ch in m.chips], lag_ratio=0.2), run_time=1.1)
-            self.remove(pz.cards)
+            # each copy's inputs leave its card and become one input row of the single function
+            flies, homes = VGroup(), []
+            for c, ch, (a, b) in zip(pz.cards, m.chips, PARAM_CASES):
+                for sub in (a, b):
+                    flies.add(glyphs_of(c.text, f"assert power({a}) == {b}", sub).copy())
+                    homes.append(glyphs_of(ch.text, f"({a}, {b})", sub))
+            self.add(flies)
+            self.play(FadeIn(m.frame), FadeIn(m.head, shift=DOWN * 0.1), pz.cards.animate.fade(0.6),
+                      *[f.animate.move_to(h) for f, h in zip(flies, homes)], run_time=0.9)
+            self.play(FadeIn(m.chips), FadeOut(pz.cards), run_time=0.35)
+            self.remove(flies, pz.cards)
             vo.wait_until("four inputs")
             self.play(Indicate(m.chips, color=UNIT, scale_factor=1.1), run_time=0.8)
         self.wait(1.2)                         # the folded function is the last picture: let it be read
