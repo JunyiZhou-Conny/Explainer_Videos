@@ -18,7 +18,7 @@ top right for the whole scene.
 5. CODE(tests/integration/test_api.py: 7–11), line 11 highlighted; `client` flies into a conftest.py
    box (V3 FixtureWiring, GREY caption "what it could look like · not this repo's code"): tests ask
    for it, fresh copies per test (default), then one shared instance (scope="session"); then
-   Parametrize's four power() assert cards (top) fold into one function (below): each card's inputs
+   Parametrize's four power() assert cards (below) fold into one function (above): each card's inputs
    fly into its input chip (shows what became what; no text morph). Fade to an empty frame.
 """
 
@@ -318,11 +318,12 @@ class PytestInside(VoiceScene):
             self.add(inst[0])
             self.play(*sess_anims[1:], run_time=0.6)
             vo.wait_until("And parametrize")
-            # four would-be copies of one test (test_utils.py:15-18) above; the one function below
+            # four would-be copies of one test (test_utils.py:15-18) below; the one function forms above,
+            # so the inputs rise into its chip row without crossing the decorator lines
             pz = Parametrize()
-            pz.cards.move_to([0, 1.45, 0])
+            pz.cards.move_to([0, -1.75, 0])
             m = pz.merged
-            m.move_to([0, -0.95, 0])
+            m.move_to([0, 0.75, 0])
             self.play(FadeOut(VGroup(fw, fw.ask_label, inst, shared)), run_time=0.5)
             self.remove(fw, fw.ask_label, inst, shared)
             self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in pz.cards], lag_ratio=0.15), run_time=0.7)
