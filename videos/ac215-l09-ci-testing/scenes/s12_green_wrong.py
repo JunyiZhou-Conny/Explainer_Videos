@@ -61,7 +61,7 @@ from manim import *  # noqa: I001  (manim first, then common: common must win)
 from explainer.scene import VoiceScene
 from explainer import style as S
 
-from explainer.devops import tag
+from explainer.devops import code_span, tag
 
 from common import (CLOUD, ERR, INK, NARRATION, P_BABYKEV, PASS, SEG_SIX, TURN, T_BABYKEV, MaskGrid, attach,
                     beside, capture, code_panel, coverage_sweep, cut, excerpt, glyph_range, label, lref,
@@ -409,6 +409,7 @@ class GreenButWrong(VoiceScene):
             lower = VGroup(*[grid.cells[i][j] for i in range(6) for j in range(i + 1)])
             self.play(Indicate(substring(c_row, "same"), color=INK, scale_factor=1.2),
                       pulse(lower, INK, width=4), run_time=0.8)
+            self.add(boxes)                      # the pulse re-added the cells on top of the boxes
 
         # ========================================================== 3. a checker prints WRONG; ponder
         built = VGroup(grid, boxes)
@@ -433,6 +434,7 @@ class GreenButWrong(VoiceScene):
             typ(self, s, cmp_.cmd, type_time=0.6)
             out(self, s, ["…"], run_time=0.2)
             self.play(FadeIn(study, shift=UP * 0.1), run_time=0.4)
+            vo.wait_until("against the one we meant")
             q1 = out(self, s, cmp_rows[:3], run_time=0.4)
             land(self, want, q1, [r.split()[0] for r in cmp_rows[:3]], 0)
             q2 = out(self, s, cmp_rows[3:], run_time=0.4)
@@ -442,6 +444,7 @@ class GreenButWrong(VoiceScene):
             self.play(w12.animate.set_color(ERR), w13.animate.set_color(ERR), run_time=0.3)
             self.play(Indicate(w12, color=ERR, scale_factor=1.2), Indicate(w13, color=ERR, scale_factor=1.2),
                       grid.flash_rows([4, 5]), run_time=0.8)
+            self.add(boxes)                      # flash_rows leaves its rows on top of the boxes
             vo.wait_until("But nothing in just check runs it")
             self.play(FadeIn(nothing, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("a printout you read by eye")
@@ -459,6 +462,8 @@ class GreenButWrong(VoiceScene):
         lines[139 - FIRST] = cut(lines[139 - FIRST], "torch.ones(n, n,")
         lines[143 - FIRST] = cut(lines[143 - FIRST], "device=device)")
         panel = code_panel("\n".join(lines), shown_path(SRC), FIRST, "python", font_size=PT)
+        for k in (139 - FIRST, 143 - FIRST):     # pygments paints the cut's "…" as an error (pink)
+            code_span(panel.code, k, "…").set_color(S.GREY)
         panel.move_to([0, 0, 0]).align_to([-6.5, 0, 0], LEFT).align_to([0, 2.75, 0], UP)
         g_at = [4.95, 0.95, 0]
         ran = label("lines that ran", 24, PASS)
@@ -484,6 +489,7 @@ class GreenButWrong(VoiceScene):
                       LaggedStart(*[b.animate(rate_func=there_and_back).set_stroke(width=8) for b in boxes],
                                   lag_ratio=0.1), run_time=0.9)
             self.play(grid.flash_rows([4, 5]), run_time=0.8)
+            self.add(boxes)
             vo.wait_until("Necessary, and never sufficient.")
             self.play(FadeIn(verdict, shift=UP * 0.15), run_time=0.6)
             self.play(Indicate(verdict, color=INK, scale_factor=1.08), run_time=0.8)
