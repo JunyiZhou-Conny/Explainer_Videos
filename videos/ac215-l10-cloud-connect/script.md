@@ -820,21 +820,23 @@ SAY: Look for an answer and ten references, with book, author and distance, wher
 
 ## S13 · The agent, and a model that isn't yours — `s13_agent.py` · `AgentAndTuned`
 
-SHOW: TRACKER E4. The browser at `localhost:3200/agent` (`illustration`), the README's example
-question as a quote (README.md · line 232). The flow as a three-step strip over code:
-① browser → `GET :9000/rag/agent_call`, CODE(cheese-app-v0/api-service/api/routers/rag.py: 150–171),
-lines 160–163 highlighted (the search text becomes an embedding); a choice chip
-`get_book_by_author` / `get_book_by_search_content`; ② browser → Chroma `:8000`, CODE(cheese-app-v0/frontend-ai-chatbot/src/services/DataService.js:
+SHOW: TRACKER E4. The browser at `localhost:3200/agent` (`illustration`) with the collection picker,
+the README's example question as a quote (README.md · line 232). The flow as a three-step strip,
+one code panel per call, each replacing the last: ① browser → `GET :9000/rag/agent_call`,
+CODE(cheese-app-v0/api-service/api/routers/rag.py: 150–171), lines 160–163 highlighted (the search
+text becomes an embedding); a choice chip `get_book_by_author` / `get_book_by_search_content`;
+② browser → Chroma `:8000`, CODE(cheese-app-v0/frontend-ai-chatbot/src/services/DataService.js:
 45–47) small (`"where": { "author": author }`); ③ browser → `POST :9000/rag/llm-agent-response`,
 CODE(cheese-app-v0/api-service/api/routers/rag.py: 190–203) with a chip `MAX_AGENT_STEPS = 5`
 (rag.py:83), a loop arrow, and a server-side tool chip `pavlos_fun_fact_tool` (quoted name). GOLD
-`cost_tag()` "1 embedding + 3 to 7 generation calls". `▶ your turn`.
-SAY: Step 4 is the cheese expert agent. Pause and ask it something. Here Gemini must first pick a retrieval tool: search by author, or search by content. The API turns the search text into an embedding, and your browser queries the database, filtered by author when that tool won. Then the API loops up to five times, and Gemini may call a fun fact tool on the server. A gold tag: one agent question costs one embedding and three to seven generation calls.
+`cost_tag()` "1 embedding + 3 to 7 generation calls". `▶ your turn` after the GOLD tag.
+SAY: Step 4 is the cheese expert agent: the chat's three calls, with one twist. Gemini first picks a retrieval tool: search by author, or search by content. The API turns the search text into an embedding. Then your browser queries the database, filtered by author if Gemini chose that tool. The API loops up to five times, and Gemini may call a fun fact tool on the server. A gold tag: one agent question costs one embedding and three to seven generation calls. Pause, pick a collection, and ask it something.
 
-SHOW: The answer frame (`illustration`), empty outlines, its last paragraph drawn as an amber box
-labelled "Pavlos' fun fact" (README.md · line 239; CODE(cheese-app-v0/frontend-ai-chatbot/src/components/chat/ChatComponent.jsx:
-22–28) small, line 24 highlighted). No answer text.
-SAY: On your screen, look for an answer that ends with a highlighted fun fact paragraph.
+SHOW: The answer frame (`illustration`) with GREY skeleton bars (no glyphs), its last paragraph
+drawn as an amber box labelled "Pavlos' fun fact" (README.md · line 239;
+CODE(cheese-app-v0/frontend-ai-chatbot/src/components/chat/ChatComponent.jsx: 22–28) small, line 24
+highlighted). No answer text.
+SAY: Look for an answer that ends with a highlighted fun fact paragraph.
 
 SHOW: TRACKER E5. CODE(cheese-app-v0/api-service/api/routers/rag.py: 14–27), line 22
 `FINE_TUNE_GENERATIVE_MODEL = "projects/129349313346/locations/us/endpoints/7652952773041848320"`
@@ -843,15 +845,16 @@ CODE(llm-finetuning/gemini-finetuner/cli.py: 89–96), header
 `llm-finetuning · gemini-finetuner/cli.py · lines 89–96`, line 92 `Tuned model endpoint:` GREEN. A
 YELLOW edit arrow carries "your endpoint" into line 22. A small chip: "rag.py is under api/ →
 reloads · agent_tools.py is not → control C, uvicorn_server again". `▶ your turn`.
-SAY: Step 5 is the fine-tuned cheese model. The README says to update this endpoint to your own, the one your trainer printed in the fine-tuning lecture. Pause and paste yours. The server reloads by itself, because this file sits under the api folder. Its neighbour, the agent tools file, is not watched; for that one, press control C and start the server again.
+SAY: Step 5 is the fine-tuned cheese model. The README says to update this endpoint to your own, the one your fine-tuning run printed in lecture 8. Pause and paste yours. The server reloads by itself, because this file sits under the api folder. Its neighbor, the agent tools file, is not watched; for that one, press control C and start the server again.
 
-SHOW: V2 reprise: the grid returns; S08's parked arrow re-fires from the browser at
-`localhost:3200/finetunechat` (`illustration`): the endpoint path picks column `project
-129349313346`, row `llm-service-account`, empty cell, RED 403; no error panel (caption "nothing
-documents this error's exact text"). CODE(cheese-app-v0/api-service/api/routers/rag.py: 110–113)
-small, line 111 `location="us"` highlighted. GOLD `cost_tag()` "tuned-model calls bill the
-endpoint's project". Fade out.
-SAY: Here the ponder from part 1 lands. Leave the default, and the endpoint path points into the instructor's project, where your account has no role: a 403. This call also uses a second client, in the U S location, as tuned models need. And a final gold tag: tuned model calls bill whichever project owns the endpoint.
+SHOW: A README card (`README.md · line 249`) and the browser at `localhost:3200/finetunechat`
+(`illustration`). V2 reprise: the grid returns; S08's parked arrow re-fires from that browser: the
+endpoint path picks column `project 129349313346`, row `llm-service-account`, empty cell, RED 403;
+no error panel (caption "nothing documents this error's exact text").
+CODE(cheese-app-v0/api-service/api/routers/rag.py: 110–113) small, line 111 `location="us"`
+highlighted. GOLD `cost_tag()` "tuned-model calls bill the endpoint's project". `▶ your turn` on
+the README's `/finetunechat` step, after the GOLD tag. Fade out.
+SAY: Then open localhost 3200 slash finetunechat and ask the same question. Here the part 1 puzzle gets its answer. With the default, the endpoint path points into the instructor's project, where your account has no role, so you get a 403. This call also uses a second client, in the U S location, because tuned models need it. And a final gold tag: calls to a tuned model are billed to whichever project owns the endpoint. Pause and try it; without your own endpoint, expect the 403.
 
 ---
 
@@ -862,30 +865,30 @@ SHOW: TRACKER F1 (tracker F appears: "README › Shut down", 2 dots). GREY tag
 165–170), then `exit` → TERM(laptop/33: 173); the frontend terminal gets `^C` → TERM(laptop/51: 56),
 then `exit` → TERM(laptop/51: 65) (the npm notice, lines 58–62, is not printed). The map's API and
 frontend houses go dark; their doors brick up. Then `docker ps` (extra) → TERM(laptop/46: 2–3;
-squeeze): only Chroma. `▶ your turn`.
-SAY: Time to shut things down, and see what survives. In the API and frontend terminals, press control C, then type exit. Pause and do it. Both containers ran with dash dash rm, so an extra docker ps shows only the database left.
+squeeze, without the CREATED and STATUS columns, as for `54`: `46` predates the frontend run):
+only Chroma. `▶ your turn`.
+SAY: Time to shut down, and see what survives. In the API and frontend terminals, press control C, then type exit. Pause and do it. Both containers ran with dash dash rm, so an extra docker ps shows only the database left.
 
-SHOW: TRACKER F2. Prompt `student@laptop:~/cheese-app-v0/llm-rag$`. It types `docker compose down`
+SHOW: TRACKER F2. In the API's terminal it types `cd ../llm-rag` → (no output); prompt
+`student@laptop:~/cheese-app-v0/llm-rag$`. It types `docker compose down`
 (README.md line 106) → TERM(laptop/70: 2–9; wrap). Lines 4–9 (Chroma stopped and removed,
 `llm-rag-network` removed) highlight; the Chroma house and its street vanish from the map. Lines
 2–3, the two `variable is not set` warnings, YELLOW, with CODE(cheese-app-v0/llm-rag/docker-compose.yml:
 13–15) beside them. `▶ your turn`. Then `docker ps` (extra) → TERM(laptop/71: 2): an empty table.
-SAY: Now the README's stop command, docker compose down, inside llm-rag. Pause and run it. The database and its network are removed. Two warnings say variables are not set, because we ran this outside the shell script, and Compose fills those blanks from your shell. That is part 1's mechanism, caught in the wild.
-
-SHOW: TRACKER F2 · extra. It types `ls -la docker-volumes/chromadb` (extra) → TERM(laptop/72: 2–5),
-`chroma.sqlite3` highlighted GREEN; on the map the Chroma house is gone, but a GREEN folder stays lit
-where it stood.
+The map shows only the empty lot where the Chroma house stood.
 PONDER(6 s, "After docker compose down,\nare your embeddings gone?\nWhat would make them gone?")
-SAY: An extra listing shows the database file still on disk. Something to ponder: after compose down, are your embeddings gone? And what would make them gone?
+SAY: Now the README's stop command, docker compose down, inside llm-rag. Pause and run it. The database and its network are removed. Two warnings say variables are not set, because we ran this outside the shell script, and Compose fills those blanks from your shell. That is the mechanism from part 1, caught in the wild. Something to ponder: the database is gone, but are your embeddings gone too? And what would make them gone?
 
-SHOW: CODE(cheese-app-v0/llm-rag/docker-compose.yml: 18–24), line 24
+SHOW: TRACKER F2 · extra. The answer: it types `ls -la docker-volumes/chromadb` (extra) →
+TERM(laptop/72: 2–5), `chroma.sqlite3` highlighted GREEN; on the map a GREEN folder lights where the
+Chroma house stood. CODE(cheese-app-v0/llm-rag/docker-compose.yml: 18–24), line 24
 `- ./docker-volumes/chromadb:/data` YELLOW. Then `sh docker-shell.sh` (extra; the README's command
 re-used) → TERM(laptop/73: 2–4, …, 12), `exit` → TERM(laptop/73: 14); then
 `curl -s http://localhost:8000/api/v2/version` (extra) → TERM(laptop/74: 2), `"1.0.0"`, caption
-"same folder, served again". A RED trash glyph hovers over `llm-rag/docker-volumes/`, caption "this
-deletes them"; CODE(cheese-app-v0/llm-rag/cli.py: 280–288) small, caption "a reload deletes, then
-creates".
-SAY: No. The data sits in a folder on your laptop, mounted into the container at slash data. Containers come and go; mounted folders stay. An extra restart brings the database back over that same folder. Deleting the docker volumes folder is what loses your embeddings, and a fresh load rebuilds cleanly, because the loader deletes and then recreates each collection.
+"same folder, served again". On "Deleting", a RED trash glyph hovers over `llm-rag/docker-volumes/`,
+caption "this deletes them"; on "A fresh load", CODE(cheese-app-v0/llm-rag/cli.py: 280–288) small,
+caption "a reload deletes, then creates".
+SAY: No. An extra listing shows the database file still on disk, in a folder on your laptop, mounted into the container at slash data. Containers come and go; mounted folders stay. An extra restart brings the database back over that same folder. Deleting the docker volumes folder is what loses your embeddings. A fresh load rebuilds cleanly, because the loader deletes and then recreates each collection.
 
 SHOW: Slides 40–45 redrawn: the bind-mounted folder ("a folder this laptop can see") morphs into a
 GCS bucket ("a folder any authorized machine can see"); the folder tree melts into a flat list of
@@ -894,13 +897,13 @@ names with shared prefixes (slide 41). CODE(llm-finetuning/dataset-creator/cli.p
 `storage_client = storage.Client()` YELLOW, chip "no key path: ADC again". One GREY line for the read
 side: CODE(mega-pipeline/transcribe_audio/cli.py: 36–39), header
 `mega-pipeline · transcribe_audio/cli.py · lines 36–39`.
-SAY: The cloud version of a mounted folder is a storage bucket, a folder any authorized machine can see. Its folders are only name prefixes. The storage client takes no key path, so ADC finds the same key, and a storage role authorizes the writes.
+SAY: The cloud version of a mounted folder is a storage bucket, a folder any authorized machine can see. Its folders are only name prefixes. The storage client takes no key path, so ADC finds the same key, and a storage role allows it to write to the bucket.
 
 SHOW: The IAM grid's GREY Storage Admin token pulses: "this is what it was for". Slide 45's four
-rules as a card, GREY dashed "L11", the last rule GOLD: "Storage Object Admin over Storage Admin ·
-keep buckets private · prefix the globally unique name · delete what you don't need: storage and
-egress bill". Fade out.
-SAY: This app never calls a bucket, which is why Storage Admin sat gray in the grid; next lecture uses one for real. The lecture's four rules: grant object admin, not full admin; keep buckets private; prefix their globally unique names; and delete what you no longer need, because storage and downloads cost money.
+rules as a card, GREY dashed "L11", built rule by rule on its own sentence, the last rule GOLD:
+"Storage Object Admin over Storage Admin · keep buckets private · prefix the globally unique name ·
+delete what you don't need: storage and egress bill". Fade out.
+SAY: This app never calls a bucket, which is why Storage Admin sat gray in the grid; next lecture uses one for real. The lecture gives four rules. Grant object admin, not full admin. Keep buckets private. Prefix their globally unique names. And delete what you no longer need, because storage and downloads cost money.
 
 ---
 
@@ -911,22 +914,36 @@ SHOW: TRACKER F2 · extra (the README's command again, after our extra restart).
 TERM(laptop/75: 4–9) (lines 2–3, the same two warnings, print small and GREY). `▶ your turn`. Then
 `docker network rm cheese-app-network` (extra) → TERM(laptop/76: 2). The map's streets vanish; the
 laptop is empty except the GREEN secrets drawer.
-SAY: If you tried the restart too, run docker compose down once more. An extra command then removes the shared network. Pause, and leave your machine clean.
+SAY: If you tried the restart, run docker compose down once more. An extra command then removes the shared network. Pause, and leave your machine clean.
 
-SHOW: The BLUE building, GREY: "nothing idles in the cloud · no VM · no bucket · no deployed
+SHOW: The BLUE building, GREY: "this lecture started nothing in the cloud · no VM · no bucket · no
 endpoint". The GREEN key card turns over: a GREY `extra` card, small, "key hygiene":
-`gcloud iam service-accounts keys list --iam-account=…` and
-`gcloud iam service-accounts keys delete KEY_ID --iam-account=…`. A RED chip: "a key on GitHub →
-delete it in IAM now · rewriting history is not enough". A turnstile arch labelled
-`detect-private-key` (L09's gate).
-SAY: Nothing idles in the cloud: no machine, no bucket, no deployed endpoint. What can keep costing you is the key. List your keys, and delete the ones you no longer use. If a key ever reaches GitHub, delete it in IAM at once; rewriting history is not enough. Last lecture's private key hook is the gate that catches it first.
+`gcloud iam service-accounts keys list --iam-account=llm-service-account@your-gcp-project.iam.gserviceaccount.com`
+and
+`gcloud iam service-accounts keys delete KEY_ID --iam-account=llm-service-account@your-gcp-project.iam.gserviceaccount.com`
+(both fold; `your-gcp-project` = your project ID, as for `GCP_PROJECT`), one GREY line for the
+console route, in S03's schematic style, "IAM & Admin → Service accounts → llm-service-account →
+KEYS → delete", and a GREY line "deleted a key in IAM? delete secrets/llm-service-account.json
+too". A RED chip: "a key on GitHub → delete it in IAM now · rewriting history is not enough". A
+turnstile arch labelled `detect-private-key` (L09's gate), caption "once added to the repo you
+commit from".
+SAY: This lecture started nothing in the cloud: no machine, no bucket, no endpoint. What stays behind is the key, and a leaked key can spend your money. Delete the keys you no longer use, and their local files. If one ever reaches GitHub, delete it in IAM at once. Last lecture's private key hook would catch it first, once you add it to the repo you commit from.
 
-SHOW: The debugging flowchart, each error pointing at its set piece's thumbnail:
-`DefaultCredentialsError` → path and mount (V3) · `401` → no token (V1) · `403` → role, project,
-API (V2) · `Failed to fetch` or a CORS line in the console → origin (V5) · `port is already
-allocated` or a name conflict → doors and names (V4) · "the script dies on the network" → line 14.
-Then V6 complete, every house and door lit; then everything unlit.
-SAY: When something breaks, find its layer. A default credentials error: the path or the mount. A 401: no token. A 403: role, project, or API. Failed to fetch, or a CORS line in the console: the page's origin. Port already allocated: a door is taken. And a script that dies on the network: line 14.
+SHOW: The recap, on V6. The map relights piece by piece as each idea is named: the GREEN badge and
+key → the BLUE ticket at the token desk (V1); one GREEN IAM cell (V2); the secrets tube (V3); the
+phone books on the streets beside the laptop's own localhost loop (V4); the `3200→3000` door with
+its Wi-Fi side (V4); the browser's three PINK calls past the bouncer (V5); the GREEN folder that
+survived (S14). S01's three riddle labels and the knock card fly in from the left and each gets a
+GREEN check as its piece lights (`llm-rag-chromadb` on the phone books, `localhost:9000` and
+`-p 3200:3000` on the door, the knock on the Wi-Fi side). Then everything unlit.
+SAY: The whole lecture, on one map. Your code wears a service account badge, and its key buys a one-hour ticket at Google's token desk. One IAM cell lets that badge call Gemini. A mount carries the key to slash secrets. Containers dial names on their street; your browser dials localhost, through doors like 3200 to 3000, which your Wi-Fi can reach too. The browser stitches three calls, past the CORS bouncer. And the vectors survive in a mounted folder.
+
+SHOW: The debugging flowchart on its own (no map behind it), each error pointing at its set
+piece's thumbnail: `DefaultCredentialsError` → path and mount (V3) · `401` → no valid token (V1) ·
+`403` → role, project, API (V2) · `Failed to fetch` or a CORS line in the console → origin (V5) ·
+`port is already allocated` or a name conflict → doors and names (V4) · "the script dies on the
+network" → line 14.
+SAY: When something breaks, find its layer. A default credentials error: the path or the mount. A 401: no valid token. A 403: role, project, or API. A CORS line: the page's origin. A taken port: the doors. A dying script: line 14.
 
 SHOW: A card "Test yourself". One question at a time (≥ 24 pt, ≤ 3 lines), each with a thumbnail of
 its picture; earlier ones collapse into a label list at left. Q1 "Name ADC's three places, and the
@@ -936,10 +953,10 @@ your browser rings localhost:8000. Why can't they swap?" (two arrows) · Q4 "You
 at http://localhost:3300. Which component breaks first, and why does the API keep working?" (the
 bouncer) · Q5 "You got a 403 on /rag/embedding. Three distinct causes: how do you tell them apart?"
 (the grid). Labels: "ADC" · "the portal" · "two addresses" · "origins" · "403".
-SAY: 5 questions to test yourself. One: name the three places ADC looks, and the one this tutorial fills. Two: why does the key variable point to slash secrets, not to a path on your Mac? Three: the loader dials the database by name, your browser by localhost; why can they not swap? Four: with the frontend on port 3300, which call breaks first, and why does the API keep working? Five: a 403 on the embedding route has three causes; how do you tell them apart?
+SAY: 5 questions to test yourself. One: the three places ADC looks, and the one this tutorial fills. Two: why does the key variable point to slash secrets, not your Mac? Three: why can the loader's name and your browser's localhost not swap? Four: on port 3300, which call breaks first, and why does the API keep working? Five: a 403 has three causes; how do you tell them apart?
 
 SHOW: The label list stays at left. Footer cards: "Answers: exercises.md" and "Study guide + every
 command: MLOps_Learning · guides/L10-cloud-connect-cheese-app-v0.md". A "Next" card, GREY dashed:
 "L11 · data-service-account, real buckets, a bucket's CORS list" · "L13–L15 · ADC's third place,
 inside the cloud" · "L21+ · federation for CI". Everything fades to an empty frame (end of part 2).
-SAY: Answers are in the exercises; every command is in the study guide. Next lecture brings a new service account, and real buckets with a CORS list of their own. Later, code inside Google's cloud fills the third place ADC looks, and federation returns for CI.
+SAY: Answers are in the exercises, commands in the study guide. Next lecture brings a new service account, and real buckets with a CORS list of their own. Later, code inside Google's cloud fills the third place ADC looks, and federation returns for CI.
