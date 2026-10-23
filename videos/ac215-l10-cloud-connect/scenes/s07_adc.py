@@ -316,7 +316,7 @@ class AdcToToken(VoiceScene):
             self.play(FadeIn(fc), FadeOut(box_c), run_time=0.3)
             self.remove(kc, box_c)
             vo.wait_until("Google holds the matching")
-            msg = env.copy().move_to(ch.slots[2].frame.get_center() + UP * 0.05)
+            msg = envelope("JWT", sealed=True).move_to(ch.slots[2].frame.get_center() + UP * 0.05)
             self.add(msg)
             self.play(msg.animate.move_to([2.6, -0.3, 0]), FadeIn(pub, shift=LEFT * 0.2), run_time=0.8)
             self.play(FadeIn(half, shift=UP * 0.1), run_time=0.4)
@@ -343,6 +343,7 @@ class AdcToToken(VoiceScene):
         # ========================================================== 3. a fresh ticket; the same desk
         desk_x, ticket_x = ch.slots[3].frame.get_center()[0], ch.slots[4].frame.get_center()[0]
         oc = oauth_card(desk_x, ticket_x).move_to([0, -1.75, 0])
+        oc.caption.move_to(oc.frame.get_bottom() + UP * 0.35).align_to(oc.head, LEFT)   # not in the group
         link = DashedLine(ch.slots[3].text.get_bottom() + DOWN * 0.08, oc.desk.get_top() + UP * 0.08,
                           color=CLOUD, stroke_width=3, dash_length=0.1)
         crosses = VGroup(cross_mark(0.7, S.GREY).move_to(oc.person), cross_mark(0.7, S.GREY).move_to(oc.consent))
