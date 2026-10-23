@@ -34,7 +34,7 @@ cd ~
 
 step() {  # step <name> <command...>   (no terminal: plain output, as in a script)
   local name=$1; shift
-  { echo "\$ $*"; bash -c "$*" 2>&1; echo "[exit $?]"; } > "$OUT/$name.txt"
+  { echo "\$ $*"; bash -c "$*" 2>&1 | sed 's/\x1b\[[0-9;]*m//g'; echo "[exit ${PIPESTATUS[0]}]"; } > "$OUT/$name.txt"   # colours dropped, as in ptyrun.py
 }
 istep() {  # istep <name> <command> [<prompt regex> <typed line>]...   (in a terminal, typed)
   local name=$1 cmd=$2; shift 2
@@ -243,8 +243,8 @@ cli)
     ':/app\$ $' 'python cli.py -m' \
     ':/app\$ $' 'ls -la /secrets' \
     ':/app\$ $' 'echo $GCS_BUCKET_NAME $LABEL_STUDIO_URL' \
-    ':/app\$ $' 'curl -s http://data-label-studio:8080/health' \
     ':/app\$ $' 'curl -sS http://localhost:8080/health' \
+    ':/app\$ $' 'curl -s http://data-label-studio:8080/health; echo' \
     ':/app\$ $' 'exit'
   # --- README "View Annotations using CLI" (README:189-199): python cli.py -p -k <token> and
   # -t -k <token>. First with Label Studio's defaults: legacy tokens are OFF (27-jwt-settings),
@@ -346,6 +346,8 @@ b-build)
     ':/app# $' 'ls -la cheese_dataset' \
     ':/app# $' 'which dvc' \
     ':/app# $' 'dvc --version' \
+    ':/app# $' 'gcsfuse --version' \
+    ':/app# $' 'gcloud --version' \
     ':/app# $' 'ls /mnt/gcs_data' \
     ':/app# $' 'exit'
   step 89-host-cheese-dataset "ls -la cheese_dataset"     # extra: the host side of the same folder
