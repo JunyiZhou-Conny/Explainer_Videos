@@ -429,7 +429,7 @@ class HooksThenCI(VoiceScene):
         gt.move_to([0, -0.35, 0])
         assert gt.get_top()[1] <= 2.8 and gt.get_bottom()[1] >= -3.5 and gt.width <= 13.2, \
             (gt.get_top(), gt.get_bottom(), gt.width)
-        dim_box = outline_box(tr.width + 0.3, tr.height + 0.2, S.GREY, solid=False).move_to(tr)
+        dim_box = outline_box(tr.width + 0.16, tr.height + 0.12, S.GREY, solid=False).move_to(tr)
         gate = CommitGate(5, arch_h=1.2)
         gate.shift(np.array([GATE_X - gate.get_center()[0], FLOOR - gate.floor.get_center()[1], 0]))
         names = gate.turnstile.name_labels(ARCH_NAMES)          # built AFTER placing (SCENE-NOTES trap)
@@ -525,7 +525,7 @@ class HooksThenCI(VoiceScene):
         ci.move_to([0, 0, 0]).align_to([-6.4, 0, 0], LEFT).align_to([0, -0.4, 0], UP)
         ci.code.set_opacity(0.55)
         ci.header.set_opacity(0.55)
-        cap = VGroup(label("Part 5 of this same repo", 22, S.GREY), label("lecture 21", 22, S.GREY))
+        cap = VGroup(label("Part 5 of this same repo", 20, S.GREY), label("lecture 21", 20, S.GREY))
         cap.arrange(DOWN, aligned_edge=LEFT, buff=0.15).next_to(ci, RIGHT, buff=0.3)
         assert ci.get_bottom()[1] >= -3.5 and cap.get_right()[0] <= 6.5, (ci.get_bottom(), cap.get_right())
 
