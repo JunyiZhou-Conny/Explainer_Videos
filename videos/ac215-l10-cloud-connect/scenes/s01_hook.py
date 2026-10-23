@@ -19,9 +19,9 @@ Beats (script.md, ## S01; one voiceover block each):
    who's allowed in?"; the knocker swings on "once anything can knock".
 3. Checklist card (✓ your clone of cheese-app-v0 · ✓ Docker Desktop running · ✓ a GCP project with
    billing + the GOLD cost tag 'this lecture bills'). Layout preview: tracker A (step 1) top-left in
-   a YELLOW ring; on "six sections" the ring cycles trackers A–F and returns to A. A 2-row strip
+   a YELLOW ring; on "six sections" the ring cycles trackers A–F and returns to A. A 3-row strip
    (GREY tag 'preview', prompt student@laptop:~$) types `git clone https://github.com/dlops-io/
-   cheese-app-v0` (laptop/01's command; it folds) with the YELLOW `▶ your turn` row tag, then
+   cheese-app-v0` (laptop/01's command; it folds onto 2 rows) with the YELLOW `▶ your turn` row tag, then
    `docker ps` (laptop/22's command) with the GREY `extra` row tag (tracker caption gains ' · extra'),
    then a GREY `recorded` tag above the strip. Tags never stacked. Fade to an empty frame.
 """
@@ -32,7 +32,7 @@ from explainer.scene import VoiceScene
 
 from common import (COST, IMAGE, INK, LAPTOP, NARRATION, P_LAPTOP_HOME, ROUTE, CLOUD, SAY_COUNT, TURN,
                     AppMap, ChatWireframe, KNOCK, beside, browser_glyph, capture, check_mark, cost_tag,
-                    door_glyph, extra_row, flash_tag, google_building, house, illustration_tag, label,
+                    door_glyph, each, extra_row, flash_tag, google_building, house, illustration_tag, label,
                     lref, mono, note, pin, preview_tag, recorded_tag, riddle_card, riddle_label, route,
                     step_badge, swap_tracker, term, track, tracker, turn_row, type_cmd, unpin)
 from explainer import style as S
@@ -147,6 +147,10 @@ class Hook(VoiceScene):
             self.play(FadeIn(m, scale=1.25), FadeIn(ref), run_time=1.0)
             vo.wait_until("The flag dash p")
             self.play(FadeIn(cards[0], shift=DOWN * 0.3), run_time=0.6)
+            vo.wait_until("has two numbers")
+            nums = cards[0].code          # Text glyphs, spaces dropped: '-p3200:3000'
+            assert len(nums) == 11, len(nums)
+            self.play(each([nums[2:6], nums[7:11]], TURN, scale=1.2, lag=0.5), run_time=1.2)
             vo.wait_until("And localhost 9000")
             to_label(0)
             self.play(FadeIn(cards[1], shift=DOWN * 0.3), run_time=0.6)
@@ -185,7 +189,7 @@ class Hook(VoiceScene):
         trs = {k: tracker(k, 1) for k in "ABCDEF"}
         tr = trs["A"]
         rng = tracker_ring(tr)
-        strip = term(P_LAPTOP_HOME, rows=2, title="laptop")
+        strip = term(P_LAPTOP_HOME, rows=3, title="laptop")   # 3 rows: the folded clone stays whole
         prev = preview_tag().next_to(strip.box, UP, buff=0.15).align_to(strip.box, LEFT)
         rec = recorded_tag("recorded · source named").next_to(strip.box, UP, buff=0.15).align_to(strip.box, RIGHT)
         clone, ps = capture("01").cmd, capture("22").cmd
@@ -201,6 +205,8 @@ class Hook(VoiceScene):
             self.play(FadeIn(bill, shift=LEFT * 0.2), run_time=0.5)
             vo.wait_until("a gold tag marks each one")
             flash_tag(self, bill, COST)
+            vo.wait_until("and the video ends by shutting")
+            self.play(VGroup(frame, body, bill).animate.fade(0.6), run_time=1.2)   # lights going down
             vo.wait_until("The tracker in the top left")
             self.play(FadeOut(VGroup(frame, body, bill)), run_time=0.5)
             self.remove(frame, body, bill)
