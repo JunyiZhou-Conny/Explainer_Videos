@@ -457,8 +457,8 @@ def code(path: str, first: int, last: int | None = None, language: str | None = 
          font_size: float = 22, shown: str | None = None, max_lines: int = 12, cuts: dict | None = None):
     """CODE(path: first–last) of script.md: a code_panel quoting assets/source/<path>, header
     '<shown> · lines a–b' (shown_path()). <= 12 lines. 22 pt fits <= 66 characters a line, 20 pt
-    <= 72: a longer line raises; cut it with cuts={file_line: 'text it ends after'} (the house '…',
-    recoloured GREY; pygments would paint it pink-red) or use font_size=20.
+    <= 73: a longer line raises; cut it with cuts={file_line: 'text it ends after'} (the house '…',
+    recoloured GREY; pygments would paint it pink-red) or use font_size=20 (<= 73).
     .code .header; highlight with code_span(p.code, k, "x"), line_bar(p.code, k, colour), k = file
     line - first."""
     last = first if last is None else last
@@ -469,7 +469,7 @@ def code(path: str, first: int, last: int | None = None, language: str | None = 
     cuts = cuts or {}
     for n, after in cuts.items():
         lines[n - first] = cut(lines[n - first], after)
-    limit = 66 if font_size >= 22 else 72
+    limit = 66 if font_size >= 22 else 73
     for i, s in enumerate(lines):
         if len(s.expandtabs(4)) > limit:
             raise ValueError(f"CODE {path}:{first + i} is {len(s)} characters; > {limit} at {font_size} pt "
@@ -689,6 +689,13 @@ def unpin(scene, line, mob, *extra, run_time: float = 0.3):
     if mob in row.submobjects:
         row.remove(mob)
     scene.remove(mob)
+
+
+def on_bar(t: Terminal, mob, buff: float = 0.15):
+    """Put a row-sized tag (turn_row(), extra_row(), time_row() …) on terminal t's title bar, at its
+    right end: for a command row too long to hold a tag beside it. Add/FadeIn it yourself (it is not
+    part of any row, so it does not scroll)."""
+    return mob.move_to([t.box.get_right()[0] - buff - mob.width / 2, t.box.get_top()[1] - t.bar_h / 2, 0])
 
 
 def row_tag(parts, color=S.GREY, size: float = 20) -> VGroup:
@@ -1010,6 +1017,7 @@ def key_card(fields=KEY_FIELDS, size: float = 20, color=KEY, glow: bool = False)
         r = mono(f'"{f}": "{v}",', size, INK, t2c={f'"{f}"': S.GREY})
         rows.add(r)
         by[f] = r
+    rows.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
     body = VGroup(mono("{", size, S.GREY), rows, mono("}", size, S.GREY)).arrange(DOWN, aligned_edge=LEFT,
                                                                                   buff=0.1)
     rows.shift(RIGHT * 0.3)
