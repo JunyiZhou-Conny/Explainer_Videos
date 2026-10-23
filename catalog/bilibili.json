@@ -56,6 +56,11 @@
       "bvid": "BV1dHJd6PEvW",
       "title": "AC215 第2讲跟练 · 容器入门：一个 image，从笔记本到虚拟机",
       "pubdate": 1792440201
+    },
+    "ac215-l05-rag": {
+      "bvid": "BV1xgns6NEiz",
+      "title": "AC215 第5讲跟练 · RAG 入门：切块、向量化、入库、检索与对话",
+      "pubdate": 1792718684
     }
   },
   "unmatched": []
