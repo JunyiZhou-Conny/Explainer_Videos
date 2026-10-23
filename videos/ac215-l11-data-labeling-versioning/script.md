@@ -129,7 +129,9 @@ Conventions
   byte).
 - `TRACKER A3`: the `ReadmeTracker`, top-left, in every walkthrough scene, moves to that step.
   `TRACKER A3 · extra`: same step, caption gets " · extra" while a command the README doesn't have
-  is on screen (variants `extra · Linux`, `extra · stand-in`, `extra · local remote`). Twelve
+  is on screen (variants written in full, e.g. `TRACKER B1 · extra · Linux`, `TRACKER J3 · extra ·
+  stand-in`, and `extra · local remote`); a README command re-run after an extra moves the caption
+  back to its own step. Twelve
   trackers (BRIEF), titled with the README section headings; data-labeling README @ `03c3e27`,
   data-versioning README @ `b240b1a`:
   - A = "data-labeling › Setup" (`README.md:11-76`), 6 steps: 1 Clone · 2 secrets folder ·
@@ -166,7 +168,9 @@ Conventions
   tree, not a command", "our editor; use yours", "the README names the script"); the README's own
   words stand beside them on a README card.
 - `▶ your turn`: a YELLOW tag beside the command at a real checkpoint (about one per README step);
-  the SAY of that block says "pause". The video doesn't wait: the viewer pauses.
+  the SAY of every block that carries one says "pause". Where several forms or commands share one
+  checkpoint, only the last block carries the ▶ (the SHOW says "No ▶ here"). The video doesn't
+  wait: the viewer pauses.
 - Tags (GREY unless said): `illustration` on every console step, Label Studio screen, GitHub form,
   notebook frame, the hook's two folders and its invented `final-final` file names, the working
   two-view of S11 and the drawn `dvc_store/`; `recorded · <source>` on every success a student sees
@@ -177,7 +181,7 @@ Conventions
   `103`) and the time travel on the unmounted stand-in folder (`114`–`117`, S14); `extra · local remote` on
   `dvc push -r standin` (`95`, `104`); `at the time of recording` beside every version and image
   size when first shown; `erratum` on every README/repo slip (the narration says "a small slip" or
-  "a small gap", never "erratum"); the GOLD `cost_tag()` at S01 (checklist), S03 (bucket 1 + 21
+  "a small gap", never "erratum"); the GOLD `cost_tag()` (every amount "a fraction of a cent a month" or a size, never "cents") at S01 (checklist), S03 (bucket 1 + 21
   photos), S10 (`images/`) and S13 (`dvc_store/`), and on S16's checklist card. There are no
   `expected` panels in this episode.
 - The honest framing (BRIEF, coordinator decision): S03 says in one line that the key in the
@@ -235,25 +239,28 @@ Conventions
   the labeled drawer S07, compose S08, the repo + flags S09/S13/S14, bucket 2 S10, Colab S15); S08
   ends part 1 with the labeling half lit; S16 adds the GREY-dashed monitoring watchtower, shows it
   complete, then unlit.
-- Length and parts: narration **4,282** words (`python -m explainer.script`, which counts SAY
+- Length and parts: narration **4,286** words (`python -m explainer.script`, which counts SAY
   words; its minute figure assumes 155 wpm and is ignored). At Kokoro af_heart speed 0.9 (≈174 wpm)
   that is ≈24.6 min of narration, ≈29–31 min with typing, outputs and ponder timers. Part 1 =
   S01–S08 (labeling; ends on `docker system prune` with the labeled project still on disk), part 2
-  = S09–S16 (versioning). Each part ends on an empty frame. Per scene (BRIEF target in brackets):
+  = S09–S16 (versioning). Each part ends on an empty frame. Per scene (BRIEF target in brackets;
+  ±15 % band after it):
 
-  | scene | words (BRIEF) | scene | words (BRIEF) |
+  | scene | words (BRIEF · band) | scene | words (BRIEF · band) |
   | --- | --- | --- | --- |
-  | S01 Hook | 219 (220) | S09 YourOwnRepo | 247 (240) |
-  | S02 TwoStations | 256 (250) | S10 BucketAsFolder | 293 (290) |
-  | S03 KeyAndPhotos | 232 (230) | S11 StarterFix | 249 (260) |
-  | S04 StudioInABox | 302 (300) | S12 Fingerprints | 326 (320) |
-  | S05 WhoTouchesBytes | 292 (290) | S13 PointerAndBytes | 271 (300) |
-  | S06 CorsOnTheBucket | 300 (290) | S14 SecondVersion | 251 (260) |
-  | S07 LabelsAndTokens | 299 (310) | S15 TimeTravel | 252 (250) |
-  | S08 ComposeAndClean | 234 (230) | S16 Recap | 259 (230) |
-  | **part 1** | **2,134** (2,120) | **part 2** | **2,148** (2,150) |
+  | S01 Hook | 210 (220 · 187–253) | S09 YourOwnRepo | 243 (240 · 204–276) |
+  | S02 TwoStations | 238 (250 · 213–287) | S10 BucketAsFolder | 288 (290 · 247–333) |
+  | S03 KeyAndPhotos | 234 (230 · 196–264) | S11 StarterFix | 237 (260 · 221–299) |
+  | S04 StudioInABox | 293 (300 · 255–345) | S12 Fingerprints | 354 (320 · 272–368) |
+  | S05 WhoTouchesBytes | 298 (290 · 247–333) | S13 PointerAndBytes | 284 (300 · 255–345) |
+  | S06 CorsOnTheBucket | 292 (290 · 247–333) | S14 SecondVersion | 263 (260 · 221–299) |
+  | S07 LabelsAndTokens | 303 (310 · 264–356) | S15 TimeTravel | 256 (250 · 213–287) |
+  | S08 ComposeAndClean | 233 (230 · 196–264) | S16 Recap | 260 (230 · 196–264) |
+  | **part 1** | **2,101** (2,120) | **part 2** | **2,185** (2,150) |
 
-  Every scene is within the BRIEF's ±15 %. Re-run the counter after any review edit.
+  Every scene is within the BRIEF's ±15 %. Tight: S12 (354/368) and S16 (260/264) are near the top
+  of their bands, so any later addition there names its cut in the same scene. Re-run the counter
+  after any edit.
 
 Notes for scene authors
 - TERM line numbers are *file* lines (line 1 = the `$` command); `Capture.pick()` indexes the
@@ -274,7 +281,27 @@ Notes for scene authors
   labeled data drawn as photos sorted into class folders; "Label Studio copies the images"; CORS
   called access control; the host's `cheese_dataset/` drawn holding photos; "DVC stores diffs";
   deleting `dvc_store/` as cleanup; `89`'s root ownership as the mount's success state; the
-  capture-only lines read aloud.
+  capture-only lines read aloud; a `dvc checkout` on a mounted `cheese_dataset/` presented as
+  harmless (it rewrites the bucket's `images/`); a real-looking token in the private-repo URL chip
+  (only `<read-only token>`).
+- v2 changes to the SHOW structure (inside scenes only; the scene list is unchanged): S01 splits
+  its third block (the gouda envelope gets its own beat); S08 splits the compose surprises into two
+  blocks and types `exit` first (`42:73–74`); S10 splits the mount block (chips, then the two-bind
+  pull-back); S12 is reordered (V5 as a prediction before any `dvc add` output; the class-repo
+  `diff` `121` moved to S13); S13 splits the tag block (the `121` diff gets its own block); S14
+  splits the v21 add and push; S16 is reordered (recap → test yourself → cleanup and teardown →
+  next). S07's forgot-`-k` beat is folded, unspoken, into the `-t` block.
+- New visual elements in v2: S01 one-question-at-a-time caption; S02 small "command line
+  container" house and the versioning half in outlines; S03 the five md5 rows pulsing; S05 the
+  crossed-out relay arrow; S06 the "CORS mode" chip and the rule card flying to the viewer's other
+  bucket; S07 the envelope stopping at the database drawer before its copy flies to the bucket, the
+  opened JSON file, and the two-row token wireframe (lower-case "personal access token" / "legacy
+  token", `illustration`); S09 the parked card, the "git alone" clones sketch and the V6 silhouette;
+  S10 the marker-object glow, the request dot on the pipe and the gcloud side note on line 8; S12
+  the `????????….dir` prediction box, the blank pointer card filling on `95:59–61`, the two-layer
+  picture with the inner bind dashed, the Monday/Friday manifests; S13 the parked card's check mark;
+  S15 the edited cell 15 and the private-repo chip; S16 the S01 caption with "which photos ✓ tag ·
+  which labels → E7".
 
 ---
 
