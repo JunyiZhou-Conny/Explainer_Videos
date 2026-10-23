@@ -1,0 +1,59 @@
+$ docker build -t python:3.11-slim-bookworm /tmp/tmp.oIeNLG
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.13kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.11-slim-bookworm
+#2 DONE 0.5s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 37B done
+#4 DONE 0.0s
+
+#5 [1/3] FROM docker.io/library/python:3.11-slim-bookworm@sha256:f06d01d4ba3f8ad5af45a3ec87df19c1d317d8e8961edc0fabda61811af6f7cf
+#5 resolve docker.io/library/python:3.11-slim-bookworm@sha256:f06d01d4ba3f8ad5af45a3ec87df19c1d317d8e8961edc0fabda61811af6f7cf 0.0s done
+#5 DONE 0.1s
+
+#5 [1/3] FROM docker.io/library/python:3.11-slim-bookworm@sha256:f06d01d4ba3f8ad5af45a3ec87df19c1d317d8e8961edc0fabda61811af6f7cf
+#5 sha256:efd623ba8e536eb877739a1b5d5a43f48fdea8143a8de7ab5331a100f6df1b80 0B / 250B 0.2s
+#5 sha256:efd623ba8e536eb877739a1b5d5a43f48fdea8143a8de7ab5331a100f6df1b80 250B / 250B 0.3s done
+#5 sha256:fe9b55673e95e44e6b867088bbaa2ade7d1e259c40c6fe8a6b2190b6a8366497 0B / 16.03MB 0.2s
+#5 sha256:5938c3a3cfef8c7171a52090e5a46e274e21e3860a258dfa9a9f64e5909f25db 0B / 3.34MB 0.2s
+#5 sha256:fe9b55673e95e44e6b867088bbaa2ade7d1e259c40c6fe8a6b2190b6a8366497 7.34MB / 16.03MB 0.5s
+#5 sha256:fe9b55673e95e44e6b867088bbaa2ade7d1e259c40c6fe8a6b2190b6a8366497 13.63MB / 16.03MB 0.6s
+#5 sha256:fe9b55673e95e44e6b867088bbaa2ade7d1e259c40c6fe8a6b2190b6a8366497 16.03MB / 16.03MB 0.7s done
+#5 sha256:5938c3a3cfef8c7171a52090e5a46e274e21e3860a258dfa9a9f64e5909f25db 3.34MB / 3.34MB 0.6s done
+#5 extracting sha256:5938c3a3cfef8c7171a52090e5a46e274e21e3860a258dfa9a9f64e5909f25db
+#5 extracting sha256:5938c3a3cfef8c7171a52090e5a46e274e21e3860a258dfa9a9f64e5909f25db 0.5s done
+#5 extracting sha256:fe9b55673e95e44e6b867088bbaa2ade7d1e259c40c6fe8a6b2190b6a8366497
+#5 extracting sha256:fe9b55673e95e44e6b867088bbaa2ade7d1e259c40c6fe8a6b2190b6a8366497 1.2s done
+#5 DONE 2.4s
+
+#5 [1/3] FROM docker.io/library/python:3.11-slim-bookworm@sha256:f06d01d4ba3f8ad5af45a3ec87df19c1d317d8e8961edc0fabda61811af6f7cf
+#5 extracting sha256:efd623ba8e536eb877739a1b5d5a43f48fdea8143a8de7ab5331a100f6df1b80 0.0s done
+#5 DONE 2.4s
+
+#6 [2/3] COPY capture-ca.crt /usr/local/share/ca-certificates/capture-ca.crt
+#6 DONE 0.5s
+
+#7 [3/3] RUN cat /usr/local/share/ca-certificates/capture-ca.crt >> /etc/ssl/certs/ca-certificates.crt  && sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources  && echo 'APT::Update::Pre-Invoke { "sed -i s,http://packages.cloud.google.com,https://packages.cloud.google.com,g /etc/apt/sources.list.d/*.list 2>/dev/null || true"; };' > /etc/apt/apt.conf.d/99capture-https
+#7 DONE 0.3s
+
+#8 exporting to image
+#8 exporting layers 0.1s done
+#8 exporting manifest sha256:6133bd3029392e255d56d0169109a559de8948fb5d790a061be804959ff9c1ec
+#8 exporting manifest sha256:6133bd3029392e255d56d0169109a559de8948fb5d790a061be804959ff9c1ec done
+#8 exporting config sha256:98f33ac02d60e2d0c6fde1d760ef67d1cb77df2b718b0056951c11c11f30747c done
+#8 exporting attestation manifest sha256:47e8b6d4a32eee9e1d3ecb868b15408118ac4eb5c64d5f6c3bc6c71d31883ecb 0.0s done
+#8 exporting manifest list sha256:de64614670c0b06587089a7368d44924166d536c269183b1dc408e5cc8c041f5 done
+#8 naming to docker.io/library/python:3.11-slim-bookworm done
+#8 unpacking to docker.io/library/python:3.11-slim-bookworm
+#8 unpacking to docker.io/library/python:3.11-slim-bookworm 1.9s done
+#8 DONE 2.2s
+[exit 0]

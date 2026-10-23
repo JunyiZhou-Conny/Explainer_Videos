@@ -1,0 +1,74 @@
+$ sh docker-shell.sh
+6728d9ff983c0ec4735e4701da9fd12dfaa1203461fae57b9aedc686514e229f
+Unable to find image 'heartexlabs/label-studio:latest' locally
+latest: Pulling from heartexlabs/label-studio
+50f6071868c3: Pulling fs layer
+e2de96513ba9: Pulling fs layer
+95137bf95caa: Pulling fs layer
+058223aa38a4: Pulling fs layer
+3023e46d9af6: Pulling fs layer
+a59c1c48d60b: Pulling fs layer
+07f3254c83d7: Pulling fs layer
+6469ec425b89: Pulling fs layer
+c6eeff9e05e8: Pulling fs layer
+36d800a2d329: Pulling fs layer
+cfa4711bf617: Pulling fs layer
+db6da9b7036a: Pulling fs layer
+b04d9f84c038: Pulling fs layer
+ab7be19234b8: Pulling fs layer
+a166dc3562f7: Pulling fs layer
+8c5ab5082d74: Pulling fs layer
+f7ca06d6adc8: Pulling fs layer
+263eecf6daa0: Pulling fs layer
+16501e5e4999: Pulling fs layer
+7fbf05ebedfe: Pulling fs layer
+097ef69e68bd: Pulling fs layer
+44136fa355b3: Already exists
+8d3aee95628a: Download complete
+1305effe2abe: Download complete
+097ef69e68bd: Download complete
+36d800a2d329: Download complete
+50f6071868c3: Download complete
+e2de96513ba9: Download complete
+95137bf95caa: Download complete
+3023e46d9af6: Download complete
+a59c1c48d60b: Download complete
+6469ec425b89: Download complete
+c6eeff9e05e8: Download complete
+e2de96513ba9: Pull complete
+058223aa38a4: Download complete
+cfa4711bf617: Download complete
+a166dc3562f7: Download complete
+b04d9f84c038: Download complete
+db6da9b7036a: Download complete
+ab7be19234b8: Download complete
+95137bf95caa: Pull complete
+f7ca06d6adc8: Download complete
+263eecf6daa0: Download complete
+16501e5e4999: Download complete
+7fbf05ebedfe: Download complete
+058223aa38a4: Pull complete
+3023e46d9af6: Pull complete
+a59c1c48d60b: Pull complete
+07f3254c83d7: Download complete
+8c5ab5082d74: Download complete
+6469ec425b89: Pull complete
+07f3254c83d7: Pull complete
+36d800a2d329: Pull complete
+c6eeff9e05e8: Pull complete
+cfa4711bf617: Pull complete
+b04d9f84c038: Pull complete
+db6da9b7036a: Pull complete
+ab7be19234b8: Pull complete
+a166dc3562f7: Pull complete
+f7ca06d6adc8: Pull complete
+8c5ab5082d74: Pull complete
+263eecf6daa0: Pull complete
+16501e5e4999: Pull complete
+7fbf05ebedfe: Pull complete
+097ef69e68bd: Pull complete
+50f6071868c3: Pull complete
+Digest: sha256:afcc516a22775a39d0d66f4c2ddc95d01be3e3d3862b21fcf4f9de34b4ad4e12
+Status: Downloaded newer image for heartexlabs/label-studio:latest
+2c8443dc940a4ce07426cf311bd193cdb7525c0f2223c24cd31277381222a96f
+[exit 0]
