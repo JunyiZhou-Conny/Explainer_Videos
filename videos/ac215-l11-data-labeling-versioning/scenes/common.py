@@ -2917,15 +2917,9 @@ class PipelineMap(Rig):
             "cli": pipe([[sx + 0.3, st, 0], [sx + 0.3, 1.88, 0], [-1.15, 1.88, 0], [-1.15, roof_y(hc, -1.15), 0]], KEY),
             "dvc": pipe([[sx, sb, 0], [sx, -0.85, 0], [hd.body.get_left()[0], -0.85, 0]], KEY),
         }
-        # ---- links from the DVC house to bucket 2
+        # ---- links from the DVC house to bucket 2 (fresh mobjects each time they light: _make_link)
+        self.links = {k: self._make_link(k) for k in ("fuse", "remote")}
         i2 = self.bucket2.drawers["images/"]
-        ds = self.bucket2.drawers["dvc_store/"]
-        hr = hd.body.get_right()[0]
-        self.links = {
-            "fuse": pipe([[hr, -0.7, 0], [-0.75, -0.7, 0], [-0.75, i2.get_center()[1], 0], i2.get_left()], ROUTE),
-            "remote": pipe([[hr, -0.98, 0], [-0.55, -0.98, 0], [-0.55, ds.get_center()[1], 0], ds.get_left()],
-                           ROUTE, stroke=3),
-        }
         # ---- the bridge (labels → images, not connected)
         cl = self.bucket1.drawers["cheeses_labeled/"]
         bx = cl.get_center()[0] + 1.2
@@ -2945,7 +2939,7 @@ class PipelineMap(Rig):
                  self.colab, self.bridge)
         if secrets:
             self.add(self.secrets)
-        self.ride(self.cli_caption, *self.pipes.values(), *self.links.values(), self.tower, self.slide6,
+        self.ride(self.cli_caption, *self.pipes.values(), self.tower, self.slide6,
                   self.slide6_big)
         if not secrets:
             self.ride(self.secrets)
@@ -2956,6 +2950,18 @@ class PipelineMap(Rig):
             self.state[k] = k in lit
         for k in MAP_PIECES:
             self._apply(k, k in lit)
+
+    def _make_link(self, k: str) -> VGroup:
+        """A new PINK link from the DVC house: 'fuse' → images/ (gcsfuse), 'remote' → dvc_store/."""
+        hr = self.houses["dvc"].body.get_right()[0]
+        y0 = self.houses["dvc"].body.get_bottom()[1]
+        if k == "fuse":
+            d = self.bucket2.drawers["images/"]
+            return pipe([[hr, y0 + 0.4, 0], [d.get_left()[0] - 0.7, y0 + 0.4, 0],
+                         [d.get_left()[0] - 0.7, d.get_center()[1], 0], d.get_left()], ROUTE)
+        d = self.bucket2.drawers["dvc_store/"]
+        return pipe([[hr, y0 + 0.12, 0], [d.get_left()[0] - 0.5, y0 + 0.12, 0],
+                     [d.get_left()[0] - 0.5, d.get_center()[1], 0], d.get_left()], ROUTE, stroke=3)
 
     @classmethod
     def at(cls, scene_id: str, **kw) -> "PipelineMap":
@@ -3056,10 +3062,11 @@ class PipelineMap(Rig):
         """Set piece k lit/dark in place (no animation)."""
         self.state[k] = on
         if k in ("fuse", "remote"):
-            if on:
+            if on and self.links[k] not in self.submobjects:
                 self.add(self.links[k])
-            elif self.links[k] in self.submobjects:
+            elif not on and self.links[k] in self.submobjects:
                 self.remove(self.links[k])
+                self.links[k] = self._make_link(k)
             return
         m = self._targets(k)
         m.become(self._version(k, on))
@@ -3073,8 +3080,11 @@ class PipelineMap(Rig):
                     self.add(ln)
                     anims.append(Create(ln))
                 elif not on and ln in self.submobjects:
-                    self.remove(ln)                    # off the map first: a faded child would snap back
+                    # the old link leaves the map (a faded child would snap back) and fades on its own
+                    # (play() adds it for the fade); the next light() gets a fresh, fully opaque one
+                    self.remove(ln)
                     anims.append(FadeOut(ln))
+                    self.links[k] = self._make_link(k)
                 self.state[k] = on
                 continue
             self.state[k] = on

@@ -295,8 +295,8 @@ class IamGrid(VoiceScene):
         low.move_to([0, -1.75, 0])
         up.move_to([0, 1.05, 0])
         up.left.move_to([low.left.get_center()[0], up.left.get_center()[1], 0])     # one column of errors
-        up.to.move_to([low.to.get_center()[0], up.to.get_center()[1], 0])
-        up.right.align_to(low.right, LEFT)
+        up.to.next_to(up.left, RIGHT, buff=0.4)
+        up.right.next_to(up.to, RIGHT, buff=0.4)
         rails = VGroup(*[Line([x, -3.3, 0], [x, 2.6, 0], color=S.GREY, stroke_width=4) for x in (-6.15, 6.15)])
         climb = arrow(low.frame.get_top() + LEFT * 3.2, up.frame.get_bottom() + LEFT * 3.2, S.GREY, buff=0.08)
         climb_txt = note("valid token").next_to(climb, RIGHT, buff=0.2)
