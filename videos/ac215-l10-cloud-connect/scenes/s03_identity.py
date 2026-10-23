@@ -182,7 +182,7 @@ class IdentityForCode(VoiceScene):
 
         # ========================================================== 0. an identity for software
         server = server_box().move_to([-3.4, 0.95, 0])
-        bdg = id_badge().move_to([0.6, 0.2, 0])
+        bdg = id_badge().move_to([0.1, 0.2, 0])
         hang = bdg.copy().move_to([server.get_center()[0], 0, 0]).align_to(server, UP).shift(DOWN * 1.75)
         lanyard = Line(server.body.get_bottom(), hang.clip.get_top(), color=KEY, stroke_width=3)
         gb = google_building(2.4, 3.0, door=False, meter_=False).move_to([4.75, -1.75, 0], aligned_edge=DOWN)
@@ -194,10 +194,10 @@ class IdentityForCode(VoiceScene):
         login = dashed_chip("login screen", S.GREY, 22).move_to([0.45, y_call + 0.6, 0])
         no_login = strike(login.text, S.GREY)
 
-        with self.voiceover(SAY[0]) as vo:
+        with self.voiceover(SAY[0], pad=0.9) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref), run_time=0.8)
             vo.wait_until("A service account is an identity")
-            self.play(FadeIn(server, shift=UP * 0.2), run_time=0.7)
+            self.play(FadeIn(server, shift=UP * 0.2), FadeIn(gb, shift=LEFT * 0.2), run_time=0.7)
             vo.wait_until("Its email looks like this badge")
             self.play(GrowFromCenter(bdg), run_time=0.8)
             self.play(Indicate(bdg.frame, color=KEY, scale_factor=1.04), run_time=0.6)
@@ -206,15 +206,15 @@ class IdentityForCode(VoiceScene):
             vo.wait_until("at your project")
             self.play(Indicate(bdg.text[1], color=KEY, scale_factor=1.12), run_time=0.7)
             vo.wait_until("Code wears it")
-            self.play(bdg.animate.move_to(hang), run_time=0.9)
-            self.play(Create(lanyard), run_time=0.4)
+            self.play(bdg.animate.move_to(hang), run_time=0.7)
+            self.play(Create(lanyard), run_time=0.3)
             vo.wait_until("to call Google")
-            self.play(FadeIn(gb, shift=LEFT * 0.2), GrowArrow(call), run_time=0.8)
+            self.play(GrowArrow(call), run_time=0.5)
             self.add(rider)
-            self.play(rider.animate.move_to(call.get_end() + LEFT * 0.55), run_time=0.9)
+            self.play(rider.animate.move_to(call.get_end() + LEFT * 0.55), run_time=0.6)
             vo.wait_until("with no login screen")
-            self.play(FadeIn(login, shift=DOWN * 0.15), run_time=0.4)
-            self.play(Create(no_login), run_time=0.4)
+            self.play(FadeIn(login, shift=DOWN * 0.15), run_time=0.3)
+            self.play(Create(no_login), run_time=0.3)
 
         # ========================================================== 1. slide 31's rule, walked
         rc = rule_card().move_to([0.35, 0.95, 0])
@@ -241,6 +241,7 @@ class IdentityForCode(VoiceScene):
             self.play(Indicate(rc.rows[0].right, color=INK, scale_factor=1.12), run_time=0.6)
             vo.wait_until("An app acting for a consenting user")
             self.play(ptr.animate.move_to(at_row(1)), run_time=0.4)
+            vo.wait_until("gets OAuth")
             self.play(Indicate(rc.rows[1].right, color=INK, scale_factor=1.12), run_time=0.6)
             vo.wait_until("Our code calls Vertex AI")
             self.play(ptr.animate.move_to(at_row(2)), run_time=0.4)
@@ -343,6 +344,8 @@ class IdentityForCode(VoiceScene):
             self.play(Indicate(ec.body[0], color=INK, scale_factor=1.04), run_time=0.6)
             vo.wait_until("And this app never touches storage")
             self.play(ec.body[1].animate.set_opacity(1), run_time=0.6)
+            vo.wait_until("that role rides along")
+            self.play(Indicate(ec.body[1], color=INK, scale_factor=1.04), run_time=0.7)
             vo.wait_until("Grant both anyway")
             self.play(FadeIn(both, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("The lecture's rule, least privilege")
@@ -408,9 +411,9 @@ class IdentityForCode(VoiceScene):
             self.play(Create(json_ring), run_time=0.3)
             vo.wait_until("and a file downloads")
             self.play(FadeIn(fdl, scale=0.6), run_time=0.3)
-            self.play(fdl.animate.move_to(land), run_time=0.8)
-            self.play(FadeIn(fl), FadeIn(ban1, shift=UP * 0.15), run_time=0.5)
-            self.play(FadeIn(ban2, shift=UP * 0.15), run_time=0.5)
+            self.play(fdl.animate.move_to(land), run_time=0.6)
+            self.play(FadeIn(fl), LaggedStart(FadeIn(ban1, shift=UP * 0.15), FadeIn(ban2, shift=UP * 0.15),
+                                              lag_ratio=0.5), run_time=0.7)
             vo.wait_until("Pause and make yours")
             self.play(FadeIn(yt2, shift=LEFT * 0.2), run_time=0.4)
             flash_tag(self, yt2, TURN)
