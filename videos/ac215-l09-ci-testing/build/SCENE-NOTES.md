@@ -254,3 +254,5 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
   fly off their lines: flash each piece on its own (S07).
 - pytest's long result rows hard-wrap mid-word ("PA / SSED"): break at the last space that fits
   (S07's local `soft()`), text unchanged.
+- `Indicate` on a filled tag or chip (your_turn, extra, grey_chip) fills its box with the text colour
+  and the word disappears: flash `.text` and pulse the `.box` stroke instead (S01 critic).
