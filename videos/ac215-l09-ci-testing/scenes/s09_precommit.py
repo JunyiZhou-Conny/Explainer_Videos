@@ -155,6 +155,12 @@ def flash(tg, color, scale: float = 1.15, run_time: float = 0.7):
     return Indicate(tg.text, color=color, scale_factor=scale, run_time=run_time)
 
 
+def each(pieces, color, scale: float = 1.1, lag: float = 0.15):
+    """Flash scattered pieces one by one: one Indicate on their group would scale them about the
+    group's centre and pull glyphs off their rows (SCENE-NOTES trap)."""
+    return LaggedStart(*[Indicate(p, color=color, scale_factor=scale) for p in pieces], lag_ratio=lag)
+
+
 def rows_of(line) -> list:
     return list(line.rows) if hasattr(line, "rows") else [line]
 
@@ -406,13 +412,12 @@ class PreCommitGate(VoiceScene):
                                                      scale_factor=1.1), run_time=0.8)
             vo.wait_until("both at width 120")
             u120 = under(code_span(p3.code, 43 - 35, "120"), TURN, stroke=3)
-            self.play(Create(u120), Indicate(VGroup(names[7], names[8]), color=TURN, scale_factor=1.15),
+            self.play(Create(u120), each([names[7], names[8]], TURN, 1.15),
                       run_time=0.8)
             vo.wait_until("both seeing only Python files under src")
             bars = VGroup(line_bar(p3.code, 0, TURN, 0.22), line_bar(p3.code, 9, TURN, 0.22))
             self.play(FadeIn(bars), run_time=0.6)
-            self.play(Indicate(VGroup(code_span(p3.code, 0, "^src/"), code_span(p3.code, 9, "^src/")),
-                               color=TURN, scale_factor=1.12), run_time=0.7)
+            self.play(each([code_span(p3.code, 0, "^src/"), code_span(p3.code, 9, "^src/")], TURN, 1.12), run_time=0.7)
             vo.wait_until("the tests are never linted")
             never = dashed_chip("tests/ · never matched")
             first = p3.code.code_lines[0]
@@ -456,8 +461,7 @@ class PreCommitGate(VoiceScene):
             vo.wait_until("hooks check staged files")
             self.play(Indicate(substring(done, "nothing to commit"), color=TURN, scale_factor=1.12), run_time=0.8)
             vo.wait_until("nothing was staged")
-            self.play(Indicate(VGroup(*[substring(r, "(no files to check)") for r in skipped]), color=INK,
-                               scale_factor=1.06), run_time=0.8)
+            self.play(each([substring(r, "(no files to check)") for r in skipped], INK, 1.06, lag=0.08), run_time=0.8)
 
         # ========================================================== 4. run --all-files (D4): black refuses
         gate = CommitGate(9, CHEESE_HOOKS, with_tray=True)
@@ -478,7 +482,7 @@ class PreCommitGate(VoiceScene):
             for i, s in enumerate(["pass", "pass", "pass", "pass", "skip", "pass", "pass"]):
                 step_to(self, gate, i, s, run_time=0.22)
             vo.wait_until("one has no files to check")
-            self.play(Indicate(VGroup(gate.arches[4], gate.turnstile.labels[4]), color=S.GREY, scale_factor=1.15),
+            self.play(each([gate.arches[4], gate.turnstile.labels[4]], S.GREY, 1.15),
                       run_time=0.6)
             vo.wait_until("then black fails")
             a7 = gate.arches[7]
@@ -614,8 +618,7 @@ class PreCommitGate(VoiceScene):
             b9, b18, b22 = bl[0], bl[5], bl[9]
             assert "Black" in b9.text and "Flake8" in b18.text and "F401" in b22.text
             vo.wait_until("black reformats the file")
-            self.play(Indicate(VGroup(substring(b9, "Failed"), substring(bl[2], "files were modified")),
-                               color=ERR, scale_factor=1.1), run_time=0.7)
+            self.play(each([substring(b9, "Failed"), substring(bl[2], "files were modified")], ERR, 1.1), run_time=0.7)
             vo.wait_until("flake8 reports F401")
             self.play(Indicate(substring(b22, "F401 'os' imported but unused"), color=ERR, scale_factor=1.08),
                       run_time=0.7)
@@ -641,7 +644,7 @@ class PreCommitGate(VoiceScene):
             still = out(self, t, status.at((6, 8)), run_time=0.5)
             stag = beside(row_tag("still staged · not committed", TURN), still[0])
             pin(self, still[0], stag)
-            self.play(Indicate(VGroup(env, gate.tray), color=TURN, scale_factor=1.08), run_time=0.7)
+            self.play(each([env.text, gate.tray.shape, gate.tray.text], TURN, 1.12), run_time=0.7)
             vo.wait_until("Restore the file")
             r_ln = typ(self, t, restore.cmd, type_time=1.4)
             tag_on(self, r_ln, extra_row)
@@ -650,12 +653,12 @@ class PreCommitGate(VoiceScene):
             self.remove(env)
             gate.envelope = None
             vo.wait_until("your machine now says no")
-            self.play(Indicate(gate.vault.door, color=INK, scale_factor=1.06),
-                      Indicate(VGroup(gate.arches[7], gate.arches[8]), color=ERR, scale_factor=1.1), run_time=0.9)
+            self.play(Indicate(gate.vault.door[1], color=INK, scale_factor=1.25),
+                      each([gate.arches[7], gate.arches[8]], ERR, 1.1), run_time=0.9)
             vo.wait_until("But this gate never ran")
             self.play(FadeOut(t), run_time=0.4)
             self.remove(t)
-            self.play(FadeIn(qcard, scale=0.9), Indicate(gate.arches, color=S.GREY, scale_factor=1.05),
+            self.play(FadeIn(qcard, scale=0.9), each(list(gate.arches), S.GREY, 1.08, lag=0.06),
                       run_time=0.8)
             vo.wait_until("Part 2 builds one")
             corner = [6.5 - qcard.width / 2, 3.55 - qcard.height / 2, 0]
