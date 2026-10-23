@@ -102,6 +102,41 @@ def at_ids(lines: list[str]) -> list[str]:
     return out
 
 
+def room(scene, t, n: int, run_time: float = 0.3) -> None:
+    """Make room for n new rows without the toolkit's fly-up (S09's helper): the oldest rows fade
+    where they are, then the rest slide up (a scroll would otherwise sail over the tracker)."""
+    over = len(t.lines) + n - t.rows
+    if over <= 0:
+        return
+    gone = VGroup(*t.lines.submobjects[:over])
+    stay = VGroup(*t.lines.submobjects[over:])
+    scene.play(FadeOut(gone), run_time=run_time * 0.4)
+    for m in gone:
+        t.lines.remove(m)
+    scene.remove(gone)
+    if len(stay):
+        scene.play(stay.animate.shift(UP * t.pitch * over), run_time=run_time * 0.6)
+
+
+def put(scene, t, lines, **kw) -> VGroup:
+    """Terminal.print of rows that each fit a row, with room() made first."""
+    rows = [lines] if isinstance(lines, (str, tuple)) else list(lines)
+    assert len(rows) <= t.rows and not kw.get("wrap"), (len(rows), t.rows)
+    room(scene, t, len(rows))
+    return t.print(scene, rows, **kw)
+
+
+def typ(scene, t, cmd: str, type_time: float | None = None):
+    """type_cmd, with room made first (see room())."""
+    if len(t.lines) and getattr(t.lines[-1], "bare", False):
+        last = t.lines[-1]
+        scene.remove(last, *last.submobjects)
+        t.lines.remove(last)
+    p = t.prompt + " "
+    room(scene, t, len(t.fold(p + cmd, first_prefix=len(p))))
+    return type_cmd(scene, t, cmd, type_time)
+
+
 def readme_cmd(n: int) -> str:
     """babykev README.md line n without its trailing '# comment'."""
     return excerpt(README, n, n).split("#")[0].strip()
@@ -249,20 +284,20 @@ class OneCommand(VoiceScene):
             self.remove(demo, dot_ring, docker)
             vo.wait_until("the package manager uv")
             self.play(FadeIn(uv_chip, shift=DOWN * 0.2), FadeIn(uv_note), run_time=0.5)
-            uv_ln = type_cmd(self, t, uv_v.cmd, type_time=0.5)
+            uv_ln = typ(self, t, uv_v.cmd, type_time=0.5)
             x1 = beside(extra_row(), uv_ln)
             pin(self, uv_ln, x1, anim=AnimationGroup(FadeIn(x1, shift=LEFT * 0.1), track(tr, extra=True)))
-            uv_out = t.print(self, uv_v.at(2), run_time=0.4)[0]
+            uv_out = put(self, t, uv_v.at(2), run_time=0.4)[0]
             vo.wait_until("0.13.2")
             self.play(Indicate(substring(uv_out, "0.13.2"), color=INK, scale_factor=1.2), run_time=0.5)
             tt1 = beside(time_row(), uv_out)
             pin(self, uv_out, tt1)
             vo.wait_until("the command runner just")
             self.play(FadeIn(just_chip, shift=DOWN * 0.2), FadeIn(just_note), run_time=0.5)
-            just_ln = type_cmd(self, t, just_v.cmd, type_time=0.5)
+            just_ln = typ(self, t, just_v.cmd, type_time=0.5)
             x2 = beside(extra_row(), just_ln)
             pin(self, just_ln, x2)
-            just_out = t.print(self, just_v.at(2), run_time=0.4)[0]
+            just_out = put(self, t, just_v.at(2), run_time=0.4)[0]
             vo.wait_until("1.59.0")
             tt2 = beside(time_row(), just_out)
             pin(self, just_out, tt2, anim=AnimationGroup(FadeIn(tt2, shift=LEFT * 0.1),
@@ -276,13 +311,13 @@ class OneCommand(VoiceScene):
             self.remove(uv_chip, uv_note, just_chip, just_note)
             t.clear(self)
             resize(self, t, 13, keep=0)
-            type_cmd(self, t, clone.cmd, type_time=1.2)
-            c_out = t.print(self, clone.at(2), run_time=0.3)[0]
-            type_cmd(self, t, "cd babykev", type_time=0.4)
+            typ(self, t, clone.cmd, type_time=1.2)
+            c_out = put(self, t, clone.at(2), run_time=0.3)[0]
+            typ(self, t, "cd babykev", type_time=0.4)
             cd_prompt(self, t, P_BABYKEV)
             vo.wait_until("list its tags")
-            g_ln = type_cmd(self, t, tags.cmd, type_time=0.8)
-            rows = t.print(self, tags.at((2, 10)), run_time=0.9, lag=0.1)
+            g_ln = typ(self, t, tags.cmd, type_time=0.8)
+            rows = put(self, t, tags.at((2, 10)), run_time=0.9, lag=0.1)
             names = [substring(r, r.text.split()[0]) for r in rows]
             vo.wait_until("9 steps")
             self.play(LaggedStart(*[n.animate.set_color(TURN) for n in names], lag_ratio=0.25), run_time=1.6)
@@ -334,13 +369,13 @@ class OneCommand(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             t.clear(self, run_time=0.4)
             resize(self, t, 11, keep=0)
-            type_cmd(self, t, sw0.cmd, type_time=0.7)
-            t.print(self, sw0.at(2), run_time=0.3)
+            typ(self, t, sw0.cmd, type_time=0.7)
+            put(self, t, sw0.at(2), run_time=0.3)
             vo.wait_until("one command builds the environment")
-            u_ln = type_cmd(self, t, sync.cmd, type_time=0.6)
+            u_ln = typ(self, t, sync.cmd, type_time=0.6)
             vo.wait_until("uv sync, dash dash locked")
             self.play(Indicate(substring(u_ln, "--locked"), color=VENV, scale_factor=1.15), run_time=0.6)
-            out = t.print(self, sync.at((2, 4)) + soft(sync.at(6), t.max_chars) + sync.at((9, 10)),
+            out = put(self, t, sync.at((2, 4)) + soft(sync.at(6), t.max_chars) + sync.at((9, 10)),
                           run_time=0.9, lag=0.1)
             cpy, warn_a, warn_b, pkg = out[0], out[3], out[4], out[6]
             vo.wait_until("It installs Python 3.13.16")
@@ -376,8 +411,8 @@ class OneCommand(VoiceScene):
             self.play(FadeOut(pic), run_time=0.5)
             self.remove(pic)
             resize(self, t, 8, keep=0)
-            j_ln = type_cmd(self, t, just0.cmd, type_time=0.3)
-            j_out = t.print(self, just0.at((2, 6)), run_time=0.7, lag=0.12)
+            j_ln = typ(self, t, just0.cmd, type_time=0.3)
+            j_out = put(self, t, just0.at((2, 6)), run_time=0.7, lag=0.12)
             vo.wait_until("lists the recipes")
             recipes = [substring(j_out[1], "help"), substring(j_out[4], "setup")]
             r_rings = VGroup(*[ring(g, TURN, buff=0.07) for g in recipes])
@@ -409,17 +444,17 @@ class OneCommand(VoiceScene):
             for m in list(t.lines):
                 t.lines.remove(m)
             resize(self, t, 14, keep=0, run_time=0.6)
-            type_cmd(self, t, sw1.cmd, type_time=0.6)
-            t.print(self, sw1.at(3), run_time=0.3)
+            typ(self, t, sw1.cmd, type_time=0.6)
+            put(self, t, sw1.at(3), run_time=0.3)
             vo.wait_until("the contract and its tests")
-            type_cmd(self, t, setup1.cmd, type_time=0.4)
-            t.print(self, setup1.at((2, 3), 9, "…", 19), run_time=0.6, lag=0.1)
+            typ(self, t, setup1.cmd, type_time=0.4)
+            put(self, t, setup1.at((2, 3), 9, "…", 19), run_time=0.6, lag=0.1)
             vo.wait_until("Run uv run pytest")
-            type_cmd(self, t, pyt.cmd, type_time=0.6)
-            prog = t.print(self, soft(pyt.at((10, 11)), t.max_chars), run_time=0.5, lag=0.1)
-            t.print(self, ["…"], run_time=0.2)
-            fails = t.print(self, at_ids(pyt.at((53, 54))), run_time=0.5, lag=0.1)
-            summ = t.print(self, summary(pyt, 55), run_time=0.3)[0]
+            typ(self, t, pyt.cmd, type_time=0.6)
+            prog = put(self, t, soft(pyt.at((10, 11)), t.max_chars), run_time=0.5, lag=0.1)
+            put(self, t, ["…"], run_time=0.2)
+            fails = put(self, t, at_ids(pyt.at((53, 54))), run_time=0.5, lag=0.1)
+            summ = put(self, t, summary(pyt, 55), run_time=0.3)[0]
             vo.wait_until("2 failed, 50 passed")
             self.play(substring(summ, "2 failed").animate.set_color(ERR),
                       substring(summ, "50 passed").animate.set_color(PASS),
@@ -489,10 +524,10 @@ class OneCommand(VoiceScene):
             resize(self, t, 6, keep=0, run_time=0.6)
             vo.wait_until("ruff in both roles")
             self.play(FadeIn(r_fmt, shift=DOWN * 0.15), FadeIn(r_chk, shift=DOWN * 0.15), run_time=0.6)
-            type_cmd(self, t, stats.cmd, type_time=0.8)
+            typ(self, t, stats.cmd, type_time=0.8)
             self.play(Indicate(r_chk.text, color=TOOL, scale_factor=1.15), run_time=0.5)
-            t.print(self, stats.at((2, 6)), run_time=0.7, lag=0.08)
-            st = t.print(self, ["…"] + stats.at(14) + soft(stats.at(15), t.max_chars), run_time=0.6, lag=0.08)
+            put(self, t, stats.at((2, 6)), run_time=0.7, lag=0.08)
+            st = put(self, t, ["…"] + stats.at(14) + soft(stats.at(15), t.max_chars), run_time=0.6, lag=0.08)
             found70 = st[1]
             vo.wait_until("the linter counts 70 findings")
             self.play(FadeIn(ff.track), FadeIn(ff.bar, shift=RIGHT * 0.3), FadeIn(ff.count), FadeIn(ff.note),
@@ -500,13 +535,13 @@ class OneCommand(VoiceScene):
             self.play(substring(found70, "Found 70 errors.").animate.set_color(ERR),
                       Indicate(ff.count, color=ERR, scale_factor=1.15), run_time=0.6)
             vo.wait_until("Safe automatic fixes")
-            type_cmd(self, t, fix.cmd, type_time=0.5)
-            f_out = t.print(self, fix.at(692), run_time=0.3)[0]
+            typ(self, t, fix.cmd, type_time=0.5)
+            f_out = put(self, t, fix.at(692), run_time=0.3)[0]
             vo.wait_until("remove one")
             self.play(ff.step(), Indicate(substring(f_out, "1 fixed"), color=INK, scale_factor=1.15), run_time=0.9)
             vo.wait_until("Unsafe fixes")
-            type_cmd(self, t, unsafe.cmd, type_time=0.7)
-            u_out = t.print(self, unsafe.at(360), run_time=0.3)[0]
+            typ(self, t, unsafe.cmd, type_time=0.7)
+            u_out = put(self, t, unsafe.at(360), run_time=0.3)[0]
             vo.wait_until("remove 32 more")
             self.play(ff.step(run_time=1.1), Indicate(substring(u_out, "32 fixed"), color=INK, scale_factor=1.15),
                       run_time=1.1)

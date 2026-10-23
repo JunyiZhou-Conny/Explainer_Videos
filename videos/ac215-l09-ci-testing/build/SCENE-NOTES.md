@@ -265,3 +265,8 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
   local `room()` / `out()` / `typ()`).
 - `Indicate` on any FILLED shape (envelope body, vault door, tray) floods it with the indicate
   colour: indicate its text or an outline part instead (S09).
+- Never wrap a tag's text-and-box flash in an `AnimationGroup`: it adds `Group(text, box)` on top and
+  the tag's filled box covers its own word (S10).
+- No invented numbers on screen, not even under an `illustration` tag (versions, scores,
+  confidences). Every number is from a capture/source/ASSETS.md; for a purely schematic idea use
+  symbolic marks (`x.y`, arrows, "newer") instead of made-up values (coordinator, S10).

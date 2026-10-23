@@ -28,8 +28,8 @@ Beats (script.md, ## S09; one voiceover block each):
    arches GREEN, two GREY dashed, the envelope goes into the vault; `[main b72d50d]` GREEN.
    `▶ your turn`. TRACKER D5: `pre-commit run` (README:265) -> part4-08: 2–10, all arches GREY dashed.
 7. TRACKER D5 · extra: the sed line (folds) -> no output, GREY note "on a Mac: sed -i '' …";
-   `git commit -m "try an unused import"` -> part4-11: 9–13, 18–22 (both Failed RED, line 11 YELLOW,
-   F401 RED). Strip (rows 9, 18, 22) under the gate: an `import os` envelope, black amber, flake8
+   `git commit -m "try an unused import"` -> part4-11: 9–13, 18–22 (both Failed RED, line 11 `files
+   were modified` RED as scripted, F401 RED). Strip (rows 9, 18, 22) under the gate: an `import os` envelope, black amber, flake8
    RED, back to the tray; `git status` -> part4-12: 2–3, 6–8, "still staged · not committed";
    the restore line (folds) -> no output, the envelope leaves the tray; the vault stays shut. A
    YELLOW card "this gate never ran a test" appears and parks in the top-right corner. Fade to an
@@ -42,8 +42,8 @@ Deviations (reported to the coordinator):
 - part4-04:15 (the emoji line) is never printed (SCENE-NOTES trap): 2–16 is shown as 2–14, …, 16.
 - The remedy chip and the ORANGE tag stand above the terminal (not inside it, where they would hide
   output). The chip leaves out "said at S05" (an authoring note).
-- Beat 7: black's "files were modified" stays YELLOW (MODIFIED, as in beat 4); both Failed verdicts
-  and the F401 row are RED.
+- Beat 7 follows the script: "Both RED" — black's "files were modified" (YELLOW in beat 4), both
+  Failed verdicts and the F401 row are RED here.
 - The gate pictures need the frame, so the terminal shrinks to a 3-row strip under them (beats 4–7),
   keeping the rows the narration names.
 - Beat 2's arches are a shorter Turnstile (arch_h 1.0) that the chain's turnstile turns into: with
@@ -613,7 +613,7 @@ class PreCommitGate(VoiceScene):
             vo.wait_until("The commit fails twice")
             k2 = typ(self, t, blocked.cmd, type_time=0.9)
             tag_on(self, k2, extra_row)
-            bl = out(self, t, fit(blocked.at((9, 13), (18, 22)), {0: ERR, 2: MODIFIED, 5: ERR, 9: ERR}),
+            bl = out(self, t, fit(blocked.at((9, 13), (18, 22)), {0: ERR, 2: ERR, 5: ERR, 9: ERR}),
                      run_time=0.9)
             b9, b18, b22 = bl[0], bl[5], bl[9]
             assert "Black" in b9.text and "Flake8" in b18.text and "F401" in b22.text
