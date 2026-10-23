@@ -28,8 +28,9 @@ issue/PR thread.
 > Then claim issue #<N> with a comment (model + surface + branch), and produce the episode on
 > branch `episode/<slug>`, touching only `videos/<slug>/`. At every stage boundary (brief,
 > script, sample, scenes, full-cut) push the branch and post a `CHECKPOINT <stage>` comment
-> with DONE / NEXT / WARN on the issue. Post a 20–30 s narrated sample on the draft PR and
-> stop for my review before the full render.
+> with DONE / NEXT / WARN on the issue. Keep one `▶` stage label current on the issue, post a 20–30 s narrated
+> sample on the draft PR for the record and continue — I rely on QA passes and review bots
+> rather than reviewing myself — and put any question for me on the issue with `blocked:question`.
 
 This one paragraph plus this repository **is** the full context. If an agent needs more than
 this to proceed, that gap is a bug: say so on the issue so the missing knowledge gets written

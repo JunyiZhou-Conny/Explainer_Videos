@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  actions: write      # to rebuild the site after a registry change
 
 concurrency:
   group: bilibili-sync
@@ -35,3 +36,7 @@ jobs:
           git add catalog/bilibili.json
           git commit -m "catalog: sync Bilibili registry"
           git push
+          # A push made with the Actions token starts no workflows, so ask for the site rebuild.
+          gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/pages.yml/dispatches" -f ref=main
+        env:
+          GH_TOKEN: ${{ github.token }}

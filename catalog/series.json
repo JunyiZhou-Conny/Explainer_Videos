@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "note": "Series registry for the Studio site (tools/studio_status.py). An episode belongs to the first series whose issue_label is on its issue or whose slug_prefix starts its slug; 'standalone' catches the rest.",
+  "series": [
+    {
+      "id": "ac215",
+      "name": "AC215 · MLOps 课程跟练",
+      "short": "AC215",
+      "description": "哈佛 AC215（MLOps & LLMOps）逐讲跟练：每集 25–35 分钟，照着官方教程把每条命令跑一遍；英文配音，中英双语字幕。",
+      "issue_label": "AC215",
+      "slug_prefix": "ac215-",
+      "slug_number": "^ac215-l(\\d+)",
+      "title_number": "\\bL(\\d+)\\b",
+      "code": "L{:02d}",
+      "planned": 23,
+      "skip": {"12": "App Design：这一讲没有配套教程，跟练形式不适用"}
+    },
+    {
+      "id": "careonex",
+      "name": "CareOneX 代码讲解",
+      "short": "CareOneX",
+      "description": "CareOneX 语音代理项目的源码导读：从启动命令到知识库和检索评估。",
+      "slug_prefix": "careonex-",
+      "slug_number": "^careonex-e(\\d+)",
+      "code": "E{}"
+    },
+    {
+      "id": "speciesot",
+      "name": "speciesOT 代码讲解",
+      "short": "speciesOT",
+      "description": "和 Josh 一起搭 speciesOT 包的五集讲解（未公开发布）。",
+      "slug_prefix": "speciesot-",
+      "slug_number": "^speciesot-e(\\d+)",
+      "code": "E{}"
+    },
+    {
+      "id": "standalone",
+      "name": "单集",
+      "short": "单集",
+      "description": "独立成篇的解释视频。"
+    }
+  ]
+}

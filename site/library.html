@@ -4,111 +4,122 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Explainer Studio · 视频库</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23171717'/%3E%3Cpath d='M10.6 3 5.4 13' stroke='%23DA2D24' stroke-width='2.4'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header>
+<header><div class="bar-in">
   <span class="brand">CONNY<span class="dot">/</span>EXPLAINER STUDIO</span>
   <nav>
-    <a href="./">看板</a>
-    <a href="new.html">新视频</a>
+    <a href="./">制作进度</a>
     <a class="active" href="library.html">视频库</a>
+    <a href="new.html">新视频</a>
     <a href="https://github.com/JunyiZhou-Conny/Explainer_Videos" target="_blank" rel="noopener">GitHub ↗</a>
   </nav>
-</header>
+</div></header>
 <main>
-  <h1>视频库</h1>
-  <p class="sub">实时读取 <code>catalog/videos.json</code>。每个变体都是 release 资产，下载不依赖任何分支。</p>
-  <div id="list"><p>加载中…</p></div>
+  <div class="page-head">
+    <div>
+      <h1>视频库</h1>
+      <p class="sub" id="totals">每个版本都是 release 资产，下载不依赖任何分支。</p>
+    </div>
+    <div id="fresh" class="fresh"></div>
+  </div>
+  <div class="chipbar" id="chips"></div>
+  <div class="lib">
+    <aside class="side" id="side"></aside>
+    <div id="list"><p class="empty">加载中…</p></div>
+  </div>
 </main>
+<script src="app.js"></script>
 <script>
-const RAW = 'https://raw.githubusercontent.com/JunyiZhou-Conny/Explainer_Videos/main/catalog/';
-// fetch with retries: raw.githubusercontent / api.github.com drop connections now and then.
-async function fetchJSON(url, tries = 3){
-  for(let i = 1; ; i++){
-    try{
-      const r = await fetch(url);
-      if(!r.ok) throw new Error(`HTTP ${r.status}`);
-      return await r.json();
-    }catch(e){
-      if(i >= tries) throw e;
-      await new Promise(res => setTimeout(res, 800 * i));
-    }
+let LIB = null;
+let STATUS = 'all';                     // all | live | off
+const FILTERS = [['all', '全部'], ['live', '已上 B 站'], ['off', '未上 B 站']];
+const selected = () => {            // #<series> filters; #ep-<slug> deep-links one video
+  const h = decodeURIComponent(location.hash.slice(1));
+  return !h || h.startsWith('ep-') ? 'all' : h;
+};
+const keep = v => STATUS === 'all' || (STATUS === 'live') === Boolean(v.bilibili);
+
+function vidCard(v){
+  const others = v.variants.filter(x => x.url !== v.primary.url);
+  const when = v.bilibili?.pubdate ? clock(new Date(v.bilibili.pubdate * 1000).toISOString()).split(' ')[0] : '';
+  const meta = [dur(v.seconds), v.bilibili ? `${when} 上 B 站` : '未上 B 站'].filter(Boolean).join(' · ');
+  const list = others.map(x => `<li><a href="${esc(x.url)}">${esc(x.variant)}</a><span>${dur(x.seconds)}</span><span>${mb(x.bytes)}</span></li>`).join('');
+  return `<article class="ep vid${v.bilibili ? '' : ' off'}" id="ep-${esc(v.slug)}">
+    ${v.code ? `<div class="ep-top"><span class="ep-code">${esc(v.code)}</span></div>` : ''}
+    <div class="ep-title">${esc(v.title)}</div>
+    ${v.subtitle ? `<div class="ep-zh">${esc(v.subtitle)}</div>` : ''}
+    <div class="ep-meta num">${esc(meta)}</div>
+    <div class="vid-actions">
+      ${v.bilibili ? `<a class="btn primary small" href="${esc(v.bilibili.url)}" target="_blank" rel="noopener">▶ B 站观看</a>` : ''}
+      <a class="btn ghost small" href="${esc(v.primary.url)}" title="${esc(v.primary.variant)}">下载 MP4${v.primary.bytes ? ' · ' + mb(v.primary.bytes) : ''}</a>
+    </div>
+    ${others.length ? `<details class="fold"><summary>其他版本（${others.length}）</summary><ul class="dl">${list}</ul></details>` : ''}
+  </article>`;
+}
+
+function render(){
+  const sel = selected();
+  const series = LIB.series;
+  const all = series.flatMap(s => s.episodes);
+  const nLive = all.filter(v => v.bilibili).length;
+  const count = s => s.episodes.filter(keep).length;
+
+  document.getElementById('totals').textContent =
+    `${LIB.totals.episodes} 个视频 · ${LIB.totals.published} 个已上 B 站 · 共 ${hours(LIB.totals.seconds)}`;
+
+  const nav = [['all', '全部', all.filter(keep).length], ...series.map(s => [s.id, s.name, count(s)])];
+  document.getElementById('side').innerHTML = `
+    <div><h3>系列</h3><nav>${nav.map(([id, name, n]) =>
+      `<a href="#${id}" class="${sel === id ? 'on' : ''}"><span>${esc(name)}</span><span class="n">${n}</span></a>`).join('')}</nav></div>
+    <div><h3>B 站状态</h3><div class="seg-ctl">${FILTERS.map(([k, name]) =>
+      `<button type="button" class="opt${STATUS === k ? ' on' : ''}" data-status="${k}"><span>${name}</span><span class="n">${
+        k === 'all' ? all.length : k === 'live' ? nLive : all.length - nLive}</span></button>`).join('')}</div></div>`;
+  document.getElementById('chips').innerHTML =
+    nav.map(([id, name]) => `<a href="#${id}" class="${sel === id ? 'on' : ''}">${esc(id === 'all' ? '全部' : (series.find(s => s.id === id)?.short || name))}</a>`).join('') +
+    '<span class="sep"></span>' +
+    FILTERS.slice(1).map(([k, name]) => `<button type="button" class="${STATUS === k ? 'on' : ''}" data-status="${k}" data-toggle>${name}</button>`).join('');
+
+  const shown = series.filter(s => sel === 'all' || s.id === sel);
+  let html = '';
+  for(const s of shown){
+    const eps = s.episodes.filter(keep);
+    if(!eps.length) continue;
+    html += `<section class="series-sec" id="sec-${esc(s.id)}">
+      <div class="section-h"><h2>${esc(s.name)}</h2>
+        <span class="aside num">${s.counts.episodes} 集 · ${s.counts.published} 已上 B 站 · ${hours(s.counts.seconds)}</span></div>
+      ${s.description ? `<p class="series-desc">${esc(s.description)}</p>` : ''}
+      <div class="grid tight">${eps.map(vidCard).join('')}</div></section>`;
   }
+  const stray = LIB.unmatched || [];
+  if(stray.length && STATUS !== 'off' && sel === 'all'){
+    html += `<section class="series-sec"><div class="section-h"><h2>B 站上有、还没归到某一集</h2></div>
+      <div class="rows">${stray.map(a => `<a class="row" href="https://www.bilibili.com/video/${esc(a.bvid)}/" target="_blank" rel="noopener">
+        <span class="code">${esc(a.bvid.slice(0, 6))}</span><span class="t">${esc(a.title)}</span>
+        <span class="r">${new Date(a.pubdate * 1000).toLocaleDateString('zh-CN')}</span></a>`).join('')}</div></section>`;
+  }
+  document.getElementById('list').innerHTML = html || '<p class="empty">没有符合条件的视频。</p>';
+  freshness(document.getElementById('fresh'), LIB.generated_at);
+  if(location.hash.startsWith('#ep-')) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
 }
-function scheduleRetry(el, msg, fn, secs = 10){
-  el.innerHTML = `<p class="error">${msg}；${secs} 秒后自动重试。 <button class="ghost" onclick="load()">立即重试</button></p>`;
-  clearTimeout(window.__retryTimer);
-  window.__retryTimer = setTimeout(fn, secs * 1000);
-}
-function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML;}
-function dur(s){ if(!s) return ''; s=Math.round(s); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
-function mb(b){ return b ? (b/1048576).toFixed(1) + ' MB' : ''; }
+
 async function load(){
-  clearTimeout(window.__retryTimer); // a manual 立即重试 must not leave the auto-retry armed
-  const el = document.getElementById('list');
+  clearTimeout(window.__retry);
   try{
-    const cat = await fetchJSON(RAW + 'videos.json');
-    // The registry is optional: without it, badges say the status is unknown rather than "not on Bilibili".
-    const reg = await fetchJSON(RAW + 'bilibili.json').catch(() => null);
-    const byEp = new Map();
-    for(const a of cat.artifacts){
-      if(!byEp.has(a.episode)) byEp.set(a.episode, []);
-      byEp.get(a.episode).push(a);
-    }
-    // Series by slug prefix. AC215 reads in lecture order; the rest newest first.
-    const SERIES = [
-      ['ac215-', 'AC215 · MLOps 课程跟练'],
-      ['careonex-', 'CareOneX 代码讲解'],
-      ['speciesot-', 'speciesOT 代码讲解'],
-      [null, '单集'],
-    ];
-    const groups = new Map(SERIES.map(([, name]) => [name, []]));
-    for(const ep of [...byEp.keys()].reverse()){
-      const [, name] = SERIES.find(([p]) => p === null || ep.startsWith(p));
-      groups.get(name).push(ep);
-    }
-    groups.get('AC215 · MLOps 课程跟练').sort();
-    let html = '';
-    for(const [, name] of SERIES){
-      const eps = groups.get(name);
-      if(!eps.length) continue;
-      html += `<h2 class="strip-h" style="margin:40px 0 4px"><span>${name}</span><span style="color:var(--red)">${eps.length}</span></h2>`;
-      for(const ep of eps){
-        const arts = byEp.get(ep);
-        const title = arts.find(a => a.title)?.title || ep;
-        const bili = reg?.episodes?.[ep];
-        const badge = !reg ? '<span class="badge none">B 站状态未知</span>'
-          : bili ? `<a class="badge bili" href="https://www.bilibili.com/video/${esc(bili.bvid)}/" target="_blank" rel="noopener">B 站 ↗</a>`
-          : '<span class="badge none">未上 B 站</span>';
-        html += `<h3 style="margin:22px 0 8px;font-size:1.05rem">${esc(title)} ${badge}</h3>
-          <table><tr><th>版本</th><th>时长</th><th>大小</th><th>下载</th></tr>`;
-        for(const a of arts){
-          html += `<tr>
-            <td><span class="variant">${esc(a.variant || '—')}</span></td>
-            <td>${dur(a.duration_seconds)}</td>
-            <td>${mb(a.bytes)}</td>
-            <td><a href="${a.download_url}">MP4</a></td>
-          </tr>`;
-        }
-        html += '</table>';
-      }
-    }
-    const stray = reg?.unmatched || [];
-    if(stray.length){
-      html += `<h2 style="margin:34px 0 8px;font-size:1.15rem">B 站上有、还没对应到目录的视频</h2>
-        <p class="sub">登记表 <code>catalog/bilibili.json</code> 里还没归到某一集。告诉代理它对应哪一集即可。</p><table>`;
-      for(const a of stray){
-        html += `<tr><td><a href="https://www.bilibili.com/video/${esc(a.bvid)}/" target="_blank" rel="noopener">${esc(a.title)}</a></td>
-          <td>${new Date(a.pubdate * 1000).toLocaleDateString('zh-CN')}</td></tr>`;
-      }
-      html += '</table>';
-    }
-    el.innerHTML = html || '<p>目录为空。</p>';
+    LIB = await loadData('library.json');
+    render();
   }catch(e){
-    scheduleRetry(el, `目录加载失败：${esc(e.message)}`, load);
+    document.getElementById('list').innerHTML = `<p class="error">视频库加载失败：${esc(e.message)}；10 秒后自动重试。 <button class="ghost small" onclick="load()">立即重试</button></p>`;
+    window.__retry = setTimeout(load, 10000);
   }
 }
+document.addEventListener('click', ev => {
+  const b = ev.target.closest('[data-status]');
+  if(b){ STATUS = 'toggle' in b.dataset && STATUS === b.dataset.status ? 'all' : b.dataset.status; render(); }
+});
+window.addEventListener('hashchange', () => { if(LIB){ render(); if(!location.hash.startsWith('#ep-')) window.scrollTo({top: 0}); } });
 load();
 </script>
 </body>

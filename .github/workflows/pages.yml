@@ -1,31 +1,48 @@
 name: Deploy site
 
-# Publishes site/ (the studio dashboard) to GitHub Pages on every push to main
-# that touches it. The site is read-only glass over GitHub: issues are the
-# source of truth, catalog/videos.json the inventory.
+# Publishes site/ (the Studio: progress board, library, composer) to GitHub Pages with its data
+# built fresh by tools/studio_status.py, so the browser never calls the GitHub API. Issues are the
+# source of truth, so every episode label or comment rebuilds the board within a minute or two;
+# pushes to the catalog or the site rebuild it too, and an hourly run catches anything missed
+# (pushes made with the Actions token, like the daily Bilibili sync, trigger no workflows).
 on:
   push:
     branches: [main]
-    paths: ["site/**", ".github/workflows/pages.yml"]
+    paths: ["site/**", "catalog/**", "tools/studio_status.py", ".github/workflows/pages.yml"]
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled, deleted]
+  issue_comment:
+    types: [created, edited, deleted]
+  schedule:
+    - cron: "23 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
+  issues: read
+  pull-requests: read
   pages: write
   id-token: write
 
+# Never cut a deploy short: a burst of comments queues one more run, which reads the newest state.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
+    # Conversation on pull requests is not episode progress.
+    if: github.event_name != 'issue_comment' || !github.event.issue.pull_request
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Build the progress and library data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/studio_status.py --repo "$GITHUB_REPOSITORY" --out site/data
       - uses: actions/configure-pages@v5
         with:
           enablement: true
