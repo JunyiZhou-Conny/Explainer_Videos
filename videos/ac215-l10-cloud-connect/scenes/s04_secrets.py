@@ -39,7 +39,7 @@ from explainer.components import ponder_card
 from common import (ERR, IMAGE, INK, KEY, LAPTOP, NARRATION, P_LAPTOP_HOME, P_REPO, ROUTE, SAY_COUNT, TURN,
                     AppMap, SecretsPortalRig, beside, bare_prompt, capture, cd_prompt, code, code_span,
                     cut, each, err_chip, excerpt, extra_row, file_glyph, folder_glyph, grey_chip,
-                    flash_tag, illustration_tag, label, line_bar, lref, mono, mono_line, note, on_bar, out, pin,
+                    flash_tag, illustration_tag, label, line_bar, lref, mono, mono_line, note, out, pin,
                     readme, readme_card, resize, ring, row_tag, strike, substring, term, track, tracker,
                     type_cmd, under, unpin, your_turn)
 from explainer import style as S
@@ -322,14 +322,14 @@ class SecretsPortal(VoiceScene):
             ln = type_cmd(self, strip, mk.cmd, type_time=0.8)
             xt = beside(extra_row(), ln)
             pin(self, ln, xt)
-            bar_note = on_bar(strip, row_tag("the README shows a tree, not a command"))
-            self.play(FadeIn(bar_note, shift=LEFT * 0.1), run_time=0.4)
-            bare_prompt(self, strip)
+            ln_bare = bare_prompt(self, strip)
+            tree_note = beside(row_tag("the README shows a tree, not a command"), ln_bare)
+            pin(self, ln_bare, tree_note)
             self.play(FadeIn(m.drawer, scale=0.6), run_time=0.6)
             self.play(Indicate(m.drawer.text, color=KEY, scale_factor=1.25), run_time=0.7)
             vo.wait_until("then move the download in")
-            self.play(FadeOut(m), FadeOut(m.drawer), FadeOut(bar_note), track(tr, 3), run_time=0.5)
-            self.remove(m, m.drawer, bar_note)
+            unpin(self, ln_bare, tree_note, FadeOut(m), FadeOut(m.drawer), track(tr, 3), run_time=0.5)
+            self.remove(m, m.drawer)
             self.play(FadeIn(dl), FadeIn(sf), FadeIn(beside_repo), FadeIn(ill), FadeIn(f_icon, shift=UP * 0.2),
                       FadeIn(f_lab), run_time=0.6)
             path = ArcBetweenPoints(f_icon.get_center(), landing, angle=-0.7)
@@ -365,10 +365,12 @@ class SecretsPortal(VoiceScene):
             self.play(t_rows[2].animate.fade(0.65), run_time=0.4)          # README.md: not in the README's tree
             vo.wait_until("Pause and match it")
             links = VGroup()
+            x0 = max(t_rows[i].glyphs.get_right()[0] for i in range(1, 8)) + 0.2   # stubs end past the text
             for ri, ci in ((1, 0), (3, 2), (4, 3), (5, 1), (6, 4), (7, 5)):
                 a = t_rows[ri].glyphs.get_right() + RIGHT * 0.12
                 b = tc.rows[ci].get_left() + LEFT * 0.1
-                lk = Line(a, b, color=TURN, stroke_width=2.5)
+                lk = VMobject(stroke_color=TURN, stroke_width=2.5).set_points_as_corners(
+                    [a, np.array([x0, a[1], 0]), b])
                 links.add(lk)
                 self.play(Create(lk), Indicate(t_rows[ri].glyphs, color=TURN, scale_factor=1.06),
                           Indicate(tc.rows[ci], color=TURN, scale_factor=1.06), run_time=0.4)
@@ -388,8 +390,9 @@ class SecretsPortal(VoiceScene):
             chk2 = grey_chip("not .json.json · llm-finetuning README.md:67")
             chk2.move_to(chk, aligned_edge=LEFT)
             yt = your_turn().next_to(chk2, RIGHT, buff=0.4)
-            self.play(FadeOut(chk), FadeIn(chk2), FadeIn(yt, shift=LEFT * 0.1), run_time=0.5)
+            self.play(FadeOut(chk), run_time=0.3)
             self.remove(chk)
+            self.play(FadeIn(chk2), FadeIn(yt, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, yt, TURN)
 
         # ========================================================== 4. the quiet trap: .gitignore
