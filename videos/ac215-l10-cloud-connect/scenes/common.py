@@ -454,18 +454,30 @@ def _lang(name: str) -> str:
 
 
 def code(path: str, first: int, last: int | None = None, language: str | None = None, focus=None,
-         font_size: float = 22, shown: str | None = None, max_lines: int = 12, cuts: dict | None = None):
+         font_size: float = 22, shown: str | None = None, max_lines: int = 12, cuts: dict | None = None,
+         dedent: bool = False):
     """CODE(path: first–last) of script.md: a code_panel quoting assets/source/<path>, header
     '<shown> · lines a–b' (shown_path()). <= 12 lines. 22 pt fits <= 66 characters a line, 20 pt
     <= 73: a longer line raises; cut it with cuts={file_line: 'text it ends after'} (the house '…',
     recoloured GREY; pygments would paint it pink-red) or use font_size=20 (<= 73).
     .code .header; highlight with code_span(p.code, k, "x"), line_bar(p.code, k, colour), k = file
-    line - first."""
+    line - first. dedent=True removes the excerpt's common leading indentation (compose 13–15:
+    dedent=True, font_size=20), nothing else.
+    Measured for script.md's CODE refs: 22 pt fits as is only when every line is <= 66; e.g.
+    api-service/docker-shell.sh 19–27 (67) and 6–11 (73), llm-rag/docker-shell.sh 6–12 (73),
+    gemini-finetuner/cli.py 89–96 (73), next.config.js 19–25 (67) need font_size=20; rag.py 14–27
+    (118), 110–113 (80), DataService.js 34–43 (143), ChatComponent.jsx 22–28 / 161–173,
+    docker-entrypoint.sh 6–9 (104), frontend docker-shell.sh 8–11 (112), cli.py 184–200 / 280–288
+    need cuts= (and windows of <= 12 lines where the range is longer)."""
     last = first if last is None else last
     if last - first + 1 > max_lines:
         raise ValueError(f"CODE {path}: {last - first + 1} lines; never more than {max_lines} lines "
                          f"on screen (show a long file as successive windows of <= {max_lines} lines)")
-    lines = excerpt(path, first, last).split("\n")
+    text = excerpt(path, first, last)
+    if dedent:
+        import textwrap
+        text = textwrap.dedent(text)
+    lines = text.split("\n")
     cuts = cuts or {}
     for n, after in cuts.items():
         lines[n - first] = cut(lines[n - first], after)
