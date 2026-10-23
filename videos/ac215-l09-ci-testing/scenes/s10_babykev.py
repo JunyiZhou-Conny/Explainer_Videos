@@ -20,8 +20,8 @@ Beats (script.md, ## S10; one voiceover block each):
    time marker slides, and a GREEN `uv sync --locked` column under a GREEN `uv.lock` card with a lock
    glyph that shakes at every tick and prints a RED "stop". The warning row gets `at the time of
    recording`. A TEAL frost glyph "the cheese way: freeze an image". Then `just` -> s00-05: 2–6; the
-   recipe names ringed; three chips (people GREY, hook PURPLE, CI · later GREY dashed) point at
-   `setup`. `▶ your turn`.
+   recipe names ringed; three row tags beside `[setup]` (for people GREY, the hook PURPLE, CI · later
+   GREY). `▶ your turn`.
 3. TRACKER E2. `git switch --detach step-01` -> s01-01: 3; `just setup` -> s01-02: 2–3, 9, …, 19;
    `uv run pytest` (walk step-01) -> s01-03: 10–11 (soft-wrapped), …, 53–54 (wrapped), 55 (its '='
    padding dropped, as S07 does): `2 failed` RED, `50 passed` GREEN. The terminal shrinks to a
@@ -52,7 +52,7 @@ from explainer import style as S
 
 from common import (BOTTOM, ERR, HOST, IMAGE, INK, NARRATION, P_BABYKEV, P_BABYKEV_HOME, PASS, TOOL,
                     TURN, T_BABYKEV, VENV, Turnstile, arrow, attach, beside, capture, cd_prompt, code, code_span,
-                    dashed_chip, excerpt, extra_row, file_card, grey_chip, illustration_tag, label,
+                    dashed_chip, excerpt, extra_row, file_card, illustration_tag, label,
                     line_bar, line_pitch, lock_glyph, lref, mono, note, outline_box, pin, recorded_tag,
                     resize, ring, row_tag, steady, substring, term, time_row, tool_chip, track, tracker,
                     turn_row, type_cmd, walk, FindingsFunnel)
@@ -107,10 +107,12 @@ def readme_cmd(n: int) -> str:
     return excerpt(README, n, n).split("#")[0].strip()
 
 
-def flash_tag(tag, color):
-    """Flash a filled row tag: its word and its outline (Indicate on the whole tag hides the word)."""
-    return AnimationGroup(Indicate(tag.text, color=color, scale_factor=1.2),
-                          tag.box.animate(rate_func=there_and_back).set_stroke(width=4))
+def flash_tag(tag, color) -> list:
+    """Flash a filled row tag: its word and its outline (Indicate on the whole tag hides the word).
+    A list to unpack into play(): wrapped in an AnimationGroup, the group's Group(text, box) is
+    added on top of the row and the tag's filled box then hides its own word."""
+    return [tag.box.animate(rate_func=there_and_back).set_stroke(width=4),
+            Indicate(tag.text, color=color, scale_factor=1.2)]
 
 
 # ---------------------------------------------------------------- beat 0: babykev, illustrated
@@ -144,7 +146,11 @@ def babykev_demo() -> VGroup:
     bars = VGroup(*[bar_rect(p, x, base) for p, x in zip(SURE, xs)])
     names = VGroup(*[label(s, 20, S.GREY).move_to([x, base - 0.27, 0]) for s, x in zip(OPTIONS, xs)])
     axis = Line([xs[0] - 0.45, base, 0], [xs[-1] + 0.45, base, 0], color=S.GREY, stroke_width=2)
-    conf = steady("confidence 0.8", 24, INK).move_to([3.65, -1.25, 0])
+    word = label("confidence", 24, INK)
+    num = steady("0.8", 24, INK)
+    conf = VGroup(word, num).arrange(RIGHT, buff=0.18).move_to([3.65, -1.25, 0])
+    num.align_to(word, DOWN)
+    conf.word, conf.num = word, num
     a1 = arrow(qbox.get_right(), mbox.get_left() + LEFT * 0.05, INK)
     a2 = arrow(mbox.get_right() + RIGHT * 0.05, np.array([xs[0] - 0.55, 0.2, 0]), INK)
     tag = illustration_tag().move_to([3.65, 1.75, 0])
@@ -232,15 +238,15 @@ class OneCommand(VoiceScene):
             vo.wait_until("a pure guess")
             level = [bar_rect(0.2, x, demo.base) for x in demo.xs]
             self.play(*[Transform(b, n) for b, n in zip(demo.bars, level)],
-                      Transform(demo.conf, steady("confidence 0", 24, INK).move_to(demo.conf)), run_time=1.0)
+                      Transform(demo.conf.num, steady("0", 24, INK).move_to(demo.conf.num, aligned_edge=LEFT)),
+                      run_time=1.0)
             vo.wait_until("should score zero")
-            self.play(Indicate(demo.conf, color=INK, scale_factor=1.15), run_time=0.7)
+            self.play(Indicate(demo.conf.num, color=INK, scale_factor=1.4), run_time=0.7)
             vo.wait_until("No Docker")
             self.play(Create(dot_ring), FadeIn(docker, shift=DOWN * 0.15), run_time=0.7)
             vo.wait_until("Two tools first")
-            self.play(FadeOut(VGroup(demo, dot_ring, docker)), run_time=0.6)
+            self.play(FadeOut(VGroup(demo, dot_ring, docker)), FadeIn(t, shift=UP * 0.2), run_time=0.7)
             self.remove(demo, dot_ring, docker)
-            self.play(FadeIn(t), run_time=0.5)
             vo.wait_until("the package manager uv")
             self.play(FadeIn(uv_chip, shift=DOWN * 0.2), FadeIn(uv_note), run_time=0.5)
             uv_ln = type_cmd(self, t, uv_v.cmd, type_time=0.5)
@@ -270,7 +276,7 @@ class OneCommand(VoiceScene):
             self.remove(uv_chip, uv_note, just_chip, just_note)
             t.clear(self)
             resize(self, t, 13, keep=0)
-            c_ln = type_cmd(self, t, clone.cmd, type_time=1.2)
+            type_cmd(self, t, clone.cmd, type_time=1.2)
             c_out = t.print(self, clone.at(2), run_time=0.3)[0]
             type_cmd(self, t, "cd babykev", type_time=0.4)
             cd_prompt(self, t, P_BABYKEV)
@@ -296,7 +302,7 @@ class OneCommand(VoiceScene):
             self.remove(jump)
             attach(self, c_out, y1)
             attach(self, g_ln, y2)
-            self.play(flash_tag(y1, TURN), flash_tag(y2, TURN), run_time=0.7)
+            self.play(*flash_tag(y1, TURN), *flash_tag(y2, TURN), run_time=0.7)
 
         # ========================================================== 2. step-00: uv sync --locked; just
         band_lo = strip_top20(3) + 0.15
@@ -305,8 +311,8 @@ class OneCommand(VoiceScene):
         lw = right_rows.width + 0.6
         lbox = outline_box(lw, right_rows.height + 0.6, S.GREY, solid=False)
         rbox = outline_box(lw, right_rows.height + 0.6, VENV, solid=True, fill_opacity=0.08)
-        lbox.move_to([-4.45, 0.95, 0])
-        rbox.move_to([-0.35, 0.95, 0])
+        lbox.move_to([-4.45, 0.6, 0])
+        rbox.move_to([-0.35, 0.6, 0])
         left_rows.move_to(lbox)
         right_rows.move_to(rbox)
         l_head = label("no lockfile", 22, S.GREY).next_to(lbox, UP, buff=0.22)
@@ -323,7 +329,7 @@ class OneCommand(VoiceScene):
         frost = frost_glyph()
         f_cap = VGroup(label("the cheese way:", 22, IMAGE), label("freeze an image", 22, IMAGE))
         f_cap.arrange(DOWN, buff=0.1)
-        cheese = VGroup(frost, f_cap).arrange(DOWN, buff=0.3).move_to([4.6, 1.15, 0])
+        cheese = VGroup(frost, f_cap).arrange(DOWN, buff=0.3).move_to([4.6, 0.85, 0])
 
         with self.voiceover(SAY[2]) as vo:
             t.clear(self, run_time=0.4)
@@ -379,30 +385,29 @@ class OneCommand(VoiceScene):
             vo.wait_until("one name per task")
             self.play(*[Indicate(g, color=TURN, scale_factor=1.15) for g in recipes], run_time=0.7)
             vo.wait_until("for people")
-            users = [grey_chip("people", size=22), tool_chip("hook", size=22),
-                     dashed_chip("CI · later", size=22)]
-            top = t.box.get_top()[1]
-            for c, x in zip(users, (-3.6, 0.0, 3.6)):
-                c.move_to([x, top + 0.75, 0])
-            target = r_rings[1]
-            links = [arrow(c.get_bottom(), target.get_top() + RIGHT * (k - 1) * 0.25, S.GREY)
-                     for k, c in enumerate(users)]
-            self.play(FadeIn(users[0], shift=DOWN * 0.15), GrowArrow(links[0]), run_time=0.45)
+            # the same name for everyone: three row tags beside `[setup]` (the row above the recipe)
+            sect = j_out[3]
+            users = [row_tag("for people", S.GREY), row_tag("the hook", TOOL), row_tag("CI · later", S.GREY)]
+            beside(users[0], sect, buff=0.6)
+            for a, b in zip(users, users[1:]):
+                b.next_to(a, RIGHT, buff=0.25)
+            pin(self, sect, users[0])
             vo.wait_until("hook")
-            self.play(FadeIn(users[1], shift=DOWN * 0.15), GrowArrow(links[1]), run_time=0.45)
+            pin(self, sect, users[1])
             vo.wait_until("and later CI")
-            self.play(FadeIn(users[2], shift=DOWN * 0.15), GrowArrow(links[2]), run_time=0.45)
+            pin(self, sect, users[2])
             vo.wait_until("Pause and run these")
             yj = beside(turn_row(), j_ln)
             pin(self, j_ln, yj)
-            self.play(flash_tag(yj, TURN), run_time=0.7)
+            self.play(*flash_tag(yj, TURN), run_time=0.7)
 
         # ========================================================== 3. step-01: 2 failed, 50 passed
         with self.voiceover(SAY[3]) as vo:
-            gone = VGroup(*users, *links, r_rings)
-            self.play(FadeOut(gone), track(tr, 2), run_time=0.5)
-            self.remove(gone)
-            t.clear(self)
+            # the tags are part of their rows: they leave with the terminal's lines
+            self.play(FadeOut(VGroup(r_rings, t.lines)), track(tr, 2), run_time=0.5)
+            self.remove(r_rings, t.lines)
+            for m in list(t.lines):
+                t.lines.remove(m)
             resize(self, t, 14, keep=0, run_time=0.6)
             type_cmd(self, t, sw1.cmd, type_time=0.6)
             t.print(self, sw1.at(3), run_time=0.3)
@@ -448,18 +453,18 @@ class OneCommand(VoiceScene):
             vo.wait_until("fix the code, not the tests")
             rule = beside(row_tag("fix the code, not the tests", VENV), got_row, buff=1.2)
             pin(self, got_row, rule)
-            self.play(flash_tag(rule, VENV), run_time=0.7)
+            self.play(*flash_tag(rule, VENV), run_time=0.7)
             vo.wait_until("Pause and run it")
             ys = beside(turn_row(), summ)
             pin(self, summ, ys)
-            self.play(flash_tag(ys, TURN), run_time=0.7)
+            self.play(*flash_tag(ys, TURN), run_time=0.7)
 
         # ========================================================== 4. step-02: ruff, the funnel, one width
         r_fmt, r_chk = tool_chip("ruff format", size=24), tool_chip("ruff check", size=24)
         VGroup(r_fmt, r_chk).arrange(RIGHT, buff=2.2).move_to([0.4, 2.3, 0])
         ff = FindingsFunnel([79, 70, 69, 37], ["before just fmt", "after just fmt", "safe fixes", "unsafe fixes, applied deliberately"],
                             bar_w=7.6)
-        ff.move_to([-1.2, 0.85, 0])
+        ff.move_to([-1.2, 0.45, 0])
         # start at 70: a faint notch stays at 79 (walk.md's record before `just fmt`, not spoken)
         old_x = ff.bar.get_right()[0]
         ff.k = 1
@@ -486,8 +491,9 @@ class OneCommand(VoiceScene):
             self.play(FadeIn(r_fmt, shift=DOWN * 0.15), FadeIn(r_chk, shift=DOWN * 0.15), run_time=0.6)
             type_cmd(self, t, stats.cmd, type_time=0.8)
             self.play(Indicate(r_chk.text, color=TOOL, scale_factor=1.15), run_time=0.5)
-            st = t.print(self, stats.at((2, 6), "…", 14) + soft(stats.at(15), t.max_chars), run_time=1.0, lag=0.08)
-            found70 = st[6]
+            t.print(self, stats.at((2, 6)), run_time=0.7, lag=0.08)
+            st = t.print(self, ["…"] + stats.at(14) + soft(stats.at(15), t.max_chars), run_time=0.6, lag=0.08)
+            found70 = st[1]
             vo.wait_until("the linter counts 70 findings")
             self.play(FadeIn(ff.track), FadeIn(ff.bar, shift=RIGHT * 0.3), FadeIn(ff.count), FadeIn(ff.note),
                       FadeIn(notch79), FadeIn(rec), Create(tick), run_time=0.7)
