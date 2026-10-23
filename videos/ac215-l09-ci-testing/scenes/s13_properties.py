@@ -558,6 +558,7 @@ class PropertyTests(VoiceScene):
                       run_time=0.9)
             i, j = hit[0]
             vo.wait_until("the smallest witness")
+            self.add(fin.cells[i][j])                    # above the siblings overlay: the lit cell reads RED
             self.play(fin.light(hit), run_time=0.5)
             spot = fin.cell_box(i, j, ERR, stroke=6)
             self.play(Create(spot), run_time=0.3)
@@ -635,15 +636,15 @@ class PropertyTests(VoiceScene):
             s_out = out(self, t4, show.at("…", (9, 14)), run_time=0.4, lag=0.04)
             jt = s_out[3]
             assert jt.text == "    just types", jt.text
-            self.play(jt.animate.set_color(TURN), run_time=0.25)
-            self.play(Indicate(VGroup(*[r.glyphs for r in s_out[1:] if r is not jt]), color=INK, scale_factor=1.04),
-                      Indicate(jt, color=TURN, scale_factor=1.15), run_time=0.5)
+            self.play(jt.animate.set_color(TURN), Indicate(VGroup(*[r.glyphs for r in s_out[1:] if r is not jt]),
+                                                           color=INK, scale_factor=1.04), run_time=0.45)
             self.play(FadeOut(t4), FadeIn(gt), run_time=0.35)
             self.remove(t4, *t4.get_family())
             for m in list(t4.lines):
                 t4.lines.remove(m)
             gt.fill(self, "types", run_time=0.4)
             gt.settle(self, "types", run_time=0.3)
+            self.wait(0.35)
             vo.wait_until("And the smoke")
             t5 = term(P_BABYKEV, rows=14, title=T_BABYKEV, size=PT)
             self.play(FadeOut(gt), FadeIn(t5, shift=UP * 0.2), run_time=0.35)

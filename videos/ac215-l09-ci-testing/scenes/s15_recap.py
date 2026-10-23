@@ -284,9 +284,10 @@ class Recap(VoiceScene):
             self.play(FadeIn(chip_, shift=LEFT * 0.15), run_time=0.4)
 
             vo.wait_until("Then docker system prune")
-            self.play(FadeOut(VGroup(card, chip_)), track(tr, 2), run_time=0.5)
+            self.play(track(tr, 2), run_time=0.5)
+            ln = type_cmd(self, t, PRUNE.cmd)          # the line-572 card stays while it is typed
+            self.play(FadeOut(VGroup(card, chip_)), run_time=0.4)
             self.remove(card, chip_)
-            ln = type_cmd(self, t, PRUNE.cmd)
             pin(self, ln, beside(turn_row(), ln))
             t.print(self, PRUNE_WARN, run_time=0.6, lag=0.1)
             ask_ln = t.print(self, [PRUNE_ASK], run_time=0.3)[0]
@@ -440,7 +441,8 @@ class Recap(VoiceScene):
             a = amber.arch
             home = amber.home.get_center().copy()
             self.play(amber.env.animate.move_to([a.get_left()[0] - amber.env.width / 2 + 0.3, home[1], 0]),
-                      a.to("modified"), run_time=0.6)
+                      run_time=0.45)                    # it runs in, THEN the arch turns amber
+            self.play(a.to("modified"), run_time=0.3)
             self.play(Indicate(a.lamp, color=TURN, scale_factor=1.6), run_time=0.4)
             self.play(amber.env.animate(path_arc=0.7).move_to(home), run_time=0.7)
             vo.wait_until("what do you do next")

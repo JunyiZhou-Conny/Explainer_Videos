@@ -504,7 +504,8 @@ class HooksThenCI(VoiceScene):
             path = VMobject().set_points_smoothly([start, [start[0] + 0.3, peak, 0],
                                                    [end[0] - 0.3, peak, 0], end])
             self.play(gate.open(), run_time=0.4)
-            assert peak + rider.height / 2 <= 2.85, peak
+            top = max(path.get_points()[:, 1]) + rider.get_top()[1] - rider.get_center()[1]
+            assert top <= dim_box.get_bottom()[1] - 0.1, (top, dim_box.get_bottom())    # under the tracker
             self.play(MoveAlongPath(rider, path), run_time=1.6, rate_func=smooth)
             self.play(FadeOut(env), FadeOut(nv), run_time=0.4)
             gate.remove(env)
