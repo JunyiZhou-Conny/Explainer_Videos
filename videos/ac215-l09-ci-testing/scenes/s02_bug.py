@@ -260,10 +260,10 @@ class BugAlmostShipped(VoiceScene):
             self.play(FadeIn(spec, shift=DOWN * 0.15), run_time=0.6)
             vo.wait_until("would have said no")
             hit = [hit_x, panel.code.get_top()[1] + 0.03 + wrong.height / 2, 0]   # the box, not the header's line
-            self.play(Succession(wrong.animate(run_time=0.45, rate_func=rush_into).move_to(hit),
-                                 wrong.animate(run_time=0.55, rate_func=rush_from).move_to(
-                                     [hit_x, top + 1.25, 0])),
-                      Indicate(bar38, color=VENV, scale_factor=1.0), run_time=1.0)
+            # two plays: a Succession of two .animate builders on one mobject never moved it
+            self.play(wrong.animate(rate_func=rush_into).move_to(hit), run_time=0.45)
+            self.play(wrong.animate(rate_func=rush_from).move_to([hit_x, top + 1.25, 0]),
+                      Indicate(bar38, color=VENV, scale_factor=1.0), run_time=0.6)
             self.play(VGroup(wrong, wrong_lbl).animate.set_opacity(0.45), run_time=0.5)
 
         # ========================================================== 3. two suspects
@@ -351,8 +351,10 @@ class BugAlmostShipped(VoiceScene):
             vo.wait_until("pytest dot raises")
             self.play(FadeIn(bar71), Indicate(raises, color=TURN, scale_factor=1.05), run_time=0.8)
             vo.wait_until("power on a string")
-            inv_chip.move_to(trays[2].spot)   # the call itself leaves line 72 and becomes the chip
-            self.play(TransformFromCopy(call, inv_chip), run_time=1.3)
+            inv_chip.move_to(trays[2].spot)   # the call's own text leaves line 72, then the chip closes round it
+            fly = call.copy()
+            self.play(fly.animate(rate_func=smooth).move_to(inv_chip.text), run_time=0.9)
+            self.play(FadeIn(inv_chip.box, scale=1.15), ReplacementTransform(fly, inv_chip.text), run_time=0.4)
             vo.wait_until("raises a type error")
             self.play(Indicate(terr, color=VENV, scale_factor=1.12), run_time=0.8)
 

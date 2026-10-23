@@ -107,6 +107,7 @@ class RunTheApp(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(t), run_time=0.8)
+            bare_prompt(self, t)                     # student@laptop:~$ waits from the start
             self.play(Indicate(tr.dots[0], color=TURN, scale_factor=1.8),
                       Indicate(tr.caption, color=TURN, scale_factor=1.08), run_time=0.9)
             vo.wait_until("The README says")
@@ -212,9 +213,9 @@ class RunTheApp(VoiceScene):
             vo.wait_until("not root")
             self.play(Indicate(lab_app[1], color=INK, scale_factor=1.15), run_time=0.7)
             vo.wait_until("and the ID changes every run")
-            self.play(FadeIn(lab_id, shift=UP * 0.15), Indicate(id_p, color=S.GREEN, scale_factor=1.08),
-                      run_time=0.8)
-            self.play(FadeIn(lab_path, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeIn(lab_id, shift=UP * 0.15), FadeIn(lab_path, shift=UP * 0.15),
+                      Indicate(id_p, color=S.GREEN, scale_factor=1.08), run_time=0.8)
+        self.wait(1.2)                               # all three labels readable before they go
 
         # ================================================== 3. uvicorn; the browser; three curls
         prompt_group = VGroup(app_p, id_p, path_p, lab_app, lab_id, lab_path)
@@ -278,9 +279,7 @@ class RunTheApp(VoiceScene):
         dspan = code_span(panel.code, 3, '"distance": result')
 
         with self.voiceover(SAY[4]) as vo:
-            for m in dist:
-                curl_t.lines.remove(m)
-            self.play(FadeTransform(dist, big_json), FadeOut(curl_t), FadeOut(evidence), FadeOut(t),
+            self.play(FadeTransform(dist.copy(), big_json), FadeOut(curl_t), FadeOut(evidence), FadeOut(t),
                       track(tr, extra=False), run_time=1.0)
             self.remove(curl_t, evidence, t)
             vo.wait_until("the README says")

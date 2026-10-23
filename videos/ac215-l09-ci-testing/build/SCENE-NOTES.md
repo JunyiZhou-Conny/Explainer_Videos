@@ -232,3 +232,7 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
 - Morphing a labelled box into a small chip with FadeTransform stretches its text across the frame
   for ~1 s: fade the words first, transform the bare shapes, then fade the new label in (S03 critic's
   `park()` pattern).
+- A `Succession` of two `.animate` builders on the SAME mobject silently does nothing (S02's arrow
+  never moved). Use separate `self.play` calls for there-and-back moves.
+- `TransformFromCopy` between differently shaped text smears into a blob mid-morph: fly a copy of
+  the text, then draw the box around it (S02 critic).
