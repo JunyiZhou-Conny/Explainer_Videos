@@ -256,3 +256,12 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
   (S07's local `soft()`), text unchanged.
 - `Indicate` on a filled tag or chip (your_turn, extra, grey_chip) fills its box with the text colour
   and the word disappears: flash `.text` and pulse the `.box` stroke instead (S01 critic).
+- `CommitGate.__init__` builds the turnstile's arch names before it moves the turnstile, so names sit
+  0.75 (arch_h/2) too low. Build the names yourself AFTER placing the gate:
+  `gate.turnstile.name_labels(...)` (S09's local helper at the top of s09_precommit.py). common.py
+  is left unchanged so finished scenes don't shift.
+- `Terminal.print` of more rows than the box holds places rows below the box, and its scroll slides
+  old rows up over the tracker: print in chunks <= rows and fade the oldest rows in place (S09's
+  local `room()` / `out()` / `typ()`).
+- `Indicate` on any FILLED shape (envelope body, vault door, tray) floods it with the indicate
+  colour: indicate its text or an outline part instead (S09).
