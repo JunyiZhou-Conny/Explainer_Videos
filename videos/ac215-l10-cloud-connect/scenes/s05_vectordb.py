@@ -18,7 +18,7 @@ Beats (script.md, ## S05; one voiceover block each):
    CODE(llm-rag/docker-shell.sh: 6–12, 20 pt) above it, line 7 RED. The sed of laptop/20 types
    (soft-wrapped at the edge: its one long quoted argument cannot fold at a space outside quotes;
    the rows join back to the command, asserted) with the GREY bar tag 'our editor; use yours' →
-   laptop/20: 2–5, line 3 `export GCP_PROJECT="your-gcp-project"` ringed GREEN. `▶ your turn`.
+   laptop/20: 2–5 (line 4, 73 wide, cut with the house '…'), line 3 `export GCP_PROJECT="your-gcp-project"` ringed GREEN. `▶ your turn`.
 3. TRACKER B2. The panel leaves, the map returns. `sh docker-shell.sh` (README.md line 88) with
    `▶ your turn` → laptop/21: 2–5 (squash), lines 3–5 ringed one by one: the llm-rag street lays
    PINK on line 4, the chroma house lights on line 5. On "Every service in this file" the map
@@ -46,7 +46,7 @@ from manim import *  # noqa: I001  (manim first, then common: common must win)
 from explainer.scene import VoiceScene
 
 from common import (ERR, IMAGE, INK, KEY, NARRATION, P_LAPTOP_HOME, P_LLMRAG, PASS, ROUTE, SAY_COUNT, TURN,
-                    AppMap, attach, beside, bare_prompt, capture, card, cd_prompt, code, code_span, cross_mark,
+                    AppMap, attach, beside, bare_prompt, capture, card, cd_prompt, code, code_span, cross_mark, cut,
                     editor_row, err_chip, extra_row, flash_tag, label, line_bar, lref, mono, note, on_bar, out,
                     outline_box, pin, readme, recorded_tag, resize, ring, row_tag, squash, squeeze, substring,
                     swap_tracker, term, time_row, track, tracker, turn_row, type_cmd, unpin, istep)
@@ -205,6 +205,8 @@ class NetworkAndShell(VoiceScene):
         red7 = ring(code_span(panel.code, 1, '"ac215-project"'), ERR)
         sed = capture("20")
         assert sed.cmd.startswith("sed -i 's|export GCP_PROJECT=\"ac215-project\" # CHANGE TO YOUR PROJECT ID|")
+        sed_lines = sed.at((2, 5))
+        sed_lines[2] = cut(sed_lines[2], "llm-service-account")    # 20:4 is 73 wide: the house '…'
         ed = editor_row()
         yt2 = turn_row()
 
@@ -227,7 +229,7 @@ class NetworkAndShell(VoiceScene):
             on_bar(t, ed)
             self.play(FadeIn(ed, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, ed, INK)
-            out(self, t, sed.at((2, 5)))
+            out(self, t, sed_lines)
             row_gp = t.find('export GCP_PROJECT="your-gcp-project"')
             mark(self, row_gp, 'export GCP_PROJECT="your-gcp-project"', PASS)
             vo.wait_until("Pause and edit it")

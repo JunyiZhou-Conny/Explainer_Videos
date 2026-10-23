@@ -323,3 +323,10 @@ S12); `picker='char-split-collection ▾'` (S12/S13); `fun_fact=True` (S13: last
   after its last field (S03); `AppMap.call("browser", k)`
   starts all three browser arrows at one point, so the frontend/API arrows nearly overlap; their
   start points will be spread across the browser's top edge. Don't work around it locally.
+- `AppMap.drawer` is a rider: `FadeOut(m)` leaves it on screen — fade it with the map (S04).
+- A `track()` played inside `unpin(...)` (or any filter on `tr` afterwards) can split the tracker
+  into parts on the scene; keep the whole tracker family when clearing (S04's local `clear_but()`).
+- `SecretsPortalRig(key_inside=True)`'s default caption overlaps the slot where `pop_empty()` puts
+  the empty folder: move the caption (S04).
+- Pending common.py wishes (after the builds): `SecretsPortalRig.snap()` as separate steps;
+  `pause_and_ponder` with `center=`/`width=` (S04 used a local copy with the same fade and timer).
