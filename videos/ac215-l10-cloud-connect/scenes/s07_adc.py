@@ -91,12 +91,12 @@ def slide42_chain() -> VGroup:
              ("??", TURN, False), ("IAM check", CLOUD, True))
     boxes = VGroup()
     for s, col, solid in names:
-        fr = outline_box(2.0, 0.8, col, solid=solid, fill_opacity=0.06)
+        fr = outline_box(2.2, 0.8, col, solid=solid, fill_opacity=0.06)
         t = label(s, 24, TURN if s == "??" else INK).move_to(fr)
         b = VGroup(fr, t)
         b.frame, b.text = fr, t
         boxes.add(b)
-    boxes.arrange(RIGHT, buff=0.55)
+    boxes.arrange(RIGHT, buff=0.45)
     arrows = VGroup(*[arrow(boxes[i].get_right() + RIGHT * 0.06, boxes[i + 1].get_left() + LEFT * 0.06)
                       for i in range(4)])
     g = VGroup(arrows, boxes)
@@ -198,7 +198,7 @@ class AdcToToken(VoiceScene):
         cap42 = note("slide 42's chain, with this app").next_to(chain42, UP, buff=0.25).align_to(chain42, LEFT)
         qbox = chain42.boxes[3]
         adc_t = label("ADC", 26, ROUTE).move_to(qbox.frame)
-        adc_fr = outline_box(2.0, 0.8, ROUTE, solid=True, fill_opacity=0.08).move_to(qbox.frame)
+        adc_fr = outline_box(2.2, 0.8, ROUTE, solid=True, fill_opacity=0.08).move_to(qbox.frame)
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref), FadeIn(win_a, shift=UP * 0.2), run_time=0.9)
@@ -269,11 +269,12 @@ class AdcToToken(VoiceScene):
         ill = illustration_tag().next_to(kc.frame, RIGHT, buff=0.15).align_to(kc.frame, UP)
         env = envelope_at([4.75, -1.15, 0])
         signed = label("signed", 22, KEY).next_to(env, DOWN, buff=0.15)
-        pen = signing_pen().move_to(kc.private_key.get_right() + RIGHT * 0.7)
+        pen_at = np.array([kc.frame.get_right()[0] - 0.75, kc.private_key.get_center()[1], 0])
+        pen = signing_pen().move_to(pen_at)
         uri_row = kc.rows["token_uri"]
         uri = sub_glyphs(uri_row, "oauth2.googleapis.com/token")
         fc = file_card("llm-service-account.json", KEY).move_to([-4.05, -2.95, 0])
-        pen_home = fc.get_right() + np.array([0.55, 0, 0])
+        pen_home = np.array([fc.get_right()[0] - 0.3, fc.get_top()[1] + 0.45, 0])
         pub = key_glyph(1.0, CLOUD).move_to([4.5, -0.3, 0])
         half = grey_chip("Google keeps this half", color=CLOUD).next_to(pub, DOWN, buff=0.25)
         tick = check_mark(0.45, PASS)
@@ -296,9 +297,9 @@ class AdcToToken(VoiceScene):
             self.play(Indicate(kc.private_key, color=KEY, scale_factor=1.06), run_time=0.6)
             self.play(GrowFromPoint(pen, kc.private_key.get_right()), run_time=0.5)
             self.play(pen.animate.move_to(env.seal.get_center() + np.array([-0.3, 0.32, 0])), run_time=0.7)
+            env.add(env.seal)             # a child first: played alone it would stay on the scene
             self.play(GrowFromCenter(env.seal), FadeIn(signed, shift=UP * 0.1), run_time=0.5)
-            env.add(env.seal)
-            self.play(pen.animate.move_to(kc.private_key.get_right() + RIGHT * 0.7), FadeOut(signed),
+            self.play(pen.animate.move_to(pen_at), FadeOut(signed),
                       env.animate.move_to(ch.slots[2].frame.get_center() + UP * 0.05), run_time=0.9)
             self.remove(signed)
             self.play(ch.reveal(2), FadeOut(env), run_time=0.6)
