@@ -254,7 +254,7 @@ class TestsInImage(VoiceScene):
                                      ("the image", "cheese-app-api:local", IMAGE),
                                      ("pytest tests slash unit", "pytest tests/unit/", TURN)):
                 vo.wait_until(anchor)
-                self.play(Indicate(find_in(u_ln, sub), color=col, scale_factor=1.12), run_time=0.6)
+                self.play(Indicate(find_in(u_ln, sub), color=col, scale_factor=1.04), run_time=0.6)
             t.print(self, unit.at(2, 3, 11), run_time=0.5)
             t.print(self, soft(unit.at(13, "…", 23), t.max_chars), run_time=0.6, lag=0.2)
             u_sum = t.print(self, [(summary(unit, 25), PASS)], run_time=0.4)[0]
@@ -359,7 +359,7 @@ class TestsInImage(VoiceScene):
             listing = t.print(self, shell.at((140, 143)), run_time=0.6, lag=0.12)
             vo.wait_until("lands inside a container")
             lw = max(r.glyphs.get_right()[0] for r in listing) - listing.get_left()[0]
-            red = outline_box(lw + 0.4, listing.height + 0.04, ERR)
+            red = outline_box(lw + 0.4, listing.height - 0.04, ERR)
             red.move_to([listing.get_left()[0] + lw / 2, listing.get_center()[1], 0])
             cap = label("inside a --rm container · gone on exit", 22, ERR)
             cap.next_to(red, RIGHT, buff=0.4)
