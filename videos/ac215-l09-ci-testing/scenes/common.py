@@ -415,14 +415,15 @@ def shown_path(path: str) -> str:
 
 
 def code(path: str, first: int, last: int | None = None, language: str | None = None, focus=None,
-         font_size: float = 22, shown: str | None = None):
+         font_size: float = 22, shown: str | None = None, max_lines: int = 12):
     """CODE(path: first–last) of script.md: a code_panel quoting assets/source/<path>, header
     '<shown> · lines a–b' (shown_path()). ≤ 12 lines. At 22 pt a 65-char line is ~12.3 wide (the
     frame's limit); use font_size=20 up to 72 chars. .code .header; code_span(p.code, k, "x"),
     line_bar(p.code, k, colour) with k = file line - first."""
     last = first if last is None else last
-    if last - first + 1 > 12:
-        raise ValueError(f"CODE {path}: {last - first + 1} lines; never more than 12 on screen")
+    if last - first + 1 > max_lines:
+        raise ValueError(f"CODE {path}: {last - first + 1} lines; never more than 12 on screen "
+                         "(show a long file as successive windows of <= 12 lines)")
     name = Path(path).name
     if language is None:
         language = ("docker" if name.startswith("Dockerfile") else
