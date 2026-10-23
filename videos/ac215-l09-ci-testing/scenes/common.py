@@ -1072,7 +1072,7 @@ class GateTable(VGroup):
         xs = [x0 + sum(self.col_w[:j]) + 0.15 for j in range(4)]      # left edge of each column's text
         y = 0.0
         self.header = VGroup(*[h.move_to([xs[j] + h.width / 2, y, 0]) for j, h in enumerate(heads)])
-        y -= 0.5
+        y -= 0.78                     # room for the arch icon between the header and the frame
         n_in = max(len(self.inside), 0 if keys else 2)
         frame_h = n_in * row_h + 0.2
         self.frame = RoundedRectangle(width=total + 0.16, height=max(frame_h, 0.3), corner_radius=0.12,
@@ -1402,7 +1402,7 @@ class Collector(VGroup):
             self.add(col)
         self.tiles = tiles
         self.counter = steady("collected 0", size, INK)
-        self.counter.next_to(VGroup(*self.columns.values()), DOWN, buff=0.35).align_to(self, LEFT)
+        self.counter.next_to(self.columns["system"], DOWN, buff=0.35).align_to(self.columns["system"], LEFT)
         self.add(self.counter)
         top, bot = self.get_top()[1] + 0.1, self.get_bottom()[1] - 0.05
         self.scanner = Line([0, top, 0], [0, bot, 0], color=TURN, stroke_width=5).move_to(
@@ -1469,7 +1469,8 @@ class FixtureWiring(VGroup):
         self.conftest.frame, self.conftest.title = frame, cf_title
         self.asks = VGroup(*[Arrow(t.get_left(), self.fixture.get_right(), buff=0.12, color=S.GREY,
                                    stroke_width=2.5, tip_length=0.15) for t in self.tests])
-        self.ask_label = note("asks for", 20).next_to(self.asks, UP, buff=0.05).shift(LEFT * 0.4)
+        self.ask_label = note("asks for", 20).move_to(
+            [(frame.get_right()[0] + self.tests.get_left()[0]) / 2, self.tests[0].get_top()[1] + 0.2, 0])
         self.add(self.conftest, self.fixture, self.tests, self.asks)
 
     def _instance(self):
@@ -1483,11 +1484,10 @@ class FixtureWiring(VGroup):
         return g, [FadeIn(inst, shift=DOWN * 0.2), LaggedStart(*[Create(ln) for ln in links], lag_ratio=0.2)]
 
     def per_test(self):
-        """-> (copies + links, animations): a fanned stack of fresh instances under the conftest box,
-        one line from each copy to its own test (the default, function scope)."""
-        base = self.conftest.frame.get_bottom() + DOWN * 0.55
-        copies = VGroup(*[self._instance().move_to(base + np.array([0.14 * k, -0.14 * k, 0]))
-                          for k in range(len(self.tests))])
+        """-> (copies + links, animations): a column of fresh instances under the conftest box, one
+        line from each copy to its own test (the default, function scope)."""
+        copies = VGroup(*[self._instance() for _ in self.tests]).arrange(DOWN, buff=0.1)
+        copies.next_to(self.conftest.frame, DOWN, buff=0.3)
         links = VGroup(*[Line(c.get_right(), t.get_left(), color=INTEG, stroke_width=2.5)
                          for c, t in zip(copies, self.tests)])
         return VGroup(copies, links), [LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in copies], lag_ratio=0.25),
@@ -1681,8 +1681,8 @@ class HandoverChain(VGroup):
         n = hc.hook_note()   # GREY tag 'machine-specific · never committed' right of the hook card
     .git .hook .tool .config .arrows .links (chips and arrows interleaved) .drop .turnstile"""
 
-    def __init__(self, variant: str = "cheese", size: float = 20, arch_w: float = 0.6, arch_h: float = 1.3,
-                 gap: float = 0.18, **kw):
+    def __init__(self, variant: str = "cheese", size: float = 20, arch_w: float | None = None,
+                 arch_h: float = 1.3, gap: float | None = None, **kw):
         super().__init__(**kw)
         self.size = size
         self.git = chip("git commit", LAPTOP, size=size, font=MONO)
@@ -1696,6 +1696,10 @@ class HandoverChain(VGroup):
         self.links = VGroup(self.git, self.arrows[0], self.hook, self.arrows[1], self.tool, self.arrows[2],
                             self.config)
         names = CHEESE_HOOKS if variant == "cheese" else BABYKEV_HOOKS
+        if arch_w is None:
+            arch_w = 0.6 if variant == "cheese" else 0.7
+        if gap is None:
+            gap = 0.18 if variant == "cheese" else 0.6
         self.turnstile = Turnstile(len(names), None, arch_w, arch_h, gap, size)
         self.turnstile.next_to(col, RIGHT, buff=0.9)
         self.turnstile.shift(UP * (self.config.get_center()[1] + 0.25 - self.turnstile.arches.get_center()[1]))
@@ -1896,18 +1900,19 @@ class MaskGrid(VGroup):
         return blocked, opened
 
 
-def sequence_bar(seg, cell: float = 0.55, size: float = 20) -> VGroup:
+def sequence_bar(seg, cell: float = 0.7, size: float = 20) -> VGroup:
     """A packed request as a row of token boxes (state GREEN, questions TEAL), a label under each
-    segment ('state', 'question 1' …). .tokens .labels"""
+    segment ('state', 'question 1' …; 'q1' … when a segment is too short for the long name).
+    .tokens .labels"""
     toks = VGroup(*[RoundedRectangle(width=cell * 0.9, height=cell * 0.9, corner_radius=0.06,
                                      stroke_color=VENV if s == 0 else IMAGE, stroke_width=2.5)
                     .set_fill(VENV if s == 0 else IMAGE, 0.35) for s in seg]).arrange(RIGHT, buff=cell * 0.1)
     labs = VGroup()
-    for s in sorted(set(seg)):
-        ks = [k for k, v in enumerate(seg) if v == s]
-        grp = VGroup(*[toks[k] for k in ks])
-        labs.add(label("state" if s == 0 else f"question {s}", size, VENV if s == 0 else IMAGE)
-                 .next_to(grp, DOWN, buff=0.12))
+    groups = [(s, VGroup(*[toks[k] for k, v in enumerate(seg) if v == s])) for s in sorted(set(seg))]
+    short = any(label(f"question {s}", size).width > g.width + 0.1 for s, g in groups if s)
+    for s, grp in groups:
+        name = "state" if s == 0 else (f"q{s}" if short else f"question {s}")
+        labs.add(label(name, size, VENV if s == 0 else IMAGE).next_to(grp, DOWN, buff=0.12))
     g = VGroup(toks, labs)
     g.tokens, g.labels = toks, labs
     return g

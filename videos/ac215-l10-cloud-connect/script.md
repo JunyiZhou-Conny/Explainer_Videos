@@ -33,10 +33,12 @@ Conventions
   said in words ("sh docker-shell.sh", "dash p, 3200 colon 3000", "slash secrets", "localhost 9000
   slash docs") while the exact spelling is on screen. File, tool and service names are written as
   they are and said by lexicon entries (`explainer/lexicon.yaml`; existing: docker-shell.sh,
-  docker-compose.yml, pipenv, ADC, RAG, Tolminc, 127.0.0.1, 0.0.0.0, 3.12.15; new candidates are
-  listed in the script agent's report: IAM, CLI, idempotent, splitext, Next.js, 1.0.0, 14.2.4,
-  3200, 3300, 401, 403). "Tolminc" is always capitalized in SAY (the lexicon entry is
-  case-sensitive). No `'s` after a word with a lexicon entry, except `README's` ("the three places
+  docker-compose.yml, pipenv, ADC, RAG, Tolminc, 127.0.0.1, 0.0.0.0, 3.12.15; added for L10:
+  idempotent, splitext, Next.js, 14.2.4, 1.0.0, 3200, 3300, 443, 401, 403, and the guards
+  "a 401", "A 401", "a 403", "A 403"). The lexicon splice turns an "a" directly before an entry
+  into the letter name, so no SAY line puts a bare "a" before an entry word ("the pipenv shell",
+  never "a pipenv shell"); the 401/403 guards cover those two. "Tolminc" is always capitalized in
+  SAY (the lexicon entry is case-sensitive). No `'s` after a word with a lexicon entry, except `README's` ("the three places
   ADC looks", never "ADC's places"). Numbers as digits; never a "!" after a digit. Versions, package
   counts, build times, chunk counts and Chroma's `"1.0.0"` are said with "at the time of
   recording". HTTP status codes are digits ("a 403"); the lexicon says them "four oh three".
@@ -64,8 +66,12 @@ Conventions
   The scene sets the terminal's prompt to the capture's own (`app@<id>:/app$`, `(app) app@<id>:/app$`
   after `pipenv shell`, root `<id>:/app#` in the frontend's node container) and types the rest of
   that line. The capture opened a fresh llm-rag container for each CLI command (`24`, `25`), so the
-  container id changes between them; a GREY chip says so once (S06), and S06 says once that the id
-  changes every run.
+  container id changes between them; the `exit` that ended `24` (line 186) is never typed, and a
+  GREY chip at the second command says "our capture: a fresh container for each command · stay in
+  yours" (S06); S06 says once that the id changes every run. The frontend capture likewise split
+  `npm install` (`50`) and `npm run dev` (`51`) across two sessions: `50`'s `exit` (line 50) and
+  `51`'s re-entry are never typed, the prompt simply becomes `6c23fe52ca92:/app#` under the same
+  kind of GREY chip (S11).
 - Crops (ASSETS.md): `33` lines 42 (the harness's readiness `GET /`) and 164 (`GET /capture-done …
   404`) are never printed; `51` lines 54–55 (`/_not-found`, `/capture-done`) are never printed;
   `21`/`33`/`50`/`51` show no base-image pull rows and nothing is said about it; `54`'s
@@ -112,7 +118,8 @@ Conventions
 - Tags (GREY unless said): `illustration` on every console step, browser page, key card and
   Swagger page (schematic; no screenshots, no logos); `recorded · <source>` on every success a
   student sees that this machine could not produce (cli.py's own prints + README.md:98–105, the
-  256-float body from rag.py:218–223, the populated collections list from README.md:103/206);
+  256-float body from rag.py:218–223, S09's door opening for the badge, S12's whole V5 flow, the
+  populated collections list from README.md:103/206);
   `at the time of recording` beside Docker 29.8.2, Python 3.12.15, Next.js 14.2.4, `"1.0.0"`, the
   package counts, the build time and the chunk counts when first shown; `erratum` on every
   README/repo slip (the narration says "a small slip" or "a small gap", never "erratum"); the GOLD
@@ -147,7 +154,10 @@ Conventions
   Episode-local semantics: the key is GREEN, the bearer token a small BLUE ticket with a timer. An
   open door (an unprefixed published port) is drawn neutral GREY, never GREEN; the `127.0.0.1:`
   narrowing bricks up its Wi-Fi side. The CORS bouncer stands at the browser (CORS is enforced by
-  the browser, configured by the server); the guest list it holds is handed over by Chroma.
+  the browser, configured by the server). The guest list never travels: it stays on the Chroma
+  house, Chroma checks the page's `Origin` stamp against it and sends back a one-origin pass
+  (`access-control-allow-origin: http://localhost:3200`) or nothing, and the bouncer compares that
+  pass with the stamp. For a preflighted call, no pass means the query is never sent.
 - Running example. The laptop: user `student`, terminal title `laptop`; prompts from the captures:
   `student@laptop:~$`, `student@laptop:~/cheese-app-v0$`, `…/cheese-app-v0/llm-rag$`,
   `…/cheese-app-v0/api-service$`, `…/cheese-app-v0/frontend-ai-chatbot$`. In these captures the
@@ -171,7 +181,9 @@ Conventions
 Notes for scene authors
 - TERM/PANEL line numbers are *file* lines (line 1 = the `$` command); `Capture.pick()` indexes
   the output body, so pick index = file line − 1.
-- Never print `[exit N]` lines, the crops listed above, or the placeholder key's content.
+- Never print `[exit N]` lines, the crops listed above, or the placeholder key's content. Strip a
+  trailing `[exit N]` from the last output line too, not only whole `[exit N]` lines (single-line
+  captures carry it inline: `23:2`, `34:2`, `37:8`, `63:2`, `74:2`).
 - Shared code (`scenes/common.py`, started from L09's): tracker factories `tracker_a` …
   `tracker_f` with the step lists above; prompts `P_LAPTOP_HOME`, `P_REPO`, `P_LLMRAG`, `P_API`,
   `P_FRONTEND` (container prompts come from each capture); tags `extra_tag`, `illustration_tag`,
@@ -191,8 +203,10 @@ Notes for scene authors
 
 SHOW: Black frame, no tracker. A schematic browser window (tag `illustration`), address bar
 `localhost:3200/chat`. A question bubble types the README's example, quoted: "How is tolminc
-cheese made?" (README.md · line 215). Below it an empty answer frame and a collapsed drawer
-labelled "References · 10 chunks", both drawn as empty outlines: no answer text anywhere.
+cheese made?" (README.md · line 215). Below it an answer frame and a collapsed drawer labelled
+"References · 10 chunks". On "appears", 4–5 GREY skeleton bars (no glyphs) grow into the answer
+frame; on "ten book passages", the drawer slides open to 10 empty GREY rows: no answer text
+anywhere.
 SAY: Here is a cheese chatbot, running on your own laptop. You ask it how Tolminc cheese is made. An answer appears, with ten book passages as references.
 
 SHOW: Freeze. The page dims; the browser figure steps out of the window. Three PINK arrows leave
@@ -201,10 +215,12 @@ the browser one after another, numbered ① `:9000`, ② `:8000`, ③ `:9000` (V
 SAY: Behind that one answer, your browser makes three calls. Two go to a Python server on port 9000, and one goes to a database on port 8000. Behind both server calls, Google's datacenter does the heavy lifting. So who checks that it is really you? And how does a web page find a database hidden inside a Docker container?
 
 SHOW: Zoom out to the V6 skeleton: a GREY laptop house, PINK street stubs, three hollow TEAL
-houses, the BLUE building across a public street. Three riddle cards drop in (slide 4's trick,
-this app's numbers): `-p 3200:3000` "two numbers: why?", `localhost:9000` "which machine is
-that?", `llm-rag-chromadb` "a name: where is the address?". A fourth card, slide 11's flip: a door
-with a knocker, "once anything can knock: who's allowed in?". `lecture_ref(10, "4, 11–13")` top
+houses, the BLUE building across a public street. Three riddle cards drop in one at a time, each
+on its own sentence and fading to a small label before the next (only one card on screen besides
+the map; slide 4's trick, this app's numbers): `-p 3200:3000` "two numbers: why?",
+`localhost:9000` "which machine is that?", `llm-rag-chromadb` "a name: where is the address?". A
+fourth card, slide 11's flip, after the third has faded: a door with a knocker, "once anything can
+knock: who's allowed in?". The three labels are kept for S15's recap. `lecture_ref(10, "4, 11–13")` top
 right from here to the end of the scene.
 SAY: Three small riddles hide in this app. The flag dash p, 3200 colon 3000, has two numbers; why? And localhost 9000: which machine is that? And llm-rag-chromadb is only a name; where is its address? Each one gets its answer today. Then the real question arrives: once anything can knock, who is allowed in?
 
@@ -222,8 +238,9 @@ SAY: To follow along you need your clone of cheese-app-v0, Docker Desktop, and a
 
 SHOW: TRACKER A1 (tracker A appears: "README › Prerequisites & Service Account", 5 dots). GREY tag
 `lecture_ref(10, "5–6, 11")` top right, whole scene. V6 built piece by piece: a GREY laptop house
-with a small loop arrow "localhost · 127.0.0.1" (slide 5's rule: every house has one); two PINK
-streets inside it, `llm-rag-network` and `cheese-app-network`; three hollow TEAL houses:
+with a small loop arrow "localhost · 127.0.0.1" (slide 5's rule: every house has one); two
+streets inside it, `llm-rag-network` and `cheese-app-network`, drawn as GREY dashed outlines
+(caption "planned"; S05 turns each one solid PINK when it is created); three hollow TEAL houses:
 `llm-rag` (the loader CLI + Chroma) on the first street, `api-service` and `frontend` on the second.
 SAY: First, the map, which stays with us all lecture. Your laptop is one house, and every house has its own loopback address, localhost, which always means this machine. Docker lays two private streets inside it, one per network. Three services will stand on them: the vector database with its loader, the API server, and the web frontend. Each house lights up when its container starts.
 
@@ -240,7 +257,7 @@ address given; this is the repo". It types `git clone https://github.com/dlops-i
 → TERM(laptop/01: 2), then `cd cheese-app-v0` → (no output); the prompt becomes
 `student@laptop:~/cheese-app-v0$`. A GREY chip on the terminal title: "Docker 29.8.2 · at the time
 of recording" (laptop/00, line 4; not spoken). `▶ your turn`.
-SAY: Time to type. The README's prerequisites are short: have Docker installed, and clone this repository. They give no address, so here is the repo's address. Pause, and clone it.
+SAY: Time to type. The README's prerequisites are short: have Docker installed, and clone this repository. The README gives no address, so here is the repo's address. Pause, and clone it.
 
 SHOW: TRACKER A1 · extra. It types `git log -1 --format='%H %ci'` (extra) → TERM(laptop/02: 2);
 `cb6fb945…` and `2026-10-08` highlight. Then `ls -la` (extra) → TERM(laptop/03: 2–11);
@@ -268,21 +285,21 @@ app acting for a consenting user → OAuth" · "code calling Google → service 
 Google, vouched for → federation" (GREY dashed). A YELLOW pointer walks down and stops on row 3,
 then slides to row 4, where a CI-runner chip is stamped "vouched for" and a laptop chip "nobody
 vouches".
-SAY: The lecture gives a rule for choosing. A metered public call gets an API key. An app acting for a consenting user gets OAuth. Our code calls Vertex AI in your own project, so it gets a service account. The rule's last line says code outside Google should use federation. That needs someone to vouch for your code, the way GitHub vouches for its Actions. A laptop has nobody, so the course hands you a key file instead.
+SAY: The lecture gives a rule for choosing. A metered public call gets an API key. An app acting for a consenting user gets OAuth, the sign in with Google flow. Our code calls Vertex AI in your own project, so it gets a service account. The rule's last line says code outside Google should use federation. That needs someone to vouch for your code, the way GitHub vouches for code running in GitHub Actions. A laptop has nobody, so the course hands you a key file instead.
 
 SHOW: TRACKER A2. A schematic console (tag `illustration`; no screenshot, no logo) with the field
 values of README.md · lines 48–52, step by step: "IAM & Admin → Service accounts" → "Create service
 account · name: llm-service-account" → "Grant this service account access to project: Storage Admin
-· Gemini Enterprise Agent Platform User". A small GREY chip under the second role: "older projects:
+· Gemini Enterprise Agent Platform User". A small GREY chip under the second role: "formerly
 Vertex AI User · role ID roles/aiplatform.user · llm-finetuning README.md:44–46". `▶ your turn`. A
 small GREY `extra` card in the corner, not spoken: the `gcloud iam service-accounts create …` and
 `gcloud projects add-iam-policy-binding …` equivalents (digest §4 step 1), with `YOUR_PROJECT_ID`.
-SAY: Now the console steps. Open IAM and Admin, then Service accounts. Create one named llm-service-account. Grant it two roles: Storage Admin, and Gemini Enterprise Agent Platform User. In older projects that second role is called Vertex AI User; it is the same role underneath. Pause and create yours.
+SAY: Now the console steps. Open IAM and Admin, then Service accounts. Create one named llm-service-account. Grant it two roles, bundles of permissions: Storage Admin, and Gemini Enterprise Agent Platform User. The second role was formerly called Vertex AI User; it is the same role underneath. Pause and create yours.
 
 SHOW: A kind card, tag `erratum`, three lines: "slides: data-service-account, one storage role →
 next week's account (L11)" · "this app: the Gemini role does the work; Storage Admin rides along for
 L08 reuse" · "slide 45: Storage Object Admin, and only when needed".
-SAY: Two kind notes. The lecture's demo creates a data service account with one storage role; that is next week's account. And this app never touches storage; that role rides along from the fine-tuning lecture. The lecture's own least-privilege rule would grant less, and only when needed.
+SAY: Two notes on the slides. The lecture's demo creates a data service account with one storage role; that is next week's account. And this app never touches storage; that role rides along from the fine-tuning lecture. Grant both anyway, as the README says. The lecture's rule, least privilege, meaning only the access you need, would grant less; part 2 comes back to it.
 
 SHOW: TRACKER A3. Console continued (`illustration`, README.md · lines 54–55): the account → tab
 "KEYS" → "ADD Key (Create New Key)" → "JSON"; a file icon downloads. Two banners redrawn in our own
@@ -291,7 +308,7 @@ card unfolds (`illustration`): `"type": "service_account"`, `"project_id": "your
 `"client_email": "llm-service-account@…"`, `"private_key": "PLACEHOLDER"`,
 `"token_uri": "https://oauth2.googleapis.com/token"`, every id zeroed. `private_key` glows RED with
 a chip "something you have · one factor". `▶ your turn`.
-SAY: On the account's Keys tab, add a key, choose JSON, and a file downloads. Pause and make yours. Inside are your project, the account's email, a token address, and a private key. That private key is the whole secret. It is one factor, something you have, and it works from anywhere, with no second step, until someone deletes it. Treat this file like a password, never like config.
+SAY: On the account's Keys tab, add a key, choose JSON, and a file downloads. Pause and make yours. Inside are your project, the account's email, a token address we use later, and a private key. That private key is the whole secret. It is one factor, something you have, and it works from anywhere, with no second step, until someone deletes or disables it. Treat this file like a password, never like config.
 
 ---
 
@@ -303,16 +320,16 @@ SHOW: TRACKER A3. GREY tag `lecture_ref(10, "38, 42")` top right, whole scene. V
 CODE(cheese-app-v0/api-service/docker-shell.sh: 6–11); line 8 `export SECRETS_DIR=$(pwd)/../../secrets/`
 highlights. A cursor starts at `api-service/` (label "$(pwd)"), hops `..` to `cheese-app-v0/`,
 `..` to `AC215/`, and lands on `secrets/`.
-SAY: The README says to copy the key into a secrets folder. Which folder, exactly? The API's script answers on line 8. It starts where you run it, in api-service, climbs up twice, and lands on secrets, beside the repo, not inside it.
+SAY: The README says to copy the key into a secrets folder. Which folder, exactly? The API's script answers on line 8. The path starts where you run it, in api-service. It climbs up twice and lands on the secrets folder, beside the repo, not inside it.
 
 SHOW: A glowing tube connects `AC215/secrets/` to `/secrets` inside a TEAL container silhouette.
 CODE(cheese-app-v0/api-service/docker-shell.sh: 19–27) replaces the first panel; line 23
 `-v "$SECRETS_DIR":/secrets` highlights, then line 24 `-e GOOGLE_APPLICATION_CREDENTIALS=…` with
 line 10's value shown above it, `"/secrets/llm-service-account.json"`. The label
 `GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account.json` slides along the tube and snaps
-onto the file. Two captions: "host path" (GREY, under the tree) and "container path" (TEAL, under
-the silhouette).
-SAY: Then a dash v flag mounts that host folder at slash secrets, inside the container. The secrets directory is a path on your laptop. Google application credentials points to slash secrets, a path inside the container. Two filesystems, one folder, and that variable only makes sense after the mount.
+onto the file, where a small GREY "Google library" chip inside the silhouette reads it. Two
+captions: "host path" (GREY, under the tree) and "container path" (TEAL, under the silhouette).
+SAY: Then a dash v flag mounts that host folder at slash secrets, inside the container. The secrets directory is a path on your laptop. The Google application credentials variable, which tells Google's library where the key file is, points to slash secrets, a path inside the container. Two filesystems, one folder, and that variable only makes sense after the mount.
 
 SHOW: CODE(cheese-app-v0/llm-rag/docker-compose.yml: 10–12), line 11 `- ../../secrets:/secrets`
 highlighted; the same tube redraws from `llm-rag/`, two hops to the same `secrets/`. A GREY note:
