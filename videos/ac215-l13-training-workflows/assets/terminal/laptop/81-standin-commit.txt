@@ -1,0 +1,3 @@
+$ docker commit trainer-standin trainer-standin >/dev/null && docker rm trainer-standin
+trainer-standin
+[exit 0]

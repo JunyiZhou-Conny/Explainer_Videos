@@ -1,0 +1,69 @@
+$ sh docker-shell.sh
+
+[+] Building 0.7s (19/19) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 2.15kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.13-slim-bookworm                             0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [ 1/14] FROM docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea1  0.1s
+ => => resolve docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea136  0.1s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 2.83kB                                                                      0.0s
+ => CACHED [ 2/14] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificate  0.0s
+ => CACHED [ 3/14] RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.clou  0.0s
+ => CACHED [ 4/14] RUN install -m 0755 -d /etc/apt/keyrings                                              0.0s
+ => CACHED [ 5/14] RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/  0.0s
+ => CACHED [ 6/14] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                            0.0s
+ => CACHED [ 7/14] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docke  0.0s
+ => CACHED [ 8/14] RUN apt-get update &&     apt-get install -y google-cloud-cli jq docker-ce            0.0s
+ => CACHED [ 9/14] RUN pip install uv                                                                    0.0s
+ => CACHED [10/14] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)  0.0s
+ => CACHED [11/14] WORKDIR /app                                                                          0.0s
+ => CACHED [12/14] COPY --chown=app:app pyproject.toml uv.lock* ./                                       0.0s
+ => CACHED [13/14] RUN uv sync --frozen                                                                  0.0s
+ => CACHED [14/14] COPY --chown=app:app . ./                                                             0.0s
+ => exporting to image                                                                                   0.2s
+ => => exporting layers                                                                                  0.0s
+ => => exporting manifest sha256:ba213d94f2cc4d684bd0f89b0fd7366822450edac3bc16b1f26a46899480b359        0.0s
+ => => exporting config sha256:925356f405a5d006717d972c7e44491427910e4483a92eec9000a48decc9085a          0.0s
+ => => exporting attestation manifest sha256:7f18b9324b77c4384e80703f9fd53b38e0d69bb9b618493c64eb142da1  0.0s
+ => => exporting manifest list sha256:b6ce35628878b454df8ec52ccfb43dc5b48b987a8e23b625e73010caf45485b5   0.0s
+ => => naming to docker.io/library/model-training-cli:latest                                             0.0s
+ => => unpacking to docker.io/library/model-training-cli:latest                                          0.0s
+Container is running!!!
+ERROR: (gcloud.auth.activate-service-account) Unable to read file [/secrets/model-trainer.json]: [Errno 2] No such file or directory: '/secrets/model-trainer.json'
+Updated property [core/project].
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.13.17
+UV version: uv 0.13.5 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+root@4f78891bf789:/app# sh package-trainer.sh
+package/
+package/trainer/
+package/trainer/task.py
+package/trainer/__init__.py
+package/trainer/task_multi_gpu.py
+package/setup.py
+package/setup.cfg
+package/PKG-INFO
+Google recommends using Gcloud storage CLI (https://docs.cloud.google.com/storage/docs/discover-object-storage-gcloud) instead of gsutil. Please refer to migration guide (https://docs.cloud.google.com/storage/docs/gsutil-transition-to-gcloud) for assistance.
+BucketNotFoundException: 404 gs://your-bucket-placeholder bucket does not exist.
+root@4f78891bf789:/app# ls -l trainer.tar.gz
+-rw-r--r-- 1 root app 4016 Oct 23 12:29 trainer.tar.gz
+root@4f78891bf789:/app# tar tzvf trainer.tar.gz
+drwxr-sr-x app/app           0 2026-10-23 12:19 package/
+drwxr-sr-x app/app           0 2026-10-23 12:19 package/trainer/
+-rw-r--r-- app/app       10253 2026-10-23 12:19 package/trainer/task.py
+-rw-r--r-- app/app           0 2026-10-23 12:19 package/trainer/__init__.py
+-rw-r--r-- app/app       10775 2026-10-23 12:19 package/trainer/task_multi_gpu.py
+-rw-r--r-- app/app         289 2026-10-23 12:19 package/setup.py
+-rw-r--r-- app/app          37 2026-10-23 12:19 package/setup.cfg
+-rw-r--r-- app/app         117 2026-10-23 12:19 package/PKG-INFO
+root@4f78891bf789:/app# gsutil ls $GCS_BUCKET_URI
+Google recommends using Gcloud storage CLI (https://docs.cloud.google.com/storage/docs/discover-object-storage-gcloud) instead of gsutil. Please refer to migration guide (https://docs.cloud.google.com/storage/docs/gsutil-transition-to-gcloud) for assistance.
+BucketNotFoundException: 404 gs://your-bucket-placeholder bucket does not exist.
+root@4f78891bf789:/app# exit
+exit
+[exit 1]

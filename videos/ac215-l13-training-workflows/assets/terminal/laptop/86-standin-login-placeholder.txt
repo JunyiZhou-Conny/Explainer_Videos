@@ -1,0 +1,6 @@
+$ docker run --rm --network none trainer-standin python -c "import wandb; wandb.login(key='PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000')"
+wandb: Network error (ProxyError), entering retry loop.
+wandb: W&B API key is configured. Use `wandb login --relogin` to force relogin
+wandb: Appending key for api.wandb.ai to your netrc file: /root/.netrc
+wandb: Network error (ProxyError), entering retry loop.
+[exit 0]

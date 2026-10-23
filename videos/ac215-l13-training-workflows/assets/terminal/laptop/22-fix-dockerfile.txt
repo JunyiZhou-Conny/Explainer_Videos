@@ -1,5 +1,0 @@
-$ sed -i '37s/google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin/google-cloud-cli/' Dockerfile && sed -n '35,37p' Dockerfile
-# Install packages
-RUN apt-get update && \
-    apt-get install -y google-cloud-cli jq docker-ce
-[exit 0]

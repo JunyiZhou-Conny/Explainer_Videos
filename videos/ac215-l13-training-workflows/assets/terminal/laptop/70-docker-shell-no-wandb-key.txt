@@ -1,0 +1,49 @@
+$ sh docker-shell.sh
+
+[+] Building 1.7s (19/19) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 2.15kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.13-slim-bookworm                             0.1s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [ 1/14] FROM docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea1  0.0s
+ => => resolve docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea136  0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 3.80kB                                                                      0.0s
+ => CACHED [ 2/14] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificate  0.0s
+ => CACHED [ 3/14] RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.clou  0.0s
+ => CACHED [ 4/14] RUN install -m 0755 -d /etc/apt/keyrings                                              0.0s
+ => CACHED [ 5/14] RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/  0.0s
+ => CACHED [ 6/14] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                            0.0s
+ => CACHED [ 7/14] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docke  0.0s
+ => CACHED [ 8/14] RUN apt-get update &&     apt-get install -y google-cloud-cli jq docker-ce            0.0s
+ => CACHED [ 9/14] RUN pip install uv                                                                    0.0s
+ => CACHED [10/14] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)  0.0s
+ => CACHED [11/14] WORKDIR /app                                                                          0.0s
+ => CACHED [12/14] COPY --chown=app:app pyproject.toml uv.lock* ./                                       0.0s
+ => CACHED [13/14] RUN uv sync --frozen                                                                  0.0s
+ => [14/14] COPY --chown=app:app . ./                                                                    0.5s
+ => exporting to image                                                                                   0.8s
+ => => exporting layers                                                                                  0.3s
+ => => exporting manifest sha256:4d17293f7f4779e984c735550b1d2192adf4741b5a03b56c8e92677fe2c550d3        0.0s
+ => => exporting config sha256:8e01a2a6bcaed3f973f32c2631047ec45a9a8834f5db158ff37ff8a6877af94a          0.0s
+ => => exporting attestation manifest sha256:9119de0b59ed7c65086f1343a17511f7add694ea20fec3c00986d1d2db  0.1s
+ => => exporting manifest list sha256:10ced6b0cf016582782ac481f228666f41aaa67eb23980f82a4d174892098ca1   0.0s
+ => => naming to docker.io/library/model-training-cli:latest                                             0.0s
+ => => unpacking to docker.io/library/model-training-cli:latest                                          0.1s
+Container is running!!!
+ERROR: (gcloud.auth.activate-service-account) Unable to read file [/secrets/model-trainer.json]: [Errno 2] No such file or directory: '/secrets/model-trainer.json'
+Updated property [core/project].
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.13.17
+UV version: uv 0.13.5 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+root@a645379bd591:/app# echo ${#WANDB_KEY}
+0
+root@a645379bd591:/app# sh -x cli.sh 2>&1 | grep -o -- "--args=.*"
+--args=--model_name=mobilenetv2,--train_base,--epochs=2,--batch_size=32,--wandb_key=
+root@a645379bd591:/app# sleep 40
+root@a645379bd591:/app# exit
+exit
+[exit 0]

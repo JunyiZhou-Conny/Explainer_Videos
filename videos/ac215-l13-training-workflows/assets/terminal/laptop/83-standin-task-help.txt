@@ -1,0 +1,10 @@
+$ docker run --rm --network none trainer-standin python -m trainer.task --help
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/local/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/usr/local/lib/python3.10/site-packages/trainer/task.py", line 9, in <module>
+    import tensorflow as tf
+ModuleNotFoundError: No module named 'tensorflow'
+[exit 1]

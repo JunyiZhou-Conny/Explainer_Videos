@@ -1,0 +1,181 @@
+$ sh docker-shell.sh
+
+[+] Building 0.6s (19/19) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 2.15kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.13-slim-bookworm                             0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [ 1/14] FROM docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea1  0.0s
+ => => resolve docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea136  0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 2.87kB                                                                      0.0s
+ => CACHED [ 2/14] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificate  0.0s
+ => CACHED [ 3/14] RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.clou  0.0s
+ => CACHED [ 4/14] RUN install -m 0755 -d /etc/apt/keyrings                                              0.0s
+ => CACHED [ 5/14] RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/  0.0s
+ => CACHED [ 6/14] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                            0.0s
+ => CACHED [ 7/14] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docke  0.0s
+ => CACHED [ 8/14] RUN apt-get update &&     apt-get install -y google-cloud-cli jq docker-ce            0.0s
+ => CACHED [ 9/14] RUN pip install uv                                                                    0.0s
+ => CACHED [10/14] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)  0.0s
+ => CACHED [11/14] WORKDIR /app                                                                          0.0s
+ => CACHED [12/14] COPY --chown=app:app pyproject.toml uv.lock* ./                                       0.0s
+ => CACHED [13/14] RUN uv sync --frozen                                                                  0.0s
+ => CACHED [14/14] COPY --chown=app:app . ./                                                             0.0s
+ => exporting to image                                                                                   0.2s
+ => => exporting layers                                                                                  0.0s
+ => => exporting manifest sha256:7b47cbf06b9a091bc38d1837fbd8f59ed699387c6604eb83841ecee061577084        0.0s
+ => => exporting config sha256:9e97c7c3622e778a12bd1d88083f29ccfa8fe8eacbaa44f5cbb8dbd5f2489f4f          0.0s
+ => => exporting attestation manifest sha256:61b9d63ff66d4deca60bad272af91bbe8c99bcaf122e2fe4b52faa21e2  0.0s
+ => => exporting manifest list sha256:a2f120d835929372502536074490abff6e818ec3f4236524c6c97a79d56f6771   0.0s
+ => => naming to docker.io/library/model-training-cli:latest                                             0.0s
+ => => unpacking to docker.io/library/model-training-cli:latest                                          0.0s
+Container is running!!!
+ERROR: (gcloud.auth.activate-service-account) Unable to read file [/secrets/model-trainer.json]: [Errno 2] No such file or directory: '/secrets/model-trainer.json'
+Updated property [core/project].
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.13.17
+UV version: uv 0.13.5 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+root@57494eba17b1:/app# python cli.py
+Traceback (most recent call last):
+  File "/app/cli.py", line 7, in <module>
+    GCP_REGION = os.environ["GCP_REGION"]
+                 ~~~~~~~~~~^^^^^^^^^^^^^^
+  File "<frozen os>", line 717, in __getitem__
+KeyError: 'GCP_REGION'
+root@57494eba17b1:/app# export GCP_REGION=us-central1
+root@57494eba17b1:/app# python cli.py
+Traceback (most recent call last):
+  File "/app/cli.py", line 23, in <module>
+    job = aip.CustomPythonPackageTrainingJob(
+        display_name=DISPLAY_NAME,
+    ...<3 lines>...
+        project=GCP_PROJECT,
+    )
+  File "/.venv/lib/python3.13/site-packages/google/cloud/aiplatform/training_jobs.py", line 7716, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        display_name=display_name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<20 lines>...
+        staging_bucket=staging_bucket,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/google/cloud/aiplatform/training_jobs.py", line 1297, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        display_name=display_name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+        model_encryption_spec_key_name=model_encryption_spec_key_name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/google/cloud/aiplatform/training_jobs.py", line 173, in __init__
+    super().__init__(project=project, location=location, credentials=credentials)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/google/cloud/aiplatform/base.py", line 1233, in __init__
+    _VertexAiResourceNounPlus.__init__(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<3 lines>...
+        resource_name=resource_name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/google/cloud/aiplatform/base.py", line 558, in __init__
+    self.credentials = credentials or initializer.global_config.credentials
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/google/cloud/aiplatform/initializer.py", line 403, in credentials
+    self._set_project_as_env_var_or_google_auth_default()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/.venv/lib/python3.13/site-packages/google/cloud/aiplatform/initializer.py", line 119, in _set_project_as_env_var_or_google_auth_default
+    credentials, _ = google.auth.default(scopes=constants.DEFAULT_AUTHED_SCOPES)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/google/auth/_default.py", line 705, in default
+    credentials, project_id = checker()
+                              ~~~~~~~^^
+  File "/.venv/lib/python3.13/site-packages/google/auth/_default.py", line 698, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id),
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/google/auth/_default.py", line 346, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        os.environ[environment_vars.CREDENTIALS],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quota_project_id=quota_project_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/google/auth/_default.py", line 173, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+        "File {} was not found.".format(filename)
+    )
+google.auth.exceptions.DefaultCredentialsError: File /secrets/model-trainer.json was not found.
+root@57494eba17b1:/app# which pip
+/usr/local/bin/pip
+root@57494eba17b1:/app# pip install ./package
+Processing ./package
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting wandb==0.15.11 (from cheese-app-trainer==0.0.1)
+  Downloading wandb-0.15.11-py3-none-any.whl.metadata (9.8 kB)
+Collecting Click!=8.0.0,>=7.1 (from wandb==0.15.11->cheese-app-trainer==0.0.1)
+  Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting GitPython!=3.1.29,>=1.0.0 (from wandb==0.15.11->cheese-app-trainer==0.0.1)
+  Downloading gitpython-3.2.1-py3-none-any.whl.metadata (13 kB)
+Collecting requests<3,>=2.0.0 (from wandb==0.15.11->cheese-app-trainer==0.0.1)
+  Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting psutil>=5.0.0 (from wandb==0.15.11->cheese-app-trainer==0.0.1)
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Collecting sentry-sdk>=1.0.0 (from wandb==0.15.11->cheese-app-trainer==0.0.1)
+  Downloading sentry_sdk-2.73.0-py3-none-any.whl.metadata (11 kB)
+Collecting docker-pycreds>=0.4.0 (from wandb==0.15.11->cheese-app-trainer==0.0.1)
+  Downloading docker_pycreds-0.4.0-py2.py3-none-any.whl.metadata (1.8 kB)
+Collecting PyYAML (from wandb==0.15.11->cheese-app-trainer==0.0.1)
+  Downloading pyyaml-6.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting pathtools (from wandb==0.15.11->cheese-app-trainer==0.0.1)
+  Downloading pathtools-0.1.2.tar.gz (11 kB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... error
+  error: subprocess-exited-with-error
+
+  × Getting requirements to build wheel did not run successfully.
+  │ exit code: 1
+  ╰─> [23 lines of output]
+      Traceback (most recent call last):
+        File "/usr/local/lib/python3.13/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 389, in <module>
+          main()
+          ~~~~^^
+        File "/usr/local/lib/python3.13/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 373, in main
+          json_out["return_val"] = hook(**hook_input["kwargs"])
+                                   ~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/usr/local/lib/python3.13/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 143, in get_requires_for_build_wheel
+          return hook(config_settings)
+        File "/tmp/pip-build-env-4rwvri2v/overlay/lib/python3.13/site-packages/setuptools/build_meta.py", line 333, in get_requires_for_build_wheel
+          return self._get_build_requires(config_settings, requirements=[])
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/tmp/pip-build-env-4rwvri2v/overlay/lib/python3.13/site-packages/setuptools/build_meta.py", line 301, in _get_build_requires
+          self.run_setup()
+          ~~~~~~~~~~~~~~^^
+        File "/tmp/pip-build-env-4rwvri2v/overlay/lib/python3.13/site-packages/setuptools/build_meta.py", line 520, in run_setup
+          super().run_setup(setup_script=setup_script)
+          ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/tmp/pip-build-env-4rwvri2v/overlay/lib/python3.13/site-packages/setuptools/build_meta.py", line 317, in run_setup
+          exec(code, locals())  # noqa: S102 # exec is intentional here
+          ~~~~^^^^^^^^^^^^^^^^
+        File "<string>", line 25, in <module>
+      ModuleNotFoundError: No module named 'imp'
+      [end of output]
+
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+ERROR: Failed to build 'pathtools' when getting requirements to build wheel
+root@57494eba17b1:/app# exit
+exit
+[exit 1]
