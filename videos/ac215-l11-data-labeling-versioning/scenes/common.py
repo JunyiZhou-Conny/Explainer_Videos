@@ -2574,7 +2574,7 @@ class HashShelf(Rig):
         return filed
 
     def manifest(self) -> VGroup:
-        return manifest_card(IMAGES[:4], self.size).move_to([-4.35, 0.75, 0])
+        return manifest_card(IMAGES[:4], self.size).move_to([-4.35, 0.75, 0]).align_to(np.array([-6.35, 0, 0]), LEFT)
 
     def hash_manifest(self, scene, card, predict: bool = True):
         c = card.copy()
@@ -2597,7 +2597,7 @@ class HashShelf(Rig):
     def pointer(self, predict: bool = True) -> VGroup:
         p = pointer_card("????????….dir" if predict else short(V20["md5"]),
                          "" if predict else V20["size"], "" if predict else V20["nfiles"], self.size)
-        return p.move_to([-4.35, 0.75, 0])
+        return p.move_to([-4.35, 0.75, 0]).align_to(np.array([-6.35, 0, 0]), LEFT)
 
     def confirm(self, scene, card):
         new = {"md5": short(V20["md5"]), "size": V20["size"], "nfiles": V20["nfiles"]}
@@ -3027,7 +3027,7 @@ class PipelineMap(Rig):
 
     def _big(self):
         s = 22
-        un = VGroup(*[tile(None, 0.5, S.GREY) for _ in range(6)]).arrange_in_grid(rows=2, cols=3, buff=0.16)
+        un = VGroup(*[tile(None, 0.45, S.GREY) for _ in range(6)]).arrange_in_grid(rows=2, cols=3, buff=0.14)
         ub = DashedVMobject(RoundedRectangle(width=un.width + 0.6, height=un.height + 0.9, corner_radius=0.16),
                             num_dashes=50, dashed_ratio=0.35).set_stroke(S.GREY, 2.5)
         un.move_to(ub).shift(DOWN * 0.15)
@@ -3041,7 +3041,7 @@ class PipelineMap(Rig):
         lab = VGroup(lb, rows, lt)
         lab.rows = rows
         tr = dashed_chip(SLIDE6[3], size=s)
-        VGroup(unl, lab, tr).arrange(RIGHT, buff=3.0).move_to([0, 0.6, 0])
+        VGroup(unl, lab, tr).arrange(RIGHT, buff=2.75).move_to([0, 0.6, 0])
         a1 = Arrow(unl.get_right(), lab.get_left(), buff=0.15, color=S.GREY, stroke_width=4)
         q = label(SLIDE6[1], s, ERR).next_to(a1, UP, buff=0.12)
         a2 = Arrow(lab.get_right(), tr.get_left(), buff=0.15, color=S.GREY, stroke_width=3)

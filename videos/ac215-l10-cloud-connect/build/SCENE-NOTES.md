@@ -337,3 +337,7 @@ S12); `picker='char-split-collection ▾'` (S12/S13); `fun_fact=True` (S13: last
   on `type_cmd` (S05).
 - A ring attached to a printed terminal row (`row.add` / `attach_mark`) can stop rendering until the
   next `room()`/scroll: keep it a free mobject until just before the next typed command (S06 critic).
+- Animating slices of a Text splits the parent: pieces stay behind. Remove the parent and animate
+  explicit pieces, then clean them up (S08 `fill_path`).
+- Pending common.py wishes (after the builds): `IamGridRig.verdict()` check mark vs wide tokens;
+  `IamGridRig.fire()` arrow stops at the cell edge, and chip/arrow/verdict as separate steps (S08).
