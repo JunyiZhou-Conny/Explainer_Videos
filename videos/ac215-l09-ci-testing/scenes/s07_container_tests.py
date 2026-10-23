@@ -83,8 +83,8 @@ def soft(lines: list[str], n: int) -> list[str]:
         while len(s) > n:
             k = s.rfind(" ", 0, n + 1)
             if k > 0:
-                out.append(s[:k])
-                s = s[k + 1:]
+                out.append(s[:k].rstrip())
+                s = s[k + 1:].lstrip()        # no stray indent before a wrapped '[100%]'
             else:
                 out.append(s[:n])
                 s = s[n:]
@@ -186,8 +186,9 @@ class TestsInImage(VoiceScene):
                 vo.wait_until(anchor)
                 self.play(FadeIn(chp, shift=RIGHT * 0.25), run_time=0.5)
             vo.wait_until("The Dockerfile copies")
-            self.play(FadeOut(routes, shift=UP * 0.2), FadeOut(intro), run_time=0.5)
-            self.play(FadeIn(dock, shift=RIGHT * 0.2), FadeIn(img_name), run_time=0.8)
+            # one cross-fade (two plays left an empty frame for ~0.5 s)
+            self.play(FadeOut(routes, shift=UP * 0.2), FadeOut(intro),
+                      FadeIn(dock, shift=RIGHT * 0.2), FadeIn(img_name), run_time=0.9)
             self.play(FadeIn(bars[32]), run_time=0.3)
             st.drop(self, slabs[0], run_time=0.6)
             vo.wait_until("installs the dependencies")
@@ -329,6 +330,7 @@ class TestsInImage(VoiceScene):
             t.clear(self)
             resize(self, t, 3, keep=0, extra=[FadeOut(ref)])
             self.remove(ref)
+            bare_prompt(self, t)          # the strip waits at a prompt, not empty, until docker-shell
             self.play(FadeIn(gt, shift=LEFT * 0.6), run_time=0.8)
             vo.wait_until("unit and integration tests")
             gt.fill(self, "tests")
@@ -357,9 +359,9 @@ class TestsInImage(VoiceScene):
             pin(self, ls_ln, x_tag, anim=AnimationGroup(FadeIn(x_tag, shift=LEFT * 0.1), track(tr, extra=True)))
             listing = t.print(self, shell.at((140, 143)), run_time=0.5, lag=0.12)
             vo.wait_until("lands inside a container")
-            lw = max(r.glyphs.get_right()[0] for r in listing) - listing.get_left()[0]
-            red = outline_box(lw + 0.4, listing.height - 0.04, ERR)
-            red.move_to([listing.get_left()[0] + lw / 2, listing.get_center()[1], 0])
+            gl = VGroup(*[r.glyphs for r in listing])      # box the glyphs, clear of their tops/bottoms
+            red = outline_box(gl.width + 0.4, gl.height + 0.12, ERR)
+            red.move_to(gl)
             cap = label("inside a --rm container · gone on exit", 22, ERR)
             cap.next_to(red, RIGHT, buff=0.4)
             self.play(Create(red.frame), FadeIn(cap, shift=LEFT * 0.15), run_time=0.8)
