@@ -32,7 +32,8 @@ Beats (script.md, ## S05; one voiceover block each):
    the survivors as RED chips (F401, E501); GREY caption "the class fixed these two by hand".
 
 Deviations (reported to the coordinator): terminals are 20 pt (72 characters a row, as in S04) so
-the tags fit beside commands; CODE(8eb63fc-service.py) is 7–13, not 7–14 (line 14 is 95 characters,
+the tags fit beside commands, and the Option B terminal is 13.0 wide (74 characters) so that
+`▶ your turn` fits beside `flake8 src/api-service/api/` inside the box; CODE(8eb63fc-service.py) is 7–13, not 7–14 (line 14 is 95 characters,
 wider than the frame at >= 20 pt); the PEP 668 chip sits above the terminal (under the version
 chips), since a chip under the command row would cover output; "on the host" moves into the title
 bar when `▶ your turn` takes the command row (both do not fit beside it).
