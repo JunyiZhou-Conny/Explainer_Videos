@@ -238,3 +238,5 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
   the text, then draw the box around it (S02 critic).
 - Removing a printed row from `t.lines` right before animating it makes it vanish for a few frames:
   animate a `.copy()` out of the terminal and fade the terminal instead (S04 critic).
+- `FixtureWiring.per_test()` fades its copies in one at a time and adds each to the scene: removing
+  only the returned group leaves them behind. Remove/fade each copy (S06).

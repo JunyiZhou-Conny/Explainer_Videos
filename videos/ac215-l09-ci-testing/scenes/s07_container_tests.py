@@ -2,8 +2,9 @@
 
 Beats (script.md, ## S07; one voiceover block each):
 0. TRACKER C1 appears; `Lecture 9 · slides 87–90` (top right, until the gate table). A TEAL image
-   box `cheese-app-api:local` takes "the app", then "its tests"; the three README routes as GREY chips (Option 1 · docker run per suite / Option 2 · live server for system
-   tests / Option 3 · interactive shell). V7: CODE(Dockerfile: 31–41) at left; as lines light, the
+   box `cheese-app-api:local` takes "the app", then "its tests"; the three README routes as GREY
+   chips (Option 1 · docker run per suite / Option 2 · live server for system tests / Option 3 ·
+   interactive shell). V7: CODE(Dockerfile: 31–41) at left; as lines light, the
    slabs stack at right, small: thin GREY `pyproject.toml`, fat ORANGE `pip install --user .`, four
    thin COPY slabs `api/`, `tests/`, `pytest.ini`, `docker-entrypoint.sh` (TEAL outlines). The
    entrypoint slab opens into CODE(docker-entrypoint.sh: 5–13): line 5 (PATH) PINK, line 12
@@ -75,14 +76,18 @@ def summary(cap, n: int) -> str:
 
 def soft(lines: list[str], n: int) -> list[str]:
     """pytest's long PASSED rows broken at their last space that fits a row (the text is the
-    capture's, only the row break moves), so 'PASSED' never splits in two."""
+    capture's, only the row break moves), so 'PASSED' never splits in two. A test id longer than
+    a row breaks at the edge, as a terminal wraps it."""
     out = []
     for s in lines:
         while len(s) > n:
             k = s.rfind(" ", 0, n + 1)
-            assert k > 0, s
-            out.append(s[:k])
-            s = s[k + 1:]
+            if k > 0:
+                out.append(s[:k])
+                s = s[k + 1:]
+            else:
+                out.append(s[:n])
+                s = s[n:]
         out.append(s)
     return out
 
