@@ -44,7 +44,7 @@ from manim import *
 from explainer.scene import VoiceScene
 from explainer import style as S
 
-from common import (BOTTOM, ERR, HOST, IMAGE, INK, NARRATION, P_LAPTOP, TOOL, TURN, T_LAPTOP, beside,
+from common import (BOTTOM, ERR, HOST, IMAGE, INK, NARRATION, P_LAPTOP, PASS, TOOL, TURN, T_LAPTOP, beside,
                     capture, chip, code, code_span, erratum_tag, finding_chip, grey_chip, hl_bar,
                     label, line_bar, line_pitch, mono, note, pin, readme, recording_tag, ring,
                     row_tag, resize, step_badge, strike, substring, term, tool_chip, track, tracker,
@@ -59,6 +59,13 @@ MESSY = "cheese-app-ci-cd-history/8eb63fc-service.py"
 def strip_top20(rows: int) -> float:
     """Top edge of a `rows`-row 20 pt terminal standing on BOTTOM."""
     return BOTTOM + rows * line_pitch(PT) + 0.85
+
+
+def text_span(t, s: str, sub: str) -> VGroup:
+    """The glyphs of `sub` in a Text built from `s` (Text has no glyphs for spaces)."""
+    i = s.index(sub)
+    start = len(s[:i].replace(" ", ""))
+    return VGroup(*t[start:start + len(sub.replace(" ", ""))])
 
 
 def find_in(line, sub: str) -> VGroup:
@@ -107,7 +114,7 @@ class FormatterLinter(VoiceScene):
         l_chip = tool_chip("linter · reports", size=24).move_to([rx, 1.95, 0])
         messy = mono("def power(base,exponent):", 24, INK).move_to([lx, 0.55, 0])
         tidy = mono("def power(base, exponent):", 24, INK).move_to([lx, 0.55, 0])
-        comma = substring_text(messy, ",")
+        comma = text_span(messy, "def power(base,exponent):", ",")
         a = np.array([messy.get_right()[0] + 0.1, messy.get_bottom()[1] - 0.12, 0])
         b = np.array([messy.get_left()[0] - 0.1, messy.get_bottom()[1] - 0.12, 0])
         loop = CurvedArrow(a, b, angle=-2.2, color=TOOL, stroke_width=4, tip_length=0.2)
@@ -128,7 +135,7 @@ class FormatterLinter(VoiceScene):
         b1 = step_badge(1, TURN).next_to(f_chip, LEFT, buff=0.15)
         b2 = step_badge(2, TURN).next_to(l_chip, LEFT, buff=0.15)
         e231 = items[0][1]
-        e231_x = strike(e231, PASS_COLOR, stroke=4)
+        e231_x = strike(e231, PASS, stroke=4)
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref), run_time=0.8)
@@ -196,8 +203,8 @@ class FormatterLinter(VoiceScene):
                           for j in (1, 2, 3)])
         c_ring = ring(p_comma, ERR, buff=0.06)
         messy_chip = grey_chip("left messy on purpose")
-        messy_chip.next_to(panel, RIGHT, buff=0).align_to(panel.code.background, RIGHT)
-        messy_chip.next_to(panel.code.background, UP, buff=0.12, coor_mask=[0, 1, 0])
+        messy_chip.move_to([panel.code.background.get_right()[0] - 0.25 - messy_chip.width / 2,
+                            panel.code.code_lines[7].get_center()[1], 0])
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(u_name), track(tr, 2), run_time=0.5)
@@ -388,7 +395,6 @@ class FormatterLinter(VoiceScene):
             vo.wait_until("adds a third finding")
             self.play(Indicate(e501, color=ERR, scale_factor=1.15), run_time=0.7)
             vo.wait_until("local black")
-            l6 = type_cmd(self, t, blk_local.cmd, type_time=0.9, ) if False else None
             self.play(track(tr, 6), run_time=0.4)
             l6 = type_cmd(self, t, blk_local.cmd, type_time=0.9)
             yt7 = beside(turn_row(), l6)
