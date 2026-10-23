@@ -161,9 +161,10 @@ R301 = "See Tutorial questions and evidence"
 assert R301 in source_line("README.md", 301).replace("[", "").replace("]", "")
 assert "docs/TUTORIAL_SCENARIOS.md" in source_line("README.md", 301)
 assert "choose a new label" in source_line("README.md", 721)
-QUOTE = ["prints both answers and a side-by-side table …",
-         "The verdict reports improvement, a tie, or a regression;",
-         "it does not assume enriched will win."]
+QUOTE = ["prints both answers and a side-by-side table …",       # README rows 852, 854-855
+         "The verdict reports improvement, a tie,",
+         "or a regression; it does not assume",
+         "enriched will win."]
 # the table's rows: four of the measures in acts/act2_context.py (metrics list, lines 151–161)
 MEASURES = ("Cart check", "Mild-cheese match", "Model calls", "Input tokens (all calls)")
 _act2 = excerpt("acts/act2_context.py", 151, 168)
@@ -450,8 +451,8 @@ class ContextModes(VoiceScene):
         place(qc, left=-6.45, cy=0.7)
         place(tbl, right=6.45, cy=0.7)
         assert qc.get_right()[0] < tbl.get_left()[0] - 0.2, (qc.get_right()[0], tbl.get_left()[0])
-        verdict = VGroup(*[r for r in qc.rows if any(w in r.text for w in ("verdict", "regression", "assume"))])
-        assert len(verdict) >= 2, [r.text for r in qc.rows]
+        assert len(qc.rows) == 4 and "verdict" in qc.rows[1].text, [r.text for r in qc.rows]
+        verdict = qc.rows[1:]
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(c16_all), run_time=0.3)
             fit(self, t, 3, keep=[cmd, l8, r9[0]], tags=(nk, lv))
@@ -563,23 +564,23 @@ class ContextModes(VoiceScene):
             vo.wait_until("This extra call does")
             self.play(FadeOut(VGroup(c278, err)), FadeOut(lv), run_time=0.35)
             fit(self, t, 13, tags=(nk,), parked=(lv,), run_time=0.6)
-            sc = type_cmd(self, t, SHIP.cmd, 1.3)
+            sc = type_cmd(self, t, SHIP.cmd, 1.1)
             pin(self, sc, beside(extra_tag(), t, sc), run_time=0.3)
+            # PA and NY first, so the command is still on screen when they are named
             rs = show(self, t, SHIP, 3, 4, (SHIP.line(5), ERR), 6, (SHIP.line(7), HARNESS), wrap=True,
-                      run_time=0.7)
+                      run_time=0.6)
             pa, ny = item_rows(rs, 2)[0], item_rows(rs, 4)[0]
             vo.wait_until("fails for Pennsylvania")
-            self.play(flash(pa.glyphs, ERR, 1.1), run_time=0.6)
-            vo.wait_until("passes for New York")
-            self.play(flash(ny.glyphs, HARNESS, 1.1), run_time=0.6)
-            rs2 = show(self, t, SHIP, 8, 9, wrap=True, run_time=0.6)
+            self.play(flash(pa.glyphs, ERR, 1.1), run_time=0.5)
+            rs2 = show(self, t, SHIP, 8, 9, wrap=True, run_time=0.5)
             l9 = item_rows(rs2, 1)[0]
             fit(self, t, 3, keep=[pa, ny, l9], tags=(nk,), parked=(lv,), run_time=0.7)
-            self.play(FadeIn(tg, shift=UP * 0.1), FadeIn(tg_il), run_time=0.5)
-            self.play(*tg.flip(), run_time=0.8)
-            self.play(*tg.flip(), run_time=0.8)
+            self.play(FadeIn(tg, shift=UP * 0.1), FadeIn(tg_il), run_time=0.45)
+            vo.wait_until("passes for New York")
+            self.play(*tg.flip(), flash(ny.glyphs, HARNESS, 1.1), run_time=0.8)
             vo.wait_until("under a fictional rule")
             self.play(FadeIn(fict, shift=UP * 0.1), run_time=0.5)
+            self.play(*tg.flip(), flash(pa.glyphs, ERR, 1.1), run_time=0.8)
 
         # ========================================================== 7 · step 5: the act 3 command
         a3 = two_row_card(["the README puts this act 3 command here (README.md · line 286)",
