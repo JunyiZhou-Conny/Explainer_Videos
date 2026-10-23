@@ -279,7 +279,7 @@ class TestsInImage(VoiceScene):
             vo.wait_until("21 passed, 1 warning")
             self.play(substring(b_sum, "21 passed").animate.set_color(PASS), run_time=0.5)
             vo.wait_until("Pause and run them")
-            self.play(Indicate(VGroup(i_tag, bo_tag), color=TURN, scale_factor=1.15), run_time=0.8)
+            self.play(*[Indicate(g, color=TURN, scale_factor=1.15) for g in (i_tag, bo_tag)], run_time=0.8)
             vo.wait_until("The 1 warning is")
             w1, w2 = substring(i_sum, "1 warning"), substring(b_sum, "1 warning")
             self.play(Indicate(w1, color=TURN, scale_factor=1.15), Indicate(w2, color=TURN, scale_factor=1.15),
@@ -289,8 +289,8 @@ class TestsInImage(VoiceScene):
             pin(self, i_sum, tags[0])
             pin(self, b_sum, tags[1])
             vo.wait_until("same tests, same results")
-            self.play(Indicate(VGroup(substring(i_sum, "10 passed"), substring(b_sum, "21 passed")),
-                               color=PASS, scale_factor=1.1), run_time=0.8)
+            self.play(*[Indicate(g, color=PASS, scale_factor=1.1) for g in
+                        (substring(i_sum, "10 passed"), substring(b_sum, "21 passed"))], run_time=0.8)
 
         # ========================================================== 3. coverage
         with self.voiceover(SAY[3]) as vo:
@@ -337,7 +337,7 @@ class TestsInImage(VoiceScene):
             vo.wait_until("one docker command")
             self.play(Indicate(gt.rows["tests"].cells[2], color=TURN, scale_factor=1.12), run_time=0.7)
             vo.wait_until("Option 2 waits")
-            self.play(Indicate(VGroup(*tr.dots[5:8]), color=S.GREY, scale_factor=1.6), run_time=0.8)
+            self.play(*[Indicate(d, color=S.GREY, scale_factor=1.6) for d in tr.dots[5:8]], run_time=0.8)
             vo.wait_until("Option 3 is the same")
             self.play(track(tr, 9), run_time=0.3)
             vo.wait_until("docker-shell again")
@@ -410,7 +410,8 @@ class TestsInImage(VoiceScene):
             vo.wait_until("ships its dev tools")
             self.play(LaggedStart(*[FadeIn(b, shift=RIGHT * 0.3) for b in tbars], lag_ratio=0.25), run_time=1.0)
             vo.wait_until("open ended pins")
-            self.play(Indicate(pins, color=TURN, scale_factor=1.25), run_time=0.8)
+            # each pin flashes in place (one Indicate on the whole group would scale them apart)
+            self.play(*[Indicate(g, color=TURN, scale_factor=1.2) for g in pins], run_time=0.8)
             vo.wait_until("no lockfile")
             self.play(VGroup(pp, tbars).animate.fade(0.75), FadeIn(left, scale=0.96), FadeIn(err), run_time=0.8)
             vo.wait_until("the guest lecture keeps them")
@@ -453,8 +454,8 @@ class TestsInImage(VoiceScene):
                       run_time=0.7)
             vo.wait_until("or you test the past")
             pbc = note("packages before code", S.GREY, 24).next_to(VGroup(s2[0], s2[1]), LEFT, buff=0.4)
-            self.play(FadeIn(pbc, shift=RIGHT * 0.15), Indicate(VGroup(s2[0].box, s2[1].box), color=SYSTEM,
-                                                                  scale_factor=1.03), run_time=0.9)
+            self.play(FadeIn(pbc, shift=RIGHT * 0.15),
+                      *[Indicate(s.box, color=SYSTEM, scale_factor=1.03) for s in s2[:2]], run_time=0.9)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

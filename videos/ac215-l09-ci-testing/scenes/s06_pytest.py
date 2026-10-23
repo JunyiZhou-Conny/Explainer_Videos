@@ -28,7 +28,8 @@ from manim import *
 from explainer.scene import VoiceScene
 from explainer import style as S
 
-from common import (ERR, INK, MONO, NARRATION, PARAM_CASES, PASS, TOOL, TURN, UNIT, Collector, FixtureWiring,
+from common import (ERR, INK, INTEG, MONO, NARRATION, PARAM_CASES, PASS, TOOL, TURN, UNIT, Collector,
+                    FixtureWiring,
                     Parametrize, check_mark, chip, code, code_span, cross_mark, erratum_tag, grey_chip,
                     illustration_tag, label, line_bar, lref, ring, mono, mono_line, note, pause_and_ponder, readme,
                     readme_card, substring, tool_chip, under)
@@ -313,10 +314,11 @@ class PytestInside(VoiceScene):
             # the fresh copies collapse into one shared instance; the per-test links give way to one
             chips3, links3 = copies
             self.play(*[c.animate.move_to(inst[0]) for c in chips3], FadeOut(links3),
-                      FadeTransform(fresh, shared), fw.asks.animate.set_opacity(1), run_time=0.6)
+                      FadeTransform(fresh, shared), run_time=0.6)
             self.remove(*chips3, *links3, chips3, links3, fresh)   # each copy was added on its own
             self.add(inst[0])
-            self.play(*sess_anims[1:], run_time=0.6)
+            # sess_anims[2] was built while the arrows were dimmed and would leave them faint: light them here
+            self.play(sess_anims[1], fw.asks.animate.set_opacity(1).set_color(INTEG), run_time=0.6)
             vo.wait_until("And parametrize")
             # four would-be copies of one test (test_utils.py:15-18) below; the one function forms above,
             # so the inputs rise into its chip row without crossing the decorator lines

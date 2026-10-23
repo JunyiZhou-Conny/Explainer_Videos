@@ -244,3 +244,9 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
   later bare `FadeOut(t)` then redraws `t` on top of overlays (rings, `hl_bar`) and they flicker
   out for a few frames. Fade terminal and overlays together: `FadeOut(VGroup(t, bar, ring))` (S05
   critic).
+- Ponder cards point with YELLOW (look here), never RED: a RED flash on the candidate answer hints
+  the wrong answer and breaks the RED-only-for-failure rule (S06 critic).
+- `FixtureWiring.session()` builds its recolour animations at call time: dimming the arrows first
+  leaves them faint after it plays. Re-light them in your own play (S06 critic).
+- `Parametrize.fold()` cross-fades text over text; S06 places the merged card ABOVE the cards and
+  flies each card's own glyphs into its chip — copy that pattern instead (S06 critic).
