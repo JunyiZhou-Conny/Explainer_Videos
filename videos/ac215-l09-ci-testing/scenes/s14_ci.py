@@ -394,12 +394,12 @@ class HooksThenCI(VoiceScene):
             yb = frame.get_bottom()[1] + 0.85
             box_c.move_to([-1.0, yb, 0])
             jc.move_to(box_c)
-            c_lab = label("dev image container", 20, IMAGE).next_to(box_c, LEFT, buff=0.25)
+            c_lab = label("dev image container", 20, IMAGE).next_to(box_c, LEFT, buff=0.45)
             wire = DashedLine(box_c.get_right() + RIGHT * 0.22, box_c.get_right() + RIGHT * 3.0, dash_length=0.12,
                               color=S.GREY, stroke_width=3)
             cutx = cross_mark(0.3, S.GREY).move_to(wire.get_center())
             netw = label("network", 22, S.GREY).next_to(wire, RIGHT, buff=0.2)
-            flag = mono("--network none", 22, INK).next_to(wire, UP, buff=0.12)
+            flag = mono("--network none", 22, INK).next_to(wire, UP, buff=0.3)
             flag.align_to(wire.get_left() + RIGHT * 0.35, LEFT)       # clear of the hermetic border
             herm = HermeticBorder.around(box_c, buff=0.22)
             assert herm.get_top()[1] < dev_bar.get_bottom()[1] - 0.05 and herm.get_bottom()[1] > frame.get_bottom()[1], \

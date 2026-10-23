@@ -276,3 +276,7 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
 - `MaskGrid.flash_rows()` / any `.animate` or `pulse` on grid cells re-adds the cells on top of
   overlays (`cell_box`, `row_box`), so RED boxes go faint: `self.add(boxes)` after each such play
   (S12 critic).
+- `Terminal.fold` breaks with ` \` even inside a quoted argument, which would not paste back. A
+  command whose spaces are all inside quotes soft-wraps at column 72 instead (rows join back to
+  the exact command; assert it) (S13).
+- `MaskGrid.flash_rows()` with a YELLOW flash floods the whole row: pulse a stroke box instead (S13).
