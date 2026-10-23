@@ -24,8 +24,8 @@ import yaml
 from manim import (DL, DOWN, DR, LEFT, ORIGIN, PI, RIGHT, UL, UP, AnimationGroup, Arc, Arrow,
                    Brace, Circle, Create, DashedVMobject, Dot, FadeIn, FadeOut, FadeTransform,
                    Indicate, LaggedStart, Line, MoveAlongPath, Polygon, Rectangle, ReplacementTransform,
-                   Rotate, RoundedRectangle, Square, Succession, Text, Transform, VGroup, VMobject,
-                   linear)
+                   Rotate, RoundedRectangle, Square, Succession, Text, Transform, UpdateFromAlphaFunc,
+                   VGroup, VMobject, linear)
 
 from explainer import style as S
 from explainer.components import pause_and_ponder, person_icon, ponder_card  # noqa: F401 (re-export)
@@ -206,7 +206,19 @@ def track(tr: ReadmeTracker, k: int | None = None, extra: bool = False, run_time
         for i, d in enumerate(tr.dots, start=1):
             col = tr.hi_color if i == k else (S.GREY if i < k else S.GREY_DARK)
             anims.append(d.animate.set_color(col).scale((1.5 if i == k else 1.0) / (d.width / 0.12)))
-    anims.append(Transform(tr.caption, _caption(tr, k, extra)))
+    # Cross-fade in place (old out, new in) so the caption is never a glyph-by-glyph morph;
+    # become() keeps tr.caption the same mobject inside the tracker. Opacity is scaled per glyph,
+    # so steady()'s invisible strut stays invisible.
+    old, new = tr.caption.copy(), _caption(tr, k, extra)
+
+    def fade_swap(m, a):
+        src, f = (old if a < 0.5 else new), abs(1 - 2 * a)
+        c = src.copy()
+        for g, g0 in zip(c.family_members_with_points(), src.family_members_with_points()):
+            g.set_fill(opacity=g0.get_fill_opacity() * f).set_stroke(opacity=g0.get_stroke_opacity() * f)
+        m.become(c)
+
+    anims.append(UpdateFromAlphaFunc(tr.caption, fade_swap))
     tr.k = k
     return AnimationGroup(*anims, run_time=run_time)
 

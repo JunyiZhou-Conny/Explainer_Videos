@@ -283,3 +283,6 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
 - `Text.text` drops spaces, so `substring()` fails on `label()`/`mono()` Text: index via
   `original_text` (S14's local `part()`). This manim has no `Scene.add_to_back`: insert behind a
   row with `row.submobjects.insert(0, bar)` (S14).
+- `set_opacity` on a tracker (or anything holding `steady()` text) makes the hidden "|" strut
+  visible ("$tep"): use `fade()` (S14 critic). `track()` now cross-fades its caption in place
+  (coordinator, after the S15 critic saw the glyph morph "step 4 of 3: ɐɹd…").

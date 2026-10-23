@@ -363,7 +363,7 @@ SHOW: TRACKER B4. It types `pip install black flake8` (README.md line 118) → T
 2–5, …, 37; wrap). ORANGE row tag "on the host" beside the command; `black-26.10.1` and
 `flake8-7.4.1` in line 37 get the tag `at the time of recording`. A small GREY chip under the
 command: "pip refuses? (PEP 668, Homebrew/Debian) → any venv, or pipx · study guide". `▶ your turn`.
-SAY: Option B runs the same checks on your laptop: install black and flake8 with pip, on the host, 26.10.1 and 7.4.1 at the time of recording. Pause and run it. If pip refuses with externally managed environment, as Homebrew Pythons do, use any lecture 3 virtual environment, or pipx; the study guide has the one-liner.
+SAY: Option B runs the same checks on your laptop: install black and flake8 with pip, on the host, 26.10.1 and 7.4.1 at the time of recording. Pause and run it. If pip refuses with externally managed environment, as Homebrew Pythons do, use any lecture 1 virtual environment, or pipx; the study guide has the one-liner.
 
 SHOW: TRACKER B5: it types `flake8 src/api-service/api/` (README.md line 121) →
 TERM(laptop/part2-05: 2–4); line 2's `E501 (95 > 79)` highlights RED, caption "flake8's default:

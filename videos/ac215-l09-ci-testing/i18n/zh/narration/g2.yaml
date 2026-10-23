@@ -47,7 +47,7 @@ S10:
   - null
 - en: "Step 1 brings the contract and its tests. Run uv run pytest: 2 failed, 50 passed, and the tests are right. One failure is a pure guess scored as half confident; the other is 77 rounded probabilities that sum to 0.77. Same rule as the cheese demo: fix the code, not the tests. Pause and run it."
   zh:
-  - "到了 step-01，带来了契约和它的测试。"
+  - "到了 step-01，加进来的是契约和它的测试。"
   - "运行 uv run pytest：2 failed, 50 passed，而且测试是对的。"
   - "一个失败是纯粹的猜测被打成了一半的把握；另一个是 77 个四舍五入后的概率，加起来只有 0.77。"
   - "和 cheese 的演示同一条规则：改代码，不改测试。"
@@ -225,7 +225,7 @@ S14:
   - null
 - en: "Smaller rows join the gate: hadolint lints the Dockerfile, clean. Part 2 was recorded on a plain machine without Docker, so the recipes fail politely: docker build is command not found, and the image recipe explains itself. On your laptop, with Docker Desktop, both images build for real. The walk's record shows the rest. Two images from one lockfile, 1.15 and 1.84 gigabytes. And just check runs green inside a container with no network: the hermetic claim, proved by experiment."
   zh:
-  - "门禁里还加了几个小行：hadolint 对 Dockerfile 做 lint，结果干净。"
+  - "门禁里又多了几行小的：hadolint 对 Dockerfile 做 lint，结果干净。"
   - "第二部分是在一台没有 Docker 的普通机器上录的，所以这些 recipe 礼貌地失败了：docker build 报 command not found，构建 image 的 recipe 也会说明原因。"
   - "在你装了 Docker Desktop 的笔记本上，两个 image 都会真正构建出来。"
   - "剩下的看 walk.md 里的记录。"

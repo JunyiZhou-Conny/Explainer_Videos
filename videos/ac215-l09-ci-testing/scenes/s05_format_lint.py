@@ -385,7 +385,7 @@ class FormatterLinter(VoiceScene):
             vo.wait_until("as Homebrew Pythons do")
             self.play(Indicate(text_span(pep.text, PEP, "Homebrew/Debian"), color=INK, scale_factor=1.12),
                       run_time=0.7)
-            vo.wait_until("use any lecture 3 virtual environment")
+            vo.wait_until("use any lecture 1 virtual environment")
             self.play(Indicate(text_span(pep.text, PEP, "any venv, or pipx"), color=INK, scale_factor=1.1),
                       run_time=0.8)
             vo.wait_until("the study guide has the one-liner")
