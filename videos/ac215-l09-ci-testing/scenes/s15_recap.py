@@ -57,7 +57,7 @@ from common import (CLOUD, ERR, FUTURE, HERMETIC, IMAGE, INK, INTEG, LAPTOP, NAR
                     P_LAPTOP, SEG_SIX, SYSTEM_TEST, TOOL, TURN, UNIT, VENV, ROUTE, Arch,
                     MaskGrid, TestDot, Turnstile, ask, attach, beside, box, capture, envelope,
                     extra_row, file_card, file_glyph, grey_chip, label, mono, mono_line,
-                    outline_box, pin, readme, readme_card, ring, squeeze, strike, substring, term,
+                    outline_box, pin, readme, readme_card, ring, squeeze, steady, strike, substring, term,
                     time_row, track, tracker, turn_row, type_cmd)
 
 SAY = NARRATION["S15"]
@@ -139,7 +139,7 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
 def badge(n: int, color=TURN) -> VGroup:
     """A number in a ring (the question's number; GREY once it is in the list). .c .t"""
     c = Circle(radius=0.27, stroke_color=color, stroke_width=3).set_fill(S.BG, 1)
-    t = label(str(n), 24, color).move_to(c)
+    t = steady(str(n), 24, color).move_to(c)        # fixed extent: every digit sits alike
     g = VGroup(c, t)
     g.c, g.t = c, t
     return g
@@ -386,7 +386,7 @@ class Recap(VoiceScene):
         def file_away(q, icon, n, *extra):
             """The question leaves; its badge flies to the list and turns GREY; its label appears."""
             nb = badge(n, S.GREY).move_to(list_slot(n))
-            lab = label(QUESTIONS[n - 1][1], L_SIZE, S.GREY)
+            lab = steady(QUESTIONS[n - 1][1], L_SIZE, S.GREY)    # descenders don't shift the row
             lab.next_to(nb, RIGHT, buff=0.22)
             self.play(FadeOut(q.text, shift=LEFT * 0.3), FadeOut(icon), *extra, run_time=0.5)
             self.remove(icon)
@@ -487,8 +487,8 @@ class Recap(VoiceScene):
         pk = Arch(arch_w=0.6, arch_h=1.05)
         pk_name = mono("detect-private-key", 20, S.GREY)
         l10 = label("L10: credentials", 22, S.GREY)
-        place(pk, left=nxt_frame.get_left()[0] + 2.5, bottom=mid + 0.55)
-        place(key, right=pk.get_left()[0] - 1.1, cy=pk.get_bottom()[1] + 0.4)
+        place(pk, left=nxt_frame.get_left()[0] + 2.75, bottom=mid + 0.55)
+        place(key, right=pk.get_left()[0] - 1.0, cy=pk.get_bottom()[1] + 0.4)
         place(pk_name, cx=pk.get_center()[0], top=pk.get_bottom()[1] - 0.1)
         place(l10, left=pk.get_right()[0] + 1.0, cy=pk.get_center()[1])
         key_home = key.get_center().copy()

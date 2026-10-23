@@ -23,7 +23,7 @@ Beats (script.md, ## S14; one voiceover block each):
    image · 1.84 GB"; a TEAL container running `just check` (GREEN check) with its network wire cut
    (`--network none`), then the GREEN dashed hermetic border around it.
 3. The tracker dims inside a GREY dashed outline (CI is not a walk step). The gate table, complete:
-   six rows (S11's config text), the system row GREY dashed outside. The five hermetic rows' names fly
+   six rows (config with hadolint), the system row GREY dashed outside. The five hermetic rows' names fly
    onto the five arches of a CommitGate (the table becomes the turnstile), the system row becomes a
    GREY dashed chip outside it; "one machine: your laptop" under the floor. A GREY chip `git commit
    --no-verify` rides the envelope up and over the whole turnstile into the vault.
@@ -48,8 +48,8 @@ Deviations (reported to the coordinator):
 - Beat 3: the turnstile the `--no-verify` envelope walks around is built from the table (its five
   hermetic rows become five named arches); the table itself has no room for an envelope beside it at
   13 wide. "The gate table clears before the server arrives" is that gate leaving in beat 4.
-- The config row keeps S11's text ("yamllint, uv, just"); hadolint is not added to it (the row would
-  outgrow the frame).
+- The config row is common.py's step-05b row ("yamllint, uv, hadolint": justfile:125 puts hadolint in
+  lint-config at this step, as the narration says); the table is 13.1 wide.
 """
 
 import re
@@ -73,7 +73,6 @@ PYP = "babykev/pyproject.toml"
 P_FIRST, P_LAST, P_MARK = 53, 57, 56
 CI = "cheese-app-ci-cd/.github/workflows/ci.yml"
 JUSTFILE = "babykev/justfile"
-S11_CONFIG = ("config files", "yamllint, uv, just", "just lint-config", "yes", True)   # S11's row text
 INSIDE = ("tests", "format", "docs", "config", "types")           # the hermetic rows, table order
 ARCH_NAMES = ("tests", "format + lint", "docs", "config files", "types")
 FLOOR = -1.6                             # the laptop gate's floor in beat 3
@@ -359,8 +358,9 @@ class HooksThenCI(VoiceScene):
             vo.wait_until("clean.")
             self.play(Create(ok), run_time=0.5)
             attach(self, h_ln, ok)
-            vo.wait_until("docker build is command not found")
+            vo.wait_until("so the recipes fail politely")
             d_ln = typ(self, t, dbuild.cmd, type_time=0.8)
+            vo.wait_until("docker build is command not found")
             d_out = out(self, t, [(dbuild.line(2), ERR)], run_time=0.4)
             _, x127 = tag_on(self, d_out[0], row_tag(f"exit {dbuild.exit}", ERR), buff=0.35)   # the command fills its row
             self.play(Indicate(substring(d_out[0], "command not found"), color=ERR, scale_factor=1.1), run_time=0.6)
@@ -430,11 +430,11 @@ class HooksThenCI(VoiceScene):
                       Indicate(jc[1], color=PASS, scale_factor=1.3), run_time=0.8)
 
         # ========================================================== 3. the table is full; --no-verify walks past
-        gt = GateTable(keys=GATE_ORDER, filled=GATE_ORDER, rows={"config": S11_CONFIG})
+        gt = GateTable(keys=GATE_ORDER, filled=GATE_ORDER)       # config row: step-05b's, hadolint in it
         gt.move_to([0, -0.35, 0])
         assert gt.get_top()[1] <= 2.8 and gt.get_bottom()[1] >= -3.5 and gt.width <= 13.2, \
             (gt.get_top(), gt.get_bottom(), gt.width)
-        dim_box = outline_box(tr.width + 0.16, tr.height + 0.12, S.GREY, solid=False).move_to(tr)
+        dim_box = outline_box(tr.width + 0.18, tr.height + 0.2, S.GREY, solid=False).move_to(tr)
         gate = CommitGate(5, arch_h=1.2)
         gate.shift(np.array([GATE_X - gate.get_center()[0], FLOOR - gate.floor.get_center()[1], 0]))
         names = gate.turnstile.name_labels(ARCH_NAMES)          # built AFTER placing (SCENE-NOTES trap)
@@ -453,7 +453,7 @@ class HooksThenCI(VoiceScene):
             self.play(FadeOut(gone), run_time=0.5)
             self.remove(gone, *gone.get_family())
             wipe(self, t, run_time=0.3)
-            self.play(FadeOut(t), tr.animate.set_opacity(0.4), Create(dim_box), run_time=0.5)
+            self.play(FadeOut(t), tr.animate.fade(0.6), Create(dim_box), run_time=0.5)
             self.remove(t)
             self.play(FadeIn(gt, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("six rows")

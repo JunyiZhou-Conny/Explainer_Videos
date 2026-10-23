@@ -2,7 +2,7 @@
 
 Beats (script.md, ## S13; one voiceover block each):
 0. TRACKER E6 -> E7, `Lecture 9 · slides 78–84` (top right, whole scene). A 14-row `laptop ·
-   babykev` terminal (20 pt): `git switch --detach step-05a` -> s05a-01: 3 (cut); `just setup` (small:
+   babykev` terminal (20 pt): `git switch --detach step-05a` -> s05a-01: …, 3 (cut); `just setup` (small:
    s05a-02: 2, …); `just test` -> s05a-03: …, 11–17 (cut after their progress marks), …, 66 (cut),
    67 (cut after the timing). `▶ your turn` on `just test`. The F of test_model.py, line 66 and
    `1 failed` RED, `102 passed` GREEN: the live result, printed honestly. The terminal shrinks to a
@@ -11,7 +11,7 @@ Beats (script.md, ## S13; one voiceover block each):
    decimals"; a lens opens and the dots part, RED "last bits differ". Beside it a GREY card, tag
    `recorded · walk.md`: "the author's Mac: 103 passed" (walk.md:621), and a GREY note "bit-exact
    across machines: a stronger promise". Line 67 is ringed on "this machine measured it".
-1. TRACKER E7. The strip is cleared; the walk's wrong-fix perl (walk.md:627 = s05a-04) is typed at
+1. TRACKER E7. The strip is cleared and grows to 6 rows; the walk's wrong-fix perl (walk.md:627 = s05a-04) is typed at
    20 pt and soft-wraps at the terminal's edge -> no output. As it is spoken, V6's 4×4 grid (the
    wrong fix's mask for state 1 · questions 1, 1, 1) appears; the adjacent-question cells it correctly
    blocks get RED boxes, the two-back cell it wrongly leaves open a pulsing YELLOW box. The six-token
@@ -25,8 +25,8 @@ Beats (script.md, ## S13; one voiceover block each):
    code; beside it the counter spins up: "shapes to cover with pictures: 4,686" (walk.md:625). The
    assert line (65) bars GREEN; `allowed(` and `siblings` on it flash. PONDER 5 (8 s).
 3. The ponder's answer drawn: the 4×4 wrong-fix grid returns with its YELLOW two-back cell and the
-   caption "state 1 · questions 1, 1, 1". TRACKER E7, a 12-row terminal: `just test -k
-   no_question_sees_another` (walk.md:653) -> s05a-08: 9, …, 11 (cut), …, 25, …, 41–45; the F RED,
+   caption "state 1 · questions 1, 1, 1". TRACKER E7, a 14-row terminal: `just test -k
+   no_question_sees_another` (walk.md:653) -> s05a-08: …, 9, …, 11 (cut), …, 25, …, 41–45, …; the F RED,
    line 25 `shape = (1, [1, 1, 1])` YELLOW. The terminal shrinks to a 3-row strip (command, …, 25);
    above it a PURPLE die rolls while a RED-framed counter-example grid shrinks 9×9 -> 6×6 -> 4×4 (GREY
    tag `illustration` on the two intermediate shapes, SHRINK_PATH; they carry no numbers); the
@@ -50,8 +50,8 @@ Deviations (reported to the coordinator):
   exactly as a terminal shows a long typed line (the rows join back to the command; asserted).
 - The checker heredocs are walk.md:628–634 and 635–641 (the script cites 628–635 / 636–641).
 - Over-wide lines get the house "…" cut (s05a-01:3, s05a-03:11–17/66/67, s05a-08:11, s05a-11:14–17/
-  306/307, test_mask.py:60/64); every skipped range gets a "…" row (s05a-02 after 2, s05a-03 before 11
-  and 17/66, s05a-08 9/11, 11/25, 25/41, s05a-11 before 14 and 17/306, s05a-15 before 9, s05a-17
+  306/307, test_mask.py:60/64); every skipped range gets a "…" row (s05a-01 before 3, s05a-02 after 2, s05a-03 before 11
+  and 17/66, s05a-08 before 9, 9/11, 11/25, 25/41, after 45, s05a-11 before 14 and 17/306, s05a-15 before 9, s05a-17
   2/4, 4/31). `just setup` is shown small: its first output line and a "…".
 - The two-dot picture's tensor text is s05a-03:48's own (both tensors print identically there);
   the dot names `before[2]` / `after[2]` are the failing assert's (s05a-03:46).
@@ -299,7 +299,7 @@ class PropertyTests(VoiceScene):
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref), FadeIn(t, shift=UP * 0.2), run_time=0.6)
             self.play(track(tr, 7), run_time=0.4)
             typ(self, t, sw.cmd, type_time=0.5)
-            out(self, t, [cut(sw.line(3), "the tests that see the mask")], run_time=0.25)
+            out(self, t, ["…", cut(sw.line(3), "the tests that see the mask")], run_time=0.25)
             typ(self, t, setup.cmd, type_time=0.3)
             out(self, t, [setup.line(2), "…"], run_time=0.3)
             vo.wait_until("First, honesty")
@@ -339,28 +339,32 @@ class PropertyTests(VoiceScene):
             self.play(Indicate(substring(l66, "test_a_question_cannot_see_its_sibling"), color=ERR,
                                scale_factor=1.06), d_a.animate(rate_func=there_and_back).set_stroke(width=8),
                       run_time=0.8)
+            vo.wait_until("bit exactness across machines")
+            self.play(FadeIn(promise[0], shift=UP * 0.1), run_time=0.5)
             vo.wait_until("a stronger promise")
-            self.play(FadeIn(promise, shift=UP * 0.1), run_time=0.6)
+            self.play(FadeIn(promise[1], shift=UP * 0.1), run_time=0.5)
             vo.wait_until("this machine measured it")
             r67 = ring(substring(l67, "1 failed, 102 passed"), INK, buff=0.05)
             self.play(Create(r67), run_time=0.5)
             attach(self, l67, r67)
 
         # ========================================================== 1. a wrong fix; two pictures
-        g4 = MaskGrid(SEG_FOUR, "wrong_fix", cell=0.55)
-        g4.move_to([2.7, 0, 0]).align_to([0, 2.72, 0], UP)
+        top6 = strip_top(6, PT)
+        g4 = MaskGrid(SEG_FOUR, "wrong_fix", cell=0.52)       # (smaller cells crowd the band names)
+        g4.move_to([2.7, 0, 0]).align_to([0, 2.9, 0], UP)    # clear of the lecture tag (bottom 3.13)
         blocked, opened = g4.wrong_fix_marks()
-        cap4 = label(shape_caption(1, [1, 1, 1]), 22, INK).next_to(g4, DOWN, buff=0.2)
+        cap4 = label(shape_caption(1, [1, 1, 1]), 22, INK).next_to(g4, DOWN, buff=0.15)
         g6 = MaskGrid(SEG_SIX, "wrong_fix", cell=0.38)
         g6.move_to([-3.5, 0, 0]).align_to([0, 2.72, 0], UP)
         sh = shrug().move_to([-0.55, 0.9, 0])
-        assert cap4.get_bottom()[1] > top4 + 0.1 and g6.get_bottom()[1] > top4 + 0.1, (cap4.get_bottom(), top4)
+        assert cap4.get_bottom()[1] > top6 + 0.1 and g6.get_bottom()[1] > top6 + 0.1, (cap4.get_bottom(), top6)
         assert g6.get_right()[0] < sh.get_left()[0] - 0.2 and sh.get_right()[0] < g4.get_left()[0] - 0.2
-        assert len(opened) == 1 and len(blocked) == 2
+        assert len(opened) == 1 and len(blocked) == 2 and g4.get_top()[1] < ref.get_bottom()[1] - 0.15
 
         with self.voiceover(SAY[1]) as vo:
             pic = VGroup(d_b, d_a, n_b, n_a, tens, same, differ, lens, handle, card, rec, promise)
             wipe(self, t, pic, run_time=0.5)
+            resize(self, t, 6, run_time=0.4)
             vo.wait_until("A deliberately wrong fix goes in")
             typ(self, t, wrong.cmd, type_time=1.3, soft=True)
             self.play(FadeIn(g4), run_time=0.6)
@@ -374,13 +378,14 @@ class PropertyTests(VoiceScene):
             dots6 = out(self, t, ["…"], run_time=0.15)[0]
             st6 = beside(study_tag(), dots6, buff=0.35)
             pin(self, dots6, st6, anim=AnimationGroup(FadeIn(st6, shift=LEFT * 0.1),
-                                                      FadeIn(VGroup(g6.col_labels, g6.row_labels, g6.band))))
-            p1 = out(self, t, six_rows[:3], run_time=0.3, lag=0.05)
+                                                      FadeIn(VGroup(g6.col_labels, g6.row_labels, g6.band))),
+                run_time=0.3)
+            p1 = out(self, t, six_rows[:3], run_time=0.25, lag=0.05)
             self.play(LaggedStart(*[FadeIn(VGroup(*g6.cells[i])) for i in range(3)], lag_ratio=0.3),
-                      *[substring(r, "ok").animate.set_color(PASS) for r in p1], run_time=0.4)
-            p2 = out(self, t, six_rows[3:], run_time=0.3, lag=0.05)
+                      *[substring(r, "ok").animate.set_color(PASS) for r in p1], run_time=0.3)
+            p2 = out(self, t, six_rows[3:], run_time=0.25, lag=0.05)
             self.play(LaggedStart(*[FadeIn(VGroup(*g6.cells[i])) for i in range(3, 6)], lag_ratio=0.3),
-                      *[substring(r, "ok").animate.set_color(PASS) for r in p2], run_time=0.4)
+                      *[substring(r, "ok").animate.set_color(PASS) for r in p2], run_time=0.3)
             self.remove(*[c for row in g6.cells for c in row], g6.col_labels, g6.row_labels, g6.band)
             self.add(g6)
             vo.wait_until("it cannot tell")
@@ -475,8 +480,8 @@ class PropertyTests(VoiceScene):
         a4 = MaskGrid(SEG_FOUR, "wrong_fix", cell=0.7).move_to([0, 0.45, 0])
         _, a_open = a4.wrong_fix_marks()
         a_cap = label(shape_caption(1, [1, 1, 1]), 24, INK).next_to(a4, DOWN, buff=0.25)
-        t3 = term(P_BABYKEV, rows=12, title=T_BABYKEV, size=PT)
-        h_lines = hyp.at(9, "…") + [cut(hyp.line(11), "test_mask.py F")] + hyp.at("…", 25, "…", (41, 45))
+        t3 = term(P_BABYKEV, rows=14, title=T_BABYKEV, size=PT)
+        h_lines = hyp.at("…", 9, "…") + [cut(hyp.line(11), "test_mask.py F")] + hyp.at("…", 25, "…", (41, 45), "…")
         top3 = strip_top(3, PT)
         gx, gy = -1.2, 0.85
         steps = [shrink_grid(*s).move_to([gx, gy, 0]) for s in SHRINK_PATH[:-1]]
@@ -513,35 +518,34 @@ class PropertyTests(VoiceScene):
             self.play(FadeIn(t3, shift=UP * 0.2), run_time=0.4)
             h_ln = typ(self, t3, hyp.cmd, type_time=0.5)
             h_out = out(self, t3, h_lines, run_time=0.7, lag=0.04)
-            f_row, l25 = h_out[2], h_out[4]
+            f_row, l25 = h_out[3], h_out[5]
             assert l25.text == shape_text(1, [1, 1, 1])
             vo.wait_until("the one test fails")
             ff = substring(f_row, "F")
             self.play(ff.animate.set_color(ERR), run_time=0.25)
             self.play(Indicate(ff, color=ERR, scale_factor=1.8), run_time=0.6)
             vo.wait_until("then shrinks the counter example")
-            self.play(l25.animate.set_color(TURN), run_time=0.3)
-            self.play(Indicate(l25, color=TURN, scale_factor=1.12), run_time=0.6)
-            vo.wait_until("to exactly that shape")
-            resize(self, t3, 3, keep=[h_ln, h_out[3], l25], run_time=0.6)
+            resize(self, t3, 3, keep=[h_ln, h_out[4], l25], run_time=0.5)
             self.play(FadeIn(die3, scale=0.6), FadeIn(ill, shift=DOWN * 0.1), FadeIn(steps[0], scale=1.08),
                       run_time=0.5)
             self.play(die3.roll(5), run_time=0.35)
-            self.play(ReplacementTransform(steps[0], steps[1]), die3.roll(3), run_time=0.7)
+            self.play(ReplacementTransform(steps[0], steps[1]), die3.roll(3), run_time=0.6)
+            vo.wait_until("to exactly that shape")
             self.play(ReplacementTransform(steps[1], VGroup(fin.grid, fin_frame)), die3.roll(1), FadeOut(ill),
-                      run_time=0.7)
+                      run_time=0.6)
             self.remove(ill)
             self.play(FadeIn(VGroup(fin.col_labels, fin.row_labels, fin.band)), FadeIn(fin_cap, shift=UP * 0.1),
-                      Indicate(l25, color=TURN, scale_factor=1.1), run_time=0.5)
+                      l25.animate.set_color(TURN), run_time=0.5)
             self.remove(fin.grid, fin.col_labels, fin.row_labels, fin.band)
             self.add(fin)
+            self.play(Indicate(l25, color=TURN, scale_factor=1.12), run_time=0.5)
             vo.wait_until("Pause and run it.")
             # the command row is too long for a row tag beside it: the house tag stands on the strip
             y3 = your_turn()
             y3.move_to([6.45 - y3.width / 2, t3.box.get_top()[1] + 0.1 + y3.height / 2, 0])
             self.play(FadeIn(y3, shift=DOWN * 0.1), run_time=0.3)
             self.play(*flash(y3, TURN), run_time=0.7)
-            vo.wait_until("it hands you the smallest witness")
+            vo.wait_until("does not only say no")
             self.play(FadeIn(sib, shift=LEFT * 0.2), FadeIn(sib_l), FadeIn(all_l), run_time=0.5)
             off = [sib.cells[a][b] for a in range(4) for b in range(4) if not sib.allowed[a][b]]
             delta = fin.cells[0][0].get_center() - sib.cells[0][0].get_center()   # cell onto cell
@@ -553,6 +557,7 @@ class PropertyTests(VoiceScene):
             self.play(sib.grid.animate.shift(delta).set_fill(opacity=0.3), sib_l.animate.move_to(sib_to),
                       run_time=0.9)
             i, j = hit[0]
+            vo.wait_until("the smallest witness")
             self.play(fin.light(hit), run_time=0.5)
             spot = fin.cell_box(i, j, ERR, stroke=6)
             self.play(Create(spot), run_time=0.3)
@@ -577,8 +582,8 @@ class PropertyTests(VoiceScene):
             a_ln = typ(self, t4, again.cmd, type_time=0.3)
             vo.wait_until("pause and try it")
             _, y4 = tag_on(self, a_ln, turn_row)
-            self.play(*flash(y4, TURN), run_time=0.6)
-            a_out = out(self, t4, a_lines, run_time=0.8, lag=0.05)
+            self.play(*flash(y4, TURN), run_time=0.45)
+            a_out = out(self, t4, a_lines, run_time=0.6, lag=0.04)
             l307 = a_out[7]
             assert l307.text.startswith("=") and "8 failed, 95 passed" in l307.text
             vo.wait_until("8 failed, 95 passed")
@@ -597,6 +602,8 @@ class PropertyTests(VoiceScene):
             self.play(Create(r_m), run_time=0.5)
             attach(self, model_r, r_m)
             vo.wait_until("The real fix is one line")
+            k = list(t4.lines).index(a_ln)                # rows above `just test`: restore + perl
+            room(self, t4, t4.rows - len(t4.lines) + k)
             typ(self, t4, rst2.cmd, type_time=0.35)
             typ(self, t4, fixl.cmd, type_time=0.35)
             f_out = out(self, t4, [fixl.line(2)], run_time=0.3)[0]
@@ -620,27 +627,26 @@ class PropertyTests(VoiceScene):
             vo.wait_until("the new recipe, just types")
             typ(self, t4, types.cmd, type_time=0.3)
             y_out = out(self, t4, types.at((2, 3)), run_time=0.4)
+            typ(self, t4, show.cmd, type_time=0.3)
             vo.wait_until("passes")
             self.play(y_out[1].animate.set_color(PASS), run_time=0.3)
-            self.play(Indicate(y_out[1], color=PASS, scale_factor=1.12), run_time=0.5)
-            typ(self, t4, show.cmd, type_time=0.3)
-            s_out = out(self, t4, show.at("…", (9, 14)), run_time=0.5, lag=0.05)
+            self.play(Indicate(y_out[1], color=PASS, scale_factor=1.12), run_time=0.4)
+            vo.wait_until("check has six lines")
+            s_out = out(self, t4, show.at("…", (9, 14)), run_time=0.4, lag=0.04)
             jt = s_out[3]
             assert jt.text == "    just types", jt.text
-            vo.wait_until("check has six lines")
             self.play(jt.animate.set_color(TURN), run_time=0.25)
-            self.play(Indicate(VGroup(*[r.glyphs for r in s_out[1:]]), color=INK, scale_factor=1.04),
-                      Indicate(jt, color=TURN, scale_factor=1.15), run_time=0.6)
-            self.play(FadeOut(t4), run_time=0.3)
+            self.play(Indicate(VGroup(*[r.glyphs for r in s_out[1:] if r is not jt]), color=INK, scale_factor=1.04),
+                      Indicate(jt, color=TURN, scale_factor=1.15), run_time=0.5)
+            self.play(FadeOut(t4), FadeIn(gt), run_time=0.35)
             self.remove(t4, *t4.get_family())
             for m in list(t4.lines):
                 t4.lines.remove(m)
-            self.play(FadeIn(gt), run_time=0.4)
-            gt.fill(self, "types", run_time=0.5)
-            gt.settle(self, "types", run_time=0.4)
+            gt.fill(self, "types", run_time=0.4)
+            gt.settle(self, "types", run_time=0.3)
             vo.wait_until("And the smoke")
             t5 = term(P_BABYKEV, rows=14, title=T_BABYKEV, size=PT)
-            self.play(FadeOut(gt), FadeIn(t5, shift=UP * 0.2), run_time=0.4)
+            self.play(FadeOut(gt), FadeIn(t5, shift=UP * 0.2), run_time=0.35)
             self.remove(gt, *gt.get_family())
             m_ln = typ(self, t5, smoke.cmd, type_time=0.3)
             m_out = out(self, t5, smoke_lines, run_time=0.5, lag=0.05)
