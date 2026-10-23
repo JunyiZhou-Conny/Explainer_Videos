@@ -46,7 +46,7 @@ from manim import *  # noqa: I001  (manim first, then common: common must win)
 from explainer.scene import VoiceScene
 
 from common import (ERR, IMAGE, INK, KEY, NARRATION, P_LAPTOP_HOME, P_LLMRAG, PASS, ROUTE, SAY_COUNT, TURN,
-                    AppMap, attach, beside, bare_prompt, capture, card, cd_prompt, code, code_span, cross_mark, cut,
+                    AppMap, attach, beside, each, bare_prompt, capture, card, cd_prompt, code, code_span, cross_mark, cut,
                     editor_row, err_chip, extra_row, flash_tag, label, line_bar, lref, mono, note, on_bar, out,
                     outline_box, pin, readme, recorded_tag, resize, ring, row_tag, squash, squeeze, substring,
                     swap_tracker, term, time_row, track, tracker, turn_row, type_cmd, unpin, istep)
@@ -332,17 +332,13 @@ class NetworkAndShell(VoiceScene):
             g_b = mark(self, row_env, "your-gcp-project", TURN)
             vo.wait_until("copied by Compose")
             map_all = VGroup(m, m.tubes["loader"])
-            self.play(FadeOut(map_all), run_time=0.5)
+            self.play(FadeOut(map_all), run_time=0.4)
             self.remove(map_all)
-            self.play(FadeIn(c15, shift=DOWN * 0.2), run_time=0.6)
+            self.play(FadeIn(c15, shift=DOWN * 0.2), FadeIn(cap15, shift=UP * 0.1), run_time=0.6)
             refs = [code_span(c15.code, 1, "$GOOGLE_APPLICATION_CREDENTIALS"), code_span(c15.code, 2, "$GCP_PROJECT")]
-            self.play(*[r.animate.set_color(TURN) for r in refs], run_time=0.5)
-            self.play(Indicate(refs[0], color=TURN, scale_factor=1.1), Indicate(g_a, color=TURN, scale_factor=1.05),
-                      run_time=0.6)
-            self.play(Indicate(refs[1], color=TURN, scale_factor=1.1), Indicate(g_b, color=TURN, scale_factor=1.05),
-                      run_time=0.6)
             vo.wait_until("from the launching script")
-            self.play(FadeIn(cap15, shift=UP * 0.1), run_time=0.5)
+            self.play(*[r.animate.set_color(TURN) for r in refs], run_time=0.4)
+            self.play(each([refs[0], g_a, refs[1], g_b], TURN, scale=1.06, lag=0.3), run_time=1.2)
             vo.wait_until("which is why you always start there")
             self.play(Indicate(cap15, color=INK, scale_factor=1.06), run_time=0.8)
 
@@ -350,20 +346,20 @@ class NetworkAndShell(VoiceScene):
         note_card = card(["This recording machine has no Google account.",
                           "The key file in the folder listings is an obviously invalid stand-in.",
                           "It was removed before the cloud steps."], head="one honest note")
-        note_card.move_to([0, 1.65, 0])
+        note_card.move_to([0, 1.9, 0])
         rec = recorded_tag("recorded")
         rec_note = note("a success you will see on your machine · source named", S.GREY, 22)
         rec_row = VGroup(rec, rec_note).arrange(RIGHT, buff=0.3).next_to(note_card, DOWN, buff=0.35)
-        ch = chain_outline().move_to([0, -2.55, 0])
+        ch = chain_outline().move_to([0, -2.1, 0])
         dce = err_chip("DefaultCredentialsError")
-        dce.next_to(ch.slots[0], UP, buff=0.3).align_to(ch.slots[0], LEFT)
+        dce.next_to(ch.slots[0], UP, buff=0.5).align_to(ch.slots[0], LEFT)
         dce_note = note("what a missing key looks like", S.GREY, 22).next_to(dce, RIGHT, buff=0.35)
         red0 = outline_box(ch.slots[0].width, ch.slots[0].height, ERR, solid=True, fill_opacity=0.08) \
             .move_to(ch.slots[0])
         x0 = cross_mark(0.45, ERR).move_to(ch.slots[0])
-        down = Arrow(dce.get_bottom(), ch.slots[0].get_top(), buff=0.05, color=ERR, stroke_width=3,
-                     tip_length=0.14, max_tip_length_to_length_ratio=0.5)
-        down.move_to([ch.slots[0].get_center()[0], down.get_center()[1], 0])
+        sx = ch.slots[0].get_center()[0]
+        down = Arrow([sx, dce.get_bottom()[1] - 0.04, 0], [sx, ch.slots[0].get_top()[1] + 0.04, 0], buff=0,
+                     color=ERR, stroke_width=3, tip_length=0.14, max_tip_length_to_length_ratio=0.5)
 
         with self.voiceover(SAY[5]) as vo:
             keep = {id(f) for k in (tr, ref) for f in k.get_family()}
