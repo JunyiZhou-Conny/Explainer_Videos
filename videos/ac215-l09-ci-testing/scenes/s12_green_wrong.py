@@ -56,8 +56,7 @@ Deviations (reported to the coordinator):
 
 import re
 
-import numpy as np  # noqa: I001  (manim first, then common: common must win)
-from manim import *
+from manim import *  # noqa: I001  (manim first, then common: common must win)
 
 from explainer.scene import VoiceScene
 from explainer import style as S
@@ -220,6 +219,12 @@ def attn(a, b, color=INK, angle: float = PI / 2, dashed: bool = False):
     return arr
 
 
+def pulse(mobs, color, width: float = 5, run_time: float = 0.7):
+    """Filled shapes flash their outline only (Indicate floods a filled shape with its colour)."""
+    return AnimationGroup(*[m.animate(rate_func=there_and_back).set_stroke(color, width=width) for m in mobs],
+                          run_time=run_time)
+
+
 def bracket(a_row, b_row, x: float, color=TURN) -> VMobject:
     """A YELLOW bracket from the end of row a to the end of row b, standing at x."""
     ya, yb = a_row.strut.get_center()[1], b_row.strut.get_center()[1]
@@ -295,8 +300,8 @@ class GreenButWrong(VoiceScene):
             vo.wait_until("all green")
             self.play(LaggedStart(*[d.animate.set_color(PASS) for d in dots], lag_ratio=0.15), run_time=0.7)
             vo.wait_until("Pause and run both.")
-            k1, y1 = tag_on(self, s_ln, turn_row)
-            k2, y2 = tag_on(self, j_ln, turn_row)
+            _, y1 = tag_on(self, s_ln, turn_row)
+            _, y2 = tag_on(self, j_ln, turn_row)
             self.play(*flash(y1, TURN), *flash(y2, TURN), run_time=0.8)
 
         # ========================================================== 1. the model in one picture
@@ -315,7 +320,7 @@ class GreenButWrong(VoiceScene):
         ybox = Rectangle(width=block.width + 0.1, height=block.height + 0.1, stroke_color=TURN,
                          stroke_width=4).move_to(block)
         diff_cap = label("this cell is the whole difference", 22, TURN)
-        diff_cap.move_to([grid.get_left()[0] - 0.25 - diff_cap.width / 2, block.get_center()[1] - 0.95, 0])
+        diff_cap.move_to([grid.get_left()[0] - 0.3 - diff_cap.width / 2, block.get_center()[1], 0])
         causal = note("causal mask", S.GREY, 22).next_to(diff_cap, DOWN, buff=0.2).align_to(diff_cap, RIGHT)
 
         with self.voiceover(SAY[1]) as vo:
@@ -336,9 +341,7 @@ class GreenButWrong(VoiceScene):
             vo.wait_until("a question may see the state and itself")
             row6 = VGroup(*[grid.cells[5][j] for j in (0, 1, 4, 5)])
             self.play(Create(to_state), Create(to_self), FadeIn(rule[0], shift=UP * 0.1), run_time=0.8)
-            self.play(Indicate(row6, color=INK, scale_factor=1.08),
-                      Indicate(VGroup(toks[0], toks[1], toks[4], toks[5]), color=INK, scale_factor=1.06),
-                      run_time=0.7)
+            self.play(pulse(row6, INK), pulse([toks[0], toks[1], toks[4], toks[5]], INK), run_time=0.8)
             vo.wait_until("never a sibling question")
             self.play(FadeIn(rule[1], shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Questions must be answered independently")
@@ -349,7 +352,7 @@ class GreenButWrong(VoiceScene):
             xmark = VGroup(Line(UL, DR), Line(DL, UR)).scale(0.22).set_stroke(ERR, 6)
             xmark.move_to(sneak.mid)
             self.play(Create(xmark), sneak.animate.set_color(ERR), run_time=0.5)
-            self.play(Indicate(VGroup(toks[2], toks[3]), color=ERR, scale_factor=1.06), run_time=0.6)
+            self.play(pulse([toks[2], toks[3]], ERR), run_time=0.7)
             vo.wait_until("That one forbidden cell")
             self.play(Create(ybox), FadeIn(diff_cap, shift=RIGHT * 0.2), run_time=0.7)
             self.play(ybox.animate(rate_func=there_and_back).set_stroke(width=8), run_time=0.6)
@@ -381,7 +384,7 @@ class GreenButWrong(VoiceScene):
                       run_time=0.9)
             attach(self, rows_of(o_ln)[1], r_seg)
             vo.wait_until("pause and print yours")
-            ky, yy = tag_on(self, o_ln, turn_row)
+            _, yy = tag_on(self, o_ln, turn_row)
             self.play(*flash(yy, TURN), run_time=0.7)
             p1 = out(self, s, built_rows[:3], run_time=0.4)
             land(self, grid, p1, built_rows[:3], 0)
@@ -405,7 +408,7 @@ class GreenButWrong(VoiceScene):
             vo.wait_until("marks every pair of tokens")
             lower = VGroup(*[grid.cells[i][j] for i in range(6) for j in range(i + 1)])
             self.play(Indicate(substring(c_row, "same"), color=INK, scale_factor=1.2),
-                      Indicate(lower, color=INK, scale_factor=1.04), run_time=0.8)
+                      pulse(lower, INK, width=4), run_time=0.8)
 
         # ========================================================== 3. a checker prints WRONG; ponder
         built = VGroup(grid, boxes)
@@ -495,9 +498,15 @@ class GreenButWrong(VoiceScene):
             self.play(FadeIn(t, shift=UP * 0.2), run_time=0.5)
             vo.wait_until("the type checker")
             typ(self, t, ty.cmd, type_time=0.5)
-            vo.wait_until("Running ty finds 6 diagnostics")
+            vo.wait_until("reads declared types")
             y_out = out(self, t, ty.at((2, 3), "…", 55), run_time=0.6)
             found = y_out[3]
+            decl = substring(y_out[0], "Return type does not match returned value")
+            self.play(Indicate(decl, color=INK, scale_factor=1.08), run_time=0.7)
+            vo.wait_until("without running the code")
+            self.play(Indicate(substring(y_out[1], "src/babykev/model.py:68:12"), color=INK, scale_factor=1.12),
+                      run_time=0.7)
+            vo.wait_until("Running ty finds 6 diagnostics")
             self.play(found.animate.set_color(ERR), run_time=0.3)
             self.play(Indicate(found, color=ERR, scale_factor=1.12), run_time=0.6)
             vo.wait_until("yet just check is green")
@@ -539,7 +548,7 @@ class GreenButWrong(VoiceScene):
                                   lag_ratio=0.2),
                       Indicate(substring(l2, "on cpu"), color=INK, scale_factor=1.2), run_time=1.0)
             vo.wait_until("pause and run it")
-            km, ym = tag_on(self, m_ln, turn_row)
+            _, ym = tag_on(self, m_ln, turn_row)
             self.play(*flash(ym, TURN), run_time=0.7)
             vo.wait_until("6 of 15 right.")
             right = substring(l32, "6 of 15 right")

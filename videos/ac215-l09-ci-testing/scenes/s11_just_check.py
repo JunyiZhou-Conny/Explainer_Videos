@@ -39,12 +39,15 @@ Beats (script.md, ## S11; one voiceover block each):
    whole in a RED card above the terminal; the undo `git rm --cached -q .env && rm .env`
    (walk.md:311).
 5. TRACKER E5. Two style cards: GREEN "babykev: check points, you run just fmt yourself", TEAL
-   "cheese: black rewrites, you look and re-stage"; they clear. One 11-row terminal: `just docs
+   "cheese: black rewrites, you look and re-stage", over the gate table (tests and system filled,
+   S09 left "format + lint" empty): as the two format styles are named, the "format + lint" row
+   fills (YELLOW on babykev's card, settles on cheese's: both styles are that gate row); cards and
+   table clear. One 11-row terminal: `just docs
    check` (row tag "at step-04") -> s04-04: 2–7, …, 93, `50 of 88` RED; it keeps the command and
    line 93 and runs it again (row tag "at step-04b") -> s04b-03: 2–9, `88 of 88` GREEN. A capture
    card `git commit -am "try"` with s04b-09: 5–7, 35–36 and the GREY chip "one deleted description
-   blocks the commit". V1: the gate table (tests, format + lint, system filled) gains "docs" and
-   "config files", GREEN inside the turnstile frame. Fade to an empty frame.
+   blocks the commit". V1: the gate table returns (tests, format + lint, system) and the two rows
+   join, "docs" and "config files", GREEN inside the turnstile frame. Fade to an empty frame.
 
 Deviations (reported to the coordinator):
 - Over-wide lines keep their text verbatim up to a house "…" cut (common.py `cut`). pre-commit's
@@ -60,7 +63,8 @@ Deviations (reported to the coordinator):
   quotes with a 2-space indent (still one valid shell command when pasted; asserted).
 - "two small terminals" for the docs checks: one full-width terminal runs both in turn (the house
   forbids half-width terminals), each command tagged with its step.
-- The gate table carries "format + lint" filled (BRIEF: S09 adds it; S14 shows all six), and the
+- The gate table's "format + lint" row is empty when it appears (S09 leaves it empty) and fills
+  during the two format-gate style cards, so "Two rows join the table" stays true at the end; the
   config row's tools read "yamllint, uv, just" (step-03's lint-config: no hadolint until step-05b).
 - The coverage gauge above the beat-2 terminal is an addition (a mechanism for "floor"): its two
   values are the capture's own (100.00 %, 49.40 %).
@@ -648,11 +652,13 @@ class JustCheck(VoiceScene):
         # ========================================================== 5. two styles; docs join the gate
         cards = VGroup(style_card("babykev", "check points, you run just fmt yourself", VENV),
                        style_card("cheese", "black rewrites, you look and re-stage", IMAGE))
-        cards.arrange(RIGHT, buff=0.3).move_to([0, 0.2, 0])
+        cards.arrange(RIGHT, buff=0.3)
+        cards.move_to([0, 2.75 - cards.height / 2, 0])
         t2 = term(P_BABYKEV, rows=11, title=T_BABYKEV, size=PT)
-        gt = GateTable(keys=("tests", "format", "docs", "config", "system"), filled=("tests", "format", "system"),
+        gt = GateTable(keys=("tests", "format", "docs", "config", "system"), filled=("tests", "system"),
                        rows={"config": ("config files", "yamllint, uv, just", "just lint-config", "yes", True)})
-        gt.move_to([0, -0.35, 0])
+        gt.shift(UP * (cards.get_bottom()[1] - 0.35 - gt.get_top()[1]))     # under the style cards
+        assert gt.get_bottom()[1] >= -3.5, gt.get_bottom()
         cc_lines = fit(c4b.at((5, 7), "…", (35, 36)))
         cc = term(P_BABYKEV, rows=len(cc_lines), title=c4b.cmd, size=PT, place=False)
         cc.move_to([0, 0.35, 0])
@@ -664,14 +670,17 @@ class JustCheck(VoiceScene):
             self.play(FadeOut(gone), track(tr, 5), run_time=0.6)
             self.remove(gone, *gone.get_family())
             vo.wait_until("Two gate styles, both fine")
-            self.play(FadeIn(cards[0].frame), FadeIn(cards[1].frame), run_time=0.5)
+            self.play(FadeIn(cards[0].frame), FadeIn(cards[1].frame), FadeIn(gt), run_time=0.6)
             vo.wait_until("this one points and you run just fmt")
             self.play(FadeIn(cards[0].head), FadeIn(cards[0].body, shift=RIGHT * 0.2), run_time=0.6)
+            gt.fill(self, "format", run_time=0.6)           # just check's fmt --check + lint: the row S09 left empty
             vo.wait_until("the cheese gate rewrites and makes you look")
             self.play(FadeIn(cards[1].head), FadeIn(cards[1].body, shift=RIGHT * 0.2), run_time=0.6)
+            gt.settle(self, "format")
             vo.wait_until("Steps 4 and 4 b put documentation in the gate")
-            self.play(FadeOut(cards), FadeIn(t2, shift=UP * 0.2), run_time=0.6)
-            self.remove(cards)
+            self.play(FadeOut(VGroup(cards, gt)), FadeIn(t2, shift=UP * 0.2), run_time=0.6)
+            self.remove(cards, gt)
+            gt.move_to([0, -0.35, 0])                       # it returns centred for the last beat
             d_ln = typ(self, t2, d4.cmd, type_time=0.5)
             pin(self, d_ln, beside(row_tag("at step-04", S.GREY), d_ln))
             d_out = out(self, t2, d4.at((2, 7), "…", 93), run_time=0.8)
@@ -679,6 +688,8 @@ class JustCheck(VoiceScene):
             vo.wait_until("first 50 of 88")
             self.play(substring(l93, "50 of 88").animate.set_color(ERR), run_time=0.3)
             self.play(Indicate(substring(l93, "50 of 88"), color=ERR, scale_factor=1.2), run_time=0.6)
+            vo.wait_until("classes typed and documented")
+            self.play(Indicate(substring(l93, "typed and documented"), color=INK, scale_factor=1.1), run_time=0.7)
             vo.wait_until("one step later 88 of 88")
             resize(self, t2, 11, keep=[d_ln, l93], run_time=0.5)
             e_ln = typ(self, t2, d4b.cmd, type_time=0.5)
