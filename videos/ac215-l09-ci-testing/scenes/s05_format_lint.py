@@ -388,7 +388,7 @@ class FormatterLinter(VoiceScene):
             grow = (14 - t.rows) * line_pitch(PT)
             resize(self, t, 14, keep=0, extra=(host.animate.shift(UP * grow), track(tr, 5)))
             l5 = type_cmd(self, t, f8_local.cmd, type_time=0.8)
-            yt6 = beside(turn_row(), l5)
+            yt6 = beside(turn_row(), l5, buff=0.2)
             pin(self, l5, yt6)
             vo.wait_until("The local flake8")
             o5 = t.print(self, f8_local.at((2, 4)), run_time=0.7, wrap=True)
@@ -422,7 +422,7 @@ class FormatterLinter(VoiceScene):
         ff.move_to([-0.9, -0.55, 0])
         sweeper = broom()
         p_mid = panel2.code.background.get_center()[1]
-        sweeper.move_to([-6.0, p_mid, 0])
+        sweeper.move_to([-5.7, p_mid, 0])
         survivors = VGroup(finding_chip("F401", "'os' imported but unused"),
                            finding_chip("E501", "a 147-character line · a string black must not break"))
         survivors.arrange(DOWN, aligned_edge=LEFT, buff=0.18).move_to([0, -2.15, 0])
@@ -440,7 +440,7 @@ class FormatterLinter(VoiceScene):
             self.play(FadeIn(imp_bar), imp.animate.set_color(ERR), run_time=0.5)
             vo.wait_until("black sweeps away almost every finding")
             self.play(FadeIn(sweeper, shift=RIGHT * 0.3), run_time=0.4)
-            self.play(sweeper.animate.set_x(6.0), ff.step(run_time=1.6), run_time=1.8, rate_func=smooth)
+            self.play(sweeper.animate.set_x(5.7), ff.step(run_time=1.6), run_time=1.8, rate_func=smooth)
             self.play(FadeOut(sweeper, shift=RIGHT * 0.3), run_time=0.4)
             self.remove(sweeper)
             vo.wait_until("exactly 2 survive")
