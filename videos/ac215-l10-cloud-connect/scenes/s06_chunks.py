@@ -161,7 +161,7 @@ class ChunksNeedAKey(VoiceScene):
             vo.wait_until("The ID in the prompt")
             cid = substring(r0, "f9965bfbee29")
             id_ring = ring(cid, TURN, buff=0.06)
-            id_note = note("new every run", TURN).next_to(id_ring, UP, buff=0.18).align_to(id_ring, LEFT)
+            id_note = note("new every run", TURN).align_to(id_ring, LEFT).set_y(t.box.get_top()[1] + 0.3)
             self.play(Create(id_ring), FadeIn(id_note, shift=DOWN * 0.1), run_time=0.7)
             vo.wait_until("Chunking runs for real")
             out(self, t, cap24.at((14, 17)), wrap=True)
@@ -283,7 +283,7 @@ class ChunksNeedAKey(VoiceScene):
             w.move_to([0, 0.35, 0])
         cap_a = label("default overlap: up to 200", 22, INK)
         cap_b = label("· cuts at paragraph and word breaks", 22, INK)
-        caps = VGroup(cap_a, cap_b).arrange(RIGHT, buff=0.15).move_to([0, -2.85, 0])
+        caps = VGroup(cap_a, cap_b).arrange(RIGHT, buff=0.15).next_to(win_b, DOWN, buff=0.45)
 
         with self.voiceover(SAY[4]) as vo:
             clear_but(self, tr, anims=[track(tr, 4)], run_time=0.5)
@@ -386,26 +386,23 @@ class ChunksNeedAKey(VoiceScene):
             self.play(Indicate(e_b[1], color=TURN, scale_factor=1.12), run_time=0.8)
             vo.wait_until("Last, one real Tolminc chunk")
             clear_but(self, tr, t5, run_time=0.4)
-            resize(self, t5, 8, run_time=0.6)
-            hd = type_cmd(self, t5, cap28.cmd, type_time=1.3)
+            resize(self, t5, 8, run_time=0.5)
+            book.move_to([0, t5.box.get_top()[1] + 0.45, 0])
+            self.play(FadeIn(book, shift=DOWN * 0.1), run_time=0.4)
+            hd = type_cmd(self, t5, cap28.cmd, type_time=1.0)
             xh = beside(extra_row(), hd)
             pin(self, hd, xh)
             out(self, t5, cap28.at(2), wrap=True)
-            book.move_to([0, t5.box.get_top()[1] + 0.45, 0])
             vo.wait_until("the kind of passage")
             tol = t5.find("Tolminc: A Cheese")
-            self.play(FadeIn(book, shift=DOWN * 0.1),
-                      Indicate(substring(tol, "Tolminc"), color=TURN, scale_factor=1.2), run_time=0.8)
+            self.play(Indicate(substring(tol, "Tolminc"), color=TURN, scale_factor=1.2),
+                      Indicate(book, color=INK, scale_factor=1.05), run_time=0.8)
+        self.wait(1.2)                                   # time to read the chunk
 
         # ========================================================== 6. Chroma keeps running
         cap22, cap23 = capture("22"), capture("23")
         r106_1 = label("ChromaDB keeps running after you exit the CLI container …", 24, INK)
-        r106_2 = VGroup(label("To stop it, run", 24, INK), mono("docker compose down", 22, INK),
-                        label("inside", 24, INK), mono("llm-rag", 22, INK), label(".", 24, INK))
-        r106_2.arrange(RIGHT, buff=0.14)
-        for x in r106_2[1:]:
-            x.align_to(r106_2[0], DOWN)
-        r106_2[-1].shift(LEFT * 0.08)
+        r106_2 = label("To stop it, run docker compose down inside llm-rag.", 24, INK)
         c106 = readme_card(106, VGroup(r106_1, r106_2).arrange(DOWN, aligned_edge=LEFT, buff=0.18))
         c106.move_to([0, 0.5, 0])
         part2 = grey_chip("we stop it in part 2").next_to(c106, DOWN, buff=0.3).align_to(c106, RIGHT)
@@ -447,10 +444,12 @@ class ChunksNeedAKey(VoiceScene):
             pin(self, cu, xc)
             vo.wait_until("1.0.0")
             ver = out(self, strip, cap23.at(2), run_time=0.3)[0]
-            self.play(Indicate(substring(ver, '"1.0.0"'), color=INK, scale_factor=1.2), run_time=0.6)
-            vo.wait_until("at the time of recording")
             tv = beside(time_row(), ver)
-            pin(self, ver, tv)
+            pin(self, ver, tv, anim=AnimationGroup(FadeIn(tv, shift=LEFT * 0.1),
+                                                   Indicate(substring(ver, '"1.0.0"'), color=INK, scale_factor=1.2)),
+                run_time=0.6)
+            vo.wait_until("at the time of recording")
+            flash_tag(self, tv, INK)
             vo.wait_until("Stopping it comes")
             self.play(FadeOut(strip), run_time=0.4)
             self.remove(strip, *strip.get_family())
