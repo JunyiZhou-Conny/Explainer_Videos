@@ -508,8 +508,19 @@ class HooksThenCI(VoiceScene):
             ys = [path.point_from_proportion(a)[1] for a in np.linspace(0, 1, 300)]
             top = max(ys) + rider.get_top()[1] - rider.get_center()[1]
             assert top <= dim_box.get_bottom()[1] - 0.15, (top, dim_box.get_bottom())
-            self.play(MoveAlongPath(rider, path), run_time=1.6, rate_func=smooth)
-            self.play(FadeOut(env), FadeOut(nv), run_time=0.4)
+            # the chip rides until it would come down onto HISTORY, then fades there; the envelope
+            # alone drops into the vault
+            off = nv.get_bottom()[1] - rider.get_center()[1]
+            lim = gate.vault.text.get_top()[1] + 0.12
+            ss = np.linspace(0.02, 1, 150)
+            ends = [path.get_subcurve(0, s).get_end() for s in ss]
+            k_top = max(range(len(ss)), key=lambda i: ends[i][1])
+            a = next(ss[i - 1] for i in range(k_top, len(ss)) if ends[i][1] + off < lim)
+            p1 = path.get_subcurve(0, a)
+            p2 = path.get_subcurve(a, 1).shift(env.get_center() - rider.get_center())
+            self.play(MoveAlongPath(rider, p1), run_time=1.6 * a, rate_func=rush_into)
+            self.play(MoveAlongPath(env, p2), FadeOut(nv), run_time=max(0.5, 1.6 * (1 - a)), rate_func=rush_from)
+            self.play(FadeOut(env), run_time=0.4)
             gate.remove(env)
             self.remove(env, nv)
             gate.envelope = None

@@ -19,7 +19,8 @@ Beats (script.md, ## S15; one voiceover block each):
 1. Tracker and laptop leave. "Test yourself" (YELLOW underline) top-left; one question at a time
    at 26 pt (<= 3 lines) on the right, each under a YELLOW number badge, with a text-free icon
    from its set piece: Q1 the nested boxes (unit, integration, the GREEN dashed hermetic border,
-   the BLUE system box, the PINK wire to a BLUE server; they light in turn on "file by file");
+   the BLUE system box, the PINK wire to a BLUE server; each lights as it is named, the server
+   on "file by file");
    Q2 a GREEN headline bar over four GREY dashed skip dots (the bar pulses on "What does pytest
    actually print", each dot on "hermetic"). When a question is replaced, its badge flies into the
    list at the left and turns GREY; its one-line label fades in: "three kinds" · "silent skip".
@@ -404,10 +405,12 @@ class Recap(VoiceScene):
             self.play(FadeIn(title, shift=DOWN * 0.1), Create(uline), run_time=0.6)
             vo.wait_until("One:")
             q1 = ask_q(1, kinds)
-            vo.wait_until("file by file")
-            for part, col in ((kinds.unit, UNIT), (kinds.integ, INTEG), (kinds.system, SYSTEM_TEST)):
+            for said, part, col in (("a unit,", kinds.unit, UNIT), ("an integration", kinds.integ, INTEG),
+                                    ("a system test", kinds.system, SYSTEM_TEST)):
+                vo.wait_until(said)                    # each box lights as it is named
                 self.play(part.fill.animate.set_fill(col, 0.4), run_time=0.35)
                 self.play(part.fill.animate.set_fill(col, 0.08), run_time=0.35)
+            vo.wait_until("file by file")
             self.play(Indicate(kinds.server, color=SYSTEM_TEST, scale_factor=1.12), run_time=0.5)
 
             vo.wait_until("Two:")

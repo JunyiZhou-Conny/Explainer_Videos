@@ -257,8 +257,9 @@ you skipped the rebuild (C1). Undo with `git restore src/api-service/api/service
 rebuild.
 </details>
 
-**B2. What does the silent skip return?** Start the server and wait for it as in B1, run the system
-tests, stop and remove the server, then run the same test command again. After each test run,
+**B2. What does the silent skip return?** With B1's change undone and the image rebuilt, start the
+server and wait for it as in B1, run the system tests, stop and remove the server, then run the
+same test command again. After each test run,
 type `echo $?` *(extra)*. Predict the summary line and the exit status both times.
 
 <details><summary>Answer</summary>
@@ -311,10 +312,12 @@ it (line 8), and line 20 is a bare `except:`. Predict: does `pre-commit run --al
 
 No complaint: flake8 says `Passed` (`laptop/part4-04`, line 18) because both black and flake8 only
 see files that match `^src/.*\.py$` (`.pre-commit-config.yaml:35`, `:44`), and CI lints only the
-image's `api/` folder (`ci.yml:61`, `:66`). With the wider pattern, flake8 should report at least
-`F401` for `time` (line 8) and `E722` for the bare `except:` (line 20), and black may reformat test
-files too (for example `power(8, 1/3)` at `test_utils.py:59`). Those predictions come from reading
-the files, not from a capture: run it and look. Undo with
+image's `api/` folder (`ci.yml:61`, `:66`). With the wider pattern, flake8 reports two findings,
+`F401 'time' imported but unused` (line 8) and `E722 do not use bare 'except'` (line 20), and black
+reformats two test files: a blank line at the end of `test_system_api.py`, and `power(8, 1/3)` →
+`power(8, 1 / 3)` at `test_utils.py:59`. These were measured on copies of the `tests/` folder with
+the hooks' arguments (flake8 7.4.1 and black 26.5.1 at the time of recording, not the hooks' pinned
+versions), not captured from a pre-commit run: run it and compare. Undo with
 `git restore .pre-commit-config.yaml tests/` *(extra)*, or keep the wider pattern and fix what it
 finds: test code is code.
 </details>
@@ -378,8 +381,8 @@ couldn't find them in the cached files." Don't try that last command on a laptop
 there it would most likely just download the 1 GB model again, into the empty folder.
 </details>
 
-**B7. README Part 7: add an endpoint.** Add the `/add/` endpoint (`README.md:405-410`) and its test
-(`README.md:414-419`), then build and run all tests the README's way:
+**B7. README Part 7: add an endpoint.** Add the `/add/` endpoint (`README.md:406-409`) and its test
+(`README.md:415-418`), then build and run all tests the README's way:
 
 ```bash
 docker build -t cheese-app-api:local .
@@ -474,7 +477,7 @@ guard is `detect-private-key` (`.pre-commit-config.yaml:25`), which starts to ma
 real credentials arrive.
 </details>
 
-**C4. The walk-around.** In the C2 state (unused import staged), run
+**C4. The walk-around.** With C2's unused import staged again, run
 `git commit --no-verify -m "try an unused import"` *(extra)*. Predict what happens. Then read
 `ci.yml:7-11` and `:59-67`: once such a commit is pushed to a repo with this workflow, which step
 would turn the job red?
@@ -587,9 +590,10 @@ fail": it promises the same floating-point arithmetic everywhere.
 
 A `system` marker would be wrong: it would take a good isolation test out of every commit. Better,
 keep the promise the test is about and drop the one it isn't: compare with a tolerance far below
-what a leaking mask does (with step 05's mask the scores moved in the second decimal, walk.md
-step-05a E). That's a suggestion, not the author's code. The test still fails for the real reason
-with the wrong mask (`babykev/s05a-11`). Neither result is the student's mistake or a babykev bug.
+what a leaking mask does (with step 05's mask the scores moved in the second decimal,
+walk.md:656). That's a suggestion, not the author's code. The test still fails for the real
+reason with the wrong mask (`babykev/s05a-11`). Neither result is the student's mistake or a
+babykev bug.
 </details>
 
 **D3. One command for everyone.** In the cheese repo, list every black that can judge your code,
