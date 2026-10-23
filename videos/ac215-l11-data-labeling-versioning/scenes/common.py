@@ -2280,9 +2280,10 @@ class FuseMount(Rig):
         return FadeIn(self.dvc, shift=DOWN * 0.2, run_time=run_time)
 
     def fetch(self, scene):
-        d = Dot(self.dvc.get_bottom(), radius=0.08, color=ROUTE)
+        d = Dot(self.dvc.get_left(), radius=0.08, color=ROUTE)
         bx = self.mnt_images.get_right()[0] + 0.45
-        up = VMobject().set_points_as_corners([self.app.get_left(), [bx, self.app.get_center()[1], 0],
+        up = VMobject().set_points_as_corners([self.dvc.get_left(), self.app.get_left(),
+                                               [bx, self.app.get_center()[1], 0],
                                                [bx, self.mnt_images.get_center()[1], 0],
                                                self.mnt_images.get_right(), self.mnt.get_top(),
                                                self.bucket.frame.get_bottom()])
@@ -2675,7 +2676,7 @@ class TagRope(Rig):
                                   the manifest then each blob; n blank tiles appear in Colab
       stop_at_manifest(scene)     the rope reaches the manifest and a RED '401' stops it (C13)
       ghost(tag='dataset_v25') -> VGroup   a dashed GREY flag on no bead, its rope ending in air
-      burn() -> Animation                  the warehouse turns GREY dashed, its blobs go (recap Q5)
+      burn(scene)                 plays: the warehouse turns GREY dashed (kept in .store), its blobs go
       homes() -> VGroup           the three homes of the bytes panel (.images .cache .store; not
                                   added; shown alone)
       silhouette() -> VGroup      S09's 2 s GREY sketch: flag → card → rope → bucket (not added)"""
@@ -2801,12 +2802,20 @@ class TagRope(Rig):
         g.flag, g.rope = f, r
         return g
 
-    def burn(self, run_time: float = 1.0):
+    def burn(self, scene, run_time: float = 1.0):
+        """Plays: the warehouse burns (recap Q5): blobs and manifests go, the frame turns into a GREY
+        dashed outline that stays part of .store (it follows the piece and fades with it)."""
         fr = self.store.frame
         ghost_ = outline_box(fr.width, fr.height, S.GREY, solid=False).move_to(fr)
-        return AnimationGroup(FadeOut(VGroup(*[b for b in self.blobs.values()], *self.dirs.values())),
-                              FadeTransform(fr, ghost_), self.store.title.animate.set_color(S.GREY),
-                              run_time=run_time)
+        gone = [m for m in (*self.blobs.values(), *self.dirs.values()) if m in scene.mobjects]
+        scene.play(*([FadeOut(VGroup(*gone))] if gone else []), FadeTransform(fr, ghost_),
+                   self.store.title.animate.set_color(S.GREY), run_time=run_time)
+        scene.remove(ghost_, *gone)
+        self.store.remove(fr)                          # a faded child left in .store would snap back
+        self.store.submobjects.insert(0, ghost_)
+        self.store.frame = ghost_
+        if self.store not in scene.mobjects and self not in scene.mobjects:
+            scene.add(self.store)
 
     def homes(self) -> VGroup:
         """The three homes of the bytes: images/ (BLUE, the folder you upload to · changes),
