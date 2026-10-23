@@ -29,6 +29,7 @@
 # Steps marked "extra" are not in the README; they are checks the video uses.
 OUT=$1; SEG=$2
 HERE="$(cd "$(dirname "$0")" && pwd)"
+umask 022   # a login shell's default (docker exec would otherwise run with umask 0000)
 cd ~
 
 step() {  # step <name> <command...>   (no terminal: plain output, as in a script)
@@ -96,6 +97,7 @@ wait_http() {  # wait_http <url> <seconds>: quiet readiness probe (capture-only,
 TOKEN=student-demo-token-not-a-secret   # capture-only Label Studio API token (see ASSETS.md)
 AUTH="Authorization: Token $TOKEN"
 CTRLC=$'\x03'
+AUTHCHECK='python -c "import google.auth; google.auth.default()"'   # extra: who would gcsfs authenticate as?
 
 case $SEG in
 pre)
@@ -368,6 +370,7 @@ b-v20)
     ':/app# $' 'dvc add cheese_dataset' \
     ':/app# $' 'cat cheese_dataset.dvc' \
     ':/app# $' 'dvc push' \
+    ':/app# $' "$AUTHCHECK" \
     ':/app# $' 'exit'
   # capture-only stand-in for the bucket's images/ folder (no bucket can be mounted here): the
   # four photos the class's dataset_v20 was made of (digest §3.5) go into the folder DVC tracks.

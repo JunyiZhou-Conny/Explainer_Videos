@@ -1,0 +1,3 @@
+$ diff <(git -C class-data-versioning show dataset_v20:cheese_dataset.dvc) <(git -C data-versioning show dataset_v20:cheese_dataset.dvc) && echo identical
+identical
+[exit 0]
