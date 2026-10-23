@@ -1,4 +1,4 @@
-# AC215 · Lecture 13 — Advanced training workflows: a run is a record, a job is a rented machine — narration script & visual plan (v1)
+# AC215 · Lecture 13 — Advanced training workflows: a run is a record, a job is a rented machine — narration script & visual plan (v2)
 
 Audience: an AC215 student who has done L1–L11: a GCP project with billing (L1), images,
 containers, bind mounts and `docker-shell.sh` scripts (L2–L4), training and fine-tuning in Colab
@@ -280,7 +280,8 @@ cell 55", both cropped to the columns `name · epochs · accuracy` (values verba
 tables' own order), each tagged `recorded`. A YELLOW ring settles on each top row:
 `mobilenetv2_train_base_True · 15 · 68.97%` (A) and `mobilenetv2_train_base_False · 15 · 68.97%`
 (B); on "62.93", B's second row `mobilenetv2_train_base_True · 10 · 62.93%` flashes WHITE. A GREY
-chip under both: "same pipeline · same 1,156 photos · same five models".
+chip under both: "same pipeline · same 1,156 photos · same five models", and a second GREY chip:
+"train_base True = fine-tuned · False = frozen".
 SAY: Two notebooks from this lecture, run by the instructors: the same data pipeline, the same 1,156 cheese photos, the same five models. Notebook A crowns the fine-tuned MobileNet, at 68.97 percent. Notebook B crowns the frozen MobileNet, also at 68.97 percent, and puts the fine-tuned one at 62.93.
 
 SHOW: A YELLOW question card settles above the tables: "Which recipe is better — and from these two
@@ -292,16 +293,15 @@ SHOW: The tables fade. V4 preview: the winning row lifts out of a Colab frame, s
 GREEN parcel "4 KB tarball" and slides into a BLUE job tile with a GOLD meter (no numbers). A
 strip below (GREY tag "preview · scene 10") shows TERM(laptop/40: 75 from "--model_name") — the
 `CMDARGS` value — with `--wandb_key=PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000` outlined RED.
-SAY: Then the winner leaves Colab. It gets packed into a 4 kilobyte tarball and trains on a machine you rent for the length of one job, from one command. That command carries a line we will look at together, because your W and B key is inside it.
+SAY: Then the fine-tuned MobileNet leaves Colab. It gets packed into a 4 kilobyte tarball and trains on a machine you rent for the length of one job, from one command. That command carries a line we will look at together, because your W and B key is inside it.
 
 SHOW: A checklist card: "✓ two Colab copies (free T4)", "✓ W&B account (free tier)", "✓ Docker",
 "✓ a GCP project with billing" with a GOLD `cost_tag()` beside it: "Vertex AI jobs bill while they
 run · no amounts in this video · see the Vertex AI pricing page". Layout preview: `tracker_a(1)`
-top-left with a YELLOW ring that flicks through the seven tracker titles A–G; a 2-row strip (GREY
-tag "preview") shows a YELLOW `▶ your turn` row tag, then a GREY `extra`, then `recorded`, then
-`extra · local stand-in` (one after the other). On "two words", GREY tag `lecture_ref(13, "8")` top
+top-left; a 2-row strip (GREY tag "preview") shows only the YELLOW `▶ your turn` row tag (the other
+tags explain themselves on first use). On "two words", GREY tag `lecture_ref(13, "8")` top
 right and two GREY words settle centre: "reproducibility · accountability". Fade out.
-SAY: To follow along you need two Colab copies with a free T4 GPU, a free account on W and B, Docker, and a Google Cloud project with billing. Vertex AI jobs bill while they run; gold tags mark each point, without amounts. Seven trackers follow along, a yellow tag means pause and run it, and the study guide has every command. Today's two words, from the lecture: reproducibility and accountability.
+SAY: To follow along you need two Colab copies with a free T4 GPU, a free account on W and B, Docker, and a Google Cloud project with billing. Vertex AI jobs cost money while they run; gold tags mark each point, without amounts. A yellow tag means pause and run it, and the study guide has every command. Today's two words, from the lecture: reproducibility and accountability.
 
 ---
 
@@ -311,12 +311,12 @@ SHOW: No tracker. GREY tag `lecture_ref(13, "5–6, 9–12")` top right, whole s
 as three dials side by side: "More Data" · "Better/Faster Models" · "Faster Hardware"; on "the
 third", the third dial turns and lights; a small GREY ledger icon pops up beside it on
 "bookkeeping".
-SAY: The lecture starts from three levers for better deep learning: more data, better models, and faster hardware. Today pulls the third one: you rent hardware. And you add the bookkeeping that shows whether it helped.
+SAY: The lecture starts from three levers for better deep learning: more data, better models, and faster hardware. Today we pull the third one: you rent hardware. And you add the bookkeeping that shows whether it helped.
 
 SHOW: Slide 6 redrawn: an arrow POC → Prototype → MVP with pastel bars; the dashed box around
 "Setup Experiment Tracking" + "Build Baseline Models" turns YELLOW with a chip "today". A GREY chip
 below: "Milestone 3: experiment tracking + one serverless training run, logged and reproducible".
-SAY: On the Cheese App roadmap, the dashed box around experiment tracking and baseline models is today: early, before the better models. Your third milestone asks for exactly this: tracking, and one serverless training run that is logged and reproducible.
+SAY: On the Cheese App roadmap, the dashed box around experiment tracking and baseline models is today. Your third milestone asks for exactly this: tracking, and one serverless training run that is logged and reproducible.
 
 SHOW: Slide 10 redrawn as four rows that snap into homes: "code → GitHub" · "data → versioning
 (L11, DVC)" · "environment → pyproject.toml, uv.lock" · "weights, metrics, logs → ?" — the last row
@@ -343,14 +343,15 @@ SHOW: TRACKER A1 (tracker A appears: "Notebook A › Cheese Classification Model
 in Drive", then "Runtime → Change runtime type → GPU"; `▶ your turn`. Then NB(A: 101, 106, 112)
 with its output NB(A: 115, 117, 120) (`tensorflow version 2.19.0`, `Number of replicas: 1`,
 `GPU Available:  [PhysicalDevice(…GPU:0…)]`, the last cut at the frame) and cell 10's
-`!nvidia-smi` box cropped to NB(A: 137), `Tesla T4` YELLOW.
+`!nvidia-smi` box cropped to NB(A: 137), `Tesla T4` YELLOW. A GREY chip on the menu: "the study
+guide links notebooks A and B · the badges inside them open older copies".
 SAY: Open notebook A from the course page, save a copy, and switch the runtime to a GPU; pause and set it up. Its stored outputs show the instructors' run: TensorFlow 2.19.0 and one Tesla T4 GPU.
 
 SHOW: TRACKER A2. NB(A: 318) (the download line) then cell 17's output NB(A: 352–353):
 `Labels: ['brie', 'gouda', 'parmigiano', 'gruyere']` with a YELLOW pin "remember this order", and
 `Full size of the dataset: 1156`. TRACKER A3: cell 26, NB(A: 432–443) as code, then its output
 NB(A: 445–447): `train_x count: 936` / `validate_x count: 104` / `test_x count: 116`. `▶ your turn`.
-SAY: Run the dataset cells: 1,156 photos from one GitHub release, with four cheese labels. Remember their order. Then the split: 936 for training, 104 for validation, 116 for testing. Pause and run them.
+SAY: Run the dataset cells: 1,156 photos from one GitHub release, with four cheese labels. Remember their order. Then the split: 936 to train, 104 to validate, 116 to test. Pause and run them.
 
 SHOW: The code panel stays; line 433 `validation_percent = 0.2` and the three counts glow.
 PONDER(8 s, "The cell sets validation_percent = 0.2.\nYet validation is 104 of 1,156.\nWhat did the code actually do?")
@@ -359,7 +360,7 @@ SAY: Something to ponder. The cell sets the validation percent to 0.2, yet valid
 SHOW: The answer: in NB(A: 436–439) both `test_size=test_percent` light RED; a GREY bar of 1,156
 tiles splits: 10 % → 116 (test), then 10 % of the remaining 1,040 → 104 (validation), 936 left; tag
 `erratum` with the chip "same lines in task.py:134–146".
-SAY: Both splits use the test percent. 10 percent of 1,156 is 116 for testing, then 10 percent of the remaining 1,040 is 104 for validation. A small slip, and the repo trainer copies the same lines.
+SAY: Both splits use the test percent. 10 percent of 1,156 is 116 for testing, then 10 percent of the remaining 1,040 is 104, the validation set. A small slip, and the repo trainer copies the same lines.
 
 SHOW: TRACKER A4. V2 builds: NB(A: 527–528) `create_experiment()` → a GREY folder card
 `experiment_1760994796/` (the name from NB(A: 1304)). Cell 12's helper as a short excerpt,
@@ -371,22 +372,24 @@ SAY: Now the home-made tracker. Cell 31 makes a folder named after the current U
 SHOW: TRACKER A5. The metric chips fly out and fold into a table of five WHITE rows: NB(A:
 1283–1295) (all columns, small), then NB(A: 1304) `experiment_1760994796/mobilenetv2_train_base_True.keras`
 under it, YELLOW. A GREY chip with the tag `erratum`, beside NB(A: 1272) and NB(A: 1280): "accuracy
-turned into text before sorting · 9.50% would rank above 68.97%".
-SAY: Cell 54 gathers the metric files into one table, and cell 56 picks its top row as the best model. A small slip: accuracy becomes text before sorting, so it sorts strings; 9.5 percent would rank above 68.
+turned into text before sorting · 9.50% would rank above 68.97%". A GREY chip "cells 54–59, through
+the predictions"; `▶ your turn`.
+SAY: Cell 54 gathers the metric files into one table, and cell 56 picks its top row as the best model; pause and run through the predictions. A small slip: accuracy becomes text before sorting, so it sorts strings; 9.5 percent would rank above 68 percent.
 
 SHOW: The hook's first answer. A GREY strip of 1,156 small tiles; 116 of them light as "test" —
 then the lit set reshuffles twice (chip "no seed: a different 116 every run"). A ruler: "1 photo =
 0.86 points" (1/116); copy A's top two rows, 68.97 % vs 67.24 %, with "2 photos" between them,
 YELLOW.
-SAY: Here is the first answer to the opening question. The folder keeps settings and scores, but not which 116 photos were the test set: the split has no seed, so every run is graded on a different 116. One photo is worth 0.86 points, and notebook A wins by two photos.
+SAY: Here is the first answer to the opening question. The folder keeps settings and scores, but not which 116 photos were the test set. The split has no seed, so every run is graded on a different 116. One photo is worth 0.86 points, and the winner in notebook A leads by two photos.
 
-SHOW: TRACKER A6. NB(A: 1396–1397) `auth.authenticate_user()`; NB(A: 1400–1402) with the two
-instructors' names and GREY chips "replace this with yours" (YELLOW); then NB(A: 1437, 1439–1442)
-(`Uploadin Experiment: experiment_1760994796`, the first upload lines; the bucket line 1438 is not
-shown) and a `…`. `▶ your turn`. V1's Colab lane: notebook A → folder → bucket lights. GOLD
-`cost_tag()`: "stored in your bucket · model files of 10–104 MB each (the table's model_size)".
-Fade out.
-SAY: Finally, upload. Sign in with cell 62, put your own project and bucket into cell 63, and run cell 66. Pause and run it. A gold tag: those model files now sit in your bucket, 10 to 104 megabytes each.
+SHOW: TRACKER A6. NB(A: 1396–1397) `auth.authenticate_user()`; NB(A: 1400–1402) with the
+instructors' project id and bucket name and GREY chips "replace this with yours" (YELLOW), plus a
+GREY chip "your bucket: one from lecture 11, or create it now · scene 7 shows how"; then NB(A: 1437,
+1439–1442) (`Uploadin Experiment: experiment_1760994796`, the first upload lines; the bucket line
+1438 is not shown) and a `…`. `▶ your turn`. V1's Colab lane: notebook A → folder → bucket lights.
+GOLD `cost_tag()`: "stored in your bucket · weights of 10–104 MB per model (the table's model_size),
+plus a .keras copy of each". Fade out.
+SAY: Finally, upload. Sign in with cell 62, put your own project and bucket into cell 63, and run cell 66. Any bucket of yours works; scene 7 creates one. Pause and run it. A gold tag: those files now sit in your bucket, 10 to 104 megabytes of weights per model, plus a copy.
 
 ---
 
@@ -394,16 +397,17 @@ SAY: Finally, upload. Sign in with cell 62, put your own project and bucket into
 
 SHOW: TRACKER B1 (tracker B appears: "Notebook B › Experiment Tracking with W&B", 6 dots). GREY tag
 `lecture_ref(13, "12–13, 16–17")` top right, whole scene. NB(B: 37) `!pip install -q wandb -U`.
-Below it the Colab stand-in strip (`extra · local stand-in`), prompt `$`: `pip install -q wandb -U`
+Below it the Colab stand-in strip (`extra · local stand-in`; `TRACKER B1 · extra · local stand-in`
+while it is on screen), prompt `$`: `pip install -q wandb -U`
 → TERM(colab/C05: 2 cut, 4–5); then `python -c 'import wandb; print(wandb.__version__)'` (extra) →
 TERM(colab/C05b: 2), `0.31.0` YELLOW with `at the time of recording`; a GREY chip "stored run:
 0.22.2" (NB(B: 773)). `▶ your turn`.
-SAY: Notebook B adds W and B. Its first cell installs it, and the dash U flag means whatever is newest: in our signed-out stand-in, 0.31.0 at the time of recording, while the stored run used 0.22.2. Pause and run it.
+SAY: Notebook B adds W and B. Its first cell installs it, and the dash U flag means whatever is newest. An extra check in our signed-out stand-in shows 0.31.0 at the time of recording, while the stored run used 0.22.2. Pause and run it.
 
 SHOW: TRACKER B2. GREY chip "cells 7–32: the same data and pipelines as notebook A". NB(B:
 373–375): line 375 (`experiments.zip`) gets a GREY strike-through chip "about 510 MB you never use
-· you may delete this line".
-SAY: The data cells match notebook A, but one also downloads an experiments zip of about 510 megabytes you never use; you may delete that line.
+· you may delete this line". `▶ your turn`.
+SAY: The data cells, through cell 32, match notebook A, but one also downloads a zip of about 510 megabytes you never use. You may delete that line; then pause and run them.
 
 SHOW: TRACKER B3. A W&B page `illustration`: "User settings → API keys", the key as a row of dots;
 then Colab's key-icon panel (`illustration`): a secret named `WandB`, value dots, "Notebook access"
@@ -411,40 +415,49 @@ switched on. `▶ your turn`. Then NB(B: 603–606) and its output NB(B: 614–6
 `wandb: Appending key for api.wandb.ai to your netrc file: /root/.netrc`,
 `wandb: Currently logged in as: <W&B user> (<team>) …` (cut at the frame; the team masked as
 `<team>`), tag `recorded · notebook B, cell 34 (Colab)`.
-SAY: Next, the key. Copy your API key from the user settings on W and B. In Colab, open the key icon and add a secret named exactly as on screen, with notebook access on. Pause and add yours. Cell 34 signs in with it.
+SAY: Copy your API key from the user settings on W and B. In Colab, open the key icon and add a secret named exactly as on screen, with notebook access on. Pause and add yours. Cell 34 signs in with it.
 
 SHOW: TRACKER B4. NB(B: 697) `wandb.init(project='cheese-app-demo')` YELLOW; the stored banners of
 the first training cell, NB(B: 773, 781) (`Tracking run with wandb version 0.22.2`,
 `View run at https://wandb.ai/<team>/cheese-app-demo/runs/…`). V2: the five WHITE rows from S03
 slide into one BLUE project frame `cheese-app-demo` inside the `wandb.ai` building, and each row
 grows an empty slot over one shared epoch axis. `▶ your turn` on the five training cells.
-SAY: Now pause and run the five training cells. Each starts its run with wandb init in one project, cheese app demo, and prints a link to the run. In the ledger, the five rows become five runs on one shared epoch axis.
+SAY: Now pause and run the five training cells. Each starts its run with wandb init in one project, cheese app demo. In the ledger, the five rows become five runs on one shared epoch axis.
 
 SHOW: Only the `2_block` slot draws curves, from its stored "Run history" sparklines NB(B: 1009–1014)
-(25 epochs); the other four slots stay ghost outlines (GREY dashed).
+(25 epochs); the other four slots stay ghost outlines (GREY dashed). On "Compare", two small
+panels side by side, neither highlighted: NB(B: 710–716) (cell 38, the `2_block` run's
+`model.fit`) and NB(B: 940–945) (cell 42's `model.fit`), identical but for line 715.
 PONDER(6 s, "Five runs in one project, but only one\nhas loss and accuracy curves.\nWhat do the other four lack?")
-SAY: But the stored history shows curves only for the two block run. Something to ponder: what do the other four lack?
+SAY: But only the two block run shows curves. Compare its model fit call with another cell's. Something to ponder: what do the other four lack?
 
-SHOW: The answer: NB(B: 710–716) with line 715 `callbacks=[WandbCallback(save_graph=False,
-save_model=False)],` YELLOW; a PURPLE callback pipe runs from `model.fit` to the `2_block` row only.
-The warning NB(B: 782) appears small, GREY chip "deprecated · harmless here". The row's summary
-cells fill from NB(B: 1016, 1021): `accuracy 0.72436`, `val_accuracy 0.45192`. The four ghost
-slots stay ghosts.
-SAY: A callback. Only the two block cell passes the W and B callback to model fit, so only its loss and accuracy arrive, epoch by epoch. Without one, wandb init gives you system charts, never your curves.
+SHOW: The answer: in NB(B: 710–716) line 715 `callbacks=[WandbCallback(save_graph=False,
+save_model=False)],` lights YELLOW (the cell-42 panel has no such line); a PURPLE callback pipe runs
+from `model.fit` to the `2_block` row only. The warning NB(B: 782) appears small, GREY chip
+"deprecated · harmless here". The row's summary cells fill from NB(B: 1016, 1021): `accuracy
+0.72436`, `val_accuracy 0.45192`. The four ghost slots stay ghosts. On "system charts", a GREY chip:
+"system charts = the machine's CPU · GPU · memory over time".
+SAY: A callback: code that model fit calls after every epoch. Only the two block cell passes the W and B callback, so only its loss and accuracy arrive, epoch by epoch. Without one, wandb init gives you system charts, never your curves.
 
 SHOW: The two MobileNet rows collapse under one label, `mobilenetv2_train_base` (NB(B: 1629),
-URL masked), GREY chip "tell runs apart by run id". Then a small notebook cell, tagged `extra`:
-`wandb.finish()` after cell 52.
-SAY: Two more things: both MobileNet runs show the same name, so tell them apart by run ID, and no cell finishes the last run, so add wandb finish after cell 52; that one is an extra.
+URL masked), GREY chip "tell runs apart by run id". Then a small notebook cell, tagged `extra`
+(`TRACKER B4 · extra`): `wandb.finish()` after cell 52.
+SAY: Both MobileNet runs share one name, so tell them apart by run ID. No cell finishes the last run, so add wandb finish after cell 52, an extra.
 
-SHOW: TRACKER B5. NB(B: 1703–1715) (cropped to `name · epochs · accuracy`) slides in beside
-notebook A's table: the hook's second winner, YELLOW; the fine-tuned rows' `epochs` 10 vs 15 glow,
-chip "not like for like". TRACKER B6: NB(B: 1819–1820); GREY chip "cells 64 and 66: no stored
-output". NB(B: 254, 257) (cell 13's `upload_experiment`, the instructors' bucket and project) with
-"replace this with yours" chips. A last GREY chip, slide 16: "the lecture's dashboard screenshot
-shows an earlier project · yours says cheese". `▶ your turn`. V1: notebook B → `wandb.ai` lights.
-Fade out.
-SAY: Cells 55 to 60 build the second table from the opening. Check the epochs: the fine-tuned MobileNet trained 10 here and 15 in notebook A, so it is not a fair comparison. To upload, edit the bucket and project inside cell 13, then run cells 64 and 66. The lecture's dashboard comes from an earlier project; yours will say cheese.
+SHOW: TRACKER B5. NB(B: 1703–1715) (cell 55, cropped to `name · epochs · accuracy`) slides in
+beside notebook A's table: the hook's second winner, YELLOW; the fine-tuned rows' `epochs` 10 vs 15
+glow, chip "not like for like". On "the frozen MobileNet", both frozen rows ring YELLOW — A's
+`mobilenetv2_train_base_False · 15 · 67.24%` (NB(A: 1285, 1292)) and B's `mobilenetv2_train_base_False
+· 15 · 68.97%` (NB(B: 1704, 1711)) — with the chip "same settings · 15 epochs · 2 photos apart"; S03's
+ruler "1 photo = 0.86 points" returns between them.
+SAY: Cell 55 builds the second table from the opening. Check the epochs: the fine-tuned MobileNet trained 10 epochs here and 15 in notebook A, so it is not a fair comparison. Now the frozen MobileNet, with the same settings and epochs: 67.24 in notebook A, 68.97 here. Two photos apart by chance alone: the size of the winning margin.
+
+SHOW: TRACKER B6: NB(B: 254, 257) (cell 13's `upload_experiment`, the instructors' bucket and
+project) with "replace this with yours" chips and a GREY chip "edited? run cell 13 again"; then
+NB(B: 1819–1820), GREY chip "cells 64 and 66: no stored output". A last GREY chip, slide 16 (not
+spoken): "the lecture's dashboard screenshot shows an earlier project · yours says cheese".
+`▶ your turn`. V1: notebook B → `wandb.ai` lights. Fade out.
+SAY: To upload, edit the bucket and project inside cell 13 and run cell 13 again, then run cells 64 and 66; pause and do it.
 
 ---
 
@@ -452,9 +465,10 @@ SAY: Cells 55 to 60 build the second table from the opening. Check the epochs: t
 
 SHOW: TRACKER B4 (held). GREY tag `lecture_ref(13, "14–15")` top right, whole scene. Slide 14's
 baseline redrawn as plain code (`learning_rate = 0.001`, `batch_size = 32`, `epochs = 10`, data,
-model, `training_results = model.fit(...)`); three lines slide in with the lecture's call-outs:
-BLUE "start the run" → `wandb.init(...)`; GREEN "watch the model" →
-`callbacks=[WandbCallback()]` inside `model.fit`; RED "finish the run" → `wandb.run.finish()`.
+model, `training_results = model.fit(...)`); three lines slide in, each tagged with the slide's own
+call-out (SLIDES.md:40): BLUE "Initialize wandb run" → `wandb.init(...)`; GREEN "Add a callback to
+monitor model" → `callbacks=[WandbCallback()]` inside `model.fit`; RED "Let wandb know to finish the
+run" → `wandb.run.finish()`.
 SAY: The lecture shows the pattern as three lines around unchanged training code. Start the run with wandb init. Watch the model with a callback inside model fit. And finish the run when training ends.
 
 SHOW: Notebook B's real cell 38: NB(B: 696–705); line 698 `wandb.config = {` YELLOW, lines
@@ -479,11 +493,11 @@ mode · today's wandb"): `cat /tmp/e14.py; python /tmp/e14.py` → TERM(colab/C3
 `cat /tmp/e14-fixed.py; python /tmp/e14-fixed.py` → TERM(colab/C38b: 3–4, …, 16–17); line 17 GREEN.
 V3 replays: with `config={...}` inside `init`, the four keys drop straight into the drawer, the
 update adds the fifth.
-SAY: The proof, on today's W and B in offline mode, as our stand-in: the name points at a plain dict, and the run's config is empty. The fix passes the dictionary to wandb init itself, and the config holds all four keys plus the execution time.
+SAY: The proof, on today's W and B in offline mode, as our stand-in. The name points at a plain dict, and the run's config is empty. The fix passes the dictionary to wandb init itself, and the config holds all four keys plus the execution time.
 
 SHOW: NB(B: 705) `wandb.run.save("test")` with a GREY chip "uploads files matching test · does not
 save the run".
-SAY: And run save with the word test uploads files that match test; it does not save the run.
+SAY: The call run save with the word test uploads files matching test; it does not save the run.
 
 SHOW: The repo does it right: CODE(package/trainer/task.py: 312–322) (`wandb.init(project=…,
 config={…}, name=model.name)`), then CODE(package/trainer/task.py: 335–338) (`config.update`,
@@ -491,7 +505,7 @@ config={…}, name=model.name)`), then CODE(package/trainer/task.py: 335–338) 
 `-    callbacks=[WandbCallback()],` RED; a GREY chip "2025-10-15 · removed ca;llback · 51 min after
 `1c03dd5` moved the image to TF 2.17 · no reason given". V2: the repo run's row appears with its
 curve slot as a ghost. Fade out.
-SAY: The repo's trainer gets the first and last lines right: config inside wandb init, then update and finish. But the middle line is gone: one commit in October 2025 removed the callback, 51 minutes after the image moved to a newer TensorFlow, without saying why. So its runs get config and system charts, and no curves; exercise 1 puts a callback back.
+SAY: The repo's trainer gets the first and last lines right: config inside wandb init, then update and finish. But the middle line is gone. One commit in October 2025 removed the callback, without saying why. So its runs get config and system charts, and no curves; exercise 1 adds the callback again.
 
 ---
 
@@ -511,20 +525,23 @@ SHOW: V4 step 1, slide 23 with real names: a notebook card with globals `epochs 
 `batch_size = 32`, `model = …`; the values peel off and re-enter a GREEN `task.py` card from below
 as flags `--epochs`, `--batch_size`, `--model_name`, then `--train_base`, `--wandb_key`. A small
 GREY chip: "slide: epochs=25 · cli.sh sends --epochs=2".
-SAY: Step one: move the notebook code into a Python file and turn its hard-coded choices into flags: epochs, batch size and model name, plus train base and your W and B key.
+SAY: Step one: move the notebook code into a Python file, and turn its hard-coded choices into flags. The flags are epochs, batch size and model name, plus train base and your W and B key.
 
 SHOW: V1 lights slide 24's layers as a plan: the GREEN `task.py` wraps into a tarball, an arrow
 carries it into the bucket ("2 · package & upload"); at the bottom the label "Model Trainer CLI
 Container" appears over the TEAL cockpit, then morphs into `model-training-cli`; its second arrow
 goes to Vertex AI ("3 · create jobs"). Two job tiles appear: one labelled "CPU, RAM", one with a T4
-chip; each runs its own TEAL container.
-SAY: Step two packs that file and uploads it to a bucket. Step three runs from what the lecture calls the Model Trainer CLI Container, on your laptop, which asks Vertex AI for a job. Each job runs in its own container, with hardware chosen per job: CPU and memory only, or with one T4 GPU.
+chip; each runs its own TEAL container. Then the "CPU, RAM" tile plays V4 step 4 in miniature, in
+step with the last sentence's clauses: a machine appears (GOLD meter on), Google's ORANGE-banded
+image drops in, the GREEN tarball unwraps, `python -m trainer.task` runs with flag chips, the
+machine dissolves. GREY tag "plan · drawn".
+SAY: Step two packs that file into a tarball, one compressed archive, and uploads it to a bucket. Step three runs from what the lecture calls the Model Trainer CLI Container, our cockpit on your laptop: it asks Vertex AI for a job. Vertex AI then starts a machine, CPU only or with one T4. It loads Google's prebuilt TensorFlow image, installs your tarball, runs your trainer with your flags, and deletes the machine.
 
 SHOW: Two GREY cards over the map. (1) "the job can't see your laptop": a PINK arrow from the
 internet into the job tile, CODE(package/trainer/task.py: 96–100) small (the GitHub release URL);
 an "anything to keep → somewhere durable" chip. (2) "the image that runs is Google's": the job's
 TEAL container gets an ORANGE "Google" band; the laptop's cockpit stays put.
-SAY: Two facts drive everything after this. The job cannot see your laptop: its data comes from the internet, and anything it should keep must be written somewhere durable. And the image that runs the job belongs to Google, not to you.
+SAY: Two facts drive everything after this. The job cannot see your laptop: its data comes from the internet, and anything it should keep must be written somewhere durable. And the image is Google's, not yours.
 
 SHOW: The map, all machines outlined.
 QUICK(4 s, "Your laptop has no GPU and no TensorFlow.\nWhich machines here will ever\nimport TensorFlow?")
@@ -548,20 +565,21 @@ README links the repo · we use git clone". It types
 TRACKER C1 · extra: `git log -1 --format='%H %ci %s'` (extra) → TERM(laptop/02: 2), `b9aee1cc…`
 and `2025-10-16` YELLOW, chip "the course pin". Then `ls -la` (extra) → TERM(laptop/03: 7–23;
 squeeze); the five `.sh` rows (9, 11, 16, 17, 19), `cli.py` (10) and `package` (18) YELLOW, the six
-PNG rows (12–15, 21, 23) GREY with a chip "console screenshots · redrawn in this video".
-SAY: Clone the model training repo and move into it; pause and run it. Two extras show the course pin, then five shell scripts, cli.py, the package folder and six console pictures this video redraws.
+PNG rows (12–15, 21, 23) GREY with a chip "screenshots and a diagram · redrawn in this video".
+SAY: Clone the model training repo and move into it; pause and run it. Two extras show the course pin and the repo's files.
 
 SHOW: TRACKER C2. Schematic console (`illustration`, no logo): search "Vertex AI API" → ENABLE →
 "API enabled". `▶ your turn`. TRACKER C3: the quota page (`illustration`) with the README's own
 labels (README.md lines 25–39): filter `Quota: Custom model training` → row `Custom model training
 Nvidia T4 GPUs per region` → a few regions ticked → `EDIT QUOTAS` → "new limit" → `NEXT` → name →
-`SUBMIT REQUEST`. A README card (`README.md · lines 43–44`). A GREY chip: "cli.sh runs on CPU today
-· the request is for later". `▶ your turn`.
-SAY: In the console, enable the Vertex AI API. Then request GPU quota: filter for custom model training, pick T4 GPUs per region, choose regions, set a new limit and submit. Approval takes hours and may be refused; cli.sh runs on CPU today, so this is for later.
+`SUBMIT REQUEST`; among the ticked regions `us-central1` YELLOW with a chip "cli.sh's region ·
+line 14". A README card (`README.md · lines 43–44`). A GREY chip: "cli.sh runs on CPU today · the
+request is for later". `▶ your turn`.
+SAY: In the console, enable the Vertex AI API. Then request GPU quota, an allowance per region. Filter for custom model training, pick T4 GPUs, include us-central1, where cli.sh runs, set a new limit and submit. Pause and do both. Approval takes hours and may be refused; cli.sh runs on CPU today, so this is for later.
 
 SHOW: TRACKER C4. It types `cd ..` → (no output); prompt `student@laptop:~$`. Then `mkdir secrets`
 (GREY chip "the README shows a tree, not a command") → TERM(laptop/04: → (no output)); then
-`tree -L 1 .` (extra) → TERM(laptop/05: 2–6) beside a README card (`README.md · lines 55–58`), the
+`TRACKER C4 · extra`: `tree -L 1 .` (extra) → TERM(laptop/05: 2–6) beside a README card (`README.md · lines 55–58`), the
 two trees matching row for row. `▶ your turn`. On V1 a GREEN `secrets/` drawer settles beside the
 laptop's repo, outside it.
 SAY: Next, a secrets folder beside the repo, never inside it; pause and make it.
@@ -576,9 +594,9 @@ SAY: Then the identity: a service account called model trainer, with Storage Adm
 SHOW: The honest card (GREY), three lines building on their sentences: "This recording machine has
 no Google credentials, no W&B account, no GPU and no browser." · "The key in that listing is an
 obviously invalid stand-in, moved out before the first container start." · "Every cloud step shows
-the failure a misplaced key gives." On "a source we name", two GREY chips settle under it:
-`recorded · source named`, `extra · local stand-in`.
-SAY: One honest note. This recording machine has no Google credentials, no W and B account, no GPU and no browser, and the key in that listing is an obviously invalid stand-in, moved out before the container starts. So each cloud step shows the failure a misplaced key gives, and successes come from named sources.
+the failure a misplaced key gives." (one line per content sentence below). On "named sources", two
+GREY chips settle under it: `recorded · source named`, `extra · local stand-in`.
+SAY: One honest note. This recording machine has no Google credentials, no W and B account, no GPU and no browser. The key in that listing is an obviously invalid stand-in, moved out before the container starts. So each cloud step shows the failure a misplaced key gives, and successes come from named sources.
 
 SHOW: TRACKER C6. Console `illustration`: "Create bucket · `your-bucket-placeholder`" beside a README
 card (`README.md · line 71`, the instructors' bucket name with its own "[REPLACE WITH YOUR BUCKET
@@ -595,10 +613,13 @@ SHOW: TRACKER C7. A W&B page `illustration`: "User settings → API keys", the k
 A README card (`README.md · line 80`): "Set an environment variable using your terminal: `export
 WANDB_KEY=...`". In the laptop terminal it types the capture's line,
 `export WANDB_KEY=PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000; echo ${#WANDB_KEY}` (GREY chip "README:
-`...` = your key · ours: an obvious placeholder"; the `; echo …` part tagged `extra`) →
-TERM(laptop/10: 2), `40` with a chip "the placeholder's length · the check: not 0". `▶ your turn`.
-On V1 a GREEN key chip settles in the laptop's shell.
-SAY: Last, copy your W and B key and export it in the terminal you'll use for the container. Pause and do it. An extra echo prints its length, 40 for our placeholder; what matters is that it isn't zero.
+`...` = your key · ours: an obvious placeholder"; the `; echo …` part tagged `extra`, `TRACKER C7 ·
+extra` while it is on screen) → TERM(laptop/10: 2), `40` with a chip "the placeholder's length ·
+the check: not 0 · and the trainer's pinned wandb 0.15.11 accepts only 40 (scene 11: `84:14`,
+`87:14`)". `▶ your turn`. An optional GREY chip, tagged `extra · not captured`: "keep it out of
+your shell history: `read -rs WANDB_KEY && export WANDB_KEY` (bash, zsh)". On V1 a GREEN key chip
+settles in the laptop's shell.
+SAY: Last, copy your W and B key and export it in the terminal you'll use for the container. Pause and do it. An extra echo prints its length, 40 for our placeholder. It must not be zero, and the trainer's pinned wandb accepts exactly 40.
 
 SHOW: A second terminal slides in (title `laptop · new terminal`, prompt `student@laptop:~$`),
 empty.
@@ -609,20 +630,23 @@ SHOW: The answer: `echo ${#WANDB_KEY}` (extra) → TERM(laptop/11: 2), `0` RED. 
 Part-1 close on V1: the Colab lane lit, the repo lane dashed, the GREEN key chip in the laptop's
 shell, the bucket named; the hollow TEAL cockpit flickers. Caption: "next: the cockpit — and today
 it won't build". Fade to an empty frame (end of part 1).
-SAY: Zero: an exported variable exists only in that shell and its children. Part 1 is done: the Colab lane is lit, the key is set, the bucket has a name. Next, we build the cockpit, and today it won't build.
+SAY: Zero: an exported variable exists only in that shell and its children. Part 1 is done: the key is set, the bucket has a name. Next, we build the cockpit, and today it won't build.
 
 ---
 
 ## S08 · The cockpit that won't build: two one-line fixes — `s08_build.py` · `TwoFixes`
 
-SHOW: TRACKER D1 (tracker D appears: "model-training › Run Container", 2 dots + 2 `extra` rows).
-GREY tag `lecture_ref(13, "24")` on V1's cockpit box, with a GREY chip "the build itself is
-tutorial-only". Laptop terminal, prompt `student@laptop:~$`: `cd model-training` → (no output). A
+SHOW: On "Part 2 ships the trainer", V1's repo lane flashes in the three spoken stages (cockpit →
+bucket → job tile), then dims. TRACKER D1 (tracker D appears: "model-training › Run Container", 2
+dots + 2 `extra` rows). GREY tag `lecture_ref(13, "24")` on V1's cockpit box, with a GREY chip "the
+build itself is tutorial-only". Laptop terminal, prompt `student@laptop:~$`, with a GREY chip "same
+terminal as your export · new terminal? export again first": `cd model-training` → (no output). A
 README card (`README.md · lines 93–94`, the instructors' bucket and project with the README's own
-"[REPLACE …]" notes; GREY chip "replace this with yours"). It types the edit (GREY chip "our
-editor; use yours"; the `sed` of TERM laptop/20's line 1; folds) → TERM(laptop/20: 2–6), lines 5–6
+"[REPLACE …]" notes; GREY chips "replace this with yours" and "project ID, not its name · keep
+gs://"). It types the edit (GREY chip "our editor; use yours · this sed -i is GNU syntax · macOS sed:
+sed -i ''"; the `sed` of TERM laptop/20's line 1; folds) → TERM(laptop/20: 2–6), lines 5–6
 `gs://your-bucket-placeholder` and `your-gcp-project` GREEN. `▶ your turn`.
-SAY: Part 2 starts in the repo. Put your bucket and project on lines 8 and 9 of docker-shell.sh, with any editor; we use sed. Pause and edit yours.
+SAY: Part 2 ships the trainer: build the cockpit, pack the code, send one job. It starts in the repo. Put your bucket and project on lines 8 and 9 of docker-shell.sh, with any editor; we use sed. Pause and edit yours.
 
 SHOW: A kind card, tag `erratum`: README cards (`README.md · lines 100–101`, the arm64 build line)
 and (`README.md · line 110`, `-e WANDB_KEY=$WANDB_KEY \ [MAKE SURE YOU HAVE THIS VARIABLE SET]`), a
@@ -631,14 +655,14 @@ CODE(docker-shell.sh: 12–24): line 14 (`--platform=linux/amd64`) YELLOW; line 
 GREY; lines 18–19 become two GREY→TEAL pipes on V1 ("your code → /app", "secrets → /secrets");
 lines 20–23 stick on as four notes; a GREY chip "no -p · it serves nothing". CODE(docker-shell.sh:
 3) small beside it, `set -e`.
-SAY: A small slip: the README's copy of this script, with notes in brackets and an older line for Apple chips, is not the real file; edit the script itself. It builds for amd64 and runs the container with two mounts, code and secrets, four environment variables, and no port.
+SAY: A small slip: the README's copy of this script is not the real file. It has notes in brackets and an older line for Apple chips, so edit the script itself. It builds for amd64 and mounts your code and secrets.
 
 SHOW: TRACKER D2. A README card (`README.md · lines 114–115`). It types `sh docker-shell.sh` →
 TERM(laptop/21: 23, …, 65–70, …, 166, …, 181–188 wrap) — every `[IP: …]` tail cut; the three `Err:`
 rows and their `404  Not Found` RED, line 166 RED, the `Dockerfile:18` frame (181–187) with lines
 18–19 RED. `▶ your turn`. A GREY chip "22 packages · all 404" and, on "before docker run", CODE
 chip `set -e` flashes. V1's cockpit outline cracks RED.
-SAY: Now run sh docker-shell.sh from inside the repo; pause and run it. Today it fails at step 2 of 14: 22 packages return 404 Not Found from the Debian mirror, and the build stops at line 18. The script's set dash e then skips docker run.
+SAY: Now run sh docker-shell.sh from inside the repo; pause and run it. Today it fails at step 2 of 14. All 22 packages return 404 Not Found from the Debian mirror, and the build stops at line 18. The script's set dash e, exit on error, then stops it before docker run.
 
 SHOW: The error panel shrinks to a strip.
 PONDER(8 s, "Every error is a 404 from a Debian mirror,\nand your internet works. Which line of\nthe Dockerfile picks your Debian?")
@@ -648,21 +672,24 @@ SHOW: The answer: CODE(Dockerfile: 1–2), line 2 `FROM python:3.13-slim-bullsey
 cockpit's ORANGE base layer is labelled "bullseye · Debian 11"; a GREY chip: "on 2026-10-23 its
 security mirror lists packages it no longer serves · they are on archive.debian.org · at the time
 of recording". TRACKER D · extra, row "fix 1 · Dockerfile:2": it types the `sed` of TERM
-laptop/22's line 1 (extra; folds) → TERM(laptop/22: 2–3), line 3 GREEN; the ORANGE base swaps to
-"bookworm · Debian 12".
-SAY: Line 2, the FROM line. Bullseye is Debian 11, and at the time of recording its security mirror lists packages it no longer serves; they moved to an archive. The first fix, an extra, switches the base to bookworm, Debian 12.
+laptop/22's line 1 (extra; folds; GREY chip "our editor; use yours · macOS sed: sed -i ''") →
+TERM(laptop/22: 2–3), line 3 GREEN and shown large as "your new line 2"; the ORANGE base swaps to
+"bookworm · Debian 12". `▶ your turn`.
+SAY: Line 2, the FROM line. Bullseye is Debian 11, and at the time of recording its security mirror lists packages it no longer serves; they moved to an archive. The first fix, an extra, switches the base to bookworm, Debian 12; pause and make it.
 
 SHOW: TRACKER D2. It types `sh docker-shell.sh` → TERM(laptop/23: 330, …, 344–348, …, 356, …,
 372–378); steps 2–7 tick GREEN on a small step counter; line 348 `google-cloud-cli` YELLOW, line
 356 RED, the `Dockerfile:36` frame with line 37 RED. A GREY chip: "renamed by Google · no
-Kubernetes plugin needed here".
-SAY: Run it again. Now it stops at step 8: google-cloud-sdk has no installation candidate, and google-cloud-cli replaces it. Google renamed its apt package, and nothing here needs the Kubernetes plugin either.
+Kubernetes plugin needed here". `▶ your turn`.
+SAY: Pause and run it again. Now it stops at step 8: google-cloud-sdk has no installation candidate, and google-cloud-cli replaces it. Google renamed its apt package.
 
 SHOW: TRACKER D · extra, row "fix 2 · Dockerfile:37": it types the `sed` of TERM laptop/24's line 1
-(extra; folds) → TERM(laptop/24: 2–4), line 4 GREEN; the ORANGE apt layer relabels
-`google-cloud-cli`. Then `git diff --stat; git diff Dockerfile` (extra) → TERM(laptop/25: 2–4, …,
-11–12, …, 20–21); line 4 `2 files changed, 4 insertions(+), 4 deletions(-)` YELLOW.
-SAY: The second fix, also an extra: install google-cloud-cli instead, on line 37. An extra git diff shows everything you changed: your two values, the two fixes, and nothing else.
+(extra; folds; GREY chip "our editor; use yours · macOS sed: sed -i ''") → TERM(laptop/24: 2–4),
+line 4 GREEN and shown large as "your new line 37"; the ORANGE apt layer relabels
+`google-cloud-cli`. `▶ your turn`. Then `git diff --stat; git diff Dockerfile` (extra) →
+TERM(laptop/25: 2–4, …, 11–12, …, 20–21); line 4 `2 files changed, 4 insertions(+), 4 deletions(-)`
+YELLOW (either editing route ends here).
+SAY: The second fix, also an extra: install google-cloud-cli instead, on line 37; pause and make it. An extra git diff shows everything you changed: your two values, the two fixes, and nothing else.
 
 SHOW: TRACKER D2. It types `sh docker-shell.sh` → TERM(laptop/26: 3, …, 19, …, 32, 34–36); line 3
 `[+] Building 314.2s (19/19) FINISHED` with `at the time of recording` and a chip "much slower
@@ -670,7 +697,7 @@ emulated on Apple Silicon"; line 34 `Container is running!!!`; line 35 (`ERROR:
 (gcloud.auth.activate-service-account) Unable to read file [/secrets/model-trainer.json] …`, wrap)
 RED with a GREY chip "the honest no-key state"; line 36 `Updated property [core/project].`. `▶ your
 turn`. V1's cockpit becomes solid TEAL.
-SAY: Third time, it builds: about 5 minutes here, longer on Apple Silicon, where amd64 is emulated. The banner says running, then gcloud cannot open the key file: our missing key. With yours, this line confirms the service account. The script carries on anyway, since the entrypoint has no set dash e.
+SAY: Pause and run it a third time: it builds, about 5 minutes here, longer on Apple Silicon, where amd64 is emulated. The banner says running, then gcloud cannot open the key file: our missing key. With yours, this line confirms the service account. The script carries on anyway, because the entrypoint has no set dash e.
 
 SHOW: TERM(laptop/26: 37–41) prints under it: `Architecture: x86_64` (chip "x86_64 on a Mac too ·
 built for amd64"), `Environment ready! Virtual environment activated.`, `Python version: Python
@@ -688,44 +715,48 @@ SHOW: TRACKER E1 · extra (tracker E appears: "model-training › Package & Uplo
 dots). GREY tag `lecture_ref(13, "23–24")` top right, whole scene. Cockpit prompt `root@<id>:/app#`
 (same cockpit as S08, `26`). It types, one after another: `ls -la /secrets` (extra) →
 TERM(laptop/26: 43–45); `echo $GCP_PROJECT $GCS_BUCKET_URI ${#WANDB_KEY}` (extra) →
-TERM(laptop/26: 47); `which python gcloud gsutil uv` (extra) → TERM(laptop/26: 49–52);
+TERM(laptop/26: 47), the last field `40` YELLOW, `▶ your turn`, GREY chip "0? exit · export
+WANDB_KEY=… · sh docker-shell.sh"; `which python gcloud gsutil uv` (extra) → TERM(laptop/26: 49–52);
 `gcloud --version` (extra) → TERM(laptop/26: 54, …, 61); `python -c "import
 google.cloud.aiplatform as aip; print(aip.__version__)"` (extra; folds) → TERM(laptop/26: 64);
 `590.0.0` and `1.120.0` with `at the time of recording`. Then `python -c "import tensorflow"`
 (extra) → TERM(laptop/26: 66, …, 69), line 69 RED. V1's cockpit gets its stamp: "submits · never
 trains". A host strip (`student@laptop:~/model-training$`): `docker image ls model-training-cli`
 (extra) → TERM(laptop/27: 2–3; squeeze), `2.59GB` with `at the time of recording`.
-SAY: Inside the cockpit, a few extra checks. Slash secrets is empty, our sandbox. Project, bucket and key came through, and gcloud, gsutil and uv are here, with Cloud SDK 590.0.0 and the Vertex AI library 1.120.0, at the time of recording. But importing TensorFlow fails: this container submits jobs, it never trains. Its image takes 2.59 gigabytes.
+SAY: Inside the cockpit, a few extra checks. Slash secrets is empty, our sandbox. Project, bucket and key came through, and gcloud, gsutil and uv are here, versions on screen. Pause and check yours: the last number must be 40, not 0. But importing TensorFlow fails: this container submits jobs, it never trains.
 
 SHOW: TRACKER E1. CODE(package/setup.py: 5–13): line 5 `REQUIRED_PACKAGES = ["wandb==0.15.11"]`
 GREEN; line 11 `packages=find_packages(),` YELLOW → V4: a GREEN `trainer/` folder with
 `__init__.py` lit (chip "this file makes it a package"). An ORANGE layer floats beside it:
-"TensorFlow · scikit-learn · requests — assumed from Google's image", tag `erratum`, chip "scene
-11 tests it". A small GREY chip (slides vs code): "uv.lock pins the cockpit, not the trainer".
-`▶ your turn` (open the file).
-SAY: Review setup.py; pause and open it. The only declared dependency is wandb, pinned to 0.15.11. Its find packages call finds the trainer folder because the folder has its own init file, so python dash m trainer dot task works. TensorFlow, scikit-learn and requests are not declared: they are assumed to come from the image Google provides, and scene 11 tests that.
+"TensorFlow · scikit-learn — assumed from Google's image", tag `erratum`, chip "expected in
+tf-cpu.2-17 · not verified here"; a GREY chip beside the GREEN pin: "requests: via wandb". A small
+GREY chip (slides vs code): "uv.lock pins the cockpit, not the trainer". `▶ your turn` (open the
+file).
+SAY: Review setup.py; pause and open it. It is the label pip reads to install the tarball. The only declared dependency is wandb, pinned to 0.15.11. Its find packages call finds the trainer folder because the folder has its own init file, so once installed, python dash m trainer dot task works. TensorFlow and scikit-learn are not declared: they are assumed to come from the image Google provides, and scene 11 shows the tarball lacks them. Requests only arrives because wandb needs it.
 
 SHOW: TRACKER E2. CODE(package/trainer/task.py: 45–54): line 52 `default="16"` YELLOW, pin "scene
 11". Then two small panels: CODE(package/trainer/task.py: 96–100) (chip "from a GitHub release ·
 the job can't see your laptop") and CODE(package/trainer/task.py: 152–153) (chip "after the
 download"). `▶ your turn` (open the file).
-SAY: Review task.py next. The notebook choices are flags now, and the key flag defaults to the text 16: remember that. The data comes from one GitHub release, since the job cannot see your laptop, and the W and B login runs after that download.
+SAY: Review task.py next; pause and open it. The notebook choices are flags now, and the key flag defaults to the text 16: remember that. The data comes from one GitHub release, since the job cannot see your laptop, and the W and B login runs after that download.
 
 SHOW: TRACKER E3. V4 step 2: `task.py` and `__init__.py` drop into `trainer/`, `setup.py` clips on
 as a label (`install_requires = wandb==0.15.11`), `tar` wraps `package/`, `gzip` shrinks it. A
-README card (`README.md · lines 128–129`). It types `sh package-trainer.sh` → TERM(laptop/30:
-43–50, 51 cut, 52); line 51 GREY chip "new notice · harmless"; line 52 RED. `▶ your turn`. A
-PINK `gsutil cp` arrow reaches the bucket and stops at a RED "404". CODE(package-trainer.sh: 1–4),
-line 4 YELLOW, chip "fixed name · a new upload overwrites the old one". A GREY chip, no panel: "with
-your bucket: look for cheese-app-trainer.tar.gz in it".
-SAY: Now pack it: run sh package-trainer.sh inside the container; pause and run it. Tar lists eight entries, gsutil prints a new, harmless notice, and the upload fails: our placeholder bucket does not exist. With yours, look for cheese-app-trainer.tar.gz in your bucket. Line 4 uses a fixed name, so each upload overwrites the last.
+README card (`README.md · lines 128–129`). At the cockpit prompt a GREY chip: "our capture: a fresh
+cockpit for this step · stay in yours". It types `sh package-trainer.sh` → TERM(laptop/30: 43–50, 51
+cut, 52); line 51 GREY chip "new notice · harmless"; line 52 RED. `▶ your turn`. A PINK `gsutil cp`
+arrow reaches the bucket and stops at a RED "404". CODE(package-trainer.sh: 1–4), line 4 YELLOW,
+chip "fixed name · a new upload overwrites the old one". A GREY chip, no panel: "with your bucket:
+`gsutil ls $GCS_BUCKET_URI` lists cheese-app-trainer.tar.gz" (the command of `30:64`; its output
+here is the placeholder's 404 and is not shown).
+SAY: Now pack it: run sh package-trainer.sh inside the container; pause and run it. Tar lists eight entries, and the upload fails: our placeholder bucket does not exist. With yours, look for cheese-app-trainer.tar.gz in your bucket. Line 4 uses a fixed name, so each upload overwrites the last.
 
 SHOW: TRACKER E3 · extra. `ls -l trainer.tar.gz` (extra) → TERM(laptop/30: 54), `4016` YELLOW;
 `tar tzvf trainer.tar.gz` (extra) → TERM(laptop/30: 56–63; squeeze), `10253` beside `task.py`
-YELLOW. GREY chip "our capture: a fresh cockpit for this step · stay in yours". The host strip:
-`ls -l trainer.tar.gz; git status --short; git check-ignore -v trainer.tar.gz` (extra; folds) →
-TERM(laptop/31: 2–5); `root` and `.gitignore:4` YELLOW.
-SAY: Extra checks: the tarball is 4,016 bytes, with each file size inside. On the host it belongs to root, because the container wrote it, and git ignores it.
+YELLOW. The host strip: `ls -l trainer.tar.gz; git status --short; git check-ignore -v
+trainer.tar.gz` (extra; folds) → TERM(laptop/31: 2–5); `root` and `.gitignore:4` YELLOW, chip on
+`root`: "Linux engine · Docker Desktop: your user".
+SAY: Extra checks: the tarball is 4,016 bytes, with each file size inside. On our Linux engine it belongs to root, because the container wrote it; on Docker Desktop, to you. Git ignores it either way.
 
 SHOW: V1 with the cockpit, the `/app` mount pipe, the bucket holding the tarball, a job tile.
 PONDER(6 s, "You fix a typo in task.py.\nRebuild the image, re-run\npackage-trainer.sh, or both?")
@@ -744,24 +775,32 @@ SHOW: TRACKER F1 (tracker F appears: "model-training › Create & View Jobs in V
 GREY tag `lecture_ref(13, "22, 24–25")` top right, whole scene. CODE(cli.sh: 5–19) (a 12-line
 window that scrolls): line 5 `openssl rand -hex 6`, line 7 `n1-standard-4`, line 8 `REPLICA_COUNT=1`,
 line 9 the **GPU** image YELLOW, lines 10–11 package and module, 12–13 accelerator, 14 region, line
-19 `CMDARGS` with `--wandb_key=$WANDB_KEY` outlined GREEN. `▶ your turn` (open the file).
-SAY: Review cli.sh; pause and open it. It names the job with random hex, asks for one n1-standard-4 machine, sets a GPU image, points at your package and module, and builds the arguments, ending with your W and B key.
+19 `CMDARGS` with `--wandb_key=$WANDB_KEY` outlined GREEN; on line 10 (`PYTHON_PACKAGE_URI=…`) a
+PINK arrow to the tarball in the bucket. `▶ your turn` (open the file). Beside the window, V4 step
+3's job-spec card assembles one chip per spoken item (name, machine, image, package URI, module,
+`--args`), so the later `sh -x` trace confirms it.
+SAY: Review cli.sh; pause and open it. It names the job with random hex, asks for one n1-standard-4 machine, and sets a GPU image. Then it points at your tarball in the bucket and the module to run, and builds the arguments, ending with your W and B key.
 
 SHOW: CODE(cli.sh: 21–37): lines 22–27 GREY (commented out), line 31
 `export EXECUTOR_IMAGE_URI="us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest"`
 YELLOW, lines 32–37 the one `gcloud ai custom-jobs create` that runs. A kind card, tag `erratum`:
 README card (`README.md · lines 152–154`) with a chip "already done in cli.sh · commit 3efb2d5";
 TRACKER F3 flashes with the caption "already the default". A small README card (`README.md · lines
-136–142`) with a GREY chip "may be out of date · check Google's current list".
-SAY: Further down, the GPU block is commented out and line 31 swaps in the CPU image, so only the CPU command runs. A small slip: the README presents GPU first and CPU as optional, but the script already runs on CPU. Its accelerator list may also be out of date.
+136–142`) with a GREY chip "may be out of date · check Google's current list" (not spoken).
+SAY: Further down, the GPU block is commented out and line 31 swaps in the CPU image, so only the CPU command runs. A small slip: the README shows GPU first and CPU as optional, but the script already runs on CPU.
 
-SHOW: TRACKER F2. A README card (`README.md · line 150`). Cockpit prompt `root@<id>:/app#` (GREY
-chip "our capture: a fresh cockpit for this step · stay in yours"). It types `sh cli.sh` →
+SHOW: TRACKER F2. First the GOLD `cost_tag()`: "the job's VM bills while it is up: from provisioning
+until the script exits · see the Vertex AI pricing page"; V4 step 3: the assembled job-spec card
+(worker-pool chips, `--python-package-uris`, `--args` with the key still GREEN) flies from the
+cockpit to Vertex AI, and a BLUE job tile appears with a GOLD meter (no numbers). On "key length", a
+GREY chip "scene 9's check: the last number · 40 for wandb 0.15.11". A README card (`README.md ·
+line 150`). Cockpit prompt `root@<id>:/app#` (GREY chip "our capture: a fresh cockpit for this step
+· stay in yours"). It types `sh cli.sh` →
 TERM(laptop/40: 43–44, …, 47); line 43 `Using endpoint [https://us-central1-aiplatform.googleapis.com/]`
 GREEN, line 44 RED. `▶ your turn`. TRACKER F2 · extra: `gcloud auth list` (extra) →
 TERM(laptop/40: 58), RED. On V5's preview the GREEN key-file badge is missing from the cockpit's
 lanyard. A GREY chip, no panel: "with your key: gcloud reports the job as created".
-SAY: Now sh cli.sh; pause and run it. The first line is real: the Vertex AI endpoint in us-central1. Then it stops with no active account, the key that never loaded; an extra auth list confirms it. With your key, gcloud reports the job as created; nothing here shows that.
+SAY: A gold tag first: once the job's machine is provisioned, your project pays until the script exits. Check that your key length is 40; if not, watch scene 11 before you submit. Now sh cli.sh; pause and run it. The first line is real: the Vertex AI endpoint in us-central1. Then it stops with no active account, because the key never loaded; an extra auth list confirms it. With your key, gcloud reports the job as created.
 
 SHOW: TRACKER F2 · extra. It types `sh -x cli.sh` (extra) → TERM(laptop/40: 64–66, 69, 75–77 wrap)
 — the hex in 65–66 and 77 rendered `<12 hex>`; line 69 (the GPU image) YELLOW, then line 76 (the
@@ -769,7 +808,7 @@ CPU image) strikes it through; line 77 folds into chips: `--worker-pool-spec=mac
 · `replica-count=1` · `executor-image-uri=…tf-cpu.2-17.py310:latest` · `python-module=trainer.task`,
 then `--args=--model_name=mobilenetv2,--train_base,--epochs=2,--batch_size=32,--wandb_key=PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000`
 with the key RED. V5's GREEN W&B badge turns RED.
-SAY: An extra trace with sh dash x shows the job it tried to send. The GPU image is set, then overridden by the CPU image. Then the full command: the worker pool spec with machine, replica count, image and module, and the arguments, ending with your W and B key in plain text.
+SAY: An extra trace with sh dash x shows the job it tried to send. The GPU image is set, then overridden by the CPU image. Then the full command. The worker pool spec is the job's machine order: machine type, one replica, meaning one machine, image and module. Last come the arguments, ending with your W and B key in plain text.
 
 SHOW: The RED badge, large.
 PONDER(8 s, "Your W&B key is now part of the\njob's arguments. Who can read it later?")
@@ -778,7 +817,7 @@ SAY: Something to ponder. Your W and B key is now part of the job's arguments. W
 SHOW: The answer: a GREY viewer icon looks over the badge's shoulder; chips settle: "anyone who can
 view jobs in this project (the job spec keeps --args)" · "your shell history, if typed inline" ·
 "use a dedicated key · rotate it at the end" · "Secret Manager: exercises".
-SAY: Anyone who can view jobs in this project, since the job spec keeps its arguments, plus your shell history if typed inline. Use a dedicated key and rotate it at the end; the exercises use Secret Manager.
+SAY: Anyone who can view jobs in this project, because the job spec keeps its arguments, plus your shell history if typed inline. Use a dedicated key and rotate it at the end; the exercises use Secret Manager.
 
 SHOW: TRACKER F2 · extra. The second terminal (`laptop · new terminal`, prompt
 `student@laptop:~/model-training$`, the key never exported): `sh docker-shell.sh` →
@@ -786,14 +825,9 @@ TERM(laptop/70: 34, …, 41); prompt `root@<id>:/app#`. `echo ${#WANDB_KEY}` (ex
 TERM(laptop/70: 43), `0` RED; `sh -x cli.sh 2>&1 | grep -o -- "--args=.*"` (extra; folds) →
 TERM(laptop/70: 45), `--wandb_key=` RED. A GREY chip: "fix: exit · export · sh docker-shell.sh".
 A third strip (`laptop`), while that cockpit is open: `sh docker-shell.sh` → TERM(laptop/71: 34
-wrap, the container id rendered `"…"`), RED.
-SAY: The other way it goes wrong: a terminal where the key was never exported. Inside, its length is 0 and the arguments end with an empty key, so the job would download its data and only then fail at login. Exit, export, and start again; exit any old cockpit first, or the name conflicts.
-
-SHOW: V4 step 3: the job-spec card (worker-pool chips, `--python-package-uris`, `--args` with the RED
-key) flies from the cockpit to Vertex AI; a BLUE job tile appears with a GOLD meter (no numbers).
-GOLD `cost_tag()`: "the job's VM bills from submission until the script exits · see the Vertex AI
-pricing page". Fade out.
-SAY: A gold tag: from submission until the script exits, the job's machine bills your project. Check the Vertex AI pricing page.
+wrap, the container id rendered `"…"`), RED, with a GREY chip "fixed name: model-training-cli". Fade
+out.
+SAY: The other way it goes wrong: a terminal where the key was never exported. Inside, its length is 0, and the arguments end with an empty key. So the job would download its data, and only then fail at login. Exit, export, and start again; first exit any old cockpit, which holds the name.
 
 ---
 
@@ -806,51 +840,63 @@ README.md line 62); an arrow from the cockpit to the bucket ("write") and to Ver
 job").
 SAY: Three badges take part in every job. The first is your key file, for the model trainer service account. Its three roles let it write to your bucket and create jobs: it submits.
 
-SHOW: The second, ORANGE, Google-managed: "your project's Vertex AI service agent" (runner, by
-default); it rides the job tile and holds no key of yours (the GREEN key file stays GREY-side). The
-third, the W&B badge, RED since S10, carried by hand inside `--args` to the separate BLUE `wandb.ai`
-building.
-SAY: The second badge belongs to Google: your project's Vertex AI service agent, which runs the job by default. The third is your W and B key, for a different building altogether, carried by hand inside the job's arguments.
+SHOW: The third badge, the W&B key, RED since S10, carried by hand inside `--args` to the separate
+BLUE `wandb.ai` building. The middle lanyard hangs empty, with a GREY "?" on it.
+SAY: The third is your W and B key, for a different building altogether, carried by hand inside the job's arguments. The middle lanyard is still empty.
 
 SHOW: The private bucket glows; the key file sits on the laptop.
 PONDER(8 s, "The job installs your package from your\nprivate bucket, but your key never left\nyour laptop. How?")
 SAY: Something to ponder. The job installs your package from your private bucket, but your key file never left your laptop. How?
 
-SHOW: The answer: the ORANGE badge opens the bucket (same project); the GREEN key file's job was only
-the submit arrow. A GREY chip: "a 403 on your bucket → grant this identity access".
-SAY: The job runs as that service agent, which can open buckets in the same project. Your key only proved who submitted. If a job ever gets a 403 on your bucket, that is the identity to grant access.
+SHOW: The answer: the second badge settles on the middle lanyard, ORANGE, Google-managed: "Vertex AI
+Custom Code Service Agent · service-…@gcp-sa-aiplatform-cc" (runner, by default, digest §3.5); it
+rides the job tile and holds no key of yours (the GREEN key file stays GREY-side). The ORANGE badge
+opens the bucket (same project); the GREEN key file's job was only the submit arrow. A GREY chip: "a
+403 on your bucket → grant this identity access".
+SAY: The second badge: your project's Vertex AI service agent, a service account Google manages. By default the job runs as it, and it can open buckets in the same project. Your key only proved who submitted. If a job ever gets a 403 on your bucket, that is the identity to grant access.
 
-SHOW: TRACKER F2 · extra (variant `extra · local stand-in`). V4 step 4 starts on a dashed TEAL
-container labelled "plain python:3.10 · not Google's image". A laptop strip (prompt
-`student@laptop:~/model-training$`):
+SHOW: First the real V4 step 4, once, GREY tag "what Vertex does · drawn, not recorded", no output
+panels: a BLUE VM materialises (GOLD meter on), Google's TEAL image drops in with its ORANGE layer
+(chip "expected · not verified here"), the GREEN tarball unwraps, `pip install` adds wandb, then
+`python -m trainer.task --model_name=mobilenetv2 --train_base --epochs=2 --batch_size=32
+--wandb_key=…`: S10's `--args` string splits at its commas into argv tokens that land on S09's
+`task.py` flag lines. Then a dashed TEAL container labelled "plain python:3.10 · not Google's image"
+replaces the BLUE VM. TRACKER F2 · extra (variant `extra · local stand-in`). A laptop strip
+(prompt `student@laptop:~/model-training$`):
 `docker run --name trainer-standin -v "$PWD/trainer.tar.gz":/tmp/trainer.tar.gz python:3.10-slim-bookworm pip install /tmp/trainer.tar.gz`
-(extra; folds; small) → TERM(laptop/80: 2, …, 68, 70 cut); `cheese-app-trainer-0.0.1` and
-`wandb-0.15.11` YELLOW. On V4 the tarball unwraps and `pip install` adds wandb.
-SAY: We can't run Vertex here, so we replay the job's first step on the laptop, tagged as a stand-in. In a plain Python 3.10 container, pip installs the tarball: your package, plus wandb 0.15.11.
+(extra; folds; small) → TERM(laptop/80: 2, …, 68, 70 wrap) — line 70 folds into six rows, so
+`cheese-app-trainer-0.0.1` and `wandb-0.15.11` are on screen, both YELLOW. On the dashed container
+the tarball unwraps and `pip install` adds wandb.
+SAY: On Vertex, the job's first step installs your tarball into Google's image. We can't run Vertex here, so we rerun that step on the laptop, tagged as a stand-in. In a plain Python 3.10 container, pip installs the tarball: your package, plus wandb 0.15.11.
 
-SHOW: `docker run --rm trainer-standin pip list` (extra) → TERM(laptop/82: 2–3, …, 7, …, 19, …, 26;
+SHOW: `docker commit trainer-standin trainer-standin >/dev/null && docker rm trainer-standin` (extra;
+folds; small) → TERM(laptop/81: 2) (it saves the stand-in as an image for the next runs). Then
+`docker run --rm trainer-standin pip list` (extra) → TERM(laptop/82: 2–3, …, 7, …, 19, …, 26;
 squeeze), then a GREY chip "no tensorflow · no scikit-learn". The ORANGE layer slot on V4 stays
-empty. `for i in tf-cpu.2-17.py310 …` (extra; folds; small) → TERM(laptop/09: 2–3), `4.31 GB
-compressed` with `at the time of recording`; the ORANGE layer slot fills only inside a TEAL band
-labelled `tf-cpu.2-17.py310`. Then
+empty. `for i in tf-cpu.2-17.py310 …` (tag plain `extra`: a live manifest check of Google's real
+image, not a stand-in; folds; small) → TERM(laptop/09: 2–3), `4.31 GB compressed` with `at the time
+of recording`; the ORANGE layer slot fills only inside a TEAL band labelled `tf-cpu.2-17.py310`,
+GREY chip "expected in tf-cpu.2-17 · not verified here". Then
 `docker run --rm --network none trainer-standin python -m trainer.task --help` (extra; folds) →
 TERM(laptop/83: 2, …, 7–9), line 9 RED.
-SAY: An extra pip list shows wandb, requests and their helpers, but no TensorFlow and no scikit-learn: those come from the prebuilt image Google still serves. Without it, the trainer cannot even print its help.
+SAY: An extra pip list shows wandb, requests and their helpers, but no TensorFlow and no scikit-learn. The trainer counts on the prebuilt image for those, which we did not pull to check. Without it, the trainer cannot even print its help.
 
 SHOW: The trainer's first W&B step: CODE(package/trainer/task.py: 152–153). Three keys, three
 strips, the ProxyError lines never printed:
 `docker run --rm --network none trainer-standin python -c "import wandb; wandb.login(key='')"`
 (extra; folds) → TERM(laptop/85: 2), RED, chip "the empty key from scene 10 · on Vertex: after the
-download"; `… wandb.login(key='16')"` → TERM(laptop/84: 3, …, 14), line 14 RED, chip "the default
-`\"16\"`"; `… wandb.login(key='PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000')"` → TERM(laptop/86: 4),
-GREEN. (Each command is typed in full, folded, small.)
-SAY: Then the first W and B step of the trainer, line 153, with three keys. The empty key from scene 10 fails, api key not configured, and on Vertex that comes after the paid data download. The default of 16 fails: API key must be 40 characters long, yours was 2. Our 40 character placeholder passes.
+download, on billed machine time"; `… wandb.login(key='16')"` → TERM(laptop/84: …, 14) (line 3,
+printed before the check, is not shown), line 14 RED, chip "the default `\"16\"`"; `…
+wandb.login(key='PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000')"` → TERM(laptop/86: 4), YELLOW (not
+GREEN), chip "length check only · offline · nothing asked W&B". (Each command is typed in full,
+folded, small.)
+SAY: Then the first W and B step of the trainer, line 153, with three keys. The empty key from scene 10 fails with api key not configured, and on Vertex that comes after the data download, on billed machine time. The default of 16 fails: API key must be 40 characters long, yours was 2. Our 40 character placeholder passes the offline length check, and nothing more.
 
 SHOW: One more strip: `… wandb.login(key='PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000_LONGER')"`
 (extra; folds) → TERM(laptop/87: 14), `yours was 47` RED. A GREY card: "wandb 0.15.11 accepts
-exactly 40 characters · today's key format: not checked · if yours differs, raise the pin in
-setup.py". Fade out.
-SAY: One more: this old wandb pin accepts exactly 40 characters, and 47 fails. We could not check the key format W and B issues today, so if your key has a different length, raise the pin in setup.py.
+exactly 40 characters · today's key format: not checked · a different length? raise the pin, then
+sh package-trainer.sh again · a tested route: see the study guide". Fade out.
+SAY: One more: this old wandb pin accepts exactly 40 characters, and 47 fails. We could not check which key format W and B gives out today. If your key has a different length, follow the workaround in the study guide before you submit.
 
 ---
 
@@ -859,8 +905,9 @@ SAY: One more: this old wandb pin accepts exactly 40 characters, and 47 fails. W
 SHOW: TRACKER F4. GREY tag `lecture_ref(13, "9–10, 15–16, 25")` top right, whole scene. A README
 card (`README.md · lines 157–158`). A console `illustration`: "Vertex AI → Training → Custom jobs",
 one row `cheese_training_job_<12 hex>`, no status values, no durations; GREY chip "a custom job ·
-not a training pipeline". `▶ your turn`.
-SAY: To view jobs, open Vertex AI, then Training, then Custom jobs; pause and look for yours. The README says you'll see the new job, ready to be provisioned to run. It is a custom job, not a training pipeline, so look on that tab.
+not a training pipeline". The row opens to a job page wireframe with a "logs" link (`illustration`;
+the console's labels were not captured), which leads to the log shape below. `▶ your turn`.
+SAY: To view jobs, open Vertex AI, then Training, then Custom jobs; pause and look for yours. It is a custom job, not a training pipeline, so look on that tab. Open your job and follow its logs link; wait for the line training job complete.
 
 SHOW: A log panel, tag `illustration · built from task.py's print lines`, every line labelled with
 its source line in a GREY gutter: `tensorflow version …` (:57), `Number of replicas: …` (:61),
@@ -871,11 +918,12 @@ notebooks A/B` (NB(A: 353, 445–447), NB(B: 410, 502–504)).
 SAY: What will the job print? No job log exists for this video, so here is its shape, built from the code's own print lines. The counts are the ones both notebooks printed for the same code: 1,156 photos, then 936, 104 and 116.
 
 SHOW: The `Labels:` line splits into two, NB(A: 352) and NB(B: 409), the two orders side by side
-(chip "os.listdir has no order · no label map is saved", tag `erratum`). Then `Train model` (:269),
+(chip "os.listdir has no order · no label map is saved", tag `erratum`), a YELLOW chip "class 0:
+brie in A · gruyere in B", and S03's pin icon returns beside it. Then `Train model` (:269),
 the model summary as a GREY block ending in a stray `None` (:308, chip "print(model.summary())");
 where `model.fit` runs, a GREY-dashed gap "no recording of this part"; `Training execution time
 (mins) …` (:333); `Training Job Complete` (:341).
-SAY: The labels line has no fixed order, as the two notebooks show, and no label map is saved. The summary ends with a stray None, because the code prints what summary returns. Training itself is a gap here, with no epochs, loss or times, then training job complete.
+SAY: The labels line has no fixed order, as the two notebooks show, and no label map is saved. The summary ends with a stray None, because the code prints what summary returns. Training itself is a gap here, with no epochs, loss or times, then the line training job complete.
 
 SHOW: TRACKER F5. A README card (`README.md · lines 161–163`, "You will view the training metrics
 tracked and automatically updated"), tag `erratum`, chip "not with this code · no callback". V2: the
@@ -883,21 +931,24 @@ repo run's row, tag `illustration` (coordinator decision), no dashboard chrome, 
 project `cheese-training-vertex-ai` (task.py:314), run name `mobilenetv2_train_base_True` (:263,
 :321), config keys as chips pointing to their sources — `learning_rate ← task.py:274`,
 `epochs ← --epochs`, `batch_size ← --batch_size`, `model_name ← model.name`,
-`execution_time ← :336` — a GREY chip "system charts" (named, not drawn), and the curve slots as
-ghost outlines (CODE(package/trainer/task.py: 326–331) small, no `callbacks=`). `▶ your turn`.
-SAY: To view metrics, the README sends you to the W and B project cheese training vertex AI, and promises training metrics, tracked and updated automatically. Kindly put, not with this code. From task.py, the run named after the model gets its config, the execution time and system charts, and its curve slots stay empty.
+`execution_time ← :336` (inside the config chips) — a GREY chip "system charts · CPU · GPU · memory"
+(named, not drawn), and the curve slots as ghost outlines (CODE(package/trainer/task.py: 326–331)
+small, no `callbacks=`). `▶ your turn`.
+SAY: To view metrics, the README sends you to the W and B project cheese training vertex AI. It promises training metrics, tracked and updated automatically. To put it kindly, not with this code. From task.py, the run named after the model gets its config, including the execution time, and system charts, and its curve slots stay empty. Pause and open your project.
 
 SHOW: Slide 9's seven items become the row's columns (environment · code · data · model · metrics ·
 artifacts · notes), all unticked.
 PONDER(8 s, "Of the seven things a run record\nshould hold, which does this run record?")
 SAY: Something to ponder, with the lecture's list of seven. Which of them does this run actually keep?
 
-SHOW: The answer, ticked on V2's columns: model ✓ (hyperparameters); environment ◐ (system charts;
-"image tag only in cli.sh"); metrics ◐ ("only execution_time"); artifacts ◐ ("logs ✓ · weights ✗",
-a dashed hole); code ✗ ("no commit"); data ✗ ("a fixed release zip · an unseeded split"); notes ✗.
-The hook's two tables slide in small beside the ledger with a chip "this is why". A GREY chip:
-"exercise 1: a LambdaCallback". Fade out.
-SAY: The model and its settings, yes. The environment only partly: system charts, while the image tag sits in cli.sh. Metrics, only the execution time. Logs yes, weights no. Code, data and notes, no: no commit, a fixed zip, and an unseeded split. That is exactly why tables A and B could not be compared, and exercise 1 adds a small callback.
+SHOW: The answer, ticked on V2's columns: model ✓ (hyperparameters); environment ◐ (chip "system
+charts and run metadata · not the image tag (cli.sh)"); metrics ✗ ("execution_time is in config · no
+metric logged"); artifacts ◐ ("logs ✓ · weights ✗", a dashed hole); code ✗ ("no commit"); data ✗
+("a fixed release zip · an unseeded split"); notes ✗. On "notebook A", the hook's two tables slide
+in small beside the ledger and notebook A's folder card gets the same three ✗. On "cannot crown",
+S01's YELLOW question card returns small and its "?" resolves to "can't tell · yet". GREY chips:
+"exercise 1: a LambdaCallback" · "exercise 3: seed the split". Fade out.
+SAY: The model and its settings, yes. The environment only partly: system charts, while the image tag sits in cli.sh. Metrics, none: the execution time goes into the config. Logs yes, weights no. Code, data and notes, no: no commit, a fixed zip, and an unseeded split. The folder from notebook A misses the same three. So the opening's answer: these tables cannot crown a recipe. Seed the split, match the epochs, keep the code version, then compare. Exercise 1 adds a small callback.
 
 ---
 
@@ -906,16 +957,17 @@ SAY: The model and its settings, yes. The environment only partly: system charts
 SHOW: TRACKER F3 (caption "optional · read in reverse"). GREY tag `lecture_ref(13, "22, 24")` top
 right, whole scene. CODE(cli.sh: 9–14) small, then CODE(cli.sh: 21–27) beside CODE(cli.sh:
 30–37). V6 `GpuSwitchboard` inside a job tile: three switches in a row — **accelerator**
-(`accelerator-type=NVIDIA_TESLA_T4,accelerator-count=1` in the worker pool, from line 26),
+(`accelerator-type=NVIDIA_TESLA_T4,accelerator-count=1` in the worker pool: values from lines 12–13,
+used on line 26),
 **image** (`tf-gpu.*` with CUDA vs `tf-cpu.*`), **quota** (T4s for custom training in this region,
 a regional stock counter). On "all three", the switches flip GREEN one by one and the T4 chip
 lights.
-SAY: Back to the optional step, in reverse: what would it take to train on a GPU? Three switches must agree. The accelerator: one T4 in the worker pool spec. The image: TensorFlow built for GPUs, with CUDA. And the quota: T4s for custom training in this region. The chip lights only when all three are on.
+SAY: Now the reverse of the README's optional CPU step: what would it take to train on a GPU? Three switches must agree. The accelerator: one T4 in the worker pool spec. The image: TensorFlow built for GPUs, with CUDA, the GPU libraries. And the quota: T4s for custom training in this region. The chip lights only when all three are on.
 
 SHOW: The quota page from S07 (`illustration`) flashes by the quota switch. TRACKER F3 · extra:
 cockpit-free laptop strip, the long loop of TERM laptop/09's line 1 (extra; folds; small) →
-TERM(laptop/09: 2–7), the three sizes with `at the time of recording`.
-SAY: The quota is the console request from scene 7. An extra check shows the prebuilt images are still served, at the time of recording: the CPU image at 4.31 gigabytes compressed, and two GPU images at 8.93 and 7.61.
+TERM(laptop/09: 2–7), the three sizes with `at the time of recording` (on screen, not spoken).
+SAY: The quota is the console request from scene 7. An extra check shows Google still serves both GPU images, at the time of recording.
 
 SHOW: CODE(cli.sh: 21–37): lines 22–27 uncomment (YELLOW), lines 30–37 comment out (GREY). V6
 replay: with both blocks left live, two job tiles appear with the same name
@@ -924,7 +976,7 @@ SAY: To switch, uncomment the GPU block and comment out the CPU block. Leave bot
 
 SHOW: A GREY honest card: "no GPU quota, no account here · the GPU block runs the same
 gcloud ai custom-jobs create that failed in scene 10 · nothing new to show, nothing faked".
-SAY: This recording has no GPU quota and no account, and the GPU block runs the same create command that failed in scene 10. So there is nothing new to show, and nothing we would fake.
+SAY: Here the GPU block would fail the same way as in scene 10, with no active account, so there is nothing new to show, and nothing we fake.
 
 SHOW: GOLD `cost_tag()` on the T4 chip: "a GPU adds to the bill while it is attached, used or not ·
 see the Vertex AI pricing page".
@@ -1002,34 +1054,42 @@ prompt `root@<id>:/app#` (chip "our capture: a fresh cockpit"). It types `python
 Then `export GCP_REGION=us-central1` (extra) → (no output); `python cli.py` (extra) →
 TERM(laptop/60: 51–52, …, 119 wrap), RED. A GREY chip: "the Python SDK route · L15 · sends no
 --wandb_key (scene 11: yours was 2)".
-SAY: One launcher the README never mentions is cli.py, the Python SDK route. As an extra run, it fails at once because only cli.sh sets the region variable; export it, and it fails at the missing key file. Lecture 15 picks this route up.
+SAY: One launcher the README never mentions is cli.py, the Python SDK route. As an extra run, it fails at once, because only cli.sh sets the region variable. Export it, and it fails at the missing key file. Lecture 15 picks this route up.
 
 SHOW: V4 step 5: the job's script exits, the VM dissolves, the GOLD meter stops — and the trained
 weights evaporate as a GREY-dashed ghost. Chips, tag `erratum`: "nothing calls model.save" ·
-CODE(package/trainer/task.py: 27–30) small, "--model-dir: parsed, never used". V2's artifacts cell
+CODE(package/trainer/task.py: 27–30) small, "--model-dir and --lr: parsed, never used". V2's artifacts cell
 stays "?". A GREY-dashed arrow to "L15 · saves the model to a bucket"; chip "exercise 4: today".
 SAY: And where is the trained model? When the script ends, the machine is deleted, and the weights with it: nothing calls model save, and the model dir flag is ignored. Lecture 15 saves the model to a bucket; exercise 4 does it today.
 
-SHOW: TRACKER cleanup 1 (`tracker_cleanup` appears: "extra · clean-up", 3 dots). Laptop prompt
+SHOW: TRACKER cleanup 1 (`tracker_cleanup` appears: "extra · clean-up", 3 dots). The GOLD-framed
+shutdown checklist card builds one line per sentence, in this order (every command shown, not run,
+with no output panel):
+(1) "in the cockpit: `gcloud ai custom-jobs list --region=us-central1` (finds the JOB_ID; the
+capture's typed line `40:91`) · `gcloud ai custom-jobs cancel JOB_ID --region=us-central1` ·
+nothing RUNNING or PENDING · tried cli.py? also check Training pipelines";
+(2) "`gsutil rm $GCS_BUCKET_URI/cheese-app-trainer.tar.gz` · the `experiment_<ts>/` folders
+(notebook B: under your account's folder) · or delete the bucket";
+(3) "or in the console: Vertex AI → Training → Custom jobs → Cancel · Cloud Storage → your bucket →
+delete";
+(4) TRACKER cleanup 2: "then `exit` the cockpit (`--rm` removes it)". Laptop prompt
 `student@laptop:~/model-training$`: `docker ps -a` (extra) → TERM(laptop/90: 2; squeeze), nothing
 listed, chip "--rm"; `docker image ls` (extra) → TERM(laptop/91: 2–7; squeeze), `2.59GB` with
-`at the time of recording`. TRACKER cleanup 2. Then the GOLD-framed shutdown checklist card, one
-line per sentence:
-"`exit` the cockpit (`--rm` removes it) · `docker image rm …` if you need the disk" ·
-"Vertex AI → Training → Custom jobs: nothing RUNNING or PENDING · cancel a stuck one:
-`gcloud ai custom-jobs cancel JOB_ID --region=us-central1` (shown, not run) · tried cli.py? also
-check Training pipelines" · "`gsutil rm $GCS_BUCKET_URI/cheese-app-trainer.tar.gz` (shown, not
-run) · the `experiment_<ts>/` folders · or delete the bucket" · TRACKER cleanup 3: "notebook B:
-`wandb.finish()` · both notebooks: Runtime → Disconnect and delete runtime" · "end of term: delete
-the model-trainer key (IAM → Service accounts → Keys) · rotate your W&B key". `▶ your turn`.
-SAY: Time to shut down; pause and work through the list. An extra docker ps shows nothing left; the images stay on disk. Make sure no custom job is running or pending. Remove the tarball and experiment folders, finish the last W and B run, and disconnect the Colab runtimes. At the end of term, delete the model trainer key and rotate your W and B key, which traveled in a job.
+`at the time of recording`. Card line: "need the disk? `docker image rm model-training-cli
+python:3.13-slim-bookworm python:3.13-slim-bullseye` · ran our extras? also `trainer-standin
+python:3.10-slim-bookworm` · Linux: `sudo rm trainer.tar.gz`" (names from `91`);
+(5) TRACKER cleanup 3: "notebook B: `wandb.finish()` · both notebooks: Runtime → Disconnect and
+delete runtime";
+(6) "end of term: delete the model-trainer key in IAM and its JSON in secrets · rotate your W&B key
+and update the Colab secret `WandB`". `▶ your turn`.
+SAY: Time to shut down; pause and work through the list. From inside the cockpit, or in the console, make sure no custom job is running or pending. Remove the tarball and experiment folders too. Then exit; an extra docker ps shows nothing left, and the images stay on disk. Finish the last W and B run, and disconnect the Colab runtimes. At the end of term, delete the model trainer key and rotate your W and B key, which traveled in a job.
 
 SHOW: The recap on V1, complete: pieces relight one by one as each is named: the folder of runs and
 the WHITE ledger (V2); the shared axis with its one PURPLE pipe; the drawer with config inside
 `init` (V3); the GREEN tarball crossing while the TEAL cockpit stays home (V4); the job spec with the
 RED key; the three badges (V5); the three switches (V6); the two replicas in step (V7). Then
 everything unlit.
-SAY: The whole lecture on one map: a folder of runs, runs on a shared axis, config passed to wandb init, a tarball that travels while your image stays home, a key inside one command, three badges, three switches, and two GPUs in step.
+SAY: The whole lecture on one map. A run is only as useful as what it keeps. Curves need a callback; config goes into wandb init. Only the tarball travels, into Google's image, run as the service agent, your key in its arguments. One GPU needs three switches; two GPUs split the batch and average gradients.
 
 SHOW: A card "Test yourself". One question at a time (≥ 24 pt, ≤ 3 lines), each with a thumbnail of
 its picture; earlier ones collapse into a label list at left. Q1 "Notebooks A and B crowned different
@@ -1048,7 +1108,7 @@ command: MLOps_Learning · guides/L13-training-workflows.md". A "Next" card, GRE
 serving containers, serverless" · "L15 · save this model, chain the steps in Pipelines (slide 21's
 third entry)". Close on slide 5's three dials, the third lit, with a small ledger beside it.
 Everything fades to an empty frame (end of part 2).
-SAY: Answers are in the exercises, every command in the study guide. Next, lecture 14 serves containers without servers, and lecture 15 saves this model and chains the steps. Hardware rented, and a log of what you rented it for.
+SAY: Answers are in the exercises. Next, lecture 14 serves containers without servers, and lecture 15 saves this model and chains the steps. Hardware rented, and a log of what you rented it for.
 
 ---
 

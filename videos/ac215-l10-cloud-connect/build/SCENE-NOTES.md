@@ -330,3 +330,8 @@ S12); `picker='char-split-collection ▾'` (S12/S13); `fun_fact=True` (S13: last
   the empty folder: move the caption (S04).
 - Pending common.py wishes (after the builds): `SecretsPortalRig.snap()` as separate steps;
   `pause_and_ponder` with `center=`/`width=` (S04 used a local copy with the same fade and timer).
+- A command whose single quoted argument is longer than a row (laptop/20's sed; S09's laptop/30
+  sed likely too) soft-wraps at the edge with `wrap=True`, rows asserted to join back to the exact
+  command; `Terminal.fold` would put ` \` inside the quotes (S05, as L09 S13).
+- Pending common.py wishes (after the builds): `AuthChain` fully hollow teaser; a soft-wrap option
+  on `type_cmd` (S05).
