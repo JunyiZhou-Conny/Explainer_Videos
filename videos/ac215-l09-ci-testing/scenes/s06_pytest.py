@@ -28,7 +28,7 @@ from explainer import style as S
 
 from common import (ERR, INK, INTEG, MONO, NARRATION, PASS, TOOL, TURN, UNIT, Collector, FixtureWiring,
                     Parametrize, check_mark, chip, code, code_span, cross_mark, erratum_tag, grey_chip,
-                    illustration_tag, label, line_bar, lref, mono, mono_line, note, pause_and_ponder, readme,
+                    illustration_tag, label, line_bar, lref, ring, mono, mono_line, note, pause_and_ponder, readme,
                     readme_card, substring, tool_chip, under)
 
 SAY = NARRATION["S06"]
@@ -52,7 +52,7 @@ def bin_tray(name: str, tray_w: float = 2.9, wall_h: float = 0.6) -> VGroup:
     return g
 
 
-def mini_card(title: str, card_w: float = 5.9, card_h: float = 2.5) -> VGroup:
+def mini_card(title: str, card_w: float = 5.9, card_h: float = 2.8) -> VGroup:
     """An empty card with its title at the top. .frame .title"""
     frame = RoundedRectangle(width=card_w, height=card_h, corner_radius=0.16, stroke_color=S.GREY,
                              stroke_width=2.5).set_fill(S.GREY_DARKER, 1)
@@ -70,14 +70,15 @@ class PytestInside(VoiceScene):
         # ========================================================== 0. the rules in pytest.ini
         ref = lref("26, 58–61")
         pyt = tool_chip("pytest", size=28).move_to([0, 0.3, 0])
-        w1 = code(INI, 4, 9)
-        w1.move_to([1.3, 0.3, 0])
-        w2 = code(INI, 11, 17)
+        w1 = code(INI, 4, 9, font_size=26)
+        w1.move_to([1.3, 0.45, 0])
+        w2 = code(INI, 11, 17, font_size=26)
         w2.move_to(w1, aligned_edge=UL)
         pats = [code_span(w1.code, k - 4, s) for k, s in ((6, "test_*.py"), (7, "Test*"), (8, "test_*"))]
         bar = line_bar(w1.code, 6 - 4, TURN, 0.2)
         reads = Arrow(LEFT, RIGHT, color=S.GREY, stroke_width=3, buff=0, tip_length=0.18)
         what = note("finds tests · runs them · reports", S.GREY, 22)
+        rings = VGroup()
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref), FadeIn(pyt, scale=0.9), run_time=0.7)
@@ -92,15 +93,17 @@ class PytestInside(VoiceScene):
                                                        "functions named test underscore")):
                 vo.wait_until(anchor)
                 target = line_bar(w1.code, k - 4, TURN, 0.2)
+                rg = ring(p, PASS, buff=0.06)
+                rings.add(rg)
                 if k == 6:
-                    self.play(FadeIn(bar), p.animate.set_color(PASS), run_time=0.5)
+                    self.play(FadeIn(bar), p.animate.set_color(PASS), Create(rg), run_time=0.5)
                 else:
-                    self.play(Transform(bar, target), p.animate.set_color(PASS), run_time=0.5)
+                    self.play(Transform(bar, target), p.animate.set_color(PASS), Create(rg), run_time=0.5)
                 self.play(Indicate(p, color=PASS, scale_factor=1.12), run_time=0.6)
             vo.wait_until("It also adds options")
             # scroll: lines 4-9 leave upwards, 11-17 rise from below
-            self.play(FadeOut(bar), run_time=0.3)
-            self.remove(bar)
+            self.play(FadeOut(VGroup(bar, rings)), run_time=0.3)
+            self.remove(bar, rings)
             self.play(FadeOut(w1, shift=UP * 0.6), FadeIn(w2, shift=UP * 0.6), run_time=0.8)
             self.remove(w1)
             addopts = code_span(w2.code, 12 - 11, "addopts")
@@ -194,7 +197,7 @@ class PytestInside(VoiceScene):
         ill = illustration_tag().next_to(ca.frame, UP, buff=0.12).align_to(ca.frame, LEFT)
         # card A: a failed compare, both sides printed under it (illustration)
         expr = mono_line("assert power(2, 3) == 9", 24, INK)
-        expr.move_to(ca.frame).shift(UP * 0.05)
+        expr.move_to(ca.frame).shift(UP * 0.1)
         lhs, rhs = substring(expr, "power(2, 3)"), substring(expr, "9")
         v_l = chip("8", ERR, size=24, font=MONO).next_to(lhs, DOWN, buff=0.45)
         v_r = chip("9", S.GREY, size=24, font=MONO).next_to(rhs, DOWN, buff=0.45)
@@ -202,7 +205,7 @@ class PytestInside(VoiceScene):
         links = VGroup(Line(lhs.get_bottom() + DOWN * 0.06, v_l.get_top() + UP * 0.04),
                        Line(rhs.get_bottom() + DOWN * 0.06, v_r.get_top() + UP * 0.04)).set_stroke(S.GREY, 2)
         # card B: two values inside a tolerance band (illustration)
-        axis = Line(LEFT * 2.3, RIGHT * 2.3, color=S.GREY, stroke_width=2).move_to(cb.frame).shift(DOWN * 0.35)
+        axis = Line(LEFT * 2.3, RIGHT * 2.3, color=S.GREY, stroke_width=2).move_to(cb.frame).shift(DOWN * 0.3)
         band = Rectangle(width=1.4, height=0.5, stroke_color=PASS, stroke_width=2).set_fill(PASS, 0.18)
         band.move_to(axis)
         want = Dot(axis.get_center(), radius=0.09, color=INK)
@@ -213,6 +216,7 @@ class PytestInside(VoiceScene):
         pc = code(UTILS, 69, 72, font_size=20)
         pc.move_to([-1.55, -1.95, 0])
         raises = code_span(pc.code, 71 - 69, "pytest.raises(TypeError)")
+        bar71 = line_bar(pc.code, 71 - 69, PASS, 0.2)
         terr = code_span(pc.code, 71 - 69, "TypeError")
         tray = bin_tray("invalid")
         tray.move_to([4.95, -2.35, 0])
@@ -238,7 +242,7 @@ class PytestInside(VoiceScene):
             self.play(got.animate.set_color(PASS), band.animate.set_fill(PASS, 0.32), run_time=0.4)
             vo.wait_until("And pytest dot raises")
             self.play(FadeIn(pc, shift=UP * 0.2), run_time=0.6)
-            self.play(raises.animate.set_color(PASS), run_time=0.4)
+            self.play(FadeIn(bar71), raises.animate.set_color(PASS), run_time=0.5)
             vo.wait_until("the named error")
             self.play(Indicate(terr, color=PASS, scale_factor=1.15), run_time=0.7)
             vo.wait_until("the invalid tray")
@@ -256,14 +260,12 @@ class PytestInside(VoiceScene):
         glob.align_to(pa, LEFT)
         cl = code_span(pa.code, 11 - 7, "client")
         fw = FixtureWiring()
-        fw.shift(UP * 0.35)
-        fw.ask_label.shift(UP * 0.35)
         look = note("what it could look like · not this repo's code", S.GREY, 22)
         look.move_to([-6.4 + look.width / 2, 2.85, 0])
         copies, per_anims = fw.per_test()
         fresh = grey_chip('scope="function" · the default', size=20, mono_font=True)
         fresh.next_to(copies, DOWN, buff=0.25).align_to(fw.conftest.frame, LEFT)
-        verbs4 = VGroup(ca, cb, ill, expr, v_l, v_r, neq, links, axis, band, want, got, appr, rel, pc, tray, inv)
+        verbs4 = VGroup(ca, cb, ill, expr, v_l, v_r, neq, links, axis, band, want, got, appr, rel, pc, bar71, tray, inv)
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(verbs4), run_time=0.6)
@@ -306,10 +308,19 @@ class PytestInside(VoiceScene):
             self.play(FadeOut(VGroup(fw, fw.ask_label, inst, shared)), run_time=0.6)
             self.remove(fw, fw.ask_label, inst, shared)
             self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in pz.cards], lag_ratio=0.15), run_time=0.8)
+            # four copies stack into one: the lower cards' words fade, the cards slide under the first
+            m = pz.merged
+            rest = pz.cards[1:]
+            self.play(*[c.text.animate.set_opacity(0) for c in rest], run_time=0.3)
+            self.play(*[c.animate.move_to(pz.cards[0].get_center() + np.array([0.1, -0.1, 0]) * (i + 1))
+                        for i, c in enumerate(rest)], run_time=0.6)
             vo.wait_until("into one function")
-            self.play(*pz.fold(run_time=1.2))
+            self.play(FadeOut(pz.cards), FadeIn(m.frame), FadeIn(m.head, shift=DOWN * 0.1),
+                      LaggedStart(*[FadeIn(ch, shift=DOWN * 0.2) for ch in m.chips], lag_ratio=0.2), run_time=1.1)
+            self.remove(pz.cards)
             vo.wait_until("four inputs")
-            self.play(Indicate(pz.merged.chips, color=UNIT, scale_factor=1.1), run_time=0.8)
+            self.play(Indicate(m.chips, color=UNIT, scale_factor=1.1), run_time=0.8)
+        self.wait(1.2)                         # the folded function is the last picture: let it be read
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)
