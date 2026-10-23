@@ -1,0 +1,6 @@
+$ cat ls-api/annotation.json; curl -s -w '\nHTTP %{http_code}\n' -b /tmp/ls.cookies -H "X-CSRFToken: $LS_CSRF" -H "Referer: http://localhost:8080/" -H 'Content-Type: application/json' -d @ls-api/annotation.json http://localhost:8080/api/tasks/1/annotations | python3 -c 'import sys; print(sys.stdin.read()[:900])'
+{"result": [{"from_name": "choice", "to_name": "image", "type": "choices", "value": {"choices": ["gouda"]}}]}
+{"id":1,"result":[{"from_name":"choice","to_name":"image","type":"choices","value":{"choices":["gouda"]}}],"created_username":" student@example.com, 1","created_ago":"0 minutes","completed_by":1,"was_cancelled":false,"ground_truth":false,"created_at":"2026-10-23T11:12:03.755755Z","updated_at":"2026-10-23T11:12:03.755813Z","draft_created_at":null,"lead_time":null,"import_id":null,"last_action":null,"bulk_created":false,"task":1,"project":1,"updated_by":1,"parent_prediction":null,"parent_annotation":null,"last_created_by":null}
+HTTP 201
+
+[exit 0]

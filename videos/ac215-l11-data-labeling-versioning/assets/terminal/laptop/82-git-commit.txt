@@ -1,0 +1,11 @@
+$ git commit -m "Initial commit"
+[main (root-commit) 231cef2] Initial commit
+ 7 files changed, 2815 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100755 Dockerfile
+ create mode 100644 README.md
+ create mode 100644 docker-entrypoint.sh
+ create mode 100755 docker-shell.sh
+ create mode 100644 pyproject.toml
+ create mode 100644 uv.lock
+[exit 0]

@@ -1,0 +1,5 @@
+$ cat ls-api/source-storage.json; curl -s -w '\nHTTP %{http_code}\n' -b /tmp/ls.cookies -H "X-CSRFToken: $LS_CSRF" -H "Referer: http://localhost:8080/" -H 'Content-Type: application/json' -d @ls-api/source-storage.json http://localhost:8080/api/storages/gcs/validate
+{"project": 1, "title": "Cheese Images", "bucket": "your-bucket-name", "prefix": "cheeses_unlabeled", "use_blob_urls": true, "presign": true}
+{"id":"4bca44b1-10ce-4406-bf2d-328d104cd8b5","status_code":400,"version":"1.23.0","detail":"Validation error","exc_info":null,"validation_errors":{"non_field_errors":["File /secrets/data-service-account.json was not found."]}}
+HTTP 400
+[exit 0]

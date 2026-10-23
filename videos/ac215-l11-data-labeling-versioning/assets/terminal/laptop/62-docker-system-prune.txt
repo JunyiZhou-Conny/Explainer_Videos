@@ -1,0 +1,27 @@
+$ docker system prune
+WARNING! This will remove:
+  - all stopped containers
+  - all networks not used by at least one container
+  - all dangling images
+  - unused build cache
+
+Are you sure you want to continue? [y/N] y
+Deleted Containers:
+e591909b7c005653f58022b3d2daf7e64b8148b4c604061319529457f1fbab37
+
+Deleted Networks:
+data-labeling-network
+
+Deleted build cache objects:
+2ar84ujtj07m4xi89lfawed0b
+mi7e8dvzhsmzfimmb2npdegph
+c978bvahwnxx34mrhq98yo7qw
+w4cwt3otrbiixqu41ygtm4h66
+jih6msb35vvndf0f47dfx11kv
+70ik2o3sp4kltukvy3jzcab3o
+38hvjp8uzpwjef5h7uqmx61tz
+3mhhg2g1eeaychsr98hfoduxz
+l8c4hqo7hw8a95t3rp7k22mk5
+
+Total reclaimed space: 22.27MB
+[exit 0]

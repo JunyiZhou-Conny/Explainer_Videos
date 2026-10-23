@@ -1,0 +1,23 @@
+$ docker logs data-label-studio 2>&1 | tail -n 40
+./deploy/docker-entrypoint.sh: Looking for init scripts in /label-studio/deploy/docker-entrypoint.d/app-docker/
+./deploy/docker-entrypoint.sh: Launching /label-studio/deploy/docker-entrypoint.d/app-docker/05-check-data-permissions.sh
+=> Checking data directory permissions: /label-studio/data
+ERROR: Data directory is not writable: /label-studio/data
+-----------------------------------------------------
+Current user:
+  UID        = 1001
+  GID        = 0
+
+Directory owner and permissions:
+drwxr-sr-x    2 root     root          4096 Oct 23 11:08 /label-studio/data
+
+To resolve this issue:
+  - On the Docker host, ensure the user running the container has write access to the mount volume.
+  - If you are mounting a host directory as -v mydata:/label-studio/data:
+      rm -rf mydata
+      mkdir -p mydata
+      sudo chown :0 mydata
+
+Refer to the documentation for more details:
+  https://labelstud.io/guide/install_troubleshoot.html#File-permissions-for-non-root-user
+[exit 0]

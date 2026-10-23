@@ -1,0 +1,7 @@
+$ docker image ls
+IMAGE                             ID             DISK USAGE   CONTENT SIZE   EXTRA
+data-label-cli:latest             0820c41fa2b2       1.76GB          434MB        
+heartexlabs/label-studio:latest   afcc516a2277        1.5GB          382MB        
+python:3.11-slim-bookworm         de64614670c0        196MB           48MB        
+python:3.12-slim-bookworm         db1aa7b3d044        186MB         45.6MB        
+[exit 0]

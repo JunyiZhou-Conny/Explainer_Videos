@@ -1,0 +1,28 @@
+$ dvc list -R https://github.com/dlops-io/data-versioning.git
+Could not determine bucket type for bucket name cheese-app-data-versioning: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information., falling back to GCSFileSystem
+Could not determine bucket type for bucket name cheese-app-data-versioning: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information., falling back to GCSFileSystem
+Could not determine bucket type for bucket name cheese-app-data-versioning: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information., falling back to GCSFileSystem
+_request non-retriable exception: Anonymous caller does not have storage.objects.list access to the Google Cloud Storage bucket. Permission 'storage.objects.list' denied on resource '//storage.googleapis.com/projects/_/buckets/cheese-app-data-versioning' (or it may not exist)., 401
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/gcsfs/retry.py", line 156, in retry_request
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/gcsfs/core.py", line 646, in _request
+    validate_response(status, contents, path, args)
+  File "/usr/local/lib/python3.12/site-packages/gcsfs/retry.py", line 143, in validate_response
+    raise HttpError({"code": status, **error})
+gcsfs.retry.HttpError: Anonymous caller does not have storage.objects.list access to the Google Cloud Storage bucket. Permission 'storage.objects.list' denied on resource '//storage.googleapis.com/projects/_/buckets/cheese-app-data-versioning' (or it may not exist)., 401
+_request non-retriable exception: Anonymous caller does not have storage.objects.get access to the Google Cloud Storage object. Permission 'storage.objects.get' denied on resource '//storage.googleapis.com/projects/_/buckets/cheese-app-data-versioning/objects/dvc_store/files/md5/32/80f8f9629451704dca3f792534e1f5.dir' (or it may not exist)., 401
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/gcsfs/retry.py", line 156, in retry_request
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/gcsfs/core.py", line 646, in _request
+    validate_response(status, contents, path, args)
+  File "/usr/local/lib/python3.12/site-packages/gcsfs/retry.py", line 143, in validate_response
+    raise HttpError({"code": status, **error})
+gcsfs.retry.HttpError: Anonymous caller does not have storage.objects.get access to the Google Cloud Storage object. Permission 'storage.objects.get' denied on resource '//storage.googleapis.com/projects/_/buckets/cheese-app-data-versioning/objects/dvc_store/files/md5/32/80f8f9629451704dca3f792534e1f5.dir' (or it may not exist)., 401
+ERROR: unexpected error - failed to load directory ('cheese_dataset',): Anonymous caller does not have storage.objects.get access to the Google Cloud Storage object. Permission 'storage.objects.get' denied on resource '//storage.googleapis.com/projects/_/buckets/cheese-app-data-versioning/objects/dvc_store/files/md5/32/80f8f9629451704dca3f792534e1f5.dir' (or it may not exist)., 401
+
+Having any troubles? Hit us up at https://dvc.org/support, we are always happy to help!
+[exit 255]

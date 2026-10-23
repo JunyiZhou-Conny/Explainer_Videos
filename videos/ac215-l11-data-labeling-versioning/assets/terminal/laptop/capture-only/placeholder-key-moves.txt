@@ -1,0 +1,3 @@
+ls2: moved the placeholder key out of ~/secrets so cloud steps show the documented missing-key errors
+b-build: put the placeholder key back for the folder-structure step
+b-build: moved the placeholder key out again before the DVC container (documented missing-key errors)

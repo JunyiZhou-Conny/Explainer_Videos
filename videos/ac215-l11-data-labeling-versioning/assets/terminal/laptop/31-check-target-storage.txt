@@ -1,0 +1,5 @@
+$ cat ls-api/target-storage.json; curl -s -w '\nHTTP %{http_code}\n' -b /tmp/ls.cookies -H "X-CSRFToken: $LS_CSRF" -H "Referer: http://localhost:8080/" -H 'Content-Type: application/json' -d @ls-api/target-storage.json http://localhost:8080/api/storages/export/gcs/validate
+{"project": 1, "title": "Cheese Images", "bucket": "your-bucket-name", "prefix": "cheeses_labeled"}
+{"id":"144c070e-5069-48dc-9f4f-5e28f31c7d4e","status_code":400,"version":"1.23.0","detail":"Validation error","exc_info":null,"validation_errors":{"non_field_errors":["Error validating storage connection"]}}
+HTTP 400
+[exit 0]

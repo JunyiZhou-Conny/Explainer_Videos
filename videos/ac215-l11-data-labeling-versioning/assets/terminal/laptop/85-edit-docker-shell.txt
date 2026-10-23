@@ -1,0 +1,8 @@
+$ sed -i -e 's|^export GCS_BUCKET_NAME=.*|export GCS_BUCKET_NAME="your-bucket-name"|' -e 's|^export GCP_PROJECT=.*|export GCP_PROJECT="your-gcp-project"|' -e 's|^export GCP_ZONE=.*|export GCP_ZONE="us-central1-a"|' docker-shell.sh && sed -n '5,10p' docker-shell.sh
+export BASE_DIR=$(pwd)
+export SECRETS_DIR=$(pwd)/../secrets/
+export GCS_BUCKET_NAME="your-bucket-name"
+export GCP_PROJECT="your-gcp-project"
+export GCP_ZONE="us-central1-a"
+export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json"
+[exit 0]

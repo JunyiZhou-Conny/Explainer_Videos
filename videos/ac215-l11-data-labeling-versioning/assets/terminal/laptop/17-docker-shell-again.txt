@@ -1,0 +1,4 @@
+$ sh docker-shell.sh
+data-label-studio
+ca6e2fa78b62bda99900577465001dd4052d5af243525206b17f4837013431c8
+[exit 0]

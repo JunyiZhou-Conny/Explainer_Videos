@@ -1,0 +1,3 @@
+$ sed -i '36s/google-cloud-sdk/google-cloud-cli/' Dockerfile && sed -n '36p' Dockerfile
+    apt-get install -y --no-install-recommends google-cloud-cli && \
+[exit 0]

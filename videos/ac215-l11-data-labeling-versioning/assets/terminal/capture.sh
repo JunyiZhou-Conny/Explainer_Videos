@@ -14,8 +14,8 @@
 #   are NO GCP credentials in this environment: ~/secrets holds an obviously-invalid placeholder key
 #   for the folder-structure steps and is emptied before the cloud steps, so every Google call fails
 #   with its documented missing-key error (see ASSETS.md, "What cannot run here").
-# "colab": a python:3.12-slim-bookworm container (+ git, + the proxy CA) stands in for a Colab
-#   runtime with no Google sign-in, for the notebook's `dvc list` / `dvc get` cells.
+# "colab": a python:3.12-slim-bookworm container (+ git, + the proxy CA; root in /content, like a
+#   Colab runtime) stands in for Colab with no Google sign-in, for the notebook's `dvc` cells.
 #
 # Behind an HTTPS-only proxy that listens on the host's 127.0.0.1 (the recording sandbox), export
 # HTTPS_PROXY and CA_BUNDLE (a PEM file with the proxy's CA) first: proxy_relay.py (container
@@ -63,10 +63,11 @@ if [ "$MODE" = laptop ]; then
           set -e
           until docker info >/dev/null 2>&1; do sleep 1; done
           # the laptop baseline (not part of the tutorial): bash, git, curl, GNU sed, tree, unzip,
-          # an ssh client, python3 (for ptyrun.py), and a user in the docker group whose git
+          # an ssh client, sudo (a Linux user would have it), python3 (for ptyrun.py), and a user in the docker group whose git
           # identity is already set (digest gotcha #4: set it before the first DVC container run).
           # The docker:dind image already ships the compose plugin, as Docker Desktop does.
-          apk add --no-cache -q bash python3 git curl sed tree unzip openssh-client-default >/dev/null
+          apk add --no-cache -q bash python3 git curl sed tree unzip openssh-client-default sudo >/dev/null
+          echo "student ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/student && chmod 440 /etc/sudoers.d/student
           adduser -D -s /bin/bash student && addgroup student docker
           mkdir -p /home/student/.docker
           [ -n "$PROXY_JSON" ] && echo "$PROXY_JSON" > /home/student/.docker/config.json
@@ -92,11 +93,10 @@ COPY capture-ca.crt /usr/local/share/ca-certificates/capture-ca.crt
 RUN cat /usr/local/share/ca-certificates/capture-ca.crt >> /etc/ssl/certs/ca-certificates.crt \
  && sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources \
  && apt-get update -qq && apt-get install -y -qq --no-install-recommends git >/dev/null \
- && useradd -m student
+ && mkdir /content
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt PIP_CERT=/etc/ssl/certs/ca-certificates.crt \
     REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt GIT_SSL_CAINFO=/etc/ssl/certs/ca-certificates.crt
-USER student
-WORKDIR /home/student
+WORKDIR /content
 EOF
   mkdir -p "$DEST/capture-only"; cp "$D/Dockerfile" "$DEST/capture-only/colab-standin.Dockerfile"
   docker build --network host --build-arg HTTPS_PROXY="$HTTPS_PROXY" --build-arg https_proxy="$HTTPS_PROXY" \

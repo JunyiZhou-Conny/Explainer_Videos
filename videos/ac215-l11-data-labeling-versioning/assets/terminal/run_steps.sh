@@ -152,9 +152,340 @@ ls1)
   hub_retry step 10-docker-shell "sh docker-shell.sh"
   # --- README:91 "open another terminal and run docker container ls"
   step 11-docker-container-ls "docker container ls"
-  wait_http http://localhost:8080/health 240 || true
-  step 12-docker-logs "docker logs data-label-studio 2>&1 | tail -n 40"   # extra: digest A6 checkpoint (first start migrates the database)
-  step 13-ls-volume "ls -la docker-volumes docker-volumes/label-studio"   # extra: Label Studio's data folder on the host (git-ignored)
+  sleep 25
+  step 12-docker-container-ls-a "docker container ls -a"   # extra: on a Linux engine the container has already exited
+  step 13-docker-logs "docker logs data-label-studio 2>&1 | tail -n 40"   # extra: digest A6 checkpoint -> digest gotcha #12, live
+  step 14-ls-volume "ls -la docker-volumes docker-volumes/label-studio"   # extra: Docker created the bind-mount source as root
+  step 15-ls-uid "docker run --rm --entrypoint id heartexlabs/label-studio:latest"   # extra: digest gotcha #12's check -- the image runs as uid 1001
+  # --- digest gotcha #12's fix (extra; Linux hosts only -- Docker Desktop on macOS does not hit this)
+  step 16-fix-volume-perms "sudo chown -R 1001 docker-volumes/label-studio && ls -la docker-volumes"
+  # --- README:87 again: the script removes the exited container and starts a fresh one
+  step 17-docker-shell-again "sh docker-shell.sh"
+  wait_http http://localhost:8080/health 300 || true
+  step 18-docker-container-ls "docker container ls"       # README:91 checkpoint, now Up
+  step 19-docker-logs "docker logs data-label-studio 2>&1 | grep -v '^\s*$' | tail -n 25"   # extra: the server is up
+  ;;
+ls2)
+  # --- README "Setup Label Studio" (README:102-147) happens in a browser. Without one, the same
+  # server is driven over HTTP with the browser's own session (cookie + CSRF header): every call
+  # below is one the UI makes when you click (all extra; the UI itself is drawn as an
+  # illustration, see ASSETS.md).
+  step 20-curl-health "curl -s http://localhost:8080/health"
+  step 21-curl-root "curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}\n' http://localhost:8080/"   # README:108 'go to http://localhost:8080/'
+  step 22-curl-login-page "curl -s -o /tmp/ls-login.html -w '%{http_code} %{content_type}\n' http://localhost:8080/user/login/ && grep -o '<title>[^<]*</title>' /tmp/ls-login.html | head -1"
+  # README:109 "Login with <e-mail> / awesome": the account the env vars created (stand-in e-mail, see ASSETS.md)
+  step 23-login "rm -f /tmp/ls.cookies; curl -s -c /tmp/ls.cookies -o /dev/null http://localhost:8080/user/login/; CSRF=\$(awk '\$6==\"csrftoken\"{print \$7}' /tmp/ls.cookies); curl -s -b /tmp/ls.cookies -c /tmp/ls.cookies -o /dev/null -w '%{http_code} -> %{redirect_url}\n' -H 'Referer: http://localhost:8080/user/login/' --data-urlencode csrfmiddlewaretoken=\$CSRF --data-urlencode email=student@example.com --data-urlencode password=awesome http://localhost:8080/user/login/"
+  export LS_CSRF=$(awk '$6=="csrftoken"{print $7}' /tmp/ls.cookies)   # the session's CSRF token (rotated at login)
+  S='-b /tmp/ls.cookies -H "X-CSRFToken: $LS_CSRF" -H "Referer: http://localhost:8080/"'
+  step 24-whoami "curl -s -b /tmp/ls.cookies http://localhost:8080/api/current-user/whoami | python3 -m json.tool | head -12"
+  # the token side of the API (digest gotcha #11): no token -> refused; /api/version is open
+  step 25-api-no-token "curl -s -w '\nHTTP %{http_code}\n' http://localhost:8080/api/projects"
+  step 26-api-version "curl -s -w '\nHTTP %{http_code}\n' http://localhost:8080/api/version"   # digest §5 open question: /api/version needs no token
+  step 27-jwt-settings "curl -s -b /tmp/ls.cookies http://localhost:8080/api/jwt/settings"   # Organization > API token settings, as the UI reads them: legacy tokens OFF by default
+  # README "Create Annotation Project" (README:104-115) through the UI's API: the Image
+  # Classification template with the four cheese choices (stand-in for the clicks)
+  mkdir -p ls-api
+  cat > ls-api/project.json <<'EOF'
+{
+  "title": "Cheese labels",
+  "label_config": "<View><Image name=\"image\" value=\"$image\"/><Choices name=\"choice\" toName=\"image\"><Choice value=\"brie\"/><Choice value=\"gouda\"/><Choice value=\"gruyere\"/><Choice value=\"parmigiano\"/></Choices></View>"
+}
+EOF
+  step 28-create-project "cat ls-api/project.json; curl -s -w '\nHTTP %{http_code}\n' $S -H 'Content-Type: application/json' -d @ls-api/project.json http://localhost:8080/api/projects | python3 -c 'import sys; t=sys.stdin.read(); print(t[:700])'"
+  PID=$(curl -s -b /tmp/ls.cookies http://localhost:8080/api/projects | python3 -c 'import sys, json; print(json.load(sys.stdin)["results"][0]["id"])')
+  # README "Configure Cloud Storage" (README:117-147): the form's "Check Connection" button posts
+  # to these validate endpoints. Honest result here: no key in /secrets (ASSETS.md).
+  cat > ls-api/source-storage.json <<EOF
+{"project": $PID, "title": "Cheese Images", "bucket": "your-bucket-name", "prefix": "cheeses_unlabeled", "use_blob_urls": true, "presign": true}
+EOF
+  cat > ls-api/target-storage.json <<EOF
+{"project": $PID, "title": "Cheese Images", "bucket": "your-bucket-name", "prefix": "cheeses_labeled"}
+EOF
+  mkdir -p "$OUT/capture-only"
+  if [ -f ~/secrets/data-service-account.json ]; then
+    mv ~/secrets/data-service-account.json ~/placeholder-key-removed.json
+    echo "ls2: moved the placeholder key out of ~/secrets so cloud steps show the documented missing-key errors" >> "$OUT/capture-only/placeholder-key-moves.txt"
+  fi
+  step 29-ls-secrets-in-container "docker exec data-label-studio ls -la /secrets"   # digest A8 'If it fails' check: no key there
+  step 30-check-source-storage "cat ls-api/source-storage.json; curl -s -w '\nHTTP %{http_code}\n' $S -H 'Content-Type: application/json' -d @ls-api/source-storage.json http://localhost:8080/api/storages/gcs/validate"
+  step 31-check-target-storage "cat ls-api/target-storage.json; curl -s -w '\nHTTP %{http_code}\n' $S -H 'Content-Type: application/json' -d @ls-api/target-storage.json http://localhost:8080/api/storages/export/gcs/validate"
+  # stand-ins for "Sync Storage" + one click on "gouda" (the bucket cannot be listed here): three
+  # tasks with the gs:// URIs a sync would create, and one annotation through the UI's API
+  cat > ls-api/tasks.json <<'EOF'
+[{"image": "gs://your-bucket-name/cheeses_unlabeled/Image_1.jpg"},
+ {"image": "gs://your-bucket-name/cheeses_unlabeled/Image_2.jpg"},
+ {"image": "gs://your-bucket-name/cheeses_unlabeled/Image_3.jpg"}]
+EOF
+  cat > ls-api/annotation.json <<'EOF'
+{"result": [{"from_name": "choice", "to_name": "image", "type": "choices", "value": {"choices": ["gouda"]}}]}
+EOF
+  step 32-import-tasks "cat ls-api/tasks.json; curl -s -w '\nHTTP %{http_code}\n' $S -H 'Content-Type: application/json' -d @ls-api/tasks.json http://localhost:8080/api/projects/$PID/import"
+  TID=$(curl -s -b /tmp/ls.cookies "http://localhost:8080/api/tasks?project=$PID" | python3 -c '
+import sys, json
+d = json.load(sys.stdin)
+t = d if isinstance(d, list) else (d.get("tasks") or d.get("results") or [])
+print(min(x["id"] for x in t))')
+  step 33-annotate "cat ls-api/annotation.json; curl -s -w '\nHTTP %{http_code}\n' $S -H 'Content-Type: application/json' -d @ls-api/annotation.json http://localhost:8080/api/tasks/$TID/annotations | python3 -c 'import sys; print(sys.stdin.read()[:900])'"
+  ;;
+cli)
+  cd data-labeling
+  export LS_CSRF=$(awk '$6=="csrftoken"{print $7}' /tmp/ls.cookies)   # the browser session from ls2
+  # --- README "Enable CORS" (README:164): "Change the bucket name in docker-shell-CLI.sh" (sed is
+  # the editor here; your-bucket-name is the stand-in)
+  step 40-edit-bucket "sed -i 's|GCS_BUCKET_NAME=\"cheese-app-data-demo\"|GCS_BUCKET_NAME=\"your-bucket-name\"|' docker-shell-CLI.sh && sed -n '23,24p' docker-shell-CLI.sh"
+  # --- README:165-168: run docker-shell-CLI.sh, then python cli.py -c and -m inside. Both need a
+  # Google credential and fail honestly (no key; see ASSETS.md). Extras typed inside: the env, the
+  # empty /secrets, and the two addresses of Label Studio (digest §3.4).
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=2400 hub_retry istep 41-docker-shell-CLI "sh docker-shell-CLI.sh" \
+    ':/app\$ $' 'python cli.py -c' \
+    ':/app\$ $' 'python cli.py -m' \
+    ':/app\$ $' 'ls -la /secrets' \
+    ':/app\$ $' 'echo $GCS_BUCKET_NAME $LABEL_STUDIO_URL' \
+    ':/app\$ $' 'curl -s http://data-label-studio:8080/health' \
+    ':/app\$ $' 'curl -sS http://localhost:8080/health' \
+    ':/app\$ $' 'exit'
+  # --- README "View Annotations using CLI" (README:189-199): python cli.py -p -k <token> and
+  # -t -k <token>. First with Label Studio's defaults: legacy tokens are OFF (27-jwt-settings),
+  # and cli.py's legacy Client sends "Authorization: Token <key>" (digest gotcha #11, live).
+  # The token is the capture-only stand-in (ASSETS.md). Extras: the two ways to forget the token.
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1200 istep 42-cli-projects-401 "sh docker-shell-CLI.sh" \
+    ':/app\$ $' "python cli.py -p -k $TOKEN" \
+    ':/app\$ $' 'python cli.py -t' \
+    ':/app\$ $' 'python cli.py -p -k' \
+    ':/app\$ $' 'exit'
+  # digest gotcha #11's first fix (extra): Organization > API Tokens Settings > enable legacy
+  # tokens -- done with the UI's own call, as the logged-in admin
+  step 43-enable-legacy-tokens "curl -s -w '\nHTTP %{http_code}\n' -b /tmp/ls.cookies -H \"X-CSRFToken: \$LS_CSRF\" -H 'Referer: http://localhost:8080/' -H 'Content-Type: application/json' -d '{\"api_tokens_enabled\": true, \"legacy_api_tokens_enabled\": true}' http://localhost:8080/api/jwt/settings"
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1200 istep 44-cli-projects-tasks "sh docker-shell-CLI.sh" \
+    ':/app\$ $' "python cli.py -p -k $TOKEN" \
+    ':/app\$ $' "python cli.py -t -k $TOKEN" \
+    ':/app\$ $' 'exit'
+  ;;
+cmp)
+  cd data-labeling
+  # --- README "Extra: Using docker-compose" (README:214-229): stop the containers, then run
+  # docker-shell-compose.sh. README:225/229 give `docker stop <name>` and `docker ps`.
+  step 50-docker-stop "docker stop data-label-studio"
+  step 51-docker-ps "docker ps"
+  # the unmodified script: docker-compose (Compose v2's compatibility command) builds, then
+  # compose tries to create data-label-studio -- but `docker stop` left the stopped container
+  # behind (digest gotcha #6, live)
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1200 istep 52-docker-shell-compose "sh docker-shell-compose.sh"
+  # digest gotcha #6's fix (extra)
+  step 53-docker-rm "docker rm data-label-studio"
+  # the same script again: compose starts Label Studio, then the CLI shell at once -- depends_on
+  # does not wait until Label Studio is ready (digest §5), so the first cli.py call is refused.
+  # Extras typed inside: the bucket name compose passes (digest errata #9), a wait loop.
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1200 istep 54-docker-shell-compose-run "sh docker-shell-compose.sh" \
+    ':/app\$ $' 'echo $GCS_BUCKET_NAME' \
+    ':/app\$ $' "python cli.py -p -k $TOKEN" \
+    ':/app\$ $' 'until curl -s http://data-label-studio:8080/health; do sleep 2; done' \
+    'UP"}.*:/app\$ $' "python cli.py -p -k $TOKEN" \
+    ':/app\$ $' 'exit'
+  step 55-docker-ps "docker ps"                           # extra: data-label-studio keeps running after the CLI exits (digest gotcha #8 note)
+  ;;
+aclean)
+  cd data-labeling
+  # --- README "Docker Cleanup" (README:239-246)
+  step 60-docker-container-ls "docker container ls"
+  step 61-docker-stop "docker stop data-label-studio"     # README:244 'Stop any container that is running'
+  PTY_COLS=110 PTY_ROWS=30 istep 62-docker-system-prune "docker system prune" 'y/N\] $' 'y'
+  step 63-docker-image-ls "docker image ls"
+  step 64-volume-survives "sudo ls -la docker-volumes/label-studio"   # extra: prune removed the container, not the project data
+  ;;
+b-pre)
+  # ===== Part B: data-versioning README @ b240b1a (the course-map pin; digest Part B) =====
+  # --- README "Make sure we do not have any running containers..." (README:52-72)
+  step 70-docker-container-ls "docker container ls"
+  PTY_COLS=110 PTY_ROWS=30 istep 71-docker-system-prune "docker system prune" 'y/N\] $' 'y'
+  step 72-docker-image-ls "docker image ls"
+  # --- README "Clone the class repository" (README:76-84): the SSH command, then the HTTPS form
+  # the tip offers. The recording sandbox has no SSH route to GitHub (ASSETS.md).
+  step 73-clone-ssh "git clone -b data-versioning-ac215 git@github.com:dlops-io/data-versioning.git"
+  step 74-clone-https "git clone -b data-versioning-ac215 https://github.com/dlops-io/data-versioning.git"
+  cd data-versioning
+  step 75-git-log "git log -1 --format='%H %ci'"          # extra: the starter commit (= digest pin 23762e4)
+  # --- README:86-101
+  step 76-rm-git "rm -rf .git"
+  step 77-git-init "git init"
+  step 78-ls-A "ls -A"                                    # extra: digest B2 checkpoint -- no .dvc/ folder
+  # --- README "Create your own private GitHub repository" (README:103-126)
+  step 79-git-branch-M "git branch -M main"
+  step 80-git-remote-add "git remote add origin git@github.com:YOUR_GITHUB_USERNAME/data-versioning.git"
+  step 81-git-add "git add ."
+  step 82-git-commit "git commit -m \"Initial commit\""
+  step 83-git-push "git push -u origin main"
+  ;;
+b-build)
+  # --- README "Add the secrets folder" (README:136-144): the folder next to data-versioning is
+  # the same ~/secrets as Part A. The placeholder key goes back in for this one picture.
+  mkdir -p "$OUT/capture-only"
+  if [ -f ~/placeholder-key-removed.json ]; then
+    mv ~/placeholder-key-removed.json ~/secrets/data-service-account.json
+    echo "b-build: put the placeholder key back for the folder-structure step" >> "$OUT/capture-only/placeholder-key-moves.txt"
+  fi
+  step 84-tree "tree -L 2 -I 'cheeses_unlabeled|__MACOSX|ls-api|*.zip' ."   # extra: README:140-144 folder structure
+  mv ~/secrets/data-service-account.json ~/placeholder-key-removed.json
+  echo "b-build: moved the placeholder key out again before the DVC container (documented missing-key errors)" >> "$OUT/capture-only/placeholder-key-moves.txt"
+  # --- README "Set up a GCP service account" (README:146-170) and "Create folders in your GCS
+  # bucket" (README:174-187): console clicks, illustration (ASSETS.md)
+  cd data-versioning
+  # --- README "Configure the container parameters" (README:191-205): edit docker-shell.sh lines 7-9
+  step 85-edit-docker-shell "sed -i -e 's|^export GCS_BUCKET_NAME=.*|export GCS_BUCKET_NAME=\"your-bucket-name\"|' -e 's|^export GCP_PROJECT=.*|export GCP_PROJECT=\"your-gcp-project\"|' -e 's|^export GCP_ZONE=.*|export GCP_ZONE=\"us-central1-a\"|' docker-shell.sh && sed -n '5,10p' docker-shell.sh"
+  # --- README "Run docker-shell.sh" (README:229-243): cd data-versioning; sh docker-shell.sh.
+  # The starter's Dockerfile:36 still installs google-cloud-sdk (digest gotcha #1, live).
+  hub_retry step 86-docker-shell-starter-fails "sh docker-shell.sh"
+  # digest gotcha #1's fix (extra): the one line main changed in ebf09c8
+  step 87-fix-dockerfile "sed -i '36s/google-cloud-sdk/google-cloud-cli/' Dockerfile && sed -n '36p' Dockerfile"
+  # the same README command again: the build passes; the entrypoint's gcloud/gcsfuse/mount lines
+  # need the key and the bucket, and fail honestly (no key here). Extras typed inside: what the
+  # container sees.
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=3600 hub_retry istep 88-docker-shell "sh docker-shell.sh" \
+    ':/app# $' 'ls -la cheese_dataset' \
+    ':/app# $' 'which dvc' \
+    ':/app# $' 'dvc --version' \
+    ':/app# $' 'ls /mnt/gcs_data' \
+    ':/app# $' 'exit'
+  step 89-host-cheese-dataset "ls -la cheese_dataset"     # extra: the host side of the same folder
+  ;;
+b-v20)
+  cd data-versioning
+  # --- README "Create the first dataset version" (README:255-303), inside the container
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 90-dvc-v20 "sh docker-shell.sh" \
+    ':/app# $' 'dvc init' \
+    ':/app# $' 'dvc remote add -d cheese_dataset gs://your-bucket-name/dvc_store' \
+    ':/app# $' 'cat .dvc/config' \
+    ':/app# $' 'dvc add cheese_dataset' \
+    ':/app# $' 'cat cheese_dataset.dvc' \
+    ':/app# $' 'dvc push' \
+    ':/app# $' 'exit'
+  # capture-only stand-in for the bucket's images/ folder (no bucket can be mounted here): the
+  # four photos the class's dataset_v20 was made of (digest §3.5) go into the folder DVC tracks.
+  # The folder was created by the container's root, hence sudo.
+  step 91-standin-images "sudo cp ../cheeses_unlabeled/Image_1.jpg ../cheeses_unlabeled/Image_2.jpg ../cheeses_unlabeled/Image_3.jpg ../cheeses_unlabeled/Image_4.jpg cheese_dataset/ && ls -la cheese_dataset"
+  # the README's dvc add + dvc push again, now on four real images; extras: the pointer file, the
+  # cache layout, and a push to a local stand-in remote (config.local, git-ignored) to show what
+  # dvc push would upload
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 92-dvc-add-push-v20 "sh docker-shell.sh" \
+    ':/app# $' 'ls cheese_dataset' \
+    ':/app# $' 'dvc add cheese_dataset' \
+    ':/app# $' 'cat cheese_dataset.dvc' \
+    ':/app# $' 'find .dvc/cache -type f | sort' \
+    ':/app# $' 'dvc push' \
+    ':/app# $' 'dvc remote add --local standin /app/.dvc/tmp/standin-remote' \
+    ':/app# $' 'dvc push -r standin' \
+    ':/app# $' 'exit'
+  ;;
+b-git20)
+  cd data-versioning
+  # --- README "Update Git to track the DVC metadata" (README:305-321), outside the container
+  step 93-git-status "git status"
+  step 94-git-add "git add ."
+  step 95-git-commit "git commit -m \"Track initial cheese dataset with DVC\""
+  step 96-git-tag "git tag -a dataset_v20 -m \"First version of cheese dataset\""
+  step 97-git-push "git push --atomic origin main dataset_v20"
+  step 98-git-log "git log --oneline --decorate"          # extra
+  step 99-git-show-v20 "git show dataset_v20:cheese_dataset.dvc"   # extra: what the tag pins
+  ;;
+b-v21)
+  cd data-versioning
+  # --- README "Create an updated dataset version: dataset_v21" (README:330-369). Upload step:
+  # capture-only stand-in again -- one more photo into the tracked folder
+  step 100-standin-new-image "sudo cp ../cheeses_unlabeled/Image_5.jpg cheese_dataset/ && ls -la cheese_dataset"
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 101-dvc-add-push-v21 "sh docker-shell.sh" \
+    ':/app# $' 'ls cheese_dataset' \
+    ':/app# $' 'dvc add cheese_dataset' \
+    ':/app# $' 'cat cheese_dataset.dvc' \
+    ':/app# $' 'dvc push' \
+    ':/app# $' 'dvc push -r standin' \
+    ':/app# $' 'exit'
+  ;;
+b-git21)
+  cd data-versioning
+  step 102-git-status "git status"
+  step 103-git-add "git add ."
+  step 104-git-commit "git commit -m \"Add images to cheese dataset\""
+  step 105-git-tag "git tag -a dataset_v21 -m \"Updated cheese dataset with additional images\""
+  step 106-git-push "git push --atomic origin main dataset_v21"
+  step 107-git-diff "git diff HEAD~1 -- cheese_dataset.dvc"   # extra: digest B13 checkpoint
+  step 108-git-log "git log --oneline --decorate"         # extra
+  step 109-git-tag-n "git tag -n"                         # extra
+  step 110-remote-add-again "git remote add origin git@github.com:YOUR_GITHUB_USERNAME/data-versioning.git"   # extra: what README:372 warns about (the old ac215 README repeats it)
+  # extra: time travel without Colab -- the tag's pointer file, then dvc checkout from the cache
+  step 111-checkout-v20-pointer "git checkout dataset_v20 -- cheese_dataset.dvc && git status --short"
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1200 istep 112-dvc-checkout-v20 "sh docker-shell.sh" \
+    ':/app# $' 'dvc checkout' \
+    ':/app# $' 'ls cheese_dataset' \
+    ':/app# $' 'exit'
+  step 113-back-to-main "git checkout main -- cheese_dataset.dvc && git status --short"
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1200 istep 114-dvc-checkout-main "sh docker-shell.sh" \
+    ':/app# $' 'dvc checkout' \
+    ':/app# $' 'ls cheese_dataset' \
+    ':/app# $' 'exit'
+  ;;
+b-up)
+  # extras: the class repo's own tags and pointer files (digest §3.5, §3.6), and its bucket
+  step 115-ls-remote-tags "git ls-remote --tags https://github.com/dlops-io/data-versioning"
+  step 116-clone-class-repo "git clone -q https://github.com/dlops-io/data-versioning class-data-versioning && git -C class-data-versioning log -1 --format='%H %ci'"
+  step 117-class-v20-v21 "git -C class-data-versioning show dataset_v20:cheese_dataset.dvc; echo ---; git -C class-data-versioning show dataset_v21:cheese_dataset.dvc"
+  step 118-compare-v20 "diff <(git -C class-data-versioning show dataset_v20:cheese_dataset.dvc) <(git -C data-versioning show dataset_v20:cheese_dataset.dvc) && echo identical"
+  step 119-class-bucket-anonymous "curl -s -w '\nHTTP %{http_code}\n' 'https://storage.googleapis.com/storage/v1/b/cheese-app-data-versioning/o?prefix=dvc_store/'"
+  ;;
+t-repo)
+  # ===== route T: the data-versioning README as it reads today (@ 2515e5e, 2026-10-13) =====
+  mkdir -p today/secrets && cd today
+  # --- README:76-120 today: clone -b main (SSH, then the new HTTPS section), cd, cd, rm, init
+  step 120-clone-ssh-main "git clone -b main git@github.com:dlops-io/data-versioning.git"
+  step 121-clone-https-main "git clone -b main https://github.com/dlops-io/data-versioning.git"
+  step 122-cd "cd data-versioning"                        # README:97
+  cd data-versioning
+  step 123-cd-again "cd data-versioning"                  # README:105, the second 'cd data-versioning'
+  step 124-git-log "git log -1 --format='%H %ci'"         # extra: today's head of main
+  step 125-rm-git "rm -rf .git"
+  step 126-git-init "git init"
+  step 127-ls-A "ls -A"                                   # extra: .dvc/ and cheese_dataset.dvc came with main
+  # README:133-138 "Or, if you are using HTTPS, use this instead": the README's line carries a
+  # teaching assistant's own GitHub user; YOUR_GITHUB_USERNAME stands in (ASSETS.md)
+  step 128-remote-set-url "git remote set-url origin https://github.com/YOUR_GITHUB_USERNAME/data-versioning.git"
+  step 129-git-branch-M "git branch -M main"
+  step 130-git-remote-add "git remote add origin git@github.com:YOUR_GITHUB_USERNAME/data-versioning.git"
+  step 131-git-add "git add ."
+  step 132-git-commit "git commit -m \"Initial commit\""
+  step 133-git-push "git push -u origin main"
+  ;;
+t-dvc)
+  cd today/data-versioning
+  step 134-edit-docker-shell "sed -i -e 's|^export GCS_BUCKET_NAME=.*|export GCS_BUCKET_NAME=\"your-bucket-name\"|' -e 's|^export GCP_PROJECT=.*|export GCP_PROJECT=\"your-gcp-project\"|' -e 's|^export GCP_ZONE=.*|export GCP_ZONE=\"us-central1-a\"|' docker-shell.sh && sed -n '5,10p' docker-shell.sh"
+  # README:256-268 + 288-328 today: sh docker-shell.sh, then dvc init / remote add / add / push
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=3600 hub_retry istep 135-docker-shell-dvc "sh docker-shell.sh" \
+    ':/app# $' 'dvc init' \
+    ':/app# $' 'dvc remote add -d cheese_dataset gs://your-bucket-name/dvc_store' \
+    ':/app# $' 'cat .dvc/config' \
+    ':/app# $' 'cat cheese_dataset.dvc' \
+    ':/app# $' 'dvc add cheese_dataset' \
+    ':/app# $' 'dvc push' \
+    ':/app# $' 'exit'
+  ;;
+bclean)
+  # --- README "Docker Cleanup" (README:403-425 @ b240b1a; 427-449 today)
+  step 140-docker-container-ls "docker container ls"
+  PTY_COLS=110 PTY_ROWS=30 istep 141-docker-system-prune "docker system prune" 'y/N\] $' 'y'
+  step 142-docker-image-ls "docker image ls"
+  ;;
+colab)
+  # ===== the Colab notebook linked from README @ b240b1a (Drive id 1RRQ1SlHq5lKK76R8LoQdi5LjCnND3jTq),
+  # code cells run as shell commands in a Python 3.12 container, signed out (cell 11,
+  # auth.authenticate_user(), needs a browser sign-in and cannot run here)
+  cd /content 2>/dev/null || { mkdir -p ~/content && cd ~/content; }
+  step C00-env "date -u '+%Y-%m-%d %H:%M UTC'; python --version; git --version"   # extra
+  step C07-pip-install "pip install dvc dvc-gs"
+  step C07b-dvc-version "dvc --version"                    # extra
+  step C13-dvc-list "dvc list -R https://github.com/dlops-io/data-versioning.git"
+  step C15-dvc-get-v21 "rm -rf cheese_dataset; dvc get https://github.com/dlops-io/data-versioning cheese_dataset --force --rev dataset_v21"
+  step C17-count "python -c 'import os; print(\"Number of items:\",len(os.listdir(\"cheese_dataset\")))'"
+  step C19-dvc-get-v25-quiet "rm -rf cheese_dataset; dvc get https://github.com/dlops-io/data-versioning cheese_dataset --force --quiet --rev dataset_v25"
+  step C20-count "python -c 'import os; print(\"Number of items:\",len(os.listdir(\"cheese_dataset\")))'"
+  step C19b-dvc-get-v25-loud "dvc get https://github.com/dlops-io/data-versioning cheese_dataset --force --rev dataset_v25"   # extra: the same cell without --quiet (digest gotcha #13c)
   ;;
 *)
   echo "run_steps.sh: unknown segment $SEG" >&2; exit 2 ;;

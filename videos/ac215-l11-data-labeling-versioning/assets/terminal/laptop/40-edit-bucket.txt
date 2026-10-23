@@ -1,0 +1,4 @@
+$ sed -i 's|GCS_BUCKET_NAME="cheese-app-data-demo"|GCS_BUCKET_NAME="your-bucket-name"|' docker-shell-CLI.sh && sed -n '23,24p' docker-shell-CLI.sh
+  -e GCS_BUCKET_NAME="your-bucket-name" \
+  -e LABEL_STUDIO_URL="http://data-label-studio:8080" \
+[exit 0]
