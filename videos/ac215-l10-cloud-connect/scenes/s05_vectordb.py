@@ -152,12 +152,12 @@ class NetworkAndShell(VoiceScene):
         again, nls = capture("11"), capture("12")
         assert again.cmd == net.cmd and again.lines == [] and again.exit == 0, again.lines
         assert nls.cmd == "docker network ls"
-        q = label("?", 40, TURN)
+        q = label("?", 32, TURN)               # 40 pt reached down into the id row
         beside(q, cmd1, buff=0.35)
         xt1 = extra_row()
         ok_chip = row_tag("exit 0 · nothing new", PASS).move_to([-3.6, 2.15, 0])
         cap1 = label("safe to run twice", 26, INK)
-        cap2 = label("→ idempotent", 26, TURN)
+        cap2 = label("→ idempotent", 26, INK)  # a term, not a pointer: the id rings hold YELLOW here
         caps = VGroup(cap1, cap2).arrange(RIGHT, buff=0.25).next_to(ok_chip, DOWN, buff=0.35).align_to(ok_chip, LEFT)
         sticky = sticky_note()
         sticky_at = sticky.copy().move_to([6.4 - sticky.width / 2, 1.75, 0])
@@ -192,7 +192,7 @@ class NetworkAndShell(VoiceScene):
             self.play(FadeIn(cap1, shift=RIGHT * 0.15), run_time=0.5)
             vo.wait_until("is called idempotent")
             self.play(FadeIn(cap2, shift=RIGHT * 0.15), run_time=0.5)
-            self.play(Indicate(cap2, color=TURN, scale_factor=1.12), run_time=0.7)
+            self.play(Indicate(cap2, color=INK, scale_factor=1.12), run_time=0.7)
             vo.wait_until("Remember this shape")
             sticky.move_to(VGroup(*cmd2.rows))
             self.play(FadeIn(sticky, scale=1.1), run_time=0.5)
@@ -350,7 +350,7 @@ class NetworkAndShell(VoiceScene):
         rec = recorded_tag("recorded")
         rec_note = note("a success you will see on your machine · source named", S.GREY, 22)
         rec_row = VGroup(rec, rec_note).arrange(RIGHT, buff=0.3).next_to(note_card, DOWN, buff=0.35)
-        ch = chain_outline().move_to([0, -2.1, 0])
+        ch = chain_outline().move_to([0, -2.55, 0])   # clear of the recorded row
         dce = err_chip("DefaultCredentialsError")
         dce.next_to(ch.slots[0], UP, buff=0.5).align_to(ch.slots[0], LEFT)
         dce_note = note("what a missing key looks like", S.GREY, 22).next_to(dce, RIGHT, buff=0.35)
@@ -373,7 +373,7 @@ class NetworkAndShell(VoiceScene):
                 vo.wait_until(anchor)
                 self.play(FadeIn(note_card.body[i], shift=RIGHT * 0.2), run_time=0.6)
                 if i == 1:
-                    vo.wait_until("so the folder listings match the README")
+                    vo.wait_until("an obviously invalid stand-in")
                     self.play(Indicate(note_card.body[1], color=INK, scale_factor=1.04), run_time=0.8)
             vo.wait_until("So from here on")
             self.play(FadeIn(ch, shift=UP * 0.2), run_time=0.7)

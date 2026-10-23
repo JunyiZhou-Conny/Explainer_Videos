@@ -131,7 +131,7 @@ Conventions
   `TRACKER B3 · extra`: same step, caption gets " · extra" while a command the README (or the
   notebook) doesn't have is on screen (variants `extra · local stand-in`, `extra · clean-up`).
   Seven trackers (BRIEF), titled with the notebook and README headings (the typo in notebook A,
-  "Image Classificaton Models" is written correctly); README = `model-training/README.md` @
+  "Image Classificaton Models", is written correctly); README = `model-training/README.md` @
   `b9aee1c`:
   - A = "Notebook A › Cheese Classification Models", 6 steps: 1 Setup Notebook · 2 Dataset ·
     3 Build Data Pipelines · 4 Image Classification Models · 5 Experiment Results · 6 Upload
