@@ -9,8 +9,10 @@
 #   cloud   extras for the console steps (no credentials needed): does the placeholder bucket exist,
 #           does the README's bucket, are the prebuilt training images cli.sh names still served
 #   wandb   "Get WandB Account API Key": export WANDB_KEY=... (an obviously fake placeholder)
-#   shell   "Run docker-shell.sh": edit lines 8-9, sh docker-shell.sh (fails at google-cloud-sdk =
-#           digest gotcha #20), the one-line fix, sh docker-shell.sh again + checks typed inside
+#   bases   (capture-only) re-tag the base images alone
+#   shell   "Run docker-shell.sh": edit lines 8-9, sh docker-shell.sh (fails at Dockerfile step 2:
+#           bullseye-security's pool is gone), fix 1 (bookworm base), again (fails at google-cloud-sdk
+#           = digest gotcha #20), fix 2, sh docker-shell.sh a third time + checks typed inside
 #   pkg     "Run sh package-trainer.sh" inside the container (tar + gzip real; gsutil cp fails:
 #           NO GCP credentials here)
 #   job     "Create Jobs in Vertex AI": sh cli.sh inside the container (honest failure) + extras
@@ -59,14 +61,15 @@ hub_retry() {  # hub_retry step|istep <name> <args...>   (recording sandbox only
 }
 capture_only_bases() {  # recording sandbox only (CAPTURE_CA set); see ASSETS.md, "capture-only"
   # The tutorial's build needs TLS, and the sandbox's TLS is re-signed by its proxy; the proxy also
-  # refuses plain-http requests. The base image of the repo's Dockerfile (python:3.13-slim-bullseye)
-  # and the Vertex stand-in's python:3.10-slim-bookworm are rebuilt with that proxy's CA, https
+  # refuses plain-http requests. The base image of the repo's Dockerfile (python:3.13-slim-bullseye),
+  # the bookworm base the build fix switches to, and the Vertex stand-in's python:3.10-slim-bookworm
+  # are rebuilt with that proxy's CA, https
   # Debian sources and the CA env vars (incl. gcloud's custom-CA property), then re-tagged under the
   # same names, so the tutorial build runs unchanged.
   [ -n "$CAPTURE_CA" ] || return 0
   local d v; d=$(mktemp -d); cp "$CAPTURE_CA" "$d/capture-ca.crt"
   mkdir -p "$OUT/capture-only"
-  for v in 3.13-slim-bullseye 3.10-slim-bookworm; do
+  for v in 3.13-slim-bullseye 3.13-slim-bookworm 3.10-slim-bookworm; do
     cat > "$d/Dockerfile" <<EOF
 # capture-only, NOT part of the tutorial: the recording sandbox reaches the internet through a
 # TLS-intercepting proxy that refuses plain http. Same python:$v plus that proxy's CA, https Debian
@@ -141,22 +144,37 @@ wandb)
   step 10-export-wandb-key "export WANDB_KEY=$PH_KEY; echo \${#WANDB_KEY}"   # + extra echo: digest B6 checkpoint (40)
   step 11-wandb-key-new-terminal 'echo ${#WANDB_KEY}'    # extra: a new terminal forgets it (digest gotcha #1)
   ;;
+bases)
+  capture_only_bases   # (re-)tag the capture-only base images without re-running `pre`
+  ;;
 shell)
   export WANDB_KEY=$PH_KEY        # README:80, done in this terminal before docker-shell.sh
   cd model-training
+  git checkout -q -- Dockerfile docker-shell.sh   # capture-only: a re-run starts from the pinned files
   # --- README "Run docker-shell.sh" (README:85-116): the script's lines 8-9 hold the bucket and the
   # project ("[REPLACE WITH YOUR BUCKET NAME]", README:93-94); sed is the editor.
   step 20-edit-docker-shell "sed -i -e 's|^export GCS_BUCKET_URI=.*|export GCS_BUCKET_URI=\"gs://your-bucket-placeholder\"|' -e 's|^export GCP_PROJECT=.*|export GCP_PROJECT=\"your-gcp-project\"|' docker-shell.sh && sed -n '5,9p' docker-shell.sh"
   # no real key exists; the placeholder leaves before the container starts, so gcloud fails with the
   # documented missing-file error rather than an undocumented parse error (ASSETS.md)
-  mv ~/secrets/model-trainer.json ~/placeholder-key-removed.json
-  mkdir -p "$OUT/capture-only"; echo "shell: moved the placeholder key out of ~/secrets before the first docker-shell.sh" >> "$OUT/capture-only/placeholder-key-moves.txt"
-  # README:115 "Run sh docker-shell.sh". Dockerfile:37 still installs google-cloud-sdk (digest gotcha #20, live)
+  if [ -f ~/secrets/model-trainer.json ]; then
+    mv ~/secrets/model-trainer.json ~/placeholder-key-removed.json
+    mkdir -p "$OUT/capture-only"; echo "shell: moved the placeholder key out of ~/secrets before the first docker-shell.sh" >> "$OUT/capture-only/placeholder-key-moves.txt"
+  fi
+  # README:115 "Run sh docker-shell.sh", unmodified Dockerfile. Found live (not in the digest): the
+  # bullseye-security pool on deb.debian.org no longer has the files its (stale) index lists, so
+  # Dockerfile step 2 (the first apt-get install, Dockerfile:18-19) fails with 404s.
   hub_retry step 21-docker-shell-fails "sh docker-shell.sh"
-  # digest gotcha #20's fix (extra): Dockerfile:37 -> google-cloud-cli (the auth plugin is not needed)
-  step 22-fix-dockerfile "sed -i '37s/google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin/google-cloud-cli/' Dockerfile && sed -n '35,37p' Dockerfile"
-  # the same README command again; extras typed inside: what the console container holds
-  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=3600 hub_retry istep 23-docker-shell "sh docker-shell.sh" \
+  # fix 1 (extra): Dockerfile:2 -> python:3.13-slim-bookworm (Debian 12, still supported; the
+  # digest already recommends bookworm for native arm64 builds, gotcha #20)
+  step 22-fix-base-image "sed -i '2s/python:3.13-slim-bullseye/python:3.13-slim-bookworm/' Dockerfile && sed -n '1,2p' Dockerfile"
+  # the same README command again: now the build reaches Dockerfile:37 and fails at google-cloud-sdk
+  # (digest gotcha #20, live)
+  hub_retry step 23-docker-shell-fails-again "sh docker-shell.sh"
+  # fix 2 (extra, digest gotcha #20's fix): Dockerfile:37 -> google-cloud-cli (no GKE auth plugin)
+  step 24-fix-dockerfile "sed -i '37s/google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin/google-cloud-cli/' Dockerfile && sed -n '35,37p' Dockerfile"
+  step 25-git-diff "git diff --stat; git diff Dockerfile"   # extra: the two capture fixes, nothing else
+  # the same README command a third time; extras typed inside: what the console container holds
+  PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=3600 hub_retry istep 26-docker-shell "sh docker-shell.sh" \
     "$P" 'ls -la /secrets' \
     "$P" 'echo $GCP_PROJECT $GCS_BUCKET_URI ${#WANDB_KEY}' \
     "$P" 'which python gcloud gsutil uv' \
@@ -164,7 +182,7 @@ shell)
     "$P" 'python -c "import google.cloud.aiplatform as aip; print(aip.__version__)"' \
     "$P" 'python -c "import tensorflow"' \
     "$P" 'exit'
-  step 24-docker-images "docker image ls model-training-cli"   # extra
+  step 27-docker-images "docker image ls model-training-cli"   # extra
   ;;
 pkg)
   export WANDB_KEY=$PH_KEY
