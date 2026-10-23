@@ -127,7 +127,7 @@ Conventions
   S12 (chat) and S13 (agent, tuned endpoint), and GOLD-on-GREY-dashed on S14's storage rule card.
   There are no `expected` panels in this episode.
 - The honest framing (BRIEF, binding): S05's last block says once, plainly, that this machine has
-  no Google account and the key in the folder shots is an obviously invalid stand-in removed before
+  no Google account and the key in the folder listings is an obviously invalid stand-in removed before
   the cloud steps. From S06 on, every credential failure is taught as the lesson (no identity file →
   no bearer token) and every success carries `recorded` + its source. No chat, agent or tuned-model
   answer text ever appears: those beats describe what to look for, with no output panel.
@@ -336,15 +336,16 @@ highlighted; the same tube redraws from `llm-rag/`, two hops to the same `secret
 "slides: ../secrets · L11's repos sit one level shallower".
 SAY: The loader's compose file builds the same portal, counted from its own folder: up two levels, to the same secrets. The lecture's slide climbs only once, because its repos sit one level shallower. Always count the climbs from where the script sits.
 
-SHOW: TRACKER A3. Laptop terminal, prompt `student@laptop:~/cheese-app-v0$`. It types
-`mkdir ../secrets` (GREY tag "the README shows a tree, not a command") → TERM(laptop/04: → (no
-output)). A GREY file icon slides from "Downloads" into `secrets/` and is renamed
+SHOW: TRACKER A3 · extra. Laptop terminal, prompt `student@laptop:~/cheese-app-v0$`. It types
+`mkdir ../secrets` (extra; GREY tag "the README shows a tree, not a command") → TERM(laptop/04: →
+(no output)). TRACKER A3: a GREY file icon slides from "Downloads" into `secrets/` and is renamed
 `llm-service-account.json` (`illustration`). TRACKER A4 · extra: it types `cd ..` → (no output),
 prompt `student@laptop:~$`; then `tree -L 2 .` (extra) → TERM(laptop/05: 2–11) beside a README card
-(`README.md · lines 60–67`), the two trees matching line for line. Then `ls -la secrets` (extra) →
-TERM(laptop/06: 2–5), the file name highlighted; a GREY chip: "not .json.json · llm-finetuning
-README.md:67". `▶ your turn`.
-SAY: Make the folder beside your clone, then move the download in and rename it llm-service-account dot json. Check that name: hidden extensions can leave dot json dot json. An extra tree view shows the README's layout exactly. Pause and match it.
+(`README.md · lines 60–67`), the two trees matching folder for folder (`05`'s line 4, `README.md`,
+dimmed: the README's tree omits it). A GREY chip: "no tree? ls -la secrets (next line) checks the
+same thing". Then `ls -la secrets` (extra) → TERM(laptop/06: 2–5), the file name highlighted; a
+GREY chip: "not .json.json · llm-finetuning README.md:67". `▶ your turn`.
+SAY: Make the folder beside your clone, as an extra, then move the download in and rename it llm-service-account dot json. Check that name: hidden extensions can leave dot json dot json. An extra tree view shows the README's layout. Pause and match it.
 
 SHOW: CODE(cheese-app-v0/.gitignore: 1–7); lines 6–7 highlight GREY; a RED dashed slot below
 line 7 where no `secrets/` rule exists, caption "no rule for secrets/".
@@ -358,7 +359,7 @@ SAY: Something to ponder. Suppose you save the key inside the repo instead, in c
 SHOW: V3 replay: the cursor still climbs two levels to `AC215/`, finds no `secrets/`; an empty
 GREEN-outlined folder pops into existence there with a chip "created by Docker, empty"; the tube
 carries nothing; `/secrets` in the silhouette is empty. A RED line under it, quoted from
-TERM(laptop/24: 185): `google.auth.exceptions.DefaultCredentialsError: File /secrets/llm-service-account.json was not found.`
+TERM(laptop/33: 162), the API's own instance (identical text): `google.auth.exceptions.DefaultCredentialsError: File /secrets/llm-service-account.json was not found.`
 The misplaced key inside the repo turns RED: "inside a git tree · no rule protects it". Fade out.
 SAY: The cursor still climbs twice, to a folder that does not exist. Docker does not complain; it silently creates that folder, empty. So slash secrets is empty, and the first embedding call fails with a default credentials error: file not found. Meanwhile your key sits in a git tree that nothing protects.
 
@@ -369,15 +370,16 @@ SAY: The cursor still climbs twice, to a folder that does not exist. Docker does
 SHOW: TRACKER A5. GREY tag `lecture_ref(10, "9–10")` top right, whole scene. Laptop terminal,
 prompt `student@laptop:~$`. It types
 `docker network inspect cheese-app-network >/dev/null 2>&1 || docker network create cheese-app-network`
-(README.md line 74; folds) → TERM(laptop/10: 2). On the map the PINK street `cheese-app-network`
-is laid, no houses yet. `▶ your turn`.
+(README.md line 74; folds) → TERM(laptop/10: 2). On the map the dashed `cheese-app-network`
+outline from S02 turns solid PINK, no houses yet. `▶ your turn`.
 SAY: Last prerequisite: the Docker network. The README's command inspects it quietly, and creates it only if that fails. Pause and run it.
 
-SHOW: TRACKER A5 · extra. It types the same command again (extra; folds) → TERM(laptop/11: → (no
-output)); a GREEN chip "exit 0 · nothing new", caption "safe to run twice". Then
+SHOW: TRACKER A5 · extra. A YELLOW "?" over the command line, held 2 s on the spoken question; then
+it types the same command again (extra; folds) → TERM(laptop/11: → (no output)); a GREEN chip
+"exit 0 · nothing new", caption "safe to run twice". Then
 `docker network ls` (extra) → TERM(laptop/12: 2–6; squeeze), `cheese-app-network` highlighted. A
 GREY sticky note parks in the corner: "inspect … || create · remember this shape".
-SAY: Run it again, as an extra, and nothing happens: no error, no second network. A command that is safe to run twice is called idempotent. Remember this shape; it comes back soon.
+SAY: What happens if you run it again, as an extra? Nothing: no error, no second network. A command that is safe to run twice is called idempotent. Remember this shape; it comes back soon.
 
 SHOW: TRACKER B1 (tracker B appears: "README › Build the Vector DB", 5 dots). It types
 `cd cheese-app-v0/llm-rag` → (no output), prompt `student@laptop:~/cheese-app-v0/llm-rag$`.
@@ -385,16 +387,16 @@ CODE(cheese-app-v0/llm-rag/docker-shell.sh: 6–12), line 7 `export GCP_PROJECT=
 RED. A strip types the edit, shown small with the GREY tag "our editor; use yours" (the `sed` of
 TERM laptop/20's line 1; folds) → TERM(laptop/20: 2–5), line 3 `export GCP_PROJECT="your-gcp-project"`
 GREEN. `▶ your turn`.
-SAY: In the llm-rag folder, the shell script ships with a default project name that is not yours. Update GCP project to your own project ID; we use sed, you use any editor. Pause and edit it. The API needs the same edit later.
+SAY: In the llm-rag folder, the shell script ships with a default project name that is not yours. Update the GCP project variable to your own project ID; we use the sed tool, you use any editor. Pause and edit it. The API needs the same edit later.
 
 SHOW: TRACKER B2. It types `sh docker-shell.sh` (README.md line 88) → TERM(laptop/21: 2–8, …, 34,
 …, 37–41). Lines 3–5 (`chromadb/chroma:latest Pulled`, `Network llm-rag-network Created`,
-`Container llm-rag-chromadb Created`) highlight one by one; on the map a second PINK street is laid
-and the Chroma house lights TEAL. Lines 6–8 (`pull access denied … Building`) get a GREY chip "not
+`Container llm-rag-chromadb Created`) highlight one by one; on the map the dashed `llm-rag-network`
+outline turns solid PINK and the Chroma house lights TEAL. Lines 6–8 (`pull access denied … Building`) get a GREY chip "not
 on Docker Hub → built locally". Lines 38 `Architecture: x86_64` and 40 `Python version: Python
 3.12.15` highlight, with `at the time of recording`. CODE(cheese-app-v0/llm-rag/docker-compose.yml:
 1–3) small: "every service joins this network". `▶ your turn`.
-SAY: Now the README's command: sh docker-shell.sh. Pause and run it. Compose pulls Chroma, creates a network called llm-rag-network, and starts the database on it. Every service in this compose file joins that network automatically. The pull access denied line is harmless: that image is not on Docker Hub, so Compose builds it locally. Its architecture is x86 here; Apple Silicon says aarch64, and needs no special flags. Python is 3.12.15, at the time of recording.
+SAY: Now the README's command: sh docker-shell.sh. Pause and run it. Compose pulls Chroma, creates a network called llm-rag-network, and starts the database on it. Every service in this compose file joins that network automatically. The line that says pull access denied is harmless: that image is not on Docker Hub, so Compose builds it locally. The container's architecture is x86 here; Apple Silicon says aarch64, and needs no special flags.
 
 SHOW: TRACKER B2 · extra. At the capture's prompt `app@3c41bc0606ad:/app$` it types
 `ls -la /secrets` (extra) → TERM(laptop/21: 44–47), the file name highlighted (not its size); V3's
@@ -403,12 +405,14 @@ TERM(laptop/21: 49). CODE(cheese-app-v0/llm-rag/docker-compose.yml: 13–15) sma
 from the shell that runs compose".
 SAY: Two extra checks inside. The key file shows up in slash secrets, through the portal. And both variables are set, copied by Compose from the launching script, which is why you always start through it.
 
-SHOW: A plain GREY card, no animation: "This recording machine has no Google account. · The key file
-in the folder shots is an obviously invalid stand-in. · It was removed before the cloud steps." Under
-it a RED chip `DefaultCredentialsError` ("what a missing key looks like") and a GREY `recorded` chip
-("a success you will see on your machine · source named"). The terminal's `exit` (laptop/21: 50–51)
+SHOW: A GREY card whose three lines build on their sentences: "This recording machine has no
+Google account. · The key file in the folder listings is an obviously invalid stand-in. · It was
+removed before the cloud steps." On "fails exactly the way a missing key fails", a RED chip
+`DefaultCredentialsError` ("what a missing key looks like") flies onto the first, empty slot of a
+small V1 outline as a teaser; then a GREY `recorded` chip ("a success you will see on your
+machine · source named") settles under the card. The terminal's `exit` (laptop/21: 50–51)
 is not shown: S06 continues inside a container.
-SAY: One honest note about this recording. This machine has no Google account. The key file you just saw is an obviously invalid stand-in, so that the folder shots match the README, and it was removed before the cloud steps. So from here on, every cloud call fails exactly the way a missing key fails, the most common mistake in this lecture. Every success you will see on your machine is tagged recorded, with its source.
+SAY: One honest note about this recording. This machine has no Google account. The key file you just saw is an obviously invalid stand-in. It is there so the folder listings match the README, and it was removed before the cloud steps. So from here on, every cloud call fails exactly the way a missing key fails. That is the most common mistake in this lecture, and you will learn it on sight. Every success you will see on your machine is tagged recorded, with its source.
 
 ---
 
