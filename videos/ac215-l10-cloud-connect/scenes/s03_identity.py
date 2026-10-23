@@ -182,10 +182,10 @@ class IdentityForCode(VoiceScene):
 
         # ========================================================== 0. an identity for software
         server = server_box().move_to([-3.4, 0.95, 0])
-        bdg = id_badge().move_to([0.1, 0.2, 0])
+        bdg = id_badge().move_to([0.55, 0.2, 0])
         hang = bdg.copy().move_to([server.get_center()[0], 0, 0]).align_to(server, UP).shift(DOWN * 1.75)
         lanyard = Line(server.body.get_bottom(), hang.clip.get_top(), color=KEY, stroke_width=3)
-        gb = google_building(2.4, 3.0, door=False, meter_=False).move_to([4.75, -1.75, 0], aligned_edge=DOWN)
+        gb = google_building(2.4, 3.0, door=False, meter_=False).move_to([5.0, -1.75, 0], aligned_edge=DOWN)
         y_call = 0.85
         call = Arrow([server.body.get_right()[0], y_call, 0], [gb.frame.get_left()[0] + 0.12, y_call, 0], buff=0.1,
                      color=CLOUD, stroke_width=4, tip_length=0.22, max_tip_length_to_length_ratio=0.1)
