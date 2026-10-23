@@ -12,8 +12,8 @@ Beats (script.md, ## S15; one voiceover block each):
    row, is never printed: Capture.line() refuses it); the two cheese image names ringed TEAL.
    `pre-commit uninstall` (extra; the tracker caption gains " · extra") -> clean-04: 2. The
    terminal leaves; a GREY `laptop · babykev` card: `.venv/` (GREEN file card) is struck out on
-   "delete the venv"; the BLUE model chip `Qwen/Qwen2.5-0.5B` with "~1 GB · Hugging Face cache"
-   (ASSETS.md:230) and "if you ran the smoke", struck out too. The card leaves; a laptop glyph
+   "delete the venv"; the BLUE model chip `Qwen/Qwen2.5-0.5B` with "about 1 GB · Hugging Face cache"
+   (ASSETS.md:230's "~1 GB") and "if you ran the smoke", struck out too. The card leaves; a laptop glyph
    with a five-arch turnstile on its screen, GREEN "nothing billable today" and GREY "the gate
    lives on your laptop" (the GOLD rule, said once): the arches pass GREEN on that phrase.
 1. Tracker and laptop leave. "Test yourself" (YELLOW underline) top-left; one question at a time
@@ -91,7 +91,8 @@ assert UNINSTALL.cmd == "pre-commit uninstall", UNINSTALL.cmd
 UN_OUT = UNINSTALL.at(2)
 assert UN_OUT == ["pre-commit uninstalled"], UN_OUT
 
-MODEL = "Qwen/Qwen2.5-0.5B"                   # ASSETS.md:53 (smoke.py:25), ~1 GB (ASSETS.md:230)
+MODEL = "Qwen/Qwen2.5-0.5B"                   # ASSETS.md:53 (smoke.py:25), ~1 GB (ASSETS.md:230;
+                                              # shown "about 1 GB": the serif font raises "~")
 GUIDE_REPO = "github.com/JunyiZhou-Conny/MLOps_Learning"
 GUIDE_PATH = "guides/L09-ci-testing-precommit.md"
 
@@ -323,7 +324,7 @@ class Recap(VoiceScene):
 
             # babykev, said only: a small card of what to delete
             venv = file_card(".venv/", VENV, size=22)
-            model = VGroup(mono(MODEL, 22, INK), label("~1 GB · Hugging Face cache", 22, S.GREY))
+            model = VGroup(mono(MODEL, 22, INK), label("about 1 GB · Hugging Face cache", 22, S.GREY))
             model.arrange(RIGHT, buff=0.3)
             mbox = box(model.width + 0.5, model.height + 0.4, CLOUD, fill_opacity=0.1)
             model.move_to(mbox)

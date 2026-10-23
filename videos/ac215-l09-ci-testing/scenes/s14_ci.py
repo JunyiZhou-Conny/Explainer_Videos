@@ -500,12 +500,14 @@ class HooksThenCI(VoiceScene):
             start = rider.get_center()
             # up, over every arch, and down into the vault (it never touches an arch)
             end = gate.vault.frame.get_center() + (rider.get_center() - env.get_center())
-            peak = max(n.get_top()[1] for n in names) + 0.15 + (rider.get_center()[1] - rider.get_bottom()[1])
+            peak = max(n.get_top()[1] for n in names) + 0.05 + (rider.get_center()[1] - rider.get_bottom()[1])
             path = VMobject().set_points_smoothly([start, [start[0] + 0.3, peak, 0],
                                                    [end[0] - 0.3, peak, 0], end])
             self.play(gate.open(), run_time=0.4)
-            top = max(path.get_points()[:, 1]) + rider.get_top()[1] - rider.get_center()[1]
-            assert top <= dim_box.get_bottom()[1] - 0.1, (top, dim_box.get_bottom())    # under the tracker
+            # the smooth path bulges above `peak`: sample it (clear of the tracker outline and the names)
+            ys = [path.point_from_proportion(a)[1] for a in np.linspace(0, 1, 300)]
+            top = max(ys) + rider.get_top()[1] - rider.get_center()[1]
+            assert top <= dim_box.get_bottom()[1] - 0.15, (top, dim_box.get_bottom())
             self.play(MoveAlongPath(rider, path), run_time=1.6, rate_func=smooth)
             self.play(FadeOut(env), FadeOut(nv), run_time=0.4)
             gate.remove(env)
