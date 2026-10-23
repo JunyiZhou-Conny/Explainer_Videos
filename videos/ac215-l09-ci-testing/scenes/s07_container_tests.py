@@ -1,8 +1,8 @@
 """S07 · Tests inside the shipping image (README Part 3, tracker C1 -> C5, then C9 -> C10).
 
 Beats (script.md, ## S07; one voiceover block each):
-0. TRACKER C1 appears; `Lecture 9 · slides 87–90` (top right, until the gate table). The three
-   README routes as GREY chips (Option 1 · docker run per suite / Option 2 · live server for system
+0. TRACKER C1 appears; `Lecture 9 · slides 87–90` (top right, until the gate table). A TEAL image
+   box `cheese-app-api:local` takes "the app", then "its tests"; the three README routes as GREY chips (Option 1 · docker run per suite / Option 2 · live server for system
    tests / Option 3 · interactive shell). V7: CODE(Dockerfile: 31–41) at left; as lines light, the
    slabs stack at right, small: thin GREY `pyproject.toml`, fat ORANGE `pip install --user .`, four
    thin COPY slabs `api/`, `tests/`, `pytest.ini`, `docker-entrypoint.sh` (TEAL outlines). The
@@ -35,8 +35,10 @@ panel takes at most 12; 27–30 are USER/WORKDIR, not narrated); CODE(pyproject.
 7–19 (13 lines; 19 is the closing `]`). Code panels are 20 pt so the Dockerfile and the slab stack
 share the frame and the entrypoint's 70-character comment fits. pytest's summary lines are shown
 without their `=` padding (as S03 shows part3-opt1-03:24), so they fit a 65-character row and the
-`at the time of recording` tag fits beside them; pytest's long PASSED rows wrap like a real
-terminal (wrap=True). The three route chips in beat 0 are added for the narration's "three routes".
+`at the time of recording` tag fits beside them; pytest's long PASSED rows break at the last
+space that fits (soft()), so `PASSED` never splits; their text is the capture's. The image box
+and the three route chips of beat 0 are added for the narration's opening sentence (no SHOW
+for it; the frame would sit empty for ~10 s).
 """
 
 from manim import *  # noqa: I001  (manim first, then common: common must win)
@@ -69,6 +71,20 @@ def summary(cap, n: int) -> str:
     s = cap.line(n)
     assert s.startswith("=") and s.endswith("="), s
     return s.strip("= ")
+
+
+def soft(lines: list[str], n: int) -> list[str]:
+    """pytest's long PASSED rows broken at their last space that fits a row (the text is the
+    capture's, only the row break moves), so 'PASSED' never splits in two."""
+    out = []
+    for s in lines:
+        while len(s) > n:
+            k = s.rfind(" ", 0, n + 1)
+            assert k > 0, s
+            out.append(s[:k])
+            s = s[k + 1:]
+        out.append(s)
+    return out
 
 
 def rows_of(line) -> list:
@@ -120,7 +136,15 @@ class TestsInImage(VoiceScene):
         routes = VGroup(*[grey_chip(s, size=24) for s in (
             "Option 1 · docker run per suite", "Option 2 · a live server for the system tests",
             "Option 3 · an interactive shell")]).arrange(DOWN, buff=0.35, aligned_edge=LEFT)
-        routes.move_to([0, 0.2, 0])
+        routes.move_to([2.75, 0.2, 0])
+        # the image the tests run in: the app and its tests, side by side inside it
+        img_box = RoundedRectangle(width=4.0, height=2.5, corner_radius=0.16, stroke_color=IMAGE,
+                                   stroke_width=3).set_fill(IMAGE, 0.08).move_to([-3.75, 0.2, 0])
+        img_title = mono("cheese-app-api:local", 20, IMAGE).next_to(img_box.get_top(), DOWN, buff=0.25)
+        app_chip = grey_chip("the app", size=22)
+        tests_chip = grey_chip("its tests", size=22)
+        VGroup(app_chip, tests_chip).arrange(RIGHT, buff=0.4).move_to(img_box).shift(DOWN * 0.3)
+        intro = VGroup(img_box, img_title, app_chip, tests_chip)
 
         dock = code(DOCKERFILE, D0, D1, font_size=20)
         dock.move_to([-6.6 + dock.width / 2, 0.05, 0])
@@ -141,17 +165,23 @@ class TestsInImage(VoiceScene):
             links.append(c)
         row = VGroup(*links).arrange(RIGHT, buff=0.6)
         row.next_to(entry, DOWN, buff=0.5)
-        arrows = VGroup(*[arrow(chain[i], chain[i + 1], S.GREY, buff=0.1) for i in range(3)])
+        arrows = VGroup(*[arrow(chain[i].get_right() + RIGHT * 0.08, chain[i + 1].get_left() + LEFT * 0.08, S.GREY)
+                          for i in range(3)])
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref), run_time=0.8)
             self.play(Indicate(tr.dots[0], color=TURN, scale_factor=1.6), run_time=0.6)
+            vo.wait_until("where the app lives")
+            self.play(Create(img_box), FadeIn(img_title), FadeIn(app_chip, shift=DOWN * 0.2), run_time=0.9)
+            vo.wait_until("inside the image")
+            self.play(FadeIn(tests_chip, shift=LEFT * 0.4), Indicate(img_box, color=IMAGE, scale_factor=1.03),
+                      run_time=0.8)
             vo.wait_until("by three routes")
             for chp, anchor in zip(routes, ("docker run per suite", "a live server", "or an interactive shell")):
                 vo.wait_until(anchor)
                 self.play(FadeIn(chp, shift=RIGHT * 0.25), run_time=0.5)
             vo.wait_until("The Dockerfile copies")
-            self.play(FadeOut(routes, shift=UP * 0.2), run_time=0.5)
+            self.play(FadeOut(routes, shift=UP * 0.2), FadeOut(intro), run_time=0.5)
             self.play(FadeIn(dock, shift=RIGHT * 0.2), FadeIn(img_name), run_time=0.8)
             self.play(FadeIn(bars[32]), run_time=0.3)
             st.drop(self, slabs[0], run_time=0.6)
@@ -221,7 +251,7 @@ class TestsInImage(VoiceScene):
                 vo.wait_until(anchor)
                 self.play(Indicate(find_in(u_ln, sub), color=col, scale_factor=1.12), run_time=0.6)
             t.print(self, unit.at(2, 3, 11), run_time=0.5)
-            t.print(self, unit.at(13, "…", 23), run_time=0.6, wrap=True, lag=0.2)
+            t.print(self, soft(unit.at(13, "…", 23), t.max_chars), run_time=0.6, lag=0.2)
             u_sum = t.print(self, [(summary(unit, 25), PASS)], run_time=0.4)[0]
             vo.wait_until("11 passed")
             self.play(Indicate(substring(u_sum, "11 passed"), color=PASS, scale_factor=1.15), run_time=0.7)
@@ -233,7 +263,7 @@ class TestsInImage(VoiceScene):
             unpin(self, u_row, u_tag, track(tr, 3))
             i_ln = type_cmd(self, t, integ.cmd, type_time=1.2)
             i_row, i_tag = turn_on(self, i_ln)
-            t.print(self, integ.at(13, "…", 22), run_time=0.6, wrap=True, lag=0.2)
+            t.print(self, soft(integ.at(13, "…", 22), t.max_chars), run_time=0.6, lag=0.2)
             i_sum = t.print(self, [summary(integ, 24)], run_time=0.4)[0]
             vo.wait_until("10 passed, 1 warning")
             self.play(substring(i_sum, "10 passed").animate.set_color(PASS), run_time=0.5)
@@ -288,7 +318,7 @@ class TestsInImage(VoiceScene):
 
         # ========================================================== 4. the gate table, Option 3
         gt = GateTable(keys=("tests",))
-        gt.move_to([0, 1.05, 0])
+        gt.move_to([0, 0.75, 0])
 
         with self.voiceover(SAY[4]) as vo:
             unpin(self, c_row, c_tag)
@@ -324,7 +354,7 @@ class TestsInImage(VoiceScene):
             listing = t.print(self, shell.at((140, 143)), run_time=0.6, lag=0.12)
             vo.wait_until("lands inside a container")
             lw = max(r.glyphs.get_right()[0] for r in listing) - listing.get_left()[0]
-            red = outline_box(lw + 0.4, listing.height + 0.25, ERR)
+            red = outline_box(lw + 0.4, listing.height + 0.04, ERR)
             red.move_to([listing.get_left()[0] + lw / 2, listing.get_center()[1], 0])
             cap = label("inside a --rm container · gone on exit", 22, ERR)
             cap.next_to(red, RIGHT, buff=0.4)
