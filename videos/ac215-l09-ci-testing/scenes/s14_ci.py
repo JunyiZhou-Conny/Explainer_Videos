@@ -174,7 +174,7 @@ def summary(cap, n: int) -> str:
 # ---------------------------------------------------------------- pictures
 def part(t, sub: str) -> VGroup:
     """The glyphs of `sub` in a label/mono Text (its submobjects skip spaces)."""
-    s = t.text
+    s = t.original_text                     # Text.text has its spaces dropped
     i = s.index(sub)
     a = len("".join(s[:i].split()))
     return VGroup(*t.submobjects[a:a + len("".join(sub.split()))])

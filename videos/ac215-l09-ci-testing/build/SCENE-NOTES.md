@@ -270,3 +270,9 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
 - No invented numbers on screen, not even under an `illustration` tag (versions, scores,
   confidences). Every number is from a capture/source/ASSETS.md; for a purely schematic idea use
   symbolic marks (`x.y`, arrows, "newer") instead of made-up values (coordinator, S10).
+- A house-cut "…" inside a pygments CODE panel renders pink-red (Error token): recolour it GREY with
+  `code_span(...)` from `explainer.devops` right after building the panel (S12 critic). Terminal
+  "…" rows are unaffected.
+- `MaskGrid.flash_rows()` / any `.animate` or `pulse` on grid cells re-adds the cells on top of
+  overlays (`cell_box`, `row_box`), so RED boxes go faint: `self.add(boxes)` after each such play
+  (S12 critic).
