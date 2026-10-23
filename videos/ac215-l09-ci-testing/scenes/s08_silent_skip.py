@@ -369,6 +369,7 @@ class SilentSkip(VoiceScene):
         src[k24] = cut(src[k24], 'reason="API not running at')
         assert len(src[k24]) <= 72, len(src[k24])
         panel = code_panel("\n".join(src), shown_path(SYS), C0, "python", font_size=20)
+        code_span(panel.code, k24, "…").set_color(S.GREY)   # pygments paints the cut's "…" as an error (pink)
         panel.move_to([0, 2.72 - panel.height / 2, 0])
         fn_bar = VGroup(*[line_bar(panel.code, k, SYSTEM_TEST, 0.14) for k in range(0, 7)])
         get_span = code_span(panel.code, 18 - C0, "requests.get")

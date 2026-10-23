@@ -204,7 +204,10 @@ def pyproject_panel():
     lines[54 - P_FIRST] = cut(lines[54 - P_FIRST], "(the Hub, the real")
     lines[57 - P_FIRST] = cut(lines[57 - P_FIRST], "or a device;")
     assert all(len(s) <= COLS for s in lines), [len(s) for s in lines]
-    return code_panel("\n".join(lines), shown_path(PYP), P_FIRST, "toml", font_size=PT)
+    panel = code_panel("\n".join(lines), shown_path(PYP), P_FIRST, "toml", font_size=PT)
+    for n in (53, 54, 57):              # pygments marks the house "…" as an Error token (pink-red)
+        code_span(panel.code, n - P_FIRST, "…").set_color(S.GREY)
+    return panel
 
 
 def image_bar(gb: float, scale: float, text: str) -> VGroup:

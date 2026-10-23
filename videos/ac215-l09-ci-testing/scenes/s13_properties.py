@@ -335,8 +335,10 @@ class PropertyTests(VoiceScene):
             vo.wait_until("as the walk records")
             self.play(*flash(rec, S.GREY), run_time=0.7)
             vo.wait_until("Hermetic means")
-            self.play(Indicate(fm, color=ERR, scale_factor=1.5), d_a.animate(rate_func=there_and_back)
-                      .set_stroke(width=8), run_time=0.8)
+            # (fm left the screen with the resize: indicating it again would bring a stray F back)
+            self.play(Indicate(substring(l66, "test_a_question_cannot_see_its_sibling"), color=ERR,
+                               scale_factor=1.06), d_a.animate(rate_func=there_and_back).set_stroke(width=8),
+                      run_time=0.8)
             vo.wait_until("a stronger promise")
             self.play(FadeIn(promise, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("this machine measured it")
@@ -396,6 +398,7 @@ class PropertyTests(VoiceScene):
                       *[substring(r, "ok").animate.set_color(PASS) for r in t.lines if r.text.endswith(" ok")],
                       run_time=0.4)
             self.play(Indicate(w, color=ERR, scale_factor=1.25), g4.flash_rows([3]), run_time=0.7)
+            self.add(blocked, opened, box4)          # flash_rows re-added row 4's cells over the boxes
 
         # ========================================================== 2. state the rule once; ponder
         lines = excerpt(MASK_SRC, FIRST, LAST).split("\n")
@@ -404,6 +407,8 @@ class PropertyTests(VoiceScene):
         assert all(len(s) <= COLS for s in lines), [len(s) for s in lines]
         panel = code_panel("\n".join(lines), "tests/unit/test_mask.py", FIRST, "python", font_size=PT)
         panel.move_to([0, 0, 0]).align_to([0, 1.75, 0], UP)
+        for k in (60 - FIRST, 64 - FIRST):           # the house cut: pygments paints it as an error token
+            code_span(panel.code, k, "…").set_color(S.GREY)
         assert panel.width <= 13.1 and panel.get_bottom()[1] > -3.5, (panel.width, panel.get_bottom())
         given = code_span(panel.code, 0, "@given(shapes)")
         die = Dice(3, side=0.55).move_to([given.get_right()[0] + 0.8, given.get_center()[1], 0])
@@ -496,7 +501,8 @@ class PropertyTests(VoiceScene):
             self.remove(gone, *gone.get_family())
             vo.wait_until("a question two steps back")
             self.play(Create(a_open), run_time=0.4)
-            self.play(pulse(a_open, TURN, width=10), a4.flash_rows([3], TURN), run_time=0.8)
+            self.play(pulse(a_open, TURN, width=10), run_time=0.8)
+            self.add(a_open)
             vo.wait_until("so one state token")
             self.play(FadeIn(a_cap, shift=UP * 0.1), run_time=0.5)
             self.play(LaggedStart(*[Indicate(b, color=INK, scale_factor=1.1) for b in a4.band], lag_ratio=0.25),
@@ -561,8 +567,8 @@ class PropertyTests(VoiceScene):
             for m in list(t3.lines):
                 t3.lines.remove(m)
             self.play(FadeIn(t4, shift=UP * 0.2), run_time=0.4)
-            vo.wait_until("put step 5's wrong mask line back")
             typ(self, t4, rst1.cmd, type_time=0.4)
+            vo.wait_until("put step 5's wrong mask line back")
             typ(self, t4, back.cmd, type_time=1.2, soft=True)
             vo.wait_until("and run just test")
             a_ln = typ(self, t4, again.cmd, type_time=0.3)

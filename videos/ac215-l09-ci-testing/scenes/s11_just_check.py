@@ -251,11 +251,15 @@ def wipe(scene, t, *extra, run_time: float = 0.4):
 def cfg_panel(a: int, b: int):
     """CODE(.pre-commit-config.yaml: a–b) at 20 pt; line 16 (96 characters) gets the house cut."""
     lines = excerpt(CFG, a, b).split("\n")
+    cuts = []
     for i, s in enumerate(lines):
         if len(s) > COLS:
             lines[i] = cut(s, "secrets of one")
             assert len(lines[i]) <= 66, lines[i]
+            cuts.append(i)
     p = code_panel("\n".join(lines), shown_path(CFG), a, "yaml", font_size=20)
+    for i in cuts:                      # pygments paints the cut's "…" as an error (pink)
+        code_span(p.code, i, "…").set_color(S.GREY)
     return p.move_to([0, 0, 0]).align_to([0, 2.8, 0], UP)
 
 
