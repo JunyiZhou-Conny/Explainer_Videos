@@ -90,12 +90,24 @@ def rows_of(line) -> list:
     return list(line.rows) if hasattr(line, "rows") else [line]
 
 
-def find_in(line, sub: str) -> VGroup:
-    """The glyphs of `sub` in a typed command (one row, or the rows of a folded one)."""
+def find_in(line, sub: str) -> list:
+    """The glyphs of `sub` in a typed command, as one group per row: a fold may split `sub`
+    between rows, so each word is found on its own row then. Flash the pieces with flash()."""
     for r in rows_of(line):
         if sub in r.text:
-            return substring(r, sub)
-    raise KeyError(sub)
+            return [substring(r, sub)]
+    parts, rows = [], rows_of(line)
+    for w in sub.split():
+        hit = [r for r in rows if w in r.text]
+        if not hit:
+            raise KeyError(sub)
+        parts.append(substring(hit[0], w))
+    return parts
+
+
+def flash(pieces, color, scale: float = 1.12, run_time: float = 0.8):
+    """One Indicate per piece (each scales about its own centre, never the group's), together."""
+    return AnimationGroup(*[Indicate(p, color=color, scale_factor=scale) for p in pieces], run_time=run_time)
 
 
 def tag_on(scene, line, mk, anim=None):
@@ -182,8 +194,8 @@ class SilentSkip(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref), run_time=0.7)
             self.play(Indicate(tr.dots[5], color=TURN, scale_factor=1.6), run_time=0.5)
-            vo.wait_until("the lecture's question")
             self.play(Create(border.frame), FadeIn(border.text), run_time=0.8)
+            vo.wait_until("the lecture's question")
             self.play(FadeIn(q, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("but our code")
             self.play(Indicate(border.frame, color=UNIT, scale_factor=1.03), run_time=0.8)
@@ -197,7 +209,7 @@ class SilentSkip(VoiceScene):
             for anchor, sub in (("detached", "-d"), ("named api-server", "--name api-server"),
                                 ("on port 9000", "-p 9000:9000"), ("with DEV equals 1", "-e DEV=1")):
                 vo.wait_until(anchor)
-                self.play(Indicate(find_in(r_ln, sub), color=TURN, scale_factor=1.12), run_time=0.5)
+                self.play(flash(find_in(r_ln, sub), TURN, 1.12, run_time=0.5))
             vo.wait_until("All you get back")
             cid = t.print(self, run.at(2), run_time=0.4)[0]
             cring = ring(cid.glyphs, IMAGE, buff=0.06)
@@ -245,7 +257,7 @@ class SilentSkip(VoiceScene):
             for anchor, sub in (("docker run with network host", "--network host"),
                                 ("pytest tests slash system", "pytest tests/system/")):
                 vo.wait_until(anchor)
-                self.play(Indicate(find_in(s_ln, sub), color=TURN, scale_factor=1.08), run_time=0.5)
+                self.play(flash(find_in(s_ln, sub), TURN, 1.08, run_time=0.5))
             t.print(self, soft(sysc.at((13, 17)), t.max_chars), run_time=0.7, lag=0.08)
             s_sum = t.print(self, [(summary(sysc, 19), PASS)], run_time=0.3)[0]
             vo.wait_until("5 passed")
@@ -303,8 +315,9 @@ class SilentSkip(VoiceScene):
             rest = VGroup(left, right, pyt, srv, wire, wlab, checks)
             self.play(FadeOut(rest), track(tr, 8), run_time=0.6)
             self.remove(rest)
-            resize(self, t, 10, keep=0, extra=[dots.animate.move_to([-1.6, 1.97, 0]),
-                                               dots.to(range(5), "idle", run_time=0.8)])
+            # two plays: dots.to() Transforms toward targets built where the dots stand now
+            self.play(dots.to(range(5), "idle", run_time=0.5), run_time=0.5)
+            resize(self, t, 10, keep=0, extra=[dots.animate.move_to([-1.6, 1.97, 0])])
             dlab.next_to(dots, RIGHT, buff=0.4)
             self.play(FadeIn(dlab, shift=LEFT * 0.15), run_time=0.4)
             vo.wait_until("stop and remove the server")
@@ -314,7 +327,7 @@ class SilentSkip(VoiceScene):
             x_row, x_tag = tag_on(self, x_ln, turn_row)
             self.play(Indicate(x_tag, color=TURN, scale_factor=1.15), run_time=0.6)
             vo.wait_until("doubles as our experiment")
-            self.play(Indicate(VGroup(dots, dlab), color=S.GREY, scale_factor=1.06), run_time=0.8)
+            self.play(flash([*dots.dots, dlab], S.GREY, 1.1))
 
         # ========================================================== 5. the answer: still green
         with self.voiceover(SAY[5]) as vo:
@@ -336,17 +349,17 @@ class SilentSkip(VoiceScene):
             vo.wait_until("Four gray dots")
             self.play(dots.to(range(4), "skip", run_time=1.0), run_time=1.0)
             vo.wait_until("not failures")
-            self.play(Indicate(VGroup(*dots.dots[:4]), color=SKIP, scale_factor=1.2), run_time=0.7)
+            self.play(flash(dots.dots[:4], SKIP, 1.25, run_time=0.7))
             vo.wait_until("Only the summary")
             sk_ring = ring(skipped, TURN, buff=0.06)
             self.play(Create(sk_ring), run_time=0.6)
             attach(self, skipped[0], sk_ring)
             vo.wait_until("tells the truth")
-            words = VGroup(*[substring(r, "SKIPPED") for r in skipped if "SKIPPED" in r.text])
-            self.play(Indicate(words, color=TURN, scale_factor=1.15), run_time=0.8)
+            words = [substring(r, "SKIPPED") for r in skipped if "SKIPPED" in r.text]
+            self.play(flash(words, TURN, 1.15))
             vo.wait_until("API not running")
-            apis = VGroup(*[substring(r, "API not running") for r in skipped if "API not running" in r.text])
-            self.play(Indicate(apis, color=TURN, scale_factor=1.1), run_time=0.8)
+            apis = [substring(r, "API not running") for r in skipped if "API not running" in r.text]
+            self.play(flash(apis, TURN, 1.1))
 
         # ========================================================== 6. why: evaluated at collection
         src = excerpt(SYS, C0, C1).split("\n")
@@ -399,7 +412,7 @@ class SilentSkip(VoiceScene):
             vo.wait_until("A smoke detector")
             self.play(FadeIn(det, scale=0.9), run_time=0.6)
             vo.wait_until("battery removed")
-            self.play(det.battery.animate.shift(DOWN * 0.45 + RIGHT * 0.95).rotate(-0.4), run_time=0.8)
+            self.play(det.battery.animate.shift(DOWN * 0.1 + RIGHT * 1.05).rotate(-0.3), run_time=0.8)
             vo.wait_until("will never beep")
             self.play(FadeIn(zzz, shift=UP * 0.2), run_time=0.7)
             vo.wait_until("not the same as no fire")
@@ -407,16 +420,21 @@ class SilentSkip(VoiceScene):
 
         # ========================================================== 7. outside the border; CI; the table
         inside = TestDots(22, [UNIT] * 11 + [INTEG] * 11, cols=11, state="pass")
-        inside.move_to([-2.0, 1.7, 0])
+        inside.move_to([-3.0, 1.7, 0])
         hb = HermeticBorder.around(inside, buff=0.32)
         extra_dot = inside.dots[21]
         ed_ring = Circle(radius=0.3, stroke_color=INK, stroke_width=3).move_to(extra_dot)
         in_lab = note("22 inside · 11 unit, 11 run in-process", S.GREY, 22).next_to(hb, DOWN, buff=0.22)
         ed_lab = note("1 from tests/system/ · no server", INTEG, 22).next_to(hb, DOWN, buff=0.22)
-        outside = TestDots(4, SYSTEM_TEST, state="skip").move_to([4.1, inside.get_center()[1], 0])
+        outside = TestDots(4, SYSTEM_TEST, state="skip").move_to([3.6, inside.get_center()[1], 0])
         out_lab = note("4 need a live server", S.GREY, 22).next_to(outside, DOWN, buff=0.4)
         out_lab.align_to(in_lab, DOWN)
-        marker = dashed_chip("a marker the run must select · part 2", FUTURE, size=20)
+        m_t = VGroup(label("a marker the run", 20, FUTURE), label("must select · part 2", 20, FUTURE))
+        m_t.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+        m_box = outline_box(m_t.width + 0.5, m_t.height + 0.35, FUTURE)
+        m_t.move_to(m_box)
+        marker = VGroup(m_box, m_t)
+        marker.box, marker.text = m_box, m_t
 
         cip = code(CI, 150, 154)
         curl = code_span(cip.code, 154 - 150, "curl -f http://localhost:9000/ || exit 1")
@@ -427,10 +445,9 @@ class SilentSkip(VoiceScene):
         cframe = outline_box(inner.width + 0.6, inner.height + 0.5, FUTURE)
         cframe.move_to(inner)
         card = VGroup(cframe, inner)
-        card.move_to([0, -3.45 + card.height / 2, 0])
-        marker.move_to([outside.get_center()[0], (out_lab.get_bottom()[1] + card.get_top()[1]) / 2, 0])
-        if marker.get_right()[0] > 6.4:
-            marker.shift(LEFT * (marker.get_right()[0] - 6.4))
+        card.move_to([-6.4 + card.width / 2, -3.45 + card.height / 2, 0])
+        marker.move_to([(card.get_right()[0] + 6.4) / 2, (out_lab.get_bottom()[1] - 3.45) / 2, 0])
+        assert marker.get_left()[0] > card.get_right()[0] + 0.2 and marker.get_right()[0] < 6.5
         red = ring(curl, ERR, buff=0.08, stroke=4)
 
         gt = GateTable(keys=("tests", "system"), filled=("tests",))
@@ -444,15 +461,14 @@ class SilentSkip(VoiceScene):
             self.play(LaggedStart(*[FadeIn(d, scale=0.6) for d in inside.dots], lag_ratio=0.04), run_time=1.0)
             self.add(inside)
             vo.wait_until("the 21 from last scene")
-            self.play(Indicate(VGroup(*inside.dots[:21]), color=INK, scale_factor=1.08), FadeIn(in_lab),
-                      run_time=0.8)
+            self.play(flash(inside.dots[:21], INK, 1.2), FadeIn(in_lab), run_time=0.8)
             vo.wait_until("plus the one system folder test")
             self.play(Create(ed_ring), FadeOut(in_lab), FadeIn(ed_lab), run_time=0.7)
             vo.wait_until("These 4 stand outside")
             self.play(LaggedStart(*[FadeIn(d, shift=LEFT * 0.3) for d in outside.dots], lag_ratio=0.15),
                       FadeIn(out_lab), run_time=0.8)
             self.add(outside)
-            self.play(Indicate(outside, color=SKIP, scale_factor=1.15), run_time=0.6)
+            self.play(flash(outside.dots, SKIP, 1.25, run_time=0.6))
             vo.wait_until("The honest remedy")
             self.play(Create(marker.box.frame), FadeIn(marker.text), run_time=0.7)
             vo.wait_until("part 2 shows it")

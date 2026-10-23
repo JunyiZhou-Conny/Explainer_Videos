@@ -1,0 +1,613 @@
+"""S09 · The gate on your machine (README Part 4, tracker D1 -> D5). Ends part 1.
+
+Beats (script.md, ## S09; one voiceover block each):
+0. TRACKER D1 (tracker D appears); `Lecture 9 · slides 34, 41–44` (top right, until the refusal in
+   beat 7). A 10-row terminal types `pip install pre-commit` (README:240) -> part4-01: 2–3, …, 35
+   (wrap); an ORANGE tag "on the host · outside the container" over the terminal; `pre-commit-4.7.0`
+   ringed with `at the time of recording`; a GREY remedy chip "pip refuses? (PEP 668) → pipx install
+   pre-commit, or any venv". TRACKER D2: `pre-commit install` (README:246) -> part4-02: 2, the hook
+   path ringed. `▶ your turn` on both.
+1. V5 hand-over chain: the terminal's `.git/hooks/pre-commit` flies into the hook card; git commit ->
+   .git/hooks/pre-commit (GREY tag "machine-specific · never committed") -> pre-commit -> the
+   TEAL-outlined .pre-commit-config.yaml -> nine empty arches.
+2. CODE(.pre-commit-config.yaml) in four 10-line windows (7–16, 17–26, 27–36, 35–44; comment lines
+   28 and 37 cropped to their hook names) over the nine arches, which take their names as the
+   windows pass: whitespace, end of file; YAML … private keys; black; flake8. `'120'` underlined;
+   lines 35 and 44 `files: ^src/.*\\.py$` YELLOW; GREY dashed chip "tests/ · never matched".
+3. TRACKER D3: `git commit -m "Your commit message"` (README:255) -> part4-03: 2–3 (wrap), 4–6, …,
+   15–23, 27. The `[WARNING]` row ringed with `at the time of recording`; the nine Skipped rows ringed;
+   `nothing to commit, working tree clean` highlighted. `▶ your turn`.
+4. TRACKER D4: `pre-commit run --all-files` (README:262) -> part4-04: 2–14, …, 16 (line 9 RED,
+   line 11 YELLOW). The terminal shrinks to a strip (rows 9, 11, 13) under the V1 gate (9 named
+   arches, staging tray, HISTORY vault): six arches pass, JSON skips, black's arch flashes amber,
+   the envelope bounces back to the tray. `▶ your turn`. PONDER (6 s).
+5. The strip prints part4-04: 18 (Flake8 Passed, GREEN). Above it a before/after pair of utils.py:7,
+   the comma fixed; captions "Failed ≠ broken: black changed the file" / "look at the change → re-stage".
+6. TRACKER D4 · extra: `git diff` -> part4-05: 2 (wrap), …, 10–11, …, 16–18; `git add -u` -> no
+   output. TRACKER D3: the commit again -> part4-07: 2–12; strip (rows 10–12) under the gate: seven
+   arches GREEN, two GREY dashed, the envelope goes into the vault; `[main b72d50d]` GREEN.
+   `▶ your turn`. TRACKER D5: `pre-commit run` (README:265) -> part4-08: 2–10, all arches GREY dashed.
+7. TRACKER D5 · extra: the sed line (folds) -> no output, GREY note "on a Mac: sed -i '' …";
+   `git commit -m "try an unused import"` -> part4-11: 9–13, 18–22 (both Failed RED, line 11 YELLOW,
+   F401 RED). Strip (rows 9, 18, 22) under the gate: an `import os` envelope, black amber, flake8
+   RED, back to the tray; `git status` -> part4-12: 2–3, 6–8, "still staged · not committed";
+   the restore line (folds) -> no output, the envelope leaves the tray; the vault stays shut. A
+   YELLOW card "this gate never ran a test" appears and parks in the top-right corner. Fade to an
+   empty frame (end of part 1).
+
+Deviations (reported to the coordinator):
+- pre-commit pads every hook row with dots to 79 characters; the house terminal holds 65 (22 pt).
+  The rows are shown with a shorter dot leader (`hook_row`): every word, verdict and order is the
+  capture's own; only the number of padding dots differs.
+- part4-04:15 (the emoji line) is never printed (SCENE-NOTES trap): 2–16 is shown as 2–14, …, 16.
+- The remedy chip and the ORANGE tag stand above the terminal (not inside it, where they would hide
+  output). The chip leaves out "said at S05" (an authoring note).
+- Beat 7: black's "files were modified" stays YELLOW (MODIFIED, as in beat 4); both Failed verdicts
+  and the F401 row are RED.
+- The gate pictures need the frame, so the terminal shrinks to a 3-row strip under them (beats 4–7),
+  keeping the rows the narration names.
+"""
+
+import re
+
+from manim import *  # noqa: I001  (manim first, then common: common must win)
+
+from explainer.scene import VoiceScene
+from explainer import style as S
+from explainer.devops import tag
+
+from common import (ERR, INK, LAPTOP, MODIFIED, NARRATION, P_LAPTOP, PASS, STATE, SYSTEM, TURN,
+                    CHEESE_HOOKS, CommitGate, HandoverChain, attach, bare_prompt, beside, box, capture,
+                    code_panel, code_span, dashed_chip, excerpt, extra_row, label, line_bar, lref, mono,
+                    mono_line, pin, ponder_card, readme, recording_tag, resize, ring, row_tag, shown_path,
+                    glyph_range, substring, term, track, tracker, turn_row, type_cmd, under, unpin, your_turn)
+
+SAY = NARRATION["S09"]
+CFG = "cheese-app-ci-cd/.pre-commit-config.yaml"
+CROP = {28: "  # Black formatter", 37: "  # Flake8 linter"}     # the stale "L17, Slide" refs never shown
+WINDOWS = ((7, 16), (17, 26), (27, 36), (35, 44))
+COLS = 65                                                     # the house terminal at 22 pt
+
+_HOOK = re.compile(r"^(.*?[^.])(\.{3,})((?:\(no files to check\))?(?:Passed|Failed|Skipped))$")
+
+
+def hook_row(s: str, n: int = COLS) -> str:
+    """A pre-commit row with its dot leader shortened to fit `n` columns (words unchanged)."""
+    m = _HOOK.match(s)
+    if not m:
+        return s
+    name, _, tail = m.groups()
+    dots = n - len(name) - len(tail)
+    assert dots >= 3, s
+    return name + "." * dots + tail
+
+
+def fit(lines, colors=None):
+    """Capture lines ready to print: hook rows squeezed, optional colour per file line index."""
+    out = []
+    for i, s in enumerate(lines):
+        s = hook_row(s)
+        c = (colors or {}).get(i)
+        out.append((s, c) if c else s)
+    return out
+
+
+def rows_of(line) -> list:
+    return list(line.rows) if hasattr(line, "rows") else [line]
+
+
+def row_with(rows, sub: str):
+    for r in rows:
+        if sub in r.text:
+            return r
+    raise KeyError(sub)
+
+
+def tag_on(scene, line, mk, anim=None, buff: float = 0.45, tm=None):
+    """Pin a row tag (mk()) beside a typed command (its last row, or its first when the last is too
+    long). Returns (row, tag) for unpin()."""
+    rs = rows_of(line)
+    row = rs[-1]
+    t = beside(mk(), row, buff=buff)
+    if t.get_right()[0] > 6.55:
+        row = rs[0]
+        t = beside(mk(), row, buff=buff)
+    if t.get_right()[0] > 6.55 and mk is turn_row and tm is not None:
+        # no room in the row: the house tag over the terminal's top-right corner, the command
+        # underlined YELLOW (the underline scrolls with the row; drop_tag() clears both)
+        yt = your_turn()
+        top = tm.box.get_top()[1]
+        yt.move_to([6.4 - yt.width / 2, top + 0.06 + yt.height / 2, 0])
+        typed = VGroup(*[glyph_range(r, len(P_LAPTOP) + 1 if r is rs[0] else 0) for r in rs])
+        ul = under(typed, TURN, stroke=3)
+        scene.play(FadeIn(yt, shift=LEFT * 0.1), Create(ul), *([anim] if anim is not None else []),
+                   run_time=0.5)
+        attach(scene, rs[-1], ul)
+        return (rs[-1], ul), yt
+    assert t.get_right()[0] <= 6.55, line.text if hasattr(line, "text") else line
+    if anim is not None:
+        pin(scene, row, t, anim=AnimationGroup(FadeIn(t, shift=LEFT * 0.1), anim))
+    else:
+        pin(scene, row, t)
+    return row, t
+
+
+def drop_tag(scene, row, t):
+    """Take a tag_on() tag off again (a pinned row tag, or the corner tag and its underline)."""
+    if isinstance(row, tuple):
+        r, ul = row
+        scene.play(FadeOut(VGroup(t, ul)), run_time=0.3)
+        if ul in r.submobjects:
+            r.remove(ul)
+        scene.remove(t, ul)
+    else:
+        unpin(scene, row, t)
+
+
+def cfg_panel(a: int, b: int):
+    """CODE(.pre-commit-config.yaml: a–b) at 20 pt, the two stale comment lines cropped."""
+    lines = excerpt(CFG, a, b).split("\n")
+    for n, s in CROP.items():
+        if a <= n <= b:
+            assert lines[n - a].startswith(s + " - L17"), lines[n - a]
+            lines[n - a] = s
+    p = code_panel("\n".join(lines), shown_path(CFG), a, "yaml", font_size=20)
+    return p.move_to([0, 0, 0]).align_to([-5.9, 0, 0], LEFT).align_to([0, 2.8, 0], UP)
+
+
+def place_gate(gate: CommitGate) -> VGroup:
+    """The gate with its arch names, centred, bottom at -1.3 (over a 3-row strip)."""
+    g = VGroup(gate, gate.turnstile.labels)
+    g.move_to([0, 0, 0])
+    g.shift(UP * (-1.3 - g.get_bottom()[1]))
+    return g
+
+
+def reset_arches(gate: CommitGate) -> None:
+    """All arches idle again, without playing (the gate is off screen)."""
+    for a in gate.arches:
+        a.frame.become(a._frame("idle"))
+        a.lamp.set_color(STATE["idle"])
+        a.beam.set_stroke(STATE["idle"], opacity=0.35)
+        a.state = "idle"
+
+
+def step_to(scene, gate, i: int, state: str, run_time: float = 0.25):
+    """The envelope moves under arch i, which takes `state`."""
+    a = gate.arches[i]
+    scene.play(gate.envelope.animate.move_to([a.get_center()[0], gate.home[1], 0]), a.to(state),
+               run_time=run_time)
+
+
+def remedy_chip() -> VGroup:
+    parts = VGroup(label("pip refuses? (PEP 668) →", 20, S.GREY), mono("pipx install pre-commit", 20, INK),
+                   label(", or any venv", 20, S.GREY))
+    parts.arrange(RIGHT, buff=0.15)
+    parts[2].shift(LEFT * 0.1)
+    for p in parts[1:]:
+        p.align_to(parts[0], DOWN)
+    b = box(parts.width + 0.45, parts.height + 0.3, S.GREY, fill_opacity=0.1, radius=0.12)
+    parts.move_to(b)
+    return VGroup(b, parts)
+
+
+def mac_chip() -> VGroup:
+    parts = VGroup(label("on a Mac:", 20, S.GREY), mono("sed -i '' …", 20, INK)).arrange(RIGHT, buff=0.18)
+    b = box(parts.width + 0.45, parts.height + 0.3, S.GREY, fill_opacity=0.1, radius=0.12)
+    parts.move_to(b)
+    return VGroup(b, parts)
+
+
+def pair_card() -> VGroup:
+    """utils.py:7 before and after black (part4-05: 10–11), the comma fixed. .before .after"""
+    before = mono_line("def power(base,exponent):", 26, INK)
+    after = mono_line("def power(base, exponent):", 26, INK)
+    w1, w2 = label("before", 22, S.GREY), label("after black", 22, PASS)
+    w2.next_to(w1, DOWN, buff=0.55, aligned_edge=LEFT)
+    x = max(w1.get_right()[0], w2.get_right()[0]) + 0.5
+    before.shift([x - before.strut.get_left()[0], w1.get_center()[1] - before.strut.get_center()[1], 0])
+    after.shift([x - after.strut.get_left()[0], w2.get_center()[1] - after.strut.get_center()[1], 0])
+    head = VGroup(mono("src/api-service/api/utils.py", 20, S.GREY), label("· line 7", 20, S.GREY))
+    head.arrange(RIGHT, buff=0.12)
+    body = VGroup(w1, w2, before, after)
+    head.next_to(body, UP, buff=0.35, aligned_edge=LEFT)
+    inner = VGroup(head, body)
+    frame = box(inner.width + 0.8, inner.height + 0.6, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
+    frame.move_to(inner)
+    g = VGroup(frame, head, w1, w2, before, after)
+    g.frame, g.head, g.w1, g.w2, g.before, g.after = frame, head, w1, w2, before, after
+    return g
+
+
+class PreCommitGate(VoiceScene):
+    def construct(self):
+        assert len(SAY) == 8, len(SAY)
+        pip, inst = capture("part4-01"), capture("part4-02")
+        clean, allf, diff = capture("part4-03"), capture("part4-04"), capture("part4-05")
+        add, again, staged = capture("part4-06"), capture("part4-07"), capture("part4-08")
+        brk, blocked, status, restore = (capture("part4-10"), capture("part4-11"), capture("part4-12"),
+                                         capture("part4-13"))
+        for c, n in ((pip, 240), (inst, 246), (clean, 255), (allf, 262), (again, 255), (staged, 265)):
+            assert c.cmd == readme(n), (c.cmd, readme(n))
+        assert add.lines == [] and brk.lines == [] and restore.lines == []
+        assert again.line(11).startswith("[main b72d50d]")
+
+        # ========================================================== 0. install the gate (D1, D2)
+        tr = tracker("D", 1)
+        ref = lref("34, 41–44")
+        t = term(P_LAPTOP, rows=10)
+        host = tag("on the host · outside the container", SYSTEM)
+        host.move_to([-6.3 + host.width / 2, 2.35, 0])
+        remedy = remedy_chip()
+        remedy.move_to([-6.3 + remedy.width / 2, 1.8, 0])
+        rec = recording_tag().move_to([6.35 - recording_tag().width / 2, 1.8, 0])
+
+        with self.voiceover(SAY[0]) as vo:
+            self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref), run_time=0.7)
+            self.play(Indicate(tr.dots[0], color=TURN, scale_factor=1.6), FadeIn(t), run_time=0.6)
+            vo.wait_until("Outside the container")
+            self.play(FadeIn(host, shift=DOWN * 0.15), run_time=0.5)
+            vo.wait_until("pip install pre-commit")
+            p_ln = type_cmd(self, t, pip.cmd, type_time=0.9)
+            out = t.print(self, pip.at((2, 3), "…", 35), wrap=True, run_time=0.8, lag=0.1)
+            vo.wait_until("4.7.0 at the time")
+            ver_row = row_with(out, "pre-commit-4.7.0")
+            ver = substring(ver_row, "pre-commit-4.7.0")
+            vring = ring(ver, S.GREY, buff=0.05)
+            self.play(Create(vring), FadeIn(rec, shift=LEFT * 0.15), ver.animate.set_color(INK), run_time=0.6)
+            attach(self, ver_row, vring)
+            self.play(FadeIn(remedy, shift=DOWN * 0.15), run_time=0.5)
+            vo.wait_until("then, from the repo root")
+            p_row, p_tag = tag_on(self, p_ln, turn_row, buff=0.15)
+            i_ln = type_cmd(self, t, inst.cmd, type_time=0.7)
+            i_row, i_tag = tag_on(self, i_ln, turn_row, anim=track(tr, 2))
+            inst_out = t.print(self, inst.at(2), run_time=0.4)[0]
+            vo.wait_until("a hook file now sits")
+            hook_glyphs = substring(inst_out, ".git/hooks/pre-commit")
+            hring = ring(hook_glyphs, LAPTOP, buff=0.05)
+            self.play(Create(hring), hook_glyphs.animate.set_color(INK), run_time=0.6)
+            attach(self, inst_out, hring)
+            vo.wait_until("Pause and run both")
+            self.play(Indicate(VGroup(p_tag, i_tag), color=TURN, scale_factor=1.15), run_time=0.8)
+
+        # ========================================================== 1. the hand-over chain (V5)
+        hc = HandoverChain("cheese")
+        hook_note = hc.hook_note()
+        flyer = hook_glyphs.copy()
+
+        with self.voiceover(SAY[1]) as vo:
+            self.add(flyer)
+            self.play(FadeOut(VGroup(t, host, remedy, rec)), run_time=0.5)
+            self.remove(t, host, remedy, rec)
+            self.play(FadeIn(hc.git, shift=DOWN * 0.15), GrowArrow(hc.arrows[0]), run_time=0.6)
+            self.play(ReplacementTransform(flyer, hc.hook.text), FadeIn(hc.hook.box), FadeIn(hc.hook.glyph),
+                      run_time=1.0)
+            vo.wait_until("before every commit")
+            self.play(Indicate(hc.git, color=LAPTOP, scale_factor=1.1),
+                      ShowPassingFlash(hc.arrows[0].copy().set_stroke(INK, 6), time_width=0.6), run_time=0.8)
+            vo.wait_until("It lives in dot git")
+            self.play(FadeIn(hook_note, shift=LEFT * 0.15), run_time=0.6)
+            vo.wait_until("every clone installs it again")
+            self.play(Indicate(hook_note, color=INK, scale_factor=1.08), run_time=0.8)
+            vo.wait_until("It hands over to pre-commit")
+            self.play(GrowArrow(hc.arrows[1]), FadeIn(hc.tool, shift=DOWN * 0.15), run_time=0.7)
+            vo.wait_until("which reads the repo's config")
+            self.play(GrowArrow(hc.arrows[2]), FadeIn(hc.config, shift=DOWN * 0.15), run_time=0.7)
+            ts = hc.turnstile
+            self.play(GrowArrow(hc.drop), FadeIn(ts.floor),
+                      LaggedStart(*[FadeIn(a, shift=DOWN * 1.5) for a in ts.arches], lag_ratio=0.08),
+                      run_time=1.1)
+
+        # ========================================================== 2. the config: nine hooks
+        names = ts.labels
+        tsg = VGroup(ts, names)
+        dy = -3.56 - tsg.get_bottom()[1]
+        dx = 0 - tsg.get_center()[0]
+        panels = [cfg_panel(a, b) for a, b in WINDOWS]
+        which = ((0, 1), (2, 3, 4, 5, 6), (7,), (8,))
+
+        def show_names(idx):
+            return LaggedStart(*[FadeIn(names[i], shift=UP * 0.1) for i in idx], lag_ratio=0.2)
+
+        with self.voiceover(SAY[2]) as vo:
+            chain = VGroup(hc.links, hc.drop, hook_note)
+            self.play(FadeOut(chain), run_time=0.5)
+            self.remove(chain, *hc.links, hc.hook.text)
+            names.shift([dx, dy, 0])
+            self.play(ts.animate.shift([dx, dy, 0]), run_time=0.8)
+            self.play(FadeIn(panels[0], shift=UP * 0.2), run_time=0.7)
+            vo.wait_until("seven hygiene guards")
+            ids0 = VGroup(*[line_bar(panels[0].code, k - 7, TURN, 0.16) for k in (12, 14)])
+            self.play(FadeIn(ids0), show_names(which[0]), run_time=0.8)
+            vo.wait_until("to private keys")
+            p1 = panels[1]
+            p1.shift(DOWN * 0.3)
+            self.play(FadeOut(VGroup(panels[0], ids0), shift=UP * 0.3), FadeIn(p1, shift=UP * 0.3), run_time=0.6)
+            self.play(show_names(which[1]), run_time=1.2)
+            vo.wait_until("Then black")
+            p2 = panels[2]
+            p2.shift(DOWN * 0.3)
+            self.play(FadeOut(p1, shift=UP * 0.3), FadeIn(p2, shift=UP * 0.3), run_time=0.6)
+            self.play(show_names(which[2]), Indicate(code_span_safe(p2, 32 - 27, "black"), color=TURN,
+                                                    scale_factor=1.1), run_time=0.8)
+            vo.wait_until("and flake8")
+            p3 = panels[3]
+            p3.shift(DOWN * 0.3)
+            self.play(FadeOut(p2, shift=UP * 0.3), FadeIn(p3, shift=UP * 0.3), run_time=0.6)
+            self.play(show_names(which[3]), run_time=0.5)
+            vo.wait_until("both at width 120")
+            w120 = code_span_safe(p3, 43 - 35, "120")
+            u120 = under(w120, TURN, stroke=3)
+            self.play(Create(u120), Indicate(VGroup(names[7], names[8]), color=TURN, scale_factor=1.15),
+                      run_time=0.8)
+            vo.wait_until("both seeing only Python files under src")
+            bars = VGroup(line_bar(p3.code, 0, TURN, 0.22), line_bar(p3.code, 9, TURN, 0.22))
+            self.play(FadeIn(bars), run_time=0.6)
+            self.play(Indicate(VGroup(code_span_safe(p3, 0, "^src/"), code_span_safe(p3, 9, "^src/")),
+                               color=TURN, scale_factor=1.12), run_time=0.7)
+            vo.wait_until("the tests are never linted")
+            never = dashed_chip("tests/ · never matched")
+            first = p3.code.code_lines[0]
+            never.move_to([first.get_right()[0] + 0.6 + never.width / 2, first.get_center()[1], 0])
+            self.play(FadeIn(never, shift=LEFT * 0.15), run_time=0.6)
+
+        # ========================================================== 3. the README's commit, clean tree (D3)
+        t = term(P_LAPTOP, rows=12)
+        rec3 = recording_tag()
+        rec3.move_to([6.35 - rec3.width / 2, (t.box.get_top()[1] + 2.9) / 2, 0])
+
+        with self.voiceover(SAY[3]) as vo:
+            gone = VGroup(p3, bars, u120, never, ts, names)
+            self.play(FadeOut(gone), track(tr, 3), run_time=0.6)
+            self.remove(gone)
+            self.play(FadeIn(t), run_time=0.4)
+            c_ln = type_cmd(self, t, clean.cmd, type_time=1.0)
+            vo.wait_until("Pause and run it")
+            c_row, c_tag = tag_on(self, c_ln, turn_row)
+            self.play(Indicate(c_tag, color=TURN, scale_factor=1.15), run_time=0.6)
+            vo.wait_until("The first run downloads")
+            first = t.print(self, clean.at((2, 3)), wrap=True, run_time=0.8, lag=0.08)
+            t.print(self, clean.at((4, 6), "…"), wrap=True, run_time=0.6, lag=0.1)
+            vo.wait_until("plus a harmless warning")
+            w_row = row_with(first, "[WARNING]")
+            wring = ring(substring(w_row, "[WARNING]"), S.GREY, buff=0.05)
+            self.play(Create(wring), FadeIn(rec3, shift=LEFT * 0.15), run_time=0.6)
+            attach(self, w_row, wring)
+            vo.wait_until("Then every hook says skipped")
+            self.play(FadeOut(rec3), run_time=0.3)
+            self.remove(rec3)
+            skipped = t.print(self, fit(clean.at((15, 23))), run_time=0.9, lag=0.08)
+            sring = ring(skipped, S.GREY, buff=0.06)
+            self.play(Create(sring), run_time=0.5)
+            attach(self, skipped[0], sring)
+            vo.wait_until("git says nothing to commit")
+            done = t.print(self, clean.at(27), run_time=0.3)[0]
+            dbar = ring(done.glyphs, TURN, buff=0.06)
+            self.play(Create(dbar), run_time=0.5)
+            attach(self, done, dbar)
+            vo.wait_until("hooks check staged files")
+            self.play(Indicate(substring(done, "nothing to commit"), color=TURN, scale_factor=1.12), run_time=0.8)
+            vo.wait_until("nothing was staged")
+            self.play(Indicate(VGroup(*[substring(r, "(no files to check)") for r in skipped]), color=INK,
+                               scale_factor=1.06), run_time=0.8)
+
+        # ========================================================== 4. run --all-files (D4): black refuses
+        gate = CommitGate(9, CHEESE_HOOKS, with_tray=True)
+        gpic = place_gate(gate)
+
+        with self.voiceover(SAY[4]) as vo:
+            a_ln = type_cmd(self, t, allf.cmd, type_time=1.0)
+            a_row, a_tag = tag_on(self, a_ln, turn_row, anim=track(tr, 4), tm=t)
+            res = t.print(self, fit(allf.at((2, 14), "…", 16), {7: ERR, 9: MODIFIED}), run_time=1.0, lag=0.06)
+            black_ln, mod_ln, ref_ln = res[7], res[9], res[11]
+            assert "Black" in black_ln.text and "modified" in mod_ln.text and "reformatted" in ref_ln.text
+            vo.wait_until("Pause and run it")
+            self.play(Indicate(a_tag, color=TURN, scale_factor=1.15), run_time=0.6)
+            vo.wait_until("Six hooks pass")
+            drop_tag(self, a_row, a_tag)
+            resize(self, t, 3, keep=[black_ln, mod_ln, ref_ln], run_time=0.6)
+            self.play(FadeIn(gpic), run_time=0.5)
+            for i, s in enumerate(["pass", "pass", "pass", "pass", "skip", "pass", "pass"]):
+                step_to(self, gate, i, s, run_time=0.22)
+            vo.wait_until("one has no files to check")
+            self.play(Indicate(VGroup(gate.arches[4], names_of(gate)[4]), color=S.GREY, scale_factor=1.15),
+                      run_time=0.6)
+            vo.wait_until("then black fails")
+            a7 = gate.arches[7]
+            self.play(gate.envelope.animate.move_to([a7.get_left()[0] - gate.envelope.width / 2 + 0.3,
+                                                     gate.home[1], 0]), a7.to("modified"), run_time=0.4)
+            self.play(Indicate(a7, color=MODIFIED, scale_factor=1.15), Indicate(black_ln, color=ERR,
+                                                                                 scale_factor=1.04), run_time=0.6)
+            vo.wait_until("files were modified by this hook")
+            self.play(Indicate(substring(mod_ln, "files were modified by this hook"), color=MODIFIED,
+                               scale_factor=1.08), run_time=0.7)
+            vo.wait_until("it reformatted utils.py")
+            self.play(gate.go_home(), Indicate(substring(ref_ln, "utils.py"), color=INK, scale_factor=1.12),
+                      run_time=0.8)
+            vo.wait_until("A quick ponder")
+            self.play(FadeOut(gpic), run_time=0.5)
+            self.remove(gpic)
+        card = ponder_at(self, "black just Failed on utils.py.\nflake8 runs next — will it report\n"
+                               "the E231 and E303 from before?", 6, y=0.75)
+
+        # ========================================================== 5. no: flake8 saw clean code
+        pair = pair_card()
+        pair.move_to([0, 0.95, 0])
+        comma = substring(pair.before, ",")
+        fixed = substring(pair.after, ", e")
+        c_ring = ring(comma, ERR, buff=0.06)
+        f_ul = under(fixed, PASS, stroke=4)
+        cap1 = VGroup(label("Failed", 24, ERR), label("≠ broken: black changed the file", 24, INK))
+        cap1.arrange(RIGHT, buff=0.15)
+        cap1[1].align_to(cap1[0], DOWN)
+        cap2 = VGroup(label("look at the change", 24, INK), label("→", 24, S.GREY), label("re-stage", 24, INK))
+        cap2.arrange(RIGHT, buff=0.18)
+        caps = VGroup(cap1, cap2).arrange(DOWN, buff=0.2)
+        caps.next_to(pair, DOWN, buff=0.3)
+        assert caps.get_bottom()[1] > -1.4, caps.get_bottom()
+
+        with self.voiceover(SAY[5]) as vo:
+            self.play(FadeOut(card), run_time=0.5)
+            self.remove(card)
+            vo.wait_until("Black had already rewritten the file")
+            self.play(FadeIn(VGroup(pair.frame, pair.head, pair.w1, pair.before)), run_time=0.6)
+            self.play(Create(c_ring), run_time=0.4)
+            self.play(FadeIn(pair.w2), TransformFromCopy(pair.before, pair.after), run_time=0.9)
+            self.play(Create(f_ul), c_ring.animate.set_stroke(opacity=0.35), run_time=0.5)
+            vo.wait_until("so flake8 saw clean code")
+            fl = t.print(self, fit(allf.at(18), {0: PASS}), run_time=0.4)[0]
+            self.play(Indicate(substring(fl, "Passed"), color=PASS, scale_factor=1.2), run_time=0.6)
+            vo.wait_until("Failed here does not mean broken")
+            self.play(FadeIn(cap1, shift=UP * 0.15), run_time=0.6)
+            vo.wait_until("it means the hook changed files")
+            self.play(Indicate(substring(mod_ln, "files were modified"), color=MODIFIED, scale_factor=1.1),
+                      Indicate(f_ul, color=PASS), run_time=0.8)
+            vo.wait_until("look at the change")
+            self.play(FadeIn(cap2[0], shift=UP * 0.15), run_time=0.5)
+            vo.wait_until("then re-stage")
+            self.play(FadeIn(cap2[1:], shift=RIGHT * 0.15), run_time=0.5)
+
+        # ========================================================== 6. diff, add, commit again (D4x, D3, D5)
+        reset_arches(gate)
+        gpic = VGroup(gate, gate.turnstile.labels)
+
+        with self.voiceover(SAY[6]) as vo:
+            rest = VGroup(pair, c_ring, f_ul, caps)
+            self.play(FadeOut(rest), run_time=0.5)
+            self.remove(rest, *pair, *caps)
+            resize(self, t, 12)
+            vo.wait_until("git diff shows the fix")
+            d_ln = type_cmd(self, t, diff.cmd, type_time=0.4)
+            d_row, d_tag = tag_on(self, d_ln, extra_row, anim=track(tr, 4, extra=True))
+            d_out = t.print(self, fit(diff.at(2, "…", (10, 11), "…", (16, 18)), {3: ERR, 4: PASS, 6: ERR}),
+                            wrap=True, run_time=0.8, lag=0.08)
+            vo.wait_until("git add dash u")
+            unpin(self, d_row, d_tag)
+            g_ln = type_cmd(self, t, add.cmd, type_time=0.4)
+            g_row, g_tag = tag_on(self, g_ln, extra_row)
+            bare_prompt(self, t)
+            vo.wait_until("Commit again")
+            unpin(self, g_row, g_tag)
+            k_ln = type_cmd(self, t, again.cmd, type_time=0.9)
+            self.play(track(tr, 3, extra=False), run_time=0.4)
+            k_out = t.print(self, fit(again.at((2, 12))), run_time=0.9, lag=0.06)
+            vo.wait_until("seven hooks pass")
+            resize(self, t, 3, keep=[k_out[8], k_out[9], k_out[10]], run_time=0.6)
+            self.play(FadeIn(gpic), run_time=0.5)
+            gate.pass_through(self, ["pass", "pass", "skip", "pass", "skip", "pass", "pass", "pass", "pass"],
+                              step_time=0.24)
+            vo.wait_until("a real commit enters history")
+            main = k_out[9]
+            mbar = ring(substring(main, "[main b72d50d]"), PASS, buff=0.05)
+            self.play(substring(main, "[main b72d50d]").animate.set_color(PASS), Create(mbar),
+                      Indicate(gate.vault, color=PASS, scale_factor=1.06), run_time=0.8)
+            attach(self, main, mbar)
+            vo.wait_until("pause and walk the loop")
+            yt = your_turn()
+            yt.move_to([6.4 - yt.width / 2, t.box.get_top()[1] + 0.05 + yt.height / 2, 0])
+            self.play(FadeIn(yt, shift=LEFT * 0.15), run_time=0.5)
+            self.play(Indicate(yt, color=TURN, scale_factor=1.12), run_time=0.6)
+            vo.wait_until("plain pre-commit run")
+            self.play(FadeOut(yt), run_time=0.3)
+            self.remove(yt)
+            s_ln = type_cmd(self, t, staged.cmd, type_time=0.6)
+            s_row, s_tag = tag_on(self, s_ln, turn_row, anim=track(tr, 5))
+            vo.wait_until("checks only staged files")
+            t.print(self, fit(staged.at((2, 10))), run_time=1.0, lag=0.08)
+            vo.wait_until("everything skips")
+            self.play(gate.turnstile.mark_all(["skip"] * 9, run_time=0.9), run_time=0.9)
+
+        # ========================================================== 7. the refusal (D5 · extra), end of part 1
+        mac = mac_chip()
+        q = label("this gate never ran a test", 26, TURN)
+        qbox = RoundedRectangle(width=q.width + 0.7, height=q.height + 0.5, corner_radius=0.16,
+                                stroke_color=TURN, stroke_width=3).set_fill(S.BG, 0.95)
+        q.move_to(qbox)
+        qcard = VGroup(qbox, q).move_to([0, -2.45, 0])
+
+        with self.voiceover(SAY[7]) as vo:
+            self.play(FadeOut(gpic), track(tr, 5, extra=True), run_time=0.5)
+            self.remove(gpic)
+            resize(self, t, 12)
+            mac.move_to([6.35 - mac.width / 2, (t.box.get_top()[1] + 2.9) / 2, 0])
+            vo.wait_until("sed adds and stages")
+            b_ln = type_cmd(self, t, brk.cmd, type_time=1.4)
+            b_row, b_tag = tag_on(self, b_ln, extra_row)
+            bare_prompt(self, t)
+            vo.wait_until("on a Mac")
+            self.play(FadeIn(mac, shift=DOWN * 0.15), run_time=0.5)
+            vo.wait_until("The commit fails twice")
+            k2 = type_cmd(self, t, blocked.cmd, type_time=0.9)
+            k2_row, k2_tag = tag_on(self, k2, extra_row)
+            bl = t.print(self, fit(blocked.at((9, 13), (18, 22)), {0: ERR, 2: MODIFIED, 5: ERR, 9: ERR}),
+                         run_time=0.9, lag=0.06)
+            b9, b18, b22 = bl[0], bl[5], bl[9]
+            assert "Black" in b9.text and "Flake8" in b18.text and "F401" in b22.text
+            vo.wait_until("black reformats the file")
+            self.play(Indicate(VGroup(b9, bl[2]), color=ERR, scale_factor=1.04), run_time=0.7)
+            vo.wait_until("flake8 reports F401")
+            self.play(Indicate(substring(b22, "F401 'os' imported but unused"), color=ERR, scale_factor=1.08),
+                      run_time=0.7)
+            vo.wait_until("which no formatter can fix")
+            reset_arches(gate)
+            env = gate.new_envelope("import os")
+            self.play(FadeOut(mac), FadeOut(ref), run_time=0.3)
+            self.remove(mac, ref)
+            resize(self, t, 3, keep=[b9, b18, b22], run_time=0.6)
+            self.play(FadeIn(gpic), run_time=0.5)
+            for i, s in enumerate(["pass", "pass", "skip", "pass", "skip", "pass", "pass"]):
+                step_to(self, gate, i, s, run_time=0.18)
+            step_to(self, gate, 7, "modified", run_time=0.3)
+            a8 = gate.arches[8]
+            self.play(env.animate.move_to([a8.get_left()[0] - env.width / 2 + 0.3, gate.home[1], 0]),
+                      a8.to("fail"), run_time=0.35)
+            self.play(Indicate(a8, color=ERR, scale_factor=1.15), run_time=0.5)
+            self.play(gate.go_home(), run_time=0.6)
+            vo.wait_until("git status confirms")
+            st = type_cmd(self, t, status.cmd, type_time=0.4)
+            t.print(self, status.at((2, 3)), run_time=0.4)
+            still = t.print(self, status.at((6, 8)), run_time=0.5)
+            stag = beside(row_tag("still staged · not committed", TURN), still[0])
+            pin(self, still[0], stag)
+            self.play(Indicate(VGroup(env, gate.tray), color=TURN, scale_factor=1.08), run_time=0.7)
+            vo.wait_until("Restore the file")
+            r_ln = type_cmd(self, t, restore.cmd, type_time=1.4)
+            self.play(FadeOut(env, shift=DOWN * 0.3), run_time=0.6)
+            gate.remove(env)
+            self.remove(env)
+            gate.envelope = None
+            vo.wait_until("your machine now says no")
+            self.play(Indicate(gate.vault, color=INK, scale_factor=1.06),
+                      Indicate(VGroup(gate.arches[7], gate.arches[8]), color=ERR, scale_factor=1.1), run_time=0.9)
+            vo.wait_until("But this gate never ran")
+            self.play(FadeOut(t), run_time=0.4)
+            self.remove(t)
+            self.play(FadeIn(qcard, scale=0.9), Indicate(gate.arches, color=S.GREY, scale_factor=1.05),
+                      run_time=0.8)
+            vo.wait_until("Part 2 builds one")
+            corner = [6.5 - qcard.width / 2, 3.55 - qcard.height / 2, 0]
+            self.play(qcard.animate.move_to(corner), run_time=1.0)
+            vo.wait_until("what even it can miss")
+            self.play(Indicate(qcard, color=TURN, scale_factor=1.06), run_time=0.7)
+
+        self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
+        self.remove(*self.mobjects)
+
+
+def code_span_safe(panel, k: int, sub: str) -> VGroup:
+    """Glyphs of `sub` in line k of a code panel (lines of the panel's own source)."""
+    return code_span(panel.code, k, sub)
+
+
+def names_of(gate: CommitGate) -> VGroup:
+    return gate.turnstile.labels
+
+
+def ponder_at(scene, question: str, seconds: float, y: float) -> VGroup:
+    """pause_and_ponder, but the card sits at height y (above the strip, not over it)."""
+    card = ponder_card(question).move_to([0, y, 0])
+    scene.play(FadeIn(card, scale=0.95), run_time=0.6)
+    bar = card[3]
+    target = bar.copy().scale(0.001, about_point=bar.get_start())
+    scene.play(bar.animate(rate_func=linear).become(target), run_time=seconds)
+    return card
