@@ -349,7 +349,7 @@ one line (Conflict 5): the lecture's screenshot is an earlier year's project; yo
 Tracker B4 (held); `lecture_ref(13, "14–15")`. Slide 14 → 15 redrawn: plain training code, then
 three lines slide in, tagged with the lecture's call-outs — *start the run* (`wandb.init`),
 *watch the model* (a callback in `model.fit`), *finish the run* (`wandb.run.finish()`). Now
-notebook B's real cell 38, CODE from the extract (`nbB:695-704`): `wandb.init(project=…)`, then
+notebook B's real cell 38, CODE from the extract (`nbB:696-705`): `wandb.init(project=…)`, then
 **`wandb.config = {...}`**, `wandb.run.name = model_name`, `wandb.run.save("test")`.
 **PONDER 3 (8 s)**: "After `wandb.config = {…}` and later `wandb.config.update({"execution_time":
 …})`, what does the run's config hold?" V3 plays the answer, then the proof, `extra · local
