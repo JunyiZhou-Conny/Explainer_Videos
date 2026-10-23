@@ -1190,7 +1190,7 @@ main · the same five files as its v21". Then the notebook frame shows the edite
 placeholder, never a real-looking token): "private repo:
 https://YOUR_GITHUB_USERNAME:<read-only token>@github.com/YOUR_GITHUB_USERNAME/data-versioning · or
 make it public for this step". `▶ your turn`.
-SAY: The instructor's signed-in run lists five files on the class repo, the same set as its version 21, and counts 5. Your account probably cannot read the class bucket, so use your repo: replace the address and the tag; your version 20 gives 4. Your repo is private, so put an access token in the address, or make it public. Pause and work through it.
+SAY: The instructor's signed-in run lists five files on the class repo, the same set as its version 21, and counts 5. Your account probably cannot access the class bucket, so use your repo: replace the address and the tag; your version 20 gives 4. Your repo is private, so put an access token in the address, or make it public. Pause and work through it.
 
 SHOW: Cell 19 (lines 361–362): `!rm -rf cheese_dataset` /
 `!dvc get https://github.com/dlops-io/data-versioning cheese_dataset --force --quiet --rev dataset_v25`;
@@ -1272,44 +1272,23 @@ SAY: Answers are in the exercises. Lecture 13 trains from a prepared zip; a tagg
 
 ---
 
-## Lexicon candidates
+## Lexicon candidates (resolved in v2)
 
-Words the SAY lines contain that `explainer/lexicon.yaml` has no entry for and Kokoro af_heart may
-misread. **Not added**: the lexicon stage checks each with `explainer/voice.py` (phonemes) and adds
-only the ones it gets wrong, each with `ipa` + `say`. The SAY lines already avoid a bare "a" and a
-`'s` directly before every word below, so no "a X" guard is needed unless the reviewer adds one.
-Nothing in the md5 / hash family is spoken: every hash fragment (`89db50de…`, `5b53853e…`,
-`d7/…`, `6b342844…`, `3280f8f9…`, `54081d12…`, the commit and container ids) is on screen only.
+The flow review probed every candidate of v1 with `KokoroBackend.phonemize`; the coordinator added
+its `# AC215 L11` block to `explainer/lexicon.yaml` (not edited here). Nothing in the md5 / hash
+family is spoken: every hash fragment (`89db50de…`, `5b53853e…`, `d7/…`, `6b342844…`,
+`3280f8f9…`, `54081d12…`, the commit and container ids) is on screen only. The SAY lines avoid a
+bare "a" and a `'s` directly before every entry below.
 
-| word as written in SAY | scenes | intended reading | why it is a candidate |
-| --- | --- | --- | --- |
-| DVC | S02, S09–S16 | "D V C" | acronym; may be read as a word |
-| dvc (in `dvc init`, `dvc add`, `dvc push`, `dvc get`, `dvc checkout`) | S12–S16 | "D V C" | lowercase command name; entries are case-sensitive, so it needs its own |
-| gcsfuse | S10, S11 | "G C S fuse" | invented tool name |
-| CORS | S05, S06, S16 | "kors" (one syllable) | L10 used it without an entry; confirm it is not spelled out |
-| MD5 | S12 | "M D 5" | letter-digit acronym |
-| JSON | S03, S07 | "jay-son" | check it is not spelled out |
-| docker-shell-CLI.sh | S06 | "docker shell C L I dot S H" | variant of the existing `docker-shell.sh` entry |
-| docker-shell-compose.sh | S08 | "docker shell compose dot S H" | same |
-| google-cloud-sdk | S11 | "google cloud S D K" | package name |
-| google-cloud-cli | S11 | "google cloud C L I" | package name |
-| 1.23.0 | S04, S07 | "one point twenty-three point zero" | new `a.b.c` version |
-| 1.23.2 | S04 | "one point twenty-three point two" | new `a.b.c` version |
-| 3.63.0 | S11 | "three point sixty-three point zero" | new `a.b.c` version |
-| 3.67.1 | S15 | "three point sixty-seven point one" | new `a.b.c` version |
-| 1.5, 1.76, 3.7, 3.8 | S03, S08 | "one point five", "one point seven six", "three point seven", "three point eight" | two-part numbers (L09 added several such) |
-| 1001 | S04 | "ten oh one" | a user id; default reading would be "one thousand one" |
-| v20, v21, v25, v30 | S13, S14, S15 | "vee twenty", … | tag names |
-| aarch64 | S06 | "A arch sixty-four" | architecture name (L10 said it with no entry; confirm) |
-| x86 | S06 | "x eighty-six" | architecture name (L10 likewise) |
-| sudo | S04 | "soo-doo" | Unix command |
-| chown | S04 | "C H own" | Unix command |
-| GET | S06 | "get" | HTTP method in capitals; may be spelled out |
-| dirs (in "implicit dirs") | S10 | "durs" | abbreviation of directories |
-| lakeFS | S16 | "lake F S" | product name, mixed case |
-| gruyere | S04 | "groo-YAIR" | cheese name |
-| parmigiano | S04 | "par-mee-JAH-no" | cheese name |
-| gouda | S01, S04, S07 | "GOO-da" (or "GOW-da"; pick one) | cheese name, two common readings |
-| amanita | S07 | "am-uh-NYE-tuh" | mushroom name |
-| E7 | S02 | "E 7" | exercise label |
-| PNG | S03 | "P N G" | acronym; probably fine |
+| word as written in SAY | status |
+| --- | --- |
+| "1.23.0", "1.23.2", "3.63.0", "3.67.1" | entries (L11 block) |
+| docker-shell-CLI.sh, docker-shell-compose.sh | entries (L11 block; no literal-dot pause) |
+| google-cloud-sdk, google-cloud-cli | entries (L11 block) |
+| gruyere, gouda ("GOO-da"), parmigiano | entries (L11 block) |
+| implicit dirs | entry (multi-word key; S10 keeps the two words adjacent) |
+| "1001" ("ten oh one"), data-service-account | entries (L11 block, optional set) |
+| DVC / dvc, gcsfuse, CORS, MD5, JSON, GET, lakeFS, aarch64, x86, sudo, chown, v20/v21/v25/v30, E7, PNG, amanita, brie, init | probed clean, no entry needed |
+| 1.5, 1.76, 3.7, 3.8 | probed clean ("3.8" has an older entry); v2 no longer speaks 1.5, 1.76, 3.7 or 3.8 |
+| October 2025 | "two thousand twenty-five"; left as a series decision (L04 says "February 2025" likewise) |
+| imports (noun), gitignore, "cents", "bill", "to" between numbered names | avoided by rewording in v2 ("load the libraries", "git ignore file", "a fraction of a cent", "cost money", "the new name", "through") |
