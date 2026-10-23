@@ -135,7 +135,6 @@ class ThreeKinds(VoiceScene):
         dot = Dot(radius=0.12, color=ROUTE)
         hops = [c.get_top() + UP * 0.2 for c in ichain.chips]
         entry = np.array([ibox.frame.get_left()[0] + 0.3, ichain.get_center()[1], 0])
-        dot.move_to(entry)
         json = chip(RESPONSE, ROUTE, size=22, font=MONO).move_to([3.6, 2.55, 0])
         cap = note("in-process · no socket", S.GREY, 24).next_to(ibox.frame, DOWN, buff=0.35)
         line = capture("part3-opt1-03").line(24).strip("= ")
@@ -154,7 +153,9 @@ class ThreeKinds(VoiceScene):
             self.play(FadeIn(tok2, shift=DOWN * 0.2), Indicate(tc, color=INTEG, scale_factor=1.1), run_time=0.7)
             vo.wait_until("straight to the FastAPI app")
             # no wire: the token drops straight into the box and becomes the request inside
-            self.play(FadeTransform(tok2, dot), run_time=0.8)
+            dot.move_to(tok2.get_left() + RIGHT * 0.3)
+            self.play(FadeTransform(tok2, dot), run_time=0.6)
+            self.play(dot.animate.move_to(entry), run_time=0.5)
             for k, anchor in enumerate(("routing,", "validation,", "handler and power", "power all run")):
                 vo.wait_until(anchor)
                 self.play(dot.animate.move_to(hops[k]), Indicate(ichain.chips[k], color=INK, scale_factor=1.1),

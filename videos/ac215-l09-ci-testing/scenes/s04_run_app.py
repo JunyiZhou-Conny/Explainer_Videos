@@ -257,6 +257,7 @@ class RunTheApp(VoiceScene):
         err = erratum_tag().next_to(r_card, UP, buff=0.12).align_to(r_card, RIGHT)
         panel = code(SERVICE, 45, 48)
         panel.move_to([3.45, -0.35, 0])
+        panel.shift(LEFT * max(0.0, panel.get_right()[0] - 6.45))
         bar = line_bar(panel.code, 3, INK, 0.16)
         dspan = code_span(panel.code, 3, '"distance": result')
 

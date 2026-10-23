@@ -17,7 +17,7 @@ Beats (script.md, ## S02; one voiceover block each):
    executable specification"; the RED arrow (with its 7.07) comes down and bounces off the panel.
 3. The panel becomes the GREEN chip "the test", the arrow the TEAL chip "the code", on a card "two
    suspects"; a YELLOW "fix this" stamp and arrow land on the code chip; GREY caption "slide 28:
-   when a test fails, fix the code"; a dashed "rewrite the test to match the bug" under the test
+   when a test fails, fix the code"; a dashed "rewrite the test to match" under the test
    chip gets struck RED on "into a diary".
 4. Three trays slide in (slide 25 redrawn): normal, edge, invalid. `power(2, 3)` drops into normal;
    `0`, `inf`, `nan` into edge; CODE(cheese-app-ci-cd/tests/unit/test_utils.py: 69–76) appears above
@@ -74,7 +74,7 @@ def bin_tray(name: str, x: float, tray_w: float = 3.5, wall_h: float = 0.75, flo
                    [x + tray_w / 2 - 0.12, floor_y, 0], [x + tray_w / 2, floor_y + wall_h, 0],
                    stroke_width=0).set_fill(S.GREY, 0.1)
     t = label(name, 24, INK).next_to(shape, DOWN, buff=0.14)
-    g = VGroup(fill, shape, t)
+    g = VGroup(fill, shape)
     g.shape, g.text = shape, t
     g.spot = np.array([x, floor_y + 0.33, 0])
     return g
@@ -176,7 +176,7 @@ class BugAlmostShipped(VoiceScene):
                       DashedLine(P(3, 4), P(0, 4), color=S.GREY, stroke_width=2, dash_length=0.08))
         three = label("3", 20, S.GREY).next_to(P(3, 0), DOWN, buff=0.12)
         four = label("4", 20, S.GREY).next_to(P(0, 4), LEFT, buff=0.12)
-        pt_lbl = label("(3, 4)", 24, INK).move_to(P(3, 4) + np.array([0.75, -0.25, 0]))
+        pt_lbl = label("(3, 4)", 24, INK).move_to(P(3, 4) + np.array([1.0, -0.42, 0]))
         point = VGroup(proj, three, four, pt, pt_lbl)
 
         radius = Line(origin, P(3, 4), color=VENV, stroke_width=5)
@@ -193,10 +193,10 @@ class BugAlmostShipped(VoiceScene):
         bug_row = VGroup(label("line 44", 20, S.GREY), mono("math.sqrt(2 * z)", 22, ERR),
                          label("= √50 ≈ 7.07", 26, ERR))
         for row in (true_row, bug_row):
-            row[1:].arrange(RIGHT, buff=0.2)
-            row.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+            row[2].next_to(row[1], RIGHT, buff=0.2)
+            row[1:].next_to(row[0], DOWN, buff=0.1, aligned_edge=LEFT)
         rows = VGroup(true_row, bug_row).arrange(DOWN, aligned_edge=LEFT, buff=0.45)
-        rows.move_to([3.55, 0.4, 0])
+        rows.move_to([0, 0.4, 0]).align_to([1.0, 0, 0], LEFT)
         no_crash = label("no crash · just wrong", 26, S.GREY).next_to(rows, DOWN, buff=0.6).align_to(rows, LEFT)
 
         with self.voiceover(SAY[1]) as vo:
@@ -264,27 +264,27 @@ class BugAlmostShipped(VoiceScene):
             self.play(VGroup(wrong, wrong_lbl).animate.set_opacity(0.45), run_time=0.5)
 
         # ========================================================== 3. two suspects
-        card_bg = RoundedRectangle(width=9.0, height=3.5, corner_radius=0.18, stroke_color=S.GREY,
+        card_bg = RoundedRectangle(width=10.2, height=3.5, corner_radius=0.18, stroke_color=S.GREY,
                                    stroke_width=2.5).set_fill(S.GREY_DARKER, 1).move_to([0, 0.55, 0])
         heading = label("two suspects", 24, S.GREY).move_to([0, 1.95, 0])
         code_chip = chip("the code", IMAGE, size=28)
         test_chip = chip("the test", VENV, size=28)
-        code_chip.move_to([-2.3, 0.95, 0])
-        test_chip.move_to([2.3, 0.95, 0])
+        code_chip.move_to([-2.6, 0.95, 0])
+        test_chip.move_to([2.6, 0.95, 0])
         stamp = chip("fix this", TURN, size=24, text_color=TURN)
-        stamp.move_to([-2.3, -0.45, 0])
-        stamp_arrow = arrow(stamp, code_chip, TURN, stroke=4)
-        rewrite = dashed_chip("rewrite the test to match the bug", size=20)
-        rewrite.move_to([2.3, -0.45, 0])
+        stamp.move_to([-2.6, -0.3, 0])
+        stamp_arrow = arrow(stamp.get_top() + UP * 0.08, code_chip.get_bottom() + DOWN * 0.08, TURN, stroke=4)
+        rewrite = dashed_chip("rewrite the test to match", size=22)
+        rewrite.move_to([2.6, -0.3, 0])
         no = strike(rewrite, ERR, stroke=5)
         rule = label("slide 28: when a test fails, fix the code", 24, S.GREY).next_to(card_bg, DOWN, buff=0.35)
         diary = label("a diary of the bug", 20, ERR).next_to(rewrite, DOWN, buff=0.15)
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(spec), FadeIn(card_bg), run_time=0.5)
+            self.play(FadeOut(spec), run_time=0.4)
             self.remove(spec)
             vo.wait_until("two suspects")
-            self.play(FadeIn(heading),
+            self.play(FadeIn(card_bg), FadeIn(heading),
                       FadeTransform(VGroup(panel, bar38, q_line), test_chip),
                       FadeTransform(VGroup(wrong, wrong_lbl), code_chip), run_time=1.1)
             vo.wait_until("the code and the test")
@@ -300,6 +300,7 @@ class BugAlmostShipped(VoiceScene):
             self.play(FadeIn(rewrite, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("into a diary")
             self.play(Create(no), FadeIn(diary, shift=UP * 0.1), run_time=0.6)
+            self.wait(0.6)                     # let the struck rewrite land before the trays
 
         # ========================================================== 4. normal, edge, invalid
         trays = [bin_tray(n, x) for n, x in (("normal", -4.3), ("edge", 0.0), ("invalid", 4.3))]
@@ -318,17 +319,19 @@ class BugAlmostShipped(VoiceScene):
         call = code_span(panel2.code, 72 - 69, 'power("3", 4)')
         inv_chip = grey_chip('power("3", 4)', size=22, mono_font=True).move_to(call)
         terr = code_span(panel2.code, 71 - 69, "TypeError")
+        question = label("what is worth testing?", 30, INK).move_to([0, 1.6, 0])
         old = VGroup(card_bg, heading, code_chip, test_chip, stamp, stamp_arrow, rewrite, no, rule, diary)
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(old), run_time=0.6)
             self.remove(old)
+            self.play(FadeIn(question, shift=DOWN * 0.15), run_time=0.6)
             vo.wait_until("three trays")
             self.play(LaggedStart(*[FadeIn(t, shift=RIGHT * 1.5) for t in trays], lag_ratio=0.25),
                       run_time=1.2)
-            vo.wait_until("normal, edge, and invalid")
-            for t in trays:
-                self.play(Indicate(t.text, color=INK, scale_factor=1.12), run_time=0.4)
+            for t, anchor in zip(trays, ("normal,", "edge,", "and invalid")):
+                vo.wait_until(anchor)
+                self.play(FadeIn(t.text, shift=UP * 0.15), run_time=0.4)
             vo.wait_until("2 to the power 3")
             self.play(FadeIn(norm_chip), run_time=0.3)
             self.play(norm_chip.animate(rate_func=rush_into).shift(DOWN * 2.6), run_time=0.6)
@@ -338,7 +341,8 @@ class BugAlmostShipped(VoiceScene):
                 self.play(FadeIn(c), run_time=0.2)
                 self.play(c.animate(rate_func=rush_into).shift(DOWN * 2.6), run_time=0.5)
             vo.wait_until("And for invalid input")
-            self.play(FadeIn(panel2, shift=UP * 0.2), run_time=0.8)
+            self.play(FadeOut(question), FadeIn(panel2, shift=UP * 0.2), run_time=0.8)
+            self.remove(question)
             vo.wait_until("pytest dot raises")
             self.play(FadeIn(bar71), Indicate(raises, color=TURN, scale_factor=1.05), run_time=0.8)
             vo.wait_until("power on a string")
