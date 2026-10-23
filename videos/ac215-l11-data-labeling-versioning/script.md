@@ -1005,10 +1005,13 @@ SAY: Next, dvc push. Pause and run it. Here it fails without credentials. To sho
 
 SHOW: `dvc_store/` drawn (`illustration`, drawn from the cache layout of `95:65–69`) as the cache's
 mirror: `files/md5/5b/…`, `ba/…`, `91/…`, `5b/…`, `89/….dir`. GOLD `cost_tag()`: "a second copy
-of the photos now bills · cents". V6's three-homes panel: `images/` (BLUE, "the folder you upload
-to · changes"), `.dvc/cache` (GREY, "your disk · where hashing happens"), `dvc_store/` (BLUE,
-"named by fingerprint"). Conflict 9 chip, GREY: "slide 33: no local copy · DVC keeps one".
-SAY: In your bucket, the DVC store now mirrors the cache: same shelves, same names. A gold tag: that is a second copy of the photos, still cents. So the bytes now sit in three places: the images folder you upload to, the cache on your disk where hashing happens, and the DVC store, where every file is named by its fingerprint.
+of the photos now bills · a fraction of a cent a month". V6's three-homes panel, one home per
+anchor: `images/` (BLUE, "the folder you upload to · changes"), `.dvc/cache` (GREY, "your disk ·
+copies made by dvc add"), on "The third" `dvc_store/` (BLUE, "named by fingerprint · never
+overwritten"). Conflict 9 chip, GREY: "slide 33: no local copy · DVC keeps one". On "never
+overwrites", S08's YELLOW parked card ("how do you freeze which photos a model saw?") flies in and
+gets a GREEN check mark.
+SAY: In your bucket, the DVC store now mirrors the cache: same shelves, same names. A gold tag: that is a second copy of the photos, still a fraction of a cent a month. So the bytes now sit in three places: the images folder you upload to, and the cache on your disk, filled by dvc add. The third is the DVC store, where every file is named by its fingerprint. The images folder can change; the DVC store never overwrites, because new bytes get a new name.
 
 SHOW: TRACKER J5. A README card (`README.md · line 312`): "Run these commands **outside the
 container**". The capture's `exit` (95: 82); prompt `student@laptop:~/data-versioning$`. It types
@@ -1017,27 +1020,33 @@ modified by `remote add`) YELLOW, lines 13–14 GREY ("our two edits"), line 18 
 YELLOW. `git add .` → TERM(laptop/97: → (no output)); `git commit -m "Track initial cheese dataset with DVC"`
 → TERM(laptop/98: 2–7), chip "6 small text files · no photos"; CODE(data-versioning@data-versioning-ac215/.gitignore:
 3) small, `/cheese_dataset` GREEN, and a GREY chip ".dvc/cache: ignored by .dvc/.gitignore".
-`▶ your turn`.
+No ▶ here: the next block's single ▶ covers all five git commands.
 SAY: Now git, outside the container. Here, git status shows the DVC files that dvc init already staged, the new pointer file, and your two edits. Add and commit: 6 small text files and no photos, because the git ignore file excludes the dataset folder.
 
-SHOW: It types `git tag -a dataset_v20 -m "First version of cheese dataset"` → TERM(laptop/99: →
+SHOW: TRACKER J5. It types `git tag -a dataset_v20 -m "First version of cheese dataset"` → TERM(laptop/99: →
 (no output)); `git push --atomic origin main dataset_v20` — typed, no output panel; a GREY card "on
 your machine: branch and tag arrive together, or neither · the tag appears under Tags on GitHub".
-`▶ your turn`. Extras: `git log --oneline --decorate` → TERM(laptop/101: 2–3), `tag: dataset_v20`
+`▶ your turn`. TRACKER J5 · extra: `git log --oneline --decorate` → TERM(laptop/101: 2–3), `tag: dataset_v20`
 GREEN, chip "our hashes · yours differ"; `git show dataset_v20:cheese_dataset.dvc` →
 TERM(laptop/102: 2–7). V6: a horizontal git timeline with two beads (Initial commit, the v20
-commit); a GREEN flag `dataset_v20` plants on the second; zoom into the bead: the six-line card; a
-PINK rope runs from it down into the BLUE `dvc_store/` to the `.dir` box, which fans out to four
-blob boxes. A GREY line (slide 25, one level deeper): "git keeps the fingerprint of the list of
-fingerprints".
-SAY: Tag the commit as dataset v20, and push the branch and the tag together; atomic means both arrive, or neither. Pause and run them. An extra log shows the tag on your commit, and the tag pins these six lines. That is the whole trick: git keeps the fingerprint of a list of fingerprints, and a rope leads from the tag to the bytes in your bucket.
+commit); on "a permanent name", a GREEN flag `dataset_v20` plants on the second.
+SAY: Tag the commit as dataset v20, a permanent name, and push the branch and the tag together; atomic means both arrive, or neither. Pause and run them. An extra log shows the tag on your commit, and the tag pins these six lines.
+
+SHOW: TRACKER J5 · extra. The second terminal strip returns (title `laptop · second terminal`,
+prompt `student@laptop:~$`). It types
+`diff <(git -C class-data-versioning show dataset_v20:cheese_dataset.dvc) <(git -C data-versioning show dataset_v20:cheese_dataset.dvc) && echo identical`
+(extra; folds, small) → TERM(laptop/121: 2), GREEN; S12's two cards merge into one and S01's PINK
+line lands on it. The strip closes. V6: zoom into the v20 bead: the six-line card; a PINK rope runs
+from it down into the BLUE `dvc_store/` to the `.dir` box, which fans out to four blob boxes. A GREY
+line (slide 25, one level deeper): "git keeps the fingerprint of the list of fingerprints".
+SAY: An extra diff against the instructor's tag: identical, same bytes, same fingerprint, on any machine. That is the whole trick: git keeps the fingerprint of a list of fingerprints. A rope leads from the tag to the bytes in your bucket.
 
 SHOW: A kind card, tag `erratum`: README card (`README.md · line 321`), "this tag is taken", chip
 "only in a fork · after rm -rf .git and git init, no tags exist". Then the README's own table
 (README.md lines 256–260): Git · code and small DVC metadata files / DVC · large dataset files /
 GCS · where DVC stores dataset versions. TRACKER J6: a GREY note "Colab: view dataset_v20 → scene
 15 views both versions" (README.md lines 324–328). Fade out.
-SAY: The README warns that this tag may be taken; that applies only to a fork, and your fresh repo has no tags. Its table sums it up: git holds code and small DVC files, DVC tracks the dataset, the bucket stores the versions. The notebook comes next in the README; we view both versions there, shortly.
+SAY: The README warns that this tag may be taken; that applies only to a fork, and your fresh repo has no tags. Its table sums it up: git holds code and small DVC files, DVC tracks the dataset, the bucket stores the versions. The README's notebook waits until scene 15.
 
 ---
 
@@ -1049,22 +1058,24 @@ dataset_v21", 5 dots). GREY tag `lecture_ref(11, "20")` top right, whole scene. 
 `extra · stand-in`: `sudo cp ../cheeses_unlabeled/Image_5.jpg cheese_dataset/ && ls -la cheese_dataset`
 (folds) → TERM(laptop/103: 5–9), line 9 `Image_5.jpg` YELLOW. A GREY chip: "gcsfuse caches listings
 · wait a little · ls first". `▶ your turn`.
-SAY: Now a second version. Upload a few more photos to the images folder; our stand-in copies in one, Image 5. With a real bucket, the mount can take a little while to notice, so list before you add.
+SAY: Now a second version. Upload a few more photos to the images folder; our stand-in copies in one, Image 5. With a real bucket, the mount can take a little while to notice, so list before you add. Pause and upload one or two.
 
 SHOW: V5's shelf with four filled aisles and the `89/` manifest; a fifth tile waits outside.
 PONDER(8 s, "Four photos already in dvc_store.\nYou add one. How many objects\nwill dvc push upload?")
 SAY: Something to ponder. Four photos are already in the DVC store, and you add one. How many objects will dvc push upload?
 
-SHOW: TRACKER K2. `sh docker-shell.sh` → TERM(laptop/104: 27–28, …, 41–42); at
-`root@c7959d5d7f9d:/app#`: `ls cheese_dataset` (extra) → TERM(laptop/104: 46); `dvc add cheese_dataset`
-→ TERM(laptop/104: 48, 50, 52); `cat cheese_dataset.dvc` (extra) → TERM(laptop/104: 58–63), lines
-59–61 YELLOW; a GREY chip "the class v21: 3280f8f9….dir · a different fifth photo" (laptop/120,
-line 10). TRACKER K3: `dvc push` → TERM(laptop/104: 65–67), line 67 RED; tag `extra · local
-remote`: `dvc push -r standin` → TERM(laptop/104: 71–73), `2 files pushed` YELLOW. V5: `Image_5.jpg`
-→ `54081d12…` (laptop/09b, line 6) onto a new aisle `54/`; the four old tiles light "already on
-the shelf"; a new manifest `6b342844….dir` on aisle `6b/`; a counter "2 pushed, not 6". `▶ your
-turn` on each README command.
-SAY: Two: the new photo and a new manifest. Adding again gives 5 files, 712,574 bytes, and a new manifest fingerprint. The class version 21 has a different one, because its fifth photo was another image. Then push: here the local stand-in shows 2 files pushed, because the four old photos are already on the shelf. That is the saved space the lecture promised.
+SHOW: TRACKER K2. `sh docker-shell.sh` (the README's command, re-used) → TERM(laptop/104: 27–28, …,
+41–42); at `root@c7959d5d7f9d:/app#`: `ls cheese_dataset` (extra) → TERM(laptop/104: 46);
+`dvc add cheese_dataset` → TERM(laptop/104: 48, 50, 52); `cat cheese_dataset.dvc` (extra) →
+TERM(laptop/104: 58–63), lines 59–61 YELLOW; a GREY chip "the class v21: 3280f8f9….dir · a
+different fifth photo" (laptop/120, line 10). V5: `Image_5.jpg` → `54081d12…` (laptop/09b, line 6)
+onto a new aisle `54/`; a new manifest `6b342844….dir` on aisle `6b/`. `▶ your turn`.
+SAY: Two: the new photo and a new manifest. Start the container again, list the folder, and add it; pause and run them. It gives 5 files, 712,574 bytes, and a new manifest fingerprint. The class version 21 has a different manifest fingerprint, because its fifth photo was another image.
+
+SHOW: TRACKER K3. `dvc push` → TERM(laptop/104: 65–67), line 67 RED; tag `extra · local remote`:
+`dvc push -r standin` → TERM(laptop/104: 71–73), `2 files pushed` YELLOW. V5: the four old tiles
+light "already on the shelf"; a counter "2 pushed, not 6". `▶ your turn`.
+SAY: Then dvc push; pause and run it. Here the local stand-in shows 2 files pushed, because the four old photos are already on the shelf. That is the saved space the lecture promised.
 
 SHOW: TRACKER K4. The capture's `exit` (104: 74); prompt `student@laptop:~/data-versioning$`. It
 types `git status` → TERM(laptop/105: 2–6), line 6 `modified:   cheese_dataset.dvc` YELLOW;
@@ -1077,33 +1088,36 @@ TERM(laptop/112: 2–3). V6: a third bead and a second GREEN flag `dataset_v21`;
 five blobs, four of them shared with v20's rope.
 SAY: Back on your laptop, the five git commands again: status shows only the pointer file changed; then add, commit, tag dataset v21, and push. Pause and run them. An extra diff shows the whole change in three lines: the fingerprint, the size and the count. Two flags now sit on two commits, and their ropes share four photos.
 
-SHOW: A kind card, RED, tag `erratum`: README card "starter · README.md · line 148" (`Add a remote
+SHOW: TRACKER K4 · extra. A kind card, RED, tag `erratum`: README card "starter · README.md · line 148" (`Add a remote
 origin git remote add origin git@github.com:YOUR_GITHUB_USERNAME/data-versioning.git`). It types
 `git remote add origin git@github.com:YOUR_GITHUB_USERNAME/data-versioning.git` (extra; folds) →
 TERM(laptop/113: 2), RED; a README card (`README.md · line 372`): "Do not add it again here."
 SAY: The starter branch keeps an older README that adds the remote again at this point. That fails: remote origin already exists. The pinned README says not to.
 
-SHOW: TRACKER K4 · extra. Time travel without the cloud: `git checkout dataset_v20 -- cheese_dataset.dvc && git status --short`
+SHOW: TRACKER K4 · extra · stand-in (the tag `extra · stand-in` on `114`–`117`: this folder is our
+stand-in, not a mount). Time travel without the cloud: `git checkout dataset_v20 -- cheese_dataset.dvc && git status --short`
 (extra; folds) → TERM(laptop/114: 2); `sh docker-shell.sh` → TERM(laptop/115: 27–28, …, 41–42); at
 `root@cae2b394b48b:/app#` `dvc checkout` (extra) → TERM(laptop/115: 49), `ls cheese_dataset`
 (extra) → TERM(laptop/115: 51), four names GREEN; exit; `git checkout main -- cheese_dataset.dvc && git status --short`
 (extra) → TERM(laptop/116: → (no output)); `sh docker-shell.sh` → TERM(laptop/117: 27–28, …,
 41–42); at `root@b505a5708abb:/app#` `dvc checkout` → TERM(laptop/117: 49), `ls cheese_dataset` →
 TERM(laptop/117: 51), five names GREEN. On V6 a GREY cursor hops from flag to flag; the blobs come
-from the GREY `.dvc/cache`, not the bucket. Fade out.
-SAY: One extra experiment: time travel without the cloud. Check out the old pointer file with git, run dvc checkout in the container, and the folder holds four photos again. Back to main, and five. Both come straight from the cache on your disk.
+from the GREY `.dvc/cache`, not the bucket. On "With a real mount", a GREY chip: "real mount: dvc
+checkout writes to images/ in your bucket · v20 deletes Image_5.jpg there · main writes it back".
+Fade out.
+SAY: One extra experiment, on our stand-in folder: check out the old pointer file with git, run dvc checkout, and the folder holds four photos again. Back to main, and five, from the cache on disk. With a real mount, this folder is your bucket's images folder, so checkout deletes and rewrites photos there.
 
 ---
 
 ## S15 · Time travel from anywhere — `s15_colab.py` · `TimeTravel`
 
-SHOW: TRACKER J6, then K5 on "both versions" (tracker J returns to step 6 with a GREY chip "from
+SHOW: TRACKER J6, then K5 on "from anywhere" (tracker J returns to step 6 with a GREY chip "from
 scene 13", then tracker K to step 5). GREY tag `lecture_ref(11, "22, 26")` top right, whole scene.
 Slide 22's term card: "time travel · reaching an earlier version · only while its files are kept".
 V6's rope pull, `dvc get <repo> cheese_dataset --rev <tag>`: the BLUE Colab box clones the repo at
 the tag → reads *that commit's* `.dvc/config` (a chip: "which bucket") → fetches the `.dir`
 manifest → then the blobs; four blank tiles materialize in Colab.
-SAY: Now, time travel from anywhere: the lecture's phrase for reaching an earlier version, which works only while its files are kept. The command dvc get, with a tag, walks the rope: it clones the repo at that tag, reads that commit's config to find the bucket, fetches the manifest, then the photos.
+SAY: Now, time travel from anywhere: the lecture's phrase for reaching an earlier version, which works only while its files are kept. The command dvc get, with a tag, walks the rope. It clones the repo at that tag, reads that commit's config to find the bucket, then fetches the manifest, then the photos.
 
 SHOW: The notebook (`illustration`: a notebook frame, no screenshot; README.md lines 326 and 383,
 "Open the Colab Notebook"; slide 26 links the same one). Cells verbatim from
@@ -1112,8 +1126,10 @@ imports (lines 276–283), chip "keep it: it imports auth"; cell 11 `auth.authen
 (line 292); cell 13 `!dvc list -R https://github.com/dlops-io/data-versioning.git` (line 303,
 with its comment "Replace github url with your url"); cell 15 `!rm -rf cheese_dataset` /
 `!dvc get https://github.com/dlops-io/data-versioning cheese_dataset --force --rev dataset_v21`
-(lines 328–329); cell 17 the count (lines 352–353). `▶ your turn`.
-SAY: Open the notebook from the README and save a copy. Install DVC, run the imports, and sign in with your Google account. Then list a repo, fetch a version, and count the files. Pause and work through it.
+(lines 328–329); cell 17 the count (lines 352–353). A GREY chip: "today's README links a newer copy
+of this notebook (18KYngbv) · same cells, pointed at a TA's repo · point them at your repo either
+way". No ▶ yet: block 4 says what to change first.
+SAY: Open the notebook from the README and save a copy. Install DVC, load the libraries, and sign in with your Google account. Then list a repo, fetch a version, and count the files.
 
 SHOW: Strip `colab stand-in · signed out`, tag `extra`: `dvc --version` → TERM(colab/C07b: 2),
 `3.67.1` with chips "today's pip · the notebook ran 3.63.0" and `at the time of recording`.
@@ -1127,10 +1143,14 @@ SAY: Our stand-in is not signed in, and pip gives it a newer DVC, 3.67.1, at the
 SHOW: A GREY card, tag `recorded · notebook cells 13, 15, 17 · the instructor's run of the class
 repo`: cell 13's stored listing (`notebook-1RRQ1SlH.cells.txt` lines 310–314: the five
 `cheese_dataset/…` files, the long `.webp` name folded); cell 15's `Downloading cheese_dataset:
-0% 0/5` (line 331); cell 17's `Number of items: 5` (line 355). A chip: "your repo: your URL, your
-tag · your v20 gives 4". A small GREY chip: "private repo → a token in the URL, or make it public
-(exercises)".
-SAY: Signed in, the notebook shows five files in the class version 21, and a count of 5. For your repo, replace the address and the tag; your version 20 gives 4. Your repo is private, so the notebook needs an access token in the address, or a public repo.
+0% 0/5` (line 331); cell 17's `Number of items: 5` (line 355); a chip on cell 13: "the class repo's
+main · the same five files as its v21". Then the notebook frame shows the edited cell 15, GREEN:
+`!dvc get https://github.com/YOUR_GITHUB_USERNAME/data-versioning cheese_dataset --force --rev dataset_v20`
+(cell 13 likewise with your URL), chip "your v20 gives 4". A GREY chip (`illustration`, a
+placeholder, never a real-looking token): "private repo:
+https://YOUR_GITHUB_USERNAME:<read-only token>@github.com/YOUR_GITHUB_USERNAME/data-versioning · or
+make it public for this step". `▶ your turn`.
+SAY: In the instructor's signed-in run, the notebook lists five files on the class repo, the same set as its version 21, and counts 5. Your account probably cannot read the class bucket, so use your repo: replace the address and the tag; your version 20 gives 4. Your repo is private, so put an access token in the address, or make it public. Pause and work through it.
 
 SHOW: Cell 19 (lines 361–362): `!rm -rf cheese_dataset` /
 `!dvc get https://github.com/dlops-io/data-versioning cheese_dataset --force --quiet --rev dataset_v25`;
@@ -1145,7 +1165,7 @@ strip: `git ls-remote --tags https://github.com/dlops-io/data-versioning` → TE
 6), the three tag names highlighted. V6: a flag that was never planted, its rope ending in air. A
 kind card, tag `erratum`: "cell 20's stored `Number of items: 3` (line 370) is left over from an
 older run · --quiet hides errors too". Fade out.
-SAY: No. The next cell fails: no such folder. Without the quiet flag, the error appears: unknown Git revision. The class repo only has tags v20, v21 and v30. The stored count of 3 under the next cell is left over from an older run; quiet hides errors too.
+SAY: No. The next cell fails: no such folder. Without the quiet flag, the error appears: unknown Git revision. The class repo only has tags v20, v21 and v30. The stored count of 3 under the next cell is left over from an older run; the quiet flag hides errors too.
 
 ---
 
@@ -1154,56 +1174,61 @@ SAY: No. The next cell fails: no such folder. Without the quiet flag, the error 
 SHOW: No tracker. GREY tag `lecture_ref(11, "25, 35–36, 38–40")` top right, whole scene. Slide 36
 redrawn as three question cards: "Which images trained this model?" · "Can I test new images
 before everyone uses them?" · "What did this table hold before the change?"; three tool chips
-below, unmatched: DVC · lakeFS · Delta Lake / Iceberg (GREY dashed).
+below, unmatched and shuffled: Delta Lake / Iceberg · DVC · lakeFS (GREY dashed).
 QUICK(4 s, "Which images trained this model? · Can I test\nnew images first? · What did this table hold?\nWhich tool answers each?")
-SAY: A quick prediction: which images trained this model? Can I test new images before everyone uses them? What did this table hold before the change? Match DVC, lakeFS, and Delta Lake or Iceberg.
+SAY: A quick prediction: three questions, three tools. Match Delta Lake or Iceberg, DVC, and lakeFS.
 
-SHOW: The chips land in order: DVC ("uses git") · lakeFS ("its own history") · Delta Lake /
-Iceberg ("table versions"). Slide 35's line, GREY: "no single standard". A GREY chip: "Milestone 2
-accepts a light tool like this one".
-SAY: In that order. There is no single standard; your project milestone accepts a light tool like this.
+SHOW: The chips land on their questions in the spoken order: DVC ("uses git") · lakeFS ("its own
+history") · Delta Lake / Iceberg ("table versions"). Slide 35's line, GREY: "no single standard". A
+GREY chip: "Milestone 2 accepts a light tool like this one".
+SAY: DVC, lakeFS, then the table formats. There is no single standard; your project milestone accepts a light tool like this.
 
 SHOW: Monitoring, slides only: a GREY-dashed watchtower rises over V7, chip "this lecture has no
-monitoring tutorial". Slide 38's five reasons as GREY chips (quality · freshness · drift: "suddenly
-far more photos of one cheese" · cost · the broken step); slide 39's three approaches in one line
-(rules · anomaly detection · lineage + metadata); slide 40's tools as plain text, no logos. A
-YELLOW line: "versioning: what changed · monitoring: that something changed".
-SAY: The lecture ends with monitoring, slides only: watch quality, freshness, drift, cost and broken steps, with rules, anomaly detection or lineage. Versioning tells you what changed; monitoring tells you that something changed.
+monitoring tutorial · slides only". Slide 38's five reasons as GREY chips (quality · freshness ·
+drift: "suddenly far more photos of one cheese" · cost · the broken step); slide 39's three
+approaches in one line (rules · anomaly detection · lineage + metadata); slide 40's tools as plain
+text, no logos. A YELLOW line: "versioning: what changed · monitoring: that something changed".
+SAY: The lecture ends with monitoring: watch quality, freshness, drift, cost and broken steps, with rules, anomaly detection or lineage. Versioning tells you what changed; monitoring tells you that something changed.
 
-SHOW: TRACKER L1 (tracker L appears: "README › data-versioning › Docker Cleanup", 3 dots). Laptop
-prompt `student@laptop:~/data-versioning$`. `docker container ls` → TERM(laptop/150: 2; squeeze);
-TRACKER L2: `docker system prune` → TERM(laptop/151: 2–8 [y/N] y, 9, …, 20); TRACKER L3:
-`docker image ls` → TERM(laptop/152: 2–5; squeeze), `data-version-cli` `2.73GB` with `at the time of
-recording`. `▶ your turn`. Then the shutdown checklist card (GOLD frame), one line per sentence:
-"stop and remove `data-label-studio`" · "optional: `python cli.py -r` removes the CORS rule
-(cli.py:35–38)" · "`docker-volumes/label-studio`: delete only when done with the project" ·
-"buckets bill until deleted: `cheeses_unlabeled/`, `cheeses_labeled/`, `images/`" · RED-outlined:
-"never `dvc_store/` while a tag should still work" · "`.dvc/cache`: safe to delete once pushed" ·
-"delete the key when the course is done (IAM › Service accounts › Keys)".
-SAY: Cleanup is the README's three commands; pause and run them. Then shut down: stop and remove Label Studio. Buckets bill until deleted, but never delete the DVC store while any tag should still work; a tag is only a pointer. Delete the key when you are done.
-
-SHOW: The recap on V7, complete: pieces relight one by one as each is named: the TEAL Label Studio
-house with its door and drawer (V1); the BLUE ticket (V2); the bouncer and the rule card on the
-bucket (V3); the WHITE envelope with its thread; the FUSE pipes (V4); the hash shelf (V5); the
-flags and the rope (V6). Then everything unlit.
-SAY: The whole lecture on one map: Label Studio in a container, signed tickets, a bouncer the bucket configures, labels as small notes, a mounted bucket feeding DVC, photos filed by fingerprint, and a tag pinning the list.
+SHOW: The recap on V7, complete: pieces relight one by one, one per sentence: the TEAL Label Studio
+house with its door and drawer (V1) and the BLUE ticket (V2); the rule card on the bucket and the
+bouncer at the browser's door (V3); the WHITE envelope with its thread, then the FUSE pipes (V4);
+the hash shelf (V5), then the flags and the rope (V6). On "Monday's photos", S01's YELLOW caption
+returns small: "which photos ✓ tag · which labels → E7". Then everything unlit.
+SAY: On one map: Label Studio runs in a container and signs tickets for the photos. A rule on the bucket satisfies the browser's bouncer. Labels are small notes; a mounted bucket feeds DVC. Photos are filed by fingerprint; a tag pins the list. So Monday's photos come back with one dvc get; their labels join in exercise E7.
 
 SHOW: A card "Test yourself". One question at a time (≥ 24 pt, ≤ 3 lines), each with a thumbnail of
-its picture; earlier ones collapse into a label list at left. Q1 "Why does the bucket need a CORS
-rule when it is your browser that complains, and why does curl never notice?" (the bouncer) · Q2
-"cli.py reaches Label Studio at data-label-studio:8080, you at localhost:8080. Why can't they
-swap?" (two arrows) · Q3 "What is inside cheese_dataset.dvc, and which field changes if you rename
-one photo?" (the manifest card) · Q4 "After dvc add and dvc push, name the three places the photo
-bytes sit." (three homes) · Q5 "You delete gs://…/dvc_store but keep GitHub and its tags. What does
-dvc get --rev dataset_v20 do now?" (the rope in air). Labels: "CORS" · "two addresses" · "the
-pointer" · "three homes" · "the warehouse".
-SAY: 5 questions to test yourself. One: why does the bucket need its CORS rule, when curl never notices? Two: why can the command line container and your browser not swap addresses? Three: what is in the pointer file, and what changes on a rename? Four: where do the bytes sit after a push? Five: without the DVC store, what does dvc get do?
+its picture; earlier ones collapse into a label list at left. Q1 "Who fetches the photos, and why
+does that make the bucket need a CORS rule? Why does curl never notice?" (the ticket and the
+bouncer) · Q2 "cli.py reaches Label Studio at data-label-studio:8080, you at localhost:8080. Why
+can't they swap?" (two arrows) · Q3 "What is inside cheese_dataset.dvc, and which field changes if
+you rename one photo?" (the manifest card) · Q4 "After dvc add and dvc push, name the three places
+the photo bytes sit." (three homes) · Q5 "You delete gs://…/dvc_store but keep GitHub and its tags.
+What does dvc get --rev dataset_v20 do now?" (the rope in air). Labels: "who fetches · CORS" · "two
+addresses" · "the pointer" · "three homes" · "the warehouse".
+SAY: 5 questions to test yourself. One: who fetches the photos, and why does that make the bucket need its CORS rule? Two: why can't the command line container and your browser swap addresses? Three: what is in the pointer file, and what changes on a rename? Four: where do the bytes sit after a push? Five: without the DVC store, what does dvc get do?
 
-SHOW: The label list stays at left. Footer cards: "Answers: exercises.md" and "Study guide + every
-command: MLOps_Learning · guides/L11-data-labeling-versioning.md". A "Next" card, GREY dashed:
-"L13 · trains on the labeled cheeses from a prepared zip · swap that download for dvc get --rev to
-make a run reproducible". Everything fades to an empty frame (end of part 2).
-SAY: Answers are in the exercises, every command in the study guide. In lecture 13 you train from a prepared zip; fetching a tagged version instead makes such a run reproducible.
+SHOW: The label list fades. TRACKER L1 (tracker L appears: "README › data-versioning › Docker
+Cleanup", 3 dots). Laptop prompt `student@laptop:~/data-versioning$`. `docker container ls` →
+TERM(laptop/150: 2; squeeze); TRACKER L2: `docker system prune` → TERM(laptop/151: 2–8 [y/N] y, 9,
+…, 20); TRACKER L3: `docker image ls` → TERM(laptop/152: 2–5; squeeze), `data-version-cli`
+`2.73GB` with `at the time of recording`. `▶ your turn`. Then the shutdown checklist card (GOLD
+frame), one line per sentence: "containers and the labeling network: already gone (scene 8)" ·
+"keeping bucket 1? in data-labeling: `sh docker-shell.sh`, then `sh docker-shell-CLI.sh`,
+`python cli.py -r`, `exit` (cli.py:35–38) · deleting the bucket removes its rule too" ·
+"`docker-volumes/label-studio`: delete only when done with the project (sudo on Linux)" · "buckets
+bill until deleted: `cheeses_unlabeled/`, `cheeses_labeled/`, `images/`" · RED-outlined: "never
+`dvc_store/` while a tag should still work" · "`.dvc/cache`: safe to delete once pushed" · "delete
+the key and its JSON in secrets when the course is done (IAM › Service accounts › Keys)" · GREY,
+optional: "`docker image rm data-label-cli data-version-cli heartexlabs/label-studio:latest` frees
+about 6 GB".
+SAY: Cleanup is the README's three commands; pause and run them. Containers and the network are already gone. If you keep the labeling bucket, remove its CORS rule with dash r. Buckets cost money until you delete them, but never delete the DVC store while any tag should still work; a tag is only a pointer. Delete the key and its JSON file when the course is done.
+
+SHOW: Footer cards: "Answers: exercises.md" and "Study guide + every command: MLOps_Learning ·
+guides/L11-data-labeling-versioning.md". A "Next" card, GREY dashed: "L13 · trains on the labeled
+cheeses from a prepared zip · swap that download for dvc get --rev to make a run reproducible".
+Everything fades to an empty frame (end of part 2).
+SAY: Answers are in the exercises. In lecture 13 you train from a prepared zip; fetching a tagged version instead makes such a run reproducible.
 
 ---
 

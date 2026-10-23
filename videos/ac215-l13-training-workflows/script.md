@@ -46,7 +46,7 @@ Conventions
   "401", "a 403", README's, entrypoint). Words this script needs that have no entry yet are listed
   in **Lexicon candidates** at the end; this script does not edit the lexicon. The lexicon splice
   turns an "a" directly before an entry into the letter name, so no SAY line puts a bare "a" before
-  an entry or a candidate ("one T4", "your W and B account", "the netrc file", "one JSON key",
+  an entry or a candidate ("one T4", "a free account on W and B", "one JSON key",
   "one n1-standard-4 machine"); "a 403" is the one guarded form. No `'s` after a word with an entry
   or a candidate (never "TensorFlow's", "Vertex's"); `README's` is an entry. Numbers as digits
   (thousands with a comma: "1,156", "4,016"); never a "!" after a digit; no prices, no "cents".
@@ -222,14 +222,26 @@ Conventions
   repo lane dashed, the key chip in a variable and the bucket named; S08–S14 light the repo lane piece
   by piece (the cockpit gets its "submits · never trains" stamp in S09); S15 shows it complete, then
   unlit. The cockpit has exactly two arrows (package & upload; create job) and none into a job.
-- Length and parts: narration **TOTAL_WORDS** words (`python -m explainer.script`, which counts SAY
+- Length and parts: narration **4,239** words (`python -m explainer.script`, which counts SAY
   words; its minute figure assumes 155 wpm and is ignored). At Kokoro af_heart speed 0.9 (≈174 wpm)
-  that is ≈TOTAL_MIN min of narration, ≈29–31 min with typing, outputs, three builds and the ponder
+  that is ≈24.4 min of narration, ≈29–31 min with typing, outputs, three builds and the ponder
   timers. Part 1 = S01–S07 (track it, then get ready; ends on V1 with "today it won't build"),
   part 2 = S08–S15 (ship it). Each part ends on an empty frame. Per scene (BRIEF target in
   brackets):
 
-WORD_TABLE
+  | scene | words (BRIEF) | scene | words (BRIEF) |
+  | --- | --- | --- | --- |
+  | S01 Hook | 218 (220) | S08 TwoFixes | 342 (340) |
+  | S02 LeversAndRecord | 211 (220) | S09 InsideTheTarball | 307 (300) |
+  | S03 FolderTracker | 304 (280) | S10 OneCommand | 323 (310) |
+  | S04 SharedAxis | 305 (290) | S11 WhoRunsIt | 292 (300) |
+  | S05 ThreeLines | 252 (240) | S12 WhatTheJobSays | 267 (290) |
+  | S06 RentTheMachine | 246 (250) | S13 ThreeSwitches | 222 (230) |
+  | S07 KeysAndBucket | 332 (290) | S14 TwoGpusOneModel | 326 (300) |
+  |  |  | S15 Recap | 292 (270) |
+  | **part 1** | **1,868** (1,790) | **part 2** | **2,371** (2,340) |
+
+  Every scene is within the BRIEF's ±15 %. Re-run the counter after any review edit.
 
 Notes for scene authors
 - TERM line numbers are *file* lines (line 1 = the `$` command); `Capture.pick()` indexes the
@@ -334,11 +346,11 @@ with its output NB(A: 115, 117, 120) (`tensorflow version 2.19.0`, `Number of re
 `!nvidia-smi` box cropped to NB(A: 137), `Tesla T4` YELLOW.
 SAY: Open notebook A from the course page, save a copy, and switch the runtime to a GPU; pause and set it up. Its stored outputs show the instructors' run: TensorFlow 2.19.0 and one Tesla T4 GPU.
 
-SHOW: TRACKER A2. NB(A: 317) (the download line) then cell 17's output NB(A: 352–353):
+SHOW: TRACKER A2. NB(A: 318) (the download line) then cell 17's output NB(A: 352–353):
 `Labels: ['brie', 'gouda', 'parmigiano', 'gruyere']` with a YELLOW pin "remember this order", and
 `Full size of the dataset: 1156`. TRACKER A3: cell 26, NB(A: 432–443) as code, then its output
 NB(A: 445–447): `train_x count: 936` / `validate_x count: 104` / `test_x count: 116`. `▶ your turn`.
-SAY: Run the dataset cells: 1,156 photos from a GitHub release, with four cheese labels. Remember their order. Then the split: 936 for training, 104 for validation, 116 for testing. Pause and run them.
+SAY: Run the dataset cells: 1,156 photos from one GitHub release, with four cheese labels. Remember their order. Then the split: 936 for training, 104 for validation, 116 for testing. Pause and run them.
 
 SHOW: The code panel stays; line 433 `validation_percent = 0.2` and the three counts glow.
 PONDER(8 s, "The cell sets validation_percent = 0.2.\nYet validation is 104 of 1,156.\nWhat did the code actually do?")
@@ -537,7 +549,7 @@ TRACKER C1 · extra: `git log -1 --format='%H %ci %s'` (extra) → TERM(laptop/0
 and `2025-10-16` YELLOW, chip "the course pin". Then `ls -la` (extra) → TERM(laptop/03: 7–23;
 squeeze); the five `.sh` rows (9, 11, 16, 17, 19), `cli.py` (10) and `package` (18) YELLOW, the six
 PNG rows (12–15, 21, 23) GREY with a chip "console screenshots · redrawn in this video".
-SAY: Time to type. Clone the model training repo and move into it; pause and run it. Two extras show the course pin, and five shell scripts, cli.py, the package folder and six console pictures that this video redraws.
+SAY: Clone the model training repo and move into it; pause and run it. Two extras show the course pin, then five shell scripts, cli.py, the package folder and six console pictures this video redraws.
 
 SHOW: TRACKER C2. Schematic console (`illustration`, no logo): search "Vertex AI API" → ENABLE →
 "API enabled". `▶ your turn`. TRACKER C3: the quota page (`illustration`) with the README's own
@@ -586,7 +598,7 @@ WANDB_KEY=...`". In the laptop terminal it types the capture's line,
 `...` = your key · ours: an obvious placeholder"; the `; echo …` part tagged `extra`) →
 TERM(laptop/10: 2), `40` with a chip "the placeholder's length · the check: not 0". `▶ your turn`.
 On V1 a GREEN key chip settles in the laptop's shell.
-SAY: Last, copy your W and B key and export it in the terminal you will use for the container. Pause and do it. An extra echo prints its length, 40 for our placeholder; what matters is that it isn't zero.
+SAY: Last, copy your W and B key and export it in the terminal you'll use for the container. Pause and do it. An extra echo prints its length, 40 for our placeholder; what matters is that it isn't zero.
 
 SHOW: A second terminal slides in (title `laptop · new terminal`, prompt `student@laptop:~$`),
 empty.
@@ -626,11 +638,11 @@ TERM(laptop/21: 23, …, 65–70, …, 166, …, 181–188 wrap) — every `[IP:
 rows and their `404  Not Found` RED, line 166 RED, the `Dockerfile:18` frame (181–187) with lines
 18–19 RED. `▶ your turn`. A GREY chip "22 packages · all 404" and, on "before docker run", CODE
 chip `set -e` flashes. V1's cockpit outline cracks RED.
-SAY: Now run sh docker-shell.sh from inside the repo; pause and run it. Today it fails at step 2 of 14: 22 packages return 404 Not Found from a Debian mirror, and the build stops at line 18. The script's set dash e then skips docker run.
+SAY: Now run sh docker-shell.sh from inside the repo; pause and run it. Today it fails at step 2 of 14: 22 packages return 404 Not Found from the Debian mirror, and the build stops at line 18. The script's set dash e then skips docker run.
 
 SHOW: The error panel shrinks to a strip.
 PONDER(8 s, "Every error is a 404 from a Debian mirror,\nand your internet works. Which line of\nthe Dockerfile picks your Debian?")
-SAY: Something to ponder. Every error is a 404 from a Debian mirror, and your internet works. Which line of the Dockerfile picks your Debian?
+SAY: Something to ponder. Every error says 404 from the Debian mirror, and your internet works. Which line of the Dockerfile picks your Debian?
 
 SHOW: The answer: CODE(Dockerfile: 1–2), line 2 `FROM python:3.13-slim-bullseye` YELLOW. On V1 the
 cockpit's ORANGE base layer is labelled "bullseye · Debian 11"; a GREY chip: "on 2026-10-23 its
@@ -691,13 +703,13 @@ GREEN; line 11 `packages=find_packages(),` YELLOW → V4: a GREEN `trainer/` fol
 "TensorFlow · scikit-learn · requests — assumed from Google's image", tag `erratum`, chip "scene
 11 tests it". A small GREY chip (slides vs code): "uv.lock pins the cockpit, not the trainer".
 `▶ your turn` (open the file).
-SAY: Review setup.py; pause and open it. The only declared dependency is wandb, pinned to 0.15.11. Its find packages call finds the trainer folder because it has an init file, so python dash m trainer dot task works. TensorFlow, scikit-learn and requests are not declared: they are assumed to come from the image Google provides, and scene 11 tests that.
+SAY: Review setup.py; pause and open it. The only declared dependency is wandb, pinned to 0.15.11. Its find packages call finds the trainer folder because the folder has its own init file, so python dash m trainer dot task works. TensorFlow, scikit-learn and requests are not declared: they are assumed to come from the image Google provides, and scene 11 tests that.
 
 SHOW: TRACKER E2. CODE(package/trainer/task.py: 45–54): line 52 `default="16"` YELLOW, pin "scene
 11". Then two small panels: CODE(package/trainer/task.py: 96–100) (chip "from a GitHub release ·
 the job can't see your laptop") and CODE(package/trainer/task.py: 152–153) (chip "after the
 download"). `▶ your turn` (open the file).
-SAY: Review task.py next. The notebook choices are flags now, and the key flag defaults to the text 16: remember that. The data comes from a GitHub release, since the job cannot see your laptop, and the W and B login runs after that download.
+SAY: Review task.py next. The notebook choices are flags now, and the key flag defaults to the text 16: remember that. The data comes from one GitHub release, since the job cannot see your laptop, and the W and B login runs after that download.
 
 SHOW: TRACKER E3. V4 step 2: `task.py` and `__init__.py` drop into `trainer/`, `setup.py` clips on
 as a label (`install_requires = wandb==0.15.11`), `tar` wraps `package/`, `gzip` shrinks it. A
@@ -898,7 +910,7 @@ right, whole scene. CODE(cli.sh: 9–14) small, then CODE(cli.sh: 21–27) besid
 **image** (`tf-gpu.*` with CUDA vs `tf-cpu.*`), **quota** (T4s for custom training in this region,
 a regional stock counter). On "all three", the switches flip GREEN one by one and the T4 chip
 lights.
-SAY: Back to the optional step, in reverse: what would it take to train on a GPU? Three switches must agree. The accelerator: one T4 in the worker pool spec. The image: a TensorFlow GPU image with CUDA. And the quota: T4s for custom training in this region. The chip lights only when all three are on.
+SAY: Back to the optional step, in reverse: what would it take to train on a GPU? Three switches must agree. The accelerator: one T4 in the worker pool spec. The image: TensorFlow built for GPUs, with CUDA. And the quota: T4s for custom training in this region. The chip lights only when all three are on.
 
 SHOW: The quota page from S07 (`illustration`) flashes by the quota switch. TRACKER F3 · extra:
 cockpit-free laptop strip, the long loop of TERM laptop/09's line 1 (extra; folds; small) →
@@ -1001,9 +1013,8 @@ SAY: And where is the trained model? When the script ends, the machine is delete
 SHOW: TRACKER cleanup 1 (`tracker_cleanup` appears: "extra · clean-up", 3 dots). Laptop prompt
 `student@laptop:~/model-training$`: `docker ps -a` (extra) → TERM(laptop/90: 2; squeeze), nothing
 listed, chip "--rm"; `docker image ls` (extra) → TERM(laptop/91: 2–7; squeeze), `2.59GB` with
-`at the time of recording`. TRACKER cleanup 2: a cockpit strip (chip "our capture: from scene 10's
-cockpit"): `gcloud ai custom-jobs list --region=us-central1` (extra) → TERM(laptop/40: 92–93),
-RED. Then the GOLD-framed shutdown checklist card, one line per sentence:
+`at the time of recording`. TRACKER cleanup 2. Then the GOLD-framed shutdown checklist card, one
+line per sentence:
 "`exit` the cockpit (`--rm` removes it) · `docker image rm …` if you need the disk" ·
 "Vertex AI → Training → Custom jobs: nothing RUNNING or PENDING · cancel a stuck one:
 `gcloud ai custom-jobs cancel JOB_ID --region=us-central1` (shown, not run) · tried cli.py? also
@@ -1055,40 +1066,51 @@ voice says "double-you" oddly; it is listed for the check.
 | --- | --- | --- | --- |
 | TensorFlow | S03, S05, S06, S09, S11, S13, S14 | "tensor flow" | camel-case product name |
 | MobileNet | S01, S04 | "mobile net" | camel-case model name |
-| wandb (in "wandb init", "wandb config", "wandb finish", "wandb, pinned", "this old wandb pin") | S04, S05, S09, S11, S15 | "W and B" | library name; would be read "wand-b" |
-| W and B | everywhere | "double-you and B" | check the letter reading in context ("your W and B key") |
+| wandb (in "wandb init", "wandb config", "wandb finish", "wandb, pinned to", "this old wandb pin") | S04, S05, S09, S11, S15 | "W and B" | library name; would be read "wand-b" |
+| W and B | S01, S02, S04–S07, S09–S12, S15 | "double-you and B" | written as three words; check the letter reading in "your W and B key" |
 | Weights and Biases | S02 | "weights and biases" | probably fine; listed for the "biases" vowel |
-| Vertex AI | S06–S15 | "vertex A I" | product name; "AI" as letters |
+| Vertex AI | S01, S02, S06, S07, S09–S12, S15 | "vertex A I" | product name; "AI" as letters |
 | gcloud | S08, S09, S10 | "G cloud" | tool name |
 | gsutil | S09 | "G S util" | tool name |
+| uv | S08, S09 | "you-vee" | tool name; only `uv.lock`, `uv's`, `uvx` have entries |
 | google-cloud-sdk | S08 | "google cloud S D K" | package name (L11 lists the same) |
 | google-cloud-cli | S08 | "google cloud C L I" | package name (L11 lists the same) |
 | apt | S08 | "apt" (one syllable) | Debian tool; may be spelled out |
 | sed | S08 | "sed" | Unix tool |
+| FROM (in "the FROM line") | S08 | "from" | capitals; may be spelled out |
+| Bullseye, bookworm | S08 | "bullseye", "bookworm" | Debian code names; probably fine |
+| Debian | S08 | "DEB-ee-an" | distribution name |
+| Dockerfile | S08 | "docker file" | probably fine (`Dockerfile.txt` has an entry) |
+| Kubernetes | S08 | "koo-ber-NET-eez" | product name |
 | amd64 | S08 | "A M D sixty-four" | architecture name |
 | x86 64 | S08 | "x eighty-six sixty-four" | architecture name (written as two tokens) |
-| bullseye, bookworm | S08 | "bullseye", "bookworm" | Debian code names; probably fine |
-| Dockerfile | S08 | "docker file" | probably fine (Dockerfile.txt has an entry) |
-| sh (in "sh docker-shell.sh", "sh cli.sh", "sh dash x") | S08–S14 | "S H" or "shell"; pick what L10/L11 shipped | lowercase two-letter command |
+| sh (in "sh docker-shell.sh", "sh package-trainer.sh", "sh cli.sh", "sh cli-multi-gpu.sh", "sh dash x") | S08, S09, S10, S14 | "S H" (as L10/L11 shipped it) | lowercase two-letter command |
+| ps (in "docker ps") | S15 | "P S" | Unix command |
+| Tar | S09 | "tar" | sentence-initial tool name |
 | task.py | S09, S12 | "task dot pie" | file name |
 | setup.py | S09, S11 | "setup dot pie" | file name |
-| cli.sh | S07, S10, S12, S13, S14, S15 | "C L I dot S H" | file name (cli.py has an entry) |
+| cli.sh | S07, S10, S12, S14, S15 | "C L I dot S H" | file name (`cli.py` has an entry) |
 | package-trainer.sh | S09 | "package trainer dot S H" | file name |
 | cli-multi-gpu.sh | S14 | "C L I multi G P U dot S H" | file name |
-| model-trainer.json | S07, S08 | "model trainer dot JSON" | file name |
+| model-trainer.json | S07 | "model trainer dot JSON" | file name |
 | cheese-app-trainer.tar.gz | S09 | "cheese app trainer dot tar dot G Z" | object name |
 | JSON | S07 | "jay-son" | check it is not spelled out |
-| netrc | S04, S11 | "net R C" | file name |
-| tty (in "no tty") | S11 | "T T Y" | abbreviation |
+| api (in "api key not configured") | S11 | "A P I" | lowercase, quoted from the error text |
+| ID (in "run ID", "its ID") | S04, S08 | "I D" | `IDs` has an entry, `ID` does not |
 | scikit-learn | S09, S11 | "sy-kit learn" | package name |
 | MLflow | S02 | "M L flow" | product name |
-| init (in "wandb init", "an init file") | S04, S05, S09, S15 | "in-it" | Python abbreviation |
+| init (in "wandb init", "its own init file") | S04, S05, S09, S15 | "in-it" | Python abbreviation |
 | dict | S05 | "dict" | Python type |
+| hex | S10 | "hex" | probably fine |
 | T4, T4s | S01, S03, S06, S07, S13, S14 | "T four", "T fours" | GPU name |
 | n1-standard-4 | S10 | "N one standard four" | machine type |
 | n1-standard-32 | S14 | "N one standard thirty-two" | machine type |
-| us-central1 | S10 | "U S central one" | region name (us-east-1 has an entry) |
-| 404 | S07, S08 | "four oh four" | status code; default may be "four hundred four" ("401" has an entry) |
+| us-central1 | S10 | "U S central one" | region name (`us-east-1` has an entry) |
+| all-reduce | S14 | "all reduce" | hyphenated term |
+| Unix | S03 | "you-nix" | probably fine |
+| GitHub | S02, S03, S09 | "git hub" | probably fine |
+| Workbench, Cheese App | S06, S02 | "work bench", "cheese app" | probably fine |
+| 404 | S07, S08 | "four oh four" | status code ("401", "403" have entries) |
 | 2.19.0 | S03 | "two point nineteen point zero" | new `a.b.c` version |
 | 0.31.0 | S04 | "zero point thirty-one point zero" | new version; the entry "0.31" may splice inside it |
 | 0.22.2 | S04 | "zero point twenty-two point two" | new version |
@@ -1096,18 +1118,13 @@ voice says "double-you" oddly; it is listed for the check.
 | 3.13.17 | S08 | "three point thirteen point seventeen" | new version ("3.13" has an entry) |
 | 0.13.5 | S08 | "zero point thirteen point five" | new version ("0.13" has an entry) |
 | 590.0.0 | S09 | "five ninety point zero point zero" | Cloud SDK version |
-| 1.120.0 | S09 | "one point one twenty point zero" | aiplatform version |
+| 1.120.0 | S09 | "one point one twenty point zero" | Vertex AI library version |
 | 2.14, 2.17 | S14 | "two point fourteen", "two point seventeen" | TensorFlow image versions |
+| 3.10 (existing entry) | S11 | "three point ten" | confirm the entry fires in "Python 3.10 container" |
 | 68.97, 62.93 | S01 | "sixty-eight point nine seven", "sixty-two point nine three" | two-decimal accuracies |
 | 0.86 | S03 | "zero point eight six" | two-decimal number |
 | 0.2, 0.001 | S03, S14 | "zero point two", "zero point zero zero one" | small decimals |
-| 2.59, 4.31, 8.93, 7.61 | S09, S13, S15 | "two point five nine", … | sizes in gigabytes |
-| 1,156, 1,040, 4,016 | S01, S03, S09, S12 | "one thousand one hundred fifty-six", … | comma thousands; check not read as a list |
-| 936, 104, 116 | S03, S12 | "nine thirty-six", … ; pick one style | three-digit counts |
+| 2.59, 4.31, 8.93, 7.61 | S09, S13 | "two point five nine", "four point three one", … | sizes in gigabytes |
+| 1,156, 1,040, 4,016 | S01, S03, S09, S12 | "one thousand one hundred fifty-six", … | comma thousands; check not read as two numbers |
+| 936, 104, 116 | S03, S12, S14 | "nine hundred thirty-six", … | three-digit counts; pick one style |
 | 510 | S04 | "five hundred ten" | probably fine |
-| 3.10 (existing entry) | S11 | "three point ten" | confirm the entry fires in "Python 3.10 container" |
-| Unix | S03 | "you-nix" | probably fine |
-| all-reduce | S14 | "all reduce" | hyphenated term |
-| Debian | S08 | "DEB-ee-an" | distribution name |
-| GitHub | S02, S03, S09 | "git hub" | probably fine |
-| vCPUs (written "virtual CPUs" in SAY) | S14 | — | not spoken; "CPUs" has an entry |
