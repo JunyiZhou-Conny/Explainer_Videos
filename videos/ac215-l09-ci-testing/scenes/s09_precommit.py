@@ -250,6 +250,21 @@ def step_to(scene, gate, i: int, state: str, run_time: float = 0.25):
                run_time=run_time)
 
 
+def quick_pass(scene, gate: CommitGate, states, step_time: float = 0.16) -> None:
+    """CommitGate.pass_through with a shorter door (the narration names the arches and the vault in
+    about three seconds): through every arch, the door opens, the envelope goes in, the door shuts."""
+    env = gate.envelope
+    for i, s in enumerate(states):
+        step_to(scene, gate, i, s, run_time=step_time)
+    scene.play(env.animate.move_to([gate.vault.get_left()[0] - env.width / 2 - 0.05, gate.home[1], 0]),
+               gate.open(), run_time=0.35)
+    scene.play(env.animate.move_to(gate.vault.frame), FadeOut(env), run_time=0.35)
+    gate.remove(env)
+    scene.remove(env)
+    gate.envelope = None
+    scene.play(gate.shut(), run_time=0.3)
+
+
 def remedy_chip() -> VGroup:
     parts = VGroup(label("pip refuses? (PEP 668) →", 20, S.GREY), mono("pipx install pre-commit", 20, INK),
                    label(", or any venv", 20, S.GREY))
@@ -385,9 +400,9 @@ class PreCommitGate(VoiceScene):
         def show_names(idx):
             return LaggedStart(*[FadeIn(names[i], shift=UP * 0.1) for i in idx], lag_ratio=0.2)
 
-        def scroll(old, new, *extra):
+        def scroll(old, new, *extra, run_time=0.6):
             new.shift(DOWN * 0.3)
-            self.play(FadeOut(old, shift=UP * 0.3), FadeIn(new, shift=UP * 0.3), *extra, run_time=0.6)
+            self.play(FadeOut(old, shift=UP * 0.3), FadeIn(new, shift=UP * 0.3), *extra, run_time=run_time)
 
         with self.voiceover(SAY[2]) as vo:
             chain = VGroup(hc.links, hc.drop, hook_note)
@@ -400,17 +415,17 @@ class PreCommitGate(VoiceScene):
             self.play(FadeIn(ids0), show_names(which[0]), run_time=0.8)
             vo.wait_until("to private keys")
             scroll(VGroup(panels[0], ids0), panels[1])
-            self.play(show_names(which[1]), run_time=1.2)
+            self.play(show_names(which[1]), run_time=1.0)
             vo.wait_until("Then black")
             p2 = panels[2]
-            scroll(panels[1], p2)
+            scroll(panels[1], p2, run_time=0.45)
             self.play(show_names(which[2]), Indicate(code_span(p2.code, 32 - 27, "black"), color=TURN,
-                                                     scale_factor=1.1), run_time=0.8)
+                                                     scale_factor=1.1), run_time=0.6)
             vo.wait_until("and flake8")
             p3 = panels[3]
-            scroll(p2, p3)
+            scroll(p2, p3, run_time=0.45)
             self.play(show_names(which[3]), Indicate(code_span(p3.code, 41 - 35, "flake8"), color=TURN,
-                                                     scale_factor=1.1), run_time=0.8)
+                                                     scale_factor=1.1), run_time=0.6)
             vo.wait_until("both at width 120")
             u120 = under(code_span(p3.code, 43 - 35, "120"), TURN, stroke=3)
             self.play(Create(u120), each([names[7], names[8]], TURN, 1.15),
@@ -476,12 +491,11 @@ class PreCommitGate(VoiceScene):
             assert "Black" in black_ln.text and "modified" in mod_ln.text and "reformatted" in ref_ln.text
             vo.wait_until("Pause and run it")
             self.play(flash(a_tag, TURN), run_time=0.6)
-            vo.wait_until("Six hooks pass")
             drop_tag(self, a_row, a_tag)
-            resize(self, t, 3, keep=[black_ln, mod_ln, ref_ln], run_time=0.6)
-            self.play(FadeIn(gpic), run_time=0.5)
+            vo.wait_until("Six hooks pass")
+            resize(self, t, 3, keep=[black_ln, mod_ln, ref_ln], extra=[FadeIn(gpic)], run_time=0.6)
             for i, s in enumerate(["pass", "pass", "pass", "pass", "skip", "pass", "pass"]):
-                step_to(self, gate, i, s, run_time=0.22)
+                step_to(self, gate, i, s, run_time=0.15)
             vo.wait_until("one has no files to check")
             self.play(each([gate.arches[4], gate.turnstile.labels[4]], S.GREY, 1.15),
                       run_time=0.6)
@@ -562,16 +576,13 @@ class PreCommitGate(VoiceScene):
             room(self, t, 1)
             bare_prompt(self, t)
             vo.wait_until("Commit again")
-            unpin(self, g_row, g_tag)
-            typ(self, t, again.cmd, type_time=0.9)
-            self.play(track(tr, 3, extra=False), run_time=0.4)
-            k_out = out(self, t, fit(again.at((2, 12))), run_time=0.9)
+            unpin(self, g_row, g_tag, track(tr, 3, extra=False), run_time=0.4)
+            typ(self, t, again.cmd, type_time=0.6)
+            k_out = out(self, t, fit(again.at((2, 12))), run_time=0.6)
             vo.wait_until("seven hooks pass")
-            resize(self, t, 3, keep=[k_out[8], k_out[9], k_out[10]], run_time=0.6)
             gpic = VGroup(gate, gate.turnstile.labels)
-            self.play(FadeIn(gpic), run_time=0.5)
-            gate.pass_through(self, ["pass", "pass", "skip", "pass", "skip", "pass", "pass", "pass", "pass"],
-                              step_time=0.24)
+            resize(self, t, 3, keep=[k_out[8], k_out[9], k_out[10]], extra=[FadeIn(gpic)], run_time=0.6)
+            quick_pass(self, gate, ["pass", "pass", "skip", "pass", "skip", "pass", "pass", "pass", "pass"])
             vo.wait_until("a real commit enters history")
             main = k_out[9]
             mid = substring(main, "[main b72d50d]")
@@ -611,7 +622,7 @@ class PreCommitGate(VoiceScene):
             bare_prompt(self, t)
             vo.wait_until("on a Mac")
             self.play(FadeIn(mac, shift=DOWN * 0.15), run_time=0.5)
-            vo.wait_until("The commit fails twice")
+            vo.wait_until("after it.")
             k2 = typ(self, t, blocked.cmd, type_time=0.9)
             tag_on(self, k2, extra_row)
             bl = out(self, t, fit(blocked.at((9, 13), (18, 22)), {0: ERR, 2: ERR, 5: ERR, 9: ERR}),
@@ -626,13 +637,12 @@ class PreCommitGate(VoiceScene):
             vo.wait_until("which no formatter can fix")
             reset_arches(gate)
             env = gate.new_envelope("import os")
-            self.play(FadeOut(mac), FadeOut(ref), run_time=0.3)
-            self.remove(mac, ref)
-            resize(self, t, 3, keep=[b9, b18, b22], run_time=0.6)
             gpic = VGroup(gate, gate.turnstile.labels)
-            self.play(FadeIn(gpic), run_time=0.5)
+            resize(self, t, 3, keep=[b9, b18, b22], extra=[FadeOut(mac), FadeOut(ref), FadeIn(gpic)],
+                   run_time=0.6)
+            self.remove(mac, ref)
             for i, s in enumerate(["pass", "pass", "skip", "pass", "skip", "pass", "pass"]):
-                step_to(self, gate, i, s, run_time=0.18)
+                step_to(self, gate, i, s, run_time=0.14)
             step_to(self, gate, 7, "modified", run_time=0.3)
             a8 = gate.arches[8]
             self.play(env.animate.move_to([a8.get_left()[0] - env.width / 2 + 0.3, gate.home[1], 0]),
@@ -641,13 +651,13 @@ class PreCommitGate(VoiceScene):
             self.play(gate.go_home(), run_time=0.6)
             vo.wait_until("git status confirms")
             typ(self, t, status.cmd, type_time=0.4)
-            out(self, t, status.at((2, 3)), run_time=0.4)
-            still = out(self, t, status.at((6, 8)), run_time=0.5)
+            still = out(self, t, status.at((2, 3), (6, 8)), run_time=0.6)[2:]
+            assert still[0].text.startswith("Changes to be committed"), still[0].text
             stag = beside(row_tag("still staged · not committed", TURN), still[0])
             pin(self, still[0], stag)
             self.play(each([env.text, gate.tray.shape, gate.tray.text], TURN, 1.12), run_time=0.7)
             vo.wait_until("Restore the file")
-            r_ln = typ(self, t, restore.cmd, type_time=1.4)
+            r_ln = typ(self, t, restore.cmd, type_time=1.0)
             tag_on(self, r_ln, extra_row)
             self.play(FadeOut(env, shift=DOWN * 0.3), run_time=0.6)
             gate.remove(env)
