@@ -45,8 +45,9 @@ Conventions
   entry or a candidate ("one JSON key", "its own CORS rule", "the DVC store", never "a CORS
   rule"); "a 401" is the one guarded form. No `'s` after a word with an entry or a candidate,
   except `README's`. Numbers as digits; never a "!" after a digit. Versions are said with "at the
-  time of recording" (Label Studio 1.23.0 and the offered 1.23.2, DVC 3.63.0, Colab's DVC 3.67.1,
-  the image sizes); the md5s, sizes and file counts are deterministic for these photos and are said
+  time of recording" the first time they are spoken (Label Studio 1.23.0 and the offered 1.23.2 in
+  S04, the DVC 3.67.1 that today's pip gives the Colab stand-in, the image sizes); DVC 3.63.0 is
+  said as "pinned by the lock file" (its screen chip adds "at the time of recording"); the md5s, sizes and file counts are deterministic for these photos and are said
   plainly ("same bytes, same fingerprint"). HTTP status codes are digits ("a 401", "status 400" is
   never spoken; S05 says "fails").
 - Every spoken sentence starts with a capital letter or a digit (`explainer.voice.split_sentences`
@@ -83,6 +84,11 @@ Conventions
   steps, so the id changes between them; the `exit` lines that ended a capture are not typed unless
   the SHOW says so, and a GREY chip at the second container prompt of a scene says "our capture: a
   fresh container for each step · stay in yours". S06 says once that the id changes every run.
+- Stand-in API calls (`23`, `24`, `28`, `30`, `31`, `32`, `33`, `43`) are Label Studio's own HTTP calls
+  replayed with curl. Their long command lines are ours, not the README's, so they are never typed:
+  the panel is an output-only strip under the clicked `illustration`, headed with the call it
+  stands for (`POST /api/storages/gcs/validate · stand-in`) and tagged `extra · stand-in`, and it
+  prints only the listed lines. `27` (a short curl the narration calls an extra check) is typed.
 - Re-entering the DVC container (`93`, `95`, `104`, `115`, `117`): the scene types
   `sh docker-shell.sh` (the README's command, re-used) and prints only `27–28, …, 41–42`
   (`Running container`, `Container is running!!!`, `…`, the "mounted" line and the mount error), a
@@ -417,8 +423,9 @@ a GREEN pipe; lines 18–23 `-e` stick on as notes (login, key path; callout 2).
 "Label Studio Container" appears once in GREY above the house, then morphs into `data-label-studio`.
 SAY: Then one docker run, flag by flag. The flag dash d runs it in the background, the network flag puts it on a private street, and dash p, 8080 colon 8080, publishes the port: a door in your laptop wall. Two dash v flags mount a database folder and your secrets; the dash e lines set the login and key path.
 
-SHOW: TRACKER B1. Terminal, prompt `student@laptop:~/data-labeling$`. It types `sh docker-shell.sh`
-→ TERM(laptop/10: 2–3, …, 70–72); line 72 (the container id) gets a GREY chip "yours will
+SHOW: TRACKER B1. Terminal, prompt `student@laptop:~$`; it types `cd data-labeling` → (no output),
+prompt `student@laptop:~/data-labeling$`. It types `sh docker-shell.sh` → TERM(laptop/10: 2–3, …,
+70–72); line 72 (the container id) gets a GREY chip "yours will
 differ". `▶ your turn`. TRACKER B2: `docker container ls` → TERM(laptop/11: 2–3; squeeze);
 `Up Less than a second` and `0.0.0.0:8080->8080/tcp` GREEN, beside a README card
 (`README.md · lines 91–97`, its line 95 dimmed for now). `▶ your turn`.
@@ -540,7 +547,8 @@ folds) → TERM(laptop/40: 2–3), `your-bucket-placeholder` GREEN. `▶ your tu
 card (`README.md · line 165`, "Run `docker-shell-CLI.sh`", GREY chip "the README names the
 script"). It types `sh docker-shell-CLI.sh` → TERM(laptop/41: 3, …, 26–31); `Python 3.12.15` and
 `uv 0.13.5` (lines 29–30) with `at the time of recording`; line 27 `Architecture: x86_64` with a
-chip "aarch64 on Apple Silicon". The prompt becomes the capture's `app@5bf8945fb887:/app$`. On V7,
+chip "aarch64 on Apple Silicon". GREY tag `lecture_ref(11, "13")` top right from here through the
+`cli.py -c` / `-m` block (slide 13's CLI container). The prompt becomes the capture's `app@5bf8945fb887:/app$`. On V7,
 the second TEAL house appears on the street. `▶ your turn`.
 SAY: The README sets the rule from a second container. Put your bucket name on line 23 of docker-shell-CLI.sh, then run it with sh; the ID in the prompt changes every run, and Apple Silicon says aarch64 where this machine says x86. Pause and do both.
 
@@ -573,9 +581,8 @@ SAY: Something to ponder. You ran dash c and refreshed, and the thumbnails are s
 
 SHOW: The answer. Suspect 1: CODE(data-labeling/docker-shell-CLI.sh: 23) with the old name, the
 rule card flying to a second, GREY bucket; chip "check with python cli.py -m". Suspect 2: a
-refresh arrow, chip "hard refresh · or a private window". The `curl` figure again with a GREY chip
-"CORS is not access control · no signed URL → still refused". GREY tag `lecture_ref(11, "13")`
-top right for this block (the CLI container of slide 13). Fade out.
+refresh arrow, chip "hard refresh · or a private window". A `curl` figure strolls past with no bouncer at its
+door, a GREY chip "CORS is not access control · no signed URL → still refused". Fade out.
 SAY: One: the rule went to another bucket, because line 23 kept the old name; dash m tells you. Two: your browser reused cached answers; hard refresh. And curl never met a bouncer: CORS is a browser rule, not access control.
 
 ---
@@ -916,14 +923,15 @@ SHOW: TRACKER J3 · extra. It types `find .dvc/cache -type f | sort` (extra) →
 GREY, chip "the empty version".
 SAY: An extra listing of the cache shows those shelves, plus one more: the empty version from before.
 
-SHOW: TRACKER J3 · extra. On the host (the capture's `exit`, 95: 82), a GREY chip "the class repo,
-cloned as class-data-versioning (extra)". It types
+SHOW: TRACKER J3 · extra. A second terminal strip on the host (title `laptop · second terminal`,
+prompt `student@laptop:~$`; the container session stays open behind it), a GREY chip "the class
+repo, cloned as class-data-versioning (extra)". It types
 `git -C class-data-versioning show dataset_v20:cheese_dataset.dvc; echo ---; git -C class-data-versioning show dataset_v21:cheese_dataset.dvc`
 (extra; folds, small) → TERM(laptop/120: 2–7) (the v21 half, lines 8–14, not printed here); the
 class card slides in beside ours. Then
 `diff <(git -C class-data-versioning show dataset_v20:cheese_dataset.dvc) <(git -C data-versioning show dataset_v20:cheese_dataset.dvc) && echo identical`
 (extra; folds, small) → TERM(laptop/121: 2), GREEN; the two cards merge into one. S01's PINK line
-flies in and lands on it.
+flies in and lands on it. The strip closes.
 SAY: And the payoff: an extra comparison with the instructor's tag in the class repo. Identical: same bytes, same fingerprint, on any machine.
 
 SHOW: The manifest card alone, `Image_2.jpg` highlighted.
@@ -941,7 +949,7 @@ SAY: Only the manifest fingerprint, because one name in the list changed. And DV
 ## S13 · A pointer in git, the bytes in a bucket — `s13_pointer.py` · `PointerAndBytes`
 
 SHOW: TRACKER J4. GREY tag `lecture_ref(11, "22–23, 25, 33")` top right, whole scene. At
-`root@1d462befbcdd:/app#` (the same session as S12's last panel; on screen the capture continues):
+`root@1d462befbcdd:/app#` (the container session of S12, still open; the capture continues):
 `dvc push` → TERM(laptop/95: 72–74), line 74 RED. `▶ your turn`. Tag `extra · local remote`:
 `dvc remote add --local standin /app/.dvc/tmp/standin-remote` → TERM(laptop/95: → (no output),
 the prompt of line 78 returns); `dvc push -r standin` → TERM(laptop/95: 79–81), `5 files pushed`
