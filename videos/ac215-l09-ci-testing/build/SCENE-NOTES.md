@@ -227,3 +227,8 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
   left unchanged on purpose. Any other scene quoting these files must strip it the same way.
 - 20 pt terminals (72 chars/row) are fine where 22 pt (65 chars) would cut needed names (S04's
   `ls -la`); `strip_top()` assumes 22 pt, so size 20 pt strips by hand.
+- `Indicate(hermetic_border.text)` recolours the text's BG mask too, hiding the word: indicate
+  `.text[1]` (the word only). Same caution for any masked label (S03 critic).
+- Morphing a labelled box into a small chip with FadeTransform stretches its text across the frame
+  for ~1 s: fade the words first, transform the bare shapes, then fade the new label in (S03 critic's
+  `park()` pattern).
