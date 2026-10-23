@@ -32,8 +32,7 @@ Name each kind by what runs in it, not by its folder.
   request straight to the FastAPI app, in the same process: routing, query validation, the handler
   and `power()` all run; no server, no socket. The test that knows the right answer is lines 31-38,
   ending `assert data["distance"] == 5.0`. Result: `10 passed, 1 warning` (`laptop/part3-opt1-03`,
-  line 24). The warning is pytest 9.1.1's summary counting one warning that `--disable-warnings`
-  (`pytest.ini:16`) hides, at the time of recording; the tests are the same.
+  line 24; the warning count is pytest 9.1.1's, at the time of recording).
 - **System**: `tests/system/test_system_api.py`. Its four `TestAPIEndpoints` tests call
   `requests.get` on `API_BASE_URL = "http://localhost:9000"` (line 12): a real uvicorn in another
   container (`api-server`, `README.md:193`), reached over a real socket because the test container
@@ -243,7 +242,7 @@ Predict which tests fail in each suite. Then predict: would `git commit` let thi
 
 Derived from the code (not captured):
 
-- **Unit**: 11 passed. `power()` is untouched.
+- **Unit**: 11 passed; `power()` is untouched.
 - **Integration**: exactly one failure, `test_euclidean_distance_endpoint`: it wants `5.0` for
   (3, 4) and gets √50 ≈ 7.07 (`test_api.py:38`). `test_euclidean_distance_default_parameters` only
   checks that the key exists (line 45) and `..._with_floats` only checks the type (line 54), so
@@ -266,11 +265,10 @@ type `echo $?` *(extra)*. Predict the summary line and the exit status both time
 
 With the server: `5 passed`, exit 0 (`laptop/part3-opt2-05`, lines 19-20). Without it:
 `1 passed, 4 skipped`, exit 0 (`laptop/part3-opt2-07`, lines 24-25). Same status, very different
-runs. A script or CI step that only checks the exit status would be green both times. That's why
-CI starts the server and checks it before testing: `ci.yml:150-154` waits a fixed `sleep 10`, then
-one `curl -f http://localhost:9000/ || exit 1`, so a dead server fails the job before pytest can
-skip anything. To make your own run fail loudly, check the server first, or put the four tests
-behind a marker you must select on purpose (B6).
+runs: a script or CI step that only checks the exit status is green both times. That's why CI
+checks the server before testing: `ci.yml:150-154` waits a fixed `sleep 10`, then one
+`curl -f http://localhost:9000/ || exit 1`, so a dead server fails the job before pytest can skip
+anything.
 </details>
 
 **B3. Three widths, four answers.** Before running anything, predict how many findings or files
