@@ -27,8 +27,8 @@ from manim import *  # noqa: I001  (manim first, then common: common must win)
 from explainer.scene import VoiceScene
 
 from common import (COST, HASH, HOOK_LINE, IMAGES, INK, LAPTOP, NARRATION, P_LAPTOP_HOME, SAY_COUNT, TURN, ERR,
-                    annotation, beside, capture, check_mark, cost_tag, each, extra_row, flash_tag, folder_glyph,
-                    grey_chip, illustration_tag, label, lref, mono, note, pin, preview_tag, recorded_tag,
+                    annotation, beside, capture, check_mark, cost_tag, each, extra_row, flash_tag,
+                    grey_chip, illustration_tag, label, lref, mono, pin, preview_tag, recorded_tag,
                     swap_tracker, term, tile, track, tracker, turn_row, type_cmd, unpin, out)
 from explainer import style as S
 
@@ -63,12 +63,9 @@ def folder_card(day: str) -> VGroup:
     rows.shift(RIGHT * 0.3)
     fr = RoundedRectangle(width=body.width + 0.5, height=body.height + 0.5, corner_radius=0.16,
                           stroke_color=LAPTOP, stroke_width=2.5).set_fill(S.GREY_DARKER, 1)
-    fold = folder_glyph(0.34, LAPTOP).move_to(fr.get_corner(UR) + np.array([-0.35, -0.3, 0]))
     body.move_to(fr)
     g = VGroup(fr, body)
     g.frame, g.head, g.rows, g.chip = fr, head, rows, ch
-    if fold.get_left()[0] > head.get_right()[0] + 0.1:
-        g.add(fold)
     return g
 
 
@@ -152,8 +149,8 @@ class Hook(VoiceScene):
             self.play(AddTextLetterByLetter(line, time_per_char=0.03), run_time=1.3)
             vo.wait_until("from 4 cheese photos")
             self.play(LaggedStart(*[FadeIn(t, shift=DOWN * 0.2) for t in tiles], lag_ratio=0.2), run_time=1.0)
-            self.play(LaggedStart(*[t.animate.move_to(line.get_center()).scale(0.3).set_opacity(0) for t in tiles],
-                                  lag_ratio=0.15), run_time=1.0)
+            self.play(LaggedStart(*[t.animate.move_to(line.get_center()).set_opacity(0) for t in tiles],
+                                  lag_ratio=0.15), Indicate(line, color=HASH, scale_factor=1.04), run_time=1.0)
             self.remove(tiles)
             vo.wait_until("It will match")
             self.play(FadeIn(fp, shift=UP * 0.15), run_time=0.6)

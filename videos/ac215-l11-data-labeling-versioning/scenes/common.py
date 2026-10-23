@@ -27,8 +27,8 @@ import numpy as np
 import yaml
 from manim import (DL, DOWN, DR, LEFT, ORIGIN, PI, RIGHT, UL, UP, UR, AnimationGroup, Arc, Arrow,
                    Circle, Create, DashedLine, DashedVMobject, Dot, FadeIn, FadeOut, FadeTransform,
-                   GrowFromEdge, Indicate, LaggedStart, Line, MoveAlongPath, Polygon, Rectangle,
-                   ReplacementTransform, RoundedRectangle, Rotate, ShowIncreasingSubsets, Succession,
+                   Indicate, LaggedStart, Line, MoveAlongPath, Polygon, Rectangle,
+                   ReplacementTransform, RoundedRectangle, Rotate, Succession,
                    Text, Transform, UpdateFromAlphaFunc, VGroup, VMobject, linear, there_and_back)
 
 from explainer import style as S
@@ -2687,7 +2687,7 @@ class TagRope(Rig):
     (.card, not added). Right: the BLUE warehouse dvc_store/ (.store: .frame .title) with the
     manifests .dirs['v20' | 'v21'] and the five blobs .blobs[name] (not added).
       bead(i) / plant(tag) -> Animation    a commit appears / a flag plants on its bead
-      zoom() -> Animation                  the pointer card grows out of the v20 bead
+      zoom() -> Animation                  the pointer card drops out of the v20 bead
       rope(v='v20', origin=None) -> VGroup  PINK rope from the card (v20) or the bead (v21) down to
                                   its .dir box, fanning out to its blobs (v21: five, four shared) —
                                   not added: FadeIn the dir/blobs, then Create(rope.main), rope.fans
@@ -2751,7 +2751,7 @@ class TagRope(Rig):
                               run_time=run_time)
 
     def zoom(self, run_time: float = 0.8):
-        return FadeIn(self.card, scale=0.3, target_position=self.beads[1].get_center(), run_time=run_time)
+        return FadeIn(self.card, shift=DOWN * 0.4, run_time=run_time)   # never scale text below 1.0
 
     def rope(self, v: str = "v20", origin=None) -> VGroup:
         d = self.dirs[v]
