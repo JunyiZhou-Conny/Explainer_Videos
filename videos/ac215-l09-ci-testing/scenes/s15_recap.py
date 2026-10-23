@@ -54,7 +54,7 @@ from explainer import style as S
 from explainer.devops import laptop as laptop_glyph, server as server_glyph
 
 from common import (CLOUD, ERR, FUTURE, HERMETIC, IMAGE, INK, INTEG, LAPTOP, NARRATION, OUTPUT,
-                    P_LAPTOP, SEG_SIX, SKIP, SYSTEM_TEST, TOOL, TURN, UNIT, VENV, ROUTE, Arch,
+                    P_LAPTOP, SEG_SIX, SYSTEM_TEST, TOOL, TURN, UNIT, VENV, ROUTE, Arch,
                     MaskGrid, TestDot, Turnstile, ask, attach, beside, box, capture, envelope,
                     extra_row, file_card, file_glyph, grey_chip, label, mono, mono_line,
                     outline_box, pin, readme, readme_card, ring, squeeze, strike, substring, term,
@@ -116,7 +116,7 @@ LIST_TOP = 3.4
 ROW_GAP = 0.62
 Q_X = -1.75                   # left edge of the question block (badge), right edge 6.5
 Q_TOP = 3.3
-ICON_C = [2.4, -1.35, 0]      # centre of the question's icon
+ICON_C = [2.4, -0.85, 0]      # centre of the question's icon
 Q_SIZE, L_SIZE = 26, 22
 
 
@@ -225,9 +225,9 @@ def icon_amber() -> VGroup:
     env.next_to(arch, LEFT, buff=1.8).align_to(arch, DOWN).shift(UP * 0.35)
     floor = Line(env.get_corner(DL) + LEFT * 0.3 + DOWN * 0.35, arch.get_corner(DR) + RIGHT * 0.4,
                  color=S.GREY_DARK, stroke_width=3)
-    g = VGroup(floor, arch, env)
-    g.env, g.arch, g.floor = env, arch, floor
-    g.home = env.get_center().copy()
+    home = Dot(env.get_center(), radius=0.001).set_opacity(0)   # moves with the icon
+    g = VGroup(home, floor, arch, env)
+    g.env, g.arch, g.floor, g.home = env, arch, floor, home
     return g
 
 
@@ -438,10 +438,11 @@ class Recap(VoiceScene):
             q4 = ask_q(4, amber)
             vo.wait_until("files were modified")
             a = amber.arch
-            self.play(amber.env.animate.move_to([a.get_left()[0] - amber.env.width / 2 + 0.3,
-                                                 amber.home[1], 0]), a.to("modified"), run_time=0.6)
+            home = amber.home.get_center().copy()
+            self.play(amber.env.animate.move_to([a.get_left()[0] - amber.env.width / 2 + 0.3, home[1], 0]),
+                      a.to("modified"), run_time=0.6)
             self.play(Indicate(a.lamp, color=TURN, scale_factor=1.6), run_time=0.4)
-            self.play(amber.env.animate(path_arc=0.7).move_to(amber.home), run_time=0.7)
+            self.play(amber.env.animate(path_arc=0.7).move_to(home), run_time=0.7)
             vo.wait_until("what do you do next")
             self.play(Indicate(a.frame, color=TURN, scale_factor=1.06), run_time=0.7)
 
@@ -486,10 +487,10 @@ class Recap(VoiceScene):
         pk = Arch(arch_w=0.6, arch_h=1.05)
         pk_name = mono("detect-private-key", 20, S.GREY)
         l10 = label("L10: credentials", 22, S.GREY)
-        place(pk, left=nxt_frame.get_left()[0] + 2.1, bottom=mid + 0.55)
-        place(key, right=pk.get_left()[0] - 0.6, cy=pk.get_bottom()[1] + 0.4)
+        place(pk, left=nxt_frame.get_left()[0] + 2.5, bottom=mid + 0.55)
+        place(key, right=pk.get_left()[0] - 1.1, cy=pk.get_bottom()[1] + 0.4)
         place(pk_name, cx=pk.get_center()[0], top=pk.get_bottom()[1] - 0.1)
-        place(l10, left=pk.get_right()[0] + 1.6, cy=pk.get_center()[1])
+        place(l10, left=pk.get_right()[0] + 1.0, cy=pk.get_center()[1])
         key_home = key.get_center().copy()
         row1 = VGroup(key, pk, pk_name, l10)
         # row 2 · L21: the same checks on a BLUE server, where --no-verify does not get past
