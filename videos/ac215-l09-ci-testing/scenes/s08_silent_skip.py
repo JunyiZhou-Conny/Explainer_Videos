@@ -52,7 +52,7 @@ from explainer import style as S
 from common import (CAPTION, ERR, FUTURE, IMAGE, INK, NARRATION, P_LAPTOP, PASS, ROUTE, SKIP,
                     SYSTEM_TEST, TURN, UNIT, INTEG, GateTable, HermeticBorder, RequestToken, RESPONSE,
                     TestDots, attach, beside, capture, check_mark, chip, code, code_panel, code_span,
-                    cols, dashed_chip, excerpt, extra_row, label, line_bar, lref, mono,
+                    cols, excerpt, extra_row, hl_bar, label, line_bar, lref, mono,
                     note, outline_box, pause_and_ponder, pin, readme, resize, ring, row_tag, shown_path,
                     substring, term, tool_chip, track, tracker, turn_row, type_cmd, unpin)
 
@@ -438,7 +438,7 @@ class SilentSkip(VoiceScene):
 
         cip = code(CI, 150, 154)
         curl = code_span(cip.code, 154 - 150, "curl -f http://localhost:9000/ || exit 1")
-        curl_bar = line_bar(cip.code, 154 - 150, S.GREY, 0.2)
+        curl_bar = hl_bar(curl, S.GREY, 0.3)
         cap = note("CI fails loudly · lecture 21", S.GREY, 22)
         cap.next_to(cip, DOWN, buff=0.22).align_to(cip, LEFT)
         inner = VGroup(cip, cap)

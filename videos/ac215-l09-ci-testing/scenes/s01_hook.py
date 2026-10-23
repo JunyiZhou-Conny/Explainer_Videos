@@ -51,6 +51,33 @@ def tracker_ring(tr, stroke: float = 3, opacity: float = 1.0) -> RoundedRectangl
     return r.move_to([(x0 + x1) / 2, (y0 + y1) / 2, 0])
 
 
+def section_row() -> tuple[VGroup, VGroup]:
+    """The six sections as GREY chips (Part 1-4 | guest lecture | cleanup, in tracker order A-F)
+    with a GREY brace 'cheese README' under the first four; returns (chips, brace group)."""
+    names = ["Part 1", "Part 2", "Part 3", "Part 4", "guest lecture", "cleanup"]
+    chips = VGroup()
+    for s in names:
+        t = label(s, 24, S.GREY)
+        b = RoundedRectangle(width=t.width + 0.5, height=0.62, corner_radius=0.12, stroke_color=S.GREY,
+                             stroke_width=2.5).set_fill(S.BG, 1)
+        t.move_to(b)
+        c = VGroup(b, t)
+        c.box, c.text = b, t
+        chips.add(c)
+    chips.arrange(RIGHT, buff=0.22)
+    chips[4].shift(RIGHT * 0.3)
+    chips[5].shift(RIGHT * 0.6)
+    br = Brace(VGroup(*chips[:4]), DOWN, buff=0.15, color=S.GREY)
+    brace = VGroup(br, label("cheese README", 24, S.GREY).next_to(br, DOWN, buff=0.12))
+    return chips, brace
+
+
+def light(c, on: bool):
+    """Animation: chip c turns YELLOW (the tracker's section) or back to GREY."""
+    col = TURN if on else S.GREY
+    return AnimationGroup(c.box.animate.set_stroke(col), c.text.animate.set_color(col))
+
+
 def tile_grid() -> tuple[VGroup, list[int]]:
     """26 tiles (slides 4 and 6: 26 aspects of an ML project) in rows of 7, 7, 6, 6; returns the
     tiles and the indices of the 9 ML ones (Data 4, Model 5) as one block in the middle."""
@@ -76,6 +103,7 @@ class Hook(VoiceScene):
         doc = code_span(panel.code, 40 - FIRST, "sqrt(x^2 + y^2)")
         doc_line = under(doc, INK, stroke=3)
         bar = line_bar(panel.code, bug, ERR, 0.22)
+        mark = line_bar(panel.code, bug, INK, 0.12)     # "a line of code": the eye goes to 44 at once
         bug_span = code_span(panel.code, bug, "math.sqrt(2 * z)")
         two = code_span(panel.code, bug, "2 *")
         note = grey_chip("committed live, in class")
@@ -83,12 +111,13 @@ class Hook(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(panel, shift=UP * 0.2), run_time=1.0)
+            self.play(FadeIn(mark), run_time=0.5)
             vo.wait_until("committed, live")
             self.play(FadeIn(note, shift=LEFT * 0.2), run_time=0.6)
             vo.wait_until("The distance from a point")
             self.play(Create(doc_line), Indicate(doc, color=INK, scale_factor=1.08), run_time=1.0)
             vo.wait_until("This line takes")
-            self.play(FadeIn(bar), bug_span.animate.set_color(ERR), run_time=0.7)
+            self.play(ReplacementTransform(mark, bar), bug_span.animate.set_color(ERR), run_time=0.7)
             self.play(Indicate(bug_span, color=ERR, scale_factor=1.08), run_time=0.8)
             vo.wait_until("Nothing crashed")
             self.play(bar.animate.set_fill(ERR, 0.32), run_time=0.5)
@@ -106,9 +135,14 @@ class Hook(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(ref), start.animate.set_opacity(0.35), run_time=0.6)
-            # the code becomes the commit: the panel folds into the envelope
-            self.play(FadeTransform(start, gate.envelope), FadeIn(gate.vault), FadeIn(gate.floor),
-                      run_time=1.2)
+            # the code becomes the commit: the panel folds into the bare envelope (a FadeTransform
+            # onto the labelled envelope stretched "your commit" across the frame), then its name
+            env = gate.envelope
+            shell = VGroup(env.body, env.flap)
+            self.play(FadeTransform(start, shell), FadeIn(gate.vault), FadeIn(gate.floor), run_time=1.2)
+            self.play(FadeIn(env.text), run_time=0.4)
+            self.remove(shell, env.text)
+            self.add(env)
             vo.wait_until("Before that commit exists")
             self.play(gate.envelope.animate.shift(RIGHT * 0.8), run_time=1.2, rate_func=linear)
             vo.wait_until("who gets to say no")
