@@ -1092,9 +1092,13 @@ class GateTable(VGroup):
         for k in self.outside:
             self._slots[k] = yo
             yo -= row_h + 0.1
+        self.markers = {}
         for k in keys:
             r = self._row(k, cells[k], xs, total)
             self.rows[k] = r
+            # an invisible point at the slot's centre travels with the table; fill() puts the row there
+            self.markers[k] = Dot([0, self._slots[k], 0], radius=0.001).set_opacity(0)
+            self.add(self.markers[k])
             if k in filled:
                 self._final(r, k)
                 self.add(r)
@@ -1120,7 +1124,8 @@ class GateTable(VGroup):
         return r
 
     def slot(self, key) -> np.ndarray:
-        return np.array([self.frame.get_center()[0], self._slots[key], 0])
+        """The centre of row `key`'s slot (where it is, or will be after fill())."""
+        return self.markers[key].get_center()
 
     def header_pulse(self, i: int, run_time: float = 0.6):
         """Animation: header i lights YELLOW and back."""
@@ -1136,6 +1141,7 @@ class GateTable(VGroup):
     def fill(self, scene, key: str, run_time: float = 0.8):
         """Play: row `key` appears YELLOW in its slot (outside rows with their dashed outline)."""
         r = self.rows[key]
+        r.shift(self.slot(key) - r.bar.get_center())
         scene.play(FadeIn(r.bar), LaggedStart(*[FadeIn(c, shift=RIGHT * 0.15) for c in r.cells], lag_ratio=0.2),
                    *([Create(r.outline)] if r.outline is not None else []), run_time=run_time)
         scene.remove(r, r.bar, *r.cells, *([r.outline] if r.outline is not None else []))
