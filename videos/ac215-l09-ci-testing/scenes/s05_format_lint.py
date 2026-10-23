@@ -164,7 +164,7 @@ class FormatterLinter(VoiceScene):
                 self.play(FadeIn(item, shift=RIGHT * 0.2), run_time=0.5)
             vo.wait_until("Format first")
             self.play(FadeIn(b1, scale=1.4), Indicate(f_chip, color=TURN, scale_factor=1.06), run_time=0.6)
-            self.play(Create(e231_x), e231.animate.set_opacity(0.4), run_time=0.6)
+            self.play(Create(e231_x), e231.animate.fade(0.6), run_time=0.6)
             vo.wait_until("then lint")
             self.play(FadeIn(b2, scale=1.4), Indicate(VGroup(items[1], items[2]), color=ERR, scale_factor=1.04),
                       run_time=0.8)

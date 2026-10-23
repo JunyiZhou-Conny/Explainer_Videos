@@ -298,9 +298,13 @@ class PytestInside(VoiceScene):
             inst, sess_anims = fw.session()
             shared = grey_chip('scope="session" · one, shared', size=20, mono_font=True)
             shared.next_to(inst, DOWN, buff=0.3).align_to(fw.conftest.frame, LEFT)
-            self.play(FadeOut(copies), FadeOut(fresh), run_time=0.5)
-            self.remove(copies, fresh)
-            self.play(*sess_anims, FadeIn(shared, shift=UP * 0.1), run_time=1.0)
+            # the fresh copies collapse into one shared instance; the per-test links give way to one
+            chips3, links3 = copies
+            self.play(*[c.animate.move_to(inst[0]) for c in chips3], FadeOut(links3),
+                      FadeTransform(fresh, shared), run_time=0.8)
+            self.remove(chips3, links3, fresh)
+            self.add(inst[0])
+            self.play(*sess_anims[1:], run_time=0.8)
             vo.wait_until("And parametrize")
             pz = Parametrize()
             pz.move_to([0, 0.1, 0])

@@ -83,6 +83,20 @@ def find_in(line, sub: str) -> VGroup:
     raise KeyError(sub)
 
 
+def turn_on(scene, line):
+    """Pin '▶ your turn' beside a typed command: its last row, or its first row when the last
+    row of a folded command is too long to leave room. Returns (row, tag) for unpin()."""
+    rs = rows_of(line)
+    tag = beside(turn_row(), rs[-1])
+    row = rs[-1]
+    if tag.get_right()[0] > 6.55:
+        row = rs[0]
+        tag = beside(turn_row(), row)
+    assert tag.get_right()[0] <= 6.55, line
+    pin(scene, row, tag)
+    return row, tag
+
+
 def build_stack(x: float, floor_y: float) -> tuple[LayerStack, list]:
     st = LayerStack(stack_w=3.9)
     st.move_to([x, floor_y, 0])
@@ -190,8 +204,7 @@ class TestsInImage(VoiceScene):
             self.play(FadeOut(VGroup(entry, path_bar, exec_bar, row, arrows)), run_time=0.5)
             self.play(FadeIn(t), run_time=0.5)
             b_ln = type_cmd(self, t, build.cmd, type_time=1.0)
-            b_tag = beside(turn_row(), b_ln)
-            pin(self, b_ln, b_tag)
+            b_row, b_tag = turn_on(self, b_ln)
             out = t.print(self, build.at(2, "…", (23, 24), "…", 59), run_time=0.9, lag=0.2)
             cached = substring(out[3], "CACHED")
             vo.wait_until("all cached")
@@ -201,8 +214,7 @@ class TestsInImage(VoiceScene):
             vo.wait_until("then run the unit tests")
             self.play(track(tr, 2), run_time=0.5)
             u_ln = type_cmd(self, t, unit.cmd, type_time=1.3)
-            u_tag = beside(turn_row(), u_ln)
-            pin(self, u_ln, u_tag)
+            u_row, u_tag = turn_on(self, u_ln)
             for anchor, sub, col in (("docker run,", "docker run", TURN), ("dash dash rm", "--rm", TURN),
                                      ("the image", "cheese-app-api:local", IMAGE),
                                      ("pytest tests slash unit", "pytest tests/unit/", TURN)):
@@ -218,10 +230,9 @@ class TestsInImage(VoiceScene):
 
         # ========================================================== 2. integration, then both
         with self.voiceover(SAY[2]) as vo:
-            unpin(self, u_ln, u_tag, track(tr, 3))
+            unpin(self, u_row, u_tag, track(tr, 3))
             i_ln = type_cmd(self, t, integ.cmd, type_time=1.2)
-            i_tag = beside(turn_row(), i_ln)
-            pin(self, i_ln, i_tag)
+            i_row, i_tag = turn_on(self, i_ln)
             t.print(self, integ.at(13, "…", 22), run_time=0.6, wrap=True, lag=0.2)
             i_sum = t.print(self, [summary(integ, 24)], run_time=0.4)[0]
             vo.wait_until("10 passed, 1 warning")
@@ -229,8 +240,7 @@ class TestsInImage(VoiceScene):
             vo.wait_until("both suites together")
             self.play(track(tr, 4), run_time=0.4)
             bo_ln = type_cmd(self, t, both.cmd, type_time=1.2)
-            bo_tag = beside(turn_row(), bo_ln)
-            pin(self, bo_ln, bo_tag)
+            bo_row, bo_tag = turn_on(self, bo_ln)
             b_sum = t.print(self, [summary(both, 35)], run_time=0.4)[0]
             vo.wait_until("21 passed, 1 warning")
             self.play(substring(b_sum, "21 passed").animate.set_color(PASS), run_time=0.5)
@@ -250,10 +260,9 @@ class TestsInImage(VoiceScene):
 
         # ========================================================== 3. coverage
         with self.voiceover(SAY[3]) as vo:
-            unpin(self, bo_ln, bo_tag, track(tr, 5))
+            unpin(self, bo_row, bo_tag, track(tr, 5))
             c_ln = type_cmd(self, t, cov.cmd, type_time=1.3)
-            c_tag = beside(turn_row(), c_ln)
-            pin(self, c_ln, c_tag)
+            c_row, c_tag = turn_on(self, c_ln)
             vo.wait_until("measuring the api package")
             self.play(Indicate(find_in(c_ln, "--cov=api"), color=TURN, scale_factor=1.12), run_time=0.7)
             t.print(self, cov.at((28, 34)), run_time=0.9, lag=0.1)
@@ -282,7 +291,7 @@ class TestsInImage(VoiceScene):
         gt.move_to([0, 1.05, 0])
 
         with self.voiceover(SAY[4]) as vo:
-            unpin(self, c_ln, c_tag)
+            unpin(self, c_row, c_tag)
             t.clear(self)
             resize(self, t, 3, keep=0, extra=[FadeOut(ref)])
             self.remove(ref)
