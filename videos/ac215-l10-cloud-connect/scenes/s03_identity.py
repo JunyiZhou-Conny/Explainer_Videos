@@ -12,7 +12,7 @@ Beats (script.md, ## S03; one voiceover block each):
    Create service account (name typed) → Grant this service account access to project: Storage
    Admin · Gemini Enterprise Agent Platform User, with the GREY 'formerly Vertex AI User' chip
    (llm-finetuning README.md:44–46). `▶ your turn`; a GREY `extra` card (gcloud equivalents,
-   YOUR_PROJECT_ID; not spoken) in the bottom-right corner.
+   digest §4 step 1, project id your-gcp-project; not spoken) in the bottom-right corner.
 3. The `erratum` card, three lines, one per sentence.
 4. Tracker A3. Console continued (README.md · lines 54–55): the account → KEYS → ADD Key (Create New
    Key) → JSON; a key file drops out; the two banners in our own words; `▶ your turn`. The key card
@@ -226,7 +226,7 @@ class IdentityForCode(VoiceScene):
 
         ptr.move_to(at_row(0))
         r3 = ring(rc.rows[2], TURN, buff=0.1)
-        ci = grey_chip("CI runner · GitHub Actions", 22).move_to([-3.4, -1.75, 0])
+        ci = dashed_chip("CI runner · GitHub Actions", S.GREY, 22).move_to([-3.4, -1.75, 0])
         lap = grey_chip("your laptop", 22).move_to([2.1, -1.75, 0])
         st_ci = stamp("vouched for", PASS).next_to(ci, DOWN, buff=0.15)
         st_lap = stamp("nobody vouches", S.GREY).next_to(lap, DOWN, buff=0.15)
@@ -288,9 +288,9 @@ class IdentityForCode(VoiceScene):
         xc = card([VGroup(extra_tag(), note("the same from a terminal · suggested, not in the repo"))
                    .arrange(RIGHT, buff=0.25),
                    mono("gcloud iam service-accounts create \\", 20, INK),
-                   indent(mono("llm-service-account --project=YOUR_PROJECT_ID", 20, INK)),
+                   indent(mono("llm-service-account --project=your-gcp-project", 20, INK)),
                    mono("gcloud projects add-iam-policy-binding \\", 20, INK),
-                   indent(mono("YOUR_PROJECT_ID --member=… --role=…", 20, INK))], size=20, buff=0.1)
+                   indent(mono("your-gcp-project --member=… --role=…", 20, INK))], size=20, buff=0.1)
         xc.move_to([6.5, -1.1, 0], aligned_edge=UR)
         old1 = VGroup(rc, ptr, r3, ci, lap, st_ci, st_lap, kg, kl)
 

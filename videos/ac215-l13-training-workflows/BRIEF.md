@@ -271,8 +271,9 @@ spans from SLIDES.md §5.
 **S01 · Two tables, two winners (~220 words) — `s01_hook.py` · `Hook`.** Cold open, no tracker;
 `lecture_ref(13, "8")` on the closing beat. The puzzle, as two real tables side by side (V2's
 first frame), `recorded`: copy A of the notebook (cell 54, `nbA:1283-1295`) and copy B (cell 55,
-`nbB:1703-1715`), cropped to the columns `name · epochs · accuracy`, values verbatim. Same code,
-same 1,156 cheese photos, the same five recipes. Copy A crowns **`mobilenetv2_train_base_True`,
+`nbB:1703-1715`), cropped to the columns `name · epochs · accuracy`, values verbatim. The same
+pipeline, the same 1,156 cheese photos, the same five models (copy B's cells set a few epochs
+differently — never say "same code"). Copy A crowns **`mobilenetv2_train_base_True`,
 68.97 %** (the fine-tuned MobileNet), copy B crowns **`mobilenetv2_train_base_False`, 68.97 %**
 (frozen) and puts fine-tuned at 62.93 %. The question on screen: *which recipe is better — and
 from these two tables, can you even tell what was different?* (One clue is visible, and the
