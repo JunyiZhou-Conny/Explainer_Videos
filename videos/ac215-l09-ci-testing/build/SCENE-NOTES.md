@@ -222,3 +222,8 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
 - Scaling a group that contains text below 1.0 trips the SMALL check; build it at the larger size
   and Transform into the normal-size version instead (S03's gate table).
 - VoiceScene has no moving camera: "zoom" beats are done by swelling/fading the content (S03).
+- The curl captures laptop/part1-02/03/04 have no newline before `[exit 0]`, so `[exit 0]` is glued
+  to the JSON line. Only S04 prints them and strips it locally (with an assert); `capture()` is
+  left unchanged on purpose. Any other scene quoting these files must strip it the same way.
+- 20 pt terminals (72 chars/row) are fine where 22 pt (65 chars) would cut needed names (S04's
+  `ls -la`); `strip_top()` assumes 22 pt, so size 20 pt strips by hand.

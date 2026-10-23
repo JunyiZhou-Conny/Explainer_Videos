@@ -18,7 +18,7 @@ Beats (script.md, ## S02; one voiceover block each):
 3. The panel becomes the GREEN chip "the test", the arrow the TEAL chip "the code", on a card "two
    suspects"; a YELLOW "fix this" stamp and arrow land on the code chip; GREY caption "slide 28:
    when a test fails, fix the code"; a dashed "rewrite the test to match" under the test
-   chip gets struck RED on "into a diary".
+   chip gets struck RED on "turns your specification", captioned "a diary of the bug" on "into a diary".
 4. Three trays slide in (slide 25 redrawn): normal, edge, invalid. `power(2, 3)` drops into normal;
    `0`, `inf`, `nan` into edge; CODE(cheese-app-ci-cd/tests/unit/test_utils.py: 69–76) appears above
    the invalid tray, `pytest.raises(TypeError)` (line 71) is barred, and `power("3", 4)` (line 72)
@@ -259,7 +259,7 @@ class BugAlmostShipped(VoiceScene):
             vo.wait_until("A test is an executable specification")
             self.play(FadeIn(spec, shift=DOWN * 0.15), run_time=0.6)
             vo.wait_until("would have said no")
-            hit = [hit_x, top + 0.05 + wrong.height / 2, 0]
+            hit = [hit_x, panel.code.get_top()[1] + 0.03 + wrong.height / 2, 0]   # the box, not the header's line
             self.play(Succession(wrong.animate(run_time=0.45, rate_func=rush_into).move_to(hit),
                                  wrong.animate(run_time=0.55, rate_func=rush_from).move_to(
                                      [hit_x, top + 1.25, 0])),
@@ -301,9 +301,11 @@ class BugAlmostShipped(VoiceScene):
                       run_time=0.8)
             vo.wait_until("Rewriting the test")
             self.play(FadeIn(rewrite, shift=UP * 0.15), run_time=0.6)
+            vo.wait_until("turns your specification")
+            self.play(Create(no), run_time=0.5)
             vo.wait_until("into a diary")
-            self.play(Create(no), FadeIn(diary, shift=UP * 0.1), run_time=0.6)
-            self.wait(0.6)                     # let the struck rewrite land before the trays
+            self.play(FadeIn(diary, shift=UP * 0.1), run_time=0.5)
+            self.wait(1.0)                     # the diary caption lands on the last words: let it be read
 
         # ========================================================== 4. normal, edge, invalid
         trays = [bin_tray(n, x) for n, x in (("normal", -4.3), ("edge", 0.0), ("invalid", 4.3))]
@@ -320,7 +322,7 @@ class BugAlmostShipped(VoiceScene):
         raises = code_span(panel2.code, 71 - 69, "pytest.raises(TypeError)")
         bar71 = line_bar(panel2.code, 71 - 69, TURN, 0.2)
         call = code_span(panel2.code, 72 - 69, 'power("3", 4)')
-        inv_chip = grey_chip('power("3", 4)', size=22, mono_font=True).move_to(call)
+        inv_chip = grey_chip('power("3", 4)', size=22, mono_font=True)
         terr = code_span(panel2.code, 71 - 69, "TypeError")
         question = label("what is worth testing?", 30, INK).move_to([0, 1.6, 0])
         old = VGroup(card_bg, heading, code_chip, test_chip, stamp, stamp_arrow, rewrite, no, rule, diary)
@@ -349,8 +351,8 @@ class BugAlmostShipped(VoiceScene):
             vo.wait_until("pytest dot raises")
             self.play(FadeIn(bar71), Indicate(raises, color=TURN, scale_factor=1.05), run_time=0.8)
             vo.wait_until("power on a string")
-            self.play(FadeIn(inv_chip, scale=1.15), run_time=0.4)
-            self.play(inv_chip.animate(rate_func=smooth).move_to(trays[2].spot), run_time=0.9)
+            inv_chip.move_to(trays[2].spot)   # the call itself leaves line 72 and becomes the chip
+            self.play(TransformFromCopy(call, inv_chip), run_time=1.3)
             vo.wait_until("raises a type error")
             self.play(Indicate(terr, color=VENV, scale_factor=1.12), run_time=0.8)
 

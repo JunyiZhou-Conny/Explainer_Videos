@@ -61,6 +61,12 @@ SHELF_Y = -3.1
 
 
 class ThreeKinds(VoiceScene):
+    def park(self, group, slot_chip, *also, run_time: float = 0.9):
+        """A finished kind shrinks into its shelf slot while the shelf chip fades in there (a
+        FadeTransform would stretch the chip's word across the whole box for a second)."""
+        self.play(*also, FadeOut(group, target_position=slot_chip.get_center(), scale=0.2),
+                  FadeIn(slot_chip, scale=0.6), run_time=run_time)
+
     def construct(self):
         assert len(SAY) == 7, len(SAY)
         ref = lref("66, 95")
@@ -110,10 +116,11 @@ class ThreeKinds(VoiceScene):
             vo.wait_until("calls that one function alone")
             # the zoom: the app swells past the frame and fades; the chip becomes the unit box,
             # the token becomes just its numbers
+            # (the chip's outline FadeTransforms: a point morph into the dashed frame grows teeth)
             self.play(rest.animate.scale(1.6, about_point=pw.get_center()).set_opacity(0),
-                      ReplacementTransform(pw, VGroup(ubox, call)),
-                      ReplacementTransform(tok, nums), run_time=1.3)
-            self.remove(rest)
+                      FadeTransform(pw.box, ubox.frame), ReplacementTransform(pw.text, call),
+                      FadeIn(ubox.title), FadeOut(tok, scale=0.35), FadeIn(nums, scale=0.6), run_time=1.3)
+            self.remove(rest, pw)
             self.play(n3.animate.move_to(three), n2.animate.move_to(two), run_time=0.8)
             self.play(FadeOut(nums, scale=0.6), Indicate(VGroup(three, two), color=ROUTE, scale_factor=1.3),
                       run_time=0.6)
@@ -144,7 +151,7 @@ class ThreeKinds(VoiceScene):
         tim = VGroup(timing, rec).arrange(RIGHT, buff=0.35).next_to(cap, DOWN, buff=0.4)
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeTransform(unit_g, s_unit), run_time=0.9)
+            self.park(unit_g, s_unit)
             vo.wait_until("wires several of our parts")
             self.play(FadeIn(ibox), FadeIn(tc), LaggedStart(*[FadeIn(c, shift=RIGHT * 0.15) for c in
                                                              [*ichain.chips, *ichain.arrows]], lag_ratio=0.1),
@@ -193,7 +200,7 @@ class ThreeKinds(VoiceScene):
         words.arrange(RIGHT, buff=0.25).move_to([0, -1.55, 0])
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(json, cap, tim)), FadeTransform(integ_g, s_integ), run_time=0.9)
+            self.park(integ_g, s_integ, FadeOut(VGroup(json, cap, tim)))
             vo.wait_until("A system test treats")
             self.play(FadeIn(tbox, shift=RIGHT * 0.2), FadeIn(sbox, shift=LEFT * 0.2), FadeIn(port), run_time=0.8)
             vo.wait_until("as a black box")
@@ -204,7 +211,8 @@ class ThreeKinds(VoiceScene):
             vo.wait_until("crosses a real network wire")
             self.play(dot2.animate.move_to(port.get_left()), run_time=1.0, rate_func=linear)
             vo.wait_until("to port 9000")
-            self.play(Indicate(port, color=SYSTEM_TEST, scale_factor=1.12), dot2.animate.move_to(bb), run_time=0.7)
+            self.play(Indicate(port, color=SYSTEM_TEST, scale_factor=1.12),
+                      dot2.animate.move_to(bb.get_left() + RIGHT * 0.3), run_time=0.7)   # beside the label
             vo.wait_until("comes back as JSON")
             self.play(dot2.animate.move_to([tbox.frame.get_right()[0] - 0.2, wy, 0]), run_time=0.9,
                       rate_func=linear)
@@ -230,7 +238,7 @@ class ThreeKinds(VoiceScene):
         cost_t = label("cost per test", 22, S.GREY).next_to(cost, RIGHT, buff=0.2)
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(words), FadeTransform(sys_g, s_sys), run_time=0.9)
+            self.park(sys_g, s_sys, FadeOut(words))
             vo.wait_until("that is the testing pyramid")
             self.play(ReplacementTransform(s_unit, lay["unit"]), ReplacementTransform(s_integ, lay["integration"]),
                       ReplacementTransform(s_sys, lay["system"]), run_time=1.3)
@@ -246,17 +254,21 @@ class ThreeKinds(VoiceScene):
         down = cross_mark(0.36, ERR, 6).next_to(nk.server, UP, buff=0.15)
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(cost, cost_t)), FadeTransform(lay["unit"], nk.unit),
-                      FadeTransform(lay["integration"], nk.integration),
-                      FadeTransform(lay["system"], nk.system), run_time=1.3)
-            self.remove(nk.unit, nk.integration, nk.system)
+            # words off first, then shapes into frames (whole-layer FadeTransforms smeared giant
+            # ghost labels across the boxes), then the new titles
+            kinds = [(lay[k], getattr(nk, k)) for k in ("unit", "integration", "system")]
+            self.play(FadeOut(VGroup(cost, cost_t, *[a.text for a, _ in kinds])), run_time=0.4)
+            self.play(*[FadeTransform(a.shape, b.frame) for a, b in kinds], run_time=0.9)
+            self.play(FadeIn(VGroup(*[b.title for _, b in kinds], nk.unit.call)), run_time=0.4)
+            self.remove(*[m for _, b in kinds for m in b.submobjects])
             self.add(nk.system, nk.integration, nk.unit)
             self.play(Create(nk.wire), FadeIn(nk.server), run_time=0.6)
             vo.wait_until("a border.")
             self.play(Create(nk.border.frame), run_time=1.0)
             self.play(FadeIn(nk.border.text), run_time=0.4)
             vo.wait_until("A test is hermetic")
-            self.play(Indicate(nk.border.text, color=UNIT, scale_factor=1.2), FadeIn(herm, shift=UP * 0.15),
+            # the word only: indicating the label group also paints its dark mask GREEN (word vanishes)
+            self.play(Indicate(nk.border.text[1], color=UNIT, scale_factor=1.15), FadeIn(herm, shift=UP * 0.15),
                       run_time=0.9)
             vo.wait_until("Unit and integration tests live inside")
             self.play(Indicate(nk.unit, color=UNIT, scale_factor=1.05), run_time=0.6)
@@ -289,10 +301,11 @@ class ThreeKinds(VoiceScene):
         never = note("markers defined, never used", S.GREY, 22).next_to(inic, DOWN, buff=0.25).align_to(inic, LEFT)
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(nk.border, nk.wire, nk.server, down, herm)),
-                      FadeTransform(nk.unit, lay2["unit"]),
-                      FadeTransform(nk.integration, lay2["integration"]),
-                      FadeTransform(nk.system, lay2["system"]), run_time=1.2)
+            back = [(getattr(nk, k), lay2[k]) for k in ("unit", "integration", "system")]
+            self.play(FadeOut(VGroup(nk.border, nk.wire, nk.server, down, herm, nk.unit.call,
+                                     *[a.title for a, _ in back])), run_time=0.4)
+            self.play(*[FadeTransform(a.frame, b.shape) for a, b in back], run_time=0.8)
+            self.play(FadeIn(VGroup(*[b.text for _, b in back])), run_time=0.4)
             vo.wait_until("a smoke test")
             self.play(FadeIn(extra[0], shift=UP * 0.15), run_time=0.6)
             vo.wait_until("acceptance tests")

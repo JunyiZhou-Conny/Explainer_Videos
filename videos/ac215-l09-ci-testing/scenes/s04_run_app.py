@@ -198,13 +198,14 @@ class RunTheApp(VoiceScene):
             lab_app = caption("a user the Dockerfile created", "not root")
             lab_id = caption("the container's ID", "new every run")
             lab_path = caption("the working folder")
-            targets = {0: -4.3, 2: 0.2, 4: 4.5}
+            targets = ((app_p, -4.3), (id_p, 0.2), (path_p, 4.5))   # by name: the copy re-indexes big
             vo.wait_until("Read the prompt")
             resize(self, t, 3)
             self.play(TransformFromCopy(substring(box_line, app_prompt), big), run_time=1.0)
             vo.wait_until("the user is app")
-            self.play(*[big[i].animate.set_x(x) for i, x in targets.items()], FadeOut(seps), run_time=0.8)
-            self.remove(seps)
+            self.play(*[p.animate.set_x(x) for p, x in targets], FadeOut(seps), run_time=0.8)
+            self.remove(big)
+            self.add(app_p, id_p, path_p)
             for lab, part in ((lab_app, app_p), (lab_id, id_p), (lab_path, path_p)):
                 lab.next_to(part, DOWN, buff=0.45)
             self.play(FadeIn(lab_app, shift=UP * 0.15), run_time=0.5)
@@ -280,7 +281,7 @@ class RunTheApp(VoiceScene):
             for m in dist:
                 curl_t.lines.remove(m)
             self.play(FadeTransform(dist, big_json), FadeOut(curl_t), FadeOut(evidence), FadeOut(t),
-                      run_time=1.0)
+                      track(tr, extra=False), run_time=1.0)
             self.remove(curl_t, evidence, t)
             vo.wait_until("the README says")
             self.play(FadeIn(r_card, shift=UP * 0.2), run_time=0.6)
