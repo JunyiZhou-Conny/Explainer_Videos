@@ -680,7 +680,7 @@ class PreCommitGate(VoiceScene):
             self.remove(t)
             self.play(FadeIn(qcard, scale=0.9), each(list(gate.arches), S.GREY, 1.08, lag=0.06),
                       run_time=0.8)
-            vo.wait_until("Part 2 builds one")
+            vo.wait_until("The guest lecture builds one")
             corner = [6.5 - qcard.width / 2, 3.55 - qcard.height / 2, 0]
             self.play(qcard.animate.move_to(corner), run_time=1.0)
             vo.wait_until("what even it can miss")

@@ -254,7 +254,7 @@ class RunTheApp(VoiceScene):
             vo.wait_until("pause and do it")
             self.play(FadeIn(turn_tag, shift=LEFT * 0.15), run_time=0.5)
             self.play(Indicate(turn_tag, color=TURN, scale_factor=1.12), run_time=0.6)
-            vo.wait_until("Here three curl calls")
+            vo.wait_until("three curl calls")
             self.play(FadeTransform(VGroup(browser, illus, turn_tag), curl_t), FadeIn(evidence),
                       track(tr, extra=True), run_time=0.8)
             self.remove(browser, illus, turn_tag)

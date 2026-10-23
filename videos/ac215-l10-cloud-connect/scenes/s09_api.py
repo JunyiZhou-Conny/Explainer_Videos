@@ -14,7 +14,7 @@ Beats (script.md, ## S09; one voiceover block each):
 2. TRACKER C2 · extra. The map and strip leave. The `erratum` card: CODE(api-service/docker-shell.sh:
    3–14, 20 pt; the first window of 1–16: lines 1–2 are the shebang and a blank line) with line 14 RED
    and line 4 `set -e` YELLOW (its comment, line 3, flashes); a caption 'network exists → line 14
-   fails → set -e stops the script'. Then the second window CODE(13–16) with line 14 RED, S05's sticky
+   fails → set -e stops the script'. Then the second window CODE(14–16) with line 14 RED, S05's sticky
    note 'inspect … || create' returns beside it from the top-right corner; a 4-row strip (the sed of
    laptop/32 needs four rows at 72 columns) soft-wraps the fix, bar tags 'our editor; use yours' +
    'extra' → TERM(32: 2; wrap). The resulting line is shown large (24 pt, broken at two spaces), GREEN,
@@ -192,7 +192,7 @@ class ApiService(VoiceScene):
             type_cmd(self, t, "cd ../api-service", type_time=0.6)
             cd_prompt(self, t, P_API)
             vo.wait_until("make the second project-name edit")
-            soft_type(self, t, sed.cmd, type_time=2.0)
+            soft_type(self, t, sed.cmd, type_time=1.6)
             on_bar(t, ed0)
             self.play(FadeIn(ed0, shift=LEFT * 0.1), run_time=0.4)
             out(self, t, sed_lines, chunk=3)
@@ -240,10 +240,10 @@ class ApiService(VoiceScene):
                      label("→", 22, S.GREY), mono("set -e", 22, TURN), label("stops the script", 22, ERR))
         why.arrange(RIGHT, buff=0.18).next_to(panel, DOWN, buff=0.28)
 
-        w14 = code(SHELL, 13, 16, font_size=20)
+        w14 = code(SHELL, 14, 16, font_size=20)        # (a window from 13 loses its blank first row)
         w14.move_to([-6.45 + w14.width / 2, 1.85, 0])
-        w_bar = line_bar(w14.code, 1, ERR, opacity=0.28)
-        w_span = code_span(w14.code, 1, "docker network create cheese-app-network")
+        w_bar = line_bar(w14.code, 0, ERR, opacity=0.28)
+        w_span = code_span(w14.code, 0, "docker network create cheese-app-network")
         sticky = sticky_note()
         sticky_from = sticky.copy().move_to([6.4 - sticky.width / 2, 1.75, 0])     # where S05 parked it
         sticky.move_to([6.4 - sticky.width / 2, w14.get_center()[1], 0])
@@ -285,7 +285,7 @@ class ApiService(VoiceScene):
             self.play(FadeIn(t2, shift=UP * 0.2), FadeIn(ed2), FadeIn(xt2), run_time=0.5)
             soft_type(self, t2, fix.cmd, type_time=2.2)
             new_rows = out(self, t2, fix.at(2), wrap=True)
-            big.move_to([-6.2 + big.width / 2, -0.25, 0])
+            big.move_to([-6.2 + big.width / 2, -0.4, 0])
             new_cap.next_to(big, UP, buff=0.18).align_to(big, LEFT)
             self.play(FadeIn(big, target_position=new_rows.get_center(), scale=0.8),
                       Create(strike(w_span, ERR)), run_time=0.9)
@@ -366,13 +366,13 @@ class ApiService(VoiceScene):
         t3 = term(P_API, rows=5, title=T_SECOND, size=SIZE)
         bill, xt4 = cost_row(), extra_row()
         on_bar(t3, bill)
-        xt4.next_to(bill, LEFT, buff=0.2)
+        xt4.move_to([t3.box.get_left()[0] + 1.0 + xt4.width / 2, bill.get_center()[1], 0])   # clear of the title
         chain = AuthChain(teaser=True)
         chain.shift(UP * 0.55)
         k0 = chain.slots[0].frame
         sec = VGroup(folder_glyph(0.26, KEY), mono("/secrets/", 22, KEY), note("empty", KEY, 22)).arrange(RIGHT,
                                                                                                      buff=0.15)
-        sec.next_to(k0, UP, buff=0.2).align_to(k0, LEFT)
+        sec.next_to(k0, UP, buff=0.8).align_to(k0, LEFT)       # above the glass of break_at()
 
         with self.voiceover(SAY[4]) as vo:
             self.play(track(tr, extra=True), run_time=0.4)
@@ -422,18 +422,18 @@ class ApiService(VoiceScene):
             cross = chain.break_at(self, 0)
 
         # ========================================================== 5. with a real key: 256 floats, a 200
-        bars = EmbeddingBars(256, bars_w=4.2, bar_h=0.55)
+        bars = EmbeddingBars(256, bars_w=3.4, bar_h=0.55)
         open_ = mono('{"embedding": [', 22, INK)
         close_ = mono("]}", 22, INK)
         emb = VGroup(open_, bars, close_).arrange(RIGHT, buff=0.18)
         brace = Brace(bars, DOWN, buff=0.08, color=S.GREY)
         n256 = mono("256", 22, CLOUD).next_to(brace, DOWN, buff=0.08)
         rec_card = card([VGroup(emb, brace, n256)])
-        rec_card.move_to([-2.05, -0.55, 0])
+        rec_card.move_to([-6.35 + rec_card.width / 2, -0.9, 0])
         rec = recorded_tag("recorded · rag.py:218–223 · EMBEDDING_DIMENSION = 256 (rag.py:17)")
         rec.next_to(rec_card.frame, DOWN, buff=0.15).align_to(rec_card.frame, LEFT)
         c26 = code(CLI, 26)
-        c26.move_to([6.4 - c26.width / 2, rec_card.get_center()[1] + 0.25, 0])
+        c26.move_to([6.4 - c26.width / 2, -0.95, 0])
         must = label("must match", 24, INK).next_to(c26, DOWN, buff=0.3)
         link = DashedLine(n256.get_right() + RIGHT * 0.15, must.get_left() + LEFT * 0.15, color=S.GREY,
                           stroke_width=2.5, dash_length=0.1)
@@ -445,7 +445,7 @@ class ApiService(VoiceScene):
             clear_but(self, tr, chain, anims=[FadeOut(VGroup(sec, cross)), track(tr, extra=False)], run_time=0.6)
             self.remove(sec, cross)
             self.play(chain.animate.shift(UP * 1.2), run_time=0.6)
-            ok_pt = chain.slots[4].text.get_bottom() + DOWN * 0.75
+            ok_pt = chain.slots[4].text.get_bottom() + DOWN * 0.6
             frame200.move_to(ok_pt)
             ok200.move_to(frame200)
             down = Arrow(chain.slots[4].text.get_bottom() + DOWN * 0.04, frame200.get_top() + UP * 0.02, buff=0,
@@ -472,8 +472,10 @@ class ApiService(VoiceScene):
             self.play(Indicate(ok200[1], color=PASS, scale_factor=1.3), run_time=0.6)
 
         # ========================================================== 6. C4: /docs, and the routes
-        c149 = readme_card(149, VGroup(label("Go to", 22, INK), mono("http://localhost:9000/docs", 22, INK),
-                                       label("to see the API docs.", 22, INK)).arrange(RIGHT, buff=0.15))
+        url149 = mono("http://localhost:9000/docs", 22, INK)
+        c149 = readme_card(149, VGroup(VGroup(label("Go to", 22, INK), url149).arrange(RIGHT, buff=0.15),
+                                       label("to see the API docs.", 22, INK)).arrange(DOWN, aligned_edge=LEFT,
+                                                                                      buff=0.12))
         sw = swagger_page()
         ill = illustration_tag()
         yt6 = your_turn()
@@ -495,16 +497,16 @@ class ApiService(VoiceScene):
             vo.wait_until("open localhost 9000 slash docs")
             self.play(FadeIn(sw, scale=1.05), FadeIn(ill), run_time=0.7)
             self.play(Indicate(sw.page.url, color=INK, scale_factor=1.15),
-                      Indicate(c149.body[1], color=INK, scale_factor=1.08), run_time=0.8)
+                      Indicate(url149, color=INK, scale_factor=1.08), run_time=0.8)
             vo.wait_until("Pause and look")
             self.play(FadeIn(yt6, shift=LEFT * 0.15), run_time=0.4)
             flash_tag(self, yt6, TURN)
             vo.wait_until("Extra curls")
             self.play(FadeIn(t4, shift=UP * 0.2), FadeIn(xt6), track(tr, extra=True), run_time=0.5)
-            type_cmd(self, t4, c34.cmd, type_time=0.5)
+            type_cmd(self, t4, c34.cmd, type_time=0.4)
             out(self, t4, c34.at(2), run_time=0.3)
             vo.wait_until("show the docs page")
-            type_cmd(self, t4, c35.cmd, type_time=0.9)
+            type_cmd(self, t4, c35.cmd, type_time=0.6)
             r35 = out(self, t4, c35.at(2), run_time=0.3)[0]
             g35 = ring(substring(r35, "200 text/html"), PASS, buff=0.05)
             self.play(Create(g35), Indicate(sw.rows, color=INK, scale_factor=1.04), run_time=0.6)
@@ -514,21 +516,20 @@ class ApiService(VoiceScene):
             on_bar(t4, xt6)
             rc.move_to([-6.4 + rc.width / 2, t4.box.get_top()[1] + 0.2 + rc.height / 2, 0])
             self.play(FadeIn(rc, shift=DOWN * 0.15), FadeIn(xt6), run_time=0.5)
-            soft_type(self, t4, c36.cmd, type_time=1.4)
+            soft_type(self, t4, c36.cmd, type_time=1.0)
             out(self, t4, c36.at((2, 7)), run_time=0.6)
             rows36 = [t4.find(f"{mth} {rt}") for mth, rt in (("GET", "/rag/embedding"), ("POST", "/rag/llm-response"),
                                                                ("GET", "/rag/agent_call"),
                                                                ("POST", "/rag/llm-agent-response"),
                                                                ("POST", "/rag/fine-tune-llm-response"))]
             self.play(LaggedStart(*[Indicate(r.glyphs, color=INK, scale_factor=1.05) for r in rows36],
-                                  lag_ratio=0.2), Indicate(rc.body, color=INK, scale_factor=1.03), run_time=1.2)
+                                  lag_ratio=0.2), Indicate(rc.body, color=INK, scale_factor=1.03), run_time=0.8)
             vo.wait_until("plus one more at the root")
             root = [r for r in t4.lines if getattr(r, "text", "") == "GET /"][-1]
             g_root = ring(root.glyphs, S.GREY, buff=0.06)
             nt = row_tag("not in the table", S.GREY)
             beside(nt, root, buff=0.3)
             self.play(Create(g_root), FadeIn(nt, shift=LEFT * 0.1), run_time=0.6)
-            flash_tag(self, nt, INK)
 
         # ========================================================== 7. end of part 1
         m7 = AppMap.at("S09", lit=("chroma", "api"), doors=("8000", "9000"), tubes=("loader", "api"))
@@ -538,7 +539,7 @@ class ApiService(VoiceScene):
         bdg = mini_badge().move_to(lane.path.get_start())
         door = m7.google.door
         ajar = door.frame.copy().stretch(0.25, 0, about_edge=LEFT).set_fill(CLOUD, 0.35)
-        ok7 = check_mark(0.3, PASS).next_to(m7.google.guard, UP, buff=0.12)
+        ok7 = check_mark(0.3, PASS).move_to([m7.public.get_center()[0], lane.path.get_end()[1] + 0.42, 0])
         glow = m7.houses["api"].body.copy().set_stroke(IMAGE, 14, opacity=0.35).set_fill(opacity=0)
         q = card([label("The API is up on your laptop.", 26, INK),
                   label("How does a web page find it, and who else can?", 26, INK)], color=TURN)

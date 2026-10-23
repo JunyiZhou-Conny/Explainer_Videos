@@ -262,7 +262,7 @@ class FormatterLinter(VoiceScene):
             bar42 = hl_bar(last, TURN, 0.22)
             self.play(FadeIn(bar42), run_time=0.4)
             q = beside(row_tag("2?", TURN), last, buff=0.3)
-            vo.wait_until("not one")
+            vo.wait_until("not just utils")
             pin(self, last, q)
             self.play(Indicate(q, color=TURN, scale_factor=1.3), run_time=0.6)
             vo.wait_until("gives black no width")

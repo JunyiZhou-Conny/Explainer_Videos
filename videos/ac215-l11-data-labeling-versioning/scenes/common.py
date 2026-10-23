@@ -2382,7 +2382,7 @@ class MountLayers(Rig):
         self.box = outline_box(5.4, 2.85, IMAGE, solid=False).move_to([0.45, 0.0, 0])
         self.box_title = mono(CONTAINERS["dvc"], size, IMAGE).move_to(
             self.box.get_corner(UL) + np.array([0.15, -0.25, 0]), aligned_edge=LEFT)
-        self.app = self._repo("/app", IMAGE).move_to([-0.35, 0.22, 0])
+        self.app = self._repo("/app", IMAGE, extra_w=1.8).move_to([-0.12, 0.12, 0])
         self.app_data = self.app.rows[1]
         self.mnt = drawer("/mnt/gcs_data/images", ROUTE, size, glyph=False).move_to([0.45, -0.95, 0])
         self.bucket = vault("your bucket", ("images/",), CLOUD, size, mono_title=False).move_to([5.05, 0.6, 0])
@@ -2393,7 +2393,7 @@ class MountLayers(Rig):
         ax = self.app.frame.get_right()[0] + 0.45
         self.inner = pipe([self.mnt.get_right() + RIGHT * 0.02, [ax, self.mnt.get_center()[1], 0],
                            [ax, self.app_data.get_center()[1], 0],
-                           [self.app_data.get_right()[0] + 0.05, self.app_data.get_center()[1], 0]], ROUTE)
+                           [self.app.frame.get_right()[0] + 0.02, self.app_data.get_center()[1], 0]], ROUTE)
         self.inner_label = note("bind mount · inside the container (mount --bind)").next_to(
             self.laptop, DOWN, buff=0.1).align_to(self.laptop, LEFT)
         self.fuse = pipe([self.bucket.frame.get_bottom(), [self.bucket.frame.get_center()[0], -1.52, 0],
@@ -2402,14 +2402,14 @@ class MountLayers(Rig):
         self.ride(self.v_pipe, self.v_label, self.inner, self.inner_label, self.fuse)
         self.shift(UP * 0.7)
 
-    def _repo(self, name, color):
+    def _repo(self, name, color, extra_w: float = 0.0):
         rows = VGroup(drawer(name, color, self.size, glyph=False), drawer("cheese_dataset/", color, self.size,
                                                                           glyph=False))
         rows.arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         rows[1].shift(RIGHT * 0.35)
-        fr = RoundedRectangle(width=rows.width + 0.4, height=rows.height + 0.35, corner_radius=0.12,
+        fr = RoundedRectangle(width=rows.width + 0.4 + extra_w, height=rows.height + 0.35, corner_radius=0.12,
                               stroke_color=color, stroke_width=2).set_fill(S.BG, 0)
-        rows.move_to(fr)
+        rows.move_to(fr).align_to(fr, LEFT).shift(RIGHT * 0.2)
         g = VGroup(fr, rows)
         g.frame, g.rows = fr, rows
         return g
@@ -2428,7 +2428,7 @@ class MountLayers(Rig):
 
     def photos(self, n: int = 4) -> VGroup:
         ts = VGroup(*[tile(None, 0.36, CLOUD) for _ in range(n)]).arrange(RIGHT, buff=0.06)
-        return ts.next_to(self.app.frame, DOWN, buff=0.12).align_to(self.app_data, LEFT)
+        return ts.next_to(self.app_data, RIGHT, buff=0.15)
 
     def dark(self, run_time: float = 0.6):
         return self.host_data.animate(run_time=run_time).fade(0.6)
@@ -2639,7 +2639,7 @@ class HashShelf(Rig):
     def git_box(self, card) -> VGroup:
         ob = outline_box(card.width + 0.5, card.height + 0.75, LAPTOP, solid=True, fill_opacity=0.04)
         ob.move_to(card).shift(DOWN * 0.12)
-        t = mono("git", self.size, LAPTOP).move_to(ob.get_corner(UR) + np.array([-0.35, -0.22, 0]))
+        t = mono("git", self.size, LAPTOP).move_to(ob.get_corner(DR) + np.array([-0.35, 0.22, 0]))
         g = VGroup(ob, t)
         g.box, g.text = ob, t
         return g
@@ -2811,7 +2811,7 @@ class TagRope(Rig):
         d = Dot(self.colab.frame.get_top(), radius=0.09, color=ROUTE)
         scene.play(FadeIn(d), run_time=0.2)
         scene.play(d.animate.move_to(dr.get_left() + LEFT * 0.4), run_time=1.0)
-        e = err_chip("401").next_to(d, UP, buff=0.15)
+        e = err_chip("401").next_to(d, DOWN, buff=0.15)
         scene.play(FadeIn(e, scale=1.3), d.animate.set_color(ERR), run_time=0.5)
         return VGroup(d, e)
 

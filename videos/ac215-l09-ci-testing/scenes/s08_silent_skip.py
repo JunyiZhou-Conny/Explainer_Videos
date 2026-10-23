@@ -466,7 +466,7 @@ class SilentSkip(VoiceScene):
             self.play(flash(outside.dots, SKIP, 1.25, run_time=0.6))
             vo.wait_until("The honest remedy")
             self.play(Create(marker.box.frame), FadeIn(marker.text), run_time=0.7)
-            vo.wait_until("part 2 shows it")
+            vo.wait_until("the guest lecture shows it")
             self.play(Indicate(marker, color=INK, scale_factor=1.06), run_time=0.7)
             vo.wait_until("CI's version is loud")
             self.play(Create(cframe.frame), FadeIn(inner, shift=UP * 0.2), run_time=0.8)

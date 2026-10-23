@@ -326,7 +326,7 @@ class ThreeKinds(VoiceScene):
             self.play(FadeIn(bars), run_time=0.6)
             vo.wait_until("that nobody uses")
             self.play(FadeIn(never, shift=UP * 0.15), run_time=0.6)
-            vo.wait_until("markers return in part 2")
+            vo.wait_until("markers return in the guest lecture")
             self.play(Indicate(never, color=INK, scale_factor=1.08), run_time=0.8)
 
         # ========================================================== 6. the empty gate table

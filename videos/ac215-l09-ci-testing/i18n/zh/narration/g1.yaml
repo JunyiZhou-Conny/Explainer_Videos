@@ -120,11 +120,11 @@ S03:
   - "一个测试是 hermetic 的，指的是只有你的代码能让它失败。"
   - "单元测试和集成测试都在这条边界之内。"
   - "系统测试跨过了它：一台运行中的服务器可能会挂掉，原因却不是你的 bug。"
-- en: "Two more kinds get faint rows: a smoke test, which only asks whether it answers, and acceptance tests, which this project lacks, for now. One note about kinds: a test's kind is named by what runs, not by its folder. This repo's system test file calls itself integration tests, and its pytest config defines markers, labels for selecting tests, that nobody uses; markers return in part 2."
+- en: "Two more kinds get faint rows: a smoke test, which only asks whether it answers, and acceptance tests, which this project lacks, for now. One note about kinds: a test's kind is named by what runs, not by its folder. This repo's system test file calls itself integration tests, and its pytest config defines markers, labels for selecting tests, that nobody uses; markers return in the guest lecture."
   zh:
   - "还有两类测试只占淡淡的两行：冒烟测试，只问它有没有响应；还有验收测试，这个项目暂时还没有。"
   - "关于类型说一句：测试属于哪一类，看的是实际运行了什么，而不是它放在哪个目录。"
-  - "这个 repo 的系统测试文件管自己叫集成测试，它的 pytest 配置还定义了一些 marker，也就是用来挑选测试的记号，却没人用；marker 会在第二部分回来。"
+  - "这个 repo 的系统测试文件管自己叫集成测试，它的 pytest 配置还定义了一些 marker，也就是用来挑选测试的记号，却没人用；marker 会在客座讲座里回来。"
 - en: "Last picture: an empty table, four columns. What is checked, how, with which command, and does it run on every commit. Part 1 fills it in."
   zh:
   - "最后一张图：一张空表，四列。"
@@ -150,11 +150,11 @@ S04:
   - "它会构建 image，录制时大约要一分钟，然后把你放进 container 里的一个 shell。"
   - "暂停一下，自己跑一遍。"
   - "看一下提示符：用户是 app，不是 root，而且 ID 每次运行都会变。"
-- en: "Inside, start the server: uvicorn api dot service colon app, host 0.0.0.0, port 9000, with reload. When it says application startup complete, open the three README URLs in your browser; pause and do it. Here three curl calls stand in for the browser: welcome, health, and the distance answer."
+- en: "Inside, start the server: uvicorn api dot service colon app, host 0.0.0.0, port 9000, with reload. When it says application startup complete, open the three README URLs in your browser; pause and do it. Here, from a second terminal on the laptop, three curl calls stand in for the browser: welcome, health, and the distance answer."
   zh:
   - "在里面启动服务器：uvicorn api.service:app，host 是 0.0.0.0，port 是 9000，加上 --reload。"
   - "等它显示 Application startup complete，就在浏览器里打开 README 的三个 URL；暂停一下，照着做。"
-  - "这里用三次 curl 代替浏览器：欢迎信息、health，还有距离的结果。"
+  - "这里在笔记本电脑上另开一个终端，用三次 curl 代替浏览器：欢迎信息、health，还有距离的结果。"
   en_display:
   - "Inside, start the server: uvicorn api.service:app --host 0.0.0.0 --port 9000 --reload."
   - "When it says Application startup complete, open the three README URLs in your browser; pause and do it."
@@ -175,9 +175,9 @@ S04:
   - null
   - "The --reload flag watches the copy baked into the image, so an edit on your laptop changes nothing until you rebuild."
 S05:
-- en: "Part 2 hunts for quality issues with two tools not to confuse. A formatter rewrites code into one layout and never changes behavior. A linter only reports: style issues, likely bugs, things needing a person. Format first, then lint."
+- en: "The README's Part 2 hunts for quality issues with two tools not to confuse. A formatter rewrites code into one layout and never changes behavior. A linter only reports: style issues, likely bugs, things needing a person. Format first, then lint."
   zh:
-  - "Part 2 用两个工具找代码质量问题，这两个可别搞混。"
+  - "README 的 Part 2 用两个工具找代码质量问题，这两个可别搞混。"
   - "格式化工具把代码改写成统一的排版，从不改变行为。"
   - "而 linter 只负责报告：风格问题、可能的 bug、需要人来处理的地方。"
   - "先格式化，再 lint。"
@@ -199,11 +199,11 @@ S05:
   - "Now the linter, inside the image: flake8 --max-line-length=120 api/."
   - null
   - null
-- en: "Then black, in check and diff mode. Pause and run it. It reports 2 files would be reformatted, not one. This command gives black no width, so it falls back to its default of 88 and also folds a 95 character line in service.py."
+- en: "Then black, in check and diff mode. Pause and run it. It reports 2 files would be reformatted, not just utils.py. This command gives black no width, so it falls back to its default of 88 and also folds a 95 character line in service.py."
   zh:
   - "然后是 black，用 --check 和 --diff 模式。"
   - "暂停一下，自己跑一遍。"
-  - "它说有 2 个文件会被重新格式化，而不是一个。"
+  - "它说有 2 个文件会被重新格式化，不只是 utils.py。"
   - "这条命令没给 black 指定宽度，所以它退回默认的 88，把 service.py 里一行 95 个字符的代码也折了。"
   en_display:
   - "Then black, in --check --diff mode."
@@ -328,10 +328,10 @@ S07:
   - null
   - "One trap: the HTML report lands inside a container that --rm deletes, gone when you exit."
   - null
-- en: "This image ships its dev tools as runtime dependencies, open ended pins, no lockfile; the guest lecture keeps them in groups behind one lockfile. And the part 1 warning pays off: edit utils.py on your laptop, and this container still tests yesterday's copy. Rebuild, or you test the past."
+- en: "This image ships its dev tools as runtime dependencies, open ended pins, no lockfile; the guest lecture keeps them in groups behind one lockfile. And the warning from the README's Part 1 pays off: edit utils.py on your laptop, and this container still tests yesterday's copy. Rebuild, or you test the past."
   zh:
   - "这个 image 把开发工具当成运行时依赖一起发布，版本只有下限，没有 lock 文件；客座讲座则把它们放进依赖组，由一个 lock 文件锁住。"
-  - "第一部分的那句提醒这时用上了：你在笔记本上改了 utils.py，这个 container 测的还是昨天的副本。"
+  - "README Part 1 里的那句提醒这时用上了：你在笔记本上改了 utils.py，这个 container 测的还是昨天的副本。"
   - "要么重新构建，要么你测的就是过去。"
 S08:
 - en: "Option 2 is the system test, and the lecture's question: can anything but our code make it fail? Start a live server, detached, named api-server, on port 9000, with DEV equals 1. All you get back is a container ID. Pause and run it."
@@ -385,11 +385,11 @@ S08:
   - "测试文件只探测一次服务器，就在 pytest 收集这个模块的时候。"
   - "这一次的结果决定了整个类：服务器晚一秒起来，就已经太晚了。"
   - "拔了电池的烟雾报警器永远不会响，但这不等于没有着火。"
-- en: "On the border picture, 22 tests live inside: the 21 from last scene, plus the one system folder test that never needed the server. These 4 stand outside. The honest remedy is a marker the run must select on purpose; part 2 shows it. CI's version is loud: it curls the server first, and if the server is down, the whole job fails. The system row enters the gate table outside the turnstile: not on every commit, not hermetic."
+- en: "On the border picture, 22 tests live inside: the 21 from last scene, plus the one system folder test that never needed the server. These 4 stand outside. The honest remedy is a marker the run must select on purpose; the guest lecture shows it. CI's version is loud: it curls the server first, and if the server is down, the whole job fails. The system row enters the gate table outside the turnstile: not on every commit, not hermetic."
   zh:
   - "在边界图上，有 22 个测试在里面：上一段的 21 个，加上系统测试目录里那个从来不需要服务器的测试。"
   - "这 4 个站在外面。"
-  - "诚实的办法是用一个 marker，运行时必须特意选中它；第二部分会演示。"
+  - "诚实的办法是用一个 marker，运行时必须特意选中它；客座讲座会演示。"
   - "CI 的做法很响亮：它先 curl 服务器，服务器要是没起来，整个任务直接失败。"
   - "系统测试这一行写进门禁表，但放在闸机外面：不是每次 commit 都跑，也不是 hermetic 的。"
 S09:
@@ -402,14 +402,14 @@ S09:
   - null
   - "Outside the container, pip install pre-commit, 4.7.0 at the time of recording; then, from the repo root, pre-commit install: a hook file now sits in .git."
   - null
-- en: "Git runs that hook file before every commit. It lives in dot git, outside the repository: every clone installs it again. It hands over to pre-commit, which reads the repo's config."
+- en: "Git runs that hook file before every commit. It lives in dot git, which is never committed: every clone installs it again. It hands over to pre-commit, which reads the repo's config."
   zh:
   - "Git 在每次 commit 之前都会运行这个 hook 文件。"
-  - "它放在 .git 里，不属于 repo 的内容：每个 clone 都要重新安装。"
+  - "它放在 .git 里，从来不会被 commit：每个 clone 都要重新安装。"
   - "它把工作交给 pre-commit，再由 pre-commit 读取 repo 的配置。"
   en_display:
   - null
-  - "It lives in .git, outside the repository: every clone installs it again."
+  - "It lives in .git, which is never committed: every clone installs it again."
   - null
 - en: "The config names nine hooks: seven hygiene guards, from whitespace to private keys. Then black and flake8, both at width 120, both seeing only Python files under src: the tests are never linted."
   zh:
@@ -421,13 +421,13 @@ S09:
   - "暂停一下，自己跑一遍。"
   - "第一次运行会下载每个 hook pin 住的环境，录制时还多了一条无害的警告。"
   - "接着每个 hook 都显示 Skipped，git 说 nothing to commit：hook 只检查暂存的文件，而什么都没暂存。"
-- en: "To exercise them anyway, pre-commit run, dash dash all dash files. Pause and run it. Six hooks pass, one has no files to check, then black fails: files were modified by this hook; it reformatted utils.py. A quick ponder: flake8 runs next. Does it report part 2's two findings?"
+- en: "To exercise them anyway, pre-commit run, dash dash all dash files. Pause and run it. Six hooks pass, one has no files to check, then black fails: files were modified by this hook; it reformatted utils.py. A quick ponder: flake8 runs next. Does it report the two findings it made earlier?"
   zh:
   - "想让它们照样跑一遍，就用 pre-commit run --all-files。"
   - "暂停一下，自己跑一遍。"
   - "六个 hook 通过，一个没有文件可查，然后 black 失败：files were modified by this hook；它重新格式化了 utils.py。"
   - "快速想一下：接下来跑 flake8。"
-  - "它会报出 Part 2 的那两个问题吗？"
+  - "它会报出之前那两个问题吗？"
   en_display:
   - "To exercise them anyway, pre-commit run --all-files."
   - null
@@ -448,13 +448,13 @@ S09:
   - "Two extras close the loop: git diff shows the fix; git add -u re-stages it."
   - null
   - null
-- en: "A last demo, as an extra: sed adds and stages an unused import; on a Mac, sed dash i, needs empty quotes after it. The commit fails twice: black reformats the file, and flake8 reports F401, which no formatter can fix; git status confirms no commit exists. Restore the file: your machine now says no. But this gate never ran a single test. Part 2 builds one that does, and shows what even it can miss."
+- en: "A last demo, as an extra: sed adds and stages an unused import; on a Mac, sed dash i, needs empty quotes after it. The commit fails twice: black reformats the file, and flake8 reports F401, which no formatter can fix; git status confirms no commit exists. Restore the file: your machine now says no. But this gate never ran a single test. The guest lecture builds one that does, and shows what even it can miss."
   zh:
   - "最后一个演示，是额外的：用 sed 加一个没用到的 import 并暂存；在 Mac 上，sed -i 后面要跟一对空引号。"
   - "这次 commit 被拦了两道：black 重新格式化了文件，flake8 报出 F401，这是任何格式化工具都修不了的；git status 确认 commit 没有生成。"
   - "把文件恢复原样：你的电脑现在会说不了。"
   - "可这个门禁一个测试都没跑过。"
-  - "第二部分会搭一个会跑测试的门禁，再看看连它也会漏掉什么。"
+  - "客座讲座会搭一个会跑测试的门禁，再看看连它也会漏掉什么。"
   en_display:
   - "A last demo, as an extra: sed adds and stages an unused import; on a Mac, sed -i needs empty quotes after it."
   - null

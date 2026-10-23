@@ -425,7 +425,7 @@ class TestsInImage(VoiceScene):
             uf = file_card("utils.py", LAPTOP, size=22).move_to([-4.1, -0.25, 0])
             host = label("on your laptop", 22, LAPTOP).next_to(uf, DOWN, buff=0.25)
             edited = row_tag("edited", MODIFIED).next_to(uf, UP, buff=0.2)
-            vo.wait_until("And the part 1 warning")
+            vo.wait_until("And the warning from")
             self.play(FadeOut(VGroup(pp, tbars, left, err, right)), run_time=0.6)
             self.remove(pp, tbars, left, err, right)
             self.play(LaggedStart(*[FadeIn(s, shift=DOWN * 0.3) for s in s2], lag_ratio=0.08), FadeIn(img2),
