@@ -4,8 +4,9 @@ Beats (script.md, ## S10; one voiceover block each):
 0. Empty frame after the part break. TRACKER E1 (tracker E appears, 8 dots) and `Lecture 9 · slides
    14–20, 25–28` (top right, whole scene). "Part 2 · guest lecture" (no name on screen); an
    unlabeled 4-arch turnstile drops under it ("the same gate"). An `illustration` of babykev: a
-   README question card (README.md:13) -> babykev -> five option bars and a confidence; on "a pure
-   guess" the bars level and the confidence reads 0. On "No Docker" the tracker's last dot is
+   README question card (README.md:13) -> babykev -> five unlabeled option bars and an unlabeled
+   confidence meter; on "a pure guess" the bars level (1/5 each) and the meter empties to a real 0
+   (choice_confidence of a uniform guess, step-01 api.py; the test expects 0). On "No Docker" the tracker's last dot is
    ringed TEAL with a dashed TEAL chip. Then a 6-row `laptop · babykev` terminal: two PURPLE chips
    (uv, just); `uv --version` (extra) -> babykev/02: 2 and `just --version` (extra) -> babykev/04:
    2, each output row tagged `at the time of recording`.
@@ -16,8 +17,8 @@ Beats (script.md, ## S10; one voiceover block each):
 2. TRACKER E1. `git switch --detach step-00` (README.md:150) -> s00-01: 2; `uv sync --locked` (walk
    step-00) -> s00-02: 2–4, 6 (soft-wrapped), 9–10; `Using CPython 3.13.16` GREEN. The terminal
    shrinks to a 3-row strip (CPython + the warning) and the lockfile mechanism plays above it
-   (tagged `illustration`): a dashed GREY "no lockfile" column whose versions tick upward as a
-   time marker slides, and a GREEN `uv sync --locked` column under a GREEN `uv.lock` card with a lock
+   (tagged `illustration`): a dashed GREY "no lockfile" column whose symbolic versions move on
+   (`x.y` -> `x.z`, ORANGE, "↑ newer") as a time marker slides (no invented version numbers), and a GREEN `uv sync --locked` column under a GREEN `uv.lock` card with a lock
    glyph that shakes at every tick and prints a RED "stop". The warning row gets `at the time of
    recording`. A TEAL frost glyph "the cheese way: freeze an image". Then `just` -> s00-05: 2–6; the
    recipe names ringed; three row tags beside `[setup]` (for people GREY, the hook PURPLE, CI · later
@@ -27,7 +28,8 @@ Beats (script.md, ## S10; one voiceover block each):
    padding dropped, as S07 does): `2 failed` RED, `50 passed` GREEN. The terminal shrinks to a
    5-row strip holding 53–55; above it, a card (titled by its command) with s01-06: 32–35 (wrap):
    the guess `[1 / 3] * 3` YELLOW, `0.5` RED, `pytest.approx(0)` GREEN. Row tags: RED "77 × 0.01 =
-   0.77" on the rounding test, GREEN "fix the code, not the tests" on the card. `▶ your turn`.
+   0.77" on the rounding test (77 options of 1/77 from s01-06:18-19; step-01 api.py:89-90 `r2` rounds
+   each to 2 decimals, round(1/77, 2) = 0.01; s01-06:26 `Obtained: 0.77`), GREEN "fix the code, not the tests" on the card. `▶ your turn`.
 4. TRACKER E3. PURPLE chips `ruff format` / `ruff check` ("both roles"). V4 funnel reprise over a
    6-row strip: `uv run ruff check --statistics` (walk step-02) -> s02-12: 2–6, …, 14–15 ("Found 70
    errors."); `just lint --fix` -> s02-14: 692 (69); `just lint --fix --unsafe-fixes` -> s02-15:
@@ -152,7 +154,8 @@ def flash_tag(tag, color) -> list:
 
 # ---------------------------------------------------------------- beat 0: babykev, illustrated
 OPTIONS = ("cow", "goat", "sheep", "buffalo", "mixed")      # README.md:14-17, the milk question
-SURE = (0.86, 0.06, 0.04, 0.01, 0.03)                       # illustrative
+SURE = (0.86, 0.06, 0.04, 0.01, 0.03)        # illustrative bar SHAPE only: no value is ever shown
+METER_W = 1.5
 BAR_MAX = 1.5
 
 
@@ -181,11 +184,17 @@ def babykev_demo() -> VGroup:
     bars = VGroup(*[bar_rect(p, x, base) for p, x in zip(SURE, xs)])
     names = VGroup(*[label(s, 20, S.GREY).move_to([x, base - 0.27, 0]) for s, x in zip(OPTIONS, xs)])
     axis = Line([xs[0] - 0.45, base, 0], [xs[-1] + 0.45, base, 0], color=S.GREY, stroke_width=2)
+    # the confidence as an unlabeled meter (no invented value); it empties to the real 0 on a guess
     word = label("confidence", 24, INK)
-    num = steady("0.8", 24, INK)
-    conf = VGroup(word, num).arrange(RIGHT, buff=0.18).move_to([3.65, -1.25, 0])
+    rail = Rectangle(width=METER_W, height=0.26, stroke_color=S.GREY, stroke_width=2)
+    k = len(SURE)
+    fill = Rectangle(width=METER_W * (max(SURE) - 1 / k) / (1 - 1 / k), height=0.26, stroke_width=0)
+    fill.set_fill(INK, 0.75).move_to(rail, aligned_edge=LEFT)
+    meter = VGroup(rail, fill)
+    conf = VGroup(word, meter).arrange(RIGHT, buff=0.22).move_to([3.5, -1.25, 0])
+    num = steady("0", 24, INK).next_to(meter, RIGHT, buff=0.2)
     num.align_to(word, DOWN)
-    conf.word, conf.num = word, num
+    conf.word, conf.rail, conf.fill, conf.num = word, rail, fill, num
     a1 = arrow(qbox.get_right(), mbox.get_left() + LEFT * 0.05, INK)
     a2 = arrow(mbox.get_right() + RIGHT * 0.05, np.array([xs[0] - 0.55, 0.2, 0]), INK)
     tag = illustration_tag().move_to([3.65, 1.75, 0])
@@ -197,12 +206,12 @@ def babykev_demo() -> VGroup:
 
 # ---------------------------------------------------------------- beat 2: lockfile mechanism
 PKGS = ("pydantic", "pytest", "coverage")
-LOCKED = ("2.13.5", "9.1.1", "7.16.2")                      # s01-02's lock (step-01)
-DRIFT = (("2.14.0", "9.2.0", "7.17.0"), ("2.15.1", "9.3.2", "7.18.1"))   # illustrative
+LOCKED = ("2.13.5", "9.1.1", "7.16.2")                      # s01-02:16, 19, 12 (the lock at step-01)
+FLOAT = ("x.y", "x.z")              # unlocked: symbolic marks only, never invented version numbers
 
 
-def dep_rows(versions, color) -> VGroup:
-    rows = VGroup(*[steady(f"{p}=={v}", 22, color, mono_font=True) for p, v in zip(PKGS, versions)])
+def dep_rows(versions, color, sep: str = "==") -> VGroup:
+    rows = VGroup(*[steady(f"{p}{sep}{v}", 22, color, mono_font=True) for p, v in zip(PKGS, versions)])
     return rows.arrange(DOWN, aligned_edge=LEFT, buff=0.22)
 
 
@@ -272,11 +281,15 @@ class OneCommand(VoiceScene):
             self.play(FadeIn(demo.conf, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("a pure guess")
             level = [bar_rect(0.2, x, demo.base) for x in demo.xs]
-            self.play(*[Transform(b, n) for b, n in zip(demo.bars, level)],
-                      Transform(demo.conf.num, steady("0", 24, INK).move_to(demo.conf.num, aligned_edge=LEFT)),
+            empty = Rectangle(width=0.01, height=0.26, stroke_width=0).set_fill(INK, 0)
+            empty.move_to(demo.conf.rail, aligned_edge=LEFT)
+            self.play(*[Transform(b, n) for b, n in zip(demo.bars, level)], Transform(demo.conf.fill, empty),
                       run_time=1.0)
+            demo.conf.add(demo.conf.num)
+            self.play(FadeIn(demo.conf.num, scale=1.3), run_time=0.4)
             vo.wait_until("should score zero")
-            self.play(Indicate(demo.conf.num, color=INK, scale_factor=1.4), run_time=0.7)
+            self.play(Indicate(demo.conf.num, color=INK, scale_factor=1.4),
+                      demo.conf.rail.animate(rate_func=there_and_back).set_stroke(INK, width=4), run_time=0.7)
             vo.wait_until("No Docker")
             self.play(Create(dot_ring), FadeIn(docker, shift=DOWN * 0.15), run_time=0.7)
             vo.wait_until("Two tools first")
@@ -341,7 +354,7 @@ class OneCommand(VoiceScene):
 
         # ========================================================== 2. step-00: uv sync --locked; just
         band_lo = strip_top20(3) + 0.15
-        left_rows = dep_rows(LOCKED, INK)
+        left_rows = dep_rows([FLOAT[0]] * 3, INK, " ")
         right_rows = dep_rows(LOCKED, INK)
         lw = right_rows.width + 0.6
         lbox = outline_box(lw, right_rows.height + 0.6, S.GREY, solid=False)
@@ -351,6 +364,7 @@ class OneCommand(VoiceScene):
         left_rows.move_to(lbox)
         right_rows.move_to(rbox)
         l_head = label("no lockfile", 22, S.GREY).next_to(lbox, UP, buff=0.22)
+        newer = label("↑ newer", 22, HOST).next_to(lbox, DOWN, buff=0.15)
         lock_card = file_card("uv.lock", VENV, size=22)
         lk = lock_glyph(0.42, VENV)
         lock = VGroup(lk, lock_card).arrange(RIGHT, buff=0.18).next_to(rbox, UP, buff=0.12)
@@ -388,12 +402,15 @@ class OneCommand(VoiceScene):
             self.play(FadeIn(VGroup(lbox, left_rows, l_head)), FadeIn(VGroup(rbox, right_rows, r_cmd)),
                       FadeIn(lock, shift=DOWN * 0.15), GrowArrow(t_axis), FadeIn(t_lab), FadeIn(marker),
                       FadeIn(ill), run_time=0.6)
-            for k, vers in enumerate(DRIFT):
-                x = t_axis.get_start()[0] + (k + 1) * (t_axis.get_length() - 0.4) / 2
-                new = dep_rows(vers, HOST).move_to(left_rows, aligned_edge=LEFT)
-                self.play(marker.animate.set_x(x),
-                          *[Transform(a, b) for a, b in zip(left_rows, new)],
-                          Wiggle(lk, scale_value=1.25, rotation_angle=0.08 * TAU), run_time=0.8)
+            step_x = (t_axis.get_length() - 0.4) / 2
+            new = dep_rows([FLOAT[1]] * 3, HOST, " ").move_to(left_rows, aligned_edge=LEFT)
+            self.play(marker.animate.set_x(t_axis.get_start()[0] + step_x),
+                      *[Transform(a, b) for a, b in zip(left_rows, new)], FadeIn(newer, shift=UP * 0.15),
+                      Wiggle(lk, scale_value=1.25, rotation_angle=0.08 * TAU), run_time=0.8)
+            self.play(marker.animate.set_x(t_axis.get_start()[0] + 2 * step_x),
+                      Indicate(left_rows, color=HOST, scale_factor=1.04),
+                      Indicate(newer, color=HOST, scale_factor=1.15),
+                      Wiggle(lk, scale_value=1.25, rotation_angle=0.08 * TAU), run_time=0.8)
             self.play(FadeIn(stop, scale=1.3), Indicate(right_rows, color=VENV, scale_factor=1.04), run_time=0.5)
             vo.wait_until("Its warning is harmless")
             self.play(Indicate(warn_a, color=INK, scale_factor=1.03), run_time=0.5)
@@ -406,7 +423,7 @@ class OneCommand(VoiceScene):
             self.play(Indicate(lock_card.text, color=VENV, scale_factor=1.2),
                       lock_card.box.frame.animate(rate_func=there_and_back).set_stroke(width=5), run_time=0.7)
             vo.wait_until("Typing just, alone")
-            pic = VGroup(lbox, left_rows, l_head, rbox, right_rows, r_cmd, lock, stop, t_axis, t_lab, marker,
+            pic = VGroup(lbox, left_rows, l_head, newer, rbox, right_rows, r_cmd, lock, stop, t_axis, t_lab, marker,
                          ill, cheese)
             self.play(FadeOut(pic), run_time=0.5)
             self.remove(pic)
