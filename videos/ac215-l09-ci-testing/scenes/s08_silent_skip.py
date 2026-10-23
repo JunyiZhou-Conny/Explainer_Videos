@@ -31,8 +31,8 @@ Beats (script.md, ## S08; one voiceover block each):
 
 Deviations (reported to the coordinator):
 - CODE(test_system_api.py) shows 15–25, not 11–25 (15 lines; a panel takes <= 12). Line 24 is 86
-  characters (the frame takes 72 at 20 pt), so it is shown wrapped inside its parentheses (valid
-  Python, the same tokens); the header still reads "lines 15–25".
+  characters (the frame takes 72 at 20 pt): it is cut at the frame edge with the house "…" (common
+  `cut`), after `reason="API not running at`; the narrated `skipif(not is_api_running()` stays whole.
 - docker ps (part3-opt2-04) is 122 characters wide even squeezed; it shows the columns STATUS, PORTS,
   NAMES (`cols`), which carry what the narration names ("shows the server up").
 - The script puts the wire picture "beside the terminal"; a full terminal and a picture never share
@@ -49,17 +49,17 @@ from manim import *  # noqa: I001  (manim first, then common: common must win)
 from explainer.scene import VoiceScene
 from explainer import style as S
 
-from common import (CAPTION, ERR, FUTURE, IMAGE, INK, NARRATION, P_LAPTOP, PASS, ROUTE, SKIP,
+from common import (ERR, FUTURE, IMAGE, INK, NARRATION, P_LAPTOP, PASS, ROUTE, SKIP,
                     SYSTEM_TEST, TURN, UNIT, INTEG, GateTable, HermeticBorder, RequestToken, RESPONSE,
                     TestDots, attach, beside, capture, check_mark, chip, code, code_panel, code_span,
                     cols, excerpt, extra_row, hl_bar, label, line_bar, lref, mono,
-                    note, outline_box, pause_and_ponder, pin, readme, resize, ring, row_tag, shown_path,
+                    cut, note, outline_box, pause_and_ponder, pin, readme, resize, ring, row_tag, shown_path,
                     substring, term, tool_chip, track, tracker, turn_row, type_cmd, unpin)
 
 SAY = NARRATION["S08"]
 SYS = "cheese-app-ci-cd/tests/system/test_system_api.py"
 CI = "cheese-app-ci-cd/.github/workflows/ci.yml"
-C0, C1 = 15, 25                     # test_system_api.py window (line 24 wrapped: 12 rows)
+C0, C1 = 15, 25                     # test_system_api.py window (line 24 cut at the frame edge)
 
 
 def summary(cap, n: int) -> str:
@@ -365,21 +365,15 @@ class SilentSkip(VoiceScene):
         src = excerpt(SYS, C0, C1).split("\n")
         k24 = 24 - C0
         assert src[k24].startswith("@pytest.mark.skipif(not is_api_running(), ")
-        cut_at = src[k24].index("reason=")
-        wrapped = src[:k24] + [src[k24][:cut_at].rstrip(), " " * len("@pytest.mark.skipif(") + src[k24][cut_at:]] \
-            + src[k24 + 1:]
-        assert " ".join(" ".join(wrapped[k24:k24 + 2]).split()) == " ".join(src[k24].split())
-        panel = code_panel("\n".join(wrapped), shown_path(SYS), C0, "python", font_size=20)
-        panel.remove(panel.header)
-        head = VGroup(mono(shown_path(SYS), CAPTION, S.GREY), label(f"· lines {C0}–{C1}", CAPTION, S.GREY))
-        head.arrange(RIGHT, buff=0.14).move_to(panel.header, aligned_edge=LEFT)
-        panel.header = head
-        panel.add(head)
+        # line 24 is 86 characters, the panel takes 72 at 20 pt: the house cut at the frame edge
+        src[k24] = cut(src[k24], 'reason="API not running at')
+        assert len(src[k24]) <= 72, len(src[k24])
+        panel = code_panel("\n".join(src), shown_path(SYS), C0, "python", font_size=20)
         panel.move_to([0, 2.72 - panel.height / 2, 0])
         fn_bar = VGroup(*[line_bar(panel.code, k, SYSTEM_TEST, 0.14) for k in range(0, 7)])
         get_span = code_span(panel.code, 18 - C0, "requests.get")
-        sk_bar = VGroup(line_bar(panel.code, k24, TURN, 0.22), line_bar(panel.code, k24 + 1, TURN, 0.22))
-        cls_span = code_span(panel.code, k24 + 2, "class TestAPIEndpoints")
+        sk_bar = line_bar(panel.code, k24, TURN, 0.22)
+        cls_span = code_span(panel.code, k24 + 1, "class TestAPIEndpoints")
 
         clk = clock()
         ctext = label("evaluated once · at collection", 22, TURN)

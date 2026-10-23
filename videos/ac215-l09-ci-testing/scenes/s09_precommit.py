@@ -46,6 +46,15 @@ Deviations (reported to the coordinator):
   and the F401 row are RED.
 - The gate pictures need the frame, so the terminal shrinks to a 3-row strip under them (beats 4–7),
   keeping the rows the narration names.
+- Beat 2's arches are a shorter Turnstile (arch_h 1.0) that the chain's turnstile turns into: with
+  the chain's 1.3 the 10-line panel and the arch names above the lamps collide.
+- `pre-commit run --all-files` leaves no room for a row tag: `▶ your turn` stands over the
+  terminal's top-right corner and the command is underlined YELLOW. Beat 6's "pause and walk the
+  loop" puts `▶ your turn` on the `[main b72d50d]` row (the command has scrolled out of the strip).
+- Local workarounds for common.py: CommitGate builds its arch names before moving its turnstile
+  (they sit 0.75 low; `place_gate` rebuilds them); Terminal.print/type scroll by sliding the old
+  rows up past the box, over the tracker, and print more rows than fit below the box (`room`/`out`
+  fade the oldest rows in place and print in chunks).
 """
 
 import re
@@ -485,8 +494,11 @@ class PreCommitGate(VoiceScene):
             vo.wait_until("A quick ponder")
             self.play(FadeOut(gpic), run_time=0.5)
             self.remove(gpic)
-        card = ponder_at(self, "black just Failed on utils.py.\nflake8 runs next — will it report\n"
-                               "the E231 and E303 from before?", 6, y=0.75)
+            card = ponder_card("black just Failed on utils.py.\nflake8 runs next — will it report\n"
+                               "the E231 and E303 from before?").move_to([0, 0.75, 0])
+            vo.wait_until("flake8 runs next")
+            self.play(FadeIn(card, scale=0.95), run_time=0.6)
+        ponder_timer(self, card, 6)        # PONDER 3: the card sits above the strip, not over it
 
         # ========================================================== 5. no: flake8 saw clean code
         pair = pair_card()
@@ -655,11 +667,8 @@ class PreCommitGate(VoiceScene):
         self.remove(*self.mobjects)
 
 
-def ponder_at(scene, question: str, seconds: float, y: float) -> VGroup:
-    """pause_and_ponder, but the card sits at height y (above the strip, not over it)."""
-    card = ponder_card(question).move_to([0, y, 0])
-    scene.play(FadeIn(card, scale=0.95), run_time=0.6)
+def ponder_timer(scene, card, seconds: float) -> None:
+    """pause_and_ponder's timer for a card already on screen (it went up during the narration)."""
     bar = card[3]
     target = bar.copy().scale(0.001, about_point=bar.get_start())
     scene.play(bar.animate(rate_func=linear).become(target), run_time=seconds)
-    return card
