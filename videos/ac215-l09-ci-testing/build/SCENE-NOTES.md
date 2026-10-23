@@ -214,3 +214,11 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
   `GATE_ORDER` keys filled.
 - Agents never kill processes they did not start; scratch files only under `build/`; delete only
   files you created, by exact path.
+
+## Traps added during scene builds (coordinator)
+- `TestPyramid.extra_rows().set_opacity(x)` fills the dashed boxes solid. To fade those rows, fade
+  their stroke and text instead (S03). In general prefer `fade()` over `set_opacity` on groups that
+  carry glows or chip fills: `set_opacity` makes fills stronger, not fainter.
+- Scaling a group that contains text below 1.0 trips the SMALL check; build it at the larger size
+  and Transform into the normal-size version instead (S03's gate table).
+- VoiceScene has no moving camera: "zoom" beats are done by swelling/fading the content (S03).

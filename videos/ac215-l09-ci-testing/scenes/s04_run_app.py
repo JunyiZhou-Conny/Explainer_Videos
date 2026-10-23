@@ -44,7 +44,7 @@ from common import (ERR, IMAGE, INK, LAPTOP, NARRATION, P_LAPTOP, P_LAPTOP_HOME,
                     TOOL, TURN, BOTTOM, bare_prompt, beside, capture, cd_prompt, chip, code,
                     code_span, cross_mark, cut, erratum_tag, extra_row, folder_glyph, file_glyph,
                     illustration_tag, istep, label, line_bar, line_pitch, mono, mono_line, note,
-                    outline_box, pin, readme, readme_card, resize, ring, squeeze, substring, term,
+                    outline_box, PANEL, pin, readme, readme_card, resize, ring, squeeze, substring, term,
                     time_row, track, tracker, turn_row, type_cmd, under, unpin, your_turn, MONO)
 
 SAY = NARRATION["S04"]
@@ -380,8 +380,8 @@ class RunTheApp(VoiceScene):
         """A schematic browser (no logos): a window with the three README URLs (lines 88–90) as
         vertical tabs. [0] = window, [1] = the three tabs."""
         win_w, win_h, bar_h = 10.2, 3.5, 0.5
-        frame = RoundedRectangle(width=win_w, height=win_h, corner_radius=0.14, stroke_color=S.GREY_DARK,
-                                 stroke_width=2).set_fill(S.GREY_DARKER, 1)
+        frame = RoundedRectangle(width=win_w, height=win_h, corner_radius=0.14, stroke_color=S.GREY,
+                                 stroke_width=2).set_fill(PANEL, 1)
         bar = Line(frame.get_corner(UL) + DOWN * bar_h, frame.get_corner(UR) + DOWN * bar_h,
                    color=S.GREY_DARK, stroke_width=2)
         dots = VGroup(*[Dot(radius=0.055, color=S.GREY_DARK) for _ in range(3)]).arrange(RIGHT, buff=0.1)
