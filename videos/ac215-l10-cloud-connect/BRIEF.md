@@ -152,9 +152,9 @@ never "safe"; the `127.0.0.1:` narrowing closes its street side.
 - **V5 · The browser is the integrator + the CORS bouncer (S01 teaser, S12 in full).** One chat
   question as three PINK packets from the browser: (1) to door 9000 with a bearer ticket riding to
   the cloud and 256 small bars coming back; (2) to door 8000, where a bouncer checks the packet's
-  `Origin: http://localhost:3200` stamp against a two-line guest list (an OPTIONS preflight knocks
-  first) and ten chunks come back; (3) to door 9000 with question + chunks, the answer returns.
-  Replay with a `:3300` stamp: the bouncer at 8000 gives no header, packet 3 is never sent, and
+  `Origin: http://localhost:3200` stamp; Chroma keeps its two-line guest list at home and hands back
+  only a one-origin pass or nothing (an OPTIONS preflight knocks first), and ten chunks come back; (3) to door 9000 with question + chunks, the answer returns.
+  Replay with a `:3300` stamp: Chroma returns no pass, so the browser never sends call 2 at all, and
   the API's door would still have answered — its guest list is `*`. A `curl` figure walks straight
   past the bouncer (no browser, no bouncer).
 - **V6 · The running map (built S02, grows every scene, final in S15).** This episode's gate-table
@@ -398,8 +398,8 @@ don't — extra `13`/`40` network inspects show the real addresses ("yours will 
 the point: dial names, not IPs"). The three-step proof, live (digest E5, all captured while the
 API ran): extra `41` — from inside the API container, `http://llm-rag-chromadb:8000` → `Name or
 service not known`: different street, no entry in this phone book. **PONDER 3 (8 s)**: "You want
-the *API* itself to query Chroma. What URL does it use, and what single Docker command makes that
-name resolvable?" Answer, live: extra `42` — `docker network connect cheese-app-network
+the API itself to query Chroma. What URL does it use, and what must change on the map for that
+name to resolve?" (merged script: never ask for a command the viewer hasn't seen) Answer, live: extra `42` — `docker network connect cheese-app-network
 llm-rag-chromadb` — and extra `43`: the same URL now returns `b'"1.0.0"'` (Docker DNS on a shared
 street); and the third angle, extra `44`: `http://localhost:8000` from inside the API container is
 `Connection refused` — inside a container, localhost is *that container*. Extra `45` disconnects:
@@ -450,8 +450,8 @@ bearer ticket rides to the cloud, 256 bars come back (GOLD: each question = one 
 generation on your bill); packet 2 — `POST :8000/…/collections/<id>/query`, `n_results: 10`
 (CODE src/services/DataService.js: 34-43): an *origin* is scheme + host + port, so `:3200`,
 `:9000` and `:8000` are three different origins; a JSON POST knocks first with an OPTIONS
-preflight, and the bouncer checks the page's `Origin` stamp against Chroma's two-line guest list
-(CODE llm-rag/docker-compose.yml: 26 — the instructors' hosted site, and your `localhost:3200`);
+preflight, and Chroma checks the page's `Origin` stamp against its own two-line guest list, returning a
+one-origin pass or nothing (CODE llm-rag/docker-compose.yml: 26 — the instructors' hosted site, and your `localhost:3200`);
 packet 3 — `POST :9000/rag/llm-response`, question + ten chunks, the answer returns. The guest
 list, live: extra `60` — preflight from `Origin: http://localhost:3200` →
 `access-control-allow-origin: http://localhost:3200`; extra `61` — the same preflight from
@@ -514,8 +514,8 @@ storage and egress bill (GOLD, GREY-dashed future).
 **S15 · Tear down, recap, and what's next (~250) — `s15_recap.py` · `Recap`.** Tracker F;
 `lecture_ref(10, "26, 31, 53")`. Teardown, captured: the API and frontend died with Ctrl-C +
 `exit` in their own scenes (`--rm` cleaned up — `46`); ▶ `docker compose down` once more → `75`
-(idempotent, clean); extra `76` — `docker network rm cheese-app-network`. **Nothing idles in the
-cloud**: no VM, no bucket, no deployed endpoint was created (digest §2) — what can keep costing is
+(stops the Chroma that the extra restart `73` brought back; not a no-op); extra `76` — `docker network rm cheese-app-network`. **This lecture started
+nothing in the cloud**: it created no VM and no bucket (digest §2); S13's tuned endpoint is L08's — what can keep costing is
 the **key**: hygiene, said (suggested, `extra` card): `gcloud iam service-accounts keys list` /
 `keys delete` — delete keys you no longer use; if one ever reaches GitHub, delete it in IAM
 immediately (history rewriting is not enough — and L9's `detect-private-key` hook is the gate that
@@ -603,7 +603,7 @@ run spends money:
 - **S12**: each Chat question = 1 embedding + 1 generation (`max_output_tokens` 3000).
 - **S13**: each Agent question = 1 embedding + 3–7 generation calls; tuned-model calls bill
   whichever project owns the endpoint.
-**Nothing idles**: no VM, bucket or deployed endpoint is created (digest §2). Teardown, captured:
+**This lecture started nothing in the cloud**: no VM or bucket is created (digest §2); the tuned endpoint used in S13 comes from L08. Teardown, captured:
 Ctrl-C + `exit` ends each `--rm` container (`33`, `51`, `46`); `docker compose down` (`70`, `75`);
 `docker network rm cheese-app-network` (`76`); vectors persist in `docker-volumes/chromadb` —
 delete that folder only to really reset. Said only (suggested): key hygiene —

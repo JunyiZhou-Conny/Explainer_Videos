@@ -422,8 +422,8 @@ def code(path: str, first: int, last: int | None = None, language: str | None = 
     line_bar(p.code, k, colour) with k = file line - first."""
     last = first if last is None else last
     if last - first + 1 > max_lines:
-        raise ValueError(f"CODE {path}: {last - first + 1} lines; never more than 12 on screen "
-                         "(show a long file as successive windows of <= 12 lines)")
+        raise ValueError(f"CODE {path}: {last - first + 1} lines; never more than {max_lines} lines "
+                         f"on screen (show a long file as successive windows of <= {max_lines} lines)")
     name = Path(path).name
     if language is None:
         language = ("docker" if name.startswith("Dockerfile") else
