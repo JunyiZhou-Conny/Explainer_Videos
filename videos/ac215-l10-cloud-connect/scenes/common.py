@@ -1233,19 +1233,40 @@ def riddle_label(i: int, size: float = 22) -> VGroup:
     return g
 
 
+class Rig(VGroup):
+    """A set piece whose not-yet-shown parts ('riders': built, not added) follow it when it is
+    placed with shift / move_to / next_to / align_to / to_edge before it plays. (An .animate move
+    after it is on screen does not carry them: place pieces first.)"""
+
+    def ride(self, *mobs):
+        self._riders = getattr(self, "_riders", []) + [m for m in mobs if m is not None]
+        return self
+
+    def shift(self, *vectors):
+        super().shift(*vectors)
+        riders = getattr(self, "_riders", [])
+        if riders:
+            fam = set(map(id, self.get_family()))
+            for m in riders:
+                if id(m) not in fam:
+                    m.shift(*vectors)
+        return self
+
+
 def _poly(points, color, stroke: float = 3, tip: bool = True, dashed: bool = False) -> VGroup:
-    """A polyline route through `points` ending in an arrow tip. .path (the whole route, for
-    travel()) .line .tip_arrow"""
+    """A polyline route through `points` ending in an arrow tip (a Rig: line + tip are its children,
+    so Create draws only what is seen). .path (the whole route, for travel(); an invisible rider that
+    follows shift/move_to/next_to of the route or of the piece holding it) .line .tip_arrow"""
     pts = [np.array(p, dtype=float) for p in points]
-    # the travel path rides inside the group (invisible), so shift/move_to carry it along
     path = VMobject(stroke_width=0, stroke_opacity=0, fill_opacity=0).set_points_as_corners(pts)
-    line = VMobject(stroke_color=color, stroke_width=stroke).set_points_as_corners(pts[:-1] + [pts[-1]])
+    line = VMobject(stroke_color=color, stroke_width=stroke).set_points_as_corners(pts)
     if dashed:
         line = DashedVMobject(line, num_dashes=max(8, int(sum(np.linalg.norm(b - a) for a, b in
                                                             zip(pts, pts[1:])) * 5)))
         line.set_stroke(color, stroke)
-    g = VGroup(path, line)
+    g = Rig(line)
     g.path, g.line, g.tip_arrow = path, line, None
+    g.ride(path)
     if tip:
         a, b = pts[-2], pts[-1]
         d = (b - a) / max(1e-6, np.linalg.norm(b - a))
@@ -1267,26 +1288,6 @@ def greyed(m, shape=S.GREY_DARK, text=S.GREY):
             if x.get_fill_opacity() > 0 and x.get_fill_color().to_hex().upper() != S.BG.upper():
                 x.set_fill(shape)
     return c
-
-
-class Rig(VGroup):
-    """A set piece whose not-yet-shown parts ('riders': built, not added) follow it when it is
-    placed with shift / move_to / next_to / align_to / to_edge before it plays. (An .animate move
-    after it is on screen does not carry them: place pieces first.)"""
-
-    def ride(self, *mobs):
-        self._riders = getattr(self, "_riders", []) + [m for m in mobs if m is not None]
-        return self
-
-    def shift(self, *vectors):
-        super().shift(*vectors)
-        riders = getattr(self, "_riders", [])
-        if riders:
-            fam = set(map(id, self.get_family()))
-            for m in riders:
-                if id(m) not in fam:
-                    m.shift(*vectors)
-        return self
 
 
 # ================================================================== V1 · the auth chain

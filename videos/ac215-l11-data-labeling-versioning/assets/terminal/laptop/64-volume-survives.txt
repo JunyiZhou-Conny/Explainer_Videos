@@ -1,0 +1,10 @@
+$ sudo ls -la docker-volumes/label-studio
+total 1388
+drwxr-sr-x    5 1001     root          4096 Oct 23 11:51 .
+drwxr-sr-x    3 root     root          4096 Oct 23 11:44 ..
+-rw-------    1 1001     root            63 Oct 23 11:45 .env
+drwxr-sr-x    2 1001     root          4096 Oct 23 11:45 export
+-rw-r--r--    1 1001     root       1392640 Oct 23 11:51 label_studio.sqlite3
+drwxr-sr-x    3 1001     root          4096 Oct 23 11:45 media
+drwxr-sr-x    2 1001     root          4096 Oct 23 11:45 test_data
+[exit 0]

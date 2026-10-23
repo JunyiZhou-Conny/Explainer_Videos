@@ -1,0 +1,3 @@
+$ docker rm data-label-studio
+data-label-studio
+[exit 0]

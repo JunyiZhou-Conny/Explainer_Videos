@@ -1,0 +1,45 @@
+$ sh docker-shell-CLI.sh
+
+[+] Building 1.0s (11/11) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 1.48kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim-bookworm                             0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [internal] load build context                                                                        0.1s
+ => => transferring context: 1.40MB                                                                      0.1s
+ => [1/6] FROM docker.io/library/python:3.12-slim-bookworm@sha256:07d3bc5e4542eb7433fa994970b5905e5f119  0.1s
+ => => resolve docker.io/library/python:3.12-slim-bookworm@sha256:07d3bc5e4542eb7433fa994970b5905e5f119  0.1s
+ => CACHED [2/6] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &&     0.0s
+ => CACHED [3/6] WORKDIR /app                                                                            0.0s
+ => CACHED [4/6] COPY --chown=app:app pyproject.toml uv.lock* ./                                         0.0s
+ => CACHED [5/6] RUN uv sync --frozen                                                                    0.0s
+ => [6/6] COPY --chown=app:app . ./                                                                      0.1s
+ => exporting to image                                                                                   0.5s
+ => => exporting layers                                                                                  0.3s
+ => => exporting manifest sha256:97e8099647d4ec2e81f6ed516dc470157ef1b39827f517dd5af35a88dd6b5ee4        0.0s
+ => => exporting config sha256:f716bf8544f0277577f6ff90fb1543c4f149c394299e4af82c17dd319fee1dad          0.0s
+ => => exporting attestation manifest sha256:8bdbfb5b88c2aba37d8b6595ce80de5ed46ccd42265742bae5c15b73b7  0.0s
+ => => exporting manifest list sha256:48850088f22fbbbe6b12b1429502b136f732a508aa7a1ed7d06747b0fd9a4858   0.0s
+ => => naming to docker.io/library/data-label-cli:latest                                                 0.0s
+ => => unpacking to docker.io/library/data-label-cli:latest                                              0.1s
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.15
+UV version: uv 0.13.5 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+app@e9e15714ac9b:/app$ python cli.py -p -k student-demo-token-not-a-secret
+get_projects
+[<label_studio_sdk._legacy.project.Project object at 0x7f651f1b71a0>]
+1 Cheese labels
+<label_studio_sdk._legacy.project.Project object at 0x7f651f341fa0>
+app@e9e15714ac9b:/app$ python cli.py -t -k student-demo-token-not-a-secret
+get_project_tasks
+<label_studio_sdk._legacy.project.Project object at 0x7f27e5607650>
+Number of tasks: 3
+Number of labeled tasks: 1
+Annotations: [{'id': 1, 'result': [{'from_name': 'choice', 'to_name': 'image', 'type': 'choices', 'value': {'choices': ['gouda']}}], 'created_username': ' student@example.com, 1', 'created_ago': '3\xa0minutes', 'completed_by': 1, 'was_cancelled': False, 'ground_truth': False, 'created_at': '2026-10-23T11:46:57.267096Z', 'updated_at': '2026-10-23T11:46:57.267146Z', 'draft_created_at': None, 'lead_time': None, 'import_id': None, 'last_action': None, 'bulk_created': False, 'task': 1, 'project': 1, 'updated_by': 1, 'parent_prediction': None, 'parent_annotation': None, 'last_created_by': None}]
+app@e9e15714ac9b:/app$ exit
+exit
+[exit 0]
