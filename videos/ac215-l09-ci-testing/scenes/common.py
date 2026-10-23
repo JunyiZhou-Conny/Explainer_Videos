@@ -940,7 +940,8 @@ class CommitGate(VGroup):
         ts = self.turnstile
         ts.move_to([0, 0, 0], aligned_edge=DOWN)
         x_left = ts.get_left()[0] - sp - left_w / 2
-        self.home = np.array([x_left, 0.62, 0])
+        # the envelope's resting point, as an invisible dot that moves with the group
+        self._home = Dot([x_left, 0.62, 0], radius=0.001).set_opacity(0)
         self.tray = tray(tray_w=left_w + 0.1, size=size).move_to([x_left, 0.11, 0]) if with_tray else None
         if self.tray is not None:
             self.tray.shift(DOWN * (self.tray.shape.get_bottom()[1]))
@@ -952,7 +953,13 @@ class CommitGate(VGroup):
         self.floor = Line([x0, 0, 0], [self.vault.get_right()[0] + 0.1, 0, 0], color=S.GREY_DARK,
                           stroke_width=3)
         self._door_saved = self.vault.door.copy()
-        self.add(self.floor, *([self.tray] if self.tray is not None else []), ts, self.vault, self.envelope)
+        self.add(self._home, self.floor, *([self.tray] if self.tray is not None else []), ts, self.vault,
+                 self.envelope)
+
+    @property
+    def home(self) -> np.ndarray:
+        """The envelope's resting point (follows the group when it moves)."""
+        return self._home.get_center()
 
     @property
     def arches(self):

@@ -142,7 +142,9 @@ class Hook(VoiceScene):
             gate.envelope.remove(gate.envelope.text)
             gate.vault.remove(gate.vault.text)
             self.remove(word)
-            self.play(gate.animate.scale(0.32).move_to([5.3, -2.85, 0]),
+            k = 0.32
+            corner = [6.4 - gate.width * k / 2, -3.45 + gate.height * k / 2, 0]
+            self.play(gate.animate.scale(k).move_to(corner),
                       LaggedStart(*[FadeIn(t, scale=0.8) for t in tiles], lag_ratio=0.03), run_time=1.4)
             vo.wait_until("the model is a few tiles")
             self.play(ml_tiles.animate.set_fill(VENV, 0.55).set_stroke(VENV), FadeIn(cap_ml, shift=UP * 0.15),
@@ -218,7 +220,8 @@ class Hook(VoiceScene):
             unpin(self, ln1, yt)
             ln2 = type_cmd(self, strip, "ls -la", type_time=0.5)
             xt = beside(extra_row(), ln2)
-            pin(self, ln2, xt, anim=AnimationGroup(FadeIn(xt, shift=LEFT * 0.1), track(tr, extra=True)))
+            pin(self, ln2, xt, anim=AnimationGroup(FadeIn(xt, shift=LEFT * 0.1), track(tr, extra=True),
+                                                   Transform(rng, tracker_ring(tracker("F", 1, True), opacity=0.35))))
             vo.wait_until("marks a check")
             self.play(Indicate(xt, color=S.GREY, scale_factor=1.15), run_time=0.8)
             vo.wait_until("Every command")
