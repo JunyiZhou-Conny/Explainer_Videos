@@ -216,13 +216,25 @@ Conventions
   the labeled drawer S07, compose S08, the repo + flags S09/S13/S14, bucket 2 S10, Colab S15); S08
   ends part 1 with the labeling half lit; S16 adds the GREY-dashed monitoring watchtower, shows it
   complete, then unlit.
-- Length and parts: narration **WORDS_TOTAL** words (`python -m explainer.script`, which counts SAY
+- Length and parts: narration **4,282** words (`python -m explainer.script`, which counts SAY
   words; its minute figure assumes 155 wpm and is ignored). At Kokoro af_heart speed 0.9 (≈174 wpm)
-  that is ≈MIN_TOTAL min of narration, ≈29–31 min with typing, outputs and ponder timers. Part 1 =
+  that is ≈24.6 min of narration, ≈29–31 min with typing, outputs and ponder timers. Part 1 =
   S01–S08 (labeling; ends on `docker system prune` with the labeled project still on disk), part 2
   = S09–S16 (versioning). Each part ends on an empty frame. Per scene (BRIEF target in brackets):
 
-WORD_TABLE
+  | scene | words (BRIEF) | scene | words (BRIEF) |
+  | --- | --- | --- | --- |
+  | S01 Hook | 219 (220) | S09 YourOwnRepo | 247 (240) |
+  | S02 TwoStations | 256 (250) | S10 BucketAsFolder | 293 (290) |
+  | S03 KeyAndPhotos | 232 (230) | S11 StarterFix | 249 (260) |
+  | S04 StudioInABox | 302 (300) | S12 Fingerprints | 326 (320) |
+  | S05 WhoTouchesBytes | 292 (290) | S13 PointerAndBytes | 271 (300) |
+  | S06 CorsOnTheBucket | 300 (290) | S14 SecondVersion | 251 (260) |
+  | S07 LabelsAndTokens | 299 (310) | S15 TimeTravel | 252 (250) |
+  | S08 ComposeAndClean | 234 (230) | S16 Recap | 259 (230) |
+  | **part 1** | **2,134** (2,120) | **part 2** | **2,148** (2,150) |
+
+  Every scene is within the BRIEF's ±15 %. Re-run the counter after any review edit.
 
 Notes for scene authors
 - TERM line numbers are *file* lines (line 1 = the `$` command); `Capture.pick()` indexes the
@@ -1142,4 +1154,42 @@ SAY: Answers are in the exercises, every command in the study guide. In lecture 
 
 ## Lexicon candidates
 
-LEXICON_PLACEHOLDER
+Words the SAY lines contain that `explainer/lexicon.yaml` has no entry for and Kokoro af_heart may
+misread. **Not added**: the lexicon stage checks each with `explainer/voice.py` (phonemes) and adds
+only the ones it gets wrong, each with `ipa` + `say`. The SAY lines already avoid a bare "a" and a
+`'s` directly before every word below, so no "a X" guard is needed unless the reviewer adds one.
+Nothing in the md5 / hash family is spoken: every hash fragment (`89db50de…`, `5b53853e…`,
+`d7/…`, `6b342844…`, `3280f8f9…`, `54081d12…`, the commit and container ids) is on screen only.
+
+| word as written in SAY | scenes | intended reading | why it is a candidate |
+| --- | --- | --- | --- |
+| DVC | S02, S09–S16 | "D V C" | acronym; may be read as a word |
+| dvc (in `dvc init`, `dvc add`, `dvc push`, `dvc get`, `dvc checkout`) | S12–S16 | "D V C" | lowercase command name; entries are case-sensitive, so it needs its own |
+| gcsfuse | S10, S11 | "G C S fuse" | invented tool name |
+| CORS | S05, S06, S16 | "kors" (one syllable) | L10 used it without an entry; confirm it is not spelled out |
+| MD5 | S12 | "M D 5" | letter-digit acronym |
+| JSON | S03, S07 | "jay-son" | check it is not spelled out |
+| docker-shell-CLI.sh | S06 | "docker shell C L I dot S H" | variant of the existing `docker-shell.sh` entry |
+| docker-shell-compose.sh | S08 | "docker shell compose dot S H" | same |
+| google-cloud-sdk | S11 | "google cloud S D K" | package name |
+| google-cloud-cli | S11 | "google cloud C L I" | package name |
+| 1.23.0 | S04, S07 | "one point twenty-three point zero" | new `a.b.c` version |
+| 1.23.2 | S04 | "one point twenty-three point two" | new `a.b.c` version |
+| 3.63.0 | S11 | "three point sixty-three point zero" | new `a.b.c` version |
+| 3.67.1 | S15 | "three point sixty-seven point one" | new `a.b.c` version |
+| 1.5, 1.76, 3.7, 3.8 | S03, S08 | "one point five", "one point seven six", "three point seven", "three point eight" | two-part numbers (L09 added several such) |
+| 1001 | S04 | "ten oh one" | a user id; default reading would be "one thousand one" |
+| v20, v21, v25, v30 | S13, S14, S15 | "vee twenty", … | tag names |
+| aarch64 | S06 | "A arch sixty-four" | architecture name (L10 said it with no entry; confirm) |
+| x86 | S06 | "x eighty-six" | architecture name (L10 likewise) |
+| sudo | S04 | "soo-doo" | Unix command |
+| chown | S04 | "C H own" | Unix command |
+| GET | S06 | "get" | HTTP method in capitals; may be spelled out |
+| dirs (in "implicit dirs") | S10 | "durs" | abbreviation of directories |
+| lakeFS | S16 | "lake F S" | product name, mixed case |
+| gruyere | S04 | "groo-YAIR" | cheese name |
+| parmigiano | S04 | "par-mee-JAH-no" | cheese name |
+| gouda | S01, S04, S07 | "GOO-da" (or "GOW-da"; pick one) | cheese name, two common readings |
+| amanita | S07 | "am-uh-NYE-tuh" | mushroom name |
+| E7 | S02 | "E 7" | exercise label |
+| PNG | S03 | "P N G" | acronym; probably fine |
