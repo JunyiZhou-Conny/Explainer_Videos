@@ -770,17 +770,36 @@ def bare_prompt(scene, t: Terminal):
     return ln
 
 
-def type_cmd(scene, t: Terminal, cmd: str, type_time: float | None = None):
+def _soft_fold(t: Terminal):
+    def fold(text: str, first_prefix: int = 0) -> list[str]:
+        n = t.max_chars
+        return [text[i:i + n] for i in range(0, len(text), n)] or [text]
+    return fold
+
+
+def type_cmd(scene, t: Terminal, cmd: str, type_time: float | None = None, soft: bool = False):
     """Plays: type at the waiting prompt (replacing a bare prompt line if there is one; room is made
-    first). Long commands fold at a space with ' \\' (Terminal.fold). Returns the line, or a VGroup
-    with .rows when it folded."""
+    first). Long commands fold at a space outside quotes with ' \\' (Terminal.fold). soft=True
+    soft-wraps at the row edge instead, like a real terminal (no ' \\', rows join back to the exact
+    command, asserted): for a quoted argument longer than a row (the sed edits 40/85/87, where
+    fold() would put ' \\' inside the quotes). Returns the line, or a VGroup with .rows when it
+    folded."""
     if len(t.lines) and getattr(t.lines[-1], "bare", False):
         last = t.lines[-1]
         scene.remove(last, *last.submobjects)
         t.lines.remove(last)
     p = t.prompt + " "
-    room(scene, t, len(t.fold(p + cmd, first_prefix=len(p))))
-    return t.type(scene, cmd, type_time)
+    if soft:
+        t.fold = _soft_fold(t)
+    try:
+        room(scene, t, len(t.fold(p + cmd, first_prefix=len(p))))
+        ln = t.type(scene, cmd, type_time)
+    finally:
+        if soft:
+            del t.fold
+    if soft and hasattr(ln, "rows"):
+        assert "".join(r.text for r in ln.rows) == p + cmd, "soft wrap must join back to the command"
+    return ln
 
 
 def out(scene, t: Terminal, lines, wrap: bool = False, run_time: float = 0.6, lag: float = 0.08,
@@ -2685,7 +2704,7 @@ class TagRope(Rig):
         super().__init__(**kw)
         self.size = size
         y = 2.05
-        xs = (-5.7, -3.4, -0.75)
+        xs = (-5.5, -3.35, -0.75)
         self.line = Line([-6.2, y, 0], [-0.4, y, 0], color=S.GREY, stroke_width=3)
         self.beads = VGroup(*[bead().move_to([x, y, 0]) for x in xs])
         self.bead_labels = VGroup(*[note(n).next_to(b, DOWN, buff=0.12) for n, b in zip(BEAD_NAMES, self.beads)])
