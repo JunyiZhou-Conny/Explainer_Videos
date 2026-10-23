@@ -341,3 +341,5 @@ S12); `picker='char-split-collection ▾'` (S12/S13); `fun_fact=True` (S13: last
   explicit pieces, then clean them up (S08 `fill_path`).
 - Pending common.py wishes (after the builds): `IamGridRig.verdict()` check mark vs wide tokens;
   `IamGridRig.fire()` arrow stops at the cell edge, and chip/arrow/verdict as separate steps (S08).
+- A ponder card over other content needs an opaque frame fill (the default 0.96 lets grid words
+  ghost through) (S08 critic). Request arrows into empty grid cells run to the cell's middle.
