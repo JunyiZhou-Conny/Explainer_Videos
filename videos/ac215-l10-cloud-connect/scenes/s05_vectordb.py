@@ -372,6 +372,9 @@ class NetworkAndShell(VoiceScene):
                                         "and it was removed before")):
                 vo.wait_until(anchor)
                 self.play(FadeIn(note_card.body[i], shift=RIGHT * 0.2), run_time=0.6)
+                if i == 1:
+                    vo.wait_until("so the folder listings match the README")
+                    self.play(Indicate(note_card.body[1], color=INK, scale_factor=1.04), run_time=0.8)
             vo.wait_until("So from here on")
             self.play(FadeIn(ch, shift=UP * 0.2), run_time=0.7)
             vo.wait_until("fails exactly the way a missing key fails")
