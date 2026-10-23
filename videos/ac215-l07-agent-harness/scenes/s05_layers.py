@@ -27,7 +27,8 @@ Beats (script.md "## S05", one voiceover block each):
     run timeout". Eight BLUE "call" tokens pass, the counter ticks 1/8 … 8/8 and line 76's GREEN
     bar flashes on each tick; a ninth token: lines 73–74 RED, the turnstile locks RED and the RED
     label `Maximum of 8 model calls reached.` appears; a GREEN "tool" token bounces off the lock:
-    lines 69–70 RED, caption "the failure sticks".
+    lines 69–70 RED (the bar stops after the code) with the caption "the failure sticks" beside it.
+    (Neighbouring line bars are drawn on one row grid, row_bar(): no bright seam between them.)
  4  The Budget ring lifts off; the turnstile, tokens, card and label leave; a GREY dashed fence
     draws round the rings, labelled "SDK fallback · 40 iterations · no call limits · no overall
     time budget", while the panel is swapped for CODE(execution.py: 56–58) (lines 57–58 joined
@@ -52,8 +53,8 @@ Beats (script.md "## S05", one voiceover block each):
     and `lite = harness.without("trace")` (three); a YELLOW "?" on lite's inner ring, another on
     the original's Trace ring, as asked. PONDER (8 s).
  9  The card leaves. "Yes, and yes": lite's inner ring glows GREEN, excerpt chip `README.md · line
-    229 (excerpt)` "call counts and required tool admission/audit records remain". Then the onions
-    shrink up, CODE(formaggio/agents/harness.py: 62–65, 68) (folded, 20 pt) along the bottom with
+    229 (excerpt)` "call counts and required tool admission/audit records remain". Then
+    CODE(formaggio/agents/harness.py: 62–68) (20 pt) along the bottom, under the onions, with
     lines 63 and 68 lit; the original's Trace ring glows, GREEN tag "unchanged"; lite gets the GREY
     caption "a separate configuration"; quote card `README.md · line 234 (excerpt)` "`.add(...)`
     also returns a new configuration."
@@ -159,7 +160,7 @@ PANEL_TOP = 2.78                # beat 1: README / act1 panels' top (header) und
 STACK_X = -6.4                  # beat 2: the column the four labels wait in (left edges)
 CR_POS = np.array([-4.4, 1.5, 0])  # beats 3-5: the compact rings (fence fits: x -6.4..-2.4, y 0.15..2.85)
 HUB = np.array([-0.62, 1.72, 0])   # beat 3: the turnstile's hub (tokens pass at this height)
-ONION_A, ONION_B = np.array([-4.85, 1.08, 0]), np.array([0.7, 1.08, 0])   # beats 8-9: harness and lite
+ONION_A, ONION_B = np.array([-4.85, 1.26, 0]), np.array([0.7, 1.26, 0])   # beats 8-9: harness and lite
 
 
 # ------------------------------------------------------------------ small helpers
@@ -249,6 +250,25 @@ def pointer(frame, parts, x_left: float, color: str = TURN) -> VGroup:
 def code_row(panel, n: int):
     """The (first) code row of file line n in a src_panel."""
     return panel.code.code_lines[panel.rows_of(n)[0]]
+
+
+def row_bar(panel, first: int, last: int | None = None, color: str = TURN, opacity: float = 0.2,
+            right: float | None = None) -> Rectangle:
+    """One translucent bar over file lines first..last of a src_panel, on a uniform row grid, so
+    bars of neighbouring lines abut without the brighter seam two overlapping .bar()s leave.
+    right: the bar's right edge (default: the panel's, as .bar())."""
+    bg = panel.code.background
+    pts = [(i, r.get_center()[1]) for i, r in enumerate(panel.code.code_lines) if r.width > 0.05]
+    (i0, ya), (i1, yb) = pts[0], pts[-1]                          # (empty rows have no centre)
+    pitch = (ya - yb) / (i1 - i0)
+    y0 = sum(y + i * pitch for i, y in pts) / len(pts)            # row 0's centre on the grid
+    ks = [k for n in range(first, (last or first) + 1) for k in panel.rows_of(n)]
+    top = y0 - min(ks) * pitch + pitch / 2
+    bot = y0 - max(ks) * pitch - pitch / 2
+    x0 = bg.get_left()[0] + 0.06
+    x1 = bg.get_right()[0] - 0.06 if right is None else right
+    r = Rectangle(width=x1 - x0, height=top - bot, stroke_width=0).set_fill(color, opacity)
+    return r.move_to([(x0 + x1) / 2, (top + bot) / 2, 0])
 
 
 def answer_b() -> VGroup:
@@ -362,11 +382,11 @@ class HarnessLayers(VoiceScene):
         more.set_y(gap_row.get_center()[1])
         rp.add(more)
         nb = two_row_chip("notebook cell:", "Colab or your own Jupyter")
-        bars_r = {n: rp.bar(n, TURN, 0.2) for n in (217, 218, 219, 220)}
+        bars_r = {n: row_bar(rp, n) for n in (217, 218, 219, 220)}
         hb = rp.span(216, "build_agent")
         ap = src_panel("acts/act1_agent.py", 26, 33, wrap=True)
         place(ap, cx=0, top=PANEL_TOP)
-        bars_a = {n: ap.bar(n, TURN, 0.2) for n in (29, 30, 31, 32)}
+        bars_a = {n: row_bar(ap, n) for n in (29, 30, 31, 32)}
         core_b1 = core.copy().move_to([0, CORE_Y1, 0])
         place(nb, left=core_b1.get_right()[0] + 0.45, cy=CORE_Y1)
         apart(rp, core_b1, 0.12)
@@ -463,11 +483,15 @@ class HarnessLayers(VoiceScene):
         place(msg, left=ts.base.get_right()[0] + 0.3, bottom=ep.get_top()[1] + 0.14)
         apart(msg, q230, 0.1)
         apart(ts, ep, 0.08)
-        b76, b73, b74 = ep.bar(76, HARNESS, 0.16), ep.bar(73, ERR, 0.2), ep.bar(74, ERR, 0.2)
-        b69, b70 = ep.bar(69, ERR, 0.2), ep.bar(70, ERR, 0.2)
-        r69 = code_row(ep, 69)
-        sticks = note("the failure sticks").next_to(r69, RIGHT, buff=0.6)
-        assert sticks.get_right()[0] < ep.code.get_right()[0] - 0.1
+        b76 = row_bar(ep, 76, color=HARNESS, opacity=0.16)
+        b7374 = row_bar(ep, 73, 74, color=ERR)                   # one bar: no seam between the rows
+        # lines 69-70: the bar stops after line 70's text, and the caption sits on the panel beside
+        # it (GREY on a RED bar was hard to read)
+        x_end = code_row(ep, 70).get_right()[0] + 0.3
+        b6970 = row_bar(ep, 69, 70, color=ERR, right=x_end)
+        sticks = note("the failure sticks")
+        place(sticks, left=x_end + 0.4, cy=b6970.get_center()[1])
+        assert sticks.get_right()[0] < ep.code.background.get_right()[0] - 0.2
         tok_probe = ts.token()
         assert tok_probe.get_left()[0] > cr.frames["cartcheck"].get_right()[0] + 0.1
         apart(ts.token(), q230, 0.1)
@@ -496,15 +520,15 @@ class HarnessLayers(VoiceScene):
             ninth = ts.token()
             self.play(FadeIn(ninth, shift=RIGHT * 0.25), FadeOut(prev), run_time=0.25)
             vo.wait_until("a ninth fails")
-            self.play(ninth.animate.shift(RIGHT * 0.25), FadeIn(b73), FadeIn(b74), FadeOut(b76), run_time=0.35)
+            self.play(ninth.animate.shift(RIGHT * 0.25), FadeIn(b7374), FadeOut(b76), run_time=0.35)
             self.play(*ts.lock(text=None), FadeIn(msg, shift=UP * 0.1), run_time=0.6)
             self.play(flash(ts.counter, ERR, 1.3), run_time=0.5)
             vo.wait_until("and the lock stays shut")
             tool = ts.token(HARNESS, "tool")
-            self.play(FadeOut(ninth), FadeIn(tool, shift=RIGHT * 0.25), FadeOut(b73), FadeOut(b74), run_time=0.3)
+            self.play(FadeOut(ninth), FadeIn(tool, shift=RIGHT * 0.25), FadeOut(b7374), run_time=0.3)
             hit = ts.hub.get_center() + LEFT * (0.85 + tool.width / 2)     # the lock sticks: the tool
             back = tool.get_center().copy()                                 # token runs at it and back
-            self.play(tool.animate(rate_func=rush_into).move_to(hit), FadeIn(b69), FadeIn(b70), run_time=0.4)
+            self.play(tool.animate(rate_func=rush_into).move_to(hit), FadeIn(b6970), run_time=0.4)
             self.play(tool.animate.move_to(back), FadeIn(sticks, shift=LEFT * 0.1), run_time=0.45)
 
         # ========================================================== 4 · without Budget: the SDK fallback
@@ -529,7 +553,7 @@ class HarnessLayers(VoiceScene):
 
         with self.voiceover(SAY[4]) as vo:
             self.play(*cr.lift("budget"), FadeOut(VGroup(ts, tool, msg, q230, ill3)), run_time=0.6)
-            self.play(FadeOut(VGroup(ep, b69, b70, sticks)), run_time=0.3)
+            self.play(FadeOut(VGroup(ep, b6970, sticks)), run_time=0.3)
             self.play(FadeIn(e56, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("only the framework's fallback")
             self.play(Create(fe.frame), FadeIn(ill4), run_time=0.8)
@@ -707,18 +731,18 @@ class HarnessLayers(VoiceScene):
         ex229 = excerpt_chip(R229, "README.md · line 229 (excerpt)", line=source_line("README.md", 229))
         place(ex229, cx=0, bottom=-3.45)
         apart(ex229, oa, 0.1)
-        hp = src_panel("formaggio/agents/harness.py", [(62, 65), 68], wrap=True, size=20)
+        hp = src_panel("formaggio/agents/harness.py", 62, 68, wrap=True, size=20)
         place(hp, cx=0, bottom=-3.5)
-        b63, b68 = hp.bar(63, TURN, 0.2), hp.bar(68, TURN, 0.2)
+        b63, b68 = row_bar(hp, 63), row_bar(hp, 68)
         unch = tag("unchanged", HARNESS)
         place(unch, left=oa.get_right()[0] + 0.25, cy=oa.get_center()[1])
         sep = note("a separate configuration")
-        place(sep, left=ob.get_right()[0] + 0.3, top=ob.get_top()[1])
+        place(sep, left=ob.get_right()[0] + 0.3, top=min(ob.get_top()[1], ill8.get_bottom()[1] - 0.12))
         q234 = quote_card(234, lines=["`.add(...)` also returns", "a new configuration."],
                           header="README.md · line 234 (excerpt)", expected=False)
         place(q234, right=SAFE_X, top=sep.get_bottom()[1] - 0.25)
         for a_, b_ in ((unch, ob), (sep, tb), (q234, hp), (q234, ob), (sep, ob), (oa, hp), (ob, hp),
-                       (unch, hp), (q234, ill8)):
+                       (unch, hp), (q234, ill8), (sep, ill8)):
             apart(a_, b_, 0.08)
         inside_frame(hp, unch, sep, q234, ex229)
 
@@ -729,7 +753,7 @@ class HarnessLayers(VoiceScene):
             self.play(ob.glow("inner", HARNESS), FadeIn(ex229, shift=UP * 0.1), run_time=0.6)
             self.play(flash(ob.parts["inner"].lock, HARNESS, 1.8), run_time=0.6)
             vo.wait_until("And the add and without methods")
-            self.play(FadeOut(VGroup(ex229, ill8)), ob.unglow("inner"), run_time=0.4)
+            self.play(FadeOut(ex229), ob.unglow("inner"), run_time=0.4)   # (the onions keep their tag)
             self.play(FadeIn(hp, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("never change a harness")
             self.play(FadeIn(b63), FadeIn(b68), run_time=0.4)
@@ -754,7 +778,7 @@ class HarnessLayers(VoiceScene):
         inside_frame(t, ft, c248, c252, tc)
 
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(oa, ob, ta, tb, unch, sep, q234, hp, b63, b68)), run_time=0.5)
+            self.play(FadeOut(VGroup(oa, ob, ta, tb, ill8, unch, sep, q234, hp, b63, b68)), run_time=0.5)
             self.play(tr.goto(4), FadeIn(t, shift=UP * 0.2), run_time=0.5)
             self.play(FadeIn(ft, shift=DOWN * 0.1), run_time=0.3)
             type_cmd(self, t, C12.cmd, 0.9)
