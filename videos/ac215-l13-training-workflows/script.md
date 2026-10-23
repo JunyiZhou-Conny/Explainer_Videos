@@ -229,9 +229,9 @@ Conventions
   repo lane dashed, the key chip in a variable and the bucket named; S08–S14 light the repo lane piece
   by piece (the cockpit gets its "submits · never trains" stamp in S09); S15 shows it complete, then
   unlit. The cockpit has exactly two arrows (package & upload; create job) and none into a job.
-- Length and parts: narration **4,287** words after the v2 review merge (`python -m
+- Length and parts: narration **4,292** words after the v2 review merge (`python -m
   explainer.script`, which counts SAY words; its minute figure assumes 155 wpm and is ignored;
-  ceiling 4,300). At Kokoro af_heart speed 0.9 (≈174 wpm) that is ≈24.6 min of narration, ≈29–31
+  ceiling 4,300). At Kokoro af_heart speed 0.9 (≈174 wpm) that is ≈24.7 min of narration, ≈29–31
   min with typing, outputs, three builds and the ponder timers. Part 1 = S01–S07 (track it, then
   get ready; ends on V1 with "today it won't build"), part 2 = S08–S15 (ship it). Each part ends on
   an empty frame. Per scene (BRIEF target in brackets, ±15 % band):
@@ -242,14 +242,14 @@ Conventions
   | S02 LeversAndRecord | 190 (220) | S09 InsideTheTarball | 311 (300) |
   | S03 FolderTracker | 317 (280) | S10 OneCommand | 339 (310) |
   | S04 SharedAxis | 325 (290) | S11 WhoRunsIt | 318 (300) |
-  | S05 ThreeLines | 242 (240) | S12 WhatTheJobSays | 292 (290) |
+  | S05 ThreeLines | 242 (240) | S12 WhatTheJobSays | 297 (290) |
   | S06 RentTheMachine | 259 (250) | S13 ThreeSwitches | 205 (230) |
   | S07 KeysAndBucket | 321 (290) | S14 TwoGpusOneModel | 332 (300) |
   |  |  | S15 Recap | 298 (270) |
-  | **part 1** | **1,859** (1,790) | **part 2** | **2,428** (2,340) |
+  | **part 1** | **1,859** (1,790) | **part 2** | **2,433** (2,340) |
 
   Every scene is within the BRIEF's ±15 %. Tight edges: S02 (floor 187), S03 (cap 322), S04 (cap
-  333), S07 (cap 333), S15 (cap 310) and the total (13 words under 4,300): any later addition there
+  333), S07 (cap 333), S15 (cap 310) and the total (8 words under 4,300): any later addition there
   names its cut in the same scene. Re-run the counter after any review edit.
 
 Notes for scene authors
@@ -960,10 +960,10 @@ SHOW: The answer, ticked on V2's columns: model ✓ (hyperparameters); environme
 charts and run metadata · not the image tag (cli.sh)"); metrics ✗ ("execution_time is in config · no
 metric logged"); artifacts ◐ ("logs ✓ · weights ✗", a dashed hole); code ✗ ("no commit"); data ✗
 ("a fixed release zip · an unseeded split"); notes ✗. On "notebook A", the hook's two tables slide
-in small beside the ledger and the folder card from notebook A gets the same three ✗. On "cannot crown",
+in small beside the ledger and the folder card from notebook A gets "no commit · no split (it keeps sizes and the label map, NB(A: 1412–1419)) · no notes". On "cannot crown",
 S01's YELLOW question card returns small and its "?" resolves to "can't tell · yet". GREY chips:
 "exercise 1: a LambdaCallback" · "exercise 3: seed the split". Fade out.
-SAY: The model and its settings, yes. The environment only partly: system charts, while the image tag sits in cli.sh. Metrics, none: the execution time goes into the config. Logs yes, weights no. Code, data and notes, no: no commit, a fixed zip, and an unseeded split. The folder from notebook A misses the same three. So the verdict: these tables cannot crown a recipe. Seed the split, match the epochs, keep the code version, then compare. Exercise 1 adds a small callback.
+SAY: The model and its settings, yes. The environment only partly: system charts, while the image tag sits in cli.sh. Metrics, none: the execution time goes into the config. Logs yes, weights no. Code, data and notes, no: no commit, a fixed zip, and an unseeded split. The folder from notebook A has no commit, no split and no notes either. So the verdict: these tables cannot crown a recipe. Seed the split, match the epochs, keep the code version, then compare. Exercise 1 adds a small callback.
 
 ---
 

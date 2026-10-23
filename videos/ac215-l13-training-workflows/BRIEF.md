@@ -518,7 +518,7 @@ category, not drawn with data; curve slots ghost (no callback, `:326-331`). **PO
 slide 9's checklist: "Of the seven things a run record should hold, which does this run record?"
 Answer, ticked on V2's columns: model + hyperparameters ✓; environment partly (system metrics;
 the image tag lives only in `cli.sh`); metrics none (`execution_time` goes to the config: `task.py:336`); artifacts — logs yes,
-**weights no**; code ✗ (no commit), data ✗ (a fixed release zip, an unseeded split), notes ✗. **Hook verdict**: the folder from notebook A misses the same three, so these tables cannot crown a recipe — seed the split (exercise 3), match the epochs, keep the code version, then compare; S01's question card returns, its "?" resolving to "can't tell · yet". Exercise 1 adds a `LambdaCallback`
+**weights no**; code ✗ (no commit), data ✗ (a fixed release zip, an unseeded split), notes ✗. **Hook verdict**: the folder from notebook A has no commit, no split and no notes either (it keeps image sizes and the label map, `nbA:1412-1419`), so these tables cannot crown a recipe — seed the split (exercise 3), match the epochs, keep the code version, then compare; S01's question card returns, its "?" resolving to "can't tell · yet". Exercise 1 adds a `LambdaCallback`
 (one line here).
 
 **S13 · Three switches for one GPU (~230) — `s13_gpu.py` · `ThreeSwitches`.** Tracker F3 (the
