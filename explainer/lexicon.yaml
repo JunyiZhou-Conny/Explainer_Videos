@@ -163,3 +163,19 @@ service.py: {ipa: "sˈɜːvɪs dˈɑːt pˈaɪ", say: "service dot pie"}
 26.10.1: {ipa: "twˈɛnti sˈɪks pɔɪnt tˈɛn pɔɪnt wˈʌn", say: "twenty-six point ten point one"}
 4.7.0: {ipa: "fˈɔːɹ pɔɪnt sˈɛvən pɔɪnt zˈiəɹoʊ", say: "four point seven point zero"}
 7.4.1: {ipa: "sˈɛvən pɔɪnt fˈɔːɹ pɔɪnt wˈʌn", say: "seven point four point one"}
+# AC215 L10 (videos/ac215-l10-cloud-connect); verified against Kokoro af_heart phonemes.
+# "a 403"-style guards work around the splicer reading a chunk-final "a" as the letter name.
+idempotent: {ipa: "ˌaɪdəmpˈoʊtənt", say: "eye-dem-POH-tent"}
+splitext: {ipa: "splˈɪt ˈɛkst", say: "split ext"}
+Next.js: {ipa: "nˈɛkst dʒˌeɪˈɛs", say: "Next J S"}
+14.2.4: {ipa: "fˈɔːɹtiːn pɔɪnt tˈuː pɔɪnt fˈɔːɹ", say: "fourteen point two point four"}
+1.0.0: {ipa: "wˈʌn pɔɪnt zˈiəɹoʊ pɔɪnt zˈiəɹoʊ", say: "one point zero point zero"}
+"3200": {ipa: "θˈɜːɾi tˈuː hˈʌndɹɪd", say: "thirty-two hundred"}
+"3300": {ipa: "θˈɜːɾi θɹˈiː hˈʌndɹɪd", say: "thirty-three hundred"}
+"443": {ipa: "fˈɔːɹ fˈɔːɹɾi θɹˈiː", say: "four forty-three"}
+"401": {ipa: "fˈɔːɹ ˈoʊ wˈʌn", say: "four oh one"}
+"403": {ipa: "fˈɔːɹ ˈoʊ θɹˈiː", say: "four oh three"}
+a 401: {ipa: "ɐ fˈɔːɹ ˈoʊ wˈʌn", say: "a four oh one"}
+A 401: {ipa: "ɐ fˈɔːɹ ˈoʊ wˈʌn", say: "a four oh one"}
+a 403: {ipa: "ɐ fˈɔːɹ ˈoʊ θɹˈiː", say: "a four oh three"}
+A 403: {ipa: "ɐ fˈɔːɹ ˈoʊ θɹˈiː", say: "a four oh three"}
