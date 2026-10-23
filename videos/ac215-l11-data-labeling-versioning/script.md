@@ -286,7 +286,7 @@ SHOW: No tracker yet. GREY tag `lecture_ref(11, "4–6, 8–12")` top right, who
 "How do we do this?" → a box "Labeled" with four rows `brie`, `gouda`, `parmigiano`, `gruyere` →
 a GREY-dashed box "training · L13". On "graded against", a GREY one-line card (slide 4): "labels =
 ground truth · labeled mistakes → the next version".
-SAY: First, the map. The lecture draws unlabeled cheese photos on the left, labeled ones on the right, and training after that. The arrow in between asks how. Labels are the ground truth a model learns from and is graded against, and its labeled mistakes become the next dataset version.
+SAY: First, the map. The lecture draws unlabeled cheese photos, then labeled ones, then training, and the arrow in between asks how. Labels are the ground truth a model learns from and is graded against, and its labeled mistakes become the next dataset version.
 
 SHOW: Below the top row, the two stations build as the code builds them: the labeling station (a
 GREY laptop outline; two hollow TEAL houses on a PINK street) ↔ BLUE bucket 1
@@ -295,7 +295,7 @@ station (a hollow TEAL `data-version-cli`) ↔ BLUE bucket 2 (`images/`, `dvc_st
 "your private GitHub repo" with two GREEN flag stubs; a BLUE Colab box "view versions". A
 GREY-dashed bridge between `cheeses_labeled/` and `images/`, caption "not connected in the code ·
 exercise E7". The training box stays GREY dashed.
-SAY: Underneath, the two stations this lecture builds. Part 1 is the labeling station: Label Studio in a container, with one bucket for photos and labels. Part 2 is the versioning station: one DVC container, a second bucket, your own GitHub repo, and Colab to view the versions. The code does not connect the two halves yet; exercise E7 does.
+SAY: Underneath, the two stations this lecture builds. Part 1 is the labeling station: Label Studio in a container, with one bucket for photos and labels. Part 2 is the versioning station: one DVC container, a second bucket, your own GitHub repo, and Colab to view versions. The code does not connect the halves yet; exercise E7 does.
 
 SHOW: Slide 8's recall quiz as three GREY chips floating over the map: "Docker network", "cloud
 credentials", "Docker Compose".
@@ -316,20 +316,20 @@ Then `cd data-labeling` → (no output); prompt `student@laptop:~/data-labeling$
 terminal title, not spoken: "Docker 29.8.2 · Compose v5.6.0 · git 2.54.0 · at the time of
 recording" (laptop/00, lines 4–6). A small README card (`README.md · line 18`), "Docker>Preferences>Resources
 … > 4GB", tag `erratum`, chip "now: Settings › Resources".
-SAY: Time to type. Clone the data-labeling repo and move into it; pause and run it. The README also asks for more than 4 gigabytes of memory for Docker, a setting now found under Settings, then Resources.
+SAY: Time to type. Clone the data-labeling repo and move into it; pause and run it. Give Docker more than 4 gigabytes of memory, as the README asks; the setting is now under Settings, Resources.
 
 SHOW: TRACKER A1 · extra. It types `git log -1 --format='%H %ci'` (extra) → TERM(laptop/02: 2);
 `03c3e277…` and `2025-10-20` highlight. Then `ls -la` (extra) → TERM(laptop/03: 2–19); the three
 shell scripts (lines 14–16) and `cli.py` (line 10) highlight, then the three PNGs (9, 11, 17);
 `pipeline-flow.png` (17) gets a GREY chip "a version of this map, one bucket · no README links it".
-SAY: An extra git log shows the commit this video uses, from October 2025. An extra listing shows three shell scripts, cli.py, and three pictures. One of them, pipeline flow, draws a version of this map with a single bucket, though no README points to it.
+SAY: An extra git log shows this video's commit, from October 2025, and an extra listing shows three shell scripts, cli.py, and three pictures. One, pipeline flow, draws this map with a single bucket; no README links it.
 
 SHOW: TRACKER A2. It types `cd ..` → (no output); prompt `student@laptop:~$`. Then `mkdir secrets`
 (GREY chip "the README shows a tree, not a command") → TERM(laptop/04: → (no output)); then
 `tree -L 1 .` (extra) → TERM(laptop/05: 2–6) beside a README card (`README.md · lines 37–40`), the
 two trees matching row for row. `▶ your turn`. On V7 a GREEN `secrets/` drawer settles beside the
 labeling station, outside every repo. Fade out.
-SAY: Next, the secrets folder: next to the repo, never inside it, and the same folder serves both repos today. Pause and make it. An extra tree view shows the layout the README draws.
+SAY: Next, the secrets folder, beside the repo and never inside it; it serves both repos today. Pause and make it; an extra tree view matches the README.
 
 ---
 
@@ -343,7 +343,7 @@ step: "IAM & Admin → Service accounts" → "Create service account · data-ser
 `data-service-account.json`. On "every bucket in the project", a GREY chip under the role:
 "project-wide · this tutorial needs object read/write + storage.buckets.update (for CORS)".
 `▶ your turn`.
-SAY: Now the key. In the console, create a service account named data-service-account, with the Storage Admin role. Then create one JSON key and save it in your secrets folder as data-service-account dot json. It is the same kind of badge as last lecture, with a storage role, and broader than needed: it covers every bucket in the project. Pause and create yours.
+SAY: Now the key. In the console, create a service account named data-service-account with the Storage Admin role, then one JSON key, saved in your secrets folder as data-service-account dot json. This role is broader than needed: it covers every bucket in the project. Pause and create yours.
 
 SHOW: TRACKER A3 · extra. Terminal, prompt `student@laptop:~$`. It types `ls -la secrets` (extra)
 → TERM(laptop/06: 2–5); the file name highlighted (not its size); a GREY tag `stand-in` on line 5
@@ -357,7 +357,7 @@ here · Extract the zip file". It types
 `unzip cheeses_unlabeled.zip` (GREY chip "the README says extract") → TERM(laptop/08: 2–9, …,
 44–45); each `__MACOSX/cheeses_unlabeled/._Image_*` row flashes GREY under its image row.
 `▶ your turn`.
-SAY: Download the unlabeled photos from the README link; a browser works, and this is the same address with curl, about 3.7 megabytes. Then extract the zip. Pause and do both. Notice that every image comes with a twin in a hidden Mac folder.
+SAY: Download the unlabeled photos from the README link, about 3.7 megabytes; we use curl, and a browser works too. Then extract the zip. Pause and do both. Notice that every image comes with a twin in a hidden Mac folder.
 
 SHOW: The two folders side by side, unlabeled counts hidden.
 QUICK(4 s, "The zip held 42 files.\nHow many tasks should\nLabel Studio make?")
@@ -368,7 +368,7 @@ SHOW: TRACKER A4 · extra. It types
 (extra; folds) → TERM(laptop/09: 2–4, …, 11, …, 23–29); line 23 `21` and line 29 `21` YELLOW,
 line 11 `Image_3.png` YELLOW. The 21 twins drop into a RED bin "don't upload". A tiny GREY funnel
 (slides 16–18 redrawn) sorts tiles into "keep" and "discard".
-SAY: 21. An extra count shows 21 images, one of them a PNG, plus 21 Mac metadata files. Upload only the images, or you get 21 broken tasks. The lecture calls this curation: drop the junk before it becomes a task.
+SAY: 21. An extra count shows 21 images, one a PNG, plus 21 Mac metadata files: upload only the images, or you get 21 broken tasks. The lecture calls this curation, dropping junk before it becomes a task.
 
 SHOW: TRACKER A4 · extra. It types the `md5sum … ; wc -c …` line (extra; folds, small) →
 TERM(laptop/09b: 2–12); line 2's `5b53853e667c8a76121fdc475996c895` gets a PINK ring and a pin
@@ -381,7 +381,7 @@ defaults" → folders `cheeses_unlabeled/` and `cheeses_labeled/`. TRACKER A6 (R
 21 blank image tiles fly into `cheeses_unlabeled/` (no photos drawn). On V7, BLUE bucket 1 lights.
 GOLD `cost_tag()`: "storage starts here · ≈ 3.8 MB · a fraction of a cent a month · check the
 pricing page" (digest §2 estimate). `▶ your turn`. Fade out.
-SAY: Then create your bucket, with a name of your own, since bucket names are global, and keep the defaults. Add two folders, cheeses unlabeled and cheeses labeled, and upload the 21 images into the first. Pause and set it up. A gold tag: storage starts here, about 3.8 megabytes, a fraction of a cent a month by our estimate.
+SAY: Then create your bucket with a name of your own, since names are global, and keep the defaults. Add two folders, cheeses unlabeled and cheeses labeled, and upload the 21 images into the first. Pause and set it up. A gold tag: storage starts here, about 3.8 megabytes, a fraction of a cent a month.
 
 ---
 
@@ -393,7 +393,7 @@ line: "a labeling tool in your own container · no outside labeling service sees
 CODE(data-labeling/docker-shell.sh: 5–9): line 6 (`docker network inspect … || docker network
 create data-labeling-network`) YELLOW, a small GREY sticky note "inspect … || create · L10's
 shape"; line 9 (`docker rm -f data-label-studio 2>/dev/null || true`) GREY.
-SAY: The README runs Label Studio from a ready-made image. The lecture's reason: in your own container, no outside labeling service sees your photos. The script first creates its network only if it is missing, the safe-to-repeat shape from last lecture, and removes any old container with the same name.
+SAY: The README runs Label Studio from a ready-made image, in your own container, so no outside labeling service sees your photos. Its script creates the network only if missing, as last lecture, and removes any old container of that name.
 
 SHOW: V1 builds over CODE(data-labeling/docker-shell.sh: 12–24) (a 12-line window that scrolls one
 line at the end; line 19 renders `student@example.com`). Each line peels off and becomes a part:
@@ -403,19 +403,19 @@ a GREY door in the laptop wall, chip "publish the port"; line 16 `-v …/docker-
 is a GREY pipe to a drawer "database" (slide 13, callout 1); line 17 `-v "$(pwd)/../secrets:/secrets"`
 a GREEN pipe; lines 18–23 `-e` stick on as notes (login, key path; callout 2). The lecture's label
 "Label Studio Container" appears once in GREY above the house, then morphs into `data-label-studio`.
-SAY: Then one docker run, flag by flag. The flag dash d runs it in the background and hands your prompt back. The network flag puts it on a private street. Then dash p, 8080 colon 8080, publishes the port: a door in your laptop wall. The first dash v mounts a folder for its database, the second mounts your secrets, and the dash e lines set the login and the key path.
+SAY: Then one docker run, flag by flag. The flag dash d runs it in the background, the network flag puts it on a private street, and dash p, 8080 colon 8080, publishes the port: a door in your laptop wall. Two dash v flags mount a database folder and your secrets; the dash e lines set the login and key path.
 
 SHOW: TRACKER B1. Terminal, prompt `student@laptop:~/data-labeling$`. It types `sh docker-shell.sh`
 → TERM(laptop/10: 2–3, …, 70–72); line 72 (the container id) gets a GREY chip "yours will
 differ". `▶ your turn`. TRACKER B2: `docker container ls` → TERM(laptop/11: 2–3; squeeze);
 `Up Less than a second` and `0.0.0.0:8080->8080/tcp` GREEN, beside a README card
 (`README.md · lines 91–97`, its line 95 dimmed for now). `▶ your turn`.
-SAY: Pause and run sh docker-shell.sh. It pulls the image and prints the new container ID. Then the README's check, docker container ls: up, with port 8080 published.
+SAY: Pause and run sh docker-shell.sh; it pulls the image and prints a container ID. Then the README's check, docker container ls: up, port 8080 published.
 
 SHOW: TRACKER B2 · extra. A GREY "+25 s" clock chip. It types `docker container ls -a` (extra) →
 TERM(laptop/12: 2–3; squeeze); `Exited (1) 25 seconds ago` RED. The V1 house tips over.
 PONDER(6 s, "It said Up.\nNow it says Exited (1).\nWhere do you look first?")
-SAY: But look again 25 seconds later, with an extra dash a: exited, with code 1. Something to ponder: it said up, and now it says exited. Where do you look first?
+SAY: But look again 25 seconds later, with an extra dash a: exited. Something to ponder: where do you look first?
 
 SHOW: TRACKER B2 · extra. It types `docker logs data-label-studio 2>&1 | tail -n 40` (extra) →
 TERM(laptop/13: 4–12); line 5 RED, line 8 `UID        = 1001` and line 12 (owner `root`) YELLOW.
@@ -429,14 +429,14 @@ SHOW: TRACKER B1 · extra (tag `extra · Linux`). It types
 TERM(laptop/16: 2–5), line 5's `1001` GREEN; the drawer turns GREY. Then `sh docker-shell.sh` →
 TERM(laptop/17: 2–3) and `docker container ls` → TERM(laptop/18: 2–3; squeeze), `Up About a
 minute` GREEN; the house stands.
-SAY: The fix is an extra, for Linux: give the folder to user 1001 with sudo chown. On Docker Desktop for Mac this normally does not happen. Run the script again, and now it stays up.
+SAY: The fix is an extra, for Linux; Docker Desktop for Mac normally avoids this. Give the folder to user 1001 with sudo chown, run the script again, and now it stays up.
 
 SHOW: TRACKER B2 · extra. It types `docker logs data-label-studio 2>&1 | grep -v '^\s*$' | tail -n 25`
 (extra) → TERM(laptop/19: 10–13, 16, 20–21) (lines 8–9 never printed); the update box (10–13)
 YELLOW with `at the time of recording`. Then `curl -s http://localhost:8080/health` (extra) →
 TERM(laptop/20: 2); `curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}\n' http://localhost:8080/`
 (extra; folds) → TERM(laptop/21: 2).
-SAY: An extra look at the logs shows the server starting on port 8080, and a box offering version 1.23.2: the image tag is latest, so it moves. This video ran 1.23.0, at the time of recording. Two extra curls get status up and the login page.
+SAY: Extra checks: the logs show the server starting and a box offering version 1.23.2, because the image tag is latest; this video ran 1.23.0, at the time of recording. Two curls get status up and the login page.
 
 SHOW: TRACKER B3. A schematic login page (`illustration`) at `http://localhost:8080/`, fields
 `student@example.com` / `awesome`; CODE(data-labeling/docker-shell.sh: 19–20) small beside it
@@ -447,7 +447,7 @@ Import → Labeling Setup → "Computer Vision > Image Classification" → choic
 `gruyere`, `parmigiano` → Save. Server side, `extra · stand-in`: TERM(laptop/28: 6; wrap, cut after
 the label config), `"id":1,"title":"Cheese labels"` and the four `<Choice value=…/>` highlighted.
 `▶ your turn` on each step. Fade out.
-SAY: Open localhost 8080 and log in with the username and password your script sets on lines 19 and 20. Create a project with the image classification template, and replace its choices with brie, gouda, gruyere and parmigiano. Pause and do it. Underneath, the server side of those clicks, as extra stand-in calls: you are logged in, and project 1 holds the four cheeses.
+SAY: Open localhost 8080 and log in with the username and password from lines 19 and 20 of your script. Create a project with the image classification template, with the choices brie, gouda, gruyere and parmigiano. Pause and do it. Underneath, as stand-in calls, the server side: logged in, and project 1 holds the four cheeses.
 
 ---
 
@@ -461,7 +461,7 @@ slide links the browser only to Label Studio". Then a form `illustration` with R
 ☑ "Treat every bucket object as a source file" (GREY chip "may be missing in newer versions ·
 carry on"), ☑ "Use pre-signed URLs" (YELLOW), credentials and project ID empty (chip "empty = the
 key the container already has").
-SAY: Back in the project, open settings, cloud storage, and add source storage with the README's values: Google Cloud Storage, your bucket, the prefix cheeses unlabeled, and pre-signed URLs on. If a checkbox is missing in your version, carry on. Leave the credentials empty, which means: use the key the container already has.
+SAY: Back in the project, open settings, cloud storage, and add source storage with the README's values: Google Cloud Storage, your bucket, the prefix cheeses unlabeled, and pre-signed URLs on. If a checkbox is missing, carry on. Leave the credentials empty: that means the key the container already has.
 
 SHOW: The form's *Check Connection* button, then its own API call in a strip, tag
 `extra · stand-in`: TERM(laptop/30: 3; wrap), `"File /secrets/data-service-account.json was not
@@ -484,14 +484,14 @@ the BLUE bucket (tag `recorded · README.md:136 + the 21 images of laptop/09`). 
 `extra · stand-in`: TERM(laptop/32: 2–5; wrap); the three
 `gs://your-bucket-placeholder/cheeses_unlabeled/Image_N.jpg` URIs highlighted, `"task_count":3`
 YELLOW with a chip "ours: 3 · yours: 21". `▶ your turn`.
-SAY: With a real key, add both storages and click sync: Label Studio lists the bucket and makes one task per photo, 21 for you. Our stand-in imports 3 tasks with the same kind of addresses. Pause, add both, and sync.
+SAY: With a real key, add both storages and click sync: one task per photo, 21 for you. Our stand-in imports 3 tasks with the same kind of addresses. Pause, add both, and sync.
 
 SHOW: V2 steps 1–2a: the GREY browser on the laptop floor, the TEAL Label Studio house holding the
 GREEN key, the BLUE vault `cheese-app-data-demo` with drawers `cheeses_unlabeled/` and
 `cheeses_labeled/`. (1) Label Studio reaches the vault with the key, lists names, task cards fan
 out. (2a) The browser raises a hand at card 1. Nothing else moves.
 PONDER(8 s, "Label Studio holds the key;\nyour browser never sees it.\nHow can it show a private photo?")
-SAY: So who touches the photos? Label Studio holds the key and lists the bucket. Then your browser asks for task 1. Something to ponder: your browser never sees the key, so how can it show a private photo?
+SAY: So who touches the photos? Label Studio holds the key and lists the bucket; your browser asks for task 1. Something to ponder: your browser never sees the key, so how can it show a private photo?
 
 SHOW: The answer, V2 steps 2–3: Label Studio stamps a BLUE ticket (the photo's URL, a wax seal
 "signed with the key", an hourglass with no value) and slides it across; the key stays behind,
@@ -501,7 +501,7 @@ bounces off a GREY bouncer at the browser's door (V3 teaser). A GREY card, slide
 made precise: "no outside labeling company sees your data · the photos stay in your bucket · your
 browser fetches them straight from Google". Cliff-hanger: a task grid with broken thumbnails
 (`illustration`) beside a README card (`README.md · line 151`). Fade out.
-SAY: With a signed ticket. For each photo, Label Studio signs a web address with the key: permission for one object, for a short time. Your browser carries that ticket straight to Google, not through Label Studio, and the key stays in the container. So private means no outside labeling company sees your data. And then the thumbnails break. The README warns you about this: it is CORS.
+SAY: With a signed ticket. For each photo, Label Studio signs a web address with the key: permission for one object, for a short time. Your browser carries that ticket straight to Google, and the key stays in the container. So private means no outside labeling company sees your data. Then the thumbnails break, and the README warns you: it is CORS.
 
 ---
 
@@ -514,13 +514,13 @@ scheme · host · port chips light where they differ. The GREY bouncer stands at
 facing the page. A response package arrives with no `Access-Control-Allow-Origin` label → RED X;
 the tile stays broken. A rule card slot on the BLUE bucket, empty. A GREY chip: "L10: the Chroma
 bouncer · now on a bucket".
-SAY: The page comes from localhost 8080, but the photo comes from Google's storage address, a different origin. When page code fetches across origins, your browser only hands over the answer if it carries a header allowing this origin. Google adds that header only if the bucket has its own CORS rule. Same bouncer as last lecture, now configured on a bucket.
+SAY: The page comes from localhost 8080, the photo from Google's storage address: a different origin. Your browser hands a cross-origin answer to the page only if it carries a header allowing this origin, and Google adds that header only if the bucket has its own CORS rule. Same bouncer as last lecture, now on a bucket.
 
 SHOW: A kind card, tag `erratum`: README card (`README.md · lines 153, 157`), "reverse DNS lookup"
 struck through in GREY → "the browser's same-origin rule + a response header"; "must be done
 programmatically" → GREY chip "no CORS editor in the console · `gcloud storage buckets update
 --cors-file` also works".
-SAY: A small slip in the README: it blames a reverse DNS lookup. The real cause is the browser's same-origin rule, satisfied by a response header. And the console has no CORS editor, but the gcloud tool can also set the rule.
+SAY: A small slip: the README blames a reverse DNS lookup, but the cause is that same-origin rule. And though the console has no CORS editor, the gcloud tool can set the rule too.
 
 SHOW: TRACKER C1. CODE(data-labeling/docker-shell-CLI.sh: 23) small, `cheese-app-data-demo` RED. A
 strip types the edit (GREY chip "our editor; use yours"; the `sed` of TERM laptop/40's line 1;
@@ -530,7 +530,7 @@ script"). It types `sh docker-shell-CLI.sh` → TERM(laptop/41: 3, …, 26–31)
 `uv 0.13.5` (lines 29–30) with `at the time of recording`; line 27 `Architecture: x86_64` with a
 chip "aarch64 on Apple Silicon". The prompt becomes the capture's `app@5bf8945fb887:/app$`. On V7,
 the second TEAL house appears on the street. `▶ your turn`.
-SAY: The README sets the rule from a second container. Put your bucket name on line 23 of docker-shell-CLI.sh, then run the script with sh. The ID in the prompt changes every run, and Apple Silicon says aarch64 where this machine says x86. Pause and do both.
+SAY: The README sets the rule from a second container. Put your bucket name on line 23 of docker-shell-CLI.sh, then run it with sh; the ID in the prompt changes every run, and Apple Silicon says aarch64 where this machine says x86. Pause and do both.
 
 SHOW: CODE(data-labeling/docker-shell-CLI.sh: 15–25): line 17 `--network data-labeling-network`
 PINK (V1: the CLI house moves onto the same street); line 19 `-v "$(pwd)/../data-labeling:/app"`
@@ -544,7 +544,7 @@ SHOW: TRACKER C3. At `app@5bf8945fb887:/app$` it types `python cli.py -c` → TE
 68–69, …, 100–101; wrap), line 101 RED. `▶ your turn`. CODE(data-labeling/cli.py: 22–34): line 23
 `storage_client = storage.Client()` YELLOW, chip "no key path · ADC, as in L10"; lines 26–33 (the
 rule) GREEN, line 34 `bucket.patch()` YELLOW.
-SAY: Inside, run python cli.py dash c, then dash m. Pause and run them. Here both stop at the storage client: default credentials, file not found. The client takes no key path; ADC finds the key, as last lecture. The code builds one rule, any origin, GET only, with a max age of one hour, and patches the bucket.
+SAY: Inside, run python cli.py dash c, then dash m; pause and run them. Here both stop at the storage client: file not found, since ADC looks for the key. The code builds one rule, any origin, GET only, max age one hour, and patches the bucket.
 
 SHOW: A GREY card, tag `recorded · cli.py:40 + :26–33`: `set_cors_configuration()` / `Set CORS
 policies for bucket <your bucket> is [{'origin': ['*'], 'method': ['GET'], 'responseHeader':
@@ -554,7 +554,7 @@ policies for bucket <your bucket> is [{'origin': ['*'], 'method': ['GET'], 'resp
 `Access-Control-Allow-Origin: *` and is waved in; the tile fills (`illustration`, no photo). A
 `curl` figure strolls past on the side, no bouncer at its door. A GREY tag `maxAgeSeconds: 3600`
 clips onto an `OPTIONS` knock drawn dashed, caption "preflights only · a plain GET has none".
-SAY: With a real key, dash c prints the rule, and dash m prints the bucket settings, where only the CORS line matters. Now the bucket sends the header, and the thumbnails load. A tool like curl never had a bouncer: browsers enforce CORS. And the max age only caches preflight checks, which a plain image request never makes.
+SAY: With a real key, dash c prints the rule and dash m the bucket settings. Now the header arrives and the thumbnails load. The max age only caches preflight checks, which a plain image request never makes.
 
 SHOW: The broken grid again (`illustration`).
 PONDER(8 s, "You ran cli.py -c and refreshed:\nstill broken thumbnails.\nTwo suspects?")
@@ -565,7 +565,7 @@ rule card flying to a second, GREY bucket; chip "check with python cli.py -m". S
 refresh arrow, chip "hard refresh · or a private window". The `curl` figure again with a GREY chip
 "CORS is not access control · no signed URL → still refused". GREY tag `lecture_ref(11, "13")`
 top right for this block (the CLI container of slide 13). Fade out.
-SAY: One: the rule went to another bucket, because line 23 kept the old name; dash m tells you. Two: your browser reused cached answers without the header; do a hard refresh. And CORS is not access control: without a signed address, the bucket still refuses.
+SAY: One: the rule went to another bucket, because line 23 kept the old name; dash m tells you. Two: your browser reused cached answers; hard refresh. And curl never met a bouncer: CORS is a browser rule, not access control.
 
 ---
 
@@ -582,7 +582,7 @@ thin thread tying it back to its photo in `cheeses_unlabeled/`, which never move
 sorted "Labeled" rows (from V7) morph into a stack of envelopes; GREY chip "the slide draws what
 labels mean". TRACKER C6: console `illustration` (README.md lines 184–187): `cheeses_labeled/`
 holding "some json files", one per annotation, no object names drawn.
-SAY: It lands in the cheeses labeled folder and points back at the photo, which never moved. The slide sorts photos into rows; on disk, a label is a small JSON note that points at a photo, and a labeled dataset is photos plus notes. In the console, that folder shows some JSON files, one per annotation.
+SAY: It lands in the cheeses labeled folder, pointing back at the photo, which never moved. The slide sorts photos into rows, but on disk a label is a small JSON note, and a labeled dataset is photos plus notes. In the console, that folder shows one JSON file per annotation.
 
 SHOW: TRACKER D1 (tracker D appears: "README › data-labeling › View Annotations using CLI", 3
 dots). An *Account & Settings* wireframe (`illustration`, README.md lines 193–196), the token
@@ -597,7 +597,7 @@ SHOW: TRACKER D1 · extra. The same CLI session as S06, prompt `app@5bf8945fb887
 the CLI's own `localhost` arrow curls back into its own empty house: refused; the name arrow runs
 down the PINK street to Label Studio, a PINK "phone book · Docker DNS" lit; the browser's
 `localhost:8080` arrow comes in through the laptop door.
-SAY: Connection refused. Inside a container, localhost is that container, and nothing listens there. Two extra curls from the earlier session prove it, and the name works, because the Docker network keeps a phone book of container names.
+SAY: Connection refused: inside a container, localhost is that container, and nothing listens there. Two extra curls prove it, and the name works, because the Docker network keeps a phone book of container names.
 
 SHOW: TRACKER D2. At `app@eb57c56e6715:/app$` (GREY chip "our capture: a fresh container for each
 step · stay in yours"), it types `python cli.py -p -k student-demo-token-not-a-secret` (GREY chip
@@ -620,7 +620,7 @@ labels` GREEN, chip on line 34 "object reprs, not dicts". `▶ your turn`. TRACK
 `Number of tasks: 3` with a chip "ours: 3 · yours: 21", `['gouda']` YELLOW. `▶ your turn`. A README
 card (`README.md · line 204`, rendered with `student@example.com`), `'amanita'` GREY, tag
 `erratum`, chip "a mushroom from an older course app · same shape".
-SAY: Run dash p again, and it lists project 1, cheese labels. Then dash t with your token: 3 tasks in our stand-in, 21 for you, one labeled, and its annotation says gouda. Pause and run both. The README's sample says amanita, a mushroom from an older course app; same shape.
+SAY: Run dash p again, and it lists project 1, cheese labels. Then dash t with your token: 3 tasks in our stand-in, 21 for you, one labeled, as gouda. Pause and run both. The README's sample says amanita, a mushroom from an older course app; same shape.
 
 SHOW: TRACKER D3 · extra. At `app@eb57c56e6715:/app$`: `python cli.py -t` (extra: "forgot -k") →
 TERM(laptop/42: 68–69); `i required` GREY, tag `erratum`, chip "cli.py:123 · is required". Fade
@@ -656,7 +656,7 @@ arrow with a stopwatch reading "started", not "ready". Then
 `until curl -s http://data-label-studio:8080/health; do sleep 2; done` (extra; folds) →
 TERM(laptop/54: 126–130) (line 126 prints `{"status": "UP"}`, then the prompt and the typed
 command continue on the same row); `1 Cheese labels` GREEN; the V1 drawer pulses: "same folder".
-SAY: Two real surprises. An extra echo prints the class bucket name: compose keeps its own copy, on line 17 of docker-compose.yml, so edit it too. And the first call is refused, because depends on starts Label Studio first but does not wait until it listens. After an extra wait loop, the call lists project 1. It survived a brand new container, because the same folder is mounted.
+SAY: Two real surprises. An extra echo prints the class bucket name: compose keeps its own copy, on line 17 of docker-compose.yml, so edit it too. And the first call is refused: depends on starts Label Studio first, but does not wait until it listens. After an extra wait loop, project 1 is back, because the same folder is mounted.
 
 SHOW: TRACKER F1 (tracker F appears: "README › data-labeling › Docker Cleanup", 4 dots). After the
 capture's `exit` (54: 131): `docker ps` (extra) → TERM(laptop/55: 2–3; squeeze), "still Up". Then
@@ -665,7 +665,7 @@ capture's `exit` (54: 131): `docker ps` (extra) → TERM(laptop/55: 2–3; squee
 lines 10 and 13 (`data-labeling-network`) YELLOW; TRACKER F4: `docker image ls` →
 TERM(laptop/63: 2–4; squeeze), `1.76GB` and `1.5GB` with `at the time of recording`. On V7 the
 houses and the street disappear; the drawer stays. `▶ your turn`.
-SAY: Label Studio keeps running after you leave. Now the README's cleanup: list, stop, prune, and list the images. Pause and run them. Prune also removed the network, so next time run docker-shell.sh before the command line script. The images take 1.5 and 1.76 gigabytes, at the time of recording.
+SAY: Label Studio keeps running after you leave. Then the README's cleanup: list, stop, prune, and list the images; pause and run them. Prune also removed the network, so next time run docker-shell.sh first. The images take 1.5 and 1.76 gigabytes, at the time of recording.
 
 SHOW: The empty lot where the house stood; only the GREY drawer remains, dimmed.
 PONDER(6 s, "After docker system prune,\nis your labeled project gone?")
@@ -704,7 +704,7 @@ A README card (`README.md · line 84`): "Alternatively, you can clone with HTTPS
 README's HTTPS alternative; folds) → TERM(laptop/74: 2). `▶ your turn`. TRACKER G3: `cd data-versioning`
 → (no output); prompt `student@laptop:~/data-versioning$`. `git log -1 --format='%H %ci'` (extra)
 → TERM(laptop/75: 2), `23762e49…` and `2025-10-20` highlighted.
-SAY: Then clone the starter branch the README names. Its command uses SSH, which needs your key on GitHub; this machine has no SSH route, so the same branch comes over HTTPS, which the README allows. Pause, clone it, and move into the folder. An extra git log shows the starter, from October 2025.
+SAY: Then clone the starter branch the README names. Its SSH command needs your key on GitHub; this machine has no SSH route, so the same branch comes over HTTPS, which the README allows. Pause, clone it, and move in. An extra git log shows the starter, from October 2025.
 
 SHOW: A kind card, tag `erratum`: CODE(data-versioning@2515e5e/README.md: 76–82), header "README
 today · 2515e5e", line 78 "Clone the `data-versioning-ac215` branch:" over line 81
@@ -714,7 +714,7 @@ title `laptop · second clone in ~/today`, prompt `student@laptop:~/today$`: it 
 TERM(laptop/131: 2); prompt `student@laptop:~/today/data-versioning$`; `ls -A` (extra) →
 TERM(laptop/137: 2–12), `.dvc`, `.dvcignore` and `cheese_dataset.dvc` RED, chip "came with the
 clone". The strip closes; the first terminal returns.
-SAY: A note before you go on. On the day of the lecture the README changed: it now says to clone main. The main branch brings the instructor's finished DVC files along, as this extra second clone shows, and we will see where that bites. This video follows the course's pinned README: the starter branch, plus one fix.
+SAY: One note: on the day of the lecture the README changed, and it now says to clone main. That branch brings the instructor's finished DVC files along, as an extra second clone shows; we will see where that bites. This video follows the course's pinned README: the starter branch, plus one fix.
 
 SHOW: TRACKER G3. Prompt `student@laptop:~/data-versioning$`. A README card (`README.md · line
 104`, "Why remove `.git`?"). It types `rm -rf .git` → TERM(laptop/76: → (no output)); `git init` →
@@ -750,7 +750,7 @@ TERM(laptop/84: 2–3, …, 18–26); `data-versioning` and `secrets/data-servic
 highlighted, beside a README card (`README.md · lines 140–144`). TRACKER H2: the S03 console
 (`illustration`), short: the same `data-service-account`, Storage Admin, JSON key (README.md lines
 148–170). `▶ your turn`.
-SAY: The secrets folder from part 1 already sits next to this repo, and the README asks for the same service account and key, so reuse both. An extra tree view shows the layout.
+SAY: The secrets folder from part 1 already sits beside this repo, and the README wants the same service account and key: reuse both, as an extra tree view shows.
 
 SHOW: TRACKER H3. Console `illustration` (README.md lines 174–187): bucket `your-bucket-placeholder`
 (GREY chip "a new bucket, or part 1's") → "Create folder" `dvc_store/` and `images/`; on V7 the
@@ -758,7 +758,7 @@ second BLUE bucket lights. TRACKER H3 · extra (the `extra` row "upload the firs
 blank tiles `Image_1.jpg` … `Image_4.jpg` fly into `images/` (`illustration`). A kind card, tag
 `erratum`: README card (`README.md · line 338`), "Upload a few additional images", caption "but no
 step uploads the first ones". GOLD `cost_tag()`: "images/: a few hundred kB". `▶ your turn`.
-SAY: In your bucket, create two folders in the console: DVC store and images. A small gap: the README never says to put the first photos into images, yet later it says to add more. So upload Image 1 to Image 4 from the zip; you will see why those four. Pause and do it. A gold tag: a few hundred kilobytes.
+SAY: In your bucket, create two folders in the console: DVC store and images. A small gap: the README never says to put the first photos into images, yet later it says to add more. So upload Image 1 to Image 4 from the zip. Pause and do it; a gold tag, a few hundred kilobytes.
 
 SHOW: TRACKER I1 (tracker I appears: "README › data-versioning › Start the DVC Container", 3
 dots + an `extra` row). It types `cd data-versioning` → (no output). CODE(data-versioning@data-versioning-ac215/docker-shell.sh:
@@ -775,7 +775,7 @@ gcsfuse's `--key-file`); **Bucket Mounting** (line 10: a PINK `gcsfuse` pipe fro
 bucket, `images/` *and* `dvc_store/`, to `/mnt/gcs_data`); **Connecting the Application** (line 13:
 a short PINK `mount --bind` pipe from `/mnt/gcs_data/images` to `/app/cheese_dataset`); **Using
 the Data** (a PURPLE `dvc` chip sits on the last folder).
-SAY: When this container starts, its entrypoint runs the four stages the lecture draws. Authenticate with the key. Mount the whole bucket as a folder, with a tool called gcsfuse. Connect its images folder to the path the app expects, cheese dataset, with a bind mount. Then use the data: DVC works on that folder as if it were local.
+SAY: At start, the entrypoint runs the four stages the lecture draws. Authenticate with the key. Mount the whole bucket as a folder, with a tool called gcsfuse. Bind its images folder to the path the app expects, cheese dataset. Then use the data: DVC works on that folder as if it were local.
 
 SHOW: Slide 34's chips over line 10: `gcsfuse` · `--key-file=$GOOGLE_APPLICATION_CREDENTIALS` ·
 `$GCS_BUCKET_NAME` · `/mnt/gcs_data` (a GREY chip "two hyphens, full variable name"), and a dashed
@@ -785,13 +785,13 @@ the GREY laptop; the `/app` window (Docker `-v`) shows the repo on both sides, b
 `cheese_dataset/` is dark; two labels, "bind mount · host → container (-v)" and "bind mount ·
 inside the container (mount --bind)". GREY notes: "slides: disks → here: a bucket" and "slide 33:
 no local copy → DVC keeps one in .dvc/cache (scene 13)".
-SAY: The lecture takes the mount line apart: the tool, the key file, the bucket, and the mount point. One flag is not passed, implicit dirs, so gcsfuse only shows folders created in the console. That was the trap. The lecture says disks; it means this bucket. And it says nothing is copied locally; DVC still keeps a copy on your disk, as you will see.
+SAY: The lecture takes the mount line apart: tool, key file, bucket, mount point. One flag is not passed, implicit dirs, so gcsfuse only shows folders made in the console: that was the trap. The slides say disks; they mean this bucket. And despite the slides, DVC still keeps a copy on your disk.
 
 SHOW: CODE(data-versioning@data-versioning-ac215/docker-shell.sh: 17–27): lines 18–20
 `--privileged`, `--cap-add SYS_ADMIN`, `--device /dev/fuse` ORANGE; line 21 `-v "$BASE_DIR":/app`
 GREY; line 22 `-v "$SECRETS_DIR":/secrets` GREEN; line 23 `-v ~/.gitconfig:/etc/gitconfig` YELLOW,
 chip "configure git first, or Docker creates a directory here". Fade out.
-SAY: Mounting needs the fuse device and mount rights, hence privileged and the extra capability. The script also mounts your repo, your secrets, and your git config. Set up git before the first run, or Docker creates a folder where that file should be.
+SAY: Mounting needs the fuse device and mount rights, hence privileged and the extra capability. The script also mounts your repo, secrets and git config; set up git before the first run, or Docker creates a folder in its place.
 
 ---
 
@@ -818,14 +818,14 @@ stage 1 RED, no key; TERM(laptop/88: 39; from "failed to detect credentials") �
 never connects; TERM(laptop/88: 41) — a YELLOW sign over the door, "GCS bucket mounted", beside
 CODE(data-versioning@data-versioning-ac215/docker-entrypoint.sh: 11) with a chip "printed no matter
 what"; TERM(laptop/88: 42) — stage 3 RED. Lines 33–38 and 40 are never printed.
-SAY: Run it again. The first build is slow, since it installs gcsfuse and the cloud tools. Then the entrypoint runs, and every stage fails the way a missing key fails. Authentication cannot find the key file, so the bucket never mounts. Yet the next line says bucket mounted, because the script prints it no matter what. Then the bind mount fails: special device does not exist.
+SAY: Run it again. The first build is slow; it installs gcsfuse and the cloud tools. Then the entrypoint runs, and every stage fails the way a missing key fails. Authentication cannot find the key file, so the bucket never mounts. Yet the next line says bucket mounted, because the script prints it no matter what. Then the bind mount fails: special device does not exist.
 
 SHOW: TRACKER I3 · extra. The prompt appears anyway: `root@9a9e6dff5c15:/app#` (TERM(laptop/88: 45)
 prompt), chip "no set -e". It types `ls -la cheese_dataset` (extra) → TERM(laptop/88: 46–48), empty,
 RED; `which dvc` (extra) → TERM(laptop/88: 50); `dvc --version` (extra) → TERM(laptop/88: 52),
 `3.63.0` with "pinned by uv.lock · at the time of recording". A YELLOW rule card parks in the
 corner: "`ls cheese_dataset` before `dvc add`".
-SAY: And still you get a root prompt, because the entrypoint does not stop at errors. Extra checks: the cheese dataset folder is empty, and DVC 3.63.0 is installed, pinned by the lock file. So, the rule for today: always list the folder before you add it.
+SAY: And still you get a root prompt, because the entrypoint does not stop at errors. Extra checks: the cheese dataset folder is empty, and DVC 3.63.0 is installed, pinned by the lock file. So the rule for today: list the folder before you add it.
 
 SHOW: The two-view picture with a real key (`illustration`): inside the TEAL container,
 `cheese_dataset/` shows four blank image tiles, PINK-piped to the BLUE bucket; on the GREY laptop,
@@ -851,7 +851,7 @@ yours"; re-entry as in the conventions: TERM(laptop/90: 27–28, …, 41–42)),
 TERM(laptop/90: 46), RED; `ls -A` (extra) → TERM(laptop/90: 50–51), `.dvc` and `.dvcignore` RED,
 chip "half-made". An ORANGE picture: a "root" badge inside the container, a "student" badge on the
 repo folder on disk, git's ownership check between them, RED.
-SAY: Inside the container, run dvc init. On a Linux machine it may stop here: the repository path is not owned by the current user. You are root inside, the repo is yours on disk, git refuses, and a half-made folder stays behind.
+SAY: Inside the container, run dvc init. On Linux it may stop: the repository path is not owned by the current user. You are root inside, the repo is yours on disk, so git refuses, leaving a half-made folder.
 
 SHOW: TRACKER J1 · extra (tag `extra · Linux`). The capture's `exit` (90: 52); on the host:
 `sudo rm -rf .dvc .dvcignore && ls -A` → TERM(laptop/91: 2–10);
@@ -860,14 +860,14 @@ SHOW: TRACKER J1 · extra (tag `extra · Linux`). The capture's `exit` (90: 52);
 23). Then `sh docker-shell.sh` → TERM(laptop/93: 27–28, …, 41–42); at `root@d5bf95465b66:/app#`
 `dvc init` → TERM(laptop/93: 46, 48, 52) (the analytics box cut to its line 52, GREY chip "opt out:
 dvc config core.analytics false"). `▶ your turn`.
-SAY: The fix is an extra, for Linux. On your laptop, remove the half-made files, and mark slash app as a safe directory in your git config, which the container reads through its mount. Start the container again, and dvc init works. Pause and run it.
+SAY: The fix is an extra, for Linux: on your laptop, remove the half-made files and mark slash app as a safe directory in your git config, which the container mounts. Then dvc init works. Pause and run it.
 
 SHOW: Route T, kindly: the second strip returns, title `laptop · second clone in ~/today`, a GREY
 chip "if you cloned main". At `root@15ddd4810362:/app#`: `dvc init` → TERM(laptop/145: 47), RED;
 `dvc remote add -d cheese_dataset gs://your-bucket-placeholder/dvc_store` → TERM(laptop/145:
 49–50; wrap), line 50 RED; `cat .dvc/config` (extra) → TERM(laptop/145: 52–55), line 55
 `url = gs://cheese-app-data-versioning/dvc_store` RED, chip "the class bucket". The strip closes.
-SAY: If you cloned main, this is where it stops: DVC is already set up, the remote is refused, and the config still points at the class bucket. Start from the starter, as we did.
+SAY: If you cloned main, it stops here: DVC is already set up, the remote is refused, and the config still points at the class bucket. Start from the starter, as we did.
 
 SHOW: TRACKER J2. Back at `root@d5bf95465b66:/app#`. A README card (`README.md · line 279`):
 `dvc remote add -d cheese_dataset gs://YOUR_BUCKET_NAME/dvc_store`. It types
@@ -879,7 +879,7 @@ SAY: Then point DVC at the DVC store folder in your bucket, as its default remot
 SHOW: TRACKER J3. It types `dvc add cheese_dataset` → TERM(laptop/93: 71, 73, 75); `cat cheese_dataset.dvc`
 (extra) → TERM(laptop/93: 81–86), lines 82–84 (`d751713988987e9331980363e24189ce.dir`, `size: 0`,
 `nfiles: 0`) RED. The YELLOW rule card from S11 flashes.
-SAY: Now the trap. Here the mount failed, so the folder is empty, and dvc add happily versions nothing: zero files, zero bytes. This is why you list first.
+SAY: Now the trap: the mount failed, so the folder is empty, and dvc add happily versions nothing, zero files. This is why you list first.
 
 SHOW: TRACKER J3 · extra (tag `extra · stand-in`). The capture's `exit` (93: 107); on the host:
 `sudo cp ../cheeses_unlabeled/Image_1.jpg ../cheeses_unlabeled/Image_2.jpg ../cheeses_unlabeled/Image_3.jpg ../cheeses_unlabeled/Image_4.jpg cheese_dataset/ && ls -la cheese_dataset`
@@ -888,7 +888,7 @@ SHOW: TRACKER J3 · extra (tag `extra · stand-in`). The capture's `exit` (93: 1
 `ls cheese_dataset` (extra) → TERM(laptop/95: 46); `dvc add cheese_dataset` → TERM(laptop/95: 48,
 50, 52); `cat cheese_dataset.dvc` (extra) → TERM(laptop/95: 58–63), lines 59–61 YELLOW. `▶ your
 turn`.
-SAY: So we copy the four photos in, as a stand-in for your images folder, and add again. Now the pointer file says 4 files, 611,101 bytes, and one fingerprint for the folder. Pause and add yours.
+SAY: Our stand-in copies the four photos in, and we add again: now the pointer file says 4 files, 611,101 bytes, and one fingerprint for the folder. Pause and add yours.
 
 SHOW: V5 in full: four tiles labelled `Image_1.jpg` … `Image_4.jpg` (no photos drawn) drop into a
 hash machine; each comes out as its real PINK md5 from TERM(laptop/09b: 2–5) (`5b53853e…`,
@@ -898,7 +898,7 @@ aisle; chip "a path, not a meaning"). A manifest card gathers the four `{md5, re
 sorted, is hashed itself → `89db50de….dir` on aisle `89/`, and shrinks into the six-line GREEN
 `cheese_dataset.dvc` (the lines of `95:58–63`). Chips: GREY "fingerprint · slide 25", PINK "md5 ·
 DVC".
-SAY: Here is what dvc add did. It fingerprinted each photo with MD5, the same fingerprints we computed in part 1, and filed each copy under its fingerprint: the first 2 characters name the shelf. Two photos share a shelf; it is only a path. Then it wrote a manifest, a list of fingerprints and file names, fingerprinted that too, and put the result in the pointer file.
+SAY: Here is what dvc add did. It fingerprinted each photo with MD5, the values from part 1, and filed each copy under its fingerprint, the first 2 characters naming the shelf. Then it fingerprinted a manifest, the list of fingerprints and names, and wrote that into the pointer file.
 
 SHOW: TRACKER J3 · extra. It types `find .dvc/cache -type f | sort` (extra) → TERM(laptop/95:
 65–70) under the drawing; each line lights its aisle; line 70 (`d7/51713988987e9331980363e24189ce.dir`)
@@ -913,7 +913,7 @@ class card slides in beside ours. Then
 `diff <(git -C class-data-versioning show dataset_v20:cheese_dataset.dvc) <(git -C data-versioning show dataset_v20:cheese_dataset.dvc) && echo identical`
 (extra; folds, small) → TERM(laptop/121: 2), GREEN; the two cards merge into one. S01's PINK line
 flies in and lands on it.
-SAY: And the payoff from the opening: an extra comparison with the instructor's tag in the class repo. Identical. Same bytes, same fingerprint, on any machine.
+SAY: And the payoff: an extra comparison with the instructor's tag in the class repo. Identical: same bytes, same fingerprint, on any machine.
 
 SHOW: The manifest card alone, `Image_2.jpg` highlighted.
 PONDER(8 s, "Rename Image_2.jpg → brie_2.jpg,\ndvc add again. Which changes: the photo's\nmd5, the .dir md5, size, nfiles?")
@@ -923,7 +923,7 @@ SHOW: The answer: on the manifest card one `relpath` rewrites to `brie_2.jpg`; t
 rerolls (shown as `????????….dir`, no invented value); the blob on aisle `ba/`, `size` and `nfiles`
 stay GREEN. A misconception chip: "DVC stores whole files, not diffs · one changed pixel = a new
 md5, a new blob". Fade out.
-SAY: Only the manifest fingerprint: one name in the list changed, but not the bytes, the size or the count. And DVC stores whole files, not differences; one changed pixel means a new fingerprint and a new copy.
+SAY: Only the manifest fingerprint, because one name in the list changed. And DVC stores whole files, not differences; one changed pixel means a new fingerprint and a new copy.
 
 ---
 
@@ -971,7 +971,7 @@ SHOW: A kind card, tag `erratum`: README card (`README.md · line 321`), "this t
 (README.md lines 256–260): Git · code and small DVC metadata files / DVC · large dataset files /
 GCS · where DVC stores dataset versions. TRACKER J6: a GREY note "Colab: view dataset_v20 → scene
 15 views both versions" (README.md lines 324–328). Fade out.
-SAY: The README warns that this tag may be taken. That applies only to a fork; your fresh repo has no tags. Its own table sums it up: git holds code and small DVC files, DVC tracks the dataset, and the bucket stores the versions. The README now opens the Colab notebook; we will do that for both versions together, shortly.
+SAY: The README warns that this tag may be taken; that applies only to a fork, and your fresh repo has no tags. Its table sums it up: git holds code and small DVC files, DVC tracks the dataset, the bucket stores the versions. The notebook comes next in the README; we view both versions there, shortly.
 
 ---
 
@@ -1037,7 +1037,7 @@ Slide 22's term card: "time travel · reaching an earlier version · only while 
 V6's rope pull, `dvc get <repo> cheese_dataset --rev <tag>`: the BLUE Colab box clones the repo at
 the tag → reads *that commit's* `.dvc/config` (a chip: "which bucket") → fetches the `.dir`
 manifest → then the blobs; four blank tiles materialize in Colab.
-SAY: Now time travel from anywhere. The lecture uses that phrase for reaching an earlier version, with one condition: only while its files are kept. The command dvc get, with a tag, walks the rope: it clones the repo at that tag, reads that commit's config to find the bucket, fetches the manifest, then the photos.
+SAY: Now, time travel from anywhere: the lecture's phrase for reaching an earlier version, which works only while its files are kept. The command dvc get, with a tag, walks the rope: it clones the repo at that tag, reads that commit's config to find the bucket, fetches the manifest, then the photos.
 
 SHOW: The notebook (`illustration`: a notebook frame, no screenshot; README.md lines 326 and 383,
 "Open the Colab Notebook"; slide 26 links the same one). Cells verbatim from
@@ -1064,7 +1064,7 @@ repo`: cell 13's stored listing (`notebook-1RRQ1SlH.cells.txt` lines 310–314: 
 0% 0/5` (line 331); cell 17's `Number of items: 5` (line 355). A chip: "your repo: your URL, your
 tag · your v20 gives 4". A small GREY chip: "private repo → a token in the URL, or make it public
 (exercises)".
-SAY: Signed in, the notebook shows this: five files in the class version 21, and a count of 5. For your repo, replace the address and the tag; your version 20 gives 4. Your repo is private, so the notebook needs an access token in the address, or a public repo.
+SAY: Signed in, the notebook shows five files in the class version 21, and a count of 5. For your repo, replace the address and the tag; your version 20 gives 4. Your repo is private, so the notebook needs an access token in the address, or a public repo.
 
 SHOW: Cell 19 (lines 361–362): `!rm -rf cheese_dataset` /
 `!dvc get https://github.com/dlops-io/data-versioning cheese_dataset --force --quiet --rev dataset_v25`;
@@ -1090,19 +1090,19 @@ redrawn as three question cards: "Which images trained this model?" · "Can I te
 before everyone uses them?" · "What did this table hold before the change?"; three tool chips
 below, unmatched: DVC · lakeFS · Delta Lake / Iceberg (GREY dashed).
 QUICK(4 s, "Which images trained this model? · Can I test\nnew images first? · What did this table hold?\nWhich tool answers each?")
-SAY: A quick prediction. Which images trained this model? Can I test new images before everyone uses them? What did this table hold before the change? Match each with DVC, lakeFS, or Delta Lake and Iceberg.
+SAY: A quick prediction: which images trained this model? Can I test new images before everyone uses them? What did this table hold before the change? Match DVC, lakeFS, and Delta Lake or Iceberg.
 
 SHOW: The chips land in order: DVC ("uses git") · lakeFS ("its own history") · Delta Lake /
 Iceberg ("table versions"). Slide 35's line, GREY: "no single standard". A GREY chip: "Milestone 2
 accepts a light tool like this one".
-SAY: In that order. There is no single standard, and your project milestone accepts a light tool like this one.
+SAY: In that order. There is no single standard; your project milestone accepts a light tool like this.
 
 SHOW: Monitoring, slides only: a GREY-dashed watchtower rises over V7, chip "this lecture has no
 monitoring tutorial". Slide 38's five reasons as GREY chips (quality · freshness · drift: "suddenly
 far more photos of one cheese" · cost · the broken step); slide 39's three approaches in one line
 (rules · anomaly detection · lineage + metadata); slide 40's tools as plain text, no logos. A
 YELLOW line: "versioning: what changed · monitoring: that something changed".
-SAY: The lecture ends with monitoring, which has no tutorial: watch quality, freshness, drift, like suddenly far more photos of one cheese, cost, and broken steps, with rules, anomaly detection, or lineage. Versioning tells you what changed; monitoring tells you that something changed.
+SAY: The lecture ends with monitoring, slides only: watch quality, freshness, drift, cost and broken steps, with rules, anomaly detection or lineage. Versioning tells you what changed; monitoring tells you that something changed.
 
 SHOW: TRACKER L1 (tracker L appears: "README › data-versioning › Docker Cleanup", 3 dots). Laptop
 prompt `student@laptop:~/data-versioning$`. `docker container ls` → TERM(laptop/150: 2; squeeze);
@@ -1114,13 +1114,13 @@ recording`. `▶ your turn`. Then the shutdown checklist card (GOLD frame), one 
 "buckets bill until deleted: `cheeses_unlabeled/`, `cheeses_labeled/`, `images/`" · RED-outlined:
 "never `dvc_store/` while a tag should still work" · "`.dvc/cache`: safe to delete once pushed" ·
 "delete the key when the course is done (IAM › Service accounts › Keys)".
-SAY: Cleanup is the README's three commands; pause and run them. Then the shutdown list: stop and remove Label Studio, and optionally remove the CORS rule. Buckets bill until deleted, but never delete the DVC store while any tag should still work: a tag is only a pointer. Delete the key when the course is done.
+SAY: Cleanup is the README's three commands; pause and run them. Then shut down: stop and remove Label Studio. Buckets bill until deleted, but never delete the DVC store while any tag should still work; a tag is only a pointer. Delete the key when you are done.
 
 SHOW: The recap on V7, complete: pieces relight one by one as each is named: the TEAL Label Studio
 house with its door and drawer (V1); the BLUE ticket (V2); the bouncer and the rule card on the
 bucket (V3); the WHITE envelope with its thread; the FUSE pipes (V4); the hash shelf (V5); the
 flags and the rope (V6). Then everything unlit.
-SAY: The whole lecture on one map: Label Studio in a container, signed tickets for the photos, a bouncer that the bucket configures, labels as small notes, a mounted bucket feeding DVC, photos filed by fingerprint, and a git tag pinning the list.
+SAY: The whole lecture on one map: Label Studio in a container, signed tickets, a bouncer the bucket configures, labels as small notes, a mounted bucket feeding DVC, photos filed by fingerprint, and a tag pinning the list.
 
 SHOW: A card "Test yourself". One question at a time (≥ 24 pt, ≤ 3 lines), each with a thumbnail of
 its picture; earlier ones collapse into a label list at left. Q1 "Why does the bucket need a CORS
@@ -1131,13 +1131,13 @@ one photo?" (the manifest card) · Q4 "After dvc add and dvc push, name the thre
 bytes sit." (three homes) · Q5 "You delete gs://…/dvc_store but keep GitHub and its tags. What does
 dvc get --rev dataset_v20 do now?" (the rope in air). Labels: "CORS" · "two addresses" · "the
 pointer" · "three homes" · "the warehouse".
-SAY: 5 questions to test yourself. One: why does the bucket need its CORS rule, and why does curl never notice? Two: why can the command line container and your browser not swap addresses? Three: what is in the pointer file, and what changes on a rename? Four: where do the photo bytes sit after a push? Five: without the DVC store, what does dvc get do with dataset v20?
+SAY: 5 questions to test yourself. One: why does the bucket need its CORS rule, when curl never notices? Two: why can the command line container and your browser not swap addresses? Three: what is in the pointer file, and what changes on a rename? Four: where do the bytes sit after a push? Five: without the DVC store, what does dvc get do?
 
 SHOW: The label list stays at left. Footer cards: "Answers: exercises.md" and "Study guide + every
 command: MLOps_Learning · guides/L11-data-labeling-versioning.md". A "Next" card, GREY dashed:
 "L13 · trains on the labeled cheeses from a prepared zip · swap that download for dvc get --rev to
 make a run reproducible". Everything fades to an empty frame (end of part 2).
-SAY: Answers are in the exercises, every command in the study guide. In lecture 13 you train on labeled cheeses from a prepared zip; fetching a tagged version instead is how you make such a run reproducible.
+SAY: Answers are in the exercises, every command in the study guide. In lecture 13 you train from a prepared zip; fetching a tagged version instead makes such a run reproducible.
 
 ---
 

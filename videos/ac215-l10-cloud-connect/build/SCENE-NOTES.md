@@ -314,3 +314,10 @@ S12); `picker='char-split-collection ▾'` (S12/S13); `fun_fact=True` (S13: last
 - Housekeeping: delete only your own scene's preview folders (`build/preview_l/<stem>`,
   `build/preview_m/<stem>`), never the whole `build/preview_*` — other agents render there at the
   same time (coordinator).
+- `on_bar()` places a tag where the terminal is at that moment: after `resize()`, place it again
+  (S02; the review bot caught it).
+- Terminal rows are verbatim: never re-space columns (e.g. `ls -la`). A row wider than the
+  terminal gets the house `cut()` "…" only, or use 20 pt (72 columns) (coordinator, after S02).
+- Pending common.py change (coordinator, after the scene builds): `AppMap.call("browser", k)`
+  starts all three browser arrows at one point, so the frontend/API arrows nearly overlap; their
+  start points will be spread across the browser's top edge. Don't work around it locally.

@@ -27,7 +27,7 @@ from explainer.scene import VoiceScene
 from common import (CLOUD, ERR, IMAGE, INK, KEY, NARRATION, PASS, SAY_COUNT, TURN, card, dashed_chip,
                     extra_tag, file_glyph, flash_tag, google_building, grey_chip, illustration_tag,
                     key_card, key_glyph, label, lref, mono, note, ring, steady, strike, tag, track,
-                    tracker, under, warning_sign, erratum_tag, your_turn, SA_NAME)
+                    tracker, under, warning_sign, cell_width, erratum_tag, your_turn, SA_NAME)
 from explainer import style as S
 
 SAY = NARRATION["S03"]
@@ -154,6 +154,12 @@ def two_line_chip(a: str, b: str, color=S.GREY, size: float = 20, text_color=S.G
     return g
 
 
+def indent(m, n: int = 2, size: float = 20) -> VGroup:
+    """A continuation row: `m` after n blank mono cells (Text drops leading spaces)."""
+    gap = Rectangle(width=n * cell_width(size), height=0.01, stroke_width=0, fill_opacity=0)
+    return VGroup(gap, m).arrange(RIGHT, buff=0)
+
+
 def banner(s: str, banner_w: float, size: float = 22) -> VGroup:
     """A console warning banner in our own words: YELLOW warning sign + text, GREY box."""
     w = warning_sign(0.34, TURN)
@@ -205,7 +211,7 @@ class IdentityForCode(VoiceScene):
             vo.wait_until("to call Google")
             self.play(FadeIn(gb, shift=LEFT * 0.2), GrowArrow(call), run_time=0.8)
             self.add(rider)
-            self.play(rider.animate.move_to(call.get_end() + LEFT * 0.25), run_time=0.9)
+            self.play(rider.animate.move_to(call.get_end() + LEFT * 0.55), run_time=0.9)
             vo.wait_until("with no login screen")
             self.play(FadeIn(login, shift=DOWN * 0.15), run_time=0.4)
             self.play(Create(no_login), run_time=0.4)
@@ -282,9 +288,9 @@ class IdentityForCode(VoiceScene):
         xc = card([VGroup(extra_tag(), note("the same from a terminal · suggested, not in the repo"))
                    .arrange(RIGHT, buff=0.25),
                    mono("gcloud iam service-accounts create \\", 20, INK),
-                   mono("  llm-service-account --project=YOUR_PROJECT_ID", 20, INK),
+                   indent(mono("llm-service-account --project=YOUR_PROJECT_ID", 20, INK)),
                    mono("gcloud projects add-iam-policy-binding \\", 20, INK),
-                   mono("  YOUR_PROJECT_ID --member=… --role=…", 20, INK)], size=20, buff=0.1)
+                   indent(mono("YOUR_PROJECT_ID --member=… --role=…", 20, INK))], size=20, buff=0.1)
         xc.move_to([6.5, -1.1, 0], aligned_edge=UR)
         old1 = VGroup(rc, ptr, r3, ci, lap, st_ci, st_lap, kg, kl)
 
