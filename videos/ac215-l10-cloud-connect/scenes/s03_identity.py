@@ -200,7 +200,7 @@ class IdentityForCode(VoiceScene):
             self.play(FadeIn(server, shift=UP * 0.2), FadeIn(gb, shift=LEFT * 0.2), run_time=0.7)
             vo.wait_until("Its email looks like this badge")
             self.play(GrowFromCenter(bdg), run_time=0.8)
-            self.play(Indicate(bdg.frame, color=KEY, scale_factor=1.04), run_time=0.6)
+            self.play(Circumscribe(bdg.frame, color=KEY, buff=0.08), run_time=0.7)  # Indicate floods a filled frame
             vo.wait_until("llm-service-account, at")
             self.play(Indicate(bdg.text[0], color=KEY, scale_factor=1.12), run_time=0.7)
             vo.wait_until("at your project")
@@ -442,7 +442,7 @@ class IdentityForCode(VoiceScene):
             self.play(FadeIn(props[2], shift=UP * 0.15), run_time=0.4)
             vo.wait_until("Treat this file like a password")
             self.play(FadeOut(props, shift=DOWN * 0.15), FadeIn(pw, shift=UP * 0.15), run_time=0.6)
-            self.play(Indicate(kc.frame, color=KEY, scale_factor=1.02), run_time=0.7)
+            self.play(Circumscribe(kc.frame, color=KEY, buff=0.08), run_time=0.8)  # Indicate floods a filled frame
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)
