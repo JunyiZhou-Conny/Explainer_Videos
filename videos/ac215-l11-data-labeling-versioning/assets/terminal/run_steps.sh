@@ -196,10 +196,10 @@ EOF
   # README "Configure Cloud Storage" (README:117-147): the form's "Check Connection" button posts
   # to these validate endpoints. Honest result here: no key in /secrets (ASSETS.md).
   cat > ls-api/source-storage.json <<EOF
-{"project": $PID, "title": "Cheese Images", "bucket": "your-bucket-name", "prefix": "cheeses_unlabeled", "use_blob_urls": true, "presign": true}
+{"project": $PID, "title": "Cheese Images", "bucket": "your-bucket-placeholder", "prefix": "cheeses_unlabeled", "use_blob_urls": true, "presign": true}
 EOF
   cat > ls-api/target-storage.json <<EOF
-{"project": $PID, "title": "Cheese Images", "bucket": "your-bucket-name", "prefix": "cheeses_labeled"}
+{"project": $PID, "title": "Cheese Images", "bucket": "your-bucket-placeholder", "prefix": "cheeses_labeled"}
 EOF
   mkdir -p "$OUT/capture-only"
   if [ -f ~/secrets/data-service-account.json ]; then
@@ -212,9 +212,9 @@ EOF
   # stand-ins for "Sync Storage" + one click on "gouda" (the bucket cannot be listed here): three
   # tasks with the gs:// URIs a sync would create, and one annotation through the UI's API
   cat > ls-api/tasks.json <<'EOF'
-[{"image": "gs://your-bucket-name/cheeses_unlabeled/Image_1.jpg"},
- {"image": "gs://your-bucket-name/cheeses_unlabeled/Image_2.jpg"},
- {"image": "gs://your-bucket-name/cheeses_unlabeled/Image_3.jpg"}]
+[{"image": "gs://your-bucket-placeholder/cheeses_unlabeled/Image_1.jpg"},
+ {"image": "gs://your-bucket-placeholder/cheeses_unlabeled/Image_2.jpg"},
+ {"image": "gs://your-bucket-placeholder/cheeses_unlabeled/Image_3.jpg"}]
 EOF
   cat > ls-api/annotation.json <<'EOF'
 {"result": [{"from_name": "choice", "to_name": "image", "type": "choices", "value": {"choices": ["gouda"]}}]}
@@ -231,8 +231,8 @@ cli)
   cd data-labeling
   export LS_CSRF=$(awk '$6=="csrftoken"{print $7}' /tmp/ls.cookies)   # the browser session from ls2
   # --- README "Enable CORS" (README:164): "Change the bucket name in docker-shell-CLI.sh" (sed is
-  # the editor here; your-bucket-name is the stand-in)
-  step 40-edit-bucket "sed -i 's|GCS_BUCKET_NAME=\"cheese-app-data-demo\"|GCS_BUCKET_NAME=\"your-bucket-name\"|' docker-shell-CLI.sh && sed -n '23,24p' docker-shell-CLI.sh"
+  # the editor here; your-bucket-placeholder is the stand-in)
+  step 40-edit-bucket "sed -i 's|GCS_BUCKET_NAME=\"cheese-app-data-demo\"|GCS_BUCKET_NAME=\"your-bucket-placeholder\"|' docker-shell-CLI.sh && sed -n '23,24p' docker-shell-CLI.sh"
   # --- README:165-168: run docker-shell-CLI.sh, then python cli.py -c and -m inside. Both need a
   # Google credential and fail honestly (no key; see ASSETS.md). Extras typed inside: the env, the
   # empty /secrets, and the two addresses of Label Studio (digest §3.4).
@@ -331,7 +331,7 @@ b-build)
   # bucket" (README:174-187): console clicks, illustration (ASSETS.md)
   cd data-versioning
   # --- README "Configure the container parameters" (README:191-205): edit docker-shell.sh lines 7-9
-  step 85-edit-docker-shell "sed -i -e 's|^export GCS_BUCKET_NAME=.*|export GCS_BUCKET_NAME=\"your-bucket-name\"|' -e 's|^export GCP_PROJECT=.*|export GCP_PROJECT=\"your-gcp-project\"|' -e 's|^export GCP_ZONE=.*|export GCP_ZONE=\"us-central1-a\"|' docker-shell.sh && sed -n '5,10p' docker-shell.sh"
+  step 85-edit-docker-shell "sed -i -e 's|^export GCS_BUCKET_NAME=.*|export GCS_BUCKET_NAME=\"your-bucket-placeholder\"|' -e 's|^export GCP_PROJECT=.*|export GCP_PROJECT=\"your-gcp-project\"|' -e 's|^export GCP_ZONE=.*|export GCP_ZONE=\"us-central1-a\"|' docker-shell.sh && sed -n '5,10p' docker-shell.sh"
   # --- README "Run docker-shell.sh" (README:229-243): cd data-versioning; sh docker-shell.sh.
   # The starter's Dockerfile:36 still installs google-cloud-sdk (digest gotcha #1, live).
   hub_retry step 86-docker-shell-starter-fails "sh docker-shell.sh"
@@ -353,7 +353,7 @@ b-v20)
   # --- README "Create the first dataset version" (README:255-303), inside the container
   PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=1800 istep 90-dvc-v20 "sh docker-shell.sh" \
     ':/app# $' 'dvc init' \
-    ':/app# $' 'dvc remote add -d cheese_dataset gs://your-bucket-name/dvc_store' \
+    ':/app# $' 'dvc remote add -d cheese_dataset gs://your-bucket-placeholder/dvc_store' \
     ':/app# $' 'cat .dvc/config' \
     ':/app# $' 'dvc add cheese_dataset' \
     ':/app# $' 'cat cheese_dataset.dvc' \
@@ -455,11 +455,11 @@ t-repo)
   ;;
 t-dvc)
   cd today/data-versioning
-  step 134-edit-docker-shell "sed -i -e 's|^export GCS_BUCKET_NAME=.*|export GCS_BUCKET_NAME=\"your-bucket-name\"|' -e 's|^export GCP_PROJECT=.*|export GCP_PROJECT=\"your-gcp-project\"|' -e 's|^export GCP_ZONE=.*|export GCP_ZONE=\"us-central1-a\"|' docker-shell.sh && sed -n '5,10p' docker-shell.sh"
+  step 134-edit-docker-shell "sed -i -e 's|^export GCS_BUCKET_NAME=.*|export GCS_BUCKET_NAME=\"your-bucket-placeholder\"|' -e 's|^export GCP_PROJECT=.*|export GCP_PROJECT=\"your-gcp-project\"|' -e 's|^export GCP_ZONE=.*|export GCP_ZONE=\"us-central1-a\"|' docker-shell.sh && sed -n '5,10p' docker-shell.sh"
   # README:256-268 + 288-328 today: sh docker-shell.sh, then dvc init / remote add / add / push
   PTY_COLS=110 PTY_ROWS=50 PTY_TIMEOUT=3600 hub_retry istep 135-docker-shell-dvc "sh docker-shell.sh" \
     ':/app# $' 'dvc init' \
-    ':/app# $' 'dvc remote add -d cheese_dataset gs://your-bucket-name/dvc_store' \
+    ':/app# $' 'dvc remote add -d cheese_dataset gs://your-bucket-placeholder/dvc_store' \
     ':/app# $' 'cat .dvc/config' \
     ':/app# $' 'cat cheese_dataset.dvc' \
     ':/app# $' 'dvc add cheese_dataset' \
