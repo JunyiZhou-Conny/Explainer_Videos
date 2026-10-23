@@ -197,3 +197,49 @@ implicit dirs: {ipa: "ɪmplˈɪsɪt dˈɜːz", say: "implicit durs"}
 gouda: {ipa: "ɡˈuːdə", say: "GOO-da"}
 parmigiano: {ipa: "pˌɑːɹmɪdʒˈɑːnoʊ", say: "par-mi-JAH-no"}
 data-service-account: {ipa: "dˈeɪɾə sˈɜːvɪs ɐkˈaʊnt", say: "data service account"}
+# AC215 L13 (videos/ac215-l13-training-workflows); verified against Kokoro af_heart phonemes.
+# Every spoken decimal is keyed: phonemizer splits a sentence-final chunk at its first "." (decimal point).
+"0.31.0": {ipa: "zˈiəɹoʊ pɔɪnt θˈɜːɾi wˈʌn pɔɪnt zˈiəɹoʊ", say: "zero point thirty-one point zero"}
+"0.22.2": {ipa: "zˈiəɹoʊ pɔɪnt twˈɛnti tˈuː pɔɪnt tˈuː", say: "zero point twenty-two point two"}
+"2.19.0": {ipa: "tˈuː pɔɪnt nˈaɪntiːn pɔɪnt zˈiəɹoʊ", say: "two point nineteen point zero"}
+"0.15.11": {ipa: "zˈiəɹoʊ pɔɪnt fˈɪftiːn pɔɪnt ɪlˈɛvən", say: "zero point fifteen point eleven"}
+"3.13.17": {ipa: "θɹˈiː pɔɪnt θˈɜːtiːn pɔɪnt sˈɛvəntˌiːn", say: "three point thirteen point seventeen"}
+"0.13.5": {ipa: "zˈiəɹoʊ pɔɪnt θˈɜːtiːn pɔɪnt fˈaɪv", say: "zero point thirteen point five"}
+"590.0.0": {ipa: "fˈaɪv nˈaɪnti pɔɪnt zˈiəɹoʊ pɔɪnt zˈiəɹoʊ", say: "five ninety point zero point zero"}
+"1.120.0": {ipa: "wˈʌn pɔɪnt wˈʌn twˈɛnti pɔɪnt zˈiəɹoʊ", say: "one point one twenty point zero"}
+"2.14": {ipa: "tˈuː pɔɪnt fˈɔːɹtiːn", say: "two point fourteen"}
+"2.17": {ipa: "tˈuː pɔɪnt sˈɛvəntˌiːn", say: "two point seventeen"}
+"68.97": {ipa: "sˈɪksti ˈeɪt pɔɪnt nˈaɪn sˈɛvən", say: "sixty-eight point nine seven"}
+"62.93": {ipa: "sˈɪksti tˈuː pɔɪnt nˈaɪn θɹˈiː", say: "sixty-two point nine three"}
+"9.5": {ipa: "nˈaɪn pɔɪnt fˈaɪv", say: "nine point five"}
+"2.59": {ipa: "tˈuː pɔɪnt fˈaɪv nˈaɪn", say: "two point five nine"}
+"8.93": {ipa: "ˈeɪt pɔɪnt nˈaɪn θɹˈiː", say: "eight point nine three"}
+"4.31": {ipa: "fˈɔːɹ pɔɪnt θɹˈiː wˈʌn", say: "four point three one"}
+"7.61": {ipa: "sˈɛvən pɔɪnt sˈɪks wˈʌn", say: "seven point six one"}
+"0.86": {ipa: "zˈiəɹoʊ pɔɪnt ˈeɪt sˈɪks", say: "zero point eight six"}
+"0.001": {ipa: "zˈiəɹoʊ pɔɪnt zˈiəɹoʊ zˈiəɹoʊ wˈʌn", say: "zero point zero zero one"}
+"404": {ipa: "fˈɔːɹ ˈoʊ fˈɔːɹ", say: "four oh four"}
+cli.sh: {ipa: "sˌiːˌɛlˈaɪ dˈɑːt ˌɛsˈeɪtʃ", say: "C-L-I dot S-H"}
+cli-multi-gpu.sh: {ipa: "sˌiːˌɛlˈaɪ mˈʌlti dʒˌiːpˌiːjˈuː dˈɑːt ˌɛsˈeɪtʃ", say: "C-L-I multi G-P-U dot S-H"}
+package-trainer.sh: {ipa: "pˈækɪdʒ tɹˈeɪnɚ dˈɑːt ˌɛsˈeɪtʃ", say: "package trainer dot S-H"}
+setup.py: {ipa: "sˈɛɾʌp dˈɑːt pˈaɪ", say: "setup dot pie"}
+task.py: {ipa: "tˈæsk dˈɑːt pˈaɪ", say: "task dot pie"}
+model-trainer.json: {ipa: "mˈɑːdəl tɹˈeɪnɚ dˈɑːt dʒˈeɪsˈɑːn", say: "model trainer dot JSON"}
+cheese-app-trainer.tar.gz: {ipa: "tʃˈiːz ˈæp tɹˈeɪnɚ dˈɑːt tˈɑːɹ dˈɑːt dʒˌiːzˈiː", say: "cheese app trainer dot tar dot G-Z"}
+wandb: {ipa: "dˈʌbəljˌuː ænd bˈiː", say: "W and B"}
+us-central1: {ipa: "jˌuːˈɛs sˈɛntɹəl wˈʌn", say: "U S central one"}
+notebook A: {ipa: "nˈoʊtbʊk ˈeɪ", say: "notebook A"}
+Notebook A: {ipa: "nˈoʊtbʊk ˈeɪ", say: "Notebook A"}
+T4s: {ipa: "tˈiː fˈɔːɹz", say: "T fours"}
+model dir: {ipa: "mˈɑːdəl dˈɜː", say: "model dur"}
+# optional (V28)
+gsutil: {ipa: "dʒˌiːˈɛs jˈuːtɪl", say: "G-S util"}
+scikit-learn: {ipa: "sˈaɪkɪt lˈɜːn", say: "sy-kit learn"}
+# AC215 L09 decimals at a sentence end (phonemizer splits the last chunk at its first "."; found by
+# the L13 flow review). "to 0.77" is multi-word so L05's mid-sentence "0.77" is untouched.
+"3.9": {ipa: "θɹˈiː pɔɪnt nˈaɪn", say: "three point nine"}
+"5.0": {ipa: "fˈaɪv pɔɪnt zˈiəɹoʊ", say: "five point zero"}
+to 0.77: {ipa: "tə zˈiəɹoʊ pɔɪnt sˈɛvən sˈɛvən", say: "to zero point seven seven"}
+"49.4": {ipa: "fˈɔːɹɾi nˈaɪn pɔɪnt fˈɔːɹ", say: "forty-nine point four"}
+"1.15": {ipa: "wˈʌn pɔɪnt wˈʌn fˈaɪv", say: "one point one five"}
+"1.84": {ipa: "wˈʌn pɔɪnt ˈeɪt fˈɔːɹ", say: "one point eight four"}
