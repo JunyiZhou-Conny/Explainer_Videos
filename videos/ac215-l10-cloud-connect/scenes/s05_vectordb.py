@@ -46,10 +46,10 @@ from manim import *  # noqa: I001  (manim first, then common: common must win)
 from explainer.scene import VoiceScene
 
 from common import (ERR, IMAGE, INK, KEY, NARRATION, P_LAPTOP_HOME, P_LLMRAG, PASS, ROUTE, SAY_COUNT, TURN,
-                    AppMap, attach, beside, each, bare_prompt, capture, card, cd_prompt, code, code_span, cross_mark, cut,
-                    editor_row, err_chip, extra_row, flash_tag, label, line_bar, lref, mono, note, on_bar, out,
-                    outline_box, pin, readme, recorded_tag, resize, ring, row_tag, squash, squeeze, substring,
-                    swap_tracker, term, time_row, track, tracker, turn_row, type_cmd, unpin, istep)
+                    AppMap, attach, bare_prompt, beside, capture, card, cd_prompt, code, code_span, cross_mark,
+                    cut, each, editor_row, err_chip, extra_row, flash_tag, istep, label, line_bar, lref, mono,
+                    note, on_bar, out, outline_box, pin, readme, recorded_tag, resize, ring, row_tag, squash,
+                    squeeze, substring, swap_tracker, term, time_row, track, tracker, turn_row, type_cmd, unpin)
 from explainer import style as S
 
 SAY = NARRATION["S05"]
