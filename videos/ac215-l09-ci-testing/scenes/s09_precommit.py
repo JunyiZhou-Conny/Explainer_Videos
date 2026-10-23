@@ -15,7 +15,7 @@ Beats (script.md, ## S09; one voiceover block each):
    windows pass: whitespace, end of file; YAML … private keys; black; flake8. `'120'` underlined;
    lines 35 and 44 `files: ^src/.*\\.py$` YELLOW; GREY dashed chip "tests/ · never matched".
 3. TRACKER D3: `git commit -m "Your commit message"` (README:255) -> part4-03: 2–3 (wrap), 4–6, …,
-   15–23, 27. The `[WARNING]` row ringed with `at the time of recording`; the nine Skipped rows ringed;
+   15–23, …, 27. The `[WARNING]` row ringed with `at the time of recording`; the nine Skipped rows ringed;
    `nothing to commit, working tree clean` highlighted. `▶ your turn`.
 4. TRACKER D4: `pre-commit run --all-files` (README:262) -> part4-04: 2–14, …, 16 (line 9 RED,
    line 11 YELLOW). The terminal shrinks to a strip (rows 9, 11, 13) under the V1 gate (9 named
@@ -28,9 +28,9 @@ Beats (script.md, ## S09; one voiceover block each):
    arches GREEN, two GREY dashed, the envelope goes into the vault; `[main b72d50d]` GREEN.
    `▶ your turn`. TRACKER D5: `pre-commit run` (README:265) -> part4-08: 2–10, all arches GREY dashed.
 7. TRACKER D5 · extra: the sed line (folds) -> no output, GREY note "on a Mac: sed -i '' …";
-   `git commit -m "try an unused import"` -> part4-11: 9–13, 18–22 (both Failed RED, line 11 `files
+   `git commit -m "try an unused import"` -> part4-11: 9–13, …, 18–22 (both Failed RED, line 11 `files
    were modified` RED as scripted, F401 RED). Strip (rows 9, 18, 22) under the gate: an `import os` envelope, black amber, flake8
-   RED, back to the tray; `git status` -> part4-12: 2–3, 6–8, "still staged · not committed";
+   RED, back to the tray; `git status` -> part4-12: 2–3, …, 6–8, "still staged · not committed";
    the restore line (folds) -> no output, the envelope leaves the tray; the vault stays shut. A
    YELLOW card "this gate never ran a test" appears and parks in the top-right corner. Fade to an
    empty frame (end of part 1).
@@ -482,7 +482,7 @@ class PreCommitGate(VoiceScene):
             self.play(Create(sring), run_time=0.5)
             attach(self, skipped[0], sring)
             vo.wait_until("git says nothing to commit")
-            done = out(self, t, clean.at(27), run_time=0.3)[0]
+            done = out(self, t, clean.at("…", 27), run_time=0.3)[1]
             dring = ring(done.glyphs, TURN, buff=0.06)
             self.play(Create(dring), run_time=0.5)
             attach(self, done, dring)
@@ -636,9 +636,9 @@ class PreCommitGate(VoiceScene):
             vo.wait_until("after it.")
             k2 = typ(self, t, blocked.cmd, type_time=0.9)
             tag_on(self, k2, extra_row)
-            bl = out(self, t, fit(blocked.at((9, 13), (18, 22)), {0: ERR, 2: ERR, 5: ERR, 9: ERR}),
+            bl = out(self, t, fit(blocked.at((9, 13), "…", (18, 22)), {0: ERR, 2: ERR, 6: ERR, 10: ERR}),
                      run_time=0.9)
-            b9, b18, b22 = bl[0], bl[5], bl[9]
+            b9, b18, b22 = bl[0], bl[6], bl[10]
             assert "Black" in b9.text and "Flake8" in b18.text and "F401" in b22.text
             vo.wait_until("black reformats the file")
             self.play(each([substring(b9, "Failed"), substring(bl[2], "files were modified")], ERR, 1.1), run_time=0.7)
@@ -661,7 +661,7 @@ class PreCommitGate(VoiceScene):
             self.play(Indicate(a8, color=ERR, scale_factor=1.15), gate.go_home(), run_time=0.7)
             vo.wait_until("git status confirms")
             typ(self, t, status.cmd, type_time=0.4)
-            still = out(self, t, status.at((2, 3), (6, 8)), run_time=0.6)[2:]
+            still = out(self, t, status.at((2, 3), "…", (6, 8)), run_time=0.6)[3:]
             assert still[0].text.startswith("Changes to be committed"), still[0].text
             stag = beside(row_tag("still staged · not committed", TURN), still[0])
             pin(self, still[0], stag)
