@@ -427,9 +427,14 @@ def swap_tracker(scene, old: ReadmeTracker, new: ReadmeTracker, *anims, run_time
     return new
 
 
-def lref(slides: str) -> VGroup:
-    """The GREY 'Lecture 11 · slides 20, 24' tag, top right (one per scene, BRIEF span)."""
-    return lecture_ref(11, slides)
+def lref(slides: str, low: bool = False) -> VGroup:
+    """The GREY 'Lecture 11 · slides 20, 24' tag, top right (one per scene, BRIEF span). low=True
+    sits it one row lower (centre y 3.0, beside the tracker's caption row): needed with tracker G,
+    whose heading reaches x 2.35 (S09)."""
+    g = lecture_ref(11, slides)
+    if low:
+        g.shift(DOWN * (g.get_center()[1] - 3.0))
+    return g
 
 
 # ---- line transforms (script.md conventions)
@@ -1384,7 +1389,7 @@ def greyed(m, shape=S.GREY_DARK, text=S.GREY):
 
 # ------------------------------------------------------------------ L11 glyphs (all text >= 20 pt)
 def tile(name: str | None = None, tile_w: float = 0.6, color=LAPTOP, broken: bool = False,
-         filled: bool = False, size: float = 20, name_color=INK) -> VGroup:
+         filled: bool = False, size: float = 20, name_color=INK, side=DOWN) -> VGroup:
     """A photo as a blank tile (never a photo): a rounded square with a schematic hill-and-sun mark;
     `name` (mono) under it. broken=True: a RED-free GREY crack and dimmed mark (a thumbnail that did
     not load); filled=True: a light fill (the thumbnail loaded, schematic). .frame .icon .text"""
@@ -1403,7 +1408,7 @@ def tile(name: str | None = None, tile_w: float = 0.6, color=LAPTOP, broken: boo
     g = VGroup(fr, icon)
     g.frame, g.icon, g.text = fr, icon, None
     if name:
-        t = mono(name, size, name_color).next_to(fr, DOWN, buff=0.08)
+        t = mono(name, size, name_color).next_to(fr, side, buff=0.08 if side is DOWN else 0.15)
         g.add(t)
         g.text = t
     return g
@@ -1448,7 +1453,9 @@ def vault(title: str, drawers=(), color=CLOUD, size: float = 20, mono_title: boo
     bottom with title_bottom=True). .frame .title .drawers (dict name -> drawer) .rows"""
     tt = mono(title, size, color) if mono_title else label(title, size, color)
     ds = [drawer(d, color, size) for d in drawers]
-    dw = max([d.width for d in ds] + [tt.width]) + 0.0
+    dw = max([d.width for d in ds] + [tt.width])
+    if vault_w:
+        dw = max(dw, vault_w - 0.4)
     ds = [drawer(d, color, size, drawer_w=dw) for d in drawers]
     col = VGroup(*ds).arrange(DOWN, buff=gap) if ds else VGroup()
     items = [col, tt] if title_bottom else [tt, col]
@@ -1826,7 +1833,7 @@ class StationMap(Rig):
             arc.add_tip(tip_length=0.16, tip_width=0.16)
             arc.move_to(c + UP * 0.42)
             g = VGroup(arc)
-            g.label = mono("localhost:8080", s, ROUTE).next_to(arc, RIGHT, buff=0.15)
+            g.label = mono("localhost:8080", s, ROUTE).next_to(arc, UP, buff=0.08)
             g.add(g.label)
             g.cross = cross_mark(0.36, ERR).move_to(arc)
             g.path = arc
@@ -1906,12 +1913,12 @@ class SignedTicket(Rig):
         self.studio = house(CONTAINERS["studio"], 2.6, 1.0, lit=True).move_to([-3.75, 0.55, 0], aligned_edge=DOWN)
         self.key = key_glyph(0.85).next_to(self.studio, LEFT, buff=0.25).shift(DOWN * 0.15)
         self.db = drawer("database", LAPTOP, size, mono_font=False).move_to([-1.1, 1.55, 0])
-        self.browser = browser_glyph(name="your browser", glyph_w=1.2).move_to([-4.6, -1.15, 0])
+        self.browser = browser_glyph(name="your browser", glyph_w=1.2).move_to([-2.9, -1.15, 0])
         self.bouncer = bouncer(0.7).next_to(self.browser.window, RIGHT, buff=0.3).align_to(self.browser.window, DOWN)
-        self.vault = vault(BUCKET1, ("cheeses_unlabeled/", "cheeses_labeled/"), CLOUD, size)
-        self.vault.move_to([3.55, 0.45, 0])
+        self.vault = vault(BUCKET1, ("cheeses_unlabeled/", "cheeses_labeled/"), CLOUD, size, vault_w=4.75)
+        self.vault.move_to([3.85, 0.45, 0])
         d = door_glyph(0.36, 0.5, CLOUD)
-        d.move_to(self.vault.frame.get_corner(DL) + np.array([0.45, 0.3, 0]))
+        d.next_to(self.vault.frame, LEFT, buff=0.0).align_to(self.vault.frame, DOWN).shift(UP * 0.12)
         self.door = d
         self.host = mono(STORAGE_HOST, size, CLOUD).next_to(self.vault.frame, DOWN, buff=0.15)
         self.host.align_to(self.vault.frame, RIGHT)
@@ -1988,7 +1995,7 @@ class SignedTicket(Rig):
         return rt, tl, ck
 
     def envelope_to_db(self, scene, word: str = "gouda"):
-        env = annotation(word, 1.2, 0.72).move_to(self.studio.body.get_right() + RIGHT * 0.8)
+        env = annotation(word, 1.1, 0.62, 20).move_to(self.studio.body.get_right() + RIGHT * 0.8)
         scene.play(FadeIn(env, scale=0.5), run_time=0.5)
         scene.play(env.animate.next_to(self.db, DOWN, buff=0.1), run_time=0.8)
         return env
@@ -1997,9 +2004,9 @@ class SignedTicket(Rig):
         c = env.copy()
         lab = self.vault.drawers["cheeses_labeled/"]
         unl = self.vault.drawers["cheeses_unlabeled/"]
-        tgt = lab.box.get_right() + LEFT * (c.width / 2 + 0.12)
-        scene.play(c.animate.move_to(tgt + UP * 0.0).set_z_index(5), run_time=1.0)
-        ph = tile(None, 0.42, CLOUD).move_to(unl.box.get_right() + LEFT * 0.35)
+        tgt = lab.box.get_right() + LEFT * (c.width / 2 + 0.1)
+        scene.play(c.animate.move_to(tgt), run_time=1.0)
+        ph = tile(None, 0.36, CLOUD).move_to(unl.box.get_right() + LEFT * 0.3)
         th = Line(c.get_top(), ph.get_bottom(), color=NOTE, stroke_width=2)
         scene.play(FadeIn(ph, scale=0.6), run_time=0.3)
         scene.play(Create(th), run_time=0.6)
@@ -2018,9 +2025,9 @@ def page_window(url: str = PAGE_ORIGIN, win_w: float | None = None, win_h: float
     dots = VGroup(*[Dot(radius=0.04, color=S.GREY) for _ in range(3)]).arrange(RIGHT, buff=0.07)
     dots.move_to(fr.get_corner(UL) + np.array([0.3, -0.225, 0]))
     a.move_to([fr.get_center()[0] + 0.2, fr.get_top()[1] - 0.225, 0])
-    content = Rectangle(width=w - 0.3, height=win_h - 0.6, stroke_width=0, fill_opacity=0)
+    content = Rectangle(width=w - 0.3, height=win_h - 0.6, stroke_width=0, stroke_opacity=0, fill_opacity=0)
     content.move_to(fr.get_bottom() + UP * (win_h - 0.45) / 2)
-    g = VGroup(fr, bar, dots, a)
+    g = VGroup(fr, bar, dots, a, content)
     g.frame, g.bar, g.address, g.content = fr, bar, a, content
     return g
 
@@ -2139,7 +2146,8 @@ class OriginGate(Rig):
         ln = DashedLine(a, b, color=S.GREY, stroke_width=3).add_tip(tip_length=0.16, tip_width=0.16)
         kn = mono("OPTIONS", self.size, S.GREY).next_to(ln, UP, buff=0.08)
         ma = tag("maxAgeSeconds: 3600", S.GREY).next_to(ln, DOWN, buff=0.1)
-        cap = note("preflights only · a plain GET has none").next_to(ma, DOWN, buff=0.1)
+        cap = VGroup(note("preflights only"), note("a plain GET has none")).arrange(DOWN, buff=0.05)
+        cap.next_to(ma, DOWN, buff=0.1)
         g = VGroup(ln, kn, ma, cap)
         g.line, g.knock, g.max_age, g.caption = ln, kn, ma, cap
         return g
@@ -2153,10 +2161,12 @@ class OriginGate(Rig):
         return fig
 
     def other_bucket(self) -> VGroup:
-        v = vault("your other bucket", (), CLOUD, self.size, mono_title=False, vault_w=3.3)
-        v.frame.stretch_to_fit_height(1.0)
-        v.title.move_to(v.frame)
-        return v.move_to([4.4, -2.45, 0])
+        v = vault("your other bucket", (), CLOUD, self.size, mono_title=False, vault_w=3.6)
+        v.frame.stretch_to_fit_height(1.7)
+        v.title.move_to(v.frame.get_top() + DOWN * 0.25)
+        v.slot = Dot(v.frame.get_center() + DOWN * 0.2, radius=0.001).set_opacity(0)
+        v.add(v.slot)
+        return v.move_to([4.2, -2.55, 0])
 
 
 # ================================================================== V4 · FuseMount (a bucket that looks like a folder)
@@ -2179,7 +2189,7 @@ def mount_chips(size: float = 20) -> VGroup:
 
 class FuseMount(Rig):
     """V4 · the entrypoint's four stages (slides 29-32) over the starter's docker-entrypoint.sh 8-13.
-    12.6 × 3.55, built centred at (0, 0.75) (the band above a 3-row strip). Top: four stage boxes
+    12.6 × 4.0, built for the band above a 3-row strip (y -1.27 … 2.75). Top: four stage boxes
     (.stages[i]: .frame .text; 'Authenticate', 'Bucket Mounting', 'Connecting the Application',
     'Using the Data'), GREY until lit. Below: the BLUE bucket (.bucket, the WHOLE bucket: images/ and
     dvc_store/), and the TEAL container outline (.box, 'data-version-cli') holding the GREEN key
@@ -2214,30 +2224,33 @@ class FuseMount(Rig):
             g = VGroup(fr, t)
             g.frame, g.text = fr, t
             self.stages.add(g)
-        # the container and its folders
-        self.box = outline_box(12.6, 1.55, IMAGE, solid=False).move_to([0, -0.95, 0])
+        # the container (two rows) and its folders; local y: stages 1.6, bucket 0.55, box -1.25
+        for g in self.stages:
+            g.shift(UP * 0.23)
+        self.box = outline_box(12.6, 1.6, IMAGE, solid=False).move_to([0, -1.22, 0])
         self.box_title = mono(CONTAINERS["dvc"], size, IMAGE).move_to(
-            self.box.get_corner(UR) + np.array([-0.15, -0.22, 0]), aligned_edge=RIGHT)
+            self.box.get_corner(UR) + np.array([-0.15, -0.24, 0]), aligned_edge=RIGHT)
         self.key = VGroup(key_glyph(0.8), mono("/secrets", size, KEY)).arrange(DOWN, buff=0.1)
-        self.key.move_to([-5.35, -1.05, 0])
-        self.mnt = drawer("/mnt/gcs_data", ROUTE, size, glyph=False).move_to([-2.85, -1.25, 0])
+        self.key.move_to([-5.55, -1.25, 0])
+        r1, r2 = -0.83, -1.62
+        self.mnt = drawer("/mnt/gcs_data", ROUTE, size, glyph=False).move_to([-1.6, r1, 0])
         self.mnt_images = drawer("images/", ROUTE, size, glyph=False).next_to(self.mnt, RIGHT, buff=0.08)
-        self.app = drawer("/app/cheese_dataset", ROUTE, size, glyph=False).move_to([4.15, -1.25, 0])
-        self.dvc = tool_chip("dvc").next_to(self.app, UP, buff=0.12)
-        # the bucket, outside the container
+        self.app = drawer("/app/cheese_dataset", ROUTE, size, glyph=False).move_to([3.6, r2, 0])
+        self.dvc = tool_chip("dvc").next_to(self.app, RIGHT, buff=0.25)
+        # the bucket, outside the container (the WHOLE bucket: both folders)
         self.bucket = vault("your bucket", ("images/", "dvc_store/"), CLOUD, size, mono_title=False)
         self.bucket.rows.arrange(RIGHT, buff=0.15)
         inner = VGroup(self.bucket.title, self.bucket.rows).arrange(RIGHT, buff=0.3)
         self.bucket.frame.stretch_to_fit_width(inner.width + 0.4).stretch_to_fit_height(0.75)
         inner.move_to(self.bucket.frame)
-        self.bucket.move_to([-1.75, 0.25, 0])
+        self.bucket.move_to([-1.6, 0.55, 0])
         mx = self.mnt.get_center()[0]
         self.gcsfuse = pipe([[mx, self.bucket.frame.get_bottom()[1], 0], [mx, self.mnt.get_top()[1], 0]], ROUTE)
-        self.gcsfuse_label = mono("gcsfuse", size, ROUTE).next_to(self.gcsfuse, LEFT, buff=0.15)
+        self.gcsfuse_label = mono("gcsfuse", size, ROUTE).move_to([mx - 0.25, -0.15, 0], aligned_edge=RIGHT)
         a = self.mnt_images.get_right()
-        b = self.app.get_left()
-        self.bind = pipe([a + RIGHT * 0.02, b + LEFT * 0.02], ROUTE)
-        self.bind_label = mono("mount --bind", size, ROUTE).next_to(self.bind, UP, buff=0.12)
+        bx = a[0] + 0.45
+        self.bind = pipe([a + RIGHT * 0.02, [bx, a[1], 0], [bx, r2, 0], self.app.get_left() + LEFT * 0.02], ROUTE)
+        self.bind_label = mono("mount --bind", size, ROUTE).move_to([bx + 0.25, r1, 0], aligned_edge=LEFT)
         self.add(self.stages, self.box, self.box_title, self.key, self.mnt, self.mnt_images, self.app, self.bucket)
         self.ride(self.dvc, self.gcsfuse, self.gcsfuse_label, self.bind, self.bind_label)
         self.shift(UP * 0.75)
@@ -2268,20 +2281,25 @@ class FuseMount(Rig):
 
     def fetch(self, scene):
         d = Dot(self.dvc.get_bottom(), radius=0.08, color=ROUTE)
-        up = VMobject().set_points_as_corners([self.app.get_left(), self.mnt_images.get_right(),
-                                               self.mnt.get_top(), self.bucket.frame.get_bottom()])
+        bx = self.mnt_images.get_right()[0] + 0.45
+        up = VMobject().set_points_as_corners([self.app.get_left(), [bx, self.app.get_center()[1], 0],
+                                               [bx, self.mnt_images.get_center()[1], 0],
+                                               self.mnt_images.get_right(), self.mnt.get_top(),
+                                               self.bucket.frame.get_bottom()])
         scene.play(FadeIn(d), run_time=0.2)
         scene.play(MoveAlongPath(d, up), run_time=1.2)
         tl = tile(None, 0.42, LAPTOP).move_to(self.bucket.frame.get_bottom())
         down = up.copy().reverse_points()
         scene.play(FadeOut(d), FadeIn(tl), run_time=0.2)
         scene.play(MoveAlongPath(tl, down), run_time=1.2)
-        scene.play(tl.animate.move_to(self.app.get_right() + LEFT * 0.35 + UP * 0.45), run_time=0.4)
+        scene.play(tl.animate.move_to(self.app.get_top() + UP * 0.32), run_time=0.4)
         return tl
 
     def side_note(self) -> VGroup:
-        return note("gcloud's own login · not used by gcsfuse or DVC").next_to(self.key, UP, buff=0.2) \
-            .align_to(self.box, LEFT).shift(RIGHT * 0.2)
+        g = VGroup(note("gcloud's own login"), note("not used by gcsfuse or DVC")).arrange(DOWN, aligned_edge=LEFT,
+                                                                                         buff=0.05)
+        g.next_to(self.key, RIGHT, buff=0.35)
+        return g.shift(UP * (self.app.get_center()[1] - g.get_center()[1]))
 
     def broken(self, scene):
         x1 = cross_mark(0.45, ERR).move_to(self.key[0])
@@ -2289,7 +2307,7 @@ class FuseMount(Rig):
         top = self.bucket.frame.get_bottom()[1]
         stub = pipe([[mx, top, 0], [mx, top - 0.35, 0]], ERR, glow=False, dashed=True)
         x2 = cross_mark(0.3, ERR).move_to([mx, top - 0.55, 0])
-        msg = note("special device does not exist", ERR).next_to(self.mnt_images, DOWN, buff=0.12)
+        msg = note("special device does not exist", ERR).next_to(self.mnt_images, DOWN, buff=0.18)
         scene.play(Create(x1), run_time=0.5)
         scene.play(Create(stub), run_time=0.5)
         scene.play(Create(x2), run_time=0.4)
@@ -2301,13 +2319,14 @@ class FuseMount(Rig):
         b = RoundedRectangle(width=t.width + 0.35, height=t.height + 0.25, corner_radius=0.06, stroke_color=TURN,
                              stroke_width=2.5).set_fill(S.BG, 1)
         t.move_to(b)
-        g = VGroup(b, t).next_to(self.mnt, UP, buff=0.18).shift(RIGHT * 0.6)
+        g = VGroup(b, t).move_to([self.mnt.get_center()[0] + 0.25, self.gcsfuse_label.get_center()[1], 0],
+                                 aligned_edge=LEFT)
         g.box, g.text = b, t
         return g
 
     def inside_only(self) -> VGroup:
         gl = VGroup(*[p.core.copy().set_stroke(ROUTE, 12, opacity=0.35) for p in (self.gcsfuse, self.bind)])
-        t = note("the container's own mounts").next_to(self.box, DOWN, buff=0.1).align_to(self.box, RIGHT)
+        t = note("the container's own mounts").next_to(self.box, UP, buff=0.12).align_to(self.box, RIGHT)
         g = VGroup(gl, t)
         g.glow, g.text = gl, t
         return g
@@ -2315,7 +2334,8 @@ class FuseMount(Rig):
 
 class MountLayers(Rig):
     """V4's pull-back: two bind mounts at two layers (S10's last beat, S11's two-view and Ponder 7,
-    S12's stand-in picture). 12.6 × 3.9, built centred at (0, 0.75). The GREY laptop (.laptop) holds,
+    S12's stand-in picture). 12.6 × 3.25 (+ a label line above and below), built for the band above
+    a 3-row strip (y -1.25 … 2.75). The GREY laptop (.laptop) holds,
     left, your repo on disk (.host: 'data-versioning/' with its cheese_dataset/ row, .host_data, GREY
     and dark) and, right, the TEAL container (.box) with the /app window (.app: the repo seen inside,
     with its cheese_dataset/ row .app_data) and /mnt/gcs_data/images (.mnt); the BLUE bucket
@@ -2331,37 +2351,34 @@ class MountLayers(Rig):
     def __init__(self, size: float = 20, **kw):
         super().__init__(**kw)
         self.size = size
-        self.laptop = RoundedRectangle(width=9.6, height=3.9, corner_radius=0.2, stroke_color=LAPTOP,
+        self.laptop = RoundedRectangle(width=9.6, height=3.25, corner_radius=0.2, stroke_color=LAPTOP,
                                        stroke_width=3).set_fill(LAPTOP, 0.04).move_to([-1.5, 0, 0])
         self.header = label("your laptop", size, LAPTOP).move_to(self.laptop.get_corner(DL) + np.array([0.2, 0.25, 0]),
                                                                  aligned_edge=LEFT)
-        self.host = self._repo("data-versioning/", LAPTOP).move_to([-4.3, 0.75, 0])
+        self.host = self._repo("data-versioning/", LAPTOP).move_to([-4.3, 0.55, 0])
         self.host_data = self.host.rows[1]
-        self.box = outline_box(5.6, 3.3, IMAGE, solid=False).move_to([0.45, 0.05, 0])
+        self.box = outline_box(5.4, 2.85, IMAGE, solid=False).move_to([0.45, 0.0, 0])
         self.box_title = mono(CONTAINERS["dvc"], size, IMAGE).move_to(
             self.box.get_corner(UL) + np.array([0.15, -0.25, 0]), aligned_edge=LEFT)
-        self.app = self._repo("/app", IMAGE).move_to([-0.35, 0.55, 0])
+        self.app = self._repo("/app", IMAGE).move_to([-0.35, 0.4, 0])
         self.app_data = self.app.rows[1]
-        self.mnt = drawer("/mnt/gcs_data/images", ROUTE, size, glyph=False).move_to([0.45, -1.15, 0])
+        self.mnt = drawer("/mnt/gcs_data/images", ROUTE, size, glyph=False).move_to([0.45, -0.95, 0])
         self.bucket = vault("your bucket", ("images/",), CLOUD, size, mono_title=False).move_to([5.05, 0.6, 0])
-        hy = self.host_data.get_center()[1]
-        self.v_pipe = pipe([self.host.frame.get_right() + RIGHT * 0.02 + UP * 0.2,
-                            self.app.frame.get_left() + LEFT * 0.02 + UP * 0.2], LAPTOP)
+        self.v_pipe = pipe([self.host.frame.get_right() + RIGHT * 0.02 + UP * 0.15,
+                            self.app.frame.get_left() + LEFT * 0.02 + UP * 0.15], LAPTOP)
         self.v_label = note("bind mount · host → container (-v)").next_to(self.laptop, UP, buff=0.12) \
             .align_to(self.laptop, LEFT)
         ax = self.app.frame.get_right()[0] + 0.45
-        self._inner_pts = [self.mnt.get_right() + RIGHT * 0.02, [ax, self.mnt.get_center()[1], 0],
+        self.inner = pipe([self.mnt.get_right() + RIGHT * 0.02, [ax, self.mnt.get_center()[1], 0],
                            [ax, self.app_data.get_center()[1], 0],
-                           [self.app_data.get_right()[0] + 0.05, self.app_data.get_center()[1], 0]]
-        self.inner = pipe(self._inner_pts, ROUTE)
-        self.inner_label = note("bind mount · inside the container (mount --bind)").next_to(self.laptop, DOWN, buff=0.12) \
-            .align_to(self.laptop, LEFT)
-        self.fuse = pipe([self.bucket.frame.get_bottom(), [self.bucket.frame.get_center()[0], -1.6, 0],
-                          [self.mnt.get_center()[0], -1.6, 0], self.mnt.get_bottom()], ROUTE)
-        self._hy = hy
+                           [self.app_data.get_right()[0] + 0.05, self.app_data.get_center()[1], 0]], ROUTE)
+        self.inner_label = note("bind mount · inside the container (mount --bind)").next_to(
+            self.laptop, DOWN, buff=0.1).align_to(self.laptop, LEFT)
+        self.fuse = pipe([self.bucket.frame.get_bottom(), [self.bucket.frame.get_center()[0], -1.52, 0],
+                          [self.mnt.get_center()[0], -1.52, 0], self.mnt.get_bottom()], ROUTE)
         self.add(self.laptop, self.header, self.host, self.box, self.box_title, self.app, self.mnt, self.bucket)
         self.ride(self.v_pipe, self.v_label, self.inner, self.inner_label, self.fuse)
-        self.shift(UP * 0.75)
+        self.shift(UP * 0.7)
 
     def _repo(self, name, color):
         rows = VGroup(drawer(name, color, self.size, glyph=False), drawer("cheese_dataset/", color, self.size,
@@ -2409,7 +2426,7 @@ def pointer_card(md5: str = "", size_: str = "", nfiles: str = "", size: float =
     blanks = {"md5": "________", "size": "______", "nfiles": "_"}
     head = mono("cheese_dataset.dvc", size, POINTER)
     lines, fields = VGroup(), {}
-    pitch = line_pitch(size) + 0.02
+    pitch = line_pitch(size) * 0.92
     for i, raw in enumerate(("outs:", "- md5:", "  size:", "  nfiles:", "  hash: md5", "  path: cheese_dataset")):
         k = raw.strip(" -:")
         row = mono_line(raw, size, INK)
@@ -2483,12 +2500,13 @@ class HashShelf(Rig):
     def __init__(self, size: float = 20, **kw):
         super().__init__(**kw)
         self.size = size
-        ys = (2.2, 1.38, 0.56, -0.26)
+        ys = (2.25, 1.55, 0.85, 0.15)
         self.tiles = {}
         for n, y in zip(IMAGES[:4], ys):
-            self.tiles[n] = tile(n, 0.55, LAPTOP).move_to([-5.4, y, 0])
-        self.tiles[IMAGES[4]] = tile(IMAGES[4], 0.55, LAPTOP).move_to([-3.5, -0.26, 0])
-        self.machine = machine("md5").move_to([-3.2, 1.75, 0])
+            self.tiles[n] = tile(n, 0.55, LAPTOP, side=RIGHT).move_to([-6.25, y, 0], aligned_edge=LEFT)
+        self.tiles[IMAGES[4]] = tile(IMAGES[4], 0.55, LAPTOP, side=RIGHT).move_to([-6.25, -0.55, 0],
+                                                                                  aligned_edge=LEFT)
+        self.machine = machine("md5").move_to([-1.35, 1.75, 0])
         top, bot = 2.6, -1.25
         self.rack = VGroup()
         fr = RoundedRectangle(width=5.05, height=top - bot, corner_radius=0.14, stroke_color=LAPTOP,
@@ -2512,7 +2530,7 @@ class HashShelf(Rig):
     # ---- helpers
     def _slot(self, a, slip_):
         r = self.rows[a]
-        x = 2.45 + sum(s.width + 0.15 for s in self.slips[a])
+        x = 2.45 + sum(s.width + 0.3 for s in self.slips[a])
         return np.array([x + slip_.width / 2, r.label.get_center()[1], 0])
 
     def _show_row(self, scene, a):
@@ -2531,7 +2549,7 @@ class HashShelf(Rig):
 
     def _file(self, scene, a, text, color=HASH, run_time: float = 0.8):
         """A slip `text` comes out of the chute and is filed on aisle a."""
-        out_ = slip(text, color, self.size).move_to(self.machine.chute_pt.get_center() + RIGHT * 1.15)
+        out_ = slip(text, color, self.size).move_to(self.machine.chute_pt.get_center() + RIGHT * 1.0)
         scene.play(FadeIn(out_, shift=RIGHT * 0.3), run_time=0.4)
         self._show_row(scene, a)
         tgt = self._slot(a, out_)
@@ -2545,7 +2563,7 @@ class HashShelf(Rig):
         self._through(scene, t.copy())
         scene.play(t.animate.fade(0.5), run_time=0.2)
         h = MD5[name]
-        s = slip(short(h), HASH, self.size).move_to(self.machine.chute_pt.get_center() + RIGHT * 1.2)
+        s = slip(short(h), HASH, self.size).move_to(self.machine.chute_pt.get_center() + RIGHT * 1.0)
         scene.play(FadeIn(s, shift=RIGHT * 0.3), run_time=0.4)
         a = h[:2]
         self._show_row(scene, a)
@@ -2556,7 +2574,7 @@ class HashShelf(Rig):
         return filed
 
     def manifest(self) -> VGroup:
-        return manifest_card(IMAGES[:4], self.size).move_to([-4.3, 0.15, 0])
+        return manifest_card(IMAGES[:4], self.size).move_to([-4.35, 0.75, 0])
 
     def hash_manifest(self, scene, card, predict: bool = True):
         c = card.copy()
@@ -2579,7 +2597,7 @@ class HashShelf(Rig):
     def pointer(self, predict: bool = True) -> VGroup:
         p = pointer_card("????????….dir" if predict else short(V20["md5"]),
                          "" if predict else V20["size"], "" if predict else V20["nfiles"], self.size)
-        return p.move_to([-4.2, 0.0, 0])
+        return p.move_to([-4.35, 0.75, 0])
 
     def confirm(self, scene, card):
         new = {"md5": short(V20["md5"]), "size": V20["size"], "nfiles": V20["nfiles"]}
@@ -2665,27 +2683,27 @@ class TagRope(Rig):
     def __init__(self, size: float = 20, **kw):
         super().__init__(**kw)
         self.size = size
-        y = 1.95
+        y = 2.05
         xs = (-5.7, -3.4, -0.75)
-        self.line = Line([-6.2, y, 0], [0.2, y, 0], color=S.GREY, stroke_width=3)
+        self.line = Line([-6.2, y, 0], [-0.4, y, 0], color=S.GREY, stroke_width=3)
         self.beads = VGroup(*[bead().move_to([x, y, 0]) for x in xs])
         self.bead_labels = VGroup(*[note(n).next_to(b, DOWN, buff=0.12) for n, b in zip(BEAD_NAMES, self.beads)])
         self.flags = {}
         for t, b in (("dataset_v20", self.beads[1]), ("dataset_v21", self.beads[2])):
             self.flags[t] = flag_at(flag(t, size=size, pole_h=0.6), b.get_top())
-        self.card = pointer_card(short(V20["md5"]), V20["size"], V20["nfiles"], size).move_to([-3.9, -0.15, 0])
-        # the warehouse
-        fr = RoundedRectangle(width=5.85, height=3.75, corner_radius=0.16, stroke_color=CLOUD,
-                              stroke_width=3).set_fill(CLOUD, 0.07).move_to([3.43, 0.6, 0])
+        self.card = pointer_card(short(V20["md5"]), V20["size"], V20["nfiles"], size)
+        self.card.move_to([-3.9, 0.0, 0]).align_to(np.array([0, 1.48, 0]), UP)
+        # the warehouse: the manifests in a column on the left, the five blobs in a column on the right
+        fr = RoundedRectangle(width=5.8, height=3.4, corner_radius=0.16, stroke_color=CLOUD,
+                              stroke_width=3).set_fill(CLOUD, 0.07).move_to([3.45, 0.45, 0])
         tt = mono("dvc_store/", size, CLOUD).move_to(fr.get_corner(UL) + np.array([0.2, -0.27, 0]), aligned_edge=LEFT)
         self.store = VGroup(fr, tt)
         self.store.frame, self.store.title = fr, tt
-        self.dirs = {"v20": blob(V20["md5"], size).move_to([2.15 + 0.2, 1.45, 0]),
-                     "v21": blob(V21["md5"], size).move_to([4.95, 1.45, 0])}
+        self.dirs = {"v20": blob(V20["md5"], size).move_to([1.9, 0.4, 0]),
+                     "v21": blob(V21["md5"], size).move_to([1.9, 1.2, 0])}
         self.blobs = {}
-        pos = [(1.55, 0.2), (3.43, 0.2), (5.31, 0.2), (2.45, -0.75), (4.35, -0.75)]
-        for n, (bx, by) in zip(IMAGES, pos):
-            self.blobs[n] = blob(MD5[n], size).move_to([bx, by, 0])
+        for i, n in enumerate(IMAGES):
+            self.blobs[n] = blob(MD5[n], size).move_to([5.1, 1.55 - i * 0.62, 0])
         self.cursor = Polygon([0, 0, 0], [-0.14, 0.26, 0], [0.14, 0.26, 0], stroke_color=S.GREY,
                               stroke_width=2).set_fill(S.GREY, 0.8)
         self.colab = self._colab()
@@ -2720,12 +2738,12 @@ class TagRope(Rig):
                 f = self.card.fields["md5"]
                 origin = f.get_right() + RIGHT * 0.1
             else:
-                origin = self.beads[2].get_bottom() + DOWN * 0.05
+                origin = self.beads[2].get_right() + RIGHT * 0.05
         o = np.array(origin)
-        mid = [d.get_left()[0] - 0.35, o[1], 0]
-        main = _poly([o, mid, [mid[0], d.get_center()[1], 0], d.get_left() + LEFT * 0.03], ROUTE, 4)
+        lane = self.store.frame.get_left()[0] - 0.25
+        main = _poly([o, [lane, o[1], 0], [lane, d.get_center()[1], 0], d.get_left() + LEFT * 0.03], ROUTE, 4)
         names = IMAGES[:4] if v == "v20" else IMAGES
-        fans = VGroup(*[Line(d.get_bottom(), self.blobs[n].get_top(), color=ROUTE, stroke_width=2)
+        fans = VGroup(*[Line(d.get_right(), self.blobs[n].get_left(), color=ROUTE, stroke_width=2)
                         for n in names])
         g = VGroup(main, fans)
         g.main, g.fans, g.names = main, fans, names
@@ -2734,7 +2752,8 @@ class TagRope(Rig):
     def hop(self, t: str, run_time: float = 0.6):
         f = self.flags[t]
         tgt = f.pennant.get_top() + UP * 0.2
-        if self.cursor.get_center()[1] < 2.0:
+        if not getattr(self, "_cursor_on", False):
+            self._cursor_on = True
             self.cursor.move_to(tgt)
             return FadeIn(self.cursor, shift=DOWN * 0.2, run_time=run_time)
         return self.cursor.animate(run_time=run_time).move_to(tgt)
@@ -2775,7 +2794,7 @@ class TagRope(Rig):
         return VGroup(d, e)
 
     def ghost(self, t: str = "dataset_v25") -> VGroup:
-        f = flag_at(flag(t, S.GREY, 0.6, self.size, dashed=True), [0.35, 1.95, 0])
+        f = flag_at(flag(t, S.GREY, 0.6, self.size, dashed=True), [0.0, self.line.get_center()[1], 0])
         tip = f.pole.get_start() + DOWN * 0.1
         r = DashedLine(tip, tip + DOWN * 1.1, color=S.GREY, stroke_width=3)
         g = VGroup(f, r)
@@ -2784,9 +2803,9 @@ class TagRope(Rig):
 
     def burn(self, run_time: float = 1.0):
         fr = self.store.frame
-        ghost_ = DashedVMobject(fr.copy().set_fill(opacity=0), num_dashes=40).set_stroke(S.GREY, 3)
+        ghost_ = outline_box(fr.width, fr.height, S.GREY, solid=False).move_to(fr)
         return AnimationGroup(FadeOut(VGroup(*[b for b in self.blobs.values()], *self.dirs.values())),
-                              Transform(fr, ghost_), self.store.title.animate.set_color(S.GREY),
+                              FadeTransform(fr, ghost_), self.store.title.animate.set_color(S.GREY),
                               run_time=run_time)
 
     def homes(self) -> VGroup:
@@ -3008,7 +3027,7 @@ class PipelineMap(Rig):
 
     def _big(self):
         s = 22
-        un = VGroup(*[tile(None, 0.6, S.GREY) for _ in range(6)]).arrange_in_grid(rows=2, cols=3, buff=0.18)
+        un = VGroup(*[tile(None, 0.5, S.GREY) for _ in range(6)]).arrange_in_grid(rows=2, cols=3, buff=0.16)
         ub = DashedVMobject(RoundedRectangle(width=un.width + 0.6, height=un.height + 0.9, corner_radius=0.16),
                             num_dashes=50, dashed_ratio=0.35).set_stroke(S.GREY, 2.5)
         un.move_to(ub).shift(DOWN * 0.15)
@@ -3022,7 +3041,7 @@ class PipelineMap(Rig):
         lab = VGroup(lb, rows, lt)
         lab.rows = rows
         tr = dashed_chip(SLIDE6[3], size=s)
-        VGroup(unl, lab, tr).arrange(RIGHT, buff=2.6).move_to([0, 0.6, 0])
+        VGroup(unl, lab, tr).arrange(RIGHT, buff=3.0).move_to([0, 0.6, 0])
         a1 = Arrow(unl.get_right(), lab.get_left(), buff=0.15, color=S.GREY, stroke_width=4)
         q = label(SLIDE6[1], s, ERR).next_to(a1, UP, buff=0.12)
         a2 = Arrow(lab.get_right(), tr.get_left(), buff=0.15, color=S.GREY, stroke_width=3)

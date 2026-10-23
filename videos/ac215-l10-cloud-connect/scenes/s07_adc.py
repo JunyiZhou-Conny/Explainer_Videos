@@ -50,7 +50,7 @@ from common import (CAPTION, CLOUD, ERR, IMAGE, INK, KEY, NARRATION, P_LLMRAG, P
                     extra_row, file_card,
                     file_glyph, folder_glyph, greyed, grey_chip, illustration_tag, key_card, key_glyph, label,
                     line_bar, lref, mono, note, on_bar, out, outline_box, person_icon, ring, shown_path,
-                    split_prompt, strike, term, type_cmd, under)
+                    split_prompt, strike, substring, term, type_cmd, under)
 from explainer import style as S
 
 SAY = NARRATION["S07"]
@@ -311,7 +311,7 @@ class AdcToToken(VoiceScene):
             # the key card folds into its file on the laptop side; the pen stays beside it
             box_c = RoundedRectangle(width=fc.box.width, height=fc.box.height, corner_radius=0.14,
                                      stroke_color=KEY, stroke_width=3).move_to(fc.box)
-            self.play(FadeOut(kc.body), FadeOut(ill), run_time=0.4)
+            self.play(FadeOut(kc[1]), FadeOut(ill), run_time=0.4)
             self.play(ReplacementTransform(kc.frame, box_c), pen.animate.move_to(pen_home), run_time=0.7)
             self.play(FadeIn(fc), FadeOut(box_c), run_time=0.3)
             self.remove(kc, box_c)
@@ -397,8 +397,8 @@ class AdcToToken(VoiceScene):
             out(self, t, [rows_l[0], ("…", S.GREY)], run_time=0.4)
             fr = out(self, t, [rows_l[1]], wrap=True, run_time=0.4)
             frame_row = fr[-1]
-            assert frame_row.text == "_get_explicit_environ_credentials", frame_row.text
-            rg = ring(frame_row, ROUTE)
+            assert frame_row.text.endswith("in _get_explicit_environ_credentials"), frame_row.text
+            rg = ring(substring(frame_row, "_get_explicit_environ_credentials"), ROUTE)
             self.play(Create(rg), Indicate(ap4.rows[0].title, color=ROUTE, scale_factor=1.05), run_time=0.7)
             vo.wait_until("finds no file")
             ap4.stop(self, 0)

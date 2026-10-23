@@ -80,13 +80,15 @@ def req_chip(g: IamGridRig, c: int, text: str) -> VGroup:
 def req_arrow(g: IamGridRig, req, r: int, c: int) -> Arrow:
     """The request's arrow up into cell (r, c) (as IamGridRig.fire draws it)."""
     cell = g.cells[r][c]
-    return Arrow(req.get_top(), [cell.get_center()[0], cell.get_bottom()[1] + 0.12, 0], buff=0.05,
+    return Arrow(req.get_top(), [cell.get_center()[0], cell.get_bottom()[1] + 0.02, 0], buff=0.05,
                  color=ROUTE, stroke_width=4, tip_length=0.18, max_tip_length_to_length_ratio=0.5)
 
 
 def land(scene, g: IamGridRig, r: int, c: int, ok: bool) -> VGroup:
     """Plays: the cell flashes and the verdict lands (GREEN check / RED 403). Returns the mark."""
     mark = g.verdict(r, c, ok)
+    if c == 0:
+        mark.shift(UP * 0.07)          # column 0's token is as wide as the cell: keep the check off it
     flash = g.cells[r][c].copy().set_stroke(PASS if ok else ERR, 5)
     scene.play(FadeIn(mark, scale=1.3), FadeIn(flash), run_time=0.45)
     scene.play(FadeOut(flash), run_time=0.3)
@@ -101,9 +103,13 @@ def fill_path(scene, old: Text, middle: str, color=INK, src=None, run_time: floa
     new.move_to(old, aligned_edge=LEFT)
     n0, n1 = len(PREFIX), len(PREFIX) + len(SLOT)
     m0, m1 = len(PREFIX), len(PREFIX) + len(middle)
-    arrive = TransformFromCopy(src, new[m0:m1]) if src is not None else FadeIn(new[m0:m1], shift=DOWN * 0.15)
-    scene.play(FadeOut(old[n0:n1], shift=UP * 0.15), arrive, Transform(old[n1:], new[m1:]), run_time=run_time)
-    scene.remove(old, *new[m0:m1])
+    pre, mid, suf = VGroup(*old[:n0]), VGroup(*old[n0:n1]), VGroup(*old[n1:])
+    into = VGroup(*new[m0:m1])
+    scene.remove(old)                  # its parts play on their own: no slice of `old` is left behind
+    scene.add(pre, mid, suf)
+    arrive = TransformFromCopy(src, into) if src is not None else FadeIn(into, shift=DOWN * 0.15)
+    scene.play(FadeOut(mid, shift=UP * 0.15), arrive, Transform(suf, VGroup(*new[m1:]).copy()), run_time=run_time)
+    scene.remove(pre, mid, suf, into)
     scene.add(new)
     return new
 
@@ -236,13 +242,13 @@ class IamGrid(VoiceScene):
         default2.set_color(ERR)
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(own_chip, unused)), run_time=0.4)
-            self.remove(own_chip, unused)
             sa_cells = [g.cells[1][c].copy().set_stroke(TURN, 5) for c in range(3)]
             self.play(LaggedStart(*[FadeIn(x, rate_func=there_and_back) for x in sa_cells], lag_ratio=0.5),
                       run_time=1.4)
             self.remove(*sa_cells)
             vo.wait_until("IAM checks the resource")
+            self.play(FadeOut(VGroup(own_chip, unused)), run_time=0.4)
+            self.remove(own_chip, unused)
             self.play(FadeIn(req1, shift=UP * 0.2), run_time=0.4)
             self.play(FadeIn(p1, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("the client writes that name")
@@ -381,7 +387,7 @@ class IamGrid(VoiceScene):
             self.play(FadeIn(c_key, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("or the endpoint path")
             self.play(Indicate(p3, color=TURN, scale_factor=1.08), run_time=0.7)
-        pc = ponder_at(self, PONDER_2, 8, 9.5, [-1.75, 1.0, 0])
+        pc = ponder_at(self, PONDER_2, 8, 9.8, [-1.62, 1.0, 0])
 
         # ========================================================== 5. the path decides; one badge
         p_ring = ring(p3, TURN, buff=0.1)
