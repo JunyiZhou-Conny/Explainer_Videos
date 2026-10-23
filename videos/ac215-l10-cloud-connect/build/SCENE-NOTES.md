@@ -335,3 +335,5 @@ S12); `picker='char-split-collection ▾'` (S12/S13); `fun_fact=True` (S13: last
   command; `Terminal.fold` would put ` \` inside the quotes (S05, as L09 S13).
 - Pending common.py wishes (after the builds): `AuthChain` fully hollow teaser; a soft-wrap option
   on `type_cmd` (S05).
+- A ring attached to a printed terminal row (`row.add` / `attach_mark`) can stop rendering until the
+  next `room()`/scroll: keep it a free mobject until just before the next typed command (S06 critic).

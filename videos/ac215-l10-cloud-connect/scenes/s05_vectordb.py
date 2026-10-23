@@ -290,7 +290,7 @@ class NetworkAndShell(VoiceScene):
             vo.wait_until("so Compose builds it locally")
             flash_tag(self, hub, INK)
             out(self, t, sh.at("…", 34, "…"), run_time=0.5)
-            out(self, t, sh.at((37, 41)), run_time=0.8)
+            out(self, t, sh.at((37, 42)), run_time=0.8)
             vo.wait_until("The container's architecture")
             r38, r40 = t.find("Architecture: x86_64"), t.find("Python version: Python 3.12.15")
             g38 = mark(self, r38, "x86_64", INK)

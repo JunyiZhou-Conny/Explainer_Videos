@@ -601,6 +601,31 @@ def code(path: str, first: int, last: int | None = None, language: str | None = 
     return p
 
 
+def source_rows(path: str, n: int, size: float = 20, color=INK, width: int | None = None,
+                indent: int = 4) -> VGroup:
+    """Source line n of `path` (masked) as mono_line rows broken at the last space that fits
+    (`width` characters; default 73 at 20 pt, 66 at 22 pt), continuation rows indented by `indent`
+    spaces: the text is unchanged, only the row break moves. For a line no panel can hold whole —
+    the starter's docker-entrypoint.sh:10 (81 characters, slide 34's chips go over it). .rows .text"""
+    s = excerpt(path, n, n)
+    width = width or (66 if size >= 22 else 73)
+    parts, first = [], True
+    while len(s) > width - (0 if first else indent):
+        k = s.rfind(" ", 0, width - (0 if first else indent) + 1)
+        if k <= 0:
+            break
+        parts.append(s[:k])
+        s = s[k + 1:]
+        first = False
+    parts.append(s)
+    rows = VGroup(*[mono_line((" " * indent if i else "") + p, size, color) for i, p in enumerate(parts)])
+    pitch = line_pitch(size)
+    for i, r in enumerate(rows):
+        r.shift(np.array([-r.strut.get_left()[0], -i * pitch - r.strut.get_center()[1], 0]))
+    rows.rows, rows.text = list(rows), excerpt(path, n, n)
+    return rows
+
+
 def readme(n: int, repo: str = "data-labeling") -> str:
     """README.md line n (1-based) of a source folder ('data-labeling', 'data-versioning' = the pin
     b240b1a, 'data-versioning@data-versioning-ac215' = the starter's, 'data-versioning@2515e5e' =
@@ -2040,7 +2065,8 @@ class OriginGate(Rig):
         slot.next_to(hdr, DOWN, buff=0.22)
         self.slot = slot
         self.origin_l = mono(PAGE_ORIGIN, size, S.GREY).next_to(self.page, UP, buff=0.65)
-        self.origin_r = mono(STORAGE_HOST, size, CLOUD).next_to(self.bucket, UP, buff=0.65)
+        self.origin_r = mono(STORAGE_HOST, size, CLOUD).next_to(self.bucket, UP, buff=0.65).align_to(
+            self.bucket.frame, RIGHT)
         self.parts_l = self._parts(self.origin_l)
         self.parts_r = self._parts(self.origin_r)
         self.bouncer = bouncer(0.75).move_to(self.page.frame.get_corner(DR) + np.array([0.55, -0.15, 0]))
@@ -2309,7 +2335,7 @@ class MountLayers(Rig):
                                        stroke_width=3).set_fill(LAPTOP, 0.04).move_to([-1.5, 0, 0])
         self.header = label("your laptop", size, LAPTOP).move_to(self.laptop.get_corner(DL) + np.array([0.2, 0.25, 0]),
                                                                  aligned_edge=LEFT)
-        self.host = self._repo("data-versioning/", LAPTOP).move_to([-4.85, 0.75, 0])
+        self.host = self._repo("data-versioning/", LAPTOP).move_to([-4.3, 0.75, 0])
         self.host_data = self.host.rows[1]
         self.box = outline_box(5.6, 3.3, IMAGE, solid=False).move_to([0.45, 0.05, 0])
         self.box_title = mono(CONTAINERS["dvc"], size, IMAGE).move_to(
@@ -2338,8 +2364,8 @@ class MountLayers(Rig):
         self.shift(UP * 0.75)
 
     def _repo(self, name, color):
-        rows = VGroup(drawer(name, color, self.size), drawer("cheese_dataset/", color, self.size))
-        rows[1].shift(RIGHT * 0.35)
+        rows = VGroup(drawer(name, color, self.size, glyph=False), drawer("cheese_dataset/", color, self.size,
+                                                                          glyph=False))
         rows.arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         rows[1].shift(RIGHT * 0.35)
         fr = RoundedRectangle(width=rows.width + 0.4, height=rows.height + 0.35, corner_radius=0.12,
@@ -2495,9 +2521,13 @@ class HashShelf(Rig):
             scene.play(FadeIn(r), run_time=0.3)
 
     def _through(self, scene, mob, run_time: float = 0.6):
+        """mob (a throwaway copy) goes into the machine's hopper: it moves there fading out (never
+        scaled: text below 20 pt trips SMALL)."""
         m = self.machine
-        scene.play(mob.animate.move_to(m.mouth_pt.get_center() + UP * 0.1).scale(0.5), run_time=run_time)
-        scene.play(FadeOut(mob, shift=DOWN * 0.3), Indicate(m.frame, color=TOOL, scale_factor=1.05), run_time=0.4)
+        tgt = m.mouth_pt.get_center() + UP * (mob.height / 2)
+        scene.play(mob.animate.move_to(tgt).set_opacity(0), run_time=run_time)
+        scene.remove(mob)
+        scene.play(Indicate(m.frame, color=TOOL, scale_factor=1.05), run_time=0.4)
 
     def _file(self, scene, a, text, color=HASH, run_time: float = 0.8):
         """A slip `text` comes out of the chute and is filed on aisle a."""
@@ -2530,8 +2560,8 @@ class HashShelf(Rig):
 
     def hash_manifest(self, scene, card, predict: bool = True):
         c = card.copy()
-        scene.play(FadeOut(card), run_time=0.01)
         scene.remove(card)
+        scene.add(c)
         self._through(scene, c, 0.9)
         if predict:
             a = V20["md5"][:2]
@@ -2986,7 +3016,7 @@ class PipelineMap(Rig):
         lab = VGroup(lb, rows, lt)
         lab.rows = rows
         tr = dashed_chip(SLIDE6[3], size=s)
-        g = VGroup(unl, lab, tr).arrange(RIGHT, buff=2.6).move_to([0, 0.6, 0])
+        VGroup(unl, lab, tr).arrange(RIGHT, buff=2.6).move_to([0, 0.6, 0])
         a1 = Arrow(unl.get_right(), lab.get_left(), buff=0.15, color=S.GREY, stroke_width=4)
         q = label(SLIDE6[1], s, ERR).next_to(a1, UP, buff=0.12)
         a2 = Arrow(lab.get_right(), tr.get_left(), buff=0.15, color=S.GREY, stroke_width=3)
@@ -3026,6 +3056,10 @@ class PipelineMap(Rig):
         """Set piece k lit/dark in place (no animation)."""
         self.state[k] = on
         if k in ("fuse", "remote"):
+            if on:
+                self.add(self.links[k])
+            elif self.links[k] in self.submobjects:
+                self.remove(self.links[k])
             return
         m = self._targets(k)
         m.become(self._version(k, on))
@@ -3034,7 +3068,13 @@ class PipelineMap(Rig):
         anims = []
         for k in keys:
             if k in ("fuse", "remote"):
-                anims.append(Create(self.links[k]) if on else FadeOut(self.links[k]))
+                ln = self.links[k]
+                if on and ln not in self.submobjects:
+                    self.add(ln)
+                    anims.append(Create(ln))
+                elif not on and ln in self.submobjects:
+                    self.remove(ln)                    # off the map first: a faded child would snap back
+                    anims.append(FadeOut(ln))
                 self.state[k] = on
                 continue
             self.state[k] = on
