@@ -495,12 +495,12 @@ class Recap(VoiceScene):
         # row 2 · L21: the same checks on a BLUE server, where --no-verify does not get past
         srv = server_glyph(1.0, 3, CLOUD)
         ci = Turnstile(5, None, arch_w=0.36, arch_h=0.8, gap=0.12)
-        place(srv, left=nxt_frame.get_left()[0] + 0.45, top=mid - 0.3)
-        place(ci, left=srv.get_right()[0] + 0.3, bottom=srv.get_bottom()[1])
         l21 = label("L21: this repo’s checks on GitHub", 22, S.GREY)
-        place(l21, left=ci.get_right()[0] + 0.45, cy=srv.get_center()[1] + 0.25)
+        place(l21, left=nxt_frame.get_left()[0] + 0.45, top=mid - 0.1)
+        place(srv, left=nxt_frame.get_left()[0] + 0.45, top=l21.get_bottom()[1] - 0.25)
+        place(ci, left=srv.get_right()[0] + 0.3, bottom=srv.get_bottom()[1])
         nv = grey_chip("--no-verify", mono_font=True)
-        place(nv, left=l21.get_left()[0], top=l21.get_bottom()[1] - 0.2)
+        place(nv, left=ci.get_right()[0] + 0.6, cy=srv.get_center()[1])
         nv_strike = strike(nv, ERR)
         row2 = VGroup(srv, ci, l21)
 
