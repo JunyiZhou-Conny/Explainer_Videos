@@ -76,7 +76,7 @@ JUSTFILE = "babykev/justfile"
 S11_CONFIG = ("config files", "yamllint, uv, just", "just lint-config", "yes", True)   # S11's row text
 INSIDE = ("tests", "format", "docs", "config", "types")           # the hermetic rows, table order
 ARCH_NAMES = ("tests", "format + lint", "docs", "config files", "types")
-FLOOR = -0.8                             # the laptop gate's floor in beat 3
+FLOOR = -1.6                             # the laptop gate's floor in beat 3
 GATE_X = -0.45                           # the gate sits a little left: the system chip is outside it
 
 
@@ -372,7 +372,7 @@ class HooksThenCI(VoiceScene):
                       run_time=0.8)
             vo.wait_until("On your laptop, with Docker Desktop")
             resize(self, t, 3, keep=[d_out[0], rows_of(i_ln)[-1], i_out[0]], run_time=0.6)
-            top = 2.75
+            top = 2.5                                   # the tag on its edge stays under the tracker
             frame = RoundedRectangle(width=12.6, height=top - (t.box.get_top()[1] + 0.2), corner_radius=0.16,
                                      stroke_color=S.GREY, stroke_width=2.5).set_fill(S.GREY_DARKER, 0.6)
             frame.move_to([0, (top + t.box.get_top()[1] + 0.2) / 2, 0])
@@ -395,7 +395,7 @@ class HooksThenCI(VoiceScene):
             box_c.move_to([-1.0, yb, 0])
             jc.move_to(box_c)
             c_lab = label("dev image container", 20, IMAGE).next_to(box_c, LEFT, buff=0.25)
-            wire = DashedLine(box_c.get_right(), box_c.get_right() + RIGHT * 2.8, dash_length=0.12,
+            wire = DashedLine(box_c.get_right() + RIGHT * 0.22, box_c.get_right() + RIGHT * 3.0, dash_length=0.12,
                               color=S.GREY, stroke_width=3)
             cutx = cross_mark(0.3, S.GREY).move_to(wire.get_center())
             netw = label("network", 22, S.GREY).next_to(wire, RIGHT, buff=0.2)
@@ -404,14 +404,15 @@ class HooksThenCI(VoiceScene):
             assert herm.get_top()[1] < dev_bar.get_bottom()[1] - 0.05 and herm.get_bottom()[1] > frame.get_bottom()[1], \
                 (herm.get_top(), dev_bar.get_bottom(), herm.get_bottom(), frame.get_bottom())
             assert c_lab.get_left()[0] >= -6.2 and netw.get_right()[0] <= 6.2, (c_lab.get_left(), netw.get_right())
-            self.play(FadeIn(frame), run_time=0.5)
-            vo.wait_until("The walk's record shows the rest.")
-            self.play(FadeIn(rtag, shift=DOWN * 0.1), FadeIn(head), run_time=0.5)
-            self.play(*flash(rtag, S.GREY), run_time=0.7)
-            vo.wait_until("Two images from one lockfile")
+            self.play(FadeIn(frame), FadeIn(rtag, shift=DOWN * 0.1), FadeIn(head), run_time=0.5)
+            vo.wait_until("both images build for real")
             self.play(FadeIn(lock, shift=RIGHT * 0.15), run_time=0.5)
             self.play(GrowArrow(arr_r), GrowArrow(arr_d), GrowFromEdge(run_bar.bar, LEFT),
                       GrowFromEdge(dev_bar.bar, LEFT), run_time=0.8)
+            vo.wait_until("The walk's record shows the rest.")
+            self.play(*flash(rtag, S.GREY), run_time=0.7)
+            vo.wait_until("Two images from one lockfile")
+            self.play(Indicate(lock[1], color=INK, scale_factor=1.15), run_time=0.6)
             vo.wait_until("1.15 and 1.84 gigabytes")
             self.play(FadeIn(run_bar.text, shift=LEFT * 0.15), run_time=0.5)
             self.play(FadeIn(dev_bar.text, shift=LEFT * 0.15), run_time=0.5)
@@ -491,32 +492,32 @@ class HooksThenCI(VoiceScene):
             vo.wait_until("A hook runs on one machine")
             self.play(FadeIn(one_m, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("and git commit")
-            nv.next_to(env, UP, buff=0.12)
+            nv.next_to(env, UP, buff=0.7)                  # above the arch names
             self.play(FadeIn(nv, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("walks straight past it")
             rider = VGroup(env, nv)
             start = rider.get_center()
-            end_env = np.array([gate.vault.get_left()[0] - env.width / 2 - 0.05, gate.home[1], 0])
-            end = end_env + (rider.get_center() - env.get_center())
+            # up, over every arch, and down into the vault (it never touches an arch)
+            end = gate.vault.frame.get_center() + (rider.get_center() - env.get_center())
             peak = max(n.get_top()[1] for n in names) + 0.15 + (rider.get_center()[1] - rider.get_bottom()[1])
-            path = VMobject().set_points_smoothly([start, [start[0] + 0.5, peak, 0],
-                                                   [end[0] - 0.5, peak, 0], end])
+            path = VMobject().set_points_smoothly([start, [start[0] + 0.3, peak, 0],
+                                                   [end[0] - 0.3, peak, 0], end])
+            self.play(gate.open(), run_time=0.4)
             assert peak + rider.height / 2 <= 2.85, peak
             self.play(MoveAlongPath(rider, path), run_time=1.6, rate_func=smooth)
-            self.play(gate.open(), run_time=0.4)
-            self.play(env.animate.move_to(gate.vault.frame), FadeOut(env), FadeOut(nv), run_time=0.5)
+            self.play(FadeOut(env), FadeOut(nv), run_time=0.4)
             gate.remove(env)
             self.remove(env, nv)
             gate.envelope = None
             self.play(gate.shut(), Indicate(gate.turnstile.arches, color=S.GREY, scale_factor=1.04), run_time=0.6)
 
         # ========================================================== 4. CI re-runs the checks; one command for everyone
-        drop = 2.15
+        drop = FLOOR + 2.95                     # the laptop floor goes to -2.95
         srv_ts = Turnstile(5, arch_w=0.7, arch_h=1.2, gap=0.22)
         srv_ts.move_to([0.9, 0, 0]).shift(UP * (0.65 - srv_ts.arches.get_bottom()[1]))
         srv_names = srv_ts.name_labels(ARCH_NAMES)
-        srv_box = outline_box(9.8, 2.8, CLOUD, solid=False, fill_opacity=0.06)
-        srv_box.move_to([0, 1.4, 0])
+        srv_box = outline_box(9.8, 2.6, CLOUD, solid=False, fill_opacity=0.06)
+        srv_box.move_to([0, 1.3, 0])
         srv_lab = label("CI server", 22, CLOUD).move_to(srv_box.get_corner(UL) + np.array([0.3, -0.35, 0]),
                                                         aligned_edge=LEFT)
         assert srv_box.get_top()[1] <= 2.85 and srv_lab.get_right()[0] < min(n.get_left()[0] for n in srv_names), \
