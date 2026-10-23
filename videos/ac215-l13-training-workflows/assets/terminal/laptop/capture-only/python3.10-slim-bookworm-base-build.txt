@@ -27,3 +27,18 @@ $ docker build -t python:3.10-slim-bookworm /tmp/tmp.eNBoPG
 #6 DONE 0.4s
 
 #7 [3/3] RUN cat /usr/local/share/ca-certificates/capture-ca.crt >> /etc/ssl/certs/ca-certificates.crt  && for f in /etc/apt/sources.list /etc/apt/sources.list.d/debian.sources; do       [ -f "$f" ] && sed -i -e 's|http://deb.debian.org|https://deb.debian.org|g' -e 's|http://security.debian.org|https://security.debian.org|g' "$f";     done; true
+#7 DONE 0.5s
+
+#8 exporting to image
+#8 exporting layers
+#8 exporting layers 0.2s done
+#8 exporting manifest sha256:d692261d99403bc7f4416cbd63b6d53a50fa2a8cc242ace2b46f9a0016ed1df4
+#8 exporting manifest sha256:d692261d99403bc7f4416cbd63b6d53a50fa2a8cc242ace2b46f9a0016ed1df4 0.0s done
+#8 exporting config sha256:07037c6a6563c65028582cbed0b08f61313b2092fbb41af3b928df7df53815a7 0.0s done
+#8 exporting attestation manifest sha256:2dae41fc1e8ef293a3f8e3ab2d7e0890b5cfb593a40bdb2685c8ee1c5f4b038f 0.0s done
+#8 exporting manifest list sha256:924f18b47d6fdcdd6e45d9ef61675f1a662e132b8df6cfaa2540eff63367b356
+#8 exporting manifest list sha256:924f18b47d6fdcdd6e45d9ef61675f1a662e132b8df6cfaa2540eff63367b356 0.0s done
+#8 naming to docker.io/library/python:3.10-slim-bookworm done
+#8 unpacking to docker.io/library/python:3.10-slim-bookworm 0.1s done
+#8 DONE 0.5s
+[exit 0]
