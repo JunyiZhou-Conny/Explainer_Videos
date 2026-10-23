@@ -185,6 +185,14 @@ def rows_of(line) -> list:
     return list(line.rows) if hasattr(line, "rows") else [line]
 
 
+def find_in(line, sub: str) -> VGroup:
+    """The glyphs of `sub` in a typed command, on whichever of its folded rows holds it."""
+    for r in rows_of(line):
+        if sub in r.text:
+            return substring(r, sub)
+    raise KeyError(f"{sub!r} is not on one row of {[r.text for r in rows_of(line)]}")
+
+
 def flash(tg, color, scale: float = 1.15, run_time: float = 0.7) -> list:
     """Flash a filled tag: its word and its outline (Indicate on the whole tag hides the word)."""
     return [Indicate(tg.text, color=color, scale_factor=scale, run_time=run_time),
@@ -255,9 +263,10 @@ def light(arch, color=INK, run_time: float = 0.4):
 
 def style_card(head: str, body: str, color) -> VGroup:
     h = label(head, 26, color)
-    b = label(body, 24, INK)
+    b = label(body, 22, INK)
     inner = VGroup(h, b).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
-    frame = outline_box(5.9, inner.height + 0.7, color, solid=True, fill_opacity=0.08)
+    frame = outline_box(6.2, inner.height + 0.7, color, solid=True, fill_opacity=0.08)
+    assert inner.width <= 6.2 - 0.6, inner.width
     inner.move_to(frame).align_to(frame, LEFT).shift(RIGHT * 0.35)
     g = VGroup(frame, inner)
     g.frame, g.head, g.body = frame, h, b
@@ -265,7 +274,7 @@ def style_card(head: str, body: str, color) -> VGroup:
 
 
 class Gauge(VGroup):
-    """A coverage gauge 0–100 % with the floor marked: .track .fill .floor .floor_label .value.
+    """A coverage gauge 0–100 % with the floor marked: .track .fill .floor .floor_label .value (None at first).
     set_to(pct, colour) -> animations."""
 
     def __init__(self, x0: float, x1: float, y: float, floor: float = 90, **kw):
@@ -279,8 +288,8 @@ class Gauge(VGroup):
         self.floor = Line([xf, y - 0.26, 0], [xf, y + 0.26, 0], color=INK, stroke_width=4)
         self.floor_label = label("floor 90%", 20, INK).next_to(self.floor, UP, buff=0.08)
         self.name = label("coverage", 20, S.GREY).next_to(self.track, LEFT, buff=0.2)
-        self.value = steady("0%", 20, PASS, mono_font=True).next_to(self.track, RIGHT, buff=0.2)
-        self.add(self.track, self.fill, self.floor, self.floor_label, self.name, self.value)
+        self.value = None
+        self.add(self.track, self.fill, self.floor, self.floor_label, self.name)
 
     def x(self, pct: float) -> float:
         return self.x0 + (self.x1 - self.x0) * pct / 100
@@ -292,7 +301,13 @@ class Gauge(VGroup):
 
     def set_to(self, pct: float, text: str, color) -> list:
         val = steady(text, 20, color, mono_font=True).next_to(self.track, RIGHT, buff=0.2)
-        return [Transform(self.fill, self._bar(pct, color)), Transform(self.value, val)]
+        old = self.value
+        if old is not None:
+            self.remove(old)
+        self.add(val)
+        self.value = val                  # a cross-fade: a morph between two numbers garbles them
+        fade = [FadeOut(old, shift=UP * 0.15)] if old is not None else []
+        return [Transform(self.fill, self._bar(pct, color)), *fade, FadeIn(val, shift=UP * 0.15)]
 
 
 class JustCheck(VoiceScene):
@@ -496,8 +511,8 @@ class JustCheck(VoiceScene):
             resize(self, t, 12, keep=[jc_ln, l18], run_time=0.5)
             f_ln = typ(self, t, floor.cmd, type_time=0.9)
             vo.wait_until("ask for only the confidence tests")
-            self.play(Indicate(substring(rows_of(f_ln)[-1], "-k confidence"), color=INK, scale_factor=1.1),
-                      Indicate(substring(rows_of(f_ln)[-1], "--cov-fail-under=90"), color=TURN, scale_factor=1.1),
+            self.play(Indicate(find_in(f_ln, "-k confidence"), color=INK, scale_factor=1.1),
+                      Indicate(find_in(f_ln, "--cov-fail-under=90"), color=TURN, scale_factor=1.1),
                       run_time=0.7)
             f_out = out(self, t, floor.at(2, "…", (11, 12), "…", 25) + [cut(floor.line(26), "in 0.17s")], run_time=0.9)
             l11, l12, l25, l26 = f_out[2], f_out[3], f_out[5], f_out[6]
@@ -590,7 +605,7 @@ class JustCheck(VoiceScene):
             k_c1, y_c1 = tag_on(self, t, cm_ln, turn_row)
             self.play(*flash(y_c1, TURN), run_time=0.7)
             vo.wait_until("An unused import goes in")
-            self.play(Indicate(substring(rows_of(p_ln)[-1], "import os"), color=INK, scale_factor=1.15), run_time=0.7)
+            self.play(Indicate(find_in(p_ln, "import os"), color=INK, scale_factor=1.15), run_time=0.7)
             vo.wait_until("the commit fails on F401")
             o1 = out(self, t, c1.at((6, 9), "…", (16, 17), "…", 32), run_time=0.9)
             v_pass = [substring(o1[i], "Passed") for i in (0, 1)]
@@ -634,7 +649,7 @@ class JustCheck(VoiceScene):
         # ========================================================== 5. two styles; docs join the gate
         cards = VGroup(style_card("babykev", "check points, you run just fmt yourself", VENV),
                        style_card("cheese", "black rewrites, you look and re-stage", IMAGE))
-        cards.arrange(RIGHT, buff=0.4).move_to([0, 0.2, 0])
+        cards.arrange(RIGHT, buff=0.3).move_to([0, 0.2, 0])
         t2 = term(P_BABYKEV, rows=11, title=T_BABYKEV, size=PT)
         gt = GateTable(keys=("tests", "format", "docs", "config", "system"), filled=("tests", "format", "system"),
                        rows={"config": ("config files", "yamllint, uv, just", "just lint-config", "yes", True)})
@@ -674,8 +689,9 @@ class JustCheck(VoiceScene):
             self.play(substring(l9, "88 of 88").animate.set_color(PASS), run_time=0.3)
             self.play(Indicate(substring(l9, "88 of 88"), color=PASS, scale_factor=1.2), run_time=0.6)
             vo.wait_until("deleting one description blocks a commit")
-            self.play(FadeOut(t2), FadeIn(cc, shift=UP * 0.2), run_time=0.6)
+            self.play(FadeOut(t2), run_time=0.4)
             self.remove(t2, *t2.get_family())
+            self.play(FadeIn(cc, shift=UP * 0.2), run_time=0.4)
             c_rows = cc.print(self, cc_lines, run_time=0.6, lag=0.1)
             self.play(c_rows[0].animate.set_color(ERR), substring(c_rows[4], "no docment").animate.set_color(ERR),
                       substring(c_rows[5], "87 of 88").animate.set_color(ERR), FadeIn(cc_chip, shift=UP * 0.15),
