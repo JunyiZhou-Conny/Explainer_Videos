@@ -50,11 +50,14 @@ Conventions
   "one n1-standard-4 machine"); "a 403" is the one guarded form. No `'s` after a word with an entry
   or a candidate (never "TensorFlow's", "Vertex's"); `README's` is an entry. Numbers as digits
   (thousands with a comma: "1,156", "4,016"); never a "!" after a digit; no prices, no "cents".
-  Versions are said with "at the time of recording" the first time they are spoken (TensorFlow
-  2.19.0 is "the instructors' stored run"; wandb 0.31.0 today vs 0.22.2 stored; Python 3.13.17 and
-  uv 0.13.5; Cloud SDK 590.0.0 and the Vertex AI library 1.120.0; the image sizes); the wandb pin
-  0.15.11 is said as "pinned"; the tarball's 4,016 bytes, the eight entries and the notebooks'
-  counts are deterministic or stored and are said plainly.
+  Versions are said with "at the time of recording" the first time they are spoken (v2 speaks only
+  wandb 0.31.0 today vs 0.22.2 stored); every other drifting version or size (TensorFlow 2.19.0,
+  Python 3.13.17, uv 0.13.5, Cloud SDK 590.0.0, the Vertex AI library 1.120.0, 2.59 GB, the image
+  sizes) is on screen only, with its `at the time of recording` tag; the wandb pin 0.15.11 is said
+  as "pinned"; the image tags 2.14 and 2.17 are fixed names; the tarball's 4,016 bytes, the eight
+  entries and the notebooks' counts are deterministic or stored and are said plainly. Never write
+  "notebook A's" (the `notebook A` entry would leave a bare "'s"): say "the folder from notebook
+  A", "the winner in notebook A".
 - Every spoken sentence starts with a capital letter or a digit (`explainer.voice.split_sentences`
   splits only there; the same split drives TTS gaps, subtitle cues and the Chinese alignment). No
   sentence opens with a lowercase command, flag, tool or file name ("The call wandb init…", "The
@@ -148,9 +151,10 @@ Conventions
   - G = "model-training › OPTIONAL: Multi GPU Training" (`:165-170`), 4 steps: 1 Review
     `cli-multi-gpu.sh` · 2 Review `task_multi_gpu.py` · 3 Make changes · 4 `sh cli-multi-gpu.sh`.
   - `tracker_cleanup` = "extra · clean-up" (the README has no clean-up section), 3 steps:
-    1 cockpit & images · 2 jobs & bucket · 3 notebooks & keys.
+    1 jobs & bucket · 2 cockpit & images · 3 notebooks & keys (the cockpit-only lines come before
+    `exit`).
   S01, S02, S06 are concept scenes with no tracker; S11's badges beat has none until the stand-in;
-  S14's ladder and S15's `cli.py` beat and recap have none.
+  S14's ladder and the V7 picture before G1, and S15's `cli.py` beat and recap have none.
 - `(extra)` after a command: not in the README or the notebook. A small GREY tag `extra` (or a
   variant) sits beside the typed line, and the SAY says "extra" the first time each kind appears in a
   scene. Commands the README describes without spelling (the clone, `mkdir secrets`, the
@@ -166,7 +170,10 @@ Conventions
   `recorded · <source>` on every success a student sees that this machine could not produce
   (notebook outputs with their cell; the counts in S12, `recorded · notebooks A/B`); `extra · local
   stand-in` on `colab/C05`, `C05b`, `C38`, `C38b` and `laptop/80`–`87` (the Vertex job's first
-  step, replayed in a plain Python 3.10 container); `stand-in` on the key file in `06`;
+  step, replayed in a plain Python 3.10 container; `09` is a live manifest check and is plain
+  `extra`); `stand-in` on the key file in `06`; `plan · drawn` on V4 step 4's miniature in S06 and
+  `what Vertex does · drawn, not recorded` on the full V4 step 4 in S11 (no output panels in
+  either); `extra · not captured` on S07's optional `read -rs` chip;
   `at the time of recording` beside every version and image size when first shown; `erratum` on
   every README/repo/notebook slip (the narration says "a small slip", never "erratum"); the GOLD
   `cost_tag()` — **text only, never a number** — at S01 (checklist), S03 (experiment folder in the
@@ -222,26 +229,28 @@ Conventions
   repo lane dashed, the key chip in a variable and the bucket named; S08–S14 light the repo lane piece
   by piece (the cockpit gets its "submits · never trains" stamp in S09); S15 shows it complete, then
   unlit. The cockpit has exactly two arrows (package & upload; create job) and none into a job.
-- Length and parts: narration **4,239** words (`python -m explainer.script`, which counts SAY
-  words; its minute figure assumes 155 wpm and is ignored). At Kokoro af_heart speed 0.9 (≈174 wpm)
-  that is ≈24.4 min of narration, ≈29–31 min with typing, outputs, three builds and the ponder
-  timers. Part 1 = S01–S07 (track it, then get ready; ends on V1 with "today it won't build"),
-  part 2 = S08–S15 (ship it). Each part ends on an empty frame. Per scene (BRIEF target in
-  brackets):
+- Length and parts: narration **4,287** words after the v2 review merge (`python -m
+  explainer.script`, which counts SAY words; its minute figure assumes 155 wpm and is ignored;
+  ceiling 4,300). At Kokoro af_heart speed 0.9 (≈174 wpm) that is ≈24.6 min of narration, ≈29–31
+  min with typing, outputs, three builds and the ponder timers. Part 1 = S01–S07 (track it, then
+  get ready; ends on V1 with "today it won't build"), part 2 = S08–S15 (ship it). Each part ends on
+  an empty frame. Per scene (BRIEF target in brackets, ±15 % band):
 
   | scene | words (BRIEF) | scene | words (BRIEF) |
   | --- | --- | --- | --- |
-  | S01 Hook | 218 (220) | S08 TwoFixes | 342 (340) |
-  | S02 LeversAndRecord | 211 (220) | S09 InsideTheTarball | 307 (300) |
-  | S03 FolderTracker | 304 (280) | S10 OneCommand | 323 (310) |
-  | S04 SharedAxis | 305 (290) | S11 WhoRunsIt | 292 (300) |
-  | S05 ThreeLines | 252 (240) | S12 WhatTheJobSays | 267 (290) |
-  | S06 RentTheMachine | 246 (250) | S13 ThreeSwitches | 222 (230) |
-  | S07 KeysAndBucket | 332 (290) | S14 TwoGpusOneModel | 326 (300) |
-  |  |  | S15 Recap | 292 (270) |
-  | **part 1** | **1,868** (1,790) | **part 2** | **2,371** (2,340) |
+  | S01 Hook | 205 (220) | S08 TwoFixes | 333 (340) |
+  | S02 LeversAndRecord | 190 (220) | S09 InsideTheTarball | 311 (300) |
+  | S03 FolderTracker | 317 (280) | S10 OneCommand | 339 (310) |
+  | S04 SharedAxis | 325 (290) | S11 WhoRunsIt | 318 (300) |
+  | S05 ThreeLines | 242 (240) | S12 WhatTheJobSays | 292 (290) |
+  | S06 RentTheMachine | 259 (250) | S13 ThreeSwitches | 205 (230) |
+  | S07 KeysAndBucket | 321 (290) | S14 TwoGpusOneModel | 332 (300) |
+  |  |  | S15 Recap | 298 (270) |
+  | **part 1** | **1,859** (1,790) | **part 2** | **2,428** (2,340) |
 
-  Every scene is within the BRIEF's ±15 %. Re-run the counter after any review edit.
+  Every scene is within the BRIEF's ±15 %. Tight edges: S02 (floor 187), S03 (cap 322), S04 (cap
+  333), S07 (cap 333), S15 (cap 310) and the total (13 words under 4,300): any later addition there
+  names its cut in the same scene. Re-run the counter after any review edit.
 
 Notes for scene authors
 - TERM line numbers are *file* lines (line 1 = the `$` command); `Capture.pick()` indexes the
@@ -254,13 +263,17 @@ Notes for scene authors
   `RunLedger` (V2), `ConfigBinding` (V3), `TarballTrip` (V4), `ThreeBadges` (V5), `GpuSwitchboard`
   (V6), `MirroredReplicas` (V7). Never reuse a scene class name for a helper.
 - `21` (189 lines) and `23` (380 lines): print only the lines named in S08. `26`: lines 28–31 are
-  never printed. `80`: lines 2 and 68, then 70 cut. `40:77` is folded with `wrap`; its hex is
+  never printed. `80`: lines 2 and 68, then 70 with `wrap` (six rows, so both highlighted packages
+  are visible). `84`: only line 14 after a `…` (line 3, printed before the check, reads as a
+  success). `40:77` is folded with `wrap`; its hex is
   replaced before printing. The ProxyError lines are dropped before any `…` is computed.
 - What may show values: notebook outputs (recorded, with their cell); code constants and the
   arguments `cli.sh` sends (in CODE panels and in `40`'s trace); live captures. What may not: any
   Vertex job line beyond the code's own prints and the two recorded counts; any W&B dashboard value
   other than notebook B's stored output; any epoch, loss, timing, accuracy or price for the repo
-  trainer; any length claim for a real W&B key; the `Currently logged in as` line as job output (it
+  trainer; any length claim for a real W&B key (the pinned wandb 0.15.11's 40-character rule,
+  `84:14` and `87:14`, is a fact about the pin, said in S07, S09, S10 and S11); the `Currently
+  logged in as` line as job output (it
   appears only inside NB(B: 614–615), tagged as notebook B's Colab login).
 - Never: slide images, console/W&B/Colab screenshots, logos, the README's PNGs; a real person's
   name, e-mail, W&B user or team; a real-looking key; `README.md:96`; the relay IP, ProxyError
@@ -396,7 +409,8 @@ SAY: Sign in with cell 62, put your own project and bucket into cell 63, and run
 ## S04 · Runs on a shared axis — `s04_wandb.py` · `SharedAxis`
 
 SHOW: TRACKER B1 (tracker B appears: "Notebook B › Experiment Tracking with W&B", 6 dots). GREY tag
-`lecture_ref(13, "12–13, 16–17")` top right, whole scene. NB(B: 37) `!pip install -q wandb -U`.
+`lecture_ref(13, "12–13, 16–17")` top right, whole scene. A GREY chip, not spoken: "open notebook B ·
+save a copy · GPU runtime (cell 3, NB(B: 26–31))". NB(B: 37) `!pip install -q wandb -U`.
 Below it the Colab stand-in strip (`extra · local stand-in`; `TRACKER B1 · extra · local stand-in`
 while it is on screen), prompt `$`: `pip install -q wandb -U`
 → TERM(colab/C05: 2 cut, 4–5); then `python -c 'import wandb; print(wandb.__version__)'` (extra) →
@@ -449,7 +463,8 @@ beside notebook A's table: the hook's second winner, YELLOW; the fine-tuned rows
 glow, chip "not like for like". On "the frozen MobileNet", both frozen rows ring YELLOW — A's
 `mobilenetv2_train_base_False · 15 · 67.24%` (NB(A: 1285, 1292)) and B's `mobilenetv2_train_base_False
 · 15 · 68.97%` (NB(B: 1704, 1711)) — with the chip "same settings · 15 epochs · 2 photos apart"; S03's
-ruler "1 photo = 0.86 points" returns between them.
+ruler "1 photo = 0.86 points" returns between them. A GREY chip: "run cells 55–60 too · pause at the
+next step".
 SAY: Cell 55 builds the second table from the opening. The fine-tuned MobileNet trained 10 epochs here and 15 in notebook A: not a fair comparison. Now the frozen MobileNet, with the same settings and epochs: 67.24 in notebook A, 68.97 here. Two photos apart by chance alone: the size of the winning margin.
 
 SHOW: TRACKER B6: NB(B: 254, 257) (cell 13's `upload_experiment`, the instructors' bucket and
@@ -732,7 +747,7 @@ GREEN; line 11 `packages=find_packages(),` YELLOW → V4: a GREEN `trainer/` fol
 tf-cpu.2-17 · not verified here"; a GREY chip beside the GREEN pin: "requests: via wandb". A small
 GREY chip (slides vs code): "uv.lock pins the cockpit, not the trainer". `▶ your turn` (open the
 file).
-SAY: Review setup.py; pause and open it. It is the label pip reads to install the tarball. The only declared dependency is wandb, pinned to 0.15.11. Its find packages call finds the trainer folder because the folder has its own init file, so once installed, python dash m trainer dot task works. TensorFlow and scikit-learn are not declared: they are assumed to come from the image Google provides, and scene 11 shows the tarball lacks them. Requests only arrives because wandb needs it.
+SAY: Review setup.py; pause and open it. It is the label pip uses to install the tarball. The only declared dependency is wandb, pinned to 0.15.11. Its find packages call finds the trainer folder because the folder has its own init file, so once installed, python dash m trainer dot task works. TensorFlow and scikit-learn are not declared: they are assumed to come from the image Google provides, and scene 11 shows the tarball lacks them. Requests only arrives because wandb needs it.
 
 SHOW: TRACKER E2. CODE(package/trainer/task.py: 45–54): line 52 `default="16"` YELLOW, pin "scene
 11". Then two small panels: CODE(package/trainer/task.py: 96–100) (chip "from a GitHub release ·
@@ -948,7 +963,7 @@ metric logged"); artifacts ◐ ("logs ✓ · weights ✗", a dashed hole); code 
 in small beside the ledger and notebook A's folder card gets the same three ✗. On "cannot crown",
 S01's YELLOW question card returns small and its "?" resolves to "can't tell · yet". GREY chips:
 "exercise 1: a LambdaCallback" · "exercise 3: seed the split". Fade out.
-SAY: The model and its settings, yes. The environment only partly: system charts, while the image tag sits in cli.sh. Metrics, none: the execution time goes into the config. Logs yes, weights no. Code, data and notes, no: no commit, a fixed zip, and an unseeded split. The folder from notebook A misses the same three. So the opening's answer: these tables cannot crown a recipe. Seed the split, match the epochs, keep the code version, then compare. Exercise 1 adds a small callback.
+SAY: The model and its settings, yes. The environment only partly: system charts, while the image tag sits in cli.sh. Metrics, none: the execution time goes into the config. Logs yes, weights no. Code, data and notes, no: no commit, a fixed zip, and an unseeded split. The folder from notebook A misses the same three. So the verdict: these tables cannot crown a recipe. Seed the split, match the epochs, keep the code version, then compare. Exercise 1 adds a small callback.
 
 ---
 
@@ -1085,7 +1100,8 @@ python:3.10-slim-bookworm` · Linux: `sudo rm trainer.tar.gz`" (names from `91`)
 (5) TRACKER cleanup 3: "notebook B: `wandb.finish()` · both notebooks: Runtime → Disconnect and
 delete runtime";
 (6) "end of term: delete the model-trainer key in IAM and its JSON in secrets · rotate your W&B key
-and update the Colab secret `WandB`". `▶ your turn`.
+and update the Colab secret `WandB` · the old export lives on in that terminal: open a new one".
+`▶ your turn`.
 SAY: Time to shut down; pause and work through the list. From inside the cockpit, or in the console, make sure no custom job is running or pending. Remove the tarball and experiment folders too. Then exit; an extra docker ps shows nothing left. Finish the last W and B run, and disconnect the Colab runtimes. At the end of term, delete the model trainer key and rotate your W and B key, which traveled in a job.
 
 SHOW: The recap on V1, complete: pieces relight one by one as each is named: the folder of runs and
@@ -1117,6 +1133,19 @@ SAY: Answers are in the exercises. Next, lecture 14 serves containers without se
 ---
 
 ## Lexicon candidates
+
+**Status after the v2 merge.** The flow review's Appendix B block (33 required keys plus the
+optional `gsutil` and `scikit-learn`) is in `explainer/lexicon.yaml` (commit 09e7e2f): every
+dotted file name, `wandb`, `us-central1`, `T4s`, `404`, `model dir`, `notebook A` / `Notebook A`
+and every decimal the v1 script spoke now have entries; the rows below that needed one are
+covered, and the rest were found fine as phonemized (flow review, Appendix A). v2 no longer speaks
+2.19.0, 3.13.17, 0.13.5, 590.0.0, 1.120.0, 2.59, 4.31, 8.93 or 7.61 (on screen only; their keys are
+harmless). New in v2: **67.24** (S04, "67.24 in notebook A, 68.97 here"): mid-sentence, it
+phonemizes clean today (`sˈɪksti sˈɛvən pɔɪnt tˈuː fˈɔːɹ`); a robustness key beside 68.97 is
+optional, needed only if an edit moves it to the end of a sentence. Every new or changed v2
+sentence was phonemized with `KokoroBackend.phonemize`: no mid-sentence stop, no "a" before a key,
+no "'s" after a key except `README's`. Avoided by rewrite: "opening's" (stressed on "-ING"), "reads"
+(homograph rule), "notebook A's".
 
 Words the SAY lines contain that `explainer/lexicon.yaml` has no entry for and Kokoro af_heart may
 misread. **Not added**: the lexicon stage checks each with `explainer/voice.py` (phonemes) and adds
