@@ -15,7 +15,7 @@ Beats (script.md, ## S04; one voiceover block each):
    hops, underlining '../' '../'), the tube redraws. GREY note 'slides: ../secrets · L11's repos sit
    one level shallower'.
 3. TRACKER A3 · extra: the running map (AppMap.at("S04")) over a 3-row strip; `mkdir ../secrets`
-   (laptop/04, extra; GREY bar tag 'the README shows a tree, not a command'); the GREEN secrets/
+   (laptop/04, extra; GREY row tag 'the README shows a tree, not a command' on the waiting prompt); the GREEN secrets/
    drawer appears on the map. TRACKER A3: a GREY file slides from Downloads into secrets/ and is
    renamed llm-service-account.json (`illustration`); 'Check that name' rings it, a struck RED
    `.json.json` below. TRACKER A4 · extra: the strip grows; `cd ..`, `tree -L 2 .` (laptop/05: 2–11)

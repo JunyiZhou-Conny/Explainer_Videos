@@ -1,0 +1,526 @@
+[Script Info]
+Title: AC215 · Lecture 9 — CI & unit testing: the pre-commit gate (follow-along: cheese-app-ci-cd + babykev)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:04.74,Bilingual,,0,0,0,,这是一行代码，是哈佛的一位授课老师在课堂上现场 commit 的\N{\fs33\c&H00C8C0B8&\bord1.4}Here is a line of code that a Harvard instructor committed, live, in class.
+Dialogue: 0,0:00:05.06,0:00:10.62,Bilingual,,0,0,0,,一个点到原点的距离，是 x 的平方加 y 的平方，再开平方\N{\fs33\c&H00C8C0B8&\bord1.4}The distance from a point to the origin is the square root of x squared plus y squared.
+Dialogue: 0,0:00:10.94,0:00:13.42,Bilingual,,0,0,0,,这一行算的却是它的两倍再开平方\N{\fs33\c&H00C8C0B8&\bord1.4}This line takes the square root of twice that.
+Dialogue: 0,0:00:13.74,0:00:16.08,Bilingual,,0,0,0,,什么都没崩溃；应用照常启动了\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing crashed; the app started fine.
+Dialogue: 0,0:00:16.40,0:00:18.03,Bilingual,,0,0,0,,只是答案错了\N{\fs33\c&H00C8C0B8&\bord1.4}The answer was just wrong.
+Dialogue: 0,0:00:18.27,0:00:19.87,Bilingual,,0,0,0,,你输入 git commit\N{\fs33\c&H00C8C0B8&\bord1.4}You type git commit.
+Dialogue: 0,0:00:19.95,0:00:24.73,Bilingual,,0,0,0,,在这个 commit 生成之前，谁有权说不，它们又到底能抓到什么？\N{\fs33\c&H00C8C0B8&\bord1.4}Before that commit exists, who gets to say no, and what can they actually catch?
+Dialogue: 0,0:00:25.05,0:00:28.04,Bilingual,,0,0,0,,课上给能说不的东西起了个名字\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture has a word for whoever can say no:
+Dialogue: 0,0:00:28.04,0:00:30.90,Bilingual,,0,0,0,,门禁，也就是任何会失败、能拦住你的东西\N{\fs33\c&H00C8C0B8&\bord1.4}a gate, anything that can fail and stop you.
+Dialogue: 0,0:00:31.22,0:00:34.99,Bilingual,,0,0,0,,今天我们就在你的电脑上搭一个门禁，看着它拒绝一次 commit\N{\fs33\c&H00C8C0B8&\bord1.4}Today we build one on your machine, and watch it refuse a commit.
+Dialogue: 0,0:00:35.73,0:00:41.31,Bilingual,,0,0,0,,先退一步看：在一个机器学习系统里，模型只是一大张格子里的几块\N{\fs33\c&H00C8C0B8&\bord1.4}Step back once: in a machine learning system, the model is a few tiles in a big grid;
+Dialogue: 0,0:00:41.31,0:00:42.91,Bilingual,,0,0,0,,其余都是工程\N{\fs33\c&H00C8C0B8&\bord1.4}the rest is engineering.
+Dialogue: 0,0:00:43.22,0:00:44.86,Bilingual,,0,0,0,,今天讲的就是这些工程\N{\fs33\c&H00C8C0B8&\bord1.4}Today is that engineering:
+Dialogue: 0,0:00:44.86,0:00:48.40,Bilingual,,0,0,0,,测试、格式化工具、linter，还有运行它们的 hook\N{\fs33\c&H00C8C0B8&\bord1.4}tests, formatters, linters, and the hook that runs them.
+Dialogue: 0,0:00:48.65,0:00:53.21,Bilingual,,0,0,0,,想跟着做，你需要自己 clone 一份 cheese-app-ci-cd\N{\fs33\c&H00C8C0B8&\bord1.4}To follow along you need your own clone of cheese-app-ci-cd,
+Dialogue: 0,0:00:53.21,0:00:56.86,Bilingual,,0,0,0,,开着 Docker Desktop，还要有 Python 3.9 及以上\N{\fs33\c&H00C8C0B8&\bord1.4}Docker Desktop running, and Python 3.9 or newer.
+Dialogue: 0,0:00:57.18,0:00:59.45,Bilingual,,0,0,0,,不用云，不用凭据，没有账单\N{\fs33\c&H00C8C0B8&\bord1.4}No cloud, no credentials, no bill:
+Dialogue: 0,0:00:59.45,0:01:02.86,Bilingual,,0,0,0,,一切都在你的笔记本上跑，这正是重点\N{\fs33\c&H00C8C0B8&\bord1.4}everything runs on your laptop, which is the point.
+Dialogue: 0,0:01:03.10,0:01:07.27,Bilingual,,0,0,0,,左上角的进度条显示我们在 README 的哪一步\N{\fs33\c&H00C8C0B8&\bord1.4}The tracker in the top left shows which README step we are on;
+Dialogue: 0,0:01:07.27,0:01:10.16,Bilingual,,0,0,0,,今天一共 6 段：4 段来自 cheese 的 README\N{\fs33\c&H00C8C0B8&\bord1.4}6 sections today: 4 from the cheese README,
+Dialogue: 0,0:01:10.16,0:01:12.79,Bilingual,,0,0,0,,1 段是客座讲座，1 段是清理\N{\fs33\c&H00C8C0B8&\bord1.4}1 for the guest lecture, 1 for cleanup.
+Dialogue: 0,0:01:13.10,0:01:16.88,Bilingual,,0,0,0,,看到黄色的 your turn 标签，就暂停，自己跑这条命令\N{\fs33\c&H00C8C0B8&\bord1.4}When the yellow your-turn tag appears, pause and run the command.
+Dialogue: 0,0:01:17.20,0:01:20.51,Bilingual,,0,0,0,,灰色的 extra 标签表示这个检查 README 里没有\N{\fs33\c&H00C8C0B8&\bord1.4}A gray extra tag marks a check not in the README.
+Dialogue: 0,0:01:20.83,0:01:23.84,Bilingual,,0,0,0,,每条命令都在学习指南里，链接在下方\N{\fs33\c&H00C8C0B8&\bord1.4}Every command is in the study guide, linked below.
+Dialogue: 0,0:01:24.88,0:01:26.63,Bilingual,,0,0,0,,这个 bug 是真实的历史\N{\fs33\c&H00C8C0B8&\bord1.4}The bug is real history.
+Dialogue: 0,0:01:26.95,0:01:29.45,Bilingual,,0,0,0,,这个 repo 自己的 log 讲了整个故事\N{\fs33\c&H00C8C0B8&\bord1.4}This repo's own log tells the story:
+Dialogue: 0,0:01:29.45,0:01:33.42,Bilingual,,0,0,0,,先是故意加回来的乱代码，然后是一次崩溃，再是一次修复\N{\fs33\c&H00C8C0B8&\bord1.4}messy code re-added on purpose, then a crash, then a fix.
+Dialogue: 0,0:01:33.74,0:01:36.55,Bilingual,,0,0,0,,接着课堂演示把那个错的平方根混了进去\N{\fs33\c&H00C8C0B8&\bord1.4}Then the class demo slipped the wrong square root in,
+Dialogue: 0,0:01:36.55,0:01:38.15,Bilingual,,0,0,0,,后来又被 revert 拿掉了\N{\fs33\c&H00C8C0B8&\bord1.4}and the revert took it out.
+Dialogue: 0,0:01:38.37,0:01:39.87,Bilingual,,0,0,0,,额外跑一下 git log\N{\fs33\c&H00C8C0B8&\bord1.4}An extra git log
+Dialogue: 0,0:01:39.87,0:01:44.68,Bilingual,,0,0,0,,确认 clone 下来的正是最后那个 commit，2025 年 11 月的\N{\fs33\c&H00C8C0B8&\bord1.4}confirms the clone sits at that last commit, from November 2025.
+Dialogue: 0,0:01:44.92,0:01:46.94,Bilingual,,0,0,0,,想象一个点：x 是 3，y 是 4\N{\fs33\c&H00C8C0B8&\bord1.4}Picture the point (3, 4).
+Dialogue: 0,0:01:47.26,0:01:51.64,Bilingual,,0,0,0,,它到原点的真实距离是 5，也就是这个圆的半径\N{\fs33\c&H00C8C0B8&\bord1.4}Its true distance from the origin is 5, the radius of this circle.
+Dialogue: 0,0:01:51.96,0:01:58.80,Bilingual,,0,0,0,,有 bug 的那一行返回 50 的平方根，大约 7.07：冲出了这个圆\N{\fs33\c&H00C8C0B8&\bord1.4}The buggy line returns the square root of 50, about 7.07: it overshoots the circle.
+Dialogue: 0,0:01:59.12,0:02:02.39,Bilingual,,0,0,0,,没崩溃，没报错，只有一个错的数字\N{\fs33\c&H00C8C0B8&\bord1.4}No crash, no error message, only a wrong number.
+Dialogue: 0,0:02:02.63,0:02:05.58,Bilingual,,0,0,0,,有一个现成的测试早就知道正确答案\N{\fs33\c&H00C8C0B8&\bord1.4}One existing test already knew the right answer.
+Dialogue: 0,0:02:05.90,0:02:09.14,Bilingual,,0,0,0,,它让应用算 x 是 3、y 是 4 的距离\N{\fs33\c&H00C8C0B8&\bord1.4}It asks the app for the distance of (3, 4) and insists on exactly 5.0.
+Dialogue: 0,0:02:09.14,0:02:11.76,Bilingual,,0,0,0,,并且坚持结果必须正好是 5.0\N{\fs33\c&H00C8C0B8&\bord1.4}It asks the app for the distance of (3, 4) and insists on exactly 5.0.
+Dialogue: 0,0:02:12.08,0:02:14.58,Bilingual,,0,0,0,,测试就是可执行的规格说明\N{\fs33\c&H00C8C0B8&\bord1.4}A test is an executable specification,
+Dialogue: 0,0:02:14.58,0:02:18.46,Bilingual,,0,0,0,,这个测试本来会在任何人看到演示之前就说不\N{\fs33\c&H00C8C0B8&\bord1.4}and this one would have said no before anyone saw the demo.
+Dialogue: 0,0:02:18.70,0:02:22.28,Bilingual,,0,0,0,,测试失败时，有两个嫌疑人：代码和测试\N{\fs33\c&H00C8C0B8&\bord1.4}When a test fails, there are two suspects, the code and the test.
+Dialogue: 0,0:02:22.60,0:02:26.21,Bilingual,,0,0,0,,课上的规则是：先相信测试，去改代码\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's rule: first believe the test, and fix the code.
+Dialogue: 0,0:02:26.53,0:02:31.20,Bilingual,,0,0,0,,为了迁就 bug 去改测试，规格说明就变成了日记\N{\fs33\c&H00C8C0B8&\bord1.4}Rewriting the test to match a bug turns your specification into a diary.
+Dialogue: 0,0:02:31.85,0:02:33.45,Bilingual,,0,0,0,,什么值得测试？\N{\fs33\c&H00C8C0B8&\bord1.4}What is worth testing?
+Dialogue: 0,0:02:33.51,0:02:38.27,Bilingual,,0,0,0,,课上把输入分进三个托盘：正常、边缘和非法\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture sorts inputs into three trays: normal, edge, and invalid.
+Dialogue: 0,0:02:38.59,0:02:42.41,Bilingual,,0,0,0,,对这里的 power 函数来说，2 的 3 次方是正常输入\N{\fs33\c&H00C8C0B8&\bord1.4}For the power function here, 2 to the power 3 is normal;
+Dialogue: 0,0:02:42.41,0:02:45.95,Bilingual,,0,0,0,,指数为零、无穷大和非数值都是边缘情况\N{\fs33\c&H00C8C0B8&\bord1.4}zero exponents, infinity and not a number are edges.
+Dialogue: 0,0:02:46.27,0:02:50.36,Bilingual,,0,0,0,,至于非法输入，pytest.raises 把测试反过来\N{\fs33\c&H00C8C0B8&\bord1.4}And for invalid input, pytest.raises inverts the test:
+Dialogue: 0,0:02:50.36,0:02:54.53,Bilingual,,0,0,0,,只有对字符串调用 power 时抛出 TypeError，测试才通过\N{\fs33\c&H00C8C0B8&\bord1.4}it passes only if power on a string raises a TypeError.
+Dialogue: 0,0:02:55.57,0:02:58.08,Bilingual,,0,0,0,,现在用一个请求来讲课上的词汇\N{\fs33\c&H00C8C0B8&\bord1.4}Now the lecture's vocabulary,
+Dialogue: 0,0:02:58.08,0:03:02.33,Bilingual,,0,0,0,,GET euclidean distance，x 是 3，y 是 4\N{\fs33\c&H00C8C0B8&\bord1.4}on one request: GET /euclidean_distance/?x=3&y=4.
+Dialogue: 0,0:03:02.65,0:03:06.94,Bilingual,,0,0,0,,在处理函数里，求 x 的平方是一次调用：power，参数是 3 和 2\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the handler, squaring x is one call, power(3, 2).
+Dialogue: 0,0:03:07.26,0:03:11.52,Bilingual,,0,0,0,,单元测试完全绕开应用，只单独调用这一个函数\N{\fs33\c&H00C8C0B8&\bord1.4}A unit test skips the app entirely and calls that one function alone.
+Dialogue: 0,0:03:11.84,0:03:14.53,Bilingual,,0,0,0,,它很快，而且失败时你知道该去哪儿找\N{\fs33\c&H00C8C0B8&\bord1.4}It is fast, and when it fails you know where to look.
+Dialogue: 0,0:03:14.77,0:03:17.77,Bilingual,,0,0,0,,集成测试把我们自己的几个部分连起来\N{\fs33\c&H00C8C0B8&\bord1.4}An integration test wires several of our parts.
+Dialogue: 0,0:03:18.09,0:03:22.64,Bilingual,,0,0,0,,测试客户端把请求直接交给 FastAPI 应用\N{\fs33\c&H00C8C0B8&\bord1.4}The test client hands the request straight to the FastAPI app,
+Dialogue: 0,0:03:22.64,0:03:26.97,Bilingual,,0,0,0,,在同一个进程里：路由、校验、处理函数和 power 全都跑了\N{\fs33\c&H00C8C0B8&\bord1.4}in process: routing, validation, handler and power all run,
+Dialogue: 0,0:03:26.97,0:03:29.10,Bilingual,,0,0,0,,但没有服务器，也没有网络\N{\fs33\c&H00C8C0B8&\bord1.4}but no server and no network.
+Dialogue: 0,0:03:29.42,0:03:33.13,Bilingual,,0,0,0,,录制时，这里有 10 个这样的测试，不到一秒就跑完\N{\fs33\c&H00C8C0B8&\bord1.4}Ten of those run here in under a second, at the time of recording.
+Dialogue: 0,0:03:33.38,0:03:36.95,Bilingual,,0,0,0,,系统测试把运行中的程序当成一个黑盒\N{\fs33\c&H00C8C0B8&\bord1.4}A system test treats the running program as a black box.
+Dialogue: 0,0:03:37.27,0:03:42.58,Bilingual,,0,0,0,,请求离开测试，穿过一根真实的网线到达 port 9000\N{\fs33\c&H00C8C0B8&\bord1.4}The request leaves the test, crosses a real network wire to port 9000,
+Dialogue: 0,0:03:42.58,0:03:44.33,Bilingual,,0,0,0,,再以 JSON 的形式回来\N{\fs33\c&H00C8C0B8&\bord1.4}and comes back as JSON.
+Dialogue: 0,0:03:44.65,0:03:48.30,Bilingual,,0,0,0,,它是最诚实的测试，也是最慢、最脆弱的\N{\fs33\c&H00C8C0B8&\bord1.4}It is the most honest test, and the slowest and most fragile.
+Dialogue: 0,0:03:48.82,0:03:51.27,Bilingual,,0,0,0,,叠起来，就是测试金字塔\N{\fs33\c&H00C8C0B8&\bord1.4}Stacked, that is the testing pyramid:
+Dialogue: 0,0:03:51.27,0:03:55.96,Bilingual,,0,0,0,,底层是大量便宜的单元测试，顶上是少量昂贵的系统测试\N{\fs33\c&H00C8C0B8&\bord1.4}many cheap unit tests at the bottom, few expensive system tests on top.
+Dialogue: 0,0:03:56.20,0:03:58.97,Bilingual,,0,0,0,,课上还给了一个更锐利的视角：一条边界\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture adds a sharper lens: a border.
+Dialogue: 0,0:03:59.29,0:04:02.71,Bilingual,,0,0,0,,一个测试是 hermetic 的，指的是只有你的代码能让它失败\N{\fs33\c&H00C8C0B8&\bord1.4}A test is hermetic when only your code can make it fail.
+Dialogue: 0,0:04:03.03,0:04:06.52,Bilingual,,0,0,0,,单元测试和集成测试都在这条边界之内\N{\fs33\c&H00C8C0B8&\bord1.4}Unit and integration tests live inside that border.
+Dialogue: 0,0:04:06.84,0:04:08.55,Bilingual,,0,0,0,,系统测试跨过了它\N{\fs33\c&H00C8C0B8&\bord1.4}The system test crosses it:
+Dialogue: 0,0:04:08.55,0:04:12.35,Bilingual,,0,0,0,,一台运行中的服务器可能会挂掉，原因却不是你的 bug\N{\fs33\c&H00C8C0B8&\bord1.4}a live server can be down for reasons that are not your bug.
+Dialogue: 0,0:04:12.58,0:04:15.43,Bilingual,,0,0,0,,还有两类测试只占淡淡的两行\N{\fs33\c&H00C8C0B8&\bord1.4}Two more kinds get faint rows: a smoke test,
+Dialogue: 0,0:04:15.43,0:04:21.37,Bilingual,,0,0,0,,冒烟测试，只问它有没有响应；还有验收测试，这个项目暂时还没有\N{\fs33\c&H00C8C0B8&\bord1.4}which only asks whether it answers, and acceptance tests, which this project lacks, for now.
+Dialogue: 0,0:04:21.69,0:04:23.18,Bilingual,,0,0,0,,关于类型说一句\N{\fs33\c&H00C8C0B8&\bord1.4}One note about kinds:
+Dialogue: 0,0:04:23.18,0:04:27.07,Bilingual,,0,0,0,,测试属于哪一类，看的是实际运行了什么，而不是它放在哪个目录\N{\fs33\c&H00C8C0B8&\bord1.4}a test's kind is named by what runs, not by its folder.
+Dialogue: 0,0:04:27.39,0:04:31.93,Bilingual,,0,0,0,,这个 repo 的系统测试文件管自己叫集成测试\N{\fs33\c&H00C8C0B8&\bord1.4}This repo's system test file calls itself integration tests,
+Dialogue: 0,0:04:31.93,0:04:34.81,Bilingual,,0,0,0,,它的 pytest 配置还定义了一些 marker\N{\fs33\c&H00C8C0B8&\bord1.4}and its pytest config defines markers,
+Dialogue: 0,0:04:34.81,0:04:40.19,Bilingual,,0,0,0,,也就是用来挑选测试的记号，却没人用；marker 会在第二部分回来\N{\fs33\c&H00C8C0B8&\bord1.4}labels for selecting tests, that nobody uses; markers return in part 2.
+Dialogue: 0,0:04:40.43,0:04:43.36,Bilingual,,0,0,0,,最后一张图：一张空表，四列\N{\fs33\c&H00C8C0B8&\bord1.4}Last picture: an empty table, four columns.
+Dialogue: 0,0:04:43.68,0:04:47.88,Bilingual,,0,0,0,,检查什么，怎么检查，用哪条命令，以及是不是每次 commit 都跑\N{\fs33\c&H00C8C0B8&\bord1.4}What is checked, how, with which command, and does it run on every commit.
+Dialogue: 0,0:04:48.20,0:04:49.80,Bilingual,,0,0,0,,第一部分会把它填满\N{\fs33\c&H00C8C0B8&\bord1.4}Part 1 fills it in.
+Dialogue: 0,0:04:50.65,0:04:52.03,Bilingual,,0,0,0,,该动手敲了\N{\fs33\c&H00C8C0B8&\bord1.4}Time to type.
+Dialogue: 0,0:04:52.08,0:04:55.76,Bilingual,,0,0,0,,README 只说从你的仓库 clone 或下载\N{\fs33\c&H00C8C0B8&\bord1.4}The README says clone or download from your repository,
+Dialogue: 0,0:04:55.76,0:04:58.44,Bilingual,,0,0,0,,没给地址，所以这里给出 repo 的地址\N{\fs33\c&H00C8C0B8&\bord1.4}without an address, so here is the repo.
+Dialogue: 0,0:04:58.76,0:05:01.87,Bilingual,,0,0,0,,先 clone，再 cd 进 cheese-app-ci-cd\N{\fs33\c&H00C8C0B8&\bord1.4}Clone it, then cd into cheese-app-ci-cd.
+Dialogue: 0,0:05:02.19,0:05:03.68,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:05:03.73,0:05:07.57,Bilingual,,0,0,0,,额外看一圈，README 里没有这一步：ls -la\N{\fs33\c&H00C8C0B8&\bord1.4}An extra look around, not in the README: ls -la.
+Dialogue: 0,0:05:07.89,0:05:11.55,Bilingual,,0,0,0,,今天的东西全在这儿：tests 下面的三个\N{\fs33\c&H00C8C0B8&\bord1.4}Everything today is here: three test folders under tests,
+Dialogue: 0,0:05:11.55,0:05:14.33,Bilingual,,0,0,0,,测试目录、一个 pytest 配置、一个 pre-commit 配置\N{\fs33\c&H00C8C0B8&\bord1.4}a pytest config, a pre-commit config,
+Dialogue: 0,0:05:14.33,0:05:17.75,Bilingual,,0,0,0,,还有把它们打包进一个 image 的 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}and the Dockerfile that bakes them into one image.
+Dialogue: 0,0:05:17.98,0:05:22.16,Bilingual,,0,0,0,,现在是 README 的第一条命令：sh docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README's first command: sh docker-shell.sh.
+Dialogue: 0,0:05:22.48,0:05:26.02,Bilingual,,0,0,0,,它会构建 image，录制时大约要一分钟\N{\fs33\c&H00C8C0B8&\bord1.4}It builds the image, about a minute at the time of recording,
+Dialogue: 0,0:05:26.02,0:05:28.80,Bilingual,,0,0,0,,然后把你放进 container 里的一个 shell\N{\fs33\c&H00C8C0B8&\bord1.4}and drops you into a shell inside the container.
+Dialogue: 0,0:05:29.12,0:05:30.54,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:05:30.59,0:05:33.59,Bilingual,,0,0,0,,看一下提示符：用户是 app，不是 root\N{\fs33\c&H00C8C0B8&\bord1.4}Read the prompt: the user is app, not root,
+Dialogue: 0,0:05:33.59,0:05:35.60,Bilingual,,0,0,0,,而且 ID 每次运行都会变\N{\fs33\c&H00C8C0B8&\bord1.4}and the ID changes every run.
+Dialogue: 0,0:05:37.05,0:05:41.17,Bilingual,,0,0,0,,在里面启动服务器：uvicorn api.service:app\N{\fs33\c&H00C8C0B8&\bord1.4}Inside, start the server: uvicorn
+Dialogue: 0,0:05:41.17,0:05:47.67,Bilingual,,0,0,0,,host 是 0.0.0.0，port 是 9000，加上 --reload\N{\fs33\c&H00C8C0B8&\bord1.4}api.service:app --host 0.0.0.0 --port 9000 --reload.
+Dialogue: 0,0:05:47.99,0:05:50.89,Bilingual,,0,0,0,,等它显示 Application startup complete\N{\fs33\c&H00C8C0B8&\bord1.4}When it says Application startup complete,
+Dialogue: 0,0:05:50.89,0:05:53.68,Bilingual,,0,0,0,,就在浏览器里打开 README 的三个 URL\N{\fs33\c&H00C8C0B8&\bord1.4}open the three README URLs in your browser;
+Dialogue: 0,0:05:53.68,0:05:55.22,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}pause and do it.
+Dialogue: 0,0:05:55.27,0:05:58.19,Bilingual,,0,0,0,,这里用三次 curl 代替浏览器\N{\fs33\c&H00C8C0B8&\bord1.4}Here three curl calls stand in for the browser:
+Dialogue: 0,0:05:58.19,0:06:00.73,Bilingual,,0,0,0,,欢迎信息、health，还有距离的结果\N{\fs33\c&H00C8C0B8&\bord1.4}welcome, health, and the distance answer.
+Dialogue: 0,0:06:01.77,0:06:06.29,Bilingual,,0,0,0,,有一个小疏漏：README 说这个接口返回 5.0\N{\fs33\c&H00C8C0B8&\bord1.4}One small gap: the README says this endpoint returns 5.0.
+Dialogue: 0,0:06:06.61,0:06:09.11,Bilingual,,0,0,0,,实际上它返回的是一个 JSON 对象\N{\fs33\c&H00C8C0B8&\bord1.4}Really it returns a JSON object
+Dialogue: 0,0:06:09.11,0:06:12.90,Bilingual,,0,0,0,,其中 distance 字段是 5.0，代码里写得很清楚\N{\fs33\c&H00C8C0B8&\bord1.4}whose distance field is 5.0, as the code shows.
+Dialogue: 0,0:06:14.35,0:06:17.61,Bilingual,,0,0,0,,用 Ctrl-C 停掉服务器，再输入 exit\N{\fs33\c&H00C8C0B8&\bord1.4}Stop the server with Ctrl-C, then type exit.
+Dialogue: 0,0:06:17.93,0:06:23.18,Bilingual,,0,0,0,,因为这个 shell 脚本用了 --rm，什么都不会留下\N{\fs33\c&H00C8C0B8&\bord1.4}Because the shell script used --rm, nothing is left behind;
+Dialogue: 0,0:06:23.18,0:06:26.21,Bilingual,,0,0,0,,额外跑一下 docker ps -a 就能确认\N{\fs33\c&H00C8C0B8&\bord1.4}an extra docker ps -a confirms it.
+Dialogue: 0,0:06:26.53,0:06:31.33,Bilingual,,0,0,0,,先提醒一句，很快就会用上：你的文件没有挂载进这个 container\N{\fs33\c&H00C8C0B8&\bord1.4}One warning that pays off soon: your files are not mounted into this container.
+Dialogue: 0,0:06:31.65,0:06:35.32,Bilingual,,0,0,0,,参数 --reload 盯着的是打包进 image 的那份副本\N{\fs33\c&H00C8C0B8&\bord1.4}The --reload flag watches the copy baked into the image,
+Dialogue: 0,0:06:35.32,0:06:39.25,Bilingual,,0,0,0,,所以你在笔记本上改了什么，在重新构建之前都不起作用\N{\fs33\c&H00C8C0B8&\bord1.4}so an edit on your laptop changes nothing until you rebuild.
+Dialogue: 0,0:06:40.28,0:06:44.42,Bilingual,,0,0,0,,Part 2 用两个工具找代码质量问题，这两个可别搞混\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 hunts for quality issues with two tools not to confuse.
+Dialogue: 0,0:06:44.74,0:06:49.31,Bilingual,,0,0,0,,格式化工具把代码改写成统一的排版，从不改变行为\N{\fs33\c&H00C8C0B8&\bord1.4}A formatter rewrites code into one layout and never changes behavior.
+Dialogue: 0,0:06:49.63,0:06:51.19,Bilingual,,0,0,0,,而 linter 只负责报告\N{\fs33\c&H00C8C0B8&\bord1.4}A linter only reports:
+Dialogue: 0,0:06:51.19,0:06:54.81,Bilingual,,0,0,0,,风格问题、可能的 bug、需要人来处理的地方\N{\fs33\c&H00C8C0B8&\bord1.4}style issues, likely bugs, things needing a person.
+Dialogue: 0,0:06:55.13,0:06:56.86,Bilingual,,0,0,0,,先格式化，再 lint\N{\fs33\c&H00C8C0B8&\bord1.4}Format first, then lint.
+Dialogue: 0,0:06:57.72,0:07:01.39,Bilingual,,0,0,0,,先构建 image：cheese-app-api:local\N{\fs33\c&H00C8C0B8&\bord1.4}First build the image, cheese-app-api:local.
+Dialogue: 0,0:07:01.71,0:07:03.08,Bilingual,,0,0,0,,每一步都显示 CACHED\N{\fs33\c&H00C8C0B8&\bord1.4}Every step says CACHED:
+Dialogue: 0,0:07:03.08,0:07:05.89,Bilingual,,0,0,0,,那个 shell 脚本已经构建过这个 Dockerfile 了\N{\fs33\c&H00C8C0B8&\bord1.4}the shell script already built this Dockerfile.
+Dialogue: 0,0:07:06.21,0:07:07.55,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:07:07.60,0:07:09.16,Bilingual,,0,0,0,,现在在 image 里跑 linter\N{\fs33\c&H00C8C0B8&\bord1.4}Now the linter,
+Dialogue: 0,0:07:09.16,0:07:14.58,Bilingual,,0,0,0,,flake8，--max-line-length 设成 120，检查 api 目录\N{\fs33\c&H00C8C0B8&\bord1.4}inside the image: flake8 --max-line-length=120 api/.
+Dialogue: 0,0:07:14.90,0:07:16.32,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:07:16.37,0:07:20.45,Bilingual,,0,0,0,,在 utils.py 里发现两个问题，逗号后面少了空格\N{\fs33\c&H00C8C0B8&\bord1.4}Two findings in utils.py, a missing space after a comma,
+Dialogue: 0,0:07:20.45,0:07:23.88,Bilingual,,0,0,0,,还有空行太多：都是故意留下的乱代码\N{\fs33\c&H00C8C0B8&\bord1.4}and too many blank lines: mess left on purpose.
+Dialogue: 0,0:07:24.12,0:07:26.43,Bilingual,,0,0,0,,然后是 black，用 --check 和 --diff 模式\N{\fs33\c&H00C8C0B8&\bord1.4}Then black, in --check --diff mode.
+Dialogue: 0,0:07:26.48,0:07:27.91,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:07:27.96,0:07:31.16,Bilingual,,0,0,0,,它说有 2 个文件会被重新格式化，而不是一个\N{\fs33\c&H00C8C0B8&\bord1.4}It reports 2 files would be reformatted, not one.
+Dialogue: 0,0:07:31.48,0:07:37.14,Bilingual,,0,0,0,,这条命令没给 black 指定宽度，所以它退回默认的 88\N{\fs33\c&H00C8C0B8&\bord1.4}This command gives black no width, so it falls back to its default of 88
+Dialogue: 0,0:07:37.14,0:07:40.99,Bilingual,,0,0,0,,把 service.py 里一行 95 个字符的代码也折了\N{\fs33\c&H00C8C0B8&\bord1.4}and also folds a 95 character line in service.py.
+Dialogue: 0,0:07:41.23,0:07:42.59,Bilingual,,0,0,0,,看好这个陷阱\N{\fs33\c&H00C8C0B8&\bord1.4}Watch the trap.
+Dialogue: 0,0:07:42.64,0:07:46.58,Bilingual,,0,0,0,,宽度 88 时，black 把那一行折成三行\N{\fs33\c&H00C8C0B8&\bord1.4}At width 88, black folds that line into three;
+Dialogue: 0,0:07:46.58,0:07:48.81,Bilingual,,0,0,0,,宽度 120 时，又展开回一行\N{\fs33\c&H00C8C0B8&\bord1.4}at 120, it unfolds to one.
+Dialogue: 0,0:07:49.13,0:07:51.69,Bilingual,,0,0,0,,这里的 hook 和 CI 都用 120\N{\fs33\c&H00C8C0B8&\bord1.4}The hook and CI here both use 120,
+Dialogue: 0,0:07:51.69,0:07:54.86,Bilingual,,0,0,0,,但 README 里有几条命令没给宽度\N{\fs33\c&H00C8C0B8&\bord1.4}but several README commands pass no width,
+Dialogue: 0,0:07:54.86,0:07:57.87,Bilingual,,0,0,0,,于是同一个文件得到不同的结论\N{\fs33\c&H00C8C0B8&\bord1.4}so the same file gets different answers.
+Dialogue: 0,0:07:58.19,0:08:01.82,Bilingual,,0,0,0,,要么每次都传 120，要么在配置里一次写好\N{\fs33\c&H00C8C0B8&\bord1.4}Always pass 120, or set it once in config.
+Dialogue: 0,0:08:07.07,0:08:11.22,Bilingual,,0,0,0,,Option B 在你的笔记本上跑同样的检查\N{\fs33\c&H00C8C0B8&\bord1.4}Option B runs the same checks on your laptop:
+Dialogue: 0,0:08:11.22,0:08:15.56,Bilingual,,0,0,0,,用 pip 在宿主机上装 black 和 flake8\N{\fs33\c&H00C8C0B8&\bord1.4}install black and flake8 with pip, on the host,
+Dialogue: 0,0:08:15.56,0:08:19.53,Bilingual,,0,0,0,,录制时分别是 26.10.1 和 7.4.1\N{\fs33\c&H00C8C0B8&\bord1.4}26.10.1 and 7.4.1 at the time of recording.
+Dialogue: 0,0:08:19.85,0:08:21.27,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:08:21.32,0:08:25.11,Bilingual,,0,0,0,,如果 pip 拒绝，报 externally-managed-environment\N{\fs33\c&H00C8C0B8&\bord1.4}If pip refuses with externally-managed-environment,
+Dialogue: 0,0:08:25.11,0:08:26.83,Bilingual,,0,0,0,,Homebrew 的 Python 就会这样\N{\fs33\c&H00C8C0B8&\bord1.4}as Homebrew Pythons do,
+Dialogue: 0,0:08:26.83,0:08:30.33,Bilingual,,0,0,0,,那就用第 1 讲的任意一个虚拟环境，或者 pipx\N{\fs33\c&H00C8C0B8&\bord1.4}use any lecture 1 virtual environment, or pipx;
+Dialogue: 0,0:08:30.33,0:08:32.86,Bilingual,,0,0,0,,学习指南里有那一行命令\N{\fs33\c&H00C8C0B8&\bord1.4}the study guide has the one-liner.
+Dialogue: 0,0:08:33.10,0:08:34.67,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:08:34.72,0:08:37.90,Bilingual,,0,0,0,,本地的 flake8 用默认的 79\N{\fs33\c&H00C8C0B8&\bord1.4}The local flake8, at its default of 79,
+Dialogue: 0,0:08:37.90,0:08:41.98,Bilingual,,0,0,0,,多报了第三个问题，就是那行 95 个字符的代码\N{\fs33\c&H00C8C0B8&\bord1.4}adds a third finding, that same 95 character line;
+Dialogue: 0,0:08:41.98,0:08:45.64,Bilingual,,0,0,0,,本地的 black 要改的还是那两个文件\N{\fs33\c&H00C8C0B8&\bord1.4}local black wants the same two files changed.
+Dialogue: 0,0:08:46.92,0:08:48.52,Bilingual,,0,0,0,,格式化工具能修好什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What can a formatter fix?
+Dialogue: 0,0:08:48.77,0:08:52.17,Bilingual,,0,0,0,,在 repo 历史里那个乱糟糟的 service.py 上\N{\fs33\c&H00C8C0B8&\bord1.4}On the messy service.py from the repo's history,
+Dialogue: 0,0:08:52.17,0:08:56.55,Bilingual,,0,0,0,,black 几乎扫掉了所有问题，正好剩下 2 个\N{\fs33\c&H00C8C0B8&\bord1.4}black sweeps away almost every finding, and exactly 2 survive:
+Dialogue: 0,0:08:56.55,0:08:58.05,Bilingual,,0,0,0,,一个没用到的 import\N{\fs33\c&H00C8C0B8&\bord1.4}an unused import,
+Dialogue: 0,0:08:58.05,0:09:03.62,Bilingual,,0,0,0,,格式化工具删不掉；还有一个带引号的长句子，black 不能改写它\N{\fs33\c&H00C8C0B8&\bord1.4}which a formatter cannot delete, and a long quoted sentence black must not rewrite.
+Dialogue: 0,0:09:03.94,0:09:05.84,Bilingual,,0,0,0,,课上是手动把这两个修好的\N{\fs33\c&H00C8C0B8&\bord1.4}The class fixed both by hand.
+Dialogue: 0,0:09:07.88,0:09:11.47,Bilingual,,0,0,0,,在成批跑测试之前，先认识一下找测试的那台机器\N{\fs33\c&H00C8C0B8&\bord1.4}Before running tests in bulk, meet the machine that finds them.
+Dialogue: 0,0:09:11.79,0:09:18.07,Bilingual,,0,0,0,,配置文件 pytest.ini 定下规则：文件名以 test 下划线开头\N{\fs33\c&H00C8C0B8&\bord1.4}The config file pytest.ini sets the rules: files named test_*.py,
+Dialogue: 0,0:09:18.07,0:09:22.33,Bilingual,,0,0,0,,类名以 Test 开头，函数名以 test 下划线开头\N{\fs33\c&H00C8C0B8&\bord1.4}classes named Test*, functions named test_*.
+Dialogue: 0,0:09:22.65,0:09:27.38,Bilingual,,0,0,0,,它还给每次运行加上一些选项，要记住的是 -ra\N{\fs33\c&H00C8C0B8&\bord1.4}It also adds options to every run, and the one to remember is -ra,
+Dialogue: 0,0:09:27.38,0:09:30.60,Bilingual,,0,0,0,,凡是没有干脆通过的，都会列进这份摘要\N{\fs33\c&H00C8C0B8&\bord1.4}the summary of everything not plainly passed.
+Dialogue: 0,0:09:30.85,0:09:33.74,Bilingual,,0,0,0,,看收集器扫过 tests 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Watch the collector sweep the tests folder:
+Dialogue: 0,0:09:33.74,0:09:36.91,Bilingual,,0,0,0,,每个匹配的名字都亮起来，一共 26 个测试\N{\fs33\c&H00C8C0B8&\bord1.4}every matching name lights up, 26 tests in all.
+Dialogue: 0,0:09:37.57,0:09:39.17,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:09:39.23,0:09:44.51,Bilingual,,0,0,0,,README 后面有一部分，往一个测试文件末尾追加一行 def broken\N{\fs33\c&H00C8C0B8&\bord1.4}A later README part appends the line def broken(): assert False to a test file,
+Dialogue: 0,0:09:44.51,0:09:46.42,Bilingual,,0,0,0,,内容是 assert False，想让构建失败\N{\fs33\c&H00C8C0B8&\bord1.4}hoping to break the build.
+Dialogue: 0,0:09:46.74,0:09:48.64,Bilingual,,0,0,0,,单元测试会变红吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Will the unit test run go red?
+Dialogue: 0,0:09:57.48,0:10:01.60,Bilingual,,0,0,0,,不会。看收集器：追加的那个名字一直是暗的\N{\fs33\c&H00C8C0B8&\bord1.4}No. Watch the collector: the appended name stays dark.
+Dialogue: 0,0:10:01.92,0:10:04.23,Bilingual,,0,0,0,,这个名字不匹配 test 下划线加星号\N{\fs33\c&H00C8C0B8&\bord1.4}The name does not match test_*,
+Dialogue: 0,0:10:04.23,0:10:06.91,Bilingual,,0,0,0,,所以它从没被收集，也从没运行\N{\fs33\c&H00C8C0B8&\bord1.4}so it is never collected, never run.
+Dialogue: 0,0:10:07.23,0:10:10.62,Bilingual,,0,0,0,,想真的让构建失败，就把它叫作 test 下划线 broken\N{\fs33\c&H00C8C0B8&\bord1.4}To really break the build, call it test_broken.
+Dialogue: 0,0:10:10.94,0:10:13.59,Bilingual,,0,0,0,,按约定发现测试，是一把双刃剑\N{\fs33\c&H00C8C0B8&\bord1.4}Discovery by convention cuts both ways.
+Dialogue: 0,0:10:13.83,0:10:16.35,Bilingual,,0,0,0,,再用 30 秒讲 pytest 的三个动作\N{\fs33\c&H00C8C0B8&\bord1.4}Three more pytest verbs in 30 seconds.
+Dialogue: 0,0:10:16.67,0:10:20.36,Bilingual,,0,0,0,,普通的 assert 会被改写，失败时两边的值都会显示出来\N{\fs33\c&H00C8C0B8&\bord1.4}A plain assert is rewritten so a failure shows both values.
+Dialogue: 0,0:10:20.68,0:10:24.31,Bilingual,,0,0,0,,对浮点数，pytest.approx 带着容差来比较\N{\fs33\c&H00C8C0B8&\bord1.4}For floats, pytest.approx compares with a tolerance.
+Dialogue: 0,0:10:24.63,0:10:29.32,Bilingual,,0,0,0,,而 pytest.raises 只有在代码块抛出指定的错误时才通过\N{\fs33\c&H00C8C0B8&\bord1.4}And pytest.raises passes only when the block raises the named error:
+Dialogue: 0,0:10:29.32,0:10:31.39,Bilingual,,0,0,0,,就是前面那个非法输入的托盘\N{\fs33\c&H00C8C0B8&\bord1.4}the invalid tray from earlier.
+Dialogue: 0,0:10:31.63,0:10:35.30,Bilingual,,0,0,0,,课上还送了一个礼物，这个 repo 还没用上\N{\fs33\c&H00C8C0B8&\bord1.4}One gift from the lecture that this repo does not use yet.
+Dialogue: 0,0:10:35.62,0:10:40.17,Bilingual,,0,0,0,,集成测试把测试客户端只建一次，作为模块级的全局变量\N{\fs33\c&H00C8C0B8&\bord1.4}The integration tests build their test client once, as a module global.
+Dialogue: 0,0:10:40.49,0:10:42.11,Bilingual,,0,0,0,,用 fixture 会更好\N{\fs33\c&H00C8C0B8&\bord1.4}A fixture would do it better.
+Dialogue: 0,0:10:42.43,0:10:46.61,Bilingual,,0,0,0,,测试按名字要 client，pytest 负责建好并注入\N{\fs33\c&H00C8C0B8&\bord1.4}A test asks for client by name, and pytest builds and injects it.
+Dialogue: 0,0:10:46.93,0:10:51.47,Bilingual,,0,0,0,,有一个设置决定每个测试拿一个新的，还是整次运行共用一个\N{\fs33\c&H00C8C0B8&\bord1.4}A setting says whether each test gets a fresh one or the whole run shares one.
+Dialogue: 0,0:10:51.79,0:10:56.27,Bilingual,,0,0,0,,而 parametrize 把四份副本折成一个函数，带四组输入\N{\fs33\c&H00C8C0B8&\bord1.4}And parametrize folds four copies into one function with four inputs.
+Dialogue: 0,0:10:58.52,0:11:02.25,Bilingual,,0,0,0,,Part 3 在应用所在的地方跑测试，也就是 image 里面\N{\fs33\c&H00C8C0B8&\bord1.4}Part 3 runs tests where the app lives, inside the image,
+Dialogue: 0,0:11:02.25,0:11:04.78,Bilingual,,0,0,0,,有三条路：每个测试集一条 docker run\N{\fs33\c&H00C8C0B8&\bord1.4}by three routes: docker run per suite,
+Dialogue: 0,0:11:04.78,0:11:08.78,Bilingual,,0,0,0,,为系统测试起一个运行中的服务器，或者一个交互式 shell\N{\fs33\c&H00C8C0B8&\bord1.4}a live server for the system tests, or an interactive shell.
+Dialogue: 0,0:11:09.10,0:11:11.90,Bilingual,,0,0,0,,Dockerfile 复制 pyproject.toml\N{\fs33\c&H00C8C0B8&\bord1.4}The Dockerfile copies pyproject.toml
+Dialogue: 0,0:11:11.90,0:11:15.41,Bilingual,,0,0,0,,安装依赖，形成一个很厚的层\N{\fs33\c&H00C8C0B8&\bord1.4}and installs the dependencies, one fat layer.
+Dialogue: 0,0:11:15.73,0:11:19.13,Bilingual,,0,0,0,,接着四行薄薄的 COPY 把 api 代码、测试\N{\fs33\c&H00C8C0B8&\bord1.4}Then four thin copy lines bake in the api code,
+Dialogue: 0,0:11:19.13,0:11:22.60,Bilingual,,0,0,0,,pytest 配置和 entrypoint 打包进去\N{\fs33\c&H00C8C0B8&\bord1.4}the tests, the pytest config and the entrypoint.
+Dialogue: 0,0:11:22.92,0:11:25.17,Bilingual,,0,0,0,,这个 entrypoint 把 pytest 放进 PATH\N{\fs33\c&H00C8C0B8&\bord1.4}The entrypoint puts pytest on PATH,
+Dialogue: 0,0:11:25.17,0:11:29.47,Bilingual,,0,0,0,,它的 exec 那一行再把 container 交给你传进来的任何命令\N{\fs33\c&H00C8C0B8&\bord1.4}and its exec line hands the container to whatever command you pass.
+Dialogue: 0,0:11:29.79,0:11:31.55,Bilingual,,0,0,0,,靠的是 container 的退出码\N{\fs33\c&H00C8C0B8&\bord1.4}The container's exit code
+Dialogue: 0,0:11:31.55,0:11:34.16,Bilingual,,0,0,0,,docker run 才能让 CI 的一个步骤失败\N{\fs33\c&H00C8C0B8&\bord1.4}is how docker run can fail a CI step.
+Dialogue: 0,0:11:34.40,0:11:40.16,Bilingual,,0,0,0,,再构建一次，全是缓存，然后跑单元测试：docker run --rm\N{\fs33\c&H00C8C0B8&\bord1.4}Build again, all cached, then run the unit tests: docker run --rm,
+Dialogue: 0,0:11:40.16,0:11:43.74,Bilingual,,0,0,0,,加上 image 名，再加 pytest tests/unit/：11 passed\N{\fs33\c&H00C8C0B8&\bord1.4}the image, pytest tests/unit/: 11 passed.
+Dialogue: 0,0:11:44.06,0:11:45.55,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:11:45.60,0:11:49.16,Bilingual,,0,0,0,,集成测试显示 10 passed, 1 warning\N{\fs33\c&H00C8C0B8&\bord1.4}The integration suite says 10 passed, 1 warning;
+Dialogue: 0,0:11:49.16,0:11:52.34,Bilingual,,0,0,0,,两个测试集一起跑，是 21 passed, 1 warning\N{\fs33\c&H00C8C0B8&\bord1.4}both suites together, 21 passed, 1 warning.
+Dialogue: 0,0:11:52.66,0:11:54.19,Bilingual,,0,0,0,,暂停一下，把它们都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
+Dialogue: 0,0:11:54.24,0:11:59.80,Bilingual,,0,0,0,,那个 1 warning 是录制时 pytest 9 的摘要行\N{\fs33\c&H00C8C0B8&\bord1.4}The 1 warning is pytest 9's summary line counting a warning this config hides,
+Dialogue: 0,0:11:59.80,0:12:03.43,Bilingual,,0,0,0,,把这份配置隐藏掉的一个警告也算了进去：测试相同，结果也相同\N{\fs33\c&H00C8C0B8&\bord1.4}at the time of recording: same tests, same results.
+Dialogue: 0,0:12:03.68,0:12:07.97,Bilingual,,0,0,0,,现在跑覆盖率：单元测试，统计 api 这个包\N{\fs33\c&H00C8C0B8&\bord1.4}Now the coverage run: unit tests, measuring the api package.
+Dialogue: 0,0:12:08.29,0:12:09.71,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:12:09.76,0:12:14.41,Bilingual,,0,0,0,,看 service.py：0%；单元测试从来没有 import 它\N{\fs33\c&H00C8C0B8&\bord1.4}Look at service.py: 0 percent; the unit tests never import it.
+Dialogue: 0,0:12:14.73,0:12:19.06,Bilingual,,0,0,0,,覆盖率是一份没人问过的代码行清单，而不是一个分数\N{\fs33\c&H00C8C0B8&\bord1.4}Coverage is a list of lines nobody has asked about, not a score.
+Dialogue: 0,0:12:19.38,0:12:20.75,Bilingual,,0,0,0,,先记住这一点\N{\fs33\c&H00C8C0B8&\bord1.4}Hold that thought.
+Dialogue: 0,0:12:20.80,0:12:23.13,Bilingual,,0,0,0,,门禁表有了第一行\N{\fs33\c&H00C8C0B8&\bord1.4}The gate table gets its first row:
+Dialogue: 0,0:12:23.13,0:12:27.03,Bilingual,,0,0,0,,单元测试和集成测试，hermetic，一条 docker 命令\N{\fs33\c&H00C8C0B8&\bord1.4}unit and integration tests, hermetic, one docker command.
+Dialogue: 0,0:12:27.35,0:12:29.93,Bilingual,,0,0,0,,Option 2 先等等；下一段专门讲它\N{\fs33\c&H00C8C0B8&\bord1.4}Option 2 waits; it gets the next scene.
+Dialogue: 0,0:12:30.25,0:12:32.65,Bilingual,,0,0,0,,Option 3 是同样的事，换成交互式\N{\fs33\c&H00C8C0B8&\bord1.4}Option 3 is the same interactively:
+Dialogue: 0,0:12:32.65,0:12:36.91,Bilingual,,0,0,0,,再跑一次 docker-shell.sh，同样的 pytest 命令，同样的数字\N{\fs33\c&H00C8C0B8&\bord1.4}docker-shell again, the same pytest commands, the same counts.
+Dialogue: 0,0:12:37.23,0:12:38.23,Bilingual,,0,0,0,,有一个陷阱\N{\fs33\c&H00C8C0B8&\bord1.4}One trap:
+Dialogue: 0,0:12:38.23,0:12:43.13,Bilingual,,0,0,0,,HTML 报告生成在一个会被 --rm 删掉的 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}the HTML report lands inside a container that --rm deletes,
+Dialogue: 0,0:12:43.13,0:12:44.78,Bilingual,,0,0,0,,一 exit 就没了\N{\fs33\c&H00C8C0B8&\bord1.4}gone when you exit.
+Dialogue: 0,0:12:45.10,0:12:46.87,Bilingual,,0,0,0,,优先用终端里的报告\N{\fs33\c&H00C8C0B8&\bord1.4}Prefer the terminal report.
+Dialogue: 0,0:12:47.12,0:12:51.03,Bilingual,,0,0,0,,这个 image 把开发工具当成运行时依赖一起发布\N{\fs33\c&H00C8C0B8&\bord1.4}This image ships its dev tools as runtime dependencies,
+Dialogue: 0,0:12:51.03,0:12:53.09,Bilingual,,0,0,0,,版本只有下限，没有 lock 文件\N{\fs33\c&H00C8C0B8&\bord1.4}open ended pins, no lockfile;
+Dialogue: 0,0:12:53.09,0:12:57.29,Bilingual,,0,0,0,,客座讲座则把它们放进依赖组，由一个 lock 文件锁住\N{\fs33\c&H00C8C0B8&\bord1.4}the guest lecture keeps them in groups behind one lockfile.
+Dialogue: 0,0:12:57.61,0:13:01.98,Bilingual,,0,0,0,,第一部分的那句提醒这时用上了：你在笔记本上改了 utils.py\N{\fs33\c&H00C8C0B8&\bord1.4}And the part 1 warning pays off: edit utils.py on your laptop,
+Dialogue: 0,0:13:01.98,0:13:05.36,Bilingual,,0,0,0,,这个 container 测的还是昨天的副本\N{\fs33\c&H00C8C0B8&\bord1.4}and this container still tests yesterday's copy.
+Dialogue: 0,0:13:05.68,0:13:07.58,Bilingual,,0,0,0,,要么重新构建，要么你测的就是过去\N{\fs33\c&H00C8C0B8&\bord1.4}Rebuild, or you test the past.
+Dialogue: 0,0:13:10.12,0:13:13.85,Bilingual,,0,0,0,,Option 2 是系统测试，也带出课上的问题\N{\fs33\c&H00C8C0B8&\bord1.4}Option 2 is the system test, and the lecture's question:
+Dialogue: 0,0:13:13.85,0:13:16.45,Bilingual,,0,0,0,,除了我们的代码，还有别的东西能让它失败吗？\N{\fs33\c&H00C8C0B8&\bord1.4}can anything but our code make it fail?
+Dialogue: 0,0:13:16.77,0:13:21.26,Bilingual,,0,0,0,,在后台启动一个服务器，名字叫 api-server\N{\fs33\c&H00C8C0B8&\bord1.4}Start a live server, detached, named api-server,
+Dialogue: 0,0:13:21.26,0:13:23.60,Bilingual,,0,0,0,,用 port 9000，DEV 设成 1\N{\fs33\c&H00C8C0B8&\bord1.4}on port 9000, with DEV=1.
+Dialogue: 0,0:13:23.92,0:13:26.39,Bilingual,,0,0,0,,你拿回来的只有一个 container ID\N{\fs33\c&H00C8C0B8&\bord1.4}All you get back is a container ID.
+Dialogue: 0,0:13:26.71,0:13:28.05,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:13:28.10,0:13:30.42,Bilingual,,0,0,0,,README 接着马上就跑测试\N{\fs33\c&H00C8C0B8&\bord1.4}The README runs the tests immediately.
+Dialogue: 0,0:13:30.74,0:13:32.20,Bilingual,,0,0,0,,我们先额外加一步\N{\fs33\c&H00C8C0B8&\bord1.4}We add one extra first:
+Dialogue: 0,0:13:32.20,0:13:35.50,Bilingual,,0,0,0,,一个循环不停地 curl health 接口，直到它有回应\N{\fs33\c&H00C8C0B8&\bord1.4}a loop curling the health endpoint until it answers.
+Dialogue: 0,0:13:35.82,0:13:39.28,Bilingual,,0,0,0,,CI 也会等，用它自己的办法；很快你就知道为什么\N{\fs33\c&H00C8C0B8&\bord1.4}CI waits too, in its own way; you will see why soon.
+Dialogue: 0,0:13:39.60,0:13:42.78,Bilingual,,0,0,0,,第二个额外检查是 docker ps，显示服务器已经起来了\N{\fs33\c&H00C8C0B8&\bord1.4}A second extra, docker ps, shows the server up.
+Dialogue: 0,0:13:43.02,0:13:45.33,Bilingual,,0,0,0,,现在是 README 里的系统测试命令\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README's system command:
+Dialogue: 0,0:13:45.33,0:13:48.80,Bilingual,,0,0,0,,docker run 加上 --network host，跑 pytest tests/system/\N{\fs33\c&H00C8C0B8&\bord1.4}docker run --network host, pytest tests/system/.
+Dialogue: 0,0:13:49.12,0:13:52.68,Bilingual,,0,0,0,,5 passed，这一次请求真的穿过了那根线\N{\fs33\c&H00C8C0B8&\bord1.4}5 passed, and this time the request really crossed the wire.
+Dialogue: 0,0:13:53.00,0:13:54.60,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:13:55.93,0:13:59.99,Bilingual,,0,0,0,,来想一个问题：同一条命令再跑一次，但服务器没在运行\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: the same command again, with no server running.
+Dialogue: 0,0:14:00.31,0:14:02.38,Bilingual,,0,0,0,,这时 pytest 到底会打印什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What exactly does pytest print?
+Dialogue: 0,0:14:11.22,0:14:15.18,Bilingual,,0,0,0,,README 的下一步正好回答它：停掉并删除服务器\N{\fs33\c&H00C8C0B8&\bord1.4}The README's next step answers it: stop and remove the server.
+Dialogue: 0,0:14:15.50,0:14:18.90,Bilingual,,0,0,0,,暂停一下，照着做；这次清理顺便就是我们的实验\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it; the cleanup doubles as our experiment.
+Dialogue: 0,0:14:19.13,0:14:21.59,Bilingual,,0,0,0,,答案在这儿，作为额外的一次运行\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the answer, as an extra run.
+Dialogue: 0,0:14:21.91,0:14:25.38,Bilingual,,0,0,0,,1 passed, 4 skipped，标题行还是绿的\N{\fs33\c&H00C8C0B8&\bord1.4}1 passed, 4 skipped, and the headline is still green.
+Dialogue: 0,0:14:25.70,0:14:27.71,Bilingual,,0,0,0,,四个灰点，不算失败\N{\fs33\c&H00C8C0B8&\bord1.4}Four gray dots, not failures.
+Dialogue: 0,0:14:28.03,0:14:31.80,Bilingual,,0,0,0,,只有 -ra 的摘要说了实话\N{\fs33\c&H00C8C0B8&\bord1.4}Only the summary from -ra tells the truth:
+Dialogue: 0,0:14:31.80,0:14:35.67,Bilingual,,0,0,0,,SKIPPED，API not running at localhost:9000\N{\fs33\c&H00C8C0B8&\bord1.4}SKIPPED, API not running at localhost:9000.
+Dialogue: 0,0:14:35.92,0:14:37.38,Bilingual,,0,0,0,,为什么会跳过？\N{\fs33\c&H00C8C0B8&\bord1.4}Why does it skip?
+Dialogue: 0,0:14:37.43,0:14:41.89,Bilingual,,0,0,0,,测试文件只探测一次服务器，就在 pytest 收集这个模块的时候\N{\fs33\c&H00C8C0B8&\bord1.4}The test file probes the server once, when pytest collects the module.
+Dialogue: 0,0:14:42.21,0:14:47.67,Bilingual,,0,0,0,,这一次的结果决定了整个类：服务器晚一秒起来，就已经太晚了\N{\fs33\c&H00C8C0B8&\bord1.4}That one answer marks the whole class: a server that comes up a second late is too late.
+Dialogue: 0,0:14:47.99,0:14:53.84,Bilingual,,0,0,0,,拔了电池的烟雾报警器永远不会响，但这不等于没有着火\N{\fs33\c&H00C8C0B8&\bord1.4}A smoke detector with its battery removed will never beep, and that is not the same as no fire.
+Dialogue: 0,0:14:54.08,0:14:58.95,Bilingual,,0,0,0,,在边界图上，有 22 个测试在里面：上一段的 21 个\N{\fs33\c&H00C8C0B8&\bord1.4}On the border picture, 22 tests live inside: the 21 from last scene,
+Dialogue: 0,0:14:58.95,0:15:03.32,Bilingual,,0,0,0,,加上系统测试目录里那个从来不需要服务器的测试\N{\fs33\c&H00C8C0B8&\bord1.4}plus the one system folder test that never needed the server.
+Dialogue: 0,0:15:03.64,0:15:05.26,Bilingual,,0,0,0,,这 4 个站在外面\N{\fs33\c&H00C8C0B8&\bord1.4}These 4 stand outside.
+Dialogue: 0,0:15:05.58,0:15:09.42,Bilingual,,0,0,0,,诚实的办法是用一个 marker，运行时必须特意选中它\N{\fs33\c&H00C8C0B8&\bord1.4}The honest remedy is a marker the run must select on purpose;
+Dialogue: 0,0:15:09.42,0:15:10.82,Bilingual,,0,0,0,,第二部分会演示\N{\fs33\c&H00C8C0B8&\bord1.4}part 2 shows it.
+Dialogue: 0,0:15:10.87,0:15:14.24,Bilingual,,0,0,0,,CI 的做法很响亮：它先 curl 服务器\N{\fs33\c&H00C8C0B8&\bord1.4}CI's version is loud: it curls the server first,
+Dialogue: 0,0:15:14.24,0:15:17.53,Bilingual,,0,0,0,,服务器要是没起来，整个任务直接失败\N{\fs33\c&H00C8C0B8&\bord1.4}and if the server is down, the whole job fails.
+Dialogue: 0,0:15:17.85,0:15:21.82,Bilingual,,0,0,0,,系统测试这一行写进门禁表，但放在闸机外面\N{\fs33\c&H00C8C0B8&\bord1.4}The system row enters the gate table outside the turnstile:
+Dialogue: 0,0:15:21.82,0:15:24.14,Bilingual,,0,0,0,,不是每次 commit 都跑，也不是 hermetic 的\N{\fs33\c&H00C8C0B8&\bord1.4}not on every commit, not hermetic.
+Dialogue: 0,0:15:25.18,0:15:26.91,Bilingual,,0,0,0,,Part 4 装上门禁\N{\fs33\c&H00C8C0B8&\bord1.4}Part 4 installs the gate.
+Dialogue: 0,0:15:27.23,0:15:30.61,Bilingual,,0,0,0,,在 container 外面执行 pip install pre-commit\N{\fs33\c&H00C8C0B8&\bord1.4}Outside the container, pip install pre-commit,
+Dialogue: 0,0:15:30.61,0:15:32.07,Bilingual,,0,0,0,,录制时是 4.7.0\N{\fs33\c&H00C8C0B8&\bord1.4}4.7.0
+Dialogue: 0,0:15:32.07,0:15:37.25,Bilingual,,0,0,0,,然后在 repo 根目录运行 pre-commit install\N{\fs33\c&H00C8C0B8&\bord1.4}at the time of recording; then, from the repo root, pre-commit install:
+Dialogue: 0,0:15:37.25,0:15:39.63,Bilingual,,0,0,0,,.git 里就多了一个 hook 文件\N{\fs33\c&H00C8C0B8&\bord1.4}a hook file now sits in .git.
+Dialogue: 0,0:15:39.95,0:15:41.43,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:15:41.48,0:15:44.21,Bilingual,,0,0,0,,Git 在每次 commit 之前都会运行这个 hook 文件\N{\fs33\c&H00C8C0B8&\bord1.4}Git runs that hook file before every commit.
+Dialogue: 0,0:15:44.53,0:15:47.58,Bilingual,,0,0,0,,它放在 .git 里，不属于 repo 的内容\N{\fs33\c&H00C8C0B8&\bord1.4}It lives in .git, outside the repository:
+Dialogue: 0,0:15:47.58,0:15:49.80,Bilingual,,0,0,0,,每个 clone 都要重新安装\N{\fs33\c&H00C8C0B8&\bord1.4}every clone installs it again.
+Dialogue: 0,0:15:50.12,0:15:53.75,Bilingual,,0,0,0,,它把工作交给 pre-commit，再由 pre-commit 读取 repo 的配置\N{\fs33\c&H00C8C0B8&\bord1.4}It hands over to pre-commit, which reads the repo's config.
+Dialogue: 0,0:15:54.00,0:15:59.50,Bilingual,,0,0,0,,配置里列了九个 hook：七个卫生检查，从空白字符到私钥\N{\fs33\c&H00C8C0B8&\bord1.4}The config names nine hooks: seven hygiene guards, from whitespace to private keys.
+Dialogue: 0,0:15:59.82,0:16:03.21,Bilingual,,0,0,0,,再加上 black 和 flake8，宽度都是 120\N{\fs33\c&H00C8C0B8&\bord1.4}Then black and flake8, both at width 120,
+Dialogue: 0,0:16:03.21,0:16:08.83,Bilingual,,0,0,0,,都只看 src 下面的 Python 文件：测试代码从来不做 lint\N{\fs33\c&H00C8C0B8&\bord1.4}both seeing only Python files under src: the tests are never linted.
+Dialogue: 0,0:16:09.07,0:16:11.65,Bilingual,,0,0,0,,现在照 README 做一次 commit，工作区是干净的\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README's commit, on a clean tree.
+Dialogue: 0,0:16:11.86,0:16:13.28,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:16:13.33,0:16:16.67,Bilingual,,0,0,0,,第一次运行会下载每个 hook pin 住的环境\N{\fs33\c&H00C8C0B8&\bord1.4}The first run downloads each hook's pinned environment,
+Dialogue: 0,0:16:16.67,0:16:19.65,Bilingual,,0,0,0,,录制时还多了一条无害的警告\N{\fs33\c&H00C8C0B8&\bord1.4}plus a harmless warning at the time of recording.
+Dialogue: 0,0:16:19.97,0:16:23.56,Bilingual,,0,0,0,,接着每个 hook 都显示 Skipped，git 说 nothing to commit\N{\fs33\c&H00C8C0B8&\bord1.4}Then every hook says skipped and git says nothing to commit:
+Dialogue: 0,0:16:23.56,0:16:26.50,Bilingual,,0,0,0,,hook 只检查暂存的文件，而什么都没暂存\N{\fs33\c&H00C8C0B8&\bord1.4}hooks check staged files, and nothing was staged.
+Dialogue: 0,0:16:26.73,0:16:31.51,Bilingual,,0,0,0,,想让它们照样跑一遍，就用 pre-commit run --all-files\N{\fs33\c&H00C8C0B8&\bord1.4}To exercise them anyway, pre-commit run --all-files.
+Dialogue: 0,0:16:31.83,0:16:33.25,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:16:33.30,0:16:36.51,Bilingual,,0,0,0,,六个 hook 通过，一个没有文件可查\N{\fs33\c&H00C8C0B8&\bord1.4}Six hooks pass, one has no files to check,
+Dialogue: 0,0:16:36.51,0:16:40.41,Bilingual,,0,0,0,,然后 black 失败：files were modified by this hook\N{\fs33\c&H00C8C0B8&\bord1.4}then black fails: files were modified by this hook;
+Dialogue: 0,0:16:40.41,0:16:42.24,Bilingual,,0,0,0,,它重新格式化了 utils.py\N{\fs33\c&H00C8C0B8&\bord1.4}it reformatted utils.py.
+Dialogue: 0,0:16:42.56,0:16:44.97,Bilingual,,0,0,0,,快速想一下：接下来跑 flake8\N{\fs33\c&H00C8C0B8&\bord1.4}A quick ponder: flake8 runs next.
+Dialogue: 0,0:16:45.29,0:16:47.55,Bilingual,,0,0,0,,它会报出 Part 2 的那两个问题吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Does it report part 2's two findings?
+Dialogue: 0,0:16:53.80,0:16:56.82,Bilingual,,0,0,0,,不会。文件已经被 black 改写过了\N{\fs33\c&H00C8C0B8&\bord1.4}No. Black had already rewritten the file,
+Dialogue: 0,0:16:56.82,0:16:59.09,Bilingual,,0,0,0,,所以 flake8 看到的是干净的代码，就通过了\N{\fs33\c&H00C8C0B8&\bord1.4}so flake8 saw clean code and passed.
+Dialogue: 0,0:16:59.41,0:17:01.54,Bilingual,,0,0,0,,这里的 Failed 不代表代码坏了\N{\fs33\c&H00C8C0B8&\bord1.4}Failed here does not mean broken;
+Dialogue: 0,0:17:01.54,0:17:05.87,Bilingual,,0,0,0,,意思是 hook 改了文件：看一下改动，再重新暂存\N{\fs33\c&H00C8C0B8&\bord1.4}it means the hook changed files: look at the change, then re-stage.
+Dialogue: 0,0:17:06.12,0:17:09.91,Bilingual,,0,0,0,,两个额外步骤把这个循环走完：git diff 显示改了什么\N{\fs33\c&H00C8C0B8&\bord1.4}Two extras close the loop: git diff shows the fix;
+Dialogue: 0,0:17:09.91,0:17:11.73,Bilingual,,0,0,0,,git add -u 把它重新暂存\N{\fs33\c&H00C8C0B8&\bord1.4}git add -u re-stages it.
+Dialogue: 0,0:17:12.05,0:17:14.04,Bilingual,,0,0,0,,再 commit 一次：七个 hook 通过\N{\fs33\c&H00C8C0B8&\bord1.4}Commit again: seven hooks pass,
+Dialogue: 0,0:17:14.04,0:17:17.89,Bilingual,,0,0,0,,两个没东西可查，一个真正的 commit 进入了历史\N{\fs33\c&H00C8C0B8&\bord1.4}two have nothing to check, and a real commit enters history;
+Dialogue: 0,0:17:17.89,0:17:19.49,Bilingual,,0,0,0,,暂停一下，把这个循环走一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and walk the loop.
+Dialogue: 0,0:17:19.75,0:17:21.47,Bilingual,,0,0,0,,README 的最后一个变体\N{\fs33\c&H00C8C0B8&\bord1.4}The README's last variant,
+Dialogue: 0,0:17:21.47,0:17:23.33,Bilingual,,0,0,0,,不带参数的 pre-commit run\N{\fs33\c&H00C8C0B8&\bord1.4}plain pre-commit run, checks
+Dialogue: 0,0:17:23.33,0:17:24.66,Bilingual,,0,0,0,,只检查暂存的文件\N{\fs33\c&H00C8C0B8&\bord1.4}only staged files;
+Dialogue: 0,0:17:24.66,0:17:26.05,Bilingual,,0,0,0,,全部跳过\N{\fs33\c&H00C8C0B8&\bord1.4}everything skips.
+Dialogue: 0,0:17:26.10,0:17:28.14,Bilingual,,0,0,0,,最后一个演示，是额外的\N{\fs33\c&H00C8C0B8&\bord1.4}A last demo, as an extra:
+Dialogue: 0,0:17:28.14,0:17:31.17,Bilingual,,0,0,0,,用 sed 加一个没用到的 import 并暂存\N{\fs33\c&H00C8C0B8&\bord1.4}sed adds and stages an unused import;
+Dialogue: 0,0:17:31.17,0:17:34.85,Bilingual,,0,0,0,,在 Mac 上，sed -i 后面要跟一对空引号\N{\fs33\c&H00C8C0B8&\bord1.4}on a Mac, sed -i needs empty quotes after it.
+Dialogue: 0,0:17:35.17,0:17:39.05,Bilingual,,0,0,0,,这次 commit 被拦了两道：black 重新格式化了文件\N{\fs33\c&H00C8C0B8&\bord1.4}The commit fails twice: black reformats the file,
+Dialogue: 0,0:17:39.05,0:17:43.18,Bilingual,,0,0,0,,flake8 报出 F401，这是任何格式化工具都修不了的\N{\fs33\c&H00C8C0B8&\bord1.4}and flake8 reports F401, which no formatter can fix;
+Dialogue: 0,0:17:43.18,0:17:46.11,Bilingual,,0,0,0,,git status 确认 commit 没有生成\N{\fs33\c&H00C8C0B8&\bord1.4}git status confirms no commit exists.
+Dialogue: 0,0:17:46.43,0:17:49.03,Bilingual,,0,0,0,,把文件恢复原样：你的电脑现在会说不了\N{\fs33\c&H00C8C0B8&\bord1.4}Restore the file: your machine now says no.
+Dialogue: 0,0:17:49.35,0:17:51.79,Bilingual,,0,0,0,,可这个门禁一个测试都没跑过\N{\fs33\c&H00C8C0B8&\bord1.4}But this gate never ran a single test.
+Dialogue: 0,0:17:52.11,0:17:55.60,Bilingual,,0,0,0,,第二部分会搭一个会跑测试的门禁，再看看连它也会漏掉什么\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 builds one that does, and shows what even it can miss.
+Dialogue: 0,0:17:56.65,0:17:59.57,Bilingual,,0,0,0,,第二部分是 Rahul Dave 的客座讲座\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 is the guest lecture, by Rahul Dave.
+Dialogue: 0,0:17:59.89,0:18:04.74,Bilingual,,0,0,0,,它围绕一个小型机器学习项目 babykev 搭起同样的门禁\N{\fs33\c&H00C8C0B8&\bord1.4}It builds the same gate around a small machine learning project, babykev,
+Dialogue: 0,0:18:04.74,0:18:09.31,Bilingual,,0,0,0,,babykev 回答关于奶酪的问题，还会报告自己有多大把握\N{\fs33\c&H00C8C0B8&\bord1.4}which answers questions about cheese and reports how confident it is;
+Dialogue: 0,0:18:09.31,0:18:11.37,Bilingual,,0,0,0,,纯粹的猜测应该得零分\N{\fs33\c&H00C8C0B8&\bord1.4}a pure guess should score zero.
+Dialogue: 0,0:18:11.69,0:18:13.61,Bilingual,,0,0,0,,直到最后才用到 Docker\N{\fs33\c&H00C8C0B8&\bord1.4}No Docker until the very end.
+Dialogue: 0,0:18:13.93,0:18:20.17,Bilingual,,0,0,0,,先装两个工具，作为额外步骤：第 2 讲的包管理器 uv\N{\fs33\c&H00C8C0B8&\bord1.4}Two tools first, as extras: the package manager uv from lecture 2,
+Dialogue: 0,0:18:20.17,0:18:26.69,Bilingual,,0,0,0,,录制时是 0.13.2；还有命令运行器 just，1.59.0\N{\fs33\c&H00C8C0B8&\bord1.4}0.13.2 at the time of recording, and the command runner just, 1.59.0.
+Dialogue: 0,0:18:26.93,0:18:29.34,Bilingual,,0,0,0,,先 clone babykev，再列出它的 tag\N{\fs33\c&H00C8C0B8&\bord1.4}Clone babykev and list its tags:
+Dialogue: 0,0:18:29.34,0:18:31.67,Bilingual,,0,0,0,,一共 9 步，课上每个阶段一步\N{\fs33\c&H00C8C0B8&\bord1.4}9 steps, one per lecture stage.
+Dialogue: 0,0:18:31.99,0:18:34.31,Bilingual,,0,0,0,,这个 repo 本身就是一套幻灯片\N{\fs33\c&H00C8C0B8&\bord1.4}The repo is its own slide deck,
+Dialogue: 0,0:18:34.31,0:18:37.75,Bilingual,,0,0,0,,用 git switch --detach 就能跳到任意一步\N{\fs33\c&H00C8C0B8&\bord1.4}and git switch --detach moves you to any step.
+Dialogue: 0,0:18:38.07,0:18:39.57,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:18:39.62,0:18:45.65,Bilingual,,0,0,0,,在 step-00，一条命令就建好环境：uv sync --locked\N{\fs33\c&H00C8C0B8&\bord1.4}At step-00, one command builds the environment: uv sync --locked.
+Dialogue: 0,0:18:45.97,0:18:52.40,Bilingual,,0,0,0,,它安装 Python 3.13.16 和项目本身，完全按 lock 文件写的来\N{\fs33\c&H00C8C0B8&\bord1.4}It installs Python 3.13.16 and the project exactly as the lockfile says.
+Dialogue: 0,0:18:52.72,0:18:55.53,Bilingual,,0,0,0,,加上 --locked，意思是宁可停下，也不悄悄升级\N{\fs33\c&H00C8C0B8&\bord1.4}Locked means stop rather than silently upgrade.
+Dialogue: 0,0:18:55.85,0:18:58.75,Bilingual,,0,0,0,,录制时它打印的那条警告是无害的\N{\fs33\c&H00C8C0B8&\bord1.4}Its warning is harmless, at the time of recording.
+Dialogue: 0,0:18:59.07,0:19:01.30,Bilingual,,0,0,0,,前面 cheese 的 repo 冻结的是 image\N{\fs33\c&H00C8C0B8&\bord1.4}The cheese repo froze an image;
+Dialogue: 0,0:19:01.30,0:19:03.12,Bilingual,,0,0,0,,而 babykev pin 住的是 lock 文件\N{\fs33\c&H00C8C0B8&\bord1.4}babykev pins a lockfile.
+Dialogue: 0,0:19:03.28,0:19:06.00,Bilingual,,0,0,0,,单独输入 just，会列出所有 recipe\N{\fs33\c&H00C8C0B8&\bord1.4}Typing just, alone, lists the recipes:
+Dialogue: 0,0:19:06.00,0:19:09.59,Bilingual,,0,0,0,,每个任务一个名字，人、hook，以及之后的 CI 都用它\N{\fs33\c&H00C8C0B8&\bord1.4}one name per task, for people, hook, and later CI.
+Dialogue: 0,0:19:09.91,0:19:11.40,Bilingual,,0,0,0,,暂停一下，把这些都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run these.
+Dialogue: 0,0:19:11.45,0:19:14.07,Bilingual,,0,0,0,,到了 step-01，加进来的是契约和它的测试\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1 brings the contract and its tests.
+Dialogue: 0,0:19:14.39,0:19:19.34,Bilingual,,0,0,0,,运行 uv run pytest：2 failed, 50 passed，而且测试是对的\N{\fs33\c&H00C8C0B8&\bord1.4}Run uv run pytest: 2 failed, 50 passed, and the tests are right.
+Dialogue: 0,0:19:19.66,0:19:24.09,Bilingual,,0,0,0,,一个失败是纯粹的猜测被打成了一半的把握\N{\fs33\c&H00C8C0B8&\bord1.4}One failure is a pure guess scored as half confident;
+Dialogue: 0,0:19:24.09,0:19:28.69,Bilingual,,0,0,0,,另一个是 77 个四舍五入后的概率，加起来只有 0.77\N{\fs33\c&H00C8C0B8&\bord1.4}the other is 77 rounded probabilities that sum to 0.77.
+Dialogue: 0,0:19:29.01,0:19:32.70,Bilingual,,0,0,0,,和 cheese 的演示同一条规则：改代码，不改测试\N{\fs33\c&H00C8C0B8&\bord1.4}Same rule as the cheese demo: fix the code, not the tests.
+Dialogue: 0,0:19:33.02,0:19:34.37,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:19:34.42,0:19:36.70,Bilingual,,0,0,0,,接着 step-02：大规模的格式化和 lint\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2 is format and lint at scale,
+Dialogue: 0,0:19:36.70,0:19:38.30,Bilingual,,0,0,0,,ruff 一个工具兼两个角色\N{\fs33\c&H00C8C0B8&\bord1.4}ruff in both roles.
+Dialogue: 0,0:19:38.49,0:19:41.50,Bilingual,,0,0,0,,格式化之后，linter 数出 70 个问题\N{\fs33\c&H00C8C0B8&\bord1.4}After formatting, the linter counts 70 findings.
+Dialogue: 0,0:19:41.82,0:19:44.12,Bilingual,,0,0,0,,安全的自动修复去掉了一个\N{\fs33\c&H00C8C0B8&\bord1.4}Safe automatic fixes remove one.
+Dialogue: 0,0:19:44.44,0:19:48.58,Bilingual,,0,0,0,,有意识地用上不安全的修复，又去掉 32 个\N{\fs33\c&H00C8C0B8&\bord1.4}Unsafe fixes, applied deliberately, remove 32 more;
+Dialogue: 0,0:19:48.58,0:19:51.10,Bilingual,,0,0,0,,剩下 37 个，这些得靠人\N{\fs33\c&H00C8C0B8&\bord1.4}37 remain; those need a person.
+Dialogue: 0,0:19:51.42,0:19:55.22,Bilingual,,0,0,0,,第一部分的宽度之争，用一行就解决了\N{\fs33\c&H00C8C0B8&\bord1.4}And the width war from part 1 is settled in one line,
+Dialogue: 0,0:19:55.22,0:19:58.80,Bilingual,,0,0,0,,line-length 设成 100，在 pyproject.toml 里只写一次\N{\fs33\c&H00C8C0B8&\bord1.4}line-length = 100, written once in pyproject.toml;
+Dialogue: 0,0:19:58.80,0:20:01.96,Bilingual,,0,0,0,,格式化工具和 linter 都照它来\N{\fs33\c&H00C8C0B8&\bord1.4}the formatter and the linter both follow it.
+Dialogue: 0,0:20:03.80,0:20:06.61,Bilingual,,0,0,0,,到了 step-03，用一个 recipe 装好门禁\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3 installs the gate with one recipe,
+Dialogue: 0,0:20:06.61,0:20:10.18,Bilingual,,0,0,0,,just setup，同步 lock 文件和安装 hook 一起完成\N{\fs33\c&H00C8C0B8&\bord1.4}just setup: lockfile sync and hook install together.
+Dialogue: 0,0:20:10.50,0:20:11.92,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:20:11.97,0:20:14.77,Bilingual,,0,0,0,,按 walk.md，下一条命令打印出这个 hook 文件\N{\fs33\c&H00C8C0B8&\bord1.4}The walk's next command prints the hook file:
+Dialogue: 0,0:20:14.77,0:20:18.24,Bilingual,,0,0,0,,和前面一样的交接链，只有一处不同\N{\fs33\c&H00C8C0B8&\bord1.4}the same hand-over chain as before, with one difference.
+Dialogue: 0,0:20:18.56,0:20:21.37,Bilingual,,0,0,0,,里面写死了这台机器自己的 venv 路径\N{\fs33\c&H00C8C0B8&\bord1.4}This machine's own venv path is baked inside,
+Dialogue: 0,0:20:21.37,0:20:22.97,Bilingual,,0,0,0,,所以它永远不会被 commit\N{\fs33\c&H00C8C0B8&\bord1.4}so it is never committed.
+Dialogue: 0,0:20:23.18,0:20:26.17,Bilingual,,0,0,0,,这里的配置只有四个 hook，不是九个\N{\fs33\c&H00C8C0B8&\bord1.4}The config here has four hooks, not nine:
+Dialogue: 0,0:20:26.17,0:20:30.91,Bilingual,,0,0,0,,大文件、合并冲突标记、一个拒绝任何 .env 文件的策略 hook\N{\fs33\c&H00C8C0B8&\bord1.4}large files, merge markers, a policy hook refusing any .env file,
+Dialogue: 0,0:20:30.91,0:20:33.83,Bilingual,,0,0,0,,还有一个运行 just check 的本地 hook\N{\fs33\c&H00C8C0B8&\bord1.4}and one local hook that runs just check.
+Dialogue: 0,0:20:34.15,0:20:36.43,Bilingual,,0,0,0,,所以 hook 跑的正是你自己敲的那条命令\N{\fs33\c&H00C8C0B8&\bord1.4}So the hook runs exactly what you type.
+Dialogue: 0,0:20:36.75,0:20:39.67,Bilingual,,0,0,0,,在这一步，just check 包括格式检查、lint、带\N{\fs33\c&H00C8C0B8&\bord1.4}At this step, just check means format check,
+Dialogue: 0,0:20:39.67,0:20:43.98,Bilingual,,0,0,0,,90% 覆盖率下限的测试，以及配置文件的 lint\N{\fs33\c&H00C8C0B8&\bord1.4}lint, tests with a 90 percent coverage floor, and config linting.
+Dialogue: 0,0:20:44.48,0:20:48.86,Bilingual,,0,0,0,,运行 just check：全部是绿的，覆盖率显示 100%\N{\fs33\c&H00C8C0B8&\bord1.4}Run just check: everything green, the floor reads 100 percent.
+Dialogue: 0,0:20:49.18,0:20:53.61,Bilingual,,0,0,0,,现在看它咬人：只跑 confidence 相关的测试，下限不变\N{\fs33\c&H00C8C0B8&\bord1.4}Now watch it bite: ask for only the confidence tests, keeping the floor.
+Dialogue: 0,0:20:53.93,0:20:57.83,Bilingual,,0,0,0,,9 个测试通过，一半的代码根本没跑到\N{\fs33\c&H00C8C0B8&\bord1.4}9 tests pass, half the code is never exercised,
+Dialogue: 0,0:20:57.83,0:21:01.40,Bilingual,,0,0,0,,这次运行以 49.4% 的覆盖率失败\N{\fs33\c&H00C8C0B8&\bord1.4}and the run fails at 49.4 percent coverage.
+Dialogue: 0,0:21:01.72,0:21:03.66,Bilingual,,0,0,0,,下限是门禁，不是目标\N{\fs33\c&H00C8C0B8&\bord1.4}A floor is a gate, not a goal.
+Dialogue: 0,0:21:03.98,0:21:05.48,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:21:05.53,0:21:10.03,Bilingual,,0,0,0,,配置文件也要检查：hook 配置一坏，每次 commit 都会坏\N{\fs33\c&H00C8C0B8&\bord1.4}Config files are checked too: a broken hook config breaks every commit.
+Dialogue: 0,0:21:10.35,0:21:13.17,Bilingual,,0,0,0,,在 pre-commit 配置里缩进错一处\N{\fs33\c&H00C8C0B8&\bord1.4}One wrong indent in the pre-commit config,
+Dialogue: 0,0:21:13.17,0:21:15.45,Bilingual,,0,0,0,,yamllint 就会指出具体是哪一行\N{\fs33\c&H00C8C0B8&\bord1.4}and yamllint names the exact line.
+Dialogue: 0,0:21:15.77,0:21:18.27,Bilingual,,0,0,0,,恢复之后，这个 recipe 跑绿了\N{\fs33\c&H00C8C0B8&\bord1.4}Restored, the recipe runs green;
+Dialogue: 0,0:21:18.27,0:21:22.71,Bilingual,,0,0,0,,它还会校验 pyproject.toml，检查 lock 文件\N{\fs33\c&H00C8C0B8&\bord1.4}it also validates pyproject.toml and checks the lockfile.
+Dialogue: 0,0:21:22.95,0:21:26.53,Bilingual,,0,0,0,,现在门禁要拒绝了，两次；暂停一下，试试第一次\N{\fs33\c&H00C8C0B8&\bord1.4}Now the gate refuses, twice; pause and try the first.
+Dialogue: 0,0:21:26.85,0:21:28.97,Bilingual,,0,0,0,,加进一个没用到的 import\N{\fs33\c&H00C8C0B8&\bord1.4}An unused import goes in;
+Dialogue: 0,0:21:28.97,0:21:32.44,Bilingual,,0,0,0,,commit 在 F401 上失败，没有生成 commit\N{\fs33\c&H00C8C0B8&\bord1.4}the commit fails on F401, no commit made.
+Dialogue: 0,0:21:32.76,0:21:38.07,Bilingual,,0,0,0,,接着暂存一个 .env 文件，拒绝的理由就是配置里自己写的那句话\N{\fs33\c&H00C8C0B8&\bord1.4}Then a .env file is staged, and the refusal is the config's own sentence:
+Dialogue: 0,0:21:38.07,0:21:42.28,Bilingual,,0,0,0,,.env 文件装的是一台机器的设置和密钥\N{\fs33\c&H00C8C0B8&\bord1.4}a .env file holds the settings and secrets of one machine.
+Dialogue: 0,0:21:42.60,0:21:44.20,Bilingual,,0,0,0,,它永远不能 commit\N{\fs33\c&H00C8C0B8&\bord1.4}It is never committed.
+Dialogue: 0,0:21:44.40,0:21:48.81,Bilingual,,0,0,0,,两种门禁风格，都没问题：这个只指出问题，由你来跑 just fmt\N{\fs33\c&H00C8C0B8&\bord1.4}Two gate styles, both fine: this one points and you run just fmt;
+Dialogue: 0,0:21:48.81,0:21:51.80,Bilingual,,0,0,0,,cheese 的门禁直接改写，再逼你看一眼\N{\fs33\c&H00C8C0B8&\bord1.4}the cheese gate rewrites and makes you look.
+Dialogue: 0,0:21:52.12,0:21:55.79,Bilingual,,0,0,0,,接下来 step-04 和 step-04b 把文档放进门禁\N{\fs33\c&H00C8C0B8&\bord1.4}Steps 4 and 4b put documentation in the gate:
+Dialogue: 0,0:21:55.79,0:22:01.25,Bilingual,,0,0,0,,一开始 88 个函数、方法和类里有 50 个带类型标注和文档\N{\fs33\c&H00C8C0B8&\bord1.4}first 50 of 88 functions, methods and classes typed and documented,
+Dialogue: 0,0:22:01.25,0:22:03.20,Bilingual,,0,0,0,,下一步是 88 个全都有\N{\fs33\c&H00C8C0B8&\bord1.4}one step later 88 of 88;
+Dialogue: 0,0:22:03.20,0:22:06.54,Bilingual,,0,0,0,,删掉一条说明就会拦下 commit\N{\fs33\c&H00C8C0B8&\bord1.4}deleting one description blocks a commit.
+Dialogue: 0,0:22:06.86,0:22:08.55,Bilingual,,0,0,0,,表里又多了两行\N{\fs33\c&H00C8C0B8&\bord1.4}Two rows join the table.
+Dialogue: 0,0:22:13.68,0:22:15.78,Bilingual,,0,0,0,,到了 step-05，模型来了\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5 brings the model:
+Dialogue: 0,0:22:15.78,0:22:23.74,Bilingual,,0,0,0,,setup 这个 recipe 现在会拉下整套模型依赖，录制时是 38 个包\N{\fs33\c&H00C8C0B8&\bord1.4}the setup recipe now pulls the model stack, 38 packages including torch 2.14.1 for the CPU,
+Dialogue: 0,0:22:23.74,0:22:25.93,Bilingual,,0,0,0,,包括 CPU 版的 torch 2.14.1\N{\fs33\c&H00C8C0B8&\bord1.4}at the time of recording.
+Dialogue: 0,0:22:26.25,0:22:31.13,Bilingual,,0,0,0,,然后是 just test：92 passed，覆盖率 94%，全绿\N{\fs33\c&H00C8C0B8&\bord1.4}Then just test: 92 passed, coverage 94 percent, all green.
+Dialogue: 0,0:22:31.45,0:22:33.00,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:22:33.05,0:22:34.65,Bilingual,,0,0,0,,这个模型做什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What does the model do?
+Dialogue: 0,0:22:34.78,0:22:38.92,Bilingual,,0,0,0,,一个请求把一段状态和几个问题打包进同一个序列\N{\fs33\c&H00C8C0B8&\bord1.4}A request packs one state and several questions into one sequence.
+Dialogue: 0,0:22:39.24,0:22:40.93,Bilingual,,0,0,0,,有一个 mask 强制执行一条规则\N{\fs33\c&H00C8C0B8&\bord1.4}A mask enforces one rule:
+Dialogue: 0,0:22:40.93,0:22:45.40,Bilingual,,0,0,0,,一个问题可以看到状态和它自己，绝不能看到兄弟问题\N{\fs33\c&H00C8C0B8&\bord1.4}a question may see the state and itself, never a sibling question.
+Dialogue: 0,0:22:45.72,0:22:50.86,Bilingual,,0,0,0,,问题必须各自独立回答；偷看一眼，就会把一个答案泄露进另一个\N{\fs33\c&H00C8C0B8&\bord1.4}Questions must be answered independently; a peek would leak one answer into another.
+Dialogue: 0,0:22:51.18,0:22:55.00,Bilingual,,0,0,0,,这一个禁止的格子，就是它和 causal mask 的全部区别\N{\fs33\c&H00C8C0B8&\bord1.4}That one forbidden cell is the whole difference from a causal mask.
+Dialogue: 0,0:22:56.52,0:22:59.14,Bilingual,,0,0,0,,按 walk.md 打印出代码构建的 mask\N{\fs33\c&H00C8C0B8&\bord1.4}The walk prints the mask the code builds,
+Dialogue: 0,0:22:59.14,0:23:02.05,Bilingual,,0,0,0,,两个状态 token，加两个各有两个 token 的问题\N{\fs33\c&H00C8C0B8&\bord1.4}for two state tokens and two questions of two;
+Dialogue: 0,0:23:02.05,0:23:03.65,Bilingual,,0,0,0,,暂停一下，打印你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}pause and print yours.
+Dialogue: 0,0:23:03.81,0:23:08.74,Bilingual,,0,0,0,,第 5 行和第 6 行说明，问题 2 什么都能看到，包括问题 1\N{\fs33\c&H00C8C0B8&\bord1.4}Rows 5 and 6 say question 2 sees everything, including question 1.
+Dialogue: 0,0:23:09.06,0:23:10.57,Bilingual,,0,0,0,,原因只有一行\N{\fs33\c&H00C8C0B8&\bord1.4}The cause is one line:
+Dialogue: 0,0:23:10.57,0:23:14.97,Bilingual,,0,0,0,,torch 的 ones like 把每一对 token 都标成同一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}torch.ones_like marks every pair of tokens as the same question.
+Dialogue: 0,0:23:15.22,0:23:18.99,Bilingual,,0,0,0,,一个检查脚本把构建出的 mask 和我们想要的那个对比\N{\fs33\c&H00C8C0B8&\bord1.4}A checker script compares the built mask against the one we meant,
+Dialogue: 0,0:23:18.99,0:23:20.76,Bilingual,,0,0,0,,在那几行打印出 WRONG\N{\fs33\c&H00C8C0B8&\bord1.4}and prints WRONG on those rows.
+Dialogue: 0,0:23:21.08,0:23:23.30,Bilingual,,0,0,0,,可是 just check 里没有任何东西会运行它\N{\fs33\c&H00C8C0B8&\bord1.4}But nothing in just check runs it;
+Dialogue: 0,0:23:23.30,0:23:25.97,Bilingual,,0,0,0,,靠眼睛看的打印结果不是测试\N{\fs33\c&H00C8C0B8&\bord1.4}a printout you read by eye is not a test.
+Dialogue: 0,0:23:26.29,0:23:32.09,Bilingual,,0,0,0,,来想一个问题：branch mask 的每一行都跑到了，覆盖率显示 94%\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: every line of branch_mask ran, and coverage reads 94 percent.
+Dialogue: 0,0:23:32.41,0:23:34.57,Bilingual,,0,0,0,,有哪个覆盖率数字能抓到这个 bug 吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Can any coverage number catch this bug?
+Dialogue: 0,0:23:43.40,0:23:49.08,Bilingual,,0,0,0,,不能。覆盖率数的是跑过的行，从不管有没有人检查它们算出了什么\N{\fs33\c&H00C8C0B8&\bord1.4}No. Coverage counts lines that ran, never whether anyone checked what they produced.
+Dialogue: 0,0:23:49.40,0:23:51.55,Bilingual,,0,0,0,,必要，但永远不充分\N{\fs33\c&H00C8C0B8&\bord1.4}Necessary, and never sufficient.
+Dialogue: 0,0:23:51.78,0:23:54.25,Bilingual,,0,0,0,,同样绿着却看不见的，还有类型检查器\N{\fs33\c&H00C8C0B8&\bord1.4}Also green and blind: the type checker,
+Dialogue: 0,0:23:54.25,0:23:57.54,Bilingual,,0,0,0,,它只读声明的类型，不运行代码\N{\fs33\c&H00C8C0B8&\bord1.4}which reads declared types without running the code.
+Dialogue: 0,0:23:57.86,0:24:01.75,Bilingual,,0,0,0,,运行 ty，发现 6 条诊断，可 just check 还是绿的\N{\fs33\c&H00C8C0B8&\bord1.4}Running ty finds 6 diagnostics, yet just check is green:
+Dialogue: 0,0:24:01.75,0:24:07.02,Bilingual,,0,0,0,,类型还没进门禁，而门禁之外的检查谁也保护不了\N{\fs33\c&H00C8C0B8&\bord1.4}types are not in the gate yet, and a check outside the gate protects nobody.
+Dialogue: 0,0:24:07.25,0:24:09.69,Bilingual,,0,0,0,,最后，在真实模型上跑冒烟测试\N{\fs33\c&H00C8C0B8&\bord1.4}Last, the smoke on the real model:
+Dialogue: 0,0:24:09.69,0:24:14.64,Bilingual,,0,0,0,,5 亿参数，从公开的模型托管平台 Hugging Face Hub 下载一次\N{\fs33\c&H00C8C0B8&\bord1.4}half a billion parameters, downloaded once from the Hugging Face Hub,
+Dialogue: 0,0:24:14.64,0:24:18.53,Bilingual,,0,0,0,,在 CPU 上回答 15 个奶酪问题\N{\fs33\c&H00C8C0B8&\bord1.4}a public model host, answering 15 cheese questions on CPU; pause
+Dialogue: 0,0:24:18.53,0:24:20.13,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}and run it.
+Dialogue: 0,0:24:20.35,0:24:21.95,Bilingual,,0,0,0,,15 个里答对了 6 个\N{\fs33\c&H00C8C0B8&\bord1.4}6 of 15 right.
+Dialogue: 0,0:24:22.16,0:24:25.47,Bilingual,,0,0,0,,什么都没训练，这些都是猜的；先记住这个数字\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing is trained, these are guesses; hold that number.
+Dialogue: 0,0:24:27.12,0:24:29.89,Bilingual,,0,0,0,,到了 step-05a，用真正能看出问题的测试来回应\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5a answers with tests that could tell.
+Dialogue: 0,0:24:30.21,0:24:31.40,Bilingual,,0,0,0,,先说实话\N{\fs33\c&H00C8C0B8&\bord1.4}First, honesty:
+Dialogue: 0,0:24:31.40,0:24:35.52,Bilingual,,0,0,0,,在这台机器上，just test 显示 1 failed, 102 passed\N{\fs33\c&H00C8C0B8&\bord1.4}on this machine just test says 1 failed, 102 passed.
+Dialogue: 0,0:24:35.84,0:24:39.26,Bilingual,,0,0,0,,失败的那个测试要求输出逐位相同\N{\fs33\c&H00C8C0B8&\bord1.4}The failing test demands bit for bit equal outputs.
+Dialogue: 0,0:24:39.58,0:24:41.08,Bilingual,,0,0,0,,在这台 Linux 的 CPU 上\N{\fs33\c&H00C8C0B8&\bord1.4}On this Linux CPU,
+Dialogue: 0,0:24:41.08,0:24:45.06,Bilingual,,0,0,0,,torch 求和的顺序和作者的 Mac 不一样\N{\fs33\c&H00C8C0B8&\bord1.4}torch sums in a different order than the author's Mac;
+Dialogue: 0,0:24:45.06,0:24:48.11,Bilingual,,0,0,0,,在 Mac 上 103 个全部通过，walk.md 里有记录\N{\fs33\c&H00C8C0B8&\bord1.4}there all 103 pass, as the walk records.
+Dialogue: 0,0:24:48.43,0:24:51.54,Bilingual,,0,0,0,,所谓 hermetic，是只有你的代码能让它失败\N{\fs33\c&H00C8C0B8&\bord1.4}Hermetic means only your code can make it fail;
+Dialogue: 0,0:24:51.54,0:24:54.99,Bilingual,,0,0,0,,跨机器逐位一致是一个更强的承诺\N{\fs33\c&H00C8C0B8&\bord1.4}bit exactness across machines is a stronger promise;
+Dialogue: 0,0:24:54.99,0:24:56.64,Bilingual,,0,0,0,,这台机器把它量了出来\N{\fs33\c&H00C8C0B8&\bord1.4}this machine measured it.
+Dialogue: 0,0:24:56.88,0:24:58.26,Bilingual,,0,0,0,,现在说正题\N{\fs33\c&H00C8C0B8&\bord1.4}Now the lesson.
+Dialogue: 0,0:24:58.31,0:25:03.28,Bilingual,,0,0,0,,故意放进一个错的修复：它只挡住紧挨在前面的那个问题\N{\fs33\c&H00C8C0B8&\bord1.4}A deliberately wrong fix goes in, one that blocks only the question just before.
+Dialogue: 0,0:25:03.60,0:25:07.14,Bilingual,,0,0,0,,6 个 token 的图说一切正常；它看不出来\N{\fs33\c&H00C8C0B8&\bord1.4}The six token picture says all ok; it cannot tell.
+Dialogue: 0,0:25:07.46,0:25:10.96,Bilingual,,0,0,0,,4 个 token 的图就能：它的最后一行显示 WRONG\N{\fs33\c&H00C8C0B8&\bord1.4}A four token picture can: its last row reads WRONG.
+Dialogue: 0,0:25:11.20,0:25:12.97,Bilingual,,0,0,0,,换个办法：把规则写一次\N{\fs33\c&H00C8C0B8&\bord1.4}State the rule once instead.
+Dialogue: 0,0:25:13.29,0:25:17.76,Bilingual,,0,0,0,,属性测试让 hypothesis 随便抽请求的形状\N{\fs33\c&H00C8C0B8&\bord1.4}The property test lets hypothesis draw any request shape:
+Dialogue: 0,0:25:17.76,0:25:21.99,Bilingual,,0,0,0,,状态 1 到 6 个 token，最多 4 个问题，每个 1 到 5 个 token\N{\fs33\c&H00C8C0B8&\bord1.4}a state of 1 to 6 tokens, up to 4 questions of 1 to 5.
+Dialogue: 0,0:25:22.31,0:25:27.58,Bilingual,,0,0,0,,这些尺寸一共允许 4686 种形状，多到没法一张张画图\N{\fs33\c&H00C8C0B8&\bord1.4}Those sizes allow 4,686 shapes, too many for pictures.
+Dialogue: 0,0:25:27.90,0:25:31.06,Bilingual,,0,0,0,,它断言：任何被允许的一对，都绝不是兄弟问题的一对\N{\fs33\c&H00C8C0B8&\bord1.4}It asserts that no allowed pair is ever a sibling pair.
+Dialogue: 0,0:25:31.38,0:25:33.54,Bilingual,,0,0,0,,跑之前，先想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder before we run it.
+Dialogue: 0,0:25:42.38,0:25:44.59,Bilingual,,0,0,0,,你需要一个往回隔两步的问题\N{\fs33\c&H00C8C0B8&\bord1.4}You need a question two steps back,
+Dialogue: 0,0:25:44.59,0:25:48.19,Bilingual,,0,0,0,,所以是一个状态 token 加三个各有一个 token 的问题\N{\fs33\c&H00C8C0B8&\bord1.4}so one state token and three questions of one token each.
+Dialogue: 0,0:25:48.51,0:25:50.86,Bilingual,,0,0,0,,而 hypothesis 自己就找到了\N{\fs33\c&H00C8C0B8&\bord1.4}And hypothesis finds it on its own:
+Dialogue: 0,0:25:50.86,0:25:55.89,Bilingual,,0,0,0,,这一个测试失败，然后把反例收缩成正好这个形状\N{\fs33\c&H00C8C0B8&\bord1.4}the one test fails, then shrinks the counter example to exactly that shape.
+Dialogue: 0,0:25:56.21,0:25:57.63,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:25:57.68,0:26:02.07,Bilingual,,0,0,0,,属性测试不只是说不；它还把最小的证据交到你手上\N{\fs33\c&H00C8C0B8&\bord1.4}A property test does not only say no; it hands you the smallest witness.
+Dialogue: 0,0:26:02.32,0:26:03.43,Bilingual,,0,0,0,,证明门禁长了牙\N{\fs33\c&H00C8C0B8&\bord1.4}Proof the gate
+Dialogue: 0,0:26:03.43,0:26:07.41,Bilingual,,0,0,0,,把 step-05 那行错的 mask 放回去，再运行 just test\N{\fs33\c&H00C8C0B8&\bord1.4}grew teeth: put step 5's wrong mask line back and run just test;
+Dialogue: 0,0:26:07.41,0:26:08.92,Bilingual,,0,0,0,,暂停一下，试一试\N{\fs33\c&H00C8C0B8&\bord1.4}pause and try it.
+Dialogue: 0,0:26:08.97,0:26:13.79,Bilingual,,0,0,0,,8 failed, 95 passed；之前一路放行的代码，现在被拒绝了\N{\fs33\c&H00C8C0B8&\bord1.4}8 failed, 95 passed; code that sailed through before is refused.
+Dialogue: 0,0:26:14.11,0:26:16.93,Bilingual,,0,0,0,,门禁只能拒绝它的测试看得见的东西\N{\fs33\c&H00C8C0B8&\bord1.4}A gate refuses only what its tests can see.
+Dialogue: 0,0:26:17.25,0:26:21.71,Bilingual,,0,0,0,,真正的修复只有一行：同一个问题，意思是同一个 segment ID\N{\fs33\c&H00C8C0B8&\bord1.4}The real fix is one line: same question means same segment ID.
+Dialogue: 0,0:26:21.95,0:26:23.52,Bilingual,,0,0,0,,类型检查也进了门禁\N{\fs33\c&H00C8C0B8&\bord1.4}Types join the gate too:
+Dialogue: 0,0:26:23.52,0:26:27.45,Bilingual,,0,0,0,,新的 recipe just types 通过了，check 现在有六行\N{\fs33\c&H00C8C0B8&\bord1.4}the new recipe, just types, passes, and check has six lines.
+Dialogue: 0,0:26:27.77,0:26:29.74,Bilingual,,0,0,0,,那换上正确的 mask，冒烟测试呢？\N{\fs33\c&H00C8C0B8&\bord1.4}And the smoke, with the right mask?
+Dialogue: 0,0:26:30.06,0:26:32.30,Bilingual,,0,0,0,,15 个里答对 4 个，比之前还低\N{\fs33\c&H00C8C0B8&\bord1.4}4 of 15, lower than before.
+Dialogue: 0,0:26:32.62,0:26:34.22,Bilingual,,0,0,0,,暂停一下，跑一下冒烟测试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run the smoke.
+Dialogue: 0,0:26:34.45,0:26:37.50,Bilingual,,0,0,0,,之前的 6 是运气；没训练过的模型，分数说明不了什么\N{\fs33\c&H00C8C0B8&\bord1.4}The 6 was luck; an untrained score means nothing.
+Dialogue: 0,0:26:39.15,0:26:42.56,Bilingual,,0,0,0,,到了 step-05b，不 hermetic 的测试有了一个诚实的家\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5b gives non-hermetic tests an honest home.
+Dialogue: 0,0:26:42.88,0:26:45.74,Bilingual,,0,0,0,,新加的真实模型测试标上了 system\N{\fs33\c&H00C8C0B8&\bord1.4}A new real model test is marked system,
+Dialogue: 0,0:26:45.74,0:26:49.25,Bilingual,,0,0,0,,配置默认把这个 marker 排除在外\N{\fs33\c&H00C8C0B8&\bord1.4}and the config deselects that marker by default:
+Dialogue: 0,0:26:49.25,0:26:52.61,Bilingual,,0,0,0,,每次 just test 都显示 1 deselected，这是有意的\N{\fs33\c&H00C8C0B8&\bord1.4}every just test says 1 deselected, on purpose.
+Dialogue: 0,0:26:52.85,0:26:57.36,Bilingual,,0,0,0,,明确要求时，just test -m system 显示 1 passed\N{\fs33\c&H00C8C0B8&\bord1.4}Asked for explicitly, just test -m system says 1 passed,
+Dialogue: 0,0:26:57.36,0:27:02.60,Bilingual,,0,0,0,,103 deselected：真实模型确实跑了，而且它必须通过，不能跳过\N{\fs33\c&H00C8C0B8&\bord1.4}103 deselected: the real model ran, and it had to pass, not skip.
+Dialogue: 0,0:27:02.92,0:27:05.99,Bilingual,,0,0,0,,这就是第一部分那次悄悄跳过的诚实版本\N{\fs33\c&H00C8C0B8&\bord1.4}That is the honest version of part 1's silent skip.
+Dialogue: 0,0:27:06.31,0:27:08.02,Bilingual,,0,0,0,,暂停一下，两种写法都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both forms.
+Dialogue: 0,0:27:08.27,0:27:10.04,Bilingual,,0,0,0,,门禁里又多了几行小的\N{\fs33\c&H00C8C0B8&\bord1.4}Smaller rows join the gate:
+Dialogue: 0,0:27:10.04,0:27:12.47,Bilingual,,0,0,0,,hadolint 对 Dockerfile 做 lint，结果干净\N{\fs33\c&H00C8C0B8&\bord1.4}hadolint lints the Dockerfile, clean.
+Dialogue: 0,0:27:12.79,0:27:16.49,Bilingual,,0,0,0,,第二部分是在一台没有 Docker 的普通机器上录的\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 was recorded on a plain machine without Docker,
+Dialogue: 0,0:27:16.49,0:27:18.47,Bilingual,,0,0,0,,所以这些 recipe 礼貌地失败了\N{\fs33\c&H00C8C0B8&\bord1.4}so the recipes fail politely:
+Dialogue: 0,0:27:18.47,0:27:20.80,Bilingual,,0,0,0,,docker build 报 command not found\N{\fs33\c&H00C8C0B8&\bord1.4}docker build is command not found,
+Dialogue: 0,0:27:20.80,0:27:23.33,Bilingual,,0,0,0,,构建 image 的 recipe 也会说明原因\N{\fs33\c&H00C8C0B8&\bord1.4}and the image recipe explains itself.
+Dialogue: 0,0:27:23.65,0:27:26.13,Bilingual,,0,0,0,,在你装了 Docker Desktop 的笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}On your laptop, with Docker Desktop,
+Dialogue: 0,0:27:26.13,0:27:28.00,Bilingual,,0,0,0,,两个 image 都会真正构建出来\N{\fs33\c&H00C8C0B8&\bord1.4}both images build for real.
+Dialogue: 0,0:27:28.32,0:27:30.15,Bilingual,,0,0,0,,剩下的看 walk.md 里的记录\N{\fs33\c&H00C8C0B8&\bord1.4}The walk's record shows the rest.
+Dialogue: 0,0:27:30.47,0:27:35.83,Bilingual,,0,0,0,,同一个 lock 文件生成两个 image，1.15 GB 和 1.84 GB\N{\fs33\c&H00C8C0B8&\bord1.4}Two images from one lockfile, 1.15 and 1.84 gigabytes.
+Dialogue: 0,0:27:36.15,0:27:40.23,Bilingual,,0,0,0,,而且 just check 在一个没有网络的 container 里也跑绿了\N{\fs33\c&H00C8C0B8&\bord1.4}And just check runs green inside a container with no network:
+Dialogue: 0,0:27:40.23,0:27:42.98,Bilingual,,0,0,0,,hermetic 的说法，用实验证明了\N{\fs33\c&H00C8C0B8&\bord1.4}the hermetic claim, proved by experiment.
+Dialogue: 0,0:27:43.22,0:27:47.59,Bilingual,,0,0,0,,门禁表填满了：六行，系统测试在闸机外面\N{\fs33\c&H00C8C0B8&\bord1.4}The gate table is full: six rows, system outside the turnstile.
+Dialogue: 0,0:27:47.91,0:27:49.27,Bilingual,,0,0,0,,再说局限\N{\fs33\c&H00C8C0B8&\bord1.4}Now the limit.
+Dialogue: 0,0:27:49.32,0:27:51.27,Bilingual,,0,0,0,,一个 hook 只在一台机器上运行\N{\fs33\c&H00C8C0B8&\bord1.4}A hook runs on one machine,
+Dialogue: 0,0:27:51.27,0:27:54.89,Bilingual,,0,0,0,,而 git commit --no-verify 能直接绕过它\N{\fs33\c&H00C8C0B8&\bord1.4}and git commit --no-verify walks straight past it.
+Dialogue: 0,0:27:56.85,0:28:01.63,Bilingual,,0,0,0,,所以 CI 在一台谁也绕不过的服务器上，把同样的检查再跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}So CI re-runs the same checks on a server nobody can skip:
+Dialogue: 0,0:28:01.63,0:28:04.93,Bilingual,,0,0,0,,就是同一个 repo 的 Part 5，第 21 讲\N{\fs33\c&H00C8C0B8&\bord1.4}part 5 of this same repo, in lecture 21.
+Dialogue: 0,0:28:05.25,0:28:06.83,Bilingual,,0,0,0,,也正因为这样\N{\fs33\c&H00C8C0B8&\bord1.4}It is also why the hook,
+Dialogue: 0,0:28:06.83,0:28:10.13,Bilingual,,0,0,0,,hook、CI 和 README 应该用同一套写法来写这些检查\N{\fs33\c&H00C8C0B8&\bord1.4}CI and the README should spell the checks one way;
+Dialogue: 0,0:28:10.13,0:28:12.96,Bilingual,,0,0,0,,cheese 的 repo 还没完全做到\N{\fs33\c&H00C8C0B8&\bord1.4}the cheese repo does not quite manage that.
+Dialogue: 0,0:28:13.28,0:28:16.95,Bilingual,,0,0,0,,所有人用同一条命令，这是你做 milestone 时要带走的经验\N{\fs33\c&H00C8C0B8&\bord1.4}One command for everyone is the lesson for your milestone.
+Dialogue: 0,0:28:17.27,0:28:21.18,Bilingual,,0,0,0,,覆盖率下限一句话说完：babykev 选了 90\N{\fs33\c&H00C8C0B8&\bord1.4}Coverage floors in one line: babykev chose 90;
+Dialogue: 0,0:28:21.18,0:28:23.64,Bilingual,,0,0,0,,milestone 5 要求至少 70\N{\fs33\c&H00C8C0B8&\bord1.4}milestone 5 asks at least 70.
+Dialogue: 0,0:28:25.28,0:28:26.95,Bilingual,,0,0,0,,回顾之前，先清理\N{\fs33\c&H00C8C0B8&\bord1.4}Before the recap, clean up.
+Dialogue: 0,0:28:27.27,0:28:29.11,Bilingual,,0,0,0,,README 的 Docker 清理\N{\fs33\c&H00C8C0B8&\bord1.4}The README's Docker cleanup:
+Dialogue: 0,0:28:29.11,0:28:33.18,Bilingual,,0,0,0,,docker container ls 显示没有在运行的，所以不用停\N{\fs33\c&H00C8C0B8&\bord1.4}docker container ls shows nothing running, so nothing to stop.
+Dialogue: 0,0:28:33.50,0:28:35.93,Bilingual,,0,0,0,,然后是 docker system prune\N{\fs33\c&H00C8C0B8&\bord1.4}Then docker system prune; type y:
+Dialogue: 0,0:28:35.93,0:28:40.37,Bilingual,,0,0,0,,输入 y：录制时清掉了大约 95 MB 的构建缓存\N{\fs33\c&H00C8C0B8&\bord1.4}about 95 megabytes of build cache, at the time of recording.
+Dialogue: 0,0:28:40.69,0:28:44.44,Bilingual,,0,0,0,,最后 docker image ls 显示两个 cheese 的 image\N{\fs33\c&H00C8C0B8&\bord1.4}A final docker image ls shows the two cheese images.
+Dialogue: 0,0:28:44.76,0:28:48.07,Bilingual,,0,0,0,,一个额外步骤把 hook 卸掉：pre-commit uninstall\N{\fs33\c&H00C8C0B8&\bord1.4}One extra undoes the hook: pre-commit uninstall.
+Dialogue: 0,0:28:48.39,0:28:50.87,Bilingual,,0,0,0,,在 babykev 那边，删掉 venv\N{\fs33\c&H00C8C0B8&\bord1.4}On the babykev side, delete the venv;
+Dialogue: 0,0:28:50.87,0:28:52.55,Bilingual,,0,0,0,,如果跑过冒烟测试\N{\fs33\c&H00C8C0B8&\bord1.4}and if you ran the smoke,
+Dialogue: 0,0:28:52.55,0:28:56.24,Bilingual,,0,0,0,,再删掉 Hugging Face 缓存里那个大约 1 GB 的模型\N{\fs33\c&H00C8C0B8&\bord1.4}the roughly 1 gigabyte model in the Hugging Face cache.
+Dialogue: 0,0:28:56.56,0:29:01.40,Bilingual,,0,0,0,,今天没有任何计费：门禁就在你的笔记本上，这正是重点\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing today was billable: the gate lives on your laptop, and that is the point.
+Dialogue: 0,0:29:01.65,0:29:03.66,Bilingual,,0,0,0,,五道自测题\N{\fs33\c&H00C8C0B8&\bord1.4}5 questions to test yourself.
+Dialogue: 0,0:29:03.98,0:29:05.71,Bilingual,,0,0,0,,第一题：逐个文件说说\N{\fs33\c&H00C8C0B8&\bord1.4}One: what runs in a unit,
+Dialogue: 0,0:29:05.71,0:29:09.89,Bilingual,,0,0,0,,这个 repo 的单元测试、集成测试和系统测试分别运行了什么？\N{\fs33\c&H00C8C0B8&\bord1.4}an integration and a system test of this repo, file by file?
+Dialogue: 0,0:29:10.21,0:29:13.34,Bilingual,,0,0,0,,第二题：系统测试在完全没有服务器的情况下也通过了\N{\fs33\c&H00C8C0B8&\bord1.4}Two: the system tests pass with no server at all.
+Dialogue: 0,0:29:13.66,0:29:15.58,Bilingual,,0,0,0,,这时 pytest 实际打印了什么\N{\fs33\c&H00C8C0B8&\bord1.4}What does pytest actually print,
+Dialogue: 0,0:29:15.58,0:29:17.63,Bilingual,,0,0,0,,这四个测试又是不是 hermetic 的？\N{\fs33\c&H00C8C0B8&\bord1.4}and are those four tests hermetic?
+Dialogue: 0,0:29:17.87,0:29:21.13,Bilingual,,0,0,0,,第三题：pre-commit install 到底创建了什么\N{\fs33\c&H00C8C0B8&\bord1.4}Three: what does pre-commit install actually create,
+Dialogue: 0,0:29:21.13,0:29:23.52,Bilingual,,0,0,0,,为什么每个 clone 都要重新运行它？\N{\fs33\c&H00C8C0B8&\bord1.4}and why must every clone run it again?
+Dialogue: 0,0:29:23.84,0:29:26.93,Bilingual,,0,0,0,,第四题：black 显示 Failed，files were modified\N{\fs33\c&H00C8C0B8&\bord1.4}Four: black says failed, files were modified.
+Dialogue: 0,0:29:27.25,0:29:29.79,Bilingual,,0,0,0,,你的代码坏了吗，接下来该做什么？\N{\fs33\c&H00C8C0B8&\bord1.4}Is your code broken, and what do you do next?
+Dialogue: 0,0:29:30.11,0:29:34.44,Bilingual,,0,0,0,,第五题：babykev 有 94% 的覆盖率，mask 却是错的\N{\fs33\c&H00C8C0B8&\bord1.4}Five: babykev had 94 percent coverage and a wrong mask.
+Dialogue: 0,0:29:34.76,0:29:39.14,Bilingual,,0,0,0,,最后是哪一类测试看到了这个 bug，覆盖率又为什么看不见它？\N{\fs33\c&H00C8C0B8&\bord1.4}What kind of test finally saw the bug, and why was coverage blind to it?
+Dialogue: 0,0:29:39.67,0:29:44.36,Bilingual,,0,0,0,,答案在练习里，每条命令都在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}The answers are in the exercises, and every command is in the study guide.
+Dialogue: 0,0:29:44.68,0:29:47.02,Bilingual,,0,0,0,,下节课会用到云上的凭据\N{\fs33\c&H00C8C0B8&\bord1.4}Next lecture brings cloud credentials,
+Dialogue: 0,0:29:47.02,0:29:50.03,Bilingual,,0,0,0,,到时 detect-private-key 这个 hook 就派上用场了\N{\fs33\c&H00C8C0B8&\bord1.4}where the detect-private-key hook earns its keep.
+Dialogue: 0,0:29:50.35,0:29:54.71,Bilingual,,0,0,0,,到了第 21 讲，这个 repo 的检查会在 GitHub 上运行\N{\fs33\c&H00C8C0B8&\bord1.4}And in lecture 21, this very repo's checks run on GitHub,
+Dialogue: 0,0:29:54.71,0:29:58.46,Bilingual,,0,0,0,,在那里谁也没法用 --no-verify 绕过去\N{\fs33\c&H00C8C0B8&\bord1.4}where nobody can walk past them with --no-verify.
