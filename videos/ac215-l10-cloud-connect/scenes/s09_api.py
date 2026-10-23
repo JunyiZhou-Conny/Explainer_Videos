@@ -403,7 +403,7 @@ class ApiService(VoiceScene):
             self.play(FadeIn(t), run_time=0.4)
             resize(self, t, 11, run_time=0.6)
             out(self, t, cap.at(46, "…", (104, 105), "…", 143, "…", 162), wrap=True, run_time=1.0)
-            r46 = t.find('"GET /rag/embedding?text=hello HTTP/1.1"')
+            r46 = t.find("500 Internal Server Error")          # 33:46 wraps after its request
             r104 = t.find('"/app/api/routers/rag.py", line 222')
             a143, b143 = t.find("http_request.headers['Authorization']"), t.find("{self._access_token()}'")
             a162 = t.find("google.auth.exceptions.DefaultCredentialsError")

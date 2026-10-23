@@ -444,7 +444,8 @@ class AdcToToken(VoiceScene):
                     stroke_width=6)
         ends = VGroup(Dot(tube.get_start(), radius=0.07, color=KEY), Dot(tube.get_end(), radius=0.07, color=KEY))
         mount = mono("../../secrets:/secrets", 20, KEY).next_to(tube, UP, buff=0.15)
-        msrc = note("llm-rag/docker-compose.yml · line 11").next_to(tube, DOWN, buff=0.15)
+        msrc = note("llm-rag/docker-compose.yml · line 11").next_to(tube, DOWN, buff=0.2)
+        msrc.shift(RIGHT * (cbox.get_left()[0] - 0.2 - msrc.get_right()[0]))    # clear of the container
         p8 = code(SHELL, 8, font_size=20).move_to([0, -2.95, 0])
         path_g = code_span(p8.code, 0, "/secrets/llm-service-account.json")
         ptr = Arrow(path_g.get_top() + UP * 0.05, cfile[1].get_bottom() + DOWN * 0.05, buff=0, color=ROUTE,
