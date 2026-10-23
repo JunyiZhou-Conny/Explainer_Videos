@@ -32,7 +32,7 @@ from explainer.scene import VoiceScene
 from explainer import style as S
 
 from common import (ERR, IMAGE, INK, MONO, NARRATION, P_LAPTOP, ROUTE, TURN, VENV, arrow, capture,
-                    chip, code, code_span, dashed_chip, extra_tag, grey_chip, label, line_bar, lref,
+                    chip, code, code_span, cut, dashed_chip, extra_tag, grey_chip, label, line_bar, lref,
                     mono, ring, source_text, strike, substring, term, type_cmd, under)
 
 SAY = NARRATION["S02"]
@@ -124,6 +124,9 @@ class BugAlmostShipped(VoiceScene):
         xt = extra_tag().next_to(strip.box, UP, buff=0.15).align_to(strip.box, LEFT)
         cap = capture("02-git-log")
         assert cap.cmd == "git log -1 --format='%H %ci'"
+        # laptop/02:2 is 66 characters; the house row holds 65: cut it with '…' (drops the zone's last digit)
+        head_line = cut(cap.line(2), "13:59:04 -05")
+        assert len(head_line) <= strip.max_chars, (len(head_line), strip.max_chars)
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref), FadeIn(older), FadeIn(newer), GrowArrow(t_arrow), run_time=1.0)
@@ -149,7 +152,7 @@ class BugAlmostShipped(VoiceScene):
             self.play(FadeIn(strip), FadeIn(xt, shift=RIGHT * 0.2), run_time=0.6)
             type_cmd(self, strip, cap.cmd, type_time=1.2)
             vo.wait_until("confirms the clone")
-            out = strip.print(self, cap.at(2))[0]
+            out = strip.print(self, [head_line])[0]
             sha_out = substring(out, "b8458ff")
             r = ring(sha_out, VENV)
             self.play(Create(r), Indicate(head, color=VENV, scale_factor=1.15), run_time=0.8)

@@ -76,6 +76,14 @@ def gutter(s: str) -> str:
     return t
 
 
+def find_in(line, sub: str) -> VGroup:
+    """The glyphs of `sub` in a typed line, or in whichever row of a folded command holds it."""
+    for row in getattr(line, "rows", [line]):
+        if sub in row.text:
+            return substring(row, sub)
+    raise KeyError(sub)
+
+
 def json_line(name: str) -> str:
     """The curl captures have no newline after the JSON: their `[exit 0]` is glued to line 2."""
     s = capture(name).line(2)
@@ -220,13 +228,21 @@ class RunTheApp(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(prompt_group), run_time=0.5)
             self.remove(prompt_group)
-            resize(self, t, 9, extra=(track(tr, 3),))
-            istep(self, t, shell.line(34), type_time=1.6)
+            resize(self, t, 11, extra=(track(tr, 3),))
+            uv_line = istep(self, t, shell.line(34), type_time=1.6)
             assert uvicorn_cmd == readme(82)
+            flags = []
+            for flag, anchor in (("--host 0.0.0.0", "host 0.0.0.0"), ("--port 9000", "port 9000"),
+                                 ("--reload", "with reload")):
+                vo.wait_until(anchor)
+                rg = ring(find_in(uv_line, flag), INK, buff=0.06, stroke=2.5)
+                self.play(Create(rg), run_time=0.45)
+                flags.append(rg)
             started = t.print(self, shell.at((35, 40)), run_time=1.0, lag=0.12)
             vo.wait_until("When it says application startup complete")
             done = substring(started[-1], "Application startup complete.")
-            self.play(done.animate.set_color(PASS), run_time=0.4)
+            self.play(done.animate.set_color(PASS), FadeOut(VGroup(*flags)), run_time=0.4)
+            self.remove(*flags)
             self.play(Indicate(done, color=PASS, scale_factor=1.08), run_time=0.7)
             vo.wait_until("open the three README URLs")
             resize(self, t, 3, extra=(track(tr, 4),))
@@ -271,13 +287,16 @@ class RunTheApp(VoiceScene):
             self.play(FadeIn(r_card, shift=UP * 0.2), run_time=0.6)
             self.play(FadeIn(err, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("Really it returns a JSON object")
-            self.play(Indicate(big_json, color=INK, scale_factor=1.04), run_time=0.8)
+            self.play(Indicate(big_json, color=INK, scale_factor=1.04), FadeIn(panel, shift=UP * 0.2),
+                      run_time=0.8)
             vo.wait_until("whose distance field is 5.0")
             uline = under(span, INK, stroke=4)
-            self.play(Create(uline), span.animate.set_color(S.GREEN), run_time=0.6)
+            self.play(Create(uline), FadeIn(bar), run_time=0.6)
+            self.play(Indicate(span, color=INK, scale_factor=1.1), Indicate(dspan, color=INK, scale_factor=1.1),
+                      run_time=0.8)
             vo.wait_until("as the code shows")
-            self.play(FadeIn(panel, shift=UP * 0.2), run_time=0.6)
-            self.play(FadeIn(bar), Indicate(dspan, color=INK, scale_factor=1.08), run_time=0.8)
+            self.play(Indicate(dspan, color=INK, scale_factor=1.12), run_time=0.8)
+        self.wait(1.2)
 
         # ================================================== 5. ^C, exit, --rm, not mounted
         crop = code(SHELL, 15, 16)
