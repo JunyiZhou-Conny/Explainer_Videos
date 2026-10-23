@@ -192,7 +192,7 @@ def babykev_demo() -> VGroup:
     fill.set_fill(INK, 0.75).move_to(rail, aligned_edge=LEFT)
     meter = VGroup(rail, fill)
     conf = VGroup(word, meter).arrange(RIGHT, buff=0.22).move_to([3.5, -1.25, 0])
-    num = steady("0", 24, INK).next_to(meter, RIGHT, buff=0.2)
+    num = label("0", 24, INK).next_to(meter, RIGHT, buff=0.2)     # fades in; no descenders: baselines
     num.align_to(word, DOWN)
     conf.word, conf.rail, conf.fill, conf.num = word, rail, fill, num
     a1 = arrow(qbox.get_right(), mbox.get_left() + LEFT * 0.05, INK)
