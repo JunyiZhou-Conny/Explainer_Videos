@@ -93,7 +93,7 @@ def mount_picture(size: float = 24) -> VGroup:
     .host .cont .tube (.core .glow) .spec .files_h .files_c (built, not added)"""
     def row(name, color, depth):
         g = VGroup(folder_glyph(0.3, color), mono_line(name, size, INK)).arrange(RIGHT, buff=0.16)
-        g.depth = depth
+        g.level = depth
         return g
 
     host_rows = VGroup(row("llm-rag/", LAPTOP, 0), row("outputs/", LAPTOP, 1))

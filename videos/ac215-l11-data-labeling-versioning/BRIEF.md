@@ -119,7 +119,10 @@ PINK-piped to BLUE.
   `docker-shell.sh:19`, `docker-compose.yml:31`, `README.md:109/204/206` show it too, and nothing is
   said about the original); bucket `your-bucket-placeholder`; project `your-gcp-project`; GitHub
   user `YOUR_GITHUB_USERNAME` (the README's own placeholder); token
-  `student-demo-token-not-a-secret` (obviously fake, `42`/`44`). The class bucket
+  `student-demo-token-not-a-secret` (obviously fake, `42`/`44`). **Project id** (series convention,
+  as L10 BRIEF:110-113): ours is always `your-gcp-project` (`85`); the README's `ac215-project`
+  appears only inside quoted source lines (CODE windows quote it verbatim, never masked) and RED
+  story beats — never as ours. The class bucket
   `cheese-app-data-versioning` appears only in quoted README/config lines and RED class-repo beats.
 - **Versions**, all "at the time of recording": Docker 29.8.2 / Compose v5.6.0, git 2.54.0; Label
   Studio **1.23.0** from an **unpinned** `heartexlabs/label-studio:latest` (its log says 1.23.2 is
@@ -176,7 +179,9 @@ Class names in `scenes/common.py`; none collides with a scene class (`video.yaml
   Callback line: L10's Chroma bouncer, now on a bucket.
 - **V4 · `FuseMount` — a bucket that looks like a folder (S10 build, S11 failure replay, S13).**
   Slides 29–32's four stages as four boxes darkening left to right, each lighting one piece of the
-  entrypoint: **Authenticate** (the GREEN key into gcsfuse — `--key-file`); **Bucket Mounting** (a
+  entrypoint: **Authenticate** (the GREEN key into gcsfuse — `--key-file` on line 10; line 8 is
+  gcloud's own login, used by neither gcsfuse nor DVC, so it gets only a GREY side note);
+  **Bucket Mounting** (a
   PINK `gcsfuse` pipe from the BLUE bucket — the *whole* bucket, `images/` *and* `dvc_store/` — to
   `/mnt/gcs_data`); **Connecting the Application** (a short PINK `mount --bind` pipe from
   `/mnt/gcs_data/images` to `/app/cheese_dataset`); **Using the Data** (PURPLE dvc sits on the last
@@ -188,7 +193,10 @@ Class names in `scenes/common.py`; none collides with a scene class (`video.yaml
   two layers, labelled. S11 replays it broken: stage 1 finds no key, stage 2's pipe never connects,
   stage 3 says "special device does not exist" — and a sign over the door still reads "GCS bucket
   mounted" (the unconditional echo).
-- **V5 · `HashShelf` — files named by their fingerprint (S12, S14 reprise, Ponder 8).** Four tiles
+- **V5 · `HashShelf` — files named by their fingerprint (S12, S14 reprise, Ponder 8).** Played in
+  S12 **as a prediction, before any `dvc add` output** (concept before command; the manifest's
+  `.dir` box reads `????????….dir` and the pointer card's fields stay blank until `95:59-61`
+  confirms them). Four tiles
   labelled `Image_1.jpg` … `Image_4.jpg` (no photos drawn) drop into a hash machine; each comes out
   as its real PINK md5 (`09b`): `5b53853e…`, `ba044df2…`, `91f482c4…`, `5b85cf7e…`, and slides onto
   a shelf aisle named by its first two characters — `5b/`, `ba/`, `91/`, and `5b/` again (two photos
@@ -196,7 +204,9 @@ Class names in `scenes/common.py`; none collides with a scene class (`video.yaml
   pairs, sorted, is hashed itself → `89db50de….dir` on aisle `89/`, and shrinks into the six-line
   GREEN `cheese_dataset.dvc` (`95:57-63`). The real cache listing (`95:64-70`) types in under the
   drawing, including the GREY `d7/5171….dir` — the empty "nothing" version from the failed mount.
-  Then the class repo's `dataset_v20` card slides in beside ours: identical (`121`). S14: `Image_5`
+  Then the class repo's `dataset_v20` card (`120`) slides in beside ours: the same 32 characters.
+  The `121` diff that proves them identical needs our own tag, so it runs in S13, right after `git
+  tag` / `git show` (`99`–`102`). S14: `Image_5`
   → `54081d12…` on aisle `54/`; the four old labels light "already on the shelf"; a new manifest
   `6b342844….dir`; the push counter reads 2 (`104`, local remote). Ponder 8: a rename rewrites one
   `relpath` on the manifest card; no photo moves.
@@ -206,8 +216,8 @@ Class names in `scenes/common.py`; none collides with a scene class (`video.yaml
   the six-line pointer card; a PINK rope runs from it down into the BLUE warehouse `dvc_store/` to
   the `.dir` box, which fans out to four blob boxes; v21's rope fans to five, four of them shared.
   The **three homes of the bytes** panel (Conflict 9): `images/` (BLUE, the mutable workspace you
-  upload to), `.dvc/cache` (GREY, your disk — where hashing happens), `dvc_store/` (BLUE, immutable,
-  named by content). S15: `dvc get --rev dataset_v20` pulls the rope — the Colab box clones the repo
+  upload to), `.dvc/cache` (GREY, your disk — copies made by `dvc add`), `dvc_store/` (BLUE,
+  immutable, named by content; never overwritten — this is what freezes a version). S15: `dvc get --rev dataset_v20` pulls the rope — the Colab box clones the repo
   at the tag, reads *that commit's* `.dvc/config` (which bucket!), fetches the manifest first, then
   the blobs; four photos materialize. Failure replays: rope into the class bucket → 401 at the
   manifest (`C13`); a flag that was never planted (`dataset_v25`) → nothing to pull (`C19b`); a burnt
@@ -291,7 +301,7 @@ minutes you will compute this exact string on your own laptop — the same thirt
 instructor's repo has, from the same four photos. How can one short line pin down six hundred
 kilobytes of cheese? And before that: when someone clicks *gouda*, where does that word actually
 live?" How to follow along: two repos, Docker Desktop, a GCP project with billing and your own
-bucket (GOLD: storage, cents), a GitHub account; twelve trackers, `▶ your turn`, the study guide
+bucket (GOLD: storage, a fraction of a cent a month), a GitHub account; twelve trackers, `▶ your turn`, the study guide
 has every command.
 
 **S02 · Two stations, two buckets (~250) — `s02_map.py` · `TwoStations`.** Tracker A1→A2;
@@ -399,8 +409,10 @@ metadata, of which only `Cors:` matters (other values shown as `…`, never inve
 card sticks; V3's next package is waved in; the tile fills (`illustration`). The max-age myth in
 one line: it caches *preflights*; plain image GETs have none — if thumbnails stay broken, hard-
 refresh. **PONDER 4 (8 s)**: "You ran `cli.py -c`, refreshed — still broken thumbnails. Two
-suspects?" Answer: the rule went to another bucket (line 23 not edited — check with `-m`), or the
-browser reused cached responses without the header (hard refresh / private window). `curl` would
+suspects?" Answer: the rule missed your bucket — `-c` failed (an unedited line 23 names the
+README's bucket, which is not yours, so `get_bucket` fails outright, `cli.py:25`) or line 23 names
+another bucket of yours (check with `-m`) — or the browser reused cached responses without the
+header (hard refresh / private window). `curl` would
 have fetched the photo all along: CORS is not access control.
 
 **S07 · A label is a record; read it back by name (~310) — `s07_labels.py` · `LabelsAndTokens`.**
@@ -410,8 +422,12 @@ the server side, `extra · stand-in` → `33`: `{"result": [{"from_name": "choic
 "type": "choices", "value": {"choices": ["gouda"]}}]}`, `HTTP 201`. V2 step 4: the WHITE envelope
 into `cheeses_labeled/`, its thread back to the unmoved photo; slide 6's sorted rows morph into a
 stack of envelopes (Conflict 2: "the slide draws what labels mean; on disk a label is a small
-record that points at the photo"). ▶ View in GCS (README:184-186) — `illustration`: "some json
-files", one per submitted annotation — **no object name drawn** (not documented). A labeled
+record that points at the photo"). Where the click goes, in order (script v2): Label Studio saves
+the annotation in its database (V1's drawer — which is why Ponder 6's answer holds), and the
+target storage writes a copy to `cheeses_labeled/` on submit (digest A12, README:184-186; not
+captured here). ▶ View in GCS (README:184-186) — `illustration`: "some json files", one per
+submitted annotation — **no object name drawn** (not documented); "open one" (README:187) shows the
+envelope's shape (`33`). A labeled
 dataset = photos ⨝ records; nothing sorted into `brie/`, `gouda/` folders. ▶ The token
 (README:193-196): an *Account & Settings* wireframe with the token field drawn blank. V1 reprise —
 the CLI house joins the street. **PONDER 5 (6 s)**: "Inside the CLI container, what if
@@ -422,9 +438,14 @@ inside a container, localhost is *that* container; on a shared street, names res
 status code: 401` … **`"Authentication token no longer valid: legacy token authentication has been
 disabled for this organization"`**. Why, live: extra `27` — `"legacy_api_tokens_enabled":false`:
 Label Studio 1.23.0 turns legacy tokens off by default, and `cli.py` uses the legacy `Client`
-(CODE data-labeling/cli.py: 76-88). **The on-screen fix**: *Organization → API Tokens Settings →
-enable legacy tokens* (`illustration`) and its server side, `extra` → `43`
-(`"legacy_api_tokens_enabled":true`); then copy the legacy token. (The other fix, switching to the
+(CODE data-labeling/cli.py: 76-88); `27` rides on our scripted login, so it is an output-only
+`extra · stand-in` strip, not a typed command. Two kinds of token: the page shows a personal access
+token (a JWT) by default, which the legacy client cannot use either (not captured; no panel).
+**The on-screen fix**, its own ▶ with a spoken pause: *Organization → API Tokens Settings →
+enable legacy tokens* (`illustration`) and its server side, `extra · stand-in` → `43`
+(`"legacy_api_tokens_enabled":true`); then the *Account & Settings* wireframe again with two rows,
+lower-case "personal access token" and "legacy token" (`illustration`; the 1.23 labels were not
+captured), the legacy one lit: copy the legacy token, not the personal one. (The other fix, switching to the
 SDK's `LabelStudio` client, is one line here and an exercise.) ▶ again → `44:32-36`: `get_projects`,
 `[<…Project object at 0x…>]`, `1 Cheese labels`; ▶ `python cli.py -t -k <token>` (README:199) →
 `44:37-42`: `Number of tasks: 3` (stand-in — "yours: 21"), `Number of labeled tasks: 1`, the
@@ -433,7 +454,8 @@ the course's older app; same shape. Typo, one line: forget `-k` and argparse say
 required` (`42:67-69`).
 
 **S08 · Both containers in one file, and a clean exit (~230) — `s08_compose.py` ·
-`ComposeAndClean`.** Tracker E1→E2, F1→F4; `lecture_ref(11, "12")`. ▶ `docker stop
+`ComposeAndClean`.** Tracker E1→E2, F1→F4; `lecture_ref(11, "12")`. First `exit` the CLI
+container (typed at S07's last prompt, `42:73-74`; README:218's "stop all containers"). ▶ `docker stop
 data-label-studio` (README:225) → `50`; ▶ `docker ps` (README:229) → `51` (empty). ▶ `sh
 docker-shell-compose.sh` (README:218) → `52`: the harmless `version is obsolete` WARN, then
 **`Conflict. The container name "/data-label-studio" is already in use`** — `docker stop` left the
@@ -457,11 +479,14 @@ two buckets BLUE; the parked question (Length and parts).
 ### Part 2 · Versioning
 
 **S09 · A repo of your own, from the starter (~240) — `s09_repo.py` · `YourOwnRepo`.** Opening
-concept beat (no tracker), then Tracker G1→G5; `lecture_ref(11, "20, 23, 26")`. Back to the hook's
-overflowing folder: slide 20's five reasons as a quick card (track changes, roll back, audit,
-collaborate, **save space** — lit), slide 23's four approaches in one line each, and the one we
-build: *file-based* — fingerprints plus metadata, **git keeps the history** (DVC). ▶ Clean Docker
-(README:57/65/71) → `70`–`72` (fast; the same three commands as S08). ▶ Clone the starter
+concept beat (no tracker), then Tracker G1→G5; `lecture_ref(11, "20, 23, 26")`. Opens on S08's
+parked question ("freeze which photos a model saw"), then why not git alone (every clone would
+carry every photo version), slide 23's four approaches in one line each, and the one we build:
+*file-based* — git versions a small file of fingerprints, a bucket holds the photos (DVC), with a
+2 s silhouette of V6; slide 20's five reasons as a quick card (**save space** lit, paid off in
+S14). ▶ `cd ..` first (S08 ended in `~/data-labeling`; README:136 wants the clone beside
+`secrets/`), then Clean Docker (README:57/65/71) → `70`–`72` (fast; the same three commands as S08).
+A GREY chip gives the pinned README's address (`b240b1a`). ▶ Clone the starter
 (README:81, SSH): command shown, **no output panel** — "this recording machine has no SSH route to
 GitHub; the README's tip says HTTPS works too" → extra `74` (the same branch over HTTPS); extra `75`
 (`23762e49…`, 2025-10-20). The erratum beat, kindly, with today's README on screen
@@ -524,32 +549,45 @@ and bind mounts live in the container's mount namespace; the host sees only the 
 entrypoint's `mkdir -p` made through `/app` (extra `89`: it exists, empty, **owned by root**).
 
 **S12 · Files named by their fingerprint (~320) — `s12_fingerprints.py` · `Fingerprints`.**
-Tracker J1→J3; `lecture_ref(11, "20, 23, 25")`. ▶ `dvc init` (README:269): on a Linux engine →
-`90:45-51`: `ERROR: unexpected error - /app/.git/: repository path '/app' is not owned by current
-user` and a half-made `.dvc/` — git's ownership check (root in the container, `student` on disk;
-ORANGE). The fix, `extra · Linux` → `91` (remove the half-made files), `92` (`git config --global
---add safe.directory /app` — on the *host*: the container reads it through the `~/.gitconfig`
-mount). ▶ again → `93:45-48` (`Initialized DVC repository.`; crop the analytics box to one line —
-opt-out `dvc config core.analytics false`). **Route T, kindly** — if you cloned `main`, this is
-where it stops: `145:46-55`: `ERROR: failed to initiate DVC - '.dvc' exists`; `remote add` →
-`remote 'cheese_dataset' already exists`; and `.dvc/config` still says
-`gs://cheese-app-data-versioning/dvc_store` — the class bucket, where your push would go (S13).
-Fix: the starter route, as here. ▶ `dvc remote add -d cheese_dataset gs://YOUR_BUCKET_NAME/dvc_store`
-(README:279; ours with `your-bucket-placeholder`) → `93:63-69` (`Setting 'cheese_dataset' as a
-default remote.`, the four-line config). ▶ `dvc add cheese_dataset` (README:293) — first on what
-the failed mount left → `93:70-86`: `md5: d751713988987e9331980363e24189ce.dir`, `size: 0`,
-**`nfiles: 0`** — DVC happily versions *nothing* (RED; "this is why you `ls` first"). Then the
-photos, `extra · stand-in` → `94` (Image_1–4 copied in where your bucket's `images/` would appear)
-and ▶ again → `95:45-63`: **`md5: 89db50de27acfd6822faabc3da39b0a8.dir`, `size: 611101`, `nfiles:
-4`**. V5 in full: the hash machine with `09b`'s real md5s, the two-character aisles, the manifest,
-the pointer; extra `95:64-70` — the real cache listing (the GREY `d7/…` leftover too). "Fingerprint"
-is the lecture's word (slide 25); md5 is DVC's. The hook pays off: extra `120`/`121` — the class
-repo's `dataset_v20` pointer and ours are **identical**: same bytes, same hash, on any machine.
-**PONDER 8 (8 s)**: "You rename `Image_2.jpg` to `brie_2.jpg` and run `dvc add` again. Which
-change: the photo's md5, the `.dir` md5, `size`, `nfiles`?" Answer: only the `.dir` md5 — the
-manifest's `relpath` changed; the blob, the size and the count did not (exercise E1 has the full
-check). Misconception, one line: DVC stores whole files, not diffs — change one pixel and the
-photo gets a new md5 and a new blob.
+Tracker J1→J3; `lecture_ref(11, "20, 23, 25")`. Beat order (script v2; concept before command,
+coordinator-approved review P3):
+1. ▶ `dvc init` (README:269): on a Linux engine → `90:45-51`: `ERROR: unexpected error -
+   /app/.git/: repository path '/app' is not owned by current user` and a half-made `.dvc/` — git's
+   ownership check (root in the container, `student` on disk; ORANGE).
+2. The fix, `extra · Linux` → `91` (remove the half-made files), `92` (`git config --global --add
+   safe.directory /app` — on the *host*: the container reads it through the `~/.gitconfig` mount).
+   ▶ start the container again, `dvc init` → `93:45-48` (`Initialized DVC repository.`; crop the
+   analytics box to one line — opt-out `dvc config core.analytics false`).
+3. **Route T, kindly** — if you cloned `main`, this is where it stops: `145:46-55`: `ERROR: failed
+   to initiate DVC - '.dvc' exists`; `remote add` → `remote 'cheese_dataset' already exists`; and
+   `.dvc/config` still says `gs://cheese-app-data-versioning/dvc_store` — the class bucket, where
+   your push would go (S13). Fix: the starter route, as here (chip: rewind to S09, recreate your
+   empty GitHub repo first).
+4. ▶ `dvc remote add -d cheese_dataset gs://YOUR_BUCKET_NAME/dvc_store` (README:279; ours with
+   `your-bucket-placeholder`) → `93:63-69` (`Setting 'cheese_dataset' as a default remote.`, the
+   four-line config).
+5. **V5 as a prediction, before any `dvc add` output**: the hash machine with `09b`'s real md5s,
+   copies filed in `.dvc/cache` on two-character aisles, the manifest hashed to a `????????….dir`
+   box, only that fingerprint written into a blank six-line pointer card that "stands in for the
+   folder in git". "Fingerprint" is the lecture's word (slide 25); md5 is DVC's.
+6. ▶ `dvc add cheese_dataset` (README:293) — first on what the failed mount left → `93:70-86`:
+   `md5: d751713988987e9331980363e24189ce.dir`, `size: 0`, **`nfiles: 0`** — "a second trap": the
+   same machine, fed nothing (RED; the S11 rule card flashes).
+7. The photos, `extra · stand-in` → `94` (Image_1–4 copied into the laptop folder, which the
+   container sees through the repo mount because no bucket is mounted; caption "where your
+   bucket's images/ would appear") and ▶ again → `95:45-63`: **`md5:
+   89db50de27acfd6822faabc3da39b0a8.dir`, `size: 611101`, `nfiles: 4`** — the prediction
+   confirmed (the blank fields fill).
+8. Extra `95:64-70` — the real cache listing (the GREY `d7/…` leftover too).
+9. The hook pays off: "one line pins 600 kB: it fingerprints the list of fingerprints", and extra
+   `120` — the class repo's `dataset_v20` pointer beside ours, the same 32 characters. (The `121`
+   diff needs our own tag and runs in S13.)
+10. **PONDER 8 (8 s)**: "You rename `Image_2.jpg` to `brie_2.jpg` and run `dvc add` again. Which
+    change: the photo's md5, the `.dir` md5, `size`, `nfiles`?" Answer: only the `.dir` md5 — the
+    manifest's `relpath` changed; the blob, the size and the count did not (exercise E1 has the
+    full check). The hook's two folders were the reverse: same names, new bytes. Misconception, one
+    line: DVC stores whole files, not diffs — change one pixel and the photo gets a new md5 and a
+    new blob.
 
 **S13 · A pointer in git, the bytes in a bucket (~300) — `s13_pointer.py` · `PointerAndBytes`.**
 Tracker J4→J5; `lecture_ref(11, "22–23, 25, 33")`. ▶ `dvc push` (README:303) → `95:71-76`: the
@@ -557,8 +595,10 @@ honest failure (`ERROR: unexpected error - b/your-bucket-placeholder/o` — no c
 push uploads, against a local remote, `extra · local remote` → `95:77-81`: **`5 files pushed`** —
 four photos + the manifest ("the same summary line any remote prints"). `dvc_store/` drawn
 (`illustration`) as the cache's mirror: `files/md5/5b/…`, `ba/…`, `91/…`, `89/….dir` — same paths
-(ASSETS: drawn from the live cache layout). GOLD: a second copy of the photos now bills (cents).
-V6: the three homes of the bytes (Conflict 9 resolved), then the rope. ▶ On the host, outside the
+(ASSETS: drawn from the live cache layout). GOLD: a second copy of the photos now bills (still a fraction of a cent a month).
+V6: the three homes of the bytes (Conflict 9 resolved), then the rope. Said once: `images/` can
+change; `dvc_store/` never overwrites, since new bytes get a new name — the answer to S08's parked
+question (its card gets a check mark). ▶ On the host, outside the
 container (README:312) — ▶ `git status` (README:315) → `96`: `dvc init` already **staged** three
 files, `remote add` modified `.dvc/config` again, `cheese_dataset.dvc` untracked (and our
 `Dockerfile` / `docker-shell.sh` edits); ▶ `git add .` (`97`), ▶ commit (`98`: `create mode …
@@ -568,6 +608,9 @@ tag -a dataset_v20 -m …` (`99`), ▶ `git push --atomic origin main dataset_v2
 command shown, success described (branch and tag together or neither; the tag on GitHub's *Tags*
 list), **no panel**. Extras `101` (`(HEAD -> main, tag: dataset_v20)`), `102` (`git show
 dataset_v20:cheese_dataset.dvc` — the six lines the flag pins). The flag plants on V6's bead.
+Then, in the second-terminal strip, extra `121`: `diff` of the class repo's `dataset_v20` pointer
+against ours → `identical` — same bytes, same hash, on any machine (moved here from S12: it needs
+our tag; S01's PINK line lands on it).
 Kindly (erratum 8): README:321's "this tag is taken" is true only if you forked — after `rm -rf
 .git` and `git init` your repo has no tags at all. Slide 25's line one level deeper (Conflict 7):
 git keeps the fingerprint of the *list* of fingerprints. The README's own table (README:256-260):
@@ -587,9 +630,14 @@ from the class's v21 — their fifth photo was a Gruyère web image not in the z
 no panel. Extra `110`: the diff — md5, `size` 611101 → 712574, `nfiles` 4 → 5; extras `111`
 (two flags on two beads), `112` (`git tag -n`). RED, kindly: the old starter README (line 148)
 tells you to add the remote again here — extra `113`: `error: remote origin already exists.`
-(README:372's note says don't). Time travel without the cloud, extras `114`–`117`: `git checkout
-dataset_v20 -- cheese_dataset.dvc`, then `dvc checkout` inside the container → four photos; back to
-`main` → five — straight from your local cache.
+(README:372's note says don't). Time travel without the cloud, extras `114`–`117`, tagged
+`extra · stand-in` (the folder is our unmounted stand-in): `git checkout dataset_v20 --
+cheese_dataset.dvc`, then `dvc checkout` inside the container → four photos; back to `main` → five
+— from the local cache. **Honest warning, said:** with a real mount `cheese_dataset/` *is* the
+bucket's `images/`, so `dvc checkout` deletes and rewrites photos there (v20 removes
+`Image_5.jpg`, `main` writes it back); a GREY chip says so. Pauses: K1 (upload), K2 (restart, `ls`,
+`dvc add`) and K3 (`dvc push`) each have their own ▶ and spoken pause; the ponder answer and the
+push land in separate blocks.
 
 **S15 · Time travel from anywhere (~250) — `s15_colab.py` · `TimeTravel`.** Tracker J6, K5;
 `lecture_ref(11, "22, 26")`. Slide 22's term, "time travel", and its condition: an old version can
@@ -604,9 +652,15 @@ manifest** (`…/dvc_store/files/md5/32/80f8f9….dir`) — DVC fetches the mani
 rope's order; extra `122` — anonymous listing of the class bucket is refused. What success looks
 like — `recorded`, the notebook's stored outputs (`source/colab/notebook-1RRQ1SlH.cells.txt`, cells
 13/15/17, the instructor's run of the **class** repo): five `cheese_dataset/…` files, a five-file
-download, `Number of items: 5`. For *your* repo: replace the URL and the tag; your v20 gives four
-(narration only — follows from `95`). Your repo is private (README:108): Colab's anonymous clone
-needs a read-only token URL or a public repo (gotcha 13a, one line). **PONDER 10 (6 s)**: "Cell 19
+download, `Number of items: 5` — said as "the instructor's signed-in run" (cell 13 lists the class
+repo's `main`, the same five files as its v21); a viewer's own account probably cannot access the
+class bucket. For *your* repo: replace the URL and the tag (the edited cell 15 shown with
+`YOUR_GITHUB_USERNAME` and `--rev dataset_v20`); your v20 gives four (narration only — follows from
+`95`). Your repo is private (README:108): Colab's anonymous clone needs a read-only token URL (a
+`<read-only token>` placeholder chip) or a public repo (gotcha 13a, one line). **The notebook's ▶
+comes after these instructions**, at the end of the `recorded` block, not on the first notebook
+frame. A GREY chip: today's README links a newer copy (`18KYngbv`, same cells, a TA's repo).
+**PONDER 10 (6 s)**: "Cell 19
 — `dvc get … --quiet --rev dataset_v25` — prints nothing. Did it work?" → `C19` (nothing, exit 1),
 `C20` (`FileNotFoundError: … 'cheese_dataset'` — one cell later), `C19b` without `--quiet`:
 **`unknown Git revision 'dataset_v25'`**; extra `118`: the class repo has only `dataset_v20`,
@@ -614,8 +668,11 @@ needs a read-only token URL or a public repo (gotcha 13a, one line). **PONDER 10
 2024 run; and `--quiet` hides errors too.
 
 **S16 · Monitoring, teardown and recap (~230) — `s16_recap.py` · `Recap`.** Tracker L1→L3;
-`lecture_ref(11, "25, 35–36, 38–40")`. Slide 36 redrawn as a **quick predict (4 s)**: three
-questions, three tools — "which images trained this model?" (DVC, uses git), "can I test new images
+`lecture_ref(11, "25, 35–36, 38–40")`. Beat order (script v2): quick predict → monitoring → recap
+on V7 → Test yourself → README cleanup + teardown checklist → footer / Next (the checklist confirms
+recap Q5 instead of answering it in advance). The recap closes the hook: "Monday's photos come back
+with one `dvc get`; their labels join in exercise E7". Slide 36 redrawn as a **quick predict (4 s)**,
+tools spoken in shuffled order so the answer is not given away: three questions, three tools — "which images trained this model?" (DVC, uses git), "can I test new images
 before everyone uses them?" (lakeFS, its own history), "what did this table hold before the
 change?" (Delta Lake / Iceberg, table versions); slide 35's "no single standard". One line for the
 project: Milestone 2 accepts a light tool like this one. **Monitoring — slides only**, GREY dashed,
@@ -659,8 +716,8 @@ Each is answerable from the picture or capture shown just before it.
 | q | S03 (4 s) | "The zip held 42 files.\nHow many tasks should\nLabel Studio make?" | 21 — the other 21 are `__MACOSX` resource forks; don't upload them (`09`, gotcha 22) |
 | 2 | S04 (6 s) | "It said Up.\nNow it says Exited (1).\nWhere do you look first?" | `docker logs data-label-studio` — Label Studio explains itself: data dir not writable, uid 1001 vs root (`13`) |
 | 3 | S05 (8 s) | "Label Studio holds the key;\nyour browser never sees it.\nHow can it show a private photo?" | A pre-signed URL: one object, short-lived, signed with the key; the browser carries the ticket, not the key (digest §3.2) |
-| 4 | S06 (8 s) | "You ran `cli.py -c` and refreshed:\nstill broken thumbnails.\nTwo suspects?" | The rule went to another bucket (line 23 not edited — check `-m`), or cached responses without the header (hard refresh); `curl` never cared (digest gotcha 10) |
-| 5 | S07 (6 s) | "Inside the CLI container,\nwhat if `LABEL_STUDIO_URL` were\n`http://localhost:8080`?" | Connection refused — localhost is the CLI container itself; the name works on the shared network (`41:106-111`, live) |
+| 4 | S06 (8 s) | "You ran `cli.py -c` and refreshed:\nstill broken thumbnails.\nTwo suspects?" | The rule missed your bucket: `-c` failed (an untouched README name is not your bucket, so `get_bucket` fails outright, `cli.py:25`), or line 23 names another bucket of yours — check `-m`; or cached responses without the header (hard refresh); `curl` never cared (digest gotcha 10) |
+| 5 | S07 (6 s) | "Inside the CLI container,\nwhat if `LABEL_STUDIO_URL` were\n`http://localhost:8080`?" | It cannot connect (`curl: (7) … Couldn't connect to server`) — localhost is the CLI container itself; the name works on the shared network (`41:106-111`, live) |
 | 6 | S08 (6 s) | "After `docker system prune`,\nis your labeled project gone?" | No — `label_studio.sqlite3` lives in the bind-mounted `docker-volumes/label-studio` (`64`); prune removed the container and the network (`62`) |
 | 7 | S11 (8 s) | "Inside, `ls cheese_dataset` lists\nfour photos; on your laptop it's empty.\nIs the mount broken?" | No — the FUSE and bind mounts exist only in the container's mount namespace; the host sees the empty folder `mkdir -p` made (`89`, digest §3.7) |
 | 8 | S12 (8 s) | "Rename `Image_2.jpg` → `brie_2.jpg`,\n`dvc add` again. Which change: the photo's\nmd5, the `.dir` md5, size, nfiles?" | Only the `.dir` md5 (the manifest's relpath); blob, size and count unchanged (digest §3.5, E1) |
@@ -670,8 +727,9 @@ Each is answerable from the picture or capture shown just before it.
 
 ## Recap questions (S16 "Test yourself"; answers in exercises.md)
 
-1. Why does the *bucket* need a CORS rule when it is your *browser* that complains — and why does
-   `curl` never notice?
+1. Who fetches the photos, and why does that make the *bucket* need a CORS rule — and why does
+   `curl` never notice? (Spoken: "who fetches the photos, and why does the bucket need its CORS
+   rule?"; it also tests the signed-URL outcome.)
 2. `cli.py` reaches Label Studio at `data-label-studio:8080`, you at `localhost:8080`. Why can't
    they swap?
 3. What exactly is inside `cheese_dataset.dvc`, and which field changes if you rename one photo?
@@ -746,16 +804,21 @@ Label Studio, the CLI containers and DVC run locally, free.
 
 Teardown, captured: `docker stop` / `docker rm` / compose (`50`–`53`), `docker system prune` (`62`:
 container **and** network; `151`), image list (`63`, `152`). The checklist card (S16):
-- stop and remove `data-label-studio` (`--rm` cleans the others); the network goes with prune;
-- optional: `python cli.py -r` removes the bucket's CORS rule (`cli.py:35-38`; suggested);
+- containers and the labeling network: already gone (S08's stop + prune; `--rm` cleans the others);
+- keeping bucket 1? remove its CORS rule with `python cli.py -r` (`cli.py:35-38`), spelled runnable
+  after the prune: in `data-labeling`, `sh docker-shell.sh`, then `sh docker-shell-CLI.sh`,
+  `python cli.py -r`, `exit` (the CLI script joins the network but does not create it); deleting
+  the bucket removes its rule too — said once;
 - delete `docker-volumes/label-studio` only if you no longer need the project (it survives prune —
-  `64`);
+  `64`; `sudo` on Linux, owned by 1001);
 - buckets bill until deleted: `cheeses_unlabeled/`, `cheeses_labeled/`, `images/` when you're done
   — but **never `dvc_store/` while any tag should still work** (a tag is a pointer; the warehouse is
   the coat room — recap Q5);
 - `.dvc/cache` can be deleted safely once pushed (`dvc pull` restores it);
-- delete the service-account key when the course no longer needs it (IAM → Service accounts →
-  Keys; suggested, as in L10).
+- delete the service-account key **and** its JSON in `secrets/` when the course is done (IAM →
+  Service accounts → Keys; card and narration say the same);
+- optional GREY line: `docker image rm data-label-cli data-version-cli
+  heartexlabs/label-studio:latest` frees about 6 GB (prune keeps images).
 
 ## README commands checklist (for the follow-along review)
 
