@@ -106,7 +106,12 @@ def legacy_preflight(episode: Path) -> dict:
     any of them typesets with LaTeX (the runners skip the TeX packages otherwise)."""
     require_signoff(episode)
     spec = legacy_spec(episode)
-    tex = re.compile(r"\b(MathTex|Tex|SingleStringMathTex)\(|\bS\.(math|tex)\(")
+    # Manim typesets these with LaTeX too: every number mobject (DecimalNumber, Integer, Variable, and
+    # the numbers of NumberLine/Axes), lists, titles, matrices, tables and brace labels. L05's and L06's
+    # counters are DecimalNumbers; their release runners skipped TeX and failed on 'latex'.
+    tex = re.compile(r"\b(MathTex|Tex|SingleStringMathTex|DecimalNumber|Integer|Variable|BulletedList|Title"
+                     r"|Matrix|IntegerMatrix|DecimalMatrix|MobjectMatrix|MathTable|IntegerTable|DecimalTable"
+                     r"|BraceLabel|BraceText)\(|\bS\.(math|tex)\(|\.(get_tex|add_coordinates)\(|include_numbers\s*=\s*True")
     latex = any(tex.search(p.read_text()) for p in (episode / "scenes").glob("*.py"))
     return {"scenes": [Path(s["file"]).stem for s in spec["scenes"]], "latex": latex}
 

@@ -4,18 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Explainer Studio · 新视频</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23171717'/%3E%3Cpath d='M10.6 3 5.4 13' stroke='%23DA2D24' stroke-width='2.4'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header>
+<header><div class="bar-in">
   <span class="brand">CONNY<span class="dot">/</span>EXPLAINER STUDIO</span>
   <nav>
-    <a href="./">看板</a>
-    <a class="active" href="new.html">新视频</a>
+    <a href="./">制作进度</a>
     <a href="library.html">视频库</a>
+    <a class="active" href="new.html">新视频</a>
     <a href="https://github.com/JunyiZhou-Conny/Explainer_Videos" target="_blank" rel="noopener">GitHub ↗</a>
   </nav>
-</header>
+</div></header>
 <main>
   <h1>开一集新视频</h1>
   <p class="sub">填好 → 生成 issue（唯一真相源）→ 代理接单。规格留空就用存档默认。</p>
@@ -114,7 +115,7 @@ function openIssue(){
 function showPrompt(){
   const box = document.getElementById('promptBox');
   document.getElementById('promptText').textContent =
-`Read docs/BOOTSTRAP.md in ${REPO} and follow its reading order. Then claim issue #N with a comment (model + surface + branch), and produce the episode on branch episode/<slug>, touching only videos/<slug>/. At every stage boundary (brief, script, sample, scenes, full-cut) push the branch and post a CHECKPOINT <stage> comment with DONE / NEXT / WARN on the issue. Post a 20-30s narrated sample on the draft PR and stop for my review before the full render.`;
+`Read docs/BOOTSTRAP.md in ${REPO} and follow its reading order. Then claim issue #N with a comment (model + surface + branch), and produce the episode on branch episode/<slug>, touching only videos/<slug>/. At every stage boundary (brief, script, sample, scenes, full-cut) push the branch and post a CHECKPOINT <stage> comment with DONE / NEXT / WARN on the issue. Keep one stage label (▶ …) current on the issue, post a 20-30s narrated sample on the draft PR for the record and continue — I rely on QA passes and review bots rather than reviewing myself — and put any question for me on the issue with blocked:question.`;
   box.style.display = 'block';
   box.scrollIntoView({behavior: 'smooth'});
 }

@@ -23,7 +23,8 @@
       "sha256": "ae45b33cb6f09be2e6970550fb4c36c15bf10b68e463f4688c5a78d782ba92f8",
       "duration_seconds": 1453.575,
       "variant": "English narration / clean",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "title": "Differential privacy: calibrating noise"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -37,7 +38,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / bilingual captions",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Differential privacy: calibrating noise"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -51,7 +53,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean / part 1",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Differential privacy: calibrating noise"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -65,7 +68,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / bilingual captions / part 1",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Differential privacy: calibrating noise"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -79,7 +83,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean / part 2",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Differential privacy: calibrating noise"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -93,7 +98,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / bilingual captions / part 2",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Differential privacy: calibrating noise"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -107,7 +113,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Mandarin narration",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Differential privacy: calibrating noise"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -121,7 +128,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Mandarin narration / part 1",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Differential privacy: calibrating noise"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -135,7 +143,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Mandarin narration / part 2",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Differential privacy: calibrating noise"
     },
     {
       "episode": "how-these-videos-are-made",
@@ -151,7 +160,8 @@
       "sha256": "95d63142764c7b4b7a1f001ad650e857f46449077a3deceb1a19538edf8533d1",
       "duration_seconds": 819.888,
       "variant": "English narration / clean",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "title": "How these videos are made"
     },
     {
       "episode": "how-these-videos-are-made",
@@ -165,7 +175,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / bilingual captions",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "How these videos are made"
     },
     {
       "episode": "tictactoe-255168-short",
@@ -179,7 +190,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Short / English-first captions",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Tic-Tac-Toe short adaptation"
     },
     {
       "episode": "tictactoe-255168-short",
@@ -193,7 +205,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Short / Chinese-first captions",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Tic-Tac-Toe short adaptation"
     },
     {
       "episode": "tictactoe-255168",
@@ -207,7 +220,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Why 255,168 Tic-Tac-Toe games?"
     },
     {
       "episode": "tictactoe-255168",
@@ -223,7 +237,8 @@
       "sha256": "72f3938e4d63c01de5f45a43423bd249d7cf3e2d3d0de436c90882a2e0a6ecc1",
       "duration_seconds": 756.6,
       "variant": "English narration / bilingual captions",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "title": "Why 255,168 Tic-Tac-Toe games?"
     },
     {
       "episode": "tictactoe-255168",
@@ -237,7 +252,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Mandarin narration",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "Why 255,168 Tic-Tac-Toe games?"
     },
     {
       "episode": "careonex-e0-commands",
@@ -251,7 +267,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "CareOneX E0: startup commands"
     },
     {
       "episode": "careonex-e0-commands",
@@ -267,7 +284,8 @@
       "sha256": "42c83c3fe414c1555da2a992368d102b3658443118369b1c1931acb5400c013c",
       "duration_seconds": 446.876,
       "variant": "English narration / bilingual captions",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "title": "CareOneX E0: startup commands"
     },
     {
       "episode": "careonex-e2-library",
@@ -281,7 +299,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "CareOneX E2: building the library"
     },
     {
       "episode": "careonex-e2-library",
@@ -297,7 +316,8 @@
       "sha256": "b8d0960e0a611c50b5db1566c7b41e919c40438df0299fa03cb47ae551e8394b",
       "duration_seconds": 527.827,
       "variant": "English narration / bilingual captions",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "title": "CareOneX E2: building the library"
     },
     {
       "episode": "careonex-e6-measuring-search",
@@ -311,7 +331,8 @@
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean",
       "human_review": "not-established-by-this-publication",
-      "release_tag": "media-2026-10-13"
+      "release_tag": "media-2026-10-13",
+      "title": "CareOneX E6: measuring search"
     },
     {
       "episode": "careonex-e6-measuring-search",
@@ -327,7 +348,8 @@
       "sha256": "ad3b60a8c7f4b2239c8e201061422b32539a6df222fed488d5eb4bbb1d6f3645",
       "duration_seconds": 463.826,
       "variant": "English narration / bilingual captions",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "title": "CareOneX E6: measuring search"
     },
     {
       "episode": "skills-ecosystem",
@@ -342,7 +364,8 @@
       "availability": "incubator-release",
       "duration_seconds": 300.019667,
       "technical_review": "full-decode-and-original-sampled-visual-checks-passed",
-      "human_review": "listening-and-full-playback-not-established"
+      "human_review": "listening-and-full-playback-not-established",
+      "title": "One Skill Library, Three Coding Agents"
     },
     {
       "episode": "ac215-l01-vms-venvs",
@@ -592,6 +615,66 @@
       "availability": "release-asset",
       "release_tag": "episode/ac215-l04-flexible-workflow-ports-v1",
       "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l04-flexible-workflow-ports-v1/ac215-l04-flexible-workflow-ports_part2.mp4",
+      "technical_review": "measured-at-release (duration, loudness, cues, committed-subtitle match)",
+      "human_review": "series-listening-waiver-recorded-in-REVIEW.md"
+    },
+    {
+      "episode": "ac215-l05-rag",
+      "title": "AC215 L5: Introduction to RAG",
+      "variant": "English narration / clean",
+      "source_commit": "e35727da3f2491f3b43f33c13f4dc73804bc267a",
+      "path": "videos/ac215-l05-rag/output/ac215-l05-rag.mp4",
+      "bytes": 107813717,
+      "sha256": "9e8059cca2e0a2420abe1d82d5d49dcb91d2ef417dc4f0429d7a48538f6e5c00",
+      "duration_seconds": 1867.205,
+      "availability": "release-asset",
+      "release_tag": "episode/ac215-l05-rag-v1",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l05-rag-v1/ac215-l05-rag.mp4",
+      "technical_review": "measured-at-release (duration, loudness, cues, committed-subtitle match)",
+      "human_review": "series-listening-waiver-recorded-in-REVIEW.md"
+    },
+    {
+      "episode": "ac215-l05-rag",
+      "title": "AC215 L5: Introduction to RAG",
+      "variant": "English narration / bilingual captions (burned)",
+      "source_commit": "e35727da3f2491f3b43f33c13f4dc73804bc267a",
+      "path": "videos/ac215-l05-rag/output/ac215-l05-rag.zh-en.mp4",
+      "bytes": 106703750,
+      "sha256": "7e48de868d8619e6e009d066b329c8273ab6f1d031a6ac567423148d110dc019",
+      "duration_seconds": 1867.205,
+      "availability": "release-asset",
+      "release_tag": "episode/ac215-l05-rag-v1",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l05-rag-v1/ac215-l05-rag.zh-en.mp4",
+      "technical_review": "measured-at-release (duration, loudness, cues, committed-subtitle match)",
+      "human_review": "series-listening-waiver-recorded-in-REVIEW.md"
+    },
+    {
+      "episode": "ac215-l05-rag",
+      "title": "AC215 L5: Introduction to RAG",
+      "variant": "English narration / clean / part 1",
+      "source_commit": "e35727da3f2491f3b43f33c13f4dc73804bc267a",
+      "path": "videos/ac215-l05-rag/output/ac215-l05-rag_part1.mp4",
+      "bytes": 62137976,
+      "sha256": "1e94fb9acb823c76a61b3896a3e7bff0e2039b498049ff3e802396ca46d5da5e",
+      "duration_seconds": 1089.993,
+      "availability": "release-asset",
+      "release_tag": "episode/ac215-l05-rag-v1",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l05-rag-v1/ac215-l05-rag_part1.mp4",
+      "technical_review": "measured-at-release (duration, loudness, cues, committed-subtitle match)",
+      "human_review": "series-listening-waiver-recorded-in-REVIEW.md"
+    },
+    {
+      "episode": "ac215-l05-rag",
+      "title": "AC215 L5: Introduction to RAG",
+      "variant": "English narration / clean / part 2",
+      "source_commit": "e35727da3f2491f3b43f33c13f4dc73804bc267a",
+      "path": "videos/ac215-l05-rag/output/ac215-l05-rag_part2.mp4",
+      "bytes": 45679736,
+      "sha256": "02d2df8b91d02845a7aa3154f391e29100cc56b3cf7c0ce6e9f0ec190f4cea8a",
+      "duration_seconds": 777.327,
+      "availability": "release-asset",
+      "release_tag": "episode/ac215-l05-rag-v1",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l05-rag-v1/ac215-l05-rag_part2.mp4",
       "technical_review": "measured-at-release (duration, loudness, cues, committed-subtitle match)",
       "human_review": "series-listening-waiver-recorded-in-REVIEW.md"
     }

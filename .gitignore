@@ -39,3 +39,6 @@ videos/*-short/output/*.music.wav
 # from the media release indexed in catalog/videos.json.
 videos/*/output/*.mp4
 videos/*/output/**/*.mp4
+
+# Studio site data, built at deploy by tools/studio_status.py
+site/data/

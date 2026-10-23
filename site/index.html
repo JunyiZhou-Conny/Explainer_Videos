@@ -3,148 +3,220 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Explainer Studio · 看板</title>
+<title>Explainer Studio · 制作进度</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23171717'/%3E%3Cpath d='M10.6 3 5.4 13' stroke='%23DA2D24' stroke-width='2.4'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header>
+<header><div class="bar-in">
   <span class="brand">CONNY<span class="dot">/</span>EXPLAINER STUDIO</span>
   <nav>
-    <a class="active" href="./">看板</a>
-    <a href="new.html">新视频</a>
+    <a class="active" href="./">制作进度</a>
     <a href="library.html">视频库</a>
+    <a href="new.html">新视频</a>
     <a href="https://github.com/JunyiZhou-Conny/Explainer_Videos" target="_blank" rel="noopener">GitHub ↗</a>
   </nav>
-</header>
+</div></header>
 <main>
-  <h1>剧集看板</h1>
-  <p class="sub">实时读取 GitHub issues 的 <code>state:</code> 标签 —— 这里只是镜子，真相永远在 issue 里。</p>
-  <div id="board" class="lanes"><p>加载中…</p></div>
-  <div id="prs" style="margin-top:34px;max-width:680px"></div>
+  <div class="page-head">
+    <div>
+      <h1>制作进度</h1>
+      <p class="sub">每一集走到哪一步、大约完成多少，以及哪些事在等你。</p>
+    </div>
+    <div id="fresh" class="fresh"></div>
+  </div>
+  <div id="app"><p class="empty">加载中…</p></div>
 </main>
+<script src="app.js"></script>
 <script>
-const REPO = 'JunyiZhou-Conny/Explainer_Videos';
-const LANES = [
-  ['state:scripting', '制作中'],
-  ['state:sample-review', '等你审样片', true],
-  ['state:full-review', '等你听全片', true],
-  ['blocked:question', '等你答复', true],
-  ['state:publishing', '发布中'],
-  ['state:published', '已上 B 站'],
-];
-// fetch with retries: raw.githubusercontent / api.github.com drop connections now and then.
-async function fetchJSON(url, tries = 3){
-  for(let i = 1; ; i++){
-    try{
-      const r = await fetch(url);
-      if(r.status === 403 || r.status === 429){
-        // Rate limiting: retrying only burns more of the quota, so fail at once.
-        const e = new Error(`GitHub API ${r.status}（未登录限每小时 60 次）`);
-        e.noRetry = true;
-        throw e;
-      }
-      if(!r.ok) throw new Error(`HTTP ${r.status}`);
-      return await r.json();
-    }catch(e){
-      if(e.noRetry || i >= tries) throw e;
-      await new Promise(res => setTimeout(res, 800 * i));
-    }
+const DAY = 864e5;
+let S = null, L = null;
+
+const stageOf = key => S.stages.find(s => s.key === key) || S.stages[0];
+const shortBranch = b => (b || '').replace(/^(claude|episode)\//, '').replace(/-[a-z0-9]{6}$/, '');
+const WAITING = ['queued', 'unclaimed', 'paused'];
+const stale = e => (e.state === 'active' || e.state === 'queued')
+  && Date.now() - Date.parse(e.branch_activity_at) > DAY;
+
+function bar(e){
+  const at = S.stages.findIndex(s => s.key === e.stage);
+  const frac = e.progress ? e.progress.done / e.progress.total : 0;
+  const segs = S.stages.map((s, k) => {
+    let cls = 'seg' + (s.who !== 'agent' ? ' you' : '');
+    if(e.state === 'published' || k < at) cls += ' done';
+    else if(k === at && e.state !== 'queued' && e.state !== 'unclaimed') cls += ' now';
+    return `<i class="${cls}" style="--w:${s.weight};--f:${k === at ? frac : 0}" title="${esc(s.label)}"></i>`;
+  }).join('');
+  return `<div class="bar" role="img" aria-label="当前阶段：${esc(stageOf(e.stage).label)}，约 ${e.percent}%">${segs}</div>`;
+}
+
+function statusText(e){
+  const st = stageOf(e.stage);
+  const part = e.progress ? ` ${e.progress.done}/${e.progress.total}` : '';
+  switch(e.state){
+    case 'active': return `<b>${esc(st.label)}中${part}</b> · 本阶段 ${span(e.stage_since)}`;
+    case 'question': return `<b>等你答复</b> · 卡在「${esc(st.label)}」`;
+    case 'queued': return `<b>排队中</b> · 同一会话先做前面的集`;
+    case 'unclaimed': return `<b>待认领</b> · 还没有会话接手这一集`;
+    case 'paused': return S.stages.findIndex(s => s.key === e.stage) >= S.stages.findIndex(s => s.key === 'ready')
+      ? '<b>暂停</b> · 成片已完成' : `<b>暂停</b> · 停在「${esc(st.label)}」`;
+    case 'ready': return `<b>成片完成</b> · 等你合并`;
+    case 'publishing': return `<b>已打包发布</b> · 等你上传 B 站`;
+    default: return `<b>已上 B 站</b>`;
   }
 }
-function scheduleRetry(el, msg, fn, secs = 10){
-  el.innerHTML = `<p class="error">${msg}；${secs} 秒后自动重试。 <button class="ghost" onclick="load()">立即重试</button></p>`;
-  clearTimeout(window.__retryTimer);
-  window.__retryTimer = setTimeout(fn, secs * 1000);
+
+function card(e){
+  const badges = [];
+  if(e.state === 'question') badges.push('<span class="badge you">等你答复</span>');
+  else if(e.state === 'paused') badges.push('<span class="badge">⏸ 暂停</span>');
+  else if(e.state === 'queued') badges.push('<span class="badge">排队</span>');
+  else if(e.state === 'unclaimed') badges.push('<span class="badge">待认领</span>');
+  else badges.push('<span class="badge active">制作中</span>');
+  if(stale(e)) badges.push('<span class="badge warn" title="这个会话的分支一天多没有推送、检查点或标签变化：可能撞了用量限制、在聊天里等你回复，或被你暂停了。打开那个会话看一眼。">一天多没动静</span>');
+  const who = e.claim ? `${esc(e.claim.model)}${e.claim.branch ? ` · <span title="${esc(e.claim.branch)}">${esc(shortBranch(e.claim.branch))}</span>` : ''}` : '未认领';
+  const pct = e.state === 'queued' || e.state === 'unclaimed' ? '' : `<span class="pct">${e.percent}%</span>`;
+  return `<a class="ep ${e.state}${WAITING.includes(e.state) ? ' dim' : ''}" href="${esc(e.url)}" target="_blank" rel="noopener">
+    <div class="ep-top"><span class="ep-code">${esc(e.code || '#' + e.number)}</span><span>${badges.join(' ')}</span></div>
+    <div class="ep-title">${esc(e.title)}</div>
+    ${bar(e)}
+    <div class="ep-status"><span>${statusText(e)}</span>${pct}</div>
+    <div class="ep-meta"><span class="who">${who}</span><span>${ago(e.branch_activity_at || e.activity_at)}有动静</span></div>
+  </a>`;
 }
-const STALE_MS = 24 * 3600 * 1000;
-function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML;}
-function ago(t){
-  const m = Math.round((Date.now() - t) / 60000);
-  if(m < 60) return `${Math.max(m, 1)} 分钟前`;
-  if(m < 1440) return `${Math.round(m / 60)} 小时前`;
-  return `${Math.round(m / 1440)} 天前`;
+
+function todoItem(e){
+  const code = esc(e.code || '#' + e.number);
+  if(e.state === 'publishing') return `<div class="todo-item">
+      <span class="code">${code}</span>
+      <div class="what"><b>${esc(e.title)}</b><span>发布包已在 release 上，等你在 Mac 上跑一次上传（每跑一次传一集）。</span></div>
+      <div class="act"><a class="btn ghost small" href="${esc(e.url)}" target="_blank" rel="noopener">issue #${e.number}</a></div>
+      <div class="cmd"><code>${esc(S.worker_command)}</code><button type="button" data-copy="${esc(S.worker_command)}">复制</button></div>
+    </div>`;
+  if(e.state === 'ready'){
+    const link = e.pr ? `<a class="btn primary small" href="${esc(e.pr.url)}" target="_blank" rel="noopener">打开 PR #${e.pr.number} →</a>`
+                      : `<a class="btn primary small" href="${esc(e.url)}" target="_blank" rel="noopener">打开 issue →</a>`;
+    return `<div class="todo-item">
+      <span class="code">${code}</span>
+      <div class="what"><b>${esc(e.title)}</b><span>成片和审查记录都齐了，合并后自动渲染发布。${e.pr?.draft ? '草稿 PR 先点 Ready for review 再 Merge，' : ''}也可以直接让 Claude 替你合并。</span></div>
+      <div class="act">${link}</div>
+    </div>`;
+  }
+  return `<div class="todo-item">
+      <span class="code">${code}</span>
+      <div class="what"><b>${esc(e.title)}</b><span>代理在 issue 里问了你一个问题，答复后它才能继续。</span></div>
+      <div class="act"><a class="btn primary small" href="${esc(e.url)}" target="_blank" rel="noopener">去回答 →</a></div>
+    </div>`;
 }
-function firstLine(body){
-  // ">" is kept on purpose: a quote-reply to a protocol comment must not count as a new event.
-  return (body || '').split('\n').map(s => s.replace(/^[\s#*_`]+/, '').trim()).find(Boolean) || '';
+
+const CELL = {published: 'published', ready: 'you', publishing: 'you', question: 'you', active: 'active',
+              queued: 'queued', unclaimed: 'none', paused: 'paused', skip: 'skip', none: 'none'};
+const CELL_TEXT = {published: '已上线', ready: '等你合并', publishing: '等你上传', question: '等你答复',
+                   active: '制作中', queued: '排队', unclaimed: '未开始 · 已开 issue，等会话认领', paused: '暂停',
+                   skip: '跳过', none: '未开始'};
+
+function seriesMap(s){
+  const c = s.counts, n = k => c[k] || 0;
+  const you = n('ready') + n('publishing') + n('question');
+  const cells = s.cells.map(x => {
+    const tip = x.state === 'skip' ? `${x.code} · ${x.note}`
+      : x.state === 'none' ? `${x.code} · 未开始`
+      : `${x.code} · ${x.title} — ${CELL_TEXT[x.state]}${x.state === 'active' ? ` · ${stageOf(x.stage).label} · 约 ${x.percent}%` : ''}`;
+    const href = x.bilibili?.url || x.url;
+    const tag = href ? `a href="${esc(href)}" target="_blank" rel="noopener"` : 'div';
+    return `<${tag} class="cell ${CELL[x.state]}" style="--p:${x.state === 'active' ? x.percent : 0}" title="${esc(tip)}"><span>${x.n}</span></${tag.split(' ')[0]}>`;
+  }).join('');
+  return `<div class="map">
+    <div class="map-head"><b>${esc(s.name)}</b>
+      <span class="fresh num">已上线 ${n('published')} · 等你 ${you} · 制作中 ${n('active')} · 排队 ${n('queued')} · 暂停 ${n('paused')} · 未开始 ${n('none') + n('unclaimed')}（共 ${s.planned} 讲）</span></div>
+    <div class="cells" style="--n:${s.planned}">${cells}</div>
+    <div class="legend">
+      <span><i class="published"></i>已上 B 站</span><span><i class="you"></i>等你处理</span>
+      <span><i class="active"></i>制作中（底部填充=进度）</span><span><i class="queued"></i>排队</span>
+      <span><i class="paused"></i>暂停</span><span><i></i>未开始</span><span><i class="skip"></i>跳过</span>
+    </div>
+  </div>`;
 }
-// Reads the AGENTS.md handoff protocol out of issue comments: claims, CHECKPOINT and HANDOFF.
-async function loadProtocol(){
-  const status = new Map();
-  try{
-    const comments = await fetchJSON(`https://api.github.com/repos/${REPO}/issues/comments?sort=created&direction=desc&per_page=100`);
-    for(const c of comments){
-      const n = Number(c.issue_url.split('/').pop());
-      const s = status.get(n) || {};
-      const line = firstLine(c.body);
-      const at = Date.parse(c.created_at);
-      const claim = line.match(/^Claiming\.?\s*Model:\s*([^,]+)/i);
-      const mark = line.match(/^(CHECKPOINT|HANDOFF)\b\s*([\w-]*)/i);
-      if(claim && !s.claim) s.claim = {model: claim[1].trim(), at};
-      if(mark && !s.mark) s.mark = {kind: mark[1].toUpperCase(), stage: mark[2], at};
-      status.set(n, s);
-    }
-  }catch(e){ /* the board still renders without protocol details */ }
-  return status;
+
+function section(id, title, aside, body, attention){
+  return `<section class="section" id="${id}">
+    <div class="section-h${attention ? ' attention' : ''}"><h2>${title}</h2><span class="aside">${aside || ''}</span></div>
+    ${body}</section>`;
 }
-function protocolHtml(s, open){
-  if(!s || (!s.claim && !s.mark)) return '';
-  const parts = [];
-  const released = s.mark && s.mark.kind === 'HANDOFF' && (!s.claim || s.mark.at >= s.claim.at);
-  if(released) parts.push('已交接，待认领');
-  else if(s.claim) parts.push(`认领：${esc(s.claim.model)}`);
-  if(s.mark && s.mark.kind === 'CHECKPOINT') parts.push(`检查点 ${esc(s.mark.stage || '')} · ${ago(s.mark.at)}`);
-  const last = Math.max(s.claim?.at || 0, s.mark?.at || 0);
-  const stale = open && !released && Date.now() - last > STALE_MS;
-  return `<div class="meta">${parts.join(' · ')}</div>` + (stale ? '<span class="chip q">可能停滞</span>' : '');
+
+function grouped(list, cls){
+  const bySeries = new Map();
+  for(const e of list){ if(!bySeries.has(e.series)) bySeries.set(e.series, []); bySeries.get(e.series).push(e); }
+  const names = Object.fromEntries((L?.series || []).map(s => [s.id, s.name]));
+  for(const s of S.series) names[s.id] = s.name;
+  const many = bySeries.size > 1;
+  return [...bySeries].map(([id, eps]) =>
+    (many ? `<div class="subhead">${esc(names[id] || '单集')}</div>` : '') +
+    `<div class="grid${cls ? ' ' + cls : ''}">${eps.map(card).join('')}</div>`).join('');
 }
+
+function render(){
+  const eps = S.episodes;
+  const doing = eps.filter(e => e.state === 'active' || e.state === 'question');
+  const waiting = eps.filter(e => WAITING.includes(e.state));
+  const todo = eps.filter(e => ['question', 'ready', 'publishing'].includes(e.state))
+    .sort((a, b) => ['question', 'ready', 'publishing'].indexOf(a.state) - ['question', 'ready', 'publishing'].indexOf(b.state));
+  const live = (L?.series || []).flatMap(s => s.episodes.filter(v => v.bilibili).map(v => ({...v, short: s.short})))
+    .sort((a, b) => (b.bilibili.pubdate || 0) - (a.bilibili.pubdate || 0));
+  const count = st => eps.filter(e => e.state === st).length;
+
+  const stats = `<div class="stats">
+    <a class="stat" href="#doing"><b>${doing.length}</b><span>制作中</span></a>
+    <a class="stat" href="#wait"><b>${count('queued')}</b><span>排队</span></a>
+    <a class="stat" href="#wait"><b>${count('paused')}</b><span>暂停</span></a>
+    <a class="stat${todo.length ? ' hot' : ''}" href="#you"><b>${todo.length}</b><span>等你处理</span></a>
+    <a class="stat" href="library.html"><b>${L ? L.totals.published : '–'}</b><span>已上 B 站</span></a>
+  </div>`;
+
+  const todoBody = todo.length ? `<div class="todo">${todo.map(todoItem).join('')}</div>`
+    : '<p class="empty">现在没有需要你处理的事。✓</p>';
+  const key = S.stages.map(s => s.who === 'agent' ? s.short : `<b>${s.short}</b>`).join(' → ');
+  const doingBody = doing.length
+    ? `<p class="stage-key">进度条从左到右：${key}（宽度 ≈ 工作量；加粗的三格是你的动作）</p>${grouped(doing)}`
+    : '<p class="empty">没有正在制作的集。</p>';
+  const liveRows = live.slice(0, 6).map(v => `<a class="row" href="${esc(v.bilibili.url)}" target="_blank" rel="noopener">
+      <span class="code">${esc(v.code || v.short)}</span>
+      <span class="t">${esc(v.title)}</span>
+      <span class="r">${v.bilibili.pubdate ? clock(new Date(v.bilibili.pubdate * 1000).toISOString()).split(' ')[0] : ''} · B 站 ↗</span></a>`).join('');
+  const prs = S.pulls.map(p => `<a class="row" href="${esc(p.url)}" target="_blank" rel="noopener">
+      <span class="code">#${p.number}</span><span class="t">${esc(p.title)}<small>${esc(shortBranch(p.branch))}</small></span>
+      <span class="r">${p.draft ? '草稿 · ' : ''}${ago(p.updated_at)}</span></a>`).join('');
+
+  const prsOpen = document.querySelector('#prs details')?.open;    // survive the 5-minute refresh
+  document.getElementById('app').innerHTML =
+    stats +
+    section('you', '需要你处理', todo.length ? `${todo.length} 件` : '', todoBody, todo.length > 0) +
+    S.series.map(s => section('map-' + s.id, '课程地图', '', seriesMap(s))).join('') +
+    section('doing', '制作中', `${doing.length} 集`, doingBody) +
+    (waiting.length ? section('wait', count('unclaimed') ? '排队、暂停与待认领' : '排队与暂停', `${waiting.length} 集`, grouped(waiting, 'tight')) : '') +
+    (live.length ? section('live', '最近上线', `<a href="library.html">全部 ${L.totals.published} 个 → 视频库</a>`, `<div class="rows">${liveRows}</div>`) : '') +
+    section('prs', '工程', '', `<details class="fold"${prsOpen ? ' open' : ''}><summary>开放中的 PR（${S.pulls.length}）——代码和工具的改动，一般不用管</summary>
+      <div class="rows" style="margin-top:10px">${prs || '<p class="empty" style="padding:12px 16px">没有</p>'}</div></details>`);
+  freshness(document.getElementById('fresh'), S.generated_at);
+}
+
 async function load(){
-  clearTimeout(window.__retryTimer); // a manual 立即重试 must not leave the auto-retry armed
-  const board = document.getElementById('board');
+  clearTimeout(window.__retry);
   try{
-    const [rawIssues, protocol, pulls] = await Promise.all([
-      fetchJSON(`https://api.github.com/repos/${REPO}/issues?labels=episode&state=all&per_page=100`),
-      loadProtocol(),
-      fetchJSON(`https://api.github.com/repos/${REPO}/pulls?state=open&per_page=30`).catch(() => null),
-    ]);
-    const issues = rawIssues.filter(i => !i.pull_request);
-    board.innerHTML = '';
-    for(const [label, name, attention] of LANES){
-      const items = issues.filter(i => i.labels.some(l => l.name === label));
-      const lane = document.createElement('div');
-      lane.className = 'lane' + (attention && items.length ? ' attention' : '');
-      lane.innerHTML = `<h2><span>${name}</span><span class="count">${items.length}</span></h2>`;
-      for(const i of items){
-        const extra = i.labels.filter(l => !['episode', 'blocked:question', label].includes(l.name)).map(l => `<span class="chip">${esc(l.name)}</span>`).join('');
-        const q = i.labels.some(l => l.name === 'blocked:question') && label !== 'blocked:question'
-          ? '<span class="chip q">blocked:question</span>' : '';
-        lane.insertAdjacentHTML('beforeend', `
-          <div class="card">
-            <a class="title" href="${i.html_url}" target="_blank" rel="noopener">${esc(i.title)}</a>
-            <div class="meta">#${i.number} · ${new Date(i.updated_at).toLocaleDateString('zh-CN')} 更新</div>
-            ${protocolHtml(protocol.get(i.number), i.state === 'open' && label !== 'state:published')}
-            ${q}${extra}
-          </div>`);
-      }
-      if(!items.length) lane.insertAdjacentHTML('beforeend', '<div class="card meta" style="color:var(--gray)">空</div>');
-      board.appendChild(lane);
-    }
-    const prs = document.getElementById('prs');
-    if(pulls){
-      prs.innerHTML = `<h2 class="strip-h">进行中的 PR <span style="color:var(--red)">${pulls.length}</span></h2>` +
-        (pulls.map(p => `
-          <div class="card">
-            <a class="title" href="${p.html_url}" target="_blank" rel="noopener">#${p.number} ${esc(p.title)}</a>
-            <div class="meta">${esc(p.head.ref)} · ${new Date(p.updated_at).toLocaleDateString('zh-CN')} 更新${p.draft ? ' · 草稿' : ''}</div>
-          </div>`).join('') || '<div class="card meta" style="color:var(--gray)">没有开放的 PR</div>');
-    } else {
-      prs.innerHTML = '<p class="sub">PR 列表这次没加载出来，看板其余部分不受影响。</p>';
-    }
+    const [s, l] = await Promise.all([loadData('status.json'), loadData('library.json').catch(() => null)]);
+    S = s; L = l;
+    render();
   }catch(e){
-    scheduleRetry(board, `看板加载失败：${esc(e.message)}`, load);
+    document.getElementById('app').innerHTML = `<p class="error">进度数据加载失败：${esc(e.message)}；10 秒后自动重试。 <button class="ghost small" onclick="load()">立即重试</button></p>`;
+    window.__retry = setTimeout(load, 10000);
   }
 }
+document.addEventListener('click', ev => {
+  const b = ev.target.closest('[data-copy]');
+  if(b){ ev.preventDefault(); copyText(b, b.dataset.copy); }
+});
 load();
+setInterval(() => { if(!document.hidden) load(); }, 5 * 60 * 1000);
 </script>
 </body>
 </html>

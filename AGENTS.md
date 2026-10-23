@@ -36,9 +36,12 @@ issue/PR; if it happened anywhere else, it did not happen.
 
 The `state:` label answers "where is this episode": `scripting → sample-review →
 full-review → publishing → published`, plus `blocked:question` when an agent needs Conny.
-Files are ground truth when a label drifts. Conny's review moments: the 20–30 s narrated
-sample (comment on the PR; plain language is enough), and the full cut with audio — his
-sign-off is quoted in `REVIEW.md` before merge.
+Files are ground truth when a label drifts. Conny's review moments are optional by default
+since 2026-10-22 (「我大概率是不会进行审片的，因为我觉得做得已经非常好了，就让bugbot来检查就好了」):
+post the 20–30 s narrated sample on the PR for the record and keep going, rely on the QA
+passes and review bots, and quote this waiver in `REVIEW.md` in place of a listening sign-off
+(as `videos/ac215-l02-containers-1/REVIEW.md` does for the AC215 series). If he does listen
+or comment, his words take precedence and are quoted instead.
 
 **Content gates — an episode is not done without them, and `REVIEW.md` records each:**
 
@@ -49,7 +52,7 @@ sign-off is quoted in `REVIEW.md` before merge.
 4. Narration written for the ear, word-anchored cues where the engine gives exact marks.
 5. A simulated-target-viewer QA pass over the full draft, with timestamped findings and fixes.
 6. The measured checks (duration, loudness, caption bounds, music balance) from the
-   validation sidecar, PLUS Conny's listening sign-off. Verified facts and unclaimed
+   validation sidecar, PLUS Conny's listening sign-off or the recorded waiver above. Verified facts and unclaimed
    reviews stay separated, as in `videos/skills-ecosystem/REVIEW.md`.
 
 After merge, `tools/release_episode.py` (run by CI or a producer session with release
@@ -94,3 +97,25 @@ can end without warning (usage limits, closed laptops). Therefore:
   relying on them.
 - Abandoned claims: a claim with no push and no comment for 24 h is expired even without a
   `HANDOFF`; note the takeover in a comment and continue from the last checkpoint.
+
+## Progress on the Studio board
+
+Conny follows production on the Studio site (`site/`, built by `tools/studio_status.py` on every
+issue label or comment), not in your chat. It can only show what the issue says, so keep the
+issue telling the truth:
+
+- **Stage vocabulary.** An episode moves through `brief → script → scenes → qa → finish →
+  render → stitch`, then `ready` (episode PR waits for merge), `publishing` (released, waits
+  for the Mac worker) and `published`. Checkpoint names map onto it (`captures`/`brief`,
+  `script`, `sample`/`scenes`, `qa`, `full-cut`; `CHECKPOINT <stage>` means that stage is done).
+  Between checkpoints, keep exactly one stage label on the issue: `▶ 制作场景`, `▶ 整片审查`,
+  `▶ 收尾修改`, `▶ 渲染 1080p`, `▶ 拼接与检查`, `✔ 等待合并发布`. The newer of the stage label
+  and the latest checkpoint wins; the `state:` labels win once an episode is ready.
+- **Progress inside a long stage (optional).** A line `Progress: <stage> <done>/<total>` in a
+  checkpoint or any comment (e.g. `Progress: scenes 9/16`) fills that stage's bar on the board.
+- **Say when you stop.** When Conny pauses you, or you wait for anything only he can give,
+  put it on the issue: `⏸ 暂停` for a pause, `blocked:question` plus the question as a
+  comment for a decision. A question asked only in chat is invisible to the board.
+- Batch sessions pipeline several episodes on one branch; the board treats a claimed episode
+  with no progress as queued behind its siblings, and judges liveness by the branch's last
+  push, so push WIP at least daily while working.
