@@ -313,3 +313,12 @@ scope for L09) and `docker stop <container_id>` with nothing running (`clean-01`
 Every walk.md command of steps 00-05b is captured or listed above under "What cannot run here"
 with its recorded source (Quarto/site renders, the Docker sections of step-05b, the timewalk
 page). No output was invented; the three capture-only logs are under `capture-only/`.
+
+## Numbers shown in pictures (not terminal panels)
+
+- **S05 findings funnel, "8 findings → 2 findings" on `8eb63fc` service.py.** Re-measured
+  2026-10-23 with the hook's pinned versions (flake8 7.0.0, black 24.1.1), `flake8 --isolated
+  --max-line-length=120` on an unchanged copy of `assets/source/cheese-app-ci-cd-history/8eb63fc-service.py`:
+  8 findings (F401, E302 ×2, E225, E231 ×2, E501 187 > 120, W391); after `black --line-length 120`
+  the same file has 2 (F401 `os` unused; E501 147 > 120). Matches digest.md:190. Not a terminal
+  panel, so no capture file; the measurement is recorded here.
