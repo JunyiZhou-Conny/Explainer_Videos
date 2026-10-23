@@ -551,8 +551,7 @@ policies for bucket <your bucket> is [{'origin': ['*'], 'method': ['GET'], 'resp
 ['Content-Type', 'Access-Control-Allow-Origin'], 'maxAgeSeconds': 3600}]`. A second card, tag
 `recorded · cli.py:47–72`: `view_bucket_metadata()`, `ID: …`, `Name: …`, `…`, `Cors: […]` YELLOW,
 `…`. V3: the rule card sticks onto the BLUE bucket; the next package carries
-`Access-Control-Allow-Origin: *` and is waved in; the tile fills (`illustration`, no photo). A
-`curl` figure strolls past on the side, no bouncer at its door. A GREY tag `maxAgeSeconds: 3600`
+`Access-Control-Allow-Origin: *` and is waved in; the tile fills (`illustration`, no photo). A GREY tag `maxAgeSeconds: 3600`
 clips onto an `OPTIONS` knock drawn dashed, caption "preflights only · a plain GET has none".
 SAY: With a real key, dash c prints the rule and dash m the bucket settings. Now the header arrives and the thumbnails load. The max age only caches preflight checks, which a plain image request never makes.
 
@@ -645,7 +644,7 @@ vanishes. Then `sh docker-shell-compose.sh` → TERM(laptop/54: 28–30); V1's c
 one file over both houses; lines 29–30 `Container data-labeling-data-label-cli-run-ca04106a92f5 …`
 YELLOW beside the README card (`README.md · line 95` now lit), chip "the stray line, explained".
 `▶ your turn`.
-SAY: An extra docker rm frees the name, and the second run works. Compose creates Label Studio plus a one-off command line container, which explains a stray line in the README's sample listing.
+SAY: An extra docker rm frees the name, and the second run works. Then Compose creates Label Studio plus a one-off command line container, which explains a stray line in the README's sample listing.
 
 SHOW: TRACKER E2 · extra. At `app@ce215fc4f7a5:/app$`: `echo $GCS_BUCKET_NAME` (extra) →
 TERM(laptop/54: 38), `cheese-app-data-demo` RED; CODE(data-labeling/docker-compose.yml: 13–18),
@@ -665,7 +664,7 @@ capture's `exit` (54: 131): `docker ps` (extra) → TERM(laptop/55: 2–3; squee
 lines 10 and 13 (`data-labeling-network`) YELLOW; TRACKER F4: `docker image ls` →
 TERM(laptop/63: 2–4; squeeze), `1.76GB` and `1.5GB` with `at the time of recording`. On V7 the
 houses and the street disappear; the drawer stays. `▶ your turn`.
-SAY: Label Studio keeps running after you leave. Then the README's cleanup: list, stop, prune, and list the images; pause and run them. Prune also removed the network, so next time run docker-shell.sh first. The images take 1.5 and 1.76 gigabytes, at the time of recording.
+SAY: Label Studio keeps running after you leave. Then the README's cleanup: list, stop, prune, and list the images; pause and run them. The prune also removed the network, so next time run docker-shell.sh first. The images take 1.5 and 1.76 gigabytes, at the time of recording.
 
 SHOW: The empty lot where the house stood; only the GREY drawer remains, dimmed.
 PONDER(6 s, "After docker system prune,\nis your labeled project gone?")
