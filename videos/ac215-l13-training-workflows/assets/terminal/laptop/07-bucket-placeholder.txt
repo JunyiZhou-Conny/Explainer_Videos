@@ -1,0 +1,16 @@
+$ curl -s -w 'HTTP %{http_code}\n' https://storage.googleapis.com/storage/v1/b/your-bucket-placeholder
+{
+  "error": {
+    "code": 404,
+    "message": "The specified bucket does not exist.",
+    "errors": [
+      {
+        "message": "The specified bucket does not exist.",
+        "domain": "global",
+        "reason": "notFound"
+      }
+    ]
+  }
+}
+HTTP 404
+[exit 0]

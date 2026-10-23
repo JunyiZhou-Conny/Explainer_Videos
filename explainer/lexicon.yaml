@@ -179,3 +179,5 @@ a 401: {ipa: "ɐ fˈɔːɹ ˈoʊ wˈʌn", say: "a four oh one"}
 A 401: {ipa: "ɐ fˈɔːɹ ˈoʊ wˈʌn", say: "a four oh one"}
 a 403: {ipa: "ɐ fˈɔːɹ ˈoʊ θɹˈiː", say: "a four oh three"}
 A 403: {ipa: "ɐ fˈɔːɹ ˈoʊ θɹˈiː", say: "a four oh three"}
+IAM: {ipa: "ˌaɪˌeɪˈɛm", say: "I-A-M"}
+finetunechat: {ipa: "fˈaɪn tˈuːn tʃˈæt", say: "fine tune chat"}

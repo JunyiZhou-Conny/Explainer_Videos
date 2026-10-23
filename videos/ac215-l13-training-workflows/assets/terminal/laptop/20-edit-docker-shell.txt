@@ -1,0 +1,7 @@
+$ sed -i -e 's|^export GCS_BUCKET_URI=.*|export GCS_BUCKET_URI="gs://your-bucket-placeholder"|' -e 's|^export GCP_PROJECT=.*|export GCP_PROJECT="your-gcp-project"|' docker-shell.sh && sed -n '5,9p' docker-shell.sh
+export IMAGE_NAME="model-training-cli"
+export BASE_DIR=$(pwd)
+export SECRETS_DIR=$(pwd)/../secrets/
+export GCS_BUCKET_URI="gs://your-bucket-placeholder"
+export GCP_PROJECT="your-gcp-project"
+[exit 0]

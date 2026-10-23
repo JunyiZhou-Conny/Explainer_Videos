@@ -1,0 +1,3 @@
+$ docker image ls model-training-cli
+IMAGE   ID             DISK USAGE   CONTENT SIZE   EXTRA
+[exit 0]
