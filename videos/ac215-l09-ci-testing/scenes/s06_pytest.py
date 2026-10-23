@@ -101,7 +101,6 @@ class PytestInside(VoiceScene):
             # scroll: lines 4-9 leave upwards, 11-17 rise from below
             self.play(FadeOut(bar), run_time=0.3)
             self.remove(bar)
-            w2.shift(DOWN * 0.6)
             self.play(FadeOut(w1, shift=UP * 0.6), FadeIn(w2, shift=UP * 0.6), run_time=0.8)
             self.remove(w1)
             addopts = code_span(w2.code, 12 - 11, "addopts")
@@ -135,14 +134,12 @@ class PytestInside(VoiceScene):
         card.move_to([0, 2.45, 0])
         dbroken = substring(line, "def broken(): assert False")
         name = substring(line, "broken")
-        col_y = 1.85 - col.get_top()[1] - 0.15          # the tree's top lands under the card
         col.save_state()
         col.generate_target()
         col.target.shift(UP * (card.get_bottom()[1] - 0.3 - col.get_top()[1])).fade(0.55)
         dark = col.extra("broken", "unit")
         dark.shift(UP * (card.get_bottom()[1] - 0.3 - col.get_top()[1]))
         dline = under(dbroken, INK, stroke=3)
-        del col_y
 
         with self.voiceover(SAY[2]) as vo:
             self.play(MoveToTarget(col), run_time=0.8)
@@ -176,8 +173,7 @@ class PytestInside(VoiceScene):
             vo.wait_until("Watch the collector")
             # back to full strength (the dark chip is not part of the tree)
             col.saved_state.shift(UP * (col.get_top()[1] - col.saved_state.get_top()[1]))
-            self.play(Restore(col), card.animate.set_opacity(0.6), dline.animate.set_stroke(opacity=0.4),
-                      run_time=0.6)
+            self.play(Restore(col), dline.animate.set_stroke(opacity=0.4), run_time=0.6)
             col.sweep(self, run_time=2.2, again=True)
             vo.wait_until("stays dark")
             self.play(Indicate(dark, color=S.GREY, scale_factor=1.2), run_time=0.8)
@@ -187,9 +183,8 @@ class PytestInside(VoiceScene):
             vo.wait_until("never collected, never run")
             self.play(Indicate(col.counter, color=INK, scale_factor=1.2), run_time=0.8)
             vo.wait_until("call it test underscore broken")
-            self.play(Create(tick), TransformFromCopy(dark, lit), run_time=0.8)
-            self.play(Indicate(lit, color=PASS, scale_factor=1.15), card.animate.set_opacity(1.0),
-                      FadeIn(err, shift=LEFT * 0.15), run_time=0.8)
+            self.play(Create(tick), FadeTransform(dark.copy(), lit), run_time=0.8)
+            self.play(Indicate(lit, color=PASS, scale_factor=1.15), FadeIn(err, shift=LEFT * 0.15), run_time=0.8)
             vo.wait_until("cuts both ways")
             self.play(Indicate(ruler, color=INK, scale_factor=1.08), run_time=0.9)
 
@@ -248,8 +243,7 @@ class PytestInside(VoiceScene):
             self.play(Indicate(terr, color=PASS, scale_factor=1.15), run_time=0.7)
             vo.wait_until("the invalid tray")
             inv.move_to(tray.spot)
-            self.play(FadeIn(VGroup(tray.fill if hasattr(tray, "fill") else tray[0], tray.shape, tray.text),
-                             shift=LEFT * 0.3), run_time=0.5)
+            self.play(FadeIn(tray, shift=LEFT * 0.3), run_time=0.5)
             fly = call.copy()
             self.play(fly.animate(rate_func=smooth).move_to(inv.text), run_time=0.8)
             self.play(FadeIn(inv.box, scale=1.15), ReplacementTransform(fly, inv.text), run_time=0.4)
@@ -263,6 +257,7 @@ class PytestInside(VoiceScene):
         cl = code_span(pa.code, 11 - 7, "client")
         fw = FixtureWiring()
         fw.shift(UP * 0.35)
+        fw.ask_label.shift(UP * 0.35)
         look = note("what it could look like · not this repo's code", S.GREY, 22)
         look.move_to([-6.4 + look.width / 2, 2.85, 0])
         copies, per_anims = fw.per_test()
@@ -284,10 +279,8 @@ class PytestInside(VoiceScene):
             self.add(fly)
             self.play(FadeOut(VGroup(pa, bar11, glob)), fly.animate.move_to(fw.fixture.text), run_time=0.9)
             self.remove(pa, bar11, glob)
-            self.play(FadeIn(fw.conftest), FadeIn(fw.fixture.box, scale=1.15), FadeIn(look, shift=DOWN * 0.1),
-                      run_time=0.6)
-            self.remove(fly)
-            self.add(fw.fixture)
+            self.play(FadeIn(fw.conftest), FadeIn(fw.fixture.box, scale=1.15), ReplacementTransform(fly, fw.fixture.text),
+                      FadeIn(look, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("A test asks for client by name")
             self.play(LaggedStart(*[FadeIn(t, shift=LEFT * 0.2) for t in fw.tests], lag_ratio=0.25), run_time=0.9)
             self.play(LaggedStart(*[GrowArrow(a) for a in fw.asks], lag_ratio=0.2), FadeIn(fw.ask_label),
