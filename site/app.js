@@ -1,7 +1,9 @@
 // Shared helpers for the Studio pages. The data files are built at deploy time by
 // tools/studio_status.py (see .github/workflows/pages.yml); the browser makes no API calls.
 
-function esc(s){ const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
+// Text into HTML, attribute values included (titles come from issues and may hold quotes).
+const ESC = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'};
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ESC[c]); }
 
 function ago(iso){
   if(!iso) return '';

@@ -122,6 +122,7 @@ def snapshot():
               body="videos/ac215-l02-containers-1", labels=("episode", "AC215", "state:published")),
         issue(60, title="[episode] Why git?", body="videos/solo-git", labels=("episode", "state:full-review")),
         issue(61, title="[episode] Lonely", body="videos/lonely", labels=("episode", "state:scripting")),
+        issue(62, title="[episode] AC215 L14 · Next", body="videos/ac215-l14-next"),
     ]
     solo = "Claiming. Model: GPT, surface: cursor, branch episode/lonely."
     return {
@@ -143,6 +144,7 @@ def test_build_status_queues_batch_siblings_and_maps_the_series():
     assert by[46]["state"] == "active" and by[46]["code"] == "L09" and by[46]["title"] == "CI and unit testing"
     assert by[48]["state"] == "queued" and by[48]["percent"] == 0          # waits for L09/L10
     assert by[61]["state"] == "active" and by[61]["stage"] == "brief"      # alone on its branch
+    assert by[62]["state"] == "unclaimed" and by[62]["percent"] == 0       # no session has it
     assert by[48]["branch_activity_at"] == at(3)                           # judged with siblings
     assert by[38]["state"] == "publishing" and by[60]["state"] == "ready"
     assert by[60]["pr"] == {"number": 70, "url": "pr/70", "draft": True}
@@ -151,9 +153,21 @@ def test_build_status_queues_batch_siblings_and_maps_the_series():
     ac = s["series"][0]
     cells = {c["n"]: c["state"] for c in ac["cells"]}
     assert ac["planned"] == 23 and len(ac["cells"]) == 23
-    assert (cells[2], cells[5], cells[9], cells[11], cells[12], cells[1]) == (
-        "published", "publishing", "active", "queued", "skip", "none")
+    assert (cells[2], cells[5], cells[9], cells[11], cells[12], cells[14], cells[1]) == (
+        "published", "publishing", "active", "queued", "skip", "unclaimed", "none")
     assert sum(ac["counts"].values()) == 23
+
+
+def test_own_slug_ignores_other_episodes_cited_in_the_body():
+    ac = next(s for s in SERIES if s["id"] == "ac215")
+    solo = next(s for s in SERIES if s["id"] == "standalone")
+    body = ("Waiver as in videos/ac215-l02-containers-1/REVIEW.md. Branch episode/ac215-l07-agents, "
+            "touching only videos/ac215-l07-agents/.")
+    slugs = st.SLUG_RE.findall(body)
+    assert st.own_slug(ac, "[episode] AC215 L07 · Agents II", slugs) == "ac215-l07-agents"
+    body = "Style of videos/skills-ecosystem/. Branch episode/git-why, files in videos/git-why/."
+    assert st.own_slug(solo, "[episode] Why git?", st.SLUG_RE.findall(body)) == "git-why"
+    assert st.own_slug(solo, "[episode] Empty", []) is None
 
 
 def test_library_groups_orders_and_fills_from_releases():

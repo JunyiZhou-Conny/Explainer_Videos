@@ -34,6 +34,7 @@ let S = null, L = null;
 
 const stageOf = key => S.stages.find(s => s.key === key) || S.stages[0];
 const shortBranch = b => (b || '').replace(/^(claude|episode)\//, '').replace(/-[a-z0-9]{6}$/, '');
+const WAITING = ['queued', 'unclaimed', 'paused'];
 const stale = e => (e.state === 'active' || e.state === 'queued')
   && Date.now() - Date.parse(e.branch_activity_at) > DAY;
 
@@ -43,7 +44,7 @@ function bar(e){
   const segs = S.stages.map((s, k) => {
     let cls = 'seg' + (s.who !== 'agent' ? ' you' : '');
     if(e.state === 'published' || k < at) cls += ' done';
-    else if(k === at && e.state !== 'queued') cls += ' now';
+    else if(k === at && e.state !== 'queued' && e.state !== 'unclaimed') cls += ' now';
     return `<i class="${cls}" style="--w:${s.weight};--f:${k === at ? frac : 0}" title="${esc(s.label)}"></i>`;
   }).join('');
   return `<div class="bar" role="img" aria-label="当前阶段：${esc(stageOf(e.stage).label)}，约 ${e.percent}%">${segs}</div>`;
@@ -56,6 +57,7 @@ function statusText(e){
     case 'active': return `<b>${esc(st.label)}中${part}</b> · 本阶段 ${span(e.stage_since)}`;
     case 'question': return `<b>等你答复</b> · 卡在「${esc(st.label)}」`;
     case 'queued': return `<b>排队中</b> · 同一会话先做前面的集`;
+    case 'unclaimed': return `<b>待认领</b> · 还没有会话接手这一集`;
     case 'paused': return S.stages.findIndex(s => s.key === e.stage) >= S.stages.findIndex(s => s.key === 'ready')
       ? '<b>暂停</b> · 成片已完成' : `<b>暂停</b> · 停在「${esc(st.label)}」`;
     case 'ready': return `<b>成片完成</b> · 等你合并`;
@@ -69,11 +71,12 @@ function card(e){
   if(e.state === 'question') badges.push('<span class="badge you">等你答复</span>');
   else if(e.state === 'paused') badges.push('<span class="badge">⏸ 暂停</span>');
   else if(e.state === 'queued') badges.push('<span class="badge">排队</span>');
+  else if(e.state === 'unclaimed') badges.push('<span class="badge">待认领</span>');
   else badges.push('<span class="badge active">制作中</span>');
   if(stale(e)) badges.push('<span class="badge warn" title="这个会话的分支一天多没有推送、检查点或标签变化：可能撞了用量限制、在聊天里等你回复，或被你暂停了。打开那个会话看一眼。">一天多没动静</span>');
   const who = e.claim ? `${esc(e.claim.model)}${e.claim.branch ? ` · <span title="${esc(e.claim.branch)}">${esc(shortBranch(e.claim.branch))}</span>` : ''}` : '未认领';
-  const pct = e.state === 'queued' ? '' : `<span class="pct">${e.percent}%</span>`;
-  return `<a class="ep ${e.state}${e.state === 'queued' || e.state === 'paused' ? ' dim' : ''}" href="${esc(e.url)}" target="_blank" rel="noopener">
+  const pct = e.state === 'queued' || e.state === 'unclaimed' ? '' : `<span class="pct">${e.percent}%</span>`;
+  return `<a class="ep ${e.state}${WAITING.includes(e.state) ? ' dim' : ''}" href="${esc(e.url)}" target="_blank" rel="noopener">
     <div class="ep-top"><span class="ep-code">${esc(e.code || '#' + e.number)}</span><span>${badges.join(' ')}</span></div>
     <div class="ep-title">${esc(e.title)}</div>
     ${bar(e)}
@@ -107,9 +110,10 @@ function todoItem(e){
 }
 
 const CELL = {published: 'published', ready: 'you', publishing: 'you', question: 'you', active: 'active',
-              queued: 'queued', paused: 'paused', skip: 'skip', none: 'none'};
+              queued: 'queued', unclaimed: 'none', paused: 'paused', skip: 'skip', none: 'none'};
 const CELL_TEXT = {published: '已上线', ready: '等你合并', publishing: '等你上传', question: '等你答复',
-                   active: '制作中', queued: '排队', paused: '暂停', skip: '跳过', none: '未开始'};
+                   active: '制作中', queued: '排队', unclaimed: '未开始 · 已开 issue，等会话认领', paused: '暂停',
+                   skip: '跳过', none: '未开始'};
 
 function seriesMap(s){
   const c = s.counts, n = k => c[k] || 0;
@@ -124,7 +128,7 @@ function seriesMap(s){
   }).join('');
   return `<div class="map">
     <div class="map-head"><b>${esc(s.name)}</b>
-      <span class="fresh num">已上线 ${n('published')} · 等你 ${you} · 制作中 ${n('active')} · 排队 ${n('queued')} · 暂停 ${n('paused')} · 未开始 ${n('none')}（共 ${s.planned} 讲）</span></div>
+      <span class="fresh num">已上线 ${n('published')} · 等你 ${you} · 制作中 ${n('active')} · 排队 ${n('queued')} · 暂停 ${n('paused')} · 未开始 ${n('none') + n('unclaimed')}（共 ${s.planned} 讲）</span></div>
     <div class="cells" style="--n:${s.planned}">${cells}</div>
     <div class="legend">
       <span><i class="published"></i>已上 B 站</span><span><i class="you"></i>等你处理</span>
@@ -154,7 +158,7 @@ function grouped(list, cls){
 function render(){
   const eps = S.episodes;
   const doing = eps.filter(e => e.state === 'active' || e.state === 'question');
-  const waiting = eps.filter(e => e.state === 'queued' || e.state === 'paused');
+  const waiting = eps.filter(e => WAITING.includes(e.state));
   const todo = eps.filter(e => ['question', 'ready', 'publishing'].includes(e.state))
     .sort((a, b) => ['question', 'ready', 'publishing'].indexOf(a.state) - ['question', 'ready', 'publishing'].indexOf(b.state));
   const live = (L?.series || []).flatMap(s => s.episodes.filter(v => v.bilibili).map(v => ({...v, short: s.short})))
@@ -189,7 +193,7 @@ function render(){
     section('you', '需要你处理', todo.length ? `${todo.length} 件` : '', todoBody, todo.length > 0) +
     S.series.map(s => section('map-' + s.id, '课程地图', '', seriesMap(s))).join('') +
     section('doing', '制作中', `${doing.length} 集`, doingBody) +
-    (waiting.length ? section('wait', '排队与暂停', `${waiting.length} 集`, grouped(waiting, 'tight')) : '') +
+    (waiting.length ? section('wait', count('unclaimed') ? '排队、暂停与待认领' : '排队与暂停', `${waiting.length} 集`, grouped(waiting, 'tight')) : '') +
     (live.length ? section('live', '最近上线', `<a href="library.html">全部 ${L.totals.published} 个 → 视频库</a>`, `<div class="rows">${liveRows}</div>`) : '') +
     section('prs', '工程', '', `<details class="fold"${prsOpen ? ' open' : ''}><summary>开放中的 PR（${S.pulls.length}）——代码和工具的改动，一般不用管</summary>
       <div class="rows" style="margin-top:10px">${prs || '<p class="empty" style="padding:12px 16px">没有</p>'}</div></details>`);

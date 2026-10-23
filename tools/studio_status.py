@@ -31,6 +31,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -206,6 +207,16 @@ def code_for(s: dict, n: int | None) -> str | None:
     return s["code"].format(n) if n is not None and s.get("code") else None
 
 
+def own_slug(s: dict, title: str, slugs: list[str]) -> str | None:
+    """The episode's own slug among the paths its issue body cites. Bodies also cite other
+    episodes (the previous lecture, an example REVIEW.md), so prefer the slug numbered like
+    the title, then the one cited most often, then the first."""
+    pool = [x for x in slugs if not s.get("slug_prefix") or x.startswith(s["slug_prefix"])] or slugs
+    n = number_in(s, title=title)
+    pool = [x for x in pool if n is not None and number_in(s, slug=x) == n] or pool
+    return Counter(pool).most_common(1)[0][0] if pool else None
+
+
 def clean_title(title: str, s: dict) -> str:
     t = re.sub(r"^\s*\[episode\]\s*", "", title, flags=re.I)
     if s.get("short") and s.get("_title"):
@@ -302,7 +313,7 @@ def derive(issue: dict, comments: list[dict], events: list[dict]) -> dict:
     elif stage in ("ready", "publishing"):
         state = stage
     elif source in (None, "claim"):
-        state = "starting"          # resolved to active or queued with the branch context
+        state = "starting"          # resolved to active, queued or unclaimed below
     else:
         state = "active"
 
@@ -331,8 +342,7 @@ def build_status(snap: dict, series: list[dict], registry: dict, repo: str, now:
         labels = {lab["name"] for lab in issue.get("labels", [])}
         slugs = SLUG_RE.findall(issue.get("body") or "")
         s = series_for(series, labels, slugs[0] if slugs else None)
-        slug = next((x for x in slugs if not s.get("slug_prefix") or x.startswith(s["slug_prefix"])),
-                    slugs[0] if slugs else None)
+        slug = own_slug(s, issue["title"], slugs)
         order = number_in(s, issue["title"], slug)
         pr = prs_by_branch.get(f"episode/{slug}") if slug else None
         bili = registry.get("episodes", {}).get(slug) if slug else None
@@ -356,6 +366,7 @@ def build_status(snap: dict, series: list[dict], registry: dict, repo: str, now:
 
     # A batch session pipelines its episodes on one branch: a claimed episode with no
     # progress waits its turn while a sibling moves, and staleness is judged per branch.
+    # An episode nobody has claimed is not in any session's queue: it waits for one.
     branch_last: dict[str, float] = {b: iso_ts(at) for b, at in (snap.get("branches") or {}).items() if at}
     branch_moving: set[str] = set()
     for e in episodes:
@@ -367,7 +378,8 @@ def build_status(snap: dict, series: list[dict], registry: dict, repo: str, now:
     for e in episodes:
         b = (e["claim"] or {}).get("branch")
         if e["state"] == "starting":
-            e["state"] = "queued" if (not e["claim"] or b in branch_moving) else "active"
+            e["state"] = ("unclaimed" if not e["claim"] else
+                          "queued" if b in branch_moving else "active")
         e["branch_activity_at"] = ts_iso(branch_last.get(b, e["_activity"]))
         e["percent"] = percent(e["stage"], e["state"], e["progress"])
         del e["_activity"]
@@ -388,8 +400,8 @@ def build_status(snap: dict, series: list[dict], registry: dict, repo: str, now:
     }
 
 
-RANK = {"published": 6, "publishing": 5, "ready": 5, "question": 4, "active": 3, "paused": 2,
-        "queued": 1}
+RANK = {"published": 7, "publishing": 6, "ready": 6, "question": 5, "active": 4, "paused": 3,
+        "queued": 2, "unclaimed": 1}
 
 
 def overview(s: dict, episodes: list[dict]) -> dict:
