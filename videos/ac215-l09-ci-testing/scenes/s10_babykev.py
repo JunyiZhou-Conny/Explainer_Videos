@@ -457,7 +457,7 @@ class OneCommand(VoiceScene):
         # ========================================================== 4. step-02: ruff, the funnel, one width
         r_fmt, r_chk = tool_chip("ruff format", size=24), tool_chip("ruff check", size=24)
         VGroup(r_fmt, r_chk).arrange(RIGHT, buff=2.2).move_to([0.4, 2.3, 0])
-        ff = FindingsFunnel([79, 70, 69, 37], ["", "after just fmt", "safe fixes", "unsafe fixes, applied deliberately"],
+        ff = FindingsFunnel([79, 70, 69, 37], ["before just fmt", "after just fmt", "safe fixes", "unsafe fixes, applied deliberately"],
                             bar_w=7.6)
         ff.move_to([-1.2, 0.85, 0])
         # start at 70: a faint notch stays at 79 (walk.md's record before `just fmt`, not spoken)
