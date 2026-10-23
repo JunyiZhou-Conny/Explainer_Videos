@@ -411,7 +411,8 @@ class PropertyTests(VoiceScene):
             code_span(panel.code, k, "…").set_color(S.GREY)
         assert panel.width <= 13.1 and panel.get_bottom()[1] > -3.5, (panel.width, panel.get_bottom())
         given = code_span(panel.code, 0, "@given(shapes)")
-        die = Dice(3, side=0.55).move_to([given.get_right()[0] + 0.8, given.get_center()[1], 0])
+        l59 = panel.code.code_lines[59 - FIRST]
+        die = Dice(3, side=0.5).move_to([l59.get_right()[0] + 1.0, given.get_center()[1], 0])   # clear of line 59
         chp = VGroup(label("a state of 1 to 6 tokens · up to 4 questions of 1 to 5", 22, INK))
         chp_box = RoundedRectangle(width=chp.width + 0.48, height=0.56, corner_radius=0.2, stroke_color=TOOL,
                                    stroke_width=2.5).set_fill(TOOL, 0.14)
@@ -543,12 +544,14 @@ class PropertyTests(VoiceScene):
             vo.wait_until("it hands you the smallest witness")
             self.play(FadeIn(sib, shift=LEFT * 0.2), FadeIn(sib_l), FadeIn(all_l), run_time=0.5)
             off = [sib.cells[a][b] for a in range(4) for b in range(4) if not sib.allowed[a][b]]
+            delta = fin.cells[0][0].get_center() - sib.cells[0][0].get_center()   # cell onto cell
             self.play(FadeOut(VGroup(*off)), run_time=0.3)
             for c in off:
                 sib.grid.remove(c)
             self.remove(*off)
-            self.play(sib.grid.animate.move_to(fin.grid).set_fill(opacity=0.3), FadeOut(sib_l), run_time=0.9)
-            self.remove(sib_l)
+            sib_to = sib_l.copy().next_to(fin.grid, RIGHT, buff=0.45)
+            self.play(sib.grid.animate.shift(delta).set_fill(opacity=0.3), sib_l.animate.move_to(sib_to),
+                      run_time=0.9)
             i, j = hit[0]
             self.play(fin.light(hit), run_time=0.5)
             spot = fin.cell_box(i, j, ERR, stroke=6)
@@ -561,7 +564,7 @@ class PropertyTests(VoiceScene):
             ["…", cut(again.line(306), "test_notebook_prints_what_its"), cut(again.line(307), "34.19s")]
 
         with self.voiceover(SAY[4]) as vo:
-            gone = VGroup(t3, y3, fin, fin_frame, fin_cap, sib, all_l, die3, spot)
+            gone = VGroup(t3, y3, fin, fin_frame, fin_cap, sib, sib_l, all_l, die3, spot)
             self.play(FadeOut(gone), run_time=0.5)
             self.remove(gone, *gone.get_family())
             for m in list(t3.lines):
