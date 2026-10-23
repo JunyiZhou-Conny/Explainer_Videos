@@ -335,7 +335,7 @@ class FormatterLinter(VoiceScene):
         self.wait(0.7)
 
         # ================================================== 5. Option B: pip install on the host
-        t = term(P_LAPTOP, rows=9, title=T_LAPTOP, size=PT)
+        t = term(P_LAPTOP, rows=9, title=T_LAPTOP, size=PT, width=13.0)   # room for the turn tags
         band_hi, band_lo = 2.25, 1.35
         pep = grey_chip("pip refuses? (PEP 668, Homebrew/Debian) → any venv, or pipx · study guide")
         pep.move_to([0, band_lo, 0])
@@ -388,7 +388,7 @@ class FormatterLinter(VoiceScene):
             grow = (14 - t.rows) * line_pitch(PT)
             resize(self, t, 14, keep=0, extra=(host.animate.shift(UP * grow), track(tr, 5)))
             l5 = type_cmd(self, t, f8_local.cmd, type_time=0.8)
-            yt6 = beside(turn_row(), l5, buff=0.2)
+            yt6 = beside(turn_row(), l5, buff=0.3)
             pin(self, l5, yt6)
             vo.wait_until("The local flake8")
             o5 = t.print(self, f8_local.at((2, 4)), run_time=0.7, wrap=True)
@@ -406,15 +406,20 @@ class FormatterLinter(VoiceScene):
             pin(self, l6, yt7)
             o6 = t.print(self, blk_local.at("…", 19, 37, "…", 40), run_time=0.9, lag=0.12, wrap=True)
             vo.wait_until("the same two files changed")
-            r_files = VGroup(*[under(g, INK, stroke=3) for g in
-                               (tail(o6[1]), o6[2].glyphs, tail(o6[3]), o6[4].glyphs)])
+            names = []
+            for row in o6:                         # the file names, over their wrapped rows
+                if row.text.startswith("would reformat"):
+                    names.append(tail(row))
+                elif not row.text.startswith(("…", "2 files")):
+                    names.append(row.glyphs)
+            r_files = VGroup(*[under(g, INK, stroke=3) for g in names])
             self.play(Create(r_files), run_time=0.6)
             self.play(Indicate(o6[-1], color=INK, scale_factor=1.04), run_time=0.7)
         self.wait(1.0)
 
         # ================================================== 7. the funnel: what a formatter can fix
         panel2 = code(MESSY, 7, 13)
-        panel2.move_to([0, 0, 0]).shift(UP * (3.45 - panel2.get_top()[1]))
+        panel2.move_to([0, 0, 0]).shift(UP * (3.3 - panel2.get_top()[1]))
         imp_k = 10 - 7
         imp = code_span(panel2.code, imp_k, "import os")
         imp_bar = line_bar(panel2.code, imp_k, ERR, 0.22)

@@ -28,8 +28,8 @@ from explainer import style as S
 
 from common import (ERR, INK, INTEG, MONO, NARRATION, PASS, TOOL, TURN, UNIT, Collector, FixtureWiring,
                     Parametrize, check_mark, chip, code, code_span, cross_mark, erratum_tag, grey_chip,
-                    illustration_tag, label, line_bar, lref, mono, mono_line, note, readme, readme_card,
-                    substring, tool_chip, under)
+                    illustration_tag, label, line_bar, lref, mono, mono_line, note, pause_and_ponder, readme,
+                    readme_card, substring, tool_chip, under)
 
 SAY = NARRATION["S06"]
 INI = "cheese-app-ci-cd/pytest.ini"
