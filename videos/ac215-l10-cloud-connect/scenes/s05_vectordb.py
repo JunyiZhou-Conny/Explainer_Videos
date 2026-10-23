@@ -346,7 +346,7 @@ class NetworkAndShell(VoiceScene):
         note_card = card(["This recording machine has no Google account.",
                           "The key file in the folder listings is an obviously invalid stand-in.",
                           "It was removed before the cloud steps."], head="one honest note")
-        note_card.move_to([0, 1.9, 0])
+        note_card.move_to([0, 1.55, 0])
         rec = recorded_tag("recorded")
         rec_note = note("a success you will see on your machine · source named", S.GREY, 22)
         rec_row = VGroup(rec, rec_note).arrange(RIGHT, buff=0.3).next_to(note_card, DOWN, buff=0.35)

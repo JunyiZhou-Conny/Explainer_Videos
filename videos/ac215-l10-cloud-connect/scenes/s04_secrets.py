@@ -361,8 +361,8 @@ class SecretsPortal(VoiceScene):
             tc = tree_card()
             tc.move_to([strip.box.get_right()[0] - 0.15 - tc.width / 2, 0.0, 0])
             tc.align_to(t_rows[1].strut, UP).shift(UP * 0.2)
-            self.play(FadeIn(tc, shift=LEFT * 0.2), run_time=0.5)
-            self.play(t_rows[2].animate.fade(0.65), run_time=0.4)          # README.md: not in the README's tree
+            # README.md dims: it is not in the README's tree
+            self.play(FadeIn(tc, shift=LEFT * 0.2), t_rows[2].animate.fade(0.65), run_time=0.5)
             vo.wait_until("Pause and match it")
             links = VGroup()
             x0 = max(t_rows[i].glyphs.get_right()[0] for i in range(1, 8)) + 0.2   # stubs end past the text
@@ -373,11 +373,10 @@ class SecretsPortal(VoiceScene):
                     [a, np.array([x0, a[1], 0]), b])
                 links.add(lk)
                 self.play(Create(lk), Indicate(t_rows[ri].glyphs, color=TURN, scale_factor=1.06),
-                          Indicate(tc.rows[ci], color=TURN, scale_factor=1.06), run_time=0.4)
+                          Indicate(tc.rows[ci], color=TURN, scale_factor=1.06), run_time=0.3)
             chk = grey_chip("no tree? ls -la secrets (next line) checks the same thing")
             chk.move_to([strip.box.get_left()[0] + chk.width / 2, 2.3, 0])
-            self.play(FadeIn(chk, shift=DOWN * 0.1), run_time=0.5)
-            self.play(FadeOut(VGroup(tc, links)), run_time=0.4)
+            self.play(FadeIn(chk, shift=DOWN * 0.1), FadeOut(VGroup(tc, links)), run_time=0.5)
             self.remove(tc, links)
             ln_ls = type_cmd(self, strip, ls_cap.cmd, type_time=0.4)
             xt3 = beside(extra_row(), ln_ls)
@@ -390,9 +389,8 @@ class SecretsPortal(VoiceScene):
             chk2 = grey_chip("not .json.json · llm-finetuning README.md:67")
             chk2.move_to(chk, aligned_edge=LEFT)
             yt = your_turn().next_to(chk2, RIGHT, buff=0.4)
-            self.play(FadeOut(chk), run_time=0.3)
+            self.play(FadeOut(chk), FadeIn(chk2), FadeIn(yt, shift=LEFT * 0.1), run_time=0.5)
             self.remove(chk)
-            self.play(FadeIn(chk2), FadeIn(yt, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, yt, TURN)
 
         # ========================================================== 4. the quiet trap: .gitignore
