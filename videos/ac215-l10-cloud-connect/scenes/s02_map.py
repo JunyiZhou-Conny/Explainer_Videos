@@ -58,12 +58,13 @@ def realign(lines: list[str]) -> list[str]:
 
 
 def hosted_mini() -> VGroup:
-    """The deleted hosted setup as a GREY dashed miniature: a web server on a cloud machine."""
-    frame = outline_box(2.5, 1.45, S.GREY, solid=False)
-    cap = label("cloud machine", 20, S.GREY).move_to(frame).align_to(frame, UP).shift(DOWN * 0.14)
-    srv = house("web server", 1.65, 0.75, color=S.GREY, dashed=True)
-    srv.move_to(frame.get_bottom() + UP * 0.12, aligned_edge=DOWN)
-    g = VGroup(frame, cap, srv)
+    """The deleted hosted setup as a GREY dashed miniature: a web-server house on a cloud machine
+    (the frame), named underneath so the cross never covers the words."""
+    frame = outline_box(2.2, 1.0, S.GREY, solid=False)
+    srv = house(None, 1.0, 0.62, color=S.GREY, dashed=True)
+    srv.move_to(frame.get_bottom() + UP * 0.16, aligned_edge=DOWN)
+    cap = label("a web server on a cloud machine", 20, S.GREY).next_to(frame, DOWN, buff=0.12)
+    g = VGroup(frame, srv, cap)
     g.frame, g.cap, g.server = frame, cap, srv
     return g
 
@@ -192,7 +193,7 @@ class TheMap(VoiceScene):
         m2 = AppMap.at("S02")
         log, ls = capture("02"), capture("03")
         assert log.cmd == "git log -1 --format='%H %ci'" and ls.cmd == "ls -la", (log.cmd, ls.cmd)
-        xt = on_bar(t, extra_row())
+        xt = extra_row()
         listing = realign(ls.at((2, 11)))
         targets = {"llm-rag": (("chroma", "loader"), (hs["chroma"].get_center()[0] + hs["loader"].get_center()[0]) / 2),
                    "api-service": (("api",), hs["api"].get_center()[0]),
@@ -215,6 +216,7 @@ class TheMap(VoiceScene):
             self.play(FadeOut(VGroup(card43, noaddr, dk)), run_time=0.5)
             self.remove(card43, noaddr, dk)
             resize(self, t, 3, extra=(FadeIn(m2),))
+            on_bar(t, xt)                                   # the bar has moved: place the tag now
             self.play(track(tr, extra=True), FadeIn(xt, shift=LEFT * 0.1), run_time=0.5)
             type_cmd(self, t, log.cmd, type_time=0.9)
             got = out(self, t, log.at(2))
@@ -225,11 +227,11 @@ class TheMap(VoiceScene):
             vo.wait_until("from October 8th")
             r_date = ring(substring(row, "2026-10-08"), TURN)
             self.play(ReplacementTransform(r_hash, r_date), run_time=0.5)
-            vo.wait_until("details may differ")
+            vo.wait_until("if yours is newer")
             self.play(FadeOut(r_date), run_time=0.3)
             self.remove(r_date)
             type_cmd(self, t, ls.cmd, type_time=0.4)
-            out(self, t, listing, run_time=0.9)
+            out(self, t, listing, run_time=1.0, chunk=2)    # 2-row chunks: the strip never blanks
             vo.wait_until("shows llm-rag")
             fly("llm-rag")
             vo.wait_until("api-service")
