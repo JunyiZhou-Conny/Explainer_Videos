@@ -1,4 +1,0 @@
-$ git tag -n
-dataset_v20     First version of cheese dataset
-dataset_v21     Updated cheese dataset with additional images
-[exit 0]

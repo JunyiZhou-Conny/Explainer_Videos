@@ -1,3 +1,0 @@
-$ git checkout dataset_v20 -- cheese_dataset.dvc && git status --short
-M  cheese_dataset.dvc
-[exit 0]

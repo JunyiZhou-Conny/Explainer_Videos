@@ -1,8 +1,0 @@
-$ git commit -m "Track initial cheese dataset with DVC"
-[main ace15e8] Track initial cheese dataset with DVC
- 6 files changed, 19 insertions(+), 3 deletions(-)
- create mode 100644 .dvc/.gitignore
- create mode 100644 .dvc/config
- create mode 100644 .dvcignore
- create mode 100644 cheese_dataset.dvc
-[exit 0]

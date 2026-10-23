@@ -1,4 +1,0 @@
-$ git commit -m "Add images to cheese dataset"
-[main aac7040] Add images to cheese dataset
- 1 file changed, 3 insertions(+), 3 deletions(-)
-[exit 0]

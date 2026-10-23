@@ -1,4 +1,0 @@
-$ curl -s -o /tmp/ls-login.html -w '%{http_code} %{content_type}\n' http://localhost:8080/user/login/ && grep -o '<title>[^<]*</title>' /tmp/ls-login.html | head -1
-200 text/html; charset=utf-8
-<title>Label Studio</title>
-[exit 0]

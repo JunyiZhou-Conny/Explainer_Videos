@@ -1,3 +1,0 @@
-$ git clone -b main https://github.com/dlops-io/data-versioning.git
-Cloning into 'data-versioning'...
-[exit 0]

@@ -9,7 +9,7 @@ Current user:
   GID        = 0
 
 Directory owner and permissions:
-drwxr-sr-x    2 root     root          4096 Oct 23 11:08 /label-studio/data
+drwxr-sr-x    2 root     root          4096 Oct 23 11:44 /label-studio/data
 
 To resolve this issue:
   - On the Docker host, ensure the user running the container has write access to the mount volume.

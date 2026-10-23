@@ -1,5 +1,0 @@
-$ ls -la cheese_dataset
-total 8
-drwxr-sr-x    2 root     student       4096 Oct 23 11:29 .
-drwxrwsrwx    4 student  student       4096 Oct 23 11:29 ..
-[exit 0]

@@ -1,4 +1,0 @@
-$ curl -s -w '\nHTTP %{http_code}\n' http://localhost:8080/api/projects
-{"id":"c6fb5628-88bf-455b-a48d-55182bb19a74","status_code":401,"version":"1.23.0","detail":"Authentication credentials were not provided.","exc_info":null}
-HTTP 401
-[exit 0]

@@ -1,2 +1,0 @@
-$ rm -rf cheese_dataset; dvc get https://github.com/dlops-io/data-versioning cheese_dataset --force --quiet --rev dataset_v25
-[exit 1]

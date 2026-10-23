@@ -1,3 +1,0 @@
-$ dvc get https://github.com/dlops-io/data-versioning cheese_dataset --force --rev dataset_v25
-ERROR: failed to get 'cheese_dataset' from 'https://github.com/dlops-io/data-versioning' - unknown Git revision 'dataset_v25'
-[exit 1]

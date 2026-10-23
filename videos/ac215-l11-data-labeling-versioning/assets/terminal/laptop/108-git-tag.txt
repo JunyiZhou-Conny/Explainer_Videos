@@ -1,2 +1,0 @@
-$ git tag -a dataset_v21 -m "Updated cheese dataset with additional images"
-[exit 0]

@@ -1,3 +1,0 @@
-$ dvc --version
-3.67.1
-[exit 0]

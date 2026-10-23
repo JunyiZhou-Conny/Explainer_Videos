@@ -1097,7 +1097,7 @@ def bricks(bw: float = 0.4, bh: float = 0.5, color=S.GREY) -> VGroup:
 
 
 def browser_glyph(url: str | None = None, glyph_w: float = 0.9, size: float = 20, color=LAPTOP,
-                  name: str | None = "browser") -> VGroup:
+                  name: str | None = "browser", glyph_h: float | None = None) -> VGroup:
     """Your browser as a small window (GREY, no logo) with its name under it (and, when given, its
     address inside: keep it short, mono 20 pt). .window .bar .url .text"""
     h = glyph_w * 0.68
@@ -1105,6 +1105,7 @@ def browser_glyph(url: str | None = None, glyph_w: float = 0.9, size: float = 20
         u = mono(url, size, S.GREY)
         glyph_w = max(glyph_w, u.width + 0.4)
         h = max(h, 1.0)
+    h = glyph_h or h
     fr = RoundedRectangle(width=glyph_w, height=h, corner_radius=0.08, stroke_color=color,
                           stroke_width=3).set_fill(PANEL, 1)
     bar = Line(fr.get_corner(UL) + DOWN * 0.18, fr.get_corner(UR) + DOWN * 0.18, color=color, stroke_width=2)
@@ -1115,6 +1116,8 @@ def browser_glyph(url: str | None = None, glyph_w: float = 0.9, size: float = 20
     g.window, g.bar, g.url, g.text = win, bar, None, None
     if url:
         u.move_to(fr).shift(DOWN * 0.05)
+        if glyph_h:                                  # a tall page: the address sits at its top
+            u.next_to(bar, DOWN, buff=0.12)
         g.add(u)
         g.url = u
     if name:
@@ -1124,8 +1127,19 @@ def browser_glyph(url: str | None = None, glyph_w: float = 0.9, size: float = 20
     return g
 
 
+def _columns(bw, y0, y1, t, n: int = 4) -> VGroup:
+    """The building's columns, interrupted where its name sits (so no line runs through text)."""
+    out_ = VGroup()
+    lo, hi = t.get_bottom()[1] - 0.1, t.get_top()[1] + 0.1
+    for x in np.linspace(-bw / 2 + 0.45, bw / 2 - 0.45, n):
+        for a, b in ((y0, min(y1, lo)), (max(y0, hi), y1)):
+            if b - a > 0.05:
+                out_.add(Line([x, a, 0], [x, b, 0], color=CLOUD, stroke_width=3, stroke_opacity=0.55))
+    return out_
+
+
 def google_building(bw: float = 2.4, bh: float = 3.0, size: float = 20, door: bool = True,
-                    meter_: bool = True, name: str = "Google Cloud") -> VGroup:
+                    meter_: bool = True, name: str = "Google Cloud", text_y: float | None = None) -> VGroup:
     """The BLUE Google building (no logo): pediment, columns, base, its name; an IAM-guarded door on
     its left wall (.door, .guard = a padlock 'IAM') and a GOLD meter (.meter). Base at y = 0 of its
     own frame. .frame .text .door .guard .meter"""
@@ -1135,12 +1149,11 @@ def google_building(bw: float = 2.4, bh: float = 3.0, size: float = 20, door: bo
     ped = Polygon([-bw / 2, bh - ped_h, 0], [0, bh, 0], [bw / 2, bh - ped_h, 0])
     for m in (base, hall, ped):
         m.set_stroke(CLOUD, 3).set_fill(CLOUD, 0.1)
-    cols_ = VGroup(*[Line([x, 0.2, 0], [x, hall.get_top()[1] - 0.12, 0], color=CLOUD, stroke_width=3,
-                          stroke_opacity=0.55)
-                     for x in np.linspace(-bw / 2 + 0.45, bw / 2 - 0.45, 4)])
-    t = label(name, size, CLOUD).move_to([0, bh - ped_h - 0.3, 0])
+    t = label(name, size, CLOUD).move_to([0, bh - ped_h - 0.3 if text_y is None else text_y, 0])
+    cols_ = _columns(bw, 0.2, hall.get_top()[1] - 0.12, t)
     g = VGroup(base, hall, ped, cols_, t)
     g.frame, g.text, g.door, g.guard, g.meter = VGroup(base, hall, ped), t, None, None, None
+    g.columns = cols_
     if door:
         d = door_glyph(0.36, 0.56, CLOUD).move_to([-bw / 2 + 0.15 + 0.18, 0.14 + 0.28, 0])
         lk = lock_glyph(0.26, CLOUD).next_to(d, UP, buff=0.08)
@@ -1814,9 +1827,13 @@ class SecretsPortalRig(Rig):
         key_inside) to the container's /secrets/ row, built from where they are now."""
         src = self.ghost if self.key_inside else self.tree.rows[-2]
         a = src.name_text.strut.get_right() + RIGHT * 0.15
+        if self.key_inside and self.ghost_chip is not None:
+            a = np.array([self.ghost_chip.get_right()[0] + 0.15, a[1], 0])
         b = self.box.mount.get_left() + LEFT * 0.12
-        core = Line(a, b, color=KEY, stroke_width=5)
-        glow = Line(a, b, color=KEY, stroke_width=16, stroke_opacity=0.18)
+        xm = max(a[0] + 0.2, (max(r.get_right()[0] for r in self.tree.rows) + self.box.frame.get_left()[0]) / 2)
+        pts = [a, np.array([xm, a[1], 0]), np.array([xm, b[1], 0]), b]
+        core = VMobject(stroke_color=KEY, stroke_width=5).set_points_as_corners(pts)
+        glow = core.copy().set_stroke(KEY, 16, opacity=0.18)
         g = VGroup(glow, core)
         g.core = core
         return g
@@ -1883,7 +1900,7 @@ class TwoArrows(Rig):
         self.wall = VGroup(Line([-3.6, wall_y, 0], [1.8 - gap / 2, wall_y, 0], color=S.GREY, stroke_width=3),
                            Line([1.8 + gap / 2, wall_y, 0], [3.6, wall_y, 0], color=S.GREY, stroke_width=3))
         d = door_glyph().move_to([1.8, wall_y, 0])
-        dl = mono("8000→8000", size, DOOR).next_to(d, RIGHT, buff=0.2)
+        dl = mono("8000→8000", size, DOOR).next_to(d, RIGHT, buff=0.15).shift(DOWN * 0.38)
         self.door = VGroup(d, dl)
         self.door.glyph, self.door.text = d, dl
         self.browser = browser_glyph().move_to([-2.2, -1.45, 0])
@@ -2035,7 +2052,7 @@ class CorsBouncer(Rig):
     def __init__(self, origin: str = "3200", size: float = 20, **kw):
         super().__init__(**kw)
         self.size, self.origin = size, origin
-        self.page = browser_glyph(f"localhost:{origin}", glyph_w=2.6, name="your browser")
+        self.page = browser_glyph(f"localhost:{origin}", glyph_w=2.6, name="your browser", glyph_h=1.9)
         self.page.move_to([-5.05, 0.15, 0])
         self.bouncer = VGroup(person_icon(S.GREY, 0.7), label("bouncer", size, S.GREY))
         self.bouncer.arrange(DOWN, buff=0.1).move_to([-3.05, -1.25, 0])
@@ -2075,13 +2092,20 @@ class CorsBouncer(Rig):
         if k == 2:
             a, b = self._starts["down"], self.doors["8000"][0].get_left() + LEFT * 0.05
             r = _poly([a, [a[0] + 0.9, b[1], 0], b], color, 4, dashed=dashed)
-            cap = mono(CALLS[2], self.size, color).move_to([(a[0] + b[0]) / 2 + 0.5, b[1] - 0.3, 0])
+            cap = mono(CALLS[2], self.size, color).move_to([(a[0] + b[0]) / 2 + 0.75, b[1] - 0.62, 0])
         else:
             a, b = self._starts["up"], self.doors["9000"][0].get_left() + LEFT * 0.05
+            if k == 3:                                   # beside route 1, not on top of it
+                a = a + DOWN * 0.22
             r = _poly([a, b], color, 4, dashed=dashed)
             cap = mono(CALLS[k], self.size, color).move_to([(a[0] + b[0]) / 2, b[1] + 0.85, 0])
         self.routes[k], self.captions[k] = r, cap
         return r
+
+    def landing(self) -> np.ndarray:
+        """Where replies land in the page (under its address)."""
+        w = self.page.window
+        return w.get_center() + DOWN * 0.3
 
     def packet(self, k: int) -> VGroup:
         """The numbered PINK packet of call k (a badge; not added)."""
@@ -2116,7 +2140,7 @@ class CorsBouncer(Rig):
         bars = EmbeddingBars(256, 1.6, 0.35).move_to(to + UP * 0.35)
         scene.play(bars.grow(0.6))
         scene.play(bars.animate.move_to(self.api.get_top() + UP * 0.35), run_time=run_time * 0.5)
-        scene.play(bars.animate.move_to(self.page.window.get_center() + DOWN * 0.15), run_time=run_time * 0.7)
+        scene.play(bars.animate.move_to(self.landing()), run_time=run_time * 0.7)
         return bars
 
     def preflight(self, scene, origin: str | None = None, run_time: float = 1.0) -> bool:
@@ -2165,7 +2189,7 @@ class CorsBouncer(Rig):
         chunks.arrange_in_grid(rows=2, buff=0.06).move_to(self.chroma.get_left() + LEFT * 1.0)
         scene.play(FadeOut(p), FadeIn(chunks), run_time=0.4)
         scene.remove(p)
-        scene.play(chunks.animate.move_to(self.page.window.get_center() + DOWN * 0.15), FadeOut(ok),
+        scene.play(chunks.animate.move_to(self.landing()), FadeOut(ok),
                    *([FadeOut(self.pass_)] if self.pass_ is not None else []), run_time=run_time)
         scene.remove(ok)
         return chunks
@@ -2184,6 +2208,10 @@ class CorsBouncer(Rig):
         r = self._build_route(3, dashed=True, color=S.GREY)
         cap = note("awaits call 2 · ChatComponent.jsx:163–171").move_to(self.captions[3])
         self.captions[3] = cap
+        old = [self.captions[1]] if self.captions[1] in scene.mobjects else []
+        if old:
+            scene.play(FadeOut(*old), run_time=0.3)
+            scene.remove(*old)
         scene.play(Create(r), FadeIn(cap), run_time=run_time)
         return VGroup(r, cap)
 
@@ -2191,14 +2219,15 @@ class CorsBouncer(Rig):
         """Plays: a curl figure walks straight to door 8000 along the bottom, past no bouncer, and an
         answer comes back. Returns the figure (on the scene)."""
         fig = VGroup(person_icon(S.GREY, 0.55), mono("curl", self.size, TOOL)).arrange(RIGHT, buff=0.12)
-        fig.move_to([-1.6, -1.85, 0])
+        y = self.chroma.get_bottom()[1] - 0.6
+        fig.move_to([self.bouncer.get_right()[0] + 1.2, y, 0])
         scene.play(FadeIn(fig, shift=RIGHT * 0.2), run_time=0.4)
         door = self.doors["8000"][0]
-        scene.play(fig.animate.move_to(door.get_left() + LEFT * (fig.width / 2 + 0.15) + DOWN * 0.35),
+        scene.play(fig.animate.move_to([door.get_left()[0] - fig.width / 2 - 0.5, y, 0]),
                    run_time=run_time)
         ans = Dot(door.get_center(), radius=0.09, color=INK)
         scene.play(FadeIn(ans), run_time=0.2)
-        scene.play(ans.animate.move_to(fig[0].get_top() + UP * 0.15), run_time=0.6)
+        scene.play(ans.animate.move_to(fig.get_right() + RIGHT * 0.15), run_time=0.6)
         self.curl_fig = VGroup(fig, ans)
         return self.curl_fig
 
@@ -2326,7 +2355,7 @@ class AppMap(Rig):
         lp = Arc(radius=0.17, start_angle=-PI / 2 + 0.5, angle=2 * PI - 1.0, color=LAPTOP, stroke_width=3)
         lp.add_tip(tip_length=0.12, tip_width=0.12)
         lt = label("localhost · 127.0.0.1", size, LAPTOP).next_to(lp, RIGHT, buff=0.12)
-        self.loop = VGroup(lp, lt).move_to([1.15, -1.62, 0])
+        self.loop = VGroup(lp, lt).move_to([0.95, -1.62, 0])
         # the drawer and its tubes
         dr = outline_box(1.25, 0.42, KEY, solid=True, fill_opacity=0.15)
         dt = mono("secrets/", size, KEY)
@@ -2384,12 +2413,12 @@ class AppMap(Rig):
         return g
 
     def _building(self, B, T):
-        g = google_building(2.55, T - B, door=False, meter_=False).move_to([5.1, B, 0], aligned_edge=DOWN)
+        g = google_building(2.55, T - B, door=False, meter_=False, text_y=0.35 - B).move_to([5.1, B, 0],
+                                                                                           aligned_edge=DOWN)
         d = door_glyph(0.36, 0.5, CLOUD).move_to([g.frame.get_left()[0] + 0.15 + 0.2, 1.28, 0])
         lk = lock_glyph(0.26, CLOUD).next_to(d, RIGHT, buff=0.15)
         iam = label("IAM", self.size, CLOUD).next_to(lk, RIGHT, buff=0.08)
         m = meter().move_to([g.frame.get_right()[0] - 0.55, B + 0.55, 0])
-        g.text.move_to([g.get_center()[0], 0.35, 0])
         g.add(d, lk, iam, m)
         g.door, g.guard, g.meter = d, VGroup(lk, iam), m
         return g

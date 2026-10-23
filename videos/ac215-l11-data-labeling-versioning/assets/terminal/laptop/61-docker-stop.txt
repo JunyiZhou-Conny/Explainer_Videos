@@ -1,3 +1,0 @@
-$ docker stop data-label-studio
-data-label-studio
-[exit 0]

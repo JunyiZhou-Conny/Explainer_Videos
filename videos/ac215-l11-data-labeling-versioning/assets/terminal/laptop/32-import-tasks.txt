@@ -1,7 +1,0 @@
-$ cat ls-api/tasks.json; curl -s -w '\nHTTP %{http_code}\n' -b /tmp/ls.cookies -H "X-CSRFToken: $LS_CSRF" -H "Referer: http://localhost:8080/" -H 'Content-Type: application/json' -d @ls-api/tasks.json http://localhost:8080/api/projects/1/import
-[{"image": "gs://your-bucket-name/cheeses_unlabeled/Image_1.jpg"},
- {"image": "gs://your-bucket-name/cheeses_unlabeled/Image_2.jpg"},
- {"image": "gs://your-bucket-name/cheeses_unlabeled/Image_3.jpg"}]
-{"task_count":3,"annotation_count":0,"prediction_count":0,"duration":0.06614446640014648,"file_upload_ids":[],"could_be_tasks_list":false,"found_formats":[],"data_columns":[]}
-HTTP 201
-[exit 0]

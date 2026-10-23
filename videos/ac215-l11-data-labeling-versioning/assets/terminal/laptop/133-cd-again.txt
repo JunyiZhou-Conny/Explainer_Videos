@@ -1,3 +1,0 @@
-$ cd data-versioning
-bash: line 1: cd: data-versioning: No such file or directory
-[exit 1]

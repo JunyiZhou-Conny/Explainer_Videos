@@ -1,2 +1,0 @@
-$ git checkout main -- cheese_dataset.dvc && git status --short
-[exit 0]

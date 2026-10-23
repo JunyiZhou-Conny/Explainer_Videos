@@ -1,20 +1,20 @@
 $ ls -la
 total 696
-drwxrwsrwx    3 student  student       4096 Oct 23 11:01 .
-drwxr-sr-x    4 student  student       4096 Oct 23 11:01 ..
-drwxrwsrwx    7 student  student       4096 Oct 23 11:01 .git
--rw-rw-rw-    1 student  student         33 Oct 23 11:01 .gitignore
--rw-rw-rw-    1 student  student       1440 Oct 23 11:01 Dockerfile
--rw-rw-rw-    1 student  student      11924 Oct 23 11:01 README.md
--rw-rw-rw-    1 student  student      65084 Oct 23 11:01 cheeses-labels.png
--rw-rw-rw-    1 student  student       5060 Oct 23 11:01 cli.py
--rw-rw-rw-    1 student  student     175910 Oct 23 11:01 data-labeling-flow.png
--rwxrwxrwx    1 student  student       1239 Oct 23 11:01 docker-compose.yml
--rwxrwxrwx    1 student  student        348 Oct 23 11:01 docker-entrypoint.sh
--rw-rw-rw-    1 student  student        644 Oct 23 11:01 docker-shell-CLI.sh
--rw-rw-rw-    1 student  student        340 Oct 23 11:01 docker-shell-compose.sh
--rwxrwxrwx    1 student  student        814 Oct 23 11:01 docker-shell.sh
--rw-rw-rw-    1 student  student     289052 Oct 23 11:01 pipeline-flow.png
--rw-rw-rw-    1 student  student        244 Oct 23 11:01 pyproject.toml
--rw-rw-rw-    1 student  student     113610 Oct 23 11:01 uv.lock
+drwxr-sr-x    3 student  student       4096 Oct 23 11:42 .
+drwxr-sr-x    4 student  student       4096 Oct 23 11:42 ..
+drwxr-sr-x    7 student  student       4096 Oct 23 11:42 .git
+-rw-r--r--    1 student  student         33 Oct 23 11:42 .gitignore
+-rw-r--r--    1 student  student       1440 Oct 23 11:42 Dockerfile
+-rw-r--r--    1 student  student      11924 Oct 23 11:42 README.md
+-rw-r--r--    1 student  student      65084 Oct 23 11:42 cheeses-labels.png
+-rw-r--r--    1 student  student       5060 Oct 23 11:42 cli.py
+-rw-r--r--    1 student  student     175910 Oct 23 11:42 data-labeling-flow.png
+-rwxr-xr-x    1 student  student       1239 Oct 23 11:42 docker-compose.yml
+-rwxr-xr-x    1 student  student        348 Oct 23 11:42 docker-entrypoint.sh
+-rw-r--r--    1 student  student        644 Oct 23 11:42 docker-shell-CLI.sh
+-rw-r--r--    1 student  student        340 Oct 23 11:42 docker-shell-compose.sh
+-rwxr-xr-x    1 student  student        814 Oct 23 11:42 docker-shell.sh
+-rw-r--r--    1 student  student     289052 Oct 23 11:42 pipeline-flow.png
+-rw-r--r--    1 student  student        244 Oct 23 11:42 pyproject.toml
+-rw-r--r--    1 student  student     113610 Oct 23 11:42 uv.lock
 [exit 0]

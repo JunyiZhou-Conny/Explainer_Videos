@@ -1,0 +1,4 @@
+$ docker container ls
+CONTAINER ID   IMAGE                             COMMAND                  CREATED         STATUS                  PORTS                    NAMES
+a1f0115f4597   heartexlabs/label-studio:latest   "./deploy/docker-ent…"   3 seconds ago   Up Less than a second   0.0.0.0:8080->8080/tcp   data-label-studio
+[exit 0]
