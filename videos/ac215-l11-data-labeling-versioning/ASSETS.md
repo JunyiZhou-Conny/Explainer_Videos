@@ -104,7 +104,7 @@ outputs only, ANSI colours dropped:
 
 ## `terminal/` — real terminal sessions
 
-Captured **2026-10-23 11:42–12:xx UTC** in one clean run (`capture.sh laptop setup` → all
+Captured **2026-10-23 11:42–12:06 UTC** in one clean run (`capture.sh laptop setup` → all
 segments → `capture.sh colab run`) by `terminal/capture.sh`, which runs `terminal/run_steps.sh`
 inside fresh disposable containers. Each README command runs exactly as written, in README order,
 and its output goes to its own file: the file starts with the command (`$ ...`), then the output,
@@ -347,8 +347,9 @@ None of the tutorial's commands were changed; the environment around them was:
 - **`umask 022`** is set in `run_steps.sh` (docker exec would default to 0000), so modes in `ls -la`
   look like a normal shell's.
 - The laptop baseline (bash, git identity, curl, tree, unzip, ssh, sudo, python3 for `ptyrun.py`)
-  is not part of the tutorial. `hub_retry` (Docker Hub 429s) was armed; see
-  `capture-only/hub-retries.txt` if present.
+  is not part of the tutorial. `hub_retry` (Docker Hub 429s) retried twice
+  (`capture-only/hub-retries.txt`: the python:3.11 base re-tag and `10-docker-shell`, 30 s each);
+  the files keep the attempts that got through.
 
 ## Differences and findings vs the digest, found while running
 
@@ -404,7 +405,7 @@ pins `b240b1a` as "main" — it is no longer the head (item 1 above).
 | laptop git | 2.54.0 |
 | Label Studio | `heartexlabs/label-studio:latest` → **1.23.0** (Community; backend commit `df96d79`), Django 5.2.17, image digest `sha256:afcc516a2277…` at pull time (**unpinned tag**; PyPI already had 1.23.2) |
 | data-label-cli image | python:3.12-slim-bookworm → Python 3.12.15, uv 0.13.5; uv.lock: label-studio-sdk 2.0.12, google-cloud-storage 3.4.1, pandas 2.3.3 |
-| data-version-cli image | python:3.11-slim-bookworm → Python 3.11.17, uv 0.13.5, **gcsfuse 3.13.0**, google-cloud-cli GCLOUD_VERSION; uv.lock: dvc 3.63.0, dvc-gs 3.0.2, gcsfs 2025.9.0 |
+| data-version-cli image | python:3.11-slim-bookworm → Python 3.11.17, uv 0.13.5, **gcsfuse 3.13.0**, Google Cloud SDK 590.0.0 (`google-cloud-cli`); uv.lock: dvc 3.63.0, dvc-gs 3.0.2, gcsfs 2025.9.0 |
 | Colab stand-in | Python 3.12.15, git 2.39.5; `pip install dvc dvc-gs` → dvc 3.67.1, dvc-gs 3.1.0, gcsfs 2026.10.1 |
 
 Things that vary between runs and must be said with "at the time of recording" or cropped:
