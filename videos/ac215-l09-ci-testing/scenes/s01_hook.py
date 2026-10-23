@@ -100,6 +100,7 @@ class Hook(VoiceScene):
         # ========================================================== 1. a commit, a gate, a vault
         gate = CommitGate(5)
         gate.move_to([0, -0.6, 0]).shift(UP * (-1.2 - gate.floor.get_center()[1]))
+        gate.envelope.shift(LEFT * 1.3)            # it starts further left and slides in
         ref = lref("41, 98–99")
         word = label("a gate", 26, S.GREY).next_to(gate.turnstile, UP, buff=0.3)
         start = VGroup(panel, note, bar, doc_line)
@@ -110,7 +111,7 @@ class Hook(VoiceScene):
             self.play(FadeTransform(start, gate.envelope), FadeIn(gate.vault), FadeIn(gate.floor),
                       run_time=1.2)
             vo.wait_until("Before that commit exists")
-            self.play(gate.envelope.animate.shift(RIGHT * 0.9), run_time=1.2, rate_func=linear)
+            self.play(gate.envelope.animate.shift(RIGHT * 0.8), run_time=1.2, rate_func=linear)
             vo.wait_until("who gets to say no")
             self.play(gate.drop_in(run_time=0.9), gate.approach(run_time=0.9))
             vo.wait_until("a gate,")
