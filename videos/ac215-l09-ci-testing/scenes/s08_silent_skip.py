@@ -438,7 +438,6 @@ class SilentSkip(VoiceScene):
 
         cip = code(CI, 150, 154)
         curl = code_span(cip.code, 154 - 150, "curl -f http://localhost:9000/ || exit 1")
-        curl_bar = hl_bar(curl, S.GREY, 0.3)
         cap = note("CI fails loudly · lecture 21", S.GREY, 22)
         cap.next_to(cip, DOWN, buff=0.22).align_to(cip, LEFT)
         inner = VGroup(cip, cap)
@@ -448,6 +447,7 @@ class SilentSkip(VoiceScene):
         card.move_to([-6.4 + card.width / 2, -3.45 + card.height / 2, 0])
         marker.move_to([(card.get_right()[0] + 6.4) / 2, (out_lab.get_bottom()[1] - 3.45) / 2, 0])
         assert marker.get_left()[0] > card.get_right()[0] + 0.2 and marker.get_right()[0] < 6.5
+        curl_bar = hl_bar(curl, S.GREY, 0.3)          # built after the card is placed
         red = ring(curl, ERR, buff=0.08, stroke=4)
 
         gt = GateTable(keys=("tests", "system"), filled=("tests",))
