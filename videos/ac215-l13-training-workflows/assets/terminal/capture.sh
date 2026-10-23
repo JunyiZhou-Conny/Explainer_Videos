@@ -2,6 +2,7 @@
 # Re-capture the L13 terminal transcripts (needs Docker and privileged containers):
 #   bash assets/terminal/capture.sh laptop setup
 #   bash assets/terminal/capture.sh laptop pre cloud wandb shell pkg job mgpu clipy nokey vtx clean
+#   (`bases` alone re-tags the capture-only base images; `pre` already does it)
 #   bash assets/terminal/capture.sh laptop teardown
 #   bash assets/terminal/capture.sh colab run
 # The laptop container persists between calls, so a long capture can run in parts; `teardown`
