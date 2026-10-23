@@ -57,10 +57,11 @@ from explainer import style as S
 from explainer.devops import tag
 
 from common import (ERR, INK, LAPTOP, MODIFIED, NARRATION, P_LAPTOP, PASS, STATE, SYSTEM, TURN,
-                    CHEESE_HOOKS, CommitGate, HandoverChain, attach, bare_prompt, beside, box, capture,
-                    code_panel, code_span, dashed_chip, excerpt, extra_row, label, line_bar, lref, mono,
-                    mono_line, pin, ponder_card, readme, recording_tag, resize, ring, row_tag, shown_path,
-                    glyph_range, substring, term, track, tracker, turn_row, type_cmd, under, unpin, your_turn)
+                    CHEESE_HOOKS, CommitGate, HandoverChain, Turnstile, attach, bare_prompt, beside, box,
+                    capture, code_panel, code_span, dashed_chip, excerpt, extra_row, glyph_range, label,
+                    line_bar, lref, mono, mono_line, pin, ponder_card, readme, recording_tag, resize, ring,
+                    row_tag, shown_path, substring, term, track, tracker, turn_row, type_cmd, under, unpin,
+                    your_turn)
 
 SAY = NARRATION["S09"]
 CFG = "cheese-app-ci-cd/.pre-commit-config.yaml"
@@ -90,6 +91,59 @@ def fit(lines, colors=None):
         c = (colors or {}).get(i)
         out.append((s, c) if c else s)
     return out
+
+
+def room(scene, t, n: int, run_time: float = 0.3) -> None:
+    """Make room for n new rows without the toolkit's fly-up: the oldest rows fade where they are,
+    then the rest slide up (long outputs would otherwise sail over the tracker)."""
+    over = len(t.lines) + n - t.rows
+    if over <= 0:
+        return
+    gone = VGroup(*t.lines.submobjects[:over])
+    stay = VGroup(*t.lines.submobjects[over:])
+    scene.play(FadeOut(gone), run_time=run_time * 0.4)
+    for m in gone:
+        t.lines.remove(m)
+    scene.remove(gone)
+    if len(stay):
+        scene.play(stay.animate.shift(UP * t.pitch * over), run_time=run_time * 0.6)
+
+
+def out(scene, t, lines, wrap: bool = False, run_time: float = 0.6, lag: float = 0.08) -> VGroup:
+    """Print capture lines ((text, colour) or text) in chunks that fit the terminal; wrapped
+    lines fold at the edge as Terminal.print(wrap=True) does. Returns every printed row."""
+    items = []
+    for x in lines:
+        s, c = (x, None) if isinstance(x, str) else x
+        while wrap and len(s) > t.max_chars:
+            items.append((s[:t.max_chars], c))
+            s = s[t.max_chars:]
+        assert len(s) <= t.max_chars, s
+        items.append((s, c))
+    k = max(1, min(t.rows, 4))
+    chunks = [items[i:i + k] for i in range(0, len(items), k)]
+    rows = VGroup()
+    for ch in chunks:
+        room(scene, t, len(ch))
+        rows.add(*t.print(scene, [(s, c) if c else s for s, c in ch], run_time=run_time / len(chunks) + 0.1,
+                          lag=lag))
+    return rows
+
+
+def typ(scene, t, cmd: str, type_time: float | None = None):
+    """type_cmd, with room made first (see room())."""
+    if len(t.lines) and getattr(t.lines[-1], "bare", False):
+        last = t.lines[-1]
+        scene.remove(last, *last.submobjects)
+        t.lines.remove(last)
+    p = t.prompt + " "
+    room(scene, t, len(t.fold(p + cmd, first_prefix=len(p))))
+    return type_cmd(scene, t, cmd, type_time)
+
+
+def flash(tg, color, scale: float = 1.15, run_time: float = 0.7):
+    """Indicate a tag's words only (indicating the whole tag floods its dark fill)."""
+    return Indicate(tg.text, color=color, scale_factor=scale, run_time=run_time)
 
 
 def rows_of(line) -> list:
@@ -156,7 +210,9 @@ def cfg_panel(a: int, b: int):
 
 
 def place_gate(gate: CommitGate) -> VGroup:
-    """The gate with its arch names, centred, bottom at -1.3 (over a 3-row strip)."""
+    """The gate with its arch names, centred, bottom at -1.3 (over a 3-row strip). The names are
+    rebuilt first: CommitGate builds them before it moves its turnstile, so they sit 0.75 low."""
+    gate.turnstile.name_labels(CHEESE_HOOKS)
     g = VGroup(gate, gate.turnstile.labels)
     g.move_to([0, 0, 0])
     g.shift(UP * (-1.3 - g.get_bottom()[1]))
@@ -240,7 +296,8 @@ class PreCommitGate(VoiceScene):
         host.move_to([-6.3 + host.width / 2, 2.35, 0])
         remedy = remedy_chip()
         remedy.move_to([-6.3 + remedy.width / 2, 1.8, 0])
-        rec = recording_tag().move_to([6.35 - recording_tag().width / 2, 1.8, 0])
+        rec = recording_tag()
+        rec.move_to([6.35 - rec.width / 2, 2.35, 0])
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref), run_time=0.7)
@@ -248,10 +305,10 @@ class PreCommitGate(VoiceScene):
             vo.wait_until("Outside the container")
             self.play(FadeIn(host, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("pip install pre-commit")
-            p_ln = type_cmd(self, t, pip.cmd, type_time=0.9)
-            out = t.print(self, pip.at((2, 3), "…", 35), wrap=True, run_time=0.8, lag=0.1)
+            p_ln = typ(self, t, pip.cmd, type_time=0.9)
+            res = out(self, t, pip.at((2, 3), "…", 35), wrap=True, run_time=0.8)
             vo.wait_until("4.7.0 at the time")
-            ver_row = row_with(out, "pre-commit-4.7.0")
+            ver_row = row_with(res, "pre-commit-4.7.0")
             ver = substring(ver_row, "pre-commit-4.7.0")
             vring = ring(ver, S.GREY, buff=0.05)
             self.play(Create(vring), FadeIn(rec, shift=LEFT * 0.15), ver.animate.set_color(INK), run_time=0.6)
@@ -259,16 +316,16 @@ class PreCommitGate(VoiceScene):
             self.play(FadeIn(remedy, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("then, from the repo root")
             p_row, p_tag = tag_on(self, p_ln, turn_row, buff=0.15)
-            i_ln = type_cmd(self, t, inst.cmd, type_time=0.7)
+            i_ln = typ(self, t, inst.cmd, type_time=0.7)
             i_row, i_tag = tag_on(self, i_ln, turn_row, anim=track(tr, 2))
-            inst_out = t.print(self, inst.at(2), run_time=0.4)[0]
+            inst_out = out(self, t, inst.at(2), run_time=0.4)[0]
             vo.wait_until("a hook file now sits")
             hook_glyphs = substring(inst_out, ".git/hooks/pre-commit")
             hring = ring(hook_glyphs, LAPTOP, buff=0.05)
             self.play(Create(hring), hook_glyphs.animate.set_color(INK), run_time=0.6)
             attach(self, inst_out, hring)
             vo.wait_until("Pause and run both")
-            self.play(Indicate(VGroup(p_tag, i_tag), color=TURN, scale_factor=1.15), run_time=0.8)
+            self.play(flash(p_tag, TURN), flash(i_tag, TURN), run_time=0.8)
 
         # ========================================================== 1. the hand-over chain (V5)
         hc = HandoverChain("cheese")
@@ -283,12 +340,12 @@ class PreCommitGate(VoiceScene):
             self.play(ReplacementTransform(flyer, hc.hook.text), FadeIn(hc.hook.box), FadeIn(hc.hook.glyph),
                       run_time=1.0)
             vo.wait_until("before every commit")
-            self.play(Indicate(hc.git, color=LAPTOP, scale_factor=1.1),
+            self.play(Indicate(hc.git.text, color=INK, scale_factor=1.12),
                       ShowPassingFlash(hc.arrows[0].copy().set_stroke(INK, 6), time_width=0.6), run_time=0.8)
             vo.wait_until("It lives in dot git")
             self.play(FadeIn(hook_note, shift=LEFT * 0.15), run_time=0.6)
             vo.wait_until("every clone installs it again")
-            self.play(Indicate(hook_note, color=INK, scale_factor=1.08), run_time=0.8)
+            self.play(flash(hook_note, INK, 1.08), run_time=0.8)
             vo.wait_until("It hands over to pre-commit")
             self.play(GrowArrow(hc.arrows[1]), FadeIn(hc.tool, shift=DOWN * 0.15), run_time=0.7)
             vo.wait_until("which reads the repo's config")
@@ -299,56 +356,58 @@ class PreCommitGate(VoiceScene):
                       run_time=1.1)
 
         # ========================================================== 2. the config: nine hooks
-        names = ts.labels
-        tsg = VGroup(ts, names)
-        dy = -3.56 - tsg.get_bottom()[1]
-        dx = 0 - tsg.get_center()[0]
+        small = Turnstile(9, None, arch_w=0.6, arch_h=1.0, gap=0.18)        # shorter: room for 10 lines
+        names = small.name_labels(CHEESE_HOOKS)
+        sg = VGroup(small, names)
+        sg.move_to([0, 0, 0])
+        sg.shift(UP * (-3.52 - sg.get_bottom()[1]))
         panels = [cfg_panel(a, b) for a, b in WINDOWS]
+        assert all(p.get_bottom()[1] > sg.get_top()[1] + 0.1 for p in panels), \
+            [(p.get_bottom()[1], sg.get_top()[1]) for p in panels]
         which = ((0, 1), (2, 3, 4, 5, 6), (7,), (8,))
 
         def show_names(idx):
             return LaggedStart(*[FadeIn(names[i], shift=UP * 0.1) for i in idx], lag_ratio=0.2)
 
+        def scroll(old, new, *extra):
+            new.shift(DOWN * 0.3)
+            self.play(FadeOut(old, shift=UP * 0.3), FadeIn(new, shift=UP * 0.3), *extra, run_time=0.6)
+
         with self.voiceover(SAY[2]) as vo:
             chain = VGroup(hc.links, hc.drop, hook_note)
             self.play(FadeOut(chain), run_time=0.5)
             self.remove(chain, *hc.links, hc.hook.text)
-            names.shift([dx, dy, 0])
-            self.play(ts.animate.shift([dx, dy, 0]), run_time=0.8)
+            self.play(ReplacementTransform(ts, small), run_time=0.8)
             self.play(FadeIn(panels[0], shift=UP * 0.2), run_time=0.7)
             vo.wait_until("seven hygiene guards")
             ids0 = VGroup(*[line_bar(panels[0].code, k - 7, TURN, 0.16) for k in (12, 14)])
             self.play(FadeIn(ids0), show_names(which[0]), run_time=0.8)
             vo.wait_until("to private keys")
-            p1 = panels[1]
-            p1.shift(DOWN * 0.3)
-            self.play(FadeOut(VGroup(panels[0], ids0), shift=UP * 0.3), FadeIn(p1, shift=UP * 0.3), run_time=0.6)
+            scroll(VGroup(panels[0], ids0), panels[1])
             self.play(show_names(which[1]), run_time=1.2)
             vo.wait_until("Then black")
             p2 = panels[2]
-            p2.shift(DOWN * 0.3)
-            self.play(FadeOut(p1, shift=UP * 0.3), FadeIn(p2, shift=UP * 0.3), run_time=0.6)
-            self.play(show_names(which[2]), Indicate(code_span_safe(p2, 32 - 27, "black"), color=TURN,
-                                                    scale_factor=1.1), run_time=0.8)
+            scroll(panels[1], p2)
+            self.play(show_names(which[2]), Indicate(code_span(p2.code, 32 - 27, "black"), color=TURN,
+                                                     scale_factor=1.1), run_time=0.8)
             vo.wait_until("and flake8")
             p3 = panels[3]
-            p3.shift(DOWN * 0.3)
-            self.play(FadeOut(p2, shift=UP * 0.3), FadeIn(p3, shift=UP * 0.3), run_time=0.6)
-            self.play(show_names(which[3]), run_time=0.5)
+            scroll(p2, p3)
+            self.play(show_names(which[3]), Indicate(code_span(p3.code, 41 - 35, "flake8"), color=TURN,
+                                                     scale_factor=1.1), run_time=0.8)
             vo.wait_until("both at width 120")
-            w120 = code_span_safe(p3, 43 - 35, "120")
-            u120 = under(w120, TURN, stroke=3)
+            u120 = under(code_span(p3.code, 43 - 35, "120"), TURN, stroke=3)
             self.play(Create(u120), Indicate(VGroup(names[7], names[8]), color=TURN, scale_factor=1.15),
                       run_time=0.8)
             vo.wait_until("both seeing only Python files under src")
             bars = VGroup(line_bar(p3.code, 0, TURN, 0.22), line_bar(p3.code, 9, TURN, 0.22))
             self.play(FadeIn(bars), run_time=0.6)
-            self.play(Indicate(VGroup(code_span_safe(p3, 0, "^src/"), code_span_safe(p3, 9, "^src/")),
+            self.play(Indicate(VGroup(code_span(p3.code, 0, "^src/"), code_span(p3.code, 9, "^src/")),
                                color=TURN, scale_factor=1.12), run_time=0.7)
             vo.wait_until("the tests are never linted")
             never = dashed_chip("tests/ · never matched")
             first = p3.code.code_lines[0]
-            never.move_to([first.get_right()[0] + 0.6 + never.width / 2, first.get_center()[1], 0])
+            never.move_to([first.get_right()[0] + 0.7 + never.width / 2, first.get_center()[1], 0])
             self.play(FadeIn(never, shift=LEFT * 0.15), run_time=0.6)
 
         # ========================================================== 3. the README's commit, clean tree (D3)
@@ -357,17 +416,17 @@ class PreCommitGate(VoiceScene):
         rec3.move_to([6.35 - rec3.width / 2, (t.box.get_top()[1] + 2.9) / 2, 0])
 
         with self.voiceover(SAY[3]) as vo:
-            gone = VGroup(p3, bars, u120, never, ts, names)
+            gone = VGroup(p3, bars, u120, never, small, names)
             self.play(FadeOut(gone), track(tr, 3), run_time=0.6)
             self.remove(gone)
             self.play(FadeIn(t), run_time=0.4)
-            c_ln = type_cmd(self, t, clean.cmd, type_time=1.0)
+            c_ln = typ(self, t, clean.cmd, type_time=1.0)
             vo.wait_until("Pause and run it")
             c_row, c_tag = tag_on(self, c_ln, turn_row)
-            self.play(Indicate(c_tag, color=TURN, scale_factor=1.15), run_time=0.6)
+            self.play(flash(c_tag, TURN), run_time=0.6)
             vo.wait_until("The first run downloads")
-            first = t.print(self, clean.at((2, 3)), wrap=True, run_time=0.8, lag=0.08)
-            t.print(self, clean.at((4, 6), "…"), wrap=True, run_time=0.6, lag=0.1)
+            first = out(self, t, clean.at((2, 3)), wrap=True, run_time=0.8)
+            out(self, t, clean.at((4, 6), "…"), wrap=True, run_time=0.6)
             vo.wait_until("plus a harmless warning")
             w_row = row_with(first, "[WARNING]")
             wring = ring(substring(w_row, "[WARNING]"), S.GREY, buff=0.05)
@@ -376,15 +435,15 @@ class PreCommitGate(VoiceScene):
             vo.wait_until("Then every hook says skipped")
             self.play(FadeOut(rec3), run_time=0.3)
             self.remove(rec3)
-            skipped = t.print(self, fit(clean.at((15, 23))), run_time=0.9, lag=0.08)
+            skipped = out(self, t, fit(clean.at((15, 23))), run_time=0.9)
             sring = ring(skipped, S.GREY, buff=0.06)
             self.play(Create(sring), run_time=0.5)
             attach(self, skipped[0], sring)
             vo.wait_until("git says nothing to commit")
-            done = t.print(self, clean.at(27), run_time=0.3)[0]
-            dbar = ring(done.glyphs, TURN, buff=0.06)
-            self.play(Create(dbar), run_time=0.5)
-            attach(self, done, dbar)
+            done = out(self, t, clean.at(27), run_time=0.3)[0]
+            dring = ring(done.glyphs, TURN, buff=0.06)
+            self.play(Create(dring), run_time=0.5)
+            attach(self, done, dring)
             vo.wait_until("hooks check staged files")
             self.play(Indicate(substring(done, "nothing to commit"), color=TURN, scale_factor=1.12), run_time=0.8)
             vo.wait_until("nothing was staged")
@@ -396,13 +455,13 @@ class PreCommitGate(VoiceScene):
         gpic = place_gate(gate)
 
         with self.voiceover(SAY[4]) as vo:
-            a_ln = type_cmd(self, t, allf.cmd, type_time=1.0)
+            a_ln = typ(self, t, allf.cmd, type_time=1.0)
             a_row, a_tag = tag_on(self, a_ln, turn_row, anim=track(tr, 4), tm=t)
-            res = t.print(self, fit(allf.at((2, 14), "…", 16), {7: ERR, 9: MODIFIED}), run_time=1.0, lag=0.06)
+            res = out(self, t, fit(allf.at((2, 14), "…", 16), {7: ERR, 9: MODIFIED}), run_time=1.0)
             black_ln, mod_ln, ref_ln = res[7], res[9], res[11]
             assert "Black" in black_ln.text and "modified" in mod_ln.text and "reformatted" in ref_ln.text
             vo.wait_until("Pause and run it")
-            self.play(Indicate(a_tag, color=TURN, scale_factor=1.15), run_time=0.6)
+            self.play(flash(a_tag, TURN), run_time=0.6)
             vo.wait_until("Six hooks pass")
             drop_tag(self, a_row, a_tag)
             resize(self, t, 3, keep=[black_ln, mod_ln, ref_ln], run_time=0.6)
@@ -410,14 +469,13 @@ class PreCommitGate(VoiceScene):
             for i, s in enumerate(["pass", "pass", "pass", "pass", "skip", "pass", "pass"]):
                 step_to(self, gate, i, s, run_time=0.22)
             vo.wait_until("one has no files to check")
-            self.play(Indicate(VGroup(gate.arches[4], names_of(gate)[4]), color=S.GREY, scale_factor=1.15),
+            self.play(Indicate(VGroup(gate.arches[4], gate.turnstile.labels[4]), color=S.GREY, scale_factor=1.15),
                       run_time=0.6)
             vo.wait_until("then black fails")
             a7 = gate.arches[7]
             self.play(gate.envelope.animate.move_to([a7.get_left()[0] - gate.envelope.width / 2 + 0.3,
                                                      gate.home[1], 0]), a7.to("modified"), run_time=0.4)
-            self.play(Indicate(a7, color=MODIFIED, scale_factor=1.15), Indicate(black_ln, color=ERR,
-                                                                                 scale_factor=1.04), run_time=0.6)
+            self.play(Indicate(a7, color=MODIFIED, scale_factor=1.15), run_time=0.6)
             vo.wait_until("files were modified by this hook")
             self.play(Indicate(substring(mod_ln, "files were modified by this hook"), color=MODIFIED,
                                scale_factor=1.08), run_time=0.7)
@@ -455,7 +513,7 @@ class PreCommitGate(VoiceScene):
             self.play(FadeIn(pair.w2), TransformFromCopy(pair.before, pair.after), run_time=0.9)
             self.play(Create(f_ul), c_ring.animate.set_stroke(opacity=0.35), run_time=0.5)
             vo.wait_until("so flake8 saw clean code")
-            fl = t.print(self, fit(allf.at(18), {0: PASS}), run_time=0.4)[0]
+            fl = out(self, t, fit(allf.at(18), {0: PASS}), run_time=0.4)[0]
             self.play(Indicate(substring(fl, "Passed"), color=PASS, scale_factor=1.2), run_time=0.6)
             vo.wait_until("Failed here does not mean broken")
             self.play(FadeIn(cap1, shift=UP * 0.15), run_time=0.6)
@@ -469,7 +527,6 @@ class PreCommitGate(VoiceScene):
 
         # ========================================================== 6. diff, add, commit again (D4x, D3, D5)
         reset_arches(gate)
-        gpic = VGroup(gate, gate.turnstile.labels)
 
         with self.voiceover(SAY[6]) as vo:
             rest = VGroup(pair, c_ring, f_ul, caps)
@@ -477,43 +534,43 @@ class PreCommitGate(VoiceScene):
             self.remove(rest, *pair, *caps)
             resize(self, t, 12)
             vo.wait_until("git diff shows the fix")
-            d_ln = type_cmd(self, t, diff.cmd, type_time=0.4)
+            d_ln = typ(self, t, diff.cmd, type_time=0.4)
             d_row, d_tag = tag_on(self, d_ln, extra_row, anim=track(tr, 4, extra=True))
-            d_out = t.print(self, fit(diff.at(2, "…", (10, 11), "…", (16, 18)), {3: ERR, 4: PASS, 6: ERR}),
-                            wrap=True, run_time=0.8, lag=0.08)
+            out(self, t, fit(diff.at(2, "…", (10, 11), "…", (16, 18)), {2: ERR, 3: PASS, 5: ERR}), wrap=True,
+                run_time=0.8)
             vo.wait_until("git add dash u")
             unpin(self, d_row, d_tag)
-            g_ln = type_cmd(self, t, add.cmd, type_time=0.4)
+            g_ln = typ(self, t, add.cmd, type_time=0.4)
             g_row, g_tag = tag_on(self, g_ln, extra_row)
+            room(self, t, 1)
             bare_prompt(self, t)
             vo.wait_until("Commit again")
             unpin(self, g_row, g_tag)
-            k_ln = type_cmd(self, t, again.cmd, type_time=0.9)
+            k_ln = typ(self, t, again.cmd, type_time=0.9)
             self.play(track(tr, 3, extra=False), run_time=0.4)
-            k_out = t.print(self, fit(again.at((2, 12))), run_time=0.9, lag=0.06)
+            k_out = out(self, t, fit(again.at((2, 12))), run_time=0.9)
             vo.wait_until("seven hooks pass")
             resize(self, t, 3, keep=[k_out[8], k_out[9], k_out[10]], run_time=0.6)
+            gpic = VGroup(gate, gate.turnstile.labels)
             self.play(FadeIn(gpic), run_time=0.5)
             gate.pass_through(self, ["pass", "pass", "skip", "pass", "skip", "pass", "pass", "pass", "pass"],
                               step_time=0.24)
             vo.wait_until("a real commit enters history")
             main = k_out[9]
-            mbar = ring(substring(main, "[main b72d50d]"), PASS, buff=0.05)
-            self.play(substring(main, "[main b72d50d]").animate.set_color(PASS), Create(mbar),
-                      Indicate(gate.vault, color=PASS, scale_factor=1.06), run_time=0.8)
-            attach(self, main, mbar)
+            mid = substring(main, "[main b72d50d]")
+            mring = ring(mid, PASS, buff=0.05)
+            self.play(mid.animate.set_color(PASS), Create(mring),
+                      Indicate(gate.vault.text, color=PASS, scale_factor=1.15), run_time=0.8)
+            attach(self, main, mring)
             vo.wait_until("pause and walk the loop")
-            yt = your_turn()
-            yt.move_to([6.4 - yt.width / 2, t.box.get_top()[1] + 0.05 + yt.height / 2, 0])
-            self.play(FadeIn(yt, shift=LEFT * 0.15), run_time=0.5)
-            self.play(Indicate(yt, color=TURN, scale_factor=1.12), run_time=0.6)
+            m_row, m_tag = tag_on(self, main, turn_row)
+            self.play(flash(m_tag, TURN), run_time=0.6)
             vo.wait_until("plain pre-commit run")
-            self.play(FadeOut(yt), run_time=0.3)
-            self.remove(yt)
-            s_ln = type_cmd(self, t, staged.cmd, type_time=0.6)
+            unpin(self, m_row, m_tag)
+            s_ln = typ(self, t, staged.cmd, type_time=0.6)
             s_row, s_tag = tag_on(self, s_ln, turn_row, anim=track(tr, 5))
             vo.wait_until("checks only staged files")
-            t.print(self, fit(staged.at((2, 10))), run_time=1.0, lag=0.08)
+            out(self, t, fit(staged.at((2, 10))), run_time=1.0)
             vo.wait_until("everything skips")
             self.play(gate.turnstile.mark_all(["skip"] * 9, run_time=0.9), run_time=0.9)
 
@@ -531,20 +588,22 @@ class PreCommitGate(VoiceScene):
             resize(self, t, 12)
             mac.move_to([6.35 - mac.width / 2, (t.box.get_top()[1] + 2.9) / 2, 0])
             vo.wait_until("sed adds and stages")
-            b_ln = type_cmd(self, t, brk.cmd, type_time=1.4)
-            b_row, b_tag = tag_on(self, b_ln, extra_row)
+            b_ln = typ(self, t, brk.cmd, type_time=1.4)
+            tag_on(self, b_ln, extra_row)
+            room(self, t, 1)
             bare_prompt(self, t)
             vo.wait_until("on a Mac")
             self.play(FadeIn(mac, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("The commit fails twice")
-            k2 = type_cmd(self, t, blocked.cmd, type_time=0.9)
-            k2_row, k2_tag = tag_on(self, k2, extra_row)
-            bl = t.print(self, fit(blocked.at((9, 13), (18, 22)), {0: ERR, 2: MODIFIED, 5: ERR, 9: ERR}),
-                         run_time=0.9, lag=0.06)
+            k2 = typ(self, t, blocked.cmd, type_time=0.9)
+            tag_on(self, k2, extra_row)
+            bl = out(self, t, fit(blocked.at((9, 13), (18, 22)), {0: ERR, 2: MODIFIED, 5: ERR, 9: ERR}),
+                     run_time=0.9)
             b9, b18, b22 = bl[0], bl[5], bl[9]
             assert "Black" in b9.text and "Flake8" in b18.text and "F401" in b22.text
             vo.wait_until("black reformats the file")
-            self.play(Indicate(VGroup(b9, bl[2]), color=ERR, scale_factor=1.04), run_time=0.7)
+            self.play(Indicate(VGroup(substring(b9, "Failed"), substring(bl[2], "files were modified")),
+                               color=ERR, scale_factor=1.1), run_time=0.7)
             vo.wait_until("flake8 reports F401")
             self.play(Indicate(substring(b22, "F401 'os' imported but unused"), color=ERR, scale_factor=1.08),
                       run_time=0.7)
@@ -554,6 +613,7 @@ class PreCommitGate(VoiceScene):
             self.play(FadeOut(mac), FadeOut(ref), run_time=0.3)
             self.remove(mac, ref)
             resize(self, t, 3, keep=[b9, b18, b22], run_time=0.6)
+            gpic = VGroup(gate, gate.turnstile.labels)
             self.play(FadeIn(gpic), run_time=0.5)
             for i, s in enumerate(["pass", "pass", "skip", "pass", "skip", "pass", "pass"]):
                 step_to(self, gate, i, s, run_time=0.18)
@@ -564,20 +624,21 @@ class PreCommitGate(VoiceScene):
             self.play(Indicate(a8, color=ERR, scale_factor=1.15), run_time=0.5)
             self.play(gate.go_home(), run_time=0.6)
             vo.wait_until("git status confirms")
-            st = type_cmd(self, t, status.cmd, type_time=0.4)
-            t.print(self, status.at((2, 3)), run_time=0.4)
-            still = t.print(self, status.at((6, 8)), run_time=0.5)
+            typ(self, t, status.cmd, type_time=0.4)
+            out(self, t, status.at((2, 3)), run_time=0.4)
+            still = out(self, t, status.at((6, 8)), run_time=0.5)
             stag = beside(row_tag("still staged · not committed", TURN), still[0])
             pin(self, still[0], stag)
             self.play(Indicate(VGroup(env, gate.tray), color=TURN, scale_factor=1.08), run_time=0.7)
             vo.wait_until("Restore the file")
-            r_ln = type_cmd(self, t, restore.cmd, type_time=1.4)
+            r_ln = typ(self, t, restore.cmd, type_time=1.4)
+            tag_on(self, r_ln, extra_row)
             self.play(FadeOut(env, shift=DOWN * 0.3), run_time=0.6)
             gate.remove(env)
             self.remove(env)
             gate.envelope = None
             vo.wait_until("your machine now says no")
-            self.play(Indicate(gate.vault, color=INK, scale_factor=1.06),
+            self.play(Indicate(gate.vault.door, color=INK, scale_factor=1.06),
                       Indicate(VGroup(gate.arches[7], gate.arches[8]), color=ERR, scale_factor=1.1), run_time=0.9)
             vo.wait_until("But this gate never ran")
             self.play(FadeOut(t), run_time=0.4)
@@ -588,19 +649,10 @@ class PreCommitGate(VoiceScene):
             corner = [6.5 - qcard.width / 2, 3.55 - qcard.height / 2, 0]
             self.play(qcard.animate.move_to(corner), run_time=1.0)
             vo.wait_until("what even it can miss")
-            self.play(Indicate(qcard, color=TURN, scale_factor=1.06), run_time=0.7)
+            self.play(Indicate(q, color=TURN, scale_factor=1.06), run_time=0.7)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)
-
-
-def code_span_safe(panel, k: int, sub: str) -> VGroup:
-    """Glyphs of `sub` in line k of a code panel (lines of the panel's own source)."""
-    return code_span(panel.code, k, sub)
-
-
-def names_of(gate: CommitGate) -> VGroup:
-    return gate.turnstile.labels
 
 
 def ponder_at(scene, question: str, seconds: float, y: float) -> VGroup:
