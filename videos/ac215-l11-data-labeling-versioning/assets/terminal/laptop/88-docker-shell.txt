@@ -1,1 +1,68 @@
 $ sh docker-shell.sh
+Building image
+[+] Building 409.4s (12/12) FINISHED                                                           docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 2.52kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-slim-bookworm                             0.1s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => CACHED [1/7] FROM docker.io/library/python:3.11-slim-bookworm@sha256:eaa0727d8c3f7d04fc21c915b5b28e  0.1s
+ => => resolve docker.io/library/python:3.11-slim-bookworm@sha256:eaa0727d8c3f7d04fc21c915b5b28e0e08565  0.1s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 5.06kB                                                                      0.0s
+ => [2/7] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &&     apt  236.9s
+ => [3/7] RUN mkdir -p /mnt/gcs_data && chown app:app /mnt/gcs_data                                      1.5s
+ => [4/7] WORKDIR /app                                                                                   0.1s
+ => [5/7] COPY --chown=app:app pyproject.toml uv.lock* ./                                                0.1s
+ => [6/7] RUN uv sync --frozen                                                                           8.1s
+ => [7/7] COPY --chown=app:app . ./                                                                      0.4s
+ => exporting to image                                                                                 159.1s
+ => => exporting layers                                                                                104.2s
+ => => exporting manifest sha256:3aaee258d919995bab9c32c6db06b95a6f64adc5423704e1416a87b737539cea        0.0s
+ => => exporting config sha256:00560651ccf0264780e411db2a627a8a992901c288dc54ff179bceffacdbcca8          0.0s
+ => => exporting attestation manifest sha256:2eae098dca3ed310fc9b82616a12ab6e10a9edfc836639772e5d456d81  0.1s
+ => => exporting manifest list sha256:43f2728b2b152c1aaab24e5e81400cb08790e81488feecb82c7fab3303423934   0.1s
+ => => naming to docker.io/library/data-version-cli:latest                                               0.0s
+ => => unpacking to docker.io/library/data-version-cli:latest                                           54.6s
+Running container
+Container is running!!!
+Architecture: x86_64
+Python version: Python 3.11.17
+UV version: uv 0.13.5 (x86_64-unknown-linux-gnu)
+ERROR: (gcloud.auth.activate-service-account) Unable to read file [/secrets/data-service-account.json]: [Errno 2] No such file or directory: '/secrets/data-service-account.json'
+{"timestamp":{"seconds":1792756823,"nanos":271940750},"severity":"INFO","message":"Start gcsfuse/3.13.0 (Go version go1.27.2) for app \"\" using mount point: /mnt/gcs_data\n","mount-id":"your-bucket-placeholder-8a7edb5c"}
+{"timestamp":{"seconds":1792756823,"nanos":272014974},"severity":"INFO","message":"GCSFuse Config","mount-id":"your-bucket-placeholder-8a7edb5c","CLI Flags":{"key-file":"/secrets/data-service-account.json"}}
+{"timestamp":{"seconds":1792756823,"nanos":272052038},"severity":"INFO","message":"GCSFuse Config","mount-id":"your-bucket-placeholder-8a7edb5c","Full Config":{"AppName":"","CacheDir":"","CloudProfiler":{"AllocatedHeap":true,"Cpu":true,"Enabled":false,"Goroutines":false,"Heap":true,"Label":"gcsfuse-0.0.0","Mutex":false,"ServiceName":"gcsfuse"},"Debug":{"ExitOnInvariantViolation":false,"Fuse":false,"Gcs":false,"LogMutex":false},"DisableAutoconfig":false,"DummyIo":{"Enable":false,"PerMbLatency":0,"ReaderLatency":0},"EnableAtomicRenameObject":true,"EnableGoogleLibAuth":true,"EnableHns":true,"EnableNewReader":true,"EnableStandardSymlinks":true,"EnableTypeCacheDeprecation":true,"EnableUnsupportedPathSupport":true,"FileCache":{"CacheFileForRangeRead":false,"DownloadChunkSizeMb":200,"EnableCrc":false,"EnableExperimentalSharedChunkCache":false,"EnableODirect":false,"EnableParallelDownloads":false,"ExcludeRegex":"","ExperimentalDisableSizeCalculationFix":false,"ExperimentalEnableChunkCache":false,"ExperimentalParallelDownloadsDefaultOn":true,"IncludeRegex":"","MaxParallelDownloads":16,"MaxSizeMb":-1,"ParallelDownloadsPerFile":16,"SharedCacheChunkSizeMb":8,"WriteBufferSize":4194304},"FileSystem":{"CongestionThreshold":0,"DirMode":"755","DisableParallelDirops":false,"EnableKernelReader":false,"ExperimentalEnableDentryCache":false,"ExperimentalEnableReaddirplus":false,"ExperimentalODirect":false,"FileMode":"644","FuseMaxRequestSizeKb":1024,"FuseMaxWriteSizeKb":1024,"FuseOptions":[],"Gid":-1,"IgnoreInterrupts":true,"InactiveMrdCacheSize":1000,"KernelListCacheTtlSecs":0,"KernelParamsFile":"","MaxBackground":0,"MaxReadAheadKb":0,"RenameDirLimit":0,"StrongConsistencyOnOpen":false,"TempDir":"","Uid":-1},"Foreground":false,"GcsAuth":{"AnonymousAccess":false,"KeyFile":"/secrets/data-service-account.json","ReuseTokenFromUrl":true,"S2aAddress":"","S2aSpiffeId":"","TokenUrl":""},"GcsConnection":{"BillingProject":"","ClientProtocol":"http1","CustomEndpoint":"","EnableGrpcByDefault":false,"EnableHttpDnsCache":true,"ExperimentalEnableJsonRead":false,"ExperimentalLocalSocketAddress":"","GrpcConnPoolSize":1,"GrpcPathStrategy":"direct-path-with-fallback","HttpClientTimeout":0,"LimitBytesPerSec":-1,"LimitOpsPerSec":-1,"MaxConnsPerHost":0,"MaxIdleConnsPerHost":100,"SequentialReadSizeMb":200},"GcsRetries":{"ChunkRetryDeadlineSecs":120,"ChunkTransferTimeoutSecs":10,"EnableMountRetries":false,"MaxRetryAttempts":9223372036854775807,"MaxRetrySleep":30000000000,"Multiplier":2,"ReadStall":{"Enable":true,"InitialReqTimeout":20000000000,"MaxReqTimeout":1200000000000,"MinReqTimeout":1500000000,"ReqIncreaseRate":15,"ReqTargetPercentile":0.99}},"ImplicitDirs":false,"List":{"EnableEmptyManagedFolders":false},"Logging":{"ExperimentalEnableOtelLogging":false,"ExperimentalOtelLoggingEndpoint":"telemetry.googleapis.com","ExperimentalOtelLoggingProjectId":"","FilePath":"","Format":"json","LogRotate":{"BackupFileCount":10,"Compress":true,"MaxFileSizeMb":512},"Severity":"INFO","WireLog":""},"MachineType":"","MetadataCache":{"DeprecatedStatCacheCapacity":20460,"DeprecatedStatCacheTtl":60000000000,"DeprecatedTypeCacheTtl":60000000000,"EnableMetadataPrefetch":true,"EnableNonexistentTypeCache":false,"ExperimentalEnableOptimizedMetadataCache":false,"ExperimentalMetadataPrefetchOnMount":"disabled","MetadataPrefetchEntriesLimit":5000,"MetadataPrefetchMaxWorkers":10,"NegativeTtlSecs":5,"StatCacheMaxSizeMb":34,"TtlSecs":60,"TypeCacheMaxSizeMb":4},"Metrics":{"BufferSize":256,"CloudMetricsExportIntervalSecs":0,"EnableNewMetricsSchema":true,"ExperimentalEnableGrpcMetrics":true,"ExperimentalEnableOtelMetrics":false,"ExperimentalOtelMetricsEndpoint":"","ExperimentalOtelMetricsProjectId":"","PrometheusPort":0,"StackdriverExportInterval":0,"Workers":3},"MountId":"","Mrd":{"PoolSize":4},"OnlyDir":"","Profile":"","Read":{"BlockSizeMb":16,"EnableBufferedRead":false,"EnableGrpcReadChecksums":false,"GlobalMaxBlocks":40,"InactiveStreamTimeout":10000000000,"MaxBlocksPerHandle":20,"MinBlocksPerHandle":4,"RandomSeekThreshold":3,"StartBlocksPerHandle":1},"Trace":{"Exporters":["gcpexporter"],"ProjectId":"","SamplingRatio":0},"WorkloadInsight":{"ForwardMergeThresholdMb":0,"OutputFile":"","Visualize":false},"Write":{"BlockSizeMb":32,"CreateEmptyFile":false,"EnableRapidAppends":true,"EnableStreamingWrites":true,"FinalizeFileForRapid":false,"GlobalMaxBlocks":4,"MaxBlocksPerFile":1,"RapidWrite":"disabled"}}}
+Added environment https_proxy: http://172.17.0.1:38695
+Added environment GOOGLE_APPLICATION_CREDENTIALS: /secrets/data-service-account.json
+Added environment no_proxy: localhost,127.0.0.1,data-label-studio
+Error: daemonize.Run: readFromProcess: sub-process: Error while mounting gcsfuse: mountWithArgs: failed to create storage handle using createStorageHandle: error in getting clientOpts for gRPC client: failed to get client auth options and token: while fetching credentials: failed to detect credentials: open /secrets/data-service-account.json: no such file or directory
+{"timestamp":{"seconds":1792756823,"nanos":371950971},"severity":"INFO","message":"Error occurred during command execution on gcsfuse/3.13.0 (Go version go1.27.2): daemonize.Run: readFromProcess: sub-process: Error while mounting gcsfuse: mountWithArgs: failed to create storage handle using createStorageHandle: error in getting clientOpts for gRPC client: failed to get client auth options and token: while fetching credentials: failed to detect credentials: open /secrets/data-service-account.json: no such file or directory","mount-id":"your-bucket-placeholder-8a7edb5c"}
+GCS bucket mounted at /mnt/gcs_data
+mount: /app/cheese_dataset: special device /mnt/gcs_data/images does not exist.
+       dmesg(1) may have more information after failed mount system call.
+Activating virtual environment...
+root@9a9e6dff5c15:/app# ls -la cheese_dataset
+total 8
+drwxr-sr-x 2 root app 4096 Oct 23 12:00 .
+drwxr-sr-x 4 app  app 4096 Oct 23 12:00 ..
+root@9a9e6dff5c15:/app# which dvc
+/.venv/bin/dvc
+root@9a9e6dff5c15:/app# dvc --version
+3.63.0
+root@9a9e6dff5c15:/app# gcsfuse --version
+gcsfuse version 3.13.0 (Go version go1.27.2)
+root@9a9e6dff5c15:/app# gcloud --version
+Google Cloud SDK 590.0.0
+alpha 2026.10.16
+beta 2026.10.16
+bq 2.1.40
+bundled-python3-unix 3.14.8
+core 2026.10.16
+gcloud-crc32c 1.0.0
+gsutil 5.37
+preview 2026.10.16
+root@9a9e6dff5c15:/app# ls /mnt/gcs_data
+root@9a9e6dff5c15:/app# exit
+exit
+[exit 0]
