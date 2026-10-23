@@ -1912,7 +1912,8 @@ class SignedTicket(Rig):
       relay() -> VGroup         the dashed GREY relay route vault → house → browser and a GREY strike
                                 (.route .strike; not added: Create the route, then the strike)
       stamp(scene)              a BLUE url_ticket appears at the house (the seal stamps on) and
-                                slides to the browser; the key stays; returns the ticket
+                                slides to the browser (parks above it: fade the 'task 1?' bubble
+                                first); the key stays; returns the ticket
       walk(scene, ticket)       the ticket rides a PINK route to the vault's door; the seal is
                                 checked (GREEN check); a blank tile rides back and bounces off the
                                 bouncer (FadeIn the bouncer first); returns (route, tile, check)
@@ -1992,7 +1993,7 @@ class SignedTicket(Rig):
         seal = tk.seal
         scene.play(FadeIn(VGroup(tk.frame, tk[1], tk.glass, tk.text), shift=DOWN * 0.1), run_time=0.5)
         scene.play(FadeIn(seal, scale=2.2), Indicate(self.key, color=KEY, scale_factor=1.15), run_time=0.6)
-        tgt = self.browser.window.get_right() + np.array([tk.width / 2 + 0.2, 0.75, 0])
+        tgt = self.browser.window.get_top() + UP * (tk.height / 2 + 0.15)
         scene.play(tk.animate.move_to(tgt), run_time=0.9)
         return tk
 
@@ -2248,14 +2249,14 @@ class FuseMount(Rig):
             g.shift(UP * 0.23)
         self.box = outline_box(12.6, 1.6, IMAGE, solid=False).move_to([0, -1.22, 0])
         self.box_title = mono(CONTAINERS["dvc"], size, IMAGE).move_to(
-            self.box.get_corner(UR) + np.array([-0.15, -0.24, 0]), aligned_edge=RIGHT)
+            self.box.get_corner(UL) + np.array([0.15, -0.24, 0]), aligned_edge=LEFT)
         self.key = VGroup(key_glyph(0.8), mono("/secrets", size, KEY)).arrange(DOWN, buff=0.1)
-        self.key.move_to([-5.55, -1.25, 0])
+        self.key.move_to([-5.55, -1.42, 0])
         r1, r2 = -0.83, -1.62
         self.mnt = drawer("/mnt/gcs_data", ROUTE, size, glyph=False).move_to([-1.6, r1, 0])
         self.mnt_images = drawer("images/", ROUTE, size, glyph=False).next_to(self.mnt, RIGHT, buff=0.08)
         self.app = drawer("/app/cheese_dataset", ROUTE, size, glyph=False).move_to([3.6, r2, 0])
-        self.dvc = tool_chip("dvc").next_to(self.app, RIGHT, buff=0.25)
+        self.dvc = tool_chip("dvc").move_to([self.app.get_right()[0] - 0.45, r1, 0])
         # the bucket, outside the container (the WHOLE bucket: both folders)
         self.bucket = vault("your bucket", ("images/", "dvc_store/"), CLOUD, size, mono_title=False)
         self.bucket.rows.arrange(RIGHT, buff=0.15)
@@ -2299,9 +2300,10 @@ class FuseMount(Rig):
         return FadeIn(self.dvc, shift=DOWN * 0.2, run_time=run_time)
 
     def fetch(self, scene):
-        d = Dot(self.dvc.get_left(), radius=0.08, color=ROUTE)
+        d = Dot(self.dvc.get_bottom(), radius=0.08, color=ROUTE)
         bx = self.mnt_images.get_right()[0] + 0.45
-        up = VMobject().set_points_as_corners([self.dvc.get_left(), self.app.get_left(),
+        up = VMobject().set_points_as_corners([self.dvc.get_bottom(), self.app.get_right() + LEFT * 0.45,
+                                               self.app.get_left(),
                                                [bx, self.app.get_center()[1], 0],
                                                [bx, self.mnt_images.get_center()[1], 0],
                                                self.mnt_images.get_right(), self.mnt.get_top(),
@@ -2375,12 +2377,12 @@ class MountLayers(Rig):
                                        stroke_width=3).set_fill(LAPTOP, 0.04).move_to([-1.5, 0, 0])
         self.header = label("your laptop", size, LAPTOP).move_to(self.laptop.get_corner(DL) + np.array([0.2, 0.25, 0]),
                                                                  aligned_edge=LEFT)
-        self.host = self._repo("data-versioning/", LAPTOP).move_to([-4.3, 0.55, 0])
+        self.host = self._repo("data-versioning/", LAPTOP).move_to([-4.3, 0.3, 0])
         self.host_data = self.host.rows[1]
         self.box = outline_box(5.4, 2.85, IMAGE, solid=False).move_to([0.45, 0.0, 0])
         self.box_title = mono(CONTAINERS["dvc"], size, IMAGE).move_to(
             self.box.get_corner(UL) + np.array([0.15, -0.25, 0]), aligned_edge=LEFT)
-        self.app = self._repo("/app", IMAGE).move_to([-0.35, 0.4, 0])
+        self.app = self._repo("/app", IMAGE).move_to([-0.35, 0.22, 0])
         self.app_data = self.app.rows[1]
         self.mnt = drawer("/mnt/gcs_data/images", ROUTE, size, glyph=False).move_to([0.45, -0.95, 0])
         self.bucket = vault("your bucket", ("images/",), CLOUD, size, mono_title=False).move_to([5.05, 0.6, 0])
@@ -2524,9 +2526,9 @@ class HashShelf(Rig):
         self.tiles = {}
         for n, y in zip(IMAGES[:4], ys):
             self.tiles[n] = tile(n, 0.55, LAPTOP, side=RIGHT).move_to([-6.25, y, 0], aligned_edge=LEFT)
-        self.tiles[IMAGES[4]] = tile(IMAGES[4], 0.55, LAPTOP, side=RIGHT).move_to([-6.25, -0.55, 0],
+        self.tiles[IMAGES[4]] = tile(IMAGES[4], 0.55, LAPTOP, side=RIGHT).move_to([-1.95, 0.35, 0],
                                                                                   aligned_edge=LEFT)
-        self.machine = machine("md5").move_to([-1.35, 1.75, 0])
+        self.machine = machine("md5").move_to([-1.05, 1.75, 0])
         top, bot = 2.6, -1.25
         self.rack = VGroup()
         fr = RoundedRectangle(width=5.05, height=top - bot, corner_radius=0.14, stroke_color=LAPTOP,
@@ -2569,7 +2571,7 @@ class HashShelf(Rig):
 
     def _file(self, scene, a, text, color=HASH, run_time: float = 0.8):
         """A slip `text` comes out of the chute and is filed on aisle a."""
-        out_ = slip(text, color, self.size).move_to(self.machine.chute_pt.get_center() + RIGHT * 1.0)
+        out_ = slip(text, color, self.size).move_to(self.machine.chute_pt.get_center() + RIGHT * 0.95)
         scene.play(FadeIn(out_, shift=RIGHT * 0.3), run_time=0.4)
         self._show_row(scene, a)
         tgt = self._slot(a, out_)
@@ -2714,16 +2716,16 @@ class TagRope(Rig):
         self.card = pointer_card(short(V20["md5"]), V20["size"], V20["nfiles"], size)
         self.card.move_to([-3.9, 0.0, 0]).align_to(np.array([0, 1.48, 0]), UP)
         # the warehouse: the manifests in a column on the left, the five blobs in a column on the right
-        fr = RoundedRectangle(width=5.8, height=3.4, corner_radius=0.16, stroke_color=CLOUD,
-                              stroke_width=3).set_fill(CLOUD, 0.07).move_to([3.45, 0.45, 0])
+        fr = RoundedRectangle(width=5.8, height=3.2, corner_radius=0.16, stroke_color=CLOUD,
+                              stroke_width=3).set_fill(CLOUD, 0.07).move_to([3.45, 0.35, 0])
         tt = mono("dvc_store/", size, CLOUD).move_to(fr.get_corner(UL) + np.array([0.2, -0.27, 0]), aligned_edge=LEFT)
         self.store = VGroup(fr, tt)
         self.store.frame, self.store.title = fr, tt
-        self.dirs = {"v20": blob(V20["md5"], size).move_to([1.9, 0.4, 0]),
-                     "v21": blob(V21["md5"], size).move_to([1.9, 1.2, 0])}
+        self.dirs = {"v20": blob(V20["md5"], size).move_to([1.9, 0.3, 0]),
+                     "v21": blob(V21["md5"], size).move_to([1.9, 1.05, 0])}
         self.blobs = {}
         for i, n in enumerate(IMAGES):
-            self.blobs[n] = blob(MD5[n], size).move_to([5.1, 1.55 - i * 0.62, 0])
+            self.blobs[n] = blob(MD5[n], size).move_to([5.1, 1.45 - i * 0.6, 0])
         self.cursor = Polygon([0, 0, 0], [-0.14, 0.26, 0], [0.14, 0.26, 0], stroke_color=S.GREY,
                               stroke_width=2).set_fill(S.GREY, 0.8)
         self.colab = self._colab()
@@ -2809,14 +2811,15 @@ class TagRope(Rig):
         d = Dot(self.colab.frame.get_top(), radius=0.09, color=ROUTE)
         scene.play(FadeIn(d), run_time=0.2)
         scene.play(d.animate.move_to(dr.get_left() + LEFT * 0.4), run_time=1.0)
-        e = err_chip("401").next_to(dr, UP, buff=0.12)
+        e = err_chip("401").next_to(d, UP, buff=0.15)
         scene.play(FadeIn(e, scale=1.3), d.animate.set_color(ERR), run_time=0.5)
         return VGroup(d, e)
 
     def ghost(self, t: str = "dataset_v25") -> VGroup:
-        f = flag_at(flag(t, S.GREY, 0.6, self.size, dashed=True), [0.0, self.line.get_center()[1], 0])
-        tip = f.pole.get_start() + DOWN * 0.1
-        r = DashedLine(tip, tip + DOWN * 1.1, color=S.GREY, stroke_width=3)
+        f = flag_at(flag(t, S.GREY, 0.4, self.size, dashed=True),
+                    [self.store.frame.get_center()[0] - 0.4, self.line.get_center()[1], 0])
+        tip = f.pole.get_start() + DOWN * 0.05
+        r = DashedLine(tip, tip + DOWN * 0.45, color=S.GREY, stroke_width=3)
         g = VGroup(f, r)
         g.flag, g.rope = f, r
         return g

@@ -51,8 +51,8 @@ def tracker_ring(tr, stroke: float = 3, opacity: float = 1.0) -> RoundedRectangl
 def folder_card(day: str) -> VGroup:
     """A GREY folder card 'cheese_dataset · <day>' listing Image_1-4.jpg and a '4 files' chip.
     .frame .head .rows (each: tile glyph + name) .chip"""
-    head = VGroup(folder_glyph(0.3, LAPTOP), mono("cheese_dataset", 24, INK), label(f"· {day}", 24, S.GREY))
-    head.arrange(RIGHT, buff=0.14)
+    head = VGroup(mono("cheese_dataset", 22, INK), label(f"· {day}", 22, S.GREY))
+    head.arrange(RIGHT, buff=0.14, aligned_edge=DOWN)
     rows = VGroup()
     for n in IMAGES[:4]:
         r = VGroup(tile(None, 0.4, LAPTOP), mono(n, 22, INK)).arrange(RIGHT, buff=0.18)
@@ -61,11 +61,14 @@ def folder_card(day: str) -> VGroup:
     ch = grey_chip("4 files")
     body = VGroup(head, rows, ch).arrange(DOWN, aligned_edge=LEFT, buff=0.25)
     rows.shift(RIGHT * 0.3)
-    fr = RoundedRectangle(width=body.width + 0.6, height=body.height + 0.5, corner_radius=0.16,
+    fr = RoundedRectangle(width=body.width + 0.5, height=body.height + 0.5, corner_radius=0.16,
                           stroke_color=LAPTOP, stroke_width=2.5).set_fill(S.GREY_DARKER, 1)
+    fold = folder_glyph(0.34, LAPTOP).move_to(fr.get_corner(UR) + np.array([-0.35, -0.3, 0]))
     body.move_to(fr)
     g = VGroup(fr, body)
     g.frame, g.head, g.rows, g.chip = fr, head, rows, ch
+    if fold.get_left()[0] > head.get_right()[0] + 0.1:
+        g.add(fold)
     return g
 
 
@@ -85,8 +88,8 @@ class Hook(VoiceScene):
         assert len(SAY) == SAY_COUNT["S01"] == 5, len(SAY)
 
         # ========================================================== 0. two folders, one question
-        mon = folder_card("Monday").move_to([-4.3, -0.3, 0])
-        fri = folder_card("Friday").move_to([4.3, -0.3, 0])
+        mon = folder_card("Monday").move_to([-4.15, -0.3, 0])
+        fri = folder_card("Friday").move_to([4.15, -0.3, 0])
         mdl = model_card().move_to([0, -0.3, 0])
         ill = illustration_tag().next_to(fri, UP, buff=0.15).align_to(fri, RIGHT)
         a_mon = Arrow(mon.frame.get_right(), mdl.frame.get_left(), buff=0.15, color=S.GREY, stroke_width=3,
