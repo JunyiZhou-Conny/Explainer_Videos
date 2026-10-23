@@ -250,3 +250,7 @@ you show the intermediate steps), `sequence_bar(seg)` (packed request), `Dice(v)
   leaves them faint after it plays. Re-light them in your own play (S06 critic).
 - `Parametrize.fold()` cross-fades text over text; S06 places the merged card ABOVE the cards and
   flies each card's own glyphs into its chip — copy that pattern instead (S06 critic).
+- One `Indicate` on a group of scattered pieces scales them about the group centre, so the glyphs
+  fly off their lines: flash each piece on its own (S07).
+- pytest's long result rows hard-wrap mid-word ("PA / SSED"): break at the last space that fits
+  (S07's local `soft()`), text unchanged.
