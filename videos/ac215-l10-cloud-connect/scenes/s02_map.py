@@ -14,9 +14,10 @@ Beats (script.md, ## S02; one voiceover block each):
 2. The map leaves; a full-width laptop terminal (20 pt: see beat 3) under a README card (lines 43–44:
    the narration names both prerequisites) with the GREY note 'no address given; this is the repo'.
    `git clone …` → laptop/01:2; `cd cheese-app-v0` → the prompt becomes ~/cheese-app-v0. GREY chip
-   on the title bar 'Docker 29.8.2 · at the time of recording' (laptop/00:4). ▶ your turn.
-3. The terminal shrinks to a 3-row strip and the map returns above it. Tracker gains ' · extra'.
-   `git log -1 --format='%H %ci'` → laptop/02:2 (hash, then date ringed); `ls -la` → laptop/03:2–11
+   on the title bar 'Docker 29.8.2 · at the time of recording' (laptop/00:4). ▶ your turn. In the
+   pause after "clone it": the terminal shrinks to a 3-row strip, then the map returns above it;
+   tracker gains ' · extra'.
+3. `git log -1 --format='%H %ci'` → laptop/02:2 (hash, then date ringed); `ls -la` → laptop/03:2–11
    (whitespace re-aligned only: the capture's rows are 76 wide); llm-rag, api-service,
    frontend-ai-chatbot are ringed in turn and a TEAL chip flies from each to its house(s).
 4. The strip leaves; under the map an erratum card: a GREY dashed miniature 'cloud machine' with a
@@ -165,6 +166,8 @@ class TheMap(VoiceScene):
         assert ver.startswith("Docker client 29.8.2"), ver
         dk = on_bar(t, row_tag(f"Docker {ver.split()[2].rstrip(',')} · at the time of recording"))
         clone = capture("01")
+        m2 = AppMap.at("S02")
+        xt = extra_row()
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(shown_map, quote_row)), run_time=0.7)
@@ -188,12 +191,16 @@ class TheMap(VoiceScene):
             flash_tag(self, yt, TURN)
             type_cmd(self, t, "cd cheese-app-v0", type_time=0.6)
             cd_prompt(self, t, P_REPO)
+            # the pause the narration asks for: the card leaves, the strip shrinks, then the map returns
+            # (after the resize, so the map never fades in over the shrinking terminal)
+            resize(self, t, 3, extra=(FadeOut(VGroup(card43, noaddr, dk)),))
+            self.remove(card43, noaddr, dk)
+            on_bar(t, xt)                                   # the bar has moved: place the tag now
+            self.play(FadeIn(m2), track(tr, extra=True), FadeIn(xt, shift=LEFT * 0.1), run_time=0.7)
 
         # ========================================================== 3. extras: the commit, one folder per house
-        m2 = AppMap.at("S02")
         log, ls = capture("02"), capture("03")
         assert log.cmd == "git log -1 --format='%H %ci'" and ls.cmd == "ls -la", (log.cmd, ls.cmd)
-        xt = extra_row()
         listing = realign(ls.at((2, 11)))
         targets = {"llm-rag": (("chroma", "loader"), (hs["chroma"].get_center()[0] + hs["loader"].get_center()[0]) / 2),
                    "api-service": (("api",), hs["api"].get_center()[0]),
@@ -206,18 +213,12 @@ class TheMap(VoiceScene):
             rg = ring(g, IMAGE)
             keys, x = targets[name]
             c = chip(name, IMAGE, size=20, font=MONO).move_to(g)
-            self.play(Create(rg), run_time=0.35)
-            self.play(FadeIn(c, scale=1.1), run_time=0.25)
-            self.play(c.animate.move_to([x, chip_y, 0]), run_time=0.8)
+            self.play(Create(rg), FadeIn(c, scale=1.1), run_time=0.3)
+            self.play(c.animate.move_to([x, chip_y, 0]), run_time=0.55)
             self.play(*[Indicate(m2.houses[k].text, color=INK, scale_factor=1.25) for k in keys],
-                      FadeOut(c, shift=DOWN * 0.25), FadeOut(rg), run_time=0.7)
+                      FadeOut(c, shift=DOWN * 0.25), FadeOut(rg), run_time=0.45)
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(card43, noaddr, dk)), run_time=0.5)
-            self.remove(card43, noaddr, dk)
-            resize(self, t, 3, extra=(FadeIn(m2),))
-            on_bar(t, xt)                                   # the bar has moved: place the tag now
-            self.play(track(tr, extra=True), FadeIn(xt, shift=LEFT * 0.1), run_time=0.5)
             type_cmd(self, t, log.cmd, type_time=0.9)
             got = out(self, t, log.at(2))
             row = got[0]
