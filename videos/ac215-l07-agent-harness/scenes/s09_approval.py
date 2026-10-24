@@ -188,6 +188,7 @@ RAIL_RIGHT = 6.35       # the mini rail's home: top right
 BAND_Y = TOPCHIP_Y      # the one-line band above a 12-row terminal (top 2.19)
 STOCK = {"Mimolette": 3000, "Taleggio": 3000}    # c18 stock_g 3000 (as in act 6, container/61)
 NEED, LEFT_AFTER = 1600, 1400                     # this cart's 1,600 g; what another order leaves
+SHELF_CAP = 3200                                  # the bars' scale (no numbers on screen): 3,000 g nearly full
 
 
 # ------------------------------------------------------------------ small helpers
@@ -325,26 +326,28 @@ def neq(color: str = ERR) -> VGroup:
 
 class FlatTicket(Ticket):
     """V5's approval ticket (common.Ticket: the same parts, slot chips and animations), laid out
-    flat for this scene: the five slots in two rows (request · items · subtotal_cents / policy ·
-    products) under the title and the SHA-256 row under them, about 6.0 x 2.4 instead of
-    5.2 x 3.6, so the ticket and a code panel fit one above the other. The `stock_g` chip (part
-    "excluded") sits right of the card at the products row; its "rechecked, not approved" note is
-    dropped (the excerpt chip of checkout.py line 29 says it). .sha .row_y"""
+    for this scene: the five slots in three rows, in reading order (request · items /
+    subtotal_cents · policy / products), under the title and the SHA-256 row under them, about
+    5.85 x 3.0 instead of 5.2 x 3.6 wide-and-tall, so the ticket and a code panel fit one above the
+    other and a 6.6-wide excerpt chip fits beside it. The `stock_g` chip (part "excluded") sits
+    right of the card at the products row; its "rechecked, not approved" note is dropped (the
+    excerpt chip of checkout.py line 29 says it). .sha .row_y"""
 
-    ROWS = ((0, 1, 2), (3, 4))
+    ROWS = ((0, 1), (2, 3), (4,))
 
     def __init__(self):
         super().__init__()
         fr = self.frame
         self.shift(-fr.get_center())
         tint_, ttl = self.parts["card"][1], self.parts["card"][2]
-        pad, gap, sh, cap_gap = 0.24, 0.1, 0.42, 0.14
+        pad, gap, sh, cap_gap = 0.22, 0.1, 0.42, 0.12
         ws = [chip(f, HARNESS, size=CAPTION, font=MONO, pad_y=0.04).width + 0.06 for f in TICKET_FIELDS]
         row_w = [sum(ws[i] for i in r) + gap * (len(r) - 1) for r in self.ROWS]
         hrow = self.parts["hash"]
         hl, hc = hrow[0], hrow[1]
         width = max(max(row_w), hrow.width + 0.7, ttl.width) + 2 * pad
-        height = pad + ttl.height + cap_gap + 2 * sh + gap + cap_gap + hrow.height + pad
+        n = len(self.ROWS)
+        height = pad + ttl.height + cap_gap + n * sh + (n - 1) * gap + cap_gap + hrow.height + pad
         fr.become(box(width, height, HARNESS, fill=S.BG, fill_opacity=1.0, stroke=3))
         tint_.become(RoundedRectangle(width=width, height=height, corner_radius=0.14, stroke_width=0)
                      .set_fill(HARNESS, 0.06))
@@ -364,7 +367,7 @@ class FlatTicket(Ticket):
         hrow.move_to([left + pad + hrow.width / 2, -height / 2 + pad + hrow.height / 2, 0])
         exg = self.parts["excluded"]
         exg.remove(exg[2])                                  # the note: an excerpt chip says it
-        exg.move_to([width / 2 + 0.3 + exg.width / 2, self.row_y[1], 0])
+        exg.move_to([width / 2 + 0.3 + exg.width / 2, self.row_y[-1], 0])
         self.sha = hl
 
 
@@ -461,11 +464,12 @@ class ExactCart(VoiceScene):
         exc_box = code_box(p31, 35, EXC35)
         exg = tk.parts["excluded"]
         same = two_row_note(["same cart, same data ·", "your run prints this hash too"])
-        place(same, left=tk.frame.get_right()[0] + 0.3, cy=tk.hash_mob.get_center()[1])
+        place(same, left=exg.get_left()[0], top=exg.get_bottom()[1] - 0.12)
         ex29 = excerpt_chip(INV29, f"{CO} · line 29 (excerpt)", line=source_line(CO, 29))
-        place(ex29, right=SAFE, top=TOP)
+        place(ex29, left=exg.get_left()[0], bottom=exg.get_top()[1] + 0.22)
         assert ex29.get_bottom()[1] > exg.get_top()[1] + 0.08, (ex29.get_bottom(), exg.get_top())
         assert exg.get_bottom()[1] > same.get_top()[1] + 0.06, (exg.get_bottom(), same.get_top())
+        assert same.get_bottom()[1] > p31.get_top()[1] + 0.12, (same.get_bottom(), p31.get_top())
         for m in (tk, same, ex29, p31):
             inside(m)
         apart(ex29, tk.frame)
@@ -501,7 +505,7 @@ class ExactCart(VoiceScene):
         place(p84, left=-SAFE, bottom=-3.5)
         rh = hash_chip()
         place(rh, cx=lab_pl.get_center()[0], top=lab_pl.get_bottom()[1] - 0.1)
-        cmp_at = np.array([tk.hash_mob.get_center()[0], tk.frame.get_bottom()[1] - 0.12 - rh.height / 2, 0])
+        cmp_at = np.array([tk.hash_mob.get_center()[0], tk.frame.get_bottom()[1] - 0.1 - rh.height / 2, 0])
         assert rh.get_bottom()[1] > p84.get_top()[1] + 0.05
         boxes = [code_box(p84, 85, COND85), code_box(p84, 86, COND86A), code_box(p84, 86, COND86B)]
         checks = []
@@ -527,7 +531,7 @@ class ExactCart(VoiceScene):
         wi_ar = Arrow(LEFT * 0.3, RIGHT * 0.3, buff=0, color=S.GREY, stroke_width=3, tip_length=0.14,
                       max_tip_length_to_length_ratio=0.4)
         wi = VGroup(wi_tag, wi_mid, wi_ar, wi_hash, wi_ne, wi_no).arrange(RIGHT, buff=0.22)
-        place(wi, left=-SAFE + 0.05, top=cmp_at[1] - rh.height / 2 - 0.25)
+        place(wi, left=-SAFE + 0.05, top=cmp_at[1] - rh.height / 2 - 0.12)
         inside(wi)
         assert wi.get_bottom()[1] > STRIP_TOP + 0.05
         with self.voiceover(SAY[3]) as vo:
@@ -547,7 +551,8 @@ class ExactCart(VoiceScene):
             self.play(FadeIn(checks[1], scale=1.3), run_time=0.3)
             vo.wait_until("and this fingerprint")
             self.play(Create(boxes[2]), run_time=0.4)
-            self.play(rh.animate.move_to(cmp_at), run_time=0.8)
+            self.play(ride(rh, path_of([rh.get_center(), [rh.get_center()[0], cmp_at[1], 0], cmp_at]), 0.9),
+                      run_time=0.9)                 # down, then along under the ticket: never across it
             match.next_to(rh, RIGHT, buff=0.2)
             self.play(FadeIn(checks[2], scale=1.3), FadeIn(match, scale=1.3), flash(tk.hash_mob, HARNESS, 1.06),
                       flash(rh, HARNESS, 1.06), run_time=0.6)
@@ -567,11 +572,12 @@ class ExactCart(VoiceScene):
 
         # ========================================================== 4 · the stopwatch: your thinking time
         sw = Stopwatch()
-        place(sw, left=match.get_right()[0] + 0.55, bottom=STRIP_TOP + 0.14)
+        place(sw, left=match.get_right()[0] + 0.65, bottom=STRIP_TOP + 0.14)
         sw_tag = illustration_tag()
-        place(sw_tag, right=sw.get_left()[0] - 0.2, cy=sw.face.get_center()[1] - 0.2)
+        place(sw_tag, left=sw.get_right()[0] + 0.25, top=sw.get_top()[1])
         ex444 = excerpt_chip(R444A, "README.md · line 444 (excerpt)", line=source_line("README.md", 444))
-        place(ex444, left=sw.get_right()[0] + 0.35, cy=sw.face.get_center()[1])
+        place(ex444, left=sw.get_right()[0] + 0.25, bottom=sw.get_bottom()[1])
+        apart(sw_tag, ex444)
         hnd4 = hand(TURN, h=0.55)
         hover = tk.frame.get_corner(UP + RIGHT) + np.array([-0.6, -0.34, 0])
         hnd4.move_to(hover + RIGHT * 1.2)
@@ -610,24 +616,25 @@ class ExactCart(VoiceScene):
         chk6 = check_mark(0.26, HARNESS)
         chk6.next_to(tk.hash_mob, RIGHT, buff=0.2)
         assert chk6.get_right()[0] < tk.frame.get_right()[0] - 0.05
-        shelf = StockShelf(tuple(STOCK.items()), numbers=False)
-        place(shelf, left=-SAFE + 0.05, cy=-0.3)
-        sh_tag = illustration_tag("what if")
+        shelf = StockShelf(tuple(STOCK.items()), cap=SHELF_CAP, bar_w=2.6, numbers=False)
+        mim = shelf.frames["Mimolette"]
+        place(shelf, left=tk.frame.get_right()[0] + 0.35, top=lab_pl.get_bottom()[1] - 0.2)
+        sh_tag = illustration_tag("what if")             # the rail's tag becomes the what-if's (sequential swap)
+        place(sh_tag, right=ill.get_right()[0], cy=ill.get_center()[1])
         tok2 = new_token()
         tok2.set_z_index(0)
-        mim = shelf.frames["Mimolette"]
-        stop2 = np.array([mim.get_right()[0] + 0.35 + tok2.width / 2, mim.get_center()[1], 0])
-        tok2.move_to([5.9, stop2[1], 0])
+        stop2 = np.array([mim.get_right()[0] + 0.3 + tok2.width / 2, mim.get_center()[1], 0])
+        tok2.move_to(stop2)
         qm = label("?", 26, CLOUD)
-        qm.next_to(tok2, UP, buff=0.06)
+        qm.next_to(tok2, RIGHT, buff=0.1)
         tok2_q = VGroup(tok2, qm)
         inside(tok2_q)
-        place(sh_tag, left=mim.get_right()[0] + 0.3, cy=shelf.frames["Taleggio"].get_center()[1])
         pcard = ponder_card(PONDER, width=12.4)
         card_top = -3.55 + pcard.height
         assert shelf.get_bottom()[1] > card_top + 0.1, (shelf.get_bottom(), card_top)
-        assert sh_tag.get_bottom()[1] > card_top + 0.1
         apart(shelf, tk.frame, 0.1)
+        apart(tok2_q, rl, 0.1)
+        apart(sh_tag, tr, 0.1)
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(strip, ft)), FadeOut(VGroup(receipt, rh, match)), caption_extra(tr, False),
                       run_time=0.5)
@@ -635,10 +642,10 @@ class ExactCart(VoiceScene):
             vo.wait_until("The manager approves")
             self.play(flash(tok6, TURN, 1.2), flash(chk6, HARNESS, 1.3), run_time=0.6)
             vo.wait_until("Before checkout runs")
+            self.play(FadeOut(ill), run_time=0.3)
             self.play(FadeIn(shelf), FadeIn(sh_tag), run_time=0.6)
             vo.wait_until("another order takes")
-            self.play(FadeIn(tok2_q, shift=LEFT * 0.5), run_time=0.4)
-            self.play(tok2_q.animate.shift(RIGHT * (stop2[0] - tok2.get_center()[0])), run_time=0.9)
+            self.play(FadeIn(tok2_q, shift=LEFT * 0.6), run_time=0.9)
             vo.wait_until("What does checkout do")
             self.play(flash(rl.station("place").frame, TURN, 1.15), run_time=0.6)
         card = ponder_at(self, PONDER, seconds=8.0, width=12.4)
@@ -647,12 +654,12 @@ class ExactCart(VoiceScene):
         # ========================================================== 7 · checkout revalidates: blocked
         need = shelf.need("Mimolette", NEED)
         viol = stamp("stock violation", ERR)
-        place(viol, left=need.get_right()[0] + 0.3, cy=mim.get_center()[1])
+        place(viol, left=mim.get_right()[0] + 0.3, cy=mim.get_center()[1])
         blk = stamp("blocked", ERR)
         place(blk, right=rl.station("place").frame.get_left()[0] - 0.2, cy=rl.station("place").frame.get_center()[1])
         apart(blk, tk.frame, 0.08)
         ex158 = excerpt_chip(BLOCK158, f"{WS} · lines 155–158 (excerpt)", line=source_line(WS, 158))
-        place(ex158, left=-SAFE, top=shelf.get_bottom()[1] - 0.2)
+        place(ex158, left=-SAFE, top=min(shelf.get_bottom()[1], tk.frame.get_bottom()[1]) - 0.25)
         act6 = grey_tag("act 6 runs this for real")
         place(act6, right=SAFE, cy=ex158.chip.get_center()[1])
         ex29b = excerpt_chip(INV29, f"{CO} · line 29 (excerpt)", line=source_line(CO, 29))
@@ -693,7 +700,7 @@ class ExactCart(VoiceScene):
         t8 = term(container=True, rows=11)
         ft8 = frame_tags(t8, scripted_tag(), offline_tag())
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(tk, chk6, rl, tok6, lab_pl, ill, blk, shelf, sh_tag, need, viol, ex158, act6,
+            self.play(FadeOut(VGroup(tk, chk6, rl, tok6, lab_pl, blk, shelf, sh_tag, need, viol, ex158, act6,
                                      ex29b, cap7)), tr.goto(5), run_time=0.6)
             self.play(FadeIn(t8, shift=UP * 0.2), FadeIn(ft8, shift=DOWN * 0.1), run_time=0.5)
             type_cmd(self, t8, OOS.cmd, 1.0)
