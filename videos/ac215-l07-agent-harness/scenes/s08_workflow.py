@@ -10,7 +10,8 @@ Beats (script.md "## S08", one voiceover block each):
     reasons write in as named (high stakes · irreversible · predictable · audit); on "give control
     to code" slide 23's frame is redrawn as a GREEN dashed border round the table, its banner "the
     harness keeps authority" on the bottom edge.
- 1  The table, its frame, the lecture tag (it leaves with its picture) and the strip leave. V5: the
+ 1  On "Act 3 does exactly that" the banner and the Move RIGHT arrow pulse; on "The order route is
+    a graph" the table, its frame, the lecture tag (it leaves with its picture) and the strip leave. V5: the
     U-shaped rail (tag "illustration · README.md · lines 349–356": the README's diagram redrawn),
     GREEN stations, edges and switch, the one BLUE station "propose cart", the revise loop with
     "revisions ≤ 2"; under it CODE(acts/act3_workflow.py: 27–32) (20 pt, only line 29 wrapped). On
@@ -41,31 +42,34 @@ Beats (script.md "## S08", one voiceover block each):
     bar) and the rail returns above it (tag illustration inside the U), a BLUE "model" chip on
     "propose cart", the customer's cart: a GREY token left of "confirm" and the GREY item chips
     Comté · Bûcheron · Époisses inside the U, the GREY tag "customer input ·
-    data/shipping_customer_cart.json" in the top band. On "Before": a RED bar closes the loop,
+    data/shipping_customer_cart.json" in the top band. On "Before": the tag leaves, a RED bar closes the loop,
     "review only"; the token runs through confirm and propose (it leaves propose BLUE: the model
     records the cart) and stops at validate, RED (Comté RED), under the README's QUOTE(382–383)
-    (excerpt, `expected`) in the top band. On "After": the quote leaves, the bar lifts, the counter
+    (excerpt, `expected`; in the top band from "Before" on). On "After": the quote leaves, the bar lifts, the counter
     "revisions ≤ 2" pulses and the token rides the loop back into propose; on "may fix it" the
     model chip pulses.
  5  TRACKER Act3 3 · extra. The strip's tags swap to `scripted` + GREEN `offline · free`; it types
     `python cli.py --act 3 --fixture --scenario pa-shipping` (tag extra). On "a script in the
     model's seat" the model chip slides out and the BLUE dashed `scripted` seat comes in. A BLUE
-    dashed token runs the rail while the strip prints container/36 in turn: 11–14 as it leaves
-    propose (the cart chips arrive BLUE; "RAW MILK" RED on "raw-milk Comté"), 15–16 at validate:
-    RED stamp `shipping: comte`, token and Comté RED; 17, and it rides the revise loop (counter
-    1/2); 19–22 as it leaves propose again, 23–25 while the Comté chip swaps for Taleggio and the
-    GREY chip "README.md · lines 384–385 quote the start of the line: `Removed: Comté 18 mois
-    (comte) — 350 g`" (expected) arrives; 26–27 as it passes validate GREEN ("valid; $50.10"
-    GREEN, the chips GREEN), 28; then pairings, review, revalidate and place, and 33–35 (`your
-    numbers will differ` on the receipt).
+    dashed token runs the rail while the strip prints container/36 in turn: 11–13 as it leaves
+    propose (the cart chips arrive BLUE; "RAW MILK" RED on "Attempt 1 has"), 14–15 as it enters
+    validate, 16 (wrapped: the whole reason) with the RED stamp `shipping: comte`, token and Comté
+    RED; 17, and it rides the revise loop (counter 1/2); 19–21 as it leaves propose again, 22 (the
+    whole attempt-2 cart), 23–25 while the Comté chip swaps for Taleggio (old out, then new in) and
+    the GREY chip "README.md · lines 384–385 quote the start of the line: `Removed: Comté 18 mois
+    (comte) — 350 g`" (expected) arrives; on "valid, 50 dollars" it enters validate: a GREEN stamp
+    `valid; $50.10` (the capture's words), token and chips GREEN, then 26–27 ("valid; $50.10"
+    GREEN); 28 as it runs pairings, review, revalidate and
+    place (it waits out of the U, GREEN), and 33–35 (`your numbers will differ` on the receipt).
  6  TRACKER Act3 3 · extra. `python cli.py --act 3 --fixture --scenario pa-shipping-blocked`
     (extra) -> a new BLUE dashed token: rejected at validate, back along the loop (counter 1/2),
     container/37 lines 19–24 print and the caption "No changes; the same cart was proposed again."
     (the capture's line 24) appears; rejected again (2/2); the third proposal fails (36–37) and the
     token runs into a RED buffer "UNRESOLVED" (38–39) beside validate; on "not blocked" a GREY
-    dashed buffer "BLOCKED · live run only" next to it; on "so in Colab" the GREY card "Colab: keep
-    `USE_FIXTURES = False` for this lesson (Agent Harness · cell 11 · line 6)". On "Pause and
-    run" everything but the tracker leaves and the static "your turn" card shows the three live
+    dashed buffer "BLOCKED · live run only" under it; on "so in Colab" the GREY card "Colab: keep
+    `USE_FIXTURES = False` for this lesson (Agent Harness · cell 11 · line 6)" top right. On "Pause
+    and run" everything but the tracker leaves (its caption drops " · extra": the card is the README's
+    steps 1-3 plus the extra) and the static "your turn" card shows the three live
     commands ("with your key:"), the fixture command (extra; GREEN "no key: offline · free") and
     the GOLD "live proposals · billed per token". Hold 2 s, then fade to an empty frame.
 """
@@ -283,27 +287,35 @@ def pulse(frame, color: str | None = None, width: float = 8.0):
     return Succession(FadeIn(ol, run_time=0.3), FadeOut(ol, run_time=0.45))
 
 
-def feed(t, items):
-    """(rows, anims, done): print `items` ((text, colour) pairs, at most t.rows of them, each cut
-    at the row like Terminal.print) into terminal `t` as ANIMATIONS, so a token can move in the
-    same play: rows that scroll off fade in place (first 30%), the staying rows shift up (30-65%),
-    the new rows fade in after (staggered). Call done() after the play."""
-    assert 0 < len(items) <= t.rows, len(items)
-    overflow = max(0, len(t.lines) + len(items) - t.rows)
+def feed(t, items, wrap: bool = False):
+    """(rows, anims, done): print `items` ((text, colour) pairs, at most t.rows rows in all, each
+    cut at the row like Terminal.print, or folded at a word boundary with wrap=True, as
+    wrap_output does for t.print) into terminal `t` as ANIMATIONS, so a token can move in the same
+    play: rows that scroll off fade in place (first 30%), the staying rows shift up (30-65%), the
+    new rows fade in after (staggered; when no row stays, right after the old ones are gone, so
+    the strip is never blank for long). Call done() after the play."""
+    texts = []
+    for s_, col in items:
+        if wrap and len(s_) > t.max_chars:
+            texts += [(row, col) for row, _a, _b, _ind in wrap_output(s_, t.max_chars)]
+        else:
+            texts.append((t._cut(s_), col))
+    assert 0 < len(texts) <= t.rows, len(texts)
+    overflow = max(0, len(t.lines) + len(texts) - t.rows)
     gone = list(t.lines.submobjects[:overflow])
     stay = list(t.lines.submobjects[overflow:])
     anims = [FadeOut(r, rate_func=squish_rate_func(smooth, 0.0, 0.3)) for r in gone]
-    if overflow:
+    if overflow and stay:
         anims += [r.animate(rate_func=squish_rate_func(smooth, 0.3, 0.65)).shift(UP * t.pitch * overflow)
                   for r in stay]
     new = VGroup()
-    for j, (s_, col) in enumerate(items):
-        ln = mono_line(t._cut(s_), t.size, col)
+    for j, (s_, col) in enumerate(texts):
+        ln = mono_line(s_, t.size, col)
         t._place(ln, len(stay) + j)
         new.add(ln)
     for ln in new:
         t.lines.add(ln)
-    t0 = 0.6 if overflow else 0.0
+    t0 =(0.6 if stay else 0.32) if overflow else 0.0
     n = len(new)
     for j, ln in enumerate(new):
         a = t0 + (1 - t0) * 0.4 * (j / (n - 1) if n > 1 else 0)
@@ -423,7 +435,7 @@ class Rails(VoiceScene):
         # ========================================================== 0 · part 2: the prompt; Move RIGHT
         strip = term(container=True, rows=3)
         still = frame_tags(strip, grey_tag("still running from part 1"))
-        closed = card_rows(["closed it? on the laptop: `bash docker-shell.sh`, then your key",
+        closed = card_rows([_mixed_row(["closed it? on the laptop:", "`bash docker-shell.sh`", ", then your key"]),
                             ("README.md · lines 101, 113–115", S.GREY)])
         place(closed, left=-6.45, bottom=STRIP_TOP + 0.3)
         ab = ActionBoundary(width=8.6, row_h=0.42, texts=(), moves=True).prefill(2)
@@ -435,13 +447,14 @@ class Rails(VoiceScene):
         reasons.next_to(mr.arrow, DOWN, buff=0.1)
         items = [r1[0], r1[1], r2[0], r2[1]]
         tbl = VGroup(ab, reasons)
-        fr23 = box(tbl.width + 0.36, tbl.height + 0.3, HARNESS, dashed=True, stroke=3)
+        fr23 = box(tbl.width + 0.36, tbl.height + 0.55, HARNESS, dashed=True, stroke=3)   # room for the banner
         ban_t = label("the harness keeps authority", CAPTION, HARNESS)
         ban = VGroup(Rectangle(width=ban_t.width + 0.4, height=ban_t.height + 0.16, stroke_width=0)
                      .set_fill(S.BG, 1), ban_t)
         whole = VGroup(tbl, fr23)
-        fr23.move_to(tbl)
+        fr23.move_to(tbl).shift(DOWN * 0.125)
         ban.move_to(fr23.get_bottom())
+        apart(ban, reasons)
         lr = lref("22–23")
         place(VGroup(whole, ban), right=lr.get_left()[0] - 0.15, bottom=STRIP_TOP + 0.14)
         assert fr23.get_top()[1] < lr.get_bottom()[1] - 0.06 or fr23.get_right()[0] < lr.get_left()[0]
@@ -500,9 +513,11 @@ class Rails(VoiceScene):
         cond = p.span(29, COND29.rstrip(")"))
         edges = [rl.edge(i) for i in range(6)]
         with self.voiceover(SAY[1]) as vo:
+            self.play(flash(ban, HARNESS, 1.1), mr.arrow.animate.set_stroke(width=10), run_time=0.8)
+            vo.wait_until("The order route is a graph")
             self.play(FadeOut(VGroup(ab, reasons, fr23, ban)), FadeOut(lr), FadeOut(VGroup(strip, still)),
-                      run_time=0.6)
-            self.play(FadeIn(rl), FadeIn(ill, shift=DOWN * 0.08), run_time=0.8)
+                      run_time=0.5)
+            self.play(FadeIn(rl), FadeIn(ill, shift=DOWN * 0.08), run_time=0.7)
             vo.wait_until("and Python owns its edges")
             self.play(FadeIn(p, shift=UP * 0.1), run_time=0.6)
             self.play(LaggedStart(*[ShowPassingFlash(e.copy().set_stroke(HARNESS, 9), time_width=0.6)
@@ -539,8 +554,8 @@ class Rails(VoiceScene):
         PIC_H = 1.35                                   # pictures sit this far above their stops
         pics = {0: rule_graph(), 2: hybrid_graph(), 3: agent_graph()}
         for i, pic in pics.items():
-            pic.scale(1.1).move_to(sp.above(i, PIC_H))
-        k_mini = 2.85 / (g0.f["validate"].get_right()[0] - g0.f["confirm"].get_left()[0])
+            pic.scale(0.95).move_to(sp.above(i, PIC_H))           # (glyphs only: no text in them)
+        k_mini = 2.5 / (g0.f["validate"].get_right()[0] - g0.f["confirm"].get_left()[0])
         filing = band_card([
             VGroup(label("README: under Agent Harness", CAPTION, INK),
                    _header_text("(README.md · line 17)")).arrange(RIGHT, buff=0.15),
@@ -565,7 +580,9 @@ class Rails(VoiceScene):
             apart(cap36, filing)
             for pic in pics.values():
                 apart(pic, cap36)
-                apart(pic, mini, 0.1)
+                apart(pic, mini, 0.45)
+            apart(pics[0], pics[2], 0.45)
+            apart(pics[2], pics[3], 0.45)
             vo.wait_until("on the lecture's autonomy spectrum")
             self.play(FadeIn(lr36), Create(sp.arrow),
                       LaggedStart(*[FadeIn(VGroup(d, tx)) for d, tx in zip(sp.dots, sp.labels)], lag_ratio=0.2),
@@ -629,9 +646,20 @@ class Rails(VoiceScene):
         place(cust, left=-6.45, bottom=TOP_BAND + 0.12)
         assert cust.get_top()[1] < 2.9
         bl = rl4.block_loop("review only")
+        # at 0.8 the bar reaches the counter and its label the corner of "propose cart": a shorter
+        # bar (top clear of the counter) and the label right under it
+        mid = rl4.loop.arc.point_from_proportion(0.5)
+        top_lim = min(mid[1] + 0.22, rl4.counter.get_bottom()[1] - 0.08)
+        bl.bar.put_start_and_end_on(mid + DOWN * 0.16, np.array([mid[0], top_lim, 0]))
+        bl.label.next_to(bl.bar, DOWN, buff=0.04)
+        apart(bl, rl4.counter)
+        apart(bl.label, g.f["propose"], 0.03)
+        apart(bl.label, g.f["validate"], 0.03)
         quote = quote_card(382, 383, lines=[Q383], wrap=50, header="README.md · lines 382–383 (excerpt)")
         place(quote, left=-1.35, bottom=TOP_BAND)
         inside(quote)
+        for m in (cust, quote):
+            apart(m, tr)
         nudge = np.array([g.f["validate"].get_left()[0] + 0.15 - tok.width / 2, g.yt, 0])
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(c367), tr.goto(2), run_time=0.4)
@@ -651,16 +679,17 @@ class Rails(VoiceScene):
                       FadeIn(cust, shift=DOWN * 0.08), run_time=0.5)
             self.play(LaggedStart(*[flash(c, S.GREY, 1.12) for c in cart_items], lag_ratio=0.25), run_time=0.8)
             vo.wait_until("Before, the model")
-            self.play(FadeIn(bl, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeIn(bl, shift=DOWN * 0.1), FadeOut(cust), run_time=0.4)
+            self.play(FadeIn(quote, shift=DOWN * 0.1), run_time=0.4)        # (where the tag was: after it)
             self.play(ride(tok, path_of([g.start, g.gap_cp]), 0.7), run_time=0.7)
             self.play(ride(tok, path_of([g.gap_cp, g.gap_pv]), 0.8), *tint(tok, CLOUD, sq(0.35, 0.6)),
                       *[recolor_chip(c, CLOUD, sq(0.5, 0.8)) for c in cart_items], run_time=0.8)
             vo.wait_until("the harness checks it and stops")
-            self.play(ride(tok, path_of([g.gap_pv, nudge]), 0.35), FadeOut(cust), run_time=0.35)
+            self.play(ride(tok, path_of([g.gap_pv, nudge]), 0.35), run_time=0.35)
             self.play(*tint(tok, ERR), recolor_chip(cart_items[0], ERR), run_time=0.3)
-            self.play(ride(tok, path_of([nudge, g.gap_pv]), 0.35), FadeIn(quote, shift=DOWN * 0.1), run_time=0.5)
+            self.play(ride(tok, path_of([nudge, g.gap_pv]), 0.35), run_time=0.35)
             vo.wait_until("After, the revise loop")
-            self.play(FadeOut(bl, shift=UP * 0.3), run_time=0.5)
+            self.play(FadeOut(bl, shift=UP * 0.3), FadeOut(quote), run_time=0.5)
             self.play(flash(rl4.counter, HARNESS, 1.2), run_time=0.6)
             self.play(ride(tok, path_of([g.gap_pv, g.c["validate"]]), 0.35), run_time=0.35)
             self.play(ride(tok, g.loop_path(), 1.3), run_time=1.3)
@@ -675,11 +704,17 @@ class Rails(VoiceScene):
         apart(stamp_c, rl4.counter)
         apart(stamp_c, rl4.loop)
         inside(stamp_c)
+        stamp_ok = stamp(VALID, HARNESS)                 # attempt 2 passes: the capture's own words
+        place(stamp_ok, left=stamp_c.get_left()[0], bottom=stamp_c.get_bottom()[1])
+        apart(stamp_ok, rl4.counter)
+        apart(stamp_ok, rl4.loop)
+        inside(stamp_ok)
         exp = excerpt_chip(REMOVED, "README.md · lines 384–385 quote the start of the line:", line=FIX.line(24))
         etag = expected_tag()
         place(exp, left=-2.6, bottom=TOP_BAND + 0.04)
         place(etag, left=exp.chip.get_right()[0] + 0.25, cy=exp.chip.get_center()[1])
         assert exp.get_top()[1] < 2.93 and etag.get_right()[0] < SAFE
+        apart(VGroup(exp, etag), tr)
         com5 = cart_items[0]
         tal = item_chip("Taleggio", CLOUD)
         tal.move_to(com5).align_to(com5, LEFT)
@@ -688,8 +723,8 @@ class Rails(VoiceScene):
         tok5 = new_token(dashed=True)
         tok5.move_to(g.start)
         with self.voiceover(SAY[5]) as vo:
-            self.play(caption_extra(tr, True), FadeOut(quote), FadeOut(cart_row),
-                      Succession(FadeOut(VGroup(*ft)), FadeIn(ft5)), run_time=0.7)
+            self.play(FadeOut(cart_row), FadeOut(VGroup(*ft)), run_time=0.4)
+            self.play(caption_extra(tr, True), FadeIn(ft5), run_time=0.4)
             c3 = type_cmd(self, strip, FIX.cmd, 0.9)
             ex = extra_tag()
             beside(ex, strip, c3)
@@ -707,10 +742,13 @@ class Rails(VoiceScene):
             done()
             vo.wait_until("Attempt 1 has")
             self.play(substring(rows[1], RAW).animate.set_color(ERR), flash(com5, ERR, 1.15), run_time=0.6)
-            rows, an, done = feed(strip, FIX.out(14, 15, 16))
+            rows, an, done = feed(strip, FIX.out(14, 15))
             self.play(ride(tok5, path_of([g.gap_pv, g.c["validate"]]), 0.6), *an, run_time=0.6)
             done()
-            self.play(FadeIn(stamp_c, scale=1.2), *tint(tok5, ERR), recolor_chip(com5, ERR), run_time=0.4)
+            rows, an, done = feed(strip, FIX.out(16), wrap=True)          # the whole reason, 2 rows
+            assert len(rows) == 2, len(rows)
+            self.play(FadeIn(stamp_c, scale=1.2), *tint(tok5, ERR), recolor_chip(com5, ERR), *an, run_time=0.5)
+            done()
             vo.wait_until("and the rail sends it back")
             rows, an, done = feed(strip, FIX.out(17))
             self.play(ride(tok5, g.loop_path(), 1.1), FadeOut(stamp_c, rate_func=sq(0.5, 1.0)), *an, run_time=1.1)
@@ -721,24 +759,26 @@ class Rails(VoiceScene):
             self.play(ride(tok5, path_of([g.c["propose"], g.gap_pv]), 0.6), *tint(tok5, CLOUD, sq(0.0, 0.3)),
                       *an, run_time=0.6)
             done()
-            self.wait(0.5)                                     # attempt 2's cart, readable
+            rows, an, done = feed(strip, FIX.out(22))           # attempt 2's whole cart on the strip
+            self.play(*an, run_time=0.35)
+            done()
             others = list(cart_items[1:3])                     # (before the swap stages Taleggio in)
-            rows, an, done = feed(strip, FIX.out(22, 23, 24))
+            rows, an, done = feed(strip, FIX.out(23, 24, 25))   # Changes · Removed · Added
             self.play(*an, *_swap_text(cart_items, com5, tal),
                       *[c.animate(rate_func=sq(0.4, 0.6)).shift(RIGHT * grow) for c in others],
-                      run_time=0.9)
-            done()
-            rows, an, done = feed(strip, FIX.out(25))
-            self.play(*an, FadeIn(exp, shift=DOWN * 0.08), FadeIn(etag), run_time=0.5)
+                      FadeIn(exp, shift=DOWN * 0.08, rate_func=sq(0.5, 1.0)), FadeIn(etag, rate_func=sq(0.5, 1.0)),
+                      run_time=1.0)
             done()
             vo.wait_until("valid, 50 dollars")
-            rows, an, done = feed(strip, FIX.out(26, 27))
-            self.play(ride(tok5, path_of([g.gap_pv, g.c["validate"]]), 0.5), *an, run_time=0.5)
+            self.play(ride(tok5, path_of([g.gap_pv, g.c["validate"]]), 0.5), run_time=0.5)
+            self.play(FadeIn(stamp_ok, scale=1.2), *tint(tok5, HARNESS),
+                      *[recolor_chip(c, HARNESS) for c in cart_items], run_time=0.45)
+            rows, an, done = feed(strip, FIX.out(26, 27))       # (Changes · Removed · Added stayed up till now)
+            self.play(*an, run_time=0.45)
             done()
-            self.play(*tint(tok5, HARNESS), substring(rows[1], VALID).animate.set_color(HARNESS),
-                      *[recolor_chip(c, HARNESS) for c in cart_items], run_time=0.4)
+            self.play(substring(rows[1], VALID).animate.set_color(HARNESS), run_time=0.3)
             rows, an, done = feed(strip, FIX.out(28))
-            self.play(ride(tok5, g.to_place_path(), 1.6), *an, run_time=1.6)
+            self.play(ride(tok5, g.to_place_path(), 2.0), *an, run_time=2.0)
             done()
             rows, an, done = feed(strip, FIX.out(33, 34, 35))
             self.play(*an, run_time=0.5)
@@ -766,10 +806,11 @@ class Rails(VoiceScene):
         place(nochg, cx=g.xm, bottom=TOP_BAND + 0.08)
         colab = band_card([_mixed_row(["Colab: keep", f"`{COLAB6}`", "for this lesson"], CAPTION),
                            _header_text("(Agent Harness · cell 11 · line 6)")])
-        place(colab, left=-1.35, bottom=TOP_BAND + 0.04)
+        place(colab, right=SAFE, bottom=TOP_BAND + 0.04)
         for m in (nochg, colab):
             inside(m)
-            assert m.get_top()[1] < 2.93 or m.get_left()[0] > -1.45
+            apart(m, tr)
+            apart(m, rl4.counter)
         cart6 = cart_chips(("Comté", "Bûcheron", "Époisses"), CLOUD)
         cart6.move_to(cart_row).align_to(cart_row, LEFT)
         com6 = cart6.items[0]
@@ -785,7 +826,7 @@ class Rails(VoiceScene):
             newc = label("revisions ≤ 2", CAPTION, HARNESS).move_to(rl4.counter)
             reset = _swap_text(rl4, rl4.counter, newc)
             rl4.counter = rl4.parts["counter"] = newc
-            self.play(FadeOut(VGroup(exp, etag, tok5, cart_row)), *reset, run_time=0.4)
+            self.play(FadeOut(VGroup(exp, etag, tok5, cart_row, stamp_ok)), *reset, run_time=0.4)
             c4 = type_cmd(self, strip, FXB.cmd, 0.7)
             ex6 = extra_tag()
             beside(ex6, strip, c4)
@@ -823,7 +864,8 @@ class Rails(VoiceScene):
             self.play(FadeIn(colab, shift=DOWN * 0.08), run_time=0.4)
             self.play(flash(colab.rows[0], TURN, 1.04), run_time=0.7)
             vo.wait_until("Pause and run")
-            self.play(FadeOut(VGroup(rl4, ill4, cart6, tok6, unres, blocked, colab, strip, ft5)), run_time=0.5)
+            self.play(FadeOut(VGroup(rl4, ill4, cart6, tok6, unres, blocked, colab, strip, ft5)),
+                      caption_extra(tr, False), run_time=0.5)
             self.play(FadeIn(tc, scale=0.97), run_time=0.5)
         self.wait(2)                                    # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tc, tr)), run_time=0.8)
