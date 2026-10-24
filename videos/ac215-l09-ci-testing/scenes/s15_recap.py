@@ -99,7 +99,7 @@ GUIDE_PATH = "guides/L09-ci-testing-precommit.md"
 
 # ------------------------------------------------------------------ the recap (script.md S15)
 QUESTIONS = [   # (lines as shown, the list label)
-    (["What runs in a unit, an integration and a", "system test of this repo — file by file?"],
+    (["What runs in a unit, an integration and a", "system test of the cheese app — file by file?"],
      "three kinds"),
     (["The system tests ‘pass’ with no server. What", "does pytest actually print — and are those",
       "four tests hermetic?"], "silent skip"),
@@ -521,7 +521,7 @@ class Recap(VoiceScene):
             vo.wait_until("Next lecture brings cloud credentials")
             self.play(FadeIn(nxt_frame), FadeIn(nxt_head), run_time=0.5)
             self.play(FadeIn(row1, shift=UP * 0.1), run_time=0.6)
-            vo.wait_until("where the detect private keys hook")
+            vo.wait_until("where the detect private key hook")
             self.play(key.animate.move_to([pk.get_left()[0] - key.width / 2 + 0.15, key_home[1], 0]),
                       run_time=0.5)
             self.play(pk.to("fail"), run_time=0.3)

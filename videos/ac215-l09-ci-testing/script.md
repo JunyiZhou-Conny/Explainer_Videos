@@ -650,7 +650,7 @@ SHOW: TRACKER E4. It types `just check` (walk step-03) → TERM(babykev/s03-09: 
 `just test -k confidence --cov-fail-under=90` (walk step-03) → TERM(babykev/s03-10: 2, 11–12,
 25–26). Line 25 `FAIL Required test coverage of 90% not reached. Total coverage: 49.40%` RED.
 `▶ your turn` on both (BRIEF: the floor biting is the lesson).
-SAY: Run just check: everything green, the floor reads 100 percent. Now watch it bite: ask for only the confidence tests, keeping the floor. 9 tests pass, half the code is never exercised, and the run fails at 49.4 percent coverage. A floor is a gate, not a goal. Pause and run both.
+SAY: Run just check: everything green, coverage 100 percent over a floor of 90. Now watch it bite: ask for only the confidence tests, keeping the floor. 9 tests pass, half the code is never exercised, and the run fails at 49.4 percent coverage. A floor is a gate, not a goal. Pause and run both.
 
 SHOW: Config beat: it types the walk's mis-indent sed
 `sed -i 's/^        args: \[--maxkb=1000\]$/          args: [--maxkb=1000]/' .pre-commit-config.yaml`
@@ -742,7 +742,7 @@ SHOW: TRACKER E7. It types `git switch --detach step-05a` → TERM(babykev/s05a-
 `1 failed, 102 passed` prints honestly; beside the terminal a GREY card, tag `recorded · walk.md`:
 "the author's Mac: 103 passed". A two-dot picture: GREEN "same to 4 decimals", RED "last bits
 differ". GREY tag `Lecture 9 · slides 78–84` (top right, whole scene). `▶ your turn`.
-SAY: Step five a answers with tests that could tell. First, honesty: on this machine just test says 1 failed, 102 passed. The failing test demands bit for bit equal outputs. On this Linux CPU, torch sums in a different order than the author's Mac; there all 103 pass, as the walk records. Hermetic means only your code can make it fail; bit exactness across machines is a stronger promise; this machine measured it.
+SAY: Step five a answers with tests that could tell. First, honesty: on this machine just test says 1 failed, 102 passed. The failing test changes one question and demands that the other answers stay bit for bit equal. On this Linux CPU, torch sums in a different order than the author's Mac; there all 103 pass, as the walk records. Hermetic means only your code can make it fail; bit exactness across machines is a stronger promise; this machine measured it.
 
 SHOW: TRACKER E7. The walk's wrong fix types:
 `perl -pi -e 's/^    same = \(s\[None, :\] == s\[:, None\]\) \| \(s\[None, :\] == 0\)$/    same = (s[None, :] == s[:, None]) | (s[None, :] == 0) | (s[None, :] < s[:, None] - 1)/' src/babykev/model.py`
@@ -839,7 +839,7 @@ file by file?" (the three nested boxes); Q2 "The system tests 'pass' with no ser
 pytest actually print — and are those four tests hermetic?" (four gray dashed dots, green
 headline). When the next question arrives, the previous one becomes a one-line label in a list at
 left: "three kinds" · "silent skip".
-SAY: 5 questions to test yourself. One: what runs in a unit, an integration and a system test of this repo, file by file? Two: the system tests pass with no server at all. What does pytest actually print, and are those four tests hermetic?
+SAY: 5 questions to test yourself. One: what runs in a unit, an integration and a system test of the cheese app, file by file? Two: the system tests pass with no server at all. What does pytest actually print, and are those four tests hermetic?
 
 SHOW: Q3 "What does pre-commit install actually create, and why must every clone run it (or just
 setup) again?" (the hand-over chain); Q4 "black says Failed — files were modified. Is your code
@@ -854,4 +854,4 @@ every command: github.com/JunyiZhou-Conny/MLOps_Learning · guides/L09-ci-testin
 "Next" card, GREY dashed: a key glyph with the `detect-private-key` arch ("L10: credentials"), and
 a BLUE server with the turnstile ("L21: this repo's checks on GitHub"). Everything fades to an
 empty frame (end of part 2).
-SAY: The answers are in the exercises, and every command is in the study guide. Next lecture brings cloud credentials, where the detect private keys hook earns its keep. And in lecture 21, this very repo's checks run on GitHub, where nobody can walk past them with dash dash no verify.
+SAY: The answers are in the exercises, and every command is in the study guide. Next lecture brings cloud credentials, where the detect private key hook earns its keep. And in lecture 21, this very repo's checks run on GitHub, where nobody can walk past them with dash dash no verify.

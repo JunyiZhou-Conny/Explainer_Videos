@@ -81,9 +81,9 @@ S11:
   - "The config here has four hooks, not nine: large files, merge markers, a policy hook refusing any .env file, and one local hook that runs just check."
   - null
   - null
-- en: "Run just check: everything green, the floor reads 100 percent. Now watch it bite: ask for only the confidence tests, keeping the floor. 9 tests pass, half the code is never exercised, and the run fails at 49.4 percent coverage. A floor is a gate, not a goal. Pause and run both."
+- en: "Run just check: everything green, coverage 100 percent over a floor of 90. Now watch it bite: ask for only the confidence tests, keeping the floor. 9 tests pass, half the code is never exercised, and the run fails at 49.4 percent coverage. A floor is a gate, not a goal. Pause and run both."
   zh:
-  - "运行 just check：全部是绿的，覆盖率显示 100%。"
+  - "运行 just check：全部是绿的，覆盖率 100%，高于 90% 的下限。"
   - "现在看它咬人：只跑 confidence 相关的测试，下限不变。"
   - "9 个测试通过，一半的代码根本没跑到，这次运行以 49.4% 的覆盖率失败。"
   - "下限是门禁，不是目标。"
@@ -161,11 +161,11 @@ S12:
   - "15 个里答对了 6 个。"
   - "什么都没训练，这些都是猜的；先记住这个数字。"
 S13:
-- en: "Step five a answers with tests that could tell. First, honesty: on this machine just test says 1 failed, 102 passed. The failing test demands bit for bit equal outputs. On this Linux CPU, torch sums in a different order than the author's Mac; there all 103 pass, as the walk records. Hermetic means only your code can make it fail; bit exactness across machines is a stronger promise; this machine measured it."
+- en: "Step five a answers with tests that could tell. First, honesty: on this machine just test says 1 failed, 102 passed. The failing test changes one question and demands that the other answers stay bit for bit equal. On this Linux CPU, torch sums in a different order than the author's Mac; there all 103 pass, as the walk records. Hermetic means only your code can make it fail; bit exactness across machines is a stronger promise; this machine measured it."
   zh:
   - "到了 step-05a，用真正能看出问题的测试来回应。"
   - "先说实话：在这台机器上，just test 显示 1 failed, 102 passed。"
-  - "失败的那个测试要求输出逐位相同。"
+  - "失败的那个测试改动一个问题，要求其他问题的答案逐位不变。"
   - "在这台 Linux 的 CPU 上，torch 求和的顺序和作者的 Mac 不一样；在 Mac 上 103 个全部通过，walk.md 里有记录。"
   - "所谓 hermetic，是只有你的代码能让它失败；跨机器逐位一致是一个更强的承诺；这台机器把它量了出来。"
   en_display:
@@ -256,10 +256,10 @@ S15:
   - "一个额外步骤把 hook 卸掉：pre-commit uninstall。"
   - "在 babykev 那边，删掉 venv；如果跑过冒烟测试，再删掉 Hugging Face 缓存里那个大约 1 GB 的模型。"
   - "今天没有任何计费：门禁就在你的笔记本上，这正是重点。"
-- en: "5 questions to test yourself. One: what runs in a unit, an integration and a system test of this repo, file by file? Two: the system tests pass with no server at all. What does pytest actually print, and are those four tests hermetic?"
+- en: "5 questions to test yourself. One: what runs in a unit, an integration and a system test of the cheese app, file by file? Two: the system tests pass with no server at all. What does pytest actually print, and are those four tests hermetic?"
   zh:
   - "五道自测题。"
-  - "第一题：逐个文件说说，这个 repo 的单元测试、集成测试和系统测试分别运行了什么？"
+  - "第一题：逐个文件说说，cheese 应用的单元测试、集成测试和系统测试分别运行了什么？"
   - "第二题：系统测试在完全没有服务器的情况下也通过了。"
   - "这时 pytest 实际打印了什么，这四个测试又是不是 hermetic 的？"
 - en: "Three: what does pre-commit install actually create, and why must every clone run it again? Four: black says failed, files were modified. Is your code broken, and what do you do next? Five: babykev had 94 percent coverage and a wrong mask. What kind of test finally saw the bug, and why was coverage blind to it?"
@@ -269,7 +269,7 @@ S15:
   - "你的代码坏了吗，接下来该做什么？"
   - "第五题：babykev 有 94% 的覆盖率，mask 却是错的。"
   - "最后是哪一类测试看到了这个 bug，覆盖率又为什么看不见它？"
-- en: "The answers are in the exercises, and every command is in the study guide. Next lecture brings cloud credentials, where the detect private keys hook earns its keep. And in lecture 21, this very repo's checks run on GitHub, where nobody can walk past them with dash dash no verify."
+- en: "The answers are in the exercises, and every command is in the study guide. Next lecture brings cloud credentials, where the detect private key hook earns its keep. And in lecture 21, this very repo's checks run on GitHub, where nobody can walk past them with dash dash no verify."
   zh:
   - "答案在练习里，每条命令都在学习指南里。"
   - "下节课会用到云上的凭据，到时 detect-private-key 这个 hook 就派上用场了。"

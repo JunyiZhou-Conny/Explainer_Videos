@@ -509,7 +509,7 @@ class JustCheck(VoiceScene):
             self.play(ok.animate.set_color(PASS), l18.animate.set_color(PASS),
                       substring(l19, "53 passed").animate.set_color(PASS), run_time=0.5)
             k_jc, y_jc = tag_on(self, t, jc_ln, turn_row)
-            vo.wait_until("the floor reads 100 percent")
+            vo.wait_until("coverage 100 percent")
             self.play(FadeIn(gauge.track), FadeIn(gauge.floor), FadeIn(gauge.floor_label), FadeIn(gauge.name),
                       run_time=0.4)
             self.play(*gauge.set_to(100, "100.00%", PASS),

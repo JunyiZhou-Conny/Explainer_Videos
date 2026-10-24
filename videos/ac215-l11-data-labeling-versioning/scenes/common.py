@@ -1914,7 +1914,8 @@ class SignedTicket(Rig):
       stamp(scene)              a BLUE url_ticket appears at the house (the seal stamps on) and
                                 slides to the browser (parks above it: fade the 'task 1?' bubble
                                 first); the key stays; returns the ticket
-      walk(scene, ticket)       the ticket rides a PINK route to the vault's door; the seal is
+      walk(scene, ticket)       the ticket rides a PINK route from where stamp() parked it to the
+                                vault's door (its right edge on the line); the seal is
                                 checked (GREEN check); a blank tile rides back and bounces off the
                                 bouncer (FadeIn the bouncer first); returns (route, tile, check)
       envelope_to_db(scene, word='gouda')   S07: a WHITE envelope leaves the house and stops at the
@@ -1998,15 +1999,17 @@ class SignedTicket(Rig):
         return tk
 
     def walk(self, scene, ticket):
-        w = self.browser.window
-        a = w.get_right() + RIGHT * 0.05 + DOWN * 0.15
+        # the route starts where stamp() parked the ticket (its right edge) and ends at the vault's door;
+        # the ticket rides it with its right edge on the line
+        a = ticket.get_right() + RIGHT * 0.05
         dpt = self.door.get_left() + LEFT * 0.05
-        rt = _poly([a, [dpt[0] - 0.6, a[1], 0], dpt], ROUTE, 4)
+        rt = _poly([a, [dpt[0] - 0.6, a[1], 0], [dpt[0] - 0.6, dpt[1], 0], dpt], ROUTE, 4)
         scene.play(Create(rt), run_time=0.7)
-        scene.play(ticket.animate.move_to(dpt + np.array([-ticket.width / 2 - 0.1, 0.45, 0])), run_time=0.9)
+        ride = rt.path.copy().shift(LEFT * (ticket.width / 2 + 0.05))
+        scene.play(MoveAlongPath(ticket, ride), run_time=1.1)
         ck = check_mark(0.35, PASS).next_to(ticket.seal, UP, buff=0.08)
         scene.play(Create(ck), Indicate(ticket.seal, color=KEY, scale_factor=1.3), run_time=0.6)
-        tl = tile(None, 0.55, LAPTOP).move_to(dpt + LEFT * 0.3)
+        tl = tile(None, 0.55, LAPTOP).move_to(dpt + np.array([-0.3, -0.5, 0]))
         scene.play(FadeIn(tl, scale=0.6), run_time=0.3)
         stop = self.bouncer.get_right() + RIGHT * 0.35
         scene.play(MoveAlongPath(tl, Line(tl.get_center(), stop)), run_time=0.9)
