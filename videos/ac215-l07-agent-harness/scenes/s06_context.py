@@ -4,18 +4,19 @@ Lecture: 12–18.
 
 Beats (script.md "## S06", one voiceover block each):
  0  LECTURE 12–18 (with the picture). TRACKER Context (section shown, no step lit). Slide 16
-    rebuilt from Act 1's real blocks (V4 ContextStack): the GREY chip "the invisible layer"
-    (slide 12) over the column on "invisible layer"; the GREY "user prompt" chip arrows into the
-    column, which arrows into the BLUE "LLM" and a BLUE "response"; the six GREEN-outlined blocks
+    rebuilt from Act 1's real blocks (V4 ContextStack): the BLUE "LLM" and "response" first ("what
+    the model sees"); the GREY chip "the invisible layer" (slide 12) over the empty column on
+    "invisible layer"; on "one model call" the GREY "user prompt" chip and the arrows into and out
+    of the column, the LLM pulses; the six GREEN-outlined blocks
     write in top to bottom as the SAY names them (system prompt · prompts/shop_assistant.md +
     policies; user message · the confirmed request (JSON); structured output · AgentReply; tool
     definitions · 5 tools); blocks 5-6 as GREY dashed empty slots "retrieved data" and "memory ·
     saved preferences", each pulsing as it is named.
- 1  The ends and details leave; the column becomes two compact columns "basic · act 1" (the
-    column itself) and "enriched" (a copy). Three GREY chips across the top "same prompt",
-    "same model", "same tools"; the V1 mini-map bottom right, Context & memory row YELLOW. Basic:
-    the first four blocks light YELLOW in turn, its slots pulse GREY (empty); enriched: the two
-    slots fill GREEN. Caption (slide 18, our words) "every block your code adds is a decision".
+ 1  The ends and details leave; the column becomes the compact "basic · act 1", then a copy slides
+    right: "enriched". Three GREY chips across the top "same prompt", "same model", "same tools";
+    the V1 mini-map bottom right (Act 1's bars), Context & memory row YELLOW. Basic: the first four
+    blocks light YELLOW in turn, its slots pulse GREY (empty); enriched: the two slots fill GREEN.
+    Caption (slide 18, our words) "every block your code adds is a decision"; 1 s hold.
  2  TRACKER Context 1. Picture, chips, mini-map and lecture tag leave. Container terminal (11
     rows, TEAL), title-bar tag `no key`; it types `python cli.py --act 2 --compare`, the GOLD
     `live · billed per token` joins the title bar, a GOLD row chip "2 runs" beside the command.
@@ -25,11 +26,11 @@ Beats (script.md "## S06", one voiceover block each):
     pulse on "mild cheeses". Line 8 gets the GREY row tag "enriched never starts".
  3  The terminal shrinks to the 3-row strip (the command, line 8, the 401's first row). Above it,
     left: QUOTE(README.md: 851–856) "prints both answers and a side-by-side table … The verdict
-    reports improvement, a tie, or a regression; it does not assume enriched will win."
-    (`expected`); right: a GREY dashed empty table outline (`illustration`, header
+    reports improvement, a tie, / or a regression; it does not assume / enriched will win." (four
+    rows, `expected`); right: a GREY dashed empty table outline (`illustration`, header
     acts/act2_context.py · lines 151–168): Measure | BASIC | ENRICHED; Cart check · Mild-cheese
-    match · Model calls · Input tokens (all calls); no values. The verdict sentence is underlined
-    YELLOW on "and a verdict".
+    match · Model calls · Input tokens (all calls); no values. The verdict rows are underlined
+    YELLOW on "and a verdict" and pulse on "a tie or a regression".
  4  TRACKER Context 2, then 3. The card and table leave; the terminal grows back (11 rows); the
     top-band chip README.md · line 271 (excerpt) "Individual runs, if you want to inspect each
     tool call". It types the basic run (folds) -> TERM(container/21: 10, 12 as 401s), then the
@@ -38,7 +39,8 @@ Beats (script.md "## S06", one voiceover block each):
     on "enriched sends 2". On "the extra one": the strip (21:10 and 22:10), the two compact
     columns return above it (lecture tag back), with what each sends on the right: basic ·
     1 message [request]; enriched · 2 messages [ ┄ ] [request]; a copy of enriched's two filled
-    slots folds into one GREEN card "context packet", which slides into the empty message spot.
+    slots' frames folds into one GREEN card's frame as it slides into the empty message spot, then
+    the words "context packet" appear (no filled box over its own label) and the card pulses.
  5  TRACKER Context 4. The columns, cards and lecture tag leave; the terminal grows back. It
     types the override run -> TERM(container/23: 10, 12 as 401s). Top-band chips one at a time:
     container/23 · line 7 (excerpt) "at least one with a funk rating of 4 or higher" on "asks for
@@ -49,19 +51,22 @@ Beats (script.md "## S06", one voiceover block each):
     --compare doesn't`. On "This extra call does" the chips and the GOLD live tag leave, the
     terminal grows to 13 rows and types `python -c 'from acts.act2_context import
     print_shipping_demo; print_shipping_demo()'` (extra tag; folds onto 3 rows) ->
-    TERM(container/29: 3–9 wrap): `PA: REJECTED` RED, `NY: PASS` GREEN, pulsing as named. The
-    terminal shrinks to the strip (PA, NY, line 9's first row); above it V4's toggle: the fixed
-    cart (Comté 350 g · Bûcheron 350 g · Époisses 300 g, GREY: a given cart, not a model's) on the
-    GREEN validator, the PA ↔ NY switch flips twice and the stamp flips RED "PA: REJECTED" ↔ GREEN
-    "NY: PASS"; the GREY tag "a fictional classroom rule · not a law (container/29 · line 9)" on
-    "under a fictional rule"; `illustration` on the toggle.
+    TERM(container/29: 3–7 wrap, while the command is still on screen): `PA: REJECTED` RED (pulses
+    on "fails for Pennsylvania"), `NY: PASS` GREEN; then 8–9 (wrap, the command scrolls off), held
+    0.5 s. The terminal shrinks to the strip (PA, NY, line 9's first row); above it V4's toggle
+    (`illustration`): the fixed cart (Comté 350 g · Bûcheron 350 g · Époisses 300 g, GREY: a given
+    cart, not a model's) on the GREEN validator, stamp RED "PA: REJECTED"; on "passes for New York"
+    the switch flips to NY, the stamp turns GREEN "NY: PASS" and the strip's NY row pulses; on
+    "under a fictional rule" the GREY tag "a fictional classroom rule · not a law (container/29 ·
+    line 9)", then the switch flips back to PA (PA row pulses).
  7  TRACKER Context 5 (extra off). The toggle leaves; the terminal grows back (11 rows), the GOLD
-    live tag returns. It types `python cli.py --act 3 --scenario pa-shipping` (folds) ->
+    live tag returns and the two-row card below arrives in the top band. It types `python cli.py
+    --act 3 --scenario pa-shipping` (folds) ->
     TERM(container/24: 5, 6 wrap, 9 folded to "Could you help me order cheese … My starting cart
     is 350 g of Comté, 350 g of Bûcheron, and 300 g of Époisses. …" wrap, 13, 15, 16 as 401s): 13
-    BLUE, 15 YELLOW. A two-row GREY card in the top band: "the README puts this act 3 command
-    here (README.md · line 286)" / "a customer's own cart, checked, and the model asked to fix
-    it · part 2 explains it".
+    BLUE, 15 YELLOW (pulses at the end). The GREY card: "the README puts this act 3 command here
+    (README.md · line 286)" / "a customer's own cart, checked, and the model asked to fix it ·
+    part 2 explains it" (its second row pulses on "part 2 explains it").
  8  TRACKER Context 6, then 7. The card leaves; the terminal grows to 12 rows. It types the
     evaluation command (folds onto 3 rows), a GOLD row chip "12 runs" beside it ->
     TERM(container/25: 2, …, 36, 38): "4 cases × 3 repeats = 12 runs" boxed YELLOW with the GREY
@@ -73,8 +78,9 @@ Beats (script.md "## S06", one voiceover block each):
  9  The terminal and its tags leave. README.md · line 301 "See Tutorial questions and evidence",
     under it the GREY two-row tag `erratum · docs/TUTORIAL_SCENARIOS.md was never published` /
     `use the README's checkpoints`; beside them S02's GREY dashed ghost `docs/` "not in the repo"
-    returns. On "Pause here" the chips leave and the static GREY "your turn" card enters ("with
-    your key:", the seven commands of steps 1-7, folded at a space with " \\", GOLD "about 18 live
+    returns on "the docs folder"; the erratum's second row pulses on "so use the README". On
+    "Pause here" the chips leave and the static GREY "your turn" card enters ("with your key:", the
+    seven commands of steps 1-7, folded at a space with " \\" before an option, GOLD "about 18 live
     runs · billed per token"), ▶ your turn. Hold 2 s, then everything fades to an empty frame.
 """
 
@@ -324,10 +330,19 @@ def table_outline() -> VGroup:
     return g
 
 
-def card_lines(cmd: str) -> str:
-    """A command for the turn card: folded at a space with " \\" (fold_cmd), rows joined by "\\n"."""
-    rows, hard = fold_cmd(cmd, CARD_FOLD, 0)
-    assert not hard, cmd
+def card_lines(cmd: str, limit: int = CARD_FOLD) -> str:
+    """A command for the turn card, folded at a space with " \\" and a 4-space indent (preferring a
+    break before an option, so an option keeps its value), rows joined by "\\n"."""
+    rows, cur = [], cmd
+    while len(cur) > limit:
+        room = limit - 2
+        spaces = [i for i, ch in enumerate(cur) if ch == " " and (4 if rows else 0) < i <= room]
+        opt = [i for i in spaces if cur[i + 1] == "-"]
+        cut = opt[-1] if opt and opt[-1] >= room * 0.5 else spaces[-1]
+        rows.append(cur[:cut] + " \\")
+        cur = "    " + cur[cut + 1:]
+    rows.append(cur)
+    assert " ".join(r.rstrip(" \\").strip() for r in rows) == cmd, rows
     return "\n".join(rows)
 
 
@@ -382,17 +397,21 @@ class ContextModes(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             self.play(*cs.parts_out(*ends), *[d.animate.set_opacity(0) for d in details], FadeOut(inv),
                       run_time=0.4)
+            # the column becomes "basic" (the same blocks, smaller), then a copy slides right: "enriched"
             moves = []
             for i, fb in enumerate(blocks):
                 src = VGroup(fb.solid, fb.title) if fb.dashed is None else VGroup(fb.solid, fb.dashed, fb.title)
-                bb, eb = bs.block(i), es.block(i)
+                bb = bs.block(i)
                 dst_b = VGroup(bb.solid, bb.title) if bb.dashed is None else VGroup(bb.solid, bb.dashed, bb.title)
-                dst_e = VGroup(eb.solid, eb.title) if eb.dashed is None else VGroup(eb.solid, eb.dashed, eb.title)
-                moves += [TransformFromCopy(src, dst_e), ReplacementTransform(src, dst_b)]
-            self.play(*moves, FadeIn(bs.parts["title"]), FadeIn(es.parts["title"]), run_time=0.9)
-            # the transforms left the parts on the scene one by one: swap them for the two pieces
+                moves.append(ReplacementTransform(src, dst_b))
+            self.play(*moves, FadeIn(bs.parts["title"]), run_time=0.7)
+            # the transforms left the parts on the scene one by one: swap them for the piece
             self.remove(*[m for m in self.mobjects if m not in (tr, lr)])
-            self.add(bs, es)
+            self.add(bs)
+            self.play(TransformFromCopy(bs.parts["blocks"], es.parts["blocks"]), FadeIn(es.parts["title"]),
+                      run_time=0.7)
+            self.remove(*[m for m in self.mobjects if m not in (tr, lr, bs)])
+            self.add(es)
             self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.1) for c in same], lag_ratio=0.25),
                       FadeIn(mm), run_time=0.6)
             self.play(mm.light("context"), run_time=0.4)
@@ -402,7 +421,8 @@ class ContextModes(VoiceScene):
             self.play(flash(VGroup(*[b.dashed for b in bs.blocks_list[4:]]), S.GREY, 1.04), run_time=0.6)
             vo.wait_until("enriched fills them")
             self.play(*es.fill_slots(), run_time=0.7)
-            self.play(Write(dec), run_time=0.9)
+            self.play(Write(dec), run_time=0.8)
+        self.wait(1.0)                                         # the caption reads before the picture goes
 
         # ========================================================== 2 · step 1: --compare
         t = term(container=True, rows=T_ROWS)
@@ -574,6 +594,7 @@ class ContextModes(VoiceScene):
             self.play(flash(pa.glyphs, ERR, 1.1), run_time=0.5)
             rs2 = show(self, t, SHIP, 8, 9, wrap=True, run_time=0.5)
             l9 = item_rows(rs2, 1)[0]
+            self.wait(0.5)
             fit(self, t, 3, keep=[pa, ny, l9], tags=(nk,), parked=(lv,), run_time=0.7)
             self.play(FadeIn(tg, shift=UP * 0.1), FadeIn(tg_il), run_time=0.45)
             vo.wait_until("passes for New York")
@@ -637,7 +658,7 @@ class ContextModes(VoiceScene):
         gnote = note("not in the repo")
         gg = VGroup(ghost_d, gnote).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         grp = VGroup(c301, e301).arrange(DOWN, aligned_edge=LEFT, buff=0.3)
-        place(grp, left=-5.6, cy=0.8)
+        place(grp, left=-5.6, cy=0.35)
         place(gg, left=grp.get_right()[0] + 0.7, cy=c301.get_center()[1] - 0.1)
         assert gg.get_right()[0] < 6.4, gg.get_right()[0]
         rows = [Prose("with your key:")] + [card_lines(c) for c in CARD_CMDS] + \
