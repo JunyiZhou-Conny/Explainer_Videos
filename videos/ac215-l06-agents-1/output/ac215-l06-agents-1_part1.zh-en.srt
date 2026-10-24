@@ -414,811 +414,801 @@ Agentic RAG 把一个模型放在这份菜单前面，让它来选
 Agentic RAG puts a model in front of that menu, and lets it choose.
 
 84
-00:05:32,250 --> 00:05:35,811
-在 llm-rag 里，Agents 一节就是 Agentic RAG
+00:05:32,250 --> 00:05:37,029
+在 llm-rag 里，Agents 一节就是菜单只有两项的 Agentic RAG
 llm-rag's Agents section is Agentic RAG with a menu of two.
 
 85
-00:05:35,811 --> 00:05:37,299
-菜单上只有两项
-llm-rag's Agents section is Agentic RAG with a menu of two.
-
-86
 00:05:37,349 --> 00:05:40,997
 它的 README 说：让 LLM 决定怎么检索
 Its README says: let the LLM decide how to retrieve.
 
-87
+86
 00:05:41,317 --> 00:05:44,005
 搜一位作者的书，或者搜全部的书
 Search one author's book, or search all books.
 
-88
+87
 00:05:44,250 --> 00:05:47,125
 这是第一个菜单项，是手写的
 Here's the first menu item, written by hand:
 
-89
+88
 00:05:47,125 --> 00:05:50,981
 一个名字，模型会把它写回来，还有一段描述
 a name, which the model will write back, and a description;
 
-90
+89
 00:05:50,981 --> 00:05:55,621
 它和参数描述一起，是模型能看到的唯一文档
 with the parameter descriptions, the only documentation the model sees.
 
-91
+90
 00:05:55,941 --> 00:05:58,245
 参数以 JSON schema 的形式给出
 Parameters come as a JSON schema.
 
-92
+91
 00:05:58,483 --> 00:06:01,363
 作者必须是 enum 里 9 个名字之一
 The author must be one of 9 names in an enum.
 
-93
+92
 00:06:01,683 --> 00:06:05,075
 搜索文本的描述甚至在指导模型
 The search text's description even coaches the model:
 
-94
+93
 00:06:05,075 --> 00:06:07,891
 把搜索词扩展成一两句话
 expand the search term to a sentence or two.
 
-95
+94
 00:06:08,211 --> 00:06:09,918
 而且两个字段都是必填的
 And both fields are required.
 
-96
+95
 00:06:10,167 --> 00:06:11,767
 再看真正的函数
 Now the real function.
 
-97
+96
 00:06:11,980 --> 00:06:15,580
 还有两个参数，collection 和一个 embedding 函数
 Two more arguments, the collection and an embedding function,
 
-98
+97
 00:06:15,580 --> 00:06:18,295
 不在 schema 里：由你的代码提供
 aren't in the schema: your code supplies them.
 
-99
+98
 00:06:18,615 --> 00:06:21,857
 模型能控制的只有作者和搜索文本
 The model controls only the author and the search text.
 
-100
+99
 00:06:24,200 --> 00:06:28,042
 课上说，会用工具的 agent 必须选对工具
 The lecture says a tool-using agent must pick the right tool,
 
-101
+100
 00:06:28,042 --> 00:06:30,877
 整理好输入格式，并解读输出
 format its inputs, and interpret its outputs.
 
-102
+101
 00:06:31,197 --> 00:06:34,405
 在这里，模型选工具、整理格式，全靠写出来
 Here the model picks and formats only by writing;
 
-103
+102
 00:06:34,405 --> 00:06:36,005
 运行工具的是你的代码
 your code runs the tool.
 
-104
+103
 00:06:36,217 --> 00:06:40,803
 这是 collection 里的 11 本书，旁边是 enum 里的 9 个名字
 Here are the 11 books in the collection, beside the 9 names in the enum.
 
-105
+104
 00:06:50,650 --> 00:06:57,861
 两本书。那本茅屋奶酪食谱，178 个 chunk，作者不在名单上
 Two books. The cottage cheese recipe book, 178 chunks, has an author who isn't on the list.
 
-106
+105
 00:06:58,181 --> 00:07:01,811
 Woman's Institute 那本书，1505 个 chunk
 The Woman's Institute book, 1,505 chunks,
 
-107
+106
 00:07:01,811 --> 00:07:06,415
 干脆没有作者：这是第 5 讲里那个文件名的小疏漏
 has no author at all: a file name slip in lecture 5.
 
-108
+107
 00:07:06,650 --> 00:07:09,807
 这两本书仍然能通过搜索全部的书找到
 Both stay reachable by the search across all books.
 
-109
+108
 00:07:10,127 --> 00:07:12,805
 现在看舞台：Gemini 在 Google 的云上
 Now the stage: Gemini in Google's cloud,
 
-110
+109
 00:07:12,805 --> 00:07:16,421
 两个 container 在你的笔记本上，中间隔着一条边界
 two containers on your laptop, and a boundary between.
 
-111
+110
 00:07:16,667 --> 00:07:19,718
 模型从来拿不到你的数据库，只拿到一份菜单
 The model never gets your database, only a menu.
 
-112
+111
 00:07:20,038 --> 00:07:23,643
 第 1 次调用返回一张点单：函数名和参数
 Call 1 returns an order: a function name and arguments.
 
-113
+112
 00:07:23,963 --> 00:07:27,163
 你的代码执行它；第 2 次调用把结果发回去
 Your code runs it; call 2 sends back the result.
 
-114
+113
 00:07:32,750 --> 00:07:36,334
 第 5 讲停在了一条命令上；今天我们来运行它
 Lecture 5 ended on one command; today we run it.
 
-115
+114
 00:07:36,654 --> 00:07:38,076
 从头开始？
 Starting fresh?
 
-116
+115
 00:07:38,126 --> 00:07:39,626
 把 llm-rag clone 下来
 Clone llm-rag,
 
-117
+116
 00:07:39,626 --> 00:07:43,500
 把服务账号密钥放进它旁边的 secrets 目录
 and put the service account key in a secrets folder beside it;
 
-118
+117
 00:07:43,500 --> 00:07:45,550
 不是的话，就进到你的目录
 otherwise, go to your folder.
 
-119
+118
 00:07:45,783 --> 00:07:48,130
 第 1 步：cd llm-rag
 Step 1: cd llm-rag.
 
-120
+119
 00:07:48,450 --> 00:07:50,898
 第 2 步：编辑 docker-shell.sh
 Step 2: edit docker-shell.sh,
 
-121
+120
 00:07:50,898 --> 00:07:54,529
 把 GCP project 变量改成你自己的项目 ID
 and set GCP_PROJECT to your own project ID;
 
-122
+121
 00:07:54,529 --> 00:07:56,386
 我们用的是占位值
 we used a placeholder.
 
-123
+122
 00:07:56,706 --> 00:07:58,306
 暂停一下，把两件事都做了
 Pause, and do both.
 
-124
+123
 00:08:00,267 --> 00:08:03,062
 第 3 步：sh docker-shell.sh
 Step 3: sh docker-shell.sh.
 
-125
+124
 00:08:03,382 --> 00:08:05,152
 Compose 先启动 Chroma
 Compose starts Chroma first.
 
-126
+125
 00:08:05,472 --> 00:08:09,452
 后面那条 pull 的消息看起来像报错，其实无害
 The pull message after it looks like an error but is harmless:
 
-127
+126
 00:08:09,452 --> 00:08:12,725
 网上没有这个 image，所以 Compose 自己构建
 there's no such image online, so Compose builds it.
 
-128
+127
 00:08:13,033 --> 00:08:16,190
 构建大约 40 秒后，出现横幅
 After about 40 seconds of building, the banner prints.
 
-129
+128
 00:08:16,510 --> 00:08:23,081
 录制时是 Python 3.12.15 和 uv 0.13.1
 Python 3.12.15 and uv 0.13.1, at the time of recording.
 
-130
+129
 00:08:23,401 --> 00:08:27,310
 提示符里 @ 符号后面是 container ID，每次运行都不一样
 After the at sign comes the container's ID, new every run;
 
-131
+130
 00:08:27,310 --> 00:08:29,332
 暂停一下，走到这个提示符
 pause, and get to this prompt.
 
-132
+131
 00:08:31,567 --> 00:08:35,023
 在第二个终端里做一个额外检查：docker ps
 An extra check from a second terminal: docker ps.
 
-133
+132
 00:08:35,343 --> 00:08:39,673
 Chroma 发布了 port 8000；记住这个 port，第二部分会用到
 Chroma publishes port 8000; remember that port for part 2.
 
-134
+133
 00:08:40,600 --> 00:08:43,529
 现在是 Agents 一节的第 1 步
 Now the Agents section, step 1:
 
-135
+134
 00:08:43,529 --> 00:08:47,875
 python cli.py --agent，chunk type 用 char-split
 python cli.py --agent --chunk_type char-split.
 
-136
+135
 00:08:48,195 --> 00:08:52,120
 在新的 clone 上，它马上就失败：collection 不存在
 On a fresh clone it fails at once: the collection does not exist.
 
-137
+136
 00:08:52,440 --> 00:08:56,301
 那是第 429 行，在任何 Gemini 调用之前
 That's line 429, before any call to Gemini.
 
-138
+137
 00:08:56,550 --> 00:08:59,387
 这个 agent 需要第 5 讲的索引
 The agent needs the index from lecture 5.
 
-139
+138
 00:08:59,707 --> 00:09:01,307
 那个数据库还留着吗？
 Kept that database?
 
-140
+139
 00:09:01,414 --> 00:09:03,687
 它在 docker-volumes 目录里
 It's in the docker-volumes/ folder;
 
-141
+140
 00:09:03,687 --> 00:09:07,323
 如果你是在 9 月 22 日之前分块的，先 pull，再重建它
 if you chunked before September 22, pull and rebuild it.
 
+141
+00:09:07,643 --> 00:09:11,244
+否则就重新分块、向量化、加载。我们没有密钥
+Otherwise, chunk, embed and load again. We had no key,
+
 142
-00:09:07,643 --> 00:09:10,182
-否则就重新分块、向量化、加载
-Otherwise, chunk, embed and load again.
+00:09:11,244 --> 00:09:15,025
+所以 embed 用的是课程团队 commit 过的 embedding
+so the staff's committed embeddings stood in for the embed step.
 
 143
-00:09:10,417 --> 00:09:12,530
-我们没有密钥，所以 embed 这一步
-We had no key, so the staff's committed embeddings stood in for the embed step.
-
-144
-00:09:12,530 --> 00:09:15,025
-用的是课程团队 commit 过的 embedding
-We had no key, so the staff's committed embeddings stood in for the embed step.
-
-145
 00:09:15,267 --> 00:09:21,006
 再加载：python cli.py --load，chunk type 用 char-split
 Then the load step: python cli.py --load --chunk_type char-split.
 
-146
+144
 00:09:21,326 --> 00:09:27,982
 11 本书，8248 个 chunk；授课老师的故事只占其中 24 个
 11 books, 8,248 chunks; the instructor's story is just 24 of them.
 
-147
+145
 00:09:28,302 --> 00:09:31,729
 一条额外的 --get 命令确认 collection 能正常响应
 An extra --get command confirms the collection answers;
 
-148
+146
 00:09:31,729 --> 00:09:33,329
 暂停一下，加载你自己的
 pause, and load yours.
 
-149
+147
 00:09:36,650 --> 00:09:41,107
 查完 collection 之后，agent 函数组装出用户这一轮
 After the collection lookup, the agent function builds the user's turn:
 
-150
+148
 00:09:41,107 --> 00:09:43,178
 问题，角色是 user
 the question, with the role user.
 
-151
+149
 00:09:43,498 --> 00:09:45,781
 接着是对 Gemini 的第一次调用
 Then comes the first call to Gemini.
 
-152
+150
 00:09:46,017 --> 00:09:49,384
 三个设置：temperature 设为 0，菜单作为工具
 Three settings: temperature zero, the menu as tools,
 
-153
+151
 00:09:49,384 --> 00:09:51,585
 以及一个 mode 设为 any 的 tool config
 and a tool_config with mode="any".
 
-154
+152
 00:09:51,905 --> 00:09:54,785
 课上把 temperature 列为一个设计选择
 The lecture lists temperature as a design choice.
 
-155
+153
 00:09:55,105 --> 00:09:57,750
 设为 0，工具的选择就几乎可以复现
 Zero keeps the tool choice nearly repeatable.
 
-156
+154
 00:09:57,983 --> 00:10:02,356
 一行额外的命令显示，mode 设为 any 变成了什么：enum 值 ANY
 An extra one-liner shows what mode="any" becomes: the enum value ANY.
 
-157
+155
 00:10:02,676 --> 00:10:04,959
 模型必须用一个函数调用来回答
 The model must answer with a function call.
 
-158
+156
 00:10:05,200 --> 00:10:09,199
 在课上，一个好的 agent 可能决定根本不去搜索
 In the lecture, a good agent may decide not to search at all;
 
-159
+157
 00:10:09,199 --> 00:10:11,493
 Self-RAG 就是从这个决定开始的
 Self-RAG starts with that decision.
 
-160
+158
 00:10:11,813 --> 00:10:15,291
 我们的不行：在第 1 次调用里，mode 设为 any 会强制调用工具
 Ours can't: on call 1, mode="any" forces a tool call.
 
-161
+159
 00:10:15,611 --> 00:10:17,723
 它选的是搜哪一个，从来不是搜不搜
 It chooses which search, never whether.
 
-162
+160
 00:10:17,967 --> 00:10:20,143
 Gemini 实际收到的是什么？
 What does Gemini actually receive?
 
-163
+161
 00:10:20,463 --> 00:10:25,391
 一个额外的脚本运行同样的代码，但把请求打印出来，而不是发出去
 An extra script runs the same code, but prints the request instead of sending it.
 
-164
-00:10:25,711 --> 00:10:29,453
+162
+00:10:25,711 --> 00:10:29,511
 一个信封：问题、带着 enum 的两个声明
 One envelope: the question, both declarations with the enum;
 
-165
-00:10:29,453 --> 00:10:31,449
+163
+00:10:29,511 --> 00:10:31,727
 mode 为 ANY，temperature 为 0
-"mode": "ANY", temperature zero.
+"mode": "ANY" and temperature zero.
 
-166
-00:10:31,683 --> 00:10:33,874
+164
+00:10:31,967 --> 00:10:34,158
 而且没有 system instruction
 And no system instruction:
 
-167
-00:10:33,874 --> 00:10:38,510
+165
+00:10:34,158 --> 00:10:38,793
 和第 5 讲一样，cli.py 定义了一个，却从来没发出去
 as in lecture 5, cli.py defines one and never sends it.
 
-168
-00:10:38,750 --> 00:10:41,459
+166
+00:10:39,033 --> 00:10:41,742
 现在再跑第 1 步，collection 已经加载了
 Now step 1 again, with the collection loaded.
 
-169
-00:10:41,779 --> 00:10:47,134
+167
+00:10:42,062 --> 00:10:47,418
 查找通过了，问题也打印出来了，但第一次模型调用需要你的密钥
 The lookup passes and the question prints, but the first model call needs your key:
 
-170
-00:10:47,134 --> 00:10:49,715
+168
+00:10:47,418 --> 00:10:49,999
 报 DefaultCredentialsError，找不到文件
 DefaultCredentialsError, file not found.
 
-171
-00:10:49,950 --> 00:10:51,550
+169
+00:10:50,233 --> 00:10:51,833
 下面是课程团队看到的
 Here's what the staff saw.
 
-172
-00:10:51,742 --> 00:10:54,596
+170
+00:10:52,025 --> 00:10:54,879
 模型的整个回答就是一个函数调用
 The model's whole answer is a function call:
 
-173
-00:10:54,596 --> 00:10:57,839
+171
+00:10:54,879 --> 00:10:58,122
 get book by author，作者填的是授课老师
 get_book_by_author, with the instructor as author,
 
-174
-00:10:57,839 --> 00:11:01,406
+172
+00:10:58,122 --> 00:11:01,689
 搜索文本是 cheese making importance location
 and the search text, cheese making importance location.
 
-175
-00:11:01,650 --> 00:11:05,042
+173
+00:11:01,933 --> 00:11:05,325
 四个词，而描述要求的是一两句话
 Four words, though the description asked for a sentence or two.
 
-176
-00:11:05,362 --> 00:11:07,916
+174
+00:11:05,645 --> 00:11:08,200
 还有一个 ID，以及一个 thought signature
 There's also an ID, and a thought signature;
 
-177
-00:11:07,916 --> 00:11:09,350
+175
+00:11:08,200 --> 00:11:09,633
 我们之后还会再见到它
 we'll meet it again.
 
-178
-00:11:09,400 --> 00:11:12,899
+176
+00:11:09,683 --> 00:11:13,182
 SDK 什么都没运行；它手里只有声明
 The SDK ran nothing; it only has declarations.
 
-179
-00:11:13,219 --> 00:11:15,032
+177
+00:11:13,502 --> 00:11:15,315
 到目前为止，一次付费调用
 So far, one paid call.
 
-180
-00:11:15,352 --> 00:11:17,827
+178
+00:11:15,635 --> 00:11:18,110
 在这里暂停，用你的密钥跑第 1 步
 Pause here, and run step 1 with your key.
 
-181
-00:11:21,667 --> 00:11:25,394
+179
+00:11:21,950 --> 00:11:25,677
 回到你的 Python 里，分发器按名字匹配每个调用
 Back in your Python, a dispatcher matches each call's name,
 
-182
-00:11:25,394 --> 00:11:31,395
+180
+00:11:25,677 --> 00:11:31,678
 用模型给的参数运行真正的函数，再把结果包装成函数响应
 runs the real function with the model's arguments, and wraps the result as a function response.
 
-183
-00:11:31,634 --> 00:11:35,431
+181
+00:11:31,917 --> 00:11:35,714
 没有密钥时，一个额外的脚本把课程团队录下的调用
 Without a key, an extra script feeds the staff's recorded call
 
-184
-00:11:35,431 --> 00:11:39,228
+182
+00:11:35,714 --> 00:11:39,511
 送进教程自己的分发器，对着我们的 collection 运行
 through the tutorial's own dispatcher, against our collection.
 
-185
-00:11:39,467 --> 00:11:43,351
+183
+00:11:39,750 --> 00:11:43,634
 有一个替身：没有 Google，我们没法把搜索文本向量化
 One stand-in: without Google we can't embed the search text,
 
-186
-00:11:43,351 --> 00:11:45,746
+184
+00:11:43,634 --> 00:11:46,029
 所以用一个已存 chunk 的向量来替代
 so a stored chunk's vector stands in,
 
-187
-00:11:45,746 --> 00:11:48,918
+185
+00:11:46,029 --> 00:11:49,201
 这 10 个 chunk 可能和真实查询返回的不一样
 and the 10 chunks may differ from a real query's.
 
-188
-00:11:49,167 --> 00:11:53,263
+186
+00:11:49,450 --> 00:11:53,546
 出来的是今天这个故事里的 10 个段落，讲的是 Mara 和 Anja
 Out come 10 passages from today's story, about Mara and Anja.
 
-189
-00:11:53,583 --> 00:12:00,388
+187
+00:11:53,866 --> 00:12:00,671
 它们拼成一个 3509 个字符的字符串，作为响应钉在这个调用上
 Joined into one string of 3,509 characters, they're stapled to the call as its response.
 
-190
-00:12:00,634 --> 00:12:02,397
+188
+00:12:00,917 --> 00:12:02,680
 第 2 次调用发送三样东西
 Call 2 sends three things:
 
-191
-00:12:02,397 --> 00:12:07,482
+189
+00:12:02,680 --> 00:12:07,765
 问题、原封不动的模型自己那一轮，以及你的函数响应
 the question, the model's own turn, unchanged, and your function responses.
 
-192
-00:12:07,802 --> 00:12:12,708
+190
+00:12:08,085 --> 00:12:12,991
 工具也再次一起发过去，但没有 tool config：mode 回到了自动
 The tools go along again, but no tool_config: the mode is back to automatic.
 
-193
-00:12:12,950 --> 00:12:16,506
+191
+00:12:13,233 --> 00:12:16,789
 模型那一轮里面带着它的 thought signature
 Inside, the model's turn carries its thought signature:
 
-194
-00:12:16,506 --> 00:12:21,355
+192
+00:12:16,789 --> 00:12:21,638
 Gemini 的思考模型会给自己的那一轮签名，并要求原样发回
 Gemini's thinking models sign their turn, and want it back exactly as sent.
 
-195
-00:12:21,675 --> 00:12:24,406
+193
+00:12:21,958 --> 00:12:24,689
 原封不动地发回这一轮，封印就不会破
 Resending the turn unchanged keeps the seal.
 
-196
-00:12:24,650 --> 00:12:26,157
+194
+00:12:24,933 --> 00:12:26,440
 课程团队拿到的回答呢？
 The staff's answer?
 
-197
-00:12:26,207 --> 00:12:29,248
+195
+00:12:26,490 --> 00:12:29,531
 一个阿尔卑斯山谷、它的山洞，还有转场放牧
 An Alpine valley, its caves, and transhumance,
 
-198
-00:12:29,248 --> 00:12:31,562
+196
+00:12:29,531 --> 00:12:31,845
 也就是牲畜随季节迁移
 the seasonal movement of livestock.
 
-199
-00:12:31,882 --> 00:12:37,493
+197
+00:12:32,165 --> 00:12:37,776
 两次调用分别用了 247 和 1269 个 token
 The two calls used 247 and 1,269 tokens.
 
-200
-00:12:37,734 --> 00:12:39,590
+198
+00:12:38,017 --> 00:12:39,873
 所以，是谁搜索了你的数据库？
 So, who searched your database?
 
-201
-00:12:39,910 --> 00:12:42,545
+199
+00:12:40,193 --> 00:12:42,828
 Gemini 写出了调用，选了那本书
 Gemini wrote the call and chose the book;
 
-202
-00:12:42,545 --> 00:12:44,795
+200
+00:12:42,828 --> 00:12:45,078
 你的 Python 运行了它，就在你的笔记本上
 your Python ran it, on your laptop.
 
-203
-00:12:45,115 --> 00:12:49,339
+201
+00:12:45,398 --> 00:12:49,622
 每个问题要两次模型调用，加一次 embedding 调用，全都要付费
 That's two model calls and one embedding call per question, all paid.
 
-204
-00:12:49,584 --> 00:12:52,214
+202
+00:12:49,867 --> 00:12:52,497
 可今天这一版的书里从没出现过转场放牧
 But today's book never says transhumance,
 
-205
-00:12:52,214 --> 00:12:54,524
+203
+00:12:52,497 --> 00:12:54,807
 这次运行里的另外三个词也没有
 nor three other words from this run:
 
-206
-00:12:54,524 --> 00:12:58,117
+204
+00:12:54,807 --> 00:12:58,400
 加入这份输出的那个 commit，同时重写了这本书
 the commit that added this output also rewrote the book.
 
-207
-00:12:58,437 --> 00:13:01,061
+205
+00:12:58,720 --> 00:13:01,344
 课程团队的索引是用旧文本建的
 The staff's index was built from the old text.
 
-208
-00:13:01,300 --> 00:13:06,676
+206
+00:13:01,583 --> 00:13:06,959
 你在今天这一版书上跑，会用到这样的段落：Mara、凝乳、奶酪轮
 Your run on today's book draws on passages like these: Mara, the curd, the wheels.
 
-209
-00:13:06,996 --> 00:13:09,215
+207
+00:13:07,279 --> 00:13:09,498
 索引按加载进去的内容来回答
 An index answers from what was loaded.
 
-210
-00:13:09,450 --> 00:13:13,488
+208
+00:13:09,733 --> 00:13:13,771
 一个小疏漏：README 说会打印回答
 One small slip: the README promises the response,
 
-211
-00:13:13,488 --> 00:13:17,279
+209
+00:13:13,771 --> 00:13:17,562
 但第 478 行打印的是整个 response 对象
 but line 478 prints the whole response object.
 
-212
-00:13:17,599 --> 00:13:20,245
+210
+00:13:17,882 --> 00:13:20,528
 改成打印 response.text，就只有回答了
 Print response.text for just the answer.
 
-213
-00:13:20,484 --> 00:13:25,560
+211
+00:13:20,767 --> 00:13:25,843
 第 2 步链接到课程托管的 Cheese Agent Tool，录制时还在线
 Step 2 links to the course's hosted Cheese Agent Tool, up at the time of recording;
 
-214
-00:13:25,560 --> 00:13:27,160
+212
+00:13:25,843 --> 00:13:27,443
 在 Chrome 里试试
 try it in Chrome.
 
-215
-00:13:29,400 --> 00:13:32,472
+213
+00:13:29,683 --> 00:13:32,755
 课上的 agent 会一直运行，直到任务完成
 The lecture's agent runs until the task is done.
 
-216
-00:13:32,792 --> 00:13:34,859
+214
+00:13:33,075 --> 00:13:35,142
 而 llm-rag 的 agent 只跑了一圈
 llm-rag's agent ran one lap:
 
-217
-00:13:34,859 --> 00:13:37,443
+215
+00:13:35,142 --> 00:13:37,726
 一次强制的工具调用，然后一个回答
 a forced tool call, then an answer.
 
-218
-00:13:37,763 --> 00:13:39,612
+216
+00:13:38,046 --> 00:13:39,895
 README 把它叫作 agent
 The README calls it an agent;
 
-219
-00:13:39,612 --> 00:13:43,437
+217
+00:13:39,895 --> 00:13:43,720
 按课上的定义，它只是 agent 最小的一块
 by the lecture's definition, it's the smallest piece of one.
 
-220
-00:13:43,683 --> 00:13:45,902
+218
+00:13:43,966 --> 00:13:46,185
 关于这一圈，有一个问题
 Here's a question about that one lap.
 
-221
-00:13:54,750 --> 00:13:58,295
+219
+00:13:55,033 --> 00:13:58,578
 它打印出的 response 只有一个部分，就是函数调用
 It prints a response whose only part is a function call,
 
-222
-00:13:58,295 --> 00:14:00,510
+220
+00:13:58,578 --> 00:14:00,793
 没有文本，然后程序就结束了
 with no text, and the program ends.
 
-223
-00:14:00,830 --> 00:14:04,414
+221
+00:14:01,113 --> 00:14:04,697
 没有任何东西去执行这个调用；换成循环，就会执行它，再问一次
 Nothing runs that call; a loop would run it, and ask again.
 
-224
-00:14:04,650 --> 00:14:07,088
+222
+00:14:04,933 --> 00:14:07,371
 课上把 agent 画成一个轮毂
 The lecture draws the agent as a hub:
 
-225
-00:14:07,088 --> 00:14:13,610
+223
+00:14:07,371 --> 00:14:13,893
 核心和它的指令成为决策者，辐条通向规划器、工具和记忆
 the core and its instructions become a decision maker, with spokes to a planner, tools, and memory.
 
-226
-00:14:13,930 --> 00:14:16,362
+224
+00:14:14,213 --> 00:14:16,645
 把通向工具的那根辐条展开，就成了一个循环
 Unroll the spoke to the tools into a loop.
 
-227
-00:14:16,600 --> 00:14:18,107
+225
+00:14:16,883 --> 00:14:18,390
 循环靠什么结束？
 What ends the loop?
 
-228
-00:14:18,157 --> 00:14:22,893
+226
+00:14:18,440 --> 00:14:23,176
 停止规则：一个不含函数调用的回复，就是最终回复
 The stop rule: a reply with no function call is the final response.
 
-229
-00:14:23,213 --> 00:14:26,733
+227
+00:14:23,496 --> 00:14:27,016
 模型认定自己做完了，办法就是用纯文本回答
 The model decides it's done by answering in plain text.
 
-230
-00:14:26,983 --> 00:14:29,539
+228
+00:14:27,266 --> 00:14:29,822
 在代码里，你是从外面看这个循环的
 In code you see the loop from outside:
 
-231
-00:14:29,539 --> 00:14:31,557
+229
+00:14:29,822 --> 00:14:31,840
 ADK 的 Runner 以流的形式输出事件
 the ADK Runner streams events,
 
-232
-00:14:31,557 --> 00:14:36,669
+230
+00:14:31,840 --> 00:14:36,952
 这个包装函数留下最终回复，循环本身在库里面运行
 this wrapper keeps the final response, and the loop runs inside the library.
 
-233
-00:14:36,917 --> 00:14:39,764
+231
+00:14:37,200 --> 00:14:40,047
 你还要给它设个上限，以防它永远不停
 You also cap it, in case it never stops:
 
-234
-00:14:39,764 --> 00:14:44,533
+232
+00:14:40,047 --> 00:14:44,816
 Cheese Quiz Guild 里是 12 轮，简报里是 16 次迭代
 12 turns in the Cheese Quiz Guild, 16 iterations in the newsletter.
 
-235
-00:14:44,853 --> 00:14:48,522
+233
+00:14:45,136 --> 00:14:48,805
 碰到 Agents SDK 的上限，运行就会以报错结束
 Hitting the Agents SDK cap ends the run with an error.
 
-236
-00:14:48,767 --> 00:14:52,074
+234
+00:14:49,050 --> 00:14:52,357
 课上的组件图把动态控制标成了灰色
 The lecture's building blocks gray out dynamic control.
 
-237
-00:14:52,394 --> 00:14:55,977
+235
+00:14:52,677 --> 00:14:56,261
 你来配置模型、指令、工具和记忆
 You configure the model, instructions, tools and memory;
 
-238
-00:14:55,977 --> 00:14:59,113
+236
+00:14:56,261 --> 00:14:59,396
 循环则是框架替你写好的那个组件
 the loop is the block a framework writes for you.
 
-239
-00:14:59,350 --> 00:15:02,388
+237
+00:14:59,633 --> 00:15:02,671
 第二部分之前，先把它拆掉。输入 exit
 Before part 2, tear down. Type exit;
 
-240
-00:15:02,388 --> 00:15:06,138
+238
+00:15:02,671 --> 00:15:06,421
 再用一条额外的 docker ps，会看到 Chroma 还在运行
 an extra docker ps then shows Chroma still up,
 
-241
-00:15:06,138 --> 00:15:07,620
+239
+00:15:06,421 --> 00:15:07,903
 在 port 8000 上
 on port 8000.
 
-242
-00:15:07,670 --> 00:15:11,553
+240
+00:15:07,953 --> 00:15:11,836
 然后运行 docker compose down：两条无害的警告之后，它就停了
 Then docker compose down: two harmless warnings, and it stops.
 
-243
-00:15:11,867 --> 00:15:16,368
+241
+00:15:12,150 --> 00:15:16,651
 你的索引会留在磁盘上，而第二部分也要用 port 8000
 Your index stays on disk, and part 2 also needs port 8000.
 
-244
-00:15:16,688 --> 00:15:18,281
+242
+00:15:16,971 --> 00:15:18,564
 暂停一下，把它拆掉
 Pause and tear down.
 
-245
-00:15:18,331 --> 00:15:21,253
+243
+00:15:18,614 --> 00:15:21,536
 第二部分，由框架替我们跑这个循环
 In part 2, a framework runs this loop for us.

@@ -234,986 +234,986 @@ The text says telemetry is off by default,
 but the capital Y means pressing enter answers yes.
 
 48
-00:03:15,215 --> 00:03:16,735
+00:03:15,215 --> 00:03:16,713
 怎么回答都行
 Answer as you like;
 
 49
-00:03:16,735 --> 00:03:18,235
+00:03:16,713 --> 00:03:19,393
 以后可以用这条命令改
-change it later
+change it later with this command:
 
 50
-00:03:18,235 --> 00:03:20,655
+00:03:19,393 --> 00:03:21,679
 uv run adk telemetry disable
-with uv run adk telemetry disable.
+uv run adk telemetry disable.
 
 51
-00:03:20,900 --> 00:03:23,673
+00:03:21,916 --> 00:03:24,689
 然后服务器启动了，在 port 8000 上
 Then the server starts, on port 8000.
 
 52
-00:03:23,993 --> 00:03:27,500
+00:03:25,009 --> 00:03:28,517
 第 2 步：在浏览器里打开 localhost:8000
 Step 2: open localhost:8000 in your browser;
 
 53
-00:03:27,500 --> 00:03:31,246
+00:03:28,517 --> 00:03:32,263
 额外的 curl 显示它重定向到了 dev UI
 an extra curl shows the redirect to the dev UI.
 
 54
-00:03:31,483 --> 00:03:35,664
+00:03:32,500 --> 00:03:36,681
 这个 agent 下拉菜单列出了 7 项，嵌套的也算在内
 The agent dropdown lists 7 entries, nested ones included.
 
 55
-00:03:35,984 --> 00:03:40,466
+00:03:37,001 --> 00:03:41,482
 按它的 README 选 1-baseline，页面拒绝了
 Pick 1-baseline, as its README says, and the page refuses:
 
 56
-00:03:40,466 --> 00:03:43,942
+00:03:41,482 --> 00:03:44,958
 agent 名必须是合法的 Python 标识符
 agent names must be valid Python identifiers.
 
 57
-00:03:44,183 --> 00:03:47,802
+00:03:45,200 --> 00:03:48,819
 为什么？每个目录名都会变成 app 名
 Why? Each folder name becomes the app's name,
 
 58
-00:03:47,802 --> 00:03:53,591
+00:03:48,819 --> 00:03:54,608
 而标识符只能包含字母、数字和下划线，并且不能以数字开头
 and an identifier holds only letters, digits and underscores, never starting with a digit.
 
 59
-00:03:53,911 --> 00:03:56,407
+00:03:54,928 --> 00:03:57,424
 这个名字 1-baseline，两条规则都违反了
 The name 1-baseline breaks both rules.
 
 60
-00:03:56,650 --> 00:04:01,855
+00:03:57,666 --> 00:04:02,871
 旧版本 1.27.5 只列出那四个目录
 An older version, 1.27.5, lists only the four folders.
 
 61
-00:04:02,175 --> 00:04:05,397
+00:04:03,191 --> 00:04:06,413
 但选一个还是失败，原因是 app 名不合法
 But picking one still fails, as an invalid app name.
 
 62
-00:04:05,717 --> 00:04:08,596
+00:04:06,733 --> 00:04:09,613
 所以 pin 版本没用；我们也把自己的 pin 撤掉了
 So a version pin doesn't help; we undid ours.
 
 63
-00:04:10,116 --> 00:04:13,444
+00:04:11,133 --> 00:04:14,461
 管用的是改名，这也不在 README 里
 What works is renaming, which isn't in the README either.
 
 64
-00:04:13,764 --> 00:04:17,825
+00:04:14,781 --> 00:04:18,842
 先按 Ctrl-C 停掉服务器，再去掉每个开头的数字
 Stop the server with Ctrl+C, then drop each leading number,
 
 65
-00:04:17,825 --> 00:04:20,164
+00:04:18,842 --> 00:04:21,181
 把连字符换成下划线
 and turn hyphens into underscores.
 
 66
-00:04:20,400 --> 00:04:23,131
+00:04:21,416 --> 00:04:24,147
 再启动一次 web 服务器，选 baseline
 Start the web server again, and pick baseline.
 
 67
-00:04:23,451 --> 00:04:26,413
-日志说它加载了根目录的 .env 文件
-The log says it loaded the root .env file,
+00:04:24,467 --> 00:04:28,299
+日志说它加载了 repo 根目录下的 .env
+The log says it loaded the .env at the repository root,
 
 68
-00:04:26,413 --> 00:04:29,445
+00:04:28,299 --> 00:04:31,294
 并在 baseline.agent 里找到了 root agent
 and found the root_agent in baseline.agent.
 
 69
-00:04:29,683 --> 00:04:34,458
+00:04:31,533 --> 00:04:36,308
 还有两个小疏漏：快速入门在该传目录的地方传了一个文件
 Two more slips: the quick start passes a file where a folder is expected,
 
 70
-00:04:34,458 --> 00:04:37,139
+00:04:36,308 --> 00:04:38,989
 各模块的 README 又漏了 web 这个词
 and the module READMEs drop the word web,
 
 71
-00:04:37,139 --> 00:04:38,739
+00:04:38,989 --> 00:04:40,589
 所以命令只会打印帮助信息
 so it only prints help.
 
 72
-00:04:38,883 --> 00:04:43,220
+00:04:40,733 --> 00:04:45,070
 如果 llm-rag 的 Chroma 还占着 port 8000，两边就会冲突
 And if llm-rag's Chroma still holds port 8000, they clash;
 
 73
-00:04:43,220 --> 00:04:46,734
+00:04:45,070 --> 00:04:48,584
 web 服务器停了：address already in use
 the web server stopped: address already in use.
 
 74
-00:04:47,054 --> 00:04:51,555
+00:04:48,904 --> 00:04:53,405
 先运行 docker compose down，或者加上 --port 8080
 Run docker compose down first, or add --port 8080.
 
 75
-00:04:51,875 --> 00:04:54,904
+00:04:53,725 --> 00:04:56,754
 暂停一下，在 dev UI 里打开 baseline
 Pause, and get the dev UI open on baseline.
 
 76
-00:04:58,250 --> 00:05:00,547
+00:05:00,100 --> 00:05:02,397
 在 baseline 里，有三个 LLM agent
 Baseline holds three LLM agents,
 
 77
-00:05:00,547 --> 00:05:04,351
+00:05:02,397 --> 00:05:06,201
 每个都有一个模型、一条指令和一个 output key
 each with a model, an instruction, and an output_key.
 
 78
-00:05:04,671 --> 00:05:09,642
+00:05:06,521 --> 00:05:11,492
 对应课上的组件：LLM 核心、指令，完全没有工具
 In the lecture's blocks: the LLM core, the instructions, and no tools at all.
 
 79
-00:05:10,183 --> 00:05:15,196
+00:05:12,033 --> 00:05:17,046
 顺序 agent 依次运行它们：校验器、规划器、总结器
 A sequential agent runs them in order: validator, planner, summarizer.
 
 80
-00:05:15,516 --> 00:05:18,730
+00:05:17,366 --> 00:05:20,580
 一个额外的请求显示了 UI 加载的那棵树
 An extra request shows the tree the UI loads,
 
 81
-00:05:18,730 --> 00:05:21,230
+00:05:20,580 --> 00:05:23,080
 模型来自你根目录的 .env
 with the model from your root .env;
 
 82
-00:05:21,230 --> 00:05:25,124
+00:05:23,080 --> 00:05:26,974
 核对一下你的。另一个额外的请求创建了一个 session
 check yours. Another extra request creates a session:
 
 83
-00:05:25,124 --> 00:05:27,496
+00:05:26,974 --> 00:05:29,346
 状态是空的，也还没有事件
 an empty state, and no events yet.
 
 84
-00:05:27,816 --> 00:05:30,120
+00:05:29,666 --> 00:05:31,970
 把状态想成一块共享的白板
 Think of the state as a shared whiteboard.
 
 85
-00:05:30,367 --> 00:05:32,778
+00:05:32,217 --> 00:05:34,628
 等你加上密钥，Runner 就会这样做
 Once you add your key, the Runner does this.
 
 86
-00:05:33,098 --> 00:05:37,175
+00:05:34,948 --> 00:05:39,025
 校验器的回复写进状态，放在它的 output key 下面
 The validator's reply goes into the state, under its output_key;
 
 87
-00:05:37,175 --> 00:05:42,271
+00:05:39,025 --> 00:05:44,121
 规划器运行之前，它指令里的占位符会用那一格的内容填上
 before the planner runs, its instruction's placeholder is filled from that cell.
 
 88
-00:05:43,133 --> 00:05:45,928
+00:05:44,983 --> 00:05:47,778
 总结器也用同样的方式读取计划
 The summarizer reads the plan the same way.
 
 89
-00:05:46,248 --> 00:05:48,263
+00:05:48,098 --> 00:05:50,113
 这些 agent 从不互相调用
 The agents never call each other:
 
 90
-00:05:48,263 --> 00:05:52,477
+00:05:50,113 --> 00:05:54,327
 数据由 session 携带，放在它的状态和事件历史里
 the session carries the data, in its state and its history of events.
 
 91
-00:05:52,797 --> 00:05:55,400
+00:05:54,647 --> 00:05:57,250
 并行 agent 会同时填满它的格子
 A parallel agent fills its cells at once.
 
 92
-00:05:55,650 --> 00:05:58,274
+00:05:57,500 --> 00:06:00,124
 课上的旅行规划需要实时系统
 The lecture's planner needs live systems;
 
 93
-00:05:58,274 --> 00:06:02,498
+00:06:00,124 --> 00:06:04,348
 这条 pipeline 没有工具，所以里面的价格都是模型猜的
 this pipeline has no tools, so its prices are the model's guesses.
 
 94
-00:06:02,818 --> 00:06:06,743
+00:06:04,668 --> 00:06:08,593
 后面一个 notebook 的价格来自工具，总和由 Python 计算
 A later notebook gets prices from tools and sums from Python.
 
 95
-00:06:07,283 --> 00:06:09,694
+00:06:09,133 --> 00:06:11,544
 ADK 的 README 把这叫作记忆
 The ADK README calls this memory.
 
 96
-00:06:10,014 --> 00:06:13,726
+00:06:11,864 --> 00:06:15,576
 代码里叫它 session 状态，只持续一个 session
 The code calls it session state, and it lasts one session;
 
 97
-00:06:13,726 --> 00:06:18,718
+00:06:15,576 --> 00:06:20,568
 课上说的记忆，下次还会记得你，而今天的运行一个都做不到
 the lecture's memory remembers you next time, which none of today's runs does.
 
 98
-00:06:18,967 --> 00:06:23,127
+00:06:20,817 --> 00:06:24,977
 没有真正的密钥，旅行请求会得到 Internal Server Error
 Without a real key, a trip request gets an Internal Server Error.
 
 99
-00:06:23,447 --> 00:06:26,711
+00:06:25,297 --> 00:06:28,561
 服务器日志说明了原因：API key not valid
 The server log says why: API key not valid.
 
 100
-00:06:27,031 --> 00:06:29,889
+00:06:28,881 --> 00:06:31,739
 占位密钥发到了 Google，被拒绝了
 The placeholder reached Google, and was refused.
 
 101
-00:06:30,933 --> 00:06:33,925
+00:06:32,783 --> 00:06:35,775
 有密钥的话，要找的是：按顺序的三条回复
 With your key, look for three replies in order,
 
 102
-00:06:33,925 --> 00:06:36,409
+00:06:35,775 --> 00:06:38,259
 以及 State 标签页里新增的三项
 and three new entries in the State tab;
 
 103
-00:06:36,409 --> 00:06:39,210
+00:06:38,259 --> 00:06:41,060
 这个 session 是 agent 目录里的一个文件
 the session is a file in the agent's folder.
 
 104
-00:06:39,530 --> 00:06:43,371
+00:06:41,380 --> 00:06:45,221
 每个请求是三次模型调用：暂停一下，规划一次旅行
 Each request is three model calls: pause, and plan a trip.
 
 105
-00:06:46,717 --> 00:06:49,277
+00:06:48,567 --> 00:06:51,127
 课上把工具分成三类
 The lecture sorts tools into three families.
 
 106
-00:06:49,597 --> 00:06:52,485
+00:06:51,447 --> 00:06:54,335
 数据工具负责获取，比如我们的搜书工具
 Data tools fetch, like our book searches;
 
 107
-00:06:52,485 --> 00:06:57,486
+00:06:54,335 --> 00:06:59,336
 行动工具会改变某些东西，比如敲定行程或者发邮件
 action tools change something, like finalizing a trip or sending email;
 
 108
-00:06:57,486 --> 00:07:00,797
+00:06:59,336 --> 00:07:02,647
 编排工具把工作交给另一个 agent
 orchestration tools hand work to another agent.
 
 109
-00:07:01,034 --> 00:07:05,514
+00:07:02,884 --> 00:07:07,364
 现在把一个 agent 接到十个服务上，每个服务都有自己的协议
 Now wire one agent to ten services, each with its own protocol.
 
 110
-00:07:05,834 --> 00:07:08,308
+00:07:07,684 --> 00:07:10,158
 课上问：你看出问题了吗？
 The lecture asks: do you see a problem?
 
 111
-00:07:13,550 --> 00:07:16,131
+00:07:15,400 --> 00:07:17,981
 每个工具都要做一次定制集成
 Every tool becomes a custom integration.
 
 112
-00:07:16,451 --> 00:07:20,525
+00:07:18,301 --> 00:07:22,375
 MCP，也就是模型上下文协议，把它变成一种模式
 MCP, the Model Context Protocol, makes it one pattern:
 
 113
-00:07:20,525 --> 00:07:24,750
+00:07:22,375 --> 00:07:26,600
 一个 host 带着若干 client，每个服务对应一个 MCP server
 a host with clients, and an MCP server for each service.
 
 114
-00:07:25,000 --> 00:07:29,651
+00:07:26,850 --> 00:07:31,501
 课上那个 MCP 方框是一个共享的协议，不是一个要你运行的程序
 The lecture's MCP box is a shared protocol, not a program you run.
 
 115
-00:07:29,971 --> 00:07:34,024
+00:07:31,821 --> 00:07:35,874
 在代码里，每个 server 都是一个单独的插头，教程里有三个
 In code, each server is its own plug, and the tutorial has three.
 
 116
-00:07:34,267 --> 00:07:37,616
+00:07:36,117 --> 00:07:39,466
 第 1 个插头在 ADK 讲 MCP 的那个模块里
 Plug 1 is in the ADK module on MCP.
 
 117
-00:07:37,936 --> 00:07:39,536
+00:07:39,786 --> 00:07:41,386
 安装 Node
 Install Node.
 
 118
-00:07:42,250 --> 00:07:46,218
+00:07:44,100 --> 00:07:48,068
 这个 agent 的工具集用 npx 启动一个文件系统 server
 The agent's toolset starts a filesystem server with npx,
 
 119
-00:07:46,218 --> 00:07:50,400
+00:07:48,068 --> 00:07:52,250
 作为子进程；它通过标准输入输出通信
 as a child process, talking over standard input and output.
 
 120
-00:07:50,650 --> 00:07:55,279
+00:07:52,500 --> 00:07:57,129
 一个额外的脚本向这个工具集要它的工具列表，完全不涉及模型
 An extra script asks that toolset for its tools, with no model involved.
 
 121
-00:07:55,599 --> 00:08:00,698
+00:07:57,449 --> 00:08:02,548
 这个 server 提供 14 个，包括写入和编辑，过滤器放行了三个
 The server offers 14, including write and edit, and the filter lets three through.
 
 122
-00:08:01,018 --> 00:08:03,664
+00:08:02,868 --> 00:08:05,514
 有密钥的话，让 agent 列出文件
 With your key, ask the agent to list files.
 
 123
-00:08:05,900 --> 00:08:07,905
+00:08:07,750 --> 00:08:09,755
 第 2 个插头回到 Cheese Quiz 里
 Plug 2 is back in the Cheese Quiz.
 
 124
-00:08:08,225 --> 00:08:11,917
+00:08:10,075 --> 00:08:13,767
 先是第一个工具，写成普通函数
 After a first tool written as a plain function,
 
 125
-00:08:11,917 --> 00:08:16,001
+00:08:13,767 --> 00:08:17,851
 然后 notebook 按 URL 连上一个远程 MCP server
 the notebook connects to a remote MCP server by URL,
 
 126
-00:08:16,001 --> 00:08:18,594
+00:08:17,851 --> 00:08:20,444
 作为 MCP servers 参数传进去，而不是 tools
 passed as mcp_servers, not tools.
 
 127
-00:08:18,834 --> 00:08:21,266
+00:08:20,684 --> 00:08:23,116
 额外的几条 curl 命令和这个 server 对话
 Extra curl commands talk to that server.
 
 128
-00:08:21,586 --> 00:08:24,545
+00:08:23,436 --> 00:08:26,395
 浏览器的普通请求得到 406
 A browser's plain request gets 406:
 
 129
-00:08:24,545 --> 00:08:28,605
+00:08:26,395 --> 00:08:30,455
 server 在运行，但它说的是 MCP，不是网页
 the server is up, but speaks MCP, not web pages.
 
 130
-00:08:28,925 --> 00:08:31,048
+00:08:30,775 --> 00:08:32,898
 然后是初始化、列出工具、调用
 Then initialize, list tools, call:
 
 131
-00:08:31,048 --> 00:08:33,234
+00:08:32,898 --> 00:08:35,084
 一个工具，每次调用一条奶酪冷知识
 one tool, one cheese fact per call.
 
 132
-00:08:34,984 --> 00:08:36,718
+00:08:36,834 --> 00:08:38,568
 第 3 个插头是可选的
 Plug 3 is optional:
 
 133
-00:08:36,718 --> 00:08:40,461
+00:08:38,568 --> 00:08:42,311
 这个 notebook 自己起一个 FastMCP server
 the notebook runs its own FastMCP server,
 
 134
-00:08:40,461 --> 00:08:42,835
+00:08:42,311 --> 00:08:44,685
 跑在一个线程里，在 port 8001 上
 in a thread, on port 8001.
 
 135
-00:08:43,155 --> 00:08:48,808
+00:08:45,005 --> 00:08:50,658
 一个小疏漏：上面的注释写的是 8000，一份较早保存的输出也是
 A small slip: the comment above says 8000, and so does an older saved output.
 
 136
-00:08:53,400 --> 00:08:56,451
+00:08:55,250 --> 00:08:58,301
 注意是谁在负责通信：你的 client 进程
 Notice who does the talking: your client process.
 
 137
-00:08:56,771 --> 00:09:01,592
+00:08:58,621 --> 00:09:03,442
 MCP 并没有给模型任何网络访问权限；它仍然只是写出调用
 MCP gives the model no network access; it still only writes calls.
 
 138
-00:09:01,912 --> 00:09:04,131
+00:09:03,762 --> 00:09:05,981
 暂停一下，把 MCP 的单元格跑一遍
 Pause, and run the MCP cells.
 
 139
-00:09:07,467 --> 00:09:10,842
+00:09:09,317 --> 00:09:12,692
 课上的深度研究是一棵 agent 树
 In the lecture, deep research is a tree of agents:
 
 140
-00:09:10,842 --> 00:09:14,082
+00:09:12,692 --> 00:09:15,932
 一个主 agent、一个规划器、几个并行的网页搜索 agent
 a lead agent, a planner, parallel web searchers,
 
 141
-00:09:14,082 --> 00:09:16,107
+00:09:15,932 --> 00:09:17,957
 最后汇总成一份报告
 and a synthesis into a report.
 
 142
-00:09:16,427 --> 00:09:20,843
+00:09:18,277 --> 00:09:22,693
 教程搭了类似的树：Cheese Quiz Guild，还有简报
 The tutorial builds trees like it: the Cheese Quiz Guild, and the newsletter.
 
 143
-00:09:21,084 --> 00:09:25,628
+00:09:22,934 --> 00:09:27,478
 课上的规划器引出了区分它们的问题：顺序由谁来定？
 The lecture's planner raises the question that sorts them: who plans the order?
 
 144
-00:09:25,948 --> 00:09:27,633
+00:09:27,798 --> 00:09:29,483
 第一种答案：代码
 First answer: the code.
 
 145
-00:09:27,953 --> 00:09:32,476
+00:09:29,803 --> 00:09:34,326
 顺序 agent 就是一条流水线，顺序在 Python 里写死
 The sequential agent is an assembly line, its order fixed in Python.
 
 146
-00:09:34,284 --> 00:09:36,033
+00:09:36,134 --> 00:09:37,883
 第二种答案：模型
 Second answer: the model.
 
 147
-00:09:36,353 --> 00:09:39,391
+00:09:38,203 --> 00:09:41,241
 在 Guild 里，每个专家 agent 都变成一个工具
 In the Guild, each specialist becomes a tool:
 
 148
-00:09:39,391 --> 00:09:41,687
+00:09:41,241 --> 00:09:43,537
 一个函数背后是一整个 agent
 a whole agent behind one function.
 
 149
-00:09:42,007 --> 00:09:44,481
+00:09:43,857 --> 00:09:46,331
 由一个编排 agent 决定调用哪一个
 An orchestrator decides which to call.
 
 150
-00:09:44,717 --> 00:09:49,901
+00:09:46,567 --> 00:09:51,751
 它的指令写着：严格按流水线来，最多 2 轮审查
 Its instructions say: follow the assembly line strictly, at most 2 review rounds.
 
 151
-00:09:50,221 --> 00:09:51,856
+00:09:52,071 --> 00:09:53,706
 这是写在文字里的规则
 That's a rule in prose;
 
 152
-00:09:51,856 --> 00:09:55,128
+00:09:53,706 --> 00:09:56,978
 没有代码去强制执行它，除了 12 轮的上限
 no code enforces it, except a cap of 12 turns.
 
 153
-00:09:55,367 --> 00:09:59,250
+00:09:57,217 --> 00:10:01,100
 课程团队保存的运行报了三次获取回复的错误
 The staff's saved run logged three errors getting a response,
 
 154
-00:09:59,250 --> 00:10:00,905
+00:10:01,100 --> 00:10:02,755
 却还是生成了一份测验
 and still produced a quiz;
 
 155
-00:10:00,905 --> 00:10:03,388
+00:10:02,755 --> 00:10:05,238
 日志没说是哪些调用失败了
 the log doesn't say which calls failed.
 
 156
-00:10:03,708 --> 00:10:06,684
+00:10:05,558 --> 00:10:08,534
 每多一跳，就多一份成本、一段时间和一种失败的可能
 Every hop adds cost, time, and a way to fail;
 
 157
-00:10:06,684 --> 00:10:08,338
+00:10:08,534 --> 00:10:10,188
 暂停一下，跑一遍 Guild
 pause, and run the Guild.
 
 158
-00:10:12,484 --> 00:10:15,535
+00:10:14,334 --> 00:10:17,385
 第三种答案：Python，读取模型给的标签
 Third answer: Python, reading the model's label.
 
 159
-00:10:15,855 --> 00:10:19,920
+00:10:17,705 --> 00:10:21,770
 在这个自定义 agent 里，一个分类器往状态里写一个词
 In this custom agent, a classifier writes one word into the state,
 
 160
-00:10:19,920 --> 00:10:22,446
+00:10:21,770 --> 00:10:24,296
 再由普通的 if 语句选出处理函数
 and plain if statements pick the handler.
 
 161
-00:10:29,284 --> 00:10:31,353
+00:10:31,134 --> 00:10:33,203
 走的是 else 分支：clarification
 The else branch: clarification.
 
 162
-00:10:31,673 --> 00:10:37,156
+00:10:33,523 --> 00:10:39,006
 比较是精确匹配；先把标签转成小写，或者要求结构化输出
 The comparison is exact; lowercase the label first, or ask for structured output.
 
 163
-00:10:37,476 --> 00:10:39,246
+00:10:39,326 --> 00:10:41,096
 练习里两种办法都会试
 The exercises try both.
 
 164
-00:10:40,984 --> 00:10:44,717
+00:10:42,834 --> 00:10:46,567
 课上还把交接也列进了编排工具
 The lecture also lists handoffs among the orchestration tools.
 
 165
-00:10:45,037 --> 00:10:49,688
+00:10:46,887 --> 00:10:51,538
 这些教程是把 agent 当工具用；第 7 讲会简单讲讲交接
 These tutorials use agents as tools; lecture 7 sketches handoffs.
 
 166
-00:10:50,733 --> 00:10:53,912
+00:10:52,583 --> 00:10:55,762
 Travel Planner 这个 notebook 演练的是课上那趟旅行
 The Travel Planner notebook rehearses the lecture's trip.
 
 167
-00:10:54,232 --> 00:10:58,050
+00:10:56,082 --> 00:10:59,900
 复制一份，加上你的密钥，再安装它 pin 了版本的 agents 包
 Copy it, add your key, and install its pinned agents package.
 
 168
-00:10:58,370 --> 00:11:00,816
+00:11:00,220 --> 00:11:02,666
 巴黎缩成了一份模拟清单
 Paris shrinks to a mock catalog:
 
 169
-00:11:00,816 --> 00:11:04,878
+00:11:02,666 --> 00:11:06,728
 3 个城市、6 家酒店、5 个搜索工具和一个 finalize 工具
 3 cities, 6 hotels, 5 search tools and a finalize tool,
 
 170
-00:11:04,878 --> 00:11:06,433
+00:11:06,728 --> 00:11:08,283
 什么都不会真的预订
 booking nothing.
 
 171
-00:11:06,483 --> 00:11:10,387
+00:11:08,333 --> 00:11:12,237
 在课程团队保存的运行里，第 1 轮问的是加州的哪个城市
 In the staff's saved run, turn 1 asks which California city.
 
 172
-00:11:10,707 --> 00:11:13,822
+00:11:12,557 --> 00:11:15,672
 第 2 轮做了五次搜索，给出几个选项
 Turn 2 runs five searches and offers options.
 
 173
-00:11:14,142 --> 00:11:17,644
+00:11:15,992 --> 00:11:19,494
 第 3 轮里用户做出选择，模型调用 finalize
 In turn 3 the user picks, the model calls finalize,
 
 174
-00:11:17,644 --> 00:11:21,352
+00:11:19,494 --> 00:11:23,202
 回复里列出确切的计划，并请用户回答 yes
 and the reply shows the exact plan and asks for a yes.
 
 175
-00:11:21,600 --> 00:11:22,958
+00:11:23,450 --> 00:11:24,808
 这就是关卡
 That's the gate.
 
 176
-00:11:23,008 --> 00:11:26,348
+00:11:24,858 --> 00:11:28,198
 模型发起的 finalize 调用只能提议
 A finalize call from the model can only propose:
 
 177
-00:11:26,348 --> 00:11:30,941
+00:11:28,198 --> 00:11:32,791
 如果计划不是已批准的那一份，代码就把它存为待批准
 if the plan isn't the approved one, the code stores it as pending,
 
 178
-00:11:30,941 --> 00:11:33,098
+00:11:32,791 --> 00:11:34,948
 并返回 needs confirmation
 and returns needs_confirmation.
 
 179
-00:11:33,333 --> 00:11:37,325
+00:11:35,183 --> 00:11:39,175
 批准放在另一个函数 apply confirmation 里
 Approval lives in a separate function, apply_confirmation:
 
 180
-00:11:37,325 --> 00:11:40,629
+00:11:39,175 --> 00:11:42,479
 只有明确的 yes，才会把待批准的计划复制为已批准
 only an explicit yes copies pending to approved.
 
 181
-00:11:50,066 --> 00:11:53,542
+00:11:51,916 --> 00:11:55,392
 因为 apply confirmation 处理的是人发来的消息
 Because apply_confirmation runs on the human's message,
 
 182
-00:11:53,542 --> 00:11:55,142
+00:11:55,392 --> 00:11:56,992
 在 agent 启动之前运行
 before the agent starts.
 
 183
-00:11:55,378 --> 00:12:00,285
+00:11:57,228 --> 00:12:02,135
 在第 3 轮里，什么都没被批准，所以每次重试都会盖上同一个印章
 Inside turn 3, nothing is approved, so every retry gets the same stamp.
 
 184
-00:12:00,533 --> 00:12:02,666
+00:12:02,383 --> 00:12:04,516
 第 4 轮：人输入 yes
 Turn 4: the human types yes.
 
 185
-00:12:02,986 --> 00:12:06,705
+00:12:04,836 --> 00:12:08,555
 印章翻成已批准，finalize 运行
 The stamp flips to approved, finalize runs,
 
 186
-00:12:06,705 --> 00:12:12,757
+00:12:08,555 --> 00:12:14,607
 Python 逐行算出预算：2690 美元，上限 6000
 and Python builds the budget line by line: 2,690 of the 6,000 dollars.
 
 187
-00:12:13,077 --> 00:12:15,914
+00:12:14,927 --> 00:12:17,764
 这个 notebook 自带的测试核对 Python 算出的数
 The notebook's own test checks Python's number.
 
 188
-00:12:16,150 --> 00:12:19,798
+00:12:18,000 --> 00:12:21,648
 用户看到的内容来自检查过的状态，而不是模型写的文字
 What the user sees comes from checked state, not the model's prose.
 
 189
-00:12:20,118 --> 00:12:24,895
+00:12:21,968 --> 00:12:26,745
 跳过检查的行程会抛出异常，这是硬护栏
 An itinerary that skipped the check raises an error, a hard guardrail;
 
 190
-00:12:24,895 --> 00:12:29,739
+00:12:26,745 --> 00:12:31,589
 模型文字里出现美元金额，只会打印一条警告，这是软护栏
 a dollar amount in the model's prose only prints a warning, a soft one.
 
 191
-00:12:29,983 --> 00:12:35,615
+00:12:31,833 --> 00:12:37,465
 课上把成功标准放在指令里，把护栏放在决策者里
 The lecture puts success criteria in the instructions, and guardrails in the decision maker.
 
 192
-00:12:35,935 --> 00:12:39,761
+00:12:37,785 --> 00:12:41,611
 这个 notebook 把两者都写进代码，模型怎么说都绕不过去
 This notebook keeps both in code the model can't talk its way past,
 
 193
-00:12:39,761 --> 00:12:41,361
+00:12:41,611 --> 00:12:43,211
 代码就放在行动工具上
 on the action tool.
 
 194
-00:12:41,524 --> 00:12:44,724
+00:12:43,374 --> 00:12:46,574
 每一轮都要付费；暂停一下，把这四轮跑一遍
 Every turn is paid; pause, and run the four turns.
 
 195
-00:12:47,767 --> 00:12:50,571
+00:12:49,617 --> 00:12:52,421
 最后一个 notebook 给每位读者写一份奶酪简报
 The last notebook writes a cheese newsletter per reader,
 
 196
-00:12:50,571 --> 00:12:53,527
+00:12:52,421 --> 00:12:55,377
 用的是 Microsoft 的 Agent Framework，版本 pin 住了
 with Microsoft's Agent Framework, pinned.
 
 197
-00:12:53,847 --> 00:12:57,730
+00:12:55,697 --> 00:12:59,580
 在 USERS 单元格里，填上你自己和一个朋友，保留两项
 In the USERS cell, put in yourself and a friend, and keep two entries.
 
 198
-00:12:58,050 --> 00:13:00,780
+00:12:59,900 --> 00:13:02,630
 邮件只是预览；什么都不会发出去
 Email is preview only; nothing is sent.
 
 199
-00:13:01,017 --> 00:13:03,176
+00:13:02,867 --> 00:13:05,026
 编排 agent 有三个工具
 The orchestrator gets three tools:
 
 200
-00:13:03,176 --> 00:13:06,734
+00:13:05,026 --> 00:13:08,584
 一个带网页搜索的研究员、一个编辑，以及 send email
 a researcher with web search, an editor, and send_email.
 
 201
-00:13:07,054 --> 00:13:10,425
+00:13:08,904 --> 00:13:12,275
 最多 16 次迭代，一次只做一个工具调用
 At most 16 iterations, one tool call at a time.
 
 202
-00:13:10,667 --> 00:13:14,782
+00:13:12,517 --> 00:13:16,632
 在课程团队保存的运行里，第一个城市用了四次编辑调用
 In the staff's saved run, the first city took four editor calls;
 
 203
-00:13:14,782 --> 00:13:19,798
+00:13:16,632 --> 00:13:21,648
 代码会校验每份草稿，把任何错误都作为工具的结果交回去
 the code validates every draft and hands any errors back as the tool's result.
 
 204
-00:13:20,118 --> 00:13:22,443
-然后 send email 把 HTML 存了下来
-Then send_email saved the HTML.
+00:13:21,968 --> 00:13:24,869
+然后 send email 把 HTML 写进了一个文件
+Then send_email wrote the HTML to a file.
 
 205
-00:13:22,763 --> 00:13:25,899
+00:13:25,189 --> 00:13:28,325
 那次运行有四位读者；今天的名单是两位
 That run had four readers; today's list makes two.
 
 206
-00:13:26,134 --> 00:13:27,556
+00:13:28,567 --> 00:13:29,989
 现在来看 harness
 Now the harness.
 
 207
-00:13:27,606 --> 00:13:32,494
+00:13:30,039 --> 00:13:34,927
 编排 agent 停下来以后，Python 不管它说了什么，检查两件事
 When the orchestrator stops, Python ignores its words and checks two things:
 
 208
-00:13:32,494 --> 00:13:36,417
+00:13:34,927 --> 00:13:38,850
 有没有来自 send email 的回执，那个文件在不在磁盘上？
 is there a receipt from send_email, and is that file on disk?
 
 209
-00:13:36,737 --> 00:13:38,279
+00:13:39,170 --> 00:13:40,712
 如果没有，这次运行就算失败
 If not, the run fails;
 
 210
-00:13:38,279 --> 00:13:40,662
+00:13:40,712 --> 00:13:43,095
 成功看的是回执，而不是它声称了什么
 success is a receipt, not a claim.
 
 211
-00:13:40,900 --> 00:13:43,439
+00:13:43,334 --> 00:13:45,873
 对比一下只写在 prompt 里的规则
 Compare a rule that lives only in the prompt.
 
 212
-00:13:43,759 --> 00:13:46,767
+00:13:46,193 --> 00:13:49,201
 编辑收到的指令是：不要嵌入 URL
 The editor is told: no embedded URLs.
 
 213
-00:13:47,087 --> 00:13:52,676
+00:13:49,521 --> 00:13:55,110
 保存的预览里还是有一个，因为没有代码去检查；便条不等于检查
 The saved preview has one anyway, because no code checks for it; a note is not a check.
 
 214
-00:13:52,917 --> 00:13:56,910
+00:13:55,350 --> 00:13:59,343
 课上的 Self-RAG 和 Corrective RAG 给检索结果打分
 The lecture's Self-RAG and Corrective RAG grade their retrieval
 
 215
-00:13:56,910 --> 00:13:59,445
+00:13:59,343 --> 00:14:01,878
 也是出于同样的理由：别信，要查
 for the same reason: don't trust, check.
 
 216
-00:13:59,765 --> 00:14:02,389
+00:14:02,198 --> 00:14:04,822
 下节课把这个外层叫作 harness
 Next lecture calls this outer layer the harness.
 
 217
-00:14:02,709 --> 00:14:06,101
+00:14:05,142 --> 00:14:08,534
 网页搜索按次计费；暂停一下，跑一遍演示
 Web search is billed per call; pause, and run the demo.
 
 218
-00:14:09,150 --> 00:14:11,966
+00:14:11,583 --> 00:14:14,399
 该拆掉了：按 Ctrl-C 停掉 web 服务器
 Tear down: Ctrl+C stops the web server.
 
 219
-00:14:12,286 --> 00:14:16,789
+00:14:14,719 --> 00:14:19,223
 额外的 git status 显示了改名后的目录，还有你的 Python pin
 An extra git status shows the renamed folders and your Python pin;
 
 220
-00:14:16,789 --> 00:14:20,883
+00:14:19,223 --> 00:14:23,316
 而 .env 文件、虚拟环境和 lock 文件，都被忽略了
 .env, the virtual environment and the lock file are ignored.
 
 221
-00:14:21,117 --> 00:14:25,002
+00:14:23,550 --> 00:14:27,435
 这个 agent 的 .adk 目录里，session 没有被忽略
 The sessions in the agent's .adk/ folder aren't ignored,
 
 222
-00:14:25,002 --> 00:14:31,037
+00:14:27,435 --> 00:14:33,470
 所以别 commit 它们，用完以后把 1.6 GB 的虚拟环境删掉
 so don't commit them, and delete the 1.6 gigabyte virtual environment when you're done.
 
 223
-00:14:31,283 --> 00:14:34,398
+00:14:33,716 --> 00:14:36,831
 在每个 notebook 里，断开连接并删除运行时
 In each notebook, disconnect and delete the runtime.
 
 224
-00:14:34,718 --> 00:14:38,718
+00:14:37,151 --> 00:14:41,151
 服务账号密钥放在 llm-rag 旁边，绝不放进去
 Keep the service account key beside llm-rag, never inside,
 
 225
-00:14:38,718 --> 00:14:42,718
+00:14:41,151 --> 00:14:45,151
 课程结束时把另外两个密钥删掉，或者给它们设上限
 and delete or cap the other two keys when the course ends.
 
 226
-00:14:43,967 --> 00:14:47,146
+00:14:46,400 --> 00:14:49,579
 这是课上的 agent 结构图，填上了今天的代码
 Here's the lecture's anatomy, filled with today's code.
 
 227
-00:14:47,466 --> 00:14:50,525
+00:14:49,899 --> 00:14:52,958
 核心是 Gemini 和 OpenAI 的模型
 Gemini and OpenAI models as the core;
 
 228
-00:14:50,525 --> 00:14:53,914
+00:14:52,958 --> 00:14:56,347
 指令是 prompt 和输出类型
 prompts and output types as instructions;
 
 229
-00:14:53,914 --> 00:14:57,055
+00:14:56,347 --> 00:14:59,488
 工具有手写的、加装饰器的，或者走 MCP 的
 tools by hand, decorated, or over MCP;
 
 230
-00:14:57,055 --> 00:15:00,031
+00:14:59,488 --> 00:15:02,464
 记忆是消息历史和 session 状态
 history and session state as memory.
 
 231
-00:15:00,267 --> 00:15:04,278
+00:15:02,700 --> 00:15:06,711
 动态控制就是框架的循环，或者手写的两次调用
 Dynamic control is the framework's loop, or two calls by hand.
 
 232
-00:15:04,598 --> 00:15:10,511
+00:15:07,031 --> 00:15:12,944
 课上的公式，LLM 加上推理、指令和工具，多了两块
 The lecture's formula, LLM plus reasoning, instructions and tools, gains two pieces:
 
 233
-00:15:10,511 --> 00:15:15,157
+00:15:12,944 --> 00:15:17,590
 框架运行的循环，以及由你的代码强制执行的检查
 a loop the framework runs, and checks that your own code enforces.
 
 234
-00:15:15,400 --> 00:15:16,779
+00:15:17,833 --> 00:15:19,212
 自测一下
 Test yourself.
 
 235
-00:15:16,829 --> 00:15:20,413
+00:15:19,262 --> 00:15:22,846
 第一题：谁来运行这个函数，第 2 次调用里又发回什么？
 One: who runs the function, and what goes back in call 2?
 
 236
-00:15:20,733 --> 00:15:22,860
+00:15:23,166 --> 00:15:25,293
 第二题：mode 设为 any 改变了什么
 Two: what does mode="any" change,
 
 237
-00:15:22,860 --> 00:15:24,460
+00:15:25,293 --> 00:15:26,893
 为什么只在第 1 次调用上？
 and why only on call 1?
 
 238
-00:15:24,600 --> 00:15:26,552
+00:15:27,033 --> 00:15:28,986
 第三题：agent 循环靠什么结束
 Three: what ends an agent loop,
 
 239
-00:15:26,552 --> 00:15:29,827
+00:15:28,986 --> 00:15:32,260
 框架加了什么上限，那又是哪个组件？
 what cap do frameworks add, and which block is that?
 
 240
-00:15:30,147 --> 00:15:33,475
+00:15:32,580 --> 00:15:35,908
 第四题：总结器怎么在没有消息的情况下拿到计划？
 Four: how does the summarizer get the plan without a message?
 
 241
-00:15:33,717 --> 00:15:36,709
+00:15:36,150 --> 00:15:39,143
 第五题：什么决定一次 harness 运行成功了
 Five: what decides that a harness run succeeded,
 
 242
-00:15:36,709 --> 00:15:38,517
+00:15:39,143 --> 00:15:40,950
 为什么不是模型说了算？
 and why not the model's word?
 
 243
-00:15:38,837 --> 00:15:43,146
+00:15:41,270 --> 00:15:45,579
 答案和每条命令都在练习和学习指南里
 Answers and every command are in the exercises and the study guide.
 
 244
-00:15:43,466 --> 00:15:45,727
+00:15:45,899 --> 00:15:48,160
 下节课：harness 本身
 Next lecture: the harness itself.

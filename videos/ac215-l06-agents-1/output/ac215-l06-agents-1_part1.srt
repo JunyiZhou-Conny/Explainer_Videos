@@ -774,373 +774,373 @@ but prints the request instead
 of sending it.
 
 169
-00:10:25,711 --> 00:10:29,453
+00:10:25,711 --> 00:10:29,511
 One envelope: the question,
 both declarations with the enum;
 
 170
-00:10:29,453 --> 00:10:31,449
-"mode": "ANY", temperature zero.
+00:10:29,511 --> 00:10:31,727
+"mode": "ANY" and temperature zero.
 
 171
-00:10:31,683 --> 00:10:38,510
+00:10:31,967 --> 00:10:38,793
 And no system instruction: as in lecture 5,
 cli.py defines one and never sends it.
 
 172
-00:10:38,750 --> 00:10:41,459
+00:10:39,033 --> 00:10:41,742
 Now step 1 again,
 with the collection loaded.
 
 173
-00:10:41,779 --> 00:10:47,134
+00:10:42,062 --> 00:10:47,418
 The lookup passes and the question prints,
 but the first model call needs your key:
 
 174
-00:10:47,134 --> 00:10:49,715
+00:10:47,418 --> 00:10:49,999
 DefaultCredentialsError, file not found.
 
 175
-00:10:49,950 --> 00:10:51,422
+00:10:50,233 --> 00:10:51,705
 Here's what the staff saw.
 
 176
-00:10:51,742 --> 00:10:54,596
+00:10:52,025 --> 00:10:54,879
 The model's whole answer is a function call:
 
 177
-00:10:54,596 --> 00:10:57,839
+00:10:54,879 --> 00:10:58,122
 get_book_by_author,
 with the instructor as author,
 
 178
-00:10:57,839 --> 00:11:01,406
+00:10:58,122 --> 00:11:01,689
 and the search text,
 cheese making importance location.
 
 179
-00:11:01,650 --> 00:11:05,042
+00:11:01,933 --> 00:11:05,325
 Four words, though the description
 asked for a sentence or two.
 
 180
-00:11:05,362 --> 00:11:09,159
+00:11:05,645 --> 00:11:09,443
 There's also an ID, and a thought signature;
 we'll meet it again.
 
 181
-00:11:09,400 --> 00:11:12,899
+00:11:09,683 --> 00:11:13,182
 The SDK ran nothing;
 it only has declarations.
 
 182
-00:11:13,219 --> 00:11:15,032
+00:11:13,502 --> 00:11:15,315
 So far, one paid call.
 
 183
-00:11:15,352 --> 00:11:17,827
+00:11:15,635 --> 00:11:18,110
 Pause here, and run step 1 with your key.
 
 184
-00:11:21,667 --> 00:11:25,418
+00:11:21,950 --> 00:11:25,701
 Back in your Python,
 a dispatcher matches each call's name,
 
 185
-00:11:25,418 --> 00:11:28,597
+00:11:25,701 --> 00:11:28,880
 runs the real function
 with the model's arguments,
 
 186
-00:11:28,597 --> 00:11:31,395
+00:11:28,880 --> 00:11:31,678
 and wraps the result as a function response.
 
 187
-00:11:31,634 --> 00:11:35,431
+00:11:31,917 --> 00:11:35,714
 Without a key, an extra script
 feeds the staff's recorded call
 
 188
-00:11:35,431 --> 00:11:39,228
+00:11:35,714 --> 00:11:39,511
 through the tutorial's own dispatcher,
 against our collection.
 
 189
-00:11:39,467 --> 00:11:43,351
+00:11:39,750 --> 00:11:43,634
 One stand-in: without Google
 we can't embed the search text,
 
 190
-00:11:43,351 --> 00:11:45,746
+00:11:43,634 --> 00:11:46,029
 so a stored chunk's vector stands in,
 
 191
-00:11:45,746 --> 00:11:48,918
+00:11:46,029 --> 00:11:49,201
 and the 10 chunks may differ
 from a real query's.
 
 192
-00:11:49,167 --> 00:11:53,263
+00:11:49,450 --> 00:11:53,546
 Out come 10 passages from today's story,
 about Mara and Anja.
 
 193
-00:11:53,583 --> 00:12:00,388
+00:11:53,866 --> 00:12:00,671
 Joined into one string of 3,509 characters,
 they're stapled to the call as its response.
 
 194
-00:12:00,634 --> 00:12:04,837
+00:12:00,917 --> 00:12:05,121
 Call 2 sends three things:
 the question, the model's own turn,
 
 195
-00:12:04,837 --> 00:12:07,482
+00:12:05,121 --> 00:12:07,765
 unchanged, and your function responses.
 
 196
-00:12:07,802 --> 00:12:10,745
+00:12:08,085 --> 00:12:11,029
 The tools go along again,
 but no tool_config:
 
 197
-00:12:10,745 --> 00:12:12,708
+00:12:11,029 --> 00:12:12,991
 the mode is back to automatic.
 
 198
-00:12:12,950 --> 00:12:16,506
+00:12:13,233 --> 00:12:16,789
 Inside, the model's turn
 carries its thought signature:
 
 199
-00:12:16,506 --> 00:12:21,355
+00:12:16,789 --> 00:12:21,638
 Gemini's thinking models sign their turn,
 and want it back exactly as sent.
 
 200
-00:12:21,675 --> 00:12:24,406
+00:12:21,958 --> 00:12:24,689
 Resending the turn unchanged keeps the seal.
 
 201
-00:12:24,650 --> 00:12:25,887
+00:12:24,933 --> 00:12:26,170
 The staff's answer?
 
 202
-00:12:26,207 --> 00:12:29,248
+00:12:26,490 --> 00:12:29,531
 An Alpine valley,
 its caves, and transhumance,
 
 203
-00:12:29,248 --> 00:12:31,562
+00:12:29,531 --> 00:12:31,845
 the seasonal movement of livestock.
 
 204
-00:12:31,882 --> 00:12:37,493
+00:12:32,165 --> 00:12:37,776
 The two calls used 247 and 1,269 tokens.
 
 205
-00:12:37,734 --> 00:12:39,590
+00:12:38,017 --> 00:12:39,873
 So, who searched your database?
 
 206
-00:12:39,910 --> 00:12:44,795
+00:12:40,193 --> 00:12:45,078
 Gemini wrote the call and chose the book;
 your Python ran it, on your laptop.
 
 207
-00:12:45,115 --> 00:12:46,481
+00:12:45,398 --> 00:12:46,765
 That's two model calls
 
 208
-00:12:46,481 --> 00:12:49,339
+00:12:46,765 --> 00:12:49,622
 and one embedding call per question,
 all paid.
 
 209
-00:12:49,584 --> 00:12:54,551
+00:12:49,867 --> 00:12:54,834
 But today's book never says transhumance,
 nor three other words from this run:
 
 210
-00:12:54,551 --> 00:12:58,117
+00:12:54,834 --> 00:12:58,400
 the commit that added this output
 also rewrote the book.
 
 211
-00:12:58,437 --> 00:13:01,061
+00:12:58,720 --> 00:13:01,344
 The staff's index
 was built from the old text.
 
 212
-00:13:01,300 --> 00:13:04,884
+00:13:01,583 --> 00:13:05,167
 Your run on today's book draws
 on passages like these:
 
 213
-00:13:04,884 --> 00:13:06,676
+00:13:05,167 --> 00:13:06,959
 Mara, the curd, the wheels.
 
 214
-00:13:06,996 --> 00:13:09,215
+00:13:07,279 --> 00:13:09,498
 An index answers from what was loaded.
 
 215
-00:13:09,450 --> 00:13:13,488
+00:13:09,733 --> 00:13:13,771
 One small slip:
 the README promises the response,
 
 216
-00:13:13,488 --> 00:13:17,279
+00:13:13,771 --> 00:13:17,562
 but line 478 prints
 the whole response object.
 
 217
-00:13:17,599 --> 00:13:20,245
+00:13:17,882 --> 00:13:20,528
 Print response.text for just the answer.
 
 218
-00:13:20,484 --> 00:13:24,031
+00:13:20,767 --> 00:13:24,315
 Step 2 links to the course's hosted
 Cheese Agent Tool,
 
 219
-00:13:24,031 --> 00:13:27,054
+00:13:24,315 --> 00:13:27,337
 up at the time of recording;
 try it in Chrome.
 
 220
-00:13:29,400 --> 00:13:32,472
+00:13:29,683 --> 00:13:32,755
 The lecture's agent runs
 until the task is done.
 
 221
-00:13:32,792 --> 00:13:37,443
+00:13:33,075 --> 00:13:37,726
 llm-rag's agent ran one lap:
 a forced tool call, then an answer.
 
 222
-00:13:37,763 --> 00:13:39,612
+00:13:38,046 --> 00:13:39,895
 The README calls it an agent;
 
 223
-00:13:39,612 --> 00:13:43,437
+00:13:39,895 --> 00:13:43,720
 by the lecture's definition,
 it's the smallest piece of one.
 
 224
-00:13:43,683 --> 00:13:45,902
+00:13:43,966 --> 00:13:46,185
 Here's a question about that one lap.
 
 225
-00:13:54,750 --> 00:13:58,295
+00:13:55,033 --> 00:13:58,578
 It prints a response
 whose only part is a function call,
 
 226
-00:13:58,295 --> 00:14:00,510
+00:13:58,578 --> 00:14:00,793
 with no text, and the program ends.
 
 227
-00:14:00,830 --> 00:14:04,414
+00:14:01,113 --> 00:14:04,697
 Nothing runs that call;
 a loop would run it, and ask again.
 
 228
-00:14:04,650 --> 00:14:07,106
+00:14:04,933 --> 00:14:07,389
 The lecture draws the agent as a hub:
 
 229
-00:14:07,106 --> 00:14:10,690
+00:14:07,389 --> 00:14:10,973
 the core and its instructions
 become a decision maker,
 
 230
-00:14:10,690 --> 00:14:13,610
+00:14:10,973 --> 00:14:13,893
 with spokes to a planner, tools, and memory.
 
 231
-00:14:13,930 --> 00:14:16,362
+00:14:14,213 --> 00:14:16,645
 Unroll the spoke to the tools into a loop.
 
 232
-00:14:16,600 --> 00:14:17,837
+00:14:16,883 --> 00:14:18,120
 What ends the loop?
 
 233
-00:14:18,157 --> 00:14:22,893
+00:14:18,440 --> 00:14:23,176
 The stop rule: a reply
 with no function call is the final response.
 
 234
-00:14:23,213 --> 00:14:26,733
+00:14:23,496 --> 00:14:27,016
 The model decides it's done
 by answering in plain text.
 
 235
-00:14:26,983 --> 00:14:31,592
+00:14:27,266 --> 00:14:31,876
 In code you see the loop from outside:
 the ADK Runner streams events,
 
 236
-00:14:31,592 --> 00:14:36,669
+00:14:31,876 --> 00:14:36,952
 this wrapper keeps the final response,
 and the loop runs inside the library.
 
 237
-00:14:36,917 --> 00:14:39,764
+00:14:37,200 --> 00:14:40,047
 You also cap it, in case it never stops:
 
 238
-00:14:39,764 --> 00:14:44,533
+00:14:40,047 --> 00:14:44,816
 12 turns in the Cheese Quiz Guild,
 16 iterations in the newsletter.
 
 239
-00:14:44,853 --> 00:14:48,522
+00:14:45,136 --> 00:14:48,805
 Hitting the Agents SDK cap
 ends the run with an error.
 
 240
-00:14:48,767 --> 00:14:52,074
+00:14:49,050 --> 00:14:52,357
 The lecture's building blocks
 gray out dynamic control.
 
 241
-00:14:52,394 --> 00:14:55,977
+00:14:52,677 --> 00:14:56,261
 You configure the model,
 instructions, tools and memory;
 
 242
-00:14:55,977 --> 00:14:59,113
+00:14:56,261 --> 00:14:59,396
 the loop is the block
 a framework writes for you.
 
 243
-00:14:59,350 --> 00:15:01,227
+00:14:59,633 --> 00:15:01,510
 Before part 2, tear down.
 
 244
-00:15:01,547 --> 00:15:07,350
+00:15:01,830 --> 00:15:07,633
 Type exit; an extra docker ps
 then shows Chroma still up, on port 8000.
 
 245
-00:15:07,670 --> 00:15:11,553
+00:15:07,953 --> 00:15:11,836
 Then docker compose down:
 two harmless warnings, and it stops.
 
 246
-00:15:11,867 --> 00:15:16,368
+00:15:12,150 --> 00:15:16,651
 Your index stays on disk,
 and part 2 also needs port 8000.
 
 247
-00:15:16,688 --> 00:15:18,011
+00:15:16,971 --> 00:15:18,294
 Pause and tear down.
 
 248
-00:15:18,331 --> 00:15:21,253
+00:15:18,614 --> 00:15:21,536
 In part 2,
 a framework runs this loop for us.
 

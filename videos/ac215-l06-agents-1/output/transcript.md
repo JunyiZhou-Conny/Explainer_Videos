@@ -61,7 +61,7 @@ After the collection lookup, the agent function builds the user's turn: the ques
 Three settings: temperature zero, the menu as tools, and a tool config with mode any. The lecture lists temperature as a design choice. Zero keeps the tool choice nearly repeatable.
 An extra one-liner shows what mode any becomes: the enum value ANY. The model must answer with a function call.
 In the lecture, a good agent may decide not to search at all; Self-RAG starts with that decision. Ours can't: on call 1, mode any forces a tool call. It chooses which search, never whether.
-What does Gemini actually receive? An extra script runs the same code, but prints the request instead of sending it. One envelope: the question, both declarations with the enum, mode ANY, temperature zero.
+What does Gemini actually receive? An extra script runs the same code, but prints the request instead of sending it. One envelope: the question, both declarations with the enum, mode ANY and temperature zero.
 And no system instruction: as in lecture 5, cli.py defines one and never sends it.
 Now step 1 again, with the collection loaded. The lookup passes and the question prints, but the first model call needs your key: default credentials error, file not found.
 Here's what the staff saw. The model's whole answer is a function call: get book by author, with the instructor as author, and the search text, cheese making importance location.
@@ -113,17 +113,17 @@ An extra check, uv run ADK dash dash version, says 2.12.0, at the time of record
 
 ## 18:19 — adk web and the folder names
 Running agents, step 1, from the repository root: uv run ADK web. First, version 2.12 asks a question the README doesn't mention: may Google collect usage data?
-The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with uv run ADK telemetry disable.
+The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with this command: uv run ADK telemetry disable.
 Then the server starts, on port 8000. Step 2: open localhost 8000 in your browser; an extra curl shows the redirect to the dev UI.
 The agent dropdown lists 7 entries, nested ones included. Pick 1 baseline, as its README says, and the page refuses: agent names must be valid Python identifiers.
 Why? Each folder name becomes the app's name, and an identifier holds only letters, digits and underscores, never starting with a digit. The name 1 baseline breaks both rules.
 An older version, 1.27.5, lists only the four folders. But picking one still fails, as an invalid app name. So a version pin doesn't help; we undid ours.
 What works is renaming, which isn't in the README either. Stop the server with control C, then drop each leading number, and turn hyphens into underscores.
-Start the web server again, and pick baseline. The log says it loaded the root dot env file, and found the root agent in baseline dot agent.
+Start the web server again, and pick baseline. The log says it loaded the dot env at the repository root, and found the root agent in baseline dot agent.
 Two more slips: the quick start passes a file where a folder is expected, and the module READMEs drop the word web, so it only prints help.
 And if L-L-M rag's Chroma still holds port 8000, they clash; the web server stopped: address already in use. Run docker compose down first, or add dash dash port 8080. Pause, and get the dev UI open on baseline.
 
-## 20:22 — Runner, session, state: the shared whiteboard
+## 20:24 — Runner, session, state: the shared whiteboard
 Baseline holds three LLM agents, each with a model, an instruction, and an output key. In the lecture's blocks: the LLM core, the instructions, and no tools at all.
 A sequential agent runs them in order: validator, planner, summarizer. An extra request shows the tree the UI loads, with the model from your root dot env; check yours.
 Another extra request creates a session: an empty state, and no events yet. Think of the state as a shared whiteboard.
@@ -134,7 +134,7 @@ The ADK README calls this memory. The code calls it session state, and it lasts 
 Without a real key, a trip request gets an internal server error. The server log says why: API key not valid. The placeholder reached Google, and was refused.
 With your key, look for three replies in order, and three new entries in the State tab; the session is a file in the agent's folder. Each request is three model calls: pause, and plan a trip.
 
-## 22:11 — Tools you didn't write: MCP
+## 22:13 — Tools you didn't write: MCP
 The lecture sorts tools into three families. Data tools fetch, like our book searches; action tools change something, like finalizing a trip or sending email; orchestration tools hand work to another agent.
 Now wire one agent to ten services, each with its own protocol. The lecture asks: do you see a problem?
 Every tool becomes a custom integration. MCP, the Model Context Protocol, makes it one pattern: a host with clients, and an MCP server for each service.
@@ -147,7 +147,7 @@ Extra curl commands talk to that server. A browser's plain request gets 406: the
 Plug 3 is optional: the notebook runs its own FastMCP server, in a thread, on port 8001. A small slip: the comment above says 8000, and so does an older saved output.
 Notice who does the talking: your client process. MCP gives the model no network access; it still only writes calls. Pause, and run the MCP cells.
 
-## 24:31 — Many agents: who plans the order?
+## 24:33 — Many agents: who plans the order?
 In the lecture, deep research is a tree of agents: a lead agent, a planner, parallel web searchers, and a synthesis into a report. The tutorial builds trees like it: the Cheese Quiz Guild, and the newsletter.
 The lecture's planner raises the question that sorts them: who plans the order? First answer: the code. The sequential agent is an assembly line, its order fixed in Python.
 Second answer: the model. In the Guild, each specialist becomes a tool: a whole agent behind one function. An orchestrator decides which to call.
@@ -157,7 +157,7 @@ Third answer: Python, reading the model's label. In this custom agent, a classif
 The else branch: clarification. The comparison is exact; lowercase the label first, or ask for structured output. The exercises try both.
 The lecture also lists handoffs among the orchestration tools. These tutorials use agents as tools; lecture 7 sketches handoffs.
 
-## 26:15 — The harness: only a human says yes
+## 26:17 — The harness: only a human says yes
 The Travel Planner notebook rehearses the lecture's trip. Copy it, add your key, and install its pinned agents package. Paris shrinks to a mock catalog: 3 cities, 6 hotels, 5 search tools and a finalize tool, booking nothing.
 In the staff's saved run, turn 1 asks which California city. Turn 2 runs five searches and offers options. In turn 3 the user picks, the model calls finalize, and the reply shows the exact plan and asks for a yes.
 That's the gate. A finalize call from the model can only propose: if the plan isn't the approved one, the code stores it as pending, and returns needs confirmation.
@@ -167,15 +167,15 @@ Turn 4: the human types yes. The stamp flips to approved, finalize runs, and Pyt
 What the user sees comes from checked state, not the model's prose. An itinerary that skipped the check raises an error, a hard guardrail; a dollar amount in the model's prose only prints a warning, a soft one.
 The lecture puts success criteria in the instructions, and guardrails in the decision maker. This notebook keeps both in code the model can't talk its way past, on the action tool. Every turn is paid; pause, and run the four turns.
 
-## 28:12 — The harness: success is a receipt
+## 28:14 — The harness: success is a receipt
 The last notebook writes a cheese newsletter per reader, with Microsoft's Agent Framework, pinned. In the users cell, put in yourself and a friend, and keep two entries. Email is preview only; nothing is sent.
 The orchestrator gets three tools: a researcher with web search, an editor, and send email. At most 16 iterations, one tool call at a time.
-In the staff's saved run, the first city took four editor calls; the code validates every draft and hands any errors back as the tool's result. Then send email saved the HTML. That run had four readers; today's list makes two.
+In the staff's saved run, the first city took four editor calls; the code validates every draft and hands any errors back as the tool's result. Then send email wrote the HTML to a file. That run had four readers; today's list makes two.
 Now the harness. When the orchestrator stops, Python ignores its words and checks two things: is there a receipt from send email, and is that file on disk? If not, the run fails; success is a receipt, not a claim.
 Compare a rule that lives only in the prompt. The editor is told: no embedded URLs. The saved preview has one anyway, because no code checks for it; a note is not a check.
 The lecture's Self-RAG and Corrective RAG grade their retrieval for the same reason: don't trust, check. Next lecture calls this outer layer the harness. Web search is billed per call; pause, and run the demo.
 
-## 29:33 — Tear down, recap, and what's next
+## 29:36 — Tear down, recap, and what's next
 Tear down: control C stops the web server. An extra git status shows the renamed folders and your Python pin; dot env, the virtual environment and the lock file are ignored.
 The sessions in the agent's dot ADK folder aren't ignored, so don't commit them, and delete the 1.6 gigabyte virtual environment when you're done.
 In each notebook, disconnect and delete the runtime. Keep the service account key beside L-L-M rag, never inside, and delete or cap the other two keys when the course ends.
