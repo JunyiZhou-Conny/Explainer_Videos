@@ -1,0 +1,108 @@
+$ python cli.py --act 5 --fixture --scenario tasting-plan
+Skills lesson — SCRIPTED local SDK responses; no service calls.
+Sourcing plan and mock HTML email only. No order, reservation or email transmission.
+Memory for pavlos: French cheeses; funky cheeses
+Skills available (metadata only): tasting-planning, vendor-outreach
+
+🤖 Model call 1 · Event planner · fixture-model
+  📥 Input: 2 conversation messages.
+  🧰 Available tools: assess_event, read_vendor_document, draft_vendor_email, save_vendor_email, get_stock, todos_add, todos_complete, todos_remove, todos_get_remaining, todos_get_all, load_skill, read_skill_resource
+  📤 Requested tools: load_skill
+  ⏱️ 0.28s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: load_skill
+  📋 Arguments: skill name: tasting-planning
+Skill loaded: tasting-planning/SKILL.md
+  📦 Result (0.00s): --- name: tasting-planning description: Plan and present a cheese tasting using a confirmed menu, serving guidance, and a reusable tasting-plan format. Use f…
+
+🤖 Model call 2 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_0
+  📤 Requested tools: read_skill_resource
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+  🔧 Tool call 2: read_skill_resource
+  📋 Arguments: skill name: tasting-planning; resource name: references/serving-guide.md
+Skill loaded: tasting-planning/references/serving-guide.md
+  📦 Result (0.00s): # Serving guide Organize the board as a tasting journey: start with the gentlest fresh or fresh-aged cheese, continue with firmer cheeses, and finish with th…
+
+🤖 Model call 3 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_1
+  📤 Requested tools: read_skill_resource
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+  🔧 Tool call 3: read_skill_resource
+  📋 Arguments: skill name: tasting-planning; resource name: assets/tasting-plan.md
+Skill loaded: tasting-planning/assets/tasting-plan.md
+  📦 Result (0.00s): # Host tasting plan This is the layout the application renders. For a structured `TastingReply`, fill `courses`, `serving_notes`, and `open_questions`; do no…
+
+🤖 Model call 4 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_2
+  📤 Requested tools: todos_add
+  ⏱️ 0.03s · 100 input tokens · 20 output tokens
+  🔧 Tool call 4: todos_add
+  📋 Arguments: todos: title: Prepare the requested plan
+Plan: [open] Prepare the requested plan
+  📦 Result (0.00s): 1 entries
+
+🤖 Model call 5 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_3
+  📤 Requested tools: assess_event
+  ⏱️ 0.03s · 100 input tokens · 20 output tokens
+  🔧 Tool call 5: assess_event
+  📋 Arguments: none
+  📦 Result (0.00s): report: items: 3 entries; line totals cents: 3 entries; subtotal cents: 5010; total grams: 1000; needs manager approval: no; violations: 0 entries; shortfalls: 0 entries; inventory source: shop_inventory; inventory g: bucheron: 2000; epoisses: 900; taleggio: 3000; vendor availability: unconfirmed…
+
+🤖 Model call 6 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_4
+  📤 Requested tools: todos_complete
+  ⏱️ 0.03s · 100 input tokens · 20 output tokens
+  🔧 Tool call 6: todos_complete
+  📋 Arguments: items: id: 1; reason: Scripted planning/review demonstration finished.
+Plan: [done] Prepare the requested plan
+  📦 Result (0.00s): completed: 1
+
+🤖 Model call 7 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_5
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.06s · 100 input tokens · 20 output tokens
+
+--- HARNESS PLAN_PROPOSED — run 5bd990507796466593c4e183b92cf42f ---
+Agent's notes:
+Scripted skill demonstration finished; consult the authoritative tool results.
+
+## Host tasting plan — event
+### Confirmed brief
+12 guests · PA · Budget $150.00.
+Confirmed allergies: nuts.
+Include at least one cheese from each of: France.
+Include at least one cheese at funk 4 or higher.
+### Tasting sequence
+1. Bûcheron: 350 g — Serve this course before moving to the next cheese.
+2. Époisses: 300 g — Serve this course before moving to the next cheese.
+3. Taleggio: 350 g — Serve this course before moving to the next cheese.
+### Serving notes
+Serve individual portions with separate utensils.
+### Pairing suggestions
+- Bûcheron: Apple slices (listed allergens: none listed)
+- Époisses: Apple slices (listed allergens: none listed)
+- Taleggio: Apple slices (listed allergens: none listed)
+### Quote and availability
+1000 g · Cheese subtotal $50.10.
+Excludes tax, shipping and pairing costs.
+Authoritative status: Proposal only; no order placed.
+### Open questions and next actions
+- Confirm serving time.
+
+Authoritative application state:
+Skills loaded: tasting-planning
+Skill resources: tasting-planning/references/serving-guide.md, tasting-planning/assets/tasting-plan.md
+Menu: 1000 g; cheese quote $50.10.
+Sourcing quote only. Stock is not reserved; vendor availability is unconfirmed. Excludes tax, shipping and pairings.
+No HTML email saved.
+No order placed; no email transmitted.
+Model calls: 7. Compactions: 0.
+💾 Recorded in /app/outputs/observability.sqlite. No evaluation suite was run.
+[exit 0]

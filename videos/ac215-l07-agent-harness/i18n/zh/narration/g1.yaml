@@ -1,0 +1,405 @@
+# zh narration for S01-S07 (part 1, group g1: one agent — setup, the agent loop, its harness layers and its
+# context; acts 1-2), sentence-aligned to script.md v2: one zh sentence per English sentence
+# (explainer.voice.split_sentences; 68 SAY lines, 148 sentences). Terms and rules: ../GLOSSARY.md,
+# ../glossary.yaml (binding).
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8, D9:
+# S05[0] keeps 循环 in its first clause, S06[2] names the saved taste before its contents, S05[7] puts the
+# condition inside the clause with no comma before 往右移).
+# Underscore names and code expressions are written the way the SAY speaks them, with a Chinese head noun where it
+# helps (rule A6: build agent 这个函数, preview order 工具, order placed 设为 false, get catalog 工具, no cart,
+# harness without trace, add 和 without 方法, basic Context, OpenAI API key); no brackets and no symbols the
+# checker refuses (B2, B3). Numbers as on screen, without thousands separators (C1: 1050, 5600, 1942, 4540,
+# 21000); numbers the SAY says as words in Hanzi (C1: 五个工具, 七节, 第九次 for a ninth); money in 美元 / 美分,
+# versions with their package name and the model ID as in the code (C2: 150 美元, agent-framework 1.19.0,
+# gpt-5.6-luna). Commands sit at the end of a clause, after a full-width colon (G3).
+# Sentences never open with an artifact or a lower-case kept-English word (A5: 其中 basic……, 而 enriched……,
+# 先看 docker ps……, 用 docker inspect……, 命令行里的 --model 参数……). The ponder lines (S05[8], S07[5]) and the
+# hook's question (S01[2]) give nothing away (A9). The customers are 第一位 / 第二位顾客 only (A10).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: $150 budget, $64,
+# docker ps / docker images / docker inspect, agent-framework 1.19.0, gpt-5.6-luna, --model, OPENAI_API_KEY,
+# build_agent, preview_order, "order_placed" set to False, python cli.py --act 1 --scenario standard,
+# Requested tools / Tool call, --show-json, Context("basic"), CartCheck, Maximum of 8 model calls reached,
+# harness.without("trace"), .add() / .without(), missing-details, no_cart, --compare, Inspect the context first,
+# --preview-context, get_catalog); null = the SAY text.
+# Self-check (2026-10-21): all 148 sentences run through explainer.subtitles.tracks(timing="en") on an estimated
+# English timing (2.9 words/s, no renders yet): S02[10], S02[11], S05[3], S06[7], S06[8] and S07[4] were reworded so
+# each band piece sits over its own English clause; python cli.py --act 1 --scenario standard (22.6 units) still
+# wraps inside its one .zh.srt cue. Repeat the check on the rendered timing before publishing.
+# Proofread (2026-10-21, subtitles step 3) against script.md, digest.md and the captures: S01[3] valid → 有效 (as
+# S08, S09), S05[3] keeps the error text whole on one .zh.srt line (报的是：…), S05[5] says the check passed despite
+# the garbled budget, S05[8] and S05[9] name the copy and the original harness plainly, S06[6]'s extra is a command
+# that prints the PA/NY check; glossary first_use examples synced to these lines.
+S01:
+- en: "A customer wants cheese for a tasting: 12 guests in Pennsylvania, a 150 dollar budget, no nuts, a French cheese, and one with a funk rating of 4 or more. Here are two answers from the same model and tools."
+  zh:
+  - "一位顾客要为一场品鉴会买奶酪：宾夕法尼亚 12 位客人，150 美元预算，不要坚果，一款法国奶酪，还有一款浓烈度 4 或以上。"
+  - "这是两个回答，来自同一个模型和同一套工具。"
+  en_display:
+  - "A customer wants cheese for a tasting: 12 guests in Pennsylvania, a $150 budget, no nuts, a French cheese, and one with a funk rating of 4 or more."
+  - null
+- en: "The first proposes 1,050 grams for 5,600 cents. The second, 1,200 grams for 6,400 cents, within a budget with the comma in the wrong place: a malformed number."
+  zh:
+  - "第一个提议 1050 克，5600 美分。"
+  - "第二个是 1200 克，6400 美分，说在预算之内，可预算的逗号放错了地方：一个格式错误的数字。"
+- en: "Which of these would you let charge a customer's card? And what would have to be true first?"
+  zh:
+  - "这两个里面，你会让哪一个去刷顾客的卡？"
+  - "而且在那之前，必须先满足什么条件？"
+- en: "The second run printed more. Code checked the cart itself: 1,200 grams, 64 dollars, shop rules satisfied, no order placed. The cart was valid; only the sentence was garbled. Nothing checked the first answer's final cart."
+  zh:
+  - "第二次运行打印了更多内容。"
+  - "代码检查了购物车本身：1200 克，64 美元，满足店铺规则，没有下单。"
+  - "购物车是有效的；只是那句话写乱了。"
+  - "第一个回答最终的购物车，根本没经过检查。"
+  en_display:
+  - null
+  - "Code checked the cart itself: 1,200 grams, $64, shop rules satisfied, no order placed."
+  - null
+  - null
+- en: "The course notebook says it in one line: the model proposes; the harness decides. The harness is the code around the model: the loop, its limits, its context and its checks. Today we sort every line of output into these two columns."
+  zh:
+  - "课程的 notebook 用一句话说清了：模型提议；harness 决定。"
+  - "所谓 harness，就是模型外面的代码：循环、它的限制、它的上下文和它的检查。"
+  - "今天我们把输出的每一行，都归到这两栏里。"
+- en: "Lecture 7 and the README share seven sections, in order. The tutorial runs six acts in a fictional cheese shop, where nothing is really bought, shipped or emailed."
+  zh:
+  - "第 7 讲和 README 分成同样的七节，顺序也一样。"
+  - "教程在一家虚构的奶酪店里分六幕进行，那里什么都不会真的买、真的寄，也不会真的发邮件。"
+- en: "The tracker, top left, shows the README step; the gray tag, top right, shows the lecture slides. When a tag says your turn, pause and run the command."
+  zh:
+  - "左上角的进度条显示 README 的步骤；右上角的灰色标签显示对应的课件。"
+  - "看到标签写着 your turn，就暂停，自己跑这条命令。"
+- en: "One honest limit: we recorded this on October 20, 2026, without an OpenAI key. Everything offline ran for real; live commands ran until OpenAI refused the placeholder key. Live answers come from the staff's saved Colab run and the README."
+  zh:
+  - "坦白说一个限制：我们在 2026 年 10 月 20 日录制，没有 OpenAI 密钥。"
+  - "离线的部分都是真实运行的；在线命令一直跑到 OpenAI 拒绝占位密钥为止。"
+  - "在线运行的回答，来自课程团队保存的 Colab 运行和 README。"
+- en: "The only cost is OpenAI tokens. Customer IDs are masked on screen, and every command is in the study guide."
+  zh:
+  - "唯一的花费是 OpenAI 的 token。"
+  - "顾客 ID 在画面上遮住了，每条命令都在学习指南里。"
+S02:
+- en: "Your laptop holds the clone, with an empty secrets folder beside it. One container mounts both, your key goes in as an environment variable, no port is published, and the app's only call out is HTTPS to OpenAI."
+  zh:
+  - "你的笔记本上有 clone 下来的 repo，旁边是一个空的 secrets 目录。"
+  - "一个 container 挂载这两个目录，密钥以环境变量的形式传进去，不发布任何 port，应用唯一的对外调用是走 HTTPS 去 OpenAI。"
+- en: "Two extras first: git clone, since the README assumes a copy, then change into the agent-harness folder, where every setup command runs. A listing shows no docs folder; that matters later."
+  zh:
+  - "先做两个额外步骤：git clone，因为 README 默认你已经有一份；然后进入 agent-harness 目录，所有准备命令都在这里运行。"
+  - "列出的文件里没有 docs 目录；这一点后面很重要。"
+- en: "Step 1 makes the secrets folder, one level up. Nothing reads it today, so no service account. Pause and run it."
+  zh:
+  - "第 1 步在上一级创建 secrets 目录。"
+  - "今天没有东西会读它，所以不需要服务账号。"
+  - "暂停一下，跑一遍。"
+- en: "Step 2 exports your key. Replace the placeholder with your own, or skip this line offline. We typed it as written; act 1 shows what that does."
+  zh:
+  - "第 2 步导出你的密钥。"
+  - "把占位符换成你自己的密钥，或者离线时跳过这一行。"
+  - "我们是照原样输入的；第 1 幕会看到这样做的结果。"
+- en: "Step 3, bash docker-shell.sh, builds the image and starts the container. Ours took 38 seconds, with the base image already on the machine; your first build also pulls it, so expect a minute or more."
+  zh:
+  - "第 3 步：bash docker-shell.sh，构建 image 并启动 container。"
+  - "我们的构建用了 38 秒，当时 base image 已经在机器上；你第一次构建还要先 pull 它，所以预计要一分钟或更久。"
+- en: "The Dockerfile installs from the lockfile before it copies the code: the layer trick from lecture 2."
+  zh:
+  - "Dockerfile 先根据 lock 文件安装，再复制代码：这是第 2 讲讲过的分层技巧。"
+- en: "The banner says the environment is activated before the script activates it: a harmless slip. After the at sign comes the container ID."
+  zh:
+  - "横幅说环境已经激活了，可这时脚本还没激活它：一个无害的小疏漏。"
+  - "紧跟在 @ 符号后面的，是 container ID。"
+- en: "From here on, every command runs inside the container. Pause, run steps 2 and 3, and wait for this prompt."
+  zh:
+  - "从这里开始，每条命令都在 container 里运行。"
+  - "暂停一下，跑第 2、3 步，等到出现这个提示符。"
+- en: "Three extras from a second terminal. Docker ps: no ports. Docker images: 1.77 gigabytes, since the framework installs every integration."
+  zh:
+  - "在第二个终端里做三个额外检查。"
+  - "先看 docker ps：没有 port。"
+  - "再看 docker images：1.77 GB，因为框架把所有集成都装上了。"
+  en_display:
+  - null
+  - "docker ps: no ports."
+  - "docker images: 1.77 gigabytes, since the framework installs every integration."
+- en: "Docker inspect shows your key in the container's configuration; treat a real key as sensitive."
+  zh:
+  - "用 docker inspect，能在 container 的配置里看到你的密钥；真实的密钥要当作敏感信息对待。"
+  en_display:
+  - "docker inspect shows your key in the container's configuration; treat a real key as sensitive."
+- en: "Step 4 is for a container already running when you changed the key: the script then only runs docker exec, which doesn't bring the new key."
+  zh:
+  - "第 4 步适用于改密钥时 container 已经在运行的情况：这时脚本只会运行 docker exec，而它不会带上新的密钥。"
+- en: "If that's you, shell in from a second terminal and type the README's three lines: the key goes in hidden, and out of your history. Keep working in that shell. Pause here."
+  zh:
+  - "如果是这种情况，就从第二个终端进到 container 的 shell 里，再输入 README 的那三行：密钥隐藏着输入，也不会留在你的历史记录里。"
+  - "之后一直在那个 shell 里操作。"
+  - "在这里暂停。"
+S03:
+- en: "Now verify, offline, inside the container. Step 1 checks the SDK and prints the installed versions, at the time of recording: Python 3.13.16, agent framework 1.19.0, and every feature true."
+  zh:
+  - "现在在 container 里离线验证。"
+  - "第 1 步检查 SDK，并打印安装的版本，录制时是：Python 3.13.16、agent-framework 1.19.0，而且每个功能都是 true。"
+  en_display:
+  - null
+  - "Step 1 checks the SDK and prints the installed versions, at the time of recording: Python 3.13.16, agent-framework 1.19.0, and every feature true."
+- en: "Step 2 runs the tests: 281 of them, in about 100 seconds, ending in OK. They use scripted model responses, so they test the machinery, not the model."
+  zh:
+  - "第 2 步跑测试：一共 281 个，大约 100 秒，最后是 OK。"
+  - "它们用的是脚本模拟的模型回复，所以测的是这套机制，不是模型。"
+- en: "Step 3 shows the logs: deliberate failures, like an injected audit outage, and an approval-identity warning we'll meet in act 4. Trust the last line."
+  zh:
+  - "第 3 步显示日志：故意制造的失败，比如注入的审计故障，还有一个第 4 幕会再遇到的审批身份警告。"
+  - "以最后一行为准。"
+- en: "The model check prints the default without calling it: GPT 5.6 Luna, at the time of recording. A model flag beats an environment variable, which beats this default; if your account can't use it, set either."
+  zh:
+  - "模型检查只打印默认模型，并不调用它：录制时是 gpt-5.6-luna。"
+  - "命令行里的 --model 参数优先于环境变量，环境变量又优先于这个默认值；如果你的账号用不了它，就设置其中一个。"
+  en_display:
+  - "The model check prints the default without calling it: gpt-5.6-luna, at the time of recording."
+  - "A --model flag beats an environment variable, which beats this default; if your account can't use it, set either."
+- en: "The README's notebook section has two more test commands. They run in the container too: 9 notebook tests and 12 chat view tests, both OK."
+  zh:
+  - "README 的 notebook 那一节还有两条测试命令。"
+  - "它们也在 container 里运行：9 个 notebook 测试和 12 个 chat view 测试，都是 OK。"
+- en: "There's a second road: the course Colab. Save a copy to your Drive, add your key as a secret named OpenAI API key, allow notebook access, and run the setup cells."
+  zh:
+  - "还有第二条路：课程的 Colab。"
+  - "把副本保存到你的 Drive，把密钥存成一个名叫 OpenAI API key 的 secret，打开 Notebook access，再运行准备单元格。"
+  en_display:
+  - null
+  - "Save a copy to your Drive, add your key as a secret named OPENAI_API_KEY, allow notebook access, and run the setup cells."
+- en: "The Colab setup installs the seven pinned packages, not the lockfile, so their dependencies can drift; for identical versions, use Docker."
+  zh:
+  - "Colab 的准备步骤装的是那七个 pin 了版本的包，而不是 lock 文件，所以它们的依赖可能会漂移；要版本完全一致，就用 Docker。"
+- en: "Every recorded answer in this video comes from this notebook's saved run. Pause, and verify your setup either way."
+  zh:
+  - "这期视频里每个录下来的回答，都来自这个 notebook 保存的那次运行。"
+  - "暂停一下，两条路任选一条，把你的环境验证一遍。"
+S04:
+- en: "Act 1 starts from the lecture's recap: an agent is a model with instructions and tools, running until the task is done."
+  zh:
+  - "第 1 幕从课上的回顾开始：agent 就是一个带着指令和工具的模型，一直运行到任务完成。"
+- en: "In code, the function build agent makes one framework agent: the shop instructions, five tools, and a structured reply format."
+  zh:
+  - "在代码里，build agent 这个函数会创建一个框架里的 agent：店里的指令、五个工具，以及结构化的回复格式。"
+  en_display:
+  - "In code, the function build_agent makes one framework agent: the shop instructions, five tools, and a structured reply format."
+- en: "The model can only ask for a tool; the harness runs it. And none of these five can place an order: the preview order tool records an unvalidated proposal, with order placed set to false."
+  zh:
+  - "模型只能请求工具；工具由 harness 来运行。"
+  - "而且这五个工具都不能下单：preview order 工具只记录一个未经验证的提议，order placed 设为 false。"
+  en_display:
+  - null
+  - "And none of these five can place an order: the preview_order tool records an unvalidated proposal, with \"order_placed\" set to False."
+- en: "Step 1: python cli.py, dash dash act 1, dash dash scenario standard. You see the ask, call 1 and five tools; then the call fails with error 401: the placeholder key. Fix it in this shell with the three read lines from setup step 4. The failed run is still recorded."
+  zh:
+  - "第 1 步：python cli.py --act 1 --scenario standard。"
+  - "你会看到需求、第 1 次调用和五个工具；接着调用失败，报 401：占位密钥。"
+  - "在这个 shell 里就能修好：用 Setup 的第 4 步那三行 read 命令。"
+  - "失败的运行照样会记录下来。"
+  en_display:
+  - "Step 1: python cli.py --act 1 --scenario standard."
+  - null
+  - null
+  - null
+- en: "Here's what a key gets you, from the staff's saved run. The model asks for the catalog; the harness runs it, and the result goes back in: two more messages."
+  zh:
+  - "下面是有密钥时的样子，来自课程团队保存的运行。"
+  - "模型请求商品清单；harness 运行这个工具，结果再送回去：又多了两条消息。"
+- en: "Every round splits at the same seam. The model's plan ends at requested tools; the harness executes at tool call. The trace shows requests and results, not hidden reasoning."
+  zh:
+  - "每一轮都在同一个接缝处分开。"
+  - "模型的计划止于 Requested tools；harness 从 Tool call 开始执行。"
+  - "这个 trace 显示的是请求和结果，不是隐藏的推理。"
+  en_display:
+  - null
+  - "The model's plan ends at Requested tools; the harness executes at Tool call."
+  - null
+- en: "Then stock, price, pairings and preview. On call 6 the model answers without asking for a tool, and the loop stops. Messages grew from 1 to 11, input from 1,942 to 4,540 tokens: about 21,000 billed input tokens, for one answer."
+  zh:
+  - "然后是库存、价格、搭配和预览。"
+  - "第 6 次调用时，模型直接回答，没有请求工具，循环就停了。"
+  - "消息从 1 条涨到 11 条，输入从 1942 涨到 4540 个 token：一共大约 21000 个计费的输入 token，只为了一个回答。"
+- en: "Step 2 adds dash dash show JSON, to see the exact message: a short note, plus the confirmed request as JSON, where null means not provided. Pause and run both, with your key."
+  zh:
+  - "第 2 步加上 --show-json，看确切的消息：一段简短的说明，加上 JSON 形式的已确认需求，其中 null 表示没有提供。"
+  - "暂停一下，用你的密钥把两条都跑一遍。"
+  en_display:
+  - "Step 2 adds --show-json, to see the exact message: a short note, plus the confirmed request as JSON, where null means not provided."
+  - null
+- en: "The input grows with every call. That's the lecture's question: how do we manage what goes into the model?"
+  zh:
+  - "每调用一次，输入就会变长。"
+  - "这就是课上的问题：怎么管理进入模型的东西？"
+S05:
+- en: "The lecture says it plainly: if you've written a loop that calls a model and runs its tool calls, you're a harness engineer. And a bare loop has no stop."
+  zh:
+  - "课上说得很直白：如果你写过一个循环，它调用模型并执行工具调用，那你就是 harness 工程师。"
+  - "而一个裸循环是停不下来的。"
+- en: "Step 3 is a notebook cell, for Colab or Jupyter, that wraps build agent in a harness. It adds Trace, Budget with 8 model calls, 20 tool calls and 120 seconds, basic Context, and Cart Check. The CLI builds exactly this."
+  zh:
+  - "第 3 步是一个 notebook 单元格，在 Colab 或 Jupyter 里用，它把 build agent 包进一个 harness。"
+  - "它加上 Trace、Budget，限 8 次模型调用、20 次工具调用和 120 秒，basic Context，还有 CartCheck。"
+  - "CLI 构建的正是这个。"
+  en_display:
+  - "Step 3 is a notebook cell, for Colab or Jupyter, that wraps build_agent in a harness."
+  - "It adds Trace, Budget with 8 model calls, 20 tool calls and 120 seconds, Context(\"basic\"), and CartCheck."
+  - null
+- en: "The inner ring never comes off: call admission, the tool audit and the shop rules. Four harness layers slide on around it, one feature each."
+  zh:
+  - "内环永远拆不掉：调用准入、工具审计和店铺规则。"
+  - "四个 harness 层套在它外面，每层一个功能。"
+- en: "Budget is a turnstile. Each model call is admitted and counted; a ninth fails with maximum of 8 model calls reached, and the lock stays shut."
+  zh:
+  - "Budget 是一个闸机。"
+  - "每次模型调用都要放行并计数；第九次会失败，报的是：Maximum of 8 model calls reached，而且锁会一直关着。"
+  en_display:
+  - null
+  - "Each model call is admitted and counted; a ninth fails with Maximum of 8 model calls reached, and the lock stays shut."
+- en: "Without Budget, only the framework's fallback is left: 40 loop iterations, no call limits, no overall time budget."
+  zh:
+  - "没有 Budget，就只剩框架的兜底：40 次循环迭代，没有调用次数上限，也没有总的时间预算。"
+- en: "Cart Check is the lecture's verify step. Back to the hook: it checked the items, not the prose, so the garbled budget still passed. It reports, and never repairs."
+  zh:
+  - "CartCheck 就是课上的验证步骤。"
+  - "回到开头的例子：它检查的是商品明细，不是文字，所以预算写乱了也照样通过。"
+  - "它只报告，从不修复。"
+  en_display:
+  - "CartCheck is the lecture's verify step."
+  - null
+  - null
+- en: "Now the two columns become the lecture's action boundary: five concerns, the model's part on the left, the harness's on the right."
+  zh:
+  - "现在这两栏变成了课上的行动边界：五个关注点，左边是模型负责的部分，右边是 harness 的。"
+- en: "Act 1 fills three rows. Move right when stakes are high, or an action can't be undone."
+  zh:
+  - "第 1 幕填了三行。"
+  - "风险高或操作无法撤销时就往右移。"
+- en: "Something to ponder. Take harness without trace, and run that copy. Is a tool call still counted and audited? And does the original harness still trace?"
+  zh:
+  - "来想一个问题。"
+  - "用 harness without trace 得到一个副本，再运行它。"
+  - "工具调用还会计数、还会审计吗？"
+  - "而原来那个 harness 还会记录 trace 吗？"
+  en_display:
+  - null
+  - "Take harness.without(\"trace\"), and run that copy."
+  - null
+  - null
+- en: "Yes, and yes. Admission and the audit are the inner ring. And the add and without methods never change a harness: each returns a new configuration, so the original keeps all four layers."
+  zh:
+  - "是，也是。"
+  - "准入和审计就是内环。"
+  - "而且 add 和 without 方法从不修改 harness：每次都返回一个新的配置，所以原来那个 harness 的四层都还在。"
+  en_display:
+  - null
+  - null
+  - "And the .add() and .without() methods never change a harness: each returns a new configuration, so the original keeps all four layers."
+- en: "Step 4 runs the missing details scenario. With a key, look for a question back, not invented details; Cart Check should report no cart. Pause and run it."
+  zh:
+  - "第 4 步运行 missing-details 场景。"
+  - "有密钥的话，要找的是反问，而不是编造的细节；CartCheck 应该报告 no cart。"
+  - "暂停一下，跑一遍。"
+  en_display:
+  - "Step 4 runs the missing-details scenario."
+  - "With a key, look for a question back, not invented details; CartCheck should report no_cart."
+  - null
+S06:
+- en: "Act 2 changes what the model sees: the lecture's invisible layer. Here is one model call as the lecture's stack: system prompt and shop policies, the request, the reply format, five tools, and two slots, for retrieved data and saved preferences."
+  zh:
+  - "第 2 幕改的是模型看到的东西：课上说的看不见的那一层。"
+  - "这是按课上的上下文栈画出的一次模型调用：system prompt 和店铺政策、需求、回复格式、五个工具，还有两个空位，留给检索到的数据和保存的偏好。"
+- en: "Basic mode, the one act 1 used, sends the first four and leaves the slots empty; enriched fills them."
+  zh:
+  - "第 1 幕用的 basic 模式只发前四块，空位留空；而 enriched 把它们填满。"
+- en: "Step 1, dash dash compare, uses the personalized scenario, where today's request leaves out the second customer's saved taste: mild cheeses and nonalcoholic pairings. The basic run starts and stops at the 401, so enriched never starts."
+  zh:
+  - "第 1 步 --compare 用的是 personalized 场景，今天的需求没提第二位顾客保存的口味：温和的奶酪和无酒精搭配。"
+  - "先跑的 basic 一启动就停在 401，所以 enriched 根本没有开始。"
+  en_display:
+  - "Step 1, --compare, uses the personalized scenario, where today's request leaves out the second customer's saved taste: mild cheeses and nonalcoholic pairings."
+  - null
+- en: "With a key, it prints a side-by-side table and a verdict, which may be a tie or a regression."
+  zh:
+  - "有密钥的话，它会打印一张并排对比表和一个结论，结论也可能是打平或者退步。"
+- en: "Steps 2 to 4 are optional single runs. Even without a key, there's a real difference: basic sends 1 conversation message, enriched sends 2; the extra one is the context packet."
+  zh:
+  - "第 2 到第 4 步是可选的单次运行。"
+  - "即使没有密钥，也能看到一个真实的差别：basic 发 1 条对话消息，enriched 发 2 条；多出来的那条就是上下文包。"
+- en: "Step 4, the override run, asks for funk 4 or more, and today's request must win over the saved taste."
+  zh:
+  - "第 4 步是偏好覆盖那次运行，要求浓烈度 4 或以上，今天的需求必须压过保存的口味。"
+- en: "The README says each act 2 command also prints a state check. A small slip: dash dash compare doesn't. This extra call does: the same raw-milk cart fails for Pennsylvania and passes for New York, under a fictional rule."
+  zh:
+  - "README 里说，第 2 幕的每条命令还会打印一个按州的检查。"
+  - "一个小疏漏：--compare 不会。"
+  - "这条额外的命令会打印：同一辆生乳奶酪的购物车，寄往宾夕法尼亚不通过，寄往纽约通过，依据的是一条虚构的规则。"
+  en_display:
+  - null
+  - "A small slip: --compare doesn't."
+  - null
+- en: "Step 5 is an act 3 command the README puts here; part 2 explains it."
+  zh:
+  - "第 5 步是一条第 3 幕的命令，README 把它放在了这里；第二部分会讲它。"
+- en: "Steps 6 and 7 repeat both cases in both modes, 3 times: 12 live runs. Without a key it stops after 3 errors, but the report still writes, and the label is used up: with your key, choose a new one."
+  zh:
+  - "第 6、7 步把两个用例在两种模式下各重复 3 次：一共 12 次在线运行。"
+  - "没有密钥时，它在 3 个错误之后就停了，但报告照样会写出来，label 也用掉了：有密钥的话，换一个新的。"
+- en: "The page linked here belongs in the docs folder we saw missing, so use the README checkpoints. Pause here if you have a key."
+  zh:
+  - "这里链接的页面，本该放在我们看到缺失的那个 docs 目录里，所以就用 README 的检查点。"
+  - "有密钥的话就在这里暂停。"
+S07:
+- en: "The README prints inspect the context first after the live runs. Without a key, start here: dash dash preview context, offline. Both modes share instructions, message and tools; only the packets differ."
+  zh:
+  - "README 里，Inspect the context first 排在在线运行之后。"
+  - "没有密钥的话，就从这里开始：离线跑 --preview-context。"
+  - "两种模式的指令、消息和工具都一样；只有上下文包不同。"
+  en_display:
+  - "The README prints Inspect the context first after the live runs."
+  - "Without a key, start here: --preview-context, offline."
+  - null
+- en: "Basic has no sources. Enriched has three, each with a trust label: the confirmed request, shop data, and saved preferences."
+  zh:
+  - "其中 basic 没有来源。"
+  - "而 enriched 有三个，每个都带一个信任标注：已确认的需求、店铺数据和保存的偏好。"
+- en: "Twelve cheeses fall through three sieves: enough stock, no raw milk to Pennsylvania, no nut allergens. Munster has no stock, Brie and Comté fail the shipping rule, and two nut cheeses fail the allergy check. Seven survive."
+  zh:
+  - "十二种奶酪穿过三层筛子：库存够、不往宾夕法尼亚寄生乳、没有坚果过敏原。"
+  - "Munster 没有库存，Brie 和 Comté 过不了运输规则，两种含坚果的奶酪过不了过敏检查。"
+  - "七种留了下来。"
+- en: "The lecture's retrieved information is any outside data; here it's a Python filter, not the vector search from lecture 5."
+  zh:
+  - "课上说的检索信息指任何外部数据；在这里它是一个 Python 过滤器，不是第 5 讲的向量检索。"
+- en: "And where does it go? Into a user message headed retrieved context, data, not instructions, so it cannot pose as a system rule. That's the lecture's two lanes: instructions in the system lane, evidence in the user lane."
+  zh:
+  - "那它放在哪儿？"
+  - "放进一条以 Retrieved context 为标题的 user 消息，是数据，不是指令，所以它没法冒充系统规则。"
+  - "这就是课上的两条通道：指令走 system 通道，证据走 user 通道。"
+  en_display:
+  - null
+  - "Into a user message headed Retrieved context, data, not instructions, so it cannot pose as a system rule."
+  - null
+- en: "Something to ponder. The enriched packet already removed Comté. Can the model still put Comté in its cart? And does anything in act 2 stop it?"
+  zh:
+  - "来想一个问题。"
+  - "这个 enriched 上下文包已经去掉了 Comté。"
+  - "模型还能把 Comté 放进它的购物车吗？"
+  - "第 2 幕里有什么能拦住它吗？"
+- en: "Yes: the get catalog tool still returns all twelve, and in act 2 Cart Check only reports. Selection narrows, but validation decides: the act 3 workflow blocks it."
+  zh:
+  - "能：get catalog 工具仍然返回全部十二种奶酪，而在第 2 幕，CartCheck 只报告。"
+  - "筛选能缩小范围，但校验说了算：第 3 幕的工作流会拦下它。"
+  en_display:
+  - "Yes: the get_catalog tool still returns all twelve, and in act 2 CartCheck only reports."
+  - null
+- en: "Step 9 is the optional baseline, in both modes. For standard, the saved preferences repeat the request, so little may change. Pause and run steps 8 and 9."
+  zh:
+  - "第 9 步是可选的基线，两种模式都跑。"
+  - "在 standard 场景里，保存的偏好重复了需求，所以可能变化不大。"
+  - "暂停一下，跑第 8、9 步。"
+- en: "So selecting candidates helps, but validation decides, and today's request outranks saved preferences. In part 2, the harness takes the cart's route out of the model's hands."
+  zh:
+  - "所以筛选候选有帮助，但校验说了算，今天的需求优先于保存的偏好。"
+  - "第二部分，harness 会把购物车的路线从模型手里拿走。"

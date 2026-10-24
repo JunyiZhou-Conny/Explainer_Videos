@@ -1,0 +1,4 @@
+$ python -c 'import json, sqlite3; [print(c, json.loads(v)) for c, v in sqlite3.connect("outputs/customer_memory.sqlite").execute("SELECT customer_id, value FROM preferences")]'
+pavlos ['French cheeses', 'funky cheeses']
+shivas ['mild cheeses', 'nonalcoholic pairings', 'Prefer nonalcoholic pairings today']
+[exit 0]

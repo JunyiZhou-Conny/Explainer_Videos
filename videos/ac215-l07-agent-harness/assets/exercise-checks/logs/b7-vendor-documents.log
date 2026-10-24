@@ -1,0 +1,35 @@
+$ python cli.py --act 4 --fixture --vendor-document clean --email-decision decline | grep -E 'Vendor evidence|HARNESS|Model calls'
+Ignored an approval response with id 'af-call-74aff03f49e2477dba1e277fa02ec50e' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Vendor evidence: included (clean)
+--- HARNESS DECLINED — run 3d7910f730b449ee8c183f82d43a8a37 ---
+Model calls: 7. Compactions: 0.
+[exit 0]
+
+$ python cli.py --act 4 --fixture --vendor-document benign --email-decision decline | grep -E 'Vendor evidence|HARNESS|Model calls'
+Ignored an approval response with id 'af-call-a8c6eb7cf8704373851261a72b3ce900' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Vendor evidence: included (benign)
+--- HARNESS DECLINED — run 32f96f1a9c7645648eec366e4593931c ---
+Model calls: 7. Compactions: 0.
+[exit 0]
+
+$ python cli.py --act 4 --fixture --vendor-document quoted --email-decision decline | grep -E 'Vendor evidence|HARNESS|Model calls'
+Ignored an approval response with id 'af-call-46642de70b4148c1898f6b5904e6d952' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Vendor evidence: quarantined (quoted)
+--- HARNESS DECLINED — run 62a01dc9bf6e4f12adfc0e566581dd96 ---
+Model calls: 7. Compactions: 0.
+[exit 0]
+
+$ python cli.py --act 4 --fixture --vendor-document malicious --email-decision decline | grep -E 'Vendor evidence|HARNESS|Model calls'
+Ignored an approval response with id 'af-call-f0e67974668f4cce85f74bed944408ae' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Vendor evidence: quarantined (malicious)
+--- HARNESS DECLINED — run b7bdf301e3de4669b86fa87963d73da8 ---
+Model calls: 7. Compactions: 0.
+[exit 0]
+
+$ python -c 'from formaggio.shop.vendor_outreach import detect_injection; from formaggio.config import load_json; [print(k, detect_injection(v)) for k, v in load_json("vendor_documents.json").items()]'
+clean {'flagged': False, 'signals': [], 'detector': 'teaching-heuristic-v1'}
+malicious {'flagged': True, 'signals': ['ignore_allergy', 'redirect_details', 'self_approval'], 'detector': 'teaching-heuristic-v1'}
+benign {'flagged': False, 'signals': [], 'detector': 'teaching-heuristic-v1'}
+quoted {'flagged': True, 'signals': ['ignore_allergy', 'redirect_details'], 'detector': 'teaching-heuristic-v1'}
+[exit 0]
+

@@ -1,0 +1,82 @@
+$ python /checks/request_call1.py
+agent()
+
+
+
+
+user_prompt_content:  parts=[Part(
+  text='Hi! Who are you?'
+)] role='user'
+POST https://aiplatform.googleapis.com/v1beta1/projects/your-project-id/locations/global/publishers/google/models/gemini-3.1-flash-lite:generateContent
+{
+  "contents": [
+    {
+      "parts": [
+        {
+          "text": "Hi! Who are you?"
+        }
+      ],
+      "role": "user"
+    }
+  ],
+  "tools": [
+    {
+      "functionDeclarations": [
+        {
+          "description": "Get the book chunks filtered by author name",
+          "name": "get_book_by_author",
+          "parameters": {
+            "properties": {
+              "author": {
+                "description": "The author name",
+                "enum": [
+                  "C. F. Langworthy and Caroline Louisa Hunt",
+                  "J. Twamley",
+                  "George E. Newell",
+                  "T. D. Curtis",
+                  "Charles Thom and W. W. Fisk",
+                  "Thomas Wilson Reid",
+                  "Bob Brown",
+                  "Charles S. Brooks",
+                  "<instructor>"
+                ],
+                "type": "STRING"
+              },
+              "search_content": {
+                "description": "The search text to filter content from books. The search term is compared against the book text based on cosine similarity. Expand the search term to a a sentence or two to get better matches",
+                "type": "STRING"
+              }
+            },
+            "required": [
+              "author",
+              "search_content"
+            ],
+            "type": "OBJECT"
+          }
+        },
+        {
+          "description": "Get the book chunks filtered by search terms",
+          "name": "get_book_by_search_content",
+          "parameters": {
+            "properties": {
+              "search_content": {
+                "description": "The search text to filter content from books. The search term is compared against the book text based on cosine similarity. Expand the search term to a a sentence or two to get better matches",
+                "type": "STRING"
+              }
+            },
+            "required": [
+              "search_content"
+            ],
+            "type": "OBJECT"
+          }
+        }
+      ]
+    }
+  ],
+  "generationConfig": {
+    "temperature": 0.0
+  }
+}
+top-level keys: ['contents', 'tools', 'generationConfig']
+-- stopped here: nothing was sent to Vertex AI --
+[exit 1]

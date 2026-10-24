@@ -1,0 +1,9 @@
+$ cd 4-production-ready && uv run --project .. python -W ignore /checks/c5_error_event.py 2>&1 | grep -E '^event|Error' | head
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host generativelanguage.googleapis.com:443 ssl:<ssl.SSLContext object at 0x7fd0cf68e990> [Temporary failure in name resolution]
+event author=assistant final=True content=None error_code='ClientConnectorDNSError' error_message='Cannot connect to host generativelanguage.googleapis.com:443 ssl:<ssl.SSLContext object at 0x7fd0cf68e990> [Temporary failure in name resolution]'
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host generativelanguage.googleapis.com:443 ssl:<ssl.SSLContext object at 0x7fd0cf68e990> [Temporary failure in name resolution]
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host generativelanguage.googleapis.com:443 ssl:<ssl.SSLContext object at 0x7fd0cf68e990> [Temporary failure in name resolution]
+[exit 0]

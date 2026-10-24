@@ -1,0 +1,31 @@
+$ python cli.py --act 4 --fixture --memory-db outputs/my-memory.sqlite --customer shivas --remember-preference 'Prefer nonalcoholic pairings today' --email-decision decline | grep -E '^Memory for'
+Ignored an approval response with id 'af-call-317e15f051eb4cc39485212c5c73865a' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Memory for shivas: mild cheeses; nonalcoholic pairings; Prefer nonalcoholic pairings today
+[exit 0]
+
+$ python cli.py --act 4 --fixture --memory-db outputs/my-memory.sqlite --customer shivas --email-decision decline | grep -E '^Memory for'
+Ignored an approval response with id 'af-call-88759c572665453595aff52536c0a0f3' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Memory for shivas: mild cheeses; nonalcoholic pairings; Prefer nonalcoholic pairings today
+[exit 0]
+
+$ python cli.py --act 4 --fixture --memory-db outputs/my-memory.sqlite --customer shivas --remember-preference 'mild cheeses' --email-decision decline | grep -E '^Memory for'
+Ignored an approval response with id 'af-call-d00d3d69062b494ba3e3b089866c746d' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Memory for shivas: nonalcoholic pairings; Prefer nonalcoholic pairings today; mild cheeses
+[exit 0]
+
+$ python cli.py --act 4 --fixture --customer shivas --email-decision decline | grep -E '^Memory for'
+Ignored an approval response with id 'af-call-7a59d777e6ed4551906abc9240ff9c5f' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Memory for shivas: mild cheeses; nonalcoholic pairings
+[exit 0]
+
+$ python cli.py --act 4 --fixture --customer pavlos --memory-db outputs/my-memory.sqlite --email-decision decline | grep -E '^Memory for'
+Ignored an approval response with id 'af-call-776c395cf7954a2b9265d537f2287187' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Memory for pavlos: French cheeses; funky cheeses
+[exit 0]
+
+$ ls outputs/
+772eb56f7fa345d194040793096cb540
+my-memory.sqlite
+observability.sqlite
+[exit 0]
+

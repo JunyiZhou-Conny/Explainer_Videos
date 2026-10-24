@@ -1,0 +1,1449 @@
+$ python cli.py --compare context-fixture-1 context-fixture-2
+{
+  "before": "context-fixture-1",
+  "after": "context-fixture-2",
+  "changed_configuration": [
+    "prompt"
+  ],
+  "confounding_changes": [],
+  "evaluator_changed": false,
+  "results": [
+    {
+      "case_id": "standard:basic",
+      "repetition": 1,
+      "outcome": "unchanged",
+      "before": {
+        "run_id": "aac39f4b2404478d86eca8a2ce7d0891",
+        "case_id": "standard:basic",
+        "repetition": 1,
+        "run_status": "completed",
+        "checks": [
+          {
+            "check_id": "human.prose_quality",
+            "status": "not_applicable",
+            "expected": "Instructor review",
+            "observed": null,
+            "explanation": "Automated checks do not score prose, clarification wording or serving-plan quality."
+          },
+          {
+            "check_id": "outcome.proposal",
+            "status": "pass",
+            "expected": "valid_proposal",
+            "observed": "valid_proposal",
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.check_before_action",
+            "status": "pass",
+            "expected": [],
+            "observed": [],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.email_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.manager_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_duplicate_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.preview_matches_final",
+            "status": "pass",
+            "expected": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "observed": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.valid_checkout",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          }
+        ],
+        "passed": true,
+        "observation": {
+          "duration_seconds": 0.318659,
+          "missing_usage_calls": 0,
+          "model_calls": 2,
+          "normalized_output": {
+            "carts": [
+              [
+                {
+                  "grams": 350,
+                  "product": "bucheron"
+                },
+                {
+                  "grams": 300,
+                  "product": "epoisses"
+                },
+                {
+                  "grams": 350,
+                  "product": "taleggio"
+                }
+              ]
+            ],
+            "html_hashes": [],
+            "html_saved": 0,
+            "orders_placed": 0,
+            "skills": [],
+            "status": "valid_proposal"
+          },
+          "output_fingerprint": "1501e8d93ca5022ae169a047c888d95a8017391b0849bf321847476759f4a6c7",
+          "response_fingerprint": "374b6a763fc89e8d4d72c74e1bd6964548fb0538653a47ad7622522fd67181e9",
+          "response_text": "Scripted proposal or abstention; review the recorded checks.",
+          "tool_path": [
+            "preview_order"
+          ],
+          "usage": {
+            "input_token_count": 200,
+            "output_token_count": 40,
+            "total_token_count": 240
+          }
+        },
+        "version_id": "d7b52f15f72823afe302c7d428a4fdb090a97903cd218bb31b5851e35b4da652"
+      },
+      "after": {
+        "run_id": "7ae66f1c9c3b4577a6e4ff5e0219a231",
+        "case_id": "standard:basic",
+        "repetition": 1,
+        "run_status": "completed",
+        "checks": [
+          {
+            "check_id": "human.prose_quality",
+            "status": "not_applicable",
+            "expected": "Instructor review",
+            "observed": null,
+            "explanation": "Automated checks do not score prose, clarification wording or serving-plan quality."
+          },
+          {
+            "check_id": "outcome.proposal",
+            "status": "pass",
+            "expected": "valid_proposal",
+            "observed": "valid_proposal",
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.check_before_action",
+            "status": "pass",
+            "expected": [],
+            "observed": [],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.email_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.manager_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_duplicate_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.preview_matches_final",
+            "status": "pass",
+            "expected": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "observed": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.valid_checkout",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          }
+        ],
+        "passed": true,
+        "observation": {
+          "duration_seconds": 0.477108,
+          "missing_usage_calls": 0,
+          "model_calls": 2,
+          "normalized_output": {
+            "carts": [
+              [
+                {
+                  "grams": 350,
+                  "product": "bucheron"
+                },
+                {
+                  "grams": 300,
+                  "product": "epoisses"
+                },
+                {
+                  "grams": 350,
+                  "product": "taleggio"
+                }
+              ]
+            ],
+            "html_hashes": [],
+            "html_saved": 0,
+            "orders_placed": 0,
+            "skills": [],
+            "status": "valid_proposal"
+          },
+          "output_fingerprint": "1501e8d93ca5022ae169a047c888d95a8017391b0849bf321847476759f4a6c7",
+          "response_fingerprint": "374b6a763fc89e8d4d72c74e1bd6964548fb0538653a47ad7622522fd67181e9",
+          "response_text": "Scripted proposal or abstention; review the recorded checks.",
+          "tool_path": [
+            "preview_order"
+          ],
+          "usage": {
+            "input_token_count": 200,
+            "output_token_count": 40,
+            "total_token_count": 240
+          }
+        },
+        "version_id": "8405111bbee844f3058b1dd22a8de858b607de2de4d73629adbc21cb91db4653"
+      },
+      "structured_output_changed": false,
+      "response_text_changed": false,
+      "check_changes": [],
+      "metric_deltas": {
+        "model_calls": 0,
+        "duration_seconds": 0.15844899999999995,
+        "input_token_count": 0,
+        "output_token_count": 0,
+        "total_token_count": 0
+      }
+    },
+    {
+      "case_id": "standard:basic",
+      "repetition": 2,
+      "outcome": "unchanged",
+      "before": {
+        "run_id": "f7c58f2cd1ab45778cb8a938c19fc8a6",
+        "case_id": "standard:basic",
+        "repetition": 2,
+        "run_status": "completed",
+        "checks": [
+          {
+            "check_id": "human.prose_quality",
+            "status": "not_applicable",
+            "expected": "Instructor review",
+            "observed": null,
+            "explanation": "Automated checks do not score prose, clarification wording or serving-plan quality."
+          },
+          {
+            "check_id": "outcome.proposal",
+            "status": "pass",
+            "expected": "valid_proposal",
+            "observed": "valid_proposal",
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.check_before_action",
+            "status": "pass",
+            "expected": [],
+            "observed": [],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.email_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.manager_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_duplicate_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.preview_matches_final",
+            "status": "pass",
+            "expected": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "observed": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.valid_checkout",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          }
+        ],
+        "passed": true,
+        "observation": {
+          "duration_seconds": 0.04782,
+          "missing_usage_calls": 0,
+          "model_calls": 2,
+          "normalized_output": {
+            "carts": [
+              [
+                {
+                  "grams": 350,
+                  "product": "bucheron"
+                },
+                {
+                  "grams": 300,
+                  "product": "epoisses"
+                },
+                {
+                  "grams": 350,
+                  "product": "taleggio"
+                }
+              ]
+            ],
+            "html_hashes": [],
+            "html_saved": 0,
+            "orders_placed": 0,
+            "skills": [],
+            "status": "valid_proposal"
+          },
+          "output_fingerprint": "1501e8d93ca5022ae169a047c888d95a8017391b0849bf321847476759f4a6c7",
+          "response_fingerprint": "374b6a763fc89e8d4d72c74e1bd6964548fb0538653a47ad7622522fd67181e9",
+          "response_text": "Scripted proposal or abstention; review the recorded checks.",
+          "tool_path": [
+            "preview_order"
+          ],
+          "usage": {
+            "input_token_count": 200,
+            "output_token_count": 40,
+            "total_token_count": 240
+          }
+        },
+        "version_id": "d7b52f15f72823afe302c7d428a4fdb090a97903cd218bb31b5851e35b4da652"
+      },
+      "after": {
+        "run_id": "700363e4ac4b46ec8633714302f9a1ec",
+        "case_id": "standard:basic",
+        "repetition": 2,
+        "run_status": "completed",
+        "checks": [
+          {
+            "check_id": "human.prose_quality",
+            "status": "not_applicable",
+            "expected": "Instructor review",
+            "observed": null,
+            "explanation": "Automated checks do not score prose, clarification wording or serving-plan quality."
+          },
+          {
+            "check_id": "outcome.proposal",
+            "status": "pass",
+            "expected": "valid_proposal",
+            "observed": "valid_proposal",
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.check_before_action",
+            "status": "pass",
+            "expected": [],
+            "observed": [],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.email_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.manager_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_duplicate_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.preview_matches_final",
+            "status": "pass",
+            "expected": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "observed": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.valid_checkout",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          }
+        ],
+        "passed": true,
+        "observation": {
+          "duration_seconds": 0.049286,
+          "missing_usage_calls": 0,
+          "model_calls": 2,
+          "normalized_output": {
+            "carts": [
+              [
+                {
+                  "grams": 350,
+                  "product": "bucheron"
+                },
+                {
+                  "grams": 300,
+                  "product": "epoisses"
+                },
+                {
+                  "grams": 350,
+                  "product": "taleggio"
+                }
+              ]
+            ],
+            "html_hashes": [],
+            "html_saved": 0,
+            "orders_placed": 0,
+            "skills": [],
+            "status": "valid_proposal"
+          },
+          "output_fingerprint": "1501e8d93ca5022ae169a047c888d95a8017391b0849bf321847476759f4a6c7",
+          "response_fingerprint": "374b6a763fc89e8d4d72c74e1bd6964548fb0538653a47ad7622522fd67181e9",
+          "response_text": "Scripted proposal or abstention; review the recorded checks.",
+          "tool_path": [
+            "preview_order"
+          ],
+          "usage": {
+            "input_token_count": 200,
+            "output_token_count": 40,
+            "total_token_count": 240
+          }
+        },
+        "version_id": "8405111bbee844f3058b1dd22a8de858b607de2de4d73629adbc21cb91db4653"
+      },
+      "structured_output_changed": false,
+      "response_text_changed": false,
+      "check_changes": [],
+      "metric_deltas": {
+        "model_calls": 0,
+        "duration_seconds": 0.001466000000000002,
+        "input_token_count": 0,
+        "output_token_count": 0,
+        "total_token_count": 0
+      }
+    },
+    {
+      "case_id": "standard:enriched",
+      "repetition": 1,
+      "outcome": "unchanged",
+      "before": {
+        "run_id": "1ab3d275110d4dbf8b82e34916931031",
+        "case_id": "standard:enriched",
+        "repetition": 1,
+        "run_status": "completed",
+        "checks": [
+          {
+            "check_id": "human.prose_quality",
+            "status": "not_applicable",
+            "expected": "Instructor review",
+            "observed": null,
+            "explanation": "Automated checks do not score prose, clarification wording or serving-plan quality."
+          },
+          {
+            "check_id": "outcome.proposal",
+            "status": "pass",
+            "expected": "valid_proposal",
+            "observed": "valid_proposal",
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.check_before_action",
+            "status": "pass",
+            "expected": [],
+            "observed": [],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.email_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.manager_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_duplicate_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.preview_matches_final",
+            "status": "pass",
+            "expected": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "observed": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.valid_checkout",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          }
+        ],
+        "passed": true,
+        "observation": {
+          "duration_seconds": 0.060682,
+          "missing_usage_calls": 0,
+          "model_calls": 2,
+          "normalized_output": {
+            "carts": [
+              [
+                {
+                  "grams": 350,
+                  "product": "bucheron"
+                },
+                {
+                  "grams": 300,
+                  "product": "epoisses"
+                },
+                {
+                  "grams": 350,
+                  "product": "taleggio"
+                }
+              ]
+            ],
+            "html_hashes": [],
+            "html_saved": 0,
+            "orders_placed": 0,
+            "skills": [],
+            "status": "valid_proposal"
+          },
+          "output_fingerprint": "1501e8d93ca5022ae169a047c888d95a8017391b0849bf321847476759f4a6c7",
+          "response_fingerprint": "374b6a763fc89e8d4d72c74e1bd6964548fb0538653a47ad7622522fd67181e9",
+          "response_text": "Scripted proposal or abstention; review the recorded checks.",
+          "tool_path": [
+            "preview_order"
+          ],
+          "usage": {
+            "input_token_count": 200,
+            "output_token_count": 40,
+            "total_token_count": 240
+          }
+        },
+        "version_id": "cbd9cf4b77f80e75eabfc3b4cd426bdcac956ecbe3b9a0563a7c8c488df8b1d5"
+      },
+      "after": {
+        "run_id": "08836afb128c47b095e49eeec92a7841",
+        "case_id": "standard:enriched",
+        "repetition": 1,
+        "run_status": "completed",
+        "checks": [
+          {
+            "check_id": "human.prose_quality",
+            "status": "not_applicable",
+            "expected": "Instructor review",
+            "observed": null,
+            "explanation": "Automated checks do not score prose, clarification wording or serving-plan quality."
+          },
+          {
+            "check_id": "outcome.proposal",
+            "status": "pass",
+            "expected": "valid_proposal",
+            "observed": "valid_proposal",
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.check_before_action",
+            "status": "pass",
+            "expected": [],
+            "observed": [],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.email_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.manager_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_duplicate_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.preview_matches_final",
+            "status": "pass",
+            "expected": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "observed": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.valid_checkout",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          }
+        ],
+        "passed": true,
+        "observation": {
+          "duration_seconds": 0.057388,
+          "missing_usage_calls": 0,
+          "model_calls": 2,
+          "normalized_output": {
+            "carts": [
+              [
+                {
+                  "grams": 350,
+                  "product": "bucheron"
+                },
+                {
+                  "grams": 300,
+                  "product": "epoisses"
+                },
+                {
+                  "grams": 350,
+                  "product": "taleggio"
+                }
+              ]
+            ],
+            "html_hashes": [],
+            "html_saved": 0,
+            "orders_placed": 0,
+            "skills": [],
+            "status": "valid_proposal"
+          },
+          "output_fingerprint": "1501e8d93ca5022ae169a047c888d95a8017391b0849bf321847476759f4a6c7",
+          "response_fingerprint": "374b6a763fc89e8d4d72c74e1bd6964548fb0538653a47ad7622522fd67181e9",
+          "response_text": "Scripted proposal or abstention; review the recorded checks.",
+          "tool_path": [
+            "preview_order"
+          ],
+          "usage": {
+            "input_token_count": 200,
+            "output_token_count": 40,
+            "total_token_count": 240
+          }
+        },
+        "version_id": "f77f9a12e60cb2208e424e51fac815ac2b3f37387fd6c794ffc3ec1bfdbda225"
+      },
+      "structured_output_changed": false,
+      "response_text_changed": false,
+      "check_changes": [],
+      "metric_deltas": {
+        "model_calls": 0,
+        "duration_seconds": -0.0032939999999999983,
+        "input_token_count": 0,
+        "output_token_count": 0,
+        "total_token_count": 0
+      }
+    },
+    {
+      "case_id": "standard:enriched",
+      "repetition": 2,
+      "outcome": "unchanged",
+      "before": {
+        "run_id": "f5f3d867d72149f7b4cea87b107076a6",
+        "case_id": "standard:enriched",
+        "repetition": 2,
+        "run_status": "completed",
+        "checks": [
+          {
+            "check_id": "human.prose_quality",
+            "status": "not_applicable",
+            "expected": "Instructor review",
+            "observed": null,
+            "explanation": "Automated checks do not score prose, clarification wording or serving-plan quality."
+          },
+          {
+            "check_id": "outcome.proposal",
+            "status": "pass",
+            "expected": "valid_proposal",
+            "observed": "valid_proposal",
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.check_before_action",
+            "status": "pass",
+            "expected": [],
+            "observed": [],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.email_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.manager_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_duplicate_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.preview_matches_final",
+            "status": "pass",
+            "expected": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "observed": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.valid_checkout",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          }
+        ],
+        "passed": true,
+        "observation": {
+          "duration_seconds": 0.051971,
+          "missing_usage_calls": 0,
+          "model_calls": 2,
+          "normalized_output": {
+            "carts": [
+              [
+                {
+                  "grams": 350,
+                  "product": "bucheron"
+                },
+                {
+                  "grams": 300,
+                  "product": "epoisses"
+                },
+                {
+                  "grams": 350,
+                  "product": "taleggio"
+                }
+              ]
+            ],
+            "html_hashes": [],
+            "html_saved": 0,
+            "orders_placed": 0,
+            "skills": [],
+            "status": "valid_proposal"
+          },
+          "output_fingerprint": "1501e8d93ca5022ae169a047c888d95a8017391b0849bf321847476759f4a6c7",
+          "response_fingerprint": "374b6a763fc89e8d4d72c74e1bd6964548fb0538653a47ad7622522fd67181e9",
+          "response_text": "Scripted proposal or abstention; review the recorded checks.",
+          "tool_path": [
+            "preview_order"
+          ],
+          "usage": {
+            "input_token_count": 200,
+            "output_token_count": 40,
+            "total_token_count": 240
+          }
+        },
+        "version_id": "cbd9cf4b77f80e75eabfc3b4cd426bdcac956ecbe3b9a0563a7c8c488df8b1d5"
+      },
+      "after": {
+        "run_id": "e3fff822e978431298f340748a378c29",
+        "case_id": "standard:enriched",
+        "repetition": 2,
+        "run_status": "completed",
+        "checks": [
+          {
+            "check_id": "human.prose_quality",
+            "status": "not_applicable",
+            "expected": "Instructor review",
+            "observed": null,
+            "explanation": "Automated checks do not score prose, clarification wording or serving-plan quality."
+          },
+          {
+            "check_id": "outcome.proposal",
+            "status": "pass",
+            "expected": "valid_proposal",
+            "observed": "valid_proposal",
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.check_before_action",
+            "status": "pass",
+            "expected": [],
+            "observed": [],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.email_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.manager_authority",
+            "status": "pass",
+            "expected": true,
+            "observed": true,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_duplicate_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.no_orders",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.preview_matches_final",
+            "status": "pass",
+            "expected": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "observed": [
+              {
+                "grams": 350,
+                "product": "bucheron"
+              },
+              {
+                "grams": 300,
+                "product": "epoisses"
+              },
+              {
+                "grams": 350,
+                "product": "taleggio"
+              }
+            ],
+            "explanation": "Checked recorded application state, not final prose."
+          },
+          {
+            "check_id": "process.valid_checkout",
+            "status": "pass",
+            "expected": 0,
+            "observed": 0,
+            "explanation": "Checked recorded application state, not final prose."
+          }
+        ],
+        "passed": true,
+        "observation": {
+          "duration_seconds": 0.074323,
+          "missing_usage_calls": 0,
+          "model_calls": 2,
+          "normalized_output": {
+            "carts": [
+              [
+                {
+                  "grams": 350,
+                  "product": "bucheron"
+                },
+                {
+                  "grams": 300,
+                  "product": "epoisses"
+                },
+                {
+                  "grams": 350,
+                  "product": "taleggio"
+                }
+              ]
+            ],
+            "html_hashes": [],
+            "html_saved": 0,
+            "orders_placed": 0,
+            "skills": [],
+            "status": "valid_proposal"
+          },
+          "output_fingerprint": "1501e8d93ca5022ae169a047c888d95a8017391b0849bf321847476759f4a6c7",
+          "response_fingerprint": "374b6a763fc89e8d4d72c74e1bd6964548fb0538653a47ad7622522fd67181e9",
+          "response_text": "Scripted proposal or abstention; review the recorded checks.",
+          "tool_path": [
+            "preview_order"
+          ],
+          "usage": {
+            "input_token_count": 200,
+            "output_token_count": 40,
+            "total_token_count": 240
+          }
+        },
+        "version_id": "f77f9a12e60cb2208e424e51fac815ac2b3f37387fd6c794ffc3ec1bfdbda225"
+      },
+      "structured_output_changed": false,
+      "response_text_changed": false,
+      "check_changes": [],
+      "metric_deltas": {
+        "model_calls": 0,
+        "duration_seconds": 0.022351999999999997,
+        "input_token_count": 0,
+        "output_token_count": 0,
+        "total_token_count": 0
+      }
+    }
+  ],
+  "changed_paths": [
+    "prompt"
+  ],
+  "batch_results": [
+    {
+      "label": "context-fixture-1",
+      "mode": "fixture",
+      "passed": 4,
+      "scheduled": 4,
+      "missing": 0,
+      "case_summary": [
+        {
+          "case_id": "standard:basic",
+          "passed": 2,
+          "scheduled": 2,
+          "recorded": 2,
+          "output_variants": [
+            {
+              "count": 2,
+              "output": {
+                "carts": [
+                  [
+                    {
+                      "grams": 350,
+                      "product": "bucheron"
+                    },
+                    {
+                      "grams": 300,
+                      "product": "epoisses"
+                    },
+                    {
+                      "grams": 350,
+                      "product": "taleggio"
+                    }
+                  ]
+                ],
+                "html_hashes": [],
+                "html_saved": 0,
+                "orders_placed": 0,
+                "skills": [],
+                "status": "valid_proposal"
+              }
+            }
+          ],
+          "distinct_tool_paths": 1,
+          "distinct_response_texts": 1,
+          "latency_seconds": {
+            "mean": 0.1832395,
+            "min": 0.04782,
+            "max": 0.318659
+          },
+          "model_calls": [
+            2,
+            2
+          ],
+          "token_usage": [
+            {
+              "input_token_count": 200,
+              "output_token_count": 40,
+              "total_token_count": 240
+            },
+            {
+              "input_token_count": 200,
+              "output_token_count": 40,
+              "total_token_count": 240
+            }
+          ],
+          "check_counts": {
+            "not_applicable": 2,
+            "pass": 16
+          },
+          "unexercised_checks": []
+        },
+        {
+          "case_id": "standard:enriched",
+          "passed": 2,
+          "scheduled": 2,
+          "recorded": 2,
+          "output_variants": [
+            {
+              "count": 2,
+              "output": {
+                "carts": [
+                  [
+                    {
+                      "grams": 350,
+                      "product": "bucheron"
+                    },
+                    {
+                      "grams": 300,
+                      "product": "epoisses"
+                    },
+                    {
+                      "grams": 350,
+                      "product": "taleggio"
+                    }
+                  ]
+                ],
+                "html_hashes": [],
+                "html_saved": 0,
+                "orders_placed": 0,
+                "skills": [],
+                "status": "valid_proposal"
+              }
+            }
+          ],
+          "distinct_tool_paths": 1,
+          "distinct_response_texts": 1,
+          "latency_seconds": {
+            "mean": 0.0563265,
+            "min": 0.051971,
+            "max": 0.060682
+          },
+          "model_calls": [
+            2,
+            2
+          ],
+          "token_usage": [
+            {
+              "input_token_count": 200,
+              "output_token_count": 40,
+              "total_token_count": 240
+            },
+            {
+              "input_token_count": 200,
+              "output_token_count": 40,
+              "total_token_count": 240
+            }
+          ],
+          "check_counts": {
+            "not_applicable": 2,
+            "pass": 16
+          },
+          "unexercised_checks": []
+        }
+      ]
+    },
+    {
+      "label": "context-fixture-2",
+      "mode": "fixture",
+      "passed": 4,
+      "scheduled": 4,
+      "missing": 0,
+      "case_summary": [
+        {
+          "case_id": "standard:basic",
+          "passed": 2,
+          "scheduled": 2,
+          "recorded": 2,
+          "output_variants": [
+            {
+              "count": 2,
+              "output": {
+                "carts": [
+                  [
+                    {
+                      "grams": 350,
+                      "product": "bucheron"
+                    },
+                    {
+                      "grams": 300,
+                      "product": "epoisses"
+                    },
+                    {
+                      "grams": 350,
+                      "product": "taleggio"
+                    }
+                  ]
+                ],
+                "html_hashes": [],
+                "html_saved": 0,
+                "orders_placed": 0,
+                "skills": [],
+                "status": "valid_proposal"
+              }
+            }
+          ],
+          "distinct_tool_paths": 1,
+          "distinct_response_texts": 1,
+          "latency_seconds": {
+            "mean": 0.263197,
+            "min": 0.049286,
+            "max": 0.477108
+          },
+          "model_calls": [
+            2,
+            2
+          ],
+          "token_usage": [
+            {
+              "input_token_count": 200,
+              "output_token_count": 40,
+              "total_token_count": 240
+            },
+            {
+              "input_token_count": 200,
+              "output_token_count": 40,
+              "total_token_count": 240
+            }
+          ],
+          "check_counts": {
+            "not_applicable": 2,
+            "pass": 16
+          },
+          "unexercised_checks": []
+        },
+        {
+          "case_id": "standard:enriched",
+          "passed": 2,
+          "scheduled": 2,
+          "recorded": 2,
+          "output_variants": [
+            {
+              "count": 2,
+              "output": {
+                "carts": [
+                  [
+                    {
+                      "grams": 350,
+                      "product": "bucheron"
+                    },
+                    {
+                      "grams": 300,
+                      "product": "epoisses"
+                    },
+                    {
+                      "grams": 350,
+                      "product": "taleggio"
+                    }
+                  ]
+                ],
+                "html_hashes": [],
+                "html_saved": 0,
+                "orders_placed": 0,
+                "skills": [],
+                "status": "valid_proposal"
+              }
+            }
+          ],
+          "distinct_tool_paths": 1,
+          "distinct_response_texts": 1,
+          "latency_seconds": {
+            "mean": 0.0658555,
+            "min": 0.057388,
+            "max": 0.074323
+          },
+          "model_calls": [
+            2,
+            2
+          ],
+          "token_usage": [
+            {
+              "input_token_count": 200,
+              "output_token_count": 40,
+              "total_token_count": 240
+            },
+            {
+              "input_token_count": 200,
+              "output_token_count": 40,
+              "total_token_count": 240
+            }
+          ],
+          "check_counts": {
+            "not_applicable": 2,
+            "pass": 16
+          },
+          "unexercised_checks": []
+        }
+      ]
+    }
+  ],
+  "interpretation": "Matched repetitions are observations, not matched random seeds. Prompt/skill edits can be compared; code, data, model or settings changes are confounders. Inspect changed paths and coverage before attributing improvements."
+}
+[exit 0]

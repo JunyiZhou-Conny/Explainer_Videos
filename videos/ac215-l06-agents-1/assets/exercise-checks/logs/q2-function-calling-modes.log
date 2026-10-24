@@ -1,0 +1,22 @@
+$ python -c 'import google.genai, inspect; print("google-genai", google.genai.__version__)'; grep -n -B1 -A1 -E '^  (AUTO|ANY|NONE|VALIDATED|MODE_UNSPECIFIED) = ' /.venv/lib/python3.12/site-packages/google/genai/types.py | head -40
+google-genai 1.39.1
+205-
+206:  MODE_UNSPECIFIED = 'MODE_UNSPECIFIED'
+207-  """Always trigger retrieval."""
+--
+477-
+478:  MODE_UNSPECIFIED = 'MODE_UNSPECIFIED'
+479-  """Always trigger retrieval."""
+--
+495-
+496:  MODE_UNSPECIFIED = 'MODE_UNSPECIFIED'
+497-  """The function calling config mode is unspecified. Should not be used."""
+498:  AUTO = 'AUTO'
+499-  """Default model behavior, model decides to predict either function calls or natural language response."""
+500:  ANY = 'ANY'
+501-  """Model is constrained to always predicting function calls only. If "allowed_function_names" are set, the predicted function calls will be limited to any one of "allowed_function_names", else the predicted function calls will be any one of the provided "function_declarations"."""
+502:  NONE = 'NONE'
+503-  """Model will not predict any function calls. Model behavior is same as when not passing any function declarations."""
+504:  VALIDATED = 'VALIDATED'
+505-  """Model decides to predict either a function call or a natural language response, but will validate function calls with constrained decoding. If "allowed_function_names" are set, the predicted function call will be limited to any one of "allowed_function_names", else the predicted function call will be any one of the provided "function_declarations"."""
+[exit 0]

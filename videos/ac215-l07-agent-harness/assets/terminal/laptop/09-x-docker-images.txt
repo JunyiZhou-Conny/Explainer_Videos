@@ -1,0 +1,5 @@
+$ docker images
+IMAGE                       ID             DISK USAGE   CONTENT SIZE   EXTRA
+agent-harness:latest        3632ecb9fff8       1.77GB             0B   U    
+python:3.13-slim-bookworm   30b8ab9d6ada        128MB             0B        
+[exit 0]

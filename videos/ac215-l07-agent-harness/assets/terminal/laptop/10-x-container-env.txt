@@ -1,0 +1,5 @@
+$ docker inspect agent-harness --format '{{range .Config.Env}}{{println .}}{{end}}' | grep -E '^(OPENAI_API_KEY|GCP_PROJECT|GOOGLE_APPLICATION_CREDENTIALS)='
+GOOGLE_APPLICATION_CREDENTIALS=/secrets/ml-workflow.json
+GCP_PROJECT=ac215-project
+OPENAI_API_KEY=YOUR_OPENAI_API_KEY
+[exit 0]

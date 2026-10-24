@@ -145,3 +145,31 @@ Havarti: {ipa: "həvˈɑːɹɾi", say: "huh-var-tee"}
 "1.27.5": {ipa: "wˈʌn pɔɪnt twˈɛnti sˈɛvən pɔɪnt fˈaɪv", say: "one point twenty-seven point five"}
 "3.10": {ipa: "θɹˈiː pɔɪnt tˈɛn", say: "three point ten"}
 "406": {ipa: "fˈɔːɹ ˈoʊ sˈɪks", say: "four oh six"}
+# L06 whole-video ASR pass: phrases only L06 speaks. espeak reads "tear down" as tˈɪɹ (crying) in these
+# sentences; L05's "Pause and tear down now" has the same slip and is left to L05's owner.
+"Before part 2, tear down": {ipa: "bᵻfˌɔːɹ pˈɑːɹt tˈuː, tˈɛɹ dˈaʊn", say: "Before part 2, tare down"}
+"and tear down.": {ipa: "ænd tˈɛɹ dˈaʊn.", say: "and tare down."}
+"Tear down": {ipa: "tˈɛɹ dˈaʊn", say: "Tare down"}
+"Approval lives": {ipa: "ɐpɹˈuːvəl lˈɪvz", say: "approval livz"}
+Resending: {ipa: "ɹiːsˈɛndɪŋ", say: "ree-sending"}
+"Kept that database": {ipa: "kˈɛpt ðæt dˈeɪtəbˌeɪs", say: "kept that day-tuh-base"}
+"use agents": {ipa: "jˈuːz ˈeɪdʒənts", say: "yooz agents"}
+# AC215 L07 (versions with two dots, cheese names and terms only L07 says; SQLite as two phrases because L05 says
+# the bare word)
+"3.13.16": {ipa: "θɹˈiː pɔɪnt θˈɜːtiːn pɔɪnt sˈɪkstiːn", say: "three point thirteen point sixteen"}
+"1.19.0": {ipa: "wˈʌn pɔɪnt nˈaɪntiːn pɔɪnt zˈiəɹoʊ", say: "one point nineteen point zero"}
+"1.77": {ipa: "wˈʌn pɔɪnt sˈɛvən sˈɛvən", say: "one point seven seven"}
+SKILL.md: {ipa: "skˈɪl dˈɑːt ˌɛmdˈiː", say: "skill dot M-D"}
+"SHA-256": {ipa: "ʃˈɑː tˈuː fˈɪfti sˈɪks", say: "shah two fifty-six"}
+"401": {ipa: "fˈɔːɹ ˈoʊ wˈʌn", say: "four oh one"}
+"Batch A": {ipa: "bˈætʃ ˈeɪ", say: "Batch A"}
+Époisses: {ipa: "eɪpwˈɑːs", say: "ay-pwahss"}
+Taleggio: {ipa: "tɑːlˈɛdʒoʊ", say: "tah-leh-joh"}
+Bûcheron: {ipa: "bˌuːʃəɹˈoʊn", say: "boo-shuh-rohn"}
+Comté: {ipa: "kɔːntˈeɪ", say: "kon-tay"}
+"SQLite database": {ipa: "ˌɛskjˌuːˌɛlˈaɪt dˈeɪɾəbˌeɪs", say: "S-Q-L-ite database"}
+"in SQLite": {ipa: "ɪn ˌɛskjˌuːˌɛlˈaɪt", say: "in S-Q-L-ite"}
+to-do: {ipa: "tˈuːdˌuː", say: "to-do"}
+eval: {ipa: "ˈiːvæl", say: "ee-val"}
+unittest: {ipa: "jˈuːnɪt tˈɛst", say: "unit test"}
+pytest: {ipa: "pˈaɪ tˈɛst", say: "pie test"}

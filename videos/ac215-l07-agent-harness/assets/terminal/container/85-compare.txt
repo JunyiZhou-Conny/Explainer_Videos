@@ -1,0 +1,439 @@
+$ python cli.py --compare context-live-a context-live-b --json-output outputs/context-comparison.json
+{
+  "before": "context-live-a",
+  "after": "context-live-b",
+  "changed_configuration": [
+    "prompt"
+  ],
+  "confounding_changes": [],
+  "evaluator_changed": false,
+  "results": [
+    {
+      "case_id": "missing-details:enriched",
+      "repetition": 1,
+      "outcome": "unchanged",
+      "before": {
+        "run_id": "95a0d82ce5424675aaefbc988190562f",
+        "case_id": "missing-details:enriched",
+        "repetition": 1,
+        "run_status": "error",
+        "checks": [
+          {
+            "check_id": "execution",
+            "status": "error",
+            "expected": "completed",
+            "observed": "ChatClientException",
+            "explanation": "(\"<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\", AuthenticationError(\"Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\"))"
+          }
+        ],
+        "passed": false,
+        "observation": {
+          "duration_seconds": 0.564223,
+          "missing_usage_calls": 1,
+          "model_calls": 1,
+          "normalized_output": {
+            "status": "error"
+          },
+          "output_fingerprint": "c7fbd9501e80a14cf61dc931140fb4d48d148c5e42ea0cef4573444061bdddfa",
+          "response_fingerprint": null,
+          "response_text": null,
+          "tool_path": [],
+          "usage": {
+            "input_token_count": null,
+            "output_token_count": null,
+            "total_token_count": null
+          }
+        },
+        "version_id": "275c6f19647b45925e70f05dc2a83d6fd1b4c493b3949680a7bf2042da812753"
+      },
+      "after": {
+        "run_id": "f45bdaeb2c0042589fff12e01d7e70e2",
+        "case_id": "missing-details:enriched",
+        "repetition": 1,
+        "run_status": "error",
+        "checks": [
+          {
+            "check_id": "execution",
+            "status": "error",
+            "expected": "completed",
+            "observed": "ChatClientException",
+            "explanation": "(\"<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\", AuthenticationError(\"Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\"))"
+          }
+        ],
+        "passed": false,
+        "observation": {
+          "duration_seconds": 0.538615,
+          "missing_usage_calls": 1,
+          "model_calls": 1,
+          "normalized_output": {
+            "status": "error"
+          },
+          "output_fingerprint": "c7fbd9501e80a14cf61dc931140fb4d48d148c5e42ea0cef4573444061bdddfa",
+          "response_fingerprint": null,
+          "response_text": null,
+          "tool_path": [],
+          "usage": {
+            "input_token_count": null,
+            "output_token_count": null,
+            "total_token_count": null
+          }
+        },
+        "version_id": "d32ddd8d5a99ebde1c9683ab1a3b6138b6812b799e040628a8f8e609474acd0a"
+      },
+      "structured_output_changed": false,
+      "response_text_changed": false,
+      "check_changes": [],
+      "metric_deltas": {
+        "model_calls": 0,
+        "duration_seconds": -0.025608000000000075,
+        "input_token_count": null,
+        "output_token_count": null,
+        "total_token_count": null
+      }
+    },
+    {
+      "case_id": "standard:enriched",
+      "repetition": 1,
+      "outcome": "unchanged",
+      "before": {
+        "run_id": "d22adc1a579a470985e7799dd5b59ea8",
+        "case_id": "standard:enriched",
+        "repetition": 1,
+        "run_status": "error",
+        "checks": [
+          {
+            "check_id": "execution",
+            "status": "error",
+            "expected": "completed",
+            "observed": "ChatClientException",
+            "explanation": "(\"<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\", AuthenticationError(\"Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\"))"
+          }
+        ],
+        "passed": false,
+        "observation": {
+          "duration_seconds": 0.820094,
+          "missing_usage_calls": 1,
+          "model_calls": 1,
+          "normalized_output": {
+            "status": "error"
+          },
+          "output_fingerprint": "c7fbd9501e80a14cf61dc931140fb4d48d148c5e42ea0cef4573444061bdddfa",
+          "response_fingerprint": null,
+          "response_text": null,
+          "tool_path": [],
+          "usage": {
+            "input_token_count": null,
+            "output_token_count": null,
+            "total_token_count": null
+          }
+        },
+        "version_id": "56f609e714fa267b1e364f106b8e85b8a414084534230956da00e0e1f0c61bbb"
+      },
+      "after": {
+        "run_id": "5c23dc2b279d4ba9a4f6570dac80df5c",
+        "case_id": "standard:enriched",
+        "repetition": 1,
+        "run_status": "error",
+        "checks": [
+          {
+            "check_id": "execution",
+            "status": "error",
+            "expected": "completed",
+            "observed": "ChatClientException",
+            "explanation": "(\"<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\", AuthenticationError(\"Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\"))"
+          }
+        ],
+        "passed": false,
+        "observation": {
+          "duration_seconds": 0.795776,
+          "missing_usage_calls": 1,
+          "model_calls": 1,
+          "normalized_output": {
+            "status": "error"
+          },
+          "output_fingerprint": "c7fbd9501e80a14cf61dc931140fb4d48d148c5e42ea0cef4573444061bdddfa",
+          "response_fingerprint": null,
+          "response_text": null,
+          "tool_path": [],
+          "usage": {
+            "input_token_count": null,
+            "output_token_count": null,
+            "total_token_count": null
+          }
+        },
+        "version_id": "ffd14ad381a9f0e78063f42be82df16d83352c3962f1cd68734b761246185f96"
+      },
+      "structured_output_changed": false,
+      "response_text_changed": false,
+      "check_changes": [],
+      "metric_deltas": {
+        "model_calls": 0,
+        "duration_seconds": -0.02431799999999995,
+        "input_token_count": null,
+        "output_token_count": null,
+        "total_token_count": null
+      }
+    },
+    {
+      "case_id": "standard:enriched",
+      "repetition": 2,
+      "outcome": "unchanged",
+      "before": {
+        "run_id": "aa617768b1664936be21d745e7c204b2",
+        "case_id": "standard:enriched",
+        "repetition": 2,
+        "run_status": "error",
+        "checks": [
+          {
+            "check_id": "execution",
+            "status": "error",
+            "expected": "completed",
+            "observed": "ChatClientException",
+            "explanation": "(\"<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\", AuthenticationError(\"Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\"))"
+          }
+        ],
+        "passed": false,
+        "observation": {
+          "duration_seconds": 0.561694,
+          "missing_usage_calls": 1,
+          "model_calls": 1,
+          "normalized_output": {
+            "status": "error"
+          },
+          "output_fingerprint": "c7fbd9501e80a14cf61dc931140fb4d48d148c5e42ea0cef4573444061bdddfa",
+          "response_fingerprint": null,
+          "response_text": null,
+          "tool_path": [],
+          "usage": {
+            "input_token_count": null,
+            "output_token_count": null,
+            "total_token_count": null
+          }
+        },
+        "version_id": "56f609e714fa267b1e364f106b8e85b8a414084534230956da00e0e1f0c61bbb"
+      },
+      "after": {
+        "run_id": "d418c378463e40a3aac76cfb08bc9220",
+        "case_id": "standard:enriched",
+        "repetition": 2,
+        "run_status": "error",
+        "checks": [
+          {
+            "check_id": "execution",
+            "status": "error",
+            "expected": "completed",
+            "observed": "ChatClientException",
+            "explanation": "(\"<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\", AuthenticationError(\"Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}\"))"
+          }
+        ],
+        "passed": false,
+        "observation": {
+          "duration_seconds": 0.597356,
+          "missing_usage_calls": 1,
+          "model_calls": 1,
+          "normalized_output": {
+            "status": "error"
+          },
+          "output_fingerprint": "c7fbd9501e80a14cf61dc931140fb4d48d148c5e42ea0cef4573444061bdddfa",
+          "response_fingerprint": null,
+          "response_text": null,
+          "tool_path": [],
+          "usage": {
+            "input_token_count": null,
+            "output_token_count": null,
+            "total_token_count": null
+          }
+        },
+        "version_id": "ffd14ad381a9f0e78063f42be82df16d83352c3962f1cd68734b761246185f96"
+      },
+      "structured_output_changed": false,
+      "response_text_changed": false,
+      "check_changes": [],
+      "metric_deltas": {
+        "model_calls": 0,
+        "duration_seconds": 0.03566199999999997,
+        "input_token_count": null,
+        "output_token_count": null,
+        "total_token_count": null
+      }
+    }
+  ],
+  "changed_paths": [
+    "prompt"
+  ],
+  "batch_results": [
+    {
+      "label": "context-live-a",
+      "mode": "live",
+      "passed": 0,
+      "scheduled": 4,
+      "missing": 1,
+      "case_summary": [
+        {
+          "case_id": "standard:enriched",
+          "passed": 0,
+          "scheduled": 2,
+          "recorded": 2,
+          "output_variants": [
+            {
+              "count": 2,
+              "output": {
+                "status": "error"
+              }
+            }
+          ],
+          "distinct_tool_paths": 1,
+          "distinct_response_texts": 0,
+          "latency_seconds": {
+            "mean": 0.690894,
+            "min": 0.561694,
+            "max": 0.820094
+          },
+          "model_calls": [
+            1,
+            1
+          ],
+          "token_usage": [
+            {
+              "input_token_count": null,
+              "output_token_count": null,
+              "total_token_count": null
+            },
+            {
+              "input_token_count": null,
+              "output_token_count": null,
+              "total_token_count": null
+            }
+          ],
+          "check_counts": {
+            "error": 2
+          },
+          "unexercised_checks": []
+        },
+        {
+          "case_id": "missing-details:enriched",
+          "passed": 0,
+          "scheduled": 2,
+          "recorded": 1,
+          "output_variants": [
+            {
+              "count": 1,
+              "output": {
+                "status": "error"
+              }
+            }
+          ],
+          "distinct_tool_paths": 1,
+          "distinct_response_texts": 0,
+          "latency_seconds": {
+            "mean": 0.564223,
+            "min": 0.564223,
+            "max": 0.564223
+          },
+          "model_calls": [
+            1
+          ],
+          "token_usage": [
+            {
+              "input_token_count": null,
+              "output_token_count": null,
+              "total_token_count": null
+            }
+          ],
+          "check_counts": {
+            "error": 1
+          },
+          "unexercised_checks": []
+        }
+      ]
+    },
+    {
+      "label": "context-live-b",
+      "mode": "live",
+      "passed": 0,
+      "scheduled": 4,
+      "missing": 1,
+      "case_summary": [
+        {
+          "case_id": "standard:enriched",
+          "passed": 0,
+          "scheduled": 2,
+          "recorded": 2,
+          "output_variants": [
+            {
+              "count": 2,
+              "output": {
+                "status": "error"
+              }
+            }
+          ],
+          "distinct_tool_paths": 1,
+          "distinct_response_texts": 0,
+          "latency_seconds": {
+            "mean": 0.696566,
+            "min": 0.597356,
+            "max": 0.795776
+          },
+          "model_calls": [
+            1,
+            1
+          ],
+          "token_usage": [
+            {
+              "input_token_count": null,
+              "output_token_count": null,
+              "total_token_count": null
+            },
+            {
+              "input_token_count": null,
+              "output_token_count": null,
+              "total_token_count": null
+            }
+          ],
+          "check_counts": {
+            "error": 2
+          },
+          "unexercised_checks": []
+        },
+        {
+          "case_id": "missing-details:enriched",
+          "passed": 0,
+          "scheduled": 2,
+          "recorded": 1,
+          "output_variants": [
+            {
+              "count": 1,
+              "output": {
+                "status": "error"
+              }
+            }
+          ],
+          "distinct_tool_paths": 1,
+          "distinct_response_texts": 0,
+          "latency_seconds": {
+            "mean": 0.538615,
+            "min": 0.538615,
+            "max": 0.538615
+          },
+          "model_calls": [
+            1
+          ],
+          "token_usage": [
+            {
+              "input_token_count": null,
+              "output_token_count": null,
+              "total_token_count": null
+            }
+          ],
+          "check_counts": {
+            "error": 1
+          },
+          "unexercised_checks": []
+        }
+      ]
+    }
+  ],
+  "interpretation": "Matched repetitions are observations, not matched random seeds. Prompt/skill edits can be compared; code, data, model or settings changes are confounders. Inspect changed paths and coverage before attributing improvements."
+}
+JSON saved: outputs/context-comparison.json
+[exit 0]

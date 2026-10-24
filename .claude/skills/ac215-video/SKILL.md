@@ -80,7 +80,8 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
    genuinely short), colours (series table), the 4–8 visual set pieces (V1…: the mechanisms that
    deserve animation — the concept before the command), the README step tracker steps, the scene
    plan (12–16 scenes, word budget each, which captures/source lines each shows), the ponder
-   questions (3–5, answerable at that point), the errata to state kindly with the fix, and the
+   questions (3–5, answerable at that point; Conny confirmed this density for the series on
+   2026-10-21, so REVIEW.md marks gate 3 met with that decision), the errata to state kindly with the fix, and the
    things never to do. The scene list (file, class, title) is fixed after the brief.
 4. **Script** (`script.md`): conventions header + `## Snn · Title — \`snn_x.py\` · \`Cls\`` sections of
    SHOW/SAY pairs, as in L1. Review with four independent lenses — technical accuracy (against
@@ -198,6 +199,22 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
   returned text from its journal to a file, then run the consumers as a second workflow that reads
   those paths (`ac215-final-review.js` stage `checks`, then stage `write`). L04's single-run review
   got five refusals, and its writer wrote REVIEW.md without the reports.
+  A workflow with parallel tracks (`ac215-video-v2.js`: scenes, subtitles and extras side by side)
+  starts its agents in a different order on every run, so a resume replays only up to the first
+  difference and re-runs finished agents (L06's resume restarted its finished S01 build). After an
+  interruption, save the finished agents' results from the journal and launch a continuation script
+  with only the pending agents (`ac215-l06-rest.js`). `ac215-final-review.js` takes `only: [keys]`
+  to re-run just the checks a limit cut off.
+  A resume can also miss the cache with the same script and args: after a worker restart on
+  2026-10-20, resuming L06's QA started the watchers again with new cache keys (stopped after a
+  minute). Read the journal's first new `started` lines right after any resume and stop at once
+  if a finished agent shows up; the reliable route is a continuation script with the finished
+  agents' results embedded in it (`ac215-l06-qa-verify.js`).
+- **Run one token-heavy workflow at a time, and put the nearest-to-release lecture first.** The
+  usage limit is a token budget per window: two workflows at once spend it twice as fast, and every
+  agent still running when it runs out loses its work. On 2026-10-20, L05's final-review checks and
+  L06's scene builds started together and both stopped after 50 minutes: 2 of the 5 checks and
+  16 of L06's 20 agents were lost. Overlap the token-heavy work with CPU-only jobs (1080p renders, stitches).
 - **State each workflow's scope in its prompts.** A user message sent mid-run reaches the running
   agents: L04's whole finishing run (28 agents) read a status question about L02/L03 as its task and
   declined every edit. Every agent prompt says what the task is, who assigned it, and that user

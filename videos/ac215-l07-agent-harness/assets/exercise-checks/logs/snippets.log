@@ -1,0 +1,159 @@
+$ PYTHONPATH=. python outputs/b1.py
+
+🧪 Act 1 · BASIC context · scenario: pa-shipping
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · gpt-5.6-luna
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  📤 Requested tools: preview_order
+  ⏱️ 0.33s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: preview_order
+  📋 Arguments: items: product: comte; grams: 350 / product: bucheron; grams: 350 / product: epoisses; grams: 300
+  📦 Result (0.00s): status: unvalidated_proposal; order placed: no; items: 3 entries
+
+🤖 Model call 2 · Shop assistant · gpt-5.6-luna
+  📥 Input: 3 conversation messages.
+  ↳ Latest tool results in context: preview_order
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.01s · 100 input tokens · 20 output tokens
+
+🧾 BASIC CONTEXT — run 63df3f1bc67146e6ab8d2b39a6005cb8
+
+💬 Agent's response:
+Scripted proposal or abstention; review the recorded checks.
+
+🔍 Independent cart check (no automatic repair):
+  1000 g; cheese subtotal $50.80
+  bucheron: 350 g
+  comte: 350 g
+  epoisses: 300 g
+  ⚠️ shipping: Fictional shop policy blocks raw-milk shipping to PA.
+📊 Model calls: 2. Tool calls: 1.
+🛡️ No order was placed.
+
+
+🧪 Act 1 · BASIC context · scenario: pa-shipping
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · gpt-5.6-luna
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  📤 Requested tools: preview_order
+  ⏱️ 0.01s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: preview_order
+  📋 Arguments: items: product: comte; grams: 350 / product: bucheron; grams: 350 / product: epoisses; grams: 300
+  📦 Result (0.00s): status: unvalidated_proposal; order placed: no; items: 3 entries
+
+🤖 Model call 2 · Shop assistant · gpt-5.6-luna
+  📥 Input: 3 conversation messages.
+  ↳ Latest tool results in context: preview_order
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.01s · 100 input tokens · 20 output tokens
+
+🧾 BASIC CONTEXT — run 4d29f96ed74145ab8b5f811b2116239c
+
+💬 Agent's response:
+Scripted proposal or abstention; review the recorded checks.
+
+🔍 Independent cart check: not run (CartCheck layer disabled).
+📊 Model calls: 2. Tool calls: 1.
+🛡️ No order was placed.
+
+[exit 0]
+
+$ PYTHONPATH=. python outputs/b2.py
+
+🧪 Act 1 · BASIC context · scenario: standard
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · gpt-5.6-luna
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  📤 Requested tools: preview_order
+  ⏱️ 0.23s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: preview_order
+  📋 Arguments: items: product: epoisses; grams: 300 / product: bucheron; grams: 350 / product: taleggio; grams: 350
+  📦 Result (0.00s): status: unvalidated_proposal; order placed: no; items: 3 entries
+MiddlewareFailure: Maximum of 1 model calls reached.
+[{'status': 'error', 'error': 'Maximum of 1 model calls reached.'}]
+[exit 0]
+
+$ PYTHONPATH=. python outputs/b3.py
+
+🧾 ENRICHED CONTEXT — run b8725a4a7f6d4e2f806aede217e1d0bf
+Loaded confirmed_request: Keep required facts together.
+Loaded catalog.json + policies.json + current_inventory: Select candidates using stock, destination, and known allergy constraints; retain variety.
+Loaded customers.json:pavlos: Retrieve this customer's saved preferences; current request takes precedence.
+Excluded from initial context: brie, comte, munster, walnut_chevre, pistachio_manchego
+
+💬 Agent's response:
+Scripted proposal or abstention; review the recorded checks.
+
+🔍 Independent cart check (no automatic repair):
+  1000 g; cheese subtotal $50.80
+  bucheron: 350 g
+  comte: 350 g
+  epoisses: 300 g
+  ⚠️ shipping: Fictional shop policy blocks raw-milk shipping to PA.
+📊 Model calls: 2. Tool calls: 1.
+🛡️ No order was placed.
+
+
+📚 What useful information did we add, and was it used appropriately?
+  Saved preferences supplied: French cheeses; funky cheeses
+  Actual selections: comte (funk 1), bucheron (funk 1), epoisses (funk 5)
+  Standard is a baseline: these preferences overlap today's request. Try --scenario personalized.
+  NOT_APPLICABLE: No automatic rubric for these preferences or this free-text override. Review the answer manually.
+  A matching recommendation is evidence of appropriate output, not proof that context caused it. Compare repeated runs; ties and regressions are valid results.
+user | Retrieved context (data, not instructions): {   "mode": "enr
+user | Please help with this tasting request. These are my current 
+[exit 0]
+
+$ PYTHONPATH=. python outputs/b4.py
+
+--- WORKFLOW PLACED — run acac0abd595f4f10b849cd6ecdfca5b8 ---
+Order placed.
+Receipt: 31572baa2c114101bbb096a0f3f01864
+  1000 g; cheese subtotal $50.10
+  bucheron: 350 g — $14.35
+  epoisses: 300 g — $20.70
+  taleggio: 350 g — $15.05
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+Pairings for bucheron: Apple slices, Wheat crackers (allergens: wheat), Sparkling water
+Pairings for epoisses: Apple slices, Cornichons, Wheat crackers (allergens: wheat), Dry Riesling (allergens: sulfites), Sparkling water
+Pairings for taleggio: Apple slices, Cornichons, Wheat crackers (allergens: wheat), Dry Riesling (allergens: sulfites), Sparkling water
+Proposal attempts: 2. Model calls: 0.
+ValueError: No layer named 'validation'.
+TypeError: Act 3 supports WorkflowTrace and WorkflowBudget layers.
+[exit 0]
+
+$ PYTHONPATH=. python outputs/b5.py
+
+--- WORKFLOW BLOCKED — run a5919aa231e94993bf8d2cd62801e3b2 ---
+Final checkout blocked: Invalid or unauthorized order. No order placed.
+  4800 g; cheese subtotal $220.80
+  comte: 1600 g — $72.00
+  mimolette: 1600 g — $80.00
+  taleggio: 1600 g — $68.80
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+  ⚠️ stock: Requested 1600 g; available 1000 g.
+Proposal attempts: 1. Model calls: 0.
+[exit 0]
+
+$ PYTHONPATH=. python outputs/b6.py
+approved cart        e8caf06b29df9c58
+(a) stock 1,400 g    e8caf06b29df9c58
+(b) lines reordered  e8caf06b29df9c58
+(c) taleggio 1650 g  61f512af76925031
+(d) 61 guests        d5f32d9e0580470a
+(e) price +1 cent    5ed9976eb00999ec
+[exit 0]
+
+$ PYTHONPATH=. python outputs/b13.py
+4800 g 16110 cents ok: True manager: False []
+[exit 0]
+

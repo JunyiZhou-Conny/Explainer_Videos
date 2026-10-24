@@ -1,0 +1,65 @@
+$ bash /checks/b11_adk_git.sh
+$ curl -s -X POST http://localhost:8000/apps/baseline/users/student/sessions; echo
+{"id":"2553cde5-ac55-40a3-9300-60f66a0ff6f0","appName":"baseline","userId":"student","state":{},"events":[],"lastUpdateTime":1792406251.5183492}
+2026-10-19 10:37:31,517 - INFO - local_storage.py:65 - Creating local session service at /home/student/AC215/llm-agent-google-adk/baseline/.adk/session.db
+2026-10-19 10:37:31,521 - INFO - api_server.py:1262 - New session created: 2553cde5-ac55-40a3-9300-60f66a0ff6f0
+$ ls -a baseline/.adk
+.
+..
+session.db
+$ git status --short --untracked-files=all | grep -v "^ D"
+?? .python-version
+?? baseline/.adk/session.db
+?? baseline/.env.example
+?? baseline/README.md
+?? baseline/agent.py
+?? baseline/pyproject.toml
+?? custom_agent/.env.example
+?? custom_agent/README.md
+?? custom_agent/agent.py
+?? custom_agent/conditional_agent.py
+?? custom_agent/pyproject.toml
+?? custom_agent/simple_custom_agent.py
+?? mcp_tools/.env.example
+?? mcp_tools/README.md
+?? mcp_tools/agent.py
+?? mcp_tools/pyproject.toml
+$ git add --all --dry-run | grep -v "^remove"
+add '.python-version'
+add 'baseline/.adk/session.db'
+add 'baseline/.env.example'
+add 'baseline/README.md'
+add 'baseline/agent.py'
+add 'baseline/pyproject.toml'
+add 'custom_agent/.env.example'
+add 'custom_agent/README.md'
+add 'custom_agent/agent.py'
+add 'custom_agent/conditional_agent.py'
+add 'custom_agent/pyproject.toml'
+add 'custom_agent/simple_custom_agent.py'
+add 'mcp_tools/.env.example'
+add 'mcp_tools/README.md'
+add 'mcp_tools/agent.py'
+add 'mcp_tools/pyproject.toml'
+$ echo ".adk/" >> .gitignore; git check-ignore -v baseline/.adk/session.db
+.gitignore:73:.adk/	baseline/.adk/session.db
+$ git add --all --dry-run | grep -v "^remove"
+add '.gitignore'
+add '.python-version'
+add 'baseline/.env.example'
+add 'baseline/README.md'
+add 'baseline/agent.py'
+add 'baseline/pyproject.toml'
+add 'custom_agent/.env.example'
+add 'custom_agent/README.md'
+add 'custom_agent/agent.py'
+add 'custom_agent/conditional_agent.py'
+add 'custom_agent/pyproject.toml'
+add 'custom_agent/simple_custom_agent.py'
+add 'mcp_tools/.env.example'
+add 'mcp_tools/README.md'
+add 'mcp_tools/agent.py'
+add 'mcp_tools/pyproject.toml'
+$ git checkout .gitignore   # (undo, for the next checks)
+Updated 1 path from the index
+[exit 0]

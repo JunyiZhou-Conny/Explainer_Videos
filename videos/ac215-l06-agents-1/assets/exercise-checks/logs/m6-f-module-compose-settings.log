@@ -1,0 +1,13 @@
+$ docker run -d --name l06ex-m6 --network l06ex-net -e IS_PERSISTENT=TRUE -e PERSIST_DIRECTORY=/chroma/chroma -e ANONYMIZED_TELEMETRY=FALSE -v l06ex-m6-chroma:/chroma/chroma chromadb/chroma@sha256:1e0b73a1…   # the module compose file's settings
+[exit 0]
+$ (a client on the same network creates a collection with one record)
+collections: ['knowledge_base']
+[exit 0]
+$ docker exec l06ex-m6 sh -c "ls -la /chroma/chroma; ls /data"
+total 8
+drwxr-xr-x 2 root root 4096 Oct 19 10:47 .
+drwxr-xr-x 3 root root 4096 Oct 19 10:47 ..
+a6384614-7e97-464a-a86f-5ff82bf4b341
+chroma.sqlite3
+[exit 0]
+(container and volume removed)

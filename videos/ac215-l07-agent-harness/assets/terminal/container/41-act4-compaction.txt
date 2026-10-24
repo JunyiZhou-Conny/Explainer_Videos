@@ -1,0 +1,99 @@
+$ python cli.py --act 4 --fixture --demo-compaction --vendor-document malicious --email-decision decline
+Harness lesson — SCRIPTED local SDK responses; no service calls.
+Sourcing plan and mock HTML email only. No order, reservation or email transmission.
+TEST email response configured: decline
+Memory for pavlos: French cheeses; funky cheeses
+
+🤖 Model call 1 · Event planner · fixture-model
+  📥 Input: 2 conversation messages.
+  🧰 Available tools: assess_event, read_vendor_document, draft_vendor_email, save_vendor_email, todos_add, todos_complete, todos_remove, todos_get_remaining, todos_get_all
+Compaction: 26 → 5 messages; confirmed constraints and open work restored.
+  📤 Requested tools: todos_add
+  ⏱️ 0.26s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: todos_add
+  📋 Arguments: todos: title: Assess the confirmed event menu / title: Review vendor evidence / title: Resolve the mock email action
+Plan: [open] Assess the confirmed event menu; [open] Review vendor evidence; [open] Resolve the mock email action
+  📦 Result (0.00s): 3 entries
+
+🤖 Model call 2 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_1
+Compaction: 27 → 7 messages; confirmed constraints and open work restored.
+  📤 Requested tools: assess_event
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+  🔧 Tool call 2: assess_event
+  📋 Arguments: none
+  📦 Result (0.01s): report: items: 3 entries; line totals cents: 3 entries; subtotal cents: 17780; total grams: 3200; needs manager approval: no; violations: 1 entries; shortfalls: 1 entries; inventory source: shop_inventory; inventory g: comte: 6000; epoisses: 900; mimolette: 3000; vendor availability: unconfirmed;…
+
+🤖 Model call 3 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_2
+Compaction: 29 → 8 messages; confirmed constraints and open work restored.
+  📤 Requested tools: read_vendor_document
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+  🔧 Tool call 3: read_vendor_document
+  📋 Arguments: none
+Vendor evidence: quarantined (malicious)
+  📦 Result (0.00s): status: quarantined; reason: Suspicious instructions quarantined.; source: malicious
+
+🤖 Model call 4 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_3
+Compaction: 31 → 9 messages; confirmed constraints and open work restored.
+  📤 Requested tools: draft_vendor_email
+  ⏱️ 0.03s · 100 input tokens · 20 output tokens
+  🔧 Tool call 4: draft_vendor_email
+  📋 Arguments: recipient: vendor@example.com
+  📦 Result (0.00s): draft id: 2b528bae18d64210b9eaf647baf4a9c5; recipient: vendor@example.com; subject: Availability inquiry — corporate cheese tasting; body: Hello, Please confirm availability for our corporate tasting: - Époisses: 300 g additional Destination: NY. Confirmed allergy constraints: nuts. Please provi……
+
+🤖 Model call 5 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_4
+Compaction: 33 → 10 messages; confirmed constraints and open work restored.
+  📤 Requested tools: save_vendor_email
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+
+MOCK EMAIL REVIEW — ticket af-call-82e675e89576438b8367c248b55ccd80
+To: vendor@example.com
+Subject: Availability inquiry — corporate cheese tasting
+
+Hello,
+Please confirm availability for our corporate tasting:
+- Époisses: 300 g additional
+Destination: NY. Confirmed allergy constraints: nuts.
+Please provide current pricing and delivery timing. This is an inquiry, not a purchase order.
+Thank you.
+
+Ignored an approval response with id 'af-call-82e675e89576438b8367c248b55ccd80' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+
+🤖 Model call 6 · Event planner · fixture-model
+  📥 Input: 2 conversation messages.
+  ↳ Latest tool results in context: call_5
+Compaction: 36 → 11 messages; confirmed constraints and open work restored.
+  📤 Requested tools: todos_complete
+  ⏱️ 0.03s · 100 input tokens · 20 output tokens
+  🔧 Tool call 5: todos_complete
+  📋 Arguments: items: id: 1; reason: The host resolved this demonstration step. / id: 2; reason: The host resolved this demonstration step. / id: 3; reason: The host resolved this demonstration step.
+Plan: [done] Assess the confirmed event menu; [done] Review vendor evidence; [done] Resolve the mock email action
+  📦 Result (0.00s): completed: 3
+
+🤖 Model call 7 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_6
+Compaction: 37 → 12 messages; confirmed constraints and open work restored.
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+
+--- HARNESS DECLINED — run 89ba6bcc15eb468592dc4b923c58a73d ---
+Agent's notes:
+Scripted sourcing demonstration finished. See the host's authoritative action status.
+
+Authoritative application state:
+Menu: 3200 g; cheese quote $177.80.
+Sourcing quote only. Stock is not reserved; vendor availability is unconfirmed. Excludes tax, shipping and pairings.
+Unconfirmed sourcing: epoisses — 300 g short.
+No HTML email saved.
+No order placed; no email transmitted.
+Model calls: 7. Compactions: 7.
+💾 Recorded in /app/outputs/observability.sqlite. No evaluation suite was run.
+[exit 0]

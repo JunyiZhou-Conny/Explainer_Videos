@@ -1,0 +1,18 @@
+[
+  {
+    "customer_id": "pavlos",
+    "name": "Pavlos Protopapas",
+    "preferences": [
+      "French cheeses",
+      "funky cheeses"
+    ]
+  },
+  {
+    "customer_id": "shivas",
+    "name": "Shivas Jayaram",
+    "preferences": [
+      "mild cheeses",
+      "nonalcoholic pairings"
+    ]
+  }
+]

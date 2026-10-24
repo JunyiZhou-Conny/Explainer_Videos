@@ -1,0 +1,10 @@
+$ python -c 'from acts.act2_context import print_shipping_demo; print_shipping_demo()'
+
+🛡️ Harness policy check — fixed counterexample, NOT the agent's cart
+  Same cart: Comté 350 g + Bûcheron 350 g + Époisses 300 g. Change only the destination.
+  PA: REJECTED
+    shipping: Fictional shop policy blocks raw-milk shipping to PA.
+  NY: PASS
+  CartCheck reports this violation in Acts 1–2. Act 3's workflow and checkout enforce it before placing an order.
+  This models store/regulatory policy enforcement with a FICTIONAL classroom PA rule, not actual legal advice. No order placed by this check.
+[exit 0]

@@ -1,0 +1,6 @@
+$ uv run python /checks/b8_missing_name.py
+tool_filter: ['read_file_v0', 'list_directory', 'search_files']
+Secure MCP Filesystem Server running on stdio
+Client does not support MCP Roots, using allowed directories set from server args: [ '/home/student/AC215/llm-agent-google-adk/mcp_tools' ]
+tools the agent sees: ['list_directory', 'search_files']
+[exit 0]
