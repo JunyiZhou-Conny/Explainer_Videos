@@ -41,8 +41,8 @@ Beats (script.md "## S10", one voiceover block each):
    again (localhost:8000/dev-ui/), reloaded with the dropdown open on its seven entries; TRACKER ·
    extra: the second strip types the list-apps curl -> 30 line 2 (cut); the cursor picks baseline,
    GREEN; a GREY card beside the list "this video: baseline, mcp_tools / custom_agent as code · 2, 4,
-   6: exercises.md". At "The log says" the terminal grows (9 rows) behind the strip, the page and
-   then the strip leave, and the card moves under the tracker (it stays there, readable, until the
+   6: exercises.md". At "The log says" the page, the card and the strip leave, then the terminal
+   grows (9 rows) and the card returns under the tracker (it stays there, readable, until the
    next beat): 29 lines 36–37 joined, 38–39 joined, 40 (wrap); the root .env path PINK in a PINK box, PINK tag "the root .env" above the
    terminal; "baseline.agent" and "200 OK" GREEN.
 8. The terminal shrinks to the strip. GREY chip in the band right of the tracker "git status: 3
@@ -124,7 +124,6 @@ from manim import (
     Polygon,
     RoundedRectangle,
     Transform,
-    UpdateFromAlphaFunc,
     VGroup,
     smooth,
     squish_rate_func,
@@ -260,22 +259,6 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
     if cy is not None:
         m.set_y(cy)
     return m
-
-
-def refade(m, target, out=(0.0, 0.45), into=(0.55, 1.0)):
-    """Transform(m, target)'s end state, reached by fading: m fades out where it is, then fades
-    back in as `target` (moving, it crossed the text between). m keeps its identity."""
-    snap, goal = m.copy(), target.copy()
-
-    def upd(mob, a):
-        if a < into[0]:
-            k = 1 - smooth(min(1.0, max(0.0, (a - out[0]) / (out[1] - out[0]))))
-            mob.become(snap.copy().fade(1 - k))
-        else:
-            k = smooth(min(1.0, (a - into[0]) / (into[1] - into[0])))
-            mob.become(goal.copy().fade(1 - k))
-
-    return UpdateFromAlphaFunc(m, upd)
 
 
 def attach(scene, row, *mobs):
@@ -783,16 +766,19 @@ class AdkWeb(VoiceScene):
             hl7, anims = menu7.pick("baseline", DATA)
             self.play(*anims, click(cur7), FadeIn(card7, shift=LEFT * 0.1), run_time=0.3)
             vo.wait_until("The log says")
-            # the terminal grows behind the second strip: its kept lines slide up out from under it,
-            # and the strip fades only in the second half, when they have left its rows; the page
-            # fades in the first half, before the growing frame reaches it
-            resize(self, t, 9, run_time=0.5, extra=[FadeOut(VGroup(br7, menu7, hl7, cur7),
-                                                            rate_func=lambda a: smooth(min(1.0, 2 * a))),
-                                                    # the card fades out with the page and back in at the
-                                                    # top (moving, it crossed the menu or the terminal title)
-                                                    refade(card7, card7_up, into=(0.7, 1.0)),
-                                                    caption_extra(tr, False),
-                                                    FadeOut(t7, rate_func=lambda a: smooth(max(0.0, 2 * a - 1)))])
+            # old panels out, then new in (one half each). Out: the page, the card beside the list and
+            # the second strip, its text first, then its frame, so the server strip under it shows
+            # through an empty frame (dissolved whole, the two strips' rows mixed). In: the terminal
+            # grows and the card returns under the tracker. (Done at once, the growing terminal rose
+            # under the leaving strip and the card sat on the fading page: final review.)
+            frame7 = [m for m in t7.submobjects if m is not t7.lines and m is not t7.title]
+            self.play(FadeOut(VGroup(br7, menu7, hl7, cur7, card7)), caption_extra(tr, False),
+                      FadeOut(VGroup(*frame7), rate_func=squish_rate_func(smooth, 0.5, 1.0)),
+                      # added last, so the text is drawn above the strip's (opaque) frame
+                      FadeOut(VGroup(t7.lines, t7.title), rate_func=squish_rate_func(smooth, 0.0, 0.5)),
+                      run_time=0.25)
+            card7.move_to(card7_up)
+            resize(self, t, 9, run_time=0.25, extra=[FadeIn(card7, shift=DOWN * 0.1)])
             log = t.print(self, [ENV_LOG, AGENT_LOG, WEB2.line(40)], wrap=True, run_time=0.3)
             env_row = rows_with(log, ROOT_ENV)[0]
             a = env_row.text.index(ROOT_ENV)

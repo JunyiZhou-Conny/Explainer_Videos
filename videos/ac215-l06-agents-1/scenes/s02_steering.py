@@ -25,9 +25,9 @@ Beats (script.md "## S02", one voiceover block each):
     "sequential processing" lights the arrows; the diamond pulses; GREY caption "reasoning workflow:
     …" and a GREY dashed chip "a reasoning model thinks inside one call · more with Gemini, later".
  5  TRACKER CQ-Agent 3. The lecture tag and lane 2's notes leave; lanes 2–3 slide up, lane 2 dims.
-    Lane 3: lane 2's gpt-4o flashes and the same gpt-4o fades in on lane 3, lane 2's diamond slides
-    into it; a GREY instructions note clips on; the excerpt chip tools=[web_tool], (cell 30 · line
-    34) flashes and a BLUE web_search fades in under the model,
+    Lane 3: lane 2's gpt-4o flashes and the same gpt-4o fades in on lane 3, lane 2's diamond flashes
+    and a small one fades in inside it; a GREY instructions note clips on; the excerpt chip
+    tools=[web_tool], (cell 30 · line 34) flashes and a BLUE web_search fades in under the model,
     "hosted by OpenAI"; two reaches (GOLD ticks), the two search texts (c31: 23, 28) grow in PINK;
     the answer and "13.29 s" (c31: 100); the excerpt Tools used: 1 (c31: 99) + erratum "tools
     configured (cell 30 · line 71), not calls".
@@ -519,9 +519,12 @@ class SteeringWheel(VoiceScene):
             m3.move_to([m3_x, y3, 0])
             self.play(FadeIn(q3), Indicate(m2, color=CLOUD, scale_factor=1.08),
                       FadeIn(m3, rate_func=squish_rate_func(smooth, 0.3, 1.0)), run_time=0.8)
-            d3 = diamond(w=0.42).move_to(d2)
+            d3 = diamond(w=0.42).move_to(w_box.get_right() + LEFT * 0.42)
             self.play(Transform(m3.box, w_box), Transform(m3.text, w_txt), run_time=0.4)
-            self.play(d3.animate.move_to(w_box.get_right() + LEFT * 0.42), run_time=0.8)
+            # lane 2's diamond flashes in place and a small one fades in at the chip's right end
+            # (flying down, it crossed "your Python decides the order" and the "o" of gpt-4o)
+            self.play(Indicate(d2, scale_factor=1.3, color=INK),
+                      FadeIn(d3, scale=0.6, rate_func=squish_rate_func(smooth, 0.3, 1.0)), run_time=0.8)
             vo.wait_until("plus instructions")
             a3 = arr(q3.get_right(), note.get_left(), LOOKUP)
             self.bring_to_back(note)

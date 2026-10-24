@@ -8,10 +8,11 @@ Beats (script.md "## S04", one voiceover block each):
 1. "agentic RAG" (GREY) beside the first LLM, which gets the YELLOW label "chooses"; a YELLOW ring
    hops down the menu.
 2. TRACKER Agents (no step lit). The column shrinks to llm-rag's two GREEN menu cards, "retrieval
-   decision" stays behind dashed; the V1 mini-map comes in bottom right, Tools lit YELLOW. L05's
+   decision" stays behind dashed, and the lecture tag leaves with the six boxes (slides 8–14 are
+   the column, not llm-rag's menu); the V1 mini-map comes in bottom right, Tools lit YELLOW. L05's
    strip gives way to the README chip `README.md · line 244 (excerpt)` "let the LLM decide how to
    retrieve" (tag `expected`); each card is ringed as the SAY names it.
-3. The mini-map, the lecture tag and the column leave; the first card moves to where its
+3. The mini-map and the column leave; the first card moves to where its
    declaration starts and fades into CODE(agent_tools.py: 9–19) (line 12 wrapped; every panel
    of the scene gets the full 12.9 width, so the notes on its lines sit inside it): line 10 GREEN + note "← the name the model writes back"; line 11 GREEN +
    note "↑ the model's documentation, with the parameter descriptions" (line 18 GREEN too;
@@ -413,7 +414,8 @@ class ToolMenu(VoiceScene):
         rc.move_to([0, cp.get_center()[1], 0])
         with self.voiceover(SAY[2]) as vo:
             tr = switch_section(self, None, "Agents", None)
-            self.play(*mc.to_menu(), FadeOut(hop), run_time=1.0)
+            # the lecture tag (slides 8–14: the six-box column) leaves with the column
+            self.play(*mc.to_menu(), FadeOut(hop), FadeOut(ref), run_time=1.0)
             self.play(FadeIn(mm), run_time=0.5)
             self.play(mm.light("tools"), run_time=0.5)
             vo.wait_until("Its README says")
@@ -435,7 +437,7 @@ class ToolMenu(VoiceScene):
             # the first card leaves the menu and lands where its declaration will start
             # the menu leaves first, then the card travels (it crossed the fading labels)
             out_ = squish_rate_func(smooth, 0.0, 0.4)
-            self.play(*[FadeOut(m, rate_func=out_) for m in (mc, rc, ref, mm, r1)],
+            self.play(*[FadeOut(m, rate_func=out_) for m in (mc, rc, mm, r1)],
                       m0.animate(rate_func=squish_rate_func(smooth, 0.3, 1.0))
                       .align_to(c1[0], LEFT).align_to(c1[0], UP).shift(LEFT * 0.1),
                       run_time=0.7)
@@ -706,8 +708,15 @@ class ToolMenu(VoiceScene):
         itag = illustration_tag().move_to([-4.3, -1.95, 0])
         lab = label("call 1", 22, S.GREY).move_to([-1.6, 3.25, 0])
         tick1 = cost_tick().next_to(lab, RIGHT, buff=0.15)
+        model_top = st.parts["model"].frame.get_top()[1]
+
+        def out_of_model(m):
+            """Where a card comes out of the model: just above the Gemini chip, in the cloud's top
+            (faded in on the chip itself, each card covered "Gemini · location global")."""
+            return np.array([model_c[0], model_top + 0.1 + m.height / 2, 0])
+
         cc = mini_call_card()
-        cc.move_to(model_c)
+        cc.move_to(out_of_model(cc))
         cc_spot = np.array([0.3, LANE, 0])
 
         # The corridor between "call 1" (bottom 3.14) and HTTPS (top 2.13) is about 1.0 high. Each card
@@ -723,7 +732,9 @@ class ToolMenu(VoiceScene):
 
         # up out of the cloud, along the corridor's middle (the answer card is 0.98 high), then down
         # into place clear of HTTPS's right end
-        rise = via(model_c, cc_spot, [model_c[0], mid, 0], [cc_spot[0], mid, 0])
+        def rise(m):
+            c0 = m.get_center()
+            return via(c0, cc_spot, [c0[0], mid, 0], [cc_spot[0], mid, 0])
 
         with self.voiceover(SAY[10]) as vo:
             st.reveal(self, "lock", run_time=0.5, extra=[FadeIn(itag)])
@@ -737,7 +748,7 @@ class ToolMenu(VoiceScene):
             vo.wait_until("Call 1 returns")
             self.play(*st.light("model"), run_time=0.3)
             self.play(FadeIn(cc, scale=0.4), *st.unlight("model"), run_time=0.4)
-            self.play(cc.animate(path_func=rise).move_to(cc_spot), run_time=0.9)
+            self.play(cc.animate(path_func=rise(cc)).move_to(cc_spot), run_time=0.9)
             vo.wait_until("a function name")
             self.play(Indicate(cc[2], color=CLOUD, scale_factor=1.08), run_time=0.6)
             vo.wait_until("Your code runs it")
@@ -760,9 +771,10 @@ class ToolMenu(VoiceScene):
             self.remove(q2, cc, tc)
             # 0.85: 0.84 high, it rises through the 1.0-high corridor with room on both sides (at
             # 0.98 high it grazed "call 2" and HTTPS)
-            ans = answer_card().scale(0.85).move_to(model_c)
+            ans = answer_card().scale(0.85)
+            ans.move_to(out_of_model(ans))
             self.play(FadeIn(ans, scale=0.4), run_time=0.35)
-            self.play(ans.animate(path_func=rise).move_to(cc_spot), run_time=0.8)
+            self.play(ans.animate(path_func=rise(ans)).move_to(cc_spot), run_time=0.8)
 
         cs = CallStrip()
         trip = VGroup(st, ans, lab2, tick2, itag)

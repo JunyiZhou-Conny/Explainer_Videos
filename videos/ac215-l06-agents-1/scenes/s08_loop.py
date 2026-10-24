@@ -19,7 +19,8 @@ Beats (script.md "## S08", one voiceover block each):
    maker"; two-way spokes grow to planner, tools and memory as named. Unrolled: the hub becomes the
    BLUE "model" station, the tools node the PURPLE "tools" station, the tools spoke the circular
    track (planner and memory fade).
-4. The YELLOW token runs laps, the counter ticks 1 / 12, 2 / 12; the YELLOW gate "final response"
+4. The lecture tag leaves (slides 35–40 draw the cycle, not its stop rule or cap). The YELLOW
+   token runs laps, the counter ticks 1 / 12, 2 / 12; the YELLOW gate "final response"
    and the caption "stop rule: a reply with no function call" appear; on turn 3 the model station
    emits a GREY "plain text" card, the gate opens and the card passes.
 5. The track shrinks to the top left, PURPLE caption "inside ADK, simplified: model → tools, until
@@ -31,9 +32,10 @@ Beats (script.md "## S08", one voiceover block each):
    subtitle “Orchestrator Agent”) `"max_iterations": 16` write in bottom right and are boxed YELLOW
    as named; a PURPLE chip on each header row names the framework (OpenAI Agents SDK: this Runner
    is not ADK's; Microsoft Agent Framework). Replay: the token races to 12 / 12 (RED), the gate slams RED "MaxTurnsExceeded".
-7. LECTURE 41. V1's anatomy (slide 41: no Task/Goal ends), the track beside it: Dynamic Control
-   GREY dashed, its name grays out; the four blocks light (white outline) as named; the track flies
-   into the bar, which fills PURPLE; caption "the framework writes this part".
+7. LECTURE 41 (the tag arrives with the anatomy). V1's anatomy (slide 41: no Task/Goal ends),
+   the track beside it: Dynamic Control GREY dashed, its name grays out; the four blocks light
+   (white outline) as named; the track flies into the bar, which fills PURPLE; caption "the
+   framework writes this part".
 8. TRACKER Run 3 · extra. The TEAL container terminal (8 rows) types `exit` (extra) →
    TERM(laptop/06: 42; session); the frame turns GREY (title laptop, prompt ~/AC215/llm-rag$).
    `docker ps --format 'table …'` (extra; folds) → TERM(laptop/12: 2–3) as the NAMES and PORTS
@@ -75,7 +77,6 @@ from common import (
     illustration_tag,
     leave_container,
     lref,
-    lref_swap,
     note,
     one_lap_row,
     pin,
@@ -381,12 +382,15 @@ class TheLoop(VoiceScene):
         ex = lt.parts["exit"]
         stop = VGroup(label("stop rule:", 24, TURN), label("a reply with no function call", 24, INK))
         stop.arrange(RIGHT, buff=0.18).move_to([0, -2.95, 0])
-        reply = lt.reply_card("plain text")
-        reply.move_to(ex.get_start() + RIGHT * (reply.width / 2 + 0.12))
+        reply = lt.reply_card("plain text")           # above the exit arrow: the arrow never strikes its text
+        reply.shift(RIGHT * 0.25)                      # x only: its fade-in shift stays clear of the model station
+        reply_bg = reply.box.copy().set_fill(S.BG, 1).set_stroke(width=0)   # opaque, under the chip at the gate
         before_gate = gate.lpost.get_center()[0] - reply.width / 2 - 0.2
         after_gate = gate.rpost.get_center()[0] + reply.width / 2 + 0.35
         with self.voiceover(SAY[4]) as vo:
-            self.play(*lt.parts_in("token", "counter"), run_time=0.4)
+            # slides 35–40 draw the cycle, not the stop rule or the turn cap (SLIDES.md): their tag
+            # leaves as the counter arrives; slide 41's tag returns with the anatomy (block 7)
+            self.play(*lt.parts_in("token", "counter"), FadeOut(lr), run_time=0.4)
             self.add(lt)                           # the token back under the stations (z-order)
             run_lap(self, lt, 0.75)                # lap 1 under "What ends the loop?"
             vo.wait_until("The stop rule")
@@ -401,7 +405,8 @@ class TheLoop(VoiceScene):
             self.play(reply.animate.set_x(before_gate), run_time=0.8)
             vo.wait_until("is the final response")
             self.play(gate.open(run_time=0.6))
-            self.play(reply.animate.set_x(after_gate), run_time=0.7)
+            self.add(reply_bg.move_to(reply.box), reply)       # the gate posts pass behind its text, not through it
+            self.play(reply.animate.set_x(after_gate), reply_bg.animate.set_x(after_gate), run_time=0.7)
             vo.wait_until("The model decides")
             self.play(Indicate(reply, color=INK, scale_factor=1.12), run_time=0.8)
 
@@ -430,7 +435,7 @@ class TheLoop(VoiceScene):
         lab45.next_to(p5, RIGHT, buff=0.2)
         lab45.set_y((code_row(p5, 45).get_center()[1] + code_row(p5, 46).get_center()[1]) / 2)
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(stop), FadeOut(reply), run_time=0.4)
+            self.play(FadeOut(stop), FadeOut(reply), FadeOut(reply_bg), run_time=0.4)
             morph_track(self, lt, lt5, run_time=1.0)        # the caption follows: the shrinking track crosses its place
             self.play(FadeIn(cap5, shift=RIGHT * 0.1), FadeIn(ill), run_time=0.4)
             self.play(FadeIn(p5, shift=UP * 0.15), FadeIn(mod4, shift=LEFT * 0.1), run_time=0.6)
@@ -502,13 +507,13 @@ class TheLoop(VoiceScene):
         fw.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         bar = A.parts["control_dash"]
         fw.next_to(A, RIGHT, buff=0.45).set_y(bar.get_center()[1])
+        lr = lref("41")
         with self.voiceover(SAY[7]) as vo:
-            lr = lref_swap(self, lr, "41", run_time=0.4)
             self.play(FadeOut(c71), FadeOut(c25), FadeOut(fw71), FadeOut(fw25), FadeOut(bx71), FadeOut(bx25),
                       FadeOut(lt6.gate.caption),
                       *lt6.parts_out("counter", "exit", "gate"), run_time=0.5)
             self.play(trk.animate.move_to([4.95, -0.3, 0]), run_time=0.7)     # out of the anatomy's way first
-            self.play(FadeIn(A, shift=RIGHT * 0.2), run_time=0.6)
+            self.play(FadeIn(A, shift=RIGHT * 0.2), FadeIn(lr), run_time=0.6)   # slide 41's tag with its picture
             vo.wait_until("gray out dynamic control")
             self.play(A.names["control"].animate.set_color(S.GREY),     # grayed, still readable
                       Indicate(bar, color=S.GREY, scale_factor=1.03), run_time=0.7)

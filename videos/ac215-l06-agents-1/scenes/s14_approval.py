@@ -52,7 +52,7 @@ Beats (script.md "## S14", one voiceover block each):
    `finalize_itinerary`. Cards and tag fade; TRACKER TP 8; ▶ your turn on a static GREY card (it
    names the titled cell Start an interactive conversation "and the cell after it": that cell only
    defines chat_loop(), the last one runs it), its last line GOLD "OpenAI calls · every turn",
-   arriving with "Every turn is paid". Hold 2 s. Empty frame.
+   arriving with "Every turn is paid"; its ▶ tag pulses on "pause". Hold 2 s. Empty frame.
 """
 
 import re
@@ -932,5 +932,9 @@ class ApprovalGate(VoiceScene):
                       tr.goto(8), run_time=0.5)
             vo.wait_until("Every turn is paid")
             self.play(FadeIn(your, shift=UP * 0.15), run_time=0.6)
+            # the ▶ tag pulses on "pause", as on S08's and S15's cards (final review: without it the
+            # card stood frozen 4.75 s, over the 4 s limit); the 2 s hold stays
+            vo.wait_until("pause, and run the four turns")
+            self.play(your.tag.animate(rate_func=there_and_back).scale(1.15), run_time=0.6)
         self.wait(2)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)

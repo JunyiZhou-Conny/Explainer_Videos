@@ -467,7 +467,7 @@ class Receipt(VoiceScene):
             self.play(FadeIn(bar114), FadeIn(n114, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("and hands any errors back")
             self.play(FadeIn(bar116), FadeIn(n116, shift=LEFT * 0.1), run_time=0.5)
-            vo.wait_until("Then send email saved the HTML")
+            vo.wait_until("Then send email wrote the HTML")
             self.play(FadeOut(p16b), FadeOut(bar114), FadeOut(bar116), FadeOut(n114), FadeOut(n116),
                       run_time=0.4)
             self.play(ReplacementTransform(box_a.frame, box_b.frame), ReplacementTransform(box_a.rule, box_b.rule),

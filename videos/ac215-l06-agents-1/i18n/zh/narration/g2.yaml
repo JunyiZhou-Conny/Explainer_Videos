@@ -15,6 +15,10 @@
 # subject of both clauses, and no band cue opens on a model ID), S09[13] (再跑一次), S10[1] (提示文字说), S14[7]
 # (the ； now joins two full clauses: 代码就放在行动工具上) and S16[3] (block first, as the anatomy fills: 核心是……；
 # 指令是……；记忆是消息历史和 session 状态, so no cue opens on prompt). Repeat that check on the rendered timing.
+# Fix round 1 (final review, report-asr.md §3 and report-pairs.md F3) reworded three SAY sentences, and their en,
+# zh and en_display follow: S10[1] (with this command: before the command, as the zh 用这条命令改： already said, so
+# the English track keeps uv run adk telemetry disable on one line), S10[7] (the dot env at the repository root:
+# repo 根目录下的 .env) and S15[2] (wrote the HTML to a file: 写进了一个文件).
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8, D9:
 # 所以这一步只要 uv 选中 3.15 就会失败; 用完以后把 1.6 GB 的虚拟环境删掉).
@@ -126,13 +130,13 @@ S10:
   en_display:
   - "Running Agents, step 1, from the repository root: uv run adk web."
   - null
-- en: "The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with uv run ADK telemetry disable."
+- en: "The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with this command: uv run ADK telemetry disable."
   zh:
   - "提示文字说遥测默认是关闭的，可大写的 Y 意味着直接按回车就是回答 yes。"
   - "怎么回答都行；以后可以用这条命令改：uv run adk telemetry disable。"
   en_display:
   - null
-  - "Answer as you like; change it later with uv run adk telemetry disable."
+  - "Answer as you like; change it later with this command: uv run adk telemetry disable."
 - en: "Then the server starts, on port 8000. Step 2: open localhost 8000 in your browser; an extra curl shows the redirect to the dev UI."
   zh:
   - "然后服务器启动了，在 port 8000 上。"
@@ -168,13 +172,13 @@ S10:
   en_display:
   - null
   - "Stop the server with Ctrl+C, then drop each leading number, and turn hyphens into underscores."
-- en: "Start the web server again, and pick baseline. The log says it loaded the root dot env file, and found the root agent in baseline dot agent."
+- en: "Start the web server again, and pick baseline. The log says it loaded the dot env at the repository root, and found the root agent in baseline dot agent."
   zh:
   - "再启动一次 web 服务器，选 baseline。"
-  - "日志说它加载了根目录的 .env 文件，并在 baseline.agent 里找到了 root agent。"
+  - "日志说它加载了 repo 根目录下的 .env，并在 baseline.agent 里找到了 root agent。"
   en_display:
   - null
-  - "The log says it loaded the root .env file, and found the root_agent in baseline.agent."
+  - "The log says it loaded the .env at the repository root, and found the root_agent in baseline.agent."
 - en: "Two more slips: the quick start passes a file where a folder is expected, and the module READMEs drop the word web, so it only prints help."
   zh:
   - "还有两个小疏漏：快速入门在该传目录的地方传了一个文件，各模块的 README 又漏了 web 这个词，所以命令只会打印帮助信息。"
@@ -386,14 +390,14 @@ S15:
   en_display:
   - "The orchestrator gets three tools: a researcher with web search, an editor, and send_email."
   - null
-- en: "In the staff's saved run, the first city took four editor calls; the code validates every draft and hands any errors back as the tool's result. Then send email saved the HTML. That run had four readers; today's list makes two."
+- en: "In the staff's saved run, the first city took four editor calls; the code validates every draft and hands any errors back as the tool's result. Then send email wrote the HTML to a file. That run had four readers; today's list makes two."
   zh:
   - "在课程团队保存的运行里，第一个城市用了四次编辑调用；代码会校验每份草稿，把任何错误都作为工具的结果交回去。"
-  - "然后 send email 把 HTML 存了下来。"
+  - "然后 send email 把 HTML 写进了一个文件。"
   - "那次运行有四位读者；今天的名单是两位。"
   en_display:
   - null
-  - "Then send_email saved the HTML."
+  - "Then send_email wrote the HTML to a file."
   - null
 - en: "Now the harness. When the orchestrator stops, Python ignores its words and checks two things: is there a receipt from send email, and is that file on disk? If not, the run fails; success is a receipt, not a claim."
   zh:

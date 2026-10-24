@@ -19,8 +19,12 @@
 # and ran all 172 sentences through explainer.subtitles.tracks(timing="en") on an estimated English timing (2.9
 # words/s, no renders yet) at the band width (30) and the .zh.srt width (22): each band piece sits over its own
 # English clause, and no command, model ID or kept-English name is split across lines or cues. It changed S03[1]
-# (每一步改的是输入), S03[3] (并不是模型记住的), S05[1] (把两件事都做了, D6) and S05[7] (a comma, so the band cuts
-# after embed 这一步). Repeat that check on the rendered timing before publishing.
+# (每一步改的是输入), S03[3] (并不是模型记住的), S05[1] (把两件事都做了, D6) and S05[7]. Repeat that check on the
+# rendered timing before publishing. Fix round 1 (final review, report-pairs.md F1/F2): S04[2] fits one band cue
+# under the whole English (菜单只有两项的 Agentic RAG, 29.4 units), and S05[7] puts its comma where the English one
+# is (我们没有密钥 / We had no key,), so no band piece repeats the English sentence. S06[4] (report-asr.md §3, cue
+# 170) says mode ANY and temperature zero, so ANY is not a list item before a comma (Kokoro's list prosody was
+# heard as modini); en and en_display follow, the zh line is unchanged.
 S01:
 - en: "Here's a question for a cheese expert: describe where cheese making is important in the instructor's book. In the staff's recorded run, these two lines print before the answer: a function called get book by author, and its arguments."
   zh:
@@ -154,7 +158,7 @@ S04:
   - "Agentic RAG 把一个模型放在这份菜单前面，让它来选。"
 - en: "L-L-M rag's agents section is agentic RAG with a menu of two. Its README says: let the L-L-M decide how to retrieve. Search one author's book, or search all books."
   zh:
-  - "在 llm-rag 里，Agents 一节就是 Agentic RAG，菜单上只有两项。"
+  - "在 llm-rag 里，Agents 一节就是菜单只有两项的 Agentic RAG。"
   - "它的 README 说：让 LLM 决定怎么检索。"
   - "搜一位作者的书，或者搜全部的书。"
   en_display:
@@ -251,7 +255,7 @@ S05:
   - null
 - en: "We had no key, so the staff's committed embeddings stood in for the embed step."
   zh:
-  - "我们没有密钥，所以 embed 这一步，用的是课程团队 commit 过的 embedding。"
+  - "我们没有密钥，所以 embed 用的是课程团队 commit 过的 embedding。"
 - en: "Then the load step: python cli.py, dash dash load, chunk type char split. 11 books, 8,248 chunks; the instructor's story is just 24 of them. An extra get command confirms the collection answers; pause, and load yours."
   zh:
   - "再加载：python cli.py --load，chunk type 用 char-split。"
@@ -291,7 +295,7 @@ S06:
   - null
   - "Ours can't: on call 1, mode=\"any\" forces a tool call."
   - null
-- en: "What does Gemini actually receive? An extra script runs the same code, but prints the request instead of sending it. One envelope: the question, both declarations with the enum, mode ANY, temperature zero."
+- en: "What does Gemini actually receive? An extra script runs the same code, but prints the request instead of sending it. One envelope: the question, both declarations with the enum, mode ANY and temperature zero."
   zh:
   - "Gemini 实际收到的是什么？"
   - "一个额外的脚本运行同样的代码，但把请求打印出来，而不是发出去。"
@@ -299,7 +303,7 @@ S06:
   en_display:
   - null
   - null
-  - "One envelope: the question, both declarations with the enum; \"mode\": \"ANY\", temperature zero."
+  - "One envelope: the question, both declarations with the enum; \"mode\": \"ANY\" and temperature zero."
 - en: "And no system instruction: as in lecture 5, cli.py defines one and never sends it."
   zh:
   - "而且没有 system instruction：和第 5 讲一样，cli.py 定义了一个，却从来没发出去。"

@@ -13,10 +13,10 @@ Beats (script.md "## S12", one voiceover block each):
    caption "Do you see a problem?" under the agent. In the 5 s of silence after the SAY, a GREY
    "custom code" block grows on each wire, one after another, and the counter "10 integrations"
    ticks up from 0.
-2. LECTURE 53. The custom blocks ripple once; then the wires, the blocks, the caption and the
-   counter fade, the PINK trunk "same protocol" (a line, never a box) grows from the agent; the
-   agent becomes the "MCP host" with PINK "clients" ports; an "MCP server" adapter clicks onto each
-   service.
+2. The custom blocks ripple once (still slide 52); then the wires, the blocks, the caption, the
+   counter and the 52 tag fade, the PINK trunk "same protocol" (a line, never a box) grows from
+   the agent and LECTURE 53 comes in with it; the agent becomes the "MCP host" with PINK "clients"
+   ports; an "MCP server" adapter clicks onto each service.
 3. "same protocol" flashes PINK. The other seven services, their adapters and branches fade; the
    trunk splits into three separate PINK plugs, each its own connection from its own client port:
    "stdio · a child process", "HTTPS · a remote URL", "HTTP · a thread on :8001", while three
@@ -127,7 +127,6 @@ from common import (
     grey_tag,
     laptop_zone,
     lref,
-    lref_swap,
     mini_envelope,
     model_chip,
     note,
@@ -601,8 +600,10 @@ class McpPlugs(VoiceScene):
 
         # ============================================================ 2 · MCP (slide 53)
         customs = fan.parts["customs"]
+        ref53 = lref("53")
         with self.voiceover(SAY[2]) as vo:
-            ref = lref_swap(self, ref, "53", run_time=0.4)
+            # "Every tool becomes a custom integration" is still slide 52's point: the tag swaps to
+            # 53 with the MCP morph below, not here (final review: 53 led its picture by 2.7 s)
             # each block's border flares and its words pulse RED (Indicate on the block filled its
             # opaque box RED: "custom code" vanished). Box first, words second: play_drop puts the
             # wrapper's members back in this order, so the words stay drawn over the opaque box. The
@@ -612,11 +613,14 @@ class McpPlugs(VoiceScene):
                                           for c in customs], lag_ratio=0.08),
                       Indicate(counter, color=ERR, scale_factor=1.1), run_time=1.4)
             vo.wait_until("MCP, the Model")
+            # the 52 tag leaves with the ten wires, the 53 tag comes in with the trunk (old out first)
             play_drop(self, *fan.parts_out("wires", "customs"), FadeOut(ask), FadeOut(counter),
                       *fan.parts_in("trunk", anim=lambda m: LaggedStart(
                           Create(m[0]), LaggedStart(*[Create(b) for b in m[1]], lag_ratio=0.05),
                           FadeIn(m[2]), lag_ratio=0.4)),
+                      FadeOut(ref, rate_func=OUT_HALF), FadeIn(ref53, rate_func=IN_HALF),
                       run_time=1.4)
+            ref = ref53
             vo.wait_until("a host with clients")
             self.play(*fan.parts_in("host"), run_time=0.7)
             vo.wait_until("and an MCP server for each")

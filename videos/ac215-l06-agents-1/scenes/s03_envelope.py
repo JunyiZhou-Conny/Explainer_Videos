@@ -89,6 +89,7 @@ from manim import (
     ManimColor,
     MoveToTarget,
     ReplacementTransform,
+    Succession,
     Transform,
     UpdateFromAlphaFunc,
     VGroup,
@@ -280,6 +281,19 @@ def to_spot(lbl, sheet):
     """Where a role label sits on `sheet`: right-aligned, 0.15 from the edge."""
     x = sheet.frame.get_right()[0] - 0.15 - lbl.width / 2
     return np.array([x, sheet.frame.get_center()[1], 0])
+
+
+def trade(a, a_to, b, b_to, drift=0.06):
+    """Two role labels trade places, old out then new in: each fades out drifting toward its new
+    row, then a copy fades in at a_to / b_to (moved at once, the two labels crossed mid-swap:
+    L06 final review). The drift stays inside each label's sheet. Returns (anims for one play,
+    new a, new b)."""
+    na, nb = a.copy().move_to(a_to), b.copy().move_to(b_to)
+    anims = []
+    for old, new in ((a, na), (b, nb)):
+        v = (DOWN if new.get_y() < old.get_y() else UP) * drift
+        anims.append(Succession(FadeOut(old, shift=v), FadeIn(new, shift=v)))
+    return anims, na, nb
 
 
 class Envelope(VoiceScene):
@@ -571,9 +585,8 @@ class Envelope(VoiceScene):
             rbars = VGroup(p39.bar(19, ERR, 0.2), p39.bar(20, ERR, 0.2))
             red_rings = VGroup(ring(p39.span(19, '"user"'), ERR, buff=0.05),
                                ring(p39.span(20, '"system"'), ERR, buff=0.05))
-            self.play(r_sys.animate(path_arc=-PI * 0.6).move_to(to_spot(r_sys, s2_user)),
-                      r_user.animate(path_arc=-PI * 0.6).move_to(to_spot(r_user, s2_sys)),
-                      run_time=0.9)
+            swap, r_sys, r_user = trade(r_sys, to_spot(r_sys, s2_user), r_user, to_spot(r_user, s2_sys))
+            self.play(*swap, run_time=0.9)
             vo.wait_until("and the question with the role system")
             self.play(s2_sys.frame.animate.set_stroke(ERR, 4), s2_user.frame.animate.set_stroke(ERR, 4),
                       ReplacementTransform(ybars, rbars), Create(red_rings), run_time=0.6)
@@ -584,10 +597,8 @@ class Envelope(VoiceScene):
             d2 = end2 - env2.parts["body"].get_center()
             ok = check_mark(0.34, S.GREEN)
             ok.move_to([to_spot(r_sys, s2_sys)[0], env2.parts["body"].get_top()[1] + 0.3, 0]).shift(d2)
-            self.play(FadeIn(err),
-                      r_sys.animate(path_arc=PI * 0.6).move_to(to_spot(r_sys, s2_sys)),
-                      r_user.animate(path_arc=PI * 0.6).move_to(to_spot(r_user, s2_user)),
-                      run_time=0.9)
+            swap, r_sys, r_user = trade(r_sys, to_spot(r_sys, s2_sys), r_user, to_spot(r_user, s2_user))
+            self.play(FadeIn(err), *swap, run_time=0.9)
             env2.generate_target()                  # the red goes, the envelope makes room for the fix
             env2.target.shift(d2)
             env2.target.sheets[0].frame.set_stroke(S.GREY, 2)

@@ -34,10 +34,10 @@ Beats (script.md "## S07", one voiceover block each):
    168, 170 cut, …, 231, 233), `built, not sent`; `"thoughtSignature":` boxed BLUE and the seal from the
    BLUE sheet lands on it; `"functionResponse"` TEAL; `"generationConfig": {}` GREY; a BLUE rule and
    "the model's own turn" beside rows 148–163; "unchanged · seal kept" at the last sentence.
-6. Our request stays unsent: the terminal fades in place and V3's compact stage returns; a GREY dashed
-   envelope (the staff's recorded call 2, tag "recorded · the staff's call 2, September 22, 2026"
-   under the stage) crosses into the cloud, a BLUE prose card comes back; it and the stage leave,
-   then PANEL(expected/out-txt-agent-run.txt: 99, 105
+6. Our request stays unsent: the terminal fades in place (the duty chip and the lecture tag with it)
+   and V3's compact stage returns; a GREY dashed envelope (the staff's recorded call 2, tag
+   "recorded · the staff's call 2, September 22, 2026" under the stage) crosses into the cloud, a
+   BLUE prose card comes back; it and the stage leave, then PANEL(expected/out-txt-agent-run.txt: 99, 105
    cut, 111 cut, 112 cut; wrapped at spaces, GREY ↪) (out.txt · lines 98–111 (excerpt), staff tag with
    "old book") fades in; Alpine region, limestone caves underlined, transhumance YELLOW,
    the seasonal movement underlined; then two GOLD chips "247 tokens" / "1,269 tokens" and under them
@@ -45,11 +45,11 @@ Beats (script.md "## S07", one voiceover block each):
 7. The hook's YELLOW card, centre: "Who searched your database?" / "Who chose the book?"; BLUE "Gemini
    wrote the call" then GREEN "your Python, on your laptop" as said; GOLD tag "2 Gemini calls + 1
    embedding call per question", GREY source note (agent_tools.py · line 43 → cli.py · lines 75–84).
-8. TRACKER Agents 1 · extra. The lecture tag and the call strip leave. A 10-row second terminal (20 pt
-   so the table's 70 columns fit) under the extra card "count four of the answer's words …": in the
-   narration's order, TERM(laptop/10: 2–5) first, "book today 0" boxed RED; the card leaves and the
-   terminal grows to 13 rows (the table stays); it types the git show …;
-   head -4 … command (extra, folds) → TERM(laptop/09: 2 cut after "2026-09-22", 4–6, … (7–8: the author
+8. TRACKER Agents 1 · extra. The call strip leaves (the lecture tag left with the duty chip in 6).
+   A 10-row second terminal (20 pt so the table's 70 columns fit) under the extra card "count four
+   of the answer's words …": in the narration's order, TERM(laptop/10: 2–5) first, "book today 0"
+   boxed RED; the card leaves and the terminal grows to 13 rows (the table stays); it types the git
+   show …; head -4 … command (extra, folds) → TERM(laptop/09: 2 cut after "2026-09-22", 4–6, … (7–8: the author
    line is never shown), 9), the commit and both files underlined YELLOW, GREY "← today's book" beside
    line 9; at "The staff's index" the "book before 85bba32" column boxed GREEN.
 9. The TEAL cylinder with the staff's index: its cards turn GREY dashed "old book"; today's 24 GREEN
@@ -741,7 +741,8 @@ class CallTwo(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             # our request stays unsent: its terminal fades in place, the staff's recorded call crosses
             self.play(FadeOut(VGroup(t5, seal_fly, box_ts, rule, turn_l, kept), rate_func=OUT_HALF),
-                      FadeOut(duty, rate_func=OUT_HALF), caption_extra(tr, False),
+                      FadeOut(duty, rate_func=OUT_HALF), FadeOut(ref, rate_func=OUT_HALF),
+                      caption_extra(tr, False),
                       FadeIn(st6, shift=DOWN * 0.2, rate_func=IN_HALF), FadeIn(ghost_env, rate_func=IN_HALF),
                       FadeIn(env_tag, shift=UP * 0.1, rate_func=IN_HALF), run_time=0.7)
             self.play(ghost_env.animate.move_to(md.get_center()).scale(0.7), run_time=0.7)
@@ -829,7 +830,7 @@ class CallTwo(VoiceScene):
         dy8 = term(P_REPO, rows=13, title=SECOND, size=20).box.get_top()[1] - t8.box.get_top()[1]
         OUT8 = [G2] + C09.at(4, 5, 6, "…", 9)
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(hook, gold7, src7)), FadeOut(ref), FadeOut(cs), caption_extra(tr, True),
+            self.play(FadeOut(VGroup(hook, gold7, src7)), FadeOut(cs), caption_extra(tr, True),
                       run_time=0.5)
             self.play(FadeIn(xc8, shift=DOWN * 0.15), FadeIn(t8, shift=UP * 0.3), run_time=0.6)
             tab = t8.print(self, TABLE, run_time=0.6)

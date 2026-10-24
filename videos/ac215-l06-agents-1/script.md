@@ -235,18 +235,18 @@ Conventions
   the `google-adk<1.28` pin as a fix; invented `LLM Response:` values, ADK events, State-tab values, model
   replies or notebook outputs; `cli-container/31` or `33` as sent; `33`'s ten chunks as what the real query
   returns.
-- Length and parts: narration 4,291 words (`python -m explainer.script`, v2 after the review merge; v1
-  had 4,292; BRIEF.md: 3,900–4,300, plan ~4,250). Part 1 = S01–S08 (what an agent is, and function calling
-  by hand) 2,155 words; part 2 = S09–S16 (frameworks own the loop) 2,136 words. Per scene (BRIEF.md budget
-  ±15 %):
+- Length and parts: narration 4,307 words (`python -m explainer.script`, after fix round 1; v2 after the
+  review merge had 4,291, v1 4,292; BRIEF.md: 3,900–4,300, plan ~4,250). Part 1 = S01–S08 (what an agent
+  is, and function calling by hand) 2,157 words; part 2 = S09–S16 (frameworks own the loop) 2,150 words.
+  Per scene (BRIEF.md budget ±15 %):
 
   | scene | S01 | S02 | S03 | S04 | S05 | S06 | S07 | S08 | S09 | S10 | S11 | S12 | S13 | S14 | S15 | S16 |
   | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
   | budget | 260 | 280 | 200 | 290 | 250 | 280 | 300 | 270 | 360 | 300 | 270 | 280 | 240 | 260 | 200 | 210 |
-  | words | 260 | 275 | 201 | 311 | 262 | 261 | 310 | 275 | 361 | 281 | 270 | 296 | 221 | 261 | 210 | 236 |
+  | words | 260 | 275 | 201 | 311 | 263 | 262 | 310 | 275 | 362 | 289 | 270 | 296 | 221 | 261 | 213 | 238 |
 
   `explainer.script` assumes 155 wpm and BRIEF.md 174; the spoken review synthesized 66 sentences and
-  measured af_heart at 0.9 at 148.5 wpm (L04/L05: 144–151), so 4,291 words ≈ 28.9 min of voice plus ≈ 1
+  measured af_heart at 0.9 at 148.5 wpm (L04/L05: 144–151), so 4,307 words ≈ 29.0 min of voice plus ≈ 1
   min of sentence gaps and, with typing, outputs, five ponders and the `▶` holds, ≈ 35 min: the top of the
   series range. Later changes trim rather than add. Run `python -m explainer.script
   videos/ac215-l06-agents-1/script.md --synth` when the CPUs are free and put the measured total here.
@@ -678,7 +678,7 @@ wrap, 21–31 folded to `{ "contents": [ { "parts": [ { "text": "Describe where 
 "ANY" } },`, 91–93 folded to `"generationConfig": { "temperature": 0.0 }`, 95), tag `built, not sent`. On
 line 20, `locations/global` and `gemini-3.1-flash-lite` highlight BLUE; `"mode": "ANY"` and `"temperature":
 0.0` YELLOW; line 95 GREY.
-SAY: What does Gemini actually receive? An extra script runs the same code, but prints the request instead of sending it. One envelope: the question, both declarations with the enum, mode ANY, temperature zero.
+SAY: What does Gemini actually receive? An extra script runs the same code, but prints the request instead of sending it. One envelope: the question, both declarations with the enum, mode ANY and temperature zero.
 
 SHOW: A GREY dashed ghost card "systemInstruction" slides next to the body with a tag `erratum` "defined
 at cli.py lines 40–58 · never sent (as in lecture 5)".
@@ -987,7 +987,7 @@ SAY: Running agents, step 1, from the repository root: uv run ADK web. First, ve
 SHOW: "This is OFF by default." underlines GREY; `[Y/n]` is boxed YELLOW with a tag "Enter = yes". After
 a 0.6 s pause the terminal types `n` (as the capture did), and a GREY chip appears: "`uv run adk
 telemetry disable` · change it later".
-SAY: The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with uv run ADK telemetry disable.
+SAY: The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with this command: uv run ADK telemetry disable.
 
 SHOW: TERM(adk-laptop/15-adk-web.txt: 34–38, 41); line 41 `Uvicorn running on http://127.0.0.1:8000` PINK.
 TRACKER RunAg 2: the terminal shrinks to a strip; a GREY browser frame (tag `illustration`) opens at
@@ -1032,7 +1032,7 @@ SHOW: It types `uv run adk web` → TERM(adk-laptop/29-x-adk-web-renamed.txt: 36
 dropdown now lists the entries of TERM(adk-laptop/30-x-list-apps-renamed.txt: 2) (extra strip `curl -s
 http://localhost:8000/list-apps; echo`) after the page reloads; `baseline` is picked, GREEN. A GREY chip
 under the list: "this video: baseline, mcp_tools · custom_agent as code · 2, 4, 6: exercises.md".
-SAY: Start the web server again, and pick baseline. The log says it loaded the root dot env file, and found the root agent in baseline dot agent.
+SAY: Start the web server again, and pick baseline. The log says it loaded the dot env at the repository root, and found the root agent in baseline dot agent.
 
 SHOW: A GREY chip "git status: 3 folders deleted, 3 new · fine for your copy (teardown)". Two `erratum`
 chips write in: (a) a README chip (header `QUICKSTART.md · line 24`, tag `expected`) `uv run adk web
@@ -1354,7 +1354,7 @@ file): the four `[tool] editor_agent` lines get a YELLOW bracket "×4"; line 10 
 `Saved HTML: … (8005 bytes). No email sent.`. A chip CODE(colab/cheese-newsletter/cell-16.redacted.py:
 114–116) "every draft is validated · errors go back as the tool's result". Then line 30 `Created 4 mock
 emails. No email was sent.` with a GREY tag "saved run: 4 readers · today's list: 2".
-SAY: In the staff's saved run, the first city took four editor calls; the code validates every draft and hands any errors back as the tool's result. Then send email saved the HTML. That run had four readers; today's list makes two.
+SAY: In the staff's saved run, the first city took four editor calls; the code validates every draft and hands any errors back as the tool's result. Then send email wrote the HTML to a file. That run had four readers; today's list makes two.
 
 SHOW: LECTURE 36–37. V8: a newsletter draft card and the BLUE orchestrator's speech bubble "done!"; a door
 marked SUCCESS stays shut. CODE(colab/cheese-newsletter/cell-18.py: 118–120, 123–124) folded (header `Cheese
