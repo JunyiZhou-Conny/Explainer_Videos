@@ -442,8 +442,7 @@ class ApiService(VoiceScene):
                                     stroke_width=3).set_fill(S.BG, 1)
 
         with self.voiceover(SAY[5]) as vo:
-            clear_but(self, tr, chain, anims=[FadeOut(VGroup(sec, cross)), track(tr, extra=False)], run_time=0.6)
-            self.remove(sec, cross)
+            clear_but(self, tr, chain, anims=[track(tr, extra=False)], run_time=0.6)   # sec, cross, strip go
             self.play(chain.animate.shift(UP * 1.2), run_time=0.6)
             ok_pt = chain.slots[4].text.get_bottom() + DOWN * 0.6
             frame200.move_to(ok_pt)
