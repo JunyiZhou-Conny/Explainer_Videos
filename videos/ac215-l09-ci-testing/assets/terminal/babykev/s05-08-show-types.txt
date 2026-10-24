@@ -1,0 +1,7 @@
+$ just --show types
+# Check the types: what a caller passes against what a function declares. Extra arguments go to ty
+[group('quality')]
+[no-exit-message]
+types *args:
+    {{ if args == "help" { "just help types" } else { 'uv run ty check "$@"' } }}
+[exit 0]

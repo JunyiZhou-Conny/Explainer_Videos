@@ -1,0 +1,9 @@
+$ uv tool install rust-just
+Resolved 1 package in 844ms
+Downloading rust-just (2.3MiB)
+ Downloaded rust-just
+Prepared 1 package in 497ms
+Installed 1 package in 1ms
+ + rust-just==1.59.0
+Installed 1 executable: just
+[exit 0]

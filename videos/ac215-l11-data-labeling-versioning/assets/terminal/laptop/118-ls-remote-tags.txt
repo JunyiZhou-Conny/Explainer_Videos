@@ -1,0 +1,8 @@
+$ git ls-remote --tags https://github.com/dlops-io/data-versioning
+60be3fc381b4e5ced0132aeff449a30ff1998e65	refs/tags/dataset_v20
+299bcabfc62c7d8d4a3cbd65a0874ccf2a2d96bc	refs/tags/dataset_v20^{}
+65f2406ed34c6ebeea6ffd74e367dbd8a79d68ce	refs/tags/dataset_v21
+6de43d1222f6399fe8d292652198beb8ba3bf0c7	refs/tags/dataset_v21^{}
+37e35b65701dd7dc8525896e107da1be7831453c	refs/tags/dataset_v30
+8a1d9b08da52002e3e80832872b4de42ac28a669	refs/tags/dataset_v30^{}
+[exit 0]

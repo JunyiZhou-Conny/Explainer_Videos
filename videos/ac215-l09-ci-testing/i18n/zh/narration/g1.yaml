@@ -1,0 +1,463 @@
+# zh narration for S01-S09 (part 1, group g1: the cheese-app-ci-cd tutorial, README Parts 1-4),
+# sentence-aligned to script.md: one zh sentence per English sentence (explainer.voice.split_sentences).
+# Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh
+# line is shown on the English timing, so each sentence keeps the English order of ideas (D8).
+# Artifacts the checker does not allow in a displayed line are described in words (rule A6):
+# (3, 4) -> x 是 3，y 是 4; GET /euclidean_distance/?x=3&y=4 -> GET euclidean distance，x 是 3，y 是 4;
+# power(3, 2) -> power，参数是 3 和 2; --max-line-length=120 -> --max-line-length 设成 120;
+# test_*.py / Test* / test_* -> 以 test 下划线开头 / 以 Test 开头; test_broken -> test 下划线 broken;
+# def broken(): assert False -> def broken，内容是 assert False; DEV=1 -> DEV 设成 1; Ctrl+C -> Ctrl-C.
+# README Part N (the tracker titles) stays Part N / Option N; the video's own parts are 第一部分 / 第二部分 (A7).
+# Terminal results stay as printed (11 passed; 10 passed, 1 warning; 1 passed, 4 skipped; CACHED; Skipped;
+# Failed; files were modified by this hook; nothing to commit; SKIPPED, API not running at localhost:9000).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: (3, 4),
+# pytest.raises, TypeError, GET /euclidean_distance/?x=3&y=4, power(3, 2), ls -la,
+# uvicorn api.service:app --host 0.0.0.0 --port 9000 --reload, Application startup complete, Ctrl-C, --rm,
+# docker ps -a, --reload, cheese-app-api:local, flake8 --max-line-length=120 api/, --check --diff,
+# externally-managed-environment, test_*.py, Test*, test_*, -ra, def broken(): assert False, test_broken,
+# pytest.approx, tests/unit/, tests/system/, --network host, DEV=1, localhost:9000, .git, --all-files,
+# git add -u, sed -i); null = the SAY text.
+S01:
+- en: "Here is a line of code that a Harvard instructor committed, live, in class. The distance from a point to the origin is the square root of x squared plus y squared. This line takes the square root of twice that. Nothing crashed; the app started fine. The answer was just wrong."
+  zh:
+  - "这是一行代码，是哈佛的一位授课老师在课堂上现场 commit 的。"
+  - "一个点到原点的距离，是 x 的平方加 y 的平方，再开平方。"
+  - "这一行算的却是它的两倍再开平方。"
+  - "什么都没崩溃；应用照常启动了。"
+  - "只是答案错了。"
+- en: "You type git commit. Before that commit exists, who gets to say no, and what can they actually catch? The lecture has a word for whoever can say no: a gate, anything that can fail and stop you. Today we build one on your machine, and watch it refuse a commit."
+  zh:
+  - "你输入 git commit。"
+  - "在这个 commit 生成之前，谁有权说不，它们又到底能抓到什么？"
+  - "课上给能说不的东西起了个名字：门禁，也就是任何会失败、能拦住你的东西。"
+  - "今天我们就在你的电脑上搭一个门禁，看着它拒绝一次 commit。"
+- en: "Step back once: in a machine learning system, the model is a few tiles in a big grid; the rest is engineering. Today is that engineering: tests, formatters, linters, and the hook that runs them."
+  zh:
+  - "先退一步看：在一个机器学习系统里，模型只是一大张格子里的几块；其余都是工程。"
+  - "今天讲的就是这些工程：测试、格式化工具、linter，还有运行它们的 hook。"
+- en: "To follow along you need your own clone of cheese-app-ci-cd, Docker Desktop running, and Python 3.9 or newer. No cloud, no credentials, no bill: everything runs on your laptop, which is the point."
+  zh:
+  - "想跟着做，你需要自己 clone 一份 cheese-app-ci-cd，开着 Docker Desktop，还要有 Python 3.9 及以上。"
+  - "不用云，不用凭据，没有账单：一切都在你的笔记本上跑，这正是重点。"
+- en: "The tracker in the top left shows which README step we are on; 6 sections today: 4 from the cheese README, 1 for the guest lecture, 1 for cleanup. When the yellow your-turn tag appears, pause and run the command. A gray extra tag marks a check not in the README. Every command is in the study guide, linked below."
+  zh:
+  - "左上角的进度条显示我们在 README 的哪一步；今天一共 6 段：4 段来自 cheese 的 README，1 段是客座讲座，1 段是清理。"
+  - "看到黄色的 your turn 标签，就暂停，自己跑这条命令。"
+  - "灰色的 extra 标签表示这个检查 README 里没有。"
+  - "每条命令都在学习指南里，链接在下方。"
+S02:
+- en: "The bug is real history. This repo's own log tells the story: messy code re-added on purpose, then a crash, then a fix. Then the class demo slipped the wrong square root in, and the revert took it out. An extra git log confirms the clone sits at that last commit, from November 2025."
+  zh:
+  - "这个 bug 是真实的历史。"
+  - "这个 repo 自己的 log 讲了整个故事：先是故意加回来的乱代码，然后是一次崩溃，再是一次修复。"
+  - "接着课堂演示把那个错的平方根混了进去，后来又被 revert 拿掉了。"
+  - "额外跑一下 git log，确认 clone 下来的正是最后那个 commit，2025 年 11 月的。"
+- en: "Picture the point 3 comma 4. Its true distance from the origin is 5, the radius of this circle. The buggy line returns the square root of 50, about 7.07: it overshoots the circle. No crash, no error message, only a wrong number."
+  zh:
+  - "想象一个点：x 是 3，y 是 4。"
+  - "它到原点的真实距离是 5，也就是这个圆的半径。"
+  - "有 bug 的那一行返回 50 的平方根，大约 7.07：冲出了这个圆。"
+  - "没崩溃，没报错，只有一个错的数字。"
+  en_display:
+  - "Picture the point (3, 4)."
+  - null
+  - null
+  - null
+- en: "One existing test already knew the right answer. It asks the app for the distance of 3 comma 4 and insists on exactly 5.0. A test is an executable specification, and this one would have said no before anyone saw the demo."
+  zh:
+  - "有一个现成的测试早就知道正确答案。"
+  - "它让应用算 x 是 3、y 是 4 的距离，并且坚持结果必须正好是 5.0。"
+  - "测试就是可执行的规格说明，这个测试本来会在任何人看到演示之前就说不。"
+  en_display:
+  - null
+  - "It asks the app for the distance of (3, 4) and insists on exactly 5.0."
+  - null
+- en: "When a test fails, there are two suspects, the code and the test. The lecture's rule: first believe the test, and fix the code. Rewriting the test to match a bug turns your specification into a diary."
+  zh:
+  - "测试失败时，有两个嫌疑人：代码和测试。"
+  - "课上的规则是：先相信测试，去改代码。"
+  - "为了迁就 bug 去改测试，规格说明就变成了日记。"
+- en: "What is worth testing? The lecture sorts inputs into three trays: normal, edge, and invalid. For the power function here, 2 to the power 3 is normal; zero exponents, infinity and not a number are edges. And for invalid input, pytest dot raises inverts the test: it passes only if power on a string raises a type error."
+  zh:
+  - "什么值得测试？"
+  - "课上把输入分进三个托盘：正常、边缘和非法。"
+  - "对这里的 power 函数来说，2 的 3 次方是正常输入；指数为零、无穷大和非数值都是边缘情况。"
+  - "至于非法输入，pytest.raises 把测试反过来：只有对字符串调用 power 时抛出 TypeError，测试才通过。"
+  en_display:
+  - null
+  - null
+  - null
+  - "And for invalid input, pytest.raises inverts the test: it passes only if power on a string raises a TypeError."
+S03:
+- en: "Now the lecture's vocabulary, on one request: get euclidean distance, with x 3 and y 4. Inside the handler, squaring x is one call, power of 3 and 2. A unit test skips the app entirely and calls that one function alone. It is fast, and when it fails you know where to look."
+  zh:
+  - "现在用一个请求来讲课上的词汇：GET euclidean distance，x 是 3，y 是 4。"
+  - "在处理函数里，求 x 的平方是一次调用：power，参数是 3 和 2。"
+  - "单元测试完全绕开应用，只单独调用这一个函数。"
+  - "它很快，而且失败时你知道该去哪儿找。"
+  en_display:
+  - "Now the lecture's vocabulary, on one request: GET /euclidean_distance/?x=3&y=4."
+  - "Inside the handler, squaring x is one call, power(3, 2)."
+  - null
+  - null
+- en: "An integration test wires several of our parts. The test client hands the request straight to the FastAPI app, in process: routing, validation, handler and power all run, but no server and no network. Ten of those run here in under a second, at the time of recording."
+  zh:
+  - "集成测试把我们自己的几个部分连起来。"
+  - "测试客户端把请求直接交给 FastAPI 应用，在同一个进程里：路由、校验、处理函数和 power 全都跑了，但没有服务器，也没有网络。"
+  - "录制时，这里有 10 个这样的测试，不到一秒就跑完。"
+- en: "A system test treats the running program as a black box. The request leaves the test, crosses a real network wire to port 9000, and comes back as JSON. It is the most honest test, and the slowest and most fragile."
+  zh:
+  - "系统测试把运行中的程序当成一个黑盒。"
+  - "请求离开测试，穿过一根真实的网线到达 port 9000，再以 JSON 的形式回来。"
+  - "它是最诚实的测试，也是最慢、最脆弱的。"
+- en: "Stacked, that is the testing pyramid: many cheap unit tests at the bottom, few expensive system tests on top."
+  zh:
+  - "叠起来，就是测试金字塔：底层是大量便宜的单元测试，顶上是少量昂贵的系统测试。"
+- en: "The lecture adds a sharper lens: a border. A test is hermetic when only your code can make it fail. Unit and integration tests live inside that border. The system test crosses it: a live server can be down for reasons that are not your bug."
+  zh:
+  - "课上还给了一个更锐利的视角：一条边界。"
+  - "一个测试是 hermetic 的，指的是只有你的代码能让它失败。"
+  - "单元测试和集成测试都在这条边界之内。"
+  - "系统测试跨过了它：一台运行中的服务器可能会挂掉，原因却不是你的 bug。"
+- en: "Two more kinds get faint rows: a smoke test, which only asks whether it answers, and acceptance tests, which this project lacks, for now. One note about kinds: a test's kind is named by what runs, not by its folder. This repo's system test file calls itself integration tests, and its pytest config defines markers, labels for selecting tests, that nobody uses; markers return in the guest lecture."
+  zh:
+  - "还有两类测试只占淡淡的两行：冒烟测试，只问它有没有响应；还有验收测试，这个项目暂时还没有。"
+  - "关于类型说一句：测试属于哪一类，看的是实际运行了什么，而不是它放在哪个目录。"
+  - "这个 repo 的系统测试文件管自己叫集成测试，它的 pytest 配置还定义了一些 marker，也就是用来挑选测试的记号，却没人用；marker 会在客座讲座里回来。"
+- en: "Last picture: an empty table, four columns. What is checked, how, with which command, and does it run on every commit. Part 1 fills it in."
+  zh:
+  - "最后一张图：一张空表，四列。"
+  - "检查什么，怎么检查，用哪条命令，以及是不是每次 commit 都跑。"
+  - "第一部分会把它填满。"
+S04:
+- en: "Time to type. The README says clone or download from your repository, without an address, so here is the repo. Clone it, then cd into cheese-app-ci-cd. Pause and run both."
+  zh:
+  - "该动手敲了。"
+  - "README 只说从你的仓库 clone 或下载，没给地址，所以这里给出 repo 的地址。"
+  - "先 clone，再 cd 进 cheese-app-ci-cd。"
+  - "暂停一下，两条都跑一遍。"
+- en: "An extra look around, not in the README: ls dash l a. Everything today is here: three test folders under tests, a pytest config, a pre-commit config, and the Dockerfile that bakes them into one image."
+  zh:
+  - "额外看一圈，README 里没有这一步：ls -la。"
+  - "今天的东西全在这儿：tests 下面的三个测试目录、一个 pytest 配置、一个 pre-commit 配置，还有把它们打包进一个 image 的 Dockerfile。"
+  en_display:
+  - "An extra look around, not in the README: ls -la."
+  - null
+- en: "Now the README's first command: sh docker-shell.sh. It builds the image, about a minute at the time of recording, and drops you into a shell inside the container. Pause and run it. Read the prompt: the user is app, not root, and the ID changes every run."
+  zh:
+  - "现在是 README 的第一条命令：sh docker-shell.sh。"
+  - "它会构建 image，录制时大约要一分钟，然后把你放进 container 里的一个 shell。"
+  - "暂停一下，自己跑一遍。"
+  - "看一下提示符：用户是 app，不是 root，而且 ID 每次运行都会变。"
+- en: "Inside, start the server: uvicorn api dot service colon app, host 0.0.0.0, port 9000, with reload. When it says application startup complete, open the three README URLs in your browser; pause and do it. Here, from a second terminal on the laptop, three curl calls stand in for the browser: welcome, health, and the distance answer."
+  zh:
+  - "在里面启动服务器：uvicorn api.service:app，host 是 0.0.0.0，port 是 9000，加上 --reload。"
+  - "等它显示 Application startup complete，就在浏览器里打开 README 的三个 URL；暂停一下，照着做。"
+  - "这里在笔记本电脑上另开一个终端，用三次 curl 代替浏览器：欢迎信息、health，还有距离的结果。"
+  en_display:
+  - "Inside, start the server: uvicorn api.service:app --host 0.0.0.0 --port 9000 --reload."
+  - "When it says Application startup complete, open the three README URLs in your browser; pause and do it."
+  - null
+- en: "One small gap: the README says this endpoint returns 5.0. Really it returns a JSON object whose distance field is 5.0, as the code shows."
+  zh:
+  - "有一个小疏漏：README 说这个接口返回 5.0。"
+  - "实际上它返回的是一个 JSON 对象，其中 distance 字段是 5.0，代码里写得很清楚。"
+- en: "Stop the server with control C, then type exit. Because the shell script used dash dash rm, nothing is left behind; an extra docker ps dash a, confirms it. One warning that pays off soon: your files are not mounted into this container. The reload flag watches the copy baked into the image, so an edit on your laptop changes nothing until you rebuild."
+  zh:
+  - "用 Ctrl-C 停掉服务器，再输入 exit。"
+  - "因为这个 shell 脚本用了 --rm，什么都不会留下；额外跑一下 docker ps -a 就能确认。"
+  - "先提醒一句，很快就会用上：你的文件没有挂载进这个 container。"
+  - "参数 --reload 盯着的是打包进 image 的那份副本，所以你在笔记本上改了什么，在重新构建之前都不起作用。"
+  en_display:
+  - "Stop the server with Ctrl-C, then type exit."
+  - "Because the shell script used --rm, nothing is left behind; an extra docker ps -a confirms it."
+  - null
+  - "The --reload flag watches the copy baked into the image, so an edit on your laptop changes nothing until you rebuild."
+S05:
+- en: "The README's Part 2 hunts for quality issues with two tools not to confuse. A formatter rewrites code into one layout and never changes behavior. A linter only reports: style issues, likely bugs, things needing a person. Format first, then lint."
+  zh:
+  - "README 的 Part 2 用两个工具找代码质量问题，这两个可别搞混。"
+  - "格式化工具把代码改写成统一的排版，从不改变行为。"
+  - "而 linter 只负责报告：风格问题、可能的 bug、需要人来处理的地方。"
+  - "先格式化，再 lint。"
+- en: "First build the image, cheese-app-api tagged local. Every step says CACHED: the shell script already built this Dockerfile. Pause and run it."
+  zh:
+  - "先构建 image：cheese-app-api:local。"
+  - "每一步都显示 CACHED：那个 shell 脚本已经构建过这个 Dockerfile 了。"
+  - "暂停一下，自己跑一遍。"
+  en_display:
+  - "First build the image, cheese-app-api:local."
+  - null
+  - null
+- en: "Now the linter, inside the image: flake8, max line length 120, on the api folder. Pause and run it. Two findings in utils.py, a missing space after a comma, and too many blank lines: mess left on purpose."
+  zh:
+  - "现在在 image 里跑 linter：flake8，--max-line-length 设成 120，检查 api 目录。"
+  - "暂停一下，自己跑一遍。"
+  - "在 utils.py 里发现两个问题，逗号后面少了空格，还有空行太多：都是故意留下的乱代码。"
+  en_display:
+  - "Now the linter, inside the image: flake8 --max-line-length=120 api/."
+  - null
+  - null
+- en: "Then black, in check and diff mode. Pause and run it. It reports 2 files would be reformatted, not just utils.py. This command gives black no width, so it falls back to its default of 88 and also folds a 95 character line in service.py."
+  zh:
+  - "然后是 black，用 --check 和 --diff 模式。"
+  - "暂停一下，自己跑一遍。"
+  - "它说有 2 个文件会被重新格式化，不只是 utils.py。"
+  - "这条命令没给 black 指定宽度，所以它退回默认的 88，把 service.py 里一行 95 个字符的代码也折了。"
+  en_display:
+  - "Then black, in --check --diff mode."
+  - null
+  - null
+  - null
+- en: "Watch the trap. At width 88, black folds that line into three; at 120, it unfolds to one. The hook and CI here both use 120, but several README commands pass no width, so the same file gets different answers. Always pass 120, or set it once in config."
+  zh:
+  - "看好这个陷阱。"
+  - "宽度 88 时，black 把那一行折成三行；宽度 120 时，又展开回一行。"
+  - "这里的 hook 和 CI 都用 120，但 README 里有几条命令没给宽度，于是同一个文件得到不同的结论。"
+  - "要么每次都传 120，要么在配置里一次写好。"
+- en: "Option B runs the same checks on your laptop: install black and flake8 with pip, on the host, 26.10.1 and 7.4.1 at the time of recording. Pause and run it. If pip refuses with externally managed environment, as Homebrew Pythons do, use any lecture 1 virtual environment, or pipx; the study guide has the one-liner."
+  zh:
+  - "Option B 在你的笔记本上跑同样的检查：用 pip 在宿主机上装 black 和 flake8，录制时分别是 26.10.1 和 7.4.1。"
+  - "暂停一下，自己跑一遍。"
+  - "如果 pip 拒绝，报 externally-managed-environment，Homebrew 的 Python 就会这样，那就用第 1 讲的任意一个虚拟环境，或者 pipx；学习指南里有那一行命令。"
+  en_display:
+  - null
+  - null
+  - "If pip refuses with externally-managed-environment, as Homebrew Pythons do, use any lecture 1 virtual environment, or pipx; the study guide has the one-liner."
+- en: "Pause and run both. The local flake8, at its default of 79, adds a third finding, that same 95 character line; local black wants the same two files changed."
+  zh:
+  - "暂停一下，两条都跑一遍。"
+  - "本地的 flake8 用默认的 79，多报了第三个问题，就是那行 95 个字符的代码；本地的 black 要改的还是那两个文件。"
+- en: "What can a formatter fix? On the messy service.py from the repo's history, black sweeps away almost every finding, and exactly 2 survive: an unused import, which a formatter cannot delete, and a long quoted sentence black must not rewrite. The class fixed both by hand."
+  zh:
+  - "格式化工具能修好什么？"
+  - "在 repo 历史里那个乱糟糟的 service.py 上，black 几乎扫掉了所有问题，正好剩下 2 个：一个没用到的 import，格式化工具删不掉；还有一个带引号的长句子，black 不能改写它。"
+  - "课上是手动把这两个修好的。"
+S06:
+- en: "Before running tests in bulk, meet the machine that finds them. The config file pytest.ini sets the rules: files named test underscore something, classes named Test, functions named test underscore. It also adds options to every run, and the one to remember is dash r a, the summary of everything not plainly passed."
+  zh:
+  - "在成批跑测试之前，先认识一下找测试的那台机器。"
+  - "配置文件 pytest.ini 定下规则：文件名以 test 下划线开头，类名以 Test 开头，函数名以 test 下划线开头。"
+  - "它还给每次运行加上一些选项，要记住的是 -ra：凡是没有干脆通过的，都会列进这份摘要。"
+  en_display:
+  - null
+  - "The config file pytest.ini sets the rules: files named test_*.py, classes named Test*, functions named test_*."
+  - "It also adds options to every run, and the one to remember is -ra, the summary of everything not plainly passed."
+- en: "Watch the collector sweep the tests folder: every matching name lights up, 26 tests in all."
+  zh:
+  - "看收集器扫过 tests 目录：每个匹配的名字都亮起来，一共 26 个测试。"
+- en: "Something to ponder. A later README part appends the line def broken, assert False, to a test file, hoping to break the build. Will the unit test run go red?"
+  zh:
+  - "来想一个问题。"
+  - "README 后面有一部分，往一个测试文件末尾追加一行 def broken，内容是 assert False，想让构建失败。"
+  - "单元测试会变红吗？"
+  en_display:
+  - null
+  - "A later README part appends the line def broken(): assert False to a test file, hoping to break the build."
+  - null
+- en: "No. Watch the collector: the appended name stays dark. The name does not match test underscore star, so it is never collected, never run. To really break the build, call it test underscore broken. Discovery by convention cuts both ways."
+  zh:
+  - "不会。"
+  - "看收集器：追加的那个名字一直是暗的。"
+  - "这个名字不匹配 test 下划线加星号，所以它从没被收集，也从没运行。"
+  - "想真的让构建失败，就把它叫作 test 下划线 broken。"
+  - "按约定发现测试，是一把双刃剑。"
+  en_display:
+  - null
+  - null
+  - "The name does not match test_*, so it is never collected, never run."
+  - "To really break the build, call it test_broken."
+  - null
+- en: "Three more pytest verbs in 30 seconds. A plain assert is rewritten so a failure shows both values. For floats, pytest dot approx compares with a tolerance. And pytest dot raises passes only when the block raises the named error: the invalid tray from earlier."
+  zh:
+  - "再用 30 秒讲 pytest 的三个动作。"
+  - "普通的 assert 会被改写，失败时两边的值都会显示出来。"
+  - "对浮点数，pytest.approx 带着容差来比较。"
+  - "而 pytest.raises 只有在代码块抛出指定的错误时才通过：就是前面那个非法输入的托盘。"
+  en_display:
+  - null
+  - null
+  - "For floats, pytest.approx compares with a tolerance."
+  - "And pytest.raises passes only when the block raises the named error: the invalid tray from earlier."
+- en: "One gift from the lecture that this repo does not use yet. The integration tests build their test client once, as a module global. A fixture would do it better. A test asks for client by name, and pytest builds and injects it. A setting says whether each test gets a fresh one or the whole run shares one. And parametrize folds four copies into one function with four inputs."
+  zh:
+  - "课上还送了一个礼物，这个 repo 还没用上。"
+  - "集成测试把测试客户端只建一次，作为模块级的全局变量。"
+  - "用 fixture 会更好。"
+  - "测试按名字要 client，pytest 负责建好并注入。"
+  - "有一个设置决定每个测试拿一个新的，还是整次运行共用一个。"
+  - "而 parametrize 把四份副本折成一个函数，带四组输入。"
+S07:
+- en: "Part 3 runs tests where the app lives, inside the image, by three routes: docker run per suite, a live server for the system tests, or an interactive shell. The Dockerfile copies pyproject.toml and installs the dependencies, one fat layer. Then four thin copy lines bake in the api code, the tests, the pytest config and the entrypoint. The entrypoint puts pytest on PATH, and its exec line hands the container to whatever command you pass. The container's exit code is how docker run can fail a CI step."
+  zh:
+  - "Part 3 在应用所在的地方跑测试，也就是 image 里面，有三条路：每个测试集一条 docker run，为系统测试起一个运行中的服务器，或者一个交互式 shell。"
+  - "Dockerfile 复制 pyproject.toml，安装依赖，形成一个很厚的层。"
+  - "接着四行薄薄的 COPY 把 api 代码、测试、pytest 配置和 entrypoint 打包进去。"
+  - "这个 entrypoint 把 pytest 放进 PATH，它的 exec 那一行再把 container 交给你传进来的任何命令。"
+  - "靠的是 container 的退出码，docker run 才能让 CI 的一个步骤失败。"
+- en: "Build again, all cached, then run the unit tests: docker run, dash dash rm, the image, pytest tests slash unit: 11 passed. Pause and run both."
+  zh:
+  - "再构建一次，全是缓存，然后跑单元测试：docker run --rm，加上 image 名，再加 pytest tests/unit/：11 passed。"
+  - "暂停一下，两条都跑一遍。"
+  en_display:
+  - "Build again, all cached, then run the unit tests: docker run --rm, the image, pytest tests/unit/: 11 passed."
+  - null
+- en: "The integration suite says 10 passed, 1 warning; both suites together, 21 passed, 1 warning. Pause and run them. The 1 warning is pytest 9's summary line counting a warning this config hides, at the time of recording: same tests, same results."
+  zh:
+  - "集成测试显示 10 passed, 1 warning；两个测试集一起跑，是 21 passed, 1 warning。"
+  - "暂停一下，把它们都跑一遍。"
+  - "那个 1 warning 是录制时 pytest 9 的摘要行，把这份配置隐藏掉的一个警告也算了进去：测试相同，结果也相同。"
+- en: "Now the coverage run: unit tests, measuring the api package. Pause and run it. Look at service.py: 0 percent; the unit tests never import it. Coverage is a list of lines nobody has asked about, not a score. Hold that thought."
+  zh:
+  - "现在跑覆盖率：单元测试，统计 api 这个包。"
+  - "暂停一下，自己跑一遍。"
+  - "看 service.py：0%；单元测试从来没有 import 它。"
+  - "覆盖率是一份没人问过的代码行清单，而不是一个分数。"
+  - "先记住这一点。"
+- en: "The gate table gets its first row: unit and integration tests, hermetic, one docker command. Option 2 waits; it gets the next scene. Option 3 is the same interactively: docker-shell again, the same pytest commands, the same counts. One trap: the HTML report lands inside a container that dash dash rm deletes, gone when you exit. Prefer the terminal report."
+  zh:
+  - "门禁表有了第一行：单元测试和集成测试，hermetic，一条 docker 命令。"
+  - "Option 2 先等等；下一段专门讲它。"
+  - "Option 3 是同样的事，换成交互式：再跑一次 docker-shell.sh，同样的 pytest 命令，同样的数字。"
+  - "有一个陷阱：HTML 报告生成在一个会被 --rm 删掉的 container 里，一 exit 就没了。"
+  - "优先用终端里的报告。"
+  en_display:
+  - null
+  - null
+  - null
+  - "One trap: the HTML report lands inside a container that --rm deletes, gone when you exit."
+  - null
+- en: "This image ships its dev tools as runtime dependencies, open ended pins, no lockfile; the guest lecture keeps them in groups behind one lockfile. And the warning from the README's Part 1 pays off: edit utils.py on your laptop, and this container still tests yesterday's copy. Rebuild, or you test the past."
+  zh:
+  - "这个 image 把开发工具当成运行时依赖一起发布，版本只有下限，没有 lock 文件；客座讲座则把它们放进依赖组，由一个 lock 文件锁住。"
+  - "README Part 1 里的那句提醒这时用上了：你在笔记本上改了 utils.py，这个 container 测的还是昨天的副本。"
+  - "要么重新构建，要么你测的就是过去。"
+S08:
+- en: "Option 2 is the system test, and the lecture's question: can anything but our code make it fail? Start a live server, detached, named api-server, on port 9000, with DEV equals 1. All you get back is a container ID. Pause and run it."
+  zh:
+  - "Option 2 是系统测试，也带出课上的问题：除了我们的代码，还有别的东西能让它失败吗？"
+  - "在后台启动一个服务器，名字叫 api-server，用 port 9000，DEV 设成 1。"
+  - "你拿回来的只有一个 container ID。"
+  - "暂停一下，自己跑一遍。"
+  en_display:
+  - null
+  - "Start a live server, detached, named api-server, on port 9000, with DEV=1."
+  - null
+  - null
+- en: "The README runs the tests immediately. We add one extra first: a loop curling the health endpoint until it answers. CI waits too, in its own way; you will see why soon. A second extra, docker ps, shows the server up."
+  zh:
+  - "README 接着马上就跑测试。"
+  - "我们先额外加一步：一个循环不停地 curl health 接口，直到它有回应。"
+  - "CI 也会等，用它自己的办法；很快你就知道为什么。"
+  - "第二个额外检查是 docker ps，显示服务器已经起来了。"
+- en: "Now the README's system command: docker run with network host, pytest tests slash system. 5 passed, and this time the request really crossed the wire. Pause and run it."
+  zh:
+  - "现在是 README 里的系统测试命令：docker run 加上 --network host，跑 pytest tests/system/。"
+  - "5 passed，这一次请求真的穿过了那根线。"
+  - "暂停一下，自己跑一遍。"
+  en_display:
+  - "Now the README's system command: docker run --network host, pytest tests/system/."
+  - null
+  - null
+- en: "Something to ponder: the same command again, with no server running. What exactly does pytest print?"
+  zh:
+  - "来想一个问题：同一条命令再跑一次，但服务器没在运行。"
+  - "这时 pytest 到底会打印什么？"
+- en: "The README's next step answers it: stop and remove the server. Pause and do it; the cleanup doubles as our experiment."
+  zh:
+  - "README 的下一步正好回答它：停掉并删除服务器。"
+  - "暂停一下，照着做；这次清理顺便就是我们的实验。"
+- en: "Here is the answer, as an extra run. 1 passed, 4 skipped, and the headline is still green. Four gray dots, not failures. Only the summary from dash r a, tells the truth: skipped, API not running at localhost 9000."
+  zh:
+  - "答案在这儿，作为额外的一次运行。"
+  - "1 passed, 4 skipped，标题行还是绿的。"
+  - "四个灰点，不算失败。"
+  - "只有 -ra 的摘要说了实话：SKIPPED，API not running at localhost:9000。"
+  en_display:
+  - null
+  - null
+  - null
+  - "Only the summary from -ra tells the truth: SKIPPED, API not running at localhost:9000."
+- en: "Why does it skip? The test file probes the server once, when pytest collects the module. That one answer marks the whole class: a server that comes up a second late is too late. A smoke detector with its battery removed will never beep, and that is not the same as no fire."
+  zh:
+  - "为什么会跳过？"
+  - "测试文件只探测一次服务器，就在 pytest 收集这个模块的时候。"
+  - "这一次的结果决定了整个类：服务器晚一秒起来，就已经太晚了。"
+  - "拔了电池的烟雾报警器永远不会响，但这不等于没有着火。"
+- en: "On the border picture, 22 tests live inside: the 21 from last scene, plus the one system folder test that never needed the server. These 4 stand outside. The honest remedy is a marker the run must select on purpose; the guest lecture shows it. CI's version is loud: it curls the server first, and if the server is down, the whole job fails. The system row enters the gate table outside the turnstile: not on every commit, not hermetic."
+  zh:
+  - "在边界图上，有 22 个测试在里面：上一段的 21 个，加上系统测试目录里那个从来不需要服务器的测试。"
+  - "这 4 个站在外面。"
+  - "诚实的办法是用一个 marker，运行时必须特意选中它；客座讲座会演示。"
+  - "CI 的做法很响亮：它先 curl 服务器，服务器要是没起来，整个任务直接失败。"
+  - "系统测试这一行写进门禁表，但放在闸机外面：不是每次 commit 都跑，也不是 hermetic 的。"
+S09:
+- en: "Part 4 installs the gate. Outside the container, pip install pre-commit, 4.7.0 at the time of recording; then, from the repo root, pre-commit install: a hook file now sits in dot git. Pause and run both."
+  zh:
+  - "Part 4 装上门禁。"
+  - "在 container 外面执行 pip install pre-commit，录制时是 4.7.0；然后在 repo 根目录运行 pre-commit install：.git 里就多了一个 hook 文件。"
+  - "暂停一下，两条都跑一遍。"
+  en_display:
+  - null
+  - "Outside the container, pip install pre-commit, 4.7.0 at the time of recording; then, from the repo root, pre-commit install: a hook file now sits in .git."
+  - null
+- en: "Git runs that hook file before every commit. It lives in dot git, which is never committed: every clone installs it again. It hands over to pre-commit, which reads the repo's config."
+  zh:
+  - "Git 在每次 commit 之前都会运行这个 hook 文件。"
+  - "它放在 .git 里，从来不会被 commit：每个 clone 都要重新安装。"
+  - "它把工作交给 pre-commit，再由 pre-commit 读取 repo 的配置。"
+  en_display:
+  - null
+  - "It lives in .git, which is never committed: every clone installs it again."
+  - null
+- en: "The config names nine hooks: seven hygiene guards, from whitespace to private keys. Then black and flake8, both at width 120, both seeing only Python files under src: the tests are never linted."
+  zh:
+  - "配置里列了九个 hook：七个卫生检查，从空白字符到私钥。"
+  - "再加上 black 和 flake8，宽度都是 120，都只看 src 下面的 Python 文件：测试代码从来不做 lint。"
+- en: "Now the README's commit, on a clean tree. Pause and run it. The first run downloads each hook's pinned environment, plus a harmless warning at the time of recording. Then every hook says skipped and git says nothing to commit: hooks check staged files, and nothing was staged."
+  zh:
+  - "现在照 README 做一次 commit，工作区是干净的。"
+  - "暂停一下，自己跑一遍。"
+  - "第一次运行会下载每个 hook pin 住的环境，录制时还多了一条无害的警告。"
+  - "接着每个 hook 都显示 Skipped，git 说 nothing to commit：hook 只检查暂存的文件，而什么都没暂存。"
+- en: "To exercise them anyway, pre-commit run, dash dash all dash files. Pause and run it. Six hooks pass, one has no files to check, then black fails: files were modified by this hook; it reformatted utils.py. A quick ponder: flake8 runs next. Does it report the two findings it made earlier?"
+  zh:
+  - "想让它们照样跑一遍，就用 pre-commit run --all-files。"
+  - "暂停一下，自己跑一遍。"
+  - "六个 hook 通过，一个没有文件可查，然后 black 失败：files were modified by this hook；它重新格式化了 utils.py。"
+  - "快速想一下：接下来跑 flake8。"
+  - "它会报出之前那两个问题吗？"
+  en_display:
+  - "To exercise them anyway, pre-commit run --all-files."
+  - null
+  - null
+  - null
+  - null
+- en: "No. Black had already rewritten the file, so flake8 saw clean code and passed. Failed here does not mean broken; it means the hook changed files: look at the change, then re-stage."
+  zh:
+  - "不会。"
+  - "文件已经被 black 改写过了，所以 flake8 看到的是干净的代码，就通过了。"
+  - "这里的 Failed 不代表代码坏了；意思是 hook 改了文件：看一下改动，再重新暂存。"
+- en: "Two extras close the loop: git diff shows the fix; git add dash u, re-stages it. Commit again: seven hooks pass, two have nothing to check, and a real commit enters history; pause and walk the loop. The README's last variant, plain pre-commit run, checks only staged files; everything skips."
+  zh:
+  - "两个额外步骤把这个循环走完：git diff 显示改了什么；git add -u 把它重新暂存。"
+  - "再 commit 一次：七个 hook 通过，两个没东西可查，一个真正的 commit 进入了历史；暂停一下，把这个循环走一遍。"
+  - "README 的最后一个变体，不带参数的 pre-commit run，只检查暂存的文件；全部跳过。"
+  en_display:
+  - "Two extras close the loop: git diff shows the fix; git add -u re-stages it."
+  - null
+  - null
+- en: "A last demo, as an extra: sed adds and stages an unused import; on a Mac, sed dash i, needs empty quotes after it. The commit fails twice: black reformats the file, and flake8 reports F401, which no formatter can fix; git status confirms no commit exists. Restore the file: your machine now says no. But this gate never ran a single test. The guest lecture builds one that does, and shows what even it can miss."
+  zh:
+  - "最后一个演示，是额外的：用 sed 加一个没用到的 import 并暂存；在 Mac 上，sed -i 后面要跟一对空引号。"
+  - "这次 commit 被拦了两道：black 重新格式化了文件，flake8 报出 F401，这是任何格式化工具都修不了的；git status 确认 commit 没有生成。"
+  - "把文件恢复原样：你的电脑现在会说不了。"
+  - "可这个门禁一个测试都没跑过。"
+  - "客座讲座会搭一个会跑测试的门禁，再看看连它也会漏掉什么。"
+  en_display:
+  - "A last demo, as an extra: sed adds and stages an unused import; on a Mac, sed -i needs empty quotes after it."
+  - null
+  - null
+  - null
+  - null

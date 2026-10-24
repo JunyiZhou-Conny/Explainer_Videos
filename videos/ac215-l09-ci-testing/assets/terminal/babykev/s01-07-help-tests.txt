@@ -1,0 +1,28 @@
+$ just test -k help_is_printed -v
+uv run pytest "$@"
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- /home/student/babykev/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/student/babykev
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0
+collecting ... collected 52 items / 48 deselected / 4 selected
+
+tests/unit/test_cli.py::test_help_is_printed_for_help_and_for_no_words[words0] PASSED [ 25%]
+tests/unit/test_cli.py::test_help_is_printed_for_help_and_for_no_words[words1] PASSED [ 50%]
+tests/unit/test_cli.py::test_help_is_printed_for_help_and_for_no_words[words2] PASSED [ 75%]
+tests/unit/test_cli.py::test_help_is_printed_for_help_and_for_no_words[words3] PASSED [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                      Stmts   Miss  Cover   Missing
+-------------------------------------------------------
+src/babykev/__init__.py       0      0   100%
+src/babykev/api.py           66     37    44%   27-28, 47-51, 55, 60-74, 78-79, 85-86, 90, 94-104
+src/babykev/cli.py            8      2    75%   19-20
+-------------------------------------------------------
+TOTAL                        74     39    47%
+======================= 4 passed, 48 deselected in 0.17s =======================
+[exit 0]

@@ -1,0 +1,7 @@
+$ docker network ls
+NETWORK ID     NAME                 DRIVER    SCOPE
+4434d0847297   bridge               bridge    local
+c0ebf9f7f30d   cheese-app-network   bridge    local
+8318df0e1086   host                 host      local
+f753e0fe9689   none                 null      local
+[exit 0]

@@ -1,0 +1,2264 @@
+1
+00:00:00,000 --> 00:00:01,408
+Here is a line of code
+
+2
+00:00:01,408 --> 00:00:04,736
+that a Harvard instructor committed,
+live, in class.
+
+3
+00:00:05,056 --> 00:00:08,811
+The distance from a point
+to the origin is the square root
+
+4
+00:00:08,811 --> 00:00:10,624
+of x squared plus y squared.
+
+5
+00:00:10,944 --> 00:00:13,419
+This line takes
+the square root of twice that.
+
+6
+00:00:13,739 --> 00:00:16,085
+Nothing crashed; the app started fine.
+
+7
+00:00:16,405 --> 00:00:18,027
+The answer was just wrong.
+
+8
+00:00:18,267 --> 00:00:19,632
+You type git commit.
+
+9
+00:00:19,952 --> 00:00:22,735
+Before that commit exists,
+who gets to say no,
+
+10
+00:00:22,735 --> 00:00:24,731
+and what can they actually catch?
+
+11
+00:00:25,051 --> 00:00:28,038
+The lecture has a word
+for whoever can say no:
+
+12
+00:00:28,038 --> 00:00:30,896
+a gate, anything that can fail and stop you.
+
+13
+00:00:31,216 --> 00:00:34,992
+Today we build one on your machine,
+and watch it refuse a commit.
+
+14
+00:00:35,733 --> 00:00:38,692
+Step back once:
+in a machine learning system,
+
+15
+00:00:38,692 --> 00:00:42,901
+the model is a few tiles in a big grid;
+the rest is engineering.
+
+16
+00:00:43,221 --> 00:00:44,865
+Today is that engineering:
+
+17
+00:00:44,865 --> 00:00:48,405
+tests, formatters, linters,
+and the hook that runs them.
+
+18
+00:00:48,650 --> 00:00:53,166
+To follow along you need
+your own clone of cheese-app-ci-cd,
+
+19
+00:00:53,166 --> 00:00:56,778
+Docker Desktop running,
+and Python 3.9 or newer.
+
+20
+00:00:57,098 --> 00:00:59,368
+No cloud, no credentials, no bill:
+
+21
+00:00:59,368 --> 00:01:02,773
+everything runs on your laptop,
+which is the point.
+
+22
+00:01:03,017 --> 00:01:07,158
+The tracker in the top left shows
+which README step we are on;
+
+23
+00:01:07,158 --> 00:01:12,702
+6 sections today: 4 from the cheese README,
+1 for the guest lecture, 1 for cleanup.
+
+24
+00:01:13,022 --> 00:01:16,798
+When the yellow your-turn tag appears,
+pause and run the command.
+
+25
+00:01:17,118 --> 00:01:20,425
+A gray extra tag marks
+a check not in the README.
+
+26
+00:01:20,745 --> 00:01:23,753
+Every command is in the study guide,
+linked below.
+
+27
+00:01:24,800 --> 00:01:26,549
+The bug is real history.
+
+28
+00:01:26,869 --> 00:01:29,371
+This repo's own log tells the story:
+
+29
+00:01:29,371 --> 00:01:33,333
+messy code re-added on purpose,
+then a crash, then a fix.
+
+30
+00:01:33,653 --> 00:01:36,508
+Then the class demo slipped
+the wrong square root in,
+
+31
+00:01:36,508 --> 00:01:37,963
+and the revert took it out.
+
+32
+00:01:38,283 --> 00:01:44,597
+An extra git log confirms the clone sits
+at that last commit, from November 2025.
+
+33
+00:01:44,833 --> 00:01:46,860
+Picture the point (3, 4).
+
+34
+00:01:47,180 --> 00:01:51,553
+Its true distance from the origin is 5,
+the radius of this circle.
+
+35
+00:01:51,873 --> 00:01:56,633
+The buggy line returns
+the square root of 50, about 7.07:
+
+36
+00:01:56,633 --> 00:01:58,721
+it overshoots the circle.
+
+37
+00:01:59,041 --> 00:02:02,305
+No crash, no error message,
+only a wrong number.
+
+38
+00:02:02,550 --> 00:02:05,494
+One existing test already
+knew the right answer.
+
+39
+00:02:05,814 --> 00:02:11,638
+It asks the app for the distance of (3, 4)
+and insists on exactly 5.0.
+
+40
+00:02:11,958 --> 00:02:14,457
+A test is an executable specification,
+
+41
+00:02:14,457 --> 00:02:18,337
+and this one would have said
+no before anyone saw the demo.
+
+42
+00:02:18,583 --> 00:02:22,167
+When a test fails, there are two suspects,
+the code and the test.
+
+43
+00:02:22,487 --> 00:02:26,092
+The lecture's rule:
+first believe the test, and fix the code.
+
+44
+00:02:26,412 --> 00:02:31,085
+Rewriting the test to match a bug
+turns your specification into a diary.
+
+45
+00:02:31,733 --> 00:02:33,077
+What is worth testing?
+
+46
+00:02:33,397 --> 00:02:38,154
+The lecture sorts inputs into three trays:
+normal, edge, and invalid.
+
+47
+00:02:38,474 --> 00:02:42,290
+For the power function here,
+2 to the power 3 is normal;
+
+48
+00:02:42,290 --> 00:02:45,834
+zero exponents,
+infinity and not a number are edges.
+
+49
+00:02:46,154 --> 00:02:50,245
+And for invalid input,
+pytest.raises inverts the test:
+
+50
+00:02:50,245 --> 00:02:54,411
+it passes only if power
+on a string raises a TypeError.
+
+51
+00:02:55,450 --> 00:02:59,352
+Now the lecture's vocabulary,
+on one request:
+
+52
+00:02:59,352 --> 00:03:02,213
+GET /euclidean_distance/?x=3&y=4.
+
+53
+00:03:02,533 --> 00:03:06,821
+Inside the handler,
+squaring x is one call, power(3, 2).
+
+54
+00:03:07,141 --> 00:03:11,407
+A unit test skips the app entirely
+and calls that one function alone.
+
+55
+00:03:11,727 --> 00:03:14,415
+It is fast,
+and when it fails you know where to look.
+
+56
+00:03:14,650 --> 00:03:17,658
+An integration test wires
+several of our parts.
+
+57
+00:03:17,978 --> 00:03:23,373
+The test client hands the request straight
+to the FastAPI app, in process:
+
+58
+00:03:23,373 --> 00:03:26,844
+routing,
+validation, handler and power all run,
+
+59
+00:03:26,844 --> 00:03:28,986
+but no server and no network.
+
+60
+00:03:29,306 --> 00:03:33,018
+Ten of those run here in under a second,
+at the time of recording.
+
+61
+00:03:33,267 --> 00:03:36,830
+A system test treats the running program
+as a black box.
+
+62
+00:03:37,150 --> 00:03:39,276
+The request leaves the test,
+
+63
+00:03:39,276 --> 00:03:44,211
+crosses a real network wire to port 9000,
+and comes back as JSON.
+
+64
+00:03:44,531 --> 00:03:48,179
+It is the most honest test,
+and the slowest and most fragile.
+
+65
+00:03:48,700 --> 00:03:51,149
+Stacked, that is the testing pyramid:
+
+66
+00:03:51,149 --> 00:03:55,847
+many cheap unit tests at the bottom,
+few expensive system tests on top.
+
+67
+00:03:56,083 --> 00:03:58,856
+The lecture adds a sharper lens: a border.
+
+68
+00:03:59,176 --> 00:04:02,590
+A test is hermetic
+when only your code can make it fail.
+
+69
+00:04:02,910 --> 00:04:06,408
+Unit and integration tests live inside
+that border.
+
+70
+00:04:06,728 --> 00:04:08,436
+The system test crosses it:
+
+71
+00:04:08,436 --> 00:04:12,233
+a live server can be down for reasons
+that are not your bug.
+
+72
+00:04:12,467 --> 00:04:17,637
+Two more kinds get faint rows: a smoke test,
+which only asks whether it answers,
+
+73
+00:04:17,637 --> 00:04:21,256
+and acceptance tests,
+which this project lacks, for now.
+
+74
+00:04:21,576 --> 00:04:23,061
+One note about kinds:
+
+75
+00:04:23,061 --> 00:04:26,952
+a test's kind is named by what runs,
+not by its folder.
+
+76
+00:04:27,272 --> 00:04:31,816
+This repo's system test file
+calls itself integration tests,
+
+77
+00:04:31,816 --> 00:04:36,815
+and its pytest config defines markers,
+labels for selecting tests,
+
+78
+00:04:36,815 --> 00:04:40,072
+that nobody uses; markers return in part 2.
+
+79
+00:04:40,317 --> 00:04:43,240
+Last picture: an empty table, four columns.
+
+80
+00:04:43,560 --> 00:04:47,762
+What is checked, how, with which command,
+and does it run on every commit.
+
+81
+00:04:48,082 --> 00:04:49,490
+Part 1 fills it in.
+
+82
+00:04:50,533 --> 00:04:51,642
+Time to type.
+
+83
+00:04:51,962 --> 00:04:55,643
+The README says clone
+or download from your repository,
+
+84
+00:04:55,643 --> 00:04:58,320
+without an address, so here is the repo.
+
+85
+00:04:58,640 --> 00:05:01,754
+Clone it, then cd into cheese-app-ci-cd.
+
+86
+00:05:02,074 --> 00:05:03,376
+Pause and run both.
+
+87
+00:05:03,616 --> 00:05:07,456
+An extra look around,
+not in the README: ls -la.
+
+88
+00:05:07,776 --> 00:05:11,678
+Everything today is here:
+three test folders under tests,
+
+89
+00:05:11,678 --> 00:05:14,210
+a pytest config, a pre-commit config,
+
+90
+00:05:14,210 --> 00:05:17,632
+and the Dockerfile
+that bakes them into one image.
+
+91
+00:05:17,866 --> 00:05:22,047
+Now the README's first command:
+sh docker-shell.sh.
+
+92
+00:05:22,367 --> 00:05:25,901
+It builds the image,
+about a minute at the time of recording,
+
+93
+00:05:25,901 --> 00:05:28,682
+and drops you into a shell
+inside the container.
+
+94
+00:05:29,002 --> 00:05:30,154
+Pause and run it.
+
+95
+00:05:30,474 --> 00:05:35,488
+Read the prompt: the user is app,
+not root, and the ID changes every run.
+
+96
+00:05:36,933 --> 00:05:40,058
+Inside, start the server:
+
+97
+00:05:40,058 --> 00:05:47,557
+uvicorn api.service:app
+--host 0.0.0.0 --port 9000 --reload.
+
+98
+00:05:47,877 --> 00:05:50,741
+When it says Application startup complete,
+
+99
+00:05:50,741 --> 00:05:54,832
+open the three README URLs in your browser;
+pause and do it.
+
+100
+00:05:55,152 --> 00:05:58,069
+Here three curl calls stand
+in for the browser:
+
+101
+00:05:58,069 --> 00:06:00,613
+welcome, health, and the distance answer.
+
+102
+00:06:01,650 --> 00:06:06,194
+One small gap:
+the README says this endpoint returns 5.0.
+
+103
+00:06:06,514 --> 00:06:09,015
+Really it returns a JSON object
+
+104
+00:06:09,015 --> 00:06:12,807
+whose distance field is 5.0,
+as the code shows.
+
+105
+00:06:14,250 --> 00:06:17,514
+Stop the server with Ctrl-C, then type exit.
+
+106
+00:06:17,834 --> 00:06:23,085
+Because the shell script used --rm,
+nothing is left behind;
+
+107
+00:06:23,085 --> 00:06:26,111
+an extra docker ps -a confirms it.
+
+108
+00:06:26,431 --> 00:06:28,339
+One warning that pays off soon:
+
+109
+00:06:28,339 --> 00:06:31,231
+your files are not mounted
+into this container.
+
+110
+00:06:31,551 --> 00:06:35,218
+The --reload flag watches the copy baked
+into the image,
+
+111
+00:06:35,218 --> 00:06:39,146
+so an edit on your laptop changes nothing
+until you rebuild.
+
+112
+00:06:40,183 --> 00:06:44,322
+Part 2 hunts for quality issues
+with two tools not to confuse.
+
+113
+00:06:44,642 --> 00:06:49,207
+A formatter rewrites code into one layout
+and never changes behavior.
+
+114
+00:06:49,527 --> 00:06:51,090
+A linter only reports:
+
+115
+00:06:51,090 --> 00:06:54,711
+style issues,
+likely bugs, things needing a person.
+
+116
+00:06:55,031 --> 00:06:56,759
+Format first, then lint.
+
+117
+00:06:57,616 --> 00:07:01,285
+First build the image, cheese-app-api:local.
+
+118
+00:07:01,605 --> 00:07:02,979
+Every step says CACHED:
+
+119
+00:07:02,979 --> 00:07:05,787
+the shell script already
+built this Dockerfile.
+
+120
+00:07:06,107 --> 00:07:07,259
+Pause and run it.
+
+121
+00:07:07,500 --> 00:07:14,476
+Now the linter, inside the image:
+flake8 --max-line-length=120 api/.
+
+122
+00:07:14,796 --> 00:07:15,948
+Pause and run it.
+
+123
+00:07:16,268 --> 00:07:20,351
+Two findings in utils.py,
+a missing space after a comma,
+
+124
+00:07:20,351 --> 00:07:23,777
+and too many blank lines:
+mess left on purpose.
+
+125
+00:07:24,016 --> 00:07:26,064
+Then black, in --check --diff mode.
+
+126
+00:07:26,384 --> 00:07:27,536
+Pause and run it.
+
+127
+00:07:27,856 --> 00:07:31,056
+It reports 2 files would be reformatted,
+not one.
+
+128
+00:07:31,376 --> 00:07:35,387
+This command gives black no width,
+so it falls back
+
+129
+00:07:35,387 --> 00:07:40,891
+to its default of 88 and also folds
+a 95 character line in service.py.
+
+130
+00:07:41,133 --> 00:07:42,221
+Watch the trap.
+
+131
+00:07:42,541 --> 00:07:46,480
+At width 88,
+black folds that line into three;
+
+132
+00:07:46,480 --> 00:07:48,706
+at 120, it unfolds to one.
+
+133
+00:07:49,026 --> 00:07:54,783
+The hook and CI here both use 120,
+but several README commands pass no width,
+
+134
+00:07:54,783 --> 00:07:57,773
+so the same file gets different answers.
+
+135
+00:07:58,093 --> 00:08:01,720
+Always pass 120, or set it once in config.
+
+136
+00:08:06,966 --> 00:08:11,119
+Option B runs the same checks
+on your laptop:
+
+137
+00:08:11,119 --> 00:08:15,457
+install black and flake8 with pip,
+on the host,
+
+138
+00:08:15,457 --> 00:08:19,425
+26.10.1 and 7.4.1 at the time of recording.
+
+139
+00:08:19,745 --> 00:08:20,897
+Pause and run it.
+
+140
+00:08:21,217 --> 00:08:24,990
+If pip refuses
+with externally-managed-environment,
+
+141
+00:08:24,990 --> 00:08:26,716
+as Homebrew Pythons do,
+
+142
+00:08:26,716 --> 00:08:30,243
+use any lecture 1 virtual environment,
+or pipx;
+
+143
+00:08:30,243 --> 00:08:32,758
+the study guide has the one-liner.
+
+144
+00:08:33,000 --> 00:08:34,301
+Pause and run both.
+
+145
+00:08:34,621 --> 00:08:39,557
+The local flake8, at its default of 79,
+adds a third finding,
+
+146
+00:08:39,557 --> 00:08:41,853
+that same 95 character line;
+
+147
+00:08:41,853 --> 00:08:45,544
+local black wants
+the same two files changed.
+
+148
+00:08:46,816 --> 00:08:48,352
+What can a formatter fix?
+
+149
+00:08:48,672 --> 00:08:52,066
+On the messy service.py
+from the repo's history,
+
+150
+00:08:52,066 --> 00:08:56,450
+black sweeps away almost every finding,
+and exactly 2 survive:
+
+151
+00:08:56,450 --> 00:08:59,985
+an unused import,
+which a formatter cannot delete,
+
+152
+00:08:59,985 --> 00:09:03,520
+and a long quoted sentence
+black must not rewrite.
+
+153
+00:09:03,840 --> 00:09:05,739
+The class fixed both by hand.
+
+154
+00:09:07,783 --> 00:09:11,367
+Before running tests in bulk,
+meet the machine that finds them.
+
+155
+00:09:11,687 --> 00:09:15,748
+The config file pytest.ini sets the rules:
+
+156
+00:09:15,748 --> 00:09:22,226
+files named test_*.py, classes named Test*,
+functions named test_*.
+
+157
+00:09:22,546 --> 00:09:27,278
+It also adds options to every run,
+and the one to remember is -ra,
+
+158
+00:09:27,278 --> 00:09:30,503
+the summary of everything
+not plainly passed.
+
+159
+00:09:30,750 --> 00:09:33,645
+Watch the collector sweep the tests folder:
+
+160
+00:09:33,645 --> 00:09:36,808
+every matching name lights up,
+26 tests in all.
+
+161
+00:09:37,466 --> 00:09:38,810
+Something to ponder.
+
+162
+00:09:39,130 --> 00:09:42,554
+A later README part appends
+the line def broken():
+
+163
+00:09:42,554 --> 00:09:46,319
+assert False to a test file,
+hoping to break the build.
+
+164
+00:09:46,639 --> 00:09:48,538
+Will the unit test run go red?
+
+165
+00:09:57,383 --> 00:10:01,500
+No. Watch the collector:
+the appended name stays dark.
+
+166
+00:10:01,820 --> 00:10:06,812
+The name does not match test_*,
+so it is never collected, never run.
+
+167
+00:10:07,132 --> 00:10:10,524
+To really break the build,
+call it test_broken.
+
+168
+00:10:10,844 --> 00:10:13,490
+Discovery by convention cuts both ways.
+
+169
+00:10:13,733 --> 00:10:16,250
+Three more pytest verbs in 30 seconds.
+
+170
+00:10:16,570 --> 00:10:20,261
+A plain assert is rewritten
+so a failure shows both values.
+
+171
+00:10:20,581 --> 00:10:24,208
+For floats,
+pytest.approx compares with a tolerance.
+
+172
+00:10:24,528 --> 00:10:29,220
+And pytest.raises passes
+only when the block raises the named error:
+
+173
+00:10:29,220 --> 00:10:31,290
+the invalid tray from earlier.
+
+174
+00:10:31,533 --> 00:10:35,202
+One gift from the lecture
+that this repo does not use yet.
+
+175
+00:10:35,522 --> 00:10:40,066
+The integration tests build
+their test client once, as a module global.
+
+176
+00:10:40,386 --> 00:10:42,008
+A fixture would do it better.
+
+177
+00:10:42,328 --> 00:10:46,509
+A test asks for client by name,
+and pytest builds and injects it.
+
+178
+00:10:46,829 --> 00:10:49,721
+A setting says
+whether each test gets a fresh one
+
+179
+00:10:49,721 --> 00:10:51,373
+or the whole run shares one.
+
+180
+00:10:51,693 --> 00:10:56,173
+And parametrize folds four copies
+into one function with four inputs.
+
+181
+00:10:58,417 --> 00:11:02,148
+Part 3 runs tests where the app lives,
+inside the image,
+
+182
+00:11:02,148 --> 00:11:04,680
+by three routes: docker run per suite,
+
+183
+00:11:04,680 --> 00:11:08,678
+a live server for the system tests,
+or an interactive shell.
+
+184
+00:11:08,998 --> 00:11:11,804
+The Dockerfile copies pyproject.toml
+
+185
+00:11:11,804 --> 00:11:15,313
+and installs the dependencies,
+one fat layer.
+
+186
+00:11:15,633 --> 00:11:19,031
+Then four thin copy lines bake
+in the api code,
+
+187
+00:11:19,031 --> 00:11:22,502
+the tests,
+the pytest config and the entrypoint.
+
+188
+00:11:22,822 --> 00:11:25,069
+The entrypoint puts pytest on PATH,
+
+189
+00:11:25,069 --> 00:11:29,372
+and its exec line hands the container
+to whatever command you pass.
+
+190
+00:11:29,692 --> 00:11:34,065
+The container's exit code
+is how docker run can fail a CI step.
+
+191
+00:11:34,300 --> 00:11:38,579
+Build again, all cached,
+then run the unit tests:
+
+192
+00:11:38,579 --> 00:11:43,644
+docker run --rm, the image,
+pytest tests/unit/: 11 passed.
+
+193
+00:11:43,964 --> 00:11:45,266
+Pause and run both.
+
+194
+00:11:45,500 --> 00:11:49,055
+The integration suite says 10 passed,
+1 warning;
+
+195
+00:11:49,055 --> 00:11:52,241
+both suites together, 21 passed, 1 warning.
+
+196
+00:11:52,561 --> 00:11:53,820
+Pause and run them.
+
+197
+00:11:54,140 --> 00:11:59,699
+The 1 warning is pytest 9's summary line
+counting a warning this config hides,
+
+198
+00:11:59,699 --> 00:12:03,335
+at the time of recording:
+same tests, same results.
+
+199
+00:12:03,584 --> 00:12:07,872
+Now the coverage run:
+unit tests, measuring the api package.
+
+200
+00:12:08,192 --> 00:12:09,344
+Pause and run it.
+
+201
+00:12:09,664 --> 00:12:14,315
+Look at service.py: 0 percent;
+the unit tests never import it.
+
+202
+00:12:14,635 --> 00:12:18,965
+Coverage is a list of lines nobody
+has asked about, not a score.
+
+203
+00:12:19,285 --> 00:12:20,458
+Hold that thought.
+
+204
+00:12:20,700 --> 00:12:23,027
+The gate table gets its first row:
+
+205
+00:12:23,027 --> 00:12:26,929
+unit and integration tests,
+hermetic, one docker command.
+
+206
+00:12:27,249 --> 00:12:29,831
+Option 2 waits; it gets the next scene.
+
+207
+00:12:30,151 --> 00:12:32,552
+Option 3 is the same interactively:
+
+208
+00:12:32,552 --> 00:12:36,807
+docker-shell again,
+the same pytest commands, the same counts.
+
+209
+00:12:37,127 --> 00:12:41,418
+One trap:
+the HTML report lands inside a container
+
+210
+00:12:41,418 --> 00:12:44,679
+that --rm deletes, gone when you exit.
+
+211
+00:12:44,999 --> 00:12:46,770
+Prefer the terminal report.
+
+212
+00:12:47,017 --> 00:12:52,105
+This image ships its dev tools
+as runtime dependencies, open ended pins,
+
+213
+00:12:52,105 --> 00:12:57,193
+no lockfile; the guest lecture keeps them
+in groups behind one lockfile.
+
+214
+00:12:57,513 --> 00:13:01,877
+And the part 1 warning pays off:
+edit utils.py on your laptop,
+
+215
+00:13:01,877 --> 00:13:05,257
+and this container
+still tests yesterday's copy.
+
+216
+00:13:05,577 --> 00:13:07,476
+Rebuild, or you test the past.
+
+217
+00:13:10,017 --> 00:13:13,752
+Option 2 is the system test,
+and the lecture's question:
+
+218
+00:13:13,752 --> 00:13:16,353
+can anything but our code make it fail?
+
+219
+00:13:16,673 --> 00:13:21,162
+Start a live server,
+detached, named api-server,
+
+220
+00:13:21,162 --> 00:13:23,500
+on port 9000, with DEV=1.
+
+221
+00:13:23,820 --> 00:13:26,294
+All you get back is a container ID.
+
+222
+00:13:26,614 --> 00:13:27,766
+Pause and run it.
+
+223
+00:13:28,000 --> 00:13:30,325
+The README runs the tests immediately.
+
+224
+00:13:30,645 --> 00:13:32,104
+We add one extra first:
+
+225
+00:13:32,104 --> 00:13:35,403
+a loop curling the health endpoint
+until it answers.
+
+226
+00:13:35,723 --> 00:13:39,179
+CI waits too, in its own way;
+you will see why soon.
+
+227
+00:13:39,499 --> 00:13:42,678
+A second extra,
+docker ps, shows the server up.
+
+228
+00:13:42,917 --> 00:13:45,229
+Now the README's system command:
+
+229
+00:13:45,229 --> 00:13:48,698
+docker run --network host,
+pytest tests/system/.
+
+230
+00:13:49,018 --> 00:13:52,581
+5 passed, and this time
+the request really crossed the wire.
+
+231
+00:13:52,901 --> 00:13:54,053
+Pause and run it.
+
+232
+00:13:55,834 --> 00:13:59,887
+Something to ponder: the same command again,
+with no server running.
+
+233
+00:14:00,207 --> 00:14:02,276
+What exactly does pytest print?
+
+234
+00:14:11,117 --> 00:14:15,085
+The README's next step answers it:
+stop and remove the server.
+
+235
+00:14:15,405 --> 00:14:18,797
+Pause and do it;
+the cleanup doubles as our experiment.
+
+236
+00:14:19,034 --> 00:14:21,487
+Here is the answer, as an extra run.
+
+237
+00:14:21,807 --> 00:14:25,285
+1 passed, 4 skipped,
+and the headline is still green.
+
+238
+00:14:25,605 --> 00:14:27,610
+Four gray dots, not failures.
+
+239
+00:14:27,930 --> 00:14:35,567
+Only the summary from -ra tells the truth:
+SKIPPED, API not running at localhost:9000.
+
+240
+00:14:35,817 --> 00:14:37,012
+Why does it skip?
+
+241
+00:14:37,332 --> 00:14:41,790
+The test file probes the server once,
+when pytest collects the module.
+
+242
+00:14:42,110 --> 00:14:44,495
+That one answer marks the whole class:
+
+243
+00:14:44,495 --> 00:14:47,572
+a server that comes up a second late
+is too late.
+
+244
+00:14:47,892 --> 00:14:51,498
+A smoke detector with its battery
+removed will never beep,
+
+245
+00:14:51,498 --> 00:14:53,737
+and that is not the same as no fire.
+
+246
+00:14:53,984 --> 00:14:58,853
+On the border picture, 22 tests live inside:
+the 21 from last scene,
+
+247
+00:14:58,853 --> 00:15:03,221
+plus the one system folder test
+that never needed the server.
+
+248
+00:15:03,541 --> 00:15:05,163
+These 4 stand outside.
+
+249
+00:15:05,483 --> 00:15:10,453
+The honest remedy is a marker the run
+must select on purpose; part 2 shows it.
+
+250
+00:15:10,773 --> 00:15:14,136
+CI's version is loud:
+it curls the server first,
+
+251
+00:15:14,136 --> 00:15:17,429
+and if the server is down,
+the whole job fails.
+
+252
+00:15:17,749 --> 00:15:21,741
+The system row enters the gate table
+outside the turnstile:
+
+253
+00:15:21,741 --> 00:15:24,042
+not on every commit, not hermetic.
+
+254
+00:15:25,083 --> 00:15:26,811
+Part 4 installs the gate.
+
+255
+00:15:27,131 --> 00:15:30,906
+Outside the container,
+pip install pre-commit,
+
+256
+00:15:30,906 --> 00:15:33,450
+4.7.0 at the time of recording;
+
+257
+00:15:33,450 --> 00:15:37,145
+then, from the repo root,
+pre-commit install:
+
+258
+00:15:37,145 --> 00:15:39,526
+a hook file now sits in .git.
+
+259
+00:15:39,846 --> 00:15:41,147
+Pause and run both.
+
+260
+00:15:41,383 --> 00:15:44,114
+Git runs that hook file before every commit.
+
+261
+00:15:44,434 --> 00:15:49,703
+It lives in .git, outside the repository:
+every clone installs it again.
+
+262
+00:15:50,023 --> 00:15:53,650
+It hands over to pre-commit,
+which reads the repo's config.
+
+263
+00:15:53,900 --> 00:15:55,780
+The config names nine hooks:
+
+264
+00:15:55,780 --> 00:15:59,404
+seven hygiene guards,
+from whitespace to private keys.
+
+265
+00:15:59,724 --> 00:16:03,110
+Then black and flake8, both at width 120,
+
+266
+00:16:03,110 --> 00:16:08,726
+both seeing only Python files under src:
+the tests are never linted.
+
+267
+00:16:08,966 --> 00:16:11,441
+Now the README's commit, on a clean tree.
+
+268
+00:16:11,761 --> 00:16:12,913
+Pause and run it.
+
+269
+00:16:13,233 --> 00:16:16,572
+The first run downloads
+each hook's pinned environment,
+
+270
+00:16:16,572 --> 00:16:19,547
+plus a harmless warning
+at the time of recording.
+
+271
+00:16:19,867 --> 00:16:23,461
+Then every hook says skipped and git
+says nothing to commit:
+
+272
+00:16:23,461 --> 00:16:26,396
+hooks check staged files,
+and nothing was staged.
+
+273
+00:16:26,633 --> 00:16:31,412
+To exercise them anyway,
+pre-commit run --all-files.
+
+274
+00:16:31,732 --> 00:16:32,884
+Pause and run it.
+
+275
+00:16:33,204 --> 00:16:37,749
+Six hooks pass, one has no files to check,
+then black fails:
+
+276
+00:16:37,749 --> 00:16:42,142
+files were modified by this hook;
+it reformatted utils.py.
+
+277
+00:16:42,462 --> 00:16:44,873
+A quick ponder: flake8 runs next.
+
+278
+00:16:45,193 --> 00:16:47,454
+Does it report part 2's two findings?
+
+279
+00:16:53,700 --> 00:16:58,991
+No. Black had already rewritten the file,
+so flake8 saw clean code and passed.
+
+280
+00:16:59,311 --> 00:17:01,444
+Failed here does not mean broken;
+
+281
+00:17:01,444 --> 00:17:05,774
+it means the hook changed files:
+look at the change, then re-stage.
+
+282
+00:17:06,016 --> 00:17:07,988
+Two extras close the loop:
+
+283
+00:17:07,988 --> 00:17:11,627
+git diff shows the fix;
+git add -u re-stages it.
+
+284
+00:17:11,947 --> 00:17:15,638
+Commit again: seven hooks pass,
+two have nothing to check,
+
+285
+00:17:15,638 --> 00:17:19,328
+and a real commit enters history;
+pause and walk the loop.
+
+286
+00:17:19,648 --> 00:17:22,766
+The README's last variant,
+plain pre-commit run,
+
+287
+00:17:22,766 --> 00:17:25,558
+checks only staged files; everything skips.
+
+288
+00:17:26,000 --> 00:17:31,103
+A last demo, as an extra:
+sed adds and stages an unused import;
+
+289
+00:17:31,103 --> 00:17:34,747
+on a Mac,
+sed -i needs empty quotes after it.
+
+290
+00:17:35,067 --> 00:17:36,903
+The commit fails twice:
+
+291
+00:17:36,903 --> 00:17:40,894
+black reformats the file,
+and flake8 reports F401,
+
+292
+00:17:40,894 --> 00:17:46,011
+which no formatter can fix;
+git status confirms no commit exists.
+
+293
+00:17:46,331 --> 00:17:48,933
+Restore the file: your machine now says no.
+
+294
+00:17:49,253 --> 00:17:51,685
+But this gate never ran a single test.
+
+295
+00:17:52,005 --> 00:17:55,504
+Part 2 builds one that does,
+and shows what even it can miss.
+
+296
+00:17:56,550 --> 00:17:59,473
+Part 2 is the guest lecture, by Rahul Dave.
+
+297
+00:17:59,793 --> 00:18:04,039
+It builds the same gate
+around a small machine learning project,
+
+298
+00:18:04,039 --> 00:18:07,820
+babykev, which answers questions
+about cheese and reports
+
+299
+00:18:07,820 --> 00:18:11,270
+how confident it is;
+a pure guess should score zero.
+
+300
+00:18:11,590 --> 00:18:13,510
+No Docker until the very end.
+
+301
+00:18:13,830 --> 00:18:16,400
+Two tools first, as extras:
+
+302
+00:18:16,400 --> 00:18:23,160
+the package manager uv from lecture
+2, 0.13.2 at the time of recording,
+
+303
+00:18:23,160 --> 00:18:26,587
+and the command runner just, 1.59.0.
+
+304
+00:18:26,833 --> 00:18:31,569
+Clone babykev and list its tags:
+9 steps, one per lecture stage.
+
+305
+00:18:31,889 --> 00:18:34,208
+The repo is its own slide deck,
+
+306
+00:18:34,208 --> 00:18:37,649
+and git switch --detach
+moves you to any step.
+
+307
+00:18:37,969 --> 00:18:39,271
+Pause and run both.
+
+308
+00:18:39,517 --> 00:18:43,950
+At step-00,
+one command builds the environment:
+
+309
+00:18:43,950 --> 00:18:45,554
+uv sync --locked.
+
+310
+00:18:45,874 --> 00:18:52,296
+It installs Python 3.13.16 and the project
+exactly as the lockfile says.
+
+311
+00:18:52,616 --> 00:18:55,432
+Locked means stop rather
+than silently upgrade.
+
+312
+00:18:55,752 --> 00:18:58,653
+Its warning is harmless,
+at the time of recording.
+
+313
+00:18:58,973 --> 00:19:02,856
+The cheese repo froze an image;
+babykev pins a lockfile.
+
+314
+00:19:03,176 --> 00:19:05,903
+Typing just, alone, lists the recipes:
+
+315
+00:19:05,903 --> 00:19:09,490
+one name per task,
+for people, hook, and later CI.
+
+316
+00:19:09,810 --> 00:19:11,111
+Pause and run these.
+
+317
+00:19:11,350 --> 00:19:13,974
+Step 1 brings the contract and its tests.
+
+318
+00:19:14,294 --> 00:19:19,243
+Run uv run pytest: 2 failed, 50 passed,
+and the tests are right.
+
+319
+00:19:19,563 --> 00:19:24,128
+One failure is a pure guess
+scored as half confident;
+
+320
+00:19:24,128 --> 00:19:28,865
+the other is 77 rounded probabilities
+that sum to 0.77.
+
+321
+00:19:29,185 --> 00:19:32,875
+Same rule as the cheese demo:
+fix the code, not the tests.
+
+322
+00:19:33,195 --> 00:19:34,347
+Pause and run it.
+
+323
+00:19:34,583 --> 00:19:38,338
+Step 2 is format and lint at scale,
+ruff in both roles.
+
+324
+00:19:38,658 --> 00:19:41,666
+After formatting,
+the linter counts 70 findings.
+
+325
+00:19:41,986 --> 00:19:44,290
+Safe automatic fixes remove one.
+
+326
+00:19:44,610 --> 00:19:48,750
+Unsafe fixes,
+applied deliberately, remove 32 more;
+
+327
+00:19:48,750 --> 00:19:51,266
+37 remain; those need a person.
+
+328
+00:19:51,586 --> 00:19:56,713
+And the width war from part 1 is settled
+in one line, line-length = 100,
+
+329
+00:19:56,713 --> 00:20:02,125
+written once in pyproject.toml;
+the formatter and the linter both follow it.
+
+330
+00:20:03,967 --> 00:20:07,602
+Step 3 installs the gate with one recipe,
+just setup:
+
+331
+00:20:07,602 --> 00:20:10,346
+lockfile sync and hook install together.
+
+332
+00:20:10,666 --> 00:20:11,818
+Pause and run it.
+
+333
+00:20:12,138 --> 00:20:14,932
+The walk's next command
+prints the hook file:
+
+334
+00:20:14,932 --> 00:20:18,410
+the same hand-over chain as before,
+with one difference.
+
+335
+00:20:18,730 --> 00:20:21,541
+This machine's own venv path
+is baked inside,
+
+336
+00:20:21,541 --> 00:20:23,103
+so it is never committed.
+
+337
+00:20:23,350 --> 00:20:28,346
+The config here has four hooks, not nine:
+large files, merge markers,
+
+338
+00:20:28,346 --> 00:20:33,995
+a policy hook refusing any .env file,
+and one local hook that runs just check.
+
+339
+00:20:34,315 --> 00:20:36,598
+So the hook runs exactly what you type.
+
+340
+00:20:36,918 --> 00:20:39,837
+At this step, just check means format check,
+
+341
+00:20:39,837 --> 00:20:42,869
+lint, tests with a 90 percent
+coverage floor,
+
+342
+00:20:42,869 --> 00:20:44,150
+and config linting.
+
+343
+00:20:44,650 --> 00:20:49,023
+Run just check: everything green,
+the floor reads 100 percent.
+
+344
+00:20:49,343 --> 00:20:50,468
+Now watch it bite:
+
+345
+00:20:50,468 --> 00:20:53,781
+ask for only the confidence tests,
+keeping the floor.
+
+346
+00:20:54,101 --> 00:20:57,966
+9 tests pass,
+half the code is never exercised,
+
+347
+00:20:57,966 --> 00:21:01,503
+and the run fails at 49.4 percent coverage.
+
+348
+00:21:01,823 --> 00:21:03,765
+A floor is a gate, not a goal.
+
+349
+00:21:04,085 --> 00:21:05,386
+Pause and run both.
+
+350
+00:21:05,634 --> 00:21:10,135
+Config files are checked too:
+a broken hook config breaks every commit.
+
+351
+00:21:10,455 --> 00:21:15,554
+One wrong indent in the pre-commit config,
+and yamllint names the exact line.
+
+352
+00:21:15,874 --> 00:21:18,366
+Restored, the recipe runs green;
+
+353
+00:21:18,366 --> 00:21:22,807
+it also validates pyproject.toml
+and checks the lockfile.
+
+354
+00:21:23,050 --> 00:21:26,634
+Now the gate refuses, twice;
+pause and try the first.
+
+355
+00:21:26,954 --> 00:21:32,543
+An unused import goes in;
+the commit fails on F401, no commit made.
+
+356
+00:21:32,863 --> 00:21:34,851
+Then a .env file is staged,
+
+357
+00:21:34,851 --> 00:21:38,165
+and the refusal
+is the config's own sentence:
+
+358
+00:21:38,165 --> 00:21:42,378
+a .env file holds the settings
+and secrets of one machine.
+
+359
+00:21:42,698 --> 00:21:44,106
+It is never committed.
+
+360
+00:21:44,500 --> 00:21:48,914
+Two gate styles, both fine:
+this one points and you run just fmt;
+
+361
+00:21:48,914 --> 00:21:51,903
+the cheese gate rewrites and makes you look.
+
+362
+00:21:52,223 --> 00:21:55,868
+Steps 4 and 4b put
+documentation in the gate:
+
+363
+00:21:55,868 --> 00:22:01,297
+first 50 of 88 functions,
+methods and classes typed and documented,
+
+364
+00:22:01,297 --> 00:22:06,644
+one step later 88 of 88;
+deleting one description blocks a commit.
+
+365
+00:22:06,964 --> 00:22:08,650
+Two rows join the table.
+
+366
+00:22:13,783 --> 00:22:19,689
+Step 5 brings the model:
+the setup recipe now pulls the model stack,
+
+367
+00:22:19,689 --> 00:22:26,028
+38 packages including torch 2.14.1
+for the CPU, at the time of recording.
+
+368
+00:22:26,348 --> 00:22:31,234
+Then just test:
+92 passed, coverage 94 percent, all green.
+
+369
+00:22:31,554 --> 00:22:32,855
+Pause and run both.
+
+370
+00:22:33,150 --> 00:22:34,558
+What does the model do?
+
+371
+00:22:34,878 --> 00:22:39,017
+A request packs one state
+and several questions into one sequence.
+
+372
+00:22:39,337 --> 00:22:41,031
+A mask enforces one rule:
+
+373
+00:22:41,031 --> 00:22:45,502
+a question may see the state and itself,
+never a sibling question.
+
+374
+00:22:45,822 --> 00:22:50,963
+Questions must be answered independently;
+a peek would leak one answer into another.
+
+375
+00:22:51,283 --> 00:22:55,102
+That one forbidden cell
+is the whole difference from a causal mask.
+
+376
+00:22:56,616 --> 00:22:59,216
+The walk prints the mask the code builds,
+
+377
+00:22:59,216 --> 00:23:02,177
+for two state tokens
+and two questions of two;
+
+378
+00:23:02,177 --> 00:23:03,592
+pause and print yours.
+
+379
+00:23:03,912 --> 00:23:08,840
+Rows 5 and 6 say question 2 sees everything,
+including question 1.
+
+380
+00:23:09,160 --> 00:23:10,672
+The cause is one line:
+
+381
+00:23:10,672 --> 00:23:15,070
+torch.ones_like marks every pair of tokens
+as the same question.
+
+382
+00:23:15,316 --> 00:23:19,091
+A checker script compares the built mask
+against the one we meant,
+
+383
+00:23:19,091 --> 00:23:20,863
+and prints WRONG on those rows.
+
+384
+00:23:21,183 --> 00:23:26,068
+But nothing in just check runs it;
+a printout you read by eye is not a test.
+
+385
+00:23:26,388 --> 00:23:27,821
+Something to ponder:
+
+386
+00:23:27,821 --> 00:23:32,191
+every line of branch_mask ran,
+and coverage reads 94 percent.
+
+387
+00:23:32,511 --> 00:23:34,666
+Can any coverage number catch this bug?
+
+388
+00:23:43,500 --> 00:23:49,175
+No. Coverage counts lines that ran, never
+whether anyone checked what they produced.
+
+389
+00:23:49,495 --> 00:23:51,649
+Necessary, and never sufficient.
+
+390
+00:23:51,883 --> 00:23:54,352
+Also green and blind: the type checker,
+
+391
+00:23:54,352 --> 00:23:57,643
+which reads declared types
+without running the code.
+
+392
+00:23:57,963 --> 00:24:01,846
+Running ty finds 6 diagnostics,
+yet just check is green:
+
+393
+00:24:01,846 --> 00:24:03,954
+types are not in the gate yet,
+
+394
+00:24:03,954 --> 00:24:07,115
+and a check outside
+the gate protects nobody.
+
+395
+00:24:07,350 --> 00:24:11,705
+Last, the smoke on the real model:
+half a billion parameters,
+
+396
+00:24:11,705 --> 00:24:16,203
+downloaded once from the Hugging Face Hub,
+a public model host,
+
+397
+00:24:16,203 --> 00:24:20,129
+answering 15 cheese questions on CPU;
+pause and run it.
+
+398
+00:24:20,449 --> 00:24:21,942
+6 of 15 right.
+
+399
+00:24:22,262 --> 00:24:25,568
+Nothing is trained, these are guesses;
+hold that number.
+
+400
+00:24:27,217 --> 00:24:29,990
+Step 5a answers with tests that could tell.
+
+401
+00:24:30,310 --> 00:24:31,499
+First, honesty:
+
+402
+00:24:31,499 --> 00:24:35,622
+on this machine just test says 1 failed,
+102 passed.
+
+403
+00:24:35,942 --> 00:24:39,356
+The failing test demands bit
+for bit equal outputs.
+
+404
+00:24:39,676 --> 00:24:45,188
+On this Linux CPU, torch sums
+in a different order than the author's Mac;
+
+405
+00:24:45,188 --> 00:24:48,209
+there all 103 pass, as the walk records.
+
+406
+00:24:48,529 --> 00:24:51,642
+Hermetic means only your code
+can make it fail;
+
+407
+00:24:51,642 --> 00:24:55,086
+bit exactness across machines
+is a stronger promise;
+
+408
+00:24:55,086 --> 00:24:56,742
+this machine measured it.
+
+409
+00:24:56,984 --> 00:24:58,093
+Now the lesson.
+
+410
+00:24:58,413 --> 00:25:00,489
+A deliberately wrong fix goes in,
+
+411
+00:25:00,489 --> 00:25:03,384
+one that blocks only
+the question just before.
+
+412
+00:25:03,704 --> 00:25:07,245
+The six token picture says all ok;
+it cannot tell.
+
+413
+00:25:07,565 --> 00:25:11,064
+A four token picture can:
+its last row reads WRONG.
+
+414
+00:25:11,300 --> 00:25:13,071
+State the rule once instead.
+
+415
+00:25:13,391 --> 00:25:17,860
+The property test lets hypothesis
+draw any request shape:
+
+416
+00:25:17,860 --> 00:25:22,095
+a state of 1 to 6 tokens,
+up to 4 questions of 1 to 5.
+
+417
+00:25:22,415 --> 00:25:27,684
+Those sizes allow 4,686 shapes,
+too many for pictures.
+
+418
+00:25:28,004 --> 00:25:31,161
+It asserts
+that no allowed pair is ever a sibling pair.
+
+419
+00:25:31,481 --> 00:25:33,636
+Something to ponder before we run it.
+
+420
+00:25:42,484 --> 00:25:44,691
+You need a question two steps back,
+
+421
+00:25:44,691 --> 00:25:48,287
+so one state token
+and three questions of one token each.
+
+422
+00:25:48,607 --> 00:25:52,297
+And hypothesis finds it on its own:
+the one test fails,
+
+423
+00:25:52,297 --> 00:25:55,988
+then shrinks the counter example
+to exactly that shape.
+
+424
+00:25:56,308 --> 00:25:57,460
+Pause and run it.
+
+425
+00:25:57,780 --> 00:26:02,174
+A property test does not only say no;
+it hands you the smallest witness.
+
+426
+00:26:02,417 --> 00:26:04,133
+Proof the gate grew teeth:
+
+427
+00:26:04,133 --> 00:26:08,753
+put step 5's wrong mask line back
+and run just test; pause and try it.
+
+428
+00:26:09,073 --> 00:26:13,894
+8 failed, 95 passed;
+code that sailed through before is refused.
+
+429
+00:26:14,214 --> 00:26:17,030
+A gate refuses only what its tests can see.
+
+430
+00:26:17,350 --> 00:26:21,809
+The real fix is one line:
+same question means same segment ID.
+
+431
+00:26:22,050 --> 00:26:27,554
+Types join the gate too: the new recipe,
+just types, passes, and check has six lines.
+
+432
+00:26:27,874 --> 00:26:29,837
+And the smoke, with the right mask?
+
+433
+00:26:30,157 --> 00:26:32,397
+4 of 15, lower than before.
+
+434
+00:26:32,717 --> 00:26:34,231
+Pause and run the smoke.
+
+435
+00:26:34,551 --> 00:26:37,602
+The 6 was luck;
+an untrained score means nothing.
+
+436
+00:26:39,250 --> 00:26:42,663
+Step 5b gives non-hermetic tests
+an honest home.
+
+437
+00:26:42,983 --> 00:26:45,836
+A new real model test is marked system,
+
+438
+00:26:45,836 --> 00:26:49,346
+and the config deselects
+that marker by default:
+
+439
+00:26:49,346 --> 00:26:52,711
+every just test says 1 deselected,
+on purpose.
+
+440
+00:26:52,950 --> 00:26:54,666
+Asked for explicitly,
+
+441
+00:26:54,666 --> 00:26:58,751
+just test -m system says 1 passed,
+103 deselected:
+
+442
+00:26:58,751 --> 00:27:02,699
+the real model ran,
+and it had to pass, not skip.
+
+443
+00:27:03,019 --> 00:27:06,091
+That is the honest version
+of part 1's silent skip.
+
+444
+00:27:06,411 --> 00:27:08,118
+Pause and run both forms.
+
+445
+00:27:08,367 --> 00:27:12,570
+Smaller rows join the gate:
+hadolint lints the Dockerfile, clean.
+
+446
+00:27:12,890 --> 00:27:16,561
+Part 2 was recorded
+on a plain machine without Docker,
+
+447
+00:27:16,561 --> 00:27:18,533
+so the recipes fail politely:
+
+448
+00:27:18,533 --> 00:27:23,428
+docker build is command not found,
+and the image recipe explains itself.
+
+449
+00:27:23,748 --> 00:27:28,100
+On your laptop, with Docker Desktop,
+both images build for real.
+
+450
+00:27:28,420 --> 00:27:30,255
+The walk's record shows the rest.
+
+451
+00:27:30,575 --> 00:27:36,143
+Two images
+from one lockfile, 1.15 and 1.84 gigabytes.
+
+452
+00:27:36,463 --> 00:27:40,545
+And just check runs green inside a container
+with no network:
+
+453
+00:27:40,545 --> 00:27:43,289
+the hermetic claim, proved by experiment.
+
+454
+00:27:43,533 --> 00:27:47,906
+The gate table is full:
+six rows, system outside the turnstile.
+
+455
+00:27:48,226 --> 00:27:49,314
+Now the limit.
+
+456
+00:27:49,634 --> 00:27:51,587
+A hook runs on one machine,
+
+457
+00:27:51,587 --> 00:27:55,203
+and git commit --no-verify walks
+straight past it.
+
+458
+00:27:57,167 --> 00:28:01,952
+So CI re-runs the same checks
+on a server nobody can skip:
+
+459
+00:28:01,952 --> 00:28:05,252
+part 5 of this same repo, in lecture 21.
+
+460
+00:28:05,572 --> 00:28:10,467
+It is also why the hook, CI and the README
+should spell the checks one way;
+
+461
+00:28:10,467 --> 00:28:13,274
+the cheese repo does not quite manage that.
+
+462
+00:28:13,594 --> 00:28:17,263
+One command for everyone
+is the lesson for your milestone.
+
+463
+00:28:17,583 --> 00:28:21,495
+Coverage floors in one line:
+babykev chose 90;
+
+464
+00:28:21,495 --> 00:28:23,961
+milestone 5 asks at least 70.
+
+465
+00:28:25,600 --> 00:28:27,264
+Before the recap, clean up.
+
+466
+00:28:27,584 --> 00:28:29,422
+The README's Docker cleanup:
+
+467
+00:28:29,422 --> 00:28:33,493
+docker container ls shows nothing running,
+so nothing to stop.
+
+468
+00:28:33,813 --> 00:28:35,660
+Then docker system prune;
+
+469
+00:28:35,660 --> 00:28:40,683
+type y: about 95 megabytes of build cache,
+at the time of recording.
+
+470
+00:28:41,003 --> 00:28:44,757
+A final docker image ls
+shows the two cheese images.
+
+471
+00:28:45,077 --> 00:28:48,384
+One extra undoes the hook:
+pre-commit uninstall.
+
+472
+00:28:48,704 --> 00:28:52,896
+On the babykev side, delete the venv;
+and if you ran the smoke,
+
+473
+00:28:52,896 --> 00:28:56,555
+the roughly 1 gigabyte model
+in the Hugging Face cache.
+
+474
+00:28:56,875 --> 00:28:58,509
+Nothing today was billable:
+
+475
+00:28:58,509 --> 00:29:01,717
+the gate lives on your laptop,
+and that is the point.
+
+476
+00:29:01,967 --> 00:29:03,972
+5 questions to test yourself.
+
+477
+00:29:04,292 --> 00:29:07,073
+One: what runs in a unit, an integration
+
+478
+00:29:07,073 --> 00:29:10,202
+and a system test of this repo,
+file by file?
+
+479
+00:29:10,522 --> 00:29:13,658
+Two:
+the system tests pass with no server at all.
+
+480
+00:29:13,978 --> 00:29:17,945
+What does pytest actually print,
+and are those four tests hermetic?
+
+481
+00:29:18,183 --> 00:29:21,449
+Three: what does pre-commit install
+actually create,
+
+482
+00:29:21,449 --> 00:29:23,836
+and why must every clone run it again?
+
+483
+00:29:24,156 --> 00:29:27,250
+Four: black says failed,
+files were modified.
+
+484
+00:29:27,570 --> 00:29:30,108
+Is your code broken,
+and what do you do next?
+
+485
+00:29:30,428 --> 00:29:34,759
+Five: babykev had 94 percent coverage
+and a wrong mask.
+
+486
+00:29:35,079 --> 00:29:39,453
+What kind of test finally saw the bug,
+and why was coverage blind to it?
+
+487
+00:29:39,983 --> 00:29:44,676
+The answers are in the exercises,
+and every command is in the study guide.
+
+488
+00:29:44,996 --> 00:29:47,335
+Next lecture brings cloud credentials,
+
+489
+00:29:47,335 --> 00:29:50,351
+where the detect-private-key hook
+earns its keep.
+
+490
+00:29:50,671 --> 00:29:55,030
+And in lecture 21,
+this very repo's checks run on GitHub,
+
+491
+00:29:55,030 --> 00:29:58,778
+where nobody can walk past them
+with --no-verify.
+

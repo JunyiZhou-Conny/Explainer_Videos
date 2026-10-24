@@ -1,0 +1,42 @@
+$ just check
+uv run ruff format "$@"
+15 files already formatted
+uv run ruff check "$@"
+All checks passed!
+uv run pytest "$@"
+........................................................................ [ 78%]
+....................                                                     [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                      Stmts   Miss  Cover   Missing
+-------------------------------------------------------
+src/babykev/__init__.py       0      0   100%
+src/babykev/api.py           75      0   100%
+src/babykev/cli.py           15      0   100%
+src/babykev/docs.py         250      7    97%   86, 211, 220, 224, 227, 240, 267
+src/babykev/model.py         91      4    96%   60, 68, 182-185
+src/babykev/smoke.py         72     21    71%   102-122
+-------------------------------------------------------
+TOTAL                       503     32    94%
+Required test coverage of 90% reached. Total coverage: 93.64%
+92 passed in 3.17s
+babykev.api                       12 of  12
+babykev.cli                        1 of   1
+babykev.docs                      30 of  30
+babykev.model                     13 of  13
+babykev.smoke                      5 of   5
+docs/apidocs.py                    4 of   4
+tests/conftest.py                  3 of   3
+tests/tiny.py                      2 of   2
+tests/unit/test_api.py            29 of  29
+tests/unit/test_cli.py             5 of   5
+tests/unit/test_docs.py           18 of  18
+tests/unit/test_model.py          13 of  13
+tests/unit/test_smoke.py           4 of   4
+
+139 of 139 functions, methods and classes are typed and documented
+Could not find an up-to-date installation of `packaging`. License expressions might not be validated. To enforce validation, please install `packaging>=24.2`.
+Valid file: pyproject.toml
+Resolved 66 packages in 1ms
+[exit 0]

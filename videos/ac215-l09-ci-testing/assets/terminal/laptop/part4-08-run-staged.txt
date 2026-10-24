@@ -1,0 +1,11 @@
+$ pre-commit run
+Trim trailing whitespace.............................(no files to check)Skipped
+Fix end of files.....................................(no files to check)Skipped
+Check YAML syntax....................................(no files to check)Skipped
+Check for large files................................(no files to check)Skipped
+Check JSON syntax....................................(no files to check)Skipped
+Check for merge conflicts............................(no files to check)Skipped
+Detect private keys..................................(no files to check)Skipped
+Format Python code with Black........................(no files to check)Skipped
+Check Python code with Flake8........................(no files to check)Skipped
+[exit 0]

@@ -1,0 +1,5 @@
+$ docker ps
+CONTAINER ID   IMAGE                                  COMMAND                  CREATED          STATUS          PORTS                    NAMES
+6c23fe52ca92   llm-rag-analysis-frontend-ai-chatbot   "/bin/bash"              11 seconds ago   Up 11 seconds   0.0.0.0:3200->3000/tcp   llm-rag-analysis-frontend-ai-chatbot
+8488fbe968f5   chromadb/chroma:latest                 "dumb-init -- chroma…"   4 hours ago      Up 2 minutes    0.0.0.0:8000->8000/tcp   llm-rag-chromadb
+[exit 0]

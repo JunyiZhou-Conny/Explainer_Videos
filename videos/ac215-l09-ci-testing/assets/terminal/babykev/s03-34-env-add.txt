@@ -1,0 +1,2 @@
+$ echo X=1 > .env && git add -f .env
+[exit 0]

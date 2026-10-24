@@ -1,0 +1,53 @@
+$ sh docker-shell.sh
+Building Docker image: cheese-app-api-service
+[+] Building 59.0s (16/16) FINISHED                                                  docker:default
+ => [internal] load build definition from Dockerfile                                           0.0s
+ => => transferring dockerfile: 1.25kB                                                         0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-slim-bookworm                   0.0s
+ => [internal] load .dockerignore                                                              0.0s
+ => => transferring context: 2B                                                                0.0s
+ => [ 1/11] FROM docker.io/library/python:3.11-slim-bookworm@sha256:01f91ffadd9a08f0159de679c  0.0s
+ => => resolve docker.io/library/python:3.11-slim-bookworm@sha256:01f91ffadd9a08f0159de679c45  0.0s
+ => [internal] load build context                                                              0.0s
+ => => transferring context: 12.34kB                                                           0.0s
+ => [ 2/11] RUN set -ex;     apt-get update &&     apt-get upgrade -y &&     apt-get install  18.4s
+ => [ 3/11] RUN useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     ch  0.3s
+ => [ 4/11] WORKDIR /app                                                                       0.0s
+ => [ 5/11] COPY --chown=app:app pyproject.toml ./                                             0.0s
+ => [ 6/11] RUN pip install --no-cache-dir --user .                                           20.1s
+ => [ 7/11] COPY --chown=app:app src/api-service/api/ ./api/                                   0.0s
+ => [ 8/11] COPY --chown=app:app tests/ ./tests/                                               0.0s
+ => [ 9/11] COPY --chown=app:app pytest.ini ./                                                 0.0s
+ => [10/11] COPY --chown=app:app docker-entrypoint.sh ./                                       0.0s
+ => [11/11] RUN chmod +x docker-entrypoint.sh                                                  0.2s
+ => exporting to image                                                                        19.4s
+ => => exporting layers                                                                       14.9s
+ => => exporting manifest sha256:f7464e575f750cc35da1b112ff03628b0a49926849a2029aabf01d85b6b9  0.0s
+ => => exporting config sha256:f6d59621f78d26f114fd18be5a9ac679faa50d93fda1d77188526acd635a9c  0.0s
+ => => exporting attestation manifest sha256:c7f32a4748b3a95540e7fca75e3c00ea0fd03bb4ab14a439  0.0s
+ => => exporting manifest list sha256:25dc59604b6a4ead7bd50f20ba89187b94f912fdf7e62c4de01aea2  0.0s
+ => => naming to docker.io/library/cheese-app-api-service:latest                               0.0s
+ => => unpacking to docker.io/library/cheese-app-api-service:latest                            4.4s
+Starting interactive container shell: cheese-app-api-service
+Container is running!!!
+Executing command: /bin/bash
+app@44b7ce455073:/app$ uvicorn api.service:app --host 0.0.0.0 --port 9000 --reload
+INFO:     Will watch for changes in these directories: ['/app']
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+INFO:     Started reloader process [7] using StatReload
+INFO:     Started server process [9]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     172.18.0.1:56578 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.0.1:56586 - "GET /health HTTP/1.1" 200 OK
+INFO:     172.18.0.1:56598 - "GET /euclidean_distance/?x=3&y=4 HTTP/1.1" 200 OK
+^C
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9]
+INFO:     Stopping reloader process [7]
+app@44b7ce455073:/app$
+app@44b7ce455073:/app$ exit
+exit
+[exit 0]

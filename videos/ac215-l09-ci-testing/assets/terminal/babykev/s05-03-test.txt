@@ -1,0 +1,31 @@
+$ just test
+uv run pytest "$@"
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/student/babykev
+configfile: pyproject.toml
+testpaths: tests
+plugins: platformdirs-4.12.3, anyio-4.15.1, hypothesis-6.168.4, cov-7.1.0
+collected 92 items
+
+tests/unit/test_api.py ................................................  [ 52%]
+tests/unit/test_cli.py .......                                           [ 59%]
+tests/unit/test_docs.py .................                                [ 78%]
+tests/unit/test_model.py ................                                [ 95%]
+tests/unit/test_smoke.py ....                                            [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                      Stmts   Miss  Cover   Missing
+-------------------------------------------------------
+src/babykev/__init__.py       0      0   100%
+src/babykev/api.py           75      0   100%
+src/babykev/cli.py           15      0   100%
+src/babykev/docs.py         250      7    97%   86, 211, 220, 224, 227, 240, 267
+src/babykev/model.py         91      4    96%   60, 68, 182-185
+src/babykev/smoke.py         72     21    71%   102-122
+-------------------------------------------------------
+TOTAL                       503     32    94%
+============================== 92 passed in 4.18s ==============================
+[exit 0]

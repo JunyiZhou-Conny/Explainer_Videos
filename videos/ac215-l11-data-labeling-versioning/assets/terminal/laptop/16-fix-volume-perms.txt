@@ -1,0 +1,6 @@
+$ sudo chown -R 1001 docker-volumes/label-studio && ls -la docker-volumes
+total 12
+drwxr-sr-x    3 root     root          4096 Oct 23 11:44 .
+drwxr-sr-x    4 student  student       4096 Oct 23 11:44 ..
+drwxr-sr-x    2 1001     root          4096 Oct 23 11:44 label-studio
+[exit 0]

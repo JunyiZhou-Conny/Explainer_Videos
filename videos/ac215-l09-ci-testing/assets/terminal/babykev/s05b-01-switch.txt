@@ -1,0 +1,4 @@
+$ git switch --detach step-05b
+Previous HEAD position was c954af4 step-05a: the tests that see the mask, the fix, ty in the gate, the model explained
+HEAD is now at 47b43c0 step-05b: two images from the lockfile, hadolint, the test that is not hermetic
+[exit 0]

@@ -1,0 +1,63 @@
+id: ac215-l09-ci-testing
+title: "AC215 · Lecture 9 — CI & unit testing: the pre-commit gate (follow-along: cheese-app-ci-cd + babykev)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 9
+  lecture_title: "Automating Software Development: CI, unit testing"
+  ed: https://edstem.org/us/courses/97373/lessons/166034/
+  repos:
+    - {repo: dlops-io/cheese-app-ci-cd, branch: main, commit: b8458ff0cc1898700b32a873b4665f43f50df71e,
+       sections: ["Part 1: Understanding the Codebase", "Part 2: Identifying Code Quality Issues",
+                  "Part 3: Testing with Pytest", "Part 4: Automating with Pre-commit Hooks",
+                  "Docker Cleanup"]}
+    - {repo: rahuldave/babykev, branch: main, commit: 4a14085bb25620f37dca5c2bfeb27843c82dbe9e,
+       sections: ["guest lecture walk, steps 00-05b (tags step-00 … step-05b)"]}
+    - {repo: rahuldave/babykev-walk, branch: main, commit: 82adb14c0f3e73a0a836a3655f7dc4ffcdf76670,
+       sections: ["walk.md (the step notes the captures follow)"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L09-ci-testing-precommit.md
+audience: "AC215 student who has done L1-L4 (VMs, venvs and uv, Docker images and containers), new to pytest, black/flake8 and pre-commit hooks; watching with their own clones of cheese-app-ci-cd and babykev open, pausing to run each command — nothing in this lecture needs GCP or any paid service"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,            cls: Hook,            title: "Who gets to say no?"}
+  - {file: scenes/s02_bug.py,             cls: BugAlmostShipped, title: "The bug that almost shipped"}
+  - {file: scenes/s03_kinds.py,           cls: ThreeKinds,      title: "Three kinds of test, and a gate"}
+  - {file: scenes/s04_run_app.py,         cls: RunTheApp,       title: "Clone, and run the app"}
+  - {file: scenes/s05_format_lint.py,     cls: FormatterLinter, title: "Formatter vs linter"}
+  - {file: scenes/s06_pytest.py,          cls: PytestInside,    title: "pytest, under the hood"}
+  - {file: scenes/s07_container_tests.py, cls: TestsInImage,    title: "Tests inside the shipping image"}
+  - {file: scenes/s08_silent_skip.py,     cls: SilentSkip,      title: "The system test and the silent skip"}
+  - {file: scenes/s09_precommit.py,       cls: PreCommitGate,   title: "The gate on your machine"}
+  - {file: scenes/s10_babykev.py,         cls: OneCommand,      title: "Guest lecture: uv, just, and two failing tests"}
+  - {file: scenes/s11_just_check.py,      cls: JustCheck,       title: "One command is the gate"}
+  - {file: scenes/s12_green_wrong.py,     cls: GreenButWrong,   title: "All green, and the mask is wrong"}
+  - {file: scenes/s13_properties.py,      cls: PropertyTests,   title: "Properties, not examples"}
+  - {file: scenes/s14_ci.py,              cls: HooksThenCI,     title: "Hooks are local; CI checks again"}
+  - {file: scenes/s15_recap.py,           cls: Recap,           title: "Tear down, recap, and what's next"}
+parts:
+  - id: part1
+    title: "AC215 · L9, part 1: pytest, black & flake8, and the pre-commit gate"
+    scenes: [s01_hook, s02_bug, s03_kinds, s04_run_app, s05_format_lint, s06_pytest, s07_container_tests, s08_silent_skip, s09_precommit]
+  - id: part2
+    title: "AC215 · L9, part 2: one command, green-but-wrong, and property tests"
+    scenes: [s10_babykev, s11_just_check, s12_green_wrong, s13_properties, s14_ci, s15_recap]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker)
+publish:
+  title_zh: "AC215 第9讲跟练 · CI 与单元测试：pytest、pre-commit，提交前的质量门"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 9 讲教程的逐条命令跟练：照着 dlops-io/cheese-app-ci-cd 的 README，
+    在 Docker 镜像里跑 unit / integration / system 三层 pytest 测试，理解测试金字塔和 hermetic 测试、"skipped 不等于 passed" 的陷阱，
+    用 black 和 flake8 分清格式化工具和 linter（以及 120 列宽度为什么必须统一），安装 pre-commit 钩子，亲眼看一次提交被拦下再被放行。
+    下半场跟着客座讲座的 babykev 项目：uv 锁定环境、just check 一条命令当门禁、覆盖率 94% 仍然放过一个 bug，
+    最后用 hypothesis 属性测试把反例收缩出来。边看边暂停，在自己的电脑上跑每一条命令；本讲全程本地运行，不需要云资源。
+    英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/cheese-app-ci-cd
+    客座讲座项目：https://github.com/rahuldave/babykev
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L09-ci-testing-precommit.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等），客座讲座内容来自 Rahul Dave；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, CI, 单元测试, pytest, pre-commit, 代码质量, 测试金字塔, 哈佛, 教程跟练]
+  tid: 231

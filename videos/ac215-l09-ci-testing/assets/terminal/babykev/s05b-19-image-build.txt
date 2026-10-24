@@ -1,0 +1,3 @@
+$ just image build run
+image: there is no docker here. Inside the dev image, run the recipes themselves: just check
+[exit 2]

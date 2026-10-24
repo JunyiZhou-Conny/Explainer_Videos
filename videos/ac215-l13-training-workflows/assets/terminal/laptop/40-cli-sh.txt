@@ -1,0 +1,107 @@
+$ sh docker-shell.sh
+
+[+] Building 1.5s (19/19) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 2.15kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.13-slim-bookworm                             0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [ 1/14] FROM docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea1  0.1s
+ => => resolve docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea136  0.1s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 8.97kB                                                                      0.0s
+ => CACHED [ 2/14] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificate  0.0s
+ => CACHED [ 3/14] RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.clou  0.0s
+ => CACHED [ 4/14] RUN install -m 0755 -d /etc/apt/keyrings                                              0.0s
+ => CACHED [ 5/14] RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/  0.0s
+ => CACHED [ 6/14] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                            0.0s
+ => CACHED [ 7/14] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docke  0.0s
+ => CACHED [ 8/14] RUN apt-get update &&     apt-get install -y google-cloud-cli jq docker-ce            0.0s
+ => CACHED [ 9/14] RUN pip install uv                                                                    0.0s
+ => CACHED [10/14] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)  0.0s
+ => CACHED [11/14] WORKDIR /app                                                                          0.0s
+ => CACHED [12/14] COPY --chown=app:app pyproject.toml uv.lock* ./                                       0.0s
+ => CACHED [13/14] RUN uv sync --frozen                                                                  0.0s
+ => [14/14] COPY --chown=app:app . ./                                                                    0.2s
+ => exporting to image                                                                                   0.9s
+ => => exporting layers                                                                                  0.5s
+ => => exporting manifest sha256:7b47cbf06b9a091bc38d1837fbd8f59ed699387c6604eb83841ecee061577084        0.0s
+ => => exporting config sha256:9e97c7c3622e778a12bd1d88083f29ccfa8fe8eacbaa44f5cbb8dbd5f2489f4f          0.0s
+ => => exporting attestation manifest sha256:d2fd16f2c5d0c867cccd0ceccc9ce555067e9a1be55230d9d6bd4504fd  0.0s
+ => => exporting manifest list sha256:0e780d54db73ef17023d93ed08571075e1c6372fd9658df0a92a870527c0f13d   0.0s
+ => => naming to docker.io/library/model-training-cli:latest                                             0.0s
+ => => unpacking to docker.io/library/model-training-cli:latest                                          0.2s
+Container is running!!!
+ERROR: (gcloud.auth.activate-service-account) Unable to read file [/secrets/model-trainer.json]: [Errno 2] No such file or directory: '/secrets/model-trainer.json'
+Updated property [core/project].
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.13.17
+UV version: uv 0.13.5 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+root@72ebb58648c2:/app# sh cli.sh
+Using endpoint [https://us-central1-aiplatform.googleapis.com/]
+ERROR: (gcloud.ai.custom-jobs.create) You do not currently have an active account selected.
+Please run:
+
+  $ gcloud auth login
+
+to obtain new credentials.
+
+If you have already logged in with a different account, run:
+
+  $ gcloud config set account ACCOUNT
+
+to select an already authenticated account to use.
+root@72ebb58648c2:/app# gcloud auth list
+
+No credentialed accounts.
+
+To login, run:
+  $ gcloud auth login `ACCOUNT`
+
+root@72ebb58648c2:/app# sh -x cli.sh
++ openssl rand -hex 6
++ export UUID=95d66f2b3585
++ export DISPLAY_NAME=cheese_training_job_95d66f2b3585
++ export MACHINE_TYPE=n1-standard-4
++ export REPLICA_COUNT=1
++ export EXECUTOR_IMAGE_URI=us-docker.pkg.dev/vertex-ai/training/tf-gpu.2-17.py310:latest
++ export PYTHON_PACKAGE_URI=gs://your-bucket-placeholder/cheese-app-trainer.tar.gz
++ export PYTHON_MODULE=trainer.task
++ export ACCELERATOR_TYPE=NVIDIA_TESLA_T4
++ export ACCELERATOR_COUNT=1
++ export GCP_REGION=us-central1
++ export CMDARGS=--model_name=mobilenetv2,--train_base,--epochs=2,--batch_size=32,--wandb_key=PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000
++ export EXECUTOR_IMAGE_URI=us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest
++ gcloud ai custom-jobs create --region=us-central1 --display-name=cheese_training_job_95d66f2b3585 --python-package-uris=gs://your-bucket-placeholder/cheese-app-trainer.tar.gz --worker-pool-spec=machine-type=n1-standard-4,replica-count=1,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest,python-module=trainer.task --args=--model_name=mobilenetv2,--train_base,--epochs=2,--batch_size=32,--wandb_key=PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000
+Using endpoint [https://us-central1-aiplatform.googleapis.com/]
+ERROR: (gcloud.ai.custom-jobs.create) You do not currently have an active account selected.
+Please run:
+
+  $ gcloud auth login
+
+to obtain new credentials.
+
+If you have already logged in with a different account, run:
+
+  $ gcloud config set account ACCOUNT
+
+to select an already authenticated account to use.
+root@72ebb58648c2:/app# gcloud ai custom-jobs list --region=us-central1
+Using endpoint [https://us-central1-aiplatform.googleapis.com/]
+ERROR: (gcloud.ai.custom-jobs.list) You do not currently have an active account selected.
+Please run:
+
+  $ gcloud auth login
+
+to obtain new credentials.
+
+If you have already logged in with a different account, run:
+
+  $ gcloud config set account ACCOUNT
+
+to select an already authenticated account to use.
+root@72ebb58648c2:/app# exit
+exit
+[exit 1]

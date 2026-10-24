@@ -1,0 +1,2 @@
+$ curl -s 'http://localhost:9000/euclidean_distance/?x=3&y=4'
+{"x":3.0,"y":4.0,"distance":5.0,"message":"This is a very long line that exceeds 120 characters blah"}[exit 0]

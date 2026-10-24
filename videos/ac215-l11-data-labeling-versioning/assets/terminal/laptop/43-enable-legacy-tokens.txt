@@ -1,0 +1,4 @@
+$ curl -s -w '\nHTTP %{http_code}\n' -b /tmp/ls.cookies -H "X-CSRFToken: $LS_CSRF" -H 'Referer: http://localhost:8080/' -H 'Content-Type: application/json' -d '{"api_tokens_enabled": true, "legacy_api_tokens_enabled": true}' http://localhost:8080/api/jwt/settings
+{"api_tokens_enabled":true,"legacy_api_tokens_enabled":true}
+HTTP 200
+[exit 0]

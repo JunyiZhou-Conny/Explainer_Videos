@@ -1,0 +1,4 @@
+$ just fmt --check
+uv run ruff format "$@"
+6 files already formatted
+[exit 0]

@@ -1,0 +1,13 @@
+$ git commit -m "try"
+check for added large files..............................................Passed
+check for merge conflicts................................................Passed
+no .env file.............................................................Failed
+- hook id: no-env-file
+- exit code: 1
+
+A .env file holds the settings and secrets of one machine. It is never committed
+
+.env
+
+just check...............................................................Passed
+[exit 1]

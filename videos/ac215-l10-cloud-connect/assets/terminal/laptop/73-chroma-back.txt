@@ -1,0 +1,15 @@
+$ sh docker-shell.sh
+[+] run 2/2
+ ✔ Network llm-rag-network    Created                                                                     0.0s
+ ✔ Container llm-rag-chromadb Created                                                                     0.0s
+Container llm-rag-llm-rag-cli-run-6259075bc90d Creating
+Container llm-rag-llm-rag-cli-run-6259075bc90d Created
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.15
+UV version: uv 0.13.2 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+app@4fc23cd581ab:/app$ exit
+exit
+[exit 0]

@@ -1,0 +1,4 @@
+$ just setup
+Resolved 1 package in 2ms
+Checked 1 package in 0.14ms
+[exit 0]

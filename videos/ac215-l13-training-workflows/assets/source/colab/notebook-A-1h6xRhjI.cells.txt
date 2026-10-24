@@ -1,0 +1,1494 @@
+Extract (cell sources + stored outputs, metadata dropped) of the Colab notebook https://colab.research.google.com/drive/1h6xRhjILxaUosXlZ5ZC1NZbP0AOHALTl (Notebook A, "Cheese Classification Models"; the course map's link for L13), downloaded 2026-10-23 from Google Drive, md5 of the .ipynb 0f4a5c78698b744f46178dc36818f88c (= digest.md). Cell numbers are the 0-based indices the digest uses. Images are replaced by '[image output omitted]'; W&B's HTML banners (text/plain '<IPython.core.display.HTML object>') are rendered as text and marked '[HTML output, rendered as text]'; colours dropped, carriage-return progress lines collapsed to their final state. EDITED: cell 0's instructor and author lines read <course instructor> / <notebook author>. Otherwise unchanged; see ASSETS.md.
+
+===== cell 0 · markdown
+
+<a href="https://colab.research.google.com/drive/1GIslUzm62UsiDCWleLdANaNM-Z7JiExB?usp=sharing" target="_blank" >
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+
+<hr style="height:2pt">
+
+===== cell 1 · markdown
+<h1 style="padding-top: 25px;padding-bottom: 25px;text-align: left; padding-left: 10px; background-color: #DDDDDD;
+    color: black;"> <img style="float: left; padding-right: 10px;" src="https://raw.githubusercontent.com/Harvard-IACS/2018-CS109A/master/content/styles/iacs.png" height="50px"> <a href='https://harvard-iacs.github.io/2024-AC215/' target='_blank'><strong><font color="#A41034">AC215/E115: MLOps & LLMOps: Production AI Systems</font></strong></a></h1>
+
+# **<font color="#A41034">Tutorial -  Cheese Classification Models, Experimental Tracking</font>**
+
+**Harvard University**<br/>
+**Fall 2025**<br/>
+**Instructor:** <course instructor><br/>
+**Authors:** <notebook author>
+
+<hr style="height:2pt">
+
+===== cell 2 · markdown
+## **<font color="#A41034">Setup Notebook</font>**
+
+===== cell 3 · markdown
+**Copy & setup Colab with GPU**
+
+1) Select "File" menu and pick "Save a copy in Drive"  
+2) This notebooks is already setup to use GPU but if you want to change it. Go to "Runtime" menu and select "Change runtime type". Then in the popup in "Hardware accelerator" select "GPU" and then click "Save"   
+3) If you want high RAM there is an option for that
+
+===== cell 4 · code · execution_count 1
+#!pip install tensorflow==2.13.1
+
+===== cell 5 · markdown
+**Imports**
+
+===== cell 6 · code · execution_count 2
+#@title imports
+import os
+import requests
+import zipfile
+import tarfile
+import shutil
+import math
+import json
+import time
+import sys
+import cv2
+import string
+import re
+import subprocess
+import hashlib
+import numpy as np
+import pandas as pd
+from glob import glob
+import collections
+import unicodedata
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+%matplotlib inline
+
+# Tensorflow
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.utils import to_categorical
+from tensorflow.python.keras import backend as K
+from tensorflow.python.keras.utils.layer_utils import count_params
+
+# sklearn
+from sklearn.model_selection import train_test_split
+
+# Tensorflow Hub
+import tensorflow_hub as hub
+
+# Colab auth
+from google.colab import auth
+from google.cloud import storage
+
+===== cell 7 · markdown
+**Verify Setup**
+
+It is a good practice to verify what version of TensorFlow & Keras you are using. Also verify if GPU is enabled and what GPU you have. Run the following cells to check the version of TensorFlow
+
+References:
+- [Eager Execution](https://www.tensorflow.org/guide/eager)
+- [Data Performance](https://www.tensorflow.org/guide/data_performance)
+
+===== cell 8 · code · execution_count 3
+# Enable/Disable Eager Execution
+# Reference: https://www.tensorflow.org/guide/eager
+# TensorFlow's eager execution is an imperative programming environment that evaluates operations immediately,
+# without building graphs
+
+#tf.compat.v1.disable_eager_execution()
+#tf.compat.v1.enable_eager_execution()
+
+print("tensorflow version", tf.__version__)
+print("Eager Execution Enabled:", tf.executing_eagerly())
+
+# Get the number of replicas
+strategy = tf.distribute.MirroredStrategy()
+print("Number of replicas:", strategy.num_replicas_in_sync)
+
+devices = tf.config.experimental.get_visible_devices()
+print("Devices:", devices)
+print(tf.config.experimental.list_logical_devices('GPU'))
+
+print("GPU Available: ", tf.config.list_physical_devices('GPU'))
+print("All Physical Devices", tf.config.list_physical_devices())
+----- stored output
+tensorflow version 2.19.0
+Eager Execution Enabled: True
+Number of replicas: 1
+Devices: [PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU'), PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+[LogicalDevice(name='/device:GPU:0', device_type='GPU')]
+GPU Available:  [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+All Physical Devices [PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU'), PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+
+===== cell 9 · markdown
+Run this cell to see what GPU you have. If you get a P100 or T4 GPU that's great. If it's K80, it will still work but it will be slow.
+
+===== cell 10 · code · execution_count 4
+!nvidia-smi
+----- stored output
+Mon Oct 20 21:12:38 2025
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 550.54.15              Driver Version: 550.54.15      CUDA Version: 12.4     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |
+| N/A   52C    P0             28W /   70W |     104MiB /  15360MiB |      3%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
++-----------------------------------------------------------------------------------------+
+
+===== cell 11 · markdown
+**Utils**
+
+Here are some util functions that we will be using for this notebook
+
+===== cell 12 · code · execution_count 5
+#@title utils
+def download_file(packet_url, base_path="", extract=False, headers=None):
+  if base_path != "":
+    if not os.path.exists(base_path):
+      os.mkdir(base_path)
+  packet_file = os.path.basename(packet_url)
+  with requests.get(packet_url, stream=True, headers=headers) as r:
+      r.raise_for_status()
+      with open(os.path.join(base_path,packet_file), 'wb') as f:
+          for chunk in r.iter_content(chunk_size=8192):
+              f.write(chunk)
+
+  if extract:
+    if packet_file.endswith(".zip"):
+      with zipfile.ZipFile(os.path.join(base_path,packet_file)) as zfile:
+        zfile.extractall(base_path)
+    else:
+      packet_name = packet_file.split('.')[0]
+      with tarfile.open(os.path.join(base_path,packet_file)) as tfile:
+        tfile.extractall(base_path)
+
+def compute_dataset_metrics(data_list):
+  data_list_with_metrics = []
+  for item in data_list:
+    # Read image
+    image = cv2.imread(item[1])
+    data_list_with_metrics.append((item[0],item[1],image.shape[0],image.shape[1],image.nbytes / (1024 * 1024.0)))
+
+  # Build a dataframe
+  data_list_with_metrics = np.asarray(data_list_with_metrics)
+  dataset_df = pd.DataFrame({
+    'label': data_list_with_metrics[:, 0],
+    'path': data_list_with_metrics[:, 1],
+    'height': data_list_with_metrics[:, 2],
+    'width': data_list_with_metrics[:, 3],
+    'size': data_list_with_metrics[:, 4],
+    })
+
+  dataset_df["height"] = dataset_df["height"].astype(int)
+  dataset_df["width"] = dataset_df["width"].astype(int)
+  dataset_df["size"] = dataset_df["size"].astype(float)
+
+  dataset_mem_size = dataset_df["size"].sum()
+  value_counts = dataset_df["label"].value_counts()
+  height_details = dataset_df["height"].describe()
+  width_details = dataset_df["width"].describe()
+
+  print("Dataset Metrics:")
+  print("----------------")
+  print("Label Counts:")
+  print(value_counts)
+  print("Image Width:")
+  print("Min:",width_details["min"]," Max:",width_details["max"])
+  print("Image Height:")
+  print("Min:",height_details["min"]," Max:",height_details["max"])
+  print("Size in memory:",round(dataset_df["size"].sum(),2),"MB")
+
+class JsonEncoder(json.JSONEncoder):
+  def default(self, obj):
+    if isinstance(obj, np.integer):
+        return int(obj)
+    elif isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, decimal.Decimal):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    else:
+        return super(JsonEncoder, self).default(obj)
+
+experiment_name = None
+def create_experiment():
+  global experiment_name
+  experiment_name = "experiment_" + str(int(time.time()))
+
+  # Create experiment folder
+  if not os.path.exists(experiment_name):
+      os.mkdir(experiment_name)
+
+def save_data_details(data_details):
+  with open(os.path.join(experiment_name,"data_details.json"), "w") as json_file:
+    json_file.write(json.dumps(data_details,cls=JsonEncoder))
+
+def save_model(model,model_name="model01"):
+
+  # Save the enitire model (structure + weights)
+  #print(experiment_name, model_name)
+  model.save(os.path.join(experiment_name,model_name+".keras"))
+
+  # Save only the weights
+  model.save_weights(os.path.join(experiment_name,model_name+".weights.h5"))
+
+  # Save the structure only
+  model_json = model.to_json()
+  with open(os.path.join(experiment_name,model_name+".json"), "w") as json_file:
+      json_file.write(model_json)
+
+def get_model_size(model_name="model01"):
+  model_size = os.stat(os.path.join(experiment_name,model_name+".weights.h5")).st_size
+  return model_size
+
+def evaluate_save_model(model,test_data, model_train_history,execution_time, learning_rate, batch_size, epochs, optimizer,save=True):
+
+  # Get the number of epochs the training was run for
+  num_epochs = len(model_train_history["loss"])
+
+  # Plot training results
+  fig = plt.figure(figsize=(15,5))
+  axs = fig.add_subplot(1,2,1)
+  axs.set_title('Loss')
+  # Plot all metrics
+  for metric in ["loss","val_loss"]:
+      axs.plot(np.arange(0, num_epochs), model_train_history[metric], label=metric)
+  axs.legend()
+
+  axs = fig.add_subplot(1,2,2)
+  axs.set_title('Accuracy')
+  # Plot all metrics
+  for metric in ["accuracy","val_accuracy"]:
+      axs.plot(np.arange(0, num_epochs), model_train_history[metric], label=metric)
+  axs.legend()
+
+  plt.show()
+
+  # Evaluate on test data
+  evaluation_results = model.evaluate(test_data)
+  print(evaluation_results)
+
+  if save:
+    # Save model
+    save_model(model, model_name=model.name)
+    model_size = get_model_size(model_name=model.name)
+
+    # Save model history
+    with open(os.path.join(experiment_name,model.name+"_train_history.json"), "w") as json_file:
+        json_file.write(json.dumps(model_train_history,cls=JsonEncoder))
+
+    trainable_parameters = count_params(model.trainable_weights)
+    non_trainable_parameters = count_params(model.non_trainable_weights)
+
+    # Save model metrics
+    metrics ={
+        "trainable_parameters":trainable_parameters,
+        "execution_time":execution_time,
+        "loss":evaluation_results[0],
+        "accuracy":evaluation_results[1],
+        "model_size":model_size,
+        "learning_rate":learning_rate,
+        "batch_size":batch_size,
+        "epochs":epochs,
+        "optimizer":type(optimizer).__name__
+    }
+    with open(os.path.join(experiment_name,model.name+"_model_metrics.json"), "w") as json_file:
+        json_file.write(json.dumps(metrics,cls=JsonEncoder))
+
+===== cell 13 · markdown
+## **<font color="#A41034">Dataset</font>**
+
+===== cell 14 · markdown
+#### **Download**
+
+===== cell 15 · code · execution_count 6
+start_time = time.time()
+download_file("https://github.com/dlops-io/datasets/releases/download/v4.0/cheese_4_labels.zip", base_path="datasets", extract=True)
+execution_time = (time.time() - start_time)/60.0
+print("Download execution time (mins)",execution_time)
+----- stored output
+Download execution time (mins) 0.2924845059712728
+
+===== cell 16 · markdown
+### **Load Data**
+
+* Read-in data as lists.
+* Each element in data_x is the path to the image
+* Each element in data_y is the label of that image
+
+===== cell 17 · code · execution_count 7
+base_path = os.path.join("datasets","cheese")
+label_names = os.listdir(base_path)
+print("Labels:", label_names)
+
+# Number of unique labels
+num_classes = len(label_names)
+# Create label index for easy lookup
+label2index = dict((name, index) for index, name in enumerate(label_names))
+index2label = dict((index, name) for index, name in enumerate(label_names))
+
+# Generate a list of labels and path to images
+data_list = []
+for label in label_names:
+  # Images
+  image_files = os.listdir(os.path.join(base_path,label))
+  data_list.extend([(label,os.path.join(base_path,label,f)) for f in image_files])
+
+print("Full size of the dataset:",len(data_list))
+print("data_list:",data_list[:5])
+----- stored output
+Labels: ['brie', 'gouda', 'parmigiano', 'gruyere']
+Full size of the dataset: 1156
+data_list: [('brie', 'datasets/cheese/brie/Image_186.jpg'), ('brie', 'datasets/cheese/brie/Image_11.jpg'), ('brie', 'datasets/cheese/brie/Image_141.jpg'), ('brie', 'datasets/cheese/brie/Image_107.jpg'), ('brie', 'datasets/cheese/brie/Image_39.jpg')]
+
+===== cell 18 · markdown
+### **View Images**
+
+Let's take a look at the data.
+
+===== cell 19 · code · execution_count 8
+# Generate a random sample of index
+image_samples = np.random.randint(0,high=len(data_list)-1, size=12)
+
+fig = plt.figure(figsize=(20,8))
+for i,img_idx in enumerate(image_samples):
+    axs = fig.add_subplot(3,4,i+1)
+    axs.set_title(data_list[img_idx][0])
+    # Read image
+    image = cv2.imread(data_list[img_idx][1])
+    # convert to rgb
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    plt.imshow(image)
+    plt.axis('off')
+
+plt.suptitle("Sample Images")
+plt.show()
+----- stored output
+<Figure size 2000x800 with 12 Axes>
+[image output omitted]
+
+===== cell 20 · markdown
+### **Dataset Metrics**
+
+===== cell 21 · code · execution_count 9
+# Compute dataset metrics
+compute_dataset_metrics(data_list)
+----- stored output
+Dataset Metrics:
+----------------
+Label Counts:
+label
+parmigiano    291
+brie          289
+gouda         288
+gruyere       288
+Name: count, dtype: int64
+Image Width:
+Min: 160.0  Max: 7200.0
+Image Height:
+Min: 170.0  Max: 6000.0
+Size in memory: 6679.46 MB
+
+===== cell 22 · markdown
+## **<font color="#A41034">Build Data Pipelines</font>**
+
+===== cell 23 · markdown
+### **Load X & Y**
+
+Generate data_x and data_y
+
+===== cell 24 · code · execution_count 10
+# Build data x, y
+data_x = [itm[1] for itm in data_list]
+data_y = [itm[0] for itm in data_list]
+
+print("data_x:",len(data_x))
+print("data_y:",len(data_y))
+print("data_x:",data_x[:5])
+print("data_y:",data_y[:5])
+----- stored output
+data_x: 1156
+data_y: 1156
+data_x: ['datasets/cheese/brie/Image_186.jpg', 'datasets/cheese/brie/Image_11.jpg', 'datasets/cheese/brie/Image_141.jpg', 'datasets/cheese/brie/Image_107.jpg', 'datasets/cheese/brie/Image_39.jpg']
+data_y: ['brie', 'brie', 'brie', 'brie', 'brie']
+
+===== cell 25 · markdown
+### **Split Data**
+We split data into test, validation, & train
+
+===== cell 26 · code · execution_count 11
+test_percent = 0.10
+validation_percent = 0.2
+
+# Split data into train / test
+train_validate_x, test_x, train_validate_y, test_y = train_test_split(data_x, data_y, test_size=test_percent)
+
+# Split data into train / validate
+train_x, validate_x, train_y, validate_y = train_test_split(train_validate_x, train_validate_y, test_size=test_percent)
+
+print("train_x count:",len(train_x))
+print("validate_x count:",len(validate_x))
+print("test_x count:",len(test_x))
+----- stored output
+train_x count: 936
+validate_x count: 104
+test_x count: 116
+
+===== cell 27 · markdown
+### **Create TF Datasets**
+
+===== cell 28 · code · execution_count 12
+def get_dataset(image_width = 224, image_height = 224, num_channels = 3, batch_size = 32):
+
+  # Load Image
+  def load_image(path, label):
+    image = tf.io.read_file(path)
+    image = tf.image.decode_jpeg(image, channels=num_channels)
+    image = tf.image.resize(image, [image_height,image_width])
+    return image, label
+
+  # Normalize pixels
+  def normalize(image, label):
+    image = image/255
+    return image, label
+
+  train_shuffle_buffer_size= len(train_x)
+  validation_shuffle_buffer_size= len(validate_x)
+
+  # Convert all y labels to numbers
+  train_processed_y = [label2index[label] for label in train_y]
+  validate_processed_y = [label2index[label] for label in validate_y]
+  test_processed_y = [label2index[label] for label in test_y]
+
+  # Converts to y to binary class matrix (One-hot-encoded)
+  train_processed_y = to_categorical(train_processed_y, num_classes=num_classes)#, dtype='float32')
+  validate_processed_y = to_categorical(validate_processed_y, num_classes=num_classes)#, dtype='float32')
+  test_processed_y = to_categorical(test_processed_y, num_classes=num_classes)#, dtype='float32')
+
+  # Create TF Dataset
+  train_data = tf.data.Dataset.from_tensor_slices((train_x, train_processed_y))
+  validation_data = tf.data.Dataset.from_tensor_slices((validate_x, validate_processed_y))
+  test_data = tf.data.Dataset.from_tensor_slices((test_x, test_processed_y))
+
+  #############
+  # Train data
+  #############
+  # Apply all data processing logic
+  train_data = train_data.shuffle(buffer_size=train_shuffle_buffer_size)
+  train_data = train_data.map(load_image, num_parallel_calls=tf.data.AUTOTUNE)
+  train_data = train_data.map(normalize, num_parallel_calls=tf.data.AUTOTUNE)
+  train_data = train_data.batch(batch_size)
+  train_data = train_data.prefetch(tf.data.AUTOTUNE)
+
+  ##################
+  # Validation data
+  ##################
+  # Apply all data processing logic
+  validation_data = validation_data.shuffle(buffer_size=validation_shuffle_buffer_size)
+  validation_data = validation_data.map(load_image, num_parallel_calls=tf.data.AUTOTUNE)
+  validation_data = validation_data.map(normalize, num_parallel_calls=tf.data.AUTOTUNE)
+  validation_data = validation_data.batch(batch_size)
+  validation_data = validation_data.prefetch(tf.data.AUTOTUNE)
+
+  ############
+  # Test data
+  ############
+  # Apply all data processing logic
+  test_data = test_data.map(load_image, num_parallel_calls=tf.data.AUTOTUNE)
+  test_data = test_data.map(normalize, num_parallel_calls=tf.data.AUTOTUNE)
+  test_data = test_data.batch(batch_size)
+  test_data = test_data.prefetch(tf.data.AUTOTUNE)
+
+  return (
+      train_data, validation_data, test_data
+  )
+
+===== cell 29 · markdown
+## **<font color="#A41034">Image Classificaton Models</font>**
+
+===== cell 30 · markdown
+### **Create Experiment**
+
+We will use our util functions to create an experiment to keep track of hyper parameters, metrics, models etc.
+
+===== cell 31 · code · execution_count 13
+# Create an experiment
+create_experiment()
+
+===== cell 32 · markdown
+### **1) Two Block CNN Network**
+
+===== cell 33 · code · execution_count 14
+# Build Model
+def build_2_block_model(image_height, image_width, num_channels, num_classes, model_name):
+  # Model input
+  input_shape = [image_height, image_width, num_channels] # height, width, channels
+  model_input = keras.Input(shape=input_shape)
+
+  # Hidden Layer, Convolution Block
+  hidden = keras.layers.Conv2D(filters=64, kernel_size=(3, 3), padding='same', activation='relu')(model_input)
+  hidden = keras.layers.Conv2D(filters=64, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(hidden)
+
+  # Hidden Layer, Convolution Block
+  hidden = keras.layers.Conv2D(filters=128, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.Conv2D(filters=128, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(hidden)
+
+  # Flatten
+  hidden = keras.layers.Flatten()(hidden)
+
+  #  Hidden Layer, Classification Block
+  hidden = keras.layers.Dense(units=64, activation='relu')(hidden)
+
+  # Output Layer
+  output = keras.layers.Dense(units=num_classes, activation='softmax')(hidden)
+
+  # Create model
+  model = Model(model_input, output, name=model_name)
+
+  return model
+
+===== cell 34 · markdown
+### **Train**
+
+===== cell 35 · code · execution_count 15
+############################
+# Training Params
+############################
+model_name = "2_block"
+learning_rate = 0.01
+image_width = 224
+image_height = 224
+num_channels = 3
+batch_size = 32
+epochs = 1
+
+# Free up memory
+K.clear_session()
+
+# Data
+train_data, validation_data, test_data = get_dataset(image_width = image_width,
+                                                     image_height = image_height,
+                                                     num_channels = num_channels,
+                                                     batch_size = batch_size)
+
+# Model
+model = build_2_block_model(image_height, image_width, num_channels, num_classes, model_name)
+# Optimizer
+optimizer = keras.optimizers.SGD(learning_rate=learning_rate)
+# Loss
+loss = keras.losses.categorical_crossentropy
+# Print the model architecture
+print(model.summary())
+# Compile
+model.compile(loss=loss,
+                  optimizer=optimizer,
+                  metrics=['accuracy'])
+
+# Train model
+start_time = time.time()
+training_results = model.fit(
+        train_data,
+        validation_data=validation_data,
+        epochs=epochs,
+        verbose=1)
+execution_time = (time.time() - start_time)/60.0
+print("Training execution time (mins)",execution_time)
+
+# Get model training history
+training_history = training_results.history
+----- stored output
+Model: "2_block"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ input_layer (InputLayer)        │ (None, 224, 224, 3)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d (Conv2D)                 │ (None, 224, 224, 64)   │         1,792 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_1 (Conv2D)               │ (None, 224, 224, 64)   │        36,928 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d (MaxPooling2D)    │ (None, 112, 112, 64)   │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_2 (Conv2D)               │ (None, 112, 112, 128)  │        73,856 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_3 (Conv2D)               │ (None, 112, 112, 128)  │       147,584 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_1 (MaxPooling2D)  │ (None, 56, 56, 128)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ flatten (Flatten)               │ (None, 401408)         │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense (Dense)                   │ (None, 64)             │    25,690,176 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_1 (Dense)                 │ (None, 4)              │           260 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 25,950,596 (98.99 MB)
+ Trainable params: 25,950,596 (98.99 MB)
+ Non-trainable params: 0 (0.00 B)
+None
+30/30 ━━━━━━━━━━━━━━━━━━━━ 51s 952ms/step - accuracy: 0.2792 - loss: 1.3974 - val_accuracy: 0.3365 - val_loss: 1.3784
+Training execution time (mins) 1.3740151365598043
+
+===== cell 36 · code · execution_count 16
+experiment_name
+----- stored output
+'experiment_1760994796'
+
+===== cell 37 · code · execution_count 17
+
+# Save and custom model tracking
+evaluate_save_model(model,test_data, training_history,execution_time, learning_rate, batch_size, epochs, optimizer,save=True)
+----- stored output
+<Figure size 1500x500 with 2 Axes>
+[image output omitted]
+4/4 ━━━━━━━━━━━━━━━━━━━━ 6s 2s/step - accuracy: 0.3598 - loss: 1.3747
+[1.3765590190887451, 0.3448275923728943]
+
+===== cell 38 · markdown
+### **2) Four Block CNN Network**
+
+===== cell 39 · code · execution_count 18
+# Build Model
+def build_4_block_model(image_height, image_width, num_channels, num_classes, model_name):
+  # Model input
+  input_shape = [image_height, image_width, num_channels] # height, width, channels
+  model_input = keras.Input(shape=input_shape)
+
+  # Hidden Layer, Convolution Block
+  hidden = keras.layers.Conv2D(filters=64, kernel_size=(3, 3), padding='same', activation='relu')(model_input)
+  hidden = keras.layers.Conv2D(filters=64, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(hidden)
+
+  # Hidden Layer, Convolution Block
+  hidden = keras.layers.Conv2D(filters=128, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.Conv2D(filters=128, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(hidden)
+
+  # Hidden Layer, Convolution Block
+  hidden = keras.layers.Conv2D(filters=256, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.Conv2D(filters=256, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(hidden)
+
+  # Hidden Layer, Convolution Block
+  hidden = keras.layers.Conv2D(filters=512, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.Conv2D(filters=512, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(hidden)
+
+  # Flatten
+  hidden = keras.layers.Flatten()(hidden)
+
+  #  Hidden Layer, Classification Block
+  hidden = keras.layers.Dense(units=64, activation='relu')(hidden)
+  hidden = keras.layers.Dense(units=64, activation='relu')(hidden)
+
+  # Output Layer
+  output = keras.layers.Dense(units=num_classes, activation='softmax')(hidden)
+
+  # Create model
+  model = Model(model_input, output, name=model_name)
+
+  return model
+
+===== cell 40 · markdown
+### **Train**
+
+===== cell 41 · code · execution_count 19
+############################
+# Training Params
+############################
+model_name = "4_block"
+learning_rate = 0.01
+image_width = 224
+image_height = 224
+num_channels = 3
+batch_size = 32
+epochs = 25
+
+# Free up memory
+K.clear_session()
+
+# Data
+train_data, validation_data, test_data = get_dataset(image_width = image_width,
+                                                     image_height = image_height,
+                                                     num_channels = num_channels,
+                                                     batch_size = batch_size)
+
+# Model
+model = build_4_block_model(image_height, image_width, num_channels, num_classes, model_name)
+# Optimizer
+optimizer = keras.optimizers.SGD(learning_rate=learning_rate)
+# Loss
+loss = keras.losses.categorical_crossentropy
+# Print the model architecture
+print(model.summary())
+# Compile
+model.compile(loss=loss,
+                  optimizer=optimizer,
+                  metrics=['accuracy'])
+
+# Train model
+start_time = time.time()
+training_results = model.fit(
+        train_data,
+        validation_data=validation_data,
+        epochs=epochs,
+        verbose=1)
+execution_time = (time.time() - start_time)/60.0
+print("Training execution time (mins)",execution_time)
+
+# Get model training history
+training_history = training_results.history
+
+# Save and custom model tracking
+evaluate_save_model(model,test_data, training_history,execution_time, learning_rate, batch_size, epochs, optimizer,save=True)
+----- stored output
+Model: "4_block"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ input_layer_1 (InputLayer)      │ (None, 224, 224, 3)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_4 (Conv2D)               │ (None, 224, 224, 64)   │         1,792 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_5 (Conv2D)               │ (None, 224, 224, 64)   │        36,928 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_2 (MaxPooling2D)  │ (None, 112, 112, 64)   │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_6 (Conv2D)               │ (None, 112, 112, 128)  │        73,856 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_7 (Conv2D)               │ (None, 112, 112, 128)  │       147,584 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_3 (MaxPooling2D)  │ (None, 56, 56, 128)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_8 (Conv2D)               │ (None, 56, 56, 256)    │       295,168 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_9 (Conv2D)               │ (None, 56, 56, 256)    │       590,080 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_4 (MaxPooling2D)  │ (None, 28, 28, 256)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_10 (Conv2D)              │ (None, 28, 28, 512)    │     1,180,160 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_11 (Conv2D)              │ (None, 28, 28, 512)    │     2,359,808 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_5 (MaxPooling2D)  │ (None, 14, 14, 512)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ flatten_1 (Flatten)             │ (None, 100352)         │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_2 (Dense)                 │ (None, 64)             │     6,422,592 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_3 (Dense)                 │ (None, 64)             │         4,160 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_4 (Dense)                 │ (None, 4)              │           260 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 11,112,388 (42.39 MB)
+ Trainable params: 11,112,388 (42.39 MB)
+ Non-trainable params: 0 (0.00 B)
+None
+Epoch 1/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 49s 1s/step - accuracy: 0.2726 - loss: 1.3863 - val_accuracy: 0.2981 - val_loss: 1.3856
+Epoch 2/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 516ms/step - accuracy: 0.3007 - loss: 1.3856 - val_accuracy: 0.2692 - val_loss: 1.3852
+Epoch 3/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 21s 516ms/step - accuracy: 0.2844 - loss: 1.3852 - val_accuracy: 0.2404 - val_loss: 1.3846
+Epoch 4/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 512ms/step - accuracy: 0.2826 - loss: 1.3834 - val_accuracy: 0.2404 - val_loss: 1.3843
+Epoch 5/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 520ms/step - accuracy: 0.3221 - loss: 1.3818 - val_accuracy: 0.4231 - val_loss: 1.3811
+Epoch 6/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 534ms/step - accuracy: 0.3501 - loss: 1.3778 - val_accuracy: 0.4135 - val_loss: 1.3781
+Epoch 7/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 20s 510ms/step - accuracy: 0.3549 - loss: 1.3730 - val_accuracy: 0.2596 - val_loss: 1.3798
+Epoch 8/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 528ms/step - accuracy: 0.3511 - loss: 1.3636 - val_accuracy: 0.3269 - val_loss: 1.3727
+Epoch 9/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 512ms/step - accuracy: 0.3880 - loss: 1.3436 - val_accuracy: 0.2596 - val_loss: 1.5761
+Epoch 10/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 514ms/step - accuracy: 0.3255 - loss: 1.3758 - val_accuracy: 0.3558 - val_loss: 1.3276
+Epoch 11/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 519ms/step - accuracy: 0.3888 - loss: 1.3057 - val_accuracy: 0.3269 - val_loss: 1.3649
+Epoch 12/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 21s 512ms/step - accuracy: 0.4086 - loss: 1.2675 - val_accuracy: 0.3173 - val_loss: 1.3542
+Epoch 13/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 21s 526ms/step - accuracy: 0.3849 - loss: 1.2695 - val_accuracy: 0.4038 - val_loss: 1.3092
+Epoch 14/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 517ms/step - accuracy: 0.4112 - loss: 1.2679 - val_accuracy: 0.4038 - val_loss: 1.3081
+Epoch 15/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 17s 568ms/step - accuracy: 0.4435 - loss: 1.2445 - val_accuracy: 0.2788 - val_loss: 1.4143
+Epoch 16/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 519ms/step - accuracy: 0.2999 - loss: 1.3967 - val_accuracy: 0.3077 - val_loss: 1.3410
+Epoch 17/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 524ms/step - accuracy: 0.4290 - loss: 1.2347 - val_accuracy: 0.3654 - val_loss: 1.3197
+Epoch 18/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 533ms/step - accuracy: 0.4406 - loss: 1.2490 - val_accuracy: 0.3654 - val_loss: 1.3058
+Epoch 19/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 540ms/step - accuracy: 0.4735 - loss: 1.2137 - val_accuracy: 0.3462 - val_loss: 1.3624
+Epoch 20/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 519ms/step - accuracy: 0.4513 - loss: 1.2138 - val_accuracy: 0.4231 - val_loss: 1.2889
+Epoch 21/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 21s 524ms/step - accuracy: 0.4701 - loss: 1.2003 - val_accuracy: 0.3846 - val_loss: 1.2762
+Epoch 22/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 20s 528ms/step - accuracy: 0.4661 - loss: 1.1898 - val_accuracy: 0.4231 - val_loss: 1.2381
+Epoch 23/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 532ms/step - accuracy: 0.4965 - loss: 1.1586 - val_accuracy: 0.4038 - val_loss: 1.2665
+Epoch 24/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 529ms/step - accuracy: 0.4798 - loss: 1.1589 - val_accuracy: 0.4135 - val_loss: 1.2495
+Epoch 25/25
+30/30 ━━━━━━━━━━━━━━━━━━━━ 21s 539ms/step - accuracy: 0.4808 - loss: 1.1759 - val_accuracy: 0.3077 - val_loss: 1.6605
+Training execution time (mins) 7.752844043572744
+<Figure size 1500x500 with 2 Axes>
+[image output omitted]
+4/4 ━━━━━━━━━━━━━━━━━━━━ 7s 2s/step - accuracy: 0.3283 - loss: 1.5480
+[1.5817978382110596, 0.3103448152542114]
+
+===== cell 42 · markdown
+### **3) VGG Style Network**
+
+===== cell 43 · code · execution_count 20
+# Build Model
+def build_vgg_style_model(image_height, image_width, num_channels, num_classes, model_name):
+  # Model input
+  input_shape = [image_height, image_width, num_channels] # height, width, channels
+  model_input = keras.Input(shape=input_shape)
+
+  # Hidden Layer, Convolution Block
+  hidden = keras.layers.Conv2D(filters=64, kernel_size=(3, 3), padding='same', activation='relu')(model_input)
+  hidden = keras.layers.Conv2D(filters=64, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(hidden)
+
+  # Hidden Layer, Convolution Block
+  hidden = keras.layers.Conv2D(filters=128, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.Conv2D(filters=128, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(hidden)
+
+  # Hidden Layer, Convolution Block
+  hidden = keras.layers.Conv2D(filters=256, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.Conv2D(filters=256, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(hidden)
+
+  # Hidden Layer, Convolution Block
+  hidden = keras.layers.Conv2D(filters=512, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.Conv2D(filters=512, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(hidden)
+
+  # Hidden Layer, Convolution Block
+  hidden = keras.layers.Conv2D(filters=512, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.Conv2D(filters=512, kernel_size=(3, 3), padding='same', activation='relu')(hidden)
+  hidden = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2))(hidden)
+
+  # Flatten
+  hidden = keras.layers.Flatten()(hidden)
+
+  #  Hidden Layer, Classification Block
+  hidden = keras.layers.Dense(units=512, activation='relu')(hidden)
+  hidden = keras.layers.Dense(units=512, activation='relu')(hidden)
+
+  # Output Layer
+  output = keras.layers.Dense(units=num_classes, activation='softmax')(hidden)
+
+  # Create model
+  model = Model(model_input, output, name=model_name)
+
+  return model
+
+===== cell 44 · markdown
+### **Train**
+
+===== cell 45 · code · execution_count 21
+############################
+# Training Params
+############################
+model_name = "vgg_style"
+learning_rate = 0.01
+image_width = 224
+image_height = 224
+num_channels = 3
+batch_size = 32
+epochs = 15
+
+# Free up memory
+K.clear_session()
+
+# Data
+train_data, validation_data, test_data = get_dataset(image_width = image_width,
+                                                     image_height = image_height,
+                                                     num_channels = num_channels,
+                                                     batch_size = batch_size)
+
+# Model
+model = build_vgg_style_model(image_height, image_width, num_channels, num_classes, model_name)
+# Optimizer
+optimizer = keras.optimizers.SGD(learning_rate=learning_rate)
+# Loss
+loss = keras.losses.categorical_crossentropy
+# Print the model architecture
+print(model.summary())
+# Compile
+model.compile(loss=loss,
+                  optimizer=optimizer,
+                  metrics=['accuracy'])
+
+# Train model
+start_time = time.time()
+training_results = model.fit(
+        train_data,
+        validation_data=validation_data,
+        epochs=epochs,
+        verbose=1)
+execution_time = (time.time() - start_time)/60.0
+print("Training execution time (mins)",execution_time)
+
+# Get model training history
+training_history = training_results.history
+
+# Save and custom model tracking
+evaluate_save_model(model,test_data, training_history,execution_time, learning_rate, batch_size, epochs, optimizer,save=True)
+----- stored output
+Model: "vgg_style"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ input_layer_2 (InputLayer)      │ (None, 224, 224, 3)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_12 (Conv2D)              │ (None, 224, 224, 64)   │         1,792 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_13 (Conv2D)              │ (None, 224, 224, 64)   │        36,928 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_6 (MaxPooling2D)  │ (None, 112, 112, 64)   │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_14 (Conv2D)              │ (None, 112, 112, 128)  │        73,856 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_15 (Conv2D)              │ (None, 112, 112, 128)  │       147,584 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_7 (MaxPooling2D)  │ (None, 56, 56, 128)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_16 (Conv2D)              │ (None, 56, 56, 256)    │       295,168 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_17 (Conv2D)              │ (None, 56, 56, 256)    │       590,080 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_8 (MaxPooling2D)  │ (None, 28, 28, 256)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_18 (Conv2D)              │ (None, 28, 28, 512)    │     1,180,160 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_19 (Conv2D)              │ (None, 28, 28, 512)    │     2,359,808 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_9 (MaxPooling2D)  │ (None, 14, 14, 512)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_20 (Conv2D)              │ (None, 14, 14, 512)    │     2,359,808 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_21 (Conv2D)              │ (None, 14, 14, 512)    │     2,359,808 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_10 (MaxPooling2D) │ (None, 7, 7, 512)      │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ flatten_2 (Flatten)             │ (None, 25088)          │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_5 (Dense)                 │ (None, 512)            │    12,845,568 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_6 (Dense)                 │ (None, 512)            │       262,656 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_7 (Dense)                 │ (None, 4)              │         2,052 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 22,515,268 (85.89 MB)
+ Trainable params: 22,515,268 (85.89 MB)
+ Non-trainable params: 0 (0.00 B)
+None
+Epoch 1/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 26s 668ms/step - accuracy: 0.2700 - loss: 1.3861 - val_accuracy: 0.2404 - val_loss: 1.3860
+Epoch 2/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 541ms/step - accuracy: 0.2701 - loss: 1.3856 - val_accuracy: 0.2404 - val_loss: 1.3865
+Epoch 3/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 519ms/step - accuracy: 0.2808 - loss: 1.3851 - val_accuracy: 0.2404 - val_loss: 1.3860
+Epoch 4/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 520ms/step - accuracy: 0.2982 - loss: 1.3849 - val_accuracy: 0.2404 - val_loss: 1.3863
+Epoch 5/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 17s 547ms/step - accuracy: 0.2591 - loss: 1.3845 - val_accuracy: 0.2404 - val_loss: 1.3853
+Epoch 6/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 508ms/step - accuracy: 0.2809 - loss: 1.3830 - val_accuracy: 0.2981 - val_loss: 1.3846
+Epoch 7/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 523ms/step - accuracy: 0.3089 - loss: 1.3825 - val_accuracy: 0.3269 - val_loss: 1.3829
+Epoch 8/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 18s 575ms/step - accuracy: 0.3659 - loss: 1.3816 - val_accuracy: 0.2981 - val_loss: 1.3834
+Epoch 9/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 515ms/step - accuracy: 0.3293 - loss: 1.3800 - val_accuracy: 0.2981 - val_loss: 1.3817
+Epoch 10/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 21s 537ms/step - accuracy: 0.3655 - loss: 1.3767 - val_accuracy: 0.2885 - val_loss: 1.3796
+Epoch 11/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 21s 575ms/step - accuracy: 0.3693 - loss: 1.3730 - val_accuracy: 0.2788 - val_loss: 1.3830
+Epoch 12/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 17s 537ms/step - accuracy: 0.3601 - loss: 1.3722 - val_accuracy: 0.2596 - val_loss: 1.3763
+Epoch 13/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 514ms/step - accuracy: 0.3680 - loss: 1.3565 - val_accuracy: 0.3558 - val_loss: 1.3535
+Epoch 14/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 536ms/step - accuracy: 0.3808 - loss: 1.3380 - val_accuracy: 0.2788 - val_loss: 1.3652
+Epoch 15/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 16s 526ms/step - accuracy: 0.4066 - loss: 1.3052 - val_accuracy: 0.2788 - val_loss: 1.3867
+Training execution time (mins) 4.381443357467651
+<Figure size 1500x500 with 2 Axes>
+[image output omitted]
+4/4 ━━━━━━━━━━━━━━━━━━━━ 3s 661ms/step - accuracy: 0.2378 - loss: 1.4022
+[1.3990068435668945, 0.2586206793785095]
+
+===== cell 46 · markdown
+### **4) MobileNet - Transfer Learning**
+
+===== cell 47 · code · execution_count 22
+# Build Model
+def build_mobilenet_model(image_height, image_width, num_channels, num_classes,model_name, train_base = False):
+
+  # Load the base model with imagenet weights without top layer
+  base_model = tf.keras.applications.MobileNetV2(include_top=False, weights='imagenet', input_shape=(image_height, image_width, num_channels))
+  base_model.trainable = train_base
+  #base_model.summary(show_trainable=True, expand_nested=True)
+
+  # Model input
+  input = tf.keras.Input(shape=(image_height, image_width, num_channels), name="input")
+  # Add new layers on top of the model
+  x = base_model(input, training=False)
+  x = tf.keras.layers.GlobalAveragePooling2D()(x)
+  # x = tf.keras.layers.Dropout(DROPOUT)(x) # optional for your own experiments
+  x = tf.keras.layers.Dense(units=128, activation='relu')(x)
+  predictions = tf.keras.layers.Dense(units=num_classes, activation='softmax', name="output")(x)
+  model = tf.keras.models.Model(inputs=input, outputs=predictions, name=model_name+'_'+str(train_base))
+
+  return model
+
+===== cell 48 · markdown
+### **Train - Feature Extraction**
+
+Freeze the base
+
+===== cell 49 · code · execution_count 23
+############################
+# Training Params
+############################
+model_name = "mobilenetv2_train_base"
+learning_rate = 0.001
+image_width = 224
+image_height = 224
+num_channels = 3
+batch_size = 32
+epochs = 15
+
+# Free up memory
+K.clear_session()
+
+# Data
+train_data, validation_data, test_data = get_dataset(image_width = image_width,
+                                                     image_height = image_height,
+                                                     num_channels = num_channels,
+                                                     batch_size = batch_size)
+
+# Model
+model = build_mobilenet_model(image_height, image_width, num_channels, num_classes, model_name, train_base = False)
+# Optimizer
+optimizer = keras.optimizers.SGD(learning_rate=learning_rate)
+# Loss
+loss = keras.losses.categorical_crossentropy
+# Print the model architecture
+#print(model.summary())
+# Compile
+model.compile(loss=loss,
+                  optimizer=optimizer,
+                  metrics=['accuracy'])
+
+# Train model
+start_time = time.time()
+training_results = model.fit(
+        train_data,
+        validation_data=validation_data,
+        epochs=epochs,
+        verbose=1)
+execution_time = (time.time() - start_time)/60.0
+print("Training execution time (mins)",execution_time)
+
+# Get model training history
+training_history = training_results.history
+
+# Save and custom model tracking
+evaluate_save_model(model,test_data, training_history,execution_time, learning_rate, batch_size, epochs, optimizer,save=True)
+----- stored output
+Downloading data from https://storage.googleapis.com/tensorflow/keras-applications/mobilenet_v2/mobilenet_v2_weights_tf_dim_ordering_tf_kernels_1.0_224_no_top.h5
+9406464/9406464 ━━━━━━━━━━━━━━━━━━━━ 1s 0us/step
+Epoch 1/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 46s 1s/step - accuracy: 0.2685 - loss: 1.4835 - val_accuracy: 0.3365 - val_loss: 1.4045
+Epoch 2/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 466ms/step - accuracy: 0.3573 - loss: 1.3888 - val_accuracy: 0.3750 - val_loss: 1.3343
+Epoch 3/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 460ms/step - accuracy: 0.3933 - loss: 1.3232 - val_accuracy: 0.4519 - val_loss: 1.2735
+Epoch 4/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 465ms/step - accuracy: 0.4611 - loss: 1.2365 - val_accuracy: 0.5000 - val_loss: 1.2190
+Epoch 5/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 468ms/step - accuracy: 0.4800 - loss: 1.2056 - val_accuracy: 0.5096 - val_loss: 1.1761
+Epoch 6/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 20s 463ms/step - accuracy: 0.5661 - loss: 1.1297 - val_accuracy: 0.5385 - val_loss: 1.1293
+Epoch 7/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 459ms/step - accuracy: 0.5472 - loss: 1.1073 - val_accuracy: 0.5769 - val_loss: 1.0950
+Epoch 8/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 21s 456ms/step - accuracy: 0.5845 - loss: 1.0488 - val_accuracy: 0.5962 - val_loss: 1.0596
+Epoch 9/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 460ms/step - accuracy: 0.6283 - loss: 1.0069 - val_accuracy: 0.6154 - val_loss: 1.0280
+Epoch 10/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 452ms/step - accuracy: 0.6241 - loss: 0.9770 - val_accuracy: 0.6442 - val_loss: 1.0060
+Epoch 11/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 465ms/step - accuracy: 0.6499 - loss: 0.9460 - val_accuracy: 0.6635 - val_loss: 0.9766
+Epoch 12/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 464ms/step - accuracy: 0.6784 - loss: 0.9060 - val_accuracy: 0.6731 - val_loss: 0.9514
+Epoch 13/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 15s 501ms/step - accuracy: 0.6719 - loss: 0.8840 - val_accuracy: 0.7019 - val_loss: 0.9269
+Epoch 14/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 470ms/step - accuracy: 0.7014 - loss: 0.8797 - val_accuracy: 0.6923 - val_loss: 0.9067
+Epoch 15/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 460ms/step - accuracy: 0.7060 - loss: 0.8452 - val_accuracy: 0.7115 - val_loss: 0.8883
+Training execution time (mins) 4.234664460023244
+<Figure size 1500x500 with 2 Axes>
+[image output omitted]
+4/4 ━━━━━━━━━━━━━━━━━━━━ 11s 4s/step - accuracy: 0.6638 - loss: 0.9021
+[0.8873252272605896, 0.6724137663841248]
+
+===== cell 50 · markdown
+### **Train - Fine-Tuning**
+
+Unfreeze the base
+
+===== cell 51 · code · execution_count 24
+############################
+# Training Params
+############################
+model_name = "mobilenetv2_train_base"
+learning_rate = 0.001
+image_width = 224
+image_height = 224
+num_channels = 3
+batch_size = 32
+epochs = 15
+
+# Free up memory
+K.clear_session()
+
+# Data
+train_data, validation_data, test_data = get_dataset(image_width = image_width,
+                                                     image_height = image_height,
+                                                     num_channels = num_channels,
+                                                     batch_size = batch_size)
+
+# Model
+model = build_mobilenet_model(image_height, image_width, num_channels, num_classes, model_name, train_base = True)
+# Optimizer
+optimizer = keras.optimizers.SGD(learning_rate=learning_rate)
+# Loss
+loss = keras.losses.categorical_crossentropy
+# Print the model architecture
+##print(model.summary())
+# Compile
+model.compile(loss=loss,
+                  optimizer=optimizer,
+                  metrics=['accuracy'])
+
+# Train model
+start_time = time.time()
+training_results = model.fit(
+        train_data,
+        validation_data=validation_data,
+        epochs=epochs,
+        verbose=1)
+execution_time = (time.time() - start_time)/60.0
+print("Training execution time (mins)",execution_time)
+
+# Get model training history
+training_history = training_results.history
+
+# Save and custom model tracking
+evaluate_save_model(model,test_data, training_history,execution_time, learning_rate, batch_size, epochs, optimizer,save=True)
+----- stored output
+Epoch 1/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 69s 1s/step - accuracy: 0.2529 - loss: 1.5294 - val_accuracy: 0.2981 - val_loss: 1.5436
+Epoch 2/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 470ms/step - accuracy: 0.4168 - loss: 1.2521 - val_accuracy: 0.3269 - val_loss: 1.4240
+Epoch 3/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 22s 525ms/step - accuracy: 0.6085 - loss: 1.0722 - val_accuracy: 0.3654 - val_loss: 1.3104
+Epoch 4/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 471ms/step - accuracy: 0.7036 - loss: 0.9259 - val_accuracy: 0.4135 - val_loss: 1.2290
+Epoch 5/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 21s 500ms/step - accuracy: 0.7413 - loss: 0.8337 - val_accuracy: 0.4615 - val_loss: 1.1639
+Epoch 6/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 462ms/step - accuracy: 0.8089 - loss: 0.7451 - val_accuracy: 0.5096 - val_loss: 1.1006
+Epoch 7/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 469ms/step - accuracy: 0.8301 - loss: 0.6701 - val_accuracy: 0.5673 - val_loss: 1.0540
+Epoch 8/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 465ms/step - accuracy: 0.8629 - loss: 0.5927 - val_accuracy: 0.6058 - val_loss: 0.9954
+Epoch 9/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 469ms/step - accuracy: 0.8722 - loss: 0.5509 - val_accuracy: 0.6154 - val_loss: 0.9535
+Epoch 10/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 472ms/step - accuracy: 0.8759 - loss: 0.5183 - val_accuracy: 0.6346 - val_loss: 0.9119
+Epoch 11/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 15s 497ms/step - accuracy: 0.9019 - loss: 0.4574 - val_accuracy: 0.6346 - val_loss: 0.8849
+Epoch 12/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 15s 485ms/step - accuracy: 0.9100 - loss: 0.4160 - val_accuracy: 0.6346 - val_loss: 0.8488
+Epoch 13/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 20s 485ms/step - accuracy: 0.9237 - loss: 0.3719 - val_accuracy: 0.6442 - val_loss: 0.8250
+Epoch 14/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 21s 479ms/step - accuracy: 0.9210 - loss: 0.3627 - val_accuracy: 0.6538 - val_loss: 0.8010
+Epoch 15/15
+30/30 ━━━━━━━━━━━━━━━━━━━━ 14s 480ms/step - accuracy: 0.9456 - loss: 0.3234 - val_accuracy: 0.6731 - val_loss: 0.7764
+Training execution time (mins) 5.072258381048838
+<Figure size 1500x500 with 2 Axes>
+[image output omitted]
+4/4 ━━━━━━━━━━━━━━━━━━━━ 4s 1s/step - accuracy: 0.7134 - loss: 0.8397
+[0.8568759560585022, 0.6896551847457886]
+
+===== cell 52 · markdown
+## **<font color="#A41034">Experiment Results</font>**
+
+===== cell 53 · markdown
+#### **Compare Models**
+
+===== cell 54 · code · execution_count 25
+models_metrics_list = glob(experiment_name+"/*_model_metrics.json")
+
+all_models_metrics = []
+for mm_file in models_metrics_list:
+  with open(mm_file) as json_file:
+    model_metrics = json.load(json_file)
+    model_metrics["name"] = mm_file.replace(experiment_name+"/","").replace("_model_metrics.json","")
+    all_models_metrics.append(model_metrics)
+
+# Load metrics to dataframe
+view_metrics = pd.DataFrame(data=all_models_metrics)
+
+# Format columns
+view_metrics['accuracy'] = view_metrics['accuracy']*100
+view_metrics['accuracy'] = view_metrics['accuracy'].map('{:,.2f}%'.format)
+
+view_metrics['trainable_parameters'] = view_metrics['trainable_parameters'].map('{:,.0f}'.format)
+view_metrics['execution_time'] = view_metrics['execution_time'].map('{:,.2f} mins'.format)
+view_metrics['loss'] = view_metrics['loss'].map('{:,.2f}'.format)
+view_metrics['model_size'] = view_metrics['model_size']/1000000
+view_metrics['model_size'] = view_metrics['model_size'].map('{:,.0f} MB'.format)
+
+view_metrics = view_metrics.sort_values(by=['accuracy'],ascending=False)
+view_metrics.head(10)
+----- stored output
+  trainable_parameters execution_time  loss accuracy model_size  \
+1            2,388,356      5.07 mins  0.86   68.97%      10 MB
+0              164,484      4.23 mins  0.89   67.24%      10 MB
+3           25,950,596      1.37 mins  1.38   34.48%     104 MB
+4           11,112,388      7.75 mins  1.58   31.03%      45 MB
+2           22,515,268      4.38 mins  1.40   25.86%      90 MB
+
+   learning_rate  batch_size  epochs optimizer                          name
+1          0.001          32      15       SGD   mobilenetv2_train_base_True
+0          0.001          32      15       SGD  mobilenetv2_train_base_False
+3          0.010          32       1       SGD                       2_block
+4          0.010          32      25       SGD                       4_block
+2          0.010          32      15       SGD                     vgg_style
+
+===== cell 55 · markdown
+#### **Find Best Model**
+
+===== cell 56 · code · execution_count 26
+best_model = experiment_name+'/'+view_metrics.iloc[0]["name"]+".keras"
+print(best_model)
+----- stored output
+experiment_1760994796/mobilenetv2_train_base_True.keras
+
+===== cell 57 · markdown
+### **Predict using the best model**
+
+===== cell 58 · code · execution_count 27
+# Load a model from disk
+prediction_model = tf.keras.models.load_model(best_model)
+prediction_model.summary()
+----- stored output
+Model: "mobilenetv2_train_base_True"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ input (InputLayer)              │ (None, 224, 224, 3)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ mobilenetv2_1.00_224            │ (None, 7, 7, 1280)     │     2,257,984 │
+│ (Functional)                    │                        │               │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ global_average_pooling2d_1      │ (None, 1280)           │             0 │
+│ (GlobalAveragePooling2D)        │                        │               │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_9 (Dense)                 │ (None, 128)            │       163,968 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ output (Dense)                  │ (None, 4)              │           516 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 2,422,470 (9.24 MB)
+ Trainable params: 2,388,356 (9.11 MB)
+ Non-trainable params: 34,112 (133.25 KB)
+ Optimizer params: 2 (12.00 B)
+
+===== cell 59 · code · execution_count 28
+# Generate a random sample of index
+image_samples = np.random.randint(0,high=len(test_x)-1, size=12)
+image_width = 224
+image_height = 224
+num_channels = 3
+
+# Prepare the data
+def preprocess_image(path):
+  image = tf.io.read_file(path)
+  image = tf.image.decode_jpeg(image, channels=num_channels)
+  image = tf.image.resize(image, [image_height, image_width])
+
+  image = keras.applications.mobilenet.preprocess_input(image)
+
+  return image
+
+prediction_image_paths = [test_x[img_idx] for img_idx in image_samples]
+# Prepare the data for prediction
+prediction_data = tf.data.Dataset.from_tensor_slices((prediction_image_paths))
+prediction_data = prediction_data.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
+prediction_data = prediction_data.batch(len(prediction_image_paths))
+
+# Make prediction
+predictions = prediction_model.predict(prediction_data)
+print("predictions.shape:",predictions.shape)
+print(predictions[0],predictions[0].argmax())
+
+fig = plt.figure(figsize=(20,15))
+for i,img_idx in enumerate(image_samples):
+    axs = fig.add_subplot(4,3,i+1)
+
+    # Read image
+    image = cv2.imread(test_x[img_idx])
+    # convert to rgb
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    plt.imshow(image)
+
+    # Actual label vs prediction
+    prediction_label = index2label[predictions[i].argmax()]
+    axs.set_title("Actual:"+test_y[img_idx]+", Pred:"+prediction_label)
+
+
+    plt.axis('off')
+
+plt.suptitle("Test predictions")
+plt.show()
+----- stored output
+1/1 ━━━━━━━━━━━━━━━━━━━━ 11s 11s/step
+predictions.shape: (12, 4)
+[0.00362189 0.01533645 0.15256913 0.8284725 ] 3
+<Figure size 2000x1500 with 12 Axes>
+[image output omitted]
+
+===== cell 60 · markdown
+## **<font color="#A41034">Upload Experiment to Cloud Storage</font>**
+
+===== cell 61 · markdown
+### **Login using Google Acccount**
+
+===== cell 62 · code · execution_count 29
+# Authenticate
+auth.authenticate_user()
+
+===== cell 63 · code · execution_count 30
+# REPLACE
+GCP_PROJECT = "ac215-project" # [REPLACE WITH YOUR GCP PROJECT]
+GCS_BUCKET_NAME = "cheese-app-models" # [REPLACE WITH YOUR GCP PROJECT]
+
+===== cell 64 · markdown
+
+
+===== cell 65 · markdown
+### **Save Experiment**
+
+===== cell 66 · code · execution_count 31
+# Save data details used for the experiment
+data_details = {
+  "image_width": image_width,
+  "image_height": image_height,
+  "num_channels": num_channels,
+  "num_classes": num_classes,
+  "label2index": label2index,
+  "index2label": index2label
+}
+# Save data details used for the experiment
+save_data_details(data_details)
+print("Uploadin Experiment:",experiment_name)
+
+# Upload experiment to GCS bucket
+storage_client = storage.Client(project = GCP_PROJECT)
+# Get bucket for Experiments
+bucket = storage_client.get_bucket(GCS_BUCKET_NAME)
+print("Model Bucket:",bucket)
+
+# Copy the experiment folder to GCP Bucket
+for file_path in glob(experiment_name+'/*'):
+  print(file_path)
+  blob = bucket.blob(file_path)
+  print('uploading file', file_path)
+  blob.upload_from_filename(file_path)
+----- stored output
+Uploadin Experiment: experiment_1760994796
+Model Bucket: <Bucket: cheese-app-models>
+experiment_1760994796/4_block_train_history.json
+uploading file experiment_1760994796/4_block_train_history.json
+experiment_1760994796/4_block.keras
+uploading file experiment_1760994796/4_block.keras
+experiment_1760994796/data_details.json
+uploading file experiment_1760994796/data_details.json
+experiment_1760994796/mobilenetv2_train_base_False.keras
+uploading file experiment_1760994796/mobilenetv2_train_base_False.keras
+experiment_1760994796/2_block.weights.h5
+uploading file experiment_1760994796/2_block.weights.h5
+experiment_1760994796/2_block.keras
+uploading file experiment_1760994796/2_block.keras
+experiment_1760994796/2_block_train_history.json
+uploading file experiment_1760994796/2_block_train_history.json
+experiment_1760994796/mobilenetv2_train_base_False_train_history.json
+uploading file experiment_1760994796/mobilenetv2_train_base_False_train_history.json
+experiment_1760994796/4_block.weights.h5
+uploading file experiment_1760994796/4_block.weights.h5
+experiment_1760994796/4_block.json
+uploading file experiment_1760994796/4_block.json
+experiment_1760994796/2_block.json
+uploading file experiment_1760994796/2_block.json
+experiment_1760994796/mobilenetv2_train_base_False_model_metrics.json
+uploading file experiment_1760994796/mobilenetv2_train_base_False_model_metrics.json
+experiment_1760994796/mobilenetv2_train_base_True.keras
+uploading file experiment_1760994796/mobilenetv2_train_base_True.keras
+experiment_1760994796/mobilenetv2_train_base_True_model_metrics.json
+uploading file experiment_1760994796/mobilenetv2_train_base_True_model_metrics.json
+experiment_1760994796/vgg_style_train_history.json
+uploading file experiment_1760994796/vgg_style_train_history.json
+experiment_1760994796/vgg_style.weights.h5
+uploading file experiment_1760994796/vgg_style.weights.h5
+experiment_1760994796/vgg_style_model_metrics.json
+uploading file experiment_1760994796/vgg_style_model_metrics.json
+experiment_1760994796/mobilenetv2_train_base_True.json
+uploading file experiment_1760994796/mobilenetv2_train_base_True.json
+experiment_1760994796/vgg_style.keras
+uploading file experiment_1760994796/vgg_style.keras
+experiment_1760994796/vgg_style.json
+uploading file experiment_1760994796/vgg_style.json
+experiment_1760994796/mobilenetv2_train_base_False.json
+uploading file experiment_1760994796/mobilenetv2_train_base_False.json
+experiment_1760994796/2_block_model_metrics.json
+uploading file experiment_1760994796/2_block_model_metrics.json
+experiment_1760994796/4_block_model_metrics.json
+uploading file experiment_1760994796/4_block_model_metrics.json
+experiment_1760994796/mobilenetv2_train_base_False.weights.h5
+uploading file experiment_1760994796/mobilenetv2_train_base_False.weights.h5
+experiment_1760994796/mobilenetv2_train_base_True_train_history.json
+uploading file experiment_1760994796/mobilenetv2_train_base_True_train_history.json
+experiment_1760994796/mobilenetv2_train_base_True.weights.h5
+uploading file experiment_1760994796/mobilenetv2_train_base_True.weights.h5
+
+===== cell 67 · code · execution_count 31
+
+

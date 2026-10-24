@@ -1,0 +1,2 @@
+capture-only/python3.11-base-build: attempt 1 hit Docker Hub's rate limit, retrying in 30 s
+10-docker-shell: attempt 1 hit Docker Hub's rate limit, retrying in 30 s

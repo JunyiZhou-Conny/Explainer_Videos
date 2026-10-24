@@ -1,0 +1,3 @@
+$ head -1 'outputs/chunks-char-split-Tolminc Cheese.jsonl' | cut -c1-300
+{"chunk":"Author: Pavlos Protopapas\n\n# Tolminc: A Cheese, a Valley, and the Art of Waiting\n*A fictional tale inspired by Alpine cheesemaking*\n\n## Chapter One: The First Slice\n\nThe first thing Mara noticed was that nobody hurried.\n\nShe had arrived at her grandfather\u2019s house with a suitc
+[exit 0]

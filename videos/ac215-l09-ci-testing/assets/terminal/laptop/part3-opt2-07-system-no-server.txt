@@ -1,0 +1,25 @@
+$ docker run --rm --network host cheese-app-api:local pytest tests/system/ -v
+Container is running!!!
+Executing command: pytest tests/system/ -v
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /app
+configfile: pytest.ini
+plugins: platformdirs-4.13.5, asyncio-1.4.0, anyio-4.15.1, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 5 items
+
+tests/system/test_system_api.py::TestAPIEndpoints::test_root_endpoint SKIPPED [ 20%]
+tests/system/test_system_api.py::TestAPIEndpoints::test_health_check SKIPPED [ 40%]
+tests/system/test_system_api.py::TestAPIEndpoints::test_euclidean_distance_endpoint_default SKIPPED [ 60%]
+tests/system/test_system_api.py::TestAPIEndpoints::test_euclidean_distance_endpoint_custom_values SKIPPED [ 80%]
+tests/system/test_system_api.py::TestAPIWithoutServer::test_api_structure PASSED [100%]
+
+=========================== short test summary info ============================
+SKIPPED [1] tests/system/test_system_api.py:28: API not running at localhost:9000
+SKIPPED [1] tests/system/test_system_api.py:36: API not running at localhost:9000
+SKIPPED [1] tests/system/test_system_api.py:43: API not running at localhost:9000
+SKIPPED [1] tests/system/test_system_api.py:53: API not running at localhost:9000
+========================= 1 passed, 4 skipped in 0.35s =========================
+[exit 0]

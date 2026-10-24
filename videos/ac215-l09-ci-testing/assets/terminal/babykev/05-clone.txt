@@ -1,0 +1,3 @@
+$ git clone https://github.com/rahuldave/babykev
+Cloning into 'babykev'...
+[exit 0]

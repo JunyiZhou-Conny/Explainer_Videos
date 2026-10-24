@@ -1,0 +1,2 @@
+$ curl -s http://localhost:9000/health
+{"status":"healthy"}[exit 0]

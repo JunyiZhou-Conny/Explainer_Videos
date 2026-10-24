@@ -1,0 +1,3 @@
+$ docker network rm cheese-app-network
+cheese-app-network
+[exit 0]

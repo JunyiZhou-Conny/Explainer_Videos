@@ -1,0 +1,10 @@
+$ docker compose down
+time="2026-10-20T01:48:34Z" level=warning msg="The \"GOOGLE_APPLICATION_CREDENTIALS\" variable is not set. Defaulting to a blank string."
+time="2026-10-20T01:48:34Z" level=warning msg="The \"GCP_PROJECT\" variable is not set. Defaulting to a blank string."
+ Container llm-rag-chromadb Stopping 
+ Container llm-rag-chromadb Stopped 
+ Container llm-rag-chromadb Removing 
+ Container llm-rag-chromadb Removed 
+ Network llm-rag-network Removing 
+ Network llm-rag-network Removed 
+[exit 0]

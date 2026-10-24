@@ -1,0 +1,2 @@
+$ curl -s http://localhost:9000
+{"message":"Welcome to the Cheese App CI/CD Tutorial!"}[exit 0]

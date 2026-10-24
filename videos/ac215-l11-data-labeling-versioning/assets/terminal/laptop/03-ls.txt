@@ -1,0 +1,20 @@
+$ ls -la
+total 696
+drwxr-sr-x    3 student  student       4096 Oct 23 11:42 .
+drwxr-sr-x    4 student  student       4096 Oct 23 11:42 ..
+drwxr-sr-x    7 student  student       4096 Oct 23 11:42 .git
+-rw-r--r--    1 student  student         33 Oct 23 11:42 .gitignore
+-rw-r--r--    1 student  student       1440 Oct 23 11:42 Dockerfile
+-rw-r--r--    1 student  student      11924 Oct 23 11:42 README.md
+-rw-r--r--    1 student  student      65084 Oct 23 11:42 cheeses-labels.png
+-rw-r--r--    1 student  student       5060 Oct 23 11:42 cli.py
+-rw-r--r--    1 student  student     175910 Oct 23 11:42 data-labeling-flow.png
+-rwxr-xr-x    1 student  student       1239 Oct 23 11:42 docker-compose.yml
+-rwxr-xr-x    1 student  student        348 Oct 23 11:42 docker-entrypoint.sh
+-rw-r--r--    1 student  student        644 Oct 23 11:42 docker-shell-CLI.sh
+-rw-r--r--    1 student  student        340 Oct 23 11:42 docker-shell-compose.sh
+-rwxr-xr-x    1 student  student        814 Oct 23 11:42 docker-shell.sh
+-rw-r--r--    1 student  student     289052 Oct 23 11:42 pipeline-flow.png
+-rw-r--r--    1 student  student        244 Oct 23 11:42 pyproject.toml
+-rw-r--r--    1 student  student     113610 Oct 23 11:42 uv.lock
+[exit 0]

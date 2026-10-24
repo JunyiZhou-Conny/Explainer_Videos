@@ -1,0 +1,2 @@
+$ uv run hadolint Dockerfile
+[exit 0]

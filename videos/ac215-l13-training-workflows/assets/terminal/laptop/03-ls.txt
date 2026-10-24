@@ -1,0 +1,24 @@
+$ ls -la
+total 2148
+drwxr-sr-x    4 student  student       4096 Oct 23 12:19 .
+drwxr-sr-x    4 student  student       4096 Oct 23 12:19 ..
+drwxr-sr-x    7 student  student       4096 Oct 23 12:19 .git
+-rw-r--r--    1 student  student         47 Oct 23 12:19 .gitignore
+-rwxr-xr-x    1 student  student       2146 Oct 23 12:19 Dockerfile
+-rw-r--r--    1 student  student       6856 Oct 23 12:19 README.md
+-rw-r--r--    1 student  student       1201 Oct 23 12:19 cli-multi-gpu.sh
+-rw-r--r--    1 student  student       1378 Oct 23 12:19 cli.py
+-rw-r--r--    1 student  student       1770 Oct 23 12:19 cli.sh
+-rw-r--r--    1 student  student     571869 Oct 23 12:19 custom-training-quota-1.png
+-rw-r--r--    1 student  student     443455 Oct 23 12:19 custom-training-quota-2.png
+-rw-r--r--    1 student  student     125517 Oct 23 12:19 custom-training-quota-3.png
+-rw-r--r--    1 student  student     427950 Oct 23 12:19 custom-training-quota-4.png
+-rwxr-xr-x    1 student  student        541 Oct 23 12:19 docker-entrypoint.sh
+-rwxr-xr-x    1 student  student        636 Oct 23 12:19 docker-shell.sh
+drwxr-sr-x    3 student  student       4096 Oct 23 12:19 package
+-rw-r--r--    1 student  student        144 Oct 23 12:19 package-trainer.sh
+-rw-r--r--    1 student  student        190 Oct 23 12:19 pyproject.toml
+-rw-r--r--    1 student  student     395911 Oct 23 12:19 serverless-training.png
+-rw-r--r--    1 student  student      93653 Oct 23 12:19 uv.lock
+-rw-r--r--    1 student  student      67824 Oct 23 12:19 wandb-api-key.png
+[exit 0]

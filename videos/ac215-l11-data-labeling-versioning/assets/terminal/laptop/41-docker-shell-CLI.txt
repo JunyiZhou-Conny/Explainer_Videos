@@ -1,0 +1,114 @@
+$ sh docker-shell-CLI.sh
+
+[+] Building 149.0s (11/11) FINISHED                                                           docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 1.48kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim-bookworm                             0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [internal] load build context                                                                        0.3s
+ => => transferring context: 3.68MB                                                                      0.2s
+ => [1/6] FROM docker.io/library/python:3.12-slim-bookworm@sha256:07d3bc5e4542eb7433fa994970b5905e5f119  0.3s
+ => => resolve docker.io/library/python:3.12-slim-bookworm@sha256:07d3bc5e4542eb7433fa994970b5905e5f119  0.2s
+ => [2/6] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &&     apt-  45.2s
+ => [3/6] WORKDIR /app                                                                                   0.1s
+ => [4/6] COPY --chown=app:app pyproject.toml uv.lock* ./                                                0.1s
+ => [5/6] RUN uv sync --frozen                                                                          10.3s
+ => [6/6] COPY --chown=app:app . ./                                                                      0.5s
+ => exporting to image                                                                                  91.5s
+ => => exporting layers                                                                                 68.5s
+ => => exporting manifest sha256:d01b96aa077f6aab01bc540eaa1bac66ee70e8812a0cf899836ddb8cd923b89f        0.0s
+ => => exporting config sha256:ebc0b47a1a1378c7e3a209845206d2c0dc51a6dac22d73dbf158d523a1db8d7b          0.0s
+ => => exporting attestation manifest sha256:d3af2fb0029a61b74eee3f635e09c4efd241e276fc883ace2ef70d4690  0.0s
+ => => exporting manifest list sha256:976396e66286a27845cd061c6949dfdc8d7d8aa78bd774cd4861f3fa8ba563ee   0.0s
+ => => naming to docker.io/library/data-label-cli:latest                                                 0.0s
+ => => unpacking to docker.io/library/data-label-cli:latest                                             22.8s
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.15
+UV version: uv 0.13.5 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+app@5bf8945fb887:/app$ python cli.py -c
+set_cors_configuration()
+Traceback (most recent call last):
+  File "/app/cli.py", line 165, in <module>
+    main(args)
+  File "/app/cli.py", line 113, in main
+    set_cors_configuration(set=True)
+  File "/app/cli.py", line 23, in set_cors_configuration
+    storage_client = storage.Client()
+                     ^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/cloud/storage/client.py", line 247, in __init__
+    super(Client, self).__init__(
+  File "/.venv/lib/python3.12/site-packages/google/cloud/client/__init__.py", line 338, in __init__
+    _ClientProjectMixin.__init__(self, project=project, credentials=credentials)
+  File "/.venv/lib/python3.12/site-packages/google/cloud/client/__init__.py", line 286, in __init__
+    project = self._determine_default(project)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/cloud/client/__init__.py", line 305, in _determine_default
+    return _determine_default_project(project)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/cloud/_helpers/__init__.py", line 152, in _determine_default_project
+    _, project = google.auth.default()
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 705, in default
+    credentials, project_id = checker()
+                              ^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 698, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 346, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 173, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+google.auth.exceptions.DefaultCredentialsError: File /secrets/data-service-account.json was not found.
+app@5bf8945fb887:/app$ python cli.py -m
+view_bucket_metadata()
+Traceback (most recent call last):
+  File "/app/cli.py", line 165, in <module>
+    main(args)
+  File "/app/cli.py", line 119, in main
+    view_bucket_metadata()
+  File "/app/cli.py", line 50, in view_bucket_metadata
+    storage_client = storage.Client()
+                     ^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/cloud/storage/client.py", line 247, in __init__
+    super(Client, self).__init__(
+  File "/.venv/lib/python3.12/site-packages/google/cloud/client/__init__.py", line 338, in __init__
+    _ClientProjectMixin.__init__(self, project=project, credentials=credentials)
+  File "/.venv/lib/python3.12/site-packages/google/cloud/client/__init__.py", line 286, in __init__
+    project = self._determine_default(project)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/cloud/client/__init__.py", line 305, in _determine_default
+    return _determine_default_project(project)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/cloud/_helpers/__init__.py", line 152, in _determine_default_project
+    _, project = google.auth.default()
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 705, in default
+    credentials, project_id = checker()
+                              ^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 698, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 346, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 173, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+google.auth.exceptions.DefaultCredentialsError: File /secrets/data-service-account.json was not found.
+app@5bf8945fb887:/app$ ls -la /secrets
+total 8
+drwxr-sr-x 2 app  app  4096 Oct 23 11:46 .
+drwxr-xr-x 1 root root 4096 Oct 23 11:49 ..
+app@5bf8945fb887:/app$ echo $GCS_BUCKET_NAME $LABEL_STUDIO_URL
+your-bucket-placeholder http://data-label-studio:8080
+app@5bf8945fb887:/app$ curl -sS http://localhost:8080/health
+curl: (7) Failed to connect to localhost port 8080 after 0 ms: Couldn't connect to server
+app@5bf8945fb887:/app$ curl -s http://data-label-studio:8080/health; echo
+{"status": "UP"}
+app@5bf8945fb887:/app$ exit
+exit
+[exit 0]

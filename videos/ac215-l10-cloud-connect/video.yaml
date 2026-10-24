@@ -1,0 +1,74 @@
+id: ac215-l10-cloud-connect
+title: "AC215 · Lecture 10 — Connecting to the cloud: one key, three containers, one browser (follow-along: cheese-app-v0)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 10
+  lecture_title: "Connecting to the Cloud: Networking, Authentication & Storage"
+  ed: https://edstem.org/us/courses/97373/lessons/166035/
+  repos:
+    - {repo: dlops-io/cheese-app-v0, branch: main, commit: cb6fb94576aa37bb0b94a8745e5e94e6a504f4bb,
+       sections: ["Prerequisites (incl. Setup GCP Service Account, Create the Docker Network)",
+                  "Build the Vector DB", "Optional: LLM RAG Tutorial", "Run API Service Container",
+                  "Run Frontend Container", "Text Chunking", "Vector DB UI", "Chat",
+                  "Cheese Expert Agent", "Pavlos Cheese Model", "API Endpoints"]}
+    # context repos (cited by code panels / the digest; none of them run in L10):
+    - {repo: dlops-io/llm-rag, branch: main, commit: e17a39f35bc07b440f573def480adaf4703f8b91,
+       sections: ["context only: the standalone L05 predecessor of llm-rag/ (origin of the hosted links and the Chrome note)"]}
+    - {repo: dlops-io/llm-finetuning, branch: main, commit: 44ef6f0a70315aa0a551b8565ca862679a87c1eb,
+       sections: ["context only: role-rename note, key tips, GCS upload with ADC, the location=us client and endpoint print (L08)"]}
+    - {repo: dlops-io/mega-pipeline, branch: main, commit: c6bbc9ba88984e1234b68ccf5cdf7c00f7e9accc,
+       sections: ["context only: GCS download with ADC (L03)"]}
+    - {repo: dlops-io/port_toy, branch: main, commit: d190c7122fc35cc1f7e15e467d2babdfc24b5c0c,
+       sections: ["context only: ports and networks, the 127.0.0.1: publish prefix (L04)"]}
+    - {repo: dlops-io/data-labeling, branch: main, commit: 03c3e277abeee2cdaf4c1a8149c11c9fd259577d,
+       sections: ["context only: next lecture's data-service-account and secrets depth (L11)"]}
+    - {repo: dlops-io/data-versioning, branch: main, commit: b240b1a03e0abd1964b689ea68e35f0990a33ebc,
+       sections: ["context only: L11 DVC with a GCS remote"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L10-cloud-connect-cheese-app-v0.md
+audience: "AC215 student who has done L1-L9 (a GCP project, venvs and uv, Docker images, Compose, ports, the L5 RAG stack, L8 fine-tuning, L9 testing), new to service accounts, ADC, IAM, cross-container networking and CORS; watching with their own clone of cheese-app-v0 open and a GCP project with billing enabled — this lecture's embedding and chat calls bill that project (GOLD tags + teardown checklist in the video)"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,     cls: Hook,              title: "Three phone calls, one question"}
+  - {file: scenes/s02_map.py,      cls: TheMap,            title: "One laptop, three containers, one cloud"}
+  - {file: scenes/s03_identity.py, cls: IdentityForCode,   title: "An identity for code"}
+  - {file: scenes/s04_secrets.py,  cls: SecretsPortal,     title: "Two filesystems, one folder"}
+  - {file: scenes/s05_vectordb.py, cls: NetworkAndShell,   title: "A network, a compose file, a running Chroma"}
+  - {file: scenes/s06_chunks.py,   cls: ChunksNeedAKey,    title: "Chunks for free, embeddings need a key"}
+  - {file: scenes/s07_adc.py,      cls: AdcToToken,        title: "ADC: from key file to bearer token"}
+  - {file: scenes/s08_iam.py,      cls: IamGrid,           title: "IAM: may this identity do this, here?"}
+  - {file: scenes/s09_api.py,      cls: ApiService,        title: "Run the API, and survive line 14"}
+  - {file: scenes/s10_names.py,    cls: TwoAddresses,      title: "A name is not localhost"}
+  - {file: scenes/s11_frontend.py, cls: FrontendPorts,     title: "One server, two addresses"}
+  - {file: scenes/s12_browser.py,  cls: BrowserIntegrator, title: "The browser is the integrator"}
+  - {file: scenes/s13_agent.py,    cls: AgentAndTuned,     title: "The agent, and a model that isn't yours"}
+  - {file: scenes/s14_persist.py,  cls: WhatSurvives,      title: "What survives: volumes now, buckets next"}
+  - {file: scenes/s15_recap.py,    cls: Recap,             title: "Tear down, recap, and what's next"}
+parts:
+  - id: part1
+    title: "AC215 · L10, part 1: service accounts, ADC and IAM — from a JSON key to a bearer token"
+    scenes: [s01_hook, s02_map, s03_identity, s04_secrets, s05_vectordb, s06_chunks, s07_adc, s08_iam, s09_api]
+  - id: part2
+    title: "AC215 · L10, part 2: ports, Docker DNS, CORS, and what survives"
+    scenes: [s10_names, s11_frontend, s12_browser, s13_agent, s14_persist, s15_recap]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker)
+publish:
+  title_zh: "AC215 第10讲跟练 · 连接云端：Service Account 认证、Docker 网络与 CORS"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 10 讲教程的逐条命令跟练：照着 dlops-io/cheese-app-v0 的 README，
+    创建 Service Account 和 JSON 密钥，理解 secrets 文件夹约定和 bind mount（宿主机路径 vs 容器路径的两个世界），
+    看 ADC 如何按三个位置找到密钥、把它换成一小时有效的 bearer token，用 principal × role × resource 的 IAM 格子读懂每一个 403；
+    在 Docker 里跑起 ChromaDB + FastAPI + Next.js 三个容器（包括 api-service 脚本在已有网络上中断的真实坑和修法），
+    分清容器名 DNS 和 localhost、`-p 3200:3000` 的两个端口号，跟着浏览器亲自发出的三个跨域请求看 CORS 白名单怎样放行和拦截，
+    最后验证 docker compose down 之后向量数据为什么还在，以及 GCS 作为它的云端版本。
+    边看边暂停，在自己的电脑上跑每一条命令；本讲的 Vertex AI 调用会产生实际费用，视频用金色标签标出每个计费点，结尾有完整收尾清单。
+    英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/cheese-app-v0
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L10-cloud-connect-cheese-app-v0.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, 云计算, 认证, Service Account, Docker网络, CORS, RAG, 哈佛, 教程跟练]
+  tid: 231

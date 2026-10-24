@@ -1,0 +1,67 @@
+$ uv run ruff format --check
+unformatted: File would be reformatted
+   --> src/babykev/api.py:7:1
+    |
+6   | """
+7   +
+8   | from typing import Any, Literal, Union
+--------------------------------------------------------------------------------
+27  |     def _check(self):
+    -         if not 1 <= len(self.criteria) <= MAX_OPTIONS: raise ValueError(f"criteria must have 1..{MAX_OPTIONS} options")
+28  +         if not 1 <= len(self.criteria) <= MAX_OPTIONS:
+29  +             raise ValueError(f"criteria must have 1..{MAX_OPTIONS} options")
+30  |         return self
+--------------------------------------------------------------------------------
+49  |     pad = "  " * indent
+    -     if v is None: return ""
+    -     if isinstance(v, (str, int, float, bool)): return str(v)
+    -     if isinstance(v, list): return "\n".join(f"{pad}- {render(x, indent + 1).lstrip()}" for x in v)
+    -     return "\n".join(f"{pad}{k}:\n{render(x, indent + 1)}" if isinstance(x, (dict, list)) else f"{pad}{k}: {render(x)}" for k, x in v.items())
+50  +     if v is None:
+51  +         return ""
+52  +     if isinstance(v, (str, int, float, bool)):
+53  +         return str(v)
+54  +     if isinstance(v, list):
+55  +         return "\n".join(f"{pad}- {render(x, indent + 1).lstrip()}" for x in v)
+56  +     return "\n".join(
+57  +         f"{pad}{k}:\n{render(x, indent + 1)}"
+58  +         if isinstance(x, (dict, list))
+59  +         else f"{pad}{k}: {render(x)}"
+60  +         for k, x in v.items()
+61  +     )
+62  |
+--------------------------------------------------------------------------------
+81  |             opts = [render(x) for x in q.criteria]
+    -             meta.append({"id": qid, "type": "score", "legend": {str(i): render(x) for i, x in enumerate(q.criteria)}})
+82  +             meta.append(
+83  +                 {
+84  +                     "id": qid,
+85  +                     "type": "score",
+86  +                     "legend": {str(i): render(x) for i, x in enumerate(q.criteria)},
+87  +                 }
+88  +             )
+89  |         qs.append({"instr": instr, "options": opts, "label": 0})
+--------------------------------------------------------------------------------
+125 |             dist = {k: round_prob(v) for k, v in zip(m["keys"], p)}
+    -             out[m["id"]] = {"type": "choice", "choice": m["keys"][max(range(len(p)), key=lambda i: p[i])], "confidence": round_prob(choice_confidence(p)), "probabilities": dist}
+126 +             out[m["id"]] = {
+127 +                 "type": "choice",
+128 +                 "choice": m["keys"][max(range(len(p)), key=lambda i: p[i])],
+129 +                 "confidence": round_prob(choice_confidence(p)),
+130 +                 "probabilities": dist,
+131 +             }
+132 |         else:
+133 |             score = sum(i * pi for i, pi in enumerate(p))
+    -             out[m["id"]] = {"type": "score", "score": round_prob(score), "legend": m["legend"], "probabilities": {str(i): round_prob(v) for i, v in enumerate(p)}, "confidence": round_prob(score_confidence(p))}
+134 +             out[m["id"]] = {
+135 +                 "type": "score",
+136 +                 "score": round_prob(score),
+137 +                 "legend": m["legend"],
+138 +                 "probabilities": {str(i): round_prob(v) for i, v in enumerate(p)},
+139 +                 "confidence": round_prob(score_confidence(p)),
+140 +             }
+141 |     return out
+    |
+
+1 file would be reformatted, 5 files already formatted
+[exit 1]

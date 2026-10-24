@@ -1,0 +1,4 @@
+$ docker exec llm-rag-analysis-frontend-ai-chatbot wget -qO- -T 10 http://localhost:3000/ | grep -o '<title>[^<]*</title>'
+<title>RAG App</title>
+<title>RAG App</title>
+[exit 0]

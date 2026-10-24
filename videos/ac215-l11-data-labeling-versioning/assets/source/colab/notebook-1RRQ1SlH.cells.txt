@@ -1,0 +1,374 @@
+Extract (cell sources + stored outputs, metadata dropped) of the Colab notebook https://colab.research.google.com/drive/1RRQ1SlHq5lKK76R8LoQdi5LjCnND3jTq (linked from data-versioning README @ b240b1a), downloaded 2026-10-23. EDITED: the author line in cell 0 names the course instructor; it reads <course instructor> here. Otherwise unchanged; see ASSETS.md.
+
+===== cell 0 · markdown
+<h1 style="padding-top: 25px;padding-bottom: 25px;text-align: left; padding-left: 10px; background-color: #DDDDDD;
+    color: black;"> <img style="float: left; padding-right: 10px;" src="https://raw.githubusercontent.com/Harvard-IACS/2018-CS109A/master/content/styles/iacs.png" height="50px"> <a href='https://harvard-iacs.github.io/2023-AC215/' target='_blank'><strong><font color="#A41034">AC215: Productionizing AI (MLOps)</font></strong></a></h1>
+
+# **<font color="#A41034">Tutorial - Data Pipelines, Labeling, Versioning, Cloud Storage</font>**
+
+**Harvard University**<br/>
+**Fall 2025**<br/>
+**Instructor:**<br/>
+<course instructor>
+
+<hr style="height:2pt">
+
+===== cell 1 · markdown
+## **<font color="#A41034">Tutorial Outline</font>**
+
+===== cell 2 · markdown
+## **Learning Objectives**
+
+By the end of this notebook, you will be:
+* Familiar with data version from a DVC repo
+
+
+## **Tutorial Content**
+
+In order to run this tutorial you should have completed [Data Labeling & Versioning](https://github.com/dlops-io/data-labeling) steps.
+
+- View data from a remote DVC repo
+- Retrieve data from a remote DVC repo
+- Retrieve a specifi data version from DVC
+
+===== cell 3 · markdown
+## **<font color="#A41034">Setup Notebook</font>**
+
+===== cell 4 · markdown
+**Copy & setup Colab**
+
+===== cell 5 · markdown
+1) Select "File" menu and pick "Save a copy in Drive"
+
+===== cell 6 · markdown
+**Installs**
+
+===== cell 7 · code · execution_count 1
+!pip install dvc dvc-gs
+----- stored output
+Collecting dvc
+  Downloading dvc-3.63.0-py3-none-any.whl.metadata (17 kB)
+Collecting dvc-gs
+  Downloading dvc_gs-3.0.2-py3-none-any.whl.metadata (1.3 kB)
+Requirement already satisfied: attrs>=22.2.0 in /usr/local/lib/python3.12/dist-packages (from dvc) (25.4.0)
+Collecting celery (from dvc)
+  Downloading celery-5.5.3-py3-none-any.whl.metadata (22 kB)
+Collecting colorama>=0.3.9 (from dvc)
+  Downloading colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+Collecting configobj>=5.0.9 (from dvc)
+  Downloading configobj-5.0.9-py2.py3-none-any.whl.metadata (3.2 kB)
+Requirement already satisfied: distro>=1.3 in /usr/local/lib/python3.12/dist-packages (from dvc) (1.9.0)
+Collecting dpath<3,>=2.1.0 (from dvc)
+  Downloading dpath-2.2.0-py3-none-any.whl.metadata (15 kB)
+Collecting dulwich (from dvc)
+  Downloading dulwich-0.24.7-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (5.4 kB)
+Collecting dvc-data<3.17,>=3.16.2 (from dvc)
+  Downloading dvc_data-3.16.12-py3-none-any.whl.metadata (5.1 kB)
+Collecting dvc-http>=2.29.0 (from dvc)
+  Downloading dvc_http-2.32.0-py3-none-any.whl.metadata (1.3 kB)
+Collecting dvc-objects (from dvc)
+  Downloading dvc_objects-5.1.2-py3-none-any.whl.metadata (3.9 kB)
+Collecting dvc-render<2,>=1.0.1 (from dvc)
+  Downloading dvc_render-1.0.2-py3-none-any.whl.metadata (5.4 kB)
+Collecting dvc-studio-client<1,>=0.21 (from dvc)
+  Downloading dvc_studio_client-0.22.0-py3-none-any.whl.metadata (4.4 kB)
+Collecting dvc-task<1,>=0.3.0 (from dvc)
+  Downloading dvc_task-0.40.2-py3-none-any.whl.metadata (10.0 kB)
+Collecting flatten_dict<1,>=0.4.1 (from dvc)
+  Downloading flatten_dict-0.4.2-py2.py3-none-any.whl.metadata (9.2 kB)
+Collecting flufl.lock<9,>=8.1.0 (from dvc)
+  Downloading flufl_lock-8.2.0-py3-none-any.whl.metadata (3.3 kB)
+Requirement already satisfied: fsspec>=2024.2.0 in /usr/local/lib/python3.12/dist-packages (from dvc) (2025.3.0)
+Collecting funcy>=1.14 (from dvc)
+  Downloading funcy-2.0-py2.py3-none-any.whl.metadata (5.9 kB)
+Collecting grandalf<1,>=0.7 (from dvc)
+  Downloading grandalf-0.8-py3-none-any.whl.metadata (1.7 kB)
+Collecting gto<2,>=1.6.0 (from dvc)
+  Downloading gto-1.9.0-py3-none-any.whl.metadata (4.9 kB)
+Collecting hydra-core>=1.1 (from dvc)
+  Downloading hydra_core-1.3.2-py3-none-any.whl.metadata (5.5 kB)
+Collecting iterative-telemetry>=0.0.7 (from dvc)
+  Downloading iterative_telemetry-0.0.10-py3-none-any.whl.metadata (4.1 kB)
+Collecting kombu (from dvc)
+  Downloading kombu-5.5.4-py3-none-any.whl.metadata (3.5 kB)
+Requirement already satisfied: networkx>=2.5 in /usr/local/lib/python3.12/dist-packages (from dvc) (3.5)
+Requirement already satisfied: omegaconf in /usr/local/lib/python3.12/dist-packages (from dvc) (2.3.0)
+Requirement already satisfied: packaging>=19 in /usr/local/lib/python3.12/dist-packages (from dvc) (25.0)
+Collecting pathspec>=0.10.3 (from dvc)
+  Downloading pathspec-0.12.1-py3-none-any.whl.metadata (21 kB)
+Requirement already satisfied: platformdirs<5,>=3.1.1 in /usr/local/lib/python3.12/dist-packages (from dvc) (4.5.0)
+Requirement already satisfied: psutil>=5.8 in /usr/local/lib/python3.12/dist-packages (from dvc) (5.9.5)
+Requirement already satisfied: pydot>=1.2.4 in /usr/local/lib/python3.12/dist-packages (from dvc) (3.0.4)
+Collecting pygtrie>=2.3.2 (from dvc)
+  Downloading pygtrie-2.5.0-py3-none-any.whl.metadata (7.5 kB)
+Requirement already satisfied: pyparsing>=2.4.7 in /usr/local/lib/python3.12/dist-packages (from dvc) (3.2.5)
+Requirement already satisfied: requests>=2.22 in /usr/local/lib/python3.12/dist-packages (from dvc) (2.32.4)
+Requirement already satisfied: rich>=12 in /usr/local/lib/python3.12/dist-packages (from dvc) (13.9.4)
+Collecting ruamel.yaml>=0.17.11 (from dvc)
+  Downloading ruamel.yaml-0.18.16-py3-none-any.whl.metadata (25 kB)
+Collecting scmrepo<4,>=3.5.2 (from dvc)
+  Downloading scmrepo-3.5.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting shortuuid>=0.5 (from dvc)
+  Downloading shortuuid-1.0.13-py3-none-any.whl.metadata (5.8 kB)
+Collecting shtab<2,>=1.3.4 (from dvc)
+  Downloading shtab-1.7.2-py3-none-any.whl.metadata (7.4 kB)
+Requirement already satisfied: tabulate>=0.8.7 in /usr/local/lib/python3.12/dist-packages (from dvc) (0.9.0)
+Requirement already satisfied: tomlkit>=0.11.1 in /usr/local/lib/python3.12/dist-packages (from dvc) (0.13.3)
+Requirement already satisfied: tqdm<5,>=4.63.1 in /usr/local/lib/python3.12/dist-packages (from dvc) (4.67.1)
+Collecting voluptuous>=0.11.7 (from dvc)
+  Downloading voluptuous-0.15.2-py3-none-any.whl.metadata (20 kB)
+Collecting zc.lockfile>=1.2.1 (from dvc)
+  Downloading zc_lockfile-4.0-py3-none-any.whl.metadata (6.6 kB)
+Requirement already satisfied: gcsfs>=2022.11.0 in /usr/local/lib/python3.12/dist-packages (from dvc-gs) (2025.3.0)
+Collecting dictdiffer>=0.8.1 (from dvc-data<3.17,>=3.16.2->dvc)
+  Downloading dictdiffer-0.9.0-py2.py3-none-any.whl.metadata (4.8 kB)
+Collecting diskcache>=5.2.1 (from dvc-data<3.17,>=3.16.2->dvc)
+  Downloading diskcache-5.6.3-py3-none-any.whl.metadata (20 kB)
+Collecting sqltrie<1,>=0.11.0 (from dvc-data<3.17,>=3.16.2->dvc)
+  Downloading sqltrie-0.11.2-py3-none-any.whl.metadata (3.3 kB)
+Requirement already satisfied: orjson<4,>=3 in /usr/local/lib/python3.12/dist-packages (from dvc-data<3.17,>=3.16.2->dvc) (3.11.4)
+Collecting aiohttp-retry>=2.5.0 (from dvc-http>=2.29.0->dvc)
+  Downloading aiohttp_retry-2.9.1-py3-none-any.whl.metadata (8.8 kB)
+Collecting billiard<5.0,>=4.2.1 (from celery->dvc)
+  Downloading billiard-4.2.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting vine<6.0,>=5.1.0 (from celery->dvc)
+  Downloading vine-5.1.0-py3-none-any.whl.metadata (2.7 kB)
+Requirement already satisfied: click<9.0,>=8.1.2 in /usr/local/lib/python3.12/dist-packages (from celery->dvc) (8.3.0)
+Collecting click-didyoumean>=0.3.0 (from celery->dvc)
+  Downloading click_didyoumean-0.3.1-py3-none-any.whl.metadata (3.9 kB)
+Collecting click-repl>=0.2.0 (from celery->dvc)
+  Downloading click_repl-0.3.0-py3-none-any.whl.metadata (3.6 kB)
+Collecting click-plugins>=1.1.1 (from celery->dvc)
+  Downloading click_plugins-1.1.1.2-py2.py3-none-any.whl.metadata (6.5 kB)
+Requirement already satisfied: python-dateutil>=2.8.2 in /usr/local/lib/python3.12/dist-packages (from celery->dvc) (2.9.0.post0)
+Requirement already satisfied: six<2.0,>=1.12 in /usr/local/lib/python3.12/dist-packages (from flatten_dict<1,>=0.4.1->dvc) (1.17.0)
+Requirement already satisfied: atpublic in /usr/local/lib/python3.12/dist-packages (from flufl.lock<9,>=8.1.0->dvc) (5.1)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /usr/local/lib/python3.12/dist-packages (from gcsfs>=2022.11.0->dvc-gs) (3.13.1)
+Requirement already satisfied: decorator>4.1.2 in /usr/local/lib/python3.12/dist-packages (from gcsfs>=2022.11.0->dvc-gs) (4.4.2)
+Requirement already satisfied: google-auth>=1.2 in /usr/local/lib/python3.12/dist-packages (from gcsfs>=2022.11.0->dvc-gs) (2.38.0)
+Requirement already satisfied: google-auth-oauthlib in /usr/local/lib/python3.12/dist-packages (from gcsfs>=2022.11.0->dvc-gs) (1.2.2)
+Requirement already satisfied: google-cloud-storage in /usr/local/lib/python3.12/dist-packages (from gcsfs>=2022.11.0->dvc-gs) (2.19.0)
+Requirement already satisfied: entrypoints in /usr/local/lib/python3.12/dist-packages (from gto<2,>=1.6.0->dvc) (0.4)
+Requirement already satisfied: pydantic>=2 in /usr/local/lib/python3.12/dist-packages (from gto<2,>=1.6.0->dvc) (2.11.10)
+Requirement already satisfied: pydantic-settings>=2 in /usr/local/lib/python3.12/dist-packages (from gto<2,>=1.6.0->dvc) (2.11.0)
+Collecting semver>=2.13.0 (from gto<2,>=1.6.0->dvc)
+  Downloading semver-3.0.4-py3-none-any.whl.metadata (6.8 kB)
+Requirement already satisfied: typer>=0.4.1 in /usr/local/lib/python3.12/dist-packages (from gto<2,>=1.6.0->dvc) (0.20.0)
+Requirement already satisfied: antlr4-python3-runtime==4.9.* in /usr/local/lib/python3.12/dist-packages (from hydra-core>=1.1->dvc) (4.9.3)
+Collecting appdirs (from iterative-telemetry>=0.0.7->dvc)
+  Downloading appdirs-1.4.4-py2.py3-none-any.whl.metadata (9.0 kB)
+Requirement already satisfied: filelock in /usr/local/lib/python3.12/dist-packages (from iterative-telemetry>=0.0.7->dvc) (3.20.0)
+Collecting amqp<6.0.0,>=5.1.1 (from kombu->dvc)
+  Downloading amqp-5.3.1-py3-none-any.whl.metadata (8.9 kB)
+Requirement already satisfied: tzdata>=2025.2 in /usr/local/lib/python3.12/dist-packages (from kombu->dvc) (2025.2)
+Requirement already satisfied: PyYAML>=5.1.0 in /usr/local/lib/python3.12/dist-packages (from omegaconf->dvc) (6.0.3)
+Requirement already satisfied: charset_normalizer<4,>=2 in /usr/local/lib/python3.12/dist-packages (from requests>=2.22->dvc) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.12/dist-packages (from requests>=2.22->dvc) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/local/lib/python3.12/dist-packages (from requests>=2.22->dvc) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.12/dist-packages (from requests>=2.22->dvc) (2025.10.5)
+Requirement already satisfied: markdown-it-py>=2.2.0 in /usr/local/lib/python3.12/dist-packages (from rich>=12->dvc) (4.0.0)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /usr/local/lib/python3.12/dist-packages (from rich>=12->dvc) (2.19.2)
+Collecting ruamel.yaml.clib>=0.2.7 (from ruamel.yaml>=0.17.11->dvc)
+  Downloading ruamel.yaml.clib-0.2.14-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.0 kB)
+Requirement already satisfied: gitpython>3 in /usr/local/lib/python3.12/dist-packages (from scmrepo<4,>=3.5.2->dvc) (3.1.45)
+Requirement already satisfied: pygit2>=1.14.0 in /usr/local/lib/python3.12/dist-packages (from scmrepo<4,>=3.5.2->dvc) (1.19.0)
+Collecting asyncssh<3,>=2.13.1 (from scmrepo<4,>=3.5.2->dvc)
+  Downloading asyncssh-2.21.1-py3-none-any.whl.metadata (9.9 kB)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.12/dist-packages (from zc.lockfile>=1.2.1->dvc) (75.2.0)
+Requirement already satisfied: aiohappyeyeballs>=2.5.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->gcsfs>=2022.11.0->dvc-gs) (2.6.1)
+Requirement already satisfied: aiosignal>=1.4.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->gcsfs>=2022.11.0->dvc-gs) (1.4.0)
+Requirement already satisfied: frozenlist>=1.1.1 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->gcsfs>=2022.11.0->dvc-gs) (1.8.0)
+Requirement already satisfied: multidict<7.0,>=4.5 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->gcsfs>=2022.11.0->dvc-gs) (6.7.0)
+Requirement already satisfied: propcache>=0.2.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->gcsfs>=2022.11.0->dvc-gs) (0.4.1)
+Requirement already satisfied: yarl<2.0,>=1.17.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->gcsfs>=2022.11.0->dvc-gs) (1.22.0)
+Requirement already satisfied: cryptography>=39.0 in /usr/local/lib/python3.12/dist-packages (from asyncssh<3,>=2.13.1->scmrepo<4,>=3.5.2->dvc) (43.0.3)
+Requirement already satisfied: typing_extensions>=4.0.0 in /usr/local/lib/python3.12/dist-packages (from asyncssh<3,>=2.13.1->scmrepo<4,>=3.5.2->dvc) (4.15.0)
+Requirement already satisfied: prompt-toolkit>=3.0.36 in /usr/local/lib/python3.12/dist-packages (from click-repl>=0.2.0->celery->dvc) (3.0.52)
+Requirement already satisfied: gitdb<5,>=4.0.1 in /usr/local/lib/python3.12/dist-packages (from gitpython>3->scmrepo<4,>=3.5.2->dvc) (4.0.12)
+Requirement already satisfied: cachetools<6.0,>=2.0.0 in /usr/local/lib/python3.12/dist-packages (from google-auth>=1.2->gcsfs>=2022.11.0->dvc-gs) (5.5.2)
+Requirement already satisfied: pyasn1-modules>=0.2.1 in /usr/local/lib/python3.12/dist-packages (from google-auth>=1.2->gcsfs>=2022.11.0->dvc-gs) (0.4.2)
+Requirement already satisfied: rsa<5,>=3.1.4 in /usr/local/lib/python3.12/dist-packages (from google-auth>=1.2->gcsfs>=2022.11.0->dvc-gs) (4.9.1)
+Requirement already satisfied: mdurl~=0.1 in /usr/local/lib/python3.12/dist-packages (from markdown-it-py>=2.2.0->rich>=12->dvc) (0.1.2)
+Requirement already satisfied: annotated-types>=0.6.0 in /usr/local/lib/python3.12/dist-packages (from pydantic>=2->gto<2,>=1.6.0->dvc) (0.7.0)
+Requirement already satisfied: pydantic-core==2.33.2 in /usr/local/lib/python3.12/dist-packages (from pydantic>=2->gto<2,>=1.6.0->dvc) (2.33.2)
+Requirement already satisfied: typing-inspection>=0.4.0 in /usr/local/lib/python3.12/dist-packages (from pydantic>=2->gto<2,>=1.6.0->dvc) (0.4.2)
+Requirement already satisfied: python-dotenv>=0.21.0 in /usr/local/lib/python3.12/dist-packages (from pydantic-settings>=2->gto<2,>=1.6.0->dvc) (1.1.1)
+Requirement already satisfied: cffi>=2.0 in /usr/local/lib/python3.12/dist-packages (from pygit2>=1.14.0->scmrepo<4,>=3.5.2->dvc) (2.0.0)
+Requirement already satisfied: shellingham>=1.3.0 in /usr/local/lib/python3.12/dist-packages (from typer>=0.4.1->gto<2,>=1.6.0->dvc) (1.5.4)
+Requirement already satisfied: requests-oauthlib>=0.7.0 in /usr/local/lib/python3.12/dist-packages (from google-auth-oauthlib->gcsfs>=2022.11.0->dvc-gs) (2.0.0)
+Requirement already satisfied: google-api-core<3.0.0dev,>=2.15.0 in /usr/local/lib/python3.12/dist-packages (from google-cloud-storage->gcsfs>=2022.11.0->dvc-gs) (2.27.0)
+Requirement already satisfied: google-cloud-core<3.0dev,>=2.3.0 in /usr/local/lib/python3.12/dist-packages (from google-cloud-storage->gcsfs>=2022.11.0->dvc-gs) (2.4.3)
+Requirement already satisfied: google-resumable-media>=2.7.2 in /usr/local/lib/python3.12/dist-packages (from google-cloud-storage->gcsfs>=2022.11.0->dvc-gs) (2.7.2)
+Requirement already satisfied: google-crc32c<2.0dev,>=1.0 in /usr/local/lib/python3.12/dist-packages (from google-cloud-storage->gcsfs>=2022.11.0->dvc-gs) (1.7.1)
+Requirement already satisfied: pycparser in /usr/local/lib/python3.12/dist-packages (from cffi>=2.0->pygit2>=1.14.0->scmrepo<4,>=3.5.2->dvc) (2.23)
+Requirement already satisfied: smmap<6,>=3.0.1 in /usr/local/lib/python3.12/dist-packages (from gitdb<5,>=4.0.1->gitpython>3->scmrepo<4,>=3.5.2->dvc) (5.0.2)
+Requirement already satisfied: googleapis-common-protos<2.0.0,>=1.56.2 in /usr/local/lib/python3.12/dist-packages (from google-api-core<3.0.0dev,>=2.15.0->google-cloud-storage->gcsfs>=2022.11.0->dvc-gs) (1.71.0)
+Requirement already satisfied: protobuf!=3.20.0,!=3.20.1,!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<7.0.0,>=3.19.5 in /usr/local/lib/python3.12/dist-packages (from google-api-core<3.0.0dev,>=2.15.0->google-cloud-storage->gcsfs>=2022.11.0->dvc-gs) (5.29.5)
+Requirement already satisfied: proto-plus<2.0.0,>=1.22.3 in /usr/local/lib/python3.12/dist-packages (from google-api-core<3.0.0dev,>=2.15.0->google-cloud-storage->gcsfs>=2022.11.0->dvc-gs) (1.26.1)
+Requirement already satisfied: wcwidth in /usr/local/lib/python3.12/dist-packages (from prompt-toolkit>=3.0.36->click-repl>=0.2.0->celery->dvc) (0.2.14)
+Requirement already satisfied: pyasn1<0.7.0,>=0.6.1 in /usr/local/lib/python3.12/dist-packages (from pyasn1-modules>=0.2.1->google-auth>=1.2->gcsfs>=2022.11.0->dvc-gs) (0.6.1)
+Requirement already satisfied: oauthlib>=3.0.0 in /usr/local/lib/python3.12/dist-packages (from requests-oauthlib>=0.7.0->google-auth-oauthlib->gcsfs>=2022.11.0->dvc-gs) (3.3.1)
+Downloading dvc-3.63.0-py3-none-any.whl (466 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 466.2/466.2 kB 27.7 MB/s eta 0:00:00
+[?25hDownloading dvc_gs-3.0.2-py3-none-any.whl (10 kB)
+Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Downloading configobj-5.0.9-py2.py3-none-any.whl (35 kB)
+Downloading dpath-2.2.0-py3-none-any.whl (17 kB)
+Downloading dvc_data-3.16.12-py3-none-any.whl (78 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.2/78.2 kB 6.4 MB/s eta 0:00:00
+[?25hDownloading dvc_http-2.32.0-py3-none-any.whl (12 kB)
+Downloading dvc_objects-5.1.2-py3-none-any.whl (33 kB)
+Downloading dvc_render-1.0.2-py3-none-any.whl (22 kB)
+Downloading dvc_studio_client-0.22.0-py3-none-any.whl (16 kB)
+Downloading dvc_task-0.40.2-py3-none-any.whl (21 kB)
+Downloading celery-5.5.3-py3-none-any.whl (438 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 438.8/438.8 kB 31.6 MB/s eta 0:00:00
+[?25hDownloading flatten_dict-0.4.2-py2.py3-none-any.whl (9.7 kB)
+Downloading flufl_lock-8.2.0-py3-none-any.whl (11 kB)
+Downloading funcy-2.0-py2.py3-none-any.whl (30 kB)
+Downloading grandalf-0.8-py3-none-any.whl (41 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 41.8/41.8 kB 2.8 MB/s eta 0:00:00
+[?25hDownloading gto-1.9.0-py3-none-any.whl (45 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 45.0/45.0 kB 3.6 MB/s eta 0:00:00
+[?25hDownloading hydra_core-1.3.2-py3-none-any.whl (154 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 154.5/154.5 kB 13.0 MB/s eta 0:00:00
+[?25hDownloading iterative_telemetry-0.0.10-py3-none-any.whl (10 kB)
+Downloading kombu-5.5.4-py3-none-any.whl (210 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 210.0/210.0 kB 18.1 MB/s eta 0:00:00
+[?25hDownloading vine-5.1.0-py3-none-any.whl (9.6 kB)
+Downloading pathspec-0.12.1-py3-none-any.whl (31 kB)
+Downloading pygtrie-2.5.0-py3-none-any.whl (25 kB)
+Downloading ruamel.yaml-0.18.16-py3-none-any.whl (119 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 119.9/119.9 kB 11.4 MB/s eta 0:00:00
+[?25hDownloading scmrepo-3.5.2-py3-none-any.whl (73 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.9/73.9 kB 6.7 MB/s eta 0:00:00
+[?25hDownloading dulwich-0.24.7-cp312-cp312-manylinux_2_28_x86_64.whl (1.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 56.1 MB/s eta 0:00:00
+[?25hDownloading shortuuid-1.0.13-py3-none-any.whl (10 kB)
+Downloading shtab-1.7.2-py3-none-any.whl (14 kB)
+Downloading voluptuous-0.15.2-py3-none-any.whl (31 kB)
+Downloading zc_lockfile-4.0-py3-none-any.whl (9.1 kB)
+Downloading aiohttp_retry-2.9.1-py3-none-any.whl (10.0 kB)
+Downloading amqp-5.3.1-py3-none-any.whl (50 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 50.9/50.9 kB 4.0 MB/s eta 0:00:00
+[?25hDownloading asyncssh-2.21.1-py3-none-any.whl (375 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 375.5/375.5 kB 29.5 MB/s eta 0:00:00
+[?25hDownloading billiard-4.2.2-py3-none-any.whl (86 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.9/86.9 kB 4.6 MB/s eta 0:00:00
+[?25hDownloading click_didyoumean-0.3.1-py3-none-any.whl (3.6 kB)
+Downloading click_plugins-1.1.1.2-py2.py3-none-any.whl (11 kB)
+Downloading click_repl-0.3.0-py3-none-any.whl (10 kB)
+Downloading dictdiffer-0.9.0-py2.py3-none-any.whl (16 kB)
+Downloading diskcache-5.6.3-py3-none-any.whl (45 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 45.5/45.5 kB 3.2 MB/s eta 0:00:00
+[?25hDownloading ruamel.yaml.clib-0.2.14-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (753 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 753.1/753.1 kB 49.2 MB/s eta 0:00:00
+[?25hDownloading semver-3.0.4-py3-none-any.whl (17 kB)
+Downloading sqltrie-0.11.2-py3-none-any.whl (17 kB)
+Downloading appdirs-1.4.4-py2.py3-none-any.whl (9.6 kB)
+Installing collected packages: pygtrie, funcy, dictdiffer, appdirs, zc.lockfile, voluptuous, vine, sqltrie, shtab, shortuuid, semver, ruamel.yaml.clib, pathspec, grandalf, flufl.lock, flatten_dict, dvc-render, dvc-objects, dulwich, dpath, diskcache, configobj, colorama, click-plugins, click-didyoumean, billiard, ruamel.yaml, iterative-telemetry, hydra-core, dvc-studio-client, dvc-data, click-repl, amqp, kombu, asyncssh, aiohttp-retry, scmrepo, dvc-http, celery, gto, dvc-task, dvc, dvc-gs
+Successfully installed aiohttp-retry-2.9.1 amqp-5.3.1 appdirs-1.4.4 asyncssh-2.21.1 billiard-4.2.2 celery-5.5.3 click-didyoumean-0.3.1 click-plugins-1.1.1.2 click-repl-0.3.0 colorama-0.4.6 configobj-5.0.9 dictdiffer-0.9.0 diskcache-5.6.3 dpath-2.2.0 dulwich-0.24.7 dvc-3.63.0 dvc-data-3.16.12 dvc-gs-3.0.2 dvc-http-2.32.0 dvc-objects-5.1.2 dvc-render-1.0.2 dvc-studio-client-0.22.0 dvc-task-0.40.2 flatten_dict-0.4.2 flufl.lock-8.2.0 funcy-2.0 grandalf-0.8 gto-1.9.0 hydra-core-1.3.2 iterative-telemetry-0.0.10 kombu-5.5.4 pathspec-0.12.1 pygtrie-2.5.0 ruamel.yaml-0.18.16 ruamel.yaml.clib-0.2.14 scmrepo-3.5.2 semver-3.0.4 shortuuid-1.0.13 shtab-1.7.2 sqltrie-0.11.2 vine-5.1.0 voluptuous-0.15.2 zc.lockfile-4.0
+
+===== cell 8 · markdown
+**Imports**
+
+===== cell 9 · code · execution_count 2
+import os
+import cv2
+import numpy as np
+import pandas as pd
+
+# Colab auth
+from google.colab import auth
+from google.cloud import storage
+
+===== cell 10 · markdown
+## **<font color="#A41034">Authenticate</font>**
+
+Here we authenticate your Google account that has access to your GCS bucket
+
+===== cell 11 · code · execution_count 3
+# This step is required for DVC in colab to access your Bucket
+auth.authenticate_user()
+
+===== cell 12 · markdown
+## **View Remote Data**
+
+To view a DVC repository, listing data files and directories tracked by DVC alongside the remaining Git repo contents.
+
+[dvc list reference](https://dvc.org/doc/command-reference/list)
+
+===== cell 13 · code · execution_count 12
+# Replace github url with your url
+!dvc list -R https://github.com/dlops-io/data-versioning.git
+----- stored output
+.dvcignore
+.gitignore
+Dockerfile
+README.md
+cheese_dataset.dvc
+cheese_dataset/Image_1.jpg
+cheese_dataset/Image_2.jpg
+cheese_dataset/Image_3.jpg
+cheese_dataset/Image_4.jpg
+cheese_dataset/csm_Gruyere_Website_Header_Desktop_1920x1080px_Homepage_Curling_cdd2c6527c.jpg.webp
+docker-entrypoint.sh
+docker-shell.sh
+pyproject.toml
+uv.lock
+
+===== cell 14 · markdown
+## **Retrieving Data**
+
+Once DVC-tracked data are stored remotely, they can be downloaded with dvc get when needed.
+
+[dvc get reference](https://dvc.org/doc/command-reference/get)
+
+===== cell 15 · code · execution_count 14
+!rm -rf cheese_dataset
+!dvc get https://github.com/dlops-io/data-versioning cheese_dataset --force --rev dataset_v21
+----- stored output
+Downloading cheese_dataset:   0% 0/5 [00:00<?, ?files/s{'info': ''}]
+cheese_dataset/Image_1.jpg:   0% 0.00/242k [00:00<?, ?B/s]
+cheese_dataset/Image_1.jpg:   0% 0.00/242k [00:00<?, ?B/s{'info': ''}]
+Downloading cheese_dataset:  20% 1/5 [00:00<00:00,  8.95files/s{'info': ''}]
+  0% 0.00/170k [00:00<?, ?B/s]
+  0% 0.00/170k [00:00<?, ?B/s{'info': ''}]
+                                          
+cheese_dataset/Image_3.jpg:   0% 0.00/106k [00:00<?, ?B/s]
+cheese_dataset/Image_3.jpg:   0% 0.00/106k [00:00<?, ?B/s{'info': ''}]
+                                                                      
+cheese_dataset/Image_2.jpg:   0% 0.00/109k [00:00<?, ?B/s]
+cheese_dataset/Image_2.jpg:   0% 0.00/109k [00:00<?, ?B/s{'info': ''}]
+
+cheese_dataset/Image_4.jpg:   0% 0.00/140k [00:00<?, ?B/s]
+
+cheese_dataset/Image_4.jpg:   0% 0.00/140k [00:00<?, ?B/s{'info': ''}]
+
+===== cell 16 · code · execution_count None
+
+
+===== cell 17 · code · execution_count 15
+# Check the dataset
+print("Number of items:",len(os.listdir("cheese_dataset")))
+----- stored output
+Number of items: 5
+
+===== cell 18 · markdown
+## **Retrieve a different data version**
+
+===== cell 19 · code · execution_count 16
+!rm -rf cheese_dataset
+!dvc get https://github.com/dlops-io/data-versioning cheese_dataset --force --quiet --rev dataset_v25
+----- stored output
+
+
+===== cell 20 · code · execution_count None
+# Check the dataset
+print("Number of items:",len(os.listdir("cheese_dataset")))
+----- stored output
+Number of items: 3
+
+===== cell 21 · code · execution_count None
+
+
