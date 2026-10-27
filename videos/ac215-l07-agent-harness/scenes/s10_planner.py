@@ -2,10 +2,10 @@
 Lecture: 8, 13–16, then 22.
 
 Beats (script.md "## S10", one voiceover block each):
- 0  LECTURE 8, 13–16. The event chip README.md · line 460 (excerpt) "40 guests in NY" arrives
-    mid-frame (it flashes on "a 40-guest event") and moves top left on "The lecture splits", where
-    slides 13/16's two memory chips, "short-term memory" and "long-term memory" (GREY dashed, tag
-    `concept · lecture only`), come in on the left and V6's empty cabinet frame on the right (tag
+ 0  The event chip README.md · line 460 (excerpt) "40 guests in NY" arrives mid-frame (it flashes
+    on "a 40-guest event") and moves top left on "The lecture splits". Then LECTURE 8, 13–16 comes
+    in with slides 13/16's two memory chips on the left, "short-term memory" and "long-term memory"
+    (GREY dashed, tag `concept · lecture only`), and V6's empty cabinet frame on the right (tag
     `illustration`). On "saved memory" the long-term chip slides into the GREEN drawer "Memory ·
     customer_memory.sqlite", on "and history" the short-term chip into "History · the
     conversation"; on "plus tasks", "approvals" and "and the audit" the drawers Tasks, Approval and
@@ -359,13 +359,13 @@ class FiveDrawers(VoiceScene):
 
         ev.move_to([0, 0.5, 0])                          # it opens the scene in the middle
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(lr), FadeIn(ev, shift=DOWN * 0.1), run_time=0.6)
+            self.play(FadeIn(ev, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("a 40-guest event")
             self.play(flash(ev.phrase, TURN, 1.06), run_time=0.7)
             vo.wait_until("The lecture splits")
             self.play(ev.animate.move_to(ev_home), run_time=0.6)
-            self.play(FadeIn(ctag, shift=DOWN * 0.1), LaggedStart(FadeIn(st_chip), FadeIn(lt_chip), lag_ratio=0.4),
-                      run_time=0.8)
+            self.play(FadeIn(lr), FadeIn(ctag, shift=DOWN * 0.1),       # the lecture tag comes with its picture
+                      LaggedStart(FadeIn(st_chip), FadeIn(lt_chip), lag_ratio=0.4), run_time=0.8)
             self.play(FadeIn(cab), FadeIn(ill), run_time=0.6)
             vo.wait_until("here that's saved memory")
             self.play(*into(lt_chip, "memory"), run_time=0.9)
