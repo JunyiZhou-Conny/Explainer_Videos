@@ -42,10 +42,11 @@ Beats (script.md "## S12", one voiceover block each):
     with each a GREEN card with its real path rises onto its step (SKILL.md to Activate, resources
     to Use resources, shortened "…/file" where a path is wider than a step). On "Drafting is
     refused" the closed gate flashes; line 84 prints, the email-template card rises, the gate opens
-    and the draft card turns GREEN. On "a backstop in code" the staircase and its tag leave; the
-    excerpt chip formaggio/shop/vendor_outreach.py · line 92 "Load vendor-outreach/assets/email-
-    template.html / before requesting this draft." comes in beside the gate and lights GREEN; then
-    the strip prints 144 (GREEN) and 154 (the HTML path PINK).
+    and the draft card turns GREEN; the strip prints 144 (GREEN) and 154 in one scroll, and the
+    HTML path turns PINK as the staircase and its tag leave. On "a backstop in code" the gate and
+    draft settle lower and the GREEN excerpt chip formaggio/shop/vendor_outreach.py · line 92
+    "Load vendor-outreach/assets/email-template.html / before requesting this draft." comes in
+    beside the gate and pulses.
  6  Everything leaves. A GREY "what if" picture (tag `illustration · what if`): a copy of
     vendor-outreach/SKILL.md (right; its text drawn as GREY bars), a GREEN padlock shut on the
     GREEN `save_vendor_email` chip (left). On "Someone edits" a GREY pencil arrives; on "also send
@@ -76,18 +77,16 @@ Beats (script.md "## S12", one voiceover block each):
     README.md · line 578 "The model-call allowance is 16". On "Pause and run" the panel and chip fade
     and the static "your turn" card comes in: the live command (GOLD "with your key"), the two
     offline commands (GREEN "offline · free"), GREY "notebook cell: Colab or Jupyter", GOLD "act 5
-    live · billed per token". Hold 2 s, then fade to an empty frame.
+    live · billed per token"; one GREEN bracket ties "offline · free" to both offline commands.
+    Hold 2 s, then fade to an empty frame.
 """
 
 import numpy as np
 from manim import (
     DOWN,
     LEFT,
-    PI,
     RIGHT,
     UP,
-    AnimationGroup,
-    Arc,
     Circle,
     Create,
     DashedVMobject,
@@ -98,12 +97,11 @@ from manim import (
     LaggedStart,
     Line,
     ManimColor,
-    Rectangle,
     RoundedRectangle,
     ShowIncreasingSubsets,
-    Succession,
     UpdateFromAlphaFunc,
     VGroup,
+    VMobject,
     interpolate_color,
     linear,
     there_and_back,
@@ -290,11 +288,6 @@ def code_chip(rows, header_rows, color: str = INK, frame: str = S.GREY, size: fl
     return keep_size(g)
 
 
-def light(ch, color: str = TURN):
-    """A chip lights: its border turns `color` (thicker) and it swells once."""
-    return AnimationGroup(ch.box.animate.set_stroke(color, 3.5), pulse(ch.chip, color, 1.06, frame=ch.box))
-
-
 def guard_chip(rows, color: str, mono_rows=(), pad: float = 0.25) -> VGroup:
     """A guard (S11): a rounded chip of one or more rows (serif; rows in mono_rows mono), border and
     tint in `color`. .box .text"""
@@ -400,14 +393,14 @@ def lock_tool() -> VGroup:
 
 
 def socket_glyph(h: float = 0.62, color: str = S.GREY) -> VGroup:
-    """Beat 9: a wall socket (MCP: the socket), GREY dashed."""
+    """Beat 9: a wall socket (MCP: the socket), GREY dashed: a plate, a round recess, two round
+    pin holes side by side (no third hole under them: two slots over an arc read as a face)."""
     plate = DashedVMobject(RoundedRectangle(width=h, height=h, corner_radius=h * 0.18), num_dashes=20)
     plate.set_stroke(color, 2.5)
-    holes = VGroup(*[RoundedRectangle(width=h * 0.09, height=h * 0.26, corner_radius=h * 0.03, stroke_width=0)
-                     .set_fill(color, 1).move_to([dx, h * 0.06, 0]) for dx in (-h * 0.17, h * 0.17)])
-    ground = Arc(radius=h * 0.08, start_angle=PI, angle=PI, stroke_color=color, stroke_width=2.5)
-    ground.move_to([0, -h * 0.22, 0])
-    return keep_size(VGroup(plate, holes, ground))
+    recess = Circle(radius=h * 0.33, stroke_color=color, stroke_width=2.5)
+    holes = VGroup(*[Circle(radius=h * 0.065, stroke_width=0).set_fill(color, 1).move_to([dx, 0, 0])
+                     for dx in (-h * 0.15, h * 0.15)])
+    return keep_size(VGroup(plate, recess, holes))
 
 
 def manual_glyph(h: float = 0.62, color: str = HARNESS) -> VGroup:
@@ -686,10 +679,10 @@ class SkillsManual(VoiceScene):
             lit = None
             for k, (n, path) in enumerate(zip(LOADS, PATHS)):
                 if k == 5:
-                    self.play(step_unlight(st5, lit), run_time=0.2)
-                    lit = None
                     vo.wait_until("Drafting is refused")
-                    self.play(flash(gate.bar, ERR, 1.15), flash(gate.caption, HARNESS, 1.1), run_time=0.6)
+                    self.play(flash(gate.bar, ERR, 1.15), flash(gate.caption, HARNESS, 1.1), step_unlight(st5, lit),
+                              run_time=0.5)
+                    lit = None
                 row = show(self, t, C52, n, run_time=0.15)[0]
                 i = CARDS[k][0]
                 anims = [recolor(substring(row, path), LOOKUP), FadeIn(cards5[k], shift=UP * 0.18)]
@@ -703,15 +696,20 @@ class SkillsManual(VoiceScene):
             self.play(FadeIn(d_solid), FadeOut(d_dash), run_time=0.3)
             draft.remove(d_dash)                       # (faded: it must not come back with the group)
             draft.submobjects.insert(0, d_solid)
-            # the stairs leave; the gate and its draft settle in the middle of the free picture
-            self.play(FadeOut(VGroup(st5, *cards5)), FadeOut(lr28), gg.animate.shift(DOWN * GG_DROP),
-                      run_time=0.5)
+            # the draft is saved: the strip prints 144 and 154 in one scroll, so the saved path stays
+            # up to the end of the beat (no "your numbers will differ": every row of both lines is too
+            # full for the tag, as with S10's HARNESS SAVED line)
+            s2 = show(self, t, C52, (C52.line(144), HARNESS), 154, wrap=True, run_time=0.25)
+            r154 = item_rows(s2, 1)
+            assert len(r154) == 2 and len(t.lines) == 3, [r.text for r in t.lines]
+            # the path turns PINK while the stairs and their tag leave (old out) ...
+            self.play(recolor(wrapped_glyphs(r154, HTML_PATH), LOOKUP), FadeOut(VGroup(st5, *cards5)), FadeOut(lr28),
+                      run_time=0.4)
+            # ... then the gate and its draft settle in the free picture and the backstop comes in
             vo.wait_until("a backstop in code")
             x92.box.set_stroke(HARNESS, 3.5)
-            self.play(FadeIn(x92, shift=LEFT * 0.1), run_time=0.45)
-            t.print(self, [(C52.line(144), HARNESS)], run_time=0.2)
-            s2 = show(self, t, C52, 154, wrap=True, run_time=0.25)
-            self.play(recolor(wrapped_glyphs(s2, HTML_PATH), LOOKUP), run_time=0.3)
+            self.play(gg.animate.shift(DOWN * GG_DROP), FadeIn(x92, shift=LEFT * 0.1), run_time=0.5)
+            self.play(pulse(x92.chip, HARNESS, 1.05, frame=x92.box), run_time=0.6)
 
         # ========================================================== 6 · ponder: an edited skill page
         pg = page_card()
@@ -830,7 +828,6 @@ class SkillsManual(VoiceScene):
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(pB, b40, b46, b50, tree, seals, checks, snap)), run_time=0.4)
             self.play(FadeIn(lk8, shift=RIGHT * 0.1), FadeIn(g1, shift=RIGHT * 0.1), FadeIn(rec), run_time=0.5)
-            self.play(pulse(g1, HARNESS, 1.08), run_time=0.6)
             # the edited page tries the lock and bounces off
             self.play(pg.animate.shift(LEFT * (gap - 0.04)), run_time=0.4)
             self.play(pg.animate.shift(RIGHT * (gap - 0.04)), Indicate(lk8.lock, color=HARNESS, scale_factor=1.1),
@@ -840,9 +837,10 @@ class SkillsManual(VoiceScene):
             self.remove(cross)
             pg.add(cross)
             self.play(flash(g1.text[1], HARNESS, 1.12), run_time=0.5)
-            self.play(FadeIn(hd, shift=UP * 0.3), run_time=0.3)
-            self.play(hd.animate.move_to(lk8.lock.body.get_bottom() + DOWN * 0.3), run_time=0.4)
-            self.play(unlock(lk8.lock, run_time=0.5), run_time=0.5)
+            # only the human's hand turns the lock
+            self.play(FadeIn(hd, shift=UP * 0.3), run_time=0.25)
+            self.play(hd.animate.move_to(lk8.lock.body.get_bottom() + DOWN * 0.3), run_time=0.3)
+            self.play(unlock(lk8.lock, run_time=0.4), run_time=0.4)
             vo.wait_until("and nothing is ever transmitted")
             self.play(hd.animate.shift(DOWN * 0.5).set_opacity(0), FadeIn(g2, shift=RIGHT * 0.1), run_time=0.4)
             self.remove(hd)
@@ -906,16 +904,23 @@ class SkillsManual(VoiceScene):
             C52.cmd,
             (Prose("notebook cell: Colab or Jupyter"), S.GREY),
             (Prose("act 5 live · billed per token"), COST),
-        ], width=mono(C52.cmd, CAPTION).width + 0.35 + off_w + 0.3 + 0.6)
+        ], width=mono(C52.cmd, CAPTION).width + 0.25 + 0.1 + 0.25 + off_w + 0.3 + 0.35)
         wk = label("with your key", CAPTION, COST)
         place(wk, left=tc.rows[0][0].get_right()[0] + 0.35, cy=tc.rows[0][0].get_center()[1])
+        # both offline commands (rows 1 and 2) share one GREEN bracket and its "offline · free"
+        r1, r2 = tc.rows[1][0], tc.rows[2][0]
+        xb = max(r1.get_right()[0], r2.get_right()[0]) + 0.25
+        yt, yb = r1.get_top()[1] + 0.02, r2.get_bottom()[1] - 0.02
+        brk = VMobject(stroke_color=HARNESS, stroke_width=2.5)
+        brk.set_points_as_corners([[xb, yt, 0], [xb + 0.1, yt, 0], [xb + 0.1, yb, 0], [xb, yb, 0]])
         off = label("offline · free", CAPTION, HARNESS)
-        place(off, left=tc.rows[2][0].get_right()[0] + 0.35, cy=tc.rows[2][0].get_center()[1])
-        tc.add(wk, off)
+        place(off, left=xb + 0.25, cy=(yt + yb) / 2)
+        tc.add(wk, brk, off)
         place(tc, cx=0, cy=-0.2)
         inside(tc)
-        assert off.get_right()[0] < tc.frame.get_right()[0] - 0.1
+        assert off.get_right()[0] < tc.frame.get_right()[0] - 0.1, (off.get_right(), tc.frame.get_right())
         apart(wk, tc.tag, 0.04)
+        apart(off, tc.tag, 0.04)
         apart(tc, tr, 0.05)
         with self.voiceover(SAY[10]) as vo:
             self.play(tr.goto(4), FadeIn(pR, shift=UP * 0.1), run_time=0.5)
