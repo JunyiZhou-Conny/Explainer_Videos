@@ -8,12 +8,13 @@ Beats (script.md "## S14", one voiceover block each):
     build" with GREY arrows (on "is ours"); its four GREEN tiles Context · Harness · Tools · Skills
     pop in as named. On "So all of it must be tested" the RED banner "every layer we change must be
     tested" and the GREY chip (slide 37, our words) "in this class you wear every hat".
- 1  The picture leaves. V8's three GREEN pills (slide 40), each band on its word: Outcome "did it get
-    the right result?", Trajectory "did it get there sensibly?", Cost "tokens, turns, latency". On
-    "the outcome and process checks" the check names of container/89 lines 39–44 slide in along
-    their rows: `outcome.proposal` into Outcome; `process.check_before_action`,
-    `process.manager_authority`, `process.no_duplicate_orders` into Trajectory; on "plus calls and
-    tokens" "model calls · input tokens" (line 25's column names) into Cost.
+ 1  The picture leaves. V8's three GREEN pills (slide 40) draw at once, empty (on "three things");
+    each name writes in on its word: Outcome "did it get the right result?", Trajectory "did it get
+    there sensibly?", Cost "tokens, turns, latency". On "the outcome and process checks" the check
+    names of container/89 lines 39–44 slide in along their rows (from inside the band's right end):
+    `outcome.proposal` into Outcome; `process.check_before_action`, `process.manager_authority`,
+    `process.no_duplicate_orders` into Trajectory; on "plus calls and tokens" "model calls · input
+    tokens" (line 25's column names) into Cost.
  2  TRACKER Eval1 1. The pills and the lecture tag leave. A GREEN cylinder (illustration), its PINK
     path `outputs/observability.sqlite` under it; every run of the video so far drops in as a small
     card (32, in list order: RED = the failed live runs, BLUE dashed = the scripted runs) while a
@@ -23,12 +24,14 @@ Beats (script.md "## S14", one voiceover block each):
     error" `"status": "error"` turns RED and `"mode": "live"` BLUE; GREY tag "32 runs here · your
     numbers will differ" on the closing bracket.
  3  TRACKER Eval1 2. `python cli.py --inspect-run RUN_ID` (as written) -> container/72 line 20 RED on
-    "it fails"; GREY tag "a template" beside the command on "because it's a template"; on "Paste a
+    "it fails"; GREY tag "a template" beside the error (the command's row is too full for it) on
+    "because it's a template"; on "Paste a
     real one" the GREY caption "paste a run ID from --list-runs" beside the error. On "we use the
     manager approval run" the terminal shrinks to the 3-row strip, the cylinder returns above it
     (left) and the manager-approval run's card (BLUE dashed, 16th) gets a YELLOW outline.
- 4  A PINK arrow "7409b343…" runs from the cylinder to V8's event chain; its five cards rise as the
-    SAY names them: approval.requested GREEN (on "with the fingerprint" the PINK hash chip beside
+ 4  The YELLOW outline on the run's card pulses; a PINK arrow "7409b343…" runs from the cylinder to
+    V8's event chain, whose five cards rise in dim; each lights to full as the SAY names it:
+    approval.requested GREEN (on "with the fingerprint" the PINK hash chip beside
     it), approval.decided · human YELLOW, policy.decision · allow, order.placed, run.finished ·
     completed GREEN. On "The evidence for order placed" order.placed pulses; the picture leaves, the
     terminal grows back (12 rows) and types `python cli.py --inspect-run 7409b343679a457490c94fb7512faa31`
@@ -41,10 +44,11 @@ Beats (script.md "## S14", one voiceover block each):
     tag "0245… · numbered across the whole database" on the `…` above 33.
  5  TRACKER Eval1 2 · extra. The chip leaves. `python cli.py --inspect-run 536c6c4812c049c495a9988ed754ee49`
     (extra; your numbers will differ) -> container/73 lines 2, 5 cut after "call_number": 1, 7 folded
-    to `0006 model.failed {"call_number": 1, "error": "(… Error code: 401 …` (RED), 10 folded to
-    `0009 run.finished {"error": "(… Error code: 401 …`. Line 7 flashes on "model failed", its
-    "Error code: 401" on "with the 401"; on "A failure is evidence too" a YELLOW outline round the
-    four events.
+    to `0006 model.failed {"call_number": 1, "error": "(… Error code: 401 …` (RED; 67 characters, so
+    it wraps at its JSON comma onto a hanging row: a word-boundary wrap left a lone '…' row that read
+    as an elision), 10 folded to `0009 run.finished {"error": "(… Error code: 401 …`. Line 7 flashes
+    on "model failed", its "Error code: 401" on "with the 401"; on "A failure is evidence too" a
+    YELLOW outline round the four events.
  6  TRACKER Eval2 1 (the section switches). It types `python cli.py --act 2 --evaluate core --fixture
     --case standard --repeats 2 --label context-fixture-1` (three rows); the flags flash YELLOW as
     named (the act 2 evaluation, scripted + the GREY tag scripted, two repeats, the label) ->
@@ -58,18 +62,21 @@ Beats (script.md "## S14", one voiceover block each):
     77 line 2, `/app/outputs/my-report.html` PINK.
  8  The terminal shrinks to the strip (the last command and its output line). Above it a GREY
     browser window (address `~/AC215/agent-harness/outputs/my-report.html`, tag illustration, no
-    logo) draws the scorecard from container/89 lines 13–22: the banner `SCRIPTED RESPONSES · These
-    results test the evaluation machinery. …`, the tiles 4/4 Passed / scheduled, 0 Runs with failed
-    checks, 0 Run errors, 0 Missing runs, and the rows `standard:basic | 2/2 | 100% (2/2) …`,
-    `standard:enriched | 2/2 | 100% (2/2) …`. Under it the PINK route (bind mount): container
-    `/app/outputs/` -> laptop `~/AC215/agent-harness/outputs/`; the address's `outputs/` flashes PINK.
+    logo) and, under it, the container box `/app/outputs/`; on "on your laptop" the PINK bind-mount
+    route grows to the laptop's `~/AC215/agent-harness/outputs/` and the address's `outputs/`
+    flashes PINK. Then the page draws the scorecard from container/89 lines 13–22: the banner
+    `SCRIPTED RESPONSES · These results test the evaluation machinery. …`, the tiles 4/4 Passed /
+    scheduled, 0 Runs with failed checks, 0 Run errors, 0 Missing runs, and the rows
+    `standard:basic | 2/2 | 100% (2/2) …`, `standard:enriched | 2/2 | 100% (2/2) …`; it holds 2 s
+    to be read.
  9  TRACKER Eval2 5. The browser leaves, the terminal grows back; `python cli.py --view-report
     COLAB_LABEL --db outputs/colab.sqlite` (as written; tag a template) -> container/78 line 20 RED
     (wrap) with the caption "copy colab.sqlite from your Colab run into outputs/ first". TRACKER Eval2
     5 · extra: the act 2 evaluation again (extra) -> container/88 line 2 RED (wrap), caption "labels
-    are immutable · choose a new one". On "Pause and run" the terminal leaves and the static GREY
-    "your turn" card arrives (the six commands of steps 1 and 2, long ones folded with " \\"; GREEN
-    "offline · free" last). Hold 2 s, then an empty frame.
+    are immutable · choose a new one" (or "· use a new one" when that does not fit beside the
+    row: it does not, at 20 pt). On "Pause and run" the terminal leaves and the static GREY
+    "your turn" card arrives (the six commands of steps 1 and 2, long ones folded before an option
+    with " \\" and a 4-space indent; GREEN "offline · free" last). Hold 2 s, then an empty frame.
 """
 
 import numpy as np
@@ -92,6 +99,7 @@ from manim import (
     RoundedRectangle,
     Succession,
     SurroundingRectangle,
+    UpdateFromAlphaFunc,
     VGroup,
 )
 
@@ -153,6 +161,9 @@ assert MGR.line(67) == '0279 run.finished {"error": null, "status": "completed"}
 F5 = FAIL.cut(5, '"call_number": 1,')
 F7 = FAIL.fold(7, 7, '0006 model.failed {"call_number": 1, "error": "(… Error code: 401 …')
 F10 = FAIL.fold(10, 10, '0009 run.finished {"error": "(… Error code: 401 …')
+_k = F7.index(' "error"')
+F7A, F7B = F7[:_k], " " * WRAP_HANG + F7[_k + 1:]          # two rows of the one folded line
+assert len(F7A) <= 65 and len(F7B) <= 65 and F7A.endswith('"call_number": 1,'), (F7A, F7B)
 assert FAIL.line(2) == '0001 run.started {"act": 1, "mode": "live"}'
 # step 2
 L86 = "FIXTURE EVALUATION context-fixture-1: 4/4 scheduled runs passed"
@@ -416,6 +427,8 @@ class TraceEvidence(VoiceScene):
 
         def drop(i, c):
             tp.start(i, c)
+            # start inside the band (its right edge clear of the border), then slide left along the row
+            c.shift(LEFT * max(0.0, c.get_right()[0] - (tp.bands[i].frame.get_right()[0] - 0.2)))
             tp.bands[i].add(c)          # a member before it shows: drawn once, moves with the band
             self.play(FadeIn(c, shift=LEFT * 0.2), run_time=0.25)
             self.play(tp.drop(i, c, run_time=0.45))
@@ -423,10 +436,15 @@ class TraceEvidence(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(pic0), run_time=0.5)
             self.add(tp)
+            # "three things": the three empty GREEN pills at once (no empty frame); each name on its word
+            for b in tp.bands:
+                _set_op(b.frame)
+            self.play(LaggedStart(*[FadeIn(b.frame, shift=DOWN * 0.1) for b in tp.bands], lag_ratio=0.25),
+                      run_time=0.8)
             for i, word in enumerate(("outcome", "trajectory", "and cost")):
                 vo.wait_until(word)
-                _set_op(tp.bands[i])
-                self.play(FadeIn(tp.bands[i], shift=DOWN * 0.1), run_time=0.4)
+                _set_op(tp.bands[i].title)
+                self.play(FadeIn(tp.bands[i].title, shift=RIGHT * 0.12), run_time=0.4)
             vo.wait_until("the outcome and process checks")
             drop(*chips[0])
             for i, c in chips[1:4]:
@@ -544,53 +562,67 @@ class TraceEvidence(VoiceScene):
         apart(fpc, ec.card(1), 0.05)
         c686 = top_chip(R686, where="README.md · line 686")
         pic4 = VGroup(cyl_g, hl, lbl2, ill4, look, rid, ec, fpc)
+        # the run's five events arrive dim with the lookup (the arrow has a target), then each lights
+        # to full as the SAY reads it (opacity scaled from the parts' saved values: no fill jumps)
+        DIM = 0.22
+        ev = [[ec.parts[f"c{i}"]] + ([ec.parts[f"a{i - 1}"]] if i else []) for i in range(5)]
+
+        def brighten(i):
+            return [UpdateFromAlphaFunc(m, lambda mob, a: _set_op(mob, DIM + (1 - DIM) * a)) for m in ev[i]]
+
         with self.voiceover(SAY[4]) as vo:
             self.add(ec)
-            self.play(GrowArrow(look), FadeIn(rid, shift=RIGHT * 0.1), run_time=0.6)
+            self.play(pulse(hl, TURN, 6), run_time=0.7)            # this run: the manager-approval one
+            for grp in ev:
+                for m in grp:
+                    _set_op(m, DIM)
+            self.play(GrowArrow(look), FadeIn(rid, shift=RIGHT * 0.1),
+                      LaggedStart(*[FadeIn(m, shift=UP * 0.12) for grp in ev for m in grp], lag_ratio=0.08),
+                      run_time=0.8)
             names = ("approval requested", "approval decided by a human", "policy decision allow",
                      "order placed", "run finished")
             for i, word in enumerate(names):
                 vo.wait_until(word)
-                self.play(*ec.light(i), run_time=0.4)
+                self.play(*brighten(i), run_time=0.4)
                 if i == 0:
                     vo.wait_until("with the fingerprint")
                     self.play(FadeIn(fpc, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("The evidence for order placed")
-            self.play(pulse(ec.card(3).frame, HARNESS, 9), run_time=0.75)
-            self.play(FadeOut(pic4), run_time=0.4)
-            fit(self, t, 12, tags=list(ft), run_time=0.7)
-            c4 = type_cmd(self, t, MGR.cmd, 1.0)
+            self.play(pulse(ec.card(3).frame, HARNESS, 9), run_time=0.7)
+            self.play(FadeOut(pic4), run_time=0.35)
+            fit(self, t, 12, tags=list(ft), run_time=0.6)
+            c4 = type_cmd(self, t, MGR.cmd, 0.9)
             # the command starts under the prompt and fills its row: the tag goes on the prompt's row
             pin_tag(self, t, rows_of(c4)[0], differ_tag(), run_time=0.3)
             vo.wait_until("not the prose")
             self.play(FadeIn(c686, shift=DOWN * 0.1), run_time=0.45)
-            # the trace confirms the chain, line by line
-            o33 = show(self, t, MGR, "…", L33, wrap=True, run_time=0.45)
+            # the trace confirms the chain, line by line (after the SAY: kept brisk)
+            o33 = show(self, t, MGR, "…", L33, wrap=True, run_time=0.4)
             r33 = item_rows(o33, 1)
             fp33 = per_row(r33, FP)
             u33 = [(r, under(g, LOOKUP, stroke=3, buff=0.04)) for r, g in fp33]
             numtag = grey_tag("0245… · numbered across the whole database")
             beside(numtag, t, o33[0])
             self.play(substring(r33[0], "approval.requested").animate.set_color(HARNESS),
-                      *[g.animate.set_color(LOOKUP) for _, g in fp33], run_time=0.4)
-            self.play(*[Create(u) for _, u in u33], run_time=0.3)
+                      *[g.animate.set_color(LOOKUP) for _, g in fp33], *[Create(u) for _, u in u33],
+                      run_time=0.4)
             stick(self, u33)
-            pin(self, o33[0], numtag, run_time=0.35)
-            o46 = show(self, t, MGR, "…", 46, wrap=True, run_time=0.45)
+            pin(self, o33[0], numtag, run_time=0.3)
+            o46 = show(self, t, MGR, "…", 46, wrap=True, run_time=0.4)
             r46 = item_rows(o46, 1)
             fp46 = per_row(r46, FP)
             u46 = [(r, under(g, LOOKUP, stroke=3, buff=0.04)) for r, g in fp46]
             self.play(substring(r46[0], "approval.decided").animate.set_color(TURN),
                       wrapped_glyphs(r46, '"source": "human"').animate.set_color(TURN),
-                      *[g.animate.set_color(LOOKUP) for _, g in fp46], run_time=0.4)
-            self.play(*[Create(u) for _, u in u46], run_time=0.3)
+                      *[g.animate.set_color(LOOKUP) for _, g in fp46], *[Create(u) for _, u in u46],
+                      run_time=0.4)
             stick(self, u46)
             for spec, subs in ((L53, ("policy.decision", '"outcome": "allow"')),
                                (L58, ("order.placed",)),
                                (67, ("run.finished", '"status": "completed"'))):
-                o = show(self, t, MGR, "…", spec, wrap=True, run_time=0.4)
+                o = show(self, t, MGR, "…", spec, wrap=True, run_time=0.35)
                 rr = item_rows(o, 1)
-                self.play(*[wrapped_glyphs(rr, s).animate.set_color(HARNESS) for s in subs], run_time=0.35)
+                self.play(*[wrapped_glyphs(rr, s).animate.set_color(HARNESS) for s in subs], run_time=0.3)
             assert len(t.lines) == 12
 
         # ========================================================== 5 · extra: a failed live run is evidence too
@@ -605,14 +637,15 @@ class TraceEvidence(VoiceScene):
             assert dt.get_right()[0] < t.box.get_right()[0] - 0.12
             pin(self, last5, et, run_time=0.3)
             pin(self, last5, dt, run_time=0.3)
-            # F7 is 66 characters: it folds (at the space before its closing "…")
-            o73 = show(self, t, FAIL, 2, F5, (F7, ERR), F10, wrap=True, run_time=0.5)
-            r7 = item_rows(o73, 2)
-            assert len(o73) == 5 and r7[0].text.endswith("Error code: 401"), [r.text for r in o73]
+            # F7 (67 characters) wraps at its JSON comma, as wrap_output would with a hanging indent of
+            # 2: the word-boundary wrap would leave its closing '…' alone on a row (read as an elision)
+            o73 = show(self, t, FAIL, 2, F5, (F7A, ERR), (F7B, ERR), F10, run_time=0.5)
+            r7 = [o73[2], o73[3]]
+            assert len(o73) == 5 and r7[1].text.strip().endswith("Error code: 401 …"), [r.text for r in o73]
             vo.wait_until("model failed")
             self.play(flash(VGroup(*[r.glyphs for r in r7]), ERR, 1.05), run_time=0.6)
             vo.wait_until("with the 401")
-            self.play(Indicate(substring(r7[0], "Error code: 401"), color=ERR, scale_factor=1.2), run_time=0.6)
+            self.play(Indicate(substring(r7[1], "Error code: 401"), color=ERR, scale_factor=1.2), run_time=0.6)
             vo.wait_until("A failure is evidence too")
             self.play(outline_flash(VGroup(*[r.glyphs for r in o73]), TURN, 0.1), run_time=0.9)
 
@@ -665,24 +698,25 @@ class TraceEvidence(VoiceScene):
         page = br.content
         x0 = page.get_left()[0] + 0.25
         ban_rows = VGroup(sans("SCRIPTED RESPONSES", CAPTION, INK, weight="BOLD"),
-                          label(BANNER[len("SCRIPTED RESPONSES"):], CAPTION, INK))
-        ban_rows.arrange(RIGHT, buff=0.0, aligned_edge=DOWN)
+                          label(BANNER[len("SCRIPTED RESPONSES"):].lstrip(), CAPTION, INK))
+        ban_rows.arrange(RIGHT, buff=0.14, aligned_edge=DOWN)     # (Text drops the leading space)
         sban = box(ban_rows.width + 0.4, ban_rows.height + 0.24, S.GREY, fill_opacity=0.1, radius=0.08)
         ban_rows.move_to(sban)
         sbanner = VGroup(sban, ban_rows)
         place(sbanner, left=x0, top=page.get_top()[1] - 0.08)
         ill8 = illustration_tag()
         place(ill8, right=page.get_right()[0] - 0.2, cy=sbanner.get_center()[1])
-        tw, th = 2.85, 0.84
+        th = 0.84
         tiles8 = VGroup()
         for num, lab, _ in TILES:
-            fr = box(tw, th, HARNESS, fill_opacity=0.1, stroke=2.5, radius=0.1)
             n = sans(num, 24, HARNESS, weight="BOLD")
             lb = label(lab, CAPTION, INK)
+            fr = box(max(2.4, lb.width + 0.5), th, HARNESS, fill_opacity=0.1, stroke=2.5, radius=0.1)
             col = VGroup(n, lb).arrange(DOWN, buff=0.05)
             col.move_to(fr)
             tiles8.add(VGroup(fr, col))
-        tiles8.arrange(RIGHT, buff=0.22)
+        gap = max(0.22, (page.width - 0.5 - sum(tl.width for tl in tiles8)) / 3)   # the row spans the page
+        tiles8.arrange(RIGHT, buff=gap)
         place(tiles8, left=x0, top=sbanner.get_bottom()[1] - 0.15)
         trows = VGroup(*[mtext(r, CAPTION, INK) for r in ROWS]).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         place(trows, left=x0 + 0.1, top=tiles8.get_bottom()[1] - 0.15)
@@ -715,24 +749,28 @@ class TraceEvidence(VoiceScene):
         addr = br.address
         a_out = glyph_range_text(addr, "outputs/")
         with self.voiceover(SAY[8]) as vo:
-            fit(self, t, 3, keep=rows_of(c7) + [o77[0]], tags=list(ft), run_time=0.7)
-            self.play(FadeIn(br, shift=UP * 0.15), run_time=0.5)
+            fit(self, t, 3, keep=rows_of(c7) + [o77[0]], tags=list(ft), run_time=0.6)
+            # the narrated thing first: the file reaches the laptop through the bind-mounted outputs folder
+            self.play(FadeIn(br, shift=UP * 0.15), FadeIn(ctr_g), run_time=0.5)
+            vo.wait_until("on your laptop")
+            self.play(GrowArrow(mount), FadeIn(bm), FadeIn(lap_g, shift=LEFT * 0.1), run_time=0.6)
+            self.play(Indicate(a_out, color=LOOKUP, scale_factor=1.15), run_time=0.6)
+            # then the page draws: the scorecard
             self.play(FadeIn(sbanner), FadeIn(ill8), run_time=0.4)
             self.play(LaggedStart(*[FadeIn(tl, shift=UP * 0.08) for tl in tiles8], lag_ratio=0.2),
                       run_time=0.7)
             self.play(LaggedStart(*[FadeIn(r) for r in trows], lag_ratio=0.3), run_time=0.5)
-            self.play(FadeIn(ctr_g), run_time=0.3)
-            self.play(GrowArrow(mount), FadeIn(bm), FadeIn(lap_g, shift=LEFT * 0.1), run_time=0.6)
-            self.play(Indicate(a_out, color=LOOKUP, scale_factor=1.15), run_time=0.6)
+            self.wait(2.0)                              # time to read the scorecard
         pic8 = VGroup(br, sbanner, ill8, tiles8, trows, route)
 
         # ========================================================== 9 · two templates and an immutable label; your turn
-        tc_rows = [LIST.cmd, (TPL.cmd, "paste a run ID"), "\n".join(fold_cmd(EVAL_CMD, 66)[0]), REP.cmd, VIEW.cmd,
-                   "\n".join(fold_cmd(HTML.cmd, 66)[0]), (Prose("offline · free"), HARNESS)]
-        for cmd_ in (EVAL_CMD, HTML.cmd):
-            rows_, hard = fold_cmd(cmd_, 66)
-            assert not hard and " ".join(r.rstrip(" \\").strip() for r in rows_) == cmd_, rows_
+        tc_rows = [LIST.cmd, (TPL.cmd, "paste a run ID"), card_lines(EVAL_CMD), REP.cmd, VIEW.cmd,
+                   card_lines(HTML.cmd), (Prose("offline · free"), HARNESS)]
         tc = turn_card(tc_rows, width=12.4)
+        for k in (2, 5):                               # the folded commands' continuation rows,
+            assert len(tc.rows[k]) == 2                # indented 4 as typed (Text drops leading spaces)
+            tc.rows[k][1].shift(RIGHT * 4 * cell_width(CAPTION))
+        assert tc.rows[5][1].get_right()[0] < tc.frame.get_right()[0] - 0.2, tc.rows[5][1].get_right()
         place(tc, cx=0, cy=-0.35)
         inside(tc)
         apart(tc, tr, 0.05)
@@ -751,9 +789,12 @@ class TraceEvidence(VoiceScene):
             pin_tag(self, t, c9b, extra_tag(), run_time=0.3)
             vo.wait_until("and the batch stops")
             o88 = show(self, t, AGAIN, (AGAIN.line(2), ERR), wrap=True, run_time=0.4)
-            cap9b = note("labels are immutable · use a new one")     # (fits beside the wrapped error)
-            beside(cap9b, t, o88[-1])
-            if cap9b.get_right()[0] > t.box.get_right()[0] - 0.12 or covers_text(cap9b, o88[-1]):
+            for txt in ("labels are immutable · choose a new one", "labels are immutable · use a new one"):
+                cap9b = note(txt)                       # the SHOW's words if they fit beside the row
+                beside(cap9b, t, o88[-1])
+                if cap9b.get_right()[0] <= t.box.get_right()[0] - 0.12 and not covers_text(cap9b, o88[-1]):
+                    break
+            else:
                 raise ValueError("the immutable-label caption does not fit beside its row")
             pin(self, o88[-1], cap9b, run_time=0.4)
             vo.wait_until("Pause and run")
@@ -762,6 +803,22 @@ class TraceEvidence(VoiceScene):
         self.wait(2)                                    # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tc, tr)), run_time=0.8)
         self.wait(0.3)
+
+
+def card_lines(cmd: str, limit: int = 66) -> str:
+    """A command for the turn card (S06's idiom), folded at a space with " \\" and a 4-space indent,
+    preferring a break before an option (an option keeps its value), rows joined by "\\n"."""
+    rows, cur = [], cmd
+    while len(cur) > limit:
+        room = limit - 2
+        spaces = [i for i, ch in enumerate(cur) if ch == " " and (4 if rows else 0) < i <= room]
+        opt = [i for i in spaces if cur[i + 1] == "-"]
+        cut = opt[-1] if opt and opt[-1] >= room * 0.5 else spaces[-1]
+        rows.append(cur[:cut] + " \\")
+        cur = "    " + cur[cut + 1:]
+    rows.append(cur)
+    assert " ".join(r.rstrip(" \\").strip() for r in rows) == cmd, rows
+    return "\n".join(rows)
 
 
 def glyph_range_text(t, sub: str) -> VGroup:

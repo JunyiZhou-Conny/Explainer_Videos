@@ -25,16 +25,17 @@ Beats (script.md "## S13", one voiceover block each):
     YELLOW bar, line 18 a GREEN bar with both "manager-approval" GREEN. On "the model only picks an
     ID" line 24 gets a PINK bar, `request_id` turns PINK and the PINK handle chip `request-1`
     arrives beside it. On "Its tools are narrow" the header "acts/act6_composition.py · lines 24,
-    29, 34" and the GREY tag "narrow tools"; the three GREEN tool chips arrive as they are named.
+    29, 34" with the GREY tag "narrow tools" beside it; the three GREEN tool chips arrive under
+    them as they are named.
  4  TRACKER Systems 2. Container terminal (10 rows; title-bar tags `no key` + GOLD `live · billed
     per token`: the typed line fills its row) types `python cli.py --act 6 --scenario standard` ->
     container/60 lines 2–3 (wrap), 5, 7, 9 (wrap), 10 as 401s. Line 3 GREEN. On "tell outer model
     calls apart" line 7 pulses BLUE, start_order and get_order_status turn PINK and the top-band
-    chip README.md · line 637 (expected) arrives; on "the outer agent cannot approve" line 3's
-    "host manager review when required" turns YELLOW.
+    chip README.md · line 637 (expected) arrives, centred between the tracker and the terminal;
+    on "the outer agent cannot approve" line 3's "host manager review when required" turns YELLOW.
  5  TRACKER Systems 3. The chip leaves; the terminal shrinks to the strip (its tags swap, old out
-    then new in, to `scripted` + GREEN `offline · free`). Above it (tag illustration, top right) a
-    BLUE "customer assistant" node and two glyph-only rails, request-1 above request-2 (PINK
+    then new in, to `scripted` + GREEN `offline · free`). Above it (tag illustration, right of the
+    tracker) a BLUE "customer assistant" node and two glyph-only rails, request-1 above request-2 (PINK
     arrows and handles), each with three stations named once between them: validate · manager
     review · revalidate & place; the right side stays free. The strip types the two-orders
     command (folds; `--manager-decision approve` in a YELLOW outline, tag TEST decision) and
@@ -92,7 +93,6 @@ from manim import (
     RoundedRectangle,
     ShowPassingFlash,
     Succession,
-    SurroundingRectangle,
     Transform,
     UpdateFromAlphaFunc,
     VGroup,
@@ -184,7 +184,7 @@ SAFE = 6.45
 TOP = 2.6               # content top under the tracker
 TITLE = 24              # the beat-0 headings
 # beats 5-6: two glyph-only rails above the strip, a shared shelf at right
-Y1, Y2 = 1.75, 0.25     # the rails' rows (request-1 above request-2)
+Y1, Y2 = 1.85, 0.35     # the rails' rows (request-1 above request-2)
 XV = -3.3               # the "validate" stations' x
 BAND = 0.62             # a rail's annotations sit this far above (request-1) / below (request-2) it
 SHELF_RIGHT = SAFE
@@ -345,6 +345,31 @@ def ShowFlash(m, color: str | None = None):
     return ShowPassingFlash(src.set_stroke(col, 9), time_width=0.6, run_time=0.7)
 
 
+def slim_tag(s: str, color: str = S.GREY, size: float = CAPTION, pad_y: float = 0.05) -> VGroup:
+    """tag() with less vertical padding: a 20-pt tag() is 0.44 tall and the 22-pt terminal row pitch is
+    0.40, so a box drawn round the next rows would touch it; this one stays inside its row's pitch."""
+    t_ = label(s, size, color)
+    h = mono("|", size).height + 2 * pad_y
+    b = RoundedRectangle(width=t_.width + 0.4, height=h, corner_radius=h / 2, stroke_color=color,
+                         stroke_width=2).set_fill(S.BG, 0.92)
+    t_.move_to(b)
+    g = VGroup(b, t_)
+    g.box, g.text = b, t_
+    return g
+
+
+def rows_box(rows, color: str = TURN, pad_x: float = 0.07, pad_y: float = 0.025) -> RoundedRectangle:
+    """An outline round terminal rows: their glyphs' width, their struts' height (tight, so a tag
+    pinned on the row above stays clear). Not added."""
+    gl = VGroup(*[r.glyphs for r in rows])
+    top = max(r.strut.get_top()[1] for r in rows) + pad_y
+    bot = min(r.strut.get_bottom()[1] for r in rows) - pad_y
+    b = RoundedRectangle(width=gl.width + 2 * pad_x, height=top - bot, corner_radius=0.05,
+                         stroke_color=color, stroke_width=3).set_fill(opacity=0)
+    b.move_to([gl.get_center()[0], (top + bot) / 2, 0])
+    return b
+
+
 def new_token():
     """A scripted cart (BLUE dashed: real program output, scripted proposal), under the stations:
     it tunnels through them."""
@@ -442,7 +467,7 @@ class AgentSystem(VoiceScene):
         edges = [arrow(m_node.frame.get_right(), sp.frame.get_left(), S.GREY) for sp in specs]
         tcall = label("tool call", CAPTION, S.GREY)
         e_mid = edges[1]
-        place(tcall, cx=(e_mid.get_start()[0] + e_mid.get_end()[0]) / 2 + 0.75, bottom=e_mid.get_center()[1] + 0.1)
+        place(tcall, cx=(e_mid.get_start()[0] + e_mid.get_end()[0]) / 2 + 0.6, bottom=e_mid.get_center()[1] + 0.1)
         place(ttl2, cx=(MX + SX) / 2, top=2.98)
         # the peers pattern (bottom right): GREY dashed, lecture only
         PY = -1.95
@@ -471,8 +496,8 @@ class AgentSystem(VoiceScene):
         apart(specs[2], peer_g, 0.2)
         apart(ttl1, tr, 0.1)
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(lr), run_time=0.5)
-            self.play(FadeIn(ttl1, shift=DOWN * 0.1), FadeIn(a_node, scale=0.9), run_time=0.5)
+            self.play(FadeIn(tr, shift=DOWN * 0.25), run_time=0.5)
+            self.play(FadeIn(ttl1, shift=DOWN * 0.1), FadeIn(a_node, scale=0.9), FadeIn(lr), run_time=0.5)
             for lk, c in zip(links, tools):
                 self.play(Create(lk), FadeIn(c, shift=DOWN * 0.1), run_time=0.35)
             self.play(FadeIn(grow, shift=UP * 0.08), run_time=0.4)
@@ -611,10 +636,11 @@ class AgentSystem(VoiceScene):
         trow = VGroup(*tchips).arrange(RIGHT, buff=0.3)
         narrow = grey_tag("narrow tools")
         place(thdr, left=-6.25, top=p15.get_bottom()[1] - 0.3)
-        place(trow, left=-6.35, top=thdr.get_bottom()[1] - 0.12)
-        place(narrow, left=trow.get_right()[0] + 0.4, cy=trow.get_center()[1])
+        place(trow, left=-6.35, top=thdr.get_bottom()[1] - 0.26)       # (room for the tag beside the header)
+        place(narrow, left=thdr.get_right()[0] + 0.35, cy=thdr.get_center()[1])
         for m in (p15, handle, thdr, trow, narrow):
             inside(m)
+        apart(narrow, trow, 0.12)
         apart(p15, tr, 0.05)
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(pic2), run_time=0.4)
@@ -635,8 +661,10 @@ class AgentSystem(VoiceScene):
         t = term(container=True, rows=10)
         ft = frame_tags(t, nokey_tag(), live_tag())
         c637 = top_chip(R637, where="README.md · line 637", expected=True)
+        c637.set_y((tr.get_bottom()[1] + ft.get_top()[1]) / 2)          # mid-gap over a 10-row terminal
+        apart(c637, tr, 0.3)
+        apart(c637, ft, 0.3)
         assert c637.get_bottom()[1] > t.box.get_top()[1] + 0.05
-        apart(c637, tr, 0.01)
         with self.voiceover(SAY[4]) as vo:
             self.wait(0.4)                               # (the last tool chip arrived on the last words)
             self.play(FadeOut(pic3), run_time=0.4)
@@ -765,8 +793,9 @@ class AgentSystem(VoiceScene):
         for m in (shelf, rec, reds, ponder, ok_c):
             inside(m)
         for a_, b_ in ((shelf, rails_g), (shelf, rec), (shelf, ill5), (reds, r2), (reds, reqs[1]), (reds, amts[1]),
-                       (reds, tks[1]), (ponder, rails_g), (ponder, shelf), (reds, cks[1]), (ok_c, ill5)):
+                       (reds, tks[1]), (ponder, rails_g), (ponder, shelf), (ok_c, ill5)):
             apart(a_, b_, 0.08)
+        apart(reds, cks[1], 0.15)                           # (request-2's check, right above the RED lines)
         for part in (rec.frame, rec.header, rec.tag):       # (the box's bounding box is an L: check its parts)
             for b_ in (r1, r2, st_names, *calls):
                 apart(part, b_, 0.08)
@@ -847,13 +876,13 @@ class AgentSystem(VoiceScene):
             vo.wait_until("The blocked order says")
             o184 = show(self, t, TWO, 175, 183, (TWO.line(184), ERR), wrap=True, run_time=0.5)
             r184 = item_rows(o184, 2)
-            gchip = tag(f"one message for both cases ({GOV} · line 75)", S.GREY, size=CAPTION)
+            gchip = slim_tag(f"one message for both cases ({GOV} · line 75)")
             beside(gchip, t, r184[-1])
             pin(self, r184[-1], gchip, run_time=0.45)
             vo.wait_until("the stock lines below give the reason")
             o190 = show(self, t, TWO, 190, 191, run_time=0.4)
-            yb = SurroundingRectangle(VGroup(o190[0].glyphs, o190[1].glyphs), color=TURN, buff=0.06,
-                                      stroke_width=3, corner_radius=0.05)
+            yb = rows_box(o190[:2])
+            apart(yb, gchip, 0.03)
             rs = grey_tag("the reason")
             place(rs, left=yb.get_right()[0] + 0.3, cy=yb.get_center()[1])
             assert rs.get_right()[0] < t.box.get_right()[0] - 0.12
@@ -865,7 +894,7 @@ class AgentSystem(VoiceScene):
         # ========================================================== 8 · slide 36: a hybrid, inside out; the map; your turn
         lr36 = lref("36, 22")
         sp = Spectrum(width=12.2)
-        sp.move_to([0, 0.05, 0])
+        sp.move_to([0, -0.3, 0])
         PIC_H = 1.25
         pics = {0: rule_graph(), 1: act3_rail(2.0), 2: act6_graph(), 3: agent_graph()}
         for i, pic in pics.items():
