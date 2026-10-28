@@ -74,7 +74,8 @@ Beats (script.md "## S14", one voiceover block each):
     (wrap) with the caption "copy colab.sqlite from your Colab run into outputs/ first". TRACKER Eval2
     5 · extra: the act 2 evaluation again (extra) -> container/88 line 2 RED (wrap), caption "labels
     are immutable · choose a new one" (or "· use a new one" when that does not fit beside the
-    row: it does not, at 20 pt). On "Pause and run" the terminal leaves and the static GREY
+    row: it does not, at 20 pt). On "evaluation steps 1 and 2" (the error stays readable through
+    "Pause and run") the terminal leaves and the static GREY
     "your turn" card arrives (the six commands of steps 1 and 2, long ones folded before an option
     with " \\" and a 4-space indent; GREEN "offline · free" last). Hold 2 s, then an empty frame.
 """
@@ -785,7 +786,7 @@ class TraceEvidence(VoiceScene):
             pin_tag(self, t, o78[-1], cap9, run_time=0.4)
             vo.wait_until("Labels are immutable")
             self.play(caption_extra(tr, True), run_time=0.4)
-            c9b = type_cmd(self, t, EVAL_CMD, 1.3)
+            c9b = type_cmd(self, t, EVAL_CMD, 1.1)
             pin_tag(self, t, c9b, extra_tag(), run_time=0.3)
             vo.wait_until("and the batch stops")
             o88 = show(self, t, AGAIN, (AGAIN.line(2), ERR), wrap=True, run_time=0.4)
@@ -797,7 +798,8 @@ class TraceEvidence(VoiceScene):
             else:
                 raise ValueError("the immutable-label caption does not fit beside its row")
             pin(self, o88[-1], cap9b, run_time=0.4)
-            vo.wait_until("Pause and run")
+            # (the error and its caption stay readable into "Pause and run"; the card comes on the steps)
+            vo.wait_until("evaluation steps 1 and 2")
             self.play(FadeOut(t), FadeOut(ft), caption_extra(tr, False), run_time=0.5)
             self.play(FadeIn(tc, scale=0.97), run_time=0.5)
         self.wait(2)                                    # ▶ beat: hold the frame
