@@ -39,8 +39,11 @@ Claude Code cloud sessions (Claude) produced it:
   inputs 18:14–18:50 UTC); the clean cut and its subtitles at 18:53, the zh-en copy, chapters and
   transcript at 19:13, the parts at 19:14–19:15 UTC; committed in `6311d49` (19:17 UTC). The other six
   stitch inputs are the 2026-10-21 renders. The tracked files in `output/` are identical to `6311d49`.
-- **Re-check of the re-stitched cut** (2026-10-27): three agent checks, measured, ASR and the changed
-  scenes, with their evidence in `build/recheck/`; and, for this update, the two review-bot threads
+- **Re-check of the re-stitched cut** (2026-10-24 and 2026-10-27): three agent checks, measured, ASR
+  and the changed scenes, with their evidence in `build/recheck/`. The measured and ASR evidence is
+  dated 2026-10-24 (19:18–19:45 UTC), as is a first set of changed-scene frames (`build/recheck/changed/`,
+  19:2x–19:4x UTC); the changed-scene frames this record cites (`build/recheck/finalcut/`) are dated
+  2026-10-27 (16:38–16:55 UTC). For the 2026-10-27 update, the two review-bot threads
   (`build/recheck/bots/`) and the subtitle text against the previous cut
   (`build/recheck/text_diff_vs_prev.json`).
 - **This record:** first complete version 2026-10-23, written before fix round 1 ran, from the five
@@ -51,7 +54,13 @@ Claude Code cloud sessions (Claude) produced it:
   "Fixed" or "Accepted" with the re-check's times and evidence, the measured numbers replaced from
   `build/recheck/measured.json`, the coordinator's decisions on items 25–29 recorded, the review-bot
   threads checked, and every time from S06's reworded sentence on converted to the new cut. `README.md`'s
-  durations and chapter blocks were updated to match in the same update.
+  durations and chapter blocks were updated to match in the same update. **Verified 2026-10-28** by a
+  separate agent (machine checks only, evidence in `build/recheck/verify3/`): it re-probed the four
+  MP4s, re-measured loudness and true peak on all four, decoded the clean cut and the zh-en copy in
+  full, recounted cues, chapters, SAY words and anchors, re-aligned the subtitle tracks with `980d756`'s,
+  re-read the ASR evidence, re-extracted frames at every fix of items 1–18 and the two bot threads, and
+  corrected the dates of the re-check, the ASR re-run's list of mismatches, the audio-identity
+  boundary (whole SAY blocks were re-voiced) and the length comparison; it added item 31.
 
 This record is based on the five reports of the previous cut and the evidence folders beside them, the
 QA, finishing and fix-round outputs named above, the re-check's three results and `build/recheck/`,
@@ -69,8 +78,10 @@ and unclaimed reviews are kept in separate sections.
   SAY[1]'s reworded sentence); +1.300 s from *prev* 18:45.2 to 19:47.7 (S10 between its two reworded
   sentences); +2.133 s from *prev* 19:54.0 to 28:44.4 (the rest of S10, S11–S14, S15 before its reworded
   sentence); +2.716 s from *prev* 28:47.1 (the rest of S15, S16). The four reworded sentences themselves
-  are new audio (items 3–6). Times carried over from the review of the previous cut and not re-measured
-  were converted this way; where a time is a cue start or end it was read from the new `.srt`.
+  are new audio (items 3–6); the SAY blocks holding them were re-voiced whole (S06 SAY[4] from 10:18.0,
+  S10 SAY[1] from 18:33.1 and SAY[7] from 19:46.0, S15 SAY[2] from 28:37.1), but their cue times before
+  the reworded words follow the rule above. Times carried over from the review of the previous cut and
+  not re-measured were converted this way; where a time is a cue start or end it was read from the new `.srt`.
 - **Draft times** are up to about 9.5 s earlier than the same moment in the previous final cut (fixes
   after the draft moved the scene starts by 0 s in S01, +4.1 to +5.7 s in S02–S08, +6.3/+6.4 s in S09–S10
   and +8.6 to +9.5 s in S11–S16; `build/qa/scenes.json` against the previous `measured.json`).
@@ -267,16 +278,20 @@ and unclaimed reviews are kept in separate sections.
    word base.en seemed to drop or garble, among them the *prev* 11:43–11:49 passage and "Agent
    Development Kit runs" (*prev* 15:28.2); it left six low-severity weak spots (items 3–5, accepted item
    23). Since that run the narration of three scenes changed: **S06** (SAY[4]), **S10** (SAY[1] and
-   SAY[7]) and **S15** (SAY[2]). The re-check of 2026-10-27 (`recheck/asr-summary.json`) ran the round
+   SAY[7]) and **S15** (SAY[2]). The re-check of 2026-10-24 (`recheck/asr-summary.json`) ran the round
    trip again on this cut: base.en over the whole clean cut (491 cues, 213 with some difference, 4,363
    words recognised against 4,225 subtitle words; 131 differences after removing number, identifier and
    cue-boundary noise, `recheck/triage-base.txt`), and large-v3-turbo on the four reworded sentences with
    0.3 s and 2 s of context, which hears each as written (items 3–6). The re-check found the base.en
    turnover in unchanged cues to be recogniser noise: S01's audio is sample-identical to the previous
-   cut's and base.en still changed there, and the 11 newly differing cues it re-ran with large-v3-turbo
-   all match apart from the homophone "won"/"one" (cue 459). The rest of the narration is the previous
-   cut's audio: identical within a 5 ms shift up to S06's reworded sentence, the same narration
-   re-encoded elsewhere (correlation 0.984–0.994). The zh-en copy carries the same audio (audio stream MD5
+   cut's and base.en still changed there, and of the 11 newly differing cues it re-ran with
+   large-v3-turbo (`recheck/asr-large-newdiffs.json`) nine match, cue 459 differs by the homophone
+   "won"/"one" and cue 63 is heard "retrieve documents" for "retrieved documents" (a -d elision in S03
+   audio that is the same as the previous cut's; item 31). The rest of the narration is the previous
+   cut's audio: identical within a 5 ms shift up to S06's SAY[4] (10:18.0), and the same narration
+   re-encoded in the other stretches the re-check compared (correlation 0.984–0.994;
+   `recheck/asr-summary.json`, "audio_identity", which does not list S10 SAY[0] or SAY[2]–[6]). The
+   zh-en copy carries the same audio (audio stream MD5
    `94d30dd3f0fec89d531d9a84797ccf16` in both).
 
 ## Whole-video QA (480p draft, 2026-10-20/21; times are draft times)
@@ -425,10 +440,11 @@ fixed or decided items 1–18. Five agent checks, each from its own report:
   check lists 04:46.5–04:51.5 among the timed stretches, because a line draws under the card for 4 s
   (`s03_envelope.py`, `Create(uline)`, 4.0 s). Gate 3 counts five ponders.
 
-## Re-check of the re-stitched cut (2026-10-27)
+## Re-check of the re-stitched cut (2026-10-24 and 2026-10-27)
 
-Three agent checks of `6311d49`'s outputs, each read in full for this update; nothing tracked was
-modified and nothing re-rendered:
+Three agent checks of `6311d49`'s outputs, each read in full for the 2026-10-27 update (measured and
+ASR evidence dated 2026-10-24, the cited changed-scene frames 2026-10-27; see the header); nothing
+tracked was modified and nothing re-rendered:
 - **Measured** (`recheck/measured.json`; its key `changed_vs_final_review` lists 137 changed figures):
   every measured check passes; all four MP4s decode in full; every true peak is at or below −1.5 dBTP
   (gate 6, "Verified"). Observations: S10 grew by 1.850 s (not the ~2.4 s first estimated), S06 by
@@ -456,7 +472,8 @@ modified and nothing re-rendered:
     reproducing.** The two sheet frames are red as the envelope starts to move (04:57.6, stroke pixels
     about RGB 234/106/93, the RED `#FC6255`; `recheck/bots/clean_297.6.png`) and after the move they are
     GREY and PINK (04:59.5, about 140/140/148 and 224/146/173, `#8A8F98` and `#F28FB5`;
-    `recheck/bots/clean_299.5.png`), so the red does not come back.
+    `recheck/bots/clean_299.5.png`), so the red does not come back. (The 2026-10-28 verification sampled
+    every 0.1 s across the move: no red stroke pixel from 04:57.8 to 04:59.7, `recheck/verify3/s03_red.json`.)
   - The third thread is on L05 (`videos/ac215-l05-rag/scenes/s16_recap.py`). No bot thread is newer
     than 2026-10-20.
 
@@ -465,7 +482,8 @@ modified and nothing re-rendered:
 Fix round 1's plan (`/root/ac215-backup/args/l06-fix1.json`) is the coordinator's; its IDs are in
 brackets. Items 1–18 were open for that round: 17 are fixed and one optional item (10) was left as it
 is. Items 19–24 are the plan's `accepted` list. For items 25–29 the coordinator decided after the
-review: 25, 26 and 29 accepted as recorded, 27 and 28 fixed. Item 30 is new in the re-check.
+review: 25, 26 and 29 accepted as recorded, 27 and 28 fixed. Item 30 is new in the re-check, item 31 in
+its 2026-10-28 verification.
 
 ### Fixed in fix round 1 (`980d756`; re-rendered and re-stitched in `6311d49`)
 
@@ -680,7 +698,7 @@ the plan's reason; items 25, 26 and 29 were accepted as recorded after the revie
     (`docs/PUBLISHING.md`). The coordinator decided that this record needs no `QA_FOLLOWUPS.md`: the
     review-bot threads are recorded under "Re-check" (both L06 threads checked on this cut).
 
-### Open (new in the re-check, no decision recorded)
+### New since fix round 1 (accepted by the coordinator, 2026-10-28)
 
 30. **Two subtitle timing side effects of fix round 1 (information):** (a) S10, `.srt` #295 (18:44.004):
     "uv run" is heard about 0.39 s before the line "uv run adk telemetry disable." appears, so it plays
@@ -689,8 +707,25 @@ the plan's reason; items 25, 26 and 29 were accepted as recorded after the revie
     373, 414, 474); the ASR re-check calls it not a gate issue, and the command chip is on screen from
     18:41.33 (`recheck/joins.json`). (b) S05, zh-en #141 shows "We had no key," about 2.8 s before it is
     spoken (item 2).
+31. **Found by the 2026-10-28 verification, both older than fix round 1 (information):** (a) S04,
+    05:33.3–05:33.7: as the six-box column becomes llm-rag's two menu cards (`mc.to_menu()`, 05:33.05–05:34.05,
+    unchanged by fix round 1 except for the tag's exit), the two cards fade in at the places of
+    "pre-retrieval" and "post-retrieval" while those labels are still visible, so for about 0.3 s
+    `get_book_by_search_content(…)` and "post-retrieval" are both legible on top of each other, and
+    "retrieval decision" slides over "document grading" (05:33.5–05:33.7). It is L05's double-exposed-swap
+    pattern, in a scene-specific morph (not one of `common.py`'s swaps); the previous visual check's 3 s
+    sampling would miss it, and the changed-scene check, which looked at the tag there, did not report
+    it. Evidence: `recheck/verify3/frames/s04_morph_zoom.png`
+    (05:33.10–05:34.30, every 0.1 s), `s04_tag_full.png`. (b) ASR: large-v3-turbo hears cue 63 (04:04.5)
+    as "retrieve documents" for "retrieved documents", a -d elision before "documents" in audio that is
+    the same as the previous cut's (`recheck/asr-large-newdiffs.json`); the subtitle carries the word.
 
-## Verified (re-stitched cut, `6311d49`; re-check 2026-10-27)
+Decision (coordinator, 2026-10-28): items 30 and 31 are accepted for this release. 30 is the subtitle
+splitter's interpolated timing inside a sentence, as at eight other joins in the cut. 31(a) lasts about
+0.3 s, is older than fix round 1, and fixing it means re-rendering S04, re-stitching and re-checking the cut;
+it goes on the list for a later round if Conny or a review bot asks. 31(b) is carried by the subtitle.
+
+## Verified (re-stitched cut, `6311d49`; re-check 2026-10-24/27, verified 2026-10-28)
 
 - **Files** (`recheck/measured.json`): all four MP4s decode in full with no error (`ffmpeg -v error`, exit
   0; `recheck/decode-*.log`). 1920×1080 at 60 fps, H.264 High, yuv420p; AAC-LC 48 kHz stereo; `moov`
@@ -706,8 +741,11 @@ the plan's reason; items 25, 26 and 29 were accepted as recorded after the revie
   The video streams of the two parts sum to 1874.783 s, exactly the clean cut's video stream and the
   sum of the 16 scene stitch inputs; their frames sum to 112,487. The ten re-rendered stitch inputs date
   from 2026-10-24 and each matches its sidecar's duration. Against the previous cut: S06 104.517 →
-  104.800 s, S10 123.117 → 124.967 s, S15 81.383 → 81.967 s, the other 13 scenes unchanged; the cut is
-  2.716 s longer, S07–S10 start 0.283 s later, S11–S15 2.133 s and S16 2.717 s.
+  104.800 s, S10 123.117 → 124.967 s, S15 81.383 → 81.967 s, the other 13 scenes unchanged; the scenes
+  (and the video stream) are 2.716 s longer, S07–S10 start 0.283 s later, S11–S15 2.133 s and S16
+  2.717 s. The file is 2.801 s longer (1872.088 → 1874.889 s) because its audio stream grew by 2.807 s
+  (1872.082 → 1874.889 s) and now ends 0.085 s after the last video frame (the video stream starts at
+  0.021 s).
 - **Loudness** (EBU R128, true peak): −16.1 / −16.1 / −16.0 / −16.1 LUFS, LRA 2.4 / 2.4 / 2.3 / 2.5 LU,
   true peak −2.7 / −2.7 / −2.7 / −2.8 dBTP (clean, zh-en, part 1, part 2; `recheck/ebur128-*.log`). The
   zh-en audio is a straight copy of the clean cut's (identical audio stream MD5,
@@ -750,7 +788,8 @@ the plan's reason; items 25, 26 and 29 were accepted as recorded after the revie
 - **Defect patterns from L05:** in the previous cut no fill hid its own label in the dense frames checked
   at full size (the your-turn cards, the PENDING stamps at *prev* 26:51 and 27:03, the sticky note at
   *prev* 29:12) and no tag swap was double-exposed; the copy flights and overlaps it left (items 9 and
-  15–18) are fixed in this cut.
+  15–18) are fixed in this cut. The 2026-10-28 verification found one older cross-fade that double-exposes
+  two labels for about 0.3 s in S04 (item 31).
 - **QA's must fixes:** on the previous cut's frames, the S06 card's cost line (*prev* 11:18.5) and the
   clear `copy()` row (*prev* 27:03) (QA section); fix round 1 changed S06 only in item 5's sentence and
   S14 only by item 13's pulse.
