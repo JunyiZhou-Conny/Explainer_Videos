@@ -1,0 +1,29 @@
+$ uv run python /checks/b8_mcp.py mcp_tools/agent.py; echo '=== with read_text_file added to tool_filter (a copy of agent.py with line 28 edited; same allowed folder)'; sed "s/tool_filter=\['read_file', 'list_directory', 'search_files'\]/tool_filter=['read_file', 'read_text_file', 'list_directory', 'search_files']/" mcp_tools/agent.py > /tmp/agent_b8.py && diff mcp_tools/agent.py /tmp/agent_b8.py; MCP_ALLOWED_PATH=$PWD/mcp_tools uv run python /checks/b8_mcp.py /tmp/agent_b8.py
+Secure MCP Filesystem Server running on stdio
+Client does not support MCP Roots, using allowed directories set from server args: [ '/home/student/AC215/llm-agent-google-adk/mcp_tools' ]
+tool_filter: ['read_file', 'list_directory', 'search_files']
+tools the agent sees: ['list_directory', 'read_file', 'search_files']
+server's description of read_file: 'Read the complete contents of a file as text. DEPRECATED: Use read_text_file instead.'
+server's description of read_text_file: 'Read the complete contents of a file from the file system as text. Handles various text encodings and provides detailed error messages if the file cannot be read. Use this tool when you need to examine the contents of a single fil'
+server's description of search_files: "Recursively search for files and directories matching a pattern. The patterns should be glob-style patterns that match paths relative to the working directory. Use pattern like '*.ext' to match files in current directory, and '**/"
+search_files 'agent' -> No matches found
+search_files '**/*agent*' -> /home/student/AC215/llm-agent-google-adk/mcp_tools/__pycache__/agent.cpython-313.pyc
+/home/student/AC215/llm-agent-google-adk/mcp_tools/agent.py
+read_file ../.env -> is_error True : Access denied - path outside allowed directories: /home/student/AC215/llm-agent-google-adk/.env not in /home/student/AC215/llm-agent-google-adk/mcp_tools
+=== with read_text_file added to tool_filter (a copy of agent.py with line 28 edited; same allowed folder)
+28c28
+<     tool_filter=['read_file', 'list_directory', 'search_files']
+---
+>     tool_filter=['read_file', 'read_text_file', 'list_directory', 'search_files']
+Secure MCP Filesystem Server running on stdio
+Client does not support MCP Roots, using allowed directories set from server args: [ '/home/student/AC215/llm-agent-google-adk/mcp_tools' ]
+tool_filter: ['read_file', 'read_text_file', 'list_directory', 'search_files']
+tools the agent sees: ['list_directory', 'read_file', 'read_text_file', 'search_files']
+server's description of read_file: 'Read the complete contents of a file as text. DEPRECATED: Use read_text_file instead.'
+server's description of read_text_file: 'Read the complete contents of a file from the file system as text. Handles various text encodings and provides detailed error messages if the file cannot be read. Use this tool when you need to examine the contents of a single fil'
+server's description of search_files: "Recursively search for files and directories matching a pattern. The patterns should be glob-style patterns that match paths relative to the working directory. Use pattern like '*.ext' to match files in current directory, and '**/"
+search_files 'agent' -> No matches found
+search_files '**/*agent*' -> /home/student/AC215/llm-agent-google-adk/mcp_tools/__pycache__/agent.cpython-313.pyc
+/home/student/AC215/llm-agent-google-adk/mcp_tools/agent.py
+read_file ../.env -> is_error True : Access denied - path outside allowed directories: /home/student/AC215/llm-agent-google-adk/.env not in /home/student/AC215/llm-agent-google-adk/mcp_tools
+[exit 0]

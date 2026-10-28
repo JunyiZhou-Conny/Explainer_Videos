@@ -1,0 +1,17 @@
+$ mv 1-baseline baseline; mv 3-mcp-tools mcp_tools; mv 5-custom-agent custom_agent; ls; cat .python-version; grep -v '^#' .env | grep .
+2-litellm
+4-production-ready
+6-rag
+QUICKSTART.md
+README.md
+baseline
+custom_agent
+demo.gif
+mcp_tools
+pyproject.toml
+3.13
+GOOGLE_API_KEY=your_google_ai_api_key_here
+AWS_OPENAI_API_KEY=your_aws_openai_api_key_here
+GEMINI_MODEL=gemini-3.1-flash-lite
+ENVIRONMENT=development
+[exit 0]

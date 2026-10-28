@@ -60,3 +60,17 @@ parts:
   - id: part2
     title: "AC215 · L6, part 2: frameworks own the loop — ADK, MCP, many agents and the harness"
     scenes: [s09_adk_setup, s10_adk_web, s11_state, s12_mcp, s13_many, s14_approval, s15_receipt, s16_recap]
+publish:
+  title_zh: "AC215 第6讲跟练 · LLM 智能体 I：手写函数调用、ADK、MCP、多智能体与 harness"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 6 讲教程的逐条命令跟练：dlops-io/llm-rag 的 Agents 部分、dlops-io/llm-agent-google-adk，以及三本 Colab 笔记本（Cheese Quiz、Travel Planner、Cheese Newsletter · Harness）。
+    第一部分手写函数调用：给 Gemini 两个函数声明，看模型写出调用、你的 Python 去 ChromaDB 执行、再把结果送回模型作答，从两次调用走到一个循环。
+    第二部分把循环交给框架：用 Google ADK 跑起 adk web，看 Runner、session 和 state 怎样共用一块白板，接上不是你写的 MCP 工具，让多个智能体分工，最后用 harness 让人来批准、用回执判定成功。
+    需要 API 密钥的步骤用课程团队保存的运行结果展示，并在画面上标明。边看边暂停，在自己的电脑上跑每一条命令。英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/llm-rag 、https://github.com/dlops-io/llm-agent-google-adk
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L06-agents-1.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, 智能体, Agent, 函数调用, Gemini, Google ADK, MCP, 哈佛, 教程跟练]
+  tid: 231

@@ -1,0 +1,15 @@
+$ uv pip list 2>/dev/null | grep -E '^google-cloud-aiplatform '; uv run python -W ignore -c 'from vertexai.preview import rag; import inspect; print("delete_corpus", inspect.signature(rag.delete_corpus)); print("list_corpora", inspect.signature(rag.list_corpora))'; cd 6-rag/1-vertex-rag-engine && printf '6\n' | uv run --project ../.. python setup_corpus.py
+google-cloud-aiplatform                  2.5.0
+delete_corpus (name: str) -> None
+list_corpora (page_size: Optional[int] = None, page_token: Optional[str] = None) -> google.cloud.aiplatform_v1beta1.services.vertex_rag_data_service.pagers.ListRagCorporaPager
+/home/student/AC215/llm-agent-google-adk/6-rag/1-vertex-rag-engine/setup_corpus.py:24: UserWarning: The `vertexai.preview.rag` module is deprecated and will be removed in a future version. Please migrate to the `agentplatform` client. For example:
+
+    import agentplatform
+
+    client = agentplatform.Client(project="your-project", location="us-central1")
+    client.rag.create_corpus(...)
+
+  from vertexai.preview import rag
+Error: GOOGLE_CLOUD_PROJECT environment variable not set.
+Please set it in your .env file.
+[exit 1]

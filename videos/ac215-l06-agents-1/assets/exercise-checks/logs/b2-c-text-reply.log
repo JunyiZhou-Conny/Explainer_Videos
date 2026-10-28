@@ -1,0 +1,33 @@
+$ cd /checks && python b2_text_reply.py
+agent()
+
+
+
+
+user_prompt_content:  parts=[Part(
+  text='Hi! Who are you?'
+)] role='user'
+[stand-in model] call 1: contents roles ['user'], parts [['text']], tools yes, tool_config mode None
+
+
+
+
+LLM Response: sdk_http_response=None candidates=[Candidate(
+  content=Content(
+    parts=[
+      Part(
+        text='(stand-in reply: plain text, no function call)'
+      ),
+    ],
+    role='model'
+  ),
+  finish_reason=<FinishReason.STOP: 'STOP'>
+)] create_time=None model_version=None prompt_feedback=None response_id=None usage_metadata=None automatic_function_calling_history=None parsed=None
+
+
+
+
+Function calls: []
+Function calls did not result in any responses...
+model calls made: 1
+[exit 0]

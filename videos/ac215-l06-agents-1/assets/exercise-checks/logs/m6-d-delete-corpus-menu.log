@@ -1,0 +1,60 @@
+$ cd 6-rag/1-vertex-rag-engine && printf '5\nprojects/your-project-id/locations/us-central1/ragCorpora/1234\ny\n5\nprojects/your-project-id/locations/us-central1/ragCorpora/1234\nyes\n' | GOOGLE_CLOUD_PROJECT=your-project-id uv run --project ../.. python -W ignore setup_corpus.py
+================================================================================
+Vertex AI RAG Engine - Corpus Setup
+================================================================================
+
+
+Options:
+1. Create new corpus
+2. List existing corpora
+3. Import files from Google Cloud Storage
+4. Import files from Google Drive
+5. Delete corpus
+6. Exit
+
+Select option (1-6): Enter corpus name to delete: Deleting corpus: projects/your-project-id/locations/us-central1/ragCorpora/1234
+Are you sure? This cannot be undone. (yes/no): Cancelled.
+
+Options:
+1. Create new corpus
+2. List existing corpora
+3. Import files from Google Cloud Storage
+4. Import files from Google Drive
+5. Delete corpus
+6. Exit
+
+Select option (1-6): Enter corpus name to delete: Deleting corpus: projects/your-project-id/locations/us-central1/ragCorpora/1234
+Are you sure? This cannot be undone. (yes/no): Traceback (most recent call last):
+  File "/home/student/AC215/llm-agent-google-adk/6-rag/1-vertex-rag-engine/setup_corpus.py", line 205, in <module>
+    main()
+    ~~~~^^
+  File "/home/student/AC215/llm-agent-google-adk/6-rag/1-vertex-rag-engine/setup_corpus.py", line 194, in main
+    delete_corpus(corpus_name)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/6-rag/1-vertex-rag-engine/setup_corpus.py", line 143, in delete_corpus
+    rag.delete_corpus(name=corpus_name)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/vertexai/preview/rag/rag_data.py", line 393, in delete_corpus
+    corpus_name = _gapic_utils.get_corpus_name(name)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/vertexai/preview/rag/utils/_gapic_utils.py", line 961, in get_corpus_name
+    client = create_rag_data_service_client()
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/vertexai/preview/rag/utils/_gapic_utils.py", line 99, in create_rag_data_service_client
+    return initializer.global_config.create_client(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        client_class=VertexRagDataClientWithOverride,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ).select_version("v1beta1")
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/cloud/aiplatform/initializer.py", line 601, in create_client
+    "credentials": credentials or self.credentials,
+                                  ^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/cloud/aiplatform/initializer.py", line 399, in credentials
+    self._set_project_as_env_var_or_google_auth_default()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/cloud/aiplatform/initializer.py", line 119, in _set_project_as_env_var_or_google_auth_default
+    credentials, _ = google.auth.default(scopes=constants.DEFAULT_AUTHED_SCOPES)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/auth/_default.py", line 750, in default
+    raise exceptions.DefaultCredentialsError(_CLOUD_SDK_MISSING_CREDENTIALS)
+google.auth.exceptions.DefaultCredentialsError: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+[exit 1]

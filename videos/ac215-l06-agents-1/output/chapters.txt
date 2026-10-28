@@ -1,0 +1,16 @@
+00:00 Who searched your database?
+01:55 Who holds the steering wheel?
+03:49 Everything the model knows is in the envelope
+05:13 A menu of two tools
+07:32 Back in the container: the agent needs an index
+09:36 Call 1: the model writes the call
+11:21 Call 2: your code ran it, the model answers
+13:29 From two calls to a loop
+15:24 ADK: clone, configure, and a sync that fails
+18:19 adk web and the folder names
+20:24 Runner, session, state: the shared whiteboard
+22:13 Tools you didn't write: MCP
+24:33 Many agents: who plans the order?
+26:17 The harness: only a human says yes
+28:14 The harness: success is a receipt
+29:36 Tear down, recap, and what's next

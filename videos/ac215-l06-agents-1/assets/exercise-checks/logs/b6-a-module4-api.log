@@ -1,0 +1,22 @@
+$ bash /checks/b6_module4.sh
+$ curl -s http://localhost:8080/health
+{"status":"healthy"}
+$ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080/docs
+200
+$ curl -s -X POST http://localhost:8080/chat -H "Content-Type: application/json" -d '{"user_message": "Hello!"}' -w "\n%{http_code}\n"
+Internal Server Error
+500
+$ curl -s -X POST http://localhost:8080/chat -H "Content-Type: application/json" -d '{"message": "Hello!"}' -w "\n%{http_code}\n"
+{"detail":[{"type":"missing","loc":["body","user_message"],"msg":"Field required","input":{"message":"Hello!"}}]}
+422
+--- server log (first lines, and the /chat error) ---
+INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host generativelanguage.googleapis.com:443 ssl:<ssl.SSLContext object at 0x7f20deb2b110> [Temporary failure in name resolution]
+INFO:     127.0.0.1:39674 - "POST /chat HTTP/1.1" 500 Internal Server Error
+  File "/home/student/AC215/llm-agent-google-adk/4-production-ready/app/main.py", line 31, in chat
+    response_text = await runner.run(request.user_message)
+  File "/home/student/AC215/llm-agent-google-adk/4-production-ready/app/runner.py", line 46, in run
+    response_text = event.content.parts[0].text
+AttributeError: 'NoneType' object has no attribute 'parts'
+INFO:     127.0.0.1:41200 - "POST /chat HTTP/1.1" 422 Unprocessable Content
+[exit 0]

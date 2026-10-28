@@ -1,0 +1,54 @@
+$ uv run python /checks/b5.patch.py custom_agent/conditional_agent.py && ls custom_agent && diff -u custom_agent/conditional_agent.py custom_agent/conditional_agent_lower.py; diff -u custom_agent/conditional_agent.py custom_agent/conditional_agent_schema.py
+README.md
+agent.py
+conditional_agent.py
+conditional_agent_lower.py
+conditional_agent_schema.py
+pyproject.toml
+simple_custom_agent.py
+--- custom_agent/conditional_agent.py	2026-10-19 10:30:33.815221745 +0000
++++ custom_agent/conditional_agent_lower.py	2026-10-19 10:33:23.838174429 +0000
+@@ -82,7 +82,7 @@
+             yield event
+ 
+         # Get classification result
+-        complexity = ctx.session.state.get("query_complexity", "simple")
++        complexity = ctx.session.state.get("query_complexity", "simple").strip().lower()
+         logger.info(f"  Classification: {complexity}")
+ 
+         # Step 2: Route based on complexity
+--- custom_agent/conditional_agent.py	2026-10-19 10:30:33.815221745 +0000
++++ custom_agent/conditional_agent_schema.py	2026-10-19 10:33:23.838402698 +0000
+@@ -16,6 +16,12 @@
+ from google.adk.events import Event
+ from google.adk.runners import InMemoryRunner
+ from google.genai import types
++from typing import Literal
++from pydantic import BaseModel
++
++
++class Classification(BaseModel):
++    complexity: Literal["simple", "complex", "ambiguous"]
+ 
+ # Load environment variables
+ load_dotenv()
+@@ -82,7 +88,7 @@
+             yield event
+ 
+         # Get classification result
+-        complexity = ctx.session.state.get("query_complexity", "simple")
++        complexity = ctx.session.state.get("query_complexity", {}).get("complexity", "simple")
+         logger.info(f"  Classification: {complexity}")
+ 
+         # Step 2: Route based on complexity
+@@ -168,7 +174,8 @@
+ Save to state key 'query_complexity'.
+ """,
+         description="Classifies query complexity",
+-        output_key="query_complexity"
++        output_key="query_complexity",
++        output_schema=Classification,
+     )
+ 
+     simple_handler = LlmAgent(
+[exit 1]

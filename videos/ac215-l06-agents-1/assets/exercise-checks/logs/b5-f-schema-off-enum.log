@@ -1,0 +1,115 @@
+$ uv run python -W ignore /checks/b5_router.py conditional_agent_schema '{"What is Python?": "{\"complexity\": \"Simple\"}", "Compare and contrast object-oriented vs functional programming paradigms": "{\"complexity\": \"complex\"}", "Tell me about that thing": "{\"complexity\": \"ambiguous\"}"}'
+======================================================================
+Conditional Workflow Agent Demo
+======================================================================
+
+1. Creating workflow agents...
+   ✓ All agents created
+
+2. Creating Conditional Agent...
+   ✓ ConditionalRouter created
+
+3. Setting up execution environment...
+   ✓ Runner ready
+
+4. Testing different query types...
+
+======================================================================
+Query: What is Python?
+======================================================================
+INFO:custom_agent.conditional_agent_schema:[ConditionalRouter] Starting conditional workflow
+INFO:custom_agent.conditional_agent_schema:  Step 1: Classifying query complexity...
+  [stand-in classifier] for 'What is Python?' answers '{"complexity": "Simple"}'
+WARNING:google_adk.google.adk.telemetry._metrics:Skipping missing token usage metadata for agent QueryClassifier and model stand-in
+Traceback (most recent call last):
+  File "/checks/b5_router.py", line 19, in <module>
+    asyncio.run(mod.main())
+    ~~~~~~~~~~~^^^^^^^^^^^^
+  File "/home/student/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py", line 196, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/home/student/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py", line 119, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/student/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py", line 726, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/student/AC215/llm-agent-google-adk/custom_agent/conditional_agent_schema.py", line 257, in main
+    await test_query(conditional_agent, runner, query, session_service)
+  File "/home/student/AC215/llm-agent-google-adk/custom_agent/conditional_agent_schema.py", line 139, in test_query
+    async for event in runner.run_async(
+    ...<10 lines>...
+            final_response = event.content.parts[0].text
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/runners.py", line 1391, in run_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/telemetry/_instrumentation.py", line 164, in stream_in_scope
+    item = await _drive(owned.__anext__())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/telemetry/_instrumentation.py", line 152, in _drive
+    return await step
+           ^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/runners.py", line 1359, in _run_with_trace
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/runners.py", line 1593, in _exec_with_plugin
+    async for event in agen:
+    ...<5 lines>...
+      yield output_event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/runners.py", line 1346, in execute
+    async for event in agen:
+    ...<2 lines>...
+        break
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 359, in run_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 460, in _run_with_lifecycle
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/telemetry/_instrumentation.py", line 164, in stream_in_scope
+    item = await _drive(owned.__anext__())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/telemetry/_instrumentation.py", line 152, in _drive
+    return await step
+           ^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 423, in _run
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/custom_agent/conditional_agent_schema.py", line 87, in _run_async_impl
+    async for event in self.classifier.run_async(ctx):
+        yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 359, in run_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 460, in _run_with_lifecycle
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/telemetry/_instrumentation.py", line 164, in stream_in_scope
+    item = await _drive(owned.__anext__())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/telemetry/_instrumentation.py", line 152, in _drive
+    return await step
+           ^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 423, in _run
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/llm_agent.py", line 639, in _run_async_impl
+    self.__maybe_save_output_to_state(event)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/llm_agent.py", line 1129, in __maybe_save_output_to_state
+    result = validate_schema(self.output_schema, result)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/utils/_schema_utils.py", line 252, in validate_schema
+    return schema.model_validate_json(json_text).model_dump(exclude_none=True)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/pydantic/main.py", line 845, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, extra=extra, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Classification
+complexity
+  Input should be 'simple', 'complex' or 'ambiguous' [type=literal_error, input_value='Simple', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.14/v/literal_error
+[exit 1]
