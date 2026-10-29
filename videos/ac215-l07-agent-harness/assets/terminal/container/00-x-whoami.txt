@@ -1,0 +1,14 @@
+$ whoami; id; pwd; which python; python --version; uv --version; echo "VIRTUAL_ENV=$VIRTUAL_ENV"; echo "GCP_PROJECT=$GCP_PROJECT"; echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS"; ls -la /secrets
+app
+uid=1000(app) gid=1000(app) groups=1000(app)
+/app
+/.venv/bin/python
+Python 3.13.16
+uv 0.13.4 (x86_64-unknown-linux-gnu)
+VIRTUAL_ENV=/.venv
+GCP_PROJECT=ac215-project
+GOOGLE_APPLICATION_CREDENTIALS=/secrets/ml-workflow.json
+total 0
+drwxr-xr-x 2 app  app  40 Oct 20 20:17 .
+drwxr-xr-x 1 root root 80 Oct 20 20:18 ..
+[exit 0]

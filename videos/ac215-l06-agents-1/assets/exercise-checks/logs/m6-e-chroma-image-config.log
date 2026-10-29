@@ -1,0 +1,3 @@
+$ docker image inspect chromadb/chroma@sha256:1e0b73a1… --format "Volumes={{json .Config.Volumes}} WorkingDir={{.Config.WorkingDir}} Cmd={{json .Config.Cmd}} Entrypoint={{json .Config.Entrypoint}}"
+Volumes=null WorkingDir= Cmd=["run","/config.yaml"] Entrypoint=["dumb-init","--","chroma"]
+[exit 0]

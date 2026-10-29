@@ -1,0 +1,4 @@
+$ python cli.py --view-report context-fixture-1 --html-output outputs/my-report.html
+Saved evaluation report: /app/outputs/my-report.html
+Open this HTML file in your host browser. No model calls were made.
+[exit 0]

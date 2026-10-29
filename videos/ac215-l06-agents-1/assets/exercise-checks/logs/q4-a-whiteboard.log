@@ -1,0 +1,213 @@
+$ uv run python -W ignore /checks/q4_whiteboard.py
+ItineraryValidator: model='gemini-3.1-flash-lite' -> stand-in; output_key='itinerary_validation'; instruction='You validate trip requests. Extract traveler count, origin, '…
+TravelPlanner: model='gemini-3.1-flash-lite' -> stand-in; output_key='travel_plan'; instruction='Using {itinerary_validation}, design a realistic multi-day t'…
+TripSummarizer: model='gemini-3.1-flash-lite' -> stand-in; output_key='trip_summary'; instruction='Provide a concise, traveler-friendly summary based on {trave'…
+
+== session 1: one trip request through TravelPlannerPipeline
+  [model call] system instruction: 'You validate trip requests. Extract traveler count, origin, destinations, dates, budget, and constraints from the input. You are an agent. Your internal name is…'
+  [model call]   user: '2 adults, Boston to Montreal, Oct 30 - Nov 2, 1500 dollars, train preferred'
+  [event] author=ItineraryValidator final=True state_delta={"itinerary_validation": "(stand-in reply written for ItineraryValidator)"} text='(stand-in reply written for ItineraryValidator)'
+Skipping missing token usage metadata for agent ItineraryValidator and model stand-in
+  [model call] system instruction: 'Using (stand-in reply written for ItineraryValidator), design a realistic multi-day travel plan with routing, daily schedule, estimated costs, and key booking r…'
+  [model call]   user: '2 adults, Boston to Montreal, Oct 30 - Nov 2, 1500 dollars, train preferred'
+  [model call]   user: 'For context: below is a transcript of what another agent did, quoted between <<<BEGIN_QUOTED_AGENT_CONTENT>>> …'
+  [model call]   user: '[ItineraryValidator] said: <<<BEGIN_QUOTED_AGENT_CONTENT>>> (stand-in reply written for ItineraryValidator) <<…'
+  [event] author=TravelPlanner final=True state_delta={"travel_plan": "(stand-in reply written for TravelPlanner)"} text='(stand-in reply written for TravelPlanner)'
+Skipping missing token usage metadata for agent TravelPlanner and model stand-in
+  [model call] system instruction: 'Provide a concise, traveler-friendly summary based on (stand-in reply written for TravelPlanner). Include total estimated cost and a highlights list. You are an…'
+  [model call]   user: '2 adults, Boston to Montreal, Oct 30 - Nov 2, 1500 dollars, train preferred'
+  [model call]   user: 'For context: below is a transcript of what another agent did, quoted between <<<BEGIN_QUOTED_AGENT_CONTENT>>> …'
+  [model call]   user: '[ItineraryValidator] said: <<<BEGIN_QUOTED_AGENT_CONTENT>>> (stand-in reply written for ItineraryValidator) <<…'
+  [model call]   user: 'For context: below is a transcript of what another agent did, quoted between <<<BEGIN_QUOTED_AGENT_CONTENT>>> …'
+  [model call]   user: '[TravelPlanner] said: <<<BEGIN_QUOTED_AGENT_CONTENT>>> (stand-in reply written for TravelPlanner) <<<END_QUOTE…'
+  [event] author=TripSummarizer final=True state_delta={"trip_summary": "(stand-in reply written for TripSummarizer)"} text='(stand-in reply written for TripSummarizer)'
+Skipping missing token usage metadata for agent TripSummarizer and model stand-in
+state after the run: {'itinerary_validation': '(stand-in reply written for ItineraryValidator)', 'travel_plan': '(stand-in reply written for TravelPlanner)', 'trip_summary': '(stand-in reply written for TripSummarizer)'}
+events in the session: 4 ['user', 'ItineraryValidator', 'TravelPlanner', 'TripSummarizer']
+
+== session 2 (same runner, new session): state before any message
+state: {} events: 0
+
+== the planner alone, in a fresh session (nothing has written itinerary_validation)
+Node execution failed with exception
+Traceback (most recent call last):
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_node_runner.py", line 138, in run
+    await self._execute_node(ctx, node_input)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_node_runner.py", line 316, in _execute_node
+    await self._run_node_loop(ctx, node_input)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_node_runner.py", line 330, in _run_node_loop
+    async for event in agen:
+    ...<8 lines>...
+        break
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_base_node.py", line 190, in run
+    async for item in agen:
+    ...<12 lines>...
+        yield Event(output=validated)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/llm_agent.py", line 689, in _run_impl
+    async for event in agen:
+    ...<4 lines>...
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_llm_agent_wrapper.py", line 527, in run_llm_agent_as_node
+    async for event in run_iter:
+    ...<55 lines>...
+        break
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 359, in run_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 460, in _run_with_lifecycle
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/telemetry/_instrumentation.py", line 164, in stream_in_scope
+    item = await _drive(owned.__anext__())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/telemetry/_instrumentation.py", line 152, in _drive
+    return await step
+           ^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 423, in _run
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/llm_agent.py", line 638, in _run_async_impl
+    async for event in agen:
+    ...<8 lines>...
+        should_pause = True
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 343, in run_async
+    async for event in agen:
+    ...<3 lines>...
+        break
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 390, in _run_one_step_async
+    async for event in agen:
+    ...<2 lines>...
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 477, in _preprocess_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions.py", line 166, in run_async
+    await _build_instructions(invocation_context, llm_request)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions.py", line 144, in _build_instructions
+    si = await _process_agent_instruction(agent, invocation_context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions.py", line 90, in _process_agent_instruction
+    si = await instructions_utils.inject_session_state(
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        raw_si, ReadonlyContext(invocation_context)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions_utils.py", line 119, in inject_session_state
+    return await _render_with_regex(template, readonly_context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions_utils.py", line 200, in _render_with_regex
+    return await _async_sub(_TEMPLATE_VAR_PATTERN, _replace_match, template)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions_utils.py", line 145, in _async_sub
+    replacement = await repl_async_fn(match)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions_utils.py", line 195, in _replace_match
+    raise KeyError(
+    ...<2 lines>...
+    )
+KeyError: "Context variable not found: `itinerary_validation` in agent 'TravelPlanner'."
+  [event] author=TravelPlanner final=True state_delta={} text=''
+Root node TravelPlanner failed.
+Traceback (most recent call last):
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_node_runner_utils.py", line 262, in _drive_root_node
+    await root_ctx._run_node_internal(  # pylint: disable=protected-access
+    ...<3 lines>...
+    )
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/context.py", line 516, in _run_node_internal
+    return await _dynamic_node_scheduler.run_node_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<12 lines>...
+    )
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_dynamic_node_scheduler.py", line 758, in run_node_internal
+    raise DynamicNodeFailError(
+    ...<3 lines>...
+    )
+google.adk.workflow._errors.DynamicNodeFailError: Dynamic node TravelPlanner failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/runners.py", line 889, in _cleanup_root_task
+    await task
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_node_runner_utils.py", line 271, in _drive_root_node
+    raise e.error
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_node_runner.py", line 138, in run
+    await self._execute_node(ctx, node_input)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_node_runner.py", line 316, in _execute_node
+    await self._run_node_loop(ctx, node_input)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_node_runner.py", line 330, in _run_node_loop
+    async for event in agen:
+    ...<8 lines>...
+        break
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_base_node.py", line 190, in run
+    async for item in agen:
+    ...<12 lines>...
+        yield Event(output=validated)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/llm_agent.py", line 689, in _run_impl
+    async for event in agen:
+    ...<4 lines>...
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/workflow/_llm_agent_wrapper.py", line 527, in run_llm_agent_as_node
+    async for event in run_iter:
+    ...<55 lines>...
+        break
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 359, in run_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 460, in _run_with_lifecycle
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/telemetry/_instrumentation.py", line 164, in stream_in_scope
+    item = await _drive(owned.__anext__())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/telemetry/_instrumentation.py", line 152, in _drive
+    return await step
+           ^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/base_agent.py", line 423, in _run
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/agents/llm_agent.py", line 638, in _run_async_impl
+    async for event in agen:
+    ...<8 lines>...
+        should_pause = True
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 343, in run_async
+    async for event in agen:
+    ...<3 lines>...
+        break
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 390, in _run_one_step_async
+    async for event in agen:
+    ...<2 lines>...
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 477, in _preprocess_async
+    async for event in agen:
+      yield event
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions.py", line 166, in run_async
+    await _build_instructions(invocation_context, llm_request)
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions.py", line 144, in _build_instructions
+    si = await _process_agent_instruction(agent, invocation_context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions.py", line 90, in _process_agent_instruction
+    si = await instructions_utils.inject_session_state(
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        raw_si, ReadonlyContext(invocation_context)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions_utils.py", line 119, in inject_session_state
+    return await _render_with_regex(template, readonly_context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions_utils.py", line 200, in _render_with_regex
+    return await _async_sub(_TEMPLATE_VAR_PATTERN, _replace_match, template)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions_utils.py", line 145, in _async_sub
+    replacement = await repl_async_fn(match)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/flows/llm_flows/prompt/_instructions_utils.py", line 195, in _replace_match
+    raise KeyError(
+    ...<2 lines>...
+    )
+KeyError: "Context variable not found: `itinerary_validation` in agent 'TravelPlanner'."
+  KeyError: "Context variable not found: `itinerary_validation` in agent 'TravelPlanner'."
+[exit 0]

@@ -1,0 +1,9 @@
+$ PYTHONPATH=. python /checks/q3_fingerprint.py
+approved cart            e8caf06b29df9c58
+after stock 3000 -> 1400 e8caf06b29df9c58 | still valid? False
+same lines, other order  e8caf06b29df9c58
+taleggio 1600 -> 1650 g  61f512af76925031
+one more guest (61)      d5f32d9e0580470a
+mimolette price +1 cent  5ed9976eb00999ec
+[exit 0]
+

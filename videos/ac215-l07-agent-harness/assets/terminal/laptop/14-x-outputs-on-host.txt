@@ -1,0 +1,25 @@
+$ ls -la outputs/ outputs/reports/; git status --short; git status --short --ignored | grep outputs
+outputs/:
+total 5116
+drwxrwxrwx  8 student student     240 Oct 20 20:24 .
+drwxr-xr-x 13 student student     420 Oct 20 20:19 ..
+drwxrwxrwx  2 student student      80 Oct 20 20:23 2a2c5f865df2498298a0965056d621eb
+drwxrwxrwx  2 student student      60 Oct 20 20:23 5bd990507796466593c4e183b92cf42f
+drwxrwxrwx  2 student student      60 Oct 20 20:23 89ba6bcc15eb468592dc4b923c58a73d
+drwxrwxrwx  2 student student      60 Oct 20 20:23 a6093b15c39b454d922735328ab6d073
+-rw-rw-rw-  1 student student   16184 Oct 20 20:23 context-comparison.json
+-rw-r--r--  1 student student   12288 Oct 20 20:23 customer_memory.sqlite
+drwxrwxrwx  2 student student      80 Oct 20 20:23 f64b285442fb4c7eaa9fe259a3ed8ec7
+-rw-rw-rw-  1 student student  186508 Oct 20 20:23 my-report.html
+-rw-r--r--  1 student student 5021696 Oct 20 20:24 observability.sqlite
+drwxrwxrwx  2 student student      80 Oct 20 20:23 reports
+
+outputs/reports/:
+total 312
+drwxrwxrwx 2 student student     80 Oct 20 20:23 .
+drwxrwxrwx 8 student student    240 Oct 20 20:24 ..
+-rw-rw-rw- 1 student student 128948 Oct 20 20:22 act2-context-live-1.html
+-rw-rw-rw- 1 student student 186508 Oct 20 20:23 context-fixture-1.html
+?? prompts/shop_assistant_v2.md
+!! outputs/
+[exit 0]

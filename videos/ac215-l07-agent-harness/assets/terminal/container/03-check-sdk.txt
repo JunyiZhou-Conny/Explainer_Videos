@@ -1,0 +1,30 @@
+$ python -m scripts.check_sdk
+{
+  "python": "3.13.16",
+  "dependencies": {
+    "agent-framework": "1.19.0",
+    "agent-framework-core": "1.19.0",
+    "pydantic": "2.13.5",
+    "openai": "3.19.2",
+    "opentelemetry-api": "1.40.0",
+    "opentelemetry-sdk": "1.40.0"
+  },
+  "features": {
+    "SkillsProvider": true,
+    "ContextProvider": true,
+    "AgentMiddleware": true,
+    "ChatMiddleware": true,
+    "FunctionMiddleware": true,
+    "skills_provider": true,
+    "skills_paths": true,
+    "max_context_window_tokens": true,
+    "max_output_tokens": true,
+    "middleware": true,
+    "otel_provider_name": true
+  },
+  "skills_signature": "(skill_paths: 'str | Path | Sequence[str | Path]', *, script_runner: 'SkillScriptRunner | None' = None, resource_extensions: 'tuple[str, ...] | None' = ('.md', '.json', '.yaml', '.yml', '.csv', '.xml', '.txt'), script_extensions: 'tuple[str, ...] | None' = ('.py',), search_depth: 'int' = 2, script_filter: 'Callable[[str, str], bool] | None' = None, resource_filter: 'Callable[[str, str], bool] | None' = None, instruction_template: 'str | None' = None, disable_caching: 'bool' = False, cache_refresh_interval: 'timedelta | None' = None, disable_load_skill_approval: 'bool' = False, disable_read_skill_resource_approval: 'bool' = False, disable_run_skill_script_approval: 'bool' = False, source_id: 'str | None' = None) -> '_TSkillsProvider'",
+  "tool_signature": "(func: 'Callable[..., Any] | None' = None, *, name: 'str | None' = None, description: 'str | None' = None, schema: 'type[BaseModel] | Mapping[str, Any] | None' = None, approval_mode: 'ApprovalMode | None' = None, kind: 'str | None' = None, max_invocations: 'int | None' = None, max_invocation_exceptions: 'int | None' = None, additional_properties: 'dict[str, Any] | None' = None, result_parser: 'Callable[[Any], str | list[Content]] | _SkipParsingSentinel | None' = None) -> 'FunctionTool | Callable[[Callable[..., Any]], FunctionTool]'",
+  "otel_setup_available": true,
+  "compaction_factory_source": "def _assemble_compaction(\n    *,\n    disable_compaction: bool,\n    max_context_window_tokens: int | None,\n    max_output_tokens: int | None,\n    history_source_id: str,\n    before_compaction_strategy: CompactionStrategy | None,\n    after_compaction_strategy: CompactionStrategy | None,\n    tokenizer: TokenizerProtocol | None,\n) -> tuple[CompactionStrategy | None, CompactionProvider | None]:\n    \"\"\"Resolve the harness compaction strategies into their execution sites.\n\n    The token-budget default (``ContextWindowCompactionStrategy``) is used for **both** the before\n    and after phases, and is only applied when the token params are provided. A single shared\n    instance is reused across both phases (it is stateless). Caller-supplied strategies always win\n    per phase.\n\n    Because the harness enables per-service-call history persistence, running the before-phase\n    compaction as a ``CompactionProvider.before_run`` hook is a no-op: the agent skips\n    ``HistoryProvider.before_run``, so the provider only ever sees an empty context.\n    Instead the before-strategy is returned separately so the caller can wire it as the agent's\n    ``compaction_strategy`` chat option. That runs it inside ``BaseChatClient.get_response`` \u2014\n    per model call, inner of ``PerServiceCallHistoryPersistingMiddleware`` (which has already\n    loaded the full history into the outgoing messages) and outer of the leaf client.\n\n    The after-strategy stays on a ``CompactionProvider`` (its ``after_run`` compacts the persisted\n    session history in place and works correctly).\n\n    Returns a ``(before_strategy, after_provider)`` tuple. Both elements are ``None`` when\n    compaction is disabled or when the corresponding phase has no strategy (no custom strategy\n    and no token budget to build the default).\n    \"\"\"\n    if disable_compaction:\n        return None, None\n\n    # Token-budget default, shared across both phases when token params are available.\n    default_strategy: CompactionStrategy | None = None\n    if max_context_window_tokens is not None and max_output_tokens is not None:\n        default_strategy = ContextWindowCompactionStrategy(\n            max_context_window_tokens=max_context_window_tokens,\n            max_output_tokens=max_output_tokens,\n            tokenizer=tokenizer,\n        )\n\n    # Resolve each phase: caller-supplied strategy wins; otherwise fall back to the shared default.\n    before_strategy = before_compaction_strategy if before_compaction_strategy is not None else default_strategy\n    after_strategy = after_compaction_strategy if after_compaction_strategy is not None else default_strategy\n\n    # The after-strategy runs post-turn against the persisted history via a CompactionProvider;\n    # the before-strategy runs per model call via the agent's compaction_strategy option.\n    after_provider = (\n        CompactionProvider(\n            before_strategy=None,\n            after_strategy=after_strategy,\n            tokenizer=tokenizer,\n            history_source_id=history_source_id,\n        )\n        if after_strategy is not None\n        else None\n    )\n    return before_strategy, after_provider\n"
+}
+[exit 0]

@@ -1,0 +1,53 @@
+id: ac215-l07-agent-harness
+title: "AC215 · Lecture 7 — LLM: Agents II (follow-along: agent-harness)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 7
+  lecture_title: "LLM: Agents II"
+  ed: https://edstem.org/us/courses/97373/lessons/166031/
+  repos:
+    # the whole README is L07's (setup, Acts 1–6, evaluation, additional resources, troubleshooting)
+    - {repo: dlops-io/agent-harness, branch: main, commit: e25dfe9615d78b78e0764a636cc2462f530a1402,
+       sections: ["Setup and verification", "1. Recap — agent and tools",
+                  "2. Context Engineering — choose what the model sees",
+                  "3. Agent Harness — manage execution and enforce boundaries",
+                  "4. Skills — load reusable guidance when needed",
+                  "5. Agent Systems — compose a harness and a workflow",
+                  "6. Evaluation — inspect, repeat, and compare",
+                  "7. Additional Resources", "Troubleshooting"]}
+  colab:
+    # a notebook has no commit: the copy used is in assets/source/colab/ (downloaded 2026-10-17), its saved
+    # outputs (cells 8–24 only) in assets/terminal/expected/colab-*.txt (tagged "recorded").
+    - {name: "Agent Harness", url: "https://colab.research.google.com/drive/1ZYMsbG0gqsbs-6Pcj8WtT3WhEa4f80EZ?usp=sharing",
+       sections: ["Make a Copy to Edit", "Setup Agent Harness Repo", "Install Dependencies", "Setup OpenAI Key",
+                  "Utils", "Agent", "Agent + Harness"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L07-agents-2-harness.md
+audience: "AC215 student who has done L1–L6 (uv and lockfiles, containers and docker-shell.sh, L05's RAG, L06's function calling, agent loop, MCP and first harness notebooks); reads Python including async/await, has never built an agent harness; watching with their agent-harness clone open and Docker running, optionally with an OpenAI key, pausing to run each command"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,        cls: Hook,           title: "Which sentence would you trust?"}
+  - {file: scenes/s02_container.py,   cls: OneContainer,   title: "One container, no ports"}
+  - {file: scenes/s03_verify.py,      cls: VerifyOffline,  title: "Verify offline, and the Colab road"}
+  - {file: scenes/s04_agent.py,       cls: AgentLoop,      title: "Act 1: an agent, measured"}
+  - {file: scenes/s05_layers.py,      cls: HarnessLayers,  title: "Act 1: wrap it in a harness"}
+  - {file: scenes/s06_context.py,     cls: ContextModes,   title: "Act 2: same agent, different context"}
+  - {file: scenes/s07_packet.py,      cls: ContextPacket,  title: "Act 2: sieves and lanes"}
+  - {file: scenes/s08_workflow.py,    cls: Rails,          title: "Act 3: rails, not suggestions"}
+  - {file: scenes/s09_approval.py,    cls: ExactCart,      title: "Act 3: approve this exact cart"}
+  - {file: scenes/s10_planner.py,     cls: FiveDrawers,    title: "Act 4: a planner with five drawers"}
+  - {file: scenes/s11_compaction.py,  cls: Capsule,        title: "Act 4: compaction, the capsule and memory"}
+  - {file: scenes/s12_skills.py,      cls: SkillsManual,   title: "Act 5: skills are manuals, not keys"}
+  - {file: scenes/s13_systems.py,     cls: AgentSystem,    title: "Act 6: an agent that calls a workflow"}
+  - {file: scenes/s14_traces.py,      cls: TraceEvidence,  title: "Evaluation: the trace is the evidence"}
+  - {file: scenes/s15_compare.py,     cls: FairComparison, title: "Evaluation: one change, k runs, a diff"}
+  - {file: scenes/s16_recap.py,       cls: Recap,          title: "Tear down, recap, and what's next"}
+parts:
+  - id: part1
+    title: "AC215 · L7, part 1: one agent — setup, the agent loop, harness layers and context (Acts 1–2)"
+    scenes: [s01_hook, s02_container, s03_verify, s04_agent, s05_layers, s06_context, s07_packet]
+  - id: part2
+    title: "AC215 · L7, part 2: the harness takes control — workflows, approvals, memory, skills, agent systems and evaluation (Acts 3–6)"
+    scenes: [s08_workflow, s09_approval, s10_planner, s11_compaction, s12_skills, s13_systems, s14_traces, s15_compare, s16_recap]

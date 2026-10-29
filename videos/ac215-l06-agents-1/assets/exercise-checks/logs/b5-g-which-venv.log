@@ -1,0 +1,23 @@
+$ cd custom_agent; uv run --project .. python -c 'import sys; print(sys.prefix)'; echo '---'; env -u UV_NO_SYNC uv sync --dry-run 2>&1 | head -8; ls -a
+/home/student/AC215/llm-agent-google-adk/.venv
+---
+warning: The `tool.uv.dev-dependencies` field (used in `pyproject.toml`) is deprecated and will be removed in a future release; use `dependency-groups.dev` instead
+Using CPython 3.13.16
+Would create project environment at: .venv
+Resolved 354 packages in 7.05s
+Would create lockfile at: uv.lock
+Would download 165 packages
+Would install 276 packages
+ + a2a-sdk==1.2.3
+.
+..
+.env.example
+README.md
+__pycache__
+agent.py
+conditional_agent.py
+conditional_agent_lower.py
+conditional_agent_schema.py
+pyproject.toml
+simple_custom_agent.py
+[exit 0]

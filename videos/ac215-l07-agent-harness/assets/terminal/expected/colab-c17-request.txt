@@ -1,0 +1,22 @@
+# recorded (saved output of the course Colab "Agent Harness", not re-run here): https://colab.research.google.com/drive/1ZYMsbG0gqsbs-6Pcj8WtT3WhEa4f80EZ, cell 17 ("The Customer Request"), execution count 10; the notebook stores no date.
+"Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?"
+
+Structured fields the application actually trusts:
+{
+  "customer_id": "pavlos",
+  "intent": "order",
+  "party_size": 12,
+  "budget_cents": 15000,
+  "state": "PA",
+  "allergies": [
+    "nuts"
+  ],
+  "allergies_confirmed": true,
+  "order_authorized": true,
+  "required_countries": [
+    "France"
+  ],
+  "required_min_funk": 4,
+  "preferences": [],
+  "wants_pairings": true
+}

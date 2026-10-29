@@ -1,0 +1,97 @@
+$ python cli.py --act 2 --evaluate core --fixture --case standard --repeats 2 --label context-fixture-2 --prompt-file prompts/shop_assistant_v2.md
+FIXTURE evaluation: 2 cases × 2 repeats = 4 runs.
+Approval responses are explicit scenario TEST decisions. Operational state resets each run.
+Excluded cases: missing-details, dairy-allergy, manager-approve, manager-decline, event-approve, event-decline, malicious-vendor, tasting-plan, stock-question, personalized, preference-override
+Case standard:basic — repeat 1/2
+
+🧪 Act 2 · BASIC context · scenario: standard
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · fixture-model
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  📤 Requested tools: preview_order
+  ⏱️ 0.40s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: preview_order
+  📋 Arguments: items: product: epoisses; grams: 300 / product: bucheron; grams: 350 / product: taleggio; grams: 350
+  📦 Result (0.00s): status: unvalidated_proposal; order placed: no; items: 3 entries
+
+🤖 Model call 2 · Shop assistant · fixture-model
+  📥 Input: 3 conversation messages.
+  ↳ Latest tool results in context: preview_order
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+Case standard:basic — repeat 2/2
+
+🧪 Act 2 · BASIC context · scenario: standard
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · fixture-model
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  📤 Requested tools: preview_order
+  ⏱️ 0.01s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: preview_order
+  📋 Arguments: items: product: epoisses; grams: 300 / product: bucheron; grams: 350 / product: taleggio; grams: 350
+  📦 Result (0.00s): status: unvalidated_proposal; order placed: no; items: 3 entries
+
+🤖 Model call 2 · Shop assistant · fixture-model
+  📥 Input: 3 conversation messages.
+  ↳ Latest tool results in context: preview_order
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+Case standard:enriched — repeat 1/2
+
+🧪 Act 2 · ENRICHED context · scenario: standard
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · fixture-model
+  📥 Input: 2 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  📤 Requested tools: preview_order
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: preview_order
+  📋 Arguments: items: product: epoisses; grams: 300 / product: bucheron; grams: 350 / product: taleggio; grams: 350
+  📦 Result (0.00s): status: unvalidated_proposal; order placed: no; items: 3 entries
+
+🤖 Model call 2 · Shop assistant · fixture-model
+  📥 Input: 4 conversation messages.
+  ↳ Latest tool results in context: preview_order
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+Case standard:enriched — repeat 2/2
+
+🧪 Act 2 · ENRICHED context · scenario: standard
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · fixture-model
+  📥 Input: 2 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  📤 Requested tools: preview_order
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: preview_order
+  📋 Arguments: items: product: epoisses; grams: 300 / product: bucheron; grams: 350 / product: taleggio; grams: 350
+  📦 Result (0.00s): status: unvalidated_proposal; order placed: no; items: 3 entries
+
+🤖 Model call 2 · Shop assistant · fixture-model
+  📥 Input: 4 conversation messages.
+  ↳ Latest tool results in context: preview_order
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.03s · 100 input tokens · 20 output tokens
+
+FIXTURE EVALUATION context-fixture-2: 4/4 scheduled runs passed
+Version: cc26bb6fd89ccfa5c93b27ae096592a3ae0f95cc77fa7dc7b3733a08cd5f140a
+Failures: 0; errors: 0; missing: 0.
+standard:basic: 2/2 passed; 1 structured outcome variants; 1 tool paths.
+standard:enriched: 2/2 passed; 1 structured outcome variants; 1 tool paths.
+PASS standard:basic #1 — run 7ae66f1c9c3b4577a6e4ff5e0219a231
+PASS standard:basic #2 — run 700363e4ac4b46ec8633714302f9a1ec
+PASS standard:enriched #1 — run 08836afb128c47b095e49eeec92a7841
+PASS standard:enriched #2 — run e3fff822e978431298f340748a378c29
+Pass rate uses all scheduled runs. Variants measure structured outcomes, not prose identity. Human prose review is separate; small samples do not establish reliability.
+Recorded in /app/outputs/observability.sqlite. Inspect with --report context-fixture-2 or --inspect-run RUN_ID.
+[exit 0]

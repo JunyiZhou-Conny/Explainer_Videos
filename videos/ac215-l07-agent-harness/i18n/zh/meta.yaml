@@ -1,0 +1,48 @@
+# Chinese (zh-CN) metadata for ac215-l07-agent-harness (read by explainer/i18n.py meta(), used by explainer/build.py
+# for the subtitles' chapters and the zh descriptions): video title, part titles, chapter titles keyed by scene file
+# stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 端口, 智能体, 技能, 评测; A4), questions keep their question
+# mark, the English colon structure is kept (第 1 幕：……, 评测：……), commands and code names stay as they are (meta.yaml
+# is not read by `explainer.i18n check`, so brackets are fine here), and the core-concept chapters carry their
+# English short name for search (智能体（agent）, 技能（skill）, 执行记录（trace）), as L1, L3, L5 and L6 do. harness stays
+# English in writing too (L06 H3). LLM: Agents II → LLM 智能体 II (as L6's 智能体 I); Act n → 第 n 幕 (A3); the
+# metaphors keep their picture (review_spoken 17: sieves and lanes → 筛选与两条通道; rails → 轨道; manuals, not keys →
+# 说明书，不是钥匙, keys being 钥匙, never 密钥, A7); an agent, measured → 给智能体（agent）算一笔账 (calls, messages and
+# tokens counted); the harness takes control → harness 接管. 跟练 = follow-along.
+title: "AC215 · 第 7 讲：LLM 智能体 II（跟练：agent-harness）"
+
+parts:
+  part1: "AC215 · 第 7 讲（上）：一个智能体——环境准备、智能体循环、harness 层与上下文（第 1–2 幕）"
+  part2: "AC215 · 第 7 讲（下）：harness 接管——工作流、审批、记忆、技能、智能体系统与评测（第 3–6 幕）"
+
+chapters:
+  s01_hook: "你会相信哪一句？"
+  s02_container: "一个容器，不开端口"
+  s03_verify: "离线验证，以及 Colab 这条路"
+  s04_agent: "第 1 幕：给智能体（agent）算一笔账"
+  s05_layers: "第 1 幕：给它套上 harness"
+  s06_context: "第 2 幕：同一个智能体，不同的上下文"
+  s07_packet: "第 2 幕：筛选与两条通道"
+  s08_workflow: "第 3 幕：是轨道，不是建议"
+  s09_approval: "第 3 幕：批准的就是这辆购物车"
+  s10_planner: "第 4 幕：有五个抽屉的规划器"
+  s11_compaction: "第 4 幕：压缩、胶囊与记忆"
+  s12_skills: "第 5 幕：技能（skill）是说明书，不是钥匙"
+  s13_systems: "第 6 幕：调用工作流的智能体"
+  s14_traces: "评测：执行记录（trace）就是证据"
+  s15_compare: "评测：一处改动，跑 k 次，看 diff"
+  s16_recap: "清理、回顾与下节预告"
+
+# Two or three sentences (rule H2), written register. Facts: video.yaml course: dlops-io/agent-harness main @ e25dfe9
+# (the whole README: setup and verification, Acts 1-6, evaluation, resources) and the Agent Harness Colab notebook;
+# BRIEF.md and script.md v2: one container with no published ports (docker ps), check_sdk, 281 offline tests in about
+# 100 s, Act 1's six model calls and four layers (Trace, Budget, Context, CartCheck), Act 2's basic / enriched context
+# packet in a user message, Act 3's workflow graph with a fingerprint (SHA-256) approval and checkout revalidation,
+# Act 4's compaction, capsule and host-written memory, Act 5's skills (progressive disclosure, no script tool), Act 6's
+# agent calling the act 3 workflow (two approvals, one order), evaluation (--list-runs, --inspect-run, a fixture batch,
+# --compare). Recorded October 20, 2026 without an OpenAI key (script.md S01[7]): offline and scripted commands ran
+# for real, every live command stops at OpenAI's 401 for the README's placeholder key, live answers are the staff's
+# saved Colab run. The customers' IDs and names never appear (A10). Paste the chapter timestamps from
+# output/chapters.txt and the study guide, tutorial repo and Ed links (video.yaml course:) under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 7 讲“LLM：智能体 II”的跟练视频：照着 dlops-io/agent-harness 的 README 和课程的 Agent Harness Colab 笔记本（notebook），先在一个不开端口的 Docker 容器里完成准备和离线验证（281 个测试），再在一家虚构的奶酪店里走完六幕：用真实数字拆开智能体（agent）的循环并给它套上四个 harness 层（Trace、Budget、Context、CartCheck），用上下文工程决定模型能看到什么，用 Python 掌控的工作流图、绑定 SHA-256 指纹的经理审批和结账时的重新校验接管下单，用压缩、状态胶囊和只由宿主程序写入的记忆支撑更长的任务，用渐进式披露加载技能（skill），最后让一个智能体把整个受管控的工作流当作工具来调用。贯穿全片的规则是“模型提议，harness 决定”：每一行输出都要分清是模型提出的还是应用决定的，最后用执行记录（trace）、测试夹具（fixture）批量评测和只改一处的 A/B 对比（--compare）拿出证据，并说清自动检查证明不了什么。英文旁白，配中文和中英双语字幕；终端输出录于 2026-10-20，录制时没有 OpenAI 密钥，所以离线和脚本模拟的命令都是真实运行，在线命令停在占位密钥引发的 401，模型的回答来自课程团队保存的 Colab 运行。

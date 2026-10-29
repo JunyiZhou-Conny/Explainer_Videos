@@ -1,0 +1,11 @@
+$ P=/colab/nl/lib/python3.12/site-packages/agent_framework; grep -n 'DEFAULT_MAX_ITERATIONS: Final' $P/_tools.py; grep -n 'Phase 3: the iteration budget is exhausted' $P/_tools.py; grep -n 'options\["tool_choice"\] = "none"' $P/_tools.py
+102:DEFAULT_MAX_ITERATIONS: Final[int] = 40
+3734:        # Phase 3: the iteration budget is exhausted, so request one final response with tools disabled.
+3990:        # Phase 3: the iteration budget is exhausted, so stream one final response with tools disabled.
+3055:    options["tool_choice"] = "none"
+3097:            options["tool_choice"] = "none"
+3101:        options["tool_choice"] = "none"
+3540:            options["tool_choice"] = "none"
+3740:        options["tool_choice"] = "none"
+3996:        options["tool_choice"] = "none"
+[exit 0]

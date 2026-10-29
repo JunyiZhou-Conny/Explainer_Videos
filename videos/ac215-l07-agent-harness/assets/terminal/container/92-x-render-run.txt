@@ -1,0 +1,2729 @@
+$ python -c 'from formaggio.operations.chat_view import render_run; print(render_run("outputs/observability.sqlite", "7409b343679a457490c94fb7512faa31"))' | python -c 'import html, re, sys
+h = sys.stdin.read()
+h = re.sub(r"(?is)<(script|style)\b.*?</\1>", "", h)
+h = re.sub(r"(?is)<tr\b.*?</tr>", lambda m: re.sub(r"\s*\n\s*", " ", m.group(0)), h)
+h = re.sub(r"(?i)<br\s*/?>|</(p|div|h[1-6]|li|tr|summary|pre|header|section|details|table|thead|tbody)>", "\n", h)
+h = re.sub(r"(?i)</t[dh]>", " | ", h)
+h = re.sub(r"(?i)</span>", " ", h)
+for line in html.unescape(re.sub(r"<[^>]+>", "", h)).splitlines():
+    line = " ".join(line.split()).strip(" |")
+    if line:
+        print(line)'
+Act 3 · manager-approval
+Scripted responses Execution: completed Recorded view · not a live chat
+💬 Request and response
+Customer request · rendered from confirmed fields
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+Application results
+Workflow outcome: placed
+Order placed.
+Order receipt
+Receipt: d64cdc9187214dd19e30e78272e9bf05
+comte: 1600 g
+mimolette: 1600 g
+taleggio: 1600 g
+Cheese subtotal: $220.80
+🔎 Steps and checks
+Recorded actions and application state, not the model’s private reasoning.
+Workflow steps · 7
+confirm request
+propose cart
+validate and price
+select pairings
+manager approval
+manager approval
+revalidate and place
+Context · 5
+enriched context · 3 sources
+confirmed_request: Keep required facts together.
+catalog.json + policies.json + current_inventory: Select candidates using stock, destination, and known allergy constraints; retain variety.
+customers.json:pavlos: Retrieve this customer's saved preferences; current request takes precedence.
+Excluded munster: insufficient_stock_for_minimum
+Proposed carts · 4
+🧺 Proposed cart — attempt 1:
+Comté 18 mois (comte) — 1600 g · RAW MILK
+Mimolette Extra-Vieille (mimolette) — 1600 g · not raw milk
+Taleggio (taleggio) — 1600 g · not raw milk
+Cart checks · 1
+Passed · attempt 1: $220.80
+Human review · 2
+Manager review requested: $220.80
+Manager approved · source: human
+Agent activity · 2
+Tool requested: place_mock_order
+Tool returned: not recorded · check its result for the business outcome
+Inspect recorded events · 66
+Internal model replies stay here. Events without actor/request labels remain unscoped; sequence numbers identify each record.
+#214 · run.started
+{
+"act": 3,
+"mode": "fixture"
+}
+#215 · request.brief
+{
+"request": {
+"allergies": [],
+"allergies_confirmed": true,
+"budget_cents": 30000,
+"customer_id": "pavlos",
+"intent": "order",
+"order_authorized": true,
+"party_size": 60,
+"preferences": [],
+"required_countries": [
+"France"
+],
+"required_min_funk": null,
+"state": "NY",
+"wants_pairings": true
+},
+"source": "structured_input"
+}
+#216 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "started"
+}
+#217 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "status"
+}
+#218 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_started"
+}
+#219 · workflow.step
+{
+"executor_id": "confirm_request"
+}
+#220 · workflow.event
+{
+"executor_id": "confirm_request",
+"request_id": null,
+"type": "executor_invoked"
+}
+#221 · workflow.event
+{
+"executor_id": "confirm_request",
+"request_id": null,
+"type": "executor_completed"
+}
+#222 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_completed"
+}
+#223 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_started"
+}
+#224 · workflow.step
+{
+"executor_id": "propose_cart"
+}
+#225 · context.selected
+{
+"excluded_products": [
+{
+"product_id": "munster",
+"reasons": [
+"insufficient_stock_for_minimum"
+]
+}
+],
+"mode": "enriched",
+"note": "Selection is application code, not an LLM decision or final-cart validation.",
+"sources": [
+{
+"content": {
+"allergies": [],
+"allergies_confirmed": true,
+"budget_cents": 30000,
+"customer_id": "pavlos",
+"intent": "order",
+"order_authorized": true,
+"party_size": 60,
+"preferences": [],
+"required_countries": [
+"France"
+],
+"required_min_funk": null,
+"state": "NY",
+"wants_pairings": true
+},
+"reason": "Keep required facts together.",
+"source": "confirmed_request",
+"trust": "customer_data"
+},
+{
+"content": {
+"candidates": [
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 520,
+"country": "France",
+"funk": 2,
+"milk": "cow",
+"name": "Brie de Meaux",
+"product_id": "brie",
+"raw_milk": true,
+"stock_g": 2400,
+"style": "soft-ripened"
+},
+{
+"aliases": [
+"Comte"
+],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 450,
+"country": "France",
+"funk": 1,
+"milk": "cow",
+"name": "Comté 18 mois",
+"product_id": "comte",
+"raw_milk": true,
+"stock_g": 6000,
+"style": "alpine"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 690,
+"country": "France",
+"funk": 5,
+"milk": "cow",
+"name": "Époisses",
+"product_id": "epoisses",
+"raw_milk": false,
+"stock_g": 900,
+"style": "washed-rind"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 410,
+"country": "France",
+"funk": 1,
+"milk": "goat",
+"name": "Bûcheron",
+"product_id": "bucheron",
+"raw_milk": false,
+"stock_g": 2000,
+"style": "fresh-aged"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 500,
+"country": "France",
+"funk": 2,
+"milk": "cow",
+"name": "Mimolette Extra-Vieille",
+"product_id": "mimolette",
+"raw_milk": false,
+"stock_g": 3000,
+"style": "hard"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 430,
+"country": "Italy",
+"funk": 4,
+"milk": "cow",
+"name": "Taleggio",
+"product_id": "taleggio",
+"raw_milk": false,
+"stock_g": 3000,
+"style": "washed-rind"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 390,
+"country": "Spain",
+"funk": 1,
+"milk": "sheep",
+"name": "Manchego 12 meses",
+"product_id": "manchego",
+"raw_milk": false,
+"stock_g": 4000,
+"style": "hard"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 370,
+"country": "Netherlands",
+"funk": 1,
+"milk": "cow",
+"name": "Aged Gouda",
+"product_id": "gouda",
+"raw_milk": false,
+"stock_g": 4500,
+"style": "hard"
+},
+{
+"aliases": [],
+"allergens": [
+"milk",
+"tree_nuts",
+"walnut"
+],
+"cents_per_100g": 360,
+"country": "USA",
+"funk": 1,
+"milk": "goat",
+"name": "Walnut-Crusted Chèvre",
+"product_id": "walnut_chevre",
+"raw_milk": false,
+"stock_g": 900,
+"style": "fresh"
+},
+{
+"aliases": [],
+"allergens": [
+"milk",
+"tree_nuts",
+"pistachio"
+],
+"cents_per_100g": 480,
+"country": "Spain",
+"funk": 1,
+"milk": "sheep",
+"name": "Pistachio Manchego",
+"product_id": "pistachio_manchego",
+"raw_milk": false,
+"stock_g": 650,
+"style": "hard"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 290,
+"country": "Cyprus",
+"funk": 0,
+"milk": "goat",
+"name": "Halloumi",
+"product_id": "halloumi",
+"raw_milk": false,
+"stock_g": 2000,
+"style": "brined"
+}
+],
+"selection_is_not_final_validation": true,
+"unresolved_allergy_information": []
+},
+"reason": "Select candidates using stock, destination, and known allergy constraints; retain variety.",
+"source": "catalog.json + policies.json + current_inventory",
+"trust": "shop_data"
+},
+{
+"content": {
+"customer_id": "pavlos",
+"preferences": [
+"French cheeses",
+"funky cheeses"
+]
+},
+"reason": "Retrieve this customer's saved preferences; current request takes precedence.",
+"source": "customers.json:pavlos",
+"trust": "saved_preferences"
+}
+]
+}
+#226 · fixture.proposal
+{
+"attempt": 1,
+"items": [
+{
+"grams": 1600,
+"product": "comte"
+},
+{
+"grams": 1600,
+"product": "mimolette"
+},
+{
+"grams": 1600,
+"product": "taleggio"
+}
+]
+}
+#227 · cart.proposed
+{
+"added": [
+{
+"grams": 1600,
+"name": "Comté 18 mois",
+"product": "comte",
+"raw_milk": true
+},
+{
+"grams": 1600,
+"name": "Mimolette Extra-Vieille",
+"product": "mimolette",
+"raw_milk": false
+},
+{
+"grams": 1600,
+"name": "Taleggio",
+"product": "taleggio",
+"raw_milk": false
+}
+],
+"attempt": 1,
+"items": [
+{
+"grams": 1600,
+"name": "Comté 18 mois",
+"product": "comte",
+"raw_milk": true
+},
+{
+"grams": 1600,
+"name": "Mimolette Extra-Vieille",
+"product": "mimolette",
+"raw_milk": false
+},
+{
+"grams": 1600,
+"name": "Taleggio",
+"product": "taleggio",
+"raw_milk": false
+}
+],
+"quantity_changes": [],
+"removed": []
+}
+#228 · workflow.event
+{
+"executor_id": "propose_cart",
+"request_id": null,
+"type": "executor_invoked"
+}
+#229 · workflow.event
+{
+"executor_id": "propose_cart",
+"request_id": null,
+"type": "executor_completed"
+}
+#230 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_completed"
+}
+#231 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_started"
+}
+#232 · workflow.step
+{
+"executor_id": "validate_and_price"
+}
+#233 · cart.validated
+{
+"attempt": 1,
+"items": [
+{
+"grams": 1600,
+"product": "comte"
+},
+{
+"grams": 1600,
+"product": "mimolette"
+},
+{
+"grams": 1600,
+"product": "taleggio"
+}
+],
+"line_totals_cents": [
+7200,
+8000,
+6880
+],
+"needs_manager_approval": true,
+"subtotal_cents": 22080,
+"total_grams": 4800,
+"violations": []
+}
+#234 · workflow.event
+{
+"executor_id": "validate_and_price",
+"request_id": null,
+"type": "executor_invoked"
+}
+#235 · workflow.event
+{
+"executor_id": "validate_and_price",
+"request_id": null,
+"type": "executor_completed"
+}
+#236 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_completed"
+}
+#237 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_started"
+}
+#238 · workflow.step
+{
+"executor_id": "select_pairings"
+}
+#239 · pairings.selected
+{
+"pairings": [
+{
+"product": "comte",
+"suggestions": [
+{
+"allergens": [
+"wheat",
+"tree_nuts",
+"walnut"
+],
+"ingredients": [
+"wheat",
+"walnut"
+],
+"kind": "food",
+"name": "Walnut bread",
+"pairing_id": "walnut_bread",
+"styles": [
+"alpine",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+},
+{
+"product": "mimolette",
+"suggestions": [
+{
+"allergens": [
+"wheat",
+"tree_nuts",
+"walnut"
+],
+"ingredients": [
+"wheat",
+"walnut"
+],
+"kind": "food",
+"name": "Walnut bread",
+"pairing_id": "walnut_bread",
+"styles": [
+"alpine",
+"hard"
+]
+},
+{
+"allergens": [
+"tree_nuts",
+"almond"
+],
+"ingredients": [
+"almond"
+],
+"kind": "food",
+"name": "Marcona almonds",
+"pairing_id": "almonds",
+"styles": [
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+},
+{
+"product": "taleggio",
+"suggestions": [
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"cucumber",
+"vinegar"
+],
+"kind": "food",
+"name": "Cornichons",
+"pairing_id": "cornichons",
+"styles": [
+"washed-rind",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+}
+]
+}
+#240 · workflow.event
+{
+"executor_id": "select_pairings",
+"request_id": null,
+"type": "executor_invoked"
+}
+#241 · workflow.event
+{
+"executor_id": "select_pairings",
+"request_id": null,
+"type": "executor_completed"
+}
+#242 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_completed"
+}
+#243 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_started"
+}
+#244 · workflow.step
+{
+"executor_id": "manager_approval"
+}
+#245 · approval.requested
+{
+"checkout_key": "b2418183bc38497cbd0e576186ba5dcb",
+"decision": "pending",
+"fingerprint": "e8caf06b29df9c585b778e2999c022c93be0896bb26bd8c5967e6fdbdb43399c",
+"report": {
+"items": [
+{
+"grams": 1600,
+"product": "comte"
+},
+{
+"grams": 1600,
+"product": "mimolette"
+},
+{
+"grams": 1600,
+"product": "taleggio"
+}
+],
+"line_totals_cents": [
+7200,
+8000,
+6880
+],
+"needs_manager_approval": true,
+"subtotal_cents": 22080,
+"total_grams": 4800,
+"violations": []
+},
+"request": {
+"allergies": [],
+"allergies_confirmed": true,
+"budget_cents": 30000,
+"customer_id": "pavlos",
+"intent": "order",
+"order_authorized": true,
+"party_size": 60,
+"preferences": [],
+"required_countries": [
+"France"
+],
+"required_min_funk": null,
+"state": "NY",
+"wants_pairings": true
+},
+"ticket_id": "c48487091d824bd5a2575417247c17a1"
+}
+#246 · workflow.event
+{
+"executor_id": "manager_approval",
+"request_id": null,
+"type": "executor_invoked"
+}
+#247 · workflow.event · 2b1675d2-224d-4167-a594-b2e5018bdf25
+{
+"executor_id": null,
+"request_id": "2b1675d2-224d-4167-a594-b2e5018bdf25",
+"type": "request_info"
+}
+#248 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "status"
+}
+#249 · workflow.event
+{
+"executor_id": "manager_approval",
+"request_id": null,
+"type": "executor_completed"
+}
+#250 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_completed"
+}
+#251 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "status"
+}
+#252 · span.event · workflow.started
+{
+"attributes": {},
+"name": "workflow.started",
+"timestamp_ns": 1792527775534562891
+}
+#253 · span.event · workflow.completed
+{
+"attributes": {},
+"name": "workflow.completed",
+"timestamp_ns": 1792527775548494560
+}
+#254 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "started"
+}
+#255 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "status"
+}
+#256 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_started"
+}
+#257 · workflow.step
+{
+"executor_id": "manager_approval"
+}
+#258 · approval.decided
+{
+"decision": "approve",
+"fingerprint": "e8caf06b29df9c585b778e2999c022c93be0896bb26bd8c5967e6fdbdb43399c",
+"source": "human",
+"ticket_id": "c48487091d824bd5a2575417247c17a1"
+}
+#259 · workflow.event
+{
+"executor_id": "manager_approval",
+"request_id": null,
+"type": "executor_invoked"
+}
+#260 · workflow.event
+{
+"executor_id": "manager_approval",
+"request_id": null,
+"type": "executor_completed"
+}
+#261 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_completed"
+}
+#262 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_started"
+}
+#263 · workflow.step
+{
+"executor_id": "revalidate_and_place"
+}
+#264 · tool.requested · place_mock_order
+{
+"arguments": {
+"checkout_key": "b2418183bc38497cbd0e576186ba5dcb",
+"items": [
+{
+"grams": 1600,
+"product": "comte"
+},
+{
+"grams": 1600,
+"product": "mimolette"
+},
+{
+"grams": 1600,
+"product": "taleggio"
+}
+],
+"ticket_id": "c48487091d824bd5a2575417247c17a1"
+},
+"call_id": "3613581d4d7e42a9b28db86bab4364e4",
+"name": "place_mock_order"
+}
+#265 · policy.decision
+{
+"boundary": "tool_invocation",
+"call_id": "3613581d4d7e42a9b28db86bab4364e4",
+"outcome": "allow",
+"policy_id": "checkout",
+"policy_version": "1",
+"reason": "Validated and customer-authorized."
+}
+#266 · tool.permitted
+{
+"call_id": "3613581d4d7e42a9b28db86bab4364e4"
+}
+#267 · tool.started
+{
+"call_id": "3613581d4d7e42a9b28db86bab4364e4"
+}
+#268 · order.placing
+{
+"approval_ticket_id": "c48487091d824bd5a2575417247c17a1",
+"checkout_key": "b2418183bc38497cbd0e576186ba5dcb",
+"fingerprint": "e8caf06b29df9c585b778e2999c022c93be0896bb26bd8c5967e6fdbdb43399c",
+"order_id": "d64cdc9187214dd19e30e78272e9bf05",
+"pairings": [
+{
+"product": "comte",
+"suggestions": [
+{
+"allergens": [
+"wheat",
+"tree_nuts",
+"walnut"
+],
+"ingredients": [
+"wheat",
+"walnut"
+],
+"kind": "food",
+"name": "Walnut bread",
+"pairing_id": "walnut_bread",
+"styles": [
+"alpine",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+},
+{
+"product": "mimolette",
+"suggestions": [
+{
+"allergens": [
+"wheat",
+"tree_nuts",
+"walnut"
+],
+"ingredients": [
+"wheat",
+"walnut"
+],
+"kind": "food",
+"name": "Walnut bread",
+"pairing_id": "walnut_bread",
+"styles": [
+"alpine",
+"hard"
+]
+},
+{
+"allergens": [
+"tree_nuts",
+"almond"
+],
+"ingredients": [
+"almond"
+],
+"kind": "food",
+"name": "Marcona almonds",
+"pairing_id": "almonds",
+"styles": [
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+},
+{
+"product": "taleggio",
+"suggestions": [
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"cucumber",
+"vinegar"
+],
+"kind": "food",
+"name": "Cornichons",
+"pairing_id": "cornichons",
+"styles": [
+"washed-rind",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+}
+],
+"report": {
+"items": [
+{
+"grams": 1600,
+"product": "comte"
+},
+{
+"grams": 1600,
+"product": "mimolette"
+},
+{
+"grams": 1600,
+"product": "taleggio"
+}
+],
+"line_totals_cents": [
+7200,
+8000,
+6880
+],
+"needs_manager_approval": true,
+"subtotal_cents": 22080,
+"total_grams": 4800,
+"violations": []
+},
+"request": {
+"allergies": [],
+"allergies_confirmed": true,
+"budget_cents": 30000,
+"customer_id": "pavlos",
+"intent": "order",
+"order_authorized": true,
+"party_size": 60,
+"preferences": [],
+"required_countries": [
+"France"
+],
+"required_min_funk": null,
+"state": "NY",
+"wants_pairings": true
+}
+}
+#269 · tool.completed · returned (see result for business outcome)
+{
+"call_id": "3613581d4d7e42a9b28db86bab4364e4",
+"result": {
+"approval_ticket_id": "c48487091d824bd5a2575417247c17a1",
+"checkout_key": "b2418183bc38497cbd0e576186ba5dcb",
+"fingerprint": "e8caf06b29df9c585b778e2999c022c93be0896bb26bd8c5967e6fdbdb43399c",
+"order_id": "d64cdc9187214dd19e30e78272e9bf05",
+"pairings": [
+{
+"product": "comte",
+"suggestions": [
+{
+"allergens": [
+"wheat",
+"tree_nuts",
+"walnut"
+],
+"ingredients": [
+"wheat",
+"walnut"
+],
+"kind": "food",
+"name": "Walnut bread",
+"pairing_id": "walnut_bread",
+"styles": [
+"alpine",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+},
+{
+"product": "mimolette",
+"suggestions": [
+{
+"allergens": [
+"wheat",
+"tree_nuts",
+"walnut"
+],
+"ingredients": [
+"wheat",
+"walnut"
+],
+"kind": "food",
+"name": "Walnut bread",
+"pairing_id": "walnut_bread",
+"styles": [
+"alpine",
+"hard"
+]
+},
+{
+"allergens": [
+"tree_nuts",
+"almond"
+],
+"ingredients": [
+"almond"
+],
+"kind": "food",
+"name": "Marcona almonds",
+"pairing_id": "almonds",
+"styles": [
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+},
+{
+"product": "taleggio",
+"suggestions": [
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"cucumber",
+"vinegar"
+],
+"kind": "food",
+"name": "Cornichons",
+"pairing_id": "cornichons",
+"styles": [
+"washed-rind",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+}
+],
+"report": {
+"items": [
+{
+"grams": 1600,
+"product": "comte"
+},
+{
+"grams": 1600,
+"product": "mimolette"
+},
+{
+"grams": 1600,
+"product": "taleggio"
+}
+],
+"line_totals_cents": [
+7200,
+8000,
+6880
+],
+"needs_manager_approval": true,
+"subtotal_cents": 22080,
+"total_grams": 4800,
+"violations": []
+},
+"request": {
+"allergies": [],
+"allergies_confirmed": true,
+"budget_cents": 30000,
+"customer_i
+… Display shortened; full payload is in the recorded database.
+#270 · order.placed
+{
+"approval_ticket_id": "c48487091d824bd5a2575417247c17a1",
+"checkout_key": "b2418183bc38497cbd0e576186ba5dcb",
+"fingerprint": "e8caf06b29df9c585b778e2999c022c93be0896bb26bd8c5967e6fdbdb43399c",
+"order_id": "d64cdc9187214dd19e30e78272e9bf05",
+"pairings": [
+{
+"product": "comte",
+"suggestions": [
+{
+"allergens": [
+"wheat",
+"tree_nuts",
+"walnut"
+],
+"ingredients": [
+"wheat",
+"walnut"
+],
+"kind": "food",
+"name": "Walnut bread",
+"pairing_id": "walnut_bread",
+"styles": [
+"alpine",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+},
+{
+"product": "mimolette",
+"suggestions": [
+{
+"allergens": [
+"wheat",
+"tree_nuts",
+"walnut"
+],
+"ingredients": [
+"wheat",
+"walnut"
+],
+"kind": "food",
+"name": "Walnut bread",
+"pairing_id": "walnut_bread",
+"styles": [
+"alpine",
+"hard"
+]
+},
+{
+"allergens": [
+"tree_nuts",
+"almond"
+],
+"ingredients": [
+"almond"
+],
+"kind": "food",
+"name": "Marcona almonds",
+"pairing_id": "almonds",
+"styles": [
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+},
+{
+"product": "taleggio",
+"suggestions": [
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"cucumber",
+"vinegar"
+],
+"kind": "food",
+"name": "Cornichons",
+"pairing_id": "cornichons",
+"styles": [
+"washed-rind",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+}
+],
+"report": {
+"items": [
+{
+"grams": 1600,
+"product": "comte"
+},
+{
+"grams": 1600,
+"product": "mimolette"
+},
+{
+"grams": 1600,
+"product": "taleggio"
+}
+],
+"line_totals_cents": [
+7200,
+8000,
+6880
+],
+"needs_manager_approval": true,
+"subtotal_cents": 22080,
+"total_grams": 4800,
+"violations": []
+},
+"request": {
+"allergies": [],
+"allergies_confirmed": true,
+"budget_cents": 30000,
+"customer_id": "pavlos",
+"intent": "order",
+"order_authorized": true,
+"party_size": 60,
+"preferences": [],
+"required_countries": [
+"France"
+],
+"required_min_funk": null,
+"state": "NY",
+"wants_pairings": true
+}
+}
+#271 · workflow.event
+{
+"executor_id": "revalidate_and_place",
+"request_id": null,
+"type": "executor_invoked"
+}
+#272 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "output"
+}
+#273 · workflow.event
+{
+"executor_id": "revalidate_and_place",
+"request_id": null,
+"type": "executor_completed"
+}
+#274 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "superstep_completed"
+}
+#275 · workflow.event
+{
+"executor_id": null,
+"request_id": null,
+"type": "status"
+}
+#276 · span.event · workflow.started
+{
+"attributes": {},
+"name": "workflow.started",
+"timestamp_ns": 1792527776254807306
+}
+#277 · span.event · workflow.completed
+{
+"attributes": {},
+"name": "workflow.completed",
+"timestamp_ns": 1792527776273533517
+}
+#278 · workflow.result
+{
+"attempts": 1,
+"message": "Mock order placed. No purchase or email was sent.",
+"pairings": [
+{
+"product": "comte",
+"suggestions": [
+{
+"allergens": [
+"wheat",
+"tree_nuts",
+"walnut"
+],
+"ingredients": [
+"wheat",
+"walnut"
+],
+"kind": "food",
+"name": "Walnut bread",
+"pairing_id": "walnut_bread",
+"styles": [
+"alpine",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+},
+{
+"product": "mimolette",
+"suggestions": [
+{
+"allergens": [
+"wheat",
+"tree_nuts",
+"walnut"
+],
+"ingredients": [
+"wheat",
+"walnut"
+],
+"kind": "food",
+"name": "Walnut bread",
+"pairing_id": "walnut_bread",
+"styles": [
+"alpine",
+"hard"
+]
+},
+{
+"allergens": [
+"tree_nuts",
+"almond"
+],
+"ingredients": [
+"almond"
+],
+"kind": "food",
+"name": "Marcona almonds",
+"pairing_id": "almonds",
+"styles": [
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+},
+{
+"product": "taleggio",
+"suggestions": [
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"cucumber",
+"vinegar"
+],
+"kind": "food",
+"name": "Cornichons",
+"pairing_id": "cornichons",
+"styles": [
+"washed-rind",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id": "crackers",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"sulfites"
+],
+"ingredients": [
+"grapes",
+"sulfites"
+],
+"kind": "drink",
+"name": "Dry Riesling",
+"pairing_id": "riesling",
+"styles": [
+"alpine",
+"washed-rind",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"water"
+],
+"kind": "drink",
+"name": "Sparkling water",
+"pairing_id": "sparkling_water",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+}
+]
+}
+],
+"receipt": {
+"approval_ticket_id": "c48487091d824bd5a2575417247c17a1",
+"checkout_key": "b2418183bc38497cbd0e576186ba5dcb",
+"fingerprint": "e8caf06b29df9c585b778e2999c022c93be0896bb26bd8c5967e6fdbdb43399c",
+"order_id": "d64cdc9187214dd19e30e78272e9bf05",
+"pairings": [
+{
+"product": "comte",
+"suggestions": [
+{
+"allergens": [
+"wheat",
+"tree_nuts",
+"walnut"
+],
+"ingredients": [
+"wheat",
+"walnut"
+],
+"kind": "food",
+"name": "Walnut bread",
+"pairing_id": "walnut_bread",
+"styles": [
+"alpine",
+"hard"
+]
+},
+{
+"allergens": [],
+"ingredients": [
+"apple"
+],
+"kind": "food",
+"name": "Apple slices",
+"pairing_id": "apple",
+"styles": [
+"soft-ripened",
+"alpine",
+"washed-rind",
+"fresh-aged",
+"hard",
+"fresh",
+"brined"
+]
+},
+{
+"allergens": [
+"wheat"
+],
+"ingredients": [
+"wheat"
+],
+"kind": "food",
+"name": "Wheat crackers",
+"pairing_id"
+… Display shortened; full payload is in the recorded database.
+#279 · run.finished
+{
+"error": null,
+"status": "completed"
+}
+Inspect recorded task fields
+{
+"request": {
+"allergies": [],
+"allergies_confirmed": true,
+"budget_cents": 30000,
+"customer_id": "pavlos",
+"intent": "order",
+"order_authorized": true,
+"party_size": 60,
+"preferences": [],
+"required_countries": [
+"France"
+],
+"required_min_funk": null,
+"state": "NY",
+"wants_pairings": true
+},
+"context": {
+"excluded_products": [
+{
+"product_id": "munster",
+"reasons": [
+"insufficient_stock_for_minimum"
+]
+}
+],
+"mode": "enriched",
+"note": "Selection is application code, not an LLM decision or final-cart validation.",
+"sources": [
+{
+"content": {
+"allergies": [],
+"allergies_confirmed": true,
+"budget_cents": 30000,
+"customer_id": "pavlos",
+"intent": "order",
+"order_authorized": true,
+"party_size": 60,
+"preferences": [],
+"required_countries": [
+"France"
+],
+"required_min_funk": null,
+"state": "NY",
+"wants_pairings": true
+},
+"reason": "Keep required facts together.",
+"source": "confirmed_request",
+"trust": "customer_data"
+},
+{
+"content": {
+"candidates": [
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 520,
+"country": "France",
+"funk": 2,
+"milk": "cow",
+"name": "Brie de Meaux",
+"product_id": "brie",
+"raw_milk": true,
+"stock_g": 2400,
+"style": "soft-ripened"
+},
+{
+"aliases": [
+"Comte"
+],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 450,
+"country": "France",
+"funk": 1,
+"milk": "cow",
+"name": "Comté 18 mois",
+"product_id": "comte",
+"raw_milk": true,
+"stock_g": 6000,
+"style": "alpine"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 690,
+"country": "France",
+"funk": 5,
+"milk": "cow",
+"name": "Époisses",
+"product_id": "epoisses",
+"raw_milk": false,
+"stock_g": 900,
+"style": "washed-rind"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 410,
+"country": "France",
+"funk": 1,
+"milk": "goat",
+"name": "Bûcheron",
+"product_id": "bucheron",
+"raw_milk": false,
+"stock_g": 2000,
+"style": "fresh-aged"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 500,
+"country": "France",
+"funk": 2,
+"milk": "cow",
+"name": "Mimolette Extra-Vieille",
+"product_id": "mimolette",
+"raw_milk": false,
+"stock_g": 3000,
+"style": "hard"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 430,
+"country": "Italy",
+"funk": 4,
+"milk": "cow",
+"name": "Taleggio",
+"product_id": "taleggio",
+"raw_milk": false,
+"stock_g": 3000,
+"style": "washed-rind"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 390,
+"country": "Spain",
+"funk": 1,
+"milk": "sheep",
+"name": "Manchego 12 meses",
+"product_id": "manchego",
+"raw_milk": false,
+"stock_g": 4000,
+"style": "hard"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 370,
+"country": "Netherlands",
+"funk": 1,
+"milk": "cow",
+"name": "Aged Gouda",
+"product_id": "gouda",
+"raw_milk": false,
+"stock_g": 4500,
+"style": "hard"
+},
+{
+"aliases": [],
+"allergens": [
+"milk",
+"tree_nuts",
+"walnut"
+],
+"cents_per_100g": 360,
+"country": "USA",
+"funk": 1,
+"milk": "goat",
+"name": "Walnut-Crusted Chèvre",
+"product_id": "walnut_chevre",
+"raw_milk": false,
+"stock_g": 900,
+"style": "fresh"
+},
+{
+"aliases": [],
+"allergens": [
+"milk",
+"tree_nuts",
+"pistachio"
+],
+"cents_per_100g": 480,
+"country": "Spain",
+"funk": 1,
+"milk": "sheep",
+"name": "Pistachio Manchego",
+"product_id": "pistachio_manchego",
+"raw_milk": false,
+"stock_g": 650,
+"style": "hard"
+},
+{
+"aliases": [],
+"allergens": [
+"milk"
+],
+"cents_per_100g": 290,
+"country": "Cyprus",
+"funk": 0,
+"milk": "goat",
+"name": "Halloumi",
+"product_id": "halloumi",
+"raw_milk": false,
+"stock_g": 2000,
+"style": "brined"
+}
+],
+"selection_is_not_final_validation": true,
+"unresolved_allergy_information": []
+},
+"reason": "Select candidates using stock, destination, and known allergy constraints; retain variety.",
+"source": "catalog.json + policies.json + current_inventory",
+"trust": "shop_data"
+},
+{
+"content": {
+"customer_id": "pavlos",
+"preferences": [
+"French cheeses",
+"funky cheeses"
+]
+},
+"reason": "Retrieve this customer's saved preferences; current request takes precedence.",
+"source": "customers.json:pavlos",
+"trust": "saved_preferences"
+}
+]
+}
+}
+Classroom simulation · no real purchase or email. Run: 7409b343679a457490c94fb7512faa31
+[exit 0]

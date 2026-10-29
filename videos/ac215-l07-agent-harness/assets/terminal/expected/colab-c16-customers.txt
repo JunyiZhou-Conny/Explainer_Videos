@@ -1,0 +1,4 @@
+# recorded (saved output of the course Colab "Agent Harness", not re-run here): https://colab.research.google.com/drive/1ZYMsbG0gqsbs-6Pcj8WtT3WhEa4f80EZ, cell 16 ("Customers"), execution count 9; the notebook stores no date. The two staff names are replaced by <name>.
+  customer_id               name                            preferences
+0      pavlos  <name>        [French cheeses, funky cheeses]
+1      shivas     <name>  [mild cheeses, nonalcoholic pairings]

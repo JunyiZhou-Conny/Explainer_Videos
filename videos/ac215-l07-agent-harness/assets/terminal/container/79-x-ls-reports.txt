@@ -1,0 +1,10 @@
+$ ls -la outputs/reports/ outputs/*.html
+-rw-rw-rw- 1 app app 186508 Oct 20 20:23 outputs/my-report.html
+
+outputs/reports/:
+total 312
+drwxrwxrwx 2 app app     80 Oct 20 20:23 .
+drwxrwxrwx 8 app app    220 Oct 20 20:23 ..
+-rw-rw-rw- 1 app app 128948 Oct 20 20:22 act2-context-live-1.html
+-rw-rw-rw- 1 app app 186508 Oct 20 20:23 context-fixture-1.html
+[exit 0]

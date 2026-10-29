@@ -1,0 +1,45 @@
+$ python cli.py --act 3 --fixture --scenario manager-approval
+Workflow lesson — FIXTURE proposals; no model calls.
+Classroom simulation — no real purchase, shipment, or email. Orders and inventory last for this process; traces are saved in SQLite.
+
+🧪 Scenario: manager-approval · SCRIPTED proposals
+
+👤 Customer ask:
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+Step: confirm_request
+Step: propose_cart
+🧺 Proposed cart — attempt 1:
+  Comté 18 mois (comte) — 1600 g · RAW MILK
+  Mimolette Extra-Vieille (mimolette) — 1600 g · not raw milk
+  Taleggio (taleggio) — 1600 g · not raw milk
+Step: validate_and_price
+Cart attempt 1: valid; $220.80
+Step: select_pairings
+Step: manager_approval
+
+MANAGER REVIEW — ticket c48487091d824bd5a2575417247c17a1
+Confirmed request:
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+  4800 g; cheese subtotal $220.80
+  comte: 1600 g — $72.00
+  mimolette: 1600 g — $80.00
+  taleggio: 1600 g — $68.80
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+Approve this exact cart? Type approve or decline: approve
+Step: manager_approval
+Step: revalidate_and_place
+
+--- WORKFLOW PLACED — run 7409b343679a457490c94fb7512faa31 ---
+Order placed.
+Receipt: d64cdc9187214dd19e30e78272e9bf05
+  4800 g; cheese subtotal $220.80
+  comte: 1600 g — $72.00
+  mimolette: 1600 g — $80.00
+  taleggio: 1600 g — $68.80
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+Pairings for comte: Walnut bread (allergens: wheat, tree_nuts, walnut), Apple slices, Wheat crackers (allergens: wheat), Dry Riesling (allergens: sulfites), Sparkling water
+Pairings for mimolette: Walnut bread (allergens: wheat, tree_nuts, walnut), Marcona almonds (allergens: tree_nuts, almond), Apple slices, Wheat crackers (allergens: wheat), Dry Riesling (allergens: sulfites), Sparkling water
+Pairings for taleggio: Apple slices, Cornichons, Wheat crackers (allergens: wheat), Dry Riesling (allergens: sulfites), Sparkling water
+Proposal attempts: 1. Model calls: 0.
+💾 Recorded in /app/outputs/observability.sqlite. No evaluation suite was run.
+[exit 0]

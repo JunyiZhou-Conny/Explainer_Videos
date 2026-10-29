@@ -1,0 +1,466 @@
+# zh narration for S09-S16 (part 2, group g2: frameworks own the loop — ADK setup, adk web and the folder names,
+# Runner / session / state, MCP, many agents, the harness's approval gate and receipt, teardown and recap),
+# sentence-aligned to script.md v2: one zh sentence per English sentence (explainer.voice.split_sentences; 75 SAY
+# lines, 165 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml (binding); the glossary's S09-S16
+# first_use sentences are used as written, except where a rule asks for a small change (G3: a colon before the
+# command in S09[2]; A9: no 只 the English lacks in S12[6] and S13[3]; D9: no comma before the main verb after
+# 课程结束时 in S16[2]; G2: .env 文件 at the end of S09[4]; G1: a comma after Agent Development Kit in S09[0], so
+# the band cuts there and not between 跑 and 在). Every sentence was run through subtitles.split_balanced at the
+# band width (30) and the .zh.srt width (22): no command, model ID or kept-English name is split. Proofread
+# (subtitles step 3), in two sessions: the first, cut off by a usage limit, re-punctuated S12[6], S12[7], S13[4],
+# S14[7] and S16[0] so each Chinese clause sits over its own English clause, and smoothed S10[8], S14[4], S15[3].
+# The second (2026-10-20) checked every sentence against script.md and the glossary, kept those edits, and ran all
+# 165 sentences through explainer.subtitles.tracks(timing="en") on an estimated English timing (2.9 words/s, no
+# renders yet). It changed S09[1] (README 里的地址), S09[7] (又把 gemini-2.5-flash 限定给老用户使用: Google is the
+# subject of both clauses, and no band cue opens on a model ID), S09[13] (再跑一次), S10[1] (提示文字说), S14[7]
+# (the ； now joins two full clauses: 代码就放在行动工具上) and S16[3] (block first, as the anatomy fills: 核心是……；
+# 指令是……；记忆是消息历史和 session 状态, so no cue opens on prompt). Repeat that check on the rendered timing.
+# Fix round 1 (final review, report-asr.md §3 and report-pairs.md F3) reworded three SAY sentences, and their en,
+# zh and en_display follow: S10[1] (with this command: before the command, as the zh 用这条命令改： already said, so
+# the English track keeps uv run adk telemetry disable on one line), S10[7] (the dot env at the repository root:
+# repo 根目录下的 .env) and S15[2] (wrote the HTML to a file: 写进了一个文件).
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8, D9:
+# 所以这一步只要 uv 选中 3.15 就会失败; 用完以后把 1.6 GB 的虚拟环境删掉).
+# Underscore names and refused symbols are written the way the SAY speaks them, with a Chinese noun where it helps
+# (rules A6, B3: Google API key 的等号后面, output key, MCP servers 参数, needs confirmation, apply confirmation,
+# send email, root agent, mode 设为 any, Ctrl-C). No brackets (B2). Numbers as on screen, without thousands
+# separators (C1: 189 个包, 2690 美元, 上限 6000); small narrative counts in Hanzi (六个模块目录, 三个插头, 四次编辑调用).
+# Model IDs as in the code, on both lines (C2: gemini-2.5-flash, gemini-3.1-flash-lite, gemini-2.0-flash).
+# Commands sit at the end of a clause, after a full-width colon (G3). Sentences never open with an artifact or a
+# lower-case kept-English word (A5: 这个 agent 下拉菜单……, 这个名字 1-baseline……, 这个 agent 的 .adk 目录……).
+# The ponder lines S09[9], S13[5] and S14[3] give nothing away (A9).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: cd google-adk-tutorial,
+# cd llm-agent-google-adk, .env, .env.example, gemini-2.5-flash, GOOGLE_API_KEY=, gemini-3.1-flash-lite,
+# gemini-2.0-flash, sentence-transformers, onnxruntime, uv run adk --version, uv run adk web, adk telemetry disable,
+# localhost:8000, 1-baseline, Ctrl+C, root_agent, baseline.agent, llm-rag, --port 8080, output_key, mcp_servers,
+# needs_confirmation, apply_confirmation, the USERS cell, send_email, .adk/, mode="any"); null = the SAY text.
+S09:
+- en: "Part 2: frameworks own the loop. No Docker this time: Google's Agent Development Kit runs in a uv environment on your laptop. Open a new terminal where you keep your clones."
+  zh:
+  - "第二部分：循环归框架管。"
+  - "这次不用 Docker：Google 的 Agent Development Kit，跑在你笔记本上的一个 uv 环境里。"
+  - "打开一个新终端，进到你放 clone 的地方。"
+- en: "Step 1: clone; the README writes a placeholder for the address. The next line says cd google ADK tutorial, but no such folder exists."
+  zh:
+  - "第 1 步：clone；README 里的地址写的是一个占位符。"
+  - "下一行写的是：cd google-adk-tutorial，可是并没有这个目录。"
+  en_display:
+  - null
+  - "The next line says cd google-adk-tutorial, but no such folder exists."
+- en: "A small slip: the folder is named after the repo. Type cd L-L-M agent google ADK instead."
+  zh:
+  - "一个小疏漏：目录名和 repo 名一样。"
+  - "改成输入：cd llm-agent-google-adk。"
+  en_display:
+  - null
+  - "Type cd llm-agent-google-adk instead."
+- en: "An extra ls shows six numbered module folders, but no lock file: the repo ignores it, so everyone resolves fresh versions."
+  zh:
+  - "额外的 ls 显示有六个带编号的模块目录，但没有 lock 文件：这个 repo 忽略了它，所以每个人都会重新解析出最新的版本。"
+- en: "Next, copy dot env dot example to dot env. An extra grep shows a placeholder Google API key, and the model, Gemini 2.5 Flash."
+  zh:
+  - "接下来，把 .env.example 复制成 .env 文件。"
+  - "额外的 grep 显示了一个占位的 Google API 密钥，还有模型：gemini-2.5-flash。"
+  en_display:
+  - "Next, copy .env.example to .env."
+  - "An extra grep shows a placeholder Google API key, and the model, gemini-2.5-flash."
+- en: "Then create a key in Google AI Studio, and paste it into dot env, after Google API key equals."
+  zh:
+  - "然后在 Google AI Studio 里创建一个密钥，粘贴到 .env 里 Google API key 的等号后面。"
+  en_display:
+  - "Then create a key in Google AI Studio, and paste it into .env, after GOOGLE_API_KEY=."
+- en: "Also change the model line. Choosing the LLM core is the lecture's first design decision, and here it's one line: a current model, like Gemini 3.1 Flash-Lite."
+  zh:
+  - "模型那一行也要改。"
+  - "选 LLM 核心是课上的第一个设计决定，而在这里它只是一行：换成当前的模型，比如 gemini-3.1-flash-lite。"
+  en_display:
+  - null
+  - "Choosing the LLM core is the lecture's first design decision, and here it's one line: a current model, like gemini-3.1-flash-lite."
+- en: "Google lists the code's fallback, Gemini 2.0 Flash, as shut down, and limits 2.5 Flash to earlier users. Keep everything in this root file: only the nearest dot env is loaded. Pause, and set up yours."
+  zh:
+  - "Google 把代码里的后备模型 gemini-2.0-flash 列为已停用，又把 gemini-2.5-flash 限定给老用户使用。"
+  - "所有设置都放在根目录这个文件里：只会加载离得最近的那个 .env 文件。"
+  - "暂停一下，把你的设置好。"
+  en_display:
+  - "Google lists the code's fallback, gemini-2.0-flash, as shut down, and limits gemini-2.5-flash to earlier users."
+  - "Keep everything in this root file: only the nearest .env is loaded."
+  - null
+- en: "The project file wants Python 3.10 or newer and ADK 1.8 or newer, with no upper bound. It also lists Chroma and sentence transformers."
+  zh:
+  - "项目文件要求 Python 3.10 及以上、ADK 1.8 及以上，没有上限。"
+  - "文件里还列了 Chroma 和 sentence-transformers。"
+  en_display:
+  - null
+  - "It also lists Chroma and sentence-transformers."
+- en: "One more fact: this laptop has no Python at all."
+  zh:
+  - "再补充一点：这台笔记本上根本没有 Python。"
+- en: "Then install: uv sync. As in lecture 1, with no Python around, uv downloads the newest: CPython 3.15.0, at the time of recording."
+  zh:
+  - "然后安装：uv sync。"
+  - "和第 1 讲一样，周围没有 Python，uv 就下载最新的：录制时是 CPython 3.15.0。"
+- en: "It resolves 189 packages, then fails. O-N-N-X runtime, which Chroma pulls in, has wheels only up to Python 3.14."
+  zh:
+  - "它解析了 189 个包，然后失败了。"
+  - "Chroma 引入的 onnxruntime，只有到 Python 3.14 为止的 wheel。"
+  en_display:
+  - null
+  - "onnxruntime, which Chroma pulls in, has wheels only up to Python 3.14."
+- en: "So this step fails whenever uv picks 3.15: on a fresh laptop, or where uv already has 3.15, even beside an older Python. The fix, with an extra command: uv python pin 3.13."
+  zh:
+  - "所以这一步只要 uv 选中 3.15 就会失败：在全新的笔记本上，或者 uv 已经有 3.15 的地方，哪怕旁边还有更旧的 Python。"
+  - "修复办法是一条额外的命令：uv python pin 3.13。"
+- en: "Then uv sync again: CPython 3.13 this time, and it installs, ADK 2.12.0 included. PyTorch makes it big: about 1.6 gigabytes, plus about 3 gigabytes for CUDA on a Linux PC."
+  zh:
+  - "然后再跑一次：uv sync，这次用的是 CPython 3.13，安装成功，ADK 2.12.0 也装上了。"
+  - "PyTorch 让它变得很大：大约 1.6 GB，在 Linux 电脑上还要再加大约 3 GB 的 CUDA。"
+- en: "An extra check, uv run ADK dash dash version, says 2.12.0, at the time of recording. Pause, and get your sync to succeed."
+  zh:
+  - "额外检查一下：uv run adk --version，录制时显示 2.12.0。"
+  - "暂停一下，让你的 sync 跑成功。"
+  en_display:
+  - "An extra check, uv run adk --version, says 2.12.0, at the time of recording."
+  - null
+S10:
+- en: "Running agents, step 1, from the repository root: uv run ADK web. First, version 2.12 asks a question the README doesn't mention: may Google collect usage data?"
+  zh:
+  - "Running Agents 一节的第 1 步，在 repo 根目录下：uv run adk web。"
+  - "首先，2.12 版会问一个问题，README 里没提：可以让 Google 收集使用数据吗？"
+  en_display:
+  - "Running Agents, step 1, from the repository root: uv run adk web."
+  - null
+- en: "The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with this command: uv run ADK telemetry disable."
+  zh:
+  - "提示文字说遥测默认是关闭的，可大写的 Y 意味着直接按回车就是回答 yes。"
+  - "怎么回答都行；以后可以用这条命令改：uv run adk telemetry disable。"
+  en_display:
+  - null
+  - "Answer as you like; change it later with this command: uv run adk telemetry disable."
+- en: "Then the server starts, on port 8000. Step 2: open localhost 8000 in your browser; an extra curl shows the redirect to the dev UI."
+  zh:
+  - "然后服务器启动了，在 port 8000 上。"
+  - "第 2 步：在浏览器里打开 localhost:8000；额外的 curl 显示它重定向到了 dev UI。"
+  en_display:
+  - null
+  - "Step 2: open localhost:8000 in your browser; an extra curl shows the redirect to the dev UI."
+- en: "The agent dropdown lists 7 entries, nested ones included. Pick 1 baseline, as its README says, and the page refuses: agent names must be valid Python identifiers."
+  zh:
+  - "这个 agent 下拉菜单列出了 7 项，嵌套的也算在内。"
+  - "按它的 README 选 1-baseline，页面拒绝了：agent 名必须是合法的 Python 标识符。"
+  en_display:
+  - null
+  - "Pick 1-baseline, as its README says, and the page refuses: agent names must be valid Python identifiers."
+- en: "Why? Each folder name becomes the app's name, and an identifier holds only letters, digits and underscores, never starting with a digit. The name 1 baseline breaks both rules."
+  zh:
+  - "为什么？"
+  - "每个目录名都会变成 app 名，而标识符只能包含字母、数字和下划线，并且不能以数字开头。"
+  - "这个名字 1-baseline，两条规则都违反了。"
+  en_display:
+  - null
+  - null
+  - "The name 1-baseline breaks both rules."
+- en: "An older version, 1.27.5, lists only the four folders. But picking one still fails, as an invalid app name. So a version pin doesn't help; we undid ours."
+  zh:
+  - "旧版本 1.27.5 只列出那四个目录。"
+  - "但选一个还是失败，原因是 app 名不合法。"
+  - "所以 pin 版本没用；我们也把自己的 pin 撤掉了。"
+- en: "What works is renaming, which isn't in the README either. Stop the server with control C, then drop each leading number, and turn hyphens into underscores."
+  zh:
+  - "管用的是改名，这也不在 README 里。"
+  - "先按 Ctrl-C 停掉服务器，再去掉每个开头的数字，把连字符换成下划线。"
+  en_display:
+  - null
+  - "Stop the server with Ctrl+C, then drop each leading number, and turn hyphens into underscores."
+- en: "Start the web server again, and pick baseline. The log says it loaded the dot env at the repository root, and found the root agent in baseline dot agent."
+  zh:
+  - "再启动一次 web 服务器，选 baseline。"
+  - "日志说它加载了 repo 根目录下的 .env，并在 baseline.agent 里找到了 root agent。"
+  en_display:
+  - null
+  - "The log says it loaded the .env at the repository root, and found the root_agent in baseline.agent."
+- en: "Two more slips: the quick start passes a file where a folder is expected, and the module READMEs drop the word web, so it only prints help."
+  zh:
+  - "还有两个小疏漏：快速入门在该传目录的地方传了一个文件，各模块的 README 又漏了 web 这个词，所以命令只会打印帮助信息。"
+- en: "And if L-L-M rag's Chroma still holds port 8000, they clash; the web server stopped: address already in use. Run docker compose down first, or add dash dash port 8080. Pause, and get the dev UI open on baseline."
+  zh:
+  - "如果 llm-rag 的 Chroma 还占着 port 8000，两边就会冲突；web 服务器停了：address already in use。"
+  - "先运行 docker compose down，或者加上 --port 8080。"
+  - "暂停一下，在 dev UI 里打开 baseline。"
+  en_display:
+  - "And if llm-rag's Chroma still holds port 8000, they clash; the web server stopped: address already in use."
+  - "Run docker compose down first, or add --port 8080."
+  - null
+S11:
+- en: "Baseline holds three LLM agents, each with a model, an instruction, and an output key. In the lecture's blocks: the LLM core, the instructions, and no tools at all."
+  zh:
+  - "在 baseline 里，有三个 LLM agent，每个都有一个模型、一条指令和一个 output key。"
+  - "对应课上的组件：LLM 核心、指令，完全没有工具。"
+  en_display:
+  - "Baseline holds three LLM agents, each with a model, an instruction, and an output_key."
+  - null
+- en: "A sequential agent runs them in order: validator, planner, summarizer. An extra request shows the tree the UI loads, with the model from your root dot env; check yours."
+  zh:
+  - "顺序 agent 依次运行它们：校验器、规划器、总结器。"
+  - "一个额外的请求显示了 UI 加载的那棵树，模型来自你根目录的 .env；核对一下你的。"
+  en_display:
+  - null
+  - "An extra request shows the tree the UI loads, with the model from your root .env; check yours."
+- en: "Another extra request creates a session: an empty state, and no events yet. Think of the state as a shared whiteboard."
+  zh:
+  - "另一个额外的请求创建了一个 session：状态是空的，也还没有事件。"
+  - "把状态想成一块共享的白板。"
+- en: "Once you add your key, the Runner does this. The validator's reply goes into the state, under its output key; before the planner runs, its instruction's placeholder is filled from that cell."
+  zh:
+  - "等你加上密钥，Runner 就会这样做。"
+  - "校验器的回复写进状态，放在它的 output key 下面；规划器运行之前，它指令里的占位符会用那一格的内容填上。"
+  en_display:
+  - null
+  - "The validator's reply goes into the state, under its output_key; before the planner runs, its instruction's placeholder is filled from that cell."
+- en: "The summarizer reads the plan the same way. The agents never call each other: the session carries the data, in its state and its history of events. A parallel agent fills its cells at once."
+  zh:
+  - "总结器也用同样的方式读取计划。"
+  - "这些 agent 从不互相调用：数据由 session 携带，放在它的状态和事件历史里。"
+  - "并行 agent 会同时填满它的格子。"
+- en: "The lecture's planner needs live systems; this pipeline has no tools, so its prices are the model's guesses. A later notebook gets prices from tools and sums from Python."
+  zh:
+  - "课上的旅行规划需要实时系统；这条 pipeline 没有工具，所以里面的价格都是模型猜的。"
+  - "后面一个 notebook 的价格来自工具，总和由 Python 计算。"
+- en: "The ADK README calls this memory. The code calls it session state, and it lasts one session; the lecture's memory remembers you next time, which none of today's runs does."
+  zh:
+  - "ADK 的 README 把这叫作记忆。"
+  - "代码里叫它 session 状态，只持续一个 session；课上说的记忆，下次还会记得你，而今天的运行一个都做不到。"
+- en: "Without a real key, a trip request gets an internal server error. The server log says why: API key not valid. The placeholder reached Google, and was refused."
+  zh:
+  - "没有真正的密钥，旅行请求会得到 Internal Server Error。"
+  - "服务器日志说明了原因：API key not valid。"
+  - "占位密钥发到了 Google，被拒绝了。"
+  en_display:
+  - "Without a real key, a trip request gets an Internal Server Error."
+  - null
+  - null
+- en: "With your key, look for three replies in order, and three new entries in the State tab; the session is a file in the agent's folder. Each request is three model calls: pause, and plan a trip."
+  zh:
+  - "有密钥的话，要找的是：按顺序的三条回复，以及 State 标签页里新增的三项；这个 session 是 agent 目录里的一个文件。"
+  - "每个请求是三次模型调用：暂停一下，规划一次旅行。"
+S12:
+- en: "The lecture sorts tools into three families. Data tools fetch, like our book searches; action tools change something, like finalizing a trip or sending email; orchestration tools hand work to another agent."
+  zh:
+  - "课上把工具分成三类。"
+  - "数据工具负责获取，比如我们的搜书工具；行动工具会改变某些东西，比如敲定行程或者发邮件；编排工具把工作交给另一个 agent。"
+- en: "Now wire one agent to ten services, each with its own protocol. The lecture asks: do you see a problem?"
+  zh:
+  - "现在把一个 agent 接到十个服务上，每个服务都有自己的协议。"
+  - "课上问：你看出问题了吗？"
+- en: "Every tool becomes a custom integration. MCP, the Model Context Protocol, makes it one pattern: a host with clients, and an MCP server for each service."
+  zh:
+  - "每个工具都要做一次定制集成。"
+  - "MCP，也就是模型上下文协议，把它变成一种模式：一个 host 带着若干 client，每个服务对应一个 MCP server。"
+- en: "The lecture's MCP box is a shared protocol, not a program you run. In code, each server is its own plug, and the tutorial has three."
+  zh:
+  - "课上那个 MCP 方框是一个共享的协议，不是一个要你运行的程序。"
+  - "在代码里，每个 server 都是一个单独的插头，教程里有三个。"
+- en: "Plug 1 is in the ADK module on MCP. Install Node."
+  zh:
+  - "第 1 个插头在 ADK 讲 MCP 的那个模块里。"
+  - "安装 Node。"
+- en: "The agent's toolset starts a filesystem server with npx, as a child process, talking over standard input and output."
+  zh:
+  - "这个 agent 的工具集用 npx 启动一个文件系统 server，作为子进程；它通过标准输入输出通信。"
+- en: "An extra script asks that toolset for its tools, with no model involved. The server offers 14, including write and edit, and the filter lets three through. With your key, ask the agent to list files."
+  zh:
+  - "一个额外的脚本向这个工具集要它的工具列表，完全不涉及模型。"
+  - "这个 server 提供 14 个，包括写入和编辑，过滤器放行了三个。"
+  - "有密钥的话，让 agent 列出文件。"
+- en: "Plug 2 is back in the Cheese Quiz. After a first tool written as a plain function, the notebook connects to a remote MCP server by URL, passed as MCP servers, not tools."
+  zh:
+  - "第 2 个插头回到 Cheese Quiz 里。"
+  - "先是第一个工具，写成普通函数；然后 notebook 按 URL 连上一个远程 MCP server，作为 MCP servers 参数传进去，而不是 tools。"
+  en_display:
+  - null
+  - "After a first tool written as a plain function, the notebook connects to a remote MCP server by URL, passed as mcp_servers, not tools."
+- en: "Extra curl commands talk to that server. A browser's plain request gets 406: the server is up, but speaks MCP, not web pages. Then initialize, list tools, call: one tool, one cheese fact per call."
+  zh:
+  - "额外的几条 curl 命令和这个 server 对话。"
+  - "浏览器的普通请求得到 406：server 在运行，但它说的是 MCP，不是网页。"
+  - "然后是初始化、列出工具、调用：一个工具，每次调用一条奶酪冷知识。"
+- en: "Plug 3 is optional: the notebook runs its own FastMCP server, in a thread, on port 8001. A small slip: the comment above says 8000, and so does an older saved output."
+  zh:
+  - "第 3 个插头是可选的：这个 notebook 自己起一个 FastMCP server，跑在一个线程里，在 port 8001 上。"
+  - "一个小疏漏：上面的注释写的是 8000，一份较早保存的输出也是。"
+- en: "Notice who does the talking: your client process. MCP gives the model no network access; it still only writes calls. Pause, and run the MCP cells."
+  zh:
+  - "注意是谁在负责通信：你的 client 进程。"
+  - "MCP 并没有给模型任何网络访问权限；它仍然只是写出调用。"
+  - "暂停一下，把 MCP 的单元格跑一遍。"
+S13:
+- en: "In the lecture, deep research is a tree of agents: a lead agent, a planner, parallel web searchers, and a synthesis into a report. The tutorial builds trees like it: the Cheese Quiz Guild, and the newsletter."
+  zh:
+  - "课上的深度研究是一棵 agent 树：一个主 agent、一个规划器、几个并行的网页搜索 agent，最后汇总成一份报告。"
+  - "教程搭了类似的树：Cheese Quiz Guild，还有简报。"
+- en: "The lecture's planner raises the question that sorts them: who plans the order? First answer: the code. The sequential agent is an assembly line, its order fixed in Python."
+  zh:
+  - "课上的规划器引出了区分它们的问题：顺序由谁来定？"
+  - "第一种答案：代码。"
+  - "顺序 agent 就是一条流水线，顺序在 Python 里写死。"
+- en: "Second answer: the model. In the Guild, each specialist becomes a tool: a whole agent behind one function. An orchestrator decides which to call."
+  zh:
+  - "第二种答案：模型。"
+  - "在 Guild 里，每个专家 agent 都变成一个工具：一个函数背后是一整个 agent。"
+  - "由一个编排 agent 决定调用哪一个。"
+- en: "Its instructions say: follow the assembly line strictly, at most 2 review rounds. That's a rule in prose; no code enforces it, except a cap of 12 turns."
+  zh:
+  - "它的指令写着：严格按流水线来，最多 2 轮审查。"
+  - "这是写在文字里的规则；没有代码去强制执行它，除了 12 轮的上限。"
+- en: "The staff's saved run logged three errors getting a response, and still produced a quiz; the log doesn't say which calls failed. Every hop adds cost, time, and a way to fail; pause, and run the Guild."
+  zh:
+  - "课程团队保存的运行报了三次获取回复的错误，却还是生成了一份测验；日志没说是哪些调用失败了。"
+  - "每多一跳，就多一份成本、一段时间和一种失败的可能；暂停一下，跑一遍 Guild。"
+- en: "Third answer: Python, reading the model's label. In this custom agent, a classifier writes one word into the state, and plain if statements pick the handler."
+  zh:
+  - "第三种答案：Python，读取模型给的标签。"
+  - "在这个自定义 agent 里，一个分类器往状态里写一个词，再由普通的 if 语句选出处理函数。"
+- en: "The else branch: clarification. The comparison is exact; lowercase the label first, or ask for structured output. The exercises try both."
+  zh:
+  - "走的是 else 分支：clarification。"
+  - "比较是精确匹配；先把标签转成小写，或者要求结构化输出。"
+  - "练习里两种办法都会试。"
+- en: "The lecture also lists handoffs among the orchestration tools. These tutorials use agents as tools; lecture 7 sketches handoffs."
+  zh:
+  - "课上还把交接也列进了编排工具。"
+  - "这些教程是把 agent 当工具用；第 7 讲会简单讲讲交接。"
+S14:
+- en: "The Travel Planner notebook rehearses the lecture's trip. Copy it, add your key, and install its pinned agents package. Paris shrinks to a mock catalog: 3 cities, 6 hotels, 5 search tools and a finalize tool, booking nothing."
+  zh:
+  - "Travel Planner 这个 notebook 演练的是课上那趟旅行。"
+  - "复制一份，加上你的密钥，再安装它 pin 了版本的 agents 包。"
+  - "巴黎缩成了一份模拟清单：3 个城市、6 家酒店、5 个搜索工具和一个 finalize 工具，什么都不会真的预订。"
+- en: "In the staff's saved run, turn 1 asks which California city. Turn 2 runs five searches and offers options. In turn 3 the user picks, the model calls finalize, and the reply shows the exact plan and asks for a yes."
+  zh:
+  - "在课程团队保存的运行里，第 1 轮问的是加州的哪个城市。"
+  - "第 2 轮做了五次搜索，给出几个选项。"
+  - "第 3 轮里用户做出选择，模型调用 finalize，回复里列出确切的计划，并请用户回答 yes。"
+- en: "That's the gate. A finalize call from the model can only propose: if the plan isn't the approved one, the code stores it as pending, and returns needs confirmation."
+  zh:
+  - "这就是关卡。"
+  - "模型发起的 finalize 调用只能提议：如果计划不是已批准的那一份，代码就把它存为待批准，并返回 needs confirmation。"
+  en_display:
+  - null
+  - "A finalize call from the model can only propose: if the plan isn't the approved one, the code stores it as pending, and returns needs_confirmation."
+- en: "Approval lives in a separate function, apply confirmation: only an explicit yes copies pending to approved."
+  zh:
+  - "批准放在另一个函数 apply confirmation 里：只有明确的 yes，才会把待批准的计划复制为已批准。"
+  en_display:
+  - "Approval lives in a separate function, apply_confirmation: only an explicit yes copies pending to approved."
+- en: "Because apply confirmation runs on the human's message, before the agent starts. Inside turn 3, nothing is approved, so every retry gets the same stamp."
+  zh:
+  - "因为 apply confirmation 处理的是人发来的消息，在 agent 启动之前运行。"
+  - "在第 3 轮里，什么都没被批准，所以每次重试都会盖上同一个印章。"
+  en_display:
+  - "Because apply_confirmation runs on the human's message, before the agent starts."
+  - null
+- en: "Turn 4: the human types yes. The stamp flips to approved, finalize runs, and Python builds the budget line by line: 2,690 of the 6,000 dollars. The notebook's own test checks Python's number."
+  zh:
+  - "第 4 轮：人输入 yes。"
+  - "印章翻成已批准，finalize 运行，Python 逐行算出预算：2690 美元，上限 6000。"
+  - "这个 notebook 自带的测试核对 Python 算出的数。"
+- en: "What the user sees comes from checked state, not the model's prose. An itinerary that skipped the check raises an error, a hard guardrail; a dollar amount in the model's prose only prints a warning, a soft one."
+  zh:
+  - "用户看到的内容来自检查过的状态，而不是模型写的文字。"
+  - "跳过检查的行程会抛出异常，这是硬护栏；模型文字里出现美元金额，只会打印一条警告，这是软护栏。"
+- en: "The lecture puts success criteria in the instructions, and guardrails in the decision maker. This notebook keeps both in code the model can't talk its way past, on the action tool. Every turn is paid; pause, and run the four turns."
+  zh:
+  - "课上把成功标准放在指令里，把护栏放在决策者里。"
+  - "这个 notebook 把两者都写进代码，模型怎么说都绕不过去；代码就放在行动工具上。"
+  - "每一轮都要付费；暂停一下，把这四轮跑一遍。"
+S15:
+- en: "The last notebook writes a cheese newsletter per reader, with Microsoft's Agent Framework, pinned. In the users cell, put in yourself and a friend, and keep two entries. Email is preview only; nothing is sent."
+  zh:
+  - "最后一个 notebook 给每位读者写一份奶酪简报，用的是 Microsoft 的 Agent Framework，版本 pin 住了。"
+  - "在 USERS 单元格里，填上你自己和一个朋友，保留两项。"
+  - "邮件只是预览；什么都不会发出去。"
+  en_display:
+  - null
+  - "In the USERS cell, put in yourself and a friend, and keep two entries."
+  - null
+- en: "The orchestrator gets three tools: a researcher with web search, an editor, and send email. At most 16 iterations, one tool call at a time."
+  zh:
+  - "编排 agent 有三个工具：一个带网页搜索的研究员、一个编辑，以及 send email。"
+  - "最多 16 次迭代，一次只做一个工具调用。"
+  en_display:
+  - "The orchestrator gets three tools: a researcher with web search, an editor, and send_email."
+  - null
+- en: "In the staff's saved run, the first city took four editor calls; the code validates every draft and hands any errors back as the tool's result. Then send email wrote the HTML to a file. That run had four readers; today's list makes two."
+  zh:
+  - "在课程团队保存的运行里，第一个城市用了四次编辑调用；代码会校验每份草稿，把任何错误都作为工具的结果交回去。"
+  - "然后 send email 把 HTML 写进了一个文件。"
+  - "那次运行有四位读者；今天的名单是两位。"
+  en_display:
+  - null
+  - "Then send_email wrote the HTML to a file."
+  - null
+- en: "Now the harness. When the orchestrator stops, Python ignores its words and checks two things: is there a receipt from send email, and is that file on disk? If not, the run fails; success is a receipt, not a claim."
+  zh:
+  - "现在来看 harness。"
+  - "编排 agent 停下来以后，Python 不管它说了什么，检查两件事：有没有来自 send email 的回执，那个文件在不在磁盘上？"
+  - "如果没有，这次运行就算失败；成功看的是回执，而不是它声称了什么。"
+  en_display:
+  - null
+  - "When the orchestrator stops, Python ignores its words and checks two things: is there a receipt from send_email, and is that file on disk?"
+  - null
+- en: "Compare a rule that lives only in the prompt. The editor is told: no embedded URLs. The saved preview has one anyway, because no code checks for it; a note is not a check."
+  zh:
+  - "对比一下只写在 prompt 里的规则。"
+  - "编辑收到的指令是：不要嵌入 URL。"
+  - "保存的预览里还是有一个，因为没有代码去检查；便条不等于检查。"
+- en: "The lecture's Self-RAG and Corrective RAG grade their retrieval for the same reason: don't trust, check. Next lecture calls this outer layer the harness. Web search is billed per call; pause, and run the demo."
+  zh:
+  - "课上的 Self-RAG 和 Corrective RAG 给检索结果打分，也是出于同样的理由：别信，要查。"
+  - "下节课把这个外层叫作 harness。"
+  - "网页搜索按次计费；暂停一下，跑一遍演示。"
+S16:
+- en: "Tear down: control C stops the web server. An extra git status shows the renamed folders and your Python pin; dot env, the virtual environment and the lock file are ignored."
+  zh:
+  - "该拆掉了：按 Ctrl-C 停掉 web 服务器。"
+  - "额外的 git status 显示了改名后的目录，还有你的 Python pin；而 .env 文件、虚拟环境和 lock 文件，都被忽略了。"
+  en_display:
+  - "Tear down: Ctrl+C stops the web server."
+  - "An extra git status shows the renamed folders and your Python pin; .env, the virtual environment and the lock file are ignored."
+- en: "The sessions in the agent's dot ADK folder aren't ignored, so don't commit them, and delete the 1.6 gigabyte virtual environment when you're done."
+  zh:
+  - "这个 agent 的 .adk 目录里，session 没有被忽略，所以别 commit 它们，用完以后把 1.6 GB 的虚拟环境删掉。"
+  en_display:
+  - "The sessions in the agent's .adk/ folder aren't ignored, so don't commit them, and delete the 1.6 gigabyte virtual environment when you're done."
+- en: "In each notebook, disconnect and delete the runtime. Keep the service account key beside L-L-M rag, never inside, and delete or cap the other two keys when the course ends."
+  zh:
+  - "在每个 notebook 里，断开连接并删除运行时。"
+  - "服务账号密钥放在 llm-rag 旁边，绝不放进去；课程结束时把另外两个密钥删掉，或者给它们设上限。"
+  en_display:
+  - null
+  - "Keep the service account key beside llm-rag, never inside, and delete or cap the other two keys when the course ends."
+- en: "Here's the lecture's anatomy, filled with today's code. Gemini and OpenAI models as the core; prompts and output types as instructions; tools by hand, decorated, or over MCP; history and session state as memory."
+  zh:
+  - "这是课上的 agent 结构图，填上了今天的代码。"
+  - "核心是 Gemini 和 OpenAI 的模型；指令是 prompt 和输出类型；工具有手写的、加装饰器的，或者走 MCP 的；记忆是消息历史和 session 状态。"
+- en: "Dynamic control is the framework's loop, or two calls by hand. The lecture's formula, LLM plus reasoning, instructions and tools, gains two pieces: a loop the framework runs, and checks that your own code enforces."
+  zh:
+  - "动态控制就是框架的循环，或者手写的两次调用。"
+  - "课上的公式，LLM 加上推理、指令和工具，多了两块：框架运行的循环，以及由你的代码强制执行的检查。"
+- en: "Test yourself. One: who runs the function, and what goes back in call 2? Two: what does mode any change, and why only on call 1?"
+  zh:
+  - "自测一下。"
+  - "第一题：谁来运行这个函数，第 2 次调用里又发回什么？"
+  - "第二题：mode 设为 any 改变了什么，为什么只在第 1 次调用上？"
+  en_display:
+  - null
+  - null
+  - "Two: what does mode=\"any\" change, and why only on call 1?"
+- en: "Three: what ends an agent loop, what cap do frameworks add, and which block is that? Four: how does the summarizer get the plan without a message?"
+  zh:
+  - "第三题：agent 循环靠什么结束，框架加了什么上限，那又是哪个组件？"
+  - "第四题：总结器怎么在没有消息的情况下拿到计划？"
+- en: "Five: what decides that a harness run succeeded, and why not the model's word? Answers and every command are in the exercises and the study guide. Next lecture: the harness itself."
+  zh:
+  - "第五题：什么决定一次 harness 运行成功了，为什么不是模型说了算？"
+  - "答案和每条命令都在练习和学习指南里。"
+  - "下节课：harness 本身。"

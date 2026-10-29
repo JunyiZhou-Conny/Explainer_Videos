@@ -235,18 +235,18 @@ Conventions
   the `google-adk<1.28` pin as a fix; invented `LLM Response:` values, ADK events, State-tab values, model
   replies or notebook outputs; `cli-container/31` or `33` as sent; `33`'s ten chunks as what the real query
   returns.
-- Length and parts: narration 4,291 words (`python -m explainer.script`, v2 after the review merge; v1
-  had 4,292; BRIEF.md: 3,900–4,300, plan ~4,250). Part 1 = S01–S08 (what an agent is, and function calling
-  by hand) 2,155 words; part 2 = S09–S16 (frameworks own the loop) 2,136 words. Per scene (BRIEF.md budget
-  ±15 %):
+- Length and parts: narration 4,307 words (`python -m explainer.script`, after fix round 1; v2 after the
+  review merge had 4,291, v1 4,292; BRIEF.md: 3,900–4,300, plan ~4,250). Part 1 = S01–S08 (what an agent
+  is, and function calling by hand) 2,157 words; part 2 = S09–S16 (frameworks own the loop) 2,150 words.
+  Per scene (BRIEF.md budget ±15 %):
 
   | scene | S01 | S02 | S03 | S04 | S05 | S06 | S07 | S08 | S09 | S10 | S11 | S12 | S13 | S14 | S15 | S16 |
   | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
   | budget | 260 | 280 | 200 | 290 | 250 | 280 | 300 | 270 | 360 | 300 | 270 | 280 | 240 | 260 | 200 | 210 |
-  | words | 260 | 275 | 201 | 311 | 262 | 261 | 310 | 275 | 361 | 281 | 270 | 296 | 221 | 261 | 210 | 236 |
+  | words | 260 | 275 | 201 | 311 | 263 | 262 | 310 | 275 | 362 | 289 | 270 | 296 | 221 | 261 | 213 | 238 |
 
   `explainer.script` assumes 155 wpm and BRIEF.md 174; the spoken review synthesized 66 sentences and
-  measured af_heart at 0.9 at 148.5 wpm (L04/L05: 144–151), so 4,291 words ≈ 28.9 min of voice plus ≈ 1
+  measured af_heart at 0.9 at 148.5 wpm (L04/L05: 144–151), so 4,307 words ≈ 29.0 min of voice plus ≈ 1
   min of sentence gaps and, with typing, outputs, five ponders and the `▶` holds, ≈ 35 min: the top of the
   series range. Later changes trim rather than add. Run `python -m explainer.script
   videos/ac215-l06-agents-1/script.md --synth` when the CPUs are free and put the measured total here.
@@ -280,7 +280,7 @@ Conventions
     google-adk-tutorial`, cd L-L-M agent google ADK → `cd llm-agent-google-adk`, python cli.py, dash dash
     agent, chunk type char split → `python cli.py --agent --chunk_type char-split` (and dash dash load →
     `--load`), uv run ADK web → `uv run adk web`, uv run ADK dash dash version → `uv run adk --version`, dash
-    dash port 8080 → `--port 8080`, ADK telemetry disable → `adk telemetry disable`, GCP project →
+    dash port 8080 → `--port 8080`, uv run ADK telemetry disable → `uv run adk telemetry disable`, GCP project →
     `GCP_PROJECT`, docker volumes folder → `docker-volumes/`, Google API key equals → `GOOGLE_API_KEY=`, dot
     ADK folder → `.adk/`, tool config → `tool_config`, default credentials error → `DefaultCredentialsError`,
     1 baseline → `1-baseline`, baseline dot agent → `baseline.agent`, output key → `output_key`, MCP
@@ -349,7 +349,8 @@ SAY: The tracker, top left, shows the step; the gray tag, top right, names the l
 
 SHOW: The preview clears. A checklist card "You need" writes in row by row as named: "lecture 5's
 char-split collection (or the load step)", a GOLD key "service-account key · lecture 5", "Docker", "uv",
-"Node.js", a GOLD key "Google AI Studio key", a GOLD key "OpenAI key · billing on".
+"Node.js", a GOLD key "Google AI Studio key", a GOLD key "OpenAI key · billing on", and a GREY row (not
+spoken) "three Colab notebooks · links in the study guide".
 SAY: You'll need the database and key from lecture 5, Docker, uv, Node, and two more keys: one from Google AI Studio, one from OpenAI, with billing on.
 
 SHOW: A card "Recorded October 18, 2026 · no Google or OpenAI keys" with three rows writing in as named:
@@ -600,8 +601,10 @@ SAY: Step 3: sh docker-shell.sh. Compose starts Chroma first. The pull message a
 SHOW: TERM(laptop/06-docker-shell.txt: 35–40; session); lines 38–39 get the tag `at the time of
 recording`. Then line 41's prompt appears alone, cut before `exit` (`app@abcf218747d0:/app$`); the frame
 turns TEAL, title `container · llm-rag-cli`; `abcf218747d0` gets a GREY tag "container ID · your numbers
-will differ". `▶ your turn` beside the prompt. Hold 2 s.
-SAY: After about 40 seconds of building, the banner: Python 3.12.15 and uv 0.13.1, at the time of recording. After the at sign comes the container's ID, new every run; pause, and get to this prompt.
+will differ". At "pause, and get to this prompt" the terminal shrinks to a 3-row strip (the uv 0.13.1 row,
+`Activating virtual environment...`, the prompt with its ID underline and tag), and `▶ your turn` comes on a
+static GREY card above it: `sh docker-shell.sh` "until the app@…:/app$ prompt". Hold 2 s.
+SAY: After about 40 seconds of building, the banner prints. Python 3.12.15 and uv 0.13.1, at the time of recording. After the at sign comes the container's ID, new every run; pause, and get to this prompt.
 
 SHOW: TRACKER Run 3 · extra. A second terminal slides over (title `laptop · second terminal`, prompt
 `student@laptop:~/AC215/llm-rag$`). It types `docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}'`
@@ -675,7 +678,7 @@ wrap, 21–31 folded to `{ "contents": [ { "parts": [ { "text": "Describe where 
 "ANY" } },`, 91–93 folded to `"generationConfig": { "temperature": 0.0 }`, 95), tag `built, not sent`. On
 line 20, `locations/global` and `gemini-3.1-flash-lite` highlight BLUE; `"mode": "ANY"` and `"temperature":
 0.0` YELLOW; line 95 GREY.
-SAY: What does Gemini actually receive? An extra script runs the same code, but prints the request instead of sending it. One envelope: the question, both declarations with the enum, mode ANY, temperature zero.
+SAY: What does Gemini actually receive? An extra script runs the same code, but prints the request instead of sending it. One envelope: the question, both declarations with the enum, mode ANY and temperature zero.
 
 SHOW: A GREY dashed ghost card "systemInstruction" slides next to the body with a tag `erratum` "defined
 at cli.py lines 40–58 · never sent (as in lecture 5)".
@@ -701,7 +704,9 @@ pulse.
 SAY: Four words, though the description asked for a sentence or two. There's also an ID, and a thought signature; we'll meet it again.
 
 SHOW: PANEL(expected/out-txt-agent-run.txt: 52, "out.txt · line 51"):
-`automatic_function_calling_history=[]` highlights GREY "the SDK ran nothing". The BLUE card waits at the
+`automatic_function_calling_history=[]` highlights GREY "the SDK ran nothing"; under the panel, at "it only has
+declarations", a GREY caption "it runs functions itself only when you pass Python functions · here: declarations
+only". The BLUE card waits at the
 trust boundary, unopened; caption "Gemini wrote arguments · nothing has run yet". Then `▶ your turn` on a
 static GREY card (short lines, two columns): top "with your key: python cli.py --agent --chunk_type
 char-split"; left "look for, in order:" `LLM Response:` with a function_call (cli.py line 454) ·
@@ -710,7 +715,7 @@ char-split"; left "look for, in order:" `LLM Response:` with a function_call (cl
 (cli.py line 478); right "if it fails with your key:" DefaultCredentialsError → is
 llm-service-account.json in secrets/, beside llm-rag? · 403 PERMISSION_DENIED → the service account's
 roles (README.md · lines 56–58) and the Vertex AI API · KeyError: 'GCP_PROJECT' → start with sh
-docker-shell.sh; last line GOLD "1 Gemini call · paid". Hold 2 s.
+docker-shell.sh; last line GOLD "2 Gemini calls + 1 embedding call per run · paid". Hold 2 s.
 SAY: The SDK ran nothing; it only has declarations. So far, one paid call. Pause here, and run step 1 with your key.
 
 ---
@@ -766,11 +771,14 @@ TERM(cli-container/33-x-dispatch-recorded-call.txt: 137 (no wrap: cut at the row
 Line 167 `"functionResponse"` TEAL; line 231 `"generationConfig": {}` GREY.
 SAY: Inside, the model's turn carries its thought signature: Gemini's thinking models sign their turn, and want it back exactly as sent. Resending the turn unchanged keeps the seal.
 
-SHOW: On V3's stage the envelope crosses into the cloud and a BLUE prose card comes back; it unfolds into
+SHOW: Our request stays unsent: the `built, not sent` terminal fades in place and V3's compact stage returns. A
+GREY dashed envelope, the staff's recorded call 2 (tag `recorded · the staff's call 2, September 22, 2026` under
+the stage), crosses into the cloud, and a BLUE prose card comes back; while the stage leaves it unfolds into
 PANEL(expected/out-txt-agent-run.txt: 99, 105 cut after "Alpine region,", 111 cut after "limestone caves",
 112 cut after "(the seasonal movement of livestock)") (header `out.txt · lines 98–111 (excerpt)`, masked,
 tag `recorded · the staff's run · old book`); "transhumance" highlights YELLOW. Two GOLD chips: "247 tokens"
-(`out.txt` line 49, file line 50) and "1,269 tokens" (`out.txt` line 135, file line 136).
+(`out.txt` line 49, file line 50) and "1,269 tokens" (`out.txt` line 135, file line 136), with a GREY note
+under them "printed as `total_token_count` · out.txt · lines 49, 135".
 SAY: The staff's answer? An Alpine valley, its caves, and transhumance, the seasonal movement of livestock. The two calls used 247 and 1,269 tokens.
 
 SHOW: The hook's YELLOW card returns, center: "Who searched your database?" → GREEN "your Python, on your
@@ -778,12 +786,14 @@ laptop"; "Who chose the book?" → BLUE "Gemini wrote the call". A GOLD tag "2 G
 call per question" (the embedding: `agent_tools.py · line 43` → `cli.py · lines 75–84`).
 SAY: So, who searched your database? Gemini wrote the call and chose the book; your Python ran it, on your laptop. That's two model calls and one embedding call per question, all paid.
 
-SHOW: TRACKER Agents 1 · extra. The lecture tag leaves. A strip (title `laptop · second terminal`): it types
+SHOW: TRACKER Agents 1 · extra. The lecture tag and the call strip leave. An extra card "count four of the answer's
+words in out.txt, today's book, and the book before 85bba32" over a second terminal (title `laptop · second
+terminal`, 20 pt so the table's 70 columns fit) → TERM(laptop/10-x-old-words.txt: 2–5); the "book today 0" column
+highlights RED. The card leaves and the terminal grows to 13 rows (the table stays). It types
 `git show --stat --format='%h %ad %s' --date=short 85bba32; head -4 'input-datasets/books/Tolminc Cheese.txt'`
-(extra; folds) → TERM(laptop/09-x-book-changed.txt: 2 cut after "2026-09-22", 4–6). Then an extra card:
-"count four of the answer's words in out.txt, today's book, and the book before 85bba32" →
-TERM(laptop/10-x-old-words.txt: 2–5); the "book today 0" column highlights RED, the "before 85bba32"
-column GREEN.
+(extra; folds) → TERM(laptop/09-x-book-changed.txt: 2 cut after "2026-09-22", 4–6, `…` for 7–8 (the author line
+is never shown), 9). The commit and both files underline YELLOW, with a GREY "← today's book" beside line 9. At
+"The staff's index" the "book before 85bba32" column highlights GREEN.
 SAY: But today's book never says transhumance, nor three other words from this run: the commit that added this output also rewrote the book. The staff's index was built from the old text.
 
 SHOW: The TEAL cylinder: its cards for the old book turn GREY dashed "old book", today's 24 GREEN cards
@@ -924,7 +934,7 @@ SAY: Google lists the code's fallback, Gemini 2.0 Flash, as shut down, and limit
 SHOW: CODE(llm-agent-google-adk/pyproject.toml: 8–19) (header `pyproject.toml · lines 8–19`): line 8
 `requires-python = ">=3.10"` GREEN; line 10 `"google-adk>=1.8.0",` YELLOW "no upper bound"; lines 18–19
 `chromadb`, `sentence-transformers` GREY "→ onnxruntime, PyTorch".
-SAY: The project file asks for Python 3.10 or newer, and ADK 1.8 or newer, with no upper bound, plus Chroma and sentence transformers.
+SAY: The project file wants Python 3.10 or newer and ADK 1.8 or newer, with no upper bound. It also lists Chroma and sentence transformers.
 
 SHOW: V5: L01's number line `3.10 … 3.16` slides in above the strip; the interval `>=3.10` glows GREEN to
 the right edge; no ORANGE dot anywhere; a GREY chip "no python3 on PATH" (excerpt of
@@ -975,9 +985,9 @@ It types `uv run adk web` → TERM(adk-laptop/15-adk-web.txt: 2–3 joined, 10�
 SAY: Running agents, step 1, from the repository root: uv run ADK web. First, version 2.12 asks a question the README doesn't mention: may Google collect usage data?
 
 SHOW: "This is OFF by default." underlines GREY; `[Y/n]` is boxed YELLOW with a tag "Enter = yes". After
-a 0.6 s pause the terminal types `n` (as the capture did), and a GREY chip appears: "`adk telemetry
-disable` · change it later".
-SAY: The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with ADK telemetry disable.
+a 0.6 s pause the terminal types `n` (as the capture did), and a GREY chip appears: "`uv run adk
+telemetry disable` · change it later".
+SAY: The text says telemetry is off by default, but the capital Y means pressing enter answers yes. Answer as you like; change it later with this command: uv run ADK telemetry disable.
 
 SHOW: TERM(adk-laptop/15-adk-web.txt: 34–38, 41); line 41 `Uvicorn running on http://127.0.0.1:8000` PINK.
 TRACKER RunAg 2: the terminal shrinks to a strip; a GREY browser frame (tag `illustration`) opens at
@@ -1008,7 +1018,7 @@ shows the four folders of `adk-laptop/25-x-list-apps-pinned.txt` line 2 (GREEN; 
 strip); the strip shows TERM(adk-laptop/24-x-adk-web-pinned.txt: 131, 132–134 joined cut after
 "underscores."; wrap) RED. It types `git checkout pyproject.toml; uv sync --upgrade-package google-adk`
 (extra) → TERM(adk-laptop/27-x-undo-pin.txt: 8–9). The frame closes; caption "back in your terminal".
-SAY: An older version, 1.27.5, lists only the four folders, but picking one still fails, as an invalid app name. So a version pin doesn't help; we undid ours.
+SAY: An older version, 1.27.5, lists only the four folders. But picking one still fails, as an invalid app name. So a version pin doesn't help; we undid ours.
 
 SHOW: TRACKER RunAg 1 · extra. In the viewer's terminal, still running the first server: Ctrl+C →
 TERM(adk-laptop/15-adk-web.txt: 46, 49–51); the prompt `student@laptop:~/AC215/llm-agent-google-adk$`
@@ -1022,7 +1032,7 @@ SHOW: It types `uv run adk web` → TERM(adk-laptop/29-x-adk-web-renamed.txt: 36
 dropdown now lists the entries of TERM(adk-laptop/30-x-list-apps-renamed.txt: 2) (extra strip `curl -s
 http://localhost:8000/list-apps; echo`) after the page reloads; `baseline` is picked, GREEN. A GREY chip
 under the list: "this video: baseline, mcp_tools · custom_agent as code · 2, 4, 6: exercises.md".
-SAY: Start the web server again, and pick baseline. The log says it loaded the root dot env file, and found the root agent in baseline dot agent.
+SAY: Start the web server again, and pick baseline. The log says it loaded the dot env at the repository root, and found the root agent in baseline dot agent.
 
 SHOW: A GREY chip "git status: 3 folders deleted, 3 new · fine for your copy (teardown)". Two `erratum`
 chips write in: (a) a README chip (header `QUICKSTART.md · line 24`, tag `expected`) `uv run adk web
@@ -1036,7 +1046,7 @@ TERM(adk-laptop/36-x-port-8000-busy.txt: 21; wrap) RED; then it types `uv run ad
 (extra) → TERM(adk-laptop/37-x-adk-web-port-8080.txt: 34). Back in the viewer's terminal, `▶ your turn`
 on a static GREY card "Ctrl+C · mv 1-baseline baseline; mv 3-mcp-tools mcp_tools; mv 5-custom-agent
 custom_agent; ls · uv run adk web · reload localhost:8000 · pick baseline". Hold 2 s.
-SAY: And if L-L-M rag's Chroma still holds port 8000, they clash; ours stopped: address already in use. Run docker compose down first, or add dash dash port 8080. Pause, and get the dev UI open on baseline.
+SAY: And if L-L-M rag's Chroma still holds port 8000, they clash; the web server stopped: address already in use. Run docker compose down first, or add dash dash port 8080. Pause, and get the dev UI open on baseline.
 
 ---
 
@@ -1057,8 +1067,10 @@ Control fills PURPLE "Runner + SequentialAgent". Then an extra card: "ask the se
 UI loads", and a full-width terminal (title `laptop · second terminal`, prompt
 `student@laptop:~/AC215/llm-agent-google-adk$`; adk web keeps the first) prints
 TERM(adk-laptop/31-x-select-baseline.txt: 2–5; each line cut after its instruction's first sentence);
-`model gemini-2.5-flash` highlights YELLOW "from your root .env · set your model there".
-SAY: A sequential agent runs them in order: validator, planner, summarizer. An extra request shows the tree the UI loads, with the model from your root dot env; set yours.
+`model gemini-2.5-flash` is boxed YELLOW in the three agent rows, with a YELLOW tag above the terminal, "from your
+root .env · yours: the model you set", and a GREY tag beside the tree's last row, "the capture kept .env.example's
+2.5-flash". The YELLOW tag's border flares at "check yours".
+SAY: A sequential agent runs them in order: validator, planner, summarizer. An extra request shows the tree the UI loads, with the model from your root dot env; check yours.
 
 SHOW: TRACKER Base 1 · extra. In the second terminal it types `curl -s -X POST
 http://localhost:8000/apps/baseline/users/student/sessions; echo` (extra; folds) →
@@ -1141,9 +1153,10 @@ server". The lecture tag stays.
 SAY: The lecture's MCP box is a shared protocol, not a program you run. In code, each server is its own plug, and the tutorial has three.
 
 SHOW: TRACKER Mcp 1. A README card (header `3-mcp-tools/README.md · lines 56–63`, tag `expected`), not
-typed: `brew install node` (macOS) · `sudo apt install nodejs npm` (Ubuntu) · "Windows: nodejs.org". A
-terminal strip (title `laptop · second terminal`; adk web keeps the first): it types `node --version; npx
---version` (extra) → TERM(adk-laptop/34-x-node.txt: 2–3), tag `at the time of recording`.
+typed: `brew install node` (macOS) · `sudo apt install nodejs npm` (Ubuntu) · "Windows: nodejs.org"; a GREY
+chip under it "Ubuntu 22.04's apt Node is v12: too old for MCP servers · use nodejs.org (recorded with
+v24.22.0)". A terminal strip (title `laptop · second terminal`; adk web keeps the first): it types `node
+--version; npx --version` (extra) → TERM(adk-laptop/34-x-node.txt: 2–3), tag `at the time of recording`.
 SAY: Plug 1 is in the ADK module on MCP. Install Node.
 
 SHOW: The README card and the strip leave. CODE(llm-agent-google-adk/3-mcp-tools/agent.py: 20–29) in the
@@ -1156,8 +1169,8 @@ SHOW: An extra card: "ask the agent's own toolset for its tools · no model invo
 TERM(adk-laptop/35-x-mcp-toolset.txt: 21, 30, 31 cut after "14 [" + `…]`, 32–37). V7: 14 GREY tool chips
 fall onto a sieve labelled `tool_filter`; `list_directory`, `read_file`, `search_files` pass GREEN,
 `write_file` and `edit_file` bounce off. TRACKER Mcp 2: a GREY "with your key:" card "pick mcp_tools · ask:
-List files in this directory → a list_directory call in the Events tab, and the five entries above (`35`
-lines 33–37)".
+List files in this directory → a list_directory call in the Events tab, and the five entries below (`35`
+lines 33–37), plus `[DIR] .adk` (the session folder: picking the agent creates it, `29` line 42)".
 SAY: An extra script asks that toolset for its tools, with no model involved. The server offers 14, including write and edit, and the filter lets three through. With your key, ask the agent to list files.
 
 SHOW: TRACKER CQ-Tools 1, then CQ-Tools 2. A BLUE Colab frame.
@@ -1190,11 +1203,12 @@ FastMCP thread on `127.0.0.1:8001` inside the BLUE Colab VM.
 SAY: Plug 3 is optional: the notebook runs its own FastMCP server, in a thread, on port 8001. A small slip: the comment above says 8000, and so does an older saved output.
 
 SHOW: The three plugs side by side; in each, the BLUE model chip only emits a BLUE call card, while a
-PURPLE client process does all the talking along the PINK lines. Then `▶ your turn` on a static GREY card
-"node --version · dev UI: pick mcp_tools, ask "List files in this directory" (with your key) · Cheese Quiz ›
-Tools, MCP: every cell (Build your own MCP Server is optional)", a GREY line "first run times out? npx was
-still downloading: run it once, Ctrl+C, retry (digest G12)" and its last line GOLD "OpenAI calls · paid".
-Hold 2 s.
+PURPLE client process does all the talking along the PINK lines. Then `▶ your turn` on a static GREY card:
+"no Node? `brew install node` · or nodejs.org" · `node --version; npx --version` (extra) · "dev UI: pick
+mcp_tools, ask "List files in this directory" · with your key" · "Cheese Quiz › Tools, MCP: every cell (Build
+your own MCP Server is optional)" · GREY "first run times out? warm the npx cache once:" · `npx -y
+@modelcontextprotocol/server-filesystem .` "Ctrl+C, then retry" (digest G12) · last line GOLD "OpenAI calls ·
+paid". No GREY "your turn" header. Hold 2 s.
 SAY: Notice who does the talking: your client process. MCP gives the model no network access; it still only writes calls. Pause, and run the MCP cells.
 
 ---
@@ -1298,7 +1312,7 @@ flips GREEN `APPROVED`; the turnstile turns; a calculator glyph builds the budge
 RECORDED(expected/colab-travel-planner-c27-turn4-yes.txt: 25–34): 880 + 1,000 + 600 + 150 + 60 = 2,690 of
 6,000; `"total_usd": 2690.0` GREEN. A chip CODE(colab/travel-planner/cell-27.py: 6) "the notebook's own
 test".
-SAY: Turn 4: the human types yes. The stamp flips to approved, finalize runs, and Python builds the budget line by line: 2,690 dollars out of 6,000. The notebook's own test checks Python's number.
+SAY: Turn 4: the human types yes. The stamp flips to approved, finalize runs, and Python builds the budget line by line: 2,690 of the 6,000 dollars. The notebook's own test checks Python's number.
 
 SHOW: CODE(colab/travel-planner/cell-18.py: 129–135) (header `Travel Planner · cell 18 · lines 129–135`,
 11 rows): lines 129–131 RED "hard guardrail: raise"; lines 133–135 YELLOW "soft guardrail: warn".
@@ -1319,8 +1333,10 @@ SAY: The lecture puts success criteria in the instructions, and guardrails in th
 
 Lecture: 36–37 (and 10–12).
 
-SHOW: TRACKER NL 1 → 3. A BLUE Colab frame (title "Cheese Newsletter · Harness", tag `illustration`). A
-small chip CODE(colab/cheese-newsletter/cell-08.py: 3) `"agent-framework-core==1.18.0" \` "pinned".
+SHOW: TRACKER NL 1 → 3. A BLUE Colab frame (title "Cheese Newsletter · Harness", tag `illustration`). With
+the menu path, a GREY two-line caption under the cell-8 chip, "first open it: course site · Lecture 6 · Tutorial
+3, / or the Cheese Newsletter link in the study guide", until "In the users cell". A small chip
+CODE(colab/cheese-newsletter/cell-08.py: 3) `"agent-framework-core==1.18.0" \` "pinned".
 CODE(colab/cheese-newsletter/cell-16.redacted.py: 6–12) (header `Cheese Newsletter · cell 16 · lines
 6–12`): lines 8–9 `<reader1>`, `<reader2>` YELLOW "you and a friend"; lines 10–11 GREY "commented out";
 line 6's "Email is preview-only" GREEN.
@@ -1338,7 +1354,7 @@ file): the four `[tool] editor_agent` lines get a YELLOW bracket "×4"; line 10 
 `Saved HTML: … (8005 bytes). No email sent.`. A chip CODE(colab/cheese-newsletter/cell-16.redacted.py:
 114–116) "every draft is validated · errors go back as the tool's result". Then line 30 `Created 4 mock
 emails. No email was sent.` with a GREY tag "saved run: 4 readers · today's list: 2".
-SAY: In the staff's saved run, the first city took four editor calls; the code validates every draft and hands any errors back as the tool's result. Then send email saved the HTML. That run had four readers; today's list makes two.
+SAY: In the staff's saved run, the first city took four editor calls; the code validates every draft and hands any errors back as the tool's result. Then send email wrote the HTML to a file. That run had four readers; today's list makes two.
 
 SHOW: LECTURE 36–37. V8: a newsletter draft card and the BLUE orchestrator's speech bubble "done!"; a door
 marked SUCCESS stays shut. CODE(colab/cheese-newsletter/cell-18.py: 118–120, 123–124) folded (header `Cheese
@@ -1371,12 +1387,14 @@ Lecture: 41 (and 32–33).
 SHOW: TRACKER RunAg 1 · extra. The ADK terminal (strip), running the restarted server: Ctrl+C →
 TERM(adk-laptop/29-x-adk-web-renamed.txt: 364, 367–369) `ADK Web Server shutting down...`. It types `git
 status --short; git status --short --ignored | grep '^!!'` (extra; folds) →
-TERM(adk-laptop/39-x-git-status.txt: 2, …, 16–21, 24) in a 12-row terminal: `?? .python-version` GREEN "your
-pin"; `!! .env`, `!! .venv/`, `!! uv.lock` GREY "ignored".
+TERM(adk-laptop/39-x-git-status.txt: 2, …, 16–21, …, 24) in a 12-row terminal: `?? .python-version` GREEN "your
+pin"; `!! .env`, `!! .venv/`, `!! uv.lock` GREY "ignored"; the second `…` (the two `__pycache__/` rows) turns GREY
+with the ignored rows under one GREY bracket.
 SAY: Tear down: control C stops the web server. An extra git status shows the renamed folders and your Python pin; dot env, the virtual environment and the lock file are ignored.
 
 SHOW: A RED-outlined ghost folder `baseline/.adk/` "sessions · not in .gitignore" (from the log line
-`29` lines 41–42); a GREY chip "add .adk/ to your ignore file (exercises)"; a GREY chip ".venv · 1.6 GB".
+`29` lines 41–42); a GREY chip "add .adk/ to your ignore file (exercises)"; a GREY two-row chip "`.venv` · 1.6 GB ·
+delete when done / on a Linux PC: about 3 GB more (CUDA)".
 SAY: The sessions in the agent's dot ADK folder aren't ignored, so don't commit them, and delete the 1.6 gigabyte virtual environment when you're done.
 
 SHOW: A BLUE Colab frame with Runtime › Disconnect and delete runtime (tag `illustration`), ticked three
@@ -1396,7 +1414,7 @@ SHOW: Dynamic Control fills PURPLE with `Runner`, `max_turns=12`, and a TEAL chi
 hand". LECTURE 32–33: the lecture's formula writes in under it (our words):
 "agent ≈ LLM + reasoning + instructions + tools"; two GREEN chips append: "+ a loop the framework runs",
 "+ checks your code enforces".
-SAY: Dynamic control is the framework's loop, or two calls by hand. The lecture's formula, LLM plus reasoning, instructions and tools, gains two pieces: a loop the framework runs, and checks your code enforces.
+SAY: Dynamic control is the framework's loop, or two calls by hand. The lecture's formula, LLM plus reasoning, instructions and tools, gains two pieces: a loop the framework runs, and checks that your own code enforces.
 
 SHOW: The lecture tag leaves. A card "Test yourself", questions appearing one at a time (each stays as the
 next fades in below, smaller): Q1 "In function calling, who runs the function, and what travels back to

@@ -1,0 +1,7 @@
+00:00 Which sentence would you trust?
+02:00 One container, no ports
+04:07 Verify offline, and the Colab road
+05:45 Act 1: an agent, measured
+07:40 Act 1: wrap it in a harness
+09:45 Act 2: same agent, different context
+11:43 Act 2: sieves and lanes

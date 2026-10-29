@@ -1,0 +1,196 @@
+$ python cli.py --act 6 --fixture --scenario two-orders --manager-decision approve
+Composition lesson — SCRIPTED outer agent and workflow proposals; no service calls.
+Harness → ordering workflow → host manager review when required → authoritative result.
+Mock in-memory orders only; no real purchase or email.
+TEST manager response configured: approve
+Skills available (metadata only): tasting-planning, vendor-outreach
+
+🤖 Model call 1 · Customer assistant · fixture-model
+  📥 Input: 2 conversation messages.
+  🧰 Available tools: start_order, get_order_status, assess_event, todos_add, todos_complete, todos_remove, todos_get_remaining, todos_get_all, load_skill, read_skill_resource
+  📤 Requested tools: todos_add
+  ⏱️ 0.37s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: todos_add
+  📋 Arguments: todos: title: Resolve ordering workflows and present accepted menus
+Plan: [open] Resolve ordering workflows and present accepted menus
+  📦 Result (0.00s): 1 entries
+
+🤖 Model call 2 · Customer assistant · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_0
+  📤 Requested tools: start_order
+  ⏱️ 0.04s · 100 input tokens · 20 output tokens
+  🔧 Tool call 2: start_order
+  📋 Arguments: request id: request-1
+
+👤 Customer ask:
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+Step: confirm_request
+Step: propose_cart
+🧺 Proposed cart — attempt 1:
+  Comté 18 mois (comte) — 1600 g · RAW MILK
+  Mimolette Extra-Vieille (mimolette) — 1600 g · not raw milk
+  Taleggio (taleggio) — 1600 g · not raw milk
+Step: validate_and_price
+Cart attempt 1: valid; $220.80
+Step: select_pairings
+Step: manager_approval
+Order request-1: pending_approval
+  📦 Result (0.04s): request id: request-1; workflow id: bfb117aa3e8b472f95425ecd263d7bcc; order placed: no; status: pending_approval; tickets: 1 entries; message: Return control to the host for manager review. No order has been placed.
+
+🤖 Model call 3 · Customer assistant · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_1
+  📤 Requested tools: start_order
+  ⏱️ 0.04s · 100 input tokens · 20 output tokens
+  🔧 Tool call 3: start_order
+  📋 Arguments: request id: request-2
+
+👤 Customer ask:
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+Step: confirm_request
+Step: propose_cart
+🧺 Proposed cart — attempt 1:
+  Comté 18 mois (comte) — 1600 g · RAW MILK
+  Mimolette Extra-Vieille (mimolette) — 1600 g · not raw milk
+  Taleggio (taleggio) — 1600 g · not raw milk
+Step: validate_and_price
+Cart attempt 1: valid; $220.80
+Step: select_pairings
+Step: manager_approval
+Order request-2: pending_approval
+  📦 Result (0.03s): request id: request-2; workflow id: b32601156979499b941965b461360bd4; order placed: no; status: pending_approval; tickets: 1 entries; message: Return control to the host for manager review. No order has been placed.
+
+🤖 Model call 4 · Customer assistant · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_2
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.05s · 100 input tokens · 20 output tokens
+
+MANAGER REVIEW — ticket ee161cc6f9db47daa09476e89fe1de8c
+Confirmed request:
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+  4800 g; cheese subtotal $220.80
+  comte: 1600 g — $72.00
+  mimolette: 1600 g — $80.00
+  taleggio: 1600 g — $68.80
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+Step: manager_approval
+Step: revalidate_and_place
+Order request-1: placed
+
+MANAGER REVIEW — ticket 0b3e68bd0a2649a08196f1c483b112c5
+Confirmed request:
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+  4800 g; cheese subtotal $220.80
+  comte: 1600 g — $72.00
+  mimolette: 1600 g — $80.00
+  taleggio: 1600 g — $68.80
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+Step: manager_approval
+Step: revalidate_and_place
+Order request-2: blocked
+
+🤖 Model call 5 · Customer assistant · fixture-model
+  📥 Input: 2 conversation messages.
+  📤 Requested tools: load_skill
+  ⏱️ 0.06s · 100 input tokens · 20 output tokens
+  🔧 Tool call 4: load_skill
+  📋 Arguments: skill name: tasting-planning
+Skill loaded: tasting-planning/SKILL.md
+  📦 Result (0.00s): --- name: tasting-planning description: Plan and present a cheese tasting using a confirmed menu, serving guidance, and a reusable tasting-plan format. Use f…
+
+🤖 Model call 6 · Customer assistant · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_4
+  📤 Requested tools: read_skill_resource
+  ⏱️ 0.06s · 100 input tokens · 20 output tokens
+  🔧 Tool call 5: read_skill_resource
+  📋 Arguments: skill name: tasting-planning; resource name: references/serving-guide.md
+Skill loaded: tasting-planning/references/serving-guide.md
+  📦 Result (0.00s): # Serving guide Organize the board as a tasting journey: start with the gentlest fresh or fresh-aged cheese, continue with firmer cheeses, and finish with th…
+
+🤖 Model call 7 · Customer assistant · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_5
+  📤 Requested tools: read_skill_resource
+  ⏱️ 0.06s · 100 input tokens · 20 output tokens
+  🔧 Tool call 6: read_skill_resource
+  📋 Arguments: skill name: tasting-planning; resource name: assets/tasting-plan.md
+Skill loaded: tasting-planning/assets/tasting-plan.md
+  📦 Result (0.00s): # Host tasting plan This is the layout the application renders. For a structured `TastingReply`, fill `courses`, `serving_notes`, and `open_questions`; do no…
+
+🤖 Model call 8 · Customer assistant · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_6
+  📤 Requested tools: assess_event
+  ⏱️ 0.07s · 100 input tokens · 20 output tokens
+  🔧 Tool call 7: assess_event
+  📋 Arguments: request id: request-1
+  📦 Result (0.00s): request id: request-1; status: placed; report: items: 3 entries; line totals cents: 3 entries; subtotal cents: 22080; total grams: 4800; needs manager approval: yes; violations: 0 entries; products: 3 entries; conditional pairings: comte: 5 entries; mimolette: 6 entries; taleggio: 5 entries; scop…
+
+🤖 Model call 9 · Customer assistant · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_7
+  📤 Requested tools: todos_complete
+  ⏱️ 0.04s · 100 input tokens · 20 output tokens
+  🔧 Tool call 8: todos_complete
+  📋 Arguments: items: id: 1; reason: Host workflow outcomes recorded.
+Plan: [done] Resolve ordering workflows and present accepted menus
+  📦 Result (0.00s): completed: 1
+
+🤖 Model call 10 · Customer assistant · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_8
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.05s · 100 input tokens · 20 output tokens
+
+--- COMPOSITION COMPLETED — run 746d82c82af34a8bb0fd7324834d0168 ---
+Agent's notes:
+Scripted skill demonstration finished; consult the authoritative tool results.
+
+## Host tasting plan — request-1
+### Confirmed brief
+60 guests · NY · Budget $300.00.
+Confirmed allergies: none.
+Include at least one cheese from each of: France.
+### Tasting sequence
+1. Comté 18 mois: 1600 g — Serve this course before moving to the next cheese.
+2. Mimolette Extra-Vieille: 1600 g — Serve this course before moving to the next cheese.
+3. Taleggio: 1600 g — Serve this course before moving to the next cheese.
+### Serving notes
+Serve individual portions with separate utensils.
+### Pairing suggestions
+- Comté 18 mois: Walnut bread (listed allergens: wheat, tree_nuts, walnut)
+- Mimolette Extra-Vieille: Walnut bread (listed allergens: wheat, tree_nuts, walnut)
+- Taleggio: Apple slices (listed allergens: none listed)
+### Quote and availability
+4800 g · Cheese subtotal $220.80.
+Excludes tax, shipping and pairing costs.
+Authoritative status: placed.
+### Open questions and next actions
+- Confirm serving time.
+
+Authoritative workflow results:
+request-1: placed
+Mock order placed. No purchase or email was sent.
+Mock receipt: 433ad6bbc1a343d5bd345b86dd742715
+  4800 g; cheese subtotal $220.80
+  comte: 1600 g — $72.00
+  mimolette: 1600 g — $80.00
+  taleggio: 1600 g — $68.80
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+request-2: blocked
+Final checkout blocked: Invalid or unauthorized order. No order placed.
+  4800 g; cheese subtotal $220.80
+  comte: 1600 g — $72.00
+  mimolette: 1600 g — $80.00
+  taleggio: 1600 g — $68.80
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+  ⚠️ stock: Requested 1600 g; available 1400 g.
+  ⚠️ stock: Requested 1600 g; available 1400 g.
+Skills loaded: tasting-planning
+Outer model calls: 10; workflow model calls: 0.
+No real purchase or email. Mock orders exist only for this process.
+💾 Recorded in /app/outputs/observability.sqlite. No evaluation suite was run.
+[exit 0]

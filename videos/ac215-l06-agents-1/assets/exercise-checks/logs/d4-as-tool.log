@@ -1,0 +1,7 @@
+$ python -c 'import inspect, agents; from agents import Agent; print("as_tool", inspect.signature(Agent.as_tool))' | cut -c1-600; grep -n 'max_turns' /colab/cq/lib/python3.12/site-packages/agents/agent.py | head -8
+as_tool (self, tool_name: 'str | None', tool_description: 'str | None', custom_output_extractor: 'Callable[[RunResult | RunResultStreaming], Awaitable[str]] | None' = None, is_enabled: 'bool | Callable[[RunContextWrapper[Any], AgentBase[Any]], MaybeAwaitable[bool]]' = True, on_stream: 'Callable[[AgentToolStreamEvent], MaybeAwaitable[None]] | None' = None, run_config: 'RunConfig | dict[str, Any] | None' = None, max_turns: 'int | None' = None, hooks: 'RunHooks[TContext] | None' = None, previous_response_id: 'str | None' = None, conversation_id: 'str | None' = None, session: 'Session | None' = No
+617:        max_turns: int | None = None,
+755:            resolved_max_turns = max_turns if max_turns is not None else DEFAULT_MAX_TURNS
+939:                        max_turns=resolved_max_turns,
+1052:                        max_turns=resolved_max_turns,
+[exit 0]

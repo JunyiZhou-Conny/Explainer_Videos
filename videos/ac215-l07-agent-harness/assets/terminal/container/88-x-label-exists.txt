@@ -1,0 +1,3 @@
+$ python cli.py --act 2 --evaluate core --fixture --case standard --repeats 2 --label context-fixture-1
+Evaluation stopped: Experiment label already exists. Choose a new label; previous results are immutable.
+[exit 1]
