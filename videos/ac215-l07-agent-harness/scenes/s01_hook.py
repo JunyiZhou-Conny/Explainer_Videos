@@ -2,7 +2,8 @@
 
 Beats (script.md "## S01", one voiceover block each):
 0. Cold open, no tracker. Top right the GREY tag "recorded · the staff's saved Colab run" (it covers
-   everything the hook shows from the staff's run, until V1 opens). A GREY request card "Customer
+   everything the hook shows from the staff's run: it stays until the cards and the check box leave
+   in beat 5). A GREY request card "Customer
    ask" holds RECORDED(expected/colab-c23-agent-harness.txt: 5), folded at spaces onto 4 rows so
    that no named phrase breaks. As the SAY names each phrase it turns YELLOW in the card while its
    GREY chip writes in under the card (nothing flies): 12 guests in PA · $150.00 budget · avoid
@@ -26,14 +27,15 @@ Beats (script.md "## S01", one voiceover block each):
    prose" writes in left of the box's "Cart satisfies" row. "Nothing checked": card A gets the GREY
    dashed tag "bare agent · no final cart check".
 4. LECTURE 21. V1 opens: card A slides down, card B slides left at its own height (clear of the
-   box) and drops into the slot above it; at "the model proposes" the recorded tag leaves, then the
-   BLUE column "the model proposes" fades in around the cards together with lecture_ref(7, "21")
-   (the tag arrives with the picture it cites; the column comes after B has landed: its title sits
-   on B's path); at "the harness decides" the GREEN column "the harness decides" fades in as the
+   box) and drops into the slot above it; at "the model proposes" the recorded tag slides left along
+   the empty top band (the cards and the box are still the saved run, so it stays), then the BLUE
+   column "the model proposes" fades in around the cards together with lecture_ref(7, "21") in the
+   top-right slot the recorded tag left (the tag arrives with the picture it cites; the column comes
+   after B has landed: its title sits on B's path); at "the harness decides" the GREEN column "the harness decides" fades in as the
    check box rises into it; the dim YELLOW stamp "a human decides" sits at its lower right. At "The harness is the code
    around the model" the GREEN column pulses; the four GREEN words write in as named (the loop ·
    its limits · its context · its checks); at "Today we sort" both columns pulse.
-5. LECTURE 3. The cards, the box, the words, the stamp and the slide-21 tag fade; the columns
+5. LECTURE 3. The cards, the box, the words, the stamp, the recorded tag and the slide-21 tag fade; the columns
    shrink to a band at the top. Below, our drawing of the map (the slide-3 tag arrives with it):
    GREY "Lecture 7 · outline" (slide 3's seven sections) left, `README.md · lines 13–21` (the
    tutorial activities) right; seven PINK links draw in row order at
@@ -42,10 +44,13 @@ Beats (script.md "## S01", one voiceover block each):
    really bought" its "mock, in-memory" gets a YELLOW underline.
 6. The map clears. Layout preview, piece by piece as named: the tracker top left ("README › Setup ›
    Start container", 4 dots, none lit) inside a pulsing YELLOW ring, GREY caption "the README
-   step" under it; the GREY lecture_ref(7, "21") tag top right, pulsing once, GREY caption "the
-   lecture slides" under it; a 2-row laptop terminal strip types `mkdir -p ../secrets`; its title
-   bar carries the GREY "preview" tag and then the YELLOW ▶ your turn tag (the prompt and command
-   fill the row to x 4.56, so the 2.0-wide tag cannot sit beside the command). 2 s hold.
+   step" under it; a GREY specimen lecture tag "Lecture 7 · slide N" (lecture_ref's pill and place)
+   top right, pulsing once, GREY caption "the lecture slides" under it (a specimen: the preview
+   frame shows nothing from a slide, and Setup cites none, so it names no real slide number); a
+   2-row laptop terminal strip types `mkdir -p ../secrets`; its title bar carries the GREY "preview"
+   tag and then the YELLOW ▶ your turn tag drawn DIM (the step runs in S02, after the clone: only
+   "preview" is at full colour, and it pulses in the hold). The prompt and command fill the row to
+   x 4.56, so the 2.0-wide tag cannot sit beside the command. 2 s hold.
 7. The preview clears. The honest-limit card: "One honest limit" with the GREY chip "recorded
    October 20, 2026" (at the date) and the GREY "no key" tag (at "without an OpenAI key"); the
    card's outline draws with its first row, and its rows write in as named: GREEN "ran for real: the build · the tests · every offline and scripted
@@ -124,6 +129,7 @@ from common import (
     sans,
     source_line,
     substring,
+    tag,
     term,
     tracker,
     type_cmd,
@@ -510,6 +516,13 @@ class Hook(VoiceScene):
         assert chk.frame.get_left()[0] >= tc.cols["right"].frame.get_left()[0] + 0.1
         assert card_b.frame.get_bottom()[1] > chk.get_top()[1] + 0.05      # B's slide left clears the box
         assert card_b.frame.get_bottom()[1] + b_shift[1] > card_a.get_top()[1] + a_shift[1] + 0.1
+        # the recorded tag stays while the saved run is on screen: it slides left along the empty top
+        # band (row with the lecture tag) and leaves the top-right slot to the slide-21 tag
+        rec_shift = np.array([(lr.get_left()[0] - 0.3) - rec.get_right()[0],
+                              lr.get_center()[1] - rec.get_center()[1], 0])
+        assert rec.get_bottom()[1] + rec_shift[1] >= tc.get_top()[1] + 0.2
+        assert rec.get_bottom()[1] >= max(card_a.get_top()[1], card_b.get_top()[1], chk.get_top()[1]) + 0.1
+        assert rec.get_left()[0] + rec_shift[0] >= -SAFE_X
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(dtag), FadeOut(cap), FadeOut(green_tick), FadeOut(green_ul), run_time=0.7)
@@ -519,8 +532,9 @@ class Hook(VoiceScene):
             self.play(card_b.animate.shift(UP * b_shift[1]), run_time=0.4)
             vo.wait_until("the model proposes")
             # the slide-21 tag arrives with the picture it cites (the columns); the recorded tag
-            # leaves first (one place, old out, then new in)
-            self.play(FadeOut(rec), run_time=0.3)
+            # first slides left out of its slot (nothing else is in the top band), so the two never
+            # share a place
+            self.play(rec.animate.shift(rec_shift), run_time=0.4)
             self.play(FadeIn(left_col), FadeIn(lr), run_time=0.6)
             self.bring_to_front(card_a, card_b)
             vo.wait_until("the harness decides")
@@ -568,7 +582,7 @@ class Hook(VoiceScene):
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(card_a), FadeOut(card_b), FadeOut(chk), FadeOut(stamp),
-                      *[FadeOut(w) for w in words], FadeOut(lr), run_time=0.7)
+                      *[FadeOut(w) for w in words], FadeOut(lr), FadeOut(rec), run_time=0.7)
             self.play(ReplacementTransform(left_col, band.parts["left"]),
                       ReplacementTransform(right_col, band.parts["right"]), run_time=0.8)
             # the slide-3 tag arrives with the map it cites
@@ -592,7 +606,11 @@ class Hook(VoiceScene):
         halo = RoundedRectangle(width=tr.width + 0.16, height=tr.height + 0.14, corner_radius=0.1,
                                 stroke_color=TURN, stroke_width=4).set_fill(opacity=0)
         place(halo, left=tr.get_left()[0] - 0.08, top=tr.get_top()[1] + 0.07)
-        lr21 = lref("21")
+        # a specimen of the lecture tag (lecture_ref's pill, in its place): the preview frame shows
+        # nothing from a slide (and Setup cites none), so it names no real slide number
+        lr21 = tag("Lecture 7 · slide N", S.GREY)
+        lr21.move_to([6.6 - lr21.width / 2, 3.6 - lr21.height / 2, 0])
+        assert abs(lr21.height - lref("21").height) < 1e-6
         tr_cap = note("the README step").next_to(halo, DOWN, buff=0.12).align_to(tr, LEFT)
         lr_cap = note("the lecture slides")
         place(lr_cap, right=lr21.get_right()[0], top=lr21.get_bottom()[1] - 0.12)
@@ -601,6 +619,10 @@ class Hook(VoiceScene):
         # so it goes on the title bar, right of "preview" (common.py notes: frame_tags for full rows)
         prev = frame_tags(t, your_turn(), preview_tag())
         turn_tag, prev_tag = prev[0], prev[1]
+        # the step is only previewed (it runs in S02, after the clone): the ▶ tag is drawn DIM, so a
+        # viewer who pauses here is not told to run it; "preview" alone is at full colour
+        turn_tag.box.set_stroke(opacity=0.4)
+        turn_tag.text.set_opacity(0.4)
         inside_frame(halo, lr21, t, prev, tr_cap, lr_cap)
 
         with self.voiceover(SAY[6]) as vo:
@@ -615,7 +637,8 @@ class Hook(VoiceScene):
             self.play(FadeIn(t), FadeIn(prev_tag), run_time=0.5)
             type_cmd(self, t, CMD)
             self.play(FadeIn(turn_tag, shift=LEFT * 0.1), run_time=0.4)
-        self.wait(2)
+        self.play(pulse(prev_tag.box, INK, 1.12, run_time=0.8, width=4))     # "preview": not yet
+        self.wait(1.2)
 
         # ========================================================== 7. one honest limit
         title = label("One honest limit", 26, INK)

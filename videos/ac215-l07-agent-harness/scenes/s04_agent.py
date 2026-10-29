@@ -8,10 +8,12 @@ Beats (script.md "## S04", one voiceover block each):
     "Tools" light in as named; "Memory" GREY dashed and dimmed with the GREY tag "act 4"; the bar
     "Dynamic control" and the dashed "Task completion" on "running until the task is done".
  1  The ends leave; the block shrinks (text keeps its size) into the top left. CODE(acts/
-    act1_agent.py: 15–21) at 20 pt (7 lines, no wraps) under it: PURPLE tag "agent framework" beside
-    `Agent(` (line 15); line 18 lights YELLOW and "Instructions" pulses; line 19 lights and "Tools"
-    pulses; line 21 lights, `"response_format": AgentReply` turns YELLOW, GREY tag "structured
-    reply" under the panel.
+    act1_agent.py: 14–21) at 20 pt under it (QA: from line 14, so `build_agent` is on screen when
+    it is named; line 14 wrapped before "recorder=None": 9 rows): `build_agent` turns YELLOW on "the
+    function build agent"; PURPLE row tag "agent framework" beside `Agent(` (line 15); line 18
+    lights YELLOW and "Instructions" pulses; line 19 lights and "Tools" pulses; line 21 lights,
+    `"response_format": AgentReply` turns YELLOW, GREY row tag "structured reply" straddling the
+    panel's bottom edge under it (the 9-row panel leaves no room below).
  2  LECTURE 20–21. The block leaves; the panel's code leaves, its frame reshapes and
     CODE(formaggio/agents/tools.py: 43–45) writes in (44 and 45 wrapped before "Never place" and
     before `"order_placed"`). Above it (slide 20, our drawing): the BLUE model, a PINK vertical
@@ -54,13 +56,15 @@ Beats (script.md "## S04", one voiceover block each):
     52–56) (header names cell 23; line 55 BLUE). "Messages grew" pulses the stack and counter;
     "input from" pulses the meter and line 56's "4540 input tokens" turns GOLD; the GOLD total card
     "6 calls · 20,862 input + 895 output tokens · one answer" (GREY "the six calls' sums, lines
-    11–56") writes in on "about 21,000"; the answer card pulses on "for one answer".
+    11–56") writes in on "about 21,000"; the answer card's frame pulses on "for one answer" (its
+    outline only: a filled flash hid its own text).
  7  TRACKER Agent 2. V2 and its lecture tag leave. Container terminal (13 rows), tags `no key` +
     GOLD live. `python cli.py --act 1 --scenario standard --show-json` (2 rows) -> container/11
     lines 8, 9 cut after "null means I have not provided that detail." (2 rows, broken at a space
-    like a real terminal: a hanging indent would need a third row) on "a short note"; 10, 13–15,
-    16–18 folded to `"allergies": [ "nuts" ],`, …, 27, 32 as 401s on "plus the confirmed request"
-    (line 11, the customer ID, left out); the three JSON lines party_size / budget_cents / state
+    like a real terminal: a hanging indent would need a third row) on "a short note"; 10–12 folded
+    to `{ "customer_id": "‹customer 1›", "intent": "order",` (QA: the ID shown masked, as BRIEF
+    asks, instead of silently dropped), 13–15, 16–18 folded to `"allergies": [ "nuts" ],`, …, 27,
+    32 as 401s on "plus the confirmed request"; the three JSON lines party_size / budget_cents / state
     turn GREEN; "null means I have not provided that detail" turns YELLOW on "where null". On
     "Pause": the terminal fades, the static GREY "your turn" card (▶): 401 fix (GREY), "with your
     key:", the two commands, "look for: …" (README.md · line 200), "no key: …" (GREY), GOLD "one
@@ -69,7 +73,8 @@ Beats (script.md "## S04", one voiceover block each):
     small: the BLUE model, its stack of 11 messages, the GOLD meter at 4,540; a GREEN "tools" box, a
     GREEN dashed "tool outputs" box feeding back into the stack (the model's input); a GREY dashed
     "memory" box feeding up. The stack and the meter pulse on "The input grows". The question writes
-    in RED: "How do we manage what goes into the LLM?" Everything fades to an empty frame.
+    in RED: "How do we manage what goes into the LLM?", the GREY caption "act 2 answers it" under it
+    (QA: S05 comes first, so the question is not answered next). Everything fades to an empty frame.
 """
 
 import numpy as np
@@ -96,11 +101,12 @@ from manim import (
     Transform,
     VGroup,
     Write,
+    there_and_back,
 )
 
 from common import *  # noqa: F401,F403
 from explainer import style as S
-from explainer.devops import label, substring, tag
+from explainer.devops import label, substring
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S04"]
@@ -127,6 +133,9 @@ NOTE9 = JSON_RUN.cut(9, NULL + ".")
 _cut9 = NOTE9.index(" confirmed")
 NOTE9_ROWS = [NOTE9[:_cut9], NOTE9[_cut9 + 1:]]
 assert " ".join(NOTE9_ROWS) == NOTE9 and all(len(r) <= 65 for r in NOTE9_ROWS), NOTE9_ROWS
+# lines 10-12 as one row: the customer ID shown masked (capture() masked it), not dropped (QA 7:21)
+assert JSON_RUN.line(11) == '  "customer_id": "‹customer 1›",' and JSON_RUN.line(12) == '  "intent": "order",'
+HEAD = JSON_RUN.fold(10, 12, '{ "customer_id": "‹customer 1›", "intent": "order",')
 ALLERGIES = JSON_RUN.fold(16, 18, '  "allergies": [ "nuts" ],')
 STOP11 = JSON_RUN.as401(32, short=True)
 
@@ -152,6 +161,7 @@ assert "independent cart check" in _r200 and "distinguish a proposal from an ord
 assert "Acts 1–2 have offline context preview" in source_line("README.md", 163)
 
 # the code panels
+assert source_line("acts/act1_agent.py", 14).startswith("def build_agent(client, store, request, *, recorder=None")
 assert source_line("acts/act1_agent.py", 15) == "    return Agent("
 assert '"response_format": AgentReply' in source_line("acts/act1_agent.py", 21)
 assert source_line("formaggio/agents/tools.py", 43).strip().startswith("def preview_order(")
@@ -161,7 +171,7 @@ assert '"order_placed": False' in source_line("formaggio/agents/tools.py", 45)
 T_ROWS = 13
 BLOCK_K = 0.72                                   # beat 1: the agent block's shapes (text keeps 20 pt)
 BLOCK_AT = np.array([-4.1, 1.75, 0])             # ... its frame's centre (under the tracker)
-P1_BOTTOM = -2.8                                 # act1_agent.py panel (its code's bottom edge)
+P1_BOTTOM = -3.3                                 # act1_agent.py panel (its code's bottom edge; 9 rows)
 P2_BOTTOM = -2.95                                # tools.py panel
 MODEL_AT = np.array([-5.3, 1.2, 0])              # beat 2's diagram (slide 20)
 SEAM_X = 0.3
@@ -195,6 +205,14 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
 
 def flash(mob, color: str = TURN, k: float = 1.15):
     return Indicate(mob, color=color, scale_factor=k)
+
+
+def ring_pulse(card, color: str, k: float = 1.08, width: float = 6, run_time: float = 0.7) -> tuple:
+    """A json_card's outline swells and thickens, then settles (its faint tint swells with it): the
+    text and the fill keep their colours, so the card stays readable (an Indicate on the whole card
+    filled it with its colour and hid its own label). Returns the animations: play(*ring_pulse(c))."""
+    return (card.frame.animate(rate_func=there_and_back, run_time=run_time).scale(k).set_stroke(color, width),
+            card[1].animate(rate_func=there_and_back, run_time=run_time).scale(k))
 
 
 def row_tag(text: str, color: str = S.GREY, size: float = CAPTION) -> VGroup:
@@ -411,23 +429,37 @@ class AgentLoop(VoiceScene):
             self.play(flash(VGroup(ab.parts["a_out"], ab.parts["done"].text), INK, 1.1), run_time=0.6)
 
         # ========================================================== 1 · build_agent in code
-        p1 = src_panel("acts/act1_agent.py", 15, 21, size=20)
+        # from line 14, so `build_agent` is on screen when it is named (QA 5:53); line 14 wraps
+        # before "recorder=None" (2 rows, the panel no wider than line 21 makes it): 9 rows
+        p1 = src_panel("acts/act1_agent.py", 14, 21, size=20, wrap={14: ["recorder=None"]})
         place(p1, cx=0)
         p1.shift(UP * (P1_BOTTOM - p1.code.get_bottom()[1]))
+        ba_span = p1.span(14, "build_agent")
         agent_span = p1.span(15, "Agent(")
         row16_end = p1.span(16, "client,").get_right()[0]
-        ftag = tag("agent framework", TOOL)
-        place(ftag, left=max(agent_span.get_right()[0] + 0.35, row16_end + 0.35), cy=agent_span.get_center()[1])
+        rows1 = p1.code.code_lines
+        # the 20 pt rows are 0.31 apart, so a tag (0.37) on line 15 sits just under line 14's wrapped
+        # row (whose text runs above it) and over line 16's empty right side
+        ftag = row_tag("agent framework", TOOL)
+        place(ftag, left=max(agent_span.get_right()[0] + 0.35, row16_end + 0.35),
+              top=rows1[p1.rows_of(14)[-1]].get_bottom()[1] - 0.05)
+        assert ftag.get_bottom()[1] > rows1[p1.rows_of(17)[0]].get_top()[1] + 0.1
         reply_span = p1.span(21, '"response_format": AgentReply')
-        rtag = tag("structured reply", S.GREY)
-        place(rtag, cx=reply_span.get_center()[0], top=p1.code.get_bottom()[1] - 0.08)
+        # no room under the 9-row panel (its bottom is at -3.3): the tag straddles the panel's bottom
+        # edge right under `"response_format": AgentReply`, as frame tags straddle a title bar
+        rtag = row_tag("structured reply")
+        place(rtag, cx=reply_span.get_center()[0], cy=p1.code.get_bottom()[1])
+        assert rtag.get_top()[1] < rows1[-1].get_bottom()[1] - 0.08 and rtag.get_bottom()[1] > -3.55
         with self.voiceover(SAY[1]) as vo:
             self.play(*ab.parts_out("task", "a_in", "a_out", "done"), FadeOut(mt), run_time=0.35)
             fc = ab.frame.get_center()
             self.play(ab.animate.rescale(BLOCK_K, about_point=fc).shift(BLOCK_AT - fc), run_time=0.6)
             mt.next_to(ab.frame, RIGHT, buff=0.15).set_y(ab.block("memory").get_center()[1])
+            assert p1.header.get_top()[1] < ab.frame.get_bottom()[1] - 0.15, (p1.header.get_top(), ab.frame.get_bottom())
+            self.play(FadeIn(p1, shift=UP * 0.15), FadeIn(mt), run_time=0.5)
             vo.wait_until("the function build agent")
-            self.play(FadeIn(p1, shift=UP * 0.15), FadeIn(mt), run_time=0.6)
+            self.play(ba_span.animate.set_color(TURN), run_time=0.25)
+            self.play(flash(ba_span, TURN, 1.15), run_time=0.55)
             vo.wait_until("makes one framework")
             self.play(FadeIn(ftag, shift=LEFT * 0.1), run_time=0.4)
             self.play(flash(agent_span, TOOL, 1.2), run_time=0.6)
@@ -644,7 +676,7 @@ class AgentLoop(VoiceScene):
             self.play(FadeIn(total[0]), Write(total_t), run_time=0.9)
             self.play(FadeIn(sums, shift=UP * 0.05), run_time=0.4)
             vo.wait_until("for one answer")
-            self.play(flash(ans, CLOUD, 1.08), run_time=0.7)
+            self.play(*ring_pulse(ans, CLOUD), run_time=0.7)      # outline only (QA 7:15)
 
         # ========================================================== 7 · step 2: --show-json; your turn
         lm.freeze()
@@ -672,7 +704,7 @@ class AgentLoop(VoiceScene):
             vo.wait_until("a short note")
             note_rows = show(self, t2, JSON_RUN, 8, (NOTE9_ROWS[0], OUTPUT), (NOTE9_ROWS[1], OUTPUT), run_time=0.5)
             vo.wait_until("plus the confirmed")
-            js = show(self, t2, JSON_RUN, 10, (13, 15), ALLERGIES, "…", 27, STOP11, run_time=0.8)
+            js = show(self, t2, JSON_RUN, HEAD, (13, 15), ALLERGIES, "…", 27, STOP11, run_time=0.8)
             self.play(LaggedStart(*[js[i].glyphs.animate.set_color(HARNESS) for i in (1, 2, 3)], lag_ratio=0.4),
                       run_time=0.9)
             vo.wait_until("where null")
@@ -688,6 +720,8 @@ class AgentLoop(VoiceScene):
         lr = lref("10")
         dg, dp = loop_diagram()
         q = label("How do we manage what goes into the LLM?", 28, ERR).move_to([0.2, -2.55, 0])
+        # S05 (the harness) comes first: say where the answer is (QA 7:34; BRIEF marks it "(Act 2)")
+        q_next = label("act 2 answers it", CAPTION, S.GREY).next_to(q, DOWN, buff=0.18)
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(tc), run_time=0.4)
             self.play(FadeIn(VGroup(dp["model"], dp["stack"], dp["msgs"], dp["meter"])), FadeIn(lr), run_time=0.5)
@@ -697,6 +731,7 @@ class AgentLoop(VoiceScene):
             self.play(flash(dp["stack"], TURN, 1.08), flash(dp["meter"], COST, 1.08), run_time=0.7)
             vo.wait_until("That's the lecture's")
             self.play(Write(q), run_time=1.2)
+            self.play(FadeIn(q_next, shift=UP * 0.1), run_time=0.5)
         self.wait(0.6)
-        self.play(FadeOut(VGroup(dg, q, tr, lr)), run_time=0.8)
+        self.play(FadeOut(VGroup(dg, q, q_next, tr, lr)), run_time=0.8)
         self.wait(0.3)

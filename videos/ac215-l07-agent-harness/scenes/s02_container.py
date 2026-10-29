@@ -10,17 +10,20 @@ Beats (script.md "## S02", one voiceover block each):
     key `-e OPENAI_API_KEY` and a GOLD arrow carrying a key into the container; the crossed-out
     port "no -p · no ports"; one PINK HTTPS line to the BLUE cloud "OpenAI".
  1  The stage shrinks to a glyph-only badge (top right). TRACKER Start · extra. Laptop terminal
-    (10 rows, prompt ~/AC215$): `git clone …` (extra) -> laptop/01 line 2; `cd agent-harness`
+    (10 rows, prompt ~/AC215$): `git clone …` (extra) -> laptop/01 line 2, with a GREY band note
+    "recorded at commit e25dfe9 (2026-09-28) · a newer clone may print other numbers" (laptop/02,
+    not typed); `cd agent-harness`
     (extra), the prompt becomes ~/AC215/agent-harness$; chip README.md · line 92 (excerpt) "on your
     host machine, from agent-harness". The terminal clears: `ls -a` (extra) -> laptop/03 lines
     4–20 in three columns of <= 6 rows; a GREY dashed ghost `docs/` "not in the repo".
  2  TRACKER Start 1. `mkdir -p ../secrets` (no output); `ls -la ..; ls -A ../secrets | wc -l`
-    (extra) -> laptop/05 lines 5–7, `agent-harness` and `secrets` flash, `0` gets the GREY tag
-    "empty"; the badge's secrets/ pulses; chip README.md · line 155 "No GCP service-account setup
-    is required". ▶ on a static card (`mkdir -p ../secrets`: the row is too long for the tag).
-    Hold 2 s.
- 3  TRACKER Start 2. The terminal clears: `export OPENAI_API_KEY="YOUR_OPENAI_API_KEY"` (no output);
-    the placeholder gets a YELLOW box, caption "replace it with your key · or skip the line
+    (extra; TRACKER Start 1 · extra) -> laptop/05 lines 5–7, `agent-harness` and `secrets` flash
+    on "one level up", `0` gets the GREY tag "empty"; the badge's secrets/ pulses; chip README.md ·
+    line 155 "No GCP service-account setup is required". The terminal shrinks to the strip (TRACKER
+    Start 1); ▶ on a static card above it: `git clone …` (extra) · `cd agent-harness` (extra) ·
+    `mkdir -p ../secrets`, GREY header "clone only if you have no copy yet:". Hold 2 s.
+ 3  TRACKER Start 2. The strip clears and grows back to 10 rows:
+    `export OPENAI_API_KEY="YOUR_OPENAI_API_KEY"` (no output); the placeholder gets a YELLOW box, caption "replace it with your key · or skip the line
     offline (README.md · line 104)"; a GOLD key beside the command; GREY note "typed exactly as
     written here · act 1 shows the result".
  4  TRACKER Start 3. The terminal grows to 12 rows: `bash docker-shell.sh` -> laptop/07 lines 2
@@ -30,13 +33,14 @@ Beats (script.md "## S02", one voiceover block each):
     it: line 9 fills its row); GREY chip "first build: + the base image · a minute or more".
  5  The terminal shrinks to the strip (lines 14–16, the three build steps); CODE(Dockerfile:
     42–48) above it: 42 GREEN "the lockfile first", 45 GREEN, 48 GREY "the code last", lit in
-    build order, each with its strip row.
+    build order, each with its strip row (the bars end after line 42's text; the two labels sit on
+    the panel beside them, one column).
  6  The panel leaves; the terminal grows back: a '…' row, laptop/07 lines 21–26, the prompt
     app@13a6188396ca:/app$ (line 27 cut before " exit"): TEAL frame, title "container ·
     agent-harness". The terminal shrinks to a strip (23, 26, the prompt); CODE(docker-entrypoint.sh:
     6–12) above it: line 6 on a GREY bar with the GREY tag "erratum · says activated…", line 12
-    GREEN "…activates here". 13a6188396ca underlined PINK, GREY tag "container ID · your numbers
-    will differ".
+    GREEN "…activates here"; on "a harmless slip" the erratum's text flashes (never its filled
+    pill). 13a6188396ca underlined PINK, GREY tag "container ID · your numbers will differ".
  7  The panel leaves. Chip README.md · line 108 (excerpt) "Run every remaining command inside
     the container, from /app"; it fades; the static ▶ card (export · bash docker-shell.sh · →
     app@…:/app$ · GREEN "offline · free"); the strip's prompt flashes. Hold 2 s.
@@ -60,9 +64,10 @@ Beats (script.md "## S02", one voiceover block each):
     docker-shell.sh` -> laptop/12 lines 2–3 joined (wrapped), 4–9 folded; the frame turns TEAL;
     `read -rsp "OpenAI API key: " OPENAI_API_KEY` -> "OpenAI API key: " with the GREY caption
     "type your key here · nothing shows" and a GOLD key dropping in; `export OPENAI_API_KEY`;
-    `printf '\\n'` -> an empty line; `echo ${#OPENAI_API_KEY}` (extra) -> 19, caption "its length ·
-    never its value · 0 means empty". The terminal fades; the static ▶ card "only if you changed
-    the key while the container ran:". Hold 2 s, fade to an empty frame.
+    `printf '\\n'` -> an empty line; at once `echo ${#OPENAI_API_KEY}` (extra; TRACKER Start 4 ·
+    extra) -> 19, caption "its length · never its value · 0 means empty", held 2 s. The terminal
+    fades (TRACKER Start 4); the static ▶ card "only if you changed the key while the container
+    ran:" (the echo as its GREY extra row). Hold 2 s, fade to an empty frame.
 """
 
 import numpy as np
@@ -71,6 +76,7 @@ from manim import (
     LEFT,
     RIGHT,
     UP,
+    AnimationGroup,
     Arrow,
     Create,
     FadeIn,
@@ -92,6 +98,7 @@ SAY = NARRATION["S02"]
 # ------------------------------------------------------------------ the real captures (file line numbers)
 CLONE = capture("laptop/01")
 assert CLONE.cmd == "git clone https://github.com/dlops-io/agent-harness.git", CLONE.cmd
+GITLOG = capture("laptop/02")                 # (not typed) the commit the captures were made at
 LS = capture("laptop/03")
 assert LS.cmd == "ls -a" and LS.line(4) == ".git" and LS.line(20) == "uv.lock", LS.lines
 MKDIR = capture("laptop/04")
@@ -228,6 +235,14 @@ def ls_columns(cap, first: int = 4, last: int = 20, per_col: int = 6) -> list[st
     return rows
 
 
+def short_bar(p, n: int, color: str, x_end: float, opacity: float = 0.22) -> VGroup:
+    """p.bar(n, color) cut to end at x_end (the panel's free space right of it holds a label)."""
+    b = p.bar(n, color, opacity)
+    x0 = b.get_left()[0]
+    r = Rectangle(width=x_end - x0, height=b.height, stroke_width=0).set_fill(color, opacity)
+    return VGroup(r.move_to([(x0 + x_end) / 2, b.get_center()[1], 0]))
+
+
 def flash(mob, color: str = TURN, k: float = 1.15):
     return Indicate(mob, color=color, scale_factor=k)
 
@@ -291,6 +306,10 @@ class OneContainer(VoiceScene):
         t = term(P_WS, rows=T_ROWS, title=LAPTOP_TITLE)
         c92 = readme_chip("README.md · line 92 (excerpt)", R92)
         place(c92, left=-6.3, cy=BAND2_Y)
+        # QA: every count shown later (tests, versions, sizes, README line numbers) is from this commit
+        assert GITLOG.line(2).startswith("e25dfe9 ") and GITLOG.line(3).startswith("2026-09-28 "), GITLOG.lines
+        pinned = note("recorded at commit e25dfe9 (2026-09-28) · a newer clone may print other numbers")
+        place(pinned, left=-6.25, cy=BAND1_Y)
         ls_rows = ls_columns(LS)
         with self.voiceover(SAY[1]) as vo:
             # the stage leaves the top band before the tracker enters it (no overlap mid-shrink)
@@ -299,7 +318,8 @@ class OneContainer(VoiceScene):
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(t, shift=UP * 0.2), run_time=0.5)
             vo.wait_until("git clone")
             cl = type_cmd(self, t, CLONE.cmd, 1.0)
-            self.play(caption_extra(tr, True), run_time=0.35)      # " · extra" with the first extra
+            # " · extra" with the first extra; the commit the video was recorded at
+            self.play(caption_extra(tr, True), FadeIn(pinned, shift=DOWN * 0.1), run_time=0.4)
             ex1 = at_right(extra_tag(), t, cl)
             pin(self, cl.rows[0], ex1, run_time=0.3)
             t.print(self, CLONE.at(2), run_time=0.4)
@@ -311,7 +331,7 @@ class OneContainer(VoiceScene):
             self.play(FadeIn(c92, shift=DOWN * 0.1), run_time=0.5)
             self.play(flash(c92.phrase, TURN, 1.04), run_time=0.7)
             vo.wait_until("A listing shows")
-            self.play(FadeOut(c92), run_time=0.3)
+            self.play(FadeOut(VGroup(c92, pinned)), run_time=0.3)
             t.clear(self)
             lsl = type_cmd(self, t, LS.cmd, 0.3)
             pin(self, lsl, beside(extra_tag(), t, lsl), run_time=0.3)
@@ -327,17 +347,23 @@ class OneContainer(VoiceScene):
         # ========================================================== 2 · step 1: mkdir -p ../secrets
         c155 = readme_chip("README.md · line 155", R155)
         place(c155, left=-6.3, cy=BAND2_Y)
-        card2 = turn_card([MKDIR.cmd])
-        place(card2, right=6.2, bottom=t.box.get_top()[1] + 0.12)
+        # QA: the ▶ card carries the two extras the narration does first (a viewer without a copy who
+        # pauses here would otherwise run mkdir from the wrong folder); three rows don't fit above
+        # the 10-row terminal, so it shrinks to the strip and the card sits centred above it (card7)
+        card2 = turn_card([(CLONE.cmd, "extra"), (CD, "extra"), MKDIR.cmd],
+                          header="clone only if you have no copy yet:")
+        place(card2, cx=0, cy=(c155.get_bottom()[1] + GAP_Y) / 2)
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(gg), tr.goto(1), run_time=0.5)
             type_cmd(self, t, MKDIR.cmd, 0.6)
             bare_prompt(self, t)
-            vo.wait_until("one level up")
-            wsl = type_cmd(self, t, WS.cmd, 1.0)
-            pin(self, wsl, beside(extra_tag(), t, wsl), run_time=0.3)
+            wsl = type_cmd(self, t, WS.cmd, 0.9)
+            ex2 = beside(extra_tag(), t, wsl)
+            pin(self, wsl, ex2, run_time=0.35,                  # " · extra" while the extra is on screen
+                anim=AnimationGroup(FadeIn(ex2, shift=LEFT * 0.1), caption_extra(tr, True)))
             out2 = show(self, t, WS, (5, 7), run_time=0.5)
             r5, r6, r7 = out2
+            vo.wait_until("one level up")
             self.play(flash(substring(r5, "agent-harness")), flash(substring(r6, "secrets")), run_time=0.7)
             vo.wait_until("Nothing reads it")
             pin(self, r7, beside(grey_tag("empty"), t, r7), run_time=0.4)
@@ -347,6 +373,8 @@ class OneContainer(VoiceScene):
             vo.wait_until("so no service account")
             self.play(FadeIn(c155, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("Pause and run it")
+            # the extra's command row leaves with the shrink: the caption drops " · extra"
+            resize(self, t, 3, run_time=0.5, extra=[caption_extra(tr, False)])
             self.play(FadeIn(card2, shift=UP * 0.1), run_time=0.5)
         self.wait(2)                                    # ▶ beat: hold the frame
 
@@ -357,9 +385,12 @@ class OneContainer(VoiceScene):
         cap3b = note("typed exactly as written here · act 1 shows the result")
         place(cap3b, left=-6.25, cy=BAND1_Y)
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(c155, card2)), tr.goto(2), run_time=0.5)
-            t.clear(self)
-            ex = type_cmd(self, t, EXPORT.cmd, 1.0)
+            # the strip clears as the card leaves (Terminal.clear in the same play), then grows back
+            self.play(FadeOut(VGroup(c155, card2)), FadeOut(t.lines), tr.goto(2), run_time=0.5)
+            for m in list(t.lines):
+                t.lines.remove(m)
+            resize(self, t, T_ROWS, run_time=0.5)
+            ex = type_cmd(self, t, EXPORT.cmd, 0.9)
             exr = ex.rows[-1] if hasattr(ex, "rows") else ex
             kg3 = beside(key_glyph(0.26, KEY), t, exr, buff=0.35)
             pin(self, exr, kg3, run_time=0.4, anim=FadeIn(kg3, shift=LEFT * 0.15))
@@ -413,9 +444,16 @@ class OneContainer(VoiceScene):
         # ========================================================== 5 · the Dockerfile: the lockfile before the code
         p5 = src_panel("Dockerfile", 42, 48)
         place(p5, cx=0, bottom=GAP_Y)
-        bars5 = [p5.bar(42, HARNESS, 0.22), p5.bar(45, HARNESS, 0.22), p5.bar(48, S.GREY, 0.22)]
-        n42 = after_code(label("the lockfile first", CAPTION, HARNESS), p5, 42)
-        n48 = after_code(label("the code last", CAPTION, S.GREY), p5, 48)
+        # QA: a label on its own bar was GREEN on GREEN / GREY on GREY. The bars stop just after the
+        # longest lit line (42) and the labels sit on the panel beside them, in one column (S05's
+        # row_bar(right=…) for "the failure sticks")
+        x5 = code_row(p5, 42).get_right()[0] + 0.25
+        bars5 = [short_bar(p5, 42, HARNESS, x5), short_bar(p5, 45, HARNESS, x5), short_bar(p5, 48, S.GREY, x5)]
+        n42 = label("the lockfile first", CAPTION, HARNESS)
+        place(n42, left=x5 + 0.3, cy=bars5[0].get_center()[1])
+        n48 = label("the code last", CAPTION, S.GREY)
+        place(n48, left=x5 + 0.3, cy=bars5[2].get_center()[1])
+        assert max(n42.get_right()[0], n48.get_right()[0]) < p5.code.background.get_right()[0] - 0.15
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(chip4), run_time=0.3)
             resize(self, t, 3, keep=[r14, r15, r16], run_time=0.6)
@@ -456,7 +494,8 @@ class OneContainer(VoiceScene):
             self.play(FadeIn(box6), FadeIn(err6, shift=DOWN * 0.08), run_time=0.5)
             self.play(FadeIn(bar12), FadeIn(n12, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("a harmless slip")
-            self.play(flash(err6, TURN, 1.08), run_time=0.6)
+            # the text only (QA: a flash on the filled pill hid its own label); 1.05 keeps it inside the pill
+            self.play(flash(err6.text, TURN, 1.05), run_time=0.6)
             vo.wait_until("After the at sign")
             cid = substring(pr, CTR_ID)
             ucid = under(cid, LOOKUP, stroke=4)
@@ -590,8 +629,9 @@ class OneContainer(VoiceScene):
             self.play(FadeIn(q110, shift=DOWN * 0.1), run_time=0.5)
 
         # ========================================================== 11 · step 4's three lines; ▶
-        card11 = turn_card([BUILD.cmd, READ, KEY_EXPORT, AGAIN.typed(12), Prose("keep working in this shell"),
-                            (Prose("offline · free"), HARNESS)],
+        len_note = "its length · never its value · 0 means empty"
+        card11 = turn_card([BUILD.cmd, READ, KEY_EXPORT, AGAIN.typed(12), (AGAIN.typed(14), "extra · " + len_note),
+                            Prose("keep working in this shell"), (Prose("offline · free"), HARNESS)],
                            header="only if you changed the key while the container ran:", width=9.0)
         place(card11, cx=0, cy=-0.2)
         with self.voiceover(SAY[11]) as vo:
@@ -617,14 +657,17 @@ class OneContainer(VoiceScene):
             t2.set_prompt(KEY_P)
             type_cmd(self, t2, KEY_EXPORT, 0.5)
             session(self, t2, AGAIN, 12, 13, type_time=0.4, out_time=0.2)
-            vo.wait_until("Keep working")
-            ech = session(self, t2, AGAIN, 14, type_time=0.5)[14]
-            pin(self, ech, beside(extra_tag(), t2, ech), run_time=0.3)
+            # the extra length check follows at once (QA: typed at "Keep working", it was readable
+            # for about 0.6 s before the terminal faded); the ▶ card repeats it
+            ech = session(self, t2, AGAIN, 14, type_time=0.4)[14]
+            ex11 = beside(extra_tag(), t2, ech)
+            pin(self, ech, ex11, run_time=0.3,                  # " · extra" while the extra is on screen
+                anim=AnimationGroup(FadeIn(ex11, shift=LEFT * 0.1), caption_extra(tr, True)))
             r19 = show(self, t2, AGAIN, 15, run_time=0.3)[0]
-            pin(self, r19, beside(note("its length · never its value · 0 means empty"), t2, r19, buff=0.4),
-                run_time=0.4)
+            pin(self, r19, beside(note(len_note), t2, r19, buff=0.4), run_time=0.4)
+            self.wait(2.3)                              # `19` up ~2.7 s, its caption ~2.3 s, before the fade
             vo.wait_until("Pause here")
-            self.play(FadeOut(t2), run_time=0.4)
+            self.play(FadeOut(t2), caption_extra(tr, False), run_time=0.4)
             self.play(FadeIn(card11, shift=UP * 0.1), run_time=0.5)
         self.wait(2)                                    # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tr, card11)), run_time=0.6)

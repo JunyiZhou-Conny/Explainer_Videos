@@ -1,38 +1,43 @@
 """S05 · Act 1: wrap it in a harness (README "1 · Agent and tools" steps 3-4). Lecture: 20–24.
 
 Beats (script.md "## S05", one voiceover block each):
- 0  LECTURE 20–24. A GREY dashed card (tag "illustration · our drawing") holds one line,
-    `while True: model(); dispatch()`, inside a looping track with arrowheads; `model()` and
-    `dispatch()` light as named and the BLUE agent core `build_agent` appears under the card. The
-    GREY chip (slide 24, our words) "who does harness engineering? / anyone who wrote this loop"
-    slides in beside it; at "has no stop" a dot runs round the track twice and the RED tag
-    "no stop" lands under it.
- 1  TRACKER Agent 3. The card leaves; the core slides to the bottom edge. CODE(README.md: 209,
-    215–224) (folded; the gap row reads "… 4 more imports (lines 210–213)"); GREY chip "notebook
-    cell: Colab or your own Jupyter" in the top band; `Harness(build_agent)` and the core light
+ 0  TRACKER Agent 2 (as S04 left it, from the first frame). LECTURE 20–24. A GREY dashed card
+    (tag "illustration · our drawing") holds one line, `while True: model(); dispatch()`, inside a
+    looping track with arrowheads; `model()` and `dispatch()` light as named and the BLUE agent
+    core `build_agent` appears under the card. The GREY chip (slide 24, our words) "who does
+    harness engineering? / anyone who wrote this loop" slides in beside it; at "has no stop" a dot
+    runs round the track twice and the RED tag "no stop" lands under it.
+ 1  TRACKER Agent 3 (goto). The card leaves; the core slides to the bottom edge. CODE(README.md:
+    209, 215–224) (folded; the gap row reads "… 4 more imports (lines 210–213)"); GREY chip
+    "notebook cell: Colab or your own Jupyter" in the top band; `Harness(build_agent)` and the core light
     together; lines 217–220 get YELLOW bars one by one as the SAY names Trace, Budget, Context and
-    Cart Check. At "The CLI builds exactly this" the panel is swapped (old out, then new in) for
-    CODE(acts/act1_agent.py: 26–33), whose lines 29–32 get the same bars.
+    Cart Check; line 218's three values get YELLOW rings as named (8 model calls, 20 tool calls, 120
+    seconds). At "The CLI builds exactly this" the panel is swapped (old out, then new in) for
+    CODE(acts/act1_agent.py: 26–33), whose lines 29–32 get the same bars; it holds 1.2 s after the
+    voice (compare the two).
  2  V3 (tag illustration). The panel stays a moment, then everything but lines 29–32 fades; each
     of those four lines is swapped in place (old out, new in) for its ring's label (`Trace()`,
     `Budget(8, 20, 120 s)`, `Context("basic")`, `CartCheck()`), and the four labels slide left into
     a column while the core rises to the centre. The padlocked GREEN inner ring "admission · tool
     audit · shop rules" appears around the core (padlock pulses at "never comes off"). Then each
     label lifts straight up its column (over no text: the rows above it have left) and slides
-    right into its ring's band as that ring slides on, inside out.
- 3  The rings shrink left (texts out, shapes shrink, "agent" in). Along the bottom CODE(formaggio/
-    agents/execution.py: 66, 69–70, 73–76) (folded, 20 pt); right of the rings a GREEN turnstile
-    with a counter (tag illustration); the Budget ring glows, its README caption a quote card
-    `README.md · line 230 (excerpt)`: "`Budget(...)` / Exact model/tool admission limits / and a
-    run timeout". Eight BLUE "call" tokens pass, the counter ticks 1/8 … 8/8 and line 76's GREEN
-    bar flashes on each tick; a ninth token: lines 73–74 RED, the turnstile locks RED and the RED
-    label `Maximum of 8 model calls reached.` appears; a GREEN "tool" token bounces off the lock:
-    lines 69–70 RED (the bar stops after the code) with the caption "the failure sticks" beside it.
-    (Neighbouring line bars are drawn on one row grid, row_bar(): no bright seam between them.)
- 4  The Budget ring lifts off; the turnstile, tokens, card and label leave; a GREY dashed fence
-    draws round the rings, labelled "SDK fallback · 40 iterations · no call limits · no overall
-    time budget", while the panel is swapped for CODE(execution.py: 56–58) (lines 57–58 joined
-    and wrapped); the three values light as named. At the end the Budget ring slides back on,
+    right into its ring's band as that ring slides on, inside out. The labelled onion holds 1.5 s.
+ 3  The rings shrink left (texts out, shapes shrink, "agent" in). The ring under discussion keeps
+    its name: a 20 pt `Budget` tab on the Budget ring's top edge (beats 3-4: it lifts off and comes
+    back with the ring), then `CartCheck` on the outer ring (beat 5, as Budget's leaves). Along the
+    bottom CODE(formaggio/agents/execution.py: 66, 69–70, 73–76) (folded, 20 pt); right of the
+    rings a GREEN turnstile with a counter (tag illustration); the Budget ring glows, its README
+    caption a quote card `README.md · line 230 (excerpt)`: "`Budget(...)` / Exact model/tool
+    admission limits / and a run timeout". Eight BLUE "call" tokens pass, the counter ticks 1/8 …
+    8/8 and line 76's GREEN bar flashes on each tick; a ninth token: lines 73–74 RED, the turnstile
+    locks RED and the RED label `Maximum of 8 model calls reached.` appears; a GREEN "tool" token
+    bounces off the lock: lines 69–70 RED (the bar stops after the code) with the caption "the
+    failure sticks" beside it. (Neighbouring line bars are drawn on one row grid, row_bar(): no
+    bright seam between them.)
+ 4  The Budget ring lifts off; the turnstile, tokens, card and label leave; a PURPLE (the SDK's)
+    dashed fence draws round the rings, labelled (PURPLE) "SDK fallback · 40 iterations · no call
+    limits · no overall time budget", while the panel is swapped for CODE(execution.py: 56–58)
+    (lines 57–58 joined and wrapped); the three values light as named. At the end the Budget ring slides back on,
     the fence and the panel leave.
  5  LECTURE 21. The CartCheck ring glows; excerpt chip `README.md · line 232 (excerpt)`
     "Independent assessment of the final proposal"; slide 21's strip at the bottom with "Verify"
@@ -280,6 +285,25 @@ def row_bar(panel, first: int, last: int | None = None, color: str = TURN, opaci
     return r.move_to([(x0 + x1) / 2, (top + bot) / 2, 0])
 
 
+def ring_tab(rings, name: str, text: str) -> VGroup:
+    """The name of a compact ring (whose bands are too thin for a label) as a 20 pt mono tab ON its
+    top edge: a BG patch behind the text breaks the line there, clear of the neighbouring rings'
+    edges. Made a member of that ring's part (it lifts off and comes back with the ring), hidden
+    under "_x" for a _Reveal(tab, attr="_x")."""
+    t = mono(text, CAPTION, INK)
+    fr = rings.frames[name]
+    bg = Rectangle(width=t.width + 0.16, height=t.height, stroke_width=0).set_fill(S.BG, 1)
+    g = VGroup(bg, t).move_to([fr.get_center()[0], fr.get_top()[1], 0])
+    k = RINGS.index(name)
+    half = 0.015 + 0.012                       # a neighbour's half stroke (3) and a clear gap
+    assert g.get_bottom()[1] > rings.frames[RINGS[k - 1]].get_top()[1] + half, (name, g.get_bottom())
+    if k + 1 < len(RINGS):
+        assert g.get_top()[1] < rings.frames[RINGS[k + 1]].get_top()[1] - half, (name, g.get_top())
+    rings.parts[name].add(g)
+    hide(g)
+    return g
+
+
 def answer_b() -> VGroup:
     """S01's answer card B, cut to the phrase the hook circled: BLUE frame, header "answer B", one
     mono row; a RED ring round the garbled "1,5000¢" (still on it from the hook)."""
@@ -337,6 +361,7 @@ class HarnessLayers(VoiceScene):
 
         # ========================================================== 0 · the bare loop has no stop
         lr = lref("20–24")
+        tr = tracker("Agent", 2)                      # as S04 left it: on screen from the first frame
         loop_t = mono(LOOP_TXT, 22, INK)
         th = loop_t.height + 0.75
         track = RoundedRectangle(width=loop_t.width + 0.8, height=th, corner_radius=th / 2,
@@ -362,10 +387,12 @@ class HarnessLayers(VoiceScene):
         _set_op(core)                                  # (the copy carries the hidden opacities)
         core.move_to([0, CORE_Y0, 0])
         apart(core, ill0, 0.15)
-        inside_frame(loop_g, ill0, nostop, who, core, lr)
+        apart(card0, tr, 0.3)
+        inside_frame(loop_g, ill0, nostop, who, core, lr, tr)
 
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(lr, shift=DOWN * 0.1), Create(card0), FadeIn(ill0), run_time=0.7)
+            self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(lr, shift=DOWN * 0.1), Create(card0), FadeIn(ill0),
+                      run_time=0.7)
             vo.wait_until("if you've written a loop")
             self.play(Write(loop_t), Create(track), run_time=1.0)
             self.play(FadeIn(tips, scale=0.5), run_time=0.3)
@@ -383,7 +410,6 @@ class HarnessLayers(VoiceScene):
             self.play(MoveAlongPath(dot, lap), FadeIn(nostop, shift=UP * 0.1), rate_func=linear, run_time=0.9)
 
         # ========================================================== 1 · step 3: the notebook cell; the CLI builds it
-        tr = tracker("Agent", 3)
         rp = src_panel("README.md", [209, (215, 224)])
         place(rp, cx=0, top=PANEL_TOP)
         gap_row = rp.code.code_lines[1]
@@ -392,6 +418,9 @@ class HarnessLayers(VoiceScene):
         rp.add(more)
         nb = two_row_chip("notebook cell:", "Colab or your own Jupyter")
         bars_r = {n: row_bar(rp, n) for n in (217, 218, 219, 220)}
+        vals = {a: ring(rp.span(218, sub), TURN, buff=0.05, stroke=3) for a, sub in   # (as beat 4's three)
+                (("Budget with 8 model calls", "model_calls=8"), ("20 tool calls", "tool_calls=20"),
+                 ("120 seconds", "seconds=120"))}
         hb = rp.span(216, "build_agent")
         ap = src_panel("acts/act1_agent.py", 26, 33, wrap=True)
         place(ap, cx=0, top=PANEL_TOP)
@@ -404,7 +433,7 @@ class HarnessLayers(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(card0, track, tips, loop_t, ill0, nostop, who, dot)),
-                      core.animate.move_to(core_b1), FadeIn(tr, shift=DOWN * 0.2), run_time=0.7)
+                      core.animate.move_to(core_b1), tr.goto(3), run_time=0.7)
             self.play(FadeIn(rp, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("for Colab or Jupyter")
             self.play(FadeIn(nb, shift=DOWN * 0.1), run_time=0.5)
@@ -415,10 +444,16 @@ class HarnessLayers(VoiceScene):
                                                    "basic Context", "and Cart Check")):
                 vo.wait_until(a)
                 self.play(FadeIn(bars_r[n]), run_time=0.4)
+                if n == 218:                           # its three values, as named
+                    for k, v in enumerate(vals):
+                        if k:
+                            vo.wait_until(v)
+                        self.play(Create(vals[v]), run_time=0.4)
             vo.wait_until("The CLI builds exactly this")
-            self.play(FadeOut(VGroup(rp, *bars_r.values(), nb), shift=UP * 0.1), run_time=0.4)
+            self.play(FadeOut(VGroup(rp, *bars_r.values(), *vals.values(), nb), shift=UP * 0.1), run_time=0.4)
             self.play(FadeIn(ap, shift=UP * 0.1), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(bars_a[n]) for n in (29, 30, 31, 32)], lag_ratio=0.2), run_time=0.7)
+        self.wait(1.2)                                  # the two panels compared: the act 1 one holds
 
         # ========================================================== 2 · V3: the inner ring, four layers slide on
         # the four lines -> the ring labels, swapped in place (old out, then new in), then a column
@@ -471,12 +506,15 @@ class HarnessLayers(VoiceScene):
             self.play(LaggedStart(*moves, lag_ratio=0.75), run_time=2.9)
             for n in RINGS4:
                 hr._flag(hr.parts[n], False)
+        self.wait(1.5)                                  # the fully labelled onion holds before it shrinks
 
         # ========================================================== 3 · Budget is a turnstile
         cr = HarnessRings(mode="compact").move_to(CR_POS)
         cr_texts = [cr.parts["core"][1], cr.parts["inner"].lock]
         for m in cr_texts:
             hide(m)
+        tab_b = ring_tab(cr, "budget", "Budget")            # beats 3-4 (lifts off and returns with its ring)
+        tab_c = ring_tab(cr, "cartcheck", "CartCheck")      # beat 5
         ep = src_panel("formaggio/agents/execution.py", [66, (69, 70), (73, 76)], size=20)
         place(ep, cx=0, bottom=-3.5)
         apart(cr, ep, 0.08)
@@ -518,7 +556,7 @@ class HarnessLayers(VoiceScene):
             self.add(cr)
             self.play(*[_Reveal(m, attr="_x") for m in cr_texts], FadeIn(ep, shift=UP * 0.15),
                       FadeIn(ts), FadeIn(ill3), run_time=0.5)
-            self.play(cr.glow("budget"), FadeIn(q230, shift=LEFT * 0.15), run_time=0.5)
+            self.play(cr.glow("budget"), _Reveal(tab_b, attr="_x"), FadeIn(q230, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("Each model call")
             self.play(FadeIn(b76), run_time=0.2)
             prev = None
@@ -546,10 +584,10 @@ class HarnessLayers(VoiceScene):
         fe.remove(fe.label)
         # the fence, drawn here 0.2 less tall than .fence()'s (its top ran 0.08 under the tracker)
         outer = cr.frames["cartcheck"]
-        fe.frame = box(outer.width + 0.6, outer.height + 0.3, S.GREY, dashed=True, stroke=3,
+        fe.frame = box(outer.width + 0.6, outer.height + 0.3, TOOL, dashed=True, stroke=3,   # the SDK's: PURPLE
                        radius=0.45).move_to(outer)
         apart(fe.frame, tr, 0.15)
-        fe_lab = fit_rows(FENCE_TEXT, 5.4, CAPTION, S.GREY, align=LEFT)
+        fe_lab = fit_rows(FENCE_TEXT, 5.4, CAPTION, TOOL, align=LEFT)
         place(fe_lab, left=fe.frame.get_right()[0] + 0.35, cy=cr.core.get_center()[1])
         e56 = src_panel("formaggio/agents/execution.py", 56, 58, join=[(57, 58)], size=20,
                         wrap={57: ['{"max_iterations"', '"max_duration_seconds"', '"allow_concurrent_invocation"']})
@@ -626,7 +664,9 @@ class HarnessLayers(VoiceScene):
         inside_frame(ex232, ss, cb, chk, rec, status, notread)
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(cr.glow("cartcheck"), FadeIn(ex232, shift=LEFT * 0.15), run_time=0.6)
+            # the ring under discussion keeps its name: Budget's tab out, then CartCheck's in
+            self.play(cr.glow("cartcheck"), tab_b.animate(rate_func=_out_early).set_opacity(0),
+                      _Reveal(tab_c, attr="_x", rate_func=_in_late), FadeIn(ex232, shift=LEFT * 0.15), run_time=0.6)
             vo.wait_until("the lecture's verify step")
             # the slide-21 tag arrives with slide 21's strip (old tag out, then the new one in)
             self.play(Succession(FadeOut(lr), FadeIn(lr21)), FadeIn(ss, shift=UP * 0.15), run_time=0.6)

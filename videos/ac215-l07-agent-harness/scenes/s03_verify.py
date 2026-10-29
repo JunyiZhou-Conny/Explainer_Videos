@@ -4,10 +4,11 @@ Lecture: none, then 44 (beats 5-7: the lecture links this repo and this Colab).
 
 Beats (script.md "## S03", one voiceover block each):
  0  TRACKER Verify 1. Container terminal (13 rows, TEAL), GREEN title-bar tag "offline · free".
-    `python -m scripts.check_sdk` -> container/03 lines 2–11, 12–24 folded to
-    `"features": { … },`, …, 29. GREY tag "at the time of recording" on line 3; the versions of
-    lines 3 (python), 5 (agent-framework) and 8 (openai) turn GREEN; the folded features row gets
-    a GREEN tag "11 features · all true".
+    `python -m scripts.check_sdk` -> container/03 lines 2–11, 12–28 folded to ONE row
+    `"features": { … }, …` (the script's features fold and its `…` row share a row: 12 output rows
+    keep the typed command on screen in the 13-row terminal), 29. GREY tag "at the time of
+    recording" on line 3; the versions of lines 3 (python), 5 (agent-framework) and 8 (openai)
+    turn GREEN; the folded features row gets a GREEN tag "11 features · all true".
  1  TRACKER Verify 2. The terminal clears: `python -m tests` -> container/04 line 2 (wrapped: five
     rows of dots), 3–4, 6; "Ran 281 tests in 99.378s" and OK turn GREEN. The terminal shrinks to
     the strip (the command, Ran, OK); above it (tag illustration) a GREEN ring "the harness" around
@@ -35,8 +36,9 @@ Beats (script.md "## S03", one voiceover block each):
     "notebook only · the image has no IPython" (no capture folder on screen); "Ran 12 tests" GREEN;
     both OK GREEN; a 0.6 s hold keeps the chip readable.
  5  LECTURE 44. TRACKER Colab 1, then 2. The terminal fades. A BLUE frame "Agent Harness · Colab"
-    (tag illustration): File › Save a copy in Drive (excerpt chip Agent Harness · cell 1 (excerpt)
-    "Save a copy in Drive"); a schematic Secrets panel (GOLD key, "Name: OPENAI_API_KEY", no
+    (tag illustration), a GREY note under its title tab "link: Lecture 7 · slide 44, and the study
+    guide" (beat 5 only; slide 44 and the guide link this Colab): File › Save a copy in Drive
+    (excerpt chip Agent Harness · cell 1 (excerpt) "Save a copy in Drive"); a schematic Secrets panel (GOLD key, "Name: OPENAI_API_KEY", no
     value, a toggle "Notebook access" that turns on, YELLOW); CODE(colab/cell-10.py: 3–6) (GREY
     subtitle "Setup OpenAI Key"), `userdata.get('OPENAI_API_KEY')` GOLD.
  6  TRACKER Colab 3. CODE(colab/cell-08.py: 6–8) (subtitle "Install Dependencies"; lines 7, 8
@@ -83,7 +85,9 @@ assert SDK.cmd == "python -m scripts.check_sdk", SDK.cmd
 assert SDK.line(3) == '  "python": "3.13.16",' and '"agent-framework": "1.19.0"' in SDK.line(5), SDK.lines[:5]
 assert '"openai": "3.19.2"' in SDK.line(8) and SDK.line(29) == "}", SDK.line(8)
 assert all(SDK.line(n).rstrip(",").endswith(": true") for n in range(13, 24))        # 11 features, all true
-FEATURES = SDK.fold(12, 24, '  "features": { … },')
+# lines 12-28 as one row: the features block and the four long signature/source lines after it
+# (12 output rows, so the typed command stays on row 0 of the 13-row terminal)
+FEATURES = SDK.fold(12, 28, '  "features": { … }, …')
 TESTS = capture("container/04")
 assert TESTS.cmd == "python -m tests" and TESTS.line(4) == "Ran 281 tests in 99.378s", TESTS.lines
 LOGS = capture("container/05")
@@ -290,7 +294,8 @@ class VerifyOffline(VoiceScene):
             vo.wait_until("Step 1 checks")
             type_cmd(self, t, SDK.cmd, 0.8)
             vo.wait_until("and prints the installed")
-            out0 = show(self, t, SDK, (2, 11), FEATURES, "…", 29, run_time=1.0)
+            out0 = show(self, t, SDK, (2, 11), FEATURES, 29, run_time=1.0)
+            assert len(t.lines) == len(out0) + 1 <= T_ROWS, "the typed command must stay on row 0"
             r3, r5, r8, rf = out0[1], out0[3], out0[6], out0[10]
             wait_at(self, vo, "at the time of recording", -0.9)      # spoken 7.7 s, interpolated 8.6 s
             pin(self, r3, beside(grey_tag("at the time of recording"), t, r3, buff=0.6), run_time=0.4)
@@ -476,8 +481,12 @@ class VerifyOffline(VoiceScene):
         # ========================================================== 5 · the second road: the course Colab
         lr = lref("44")
         cf = colab_frame(top=COLAB_TOP)
+        # where the course Colab is linked (README links only the repo notebooks): slide 44
+        # (SLIDES.md: "Colab notebook and GitHub links") and the study guide's header
+        link44 = note("link: Lecture 7 · slide 44, and the study guide")
+        place(link44, left=cf.title.get_left()[0] + 0.1, top=cf.title.get_bottom()[1] - 0.14)
         menu = menu_path(["File", SAVE])
-        place(menu, left=-6.0, cy=1.75)
+        place(menu, left=-6.0, top=link44.get_bottom()[1] - 0.28)
         ex1 = excerpt_chip(SAVE, "Agent Harness · cell 1 (excerpt)", line=source_line("colab/cell-01.md", 5))
         place(ex1, left=-6.0, top=menu.get_bottom()[1] - 0.35)
         sp = secrets_panel()
@@ -489,7 +498,7 @@ class VerifyOffline(VoiceScene):
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(t, ft, c82, cap82)), run_time=0.5)
             tr = switch_section(self, tr, "Colab", 1)
-            self.play(FadeIn(cf), FadeIn(lr, shift=DOWN * 0.1), run_time=0.6)
+            self.play(FadeIn(cf), FadeIn(lr, shift=DOWN * 0.1), FadeIn(link44, shift=DOWN * 0.08), run_time=0.6)
             vo.wait_until("Save a copy")
             self.play(FadeIn(menu, shift=DOWN * 0.1), run_time=0.4)
             self.play(menu.light(0), run_time=0.3)
@@ -525,7 +534,7 @@ class VerifyOffline(VoiceScene):
         rng = np.random.default_rng(3)
         drift = [d.animate.shift(np.array([rng.uniform(-0.09, 0.09), rng.uniform(-0.07, 0.07), 0])) for d in deps]
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(menu, ex1, sp, p10, bar_k)), tr.goto(3), run_time=0.5)
+            self.play(FadeOut(VGroup(link44, menu, ex1, sp, p10, bar_k)), tr.goto(3), run_time=0.5)
             self.play(FadeIn(p8, shift=UP * 0.12), run_time=0.5)
             self.play(FadeIn(bar7), run_time=0.4)
             vo.wait_until("installs the seven pinned")
