@@ -1,0 +1,257 @@
+[Script Info]
+Title: AC215 · L6, part 1: what an agent is, and function calling by hand (llm-rag)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:02.29,Bilingual,,0,0,0,,这是一个问奶酪专家的问题\N{\fs33\c&H00C8C0B8&\bord1.4}Here's a question for a cheese expert:
+Dialogue: 0,0:00:02.29,0:00:06.32,Bilingual,,0,0,0,,描述一下，在授课老师的书里，奶酪制作在哪些地方很重要\N{\fs33\c&H00C8C0B8&\bord1.4}describe where cheese making is important in the instructor's book.
+Dialogue: 0,0:00:06.64,0:00:10.99,Bilingual,,0,0,0,,在课程团队录下的那次运行里，回答之前先打印了这两行\N{\fs33\c&H00C8C0B8&\bord1.4}In the staff's recorded run, these two lines print before the answer:
+Dialogue: 0,0:00:10.99,0:00:14.53,Bilingual,,0,0,0,,一个叫 get book by author 的函数，以及它的参数\N{\fs33\c&H00C8C0B8&\bord1.4}a function called get_book_by_author, and its arguments.
+Dialogue: 0,0:00:15.20,0:00:19.25,Bilingual,,0,0,0,,返回了 10 个段落，全都来自同一本书，按作者过滤\N{\fs33\c&H00C8C0B8&\bord1.4}Ten passages came back, all from one book, filtered by author.
+Dialogue: 0,0:00:19.57,0:00:22.27,Bilingual,,0,0,0,,但 Gemini 跑在 Google 的数据中心\N{\fs33\c&H00C8C0B8&\bord1.4}But Gemini runs in Google's data center,
+Dialogue: 0,0:00:22.27,0:00:24.29,Bilingual,,0,0,0,,在那里 localhost 毫无意义\N{\fs33\c&H00C8C0B8&\bord1.4}where localhost means nothing.
+Dialogue: 0,0:00:24.61,0:00:27.51,Bilingual,,0,0,0,,所以，是谁搜索了你的数据库，又是谁选了这本书？\N{\fs33\c&H00C8C0B8&\bord1.4}So who searched your database, and who chose the book?
+Dialogue: 0,0:00:27.75,0:00:30.03,Bilingual,,0,0,0,,课上问的是一个更大的版本\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture asks a bigger version:
+Dialogue: 0,0:00:30.03,0:00:34.58,Bilingual,,0,0,0,,规划在巴黎的五天，并且在下雨或航班延误时重新规划\N{\fs33\c&H00C8C0B8&\bord1.4}plan five days in Paris, and replan if it rains or a flight is late.
+Dialogue: 0,0:00:34.90,0:00:39.35,Bilingual,,0,0,0,,模型能起草一份计划，RAG 能取回事实，但两者都没法行动\N{\fs33\c&H00C8C0B8&\bord1.4}A model can draft a plan, and RAG can fetch facts, but neither can act.
+Dialogue: 0,0:00:40.00,0:00:44.84,Bilingual,,0,0,0,,缺的是：实时系统、能行动的工具，以及自主决定的能力\N{\fs33\c&H00C8C0B8&\bord1.4}What's missing: live systems, tools that act, and the autonomy to decide.
+Dialogue: 0,0:00:45.08,0:00:47.64,Bilingual,,0,0,0,,今天我们分三步，一步步向它靠近\N{\fs33\c&H00C8C0B8&\bord1.4}Today we climb toward that in three steps.
+Dialogue: 0,0:00:47.96,0:00:50.10,Bilingual,,0,0,0,,先手写，用 llm-rag 的 agent\N{\fs33\c&H00C8C0B8&\bord1.4}By hand, with llm-rag's agent;
+Dialogue: 0,0:00:50.10,0:00:53.59,Bilingual,,0,0,0,,再用框架，Google 的 Agent Development Kit\N{\fs33\c&H00C8C0B8&\bord1.4}with a framework, Google's Agent Development Kit;
+Dialogue: 0,0:00:53.59,0:00:56.37,Bilingual,,0,0,0,,最后用 harness，在 Colab notebook 里\N{\fs33\c&H00C8C0B8&\bord1.4}and with a harness, in Colab notebooks.
+Dialogue: 0,0:00:57.42,0:01:02.98,Bilingual,,0,0,0,,左上角的进度条显示当前步骤；右上角的灰色标签标出对应的课件\N{\fs33\c&H00C8C0B8&\bord1.4}The tracker, top left, shows the step; the gray tag, top right, names the lecture slides.
+Dialogue: 0,0:01:03.30,0:01:06.65,Bilingual,,0,0,0,,看到黄色的 your turn 标签就暂停，自己跑一遍命令\N{\fs33\c&H00C8C0B8&\bord1.4}Pause at each yellow your-turn tag, and run the command.
+Dialogue: 0,0:01:14.40,0:01:19.43,Bilingual,,0,0,0,,你需要第 5 讲的数据库和密钥，Docker、uv、Node\N{\fs33\c&H00C8C0B8&\bord1.4}You'll need the database and key from lecture 5, Docker, uv, Node,
+Dialogue: 0,0:01:19.43,0:01:22.85,Bilingual,,0,0,0,,再加两个密钥：一个来自 Google AI Studio\N{\fs33\c&H00C8C0B8&\bord1.4}and two more keys: one from Google AI Studio,
+Dialogue: 0,0:01:22.85,0:01:25.36,Bilingual,,0,0,0,,一个来自 OpenAI，并且开通计费\N{\fs33\c&H00C8C0B8&\bord1.4}one from OpenAI, with billing on.
+Dialogue: 0,0:01:26.60,0:01:31.04,Bilingual,,0,0,0,,我们在 2026 年 10 月 18 日录制，没有任何密钥\N{\fs33\c&H00C8C0B8&\bord1.4}We recorded on October 18, 2026, without keys.
+Dialogue: 0,0:01:31.36,0:01:32.99,Bilingual,,0,0,0,,Docker、Chroma、uv\N{\fs33\c&H00C8C0B8&\bord1.4}Docker, Chroma, uv,
+Dialogue: 0,0:01:32.99,0:01:37.47,Bilingual,,0,0,0,,ADK 的 web 服务器和两个 MCP server，都是真实运行的\N{\fs33\c&H00C8C0B8&\bord1.4}the ADK web server and two MCP servers ran for real;
+Dialogue: 0,0:01:37.47,0:01:41.60,Bilingual,,0,0,0,,每次模型调用都没发出去就停了，或者被拒绝了\N{\fs33\c&H00C8C0B8&\bord1.4}every model call stopped unsent, or was refused.
+Dialogue: 0,0:01:41.92,0:01:44.56,Bilingual,,0,0,0,,模型的回答都是课程团队保存的输出\N{\fs33\c&H00C8C0B8&\bord1.4}Model answers are the staff's saved outputs.
+Dialogue: 0,0:01:44.80,0:01:48.45,Bilingual,,0,0,0,,画面上我们隐去了授课老师的名字；你的终端里会显示\N{\fs33\c&H00C8C0B8&\bord1.4}On screen we hide the instructor's name; your terminal shows it.
+Dialogue: 0,0:01:48.77,0:01:53.06,Bilingual,,0,0,0,,每条命令都在学习指南里，就在 MLOps Learning 这个 repo 里\N{\fs33\c&H00C8C0B8&\bord1.4}Every command is in the study guide, in the MLOps_Learning repo.
+Dialogue: 0,0:01:55.10,0:01:57.36,Bilingual,,0,0,0,,先讲概念，在 Cheese Quiz 里\N{\fs33\c&H00C8C0B8&\bord1.4}First the ideas, in the Cheese Quiz.
+Dialogue: 0,0:01:57.68,0:01:59.20,Bilingual,,0,0,0,,点 Save a copy in Drive\N{\fs33\c&H00C8C0B8&\bord1.4}Save a copy in Drive,
+Dialogue: 0,0:01:59.20,0:02:04.10,Bilingual,,0,0,0,,再在 Secrets 面板里用画面上的名字添加你的 OpenAI 密钥\N{\fs33\c&H00C8C0B8&\bord1.4}then add your OpenAI key in the Secrets panel, under the name shown,
+Dialogue: 0,0:02:04.10,0:02:05.83,Bilingual,,0,0,0,,并打开 Notebook access\N{\fs33\c&H00C8C0B8&\bord1.4}with notebook access on.
+Dialogue: 0,0:02:06.07,0:02:11.08,Bilingual,,0,0,0,,安装单元格装两个包，没有 pin 版本，还隐藏了全部输出\N{\fs33\c&H00C8C0B8&\bord1.4}The install cell installs two packages, unpinned, and hides all output:
+Dialogue: 0,0:02:11.08,0:02:14.90,Bilingual,,0,0,0,,如果后面 import 失败，就去掉那个重定向再跑一次\N{\fs33\c&H00C8C0B8&\bord1.4}if imports fail later, rerun it without that redirect.
+Dialogue: 0,0:02:15.22,0:02:18.57,Bilingual,,0,0,0,,然后下载测验文件，暂停一下，把准备工作跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Then download the quiz files, and pause to run the setup.
+Dialogue: 0,0:02:20.82,0:02:23.61,Bilingual,,0,0,0,,现在 notebook 用三种方式问同一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Now the notebook asks one question three ways,
+Dialogue: 0,0:02:23.61,0:02:28.71,Bilingual,,0,0,0,,每次都用同一个模型：做烤奶酪三明治，最好用哪种奶酪？\N{\fs33\c&H00C8C0B8&\bord1.4}with the same model each time: what's the best cheese for a grilled cheese sandwich?
+Dialogue: 0,0:02:29.03,0:02:30.97,Bilingual,,0,0,0,,第 1 条通道，基础 LLM\N{\fs33\c&H00C8C0B8&\bord1.4}Lane 1, the base LLM:
+Dialogue: 0,0:02:30.97,0:02:35.69,Bilingual,,0,0,0,,调用 gpt-4o 一次，一个回答，不到 3 秒\N{\fs33\c&H00C8C0B8&\bord1.4}one call to gpt-4o, one answer, in under 3 seconds.
+Dialogue: 0,0:02:35.93,0:02:40.50,Bilingual,,0,0,0,,第 2 条通道，推理 LLM：几个 Python 方法按固定的顺序运行\N{\fs33\c&H00C8C0B8&\bord1.4}Lane 2, the reasoning LLM: Python methods run in a fixed order.
+Dialogue: 0,0:02:40.82,0:02:46.28,Bilingual,,0,0,0,,分析，拆成 4 个子问题，逐个回答并验证，最后合并\N{\fs33\c&H00C8C0B8&\bord1.4}Analyze, split into 4 sub-questions, answer and verify each, then combine.
+Dialogue: 0,0:02:46.60,0:02:51.76,Bilingual,,0,0,0,,一共 11 次调用、39 秒，而它的 token 总数只是估算\N{\fs33\c&H00C8C0B8&\bord1.4}That's 11 calls and 39 seconds, and its token total is only an estimate.
+Dialogue: 0,0:02:52.00,0:02:56.27,Bilingual,,0,0,0,,课上把这种多次调用的系统叫作推理引擎\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture calls a multi-call system like this a reasoning engine.
+Dialogue: 0,0:02:56.59,0:02:58.59,Bilingual,,0,0,0,,这里由你的 Python 安排调用顺序\N{\fs33\c&H00C8C0B8&\bord1.4}Here your Python orders the calls,
+Dialogue: 0,0:02:58.59,0:03:01.64,Bilingual,,0,0,0,,所以它是推理工作流，不是推理模型\N{\fs33\c&H00C8C0B8&\bord1.4}so it's a reasoning workflow, not a reasoning model.
+Dialogue: 0,0:03:02.88,0:03:04.38,Bilingual,,0,0,0,,第 3 条通道，agent\N{\fs33\c&H00C8C0B8&\bord1.4}Lane 3, the agent:
+Dialogue: 0,0:03:04.38,0:03:09.92,Bilingual,,0,0,0,,同一个模型，加上指令和一个 OpenAI 托管的网页搜索工具\N{\fs33\c&H00C8C0B8&\bord1.4}the same model, plus instructions and a web search tool that OpenAI hosts.
+Dialogue: 0,0:03:10.24,0:03:15.32,Bilingual,,0,0,0,,它的回答显示做了两次搜索，13 秒后它自己停了下来\N{\fs33\c&H00C8C0B8&\bord1.4}Its answer reports two searches, and it stopped on its own after 13 seconds.
+Dialogue: 0,0:03:15.64,0:03:17.72,Bilingual,,0,0,0,,它还显示用了一个工具\N{\fs33\c&H00C8C0B8&\bord1.4}It also reports one tool used,
+Dialogue: 0,0:03:17.72,0:03:20.76,Bilingual,,0,0,0,,但这个数统计的是配置的工具，不是调用次数\N{\fs33\c&H00C8C0B8&\bord1.4}but that counts tools configured, not calls.
+Dialogue: 0,0:03:21.00,0:03:23.02,Bilingual,,0,0,0,,课上对 agent 的定义是\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture defines an agent
+Dialogue: 0,0:03:23.02,0:03:29.17,Bilingual,,0,0,0,,一个 LLM，给它指令和工具，它自己运行，直到任务完成\N{\fs33\c&H00C8C0B8&\bord1.4}as an LLM, given instructions and tools, that runs on its own until the task is done.
+Dialogue: 0,0:03:29.49,0:03:34.80,Bilingual,,0,0,0,,它的五个组件里，有一个决定下一步：动态控制，也就是方向盘\N{\fs33\c&H00C8C0B8&\bord1.4}Of its five blocks, one decides the next step: dynamic control, the steering wheel.
+Dialogue: 0,0:03:35.05,0:03:39.94,Bilingual,,0,0,0,,所以 agent 并不是更聪明的模型：三条通道用的是同一个模型\N{\fs33\c&H00C8C0B8&\bord1.4}So an agent isn't a smarter model: the model was the same in all three lanes.
+Dialogue: 0,0:03:40.26,0:03:42.69,Bilingual,,0,0,0,,变的是谁掌方向盘，还有工具\N{\fs33\c&H00C8C0B8&\bord1.4}What changed is who steers, and the tools.
+Dialogue: 0,0:03:43.01,0:03:46.27,Bilingual,,0,0,0,,每次调用都要付费；暂停一下，把三条通道都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Every call is paid; pause, and run the three lanes.
+Dialogue: 0,0:03:49.32,0:03:52.11,Bilingual,,0,0,0,,下一节：管理模型的输入\N{\fs33\c&H00C8C0B8&\bord1.4}Next section: managing the model's inputs.
+Dialogue: 0,0:03:52.43,0:03:54.52,Bilingual,,0,0,0,,LLM 是无状态的函数\N{\fs33\c&H00C8C0B8&\bord1.4}LLMs are stateless functions.
+Dialogue: 0,0:03:54.84,0:03:59.09,Bilingual,,0,0,0,,每次调用都是一个全新的信封，模型只知道信封里的东西\N{\fs33\c&H00C8C0B8&\bord1.4}Every call is a fresh envelope, and the model knows only what's inside.
+Dialogue: 0,0:03:59.33,0:04:04.18,Bilingual,,0,0,0,,这个 notebook 固定模型和问题，每一步改的是输入\N{\fs33\c&H00C8C0B8&\bord1.4}The notebook keeps the model and question fixed, and changes the inputs each step.
+Dialogue: 0,0:04:04.50,0:04:08.01,Bilingual,,0,0,0,,先是 system prompt、检索到的文档、之前几轮\N{\fs33\c&H00C8C0B8&\bord1.4}A system prompt, retrieved documents, earlier turns,
+Dialogue: 0,0:04:08.01,0:04:12.33,Bilingual,,0,0,0,,再是以往 session 的用户画像、工具的输出和输出 schema\N{\fs33\c&H00C8C0B8&\bord1.4}a profile from past sessions, a tool's output, an output schema.
+Dialogue: 0,0:04:12.57,0:04:14.31,Bilingual,,0,0,0,,注意看首选的变化\N{\fs33\c&H00C8C0B8&\bord1.4}Watch the top pick change:
+Dialogue: 0,0:04:14.31,0:04:18.35,Bilingual,,0,0,0,,切达、美式奶酪，然后是给孩子吃的温和奶酪，再然后是哈瓦蒂\N{\fs33\c&H00C8C0B8&\bord1.4}cheddar, American, then mild cheeses for kids, then Havarti.
+Dialogue: 0,0:04:18.67,0:04:21.10,Bilingual,,0,0,0,,接着是 Whole Foods 的一款温和切达\N{\fs33\c&H00C8C0B8&\bord1.4}Then a mild cheddar from Whole Foods,
+Dialogue: 0,0:04:21.10,0:04:23.79,Bilingual,,0,0,0,,最后是同一个首选，写成严格的 JSON\N{\fs33\c&H00C8C0B8&\bord1.4}and finally the same pick as strict JSON.
+Dialogue: 0,0:04:24.03,0:04:26.29,Bilingual,,0,0,0,,第 4 步展示了记忆到底是什么\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4 shows what memory really is.
+Dialogue: 0,0:04:26.61,0:04:30.99,Bilingual,,0,0,0,,之前几轮对话并不是模型记住的：代码每次都把它们重新发一遍\N{\fs33\c&H00C8C0B8&\bord1.4}The earlier turns aren't remembered: the code sends them again, every time.
+Dialogue: 0,0:04:31.31,0:04:34.02,Bilingual,,0,0,0,,记忆，就是你放回信封里的纸\N{\fs33\c&H00C8C0B8&\bord1.4}Memory is paper you put back in the envelope.
+Dialogue: 0,0:04:34.27,0:04:39.24,Bilingual,,0,0,0,,课上把这几页纸归成两个组件：指令和记忆\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture groups these sheets into two building blocks: instructions and memory.
+Dialogue: 0,0:04:39.56,0:04:42.93,Bilingual,,0,0,0,,下节课会给这门手艺起个名字：上下文工程\N{\fs33\c&H00C8C0B8&\bord1.4}Next lecture names the craft: context engineering.
+Dialogue: 0,0:04:43.17,0:04:45.53,Bilingual,,0,0,0,,现在仔细看看第 2 步的代码\N{\fs33\c&H00C8C0B8&\bord1.4}Now look closely at the code of step 2.
+Dialogue: 0,0:04:45.85,0:04:47.45,Bilingual,,0,0,0,,你能找出这个小疏漏吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Can you spot the slip?
+Dialogue: 0,0:04:51.48,0:04:54.05,Bilingual,,0,0,0,,这里 system prompt 用的角色是 user\N{\fs33\c&H00C8C0B8&\bord1.4}The system prompt goes in with the role user,
+Dialogue: 0,0:04:54.05,0:04:56.22,Bilingual,,0,0,0,,问题用的角色却是 system\N{\fs33\c&H00C8C0B8&\bord1.4}and the question with the role system.
+Dialogue: 0,0:04:56.47,0:05:00.75,Bilingual,,0,0,0,,先把这两个角色对调，再去比较；从第 3 步开始，它们就是对的\N{\fs33\c&H00C8C0B8&\bord1.4}Swap those two roles before comparing; from step 3 on, they're right.
+Dialogue: 0,0:05:01.07,0:05:03.06,Bilingual,,0,0,0,,暂停一下，把这七步跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and run the seven steps.
+Dialogue: 0,0:05:05.30,0:05:09.93,Bilingual,,0,0,0,,再注意第 6 步：代码把一个工具的输出贴进了信封\N{\fs33\c&H00C8C0B8&\bord1.4}And notice step 6: the code pasted a tool's output into the envelope.
+Dialogue: 0,0:05:10.25,0:05:12.21,Bilingual,,0,0,0,,可是，模型要怎么请求一个工具呢？\N{\fs33\c&H00C8C0B8&\bord1.4}But how does a model ask for a tool?
+Dialogue: 0,0:05:13.85,0:05:19.23,Bilingual,,0,0,0,,在第 5 讲里，RAG 是一条直线：问题、检索、模型、回答\N{\fs33\c&H00C8C0B8&\bord1.4}In lecture 5, RAG was a straight line: question, retrieval, model, response.
+Dialogue: 0,0:05:19.55,0:05:22.23,Bilingual,,0,0,0,,课上的回顾让检索更聪明\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's recap makes retrieval smarter:
+Dialogue: 0,0:05:22.23,0:05:27.59,Bilingual,,0,0,0,,搜索前后的步骤、到底要不要检索、评分、改写，还有网页搜索\N{\fs33\c&H00C8C0B8&\bord1.4}steps around the search, whether to retrieve at all, grading, rewriting, and web search.
+Dialogue: 0,0:05:27.83,0:05:32.02,Bilingual,,0,0,0,,Agentic RAG 把一个模型放在这份菜单前面，让它来选\N{\fs33\c&H00C8C0B8&\bord1.4}Agentic RAG puts a model in front of that menu, and lets it choose.
+Dialogue: 0,0:05:32.25,0:05:37.03,Bilingual,,0,0,0,,在 llm-rag 里，Agents 一节就是菜单只有两项的 Agentic RAG\N{\fs33\c&H00C8C0B8&\bord1.4}llm-rag's Agents section is Agentic RAG with a menu of two.
+Dialogue: 0,0:05:37.35,0:05:41.00,Bilingual,,0,0,0,,它的 README 说：让 LLM 决定怎么检索\N{\fs33\c&H00C8C0B8&\bord1.4}Its README says: let the LLM decide how to retrieve.
+Dialogue: 0,0:05:41.32,0:05:44.00,Bilingual,,0,0,0,,搜一位作者的书，或者搜全部的书\N{\fs33\c&H00C8C0B8&\bord1.4}Search one author's book, or search all books.
+Dialogue: 0,0:05:44.25,0:05:47.13,Bilingual,,0,0,0,,这是第一个菜单项，是手写的\N{\fs33\c&H00C8C0B8&\bord1.4}Here's the first menu item, written by hand:
+Dialogue: 0,0:05:47.13,0:05:50.98,Bilingual,,0,0,0,,一个名字，模型会把它写回来，还有一段描述\N{\fs33\c&H00C8C0B8&\bord1.4}a name, which the model will write back, and a description;
+Dialogue: 0,0:05:50.98,0:05:55.62,Bilingual,,0,0,0,,它和参数描述一起，是模型能看到的唯一文档\N{\fs33\c&H00C8C0B8&\bord1.4}with the parameter descriptions, the only documentation the model sees.
+Dialogue: 0,0:05:55.94,0:05:58.24,Bilingual,,0,0,0,,参数以 JSON schema 的形式给出\N{\fs33\c&H00C8C0B8&\bord1.4}Parameters come as a JSON schema.
+Dialogue: 0,0:05:58.48,0:06:01.36,Bilingual,,0,0,0,,作者必须是 enum 里 9 个名字之一\N{\fs33\c&H00C8C0B8&\bord1.4}The author must be one of 9 names in an enum.
+Dialogue: 0,0:06:01.68,0:06:05.08,Bilingual,,0,0,0,,搜索文本的描述甚至在指导模型\N{\fs33\c&H00C8C0B8&\bord1.4}The search text's description even coaches the model:
+Dialogue: 0,0:06:05.08,0:06:07.89,Bilingual,,0,0,0,,把搜索词扩展成一两句话\N{\fs33\c&H00C8C0B8&\bord1.4}expand the search term to a sentence or two.
+Dialogue: 0,0:06:08.21,0:06:09.92,Bilingual,,0,0,0,,而且两个字段都是必填的\N{\fs33\c&H00C8C0B8&\bord1.4}And both fields are required.
+Dialogue: 0,0:06:10.17,0:06:11.77,Bilingual,,0,0,0,,再看真正的函数\N{\fs33\c&H00C8C0B8&\bord1.4}Now the real function.
+Dialogue: 0,0:06:11.98,0:06:15.58,Bilingual,,0,0,0,,还有两个参数，collection 和一个 embedding 函数\N{\fs33\c&H00C8C0B8&\bord1.4}Two more arguments, the collection and an embedding function,
+Dialogue: 0,0:06:15.58,0:06:18.30,Bilingual,,0,0,0,,不在 schema 里：由你的代码提供\N{\fs33\c&H00C8C0B8&\bord1.4}aren't in the schema: your code supplies them.
+Dialogue: 0,0:06:18.62,0:06:21.86,Bilingual,,0,0,0,,模型能控制的只有作者和搜索文本\N{\fs33\c&H00C8C0B8&\bord1.4}The model controls only the author and the search text.
+Dialogue: 0,0:06:24.20,0:06:28.04,Bilingual,,0,0,0,,课上说，会用工具的 agent 必须选对工具\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture says a tool-using agent must pick the right tool,
+Dialogue: 0,0:06:28.04,0:06:30.88,Bilingual,,0,0,0,,整理好输入格式，并解读输出\N{\fs33\c&H00C8C0B8&\bord1.4}format its inputs, and interpret its outputs.
+Dialogue: 0,0:06:31.20,0:06:34.40,Bilingual,,0,0,0,,在这里，模型选工具、整理格式，全靠写出来\N{\fs33\c&H00C8C0B8&\bord1.4}Here the model picks and formats only by writing;
+Dialogue: 0,0:06:34.40,0:06:36.00,Bilingual,,0,0,0,,运行工具的是你的代码\N{\fs33\c&H00C8C0B8&\bord1.4}your code runs the tool.
+Dialogue: 0,0:06:36.22,0:06:40.80,Bilingual,,0,0,0,,这是 collection 里的 11 本书，旁边是 enum 里的 9 个名字\N{\fs33\c&H00C8C0B8&\bord1.4}Here are the 11 books in the collection, beside the 9 names in the enum.
+Dialogue: 0,0:06:50.65,0:06:57.86,Bilingual,,0,0,0,,两本书。那本茅屋奶酪食谱，178 个 chunk，作者不在名单上\N{\fs33\c&H00C8C0B8&\bord1.4}Two books. The cottage cheese recipe book, 178 chunks, has an author who isn't on the list.
+Dialogue: 0,0:06:58.18,0:07:01.81,Bilingual,,0,0,0,,Woman's Institute 那本书，1505 个 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}The Woman's Institute book, 1,505 chunks,
+Dialogue: 0,0:07:01.81,0:07:06.42,Bilingual,,0,0,0,,干脆没有作者：这是第 5 讲里那个文件名的小疏漏\N{\fs33\c&H00C8C0B8&\bord1.4}has no author at all: a file name slip in lecture 5.
+Dialogue: 0,0:07:06.65,0:07:09.81,Bilingual,,0,0,0,,这两本书仍然能通过搜索全部的书找到\N{\fs33\c&H00C8C0B8&\bord1.4}Both stay reachable by the search across all books.
+Dialogue: 0,0:07:10.13,0:07:12.81,Bilingual,,0,0,0,,现在看舞台：Gemini 在 Google 的云上\N{\fs33\c&H00C8C0B8&\bord1.4}Now the stage: Gemini in Google's cloud,
+Dialogue: 0,0:07:12.81,0:07:16.42,Bilingual,,0,0,0,,两个 container 在你的笔记本上，中间隔着一条边界\N{\fs33\c&H00C8C0B8&\bord1.4}two containers on your laptop, and a boundary between.
+Dialogue: 0,0:07:16.67,0:07:19.72,Bilingual,,0,0,0,,模型从来拿不到你的数据库，只拿到一份菜单\N{\fs33\c&H00C8C0B8&\bord1.4}The model never gets your database, only a menu.
+Dialogue: 0,0:07:20.04,0:07:23.64,Bilingual,,0,0,0,,第 1 次调用返回一张点单：函数名和参数\N{\fs33\c&H00C8C0B8&\bord1.4}Call 1 returns an order: a function name and arguments.
+Dialogue: 0,0:07:23.96,0:07:27.16,Bilingual,,0,0,0,,你的代码执行它；第 2 次调用把结果发回去\N{\fs33\c&H00C8C0B8&\bord1.4}Your code runs it; call 2 sends back the result.
+Dialogue: 0,0:07:32.75,0:07:36.33,Bilingual,,0,0,0,,第 5 讲停在了一条命令上；今天我们来运行它\N{\fs33\c&H00C8C0B8&\bord1.4}Lecture 5 ended on one command; today we run it.
+Dialogue: 0,0:07:36.65,0:07:38.08,Bilingual,,0,0,0,,从头开始？\N{\fs33\c&H00C8C0B8&\bord1.4}Starting fresh?
+Dialogue: 0,0:07:38.13,0:07:39.63,Bilingual,,0,0,0,,把 llm-rag clone 下来\N{\fs33\c&H00C8C0B8&\bord1.4}Clone llm-rag,
+Dialogue: 0,0:07:39.63,0:07:43.50,Bilingual,,0,0,0,,把服务账号密钥放进它旁边的 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}and put the service account key in a secrets folder beside it;
+Dialogue: 0,0:07:43.50,0:07:45.55,Bilingual,,0,0,0,,不是的话，就进到你的目录\N{\fs33\c&H00C8C0B8&\bord1.4}otherwise, go to your folder.
+Dialogue: 0,0:07:45.78,0:07:48.13,Bilingual,,0,0,0,,第 1 步：cd llm-rag\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1: cd llm-rag.
+Dialogue: 0,0:07:48.45,0:07:50.90,Bilingual,,0,0,0,,第 2 步：编辑 docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2: edit docker-shell.sh,
+Dialogue: 0,0:07:50.90,0:07:54.53,Bilingual,,0,0,0,,把 GCP project 变量改成你自己的项目 ID\N{\fs33\c&H00C8C0B8&\bord1.4}and set GCP_PROJECT to your own project ID;
+Dialogue: 0,0:07:54.53,0:07:56.39,Bilingual,,0,0,0,,我们用的是占位值\N{\fs33\c&H00C8C0B8&\bord1.4}we used a placeholder.
+Dialogue: 0,0:07:56.71,0:07:58.31,Bilingual,,0,0,0,,暂停一下，把两件事都做了\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and do both.
+Dialogue: 0,0:08:00.27,0:08:03.06,Bilingual,,0,0,0,,第 3 步：sh docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: sh docker-shell.sh.
+Dialogue: 0,0:08:03.38,0:08:05.15,Bilingual,,0,0,0,,Compose 先启动 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}Compose starts Chroma first.
+Dialogue: 0,0:08:05.47,0:08:09.45,Bilingual,,0,0,0,,后面那条 pull 的消息看起来像报错，其实无害\N{\fs33\c&H00C8C0B8&\bord1.4}The pull message after it looks like an error but is harmless:
+Dialogue: 0,0:08:09.45,0:08:12.72,Bilingual,,0,0,0,,网上没有这个 image，所以 Compose 自己构建\N{\fs33\c&H00C8C0B8&\bord1.4}there's no such image online, so Compose builds it.
+Dialogue: 0,0:08:13.03,0:08:16.19,Bilingual,,0,0,0,,构建大约 40 秒后，出现横幅\N{\fs33\c&H00C8C0B8&\bord1.4}After about 40 seconds of building, the banner prints.
+Dialogue: 0,0:08:16.51,0:08:23.08,Bilingual,,0,0,0,,录制时是 Python 3.12.15 和 uv 0.13.1\N{\fs33\c&H00C8C0B8&\bord1.4}Python 3.12.15 and uv 0.13.1, at the time of recording.
+Dialogue: 0,0:08:23.40,0:08:27.31,Bilingual,,0,0,0,,提示符里 @ 符号后面是 container ID，每次运行都不一样\N{\fs33\c&H00C8C0B8&\bord1.4}After the at sign comes the container's ID, new every run;
+Dialogue: 0,0:08:27.31,0:08:29.33,Bilingual,,0,0,0,,暂停一下，走到这个提示符\N{\fs33\c&H00C8C0B8&\bord1.4}pause, and get to this prompt.
+Dialogue: 0,0:08:31.57,0:08:35.02,Bilingual,,0,0,0,,在第二个终端里做一个额外检查：docker ps\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check from a second terminal: docker ps.
+Dialogue: 0,0:08:35.34,0:08:39.67,Bilingual,,0,0,0,,Chroma 发布了 port 8000；记住这个 port，第二部分会用到\N{\fs33\c&H00C8C0B8&\bord1.4}Chroma publishes port 8000; remember that port for part 2.
+Dialogue: 0,0:08:40.60,0:08:43.53,Bilingual,,0,0,0,,现在是 Agents 一节的第 1 步\N{\fs33\c&H00C8C0B8&\bord1.4}Now the Agents section, step 1:
+Dialogue: 0,0:08:43.53,0:08:47.88,Bilingual,,0,0,0,,python cli.py --agent，chunk type 用 char-split\N{\fs33\c&H00C8C0B8&\bord1.4}python cli.py --agent --chunk_type char-split.
+Dialogue: 0,0:08:48.20,0:08:52.12,Bilingual,,0,0,0,,在新的 clone 上，它马上就失败：collection 不存在\N{\fs33\c&H00C8C0B8&\bord1.4}On a fresh clone it fails at once: the collection does not exist.
+Dialogue: 0,0:08:52.44,0:08:56.30,Bilingual,,0,0,0,,那是第 429 行，在任何 Gemini 调用之前\N{\fs33\c&H00C8C0B8&\bord1.4}That's line 429, before any call to Gemini.
+Dialogue: 0,0:08:56.55,0:08:59.39,Bilingual,,0,0,0,,这个 agent 需要第 5 讲的索引\N{\fs33\c&H00C8C0B8&\bord1.4}The agent needs the index from lecture 5.
+Dialogue: 0,0:08:59.71,0:09:01.31,Bilingual,,0,0,0,,那个数据库还留着吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Kept that database?
+Dialogue: 0,0:09:01.41,0:09:03.69,Bilingual,,0,0,0,,它在 docker-volumes 目录里\N{\fs33\c&H00C8C0B8&\bord1.4}It's in the docker-volumes/ folder;
+Dialogue: 0,0:09:03.69,0:09:07.32,Bilingual,,0,0,0,,如果你是在 9 月 22 日之前分块的，先 pull，再重建它\N{\fs33\c&H00C8C0B8&\bord1.4}if you chunked before September 22, pull and rebuild it.
+Dialogue: 0,0:09:07.64,0:09:11.24,Bilingual,,0,0,0,,否则就重新分块、向量化、加载。我们没有密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Otherwise, chunk, embed and load again. We had no key,
+Dialogue: 0,0:09:11.24,0:09:15.02,Bilingual,,0,0,0,,所以 embed 用的是课程团队 commit 过的 embedding\N{\fs33\c&H00C8C0B8&\bord1.4}so the staff's committed embeddings stood in for the embed step.
+Dialogue: 0,0:09:15.27,0:09:21.01,Bilingual,,0,0,0,,再加载：python cli.py --load，chunk type 用 char-split\N{\fs33\c&H00C8C0B8&\bord1.4}Then the load step: python cli.py --load --chunk_type char-split.
+Dialogue: 0,0:09:21.33,0:09:27.98,Bilingual,,0,0,0,,11 本书，8248 个 chunk；授课老师的故事只占其中 24 个\N{\fs33\c&H00C8C0B8&\bord1.4}11 books, 8,248 chunks; the instructor's story is just 24 of them.
+Dialogue: 0,0:09:28.30,0:09:31.73,Bilingual,,0,0,0,,一条额外的 --get 命令确认 collection 能正常响应\N{\fs33\c&H00C8C0B8&\bord1.4}An extra --get command confirms the collection answers;
+Dialogue: 0,0:09:31.73,0:09:33.33,Bilingual,,0,0,0,,暂停一下，加载你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}pause, and load yours.
+Dialogue: 0,0:09:36.65,0:09:41.11,Bilingual,,0,0,0,,查完 collection 之后，agent 函数组装出用户这一轮\N{\fs33\c&H00C8C0B8&\bord1.4}After the collection lookup, the agent function builds the user's turn:
+Dialogue: 0,0:09:41.11,0:09:43.18,Bilingual,,0,0,0,,问题，角色是 user\N{\fs33\c&H00C8C0B8&\bord1.4}the question, with the role user.
+Dialogue: 0,0:09:43.50,0:09:45.78,Bilingual,,0,0,0,,接着是对 Gemini 的第一次调用\N{\fs33\c&H00C8C0B8&\bord1.4}Then comes the first call to Gemini.
+Dialogue: 0,0:09:46.02,0:09:49.38,Bilingual,,0,0,0,,三个设置：temperature 设为 0，菜单作为工具\N{\fs33\c&H00C8C0B8&\bord1.4}Three settings: temperature zero, the menu as tools,
+Dialogue: 0,0:09:49.38,0:09:51.58,Bilingual,,0,0,0,,以及一个 mode 设为 any 的 tool config\N{\fs33\c&H00C8C0B8&\bord1.4}and a tool_config with mode="any".
+Dialogue: 0,0:09:51.90,0:09:54.78,Bilingual,,0,0,0,,课上把 temperature 列为一个设计选择\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture lists temperature as a design choice.
+Dialogue: 0,0:09:55.10,0:09:57.75,Bilingual,,0,0,0,,设为 0，工具的选择就几乎可以复现\N{\fs33\c&H00C8C0B8&\bord1.4}Zero keeps the tool choice nearly repeatable.
+Dialogue: 0,0:09:57.98,0:10:02.36,Bilingual,,0,0,0,,一行额外的命令显示，mode 设为 any 变成了什么：enum 值 ANY\N{\fs33\c&H00C8C0B8&\bord1.4}An extra one-liner shows what mode="any" becomes: the enum value ANY.
+Dialogue: 0,0:10:02.68,0:10:04.96,Bilingual,,0,0,0,,模型必须用一个函数调用来回答\N{\fs33\c&H00C8C0B8&\bord1.4}The model must answer with a function call.
+Dialogue: 0,0:10:05.20,0:10:09.20,Bilingual,,0,0,0,,在课上，一个好的 agent 可能决定根本不去搜索\N{\fs33\c&H00C8C0B8&\bord1.4}In the lecture, a good agent may decide not to search at all;
+Dialogue: 0,0:10:09.20,0:10:11.49,Bilingual,,0,0,0,,Self-RAG 就是从这个决定开始的\N{\fs33\c&H00C8C0B8&\bord1.4}Self-RAG starts with that decision.
+Dialogue: 0,0:10:11.81,0:10:15.29,Bilingual,,0,0,0,,我们的不行：在第 1 次调用里，mode 设为 any 会强制调用工具\N{\fs33\c&H00C8C0B8&\bord1.4}Ours can't: on call 1, mode="any" forces a tool call.
+Dialogue: 0,0:10:15.61,0:10:17.72,Bilingual,,0,0,0,,它选的是搜哪一个，从来不是搜不搜\N{\fs33\c&H00C8C0B8&\bord1.4}It chooses which search, never whether.
+Dialogue: 0,0:10:17.97,0:10:20.14,Bilingual,,0,0,0,,Gemini 实际收到的是什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What does Gemini actually receive?
+Dialogue: 0,0:10:20.46,0:10:25.39,Bilingual,,0,0,0,,一个额外的脚本运行同样的代码，但把请求打印出来，而不是发出去\N{\fs33\c&H00C8C0B8&\bord1.4}An extra script runs the same code, but prints the request instead of sending it.
+Dialogue: 0,0:10:25.71,0:10:29.51,Bilingual,,0,0,0,,一个信封：问题、带着 enum 的两个声明\N{\fs33\c&H00C8C0B8&\bord1.4}One envelope: the question, both declarations with the enum;
+Dialogue: 0,0:10:29.51,0:10:31.73,Bilingual,,0,0,0,,mode 为 ANY，temperature 为 0\N{\fs33\c&H00C8C0B8&\bord1.4}"mode": "ANY" and temperature zero.
+Dialogue: 0,0:10:31.97,0:10:34.16,Bilingual,,0,0,0,,而且没有 system instruction\N{\fs33\c&H00C8C0B8&\bord1.4}And no system instruction:
+Dialogue: 0,0:10:34.16,0:10:38.79,Bilingual,,0,0,0,,和第 5 讲一样，cli.py 定义了一个，却从来没发出去\N{\fs33\c&H00C8C0B8&\bord1.4}as in lecture 5, cli.py defines one and never sends it.
+Dialogue: 0,0:10:39.03,0:10:41.74,Bilingual,,0,0,0,,现在再跑第 1 步，collection 已经加载了\N{\fs33\c&H00C8C0B8&\bord1.4}Now step 1 again, with the collection loaded.
+Dialogue: 0,0:10:42.06,0:10:47.42,Bilingual,,0,0,0,,查找通过了，问题也打印出来了，但第一次模型调用需要你的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}The lookup passes and the question prints, but the first model call needs your key:
+Dialogue: 0,0:10:47.42,0:10:50.00,Bilingual,,0,0,0,,报 DefaultCredentialsError，找不到文件\N{\fs33\c&H00C8C0B8&\bord1.4}DefaultCredentialsError, file not found.
+Dialogue: 0,0:10:50.23,0:10:51.83,Bilingual,,0,0,0,,下面是课程团队看到的\N{\fs33\c&H00C8C0B8&\bord1.4}Here's what the staff saw.
+Dialogue: 0,0:10:52.02,0:10:54.88,Bilingual,,0,0,0,,模型的整个回答就是一个函数调用\N{\fs33\c&H00C8C0B8&\bord1.4}The model's whole answer is a function call:
+Dialogue: 0,0:10:54.88,0:10:58.12,Bilingual,,0,0,0,,get book by author，作者填的是授课老师\N{\fs33\c&H00C8C0B8&\bord1.4}get_book_by_author, with the instructor as author,
+Dialogue: 0,0:10:58.12,0:11:01.69,Bilingual,,0,0,0,,搜索文本是 cheese making importance location\N{\fs33\c&H00C8C0B8&\bord1.4}and the search text, cheese making importance location.
+Dialogue: 0,0:11:01.93,0:11:05.32,Bilingual,,0,0,0,,四个词，而描述要求的是一两句话\N{\fs33\c&H00C8C0B8&\bord1.4}Four words, though the description asked for a sentence or two.
+Dialogue: 0,0:11:05.64,0:11:08.20,Bilingual,,0,0,0,,还有一个 ID，以及一个 thought signature\N{\fs33\c&H00C8C0B8&\bord1.4}There's also an ID, and a thought signature;
+Dialogue: 0,0:11:08.20,0:11:09.63,Bilingual,,0,0,0,,我们之后还会再见到它\N{\fs33\c&H00C8C0B8&\bord1.4}we'll meet it again.
+Dialogue: 0,0:11:09.68,0:11:13.18,Bilingual,,0,0,0,,SDK 什么都没运行；它手里只有声明\N{\fs33\c&H00C8C0B8&\bord1.4}The SDK ran nothing; it only has declarations.
+Dialogue: 0,0:11:13.50,0:11:15.32,Bilingual,,0,0,0,,到目前为止，一次付费调用\N{\fs33\c&H00C8C0B8&\bord1.4}So far, one paid call.
+Dialogue: 0,0:11:15.64,0:11:18.11,Bilingual,,0,0,0,,在这里暂停，用你的密钥跑第 1 步\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here, and run step 1 with your key.
+Dialogue: 0,0:11:21.95,0:11:25.68,Bilingual,,0,0,0,,回到你的 Python 里，分发器按名字匹配每个调用\N{\fs33\c&H00C8C0B8&\bord1.4}Back in your Python, a dispatcher matches each call's name,
+Dialogue: 0,0:11:25.68,0:11:31.68,Bilingual,,0,0,0,,用模型给的参数运行真正的函数，再把结果包装成函数响应\N{\fs33\c&H00C8C0B8&\bord1.4}runs the real function with the model's arguments, and wraps the result as a function response.
+Dialogue: 0,0:11:31.92,0:11:35.71,Bilingual,,0,0,0,,没有密钥时，一个额外的脚本把课程团队录下的调用\N{\fs33\c&H00C8C0B8&\bord1.4}Without a key, an extra script feeds the staff's recorded call
+Dialogue: 0,0:11:35.71,0:11:39.51,Bilingual,,0,0,0,,送进教程自己的分发器，对着我们的 collection 运行\N{\fs33\c&H00C8C0B8&\bord1.4}through the tutorial's own dispatcher, against our collection.
+Dialogue: 0,0:11:39.75,0:11:43.63,Bilingual,,0,0,0,,有一个替身：没有 Google，我们没法把搜索文本向量化\N{\fs33\c&H00C8C0B8&\bord1.4}One stand-in: without Google we can't embed the search text,
+Dialogue: 0,0:11:43.63,0:11:46.03,Bilingual,,0,0,0,,所以用一个已存 chunk 的向量来替代\N{\fs33\c&H00C8C0B8&\bord1.4}so a stored chunk's vector stands in,
+Dialogue: 0,0:11:46.03,0:11:49.20,Bilingual,,0,0,0,,这 10 个 chunk 可能和真实查询返回的不一样\N{\fs33\c&H00C8C0B8&\bord1.4}and the 10 chunks may differ from a real query's.
+Dialogue: 0,0:11:49.45,0:11:53.55,Bilingual,,0,0,0,,出来的是今天这个故事里的 10 个段落，讲的是 Mara 和 Anja\N{\fs33\c&H00C8C0B8&\bord1.4}Out come 10 passages from today's story, about Mara and Anja.
+Dialogue: 0,0:11:53.87,0:12:00.67,Bilingual,,0,0,0,,它们拼成一个 3509 个字符的字符串，作为响应钉在这个调用上\N{\fs33\c&H00C8C0B8&\bord1.4}Joined into one string of 3,509 characters, they're stapled to the call as its response.
+Dialogue: 0,0:12:00.92,0:12:02.68,Bilingual,,0,0,0,,第 2 次调用发送三样东西\N{\fs33\c&H00C8C0B8&\bord1.4}Call 2 sends three things:
+Dialogue: 0,0:12:02.68,0:12:07.76,Bilingual,,0,0,0,,问题、原封不动的模型自己那一轮，以及你的函数响应\N{\fs33\c&H00C8C0B8&\bord1.4}the question, the model's own turn, unchanged, and your function responses.
+Dialogue: 0,0:12:08.08,0:12:12.99,Bilingual,,0,0,0,,工具也再次一起发过去，但没有 tool config：mode 回到了自动\N{\fs33\c&H00C8C0B8&\bord1.4}The tools go along again, but no tool_config: the mode is back to automatic.
+Dialogue: 0,0:12:13.23,0:12:16.79,Bilingual,,0,0,0,,模型那一轮里面带着它的 thought signature\N{\fs33\c&H00C8C0B8&\bord1.4}Inside, the model's turn carries its thought signature:
+Dialogue: 0,0:12:16.79,0:12:21.64,Bilingual,,0,0,0,,Gemini 的思考模型会给自己的那一轮签名，并要求原样发回\N{\fs33\c&H00C8C0B8&\bord1.4}Gemini's thinking models sign their turn, and want it back exactly as sent.
+Dialogue: 0,0:12:21.96,0:12:24.69,Bilingual,,0,0,0,,原封不动地发回这一轮，封印就不会破\N{\fs33\c&H00C8C0B8&\bord1.4}Resending the turn unchanged keeps the seal.
+Dialogue: 0,0:12:24.93,0:12:26.44,Bilingual,,0,0,0,,课程团队拿到的回答呢？\N{\fs33\c&H00C8C0B8&\bord1.4}The staff's answer?
+Dialogue: 0,0:12:26.49,0:12:29.53,Bilingual,,0,0,0,,一个阿尔卑斯山谷、它的山洞，还有转场放牧\N{\fs33\c&H00C8C0B8&\bord1.4}An Alpine valley, its caves, and transhumance,
+Dialogue: 0,0:12:29.53,0:12:31.84,Bilingual,,0,0,0,,也就是牲畜随季节迁移\N{\fs33\c&H00C8C0B8&\bord1.4}the seasonal movement of livestock.
+Dialogue: 0,0:12:32.16,0:12:37.78,Bilingual,,0,0,0,,两次调用分别用了 247 和 1269 个 token\N{\fs33\c&H00C8C0B8&\bord1.4}The two calls used 247 and 1,269 tokens.
+Dialogue: 0,0:12:38.02,0:12:39.87,Bilingual,,0,0,0,,所以，是谁搜索了你的数据库？\N{\fs33\c&H00C8C0B8&\bord1.4}So, who searched your database?
+Dialogue: 0,0:12:40.19,0:12:42.83,Bilingual,,0,0,0,,Gemini 写出了调用，选了那本书\N{\fs33\c&H00C8C0B8&\bord1.4}Gemini wrote the call and chose the book;
+Dialogue: 0,0:12:42.83,0:12:45.08,Bilingual,,0,0,0,,你的 Python 运行了它，就在你的笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}your Python ran it, on your laptop.
+Dialogue: 0,0:12:45.40,0:12:49.62,Bilingual,,0,0,0,,每个问题要两次模型调用，加一次 embedding 调用，全都要付费\N{\fs33\c&H00C8C0B8&\bord1.4}That's two model calls and one embedding call per question, all paid.
+Dialogue: 0,0:12:49.87,0:12:52.50,Bilingual,,0,0,0,,可今天这一版的书里从没出现过转场放牧\N{\fs33\c&H00C8C0B8&\bord1.4}But today's book never says transhumance,
+Dialogue: 0,0:12:52.50,0:12:54.81,Bilingual,,0,0,0,,这次运行里的另外三个词也没有\N{\fs33\c&H00C8C0B8&\bord1.4}nor three other words from this run:
+Dialogue: 0,0:12:54.81,0:12:58.40,Bilingual,,0,0,0,,加入这份输出的那个 commit，同时重写了这本书\N{\fs33\c&H00C8C0B8&\bord1.4}the commit that added this output also rewrote the book.
+Dialogue: 0,0:12:58.72,0:13:01.34,Bilingual,,0,0,0,,课程团队的索引是用旧文本建的\N{\fs33\c&H00C8C0B8&\bord1.4}The staff's index was built from the old text.
+Dialogue: 0,0:13:01.58,0:13:06.96,Bilingual,,0,0,0,,你在今天这一版书上跑，会用到这样的段落：Mara、凝乳、奶酪轮\N{\fs33\c&H00C8C0B8&\bord1.4}Your run on today's book draws on passages like these: Mara, the curd, the wheels.
+Dialogue: 0,0:13:07.28,0:13:09.50,Bilingual,,0,0,0,,索引按加载进去的内容来回答\N{\fs33\c&H00C8C0B8&\bord1.4}An index answers from what was loaded.
+Dialogue: 0,0:13:09.73,0:13:13.77,Bilingual,,0,0,0,,一个小疏漏：README 说会打印回答\N{\fs33\c&H00C8C0B8&\bord1.4}One small slip: the README promises the response,
+Dialogue: 0,0:13:13.77,0:13:17.56,Bilingual,,0,0,0,,但第 478 行打印的是整个 response 对象\N{\fs33\c&H00C8C0B8&\bord1.4}but line 478 prints the whole response object.
+Dialogue: 0,0:13:17.88,0:13:20.53,Bilingual,,0,0,0,,改成打印 response.text，就只有回答了\N{\fs33\c&H00C8C0B8&\bord1.4}Print response.text for just the answer.
+Dialogue: 0,0:13:20.77,0:13:25.84,Bilingual,,0,0,0,,第 2 步链接到课程托管的 Cheese Agent Tool，录制时还在线\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2 links to the course's hosted Cheese Agent Tool, up at the time of recording;
+Dialogue: 0,0:13:25.84,0:13:27.44,Bilingual,,0,0,0,,在 Chrome 里试试\N{\fs33\c&H00C8C0B8&\bord1.4}try it in Chrome.
+Dialogue: 0,0:13:29.68,0:13:32.76,Bilingual,,0,0,0,,课上的 agent 会一直运行，直到任务完成\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's agent runs until the task is done.
+Dialogue: 0,0:13:33.08,0:13:35.14,Bilingual,,0,0,0,,而 llm-rag 的 agent 只跑了一圈\N{\fs33\c&H00C8C0B8&\bord1.4}llm-rag's agent ran one lap:
+Dialogue: 0,0:13:35.14,0:13:37.73,Bilingual,,0,0,0,,一次强制的工具调用，然后一个回答\N{\fs33\c&H00C8C0B8&\bord1.4}a forced tool call, then an answer.
+Dialogue: 0,0:13:38.05,0:13:39.90,Bilingual,,0,0,0,,README 把它叫作 agent\N{\fs33\c&H00C8C0B8&\bord1.4}The README calls it an agent;
+Dialogue: 0,0:13:39.90,0:13:43.72,Bilingual,,0,0,0,,按课上的定义，它只是 agent 最小的一块\N{\fs33\c&H00C8C0B8&\bord1.4}by the lecture's definition, it's the smallest piece of one.
+Dialogue: 0,0:13:43.97,0:13:46.19,Bilingual,,0,0,0,,关于这一圈，有一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Here's a question about that one lap.
+Dialogue: 0,0:13:55.03,0:13:58.58,Bilingual,,0,0,0,,它打印出的 response 只有一个部分，就是函数调用\N{\fs33\c&H00C8C0B8&\bord1.4}It prints a response whose only part is a function call,
+Dialogue: 0,0:13:58.58,0:14:00.79,Bilingual,,0,0,0,,没有文本，然后程序就结束了\N{\fs33\c&H00C8C0B8&\bord1.4}with no text, and the program ends.
+Dialogue: 0,0:14:01.11,0:14:04.70,Bilingual,,0,0,0,,没有任何东西去执行这个调用；换成循环，就会执行它，再问一次\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing runs that call; a loop would run it, and ask again.
+Dialogue: 0,0:14:04.93,0:14:07.37,Bilingual,,0,0,0,,课上把 agent 画成一个轮毂\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture draws the agent as a hub:
+Dialogue: 0,0:14:07.37,0:14:13.89,Bilingual,,0,0,0,,核心和它的指令成为决策者，辐条通向规划器、工具和记忆\N{\fs33\c&H00C8C0B8&\bord1.4}the core and its instructions become a decision maker, with spokes to a planner, tools, and memory.
+Dialogue: 0,0:14:14.21,0:14:16.65,Bilingual,,0,0,0,,把通向工具的那根辐条展开，就成了一个循环\N{\fs33\c&H00C8C0B8&\bord1.4}Unroll the spoke to the tools into a loop.
+Dialogue: 0,0:14:16.88,0:14:18.39,Bilingual,,0,0,0,,循环靠什么结束？\N{\fs33\c&H00C8C0B8&\bord1.4}What ends the loop?
+Dialogue: 0,0:14:18.44,0:14:23.18,Bilingual,,0,0,0,,停止规则：一个不含函数调用的回复，就是最终回复\N{\fs33\c&H00C8C0B8&\bord1.4}The stop rule: a reply with no function call is the final response.
+Dialogue: 0,0:14:23.50,0:14:27.02,Bilingual,,0,0,0,,模型认定自己做完了，办法就是用纯文本回答\N{\fs33\c&H00C8C0B8&\bord1.4}The model decides it's done by answering in plain text.
+Dialogue: 0,0:14:27.27,0:14:29.82,Bilingual,,0,0,0,,在代码里，你是从外面看这个循环的\N{\fs33\c&H00C8C0B8&\bord1.4}In code you see the loop from outside:
+Dialogue: 0,0:14:29.82,0:14:31.84,Bilingual,,0,0,0,,ADK 的 Runner 以流的形式输出事件\N{\fs33\c&H00C8C0B8&\bord1.4}the ADK Runner streams events,
+Dialogue: 0,0:14:31.84,0:14:36.95,Bilingual,,0,0,0,,这个包装函数留下最终回复，循环本身在库里面运行\N{\fs33\c&H00C8C0B8&\bord1.4}this wrapper keeps the final response, and the loop runs inside the library.
+Dialogue: 0,0:14:37.20,0:14:40.05,Bilingual,,0,0,0,,你还要给它设个上限，以防它永远不停\N{\fs33\c&H00C8C0B8&\bord1.4}You also cap it, in case it never stops:
+Dialogue: 0,0:14:40.05,0:14:44.82,Bilingual,,0,0,0,,Cheese Quiz Guild 里是 12 轮，简报里是 16 次迭代\N{\fs33\c&H00C8C0B8&\bord1.4}12 turns in the Cheese Quiz Guild, 16 iterations in the newsletter.
+Dialogue: 0,0:14:45.14,0:14:48.81,Bilingual,,0,0,0,,碰到 Agents SDK 的上限，运行就会以报错结束\N{\fs33\c&H00C8C0B8&\bord1.4}Hitting the Agents SDK cap ends the run with an error.
+Dialogue: 0,0:14:49.05,0:14:52.36,Bilingual,,0,0,0,,课上的组件图把动态控制标成了灰色\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's building blocks gray out dynamic control.
+Dialogue: 0,0:14:52.68,0:14:56.26,Bilingual,,0,0,0,,你来配置模型、指令、工具和记忆\N{\fs33\c&H00C8C0B8&\bord1.4}You configure the model, instructions, tools and memory;
+Dialogue: 0,0:14:56.26,0:14:59.40,Bilingual,,0,0,0,,循环则是框架替你写好的那个组件\N{\fs33\c&H00C8C0B8&\bord1.4}the loop is the block a framework writes for you.
+Dialogue: 0,0:14:59.63,0:15:02.67,Bilingual,,0,0,0,,第二部分之前，先把它拆掉。输入 exit\N{\fs33\c&H00C8C0B8&\bord1.4}Before part 2, tear down. Type exit;
+Dialogue: 0,0:15:02.67,0:15:06.42,Bilingual,,0,0,0,,再用一条额外的 docker ps，会看到 Chroma 还在运行\N{\fs33\c&H00C8C0B8&\bord1.4}an extra docker ps then shows Chroma still up,
+Dialogue: 0,0:15:06.42,0:15:07.90,Bilingual,,0,0,0,,在 port 8000 上\N{\fs33\c&H00C8C0B8&\bord1.4}on port 8000.
+Dialogue: 0,0:15:07.95,0:15:11.84,Bilingual,,0,0,0,,然后运行 docker compose down：两条无害的警告之后，它就停了\N{\fs33\c&H00C8C0B8&\bord1.4}Then docker compose down: two harmless warnings, and it stops.
+Dialogue: 0,0:15:12.15,0:15:16.65,Bilingual,,0,0,0,,你的索引会留在磁盘上，而第二部分也要用 port 8000\N{\fs33\c&H00C8C0B8&\bord1.4}Your index stays on disk, and part 2 also needs port 8000.
+Dialogue: 0,0:15:16.97,0:15:18.56,Bilingual,,0,0,0,,暂停一下，把它拆掉\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and tear down.
+Dialogue: 0,0:15:18.61,0:15:21.54,Bilingual,,0,0,0,,第二部分，由框架替我们跑这个循环\N{\fs33\c&H00C8C0B8&\bord1.4}In part 2, a framework runs this loop for us.

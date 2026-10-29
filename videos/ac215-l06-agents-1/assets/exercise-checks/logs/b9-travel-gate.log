@@ -1,0 +1,95 @@
+$ python -W ignore b9_travel_gate.py
+== 1. the model calls finalize twice in turn 3
+  [tool] finalize_plan: validating selections and calculating costs
+call 1: status='needs_confirmation'; approved_proposal=None
+  [tool] finalize_plan: validating selections and calculating costs
+call 2: status='needs_confirmation'; approved_proposal=None
+
+== 2. which replies approve the pending proposal? (apply_confirmation, cell 18 lines 55-65)
+  'Yes!'           -> APPROVED
+  'yes please'     -> APPROVED
+  'Yes, please.'   -> not approved
+  'y'              -> APPROVED
+  'Confirm.'       -> APPROVED
+  'OK'             -> not approved
+  'sure'           -> not approved
+  'yes, confirm'   -> APPROVED
+  'Yes go ahead'   -> not approved
+
+== 3. the human types yes, then finalize runs again
+  [tool] finalize_plan: validating selections and calculating costs
+status after yes: {'status': 'within_budget', 'total_usd': 2690.0, 'remaining_usd': 3310.0, 'costs_usd': {'round_trip_flights': 880.0, 'hotel': 1000.0, 'food_allowance': 600.0, 'local_transport_allowance': 150.0, 'attractions': 60.0}} | finalized_this_turn: True
+
+== 4. variants (check_itinerary directly)
+15:00 outbound (-2): {'status': 'within_budget', 'total_usd': 2790.0, 'remaining_usd': 3210.0, 'costs_usd': {'round_trip_flights': 980.0, 'hotel': 1000.0, 'food_allowance': 600.0, 'local_transport_allowance': 150.0, 'attractions': 60.0}}
+SFO-GATE, pet_friendly=True: ValueError: Hotel does not meet the destination/pet-friendly requirements.
+SFO-GATE, pet_friendly=False: {'status': 'within_budget', 'total_usd': 2410.0, 'remaining_usd': 3590.0, 'costs_usd': {'round_trip_flights': 880.0, 'hotel': 720.0, 'food_allowance': 600.0, 'local_transport_allowance': 150.0, 'attractions': 60.0}}
+  [tool] finalize_plan: validating selections and calculating costs
+finalize with that changed plan, after the earlier yes: needs_confirmation
+
+== 5. run_turn's guardrails with stand-in agents (invoke_agent replaced; no model)
+  [stand-in agent] returns kind='itinerary' without calling finalize
+  [stand-in agent] returns kind='itinerary' without calling finalize
+  RuntimeError: The agent returned an itinerary without a successful same-turn check.
+  [warning] The model repeated a monetary amount in narrative output.
+Kind: options
+Flight 1 is $220 per person.
+  -- turn 3 (stand-in calls finalize twice):
+  [tool] finalize_plan: validating selections and calculating costs
+  [tool] finalize_plan: validating selections and calculating costs
+Kind: clarification
+Please review this exact proposed plan and reply with 'yes' to approve it, or tell me what to change. Food is per person per calendar day; local transport is for the whole trip.
+{
+  "outbound_id": "SEA-SFO-20261106-1",
+  "return_id": "SFO-SEA-20261110-1",
+  "hotel_id": "SFO-BAY",
+  "travelers": 2,
+  "budget_usd": 6000,
+  "daily_food_usd": 60,
+  "local_transport_usd": 150,
+  "pet_friendly": true,
+  "attraction_ids": [
+    "SFO-BRIDGE",
+    "SFO-MUSEUM"
+  ]
+}
+  -- turn 4, the human types 'yes':
+  [tool] finalize_plan: validating selections and calculating costs
+Kind: itinerary
+Your checked round trip from Seattle to San Francisco is ready for 2 traveler(s), with Bay Area Suite and Golden Gate Bridge, Bay Art Museum. Budget report is shown below. Nothing has been booked.
+Budget report (computed by Python; fictional planning only):
+{
+  "status": "within_budget",
+  "booking_status": "Not booked \u2014 fictional planning only",
+  "origin": "Seattle",
+  "destination": "San Francisco",
+  "start_date": "2026-11-06",
+  "end_date": "2026-11-10",
+  "travelers": 2,
+  "rooms": 1,
+  "nights": 4,
+  "pet_friendly_required": true,
+  "outbound_flight": "SEA-SFO-20261106-1",
+  "return_flight": "SFO-SEA-20261110-1",
+  "hotel": "Bay Area Suite",
+  "attractions": [
+    "Golden Gate Bridge",
+    "Bay Art Museum"
+  ],
+  "costs_usd": {
+    "round_trip_flights": 880.0,
+    "hotel": 1000.0,
+    "food_allowance": 600.0,
+    "local_transport_allowance": 150.0,
+    "attractions": 60.0
+  },
+  "total_usd": 2690.0,
+  "budget_usd": 6000,
+  "remaining_usd": 3310.0,
+  "assumptions": "One shared room; food for every calendar day, including arrival/departure; transport is a whole-trip allowance."
+}
+
+== 6. the Agents SDK of cell 8 (openai-agents 0.3.2)
+DEFAULT_MAX_TURNS = 10 | MaxTurnsExceeded: AgentsException
+SQLiteSession (self, session_id: 'str', db_path: 'str | Path' = ':memory:', sessions_table: 'str' = 'agent_sessions', messages_table: 'str' = 'agent_messages')
+[exit 0]

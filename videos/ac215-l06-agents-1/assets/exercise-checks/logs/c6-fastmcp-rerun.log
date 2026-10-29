@@ -1,0 +1,77 @@
+$ python -W ignore c6_fastmcp_rerun.py
+fastmcp 4.1.1 | openai-agents 0.24.0
+{'fact': 'Gruyère and Emmental are classics for fondue thanks to their smooth melt.', 'generated_at': 1792406578}
+{'fact': 'Browned spots on grilled cheese = Maillard reaction (not caramelization).', 'generated_at': 1792406578}
+{'fact': 'Browned spots on grilled cheese = Maillard reaction (not caramelization).', 'generated_at': 1792406578}
+FastMCP server starting on http://127.0.0.1:8001/mcp
+Server thread alive: True
+
+
+╭──────────────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│                                                                              │
+│                         ▄▀▀ ▄▀█ █▀▀ ▀█▀ █▀▄▀█ █▀▀ █▀█                        │
+│                         █▀  █▀█ ▄▄█  █  █ ▀ █ █▄▄ █▀▀                        │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                FastMCP 4.1.1                                 │
+│                            https://gofastmcp.com                             │
+│                                                                              │
+│                🖥  Server:      <instructor> Cheese MCP Local, 4.1.1                │
+│                🚀 Deploy free: https://horizon.prefect.io                    │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+
+[10/19/26 10:42:58] INFO     Starting MCP server '<instructor> Cheese transport.py:358
+                             MCP Local' with transport 'http'                   
+                             on http://127.0.0.1:8001/mcp                       
+INFO:     Started server process [6]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:41530 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41530 - "POST /mcp HTTP/1.1" 200 OK
+<instructor> Fun Fact Tool Called
+INFO:     127.0.0.1:41530 - "POST /mcp HTTP/1.1" 200 OK
+client: tools and one call -> (['<instructor>_fun_fact_mcp'], {'fact': 'High-moisture cheeses (young gouda, fontina, jack) melt especially evenly.', 'generated_at': 1792406581})
+
+== edit the tool (it should now return a fixed text) and run cell 57 again in the same runtime
+FastMCP server starting on http://127.0.0.1:8001/mcp
+Server thread alive: True
+
+
+╭──────────────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│                                                                              │
+│                         ▄▀▀ ▄▀█ █▀▀ ▀█▀ █▀▄▀█ █▀▀ █▀█                        │
+│                         █▀  █▀█ ▄▄█  █  █ ▀ █ █▄▄ █▀▀                        │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                FastMCP 4.1.1                                 │
+│                            https://gofastmcp.com                             │
+│                                                                              │
+│                🖥  Server:      <instructor> Cheese MCP Local, 4.1.1                │
+│                🚀 Deploy free: https://horizon.prefect.io                    │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+
+[10/19/26 10:43:01] INFO     Starting MCP server '<instructor> Cheese transport.py:358
+                             MCP Local' with transport 'http'                   
+                             on http://127.0.0.1:8001/mcp                       
+INFO:     Started server process [6]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('127.0.0.1', 8001): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+Server thread alive (checked again, 3 s later): False
+INFO:     127.0.0.1:41532 - "POST /mcp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41532 - "POST /mcp HTTP/1.1" 200 OK
+<instructor> Fun Fact Tool Called
+INFO:     127.0.0.1:41532 - "POST /mcp HTTP/1.1" 200 OK
+client: tools and one call -> (['<instructor>_fun_fact_mcp'], {'fact': 'American slices are engineered to melt at lower temperatures.', 'generated_at': 1792406584})
+[exit 0]

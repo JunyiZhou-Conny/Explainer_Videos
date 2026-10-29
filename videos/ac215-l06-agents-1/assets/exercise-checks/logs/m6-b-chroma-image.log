@@ -1,0 +1,9 @@
+$ docker exec l06ex-chroma sh -c "command -v curl; echo curl-exit=\$?; ls /data; ls /chroma 2>&1"
+curl-exit=127
+4484ea8e-65ad-4d63-b76c-0db952e9b80f
+chroma.sqlite3
+ls: cannot access '/chroma': No such file or directory
+[exit 2]
+$ docker exec l06ex-chroma chroma --version
+chroma 1.4.4
+[exit 0]

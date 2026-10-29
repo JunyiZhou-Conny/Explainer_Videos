@@ -1,0 +1,80 @@
+$ uv run python -W ignore /checks/b5_router.py conditional_agent_lower '{"What is Python?": "Simple", "Compare and contrast object-oriented vs functional programming paradigms": "complex\n", "Tell me about that thing": "ambiguous"}'
+======================================================================
+Conditional Workflow Agent Demo
+======================================================================
+
+1. Creating workflow agents...
+   ✓ All agents created
+
+2. Creating Conditional Agent...
+   ✓ ConditionalRouter created
+
+3. Setting up execution environment...
+   ✓ Runner ready
+
+4. Testing different query types...
+
+======================================================================
+Query: What is Python?
+======================================================================
+INFO:custom_agent.conditional_agent_lower:[ConditionalRouter] Starting conditional workflow
+INFO:custom_agent.conditional_agent_lower:  Step 1: Classifying query complexity...
+  [stand-in classifier] for 'What is Python?' answers 'Simple'
+WARNING:google_adk.google.adk.telemetry._metrics:Skipping missing token usage metadata for agent QueryClassifier and model stand-in
+INFO:custom_agent.conditional_agent_lower:  Classification: simple
+INFO:custom_agent.conditional_agent_lower:  Step 2: Routing to simple handler...
+
+→ Routed to: SimpleHandler
+WARNING:google_adk.google.adk.telemetry._metrics:Skipping missing token usage metadata for agent SimpleHandler and model stand-in
+INFO:custom_agent.conditional_agent_lower:[ConditionalRouter] Conditional workflow completed
+
+Response:
+(stand-in reply of the handler: You handle simple queries)
+----------------------------------------------------------------------
+
+======================================================================
+Query: Compare and contrast object-oriented vs functional programming paradigms
+======================================================================
+INFO:custom_agent.conditional_agent_lower:[ConditionalRouter] Starting conditional workflow
+INFO:custom_agent.conditional_agent_lower:  Step 1: Classifying query complexity...
+  [stand-in classifier] for 'Compare and contrast object-oriented vs functional programming paradigms' answers 'complex\n'
+WARNING:google_adk.google.adk.telemetry._metrics:Skipping missing token usage metadata for agent QueryClassifier and model stand-in
+INFO:custom_agent.conditional_agent_lower:  Classification: complex
+INFO:custom_agent.conditional_agent_lower:  Step 2: Routing to complex handler...
+
+→ Routed to: ComplexHandler
+WARNING:google_adk.google.adk.telemetry._metrics:Skipping missing token usage metadata for agent ComplexHandler and model stand-in
+INFO:custom_agent.conditional_agent_lower:[ConditionalRouter] Conditional workflow completed
+
+Response:
+(stand-in reply of the handler: You handle complex queries)
+----------------------------------------------------------------------
+
+======================================================================
+Query: Tell me about that thing
+======================================================================
+INFO:custom_agent.conditional_agent_lower:[ConditionalRouter] Starting conditional workflow
+INFO:custom_agent.conditional_agent_lower:  Step 1: Classifying query complexity...
+  [stand-in classifier] for 'Tell me about that thing' answers 'ambiguous'
+WARNING:google_adk.google.adk.telemetry._metrics:Skipping missing token usage metadata for agent QueryClassifier and model stand-in
+INFO:custom_agent.conditional_agent_lower:  Classification: ambiguous
+INFO:custom_agent.conditional_agent_lower:  Step 2: Routing to clarification handler...
+
+→ Routed to: ClarificationHandler
+WARNING:google_adk.google.adk.telemetry._metrics:Skipping missing token usage metadata for agent ClarificationHandler and model stand-in
+INFO:custom_agent.conditional_agent_lower:[ConditionalRouter] Conditional workflow completed
+
+Response:
+(stand-in reply of the handler: You handle ambiguous queries)
+----------------------------------------------------------------------
+
+======================================================================
+✓ Conditional Agent demo completed!
+======================================================================
+
+💡 Key Observations:
+  • Classifier determined query complexity
+  • Routing logic selected appropriate handler
+  • Different handlers provided appropriate responses
+  • Custom agent enabled flexible workflow control
+[exit 0]

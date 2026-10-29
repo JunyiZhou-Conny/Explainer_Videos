@@ -1,0 +1,26 @@
+$ uv run adk telemetry --help; ls -a ~/.adk 2>&1; uv run adk telemetry disable; echo; ls -a ~/.adk; cat ~/.adk/*.json; echo; uv run adk telemetry --help | head -3
+Usage: adk telemetry [OPTIONS] COMMAND [ARGS]...
+
+  Manage telemetry settings.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  disable  Disable telemetry collection.
+  enable   Enable telemetry collection.
+  status   Show telemetry collection status.
+ls: cannot access '/home/student/.adk': No such file or directory
+Telemetry collection has been disabled.
+
+.
+..
+config.json
+{
+  "telemetry": false
+}
+
+Usage: adk telemetry [OPTIONS] COMMAND [ARGS]...
+
+  Manage telemetry settings.
+[exit 0]

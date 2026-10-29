@@ -1,0 +1,146 @@
+$ cd /checks && python b3_loop.py three-steps
+[stand-in] embed_func returns the stored vector of chunk 2fb26978ffd9a809-16 ('Hand-book on cheese making', its first chunk containing 'rennet')
+agent()
+[stand-in model] call 1: contents roles ['user'], parts [['text']], tools yes, tool_config mode None
+Function: get_book_by_author
+
+
+Calling function with args: George E. Newell , How much rennet should be added to the milk?
+
+
+Response: , so that every patron can see them, should
+be arranged the cream tubes, and lactometer. Tin utensils can be
+hung on pegs in the wall, and a stout, low shelf in one corner will
+support rennet and annottoine jars. Have the aisle between the vats
+wide enough to permit of easy passage, and at the farther ends of
+the vats sink a trough into the floor t
+roof over the delivery window, wide
+and long enough to cover wagon and team. Set the vats broadside to
+the milk scales, with ends towards the outer door. The platform for
+the weighing-can and scales should be on a level with the top of the
+vats. A small office desk should be hung to the wall near the weigh
+can, and close at hand, so that every patr
+undation, with a free
+circulation of air underneath, and a complete system of troughs be
+appendent to carry all slops and whey beyond contaminating distance.
+It is unnecessary that the building be more than a story and a half
+high, unless the upper apartment is required for something besides
+curing cheese. The make-room should be ceiled, and the cu
+ground floor, and for
+convenience it should open direct from the make-room, the door being
+easy of access to the press. The partition between the two rooms
+must be impervious to the steam arising from the cheese vats, as the
+animal vapor is detrimental to the maturing product on the shelves.
+The room should by all means be plastered, and have windo
+e ceiled, and the curing-room
+plastered. The make-room should be in the front of the building,
+with the engine-room on one side of it and the milk delivery window
+on the other. The curing-room should be in the back. Cut off all
+superfluous space about the building and have just enough room to be
+nicely convenient. Put an awning roof over the delive
+ugh into the floor to carry off the whey. Have
+similar troughs under the presses. The floor should be full enough
+in the center to gravitate all slop toward the drains. It is useless
+to have a factory floor wet all of the time; keep it dry by a system
+of neatness. The curing-room should have an outside door, from
+which cheese can be loaded. An adjo
+old 300 cheese, lay shelves 2½ feet
+above the floor that will accommodate 100, put in stout uprights 7½
+feet high, and on cross pieces above lay two more tiers of shelves of
+the same surface capacity as the bottom counter. When it is finished
+you have three tiers of shelves encircling the room, save for two
+doors, with space left in the center for 
+renheit. We will be supposed to carry a day’s make of
+cheese into such a room when it is empty. Place them all on the top
+shelf in regular order, two deep. Continue to add from day to day
+until the top shelf is completely filled all around. Then begin at
+the end where you first started, and take down the first day’s make
+and place on the second she
+es; large wheel with crank and
+endless rope for hoisting milk; two stone rennet jars of a capacity
+of ten gallons each; two thermometers, one for the make and the other
+for the curing-room; jar for keeping annottoine; syphon and tin
+strainer for drawing whey from the vat; a self-salting curd mill—a
+curd mill is now indispensable to a factory, and a
+n be loaded. An adjoining lean-to shed, for storing
+empty cheese boxes and housing fuel, is also a needed addition to
+the building. For a one day milk delivery factory, no ice-house is
+required. Build substantially and paint neatly, aiming to have a
+model-looking factory.
+
+
+Beginning of the Cheese Factory System in America.
+
+About the year 1853, a 
+[stand-in model] call 2: contents roles ['user', 'model', 'user'], parts [['text'], ['function_call'], ['function_response']], tools yes, tool_config mode None
+Function: get_book_by_search_content
+Calling function with args: Which books mention goat cheese?
+Response: , so that every patron can see them, should
+be arranged the cream tubes, and lactometer. Tin utensils can be
+hung on pegs in the wall, and a stout, low shelf in one corner will
+support rennet and annottoine jars. Have the aisle between the vats
+wide enough to permit of easy passage, and at the farther ends of
+the vats sink a trough into the floor t
+be provided on which to
+put and keep the utensils. The utensils should never be placed on the
+floor.
+
+[Illustration: FIG. 61.--Plan of Cheddar cheese factory without whey
+butter equipment. 1, Boiler; 2, sink; 3, hot water barrel for scalding
+utensils; 4, cheese vats; 5, 6, cheese presses; 7, weigh-can; 8, desk;
+9, Babcock tester; 10, shelf; 11, par
+roof over the delivery window, wide
+and long enough to cover wagon and team. Set the vats broadside to
+the milk scales, with ends towards the outer door. The platform for
+the weighing-can and scales should be on a level with the top of the
+vats. A small office desk should be hung to the wall near the weigh
+can, and close at hand, so that every patr
+undation, with a free
+circulation of air underneath, and a complete system of troughs be
+appendent to carry all slops and whey beyond contaminating distance.
+It is unnecessary that the building be more than a story and a half
+high, unless the upper apartment is required for something besides
+curing cheese. The make-room should be ceiled, and the cu
+process with as little inconvenience as possible. Some of the points
+to be observed in this connection are: vats should be near the
+weigh-can; boiler-room near the work room; cheese presses near the vats;
+cheese presses near the curing-rooms and the like.
+
+Fig. 60 shows a well arranged Cheddar cheese factory. The necessary
+machinery and rooms for t
+ground floor, and for
+convenience it should open direct from the make-room, the door being
+easy of access to the press. The partition between the two rooms
+must be impervious to the steam arising from the cheese vats, as the
+animal vapor is detrimental to the maturing product on the shelves.
+The room should by all means be plastered, and have windo
+; 10, shelf; 11, paraffine tank; 12, cheese shelves.]
+
+[Illustration: FIG. 62.--Combined Cheddar cheese and butter factory.
+
+1, Boiler; 2, engine; 3, water pump; 4, work bench; 5, wash sink; 6,
+press; 7, elevator; 8, cheese vats; 9, separator; 10, milk heater; 11,
+milk receiving vat; 12, press; 13, shelf; 14, Babcock tester; 15,
+weigh-can; 16, chur
+ht alone. Then they are moved far enough
+apart to allow a little air space between them. Another method of
+securing the flattened ends is to support each cheese on opposite sides
+by wedge-shaped pieces of wood. After being placed on the shelves in the
+curing-room, they are turned once a day and rubbed with the bare hand
+during the first month, twic
+e ceiled, and the curing-room
+plastered. The make-room should be in the front of the building,
+with the engine-room on one side of it and the milk delivery window
+on the other. The curing-room should be in the back. Cut off all
+superfluous space about the building and have just enough room to be
+nicely convenient. Put an awning roof over the delive
+ugh into the floor to carry off the whey. Have
+similar troughs under the presses. The floor should be full enough
+in the center to gravitate all slop toward the drains. It is useless
+to have a factory floor wet all of the time; keep it dry by a system
+of neatness. The curing-room should have an outside door, from
+which cheese can be loaded. An adjo
+[stand-in model] call 3: contents roles ['user', 'model', 'user', 'model', 'user'], parts [['text'], ['function_call'], ['function_response'], ['function_call'], ['function_response']], tools yes, tool_config mode None
+Answer: (stand-in reply: plain text, no function call)
+model calls made: 3
+[exit 0]

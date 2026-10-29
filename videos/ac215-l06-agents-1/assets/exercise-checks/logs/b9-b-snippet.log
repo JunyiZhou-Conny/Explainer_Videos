@@ -1,0 +1,8 @@
+$ python -W ignore b9_snippet.py
+  [tool] finalize_plan: validating selections and calculating costs
+needs_confirmation
+  [tool] finalize_plan: validating selections and calculating costs
+needs_confirmation
+  [tool] finalize_plan: validating selections and calculating costs
+2690.0
+[exit 0]

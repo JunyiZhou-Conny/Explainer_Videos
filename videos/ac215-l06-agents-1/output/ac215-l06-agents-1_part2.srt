@@ -1,0 +1,1128 @@
+1
+00:00:00,000 --> 00:00:02,112
+Part 2: frameworks own the loop.
+
+2
+00:00:02,432 --> 00:00:03,895
+No Docker this time:
+
+3
+00:00:03,895 --> 00:00:09,088
+Google's Agent Development Kit runs
+in a uv environment on your laptop.
+
+4
+00:00:09,408 --> 00:00:12,053
+Open a new terminal
+where you keep your clones.
+
+5
+00:00:12,300 --> 00:00:16,460
+Step 1: clone; the README writes
+a placeholder for the address.
+
+6
+00:00:16,780 --> 00:00:21,921
+The next line says cd google-adk-tutorial,
+but no such folder exists.
+
+7
+00:00:22,167 --> 00:00:25,474
+A small slip:
+the folder is named after the repo.
+
+8
+00:00:25,794 --> 00:00:29,143
+Type cd llm-agent-google-adk instead.
+
+9
+00:00:29,383 --> 00:00:32,695
+An extra ls
+shows six numbered module folders,
+
+10
+00:00:32,695 --> 00:00:33,919
+but no lock file:
+
+11
+00:00:33,919 --> 00:00:37,959
+the repo ignores it,
+so everyone resolves fresh versions.
+
+12
+00:00:38,200 --> 00:00:41,443
+Next, copy .env.example to .env.
+
+13
+00:00:41,763 --> 00:00:45,931
+An extra grep shows
+a placeholder Google API key,
+
+14
+00:00:45,931 --> 00:00:48,653
+and the model, gemini-2.5-flash.
+
+15
+00:00:48,900 --> 00:00:52,123
+Then create a key in Google AI Studio,
+
+16
+00:00:52,123 --> 00:00:56,025
+and paste it into .env,
+after GOOGLE_API_KEY=.
+
+17
+00:00:56,267 --> 00:00:58,038
+Also change the model line.
+
+18
+00:00:58,358 --> 00:01:02,968
+Choosing the LLM core
+is the lecture's first design decision,
+
+19
+00:01:02,968 --> 00:01:08,107
+and here it's one line:
+a current model, like gemini-3.1-flash-lite.
+
+20
+00:01:08,350 --> 00:01:12,376
+Google lists the code's fallback,
+gemini-2.0-flash,
+
+21
+00:01:12,376 --> 00:01:17,033
+as shut down, and limits
+gemini-2.5-flash to earlier users.
+
+22
+00:01:17,353 --> 00:01:21,598
+Keep everything in this root file:
+only the nearest .env is loaded.
+
+23
+00:01:21,918 --> 00:01:23,561
+Pause, and set up yours.
+
+24
+00:01:25,800 --> 00:01:32,968
+The project file wants Python 3.10 or newer
+and ADK 1.8 or newer, with no upper bound.
+
+25
+00:01:33,288 --> 00:01:36,253
+It also lists
+Chroma and sentence-transformers.
+
+26
+00:01:36,500 --> 00:01:39,785
+One more fact:
+this laptop has no Python at all.
+
+27
+00:01:46,633 --> 00:01:48,553
+Then install: uv sync.
+
+28
+00:01:48,873 --> 00:01:54,685
+As in lecture 1, with no Python around,
+uv downloads the newest:
+
+29
+00:01:54,685 --> 00:01:58,409
+CPython 3.15.0, at the time of recording.
+
+30
+00:01:58,650 --> 00:02:02,191
+It resolves 189 packages, then fails.
+
+31
+00:02:02,511 --> 00:02:08,677
+onnxruntime, which Chroma pulls in,
+has wheels only up to Python 3.14.
+
+32
+00:02:08,917 --> 00:02:14,035
+So this step fails whenever uv picks 3.15:
+on a fresh laptop,
+
+33
+00:02:14,035 --> 00:02:18,901
+or where uv already has 3.15,
+even beside an older Python.
+
+34
+00:02:19,221 --> 00:02:23,829
+The fix, with an extra command:
+uv python pin 3.13.
+
+35
+00:02:25,267 --> 00:02:33,822
+Then uv sync again: CPython 3.13 this time,
+and it installs, ADK 2.12.0 included.
+
+36
+00:02:34,142 --> 00:02:37,665
+PyTorch makes it big: about 1.6 gigabytes,
+
+37
+00:02:37,665 --> 00:02:41,523
+plus about 3 gigabytes
+for CUDA on a Linux PC.
+
+38
+00:02:41,767 --> 00:02:46,816
+An extra check,
+uv run adk --version, says 2.12.0,
+
+39
+00:02:46,816 --> 00:02:49,340
+at the time of recording.
+
+40
+00:02:49,660 --> 00:02:51,793
+Pause, and get your sync to succeed.
+
+41
+00:02:55,133 --> 00:03:00,701
+Running Agents, step 1,
+from the repository root: uv run adk web.
+
+42
+00:03:01,021 --> 00:03:05,935
+First, version 2.12 asks a question
+the README doesn't mention:
+
+43
+00:03:05,935 --> 00:03:08,274
+may Google collect usage data?
+
+44
+00:03:08,516 --> 00:03:11,397
+The text says telemetry is off by default,
+
+45
+00:03:11,397 --> 00:03:14,895
+but the capital Y means
+pressing enter answers yes.
+
+46
+00:03:15,215 --> 00:03:19,421
+Answer as you like;
+change it later with this command:
+
+47
+00:03:19,421 --> 00:03:21,679
+uv run adk telemetry disable.
+
+48
+00:03:21,916 --> 00:03:24,689
+Then the server starts, on port 8000.
+
+49
+00:03:25,009 --> 00:03:28,517
+Step 2: open localhost:8000 in your browser;
+
+50
+00:03:28,517 --> 00:03:32,263
+an extra curl shows the redirect
+to the dev UI.
+
+51
+00:03:32,500 --> 00:03:36,681
+The agent dropdown lists 7 entries,
+nested ones included.
+
+52
+00:03:37,001 --> 00:03:41,482
+Pick 1-baseline, as its README says,
+and the page refuses:
+
+53
+00:03:41,482 --> 00:03:44,958
+agent names
+must be valid Python identifiers.
+
+54
+00:03:45,200 --> 00:03:48,527
+Why?
+Each folder name becomes the app's name,
+
+55
+00:03:48,527 --> 00:03:51,263
+and an identifier holds only letters,
+
+56
+00:03:51,263 --> 00:03:54,608
+digits and underscores,
+never starting with a digit.
+
+57
+00:03:54,928 --> 00:03:57,424
+The name 1-baseline breaks both rules.
+
+58
+00:03:57,666 --> 00:04:02,871
+An older version, 1.27.5, lists
+only the four folders.
+
+59
+00:04:03,191 --> 00:04:06,413
+But picking one still fails,
+as an invalid app name.
+
+60
+00:04:06,733 --> 00:04:09,613
+So a version pin doesn't help;
+we undid ours.
+
+61
+00:04:11,133 --> 00:04:14,461
+What works is renaming,
+which isn't in the README either.
+
+62
+00:04:14,781 --> 00:04:18,842
+Stop the server with Ctrl+C,
+then drop each leading number,
+
+63
+00:04:18,842 --> 00:04:21,181
+and turn hyphens into underscores.
+
+64
+00:04:21,416 --> 00:04:24,147
+Start the web server again,
+and pick baseline.
+
+65
+00:04:24,467 --> 00:04:28,299
+The log says it loaded the .env
+at the repository root,
+
+66
+00:04:28,299 --> 00:04:31,294
+and found the root_agent in baseline.agent.
+
+67
+00:04:31,533 --> 00:04:34,496
+Two more slips:
+the quick start passes a file
+
+68
+00:04:34,496 --> 00:04:36,273
+where a folder is expected,
+
+69
+00:04:36,273 --> 00:04:40,493
+and the module READMEs drop the word web,
+so it only prints help.
+
+70
+00:04:40,733 --> 00:04:45,070
+And if llm-rag's Chroma
+still holds port 8000, they clash;
+
+71
+00:04:45,070 --> 00:04:48,584
+the web server stopped:
+address already in use.
+
+72
+00:04:48,904 --> 00:04:53,405
+Run docker compose down first,
+or add --port 8080.
+
+73
+00:04:53,725 --> 00:04:56,754
+Pause, and get the dev UI open on baseline.
+
+74
+00:05:00,100 --> 00:05:03,761
+Baseline holds three LLM agents,
+each with a model,
+
+75
+00:05:03,761 --> 00:05:06,201
+an instruction, and an output_key.
+
+76
+00:05:06,521 --> 00:05:08,091
+In the lecture's blocks:
+
+77
+00:05:08,091 --> 00:05:11,492
+the LLM core, the instructions,
+and no tools at all.
+
+78
+00:05:12,033 --> 00:05:17,046
+A sequential agent runs them in order:
+validator, planner, summarizer.
+
+79
+00:05:17,366 --> 00:05:20,546
+An extra request shows
+the tree the UI loads,
+
+80
+00:05:20,546 --> 00:05:23,937
+with the model from your root .env;
+check yours.
+
+81
+00:05:24,183 --> 00:05:29,346
+Another extra request creates a session:
+an empty state, and no events yet.
+
+82
+00:05:29,666 --> 00:05:31,970
+Think of the state as a shared whiteboard.
+
+83
+00:05:32,217 --> 00:05:34,628
+Once you add your key, the Runner does this.
+
+84
+00:05:34,948 --> 00:05:39,053
+The validator's reply goes into the state,
+under its output_key;
+
+85
+00:05:39,053 --> 00:05:40,593
+before the planner runs,
+
+86
+00:05:40,593 --> 00:05:44,121
+its instruction's placeholder
+is filled from that cell.
+
+87
+00:05:44,983 --> 00:05:47,778
+The summarizer reads the plan the same way.
+
+88
+00:05:48,098 --> 00:05:50,113
+The agents never call each other:
+
+89
+00:05:50,113 --> 00:05:54,327
+the session carries the data,
+in its state and its history of events.
+
+90
+00:05:54,647 --> 00:05:57,250
+A parallel agent fills its cells at once.
+
+91
+00:05:57,500 --> 00:06:00,124
+The lecture's planner needs live systems;
+
+92
+00:06:00,124 --> 00:06:04,348
+this pipeline has no tools,
+so its prices are the model's guesses.
+
+93
+00:06:04,668 --> 00:06:08,593
+A later notebook gets prices from tools
+and sums from Python.
+
+94
+00:06:09,133 --> 00:06:11,544
+The ADK README calls this memory.
+
+95
+00:06:11,864 --> 00:06:15,576
+The code calls it session state,
+and it lasts one session;
+
+96
+00:06:15,576 --> 00:06:18,493
+the lecture's memory
+remembers you next time,
+
+97
+00:06:18,493 --> 00:06:20,568
+which none of today's runs does.
+
+98
+00:06:20,817 --> 00:06:24,977
+Without a real key, a trip request
+gets an Internal Server Error.
+
+99
+00:06:25,297 --> 00:06:28,561
+The server log says why: API key not valid.
+
+100
+00:06:28,881 --> 00:06:31,739
+The placeholder reached Google,
+and was refused.
+
+101
+00:06:32,783 --> 00:06:35,753
+With your key,
+look for three replies in order,
+
+102
+00:06:35,753 --> 00:06:41,060
+and three new entries in the State tab;
+the session is a file in the agent's folder.
+
+103
+00:06:41,380 --> 00:06:45,221
+Each request is three model calls:
+pause, and plan a trip.
+
+104
+00:06:48,567 --> 00:06:51,127
+The lecture sorts tools into three families.
+
+105
+00:06:51,447 --> 00:06:54,335
+Data tools fetch, like our book searches;
+
+106
+00:06:54,335 --> 00:06:59,336
+action tools change something,
+like finalizing a trip or sending email;
+
+107
+00:06:59,336 --> 00:07:02,647
+orchestration tools hand work
+to another agent.
+
+108
+00:07:02,884 --> 00:07:07,364
+Now wire one agent to ten services,
+each with its own protocol.
+
+109
+00:07:07,684 --> 00:07:10,158
+The lecture asks: do you see a problem?
+
+110
+00:07:15,400 --> 00:07:17,981
+Every tool becomes a custom integration.
+
+111
+00:07:18,301 --> 00:07:22,375
+MCP, the Model Context Protocol,
+makes it one pattern:
+
+112
+00:07:22,375 --> 00:07:26,600
+a host with clients,
+and an MCP server for each service.
+
+113
+00:07:26,850 --> 00:07:31,501
+The lecture's MCP box is a shared protocol,
+not a program you run.
+
+114
+00:07:31,821 --> 00:07:35,874
+In code, each server is its own plug,
+and the tutorial has three.
+
+115
+00:07:36,117 --> 00:07:39,466
+Plug 1 is in the ADK module on MCP.
+
+116
+00:07:39,786 --> 00:07:40,938
+Install Node.
+
+117
+00:07:44,100 --> 00:07:48,068
+The agent's toolset starts
+a filesystem server with npx,
+
+118
+00:07:48,068 --> 00:07:52,250
+as a child process,
+talking over standard input and output.
+
+119
+00:07:52,500 --> 00:07:57,129
+An extra script asks that toolset
+for its tools, with no model involved.
+
+120
+00:07:57,449 --> 00:08:00,407
+The server
+offers 14, including write and edit,
+
+121
+00:08:00,407 --> 00:08:02,548
+and the filter lets three through.
+
+122
+00:08:02,868 --> 00:08:05,514
+With your key, ask the agent to list files.
+
+123
+00:08:07,750 --> 00:08:09,755
+Plug 2 is back in the Cheese Quiz.
+
+124
+00:08:10,075 --> 00:08:13,739
+After a first tool written
+as a plain function,
+
+125
+00:08:13,739 --> 00:08:20,444
+the notebook connects to a remote MCP server
+by URL, passed as mcp_servers, not tools.
+
+126
+00:08:20,684 --> 00:08:23,116
+Extra curl commands talk to that server.
+
+127
+00:08:23,436 --> 00:08:26,395
+A browser's plain request gets 406:
+
+128
+00:08:26,395 --> 00:08:30,455
+the server is up,
+but speaks MCP, not web pages.
+
+129
+00:08:30,775 --> 00:08:35,084
+Then initialize, list tools, call:
+one tool, one cheese fact per call.
+
+130
+00:08:36,834 --> 00:08:38,548
+Plug 3 is optional:
+
+131
+00:08:38,548 --> 00:08:44,685
+the notebook runs its own FastMCP server,
+in a thread, on port 8001.
+
+132
+00:08:45,005 --> 00:08:50,658
+A small slip: the comment above says 8000,
+and so does an older saved output.
+
+133
+00:08:55,250 --> 00:08:58,301
+Notice who does the talking:
+your client process.
+
+134
+00:08:58,621 --> 00:09:03,442
+MCP gives the model no network access;
+it still only writes calls.
+
+135
+00:09:03,762 --> 00:09:05,981
+Pause, and run the MCP cells.
+
+136
+00:09:09,317 --> 00:09:12,711
+In the lecture,
+deep research is a tree of agents:
+
+137
+00:09:12,711 --> 00:09:14,340
+a lead agent, a planner,
+
+138
+00:09:14,340 --> 00:09:17,957
+parallel web searchers,
+and a synthesis into a report.
+
+139
+00:09:18,277 --> 00:09:22,693
+The tutorial builds trees like it:
+the Cheese Quiz Guild, and the newsletter.
+
+140
+00:09:22,934 --> 00:09:26,313
+The lecture's planner raises the question
+that sorts them:
+
+141
+00:09:26,313 --> 00:09:27,478
+who plans the order?
+
+142
+00:09:27,798 --> 00:09:29,483
+First answer: the code.
+
+143
+00:09:29,803 --> 00:09:34,326
+The sequential agent is an assembly line,
+its order fixed in Python.
+
+144
+00:09:36,134 --> 00:09:37,883
+Second answer: the model.
+
+145
+00:09:38,203 --> 00:09:41,241
+In the Guild,
+each specialist becomes a tool:
+
+146
+00:09:41,241 --> 00:09:43,537
+a whole agent behind one function.
+
+147
+00:09:43,857 --> 00:09:46,331
+An orchestrator decides which to call.
+
+148
+00:09:46,567 --> 00:09:47,927
+Its instructions say:
+
+149
+00:09:47,927 --> 00:09:51,751
+follow the assembly line strictly,
+at most 2 review rounds.
+
+150
+00:09:52,071 --> 00:09:56,978
+That's a rule in prose; no code enforces it,
+except a cap of 12 turns.
+
+151
+00:09:57,217 --> 00:10:01,069
+The staff's saved run
+logged three errors getting a response,
+
+152
+00:10:01,069 --> 00:10:05,238
+and still produced a quiz;
+the log doesn't say which calls failed.
+
+153
+00:10:05,558 --> 00:10:10,188
+Every hop adds cost, time,
+and a way to fail; pause, and run the Guild.
+
+154
+00:10:14,334 --> 00:10:17,385
+Third answer:
+Python, reading the model's label.
+
+155
+00:10:17,705 --> 00:10:21,770
+In this custom agent,
+a classifier writes one word into the state,
+
+156
+00:10:21,770 --> 00:10:24,296
+and plain if statements pick the handler.
+
+157
+00:10:31,134 --> 00:10:33,203
+The else branch: clarification.
+
+158
+00:10:33,523 --> 00:10:35,168
+The comparison is exact;
+
+159
+00:10:35,168 --> 00:10:39,006
+lowercase the label first,
+or ask for structured output.
+
+160
+00:10:39,326 --> 00:10:41,096
+The exercises try both.
+
+161
+00:10:42,834 --> 00:10:46,567
+The lecture also lists handoffs
+among the orchestration tools.
+
+162
+00:10:46,887 --> 00:10:51,538
+These tutorials use agents as tools;
+lecture 7 sketches handoffs.
+
+163
+00:10:52,583 --> 00:10:55,762
+The Travel Planner notebook
+rehearses the lecture's trip.
+
+164
+00:10:56,082 --> 00:10:59,900
+Copy it, add your key,
+and install its pinned agents package.
+
+165
+00:11:00,220 --> 00:11:04,156
+Paris shrinks to a mock catalog:
+3 cities, 6 hotels,
+
+166
+00:11:04,156 --> 00:11:08,092
+5 search tools and a finalize tool,
+booking nothing.
+
+167
+00:11:08,333 --> 00:11:12,237
+In the staff's saved run,
+turn 1 asks which California city.
+
+168
+00:11:12,557 --> 00:11:15,672
+Turn 2 runs five searches
+and offers options.
+
+169
+00:11:15,992 --> 00:11:19,494
+In turn 3 the user picks,
+the model calls finalize,
+
+170
+00:11:19,494 --> 00:11:23,202
+and the reply shows the exact plan
+and asks for a yes.
+
+171
+00:11:23,450 --> 00:11:24,538
+That's the gate.
+
+172
+00:11:24,858 --> 00:11:28,198
+A finalize call from the model
+can only propose:
+
+173
+00:11:28,198 --> 00:11:30,634
+if the plan isn't the approved one,
+
+174
+00:11:30,634 --> 00:11:34,948
+the code stores it as pending,
+and returns needs_confirmation.
+
+175
+00:11:35,183 --> 00:11:39,175
+Approval lives in a separate function,
+apply_confirmation:
+
+176
+00:11:39,175 --> 00:11:42,479
+only an explicit yes
+copies pending to approved.
+
+177
+00:11:51,916 --> 00:11:55,392
+Because apply_confirmation runs
+on the human's message,
+
+178
+00:11:55,392 --> 00:11:56,908
+before the agent starts.
+
+179
+00:11:57,228 --> 00:12:02,135
+Inside turn 3, nothing is approved,
+so every retry gets the same stamp.
+
+180
+00:12:02,383 --> 00:12:04,516
+Turn 4: the human types yes.
+
+181
+00:12:04,836 --> 00:12:08,555
+The stamp flips to approved, finalize runs,
+
+182
+00:12:08,555 --> 00:12:14,607
+and Python builds the budget line by line:
+2,690 of the 6,000 dollars.
+
+183
+00:12:14,927 --> 00:12:17,764
+The notebook's own test checks
+Python's number.
+
+184
+00:12:18,000 --> 00:12:21,648
+What the user sees comes from checked state,
+not the model's prose.
+
+185
+00:12:21,968 --> 00:12:25,568
+An itinerary
+that skipped the check raises an error,
+
+186
+00:12:25,568 --> 00:12:26,745
+a hard guardrail;
+
+187
+00:12:26,745 --> 00:12:31,589
+a dollar amount in the model's prose
+only prints a warning, a soft one.
+
+188
+00:12:31,833 --> 00:12:35,175
+The lecture puts success criteria
+in the instructions,
+
+189
+00:12:35,175 --> 00:12:37,465
+and guardrails in the decision maker.
+
+190
+00:12:37,785 --> 00:12:43,054
+This notebook keeps both in code the model
+can't talk its way past, on the action tool.
+
+191
+00:12:43,374 --> 00:12:46,574
+Every turn is paid;
+pause, and run the four turns.
+
+192
+00:12:49,617 --> 00:12:52,942
+The last notebook writes
+a cheese newsletter per reader,
+
+193
+00:12:52,942 --> 00:12:55,377
+with Microsoft's Agent Framework, pinned.
+
+194
+00:12:55,697 --> 00:12:59,580
+In the USERS cell, put in yourself
+and a friend, and keep two entries.
+
+195
+00:12:59,900 --> 00:13:02,630
+Email is preview only; nothing is sent.
+
+196
+00:13:02,867 --> 00:13:05,026
+The orchestrator gets three tools:
+
+197
+00:13:05,026 --> 00:13:08,584
+a researcher with web search,
+an editor, and send_email.
+
+198
+00:13:08,904 --> 00:13:12,275
+At most 16 iterations,
+one tool call at a time.
+
+199
+00:13:12,517 --> 00:13:16,632
+In the staff's saved run,
+the first city took four editor calls;
+
+200
+00:13:16,632 --> 00:13:18,586
+the code validates every draft
+
+201
+00:13:18,586 --> 00:13:21,648
+and hands any errors back
+as the tool's result.
+
+202
+00:13:21,968 --> 00:13:24,869
+Then send_email wrote the HTML to a file.
+
+203
+00:13:25,189 --> 00:13:28,325
+That run had four readers;
+today's list makes two.
+
+204
+00:13:28,567 --> 00:13:29,719
+Now the harness.
+
+205
+00:13:30,039 --> 00:13:31,863
+When the orchestrator stops,
+
+206
+00:13:31,863 --> 00:13:34,927
+Python ignores its words
+and checks two things:
+
+207
+00:13:34,927 --> 00:13:38,850
+is there a receipt from send_email,
+and is that file on disk?
+
+208
+00:13:39,170 --> 00:13:43,095
+If not, the run fails;
+success is a receipt, not a claim.
+
+209
+00:13:43,334 --> 00:13:45,873
+Compare a rule
+that lives only in the prompt.
+
+210
+00:13:46,193 --> 00:13:49,201
+The editor is told: no embedded URLs.
+
+211
+00:13:49,521 --> 00:13:53,680
+The saved preview has one anyway,
+because no code checks for it;
+
+212
+00:13:53,680 --> 00:13:55,110
+a note is not a check.
+
+213
+00:13:55,350 --> 00:14:00,673
+The lecture's Self-RAG and Corrective RAG
+grade their retrieval for the same reason:
+
+214
+00:14:00,673 --> 00:14:01,878
+don't trust, check.
+
+215
+00:14:02,198 --> 00:14:04,822
+Next lecture calls
+this outer layer the harness.
+
+216
+00:14:05,142 --> 00:14:08,534
+Web search is billed per call;
+pause, and run the demo.
+
+217
+00:14:11,583 --> 00:14:14,399
+Tear down: Ctrl+C stops the web server.
+
+218
+00:14:14,719 --> 00:14:17,837
+An extra git status
+shows the renamed folders
+
+219
+00:14:17,837 --> 00:14:19,223
+and your Python pin;
+
+220
+00:14:19,223 --> 00:14:23,316
+.env, the virtual environment
+and the lock file are ignored.
+
+221
+00:14:23,550 --> 00:14:27,486
+The sessions in the agent's .adk/
+folder aren't ignored,
+
+222
+00:14:27,486 --> 00:14:28,961
+so don't commit them,
+
+223
+00:14:28,961 --> 00:14:33,470
+and delete the 1.6 gigabyte
+virtual environment when you're done.
+
+224
+00:14:33,716 --> 00:14:36,831
+In each notebook,
+disconnect and delete the runtime.
+
+225
+00:14:37,151 --> 00:14:41,151
+Keep the service account key beside llm-rag,
+never inside,
+
+226
+00:14:41,151 --> 00:14:45,151
+and delete or cap the other two keys
+when the course ends.
+
+227
+00:14:46,400 --> 00:14:49,579
+Here's the lecture's anatomy,
+filled with today's code.
+
+228
+00:14:49,899 --> 00:14:56,345
+Gemini and OpenAI models as the core;
+prompts and output types as instructions;
+
+229
+00:14:56,345 --> 00:15:02,464
+tools by hand, decorated, or over MCP;
+history and session state as memory.
+
+230
+00:15:02,700 --> 00:15:06,711
+Dynamic control is the framework's loop,
+or two calls by hand.
+
+231
+00:15:07,031 --> 00:15:08,599
+The lecture's formula,
+
+232
+00:15:08,599 --> 00:15:12,944
+LLM plus reasoning, instructions and tools,
+gains two pieces:
+
+233
+00:15:12,944 --> 00:15:17,590
+a loop the framework runs,
+and checks that your own code enforces.
+
+234
+00:15:17,833 --> 00:15:18,942
+Test yourself.
+
+235
+00:15:19,262 --> 00:15:22,846
+One: who runs the function,
+and what goes back in call 2?
+
+236
+00:15:23,166 --> 00:15:26,793
+Two: what does mode="any" change,
+and why only on call 1?
+
+237
+00:15:27,033 --> 00:15:28,986
+Three: what ends an agent loop,
+
+238
+00:15:28,986 --> 00:15:32,260
+what cap do frameworks add,
+and which block is that?
+
+239
+00:15:32,580 --> 00:15:35,908
+Four: how does the summarizer
+get the plan without a message?
+
+240
+00:15:36,150 --> 00:15:39,143
+Five:
+what decides that a harness run succeeded,
+
+241
+00:15:39,143 --> 00:15:40,950
+and why not the model's word?
+
+242
+00:15:41,270 --> 00:15:45,579
+Answers and every command
+are in the exercises and the study guide.
+
+243
+00:15:45,899 --> 00:15:48,160
+Next lecture: the harness itself.
+

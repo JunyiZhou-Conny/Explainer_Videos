@@ -1,0 +1,17 @@
+$ P=.venv/lib/python3.13/site-packages/google/adk; ls $P/memory/ | grep -v __pycache__; ls $P/tools/ | grep -i memory; grep -n '  memory_service: Optional' $P/runners.py | head -2; echo '$ git grep -n -E "memory_service|load_memory|MemoryService" -- "*.py"   # in the tutorial repo'; git grep -n -E 'memory_service|load_memory|MemoryService' -- '*.py'; echo "git grep exit $?"
+__init__.py
+_sqlite_memory_service.py
+_utils.py
+base_memory_service.py
+in_memory_memory_service.py
+memory_entry.py
+vertex_ai_memory_bank_service.py
+vertex_ai_rag_memory_service.py
+_memory_entry_utils.py
+load_memory_tool.py
+preload_memory_tool.py
+266:  memory_service: Optional[BaseMemoryService] = None
+285:      memory_service: Optional[BaseMemoryService] = None,
+$ git grep -n -E "memory_service|load_memory|MemoryService" -- "*.py"   # in the tutorial repo
+git grep exit 1
+[exit 0]

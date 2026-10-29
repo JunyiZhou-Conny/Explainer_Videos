@@ -1,0 +1,21 @@
+$ cd mcp_tools && cp .env.example .env && cd .. && uv run python /checks/c1_mcp_env.py; rm mcp_tools/.env
+Secure MCP Filesystem Server running on stdio
+Client does not support MCP Roots, using allowed directories set from server args: [ '/home/student/AC215/llm-agent-google-adk/mcp_tools' ]
+list_directory -> [FILE] .env | [FILE] .env.example | [FILE] README.md | [DIR] __pycache__ | [FILE] agent.py | [FILE] pyproject.toml
+read_file mcp_tools/.env -> is_error False
+# Google AI Configuration
+GOOGLE_API_KEY=your_google_ai_api_key_here
+
+# MCP Configuration
+
+# Filesystem paths (absolute paths recommended)
+# MCP_ALLOWED_PATH=/absolute/path/to/allowed/directory
+
+# Remote MCP Server (if using SSE-based servers)
+# MCP_SERVER_URL=https://your-mcp-server.com/sse
+# MCP_SERVER_TOKEN=your_auth_token_here
+
+# Model Configuration (Optional)
+# GEMINI_MODEL=gemini-2.0-flash
+
+[exit 0]
