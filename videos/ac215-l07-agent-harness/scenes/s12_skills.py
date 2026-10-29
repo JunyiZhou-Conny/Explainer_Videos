@@ -13,7 +13,8 @@ Beats (script.md "## S12", one voiceover block each):
     cards drop onto it, tasting-planning and vendor-outreach, each with the start of its
     description (skills/…/SKILL.md · line 3, excerpts); on "then its main file" Activate lights and
     a GREY dashed card "SKILL.md" rises onto it; on "then a reference or an asset" Use resources
-    lights and a GREY dashed card "a reference · an asset" rises onto it.
+    lights and a GREY dashed card "a reference · an asset" rises onto it. (The staircase sits 0.6
+    lower here than in beat 5, where the strip takes the bottom of the frame.)
  2  The staircase leaves. Two trees: the lecture's cheese-pairing/ (GREY dashed, concept · lecture
     only) and the real skills/vendor-outreach/. On "a scripts folder" scripts/lookup.py lights; on
     "This harness removes" CODE(formaggio/agents/skill_support.py: 59–62) comes in under the trees,
@@ -43,10 +44,11 @@ Beats (script.md "## S12", one voiceover block each):
     to Use resources, shortened "…/file" where a path is wider than a step). On "Drafting is
     refused" the closed gate flashes; line 84 prints, the email-template card rises, the gate opens
     and the draft card turns GREEN; the strip prints 144 (GREEN) and 154 in one scroll, and the
-    HTML path turns PINK as the staircase and its tag leave. On "a backstop in code" the gate and
+    HTML path turns PINK as the staircase and its tag leave; "your numbers will differ" comes in just
+    above the strip's top-left corner. On "a backstop in code" the gate and
     draft settle lower and the GREEN excerpt chip formaggio/shop/vendor_outreach.py · line 92
     "Load vendor-outreach/assets/email-template.html / before requesting this draft." comes in
-    beside the gate and pulses.
+    beside the gate and pulses; the frame holds 1.4 s after the SAY so the chip can be read.
  6  Everything leaves. A GREY "what if" picture (tag `illustration · what if`): a copy of
     vendor-outreach/SKILL.md (right; its text drawn as GREY bars), a GREEN padlock shut on the
     GREEN `save_vendor_email` chip (left). On "Someone edits" a GREY pencil arrives; on "also send
@@ -70,9 +72,9 @@ Beats (script.md "## S12", one voiceover block each):
  9  LECTURE 29 (with the columns). Everything leaves; slide 29 as three columns: "Tool · the hands
     · an action" (GREEN), "MCP · the socket · connectivity" (GREY dashed, `concept · lecture only`,
     "not in this tutorial"), "Skill · the manual · know-how" (GREEN outline), each written in on its
-    phrase. After the narration the columns and the tag leave; V1's mini-map: Context & memory lit
-    YELLOW, its GREEN cell gains a bar segment, caption "Context & memory ← skills guide, never
-    permit"; the map and caption leave.
+    phrase. After the narration the columns and the tag leave as V1's mini-map comes in: Context &
+    memory lit YELLOW, its GREEN cell gains a bar segment, caption "Context & memory ← skills guide,
+    never permit" (held ~2.5 s); the map and caption leave.
 10  TRACKER Skills 4. CODE(README.md: 568–575); on "allows 16 model calls" the excerpt chip
     README.md · line 578 "The model-call allowance is 16". On "Pause and run" the panel and chip fade
     and the static "your turn" card comes in: the live command (GOLD "with your key"), the two
@@ -184,8 +186,11 @@ ADDED = ("also send this to", "other@example.com")
 
 # ------------------------------------------------------------------ layout
 SAFE = 6.45
-BASE = -1.0                              # the staircase in place above a 3-row strip
+BASE = -1.0                              # the staircase's reference place
 TOPS = (-0.05, 0.4, 0.85)               # a gentler rise than the default: four resource cards fit on step 3
+DY1 = -0.6                               # beat 1: lower, so the picture sits in the middle of the frame
+DY5 = 0.12                               # beat 5: higher, so "token cost" clears the strip's title-bar tags
+STACK = 0.04                             # beat 5: gap under and between the cards stacked on a step
 TERM3 = 11                               # beat 3's terminal rows (line 5 and line 9 wrap)
 GG_DROP = 0.55                           # beat 5: the gate and draft settle lower once the stairs leave
 
@@ -468,7 +473,7 @@ class SkillsManual(VoiceScene):
             self.play(FadeIn(why[1], shift=LEFT * 0.15), run_time=0.4)
 
         # ========================================================== 1 · slide 28: three steps of rising token cost
-        st = Staircase(base=BASE, tops=TOPS)
+        st = Staircase(base=BASE + DY1, tops=tuple(y + DY1 for y in TOPS))
         steps, axis = st.parts["steps"], st.parts["axis"]
         cards1 = [meta_card("tasting-planning", DESC_TP), meta_card("vendor-outreach", DESC_VO)]
         top0 = st.step(0).frame.get_top()[1]
@@ -629,16 +634,19 @@ class SkillsManual(VoiceScene):
             vo.wait_until("a hint, not a trigger")
             self.play(FadeIn(cap4b, shift=LEFT * 0.1), run_time=0.4)
             self.play(flash(exc.text, TURN, 1.08), run_time=0.6)
+        self.wait(0.5)                                  # the last caption row is read before it leaves
 
         # ========================================================== 5 · step 3: the full sourcing path climbs the stairs
-        st5 = Staircase(base=BASE, tops=TOPS)
+        st5 = Staircase(base=BASE + DY5, tops=tuple(y + DY5 for y in TOPS))
         cards5 = [skill_card(txt) for _, txt in CARDS]
-        y_next = {1: st5.step(1).frame.get_top()[1] + 0.06, 2: st5.step(2).frame.get_top()[1] + 0.06}
+        y_next = {1: st5.step(1).frame.get_top()[1] + STACK, 2: st5.step(2).frame.get_top()[1] + STACK}
         for (i, _), c in zip(CARDS, cards5):
             place(c, cx=st5.step(i).frame.get_center()[0], bottom=y_next[i])
-            y_next[i] = c.get_top()[1] + 0.05
+            y_next[i] = c.get_top()[1] + STACK
             inside(c)
-        assert cards5[-1].get_top()[1] < 3.08, cards5[-1].get_top()   # under the lecture tag
+        assert cards5[-1].get_top()[1] < 3.04, cards5[-1].get_top()   # under the lecture tag
+        # "token cost" (under the axis, right end) stays clear of the strip's title bar and its tags
+        assert st5.parts["axis"][1].get_bottom()[1] > STRIP_TOP + 0.15, st5.parts["axis"][1].get_bottom()
         # the gate in front of the draft (the free Discover column)
         gate = Gate("needs the template", HARNESS, gate_w=0.9, gate_h=1.45)
         d_txt = label("draft", 24, INK)
@@ -666,8 +674,10 @@ class SkillsManual(VoiceScene):
             self.play(FadeOut(VGroup(exc, cap4a, cap4b, lr27)), FadeOut(t.lines), tr.goto(3), run_time=0.5)
             for ln in list(t.lines):
                 t.lines.remove(ln)
-            fit(self, t, 3, keep=[], tags=ft4, run_time=0.6,
-                extra=[FadeIn(st5, shift=UP * 0.1), FadeIn(gg), FadeIn(lr28)])
+            # the strip settles first, then the stairs come in above it (its top edge never sweeps
+            # through them)
+            fit(self, t, 3, keep=[], tags=ft4, run_time=0.5)
+            self.play(FadeIn(st5, shift=UP * 0.1), FadeIn(gg), FadeIn(lr28), run_time=0.45)
             cmd5 = type_cmd(self, t, C52.cmd, 0.6)
             assert len(cmd5.rows) == 2 and "--email-decision approve" in cmd5.rows[1].text, \
                 [r.text for r in cmd5.rows]
@@ -705,11 +715,18 @@ class SkillsManual(VoiceScene):
             # the path turns PINK while the stairs and their tag leave (old out) ...
             self.play(recolor(wrapped_glyphs(r154, HTML_PATH), LOOKUP), FadeOut(VGroup(st5, *cards5)), FadeOut(lr28),
                       run_time=0.4)
+            # ... the run ID and the path are this capture's: "your numbers will differ" comes in just
+            # above the strip's top-left corner, where the stairs stood (both rows are too full for it) ...
+            dt5 = differ_tag()
+            place(dt5, left=t.box.get_left()[0] + 0.05, bottom=t.box.get_top()[1] + 0.12)
+            assert dt5.get_top()[1] < gg.get_bottom()[1] - GG_DROP - 0.2, (dt5.get_top(), gg.get_bottom())
+            self.play(FadeIn(dt5, shift=DOWN * 0.1), run_time=0.3)
             # ... then the gate and its draft settle in the free picture and the backstop comes in
             vo.wait_until("a backstop in code")
             x92.box.set_stroke(HARNESS, 3.5)
             self.play(gg.animate.shift(DOWN * GG_DROP), FadeIn(x92, shift=LEFT * 0.1), run_time=0.5)
             self.play(pulse(x92.chip, HARNESS, 1.05, frame=x92.box), run_time=0.6)
+        self.wait(1.4)                                  # the two-row backstop chip and the saved path are read
 
         # ========================================================== 6 · ponder: an edited skill page
         pg = page_card()
@@ -727,7 +744,7 @@ class SkillsManual(VoiceScene):
         apart(lk, pg)
         addr = pg.rows[1]
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(t, ft4, gg, d_solid, x92)), run_time=0.5)
+            self.play(FadeOut(VGroup(t, ft4, dt5, gg, d_solid, x92)), run_time=0.5)
             self.play(FadeIn(pg, shift=LEFT * 0.1), FadeIn(ill), FadeIn(lk, shift=RIGHT * 0.1), run_time=0.6)
             vo.wait_until("Someone edits")
             self.play(FadeIn(pen, shift=UP * 0.2), run_time=0.3)
@@ -857,6 +874,8 @@ class SkillsManual(VoiceScene):
         k2 = column("MCP", "the socket", "connectivity", socket_glyph(), S.GREY, dashed=True)
         k3 = column("Skill", "the manual", "know-how", manual_glyph(), HARNESS)
         cols = VGroup(k1, k2, k3).arrange(RIGHT, buff=0.35)
+        for k in (k2, k3):                              # the three titles on one line (the glyphs differ in height)
+            k[1].shift(UP * (k1.title.get_center()[1] - k.title.get_center()[1]))
         place(cols, cx=0, cy=0.2)
         ctag = concept_tag()
         place(ctag, cx=k2.frame.get_center()[0], cy=k2.frame.get_top()[1])
@@ -879,14 +898,17 @@ class SkillsManual(VoiceScene):
             vo.wait_until("and a skill the manual")
             self.play(FadeIn(k3, shift=UP * 0.1), run_time=0.5)
             self.play(pulse(k3, HARNESS, 1.05, frame=k3.frame), run_time=0.7)
-        self.play(FadeOut(VGroup(cols, ctag, nt, lr29)), run_time=0.4)
-        self.play(FadeIn(mm), run_time=0.4)
-        self.play(mm.light("context"), run_time=0.3)
+        # the map (bottom right, clear of the columns) comes in as the columns leave, so its 45-character
+        # caption gets about 2.5 s on screen in the silent gap before step 4
         mcap = label("Context & memory ← skills guide, never permit", CAPTION, HARNESS)
         mcap.move_to([mm.frame.get_left()[0] - 0.2 - mcap.width / 2, mm.rows["context"][0].get_center()[1], 0])
         inside(mcap)
-        self.play(mm.add_bar("context"), FadeIn(mcap, shift=LEFT * 0.1), run_time=0.5)
-        self.wait(0.9)
+        apart(mm, cols, 0.1)
+        apart(mm, nt, 0.1)
+        self.play(FadeOut(VGroup(cols, ctag, nt, lr29)), FadeIn(mm), run_time=0.5)
+        self.play(mm.light("context"), run_time=0.25)
+        self.play(mm.add_bar("context"), FadeIn(mcap, shift=LEFT * 0.1), run_time=0.45)
+        self.wait(1.8)
         self.play(FadeOut(VGroup(mm, mcap)), run_time=0.4)
 
         # ========================================================== 10 · step 4: the notebook cell; your turn

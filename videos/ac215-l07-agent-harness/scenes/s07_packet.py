@@ -12,18 +12,18 @@ Beats (script.md "## S07", one voiceover block each):
  1  Line 210 `"sources": [],` gets the GREY row tag "basic: none"; on "Enriched has three" the
     terminal scrolls on: 214–216, 218, 220, …, 241 (cut), 243, …, 357 (‹customer 1›), 359, …. The
     three "trust" values turn GREEN one by one on their names.
- 2  LECTURE 13, 16. Line 369 `"excluded_products": [` prints; the terminal shrinks to a 3-row
-    strip (359, …, 369; the GREEN tag rides on its bar). V4's sieves (common.Sieves, this scene's
+ 2  LECTURE 13, 16. Line 369 `"excluded_products": [` prints; the terminal shrinks to a 3-row strip
+    (359, …, 369; the GREEN tag rides on its bar). V4's sieves (common.Sieves, this scene's
     geometry: see SieveRig) above it, tag `illustration`: three GREEN sieves "stock ≥ 100 g", "no
-    raw milk → PA", "no nut allergens" (each flashes on its clause) with survivors falling
-    through; on "Munster has no stock" munster stops at the first sieve, on "Brie and Comté" brie
-    and comte at the second, on "and two nut cheeses" walnut_chevre and pistachio_manchego at the
-    third; each slides into the excluded list with its RED reason exactly as in container/27
-    lines 371–397. Seven GREEN survivors land in the tray in the capture's order (lines 247–337),
-    the last three on "Seven survive". Then (no narration, ~4 s) the sieves and the strip fade, the
-    tray moves down, and RECORDED(expected/colab-c18: 2–14) folded to its product_id and eligible
-    columns (left; tag `recorded …` beside it) confirms them: its seven True cells turn GREEN as
-    the tray's chips pulse, its five False cells RED, beside the excluded list.
+    raw milk → PA", "no nut allergens" (each flashes on its clause while a survivor, epoisses,
+    bucheron, mimolette, falls through); on "Munster has no stock" munster stops at the first sieve,
+    on "Brie and Comté" brie and comte at the second, on "and two nut cheeses" walnut_chevre and
+    pistachio_manchego at the third; each slides into the excluded list with its RED reason exactly
+    as in container/27 lines 371–397. Seven GREEN survivors land in the tray in the capture's order
+    (lines 247–337), the last three on "Seven survive". Then (no narration, ~4 s) the sieves and the
+    strip fade, the tray moves down, and RECORDED(expected/colab-c18: 2–14) folded to its product_id
+    and eligible columns (left; tag `recorded …` beside it) confirms them: its seven True cells turn
+    GREEN as the tray's chips pulse, its five False cells RED, beside the excluded list.
  3  The inset leaves. Slide 13 redrawn small, top left: a GREY dashed "Instructions" box holding
     the dashed box "Retrieved information (RAG)", tag `concept · lecture only`; on "here it's a
     Python filter" a PINK arrow from the RAG box down to the survivors' tray, captioned "here: a
@@ -38,9 +38,9 @@ Beats (script.md "## S07", one voiceover block each):
     candidates · preferences), stamped GREEN "data, not instructions"; the card slides up into the
     user lane and the counter counts to 2 (container/21 and 22, line 10). On "so it cannot pose"
     line 143's bar hands over to line 142's comment (the string stays YELLOW) and a GREY dashed
-    card "system rule?" drops toward the system lane and is turned back. The lanes flash on "two
-    lanes", the system lane on "instructions in the system lane", the user lane on "evidence in
-    the user lane".
+    card "system rule?" drops to the system lane's edge and is sent back, dimmed (it leaves on
+    "That's the lecture's two lanes"). The lanes flash on "two lanes", the system lane on
+    "instructions in the system lane", the user lane on "evidence in the user lane".
  5  The panel leaves; the lanes stay (they move up). The excluded products return as one row of
     RED chips; on "The enriched packet" the `comte` chip pulses GREY (again on "Can the model");
     the packet card pulses on "And does anything in act 2". PONDER(8 s).
@@ -93,6 +93,7 @@ from manim import (
     ManimColor,
     interpolate_color,
     linear,
+    rush_into,
     smooth,
     there_and_back,
 )
@@ -544,10 +545,10 @@ class ContextPacket(VoiceScene):
             vo.wait_until("Without a key")
             self.play(FadeIn(t, shift=UP * 0.2), run_time=0.5)
             type_cmd(self, t, PREV.cmd, 1.3)
-            vo.wait_until("offline")
+            out = show(self, t, PREV, 2, L3, L4, TOOLS_FOLD, (208, 213), run_time=0.8)
+            vo.wait_until("offline")                    # the output is up before "Both modes share"
             self.play(FadeIn(off, shift=DOWN * 0.1), run_time=0.4)
             self.play(flash(off.text, HARNESS, 1.15), run_time=0.5)
-            out = show(self, t, PREV, 2, L3, L4, TOOLS_FOLD, (208, 213), run_time=0.8)
             vo.wait_until("Both modes share")
             keys = [substring(out[i], k) for i, k in zip((1, 2, 3), SAME_KEYS)]
             self.play(keys[0].animate.set_color(HARNESS), run_time=0.4)
@@ -583,14 +584,12 @@ class ContextPacket(VoiceScene):
             r369 = show(self, t, PREV, 369, run_time=0.3)[0]
             fit(self, t, 3, keep=[en[10], en[11], r369], tags=[off], run_time=0.6)
             sv.reveal(self, "sieves", "tray", extra=[FadeIn(ill), FadeIn(lr)], run_time=0.5)
-            sv.drop_some(self, ["epoisses"], 0.9)
             for i, anchor in enumerate(("enough stock", "no raw milk", "no nut allergens")):
-                vo.wait_until(anchor)
-                self.play(flash(sv.sieve_labels[i], HARNESS, 1.12),
-                          sv.sieve_lines[i].animate.set_stroke(width=7), run_time=0.5)
-                self.play(sv.sieve_lines[i].animate.set_stroke(width=5), run_time=0.15)
-                if i < 2:
-                    sv.drop_some(self, [("bucheron", "mimolette")[i]], 0.8)
+                vo.wait_until(anchor)                   # each sieve lights on its clause (they come ~1 s apart)
+                fall = sv.fall(("epoisses", "bucheron", "mimolette")[i], 0.8)[1]   # ... as a survivor falls
+                self.play(Indicate(sv.sieve_labels[i], color=HARNESS, scale_factor=1.12, run_time=0.8),
+                          sv.sieve_lines[i].animate(run_time=0.8, rate_func=there_and_back).set_stroke(width=7), fall)
+                sv.settle(self, [fall])
             vo.wait_until("Munster has no stock")
             self.play(*sv.parts_in("list_head"), run_time=0.3)
             sv.drop_some(self, ["munster"], 1.0)
@@ -709,8 +708,15 @@ class ContextPacket(VoiceScene):
             vo.wait_until("so it cannot pose")
             self.play(FadeOut(b143), run_time=0.2)          # the bars overlap: one at a time (143's string stays YELLOW)
             self.play(FadeIn(b142), FadeIn(rule, shift=DOWN * 0.1), run_time=0.4)
-            self.play(ln.turn_back(rule, run_time=1.1))
+            # the card drops to the system lane's top edge and is sent back, dimmed. (Not Lanes.turn_back:
+            # its two .animate builders in one Succession share the card's .target, so the card only
+            # dimmed in place; see the report.) Two plays, one builder each.
+            near = [rule.get_center()[0], sfr.get_top()[1] + rule.height / 2 + 0.06, 0]
+            home = rule.get_center().copy()
+            self.play(rule.animate(rate_func=rush_into).move_to(near), run_time=0.5)
+            self.play(rule.animate.move_to(home).set_opacity(0.4), run_time=0.6)
             vo.wait_until("That's the lecture's two lanes")
+            self.play(FadeOut(rule), run_time=0.3)      # the turned-back ghost leaves before the lanes speak
             self.play(flash(ln.lanes["system"].frame, S.GREY, 1.02), flash(ln.lanes["user"].frame, HARNESS, 1.02),
                       run_time=0.7)
             vo.wait_until("instructions in the system lane")
@@ -725,9 +731,9 @@ class ContextPacket(VoiceScene):
         exc = VGroup(row_head, row_chips).arrange(RIGHT, buff=0.2)
         comte = row_chips[list(EXCLUDED).index("comte")]
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(p, b142, rule)), run_time=0.5)
+            self.play(FadeOut(VGroup(p, b142)), run_time=0.5)
             self.play(ln.animate.shift(UP * (LANES_UP - ln.get_top()[1])), run_time=0.7)
-            place(exc, cx=0, top=ln.get_bottom()[1] - 0.18)
+            place(exc, cx=0, top=ln.get_bottom()[1] - 0.32)
             assert exc.get_right()[0] < SAFE + 0.1 and exc.get_left()[0] > -SAFE - 0.1
             vo.wait_until("The enriched packet")
             self.play(FadeIn(exc, shift=DOWN * 0.1), run_time=0.5)
@@ -807,9 +813,9 @@ class ContextPacket(VoiceScene):
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(sh, ill6, sv6, cart, arm, ct, stc, gate, capg, exc10)), tr.goto(9), run_time=0.5)
             self.play(FadeIn(t2, shift=UP * 0.2), FadeIn(nk2, shift=DOWN * 0.1), run_time=0.4)
-            type_cmd(self, t2, BASE.cmd, 1.0)
-            self.play(FadeIn(lv2, shift=DOWN * 0.1), run_time=0.35)
-            show(self, t2, BASE, 3, 5, ASK, 10, STOP, wrap=True, run_time=0.7)
+            type_cmd(self, t2, BASE.cmd, 0.85)
+            self.play(FadeIn(lv2, shift=DOWN * 0.1), run_time=0.3)
+            show(self, t2, BASE, 3, 5, ASK, 10, STOP, wrap=True, run_time=0.6)
             vo.wait_until("in both modes")
             self.play(FadeIn(nb, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("For standard")
@@ -843,11 +849,10 @@ class ContextPacket(VoiceScene):
         n_first = len(wrap_words(Q336A, Q_WRAP))
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(tc, nb, c265)), run_time=0.5)
-            self.play(FadeIn(q, shift=UP * 0.1), FadeIn(etag), run_time=0.5)
-            self.play(FadeIn(half), FadeIn(lr8), run_time=0.6)
-            self.play(half.light("context"), run_time=0.4)
+            self.play(FadeIn(q, shift=UP * 0.1), FadeIn(etag), FadeIn(half), FadeIn(lr8), run_time=0.6)
+            self.play(half.light("context"), run_time=0.35)
             m, an = half.fill("context", "the packet in the data lane")
-            self.play(*an, run_time=0.7)
+            self.play(*an, run_time=0.6)
             vo.wait_until("but validation decides")
             self.play(flash(VGroup(*q.rows[:n_first]), TURN, 1.03), run_time=0.8)
             vo.wait_until("and today's request")

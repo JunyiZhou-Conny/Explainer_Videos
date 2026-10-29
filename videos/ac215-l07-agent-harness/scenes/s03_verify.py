@@ -26,13 +26,14 @@ Beats (script.md "## S03", one voiceover block each):
     OPENAI_CHAT_MODEL and "gpt-5.6-luna" flash with their links; GREY caption under the env link
     "set it inside the container (README.md · line 145)"; GREY dashed chip "a Gemini name doesn't
     switch providers (README.md · line 155)"; the first two links flash YELLOW ("set either").
- 4  TRACKER Notebook 1, then 2. The terminal grows back (10 rows, two band rows above it):
+ 4  TRACKER Notebook 1, then 2. The terminal grows back (10 rows, two band rows above it) with
+    the chip README.md · line 108 (excerpt) "Run every remaining command inside the container";
     `python -m tests -p test_notebook.py` -> container/07 lines 2–4, 6, then `python -m tests -p
-    test_chat_view.py` -> container/08 lines 2–4, 6 (both at "two more test commands"); chip
-    README.md · line 108 (excerpt) "Run every remaining command inside the container"; "Ran 9
-    tests" GREEN; "Ran 12 tests" GREEN, the 108 chip leaves and README.md · line 82
-    `show_chat(DB_PATH, act1_result["run_id"])` comes in with the GREY caption "notebook only · the
-    image has no IPython (container/01 · line 14)"; both OK GREEN.
+    test_chat_view.py` -> container/08 lines 2–4, 6 (both at "two more test commands"); the 108
+    chip flashes at "They run in the container too"; "Ran 9 tests" GREEN; the 108 chip leaves and
+    README.md · line 82 `show_chat(DB_PATH, act1_result["run_id"])` comes in with the GREY caption
+    "notebook only · the image has no IPython" (no capture folder on screen); "Ran 12 tests" GREEN;
+    both OK GREEN; a 0.6 s hold keeps the chip readable.
  5  LECTURE 44. TRACKER Colab 1, then 2. The terminal fades. A BLUE frame "Agent Harness · Colab"
     (tag illustration): File › Save a copy in Drive (excerpt chip Agent Harness · cell 1 (excerpt)
     "Save a copy in Drive"); a schematic Secrets panel (GOLD key, "Name: OPENAI_API_KEY", no
@@ -42,8 +43,8 @@ Beats (script.md "## S03", one voiceover block each):
     wrap), line 7 YELLOW; seven small GREEN pin chips "7 pins (pyproject.toml)"; a GREY dashed
     ghost `uv.lock` "not used here"; a row of GREY unpinned dependencies that drift, GREY tag
     "their ~200 dependencies: unpinned"; a TEAL chip "Docker: uv sync from uv.lock".
- 7  Line 8 YELLOW, GREEN caption beside it "check_sdk · returncode=0"; under the panel
-    RECORDED(expected/colab-c08-install.txt: 2) (wrapped at a space) and
+ 7  Line 8 YELLOW; under the panel RECORDED(expected/colab-c08-install.txt: 2) (wrapped at a
+    space; the GREEN caption "check_sdk · returncode=0" on its header row) and
     RECORDED(expected/colab-c11-utils.txt: 2–3) side by side (20 pt, headers "cell 8 / cell 11 ·
     saved output": the frame names the notebook), one GREY tag "recorded · the staff's saved Colab
     run" centred under both; caption "every recorded answer in this video: this notebook's saved run".
@@ -151,6 +152,16 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
 
 def flash(mob, color: str = TURN, k: float = 1.15):
     return Indicate(mob, color=color, scale_factor=k)
+
+
+def wait_at(scene, vo, phrase: str, dt: float = 0.0):
+    """vo.wait_until(phrase), moved by dt seconds. Inside a sentence an anchor is interpolated by
+    character count, and spoken numbers ("3.13.16") run far longer than their characters
+    (docs/PLAYBOOK.md §2.6). Every dt below was measured from the punctuation pauses of the cached
+    af_heart clip (speed 0.9): the clause starts where the voice really says the phrase."""
+    t = vo.time_until(phrase) + dt
+    if t > 1 / 60:
+        scene.wait(t)
 
 
 def light(scene, mob, color: str, k: float = 1.2, sub=None, run_time: float = 0.7):
@@ -281,15 +292,15 @@ class VerifyOffline(VoiceScene):
             vo.wait_until("and prints the installed")
             out0 = show(self, t, SDK, (2, 11), FEATURES, "…", 29, run_time=1.0)
             r3, r5, r8, rf = out0[1], out0[3], out0[6], out0[10]
-            vo.wait_until("at the time of recording")
+            wait_at(self, vo, "at the time of recording", -0.9)      # spoken 7.7 s, interpolated 8.6 s
             pin(self, r3, beside(grey_tag("at the time of recording"), t, r3, buff=0.6), run_time=0.4)
-            vo.wait_until("Python 3.13.16")
+            wait_at(self, vo, "Python 3.13.16", -1.5)                # spoken 9.5 s, interpolated 11.1 s
             light(self, substring(r3, '"3.13.16"'), HARNESS)
             vo.wait_until("agent framework 1.19.0")
             v5, v8 = substring(r5, '"1.19.0"'), substring(r8, '"3.19.2"')
             light(self, v5, HARNESS)
             light(self, v8, HARNESS)
-            vo.wait_until("and every feature true")
+            wait_at(self, vo, "and every feature true", 0.8)         # spoken 15.7 s, interpolated 14.9 s
             ftag = tag("11 features · all true", HARNESS)
             pin(self, rf, beside(ftag, t, rf, buff=0.6), run_time=0.4)
             self.play(flash(substring(rf, '"features"'), HARNESS, 1.15), run_time=0.6)
@@ -299,7 +310,7 @@ class VerifyOffline(VoiceScene):
         # the picture above the strip (illustration): the harness, a scripted seat, no route out
         ring_ = RoundedRectangle(width=4.4, height=2.6, corner_radius=1.0, stroke_color=HARNESS,
                                  stroke_width=10).move_to([-2.5, 0.25, 0])
-        ring_t = label("the harness", CAPTION, HARNESS).next_to(ring_, UP, buff=0.12)
+        ring_t = label("the harness", CAPTION, HARNESS).next_to(ring_, UP, buff=0.24)   # clear of the thick ring
         seat_t = VGroup(label("scripted model", CAPTION, INK), label("responses", CAPTION, INK)) \
             .arrange(DOWN, buff=0.08)
         seat = box(seat_t.width + 0.5, seat_t.height + 0.36, CLOUD, dashed=True, stroke=3)
@@ -332,12 +343,11 @@ class VerifyOffline(VoiceScene):
             light(self, ok.glyphs, HARNESS, 1.5)
             vo.wait_until("They use scripted")
             cmd1 = t.lines[0]
-            self.play(FadeOut(ft), run_time=0.25)
-            resize(self, t, 3, keep=[cmd1, ran, ok], run_time=0.6)
-            self.play(FadeIn(VGroup(ring_, ring_t, ill)), run_time=0.5)
-            self.play(Create(seat), FadeIn(seat_t), FadeIn(stag, shift=DOWN * 0.08),
-                      FadeIn(c127, shift=DOWN * 0.1), run_time=0.6)
-            self.play(FadeIn(route_g), run_time=0.5)
+            resize(self, t, 3, keep=[cmd1, ran, ok], run_time=0.6, extra=[FadeOut(ft)])
+            # the scripted seat lands while "scripted model responses" is spoken
+            self.play(FadeIn(VGroup(ring_, ring_t, ill)), Create(seat), FadeIn(seat_t),
+                      FadeIn(stag, shift=DOWN * 0.08), run_time=0.7)
+            self.play(FadeIn(route_g), FadeIn(c127, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("so they test the machinery")
             self.play(flash(ring_, HARNESS, 1.06), flash(ring_t, HARNESS, 1.2), run_time=0.8)
             vo.wait_until("not the model")
@@ -367,7 +377,10 @@ class VerifyOffline(VoiceScene):
             u2 = VGroup(*under_rows(l2, "Ignored an approval response"),
                         *under_rows(l2, "approval occurrence identity"))
             self.play(Create(u2), run_time=0.6)
-            pin(self, l2[-1], beside(grey_tag("again in act 4"), t, l2[-1], buff=0.5), run_time=0.4)
+            a4 = beside(grey_tag("again in act 4"), t, l2[-1], buff=0.5)
+            a4.shift(RIGHT * max(0.0, u2.get_right()[0] + 0.25 - a4.get_left()[0]))   # not under the underline
+            assert a4.get_right()[0] < t.box.get_right()[0] - 0.12
+            pin(self, l2[-1], a4, run_time=0.4)
             vo.wait_until("Trust the last line")
             light(self, ok2.glyphs, HARNESS, 1.5)
             pin(self, ok2, beside(note("trust the last line", HARNESS), t, ok2, buff=0.5), run_time=0.4)
@@ -398,12 +411,12 @@ class VerifyOffline(VoiceScene):
             mc = type_cmd(self, t, MODELC.cmd, 0.9)
             om = show(self, t, MODELC, 2, run_time=0.4)[0]
             bare_prompt(self, t)
-            vo.wait_until("GPT 5.6 Luna")
+            wait_at(self, vo, "GPT 5.6 Luna", -0.9)                  # spoken 3.4 s, interpolated 4.3 s
             light(self, om.glyphs, CLOUD, 1.2)
-            self.play(FadeOut(ft), run_time=0.25)
-            resize(self, t, 3, keep=[*rows_of(mc), om], run_time=0.6)
+            resize(self, t, 3, keep=[*rows_of(mc), om], run_time=0.6, extra=[FadeOut(ft)])
             self.play(FadeIn(p9, shift=UP * 0.15), run_time=0.5)
             light(self, span_m, CLOUD, 1.2)
+            vo.wait_until("at the time of recording")
             self.play(FadeIn(att, shift=UP * 0.08), run_time=0.4)
             vo.wait_until("A model flag")
             self.play(FadeIn(link_flag, shift=RIGHT * 0.15), run_time=0.5)
@@ -425,7 +438,9 @@ class VerifyOffline(VoiceScene):
         c82 = excerpt_chip(R82, "README.md · line 82", line=source_line("README.md", 82))
         c82.header.next_to(c82.chip, LEFT, buff=0.3)
         place(c82, left=-6.3, cy=BAND2_Y)
-        cap82 = note("notebook only · the image has no IPython (container/01 · line 14)")
+        # the image's missing IPython is an extra check (container/01 line 14, ASSETS.md); the
+        # caption names no capture folder (script.md: headers never name one)
+        cap82 = note("notebook only · the image has no IPython")
         place(cap82, left=c82.chip.get_left()[0] + 0.1, cy=BAND1_Y)
         with self.voiceover(SAY[4]) as vo:
             gone = list(t.lines)
@@ -435,26 +450,28 @@ class VerifyOffline(VoiceScene):
             tr = switch_section(self, tr, "Notebook", 1)
             resize(self, t, NB_ROWS, run_time=0.5)
             ft = frame_tags(t, offline_tag())
+            # SHOW order: the line-108 chip first (it governs both commands), then the typing
+            self.play(FadeIn(ft), FadeIn(c108, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("two more test commands")
-            self.play(FadeIn(ft), run_time=0.3)
             type_cmd(self, t, NB.cmd, 0.5)
             o7 = show(self, t, NB, (2, 4), 6, run_time=0.4)
             self.play(tr.goto(2), run_time=0.3)
             type_cmd(self, t, CV.cmd, 0.5)
             o8 = show(self, t, CV, (2, 4), 6, run_time=0.4)
             vo.wait_until("They run in the container too")
-            self.play(FadeIn(c108, shift=DOWN * 0.1), run_time=0.5)
             self.play(flash(c108.phrase, TURN, 1.03), run_time=0.6)
             vo.wait_until("9 notebook tests")
             light(self, o7[2].glyphs, HARNESS, 1.15, sub=substring(o7[2], "Ran 9 tests"))
-            vo.wait_until("and 12 chat view tests")
-            light(self, o8[2].glyphs, HARNESS, 1.15, sub=substring(o8[2], "Ran 12 tests"))
+            # the chat-view chip comes in as "12 chat view tests" is spoken (old chip out, then new in)
             self.play(FadeOut(c108), run_time=0.3)
             self.play(FadeIn(c82, shift=DOWN * 0.1), FadeIn(cap82, shift=DOWN * 0.08), run_time=0.5)
+            vo.wait_until("and 12 chat view tests")
+            light(self, o8[2].glyphs, HARNESS, 1.15, sub=substring(o8[2], "Ran 12 tests"))
             vo.wait_until("both OK")
             self.play(o7[3].glyphs.animate.set_color(HARNESS), o8[3].glyphs.animate.set_color(HARNESS),
                       run_time=0.3)
             self.play(flash(o7[3].glyphs, HARNESS, 1.5), flash(o8[3].glyphs, HARNESS, 1.5), run_time=0.6)
+        self.wait(0.6)                                  # the line-82 chip and its caption stay readable
 
         # ========================================================== 5 · the second road: the course Colab
         lr = lref("44")
@@ -482,9 +499,9 @@ class VerifyOffline(VoiceScene):
             self.play(tr.goto(2), run_time=0.4)
             self.play(FadeIn(sp, shift=UP * 0.1), run_time=0.5)
             self.play(flash(sp.head[0], KEY, 1.4), flash(sp.field[1], TURN, 1.08), run_time=0.7)
-            vo.wait_until("allow notebook access")
+            wait_at(self, vo, "allow notebook access", 0.55)         # spoken 8.8 s, interpolated 8.3 s
             self.play(*sp.switch.turn_on(), sp.on.animate.set_opacity(1), run_time=0.6)
-            vo.wait_until("and run the setup cells")
+            wait_at(self, vo, "and run the setup cells", 0.45)       # spoken 10.4 s, interpolated 10.0 s
             self.play(FadeIn(p10, shift=UP * 0.12), run_time=0.5)
             self.play(FadeIn(bar_k), span_k.animate.set_color(COST), run_time=0.5)
             self.play(flash(span_k, COST, 1.08), run_time=0.6)
@@ -526,15 +543,16 @@ class VerifyOffline(VoiceScene):
 
         # ========================================================== 7 · the saved run; ▶ verify either way
         bar8 = p8.bar(8, TURN, 0.18)
-        ok8 = label("check_sdk · returncode=0", CAPTION, HARNESS)
-        r8 = p8.code.code_lines[p8.rows_of(8)[-1]]
-        ok8.next_to(r8, RIGHT, buff=0.6).set_y(r8.get_center()[1])
         c08_rows = [row for row, *_ in wrap_output(C08.line(2), 44)]
         assert "".join(r.strip() for r in c08_rows).replace(" ", "") == C08.line(2).replace(" ", "")
         b08 = saved_output(c08_rows, "cell 8 · saved output")
         b11 = saved_output(C11.at((2, 3)), "cell 11 · saved output")
         boxes = VGroup(b08, b11).arrange(RIGHT, buff=0.45, aligned_edge=UP)
         place(boxes, cx=0, top=p8.get_bottom()[1] - 0.25)
+        # GREEN caption on the cell-8 box's header row (on line 8's YELLOW bar it was hard to read)
+        ok8 = label("check_sdk · returncode=0", CAPTION, HARNESS)
+        ok8.next_to(b08.header, RIGHT, buff=0.45).set_y(b08.header.get_center()[1])
+        assert ok8.get_right()[0] < b08.frame.get_right()[0]
         rec = recorded_tag()
         place(rec, cx=boxes.get_center()[0], top=boxes.get_bottom()[1] - 0.15)   # one tag for both boxes
         every = label("every recorded answer in this video: this notebook's saved run", CAPTION, INK)
@@ -547,8 +565,9 @@ class VerifyOffline(VoiceScene):
         place(card, cx=0, cy=-0.35)
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(pins, pins_t, gg, deps, deps_t, dock, bar7)), run_time=0.4)
-            self.play(FadeIn(bar8), FadeIn(ok8, shift=LEFT * 0.1), run_time=0.5)
+            self.play(FadeIn(bar8), run_time=0.4)
             self.play(FadeIn(b08, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeIn(ok8, shift=LEFT * 0.1), run_time=0.4)
             self.play(FadeIn(b11, shift=UP * 0.1), run_time=0.5)
             self.play(FadeIn(rec), run_time=0.3)
             self.play(FadeIn(every, shift=UP * 0.08), run_time=0.5)

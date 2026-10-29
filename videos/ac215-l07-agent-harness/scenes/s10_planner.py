@@ -2,58 +2,59 @@
 Lecture: 8, 13–16, then 22.
 
 Beats (script.md "## S10", one voiceover block each):
- 0  The event chip README.md · line 460 (excerpt) "40 guests in NY" arrives mid-frame (it flashes
-    on "a 40-guest event") and moves top left on "The lecture splits". Then LECTURE 8, 13–16 comes
-    in with slides 13/16's two memory chips on the left, "short-term memory" and "long-term memory"
-    (GREY dashed, tag `concept · lecture only`), and V6's empty cabinet frame on the right (tag
-    `illustration`). On "saved memory" the long-term chip slides into the GREEN drawer "Memory ·
-    customer_memory.sqlite", on "and history" the short-term chip into "History · the
-    conversation"; on "plus tasks", "approvals" and "and the audit" the drawers Tasks, Approval and
-    Audit slide in between. On "five kinds of state" a GREEN brace with those words. No key yet.
- 1  The checkpoint chip README.md · line 522 "Which of these can authorize an action?" (top band).
-    A GREY hand tries Tasks, History, Memory and Audit with a turn: each stays shut and turns GREY.
-    On "Only one" a YELLOW key comes down into the Approval drawer's keyhole; on "the approval
-    drawer" it turns and the drawer opens.
+ 0  The event chip README.md · line 460 (excerpt) "40 guests in NY" arrives mid-frame at 1.4x (it
+    flashes on "a 40-guest event") and shrinks to the top left on "The lecture splits". Then LECTURE
+    8, 13–16 comes in with slides 13/16's two memory chips on the left, "short-term memory" and
+    "long-term memory" (GREY dashed, tag `concept · lecture only`), and V6's empty cabinet frame on
+    the right (tag `illustration`). On "saved memory" the long-term chip slides into the GREEN
+    drawer "Memory · customer_memory.sqlite", on "and history" the short-term chip into "History ·
+    the conversation"; on "plus tasks", "approvals" and "and the audit" the drawers Tasks, Approval
+    and Audit slide in between. On "five kinds of state" a GREEN brace with those words. No key yet.
+ 1  The checkpoint chip README.md · line 522 "Which of these can authorize an action?" (top band). A
+    GREY hand tries Tasks, History, Memory and Audit with a turn: each stays shut and turns GREY. On
+    "Only one" a YELLOW key comes down into the Approval drawer's keyhole; on "the approval drawer"
+    it turns and the drawer opens.
  2  TRACKER Act4 1. The chips, brace, key and hand leave; the cabinet closes, its words fade and it
     shrinks to a glyph in the top band, right. The container terminal (13 rows, TEAL, title-bar tag
     `no key`) types `python cli.py --act 4` (GOLD `live · billed per token` beside it) ->
-    container/40 lines 2–4, 5 (its blank line), 6–8 wrapped, 9 as 401s. On "the harness prints"
-    line 4 turns GREEN (the mask stays GREY) with the GREEN tag "loaded by the host · before any
-    model call" on the blank row under it; the nine tool names of line 8 light GREEN as the SAY
-    names them. On "No tool writes memory" a GREY dashed ghost chip "a memory-write tool", struck
-    through RED, appears beside them; the terminal shrinks to the strip (the command, line 4, the
-    tools' last row with the ghost chip) while the cabinet grows back above it, its words return
-    (tag `illustration`), and a BLUE hand reaches for the Memory drawer and finds no handle ("the
-    model: no memory tool").
+    container/40 lines 2–4, 5 (its blank line), 6–8 wrapped, 9 as 401s. On "the harness prints" line
+    4 turns GREEN (the mask stays GREY) with the GREEN tag "loaded by the host · before any model
+    call" on the blank row under it, and the memory flashes on "saved memory"; the nine tool names
+    of line 8 light GREEN as the SAY names them. On "No tool writes memory" a GREY dashed ghost chip
+    "a memory-write tool", struck through RED, appears beside them; the terminal shrinks to the
+    strip (the command, line 4, the tools' last row with the ghost chip) while the cabinet grows
+    back above it, its words return (tag `illustration`), and a BLUE hand reaches for the Memory
+    drawer and finds no handle ("the model: no memory tool").
  3  The cabinet and hand leave. Above the strip QUOTE(README.md: 460) (`expected`), its brief rows
     underlined YELLOW on "1,000 grams each" and its stock row on "The shop has only"; beside it a
     stock bar for Époisses: on "and 1,200 of" a 1,200 g outline, on "The shop has only" 900 g GREEN,
-    on "300 short" the missing 300 g RED dashed "300 g short". On "A finished task"
-    QUOTE(README.md: 471) with its two sentences "A completed task is not an approval." and "Shop
-    stock does not establish vendor availability.", underlined in turn.
- 4  The cards, bar and strip leave. CODE(formaggio/agents/planner_tools.py: 72–75); under it a
-    GREEN `save_vendor_email` card. On "approval mode always require" a YELLOW box round
-    `approval_mode="always_require"`; on "so the framework pauses" a padlock closes on the card
-    and the PURPLE tag "the framework pauses" appears. On "Act 3 paused" a mini rail (tag
-    `illustration`) freezes amber at "manager review" ("act 3: a workflow pauses"); on "this
-    pauses one tool" the tool card freezes amber ("act 4: one tool pauses").
+    on "300 short" the missing 300 g RED dashed "300 g short". On "A finished task" QUOTE(README.md:
+    471) with its two sentences "A completed task is not an approval." and "Shop stock does not
+    establish vendor availability.", underlined in turn.
+ 4  The cards, bar and strip leave. CODE(formaggio/agents/planner_tools.py: 72–75); under it a GREEN
+    `save_vendor_email` card. On "approval mode always require" a YELLOW box round
+    `approval_mode="always_require"`; on "so the framework pauses" a padlock closes on the card and
+    the PURPLE tag "the framework pauses" appears. On "Act 3 paused" a mini rail (tag
+    `illustration`) freezes amber at "manager review" ("act 3: a workflow pauses"); on "this pauses
+    one tool" the tool card freezes amber ("act 4: one tool pauses").
  5  TRACKER Act4 1 · extra. The container terminal (12 rows, TEAL, title-bar tag `scripted`) types
-    `python cli.py --act 4 --fixture --email-decision approve` (it folds; `--email-decision
-    approve` in a YELLOW outline with the YELLOW tag `TEST decision` and the GREY tag `extra`) ->
-    container/42 lines 51–53, 55–60. On "the vendor address" line 52 PINK; on "and a body written
-    by code" the GREY tag "written by code, not the model" beside line 55 and line 57 YELLOW; on
-    "nut allergy included" line 58 GREEN. On "Then:" it prints lines 62 and 65 wrapped ("status:
-    saved" and "email transmitted: no" turn GREEN as the SAY names them), and on "and the file
-    path" lines 83, 91 wrapped and 92 (the path PINK).
+    `python cli.py --act 4 --fixture --email-decision approve` (it folds; `--email-decision approve`
+    in a YELLOW outline with the YELLOW tag `TEST decision` and the GREY tag `extra`) ->
+    container/42 lines 51–53, 55–60, and the GREY title-bar tag `your numbers will differ` (the
+    ticket and run IDs). On "the vendor address" line 52 PINK; on "and a body written by code" the
+    GREY tag "written by code, not the model" beside line 55 and line 57 YELLOW; on "nut allergy
+    included" line 58's "Confirmed allergy constraints: nuts." GREEN. On "Then:" it prints lines 62
+    and 65 wrapped ("status: saved" and "email transmitted: no" turn GREEN as the SAY names them),
+    and on "and the file path" lines 83, 91 wrapped and 92 (the path PINK).
  6  Line 62 gets YELLOW underlines; on "the README predicts it" the top-band chip README.md · line
     837 (excerpt) "a misleading approval-identity warning on successful resumes"; on "and it's
-    harmless" the GREY tag `harmless` beside it; on "Trust the authoritative block" lines 83 and
-    92 turn GREEN. On "Pause and run step 1" the terminal leaves (the caption drops " · extra");
-    LECTURE 22 with the V1 mini-map: Tools YELLOW, its GREEN cell gains a bar, caption "Tools ←
-    approval on save". The caption, map and tag leave; the static "your turn" card (with your
-    key: the live command, "type approve or decline when asked"; the extra fixture command, GREEN
-    "no key: offline · free"; GOLD "live · billed per token"). Hold 2 s, then fade to an empty
-    frame.
+    harmless" the GREY tag `harmless` beside it; on "Trust the authoritative block" lines 83 and 92
+    turn GREEN; then the terminal leaves (the caption drops " · extra") and, as "Pause and run step
+    1" is spoken, LECTURE 22 with the V1 mini-map: Tools YELLOW, its GREEN cell gains a bar, caption
+    "Tools ← approval on save". As the SAY ends the caption, map and tag leave; the static "your
+    turn" card (with your key: the live command, "type approve or decline when asked"; the extra
+    fixture command, GREEN "no key: offline · free"; GOLD "live · billed per token"). Hold 2 s, then
+    fade to an empty frame.
 """
 
 import numpy as np
@@ -109,6 +110,7 @@ assert C42.line(51).startswith("MOCK EMAIL REVIEW — ticket ")
 assert C42.line(52) == f"To: {VENDOR}"
 assert C42.line(57) == "- Époisses: 300 g additional"
 assert C42.line(58) == "Destination: NY. Confirmed allergy constraints: nuts."
+ALLERGY = "Confirmed allergy constraints: nuts."           # GREEN (SHOW); "Destination: NY." stays output gray
 assert C42.line(55) == "Hello," and C42.line(60) == "Thank you."
 assert C42.line(62).startswith("Ignored an approval response with id ")
 assert "approval occurrence identity" in C42.line(62)
@@ -146,7 +148,8 @@ SAFE = 6.45
 CAB_C = np.array([2.25, -0.45, 0])     # the cabinet (beats 0-1): x -1.25..5.75, y -2.5..1.6
 CHIP_X = -4.3                          # the lecture's memory chips, left
 BAND_K = 0.2                           # the cabinet as a glyph in the top band (beat 2), over a 13-row terminal
-BAND_RIGHT = 5.1                       # (clear of the `no key` tag on the title bar under it)
+BAND_RIGHT = 4.6                       # (left of the `no key` tag on the title bar under it)
+EV_K = 1.4                             # beat 0: the event chip opens the scene at 1.4x, mid-frame
 CAB2_C = np.array([-2.9, STRIP_TOP + 0.08 + 2.05, 0])   # the cabinet back above the strip (frame 7.0 x 4.1)
 FREEZE_X = 3.3                         # beat 4: the two freezes at x = -3.3 and +3.3
 
@@ -357,13 +360,14 @@ class FiveDrawers(VoiceScene):
         def slide_in(name):
             return cab.parts_in(name, anim=lambda m: FadeIn(m, shift=LEFT * 0.6))
 
-        ev.move_to([0, 0.5, 0])                          # it opens the scene in the middle
+        ev.scale(EV_K).move_to([0, 0.5, 0])              # it opens the scene in the middle, larger
+        inside(ev)
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ev, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("a 40-guest event")
             self.play(flash(ev.phrase, TURN, 1.06), run_time=0.7)
             vo.wait_until("The lecture splits")
-            self.play(ev.animate.move_to(ev_home), run_time=0.6)
+            self.play(ev.animate.scale(1 / EV_K).move_to(ev_home), run_time=0.6)
             self.play(FadeIn(lr), FadeIn(ctag, shift=DOWN * 0.1),       # the lecture tag comes with its picture
                       LaggedStart(FadeIn(st_chip), FadeIn(lt_chip), lag_ratio=0.4), run_time=0.8)
             self.play(FadeIn(cab), FadeIn(ill), run_time=0.6)
@@ -449,6 +453,8 @@ class FiveDrawers(VoiceScene):
             self.play(recolor(wrapped_glyphs(r4, MEM_A), HARNESS), recolor(wrapped_glyphs(r4, MEM_B), HARNESS),
                       run_time=0.4)
             pin(self, blank, host, run_time=0.4)
+            vo.wait_until("saved memory")
+            self.play(Indicate(wrapped_glyphs(r4, MEM_B[2:]), color=HARNESS, scale_factor=1.08), run_time=0.6)
             for anchor, names in TOOL_BEATS:
                 vo.wait_until(anchor)
                 self.play(LaggedStart(*[recolor(wrapped_glyphs(r8, n), HARNESS) for n in names], lag_ratio=0.35),
@@ -458,27 +464,27 @@ class FiveDrawers(VoiceScene):
             beside(gh, t, r8[-1], buff=0.45)
             gx = strike(gh.text, ERR, 3.5)                 # drawn where the chip now is
             pin_all(self, r8[-1], [gh, gx], [LaggedStart(FadeIn(gh, shift=LEFT * 0.1), Create(gx), lag_ratio=0.55)],
-                    run_time=0.55)
+                    run_time=0.5)
             # the terminal shrinks to the strip while the cabinet grows back above it
-            fit(self, t, 3, keep=[cmd, r4[0], r8[-1]], tags=list(ft), run_time=0.8,
+            fit(self, t, 3, keep=[cmd, r4[0], r8[-1]], tags=list(ft), run_time=0.75,
                 extra=[cab.animate.scale(1 / BAND_K).move_to(CAB2_C)])
             for k, g in cab.dr.items():
                 drows[k].move_to(g.face.get_center() + offs[k])
             rows_back = VGroup(*drows.values())
             place(ill, left=cab.frame.get_right()[0] + 0.25, top=cab.frame.get_top()[1])
             mem_spot = cab.handle_point("memory")
-            bhand.move_to(mem_spot + RIGHT * 0.55 + DOWN * 0.1)
+            bhand.move_to(mem_spot + DOWN * 0.1)            # where the handle would be
             place(mdl, left=cab.frame.get_right()[0] + 0.3, cy=mem_spot[1])
             for m in (cab, ill, bhand, mdl):
                 inside(m)
             assert cab.frame.get_bottom()[1] > STRIP_TOP + 0.04 and cab.frame.get_top()[1] < tr.get_bottom()[1] - 0.05
             apart(ill, mdl, 0.15)
-            apart(rows_back, bhand, 0.1)
-            self.play(FadeIn(rows_back), FadeIn(ill), FadeIn(bhand, shift=LEFT * 0.25), run_time=0.4)
+            apart(drows["memory"], bhand, 0.1)
+            # the words come back while the BLUE hand reaches in from the right
+            self.play(FadeIn(rows_back), FadeIn(ill), FadeIn(bhand, shift=LEFT * 0.8), run_time=0.5)
             self.remove(rows_back)
             for k, g in cab.dr.items():
                 g.add(drows[k])
-            self.play(bhand.animate.shift(LEFT * 0.55), run_time=0.3)
             self.play(Succession(Rotate(bhand, -0.4, about_point=bhand.palm.get_center()),
                                  Rotate(bhand, 0.4, about_point=bhand.palm.get_center())),
                       FadeIn(mdl, shift=LEFT * 0.1), run_time=0.5)
@@ -500,7 +506,7 @@ class FiveDrawers(VoiceScene):
         u_stock = under(rows460[3], TURN, 3)
         u471 = [under(r, TURN, 3) for r in q471.rows]
         with self.voiceover(SAY[3]) as vo:
-            self.wait(0.8)                                # the hand's moment, held into this block
+            self.wait(1.1)                                # the hand's moment (~1.5 s), held into this block
             self.play(FadeOut(VGroup(cab, ill, bhand, mdl)), run_time=0.4)
             self.play(FadeIn(q460, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("1,000 grams each")
@@ -571,10 +577,13 @@ class FiveDrawers(VoiceScene):
 
         # ========================================================== 5 · the scripted extra: what approve prints
         t5 = term(container=True, rows=12)
-        ft5 = frame_tags(t5, scripted_tag())
+        dif5 = differ_tag()                             # the ticket and run IDs (lines 51, 62, 65, 83, 91)
+        ft5 = frame_tags(t5, scripted_tag(), dif5)      # `scripted` at the right edge, the IDs tag left of it
+        assert ft5[1] is dif5                           # (the title moves left, next to the dots)
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(p72, b72, card, lock, rl, tok, lab_rev, cap3, cap4, fw, ill4)), run_time=0.5)
-            self.play(caption_extra(tr, True), FadeIn(t5, shift=UP * 0.2), FadeIn(ft5, shift=DOWN * 0.1), run_time=0.5)
+            self.play(caption_extra(tr, True), FadeIn(t5, shift=UP * 0.2), FadeIn(ft5[0], shift=DOWN * 0.1),
+                      run_time=0.5)
             cmd5 = type_cmd(self, t5, FIX_CMD, 1.0)
             # the command starts under the prompt (type_cmd: it fits a row of its own), so the
             # tags sit on the prompt row: `extra` after the prompt, TEST decision over the flag
@@ -591,6 +600,7 @@ class FiveDrawers(VoiceScene):
             pin(self, r_p, tt, run_time=0.3)
             o5 = show(self, t5, C42, (51, 53), (55, 60), run_time=0.6)
             r52, r55, r57, r58 = o5[1], o5[3], o5[5], o5[6]
+            self.play(FadeIn(dif5, shift=DOWN * 0.1), run_time=0.35)     # the ticket ID on line 51
             vo.wait_until("the vendor address")
             self.play(recolor(r52.glyphs, LOOKUP), run_time=0.4)
             vo.wait_until("and a body written by code")
@@ -599,7 +609,7 @@ class FiveDrawers(VoiceScene):
             pin(self, r55, wc, run_time=0.4)
             self.play(recolor(r57.glyphs, TURN), run_time=0.4)
             vo.wait_until("nut allergy included")
-            self.play(recolor(r58.glyphs, HARNESS), run_time=0.4)
+            self.play(recolor(substring(r58, ALLERGY), HARNESS), run_time=0.4)
             self.play(Indicate(substring(r58, "nuts."), color=HARNESS, scale_factor=1.15), run_time=0.5)
             vo.wait_until("Then:")                        # the output scrolls on in two steps
             o6 = show(self, t5, C42, 62, 65, wrap=True, run_time=0.5)
@@ -641,15 +651,16 @@ class FiveDrawers(VoiceScene):
             self.play(recolor(r83[0].glyphs, HARNESS), run_time=0.4)
             self.play(recolor(r92[0].glyphs, HARNESS), Circumscribe(VGroup(r83[0], r92[0]), color=HARNESS,
                                                                      fade_out=True, stroke_width=3), run_time=0.7)
-            vo.wait_until("Pause and run step 1")
-            self.play(FadeOut(VGroup(t5, ft5)), FadeOut(c837), caption_extra(tr, False), run_time=0.5)
-            self.play(FadeIn(mm), FadeIn(lr22), run_time=0.5)
-            self.play(mm.light("tools"), run_time=0.3)
+            self.wait(0.25)                              # the GREEN block holds a moment
+            # the terminal leaves before "Pause and run step 1", so the map is read while it is
+            # spoken and the ▶ card arrives right after the SAY (not 3 s later)
+            self.play(FadeOut(VGroup(t5, ft5)), FadeOut(c837), caption_extra(tr, False), run_time=0.45)
+            self.play(FadeIn(mm), FadeIn(lr22), run_time=0.4)
+            self.play(mm.light("tools"), run_time=0.25)
             cap_t = mm.caption("Tools ← approval on save")
-            self.play(mm.add_bar("tools"), FadeIn(cap_t, shift=LEFT * 0.1), run_time=0.5)
-        self.wait(1.6)
-        self.play(FadeOut(cap_t), run_time=0.3)
-        self.play(FadeOut(mm), FadeOut(lr22), run_time=0.4)
+            self.play(mm.add_bar("tools"), FadeIn(cap_t, shift=LEFT * 0.1), run_time=0.45)
+        self.wait(0.5)                                  # the caption read (~1.5 s in all)
+        self.play(FadeOut(VGroup(cap_t, mm)), FadeOut(lr22), run_time=0.4)
         self.play(FadeIn(tc, scale=0.97), run_time=0.5)
         self.wait(2)                                    # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tc, tr)), run_time=0.8)

@@ -12,9 +12,10 @@ Beats (script.md "## S01", one voiceover block each):
    writes in under them.
 1. Card A fills with RECORDED(expected/colab-c21-bare-agent.txt: 4) excerpted (exact sub-strings,
    GREY "…" between them); "1,050 g" and "5,600¢" are indicated as they are named. Card B fills with
-   RECORDED(expected/colab-c23-agent-harness.txt: 61) excerpted. At "within a budget with the
-   comma" a RED ring circles card B's "1,5000¢" and card A's "15,000¢" gets a thin GREY underline;
-   at "a malformed number" the garbled number turns RED.
+   RECORDED(expected/colab-c23-agent-harness.txt: 61) excerpted; its "1,200 g" and "6,400¢" are
+   indicated as they are named. At "within a budget with the comma" a RED ring circles card B's
+   "1,5000¢" and card A's "15,000¢" gets a thin GREY underline; at "a malformed number" the garbled
+   number turns RED.
 2. The BLUE chip fades and both cards dim; the question writes in YELLOW across the lower third (no
    timer), its second row at "And what would"; the RED ring pulses once. A one-second hold.
 3. The question and the request chips fade; the cards brighten and rise (A stays left, B right).
@@ -24,16 +25,18 @@ Beats (script.md "## S01", one voiceover block each):
    the sentence was garbled": the ring pulses and the GREEN caption "checks the items · not the
    prose" writes in left of the box's "Cart satisfies" row. "Nothing checked": card A gets the GREY
    dashed tag "bare agent · no final cart check".
-4. LECTURE 21 (the recorded tag leaves first). V1 opens: card A slides down, card B slides left at
-   its own height (clear of the box) and drops into the slot above it; at "the model proposes" the
-   BLUE column "the model proposes" fades in around them (after B has landed: the column title sits
+4. LECTURE 21. V1 opens: card A slides down, card B slides left at its own height (clear of the
+   box) and drops into the slot above it; at "the model proposes" the recorded tag leaves, then the
+   BLUE column "the model proposes" fades in around the cards together with lecture_ref(7, "21")
+   (the tag arrives with the picture it cites; the column comes after B has landed: its title sits
    on B's path); at "the harness decides" the GREEN column "the harness decides" fades in as the
    check box rises into it; the dim YELLOW stamp "a human decides" sits at its lower right. At "The harness is the code
    around the model" the GREEN column pulses; the four GREEN words write in as named (the loop ·
    its limits · its context · its checks); at "Today we sort" both columns pulse.
-5. LECTURE 3. The cards, the box, the words and the stamp fade; the columns shrink to a band at the
-   top. Below, our drawing of the map: GREY "Lecture 7 · outline" (slide 3's seven sections) left,
-   `README.md · lines 13–21` (the tutorial activities) right; seven PINK links draw in row order at
+5. LECTURE 3. The cards, the box, the words, the stamp and the slide-21 tag fade; the columns
+   shrink to a band at the top. Below, our drawing of the map (the slide-3 tag arrives with it):
+   GREY "Lecture 7 · outline" (slide 3's seven sections) left, `README.md · lines 13–21` (the
+   tutorial activities) right; seven PINK links draw in row order at
    "in order"; at "six acts" the five act chips turn YELLOW; at "in a fictional cheese shop" the
    excerpt chip `README.md · line 27 (excerpt)` writes in at the bottom, and at "where nothing is
    really bought" its "mock, in-memory" gets a YELLOW underline.
@@ -47,11 +50,14 @@ Beats (script.md "## S01", one voiceover block each):
    October 20, 2026" (at the date) and the GREY "no key" tag (at "without an OpenAI key"); the
    card's outline draws with its first row, and its rows write in as named: GREEN "ran for real: the build · the tests · every offline and scripted
    command", RED "every live command: up to its first model call, then a 401 (no key)", BLUE "live
-   answers: `recorded` = the staff's saved Colab run · `expected` = the README's own words".
+   answers: `recorded` = the staff's saved Colab run · `expected` = the README's own words". At
+   "OpenAI refused" a RED underline draws under "a 401 (no key)"; `recorded` and `expected` are
+   indicated as the SAY names their sources.
 8. The card clears. The GOLD tag `live · billed per token` over "the only cost: OpenAI tokens · no
    cloud project · no service account"; the two GREY chips ‹customer 1› ‹customer 2› over "customer
    IDs masked on screen · your terminal and the README show them"; the footer "every command:
-   MLOps_Learning · guides/L07-agents-2-harness.md". A hold, then everything fades to an empty frame.
+   MLOps_Learning · guides/L07-agents-2-harness.md", its path underlined YELLOW at "the study
+   guide". A hold, then everything fades to an empty frame.
 
 Every output line comes from capture("expected/colab-c23-agent-harness") / ("expected/colab-c21-
 bare-agent") (exact sub-strings, checked below); the README phrase from source_line("README.md", 27).
@@ -72,7 +78,6 @@ from manim import (
     Line,
     ReplacementTransform,
     RoundedRectangle,
-    Succession,
     VGroup,
     Write,
     there_and_back,
@@ -305,7 +310,9 @@ def even_chip(s: str, w: float, color: str = S.GREY, size: float = PT) -> VGroup
 
 def rich(s: str, size: float, color: str = INK, lead: tuple | None = None):
     """One row of serif text with `code` spans in mono (backticks dropped); lead=(n, colour)
-    colours the first n characters of the plain text."""
+    colours the first n characters of the plain text. Ligatures off: then the Text has one
+    submobject per character, spaces included, so t[i] is plain[i] ("fi" in "first" or "ffl" in
+    "offline" would otherwise merge glyphs and shift every index after them)."""
     parts = s.split("`")
     plain, spans = "", []
     for k, p in enumerate(parts):
@@ -313,7 +320,9 @@ def rich(s: str, size: float, color: str = INK, lead: tuple | None = None):
             spans.append((len(plain), len(plain) + len(p)))
         plain += p
     t2c = {f"[0:{lead[0]}]": lead[1]} if lead else {}
-    t = S.text(plain, size, color, t2f={f"[{a}:{b}]": MONO for a, b in spans}, t2c=t2c)
+    t = S.text(plain, size, color, t2f={f"[{a}:{b}]": MONO for a, b in spans}, t2c=t2c,
+               disable_ligatures=True)
+    assert len(t) == len(plain), (len(t), plain)
     t.plain = plain
     return t
 
@@ -406,6 +415,7 @@ class Hook(VoiceScene):
         a_15000 = substring(card_a.rows[2], "15,000¢")
         b_bad = substring(card_b.rows[2], "1,5000¢")
         b_1200 = substring(card_b.rows[1], "1,200 g")
+        b_6400 = substring(card_b.rows[3], "6,400¢")
         red_ring = ring(b_bad, ERR, buff=0.07, stroke=4)
         grey_ul = under(a_15000, S.GREY, stroke=2.5, buff=0.06)
 
@@ -416,7 +426,11 @@ class Hook(VoiceScene):
             vo.wait_until("5,600 cents")
             self.play(Indicate(a_5600, color=TURN, scale_factor=1.15), run_time=0.8)
             vo.wait_until("The second")
-            self.play(write_rows(card_b.rows, run_time=1.4))
+            self.play(write_rows(card_b.rows, run_time=1.0))
+            vo.wait_until("1,200 grams")                       # card B's numbers, as card A's
+            self.play(Indicate(b_1200, color=TURN, scale_factor=1.15), run_time=0.6)
+            vo.wait_until("6,400 cents")
+            self.play(Indicate(b_6400, color=TURN, scale_factor=1.15), run_time=0.6)
             vo.wait_until("within a budget with the comma")
             self.play(Create(red_ring), run_time=0.6)
             self.play(Create(grey_ul), run_time=0.5)
@@ -498,14 +512,16 @@ class Hook(VoiceScene):
         assert card_b.frame.get_bottom()[1] + b_shift[1] > card_a.get_top()[1] + a_shift[1] + 0.1
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(dtag), FadeOut(cap), FadeOut(green_tick), FadeOut(green_ul),
-                      Succession(FadeOut(rec, run_time=0.35), FadeIn(lr, run_time=0.35)), run_time=0.7)
+            self.play(FadeOut(dtag), FadeOut(cap), FadeOut(green_tick), FadeOut(green_ul), run_time=0.7)
             self.play(card_a.animate.shift(a_shift), run_time=0.7)
             # B slides left at its own height (above the box, clear of A), then drops into its slot
             self.play(card_b.animate.shift(RIGHT * b_shift[0]), run_time=0.7)
             self.play(card_b.animate.shift(UP * b_shift[1]), run_time=0.4)
             vo.wait_until("the model proposes")
-            self.play(FadeIn(left_col), run_time=0.6)
+            # the slide-21 tag arrives with the picture it cites (the columns); the recorded tag
+            # leaves first (one place, old out, then new in)
+            self.play(FadeOut(rec), run_time=0.3)
+            self.play(FadeIn(left_col), FadeIn(lr), run_time=0.6)
             self.bring_to_front(card_a, card_b)
             vo.wait_until("the harness decides")
             self.play(FadeIn(right_col), chk.animate.shift(UP * chk_up), run_time=0.9)
@@ -552,11 +568,11 @@ class Hook(VoiceScene):
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(card_a), FadeOut(card_b), FadeOut(chk), FadeOut(stamp),
-                      *[FadeOut(w) for w in words],
-                      Succession(FadeOut(lr, run_time=0.35), FadeIn(lr3, run_time=0.35)), run_time=0.7)
+                      *[FadeOut(w) for w in words], FadeOut(lr), run_time=0.7)
             self.play(ReplacementTransform(left_col, band.parts["left"]),
                       ReplacementTransform(right_col, band.parts["right"]), run_time=0.8)
-            self.play(FadeIn(band.parts["human"]), FadeIn(l_head), FadeIn(r_head),
+            # the slide-3 tag arrives with the map it cites
+            self.play(FadeIn(band.parts["human"]), FadeIn(l_head), FadeIn(r_head), FadeIn(lr3),
                       LaggedStart(*[FadeIn(c, shift=RIGHT * 0.1) for c in left_chips], lag_ratio=0.1),
                       LaggedStart(*[FadeIn(c, shift=LEFT * 0.1) for c in right_chips], lag_ratio=0.1),
                       run_time=1.0)
@@ -620,7 +636,7 @@ class Hook(VoiceScene):
             y = txt.get_bottom()[1] - 0.34
         row3b = rich(LIMIT_ROW3B, 22, INK)
         r3 = rows7[2][1]
-        k_rec = len("live answers:".replace(" ", ""))          # the glyph index of "recorded"
+        k_rec = r3.plain.index("recorded")                    # the glyph index of "recorded"
         place(row3b, top=r3.get_bottom()[1] - 0.14)
         row3b.align_to(r3[k_rec], LEFT)
         rows7[2].add(row3b)
@@ -631,6 +647,15 @@ class Hook(VoiceScene):
         place(VGroup(card7, body), cx=0, cy=0.0)
         inside_frame(card7)
         assert card7.width <= 12.9, card7.width
+
+        def span(t, sub: str) -> VGroup:
+            """The glyphs of `sub` in a rich() row (one submobject per character)."""
+            i = t.plain.index(sub)
+            return VGroup(*t[i:i + len(sub)])
+
+        ul_401 = under(span(rows7[1][1], "401 (no key)"), ERR, stroke=3, buff=0.06)
+        sp_rec = span(rows7[2][1], "recorded")
+        sp_exp = span(row3b, "expected")
 
         with self.voiceover(SAY[7]) as vo:
             self.play(*self.outs(t, prev, tr, lr21, tr_cap, lr_cap), run_time=0.6)
@@ -644,10 +669,16 @@ class Hook(VoiceScene):
                       run_time=0.8)
             vo.wait_until("live commands ran until")
             self.play(FadeIn(rows7[1][0], scale=1.3), FadeIn(rows7[1][1], shift=RIGHT * 0.15), run_time=0.6)
+            vo.wait_until("OpenAI refused")
+            self.play(Create(ul_401), run_time=0.5)
             vo.wait_until("Live answers come from")
             self.play(FadeIn(rows7[2][0], scale=1.3), FadeIn(VGroup(rows7[2][1], row3b), shift=RIGHT * 0.15),
                       run_time=0.6)
-        honest = VGroup(card7, head, rows7)
+            vo.wait_until("the staff's saved Colab run")
+            self.play(Indicate(sp_rec, color=TURN, scale_factor=1.12), run_time=0.7)
+            vo.wait_until("and the README")
+            self.play(Indicate(sp_exp, color=TURN, scale_factor=1.12), run_time=0.7)
+        honest = VGroup(card7, head, rows7, ul_401)
 
         # ========================================================== 8. cost, masks, the guide
         cost_txt = label("the only cost: OpenAI tokens · no cloud project · no service account", 22, INK)
@@ -659,6 +690,7 @@ class Hook(VoiceScene):
         stack = VGroup(g1, g2, footer).arrange(DOWN, buff=0.75)
         place(stack, cx=0, cy=0.0)
         inside_frame(stack)
+        guide_ul = under(footer[1], TURN, stroke=3, buff=0.08)
 
         with self.voiceover(SAY[8]) as vo:
             self.play(*self.outs(honest), run_time=0.5)
@@ -667,6 +699,8 @@ class Hook(VoiceScene):
             self.play(FadeIn(masks, shift=DOWN * 0.1), FadeIn(mask_txt), run_time=0.6)
             vo.wait_until("and every command is in the study guide")
             self.play(FadeIn(footer, shift=UP * 0.1), run_time=0.6)
+            vo.wait_until("the study guide")
+            self.play(Create(guide_ul), run_time=0.5)
         self.wait(1.2)
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)
         self.wait(0.3)

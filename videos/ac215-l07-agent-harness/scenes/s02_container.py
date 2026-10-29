@@ -31,10 +31,10 @@ Beats (script.md "## S02", one voiceover block each):
  5  The terminal shrinks to the strip (lines 14–16, the three build steps); CODE(Dockerfile:
     42–48) above it: 42 GREEN "the lockfile first", 45 GREEN, 48 GREY "the code last", lit in
     build order, each with its strip row.
- 6  The panel leaves; the terminal grows back: laptop/07 lines 21–26, the prompt
+ 6  The panel leaves; the terminal grows back: a '…' row, laptop/07 lines 21–26, the prompt
     app@13a6188396ca:/app$ (line 27 cut before " exit"): TEAL frame, title "container ·
     agent-harness". The terminal shrinks to a strip (23, 26, the prompt); CODE(docker-entrypoint.sh:
-    6–12) above it: line 6 boxed GREY with the GREY tag "erratum · says activated…", line 12
+    6–12) above it: line 6 on a GREY bar with the GREY tag "erratum · says activated…", line 12
     GREEN "…activates here". 13a6188396ca underlined PINK, GREY tag "container ID · your numbers
     will differ".
  7  The panel leaves. Chip README.md · line 108 (excerpt) "Run every remaining command inside
@@ -201,12 +201,6 @@ def after_code(mob, p, n: int, buff: float = 0.45):
     return mob
 
 
-def outline(mob, color: str = S.GREY, pad: float = 0.08, stroke: float = 3):
-    """An unfilled rounded box around mob (not added)."""
-    return RoundedRectangle(width=mob.width + 2 * pad, height=mob.height + 2 * pad, corner_radius=0.08,
-                            stroke_color=color, stroke_width=stroke).set_fill(opacity=0).move_to(mob)
-
-
 def cell_box(top_row, bottom_row, a: int, b: int, color: str = TURN, pad: float = 0.05):
     """An outline over columns a..b (exclusive) of two stacked terminal rows (a header and its cell)."""
     from explainer.devops import cell_width
@@ -299,12 +293,13 @@ class OneContainer(VoiceScene):
         place(c92, left=-6.3, cy=BAND2_Y)
         ls_rows = ls_columns(LS)
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(p0, unused, *bars0.values())), FadeIn(tr, shift=DOWN * 0.25),
-                      run_time=0.5)
-            stage.shrink(self, width=BADGE_W, center=BADGE_C, run_time=0.9)
-            self.play(FadeIn(t, shift=UP * 0.2), caption_extra(tr, True), run_time=0.5)
+            # the stage leaves the top band before the tracker enters it (no overlap mid-shrink)
+            self.play(FadeOut(VGroup(p0, unused, *bars0.values())), run_time=0.35)
+            stage.shrink(self, width=BADGE_W, center=BADGE_C, run_time=0.85)
+            self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(t, shift=UP * 0.2), run_time=0.5)
             vo.wait_until("git clone")
             cl = type_cmd(self, t, CLONE.cmd, 1.0)
+            self.play(caption_extra(tr, True), run_time=0.35)      # " · extra" with the first extra
             ex1 = at_right(extra_tag(), t, cl)
             pin(self, cl.rows[0], ex1, run_time=0.3)
             t.print(self, CLONE.at(2), run_time=0.4)
@@ -398,7 +393,8 @@ class OneContainer(VoiceScene):
             self.play(substring(r15, "uv").animate.set_color(TOOL), run_time=0.4)
             vo.wait_until("Ours took 38 seconds")
             s38 = substring(r3, "38.2s")
-            self.play(s38.animate.set_color(TURN), flash(s38, TURN, 1.2), run_time=0.6)
+            self.play(s38.animate.set_color(TURN), run_time=0.25)       # stays lit (an Indicate in the
+            self.play(flash(s38, TURN, 1.2), run_time=0.45)              # same play would undo it)
             pin(self, r3, beside(grey_tag("ours"), t, r3, buff=0.35), run_time=0.4)
             vo.wait_until("with the base image")
             img = substring(r9, "python:3.13-slim-bookworm")
@@ -435,7 +431,7 @@ class OneContainer(VoiceScene):
         # ========================================================== 6 · the banner's slip; the container ID
         p6 = src_panel("docker-entrypoint.sh", 6, 12)
         place(p6, cx=0, bottom=GAP_Y)
-        box6 = outline(code_row(p6, 6), S.GREY, pad=0.07)
+        box6 = p6.bar(6, S.GREY, 0.22)            # a bar, not an outline: the rows sit too close for a box
         err6 = erratum_tag("says activated…")
         place(err6, right=p6.code.get_right()[0], cy=p6.header.get_center()[1])
         bar12 = p6.bar(12, HARNESS, 0.22)
@@ -443,8 +439,10 @@ class OneContainer(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(p5, n42, n48, *bars5)), run_time=0.4)
             resize(self, t, BUILD_ROWS, run_time=0.6)
-            ban = t.print(self, BUILD.at((21, 26)), run_time=0.6)
-            r23, r26 = ban[2], ban[5]
+            # "…" first: the strip dropped beat 4's "…" row (lines 17-20, the export) above line 21
+            ban = t.print(self, BUILD.out("…", (21, 26)), run_time=0.6)
+            r23, r26 = ban[3], ban[6]
+            assert r23.text == BUILD.line(23) and r26.text == BUILD.line(26), (r23.text, r26.text)
             t.set_prompt(P_CTR)
             pr = bare_prompt(self, t)
             self.play(*enter_container(t), run_time=0.6)
@@ -455,7 +453,7 @@ class OneContainer(VoiceScene):
             vo.wait_until("before the script")
             resize(self, t, 3, keep=[r23, r26, pr], run_time=0.6)
             self.play(FadeIn(p6, shift=UP * 0.15), run_time=0.5)
-            self.play(Create(box6), FadeIn(err6, shift=DOWN * 0.08), run_time=0.5)
+            self.play(FadeIn(box6), FadeIn(err6, shift=DOWN * 0.08), run_time=0.5)
             self.play(FadeIn(bar12), FadeIn(n12, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("a harmless slip")
             self.play(flash(err6, TURN, 1.08), run_time=0.6)

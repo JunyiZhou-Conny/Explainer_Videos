@@ -36,11 +36,13 @@ Beats (script.md "## S05", one voiceover block each):
     the fence and the panel leave.
  5  LECTURE 21. The CartCheck ring glows; excerpt chip `README.md · line 232 (excerpt)`
     "Independent assessment of the final proposal"; slide 21's strip at the bottom with "Verify"
-    lit GREEN. "Back to the hook": answer card B (`… within your 1,5000¢ budget. …`, RED ring) at
-    left, the GREEN check box RECORDED(c23: 63–68) at right (tag recorded); GREEN arrows point at
-    the three item lines; a GREY dashed arrow to card B, "not read"; the garbled number pulses
-    RED while "Cart satisfies the shop rules." flashes GREEN. "It reports, and never repairs":
-    the four statuses of README.md · line 236 and the tag "reports · never repairs".
+    lit GREEN (the slide-21 tag arrives with it). "Back to the hook": answer card B (`… within
+    your 1,5000¢ budget. …`, RED ring) at left, the GREEN check box RECORDED(c23: 63–68) at right
+    (tag recorded); GREEN arrows point at the three item lines; a GREY dashed arrow to card B,
+    "not read"; the garbled number pulses RED while "Cart satisfies the shop rules." flashes
+    GREEN. "It reports, and never repairs":
+    the strip leaves, then the four statuses of README.md · line 236 and the tag "reports · never
+    repairs" (three groups on screen).
  6  LECTURE 22. V1 builds full screen: the rest leaves; card B and the check box lose their text
     and stretch into the BLUE and GREEN columns, the headers "the model proposes" / "the harness
     decides" write in, the PINK "who decides?" arrow; each column splits into five cells; the
@@ -49,15 +51,15 @@ Beats (script.md "## S05", one voiceover block each):
  7  Act 1 fills three GREEN cells (Control flow "Budget · admission", Tools "@tool schemas ·
     counted, audited calls", Verification "CartCheck"), each row lit YELLOW as it fills; then Move
     LEFT (BLUE) and Move RIGHT (GREEN); the GREEN arrow pulses at "Move right".
- 8  The table and the lecture tag leave. Two onions (tag illustration): `harness` (four rings)
-    and `lite = harness.without("trace")` (three); a YELLOW "?" on lite's inner ring, another on
-    the original's Trace ring, as asked. PONDER (8 s).
+ 8  The table and the lecture tag leave. Two onions (tag illustration, top right): `harness`
+    (four rings) and `lite = harness.without("trace")` (three); a YELLOW "?" on lite's inner
+    ring, another on the original's Trace ring, as asked. PONDER (8 s).
  9  The card leaves. "Yes, and yes": lite's inner ring glows GREEN, excerpt chip `README.md · line
     229 (excerpt)` "call counts and required tool admission/audit records remain". Then
     CODE(formaggio/agents/harness.py: 62–68) (20 pt) along the bottom, under the onions, with
-    lines 63 and 68 lit; the original's Trace ring glows, GREEN tag "unchanged"; lite gets the GREY
-    caption "a separate configuration"; quote card `README.md · line 234 (excerpt)` "`.add(...)`
-    also returns a new configuration."
+    lines 63 and 68 lit; the original's Trace ring glows, GREEN tag "unchanged" after its name;
+    lite gets the GREY caption "a separate configuration" after its name; quote card `README.md ·
+    line 234 (excerpt)` "`.add(...)` also returns a new configuration."
 10  TRACKER Agent 4. Container terminal (12 rows, TEAL), title-bar tags `no key` and GOLD `live ·
     billed per token`: `python cli.py --act 1 --scenario missing-details` -> container/12 lines
     4, 6 cut after "everyone's allergies." (wrapped), 8–10 (wrapped), 11 as the short 401. The two
@@ -160,7 +162,7 @@ PANEL_TOP = 2.78                # beat 1: README / act1 panels' top (header) und
 STACK_X = -6.4                  # beat 2: the column the four labels wait in (left edges)
 CR_POS = np.array([-4.4, 1.5, 0])  # beats 3-5: the compact rings (fence fits: x -6.4..-2.4, y 0.15..2.85)
 HUB = np.array([-0.62, 1.72, 0])   # beat 3: the turnstile's hub (tokens pass at this height)
-ONION_A, ONION_B = np.array([-4.85, 1.26, 0]), np.array([0.7, 1.26, 0])   # beats 8-9: harness and lite
+ONION_A, ONION_B = np.array([-4.85, 1.16, 0]), np.array([0.7, 1.16, 0])   # beats 8-9: harness and lite
 
 
 # ------------------------------------------------------------------ small helpers
@@ -209,6 +211,13 @@ def hide(m, attr: str = "_x"):
     _save_op(m, attr)
     _set_op(m, 0, attr)
     return m
+
+
+def shown_copy(m):
+    """A copy of a hidden Piece part at its saved (shown) opacities."""
+    c = m.copy()
+    _set_op(c)
+    return c
 
 
 def bar_flash(bar, k: float = 0.55, run_time: float = 0.3):
@@ -436,17 +445,18 @@ class HarnessLayers(VoiceScene):
                 ap.code.code_lines.remove(rows[SPANS[ln][0]])
             self.add(*rows.values())
             self.add(hr)
-            self.play(FadeOut(VGroup(ap, *bars_a.values())), run_time=0.45)
+            # (brisk: the inner ring must land while "never comes off" is still being said)
+            self.play(FadeOut(VGroup(ap, *bars_a.values())), run_time=0.35)
             self.play(*[FadeOut(rows[n], rate_func=_out_early) for n in RINGS4],
-                      *[_Reveal(hr.label_of(n), rate_func=_in_late) for n in RINGS4], run_time=0.7)
+                      *[_Reveal(hr.label_of(n), rate_func=_in_late) for n in RINGS4], run_time=0.6)
             self.play(*[hr.label_of(n).animate.move_to(col[n]) for n in RINGS4],
-                      core.animate.move_to(core_dst), run_time=0.7)
+                      core.animate.move_to(core_dst), run_time=0.6)
             _set_op(hr.parts["core"])                  # the piece's own core takes the copy's place
             hr._flag(hr.parts["core"], False)
             self.remove(core)
-            self.play(*hr.parts_in("inner"), FadeIn(ill2), run_time=0.6)
+            self.play(*hr.parts_in("inner"), FadeIn(ill2), run_time=0.45)
             vo.wait_until("never comes off")
-            self.play(flash(hr.parts["inner"].lock, HARNESS, 1.6), run_time=0.6)
+            self.play(flash(hr.parts["inner"].lock, HARNESS, 1.6), run_time=0.5)
             vo.wait_until("call admission")
             self.play(flash(hr.label_of("inner"), HARNESS, 1.08), run_time=0.8)
             vo.wait_until("Four harness layers slide on")
@@ -534,6 +544,11 @@ class HarnessLayers(VoiceScene):
         # ========================================================== 4 · without Budget: the SDK fallback
         fe = cr.fence()
         fe.remove(fe.label)
+        # the fence, drawn here 0.2 less tall than .fence()'s (its top ran 0.08 under the tracker)
+        outer = cr.frames["cartcheck"]
+        fe.frame = box(outer.width + 0.6, outer.height + 0.3, S.GREY, dashed=True, stroke=3,
+                       radius=0.45).move_to(outer)
+        apart(fe.frame, tr, 0.15)
         fe_lab = fit_rows(FENCE_TEXT, 5.4, CAPTION, S.GREY, align=LEFT)
         place(fe_lab, left=fe.frame.get_right()[0] + 0.35, cy=cr.core.get_center()[1])
         e56 = src_panel("formaggio/agents/execution.py", 56, 58, join=[(57, 58)], size=20,
@@ -611,10 +626,11 @@ class HarnessLayers(VoiceScene):
         inside_frame(ex232, ss, cb, chk, rec, status, notread)
 
         with self.voiceover(SAY[5]) as vo:
-            lr = lref_swap(self, lr, "21")
             self.play(cr.glow("cartcheck"), FadeIn(ex232, shift=LEFT * 0.15), run_time=0.6)
             vo.wait_until("the lecture's verify step")
-            self.play(FadeIn(ss, shift=UP * 0.15), run_time=0.5)
+            # the slide-21 tag arrives with slide 21's strip (old tag out, then the new one in)
+            self.play(Succession(FadeOut(lr), FadeIn(lr21)), FadeIn(ss, shift=UP * 0.15), run_time=0.6)
+            lr = lr21
             self.play(ss.light("Verify", HARNESS), run_time=0.5)
             vo.wait_until("Back to the hook")
             self.play(FadeIn(cb, shift=RIGHT * 0.15), run_time=0.5)
@@ -628,6 +644,8 @@ class HarnessLayers(VoiceScene):
             self.play(pulse(cb.ring, ERR, 1.25, run_time=0.8, width=6),
                       flash(verdict.glyphs, HARNESS, 1.08), run_time=0.8)
             vo.wait_until("It reports, and never repairs")
+            # the strip has made its point: it leaves before the statuses come (three groups on screen)
+            self.play(FadeOut(ss, shift=DOWN * 0.1), run_time=0.3)
             self.play(FadeIn(st_head), LaggedStart(*[FadeIn(c, shift=UP * 0.1) for c in st_chips], lag_ratio=0.25),
                       run_time=0.8)
             self.play(FadeIn(st_tag, shift=LEFT * 0.1), run_time=0.4)
@@ -651,19 +669,22 @@ class HarnessLayers(VoiceScene):
         col_b, col_g = column(blue_frames, CLOUD), column(green_frames, HARNESS)
 
         with self.voiceover(SAY[6]) as vo:
-            gone = [cr, ex232, ss, rec, items_g, notread, status, cb.row, cb.header, cb.ring, chk.rows, chk.rule]
+            gone = [cr, ex232, rec, items_g, notread, status, cb.row, cb.header, cb.ring, chk.rows, chk.rule]
             self.play(*[FadeOut(m) for m in gone], run_time=0.5)
             lr = lref_swap(self, lr, "22")
             self.play(Transform(cb.frame, col_b), Transform(chk.frame, col_g), run_time=0.9)
             self.add(ab)
             self.play(*ab.parts_in("heads", "who"), run_time=0.6)
-            # each column splits into five cells
-            pieces_b = [col_b.copy() for _ in rows5]
-            pieces_g = [col_g.copy() for _ in rows5]
+            # each column splits into five cells: five stacked copies whose fills add up to the
+            # column's (0.08), each going to its cell at the cell's own (saved) opacities; a copy at
+            # opacity 1 flashed two solid BLUE / GREEN blocks
+            k = 1 - (1 - 0.08) ** (1 / len(rows5))
+            pieces_b = [col_b.copy().set_fill(opacity=k) for _ in rows5]
+            pieces_g = [col_g.copy().set_fill(opacity=k) for _ in rows5]
             self.remove(cb.frame, chk.frame)
             self.add(*pieces_b, *pieces_g)
-            self.play(*[Transform(p, f.copy().set_opacity(1)) for p, f in zip(pieces_b, blue_frames)],
-                      *[Transform(p, f.copy().set_opacity(1)) for p, f in zip(pieces_g, green_frames)], run_time=0.8)
+            self.play(*[Transform(p, shown_copy(f)) for p, f in zip(pieces_b, blue_frames)],
+                      *[Transform(p, shown_copy(f)) for p, f in zip(pieces_g, green_frames)], run_time=0.8)
             for n in rows5:
                 _set_op(ab.blues[n].frame)
                 _set_op(ab.greens[n].frame)
@@ -699,11 +720,11 @@ class HarnessLayers(VoiceScene):
         oa = HarnessRings(mode="compact").move_to(ONION_A)
         ob = HarnessRings(mode="compact", without=("trace",)).move_to(ONION_B)
         ta = mono("harness", CAPTION, INK)
-        place(ta, cx=oa.get_center()[0], bottom=oa.get_top()[1] + 0.12)
+        place(ta, cx=oa.get_center()[0], bottom=oa.get_top()[1] + 0.19)   # (room for beat 9's tag beside it)
         tb = mono('lite = harness.without("trace")', CAPTION, INK)
-        place(tb, cx=ob.get_center()[0], bottom=ob.get_top()[1] + 0.12)
-        ill8 = illustration_tag()
-        place(ill8, left=tb.get_right()[0] + 0.3, cy=tb.get_center()[1])
+        place(tb, cx=ob.get_center()[0], bottom=ob.get_top()[1] + 0.19)
+        ill8 = illustration_tag()           # top right (no lecture tag now): beside tb sits beat 9's caption
+        place(ill8, right=SAFE_X, top=3.55)
         q_trace = pointer(oa.frames["trace"], [("`Trace()`", TURN), ("?", TURN)], oa.get_right()[0] + 0.35)
         q_lite = pointer(ob.frames["inner"], [("counted · audited", TURN), ("?", TURN)], ob.get_right()[0] + 0.35)
         apart(ta, tr, 0.08)
@@ -715,9 +736,9 @@ class HarnessLayers(VoiceScene):
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(ab), FadeOut(lr), run_time=0.6)
-            self.play(FadeIn(oa, shift=UP * 0.15), FadeIn(ta), run_time=0.6)
+            self.play(FadeIn(oa, shift=UP * 0.15), FadeIn(ta), FadeIn(ill8), run_time=0.6)
             vo.wait_until("Take harness without trace")
-            self.play(FadeIn(ob, shift=UP * 0.15), FadeIn(tb), FadeIn(ill8), run_time=0.6)
+            self.play(FadeIn(ob, shift=UP * 0.15), FadeIn(tb), run_time=0.6)
             self.play(flash(tb, TURN, 1.06), run_time=0.6)
             vo.wait_until("Is a tool call still counted")
             self.play(ob.glow("inner", TURN), Create(q_lite.leader), run_time=0.4)
@@ -734,16 +755,22 @@ class HarnessLayers(VoiceScene):
         hp = src_panel("formaggio/agents/harness.py", 62, 68, wrap=True, size=20)
         place(hp, cx=0, bottom=-3.5)
         b63, b68 = row_bar(hp, 63), row_bar(hp, 68)
+        # each onion's caption sits in its title row, after its name (between the onions, "unchanged"
+        # sat closer to lite than to harness; under the illustration tag, the caption read as the
+        # quote card's)
         unch = tag("unchanged", HARNESS)
-        place(unch, left=oa.get_right()[0] + 0.25, cy=oa.get_center()[1])
+        place(unch, left=ta.get_right()[0] + 0.3,                                  # level with ta, clear of oa
+              cy=max(ta.get_center()[1], oa.get_top()[1] + 0.09 + unch.height / 2))
         sep = note("a separate configuration")
-        place(sep, left=ob.get_right()[0] + 0.3, top=min(ob.get_top()[1], ill8.get_bottom()[1] - 0.12))
+        place(sep, left=tb.get_right()[0] + 0.3, cy=tb.get_center()[1])
+        assert sep.get_right()[0] <= SAFE_X, sep.get_right()
         q234 = quote_card(234, lines=["`.add(...)` also returns", "a new configuration."],
                           header="README.md · line 234 (excerpt)", expected=False)
         place(q234, right=SAFE_X, top=sep.get_bottom()[1] - 0.25)
-        for a_, b_ in ((unch, ob), (sep, tb), (q234, hp), (q234, ob), (sep, ob), (oa, hp), (ob, hp),
-                       (unch, hp), (q234, ill8), (sep, ill8)):
+        for a_, b_ in ((unch, ob), (unch, tb), (sep, tb), (q234, hp), (q234, ob), (sep, ob), (oa, hp), (ob, hp),
+                       (unch, hp), (q234, ill8), (sep, ill8), (unch, oa)):
             apart(a_, b_, 0.08)
+        apart(unch, tr, 0.08)
         inside_frame(hp, unch, sep, q234, ex229)
 
         with self.voiceover(SAY[9]) as vo:

@@ -42,7 +42,8 @@ Beats (script.md "## S08", one voiceover block each):
     bar) and the rail returns above it (tag illustration inside the U), a BLUE "model" chip on
     "propose cart", the customer's cart: a GREY token left of "confirm" and the GREY item chips
     Comté · Bûcheron · Époisses inside the U, the GREY tag "customer input ·
-    data/shipping_customer_cart.json" in the top band. On "Before": the tag leaves, a RED bar closes the loop,
+    data/shipping_customer_cart.json" in the top band, all on "Comté" (the chips flash; on "to
+    Pennsylvania" the strip's `pa-shipping` flashes). On "Before": the tag leaves, a RED bar closes the loop,
     "review only"; the token runs through confirm and propose (it leaves propose BLUE: the model
     records the cart) and stops at validate, RED (Comté RED), under the README's QUOTE(382–383)
     (excerpt, `expected`; in the top band from "Before" on). On "After": the quote leaves, the bar lifts, the counter
@@ -52,7 +53,8 @@ Beats (script.md "## S08", one voiceover block each):
     `python cli.py --act 3 --fixture --scenario pa-shipping` (tag extra). On "a script in the
     model's seat" the model chip slides out and the BLUE dashed `scripted` seat comes in. A BLUE
     dashed token runs the rail while the strip prints container/36 in turn: 11–13 as it leaves
-    propose (the cart chips arrive BLUE; "RAW MILK" RED on "Attempt 1 has"), 14–15 as it enters
+    propose (the cart chips arrive BLUE; its first row flashes on "Attempt 1 has", "RAW MILK" turns
+    RED on "raw-milk"), 14–15 as it enters
     validate, 16 (wrapped: the whole reason) with the RED stamp `shipping: comte`, token and Comté
     RED; 17, and it rides the revise loop (counter 1/2); 19–21 as it leaves propose again, 22 (the
     whole attempt-2 cart), 23–25 while the Comté chip swaps for Taleggio (old out, then new in) and
@@ -65,7 +67,8 @@ Beats (script.md "## S08", one voiceover block each):
     (extra) -> a new BLUE dashed token: rejected at validate, back along the loop (counter 1/2),
     container/37 lines 19–24 print and the caption "No changes; the same cart was proposed again."
     (the capture's line 24) appears; rejected again (2/2); the third proposal fails (36–37) and the
-    token runs into a RED buffer "UNRESOLVED" (38–39) beside validate; on "not blocked" a GREY
+    token runs into a RED buffer "UNRESOLVED" (38–39) beside validate (`your numbers will differ` on
+    the blank row 38, over the run ID's end: its own row is full); on "not blocked" a GREY
     dashed buffer "BLOCKED · live run only" under it; on "so in Colab" the GREY card "Colab: keep
     `USE_FIXTURES = False` for this lesson (Agent Harness · cell 11 · line 6)" top right. On "Pause
     and run" everything but the tracker leaves (its caption drops " · extra": the card is the README's
@@ -80,6 +83,7 @@ from manim import (
     LEFT,
     RIGHT,
     UP,
+    AnimationGroup,
     Arrow,
     Create,
     DashedLine,
@@ -105,7 +109,7 @@ from manim import (
 from common import *  # noqa: F401,F403
 from common import _header_text, _mixed_row, _swap_text
 from explainer import style as S
-from explainer.devops import box, chip, label, mono, substring
+from explainer.devops import box, chip, label, mono, substring, tag
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S08"]
@@ -662,22 +666,26 @@ class Rails(VoiceScene):
             apart(m, tr)
         nudge = np.array([g.f["validate"].get_left()[0] + 0.15 - tok.width / 2, g.yt, 0])
         with self.voiceover(SAY[4]) as vo:
+            # (the two commands are typed briskly: the SAY names the cart's cheeses ~4.9 s in, and
+            # the rail with the cart should be up by then)
             self.play(FadeOut(c367), tr.goto(2), run_time=0.4)
-            type_cmd(self, t, BLK.cmd, 0.45)
-            o1 = show(self, t, BLK, 5, 6, BLK.as401(16, short=True), wrap=True, run_time=0.4)
+            type_cmd(self, t, BLK.cmd, 0.35)
+            o1 = show(self, t, BLK, 5, 6, BLK.as401(16, short=True), wrap=True, run_time=0.35)
             self.play(substring(item_rows(o1, 0)[0], SC31).animate.set_color(TURN),
-                      wrapped_glyphs(item_rows(o1, 1), STOPS31).animate.set_color(TURN), run_time=0.4)
+                      wrapped_glyphs(item_rows(o1, 1), STOPS31).animate.set_color(TURN), run_time=0.35)
             self.play(tr.goto(3), run_time=0.3)
-            c2 = type_cmd(self, t, PAS.cmd, 0.75)
+            c2 = type_cmd(self, t, PAS.cmd, 0.6)
             o2 = show(self, t, PAS, 5, PAS.as401(16, short=True), run_time=0.35)
             self.play(substring(o2[0], SC32).animate.set_color(TURN), run_time=0.3)
             keep = [*c2.rows, o2[0]] if hasattr(c2, "rows") else [c2, o2[0]]
-            fit(self, t, 3, keep=keep, tags=list(ft), run_time=0.6)
+            fit(self, t, 3, keep=keep, tags=list(ft), run_time=0.5)
             strip = t
-            self.play(FadeIn(rl4), FadeIn(ill4), FadeIn(seat, shift=DOWN * 0.08), run_time=0.6)
-            self.play(FadeIn(tok, shift=RIGHT * 0.2), FadeIn(cart_row, shift=UP * 0.08),
-                      FadeIn(cust, shift=DOWN * 0.08), run_time=0.5)
+            vo.wait_until("Comté")
+            self.play(FadeIn(rl4), FadeIn(ill4), FadeIn(seat, shift=DOWN * 0.08), FadeIn(tok, shift=RIGHT * 0.2),
+                      FadeIn(cart_row, shift=UP * 0.08), FadeIn(cust, shift=DOWN * 0.08), run_time=0.6)
             self.play(LaggedStart(*[flash(c, S.GREY, 1.12) for c in cart_items], lag_ratio=0.25), run_time=0.8)
+            vo.wait_until("to Pennsylvania")
+            self.play(flash(substring(o2[0], "pa-shipping"), TURN, 1.1), run_time=0.6)
             vo.wait_until("Before, the model")
             self.play(FadeIn(bl, shift=DOWN * 0.1), FadeOut(cust), run_time=0.4)
             self.play(FadeIn(quote, shift=DOWN * 0.1), run_time=0.4)        # (where the tag was: after it)
@@ -740,10 +748,14 @@ class Rails(VoiceScene):
             self.play(ride(tok5, path_of([g.gap_cp, g.gap_pv]), 0.8), FadeIn(cart_row, rate_func=sq(0.45, 1.0)),
                       *an, run_time=0.8)
             done()
+            att1 = rows[0]
             vo.wait_until("Attempt 1 has")
+            self.play(flash(att1.glyphs, TURN, 1.04), run_time=0.5)
+            # "raw-milk Comté": the RAW MILK line stays on the strip until it is said
+            vo.wait_until("raw-milk")
             self.play(substring(rows[1], RAW).animate.set_color(ERR), flash(com5, ERR, 1.15), run_time=0.6)
             rows, an, done = feed(strip, FIX.out(14, 15))
-            self.play(ride(tok5, path_of([g.gap_pv, g.c["validate"]]), 0.6), *an, run_time=0.6)
+            self.play(ride(tok5, path_of([g.gap_pv, g.c["validate"]]), 0.5), *an, run_time=0.5)
             done()
             rows, an, done = feed(strip, FIX.out(16), wrap=True)          # the whole reason, 2 rows
             assert len(rows) == 2, len(rows)
@@ -770,15 +782,15 @@ class Rails(VoiceScene):
                       run_time=1.0)
             done()
             vo.wait_until("valid, 50 dollars")
-            self.play(ride(tok5, path_of([g.gap_pv, g.c["validate"]]), 0.5), run_time=0.5)
+            self.play(ride(tok5, path_of([g.gap_pv, g.c["validate"]]), 0.45), run_time=0.45)
+            # the stamp and the capture's own line arrive together (Changes · Removed · Added stayed up till now)
+            rows, an, done = feed(strip, FIX.out(26, 27))
             self.play(FadeIn(stamp_ok, scale=1.2), *tint(tok5, HARNESS),
-                      *[recolor_chip(c, HARNESS) for c in cart_items], run_time=0.45)
-            rows, an, done = feed(strip, FIX.out(26, 27))       # (Changes · Removed · Added stayed up till now)
-            self.play(*an, run_time=0.45)
+                      *[recolor_chip(c, HARNESS) for c in cart_items], *an, run_time=0.5)
             done()
             self.play(substring(rows[1], VALID).animate.set_color(HARNESS), run_time=0.3)
             rows, an, done = feed(strip, FIX.out(28))
-            self.play(ride(tok5, g.to_place_path(), 2.0), *an, run_time=2.0)
+            self.play(ride(tok5, g.to_place_path(), 1.6), *an, run_time=1.6)
             done()
             rows, an, done = feed(strip, FIX.out(33, 34, 35))
             self.play(*an, run_time=0.5)
@@ -856,7 +868,21 @@ class Rails(VoiceScene):
             rows, an, done = feed(strip, FXB.out(38, 39))
             self.play(ride(tok6, path_of([g.c["validate"], stop_at]), 0.5), *an, run_time=0.5)
             done()
-            self.play(flash(unres, ERR, 1.15), run_time=0.6)
+            # the run ID's row is full: its `your numbers will differ` sits on the blank row 38 right
+            # above the ID's end (it rides with that row)
+            # (the house tag is 0.47 tall and a row 0.40: this one is the same tag at 20 pt in a
+            # slimmer pill, so it clears the rows above and below)
+            assert not rows[0].text.strip(), rows[0].text
+            dt6 = tag("your numbers will differ", S.GREY, size=CAPTION)
+            dt6.box.stretch_to_fit_height(strip.pitch - 0.04)
+            dt6.move_to([strip.box.get_right()[0] - 0.12 - dt6.width / 2, rows[0].strut.get_center()[1], 0])
+            r37 = strip.lines[0]
+            assert FXB.line(37).strip() in r37.text, r37.text
+            for r_ in (r37, rows[1]):
+                assert not covers_text(dt6, r_)
+            assert dt6.get_bottom()[1] > rows[1].glyphs.get_top()[1] + 0.02
+            pin(self, rows[0], dt6, run_time=0.6,
+                anim=AnimationGroup(FadeIn(dt6, shift=LEFT * 0.1), flash(unres, ERR, 1.15)))
             vo.wait_until("not blocked")
             self.play(FadeIn(blocked, shift=UP * 0.08), run_time=0.5)
             vo.wait_until("so in Colab")

@@ -29,7 +29,7 @@ Beats (script.md "## S13", one voiceover block each):
     them as they are named.
  4  TRACKER Systems 2. Container terminal (10 rows; title-bar tags `no key` + GOLD `live · billed
     per token`: the typed line fills its row) types `python cli.py --act 6 --scenario standard` ->
-    container/60 lines 2–3 (wrap), 5, 7, 9 (wrap), 10 as 401s. Line 3 GREEN. On "tell outer model
+    container/60 lines 2–3 (wrap; line 3 GREEN), 5, 7, 9 (wrap), 10 as 401s. On "tell outer model
     calls apart" line 7 pulses BLUE, start_order and get_order_status turn PINK and the top-band
     chip README.md · line 637 (expected) arrives, centred between the tracker and the terminal;
     on "the outer agent cannot approve" line 3's "host manager review when required" turns YELLOW.
@@ -41,24 +41,27 @@ Beats (script.md "## S13", one voiceover block each):
     command (folds; `--manager-decision approve` in a YELLOW outline, tag TEST decision) and
     prints container/61 lines 5 ("approve" YELLOW), 23–24, 35, 38, 46–47, 58, 61 in turn, while
     each BLUE dashed (scripted) token enters its rail, turns GREEN through validate (`$220.80` by
-    the station) and freezes amber before manager review (a YELLOW ticket). On "and the test
-    decision approves both" a YELLOW check lands beside each ticket.
+    the station), then waits ON the amber "manager review" station (its GREEN ticket, the
+    harness's, as S09's; the track into it amber). On "and the test decision approves both" a
+    YELLOW check (the human decision) lands beside each ticket.
  6  The shared GREEN shelf (StockShelf) at right: Mimolette 3,000 g, Taleggio 3,000 g, Comté
     6,000 g, under it a RECORDED box (Agent Harness · cell 18 · saved output: lines 2, 4, 7, 9
     folded to the product and stock_g columns). On "Request 1 is placed" ticket 1's check pulses,
-    request-1 thaws and rides onto "revalidate & place", the strip prints line 80 GREEN; on
+    request-1 thaws and rides on to "revalidate & place", the strip prints line 80 GREEN; on
     "leaving 1,400" the bars drain by 1,600 g (Mimolette and Taleggio 1,400 g, Comté 4,400 g). On
     "Request 2 reaches revalidation" the RECORDED box leaves, ticket 2's check pulses and request-2
     rides onto its "revalidate & place"; on "needing 1,600" RED dashed outlines of 1,600 g on the
     two short bars (Comté gets a GREEN check); on "blocked" token and station turn RED, the two RED
-    labels (container/61 lines 190–191) arrive under the shelf and the strip prints line 92 RED.
+    labels (container/61 lines 190–191) arrive right of request-2's ticket and the strip prints
+    line 92 RED.
     On "That's the ponder" the YELLOW chip "the act 3 ponder · for real"; on "approval is not
     placement" both checks pulse beside one placed and one blocked order.
  7  The picture leaves; the terminal grows to 12 rows. On "the lecture's response step" slide 21's
     six steps (chips slimmed to fit above the terminal) arrive with LECTURE 21, "Response" lit GREEN.
     On "the app checks the model's plan" it prints container/61 152, 158–160
-    (cut after "1600 g"); on "and fills in" 170 GREEN with the GREY tag "filled in by the app from
-    the receipt". On "The blocked order" 175, 183, 184 (wrapped, RED) with the GREY chip "one
+    (cut after "1600 g"); on "and fills in quantities" the three "1600 g" turn GREEN; on "and the
+    status, placed" 170 GREEN, on "from the receipt" its GREY tag "filled in by the app from the
+    receipt". On "The blocked order" 175, 183, 184 (wrapped, RED) with the GREY chip "one
     message for both cases · formaggio/operations/governance.py · line 75"; on "the stock lines
     below" 190–191 (YELLOW box, GREY tag "the reason") and 193.
  8  LECTURE 36, 22. The terminal and the six steps leave. Slide 36's spectrum returns (four stops,
@@ -665,22 +668,22 @@ class AgentSystem(VoiceScene):
         apart(c637, tr, 0.3)
         apart(c637, ft, 0.3)
         assert c637.get_bottom()[1] > t.box.get_top()[1] + 0.05
+        s5, c5 = STD.out(5)[0]
         with self.voiceover(SAY[4]) as vo:
-            self.wait(0.4)                               # (the last tool chip arrived on the last words)
             self.play(FadeOut(pic3), run_time=0.4)
             self.play(tr.goto(2), FadeIn(t, shift=UP * 0.2), FadeIn(ft[0], shift=DOWN * 0.1), run_time=0.5)
             type_cmd(self, t, STD.cmd, 1.2)
             self.play(FadeIn(ft[1], shift=DOWN * 0.1), run_time=0.3)
-            o23 = show(self, t, STD, (2, 3), wrap=True, run_time=0.4)
-            o5 = show(self, t, STD, 5, 7, run_time=0.35)
-            o9 = show(self, t, STD, 9, STD.as401(10, short=True), wrap=True, run_time=0.45)
+            # line 3 prints GREEN; line 5 is cut at the row (not wrapped), the rest fold
+            o23 = show(self, t, STD, 2, (STD.line(3), HARNESS), wrap=True, run_time=0.4)
+            o5 = show(self, t, STD, (t._cut(s5), c5), 7, 9, STD.as401(10, short=True), wrap=True, run_time=0.5)
             assert len(t.lines) == 10, len(t.lines)
             r3 = item_rows(o23, 1)
-            self.play(*[r.glyphs.animate.set_color(HARNESS) for r in r3], run_time=0.4)
             vo.wait_until("tell outer model calls apart")
-            r7 = o5[1]
+            r7 = item_rows(o5, 1)[0]
+            assert r7.text == STD.line(7), r7.text
             self.play(flash(r7.glyphs, CLOUD, 1.05), run_time=0.6)
-            r9 = item_rows(o9, 0)[0]
+            r9 = item_rows(o5, 2)[0]
             self.play(substring(r9, "start_order").animate.set_color(LOOKUP),
                       substring(r9, "get_order_status").animate.set_color(LOOKUP), run_time=0.4)
             self.play(FadeIn(c637, shift=DOWN * 0.1), run_time=0.5)
@@ -717,7 +720,8 @@ class AgentSystem(VoiceScene):
         for rq, yb in zip(reqs, (yb1, yb2)):
             place(rq, right=XV - 0.95, cy=yb)
         amts = [mono(SUB, CAPTION, HARNESS).move_to([XV, yb, 0]) for yb in (yb1, yb2)]
-        tks = [chip("ticket", TURN, size=CAPTION).move_to([r1.station("review").frame.get_center()[0], yb, 0])
+        # the approval ticket is the harness's (GREEN, as S09's); the check beside it is the human's (YELLOW)
+        tks = [chip("ticket", HARNESS, size=CAPTION).move_to([r1.station("review").frame.get_center()[0], yb, 0])
                for yb in (yb1, yb2)]
         cks = [check_mark(0.28, TURN).next_to(tk, RIGHT, buff=0.18) for tk in tks]
         ill5 = illustration_tag()
@@ -757,16 +761,19 @@ class AgentSystem(VoiceScene):
             for i, (rl, tok, (la, lb), lv, lp) in enumerate(zip(
                     (r1, r2), toks, ((23, 24), (46, 47)), (35, 58), (38, 61))):
                 new, an, done = feed(strip, TWO.out(la, lb))
-                self.play(*an, ShowFlash(calls[i], LOOKUP), FadeIn(tok, shift=RIGHT * 0.3), run_time=0.55)
+                self.play(*an, ShowFlash(calls[i], LOOKUP), FadeIn(tok, shift=RIGHT * 0.3), run_time=0.5)
                 done()
                 new, an, done = feed(strip, [(TWO.line(lv), HARNESS)])
                 gap = rl.spot("validate")
-                self.play(*an, ride(tok, path_of([tok.get_center(), gap]), 0.7), run_time=0.7)
+                self.play(*an, ride(tok, path_of([tok.get_center(), gap]), 0.6), run_time=0.6)
                 done()
                 self.play(*tint(tok, HARNESS), FadeIn(amts[i], shift=UP * 0.08 if i == 0 else DOWN * 0.08),
                           run_time=0.3)
                 new, an, done = feed(strip, TWO.out(lp))
+                tok.set_z_index(2)                       # it waits ON "manager review", off the amber track
+                rv = rl.station("review").frame.get_center()
                 self.play(*an, *rl.freeze("review"), e_vr[id(rl)].animate.set_color(AMBER),
+                          ride(tok, path_of([tok.get_center(), rv]), 0.5),
                           FadeIn(tks[i], shift=DOWN * 0.08 if i == 0 else UP * 0.08), run_time=0.5)
                 done()
             vo.wait_until("and the test decision approves both")
@@ -808,13 +815,12 @@ class AgentSystem(VoiceScene):
                       run_time=0.6)
             # request-1: approved, revalidated, placed
             vo.wait_until("Request 1 is placed")
-            self.play(flash(cks[0], TURN, 1.4), run_time=0.4)
-            self.play(*r1.unfreeze("review"), e_vr[id(r1)].animate.set_color(HARNESS), run_time=0.3)
-            toks[0].set_z_index(2)                       # it stops ON "revalidate & place": seen at checkout
-            self.play(ride(toks[0], path_of([toks[0].get_center(), places[0].get_center()]), 0.8), run_time=0.8)
-            self.play(pulse(places[0], HARNESS), run_time=0.75)
+            self.play(flash(cks[0], TURN, 1.4), *r1.unfreeze("review"), e_vr[id(r1)].animate.set_color(HARNESS),
+                      run_time=0.45)
+            # from "manager review" it rides ON to "revalidate & place": seen at checkout
+            self.play(ride(toks[0], path_of([toks[0].get_center(), places[0].get_center()]), 0.6), run_time=0.6)
             new, an, done = feed(strip, [(TWO.line(80), HARNESS)])
-            self.play(*an, run_time=0.4)
+            self.play(pulse(places[0], HARNESS), *an, run_time=0.6)
             done()
             vo.wait_until("leaving 1,400")
             self.play(*shelf.set("Mimolette", LEFT_AFTER), *shelf.set("Taleggio", LEFT_AFTER),
@@ -822,17 +828,15 @@ class AgentSystem(VoiceScene):
             # request-2: approved, revalidated, blocked by stock
             vo.wait_until("Request 2 reaches revalidation")
             self.play(FadeOut(rec), run_time=0.3)
-            self.play(flash(cks[1], TURN, 1.4), run_time=0.4)
-            self.play(*r2.unfreeze("review"), e_vr[id(r2)].animate.set_color(HARNESS), run_time=0.3)
-            toks[1].set_z_index(2)
-            self.play(ride(toks[1], path_of([toks[1].get_center(), places[1].get_center()]), 0.8), run_time=0.8)
+            self.play(flash(cks[1], TURN, 1.4), *r2.unfreeze("review"), e_vr[id(r2)].animate.set_color(HARNESS),
+                      run_time=0.45)
+            self.play(ride(toks[1], path_of([toks[1].get_center(), places[1].get_center()]), 0.7), run_time=0.7)
             vo.wait_until("needing 1,600")
             self.play(*[Create(nd) for nd in need], FadeIn(ok_c, scale=1.2), run_time=0.6)
             vo.wait_until("blocked")
             self.play(*tint(toks[1], ERR), places[1].animate.set_stroke(ERR, 4), run_time=0.4)
-            self.play(LaggedStart(*[FadeIn(r, shift=UP * 0.08) for r in reds], lag_ratio=0.3), run_time=0.5)
             new, an, done = feed(strip, [(TWO.line(92), ERR)])
-            self.play(*an, run_time=0.4)
+            self.play(LaggedStart(*[FadeIn(r, shift=UP * 0.08) for r in reds], lag_ratio=0.3), *an, run_time=0.5)
             done()
             vo.wait_until("That's the ponder from act 3")
             self.play(FadeIn(ponder, shift=LEFT * 0.1), run_time=0.45)
@@ -855,7 +859,7 @@ class AgentSystem(VoiceScene):
         ss.add(ss.seam)
         t12_top = strip_top(12)
         tags_up = ft5.get_top()[1] - strip.box.get_top()[1]          # the tags straddle the top edge
-        place(ss, cx=0.0, bottom=t12_top + tags_up + 0.12)
+        place(ss, cx=0.0, bottom=t12_top + tags_up + 0.15)
         inside(ss)
         apart(ss, tr, 0.04)
         apart(ss, lr21, 0.04)
@@ -868,21 +872,28 @@ class AgentSystem(VoiceScene):
             self.play(FadeIn(ss, shift=DOWN * 0.1), FadeIn(lr21), run_time=0.5)    # the tag comes with its picture
             self.play(ss.light("Response", HARNESS), run_time=0.4)
             vo.wait_until("the app checks the model's plan")
-            show(self, t, TWO, 152, *[TWO.cut(n, PLAN_CUT) for n in (158, 159, 160)], run_time=0.6)
-            vo.wait_until("and fills in quantities")
+            plan = show(self, t, TWO, 152, *[TWO.cut(n, PLAN_CUT) for n in (158, 159, 160)], run_time=0.6)
+            vo.wait_until("and fills in quantities")           # the quantities came from the receipt
+            qty = VGroup(*[substring(r, PLAN_CUT) for r in plan[1:]])
+            self.play(qty.animate.set_color(HARNESS), run_time=0.5)
+            vo.wait_until("and the status, placed")
             r170 = show(self, t, TWO, (TWO.line(170), HARNESS), run_time=0.35)[0]
+            vo.wait_until("from the receipt")
             tg170 = beside(grey_tag("filled in by the app from the receipt"), t, r170)
             pin(self, r170, tg170, run_time=0.4)
             vo.wait_until("The blocked order says")
             o184 = show(self, t, TWO, 175, 183, (TWO.line(184), ERR), wrap=True, run_time=0.5)
             r184 = item_rows(o184, 2)
-            gchip = slim_tag(f"one message for both cases ({GOV} · line 75)")
+            # slim, and a hair above its row's centre: the YELLOW box round the next two rows stays clear
+            # (the row above has no descenders)
+            gchip = slim_tag(f"one message for both cases ({GOV} · line 75)", pad_y=0.025)
             beside(gchip, t, r184[-1])
+            gchip.shift(UP * 0.02)
             pin(self, r184[-1], gchip, run_time=0.45)
             vo.wait_until("the stock lines below give the reason")
             o190 = show(self, t, TWO, 190, 191, run_time=0.4)
             yb = rows_box(o190[:2])
-            apart(yb, gchip, 0.03)
+            apart(yb, gchip, 0.07)
             rs = grey_tag("the reason")
             place(rs, left=yb.get_right()[0] + 0.3, cy=yb.get_center()[1])
             assert rs.get_right()[0] < t.box.get_right()[0] - 0.12
@@ -904,17 +915,18 @@ class AgentSystem(VoiceScene):
         hyb = label("hybrid · inside out", CAPTION, INK)
         place(hyb, cx=a6.get_center()[0], bottom=a6.get_top()[1] + 0.18)
         c662 = top_chip(R662, where="README.md · line 662")
+        c662.shift(DOWN * 0.14)                         # (its left end runs under the tracker's caption)
         mm = BoundaryMini(MINI_CENTER, upto=5)
         mcap = label("Sub agents ← narrow tools · separate counters · one clock", CAPTION, HARNESS)
         mcap.move_to([mm.frame.get_left()[0] - 0.2 - mcap.width / 2, mm.rows["sub"][0].get_center()[1], 0])
         for m in (sp, *pics.values(), hyb, c662, mcap):
             inside(m)
         inside(mm, -6.6, 6.6, -3.6, 3.6)              # (the map's own home touches the safe frame)
-        apart(hyb, c662, 0.08)
+        apart(hyb, c662, 0.15)
         apart(sp, mm, 0.1)
         apart(sp, mcap, 0.1)
         apart(c662, lr36, 0.02)
-        apart(c662, tr, 0.01)
+        apart(c662, tr, 0.12)
         for i in range(3):
             apart(pics[i], pics[i + 1], 0.3)
         wk = label("with your key", CAPTION, COST)
@@ -943,8 +955,7 @@ class AgentSystem(VoiceScene):
             vo.wait_until("it's a hybrid")
             self.play(sp.light(2), FadeIn(hyb, shift=UP * 0.08), run_time=0.5)
             vo.wait_until("inside out")
-            self.play(FadeIn(c662, shift=DOWN * 0.1), run_time=0.45)
-            self.play(mm.light("sub"), run_time=0.3)
+            self.play(FadeIn(c662, shift=DOWN * 0.1), mm.light("sub"), run_time=0.45)
             self.play(mm.add_bar("sub"), FadeIn(mcap, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("the agent outside")
             self.play(pulse(a6.agent, CLOUD, 7), run_time=0.75)

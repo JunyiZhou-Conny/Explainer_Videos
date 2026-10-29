@@ -36,29 +36,30 @@ Beats (script.md "## S06", one voiceover block each):
     tool call". It types the basic run (folds) -> TERM(container/21: 10, 12 as 401s), then the
     enriched run -> TERM(container/22: 10, 12 as 401s). "Input: 1 conversation messages." gets a
     YELLOW box and the row tag "basic" on "basic sends 1"; "Input: 2 …" a YELLOW box and "enriched"
-    on "enriched sends 2". On "the extra one": the strip (21:10 and 22:10), the two compact
+    on "enriched sends 2", then the strip (21:10 and 22:10). On "the extra one" the two compact
     columns return above it (lecture tag back), with what each sends on the right: basic ·
     1 message [request]; enriched · 2 messages [ ┄ ] [request]; a copy of enriched's two filled
     slots' frames folds into one GREEN card's frame as it slides into the empty message spot, then
     the words "context packet" appear (no filled box over its own label) and the card pulses.
- 5  TRACKER Context 4. The columns, cards and lecture tag leave; the terminal grows back. It
-    types the override run -> TERM(container/23: 10, 12 as 401s). Top-band chips one at a time:
-    container/23 · line 7 (excerpt) "at least one with a funk rating of 4 or higher" on "asks for
-    funk", then README.md · lines 277–278 (excerpt) "must take priority over the saved mild
-    preference" on "today's request must win".
+ 5  TRACKER Context 4. The columns, cards and lecture tag leave; the strip's rows go with them
+    and the terminal grows back empty. It types the override run -> TERM(container/23: 10, 12
+    as 401s). Top-band chips one at a time: container/23 · line 7 (excerpt) "at least one with a
+    funk rating of 4 or higher" on "asks for funk", then README.md · lines 277–278 (excerpt)
+    "must take priority over the saved mild preference" on "today's request must win".
  6  TRACKER Context 4 · extra. Top band: README.md · line 278 "Each Act 2 command also prints a
     separate PA/NY counterexample", under it on "A small slip" the GREY tag `erratum ·
     --compare doesn't`. On "This extra call does" the chips and the GOLD live tag leave, the
     terminal grows to 13 rows and types `python -c 'from acts.act2_context import
     print_shipping_demo; print_shipping_demo()'` (extra tag; folds onto 3 rows) ->
     TERM(container/29: 3–7 wrap, while the command is still on screen): `PA: REJECTED` RED (pulses
-    on "fails for Pennsylvania"), `NY: PASS` GREEN; then 8–9 (wrap, the command scrolls off), held
-    0.5 s. The terminal shrinks to the strip (PA, NY, line 9's first row); above it V4's toggle
-    (`illustration`): the fixed cart (Comté 350 g · Bûcheron 350 g · Époisses 300 g, GREY: a given
-    cart, not a model's) on the GREEN validator, stamp RED "PA: REJECTED"; on "passes for New York"
-    the switch flips to NY, the stamp turns GREEN "NY: PASS" and the strip's NY row pulses; on
-    "under a fictional rule" the GREY tag "a fictional classroom rule · not a law (container/29 ·
-    line 9)", then the switch flips back to PA (PA row pulses).
+    on "fails for Pennsylvania"), `NY: PASS` GREEN; then 8–9 (wrap, the command scrolls off to its
+    last row); NY pulses on "passes for New York", line 9's "FICTIONAL classroom PA rule" row
+    YELLOW on "under a fictional rule". Then the terminal shrinks to the strip (PA, NY, that row);
+    above it V4's toggle (`illustration`): the fixed cart (Comté 350 g · Bûcheron 350 g · Époisses
+    300 g, GREY: a given cart, not a model's) on the GREEN validator, stamp RED "PA: REJECTED".
+    A silent coda after the words (~3 s): the switch flips to NY, the stamp turns GREEN "NY:
+    PASS" (NY row pulses); the GREY tag "a fictional classroom rule · not a law (container/29 ·
+    line 9)" (FICTIONAL row pulses); the switch flips back to PA (PA row pulses); 0.5 s hold.
  7  TRACKER Context 5 (extra off). The toggle leaves; the terminal grows back (11 rows), the GOLD
     live tag returns and the two-row card below arrives in the top band. It types `python cli.py
     --act 3 --scenario pa-shipping` (folds) ->
@@ -66,7 +67,7 @@ Beats (script.md "## S06", one voiceover block each):
     is 350 g of Comté, 350 g of Bûcheron, and 300 g of Époisses. …" wrap, 13, 15, 16 as 401s): 13
     BLUE, 15 YELLOW (pulses at the end). The GREY card: "the README puts this act 3 command here
     (README.md · line 286)" / "a customer's own cart, checked, and the model asked to fix it ·
-    part 2 explains it" (its second row pulses on "part 2 explains it").
+    part 2 explains it" (its second row pulses on "part 2 explains it"); 0.6 s hold.
  8  TRACKER Context 6, then 7. The card leaves; the terminal grows to 12 rows. It types the
     evaluation command (folds onto 3 rows), a GOLD row chip "12 runs" beside it ->
     TERM(container/25: 2, …, 36, 38): "4 cases × 3 repeats = 12 runs" boxed YELLOW with the GREY
@@ -184,7 +185,7 @@ CARD_FOLD = 66
 T_ROWS = 11                       # the walkthrough terminal (top 1.79: a two-row band above it)
 STACK_Y = -0.35                   # beat 0: the full stack's centre
 COLS_Y, BX, EX = 0.2, -2.9, 1.5   # beat 1: the two compact columns
-SAME_X = 0.6                      # beat 1: the three "same …" chips (centre x)
+SAME_X = (BX + EX) / 2            # beat 1: the three "same …" chips, centred over both columns
 COL_K = 0.85                      # beat 4: the columns return small (shapes; text keeps its size)
 C2Y, B2X, E2X = 0.72, -4.9, -1.5  # beat 4: their centres
 REQ_X = 4.75                      # beat 4: the request cards (centre x)
@@ -527,15 +528,15 @@ class ContextModes(VoiceScene):
             self.play(Create(b2), run_time=0.4)
             in2.add(b2)
             pin(self, in2, beside(row_tag("enriched"), t, in2), run_time=0.35)
+            # the strip at once (its two rows are the ones just named), so the packet folds on its words
+            fit(self, t, 3, keep=[in1, in2], tags=(nk, lv), extra=[FadeOut(c271)], run_time=0.7)
             vo.wait_until("the extra one")
-            self.play(FadeOut(c271), run_time=0.3)
-            fit(self, t, 3, keep=[in1, in2], tags=(nk, lv), run_time=0.7)
             lr = lref("12–18")
             self.play(FadeIn(bs2), FadeIn(es2), FadeIn(lr), FadeIn(VGroup(req_a, lab_a, req_b, lab_b)),
                       Create(ghost), run_time=0.6)
             fold = VGroup(*[b.solid.copy() for b in es2.blocks_list[4:]])
             pk_frame = VGroup(pk.frame, pk[1])                       # the frame and its tint
-            self.play(ReplacementTransform(fold, pk_frame), run_time=1.1)
+            self.play(ReplacementTransform(fold, pk_frame), run_time=0.9)
             self.play(FadeIn(pk.rows), FadeOut(ghost), run_time=0.4)
             self.remove(pk_frame, pk.rows)
             self.add(pk)
@@ -548,7 +549,8 @@ class ContextModes(VoiceScene):
         place(c277, right=BAND_RIGHT, top=BAND_TOP - 0.15)
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(bs2, es2, req_a, lab_a, req_b, lab_b, pk)), FadeOut(lr), run_time=0.4)
-            fit(self, t, T_ROWS, tags=(nk, lv), extra=[tr.goto(4)], run_time=0.7)
+            # the strip's two boxed rows go with the picture: no YELLOW left over from the last idea
+            fit(self, t, T_ROWS, keep=[], tags=(nk, lv), extra=[tr.goto(4)], run_time=0.7)
             type_cmd(self, t, OVR.cmd, 1.0)
             show(self, t, OVR, 10, OVR.as401(12, short=True), run_time=0.4)
             vo.wait_until("asks for funk")
@@ -593,15 +595,21 @@ class ContextModes(VoiceScene):
             vo.wait_until("fails for Pennsylvania")
             self.play(flash(pa.glyphs, ERR, 1.1), run_time=0.5)
             rs2 = show(self, t, SHIP, 8, 9, wrap=True, run_time=0.5)
-            l9 = item_rows(rs2, 1)[0]
-            self.wait(0.5)
+            l9 = next(r for r in item_rows(rs2, 1) if "FICTIONAL" in r.text)   # the row the tag cites
+            # each phrase lights its own row while the whole output is up (the command's last row too)
+            vo.wait_until("passes for New York")
+            self.play(flash(ny.glyphs, HARNESS, 1.1), run_time=0.5)
+            vo.wait_until("under a fictional rule")
+            self.play(flash(l9.glyphs, TURN, 1.04), run_time=0.6)
+            # V4's toggle: the strip keeps the three rows it restates
             fit(self, t, 3, keep=[pa, ny, l9], tags=(nk,), parked=(lv,), run_time=0.7)
             self.play(FadeIn(tg, shift=UP * 0.1), FadeIn(tg_il), run_time=0.45)
-            vo.wait_until("passes for New York")
-            self.play(*tg.flip(), flash(ny.glyphs, HARNESS, 1.1), run_time=0.8)
-            vo.wait_until("under a fictional rule")
-            self.play(FadeIn(fict, shift=UP * 0.1), run_time=0.5)
-            self.play(*tg.flip(), flash(pa.glyphs, ERR, 1.1), run_time=0.8)
+        # a short silent coda: the same cart flips PA -> NY -> PA, the strip's rows answering
+        self.wait(0.3)                                         # the PA state reads before it flips
+        self.play(*tg.flip(), flash(ny.glyphs, HARNESS, 1.1), run_time=0.8)
+        self.play(FadeIn(fict, shift=UP * 0.1), flash(l9.glyphs, TURN, 1.04), run_time=0.6)
+        self.play(*tg.flip(), flash(pa.glyphs, ERR, 1.1), run_time=0.8)
+        self.wait(0.5)
 
         # ========================================================== 7 · step 5: the act 3 command
         a3 = two_row_card(["the README puts this act 3 command here (README.md · line 286)",
@@ -618,6 +626,7 @@ class ContextModes(VoiceScene):
             vo.wait_until("part 2 explains it")
             self.play(flash(a3.rows[1], S.GREY, 1.05), run_time=0.6)
             self.play(flash(item_rows(r24, 4)[0].glyphs, TURN, 1.06), run_time=0.6)
+        self.wait(0.6)                                         # the card and the output read before they go
 
         # ========================================================== 8 · steps 6-7: twelve live runs, a report
         lab_chip = top_chip("the label is now taken · rerun with a new --label (README.md · line 721)", color=S.GREY)

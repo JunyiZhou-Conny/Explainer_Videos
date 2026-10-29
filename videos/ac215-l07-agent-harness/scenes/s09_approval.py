@@ -21,7 +21,7 @@ Beats (script.md "## S09", one voiceover block each):
     (V5's Ticket, laid out as three rows of slots in reading order) builds top left and
     CODE(formaggio/shop/checkout.py: 31–36) arrives at the bottom. As the SAY names request,
     items, subtotal, policy and product attributes, lines 31–35 get GREEN bars and each field's
-    chip writes into its slot (the dashed slot frame goes); the PINK hash `e8caf06b29df9c58 …`
+    chip writes into its slot (the faint slot outline goes); the PINK hash `e8caf06b29df9c58 …`
     (container/71 line 46) prints with the GREY note "same cart, same data · your run prints this
     hash too". On "Stock is left out on purpose" `exclude={"stock_g"}` gets a YELLOW box and the
     `stock_g` chip appears crossed out right of the ticket; on "it's rechecked" the excerpt chip
@@ -31,10 +31,11 @@ Beats (script.md "## S09", one voiceover block each):
     and slides down, then along under the ticket (never across it) to sit under the ticket's
     hash. CODE(formaggio/shop/checkout.py: 84–87) arrives at the bottom; the three conditions
     get YELLOW outlines and GREEN checks as the SAY names them (decision == "approve";
-    checkout_key, with the GREY caption "this checkout (the order's own key)"; fingerprint: both
-    hashes flash and the re-hash gets a GREEN check). The panel leaves. On "Change one line" the
-    what-if row (tag `illustration · what if`): a YELLOW `items` chip with a pencil -> a different
-    hash; on "and the hashes differ" a RED ≠ and "not approved"; it holds 1.5 s, leaves, and the
+    checkout_key, with the GREY caption "this checkout (the order's own key)" above the header and a
+    GREY elbow pointer down the free column to the right-hand checkout_key; fingerprint: both
+    hashes flash and the re-hash gets a GREEN check). On "Change one line" the panel leaves, then
+    the what-if row (tag `illustration · what if`): a YELLOW `items` chip with a pencil -> a different
+    hash; on "and the hashes differ" a RED ≠ and "not approved"; it holds 1 s, leaves, and the
     real run goes on: the strip returns and prints container/33 lines 30, 32–34 (tag `your
     numbers will differ` on the receipt row), and the token becomes the GREEN receipt card.
  4  A stopwatch "active time" (tag illustration) and the chip README.md · line 444 (excerpt)
@@ -46,8 +47,8 @@ Beats (script.md "## S09", one voiceover block each):
  6  The declined lines stay a moment, then the strip leaves. A what-if: the approved cart waits
     before "revalidate & place" (the ticket's hash row gets a GREEN check); the rail's tag becomes
     `illustration · what if` (old out, then new in); a GREEN shelf with two bars, Mimolette and
-    Taleggio (no numbers), and a second BLUE cart token arrives right of the Mimolette bar with a
-    "?". The station outline flashes on "What does checkout do". PONDER (8 s); the picture never
+    Taleggio (no numbers), and a second BLUE cart token rolls in from off-screen right along the
+    Mimolette row and stops right of its bar with a "?". The station outline flashes on "What does checkout do". PONDER (8 s); the picture never
     shows the answer.
  7  The card leaves. The second token drains the Mimolette bar and leaves; the approved cart rolls
     onto "revalidate & place" (the hash check pulses: still matching); on "finds a stock
@@ -55,8 +56,9 @@ Beats (script.md "## S09", one voiceover block each):
     "stock violation"; on "and blocks" the token and station turn RED, RED "blocked" beside it,
     and the excerpt chip formaggio/agents/workflow_steps.py · lines 155–158. On "Stock isn't in
     the fingerprint" the ticket's hash and check pulse and the excerpt chip of line 29 arrives;
-    then the caption "an approval authorizes a decision · it doesn't reserve stock"; on "Act 6"
-    the GREY chip "act 6 runs this for real".
+    then the caption "an approval authorizes a decision · it doesn't reserve stock"; on "it doesn't
+    reserve anything" a RED outline flash round the Mimolette bar; on "Act 6" the GREY chip "act 6
+    runs this for real".
  8  TRACKER Act3 5. Everything else leaves. Container terminal (11 rows; `scripted`, `offline ·
     free`) types `python cli.py --act 3 --fixture --scenario out-of-stock` -> container/35 lines
     11–14, 16 (RED, on "so attempt 1 fails"), 25–26 (YELLOW, on "One bounded revision"), 28 (GREEN,
@@ -72,7 +74,8 @@ Beats (script.md "## S09", one voiceover block each):
 10  The panel and rings leave. The checkpoint chip README.md · line 448; the V1 mini-map with
     LECTURE 22 (it leaves with the map): Control flow lights YELLOW, its GREEN cell gains a bar,
     caption "Control flow ← the workflow graph"; on "and checkout revalidates" Verification, its
-    bar and "Verification ← validate · revalidate". On "Pause and run" everything but the tracker
+    bar and "Verification ← validate · revalidate" (both captions stay, each beside its own row).
+    On "Pause and run" everything but the tracker
     leaves and the static "your turn" card arrives (manager-approval: approve, then again with
     decline · out-of-stock · notebook cell: Colab or Jupyter · GREEN "offline · free"). Hold 2 s,
     then fade to an empty frame.
@@ -373,8 +376,12 @@ class FlatTicket(Ticket):
         for r in self.ROWS:
             x = left + pad
             for i in r:
-                # a fresh dashed box in the old one's place (become() garbles dashes of another count)
-                nb = box(ws[i], sh, S.GREY, dashed=True, stroke=1.5).move_to([x + ws[i] / 2, y, 0])
+                # a fresh slot in the old one's place, shaped like the chip that fills it: a faint
+                # solid GREY outline (a short dashed pill draws ragged dashes, and GREY dashed reads
+                # "lecture only" in this series)
+                nb = RoundedRectangle(width=ws[i], height=sh, corner_radius=sh / 2.6, stroke_color=S.GREY,
+                                      stroke_width=1.5, stroke_opacity=0.6).set_fill(opacity=0)
+                nb.move_to([x + ws[i] / 2, y, 0])
                 slots = self.parts["slots"]
                 slots.submobjects[slots.submobjects.index(self.slot_frames[i])] = nb
                 self.slot_frames[i] = nb
@@ -455,12 +462,12 @@ class ExactCart(VoiceScene):
         for m in (rl, ill, pers, you, p129):
             inside(m)
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(c359), run_time=0.3)
-            r28 = show(self, t, MGR, MGR.cut(28, ASK, ellipsis=False), run_time=0.4)[0]
-            fit(self, t, 3, keep=[r26, r28], tags=list(ft), run_time=0.7)
+            self.play(FadeOut(c359), run_time=0.25)
+            r28 = show(self, t, MGR, MGR.cut(28, ASK, ellipsis=False), run_time=0.35)[0]
+            fit(self, t, 3, keep=[r26, r28], tags=list(ft), run_time=0.6)
             strip = t
-            self.play(FadeIn(rl), FadeIn(tok), FadeIn(ill, shift=DOWN * 0.1), FadeIn(lab_rev), run_time=0.5)
-            self.play(*rl.freeze("review"), FadeIn(rq, scale=0.9), run_time=0.5)
+            self.play(FadeIn(rl), FadeIn(tok), FadeIn(ill, shift=DOWN * 0.1), FadeIn(lab_rev), run_time=0.4)
+            self.play(*rl.freeze("review"), FadeIn(rq, scale=0.9), run_time=0.4)
             vo.wait_until("and you are the manager")
             self.play(FadeIn(pers, shift=RIGHT * 0.15), FadeIn(hnd, shift=RIGHT * 0.15), FadeIn(you), run_time=0.5)
             vo.wait_until("the host answers")
@@ -536,13 +543,23 @@ class ExactCart(VoiceScene):
         cap86 = label("this checkout (the order's own key)", CAPTION, S.GREY)
         match = check_mark(0.3, HARNESS)
         match.move_to([cmp_at[0] + rh.width / 2 + 0.2 + match.width / 2, cmp_at[1], 0])
-        # over the right-hand checkout_key, clear of the re-hash's check
-        place(cap86, left=max(boxes[1].get_right()[0] - cap86.width, match.get_right()[0] + 0.25),
-              bottom=p84.get_top()[1] + 0.12)
+        # the caption sits above the panel's header; a GREY elbow pointer runs down the free column
+        # right of lines 85-86 and points left at the right-hand checkout_key (this checkout's own
+        # key), so the caption is tied to it without crossing any code
+        x_el = boxes[1].get_right()[0] + 0.42
+        place(cap86, right=x_el + 0.35, bottom=p84.get_top()[1] + 0.12)
+        k86 = p84.span(86, "checkout_key", 1)
+        y86 = k86.get_center()[1]
+        ptr = VGroup(Line([x_el, cap86.get_bottom()[1] - 0.06, 0], [x_el, y86, 0], stroke_width=2.5, color=S.GREY),
+                     Arrow([x_el + 0.0125, y86, 0], [boxes[1].get_right()[0] + 0.05, y86, 0], buff=0, color=S.GREY,
+                           stroke_width=2.5, tip_length=0.13, max_tip_length_to_length_ratio=0.5))
+        assert x_el > p84.header.get_right()[0] + 0.25, (x_el, p84.header.get_right())
+        assert x_el > boxes[0].get_right()[0] + 0.25 and x_el < checks[0].get_left()[0] - 0.4
         rh_end = rh.copy().move_to(cmp_at)
         apart(cap86, match, 0.15)
         apart(cap86, rh_end, 0.15)
         apart(rh_end, p84, 0.1)
+        inside(cap86)
         rcpt = receipt_token(RECEIPT[:8] + "…")
         place(rcpt, right=rl.station("confirm").frame.get_left()[0] - 0.15, cy=1.62)
         apart(rcpt, tk.frame, 0.1)
@@ -578,19 +595,20 @@ class ExactCart(VoiceScene):
             self.play(Create(boxes[0]), run_time=0.35)
             self.play(FadeIn(checks[0], scale=1.3), run_time=0.25)
             vo.wait_until("and the ticket matches this checkout")
-            self.play(Create(boxes[1]), FadeIn(cap86, shift=UP * 0.08), run_time=0.45)
+            self.play(Create(boxes[1]), FadeIn(cap86, shift=UP * 0.08), Create(ptr), run_time=0.45)
             self.play(FadeIn(checks[1], scale=1.3), run_time=0.25)
             vo.wait_until("and this fingerprint")
             self.play(Create(boxes[2]), flash(tk.hash_mob, HARNESS, 1.06), flash(rh, HARNESS, 1.06), run_time=0.4)
             self.play(FadeIn(checks[2], scale=1.3), FadeIn(match, scale=1.3), run_time=0.3)
-            self.play(FadeOut(VGroup(p84, *boxes, *checks, cap86)), run_time=0.25)
-            # a what-if aside: one cart line changes, the re-hash differs, no approval
+            # a what-if aside: one cart line changes, the re-hash differs, no approval. The panel
+            # with its three checks stays until then; old out, then new in (the row takes its place)
             vo.wait_until("Change one line")
-            self.play(FadeIn(wi_tag), FadeIn(wi_mid, shift=DOWN * 0.1), run_time=0.35)
-            self.play(GrowArrow(wi_ar), FadeIn(wi_hash, shift=RIGHT * 0.1), run_time=0.4)
+            self.play(FadeOut(VGroup(p84, *boxes, *checks, cap86, ptr)), run_time=0.25)
+            self.play(FadeIn(wi_tag), FadeIn(wi_mid, shift=DOWN * 0.1), run_time=0.3)
+            self.play(GrowArrow(wi_ar), FadeIn(wi_hash, shift=RIGHT * 0.1), run_time=0.35)
             vo.wait_until("and the hashes differ")
             self.play(FadeIn(wi_ne, scale=1.3), FadeIn(wi_no), run_time=0.35)
-            self.wait(1.5)                                   # the aside is read before the real run goes on
+            self.wait(1.0)                                   # the aside is read before the real run goes on
             # back to the real run: the aside leaves, the strip returns, the order is placed
             self.play(FadeOut(wi), run_time=0.3)
             self.play(FadeIn(VGroup(strip, ft)), ride(tok3, path_of([tok3.get_center(), rl.spot("place")]), 0.35),
@@ -682,7 +700,11 @@ class ExactCart(VoiceScene):
             self.play(FadeOut(ill), run_time=0.3)
             self.play(FadeIn(shelf), FadeIn(sh_tag), run_time=0.6)
             vo.wait_until("another order takes")
-            self.play(FadeIn(tok2_q, shift=LEFT * 0.6), run_time=0.9)
+            # the second cart rolls in from off-screen right along the empty Mimolette row
+            q_home = tok2_q.get_center()
+            tok2_q.shift(RIGHT * (7.4 - tok2_q.get_left()[0]))
+            self.add(tok2_q)
+            self.play(tok2_q.animate.move_to(q_home), run_time=1.0)
             vo.wait_until("What does checkout do")
             self.play(outline_flash(rl.station("place").frame, TURN), run_time=0.7)
         card = ponder_at(self, PONDER, seconds=8.0, width=12.4)
@@ -712,11 +734,11 @@ class ExactCart(VoiceScene):
         drained = Rectangle(width=w_left, height=mbar.height, stroke_width=0).set_fill(HARNESS, 0.7)
         drained.move_to([mim.get_left()[0] + w_left / 2, mim.get_center()[1], 0])
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(card), run_time=0.4)
-            self.play(Transform(mbar, drained), tok2_q.animate.shift(LEFT * 0.25), run_time=0.8)
-            self.play(FadeOut(tok2_q, shift=RIGHT * 0.6), run_time=0.4)
-            self.play(ride(tok6, path_of([tok6.get_center(), rl.station("place").frame.get_center()]), 0.6), run_time=0.6)
-            self.play(flash(chk6, HARNESS, 1.3), run_time=0.4)
+            self.play(FadeOut(card), run_time=0.3)
+            self.play(Transform(mbar, drained), tok2_q.animate.shift(LEFT * 0.25), run_time=0.7)
+            self.play(FadeOut(tok2_q, shift=RIGHT * 0.6),
+                      ride(tok6, path_of([tok6.get_center(), rl.station("place").frame.get_center()]), 0.6), run_time=0.6)
+            self.play(flash(chk6, HARNESS, 1.3), run_time=0.35)
             vo.wait_until("finds a stock violation")
             self.play(Create(need), run_time=0.5)
             self.play(FadeIn(viol, scale=1.2), run_time=0.4)
@@ -729,6 +751,8 @@ class ExactCart(VoiceScene):
             self.play(FadeIn(ex29b, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("an approval authorizes a decision")
             self.play(FadeIn(cap7, shift=UP * 0.08), run_time=0.5)
+            vo.wait_until("it doesn't reserve anything")
+            self.play(outline_flash(mim, ERR, 0.08), run_time=0.7)    # the stock nobody reserved
             vo.wait_until("Act 6 shows this for real")
             self.play(FadeIn(act6, shift=LEFT * 0.1), run_time=0.4)
 
@@ -790,18 +814,19 @@ class ExactCart(VoiceScene):
         inside(tc)
         assert tc.get_top()[1] < tr.get_bottom()[1] - 0.1
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(p423, b427, ill9, ex444b, *[m for m in rings if m not in lifts])), run_time=0.5)
-            self.play(FadeIn(c448, shift=DOWN * 0.1), FadeIn(mm), FadeIn(lr10), run_time=0.6)
-            self.play(mm.light("control"), run_time=0.3)
+            self.play(FadeOut(VGroup(p423, b427, ill9, ex444b, *[m for m in rings if m not in lifts])), run_time=0.4)
+            self.play(FadeIn(c448, shift=DOWN * 0.1), FadeIn(mm), FadeIn(lr10), run_time=0.5)
+            self.play(mm.light("control"), run_time=0.25)
             cap_c = mm.caption("Control flow ← the workflow graph")
-            self.play(mm.add_bar("control"), FadeIn(cap_c, shift=LEFT * 0.1), run_time=0.5)
+            self.play(mm.add_bar("control"), FadeIn(cap_c, shift=LEFT * 0.1), run_time=0.45)
+            # each caption stays beside its own row until the beat ends (the rows are 3 apart)
             vo.wait_until("and checkout revalidates")
-            self.play(FadeOut(cap_c), run_time=0.3)
             self.play(mm.light("verify"), run_time=0.3)
             cap_v = mm.caption("Verification ← validate · revalidate")
+            apart(cap_c, cap_v, 0.1)
             self.play(mm.add_bar("verify"), FadeIn(cap_v, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("Pause and run")
-            self.play(FadeOut(VGroup(c448, mm, cap_v)), FadeOut(lr10), run_time=0.5)
+            self.play(FadeOut(VGroup(c448, mm, cap_c, cap_v)), FadeOut(lr10), run_time=0.5)
             self.play(FadeIn(tc, scale=0.97), run_time=0.5)
         self.wait(2)                                    # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tc, tr)), run_time=0.8)
