@@ -40,7 +40,7 @@ S08:
 - en: "Part 2 picks up at the container prompt; if you closed it, rerun the setup and set your key. Remember the move-right arrow: when stakes are high, actions can't be undone, the task is predictable, or you need an audit, give control to code."
   zh:
   - "第二部分从 container 的提示符接着来；如果你把它关了，就重新跑一遍准备步骤，再设置好你的密钥。"
-  - "回想一下往右移的那个箭头：风险高、操作无法撤销、任务可预测，或者需要审计的时候，就把控制权交给代码。"
+  - "回想一下往右移的那个箭头：风险高、操作无法撤销，任务可预测或者需要审计的时候，就把控制权交给代码。"
 - en: "Act 3 does exactly that. The order route is a graph, and Python owns its edges. Confirm, propose, validate, and back to propose only if the report fails, at most twice; then pairings, manager review when required, revalidate and place. Only one node belongs to the model: propose cart, with no tools."
   zh:
   - "第 3 幕做的正是这件事。"
@@ -71,6 +71,9 @@ S08:
   zh:
   - "有个坑：用 fixture 时，blocked 场景会把同一辆购物车一连提议三次，最后是 UNRESOLVED，不是 BLOCKED，所以在 Colab 里，这一课要把 fixture 关掉。"
   - "暂停一下，把第 1 到第 3 步跑一遍。"
+  en_display:
+  - "One trap: with fixtures, the blocked scenario proposes the same cart three times and ends UNRESOLVED, not BLOCKED, so in Colab keep fixtures off for this lesson."
+  - null
 S09:
 - en: "Step 4 is scripted, so approval is predictable: 60 guests in New York, a valid cart at 220 dollars 80, above the 200 dollar threshold."
   zh:
@@ -136,7 +139,7 @@ S10:
   zh:
   - "第 1 步：第 4 幕。"
   - "在任何模型调用之前，harness 就打印出第一位顾客保存的记忆。"
-  - "然后是规划器的工具：评估活动、读取供应商文档、起草和保存给供应商的邮件，以及待办工具。"
+  - "然后是规划器的工具：评估活动、读取供应商的文档、起草和保存给供应商的邮件，以及待办工具。"
   - "没有哪个工具能写记忆。"
 - en: "With a key, look for the brief: 1,000 grams each of Comté and Mimolette, and 1,200 of Époisses. The shop has only 900 grams of Époisses: 300 short. A finished task is not an approval, and shop stock is not vendor availability."
   zh:
@@ -194,6 +197,9 @@ S11:
   zh:
   - "起草的邮件里仍然写着坚果过敏。"
   - "结果：DECLINED，没有保存 HTML，7 次模型调用，7 次压缩。"
+  en_display:
+  - null
+  - "The result: DECLINED, no HTML saved, 7 model calls and 7 compactions."
 - en: "Steps 3 and 4 are the optional memory exercise; type them from README line 484, since the ID is masked here. The first command stores a preference for the second customer, and the memory prints before any model call, even without a key. The next visit shows it again; an extra check reads the file."
   zh:
   - "第 3、4 步是可选的记忆练习；照 README 第 484 行输入，因为这里的 ID 被遮住了。"
@@ -249,10 +255,10 @@ S12:
   - "来想一个问题。"
   - "有人改了供应商那个 skill，加上一句：也发一份到另一个地址。"
   - "邮件会发到那里去吗？"
-- en: "No. The skill itself says it cannot add recipients or authorize actions, and every read is checked: no parent folders, absolute paths or symlinks, and a file edited mid-run is refused."
+- en: "No. Whatever the skill says, the guards are in code; its own text even says it cannot add recipients, and every read is checked: no parent folders, absolute paths or symlinks, and a file edited mid-run is refused."
   zh:
   - "不会。"
-  - "这个 skill 自己就写明了，它不能添加收件人或授权行动；而且每次读取都要经过检查：不许上级目录、绝对路径或符号链接，运行中途改过的文件会被拒绝。"
+  - "不管这个 skill 怎么写，防线都在代码里；它自己的文字甚至写明了它不能添加收件人，而且每次读取都要经过检查：不许上级目录、绝对路径或符号链接，运行中途改过的文件会被拒绝。"
 - en: "The recipient is checked in code against the allowlist, and nothing is ever transmitted; an extra check shows the saved file says so."
   zh:
   - "收件人由代码对照白名单检查，而且什么都不会真的发出去；额外检查显示，保存的文件里也是这么写的。"
@@ -267,7 +273,7 @@ S13:
 - en: "Act 6 is an agent system. The lecture contrasts one agent with a graph of agents, in two patterns: a manager calling agents as tools, or peers handing off."
   zh:
   - "第 6 幕是一个 agent 系统。"
-  - "课上把单个 agent 和由 agent 组成的图做对比，分两种模式：一个管理者把 agent 当工具来调用，或者对等的 agent 互相交接。"
+  - "课上对比了单个 agent 和 agent 组成的图，分两种模式：一个管理者把 agent 当工具来调用，或者对等的 agent 互相交接。"
 - en: "It's the manager pattern, except the tool it calls is a whole workflow, the one from act 3, with a model inside one node. No handoffs."
   zh:
   - "它就是管理者模式，只不过它调用的工具是一整个工作流，就是第 3 幕那个，里面只有一个节点用到模型。"
@@ -304,6 +310,9 @@ S13:
   zh:
   - "最终回答就是课上的回复步骤：应用检查模型的计划，再根据回执填上数量、价格和状态 placed。"
   - "被拦下的订单显示 Invalid or unauthorized；下面库存那几行给出了原因。"
+  en_display:
+  - null
+  - "The blocked order says Invalid or unauthorized; the stock lines below give the reason."
 - en: "On the autonomy spectrum it's a hybrid, inside out: the agent outside, the fixed graph as its tool. Pause and run steps 2 and 3."
   zh:
   - "在自主性光谱上，它是混合型，只不过里外反过来：外面是 agent，固定的图是它的工具。"
@@ -316,7 +325,7 @@ S14:
 - en: "The lecture measures three things: outcome, trajectory and cost. Here they're the outcome and process checks, plus calls and tokens."
   zh:
   - "课上衡量三样东西：结果、轨迹和成本。"
-  - "在这里，它们就是 outcome 检查和 process 检查，再加上调用次数和 token。"
+  - "在这里，就是 outcome 检查和 process 检查，再加上调用次数和 token。"
 - en: "Evaluation step 1 lists the runs. Every run so far is in one SQLite database, including the failed live ones, with status error."
   zh:
   - "评测第 1 步列出所有运行。"
@@ -347,7 +356,7 @@ S14:
   - null
 - en: "Evaluation step 2 starts offline: the act 2 evaluation, scripted, two repeats, labeled context fixture 1. All 4 runs pass, but scripted runs test the machinery, not the model."
   zh:
-  - "评测第 2 步先离线跑：第 2 幕的评测，脚本模拟，重复两次，label 是 context-fixture-1。"
+  - "评测第 2 步先离线跑第 2 幕的评测：脚本模拟，重复两次，label 是 context-fixture-1。"
   - "全部 4 次运行都通过了，但脚本模拟的运行测的是这套机制，不是模型。"
   en_display:
   - "Evaluation step 2 starts offline: the act 2 evaluation, scripted, two repeats, labeled context-fixture-1."
@@ -421,7 +430,7 @@ S16:
   - "The repository map of section 7 ends with python cli.py --help: every option in one place."
 - en: "Traces and live memory stay in SQLite. Inventory, orders, tickets and pending workflows last for one process; tasks and history, for one session."
   zh:
-  - "所有 trace 和在线运行写下的记忆都保存在 SQLite 里。"
+  - "所有 trace，以及在线运行写下的记忆，都保存在 SQLite 里。"
   - "库存、订单、审批单和待处理的工作流只存在于一个进程里；任务和历史，只存在于一个 session 里。"
 - en: "Now tear down; these steps are extras. Type exit in each container shell; it was started with dash dash rm, so nothing is left in docker ps dash a."
   zh:

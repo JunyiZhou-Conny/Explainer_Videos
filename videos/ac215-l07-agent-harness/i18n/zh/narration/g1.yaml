@@ -41,7 +41,7 @@ S01:
 - en: "The first proposes 1,050 grams for 5,600 cents. The second, 1,200 grams for 6,400 cents, within a budget with the comma in the wrong place: a malformed number."
   zh:
   - "第一个提议 1050 克，5600 美分。"
-  - "第二个是 1200 克，6400 美分，说在预算之内，可预算的逗号放错了地方：一个格式错误的数字。"
+  - "第二个是 1200 克，6400 美分，说是在一个逗号放错了地方的预算之内：一个格式错误的数字。"
 - en: "Which of these would you let charge a customer's card? And what would have to be true first?"
   zh:
   - "这两个里面，你会让哪一个去刷顾客的卡？"
@@ -72,7 +72,7 @@ S01:
   - "看到标签写着 your turn，就暂停，自己跑这条命令。"
 - en: "One honest limit: we recorded this on October 20, 2026, without an OpenAI key. Everything offline ran for real; live commands ran until OpenAI refused the placeholder key. Live answers come from the staff's saved Colab run and the README."
   zh:
-  - "坦白说一个限制：我们在 2026 年 10 月 20 日录制，没有 OpenAI 密钥。"
+  - "坦白说一个限制：2026 年 10 月 20 日录制时，我们没有 OpenAI 密钥。"
   - "离线的部分都是真实运行的；在线命令一直跑到 OpenAI 拒绝占位密钥为止。"
   - "在线运行的回答，来自课程团队保存的 Colab 运行和 README。"
 - en: "The only cost is OpenAI tokens. Customer IDs are masked on screen, and every command is in the study guide."
@@ -139,7 +139,7 @@ S03:
 - en: "Now verify, offline, inside the container. Step 1 checks the SDK and prints the installed versions, at the time of recording: Python 3.13.16, agent framework 1.19.0, and every feature true."
   zh:
   - "现在在 container 里离线验证。"
-  - "第 1 步检查 SDK，并打印安装的版本，录制时是：Python 3.13.16、agent-framework 1.19.0，而且每个功能都是 true。"
+  - "第 1 步检查 SDK，并打印安装的版本：录制时是 Python 3.13.16、agent-framework 1.19.0，而且每个功能都是 true。"
   en_display:
   - null
   - "Step 1 checks the SDK and prints the installed versions, at the time of recording: Python 3.13.16, agent-framework 1.19.0, and every feature true."
@@ -161,7 +161,7 @@ S03:
 - en: "The README's notebook section has two more test commands. They run in the container too: 9 notebook tests and 12 chat view tests, both OK."
   zh:
   - "README 的 notebook 那一节还有两条测试命令。"
-  - "它们也在 container 里运行：9 个 notebook 测试和 12 个 chat view 测试，都是 OK。"
+  - "它们也在 container 里运行：9 个 notebook 测试，12 个 chat view 测试，都是 OK。"
 - en: "There's a second road: the course Colab. Save a copy to your Drive, add your key as a secret named OpenAI API key, allow notebook access, and run the setup cells."
   zh:
   - "还有第二条路：课程的 Colab。"
@@ -171,7 +171,7 @@ S03:
   - "Save a copy to your Drive, add your key as a secret named OPENAI_API_KEY, allow notebook access, and run the setup cells."
 - en: "The Colab setup installs the seven pinned packages, not the lockfile, so their dependencies can drift; for identical versions, use Docker."
   zh:
-  - "Colab 的准备步骤装的是那七个 pin 了版本的包，而不是 lock 文件，所以它们的依赖可能会漂移；要版本完全一致，就用 Docker。"
+  - "Colab 准备时装的是那七个 pin 了版本的包，而不是 lock 文件，所以它们的依赖可能会漂移；要版本完全一致，就用 Docker。"
 - en: "Every recorded answer in this video comes from this notebook's saved run. Pause, and verify your setup either way."
   zh:
   - "这期视频里每个录下来的回答，都来自这个 notebook 保存的那次运行。"
@@ -240,7 +240,7 @@ S05:
 - en: "Step 3 is a notebook cell, for Colab or Jupyter, that wraps build agent in a harness. It adds Trace, Budget with 8 model calls, 20 tool calls and 120 seconds, basic Context, and Cart Check. The CLI builds exactly this."
   zh:
   - "第 3 步是一个 notebook 单元格，在 Colab 或 Jupyter 里用，它把 build agent 包进一个 harness。"
-  - "它加上 Trace、Budget，限 8 次模型调用、20 次工具调用和 120 秒，basic Context，还有 CartCheck。"
+  - "它加上 Trace；Budget 限模型调用 8 次、工具调用 20 次、时长 120 秒；basic Context 和 CartCheck。"
   - "CLI 构建的正是这个。"
   en_display:
   - "Step 3 is a notebook cell, for Colab or Jupyter, that wraps build_agent in a harness."

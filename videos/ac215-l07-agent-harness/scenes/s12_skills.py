@@ -55,7 +55,7 @@ Beats (script.md "## S12", one voiceover block each):
     this" it writes "also send this to / other@example.com" onto the page; on "Will the email go
     there?" the address flashes. PONDER(6 s) in the lower third.
  7  The card and the padlock leave; the real skills/vendor-outreach/ tree comes in top left. On
-    "The skill itself" CODE(skills/vendor-outreach/SKILL.md: 1–4, 26–27) (folded) comes in under
+    "its own text even says" CODE(skills/vendor-outreach/SKILL.md: 1–4, 26–27) (folded) comes in under
     them; on "it cannot add recipients" lines 26–27 light. On "and every read is checked" it gives
     way (old out, then new in) to CODE(formaggio/agents/skill_support.py: 40, 46, 50–51) (folded):
     on "no parent folders" line 40 lights and a PINK check lands on the resource path
@@ -686,6 +686,7 @@ class SkillsManual(VoiceScene):
             yb = col_box(r_ed, a, r_ed.text.index("approve") + len("approve"), TURN)
             self.play(Create(yb), run_time=0.3)
             r_ed.add(yb)
+            self.wait(1.0)                             # the whole command is read before the rows scroll it away
             lit = None
             for k, (n, path) in enumerate(zip(LOADS, PATHS)):
                 if k == 5:
@@ -797,7 +798,7 @@ class SkillsManual(VoiceScene):
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(pcard), FadeOut(lk), run_time=0.5)
             self.play(FadeIn(tree, shift=RIGHT * 0.1), run_time=0.4)
-            vo.wait_until("The skill itself")
+            vo.wait_until("its own text even says")    # the guards-in-code clause is heard over the tree alone
             self.play(FadeIn(pA, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("it cannot add recipients")
             self.play(FadeIn(barsA), run_time=0.4)
@@ -816,8 +817,8 @@ class SkillsManual(VoiceScene):
             self.play(FadeOut(pg_seal), FadeIn(pg_broken, scale=1.3), recolor(pB.span(51, "Skill changed"), ERR),
                       run_time=0.5)
             self.play(flash(pg_broken, ERR, 1.3), run_time=0.5)
+        self.remove(pg_broken)                         # off the top level first, so the on-screen pg is never split
         pg.add(pg_broken)
-        self.remove(pg_broken)
 
         # ========================================================== 8 · the recipient is checked in code; nothing is sent
         g1 = guard_chip(["recipient allowlist", VENDOR], HARNESS, mono_rows=(1,))

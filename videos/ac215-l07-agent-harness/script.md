@@ -1191,7 +1191,7 @@ CODE(formaggio/agents/skill_support.py: 40, 46, 50–51) (folded): line 40 (abso
 (symlinks), lines 50–51 (`Skill changed during the run.`) light one by one, each with a PINK check mark on a
 resource path; as line 50 lights, each file of `vendor-outreach` gets a small GREEN seal "SHA-256 snapshot", and
 the edited copy's seal breaks RED.
-SAY: No. The skill itself says it cannot add recipients or authorize actions, and every read is checked: no parent folders, absolute paths or symlinks, and a file edited mid-run is refused.
+SAY: No. Whatever the skill says, the guards are in code; its own text even says it cannot add recipients, and every read is checked: no parent folders, absolute paths or symlinks, and a file edited mid-run is refused.
 
 SHOW: The panel leaves. The edited page bounces off the padlock; only the YELLOW hand turns it. Two GREEN guards
 light: "recipient allowlist: vendor@example.com" (RECORDED chip from expected/colab-c14-policies.txt line 9) and

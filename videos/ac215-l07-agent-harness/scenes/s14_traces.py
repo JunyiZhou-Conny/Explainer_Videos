@@ -112,7 +112,7 @@ from manim import (
 from common import *  # noqa: F401,F403
 from common import _header_text, _save_op, _set_op, _src_find
 from explainer import style as S
-from explainer.devops import box, chip, glyph_range, label, mono, substring
+from explainer.devops import box, chip, glyph_range, label, line_pitch, mono, substring, tag
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S14"]
@@ -149,6 +149,9 @@ K_FAILED, K_MANAGER = RUN_IDS.index(RUN_FAILED), RUN_IDS.index(RUN_MANAGER)
 assert K_FAILED == 0 and MODES[K_MANAGER] == "fixture"
 assert LIST.line(7).strip() == '"status": "error",' and LIST.line(8).strip() == '"mode": "live"'
 assert LIST.line(227) == "]"
+# the manager-approval run's entry in --list-runs: how the viewer finds their own run ID
+CASE_MGR = '"case_id": "manager-approval"'
+assert LIST.line(109).strip() == f'"run_id": "{RUN_MANAGER}",' and LIST.line(110).strip() == CASE_MGR + ","
 ERR_RUNID = "cli.py: error: Unknown run ID"
 assert TPL.line(20) == ERR_RUNID
 # inspect-run (manager approval): the five events of the chain
@@ -335,6 +338,21 @@ def pin_tag(scene, t, line, tag_, run_time: float = 0.35):
     """beside() + pin(): a tag right after a line's text (its last row when folded)."""
     beside(tag_, t, line)
     return pin(scene, line, tag_, run_time=run_time)
+
+
+def row_tag(s: str, color: str = S.GREY) -> VGroup:
+    """A tag beside a terminal row whose pill is lower than the row pitch, so the tags of two
+    neighbouring rows never touch (S16's row_tag; the shared tag() pill is taller than the pitch).
+    .box .text"""
+    g = tag(s, color, size=CAPTION)
+    h = line_pitch(TERM_PT) - 0.08
+    if g.box.height > h:
+        b = RoundedRectangle(width=g.box.width, height=h, corner_radius=h / 2, stroke_color=color,
+                             stroke_width=2).set_fill(S.BG, 0.92).move_to(g.box)
+        g.submobjects[g.submobjects.index(g.box)] = b
+        g.box = b
+        g.text.move_to(b)
+    return keep_size(g)
 
 
 def hide_all(m) -> None:
@@ -538,7 +556,7 @@ class TraceEvidence(VoiceScene):
             vo.wait_until("it fails")
             e20 = show(self, t, TPL, (TPL.line(20), ERR), run_time=0.4)[0]
             vo.wait_until("because it's a template")
-            tt3 = pin_tag(self, t, e20, template_tag())          # the command's row is too full for it
+            tt3 = pin_tag(self, t, e20, row_tag("a template"))          # the command's row is too full for it
             vo.wait_until("Paste a real one")
             cap3 = note("paste a run ID from --list-runs")
             place(cap3, left=tt3.get_right()[0] + 0.25, cy=tt3.get_center()[1])
@@ -553,17 +571,23 @@ class TraceEvidence(VoiceScene):
             hl.move_to(cards[K_MANAGER])
             ill4 = illustration_tag()
             place(ill4, left=cyl.get_left()[0] - 0.25, bottom=cyl.get_top()[1] + 0.12)
-            for m in (cyl_g, lbl2, ill4):
+            # how to find it: its --list-runs entry names the case (container/70 line 110), so the
+            # viewer looks up their own manager-approval run the same way
+            case3 = grey_tag(f"its --list-runs entry: {CASE_MGR}")
+            place(case3, left=cyl.get_right()[0] + 0.35, cy=hl.get_center()[1])
+            for m in (cyl_g, lbl2, ill4, case3):
                 inside(m)
             assert lbl2.get_bottom()[1] > STRIP_TOP + 0.12, lbl2.get_bottom()
+            assert case3.get_bottom()[1] > STRIP_TOP + 0.3, case3.get_bottom()
             apart(ill4, tr, 0.05)
+            apart(case3, cyl_g, 0.2)
             self.play(FadeIn(cyl_g), FadeIn(lbl2), FadeIn(ill4), run_time=0.5)
-            self.play(Create(hl), run_time=0.4)
+            self.play(Create(hl), FadeIn(case3, shift=LEFT * 0.1), run_time=0.4)
             # ... and its real ID is pasted in the strip (the command fills its row: it starts under the
             # prompt, so the tag goes on the prompt's row)
             c4 = type_cmd(self, t, MGR.cmd, 0.9)
             assert len(t.lines) == 3 and t.lines[0] is e20, [ln.text for ln in t.lines]
-            pin_tag(self, t, rows_of(c4)[0], differ_tag(), run_time=0.3)
+            pin_tag(self, t, rows_of(c4)[0], row_tag("your numbers will differ"), run_time=0.3)
 
         # ========================================================== 4 · the run's events, then the trace confirms them
         ec = EventChain()
@@ -603,6 +627,7 @@ class TraceEvidence(VoiceScene):
             self.add(ec)
             # this run: the manager-approval one, the ID just pasted
             self.play(pulse(hl, TURN, 6), glow(id_glyphs, LOOKUP), run_time=0.7)
+            self.play(FadeOut(case3), run_time=0.3)       # it sits where the chain rises: gone first
             for grp in ev:
                 for m in grp:
                     _set_op(m, DIM)
@@ -824,7 +849,7 @@ class TraceEvidence(VoiceScene):
             self.play(FadeOut(pic8), tr.goto(5), run_time=0.5)
             fit(self, t, 12, tags=list(ft), run_time=0.7)
             c9 = type_cmd(self, t, COLAB.cmd, 1.0)
-            pin_tag(self, t, c9, template_tag(), run_time=0.3)
+            pin_tag(self, t, c9, row_tag("a template"), run_time=0.3)
             vo.wait_until("it fails")
             o78 = show(self, t, COLAB, (COLAB.line(20), ERR), wrap=True, run_time=0.4)
             cap9 = note("copy colab.sqlite from your Colab run into outputs/ first")

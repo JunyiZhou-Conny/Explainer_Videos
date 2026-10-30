@@ -752,29 +752,29 @@ class AgentSystem(VoiceScene):
             tt = beside(test_tag(), strip, row2)
             pin(self, row2, ol, run_time=0.3, anim=Create(ol))
             pin(self, row2, tt, run_time=0.3)
-            self.wait(0.3)
+            self.wait(1.3)                              # the full command + its TEST tag stay readable
             # the strip prints the run in turn; each request's token runs its rail with it
             new, an, done = feed(strip, TWO.out(5))
-            self.play(*an, run_time=0.4)
+            self.play(*an, run_time=0.35)
             done()
             self.play(substring(new[0], "approve").animate.set_color(TURN), run_time=0.25)
             for i, (rl, tok, (la, lb), lv, lp) in enumerate(zip(
                     (r1, r2), toks, ((23, 24), (46, 47)), (35, 58), (38, 61))):
                 new, an, done = feed(strip, TWO.out(la, lb))
-                self.play(*an, ShowFlash(calls[i], LOOKUP), FadeIn(tok, shift=RIGHT * 0.3), run_time=0.5)
+                self.play(*an, ShowFlash(calls[i], LOOKUP), FadeIn(tok, shift=RIGHT * 0.3), run_time=0.4)
                 done()
                 new, an, done = feed(strip, [(TWO.line(lv), HARNESS)])
                 gap = rl.spot("validate")
-                self.play(*an, ride(tok, path_of([tok.get_center(), gap]), 0.6), run_time=0.6)
+                self.play(*an, ride(tok, path_of([tok.get_center(), gap]), 0.45), run_time=0.45)
                 done()
                 self.play(*tint(tok, HARNESS), FadeIn(amts[i], shift=UP * 0.08 if i == 0 else DOWN * 0.08),
-                          run_time=0.3)
+                          run_time=0.25)
                 new, an, done = feed(strip, TWO.out(lp))
                 tok.set_z_index(2)                       # it waits ON "manager review", off the amber track
                 rv = rl.station("review").frame.get_center()
                 self.play(*an, *rl.freeze("review"), e_vr[id(rl)].animate.set_color(AMBER),
                           ride(tok, path_of([tok.get_center(), rv]), 0.5),
-                          FadeIn(tks[i], shift=DOWN * 0.08 if i == 0 else UP * 0.08), run_time=0.5)
+                          FadeIn(tks[i], shift=DOWN * 0.08 if i == 0 else UP * 0.08), run_time=0.4)
                 done()
             vo.wait_until("and the test decision approves both")
             self.play(LaggedStart(*[FadeIn(c, scale=1.3) for c in cks], lag_ratio=0.3), run_time=0.6)

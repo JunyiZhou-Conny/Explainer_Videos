@@ -65,7 +65,7 @@ Beats (script.md "## S02", one voiceover block each):
     `read -rsp "OpenAI API key: " OPENAI_API_KEY` -> "OpenAI API key: " with the GREY caption
     "type your key here · nothing shows" and a GOLD key dropping in; `export OPENAI_API_KEY`;
     `printf '\\n'` -> an empty line; at once `echo ${#OPENAI_API_KEY}` (extra; TRACKER Start 4 ·
-    extra) -> 19, caption "its length · never its value · 0 means empty", held 2 s. The terminal
+    extra) -> 19, caption "its length (here the placeholder's) · never its value · 0 means empty", held 2 s. The terminal
     fades (TRACKER Start 4); the static ▶ card "only if you changed the key while the container
     ran:" (the echo as its GREY extra row). Hold 2 s, fade to an empty frame.
 """
@@ -472,8 +472,13 @@ class OneContainer(VoiceScene):
         box6 = p6.bar(6, S.GREY, 0.22)            # a bar, not an outline: the rows sit too close for a box
         err6 = erratum_tag("says activated…")
         place(err6, right=p6.code.get_right()[0], cy=p6.header.get_center()[1])
-        bar12 = p6.bar(12, HARNESS, 0.22)
-        n12 = after_code(label("…activates here", CAPTION, HARNESS), p6, 12)
+        # QA (as beat 5): the bar ends after line 12's text and the label sits on the panel beside it,
+        # not GREEN on its own GREEN bar
+        x12 = code_row(p6, 12).get_right()[0] + 0.25
+        bar12 = short_bar(p6, 12, HARNESS, x12)
+        n12 = label("…activates here", CAPTION, HARNESS)
+        place(n12, left=x12 + 0.3, cy=bar12.get_center()[1])
+        assert n12.get_right()[0] < p6.code.background.get_right()[0] - 0.15
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(p5, n42, n48, *bars5)), run_time=0.4)
             resize(self, t, BUILD_ROWS, run_time=0.6)
@@ -664,7 +669,9 @@ class OneContainer(VoiceScene):
             pin(self, ech, ex11, run_time=0.3,                  # " · extra" while the extra is on screen
                 anim=AnimationGroup(FadeIn(ex11, shift=LEFT * 0.1), caption_extra(tr, True)))
             r19 = show(self, t2, AGAIN, 15, run_time=0.3)[0]
-            pin(self, r19, beside(note(len_note), t2, r19, buff=0.4), run_time=0.4)
+            # 19 is the placeholder's length (a real key prints far more): say so beside it
+            pin(self, r19, beside(note("its length (here the placeholder's) · never its value · 0 means empty"),
+                                  t2, r19, buff=0.4), run_time=0.4)
             self.wait(2.3)                              # `19` up ~2.7 s, its caption ~2.3 s, before the fade
             vo.wait_until("Pause here")
             self.play(FadeOut(t2), caption_extra(tr, False), run_time=0.4)

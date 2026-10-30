@@ -118,6 +118,7 @@ from manim import (
     smooth,
     squish_rate_func,
     there_and_back,
+    Transform,
 )
 
 from common import *  # noqa: F401,F403
@@ -537,15 +538,18 @@ class Jar(ContextJar):
         """One card's way out: straight up to the rim, over the right rim, then down outside the wall
         into the heap at `dest` (shrinking to k) or, without dest, fading as it leaves."""
         x_r, y_r = self.route_x(), self.rim_y()
-        # every .animate target is built from the card as it is now: absolute moves, the scale
-        # repeated on each later leg
-        legs = [c.animate(run_time=0.3).move_to([c.get_center()[0], y_r, 0]),
-                c.animate(run_time=0.25).move_to([x_r, y_r, 0]).scale(k)]
+        # each leg's target is built explicitly: chained .animate builders in one Succession would all
+        # share the last leg's target (Manim generate_target), and the card would cut through the jar
+        t1 = c.copy().move_to([c.get_center()[0], y_r, 0])
+        t2 = t1.copy().move_to([x_r, y_r, 0]).scale(k)
         if dest is not None:
-            legs.append(c.animate(run_time=0.45).move_to(dest).scale(k).set_opacity(0.55))
+            t3 = t2.copy().move_to(dest).set_opacity(0.55)
+            last = 0.45
         else:
-            legs.append(c.animate(run_time=0.3).move_to([x_r, y_r - 0.45, 0]).scale(k).set_opacity(0))
-        return Succession(*legs)
+            t3 = t2.copy().shift(DOWN * 0.45).set_opacity(0)
+            last = 0.3
+        return Succession(Transform(c, t1, run_time=0.3), Transform(c, t2, run_time=0.25),
+                          Transform(c, t3, run_time=last))
 
     def heap_spot(self, k: int) -> np.ndarray:
         x = self.route_x() + (k % 3 - 1) * 0.07
@@ -1028,6 +1032,7 @@ class Capsule(VoiceScene):
             o45 = show(self, t2, C45, 2, 3, wrap=True, run_time=0.4)
             assert len(o45) == 3, [r.text for r in o45]
             self.play(wrapped_glyphs(item_rows(o45, 1), PREF).animate.set_color(TURN), run_time=0.35)
+        self.wait(1.5)                                    # the masked memory rows stay readable
 
         # ========================================================== 8 · slide 22–23: only the host writes memory
         half = ActionBoundary(width=8.7, row_h=0.55, texts=("context",), moves=False).prefill(3)

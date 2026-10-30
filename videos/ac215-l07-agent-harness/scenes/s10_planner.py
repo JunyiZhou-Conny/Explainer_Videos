@@ -593,7 +593,7 @@ class FiveDrawers(VoiceScene):
             ol = SurroundingRectangle(dec, color=TURN, buff=0.05, stroke_width=2.5, corner_radius=0.05)
             pin(self, r_dec, ol, anim=Create(ol), run_time=0.3)
             et = beside(extra_tag(), t5, r_p, buff=0.35)
-            tt = test_tag()
+            tt = slim_tag("TEST decision", TURN)     # fits one row pitch: clear of `ol` below
             tt.move_to([0, r_p.strut.get_center()[1], 0]).align_to(ol, RIGHT)
             assert tt.get_left()[0] > et.get_right()[0] + 0.3 and tt.get_right()[0] < t5.box.get_right()[0] - 0.12
             pin(self, r_p, et, run_time=0.3)
@@ -633,7 +633,7 @@ class FiveDrawers(VoiceScene):
         lr22 = lref("22")
         mm = BoundaryMini(upto=3)
         tc = turn_card([Prose("with your key:"), C40.cmd, (Prose("type approve or decline when asked"), S.GREY),
-                        (FIX_CMD, "extra"), (Prose("no key: offline · free"), HARNESS),
+                        (Prose("no key: offline · free"), HARNESS), (FIX_CMD, "extra"),
                         (Prose("live · billed per token"), COST)])
         place(tc, cx=0, cy=-0.3)
         inside(tc)
@@ -648,20 +648,22 @@ class FiveDrawers(VoiceScene):
             vo.wait_until("and it's harmless")
             pin(self, r62[-1], hm, run_time=0.4)
             vo.wait_until("Trust the authoritative block")
-            self.play(recolor(r83[0].glyphs, HARNESS), run_time=0.4)
-            self.play(recolor(r92[0].glyphs, HARNESS), Circumscribe(VGroup(r83[0], r92[0]), color=HARNESS,
-                                                                     fade_out=True, stroke_width=3), run_time=0.7)
-            self.wait(0.25)                              # the GREEN block holds a moment
-            # the terminal leaves before "Pause and run step 1", so the map is read while it is
-            # spoken and the ▶ card arrives right after the SAY (not 3 s later)
-            self.play(FadeOut(VGroup(t5, ft5)), FadeOut(c837), caption_extra(tr, False), run_time=0.45)
-            self.play(FadeIn(mm), FadeIn(lr22), run_time=0.4)
-            self.play(mm.light("tools"), run_time=0.25)
+            self.play(recolor(r83[0].glyphs, HARNESS), recolor(r92[0].glyphs, HARNESS),
+                      Circumscribe(VGroup(r83[0], r92[0]), color=HARNESS, fade_out=True, stroke_width=3),
+                      run_time=0.6)
+            # the terminal leaves right after the GREEN block, so the map is read during "Pause and
+            # run step 1" and the ▶ card arrives on that line (a viewer pausing there sees commands);
+            # sequential: the map sits on the terminal's bottom-right rows, so the terminal leaves first
+            self.play(FadeOut(VGroup(t5, ft5)), FadeOut(c837), caption_extra(tr, False), run_time=0.3)
+            self.play(FadeIn(mm), FadeIn(lr22), run_time=0.3)
+            lit = mm.light("tools")                      # sets the lit row: the caption sits on it
             cap_t = mm.caption("Tools ← approval on save")
-            self.play(mm.add_bar("tools"), FadeIn(cap_t, shift=LEFT * 0.1), run_time=0.45)
-        self.wait(0.5)                                  # the caption read (~1.5 s in all)
-        self.play(FadeOut(VGroup(cap_t, mm)), FadeOut(lr22), run_time=0.4)
-        self.play(FadeIn(tc, scale=0.97), run_time=0.5)
+            self.play(lit, mm.add_bar("tools"), FadeIn(cap_t, shift=LEFT * 0.1), run_time=0.35)
+            vo.wait_until("Pause and run")
+            self.wait(0.5)                               # the map is read ~1 s; the card lands mid-line
+            # sequential: the card's corner covers the map's top, so the map leaves first
+            self.play(FadeOut(VGroup(cap_t, mm)), FadeOut(lr22), run_time=0.3)
+            self.play(FadeIn(tc, scale=0.97), run_time=0.4)
         self.wait(2)                                    # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tc, tr)), run_time=0.8)
         self.wait(0.3)

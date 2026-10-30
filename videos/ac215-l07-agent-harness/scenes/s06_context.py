@@ -98,11 +98,15 @@ from manim import (
     LaggedStart,
     ReplacementTransform,
     RoundedRectangle,
-    TransformFromCopy,
+    UpdateFromAlphaFunc,
     VGroup,
     VMobject,
     Write,
+    interpolate_color,
+    linear,
+    there_and_back,
 )
+from manim.utils.color import ManimColor
 
 from common import *  # noqa: F401,F403
 from explainer import style as S
@@ -215,6 +219,24 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
 
 def flash(mob, color: str = TURN, k: float = 1.15):
     return Indicate(mob, color=color, scale_factor=k)
+
+
+def glow(m, color: str, k: float = 1.06, run_time: float = 0.6, frame=None, width: float = 5.0):
+    """Indicate's swell without its fill (as s07's pulse): m grows and shrinks back while its frame's
+    border glows `color`; the fill never changes, so a filled card keeps its label readable."""
+    fr = frame if frame is not None else m.frame
+    c0, w0 = fr.get_stroke_color(), fr.get_stroke_width()
+    col = ManimColor(color)
+    state = {"s": 1.0}
+
+    def upd(mob, a):
+        b = there_and_back(a)
+        s_ = 1 + (k - 1) * b
+        mob.scale(s_ / state["s"])
+        state["s"] = s_
+        fr.set_stroke(interpolate_color(c0, col, b), width=w0 + (width - w0) * b)
+
+    return UpdateFromAlphaFunc(m, upd, run_time=run_time, rate_func=linear)
 
 
 def row_tag(text: str, color: str = S.GREY, text_color: str | None = None) -> VGroup:
@@ -409,7 +431,7 @@ class ContextModes(VoiceScene):
             # the transforms left the parts on the scene one by one: swap them for the piece
             self.remove(*[m for m in self.mobjects if m not in (tr, lr)])
             self.add(bs)
-            self.play(TransformFromCopy(bs.parts["blocks"], es.parts["blocks"]), FadeIn(es.parts["title"]),
+            self.play(FadeIn(es.parts["blocks"], shift=RIGHT * 0.3), FadeIn(es.parts["title"], shift=RIGHT * 0.3),
                       run_time=0.7)
             self.remove(*[m for m in self.mobjects if m not in (tr, lr, bs)])
             self.add(es)
@@ -421,9 +443,8 @@ class ContextModes(VoiceScene):
             vo.wait_until("and leaves the slots")
             self.play(flash(VGroup(*[b.dashed for b in bs.blocks_list[4:]]), S.GREY, 1.04), run_time=0.6)
             vo.wait_until("enriched fills them")
-            self.play(*es.fill_slots(), run_time=0.7)
-            self.play(Write(dec), run_time=0.8)
-        self.wait(1.0)                                         # the caption reads before the picture goes
+            self.play(*es.fill_slots(), Write(dec), run_time=0.8)
+        self.wait(1.5)                                         # the caption reads before the picture goes
 
         # ========================================================== 2 · step 1: --compare
         t = term(container=True, rows=T_ROWS)
@@ -540,13 +561,14 @@ class ContextModes(VoiceScene):
             self.play(FadeIn(pk.rows), FadeOut(ghost), run_time=0.4)
             self.remove(pk_frame, pk.rows)
             self.add(pk)
-            self.play(flash(pk, HARNESS, 1.06), run_time=0.6)
+            self.play(glow(pk, HARNESS, 1.06), run_time=0.6)       # the border glows; the label stays readable
 
         # ========================================================== 5 · step 4: the override run
-        c7 = top_chip(FUNK, where="container/23 · line 7 (excerpt)", color=S.GREY)
-        place(c7, right=BAND_RIGHT, top=BAND_TOP - 0.15)
+        c7 = top_chip(FUNK, where="the override run's ask (excerpt)", color=S.GREY)
+        place(c7, right=BAND_RIGHT, top=BAND_TOP + 0.04)
         c277 = top_chip(R277, where="README.md · lines 277–278 (excerpt)", color=S.GREY)
-        place(c277, right=BAND_RIGHT, top=BAND_TOP - 0.15)
+        place(c277, right=BAND_RIGHT, top=c7.get_bottom()[1] - 0.03)          # under c7: both stay
+        assert c277.get_bottom()[1] > strip_top(T_ROWS) + 0.03, c277.get_bottom()[1]
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(bs2, es2, req_a, lab_a, req_b, lab_b, pk)), FadeOut(lr), run_time=0.4)
             # the strip's two boxed rows go with the picture: no YELLOW left over from the last idea
@@ -556,7 +578,6 @@ class ContextModes(VoiceScene):
             vo.wait_until("asks for funk")
             self.play(FadeIn(c7, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("and today's request")
-            self.play(FadeOut(c7), run_time=0.3)
             self.play(FadeIn(c277, shift=DOWN * 0.1), run_time=0.4)
 
         # ========================================================== 6 · the PA/NY block, as an extra
@@ -572,12 +593,12 @@ class ContextModes(VoiceScene):
         for c in cart.items:
             c.box.set_stroke(S.GREY).set_fill(S.GREY, 0.16)
         tg.move_to([0, TOG_Y, 0])
-        fict = grey_tag("a fictional classroom rule · not a law (container/29 · line 9)")
+        fict = grey_tag("a fictional classroom rule · not a law (its last line)")
         place(fict, cx=0, top=tg.get_bottom()[1] - 0.25)
         tg_il = illustration_tag()
         place(tg_il, right=6.3, top=tg.get_top()[1] + 0.35)
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(c277), caption_extra(tr, True), run_time=0.4)
+            self.play(FadeOut(VGroup(c7, c277)), caption_extra(tr, True), run_time=0.4)
             self.play(FadeIn(c278, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("A small slip")
             self.play(FadeIn(err, shift=DOWN * 0.1), run_time=0.4)
@@ -648,11 +669,13 @@ class ContextModes(VoiceScene):
             stops = row_tag("stops after 3 errors · exit 1")
             pin(self, r38[1], beside(stops, t, r38[1]), run_time=0.4)
             vo.wait_until("but the report still writes")
-            self.play(tr.goto(7), run_time=0.4)
+            self.play(tr.goto(7), FadeOut(lv), run_time=0.4)                # view-report makes no model call
             type_cmd(self, t, VIEW.cmd, 0.9)
             rv = show(self, t, VIEW, 2, 3, wrap=True, run_time=0.5)
             path = wrapped_glyphs(item_rows(rv, 0), REPORT)
             self.play(path.animate.set_color(LOOKUP), run_time=0.4)
+            prow = item_rows(rv, 0)[-1]                                    # /app is the repo folder (S02)
+            pin(self, prow, beside(row_tag("on your laptop: agent-harness/outputs/reports/"), t, prow), run_time=0.4)
             last = item_rows(rv, 1)[-1]
             pin(self, last, beside(row_tag("the report writes anyway · evaluation explains it"), t, last),
                 run_time=0.4)
@@ -671,7 +694,8 @@ class ContextModes(VoiceScene):
         place(gg, left=grp.get_right()[0] + 0.7, cy=c301.get_center()[1] - 0.1)
         assert gg.get_right()[0] < 6.4, gg.get_right()[0]
         rows = [Prose("with your key:")] + [card_lines(c) for c in CARD_CMDS] + \
-               [(Prose("about 18 live runs · billed per token"), COST)]
+               [(Prose("ran it without a key? use a new label in both commands (README.md · line 721)"), S.GREY),
+                (Prose("about 18 live runs · billed per token"), COST)]
         tc = turn_card(rows)
         cw = cell_width(CAPTION)
         widest = max(r.get_right()[0] for item in tc.rows for r in (item if isinstance(item, VGroup) else [item]))
@@ -681,10 +705,10 @@ class ContextModes(VoiceScene):
                     r.shift(RIGHT * 4 * cw)                       # Text drops leading spaces: put them back
         assert max(r.get_right()[0] for item in tc.rows for r in (item if isinstance(item, VGroup) else [item])) \
             <= widest + 1e-6
-        place(tc, cx=0, top=2.62)
+        place(tc, cx=0, top=2.72)
         assert tc.get_bottom()[1] > -3.55 and tc.width < 12.9, (tc.get_bottom()[1], tc.width)
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(t, nk, lv, lab_chip)), run_time=0.5)
+            self.play(FadeOut(VGroup(t, nk, lab_chip)), run_time=0.5)
             self.play(FadeIn(c301, shift=DOWN * 0.1), run_time=0.5)
             self.play(FadeIn(e301, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("the docs folder")

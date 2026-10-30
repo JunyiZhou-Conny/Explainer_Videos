@@ -173,3 +173,9 @@ to-do: {ipa: "tˈuːdˌuː", say: "to-do"}
 eval: {ipa: "ˈiːvæl", say: "ee-val"}
 unittest: {ipa: "jˈuːnɪt tˈɛst", say: "unit test"}
 pytest: {ipa: "pˈaɪ tˈɛst", say: "pie test"}
+"tool records": {ipa: "tˈuːl ɹᵻkˈɔːɹdz", say: "tool ree-cords"}
+"only records": {ipa: "ˈoʊnli ɹᵻkˈɔːɹdz", say: "only ree-cords"}
+"lecture contrasts": {ipa: "lˈɛktʃɚ kəntɹˈæsts", say: "lecture con-trasts"}
+Jupyter: {ipa: "dʒˈuːpɪɾɚ", say: "Jupiter"}
+"the lecture's recap": {ipa: "ðə lˈɛktʃɚz ɹˈiːkæp", say: "the lecture's ree-cap"}
+"vendor outreach": {ipa: "vˈɛndɚɹ ˈaʊtɹiːtʃ", say: "vendor out-reach"}

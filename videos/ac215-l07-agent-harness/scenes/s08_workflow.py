@@ -36,19 +36,20 @@ Beats (script.md "## S08", one voiceover block each):
     `Step:` lines turn GREEN; on "Success is a receipt" the top-band chip README.md · line 367 "A
     successful order has an application receipt" (expected).
  4  TRACKER Act3 2: `python cli.py --act 3` -> container/31 lines 5, 6 (wrap), 16 as 401s; the
-    scenario turns YELLOW, then "the harness checks it and stops". TRACKER Act3 3: `python cli.py
-    --act 3 --scenario pa-shipping` -> container/32 lines 5, 16 as 401s; its scenario YELLOW.
-    The terminal shrinks to the strip (the command and its scenario line; the tags ride on the
-    bar) and the rail returns above it (tag illustration inside the U), a BLUE "model" chip on
-    "propose cart", the customer's cart: a GREY token left of "confirm" and the GREY item chips
-    Comté · Bûcheron · Époisses inside the U, the GREY tag "customer input ·
-    data/shipping_customer_cart.json" in the top band, all on "Comté" (the chips flash; on "to
-    Pennsylvania" the strip's `pa-shipping` flashes). On "Before": the tag leaves, a RED bar closes the loop,
-    "review only"; the token runs through confirm and propose (it leaves propose BLUE: the model
-    records the cart) and stops at validate, RED (Comté RED), under the README's QUOTE(382–383)
-    (excerpt, `expected`; in the top band from "Before" on). On "After": the quote leaves, the bar lifts, the counter
-    "revisions ≤ 2" pulses and the token rides the loop back into propose; on "may fix it" the
-    model chip pulses.
+    scenario turns YELLOW, and "the harness checks it and stops". The terminal shrinks to the strip
+    (step 2's command and its scenario line; the tags ride on the bar) and, on "Comté", the rail
+    returns above it (tag illustration inside the U), a BLUE "model" chip on "propose cart", the
+    customer's cart: a GREY token left of "confirm" and the GREY item chips Comté · Bûcheron ·
+    Époisses inside the U, the GREY tag "customer input · data/shipping_customer_cart.json" in the
+    top band (the chips flash; on "to Pennsylvania" the strip's `pa-shipping` flashes). On "Before":
+    the tag leaves, a RED bar closes the loop, "review only"; the token runs through confirm and
+    propose (it leaves propose BLUE: the model records the cart) and stops at validate, RED (Comté
+    RED), under the README's QUOTE(382–383) (excerpt, `expected`; in the top band from "Before" on).
+    On "After": TRACKER Act3 3 as the quote leaves and the bar lifts; the strip types `python cli.py
+    --act 3 --scenario pa-shipping` -> container/32 line 5 (its scenario YELLOW; the strip holds the
+    prompt, the folded command and that line) while
+    the counter "revisions ≤ 2" pulses, and the token rides the loop back into propose; on "may fix
+    it" the model chip pulses.
  5  TRACKER Act3 3 · extra. The strip's tags swap to `scripted` + GREEN `offline · free`; it types
     `python cli.py --act 3 --fixture --scenario pa-shipping` (tag extra). On "a script in the
     model's seat" the model chip slides out and the BLUE dashed `scripted` seat comes in. A BLUE
@@ -517,7 +518,7 @@ class Rails(VoiceScene):
         cond = p.span(29, COND29.rstrip(")"))
         edges = [rl.edge(i) for i in range(6)]
         with self.voiceover(SAY[1]) as vo:
-            self.play(flash(ban, HARNESS, 1.1), mr.arrow.animate.set_stroke(width=10), run_time=0.8)
+            self.play(flash(ban_t, HARNESS, 1.06), mr.arrow.animate.set_stroke(width=10), run_time=0.8)
             vo.wait_until("The order route is a graph")
             self.play(FadeOut(VGroup(ab, reasons, fr23, ban)), FadeOut(lr), FadeOut(VGroup(strip, still)),
                       run_time=0.5)
@@ -666,18 +667,16 @@ class Rails(VoiceScene):
             apart(m, tr)
         nudge = np.array([g.f["validate"].get_left()[0] + 0.15 - tok.width / 2, g.yt, 0])
         with self.voiceover(SAY[4]) as vo:
-            # (the two commands are typed briskly: the SAY names the cart's cheeses ~4.9 s in, and
-            # the rail with the cart should be up by then)
+            # step 2 (Before) owns the strip until "After": its command and scenario stay under the
+            # Before story; step 3's command is typed as the revise loop opens
             self.play(FadeOut(c367), tr.goto(2), run_time=0.4)
-            type_cmd(self, t, BLK.cmd, 0.35)
-            o1 = show(self, t, BLK, 5, 6, BLK.as401(16, short=True), wrap=True, run_time=0.35)
-            self.play(substring(item_rows(o1, 0)[0], SC31).animate.set_color(TURN),
-                      wrapped_glyphs(item_rows(o1, 1), STOPS31).animate.set_color(TURN), run_time=0.35)
-            self.play(tr.goto(3), run_time=0.3)
-            c2 = type_cmd(self, t, PAS.cmd, 0.6)
-            o2 = show(self, t, PAS, 5, PAS.as401(16, short=True), run_time=0.35)
-            self.play(substring(o2[0], SC32).animate.set_color(TURN), run_time=0.3)
-            keep = [*c2.rows, o2[0]] if hasattr(c2, "rows") else [c2, o2[0]]
+            c1 = type_cmd(self, t, BLK.cmd, 0.5)
+            o1 = show(self, t, BLK, 5, 6, BLK.as401(16, short=True), wrap=True, run_time=0.4)
+            sc31 = item_rows(o1, 0)[0]
+            self.play(substring(sc31, SC31).animate.set_color(TURN),
+                      wrapped_glyphs(item_rows(o1, 1), STOPS31).animate.set_color(TURN), run_time=0.4)
+            self.wait(0.9)
+            keep = [*c1.rows, sc31] if hasattr(c1, "rows") else [c1, sc31]
             fit(self, t, 3, keep=keep, tags=list(ft), run_time=0.5)
             strip = t
             vo.wait_until("Comté")
@@ -685,7 +684,7 @@ class Rails(VoiceScene):
                       FadeIn(cart_row, shift=UP * 0.08), FadeIn(cust, shift=DOWN * 0.08), run_time=0.6)
             self.play(LaggedStart(*[flash(c, S.GREY, 1.12) for c in cart_items], lag_ratio=0.25), run_time=0.8)
             vo.wait_until("to Pennsylvania")
-            self.play(flash(substring(o2[0], "pa-shipping"), TURN, 1.1), run_time=0.6)
+            self.play(flash(substring(sc31, "pa-shipping"), TURN, 1.1), run_time=0.6)
             vo.wait_until("Before, the model")
             self.play(FadeIn(bl, shift=DOWN * 0.1), FadeOut(cust), run_time=0.4)
             self.play(FadeIn(quote, shift=DOWN * 0.1), run_time=0.4)        # (where the tag was: after it)
@@ -697,9 +696,13 @@ class Rails(VoiceScene):
             self.play(*tint(tok, ERR), recolor_chip(cart_items[0], ERR), run_time=0.3)
             self.play(ride(tok, path_of([nudge, g.gap_pv]), 0.35), run_time=0.35)
             vo.wait_until("After, the revise loop")
-            self.play(FadeOut(bl, shift=UP * 0.3), FadeOut(quote), run_time=0.5)
-            self.play(flash(rl4.counter, HARNESS, 1.2), run_time=0.6)
-            self.play(ride(tok, path_of([g.gap_pv, g.c["validate"]]), 0.35), run_time=0.35)
+            self.play(tr.goto(3), FadeOut(bl, shift=UP * 0.3), FadeOut(quote), run_time=0.45)
+            type_cmd(self, t, PAS.cmd, 0.5)
+            # (the command folds under the prompt: prompt, command and its scenario fill the strip;
+            # the 401 that follows is the same as step 2's)
+            o2 = show(self, t, PAS, 5, run_time=0.3)
+            self.play(substring(o2[0], SC32).animate.set_color(TURN), flash(rl4.counter, HARNESS, 1.2),
+                      ride(tok, path_of([g.gap_pv, g.c["validate"]]), 0.6), run_time=0.6)
             self.play(ride(tok, g.loop_path(), 1.3), run_time=1.3)
             vo.wait_until("may fix it")
             self.play(flash(seat, CLOUD, 1.2), pulse(rl4.station("propose").frame, CLOUD, 8), run_time=0.75)

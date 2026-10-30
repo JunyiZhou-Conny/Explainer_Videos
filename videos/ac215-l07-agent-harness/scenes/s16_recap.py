@@ -40,22 +40,24 @@ Beats (script.md "## S16", one voiceover block each):
    "offline · free", ▶ your turn. The key row's "not in files, commits or shell history" flashes
    on "keep it out of files", its "watch your OpenAI usage" on "and watch your usage", the Colab
    row on "In Colab", the ▶ tag on "Pause". Hold 2 s.
-5  LECTURE 22. The card fades; V1's action boundary full size (no move arrows), every GREEN cell
-   filled with the recap texts; each row lights YELLOW (its pill, and its GREEN text flashes) as the
+5  LECTURE 22. The card and the teardown tracker fade; V1's action boundary full size (no move arrows), every GREEN cell
+   filled with the recap texts (the BLUE Context & memory cell without "what to remember", which S11
+   moved to the GREEN side); each row lights YELLOW (its pill, and its GREEN text flashes) as the
    SAY names it: control, tools, context & memory, verification, sub agents.
 6  The light goes out; the BLUE cells dim (outline, fill and text; their header stays and
    flashes); on "On the right" the
    GREEN cells brighten and their header flashes; on "and where it matters" the GREEN texts of
    Control flow (the graph's manager review) and Tools (approval on save) move left and two YELLOW
    "a human decides" stamps land at those cells' right ends.
-7  TRACKER Res 2. The table's texts and the stamps fade, then the table shrinks to a glyph-only
-   copy bottom right (the lecture tag stays with it). A card redrawn from README.md · lines 820–826
+7  TRACKER Res 2. The table's texts, the stamps and the lecture tag fade, then the table shrinks to
+   a glyph-only copy bottom right. A card redrawn from README.md · lines 820–826
    ("End-of-lecture reflection", tag expected): the five questions, each after its concept in bold;
    on "Pick one run" the GREY caption "pick one run you did" under it.
-8  The card, the caption, the small table and the lecture tag leave. "Test yourself"; the five
+8  The card, the caption and the small table leave. "Test yourself"; the five
    recap questions build one numbered list that stays, each writing in with a YELLOW badge as the
    SAY reads its short form (the previous badge turns GREY; the last one on "Pause and try
-   them"); on "answers are in" the GREY caption "answers in exercises.md" under the list. Hold 3 s.
+   them"); on "answers are in" the GREY caption "answers: MLOps_Learning · guides/L07-agents-2-harness.md ›
+   Exercises" under the list (the footer's guide, where the answers are). Hold 3 s.
 9  The list leaves. Two GREY dashed cards: "L08 · fine-tuning on Agent Platform (formerly Vertex
    AI) · a service account again" (its middle flashes on "formerly Vertex AI") and, on "Lecture 9",
    "L09 · testing code with pytest · 281 offline unittest tests to copy" (its end flashes on
@@ -81,6 +83,7 @@ import numpy as np
 from manim import (
     DOWN,
     LEFT,
+    ORIGIN,
     RIGHT,
     UP,
     Circle,
@@ -534,13 +537,23 @@ class Recap(VoiceScene):
 
         # ========================================================== 5 · the action boundary, filled in
         ab = ActionBoundary(moves=False).fill_recap()
+        # S11 moved "what to remember" from the BLUE cell to the GREEN one (only the host writes
+        # memory): the recap's BLUE cell keeps the rest, as slide_phrase leaves it
+        ctx_blue = fit_rows(BOUNDARY_BLUE["context"].replace(" · what to remember", ""), ab.cell_w - 0.3,
+                            ab.size, INK, buff=0.04, align=ORIGIN).move_to(ab.blues["context"].frame)
+        ab.blues["context"].remove(ab.blue_texts["context"])
+        ab.blues["context"].add(ctx_blue)
+        ab.blue_texts["context"] = ctx_blue
+        assert "remember" not in BOUNDARY_BLUE["context"].replace(" · what to remember", "")
         place(ab, cx=0, top=2.72)
         lr = lref("22")
         inside(ab)
         apart(ab, tr, 0.0)
         apart(ab, lr, 0.0)
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(tc), run_time=0.5)
+            # the teardown step's tracker leaves with the card (the table is not a README step);
+            # TRACKER Res 2 comes in with the reflection card (beat 7)
+            self.play(FadeOut(tc), FadeOut(tr, shift=UP * 0.25), run_time=0.5)
             self.play(FadeIn(ab), FadeIn(lr), run_time=0.8)
             for name, phrase in (("control", "budgets and the graph"), ("tools", "schemas, the audit"),
                                  ("context", "the packet, the capsule"), ("verify", "Cart Check and revalidation"),
@@ -577,9 +590,12 @@ class Recap(VoiceScene):
         apart(refl, lr, 0.0)
         k = 3.2 / ab.width
         with self.voiceover(SAY[7]) as vo:
-            tr = switch_section(self, tr, "Res", 2)
+            tr = switch_section(self, None, "Res", 2, run_time=0.5)
             words = [m for m in texts_of(ab)]
-            self.play(*[m.animate.set_opacity(0) for m in words], FadeOut(st1), FadeOut(st2), run_time=0.35)
+            # the lecture tag leaves with the table's texts: it cites slide 22, and the card that
+            # takes the top of the frame is the README's (L05/L06: a tag sits only over its picture)
+            self.play(*[m.animate.set_opacity(0) for m in words], FadeOut(st1), FadeOut(st2), FadeOut(lr),
+                      run_time=0.35)
             for m in words:                              # gone for good: shapes only shrink (no tiny text)
                 ab._unparent(m)
             self.play(ab.animate.scale(k).move_to(MINI), run_time=0.6)
@@ -591,13 +607,13 @@ class Recap(VoiceScene):
 
         # ========================================================== 8 · test yourself
         title, blocks = question_list()
-        ans = note("answers in exercises.md")
+        ans = note(f"answers: {GUIDE} › Exercises")
         place(ans, left=X_LEFT + 0.65, top=blocks[-1].rows.get_bottom()[1] - 0.3)
         for m in (title, *blocks, ans):
             inside(m)
         apart(title, tr, 0.05)
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(refl, pick, ab, lr)), run_time=0.5)
+            self.play(FadeOut(VGroup(refl, pick, ab)), run_time=0.5)
             self.play(FadeIn(title, shift=DOWN * 0.08), run_time=0.4)
             for i, phrase in enumerate(Q_ANCHORS):
                 vo.wait_until(phrase)

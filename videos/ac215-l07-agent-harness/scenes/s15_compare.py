@@ -29,8 +29,9 @@ Beats (script.md "## S15", one voiceover block each):
     and the chip README.md · line 737 (excerpt) "Make one deliberate change"; on "keeping the" the
     second chip "Preserve the confirmed-constraint instructions." and the old lines flash GREEN.
  4  The editor leaves; TRACKER Eval3 3 · extra; the extra card "an extra · in the study guide" /
-    “appends one line with printf” above the strip. On "asking for a price" the card leaves, the
-    terminal grows back and types `diff -u prompts/shop_assistant.md prompts/shop_assistant_v2.md`
+    “appends one line with printf” above the strip. On "asking for a price" the card leaves and
+    the top chip becomes the GREY "extra · appends one line with printf" (it stays while the diff
+    runs; batch B swaps it for "step 4"), the terminal grows back and types `diff -u prompts/shop_assistant.md prompts/shop_assistant_v2.md`
     (tag extra) → container/83: 2–4, …, 8, 9 folded to `+Keep … "Price:" … and "Action status:" …`
     (wrap; 8–9 GREEN). On "diff shows" line 9 flashes and the GREY caption "diff exits 1 when the
     files differ" arrives on the command's row (line 9 has no room); the frame holds 1 s to read it.
@@ -39,12 +40,13 @@ Beats (script.md "## S15", one voiceover block each):
     prompts/shop_assistant_v2.md` turns YELLOW with the YELLOW note "the only difference" →
     container/84: 2, …, 36, 38.
  6  TRACKER Eval3 5. The top chip leaves, the terminal grows to 13 rows, the top chip "step 5 ·
-    compare" (tall form); the title bar's GOLD tag becomes GREEN `offline · free`. It types the
+    compare" (tall form, left of the title-bar tags, clear of both pills); the title bar's GOLD tag becomes GREEN `offline · free`. It types the
     compare (2 rows) → container/85: 5–9, …, 14, …, 436 folded to `"interpretation": "… Prompt/skill
     edits can be compared; code, data, model or settings changes are confounders. …` (wrap, 2 rows),
     438. On "Changed configuration" lines 5–7 GREEN; on "Confounding changes" line 8 GREEN; on
     "Change code" line 436's confounder phrase YELLOW; on "checked in code" lines 5–8 get a GREEN
-    outline flash; then `"outcome": "unchanged"` gets a YELLOW box and the GREY tag "an error
+    outline flash (lines 5–7 flash first on "the lecture's change-one-layer rule");
+    then `"outcome": "unchanged"` gets a YELLOW box and the GREY tag "an error
     before and after".
  7  The top chip leaves as the terminal shrinks to the strip (the compare command and line 14).
     Above it, at once: the excerpt chip `formaggio/evaluation/evaluation.py · line 153 (excerpt)`:
@@ -59,11 +61,12 @@ Beats (script.md "## S15", one voiceover block each):
     GREY dashed, "missing"; the balance wobbles and settles level; 0.8 s of silence to read them.
  8  TRACKER Eval3 5 · extra. The picture leaves, and with it the YELLOW box and tag on the live
     compare's line 14; the extra card “a second scripted batch, context-fixture-2, with the v2
-    prompt file” above the strip; then the terminal grows and types `python cli.py --compare
+    prompt file” above the strip; it leaves for the GREY top chip "context-fixture-2 · scripted · v2
+    prompt", which stays while the compare runs; then the terminal grows and types `python cli.py --compare
     context-fixture-1 context-fixture-2` (extra, the tag on the prompt's row) → container/87: 5–9,
     …, 14 (the … as at the live compare). On "reports all four" line 14's "unchanged" flashes and
     the GREY tag "the same for all 4 runs" (lines 14, 305, 596, 887) pins beside it; on "because
-    fixtures" the top-band chip README.md · line 765 "Scripted fixture success does not establish
+    fixtures" that chip gives way (sequentially) to the top-band chip README.md · line 765 "Scripted fixture success does not establish
     live response quality" (expected).
  9  TRACKER Eval4 1 (the section switches while the terminal is still up). The terminal fades.
     QUOTE(README.md: 755–763) as one card: the first sentence, line 757, the five review questions
@@ -691,11 +694,16 @@ class FairComparison(VoiceScene):
         place(xc4, cx=0, cy=0.65)
         inside(xc4)
         apart(xc4, tr, 0.1)
+        # the card's purpose stays in the top band while the diff it explains is typed and read
+        cx4 = top_chip("extra · appends one line with printf", color=S.GREY)
+        apart(cx4, tr, 0.01)
+        assert cx4.get_bottom()[1] > t.box.get_top()[1] + 0.05
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(pic3), caption_extra(tr, True), run_time=0.45)
             self.play(FadeIn(xc4, shift=UP * 0.1), run_time=0.45)
             vo.wait_until("asking for a price")
-            self.play(FadeOut(xc4), run_time=0.35)
+            self.play(FadeOut(xc4, shift=UP * 0.3), Succession(FadeOut(chip3), FadeIn(cx4, shift=DOWN * 0.1)),
+                      run_time=0.6)
             fit(self, t, 12, tags=bar_tags, run_time=0.6)
             cdf = type_cmd(self, t, CMD_DIFF, 0.8)
             xt4 = pin_tag(self, t, cdf, extra_tag(), run_time=0.3)
@@ -716,7 +724,7 @@ class FairComparison(VoiceScene):
             lv2.move_to([lv_right - lv2.width / 2, nk.get_center()[1], 0])
             self.play(caption_extra(tr, False), tr.goto(4), FadeIn(lv2), run_time=0.45)
             bar_tags = [nk, lv2]
-            self.play(Succession(FadeOut(chip3), FadeIn(chip4)), run_time=0.5)
+            self.play(Succession(FadeOut(cx4), FadeIn(chip4)), run_time=0.5)
             cb = type_cmd(self, t, CMD_B, 1.3)
             assert len(rows_of(cb)) == 4, [r.text for r in rows_of(cb)]
             vo.wait_until("with dash dash prompt file")
@@ -728,13 +736,18 @@ class FairComparison(VoiceScene):
 
         # ========================================================== 6 · compare, offline: one change, no confounders
         chip5 = top_chip("step 5 · compare", tall=True)
-        apart(chip5, tr, 0.05)
         off = offline_tag()
+        off.move_to([lv_right - off.width / 2, nk.get_center()[1], 0])     # x only: fit() lifts the bar
+        # the tall chip rests on the bar tags' level: it goes left of them, clear of both pills
+        place(chip5, right=off.get_left()[0] - 0.2, cy=chip5.get_center()[1] + 0.06)   # right of the tracker: room to clear the frame
+        apart(chip5, tr, 0.05)
+        assert chip5.get_left()[0] > -1.9, chip5.get_left()
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(chip4), tr.goto(5), run_time=0.4)
             fit(self, t, 13, tags=bar_tags, run_time=0.6)
-            assert chip5.get_bottom()[1] > t.box.get_top()[1], (chip5.get_bottom(), t.box.get_top())
-            off.move_to([lv_right - off.width / 2, nk.get_center()[1], 0])
+            assert chip5.get_bottom()[1] > t.box.get_top()[1] + 0.06, (chip5.get_bottom(), t.box.get_top())
+            off.move_to([lv_right - off.width / 2, nk.get_center()[1], 0])     # the bar moved up with fit
+            apart(chip5, VGroup(nk, off), 0.06)
             self.play(FadeIn(chip5, shift=DOWN * 0.1), Succession(FadeOut(lv2), FadeIn(off)), run_time=0.5)
             bar_tags = [nk, off]
             cc = type_cmd(self, t, CMD_CMP, 0.9)
@@ -749,6 +762,8 @@ class FairComparison(VoiceScene):
             self.play(r8.glyphs.animate.set_color(HARNESS), run_time=0.45)
             vo.wait_until("Change code")
             self.play(wrapped_glyphs(r436, CONF).animate.set_color(TURN), run_time=0.5)
+            vo.wait_until("the lecture's change-one-layer rule")
+            self.play(Indicate(VGroup(*[r.glyphs for r in r5_7]), color=TURN, scale_factor=1.08), run_time=0.8)   # back to GREEN
             vo.wait_until("checked in code")
             self.play(outline_flash(VGroup(*[r.glyphs for r in r5_7 + [r8]]), HARNESS, 0.08), run_time=0.8)
             k = r14.text.index('"outcome"')
@@ -845,6 +860,8 @@ class FairComparison(VoiceScene):
         place(xc8, cx=0, cy=0.65)
         inside(xc8)
         apart(xc8, tr, 0.1)
+        cx8 = top_chip("context-fixture-2 · scripted · v2 prompt", color=S.GREY)
+        apart(cx8, tr, 0.01)
         c765 = top_chip(R765, where="README.md · line 765", expected=True)
         apart(c765, tr, 0.01)
         with self.voiceover(SAY[8]) as vo:
@@ -857,9 +874,11 @@ class FairComparison(VoiceScene):
             self.play(FadeIn(xc8, shift=UP * 0.1), run_time=0.45)
             vo.wait_until("comparing two scripted batches")
             self.wait(0.6)
-            self.play(FadeOut(xc8), run_time=0.35)
+            # the card's point stays in the top band (one line) while the compare runs
+            self.play(FadeOut(xc8, shift=UP * 0.3), FadeIn(cx8, shift=DOWN * 0.1), run_time=0.5)
             fit(self, t, 12, tags=bar_tags, run_time=0.6)
             assert c765.get_bottom()[1] > t.box.get_top()[1] + 0.05
+            assert cx8.get_bottom()[1] > t.box.get_top()[1] + 0.05
             cf = type_cmd(self, t, CMD_FIX, 0.7)
             # the command starts under the prompt and fills its row: the tag goes on the prompt's row
             pin_tag(self, t, rows_of(cf)[0], extra_tag(), run_time=0.3)
@@ -873,7 +892,7 @@ class FairComparison(VoiceScene):
                 anim=AnimationGroup(Indicate(substring(f14, '"unchanged"'), color=TURN, scale_factor=1.2),
                                     FadeIn(all4, shift=LEFT * 0.1)))
             vo.wait_until("because fixtures")
-            self.play(FadeIn(c765, shift=DOWN * 0.1), run_time=0.5)
+            self.play(Succession(FadeOut(cx8), FadeIn(c765, shift=DOWN * 0.1)), run_time=0.6)
 
         # ========================================================== 9 · step 4: what the checks establish
         cc9 = check_card()

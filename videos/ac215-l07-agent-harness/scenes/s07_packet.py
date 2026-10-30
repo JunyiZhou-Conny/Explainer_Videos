@@ -12,7 +12,7 @@ Beats (script.md "## S07", one voiceover block each):
  1  Line 210 `"sources": [],` gets the GREY row tag "basic: none"; on "Enriched has three" the
     terminal scrolls on: 214–216, 218, 220, …, 241 (cut), 243, …, 357 (‹customer 1›), 359, …. The
     three "trust" values turn GREEN one by one on their names.
- 2  LECTURE 13, 16. Line 369 `"excluded_products": [` prints; the terminal shrinks to a 3-row strip
+ 2  Line 369 `"excluded_products": [` prints; the terminal shrinks to a 3-row strip
     (359, …, 369; the GREEN tag rides on its bar). V4's sieves (common.Sieves, this scene's
     geometry: see SieveRig) above it, tag `illustration`: three GREEN sieves "stock ≥ 100 g", "no
     raw milk → PA", "no nut allergens" (each flashes on its clause while a survivor, epoisses,
@@ -24,7 +24,7 @@ Beats (script.md "## S07", one voiceover block each):
     strip fade, the tray moves down, and RECORDED(expected/colab-c18: 2–14) folded to its product_id
     and eligible columns (left; tag `recorded …` beside it) confirms them: its seven True cells turn
     GREEN as the tray's chips pulse, its five False cells RED, beside the excluded list.
- 3  The inset leaves. Slide 13 redrawn small, top left: a GREY dashed "Instructions" box holding
+ 3  The inset leaves. LECTURE 13, 16 (the tag arrives with the drawing it cites). Slide 13 redrawn small, top left: a GREY dashed "Instructions" box holding
     the dashed box "Retrieved information (RAG)", tag `concept · lecture only`; on "here it's a
     Python filter" a PINK arrow from the RAG box down to the survivors' tray, captioned "here: a
     Python filter over 12 cheeses + saved preferences" / "no vector search (lecture 5)".
@@ -35,8 +35,9 @@ Beats (script.md "## S07", one voiceover block each):
     messages." beside the user lane's title. On "Into a user message" `Message(role="user"` turns
     PINK; on "headed retrieved context" line 143 lights, its string turns YELLOW, the tray's seven
     chips fade and its outline becomes the "7 candidates" chip of a GREEN packet card (request · 7
-    candidates · preferences), stamped GREEN "data, not instructions"; the card slides up into the
-    user lane and the counter counts to 2 (container/21 and 22, line 10). On "so it cannot pose"
+    candidates · preferences), stamped GREEN "data, not instructions"; the customer message slides
+    right and the card rises into slot 0 of the user lane, [packet][customer message] as in the trace
+    (container/89 model.request messages[0], [1]) and S06; the counter counts to 2 (container/21 and 22, line 10). On "so it cannot pose"
     line 143's bar hands over to line 142's comment (the string stays YELLOW) and a GREY dashed
     card "system rule?" drops to the system lane's edge and is sent back, dimmed (it leaves on
     "That's the lecture's two lanes"). The lanes flash on "two lanes", the system lane on
@@ -59,10 +60,12 @@ Beats (script.md "## S07", one voiceover block each):
     both modes", the GREY notebook chip "notebook: build_act2(mode="basic") · build_act2(mode=
     "enriched")" (README.md · line 332); on "For standard" the README chip lines 265–266
     "preferences repeat the request" (`expected`). On "Pause and run" the terminal fades and the
-    static "your turn" card shows the two commands (a GREEN note "offline · free" after the first)
-    and the GOLD "live · two runs · billed per token". Hold 2 s.
+    static "your turn" card shows the two commands (a GREEN note "offline · free" after the first),
+    S06's offline PA/NY command (container/29, folded once, GREY "extra · offline · the PA/NY check")
+    between them, and the GOLD "live · two runs · billed per token". Hold 2 s.
  8  The card and chips fade. QUOTE(README.md: 336) (left, `expected`); beside it V1's table at half
-    size (LECTURE 22 again: it is slide 22's table) as of act 1, Context & memory lit; on "So
+    size (LECTURE 22 again: it is slide 22's table) as of act 1 with every cell's text as S05 wrote
+    it (20 pt), Context & memory lit; on "So
     selecting candidates" its GREEN cell writes "the packet in the data lane"; the quote's rows
     light on "but validation decides" and "and today's request"; on "In part 2" a BLUE cart token
     waits at the table's left edge with the GREY caption "part 2: the harness takes the route".
@@ -123,6 +126,8 @@ assert PREV.line(357) == '        "source": "customers.json:‹customer 1›",',
 assert list(EXCLUDED) == ["brie", "comte", "munster", "walnut_chevre", "pistachio_manchego"], EXCLUDED
 assert len(SURVIVORS) == 7 and len(CHEESES) == 12
 
+SHIP = capture("container/29")                     # S06's offline PA/NY counterexample (no key)
+assert SHIP.cmd == "python -c 'from acts.act2_context import print_shipping_demo; print_shipping_demo()'", SHIP.cmd
 BASE = capture("container/28")
 assert BASE.cmd == "python cli.py --act 2 --scenario standard", BASE.cmd
 ASK = BASE.cut(7, "budget?")
@@ -583,7 +588,7 @@ class ContextPacket(VoiceScene):
             self.play(FadeOut(top), run_time=0.3)
             r369 = show(self, t, PREV, 369, run_time=0.3)[0]
             fit(self, t, 3, keep=[en[10], en[11], r369], tags=[off], run_time=0.6)
-            sv.reveal(self, "sieves", "tray", extra=[FadeIn(ill), FadeIn(lr)], run_time=0.5)
+            sv.reveal(self, "sieves", "tray", extra=[FadeIn(ill)], run_time=0.5)
             for i, anchor in enumerate(("enough stock", "no raw milk", "no nut allergens")):
                 vo.wait_until(anchor)                   # each sieve lights on its clause (they come ~1 s apart)
                 fall = sv.fall(("epoisses", "bucheron", "mimolette")[i], 0.8)[1]   # ... as a survivor falls
@@ -643,7 +648,7 @@ class ContextPacket(VoiceScene):
         assert caps.get_right()[0] < SAFE and caps.get_top()[1] < -0.2
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(inset, rtag)), run_time=0.4)
-            self.play(FadeIn(s13.outer), FadeIn(s13.title), run_time=0.5)
+            self.play(FadeIn(s13.outer), FadeIn(s13.title), FadeIn(lr), run_time=0.5)   # the tag cites this drawing
             self.play(FadeIn(s13.rag, shift=UP * 0.1), FadeIn(ctag, shift=UP * 0.08), run_time=0.5)
             self.play(flash(s13.rag[1], S.GREY, 1.08), run_time=0.6)
             vo.wait_until("here it's a Python filter")
@@ -666,8 +671,10 @@ class ContextPacket(VoiceScene):
         place(ln, cx=0, top=LANES_TOP)
         assert ln.get_top()[1] < p.get_bottom()[1] - 0.05, (ln.get_top(), p.get_bottom())
         env = packet_card()
-        dest = ln.slot("user", 1, env.width)
-        env.move_to([dest[0], TRAY_LOW, 0])
+        dest = ln.slot("user", 0, env.width)            # the trace: messages[0] is the context packet,
+        env.move_to([dest[0], TRAY_LOW, 0])             # messages[1] the customer's request (S06 too)
+        m1_dest = [dest[0] + env.width / 2 + 0.2 + m1.width / 2, m1.get_center()[1], 0]
+        assert m1_dest[0] + m1.width / 2 < ufr.get_right()[0] - 0.1
         st = stamp("data, not instructions", HARNESS, size=CAPTION, angle=0.0)
         place(st, left=env.get_right()[0] + 0.3, cy=TRAY_LOW)
         assert st.get_right()[0] < SAFE + 0.1 and env.get_top()[1] < ufr.get_bottom()[1] - 0.05
@@ -701,7 +708,10 @@ class ContextPacket(VoiceScene):
             self.play(Create(env.frame), run_time=0.35)
             self.add(env)
             self.play(FadeIn(st, scale=1.15), run_time=0.35)
-            self.play(ln.enter(env, "user", run_time=0.7), FadeOut(st), run_time=0.7)
+            # the customer message makes room first, then the packet rises into slot 0 (nothing crosses)
+            self.play(m1.animate.move_to(m1_dest), FadeOut(st), run_time=0.45)
+            self.play(env.animate.move_to(dest), run_time=0.6)
+            ln.filled["user"] = [env, m1]
             self.remove(env)
             ln.add(env)
             self.play(*ln.count_to(2), run_time=0.6)
@@ -802,12 +812,22 @@ class ContextPacket(VoiceScene):
         nb = card_rows([nb_row, ("(README.md · line 332)", S.GREY)])
         place(nb, left=-6.45, top=c265.get_bottom()[1] - 0.25)
         assert nb.get_bottom()[1] > t2.box.get_top()[1] + 0.08
-        tc = turn_card([PREV.cmd, BASE.cmd, (Prose("live · two runs · billed per token"), COST)], width=11.6)
+        # S06's command, folded once after the `;` (" \\" + 4-space indent, as the terminals fold): inside
+        # the quotes the backslash is Python's line continuation, so the two rows paste and run as typed
+        ship_rows = ["python -c 'from acts.act2_context import print_shipping_demo; \\", "    print_shipping_demo()'"]
+        assert ship_rows[0][:-2] + " " + ship_rows[1].strip() == SHIP.cmd, ship_rows
+        tc = turn_card([PREV.cmd, ("\n".join(ship_rows), "extra · offline · the PA/NY check"), BASE.cmd,
+                        (Prose("live · two runs · billed per token"), COST)], width=11.6)
+        ship = tc.rows[1]                               # its continuation row keeps its 4-space indent
+        cw = mono("x" * 40, CAPTION, INK).width / 40
+        VGroup(ship[1], ship[2]).shift(RIGHT * 4 * cw)
         off2 = label("offline · free", CAPTION, HARNESS)  # a GREEN note: a boxed tag would touch the ▶ tag above it
         place(off2, left=tc.rows[0].get_right()[0] + 0.35, cy=tc.rows[0].get_center()[1])
         tc.add(off2)
-        place(tc, cx=0, cy=-1.2)
+        place(tc, cx=0, top=nb.get_bottom()[1] - 0.2)
+        assert tc.get_bottom()[1] > -3.55, tc.get_bottom()
         assert off2.get_right()[0] < tc.frame.get_right()[0] - 0.1
+        assert ship.get_right()[0] < tc.frame.get_right()[0] - 0.2, (ship.get_right(), tc.frame.get_right())
         apart(off2, tc.tag, 0.04)
         assert tc.get_top()[1] < nb.get_bottom()[1] - 0.05
         with self.voiceover(SAY[7]) as vo:
@@ -833,7 +853,7 @@ class ContextPacket(VoiceScene):
         place(q, left=-6.45, top=2.8)
         etag = expected_tag()
         place(etag, left=q.frame.get_left()[0], top=q.frame.get_bottom()[1] - 0.12)
-        half = ActionBoundary(width=8.6, row_h=0.55, texts=("context",), moves=False).prefill(1)
+        half = ActionBoundary(width=8.6, row_h=0.55, moves=False).prefill(1)   # every row's text, as S05 wrote them
         seen = VGroup(*[half.parts[n] for n in ("heads", "who", "pills", "blue", "green")])
         half.shift(RIGHT * (SAFE + 0.05 - seen.get_right()[0]) + UP * (-0.1 - seen.get_center()[1]))
         assert q.get_right()[0] < seen.get_left()[0] - 0.15, (q.get_right(), seen.get_left())

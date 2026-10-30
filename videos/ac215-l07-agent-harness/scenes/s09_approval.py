@@ -6,7 +6,8 @@ Beats (script.md "## S09", one voiceover block each):
     top band: "set boundaries carefully — permissions · sandboxing · budgets · checks". The
     container terminal (12 rows, TEAL; title-bar tags `scripted` + GREEN `offline · free`, which
     flash on "is scripted") types `python cli.py --act 3 --fixture --scenario manager-approval` ->
-    container/33 lines 11–14, 16, then 20, 23–26. On "a valid cart" line 16 turns GREEN and the
+    container/33 lines 11–14, 16; on "60 guests in New York" the GREY tag "the ask (line 8): 60 guests ·
+    NY · $300 budget" pins beside row 11; then 20, 23–26. On "a valid cart" line 16 turns GREEN and the
     review's "$220.80" lights; on "above the 200 dollar threshold" the banner and its lecture tag
     leave and the top-band chip README.md · line 359 "Manager approval is required for a cheese
     subtotal greater than $200" arrives.
@@ -59,11 +60,11 @@ Beats (script.md "## S09", one voiceover block each):
     then the caption "an approval authorizes a decision · it doesn't reserve stock"; on "it doesn't
     reserve anything" a RED outline flash round the Mimolette bar; on "Act 6" the GREY chip "act 6
     runs this for real".
- 8  TRACKER Act3 5. Everything else leaves. Container terminal (11 rows; `scripted`, `offline ·
+ 8  TRACKER Act3 5. Everything else leaves. Container terminal (12 rows; `scripted`, `offline ·
     free`) types `python cli.py --act 3 --fixture --scenario out-of-stock` -> container/35 lines
     11–14, 16 (RED, on "so attempt 1 fails"), 25–26 (YELLOW, on "One bounded revision"), 28 (GREEN,
-    on "and the order places"), 45 with the GREY tag "scripted: no model" (on "with zero model
-    calls").
+    on "and the order places", then 35 "Order placed." GREEN: valid, then placed), 45 with the GREY
+    tag "scripted: no model" (on "with zero model calls").
  9  TRACKER Act3 6. The terminal leaves. CODE(README.md: 423–430), line 427 YELLOW. Under it the
     README's layer table (lines 439–440) as two GREEN rings around a mini rail (tag illustration):
     `WorkflowBudget(model_calls=8, seconds=120)` and `WorkflowTrace()`, each with its
@@ -133,6 +134,8 @@ assert MGR.line(20).startswith("MANAGER REVIEW — ticket c48487091d824bd5a25754
 SUB23 = "$220.80"
 assert MGR.line(23).strip() == f"4800 g; cheese subtotal {SUB23}"
 ASK = "decline: "
+ASK8 = "the ask (line 8): 60 guests · NY · $300 budget"
+assert "for 60 guests in NY on a $300.00 budget" in MGR.line(8)
 assert MGR.line(28).endswith(ASK + "approve") and DEC.line(28).endswith(ASK + "decline")
 assert MGR.line(30) == "Step: revalidate_and_place"
 assert MGR.line(32).startswith("--- WORKFLOW PLACED — run " + RUN_MANAGER)
@@ -145,6 +148,7 @@ assert OOS.line(16) == "Cart attempt 1: stock: munster — Requested 300 g; avai
 assert OOS.line(25).strip() == "Removed: Munster (munster) — 300 g"
 assert OOS.line(26).strip() == "Added: Époisses (epoisses) — 300 g"
 assert OOS.line(28) == "Cart attempt 2: valid; $50.10"
+assert OOS.line(35) == "Order placed."
 assert OOS.line(45) == "Proposal attempts: 2. Model calls: 0."
 # the hash: the first 16 characters of this run's fingerprint (container/71 inspects run RUN_MANAGER)
 assert "approval.decided" in C71.line(46) and f'"fingerprint": "{FINGERPRINT16}' in C71.line(46)
@@ -424,6 +428,9 @@ class ExactCart(VoiceScene):
             type_cmd(self, t, MGR.cmd, 1.0)
             o1 = show(self, t, MGR, (11, 14), 16, run_time=0.6)
             vo.wait_until("60 guests in New York")
+            # the ask itself is capture line 8 (the 12 rows are full): a GREY tag on row 11's free right
+            ask8 = grey_tag(ASK8)
+            pin(self, o1[0], beside(ask8, t, o1[0], buff=0.35), run_time=0.4)
             o2 = show(self, t, MGR, 20, (23, 26), run_time=0.6)
             vo.wait_until("a valid cart")
             self.play(o1[4].glyphs.animate.set_color(HARNESS), run_time=0.4)
@@ -757,7 +764,7 @@ class ExactCart(VoiceScene):
             self.play(FadeIn(act6, shift=LEFT * 0.1), run_time=0.4)
 
         # ========================================================== 8 · step 5: out of stock, one revision
-        t8 = term(container=True, rows=11)
+        t8 = term(container=True, rows=12)
         ft8 = frame_tags(t8, scripted_tag(), offline_tag())
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(tk, chk6, rl, tok6, lab_pl, blk, shelf, sh_tag, need, viol, ex158, act6,
@@ -771,6 +778,7 @@ class ExactCart(VoiceScene):
             show(self, t8, OOS, (OOS.line(25), TURN), (OOS.line(26), TURN), run_time=0.5)
             vo.wait_until("and the order places")
             show(self, t8, OOS, (OOS.line(28), HARNESS), run_time=0.4)
+            show(self, t8, OOS, (OOS.line(35), HARNESS), run_time=0.4)      # valid, and then placed
             vo.wait_until("with zero model calls")
             r45 = show(self, t8, OOS, 45, run_time=0.4)[0]
             pin(self, r45, beside(grey_tag("scripted: no model"), t8, r45), run_time=0.4)
