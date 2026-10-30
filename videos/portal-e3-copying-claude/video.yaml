@@ -1,0 +1,28 @@
+id: portal-e3-copying-claude
+title: "项目周记 E3 · Copying Claude's chat page: what we copied, refused, added, and haven't built"
+papers: []                     # not a paper: an explainer of the team's own pull requests (series: docs/PORTAL_SERIES.md)
+audience: "Conny, the founder, after E1–E2: directs AI agents, reads Python but not TypeScript, uses Claude's app and ChatGPT daily; has used the triage chat page but not seen how its design was decided or built"
+source: "JunyiZhou-Conny/InternationalHealthportal junyi/40-triage-chat-ui @ b7ab98e (PR #41; issue #40; decision 0006; docs/design/README.md); outside claims: SOURCES.md"
+# Narrated (Kokoro, af_heart) over a quiet music bed that ducks under the voice; the bilingual
+# (Chinese over English) subtitles are burned in, as in E2.
+voice: {backend: kokoro, voice: af_heart, speed: 0.95}
+burn_subtitles: true
+music: {seed: 7, volume_db: 0}
+scenes:
+  - {file: scenes/s01_hook.py,     cls: Hook,     title: "Copied, on purpose"}
+  - {file: scenes/s02_anatomy.py,  cls: Anatomy,  title: "The parts of a chat page"}
+  - {file: scenes/s03_decision.py, cls: Decision, title: "Why copy?"}
+  - {file: scenes/s04_copied.py,   cls: Copied,   title: "What was copied"}
+  - {file: scenes/s05_refused.py,  cls: Refused,  title: "What was not copied"}
+  - {file: scenes/s06_added.py,    cls: Added,    title: "What we added"}
+  - {file: scenes/s07_built.py,    cls: Built,    title: "How it was built"}
+  - {file: scenes/s08_next.py,     cls: Next,     title: "What else"}
+  - {file: scenes/s09_recap.py,    cls: Recap,    title: "Recap"}
+publish:
+  title_zh: "项目周记 E3 · 照着 Claude 抄：我们的聊天页抄了什么、没抄什么、加了什么"
+  description_zh: |
+    我的创业项目（给中国家长和在美留学生的就医导航原型）每周 PR 的概念讲解，第 3 集。
+    分诊聊天页为什么一比一照抄 Claude 的聊天界面？先认识聊天页的各个部分（空白页、建议、输入框、模型菜单、发送/停止键、气泡、操作按钮、回到最新、免责声明）；再看决策 0006 为什么选择「每个界面只照抄一个参考」而不是各取所长；抄了什么（版式、输入框、颜色和衬线字，只在这一页）、没抄什么（标志、侧栏和历史、推理原文、逐字流式）、为了安全和家长加了什么（紧急情况放最前、家长版的 911 说法、跟着复制走的标注、无障碍）；agent 一夜之间怎么重做这一页，又是怎么被一个「发送和停止是同一个按钮」的 bug 绊了两次；最后是主流聊天产品有而我们没有的功能，以及只有我们能做的东西。
+    所有案例都是虚构的；不是医疗建议。英文旁白，中英双语字幕。
+  tags_zh: [AI, 产品设计, UI设计, 聊天界面, 无障碍, Claude, 创业, 科普]
+  tid: 231

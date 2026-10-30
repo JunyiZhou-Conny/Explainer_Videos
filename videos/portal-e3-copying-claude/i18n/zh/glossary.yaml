@@ -1,0 +1,19 @@
+# Chinese subtitle glossary for 项目周记 E3 (subtitles only: the narration is English). Policy as in E2.
+policy: "Mandarin first; product, company and API names and the team's working words stay in English; numbers as digits; half-width space between Chinese and Latin/digits."
+terms:
+- {en: empty state, zh_subtitle: "空白页"}
+- {en: suggestion chips, zh_subtitle: "建议"}
+- {en: composer, zh_subtitle: "输入框"}
+- {en: model menu, zh_subtitle: "模型菜单"}
+- {en: send key, zh_subtitle: "发送键"}
+- {en: stop key, zh_subtitle: "停止键"}
+- {en: user bubble, zh_subtitle: "气泡"}
+- {en: action row, zh_subtitle: "操作按钮"}
+- {en: disclaimer, zh_subtitle: "免责声明"}
+- {en: decision record, zh_subtitle: "决策记录"}
+- {en: Jakob's law, zh_subtitle: "雅各布定律"}
+- {en: screen reader, zh_subtitle: "读屏软件"}
+- {en: demo replay, zh_subtitle: "演示回放"}
+- {en: review, zh_subtitle: "review"}
+- {en: agent, zh_subtitle: "agent"}
+allowed_spoken_latin: [app, Claude, Terra, Bugbot, agent, review, AI, bug]

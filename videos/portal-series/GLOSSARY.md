@@ -26,3 +26,10 @@ explains them. Later episodes reuse these words; add a row when an episode names
 | progress streaming (NDJSON) | 只流进度 | What our server sends the page: one JSON line per update (stage, box, character count, emergency flag), never the words | E2 |
 | early 911 warning | 提前的 911 提醒 | Fixed text we wrote, shown as soon as the first boxes say emergency, before the checked answer | E2 |
 | replay (reveal) | 回放 | The checked answer played out in at most 2.5 s; emergency answers appear at once | E2 |
+| empty state | 空白页 | The page before the first message: greeting, composer, suggestions | E3 |
+| suggestion chips | 建议 | Ready-made questions under the composer; ours start demo replays | E3 |
+| composer | 输入框 | The input box; ours holds 谁在问 · 保险 · 在哪里, the model menu and the send key | E3 |
+| send / stop key | 发送键 / 停止键 | One button slot: send turns into stop while waiting (the source of two bugs in PR #41) | E3 |
+| action row | 操作按钮 | Under an answer: 复制, 复制给家长 (students), 重新回答 (latest live answer) | E3 |
+| one reference per screen | 每个界面只照抄一个参考 | Decision 0006: copy one mature product exactly, no mixing; the chat page copies Claude's app | E3 |
+| Jakob's law | 雅各布定律 | Users spend most of their time on other sites, so they prefer yours to work the same way (NN/g) | E3 |
