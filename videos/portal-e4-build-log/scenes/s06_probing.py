@@ -30,8 +30,9 @@ class Probing(VoiceScene):
                              ).arrange(DOWN, buff=0.2).move_to(LEFT * 5.0 + UP * 0.4)
             judge = tag_box("agent", "5th: checks", "round 1", S.GREY, width=2.6).next_to(probers, DOWN, buff=0.25)
             checker = ours_box("the checker", "lint", width=2.6).move_to(RIGHT * 0.9 + UP * 0.4)
+            self.play(FadeIn(checker), run_time=0.4)
             vo.wait_until("attacked their own checker")
-            self.play(FadeIn(probers), FadeIn(judge), FadeIn(checker), run_time=0.6)
+            self.play(LaggedStart(*[FadeIn(p, shift=RIGHT * 0.1) for p in probers], lag_ratio=0.15), FadeIn(judge), run_time=0.8)
             vo.wait_until("about 3,000 ways")
             dots = VGroup(*[Dot(radius=0.04, color=(DANGER_C if rng.random() < 0.5 else CHECKED_C)) for _ in range(60)])
             starts = [probers[i % 4].get_right() + RIGHT * 0.2 for i in range(60)]

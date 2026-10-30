@@ -53,7 +53,7 @@ class Turn(VoiceScene):
             shelved = sans("kept in the repo · 「不再推进」", 22, S.GREY).next_to(engine, UP, buff=0.12)
             vo.wait_until("you decided")
             q2 = quote_panel("Junyi 2026-10-28 决定：先做能演示的 MVP，评估以后再做。紧急程度和去处交给推理模型判断，不再由确定性规则或正则词表决定。",
-                             "decision 0004 · written by the agent", width=11.6, size=24, color=USER_C).move_to(UP * 1.75)
+                             "decision 0004 · written by the agent", width=11.6, size=24, color=USER_C).move_to(UP * 1.4)
             self.play(FadeIn(q2, shift=DOWN * 0.1), run_time=0.6)
             m = model_box("the model", "judges urgency and where to go", width=4.4).move_to(LEFT * 3.2 + DOWN * 0.6)
             c = ours_box("the checker", "the only safety layer", width=3.4).move_to(RIGHT * 2.2 + DOWN * 0.6)

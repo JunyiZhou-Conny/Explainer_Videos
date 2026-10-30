@@ -49,6 +49,9 @@ class Decided(VoiceScene):
         # 1 ---------------------------------------------------------------- the owner's calls
         with self.voiceover(SAY[0]) as vo:
             head_l = sans("your calls, as the agents recorded them", 26, USER_C).move_to(LEFT * 3.6 + UP * 3.2)
+            who = chip("who decided?", USER_C, 30, mono_font=False).move_to(RIGHT * 3.0 + UP * 1.75)
+            self.play(FadeIn(who, scale=1.1), run_time=0.4)
+            vo.wait_until("names your calls")
             self.play(FadeIn(head_l), run_time=0.4)
             owner = VGroup(*[card(t, s, USER_C, 5.0) for t, s, _ in OWNER]).arrange(DOWN, buff=0.14)
             owner.move_to(LEFT * 3.6 + DOWN * 0.15)
@@ -58,7 +61,7 @@ class Decided(VoiceScene):
             vo.wait_until("stop at 99 percent")
             rule = quote_panel("做到 99% 就停，之后 bot 的新评论先放着；最晚周四晚上 7 点（按北京时间算）收尾。",
                                "PR #41 handoff · 收尾的约定", width=6.4, size=24, color=USER_C).move_to(RIGHT * 3.0 + UP * 1.75)
-            self.play(Circumscribe(owner[4], color=USER_C), FadeIn(rule, shift=LEFT * 0.1), run_time=0.7)
+            self.play(Circumscribe(owner[4], color=USER_C), FadeOut(who), FadeIn(rule, shift=LEFT * 0.1), run_time=0.7)
             vo.wait_until("The code kept it")
             x0, x1, y = 0.4, 6.0, -1.1
 
@@ -78,7 +81,7 @@ class Decided(VoiceScene):
             self.play(Create(axis), FadeIn(ticks), FadeIn(day), FadeIn(dead), run_time=0.6)
             self.play(FadeIn(push, scale=1.2), run_time=0.4)
             vo.wait_until("six hours early")
-            gap = DoubleArrow([x_of(0.75), y - 0.85, 0], [x_of(7), y - 0.85, 0], buff=0, color=CHECKED_C, stroke_width=3,
+            gap = DoubleArrow([x_of(0.75), y - 1.05, 0], [x_of(7), y - 1.05, 0], buff=0, color=CHECKED_C, stroke_width=3,
                               max_tip_length_to_length_ratio=0.06)
             gap_l = sans("6 h 15 min to spare", 22, CHECKED_C).next_to(gap, DOWN, buff=0.1)
             self.play(GrowFromCenter(gap), FadeIn(gap_l), run_time=0.5)
@@ -89,8 +92,9 @@ class Decided(VoiceScene):
 
         # 2 ---------------------------------------------------------------- what the agents decided alone
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(rule, axis, ticks, day, push, dead, gap, gap_l, later)), owner.animate.set_opacity(0.45),
-                      run_time=0.4)
+            self.play(FadeOut(VGroup(rule, axis, ticks, day, push, dead, gap, gap_l, later)),
+                      *[c[0].animate.set_stroke(opacity=0.45).set_fill(opacity=0.03) for c in owner],
+                      *[c[1].animate.set_opacity(0.45) for c in owner], run_time=0.4)
             head_r = sans("some of the agents' own calls", 26).move_to(RIGHT * 3.4 + UP * 3.2)
             agents = VGroup(*[card(t, None, S.WHITE, 5.6) for t in AGENTS]).arrange(DOWN, buff=0.12)
             agents.move_to(RIGHT * 3.4 + UP * 0.35)
@@ -108,13 +112,13 @@ class Decided(VoiceScene):
             self.play(Circumscribe(agents[4], color=DANGER_C), FadeIn(rule2), run_time=0.7)
             vo.wait_until("honest about slips")
             slip = quote_panel("agent 早先说「Bugbot 意见都修了」，实际有 2 条没修", "PR #36 handoff · Wed 00:26",
-                               width=10.4, size=24).move_to(DOWN * 2.85)
+                               width=6.4, size=24).move_to(RIGHT * 3.4 + DOWN * 2.6)
             self.play(FadeOut(rule2), FadeIn(slip, shift=UP * 0.1), run_time=0.5)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
         # 3 ---------------------------------------------------------------- ponder
         with self.voiceover(SAY[2]) as vo:
-            self.play(*[m.animate.set_opacity(0.15) for m in self.mobjects], run_time=0.4)
+            clear(self, 0.4)
             ponder_zh(self, "With no person having reviewed it yet, what makes this code trustworthy?",
                       "还没有人审过，这份代码凭什么可信？", seconds=4.0)
         self.wait(3.5)

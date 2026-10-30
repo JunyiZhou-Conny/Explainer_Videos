@@ -10,8 +10,8 @@ from manim import *
 from explainer import style as S
 from explainer.scene import VoiceScene
 
-from common import (CHECKED_C, DANGER_C, MODEL_C, NARRATION, USER_C, clear, doc_glyph, quote_panel, sans, tag_box,
-                    zh)
+from common import (CHECKED_C, DANGER_C, H36, MODEL_C, NARRATION, USER_C, clear, commit_ticks, doc_glyph, quote_panel, sans,
+                    tag_box, zh)
 
 SAY = NARRATION["S03"]
 
@@ -23,6 +23,18 @@ class DayOne(VoiceScene):
             when = VGroup(sans("Tue 12:22 → 13:03", 28, MODEL_C), sans("session 1's first commits · after a night of planning", 22, S.GREY)
                           ).arrange(DOWN, buff=0.1).move_to(UP * 3.0)
             self.play(FadeIn(when), run_time=0.5)
+            first = [h for h in H36 if h < 13.1]           # 12:22 → 13:03, seven commits
+            strip = Line([-1.5, -2.6, 0], [5.5, -2.6, 0], color=S.GREY, stroke_width=2)
+
+            def sx(h):
+                return -1.5 + (h - 12.3) / (13.1 - 12.3) * 7.0
+            sticks = commit_ticks(sx, first, -2.6, 0.5, MODEL_C)
+            before = VGroup(sans("before: a night of planning", 22, S.GREY), sans("research · two designs · reviews", 20, S.GREY)
+                            ).arrange(DOWN, aligned_edge=RIGHT, buff=0.06).next_to(strip, LEFT, buff=0.4)
+            ends = VGroup(sans("12:22", 20, S.GREY).move_to([sx(12.37), -3.1, 0]), sans("13:03", 20, S.GREY).move_to([sx(13.05), -3.1, 0]))
+            self.play(FadeIn(before), Create(strip), run_time=0.5)
+            vo.wait_until("started committing")
+            self.play(LaggedStart(*[Create(t) for t in sticks], lag_ratio=0.2), FadeIn(ends), run_time=1.0)
             pages = VGroup(*[doc_glyph(S.GREY, 0.36, 0.48, 3) for _ in range(15)]).arrange_in_grid(3, 5, buff=0.1)
             cards = VGroup(*[Square(0.18, stroke_width=0).set_fill(CHECKED_C, 0.8) for _ in range(74)]).arrange_in_grid(7, 11, buff=0.06)
             g1 = VGroup(VGroup(pages, sans("15 sources", 22, S.GREY)).arrange(DOWN, buff=0.15),
@@ -43,7 +55,7 @@ class DayOne(VoiceScene):
 
         # 2 ---------------------------------------------------------------- four isolated reviewers
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(others, g1[0], g1[1])), g1[2].animate.move_to(LEFT * 4.7),
+            self.play(FadeOut(VGroup(others, g1[0], g1[1], strip, sticks, before, ends)), g1[2].animate.move_to(LEFT * 4.7),
                       run_time=0.5)
             revs = VGroup(*[tag_box("agent", f"reviewer {i + 1}", "read-only", S.GREY, width=2.6) for i in range(4)]
                           ).arrange_in_grid(2, 2, buff=(0.5, 0.35)).move_to(RIGHT * 0.6)

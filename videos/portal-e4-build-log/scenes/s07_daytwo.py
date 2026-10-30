@@ -41,10 +41,10 @@ class DayTwo(VoiceScene):
             labs = VGroup(*[zh(a, 22).move_to(centre + 2.2 * np.array([np.cos(PI / 2 + k * 2 * PI / 5),
                                                                        np.sin(PI / 2 + k * 2 * PI / 5), 0]))
                             for k, a in enumerate(angles)])
-            when = sans("15:37 · the final review", 22, USER_C).move_to(centre + DOWN * 0.0)
+            when = sans("15:37 · the final review", 22, USER_C).move_to(centre + DOWN * 2.3)
             self.play(Create(pent), LaggedStart(*[FadeIn(l) for l in labs], lag_ratio=0.15), FadeIn(when), run_time=1.0)
             vo.wait_until("about 30 problems")
-            found = sans("about 30 problems", 28, DANGER_C).move_to(centre + DOWN * 2.9)
+            found = sans("about 30 problems", 28, DANGER_C).move_to(centre + DOWN * 2.85)
             self.play(FadeIn(found, scale=1.2), run_time=0.4)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
@@ -77,7 +77,7 @@ class DayTwo(VoiceScene):
                          sans("e.g. labels added a field; the tests branch rejected it: 4 failures, fixed 19:04", 22, DANGER_C)
                          ).arrange(RIGHT, buff=0.2).move_to(DOWN * 3.3 + LEFT * 1.2)
             self.play(FadeOut(when), FadeIn(hit), run_time=0.5)
-            vo.wait_until("eight more")
+            vo.wait_until("A second review")
             more = VGroup(mark_ok(0.24, CHECKED_C), sans("a second review of the merged result: 8 more fixes · 19:16", 22, CHECKED_C)
                           ).arrange(RIGHT, buff=0.15).move_to(UP * 3.25)
             self.play(FadeIn(more), run_time=0.4)
@@ -87,11 +87,11 @@ class DayTwo(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             clear(self, 0.4)
             vo.wait_until("five-hour usage limit")
-            walls = VGroup(*[VGroup(Rectangle(width=0.35, height=3.0, stroke_width=0).set_fill(DANGER_C, 0.7),
+            walls = VGroup(*[VGroup(Rectangle(width=0.35, height=2.3, stroke_width=0).set_fill(DANGER_C, 0.7),
                                     sans("5-hour usage limit", 20, DANGER_C)) for _ in range(2)])
             for w in walls:
                 w[1].next_to(w[0], UP, buff=0.1)
-            walls.arrange(RIGHT, buff=3.2).move_to(UP * 0.8)
+            walls.arrange(RIGHT, buff=3.2).move_to(UP * 1.05)
             self.play(LaggedStart(*[FadeIn(w, shift=DOWN * 0.2) for w in walls], lag_ratio=0.4), run_time=0.8)
             vo.wait_until("six fix agents ran in a row")
             queue = VGroup(*[tag_box("agent", f"fix {i + 1}", None, S.GREY, width=1.5) for i in range(6)]

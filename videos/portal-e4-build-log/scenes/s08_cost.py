@@ -29,20 +29,25 @@ class Cost(VoiceScene):
             # left: the product's own model calls, one bar per stated figure
             sub_l = sans("the product's model calls", 26, MODEL_C).move_to(LEFT * 3.4 + UP * 2.35)
             self.play(FadeIn(sub_l), run_time=0.3)
+            labs = VGroup(*[sans(name, 22, S.GREY).next_to([X0, 1.3 - k * 1.05, 0], LEFT, buff=0.2)
+                            for k, (name, *_) in enumerate(ROWS)])
+            vo.wait_until("on the record")
+            self.play(LaggedStart(*[FadeIn(l) for l in labs], lag_ratio=0.2), run_time=0.6)
             bars = []
             for k, (name, usd, value, phrase) in enumerate(ROWS):
                 y = 1.3 - k * 1.05
                 bar = Rectangle(width=max(usd * UNIT, 0.05), height=0.42, stroke_width=0).set_fill(MODEL_C, 0.8)
                 bar.move_to([X0, y, 0], aligned_edge=LEFT)
-                lab = sans(name, 22, S.GREY).next_to([X0, y, 0], LEFT, buff=0.2)
-                val = sans(value, 24).next_to(bar, RIGHT, buff=0.15)
+                # the last night's figure sits right of its cap, drawn next
+                val = sans(value, 24).next_to([X0 + max(usd, 0.5 if k == 2 else 0) * UNIT, y, 0], RIGHT, buff=0.15)
                 vo.wait_until(phrase)
-                self.play(FadeIn(lab), GrowFromEdge(bar, LEFT), FadeIn(val), run_time=0.5)
-                bars.append(VGroup(lab, bar, val))
+                self.play(GrowFromEdge(bar, LEFT), FadeIn(val), run_time=0.5)
+                bars.append(VGroup(labs[k], bar, val))
             vo.wait_until("50-cent cap")
             y = bars[2][1].get_y()
-            cap = DashedLine([X0 + 0.5 * UNIT, y - 0.45, 0], [X0 + 0.5 * UNIT, y + 0.45, 0], color=USER_C, dash_length=0.08)
-            cap_l = sans("cap $0.50", 22, USER_C).next_to(cap, DOWN, buff=0.08)
+            cap = DashedVMobject(Rectangle(width=0.5 * UNIT, height=0.42, stroke_color=USER_C, stroke_width=2.5), num_dashes=40)
+            cap.move_to([X0, y, 0], aligned_edge=LEFT)
+            cap_l = sans("cap $0.50", 22, USER_C).next_to(cap, DOWN, buff=0.08).align_to(cap, RIGHT)
             defaults = VGroup(sans("budget defaults in the code", 22, S.GREY), sans("server $2 · evaluation $10", 22, S.GREY)
                               ).arrange(DOWN, aligned_edge=LEFT, buff=0.06).move_to(LEFT * 3.4 + DOWN * 2.6)
             self.play(Create(cap), FadeIn(cap_l), FadeIn(defaults), run_time=0.5)

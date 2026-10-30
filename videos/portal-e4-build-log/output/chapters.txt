@@ -1,0 +1,10 @@
+00:00 Two days on one clock
+00:29 How the work is organised
+01:23 Day one: a skeleton, then a fact check
+02:02 The turn at 9:21
+02:45 The loop with the bots
+03:46 Attack your own checker
+04:23 Day two: a queue of fix agents
+05:13 What it cost
+05:37 Who decided, and what waits
+07:10 Recap

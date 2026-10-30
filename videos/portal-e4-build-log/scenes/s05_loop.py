@@ -39,16 +39,19 @@ class Loop(VoiceScene):
             arrows = VGroup(*[CurvedArrow(a.get_center() + (b.get_center() - a.get_center()) * 0.38,
                                           b.get_center() + (a.get_center() - b.get_center()) * 0.38, angle=-PI / 4, color=S.GREY)
                               for a, b in [(n[0], n[1]), (n[1], n[2]), (n[2], n[0])]])
+            self.play(LaggedStart(*[FadeIn(m) for m in n], lag_ratio=0.3), LaggedStart(*[Create(a) for a in arrows], lag_ratio=0.3),
+                      run_time=1.2)
             vo.wait_until("ten twenty-three")
             ready = VGroup(sans("Tue 22:23 · PR #36 marked ready for review", 22, S.WHITE),
                            sans("both bots now review every push", 20, S.GREY)).arrange(DOWN, aligned_edge=LEFT, buff=0.06)
             ready.move_to([3.4, 3.25, 0])
             self.play(FadeIn(ready), run_time=0.4)
             vo.wait_until("Push, the bots")
-            self.play(LaggedStart(*[FadeIn(m) for m in n], lag_ratio=0.3), LaggedStart(*[Create(a) for a in arrows], lag_ratio=0.3),
-                      run_time=1.2)
-            self.play(Rotate(VGroup(n, arrows), angle=2 * PI, about_point=VGroup(n).get_center()), run_time=1.2,
-                      rate_func=smooth)
+            token = Dot(radius=0.11, color=USER_C).move_to(arrows[0].get_start())
+            self.play(FadeIn(token), run_time=0.2)
+            for _ in range(2):        # round the loop twice, faster the second time
+                for a, rt in zip(arrows, (0.5, 0.5, 0.5) if _ == 0 else (0.3, 0.3, 0.3)):
+                    self.play(MoveAlongPath(token, a), run_time=rt, rate_func=linear)
             vo.wait_until("Between ten twenty-seven")
             burst = [h for h in H36 if 22.4 <= h <= 24.2]
             ax = Line(LEFT * 0.0 + RIGHT * 0.6 + DOWN * 1.9, RIGHT * 6.2 + DOWN * 1.9, color=S.GREY, stroke_width=2)
@@ -91,16 +94,18 @@ class Loop(VoiceScene):
             vo.wait_until("parent summary")
             fp = VGroup(zh("Wed 11:04 · 「不要因为保险或费用问题延误救援」", 24), VGroup(mark_bad(0.22, DANGER_C), sans("flagged as money first → a needless rewrite", 22, DANGER_C)
                                                                        ).arrange(RIGHT, buff=0.15)).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
-            fp.move_to(LEFT * 2.6 + DOWN * 0.4)
+            fp.move_to(UP * 0.85).to_edge(LEFT, buff=0.8)
             self.play(FadeIn(fp[0]), run_time=0.4)
             vo.wait_until("was flagged")
             self.play(FadeIn(fp[1]), run_time=0.4)
             vo.wait_until("narrowing a similar rule")
             fn = VGroup(zh("Wed 19:07 · 「Use my insurance first」", 24), VGroup(mark_bad(0.22, DANGER_C), sans("missed: real money first", 22, DANGER_C)
                                                                     ).arrange(RIGHT, buff=0.15)).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
-            fn.move_to(RIGHT * 3.2 + DOWN * 0.4)
-            arrow = Arrow(fp.get_right(), fn.get_left(), color=S.GREY, buff=0.2)
-            self.play(GrowArrow(arrow), FadeIn(fn), run_time=0.6)
+            fn.move_to(DOWN * 0.75).to_edge(LEFT, buff=0.8).shift(RIGHT * 1.2)
+            x = fp.get_left()[0] + 0.4
+            down = Arrow([x, fp.get_bottom()[1] - 0.05, 0], [x, fn.get_top()[1] + 0.05, 0], buff=0, color=S.GREY)
+            arrow = VGroup(down, sans("then: narrow a similar rule", 20, S.GREY).next_to(down, RIGHT, buff=0.15))
+            self.play(Create(arrow[0]), FadeIn(arrow[1]), FadeIn(fn), run_time=0.6)
             vo.wait_until("until Bugbot caught it")
             src = sans("Bugbot flagged it · restored 19:23 · commits 6f9394e, 26a2d89, 2662221", 20, S.GREY).move_to(DOWN * 1.7)
             self.play(FadeIn(src), run_time=0.3)

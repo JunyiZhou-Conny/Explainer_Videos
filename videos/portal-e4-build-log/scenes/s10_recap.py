@@ -62,7 +62,7 @@ class Recap(VoiceScene):
                         q("1.  Why did most commits fix the checker?", "为什么大多数提交都在修检查器？"),
                         q("2.  Why reproduce a bug before fixing it?", "为什么修 bug 之前要先复现？"),
                         q("3.  What is still waiting for you?", "还有什么在等你决定？")
-                        ).arrange(DOWN, aligned_edge=LEFT, buff=0.35).move_to(UP * 0.7)
+                        ).arrange(DOWN, aligned_edge=LEFT, buff=0.35).move_to(UP * 1.1)
             self.play(FadeIn(qs[0]), run_time=0.4)
             for qq, phrase in zip(qs[1:], ["Why did most", "Why reproduce", "And what is still"]):
                 vo.wait_until(phrase)
@@ -74,7 +74,7 @@ class Recap(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             self.play(qs.animate.set_opacity(0.3), run_time=0.4)
             end = VGroup(zh("项目周记 · 第 44 周 完", 40), sans("next week's episodes start from next week's pull requests", 22, S.GREY)
-                         ).arrange(DOWN, buff=0.18).move_to(DOWN * 2.2)
+                         ).arrange(DOWN, buff=0.18).move_to(DOWN * 2.45)
             frame = SurroundingRectangle(end, color=USER_C, buff=0.3, corner_radius=0.15)
             self.play(FadeIn(end, shift=UP * 0.1), Create(frame), run_time=0.7)
             self.wait(max(0.1, vo.remaining() - 0.2))
