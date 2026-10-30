@@ -1,0 +1,1294 @@
+1
+00:00:00,000 --> 00:00:02,476
+Part 2 picks up at the container prompt;
+
+2
+00:00:02,476 --> 00:00:05,632
+if you closed it,
+rerun the setup and set your key.
+
+3
+00:00:05,952 --> 00:00:07,920
+Remember the move-right arrow:
+
+4
+00:00:07,920 --> 00:00:10,937
+when stakes are high,
+actions can't be undone,
+
+5
+00:00:10,937 --> 00:00:15,339
+the task is predictable,
+or you need an audit, give control to code.
+
+6
+00:00:15,583 --> 00:00:17,439
+Act 3 does exactly that.
+
+7
+00:00:17,759 --> 00:00:21,044
+The order route is a graph,
+and Python owns its edges.
+
+8
+00:00:21,364 --> 00:00:26,572
+Confirm, propose, validate, and back
+to propose only if the report fails,
+
+9
+00:00:26,572 --> 00:00:32,351
+at most twice; then pairings, manager review
+when required, revalidate and place.
+
+10
+00:00:32,671 --> 00:00:37,002
+Only one node belongs to the model:
+propose cart, with no tools.
+
+11
+00:00:37,250 --> 00:00:42,320
+The README files this under the harness;
+on the lecture's autonomy spectrum,
+
+12
+00:00:42,320 --> 00:00:46,722
+it sits near structured output:
+a fixed graph with one model step.
+
+13
+00:00:46,967 --> 00:00:49,719
+Step 1: act 3, scenario standard.
+
+14
+00:00:50,039 --> 00:00:52,887
+With a key, the model proposes quantities;
+
+15
+00:00:52,887 --> 00:00:57,228
+code does the rest:
+transitions, pricing, validation, placement.
+
+16
+00:00:57,548 --> 00:00:59,063
+Success is a receipt.
+
+17
+00:00:59,300 --> 00:01:03,977
+Steps 2 and 3 are the shipping lesson,
+with a customer's own cart:
+
+18
+00:01:03,977 --> 00:01:07,236
+Comté, Bûcheron and Époisses,
+to Pennsylvania.
+
+19
+00:01:07,556 --> 00:01:12,079
+Before, the model only records the cart;
+the harness checks it and stops.
+
+20
+00:01:12,399 --> 00:01:16,324
+After, the revise loop opens,
+and the live model may fix it.
+
+21
+00:01:16,983 --> 00:01:20,412
+As an extra,
+--fixture runs the same path offline,
+
+22
+00:01:20,412 --> 00:01:22,743
+with a script in the model's seat.
+
+23
+00:01:23,063 --> 00:01:27,684
+Attempt 1 has raw-milk Comté,
+and the rail sends it back;
+
+24
+00:01:27,684 --> 00:01:31,170
+attempt 2 swaps in Taleggio: valid, $50.10.
+
+25
+00:01:33,233 --> 00:01:34,882
+One trap: with fixtures,
+
+26
+00:01:34,882 --> 00:01:40,331
+the blocked scenario proposes the same cart
+three times and ends UNRESOLVED,
+
+27
+00:01:40,331 --> 00:01:44,561
+not BLOCKED, so in Colab keep
+fixtures off for this lesson.
+
+28
+00:01:44,881 --> 00:01:46,951
+Pause and run steps 1 to 3.
+
+29
+00:01:50,300 --> 00:01:54,595
+Step 4 is scripted,
+so approval is predictable:
+
+30
+00:01:54,595 --> 00:01:58,949
+60 guests in New York,
+a valid cart at $220.80,
+
+31
+00:01:58,949 --> 00:02:01,265
+above the $200 threshold.
+
+32
+00:02:01,500 --> 00:02:04,344
+The workflow pauses,
+and you are the manager:
+
+33
+00:02:04,344 --> 00:02:06,492
+the host answers, never the agent.
+
+34
+00:02:06,812 --> 00:02:07,879
+Type approve.
+
+35
+00:02:08,117 --> 00:02:09,333
+What did you approve?
+
+36
+00:02:09,653 --> 00:02:13,598
+A fingerprint: the SHA-256 hash,
+taken over the request,
+
+37
+00:02:13,598 --> 00:02:18,037
+the items, the subtotal, the policy
+and the product attributes.
+
+38
+00:02:18,357 --> 00:02:22,239
+Stock is left out on purpose:
+it's rechecked, not approved.
+
+39
+00:02:22,483 --> 00:02:25,662
+At checkout the cart is validated
+and hashed again.
+
+40
+00:02:25,982 --> 00:02:29,128
+The approval counts
+only if the decision is approve,
+
+41
+00:02:29,128 --> 00:02:32,638
+and the ticket matches this checkout
+and this fingerprint.
+
+42
+00:02:32,958 --> 00:02:35,411
+Change one line, and the hashes differ.
+
+43
+00:02:37,317 --> 00:02:40,239
+Your thinking time doesn't count
+against the budget.
+
+44
+00:02:40,917 --> 00:02:45,610
+And as an extra, type decline instead:
+the workflow ends, with no order.
+
+45
+00:02:45,850 --> 00:02:47,194
+Something to ponder.
+
+46
+00:02:47,514 --> 00:02:48,943
+The manager approves.
+
+47
+00:02:49,263 --> 00:02:53,125
+Before checkout runs,
+another order takes most of the Mimolette.
+
+48
+00:02:53,445 --> 00:02:57,434
+What does checkout do, and why
+doesn't the approval protect this order?
+
+49
+00:03:06,283 --> 00:03:10,016
+Checkout revalidates,
+finds a stock violation, and blocks.
+
+50
+00:03:10,336 --> 00:03:14,695
+Stock isn't in the fingerprint:
+an approval authorizes a decision;
+
+51
+00:03:14,695 --> 00:03:16,544
+it doesn't reserve anything.
+
+52
+00:03:16,864 --> 00:03:18,635
+Act 6 shows this for real.
+
+53
+00:03:18,883 --> 00:03:22,851
+Step 5: Munster has 0 grams,
+so attempt 1 fails.
+
+54
+00:03:23,171 --> 00:03:26,195
+One bounded revision swaps in Époisses,
+
+55
+00:03:26,195 --> 00:03:30,382
+and the order places at $50.10,
+with zero model calls.
+
+56
+00:03:30,617 --> 00:03:32,558
+Step 6 is the notebook cell.
+
+57
+00:03:32,878 --> 00:03:35,624
+Its trace and budget layers can come off;
+
+58
+00:03:35,624 --> 00:03:41,049
+validation, approval and revalidation
+are graph and checkout rules, so they stay.
+
+59
+00:03:41,283 --> 00:03:46,275
+So an approval binds this exact cart,
+and checkout revalidates after the pause.
+
+60
+00:03:46,595 --> 00:03:50,350
+Pause and run steps 4 and 5;
+the cell is for Colab.
+
+61
+00:03:53,700 --> 00:03:58,415
+Act 4 is a planner for a longer task:
+a 40-guest event in New York.
+
+62
+00:03:58,735 --> 00:04:02,534
+The lecture splits memory into long-term
+and short-term;
+
+63
+00:04:02,534 --> 00:04:05,044
+here that's saved memory and history,
+
+64
+00:04:05,044 --> 00:04:08,911
+plus tasks, approvals and the audit:
+five kinds of state.
+
+65
+00:04:09,150 --> 00:04:12,265
+The README asks
+which of these can authorize an action.
+
+66
+00:04:12,585 --> 00:04:14,633
+Only one: the approval drawer.
+
+67
+00:04:14,867 --> 00:04:16,488
+Step 1: act 4.
+
+68
+00:04:16,808 --> 00:04:21,267
+Before any model call, the harness
+prints the first customer's saved memory.
+
+69
+00:04:21,587 --> 00:04:24,324
+Then the planner's tools: assess the event,
+
+70
+00:04:24,324 --> 00:04:27,934
+read the vendor document,
+draft and save a vendor email,
+
+71
+00:04:27,934 --> 00:04:29,224
+and the to-do tools.
+
+72
+00:04:29,544 --> 00:04:31,165
+No tool writes memory.
+
+73
+00:04:32,033 --> 00:04:34,636
+With a key, look for the brief:
+
+74
+00:04:34,636 --> 00:04:39,926
+1,000 grams each of Comté and Mimolette,
+and 1,200 of Époisses.
+
+75
+00:04:40,246 --> 00:04:44,833
+The shop has only 900 grams of Époisses:
+300 short.
+
+76
+00:04:45,153 --> 00:04:49,953
+A finished task is not an approval,
+and shop stock is not vendor availability.
+
+77
+00:04:50,200 --> 00:04:53,551
+Saving the email
+has approval_mode="always_require",
+
+78
+00:04:53,551 --> 00:04:56,451
+so the framework pauses
+before the save runs.
+
+79
+00:04:56,771 --> 00:05:00,269
+Act 3 paused a whole workflow;
+this pauses one tool.
+
+80
+00:05:00,517 --> 00:05:04,208
+The output after you approve comes
+from a scripted extra run.
+
+81
+00:05:04,528 --> 00:05:06,759
+The review shows the vendor address
+
+82
+00:05:06,759 --> 00:05:09,882
+and a body written by code,
+nut allergy included.
+
+83
+00:05:10,202 --> 00:05:14,170
+Then: status: saved, email transmitted:
+no, and the file path.
+
+84
+00:05:14,417 --> 00:05:18,220
+Then comes the approval-identity warning
+you saw in the tests:
+
+85
+00:05:18,220 --> 00:05:20,796
+the README predicts it, and it's harmless.
+
+86
+00:05:21,116 --> 00:05:22,865
+Trust the authoritative block.
+
+87
+00:05:23,185 --> 00:05:24,785
+Pause and run step 1.
+
+88
+00:05:28,133 --> 00:05:32,073
+Step 2 runs offline:
+a scripted planner with compaction,
+
+89
+00:05:32,073 --> 00:05:35,450
+a malicious vendor document,
+and a test decline.
+
+90
+00:05:35,770 --> 00:05:40,080
+It first seeds twelve synthetic notes
+of about 15,000 characters.
+
+91
+00:05:40,316 --> 00:05:45,820
+The window is 16,000 tokens,
+with 2,400 kept for the reply.
+
+92
+00:05:46,140 --> 00:05:51,044
+Above 80 percent of the rest,
+truncation drops the oldest messages
+
+93
+00:05:51,044 --> 00:05:54,759
+until the history is back under half:
+26 become 5.
+
+94
+00:05:55,000 --> 00:05:56,344
+Something to ponder.
+
+95
+00:05:56,664 --> 00:05:59,317
+Compaction dropped 21 of 26 messages,
+
+96
+00:05:59,317 --> 00:06:02,829
+and none of the history
+mentions the nut allergy.
+
+97
+00:06:03,149 --> 00:06:05,346
+How does every call still know about it?
+
+98
+00:06:14,183 --> 00:06:15,186
+A capsule.
+
+99
+00:06:15,506 --> 00:06:19,450
+Before every call,
+the harness takes the old one out, compacts,
+
+100
+00:06:19,450 --> 00:06:22,204
+and pins a fresh one from application state.
+
+101
+00:06:22,524 --> 00:06:26,950
+It holds the confirmed request
+with its nut allergy, the menu,
+
+102
+00:06:26,950 --> 00:06:32,018
+tasks, pending reviews and open work,
+marked as data, not instructions.
+
+103
+00:06:33,416 --> 00:06:37,470
+That's the lecture's compaction trigger,
+and what persists where, in code.
+
+104
+00:06:37,716 --> 00:06:40,655
+The vendor document says
+to ignore the allergy,
+
+105
+00:06:40,655 --> 00:06:42,281
+so it lands in quarantine.
+
+106
+00:06:42,601 --> 00:06:44,779
+The detector is deliberately small;
+
+107
+00:06:44,779 --> 00:06:48,575
+the real guards are the recipient allowlist,
+and your review.
+
+108
+00:06:49,416 --> 00:06:51,464
+The drafted email still says nuts.
+
+109
+00:06:51,784 --> 00:06:57,907
+The result: DECLINED, no HTML saved,
+7 model calls and 7 compactions.
+
+110
+00:06:58,150 --> 00:07:01,889
+Steps 3 and 4
+are the optional memory exercise;
+
+111
+00:07:01,889 --> 00:07:06,662
+type them from README line 484,
+since the ID is masked here.
+
+112
+00:07:06,982 --> 00:07:10,646
+The first command stores a preference
+for the second customer,
+
+113
+00:07:10,646 --> 00:07:14,427
+and the memory prints before any model call,
+even without a key.
+
+114
+00:07:14,747 --> 00:07:18,480
+The next visit shows it again;
+an extra check reads the file.
+
+115
+00:07:20,333 --> 00:07:23,618
+The lecture lets the model
+suggest what's worth remembering.
+
+116
+00:07:23,938 --> 00:07:28,418
+This harness moves even that to the right:
+only the host writes memory.
+
+117
+00:07:29,266 --> 00:07:34,407
+Step 5 is the notebook cell, for Colab:
+build_act4 adds five layers.
+
+118
+00:07:34,727 --> 00:07:37,693
+Without compaction,
+the capsule is still re-pinned.
+
+119
+00:07:38,013 --> 00:07:40,040
+Pause and run steps 2 to 4.
+
+120
+00:07:43,383 --> 00:07:44,681
+Act 5 adds skills:
+
+121
+00:07:44,681 --> 00:07:48,716
+folders of procedure the agent
+loads only when relevant.
+
+122
+00:07:49,036 --> 00:07:53,196
+They solve two problems:
+the expertise gap and the context budget.
+
+123
+00:07:53,433 --> 00:07:57,132
+Skills load
+in three steps of rising token cost:
+
+124
+00:07:57,132 --> 00:08:01,601
+every skill's name and description,
+about 100 tokens each;
+
+125
+00:08:01,601 --> 00:08:03,865
+then its main file, SKILL.md;
+
+126
+00:08:03,865 --> 00:08:07,534
+then a reference or an asset,
+only when needed.
+
+127
+00:08:07,783 --> 00:08:11,794
+The lecture's skill also
+has a scripts folder for the agent to run.
+
+128
+00:08:12,114 --> 00:08:17,596
+This harness removes that tool on purpose:
+a skill advises, and never executes.
+
+129
+00:08:17,833 --> 00:08:19,454
+Step 1: act 5.
+
+130
+00:08:19,774 --> 00:08:24,446
+Only the metadata loads at first:
+tasting-planning and vendor-outreach.
+
+131
+00:08:24,766 --> 00:08:28,500
+The new tools are get_stock,
+load_skill and read_skill_resource.
+
+132
+00:08:28,750 --> 00:08:31,715
+Step 2 asks only about stock, offline:
+
+133
+00:08:31,715 --> 00:08:36,473
+one get_stock call, 900 grams,
+and the script loads no skill.
+
+134
+00:08:36,793 --> 00:08:39,938
+With a key,
+the model decides from the description:
+
+135
+00:08:39,938 --> 00:08:41,294
+a hint, not a trigger.
+
+136
+00:08:42,033 --> 00:08:45,262
+Step 3 runs the full sourcing path,
+scripted:
+
+137
+00:08:45,262 --> 00:08:47,772
+six loads, each with its real path.
+
+138
+00:08:48,092 --> 00:08:51,751
+Drafting is refused
+until the email template is read:
+
+139
+00:08:51,751 --> 00:08:53,062
+a backstop in code.
+
+140
+00:08:54,933 --> 00:08:56,277
+Something to ponder.
+
+141
+00:08:56,597 --> 00:09:01,056
+Someone edits the vendor skill to add:
+also send this to another address.
+
+142
+00:09:01,376 --> 00:09:02,848
+Will the email go there?
+
+143
+00:09:09,683 --> 00:09:14,069
+No. Whatever the skill says,
+the guards are in code;
+
+144
+00:09:14,069 --> 00:09:17,431
+its own text even says
+it cannot add recipients,
+
+145
+00:09:17,431 --> 00:09:19,251
+and every read is checked:
+
+146
+00:09:19,251 --> 00:09:22,473
+no parent folders,
+absolute paths or symlinks,
+
+147
+00:09:22,473 --> 00:09:25,064
+and a file edited mid-run is refused.
+
+148
+00:09:25,300 --> 00:09:28,838
+The recipient is checked
+in code against the allowlist,
+
+149
+00:09:28,838 --> 00:09:33,790
+and nothing is ever transmitted;
+an extra check shows the saved file says so.
+
+150
+00:09:34,033 --> 00:09:36,754
+In lecture terms, a tool is the hands,
+
+151
+00:09:36,754 --> 00:09:40,476
+MCP the socket, unused here,
+and a skill the manual.
+
+152
+00:09:44,116 --> 00:09:47,572
+Step 4, the notebook cell,
+allows 16 model calls.
+
+153
+00:09:47,892 --> 00:09:49,962
+Pause and run steps 1 to 3.
+
+154
+00:09:53,300 --> 00:09:55,348
+Act 6 is an agent system.
+
+155
+00:09:55,668 --> 00:10:00,648
+The lecture contrasts one agent
+with a graph of agents, in two patterns:
+
+156
+00:10:00,648 --> 00:10:04,521
+a manager calling agents as tools,
+or peers handing off.
+
+157
+00:10:05,067 --> 00:10:06,717
+It's the manager pattern,
+
+158
+00:10:06,717 --> 00:10:09,687
+except the tool it calls
+is a whole workflow,
+
+159
+00:10:09,687 --> 00:10:12,875
+the one from act 3,
+with a model inside one node.
+
+160
+00:10:13,195 --> 00:10:14,261
+No handoffs.
+
+161
+00:10:14,500 --> 00:10:16,889
+Step 1, the notebook cell, builds it.
+
+162
+00:10:17,209 --> 00:10:21,130
+The budget:
+16 outer model calls, 20 tool calls,
+
+163
+00:10:21,130 --> 00:10:26,276
+8 proposer calls per workflow,
+and one shared 180-second clock.
+
+164
+00:10:26,517 --> 00:10:30,549
+The host confirms the requests;
+the model only picks an ID.
+
+165
+00:10:30,869 --> 00:10:35,093
+Its tools are narrow:
+start_order, get_order_status, assess_event.
+
+166
+00:10:35,333 --> 00:10:37,424
+Step 2: act 6, standard.
+
+167
+00:10:37,744 --> 00:10:41,660
+With a key, tell outer model calls
+apart from workflow calls;
+
+168
+00:10:41,660 --> 00:10:44,549
+the outer agent
+cannot approve its own order.
+
+169
+00:10:44,783 --> 00:10:48,346
+Step 3 runs offline:
+two orders sharing one shop.
+
+170
+00:10:48,666 --> 00:10:52,871
+Both carts pass at $220.80,
+both pause for a manager,
+
+171
+00:10:52,871 --> 00:10:55,727
+and the test decision approves both.
+
+172
+00:10:55,967 --> 00:10:59,636
+Mimolette and Taleggio start
+at 3,000 grams each.
+
+173
+00:10:59,956 --> 00:11:03,370
+Request 1 is placed, leaving 1,400.
+
+174
+00:11:03,690 --> 00:11:08,575
+Request 2 reaches revalidation
+needing 1,600: blocked.
+
+175
+00:11:08,895 --> 00:11:13,353
+That's the ponder from act 3, for real:
+approval is not placement.
+
+176
+00:11:13,600 --> 00:11:16,786
+The final answer
+is the lecture's response step:
+
+177
+00:11:16,786 --> 00:11:18,843
+the app checks the model's plan
+
+178
+00:11:18,843 --> 00:11:23,627
+and fills in quantities, prices
+and the status, placed, from the receipt.
+
+179
+00:11:23,947 --> 00:11:27,037
+The blocked order says Invalid
+or unauthorized;
+
+180
+00:11:27,037 --> 00:11:29,536
+the stock lines below give the reason.
+
+181
+00:11:29,783 --> 00:11:33,269
+On the autonomy spectrum it's a hybrid,
+inside out:
+
+182
+00:11:33,269 --> 00:11:36,482
+the agent outside,
+the fixed graph as its tool.
+
+183
+00:11:36,802 --> 00:11:38,829
+Pause and run steps 2 and 3.
+
+184
+00:11:42,167 --> 00:11:46,387
+Everything between the provider's model
+and the product is ours:
+
+185
+00:11:46,387 --> 00:11:48,695
+context, harness, tools and skills.
+
+186
+00:11:49,015 --> 00:11:50,807
+So all of it must be tested.
+
+187
+00:11:51,050 --> 00:11:55,103
+The lecture measures three things:
+outcome, trajectory and cost.
+
+188
+00:11:55,423 --> 00:11:59,200
+Here they're the outcome and process checks,
+plus calls and tokens.
+
+189
+00:11:59,650 --> 00:12:02,039
+Evaluation step 1 lists the runs.
+
+190
+00:12:02,359 --> 00:12:05,511
+Every run so far is in one SQLite database,
+
+191
+00:12:05,511 --> 00:12:09,250
+including the failed live ones, with status:
+error.
+
+192
+00:12:09,500 --> 00:12:11,673
+--inspect-run takes a run ID:
+
+193
+00:12:11,673 --> 00:12:15,495
+typed literally, it fails,
+because it's a template.
+
+194
+00:12:15,815 --> 00:12:19,250
+Paste a real one;
+we use the manager-approval run.
+
+195
+00:12:20,100 --> 00:12:24,654
+The events read in order:
+approval.requested with the fingerprint,
+
+196
+00:12:24,654 --> 00:12:26,610
+approval.decided by a human,
+
+197
+00:12:26,610 --> 00:12:30,105
+policy.decision allow,
+order.placed, run.finished.
+
+198
+00:12:30,425 --> 00:12:33,818
+The evidence for order placed is an event,
+not the prose.
+
+199
+00:12:35,934 --> 00:12:40,819
+As an extra, inspect the first failed run:
+model.failed, with the 401.
+
+200
+00:12:41,139 --> 00:12:42,910
+A failure is evidence too.
+
+201
+00:12:43,150 --> 00:12:47,651
+Evaluation step 2 starts offline:
+the act 2 evaluation,
+
+202
+00:12:47,651 --> 00:12:51,662
+scripted,
+two repeats, labeled context-fixture-1.
+
+203
+00:12:51,982 --> 00:12:53,111
+All 4 runs pass,
+
+204
+00:12:53,111 --> 00:12:56,782
+but scripted runs test the machinery,
+not the model.
+
+205
+00:12:57,017 --> 00:13:01,049
+Then read the report back,
+and export the HTML scorecard,
+
+206
+00:13:01,049 --> 00:13:03,737
+to its default path or one you choose.
+
+207
+00:13:05,317 --> 00:13:08,005
+Open it from the outputs
+folder on your laptop.
+
+208
+00:13:09,334 --> 00:13:13,597
+The last command is a template
+for a database copied from Colab:
+
+209
+00:13:13,597 --> 00:13:15,329
+typed literally, it fails.
+
+210
+00:13:15,649 --> 00:13:19,041
+Labels are immutable:
+reuse one, and the batch stops.
+
+211
+00:13:19,361 --> 00:13:22,347
+Pause and run evaluation steps 1 and 2.
+
+212
+00:13:25,683 --> 00:13:29,182
+Evaluation
+step 3 compares two configurations.
+
+213
+00:13:29,502 --> 00:13:30,533
+The lecture warns
+
+214
+00:13:30,533 --> 00:13:33,684
+that a prompt edit can fix one case
+and break three,
+
+215
+00:13:33,684 --> 00:13:34,878
+so compare per case.
+
+216
+00:13:35,116 --> 00:13:38,155
+The lecture's improvement loop:
+see a failure,
+
+217
+00:13:38,155 --> 00:13:42,184
+capture a test case, change one layer,
+run the suite k times,
+
+218
+00:13:42,184 --> 00:13:45,420
+compare with the baseline,
+then merge or iterate.
+
+219
+00:13:47,183 --> 00:13:51,684
+Batch A runs enriched mode on two cases,
+twice: 4 live runs.
+
+220
+00:13:52,004 --> 00:13:55,780
+Without a key: 0 of 4,
+with 3 errors and 1 missing.
+
+221
+00:13:56,100 --> 00:13:59,770
+If one fails,
+fix the key and rerun both with new labels.
+
+222
+00:14:00,016 --> 00:14:03,403
+Copy the prompt file
+and edit the copy on your laptop:
+
+223
+00:14:03,403 --> 00:14:07,291
+one deliberate change,
+keeping the confirmed constraint rules.
+
+224
+00:14:07,533 --> 00:14:11,754
+Our extra appends a line asking for a price
+and an action status;
+
+225
+00:14:11,754 --> 00:14:13,442
+diff shows just that line.
+
+226
+00:14:14,216 --> 00:14:20,040
+Batch B runs the same cases and settings,
+with --prompt-file pointing at the copy.
+
+227
+00:14:20,283 --> 00:14:21,840
+Then compare, offline.
+
+228
+00:14:22,160 --> 00:14:24,486
+Changed configuration: prompt.
+
+229
+00:14:24,806 --> 00:14:26,896
+Confounding changes: none.
+
+230
+00:14:27,216 --> 00:14:30,325
+Change code, data or the model,
+and it says so:
+
+231
+00:14:30,325 --> 00:14:33,830
+the lecture's change-one-layer rule,
+checked in code.
+
+232
+00:14:34,266 --> 00:14:37,755
+Compare flags a run
+only when pass or fail flips;
+
+233
+00:14:37,755 --> 00:14:40,176
+here every run errored both times.
+
+234
+00:14:41,216 --> 00:14:46,534
+As an extra, comparing two scripted batches
+reports all four runs unchanged,
+
+235
+00:14:46,534 --> 00:14:48,982
+because fixtures ignore the prompt.
+
+236
+00:14:49,216 --> 00:14:52,395
+Evaluation step 4 asks
+what the checks establish.
+
+237
+00:14:52,715 --> 00:14:56,492
+They check properties,
+like cart validity and approval order;
+
+238
+00:14:56,492 --> 00:15:00,331
+the prose needs your review,
+with the README's five questions.
+
+239
+00:15:00,566 --> 00:15:04,513
+The lecture lists three judges:
+code, a model and a human.
+
+240
+00:15:04,833 --> 00:15:07,585
+This tutorial uses two: code, and you.
+
+241
+00:15:07,905 --> 00:15:11,830
+Lean toward code as far as the task allows,
+as in the harness.
+
+242
+00:15:12,066 --> 00:15:15,159
+Report one difference,
+its evidence, and one limit.
+
+243
+00:15:15,479 --> 00:15:19,959
+And keep your cases:
+the eval set is the most valuable artifact.
+
+244
+00:15:20,279 --> 00:15:22,690
+Pause and run evaluation step 3.
+
+245
+00:15:26,033 --> 00:15:31,756
+The repository map of section 7 ends
+with python cli.py --help:
+
+246
+00:15:31,756 --> 00:15:34,118
+every option in one place.
+
+247
+00:15:34,366 --> 00:15:37,225
+Traces and live memory stay in SQLite.
+
+248
+00:15:37,545 --> 00:15:42,381
+Inventory, orders, tickets
+and pending workflows last for one process;
+
+249
+00:15:42,381 --> 00:15:44,798
+tasks and history, for one session.
+
+250
+00:15:45,033 --> 00:15:47,486
+Now tear down; these steps are extras.
+
+251
+00:15:47,806 --> 00:15:50,685
+Type exit in each container shell;
+
+252
+00:15:50,685 --> 00:15:55,849
+it was started with --rm,
+so nothing is left in docker ps -a.
+
+253
+00:15:56,083 --> 00:15:58,494
+The outputs folder stays on your laptop.
+
+254
+00:15:58,814 --> 00:16:02,793
+Its trace database holds
+your prompts and outputs, keys redacted;
+
+255
+00:16:02,793 --> 00:16:04,446
+delete it when you're done.
+
+256
+00:16:04,683 --> 00:16:09,307
+docker image rm frees
+most of those 1.77 gigabytes;
+
+257
+00:16:09,307 --> 00:16:11,211
+the base image stays.
+
+258
+00:16:11,531 --> 00:16:15,339
+Then close the terminal that held your key,
+keep it out of files,
+
+259
+00:16:15,339 --> 00:16:18,443
+commits and your shell history,
+and watch your usage.
+
+260
+00:16:18,763 --> 00:16:20,854
+In Colab, delete the runtime.
+
+261
+00:16:21,174 --> 00:16:22,539
+Pause, and tear down.
+
+262
+00:16:24,783 --> 00:16:29,049
+Here is the action boundary, filled in:
+budgets and the graph;
+
+263
+00:16:29,049 --> 00:16:31,802
+schemas, the audit and approval on save;
+
+264
+00:16:31,802 --> 00:16:35,104
+the packet,
+the capsule and host-written memory;
+
+265
+00:16:35,104 --> 00:16:39,439
+CartCheck and revalidation;
+narrow tools and separate counters.
+
+266
+00:16:39,683 --> 00:16:41,667
+The model proposes, on the left.
+
+267
+00:16:41,987 --> 00:16:45,635
+On the right, the harness decides,
+and where it matters, so do you.
+
+268
+00:16:45,883 --> 00:16:48,763
+The README ends
+with five reflection questions.
+
+269
+00:16:49,083 --> 00:16:51,387
+Pick one run you did, and answer them.
+
+270
+00:16:51,633 --> 00:16:52,742
+Test yourself.
+
+271
+00:16:53,062 --> 00:16:55,132
+What survives harness.without("trace")?
+
+272
+00:16:55,452 --> 00:16:58,118
+Why does retrieved context arrive as data?
+
+273
+00:16:58,438 --> 00:17:00,166
+What is an approval bound to?
+
+274
+00:17:00,486 --> 00:17:02,449
+Which state can authorize an action?
+
+275
+00:17:02,769 --> 00:17:05,329
+And what does a passing fixture batch
+establish?
+
+276
+00:17:05,649 --> 00:17:09,105
+Pause and try them;
+answers are in the exercises.
+
+277
+00:17:12,350 --> 00:17:17,019
+Next, lecture 8 fine-tunes models
+on Google's Agent Platform,
+
+278
+00:17:17,019 --> 00:17:18,473
+formerly Vertex AI.
+
+279
+00:17:18,793 --> 00:17:21,684
+Lecture 9 tests code with pytest;
+
+280
+00:17:21,684 --> 00:17:26,152
+these 281 tests use unittest,
+and are a good model.
+

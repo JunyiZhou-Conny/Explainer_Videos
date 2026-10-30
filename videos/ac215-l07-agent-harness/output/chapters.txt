@@ -1,16 +1,16 @@
 00:00 Which sentence would you trust?
 02:00 One container, no ports
-04:07 Verify offline, and the Colab road
-05:45 Act 1: an agent, measured
-07:40 Act 1: wrap it in a harness
-09:45 Act 2: same agent, different context
-11:43 Act 2: sieves and lanes
-13:44 Act 3: rails, not suggestions
-15:33 Act 3: approve this exact cart
-17:37 Act 4: a planner with five drawers
-19:12 Act 4: compaction, the capsule and memory
-21:26 Act 5: skills are manuals, not keys
-23:34 Act 6: an agent that calls a workflow
-25:23 Evaluation: the trace is the evidence
-27:06 Evaluation: one change, k runs, a diff
-29:07 Tear down, recap, and what's next
+04:09 Verify offline, and the Colab road
+05:47 Act 1: an agent, measured
+07:42 Act 1: wrap it in a harness
+09:50 Act 2: same agent, different context
+11:49 Act 2: sieves and lanes
+13:51 Act 3: rails, not suggestions
+15:41 Act 3: approve this exact cart
+17:44 Act 4: a planner with five drawers
+19:19 Act 4: compaction, the capsule and memory
+21:34 Act 5: skills are manuals, not keys
+23:44 Act 6: an agent that calls a workflow
+25:33 Evaluation: the trace is the evidence
+27:16 Evaluation: one change, k runs, a diff
+29:17 Tear down, recap, and what's next

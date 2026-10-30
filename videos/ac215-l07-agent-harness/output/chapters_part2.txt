@@ -1,9 +1,9 @@
 00:00 Act 3: rails, not suggestions
-01:49 Act 3: approve this exact cart
+01:50 Act 3: approve this exact cart
 03:53 Act 4: a planner with five drawers
 05:28 Act 4: compaction, the capsule and memory
-07:42 Act 5: skills are manuals, not keys
-09:50 Act 6: an agent that calls a workflow
-11:39 Evaluation: the trace is the evidence
-13:22 Evaluation: one change, k runs, a diff
-15:23 Tear down, recap, and what's next
+07:43 Act 5: skills are manuals, not keys
+09:53 Act 6: an agent that calls a workflow
+11:42 Evaluation: the trace is the evidence
+13:25 Evaluation: one change, k runs, a diff
+15:26 Tear down, recap, and what's next
