@@ -38,8 +38,8 @@ class Hook(VoiceScene):
                              for a, b in pairs])
             self.play(LaggedStart(*[Create(l) for l in links], lag_ratio=0.3), run_time=0.9)
             vo.wait_until("a one-to-one copy")
-            stamp = chip("you asked: a one-to-one copy · issue #40", USER_C, 26, mono_font=False).move_to(UP * 3.3)
-            self.play(FadeIn(stamp, scale=1.15), run_time=0.5)
+            stamp = chip("you asked: a one-to-one copy · issue #40", USER_C, 26, mono_font=False).move_to(DOWN * 3.2)
+            self.play(FadeOut(tag_ours), FadeOut(tag_c), FadeIn(stamp, scale=1.15), run_time=0.5)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
         # 2 ---------------------------------------------------------------- the episode's question

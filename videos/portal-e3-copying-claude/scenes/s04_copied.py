@@ -98,7 +98,7 @@ class Copied(VoiceScene):
             left.move_to(LEFT * 3.6 + UP * 0.2)
             vo.wait_until("warm colours and serif type")
             self.play(LaggedStart(*[FadeIn(r, shift=RIGHT * 0.1) for r in left], lag_ratio=0.25), run_time=1.2)
-            q = quote_panel("Junyi 选了后者（2026-10-28）", "decision 0006 · colours and type copied too", width=5.6, size=28,
+            q = quote_panel("Junyi 选了后者（2026-10-28）", "decision 0006 · colours and type copied too", width=6.2, size=26,
                             color=USER_C).move_to(RIGHT * 3.4 + UP * 2.35)
             self.play(FadeIn(q, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("inside this one page")

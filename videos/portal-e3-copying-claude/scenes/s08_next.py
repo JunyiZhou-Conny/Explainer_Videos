@@ -34,7 +34,8 @@ class Next(VoiceScene):
                      ("voice", "voice"), ("a side panel for documents and code", "a side panel"),
                      ("memory across chats", "memory across chats")]
             chips = VGroup(*[chip(t, S.GREY, 26, mono_font=False) for t, _ in items])
-            chips.arrange_in_grid(2, 3, buff=(0.35, 0.35)).move_to(UP * 1.6)
+            VGroup(VGroup(*chips[:3]).arrange(RIGHT, buff=0.35), VGroup(*chips[3:]).arrange(RIGHT, buff=0.35)
+                   ).arrange(DOWN, buff=0.35).move_to(UP * 1.6)
             for c, (_, phrase) in zip(chips, items):
                 vo.wait_until(phrase)
                 self.play(FadeIn(c, shift=UP * 0.1), run_time=0.3)

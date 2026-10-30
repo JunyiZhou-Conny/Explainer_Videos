@@ -59,7 +59,7 @@ class Anatomy(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             clear(self, 0.4)
             page2 = turn_page(6.0, 7.0).move_to(LEFT * 3.6)
-            src = sans("demo 01, recorded answer · the page redrawn", 20, S.GREY).move_to([LABEL_X + 2.6, -3.35, 0])
+            src = sans("a live turn, redrawn · text from demo 01", 20, S.GREY).move_to([LABEL_X + 2.6, -3.35, 0])
             self.play(FadeIn(page2.frame), FadeIn(page2.bar), FadeIn(page2.composer), FadeIn(page2.fine),
                       FadeIn(src), run_time=0.5)
             vo.wait_until("in a bubble")
