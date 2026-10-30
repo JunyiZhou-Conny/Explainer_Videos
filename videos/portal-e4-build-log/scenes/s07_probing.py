@@ -94,7 +94,7 @@ class Probing(VoiceScene):
             vo.wait_until("Two rules")
             rules = VGroup(sans("1  never claim a clinic is open right now unless its hours are checked", 22),
                            sans("2  keep cost out of the way of an emergency", 22)).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
-            rules.move_to(UP * 2.5)
+            rules.move_to(UP * 2.55).align_to(RIGHT * -2.9, LEFT)
             self.play(FadeIn(rules[0]), run_time=0.4)
             vo.wait_until("keep cost out")
             self.play(FadeIn(rules[1]), run_time=0.4)

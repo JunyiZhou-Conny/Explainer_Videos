@@ -64,7 +64,7 @@ class DayTwo(VoiceScene):
                 down = Line([x1 - 0.5, y, 0], [x1, -2.6, 0], color=color, stroke_width=3)
                 lab = mono(name, 20).next_to(run, UP, buff=0.05).align_to(run, LEFT).shift(RIGHT * 0.1)
                 rep = VGroup(mark_ok(0.2, CHECKED_C), sans("reproduced", 20, CHECKED_C)).arrange(RIGHT, buff=0.1)
-                rep.next_to(run, UP, buff=0.05).align_to(run, RIGHT)
+                rep.next_to(lab, RIGHT, buff=0.35)
                 branches.add(VGroup(up, run, down, lab, rep))
             clock = sans("time →   fix commits 16:52 → 19:07 · the stagger is illustrative", 20, S.GREY).move_to(DOWN * 3.0)
             self.play(Create(base), FadeIn(clock), run_time=0.4)

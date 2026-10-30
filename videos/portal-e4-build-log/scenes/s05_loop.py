@@ -75,9 +75,7 @@ class Loop(VoiceScene):
             when = sans("Wed 00:26 · the end of session 1", 24, S.GREY).move_to(UP * 1.4)
             q = quote_panel("已和 Junyi 商定：以后把修复攒在一起再推。", "PR #36 handoff · Wed 00:26", width=8.6, size=30,
                             color=USER_C).move_to(UP * 0.2)
-            self.play(FadeIn(when), run_time=0.3)
-            vo.wait_until("batch the fixes")
-            self.play(FadeIn(q, shift=UP * 0.1), run_time=0.6)
+            self.play(FadeIn(when), FadeIn(q, shift=UP * 0.1), run_time=0.6)
             self.wait(max(0.1, vo.remaining() - 0.2))
         self.wait(0.6)
         clear(self)
