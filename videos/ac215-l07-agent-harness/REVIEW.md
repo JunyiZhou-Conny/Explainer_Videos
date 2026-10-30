@@ -33,8 +33,8 @@ sessions (Claude) produced it. Verified facts and unclaimed reviews are kept in 
 
 1. **Hook** ✔. S01 opens on a broken thing from the staff's saved Colab run, not on a value proposition.
    - One request ("12 guests in Pennsylvania, a $150 budget, no nuts…", 00:00.0) gets two answers from the same
-     model and tools. The second claims 6,400 cents is "within a budget with the comma in the wrong place: a
-     malformed number" (the on-screen `1,5000¢`, held 00:25.0–00:30.1).
+     model and tools. The second, 1,200 grams for 6,400 cents, is "within a budget with the comma in the wrong
+     place: a malformed number" (the on-screen `1,5000¢`, held 00:25.0–00:30.1).
    - The question: "Which of these would you let charge a customer's card?" (cue 8, 00:30.4).
    - **Payoff:** "Code checked the cart itself: …The cart was valid; only the sentence was garbled. Nothing checked
      the first answer's final cart." (from 00:38.7). Then the rule, "the model proposes; the harness decides"
@@ -42,7 +42,8 @@ sessions (Claude) produced it. Verified facts and unclaimed reviews are kept in 
 2. **Intuition before formalism, with an animated mechanism for each core idea** ✔. `BRIEF.md` ("Visual set
    pieces") defines eight; each is animated with the commands it explains:
    - **V1, two columns → the action boundary:** the columns (00:54); slide 22's table built full screen in S05
-     (lecture tag 05c, 08:51–09:05); a mini-map row lit per act in S06–S13; the table filled in S16 (30:16.0).
+     (lecture tag 05c, 08:51–09:05); one row lit per act from S06 on (the `BoundaryMini` mini-map in S06, S09–S13
+     and S15; a small copy of the table in S07–S08); the table filled in S16 (30:16.0).
    - **V2, the loop, measured (S04):** model ↔ five tool paddles from the recorded trace, message cards and the
      GOLD token meter, "and the loop stops" (07:04.2), "about 21,000 billed input tokens" (07:12.9).
    - **V3, rings and a turnstile (S05):** the harness rings around the agent, "Budget is a turnstile" (08:20.3),
@@ -79,9 +80,12 @@ sessions (Claude) produced it. Verified facts and unclaimed reviews are kept in 
      | S12 | An edited vendor skill adds another recipient: will the email go there? | 22:54.3 | 6 s | 23:00.9 "No. Whatever the skill says, the guards are in code" |
 
    - **Rate:** 5 in 31:21.75, one per 6.3 min (the gate's aim would be about 15). The longest stretches without
-     one are 00:00–09:14.8 and from 22:54.3 (+6 s timer) to the end, about 8.5 min (`report-measured.md` §5).
-     `BRIEF.md` ("Ponder questions") plans exactly five. S13's "the act 3 ponder · for real" chip (about 24:43)
-     is a callback, not a sixth ponder. Separately, 18 English cues contain a spoken "Pause…" that sends the viewer to run a step.
+     one are 00:00–09:14.8 (about 9.2 min) and from the last timer's end (about 23:00.3) to the end (about 8.4 min);
+     `report-measured.md` §5 gives "about 8.5 min" for the second.
+     `BRIEF.md` ("Ponder questions") plans exactly five. S13's "the act 3 ponder · for real" chip (on screen
+     with "That's the ponder from act 3, for real", cue 397, 25:00.1; `verify/clean_1502.png`) is a callback, not a
+     sixth ponder. Separately, 18 English cues tell the viewer to pause and run a step ("Pause and run…", "Pause
+     here"), besides cue 24, which explains that convention.
    - **Decided by Conny (2026-10-21), as recorded in `videos/ac215-l05-rag/REVIEW.md` gate 3:**
      「我觉得可以保留现在的密度」: keep the current density of 3–5 ponders per lecture, plus a spoken recap and
      test questions.
@@ -94,7 +98,7 @@ sessions (Claude) produced it. Verified facts and unclaimed reviews are kept in 
    - **Spoken style:** `script.md`'s conventions (1–4 sentences, at most about 60 words per SAY; commands, money
      and versions said in words; "at the time of recording" for versions; customer IDs never said).
    - **Size:** 155 SAY lines, matching the 155 voice blocks in the render sidecars; 4,287 words, inside the
-     series' 3,900–4,300 (`script.md` line 231 still says 4,274, a stale note). Kokoro `af_heart` at speed 0.9:
+     series' 3,900–4,300 (`script.md` lines 221 and 232 still say 4,274, a stale note). Kokoro `af_heart` at speed 0.9:
      136.7 wpm over the runtime, 151.1 wpm over the 1,702.4 s of voice (90.5 % of the runtime).
    - **Anchors:** 617 `vo.wait_until(...)` call sites across the 16 scene files, plus one docstring mention in
      `s03_verify.py` (a plain grep finds 618). None of the 16 render logs in `build/logs/` contains
@@ -188,7 +192,9 @@ checked the build-time critiques instead.
 - **Subtitles:** 12 yaml rewordings (`g1.yaml` 6, `g2.yaml` 6; cross-paired clauses at *draft* 00:20 and 13:50, line breaks inside dates,
   counts and glossary terms), three `en_display` capitals (UNRESOLVED, DECLINED, Invalid or unauthorized), and
   the glossary alternative "vendor document".
-- **Narration:** the five stress errors via the lexicon, and S12's answer ("No. Whatever the skill says…").
+- **Narration:** the four should-level stress errors via the lexicon ("records" ×2, "contrasts", "Jupyter"; the
+  same six-entry change also fixed the two nit-level ones, "recap" and "outreach"), and S12's answer ("No.
+  Whatever the skill says…").
 
 **Nits:** fixed in the QA round or in the finishing pass (the four narration nits above, `script.md` SHOW lines
 for S01, S04, S05, S06, S08, S09 and S16, the `.animate` legs in four `common.py` helpers), except those listed
@@ -280,7 +286,7 @@ next.
   - `.zh.srt` cues 331 (24:23.1) and 358 (26:17.9), and zh-en cue 414, are code identifiers joined by 、, by
     design.
   - The cue counts differ by language (502 / 429 / 497), as expected.
-  - `script.md` line 231's word count (4,274) is stale; the measured count is 4,287.
+  - `script.md`'s word count at lines 221 and 232 (4,274) is stale; the measured count is 4,287.
 - **A7. Burned layout (by design).** The burned copy scales the picture to about 0.87 to give the subtitles their
   own band, leaving about 124 px of black at each side (`report-visual.md` F1). This is the toolkit's layout.
 
@@ -333,3 +339,9 @@ All numbers from `measured.json` and the five reports, measured on 2026-10-30.
 - **Subtitle timing** is measured with base.en word times (about ±0.5 s accurate) and voice-only large-v3-turbo
   checks on selected ranges, not cue by cue by ear.
 - **No review-bot pass on this episode:** the QA's follow-ups watcher found no bot thread on L07.
+- **The QA fixes were verified by agents** on fresh 720p or preview renders of each scene, before the 1080p60
+  renders; they were not re-checked one by one on the final cut, which the five final-cut checks cover only by
+  their own sampling (frames every 3 s, tag frames, ASR, subtitle files).
+- **Every check in this record is an agent's**, including the adversarial re-check of this record's numbers
+  (ffprobe, one ebur128 re-run on the zh-en copy, cue counts, chapter and part times, frames in
+  `verify/`).
