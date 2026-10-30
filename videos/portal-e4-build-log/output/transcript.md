@@ -38,7 +38,7 @@ Because the bots report one finding at a time, and every fix waits for the next 
 ## 06:12 — What it cost
 What did it cost? The model calls the product made are on the record: about 4 cents for one real answer, about 77 cents for the whole first day, 27 cents on the last night against a 50-cent cap. The agents' own work is priced nowhere in the repository; the only number is tokens: about 800,000 per fix agent, close to five million for the six, and none recorded for the rest.
 
-## 06:40 — Who decided, and what waits
+## 06:41 — Who decided, and what waits
 So who decided? The record, written by the agents, names your calls, among them the model and its effort, the turn to the model's judgement, batching the fixes, copying Claude's page, and the stop rule: stop at 99 percent, finish by Thursday at seven in the evening, Beijing time. The code kept it: the last push came more than six hours early, and four later bot findings were written down for the next person.
 Many smaller choices the agents made alone, and wrote down as proposals, marked unattended and not confirmed by a person. One handoff even lists, among the agent's own steps, a click the team's workflow reserves for a person: marking a pull request ready for review. The notes are honest about slips too: one admits an earlier claim that all Bugbot comments were fixed, when two were not.
 Which raises a question: with no person having reviewed it yet, what makes this code trustworthy?
