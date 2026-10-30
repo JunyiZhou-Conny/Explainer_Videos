@@ -36,7 +36,7 @@ class Loop(VoiceScene):
                               for a, b in [(n[0], n[1]), (n[1], n[2]), (n[2], n[0])]])
             self.play(LaggedStart(*[FadeIn(m) for m in n], lag_ratio=0.3), LaggedStart(*[Create(a) for a in arrows], lag_ratio=0.3),
                       run_time=1.2)
-            vo.wait_until("ten twenty-three")
+            vo.wait_until("ten twenty-three that night")
             ready = VGroup(sans("Tue 22:23 Boston · Wed 10:23 Beijing", 22, S.WHITE),
                            sans("PR #36 marked ready for review · two teammates asked", 20, S.GREY),
                            sans("both bots now review every push", 20, S.GREY)).arrange(DOWN, aligned_edge=LEFT, buff=0.06)

@@ -66,7 +66,7 @@ SAY: But notice: the checker is also made of word rules, applied to sentences in
 ## S05 · The loop with the bots — `s05_loop.py` · `Loop`
 
 SHOW: Tue 22:23 Boston (Wed 10:23 Beijing): PR #36 marked ready for review, two teammates asked. A loop diagram: push → bots review → agent fixes → push, a token going round. The clock zooms into Tue 22:27 → Wed 00:07: 19 ORANGE ticks. Counters for PR #36: bot comments 72 (Bugbot 42 · Codex 30), fixed 64.
-SAY: Then came the loop. At ten twenty-three the agent marked the brain's pull request ready for review and asked two teammates to look, and both bots began reviewing every push. Push, the bots review, the agent fixes, push again. Between ten twenty-seven and just after midnight the first session pushed 19 commits, about one every five minutes. On that pull request the bots wrote 72 comments, and 64 led to fixes.
+SAY: Then came the loop. At ten twenty-three that night, Boston time, the agent marked the brain's pull request ready for review and asked two teammates to look, and both bots began reviewing every push. Push, the bots review, the agent fixes, push again. Between ten twenty-seven and just after midnight the first session pushed 19 commits, about one every five minutes. On that pull request the bots wrote 72 comments, and 64 led to fixes.
 
 SHOW: Quote from the handoff: 「已和 Junyi 商定：以后把修复攒在一起再推。」 (Wed 00:26)
 SAY: By half past midnight, you and the agent had agreed on one change: batch the fixes before pushing.

@@ -54,10 +54,10 @@ S04:
   - 但请注意：检查器本身也是由词规则组成的，只不过查的是句子，不是症状。
   - 怎样才能不再按下葫芦浮起瓢？
 S05:
-- en: Then came the loop. At ten twenty-three the agent marked the brain's pull request ready for review and asked two teammates to look, and both bots began reviewing every push. Push, the bots review, the agent fixes, push again. Between ten twenty-seven and just after midnight the first session pushed 19 commits, about one every five minutes. On that pull request the bots wrote 72 comments, and 64 led to fixes.
+- en: Then came the loop. At ten twenty-three that night, Boston time, the agent marked the brain's pull request ready for review and asked two teammates to look, and both bots began reviewing every push. Push, the bots review, the agent fixes, push again. Between ten twenty-seven and just after midnight the first session pushed 19 commits, about one every five minutes. On that pull request the bots wrote 72 comments, and 64 led to fixes.
   zh:
   - 接下来是循环。
-  - 晚上 10 点 23 分，agent 把大脑的 PR 标成可以 review，请两位队友来看，两个 bot 从此审每一次推送。
+  - 波士顿时间当晚 10 点 23 分，agent 把大脑的 PR 标成可以 review，请两位队友来看，两个 bot 从此审每一次推送。
   - 推送，bot 审查，agent 修复，再推送。
   - 从 10 点 27 分到午夜刚过，第一个会话推送了 19 个提交，大约每 5 分钟一个。
   - 在这个 PR 上，bot 写了 72 条评论，其中 64 条带来了修复。

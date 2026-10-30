@@ -43,9 +43,9 @@ class Machinery(VoiceScene):
             bots.move_to(DOWN * 0.35)
             wake = VGroup(link(chain[2], bots[0], S.GREY), link(chain[2], bots[1], S.GREY))
             wake_l = sans("pushes", 20, S.GREY).next_to(wake[1], RIGHT, buff=0.12)
-            self.play(FadeIn(bots[0], shift=UP * 0.1), Create(wake[0]), FadeIn(wake_l), run_time=0.5)
+            self.play(FadeIn(bots[0], shift=UP * 0.1), Create(wake[0]), run_time=0.5)
             vo.wait_until("OpenAI's Codex")
-            self.play(FadeIn(bots[1], shift=UP * 0.1), Create(wake[1]), run_time=0.5)
+            self.play(FadeIn(bots[1], shift=UP * 0.1), Create(wake[1]), FadeIn(wake_l), run_time=0.5)
             vo.wait_until("They may comment")
             back = CurvedArrow(bots[1].get_right() + RIGHT * 0.1, chain[2].get_right() + RIGHT * 0.1 + DOWN * 0.1,
                                angle=PI / 2, color=S.GREY)
