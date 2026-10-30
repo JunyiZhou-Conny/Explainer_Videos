@@ -4,7 +4,7 @@
    (PR #36 handoff of 10-28); the last night ≈ $0.27 against a $0.50 cap (PR #41 handoff of 10-29).
    Budget defaults in the code: $2 for the server, $10 for an evaluation.
 2. The agents' own work: no dollar figure anywhere in the repository; the one number is ≈ 800,000 tokens
-   per fix agent, six of them queued (PR #41 handoff, 「流程问题」).
+   per fix agent, six of them queued (PR #41 handoff, 「流程问题」): ≈ 4.8 million; nothing recorded for the rest.
 """
 
 from manim import *
@@ -65,12 +65,16 @@ class Cost(VoiceScene):
             # six fix agents queued; one block = 100,000 tokens
             cols = VGroup(*[VGroup(*[Square(0.26, stroke_width=0).set_fill(S.GREY, 0.85) for _ in range(8)]
                                    ).arrange(UP, buff=0.04) for _ in range(6)]).arrange(RIGHT, buff=0.16, aligned_edge=DOWN)
-            cols.move_to(RIGHT * 3.9 + DOWN * 1.05)
+            cols.move_to(RIGHT * 3.9 + DOWN * 0.75)
             self.play(LaggedStart(*[LaggedStart(*[GrowFromEdge(c, DOWN) for c in col], lag_ratio=0.1) for col in cols],
                                   lag_ratio=0.12), run_time=1.4)
             legend = VGroup(sans("≈ 800,000 tokens per fix agent", 24, USER_C), sans("one block = 100,000 tokens", 20, S.GREY)
                             ).arrange(DOWN, buff=0.06).next_to(cols, DOWN, buff=0.2)
             self.play(FadeIn(legend), run_time=0.4)
+            vo.wait_until("close to five million")
+            total = VGroup(sans("6 fix agents ≈ 4.8 million tokens", 22, USER_C), sans("the rest: not recorded", 20, S.GREY)
+                           ).arrange(DOWN, buff=0.05).next_to(legend, DOWN, buff=0.15)
+            self.play(FadeIn(total), run_time=0.4)
             self.wait(max(0.1, vo.remaining() - 0.2))
         self.wait(1.0)
         clear(self)

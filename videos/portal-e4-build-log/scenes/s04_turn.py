@@ -23,12 +23,13 @@ class Turn(VoiceScene):
     def construct(self):
         # 1 ---------------------------------------------------------------- word lists
         with self.voiceover(SAY[0]) as vo:
-            when = VGroup(sans("Tue 21:21 Boston · commit 8f13b18", 30, USER_C), sans("Wed 09:21 Beijing · the date decision 0004 uses", 22, S.GREY)
+            when = VGroup(sans("Tue 21:21 Boston · commit 8f13b18", 30, USER_C), sans("Wed 09:21 Beijing", 24, S.GREY)
                           ).arrange(DOWN, buff=0.08).move_to(UP * 3.0)
-            self.play(FadeIn(when), run_time=0.5)
-            vo.wait_until("matched words")
             engine = tag_box("rules", "word lists", "match a symptom → urgency", MODEL_C, width=4.2).move_to(UP * 0.6)
-            self.play(FadeIn(engine), run_time=0.4)
+            plan = sans("the plan until now", 22, S.GREY).next_to(engine, UP, buff=0.15)
+            self.play(FadeIn(when), FadeIn(engine), FadeIn(plan), run_time=0.6)
+            vo.wait_until("matched words")
+            self.play(FadeOut(plan), Indicate(engine.name, color=MODEL_C), run_time=0.5)
             ins = VGroup(zh("胸口发闷", 24), zh("喘不上气", 24), zh("不想吃饭", 24)).arrange(DOWN, buff=0.35).move_to(LEFT * 4.6 + UP * 0.6)
             illus = sans("illustration", 20, S.GREY).next_to(ins, DOWN, buff=0.2)
             self.play(FadeIn(ins), FadeIn(illus), run_time=0.4)

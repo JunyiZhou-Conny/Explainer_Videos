@@ -59,16 +59,16 @@ class Recap(VoiceScene):
             def q(en, cn):
                 return VGroup(serif(en, 30), zh(cn, 22, S.GREY)).arrange(DOWN, aligned_edge=LEFT, buff=0.08)
             qs = VGroup(serif("Test yourself", 34, USER_C),
-                        q("1.  Why did most commits fix the checker?", "为什么大多数提交都在修检查器？"),
+                        q("1.  Why did so many of the brain's commits touch the checker?", "为什么分诊大脑的提交有这么多在改检查器？"),
                         q("2.  Why reproduce a bug before fixing it?", "为什么修 bug 之前要先复现？"),
                         q("3.  What is still waiting for you?", "还有什么在等你决定？")
                         ).arrange(DOWN, aligned_edge=LEFT, buff=0.35).move_to(UP * 1.1)
             self.play(FadeIn(qs[0]), run_time=0.4)
-            for qq, phrase in zip(qs[1:], ["Why did most", "Why reproduce", "And what is still"]):
+            for qq, phrase in zip(qs[1:], ["Why did so many", "Why reproduce", "And what is still"]):
                 vo.wait_until(phrase)
                 self.play(FadeIn(qq, shift=RIGHT * 0.1), run_time=0.4)
             self.wait(max(0.1, vo.remaining() - 0.2))
-        self.wait(3.5)   # time to answer before the end card
+        self.wait(5.0)   # time to answer before the end card
 
         # 3 ---------------------------------------------------------------- end of the week
         with self.voiceover(SAY[2]) as vo:

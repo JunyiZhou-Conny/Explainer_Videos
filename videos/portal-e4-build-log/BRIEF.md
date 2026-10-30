@@ -42,9 +42,11 @@ Series: [docs/PORTAL_SERIES.md](../../docs/PORTAL_SERIES.md) · batch plan:
   - The corrections from the accuracy pass are listed in `SOURCES.md`.
 - **Skip.** The harness's four jobs (E1); thinking and streaming (E2); the chat page's design (E3).
 - **Ponder questions.**
-  - S04: the checker is word rules too. What would make it less of a whack-a-mole? (Answered in S06: attack it with thousands of phrasings before pushing, and keep the failures as tests.)
+  - S04: the checker is word rules too. What would make it less of a whack-a-mole? (Answered in S07: attack it with thousands of phrasings before pushing, and keep the failures as tests.)
+  - S06: why reproduce a bug before fixing it? (Answered at once: a check that has to flip from failing to passing.)
+  - S07: the bots would have found these too; why attack the checker yourself first? (Answered: the bots report one at a time; one probing run found 372.)
   - S09: with no person having reviewed it yet, what makes this code trustworthy? (Answered at once: layers, plus decisions that wait for a signature.)
   - S10 recap questions:
-    - Why did most commits fix the checker?
+    - Why did so many of the brain's commits touch the checker?
     - Why reproduce a bug before fixing it?
     - What is still waiting for you?

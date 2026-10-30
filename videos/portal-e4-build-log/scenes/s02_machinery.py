@@ -41,9 +41,11 @@ class Machinery(VoiceScene):
             bots = VGroup(step("Bugbot", "Cursor · every push", S.GREY, 2.3), step("Codex", "OpenAI · once ready", S.GREY, 2.3)
                           ).arrange(RIGHT, buff=0.5)
             bots.move_to(DOWN * 0.35)
-            wake = link(chain[2], bots, S.GREY)
-            wake_l = sans("pushes", 20, S.GREY).next_to(wake, RIGHT, buff=0.12)
-            self.play(FadeIn(bots, shift=UP * 0.1), Create(wake), FadeIn(wake_l), run_time=0.6)
+            wake = VGroup(link(chain[2], bots[0], S.GREY), link(chain[2], bots[1], S.GREY))
+            wake_l = sans("pushes", 20, S.GREY).next_to(wake[1], RIGHT, buff=0.12)
+            self.play(FadeIn(bots[0], shift=UP * 0.1), Create(wake[0]), FadeIn(wake_l), run_time=0.5)
+            vo.wait_until("OpenAI's Codex")
+            self.play(FadeIn(bots[1], shift=UP * 0.1), Create(wake[1]), run_time=0.5)
             vo.wait_until("They may comment")
             back = CurvedArrow(bots[1].get_right() + RIGHT * 0.1, chain[2].get_right() + RIGHT * 0.1 + DOWN * 0.1,
                                angle=PI / 2, color=S.GREY)
@@ -65,7 +67,10 @@ class Machinery(VoiceScene):
             frame = SurroundingRectangle(heads, color=S.GREY_DARK, buff=0.3, corner_radius=0.14)
             hand = VGroup(frame, heads, sans("a handoff note, on the PR", 20, S.GREY).next_to(frame, DOWN, buff=0.12))
             hand.move_to(LEFT * 3.6 + UP * 0.6)
+            heads[0].set_color(S.WHITE)
             self.play(FadeIn(hand, shift=UP * 0.1), run_time=0.6)
+            vo.wait_until("marked unattended")
+            self.play(heads[0].animate.set_color(USER_C), Circumscribe(heads[0], color=USER_C), run_time=0.6)
             vo.wait_until("decision records")
             rec = VGroup(zh("决策记录", 26), VGroup(chip("提议", S.GREY, 24, mono_font=False), Arrow(LEFT * 0.4, RIGHT * 0.4, buff=0,
                                                                                                color=S.GREY),

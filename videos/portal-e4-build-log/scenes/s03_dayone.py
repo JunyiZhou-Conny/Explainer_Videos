@@ -20,7 +20,7 @@ class DayOne(VoiceScene):
     def construct(self):
         # 1 ---------------------------------------------------------------- forty minutes
         with self.voiceover(SAY[0]) as vo:
-            when = VGroup(sans("Tue 12:22 → 13:03", 28, MODEL_C), sans("session 1's first commits · after a night of planning", 22, S.GREY)
+            when = VGroup(sans("Tue 12:22 → 13:03 Boston · Wed 00:22 → 01:03 Beijing", 28, MODEL_C), sans("session 1's first commits · after a night of planning", 22, S.GREY)
                           ).arrange(DOWN, buff=0.1).move_to(UP * 3.0)
             self.play(FadeIn(when), run_time=0.5)
             first = [h for h in H36 if h < 13.1]           # 12:22 → 13:03, seven commits

@@ -7,10 +7,11 @@ S01:
   - 这是我们两个分诊 PR 上的每一个提交，放在同一个时钟上：波士顿时间，从周二中午到周四凌晨。
   - 一共 109 个提交，每一个都是 agent 做的：88 个改动，21 个把一个分支合并进另一个分支。
   - GitHub 上有 40 个显示在你的名下，因为 agent 用了你的 git 身份。
-- en: Two questions. Why are most of them fixes? And no person has reviewed them yet, so who decided anything?
+- en: 'Two questions. Why are most of them fixes? 53 of the 88 name a review in their message: Bugbot, Codex, or a review agent. And no person has reviewed them yet, so who decided anything?'
   zh:
   - 两个问题。
   - 为什么大多数都是修复？
+  - 88 个改动里，有 53 个在提交说明里提到了 review：Bugbot、Codex，或者做审查的 agent。
   - 而且到现在还没有一个人 review 过，那到底是谁做的决定？
 S02:
 - en: 'First, the machinery. Each job starts as an issue, gets its own branch, and opens a draft pull request after the first commit. Pushes wake two review bots from different companies: Cursor''s Bugbot on every push, and OpenAI''s Codex once the pull request is marked ready for review. They may comment, but never change code.'
@@ -19,9 +20,9 @@ S02:
   - 每件事从一个 issue 开始，有自己的分支，第一次提交后就开一个草稿 PR。
   - 推送会唤醒两家公司的 review bot：Cursor 的 Bugbot 每次推送都审，OpenAI 的 Codex 要等 PR 标成可以 review 之后才审。
   - 它们可以评论，但从不改代码。
-- en: 'When an agent stops, it writes a handoff note on the pull request. Big choices become decision records, marked proposed until a person marks them adopted. The team''s rule: chat is temporary, the repository is permanent.'
+- en: 'When an agent stops, it writes a handoff note on the pull request, marked unattended when nobody was watching. Big choices become decision records, marked proposed until a person marks them adopted. The team''s rule: chat is temporary, the repository is permanent.'
   zh:
-  - agent 停下来的时候，会在 PR 下写一条交接。
+  - agent 停下来的时候，会在 PR 下写一条交接；没人看着的时候，标为无人值守。
   - 重大选择写成决策记录，标为「提议」，直到有人把它改成「已采纳」。
   - 团队的规则是：聊天是临时的，仓库是永久的。
 - en: 'Two agent sessions made the commits: the first until just after midnight, the second from one fifty-one on Wednesday morning to a quarter to one on Thursday. The chat page was stacked on top of the triage brain, and pulled in the brain''s changes 13 times.'
@@ -32,7 +33,7 @@ S03:
 - en: 'Tuesday, at twelve twenty-two, after a night of planning, the first session started committing. Within forty minutes it had a skeleton: fact cards from 15 sources, a rules engine that decided urgency, eleven test cases and an evaluation.'
   zh:
   - 周二中午 12 点 22 分，规划了一夜之后，第一个会话开始提交。
-  - 不到 40 分钟就有了骨架：来自 15 个来源的事实卡、决定紧急程度的规则引擎、11 个测试案例和一个评估。
+  - 不到 40 分钟就有了骨架：15 个来源整理成的事实卡，一个规则引擎来决定紧急程度，11 个测试案例，还有一个评估。
 - en: Then it checked its own facts. Four reviewer agents that could not talk to each other read every card against its source and reported 75 problems. Twenty-three minutes after the first 74 cards, there were 97. One had said out-of-network urgent care costs you 20 percent; the source said you pay a five-hundred-dollar deductible first.
   zh:
   - 然后它核对自己的事实。
@@ -53,52 +54,66 @@ S04:
   - 但请注意：检查器本身也是由词规则组成的，只不过查的是句子，不是症状。
   - 怎样才能不再按下葫芦浮起瓢？
 S05:
-- en: Then came the loop. At ten twenty-three the agent marked the brain's pull request ready for review, and both bots began reviewing every push. Push, the bots review, the agent fixes, push again. Between ten twenty-seven and just after midnight the first session pushed 19 commits, about one every five minutes. On that pull request the bots wrote 72 comments, and 64 led to fixes.
+- en: Then came the loop. At ten twenty-three the agent marked the brain's pull request ready for review and asked two teammates to look, and both bots began reviewing every push. Push, the bots review, the agent fixes, push again. Between ten twenty-seven and just after midnight the first session pushed 19 commits, about one every five minutes. On that pull request the bots wrote 72 comments, and 64 led to fixes.
   zh:
   - 接下来是循环。
-  - 晚上 10 点 23 分，agent 把大脑的 PR 标成可以 review，两个 bot 开始审每一次推送。
+  - 晚上 10 点 23 分，agent 把大脑的 PR 标成可以 review，请两位队友来看，两个 bot 从此审每一次推送。
   - 推送，bot 审查，agent 修复，再推送。
   - 从 10 点 27 分到午夜刚过，第一个会话推送了 19 个提交，大约每 5 分钟一个。
   - 在这个 PR 上，bot 写了 72 条评论，其中 64 条带来了修复。
-- en: Most were about the checker. After the turn it grew from 459 lines to 1,326, and 27 of the 45 commits since touched it. Each fix moved the problem. On Wednesday a parent summary saying don't delay help because of insurance was flagged as putting money first, which cost a needless rewrite; that evening, narrowing a similar rule let a real money-first line slip through, until Bugbot caught it.
+- en: 'By half past midnight, you and the agent had agreed on one change: batch the fixes before pushing.'
   zh:
-  - 大多数和检查器有关。
-  - 转向之后，它从 459 行长到 1,326 行，此后的 45 个提交里有 27 个改过它。
-  - 每次修复都只是把问题挪了个地方。
-  - 周三，一段家长摘要说别因为保险耽误救援，却被判成先谈钱，白白多重写一次；当天晚上，收窄一条类似的规则，又让一句真正先谈钱的话漏了过去，直到 Bugbot 发现。
-- en: 'You and the agent agreed on one change: batch the fixes before pushing.'
-  zh:
-  - 你和 agent 商定了一个改变：把修复攒在一起再推送。
+  - 到了午夜 12 点半，你和 agent 已经商定了一个改变：修复先攒起来，再一起推送。
 S06:
-- en: 'So on the second night the agents stopped waiting for the bots. Before pushing, they attacked their own checker: they wrote about 3,000 ways to say a risky thing, or its harmless twin, and ran them all. The first round found 142 misses and 230 false alarms.'
-  zh:
-  - 于是第二天夜里，agent 不再等 bot。
-  - 推送之前，它们先攻击自己的检查器：写了大约 3,000 种说法，有危险的，也有无害的孪生版本，全部跑一遍。
-  - 第一轮找出 142 个漏判和 230 个误报。
-- en: The 1,060 phrasings it got wrong were fixed and kept as tests that run with the unit tests; about twenty harder ones are listed as known misses. In the second round, the first fix even created 20 new false alarms; this time they were caught before the push, not after.
-  zh:
-  - 判错过的 1,060 个说法都修好了，留作测试，和单元测试一起跑；还有大约 20 个更难的，列为已知漏判。
-  - 第二轮里，第一版修法甚至带出了 20 个新误报；这一次，它们在推送之前就被抓住了，而不是之后。
-S07:
 - en: On Wednesday the second session built the chat page from episode three and kept fixing the brain beside it. In the afternoon a final review looked from five angles at once and found about 30 problems.
   zh:
-  - 周三，第二个会话做出了第三集里的聊天页，同时继续修大脑。
+  - 周三，第二个会话做出了聊天页，也就是第三集讲的那一页，同时继续修大脑。
   - 下午，一次最终审查同时从 5 个角度看，找出了大约 30 个问题。
-- en: Six fix agents took them one after another, each on its own branch, and each first reproduced its bug before fixing it. Merging them back took about an hour and had collisions; in one, a branch added a field that another branch's new test rejected. A second review of the merged result found eight more.
+- en: Six fix agents took them one after another, each on its own branch, and each first reproduced its bug before fixing it.
   zh:
   - 6 个修复 agent 一个接一个地接手，各用自己的分支，每个都先复现自己的 bug 再修。
-  - 合并回去花了大约一个小时，还发生了冲突；其中一次，一个分支加了一个字段，另一个分支的新测试却不接受它。
+- en: Why reproduce a bug before fixing it?
+  zh:
+  - 为什么修 bug 之前要先复现？
+- en: Because a reproduction proves the bug is real, and gives a check that has to flip from failing to passing; a fix for a bug nobody saw fail proves nothing. Merging the branches back took about an hour and had collisions; in one, a branch added a field that another branch's new test rejected. A second review of the merged result found eight more.
+  zh:
+  - 因为复现能证明这个 bug 是真的，还能给出一项检查，修之前不通过，修之后必须通过；一个没人见过它失败的 bug，修了也证明不了什么。
+  - 把分支合并回去花了大约一个小时，还发生了冲突；其中一次，一个分支加了一个字段，另一个分支的新测试却不接受它。
   - 对合并结果的第二次审查又找出了 8 个。
 - en: 'Along the way the session hit its five-hour usage limit twice, the second time because the six fix agents ran in a row at about 800,000 tokens each, and the container restarted twice. The agents'' rule afterwards: at most three at a time.'
   zh:
   - 这期间会话两次碰到 5 小时用量上限，第二次是因为 6 个修复 agent 排队跑，每个大约 80 万 token；容器也重启了两次。
   - agent 之后的规则：一次最多 3 个。
+S07:
+- en: Back to the checker. Most of the bots' comments were about it. After the turn it grew from 459 lines to 1,326, and 27 of the 45 commits since touched it. Each fix moved the problem. On Wednesday a parent summary saying don't delay help because of insurance was flagged as putting money first, which cost a needless rewrite; that evening, narrowing a similar rule let a real money-first line slip through, until Bugbot caught it.
+  zh:
+  - 回到检查器。
+  - bot 的评论大多是关于它的。
+  - 转向之后，它从 459 行长到 1,326 行，此后的 45 个提交里有 27 个改过它。
+  - 每次修复都只是把问题挪了个地方。
+  - 周三，一段家长摘要说别因为保险耽误救援，却被判成先谈钱，白白多重写一次；当天晚上，收窄一条类似的规则，又让一句真正先谈钱的话漏了过去，直到 Bugbot 发现。
+- en: 'So on the second night the agents stopped waiting for the bots. Two rules took the beating: never claim a clinic is open right now unless its hours are checked, and keep cost out of the way of an emergency. Before pushing, the agents attacked those two rules: they wrote about 3,000 ways to say a risky thing, or its harmless twin, and ran them all. The first round found 142 misses and 230 false alarms.'
+  zh:
+  - 于是第二天夜里，agent 不再等 bot。
+  - 挨打最多的是两条规则：没核对过营业时间，就不能说诊所此刻开着；紧急情况下，不能让费用挡路。
+  - 推送之前，agent 先攻击这两条规则：写了大约 3,000 种说法，有危险的，也有无害的孪生版本，全部跑一遍。
+  - 第一轮找出 142 个漏判和 230 个误报。
+- en: The bots would have found these too. Why attack the checker yourself first?
+  zh:
+  - bot 迟早也会找到这些。
+  - 为什么要先自己攻击检查器？
+- en: Because the bots report one finding at a time, and every fix waits for the next review. One probing run found 372 at once. Across both rounds, 1,060 phrasings it got wrong were fixed and kept as tests that run with the unit tests; about twenty harder ones are listed as known misses. In the second round, the first fix even created 20 new false alarms; this time they were caught before the push, not after.
+  zh:
+  - 因为 bot 一次只报一条，每次修复都要等下一轮审查。
+  - 一次探测就找出了 372 个。
+  - 两轮下来，判错过的 1,060 个说法都修好了，留作测试，和单元测试一起跑；还有大约 20 个更难的，列为已知漏判。
+  - 第二轮里，第一版修法甚至带出了 20 个新误报；这一次，它们在推送之前就被抓住了，而不是之后。
 S08:
-- en: 'What did it cost? The model calls the product made are on the record: about 4 cents for one real answer, about 77 cents for the whole first day, 27 cents on the last night against a 50-cent cap. The agents'' own work is priced nowhere in the repository; the only number is tokens, about 800,000 per fix agent.'
+- en: 'What did it cost? The model calls the product made are on the record: about 4 cents for one real answer, about 77 cents for the whole first day, 27 cents on the last night against a 50-cent cap. The agents'' own work is priced nowhere in the repository; the only number is tokens: about 800,000 per fix agent, close to five million for the six, and none recorded for the rest.'
   zh:
   - 花了多少钱？
   - 产品自己调用模型的花费有记录：一次真实回答大约 4 美分，整个第一天大约 77 美分，最后一晚 27 美分，上限是 50 美分。
-  - agent 自己的工作在仓库里没有任何标价；唯一的数字是 token：每个修复 agent 大约 80 万。
+  - agent 自己的工作在仓库里没有任何标价；唯一的数字是 token：每个修复 agent 大约 80 万，6 个加起来接近 500 万，其余的没有记录。
 S09:
 - en: 'So who decided? The record, written by the agents, names your calls, among them the model and its effort, the turn to the model''s judgement, batching the fixes, copying Claude''s page, and the stop rule: stop at 99 percent, finish by Thursday at seven in the evening, Beijing time. The code kept it: the last push came more than six hours early, and four later bot findings were written down for the next person.'
   zh:
@@ -123,10 +138,10 @@ S10:
 - en: 'So, two days: a skeleton and a fact check in an afternoon; your turn at nine twenty-one; a night of whack-a-mole with the bots; a queue of fix agents; a second night of attacking the checker before the bots could; and a stop rule that held.'
   zh:
   - 所以，两天里：一个下午搭好骨架、核对事实；你在 9 点 21 分的转向；和 bot 打地鼠的一夜；排队的修复 agent；第二个夜晚，赶在 bot 之前先攻击检查器；还有一条守住了的收尾约定。
-- en: Three questions. Why did most commits fix the checker? Why reproduce a bug before fixing it? And what is still waiting for you?
+- en: Three questions. Why did so many of the brain's commits touch the checker? Why reproduce a bug before fixing it? And what is still waiting for you?
   zh:
   - 三个问题。
-  - 为什么大多数提交都在修检查器？
+  - 为什么分诊大脑的提交有这么多在改检查器？
   - 为什么修 bug 之前要先复现？
   - 还有什么在等你决定？
 - en: That ends this week's batch. Next week's episodes start from next week's pull requests.
