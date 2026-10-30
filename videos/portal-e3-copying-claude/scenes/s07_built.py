@@ -134,7 +134,8 @@ class Built(VoiceScene):
             vo.wait_until("In a demo replay")
             demo = sans("(in a demo replay: the very message you had just stopped)", 22, S.GREY).next_to(bug1[0], DOWN, buff=0.08)
             demo.align_to(bug1[0], LEFT)
-            self.play(FadeIn(demo), bug1[1].animate.next_to(demo, DOWN, buff=0.12).align_to(demo, LEFT), run_time=0.4)
+            bug1[1].next_to(demo, DOWN, buff=0.12).align_to(demo, LEFT)   # not on screen yet: move it, don't animate it
+            self.play(FadeIn(demo), run_time=0.4)
             vo.wait_until("The fix was one line")
             self.play(FadeIn(bug1[1]), run_time=0.4)
             vo.wait_until("the mirror image")
