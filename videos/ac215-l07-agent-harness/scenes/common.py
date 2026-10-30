@@ -3664,9 +3664,11 @@ MOVE_RIGHT = ("Move RIGHT", "high stakes · irreversible · predictable · audit
 
 class ActionBoundary(Piece):
     """V1 as slide 22's table (S05 builds it; S07 end and S11 at half size; S08 small; S16 full and
-    filled): a header row (BLUE "the model proposes", a PINK double arrow "who decides?", GREEN
-    "the harness decides"), five GREY concern pills down the middle (BOUNDARY_NAMES), BLUE cells
-    left (BOUNDARY_BLUE), GREEN cells right (empty until .fill), and under it the two move arrows
+    filled). S07's half table shows every row's text (default texts, .prefill(1)); S11's half
+    table shows only the context row's text, the others bars (texts=("context",)); S08's small one
+    is bars only (texts=()). A header row (BLUE "the model proposes", a PINK double arrow "who
+    decides?", GREEN "the harness decides"), five GREY concern pills down the middle
+    (BOUNDARY_NAMES), BLUE cells left (BOUNDARY_BLUE), GREEN cells right (empty until .fill), and under it the two move arrows
     (BLUE "Move LEFT" pointing left, GREEN "Move RIGHT" pointing right, each with its reasons).
         ActionBoundary()                        12.6 x 6.2 (moves=True; 5.1 without), built centred
                                                 at ORIGIN; a row is as tall as its BLUE text needs
@@ -4443,7 +4445,8 @@ class HarnessRings(Piece):
 
 
 class Turnstile(Piece):
-    """V3's Budget as a turnstile (S05): a post, a hub with three arms, a counter "k/8" above and,
+    """V3's Budget as a turnstile (S05): a waist-high cabinet (.post) with the hub on its upper face
+    and three short arms, one pointing left at the incoming token, a counter "k/8" above and,
     once locked, the RED message under it. About 1.6 x 2.2 (the lock message under it is 5.8
     wide: leave room). Built centred at ORIGIN. Tokens run left to right through it at hub height.
         .token(color=CLOUD, text="call") -> a token left of the gate (not added; GREEN "tool")
@@ -4456,13 +4459,16 @@ class Turnstile(Piece):
     def __init__(self, cap: int = 8, color: str = HARNESS, size: float = 24, **kw):
         super().__init__(**kw)
         self.cap, self.count, self.size, self.hi_color = cap, 0, size, color
-        post = RoundedRectangle(width=0.22, height=1.5, corner_radius=0.08, stroke_color=color,
-                                stroke_width=3).set_fill(color, 0.25).move_to([0, -0.35, 0])
+        # a waist-high cabinet, y -1.1 to 0.3 (not a tall pole: it read as a wind turbine)
+        post = RoundedRectangle(width=0.5, height=1.4, corner_radius=0.1, stroke_color=color,
+                                stroke_width=3).set_fill(color, 0.25).move_to([0, -0.4, 0])
         base = Line([-0.8, -1.1, 0], [0.8, -1.1, 0], color=color, stroke_width=4)
         self.hub_pt = np.array([0, 0.15, 0])
         hub = Circle(radius=0.13, stroke_color=color, stroke_width=3).set_fill(S.BG, 1).move_to(self.hub_pt)
-        arms = VGroup(*[Line(self.hub_pt, self.hub_pt + 0.75 * np.array([np.cos(a), np.sin(a), 0]),
-                             color=color, stroke_width=7) for a in (PI / 2 + 0.0, PI / 2 + TAU / 3, PI / 2 + 2 * TAU / 3)])
+        # one arm points left at the incoming token (the barrier); no side rail: at y 0.3 it would
+        # touch the tokens running at hub height
+        arms = VGroup(*[Line(self.hub_pt, self.hub_pt + 0.6 * np.array([np.cos(a), np.sin(a), 0]),
+                             color=color, stroke_width=7) for a in (PI, PI + TAU / 3, PI + 2 * TAU / 3)])
         self.post, self.base, self.hub, self.arms = post, base, hub, arms
         self.part("body", VGroup(post, base, arms, hub))
         self.counter = mono(f"0/{cap}", size, color).move_to([0, 1.25, 0])
@@ -4506,10 +4512,11 @@ class Turnstile(Piece):
         return anims
 
     def bounce(self, token, run_time: float = 0.8):
+        """Legs built one at a time (.build()): a builder shares .target."""
         hit = self.hub.get_center() + LEFT * (0.85 + token.width / 2)
         back = token.get_center().copy()
-        return Succession(token.animate(run_time=run_time * 0.45, rate_func=rush_into).move_to(hit),
-                          token.animate(run_time=run_time * 0.55).move_to(back))
+        return Succession(token.animate(run_time=run_time * 0.45, rate_func=rush_into).move_to(hit).build(),
+                          token.animate(run_time=run_time * 0.55).move_to(back).build())
 
 
 # ------------------------------------------------------------------ V4 · the stack, sieves and lanes (S06-S07)
@@ -4789,11 +4796,12 @@ class Lanes(Piece):
         return card.animate(run_time=run_time).move_to(dest)
 
     def turn_back(self, card, run_time: float = 1.0):
+        """Legs built one at a time (.build()): a builder shares .target."""
         fr = self.lanes["system"].frame
         near = np.array([card.get_center()[0], fr.get_top()[1] + card.height / 2 + 0.08, 0])
         back = card.get_center().copy()
-        return Succession(card.animate(run_time=run_time * 0.45, rate_func=rush_into).move_to(near),
-                          card.animate(run_time=run_time * 0.55).move_to(back).set_opacity(0.4))
+        return Succession(card.animate(run_time=run_time * 0.45, rate_func=rush_into).move_to(near).build(),
+                          card.animate(run_time=run_time * 0.55).move_to(back).set_opacity(0.4).build())
 
     def count_to(self, n: int) -> list:
         new = mono(f"Input: {n} conversation messages.", self.size, INK).move_to(self.counter, aligned_edge=RIGHT)
@@ -5037,7 +5045,8 @@ class Rail(Piece):
 
     def move(self, token, name: str, run_time: float = 0.8):
         """The token to .spot(name): straight along the track when no station is in the way,
-        else down into the corridor, along it, and up (never across a station's label)."""
+        else down into the corridor, along it, and up (never across a station's label).
+        Legs built one at a time (.build()): a builder shares .target."""
         dest = self.spot(name)
         cur = token.get_center()
         same_row = abs(cur[1] - dest[1]) < 1e-3
@@ -5053,7 +5062,7 @@ class Rail(Piece):
                 pts.append(p)
         lens = [np.linalg.norm(b - a) for a, b in zip([cur] + pts[:-1], pts)]
         tot = sum(lens) or 1.0
-        return Succession(*[token.animate(run_time=run_time * L / tot).move_to(p) for p, L in zip(pts, lens)])
+        return Succession(*[token.animate(run_time=run_time * L / tot).move_to(p).build() for p, L in zip(pts, lens)])
 
     def revise(self, token, run_time: float = 1.4):
         from manim import MoveAlongPath
@@ -5436,6 +5445,7 @@ class ContextJar(Piece):
             self.cards.add(c)
 
     def truncate(self, scene, keep: int = 5, run_time: float = 1.6):
+        """Legs built one at a time (.build()): a builder shares .target."""
         old = list(self.cards.submobjects[:len(self.cards) - keep])
         stay = list(self.cards.submobjects[len(self.cards) - keep:])
         heap_x = self.wall.get_left()[0] - 0.75
@@ -5443,8 +5453,8 @@ class ContextJar(Piece):
         anims = []
         for k, c in enumerate(old):
             dest = np.array([heap_x + (k % 3) * 0.1, self.wall.get_bottom()[1] + 0.1 + (k // 3) * 0.1, 0])
-            anims.append(Succession(c.animate(run_time=0.4).move_to([c.get_center()[0], rim, 0]),
-                                    c.animate(run_time=0.6).move_to(dest).scale(0.4).set_opacity(0.5)))
+            anims.append(Succession(c.animate(run_time=0.4).move_to([c.get_center()[0], rim, 0]).build(),
+                                    c.animate(run_time=0.6).move_to(dest).scale(0.4).set_opacity(0.5).build()))
         base = self.slot_box.get_top()[1] + 0.06
         y = base
         drops = []

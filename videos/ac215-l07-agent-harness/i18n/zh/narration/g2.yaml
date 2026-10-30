@@ -162,7 +162,7 @@ S10:
   - null
   - null
   - "Then: status: saved, email transmitted: no, and the file path."
-- en: "Then comes the approval-identity warning from the tests: the README predicts it, and it's harmless. Trust the authoritative block. Pause and run step 1."
+- en: "Then comes the approval-identity warning you saw in the tests: the README predicts it, and it's harmless. Trust the authoritative block. Pause and run step 1."
   zh:
   - "接着是测试里出现过的审批身份警告：README 预告过它，它是无害的。"
   - "以权威结果那一块为准。"
@@ -333,7 +333,7 @@ S14:
   en_display:
   - null
   - "Every run so far is in one SQLite database, including the failed live ones, with status: error."
-- en: "Inspect run takes a run ID: typed literally, it fails, because it's a template. Paste a real one; we use the manager approval run."
+- en: "Dash dash inspect run takes a run ID: typed literally, it fails, because it's a template. Paste a real one; we use the manager approval run."
   zh:
   - "这个 --inspect-run 要一个 run ID：照字面输入就会失败，因为它是个模板。"
   - "贴一个真实的；我们用 manager-approval 那次运行。"

@@ -330,9 +330,9 @@ S06:
 - en: "Step 4, the override run, asks for funk 4 or more, and today's request must win over the saved taste."
   zh:
   - "第 4 步是偏好覆盖那次运行，要求浓烈度 4 或以上，今天的需求必须压过保存的口味。"
-- en: "The README says each act 2 command also prints a state check. A small slip: dash dash compare doesn't. This extra call does: the same raw-milk cart fails for Pennsylvania and passes for New York, under a fictional rule."
+- en: "The README says each act 2 command also prints a harness policy check. A small slip: dash dash compare doesn't. This extra call does: the same raw-milk cart fails for Pennsylvania and passes for New York, under a fictional rule."
   zh:
-  - "README 里说，第 2 幕的每条命令还会打印一个按州的检查。"
+  - "README 里说，第 2 幕的每条命令还会额外打印一个 harness 政策检查。"
   - "一个小疏漏：--compare 不会。"
   - "这条额外的命令会打印：同一辆生乳奶酪的购物车，寄往宾夕法尼亚不通过，寄往纽约通过，依据的是一条虚构的规则。"
   en_display:
@@ -342,10 +342,10 @@ S06:
 - en: "Step 5 is an act 3 command the README puts here; part 2 explains it."
   zh:
   - "第 5 步是一条第 3 幕的命令，README 把它放在了这里；第二部分会讲它。"
-- en: "Steps 6 and 7 repeat both cases in both modes, 3 times: 12 live runs. Without a key it stops after 3 errors, but the report still writes, and the label is used up: with your key, choose a new one."
+- en: "Step 6 repeats both cases in both modes, 3 times: 12 live runs. Without a key it stops after 3 errors, but the report still writes in step 7, and the label is used up: with your key, choose a new one."
   zh:
-  - "第 6、7 步把两个用例在两种模式下各重复 3 次：一共 12 次在线运行。"
-  - "没有密钥时，它在 3 个错误之后就停了，但报告照样会写出来，label 也用掉了：有密钥的话，换一个新的。"
+  - "第 6 步把两个用例在两种模式下各重复 3 次：一共 12 次在线运行。"
+  - "没有密钥时，它在 3 个错误之后就停了，但报告照样会在第 7 步写出来，label 也用掉了：有密钥的话，换一个新的。"
 - en: "The page linked here belongs in the docs folder we saw missing, so use the README checkpoints. Pause here if you have a key."
   zh:
   - "这里链接的页面，本该放在我们看到缺失的那个 docs 目录里，所以就用 README 的检查点。"

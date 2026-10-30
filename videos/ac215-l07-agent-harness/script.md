@@ -280,7 +280,7 @@ Conventions
     10 → $50.10, 200 dollar threshold → $200 threshold; code: dash dash rm → `--rm`, the add and without methods →
     the `.add()` and `.without()` methods, harness without cart check → `harness.without("cart_check")`, basic
     Context → `Context("basic")`, build act 4 → `build_act4`, start order, get order status, assess event →
-    `start_order`, `get_order_status`, `assess_event`, Inspect run → `--inspect-run`, context fixture 1 →
+    `start_order`, `get_order_status`, `assess_event`, dash dash inspect run → `--inspect-run`, context fixture 1 →
     `context-fixture-1`, requested tools / tool call → `Requested tools` / `Tool call`, status saved, email
     transmitted no → status: saved, email transmitted: no, dash dash fixture → `--fixture`, dash dash prompt file →
     `--prompt-file`, SKILL.md stays as written; "docker exec" and "docker ps" stay as typed.
@@ -341,9 +341,10 @@ Evaluation · Resources; seven PINK links pair them row by row. An excerpt chip 
 SAY: Lecture 7 and the README share seven sections, in order. The tutorial runs six acts in a fictional cheese shop, where nothing is really bought, shipped or emailed.
 
 SHOW: A layout preview, built piece by piece as named: the ReadmeTracker top left ("README › Setup › Start
-container", 4 dots, none lit) with a YELLOW circle pulsing around it; the GRAY `lecture_ref(7, "21")` tag top
-right pulses once; a 2-row terminal strip (GRAY tag "preview") shows `mkdir -p ../secrets` with a YELLOW
-`▶ your turn` tag.
+container", 4 dots, none lit) with a YELLOW circle pulsing around it; a GRAY specimen lecture tag "Lecture 7 · slide N"
+(lecture_ref's pill and place) top right pulses once, GRAY caption "the lecture slides" under it; a 2-row terminal strip (GRAY tag "preview") shows `mkdir -p ../secrets` with a YELLOW
+`▶ your turn` tag, drawn dim (the step runs in S02); only the GRAY "preview" tag is at full colour and pulses
+in the hold.
 SAY: The tracker, top left, shows the README step; the gray tag, top right, shows the lecture slides. When a tag says your turn, pause and run the command.
 
 SHOW: The preview clears. An honest-limit card; its three rows write in one by one as the SAY reaches them: GREEN
@@ -530,10 +531,11 @@ SHOW: LECTURE 6–10. Slide 7 redrawn small at center: a rounded BLUE-outlined b
 "act 4"); a pill "Task / goal" arrows in, a dashed pill "Task completion" arrows out.
 SAY: Act 1 starts from the lecture's recap: an agent is a model with instructions and tools, running until the task is done.
 
-SHOW: The block slides left and shrinks. CODE(acts/act1_agent.py: 15–21) (7 lines, no wraps): line 18
+SHOW: The block slides left and shrinks. CODE(acts/act1_agent.py: 14–21) (line 14 wrapped: 9 rows); a YELLOW bar
+over line 14 as `build_agent` is named; line 18
 `instructions=...` lights and the "Instructions" chip pulses; line 19 `tools=build_tools(...)` lights and "Tools"
-pulses; line 21 `"response_format": AgentReply` highlights with a GRAY tag "structured reply". `Agent` on line 15
-gets a small PURPLE tag "agent framework".
+pulses; line 21 `"response_format": AgentReply` highlights with a GRAY tag "structured reply". `Agent(` on line 15 (just under line 14's
+wrapped row) gets a small PURPLE tag "agent framework".
 SAY: In code, the function build agent makes one framework agent: the shop instructions, five tools, and a structured reply format.
 
 SHOW: LECTURE 20–21. The panel Transforms into CODE(formaggio/agents/tools.py: 43–45): lines 44–45 highlight;
@@ -581,7 +583,7 @@ SAY: Then stock, price, pairings and preview. On call 6 the model answers withou
 SHOW: TRACKER Agent 2. Terminal (full width, TEAL), tag `no key`. It types `python cli.py --act 1 --scenario
 standard --show-json` (GOLD tag; folds onto 2 rows) → TERM(container/11: 8, 9 cut after "null means I have not
 provided that detail." wrap, 10, 13–15, 16–18 folded to `"allergies": [ "nuts" ],`, …, 27, 32 as 401s) (13 rows;
-line 11, the customer ID, is left out). Line 9's `null means I have not provided that detail` highlights YELLOW;
+lines 10–12 folded to `{ "customer_id": "‹customer 1›", "intent": "order",`, the ID masked GRAY). Line 9's `null means I have not provided that detail` highlights YELLOW;
 the JSON lines `"party_size": 12`, `"budget_cents": 15000`, `"state": "PA"` light GREEN.
 Then a static GRAY "your turn" card: first line GRAY "401? set the key in the container: `read -rsp …`
 (README.md · lines 113–115)"; "with your key:" `python cli.py --act 1 --scenario standard` · `python cli.py
@@ -592,7 +594,8 @@ SAY: Step 2 adds dash dash show JSON, to see the exact message: a short note, pl
 
 SHOW: LECTURE 10. The card fades. Slide 10's loop rebuilt from V2's own parts, small: the BLUE model, its stack of
 11 message cards and the GOLD meter at 4,540; a GREEN "tools" box feeding "tool outputs" back into its input; a GRAY
-dashed "memory" box feeding up. The question writes in RED under it: "How do we manage what goes into the LLM?"
+dashed "memory" box feeding up. The question writes in RED under it: "How do we manage what goes into the LLM?",
+with the GRAY caption "act 2 answers it" under it.
 Everything fades to an empty frame.
 SAY: The input grows with every call. That's the lecture's question: how do we manage what goes into the model?
 
@@ -632,7 +635,7 @@ arrives: lines 73–74 light and the turnstile locks RED with the label `Maximum
 lines 69–70 (`if self.failure: raise`) light, caption "the failure sticks".
 SAY: Budget is a turnstile. Each model call is admitted and counted; a ninth fails with maximum of 8 model calls reached, and the lock stays shut.
 
-SHOW: The Budget ring lifts off: the turnstile vanishes and a GRAY dashed outer fence appears around everything,
+SHOW: The Budget ring lifts off: the turnstile vanishes and a PURPLE dashed outer fence appears around everything,
 labelled "SDK fallback · 40 iterations · no call limits · no overall time budget", while the panel Transforms into
 CODE(formaggio/agents/execution.py: 56–58). The Budget ring slides back on as the SAY ends; the panel leaves.
 SAY: Without Budget, only the framework's fallback is left: 40 loop iterations, no call limits, no overall time budget.
@@ -731,7 +734,7 @@ SAY: Steps 2 to 4 are optional single runs. Even without a key, there's a real d
 
 SHOW: TRACKER Context 4. The columns leave; the terminal grows back. It types `python cli.py --act 2 --scenario
 preference-override --context enriched` → TERM(container/23: 10, 12 as 401s). Then one-line chips in the top band,
-one at a time: `container/23 · line 7 (excerpt)`: "at least one with a funk rating of 4 or higher"; then
+one at a time: "the override run's ask (excerpt)": "at least one with a funk rating of 4 or higher"; then
 `README.md · lines 277–278 (excerpt)`: "must take priority over the saved mild preference".
 SAY: Step 4, the override run, asks for funk 4 or more, and today's request must win over the saved taste.
 
@@ -741,8 +744,8 @@ acts.act2_context import print_shipping_demo; print_shipping_demo()'` (extra; fo
 wrap) (13 rows). `PA: REJECTED` prints RED, `NY: PASS` GREEN. The terminal shrinks to the strip; above it V4's toggle: the
 cart "Comté 350 g · Bûcheron 350 g · Époisses 300 g" sits on a GREEN validator; a destination switch flips PA ↔ NY
 and the cart's stamp flips RED "PA: REJECTED" ↔ GREEN "NY: PASS" twice; GRAY tag "a fictional classroom rule · not
-a law (container/29 · line 9)".
-SAY: The README says each act 2 command also prints a state check. A small slip: dash dash compare doesn't. This extra call does: the same raw-milk cart fails for Pennsylvania and passes for New York, under a fictional rule.
+a law (its last line)".
+SAY: The README says each act 2 command also prints a harness policy check. A small slip: dash dash compare doesn't. This extra call does: the same raw-milk cart fails for Pennsylvania and passes for New York, under a fictional rule.
 
 SHOW: TRACKER Context 5. Terminal full. It types `python cli.py --act 3 --scenario pa-shipping` (GOLD tag) →
 TERM(container/24: 5, 6 wrap, 9 folded to `Could you help me order cheese … My starting cart is 350 g of Comté, 350
@@ -758,7 +761,7 @@ tag "2 cases × 2 modes × 3"; `Failures: 0; errors: 3; missing: 9.` RED, captio
 and beside it a GRAY chip "the label is now taken · rerun with a new --label (README.md · line 721)". It types
 `python cli.py --view-report act2-context-live-1` → TERM(container/26: 2–3): the report path PINK, caption "the
 report writes anyway · evaluation explains it".
-SAY: Steps 6 and 7 repeat both cases in both modes, 3 times: 12 live runs. Without a key it stops after 3 errors, but the report still writes, and the label is used up: with your key, choose a new one.
+SAY: Step 6 repeats both cases in both modes, 3 times: 12 live runs. Without a key it stops after 3 errors, but the report still writes in step 7, and the label is used up: with your key, choose a new one.
 
 SHOW: A one-line chip `README.md · line 301`: "See Tutorial questions and evidence", GRAY tag `erratum`
 "docs/TUTORIAL_SCENARIOS.md was never published · use the README's checkpoints"; beside it S02's GRAY dashed ghost
@@ -878,14 +881,16 @@ tools: none (structured proposal only)` YELLOW. A one-line chip QUOTE(README.md:
 application receipt".
 SAY: Step 1: act 3, scenario standard. With a key, the model proposes quantities; code does the rest: transitions, pricing, validation, placement. Success is a receipt.
 
-SHOW: TRACKER Act3 2, then 3. It types `python cli.py --act 3` (GOLD tag) → TERM(container/31: 5, 6 wrap, 16 as
-401s); then `python cli.py --act 3 --scenario pa-shipping` → TERM(container/32: 5, 16 as 401s). Line 31:5
-`Scenario: pa-shipping-blocked · LIVE proposals` and 32:5 `Scenario: pa-shipping · LIVE proposals` highlight; in
-31:6, `the harness checks it and stops` YELLOW. (No chips over the full terminal.) Then the terminal shrinks to the
-strip and the U-rail appears above it with the customer's cart token (Comté · Bûcheron · Époisses), a GRAY tag
-"customer input · data/shipping_customer_cart.json". "Before": a RED bar closes the revise loop, label "review
-only"; the token stops at "validate" under the README's `WORKFLOW BLOCKED` (`expected`, QUOTE(README.md:
-382–383) as a card above the strip). "After": the bar lifts, label "revise ≤ 2". The rail stays into the next beat.
+SHOW: TRACKER Act3 2. It types `python cli.py --act 3` (GOLD tag) → TERM(container/31: 5, 6 wrap, 16 as 401s);
+line 31:5 `Scenario: pa-shipping-blocked · LIVE proposals` highlights; in 31:6, `the harness checks it and stops`
+YELLOW. (No chips over the full terminal.) The terminal shrinks to a strip holding `python cli.py --act 3` and
+`Scenario: pa-shipping-blocked · LIVE proposals`, and the U-rail appears above it with the customer's cart token
+(Comté · Bûcheron · Époisses), a GRAY tag "customer input · data/shipping_customer_cart.json". Under that command,
+"Before": a RED bar closes the revise loop, label "review only"; the token stops at "validate" under the README's
+`WORKFLOW BLOCKED` (`expected`, QUOTE(README.md: 382–383) as a card above the strip). On "After, the revise loop",
+TRACKER Act3 3: the quote and the bar leave, label "revise ≤ 2", and the strip types `python cli.py --act 3
+--scenario pa-shipping` → `Scenario: pa-shipping · LIVE proposals` (container/32 · line 5; no 401 row) while the
+token runs the loop. The rail stays into the next beat.
 SAY: Steps 2 and 3 are the shipping lesson, with a customer's own cart: Comté, Bûcheron and Époisses, to Pennsylvania. Before, the model only records the cart; the harness checks it and stops. After, the revise loop opens, and the live model may fix it.
 
 SHOW: TRACKER Act3 3 · extra. The quote card leaves; the rail stays above the strip. Its BLUE model glyph on
@@ -971,9 +976,9 @@ decision · it doesn't reserve stock". A GRAY chip "act 6 runs this for real".
 SAY: Checkout revalidates, finds a stock violation, and blocks. Stock isn't in the fingerprint: an approval authorizes a decision; it doesn't reserve anything. Act 6 shows this for real.
 
 SHOW: TRACKER Act3 5. Terminal (full width, TEAL), tag `scripted`. It types `python cli.py --act 3 --fixture
---scenario out-of-stock` → TERM(container/35: 11–14, 16, 25–26, 28, 45) (11 rows). Line 16 `Cart attempt 1: stock:
+--scenario out-of-stock` → TERM(container/35: 11–14, 16, 25–26, 28, 35, 45) (12 rows). Line 16 `Cart attempt 1: stock:
 munster — Requested 300 g; available 0 g.` RED; lines 25–26 (`Removed: Munster …`, `Added: Époisses …`)
-YELLOW; line 28 `Cart attempt 2: valid; $50.10` GREEN; line 45 `Proposal attempts: 2. Model calls: 0.` with a GRAY
+YELLOW; line 28 `Cart attempt 2: valid; $50.10` GREEN; line 35 `Order placed.` GREEN; line 45 `Proposal attempts: 2. Model calls: 0.` with a GRAY
 tag "scripted: no model".
 SAY: Step 5: Munster has 0 grams, so attempt 1 fails. One bounded revision swaps in Époisses, and the order places at 50 dollars 10, with zero model calls.
 
@@ -1048,7 +1053,7 @@ bar segment, caption "Tools ← approval on save"; the caption fades. Then a sta
 your key:" `python cli.py --act 4` · "type approve or decline when asked"; then `python cli.py --act 4 --fixture
 --email-decision approve` (tag `extra`, GREEN "no key: offline · free"); last line GOLD "live · billed per token".
 `▶ your turn`. Hold 2 s, then fade to an empty frame.
-SAY: Then comes the approval-identity warning from the tests: the README predicts it, and it's harmless. Trust the authoritative block. Pause and run step 1.
+SAY: Then comes the approval-identity warning you saw in the tests: the README predicts it, and it's harmless. Trust the authoritative block. Pause and run step 1.
 
 ---
 
@@ -1312,7 +1317,7 @@ SAY: Evaluation step 1 lists the runs. Every run so far is in one SQLite databas
 
 SHOW: TRACKER Eval1 2. It types `python cli.py --inspect-run RUN_ID` (exactly as written; GRAY tag "a template") →
 TERM(container/72: 20): `cli.py: error: Unknown run ID` RED. A GRAY caption "paste a run ID from --list-runs".
-SAY: Inspect run takes a run ID: typed literally, it fails, because it's a template. Paste a real one; we use the manager approval run.
+SAY: Dash dash inspect run takes a run ID: typed literally, it fails, because it's a template. Paste a real one; we use the manager approval run.
 
 SHOW: The terminal shrinks to the strip; the cylinder returns above it, and the manager-approval run's events
 rise out of it as a chain of five cards, `approval.requested` (GREEN, PINK fingerprint), `approval.decided ·
@@ -1514,7 +1519,7 @@ its question in a few words; caption "pick one run you did".
 SAY: The README ends with five reflection questions. Pick one run you did, and answer them.
 
 SHOW: The lecture tag leaves. Recap questions build as one numbered list that stays (one group), each lighting as
-the SAY reads its short form, with one small GRAY "answers in exercises.md" under the list; hold 3 s after the SAY:
+the SAY reads its short form, with one small GRAY "answers: MLOps_Learning · guides/L07-agents-2-harness.md › Exercises" under the list; hold 3 s after the SAY:
 (1) "Name three
 things .without(\"trace\") does not remove." (2) "Why does retrieved context enter as a user message labelled data,
 not instructions — and what still decides whether a cart is valid?" (3) "What is a manager approval bound to, and
