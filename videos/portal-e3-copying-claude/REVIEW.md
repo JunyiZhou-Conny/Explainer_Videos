@@ -87,9 +87,27 @@ every 3 s), plus my own frame-by-frame pass:
   - **"Helper import needs missing script":** true at a WIP checkpoint, before `script.md` existed.
   - **"Chat page sits in caption band":** does not apply to the `video.yaml` route. Its burn mode scales the picture above the subtitle band. Answered on the thread.
 
-## Verified (final render)
+## Verified (final render, 2026-10-30)
 
-To be filled from the final 1080p60 build.
+- **Files**: `portal-e3-copying-claude.mp4` (clean) and `portal-e3-copying-claude.zh-en.mp4` (bilingual
+  subtitles burned in, picture scaled above the subtitle band) both decode in full with no error
+  (`ffmpeg -v error -i … -f null -`, exit 0). 495.210 s (8:15.2), 1920×1080 at 60 fps, H.264 High,
+  yuv420p; AAC-LC 48 kHz stereo; 29,709 / 29,710 video frames; 36.5 MB / 31.1 MB. S07 and S08 were
+  re-rendered after Bugbot's findings (1bbf9be) and the cut restitched from them.
+- **Loudness** (EBU R128): −16.1 LUFS integrated, LRA 2.3 LU, true peak −1.0 dBTP, identical in both files
+  (same audio MD5, `827ddba0…`). The build's mix report: voice −16.01 LUFS, music −32.05 LUFS under speech
+  and −22.02 LUFS in the gaps.
+- **Subtitles**: 144 English / 116 Chinese / 130 bilingual cues (`output/*.srt`, committed), numbered in
+  order, never overlapping or empty, at most two lines, none shorter than 1.0 s; every bilingual cue has
+  Chinese above English; the `.zh-en.ass` has the same 130 events. The last cue ends at 8:13.4, 1.8 s before
+  the end. `python -m explainer.i18n check videos/portal-e3-copying-claude --lang zh`: OK.
+- **Layout**: `python -m explainer.check` reports no OUT, SMALL or missing-anchor problem in any of the nine
+  scenes. Two 480p drafts and two scene previews were read frame by frame; four burned 1080p frames were
+  spot-checked (S01's two pages and the request stamp, S07's sent bubble, S08's drawn ideas, S09's sorted
+  page).
+- **Narration**: 1,316 words (`python -m explainer.script`), Kokoro `af_heart` at 0.95.
+- Every on-screen string copied from the product matches SOURCES.md, and every number there has a source.
+  Rendered MP4s are not in git (release assets after merge).
 
 ## Not claimed
 
