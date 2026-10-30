@@ -1,0 +1,16 @@
+$ ls -la outputs/; du -sh outputs/
+total 5116
+drwxrwxrwx  8 app app     240 Oct 20 20:24 .
+drwxr-xr-x 13 app app     420 Oct 20 20:19 ..
+drwxrwxrwx  2 app app      80 Oct 20 20:23 2a2c5f865df2498298a0965056d621eb
+drwxrwxrwx  2 app app      60 Oct 20 20:23 5bd990507796466593c4e183b92cf42f
+drwxrwxrwx  2 app app      60 Oct 20 20:23 89ba6bcc15eb468592dc4b923c58a73d
+drwxrwxrwx  2 app app      60 Oct 20 20:23 a6093b15c39b454d922735328ab6d073
+-rw-rw-rw-  1 app app   16184 Oct 20 20:23 context-comparison.json
+-rw-r--r--  1 app app   12288 Oct 20 20:23 customer_memory.sqlite
+drwxrwxrwx  2 app app      80 Oct 20 20:23 f64b285442fb4c7eaa9fe259a3ed8ec7
+-rw-rw-rw-  1 app app  186508 Oct 20 20:23 my-report.html
+-rw-r--r--  1 app app 5021696 Oct 20 20:24 observability.sqlite
+drwxrwxrwx  2 app app      80 Oct 20 20:23 reports
+5.4M	outputs/
+[exit 0]

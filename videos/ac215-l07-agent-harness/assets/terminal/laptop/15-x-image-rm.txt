@@ -1,0 +1,4 @@
+$ docker image rm agent-harness
+Untagged: agent-harness:latest
+Deleted: sha256:3632ecb9fff8ef7cbba07bbecbcecefdb5d03fa3fbe66dabc8aabde74652e7b2
+[exit 0]

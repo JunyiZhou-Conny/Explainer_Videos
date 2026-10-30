@@ -1,0 +1,9 @@
+# recorded (saved output of the course Colab "Agent Harness", not re-run here): https://colab.research.google.com/drive/1ZYMsbG0gqsbs-6Pcj8WtT3WhEa4f80EZ, cell 14 ("Store Policies"), execution count 7; the notebook stores no date.
+                                             value
+Cheeses per tasting                   3–5 distinct
+Grams per guest                           80–100 g
+Minimum per cheese            100 g, in 50 g steps
+Manager approval above        $200 cheese subtotal
+Raw-milk shipping blocked to        PA, NJ, MD, NC
+Revisions allowed                                2
+Approved vendor recipients      vendor@example.com

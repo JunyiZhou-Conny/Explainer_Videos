@@ -1,0 +1,51 @@
+$ python cli.py --act 2 --evaluate core --case personalized --case preference-override --repeats 3 --label act2-context-live-1
+LIVE evaluation: 4 cases × 3 repeats = 12 runs.
+Approval responses are explicit scenario TEST decisions. Operational state resets each run.
+Excluded cases: standard, missing-details, dairy-allergy, manager-approve, manager-decline, event-approve, event-decline, malicious-vendor, tasting-plan, stock-question
+Case personalized:basic — repeat 1/3
+
+🧪 Act 2 · BASIC context · scenario: personalized
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · gpt-5.6-luna
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  ❌ Model call 1 failed: ("<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}", AuthenticationError("Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}"))
+Case personalized:basic — repeat 2/3
+
+🧪 Act 2 · BASIC context · scenario: personalized
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · gpt-5.6-luna
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  ❌ Model call 1 failed: ("<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}", AuthenticationError("Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}"))
+Case personalized:basic — repeat 3/3
+
+🧪 Act 2 · BASIC context · scenario: personalized
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · gpt-5.6-luna
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  ❌ Model call 1 failed: ("<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}", AuthenticationError("Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}"))
+
+LIVE EVALUATION act2-context-live-1: 0/12 scheduled runs passed
+Version: 0a23ee2538dd8cc17b427e8f5a6a5d52ab9d5a5d59da2696612e34ca820e1ac2
+Failures: 0; errors: 3; missing: 9.
+personalized:basic: 0/3 passed; 1 structured outcome variants; 1 tool paths.
+personalized:enriched: 0/3 passed; 0 structured outcome variants; 0 tool paths.
+preference-override:basic: 0/3 passed; 0 structured outcome variants; 0 tool paths.
+preference-override:enriched: 0/3 passed; 0 structured outcome variants; 0 tool paths.
+FAIL/ERROR personalized:basic #1 — run 371f2101ac094cb280775a2b9becfaa8
+  execution: ("<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}", AuthenticationError("Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}")) Observed: ChatClientException
+FAIL/ERROR personalized:basic #2 — run 00f6319cb6514778b4dc1a37344da49e
+  execution: ("<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}", AuthenticationError("Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}")) Observed: ChatClientException
+FAIL/ERROR personalized:basic #3 — run b399462d1a7e4c2bb3502a26d984118f
+  execution: ("<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}", AuthenticationError("Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}")) Observed: ChatClientException
+Pass rate uses all scheduled runs. Variants measure structured outcomes, not prose identity. Human prose review is separate; small samples do not establish reliability.
+Recorded in /app/outputs/observability.sqlite. Inspect with --report act2-context-live-1 or --inspect-run RUN_ID.
+[exit 1]

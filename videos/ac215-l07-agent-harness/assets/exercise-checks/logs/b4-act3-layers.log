@@ -1,0 +1,49 @@
+$ PYTHONPATH=. python /checks/b4_act3_layers.py
+lesson layers: ['trace', 'budget'] | bare layers: []
+
+🧪 Scenario: out-of-stock · SCRIPTED proposals
+
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+Step: confirm_request
+Step: propose_cart
+🧺 Proposed cart — attempt 1:
+  Munster (munster) — 300 g · not raw milk
+  Bûcheron (bucheron) — 350 g · not raw milk
+  Taleggio (taleggio) — 350 g · not raw milk
+Step: validate_and_price
+Cart attempt 1: stock: munster — Requested 300 g; available 0 g.
+  ✅ Shipping policy for PA: passed; no raw-milk cheese in this proposal.
+  🛡️ Cart rejected; requesting a revised proposal before checkout.
+Step: propose_cart
+🧺 Proposed cart — attempt 2:
+  Époisses (epoisses) — 300 g · not raw milk
+  Bûcheron (bucheron) — 350 g · not raw milk
+  Taleggio (taleggio) — 350 g · not raw milk
+🔄 Changes from the previous proposal:
+  Removed: Munster (munster) — 300 g
+  Added: Époisses (epoisses) — 300 g
+Step: validate_and_price
+Cart attempt 2: valid; $50.10
+  ✅ Shipping policy for PA: passed; no raw-milk cheese in this proposal.
+Step: select_pairings
+Step: manager_approval
+Step: revalidate_and_place
+
+--- WORKFLOW PLACED — run 69f4f1f2a0734c94aa5fa9e00ad6ad7c ---
+Order placed.
+Receipt: b6c633799f4b4aa79677a981cbecbeaf
+  1000 g; cheese subtotal $50.10
+  bucheron: 350 g — $14.35
+  epoisses: 300 g — $20.70
+  taleggio: 350 g — $15.05
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+Pairings for bucheron: Apple slices, Wheat crackers (allergens: wheat), Sparkling water
+Pairings for epoisses: Apple slices, Cornichons, Wheat crackers (allergens: wheat), Dry Riesling (allergens: sulfites), Sparkling water
+Pairings for taleggio: Apple slices, Cornichons, Wheat crackers (allergens: wheat), Dry Riesling (allergens: sulfites), Sparkling water
+Proposal attempts: 2. Model calls: 0.
+validation events: 2 | policy decisions: 1 | order.placed: 1
+ValueError: No layer named 'validation'.
+TypeError: Act 3 supports WorkflowTrace and WorkflowBudget layers.
+[exit 0]
+

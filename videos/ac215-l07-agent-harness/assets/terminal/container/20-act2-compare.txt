@@ -1,0 +1,11 @@
+$ python cli.py --act 2 --compare
+🧀 Context engineering lesson — model: gpt-5.6-luna.
+
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. Could you suggest some pairings too?
+
+Two fresh live runs: basic receives no saved profile; enriched receives the customer's saved preferences.
+Starting basic context with gpt-5.6-luna
+Run stopped: ("<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}", AuthenticationError("Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}"))
+Inspect the recorded error with --list-runs and --inspect-run. Database: /app/outputs/observability.sqlite
+[exit 1]

@@ -1,0 +1,22 @@
+$ ls -la /app
+total 688
+drwxr-xr-x 11 app  app     380 Oct 20 20:17 .
+drwxr-xr-x  1 root root     80 Oct 20 20:18 ..
+drwxr-xr-x  7 app  app     240 Oct 20 20:17 .git
+-rw-r--r--  1 app  app     576 Oct 20 20:17 .gitignore
+-rwxr-xr-x  1 app  app    1433 Oct 20 20:17 Dockerfile
+-rw-r--r--  1 app  app   54490 Oct 20 20:17 README.md
+drwxr-xr-x  2 app  app     180 Oct 20 20:17 acts
+-rw-r--r--  1 app  app   26440 Oct 20 20:17 cli.py
+drwxr-xr-x  2 app  app     260 Oct 20 20:17 data
+-rwxr-xr-x  1 app  app     348 Oct 20 20:17 docker-entrypoint.sh
+-rwxr-xr-x  1 app  app    1033 Oct 20 20:17 docker-shell.sh
+drwxr-xr-x  7 app  app     180 Oct 20 20:17 formaggio
+drwxr-xr-x  2 app  app     160 Oct 20 20:17 notebooks
+drwxr-xr-x  2 app  app     160 Oct 20 20:17 prompts
+-rw-r--r--  1 app  app     396 Oct 20 20:17 pyproject.toml
+drwxr-xr-x  2 app  app      80 Oct 20 20:17 scripts
+drwxr-xr-x  4 app  app      80 Oct 20 20:17 skills
+drwxr-xr-x  3 app  app     660 Oct 20 20:17 tests
+-rw-r--r--  1 app  app  597859 Oct 20 20:17 uv.lock
+[exit 0]

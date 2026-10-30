@@ -1,0 +1,139 @@
+$ python cli.py --act 4 --scenario standard
+Harness lesson — model: gpt-5.6-luna.
+Sourcing plan and mock HTML email only. No order, reservation or email transmission.
+Run stopped: Act 4 supports event-shortage; Act 5 also supports tasting-plan and stock-question.
+Inspect the recorded error with --list-runs and --inspect-run. Database: /app/outputs/observability.sqlite
+[exit 1]
+
+$ python cli.py --act 3 --fixture --scenario manager-approval < /dev/null
+Workflow lesson — FIXTURE proposals; no model calls.
+Classroom simulation — no real purchase, shipment, or email. Orders and inventory last for this process; traces are saved in SQLite.
+
+🧪 Scenario: manager-approval · SCRIPTED proposals
+
+👤 Customer ask:
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+Step: confirm_request
+Step: propose_cart
+🧺 Proposed cart — attempt 1:
+  Comté 18 mois (comte) — 1600 g · RAW MILK
+  Mimolette Extra-Vieille (mimolette) — 1600 g · not raw milk
+  Taleggio (taleggio) — 1600 g · not raw milk
+Step: validate_and_price
+Cart attempt 1: valid; $220.80
+Step: select_pairings
+Step: manager_approval
+
+MANAGER REVIEW — ticket fb11b9c12fda4a799d85dbec4b42c006
+Confirmed request:
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+  4800 g; cheese subtotal $220.80
+  comte: 1600 g — $72.00
+  mimolette: 1600 g — $80.00
+  taleggio: 1600 g — $68.80
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+Approve this exact cart? Type approve or decline: Run stopped: Manager input unavailable. Run interactively or explicitly use --manager-decision for a test.
+Inspect the recorded error with --list-runs and --inspect-run. Database: /app/outputs/observability.sqlite
+[exit 1]
+
+$ printf 'yes\napprove\n' | python cli.py --act 3 --fixture --scenario manager-approval | grep -E 'Approve this|Please enter|WORKFLOW|Order placed'
+Approve this exact cart? Type approve or decline: Please enter approve or decline.
+Approve this exact cart? Type approve or decline: Step: manager_approval
+--- WORKFLOW PLACED — run 523b3c9b41794bc4982ecced07682ecf ---
+Order placed.
+[exit 0]
+
+$ python cli.py --act 2 --compare --context basic
+usage: cli.py [-h] [--act {1,2,3,4,5,6}] [--preview-context] [--foundation]
+              [--compare [LABEL ...]] [--report LABEL] [--view-report LABEL]
+              [--inspect-run RUN_ID] [--list-runs] [--backup DESTINATION]
+              [--db DB] [--label LABEL] [--repeats REPEATS]
+              [--evaluate {core}] [--case CASE_IDS]
+              [--prompt-file PROMPT_FILE]
+              [--proposer-prompt-file PROPOSER_PROMPT_FILE]
+              [--skills-dir SKILLS_DIR] [--json-output JSON_OUTPUT]
+              [--html-output PATH] [--scenario SCENARIO]
+              [--context {basic,enriched,both}] [--model MODEL] [--show-json]
+              [--show-context] [--fixture]
+              [--manager-decision {approve,decline}]
+              [--email-decision {approve,decline}]
+              [--vendor-document {clean,malicious,benign,quoted}]
+              [--demo-compaction] [--simulate-detector-miss]
+              [--customer {pavlos,shivas}]
+              [--remember-preference REMEMBER_PREFERENCE]
+              [--memory-db MEMORY_DB]
+cli.py: error: --act 2 --compare runs both modes; omit --evaluate and use no --context or --context both.
+[exit 2]
+
+$ python cli.py --act 1 --fixture
+usage: cli.py [-h] [--act {1,2,3,4,5,6}] [--preview-context] [--foundation]
+              [--compare [LABEL ...]] [--report LABEL] [--view-report LABEL]
+              [--inspect-run RUN_ID] [--list-runs] [--backup DESTINATION]
+              [--db DB] [--label LABEL] [--repeats REPEATS]
+              [--evaluate {core}] [--case CASE_IDS]
+              [--prompt-file PROMPT_FILE]
+              [--proposer-prompt-file PROPOSER_PROMPT_FILE]
+              [--skills-dir SKILLS_DIR] [--json-output JSON_OUTPUT]
+              [--html-output PATH] [--scenario SCENARIO]
+              [--context {basic,enriched,both}] [--model MODEL] [--show-json]
+              [--show-context] [--fixture]
+              [--manager-decision {approve,decline}]
+              [--email-decision {approve,decline}]
+              [--vendor-document {clean,malicious,benign,quoted}]
+              [--demo-compaction] [--simulate-detector-miss]
+              [--customer {pavlos,shivas}]
+              [--remember-preference REMEMBER_PREFERENCE]
+              [--memory-db MEMORY_DB]
+cli.py: error: --fixture applies only to --act 3, 4, 5 or 6.
+[exit 2]
+
+$ python cli.py --act 4 --customer alice
+usage: cli.py [-h] [--act {1,2,3,4,5,6}] [--preview-context] [--foundation]
+              [--compare [LABEL ...]] [--report LABEL] [--view-report LABEL]
+              [--inspect-run RUN_ID] [--list-runs] [--backup DESTINATION]
+              [--db DB] [--label LABEL] [--repeats REPEATS]
+              [--evaluate {core}] [--case CASE_IDS]
+              [--prompt-file PROMPT_FILE]
+              [--proposer-prompt-file PROPOSER_PROMPT_FILE]
+              [--skills-dir SKILLS_DIR] [--json-output JSON_OUTPUT]
+              [--html-output PATH] [--scenario SCENARIO]
+              [--context {basic,enriched,both}] [--model MODEL] [--show-json]
+              [--show-context] [--fixture]
+              [--manager-decision {approve,decline}]
+              [--email-decision {approve,decline}]
+              [--vendor-document {clean,malicious,benign,quoted}]
+              [--demo-compaction] [--simulate-detector-miss]
+              [--customer {pavlos,shivas}]
+              [--remember-preference REMEMBER_PREFERENCE]
+              [--memory-db MEMORY_DB]
+cli.py: error: argument --customer: invalid choice: 'alice' (choose from 'pavlos', 'shivas')
+[exit 2]
+
+$ python cli.py --act 2 --evaluate core --fixture --scenario standard --label x
+usage: cli.py [-h] [--act {1,2,3,4,5,6}] [--preview-context] [--foundation]
+              [--compare [LABEL ...]] [--report LABEL] [--view-report LABEL]
+              [--inspect-run RUN_ID] [--list-runs] [--backup DESTINATION]
+              [--db DB] [--label LABEL] [--repeats REPEATS]
+              [--evaluate {core}] [--case CASE_IDS]
+              [--prompt-file PROMPT_FILE]
+              [--proposer-prompt-file PROPOSER_PROMPT_FILE]
+              [--skills-dir SKILLS_DIR] [--json-output JSON_OUTPUT]
+              [--html-output PATH] [--scenario SCENARIO]
+              [--context {basic,enriched,both}] [--model MODEL] [--show-json]
+              [--show-context] [--fixture]
+              [--manager-decision {approve,decline}]
+              [--email-decision {approve,decline}]
+              [--vendor-document {clean,malicious,benign,quoted}]
+              [--demo-compaction] [--simulate-detector-miss]
+              [--customer {pavlos,shivas}]
+              [--remember-preference REMEMBER_PREFERENCE]
+              [--memory-db MEMORY_DB]
+cli.py: error: Evaluation cases define scenarios, decisions and fresh state. Use --case to select cases.
+[exit 2]
+
+$ PYTHONPATH=. python /checks/c_compaction_layer.py
+layers: ['trace', 'budget', 'planning', 'memory', 'compaction']
+ValueError: The synthetic compaction demonstration requires the Compaction layer.
+runs recorded: 0
+[exit 0]
+

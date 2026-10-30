@@ -1,0 +1,49 @@
+$ python cli.py --act 3 --fixture --scenario pa-shipping-blocked
+Workflow lesson — FIXTURE proposals; no model calls.
+Classroom simulation — no real purchase, shipment, or email. Orders and inventory last for this process; traces are saved in SQLite.
+
+🧪 Scenario: pa-shipping-blocked · SCRIPTED proposals
+
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+Step: confirm_request
+Step: propose_cart
+🧺 Proposed cart — attempt 1:
+  Comté 18 mois (comte) — 350 g · RAW MILK
+  Bûcheron (bucheron) — 350 g · not raw milk
+  Époisses (epoisses) — 300 g · not raw milk
+Step: validate_and_price
+Cart attempt 1: shipping: comte — Fictional shop policy blocks raw-milk shipping to PA.
+  🛡️ Cart rejected; requesting a revised proposal before checkout.
+Step: propose_cart
+🧺 Proposed cart — attempt 2:
+  Comté 18 mois (comte) — 350 g · RAW MILK
+  Bûcheron (bucheron) — 350 g · not raw milk
+  Époisses (epoisses) — 300 g · not raw milk
+🔄 Changes from the previous proposal:
+  No changes; the same cart was proposed again.
+Step: validate_and_price
+Cart attempt 2: shipping: comte — Fictional shop policy blocks raw-milk shipping to PA.
+  🛡️ Cart rejected; requesting a revised proposal before checkout.
+Step: propose_cart
+🧺 Proposed cart — attempt 3:
+  Comté 18 mois (comte) — 350 g · RAW MILK
+  Bûcheron (bucheron) — 350 g · not raw milk
+  Époisses (epoisses) — 300 g · not raw milk
+🔄 Changes from the previous proposal:
+  No changes; the same cart was proposed again.
+Step: validate_and_price
+Cart attempt 3: shipping: comte — Fictional shop policy blocks raw-milk shipping to PA.
+  🛡️ Revision limit reached; no order will be placed.
+
+--- WORKFLOW UNRESOLVED — run 65dca22967404364999a8e5596d5daea ---
+No valid cart obtained within the revision limit. Ask staff to review the request; no order placed.
+  1000 g; cheese subtotal $50.80
+  bucheron: 350 g — $14.35
+  comte: 350 g — $15.75
+  epoisses: 300 g — $20.70
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+  ⚠️ shipping: Fictional shop policy blocks raw-milk shipping to PA.
+Proposal attempts: 3. Model calls: 0.
+💾 Recorded in /app/outputs/observability.sqlite. No evaluation suite was run.
+[exit 0]

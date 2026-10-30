@@ -1,0 +1,2 @@
+$ printf '%s\n' '' 'Keep the customer message under 120 words. Start it with two labeled lines: "Price:" (the tool-derived cheese subtotal) and "Action status:" (proposed, pending review, placed or blocked).' >> prompts/shop_assistant_v2.md
+[exit 0]

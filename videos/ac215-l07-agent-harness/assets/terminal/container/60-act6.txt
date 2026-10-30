@@ -1,0 +1,13 @@
+$ python cli.py --act 6 --scenario standard
+Composition lesson — model: gpt-5.6-luna.
+Harness → ordering workflow → host manager review when required → authoritative result.
+Mock in-memory orders only; no real purchase or email.
+Skills available (metadata only): tasting-planning, vendor-outreach
+
+🤖 Model call 1 · Customer assistant · gpt-5.6-luna
+  📥 Input: 2 conversation messages.
+  🧰 Available tools: start_order, get_order_status, assess_event, todos_add, todos_complete, todos_remove, todos_get_remaining, todos_get_all, load_skill, read_skill_resource
+  ❌ Model call 1 failed: ("<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}", AuthenticationError("Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}"))
+Run stopped: ("<class 'agent_framework_openai._chat_client.OpenAIChatClient'> service failed to complete the prompt: Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}", AuthenticationError("Error code: 401 - {'error': {'message': 'Incorrect API key provided: YOUR_OPE*******_KEY. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}"))
+Inspect the recorded error with --list-runs and --inspect-run. Database: /app/outputs/observability.sqlite
+[exit 1]
