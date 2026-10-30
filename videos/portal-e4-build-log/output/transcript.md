@@ -19,32 +19,32 @@ The record says you decided: a demo first, evaluation later; the model judges ur
 But notice: the checker is also made of word rules, applied to sentences instead of symptoms. What would make it less of a whack-a-mole?
 
 ## 02:54 — The loop with the bots
-Then came the loop. At ten twenty-three the agent marked the brain's pull request ready for review and asked two teammates to look, and both bots began reviewing every push. Push, the bots review, the agent fixes, push again. Between ten twenty-seven and just after midnight the first session pushed 19 commits, about one every five minutes. On that pull request the bots wrote 72 comments, and 64 led to fixes.
+Then came the loop. At ten twenty-three that night, Boston time, the agent marked the brain's pull request ready for review and asked two teammates to look, and both bots began reviewing every push. Push, the bots review, the agent fixes, push again. Between ten twenty-seven and just after midnight the first session pushed 19 commits, about one every five minutes. On that pull request the bots wrote 72 comments, and 64 led to fixes.
 By half past midnight, you and the agent had agreed on one change: batch the fixes before pushing.
 
-## 03:30 — Day two: a queue of fix agents
+## 03:32 — Day two: a queue of fix agents
 On Wednesday the second session built the chat page from episode three and kept fixing the brain beside it. In the afternoon a final review looked from five angles at once and found about 30 problems.
 Six fix agents took them one after another, each on its own branch, and each first reproduced its bug before fixing it.
 Why reproduce a bug before fixing it?
 Because a reproduction proves the bug is real, and gives a check that has to flip from failing to passing; a fix for a bug nobody saw fail proves nothing. Merging the branches back took about an hour and had collisions; in one, a branch added a field that another branch's new test rejected. A second review of the merged result found eight more.
 Along the way the session hit its five-hour usage limit twice, the second time because the six fix agents ran in a row at about 800,000 tokens each, and the container restarted twice. The agents' rule afterwards: at most three at a time.
 
-## 04:37 — Attack your own checker
+## 04:39 — Attack your own checker
 Back to the checker. Most of the bots' comments were about it. After the turn it grew from 459 lines to 1,326, and 27 of the 45 commits since touched it. Each fix moved the problem. On Wednesday a parent summary saying don't delay help because of insurance was flagged as putting money first, which cost a needless rewrite; that evening, narrowing a similar rule let a real money-first line slip through, until Bugbot caught it.
 So on the second night the agents stopped waiting for the bots. Two rules took the beating: never claim a clinic is open right now unless its hours are checked, and keep cost out of the way of an emergency. Before pushing, the agents attacked those two rules: they wrote about 3,000 ways to say a risky thing, or its harmless twin, and ran them all. The first round found 142 misses and 230 false alarms.
 The bots would have found these too. Why attack the checker yourself first?
 Because the bots report one finding at a time, and every fix waits for the next review. One probing run found 372 at once. Across both rounds, 1,060 phrasings it got wrong were fixed and kept as tests that run with the unit tests; about twenty harder ones are listed as known misses. In the second round, the first fix even created 20 new false alarms; this time they were caught before the push, not after.
 
-## 06:12 — What it cost
+## 06:14 — What it cost
 What did it cost? The model calls the product made are on the record: about 4 cents for one real answer, about 77 cents for the whole first day, 27 cents on the last night against a 50-cent cap. The agents' own work is priced nowhere in the repository; the only number is tokens: about 800,000 per fix agent, close to five million for the six, and none recorded for the rest.
 
-## 06:41 — Who decided, and what waits
+## 06:42 — Who decided, and what waits
 So who decided? The record, written by the agents, names your calls, among them the model and its effort, the turn to the model's judgement, batching the fixes, copying Claude's page, and the stop rule: stop at 99 percent, finish by Thursday at seven in the evening, Beijing time. The code kept it: the last push came more than six hours early, and four later bot findings were written down for the next person.
 Many smaller choices the agents made alone, and wrote down as proposals, marked unattended and not confirmed by a person. One handoff even lists, among the agent's own steps, a click the team's workflow reserves for a person: marking a pull request ready for review. The notes are honest about slips too: one admits an earlier claim that all Bugbot comments were fixed, when two were not.
 Which raises a question: with no person having reviewed it yet, what makes this code trustworthy?
 No single check does. It is layers: hundreds of tests, one of which replays the 1,060 probes, two review bots, and decision records that stay proposals until you sign them. Decision four itself is still a proposal, and before any real user it asks for an evaluation and a look from the team's medical reviewer. Twelve more questions wait for you, from decision six's addendum to whether a parent should get a dial link for a crisis line.
 
-## 08:17 — Recap
+## 08:19 — Recap
 So, two days: a skeleton and a fact check in an afternoon; your turn at nine twenty-one; a night of whack-a-mole with the bots; a queue of fix agents; a second night of attacking the checker before the bots could; and a stop rule that held.
 Three questions. Why did so many of the brain's commits touch the checker? Why reproduce a bug before fixing it? And what is still waiting for you?
 That ends this week's batch. Next week's episodes start from next week's pull requests.

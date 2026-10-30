@@ -230,467 +230,471 @@ What would make it less of a whack-a-mole?
 Then came the loop.
 
 51
-00:02:56,412 --> 00:03:01,251
-At ten twenty-three the agent marked
-the brain's pull request ready for review
+00:02:56,412 --> 00:02:59,191
+At ten twenty-three that night, Boston time,
 
 52
-00:03:01,251 --> 00:03:05,842
+00:02:59,191 --> 00:03:02,854
+the agent marked the brain's pull request
+ready for review
+
+53
+00:03:02,854 --> 00:03:07,527
 and asked two teammates to look,
 and both bots began reviewing every push.
 
-53
-00:03:06,162 --> 00:03:09,532
+54
+00:03:07,847 --> 00:03:11,218
 Push, the bots review, the agent fixes,
 push again.
 
-54
-00:03:09,852 --> 00:03:11,479
+55
+00:03:11,538 --> 00:03:13,165
 Between ten twenty-seven
 
-55
-00:03:11,479 --> 00:03:15,546
+56
+00:03:13,165 --> 00:03:17,231
 and just after midnight
 the first session pushed 19 commits,
 
-56
-00:03:15,546 --> 00:03:17,511
+57
+00:03:17,231 --> 00:03:19,196
 about one every five minutes.
 
-57
-00:03:17,831 --> 00:03:21,505
+58
+00:03:19,516 --> 00:03:23,191
 On that pull request
 the bots wrote 72 comments,
 
-58
-00:03:21,505 --> 00:03:23,036
+59
+00:03:23,191 --> 00:03:24,722
 and 64 led to fixes.
 
-59
-00:03:23,283 --> 00:03:27,420
+60
+00:03:24,966 --> 00:03:29,103
 By half past midnight,
 you and the agent had agreed on one change:
 
-60
-00:03:27,420 --> 00:03:29,363
+61
+00:03:29,103 --> 00:03:31,046
 batch the fixes before pushing.
 
-61
-00:03:30,700 --> 00:03:33,646
+62
+00:03:32,383 --> 00:03:35,329
 On Wednesday the second session
 built the chat page
 
-62
-00:03:33,646 --> 00:03:36,823
+63
+00:03:35,329 --> 00:03:38,506
 from episode three and kept
 fixing the brain beside it.
 
-63
-00:03:37,143 --> 00:03:41,264
+64
+00:03:38,826 --> 00:03:42,947
 In the afternoon a final review
 looked from five angles at once
 
-64
-00:03:41,264 --> 00:03:43,095
+65
+00:03:42,947 --> 00:03:44,778
 and found about 30 problems.
 
-65
-00:03:43,333 --> 00:03:47,585
+66
+00:03:45,016 --> 00:03:49,268
 Six fix agents took them one after another,
 each on its own branch,
 
-66
-00:03:47,585 --> 00:03:50,821
+67
+00:03:49,268 --> 00:03:52,504
 and each first reproduced its bug
 before fixing it.
 
-67
-00:03:51,067 --> 00:03:53,200
+68
+00:03:52,750 --> 00:03:54,883
 Why reproduce a bug before fixing it?
 
-68
-00:03:58,067 --> 00:04:01,030
+69
+00:03:59,750 --> 00:04:02,714
 Because a reproduction proves
 the bug is real,
 
-69
-00:04:01,030 --> 00:04:04,831
+70
+00:04:02,714 --> 00:04:06,515
 and gives a check
 that has to flip from failing to passing;
 
-70
-00:04:04,831 --> 00:04:07,859
+71
+00:04:06,515 --> 00:04:09,542
 a fix for a bug nobody
 saw fail proves nothing.
 
-71
-00:04:08,179 --> 00:04:12,245
+72
+00:04:09,862 --> 00:04:13,928
 Merging the branches back took about an hour
 and had collisions;
 
-72
-00:04:12,245 --> 00:04:16,755
+73
+00:04:13,928 --> 00:04:18,438
 in one, a branch added a field
 that another branch's new test rejected.
 
-73
-00:04:17,075 --> 00:04:20,040
+74
+00:04:18,758 --> 00:04:21,723
 A second review of the merged result
 found eight more.
 
-74
-00:04:20,283 --> 00:04:24,602
+75
+00:04:21,966 --> 00:04:26,285
 Along the way the session hit
 its five-hour usage limit twice,
 
-75
-00:04:24,602 --> 00:04:25,659
+76
+00:04:26,285 --> 00:04:27,342
 the second time
 
-76
-00:04:25,659 --> 00:04:30,523
+77
+00:04:27,342 --> 00:04:32,206
 because the six fix agents ran
 in a row at about 800,000 tokens each,
 
-77
-00:04:30,523 --> 00:04:32,891
+78
+00:04:32,206 --> 00:04:34,574
 and the container restarted twice.
 
-78
-00:04:33,211 --> 00:04:36,411
+79
+00:04:34,894 --> 00:04:38,094
 The agents' rule afterwards:
 at most three at a time.
 
-79
-00:04:37,750 --> 00:04:38,945
+80
+00:04:39,433 --> 00:04:40,628
 Back to the checker.
 
-80
-00:04:39,265 --> 00:04:41,334
+81
+00:04:40,948 --> 00:04:43,017
 Most of the bots' comments were about it.
 
-81
-00:04:41,654 --> 00:04:46,566
+82
+00:04:43,337 --> 00:04:48,249
 After the turn it grew
 from 459 lines to 1,326,
 
-82
-00:04:46,566 --> 00:04:50,955
+83
+00:04:48,249 --> 00:04:52,638
 and 27 of the 45 commits since touched it.
 
-83
-00:04:51,275 --> 00:04:52,918
+84
+00:04:52,958 --> 00:04:54,601
 Each fix moved the problem.
 
-84
-00:04:53,238 --> 00:04:56,602
+85
+00:04:54,921 --> 00:04:58,285
 On Wednesday a parent summary
 saying don't delay help
 
-85
-00:04:56,602 --> 00:05:00,157
+86
+00:04:58,285 --> 00:05:01,840
 because of insurance was flagged
 as putting money first,
 
-86
-00:05:00,157 --> 00:05:04,536
+87
+00:05:01,840 --> 00:05:06,220
 which cost a needless rewrite;
 that evening, narrowing a similar rule
 
-87
-00:05:04,536 --> 00:05:08,662
+88
+00:05:06,220 --> 00:05:10,345
 let a real money-first line slip through,
 until Bugbot caught it.
 
-88
-00:05:08,900 --> 00:05:12,271
+89
+00:05:10,583 --> 00:05:13,954
 So on the second night the agents
 stopped waiting for the bots.
 
-89
-00:05:12,591 --> 00:05:16,705
+90
+00:05:14,274 --> 00:05:18,388
 Two rules took the beating:
 never claim a clinic is open right now
 
-90
-00:05:16,705 --> 00:05:18,537
+91
+00:05:18,388 --> 00:05:20,220
 unless its hours are checked,
 
-91
-00:05:18,537 --> 00:05:21,380
+92
+00:05:20,220 --> 00:05:23,063
 and keep cost out
 of the way of an emergency.
 
-92
-00:05:21,700 --> 00:05:25,147
+93
+00:05:23,383 --> 00:05:26,830
 Before pushing,
 the agents attacked those two rules:
 
-93
-00:05:25,147 --> 00:05:28,395
+94
+00:05:26,830 --> 00:05:30,078
 they wrote about 3,000 ways
 to say a risky thing,
 
-94
-00:05:28,395 --> 00:05:30,980
+95
+00:05:30,078 --> 00:05:32,663
 or its harmless twin, and ran them all.
 
-95
-00:05:31,300 --> 00:05:36,356
+96
+00:05:32,983 --> 00:05:38,039
 The first round found 142 misses
 and 230 false alarms.
 
-96
-00:05:36,600 --> 00:05:38,243
+97
+00:05:38,283 --> 00:05:39,926
 The bots would have found these too.
 
-97
-00:05:38,563 --> 00:05:40,589
+98
+00:05:40,246 --> 00:05:42,272
 Why attack the checker yourself first?
 
-98
-00:05:43,600 --> 00:05:46,293
+99
+00:05:45,283 --> 00:05:47,976
 Because the bots
 report one finding at a time,
 
-99
-00:05:46,293 --> 00:05:48,635
+100
+00:05:47,976 --> 00:05:50,318
 and every fix waits for the next review.
 
-100
-00:05:48,955 --> 00:05:52,261
+101
+00:05:50,638 --> 00:05:53,944
 One probing run found 372 at once.
 
-101
-00:05:52,581 --> 00:05:56,580
+102
+00:05:54,264 --> 00:05:58,264
 Across both rounds,
 1,060 phrasings it got wrong were fixed
 
-102
-00:05:56,580 --> 00:05:59,766
+103
+00:05:58,264 --> 00:06:01,450
 and kept as tests that run
 with the unit tests;
 
-103
-00:05:59,766 --> 00:06:03,291
+104
+00:06:01,450 --> 00:06:04,974
 about twenty harder ones
 are listed as known misses.
 
-104
-00:06:03,611 --> 00:06:07,868
+105
+00:06:05,294 --> 00:06:09,551
 In the second round, the first fix
 even created 20 new false alarms;
 
-105
-00:06:07,868 --> 00:06:11,248
+106
+00:06:09,551 --> 00:06:12,931
 this time they were caught before the push,
 not after.
 
-106
-00:06:12,583 --> 00:06:13,671
+107
+00:06:14,267 --> 00:06:15,355
 What did it cost?
 
-107
-00:06:13,991 --> 00:06:17,668
+108
+00:06:15,675 --> 00:06:19,351
 The model calls the product made
 are on the record:
 
-108
-00:06:17,668 --> 00:06:23,003
+109
+00:06:19,351 --> 00:06:24,686
 about 4 cents for one real answer,
 about 77 cents for the whole first day,
 
-109
-00:06:23,003 --> 00:06:26,535
+110
+00:06:24,686 --> 00:06:28,219
 27 cents on the last night
 against a 50-cent cap.
 
-110
-00:06:26,855 --> 00:06:30,899
+111
+00:06:28,539 --> 00:06:32,583
 The agents' own work
 is priced nowhere in the repository;
 
-111
-00:06:30,899 --> 00:06:34,802
+112
+00:06:32,583 --> 00:06:36,485
 the only number is tokens:
 about 800,000 per fix agent,
 
-112
-00:06:34,802 --> 00:06:39,484
+113
+00:06:36,485 --> 00:06:41,168
 close to five million for the six,
 and none recorded for the rest.
 
-113
-00:06:41,233 --> 00:06:42,470
+114
+00:06:42,917 --> 00:06:44,154
 So who decided?
 
-114
-00:06:42,790 --> 00:06:46,144
+115
+00:06:44,474 --> 00:06:47,827
 The record, written by the agents,
 names your calls,
 
-115
-00:06:46,144 --> 00:06:50,723
+116
+00:06:47,827 --> 00:06:52,406
 among them the model and its effort,
 the turn to the model's judgement,
 
-116
-00:06:50,723 --> 00:06:54,657
+117
+00:06:52,406 --> 00:06:56,340
 batching the fixes,
 copying Claude's page, and the stop rule:
 
-117
-00:06:54,657 --> 00:06:55,898
+118
+00:06:56,340 --> 00:06:57,581
 stop at 99 percent,
 
-118
-00:06:55,898 --> 00:06:59,622
+119
+00:06:57,581 --> 00:07:01,306
 finish by Thursday at seven in the evening,
 Beijing time.
 
-119
-00:06:59,942 --> 00:07:03,610
+120
+00:07:01,626 --> 00:07:05,293
 The code kept it: the last push
 came more than six hours early,
 
-120
-00:07:03,610 --> 00:07:07,452
+121
+00:07:05,293 --> 00:07:09,136
 and four later bot findings
 were written down for the next person.
 
-121
-00:07:07,700 --> 00:07:12,551
+122
+00:07:09,384 --> 00:07:14,235
 Many smaller choices the agents made alone,
 and wrote down as proposals,
 
-122
-00:07:12,551 --> 00:07:15,785
+123
+00:07:14,235 --> 00:07:17,469
 marked unattended
 and not confirmed by a person.
 
-123
-00:07:16,105 --> 00:07:19,551
+124
+00:07:17,789 --> 00:07:21,234
 One handoff even lists,
 among the agent's own steps,
 
-124
-00:07:19,551 --> 00:07:22,863
+125
+00:07:21,234 --> 00:07:24,547
 a click the team's workflow
 reserves for a person:
 
-125
-00:07:22,863 --> 00:07:25,513
+126
+00:07:24,547 --> 00:07:27,197
 marking a pull request ready for review.
 
-126
-00:07:25,833 --> 00:07:28,063
+127
+00:07:27,517 --> 00:07:29,747
 The notes are honest about slips too:
 
-127
-00:07:28,063 --> 00:07:29,710
+128
+00:07:29,747 --> 00:07:31,394
 one admits an earlier claim
 
-128
-00:07:29,710 --> 00:07:33,065
+129
+00:07:31,394 --> 00:07:34,749
 that all Bugbot comments were fixed,
 when two were not.
 
-129
-00:07:33,300 --> 00:07:34,735
+130
+00:07:34,984 --> 00:07:36,418
 Which raises a question:
 
-130
-00:07:34,735 --> 00:07:39,038
+131
+00:07:36,418 --> 00:07:40,722
 with no person having reviewed it yet,
 what makes this code trustworthy?
 
-131
-00:07:43,183 --> 00:07:44,612
+132
+00:07:44,867 --> 00:07:46,296
 No single check does.
 
-132
-00:07:44,932 --> 00:07:49,934
+133
+00:07:46,616 --> 00:07:51,617
 It is layers: hundreds of tests,
 one of which replays the 1,060 probes,
 
-133
-00:07:49,934 --> 00:07:54,001
+134
+00:07:51,617 --> 00:07:55,685
 two review bots,
 and decision records that stay proposals
 
-134
-00:07:54,001 --> 00:07:55,428
+135
+00:07:55,685 --> 00:07:57,112
 until you sign them.
 
-135
-00:07:55,748 --> 00:07:58,515
+136
+00:07:57,432 --> 00:08:00,198
 Decision four itself is still a proposal,
 
-136
-00:07:58,515 --> 00:08:01,889
+137
+00:08:00,198 --> 00:08:03,572
 and before any real user it asks
 for an evaluation
 
-137
-00:08:01,889 --> 00:08:04,858
+138
+00:08:03,572 --> 00:08:06,542
 and a look from the team's medical reviewer.
 
-138
-00:08:05,178 --> 00:08:09,023
+139
+00:08:06,862 --> 00:08:10,706
 Twelve more questions wait for you,
 from decision six's addendum
 
-139
-00:08:09,023 --> 00:08:12,687
+140
+00:08:10,706 --> 00:08:14,371
 to whether a parent should get a dial link
 for a crisis line.
 
-140
-00:08:17,433 --> 00:08:21,103
+141
+00:08:19,117 --> 00:08:22,787
 So, two days:
 a skeleton and a fact check in an afternoon;
 
-141
-00:08:21,103 --> 00:08:22,938
+142
+00:08:22,787 --> 00:08:24,622
 your turn at nine twenty-one;
 
-142
-00:08:22,938 --> 00:08:26,798
+143
+00:08:24,622 --> 00:08:28,481
 a night of whack-a-mole with the bots;
 a queue of fix agents;
 
-143
-00:08:26,798 --> 00:08:30,721
+144
+00:08:28,481 --> 00:08:32,405
 a second night of attacking the checker
 before the bots could;
 
-144
-00:08:30,721 --> 00:08:32,366
+145
+00:08:32,405 --> 00:08:34,050
 and a stop rule that held.
 
-145
-00:08:32,600 --> 00:08:33,709
+146
+00:08:34,284 --> 00:08:35,393
 Three questions.
 
-146
-00:08:34,029 --> 00:08:36,760
+147
+00:08:35,713 --> 00:08:38,444
 Why did so many of the brain's commits
 touch the checker?
 
-147
-00:08:37,080 --> 00:08:39,213
+148
+00:08:38,764 --> 00:08:40,897
 Why reproduce a bug before fixing it?
 
-148
-00:08:39,533 --> 00:08:41,176
+149
+00:08:41,217 --> 00:08:42,860
 And what is still waiting for you?
 
-149
-00:08:46,416 --> 00:08:48,016
+150
+00:08:48,100 --> 00:08:49,700
 That ends this week's batch.
 
-150
-00:08:48,336 --> 00:08:51,771
+151
+00:08:50,020 --> 00:08:53,455
 Next week's episodes start
 from next week's pull requests.
 
