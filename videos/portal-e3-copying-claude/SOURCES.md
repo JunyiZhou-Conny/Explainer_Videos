@@ -32,6 +32,11 @@ read 2026-10-30. Times are Boston time (EDT). Abbreviations: `P` = `src/features
 | The day's rounds, as the commits that landed their fixes: 10:02–10:14 independent visual review (0df09f6) · 10:40–11:04 streaming and the model menu (c859eb8 at 10:57; your request, 0006 addendum l.67) · 11:35–12:06 streaming review (569a8c4, 26b85e0) · 11:23–15:21 second visual review (bb4fb0c, 8153818, 56981a9, e3503f1, 34fa7da: 「视觉审查（第二轮）」) · 16:52–19:03 final review from five angles (36 findings, about 30 unique, four parallel fix branches) · 19:04–19:16 re-review, 8 more | commit messages; the handoff comment |
 | Stop and send share one slot; bug 1 (stop's click submitted the box; in a demo replay, the message just stopped) fixed in 26b85e0; bug 2 (Bugbot, Medium, "Double-click send aborts request") fixed in f95aa77 by ignoring the second click | `C`:185–206, :192, :195; commit 26b85e0 (「这次点击原来会接着把正在写的话发出去，演示回放里按停止也会马上又发一遍」); PR #41 review threads r4404138880, r4404272671 |
 | The folded 「给家长的摘要」 in every answer; 「可以这样说」, English for the student to say | `A`:164–169; `prototypes/triage/src/lint.ts`:249, :888 |
+| The parent summary drawn in S08 (verbatim): 「你家孩子喉咙痛了两天，吞咽时特别疼，今天体温 38.5°C，……请孩子立即在当地寻求紧急帮助。」 | demo 01 in `recordings.json` (`parentSummaryZh`) |
+| The English line in S08's booking idea: "I twisted my right ankle playing basketball. It is very swollen, and I can barely put weight on it." | demo 03 in `recordings.json` (`sayEn`) |
+| The drop-downs sit where Claude keeps attachments and tools | design doc: 「框内底部左边一排小按钮（Claude 放附件和工具，我们放情境下拉）」 |
+| Where Claude shows its logo while it thinks, ours shows a small dot | design doc 「不照抄的」: 「Claude 的标志（星芒）……我们用一个小圆点表示「正在想」」 |
+| The two colour options, layout only or layout + colours + serif | 0006 「颜色和字体也有两种做法：只抄版式……或者连 Claude 的暖色和衬线正文一起抄」 |
 | A dozen open items; the 0006 addendum (progress-only streaming, the model menu, retry) still unconfirmed; a stopped message sent with the next; no dial link for crisis lines for parents | the handoff's 「下一步（等 Junyi 定）」 (12 items, #1, #2, #5); 0006 l.67 「具体做法是无人值守时定的，还没有人确认」 |
 
 ## Outside the product (read 2026-10-30)
@@ -54,9 +59,12 @@ read 2026-10-30. Times are Boston time (EDT). Abbreviations: `P` = `src/features
 - Claude's app is drawn only as grey outlines of the same layout: no logo, name styling or text.
 - The collage in S03 uses invented composer fragments in neutral colours, not any real product.
 - S04's longer typed text is invented to show the box growing.
-- The ideas in S08 are not built.
+- The ideas in S08 are not built; the phone card's text (「孩子发来的 · 喉咙痛 · 今天 · 打给 SHS · 不是诊断 · 模拟」) is invented.
+- S07's typed text is drawn as grey bars (any text in the box), and the demo-replay bubble reuses demo 01's first message.
 
 ## Not claimed
+
+- S08's verdict on voice, history and memory is framed as a view ("may matter most", "needs a privacy decision first"), not as a finding.
 
 - The exact disclaimer wording of Claude's app or ChatGPT (not verifiable from an official page).
 - That any review compared screenshots side by side with Claude's app, or who the reviewers were.
