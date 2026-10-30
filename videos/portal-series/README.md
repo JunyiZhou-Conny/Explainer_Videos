@@ -33,10 +33,13 @@ E4 mentions them in passing.
 > 包括这个 UI 的设计……我能在这个之上再去创新什么……主流的对这种 chatbot UI 的一些设计……
 > 我们在哪些地方进行的模仿，我们是怎么达成的，还有什么可以做的……一步一步我们的 Claude 花这么多时间去做，他都干了些什么，他解决什么问题。
 
+Style: E1 is Swiss (`episode.json` route); from E2 on, every episode uses the 3Blue1Brown house style on
+the `video.yaml` route (owner, 2026-10-30: 「以后用 3BLUE1BROWN STYLE PLEASE」; docs/PORTAL_SERIES.md).
+
 | # | Episode | Question | PRs | Status |
 |---|---|---|---|---|
 | E1 | [`portal-e1-after-send`](../portal-e1-after-send/) · 不就是调一下 API 吗？ | If it is "just the OpenAI API", where do the parent summary and the receipt come from? | #36 (+ #41 page) | [#58](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/58) · full cut |
-| E2 | `portal-e2-thinking` · 「思考了 3 秒」到底是什么 | What is the model doing during "thinking", and why do we show a receipt instead of its thoughts? | #41, #36 | [#59](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/59) · planned |
+| E2 | [`portal-e2-thinking`](../portal-e2-thinking/) · 「思考了 3 秒」到底是什么 | What is the model doing during "thinking", and why do we show a receipt instead of its thoughts? | #41, #36 | [#59](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/59) · full cut (3b1b) |
 | E3 | `portal-e3-copying-claude` · 照着 Claude 抄 | What did we copy from the Claude app, what not, what is ours, and what could we invent? | #41 | [#60](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/60) · planned |
 | E4 | `portal-e4-build-log` · 两天、一百多个提交 | What did the agents actually do for two days, and what did it cost? | #36, #41, the week | [#61](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/61) · planned |
 

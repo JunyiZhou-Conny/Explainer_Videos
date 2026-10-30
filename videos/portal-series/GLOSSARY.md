@@ -18,4 +18,11 @@ explains them. Later episodes reuse these words; add a row when an episode names
 | an emergency is never taken back | 紧急不收回 | Once any version says emergency, the rewrite and the fallback must stay emergency | E1 |
 | receipt (thinking panel) | 收据（思考过程） | The folded rows: process, sources, check, judgment, model | E1 |
 | reasoning model, reasoning effort | 推理模型，思考强度 | A model that reasons in hidden, billed steps before writing; effort (低/中/高) sets how much | E1 (named), E2 |
-| streaming (SSE, NDJSON) | 流式 | — | E2 |
+| chain of thought | 思维链，chain of thought | Asking a model to write out its steps first (2022); reasoning models now do it themselves | E2 |
+| reasoning tokens | 推理 token | The tokens a reasoning model writes for itself: not returned, still in the context, billed as output; counted in the usage report | E2 |
+| reasoning summary | 推理摘要 | A model-written summary of hidden reasoning (OpenAI's `summary` parameter, Claude's app); we do not show one | E2 |
+| stopwatch: thinking / writing | 思考 / 写 | Thinking = until the first character of the answer arrives; writing = from there until the model finishes; then checking | E2 |
+| token streaming (SSE) | 流式输出，server-sent events | Words sent to the screen as the model writes them; how most chat apps work, and how OpenAI sends to our server | E2 |
+| progress streaming (NDJSON) | 只流进度 | What our server sends the page: one JSON line per update (stage, box, character count, emergency flag), never the words | E2 |
+| early 911 warning | 提前的 911 提醒 | Fixed text we wrote, shown as soon as the first boxes say emergency, before the checked answer | E2 |
+| replay (reveal) | 回放 | The checked answer played out in at most 2.5 s; emergency answers appear at once | E2 |

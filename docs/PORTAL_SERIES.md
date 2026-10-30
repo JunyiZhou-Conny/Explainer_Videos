@@ -10,7 +10,7 @@ what was built, how it got built, what it copies, and what could come next.
 
 The agent's how-to is the `portal-video` skill (`.claude/skills/portal-video/SKILL.md`). The batch
 plan and the weekly digests are in [`videos/portal-series/`](../videos/portal-series/README.md).
-[STYLE_GUIDE.md](STYLE_GUIDE.md) and the Swiss preset apply; this page adds what this series needs.
+[STYLE_GUIDE.md](STYLE_GUIDE.md) and the `3b1b` preset apply; this page adds what this series needs.
 
 ## Who it is for
 
@@ -49,10 +49,11 @@ series is public and published to Bilibili like every other episode.
 
 ## Length and shape
 
-**10 minutes at most; aim for 7–9.** At the Swiss voice (Kokoro `af_heart`, 0.95) the narration
-runs about 165 words a minute, and ponder pauses and reading holds add 8–10 %, so about 150 words
-make one finished minute: 1,050–1,350 words. E1 (1,487 words, 9:44) is the practical ceiling.
-Measure with `render.py --prepare-only` before building scenes; cut words, never speed.
+**10 minutes at most; aim for 7–9.** At the house voice (Kokoro `af_heart`, 0.95) the narration
+runs about 165 words a minute, and pauses, ponder holds and animations add 10–15 %, so about 145
+words make one finished minute: 1,000–1,300 words. E1 (1,487 words, 9:44) is the practical ceiling.
+Count with `python -m explainer.script videos/<id>/script.md` before building scenes, and time the
+real speech with `explainer.script.synthesize_all`; cut words, never speed.
 
 Every episode has these beats, in this order (scene counts are a guide):
 
@@ -104,26 +105,35 @@ Everything on screen is real and pinned in the episode's `SOURCES.md`:
 
 ## Visual language
 
-Swiss preset (paper `#F3F0E7`, ink, one red accent, grey for secondary, Inter + Noto Sans CJK),
-with these series conventions:
+**3Blue1Brown style (`3b1b`), from E2 on** (owner, 2026-10-30: 「以后用 3BLUE1BROWN STYLE」). E1 was
+made in Swiss before that decision and stays as it is. The house dark-diagram toolkit
+(`explainer/style.py`, `components.py`, the CareOneX kit `videos/careonex-series/careonex_kit.py`):
+near-black background, CMU Serif prose, objects that move and transform rather than slides of
+bullets. Series conventions on top of it:
 
 | Meaning | Treatment |
 |---|---|
-| The product's own screen (chat page, receipt) | redrawn as a white card with a thin ink border, strings verbatim |
-| Our code (server, checker, page) | ink rectangle with a small caps label |
-| The model / the API | grey rectangle labelled with the model name |
-| Data we own (fact cards, snapshots) | stacked thin cards |
-| Danger, emergency, a rule that blocks | red |
-| The reference product (Claude, ChatGPT) | grey outline with the name in text, never a logo |
-| A ponder question | the red-framed PAUSE AND PONDER card |
+| The product's own screen (chat page, receipt) | a dark rounded panel with strings verbatim, in the product's Chinese |
+| Our code (server, checker, page) | BLUE box (`tag_box`, tag OUR CODE) |
+| The model / the API | ORANGE box labelled with the model name |
+| Hidden reasoning | GREY tokens: there, billed, never shown |
+| Text the reader may see | WHITE tokens; checked text GREEN |
+| The question, the user's words | YELLOW |
+| Danger, emergency, a rule that blocks | RED |
+| The reference product (Claude, ChatGPT) | GREY outline with the name in text, never a logo |
+| Time | a horizontal axis in seconds; the stopwatch phases as coloured bars |
+| A ponder question | the house `pause_and_ponder` card |
 
 ## Production
 
-New-route episodes (`episode.json`, `script.json`, `scenes.py`) through the conny-explainer-video
-skill, following [BOOTSTRAP.md](BOOTSTRAP.md) and the episode lifecycle and content gates in
-`AGENTS.md`. The reference implementation is `videos/portal-e1-after-send/`. Each episode folder
-holds `BRIEF.md`, `SOURCES.md`, `REVIEW.md`, `episode.json`, `style.md`, `script.json`, `scenes.py`
-and `delivery/`.
+From E2: the `video.yaml` route, as in the CareOneX and AC215 series (`docs/WORKFLOW.md`,
+`docs/STYLE_GUIDE.md`): `script.md` (SHOW/SAY), `scenes/` (one file per scene plus `common.py`,
+which imports the CareOneX kit), `i18n/zh/` (glossary, `meta.yaml`, sentence-aligned narration),
+`video.yaml` with a `publish:` block, built with `python -m explainer.build videos/<id> --burn`
+(1080p60, Kokoro `af_heart` 0.95, music, Chinese-above-English subtitles burned in). Release after
+merge with `.github/workflows/legacy-release.yml`. Each folder also holds `BRIEF.md`,
+`SOURCES.md` and `REVIEW.md`, and the episode lifecycle and content gates in `AGENTS.md` apply.
+E1 (`videos/portal-e1-after-send/`, `episode.json` route) remains the record of the Swiss start.
 
 The producing session needs read access to the private portal repository: in a cloud session,
 attach it (`add_repo`, read access); locally, clone it next to this checkout. Fetch the PR branches
