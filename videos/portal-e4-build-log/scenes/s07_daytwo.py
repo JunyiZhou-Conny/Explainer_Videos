@@ -28,8 +28,8 @@ class DayTwo(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             head = sans("Wednesday · session 2", 26, S.GREY).move_to(UP * 3.2)
             self.play(FadeIn(head), run_time=0.3)
-            page = tag_box("01:59", "the chat page", "episode 3", OURS_C, width=3.8).move_to(LEFT * 4.2 + UP * 1.6)
-            brain = tag_box("all day", "the brain's fixes", "PR #36", MODEL_C, width=3.8).move_to(LEFT * 4.2 + DOWN * 0.2)
+            page = tag_box("01:59", "the chat page", "episode 3", OURS_C, width=4.0).move_to(LEFT * 4.2 + UP * 1.6)
+            brain = tag_box("all day", "the brain's fixes", "PR #36", MODEL_C, width=4.0).move_to(LEFT * 4.2 + DOWN * 0.2)
             vo.wait_until("built the chat page")
             self.play(FadeIn(page, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("kept fixing the brain")

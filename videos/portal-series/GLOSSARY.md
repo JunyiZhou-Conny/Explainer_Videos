@@ -33,3 +33,14 @@ explains them. Later episodes reuse these words; add a row when an episode names
 | action row | 操作按钮 | Under an answer: 复制, 复制给家长 (students), 重新回答 (latest live answer) | E3 |
 | one reference per screen | 每个界面只照抄一个参考 | Decision 0006: copy one mature product exactly, no mixing; the chat page copies Claude's app | E3 |
 | Jakob's law | 雅各布定律 | Users spend most of their time on other sites, so they prefer yours to work the same way (NN/g) | E3 |
+| draft PR · ready for review | 草稿 PR · 标成可以 review | A PR opened after the first commit stays a draft; the workflow says a person marks it ready, which also starts Codex's reviews | E4 |
+| review bot | review bot | Bugbot (Cursor, every push) and Codex (OpenAI, once a PR is ready): comment, never change code | E4 |
+| handoff note | 交接 | A comment an agent leaves on its PR when it stops: done, not done, next (waiting for Junyi), traps | E4 |
+| proposed / adopted | 提议 / 已采纳 | A decision record's status; agents draft as 提议, only a person sets 已采纳 | E4 |
+| stacked PR | 叠在上面的 PR | A PR based on another PR's branch (#41 on #36), merging it in to stay current | E4 |
+| miss / false alarm | 漏判 / 误报 | The checker letting a bad line through / flagging a harmless one | E4 |
+| adversarial probing | 对抗探测 | Agents writing thousands of risky and harmless phrasings to attack the checker before pushing | E4 |
+| regression corpus | 探测说法（回归测试） | `lint.probes.json`: 1,060 phrasings the checker once got wrong, replayed by the unit tests | E4 |
+| reproduce first | 先复现再修 | A fix agent first shows the bug happening, then fixes it (「逐条先复现再修」) | E4 |
+| unattended run · usage limit | 无人值守 · 用量上限 | Agents working with no person watching; a 5-hour usage cap that pauses the session | E4 |
+| stop rule | 收尾的约定 | The owner's 「做到 99% 就停……最晚周四晚上 7 点（按北京时间算）收尾」 | E4 |

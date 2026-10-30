@@ -41,7 +41,7 @@ the `video.yaml` route (owner, 2026-10-30: 「以后用 3BLUE1BROWN STYLE PLEASE
 | E1 | [`portal-e1-after-send`](../portal-e1-after-send/) · 不就是调一下 API 吗？ | If it is "just the OpenAI API", where do the parent summary and the receipt come from? | #36 (+ #41 page) | [#58](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/58) · full cut |
 | E2 | [`portal-e2-thinking`](../portal-e2-thinking/) · 「思考了 3 秒」到底是什么 | What is the model doing during "thinking", and why do we show a receipt instead of its thoughts? | #41, #36 | [#59](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/59) · full cut (3b1b) |
 | E3 | [`portal-e3-copying-claude`](../portal-e3-copying-claude/) · 照着 Claude 抄 | What did we copy from the Claude app, what not, what is ours, and what could we invent? | #41 | [#60](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/60) · full cut (3b1b) |
-| E4 | `portal-e4-build-log` · 两天、一百多个提交 | What did the agents actually do for two days, and what did it cost? | #36, #41, the week | [#61](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/61) · planned |
+| E4 | [`portal-e4-build-log`](../portal-e4-build-log/) · 两天、一百多个提交 | What did the agents actually do for two days, what did it cost, and who decided? | #36, #41, the week | [#61](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/61) · in production (3b1b) |
 
 ### E1 · 不就是调一下 API 吗？ (Isn't it just an API call?)
 
