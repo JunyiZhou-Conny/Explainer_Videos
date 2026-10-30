@@ -1017,7 +1017,7 @@ with a turn of the hand: four stay shut (GRAY); on "Only one", a YELLOW key appe
 and it opens.
 SAY: The README asks which of these can authorize an action. Only one: the approval drawer.
 
-SHOW: TRACKER Act4 1. The cabinet shrinks to the right. Terminal (full width, TEAL), tag `no key`. It types `python
+SHOW: TRACKER Act4 1. The lecture tag leaves; the cabinet shrinks to the right. Terminal (full width, TEAL), tag `no key`. It types `python
 cli.py --act 4` (GOLD tag) → TERM(container/40: 2–4 wrap, 6–8 wrap, 9 as 401s) (11 rows; line 4 through `unname`:
 `Memory for ‹customer 1›: French cheeses; funky cheeses`). Line 4 highlights GREEN with a tag "loaded by the host ·
 before any model call"; the nine tool names in line 8 light one by one; a GRAY dashed ghost chip "a memory-write
@@ -1513,12 +1513,12 @@ SHOW: The BLUE column dims to its header "the model proposes"; the GREEN column 
 YELLOW stamps "a human decides" land on the approval cells (manager review, approval on save).
 SAY: The model proposes, on the left. On the right, the harness decides, and where it matters, so do you.
 
-SHOW: TRACKER Res 2. The table shrinks. A card redrawn from `README.md · lines 820–826` ("End-of-lecture reflection",
+SHOW: TRACKER Res 2. The lecture tag leaves with the table's texts; the table shrinks. A card redrawn from `README.md · lines 820–826` ("End-of-lecture reflection",
 tag `expected`): five short rows, Context Engineering · Agent Harness · Skills · Agent Systems · Evaluation, each with
 its question in a few words; caption "pick one run you did".
 SAY: The README ends with five reflection questions. Pick one run you did, and answer them.
 
-SHOW: The lecture tag leaves. Recap questions build as one numbered list that stays (one group), each lighting as
+SHOW: Recap questions build as one numbered list that stays (one group), each lighting as
 the SAY reads its short form, with one small GRAY "answers: MLOps_Learning · guides/L07-agents-2-harness.md › Exercises" under the list; hold 3 s after the SAY:
 (1) "Name three
 things .without(\"trace\") does not remove." (2) "Why does retrieved context enter as a user message labelled data,

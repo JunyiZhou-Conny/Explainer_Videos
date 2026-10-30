@@ -51,3 +51,17 @@ parts:
   - id: part2
     title: "AC215 · L7, part 2: the harness takes control — workflows, approvals, memory, skills, agent systems and evaluation (Acts 3–6)"
     scenes: [s08_workflow, s09_approval, s10_planner, s11_compaction, s12_skills, s13_systems, s14_traces, s15_compare, s16_recap]
+publish:
+  title_zh: "AC215 第7讲跟练 · LLM 智能体 II：agent harness——模型提议，harness 决定"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 7 讲教程的逐条命令跟练：dlops-io/agent-harness 的整份 README（环境搭建与验证、六幕、评测、补充资料和排错），以及课程的 Colab 笔记本 Agent Harness。
+    第一部分只有一个智能体：在一个没有端口的容器里跑起 OpenAI 模型和五个商店工具，量出 agent 循环的每一轮，再用 Trace、Budget、Context 和 Cart Check 给它套上 harness，并由 Python 决定模型能看到哪些上下文。
+    第二部分让 harness 接管：Python 掌握边的工作流图、绑定到这一辆购物车的人工批准、五种状态与上下文压缩、只指导不授权的 skill、把整个工作流当作工具调用的智能体，最后用 trace 和重复批次比较一次改动。
+    没有 OpenAI 密钥：离线命令和测试都真实运行，在线命令运行到 401 为止，在线答案来自课程团队保存的 Colab 运行结果，并在画面上标明。边看边暂停，在自己的电脑上跑每一条命令。英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/agent-harness
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L07-agents-2-harness.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, 智能体, Agent, agent harness, 上下文工程, 工作流, 评测, OpenAI, 哈佛, 教程跟练]
+  tid: 231

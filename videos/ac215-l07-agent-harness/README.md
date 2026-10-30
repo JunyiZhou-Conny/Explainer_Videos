@@ -36,10 +36,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l07-agent-harness.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l07-agent-harness.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 31:21 (1881.75 s), 113.7 MiB. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l07-agent-harness.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. A release asset, not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l07-agent-harness_part1.mp4` | part 1, DURATION_P1: one agent — setup, the agent loop, harness layers and context (Acts 1–2; S01–S07). A release asset, not in Git: rebuilt with `--no-render` |
-| `output/ac215-l07-agent-harness_part2.mp4` | part 2, DURATION_P2: the harness takes control — workflows, approvals, memory, skills, agent systems and evaluation (Acts 3–6; S08–S16). A release asset, not in Git: rebuilt with `--no-render` |
+| `output/ac215-l07-agent-harness_part1.mp4` | part 1, 13:51 (831.25 s): one agent — setup, the agent loop, harness layers and context (Acts 1–2; S01–S07). A release asset, not in Git: rebuilt with `--no-render` |
+| `output/ac215-l07-agent-harness_part2.mp4` | part 2, 17:30 (1050.61 s): the harness takes control — workflows, approvals, memory, skills, agent systems and evaluation (Acts 3–6; S08–S16). A release asset, not in Git: rebuilt with `--no-render` |
 | `output/ac215-l07-agent-harness.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l07-agent-harness.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l07-agent-harness.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -59,7 +59,40 @@ the two part cuts) are GitHub release assets.
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts).
+
+```
+00:00 Which sentence would you trust?
+02:00 One container, no ports
+04:09 Verify offline, and the Colab road
+05:47 Act 1: an agent, measured
+07:42 Act 1: wrap it in a harness
+09:50 Act 2: same agent, different context
+11:49 Act 2: sieves and lanes
+13:51 Act 3: rails, not suggestions
+15:41 Act 3: approve this exact cart
+17:44 Act 4: a planner with five drawers
+19:19 Act 4: compaction, the capsule and memory
+21:34 Act 5: skills are manuals, not keys
+23:44 Act 6: an agent that calls a workflow
+25:33 Evaluation: the trace is the evidence
+27:16 Evaluation: one change, k runs, a diff
+29:17 Tear down, recap, and what's next
+```
+
+Part 1 uses the first seven lines as they are. Part 2 starts its clock at 0:00:
+
+```
+00:00 Act 3: rails, not suggestions
+01:50 Act 3: approve this exact cart
+03:53 Act 4: a planner with five drawers
+05:28 Act 4: compaction, the capsule and memory
+07:43 Act 5: skills are manuals, not keys
+09:53 Act 6: an agent that calls a workflow
+11:42 Evaluation: the trace is the evidence
+13:25 Evaluation: one change, k runs, a diff
+15:26 Tear down, recap, and what's next
+```
 
 ## What you'll learn
 
