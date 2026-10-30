@@ -95,3 +95,18 @@ def test_window_excludes_older_commits(tmp_path):
     text = pd.digest(repo, datetime(2026, 10, 27, 12, tzinfo=TZ), datetime(2026, 10, 28, tzinfo=TZ), TZ)
     assert "Fix the engine" in text and "Polish the page" in text
     assert "Add the engine" not in text and "#1" not in text
+
+
+def test_reused_branch_maps_to_the_open_then_newest_pr():
+    """GitHub lists newest first; a reused head ref must not fall back to its oldest closed PR."""
+    def pr(n, state):
+        return {"number": n, "state": state, "title": f"PR {n}", "head": {"ref": "claude/reused"},
+                "user": {"login": "someone"}}
+
+    unit = pd.Unit(branch="claude/reused", tip="abc", state="open")
+    pd.apply_prs([unit], [pr(9, "closed"), pr(7, "open"), pr(4, "closed")])
+    assert unit.number == 7
+
+    unit = pd.Unit(branch="claude/reused", tip="abc", state="open")
+    pd.apply_prs([unit], [pr(9, "closed"), pr(6, "closed"), pr(4, "closed")])
+    assert unit.number == 9

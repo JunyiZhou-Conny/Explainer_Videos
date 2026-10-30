@@ -182,7 +182,9 @@ def render_unit(repo: Path, unit: Unit) -> list[str]:
 
 
 def apply_prs(units: list[Unit], prs: list[dict]) -> None:
-    by_branch = {p["head"]["ref"] if isinstance(p.get("head"), dict) else p.get("headRefName"): p for p in prs}
+    # Agents reuse head branches (claude/*), so one ref can name several PRs: the open one wins, else the newest.
+    ranked = sorted(prs, key=lambda p: (str(p.get("state", "")).lower() == "open", p["number"]))
+    by_branch = {p["head"]["ref"] if isinstance(p.get("head"), dict) else p.get("headRefName"): p for p in ranked}
     by_number = {p["number"]: p for p in prs}
     for u in units:
         p = by_number.get(u.number) if u.number else by_branch.get(u.branch)
