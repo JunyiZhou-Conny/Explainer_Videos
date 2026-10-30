@@ -1,0 +1,624 @@
+1
+00:00:00,000 --> 00:00:03,947
+等回答的时候，我们的 app 显示：正在思考，11 秒
+While you wait for an answer, our app says: thinking, eleven seconds.
+
+2
+00:00:04,183 --> 00:00:06,513
+回答出来以后，它折叠成一张收据
+Afterwards it folds into a receipt:
+
+3
+00:00:06,513 --> 00:00:09,708
+思考了 22 秒，这是整个等待的时间
+thought for 22 seconds, which is the whole wait.
+
+4
+00:00:10,028 --> 00:00:12,817
+点开，等待分成两段
+Open it, and the wait splits in two:
+
+5
+00:00:12,817 --> 00:00:17,389
+真正的思考只有 13.5 秒，然后是写 8.7 秒
+only 13.5 seconds of thinking, then 8.7 seconds of writing.
+
+6
+00:00:17,633 --> 00:00:19,162
+在思考什么？
+Thinking about what?
+
+7
+00:00:19,212 --> 00:00:22,369
+三年前，还没有哪个聊天 app 会给你看模型在思考
+Three years ago, no chat app showed you a model thinking.
+
+8
+00:00:22,689 --> 00:00:25,689
+那为什么我们给你看一个计时器，却从不给你看思考的内容？
+And why does ours show you a clock, but never the thoughts?
+
+9
+00:00:27,133 --> 00:00:29,074
+这个想法比这些 app 更早
+The idea is older than the apps.
+
+10
+00:00:29,394 --> 00:00:33,250
+2022 年 1 月，Google 的研究者发现
+In January 2022, Google researchers showed that a model
+
+11
+00:00:33,250 --> 00:00:37,736
+先让模型把步骤写出来，它能解出更多题
+solves more problems if you ask it to write out its steps first.
+
+12
+00:00:38,056 --> 00:00:40,116
+他们把它叫作思维链，chain of thought
+They called it chain of thought.
+
+13
+00:00:40,166 --> 00:00:43,410
+几个月后，一句话就做到了：「Let's think step by step」
+Months later, one sentence did it: let's think step by step.
+
+14
+00:00:43,730 --> 00:00:45,330
+这是写在提示词里的一个技巧
+It was a trick in the prompt.
+
+15
+00:00:45,550 --> 00:00:48,705
+2024 年 9 月，OpenAI 发布了 o1
+In September 2024, OpenAI released o1,
+
+16
+00:00:48,705 --> 00:00:54,681
+一个用强化学习训练、先推理再回答的模型
+a model trained with reinforcement learning to reason before it answers.
+
+17
+00:00:55,001 --> 00:00:57,769
+OpenAI 选择不展示原始的思考内容
+OpenAI chose not to show the raw thoughts,
+
+18
+00:00:57,769 --> 00:01:02,909
+理由是用户体验、竞争优势，以及可以监控这些思考
+citing user experience, competitive advantage, and the chance to monitor them,
+
+19
+00:01:02,909 --> 00:01:06,072
+它改为展示一段由模型写的摘要
+and showed a summary written by a model instead.
+
+20
+00:01:06,316 --> 00:01:07,916
+别家做了不同的选择
+Others chose differently.
+
+21
+00:01:08,065 --> 00:01:11,799
+DeepSeek 的 R1 把推理文本交给了开发者
+DeepSeek's R1 handed its reasoning text to developers.
+
+22
+00:01:12,119 --> 00:01:15,959
+Claude 3.7 展示了原始的思考内容，作为研究预览
+Claude 3.7 showed its raw thinking, as a research preview.
+
+23
+00:01:16,279 --> 00:01:19,335
+从 Claude 4 开始，长的思考会被摘要
+From Claude 4, long thinking was summarized,
+
+24
+00:01:19,335 --> 00:01:22,530
+今天的 Claude API 只返回摘要
+and today's Claude API returns only a summary.
+
+25
+00:01:22,766 --> 00:01:25,582
+今天，思考是一个你自己选、自己付钱的设置
+Today, thinking is a setting you choose and pay for.
+
+26
+00:01:25,902 --> 00:01:28,813
+OpenAI 把它叫作 reasoning effort，也就是思考强度
+OpenAI calls it reasoning effort.
+
+27
+00:01:28,863 --> 00:01:31,407
+我们的菜单把它放在选模型的旁边
+Our menu puts it next to the model choice,
+
+28
+00:01:31,407 --> 00:01:35,524
+有 Luna、Terra 和另外两个模型，思考强度分三档：低、中、高
+Luna, Terra and two others, with three levels: low, medium and high.
+
+29
+00:01:36,867 --> 00:01:39,064
+看看一次调用里面发生了什么
+Here is what happens inside one call.
+
+30
+00:01:39,384 --> 00:01:43,032
+模型一次写一小段文字，叫作 token
+A model writes one small piece of text at a time, a token.
+
+31
+00:01:43,352 --> 00:01:46,190
+推理模型会先写一些给自己看的 token
+A reasoning model first writes tokens for itself.
+
+32
+00:01:46,510 --> 00:01:48,110
+那就是它的思考
+Those are its thoughts.
+
+33
+00:01:50,017 --> 00:01:52,790
+OpenAI 从不把这些 token 发回来
+OpenAI never sends those tokens back.
+
+34
+00:01:53,110 --> 00:01:57,676
+它们是隐藏的，但会占用上下文空间，而且按输出的价格计费
+They stay hidden, but they take up room, and you pay for them at the output price.
+
+35
+00:01:57,917 --> 00:02:01,202
+然后它才写回答，也就是我们那张 13 格的表
+Only then does it write the answer, our thirteen-box form.
+
+36
+00:02:01,522 --> 00:02:03,741
+所以我们的计时器能把两段分开
+So our stopwatch can tell the two apart.
+
+37
+00:02:04,061 --> 00:02:08,442
+思考，是到回答的第一个字到达为止的时间
+Thinking is the time until the first character of the answer arrives:
+
+38
+00:02:08,442 --> 00:02:12,189
+模型先读完请求，再用隐藏的 token 推理
+the model reads the request, then reasons in hidden tokens.
+
+39
+00:02:12,509 --> 00:02:16,626
+写，是从那里到模型写完；然后检查器开始运行
+Writing runs from there until the model finishes; then the checker runs.
+
+40
+00:02:16,867 --> 00:02:19,790
+思考强度决定模型最多可以想多少
+The effort setting sets how much thinking the model may do.
+
+41
+00:02:20,110 --> 00:02:24,580
+即使设置一样，模型也会自己决定需要想多少
+Even on the same setting, the model decides how much it needs:
+
+42
+00:02:24,580 --> 00:02:27,320
+你的问候想了 1.6 秒
+your greeting thought for 1.6 seconds,
+
+43
+00:02:27,320 --> 00:02:30,926
+一个关于学校医疗中心的真实问题想了 13.5 秒
+a real question about the student clinic for 13.5.
+
+44
+00:02:33,167 --> 00:02:37,540
+既然思考是隐藏的，你到底在为什么付钱，又怎么知道？
+If the thoughts are hidden, what exactly are you paying for, and how would you know?
+
+45
+00:02:41,667 --> 00:02:44,261
+每次回复最后都有一份 usage 报告
+Every response ends with a usage report,
+
+46
+00:02:44,261 --> 00:02:48,152
+它把推理 token 算在输出 token 里
+and it counts the reasoning tokens inside the output tokens.
+
+47
+00:02:48,472 --> 00:02:49,972
+我们的服务器读取这份报告
+Our server reads it,
+
+48
+00:02:49,972 --> 00:02:53,720
+价格表把这些数字换算成收据上的金额
+and the price list turns those counts into the dollar figure on the receipt.
+
+49
+00:02:55,067 --> 00:02:56,838
+等的时候，为什么要显示点什么？
+Why show anything while you wait?
+
+50
+00:02:57,158 --> 00:02:59,220
+决策记录说得很直白
+The decision record puts it plainly:
+
+51
+00:02:59,220 --> 00:03:03,344
+干等 10 到 30 秒，人不知道在发生什么
+ten to thirty seconds of waiting, and nobody can tell what is happening.
+
+52
+00:03:03,664 --> 00:03:05,993
+大多数聊天 app 的办法是流式输出
+Most chat apps answer that by streaming:
+
+53
+00:03:05,993 --> 00:03:09,825
+每写出几个词，就立刻送到你的屏幕上
+every few words travel to your screen the moment they are written,
+
+54
+00:03:09,825 --> 00:03:12,048
+走的是一条叫 server-sent events 的通道
+over a pipe called server-sent events.
+
+55
+00:03:12,284 --> 00:03:15,484
+我们的服务器确实从 OpenAI 收到了这条流
+Our server does receive that stream from OpenAI.
+
+56
+00:03:15,804 --> 00:03:17,596
+但它不把这些文字转发出去
+But it does not pass the words on.
+
+57
+00:03:17,916 --> 00:03:20,008
+它一边读这张逐渐填满的表
+It reads the form as it fills,
+
+58
+00:03:20,008 --> 00:03:23,844
+一边记下模型写到了哪一格、写了多少字
+notes which box the model is in, counts the characters,
+
+59
+00:03:23,844 --> 00:03:28,518
+然后只把进度发给页面，每次一小行 JSON
+and sends the page only progress, one small line of JSON at a time.
+
+60
+00:03:28,767 --> 00:03:31,775
+你看到的就是这些：正在思考，11 秒
+That is what you watch: thinking, eleven seconds.
+
+61
+00:03:32,095 --> 00:03:35,956
+正在写去处和步骤，已写 320 字
+Writing the places to go, 320 characters so far.
+
+62
+00:03:36,276 --> 00:03:40,479
+正在检查。在检查器看过之前，页面一个字也看不到
+Checking. The page never sees a word before the checker has.
+
+63
+00:03:41,817 --> 00:03:46,702
+为什么不像 Claude 那样直接流式显示文字，检查不过再收回？
+Why not stream the words, the way Claude does, and pull them back if the checker objects?
+
+64
+00:03:50,450 --> 00:03:52,583
+因为屏幕上说出去的话收不回来
+Because a screen cannot unsay something.
+
+65
+00:03:52,903 --> 00:03:56,527
+如果一个剂量或者一个编造的电话号码在屏幕上闪了两秒
+If a dose or a made-up phone number flashes for two seconds,
+
+66
+00:03:56,527 --> 00:03:59,367
+着急的家长可能已经截了图
+a worried parent may already have a screenshot.
+
+67
+00:03:59,687 --> 00:04:03,357
+所以决策记录写的是：流式传输进度，而不是文字
+So the decision record says: stream the progress, not the text.
+
+68
+00:04:03,600 --> 00:04:05,200
+你要的是流式输出
+You asked for streaming.
+
+69
+00:04:05,264 --> 00:04:08,897
+agent 在无人值守时自己选了这种做法
+The agent, working unattended, chose this kind on its own,
+
+70
+00:04:08,897 --> 00:04:13,094
+并把它写成一份提议，还在等你点头
+and wrote it down as a proposal that is still waiting for your yes.
+
+71
+00:04:14,433 --> 00:04:16,566
+进度流式输出还有一招
+Progress streaming has one more trick.
+
+72
+00:04:16,886 --> 00:04:21,900
+表的前五格都和紧急程度有关，所以模型最先写它们
+The form's first five boxes are all about urgency, so the model writes them first.
+
+73
+00:04:22,150 --> 00:04:26,941
+前几格一说是紧急情况，服务器就打上紧急标记
+The moment those first boxes say emergency, the server raises a flag,
+
+74
+00:04:26,941 --> 00:04:30,273
+页面显示一段我们自己写好的提醒
+and the page shows a warning we wrote ourselves:
+
+75
+00:04:30,273 --> 00:04:33,883
+可能危及生命，不用等，现在就打 911
+possibly life-threatening, don't wait, call 911 now.
+
+76
+00:04:34,116 --> 00:04:37,865
+在一次真实测试里，提醒在第 3.5 秒出现
+In a real test, the warning appeared at 3.5 seconds,
+
+77
+00:04:37,865 --> 00:04:40,964
+检查过的回答在大约第 21 秒才到
+and the checked answer at about 21 seconds.
+
+78
+00:04:41,284 --> 00:04:45,764
+而且紧急判断从不收回，所以那个回答一定和提醒一致
+And since an emergency is never taken back, that answer is bound to agree.
+
+79
+00:04:47,100 --> 00:04:52,977
+检查过的回答终于到达时，页面最多用两秒半把它展示出来
+When the checked answer finally arrives, the page plays it out in at most two and a half seconds:
+
+80
+00:04:52,977 --> 00:04:55,825
+句子逐字打出来，列表整块出现
+sentences type themselves, lists drop in whole.
+
+81
+00:04:56,145 --> 00:04:57,738
+看起来像流式输出
+It looks like streaming.
+
+82
+00:04:57,788 --> 00:05:00,412
+其实是一段回放，回放的是已经通过检查的文字
+It is a replay of text that has already passed.
+
+83
+00:05:00,650 --> 00:05:03,637
+紧急回答跳过这段表演，立刻全部显示
+Emergency answers skip the show and appear at once.
+
+84
+00:05:03,957 --> 00:05:05,939
+停止按钮也是真的停止
+And the stop button really stops:
+
+85
+00:05:05,939 --> 00:05:10,442
+页面挂断，服务器取消它正在付钱的那次模型调用
+the page hangs up, and the server cancels the model call it was paying for.
+
+86
+00:05:11,783 --> 00:05:16,284
+周三上午，波士顿时间，流式输出在 20 分钟之内做好了
+On Wednesday morning, Boston time, the streaming went in within twenty minutes.
+
+87
+00:05:16,604 --> 00:05:19,275
+几分钟后，菜单加了一条说明
+A few minutes later, a note for the menu:
+
+88
+00:05:19,275 --> 00:05:22,337
+切换模型或思考强度会从一份新的缓存开始
+switching model or effort starts a fresh cache,
+
+89
+00:05:22,337 --> 00:05:26,311
+所以在 Terra 上，那第一次回答大约贵 5 倍
+so on Terra that first answer costs about five times as much.
+
+90
+00:05:26,550 --> 00:05:30,042
+那天剩下的很多时间，花在了 review 发现的问题上
+Much of the rest of the day went to what reviews found:
+
+91
+00:05:30,042 --> 00:05:34,359
+在停止、重试和断线时都保住 911 提醒
+keeping the 911 warning through stop, retry and dropped connections,
+
+92
+00:05:34,359 --> 00:05:39,183
+还有一个测试，只要模型原文里任意连续
+and a test that fails if any four consecutive characters of the model's text
+
+93
+00:05:39,183 --> 00:05:42,230
+4 个字符在结果之前出现在进度行里，它就失败
+show up in the progress lines before the result.
+
+94
+00:05:42,550 --> 00:05:47,478
+这个测试证明：检查器放行之前，没有一个字会到达页面
+That test is the proof that no words reach the page before the checker has passed them.
+
+95
+00:05:48,817 --> 00:05:51,740
+那么，「思考了 22 秒」后面是什么？
+So what sits behind "thought for 22 seconds"?
+
+96
+00:05:52,060 --> 00:05:55,277
+Claude 的 app 在思考时也显示计时器
+Claude's app also shows a timer while it thinks,
+
+97
+00:05:55,277 --> 00:05:59,633
+并且和 ChatGPT 一样，点开是一段模型推理的摘要
+and, like ChatGPT, opens onto a summary of the model's reasoning.
+
+98
+00:05:59,953 --> 00:06:01,600
+我们的点开是一张收据
+Ours opens onto a receipt:
+
+99
+00:06:01,600 --> 00:06:06,353
+用时、依据、检查、判断、模型和价格
+the timings, the sources, the check, the judgment, the model and the price.
+
+100
+00:06:06,600 --> 00:06:08,776
+原因写在决策记录里
+The reason is in the decision record.
+
+101
+00:06:09,096 --> 00:06:13,363
+推理原文里可能有诊断性的猜测，而且没有任何东西检查过它
+Raw reasoning may contain diagnostic guesses, and nothing has checked it.
+
+102
+00:06:13,683 --> 00:06:17,694
+在医疗产品里，屏幕上的一个猜测，读起来就像一个诊断
+In a medical product, a guess on screen reads like a diagnosis.
+
+103
+00:06:19,033 --> 00:06:20,476
+还能往哪里走？
+Where could this go?
+
+104
+00:06:20,526 --> 00:06:23,790
+OpenAI 可以返回隐藏推理的摘要
+OpenAI can return a summary of the hidden reasoning.
+
+105
+00:06:24,110 --> 00:06:27,735
+但摘要也是模型写的，所以在任何人看到之前
+But a summary is written by a model too, so it would have to pass the same checker before anyone sees it.
+
+106
+00:06:27,735 --> 00:06:29,806
+它也得通过同一个检查器
+But a summary is written by a model too, so it would have to pass the same checker before anyone sees it.
+
+107
+00:06:30,126 --> 00:06:34,265
+进度行可以说出真实的步骤，比如正在核对诊所的营业时间
+The progress line could name real steps, like checking the clinic's hours.
+
+108
+00:06:34,585 --> 00:06:37,159
+agent 还提过一个只给开发者用的开关
+And the agent raised a developer-only switch
+
+109
+00:06:37,159 --> 00:06:39,790
+在调提示词时看没检查过的草稿
+to see unchecked drafts while tuning prompts.
+
+110
+00:06:40,110 --> 00:06:41,483
+它没有被做出来
+It was not built.
+
+111
+00:06:41,533 --> 00:06:43,154
+有三个决定在等你
+Three decisions wait for you.
+
+112
+00:06:43,474 --> 00:06:48,052
+只流进度的流式输出和模型菜单，被写成了提议
+Progress-only streaming and the model menu are written down as proposals;
+
+113
+00:06:48,052 --> 00:06:50,685
+开发者开关，被写成了一个待定的问题
+the developer switch, as an open question.
+
+114
+00:06:52,033 --> 00:06:54,102
+所以，思考了 22 秒
+So, thought for 22 seconds.
+
+115
+00:06:54,422 --> 00:06:59,414
+先是思考：模型写给自己的隐藏 token，要付钱，但从不发回
+First thinking: hidden tokens the model writes for itself, billed but never sent.
+
+116
+00:06:59,734 --> 00:07:05,324
+然后是写，我们的服务器一格一格地盯着，只转发进度，不转发文字
+Then writing, which our server watches box by box, passing on progress but not words.
+
+117
+00:07:05,644 --> 00:07:08,950
+前几格一说紧急，就提前给出提醒
+An early warning when the first boxes say emergency.
+
+118
+00:07:09,270 --> 00:07:11,425
+检查器通过之后，再回放一遍
+A replay once the checker has passed it.
+
+119
+00:07:11,745 --> 00:07:13,708
+最后，用一张收据代替思考内容
+And a receipt instead of the thoughts.
+
+120
+00:07:13,950 --> 00:07:15,329
+三个问题
+Three questions.
+
+121
+00:07:15,379 --> 00:07:17,854
+我们的计时器到底把什么叫作思考？
+What exactly does our stopwatch call thinking?
+
+122
+00:07:18,174 --> 00:07:21,118
+为什么和紧急程度有关的几格排在表的最前面？
+Why do the urgency boxes come first in the form?
+
+123
+00:07:21,438 --> 00:07:24,616
+一段推理摘要要先经过什么，才能给人看？
+And what would a reasoning summary need before it could be shown?
+
+124
+00:07:24,866 --> 00:07:26,494
+下一集讲页面本身
+Next time, the page itself:
+
+125
+00:07:26,494 --> 00:07:31,074
+我们从 Claude 的 app 学了什么、拒绝了什么，还能发明什么
+what we copied from Claude's app, what we refused, and what we could invent.

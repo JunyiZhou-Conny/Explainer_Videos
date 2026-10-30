@@ -104,9 +104,29 @@ every 3 s), plus my own frame-by-frame layout pass over the same contact sheets:
   wrapper no longer starts a line with closing punctuation); the 「pulled back: too late」 label over
   the phone's edge; a wrapped status quote. All fixed and re-linted.
 
-## Verified (final render)
+## Verified (final render, 2026-10-30)
 
-To be filled from the final 1080p60 build.
+- **Files**: `portal-e2-thinking.mp4` (clean) and `portal-e2-thinking.zh-en.mp4` (bilingual subtitles
+  burned in) both decode in full with no error (`ffmpeg -v error -i … -f null -`, exit 0). 452.906 s
+  (7:32.9), 1920×1080 at 60 fps, H.264 High, yuv420p; AAC-LC 48 kHz stereo. 27,169 / 27,170 video
+  frames; 30.7 MB / 26.5 MB.
+- **Loudness** (EBU R128): −16.1 LUFS integrated, LRA 2.6 LU, true peak −1.1 dBTP, identical in both
+  files (the burned copy's audio stream has the same MD5, `13870bf5…`). The build's mix report: voice
+  −16.0 LUFS, music −32.84 LUFS under speech and −22.01 LUFS in the gaps.
+- **Subtitles**: 135 English / 101 Chinese / 125 bilingual cues (`output/*.srt`, committed), numbered
+  in order, never overlapping or empty, at most two lines, none shorter than 1.0 s; every bilingual cue
+  has Chinese above English; the `.zh-en.ass` has the same 125 events. The last cue ends at 7:31.1,
+  1.8 s before the end. `python -m explainer.i18n check videos/portal-e2-thinking --lang zh`: OK
+  (sentence alignment, punctuation, spacing).
+- **Layout**: `python -m explainer.check` reports no OUT, SMALL or missing-anchor problem in any of the
+  11 scenes. Two 480p drafts were read frame by frame (a frame every 3 s); four burned 1080p frames
+  were spot-checked (s01 receipt and stopwatch, s03 hidden tape, s06 axis, s08 commit ticks), with
+  the picture above the subtitle band and nothing under it.
+- **Narration**: 1,169 words (`python -m explainer.script`), Kokoro `af_heart` at 0.95.
+- **Release preflight**: `tools/release_episode.py videos/portal-e2-thinking --preflight` passes
+  (sign-off line, `publish:` block, no LaTeX needed).
+- Every on-screen string copied from the product matches SOURCES.md, and every number there has a
+  source. Rendered MP4s are not in git (release assets after merge).
 
 ## Not claimed
 
