@@ -1,0 +1,1099 @@
+1
+00:00:00,000 --> 00:00:03,108
+一位顾客要为一场品鉴会买奶酪
+A customer wants cheese for a tasting:
+
+2
+00:00:03,108 --> 00:00:07,198
+宾夕法尼亚 12 位客人，150 美元预算，不要坚果
+12 guests in Pennsylvania, a $150 budget, no nuts,
+
+3
+00:00:07,198 --> 00:00:11,861
+一款法国奶酪，还有一款浓烈度 4 或以上
+a French cheese, and one with a funk rating of 4 or more.
+
+4
+00:00:12,181 --> 00:00:14,976
+这是两个回答，来自同一个模型和同一套工具
+Here are two answers from the same model and tools.
+
+5
+00:00:15,217 --> 00:00:20,380
+第一个提议 1050 克，5600 美分
+The first proposes 1,050 grams for 5,600 cents.
+
+6
+00:00:20,700 --> 00:00:24,129
+第二个是 1200 克，6400 美分
+The second, 1,200 grams for 6,400 cents,
+
+7
+00:00:24,129 --> 00:00:30,129
+说是在一个逗号放错了地方的预算之内：一个格式错误的数字
+within a budget with the comma in the wrong place: a malformed number.
+
+8
+00:00:30,367 --> 00:00:33,183
+这两个里面，你会让哪一个去刷顾客的卡？
+Which of these would you let charge a customer's card?
+
+9
+00:00:33,503 --> 00:00:35,392
+而且在那之前，必须先满足什么条件？
+And what would have to be true first?
+
+10
+00:00:36,583 --> 00:00:38,354
+第二次运行打印了更多内容
+The second run printed more.
+
+11
+00:00:38,674 --> 00:00:41,549
+代码检查了购物车本身
+Code checked the cart itself:
+
+12
+00:00:41,549 --> 00:00:47,100
+1200 克，64 美元，满足店铺规则，没有下单
+1,200 grams, $64, shop rules satisfied, no order placed.
+
+13
+00:00:47,420 --> 00:00:50,706
+购物车是有效的；只是那句话写乱了
+The cart was valid; only the sentence was garbled.
+
+14
+00:00:51,026 --> 00:00:53,714
+第一个回答最终的购物车，根本没经过检查
+Nothing checked the first answer's final cart.
+
+15
+00:00:53,950 --> 00:00:58,921
+课程的 notebook 用一句话说清了：模型提议；harness 决定
+The course notebook says it in one line: the model proposes; the harness decides.
+
+16
+00:00:59,241 --> 00:01:01,807
+所谓 harness，就是模型外面的代码
+The harness is the code around the model:
+
+17
+00:01:01,807 --> 00:01:04,873
+循环、它的限制、它的上下文和它的检查
+the loop, its limits, its context and its checks.
+
+18
+00:01:05,193 --> 00:01:08,670
+今天我们把输出的每一行，都归到这两栏里
+Today we sort every line of output into these two columns.
+
+19
+00:01:08,917 --> 00:01:12,736
+第 7 讲和 README 分成同样的七节，顺序也一样
+Lecture 7 and the README share seven sections, in order.
+
+20
+00:01:13,056 --> 00:01:16,314
+教程在一家虚构的奶酪店里分六幕进行
+The tutorial runs six acts in a fictional cheese shop,
+
+21
+00:01:16,314 --> 00:01:19,391
+那里什么都不会真的买、真的寄，也不会真的发邮件
+where nothing is really bought, shipped or emailed.
+
+22
+00:01:19,633 --> 00:01:22,473
+左上角的进度条显示 README 的步骤
+The tracker, top left, shows the README step;
+
+23
+00:01:22,473 --> 00:01:25,628
+右上角的灰色标签显示对应的课件
+the gray tag, top right, shows the lecture slides.
+
+24
+00:01:25,948 --> 00:01:28,956
+看到标签写着 your turn，就暂停，自己跑这条命令
+When a tag says your turn, pause and run the command.
+
+25
+00:01:31,200 --> 00:01:36,366
+坦白说一个限制：2026 年 10 月 20 日录制时
+One honest limit: we recorded this on October 20, 2026,
+
+26
+00:01:36,366 --> 00:01:38,432
+我们没有 OpenAI 密钥
+without an OpenAI key.
+
+27
+00:01:38,752 --> 00:01:41,167
+离线的部分都是真实运行的
+Everything offline ran for real;
+
+28
+00:01:41,167 --> 00:01:45,621
+在线命令一直跑到 OpenAI 拒绝占位密钥为止
+live commands ran until OpenAI refused the placeholder key.
+
+29
+00:01:45,941 --> 00:01:50,165
+在线运行的回答，来自课程团队保存的 Colab 运行和 README
+Live answers come from the staff's saved Colab run and the README.
+
+30
+00:01:50,400 --> 00:01:53,024
+唯一的花费是 OpenAI 的 token
+The only cost is OpenAI tokens.
+
+31
+00:01:53,344 --> 00:01:58,229
+顾客 ID 在画面上遮住了，每条命令都在学习指南里
+Customer IDs are masked on screen, and every command is in the study guide.
+
+32
+00:02:00,767 --> 00:02:02,611
+你的笔记本上有 clone 下来的 repo
+Your laptop holds the clone,
+
+33
+00:02:02,611 --> 00:02:04,991
+旁边是一个空的 secrets 目录
+with an empty secrets folder beside it.
+
+34
+00:02:05,311 --> 00:02:10,644
+一个 container 挂载这两个目录，密钥以环境变量的形式传进去
+One container mounts both, your key goes in as an environment variable,
+
+35
+00:02:10,644 --> 00:02:15,828
+不发布任何 port，应用唯一的对外调用是走 HTTPS 去 OpenAI
+no port is published, and the app's only call out is HTTPS to OpenAI.
+
+36
+00:02:16,067 --> 00:02:20,125
+先做两个额外步骤：git clone，因为 README 默认你已经有一份
+Two extras first: git clone, since the README assumes a copy,
+
+37
+00:02:20,125 --> 00:02:25,048
+然后进入 agent-harness 目录，所有准备命令都在这里运行
+then change into the agent-harness folder, where every setup command runs.
+
+38
+00:02:25,368 --> 00:02:28,760
+列出的文件里没有 docs 目录；这一点后面很重要
+A listing shows no docs folder; that matters later.
+
+39
+00:02:29,000 --> 00:02:32,093
+第 1 步在上一级创建 secrets 目录
+Step 1 makes the secrets folder, one level up.
+
+40
+00:02:32,413 --> 00:02:35,293
+今天没有东西会读它，所以不需要服务账号
+Nothing reads it today, so no service account.
+
+41
+00:02:35,613 --> 00:02:37,213
+暂停一下，跑一遍
+Pause and run it.
+
+42
+00:02:39,000 --> 00:02:40,728
+第 2 步导出你的密钥
+Step 2 exports your key.
+
+43
+00:02:41,048 --> 00:02:44,952
+把占位符换成你自己的密钥，或者离线时跳过这一行
+Replace the placeholder with your own, or skip this line offline.
+
+44
+00:02:45,272 --> 00:02:48,515
+我们是照原样输入的；第 1 幕会看到这样做的结果
+We typed it as written; act 1 shows what that does.
+
+45
+00:02:48,750 --> 00:02:51,436
+第 3 步：bash docker-shell.sh
+Step 3, bash docker-shell.sh, builds the image and starts the container.
+
+46
+00:02:51,436 --> 00:02:53,913
+构建 image 并启动 container
+Step 3, bash docker-shell.sh, builds the image and starts the container.
+
+47
+00:02:54,233 --> 00:02:58,695
+我们的构建用了 38 秒，当时 base image 已经在机器上
+Ours took 38 seconds, with the base image already on the machine;
+
+48
+00:02:58,695 --> 00:03:02,745
+你第一次构建还要先 pull 它，所以预计要一分钟或更久
+your first build also pulls it, so expect a minute or more.
+
+49
+00:03:02,984 --> 00:03:07,218
+Dockerfile 先根据 lock 文件安装，再复制代码
+The Dockerfile installs from the lockfile before it copies the code:
+
+50
+00:03:07,218 --> 00:03:09,149
+这是第 2 讲讲过的分层技巧
+the layer trick from lecture 2.
+
+51
+00:03:09,384 --> 00:03:14,931
+横幅说环境已经激活了，可这时脚本还没激活它：一个无害的小疏漏
+The banner says the environment is activated before the script activates it: a harmless slip.
+
+52
+00:03:15,251 --> 00:03:18,002
+紧跟在 @ 符号后面的，是 container ID
+After the at sign comes the container ID.
+
+53
+00:03:18,250 --> 00:03:21,685
+从这里开始，每条命令都在 container 里运行
+From here on, every command runs inside the container.
+
+54
+00:03:22,005 --> 00:03:25,376
+暂停一下，跑第 2、3 步，等到出现这个提示符
+Pause, run steps 2 and 3, and wait for this prompt.
+
+55
+00:03:27,617 --> 00:03:29,708
+在第二个终端里做三个额外检查
+Three extras from a second terminal.
+
+56
+00:03:30,028 --> 00:03:31,969
+先看 docker ps：没有 port
+docker ps: no ports.
+
+57
+00:03:32,289 --> 00:03:38,796
+再看 docker images：1.77 GB，因为框架把所有集成都装上了
+docker images: 1.77 gigabytes, since the framework installs every integration.
+
+58
+00:03:39,034 --> 00:03:43,137
+用 docker inspect，能在 container 的配置里看到你的密钥
+docker inspect shows your key in the container's configuration;
+
+59
+00:03:43,137 --> 00:03:45,092
+真实的密钥要当作敏感信息对待
+treat a real key as sensitive.
+
+60
+00:03:45,334 --> 00:03:49,570
+第 4 步适用于改密钥时 container 已经在运行的情况
+Step 4 is for a container already running when you changed the key:
+
+61
+00:03:49,570 --> 00:03:54,059
+这时脚本只会运行 docker exec，而它不会带上新的密钥
+the script then only runs docker exec, which doesn't bring the new key.
+
+62
+00:03:54,300 --> 00:03:57,511
+如果是这种情况，就从第二个终端进到 container 的 shell 里
+If that's you, shell in from a second terminal
+
+63
+00:03:57,511 --> 00:03:59,207
+再输入 README 的那三行
+and type the README's three lines:
+
+64
+00:03:59,207 --> 00:04:02,151
+密钥隐藏着输入，也不会留在你的历史记录里
+the key goes in hidden, and out of your history.
+
+65
+00:04:02,471 --> 00:04:05,202
+之后一直在那个 shell 里操作。在这里暂停
+Keep working in that shell. Pause here.
+
+66
+00:04:09,500 --> 00:04:12,444
+现在在 container 里离线验证
+Now verify, offline, inside the container.
+
+67
+00:04:12,764 --> 00:04:18,115
+第 1 步检查 SDK，并打印安装的版本
+Step 1 checks the SDK and prints the installed versions,
+
+68
+00:04:18,115 --> 00:04:24,326
+录制时是 Python 3.13.16、agent-framework 1.19.0
+at the time of recording: Python 3.13.16, agent-framework 1.19.0,
+
+69
+00:04:24,326 --> 00:04:26,524
+而且每个功能都是 true
+and every feature true.
+
+70
+00:04:26,767 --> 00:04:33,551
+第 2 步跑测试：一共 281 个，大约 100 秒，最后是 OK
+Step 2 runs the tests: 281 of them, in about 100 seconds, ending in OK.
+
+71
+00:04:33,871 --> 00:04:38,500
+它们用的是脚本模拟的模型回复，所以测的是这套机制，不是模型
+They use scripted model responses, so they test the machinery, not the model.
+
+72
+00:04:39,750 --> 00:04:44,772
+第 3 步显示日志：故意制造的失败，比如注入的审计故障
+Step 3 shows the logs: deliberate failures, like an injected audit outage,
+
+73
+00:04:44,772 --> 00:04:48,369
+还有一个第 4 幕会再遇到的审批身份警告
+and an approval-identity warning we'll meet in act 4.
+
+74
+00:04:48,689 --> 00:04:50,267
+以最后一行为准
+Trust the last line.
+
+75
+00:04:50,317 --> 00:04:57,400
+模型检查只打印默认模型，并不调用它：录制时是 gpt-5.6-luna
+The model check prints the default without calling it: gpt-5.6-luna, at the time of recording.
+
+76
+00:04:57,720 --> 00:05:00,531
+命令行里的 --model 参数优先于环境变量
+A --model flag beats an environment variable,
+
+77
+00:05:00,531 --> 00:05:02,092
+环境变量又优先于这个默认值
+which beats this default;
+
+78
+00:05:02,092 --> 00:05:04,653
+如果你的账号用不了它，就设置其中一个
+if your account can't use it, set either.
+
+79
+00:05:04,900 --> 00:05:08,207
+README 的 notebook 那一节还有两条测试命令
+The README's notebook section has two more test commands.
+
+80
+00:05:08,527 --> 00:05:10,755
+它们也在 container 里运行
+They run in the container too:
+
+81
+00:05:10,755 --> 00:05:14,393
+9 个 notebook 测试，12 个 chat view 测试，都是 OK
+9 notebook tests and 12 chat view tests, both OK.
+
+82
+00:05:15,300 --> 00:05:17,711
+还有第二条路：课程的 Colab
+There's a second road: the course Colab.
+
+83
+00:05:18,031 --> 00:05:20,003
+把副本保存到你的 Drive
+Save a copy to your Drive,
+
+84
+00:05:20,003 --> 00:05:23,491
+把密钥存成一个名叫 OpenAI API key 的 secret
+add your key as a secret named OPENAI_API_KEY,
+
+85
+00:05:23,491 --> 00:05:27,055
+打开 Notebook access，再运行准备单元格
+allow notebook access, and run the setup cells.
+
+86
+00:05:27,300 --> 00:05:30,836
+Colab 准备时装的是那七个 pin 了版本的包
+The Colab setup installs the seven pinned packages,
+
+87
+00:05:30,836 --> 00:05:34,302
+而不是 lock 文件，所以它们的依赖可能会漂移
+not the lockfile, so their dependencies can drift;
+
+88
+00:05:34,302 --> 00:05:36,729
+要版本完全一致，就用 Docker
+for identical versions, use Docker.
+
+89
+00:05:36,967 --> 00:05:39,051
+这期视频里每个录下来的回答
+Every recorded answer in this video
+
+90
+00:05:39,051 --> 00:05:41,255
+都来自这个 notebook 保存的那次运行
+comes from this notebook's saved run.
+
+91
+00:05:41,575 --> 00:05:44,135
+暂停一下，两条路任选一条，把你的环境验证一遍
+Pause, and verify your setup either way.
+
+92
+00:05:47,283 --> 00:05:49,853
+第 1 幕从课上的回顾开始
+Act 1 starts from the lecture's recap:
+
+93
+00:05:49,853 --> 00:05:55,262
+agent 就是一个带着指令和工具的模型，一直运行到任务完成
+an agent is a model with instructions and tools, running until the task is done.
+
+94
+00:05:55,500 --> 00:05:59,586
+在代码里，build agent 这个函数会创建一个框架里的 agent
+In code, the function build_agent makes one framework agent:
+
+95
+00:05:59,586 --> 00:06:04,012
+店里的指令、五个工具，以及结构化的回复格式
+the shop instructions, five tools, and a structured reply format.
+
+96
+00:06:04,250 --> 00:06:07,621
+模型只能请求工具；工具由 harness 来运行
+The model can only ask for a tool; the harness runs it.
+
+97
+00:06:07,941 --> 00:06:10,608
+而且这五个工具都不能下单
+And none of these five can place an order:
+
+98
+00:06:10,608 --> 00:06:14,101
+preview order 工具只记录一个未经验证的提议
+the preview_order tool records an unvalidated proposal,
+
+99
+00:06:14,101 --> 00:06:16,196
+order placed 设为 false
+with "order_placed" set to False.
+
+100
+00:06:16,433 --> 00:06:22,556
+第 1 步：python cli.py --act 1 --scenario standard
+Step 1: python cli.py --act 1 --scenario standard.
+
+101
+00:06:22,876 --> 00:06:25,609
+你会看到需求、第 1 次调用和五个工具
+You see the ask, call 1 and five tools;
+
+102
+00:06:25,609 --> 00:06:29,532
+接着调用失败，报 401：占位密钥
+then the call fails with error 401: the placeholder key.
+
+103
+00:06:29,852 --> 00:06:31,352
+在这个 shell 里就能修好
+Fix it in this shell
+
+104
+00:06:31,352 --> 00:06:33,734
+用 Setup 的第 4 步那三行 read 命令
+with the three read lines from setup step 4.
+
+105
+00:06:34,054 --> 00:06:36,102
+失败的运行照样会记录下来
+The failed run is still recorded.
+
+106
+00:06:36,350 --> 00:06:39,294
+下面是有密钥时的样子，来自课程团队保存的运行
+Here's what a key gets you, from the staff's saved run.
+
+107
+00:06:39,614 --> 00:06:41,598
+模型请求商品清单
+The model asks for the catalog;
+
+108
+00:06:41,598 --> 00:06:45,950
+harness 运行这个工具，结果再送回去：又多了两条消息
+the harness runs it, and the result goes back in: two more messages.
+
+109
+00:06:46,200 --> 00:06:48,227
+每一轮都在同一个接缝处分开
+Every round splits at the same seam.
+
+110
+00:06:48,547 --> 00:06:51,276
+模型的计划止于 Requested tools
+The model's plan ends at Requested tools;
+
+111
+00:06:51,276 --> 00:06:53,539
+harness 从 Tool call 开始执行
+the harness executes at Tool call.
+
+112
+00:06:53,859 --> 00:06:57,357
+这个 trace 显示的是请求和结果，不是隐藏的推理
+The trace shows requests and results, not hidden reasoning.
+
+113
+00:06:57,600 --> 00:07:00,203
+然后是库存、价格、搭配和预览
+Then stock, price, pairings and preview.
+
+114
+00:07:00,523 --> 00:07:05,536
+第 6 次调用时，模型直接回答，没有请求工具，循环就停了
+On call 6 the model answers without asking for a tool, and the loop stops.
+
+115
+00:07:05,856 --> 00:07:12,942
+消息从 1 条涨到 11 条，输入从 1942 涨到 4540 个 token
+Messages grew from 1 to 11, input from 1,942 to 4,540 tokens:
+
+116
+00:07:12,942 --> 00:07:18,634
+一共大约 21000 个计费的输入 token，只为了一个回答
+about 21,000 billed input tokens, for one answer.
+
+117
+00:07:18,883 --> 00:07:22,976
+第 2 步加上 --show-json，看确切的消息
+Step 2 adds --show-json, to see the exact message:
+
+118
+00:07:22,976 --> 00:07:26,988
+一段简短的说明，加上 JSON 形式的已确认需求
+a short note, plus the confirmed request as JSON,
+
+119
+00:07:26,988 --> 00:07:29,443
+其中 null 表示没有提供
+where null means not provided.
+
+120
+00:07:29,763 --> 00:07:31,811
+暂停一下，用你的密钥把两条都跑一遍
+Pause and run both, with your key.
+
+121
+00:07:34,050 --> 00:07:35,991
+每调用一次，输入就会变长
+The input grows with every call.
+
+122
+00:07:36,311 --> 00:07:40,236
+这就是课上的问题：怎么管理进入模型的东西？
+That's the lecture's question: how do we manage what goes into the model?
+
+123
+00:07:42,183 --> 00:07:45,281
+课上说得很直白：如果你写过一个循环
+The lecture says it plainly: if you've written a loop
+
+124
+00:07:45,281 --> 00:07:49,372
+它调用模型并执行工具调用，那你就是 harness 工程师
+that calls a model and runs its tool calls, you're a harness engineer.
+
+125
+00:07:49,692 --> 00:07:51,420
+而一个裸循环是停不下来的
+And a bare loop has no stop.
+
+126
+00:07:51,666 --> 00:07:55,031
+第 3 步是一个 notebook 单元格，在 Colab 或 Jupyter 里用
+Step 3 is a notebook cell, for Colab or Jupyter,
+
+127
+00:07:55,031 --> 00:07:57,554
+它把 build agent 包进一个 harness
+that wraps build_agent in a harness.
+
+128
+00:07:57,874 --> 00:07:58,994
+它加上 Trace
+It adds Trace,
+
+129
+00:07:58,994 --> 00:08:03,551
+Budget 限模型调用 8 次、工具调用 20 次、时长 120 秒
+Budget with 8 model calls, 20 tool calls and 120 seconds,
+
+130
+00:08:03,551 --> 00:08:06,109
+basic Context 和 CartCheck
+Context("basic"), and CartCheck.
+
+131
+00:08:06,429 --> 00:08:08,477
+CLI 构建的正是这个
+The CLI builds exactly this.
+
+132
+00:08:09,916 --> 00:08:14,737
+内环永远拆不掉：调用准入、工具审计和店铺规则
+The inner ring never comes off: call admission, the tool audit and the shop rules.
+
+133
+00:08:15,057 --> 00:08:18,578
+四个 harness 层套在它外面，每层一个功能
+Four harness layers slide on around it, one feature each.
+
+134
+00:08:20,316 --> 00:08:21,916
+Budget 是一个闸机
+Budget is a turnstile.
+
+135
+00:08:22,151 --> 00:08:24,635
+每次模型调用都要放行并计数
+Each model call is admitted and counted;
+
+136
+00:08:24,635 --> 00:08:26,135
+第九次会失败，报的是
+a ninth fails
+
+137
+00:08:26,135 --> 00:08:30,066
+Maximum of 8 model calls reached，而且锁会一直关着
+with Maximum of 8 model calls reached, and the lock stays shut.
+
+138
+00:08:30,300 --> 00:08:34,174
+没有 Budget，就只剩框架的兜底
+Without Budget, only the framework's fallback is left:
+
+139
+00:08:34,174 --> 00:08:38,406
+40 次循环迭代，没有调用次数上限，也没有总的时间预算
+40 loop iterations, no call limits, no overall time budget.
+
+140
+00:08:39,350 --> 00:08:41,889
+CartCheck 就是课上的验证步骤
+CartCheck is the lecture's verify step.
+
+141
+00:08:42,209 --> 00:08:44,555
+回到开头的例子：它检查的是商品明细
+Back to the hook: it checked the items,
+
+142
+00:08:44,555 --> 00:08:47,563
+不是文字，所以预算写乱了也照样通过
+not the prose, so the garbled budget still passed.
+
+143
+00:08:47,883 --> 00:08:49,952
+它只报告，从不修复
+It reports, and never repairs.
+
+144
+00:08:50,200 --> 00:08:53,858
+现在这两栏变成了课上的行动边界
+Now the two columns become the lecture's action boundary:
+
+145
+00:08:53,858 --> 00:08:58,477
+五个关注点，左边是模型负责的部分，右边是 harness 的
+five concerns, the model's part on the left, the harness's on the right.
+
+146
+00:08:58,716 --> 00:09:00,465
+第 1 幕填了三行
+Act 1 fills three rows.
+
+147
+00:09:00,785 --> 00:09:04,412
+风险高或操作无法撤销时就往右移
+Move right when stakes are high, or an action can't be undone.
+
+148
+00:09:04,650 --> 00:09:06,250
+来想一个问题
+Something to ponder.
+
+149
+00:09:06,314 --> 00:09:09,258
+用 harness without trace 得到一个副本，再运行它
+Take harness.without("trace"), and run that copy.
+
+150
+00:09:09,578 --> 00:09:11,903
+工具调用还会计数、还会审计吗？
+Is a tool call still counted and audited?
+
+151
+00:09:12,223 --> 00:09:14,548
+而原来那个 harness 还会记录 trace 吗？
+And does the original harness still trace?
+
+152
+00:09:23,383 --> 00:09:24,848
+是，也是
+Yes, and yes.
+
+153
+00:09:24,898 --> 00:09:27,287
+准入和审计就是内环
+Admission and the audit are the inner ring.
+
+154
+00:09:27,607 --> 00:09:31,462
+而且 add 和 without 方法从不修改 harness
+And the .add() and .without() methods never change a harness:
+
+155
+00:09:31,462 --> 00:09:36,012
+每次都返回一个新的配置，所以原来那个 harness 的四层都还在
+each returns a new configuration, so the original keeps all four layers.
+
+156
+00:09:36,250 --> 00:09:39,045
+第 4 步运行 missing-details 场景
+Step 4 runs the missing-details scenario.
+
+157
+00:09:39,365 --> 00:09:43,266
+有密钥的话，要找的是反问，而不是编造的细节
+With a key, look for a question back, not invented details;
+
+158
+00:09:43,266 --> 00:09:45,381
+CartCheck 应该报告 no cart
+CartCheck should report no_cart.
+
+159
+00:09:45,701 --> 00:09:47,301
+暂停一下，跑一遍
+Pause and run it.
+
+160
+00:09:50,000 --> 00:09:54,203
+第 2 幕改的是模型看到的东西：课上说的看不见的那一层
+Act 2 changes what the model sees: the lecture's invisible layer.
+
+161
+00:09:54,523 --> 00:09:57,678
+这是按课上的上下文栈画出的一次模型调用
+Here is one model call as the lecture's stack:
+
+162
+00:09:57,678 --> 00:10:02,821
+system prompt 和店铺政策、需求、回复格式、五个工具
+system prompt and shop policies, the request, the reply format, five tools,
+
+163
+00:10:02,821 --> 00:10:06,661
+还有两个空位，留给检索到的数据和保存的偏好
+and two slots, for retrieved data and saved preferences.
+
+164
+00:10:06,900 --> 00:10:12,184
+第 1 幕用的 basic 模式只发前四块，空位留空
+Basic mode, the one act 1 used, sends the first four and leaves the slots empty;
+
+165
+00:10:12,184 --> 00:10:13,784
+而 enriched 把它们填满
+enriched fills them.
+
+166
+00:10:15,433 --> 00:10:19,244
+第 1 步 --compare 用的是 personalized 场景
+Step 1, --compare, uses the personalized scenario,
+
+167
+00:10:19,244 --> 00:10:27,401
+今天的需求没提第二位顾客保存的口味：温和的奶酪和无酒精搭配
+where today's request leaves out the second customer's saved taste: mild cheeses and nonalcoholic pairings.
+
+168
+00:10:27,721 --> 00:10:32,372
+先跑的 basic 一启动就停在 401，所以 enriched 根本没有开始
+The basic run starts and stops at the 401, so enriched never starts.
+
+169
+00:10:32,617 --> 00:10:36,357
+有密钥的话，它会打印一张并排对比表和一个结论
+With a key, it prints a side-by-side table and a verdict,
+
+170
+00:10:36,357 --> 00:10:38,654
+结论也可能是打平或者退步
+which may be a tie or a regression.
+
+171
+00:10:38,900 --> 00:10:41,631
+第 2 到第 4 步是可选的单次运行
+Steps 2 to 4 are optional single runs.
+
+172
+00:10:41,951 --> 00:10:45,171
+即使没有密钥，也能看到一个真实的差别
+Even without a key, there's a real difference:
+
+173
+00:10:45,171 --> 00:10:48,881
+basic 发 1 条对话消息，enriched 发 2 条
+basic sends 1 conversation message, enriched sends 2;
+
+174
+00:10:48,881 --> 00:10:51,401
+多出来的那条就是上下文包
+the extra one is the context packet.
+
+175
+00:10:51,867 --> 00:10:55,376
+第 4 步是偏好覆盖那次运行，要求浓烈度 4 或以上
+Step 4, the override run, asks for funk 4 or more,
+
+176
+00:10:55,376 --> 00:10:59,804
+今天的需求必须压过保存的口味。README 里说
+and today's request must win over the saved taste. The README
+
+177
+00:10:59,804 --> 00:11:03,762
+第 2 幕的每条命令还会额外打印一个 harness 政策检查
+says each act 2 command also prints a harness policy check.
+
+178
+00:11:04,082 --> 00:11:06,792
+一个小疏漏：--compare 不会
+A small slip: --compare doesn't.
+
+179
+00:11:07,112 --> 00:11:10,432
+这条额外的命令会打印：同一辆生乳奶酪的购物车
+This extra call does: the same raw-milk cart fails
+
+180
+00:11:10,432 --> 00:11:14,749
+寄往宾夕法尼亚不通过，寄往纽约通过，依据的是一条虚构的规则
+for Pennsylvania and passes for New York, under a fictional rule.
+
+181
+00:11:18,233 --> 00:11:21,733
+第 5 步是一条第 3 幕的命令，README 把它放在了这里
+Step 5 is an act 3 command the README puts here;
+
+182
+00:11:21,733 --> 00:11:23,333
+第二部分会讲它
+part 2 explains it.
+
+183
+00:11:23,967 --> 00:11:27,864
+第 6 步把两个用例在两种模式下各重复 3 次
+Step 6 repeats both cases in both modes, 3 times:
+
+184
+00:11:27,864 --> 00:11:29,464
+一共 12 次在线运行
+12 live runs.
+
+185
+00:11:29,684 --> 00:11:32,195
+没有密钥时，它在 3 个错误之后就停了
+Without a key it stops after 3 errors,
+
+186
+00:11:32,195 --> 00:11:34,705
+但报告照样会在第 7 步写出来
+but the report still writes in step 7,
+
+187
+00:11:34,705 --> 00:11:38,537
+label 也用掉了：有密钥的话，换一个新的
+and the label is used up: with your key, choose a new one.
+
+188
+00:11:38,783 --> 00:11:42,699
+这里链接的页面，本该放在我们看到缺失的那个 docs 目录里
+The page linked here belongs in the docs folder we saw missing,
+
+189
+00:11:42,699 --> 00:11:44,564
+所以就用 README 的检查点
+so use the README checkpoints.
+
+190
+00:11:44,884 --> 00:11:46,485
+有密钥的话就在这里暂停
+Pause here if you have a key.
+
+191
+00:11:49,833 --> 00:11:53,908
+README 里，Inspect the context first 排在在线运行之后
+The README prints Inspect the context first after the live runs.
+
+192
+00:11:54,228 --> 00:11:58,366
+没有密钥的话，就从这里开始：离线跑 --preview-context
+Without a key, start here: --preview-context, offline.
+
+193
+00:11:58,686 --> 00:12:03,316
+两种模式的指令、消息和工具都一样；只有上下文包不同
+Both modes share instructions, message and tools; only the packets differ.
+
+194
+00:12:03,550 --> 00:12:05,278
+其中 basic 没有来源
+Basic has no sources.
+
+195
+00:12:05,598 --> 00:12:08,471
+而 enriched 有三个，每个都带一个信任标注
+Enriched has three, each with a trust label:
+
+196
+00:12:08,471 --> 00:12:12,126
+已确认的需求、店铺数据和保存的偏好
+the confirmed request, shop data, and saved preferences.
+
+197
+00:12:12,366 --> 00:12:15,086
+十二种奶酪穿过三层筛子
+Twelve cheeses fall through three sieves:
+
+198
+00:12:15,086 --> 00:12:19,065
+库存够、不往宾夕法尼亚寄生乳、没有坚果过敏原
+enough stock, no raw milk to Pennsylvania, no nut allergens.
+
+199
+00:12:19,385 --> 00:12:23,138
+Munster 没有库存，Brie 和 Comté 过不了运输规则
+Munster has no stock, Brie and Comté fail the shipping rule,
+
+200
+00:12:23,138 --> 00:12:25,827
+两种含坚果的奶酪过不了过敏检查
+and two nut cheeses fail the allergy check.
+
+201
+00:12:26,147 --> 00:12:27,747
+七种留了下来
+Seven survive.
+
+202
+00:12:31,266 --> 00:12:34,960
+课上说的检索信息指任何外部数据
+The lecture's retrieved information is any outside data;
+
+203
+00:12:34,960 --> 00:12:39,181
+在这里它是一个 Python 过滤器，不是第 5 讲的向量检索
+here it's a Python filter, not the vector search from lecture 5.
+
+204
+00:12:39,416 --> 00:12:40,902
+那它放在哪儿？
+And where does it go?
+
+205
+00:12:40,952 --> 00:12:44,192
+放进一条以 Retrieved context 为标题的 user 消息
+Into a user message headed Retrieved context,
+
+206
+00:12:44,192 --> 00:12:48,440
+是数据，不是指令，所以它没法冒充系统规则
+data, not instructions, so it cannot pose as a system rule.
+
+207
+00:12:48,760 --> 00:12:54,456
+这就是课上的两条通道：指令走 system 通道，证据走 user 通道
+That's the lecture's two lanes: instructions in the system lane, evidence in the user lane.
+
+208
+00:12:54,700 --> 00:12:56,300
+来想一个问题
+Something to ponder.
+
+209
+00:12:56,364 --> 00:12:59,116
+这个 enriched 上下文包已经去掉了 Comté
+The enriched packet already removed Comté.
+
+210
+00:12:59,436 --> 00:13:01,847
+模型还能把 Comté 放进它的购物车吗？
+Can the model still put Comté in its cart?
+
+211
+00:13:02,167 --> 00:13:04,321
+第 2 幕里有什么能拦住它吗？
+And does anything in act 2 stop it?
+
+212
+00:13:13,166 --> 00:13:16,768
+能：get catalog 工具仍然返回全部十二种奶酪
+Yes: the get_catalog tool still returns all twelve,
+
+213
+00:13:16,768 --> 00:13:19,310
+而在第 2 幕，CartCheck 只报告
+and in act 2 CartCheck only reports.
+
+214
+00:13:19,630 --> 00:13:24,644
+筛选能缩小范围，但校验说了算：第 3 幕的工作流会拦下它
+Selection narrows, but validation decides: the act 3 workflow blocks it.
+
+215
+00:13:24,883 --> 00:13:28,254
+第 9 步是可选的基线，两种模式都跑
+Step 9 is the optional baseline, in both modes.
+
+216
+00:13:28,574 --> 00:13:33,310
+在 standard 场景里，保存的偏好重复了需求，所以可能变化不大
+For standard, the saved preferences repeat the request, so little may change.
+
+217
+00:13:33,630 --> 00:13:35,656
+暂停一下，跑第 8、9 步
+Pause and run steps 8 and 9.
+
+218
+00:13:37,900 --> 00:13:41,641
+所以筛选候选有帮助，但校验说了算
+So selecting candidates helps, but validation decides,
+
+219
+00:13:41,641 --> 00:13:44,897
+今天的需求优先于保存的偏好
+and today's request outranks saved preferences.
+
+220
+00:13:45,217 --> 00:13:49,292
+第二部分，harness 会把购物车的路线从模型手里拿走
+In part 2, the harness takes the cart's route out of the model's hands.

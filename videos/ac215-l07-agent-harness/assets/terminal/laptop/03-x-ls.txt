@@ -1,0 +1,21 @@
+$ ls -a
+.
+..
+.git
+.gitignore
+Dockerfile
+README.md
+acts
+cli.py
+data
+docker-entrypoint.sh
+docker-shell.sh
+formaggio
+notebooks
+prompts
+pyproject.toml
+scripts
+skills
+tests
+uv.lock
+[exit 0]

@@ -1,0 +1,228 @@
+$ python cli.py --list-runs
+[
+  {
+    "run_id": "536c6c4812c049c495a9988ed754ee49",
+    "case_id": "standard",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "166cc947a0b640838024ea56398d8634",
+    "case_id": "standard",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "89d30d01dad442e3850397a2e9f41c9d",
+    "case_id": "missing-details",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "d8e80c57eb5642e88d86756557f00d10",
+    "case_id": "personalized",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "8c3724d0f9274d12b70ad4b0a6924c5f",
+    "case_id": "personalized",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "36380173abf94a27908e5625929f4737",
+    "case_id": "personalized",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "103374497c64474eb2eae5cecf14f8a9",
+    "case_id": "preference-override",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "ae32636fd2cc4566b4cc35933718f484",
+    "case_id": "pa-shipping",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "371f2101ac094cb280775a2b9becfaa8",
+    "case_id": "personalized:basic",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "00f6319cb6514778b4dc1a37344da49e",
+    "case_id": "personalized:basic",
+    "repetition": 2,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "b399462d1a7e4c2bb3502a26d984118f",
+    "case_id": "personalized:basic",
+    "repetition": 3,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "2586a0f3fc31480eac4cc15cf61e958d",
+    "case_id": "standard",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "47bc6231fcac45c98d025da06818048a",
+    "case_id": "standard",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "b8abe48238be4e728f72f6de76bb8433",
+    "case_id": "pa-shipping-blocked",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "0250590efcf048e0a1e3375fb644d7e4",
+    "case_id": "pa-shipping",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "7409b343679a457490c94fb7512faa31",
+    "case_id": "manager-approval",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  },
+  {
+    "run_id": "dc711d60382540979e4d77c2af3e89db",
+    "case_id": "manager-approval",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  },
+  {
+    "run_id": "fb272439d8594e35876f1171f7b8d342",
+    "case_id": "out-of-stock",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  },
+  {
+    "run_id": "883134f014094c1dacfba59a5ff1ded6",
+    "case_id": "pa-shipping",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  },
+  {
+    "run_id": "65dca22967404364999a8e5596d5daea",
+    "case_id": "pa-shipping-blocked",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  },
+  {
+    "run_id": "a8d6ea25308a47c6bf22a2bbe4e978ae",
+    "case_id": "event-shortage",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "89ba6bcc15eb468592dc4b923c58a73d",
+    "case_id": "event-shortage",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  },
+  {
+    "run_id": "2a2c5f865df2498298a0965056d621eb",
+    "case_id": "event-shortage",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  },
+  {
+    "run_id": "9cbbf1c0a2c348c1a2fd210b733a8170",
+    "case_id": "event-shortage",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "eea3068b6b6b43368aaf6d151b133656",
+    "case_id": "event-shortage",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "a5540b216fa44546a20b263d484a3618",
+    "case_id": "event-shortage",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "a6093b15c39b454d922735328ab6d073",
+    "case_id": "stock-question",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  },
+  {
+    "run_id": "f64b285442fb4c7eaa9fe259a3ed8ec7",
+    "case_id": "event-shortage",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  },
+  {
+    "run_id": "5bd990507796466593c4e183b92cf42f",
+    "case_id": "tasting-plan",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  },
+  {
+    "run_id": "3f9298a9e80941aabb6b32fc6ba21ecd",
+    "case_id": "standard",
+    "repetition": 1,
+    "status": "error",
+    "mode": "live"
+  },
+  {
+    "run_id": "746d82c82af34a8bb0fd7324834d0168",
+    "case_id": "two-orders",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  },
+  {
+    "run_id": "913bc517753846b197f0aedfd9a9b040",
+    "case_id": "standard",
+    "repetition": 1,
+    "status": "completed",
+    "mode": "fixture"
+  }
+]
+[exit 0]

@@ -1,0 +1,16 @@
+00-x-env	20:17:47 UTC	0.1s
+01-x-clone	20:17:48 UTC	1.8s
+02-x-git-log	20:17:49 UTC	0.1s
+03-x-ls	20:17:49 UTC	0.1s
+04-mkdir-secrets	20:17:49 UTC	0.1s
+05-x-ls-workspace	20:17:49 UTC	0.1s
+06-export-key	20:17:49 UTC	0.1s
+08-x-docker-ps	20:18:29 UTC	0.1s
+09-x-docker-images	20:18:29 UTC	0.1s
+10-x-container-env	20:18:29 UTC	0.1s
+11-x-mounts	20:18:30 UTC	0.1s
+12-docker-shell-again-read-key.txt	exit=+4.5s
+07-docker-shell.txt	exit=+380.0s
+13-x-ps-after-exit	20:24:11 UTC	0.1s
+14-x-outputs-on-host	20:24:11 UTC	0.1s
+15-x-image-rm	20:24:11 UTC	0.1s

@@ -1,0 +1,46 @@
+$ python cli.py --act 3 --fixture --scenario pa-shipping
+Workflow lesson — FIXTURE proposals; no model calls.
+Classroom simulation — no real purchase, shipment, or email. Orders and inventory last for this process; traces are saved in SQLite.
+
+🧪 Scenario: pa-shipping · SCRIPTED proposals
+
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+Step: confirm_request
+Step: propose_cart
+🧺 Proposed cart — attempt 1:
+  Comté 18 mois (comte) — 350 g · RAW MILK
+  Bûcheron (bucheron) — 350 g · not raw milk
+  Époisses (epoisses) — 300 g · not raw milk
+Step: validate_and_price
+Cart attempt 1: shipping: comte — Fictional shop policy blocks raw-milk shipping to PA.
+  🛡️ Cart rejected; requesting a revised proposal before checkout.
+Step: propose_cart
+🧺 Proposed cart — attempt 2:
+  Époisses (epoisses) — 300 g · not raw milk
+  Bûcheron (bucheron) — 350 g · not raw milk
+  Taleggio (taleggio) — 350 g · not raw milk
+🔄 Changes from the previous proposal:
+  Removed: Comté 18 mois (comte) — 350 g
+  Added: Taleggio (taleggio) — 350 g
+Step: validate_and_price
+Cart attempt 2: valid; $50.10
+  ✅ Shipping policy for PA: passed; no raw-milk cheese in this proposal.
+Step: select_pairings
+Step: manager_approval
+Step: revalidate_and_place
+
+--- WORKFLOW PLACED — run 883134f014094c1dacfba59a5ff1ded6 ---
+Order placed.
+Receipt: 3990d720819e4698a3876926f2be1ec4
+  1000 g; cheese subtotal $50.10
+  bucheron: 350 g — $14.35
+  epoisses: 300 g — $20.70
+  taleggio: 350 g — $15.05
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+Pairings for bucheron: Apple slices, Wheat crackers (allergens: wheat), Sparkling water
+Pairings for epoisses: Apple slices, Cornichons, Wheat crackers (allergens: wheat), Dry Riesling (allergens: sulfites), Sparkling water
+Pairings for taleggio: Apple slices, Cornichons, Wheat crackers (allergens: wheat), Dry Riesling (allergens: sulfites), Sparkling water
+Proposal attempts: 2. Model calls: 0.
+💾 Recorded in /app/outputs/observability.sqlite. No evaluation suite was run.
+[exit 0]

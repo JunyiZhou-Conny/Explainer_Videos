@@ -1,0 +1,1023 @@
+1
+00:00:00,000 --> 00:00:06,499
+A customer wants cheese for a tasting:
+12 guests in Pennsylvania, a $150 budget,
+
+2
+00:00:06,499 --> 00:00:11,861
+no nuts, a French cheese,
+and one with a funk rating of 4 or more.
+
+3
+00:00:12,181 --> 00:00:14,976
+Here are two answers
+from the same model and tools.
+
+4
+00:00:15,217 --> 00:00:20,380
+The first proposes 1,050 grams
+for 5,600 cents.
+
+5
+00:00:20,700 --> 00:00:24,129
+The second, 1,200 grams for 6,400 cents,
+
+6
+00:00:24,129 --> 00:00:28,477
+within a budget with the comma
+in the wrong place:
+
+7
+00:00:28,477 --> 00:00:30,129
+a malformed number.
+
+8
+00:00:30,367 --> 00:00:33,183
+Which of these would you
+let charge a customer's card?
+
+9
+00:00:33,503 --> 00:00:35,337
+And what would have to be true first?
+
+10
+00:00:36,583 --> 00:00:38,354
+The second run printed more.
+
+11
+00:00:38,674 --> 00:00:41,549
+Code checked the cart itself:
+
+12
+00:00:41,549 --> 00:00:47,100
+1,200 grams, $64, shop rules satisfied,
+no order placed.
+
+13
+00:00:47,420 --> 00:00:50,706
+The cart was valid;
+only the sentence was garbled.
+
+14
+00:00:51,026 --> 00:00:53,714
+Nothing checked the first
+answer's final cart.
+
+15
+00:00:53,950 --> 00:00:58,921
+The course notebook says it in one line:
+the model proposes; the harness decides.
+
+16
+00:00:59,241 --> 00:01:01,807
+The harness is the code around the model:
+
+17
+00:01:01,807 --> 00:01:04,873
+the loop, its limits,
+its context and its checks.
+
+18
+00:01:05,193 --> 00:01:08,670
+Today we sort every line of output
+into these two columns.
+
+19
+00:01:08,917 --> 00:01:12,736
+Lecture 7 and the README
+share seven sections, in order.
+
+20
+00:01:13,056 --> 00:01:16,314
+The tutorial runs six acts
+in a fictional cheese shop,
+
+21
+00:01:16,314 --> 00:01:19,391
+where nothing is really bought,
+shipped or emailed.
+
+22
+00:01:19,633 --> 00:01:22,473
+The tracker,
+top left, shows the README step;
+
+23
+00:01:22,473 --> 00:01:25,628
+the gray tag,
+top right, shows the lecture slides.
+
+24
+00:01:25,948 --> 00:01:28,956
+When a tag says your turn,
+pause and run the command.
+
+25
+00:01:31,200 --> 00:01:32,797
+One honest limit:
+
+26
+00:01:32,797 --> 00:01:38,432
+we recorded this on October 20, 2026,
+without an OpenAI key.
+
+27
+00:01:38,752 --> 00:01:41,167
+Everything offline ran for real;
+
+28
+00:01:41,167 --> 00:01:45,621
+live commands ran
+until OpenAI refused the placeholder key.
+
+29
+00:01:45,941 --> 00:01:50,165
+Live answers come from the staff's saved
+Colab run and the README.
+
+30
+00:01:50,400 --> 00:01:53,024
+The only cost is OpenAI tokens.
+
+31
+00:01:53,344 --> 00:01:58,229
+Customer IDs are masked on screen,
+and every command is in the study guide.
+
+32
+00:02:00,767 --> 00:02:04,991
+Your laptop holds the clone,
+with an empty secrets folder beside it.
+
+33
+00:02:05,311 --> 00:02:07,278
+One container mounts both,
+
+34
+00:02:07,278 --> 00:02:12,272
+your key goes in as an environment variable,
+no port is published,
+
+35
+00:02:12,272 --> 00:02:15,828
+and the app's only call out
+is HTTPS to OpenAI.
+
+36
+00:02:16,067 --> 00:02:20,125
+Two extras first:
+git clone, since the README assumes a copy,
+
+37
+00:02:20,125 --> 00:02:25,048
+then change into the agent-harness folder,
+where every setup command runs.
+
+38
+00:02:25,368 --> 00:02:28,760
+A listing shows no docs folder;
+that matters later.
+
+39
+00:02:29,000 --> 00:02:32,093
+Step 1 makes the secrets folder,
+one level up.
+
+40
+00:02:32,413 --> 00:02:35,293
+Nothing reads it today,
+so no service account.
+
+41
+00:02:35,613 --> 00:02:36,766
+Pause and run it.
+
+42
+00:02:39,000 --> 00:02:40,728
+Step 2 exports your key.
+
+43
+00:02:41,048 --> 00:02:44,952
+Replace the placeholder with your own,
+or skip this line offline.
+
+44
+00:02:45,272 --> 00:02:48,515
+We typed it as written;
+act 1 shows what that does.
+
+45
+00:02:48,750 --> 00:02:53,913
+Step 3, bash docker-shell.sh, builds
+the image and starts the container.
+
+46
+00:02:54,233 --> 00:02:58,695
+Ours took 38 seconds,
+with the base image already on the machine;
+
+47
+00:02:58,695 --> 00:03:02,745
+your first build also pulls it,
+so expect a minute or more.
+
+48
+00:03:02,984 --> 00:03:07,218
+The Dockerfile installs from the lockfile
+before it copies the code:
+
+49
+00:03:07,218 --> 00:03:09,149
+the layer trick from lecture 2.
+
+50
+00:03:09,384 --> 00:03:12,037
+The banner says the environment is activated
+
+51
+00:03:12,037 --> 00:03:14,931
+before the script activates it:
+a harmless slip.
+
+52
+00:03:15,251 --> 00:03:18,002
+After the at sign comes the container ID.
+
+53
+00:03:18,250 --> 00:03:21,685
+From here on,
+every command runs inside the container.
+
+54
+00:03:22,005 --> 00:03:25,376
+Pause, run steps 2 and 3,
+and wait for this prompt.
+
+55
+00:03:27,617 --> 00:03:29,708
+Three extras from a second terminal.
+
+56
+00:03:30,028 --> 00:03:31,969
+docker ps: no ports.
+
+57
+00:03:32,289 --> 00:03:36,514
+docker images:
+1.77 gigabytes, since the framework
+
+58
+00:03:36,514 --> 00:03:38,796
+installs every integration.
+
+59
+00:03:39,034 --> 00:03:43,137
+docker inspect shows your key
+in the container's configuration;
+
+60
+00:03:43,137 --> 00:03:45,092
+treat a real key as sensitive.
+
+61
+00:03:45,334 --> 00:03:49,570
+Step 4 is for a container already running
+when you changed the key:
+
+62
+00:03:49,570 --> 00:03:54,059
+the script then only runs docker exec,
+which doesn't bring the new key.
+
+63
+00:03:54,300 --> 00:03:57,099
+If that's you,
+shell in from a second terminal
+
+64
+00:03:57,099 --> 00:03:59,194
+and type the README's three lines:
+
+65
+00:03:59,194 --> 00:04:02,151
+the key goes in hidden,
+and out of your history.
+
+66
+00:04:02,471 --> 00:04:05,202
+Keep working in that shell. Pause here.
+
+67
+00:04:09,500 --> 00:04:12,444
+Now verify, offline, inside the container.
+
+68
+00:04:12,764 --> 00:04:18,115
+Step 1 checks the SDK
+and prints the installed versions,
+
+69
+00:04:18,115 --> 00:04:20,504
+at the time of recording:
+
+70
+00:04:20,504 --> 00:04:26,524
+Python 3.13.16, agent-framework 1.19.0,
+and every feature true.
+
+71
+00:04:26,767 --> 00:04:33,551
+Step 2 runs the tests: 281 of them,
+in about 100 seconds, ending in OK.
+
+72
+00:04:33,871 --> 00:04:38,500
+They use scripted model responses,
+so they test the machinery, not the model.
+
+73
+00:04:39,750 --> 00:04:44,772
+Step 3 shows the logs: deliberate failures,
+like an injected audit outage,
+
+74
+00:04:44,772 --> 00:04:48,369
+and an approval-identity warning
+we'll meet in act 4.
+
+75
+00:04:48,689 --> 00:04:50,075
+Trust the last line.
+
+76
+00:04:50,317 --> 00:04:54,430
+The model check prints the default
+without calling it:
+
+77
+00:04:54,430 --> 00:04:57,400
+gpt-5.6-luna, at the time of recording.
+
+78
+00:04:57,720 --> 00:05:00,506
+A --model flag beats
+an environment variable,
+
+79
+00:05:00,506 --> 00:05:04,653
+which beats this default;
+if your account can't use it, set either.
+
+80
+00:05:04,900 --> 00:05:08,207
+The README's notebook section
+has two more test commands.
+
+81
+00:05:08,527 --> 00:05:10,755
+They run in the container too:
+
+82
+00:05:10,755 --> 00:05:14,393
+9 notebook tests and 12 chat view tests,
+both OK.
+
+83
+00:05:15,300 --> 00:05:17,711
+There's a second road: the course Colab.
+
+84
+00:05:18,031 --> 00:05:23,521
+Save a copy to your Drive, add your key
+as a secret named OPENAI_API_KEY,
+
+85
+00:05:23,521 --> 00:05:27,055
+allow notebook access,
+and run the setup cells.
+
+86
+00:05:27,300 --> 00:05:32,049
+The Colab setup installs
+the seven pinned packages, not the lockfile,
+
+87
+00:05:32,049 --> 00:05:36,729
+so their dependencies can drift;
+for identical versions, use Docker.
+
+88
+00:05:36,967 --> 00:05:41,255
+Every recorded answer in this video comes
+from this notebook's saved run.
+
+89
+00:05:41,575 --> 00:05:44,135
+Pause, and verify your setup either way.
+
+90
+00:05:47,283 --> 00:05:49,853
+Act 1 starts from the lecture's recap:
+
+91
+00:05:49,853 --> 00:05:53,140
+an agent is a model
+with instructions and tools,
+
+92
+00:05:53,140 --> 00:05:55,262
+running until the task is done.
+
+93
+00:05:55,500 --> 00:05:59,586
+In code, the function build_agent
+makes one framework agent:
+
+94
+00:05:59,586 --> 00:06:04,012
+the shop instructions, five tools,
+and a structured reply format.
+
+95
+00:06:04,250 --> 00:06:07,621
+The model can only ask for a tool;
+the harness runs it.
+
+96
+00:06:07,941 --> 00:06:10,608
+And none of these five can place an order:
+
+97
+00:06:10,608 --> 00:06:14,101
+the preview_order tool records
+an unvalidated proposal,
+
+98
+00:06:14,101 --> 00:06:16,196
+with "order_placed" set to False.
+
+99
+00:06:16,433 --> 00:06:22,556
+Step 1:
+python cli.py --act 1 --scenario standard.
+
+100
+00:06:22,876 --> 00:06:25,609
+You see the ask, call 1 and five tools;
+
+101
+00:06:25,609 --> 00:06:29,532
+then the call fails with error 401:
+the placeholder key.
+
+102
+00:06:29,852 --> 00:06:33,734
+Fix it in this shell
+with the three read lines from setup step 4.
+
+103
+00:06:34,054 --> 00:06:36,102
+The failed run is still recorded.
+
+104
+00:06:36,350 --> 00:06:39,294
+Here's what a key gets you,
+from the staff's saved run.
+
+105
+00:06:39,614 --> 00:06:41,598
+The model asks for the catalog;
+
+106
+00:06:41,598 --> 00:06:44,781
+the harness runs it,
+and the result goes back in:
+
+107
+00:06:44,781 --> 00:06:45,950
+two more messages.
+
+108
+00:06:46,200 --> 00:06:48,227
+Every round splits at the same seam.
+
+109
+00:06:48,547 --> 00:06:53,539
+The model's plan ends at Requested tools;
+the harness executes at Tool call.
+
+110
+00:06:53,859 --> 00:06:57,357
+The trace shows requests and results,
+not hidden reasoning.
+
+111
+00:06:57,600 --> 00:07:00,203
+Then stock, price, pairings and preview.
+
+112
+00:07:00,523 --> 00:07:04,232
+On call 6 the model answers
+without asking for a tool,
+
+113
+00:07:04,232 --> 00:07:05,536
+and the loop stops.
+
+114
+00:07:05,856 --> 00:07:12,942
+Messages grew from 1 to 11,
+input from 1,942 to 4,540 tokens:
+
+115
+00:07:12,942 --> 00:07:18,634
+about 21,000 billed input tokens,
+for one answer.
+
+116
+00:07:18,883 --> 00:07:24,082
+Step 2 adds --show-json,
+to see the exact message: a short note,
+
+117
+00:07:24,082 --> 00:07:29,443
+plus the confirmed request as JSON,
+where null means not provided.
+
+118
+00:07:29,763 --> 00:07:31,811
+Pause and run both, with your key.
+
+119
+00:07:34,050 --> 00:07:35,991
+The input grows with every call.
+
+120
+00:07:36,311 --> 00:07:40,236
+That's the lecture's question:
+how do we manage what goes into the model?
+
+121
+00:07:42,183 --> 00:07:46,392
+The lecture says it plainly:
+if you've written a loop that calls a model
+
+122
+00:07:46,392 --> 00:07:49,372
+and runs its tool calls,
+you're a harness engineer.
+
+123
+00:07:49,692 --> 00:07:51,420
+And a bare loop has no stop.
+
+124
+00:07:51,666 --> 00:07:55,031
+Step 3 is a notebook cell,
+for Colab or Jupyter,
+
+125
+00:07:55,031 --> 00:07:57,554
+that wraps build_agent in a harness.
+
+126
+00:07:57,874 --> 00:08:01,121
+It adds Trace, Budget with 8 model calls,
+
+127
+00:08:01,121 --> 00:08:06,109
+20 tool calls and 120 seconds,
+Context("basic"), and CartCheck.
+
+128
+00:08:06,429 --> 00:08:08,477
+The CLI builds exactly this.
+
+129
+00:08:09,916 --> 00:08:11,761
+The inner ring never comes off:
+
+130
+00:08:11,761 --> 00:08:14,737
+call admission,
+the tool audit and the shop rules.
+
+131
+00:08:15,057 --> 00:08:18,578
+Four harness layers slide on around it,
+one feature each.
+
+132
+00:08:20,316 --> 00:08:21,831
+Budget is a turnstile.
+
+133
+00:08:22,151 --> 00:08:24,857
+Each model call is admitted and counted;
+
+134
+00:08:24,857 --> 00:08:28,421
+a ninth fails
+with Maximum of 8 model calls reached,
+
+135
+00:08:28,421 --> 00:08:30,066
+and the lock stays shut.
+
+136
+00:08:30,300 --> 00:08:34,174
+Without Budget,
+only the framework's fallback is left:
+
+137
+00:08:34,174 --> 00:08:38,406
+40 loop iterations, no call limits,
+no overall time budget.
+
+138
+00:08:39,350 --> 00:08:41,889
+CartCheck is the lecture's verify step.
+
+139
+00:08:42,209 --> 00:08:44,555
+Back to the hook: it checked the items,
+
+140
+00:08:44,555 --> 00:08:47,563
+not the prose,
+so the garbled budget still passed.
+
+141
+00:08:47,883 --> 00:08:49,952
+It reports, and never repairs.
+
+142
+00:08:50,200 --> 00:08:53,858
+Now the two columns become
+the lecture's action boundary:
+
+143
+00:08:53,858 --> 00:08:58,477
+five concerns, the model's part on the left,
+the harness's on the right.
+
+144
+00:08:58,716 --> 00:09:00,465
+Act 1 fills three rows.
+
+145
+00:09:00,785 --> 00:09:04,412
+Move right when stakes are high,
+or an action can't be undone.
+
+146
+00:09:04,650 --> 00:09:05,994
+Something to ponder.
+
+147
+00:09:06,314 --> 00:09:09,258
+Take harness.without("trace"),
+and run that copy.
+
+148
+00:09:09,578 --> 00:09:11,903
+Is a tool call still counted and audited?
+
+149
+00:09:12,223 --> 00:09:14,548
+And does the original harness still trace?
+
+150
+00:09:23,383 --> 00:09:24,578
+Yes, and yes.
+
+151
+00:09:24,898 --> 00:09:27,287
+Admission and the audit are the inner ring.
+
+152
+00:09:27,607 --> 00:09:31,462
+And the .add() and .without()
+methods never change a harness:
+
+153
+00:09:31,462 --> 00:09:36,012
+each returns a new configuration,
+so the original keeps all four layers.
+
+154
+00:09:36,250 --> 00:09:39,045
+Step 4 runs the missing-details scenario.
+
+155
+00:09:39,365 --> 00:09:43,266
+With a key, look for a question back,
+not invented details;
+
+156
+00:09:43,266 --> 00:09:45,381
+CartCheck should report no_cart.
+
+157
+00:09:45,701 --> 00:09:46,852
+Pause and run it.
+
+158
+00:09:50,000 --> 00:09:54,203
+Act 2 changes what the model sees:
+the lecture's invisible layer.
+
+159
+00:09:54,523 --> 00:09:57,678
+Here is one model call
+as the lecture's stack:
+
+160
+00:09:57,678 --> 00:10:02,821
+system prompt and shop policies,
+the request, the reply format, five tools,
+
+161
+00:10:02,821 --> 00:10:06,661
+and two slots,
+for retrieved data and saved preferences.
+
+162
+00:10:06,900 --> 00:10:09,003
+Basic mode, the one act 1 used,
+
+163
+00:10:09,003 --> 00:10:12,307
+sends the first four
+and leaves the slots empty;
+
+164
+00:10:12,307 --> 00:10:13,684
+enriched fills them.
+
+165
+00:10:15,433 --> 00:10:19,269
+Step 1,
+--compare, uses the personalized scenario,
+
+166
+00:10:19,269 --> 00:10:24,409
+where today's request leaves out the second
+customer's saved taste:
+
+167
+00:10:24,409 --> 00:10:27,401
+mild cheeses and nonalcoholic pairings.
+
+168
+00:10:27,721 --> 00:10:32,372
+The basic run starts and stops at the 401,
+so enriched never starts.
+
+169
+00:10:32,617 --> 00:10:36,357
+With a key, it prints
+a side-by-side table and a verdict,
+
+170
+00:10:36,357 --> 00:10:38,654
+which may be a tie or a regression.
+
+171
+00:10:38,900 --> 00:10:41,631
+Steps 2 to 4 are optional single runs.
+
+172
+00:10:41,951 --> 00:10:45,171
+Even without a key,
+there's a real difference:
+
+173
+00:10:45,171 --> 00:10:48,881
+basic sends 1 conversation message,
+enriched sends 2;
+
+174
+00:10:48,881 --> 00:10:51,401
+the extra one is the context packet.
+
+175
+00:10:51,867 --> 00:10:55,376
+Step 4, the override run,
+asks for funk 4 or more,
+
+176
+00:10:55,376 --> 00:10:58,885
+and today's request must win
+over the saved taste.
+
+177
+00:10:59,133 --> 00:11:03,762
+The README says each act 2 command
+also prints a harness policy check.
+
+178
+00:11:04,082 --> 00:11:06,792
+A small slip: --compare doesn't.
+
+179
+00:11:07,112 --> 00:11:08,528
+This extra call does:
+
+180
+00:11:08,528 --> 00:11:11,561
+the same raw-milk cart
+fails for Pennsylvania
+
+181
+00:11:11,561 --> 00:11:14,749
+and passes for New York,
+under a fictional rule.
+
+182
+00:11:18,233 --> 00:11:21,733
+Step 5 is an act 3 command
+the README puts here;
+
+183
+00:11:21,733 --> 00:11:23,119
+part 2 explains it.
+
+184
+00:11:23,967 --> 00:11:29,364
+Step 6 repeats both cases in both modes,
+3 times: 12 live runs.
+
+185
+00:11:29,684 --> 00:11:34,733
+Without a key it stops after 3 errors,
+but the report still writes in step 7,
+
+186
+00:11:34,733 --> 00:11:38,537
+and the label is used up:
+with your key, choose a new one.
+
+187
+00:11:38,783 --> 00:11:42,699
+The page linked here belongs
+in the docs folder we saw missing,
+
+188
+00:11:42,699 --> 00:11:44,564
+so use the README checkpoints.
+
+189
+00:11:44,884 --> 00:11:46,485
+Pause here if you have a key.
+
+190
+00:11:49,833 --> 00:11:53,908
+The README prints Inspect the context
+first after the live runs.
+
+191
+00:11:54,228 --> 00:11:58,366
+Without a key, start here:
+--preview-context, offline.
+
+192
+00:11:58,686 --> 00:12:01,794
+Both modes share
+instructions, message and tools;
+
+193
+00:12:01,794 --> 00:12:03,316
+only the packets differ.
+
+194
+00:12:03,550 --> 00:12:05,278
+Basic has no sources.
+
+195
+00:12:05,598 --> 00:12:08,471
+Enriched has three, each with a trust label:
+
+196
+00:12:08,471 --> 00:12:12,126
+the confirmed request, shop data,
+and saved preferences.
+
+197
+00:12:12,366 --> 00:12:15,086
+Twelve cheeses fall through three sieves:
+
+198
+00:12:15,086 --> 00:12:19,065
+enough stock, no raw milk to Pennsylvania,
+no nut allergens.
+
+199
+00:12:19,385 --> 00:12:23,138
+Munster has no stock, Brie and Comté
+fail the shipping rule,
+
+200
+00:12:23,138 --> 00:12:25,827
+and two nut cheeses fail the allergy check.
+
+201
+00:12:26,147 --> 00:12:27,321
+Seven survive.
+
+202
+00:12:31,266 --> 00:12:34,960
+The lecture's retrieved information
+is any outside data;
+
+203
+00:12:34,960 --> 00:12:39,181
+here it's a Python filter,
+not the vector search from lecture 5.
+
+204
+00:12:39,416 --> 00:12:40,632
+And where does it go?
+
+205
+00:12:40,952 --> 00:12:44,624
+Into a user message headed
+Retrieved context, data,
+
+206
+00:12:44,624 --> 00:12:48,440
+not instructions,
+so it cannot pose as a system rule.
+
+207
+00:12:48,760 --> 00:12:50,722
+That's the lecture's two lanes:
+
+208
+00:12:50,722 --> 00:12:54,456
+instructions in the system lane,
+evidence in the user lane.
+
+209
+00:12:54,700 --> 00:12:56,044
+Something to ponder.
+
+210
+00:12:56,364 --> 00:12:59,116
+The enriched packet already removed Comté.
+
+211
+00:12:59,436 --> 00:13:01,847
+Can the model still put Comté in its cart?
+
+212
+00:13:02,167 --> 00:13:04,321
+And does anything in act 2 stop it?
+
+213
+00:13:13,166 --> 00:13:16,768
+Yes: the get_catalog tool
+still returns all twelve,
+
+214
+00:13:16,768 --> 00:13:19,310
+and in act 2 CartCheck only reports.
+
+215
+00:13:19,630 --> 00:13:24,644
+Selection narrows, but validation decides:
+the act 3 workflow blocks it.
+
+216
+00:13:24,883 --> 00:13:28,254
+Step 9 is the optional baseline,
+in both modes.
+
+217
+00:13:28,574 --> 00:13:32,002
+For standard,
+the saved preferences repeat the request,
+
+218
+00:13:32,002 --> 00:13:33,310
+so little may change.
+
+219
+00:13:33,630 --> 00:13:35,656
+Pause and run steps 8 and 9.
+
+220
+00:13:37,900 --> 00:13:41,641
+So selecting candidates helps,
+but validation decides,
+
+221
+00:13:41,641 --> 00:13:44,897
+and today's request outranks
+saved preferences.
+
+222
+00:13:45,217 --> 00:13:49,292
+In part 2, the harness takes
+the cart's route out of the model's hands.
+

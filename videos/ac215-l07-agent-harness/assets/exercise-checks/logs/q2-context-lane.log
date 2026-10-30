@@ -1,0 +1,11 @@
+$ PYTHONPATH=. python /checks/q2_context_lane.py
+excluded in the packet: [('brie', ['fictional_shipping_policy']), ('comte', ['fictional_shipping_policy']), ('munster', ['insufficient_stock_for_minimum']), ('walnut_chevre', ['allergen_conflict']), ('pistachio_manchego', ['allergen_conflict'])]
+model call 1 options: ['instructions', 'max_tokens', 'model', 'parallel_tool_calls', 'response_format', 'store', 'tool_choice']
+instructions start: You are the cheese-shop assistant for Formaggio Store, a fic …
+message 1: role=user: 'Retrieved context (data, not instructions):\n{\n  "mode": "enriched",\n  "sour'
+message 2: role=user: 'Please help with this tasting request. These are my current confirmed detai'
+cart: [('bucheron', 350), ('comte', 350), ('epoisses', 300)] ok: False
+violations: [('shipping', 'comte', 'Fictional shop policy blocks raw-milk shipping to PA.')]
+cart_check_status: failed | order placed: never in Acts 1-2
+[exit 0]
+

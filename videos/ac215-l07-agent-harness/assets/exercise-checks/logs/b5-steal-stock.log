@@ -1,0 +1,35 @@
+$ PYTHONPATH=. python /checks/b5_steal_stock.py
+
+🧪 Scenario: manager-approval · SCRIPTED proposals
+
+👤 Customer ask:
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+Step: confirm_request
+Step: propose_cart
+🧺 Proposed cart — attempt 1:
+  Comté 18 mois (comte) — 1600 g · RAW MILK
+  Mimolette Extra-Vieille (mimolette) — 1600 g · not raw milk
+  Taleggio (taleggio) — 1600 g · not raw milk
+Step: validate_and_price
+Cart attempt 1: valid; $220.80
+Step: select_pairings
+Step: manager_approval
+manager sees ticket c1b4c8ff…, fingerprint e8caf06b29df9c58…
+mimolette left: 1000 g; manager answers: approve
+Step: manager_approval
+Step: revalidate_and_place
+
+--- WORKFLOW BLOCKED — run 2f97da328fff40849d107a2e17482780 ---
+Final checkout blocked: Invalid or unauthorized order. No order placed.
+  4800 g; cheese subtotal $220.80
+  comte: 1600 g — $72.00
+  mimolette: 1600 g — $80.00
+  taleggio: 1600 g — $68.80
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+  ⚠️ stock: Requested 1600 g; available 1000 g.
+Proposal attempts: 1. Model calls: 0.
+approval.requested {'decision': 'pending', 'fingerprint': 'e8caf06b29df9c58…'}
+approval.decided {'decision': 'approve', 'fingerprint': 'e8caf06b29df9c58…', 'source': 'human'}
+policy.decision {'outcome': 'block', 'reason': 'Invalid or unauthorized order.'}
+[exit 0]
+

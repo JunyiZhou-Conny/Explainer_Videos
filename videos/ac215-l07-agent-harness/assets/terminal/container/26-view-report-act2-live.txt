@@ -1,0 +1,4 @@
+$ python cli.py --view-report act2-context-live-1
+Saved evaluation report: /app/outputs/reports/act2-context-live-1.html
+Open this HTML file in your host browser. No model calls were made.
+[exit 0]

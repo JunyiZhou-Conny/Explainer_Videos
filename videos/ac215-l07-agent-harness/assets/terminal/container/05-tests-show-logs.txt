@@ -1,0 +1,1889 @@
+$ python -m tests --show-logs
+......Ignored an approval response with id 'af-call-498e39bb4dc0453aa55d24b97e5196a2' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+...........Function failed. Error: Injected nested checkout audit outage
+Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/app/formaggio/agents/planner_tools.py", line 45, in process
+    await super().process(context, guarded_call)
+  File "/app/formaggio/agents/runtime.py", line 230, in process
+    await call_next()
+  File "/app/formaggio/agents/planner_tools.py", line 37, in guarded_call
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/skill_support.py", line 74, in process
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1320, in final_wrapper
+    context.result = await context.result
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2161, in final_function_handler
+    return await tool.invoke(
+           ^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 1155, in invoke
+    result = await self._invoke_function(call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 823, in _invoke_function
+    return await res if inspect.isawaitable(res) else res
+           ^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 811, in _await_invocation_result
+    return await result
+           ^^^^^^^^^^^^
+  File "/app/acts/act6_composition.py", line 26, in start_order
+    return await orders.start(request_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 117, in start
+    return await self.advance(handle, workflow.run(state, stream=True))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 74, in advance
+    async for event in stream:
+    ...<10 lines>...
+            outcomes.append(WorkflowOutcome.model_validate(event.data))
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_types.py", line 3498, in __anext__
+    update: UpdateT = await self._iterator.__anext__()
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 971, in _run_core
+    async for event in self._run_workflow_with_tracing(
+    ...<16 lines>...
+        yield event
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 640, in _run_workflow_with_tracing
+    event = await anext(runner_events)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 148, in run_until_convergence
+    await iteration_task
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 231, in _run_iteration
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 224, in _deliver_messages
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 214, in _deliver_messages_for_edge_runner
+    await _deliver_message_inner(edge_runner, message)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 208, in _deliver_message_inner
+    return await edge_runner.send_message(message, self._state, self._ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 221, in send_message
+    await self._execute_on_target(target_id, [source_id], message, state, ctx)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 145, in _execute_on_target
+    await target_executor.execute(
+    ...<6 lines>...
+    )
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 312, in execute
+    await handler(message, context)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 724, in wrapper
+    return await func(self, message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/workflow_steps.py", line 151, in run
+    receipt = self.checkout.place(state.request, list(state.items), state.checkout_key,
+        self.recorder, self.run_id, ticket_id=state.ticket_id)
+  File "/app/formaggio/shop/checkout.py", line 108, in place
+    recorder.event(run_id, "order.placed" if not existing else "order.replay_completed", result)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1169, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1173, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/app/tests/test_composition.py", line 147, in event
+    raise sqlite3.OperationalError("Injected nested checkout audit outage")
+sqlite3.OperationalError: Injected nested checkout audit outage
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 50, in process
+    raise MiddlewareFailure("Harness tool or required audit failed: " + str(exc)) from exc
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Injected nested checkout audit outage
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Injected nested checkout audit outage
+..Function failed. Error: Unknown request in this session.
+.............Function failed. Error: Initialization failed
+Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/app/formaggio/agents/planner_tools.py", line 45, in process
+    await super().process(context, guarded_call)
+  File "/app/formaggio/agents/runtime.py", line 230, in process
+    await call_next()
+  File "/app/formaggio/agents/planner_tools.py", line 37, in guarded_call
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/skill_support.py", line 74, in process
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1320, in final_wrapper
+    context.result = await context.result
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2161, in final_function_handler
+    return await tool.invoke(
+           ^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 1155, in invoke
+    result = await self._invoke_function(call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 823, in _invoke_function
+    return await res if inspect.isawaitable(res) else res
+           ^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 811, in _await_invocation_result
+    return await result
+           ^^^^^^^^^^^^
+  File "/app/acts/act6_composition.py", line 26, in start_order
+    return await orders.start(request_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 117, in start
+    return await self.advance(handle, workflow.run(state, stream=True))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 74, in advance
+    async for event in stream:
+    ...<10 lines>...
+            outcomes.append(WorkflowOutcome.model_validate(event.data))
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_types.py", line 3498, in __anext__
+    update: UpdateT = await self._iterator.__anext__()
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 971, in _run_core
+    async for event in self._run_workflow_with_tracing(
+    ...<16 lines>...
+        yield event
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 640, in _run_workflow_with_tracing
+    event = await anext(runner_events)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 148, in run_until_convergence
+    await iteration_task
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 231, in _run_iteration
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 224, in _deliver_messages
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 214, in _deliver_messages_for_edge_runner
+    await _deliver_message_inner(edge_runner, message)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 208, in _deliver_message_inner
+    return await edge_runner.send_message(message, self._state, self._ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 221, in send_message
+    await self._execute_on_target(target_id, [source_id], message, state, ctx)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 145, in _execute_on_target
+    await target_executor.execute(
+    ...<6 lines>...
+    )
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 312, in execute
+    await handler(message, context)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 724, in wrapper
+    return await func(self, message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/workflow_steps.py", line 52, in run
+    proposal = CartProposal.model_validate(await self.proposer(state, packet))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/workflow_runtime.py", line 40, in __call__
+    self.client = make_client(self.model, middleware, self.api, function_limits=limits)
+                  ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1169, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1173, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1234, in _execute_mock_call
+    raise effect
+RuntimeError: Initialization failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 50, in process
+    raise MiddlewareFailure("Harness tool or required audit failed: " + str(exc)) from exc
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Initialization failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Initialization failed
+Function failed. Error: Initialization failed
+Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/app/formaggio/agents/planner_tools.py", line 45, in process
+    await super().process(context, guarded_call)
+  File "/app/formaggio/agents/runtime.py", line 230, in process
+    await call_next()
+  File "/app/formaggio/agents/planner_tools.py", line 37, in guarded_call
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/skill_support.py", line 74, in process
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1320, in final_wrapper
+    context.result = await context.result
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2161, in final_function_handler
+    return await tool.invoke(
+           ^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 1155, in invoke
+    result = await self._invoke_function(call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 823, in _invoke_function
+    return await res if inspect.isawaitable(res) else res
+           ^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 811, in _await_invocation_result
+    return await result
+           ^^^^^^^^^^^^
+  File "/app/acts/act6_composition.py", line 26, in start_order
+    return await orders.start(request_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 117, in start
+    return await self.advance(handle, workflow.run(state, stream=True))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 74, in advance
+    async for event in stream:
+    ...<10 lines>...
+            outcomes.append(WorkflowOutcome.model_validate(event.data))
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_types.py", line 3498, in __anext__
+    update: UpdateT = await self._iterator.__anext__()
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 971, in _run_core
+    async for event in self._run_workflow_with_tracing(
+    ...<16 lines>...
+        yield event
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 640, in _run_workflow_with_tracing
+    event = await anext(runner_events)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 148, in run_until_convergence
+    await iteration_task
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 231, in _run_iteration
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 224, in _deliver_messages
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 214, in _deliver_messages_for_edge_runner
+    await _deliver_message_inner(edge_runner, message)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 208, in _deliver_message_inner
+    return await edge_runner.send_message(message, self._state, self._ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 221, in send_message
+    await self._execute_on_target(target_id, [source_id], message, state, ctx)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 145, in _execute_on_target
+    await target_executor.execute(
+    ...<6 lines>...
+    )
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 312, in execute
+    await handler(message, context)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 724, in wrapper
+    return await func(self, message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/workflow_steps.py", line 52, in run
+    proposal = CartProposal.model_validate(await self.proposer(state, packet))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/workflow_runtime.py", line 44, in __call__
+    agent = Agent(client=self.client, name="CartProposer",
+        instructions=self.intake["prompt"] if taking_order else self.prompt,
+        context_providers=[ShopContextProvider(packet, self.recorder, self.run_id)],
+        default_options={**MODEL_OPTIONS, "response_format": CartProposal})
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1169, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1173, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1234, in _execute_mock_call
+    raise effect
+RuntimeError: Initialization failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 50, in process
+    raise MiddlewareFailure("Harness tool or required audit failed: " + str(exc)) from exc
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Initialization failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Initialization failed
+..Function failed. Error: Maximum of 1 model calls reached.
+Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/app/formaggio/agents/planner_tools.py", line 45, in process
+    await super().process(context, guarded_call)
+  File "/app/formaggio/agents/runtime.py", line 230, in process
+    await call_next()
+  File "/app/formaggio/agents/planner_tools.py", line 37, in guarded_call
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/skill_support.py", line 74, in process
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1320, in final_wrapper
+    context.result = await context.result
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2161, in final_function_handler
+    return await tool.invoke(
+           ^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 1155, in invoke
+    result = await self._invoke_function(call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 823, in _invoke_function
+    return await res if inspect.isawaitable(res) else res
+           ^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 811, in _await_invocation_result
+    return await result
+           ^^^^^^^^^^^^
+  File "/app/acts/act6_composition.py", line 26, in start_order
+    return await orders.start(request_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 117, in start
+    return await self.advance(handle, workflow.run(state, stream=True))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 74, in advance
+    async for event in stream:
+    ...<10 lines>...
+            outcomes.append(WorkflowOutcome.model_validate(event.data))
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_types.py", line 3498, in __anext__
+    update: UpdateT = await self._iterator.__anext__()
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 971, in _run_core
+    async for event in self._run_workflow_with_tracing(
+    ...<16 lines>...
+        yield event
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 640, in _run_workflow_with_tracing
+    event = await anext(runner_events)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 148, in run_until_convergence
+    await iteration_task
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 231, in _run_iteration
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 224, in _deliver_messages
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 214, in _deliver_messages_for_edge_runner
+    await _deliver_message_inner(edge_runner, message)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 208, in _deliver_message_inner
+    return await edge_runner.send_message(message, self._state, self._ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 221, in send_message
+    await self._execute_on_target(target_id, [source_id], message, state, ctx)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 145, in _execute_on_target
+    await target_executor.execute(
+    ...<6 lines>...
+    )
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 312, in execute
+    await handler(message, context)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 724, in wrapper
+    return await func(self, message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/workflow_steps.py", line 52, in run
+    proposal = CartProposal.model_validate(await self.proposer(state, packet))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/workflow_runtime.py", line 56, in __call__
+    result = await agent.run(message, session=agent.create_session())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/observability.py", line 2546, in _run
+    response: AgentResponse[Any] = await execute()
+                                   ^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_agents.py", line 1121, in _run_non_streaming
+    response = await self._call_chat_client(ctx, stream=False)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4908, in _get_response_with_function_invocation
+    await _await_provider_call(
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    ),
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4164, in _await_provider_call
+    return await operation(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 75, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 1 model calls reached.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 50, in process
+    raise MiddlewareFailure("Harness tool or required audit failed: " + str(exc)) from exc
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Maximum of 1 model calls reached.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Maximum of 1 model calls reached.
+.Function failed. Error: Unknown request in this session.
+.Function failed. Error: Unknown request in this session.
+Function failed. Error: Required audit unavailable
+Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/app/formaggio/agents/planner_tools.py", line 45, in process
+    await super().process(context, guarded_call)
+  File "/app/formaggio/agents/runtime.py", line 230, in process
+    await call_next()
+  File "/app/formaggio/agents/planner_tools.py", line 37, in guarded_call
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1320, in final_wrapper
+    context.result = await context.result
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2161, in final_function_handler
+    return await tool.invoke(
+           ^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 1155, in invoke
+    result = await self._invoke_function(call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 823, in _invoke_function
+    return await res if inspect.isawaitable(res) else res
+           ^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 811, in _await_invocation_result
+    return await result
+           ^^^^^^^^^^^^
+  File "/app/acts/act6_composition.py", line 26, in start_order
+    return await orders.start(request_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 117, in start
+    return await self.advance(handle, workflow.run(state, stream=True))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 74, in advance
+    async for event in stream:
+    ...<10 lines>...
+            outcomes.append(WorkflowOutcome.model_validate(event.data))
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_types.py", line 3498, in __anext__
+    update: UpdateT = await self._iterator.__anext__()
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 971, in _run_core
+    async for event in self._run_workflow_with_tracing(
+    ...<16 lines>...
+        yield event
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 640, in _run_workflow_with_tracing
+    event = await anext(runner_events)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 148, in run_until_convergence
+    await iteration_task
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 231, in _run_iteration
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 224, in _deliver_messages
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 214, in _deliver_messages_for_edge_runner
+    await _deliver_message_inner(edge_runner, message)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 208, in _deliver_message_inner
+    return await edge_runner.send_message(message, self._state, self._ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 221, in send_message
+    await self._execute_on_target(target_id, [source_id], message, state, ctx)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 145, in _execute_on_target
+    await target_executor.execute(
+    ...<6 lines>...
+    )
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 312, in execute
+    await handler(message, context)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 724, in wrapper
+    return await func(self, message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/workflow_steps.py", line 151, in run
+    receipt = self.checkout.place(state.request, list(state.items), state.checkout_key,
+        self.recorder, self.run_id, ticket_id=state.ticket_id)
+  File "/app/formaggio/shop/checkout.py", line 108, in place
+    recorder.event(run_id, "order.placed" if not existing else "order.replay_completed", result)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1169, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1173, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/app/tests/test_composition_layers.py", line 143, in fail
+    if name == "order.placed": raise RuntimeError("Required audit unavailable")
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Required audit unavailable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 50, in process
+    raise MiddlewareFailure("Harness tool or required audit failed: " + str(exc)) from exc
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Required audit unavailable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Required audit unavailable
+.Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 33, in process
+    self.execution_state.admit("tool")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 75, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 2 tool calls reached.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 2 tool calls reached.
+Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 33, in process
+    self.execution_state.admit("tool")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 75, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 2 tool calls reached.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 2 tool calls reached.
+..Function failed. Error: 
+Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/app/formaggio/agents/workflow_runtime.py", line 56, in __call__
+    result = await agent.run(message, session=agent.create_session())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/observability.py", line 2546, in _run
+    response: AgentResponse[Any] = await execute()
+                                   ^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_agents.py", line 1121, in _run_non_streaming
+    response = await self._call_chat_client(ctx, stream=False)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4908, in _get_response_with_function_invocation
+    await _await_provider_call(
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    ),
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4164, in _await_provider_call
+    return await operation(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 87, in process
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/runtime.py", line 173, in process
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1405, in final_wrapper
+    context.result = await context.result
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/observability.py", line 2199, in _get_response
+    await super_get_response(
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework_openai/_chat_client.py", line 970, in _get_response
+    raw_response = await client.responses.with_raw_response.parse(stream=False, **run_options)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 386, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/openai/resources/responses/responses.py", line 3270, in parse
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<49 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 2052, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1772, in request
+    response = await self._send_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/openai/_client.py", line 1361, in _send_request
+    response = await self._send_with_auth_retry(request, stream=stream, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/openai/_client.py", line 1340, in _send_with_auth_retry
+    response = await super()._send_request(request, stream=stream, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1689, in _send_request
+    return await self._client.send(request, stream=stream, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/httpx/_transports/mock.py", line 41, in handle_async_request
+    response = await response
+               ^^^^^^^^^^^^^^
+  File "/app/tests/test_composition_layers.py", line 232, in slow
+    async def slow(request): await asyncio.Event().wait()
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/asyncio/locks.py", line 213, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/formaggio/agents/planner_tools.py", line 45, in process
+    await super().process(context, guarded_call)
+  File "/app/formaggio/agents/runtime.py", line 230, in process
+    await call_next()
+  File "/app/formaggio/agents/planner_tools.py", line 37, in guarded_call
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/skill_support.py", line 74, in process
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1320, in final_wrapper
+    context.result = await context.result
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2161, in final_function_handler
+    return await tool.invoke(
+           ^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 1155, in invoke
+    result = await self._invoke_function(call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 823, in _invoke_function
+    return await res if inspect.isawaitable(res) else res
+           ^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 811, in _await_invocation_result
+    return await result
+           ^^^^^^^^^^^^
+  File "/app/acts/act6_composition.py", line 26, in start_order
+    return await orders.start(request_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 117, in start
+    return await self.advance(handle, workflow.run(state, stream=True))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/composition.py", line 74, in advance
+    async for event in stream:
+    ...<10 lines>...
+            outcomes.append(WorkflowOutcome.model_validate(event.data))
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_types.py", line 3498, in __anext__
+    update: UpdateT = await self._iterator.__anext__()
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 971, in _run_core
+    async for event in self._run_workflow_with_tracing(
+    ...<16 lines>...
+        yield event
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_workflow.py", line 640, in _run_workflow_with_tracing
+    event = await anext(runner_events)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 148, in run_until_convergence
+    await iteration_task
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 231, in _run_iteration
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 224, in _deliver_messages
+    await gather_cancelling_siblings_on_error(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 47, in gather_cancelling_siblings_on_error
+    await asyncio.gather(*tasks)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 214, in _deliver_messages_for_edge_runner
+    await _deliver_message_inner(edge_runner, message)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_runner.py", line 208, in _deliver_message_inner
+    return await edge_runner.send_message(message, self._state, self._ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 221, in send_message
+    await self._execute_on_target(target_id, [source_id], message, state, ctx)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_edge_runner.py", line 145, in _execute_on_target
+    await target_executor.execute(
+    ...<6 lines>...
+    )
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 312, in execute
+    await handler(message, context)
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_workflows/_executor.py", line 724, in wrapper
+    return await func(self, message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/workflow_steps.py", line 52, in run
+    proposal = CartProposal.model_validate(await self.proposer(state, packet))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/formaggio/agents/workflow_runtime.py", line 55, in __call__
+    async with asyncio.timeout(self.proposal_timeout):
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/asyncio/timeouts.py", line 117, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 50, in process
+    raise MiddlewareFailure("Harness tool or required audit failed: " + str(exc)) from exc
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: 
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: 
+...........................................................................Ignored an approval response with id 'af-call-c20cb0d2d22642a0b675f38b11eb5714' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-3063adc644be4326b980b1fb8de91dd3' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-9ad7196e1e924d99af16c119fa536fec' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-c05b9f41a4284021bdb6ac9f0dc26189' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Function failed. Error: Recipient is not in the shop allowlist.
+..Ignored an approval response with id 'af-call-4a97ba959028414ca4e9c1901b6fdf6d' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-ad26ee0927fb4aaa86e5cf6ed0f1f15c' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+..............................Ignored an approval response with id 'af-call-335b1980ae294528af00ff383c57e37d' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-4422e7dae40f49c3a05a1a77a0f464f8' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-de956eba810749adb9422d4d7ef6fe63' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-f0cc1328e7f3499b9fddb6050bfc365f' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-cf9b0366bf5d4f629c7165b3d8baeaed' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-351e1207227d4a288f92a4aa12f87d6b' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.......Ignored an approval response with id 'af-call-9c1655f417ee41a08833b3e87f021e80' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+......Ignored an approval response with id 'af-call-a8a51132b9164084889d6ca9e6fd8fe4' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-e7a0b4ebfb1a4549a489708110c510a6' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.....Ignored an approval response with id 'af-call-af4f367307ab4f6a9d48773eb40ad7ee' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-c4082f0bcdb24ae097ff3cd4511d7bbd' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-56a03bec5c1f4916b11c5aa6ded84800' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-7d803c802f32408d9e073b0fa0b18e18' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+........Ignored an approval response with id 'af-call-4ff13ab10e1f44b480a3ab24af7e686c' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+..Ignored an approval response with id 'af-call-9baba393677849e493a3b972bdec90a7' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-dda0e6e8a057419ebc7d49cdd8141a3d' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-c0652cb60a5a4c849c4092da21ae55a8' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-68bf25cc2d414fe7be79395f77a2ff58' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-8a3638ce4d7743039affbc77305a81b9' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-94fc9bc517a841b1952fc1156db5e185' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-2323de52ea1b4d0cbe5916d579266b02' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-013015ec74304f2f8d2512f4ea030e38' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-5125398a8f70446e89648bcf88456c24' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-0ef77d8d66ae4f9ba2a2edb5dc108934' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-3f7cf8d6f98640ea856ad90103363670' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-1abc688bfc7044fab558b6bfb895c077' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-e9d43b513e9d483aa3ce1af9ccf374a4' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-7154a4db11d642ad8bea2f3910776f2b' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-40c4672e33e347889b5a8099fa9c44b6' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-1f704b7a137642dea1c2684646065bdd' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-fb9a933b81094551adde4c3d024a6299' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-cf71e2d931c44a558b14079225349f53' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-11852453f0d74bf098ec2613577fa31a' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-c4359a4c15494deda9a6e2a67fcb5862' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-f118c17010d14e6a9672c67a4b87bd36' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-5913446911c541a597029f0e4a7f8055' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-c8247607b5944b6abac4c5538c3e9c39' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-b05cb81191334f628e7c673e003588ed' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-e51c43b3f4ee43fdbf13d73699383b80' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-062382b4c1a344c8899376977f56eac4' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-c1e91a31c2834b27a8c43d460efb50ed' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-bae51bb1cc6b48dba0087f5291370fc7' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-b19c4fdae29f40c688d74ece36903d62' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-c12995c8bb3f40fd88941744decac185' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-0d22657f6b264343852259dbd43c2497' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-3669d263ad734eb1be76cd20e7e423a3' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-bd1a63444ad145bfbd94a34bcc5033d7' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-c3e732c182994e84818b517b034241fe' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 33, in process
+    self.execution_state.admit("tool")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 75, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 5 tool calls reached.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 5 tool calls reached.
+Ignored an approval response with id 'af-call-29bd9c0c985740e89ea76bc6ea5314f9' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-d2c17e4348a34465876355103b465b56' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 33, in process
+    self.execution_state.admit("tool")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 75, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 5 tool calls reached.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 5 tool calls reached.
+.Ignored an approval response with id 'af-call-d1b15e54edda4791b27e94d6a1fce37d' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-e2b1e3edcb014fef9a52a65b81bd6967' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-f41f3f75585c40689e8085e3cc6c7534' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-1c757d19be3f48cf96a3bfb83530775a' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-76b576b2720647ba93886ca924ecd4d3' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-5fd07f23a45d41ae82fc901f3d15bad2' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-9a35b2fa5a8e4531bc88deeba092df9e' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-2cbc0c04b9b84f92993b11ba8b3925ba' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+..Function failed. Error: Recipient is not in the shop allowlist.
+..Function failed. Error: Recipient is not in the shop allowlist.
+.Ignored an approval response with id 'af-call-3c6bc56ef844480cbb836a7c51510857' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-0ea91f2fd31142b18aebd2bccbececad' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-dce892185cf74680ba257361c586ab1d' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+..............Ignored an approval response with id 'af-call-d7b9812bccf744608ce2ec49f4a1530c' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-64eacebb12774765858a12373bf85628' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-4e06ac440b7e4169b6fb561b2509239a' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-7fa6fdf720be4f8abc50962827770b3f' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-4efb52fe00d5495abb40d7413b8f87d8' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-aa0f9bc4167541649bfa6959a6af2f78' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-6106f81ad43f420e9ca854cad669eefc' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-cbc6aaea013e467384c315a3a3192862' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-8e107a3b25414fec9acbabf5c08eb21d' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-d79d63c4dced40d785e68fd835ca68c0' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-8664c7d1ff9c410abf8623181dd81311' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-9af9865641034e12a90c009612635fd1' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-483230c0f8874fada87fcde69716613d' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-0012f7bccc424d39a5f0c88675797820' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-7cb59e0352104175a6c7ef103032934a' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-03d84d931e3e4fcfb543976487013010' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-6836886af1754a898dc441839ba307f8' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-f138d8c365b4410d8e2bc3577ae4989d' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-46d126e3bda240edb277d4d7f13bdb0f' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-9606c7b3f29c4a95877fba5df5d4cbe4' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-6fb0c94d2d5744ccae5b064bede9708e' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-7fa04fb622754aa2b96e1ecfe9e5c351' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-cf0404ff8d4c4862ac6b10b47e5a2c3f' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-8dce5c8f66c641b1b347f6a3cf2986ce' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-11127a4906c346f4a9f851c4320e85ff' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-9b5d77e992554363a55082b5349c9e0f' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-37e7d86c95ee4bbfbd12018452797c8e' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-8f06954860db420eb16ee9dc9294a828' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-3d9886e0e0904d0e9e3e90d6537e15cf' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-29483b87a8144085b5f641834838834c' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-d95c41f6108d4d7da9c0c274c4a31d05' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-df64ae12e9f84c79a83781b8c7e36af4' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+Ignored an approval response with id 'af-call-9b5d00afa0164fffb7c5c25741b4b8d1' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-a568621f0ead43a1904b01180c3afcc8' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-dc6b58d1191d46218db6ae3995446a38' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-0517e5b1fa8b4fdaac1cf42800dd9dfe' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-aea60c4a19384cc3929c424c55a03c78' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-e85be8d7368d4a279038d9b3044e669f' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-f78410ed7b5043bb9f514e7b0dc5d2b8' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+...Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+...Ignored an approval response with id 'af-call-63ae1fcf90dc46fdbafc41ba3123dc32' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-70ee558deb81441dab47bb0b8aedb276' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-1c7f52fbe99448aea29e17c085ea850f' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-c2715cf5fdfd495195b27b937abe8f5b' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 33, in process
+    self.execution_state.admit("tool")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 75, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 11 tool calls reached.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 11 tool calls reached.
+Ignored an approval response with id 'af-call-5d14078b2c22464c90c7a3f5d2e7231c' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-a0e1e50d25644a35a4896f532f54fbc6' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 33, in process
+    self.execution_state.admit("tool")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 75, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 11 tool calls reached.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Maximum of 11 tool calls reached.
+..Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/app/formaggio/agents/skill_support.py", line 87, in process
+    self.recorder.event(self.run_id, "skill.load_requested", {"path": key, "sha256": self.files.files[key]["sha256"]})
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1169, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1173, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/app/tests/test_skill_layers.py", line 173, in event
+    raise sqlite3.OperationalError("Required skill audit unavailable")
+sqlite3.OperationalError: Required skill audit unavailable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/formaggio/agents/planner_tools.py", line 45, in process
+    await super().process(context, guarded_call)
+  File "/app/formaggio/agents/runtime.py", line 230, in process
+    await call_next()
+  File "/app/formaggio/agents/planner_tools.py", line 37, in guarded_call
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/skill_support.py", line 112, in process
+    raise MiddlewareFailure("Required skill read/audit failed: " + str(exc)) from exc
+agent_framework._middleware.MiddlewareFailure: Required skill read/audit failed: Required skill audit unavailable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 50, in process
+    raise MiddlewareFailure("Harness tool or required audit failed: " + str(exc)) from exc
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Required skill read/audit failed: Required skill audit unavailable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Required skill read/audit failed: Required skill audit unavailable
+.....Ignored an approval response with id 'af-call-52b9e666785844718b7f06abe7ffb690' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Ignored an approval response with id 'af-call-6e76d0558088459690447458e7beacbe' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+Ignored an approval response with id 'af-call-f41ede667c774984a262b49f76313fc6' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Function failed. Error: Load vendor-outreach/assets/email-template.html before requesting this draft.
+.Ignored an approval response with id 'af-call-2feb5a1cff2f4359adbf40741ab83beb' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Failed to settle dangling function calls on the service-managed conversation; the next request over this conversation may be rejected by the service.
+Traceback (most recent call last):
+  File "/app/formaggio/agents/skill_support.py", line 87, in process
+    self.recorder.event(self.run_id, "skill.load_requested", {"path": key, "sha256": self.files.files[key]["sha256"]})
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1169, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1173, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/unittest/mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/app/tests/test_skills.py", line 130, in event
+    raise sqlite3.OperationalError("Skill audit unavailable")
+sqlite3.OperationalError: Skill audit unavailable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/formaggio/agents/planner_tools.py", line 45, in process
+    await super().process(context, guarded_call)
+  File "/app/formaggio/agents/runtime.py", line 230, in process
+    await call_next()
+  File "/app/formaggio/agents/planner_tools.py", line 37, in guarded_call
+    await call_next()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/skill_support.py", line 112, in process
+    raise MiddlewareFailure("Required skill read/audit failed: " + str(exc)) from exc
+agent_framework._middleware.MiddlewareFailure: Required skill read/audit failed: Skill audit unavailable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4941, in _get_response_with_function_invocation
+    function_processing = await _process_model_function_calls(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4639, in _process_model_function_calls
+    execution = await execute_function_calls(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2584, in _execute_function_calls
+    result_groups, should_terminate = await _try_execute_function_call_groups(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2524, in _try_execute_function_call_groups
+    result = await create_execution_task(function_call)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2303, in _execute_single_function_call
+    result = await _auto_invoke_function(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 2185, in _auto_invoke_function
+    function_result = await middleware_pipeline.execute(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1332, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1326, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/planner_tools.py", line 50, in process
+    raise MiddlewareFailure("Harness tool or required audit failed: " + str(exc)) from exc
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Required skill read/audit failed: Skill audit unavailable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_tools.py", line 4777, in _settle_dangling_service_function_calls
+    settlement_response = await super_get_response(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1567, in _execute
+    return await pipeline.execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1417, in execute
+    await first_handler()
+  File "/.venv/lib/python3.13/site-packages/agent_framework/_middleware.py", line 1411, in current_handler
+    await self._middleware[index].process(context, create_next_handler(index + 1))
+  File "/app/formaggio/agents/execution.py", line 86, in process
+    self.run.admit("model")
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/app/formaggio/agents/execution.py", line 70, in admit
+    raise MiddlewareFailure(self.failure)
+agent_framework._middleware.MiddlewareFailure: Harness tool or required audit failed: Required skill read/audit failed: Skill audit unavailable
+.Ignored an approval response with id 'af-call-f52d13cef5854dd1b114e04d9c98e6c7' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+.Function failed. Error: Recipient is not in the shop allowlist.
+.......................................................
+----------------------------------------------------------------------
+Ran 281 tests in 98.142s
+
+OK
+[exit 0]

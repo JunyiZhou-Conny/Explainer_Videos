@@ -1,0 +1,70 @@
+$ PYTHONPATH=. python /checks/b1_cartcheck.py
+=== layers: ['trace', 'budget', 'context', 'cart_check']
+
+🧪 Act 1 · BASIC context · scenario: pa-shipping
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · gpt-5.6-luna
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  📤 Requested tools: preview_order
+  ⏱️ 0.26s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: preview_order
+  📋 Arguments: items: product: comte; grams: 350 / product: bucheron; grams: 350 / product: epoisses; grams: 300
+  📦 Result (0.00s): status: unvalidated_proposal; order placed: no; items: 3 entries
+
+🤖 Model call 2 · Shop assistant · gpt-5.6-luna
+  📥 Input: 3 conversation messages.
+  ↳ Latest tool results in context: preview_order
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.02s · 100 input tokens · 20 output tokens
+
+🧾 BASIC CONTEXT — run 099e87185eef47e6a0c284650128e409
+
+💬 Agent's response:
+Scripted proposal or abstention; review the recorded checks.
+
+🔍 Independent cart check (no automatic repair):
+  1000 g; cheese subtotal $50.80
+  bucheron: 350 g
+  comte: 350 g
+  epoisses: 300 g
+  ⚠️ shipping: Fictional shop policy blocks raw-milk shipping to PA.
+📊 Model calls: 2. Tool calls: 1.
+🛡️ No order was placed.
+
+cart_check_status: failed
+=== layers: ['trace', 'budget', 'context']
+
+🧪 Act 1 · BASIC context · scenario: pa-shipping
+👤 Customer ask:
+Could you help me order cheese for a tasting for 12 guests in PA on a $150.00 budget? We need to avoid nuts. I'd like at least one cheese from France and at least one with a funk rating of 4 or higher. Could you suggest some pairings too?
+
+🤖 Model call 1 · Shop assistant · gpt-5.6-luna
+  📥 Input: 1 conversation messages.
+  🧰 Available tools: get_catalog, check_stock, price_order, get_pairings, preview_order
+  📤 Requested tools: preview_order
+  ⏱️ 0.01s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: preview_order
+  📋 Arguments: items: product: comte; grams: 350 / product: bucheron; grams: 350 / product: epoisses; grams: 300
+  📦 Result (0.00s): status: unvalidated_proposal; order placed: no; items: 3 entries
+
+🤖 Model call 2 · Shop assistant · gpt-5.6-luna
+  📥 Input: 3 conversation messages.
+  ↳ Latest tool results in context: preview_order
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.01s · 100 input tokens · 20 output tokens
+
+🧾 BASIC CONTEXT — run 25d42a4a5c0d424da42a510a24bdd890
+
+💬 Agent's response:
+Scripted proposal or abstention; review the recorded checks.
+
+🔍 Independent cart check: not run (CartCheck layer disabled).
+📊 Model calls: 2. Tool calls: 1.
+🛡️ No order was placed.
+
+cart_check_status: not_run
+[exit 0]
+

@@ -1,0 +1,10 @@
+$ diff -u prompts/shop_assistant.md prompts/shop_assistant_v2.md
+--- prompts/shop_assistant.md	2026-10-20 20:17:48.966703037 +0000
++++ prompts/shop_assistant_v2.md	2026-10-20 20:23:54.272698069 +0000
+@@ -55,3 +55,5 @@
+   Do not replace a documented catalog/allergy conflict with incidental empty-cart
+   variety, portion or funk violations. If no specific cause is established, state
+   that no valid cart was found; do not invent an explanation.
++
++Keep the customer message under 120 words. Start it with two labeled lines: "Price:" (the tool-derived cheese subtotal) and "Action status:" (proposed, pending review, placed or blocked).
+[exit 1]

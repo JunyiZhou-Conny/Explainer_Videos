@@ -1,0 +1,84 @@
+$ python cli.py --help
+usage: cli.py [-h] [--act {1,2,3,4,5,6}] [--preview-context] [--foundation]
+              [--compare [LABEL ...]] [--report LABEL] [--view-report LABEL]
+              [--inspect-run RUN_ID] [--list-runs] [--backup DESTINATION]
+              [--db DB] [--label LABEL] [--repeats REPEATS]
+              [--evaluate {core}] [--case CASE_IDS]
+              [--prompt-file PROMPT_FILE]
+              [--proposer-prompt-file PROPOSER_PROMPT_FILE]
+              [--skills-dir SKILLS_DIR] [--json-output JSON_OUTPUT]
+              [--html-output PATH] [--scenario SCENARIO]
+              [--context {basic,enriched,both}] [--model MODEL] [--show-json]
+              [--show-context] [--fixture]
+              [--manager-decision {approve,decline}]
+              [--email-decision {approve,decline}]
+              [--vendor-document {clean,malicious,benign,quoted}]
+              [--demo-compaction] [--simulate-detector-miss]
+              [--customer {pavlos,shivas}]
+              [--remember-preference REMEMBER_PREFERENCE]
+              [--memory-db MEMORY_DB]
+
+Run the context, workflow, harness and skills lessons or inspect their
+recorded steps.
+
+options:
+  -h, --help            show this help message and exit
+  --act {1,2,3,4,5,6}   1: simple agent; 2: context; 3: workflow; 4: harness;
+                        5: skills; 6: composition
+  --preview-context     Inspect both context packets offline
+  --foundation          Run fixed proposals; makes no model calls
+  --compare [LABEL ...]
+                        With --act 2: run a personalization comparison. Alone:
+                        compare two saved evaluation labels.
+  --report LABEL        Read an existing evaluation batch without model calls
+  --view-report LABEL   Export a saved agent evaluation as an HTML scorecard
+                        with traces
+  --inspect-run RUN_ID
+  --list-runs
+  --backup DESTINATION
+  --db DB
+  --label LABEL         Unique experiment label, required for --foundation
+  --repeats REPEATS     Evaluation repeats: default 5 live/agent, 1 foundation
+  --evaluate {core}     Run applicable scenario cases for the chosen act
+  --case CASE_IDS       Limit evaluation to a named case; repeat for multiple
+                        cases
+  --prompt-file PROMPT_FILE
+                        Execute alternate instructions in agent evaluations;
+                        foundation only records them
+  --proposer-prompt-file PROPOSER_PROMPT_FILE
+                        Act 6 evaluation: alternate inner cart-proposer
+                        instructions
+  --skills-dir SKILLS_DIR
+                        Acts 5/6 evaluation: alternate skill folders
+  --json-output JSON_OUTPUT
+                        Save evaluation/report/comparison JSON
+  --html-output PATH    Destination for --view-report; defaults to <db
+                        directory>/reports/<label>.html
+  --scenario SCENARIO
+  --context {basic,enriched,both}
+  --model MODEL         Model ID; defaults to OPENAI_CHAT_MODEL or
+                        formaggio/config.py
+  --show-json           Include JSON payload previews in act progress logs
+  --show-context        Print the supplied context before live calls
+  --fixture             Acts 3–6: scripted inputs/local responses; no service
+                        calls
+  --manager-decision {approve,decline}
+                        Acts 3/6: explicit TEST manager decision; otherwise
+                        ask a human when needed
+  --email-decision {approve,decline}
+                        Acts 4–5: explicit TEST mock-email decision
+  --vendor-document {clean,malicious,benign,quoted}
+  --demo-compaction     Acts 4–5: seed labeled synthetic history to trigger
+                        compaction
+  --simulate-detector-miss
+                        Acts 4–5 fixture only: miss injection, then block the
+                        prohibited recipient
+  --customer {pavlos,shivas}
+                        Acts 4–5: customer ID; defaults to the scenario
+                        customer
+  --remember-preference REMEMBER_PREFERENCE
+                        Acts 4–5: explicitly save a customer-confirmed
+                        preference
+  --memory-db MEMORY_DB
+                        Acts 4–5: separate operational preference database
+[exit 0]

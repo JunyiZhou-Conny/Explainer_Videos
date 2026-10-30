@@ -1,0 +1,14 @@
+# recorded (saved output of the course Colab "Agent Harness", not re-run here): https://colab.research.google.com/drive/1ZYMsbG0gqsbs-6Pcj8WtT3WhEa4f80EZ, cell 18 ("Data Constraints"), execution count 12; the notebook stores no date.
+  | product_id | country | funk | stock_g | raw-milk → PA | nut allergen | out of stock | eligible | French & funk≥4
+0 | brie | France | 2 | 2400 | True | False | False | False | False
+1 | comte | France | 1 | 6000 | True | False | False | False | False
+2 | epoisses | France | 5 | 900 | False | False | False | True | True
+3 | bucheron | France | 1 | 2000 | False | False | False | True | False
+4 | mimolette | France | 2 | 3000 | False | False | False | True | False
+5 | munster | France | 5 | 0 | False | False | True | False | False
+6 | taleggio | Italy | 4 | 3000 | False | False | False | True | False
+7 | manchego | Spain | 1 | 4000 | False | False | False | True | False
+8 | gouda | Netherlands | 1 | 4500 | False | False | False | True | False
+9 | walnut_chevre | USA | 1 | 900 | False | True | False | False | False
+10 | pistachio_manchego | Spain | 1 | 650 | False | True | False | False | False
+11 | halloumi | Cyprus | 0 | 2000 | False | False | False | True | False
