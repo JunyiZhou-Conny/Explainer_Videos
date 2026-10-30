@@ -97,10 +97,11 @@ class Decision(VoiceScene):
                              "Jakob's law · Jakob Nielsen, NN/g, 2000", width=11.0, size=26, color=USER_C)
             jl.move_to(DOWN * 1.4)
             self.play(FadeIn(jl, shift=UP * 0.1), run_time=0.6)
-            vo.wait_until("The rule, now written down")
-            self.play(FadeOut(jl), run_time=0.4)
+            vo.wait_until("The rule the agent proposed")
+            self.play(FadeOut(jl), Circumscribe(head[1][1], color=USER_C, buff=0.06), run_time=0.6)
             rule = VGroup(zh("每个界面只照抄一个参考", 32, USER_C),
                           zh("分诊聊天页 ← Claude App", 30)).arrange(DOWN, buff=0.3).move_to(DOWN * 1.6)
+            rule[0].add(zh("（提议）", 26, S.GREY).next_to(rule[0], RIGHT, buff=0.15))
             src = sans("docs/design/README.md · decision 0006", 20, S.GREY).next_to(rule, DOWN, buff=0.2)
             self.play(FadeIn(rule[0]), run_time=0.4)
             vo.wait_until("For the chat page")

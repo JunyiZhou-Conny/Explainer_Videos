@@ -5,7 +5,7 @@
 
 | English | 字幕写法 |
 | --- | --- |
-| empty state | 空白页 |
+| empty state | 空状态，也就是首屏 |
 | suggestion chips | 建议 |
 | composer | 输入框 |
 | model menu | 模型菜单 |

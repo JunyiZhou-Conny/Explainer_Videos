@@ -13,7 +13,7 @@ from manim import *
 from explainer import style as S
 from explainer.scene import VoiceScene
 
-from common import (BUBBLE, CHECKED_C, CREAM, FAINT, FIELD, INK, INK2, NARRATION, TERRA, USER_C, clear, composer,
+from common import (BUBBLE, CHECKED_C, CREAM, FAINT, FIELD, INK, INK2, NARRATION, OURS_C, TERRA, USER_C, clear, composer,
                     mark_ok, pill, quote_panel, sans, turn_page, zh)
 
 SAY = NARRATION["S04"]
@@ -68,11 +68,11 @@ class Copied(VoiceScene):
             self.play(Transform(comp, longer), run_time=0.9)
             illus = sans("typed text: illustration", 20, S.GREY).next_to(comp, UP, buff=0.12).align_to(comp, LEFT)
             self.play(FadeIn(illus), run_time=0.2)
-            vo.wait_until("three small drop-downs")
-            names = VGroup(*[zh(t, 24, USER_C) for t in ["谁在问", "保险", "在哪里"]])
+            vo.wait_until("three drop-downs of our own")
+            names = VGroup(*[zh(t, 24, OURS_C) for t in ["谁在问", "保险", "在哪里"]])
             for n, p in zip(names, comp.pills):
                 n.next_to(p, DOWN, buff=0.35)
-            sub = sans("who is asking · insurance · where you are (Composer.tsx)", 20, S.GREY).next_to(names, DOWN, buff=0.2)
+            sub = sans("ours, where Claude keeps attachments and tools (Composer.tsx)", 20, OURS_C).next_to(names, DOWN, buff=0.2)
             sub.align_to(comp, LEFT)
             self.play(LaggedStart(*[FadeIn(n, shift=UP * 0.1) for n in names], lag_ratio=0.3), FadeIn(sub), run_time=0.8)
             vo.wait_until("the model menu")
@@ -96,7 +96,15 @@ class Copied(VoiceScene):
             fonts = VGroup(zh("思源宋体 · 问候语和回答", 24), zh("思源黑体 · 其余", 24)).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
             left = VGroup(sans("light / dark", 20, S.GREY), sw, fonts).arrange(DOWN, aligned_edge=LEFT, buff=0.3)
             left.move_to(LEFT * 3.6 + UP * 0.2)
+            opts = VGroup(VGroup(sans("layout only", 24), sans("0003's neutral theme", 20, S.GREY)).arrange(DOWN, buff=0.08),
+                          VGroup(sans("layout + colours + serif", 24, USER_C), sans("Claude's warm palette", 20, S.GREY)
+                                 ).arrange(DOWN, buff=0.08)).arrange(RIGHT, buff=1.2).move_to(UP * 2.4)
+            frames = VGroup(*[SurroundingRectangle(o, color=S.GREY_DARK, buff=0.2, corner_radius=0.12) for o in opts])
+            self.play(FadeIn(opts), Create(frames), run_time=0.6)
             vo.wait_until("warm colours and serif type")
+            tick = mark_ok(0.35, CHECKED_C).next_to(frames[1], RIGHT, buff=0.15)
+            self.play(frames[1].animate.set_color(USER_C), FadeIn(tick, scale=1.3), run_time=0.5)
+            self.play(FadeOut(VGroup(opts, frames, tick)), run_time=0.4)
             self.play(LaggedStart(*[FadeIn(r, shift=RIGHT * 0.1) for r in left], lag_ratio=0.25), run_time=1.2)
             q = quote_panel("Junyi 选了后者（2026-10-28）", "decision 0006 · colours and type copied too", width=6.2, size=26,
                             color=USER_C).move_to(RIGHT * 3.4 + UP * 2.35)

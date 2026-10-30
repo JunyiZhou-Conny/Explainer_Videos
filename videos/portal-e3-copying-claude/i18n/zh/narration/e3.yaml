@@ -10,14 +10,14 @@ S01:
 - en: 'Isn''t copying exactly what a product should avoid? Here it was the plan. What was copied, what was refused, what we added, and what nobody has built yet: that is this episode.'
   zh:
   - 照抄，不正是做产品应该避免的吗？
-  - 在这里，这就是计划。
+  - 但这一次，照抄就是计划。
   - 抄了什么、拒绝了什么、我们加了什么，还有什么是还没人做过的：这就是这一集。
 S02:
 - en: First, the parts. Almost every chat app has the same ones, and designers have names for them. The empty state is the page before the first message. Suggestion chips are ready-made questions; ours start demo replays. The composer is the input box. Inside it sit a model menu and the send key, which turns into a stop key while you wait.
   zh:
   - 先认识各个部分。
   - 几乎每个聊天 app 都有同样这几样，设计师给它们都起了名字。
-  - 空白页，是发第一条消息之前的页面。
+  - 空状态，也就是首屏，是发第一条消息之前的页面。
   - 建议是现成的问题；我们的建议点开是演示回放。
   - 输入框就是你打字的地方。
   - 它里面有模型菜单和发送键；等回答的时候，发送键会变成停止键。
@@ -38,14 +38,14 @@ S03:
 - en: 'Before the answer: why would copying one product beat picking the best parts of several?'
   zh:
   - 先停一下：为什么照抄一个产品，会比从几个产品里各取所长更好？
-- en: 'Because parts from different products disagree: spacing, colours, how a button behaves. The seams show, and the decision record names a second cost: you can no longer say where each choice came from. One mature reference answers every small question the same way, so the fewest design calls give a page that is neither ugly nor wrong. It also helps the people using it. Designers call it Jakob''s law: users spend most of their time on other sites, so they prefer yours to work the same way. The rule, now written down: every screen copies exactly one reference. For the chat page, that is Claude''s app, which everyone on the team uses every day.'
+- en: 'Because parts from different products disagree: spacing, colours, how a button behaves. The seams show, and the decision record names a second cost: you can no longer say where each choice came from. One mature reference answers every small question the same way, so the fewest design calls give a page that is neither ugly nor wrong. It also helps the people using it. Designers call it Jakob''s law: users spend most of their time on other sites, so they prefer yours to work the same way. The rule the agent proposed: every screen copies exactly one reference. For the chat page, that is Claude''s app, which everyone on the team uses every day.'
   zh:
   - 因为不同产品的部件彼此不一致：间距、颜色、按钮的行为都不一样。
   - 拼接的地方会露出来；决策记录还指出了第二个代价：你再也说不清每个决定是从哪来的。
   - 一个成熟的参考，会用同一种方式回答每个小问题，所以用最少的设计判断，就能得到一个不难看、不出错的页面。
   - 这对用的人也有好处。
   - 设计师把它叫作雅各布定律：用户大部分时间都在别的网站上，所以他们希望你的网站也照同样的方式工作。
-  - 现在写下来的规则是：每个界面只照抄一个参考。
+  - agent 提议的规则是：每个界面只照抄一个参考。
   - 聊天页的参考，就是团队每个人每天都在用的 Claude 的 app。
 S04:
 - en: Here is what was copied. One column, at most 768 pixels wide. Your message in a beige bubble on the right. The answer in serif type, full width, no frame.
@@ -54,20 +54,20 @@ S04:
   - 一栏，最宽 768 像素。
   - 你的消息放在右边一个米灰色的气泡里。
   - 回答用衬线字，整宽，不加框。
-- en: 'The composer: a white rounded box that grows as you type. Along its bottom edge, three small drop-downs: who is asking, insurance, and where you are. On the right, the model menu, Terra at medium effort, next to the terracotta send key, the same spot where Claude''s help page puts its own model menu.'
+- en: 'The composer: a white rounded box that grows as you type. Along its bottom edge, where Claude keeps attachments and tools, we put three drop-downs of our own: who is asking, insurance, and where you are. On the right, the model menu, Terra at medium effort, next to the terracotta send key, the same spot where Claude''s help page puts its own model menu.'
   zh:
   - 输入框：一个白色的圆角框，会随着你打字长高。
-  - 沿着它的下边，是三个小下拉菜单：谁在问、保险，以及你在哪里。
-  - 右边是模型菜单，Terra，思考强度中，紧挨着陶土橙的发送键；Claude 的帮助页面也把它自己的模型菜单放在同一个位置。
+  - 沿着它的下边，在 Claude 放附件和工具的位置，我们放了三个自己的下拉菜单：谁在问、保险，以及你在哪里。
+  - 右边是模型菜单，Terra，思考强度中，紧挨着陶土橙的发送键；在 Claude 的帮助文档里，它的模型菜单也在这个位置。
 - en: 'Two choices here were yours: copy Claude''s chat page at all, and copy its warm colours and serif type too, not only the layout. They stay inside this one page; the rest of the site keeps its neutral theme.'
   zh:
   - 这里有两个决定是你做的：要不要照抄 Claude 的聊天页，以及要不要连它温暖的配色和衬线字一起抄，而不只是版式。
   - 这些只用在这一页；网站的其他页面仍然用中性的过渡主题。
 S05:
-- en: 'What was not copied, each for a reason. Claude''s logo, name and private fonts: they aren''t ours, so a small dot means thinking and the fonts are open ones. The sidebar, chat history, attachments and tools: we have no accounts and no storage, and the prototype doesn''t need them. And the two from episode two: the raw reasoning, and words streaming as they are written. Our answers pass the checker first.'
+- en: 'What was not copied, each for a reason. Claude''s logo, name and private fonts: they aren''t ours, so where Claude shows its logo while it thinks, ours shows a small dot, and the fonts are open ones. The sidebar, chat history, attachments and tools: we have no accounts and no storage, and the prototype doesn''t need them. And the two from episode two: the raw reasoning, and words streaming as they are written. Our answers pass the checker first.'
   zh:
   - 没抄的部分，每一样都有理由。
-  - Claude 的标志、名字和私有字体：它们不属于我们，所以我们用一个小圆点表示正在思考，字体用开源的。
+  - Claude 的标志、名字和私有字体：它们不属于我们；Claude 思考时显示它的标志，我们显示一个小圆点，字体用开源的。
   - 侧栏、对话历史、附件和工具：我们没有账号、没有存储，这个原型也不需要。
   - 还有第二集讲过的两样：推理原文，以及一边写一边流出来的文字。
   - 我们的回答要先通过检查器。
@@ -100,14 +100,14 @@ S07:
   - 周三凌晨 1 点 59 分，波士顿时间，它先把决策写了下来。
   - 17 分钟后，它提交了重做好的页面：27 个文件。
   - 又过了 6 分钟，端到端测试也有了。
-- en: Then came the reviews. An independent visual review. The streaming you had asked for, and a review of it. A second visual review, which brought Claude's phone layout and much of the parent wording and accessibility you just saw. And a final review from five angles, which found about 30 problems, fixed on parallel branches and then checked once more.
+- en: 'Then came the reviews. An independent visual review. Streaming, which you had asked for, built as progress only, and a review of it. A second visual review, which brought Claude''s phone layout and much of the parent wording and accessibility you just saw. And a final review from five angles: about 30 problems, fixed on parallel branches, then checked once more.'
   zh:
   - 接下来是一轮又一轮的审查。
   - 一次独立的视觉审查。
-  - 你要的流式输出，以及对它的审查。
+  - 你要的流式输出，做成了只流进度，以及对它的审查。
   - 第二轮视觉审查，带来了 Claude 的手机版排版，以及你刚才看到的大部分家长用语和无障碍改动。
-  - 最后是从五个角度做的终审，找出约 30 个问题，在几条并行的分支上修好，然后又检查了一遍。
-- en: 'One bug shows why this is hard. Send and stop share one button: while you wait, send turns into stop. Click stop, the wait ends, and in that same click the button turns back into send, so whatever was in the box went out. In a demo replay, that was the very message you had just stopped. The fix was one line. Then Bugbot found the mirror image: double-click send, and the second click lands on stop. Another one-line fix: ignore the second click of a double-click.'
+  - 最后是从五个角度做的终审：约 30 个问题，在几条并行的分支上修好，然后又检查了一遍。
+- en: 'One bug shows why this is hard. Send and stop share one button: while you wait, send turns into stop. Click stop, the wait ends, and in that same click the button turns back into send, so whatever was in the box went out. In a demo replay, that was the very message you had just stopped. The fix was one line. Then Bugbot found the mirror image: double-click send, and the second click lands on stop. Another one-line fix: ignore the second click of a double-click. Copying how a button looks does not copy how it behaves.'
   zh:
   - 有一个 bug 能说明这件事为什么难。
   - 发送和停止共用一个按钮：等回答的时候，发送变成停止。
@@ -116,23 +116,25 @@ S07:
   - 修复只有一行。
   - 后来 Bugbot 又发现了它的镜像：双击发送，第二下点到了停止上。
   - 又是一行修复：忽略双击的第二下。
+  - 照抄一个按钮的样子，并不等于照抄了它的行为。
 S08:
-- en: What do the big chat apps have that we don't? Conversation history and projects, file uploads, voice, a side panel for documents and code, and memory across chats. Most of them need accounts and storage, which this prototype doesn't have.
+- en: What do the big chat apps have that we don't? Conversation history and projects, file uploads, voice, a side panel for documents and code, and memory across chats. Most of them need accounts and storage, which this prototype doesn't have. Of these, voice may matter most here, for a worried parent who would rather speak than type; history and memory would mean keeping health conversations, which needs a privacy decision first.
   zh:
   - 大的聊天 app 有哪些我们没有的？
   - 对话历史和项目、上传文件、语音、放文档和代码的侧边面板，还有跨对话的记忆。
   - 它们大多需要账号和存储，而这个原型没有。
-- en: 'And what could only we build? One answer for two readers, the student''s and the parent''s, side by side; the folded parent summary is the seed. A summary card the student sends home; copy for parent is already a first step. And a hand-off to booking: the answer already writes the English sentences to say; the page could place the call, or fill in the form.'
+  - 这些里面，语音可能对这里最重要，着急的家长也许宁愿说话而不是打字；历史和记忆意味着要保存健康相关的对话，这要先做隐私上的决定。
+- en: 'And what could only we build? One answer for two readers, the student''s and the parent''s, side by side; every answer already carries a folded summary for parents, the seed. A summary card the student sends home; copy for parent is already a first step. And a hand-off to booking: the answer already writes the English sentences to say; the page could place the call, or fill in the form.'
   zh:
   - 那只有我们能做的是什么？
-  - 一个回答，两种读者：学生版和家长版并排放；折叠起来的给家长的摘要就是雏形。
+  - 一个回答，两种读者：学生版和家长版并排放；每条回答里已经有一段折叠起来的给家长的摘要，这就是雏形。
   - 一张学生发回家的摘要卡片；复制给家长已经是第一步。
-  - 还有把预约接过去：回答里已经写好了要说的英文句子；页面可以直接打电话，或者帮你填表。
-- en: 'And what waits for you: a dozen open items. Decision six is still a proposal, and so is its addendum: progress-only streaming, the model menu and retry. Two more choices the agent made unattended need your yes: a stopped message now goes out with your next one, and parents get no dial link for crisis lines.'
+  - 还有直接帮你预约：回答里已经写好了要说的英文句子；页面可以直接打电话，或者帮你填表。
+- en: 'And what waits for you: a dozen open items. Decision six is still a proposal, and so is what the agent added to it that night, unattended: progress-only streaming, the model menu and retry. Two more choices need your yes: a stopped message is no longer taken back but goes out with your next one, and parents get no dial link for crisis lines.'
   zh:
   - 还有等你决定的：一共十几项。
-  - 决策 0006 仍然是提议，它的补充也是：只流进度的流式输出、模型菜单和重新回答。
-  - 另外，agent 在无人值守时做的两个选择也需要你点头：停掉的那句话现在会和你的下一句一起发出去；家长看到的危机热线没有拨号链接。
+  - 决策 0006 仍然是提议；agent 当晚在无人值守时补充的部分也是：只流进度的流式输出、模型菜单和重新回答。
+  - 还有两个选择需要你点头：停掉的那句话不再收回，而是和你的下一句一起发出去；家长看到的危机热线没有拨号链接。
 S09:
 - en: 'So: one reference per screen, copied exactly, so every small choice has an answer and the page feels familiar. Claude''s layout, composer and colours, kept to this page. Not its logo, its history, its raw thoughts or its word-by-word streaming. Plus what only a medical page for two audiences needs: emergency first, wording a parent in China can act on, and labels that travel with copied text.'
   zh:

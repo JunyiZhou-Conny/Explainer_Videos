@@ -29,7 +29,7 @@ SAY: Isn't copying exactly what a product should avoid? Here it was the plan. Wh
 
 ## S02 · The parts of a chat page — `s02_anatomy.py` · `Anatomy`
 
-SHOW: The empty page again, larger. YELLOW callouts name each part as it is said: empty state · suggestion chips · composer · model menu · send key (it morphs into the stop key). A small source tag per name (NN/g, Material, chat-UI kits; SOURCES.md).
+SHOW: The empty page again, larger. YELLOW callouts name each part as it is said: empty state (空状态) · suggestion chips · composer · model menu · send key (it morphs into the stop key). A small source tag per name (NN/g, Material, chat-UI kits; SOURCES.md).
 SAY: First, the parts. Almost every chat app has the same ones, and designers have names for them. The empty state is the page before the first message. Suggestion chips are ready-made questions; ours start demo replays. The composer is the input box. Inside it sit a model menu and the send key, which turns into a stop key while you wait.
 
 SHOW: The page fills with one turn: a live turn: a beige bubble on the right with demo 01's first message 「喉咙痛两天了，吞东西的时候特别疼，今天量了体温38.5度」, the thinking row, an answer in serif without a frame, the action row 「复制 · 复制给家长 · 重新回答」, the round scroll-to-bottom button (its tooltip: 「回到最新」), the fine print 「AI 生成，不是诊断 · 只用虚构情况，别输入真实病情 · 危及生命直接打 911」. Callouts: user bubble · answer column · action row · scroll-to-bottom · disclaimer line.
@@ -46,7 +46,7 @@ SHOW: Pause-and-ponder card.
 SAY: Before the answer: why would copying one product beat picking the best parts of several?
 
 SHOW: Option 2 as a collage: three page fragments with different spacing, corner radii and button colours; the seams flash RED. 0006's line: 「风格容易打架，也说不清每个决定从哪来」. Then option 3: one reference, every small question answered the same way; 0006's reason: 「能用最少的设计判断得到一个不难看、不出错的结果」. Jakob's law, quoted from NN/g. A GREEN tick on option 3; the rule 「每个界面只照抄一个参考」 and the design doc's heading 「分诊聊天页 ← Claude App」.
-SAY: Because parts from different products disagree: spacing, colours, how a button behaves. The seams show, and the decision record names a second cost: you can no longer say where each choice came from. One mature reference answers every small question the same way, so the fewest design calls give a page that is neither ugly nor wrong. It also helps the people using it. Designers call it Jakob's law: users spend most of their time on other sites, so they prefer yours to work the same way. The rule, now written down: every screen copies exactly one reference. For the chat page, that is Claude's app, which everyone on the team uses every day.
+SAY: Because parts from different products disagree: spacing, colours, how a button behaves. The seams show, and the decision record names a second cost: you can no longer say where each choice came from. One mature reference answers every small question the same way, so the fewest design calls give a page that is neither ugly nor wrong. It also helps the people using it. Designers call it Jakob's law: users spend most of their time on other sites, so they prefer yours to work the same way. The rule the agent proposed: every screen copies exactly one reference. For the chat page, that is Claude's app, which everyone on the team uses every day.
 
 ---
 
@@ -55,10 +55,10 @@ SAY: Because parts from different products disagree: spacing, colours, how a but
 SHOW: One turn on the page, with GREEN ticks: one column at most 768 px; user bubble right, beige, rounded; answer serif, full width, no frame.
 SAY: Here is what was copied. One column, at most 768 pixels wide. Your message in a beige bubble on the right. The answer in serif type, full width, no frame.
 
-SHOW: The composer enlarged: it grows with the text; three pills inside 「谁在问」「保险」「在哪里」; 「Terra · 中 ⌄」; the terracotta send key.
-SAY: The composer: a white rounded box that grows as you type. Along its bottom edge, three small drop-downs: who is asking, insurance, and where you are. On the right, the model menu, Terra at medium effort, next to the terracotta send key, the same spot where Claude's help page puts its own model menu.
+SHOW: The composer enlarged: it grows with the text; along its bottom edge, where Claude keeps attachments and tools, three BLUE-tagged drop-downs of our own 「谁在问」「保险」「在哪里」; 「Terra · 中 ⌄」; the terracotta send key.
+SAY: The composer: a white rounded box that grows as you type. Along its bottom edge, where Claude keeps attachments and tools, we put three drop-downs of our own: who is asking, insurance, and where you are. On the right, the model menu, Terra at medium effort, next to the terracotta send key, the same spot where Claude's help page puts its own model menu.
 
-SHOW: The colour table (light / dark) as swatches: 页面底色 #FAF9F5 / #262624 · 输入框 #FFFFFF / #30302E · 用户气泡 #F0EEE6 / #141413 · 正文 #141413 / #FAF9F5 · 主色 #C96442 / #D97757; fonts: 思源宋体 for the greeting and answer, 思源黑体 for the rest. A boundary around the chat page only, labelled `.chat-page`; the rest of the site in the neutral theme. Quote 0006: 「Junyi 选了后者（2026-10-28）」.
+SHOW: Two option cards from 0006: copy the layout only, or the layout plus the colours and serif; the second ticked, 「Junyi 选了后者（2026-10-28）」. Then the colour table (light / dark) as swatches: 页面底色 #FAF9F5 / #262624 · 输入框 #FFFFFF / #30302E · 用户气泡 #F0EEE6 / #141413 · 正文 #141413 / #FAF9F5 · 主色 #C96442 / #D97757; fonts: 思源宋体 for the greeting and answer, 思源黑体 for the rest. A boundary around the chat page only, labelled `.chat-page`; the rest of the site in the neutral theme. Quote 0006: 「Junyi 选了后者（2026-10-28）」.
 SAY: Two choices here were yours: copy Claude's chat page at all, and copy its warm colours and serif type too, not only the layout. They stay inside this one page; the rest of the site keeps its neutral theme.
 
 ---
@@ -66,7 +66,7 @@ SAY: Two choices here were yours: copy Claude's chat page at all, and copy its w
 ## S05 · What was not copied — `s05_refused.py` · `Refused`
 
 SHOW: Four RED-crossed cards with their reasons: logo, name, private fonts → a small dot, open fonts · sidebar, history, attachments, tools → no accounts, no storage · raw reasoning → E2 · word-by-word streaming → E2.
-SAY: What was not copied, each for a reason. Claude's logo, name and private fonts: they aren't ours, so a small dot means thinking and the fonts are open ones. The sidebar, chat history, attachments and tools: we have no accounts and no storage, and the prototype doesn't need them. And the two from episode two: the raw reasoning, and words streaming as they are written. Our answers pass the checker first.
+SAY: What was not copied, each for a reason. Claude's logo, name and private fonts: they aren't ours, so where Claude shows its logo while it thinks, ours shows a small dot, and the fonts are open ones. The sidebar, chat history, attachments and tools: we have no accounts and no storage, and the prototype doesn't need them. And the two from episode two: the raw reasoning, and words streaming as they are written. Our answers pass the checker first.
 
 ---
 
@@ -92,32 +92,32 @@ SHOW: A time axis, Wednesday 2026-10-28, Boston time: 01:45 issue #40 · 01:59 d
 SAY: How did the agent build it? On Wednesday at one fifty-nine in the morning, Boston time, it wrote the decision down. Seventeen minutes later it committed the rebuilt page: 27 files. Six minutes after that, end-to-end tests.
 
 SHOW: The day on an axis, as bands of the commits that landed each round's fixes: 10:02–10:14 independent visual review · 10:40–11:04 streaming and the model menu (your request) · 11:35–12:06 the streaming review · 11:23–15:21 the second visual review (phone layout, parent wording, accessibility) · 16:52–19:16 the final review from five angles (安全和状态 · 流式后端 · 排版和无障碍 · 文案和文档 · 测试和检查规则), 36 findings, about 30 unique, fixed on four parallel branches, then a re-review that found 8 more.
-SAY: Then came the reviews. An independent visual review. The streaming you had asked for, and a review of it. A second visual review, which brought Claude's phone layout and much of the parent wording and accessibility you just saw. And a final review from five angles, which found about 30 problems, fixed on parallel branches and then checked once more.
+SAY: Then came the reviews. An independent visual review. Streaming, which you had asked for, built as progress only, and a review of it. A second visual review, which brought Claude's phone layout and much of the parent wording and accessibility you just saw. And a final review from five angles: about 30 problems, fixed on parallel branches, then checked once more.
 
-SHOW: The send key morphing into the stop key and back. Bug 1: click stop → the wait ends → the same click lands on the send key → whatever is in the box is sent (in a demo replay, the message just stopped). Fix: one line (26b85e0). Bug 2 (Bugbot, Medium): double-click send → the second click lands on stop → 「已停止」. Fix: ignore the second click of a double-click (f95aa77).
-SAY: One bug shows why this is hard. Send and stop share one button: while you wait, send turns into stop. Click stop, the wait ends, and in that same click the button turns back into send, so whatever was in the box went out. In a demo replay, that was the very message you had just stopped. The fix was one line. Then Bugbot found the mirror image: double-click send, and the second click lands on stop. Another one-line fix: ignore the second click of a double-click.
+SHOW: A composer on the page, waiting: the stop key, and (demo replay) the stopped message put back in the box. The cursor clicks stop; the key swaps to send under it; the text flies up as a second bubble. Bug 1: click stop → the wait ends → the same click lands on the send key → whatever is in the box is sent (in a demo replay, the message just stopped). Fix: one line (26b85e0). Bug 2 (Bugbot, Medium): double-click send → the second click lands on stop → 「已停止」. Fix: ignore the second click of a double-click (f95aa77).
+SAY: One bug shows why this is hard. Send and stop share one button: while you wait, send turns into stop. Click stop, the wait ends, and in that same click the button turns back into send, so whatever was in the box went out. In a demo replay, that was the very message you had just stopped. The fix was one line. Then Bugbot found the mirror image: double-click send, and the second click lands on stop. Another one-line fix: ignore the second click of a double-click. Copying how a button looks does not copy how it behaves.
 
 ---
 
 ## S08 · What else — `s08_next.py` · `Next`
 
 SHOW: GREY chips for what mainstream apps have and we don't, each with its source (Claude help centre, OpenAI; as of 2026-10-30): chat history and projects · file uploads · voice · a side panel for documents and code (Artifacts, 2024; canvas, 2024) · memory across chats. Under most of them: "needs accounts and storage".
-SAY: What do the big chat apps have that we don't? Conversation history and projects, file uploads, voice, a side panel for documents and code, and memory across chats. Most of them need accounts and storage, which this prototype doesn't have.
+SAY: What do the big chat apps have that we don't? Conversation history and projects, file uploads, voice, a side panel for documents and code, and memory across chats. Most of them need accounts and storage, which this prototype doesn't have. Of these, voice may matter most here, for a worried parent who would rather speak than type; history and memory would mean keeping health conversations, which needs a privacy decision first.
 
-SHOW: YELLOW idea cards: one answer for two readers, student and parent side by side (the folded 「给家长的摘要」 is the seed) · a summary card the student sends home (「复制给家长」 is the first step) · a hand-off to booking (the answer already writes the English to say, 「可以这样说」).
-SAY: And what could only we build? One answer for two readers, the student's and the parent's, side by side; the folded parent summary is the seed. A summary card the student sends home; copy for parent is already a first step. And a hand-off to booking: the answer already writes the English sentences to say; the page could place the call, or fill in the form.
+SHOW: Drawn ideas, each tagged "idea, not built": the answer page split in two, the student's version beside the parent's, with demo 01's folded 「给家长的摘要」 opened (its verbatim text) · a card arriving on the parent's phone in China, made by 「复制给家长」 · the 「可以这样说：」 block with demo 03's English line "I twisted my right ankle playing basketball. It is very swollen, and I can barely put weight on it.", and a BLUE arrow to a booking form.
+SAY: And what could only we build? One answer for two readers, the student's and the parent's, side by side; every answer already carries a folded summary for parents, the seed. A summary card the student sends home; copy for parent is already a first step. And a hand-off to booking: the answer already writes the English sentences to say; the page could place the call, or fill in the form.
 
 SHOW: Under 「等你决定」 (12 items in PR #41's handoff): decision 0006 and its addendum 「提议」 (progress-only streaming, the model menu, retry) · a stopped message is sent with your next one · parents get no dial link for crisis lines.
-SAY: And what waits for you: a dozen open items. Decision six is still a proposal, and so is its addendum: progress-only streaming, the model menu and retry. Two more choices the agent made unattended need your yes: a stopped message now goes out with your next one, and parents get no dial link for crisis lines.
+SAY: And what waits for you: a dozen open items. Decision six is still a proposal, and so is what the agent added to it that night, unattended: progress-only streaming, the model menu and retry. Two more choices need your yes: a stopped message is no longer taken back but goes out with your next one, and parents get no dial link for crisis lines.
 
 ---
 
 ## S09 · Recap — `s09_recap.py` · `Recap`
 
-SHOW: Three columns fill: copied (layout, composer, colours, this page only) · not copied (logo, history, raw thoughts, word-by-word) · added (emergency first, parent wording, labels that travel, accessibility).
+SHOW: The labelled page from S02 again; each name is tinted: GREEN copied (empty state, chips, composer, model menu, send/stop key, bubble, answer column, action row, scroll-to-bottom, disclaimer line), BLUE added (谁在问 · 保险 · 在哪里, 复制给家长, 紧急情况, 现在就做); beside it a RED list of what was not copied (logo, history and sidebar, raw thoughts, word-by-word streaming).
 SAY: So: one reference per screen, copied exactly, so every small choice has an answer and the page feels familiar. Claude's layout, composer and colours, kept to this page. Not its logo, its history, its raw thoughts or its word-by-word streaming. Plus what only a medical page for two audiences needs: emergency first, wording a parent in China can act on, and labels that travel with copied text.
 
-SHOW: Three test-yourself questions.
+SHOW: Three test-yourself questions, then a held pause.
 SAY: Three questions. Why copy one product instead of several? Why does the parent's page ask someone else to call 911? And what turned the send key into a bug, twice?
 
 SHOW: Next-episode card: 「两天、一百多个提交」.

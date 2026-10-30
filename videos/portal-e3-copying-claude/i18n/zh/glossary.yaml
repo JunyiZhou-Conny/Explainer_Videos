@@ -1,7 +1,7 @@
 # Chinese subtitle glossary for 项目周记 E3 (subtitles only: the narration is English). Policy as in E2.
 policy: "Mandarin first; product, company and API names and the team's working words stay in English; numbers as digits; half-width space between Chinese and Latin/digits."
 terms:
-- {en: empty state, zh_subtitle: "空白页"}
+- {en: empty state, zh_subtitle: "空状态，也就是首屏"}
 - {en: suggestion chips, zh_subtitle: "建议"}
 - {en: composer, zh_subtitle: "输入框"}
 - {en: model menu, zh_subtitle: "模型菜单"}

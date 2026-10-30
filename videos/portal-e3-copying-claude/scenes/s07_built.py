@@ -14,7 +14,8 @@ from manim import *
 from explainer import style as S
 from explainer.scene import VoiceScene
 
-from common import (DANGER_C, FIELD, NARRATION, OURS_C, TERRA, USER_C, clear, mono, sans, send_key, zh)
+from common import (BUBBLE, CREAM, DANGER_C, FIELD, INK2, NARRATION, OURS_C, TERRA, USER_C, clear, composer, mono, sans,
+                    send_key, user_bubble, zh)
 
 SAY = NARRATION["S07"]
 
@@ -91,7 +92,8 @@ class Built(VoiceScene):
                     lab.shift(LEFT * (lab.get_right()[0] - 6.5))
                 return VGroup(r, lab)
             rows = [(10 + 2 / 60, 10 + 14 / 60, 0, "independent visual review", USER_C, None, "independent visual"),
-                    (10 + 40 / 60, 11 + 4 / 60, 1, "streaming + model menu", OURS_C, "your request", "The streaming"),
+                    (10 + 40 / 60, 11 + 4 / 60, 1, "streaming + model menu", OURS_C, "your request · progress only",
+                     "which you had asked for"),
                     (11 + 35 / 60, 12 + 6 / 60, 2, "streaming review", OURS_C, None, "a review of it"),
                     (11 + 23 / 60, 15 + 21 / 60, 3, "second visual review", USER_C, "phone layout, parent wording, accessibility",
                      "A second visual review"),
@@ -112,40 +114,49 @@ class Built(VoiceScene):
         # 3 ---------------------------------------------------------------- one button, two jobs
         with self.voiceover(SAY[2]) as vo:
             clear(self, 0.4)
-            key = send_key(1.2).move_to(UP * 1.6)
-            k_lab = sans("send", 26, S.GREY).next_to(key, DOWN, buff=0.2)
-            self.play(FadeIn(key, scale=0.8), FadeIn(k_lab), run_time=0.5)
+            comp = composer(8.0, "回答上面的问题，或者补充情况", size=24).move_to(UP * 1.2)
+            strip = RoundedRectangle(width=9.0, height=3.2, corner_radius=0.16, stroke_width=0).set_fill(CREAM, 1)
+            strip.move_to(UP * 1.85)
+            self.play(FadeIn(strip), FadeIn(comp), run_time=0.5)
             vo.wait_until("send turns into stop")
-            stop = send_key(1.2, stop=True).move_to(key)
-            self.play(Transform(key, stop), Transform(k_lab, sans("stop", 26, S.GREY).move_to(k_lab)), run_time=0.5)
+            stop = send_key(stop=True).move_to(comp.key)
+            self.play(Transform(comp.key, stop), run_time=0.4)
             vo.wait_until("Click stop")
+            typed = VGroup(*[Rectangle(width=w, height=0.1, stroke_width=0).set_fill(INK2, 0.6) for w in (3.2, 2.2)]
+                           ).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
+            typed.move_to(comp.placeholder, aligned_edge=UL)
             cursor = Triangle(color=USER_C, fill_opacity=1, stroke_width=0).scale(0.14).rotate(PI / 6)
-            cursor.move_to(key.get_center() + DR * 0.2)
-            self.play(FadeIn(cursor), cursor.animate.scale(0.8), rate_func=there_and_back, run_time=0.4)
+            cursor.move_to(comp.key.get_center() + DR * 0.18)
+            self.play(FadeOut(comp.placeholder), FadeIn(typed), FadeIn(cursor), run_time=0.4)
+            self.play(cursor.animate.scale(0.8), rate_func=there_and_back, run_time=0.3)
             vo.wait_until("turns back into send")
-            back = send_key(1.2).move_to(key)
-            self.play(Transform(key, back), Transform(k_lab, sans("send", 26, S.GREY).move_to(k_lab)), run_time=0.3)
+            self.play(Transform(comp.key, send_key().move_to(comp.key)), run_time=0.3)
             vo.wait_until("whatever was in the box went out")
-            bug1 = VGroup(sans("bug 1 · stop's click lands on send: the box is sent", 24, DANGER_C),
-                          VGroup(mono("26b85e0", 22, S.GREY), sans("one line: the stop click does nothing else", 22)
-                                 ).arrange(RIGHT, buff=0.3)).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
-            bug1.move_to(DOWN * 0.6)
-            self.play(FadeIn(bug1[0], shift=UP * 0.1), run_time=0.5)
+            bubble = VGroup(RoundedRectangle(width=3.8, height=0.75, corner_radius=0.16, stroke_width=0).set_fill(BUBBLE, 1))
+            bubble.add(typed.copy().move_to(bubble[0]))
+            bubble.move_to(strip.get_top() + DOWN * 0.6).align_to(comp.box, RIGHT)
+            self.play(ReplacementTransform(typed, bubble[1]), FadeIn(bubble[0]), run_time=0.7)
+            sent = sans("sent", 22, DANGER_C).next_to(bubble, LEFT, buff=0.25)
+            self.play(FadeIn(sent), run_time=0.3)
             vo.wait_until("In a demo replay")
-            demo = sans("(in a demo replay: the very message you had just stopped)", 22, S.GREY).next_to(bug1[0], DOWN, buff=0.08)
-            demo.align_to(bug1[0], LEFT)
-            bug1[1].next_to(demo, DOWN, buff=0.12).align_to(demo, LEFT)   # not on screen yet: move it, don't animate it
-            self.play(FadeIn(demo), run_time=0.4)
+            again = user_bubble("喉咙痛两天了，吞东西的时候特别疼，今天量了体温38.5度", 4.6, 20).move_to(bubble).align_to(bubble, RIGHT)
+            demo = sans("demo replay: the message you had just stopped, sent again", 22, S.GREY).next_to(strip, DOWN, buff=0.2)
+            self.play(ReplacementTransform(bubble, again), FadeIn(demo), run_time=0.6)
             vo.wait_until("The fix was one line")
-            self.play(FadeIn(bug1[1]), run_time=0.4)
+            fix1 = VGroup(mono("26b85e0", 22, S.GREY), sans("one line: the stop click does nothing else", 22)).arrange(RIGHT, buff=0.3)
+            fix1.next_to(demo, DOWN, buff=0.3)
+            self.play(FadeIn(fix1), FadeOut(cursor), run_time=0.4)
             vo.wait_until("the mirror image")
             bug2 = VGroup(sans("bug 2 · Bugbot, Medium: double-click send, the second click hits stop", 24, DANGER_C),
                           VGroup(mono("f95aa77", 22, S.GREY), sans("one line: ignore the second click of a double-click", 22)
-                                 ).arrange(RIGHT, buff=0.3)).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
-            bug2.next_to(bug1, DOWN, buff=0.45).align_to(bug1, LEFT)
-            self.play(FadeOut(cursor), FadeIn(bug2[0], shift=UP * 0.1), run_time=0.5)
+                                 ).arrange(RIGHT, buff=0.3)).arrange(DOWN, buff=0.12)
+            bug2.next_to(fix1, DOWN, buff=0.35)
+            self.play(FadeIn(bug2[0], shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Another one-line fix")
             self.play(FadeIn(bug2[1]), run_time=0.4)
+            vo.wait_until("Copying how a button looks")
+            moral = sans("copying how a button looks ≠ copying how it behaves", 26, USER_C).next_to(bug2, DOWN, buff=0.3)
+            self.play(FadeIn(moral, shift=UP * 0.1), run_time=0.5)
             self.wait(max(0.1, vo.remaining() - 0.2))
         self.wait(0.6)
         clear(self)
