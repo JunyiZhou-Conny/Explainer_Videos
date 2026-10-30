@@ -8,8 +8,8 @@ facts and unclaimed reviews are kept separate.
 ## Content gates (AGENTS.md)
 
 1. **Hook.** s01 puts all 109 commits of PR #36 and PR #41 on one Boston-time clock, every one made by
-   an agent, then asks two questions: why are most of them fixes, and with no person reviewing yet,
-   who decided anything? ✔
+   an agent. Then it asks two questions: why are most of them fixes (the 53 that name a review light
+   up), and, with no person reviewing yet, who decided anything? ✔
 2. **Intuition before formalism; an animated mechanism per core idea.**
    - s02 shows the pipeline issue → branch → draft PR, pushes waking two bots that only comment, a
      decision record moving 提议 → 已采纳, two session bars, and the stacked PR with its 13 merge arrows.
@@ -17,12 +17,13 @@ facts and unclaimed reviews are kept separate.
      cards. Four walled-off reviewers find 75 problems (97 cards). One card is shown before and after.
    - s04 shows a word-list engine missing one phrasing and tripping on a harmless one, then the new
      shape: the model judges, and the checker on its output guards.
-   - s05 shows a token going round push → bots → fix. 19 commits in about 100 minutes. The checker's
-     bar grows 459 → 1,326 lines, and a whack-a-mole pair shows a false alarm, then a miss.
-   - s06 shows prober agents firing phrasings at the checker; the 1,060 failures fill a jar that runs
-     with the unit tests.
-   - s07 shows the five-angle review, then six fix branches leaving one base and merging back after
-     reproducing their bugs, with one collision. Usage-limit walls stand over a queue of six agents.
+   - s05 shows a token going round push → bots → fix, and 19 commits in about 100 minutes.
+   - s06 shows the five-angle review, then six fix branches leaving one after another. Each reproduces
+     its bug first, a check flips from ✗ to ✓, and the branches merge back with collisions. One
+     usage-limit wall stands alone; a second stands over the queue of six agents.
+   - s07 shows the checker's bar growing 459 → 1,326 lines and a rule window that flags a harmless
+     phrasing, then misses a risky one. Prober agents fire phrasings at it, then the bots' one-at-a-time
+     findings are set against 372 at once, and the 1,060 failures fill a jar that runs with the unit tests.
    - s08 has two receipts: bars for the stated model costs against a $0.50 cap, and token blocks with
      "$ ?" for the agents.
    - s09 sets your recorded calls against the agents' own calls, shows the stop rule's deadline and the
@@ -30,14 +31,15 @@ facts and unclaimed reviews are kept separate.
    - s10 marks the six phases on the clock.
 
    No code on screen. ✔
-3. **Ponder moments and recap.** Two pause-and-ponder cards, each with a held pause:
-   - s04: "The checker is word rules too. What would make it less of a whack-a-mole?" s06 answers it
-     with probing before the push and failures kept as tests.
-   - s09: "With no person having reviewed it yet, what makes this code trustworthy?" The layers answer it
-     at once, along with decisions that wait for a signature.
+3. **Ponder moments and recap.** Four pause-and-ponder cards, each with a held pause:
+   - s04: "The checker is word rules too. What would make it less of a whack-a-mole?" s07 answers it.
+   - s06: "Why reproduce a bug before fixing it?" Answered at once.
+   - s07: "The bots would have found these too. Why attack the checker yourself first?" Answered at once.
+   - s09: "With no person having reviewed it yet, what makes this code trustworthy?" The layers answer
+     it at once.
 
-   s10 recaps the six phases and asks three bilingual test-yourself questions, each answered in the
-   episode (s05/s06, s07, s09), then holds a pause. ✔
+   s10 recaps the six phases in order and asks three bilingual test-yourself questions, each answered in
+   the episode (s07, s06, s09), then holds a 5 s pause. ✔
 4. **Written for the ear; anchored cues.**
    - Times are spelled out ("nine twenty-one", "one fifty-one", "a quarter to one").
    - "0004" and "0006" are spoken "decision four" and "decision six".
@@ -78,7 +80,70 @@ facts and unclaimed reviews are kept separate.
 
 ## Whole-video QA (first draft, 7:44)
 
-(filled after the viewer pass)
+**Who reviewed.** An independent agent played Conny, working from the bilingual subtitles and one frame every 3 s. I also made two frame-by-frame passes over every scene.
+
+**Gates as first judged.**
+
+- Hook: pass.
+- Mechanisms: pass, with gaps.
+- Ponder: marginal (two cards in 7:43).
+- Recap: **fail**. Question 2 was never answered.
+
+**Fixes.**
+
+- [04:38 / 07:29][MISSING] "Why reproduce a bug before fixing it?" was asked but never answered. FIX:
+  - s06 now asks it on a ponder card.
+  - The answer comes at once, with a check flipping ✗ → ✓: a reproduction proves the bug is real, and gives a check that has to flip from failing to passing.
+- [03:48–04:23][CONFUSING] Wednesday ran out of order: the night's probing came before the afternoon's fix agents. FIX: the scenes are now chronological.
+  - Tuesday night's loop ends on the batching agreement of 00:26.
+  - Day two (s06) follows.
+  - Then the checker's whack-a-mole and the second night's probing (s07).
+  - The recap follows the same order.
+- [04:38][WRONG] The fix branches looked parallel. FIX: each later agent leaves later and merges later, over a "time →" line. The stagger is labelled illustrative.
+- [03:41][WRONG] The batching quote (Wed 00:26) came after Wednesday's examples. FIX: it now closes the Tuesday-night loop: "By half past midnight…".
+- [00:22][CONFUSING] "Most of them are fixes" was said but not shown. FIX:
+  - The 53 of 88 commits whose message names Bugbot, Codex or a review agent light up on the hook's clock, with the count.
+  - Recap question 1 now reads "Why did so many of the brain's commits touch the checker?"
+- [04:04][CONFUSING] 372 errors versus 1,060 tests did not add up. FIX:
+  - A second ponder card asks why the agents attacked the checker themselves first.
+  - The answer: the bots report one finding at a time, while one probing run found 372 at once.
+  - The jar shows round 1's 371 + round 2's 689 = 1,060.
+- [03:52][MISSING] The two rules were never named, and there was no example pair. FIX: the narration names both rules (no "open now" unless the hours are checked; keep cost out of the way of an emergency). A real pair from the handoff is shown: 「网络外的急诊也是更贵」 must be flagged, 「多休息」 must pass.
+- [05:27][MISSING] Cost had no scale. FIX: about 800,000 tokens per fix agent, close to five million for the six, and nothing recorded for the rest.
+- [07:01][CONFUSING] The twelve items flashed by, and decision 0006 was unexplained. FIX: a note says what 0006 is and what its addendum covers, and the list holds 4 s longer.
+- [03:23–03:45][gate 2] The whack-a-mole was two static lines. FIX: a rule drawn as a window over phrasings (an illustration). Too wide, it flags a harmless one; narrowed, it misses a risky one.
+- [00:41][WRONG] Bugbot was narrated first, but Codex's arrow appeared first. FIX: one arrow per bot, each on its own name.
+- [04:57][WRONG] Both usage-limit walls sat over the queue. FIX: the first wall stands alone and the second sits over the six queued agents, each on its own words.
+- [00:54][CONFUSING] 「无人值守」 was shown before it was explained, and "two teammates asked" was never said. FIX:
+  - s02 says handoffs are "marked unattended when nobody was watching" and highlights the title.
+  - s05 says the agent "asked two teammates to look".
+- [02:03][CONFUSING] "The date decision 0004 uses" was cryptic, and there were few Beijing times. FIX: s03, s04, s05 and s07 now carry Beijing times in their headers.
+- [SLOW] These openings had a bare header for 6–9 s, each now fixed:
+  - s03: session 1's first seven commits on a strip, after "a night of planning".
+  - s04: the rules engine shown from the start.
+  - s05: the loop drawn at once.
+  - s06: the checker shown first.
+  - s07: the checker label shown at once.
+  - s08: the cost labels.
+  - s09: the "who decided?" card.
+- [LAYOUT] These were caught in my frame passes and fixed:
+  - the session labels over each other;
+  - "13 merges…" over the #41 label;
+  - the two whack-a-mole quotes over each other;
+  - "pushes" on the PR box;
+  - the review label crossing the pentagon;
+  - the double arrow through "Thursday";
+  - the honesty quote over the stop-rule card;
+  - the cap line through "≈ $0.27" (now a dashed budget outline);
+  - the spinning loop turning its text sideways (now a token travels the loop);
+  - dimmed yellow cards filling solid;
+  - the end card over question 3.
+- [captions] Three lines were reworded so the line breaks no longer split a phrase:
+  - 「一个规则引擎来决定紧急程度」;
+  - 「做出了聊天页，也就是第三集讲的那一页」;
+  - 「修复先攒起来，再一起推送」.
+
+The ponder count is now four (s04, s06, s07, s09). The recap's three questions are each answered in the episode (s07; s06; s09).
 
 ## Verified (final render)
 
