@@ -101,11 +101,11 @@ class Next(VoiceScene):
             sbg = RoundedRectangle(width=say.width + 0.5, height=say.height + 0.35, corner_radius=0.14, stroke_width=0
                                    ).set_fill(CREAM, 1)
             say.move_to(sbg)
-            sayg = VGroup(sbg, say).move_to(LEFT * 2.2 + DOWN * 2.35)
+            sayg = VGroup(sbg, say).move_to(LEFT * 2.2 + DOWN * 2.6)
             form = RoundedRectangle(width=2.6, height=1.1, corner_radius=0.12, stroke_color=OURS_C, stroke_width=2)
             form_lab = VGroup(sans("booking", 22, OURS_C), sans("call · or fill the form", 20, S.GREY)).arrange(DOWN, buff=0.06)
             form_lab.move_to(form)
-            formg = VGroup(form, form_lab).move_to(RIGHT * 4.3 + DOWN * 2.35)
+            formg = VGroup(form, form_lab).move_to(RIGHT * 4.3 + DOWN * 2.6)
             link_a = Arrow(sayg.get_right(), formg.get_left(), color=OURS_C, buff=0.15, stroke_width=3)
             src = sans("demo 03's English line", 20, S.GREY).next_to(sayg, UP, buff=0.06).align_to(sayg, LEFT)
             self.play(FadeOut(seed), FadeIn(sayg), FadeIn(src), run_time=0.5)

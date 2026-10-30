@@ -141,7 +141,8 @@ class Built(VoiceScene):
             vo.wait_until("In a demo replay")
             again = user_bubble("喉咙痛两天了，吞东西的时候特别疼，今天量了体温38.5度", 4.6, 20).move_to(bubble).align_to(bubble, RIGHT)
             demo = sans("demo replay: the message you had just stopped, sent again", 22, S.GREY).next_to(strip, DOWN, buff=0.2)
-            self.play(ReplacementTransform(bubble, again), FadeIn(demo), run_time=0.6)
+            # the bubble's parts were added one by one, so fade those parts, not the parent group
+            self.play(FadeOut(bubble[0]), FadeOut(bubble[1]), FadeIn(again), FadeIn(demo), run_time=0.6)
             vo.wait_until("The fix was one line")
             fix1 = VGroup(mono("26b85e0", 22, S.GREY), sans("one line: the stop click does nothing else", 22)).arrange(RIGHT, buff=0.3)
             fix1.next_to(demo, DOWN, buff=0.3)
