@@ -1,0 +1,1384 @@
+1
+00:00:00,000 --> 00:00:02,476
+第二部分从 container 的提示符接着来
+Part 2 picks up at the container prompt;
+
+2
+00:00:02,476 --> 00:00:05,632
+如果你把它关了，就重新跑一遍准备步骤，再设置好你的密钥
+if you closed it, rerun the setup and set your key.
+
+3
+00:00:05,952 --> 00:00:10,937
+回想一下往右移的那个箭头：风险高、操作无法撤销
+Remember the move-right arrow: when stakes are high, actions can't be undone,
+
+4
+00:00:10,937 --> 00:00:15,339
+任务可预测或者需要审计的时候，就把控制权交给代码
+the task is predictable, or you need an audit, give control to code.
+
+5
+00:00:15,583 --> 00:00:17,439
+第 3 幕做的正是这件事
+Act 3 does exactly that.
+
+6
+00:00:17,759 --> 00:00:21,044
+下单路线是一张图，它的边归 Python 管
+The order route is a graph, and Python owns its edges.
+
+7
+00:00:21,364 --> 00:00:27,642
+确认、提议、校验，只有报告不通过才退回提议，最多两次
+Confirm, propose, validate, and back to propose only if the report fails, at most twice;
+
+8
+00:00:27,642 --> 00:00:32,351
+然后是搭配、需要时经理审核，最后重新校验并下单
+then pairings, manager review when required, revalidate and place.
+
+9
+00:00:32,671 --> 00:00:37,002
+只有一个节点归模型：propose cart 节点，不带任何工具
+Only one node belongs to the model: propose cart, with no tools.
+
+10
+00:00:37,250 --> 00:00:39,937
+README 把它归在 harness 下面
+The README files this under the harness;
+
+11
+00:00:39,937 --> 00:00:44,438
+在课上的自主性光谱上，它靠近结构化输出
+on the lecture's autonomy spectrum, it sits near structured output:
+
+12
+00:00:44,438 --> 00:00:46,722
+一张固定的图，只有一步交给模型
+a fixed graph with one model step.
+
+13
+00:00:46,967 --> 00:00:49,719
+第 1 步：第 3 幕，standard 场景
+Step 1: act 3, scenario standard.
+
+14
+00:00:50,039 --> 00:00:52,887
+有密钥的话，模型提议数量
+With a key, the model proposes quantities;
+
+15
+00:00:52,887 --> 00:00:57,228
+其余的都由代码来做：流转、定价、校验、下单
+code does the rest: transitions, pricing, validation, placement.
+
+16
+00:00:57,548 --> 00:00:59,148
+成功就是一张回执
+Success is a receipt.
+
+17
+00:00:59,300 --> 00:01:03,977
+第 2、3 步是运输这一课，用的是一位顾客自己的购物车
+Steps 2 and 3 are the shipping lesson, with a customer's own cart:
+
+18
+00:01:03,977 --> 00:01:07,236
+Comté、Bûcheron 和 Époisses，寄往宾夕法尼亚
+Comté, Bûcheron and Époisses, to Pennsylvania.
+
+19
+00:01:07,556 --> 00:01:12,079
+改之前，模型只记录购物车；harness 检查它，然后停下
+Before, the model only records the cart; the harness checks it and stops.
+
+20
+00:01:12,399 --> 00:01:16,324
+改之后，修订循环打开了，在线模型可能会修正它
+After, the revise loop opens, and the live model may fix it.
+
+21
+00:01:16,983 --> 00:01:20,412
+额外再跑一个：--fixture 离线走同一条路线
+As an extra, --fixture runs the same path offline,
+
+22
+00:01:20,412 --> 00:01:22,743
+模型的位置上坐的是一个脚本
+with a script in the model's seat.
+
+23
+00:01:23,063 --> 00:01:27,684
+第 1 次尝试里有生乳的 Comté，轨道把它退了回去
+Attempt 1 has raw-milk Comté, and the rail sends it back;
+
+24
+00:01:27,684 --> 00:01:31,170
+第 2 次换成 Taleggio：有效，50.10 美元
+attempt 2 swaps in Taleggio: valid, $50.10.
+
+25
+00:01:33,233 --> 00:01:34,233
+有个坑
+One trap:
+
+26
+00:01:34,233 --> 00:01:39,435
+用 fixture 时，blocked 场景会把同一辆购物车一连提议三次
+with fixtures, the blocked scenario proposes the same cart three times and ends
+
+27
+00:01:39,435 --> 00:01:41,263
+最后是 UNRESOLVED，不是 BLOCKED
+UNRESOLVED, not BLOCKED,
+
+28
+00:01:41,263 --> 00:01:44,561
+所以在 Colab 里，这一课要把 fixture 关掉
+so in Colab keep fixtures off for this lesson.
+
+29
+00:01:44,881 --> 00:01:46,951
+暂停一下，把第 1 到第 3 步跑一遍
+Pause and run steps 1 to 3.
+
+30
+00:01:50,300 --> 00:01:56,696
+第 4 步是脚本模拟的，所以审批结果可以预期：纽约 60 位客人
+Step 4 is scripted, so approval is predictable: 60 guests in New York,
+
+31
+00:01:56,696 --> 00:02:01,265
+一辆有效的购物车，220.80 美元，超过了 200 美元的门槛
+a valid cart at $220.80, above the $200 threshold.
+
+32
+00:02:01,500 --> 00:02:06,492
+工作流暂停了，你就是经理：回答的是宿主程序，绝不是 agent
+The workflow pauses, and you are the manager: the host answers, never the agent.
+
+33
+00:02:06,812 --> 00:02:08,067
+输入 approve
+Type approve.
+
+34
+00:02:08,117 --> 00:02:10,639
+你批准的到底是什么？一个指纹
+What did you approve? A fingerprint:
+
+35
+00:02:10,639 --> 00:02:18,037
+SHA-256 哈希，覆盖需求、商品明细、小计、政策和商品属性
+the SHA-256 hash, taken over the request, the items, the subtotal, the policy and the product attributes.
+
+36
+00:02:18,357 --> 00:02:22,239
+库存是故意排除在外的：它会被重新检查，而不是被批准
+Stock is left out on purpose: it's rechecked, not approved.
+
+37
+00:02:22,483 --> 00:02:25,662
+结账时，购物车会再校验一次，再算一次哈希
+At checkout the cart is validated and hashed again.
+
+38
+00:02:25,982 --> 00:02:29,128
+批准要算数，决定必须是 approve
+The approval counts only if the decision is approve,
+
+39
+00:02:29,128 --> 00:02:32,638
+而且审批单要对得上这次结账和这个指纹
+and the ticket matches this checkout and this fingerprint.
+
+40
+00:02:32,958 --> 00:02:35,411
+改动一行，哈希就不一样了
+Change one line, and the hashes differ.
+
+41
+00:02:37,317 --> 00:02:40,239
+你思考的时间不算进预算
+Your thinking time doesn't count against the budget.
+
+42
+00:02:40,917 --> 00:02:45,610
+再额外试一次，改成输入 decline：工作流结束，没有订单
+And as an extra, type decline instead: the workflow ends, with no order.
+
+43
+00:02:45,850 --> 00:02:47,450
+来想一个问题
+Something to ponder.
+
+44
+00:02:47,514 --> 00:02:49,114
+经理批准了
+The manager approves.
+
+45
+00:02:49,263 --> 00:02:53,125
+在结账执行之前，另一个订单拿走了大部分 Mimolette
+Before checkout runs, another order takes most of the Mimolette.
+
+46
+00:02:53,445 --> 00:02:57,434
+结账会怎么做，为什么批准保护不了这个订单？
+What does checkout do, and why doesn't the approval protect this order?
+
+47
+00:03:06,283 --> 00:03:10,016
+结账时重新校验，发现库存违规，就把它拦下了
+Checkout revalidates, finds a stock violation, and blocks.
+
+48
+00:03:10,336 --> 00:03:16,544
+库存不在指纹里：批准授权的是一个决定；它不预留任何东西
+Stock isn't in the fingerprint: an approval authorizes a decision; it doesn't reserve anything.
+
+49
+00:03:16,864 --> 00:03:18,635
+第 6 幕会把这个真的跑一遍
+Act 6 shows this for real.
+
+50
+00:03:18,883 --> 00:03:22,851
+第 5 步：Munster 的库存是 0 克，所以第 1 次尝试失败了
+Step 5: Munster has 0 grams, so attempt 1 fails.
+
+51
+00:03:23,171 --> 00:03:26,195
+一次有上限的修订换成了 Époisses
+One bounded revision swaps in Époisses,
+
+52
+00:03:26,195 --> 00:03:30,382
+订单以 50.10 美元下单，模型调用为零
+and the order places at $50.10, with zero model calls.
+
+53
+00:03:30,617 --> 00:03:32,558
+第 6 步是 notebook 单元格
+Step 6 is the notebook cell.
+
+54
+00:03:32,878 --> 00:03:35,624
+它的 trace 层和 budget 层可以拆掉
+Its trace and budget layers can come off;
+
+55
+00:03:35,624 --> 00:03:41,049
+校验、审批和重新校验是图和结账的规则，所以保留
+validation, approval and revalidation are graph and checkout rules, so they stay.
+
+56
+00:03:41,283 --> 00:03:46,275
+所以批准绑定的正是这辆购物车，而结账在暂停之后还会重新校验
+So an approval binds this exact cart, and checkout revalidates after the pause.
+
+57
+00:03:46,595 --> 00:03:50,350
+暂停一下，跑第 4、5 步；单元格是给 Colab 用的
+Pause and run steps 4 and 5; the cell is for Colab.
+
+58
+00:03:53,700 --> 00:03:56,343
+第 4 幕是一个规划器，处理更长的任务
+Act 4 is a planner for a longer task:
+
+59
+00:03:56,343 --> 00:03:58,415
+纽约一场 40 位客人的活动
+a 40-guest event in New York.
+
+60
+00:03:58,735 --> 00:04:02,534
+课上把记忆分成长期和短期
+The lecture splits memory into long-term and short-term;
+
+61
+00:04:02,534 --> 00:04:05,044
+这里对应的是保存的记忆和历史
+here that's saved memory and history,
+
+62
+00:04:05,044 --> 00:04:08,911
+再加上任务、审批和审计：五种状态
+plus tasks, approvals and the audit: five kinds of state.
+
+63
+00:04:09,150 --> 00:04:12,265
+README 问的是，这些里面哪一个能授权行动
+The README asks which of these can authorize an action.
+
+64
+00:04:12,585 --> 00:04:14,633
+只有一个：审批抽屉
+Only one: the approval drawer.
+
+65
+00:04:14,867 --> 00:04:16,488
+第 1 步：第 4 幕
+Step 1: act 4.
+
+66
+00:04:16,808 --> 00:04:21,267
+在任何模型调用之前，harness 就打印出第一位顾客保存的记忆
+Before any model call, the harness prints the first customer's saved memory.
+
+67
+00:04:21,587 --> 00:04:23,191
+然后是规划器的工具
+Then the planner's tools:
+
+68
+00:04:23,191 --> 00:04:27,940
+评估活动、读取供应商的文档、起草和保存给供应商的邮件
+assess the event, read the vendor document, draft and save a vendor email,
+
+69
+00:04:27,940 --> 00:04:29,494
+以及待办工具
+and the to-do tools.
+
+70
+00:04:29,544 --> 00:04:31,165
+没有哪个工具能写记忆
+No tool writes memory.
+
+71
+00:04:32,033 --> 00:04:34,636
+有密钥的话，要找的是活动说明
+With a key, look for the brief:
+
+72
+00:04:34,636 --> 00:04:39,926
+Comté 和 Mimolette 各 1000 克，Époisses 1200 克
+1,000 grams each of Comté and Mimolette, and 1,200 of Époisses.
+
+73
+00:04:40,246 --> 00:04:44,833
+店里的 Époisses 只有 900 克：差 300 克
+The shop has only 900 grams of Époisses: 300 short.
+
+74
+00:04:45,153 --> 00:04:49,953
+完成的任务不等于批准，店里的库存也不等于供应商有货
+A finished task is not an approval, and shop stock is not vendor availability.
+
+75
+00:04:50,200 --> 00:04:53,551
+保存邮件这个工具，approval mode 设为 always require
+Saving the email has approval_mode="always_require",
+
+76
+00:04:53,551 --> 00:04:56,451
+所以框架会在保存执行之前暂停
+so the framework pauses before the save runs.
+
+77
+00:04:56,771 --> 00:05:00,269
+第 3 幕暂停的是整个工作流；这里只暂停一个工具
+Act 3 paused a whole workflow; this pauses one tool.
+
+78
+00:05:00,517 --> 00:05:04,208
+你批准之后的输出，来自一次脚本模拟的额外运行
+The output after you approve comes from a scripted extra run.
+
+79
+00:05:04,528 --> 00:05:06,759
+审核里显示供应商地址
+The review shows the vendor address
+
+80
+00:05:06,759 --> 00:05:09,882
+和一段由代码写的正文，坚果过敏也写在里面
+and a body written by code, nut allergy included.
+
+81
+00:05:10,202 --> 00:05:14,170
+然后：status 为 saved，email transmitted 为 no，文件路径
+Then: status: saved, email transmitted: no, and the file path.
+
+82
+00:05:14,417 --> 00:05:18,220
+接着是测试里出现过的审批身份警告
+Then comes the approval-identity warning you saw in the tests:
+
+83
+00:05:18,220 --> 00:05:20,796
+README 预告过它，它是无害的
+the README predicts it, and it's harmless.
+
+84
+00:05:21,116 --> 00:05:22,865
+以权威结果那一块为准
+Trust the authoritative block.
+
+85
+00:05:23,185 --> 00:05:24,785
+暂停一下，跑第 1 步
+Pause and run step 1.
+
+86
+00:05:28,133 --> 00:05:32,073
+第 2 步离线运行：一个脚本模拟的规划器，带压缩
+Step 2 runs offline: a scripted planner with compaction,
+
+87
+00:05:32,073 --> 00:05:35,450
+一份恶意的供应商文档，还有一次测试用的拒绝
+a malicious vendor document, and a test decline.
+
+88
+00:05:35,770 --> 00:05:40,080
+它先放进十二条合成笔记，每条大约 15000 个字符
+It first seeds twelve synthetic notes of about 15,000 characters.
+
+89
+00:05:40,316 --> 00:05:45,820
+窗口是 16000 个 token，其中 2400 个留给回复
+The window is 16,000 tokens, with 2,400 kept for the reply.
+
+90
+00:05:46,140 --> 00:05:51,044
+超过剩下部分的 80% 时，截断会丢掉最旧的消息
+Above 80 percent of the rest, truncation drops the oldest messages
+
+91
+00:05:51,044 --> 00:05:54,759
+直到历史回到一半以下：26 条变成 5 条
+until the history is back under half: 26 become 5.
+
+92
+00:05:55,000 --> 00:05:56,600
+来想一个问题
+Something to ponder.
+
+93
+00:05:56,664 --> 00:05:59,317
+压缩丢掉了 26 条消息里的 21 条
+Compaction dropped 21 of 26 messages,
+
+94
+00:05:59,317 --> 00:06:02,829
+而且历史里没有一条提到坚果过敏
+and none of the history mentions the nut allergy.
+
+95
+00:06:03,149 --> 00:06:05,346
+那每次调用怎么还会知道这件事？
+How does every call still know about it?
+
+96
+00:06:14,183 --> 00:06:15,456
+一个胶囊
+A capsule.
+
+97
+00:06:15,506 --> 00:06:19,450
+每次调用之前，harness 先取出旧胶囊、做压缩
+Before every call, the harness takes the old one out, compacts,
+
+98
+00:06:19,450 --> 00:06:22,204
+再根据应用状态钉上一个新的
+and pins a fresh one from application state.
+
+99
+00:06:22,524 --> 00:06:26,264
+里面有已确认的需求，包括坚果过敏
+It holds the confirmed request with its nut allergy,
+
+100
+00:06:26,264 --> 00:06:29,645
+还有菜单、任务、待处理的审核和未完成的工作
+the menu, tasks, pending reviews and open work,
+
+101
+00:06:29,645 --> 00:06:32,018
+都标明是数据，不是指令
+marked as data, not instructions.
+
+102
+00:06:33,416 --> 00:06:35,248
+这就是课上的压缩触发条件
+That's the lecture's compaction trigger,
+
+103
+00:06:35,248 --> 00:06:37,470
+以及什么东西持久保存在哪里，都写成了代码
+and what persists where, in code.
+
+104
+00:06:37,716 --> 00:06:42,281
+供应商文档要求忽略过敏，所以它被隔离了
+The vendor document says to ignore the allergy, so it lands in quarantine.
+
+105
+00:06:42,601 --> 00:06:44,779
+检测器故意做得很小
+The detector is deliberately small;
+
+106
+00:06:44,779 --> 00:06:48,575
+真正的防线是收件人白名单，还有你的审核
+the real guards are the recipient allowlist, and your review.
+
+107
+00:06:49,416 --> 00:06:51,464
+起草的邮件里仍然写着坚果过敏
+The drafted email still says nuts.
+
+108
+00:06:51,784 --> 00:06:57,907
+结果：DECLINED，没有保存 HTML，7 次模型调用，7 次压缩
+The result: DECLINED, no HTML saved, 7 model calls and 7 compactions.
+
+109
+00:06:58,150 --> 00:07:01,889
+第 3、4 步是可选的记忆练习
+Steps 3 and 4 are the optional memory exercise;
+
+110
+00:07:01,889 --> 00:07:06,662
+照 README 第 484 行输入，因为这里的 ID 被遮住了
+type them from README line 484, since the ID is masked here.
+
+111
+00:07:06,982 --> 00:07:10,646
+第一条命令给第二位顾客存一条偏好
+The first command stores a preference for the second customer,
+
+112
+00:07:10,646 --> 00:07:14,427
+记忆在任何模型调用之前就打印出来，即使没有密钥也一样
+and the memory prints before any model call, even without a key.
+
+113
+00:07:14,747 --> 00:07:18,480
+下一次来访时它又会显示出来；额外检查会读取这个文件
+The next visit shows it again; an extra check reads the file.
+
+114
+00:07:20,333 --> 00:07:23,618
+课上让模型来建议什么值得记住
+The lecture lets the model suggest what's worth remembering.
+
+115
+00:07:23,938 --> 00:07:28,418
+这个 harness 连这一点也移到了右边：只有宿主程序能写记忆
+This harness moves even that to the right: only the host writes memory.
+
+116
+00:07:29,266 --> 00:07:32,259
+第 5 步是 notebook 单元格，给 Colab 用
+Step 5 is the notebook cell, for Colab:
+
+117
+00:07:32,259 --> 00:07:34,407
+build act 4 加了五层
+build_act4 adds five layers.
+
+118
+00:07:34,727 --> 00:07:37,693
+去掉压缩之后，胶囊还是会重新钉上
+Without compaction, the capsule is still re-pinned.
+
+119
+00:07:38,013 --> 00:07:40,040
+暂停一下，把第 2 到第 4 步跑一遍
+Pause and run steps 2 to 4.
+
+120
+00:07:43,383 --> 00:07:44,883
+第 5 幕加入了 skill
+Act 5 adds skills:
+
+121
+00:07:44,883 --> 00:07:48,716
+装着操作流程的目录，agent 只在相关时才加载
+folders of procedure the agent loads only when relevant.
+
+122
+00:07:49,036 --> 00:07:53,196
+它们解决两个问题：专业知识的缺口，和上下文预算
+They solve two problems: the expertise gap and the context budget.
+
+123
+00:07:53,433 --> 00:07:57,152
+加载 skill 分三步，token 成本一步比一步高
+Skills load in three steps of rising token cost:
+
+124
+00:07:57,152 --> 00:08:01,646
+每个 skill 的名字和描述，各大约 100 个 token
+every skill's name and description, about 100 tokens each;
+
+125
+00:08:01,646 --> 00:08:03,893
+然后是它的主文件 SKILL.md
+then its main file, SKILL.md;
+
+126
+00:08:03,893 --> 00:08:07,534
+再然后是一份参考资料或资源文件，只在需要时读取
+then a reference or an asset, only when needed.
+
+127
+00:08:07,783 --> 00:08:10,093
+课上的 skill 还带一个 scripts 目录
+The lecture's skill also has a scripts folder for the agent to run.
+
+128
+00:08:10,093 --> 00:08:11,794
+里面的脚本由 agent 来运行
+The lecture's skill also has a scripts folder for the agent to run.
+
+129
+00:08:12,114 --> 00:08:17,596
+这个 harness 故意去掉了那个工具：skill 只提建议，从不执行
+This harness removes that tool on purpose: a skill advises, and never executes.
+
+130
+00:08:17,833 --> 00:08:19,454
+第 1 步：第 5 幕
+Step 1: act 5.
+
+131
+00:08:19,774 --> 00:08:24,446
+一开始只加载元数据：tasting-planning 和 vendor-outreach
+Only the metadata loads at first: tasting-planning and vendor-outreach.
+
+132
+00:08:24,766 --> 00:08:28,500
+新的工具是 get stock、load skill 和 read skill resource
+The new tools are get_stock, load_skill and read_skill_resource.
+
+133
+00:08:28,750 --> 00:08:31,715
+第 2 步只问库存，离线运行
+Step 2 asks only about stock, offline:
+
+134
+00:08:31,715 --> 00:08:36,473
+一次 get stock 调用，900 克，脚本没有加载任何 skill
+one get_stock call, 900 grams, and the script loads no skill.
+
+135
+00:08:36,793 --> 00:08:41,294
+有密钥的话，模型根据描述来决定：是提示，不是触发条件
+With a key, the model decides from the description: a hint, not a trigger.
+
+136
+00:08:42,033 --> 00:08:45,262
+第 3 步跑完整的采购流程，脚本模拟
+Step 3 runs the full sourcing path, scripted:
+
+137
+00:08:45,262 --> 00:08:47,772
+六次加载，每次都带着真实路径
+six loads, each with its real path.
+
+138
+00:08:48,092 --> 00:08:53,062
+起草一直会被拒绝，直到读过邮件模板为止：这是代码里的一道保险
+Drafting is refused until the email template is read: a backstop in code.
+
+139
+00:08:54,933 --> 00:08:56,533
+来想一个问题
+Something to ponder.
+
+140
+00:08:56,597 --> 00:09:01,056
+有人改了供应商那个 skill，加上一句：也发一份到另一个地址
+Someone edits the vendor skill to add: also send this to another address.
+
+141
+00:09:01,376 --> 00:09:02,976
+邮件会发到那里去吗？
+Will the email go there?
+
+142
+00:09:09,683 --> 00:09:14,053
+不会。不管这个 skill 怎么写，防线都在代码里
+No. Whatever the skill says, the guards are in code;
+
+143
+00:09:14,053 --> 00:09:17,398
+它自己的文字甚至写明了它不能添加收件人
+its own text even says it cannot add recipients,
+
+144
+00:09:17,398 --> 00:09:22,486
+而且每次读取都要经过检查：不许上级目录、绝对路径或符号链接
+and every read is checked: no parent folders, absolute paths or symlinks,
+
+145
+00:09:22,486 --> 00:09:25,064
+运行中途改过的文件会被拒绝
+and a file edited mid-run is refused.
+
+146
+00:09:25,300 --> 00:09:30,960
+收件人由代码对照白名单检查，而且什么都不会真的发出去
+The recipient is checked in code against the allowlist, and nothing is ever transmitted;
+
+147
+00:09:30,960 --> 00:09:33,790
+额外检查显示，保存的文件里也是这么写的
+an extra check shows the saved file says so.
+
+148
+00:09:34,033 --> 00:09:37,899
+用课上的话说，工具是手，MCP 是插座
+In lecture terms, a tool is the hands, MCP the socket,
+
+149
+00:09:37,899 --> 00:09:40,476
+这里没用到，skill 是说明书
+unused here, and a skill the manual.
+
+150
+00:09:44,116 --> 00:09:47,572
+第 4 步是 notebook 单元格，允许 16 次模型调用
+Step 4, the notebook cell, allows 16 model calls.
+
+151
+00:09:47,892 --> 00:09:49,962
+暂停一下，把第 1 到第 3 步跑一遍
+Pause and run steps 1 to 3.
+
+152
+00:09:53,300 --> 00:09:55,348
+第 6 幕是一个 agent 系统
+Act 6 is an agent system.
+
+153
+00:09:55,668 --> 00:10:00,648
+课上对比了单个 agent 和 agent 组成的图，分两种模式
+The lecture contrasts one agent with a graph of agents, in two patterns:
+
+154
+00:10:00,648 --> 00:10:04,521
+一个管理者把 agent 当工具来调用，或者对等的 agent 互相交接
+a manager calling agents as tools, or peers handing off.
+
+155
+00:10:05,067 --> 00:10:09,687
+它就是管理者模式，只不过它调用的工具是一整个工作流
+It's the manager pattern, except the tool it calls is a whole workflow,
+
+156
+00:10:09,687 --> 00:10:12,875
+就是第 3 幕那个，里面只有一个节点用到模型
+the one from act 3, with a model inside one node.
+
+157
+00:10:13,195 --> 00:10:14,450
+没有交接
+No handoffs.
+
+158
+00:10:14,500 --> 00:10:16,889
+第 1 步是 notebook 单元格，用来构建它
+Step 1, the notebook cell, builds it.
+
+159
+00:10:17,209 --> 00:10:21,130
+预算是：16 次外层模型调用，20 次工具调用
+The budget: 16 outer model calls, 20 tool calls,
+
+160
+00:10:21,130 --> 00:10:26,276
+每个工作流 8 次提议者调用，再加一个共享的 180 秒时钟
+8 proposer calls per workflow, and one shared 180-second clock.
+
+161
+00:10:26,517 --> 00:10:30,549
+宿主程序确认这些需求；模型只负责挑一个 ID
+The host confirms the requests; the model only picks an ID.
+
+162
+00:10:30,869 --> 00:10:35,093
+工具都很窄：start order、get order status、assess event
+Its tools are narrow: start_order, get_order_status, assess_event.
+
+163
+00:10:35,333 --> 00:10:37,424
+第 2 步：第 6 幕，standard 场景
+Step 2: act 6, standard.
+
+164
+00:10:37,744 --> 00:10:41,660
+有密钥的话，要分清外层模型调用和工作流里的调用
+With a key, tell outer model calls apart from workflow calls;
+
+165
+00:10:41,660 --> 00:10:44,549
+外层 agent 不能批准自己的订单
+the outer agent cannot approve its own order.
+
+166
+00:10:44,783 --> 00:10:48,346
+第 3 步离线运行：两个订单共用一家店
+Step 3 runs offline: two orders sharing one shop.
+
+167
+00:10:48,666 --> 00:10:50,808
+两辆购物车都以 220.80 美元通过
+Both carts pass at $220.80,
+
+168
+00:10:50,808 --> 00:10:55,727
+都暂停等经理，测试用的决定把两个都批准了
+both pause for a manager, and the test decision approves both.
+
+169
+00:10:55,967 --> 00:10:59,636
+Mimolette 和 Taleggio 一开始各有 3000 克
+Mimolette and Taleggio start at 3,000 grams each.
+
+170
+00:10:59,956 --> 00:11:03,370
+订单 1 下单了，剩下 1400 克
+Request 1 is placed, leaving 1,400.
+
+171
+00:11:03,690 --> 00:11:08,575
+订单 2 走到重新校验时需要 1600 克：被拦下了
+Request 2 reaches revalidation needing 1,600: blocked.
+
+172
+00:11:08,895 --> 00:11:13,353
+这就是第 3 幕那个思考题，真的发生了：批准不等于下单
+That's the ponder from act 3, for real: approval is not placement.
+
+173
+00:11:13,600 --> 00:11:18,843
+最终回答就是课上的回复步骤：应用检查模型的计划
+The final answer is the lecture's response step: the app checks the model's plan
+
+174
+00:11:18,843 --> 00:11:23,627
+再根据回执填上数量、价格和状态 placed
+and fills in quantities, prices and the status, placed, from the receipt.
+
+175
+00:11:23,947 --> 00:11:27,037
+被拦下的订单显示 Invalid or unauthorized
+The blocked order says Invalid or unauthorized;
+
+176
+00:11:27,037 --> 00:11:29,536
+下面库存那几行给出了原因
+the stock lines below give the reason.
+
+177
+00:11:29,783 --> 00:11:33,269
+在自主性光谱上，它是混合型，只不过里外反过来
+On the autonomy spectrum it's a hybrid, inside out:
+
+178
+00:11:33,269 --> 00:11:36,482
+外面是 agent，固定的图是它的工具
+the agent outside, the fixed graph as its tool.
+
+179
+00:11:36,802 --> 00:11:38,829
+暂停一下，跑第 2、3 步
+Pause and run steps 2 and 3.
+
+180
+00:11:42,167 --> 00:11:46,387
+服务商的模型和产品之间的一切都是我们的
+Everything between the provider's model and the product is ours:
+
+181
+00:11:46,387 --> 00:11:48,695
+上下文、harness、工具和 skill
+context, harness, tools and skills.
+
+182
+00:11:49,015 --> 00:11:50,807
+所以这些全都要测试
+So all of it must be tested.
+
+183
+00:11:51,050 --> 00:11:55,103
+课上衡量三样东西：结果、轨迹和成本
+The lecture measures three things: outcome, trajectory and cost.
+
+184
+00:11:55,423 --> 00:11:57,889
+在这里，就是 outcome 检查和 process 检查
+Here they're the outcome and process checks,
+
+185
+00:11:57,889 --> 00:11:59,489
+再加上调用次数和 token
+plus calls and tokens.
+
+186
+00:11:59,650 --> 00:12:02,039
+评测第 1 步列出所有运行
+Evaluation step 1 lists the runs.
+
+187
+00:12:02,359 --> 00:12:05,511
+到目前为止的每次运行都在同一个 SQLite 数据库里
+Every run so far is in one SQLite database,
+
+188
+00:12:05,511 --> 00:12:09,250
+包括失败的在线运行，status 为 error
+including the failed live ones, with status: error.
+
+189
+00:12:09,500 --> 00:12:11,673
+这个 --inspect-run 要一个 run ID
+--inspect-run takes a run ID:
+
+190
+00:12:11,673 --> 00:12:15,495
+照字面输入就会失败，因为它是个模板
+typed literally, it fails, because it's a template.
+
+191
+00:12:15,815 --> 00:12:19,250
+贴一个真实的；我们用 manager-approval 那次运行
+Paste a real one; we use the manager-approval run.
+
+192
+00:12:20,100 --> 00:12:24,685
+事件依次是：approval.requested，带着指纹
+The events read in order: approval.requested with the fingerprint,
+
+193
+00:12:24,685 --> 00:12:26,631
+approval.decided，由人做出
+approval.decided by a human,
+
+194
+00:12:26,631 --> 00:12:30,105
+policy.decision allow、order.placed、run.finished
+policy.decision allow, order.placed, run.finished.
+
+195
+00:12:30,425 --> 00:12:33,818
+下单的证据是一个事件，不是文字
+The evidence for order placed is an event, not the prose.
+
+196
+00:12:35,934 --> 00:12:40,819
+再额外查看第一次失败的运行：model.failed，带着 401
+As an extra, inspect the first failed run: model.failed, with the 401.
+
+197
+00:12:41,139 --> 00:12:42,910
+失败也是证据
+A failure is evidence too.
+
+198
+00:12:43,150 --> 00:12:47,651
+评测第 2 步先离线跑第 2 幕的评测
+Evaluation step 2 starts offline: the act 2 evaluation,
+
+199
+00:12:47,651 --> 00:12:51,662
+脚本模拟，重复两次，label 是 context-fixture-1
+scripted, two repeats, labeled context-fixture-1.
+
+200
+00:12:51,982 --> 00:12:53,482
+全部 4 次运行都通过了
+All 4 runs pass,
+
+201
+00:12:53,482 --> 00:12:56,782
+但脚本模拟的运行测的是这套机制，不是模型
+but scripted runs test the machinery, not the model.
+
+202
+00:12:57,017 --> 00:13:01,049
+然后把报告读回来，再导出 HTML 记分卡
+Then read the report back, and export the HTML scorecard,
+
+203
+00:13:01,049 --> 00:13:03,737
+放到默认路径，或者你自己选的路径
+to its default path or one you choose.
+
+204
+00:13:05,317 --> 00:13:08,005
+从你笔记本上的 outputs 目录里打开它
+Open it from the outputs folder on your laptop.
+
+205
+00:13:09,334 --> 00:13:13,597
+最后一条命令是个模板，给从 Colab 复制过来的数据库用
+The last command is a template for a database copied from Colab:
+
+206
+00:13:13,597 --> 00:13:15,329
+照字面输入就会失败
+typed literally, it fails.
+
+207
+00:13:15,649 --> 00:13:19,041
+每个 label 都不可更改：重复用一个，这一批就会停下来
+Labels are immutable: reuse one, and the batch stops.
+
+208
+00:13:19,361 --> 00:13:22,347
+暂停一下，跑评测第 1、2 步
+Pause and run evaluation steps 1 and 2.
+
+209
+00:13:25,683 --> 00:13:29,182
+评测第 3 步比较两套配置
+Evaluation step 3 compares two configurations.
+
+210
+00:13:29,502 --> 00:13:33,512
+课上提醒，改一次 prompt 可能修好一个用例，又弄坏三个
+The lecture warns that a prompt edit can fix one case and break three,
+
+211
+00:13:33,512 --> 00:13:35,066
+所以要逐个用例比较
+so compare per case.
+
+212
+00:13:35,116 --> 00:13:40,695
+课上的改进循环：发现失败，记录成测试用例，只改一层
+The lecture's improvement loop: see a failure, capture a test case, change one layer,
+
+213
+00:13:40,695 --> 00:13:45,420
+把测试集跑 k 次，和基线比较，然后合并或者继续迭代
+run the suite k times, compare with the baseline, then merge or iterate.
+
+214
+00:13:47,183 --> 00:13:51,684
+批次 A 用 enriched 模式跑两个用例，各两次：4 次在线运行
+Batch A runs enriched mode on two cases, twice: 4 live runs.
+
+215
+00:13:52,004 --> 00:13:55,780
+没有密钥：4 次里 0 次通过，3 个错误，1 个缺失
+Without a key: 0 of 4, with 3 errors and 1 missing.
+
+216
+00:13:56,100 --> 00:13:59,770
+如果有一批失败了，就修好密钥，用新的 label 把两批都重跑一遍
+If one fails, fix the key and rerun both with new labels.
+
+217
+00:14:00,016 --> 00:14:03,403
+复制 prompt 文件，在你的笔记本上改这份副本
+Copy the prompt file and edit the copy on your laptop:
+
+218
+00:14:03,403 --> 00:14:07,291
+只做一处有意的改动，保留已确认约束的那些规则
+one deliberate change, keeping the confirmed constraint rules.
+
+219
+00:14:07,533 --> 00:14:11,742
+我们额外追加了一行，要求写出价格和行动状态
+Our extra appends a line asking for a price and an action status;
+
+220
+00:14:11,742 --> 00:14:13,442
+用 diff 一看，正好只多了这一行
+diff shows just that line.
+
+221
+00:14:14,216 --> 00:14:17,164
+批次 B 用同样的用例和设置
+Batch B runs the same cases and settings,
+
+222
+00:14:17,164 --> 00:14:20,040
+再加上 --prompt-file 指向那份副本
+with --prompt-file pointing at the copy.
+
+223
+00:14:20,283 --> 00:14:21,883
+然后离线比较
+Then compare, offline.
+
+224
+00:14:22,160 --> 00:14:24,486
+改动的配置：prompt
+Changed configuration: prompt.
+
+225
+00:14:24,806 --> 00:14:26,896
+混杂改动：没有
+Confounding changes: none.
+
+226
+00:14:27,216 --> 00:14:30,325
+改了代码、数据或模型，它都会指出来
+Change code, data or the model, and it says so:
+
+227
+00:14:30,325 --> 00:14:33,830
+这就是课上“只改一层”的规则，由代码来检查
+the lecture's change-one-layer rule, checked in code.
+
+228
+00:14:34,266 --> 00:14:37,755
+比较只在通过或失败翻转时才标出一次运行
+Compare flags a run only when pass or fail flips;
+
+229
+00:14:37,755 --> 00:14:40,176
+这里每次运行前后两次都报错
+here every run errored both times.
+
+230
+00:14:41,216 --> 00:14:44,225
+再额外比较两个脚本模拟的批次
+As an extra, comparing two scripted batches
+
+231
+00:14:44,225 --> 00:14:48,982
+四次运行全部不变，因为 fixture 不看 prompt
+reports all four runs unchanged, because fixtures ignore the prompt.
+
+232
+00:14:49,216 --> 00:14:52,395
+评测第 4 步问的是，这些检查能证明什么
+Evaluation step 4 asks what the checks establish.
+
+233
+00:14:52,715 --> 00:14:56,492
+它们检查的是属性，比如购物车是否有效、审批的顺序
+They check properties, like cart validity and approval order;
+
+234
+00:14:56,492 --> 00:15:00,331
+文字要靠你来审，用 README 里的五个问题
+the prose needs your review, with the README's five questions.
+
+235
+00:15:00,566 --> 00:15:04,513
+课上列了三种评委：代码、模型和人
+The lecture lists three judges: code, a model and a human.
+
+236
+00:15:04,833 --> 00:15:07,585
+这个教程用了其中两个：代码，和你
+This tutorial uses two: code, and you.
+
+237
+00:15:07,905 --> 00:15:11,830
+尽量偏向代码，任务允许多少就偏多少，和 harness 里一样
+Lean toward code as far as the task allows, as in the harness.
+
+238
+00:15:12,066 --> 00:15:15,159
+报告一个差异、它的证据，以及一个局限
+Report one difference, its evidence, and one limit.
+
+239
+00:15:15,479 --> 00:15:19,959
+还有，留好你的用例：评测集是最有价值的产物
+And keep your cases: the eval set is the most valuable artifact.
+
+240
+00:15:20,279 --> 00:15:22,690
+暂停一下，跑评测第 3 步
+Pause and run evaluation step 3.
+
+241
+00:15:26,033 --> 00:15:29,304
+第 7 节的 repo 地图最后一条是
+The repository map of section 7 ends
+
+242
+00:15:29,304 --> 00:15:34,118
+python cli.py --help，所有选项都在一个地方
+with python cli.py --help: every option in one place.
+
+243
+00:15:34,366 --> 00:15:37,555
+所有 trace，以及在线运行写下的记忆，都保存在 SQLite 里
+Traces and live memory stay in SQLite.
+
+244
+00:15:37,605 --> 00:15:42,401
+库存、订单、审批单和待处理的工作流只存在于一个进程里
+Inventory, orders, tickets and pending workflows last for one process;
+
+245
+00:15:42,401 --> 00:15:44,798
+任务和历史，只存在于一个 session 里
+tasks and history, for one session.
+
+246
+00:15:45,033 --> 00:15:47,486
+现在来拆掉；这几步都是额外的
+Now tear down; these steps are extras.
+
+247
+00:15:47,806 --> 00:15:50,685
+在每个 container 的 shell 里输入 exit
+Type exit in each container shell;
+
+248
+00:15:50,685 --> 00:15:55,849
+它是用 --rm 启动的，所以 docker ps -a 里什么都不剩
+it was started with --rm, so nothing is left in docker ps -a.
+
+249
+00:15:56,083 --> 00:15:58,494
+你笔记本上的 outputs 目录会留着
+The outputs folder stays on your laptop.
+
+250
+00:15:58,814 --> 00:16:02,793
+里面的 trace 数据库存着你的 prompt 和输出，密钥已经脱敏
+Its trace database holds your prompts and outputs, keys redacted;
+
+251
+00:16:02,793 --> 00:16:04,446
+用完了就把它删掉
+delete it when you're done.
+
+252
+00:16:04,683 --> 00:16:09,307
+用 docker image rm，能腾出那 1.77 GB 里的大部分
+docker image rm frees most of those 1.77 gigabytes;
+
+253
+00:16:09,307 --> 00:16:11,211
+留下的是 base image
+the base image stays.
+
+254
+00:16:11,531 --> 00:16:14,050
+然后关掉存过你密钥的那个终端
+Then close the terminal that held your key,
+
+255
+00:16:14,050 --> 00:16:18,443
+别让密钥进文件、commit 和 shell 历史记录，再留意你的用量
+keep it out of files, commits and your shell history, and watch your usage.
+
+256
+00:16:18,763 --> 00:16:20,854
+在 Colab 里，删除运行时
+In Colab, delete the runtime.
+
+257
+00:16:21,174 --> 00:16:22,774
+暂停一下，把它拆掉
+Pause, and tear down.
+
+258
+00:16:24,783 --> 00:16:29,070
+这就是行动边界，现在填好了：预算和图
+Here is the action boundary, filled in: budgets and the graph;
+
+259
+00:16:29,070 --> 00:16:31,835
+schema、审计和保存时的审批
+schemas, the audit and approval on save;
+
+260
+00:16:31,835 --> 00:16:35,153
+上下文包、胶囊和由宿主程序写的记忆
+the packet, the capsule and host-written memory;
+
+261
+00:16:35,153 --> 00:16:37,020
+CartCheck 和重新校验
+CartCheck and revalidation;
+
+262
+00:16:37,020 --> 00:16:39,439
+窄工具和分开的计数器
+narrow tools and separate counters.
+
+263
+00:16:39,683 --> 00:16:41,667
+模型提议，在左边
+The model proposes, on the left.
+
+264
+00:16:41,987 --> 00:16:45,635
+在右边，harness 决定；而在关键的地方，你也一样
+On the right, the harness decides, and where it matters, so do you.
+
+265
+00:16:45,883 --> 00:16:48,763
+README 最后有五个反思问题
+The README ends with five reflection questions.
+
+266
+00:16:49,083 --> 00:16:51,387
+挑一次你跑过的运行，回答这些问题
+Pick one run you did, and answer them.
+
+267
+00:16:51,633 --> 00:16:53,012
+自测一下
+Test yourself.
+
+268
+00:16:53,062 --> 00:16:55,201
+去掉 trace 之后，harness 还剩下什么？
+What survives harness.without("trace")?
+
+269
+00:16:55,452 --> 00:16:58,118
+为什么检索到的上下文要作为数据进来？
+Why does retrieved context arrive as data?
+
+270
+00:16:58,438 --> 00:17:00,166
+批准绑定的是什么？
+What is an approval bound to?
+
+271
+00:17:00,486 --> 00:17:02,449
+哪一种状态能授权一个行动？
+Which state can authorize an action?
+
+272
+00:17:02,769 --> 00:17:05,329
+还有，一批通过的 fixture 运行能证明什么？
+And what does a passing fixture batch establish?
+
+273
+00:17:05,649 --> 00:17:09,105
+暂停一下，试着答一答；答案在练习里
+Pause and try them; answers are in the exercises.
+
+274
+00:17:12,350 --> 00:17:16,973
+接下来，第 8 讲会在 Google 的 Agent Platform 上微调模型
+Next, lecture 8 fine-tunes models on Google's Agent Platform,
+
+275
+00:17:16,973 --> 00:17:18,573
+它以前叫 Vertex AI
+formerly Vertex AI.
+
+276
+00:17:18,793 --> 00:17:21,684
+第 9 讲用 pytest 测试代码
+Lecture 9 tests code with pytest;
+
+277
+00:17:21,684 --> 00:17:26,152
+这里的 281 个测试用的是 unittest，是很好的范例
+these 281 tests use unittest, and are a good model.

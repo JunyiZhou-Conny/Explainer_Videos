@@ -1,0 +1,2 @@
+# recorded (saved output of the course Colab "Agent Harness", not re-run here): https://colab.research.google.com/drive/1ZYMsbG0gqsbs-6Pcj8WtT3WhEa4f80EZ, cell 8 ("Install Dependencies"), execution count 2; the notebook stores no date.
+CompletedProcess(args=['/usr/bin/python3', '-m', 'scripts.check_sdk'], returncode=0)

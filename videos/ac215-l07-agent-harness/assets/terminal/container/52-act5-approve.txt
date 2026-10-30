@@ -1,0 +1,158 @@
+$ python cli.py --act 5 --fixture --email-decision approve
+Skills lesson — SCRIPTED local SDK responses; no service calls.
+Sourcing plan and mock HTML email only. No order, reservation or email transmission.
+TEST email response configured: approve
+Memory for pavlos: French cheeses; funky cheeses
+Skills available (metadata only): tasting-planning, vendor-outreach
+
+🤖 Model call 1 · Event planner · fixture-model
+  📥 Input: 2 conversation messages.
+  🧰 Available tools: assess_event, read_vendor_document, draft_vendor_email, save_vendor_email, get_stock, todos_add, todos_complete, todos_remove, todos_get_remaining, todos_get_all, load_skill, read_skill_resource
+  📤 Requested tools: load_skill
+  ⏱️ 0.32s · 100 input tokens · 20 output tokens
+  🔧 Tool call 1: load_skill
+  📋 Arguments: skill name: tasting-planning
+Skill loaded: tasting-planning/SKILL.md
+  📦 Result (0.01s): --- name: tasting-planning description: Plan and present a cheese tasting using a confirmed menu, serving guidance, and a reusable tasting-plan format. Use f…
+
+🤖 Model call 2 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_0
+  📤 Requested tools: read_skill_resource
+  ⏱️ 0.01s · 100 input tokens · 20 output tokens
+  🔧 Tool call 2: read_skill_resource
+  📋 Arguments: skill name: tasting-planning; resource name: references/serving-guide.md
+Skill loaded: tasting-planning/references/serving-guide.md
+  📦 Result (0.00s): # Serving guide Organize the board as a tasting journey: start with the gentlest fresh or fresh-aged cheese, continue with firmer cheeses, and finish with th…
+
+🤖 Model call 3 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_1
+  📤 Requested tools: read_skill_resource
+  ⏱️ 0.01s · 100 input tokens · 20 output tokens
+  🔧 Tool call 3: read_skill_resource
+  📋 Arguments: skill name: tasting-planning; resource name: assets/tasting-plan.md
+Skill loaded: tasting-planning/assets/tasting-plan.md
+  📦 Result (0.00s): # Host tasting plan This is the layout the application renders. For a structured `TastingReply`, fill `courses`, `serving_notes`, and `open_questions`; do no…
+
+🤖 Model call 4 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_2
+  📤 Requested tools: todos_add
+  ⏱️ 0.03s · 100 input tokens · 20 output tokens
+  🔧 Tool call 4: todos_add
+  📋 Arguments: todos: title: Prepare the requested plan
+Plan: [open] Prepare the requested plan
+  📦 Result (0.00s): 1 entries
+
+🤖 Model call 5 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_3
+  📤 Requested tools: assess_event
+  ⏱️ 0.03s · 100 input tokens · 20 output tokens
+  🔧 Tool call 5: assess_event
+  📋 Arguments: none
+  📦 Result (0.00s): report: items: 3 entries; line totals cents: 3 entries; subtotal cents: 17780; total grams: 3200; needs manager approval: no; violations: 1 entries; shortfalls: 1 entries; inventory source: shop_inventory; inventory g: comte: 6000; epoisses: 900; mimolette: 3000; vendor availability: unconfirmed;…
+
+🤖 Model call 6 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_4
+  📤 Requested tools: load_skill
+  ⏱️ 0.03s · 100 input tokens · 20 output tokens
+  🔧 Tool call 6: load_skill
+  📋 Arguments: skill name: vendor-outreach
+Skill loaded: vendor-outreach/SKILL.md
+  📦 Result (0.00s): --- name: vendor-outreach description: Prepare a supplier availability inquiry when an event menu has a verified stock shortfall, review vendor evidence, and…
+
+🤖 Model call 7 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_5
+  📤 Requested tools: read_skill_resource
+  ⏱️ 0.03s · 100 input tokens · 20 output tokens
+  🔧 Tool call 7: read_skill_resource
+  📋 Arguments: skill name: vendor-outreach; resource name: references/vendor-guide.md
+Skill loaded: vendor-outreach/references/vendor-guide.md
+  📦 Result (0.00s): # Vendor inquiry guide Ask whether the verified missing quantities are available, their current price, and delivery timing. Include the necessary destination…
+
+🤖 Model call 8 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_6
+  📤 Requested tools: read_skill_resource
+  ⏱️ 0.04s · 100 input tokens · 20 output tokens
+  🔧 Tool call 8: read_skill_resource
+  📋 Arguments: skill name: vendor-outreach; resource name: assets/email-template.html
+Skill loaded: vendor-outreach/assets/email-template.html
+  📦 Result (0.00s): <!doctype html> <html lang="en"> <head><meta charset="utf-8"><title>Formaggio vendor inquiry</title></head> <body> <h1>Formaggio sourcing inquiry</h1> <p>Moc…
+
+🤖 Model call 9 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_7
+  📤 Requested tools: read_vendor_document
+  ⏱️ 0.04s · 100 input tokens · 20 output tokens
+  🔧 Tool call 9: read_vendor_document
+  📋 Arguments: none
+Vendor evidence: included (clean)
+  📦 Result (0.00s): status: included; source: clean; trust: untrusted_vendor; text: Fictional wholesale vendor note: availability changes daily. Ask about the required cheese and quantity before promising delivery. A request is not a stock c…
+
+🤖 Model call 10 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_8
+  📤 Requested tools: draft_vendor_email
+  ⏱️ 0.05s · 100 input tokens · 20 output tokens
+  🔧 Tool call 10: draft_vendor_email
+  📋 Arguments: recipient: vendor@example.com
+  📦 Result (0.01s): draft id: 55bc77e1e2f4417294f85b00641a5f2d; recipient: vendor@example.com; subject: Availability inquiry — corporate cheese tasting; body: Hello, Please confirm availability for our corporate tasting: - Époisses: 300 g additional Destination: NY. Confirmed allergy constraints: nuts. Please provi……
+
+🤖 Model call 11 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_9
+  📤 Requested tools: save_vendor_email
+  ⏱️ 0.05s · 100 input tokens · 20 output tokens
+
+MOCK EMAIL REVIEW — ticket af-call-814da72c76da4a53a11787a50422a69e
+To: vendor@example.com
+Subject: Availability inquiry — corporate cheese tasting
+
+Hello,
+Please confirm availability for our corporate tasting:
+- Époisses: 300 g additional
+Destination: NY. Confirmed allergy constraints: nuts.
+Please provide current pricing and delivery timing. This is an inquiry, not a purchase order.
+Thank you.
+
+Ignored an approval response with id 'af-call-814da72c76da4a53a11787a50422a69e' because it did not match the active approval occurrence identity; the pending request was retained for retry.
+  🔧 Tool call 11: save_vendor_email
+  📋 Arguments: draft id: 55bc77e1e2f4417294f85b00641a5f2d
+  📦 Result (0.01s): status: saved; path: /app/outputs/f64b285442fb4c7eaa9fe259a3ed8ec7/vendor-email-55bc77e1e2f4417294f85b00641a5f2d.html; replayed: no; email transmitted: no
+
+🤖 Model call 12 · Event planner · fixture-model
+  📥 Input: 2 conversation messages.
+  ↳ Latest tool results in context: call_10
+  📤 Requested tools: todos_complete
+  ⏱️ 0.04s · 100 input tokens · 20 output tokens
+  🔧 Tool call 12: todos_complete
+  📋 Arguments: items: id: 1; reason: Scripted planning/review demonstration finished.
+Plan: [done] Prepare the requested plan
+  📦 Result (0.00s): completed: 1
+
+🤖 Model call 13 · Event planner · fixture-model
+  📥 Input: 1 conversation messages.
+  ↳ Latest tool results in context: call_11
+  📤 Response received; no tool calls requested.
+  ⏱️ 0.05s · 100 input tokens · 20 output tokens
+
+--- HARNESS SAVED — run f64b285442fb4c7eaa9fe259a3ed8ec7 ---
+Agent's notes:
+Scripted skill demonstration finished; consult the authoritative tool results.
+
+Authoritative application state:
+Skills loaded: tasting-planning, vendor-outreach
+Skill resources: tasting-planning/references/serving-guide.md, tasting-planning/assets/tasting-plan.md, vendor-outreach/references/vendor-guide.md, vendor-outreach/assets/email-template.html
+Menu: 3200 g; cheese quote $177.80.
+Sourcing quote only. Stock is not reserved; vendor availability is unconfirmed. Excludes tax, shipping and pairings.
+Unconfirmed sourcing: epoisses — 300 g short.
+HTML file: /app/outputs/f64b285442fb4c7eaa9fe259a3ed8ec7/vendor-email-55bc77e1e2f4417294f85b00641a5f2d.html
+No order placed; no email transmitted.
+Model calls: 13. Compactions: 0.
+💾 Recorded in /app/outputs/observability.sqlite. No evaluation suite was run.
+[exit 0]

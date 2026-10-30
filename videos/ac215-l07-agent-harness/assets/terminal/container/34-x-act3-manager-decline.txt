@@ -1,0 +1,40 @@
+$ python cli.py --act 3 --fixture --scenario manager-approval
+Workflow lesson — FIXTURE proposals; no model calls.
+Classroom simulation — no real purchase, shipment, or email. Orders and inventory last for this process; traces are saved in SQLite.
+
+🧪 Scenario: manager-approval · SCRIPTED proposals
+
+👤 Customer ask:
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+Step: confirm_request
+Step: propose_cart
+🧺 Proposed cart — attempt 1:
+  Comté 18 mois (comte) — 1600 g · RAW MILK
+  Mimolette Extra-Vieille (mimolette) — 1600 g · not raw milk
+  Taleggio (taleggio) — 1600 g · not raw milk
+Step: validate_and_price
+Cart attempt 1: valid; $220.80
+Step: select_pairings
+Step: manager_approval
+
+MANAGER REVIEW — ticket 85d3c62a6d214962b78c5d44e3fbdd6d
+Confirmed request:
+Could you help me order cheese for a tasting for 60 guests in NY on a $300.00 budget? I've checked, and nobody has any allergies. I'd like at least one cheese from France. Could you suggest some pairings too?
+  4800 g; cheese subtotal $220.80
+  comte: 1600 g — $72.00
+  mimolette: 1600 g — $80.00
+  taleggio: 1600 g — $68.80
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+Approve this exact cart? Type approve or decline: decline
+Step: manager_approval
+
+--- WORKFLOW DECLINED — run dc711d60382540979e4d77c2af3e89db ---
+Manager declined this cart. No order placed.
+  4800 g; cheese subtotal $220.80
+  comte: 1600 g — $72.00
+  mimolette: 1600 g — $80.00
+  taleggio: 1600 g — $68.80
+  Excludes tax, shipping and pairing costs. Fictional shop policies apply.
+Proposal attempts: 1. Model calls: 0.
+💾 Recorded in /app/outputs/observability.sqlite. No evaluation suite was run.
+[exit 0]

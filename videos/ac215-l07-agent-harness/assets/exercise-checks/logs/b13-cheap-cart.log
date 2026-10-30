@@ -1,0 +1,8 @@
+$ PYTHONPATH=. python /checks/b13_cheap_cart.py
+request: 60 guests, NY budget 30000 allergies () countries ('France',) min funk None
+policy: grams/guest 80 - 100 | cheeses 3 - 5 | step 50 | min 100 | approval above 20000
+fixture: 4800 g, $220.80, ok=True, needs_manager_approval=True, violations=[]
+cheap: 4800 g, $161.10, ok=True, needs_manager_approval=False, violations=[]
+prices per 100 g: {'halloumi': 290, 'walnut_chevre': 360, 'gouda': 370, 'bucheron': 410} | stock: {'halloumi': 2000, 'walnut_chevre': 900, 'gouda': 4500, 'bucheron': 2000}
+[exit 0]
+

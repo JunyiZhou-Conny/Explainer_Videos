@@ -1,0 +1,16 @@
+$ uv pip list 2>/dev/null | grep -E "^(agent-framework|agent-framework-core|agent-framework-openai|agent-framework-gemini|claude-agent-sdk|openai|pydantic|httpx|opentelemetry-api|opentelemetry-sdk) "; echo "packages in /.venv: $(uv pip list 2>/dev/null | tail -n +3 | wc -l)"; du -sh /.venv; python -c "import IPython" 2>&1 | tail -1; python -c "import pandas" 2>&1 | tail -1
+agent-framework                                1.19.0
+agent-framework-core                           1.19.0
+agent-framework-gemini                         1.0.0b260910
+agent-framework-openai                         1.14.4
+claude-agent-sdk                               0.2.160
+httpx                                          0.28.1
+openai                                         3.19.2
+opentelemetry-api                              1.40.0
+opentelemetry-sdk                              1.40.0
+pydantic                                       2.13.5
+packages in /.venv: 209
+646M	/.venv
+ModuleNotFoundError: No module named 'IPython'
+ModuleNotFoundError: No module named 'pandas'
+[exit 0]

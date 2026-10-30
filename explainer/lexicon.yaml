@@ -154,4 +154,29 @@ Havarti: {ipa: "həvˈɑːɹɾi", say: "huh-var-tee"}
 Resending: {ipa: "ɹiːsˈɛndɪŋ", say: "ree-sending"}
 "Kept that database": {ipa: "kˈɛpt ðæt dˈeɪtəbˌeɪs", say: "kept that day-tuh-base"}
 "use agents": {ipa: "jˈuːz ˈeɪdʒənts", say: "yooz agents"}
+# AC215 L07 (versions with two dots, cheese names and terms only L07 says; SQLite as two phrases because L05 says
+# the bare word)
+"3.13.16": {ipa: "θɹˈiː pɔɪnt θˈɜːtiːn pɔɪnt sˈɪkstiːn", say: "three point thirteen point sixteen"}
+"1.19.0": {ipa: "wˈʌn pɔɪnt nˈaɪntiːn pɔɪnt zˈiəɹoʊ", say: "one point nineteen point zero"}
+"1.77": {ipa: "wˈʌn pɔɪnt sˈɛvən sˈɛvən", say: "one point seven seven"}
+SKILL.md: {ipa: "skˈɪl dˈɑːt ˌɛmdˈiː", say: "skill dot M-D"}
+"SHA-256": {ipa: "ʃˈɑː tˈuː fˈɪfti sˈɪks", say: "shah two fifty-six"}
+"401": {ipa: "fˈɔːɹ ˈoʊ wˈʌn", say: "four oh one"}
+"Batch A": {ipa: "bˈætʃ ˈeɪ", say: "Batch A"}
+Époisses: {ipa: "eɪpwˈɑːs", say: "ay-pwahss"}
+Taleggio: {ipa: "tɑːlˈɛdʒoʊ", say: "tah-leh-joh"}
+Bûcheron: {ipa: "bˌuːʃəɹˈoʊn", say: "boo-shuh-rohn"}
+Comté: {ipa: "kɔːntˈeɪ", say: "kon-tay"}
+"SQLite database": {ipa: "ˌɛskjˌuːˌɛlˈaɪt dˈeɪɾəbˌeɪs", say: "S-Q-L-ite database"}
+"in SQLite": {ipa: "ɪn ˌɛskjˌuːˌɛlˈaɪt", say: "in S-Q-L-ite"}
+to-do: {ipa: "tˈuːdˌuː", say: "to-do"}
+eval: {ipa: "ˈiːvæl", say: "ee-val"}
+unittest: {ipa: "jˈuːnɪt tˈɛst", say: "unit test"}
+pytest: {ipa: "pˈaɪ tˈɛst", say: "pie test"}
+"tool records": {ipa: "tˈuːl ɹᵻkˈɔːɹdz", say: "tool ree-cords"}
+"only records": {ipa: "ˈoʊnli ɹᵻkˈɔːɹdz", say: "only ree-cords"}
+"lecture contrasts": {ipa: "lˈɛktʃɚ kəntɹˈæsts", say: "lecture con-trasts"}
+Jupyter: {ipa: "dʒˈuːpɪɾɚ", say: "Jupiter"}
+"the lecture's recap": {ipa: "ðə lˈɛktʃɚz ɹˈiːkæp", say: "the lecture's ree-cap"}
+"vendor outreach": {ipa: "vˈɛndɚɹ ˈaʊtɹiːtʃ", say: "vendor out-reach"}
 "911": {ipa: "nˈaɪn wˈʌn wˈʌn", say: "nine one one"}

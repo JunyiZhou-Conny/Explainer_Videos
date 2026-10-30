@@ -1,0 +1,2 @@
+$ cp prompts/shop_assistant.md prompts/shop_assistant_v2.md
+[exit 0]

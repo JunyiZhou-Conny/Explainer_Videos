@@ -1,0 +1,9 @@
+# recorded (saved output of the course Colab "Agent Harness", not re-run here): https://colab.research.google.com/drive/1ZYMsbG0gqsbs-6Pcj8WtT3WhEa4f80EZ, cell 15 ("Pairings"), execution count 8; the notebook stores no date.
+              name   kind                                             styles                 allergens
+0     Walnut bread   food                                       alpine, hard  wheat, tree_nuts, walnut
+1  Marcona almonds   food                                               hard         tree_nuts, almond
+2     Apple slices   food  soft-ripened, alpine, washed-rind, fresh-aged,...                         —
+3       Cornichons   food                                washed-rind, brined                         —
+4   Wheat crackers   food  soft-ripened, alpine, washed-rind, fresh-aged,...                     wheat
+5     Dry Riesling  drink                          alpine, washed-rind, hard                  sulfites
+6  Sparkling water  drink  soft-ripened, alpine, washed-rind, fresh-aged,...                         —

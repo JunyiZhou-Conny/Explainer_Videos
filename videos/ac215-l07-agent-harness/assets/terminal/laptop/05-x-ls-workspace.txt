@@ -1,0 +1,8 @@
+$ ls -la ..; ls -A ../secrets | wc -l
+total 0
+drwxrwxrwx  4 student student  80 Oct 20 20:17 .
+drwxr-xr-x  4 student student 100 Oct 20 20:17 ..
+drwxr-xr-x 11 student student 380 Oct 20 20:17 agent-harness
+drwxr-xr-x  2 student student  40 Oct 20 20:17 secrets
+0
+[exit 0]
