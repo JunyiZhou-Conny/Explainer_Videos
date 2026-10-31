@@ -200,7 +200,7 @@
 | the cost table / 0.008 dollars per thousand tokens / 16,444 documents / 3 epochs / 112 dollars 73 / way too much data / 88 documents / 57 cents | 价格表 / token / 文档 | S09[0]：按每千个 token 0.008 美元算，16444 个文档跑 3 个 epoch，一共 112.73 美元；表里说这数据太多了。 | C2：0.008 美元、112.73 美元、57 美分（en_display：$112.73、$0.008）。token 照说（第 4、5 讲）。 |
 | Gemini 1.5 Flash / stale / the pricing page | Gemini 1.5 Flash / 价格页面 | S09[1]：这些数字就当是过时的，去看 README 链接的价格页面。 | 一个小疏漏（A9）。 |
 | line 107 / the instructor's endpoint / locations / endpoints / an ID / your key can't reach | endpoint / locations / endpoints | S09[2]：第 107 行写的还是授课老师的 endpoint。 | 路径里的词照画面写：一个以 locations、US、endpoints 和一个 ID 结尾的路径。endpoint 的值绝不写出来。 |
-| python cli.py --chat / how is cheese made in Greece / the serving location | python cli.py --chat / 部署区域 | S09[3]：它会打印它的问题，“希腊的奶酪是怎么做的”，用授课老师的方式回答。 | 问题放进“”里翻译（A10）；指打印行时 Using serving location 照写。 |
+| python cli.py --chat / how is cheese made in Greece / the serving location | python cli.py --chat / 部署区域 | S09[3]：它会打印它的问题，“希腊的奶酪是怎么做的，用授课老师的方式回答”。 | 问题放进“”里翻译（A10）；指打印行时 Using serving location 照写。 |
 | the hosted demo / optional / the training monitor / loss curves / data distribution | 托管 / 训练监控 / loss 曲线 / 数据分布 | S09[5]：第 4 步：控制台的训练监控会显示你这次任务的 loss 曲线和数据分布。 | loss 照说（A3）。 |
 | you never saw a single weight / the weights are in your hands | 权重 | S09[6]：第二部分，权重就在你自己手里了。 | 第一部分到这里结束；In part 2 → 第二部分，……（D6）。 |
 
@@ -272,7 +272,7 @@
 |---|---|---|---|
 | perplexity / the exponential / the average token loss / equally likely next tokens | 困惑度 | S15[0]：困惑度就是平均每个 token 的 loss 取指数：大致相当于模型在多少个等可能的下一个 token 里做选择。 | perplexity → 困惑度（中文标准译名；loss 照说，A3）。 |
 | the base model / the fine-tuned model / 30,681 tokens / a loss of 2.65 / a perplexity of 14.15 | 基座模型 / 测试样本 | S15[1]：在 100 个测试样本、30681 个 token 上，基座模型的 loss 是 2.65，困惑度 14.15。 | C1：数字不加分隔符。 |
-| disable adapter / switch the adapter off / catastrophic forgetting / losing old skills while learning new ones / one switch away | disable adapter / 灾难性遗忘 / 开关 | S15[2]：这就是课上讲的灾难性遗忘：学新本事时丢了旧本事；用 LoRA 的话，原来的模型只差一个开关。 | A6：disable_adapter() → disable adapter（en_display 还原）。课件 9–10、36。 |
+| disable adapter / switch the adapter off / catastrophic forgetting / losing old skills while learning new ones / one switch away | disable adapter / 灾难性遗忘 / 开关 | S15[2]：这正是课上讲灾难性遗忘时的要点，也就是学新本事时丢了旧本事；用 LoRA 的话，原来的模型只差一个开关。 | A6：disable_adapter() → disable adapter（en_display 还原）。课件 9–10、36。 |
 | every base answer starts with the word the / welcome / Yello / an illustration / the measured numbers | The / 示意 | S15[3]：那些柱子只是示意；实测的数字就在旁边。 | 开头的词照输出写：都以 The 开头（A10）。 |
 | What does the drop measure? / this style is what the model now expects | 风格 | S15[4]：它说明这种风格是模型现在预期的，而不是它的回答更正确了。 |  |
 | the voice transferred, the physics did not | 口吻 | S15[5]：再看天空：口吻学过去了，物理没有。 | 暂停一下，跑第 5 步（D6）。 |

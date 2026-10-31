@@ -250,7 +250,7 @@ S15:
   zh:
   - "基座那一行，就是同一个模型放在 disable adapter 里。"
   - "把 adapter 关掉，原来的 4 位模型就回来了，因为 W₀ 从来没变。"
-  - "这就是课上讲的灾难性遗忘：学新本事时丢了旧本事；用 LoRA 的话，原来的模型只差一个开关。"
+  - "这正是课上讲灾难性遗忘时的要点，也就是学新本事时丢了旧本事；用 LoRA 的话，原来的模型只差一个开关。"
   en_display:
   - "The base row is the same model inside disable_adapter()."
   - "Switch the adapter off and the original model, in 4 bits, is back, because W₀ never changed."
@@ -309,7 +309,7 @@ S16:
   zh:
   - "五道题，自测一下。"
   - "这次微调改变了什么，没改变什么？"
-  - "为什么没有密钥，generate 的退出码也是 0？"
+  - "为什么 generate 在没有密钥时退出码也是 0？"
   - "一组问答在变成模板的路上，要经过哪些形状？"
   - "为什么 train 会打印 Tuned model info: None？"
   - "还有，1146880 是怎么来的？"

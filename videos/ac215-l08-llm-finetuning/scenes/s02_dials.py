@@ -30,13 +30,14 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import MONO, box, chip, cloud, label, laptop, mono, substring
+from explainer.devops import MONO, box, chip, label, mono, substring
 from explainer.scene import VoiceScene
 
 from common import (ADAPTER, CAPTION, CLOUD, CTR, ERR, INK, LAPTOP, LOOKUP, MODEL, NARRATION, OWN, PERSONA,
-                    TURN, Dial, _rich, capture, grey_tag, illustration_tag, lref, lref_swap, persona_chip,
+                    TURN, Dial, _rich, capture, grey_tag, illustration_tag, lref, persona_chip,
                     recorded_box, recorded_tag, source_line, unname, x_mark)
 from common import ThreeDials as DialsPiece
+from s01_hook import gpu_box, track_chain              # S01's own map pieces: the same drawing
 
 SAY = NARRATION["S02"]
 
@@ -174,14 +175,14 @@ class ThreeDials(VoiceScene):
         chunks = VGroup(*[input_card(f"retrieved chunk {k}", LOOKUP) for k in (1, 2, 3)])
         chunks.arrange(UP, buff=0.1).next_to(prompt_card, UP, buff=0.14)
         rag = chip("L05 · RAG", LOOKUP, size=CAPTION).next_to(chunks, UP, buff=0.16)
-        unchanged = tag_grey("the weights: unchanged").next_to(td.box, UP, buff=0.12) \
-            .align_to(td.box, RIGHT)
+        unchanged = tag_grey("the weights: unchanged").next_to(td.arrow_out, UP, buff=0.2) \
+            .align_to(td.arrow_out, LEFT)
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(td.parts["box"], shift=UP * 0.1), run_time=0.9)
             self.play(Create(td.parts["arrows"]), FadeIn(td.parts["dials"]), FadeIn(td.parts["wires"]),
                       run_time=1.0)
-            self.play(LaggedStart(*[Indicate(d, color=INK, scale_factor=1.08)
+            self.play(LaggedStart(*[Indicate(d.label, color=INK, scale_factor=1.2)
                                     for d in td.dials.values()], lag_ratio=0.3), run_time=1.3)
             vo.wait_until("A prompt changes")
             self.play(*td.turn("prompt"), run_time=0.8)
@@ -230,18 +231,20 @@ class ThreeDials(VoiceScene):
             vo.wait_until("In this course")
             self.play(FadeIn(chip_ift, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("pairs of an instruction")
-            self.play(Indicate(top_card.text, color=OWN, scale_factor=1.06), run_time=0.9)
+            pair_t = label("(instruction, answer)", CAPTION, INK).move_to(top_card.text)
+            self.play(Transform(top_card.text, pair_t), run_time=0.8)
+            self.play(Indicate(top_card.text, color=OWN, scale_factor=1.08), run_time=0.7)
             vo.wait_until("A persona")
             self.play(FadeIn(chip_tft, shift=UP * 0.15), run_time=0.6)
             self.play(FadeIn(pchip, shift=UP * 0.1), run_time=0.5)
 
         # ========================================================== 2. three rows
         XL = -6.45                                       # left edge of the row labels
-        XC = -3.25                                       # left edge of the row contents
+        XC = -2.75                                       # left edge of the row contents
         ry = (1.85, 0.25, -1.3)
-        lab1 = row_label(["OPT-350m", "plain next-word predictor"], S.GREY, w=3.0, h=1.0)
-        lab2 = row_label(["instruction-tuned", "model"], S.GREY, w=3.0, h=1.0, dashed=True)
-        lab3 = row_label(["fine-tuned Qwen", "4-bit + LoRA adapter"], MODEL, w=3.0, h=1.0)
+        lab1 = row_label(["OPT-350m", "plain next-word predictor"], S.GREY, w=3.45, h=1.0)
+        lab2 = row_label(["instruction-tuned", "model"], S.GREY, w=3.45, h=1.0, dashed=True)
+        lab3 = row_label(["fine-tuned Qwen", "4-bit + LoRA adapter"], MODEL, w=3.45, h=1.0)
         for lab, y in zip((lab1, lab2, lab3), ry):
             lab.move_to([XL + lab.width / 2, y, 0])
         adapter_dot = RoundedRectangle(width=0.32, height=0.2, corner_radius=0.05, stroke_width=0) \
@@ -263,6 +266,7 @@ class ThreeDials(VoiceScene):
                     r11.glyphs[-1].get_corner(DR) + DOWN * 0.06, color=TURN, stroke_width=4)
         ul12 = Line(out1.rows[1].glyphs[0].get_corner(DL) + DOWN * 0.06,
                     out1.rows[1].glyphs[-1].get_corner(DR) + DOWN * 0.06, color=TURN, stroke_width=4)
+        out_glyphs = VGroup(*out1.rows[0].glyphs, *out1.rows[1].glyphs)
         keeps = label("keeps going", CAPTION, TURN).next_to(out1.frame, RIGHT, buff=0.25)
 
         # row 2: our drawing of a chat model's habit
@@ -283,7 +287,7 @@ class ThreeDials(VoiceScene):
         b3.move_to([XC + 0.25 + b3.width / 2, ry[2], 0])
         body3.move_to(b3.frame).align_to(b3.frame, LEFT).shift(RIGHT * 0.25)
         water = text_glyphs(rest, rest_s, WATER)
-        x3 = x_mark(0.26).next_to(water, UP, buff=0.04)
+        x3 = x_mark(0.26).next_to(rest, RIGHT, buff=0.25)
         ul_w = Line(water.get_corner(DL) + DOWN * 0.05, water.get_corner(DR) + DOWN * 0.05, color=ERR,
                     stroke_width=3)
         yello = text_glyphs(op, op_text, "Yello - this is")
@@ -298,18 +302,22 @@ class ThreeDials(VoiceScene):
 
         rows_static = VGroup(lab1, lab2, lab3, adapter_dot, b2, b3)
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(td), FadeOut(stack), FadeOut(chip_ift), FadeOut(chip_tft), FadeOut(pchip),
-                      run_time=0.7)
-            lr = lref_swap(self, lr, "7–8")
-            self.play(LaggedStart(FadeIn(lab1, shift=RIGHT * 0.2), FadeIn(lab2, shift=RIGHT * 0.2),
-                                  AnimationGroup(FadeIn(lab3, shift=RIGHT * 0.2), FadeIn(adapter_dot)),
-                                  lag_ratio=0.25), run_time=1.2)
+            lr_new = lref("7–8")
+            self.play(AnimationGroup(
+                AnimationGroup(FadeOut(td), FadeOut(stack), FadeOut(chip_ift), FadeOut(chip_tft),
+                               FadeOut(pchip), Succession(FadeOut(lr), FadeIn(lr_new))),
+                LaggedStart(FadeIn(lab1, shift=RIGHT * 0.2), FadeIn(lab2, shift=RIGHT * 0.2),
+                            AnimationGroup(FadeIn(lab3, shift=RIGHT * 0.2), FadeIn(adapter_dot)),
+                            lag_ratio=0.25),
+                lag_ratio=0.4), run_time=1.7)
+            lr = lr_new
             self.play(FadeIn(b2), FadeIn(b3), run_time=0.6)
             vo.wait_until("The notebook gives")
-            self.play(Indicate(lab1, color=INK, scale_factor=1.04), run_time=0.7)
+            self.play(lab1.frame.animate.set_stroke(INK, 3.5), Indicate(lab1.body, color=INK, scale_factor=1.08),
+                      run_time=0.7)
             self.play(FadeIn(in_chip, shift=RIGHT * 0.3), FadeIn(in_cap), run_time=0.7)
             vo.wait_until("It simply keeps going")
-            self.play(FadeOut(in_cap), FadeIn(out1.frame), FadeIn(out1.rule), FadeIn(in_glyphs),
+            self.play(FadeOut(in_cap), lab1.frame.animate.set_stroke(S.GREY, 2.5), FadeIn(out1.frame), FadeIn(out1.rule), FadeIn(in_glyphs),
                       FadeOut(in_chip), FadeIn(in_bar), FadeIn(rtag), run_time=0.7)
             self.play(LaggedStart(*[FadeIn(g) for g in cont], lag_ratio=0.04), run_time=2.0)
             self.play(Create(ul11), Create(ul12), FadeIn(keeps, shift=LEFT * 0.15), run_time=0.8)
@@ -317,7 +325,7 @@ class ThreeDials(VoiceScene):
         # ========================================================== 3. habit, voice, the lesson
         with self.voiceover(SAY[3]) as vo:
             self.play(lab2.frame.animate.set_stroke(INK, 3.5), b2.frame.animate.set_stroke(INK, 3),
-                      lab1.animate.set_opacity(0.5), out1.animate.set_opacity(0.5), in_bar.animate.set_opacity(0.15),
+                      lab1.animate.set_opacity(0.5), out_glyphs.animate.set_opacity(0.5), in_bar.animate.set_opacity(0.15),
                       ul11.animate.set_opacity(0.4), ul12.animate.set_opacity(0.4), keeps.animate.set_opacity(0.5),
                       rtag.animate.set_opacity(0.5), run_time=0.7)
             vo.wait_until("often with a habit")
@@ -338,13 +346,14 @@ class ThreeDials(VoiceScene):
             self.play(FadeIn(bcap, shift=UP * 0.1), run_time=0.5)
 
         # ========================================================== 4. two pictures, the map
-        desk = desk_picture().move_to([-3.3, 0.9, 0])
+        desk = desk_picture().move_to([-3.3, 0.7, 0])
         desk_cap = label("RAG: the open book on the desk", 22, INK).next_to(desk, DOWN, buff=0.3)
-        vb = voice_box().move_to([3.3, 1.1, 0])
+        vb = voice_box().move_to([3.3, 0.9, 0])
         vb_cap = label("fine-tuning: the default voice", 22, INK).next_to(vb, DOWN, buff=0.3)
         vb_cap.set_y(desk_cap.get_y())
 
-        trackmap = two_track_map().move_to([0, -2.35, 0])
+        trackmap = two_track_map()
+        trackmap.shift(DOWN * (trackmap.get_top()[1] + 1.0))   # top at y = -1.0; columns stay at x = ±3.3
         rows_all = VGroup(rows_static, out1, in_bar, ul11, ul12, keeps, rtag, sure, cap2, ill2, op, rest,
                           ul_w, x3, banner, bcap)
         with self.voiceover(SAY[4]) as vo:
@@ -360,11 +369,11 @@ class ThreeDials(VoiceScene):
             vb.dial.remove(dl)
             self.add(dl)
             vb.generate_target()
-            vb.target.scale(0.62).move_to([3.3, 2.25, 0])
+            vb.target.scale(0.75).move_to([3.3, 1.75, 0])
             dl_target = dl.copy().next_to(vb.target.dial.face, RIGHT, buff=0.15)
-            self.play(desk.animate.scale(0.62).move_to([-3.3, 2.0, 0]),
+            self.play(desk.animate.scale(0.75).move_to([-3.3, 1.65, 0]),
                       MoveToTarget(vb), dl.animate.move_to(dl_target),
-                      desk_cap.animate.move_to([-3.3, 0.85, 0]), vb_cap.animate.move_to([3.3, 0.85, 0]),
+                      desk_cap.animate.move_to([-3.3, 0.35, 0]), vb_cap.animate.move_to([3.3, 0.35, 0]),
                       run_time=0.9)
             self.play(FadeIn(trackmap.base), run_time=0.8)
             vo.wait_until("In track A")
@@ -397,40 +406,44 @@ def recorded_box_rows():
     return recorded_box("colab-c27-opt-generate", (11, 12), header="", tag_=False)
 
 
+def dot_row(s: str, col, size: float = CAPTION) -> VGroup:
+    """S01's caption row: a small dot of its colour, then the words."""
+    d = RoundedRectangle(width=0.12, height=0.12, corner_radius=0.06, stroke_width=0).set_fill(col, 1)
+    return VGroup(d, label(s, size, INK)).arrange(RIGHT, buff=0.15)
+
+
 def two_track_map() -> VGroup:
-    """S01's two-track map, drawn small (S01 SHOW: Track A · the README: GREY laptop -> TEAL
-    container -> BLUE cloud; Track B · the course Colab: a BLUE GPU box with a GREEN adapter)."""
+    """S01's two-track map, small: its own glyphs (s01_hook.track_chain / gpu_box, shapes only, so
+    no label shrinks under 20 pt), one caption of S01's per track, then the two new captions."""
     a_head = label("Track A · the README", 22, INK)
-    lp = laptop(0.9, LAPTOP)
-    ct = RoundedRectangle(width=0.9, height=0.62, corner_radius=0.1, stroke_color=CTR, stroke_width=3) \
-        .set_fill(CTR, 0.1)
-    cl = cloud(1.1, CLOUD)
-    glyphs_a = VGroup(lp, ct, cl).arrange(RIGHT, buff=0.55)
-    arrows_a = VGroup(*[Arrow(glyphs_a[k].get_right(), glyphs_a[k + 1].get_left(), buff=0.08, color=S.GREY,
-                              stroke_width=3, tip_length=0.14, max_tip_length_to_length_ratio=0.4)
-                        for k in range(2)])
-    a_cap = label("Google tunes Gemini", CAPTION, S.GREY)
+    chain = track_chain()
+    glyphs_a = VGroup(chain.glyphs, chain[1]).scale(0.58)
+    a_cap = dot_row("Google tunes Gemini", CLOUD)
     a_new = VGroup(eye_crossed(0.5), label("you never see a weight", CAPTION, INK)).arrange(RIGHT, buff=0.2)
-    col_a = VGroup(a_head, VGroup(glyphs_a, arrows_a), a_cap, a_new).arrange(DOWN, buff=0.16)
+    col_a = VGroup(a_head, glyphs_a, a_cap, a_new).arrange(DOWN, buff=0.16)
 
     b_head = label("Track B · the course Colab", 22, INK)
-    gpu = box(1.5, 0.66, CLOUD, fill_opacity=0.1, stroke=3)
-    gpu_t = label("GPU", CAPTION, CLOUD).move_to(gpu).shift(LEFT * 0.25)
-    adapter = RoundedRectangle(width=0.34, height=0.22, corner_radius=0.05, stroke_width=0) \
-        .set_fill(ADAPTER, 1).move_to(gpu.get_right() + LEFT * 0.36)
-    glyph_b = VGroup(gpu, gpu_t, adapter)
-    b_cap = label("you keep the weights", CAPTION, S.GREY)
+    gb = gpu_box()
+    adapter = gb[2]
+    glyph_b = VGroup(gb[0], adapter).scale(0.62)
+    gb[0].stretch_to_fit_width(2.2)                     # room for a 20 pt label beside the adapter
+    adapter.move_to(gb[0].get_corner(UR) + np.array([-0.03, -0.03, 0]))
+    gpu_t = label("Colab GPU", CAPTION, CLOUD).move_to(gb[0]).shift(LEFT * 0.14 + DOWN * 0.03)
+    glyph_b.add(gpu_t)
+    b_cap = dot_row("you fine-tune an open model with QLoRA", ADAPTER)
     b_new = VGroup(save_glyph(0.4), label("yours to keep", CAPTION, INK)).arrange(RIGHT, buff=0.2)
     col_b = VGroup(b_head, glyph_b, b_cap, b_new).arrange(DOWN, buff=0.16)
-    col_a.move_to([-3.3, 0, 0])
-    col_b.move_to([3.3, 0, 0])
-    glyph_b.set_y(VGroup(glyphs_a, arrows_a).get_y())
-    b_cap.set_y(a_cap.get_y())
-    b_new.set_y(a_new.get_y())
-    b_head.set_y(a_head.get_y())
+    # one shared row grid for both columns: head, glyph, caption, new caption
+    rows = ((a_head, b_head), (glyphs_a, glyph_b), (a_cap, b_cap), (a_new, b_new))
+    y = 0.0
+    for pair in rows:
+        h = max(m.height for m in pair)
+        for m, x in zip(pair, (-3.3, 3.3)):
+            m.move_to([x, y - h / 2, 0])
+        y -= h + 0.18
     sep = DashedLine([0, col_a.get_top()[1], 0], [0, col_a.get_bottom()[1], 0], color=S.GREY_DARK,
                      stroke_width=2)
     g = VGroup(col_a, col_b, sep)
-    g.base = VGroup(a_head, glyphs_a, arrows_a, a_cap, b_head, glyph_b, b_cap, sep)
+    g.base = VGroup(a_head, glyphs_a, a_cap, b_head, glyph_b, b_cap, sep)
     g.a_head, g.b_head, g.a_new, g.b_new, g.adapter = a_head, b_head, a_new, b_new, adapter
     return g

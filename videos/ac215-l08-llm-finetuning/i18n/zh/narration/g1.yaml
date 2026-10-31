@@ -237,7 +237,7 @@ S05:
 S06:
 - en: "Now step 1 of the prepare section, as a student would type it right after that run: python cli.py dash dash prepare. Zero errors, a shape of zero by zero, and then a crash: key error, question, from line 243 of cli.py."
   zh:
-  - "现在到 prepare 那一节的第 1 步，就像学生跑完刚才那条会直接敲的：python cli.py --prepare。"
+  - "现在到 prepare 那一节的第 1 步，学生跑完刚才那条，接着就会敲：python cli.py --prepare。"
   - "0 个错误，形状是 0 乘 0，然后崩溃：cli.py 第 243 行报 KeyError: 'question'。"
   en_display:
   - "Now step 1 of the prepare section, as a student would type it right after that run: python cli.py --prepare."
@@ -411,7 +411,7 @@ S09:
 - en: "Step 2: python cli.py dash dash chat. It prints its question, how is cheese made in Greece, answered the instructor's way. Then it prints the serving location, US, and the same missing key. Pause and run it once your endpoint is in."
   zh:
   - "第 2 步：python cli.py --chat。"
-  - "它会打印它的问题，“希腊的奶酪是怎么做的”，用授课老师的方式回答。"
+  - "它会打印它的问题，“希腊的奶酪是怎么做的，用授课老师的方式回答”。"
   - "然后打印部署区域 US，还有同样的缺少密钥。"
   - "暂停一下，填好你的 endpoint 之后跑一遍。"
   en_display:

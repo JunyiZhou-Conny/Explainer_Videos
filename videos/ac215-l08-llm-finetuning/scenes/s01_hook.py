@@ -149,7 +149,7 @@ PT = 22                          # the answer rows (serif)
 CARD_W = 6.2
 CX = 3.25                        # card centres
 GUTTER = 0.55                    # the mark gutter at the left inside each card
-CARD_TOP = 2.0                  # answer cards' frame top
+CARD_TOP = 1.6                  # answer cards' frame top
 SAFE = 6.6
 
 
@@ -290,8 +290,8 @@ def track_chain() -> VGroup:
     lp = laptop(1.45, LAPTOP)
     ct = RoundedRectangle(width=1.5, height=1.05, corner_radius=0.1, stroke_color=CTR,
                           stroke_width=3).set_fill(CTR, 0.12)
-    cl = cloud(2.0, CLOUD)
-    g = VGroup(lp, ct, cl).arrange(RIGHT, buff=0.55)
+    cl = cloud(1.85, CLOUD)
+    g = VGroup(lp, ct, cl).arrange(RIGHT, buff=0.45)
     arrows = VGroup(*[Line(a.get_right() + RIGHT * 0.08, b.get_left() + LEFT * 0.08, color=S.GREY,
                            stroke_width=3).add_tip(tip_length=0.15)
                       for a, b in ((lp, ct), (ct, cl))])
@@ -308,11 +308,11 @@ def track_chain() -> VGroup:
 
 def gpu_box() -> VGroup:
     """Track B: a BLUE GPU box with a GREEN adapter at its corner."""
-    fr = RoundedRectangle(width=2.8, height=1.4, corner_radius=0.12, stroke_color=CLOUD,
+    fr = RoundedRectangle(width=3.2, height=1.4, corner_radius=0.12, stroke_color=CLOUD,
                           stroke_width=3).set_fill(CLOUD, 0.12)
-    t = label("Colab GPU", 24, CLOUD).move_to(fr)
+    t = label("Colab GPU", 24, CLOUD)
     ad = adapter_glyph(0.5)
-    ad.move_to(fr.get_corner(UP + RIGHT) + np.array([-0.05, -0.05, 0]))
+    VGroup(t, ad).arrange(RIGHT, buff=0.35).move_to(fr)   # the adapter inside, never on the border
     return VGroup(fr, t, ad)
 
 
@@ -323,7 +323,7 @@ def bullet_rows(items, size: float = 22) -> VGroup:
         d = RoundedRectangle(width=0.14, height=0.14, corner_radius=0.07, stroke_width=0).set_fill(col, 1)
         t = label(s, size, INK)
         rows.add(VGroup(d, t).arrange(RIGHT, buff=0.18))
-    rows.arrange(DOWN, aligned_edge=LEFT, buff=0.2)
+    rows.arrange(DOWN, aligned_edge=LEFT, buff=0.3)
     return rows
 
 
@@ -345,7 +345,7 @@ class Hook(VoiceScene):
         q_fr = box(q.width + 0.8, q.height + 0.5, TURN, fill=S.BG, fill_opacity=1.0, stroke=3, radius=0.16)
         q.move_to(q_fr)
         qcard = VGroup(q_fr, q)
-        place(qcard, cx=0, top=3.45)
+        place(qcard, cx=0, top=3.3)
 
         card_b0 = AnswerCard("Qwen3-0.6B · as downloaded", BASE_PARAS, FROZEN)
         card_f0 = AnswerCard("Qwen3-0.6B · fine-tuned", FT_PARAS, OWN)
@@ -445,11 +445,13 @@ class Hook(VoiceScene):
         apart(top_row, bubble, 0.2)
 
         # the one row: slab | strip  label | time chip | file chip
-        slab = Rectangle(width=4.6, height=1.4, stroke_color=FROZEN, stroke_width=3).set_fill(FROZEN, 0.22)
         sf = snowflake(0.26)
         slab_t = label("596 M weights · frozen", 24, INK)
-        VGroup(sf, slab_t).arrange(RIGHT, buff=0.25).move_to(slab)
-        strip = Rectangle(width=0.035, height=1.4, stroke_width=0).set_fill(ADAPTER, 1)
+        slab_in = VGroup(sf, slab_t).arrange(RIGHT, buff=0.25)
+        slab = Rectangle(width=slab_in.width + 0.5, height=1.9, stroke_color=FROZEN,
+                         stroke_width=3).set_fill(FROZEN, 0.22)
+        slab_in.move_to(slab)
+        strip = Rectangle(width=0.035, height=1.9, stroke_width=0).set_fill(ADAPTER, 1)
         strip.next_to(slab, RIGHT, buff=0.1)
         strip_t = label("≈ 1.15 M new · trained", 22, OWN)
         strip_t.next_to(strip, RIGHT, buff=0.2)
@@ -458,8 +460,8 @@ class Hook(VoiceScene):
         f_t = label("≈ 4.6 MB", 22, INK)
         f_chip = VGroup(f_gl, f_t).arrange(RIGHT, buff=0.15)
         numrow = VGroup(VGroup(slab, sf, slab_t), strip, strip_t, t_chip, f_chip)
-        t_chip.next_to(strip_t, RIGHT, buff=0.45)
-        f_chip.next_to(t_chip, RIGHT, buff=0.45)
+        t_chip.next_to(strip_t, RIGHT, buff=0.35)
+        f_chip.next_to(t_chip, RIGHT, buff=0.35)
         place(numrow, cx=0, cy=0.0)
         f_src = chip("QLoRA notebook · 6.1", S.GREY, size=PT)
         place(f_src, top=f_chip.get_bottom()[1] - 0.35)
@@ -501,15 +503,15 @@ class Hook(VoiceScene):
         gpu = gpu_box()
         labsB = bullet_rows([("you fine-tune an open model with QLoRA", ADAPTER),
                              ("you keep the weights", ADAPTER)])
-        colA = VGroup(colA_h, chain, labsA).arrange(DOWN, buff=0.4)
-        colB = VGroup(colB_h, gpu, labsB).arrange(DOWN, buff=0.4)
+        colA = VGroup(colA_h, chain, labsA).arrange(DOWN, buff=0.55)
+        colB = VGroup(colB_h, gpu, labsB).arrange(DOWN, buff=0.55)
         labsA.align_to(chain, LEFT)
         colA_h.set_x(chain.get_center()[0])
-        colA.move_to([-3.3, 0, 0])
-        colB.move_to([3.3, 0, 0])
-        place(colA, top=2.0)
-        place(colB, top=2.0)
-        sep = Line([0, 2.1, 0], [0, -2.6, 0], color=S.GREY_DARK, stroke_width=2)
+        place(colA, left=-SAFE + 0.15, top=1.7)
+        place(colB, right=SAFE - 0.1, top=1.7)
+        sep_x = (colA.get_right()[0] + colB.get_left()[0]) / 2
+        assert colB.get_left()[0] - colA.get_right()[0] >= 0.9, (colA.get_right(), colB.get_left())
+        sep = Line([sep_x, 1.9, 0], [sep_x, -2.9, 0], color=S.GREY_DARK, stroke_width=2)
         inside_frame(colA, colB, q2_top)
         apart(colA, colB, 0.2)
         apart(q2_top, VGroup(colA_h, colB_h), 0.1)
@@ -518,7 +520,8 @@ class Hook(VoiceScene):
             self.play(*self.outs(top_row, numrow, f_src, lr), run_time=0.6)
             self.play(Write(q2), run_time=1.2)
             vo.wait_until("Two tracks answer that")
-            self.play(q2.animate.move_to(q2_top), Create(sep), run_time=0.8)
+            self.play(q2.animate.move_to(q2_top), run_time=0.7)
+            self.play(Create(sep), run_time=0.5)
             vo.wait_until("In track A")
             self.play(FadeIn(colA_h, shift=DOWN * 0.1),
                       LaggedStart(*[FadeIn(VGroup(m, n), scale=0.8) for m, n in zip(chain.glyphs, chain.names)],
@@ -586,8 +589,10 @@ class Hook(VoiceScene):
 
         # ========================================================== 6. one honest limit
         title = label("One honest limit", 28, INK)
-        date = chip("recorded October 31, 2026 · no key · no GPU", S.GREY, size=22)
-        head = VGroup(title, date).arrange(RIGHT, buff=0.4)
+        date = chip("recorded October 31, 2026", S.GREY, size=22)
+        nokey = chip("no key", S.GREY, size=22)
+        nogpu = chip("no GPU", S.GREY, size=22)
+        head = VGroup(title, date, nokey, nogpu).arrange(RIGHT, buff=0.3)
         row_specs = [
             ("tick", "ran for real:", "every README command, exactly as written", OWN),
             ("cross", "commands that talk to Google:", "up to the missing key (kept, they are instructive)", ERR),
@@ -634,6 +639,10 @@ class Hook(VoiceScene):
             self.play(FadeIn(title, shift=UP * 0.1), Create(card7), run_time=0.8)
             vo.wait_until("we recorded this on")
             self.play(FadeIn(date, shift=LEFT * 0.1), run_time=0.5)
+            vo.wait_until("with no service account key")
+            self.play(FadeIn(nokey, shift=LEFT * 0.1), run_time=0.4)
+            vo.wait_until("and no GPU")
+            self.play(FadeIn(nogpu, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("Every README command")
             self.play(FadeIn(rows7[0][0], scale=1.3), FadeIn(rows7[0][1], shift=RIGHT * 0.15), run_time=0.6)
             vo.wait_until("the ones that talk to Google")
