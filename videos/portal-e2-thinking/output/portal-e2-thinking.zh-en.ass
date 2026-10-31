@@ -1,0 +1,139 @@
+[Script Info]
+Title: 项目周记 E2 · What is "thought for 3 seconds"? Hidden reasoning, progress streaming and a receipt
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.95,Bilingual,,0,0,0,,等回答的时候，我们的 app 显示：正在思考，11 秒\N{\fs33\c&H00C8C0B8&\bord1.4}While you wait for an answer, our app says: thinking, eleven seconds.
+Dialogue: 0,0:00:04.18,0:00:06.51,Bilingual,,0,0,0,,回答出来以后，它折叠成一张收据\N{\fs33\c&H00C8C0B8&\bord1.4}Afterwards it folds into a receipt:
+Dialogue: 0,0:00:06.51,0:00:09.71,Bilingual,,0,0,0,,思考了 22 秒，这是整个等待的时间\N{\fs33\c&H00C8C0B8&\bord1.4}thought for 22 seconds, which is the whole wait.
+Dialogue: 0,0:00:10.03,0:00:12.82,Bilingual,,0,0,0,,点开，等待分成两段\N{\fs33\c&H00C8C0B8&\bord1.4}Open it, and the wait splits in two:
+Dialogue: 0,0:00:12.82,0:00:17.39,Bilingual,,0,0,0,,真正的思考只有 13.5 秒，然后是写 8.7 秒\N{\fs33\c&H00C8C0B8&\bord1.4}only 13.5 seconds of thinking, then 8.7 seconds of writing.
+Dialogue: 0,0:00:17.63,0:00:19.16,Bilingual,,0,0,0,,在思考什么？\N{\fs33\c&H00C8C0B8&\bord1.4}Thinking about what?
+Dialogue: 0,0:00:19.21,0:00:22.37,Bilingual,,0,0,0,,三年前，还没有哪个聊天 app 会给你看模型在思考\N{\fs33\c&H00C8C0B8&\bord1.4}Three years ago, no chat app showed you a model thinking.
+Dialogue: 0,0:00:22.69,0:00:25.69,Bilingual,,0,0,0,,那为什么我们给你看一个计时器，却从不给你看思考的内容？\N{\fs33\c&H00C8C0B8&\bord1.4}And why does ours show you a clock, but never the thoughts?
+Dialogue: 0,0:00:27.13,0:00:29.07,Bilingual,,0,0,0,,这个想法比这些 app 更早\N{\fs33\c&H00C8C0B8&\bord1.4}The idea is older than the apps.
+Dialogue: 0,0:00:29.39,0:00:33.25,Bilingual,,0,0,0,,2022 年 1 月，Google 的研究者发现\N{\fs33\c&H00C8C0B8&\bord1.4}In January 2022, Google researchers showed that a model
+Dialogue: 0,0:00:33.25,0:00:37.74,Bilingual,,0,0,0,,先让模型把步骤写出来，它能解出更多题\N{\fs33\c&H00C8C0B8&\bord1.4}solves more problems if you ask it to write out its steps first.
+Dialogue: 0,0:00:38.06,0:00:40.12,Bilingual,,0,0,0,,他们把它叫作思维链，chain of thought\N{\fs33\c&H00C8C0B8&\bord1.4}They called it chain of thought.
+Dialogue: 0,0:00:40.17,0:00:43.41,Bilingual,,0,0,0,,几个月后，一句话就做到了：「Let's think step by step」\N{\fs33\c&H00C8C0B8&\bord1.4}Months later, one sentence did it: let's think step by step.
+Dialogue: 0,0:00:43.73,0:00:45.33,Bilingual,,0,0,0,,这是写在提示词里的一个技巧\N{\fs33\c&H00C8C0B8&\bord1.4}It was a trick in the prompt.
+Dialogue: 0,0:00:45.55,0:00:48.70,Bilingual,,0,0,0,,2024 年 9 月，OpenAI 发布了 o1\N{\fs33\c&H00C8C0B8&\bord1.4}In September 2024, OpenAI released o1,
+Dialogue: 0,0:00:48.70,0:00:54.68,Bilingual,,0,0,0,,一个用强化学习训练、先推理再回答的模型\N{\fs33\c&H00C8C0B8&\bord1.4}a model trained with reinforcement learning to reason before it answers.
+Dialogue: 0,0:00:55.00,0:00:57.77,Bilingual,,0,0,0,,OpenAI 选择不展示原始的思考内容\N{\fs33\c&H00C8C0B8&\bord1.4}OpenAI chose not to show the raw thoughts,
+Dialogue: 0,0:00:57.77,0:01:02.91,Bilingual,,0,0,0,,理由是用户体验、竞争优势，以及可以监控这些思考\N{\fs33\c&H00C8C0B8&\bord1.4}citing user experience, competitive advantage, and the chance to monitor them,
+Dialogue: 0,0:01:02.91,0:01:06.07,Bilingual,,0,0,0,,它改为展示一段由模型写的摘要\N{\fs33\c&H00C8C0B8&\bord1.4}and showed a summary written by a model instead.
+Dialogue: 0,0:01:06.32,0:01:07.92,Bilingual,,0,0,0,,别家做了不同的选择\N{\fs33\c&H00C8C0B8&\bord1.4}Others chose differently.
+Dialogue: 0,0:01:08.07,0:01:11.80,Bilingual,,0,0,0,,DeepSeek 的 R1 把推理文本交给了开发者\N{\fs33\c&H00C8C0B8&\bord1.4}DeepSeek's R1 handed its reasoning text to developers.
+Dialogue: 0,0:01:12.12,0:01:15.96,Bilingual,,0,0,0,,Claude 3.7 展示了原始的思考内容，作为研究预览\N{\fs33\c&H00C8C0B8&\bord1.4}Claude 3.7 showed its raw thinking, as a research preview.
+Dialogue: 0,0:01:16.28,0:01:19.34,Bilingual,,0,0,0,,从 Claude 4 开始，长的思考会被摘要\N{\fs33\c&H00C8C0B8&\bord1.4}From Claude 4, long thinking was summarized,
+Dialogue: 0,0:01:19.34,0:01:22.53,Bilingual,,0,0,0,,今天的 Claude API 只返回摘要\N{\fs33\c&H00C8C0B8&\bord1.4}and today's Claude API returns only a summary.
+Dialogue: 0,0:01:22.77,0:01:25.58,Bilingual,,0,0,0,,今天，思考是一个你自己选、自己付钱的设置\N{\fs33\c&H00C8C0B8&\bord1.4}Today, thinking is a setting you choose and pay for.
+Dialogue: 0,0:01:25.90,0:01:28.81,Bilingual,,0,0,0,,OpenAI 把它叫作 reasoning effort，也就是思考强度\N{\fs33\c&H00C8C0B8&\bord1.4}OpenAI calls it reasoning effort.
+Dialogue: 0,0:01:28.86,0:01:31.41,Bilingual,,0,0,0,,我们的菜单把它放在选模型的旁边\N{\fs33\c&H00C8C0B8&\bord1.4}Our menu puts it next to the model choice,
+Dialogue: 0,0:01:31.41,0:01:35.52,Bilingual,,0,0,0,,有 Luna、Terra 和另外两个模型，思考强度分三档：低、中、高\N{\fs33\c&H00C8C0B8&\bord1.4}Luna, Terra and two others, with three levels: low, medium and high.
+Dialogue: 0,0:01:36.87,0:01:39.06,Bilingual,,0,0,0,,看看一次调用里面发生了什么\N{\fs33\c&H00C8C0B8&\bord1.4}Here is what happens inside one call.
+Dialogue: 0,0:01:39.38,0:01:43.03,Bilingual,,0,0,0,,模型一次写一小段文字，叫作 token\N{\fs33\c&H00C8C0B8&\bord1.4}A model writes one small piece of text at a time, a token.
+Dialogue: 0,0:01:43.35,0:01:46.19,Bilingual,,0,0,0,,推理模型会先写一些给自己看的 token\N{\fs33\c&H00C8C0B8&\bord1.4}A reasoning model first writes tokens for itself.
+Dialogue: 0,0:01:46.51,0:01:48.11,Bilingual,,0,0,0,,那就是它的思考\N{\fs33\c&H00C8C0B8&\bord1.4}Those are its thoughts.
+Dialogue: 0,0:01:50.02,0:01:52.79,Bilingual,,0,0,0,,OpenAI 从不把这些 token 发回来\N{\fs33\c&H00C8C0B8&\bord1.4}OpenAI never sends those tokens back.
+Dialogue: 0,0:01:53.11,0:01:57.68,Bilingual,,0,0,0,,它们是隐藏的，但会占用上下文空间，而且按输出的价格计费\N{\fs33\c&H00C8C0B8&\bord1.4}They stay hidden, but they take up room, and you pay for them at the output price.
+Dialogue: 0,0:01:57.92,0:02:01.20,Bilingual,,0,0,0,,然后它才写回答，也就是我们那张 13 格的表\N{\fs33\c&H00C8C0B8&\bord1.4}Only then does it write the answer, our thirteen-box form.
+Dialogue: 0,0:02:01.52,0:02:03.74,Bilingual,,0,0,0,,所以我们的计时器能把两段分开\N{\fs33\c&H00C8C0B8&\bord1.4}So our stopwatch can tell the two apart.
+Dialogue: 0,0:02:04.06,0:02:08.44,Bilingual,,0,0,0,,思考，是到回答的第一个字到达为止的时间\N{\fs33\c&H00C8C0B8&\bord1.4}Thinking is the time until the first character of the answer arrives:
+Dialogue: 0,0:02:08.44,0:02:12.19,Bilingual,,0,0,0,,模型先读完请求，再用隐藏的 token 推理\N{\fs33\c&H00C8C0B8&\bord1.4}the model reads the request, then reasons in hidden tokens.
+Dialogue: 0,0:02:12.51,0:02:16.63,Bilingual,,0,0,0,,写，是从那里到模型写完；然后检查器开始运行\N{\fs33\c&H00C8C0B8&\bord1.4}Writing runs from there until the model finishes; then the checker runs.
+Dialogue: 0,0:02:16.87,0:02:19.79,Bilingual,,0,0,0,,思考强度决定模型最多可以想多少\N{\fs33\c&H00C8C0B8&\bord1.4}The effort setting sets how much thinking the model may do.
+Dialogue: 0,0:02:20.11,0:02:24.58,Bilingual,,0,0,0,,即使设置一样，模型也会自己决定需要想多少\N{\fs33\c&H00C8C0B8&\bord1.4}Even on the same setting, the model decides how much it needs:
+Dialogue: 0,0:02:24.58,0:02:27.32,Bilingual,,0,0,0,,你的问候想了 1.6 秒\N{\fs33\c&H00C8C0B8&\bord1.4}your greeting thought for 1.6 seconds,
+Dialogue: 0,0:02:27.32,0:02:30.93,Bilingual,,0,0,0,,一个关于学校医疗中心的真实问题想了 13.5 秒\N{\fs33\c&H00C8C0B8&\bord1.4}a real question about the student clinic for 13.5.
+Dialogue: 0,0:02:33.17,0:02:37.54,Bilingual,,0,0,0,,既然思考是隐藏的，你到底在为什么付钱，又怎么知道？\N{\fs33\c&H00C8C0B8&\bord1.4}If the thoughts are hidden, what exactly are you paying for, and how would you know?
+Dialogue: 0,0:02:41.67,0:02:44.26,Bilingual,,0,0,0,,每次回复最后都有一份 usage 报告\N{\fs33\c&H00C8C0B8&\bord1.4}Every response ends with a usage report,
+Dialogue: 0,0:02:44.26,0:02:48.15,Bilingual,,0,0,0,,它把推理 token 算在输出 token 里\N{\fs33\c&H00C8C0B8&\bord1.4}and it counts the reasoning tokens inside the output tokens.
+Dialogue: 0,0:02:48.47,0:02:49.97,Bilingual,,0,0,0,,我们的服务器读取这份报告\N{\fs33\c&H00C8C0B8&\bord1.4}Our server reads it,
+Dialogue: 0,0:02:49.97,0:02:53.72,Bilingual,,0,0,0,,价格表把这些数字换算成收据上的金额\N{\fs33\c&H00C8C0B8&\bord1.4}and the price list turns those counts into the dollar figure on the receipt.
+Dialogue: 0,0:02:55.07,0:02:56.84,Bilingual,,0,0,0,,等的时候，为什么要显示点什么？\N{\fs33\c&H00C8C0B8&\bord1.4}Why show anything while you wait?
+Dialogue: 0,0:02:57.16,0:02:59.22,Bilingual,,0,0,0,,决策记录说得很直白\N{\fs33\c&H00C8C0B8&\bord1.4}The decision record puts it plainly:
+Dialogue: 0,0:02:59.22,0:03:03.34,Bilingual,,0,0,0,,干等 10 到 30 秒，人不知道在发生什么\N{\fs33\c&H00C8C0B8&\bord1.4}ten to thirty seconds of waiting, and nobody can tell what is happening.
+Dialogue: 0,0:03:03.66,0:03:05.99,Bilingual,,0,0,0,,大多数聊天 app 的办法是流式输出\N{\fs33\c&H00C8C0B8&\bord1.4}Most chat apps answer that by streaming:
+Dialogue: 0,0:03:05.99,0:03:09.83,Bilingual,,0,0,0,,每写出几个词，就立刻送到你的屏幕上\N{\fs33\c&H00C8C0B8&\bord1.4}every few words travel to your screen the moment they are written,
+Dialogue: 0,0:03:09.83,0:03:12.05,Bilingual,,0,0,0,,走的是一条叫 server-sent events 的通道\N{\fs33\c&H00C8C0B8&\bord1.4}over a pipe called server-sent events.
+Dialogue: 0,0:03:12.28,0:03:15.48,Bilingual,,0,0,0,,我们的服务器确实从 OpenAI 收到了这条流\N{\fs33\c&H00C8C0B8&\bord1.4}Our server does receive that stream from OpenAI.
+Dialogue: 0,0:03:15.80,0:03:17.60,Bilingual,,0,0,0,,但它不把这些文字转发出去\N{\fs33\c&H00C8C0B8&\bord1.4}But it does not pass the words on.
+Dialogue: 0,0:03:17.92,0:03:20.01,Bilingual,,0,0,0,,它一边读这张逐渐填满的表\N{\fs33\c&H00C8C0B8&\bord1.4}It reads the form as it fills,
+Dialogue: 0,0:03:20.01,0:03:23.84,Bilingual,,0,0,0,,一边记下模型写到了哪一格、写了多少字\N{\fs33\c&H00C8C0B8&\bord1.4}notes which box the model is in, counts the characters,
+Dialogue: 0,0:03:23.84,0:03:28.52,Bilingual,,0,0,0,,然后只把进度发给页面，每次一小行 JSON\N{\fs33\c&H00C8C0B8&\bord1.4}and sends the page only progress, one small line of JSON at a time.
+Dialogue: 0,0:03:28.77,0:03:31.77,Bilingual,,0,0,0,,你看到的就是这些：正在思考，11 秒\N{\fs33\c&H00C8C0B8&\bord1.4}That is what you watch: thinking, eleven seconds.
+Dialogue: 0,0:03:32.09,0:03:35.96,Bilingual,,0,0,0,,正在写去处和步骤，已写 320 字\N{\fs33\c&H00C8C0B8&\bord1.4}Writing the places to go, 320 characters so far.
+Dialogue: 0,0:03:36.28,0:03:40.48,Bilingual,,0,0,0,,正在检查。在检查器看过之前，页面一个字也看不到\N{\fs33\c&H00C8C0B8&\bord1.4}Checking. The page never sees a word before the checker has.
+Dialogue: 0,0:03:41.82,0:03:46.70,Bilingual,,0,0,0,,为什么不像 Claude 那样直接流式显示文字，检查不过再收回？\N{\fs33\c&H00C8C0B8&\bord1.4}Why not stream the words, the way Claude does, and pull them back if the checker objects?
+Dialogue: 0,0:03:50.45,0:03:52.58,Bilingual,,0,0,0,,因为屏幕上说出去的话收不回来\N{\fs33\c&H00C8C0B8&\bord1.4}Because a screen cannot unsay something.
+Dialogue: 0,0:03:52.90,0:03:56.53,Bilingual,,0,0,0,,如果一个剂量或者一个编造的电话号码在屏幕上闪了两秒\N{\fs33\c&H00C8C0B8&\bord1.4}If a dose or a made-up phone number flashes for two seconds,
+Dialogue: 0,0:03:56.53,0:03:59.37,Bilingual,,0,0,0,,着急的家长可能已经截了图\N{\fs33\c&H00C8C0B8&\bord1.4}a worried parent may already have a screenshot.
+Dialogue: 0,0:03:59.69,0:04:03.36,Bilingual,,0,0,0,,所以决策记录写的是：流式传输进度，而不是文字\N{\fs33\c&H00C8C0B8&\bord1.4}So the decision record says: stream the progress, not the text.
+Dialogue: 0,0:04:03.60,0:04:05.20,Bilingual,,0,0,0,,你要的是流式输出\N{\fs33\c&H00C8C0B8&\bord1.4}You asked for streaming.
+Dialogue: 0,0:04:05.26,0:04:08.90,Bilingual,,0,0,0,,agent 在无人值守时自己选了这种做法\N{\fs33\c&H00C8C0B8&\bord1.4}The agent, working unattended, chose this kind on its own,
+Dialogue: 0,0:04:08.90,0:04:13.09,Bilingual,,0,0,0,,并把它写成一份提议，还在等你点头\N{\fs33\c&H00C8C0B8&\bord1.4}and wrote it down as a proposal that is still waiting for your yes.
+Dialogue: 0,0:04:14.43,0:04:16.57,Bilingual,,0,0,0,,进度流式输出还有一招\N{\fs33\c&H00C8C0B8&\bord1.4}Progress streaming has one more trick.
+Dialogue: 0,0:04:16.89,0:04:21.90,Bilingual,,0,0,0,,表的前五格都和紧急程度有关，所以模型最先写它们\N{\fs33\c&H00C8C0B8&\bord1.4}The form's first five boxes are all about urgency, so the model writes them first.
+Dialogue: 0,0:04:22.15,0:04:26.94,Bilingual,,0,0,0,,前几格一说是紧急情况，服务器就打上紧急标记\N{\fs33\c&H00C8C0B8&\bord1.4}The moment those first boxes say emergency, the server raises a flag,
+Dialogue: 0,0:04:26.94,0:04:30.27,Bilingual,,0,0,0,,页面显示一段我们自己写好的提醒\N{\fs33\c&H00C8C0B8&\bord1.4}and the page shows a warning we wrote ourselves:
+Dialogue: 0,0:04:30.27,0:04:33.88,Bilingual,,0,0,0,,可能危及生命，不用等，现在就打 911\N{\fs33\c&H00C8C0B8&\bord1.4}possibly life-threatening, don't wait, call 911 now.
+Dialogue: 0,0:04:34.12,0:04:37.86,Bilingual,,0,0,0,,在一次真实测试里，提醒在第 3.5 秒出现\N{\fs33\c&H00C8C0B8&\bord1.4}In a real test, the warning appeared at 3.5 seconds,
+Dialogue: 0,0:04:37.86,0:04:40.96,Bilingual,,0,0,0,,检查过的回答在大约第 21 秒才到\N{\fs33\c&H00C8C0B8&\bord1.4}and the checked answer at about 21 seconds.
+Dialogue: 0,0:04:41.28,0:04:45.76,Bilingual,,0,0,0,,而且紧急判断从不收回，所以那个回答一定和提醒一致\N{\fs33\c&H00C8C0B8&\bord1.4}And since an emergency is never taken back, that answer is bound to agree.
+Dialogue: 0,0:04:47.10,0:04:52.98,Bilingual,,0,0,0,,检查过的回答终于到达时，页面最多用两秒半把它展示出来\N{\fs33\c&H00C8C0B8&\bord1.4}When the checked answer finally arrives, the page plays it out in at most two and a half seconds:
+Dialogue: 0,0:04:52.98,0:04:55.83,Bilingual,,0,0,0,,句子逐字打出来，列表整块出现\N{\fs33\c&H00C8C0B8&\bord1.4}sentences type themselves, lists drop in whole.
+Dialogue: 0,0:04:56.15,0:04:57.74,Bilingual,,0,0,0,,看起来像流式输出\N{\fs33\c&H00C8C0B8&\bord1.4}It looks like streaming.
+Dialogue: 0,0:04:57.79,0:05:00.41,Bilingual,,0,0,0,,其实是一段回放，回放的是已经通过检查的文字\N{\fs33\c&H00C8C0B8&\bord1.4}It is a replay of text that has already passed.
+Dialogue: 0,0:05:00.65,0:05:03.64,Bilingual,,0,0,0,,紧急回答跳过这段表演，立刻全部显示\N{\fs33\c&H00C8C0B8&\bord1.4}Emergency answers skip the show and appear at once.
+Dialogue: 0,0:05:03.96,0:05:05.94,Bilingual,,0,0,0,,停止按钮也是真的停止\N{\fs33\c&H00C8C0B8&\bord1.4}And the stop button really stops:
+Dialogue: 0,0:05:05.94,0:05:10.44,Bilingual,,0,0,0,,页面挂断，服务器取消它正在付钱的那次模型调用\N{\fs33\c&H00C8C0B8&\bord1.4}the page hangs up, and the server cancels the model call it was paying for.
+Dialogue: 0,0:05:11.78,0:05:16.28,Bilingual,,0,0,0,,周三上午，波士顿时间，流式输出在 20 分钟之内做好了\N{\fs33\c&H00C8C0B8&\bord1.4}On Wednesday morning, Boston time, the streaming went in within twenty minutes.
+Dialogue: 0,0:05:16.60,0:05:19.28,Bilingual,,0,0,0,,几分钟后，菜单加了一条说明\N{\fs33\c&H00C8C0B8&\bord1.4}A few minutes later, a note for the menu:
+Dialogue: 0,0:05:19.28,0:05:22.34,Bilingual,,0,0,0,,切换模型或思考强度会从一份新的缓存开始\N{\fs33\c&H00C8C0B8&\bord1.4}switching model or effort starts a fresh cache,
+Dialogue: 0,0:05:22.34,0:05:26.31,Bilingual,,0,0,0,,所以在 Terra 上，那第一次回答大约贵 5 倍\N{\fs33\c&H00C8C0B8&\bord1.4}so on Terra that first answer costs about five times as much.
+Dialogue: 0,0:05:26.55,0:05:30.04,Bilingual,,0,0,0,,那天剩下的很多时间，花在了 review 发现的问题上\N{\fs33\c&H00C8C0B8&\bord1.4}Much of the rest of the day went to what reviews found:
+Dialogue: 0,0:05:30.04,0:05:34.36,Bilingual,,0,0,0,,在停止、重试和断线时都保住 911 提醒\N{\fs33\c&H00C8C0B8&\bord1.4}keeping the 911 warning through stop, retry and dropped connections,
+Dialogue: 0,0:05:34.36,0:05:39.18,Bilingual,,0,0,0,,还有一个测试，只要模型原文里任意连续\N{\fs33\c&H00C8C0B8&\bord1.4}and a test that fails if any four consecutive characters of the model's text
+Dialogue: 0,0:05:39.18,0:05:42.23,Bilingual,,0,0,0,,4 个字符在结果之前出现在进度行里，它就失败\N{\fs33\c&H00C8C0B8&\bord1.4}show up in the progress lines before the result.
+Dialogue: 0,0:05:42.55,0:05:47.48,Bilingual,,0,0,0,,这个测试证明：检查器放行之前，没有一个字会到达页面\N{\fs33\c&H00C8C0B8&\bord1.4}That test is the proof that no words reach the page before the checker has passed them.
+Dialogue: 0,0:05:48.82,0:05:51.74,Bilingual,,0,0,0,,那么，「思考了 22 秒」后面是什么？\N{\fs33\c&H00C8C0B8&\bord1.4}So what sits behind "thought for 22 seconds"?
+Dialogue: 0,0:05:52.06,0:05:55.28,Bilingual,,0,0,0,,Claude 的 app 在思考时也显示计时器\N{\fs33\c&H00C8C0B8&\bord1.4}Claude's app also shows a timer while it thinks,
+Dialogue: 0,0:05:55.28,0:05:59.63,Bilingual,,0,0,0,,并且和 ChatGPT 一样，点开是一段模型推理的摘要\N{\fs33\c&H00C8C0B8&\bord1.4}and, like ChatGPT, opens onto a summary of the model's reasoning.
+Dialogue: 0,0:05:59.95,0:06:01.60,Bilingual,,0,0,0,,我们的点开是一张收据\N{\fs33\c&H00C8C0B8&\bord1.4}Ours opens onto a receipt:
+Dialogue: 0,0:06:01.60,0:06:06.35,Bilingual,,0,0,0,,用时、依据、检查、判断、模型和价格\N{\fs33\c&H00C8C0B8&\bord1.4}the timings, the sources, the check, the judgment, the model and the price.
+Dialogue: 0,0:06:06.60,0:06:08.78,Bilingual,,0,0,0,,原因写在决策记录里\N{\fs33\c&H00C8C0B8&\bord1.4}The reason is in the decision record.
+Dialogue: 0,0:06:09.10,0:06:13.36,Bilingual,,0,0,0,,推理原文里可能有诊断性的猜测，而且没有任何东西检查过它\N{\fs33\c&H00C8C0B8&\bord1.4}Raw reasoning may contain diagnostic guesses, and nothing has checked it.
+Dialogue: 0,0:06:13.68,0:06:17.69,Bilingual,,0,0,0,,在医疗产品里，屏幕上的一个猜测，读起来就像一个诊断\N{\fs33\c&H00C8C0B8&\bord1.4}In a medical product, a guess on screen reads like a diagnosis.
+Dialogue: 0,0:06:19.03,0:06:20.48,Bilingual,,0,0,0,,还能往哪里走？\N{\fs33\c&H00C8C0B8&\bord1.4}Where could this go?
+Dialogue: 0,0:06:20.53,0:06:23.79,Bilingual,,0,0,0,,OpenAI 可以返回隐藏推理的摘要\N{\fs33\c&H00C8C0B8&\bord1.4}OpenAI can return a summary of the hidden reasoning.
+Dialogue: 0,0:06:24.11,0:06:27.74,Bilingual,,0,0,0,,但摘要也是模型写的，所以在任何人看到之前\N{\fs33\c&H00C8C0B8&\bord1.4}But a summary is written by a model too, so it would have to pass the same checker before anyone sees it.
+Dialogue: 0,0:06:27.74,0:06:29.81,Bilingual,,0,0,0,,它也得通过同一个检查器\N{\fs33\c&H00C8C0B8&\bord1.4}But a summary is written by a model too, so it would have to pass the same checker before anyone sees it.
+Dialogue: 0,0:06:30.13,0:06:34.27,Bilingual,,0,0,0,,进度行可以说出真实的步骤，比如正在核对诊所的营业时间\N{\fs33\c&H00C8C0B8&\bord1.4}The progress line could name real steps, like checking the clinic's hours.
+Dialogue: 0,0:06:34.59,0:06:37.16,Bilingual,,0,0,0,,agent 还提过一个只给开发者用的开关\N{\fs33\c&H00C8C0B8&\bord1.4}And the agent raised a developer-only switch
+Dialogue: 0,0:06:37.16,0:06:39.79,Bilingual,,0,0,0,,在调提示词时看没检查过的草稿\N{\fs33\c&H00C8C0B8&\bord1.4}to see unchecked drafts while tuning prompts.
+Dialogue: 0,0:06:40.11,0:06:41.48,Bilingual,,0,0,0,,它没有被做出来\N{\fs33\c&H00C8C0B8&\bord1.4}It was not built.
+Dialogue: 0,0:06:41.53,0:06:43.15,Bilingual,,0,0,0,,有三个决定在等你\N{\fs33\c&H00C8C0B8&\bord1.4}Three decisions wait for you.
+Dialogue: 0,0:06:43.47,0:06:48.05,Bilingual,,0,0,0,,只流进度的流式输出和模型菜单，被写成了提议\N{\fs33\c&H00C8C0B8&\bord1.4}Progress-only streaming and the model menu are written down as proposals;
+Dialogue: 0,0:06:48.05,0:06:50.69,Bilingual,,0,0,0,,开发者开关，被写成了一个待定的问题\N{\fs33\c&H00C8C0B8&\bord1.4}the developer switch, as an open question.
+Dialogue: 0,0:06:52.03,0:06:54.10,Bilingual,,0,0,0,,所以，思考了 22 秒\N{\fs33\c&H00C8C0B8&\bord1.4}So, thought for 22 seconds.
+Dialogue: 0,0:06:54.42,0:06:59.41,Bilingual,,0,0,0,,先是思考：模型写给自己的隐藏 token，要付钱，但从不发回\N{\fs33\c&H00C8C0B8&\bord1.4}First thinking: hidden tokens the model writes for itself, billed but never sent.
+Dialogue: 0,0:06:59.73,0:07:05.32,Bilingual,,0,0,0,,然后是写，我们的服务器一格一格地盯着，只转发进度，不转发文字\N{\fs33\c&H00C8C0B8&\bord1.4}Then writing, which our server watches box by box, passing on progress but not words.
+Dialogue: 0,0:07:05.64,0:07:08.95,Bilingual,,0,0,0,,前几格一说紧急，就提前给出提醒\N{\fs33\c&H00C8C0B8&\bord1.4}An early warning when the first boxes say emergency.
+Dialogue: 0,0:07:09.27,0:07:11.43,Bilingual,,0,0,0,,检查器通过之后，再回放一遍\N{\fs33\c&H00C8C0B8&\bord1.4}A replay once the checker has passed it.
+Dialogue: 0,0:07:11.75,0:07:13.71,Bilingual,,0,0,0,,最后，用一张收据代替思考内容\N{\fs33\c&H00C8C0B8&\bord1.4}And a receipt instead of the thoughts.
+Dialogue: 0,0:07:13.95,0:07:15.33,Bilingual,,0,0,0,,三个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Three questions.
+Dialogue: 0,0:07:15.38,0:07:17.85,Bilingual,,0,0,0,,我们的计时器到底把什么叫作思考？\N{\fs33\c&H00C8C0B8&\bord1.4}What exactly does our stopwatch call thinking?
+Dialogue: 0,0:07:18.17,0:07:21.12,Bilingual,,0,0,0,,为什么和紧急程度有关的几格排在表的最前面？\N{\fs33\c&H00C8C0B8&\bord1.4}Why do the urgency boxes come first in the form?
+Dialogue: 0,0:07:21.44,0:07:24.62,Bilingual,,0,0,0,,一段推理摘要要先经过什么，才能给人看？\N{\fs33\c&H00C8C0B8&\bord1.4}And what would a reasoning summary need before it could be shown?
+Dialogue: 0,0:07:24.87,0:07:26.49,Bilingual,,0,0,0,,下一集讲页面本身\N{\fs33\c&H00C8C0B8&\bord1.4}Next time, the page itself:
+Dialogue: 0,0:07:26.49,0:07:31.07,Bilingual,,0,0,0,,我们从 Claude 的 app 学了什么、拒绝了什么，还能发明什么\N{\fs33\c&H00C8C0B8&\bord1.4}what we copied from Claude's app, what we refused, and what we could invent.

@@ -1,0 +1,698 @@
+1
+00:00:00,400 --> 00:00:03,301
+You typed one word into the triage chat: hello.
+
+2
+00:00:03,467 --> 00:00:09,099
+And three things came back. A greeting for you.
+A summary written for a parent in China.
+
+3
+00:00:09,099 --> 00:00:12,619
+And, folded away, a receipt:
+thought for three seconds,
+
+4
+00:00:12,619 --> 00:00:16,907
+sources, a check that passed,
+a judgment, and a model with a price.
+
+5
+00:00:17,067 --> 00:00:22,486
+But the app is built on the OpenAI API,
+and an API call returns text.
+
+6
+00:00:22,806 --> 00:00:24,832
+Nobody asked for a parent summary.
+
+7
+00:00:25,152 --> 00:00:27,115
+So who decided there would be one?
+
+8
+00:00:27,435 --> 00:00:29,235
+And who checked it?
+
+9
+00:00:32,400 --> 00:00:34,600
+Here is the picture most of us carry:
+
+10
+00:00:34,600 --> 00:00:38,821
+the page sends your words to the model,
+and the model sends words back.
+
+11
+00:00:39,000 --> 00:00:43,740
+Here is what really happens.
+The page talks only to our own small server,
+
+12
+00:00:43,740 --> 00:00:47,896
+and the server talks to the model.
+The API key lives only there.
+
+13
+00:00:48,067 --> 00:00:51,203
+The code wrapped around a model call
+is called a harness.
+
+14
+00:00:51,523 --> 00:00:55,757
+Ours does four jobs: build the request,
+set the shape of the reply,
+
+15
+00:00:55,757 --> 00:00:59,928
+check the reply, and, back in the page,
+turn it into what you saw.
+
+16
+00:01:03,667 --> 00:01:05,302
+Start with the request.
+
+17
+00:01:05,352 --> 00:01:07,422
+Your hello is the smallest part of it.
+
+18
+00:01:07,600 --> 00:01:12,330
+On top sit 15 official pages
+from the university's health service
+
+19
+00:01:12,330 --> 00:01:16,041
+and its student insurance,
+cleaned into plain text:
+
+20
+00:01:16,041 --> 00:01:20,699
+about 25,000 tokens,
+the word pieces a model reads and bills by.
+
+21
+00:01:21,019 --> 00:01:22,250
+A small booklet.
+
+22
+00:01:22,300 --> 00:01:25,595
+Below them,
+89 checked facts from our fact cards:
+
+23
+00:01:25,595 --> 00:01:28,487
+every phone number, price and opening hour.
+
+24
+00:01:28,807 --> 00:01:32,988
+Each card quotes the sentence it came from;
+the model gets just the fact.
+
+25
+00:01:33,167 --> 00:01:37,062
+Then the rules, in plain language.
+Never diagnose.
+
+26
+00:01:37,062 --> 00:01:39,788
+Never give a dose. In an emergency,
+
+27
+00:01:39,788 --> 00:01:41,350
+action before money.
+
+28
+00:01:41,350 --> 00:01:45,178
+And a parent in China
+cannot dial 911 for Boston.
+
+29
+00:01:45,334 --> 00:01:48,662
+Last comes a description
+of the form the answer must fill.
+
+30
+00:01:48,982 --> 00:01:53,846
+Together, these four parts are the instructions;
+chat apps call them the system prompt.
+
+31
+00:01:54,000 --> 00:01:56,328
+They never change, and that matters.
+
+32
+00:01:56,328 --> 00:02:00,079
+OpenAI's cache matches a request
+from its very first word,
+
+33
+00:02:00,079 --> 00:02:04,218
+so whatever never changes must come first.
+After the first call,
+
+34
+00:02:04,218 --> 00:02:08,099
+the long top is read from the cache.
+This is prompt caching,
+
+35
+00:02:08,099 --> 00:02:12,368
+and on the Luna model a cached token
+costs a tenth of a fresh one.
+
+36
+00:02:12,534 --> 00:02:17,909
+Then what changes: the chat so far,
+who is asking, the time in Boston and in China,
+
+37
+00:02:17,909 --> 00:02:21,472
+whether the student clinic is open,
+and finally, hello.
+
+38
+00:02:21,634 --> 00:02:25,452
+Your hello carried the whole booklet,
+and cost four hundredths of a cent.
+
+39
+00:02:25,600 --> 00:02:28,766
+Pause here.
+Why does our code tell the model the time,
+
+40
+00:02:28,766 --> 00:02:33,046
+and whether the clinic is open,
+instead of letting the model work it out?
+
+41
+00:02:37,700 --> 00:02:39,513
+Because a model has no clock.
+
+42
+00:02:39,833 --> 00:02:44,818
+Code reads the posted hours and the time zone,
+works it out the same way every time,
+
+43
+00:02:44,818 --> 00:02:47,727
+and writes 'to be confirmed'
+when it cannot know.
+
+44
+00:02:53,267 --> 00:02:55,202
+Next, the shape of the reply.
+
+45
+00:02:55,202 --> 00:02:59,006
+We do not ask the model for an answer.
+We hand it a form.
+
+46
+00:02:59,167 --> 00:03:03,435
+13 boxes, each with a name and a type.
+Some take free text.
+
+47
+00:03:03,435 --> 00:03:07,703
+Some take only fixed choices:
+urgency is one of six levels,
+
+48
+00:03:07,703 --> 00:03:12,116
+from possibly life-threatening down
+to just a rules question.
+
+49
+00:03:12,267 --> 00:03:14,678
+The API calls this structured outputs.
+
+50
+00:03:14,998 --> 00:03:18,053
+It is still one call,
+and the reply is still text,
+
+51
+00:03:18,053 --> 00:03:19,947
+just text shaped like the form.
+
+52
+00:03:20,267 --> 00:03:24,576
+In strict mode nothing else fits:
+no missing box, no extra box.
+
+53
+00:03:24,734 --> 00:03:27,272
+Now look at one box: the parent summary.
+
+54
+00:03:27,272 --> 00:03:32,411
+The rules give it an instruction:
+two or three sentences for the parent in China.
+
+55
+00:03:32,411 --> 00:03:37,043
+What is happening, where to go,
+what the parent can do. Always filled in.
+
+56
+00:03:37,200 --> 00:03:39,008
+That is the whole secret:
+
+57
+00:03:39,008 --> 00:03:43,131
+one call fills all 13 boxes,
+the parent summary included.
+
+58
+00:03:43,451 --> 00:03:47,589
+The model did not decide to be thoughtful;
+the rules say fill that box.
+
+59
+00:03:47,909 --> 00:03:50,833
+And strict mode only promises the box is there,
+
+60
+00:03:50,833 --> 00:03:54,566
+not that anything is in it,
+so the checker rejects it empty.
+
+61
+00:03:54,734 --> 00:03:58,981
+The receipt works the same way.
+Sources is the citations box.
+
+62
+00:03:58,981 --> 00:04:03,438
+Judgment is the urgency and where-to-go boxes,
+put into Chinese.
+
+63
+00:04:10,900 --> 00:04:13,396
+The filled form does not go to the screen yet.
+
+64
+00:04:13,716 --> 00:04:16,834
+First it passes a checker we wrote,
+called the lint,
+
+65
+00:04:16,834 --> 00:04:19,412
+after the tools that flag mistakes in code.
+
+66
+00:04:19,567 --> 00:04:22,448
+More than twenty rules read every line.
+
+67
+00:04:22,448 --> 00:04:26,216
+They stop a dose,
+like two tablets every six hours.
+
+68
+00:04:26,216 --> 00:04:30,674
+A diagnosis.
+A phone number or price that is on no fact card.
+
+69
+00:04:30,674 --> 00:04:35,204
+Money before 911 in an emergency.
+And an empty parent summary.
+
+70
+00:04:35,767 --> 00:04:38,843
+If anything fails,
+the form goes back with a note:
+
+71
+00:04:38,843 --> 00:04:41,612
+fix these problems and return the whole form.
+
+72
+00:04:41,932 --> 00:04:43,483
+One rewrite, no more.
+
+73
+00:04:43,533 --> 00:04:45,787
+If the second version still fails,
+
+74
+00:04:45,787 --> 00:04:49,102
+or the call breaks,
+nobody sees the model's words.
+
+75
+00:04:49,102 --> 00:04:52,181
+A fallback we wrote ourselves goes out instead:
+
+76
+00:04:52,181 --> 00:04:56,440
+call 911 now if it was urgent,
+otherwise call the student clinic.
+
+77
+00:04:56,600 --> 00:05:01,805
+And once any version says emergency, the rewrite
+and the fallback must stay emergency.
+
+78
+00:05:02,125 --> 00:05:06,605
+A rewrite should fix what the checker flagged,
+not change its mind about danger.
+
+79
+00:05:06,925 --> 00:05:10,488
+If we must be wrong,
+we would rather be wrong toward 911.
+
+80
+00:05:10,667 --> 00:05:14,402
+But the rules already told the model never
+to diagnose.
+
+81
+00:05:14,402 --> 00:05:16,202
+Why check again?
+
+82
+00:05:20,167 --> 00:05:23,175
+Because an instruction is a request,
+not a guarantee.
+
+83
+00:05:23,495 --> 00:05:27,058
+The check row on your receipt says
+which path the answer took:
+
+84
+00:05:27,058 --> 00:05:29,127
+passed, rewritten once, or replaced.
+
+85
+00:05:31,967 --> 00:05:36,276
+Only a checked form reaches the page,
+and the page lays it out like a chat.
+
+86
+00:05:36,434 --> 00:05:40,100
+Urgent steps first, in a red block.
+Then the explanation,
+
+87
+00:05:40,100 --> 00:05:44,089
+the places to go, what to bring,
+a sentence to say in English,
+
+88
+00:05:44,089 --> 00:05:48,978
+and near the end the folded parent summary,
+with a copy button for students.
+
+89
+00:05:49,134 --> 00:05:52,747
+And the receipt?
+Sources and judgment come from the form.
+
+90
+00:05:52,747 --> 00:05:54,608
+Check comes from the checker.
+
+91
+00:05:54,608 --> 00:05:58,200
+Model and price come from the server
+and its price list.
+
+92
+00:05:58,367 --> 00:06:02,472
+And process? Luna is a reasoning model.
+Before writing a word,
+
+93
+00:06:02,472 --> 00:06:06,246
+it reasons in hidden steps
+that we pay for but never see,
+
+94
+00:06:06,246 --> 00:06:09,533
+and the effort setting
+in the menu says how much.
+
+95
+00:06:09,533 --> 00:06:11,278
+The page times each phase:
+
+96
+00:06:11,278 --> 00:06:14,721
+thinking until the first word arrives,
+then writing.
+
+97
+00:06:14,721 --> 00:06:18,826
+So the thinking is real.
+What it contains is the next episode.
+
+98
+00:06:19,000 --> 00:06:20,800
+Now a question to sit with.
+
+99
+00:06:20,941 --> 00:06:23,608
+Two of the five rows are the model's own words.
+
+100
+00:06:23,928 --> 00:06:25,728
+The checker reads one of them.
+
+101
+00:06:25,955 --> 00:06:27,755
+Which one does nothing ever check?
+
+102
+00:06:32,100 --> 00:06:37,107
+Sources. The checker reads the judgment
+to make sure an emergency comes first,
+
+103
+00:06:37,107 --> 00:06:41,280
+and it tests every phone number
+and price against the fact cards.
+
+104
+00:06:41,280 --> 00:06:46,159
+But nothing reads the source list.
+It is simply what the model says it used.
+
+105
+00:06:49,267 --> 00:06:51,699
+This design is not where the work started.
+
+106
+00:06:52,019 --> 00:06:57,459
+The pull request behind it ran 36 hours
+and 60 commits, written with Claude Code.
+
+107
+00:06:57,634 --> 00:07:03,896
+On Tuesday, the knowledge base came first,
+and the sources turned out to disagree.
+
+108
+00:07:03,896 --> 00:07:09,380
+One insurance document puts
+the out-of-pocket maximum at 5,550 dollars,
+
+109
+00:07:09,380 --> 00:07:10,693
+another at 5,500.
+
+110
+00:07:10,693 --> 00:07:15,810
+Seven conflicts like that were ruled on,
+or marked to be confirmed.
+
+111
+00:07:15,967 --> 00:07:17,806
+The first engine was rules:
+
+112
+00:07:17,806 --> 00:07:21,621
+code judged how urgent a symptom
+was from keyword lists,
+
+113
+00:07:21,621 --> 00:07:25,055
+and the model only extracted details
+and explained.
+
+114
+00:07:25,375 --> 00:07:28,878
+We also built an evaluation
+to compare six approaches,
+
+115
+00:07:28,878 --> 00:07:31,604
+then shelved it before the comparison ran.
+
+116
+00:07:31,767 --> 00:07:34,924
+Then, at nine twenty-one
+on Tuesday night, the turn.
+
+117
+00:07:35,244 --> 00:07:38,188
+The keyword lists kept
+missing real warning signs
+
+118
+00:07:38,188 --> 00:07:39,988
+and flagging harmless ones.
+
+119
+00:07:40,130 --> 00:07:45,144
+So you decided: let a reasoning model judge,
+with the whole booklet in front of it,
+
+120
+00:07:45,144 --> 00:07:48,044
+and make the output check the only safety layer.
+
+121
+00:07:48,200 --> 00:07:51,528
+Twenty-two minutes later,
+the plainest chat box existed.
+
+122
+00:07:51,848 --> 00:07:53,475
+Forty more commits followed,
+
+123
+00:07:53,475 --> 00:07:57,544
+most of them closing a way a bad sentence
+could slip past the checker.
+
+124
+00:07:57,700 --> 00:08:01,664
+Notice the twist:
+word rules were dropped for judging symptoms,
+
+125
+00:08:01,664 --> 00:08:06,383
+yet the safety net is still word rules,
+now aimed at the model's sentences.
+
+126
+00:08:06,703 --> 00:08:08,687
+That trade-off is episode four.
+
+127
+00:08:16,933 --> 00:08:20,338
+From the outside,
+this looks like ChatGPT or Claude;
+
+128
+00:08:20,338 --> 00:08:23,721
+the look was borrowed
+from Claude's app on purpose,
+
+129
+00:08:23,721 --> 00:08:25,521
+and that is episode three.
+
+130
+00:08:25,765 --> 00:08:27,792
+Inside, it is a different machine.
+
+131
+00:08:27,966 --> 00:08:30,488
+A general chat app answers in free prose,
+
+132
+00:08:30,488 --> 00:08:33,747
+guided by its system prompt
+and the model's training.
+
+133
+00:08:34,067 --> 00:08:37,842
+Ours has a system prompt too,
+and adds a form we designed,
+
+134
+00:08:37,842 --> 00:08:39,688
+prices only from fact cards,
+
+135
+00:08:39,688 --> 00:08:43,049
+and our own rules
+between the model and the screen.
+
+136
+00:08:43,600 --> 00:08:49,195
+That form is also the key to what comes next,
+because a new feature is mostly a new box.
+
+137
+00:08:49,195 --> 00:08:53,072
+A note to forward to a roommate.
+Questions to ask the doctor.
+
+138
+00:08:53,233 --> 00:08:57,723
+Each new box needs three things:
+a line on the form with its instruction,
+
+139
+00:08:57,723 --> 00:09:00,614
+a rule in the checker, and a place on the page.
+
+140
+00:09:00,934 --> 00:09:03,558
+That recipe holds whichever agent builds it.
+
+141
+00:09:08,533 --> 00:09:10,432
+So: one hello, four jobs.
+
+142
+00:09:10,600 --> 00:09:14,538
+Build the request,
+unchanging parts first so they are cached.
+
+143
+00:09:14,538 --> 00:09:15,636
+Hand over a form.
+
+144
+00:09:15,636 --> 00:09:19,054
+Check every line,
+allow one rewrite, keep a fallback.
+
+145
+00:09:19,054 --> 00:09:21,117
+Then lay it out, with a receipt.
+
+146
+00:09:21,266 --> 00:09:25,251
+Three questions to test yourself.
+Which part of the request is cached,
+
+147
+00:09:25,251 --> 00:09:29,862
+and why does its position matter?
+Why may a rewrite never take back an emergency?
+
+148
+00:09:29,862 --> 00:09:33,106
+And what would you change
+to add a note for the roommate?
+
+149
+00:09:33,266 --> 00:09:37,155
+Next time: what the model is doing
+during thought for three seconds,
+
+150
+00:09:37,155 --> 00:09:40,242
+and why we show you a receipt
+instead of its thoughts.

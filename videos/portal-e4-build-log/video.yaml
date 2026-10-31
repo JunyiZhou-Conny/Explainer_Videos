@@ -1,0 +1,29 @@
+id: portal-e4-build-log
+title: "项目周记 E4 · Two days, a hundred-plus commits: how the agents worked, and who decided"
+papers: []                     # not a paper: an explainer of the team's own pull requests (series: docs/PORTAL_SERIES.md)
+audience: "Conny, the founder, after E1–E3: directs AI agents, reads Python but not TypeScript; knows the triage chat page and its checker from E2–E3, but has not seen how the two days of agent work on PRs #36 and #41 unfolded, what they cost, or which calls were his"
+source: "JunyiZhou-Conny/InternationalHealthportal PR #36 (claude/affectionate-franklin-igh419 @ 17228bd) and PR #41 (junyi/40-triage-chat-ui @ b7ab98e): git history, handoff notes, bot threads, decisions 0004 and 0006, docs/workflow.md; every figure: SOURCES.md"
+# Narrated (Kokoro, af_heart) over a quiet music bed that ducks under the voice; the bilingual
+# (Chinese over English) subtitles are burned in, as in E2–E3.
+voice: {backend: kokoro, voice: af_heart, speed: 0.95}
+burn_subtitles: true
+music: {seed: 9, volume_db: 0}
+scenes:
+  - {file: scenes/s01_hook.py,      cls: Hook,      title: "Two days on one clock"}
+  - {file: scenes/s02_machinery.py, cls: Machinery, title: "How the work is organised"}
+  - {file: scenes/s03_dayone.py,    cls: DayOne,    title: "Day one: a skeleton, then a fact check"}
+  - {file: scenes/s04_turn.py,      cls: Turn,      title: "The turn at 9:21"}
+  - {file: scenes/s05_loop.py,      cls: Loop,      title: "The loop with the bots"}
+  - {file: scenes/s06_daytwo.py,    cls: DayTwo,    title: "Day two: a queue of fix agents"}
+  - {file: scenes/s07_probing.py,   cls: Probing,   title: "Attack your own checker"}
+  - {file: scenes/s08_cost.py,      cls: Cost,      title: "What it cost"}
+  - {file: scenes/s09_decided.py,   cls: Decided,   title: "Who decided, and what waits"}
+  - {file: scenes/s10_recap.py,     cls: Recap,     title: "Recap"}
+publish:
+  title_zh: "项目周记 E4 · 两天、一百多个提交：agent 是怎么干活的，谁做的决定"
+  description_zh: |
+    我的创业项目（给中国家长和在美留学生的就医导航原型）每周 PR 的概念讲解，第 4 集。
+    两个分诊 PR 的 109 个提交全是 agent 做的，放在同一个时钟上看：工作怎么组织（issue、分支、草稿 PR、两个 review bot、交接和决策记录）；第一天下午的骨架和 4 个互不通信的 agent 做的事实核对；晚上 9 点 21 分从规则引擎转向「模型判断、检查器把关」；和 bot 一来一回地修；第二天排队的修复 agent、为什么先复现再修、两次用量上限；检查器从 459 行长到 1,326 行的打地鼠，以及第二天夜里先用约 3,000 种说法攻击自己的检查器，判错过的 1,060 个留作测试；花了多少钱（只说有记录的数字）；哪些是我的决定、哪些是 agent 自己定的，以及还有 12 个问题在等我。
+    所有案例都是虚构的；不是医疗建议。英文旁白，中英双语字幕。
+  tags_zh: [AI, AI agent, 软件工程, 代码审查, 测试, Claude, 创业, 科普]
+  tid: 231

@@ -1,0 +1,350 @@
+{
+  "title_en": "Isn't it just an API call?",
+  "title_zh": "不就是调一下 API 吗？",
+  "narration_language": "en",
+  "subtitle_languages": [
+    "zh",
+    "en"
+  ],
+  "preset": "swiss",
+  "description_en": "Build log E1. One word typed into our triage chat came back as a greeting, a summary for a parent in China and a receipt. Between the send button and the answer sit four jobs: build the request, hand the model a form, check every line, lay the form out as the page. Concept level, no TypeScript; every number is pinned to the pull requests in SOURCES.md.",
+  "description_zh": "项目周记 E1。在我们的分诊聊天里打一个词，回来的却是一句问候、一段写给在中国的家长的摘要，和一张「收据」。从按下发送到看见回答，中间有四件事：组装请求、递给模型一张表、逐句检查、把表排成页面。只讲概念，不读代码；屏幕上的数字都来自 SOURCES.md 里钉住的 PR。",
+  "tags_zh": [
+    "AI",
+    "大模型",
+    "OpenAI API",
+    "结构化输出",
+    "产品设计",
+    "创业",
+    "科普"
+  ],
+  "bilibili_tid": 231,
+  "production_notes_not_spoken": [
+    "Series rules: docs/PORTAL_SERIES.md. Evidence: SOURCES.md, pinned to InternationalHealthportal junyi/40-triage-chat-ui @ b7ab98e (PR #41, which contains PR #36 @ 17228bd).",
+    "UI strings on screen are copied exactly from Conny's screenshots of 2026-10-30 or from the source files named in SOURCES.md. The user's own greeting is not visible in those screenshots; the bubble is labelled as an illustration.",
+    "Never put TypeScript on screen. Field names (parentSummaryZh, citations) may appear as labels on the form diagram.",
+    "Teammates are referred to by role, not by name. No API keys, no account identifiers.",
+    "Times are Boston time (America/New_York). 2026-10-27 is a Tuesday.",
+    "The dose and diagnosis examples in s05 are illustrations of what the checker blocks, not quotes from model output."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "One word in, three answers out",
+      "title_zh": "一个词进去，三份东西出来",
+      "visual_intent": "Redraw the real hello exchange in the chat page's layout: a user bubble (illustration), the greeting, the folded parent summary, and the receipt with its five rows, each string verbatim. Then the question card: an API call returns text, so who decided on a parent summary, and who checked it?",
+      "lines": [
+        {
+          "en": "You typed one word into the triage chat: hello.",
+          "zh": "你在分诊聊天里只打了一个词：你好。"
+        },
+        {
+          "en": "And three things came back. A greeting for you. A summary written for a parent in China. And, folded away, a receipt: thought for three seconds, sources, a check that passed, a judgment, and a model with a price.",
+          "zh": "回来的却是三样东西：给你的一句问候；一段写给在中国的家长的摘要；还有一张折起来的收据：思考了 3 秒、依据、检查通过、判断，还有模型和价钱。"
+        },
+        {
+          "en": "But the app is built on the OpenAI API, and an API call returns text. Nobody asked for a parent summary. So who decided there would be one? And who checked it?",
+          "zh": "可这个应用建在 OpenAI 的 API 上，而一次 API 调用只会返回一段文字。没人要过家长摘要。那是谁决定要有这一段的？又是谁检查过它？"
+        }
+      ],
+      "source_refs": [
+        "Conny's screenshots, 2026-10-30",
+        "src/features/triage/ThinkingRow.tsx",
+        "src/features/triage/TriageAnswer.tsx"
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "More than a call: a harness",
+      "title_zh": "不只一次调用：一套 harness",
+      "visual_intent": "The naive picture: page to model and back. Then the real one: a server box slides in between and the API key sits in it. A red HARNESS frame closes around the page and the server (our code), and four numbered job cards appear: build, form, check, page.",
+      "lines": [
+        {
+          "en": "Here is the picture most of us carry: the page sends your words to the model, and the model sends words back.",
+          "zh": "我们心里通常是这样一张图：页面把你的话发给模型，模型再把话发回来。"
+        },
+        {
+          "en": "Here is what really happens. The page talks only to our own small server, and the server talks to the model. The API key lives only there.",
+          "zh": "实际上，页面只和我们自己的一个小服务器说话，再由服务器去调模型。API key 只放在服务器上。"
+        },
+        {
+          "en": "The code wrapped around a model call is called a harness. Ours does four jobs: build the request, set the shape of the reply, check the reply, and, back in the page, turn it into what you saw.",
+          "zh": "包在模型调用外面的这层代码，叫 harness。我们的 harness 干四件事：组装请求、规定回答的格式、检查回答，最后回到页面上，把回答变成你看到的样子。"
+        }
+      ],
+      "source_refs": [
+        "prototypes/triage/src/server.ts",
+        "PR #36 description: key only on the backend",
+        "docs/decisions/0004-triage-v0.md"
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "Job one: what we send",
+      "title_zh": "第一件事：发出去的是什么",
+      "visual_intent": "Build the request as a stack. The tiny word hello appears first; then, top to bottom: BU pages (15 snapshots, about 25,000 tokens), 89 checked facts from the fact cards (with one real card and the single line the model is actually sent), the rules, the form. A brace labels the fixed top 'same every call', then 'cached'; price bars for Luna fresh vs cached input. Then the changing parts: the conversation so far, the context (who is asking, insurance, Boston and China time, SHS open now) and hello. Price tag $0.0004. Ponder card on the clock, then hours table + time zone -> code -> open / closed / to be confirmed.",
+      "lines": [
+        {
+          "en": "Start with the request. Your hello is the smallest part of it.",
+          "zh": "先看请求。你的「你好」是里面最小的一块。"
+        },
+        {
+          "en": "On top sit 15 official pages from the university's health service and its student insurance, cleaned into plain text: about 25,000 tokens, the word pieces a model reads and bills by. A small booklet.",
+          "zh": "最上面是学校医疗中心和学生保险的 15 份官方资料，清洗成纯文字，大约 25,000 个 token。token 是模型读字、算钱的单位；这些加起来，相当于一本小册子。"
+        },
+        {
+          "en": "Below them, 89 checked facts from our fact cards: every phone number, price and opening hour. Each card quotes the sentence it came from; the model gets just the fact.",
+          "zh": "下面是事实卡里 89 条核对过的事实：每个电话、每个金额、每段营业时间。每张卡都引用了原文里的那一句，但发给模型的只有事实本身。"
+        },
+        {
+          "en": "Then the rules, in plain language. Never diagnose. Never give a dose. In an emergency, action before money. And a parent in China cannot dial 911 for Boston.",
+          "zh": "然后是规则，用大白话写：不诊断，不给剂量；紧急时先行动、后谈钱；还有，家长在中国拨 911 打不到波士顿。"
+        },
+        {
+          "en": "Last comes a description of the form the answer must fill. Together, these four parts are the instructions; chat apps call them the system prompt.",
+          "zh": "最后是回答必须填的那张表的说明。这四块合起来叫 instructions，聊天应用里叫系统提示词。"
+        },
+        {
+          "en": "They never change, and that matters. OpenAI's cache matches a request from its very first word, so whatever never changes must come first. After the first call, the long top is read from the cache. This is prompt caching, and on the Luna model a cached token costs a tenth of a fresh one.",
+          "zh": "它们每次都一样，这一点很要紧：OpenAI 的缓存从请求的第一个字开始比对，所以不变的东西必须放在最前面。第一次之后，前面这一大段就直接从缓存里读。这叫 prompt caching，提示缓存；在 Luna 模型上，命中缓存的 token 只要原价的十分之一。"
+        },
+        {
+          "en": "Then what changes: the chat so far, who is asking, the time in Boston and in China, whether the student clinic is open, and finally, hello.",
+          "zh": "后面才是会变的：前面聊过的话、谁在问、波士顿和中国此刻几点、学校医疗中心开没开门，最后才是那句「你好」。"
+        },
+        {
+          "en": "Your hello carried the whole booklet, and cost four hundredths of a cent.",
+          "zh": "你的一句「你好」带着整本小册子出发，只花了 0.0004 美元。"
+        },
+        {
+          "en": "Pause here. Why does our code tell the model the time, and whether the clinic is open, instead of letting the model work it out?",
+          "zh": "停一下：为什么要由我们的代码告诉模型现在几点、诊所开没开门，而不是让模型自己去算？"
+        },
+        {
+          "en": "Because a model has no clock. Code reads the posted hours and the time zone, works it out the same way every time, and writes 'to be confirmed' when it cannot know.",
+          "zh": "因为模型没有钟。代码查公布的营业时间和时区，每次都用同一套算法；算不准的时候，就写「待确认」。"
+        }
+      ],
+      "source_refs": [
+        "prototypes/triage/src/mvp.ts (mvpInstructions, factTable, usableFacts, mvpContext, mvpTurn, MVP_RULES)",
+        "docs/decisions/0004-triage-v0.md (about 25k tokens)",
+        "prototypes/triage/knowledge/facts/bu.facts.json (97 cards: 89 verified, 8 conflict; card bu.shs.phone)",
+        "prototypes/triage/src/providers/pricing.ts (gpt-6-luna input $0.10/M, cached $0.01/M, 2026-10-27)",
+        "Conny's screenshot: gpt-6-luna, $0.0004"
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "Job two: a form, not an essay",
+      "title_zh": "第二件事：交一张表，不是写作文",
+      "visual_intent": "A paper form with thirteen labelled boxes. Two boxes show their fixed choices (six urgency levels, nine next steps). The label 'structured outputs · strict' stamps the form. The parentSummaryZh box is highlighted with its instruction; then lines connect boxes to the receipt rows: citations to 依据, acuity + disposition to 判断.",
+      "lines": [
+        {
+          "en": "Next, the shape of the reply. We do not ask the model for an answer. We hand it a form.",
+          "zh": "接下来是回答的格式。我们不是请模型「回答」，而是递给它一张表。"
+        },
+        {
+          "en": "13 boxes, each with a name and a type. Some take free text. Some take only fixed choices: urgency is one of six levels, from possibly life-threatening down to just a rules question.",
+          "zh": "13 个格子，每个都有名字和类型。有的填自由文字；有的只能从固定选项里选：紧急程度只能是六档之一，从「可能危及生命」一直到「只是规则或保险问题」。"
+        },
+        {
+          "en": "The API calls this structured outputs. It is still one call, and the reply is still text, just text shaped like the form. In strict mode nothing else fits: no missing box, no extra box.",
+          "zh": "API 里这叫 structured outputs，结构化输出。它仍然是一次调用，回来的仍然是文字，只是文字长成了这张表的样子。开了严格模式，别的样子都不行：不能少一格，也不能多一格。"
+        },
+        {
+          "en": "Now look at one box: the parent summary. The rules give it an instruction: two or three sentences for the parent in China. What is happening, where to go, what the parent can do. Always filled in.",
+          "zh": "现在看其中一格：家长摘要。规则给了它一条说明：写给在中国的家长两三句话：孩子怎么了、要去哪里、家长能做什么。永远要写。"
+        },
+        {
+          "en": "That is the whole secret: one call fills all 13 boxes, the parent summary included. The model did not decide to be thoughtful; the rules say fill that box. And strict mode only promises the box is there, not that anything is in it, so the checker rejects it empty.",
+          "zh": "秘密就这么多：一次调用填满全部 13 格，家长摘要也在其中。不是模型自己想得周到，而是规则说这一格必须填。严格模式只保证这一格存在，不保证里面有字，所以空着交上来，检查就不让过。"
+        },
+        {
+          "en": "The receipt works the same way. Sources is the citations box. Judgment is the urgency and where-to-go boxes, put into Chinese.",
+          "zh": "收据也一样：「依据」就是 citations 那一格；「判断」就是紧急程度和该去哪里这两格，翻成了中文。"
+        }
+      ],
+      "source_refs": [
+        "prototypes/triage/src/llm/schema.ts (OUTPUT_SCHEMA: 13 top-level fields, 6 acuities, 9 dispositions)",
+        "prototypes/triage/src/providers/openai.ts (text.format json_schema, strict: true)",
+        "prototypes/triage/src/mvp.ts (MVP_RULES on parentSummaryZh)",
+        "src/features/triage/ThinkingRow.tsx"
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "Job three: check before anyone sees it",
+      "title_zh": "第三件事：给人看之前先检查",
+      "visual_intent": "The filled form moves into a LINT gate. Five blocked examples appear with their rule names, the dose and diagnosis examples tagged illustration. Then a flow: first try, check, pass to the page or fail with the note, one rewrite, check again, page or the fixed fallback. A red card: an emergency is never taken back. Ponder card, then the receipt's check row with its three possible values, verbatim.",
+      "lines": [
+        {
+          "en": "The filled form does not go to the screen yet. First it passes a checker we wrote, called the lint, after the tools that flag mistakes in code.",
+          "zh": "填好的表还不会直接上屏。先要过我们自己写的一道检查，叫 lint，名字借自给代码挑错的工具。"
+        },
+        {
+          "en": "More than twenty rules read every line. They stop a dose, like two tablets every six hours. A diagnosis. A phone number or price that is on no fact card. Money before 911 in an emergency. And an empty parent summary.",
+          "zh": "二十多条规则逐句读：拦下剂量，比如「每六小时两片」；拦下诊断；拦下不在任何事实卡上的电话和金额；拦下紧急时先谈钱；也拦下空着的家长摘要。"
+        },
+        {
+          "en": "If anything fails, the form goes back with a note: fix these problems and return the whole form. One rewrite, no more.",
+          "zh": "有不通过的，表就被退回去，附一张条子：改掉这几处，重新交一份完整的表。只给一次重写机会。"
+        },
+        {
+          "en": "If the second version still fails, or the call breaks, nobody sees the model's words. A fallback we wrote ourselves goes out instead: call 911 now if it was urgent, otherwise call the student clinic.",
+          "zh": "第二版还不过，或者调用出错了，模型写的字一个都不给人看，换成我们自己写好的兜底：紧急就现在打 911，不紧急就打学校医疗中心。"
+        },
+        {
+          "en": "And once any version says emergency, the rewrite and the fallback must stay emergency. A rewrite should fix what the checker flagged, not change its mind about danger. If we must be wrong, we would rather be wrong toward 911.",
+          "zh": "还有，只要有一版说了紧急，重写和兜底都只能还是紧急。重写只该改掉检查挑出的毛病，不该改变对危险的判断。真要错，宁可错在打 911 这一边。"
+        },
+        {
+          "en": "But the rules already told the model never to diagnose. Why check again?",
+          "zh": "可规则里已经告诉过模型「不要诊断」了，为什么还要再查一遍？"
+        },
+        {
+          "en": "Because an instruction is a request, not a guarantee. The check row on your receipt says which path the answer took: passed, rewritten once, or replaced.",
+          "zh": "因为指令只是请求，不是保证。收据上的「检查」那一行，写的就是这条回答走了哪条路：一次通过、重写过一次，还是被换掉了。"
+        }
+      ],
+      "source_refs": [
+        "prototypes/triage/src/lint.ts (20 rule names)",
+        "prototypes/triage/src/mvp.ts (parent_summary, pending_discipline, emergency_downgraded; two attempts; fallbackOutput)",
+        "src/features/triage/ThinkingRow.tsx (checkText)"
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "Job four: the form becomes the page",
+      "title_zh": "第四件事：表变成页面",
+      "visual_intent": "A schematic page in the real block order: the red do-this-now block, explanation, numbered places, bring, say in English, the folded parent summary, and the students' copy-for-parents button. The receipt's five rows, each tagged with its origin; the process row expands into the thinking/writing timeline with the reasoning-model and effort labels. Ponder: the two model-written rows are marked, a pause, then sources is flagged as never checked.",
+      "lines": [
+        {
+          "en": "Only a checked form reaches the page, and the page lays it out like a chat.",
+          "zh": "只有检查过的表才会到页面上，页面再把它排成聊天的样子。"
+        },
+        {
+          "en": "Urgent steps first, in a red block. Then the explanation, the places to go, what to bring, a sentence to say in English, and near the end the folded parent summary, with a copy button for students.",
+          "zh": "紧急的步骤排最前面，放在红框里；然后是说明、去处、要带什么、可以照着说的英文句子，最后是折起来的家长摘要，学生还有一个复制按钮。"
+        },
+        {
+          "en": "And the receipt? Sources and judgment come from the form. Check comes from the checker. Model and price come from the server and its price list.",
+          "zh": "那张收据呢？「依据」和「判断」来自表；「检查」来自检查器；「模型」和价钱来自服务器和它的价目表。"
+        },
+        {
+          "en": "And process? Luna is a reasoning model. Before writing a word, it reasons in hidden steps that we pay for but never see, and the effort setting in the menu says how much. The page times each phase: thinking until the first word arrives, then writing. So the thinking is real. What it contains is the next episode.",
+          "zh": "那「过程」呢？Luna 是推理模型：动笔之前，它先在看不见的地方一步步推理，这部分我们付了钱，却看不到；菜单里的思考强度，决定它想多少。页面给每一段计时：第一个字到来之前算「思考」，之后算「写」。所以思考是真的；它想了些什么，下一集讲。"
+        },
+        {
+          "en": "Now a question to sit with. Two of the five rows are the model's own words. The checker reads one of them. Which one does nothing ever check?",
+          "zh": "想一想：五行里有两行是模型自己写的。检查器会读其中一行。另一行，从来没有任何东西检查它。是哪一行？"
+        },
+        {
+          "en": "Sources. The checker reads the judgment to make sure an emergency comes first, and it tests every phone number and price against the fact cards. But nothing reads the source list. It is simply what the model says it used.",
+          "zh": "是「依据」。检查器会读「判断」，确保紧急情况排在最前，也会拿事实卡核对每个电话和金额；但没有任何东西读依据列表，那只是模型自己说它参考了什么。"
+        }
+      ],
+      "source_refs": [
+        "src/features/triage/answerBlocks.ts",
+        "src/features/triage/TriageAnswer.tsx",
+        "src/features/triage/ThinkingRow.tsx (rows; checkText)",
+        "src/features/triage/stages.ts (timelineText)",
+        "prototypes/triage/src/lint.ts (allText leaves citations out)",
+        "prototypes/triage/src/pending.ts"
+      ]
+    },
+    {
+      "id": "s07",
+      "title_en": "How we got here",
+      "title_zh": "一步步怎么来的",
+      "visual_intent": "A horizontal timeline, Tuesday noon to Thursday after midnight, Boston time, one tick per commit (real times from the week digest). The knowledge base and the $5,550 vs $5,500 conflict card; the rules engine and the shelved six-arm evaluation; the 21:21 turn; the 21:43 chat box; a brace over the forty later commits. A closing card: word rules for symptoms, dropped; word rules for the model's sentences, kept.",
+      "lines": [
+        {
+          "en": "This design is not where the work started. The pull request behind it ran 36 hours and 60 commits, written with Claude Code.",
+          "zh": "这套设计不是一开始的样子。背后那个 PR 前后 36 个小时、60 个提交，是用 Claude Code 写出来的。"
+        },
+        {
+          "en": "On Tuesday, the knowledge base came first, and the sources turned out to disagree. One insurance document puts the out-of-pocket maximum at 5,550 dollars, another at 5,500. Seven conflicts like that were ruled on, or marked to be confirmed.",
+          "zh": "周二先做的是知识库，结果发现资料之间互相打架：一份保险文件说自付上限是 5,550 美元，另一份说 5,500。七处这样的冲突被逐条裁定，或者标成「待确认」。"
+        },
+        {
+          "en": "The first engine was rules: code judged how urgent a symptom was from keyword lists, and the model only extracted details and explained. We also built an evaluation to compare six approaches, then shelved it before the comparison ran.",
+          "zh": "第一版引擎是规则：代码按关键词表判断症状有多急，模型只负责抽取信息、把结果讲清楚。还搭了一套评估，准备比较六种做法，但在真正比较之前就暂停了。"
+        },
+        {
+          "en": "Then, at nine twenty-one on Tuesday night, the turn. The keyword lists kept missing real warning signs and flagging harmless ones. So you decided: let a reasoning model judge, with the whole booklet in front of it, and make the output check the only safety layer.",
+          "zh": "然后，周二晚上九点二十一分，转向。关键词表一边漏掉真正的危险信号，一边误报无害的说法。于是你决定：让推理模型带着整本资料自己判断，把对输出的检查当作唯一的安全层。"
+        },
+        {
+          "en": "Twenty-two minutes later, the plainest chat box existed. Forty more commits followed, most of them closing a way a bad sentence could slip past the checker.",
+          "zh": "二十二分钟后，一个最朴素的聊天框就有了。之后又有四十个提交，大部分都在堵坏句子溜过检查的路。"
+        },
+        {
+          "en": "Notice the twist: word rules were dropped for judging symptoms, yet the safety net is still word rules, now aimed at the model's sentences. That trade-off is episode four.",
+          "zh": "注意这里的反转：判断症状时，词语规则被放弃了；可安全网仍然是词语规则，只是对准了模型写的句子。这个取舍，留到第四集。"
+        }
+      ],
+      "source_refs": [
+        "videos/portal-series/weeks/2026-w44.md (PR #36 timeline, America/New_York)",
+        "docs/decisions/0004-triage-v0.md (data conflicts; 10-28 revision; six arms)",
+        "prototypes/triage/eval/reports/ (arm R only)",
+        "prototypes/triage/knowledge/facts/conflicts.json (7)"
+      ]
+    },
+    {
+      "id": "s08",
+      "title_en": "Same look, different machine",
+      "title_zh": "长得像，机器不一样",
+      "visual_intent": "Two flows side by side: a general chat app (your words, model, text; system prompt + training) and ours (your words, model with fact cards, the 13-box form, the checker, page + receipt). Then the form grows two proposed boxes (a note for a roommate, questions for the doctor), each ticked for form + instruction, checker rule, page slot.",
+      "lines": [
+        {
+          "en": "From the outside, this looks like ChatGPT or Claude; the look was borrowed from Claude's app on purpose, and that is episode three. Inside, it is a different machine.",
+          "zh": "从外面看，它很像 ChatGPT 或 Claude；样子是有意照着 Claude 的应用做的，那是第三集。里面却是另一台机器。"
+        },
+        {
+          "en": "A general chat app answers in free prose, guided by its system prompt and the model's training. Ours has a system prompt too, and adds a form we designed, prices only from fact cards, and our own rules between the model and the screen.",
+          "zh": "通用的聊天应用用自由的文字回答，靠系统提示词和模型的训练守规矩。我们也有系统提示词，此外还有一张我们设计的表、只从事实卡里取的金额，以及挡在模型和屏幕之间的我们自己的规则。"
+        },
+        {
+          "en": "That form is also the key to what comes next, because a new feature is mostly a new box. A note to forward to a roommate. Questions to ask the doctor.",
+          "zh": "这张表也是下一步的钥匙，因为一个新功能，多半就是多一格：一段能转给室友的话；看医生时可以问的问题。"
+        },
+        {
+          "en": "Each new box needs three things: a line on the form with its instruction, a rule in the checker, and a place on the page. That recipe holds whichever agent builds it.",
+          "zh": "每多一格，都要做三件事：表上加一行和它的说明，检查里加一条规则，页面上给它一个位置。不管哪个 agent 来做，配方都是这三步。"
+        }
+      ],
+      "source_refs": [
+        "prototypes/triage/src/llm/schema.ts",
+        "prototypes/triage/src/lint.ts",
+        "src/features/triage/answerBlocks.ts"
+      ]
+    },
+    {
+      "id": "s09",
+      "title_en": "Recap: one hello, four jobs",
+      "title_zh": "回顾：一句你好，四件事",
+      "visual_intent": "The four job tags return as a numbered list with one line each. Three test-yourself questions. A closing card pointing to E2: what happens during thought for three seconds.",
+      "lines": [
+        {
+          "en": "So: one hello, four jobs.",
+          "zh": "所以：一句「你好」，四件事。"
+        },
+        {
+          "en": "Build the request, unchanging parts first so they are cached. Hand over a form. Check every line, allow one rewrite, keep a fallback. Then lay it out, with a receipt.",
+          "zh": "组装请求，不变的放前面，好命中缓存；递一张表；逐句检查，给一次重写，备好兜底；最后排成页面，附一张收据。"
+        },
+        {
+          "en": "Three questions to test yourself. Which part of the request is cached, and why does its position matter? Why may a rewrite never take back an emergency? And what would you change to add a note for the roommate?",
+          "zh": "三个问题考考自己：请求里哪一部分会被缓存，为什么位置很重要？为什么重写不准收回「紧急」？想加一段「给室友的话」，要改哪几处？"
+        },
+        {
+          "en": "Next time: what the model is doing during thought for three seconds, and why we show you a receipt instead of its thoughts.",
+          "zh": "下一集：「思考了 3 秒」的这几秒里，模型在干什么；以及为什么我们给你看的是收据，而不是它的思考。"
+        }
+      ],
+      "source_refs": [
+        "All of the above"
+      ]
+    }
+  ]
+}

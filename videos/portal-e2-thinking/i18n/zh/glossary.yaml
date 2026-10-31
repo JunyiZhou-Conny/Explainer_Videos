@@ -1,0 +1,25 @@
+# Chinese subtitle glossary for 项目周记 E2 (subtitles only: the narration is English).
+# Policy as in the CareOneX series: mainland Simplified Chinese; product and company names, API names
+# and the team's English working words stay in English; numbers as digits; a half-width space between
+# Chinese and Latin or digits. No brackets in subtitle lines (the checker reads them as spoken text).
+policy: "Mandarin first; product, company and API names and the team's working words stay in English; numbers as digits; half-width space between Chinese and Latin/digits."
+terms:
+- {en: token, zh_subtitle: "token"}
+- {en: reasoning model, zh_subtitle: "推理模型"}
+- {en: chain of thought, zh_subtitle: "思维链，chain of thought"}
+- {en: reasoning effort, zh_subtitle: "reasoning effort，也就是思考强度"}
+- {en: streaming, zh_subtitle: "流式输出"}
+- {en: server-sent events, zh_subtitle: "server-sent events"}
+- {en: JSON, zh_subtitle: "JSON"}
+- {en: checker, zh_subtitle: "检查器"}
+- {en: receipt, zh_subtitle: "收据"}
+- {en: usage report, zh_subtitle: "usage 报告"}
+- {en: cache, zh_subtitle: "缓存"}
+- {en: decision record, zh_subtitle: "决策记录"}
+- {en: proposal, zh_subtitle: "提议"}
+- {en: research preview, zh_subtitle: "研究预览"}
+- {en: replay, zh_subtitle: "回放"}
+- {en: agent, zh_subtitle: "agent"}
+- {en: review, zh_subtitle: "review"}
+allowed_spoken_latin: [Luna, app, Google, chain, of, thought, "Let's", think, step, by, OpenAI, o1, DeepSeek, R1, Claude, API,
+  reasoning, effort, token, usage, server-sent, events, JSON, agent, Terra, review, ChatGPT]

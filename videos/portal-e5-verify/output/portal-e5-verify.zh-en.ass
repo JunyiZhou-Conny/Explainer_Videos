@@ -1,0 +1,113 @@
+[Script Info]
+Title: 项目周记 E5 · How an agent proves its change is right: every order, and the real app
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.86,Bilingual,,0,0,0,,这是我们原型里的一个 bug\N{\fs33\c&H00C8C0B8&\bord1.4}Here is a bug in our prototype.
+Dialogue: 0,0:00:02.18,0:00:06.43,Bilingual,,0,0,0,,一个学生拿到了耳鼻喉专科的转诊\N{\fs33\c&H00C8C0B8&\bord1.4}A student has a referral to an ear, nose and throat specialist,
+Dialogue: 0,0:00:06.43,0:00:08.72,Bilingual,,0,0,0,,有效期到 1 月 22 日\N{\fs33\c&H00C8C0B8&\bord1.4}valid until January twenty-second.
+Dialogue: 0,0:00:09.04,0:00:14.42,Bilingual,,0,0,0,,家长打开预约页面，一直开着，过了有效期才点提交\N{\fs33\c&H00C8C0B8&\bord1.4}Their parent opens the booking page, leaves it open past that moment, and presses submit.
+Dialogue: 0,0:00:14.74,0:00:19.38,Bilingual,,0,0,0,,按 agent 对代码的分析，过期的转诊照样被关联上\N{\fs33\c&H00C8C0B8&\bord1.4}By the agent's reading of the code, the expired referral is attached anyway,
+Dialogue: 0,0:00:19.38,0:00:23.17,Bilingual,,0,0,0,,进度页显示已预约专科，而不是已过期\N{\fs33\c&H00C8C0B8&\bord1.4}and the tracker shows the specialist as booked, never expired.
+Dialogue: 0,0:00:23.42,0:00:28.86,Bilingual,,0,0,0,,现有的 245 个测试全部通过；没有一个是在过期之后预约的\N{\fs33\c&H00C8C0B8&\bord1.4}All 245 existing tests passed; none of them books after the expiry.
+Dialogue: 0,0:00:29.18,0:00:33.53,Bilingual,,0,0,0,,代码里甚至有一行注释，说过期的转诊保持不变\N{\fs33\c&H00C8C0B8&\bord1.4}The code even carries a comment saying expired referrals are left alone.
+Dialogue: 0,0:00:33.85,0:00:35.45,Bilingual,,0,0,0,,没有人注意到\N{\fs33\c&H00C8C0B8&\bord1.4}No person had noticed.
+Dialogue: 0,0:00:35.62,0:00:38.31,Bilingual,,0,0,0,,周五下午，一个 agent 报告了它\N{\fs33\c&H00C8C0B8&\bord1.4}On Friday afternoon an agent reported it,
+Dialogue: 0,0:00:38.31,0:00:42.17,Bilingual,,0,0,0,,它在一个很小的世界里，试遍了几种操作的所有顺序\N{\fs33\c&H00C8C0B8&\bord1.4}after trying every order of a few actions in a small world.
+Dialogue: 0,0:00:42.49,0:00:47.46,Bilingual,,0,0,0,,这一集讲的是：在有人看之前，agent 怎么证明一个改动是对的\N{\fs33\c&H00C8C0B8&\bord1.4}This episode is about how an agent can prove a change is right before anyone looks.
+Dialogue: 0,0:00:48.80,0:00:52.98,Bilingual,,0,0,0,,App 数据的每一次变化，都要经过同一个函数，叫 reducer\N{\fs33\c&H00C8C0B8&\bord1.4}Every change to the app's data goes through one function, called the reducer.
+Dialogue: 0,0:00:53.30,0:00:56.32,Bilingual,,0,0,0,,它拿到当前状态和一个操作\N{\fs33\c&H00C8C0B8&\bord1.4}It takes the current state and a single action,
+Dialogue: 0,0:00:56.32,0:01:01.60,Bilingual,,0,0,0,,比如预约、确认、改期、取消、完成，然后返回下一个状态\N{\fs33\c&H00C8C0B8&\bord1.4}such as book, confirm, reschedule, cancel or complete, and returns the next state.
+Dialogue: 0,0:01:01.92,0:01:04.79,Bilingual,,0,0,0,,预约页面在画出来的时候检查转诊\N{\fs33\c&H00C8C0B8&\bord1.4}The booking page checks the referral when it draws,
+Dialogue: 0,0:01:04.79,0:01:07.15,Bilingual,,0,0,0,,但预约要过一会儿才到 reducer\N{\fs33\c&H00C8C0B8&\bord1.4}but the booking reaches the reducer later.
+Dialogue: 0,0:01:07.47,0:01:11.22,Bilingual,,0,0,0,,所以事件的顺序很重要，时间流逝也是一个事件\N{\fs33\c&H00C8C0B8&\bord1.4}So the order of events matters, and time passing is an event too.
+Dialogue: 0,0:01:11.47,0:01:13.73,Bilingual,,0,0,0,,测试走的是某人选好的一条路\N{\fs33\c&H00C8C0B8&\bord1.4}A test follows a path someone chose.
+Dialogue: 0,0:01:14.05,0:01:19.25,Bilingual,,0,0,0,,bug 藏在一条没人选的路上：先是时间过去，然后预约成功\N{\fs33\c&H00C8C0B8&\bord1.4}The bug lives on a path nobody chose: first time passes, then the booking goes through.
+Dialogue: 0,0:01:19.50,0:01:21.93,Bilingual,,0,0,0,,测试检查的是有人想到的情况\N{\fs33\c&H00C8C0B8&\bord1.4}A test checks the cases someone thought of.
+Dialogue: 0,0:01:22.25,0:01:24.15,Bilingual,,0,0,0,,那没人想到的情况，谁来检查？\N{\fs33\c&H00C8C0B8&\bord1.4}What checks the ones nobody thought of?
+Dialogue: 0,0:01:28.00,0:01:29.77,Bilingual,,0,0,0,,换个办法，搭一个很小的世界\N{\fs33\c&H00C8C0B8&\bord1.4}Build a small world instead:
+Dialogue: 0,0:01:29.77,0:01:34.37,Bilingual,,0,0,0,,两张转诊、三个专科时段，还有一个只有两个时刻的时钟\N{\fs33\c&H00C8C0B8&\bord1.4}two referrals, three specialist slots, and a clock with just two moments,
+Dialogue: 0,0:01:34.37,0:01:38.67,Bilingual,,0,0,0,,一个是转诊刚开出来，一个是过期后一小时\N{\fs33\c&H00C8C0B8&\bord1.4}right after the referrals are written and an hour after they expire.
+Dialogue: 0,0:01:38.99,0:01:42.08,Bilingual,,0,0,0,,从起点出发，第一步有 13 种可能\N{\fs33\c&H00C8C0B8&\bord1.4}From the starting state there are thirteen possible moves.
+Dialogue: 0,0:01:42.40,0:01:45.24,Bilingual,,0,0,0,,每一种都走一遍，再从每个结果出发走下一步\N{\fs33\c&H00C8C0B8&\bord1.4}Make each one, then every move from each result,
+Dialogue: 0,0:01:45.24,0:01:48.44,Bilingual,,0,0,0,,一层一层往下，遇到见过的状态就合并\N{\fs33\c&H00C8C0B8&\bord1.4}layer by layer, merging any state you've already seen.
+Dialogue: 0,0:01:48.76,0:01:53.63,Bilingual,,0,0,0,,在这个世界里一共是 13,898 个状态，大约一秒走完\N{\fs33\c&H00C8C0B8&\bord1.4}In this world that is 13,898 states, reached in about a second,
+Dialogue: 0,0:01:53.63,0:01:58.42,Bilingual,,0,0,0,,而且每一个都来自真正的 reducer，不是复制品\N{\fs33\c&H00C8C0B8&\bord1.4}and every one of them comes from the real reducer, not a copy.
+Dialogue: 0,0:01:58.67,0:02:01.01,Bilingual,,0,0,0,,每个状态检查四条规则\N{\fs33\c&H00C8C0B8&\bord1.4}Four rules are checked at every state
+Dialogue: 0,0:02:01.01,0:02:04.62,Bilingual,,0,0,0,,每一步再检查第五条，全部用大白话写成\N{\fs33\c&H00C8C0B8&\bord1.4}and a fifth on every step, all written in plain language,
+Dialogue: 0,0:02:04.62,0:02:11.28,Bilingual,,0,0,0,,比如一张转诊最多对应一个有效预约，过期的转诊不会被新关联上\N{\fs33\c&H00C8C0B8&\bord1.4}such as one referral backs at most one live appointment, and an expired referral is never newly attached.
+Dialogue: 0,0:02:11.60,0:02:15.57,Bilingual,,0,0,0,,因为搜索是一层一层进行的，遇到的第一条被打破的规则\N{\fs33\c&H00C8C0B8&\bord1.4}Because the search goes layer by layer, the first broken rule it meets comes
+Dialogue: 0,0:02:15.57,0:02:17.61,Bilingual,,0,0,0,,给出的就是打破它的最短步骤\N{\fs33\c&H00C8C0B8&\bord1.4}with the shortest story that breaks it.
+Dialogue: 0,0:02:17.93,0:02:21.43,Bilingual,,0,0,0,,这里是两步：时间过去，然后用这张转诊预约\N{\fs33\c&H00C8C0B8&\bord1.4}Here, two steps: time passes, then book with that referral.
+Dialogue: 0,0:02:22.77,0:02:24.34,Bilingual,,0,0,0,,它为什么没被发现？\N{\fs33\c&H00C8C0B8&\bord1.4}Why did it slip through?
+Dialogue: 0,0:02:24.39,0:02:27.12,Bilingual,,0,0,0,,预约只看转诊里存着的状态\N{\fs33\c&H00C8C0B8&\bord1.4}Booking looks only at the referral's stored status.
+Dialogue: 0,0:02:27.44,0:02:31.11,Bilingual,,0,0,0,,已过期这个状态从来不存，只是显示的时候算出来\N{\fs33\c&H00C8C0B8&\bord1.4}Expired is never stored; it is only worked out for the screen.
+Dialogue: 0,0:02:31.43,0:02:34.37,Bilingual,,0,0,0,,而且页面在画出来时检查，不是在你提交时检查\N{\fs33\c&H00C8C0B8&\bord1.4}And the page checks when it draws, not when you submit.
+Dialogue: 0,0:02:34.69,0:02:37.10,Bilingual,,0,0,0,,agent 没有改产品代码\N{\fs33\c&H00C8C0B8&\bord1.4}The agent did not change the product code.
+Dialogue: 0,0:02:37.42,0:02:41.87,Bilingual,,0,0,0,,它把这个 bug 记成已知发现，把修法留给人来定\N{\fs33\c&H00C8C0B8&\bord1.4}It recorded the bug as a known finding and left the fix to a person:
+Dialogue: 0,0:02:41.87,0:02:46.38,Bilingual,,0,0,0,,在 reducer 里比较有效期，或者提交时再检查一次\N{\fs33\c&H00C8C0B8&\bord1.4}compare the expiry date inside the reducer, or check again on submit.
+Dialogue: 0,0:02:46.62,0:02:49.35,Bilingual,,0,0,0,,规则没有为了让检查通过而放宽\N{\fs33\c&H00C8C0B8&\bord1.4}The rule was not loosened to make the check pass.
+Dialogue: 0,0:02:49.67,0:02:52.27,Bilingual,,0,0,0,,而且检查会在两种情况下失败\N{\fs33\c&H00C8C0B8&\bord1.4}And the check is built to fail in two ways:
+Dialogue: 0,0:02:52.27,0:02:56.02,Bilingual,,0,0,0,,任何一条新规则被打破，或者这个已知的 bug 消失了\N{\fs33\c&H00C8C0B8&\bord1.4}if any new rule breaks, and if this known bug ever disappears.
+Dialogue: 0,0:02:56.34,0:02:59.88,Bilingual,,0,0,0,,第二种失败会提醒修好它的人把这条记录删掉\N{\fs33\c&H00C8C0B8&\bord1.4}That second failure reminds whoever fixes it to delete the note,
+Dialogue: 0,0:02:59.88,0:03:02.74,Bilingual,,0,0,0,,免得这个 bug 哪天回来时被它挡住\N{\fs33\c&H00C8C0B8&\bord1.4}so the note can never hide the bug if it comes back.
+Dialogue: 0,0:03:04.08,0:03:06.81,Bilingual,,0,0,0,,agent 为什么要故意把自己的代码改坏？\N{\fs33\c&H00C8C0B8&\bord1.4}Why would an agent break its own code on purpose?
+Dialogue: 0,0:03:10.68,0:03:13.44,Bilingual,,0,0,0,,因为一个你从没见过它失败的检查，什么也证明不了\N{\fs33\c&H00C8C0B8&\bord1.4}Because a check you have never seen fail proves nothing.
+Dialogue: 0,0:03:13.76,0:03:15.38,Bilingual,,0,0,0,,也许它根本就不会失败\N{\fs33\c&H00C8C0B8&\bord1.4}Maybe it can't fail at all.
+Dialogue: 0,0:03:15.70,0:03:18.98,Bilingual,,0,0,0,,所以 agent 故意把 reducer 改坏了五次\N{\fs33\c&H00C8C0B8&\bord1.4}So the agent broke the reducer five times on purpose,
+Dialogue: 0,0:03:18.98,0:03:22.27,Bilingual,,0,0,0,,五种不同的改法，每次改完都跑一遍检查\N{\fs33\c&H00C8C0B8&\bord1.4}in five different ways, and ran the check after each.
+Dialogue: 0,0:03:22.59,0:03:26.53,Bilingual,,0,0,0,,五次都被抓到了，每次的复现都不超过两步\N{\fs33\c&H00C8C0B8&\bord1.4}All five were caught, each with a story of two steps or fewer,
+Dialogue: 0,0:03:26.53,0:03:28.69,Bilingual,,0,0,0,,改坏的地方随后都改了回去\N{\fs33\c&H00C8C0B8&\bord1.4}and each breakage was then undone.
+Dialogue: 0,0:03:29.01,0:03:33.89,Bilingual,,0,0,0,,这是测试人员所说的变异测试的手工版\N{\fs33\c&H00C8C0B8&\bord1.4}It is a hand-made version of what testers call mutation testing;
+Dialogue: 0,0:03:33.89,0:03:36.71,Bilingual,,0,0,0,,这方面的经典论文发表于 1978 年\N{\fs33\c&H00C8C0B8&\bord1.4}the classic paper on it is from 1978.
+Dialogue: 0,0:03:38.05,0:03:39.93,Bilingual,,0,0,0,,这个思路由来已久，也很严肃\N{\fs33\c&H00C8C0B8&\bord1.4}The idea is old and serious.
+Dialogue: 0,0:03:40.25,0:03:45.09,Bilingual,,0,0,0,,2015 年，Amazon 介绍了他们用这种方法检查设计\N{\fs33\c&H00C8C0B8&\bord1.4}In 2015 Amazon described checking its designs this way,
+Dialogue: 0,0:03:45.09,0:03:49.40,Bilingual,,0,0,0,,用的是 TLA plus，一种由 Leslie Lamport 创造的语言\N{\fs33\c&H00C8C0B8&\bord1.4}using TLA+, a language created by Leslie Lamport.
+Dialogue: 0,0:03:49.72,0:03:52.88,Bilingual,,0,0,0,,在一个数据库服务里，它找到了一个会丢数据的 bug\N{\fs33\c&H00C8C0B8&\bord1.4}In one database service it found a data-loss bug
+Dialogue: 0,0:03:52.88,0:03:56.04,Bilingual,,0,0,0,,最短的复现有 35 步\N{\fs33\c&H00C8C0B8&\bord1.4}whose shortest story was thirty-five steps long,
+Dialogue: 0,0:03:56.04,0:04:00.19,Bilingual,,0,0,0,,而这个 bug 之前通过了设计审查、代码审查和测试\N{\fs33\c&H00C8C0B8&\bord1.4}a bug that had passed design reviews, code reviews and testing.
+Dialogue: 0,0:04:00.51,0:04:04.50,Bilingual,,0,0,0,,我们的相比之下很小，一秒钟的检查里只有两步\N{\fs33\c&H00C8C0B8&\bord1.4}Ours is tiny by comparison, two steps in a one-second check,
+Dialogue: 0,0:04:04.50,0:04:09.88,Bilingual,,0,0,0,,但做的是同一件事：让机器去走人永远不会去试的每一种顺序\N{\fs33\c&H00C8C0B8&\bord1.4}but it is the same move: let a machine walk every order a person would never try.
+Dialogue: 0,0:04:11.22,0:04:14.72,Bilingual,,0,0,0,,第二个工具直接操作 App，就像家长那样\N{\fs33\c&H00C8C0B8&\bord1.4}The second tool drives the app itself, the way a parent would.
+Dialogue: 0,0:04:15.04,0:04:16.85,Bilingual,,0,0,0,,agent 从一份保存好的演示状态出发\N{\fs33\c&H00C8C0B8&\bord1.4}From a saved demo state,
+Dialogue: 0,0:04:16.85,0:04:20.18,Bilingual,,0,0,0,,启动自己的一份 App 和自己的浏览器\N{\fs33\c&H00C8C0B8&\bord1.4}the agent starts its own copy of the app and its own browser.
+Dialogue: 0,0:04:20.50,0:04:24.66,Bilingual,,0,0,0,,然后它一步步点：打开转诊，选一家网络内的诊所\N{\fs33\c&H00C8C0B8&\bord1.4}Then it clicks through: open the referral, choose an in-network clinic,
+Dialogue: 0,0:04:24.66,0:04:27.94,Bilingual,,0,0,0,,选时间，提交，等待待确认，打开进度页\N{\fs33\c&H00C8C0B8&\bord1.4}pick a time, submit, wait for pending, open the tracker.
+Dialogue: 0,0:04:28.26,0:04:31.64,Bilingual,,0,0,0,,它按角色和无障碍名称来找每一个控件\N{\fs33\c&H00C8C0B8&\bord1.4}It finds each control by its role and accessible name,
+Dialogue: 0,0:04:31.64,0:04:33.90,Bilingual,,0,0,0,,也就是读屏软件念出来的那个名字\N{\fs33\c&H00C8C0B8&\bord1.4}the label a screen reader announces,
+Dialogue: 0,0:04:33.90,0:04:36.97,Bilingual,,0,0,0,,并且每一步之后都等页面安静下来\N{\fs33\c&H00C8C0B8&\bord1.4}and waits for the page to settle after each step.
+Dialogue: 0,0:04:37.20,0:04:41.43,Bilingual,,0,0,0,,做对了，要两件事同时成立：屏幕上显示专科已预约\N{\fs33\c&H00C8C0B8&\bord1.4}Right means two things at once: the screen says the specialist is booked,
+Dialogue: 0,0:04:41.43,0:04:45.60,Bilingual,,0,0,0,,保存的数据里转诊也指向了这个新预约\N{\fs33\c&H00C8C0B8&\bord1.4}and the saved data says the referral now points to that new appointment.
+Dialogue: 0,0:04:45.92,0:04:51.94,Bilingual,,0,0,0,,每次运行都必须留下证据：截图、保存的状态，以及没有浏览器报错\N{\fs33\c&H00C8C0B8&\bord1.4}Each run is required to keep evidence: screenshots, the saved state, and no browser errors.
+Dialogue: 0,0:04:52.26,0:04:55.63,Bilingual,,0,0,0,,某一步失败时，它会告诉你它能看到哪些按钮\N{\fs33\c&H00C8C0B8&\bord1.4}When a step fails, it says which buttons it could see instead.
+Dialogue: 0,0:04:55.95,0:04:58.98,Bilingual,,0,0,0,,结束时，它只关掉自己启动的东西\N{\fs33\c&H00C8C0B8&\bord1.4}And when it's done, it shuts down only what it started.
+Dialogue: 0,0:05:00.32,0:05:05.00,Bilingual,,0,0,0,,这两个工具都来自一个公开插件 pstack 里的两个 skill\N{\fs33\c&H00C8C0B8&\bord1.4}Both tools came from trying two skills in a public plugin called pstack,
+Dialogue: 0,0:05:05.00,0:05:09.11,Bilingual,,0,0,0,,是周五下午试用时做的，两次提交相隔 27 分钟\N{\fs33\c&H00C8C0B8&\bord1.4}on Friday afternoon, in two commits twenty-seven minutes apart.
+Dialogue: 0,0:05:09.43,0:05:13.58,Bilingual,,0,0,0,,Anthropic 自己给 Claude Code 的建议说得很直白\N{\fs33\c&H00C8C0B8&\bord1.4}Anthropic's own advice for Claude Code says the same thing plainly:
+Dialogue: 0,0:05:13.58,0:05:17.30,Bilingual,,0,0,0,,给 agent 一个能跑的检查，否则你自己就成了测试\N{\fs33\c&H00C8C0B8&\bord1.4}give the agent a check to run, or you become the test suite.
+Dialogue: 0,0:05:17.53,0:05:21.45,Bilingual,,0,0,0,,等你来做的事：选定过期转诊的修法\N{\fs33\c&H00C8C0B8&\bord1.4}What waits for you: choosing the fix for the expired referral,
+Dialogue: 0,0:05:21.45,0:05:24.67,Bilingual,,0,0,0,,以及在你自己的电脑上试一下这个操作 App 的工具\N{\fs33\c&H00C8C0B8&\bord1.4}and trying the app-driving tool on your own laptop;
+Dialogue: 0,0:05:24.67,0:05:26.94,Bilingual,,0,0,0,,目前它只在云端跑过\N{\fs33\c&H00C8C0B8&\bord1.4}so far it has only run in the cloud.
+Dialogue: 0,0:05:27.26,0:05:29.18,Bilingual,,0,0,0,,这个 PR 也还是草稿\N{\fs33\c&H00C8C0B8&\bord1.4}And the pull request is still a draft.
+Dialogue: 0,0:05:29.50,0:05:33.36,Bilingual,,0,0,0,,上一集问的是：层层叠加的检查，能不能代替人工审查\N{\fs33\c&H00C8C0B8&\bord1.4}The last episode asked whether layers can stand in for a human review.
+Dialogue: 0,0:05:33.68,0:05:36.85,Bilingual,,0,0,0,,这里又多了两层：一个试遍所有顺序的检查\N{\fs33\c&H00C8C0B8&\bord1.4}Here are two more: a check that tries every order,
+Dialogue: 0,0:05:36.85,0:05:39.12,Bilingual,,0,0,0,,和一个真的去用 App 的 agent\N{\fs33\c&H00C8C0B8&\bord1.4}and an agent that uses the real app.
+Dialogue: 0,0:05:40.47,0:05:44.83,Bilingual,,0,0,0,,所以：一个工具在小世界里走遍所有操作顺序\N{\fs33\c&H00C8C0B8&\bord1.4}So: one tool walks every order of actions in a small world and hands back
+Dialogue: 0,0:05:44.83,0:05:47.10,Bilingual,,0,0,0,,交回打破规则的最短复现\N{\fs33\c&H00C8C0B8&\bord1.4}the shortest story that breaks a rule.
+Dialogue: 0,0:05:47.42,0:05:51.13,Bilingual,,0,0,0,,另一个工具像家长一样真的去用 App，并留下证据\N{\fs33\c&H00C8C0B8&\bord1.4}The other uses the real app like a parent and keeps the evidence.
+Dialogue: 0,0:05:51.45,0:05:54.33,Bilingual,,0,0,0,,第一个是靠故意改坏来检验的\N{\fs33\c&H00C8C0B8&\bord1.4}The first was checked by breaking it on purpose;
+Dialogue: 0,0:05:54.33,0:05:57.02,Bilingual,,0,0,0,,第二个是靠把每个流程从头到尾跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}the second, by running every flow end to end.
+Dialogue: 0,0:05:57.27,0:05:58.65,Bilingual,,0,0,0,,三个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Three questions.
+Dialogue: 0,0:05:58.70,0:06:02.11,Bilingual,,0,0,0,,穷举检查试了哪些普通测试不会试的东西？\N{\fs33\c&H00C8C0B8&\bord1.4}What does the exhaustive check try that an ordinary test doesn't?
+Dialogue: 0,0:06:02.43,0:06:04.33,Bilingual,,0,0,0,,为什么要故意把自己的代码改坏？\N{\fs33\c&H00C8C0B8&\bord1.4}Why break your own code on purpose?
+Dialogue: 0,0:06:04.65,0:06:07.23,Bilingual,,0,0,0,,为什么 bug 修好以后，检查反而会失败？\N{\fs33\c&H00C8C0B8&\bord1.4}And why does the check fail when the bug gets fixed?
+Dialogue: 0,0:06:12.47,0:06:16.61,Bilingual,,0,0,0,,下一集：在写任何后端代码之前，后端怎么选？\N{\fs33\c&H00C8C0B8&\bord1.4}Next: before any backend code is written, how do you choose the backend?

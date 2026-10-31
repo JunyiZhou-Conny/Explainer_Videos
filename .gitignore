@@ -34,6 +34,7 @@ videos/*/output/*/*.partial.mp4
 # shorts: the music-free copy and the score alone stay local (rebuild with --no-render); the masters are committed
 videos/*-short/output/*.nomusic.mp4
 videos/*-short/output/*.music.wav
+videos/*/output/*.music.wav
 # Rendered movies are release assets (docs/PUBLISHING.md), never tracked files; git keeps the
 # recipe, subtitles, chapters and transcripts. Rebuild locally with --no-render, or download
 # from the media release indexed in catalog/videos.json.

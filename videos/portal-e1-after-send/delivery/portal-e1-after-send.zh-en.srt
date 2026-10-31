@@ -1,0 +1,719 @@
+1
+00:00:00,400 --> 00:00:03,301
+你在分诊聊天里只打了一个词：你好
+You typed one word into the triage chat: hello.
+
+2
+00:00:03,467 --> 00:00:05,195
+回来的却是三样东西
+And three things came back.
+
+3
+00:00:05,195 --> 00:00:10,891
+给你的一句问候；一段写给在中国的家长的摘要；还有一张折起来的收据
+A greeting for you. A summary written for a parent in China. And, folded away, a receipt:
+
+4
+00:00:10,891 --> 00:00:16,907
+思考了 3 秒、依据、检查通过、判断，还有模型和价钱
+thought for three seconds, sources, a check that passed, a judgment, and a model with a price.
+
+5
+00:00:17,067 --> 00:00:22,486
+可这个应用建在 OpenAI 的 API 上，而一次 API 调用只会返回一段文字
+But the app is built on the OpenAI API, and an API call returns text.
+
+6
+00:00:22,806 --> 00:00:24,832
+没人要过家长摘要
+Nobody asked for a parent summary.
+
+7
+00:00:25,152 --> 00:00:27,115
+那是谁决定要有这一段的？
+So who decided there would be one?
+
+8
+00:00:27,435 --> 00:00:29,235
+又是谁检查过它？
+And who checked it?
+
+9
+00:00:32,400 --> 00:00:34,600
+我们心里通常是这样一张图
+Here is the picture most of us carry:
+
+10
+00:00:34,600 --> 00:00:38,821
+页面把你的话发给模型，模型再把话发回来
+the page sends your words to the model, and the model sends words back.
+
+11
+00:00:39,000 --> 00:00:45,104
+实际上，页面只和我们自己的一个小服务器说话，再由服务器去调模型
+Here is what really happens. The page talks only to our own small server, and the server talks
+
+12
+00:00:45,104 --> 00:00:47,896
+API key 只放在服务器上
+to the model. The API key lives only there.
+
+13
+00:00:48,067 --> 00:00:51,203
+包在模型调用外面的这层代码，叫 harness
+The code wrapped around a model call is called a harness.
+
+14
+00:00:51,523 --> 00:00:56,831
+我们的 harness 干四件事：组装请求、规定回答的格式、检查回答
+Ours does four jobs: build the request, set the shape of the reply, check the reply,
+
+15
+00:00:56,831 --> 00:00:59,928
+最后回到页面上，把回答变成你看到的样子
+and, back in the page, turn it into what you saw.
+
+16
+00:01:03,667 --> 00:01:05,302
+先看请求
+Start with the request.
+
+17
+00:01:05,352 --> 00:01:07,422
+你的「你好」是里面最小的一块
+Your hello is the smallest part of it.
+
+18
+00:01:07,600 --> 00:01:14,258
+最上面是学校医疗中心和学生保险的 15 份官方资料
+On top sit 15 official pages from the university's health service and its student insurance,
+
+19
+00:01:14,258 --> 00:01:20,699
+清洗成纯文字，大约 25,000 个 token
+cleaned into plain text: about 25,000 tokens, the word pieces a model reads and bills by.
+
+20
+00:01:21,019 --> 00:01:22,750
+token 是模型读字、算钱的单位；这些加起来，相当于一本小册子
+A small booklet.
+
+21
+00:01:22,800 --> 00:01:25,829
+下面是事实卡里 89 条核对过的事实
+Below them, 89 checked facts from our fact cards:
+
+22
+00:01:25,829 --> 00:01:28,487
+每个电话、每个金额、每段营业时间
+every phone number, price and opening hour.
+
+23
+00:01:28,807 --> 00:01:32,988
+每张卡都引用了原文里的那一句，但发给模型的只有事实本身
+Each card quotes the sentence it came from; the model gets just the fact.
+
+24
+00:01:33,167 --> 00:01:38,479
+然后是规则，用大白话写：不诊断，不给剂量
+Then the rules, in plain language. Never diagnose. Never give a dose.
+
+25
+00:01:38,479 --> 00:01:45,178
+紧急时先行动、后谈钱；还有，家长在中国拨 911 打不到波士顿
+In an emergency, action before money. And a parent in China cannot dial 911 for Boston.
+
+26
+00:01:45,334 --> 00:01:48,662
+最后是回答必须填的那张表的说明
+Last comes a description of the form the answer must fill.
+
+27
+00:01:48,982 --> 00:01:53,846
+这四块合起来叫 instructions，聊天应用里叫系统提示词
+Together, these four parts are the instructions; chat apps call them the system prompt.
+
+28
+00:01:54,000 --> 00:01:56,328
+它们每次都一样，这一点很要紧
+They never change, and that matters.
+
+29
+00:01:56,328 --> 00:02:02,860
+OpenAI 的缓存从请求的第一个字开始比对，所以不变的东西必须放在最前面
+OpenAI's cache matches a request from its very first word, so whatever never changes must come first.
+
+30
+00:02:02,860 --> 00:02:06,405
+第一次之后，前面这一大段就直接从缓存里读
+After the first call, the long top is read from the cache.
+
+31
+00:02:06,405 --> 00:02:08,099
+这叫 prompt caching，提示缓存
+This is prompt caching,
+
+32
+00:02:08,099 --> 00:02:12,368
+在 Luna 模型上，命中缓存的 token 只要原价的十分之一
+and on the Luna model a cached token costs a tenth of a fresh one.
+
+33
+00:02:12,534 --> 00:02:13,915
+后面才是会变的
+Then what changes:
+
+34
+00:02:13,915 --> 00:02:19,972
+前面聊过的话、谁在问、波士顿和中国此刻几点、学校医疗中心开没开门
+the chat so far, who is asking, the time in Boston and in China, whether the student clinic is open,
+
+35
+00:02:19,972 --> 00:02:21,584
+最后才是那句「你好」
+and finally, hello.
+
+36
+00:02:21,634 --> 00:02:25,452
+你的一句「你好」带着整本小册子出发，只花了 0.0004 美元
+Your hello carried the whole booklet, and cost four hundredths of a cent.
+
+37
+00:02:25,600 --> 00:02:30,642
+停一下：为什么要由我们的代码告诉模型现在几点、诊所开没开门
+Pause here. Why does our code tell the model the time, and whether the clinic is open,
+
+38
+00:02:30,642 --> 00:02:33,046
+而不是让模型自己去算？
+instead of letting the model work it out?
+
+39
+00:02:37,700 --> 00:02:39,513
+因为模型没有钟
+Because a model has no clock.
+
+40
+00:02:39,833 --> 00:02:44,818
+代码查公布的营业时间和时区，每次都用同一套算法
+Code reads the posted hours and the time zone, works it out the same way every time,
+
+41
+00:02:44,818 --> 00:02:47,727
+算不准的时候，就写「待确认」
+and writes 'to be confirmed' when it cannot know.
+
+42
+00:02:53,267 --> 00:02:59,006
+接下来是回答的格式。 我们不是请模型「回答」，而是递给它一张表
+Next, the shape of the reply. We do not ask the model for an answer. We hand it a form.
+
+43
+00:02:59,167 --> 00:03:01,947
+13 个格子，每个都有名字和类型
+13 boxes, each with a name and a type.
+
+44
+00:03:01,947 --> 00:03:03,410
+有的填自由文字
+Some take free text.
+
+45
+00:03:03,410 --> 00:03:05,531
+有的只能从固定选项里选
+Some take only fixed choices:
+
+46
+00:03:05,531 --> 00:03:07,653
+紧急程度只能是六档之一
+urgency is one of six levels,
+
+47
+00:03:07,653 --> 00:03:12,116
+从「可能危及生命」一直到「只是规则或保险问题」
+from possibly life-threatening down to just a rules question.
+
+48
+00:03:12,267 --> 00:03:14,783
+API 里这叫 structured outputs，结构化输出
+The API calls this structured outputs.
+
+49
+00:03:14,998 --> 00:03:19,947
+它仍然是一次调用，回来的仍然是文字，只是文字长成了这张表的样子
+It is still one call, and the reply is still text, just text shaped like the form.
+
+50
+00:03:20,267 --> 00:03:24,576
+开了严格模式，别的样子都不行：不能少一格，也不能多一格
+In strict mode nothing else fits: no missing box, no extra box.
+
+51
+00:03:24,734 --> 00:03:27,285
+现在看其中一格：家长摘要
+Now look at one box: the parent summary.
+
+52
+00:03:27,285 --> 00:03:32,451
+规则给了它一条说明：写给在中国的家长两三句话
+The rules give it an instruction: two or three sentences for the parent in China.
+
+53
+00:03:32,451 --> 00:03:35,958
+孩子怎么了、要去哪里、家长能做什么
+What is happening, where to go, what the parent can do.
+
+54
+00:03:35,958 --> 00:03:37,150
+永远要写
+Always filled in.
+
+55
+00:03:37,200 --> 00:03:43,131
+秘密就这么多：一次调用填满全部 13 格，家长摘要也在其中
+That is the whole secret: one call fills all 13 boxes, the parent summary included.
+
+56
+00:03:43,451 --> 00:03:47,589
+不是模型自己想得周到，而是规则说这一格必须填
+The model did not decide to be thoughtful; the rules say fill that box.
+
+57
+00:03:47,909 --> 00:03:52,575
+严格模式只保证这一格存在，不保证里面有字
+And strict mode only promises the box is there, not that anything is in it,
+
+58
+00:03:52,575 --> 00:03:54,566
+所以空着交上来，检查就不让过
+so the checker rejects it empty.
+
+59
+00:03:54,734 --> 00:03:58,981
+收据也一样：「依据」就是 citations 那一格
+The receipt works the same way. Sources is the citations box.
+
+60
+00:03:58,981 --> 00:04:03,438
+「判断」就是紧急程度和该去哪里这两格，翻成了中文
+Judgment is the urgency and where-to-go boxes, put into Chinese.
+
+61
+00:04:10,900 --> 00:04:13,396
+填好的表还不会直接上屏
+The filled form does not go to the screen yet.
+
+62
+00:04:13,716 --> 00:04:15,815
+先要过我们自己写的一道检查
+First it passes a checker we wrote,
+
+63
+00:04:15,815 --> 00:04:19,412
+叫 lint，名字借自给代码挑错的工具
+called the lint, after the tools that flag mistakes in code.
+
+64
+00:04:19,567 --> 00:04:22,444
+二十多条规则逐句读
+More than twenty rules read every line.
+
+65
+00:04:22,444 --> 00:04:26,205
+拦下剂量，比如「每六小时两片」
+They stop a dose, like two tablets every six hours.
+
+66
+00:04:26,205 --> 00:04:30,705
+拦下诊断；拦下不在任何事实卡上的电话和金额
+A diagnosis. A phone number or price that is on no fact card.
+
+67
+00:04:30,705 --> 00:04:33,139
+拦下紧急时先谈钱
+Money before 911 in an emergency.
+
+68
+00:04:33,139 --> 00:04:35,204
+也拦下空着的家长摘要
+And an empty parent summary.
+
+69
+00:04:35,767 --> 00:04:38,843
+有不通过的，表就被退回去，附一张条子
+If anything fails, the form goes back with a note:
+
+70
+00:04:38,843 --> 00:04:41,612
+改掉这几处，重新交一份完整的表
+fix these problems and return the whole form.
+
+71
+00:04:41,932 --> 00:04:43,483
+只给一次重写机会
+One rewrite, no more.
+
+72
+00:04:43,533 --> 00:04:49,102
+第二版还不过，或者调用出错了，模型写的字一个都不给人看
+If the second version still fails, or the call breaks, nobody sees the model's words.
+
+73
+00:04:49,102 --> 00:04:52,181
+换成我们自己写好的兜底
+A fallback we wrote ourselves goes out instead:
+
+74
+00:04:52,181 --> 00:04:56,440
+紧急就现在打 911，不紧急就打学校医疗中心
+call 911 now if it was urgent, otherwise call the student clinic.
+
+75
+00:04:56,600 --> 00:05:01,805
+还有，只要有一版说了紧急，重写和兜底都只能还是紧急
+And once any version says emergency, the rewrite and the fallback must stay emergency.
+
+76
+00:05:02,125 --> 00:05:06,605
+重写只该改掉检查挑出的毛病，不该改变对危险的判断
+A rewrite should fix what the checker flagged, not change its mind about danger.
+
+77
+00:05:06,925 --> 00:05:10,488
+真要错，宁可错在打 911 这一边
+If we must be wrong, we would rather be wrong toward 911.
+
+78
+00:05:10,667 --> 00:05:15,488
+可规则里已经告诉过模型「不要诊断」了，为什么还要再查一遍？
+But the rules already told the model never to diagnose. Why check again?
+
+79
+00:05:20,167 --> 00:05:23,175
+因为指令只是请求，不是保证
+Because an instruction is a request, not a guarantee.
+
+80
+00:05:23,495 --> 00:05:27,058
+收据上的「检查」那一行，写的就是这条回答走了哪条路
+The check row on your receipt says which path the answer took:
+
+81
+00:05:27,058 --> 00:05:29,127
+一次通过、重写过一次，还是被换掉了
+passed, rewritten once, or replaced.
+
+82
+00:05:31,967 --> 00:05:36,276
+只有检查过的表才会到页面上，页面再把它排成聊天的样子
+Only a checked form reaches the page, and the page lays it out like a chat.
+
+83
+00:05:36,434 --> 00:05:38,685
+紧急的步骤排最前面，放在红框里
+Urgent steps first, in a red block.
+
+84
+00:05:38,685 --> 00:05:44,089
+然后是说明、去处、要带什么、可以照着说的英文句子
+Then the explanation, the places to go, what to bring, a sentence to say in English,
+
+85
+00:05:44,089 --> 00:05:48,978
+最后是折起来的家长摘要，学生还有一个复制按钮
+and near the end the folded parent summary, with a copy button for students.
+
+86
+00:05:49,134 --> 00:05:50,334
+那张收据呢？
+And the receipt?
+
+87
+00:05:50,334 --> 00:05:52,734
+「依据」和「判断」来自表
+Sources and judgment come from the form.
+
+88
+00:05:52,734 --> 00:05:54,599
+「检查」来自检查器
+Check comes from the checker.
+
+89
+00:05:54,599 --> 00:05:58,200
+「模型」和价钱来自服务器和它的价目表
+Model and price come from the server and its price list.
+
+90
+00:05:58,367 --> 00:06:00,949
+那「过程」呢？ Luna 是推理模型
+And process? Luna is a reasoning model.
+
+91
+00:06:00,949 --> 00:06:07,239
+动笔之前，它先在看不见的地方一步步推理，这部分我们付了钱，却看不到
+Before writing a word, it reasons in hidden steps that we pay for but never see, and the effort
+
+92
+00:06:07,239 --> 00:06:09,490
+菜单里的思考强度，决定它想多少
+setting in the menu says how much.
+
+93
+00:06:09,490 --> 00:06:14,721
+页面给每一段计时：第一个字到来之前算「思考」，之后算「写」
+The page times each phase: thinking until the first word arrives, then writing.
+
+94
+00:06:14,721 --> 00:06:18,826
+所以思考是真的；它想了些什么，下一集讲
+So the thinking is real. What it contains is the next episode.
+
+95
+00:06:19,000 --> 00:06:21,000
+想一想：五行里有两行是模型自己写的
+Now a question to sit with.
+
+96
+00:06:21,050 --> 00:06:23,608
+检查器会读其中一行
+Two of the five rows are the model's own words.
+
+97
+00:06:23,928 --> 00:06:25,728
+另一行，从来没有任何东西检查它
+The checker reads one of them.
+
+98
+00:06:25,955 --> 00:06:27,755
+是哪一行？
+Which one does nothing ever check?
+
+99
+00:06:32,100 --> 00:06:37,107
+是「依据」。 检查器会读「判断」，确保紧急情况排在最前
+Sources. The checker reads the judgment to make sure an emergency comes first,
+
+100
+00:06:37,107 --> 00:06:41,280
+也会拿事实卡核对每个电话和金额
+and it tests every phone number and price against the fact cards.
+
+101
+00:06:41,280 --> 00:06:46,159
+但没有任何东西读依据列表，那只是模型自己说它参考了什么
+But nothing reads the source list. It is simply what the model says it used.
+
+102
+00:06:49,267 --> 00:06:51,699
+这套设计不是一开始的样子
+This design is not where the work started.
+
+103
+00:06:52,019 --> 00:06:57,459
+背后那个 PR 前后 36 个小时、60 个提交，是用 Claude Code 写出来的
+The pull request behind it ran 36 hours and 60 commits, written with Claude Code.
+
+104
+00:06:57,634 --> 00:07:03,896
+周二先做的是知识库，结果发现资料之间互相打架
+On Tuesday, the knowledge base came first, and the sources turned out to disagree.
+
+105
+00:07:03,896 --> 00:07:10,693
+一份保险文件说自付上限是 5,550 美元，另一份说 5,500
+One insurance document puts the out-of-pocket maximum at 5,550 dollars, another at 5,500.
+
+106
+00:07:10,693 --> 00:07:15,810
+七处这样的冲突被逐条裁定，或者标成「待确认」
+Seven conflicts like that were ruled on, or marked to be confirmed.
+
+107
+00:07:15,967 --> 00:07:21,621
+第一版引擎是规则：代码按关键词表判断症状有多急
+The first engine was rules: code judged how urgent a symptom was from keyword lists,
+
+108
+00:07:21,621 --> 00:07:25,055
+模型只负责抽取信息、把结果讲清楚
+and the model only extracted details and explained.
+
+109
+00:07:25,375 --> 00:07:28,878
+还搭了一套评估，准备比较六种做法
+We also built an evaluation to compare six approaches,
+
+110
+00:07:28,878 --> 00:07:31,604
+但在真正比较之前就暂停了
+then shelved it before the comparison ran.
+
+111
+00:07:31,767 --> 00:07:34,924
+然后，周二晚上九点二十一分，转向
+Then, at nine twenty-one on Tuesday night, the turn.
+
+112
+00:07:35,244 --> 00:07:39,810
+关键词表一边漏掉真正的危险信号，一边误报无害的说法
+The keyword lists kept missing real warning signs and flagging harmless ones.
+
+113
+00:07:40,130 --> 00:07:45,144
+于是你决定：让推理模型带着整本资料自己判断
+So you decided: let a reasoning model judge, with the whole booklet in front of it,
+
+114
+00:07:45,144 --> 00:07:48,044
+把对输出的检查当作唯一的安全层
+and make the output check the only safety layer.
+
+115
+00:07:48,200 --> 00:07:51,528
+二十二分钟后，一个最朴素的聊天框就有了
+Twenty-two minutes later, the plainest chat box existed.
+
+116
+00:07:51,848 --> 00:07:53,475
+之后又有四十个提交
+Forty more commits followed,
+
+117
+00:07:53,475 --> 00:07:57,544
+大部分都在堵坏句子溜过检查的路
+most of them closing a way a bad sentence could slip past the checker.
+
+118
+00:07:57,700 --> 00:08:01,664
+注意这里的反转：判断症状时，词语规则被放弃了
+Notice the twist: word rules were dropped for judging symptoms,
+
+119
+00:08:01,664 --> 00:08:06,383
+可安全网仍然是词语规则，只是对准了模型写的句子
+yet the safety net is still word rules, now aimed at the model's sentences.
+
+120
+00:08:06,703 --> 00:08:08,687
+这个取舍，留到第四集
+That trade-off is episode four.
+
+121
+00:08:16,933 --> 00:08:20,338
+从外面看，它很像 ChatGPT 或 Claude
+From the outside, this looks like ChatGPT or Claude;
+
+122
+00:08:20,338 --> 00:08:25,445
+样子是有意照着 Claude 的应用做的，那是第三集
+the look was borrowed from Claude's app on purpose, and that is episode three.
+
+123
+00:08:25,765 --> 00:08:27,792
+里面却是另一台机器
+Inside, it is a different machine.
+
+124
+00:08:27,966 --> 00:08:30,488
+通用的聊天应用用自由的文字回答
+A general chat app answers in free prose,
+
+125
+00:08:30,488 --> 00:08:33,747
+靠系统提示词和模型的训练守规矩
+guided by its system prompt and the model's training.
+
+126
+00:08:34,067 --> 00:08:39,730
+我们也有系统提示词，此外还有一张我们设计的表、只从事实卡里取的金额
+Ours has a system prompt too, and adds a form we designed, prices only from fact cards,
+
+127
+00:08:39,730 --> 00:08:43,049
+以及挡在模型和屏幕之间的我们自己的规则
+and our own rules between the model and the screen.
+
+128
+00:08:43,600 --> 00:08:46,500
+这张表也是下一步的钥匙
+That form is also the key to what comes next,
+
+129
+00:08:46,500 --> 00:08:49,206
+因为一个新功能，多半就是多一格
+because a new feature is mostly a new box.
+
+130
+00:08:49,206 --> 00:08:51,268
+一段能转给室友的话
+A note to forward to a roommate.
+
+131
+00:08:51,268 --> 00:08:53,072
+看医生时可以问的问题
+Questions to ask the doctor.
+
+132
+00:08:53,233 --> 00:08:57,723
+每多一格，都要做三件事：表上加一行和它的说明
+Each new box needs three things: a line on the form with its instruction,
+
+133
+00:08:57,723 --> 00:09:00,614
+检查里加一条规则，页面上给它一个位置
+a rule in the checker, and a place on the page.
+
+134
+00:09:00,934 --> 00:09:03,558
+不管哪个 agent 来做，配方都是这三步
+That recipe holds whichever agent builds it.
+
+135
+00:09:08,533 --> 00:09:10,432
+所以：一句「你好」，四件事
+So: one hello, four jobs.
+
+136
+00:09:10,600 --> 00:09:14,536
+组装请求，不变的放前面，好命中缓存
+Build the request, unchanging parts first so they are cached.
+
+137
+00:09:14,536 --> 00:09:15,633
+递一张表
+Hand over a form.
+
+138
+00:09:15,633 --> 00:09:19,053
+逐句检查，给一次重写，备好兜底
+Check every line, allow one rewrite, keep a fallback.
+
+139
+00:09:19,053 --> 00:09:21,117
+最后排成页面，附一张收据
+Then lay it out, with a receipt.
+
+140
+00:09:21,266 --> 00:09:27,186
+三个问题考考自己：请求里哪一部分会被缓存，为什么位置很重要？
+Three questions to test yourself. Which part of the request is cached, and why does its position matter?
+
+141
+00:09:27,186 --> 00:09:29,862
+为什么重写不准收回「紧急」？
+Why may a rewrite never take back an emergency?
+
+142
+00:09:29,862 --> 00:09:33,106
+想加一段「给室友的话」，要改哪几处？
+And what would you change to add a note for the roommate?
+
+143
+00:09:33,266 --> 00:09:37,155
+下一集：「思考了 3 秒」的这几秒里，模型在干什么
+Next time: what the model is doing during thought for three seconds,
+
+144
+00:09:37,155 --> 00:09:40,242
+以及为什么我们给你看的是收据，而不是它的思考
+and why we show you a receipt instead of its thoughts.

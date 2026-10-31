@@ -1,0 +1,700 @@
+1
+00:00:00,000 --> 00:00:04,337
+This is every commit on our two triage
+pull requests, on one clock:
+
+2
+00:00:04,337 --> 00:00:07,509
+Boston time,
+from Tuesday noon to early Thursday.
+
+3
+00:00:07,829 --> 00:00:11,242
+109 commits, every one made by an agent:
+
+4
+00:00:11,242 --> 00:00:15,765
+88 changes,
+and 21 merges of one branch into another.
+
+5
+00:00:16,085 --> 00:00:21,120
+GitHub shows forty of them under your name,
+because the agent used your git identity.
+
+6
+00:00:21,367 --> 00:00:22,412
+Two questions.
+
+7
+00:00:22,732 --> 00:00:24,439
+Why are most of them fixes?
+
+8
+00:00:24,759 --> 00:00:30,668
+53 of the 88 name a review in their message:
+Bugbot, Codex, or a review agent.
+
+9
+00:00:30,988 --> 00:00:34,593
+And no person has reviewed them yet,
+so who decided anything?
+
+10
+00:00:35,933 --> 00:00:37,277
+First, the machinery.
+
+11
+00:00:37,597 --> 00:00:40,652
+Each job starts as an issue,
+gets its own branch,
+
+12
+00:00:40,652 --> 00:00:44,018
+and opens a draft pull request
+after the first commit.
+
+13
+00:00:44,338 --> 00:00:47,850
+Pushes wake two review bots
+from different companies:
+
+14
+00:00:47,850 --> 00:00:49,838
+Cursor's Bugbot on every push,
+
+15
+00:00:49,838 --> 00:00:54,344
+and OpenAI's Codex once the pull request
+is marked ready for review.
+
+16
+00:00:54,664 --> 00:00:56,968
+They may comment, but never change code.
+
+17
+00:00:57,216 --> 00:00:58,468
+When an agent stops,
+
+18
+00:00:58,468 --> 00:01:01,285
+it writes a handoff note
+on the pull request,
+
+19
+00:01:01,285 --> 00:01:03,936
+marked unattended when nobody was watching.
+
+20
+00:01:04,256 --> 00:01:06,578
+Big choices become decision records,
+
+21
+00:01:06,578 --> 00:01:09,803
+marked proposed
+until a person marks them adopted.
+
+22
+00:01:10,123 --> 00:01:14,326
+The team's rule: chat is temporary,
+the repository is permanent.
+
+23
+00:01:14,566 --> 00:01:19,098
+Two agent sessions made the commits:
+the first until just after midnight,
+
+24
+00:01:19,098 --> 00:01:24,251
+the second from one fifty-one on Wednesday
+morning to a quarter to one on Thursday.
+
+25
+00:01:24,571 --> 00:01:27,858
+The chat page was stacked
+on top of the triage brain,
+
+26
+00:01:27,858 --> 00:01:30,524
+and pulled in the brain's changes 13 times.
+
+27
+00:01:32,167 --> 00:01:35,362
+Tuesday, at twelve twenty-two,
+after a night of planning,
+
+28
+00:01:35,362 --> 00:01:37,436
+the first session started committing.
+
+29
+00:01:37,756 --> 00:01:42,646
+Within forty minutes it had a skeleton:
+fact cards from 15 sources,
+
+30
+00:01:42,646 --> 00:01:47,975
+a rules engine that decided urgency,
+eleven test cases and an evaluation.
+
+31
+00:01:48,217 --> 00:01:49,710
+Then it checked its own facts.
+
+32
+00:01:50,030 --> 00:01:54,706
+Four reviewer agents that could not talk
+to each other read every card
+
+33
+00:01:54,706 --> 00:01:57,646
+against its source and reported 75 problems.
+
+34
+00:01:57,966 --> 00:02:02,041
+Twenty-three minutes
+after the first 74 cards, there were 97.
+
+35
+00:02:02,361 --> 00:02:06,233
+One had said out-of-network urgent care
+costs you 20 percent;
+
+36
+00:02:06,233 --> 00:02:10,233
+the source said you pay
+a five-hundred-dollar deductible first.
+
+37
+00:02:11,567 --> 00:02:14,475
+At nine twenty-one
+that evening, Boston time,
+
+38
+00:02:14,475 --> 00:02:18,095
+Wednesday morning in Beijing,
+a commit changed the plan.
+
+39
+00:02:18,415 --> 00:02:22,098
+The rules engine matched words,
+and word lists both missed things
+
+40
+00:02:22,098 --> 00:02:25,668
+and flagged the wrong things;
+every patch broke something else.
+
+41
+00:02:25,917 --> 00:02:31,569
+The record says you decided: a demo first,
+evaluation later; the model judges urgency
+
+42
+00:02:31,569 --> 00:02:32,647
+and where to go,
+
+43
+00:02:32,647 --> 00:02:36,690
+and the checker on its output
+becomes the only safety layer.
+
+44
+00:02:37,010 --> 00:02:38,029
+The rules engine
+
+45
+00:02:38,029 --> 00:02:41,469
+and the comparison experiments stay
+in the repository,
+
+46
+00:02:41,469 --> 00:02:42,600
+no longer pursued.
+
+47
+00:02:42,834 --> 00:02:46,051
+But notice:
+the checker is also made of word rules,
+
+48
+00:02:46,051 --> 00:02:48,637
+applied to sentences instead of symptoms.
+
+49
+00:02:48,957 --> 00:02:50,748
+What would make it less of a whack-a-mole?
+
+50
+00:02:54,983 --> 00:02:56,092
+Then came the loop.
+
+51
+00:02:56,412 --> 00:02:59,191
+At ten twenty-three that night, Boston time,
+
+52
+00:02:59,191 --> 00:03:02,854
+the agent marked the brain's pull request
+ready for review
+
+53
+00:03:02,854 --> 00:03:07,527
+and asked two teammates to look,
+and both bots began reviewing every push.
+
+54
+00:03:07,847 --> 00:03:11,218
+Push, the bots review, the agent fixes,
+push again.
+
+55
+00:03:11,538 --> 00:03:13,165
+Between ten twenty-seven
+
+56
+00:03:13,165 --> 00:03:17,231
+and just after midnight
+the first session pushed 19 commits,
+
+57
+00:03:17,231 --> 00:03:19,196
+about one every five minutes.
+
+58
+00:03:19,516 --> 00:03:23,191
+On that pull request
+the bots wrote 72 comments,
+
+59
+00:03:23,191 --> 00:03:24,722
+and 64 led to fixes.
+
+60
+00:03:24,966 --> 00:03:29,103
+By half past midnight,
+you and the agent had agreed on one change:
+
+61
+00:03:29,103 --> 00:03:31,046
+batch the fixes before pushing.
+
+62
+00:03:32,383 --> 00:03:35,329
+On Wednesday the second session
+built the chat page
+
+63
+00:03:35,329 --> 00:03:38,506
+from episode three and kept
+fixing the brain beside it.
+
+64
+00:03:38,826 --> 00:03:42,947
+In the afternoon a final review
+looked from five angles at once
+
+65
+00:03:42,947 --> 00:03:44,778
+and found about 30 problems.
+
+66
+00:03:45,016 --> 00:03:49,268
+Six fix agents took them one after another,
+each on its own branch,
+
+67
+00:03:49,268 --> 00:03:52,504
+and each first reproduced its bug
+before fixing it.
+
+68
+00:03:52,750 --> 00:03:54,883
+Why reproduce a bug before fixing it?
+
+69
+00:03:59,750 --> 00:04:02,714
+Because a reproduction proves
+the bug is real,
+
+70
+00:04:02,714 --> 00:04:06,515
+and gives a check
+that has to flip from failing to passing;
+
+71
+00:04:06,515 --> 00:04:09,542
+a fix for a bug nobody
+saw fail proves nothing.
+
+72
+00:04:09,862 --> 00:04:13,928
+Merging the branches back took about an hour
+and had collisions;
+
+73
+00:04:13,928 --> 00:04:18,438
+in one, a branch added a field
+that another branch's new test rejected.
+
+74
+00:04:18,758 --> 00:04:21,723
+A second review of the merged result
+found eight more.
+
+75
+00:04:21,966 --> 00:04:26,285
+Along the way the session hit
+its five-hour usage limit twice,
+
+76
+00:04:26,285 --> 00:04:27,342
+the second time
+
+77
+00:04:27,342 --> 00:04:32,206
+because the six fix agents ran
+in a row at about 800,000 tokens each,
+
+78
+00:04:32,206 --> 00:04:34,574
+and the container restarted twice.
+
+79
+00:04:34,894 --> 00:04:38,094
+The agents' rule afterwards:
+at most three at a time.
+
+80
+00:04:39,433 --> 00:04:40,628
+Back to the checker.
+
+81
+00:04:40,948 --> 00:04:43,017
+Most of the bots' comments were about it.
+
+82
+00:04:43,337 --> 00:04:48,249
+After the turn it grew
+from 459 lines to 1,326,
+
+83
+00:04:48,249 --> 00:04:52,638
+and 27 of the 45 commits since touched it.
+
+84
+00:04:52,958 --> 00:04:54,601
+Each fix moved the problem.
+
+85
+00:04:54,921 --> 00:04:58,285
+On Wednesday a parent summary
+saying don't delay help
+
+86
+00:04:58,285 --> 00:05:01,840
+because of insurance was flagged
+as putting money first,
+
+87
+00:05:01,840 --> 00:05:06,220
+which cost a needless rewrite;
+that evening, narrowing a similar rule
+
+88
+00:05:06,220 --> 00:05:10,345
+let a real money-first line slip through,
+until Bugbot caught it.
+
+89
+00:05:10,583 --> 00:05:13,954
+So on the second night the agents
+stopped waiting for the bots.
+
+90
+00:05:14,274 --> 00:05:18,388
+Two rules took the beating:
+never claim a clinic is open right now
+
+91
+00:05:18,388 --> 00:05:20,220
+unless its hours are checked,
+
+92
+00:05:20,220 --> 00:05:23,063
+and keep cost out
+of the way of an emergency.
+
+93
+00:05:23,383 --> 00:05:26,830
+Before pushing,
+the agents attacked those two rules:
+
+94
+00:05:26,830 --> 00:05:30,078
+they wrote about 3,000 ways
+to say a risky thing,
+
+95
+00:05:30,078 --> 00:05:32,663
+or its harmless twin, and ran them all.
+
+96
+00:05:32,983 --> 00:05:38,039
+The first round found 142 misses
+and 230 false alarms.
+
+97
+00:05:38,283 --> 00:05:39,926
+The bots would have found these too.
+
+98
+00:05:40,246 --> 00:05:42,272
+Why attack the checker yourself first?
+
+99
+00:05:45,283 --> 00:05:47,976
+Because the bots
+report one finding at a time,
+
+100
+00:05:47,976 --> 00:05:50,318
+and every fix waits for the next review.
+
+101
+00:05:50,638 --> 00:05:53,944
+One probing run found 372 at once.
+
+102
+00:05:54,264 --> 00:05:58,264
+Across both rounds,
+1,060 phrasings it got wrong were fixed
+
+103
+00:05:58,264 --> 00:06:01,450
+and kept as tests that run
+with the unit tests;
+
+104
+00:06:01,450 --> 00:06:04,974
+about twenty harder ones
+are listed as known misses.
+
+105
+00:06:05,294 --> 00:06:09,551
+In the second round, the first fix
+even created 20 new false alarms;
+
+106
+00:06:09,551 --> 00:06:12,931
+this time they were caught before the push,
+not after.
+
+107
+00:06:14,267 --> 00:06:15,355
+What did it cost?
+
+108
+00:06:15,675 --> 00:06:19,351
+The model calls the product made
+are on the record:
+
+109
+00:06:19,351 --> 00:06:24,686
+about 4 cents for one real answer,
+about 77 cents for the whole first day,
+
+110
+00:06:24,686 --> 00:06:28,219
+27 cents on the last night
+against a 50-cent cap.
+
+111
+00:06:28,539 --> 00:06:32,583
+The agents' own work
+is priced nowhere in the repository;
+
+112
+00:06:32,583 --> 00:06:36,485
+the only number is tokens:
+about 800,000 per fix agent,
+
+113
+00:06:36,485 --> 00:06:41,168
+close to five million for the six,
+and none recorded for the rest.
+
+114
+00:06:42,917 --> 00:06:44,154
+So who decided?
+
+115
+00:06:44,474 --> 00:06:47,827
+The record, written by the agents,
+names your calls,
+
+116
+00:06:47,827 --> 00:06:52,406
+among them the model and its effort,
+the turn to the model's judgement,
+
+117
+00:06:52,406 --> 00:06:56,340
+batching the fixes,
+copying Claude's page, and the stop rule:
+
+118
+00:06:56,340 --> 00:06:57,581
+stop at 99 percent,
+
+119
+00:06:57,581 --> 00:07:01,306
+finish by Thursday at seven in the evening,
+Beijing time.
+
+120
+00:07:01,626 --> 00:07:05,293
+The code kept it: the last push
+came more than six hours early,
+
+121
+00:07:05,293 --> 00:07:09,136
+and four later bot findings
+were written down for the next person.
+
+122
+00:07:09,384 --> 00:07:14,235
+Many smaller choices the agents made alone,
+and wrote down as proposals,
+
+123
+00:07:14,235 --> 00:07:17,469
+marked unattended
+and not confirmed by a person.
+
+124
+00:07:17,789 --> 00:07:21,234
+One handoff even lists,
+among the agent's own steps,
+
+125
+00:07:21,234 --> 00:07:24,547
+a click the team's workflow
+reserves for a person:
+
+126
+00:07:24,547 --> 00:07:27,197
+marking a pull request ready for review.
+
+127
+00:07:27,517 --> 00:07:29,747
+The notes are honest about slips too:
+
+128
+00:07:29,747 --> 00:07:31,394
+one admits an earlier claim
+
+129
+00:07:31,394 --> 00:07:34,749
+that all Bugbot comments were fixed,
+when two were not.
+
+130
+00:07:34,984 --> 00:07:36,418
+Which raises a question:
+
+131
+00:07:36,418 --> 00:07:40,722
+with no person having reviewed it yet,
+what makes this code trustworthy?
+
+132
+00:07:44,867 --> 00:07:46,296
+No single check does.
+
+133
+00:07:46,616 --> 00:07:51,617
+It is layers: hundreds of tests,
+one of which replays the 1,060 probes,
+
+134
+00:07:51,617 --> 00:07:55,685
+two review bots,
+and decision records that stay proposals
+
+135
+00:07:55,685 --> 00:07:57,112
+until you sign them.
+
+136
+00:07:57,432 --> 00:08:00,198
+Decision four itself is still a proposal,
+
+137
+00:08:00,198 --> 00:08:03,572
+and before any real user it asks
+for an evaluation
+
+138
+00:08:03,572 --> 00:08:06,542
+and a look from the team's medical reviewer.
+
+139
+00:08:06,862 --> 00:08:10,706
+Twelve more questions wait for you,
+from decision six's addendum
+
+140
+00:08:10,706 --> 00:08:14,371
+to whether a parent should get a dial link
+for a crisis line.
+
+141
+00:08:19,117 --> 00:08:22,787
+So, two days:
+a skeleton and a fact check in an afternoon;
+
+142
+00:08:22,787 --> 00:08:24,622
+your turn at nine twenty-one;
+
+143
+00:08:24,622 --> 00:08:28,481
+a night of whack-a-mole with the bots;
+a queue of fix agents;
+
+144
+00:08:28,481 --> 00:08:32,405
+a second night of attacking the checker
+before the bots could;
+
+145
+00:08:32,405 --> 00:08:34,050
+and a stop rule that held.
+
+146
+00:08:34,284 --> 00:08:35,393
+Three questions.
+
+147
+00:08:35,713 --> 00:08:38,444
+Why did so many of the brain's commits
+touch the checker?
+
+148
+00:08:38,764 --> 00:08:40,897
+Why reproduce a bug before fixing it?
+
+149
+00:08:41,217 --> 00:08:42,860
+And what is still waiting for you?
+
+150
+00:08:48,100 --> 00:08:50,468
+Two more pull requests arrived on Friday.
+
+151
+00:08:50,788 --> 00:08:53,583
+Next:
+how an agent proves its change is right.
+

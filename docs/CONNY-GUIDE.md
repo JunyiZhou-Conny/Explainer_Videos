@@ -87,7 +87,24 @@ PR 上留档，但不停下来等你；`REVIEW.md` 里引用你的豁免原话�
 收尾小事：合并后 PR 页面点一下 Delete branch；目录（`catalog/videos.json` +
 `docs/VIDEOS.md`）由收尾的代理补一条小 PR。
 
-## 6. 出问题了看哪
+## 6. 项目周记：每周把自己的 PR 做成视频
+
+讲 InternationalHealthportal 这周做了什么的系列（规则见 [PORTAL_SERIES.md](PORTAL_SERIES.md)，
+计划见 `videos/portal-series/README.md`）。每集 10 分钟以内，只讲概念，不读代码。每周一次，
+把下面这段发给一个新的 Claude 会话（会话里要挂上两个仓库：Explainer_Videos 和
+InternationalHealthportal）：
+
+> 用 portal-video skill。做这周（<起始日>–<结束日>）的项目周记：先跑 PR 周报，按我这周看到、
+> 想问的东西规划一批视频（我的问题：<随手写几条>），每集开一个 issue，然后从第一集开始做。
+
+- **你的问题最值钱。** 看界面时想到的「这是什么、怎么做到的、还能怎么做」，直接写进去；代理会把每个
+  问题对应到一集，并在脚本里用 PR、决策记录和代码核对过的事实回答。
+- **周报**在 `videos/portal-series/weeks/`：这周你名下的每个 PR、提交时间线（波士顿时间）、动了哪些
+  目录、改了哪些决策。不想看视频时它本身就是一份周报。
+- **公开发布**：这个系列和其他视频一样公开、上传 B 站（2026-10-30 定的）。视频里队友只称角色，
+  不出现 key、账号和真实用户数据。
+
+## 7. 出问题了看哪
 
 - **代理没接单**：看 issue 有没有代理的评论；没有就按第 3 节手动指派。
 - **卡住**：`state:` 标签 + PR 最后一条评论就是现场；`blocked:question` 意味着在等你答复。

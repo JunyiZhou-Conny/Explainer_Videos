@@ -14,7 +14,7 @@ An even shorter request works once the context is clear:
 
 The agent should read [AGENTS.md](../AGENTS.md), the skill, and the selected preset. If the application does not discover the skill automatically, explicitly give it `skill-library/conny-explainer-video/SKILL.md`. A skill supplies instructions; the executing agent still needs filesystem access, rendering tools, and any account access required by the task.
 
-The saved defaults for new preset-based episodes are **five minutes, 1920 × 1080, 30 fps, English narration, and Chinese subtitles above English**. Existing episodes keep their own settings. Your current request overrides the episode specification, which overrides saved defaults.
+The saved defaults for new preset-based episodes are **the `3b1b` preset (Swiss until 2026-10-30), five minutes, 1920 × 1080, 30 fps, English narration, and Chinese subtitles above English**. Existing episodes keep their own settings. Your current request overrides the episode specification, which overrides saved defaults.
 
 > Use `rhine-lab`, make this episode two minutes, and keep the usual narration and subtitles. These are overrides for this episode only.
 

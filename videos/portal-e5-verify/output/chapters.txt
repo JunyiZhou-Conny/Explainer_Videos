@@ -1,0 +1,9 @@
+00:00 A bug nobody had seen
+00:48 One function, many orders
+01:28 Try every order in a small world
+02:22 Why it slipped through
+03:04 Breaking it on purpose
+03:38 The same idea at Amazon's scale
+04:11 Driving the real app
+05:00 Where it came from, and what waits
+05:40 Recap
