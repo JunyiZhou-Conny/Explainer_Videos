@@ -125,7 +125,7 @@ Recap: pass.
   - s07 was re-rendered after Bugbot found its Chinese and English one clause apart (e23e399), and s04 after a crash in the first 1080p run (8743cf7); the cut was restitched from them.
 - **Loudness** (EBU R128): −16.1 LUFS integrated, LRA 2.3 LU, true peak −1.1 dBTP.
   - The two files have the same AAC stream (MD5 `3feb81f3…`).
-  - The build's mix report: voice −15.97 LUFS, music −32.77 LUFS under speech and −21.97 LUFS in the gaps.
+  - The build's mix report: voice −15.99 LUFS, music −32.59 LUFS under speech and −21.99 LUFS in the gaps.
 - **Subtitles** (`output/*.srt`, committed):
   - 105 English, 84 Chinese and 99 bilingual cues.
   - All are numbered in order, never overlap and are never empty. None has more than two lines or lasts under 1.0 s.
