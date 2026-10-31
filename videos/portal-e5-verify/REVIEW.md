@@ -33,7 +33,7 @@ facts and unclaimed reviews are kept separate.
      answers it.
    - s05: "Why would an agent break its own code on purpose?" Answered at once.
 
-   That is slightly under the aim of one per two minutes for a 6:20 episode; the hook question and the
+   That is slightly under the aim of one per two minutes for a 6:18 episode; the hook question and the
    three recap questions (each answered: s03, s05, s04) carry the rest. s09 holds a 5 s pause after the
    questions. ✔
 4. **Written for the ear; anchored cues.**
@@ -64,7 +64,7 @@ facts and unclaimed reviews are kept separate.
     it in a browser, and the video says so;
   - the breakage stories are our re-run; the PR recorded results, not traces.
 
-## Whole-video QA (first draft, 6:15; final 6:20)
+## Whole-video QA (first draft, 6:15; final 6:18)
 
 **Who reviewed.** An independent agent played Conny, working from the bilingual subtitles and one frame
 every 3 s. I also made two frame-by-frame passes over every scene (one before and one after the fixes).
@@ -116,9 +116,29 @@ Recap: pass.
   footnotes raised to 22 pt.
 - Not changed: 「TLA plus」 in the caption (the caption rules forbid "+").
 
-## Verified
+## Verified (final render, 2026-10-31)
 
-(filled in after the final render)
+- **Files:**
+  - `portal-e5-verify.mp4` (clean, 27.7 MB) and `portal-e5-verify.zh-en.mp4` (23.2 MB) both decode in full with no error (`ffmpeg -v error -i … -f null -`, exit 0).
+  - The `.zh-en.mp4` has the bilingual subtitles burned in, with the picture scaled above the subtitle band.
+  - Both run 378.453 s (6:18.5): 1920×1080 at 60 fps, H.264 High, yuv420p; AAC-LC 48 kHz stereo; 22,701 / 22,702 video frames.
+  - s07 was re-rendered after Bugbot found its Chinese and English one clause apart (e23e399), and s04 after a crash in the first 1080p run (8743cf7); the cut was restitched from them.
+- **Loudness** (EBU R128): −16.1 LUFS integrated, LRA 2.3 LU, true peak −1.1 dBTP.
+  - The two files have the same AAC stream (MD5 `3feb81f3…`).
+  - The build's mix report: voice −15.97 LUFS, music −32.77 LUFS under speech and −21.97 LUFS in the gaps.
+- **Subtitles** (`output/*.srt`, committed):
+  - 105 English, 84 Chinese and 99 bilingual cues.
+  - All are numbered in order, never overlap and are never empty. None has more than two lines or lasts under 1.0 s.
+  - Every bilingual cue has Chinese above English, and the `.zh-en.ass` has the same 99 events. No two consecutive bilingual cues repeat the same English, and every split sentence was read pair by pair.
+  - The last cue ends at 6:16.6, 1.9 s before the end.
+  - `python -m explainer.i18n check videos/portal-e5-verify --lang zh`: OK.
+- **Layout:**
+  - `python -m explainer.check` reports no OUT, SMALL or missing-anchor problem in any of the nine scenes, and a script check confirms every anchor occurs verbatim in its narration.
+  - Two 480p drafts were read frame by frame.
+  - Four burned 1080p frames were spot-checked: s01's booked-not-expired tracker, s03's small world and first moves, s04's saved-status mechanism, s07's own app and browser.
+- **Narration:** 1,014 words (`python -m explainer.script`), Kokoro `af_heart` at 0.95.
+- **Release preflight:** `tools/release_episode.py videos/portal-e5-verify --preflight` passes (exit 0, no LaTeX needed).
+- **Sources:** every figure on screen and every quote is listed in SOURCES.md, with the accuracy-pass corrections. Rendered MP4s are not in git; they become release assets after merge.
 
 ## Not claimed
 
