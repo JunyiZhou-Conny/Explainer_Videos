@@ -78,36 +78,36 @@ Dialogue: 0,0:03:56.04,0:04:00.19,Bilingual,,0,0,0,,而这个 bug 之前通过�
 Dialogue: 0,0:04:00.51,0:04:04.50,Bilingual,,0,0,0,,我们的相比之下很小，一秒钟的检查里只有两步\N{\fs33\c&H00C8C0B8&\bord1.4}Ours is tiny by comparison, two steps in a one-second check,
 Dialogue: 0,0:04:04.50,0:04:09.88,Bilingual,,0,0,0,,但做的是同一件事：让机器去走人永远不会去试的每一种顺序\N{\fs33\c&H00C8C0B8&\bord1.4}but it is the same move: let a machine walk every order a person would never try.
 Dialogue: 0,0:04:11.22,0:04:14.72,Bilingual,,0,0,0,,第二个工具直接操作 App，就像家长那样\N{\fs33\c&H00C8C0B8&\bord1.4}The second tool drives the app itself, the way a parent would.
-Dialogue: 0,0:04:15.04,0:04:20.45,Bilingual,,0,0,0,,agent 启动自己的一份 App 和自己的浏览器\N{\fs33\c&H00C8C0B8&\bord1.4}The agent starts its own copy of the app and its own browser from a saved demo state,
-Dialogue: 0,0:04:20.45,0:04:22.93,Bilingual,,0,0,0,,从一份保存好的演示状态出发，然后一步步点\N{\fs33\c&H00C8C0B8&\bord1.4}then clicks through: open the referral,
-Dialogue: 0,0:04:22.93,0:04:25.54,Bilingual,,0,0,0,,打开转诊，选一家网络内的诊所\N{\fs33\c&H00C8C0B8&\bord1.4}choose an in-network clinic, pick a time,
-Dialogue: 0,0:04:25.54,0:04:28.28,Bilingual,,0,0,0,,选时间，提交，等待待确认，打开进度页\N{\fs33\c&H00C8C0B8&\bord1.4}submit, wait for pending, open the tracker.
-Dialogue: 0,0:04:28.60,0:04:31.99,Bilingual,,0,0,0,,它按角色和无障碍名称来找每一个控件\N{\fs33\c&H00C8C0B8&\bord1.4}It finds each control by its role and accessible name,
-Dialogue: 0,0:04:31.99,0:04:34.24,Bilingual,,0,0,0,,也就是读屏软件念出来的那个名字\N{\fs33\c&H00C8C0B8&\bord1.4}the label a screen reader announces,
-Dialogue: 0,0:04:34.24,0:04:37.31,Bilingual,,0,0,0,,并且每一步之后都等页面安静下来\N{\fs33\c&H00C8C0B8&\bord1.4}and waits for the page to settle after each step.
-Dialogue: 0,0:04:37.55,0:04:41.78,Bilingual,,0,0,0,,做对了，要两件事同时成立：屏幕上显示专科已预约\N{\fs33\c&H00C8C0B8&\bord1.4}Right means two things at once: the screen says the specialist is booked,
-Dialogue: 0,0:04:41.78,0:04:45.95,Bilingual,,0,0,0,,保存的数据里转诊也指向了这个新预约\N{\fs33\c&H00C8C0B8&\bord1.4}and the saved data says the referral now points to that new appointment.
-Dialogue: 0,0:04:46.27,0:04:52.29,Bilingual,,0,0,0,,每次运行都必须留下证据：截图、保存的状态，以及没有浏览器报错\N{\fs33\c&H00C8C0B8&\bord1.4}Each run is required to keep evidence: screenshots, the saved state, and no browser errors.
-Dialogue: 0,0:04:52.61,0:04:55.98,Bilingual,,0,0,0,,某一步失败时，它会告诉你它能看到哪些按钮\N{\fs33\c&H00C8C0B8&\bord1.4}When a step fails, it says which buttons it could see instead.
-Dialogue: 0,0:04:56.30,0:04:59.33,Bilingual,,0,0,0,,结束时，它只关掉自己启动的东西\N{\fs33\c&H00C8C0B8&\bord1.4}And when it's done, it shuts down only what it started.
-Dialogue: 0,0:05:00.67,0:05:05.35,Bilingual,,0,0,0,,这两个工具都来自一个公开插件 pstack 里的两个 skill\N{\fs33\c&H00C8C0B8&\bord1.4}Both tools came from trying two skills in a public plugin called pstack,
-Dialogue: 0,0:05:05.35,0:05:09.46,Bilingual,,0,0,0,,是周五下午试用时做的，两次提交相隔 27 分钟\N{\fs33\c&H00C8C0B8&\bord1.4}on Friday afternoon, in two commits twenty-seven minutes apart.
-Dialogue: 0,0:05:09.78,0:05:13.93,Bilingual,,0,0,0,,Anthropic 自己给 Claude Code 的建议说得很直白\N{\fs33\c&H00C8C0B8&\bord1.4}Anthropic's own advice for Claude Code says the same thing plainly:
-Dialogue: 0,0:05:13.93,0:05:17.65,Bilingual,,0,0,0,,给 agent 一个能跑的检查，否则你自己就成了测试\N{\fs33\c&H00C8C0B8&\bord1.4}give the agent a check to run, or you become the test suite.
-Dialogue: 0,0:05:17.88,0:05:21.80,Bilingual,,0,0,0,,等你来做的事：选定过期转诊的修法\N{\fs33\c&H00C8C0B8&\bord1.4}What waits for you: choosing the fix for the expired referral,
-Dialogue: 0,0:05:21.80,0:05:25.02,Bilingual,,0,0,0,,以及在你自己的电脑上试一下这个操作 App 的工具\N{\fs33\c&H00C8C0B8&\bord1.4}and trying the app-driving tool on your own laptop;
-Dialogue: 0,0:05:25.02,0:05:27.29,Bilingual,,0,0,0,,目前它只在云端跑过\N{\fs33\c&H00C8C0B8&\bord1.4}so far it has only run in the cloud.
-Dialogue: 0,0:05:27.61,0:05:29.53,Bilingual,,0,0,0,,这个 PR 也还是草稿\N{\fs33\c&H00C8C0B8&\bord1.4}And the pull request is still a draft.
-Dialogue: 0,0:05:29.85,0:05:33.71,Bilingual,,0,0,0,,上一集问的是：层层叠加的检查，能不能代替人工审查\N{\fs33\c&H00C8C0B8&\bord1.4}The last episode asked whether layers can stand in for a human review.
-Dialogue: 0,0:05:34.03,0:05:37.20,Bilingual,,0,0,0,,这里又多了两层：一个试遍所有顺序的检查\N{\fs33\c&H00C8C0B8&\bord1.4}Here are two more: a check that tries every order,
-Dialogue: 0,0:05:37.20,0:05:39.47,Bilingual,,0,0,0,,和一个真的去用 App 的 agent\N{\fs33\c&H00C8C0B8&\bord1.4}and an agent that uses the real app.
-Dialogue: 0,0:05:40.82,0:05:45.18,Bilingual,,0,0,0,,所以：一个工具在小世界里走遍所有操作顺序\N{\fs33\c&H00C8C0B8&\bord1.4}So: one tool walks every order of actions in a small world and hands back
-Dialogue: 0,0:05:45.18,0:05:47.45,Bilingual,,0,0,0,,交回打破规则的最短复现\N{\fs33\c&H00C8C0B8&\bord1.4}the shortest story that breaks a rule.
-Dialogue: 0,0:05:47.77,0:05:51.48,Bilingual,,0,0,0,,另一个工具像家长一样真的去用 App，并留下证据\N{\fs33\c&H00C8C0B8&\bord1.4}The other uses the real app like a parent and keeps the evidence.
-Dialogue: 0,0:05:51.80,0:05:54.68,Bilingual,,0,0,0,,第一个是靠故意改坏来检验的\N{\fs33\c&H00C8C0B8&\bord1.4}The first was checked by breaking it on purpose;
-Dialogue: 0,0:05:54.68,0:05:57.37,Bilingual,,0,0,0,,第二个是靠把每个流程从头到尾跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}the second, by running every flow end to end.
-Dialogue: 0,0:05:57.62,0:05:59.00,Bilingual,,0,0,0,,三个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Three questions.
-Dialogue: 0,0:05:59.05,0:06:02.46,Bilingual,,0,0,0,,穷举检查试了哪些普通测试不会试的东西？\N{\fs33\c&H00C8C0B8&\bord1.4}What does the exhaustive check try that an ordinary test doesn't?
-Dialogue: 0,0:06:02.78,0:06:04.68,Bilingual,,0,0,0,,为什么要故意把自己的代码改坏？\N{\fs33\c&H00C8C0B8&\bord1.4}Why break your own code on purpose?
-Dialogue: 0,0:06:05.00,0:06:07.58,Bilingual,,0,0,0,,为什么 bug 修好以后，检查反而会失败？\N{\fs33\c&H00C8C0B8&\bord1.4}And why does the check fail when the bug gets fixed?
-Dialogue: 0,0:06:12.82,0:06:16.96,Bilingual,,0,0,0,,下一集：在写任何后端代码之前，后端怎么选？\N{\fs33\c&H00C8C0B8&\bord1.4}Next: before any backend code is written, how do you choose the backend?
+Dialogue: 0,0:04:15.04,0:04:16.85,Bilingual,,0,0,0,,agent 从一份保存好的演示状态出发\N{\fs33\c&H00C8C0B8&\bord1.4}From a saved demo state,
+Dialogue: 0,0:04:16.85,0:04:20.18,Bilingual,,0,0,0,,启动自己的一份 App 和自己的浏览器\N{\fs33\c&H00C8C0B8&\bord1.4}the agent starts its own copy of the app and its own browser.
+Dialogue: 0,0:04:20.50,0:04:24.66,Bilingual,,0,0,0,,然后它一步步点：打开转诊，选一家网络内的诊所\N{\fs33\c&H00C8C0B8&\bord1.4}Then it clicks through: open the referral, choose an in-network clinic,
+Dialogue: 0,0:04:24.66,0:04:27.94,Bilingual,,0,0,0,,选时间，提交，等待待确认，打开进度页\N{\fs33\c&H00C8C0B8&\bord1.4}pick a time, submit, wait for pending, open the tracker.
+Dialogue: 0,0:04:28.26,0:04:31.64,Bilingual,,0,0,0,,它按角色和无障碍名称来找每一个控件\N{\fs33\c&H00C8C0B8&\bord1.4}It finds each control by its role and accessible name,
+Dialogue: 0,0:04:31.64,0:04:33.90,Bilingual,,0,0,0,,也就是读屏软件念出来的那个名字\N{\fs33\c&H00C8C0B8&\bord1.4}the label a screen reader announces,
+Dialogue: 0,0:04:33.90,0:04:36.97,Bilingual,,0,0,0,,并且每一步之后都等页面安静下来\N{\fs33\c&H00C8C0B8&\bord1.4}and waits for the page to settle after each step.
+Dialogue: 0,0:04:37.20,0:04:41.43,Bilingual,,0,0,0,,做对了，要两件事同时成立：屏幕上显示专科已预约\N{\fs33\c&H00C8C0B8&\bord1.4}Right means two things at once: the screen says the specialist is booked,
+Dialogue: 0,0:04:41.43,0:04:45.60,Bilingual,,0,0,0,,保存的数据里转诊也指向了这个新预约\N{\fs33\c&H00C8C0B8&\bord1.4}and the saved data says the referral now points to that new appointment.
+Dialogue: 0,0:04:45.92,0:04:51.94,Bilingual,,0,0,0,,每次运行都必须留下证据：截图、保存的状态，以及没有浏览器报错\N{\fs33\c&H00C8C0B8&\bord1.4}Each run is required to keep evidence: screenshots, the saved state, and no browser errors.
+Dialogue: 0,0:04:52.26,0:04:55.63,Bilingual,,0,0,0,,某一步失败时，它会告诉你它能看到哪些按钮\N{\fs33\c&H00C8C0B8&\bord1.4}When a step fails, it says which buttons it could see instead.
+Dialogue: 0,0:04:55.95,0:04:58.98,Bilingual,,0,0,0,,结束时，它只关掉自己启动的东西\N{\fs33\c&H00C8C0B8&\bord1.4}And when it's done, it shuts down only what it started.
+Dialogue: 0,0:05:00.32,0:05:05.00,Bilingual,,0,0,0,,这两个工具都来自一个公开插件 pstack 里的两个 skill\N{\fs33\c&H00C8C0B8&\bord1.4}Both tools came from trying two skills in a public plugin called pstack,
+Dialogue: 0,0:05:05.00,0:05:09.11,Bilingual,,0,0,0,,是周五下午试用时做的，两次提交相隔 27 分钟\N{\fs33\c&H00C8C0B8&\bord1.4}on Friday afternoon, in two commits twenty-seven minutes apart.
+Dialogue: 0,0:05:09.43,0:05:13.58,Bilingual,,0,0,0,,Anthropic 自己给 Claude Code 的建议说得很直白\N{\fs33\c&H00C8C0B8&\bord1.4}Anthropic's own advice for Claude Code says the same thing plainly:
+Dialogue: 0,0:05:13.58,0:05:17.30,Bilingual,,0,0,0,,给 agent 一个能跑的检查，否则你自己就成了测试\N{\fs33\c&H00C8C0B8&\bord1.4}give the agent a check to run, or you become the test suite.
+Dialogue: 0,0:05:17.53,0:05:21.45,Bilingual,,0,0,0,,等你来做的事：选定过期转诊的修法\N{\fs33\c&H00C8C0B8&\bord1.4}What waits for you: choosing the fix for the expired referral,
+Dialogue: 0,0:05:21.45,0:05:24.67,Bilingual,,0,0,0,,以及在你自己的电脑上试一下这个操作 App 的工具\N{\fs33\c&H00C8C0B8&\bord1.4}and trying the app-driving tool on your own laptop;
+Dialogue: 0,0:05:24.67,0:05:26.94,Bilingual,,0,0,0,,目前它只在云端跑过\N{\fs33\c&H00C8C0B8&\bord1.4}so far it has only run in the cloud.
+Dialogue: 0,0:05:27.26,0:05:29.18,Bilingual,,0,0,0,,这个 PR 也还是草稿\N{\fs33\c&H00C8C0B8&\bord1.4}And the pull request is still a draft.
+Dialogue: 0,0:05:29.50,0:05:33.36,Bilingual,,0,0,0,,上一集问的是：层层叠加的检查，能不能代替人工审查\N{\fs33\c&H00C8C0B8&\bord1.4}The last episode asked whether layers can stand in for a human review.
+Dialogue: 0,0:05:33.68,0:05:36.85,Bilingual,,0,0,0,,这里又多了两层：一个试遍所有顺序的检查\N{\fs33\c&H00C8C0B8&\bord1.4}Here are two more: a check that tries every order,
+Dialogue: 0,0:05:36.85,0:05:39.12,Bilingual,,0,0,0,,和一个真的去用 App 的 agent\N{\fs33\c&H00C8C0B8&\bord1.4}and an agent that uses the real app.
+Dialogue: 0,0:05:40.47,0:05:44.83,Bilingual,,0,0,0,,所以：一个工具在小世界里走遍所有操作顺序\N{\fs33\c&H00C8C0B8&\bord1.4}So: one tool walks every order of actions in a small world and hands back
+Dialogue: 0,0:05:44.83,0:05:47.10,Bilingual,,0,0,0,,交回打破规则的最短复现\N{\fs33\c&H00C8C0B8&\bord1.4}the shortest story that breaks a rule.
+Dialogue: 0,0:05:47.42,0:05:51.13,Bilingual,,0,0,0,,另一个工具像家长一样真的去用 App，并留下证据\N{\fs33\c&H00C8C0B8&\bord1.4}The other uses the real app like a parent and keeps the evidence.
+Dialogue: 0,0:05:51.45,0:05:54.33,Bilingual,,0,0,0,,第一个是靠故意改坏来检验的\N{\fs33\c&H00C8C0B8&\bord1.4}The first was checked by breaking it on purpose;
+Dialogue: 0,0:05:54.33,0:05:57.02,Bilingual,,0,0,0,,第二个是靠把每个流程从头到尾跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}the second, by running every flow end to end.
+Dialogue: 0,0:05:57.27,0:05:58.65,Bilingual,,0,0,0,,三个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Three questions.
+Dialogue: 0,0:05:58.70,0:06:02.11,Bilingual,,0,0,0,,穷举检查试了哪些普通测试不会试的东西？\N{\fs33\c&H00C8C0B8&\bord1.4}What does the exhaustive check try that an ordinary test doesn't?
+Dialogue: 0,0:06:02.43,0:06:04.33,Bilingual,,0,0,0,,为什么要故意把自己的代码改坏？\N{\fs33\c&H00C8C0B8&\bord1.4}Why break your own code on purpose?
+Dialogue: 0,0:06:04.65,0:06:07.23,Bilingual,,0,0,0,,为什么 bug 修好以后，检查反而会失败？\N{\fs33\c&H00C8C0B8&\bord1.4}And why does the check fail when the bug gets fixed?
+Dialogue: 0,0:06:12.47,0:06:16.61,Bilingual,,0,0,0,,下一集：在写任何后端代码之前，后端怎么选？\N{\fs33\c&H00C8C0B8&\bord1.4}Next: before any backend code is written, how do you choose the backend?

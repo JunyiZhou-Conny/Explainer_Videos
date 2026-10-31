@@ -14,14 +14,14 @@ Everything a user does is saved in that one browser, on that one device,
 and the clinics and prices it shows are made up.
 
 4
-00:00:10,091 --> 00:00:12,988
-所以，孩子在波士顿存的保险卡
-So a parent in China cannot see the insurance
+00:00:10,091 --> 00:00:15,176
+所以，在国内的家长看不到孩子在波士顿存的保险卡
+So a parent in China cannot see the insurance card their child added in Boston:
 
 5
-00:00:12,988 --> 00:00:17,365
-在国内的家长看不到：根本没有地方可以去取
-card their child added in Boston: there is nowhere to fetch it from.
+00:00:15,176 --> 00:00:17,365
+根本没有地方可以去取
+there is nowhere to fetch it from.
 
 6
 00:00:17,685 --> 00:00:22,357
@@ -254,346 +254,346 @@ One column is flexible on purpose: an insurance field stores not just a value
 but how sure the card scanner was, where it came from, and the raw text it was read from.
 
 52
-00:03:00,830 --> 00:03:04,973
+00:03:00,830 --> 00:03:05,457
 我们装的数据库还自带一个按语义搜索的扩展
-The database we install also comes with an add-on for searching
+The database we install also comes with an add-on for searching by meaning,
 
 53
-00:03:04,973 --> 00:03:07,538
+00:03:05,457 --> 00:03:07,123
 但现在没有任何地方需要它
-by meaning, but nothing needs it today;
+but nothing needs it today.
 
 54
-00:03:07,538 --> 00:03:09,577
+00:03:07,443 --> 00:03:09,470
 它是一扇开着的门，不是一个计划
-it is an open door, not a plan.
+It is an open door, not a plan.
 
 55
-00:03:09,897 --> 00:03:13,615
+00:03:09,790 --> 00:03:13,508
 表结构的改动用带编号的迁移文件同步
 Changes to the tables travel as numbered migration files,
 
 56
-00:03:13,615 --> 00:03:16,681
+00:03:13,508 --> 00:03:16,574
 所以每一份数据库最后都一样
 so every copy of the database ends up the same.
 
 57
-00:03:18,017 --> 00:03:20,150
+00:03:17,917 --> 00:03:20,050
 登录完全不用密码
 Login uses no passwords at all.
 
 58
-00:03:20,470 --> 00:03:26,143
+00:03:20,370 --> 00:03:26,043
 你输入邮箱，收到一个 6 位验证码，5 分钟内有效，可以试 3 次
 You type your email and receive a six-digit code, valid for five minutes, with three tries,
 
 59
-00:03:26,143 --> 00:03:30,569
+00:03:26,043 --> 00:03:30,469
 记录要求服务器只保存它打乱后的哈希
 and the record requires the server to keep only a scrambled hash of it,
 
 60
-00:03:30,569 --> 00:03:33,499
+00:03:30,469 --> 00:03:33,399
 这样验证码不会以明文存着
 so the codes are never stored as readable text,
 
 61
-00:03:33,499 --> 00:03:38,113
+00:03:33,399 --> 00:03:38,013
 还要加上自己的限流：每个邮箱每分钟一个，每小时最多五个
 plus its own limit of one code a minute per address, at most five an hour.
 
 62
-00:03:38,433 --> 00:03:42,124
+00:03:38,333 --> 00:03:42,024
 PR 里写着，你周五确认了只用邮箱登录
 The pull request notes you confirmed email-only on Friday.
 
 63
-00:03:42,444 --> 00:03:46,471
+00:03:42,344 --> 00:03:46,371
 记录给的理由是：每个中国家长都有邮箱
 The record's reasons: every Chinese parent has an email address,
 
 64
-00:03:46,471 --> 00:03:48,737
+00:03:46,371 --> 00:03:48,637
 而且没有密码可忘
 and nobody has a password to forget.
 
 65
-00:03:48,984 --> 00:03:54,633
+00:03:48,884 --> 00:03:54,533
 给国内手机号发短信要花钱，微信登录需要注册公司
 Text messages to Chinese numbers cost money, WeChat login needs a registered company,
 
 66
-00:03:54,633 --> 00:03:59,352
+00:03:54,533 --> 00:03:59,252
 托管登录服务把用户数据放在别处，还按用户数收费
 and hosted login services keep user data elsewhere and charge per user.
 
 67
-00:03:59,672 --> 00:04:02,765
+00:03:59,572 --> 00:04:02,665
 自己从零写，正是安全漏洞的来源
 Writing it from scratch is how security holes happen.
 
 68
-00:04:03,085 --> 00:04:06,975
+00:04:02,985 --> 00:04:06,875
 选中的 Better Auth 跑在我们自己的服务器里
 The library chosen, Better Auth, runs inside our own server,
 
 69
-00:04:06,975 --> 00:04:09,634
+00:04:06,875 --> 00:04:09,534
 数据都存进我们自己的 Postgres
 and keeps everything in our own Postgres.
 
 70
-00:04:10,983 --> 00:04:14,140
+00:04:10,883 --> 00:04:14,040
 接下来是数据的结构，也就是保护人的那一部分
 Then the shape of the data, the part that protects people.
 
 71
-00:04:14,460 --> 00:04:18,319
-每个账号都有一个身份，学生或家长
-Every account has a role, student or parent, written once and,
+00:04:14,360 --> 00:04:19,651
+每个账号都有一个身份，学生或家长，只写一次
+Every account has a role, student or parent, written once and, in this first version,
 
 72
-00:04:18,319 --> 00:04:21,431
-只写一次，在这第一版里用户自己不能改
-in this first version, not changeable by the user;
+00:04:19,651 --> 00:04:22,016
+在这第一版里，用户自己不能改
+not changeable by the user; otherwise,
 
 73
-00:04:21,431 --> 00:04:25,788
+00:04:22,016 --> 00:04:25,688
 记录写道，否则学生能把自己改成家长
-otherwise, the record notes, a student could make themselves a parent.
+the record notes, a student could make themselves a parent.
 
 74
-00:04:26,033 --> 00:04:29,830
+00:04:25,933 --> 00:04:29,730
 谁应该能发起家庭关联：学生，还是家长？
 Who should be able to start a family link: the student, or the parent?
 
 75
-00:04:32,533 --> 00:04:34,949
+00:04:32,433 --> 00:04:34,849
 只有学生能发起家庭关联
 Only the student can start a family link,
 
 76
-00:04:34,949 --> 00:04:38,485
+00:04:34,849 --> 00:04:38,385
 因为学生是病人，健康数据归学生所有
 because the student is the patient and owns the health data.
 
 77
-00:04:38,805 --> 00:04:40,539
+00:04:38,705 --> 00:04:40,439
 学生生成一个邀请码
 They create an invite code:
 
 78
-00:04:40,539 --> 00:04:44,906
+00:04:40,439 --> 00:04:44,806
 至少 8 个字符，72 小时内有效，只能用一次
 at least eight characters, valid for seventy-two hours, usable once.
 
 79
-00:04:45,226 --> 00:04:50,617
+00:04:45,126 --> 00:04:50,517
 关联之后，家长只能看到学生的资料和当前的保险卡，而且只读
 Once linked, a parent sees the student's profile and current insurance card, read-only,
 
 80
-00:04:50,617 --> 00:04:52,117
+00:04:50,517 --> 00:04:52,017
 其他什么都看不到
 and nothing else;
 
 81
-00:04:52,117 --> 00:04:57,152
+00:04:52,017 --> 00:04:57,052
 以后新增的内容，比如分诊对话，默认不对家长开放
 anything added later, such as triage chats, is closed to parents by default.
 
 82
-00:04:57,472 --> 00:04:59,701
+00:04:57,372 --> 00:04:59,601
 目前不存保险卡照片
 For now, card photos are not stored;
 
 83
-00:04:59,701 --> 00:05:03,786
+00:04:59,601 --> 00:05:03,686
 保险卡在设备上识别，只保留文字字段
 the card is read on the device, and only the text fields are kept.
 
 84
-00:05:05,133 --> 00:05:09,377
+00:05:05,033 --> 00:05:09,277
 初稿由四个审查者从不同角度读过
 The first draft was read by four reviewers from different angles:
 
 85
-00:05:09,377 --> 00:05:14,273
+00:05:09,277 --> 00:05:14,173
 外部事实、和仓库是否一致、隐私和数据结构
 outside facts, consistency with the repository, privacy and the data model,
 
 86
-00:05:14,273 --> 00:05:15,970
+00:05:14,173 --> 00:05:15,870
 以及 issue 的验收清单
 and the issue's checklist.
 
 87
-00:05:16,290 --> 00:05:20,088
+00:05:16,190 --> 00:05:19,988
 他们一共提了 31 条意见，一个裁判 agent 保留了 14 条
 They raised thirty-one comments, and a judge agent kept fourteen.
 
 88
-00:05:20,408 --> 00:05:24,534
+00:05:20,308 --> 00:05:24,434
 第二版修正了不少问题，其中有三个真错误
 The second version fixed, among other things, three real mistakes:
 
 89
-00:05:24,534 --> 00:05:28,786
+00:05:24,434 --> 00:05:28,686
 它给保险字段自己起了状态和来源的名称
 it had made up its own status and source labels for insurance fields
 
 90
-00:05:28,786 --> 00:05:31,161
+00:05:28,686 --> 00:05:31,061
 而不是先读保险的代码
 instead of reading the insurance code,
 
 91
-00:05:31,161 --> 00:05:33,099
+00:05:31,061 --> 00:05:32,999
 让关联的家长录入保险卡
 let linked parents enter cards,
 
 92
-00:05:33,099 --> 00:05:36,600
+00:05:32,999 --> 00:05:36,500
 还打算复用带着模拟数据的服务
 and planned to reuse services that carry fictional data.
 
 93
-00:05:36,850 --> 00:05:40,391
+00:05:36,750 --> 00:05:40,291
 但修订本身也带进了一个错误，被 Bugbot 抓到了
 But the revision added a mistake of its own, and Bugbot caught it.
 
 94
-00:05:40,711 --> 00:05:44,663
+00:05:40,611 --> 00:05:44,563
 解除关联时只记下了时间，关联还标着有效
 Unlinking only recorded the time and left the link marked active,
 
 95
-00:05:44,663 --> 00:05:46,791
+00:05:44,563 --> 00:05:46,691
 家长就会一直保留访问权限
 so a parent would have kept access.
 
 96
-00:05:47,111 --> 00:05:50,738
+00:05:47,011 --> 00:05:50,638
 只差一个词，还是在一份书面计划里，代码都还没写
 One missing word, in a written plan, before any code existed.
 
 97
-00:05:51,058 --> 00:05:54,044
+00:05:50,958 --> 00:05:53,944
 修正在那条评论之后 21 秒就提交了
 The fix landed twenty-one seconds after the comment.
 
 98
-00:05:54,283 --> 00:05:56,992
+00:05:54,183 --> 00:05:56,892
 如果没有 bot 盯着，什么能抓住它？
 If no bot had been watching, what would have caught it?
 
 99
-00:06:02,783 --> 00:06:05,922
+00:06:02,683 --> 00:06:05,822
 一个测试就能，而且记录里已经要求了
 A test would, and the record already asks for one:
 
 100
-00:06:05,922 --> 00:06:11,572
+00:06:05,822 --> 00:06:11,472
 学生解除关联后，家长的下一个请求必须被拒绝，并且自动检查
 after a student unlinks, the parent's next request must be refused, checked automatically.
 
 101
-00:06:11,892 --> 00:06:14,384
+00:06:11,792 --> 00:06:14,284
 这份决策本身还是提议
 The decision itself is still a proposal;
 
 102
-00:06:14,384 --> 00:06:19,615
+00:06:14,284 --> 00:06:19,515
 issue 要求你们三个人线下确认之后，才能改为已采纳
 the issue asks the three of you to confirm it in person before it is marked adopted.
 
 103
-00:06:19,850 --> 00:06:23,693
+00:06:19,750 --> 00:06:23,593
 还没定的：国内能不能访问到服务器
 Still open: whether the servers can be reached from China,
 
 104
-00:06:23,693 --> 00:06:28,132
+00:06:23,593 --> 00:06:28,032
 用哪个发信服务才不会进 QQ 和 163 的垃圾箱
 which email service stays out of QQ and one-six-three spam folders,
 
 105
-00:06:28,132 --> 00:06:33,034
+00:06:28,032 --> 00:06:32,934
 家长能不能录入保险卡信息，以及删除的数据要保留多久
 whether parents may enter card details, and how long deleted data lingers.
 
 106
-00:06:33,354 --> 00:06:36,473
+00:06:33,254 --> 00:06:36,373
 这份技术文档里有两个产品决定
 Two product calls sit in this technical document,
 
 107
-00:06:36,473 --> 00:06:39,210
+00:06:36,373 --> 00:06:39,110
 在那几个 issue 定下来之前都只是暂定
 both provisional until those issues decide:
 
 108
-00:06:39,210 --> 00:06:44,810
+00:06:39,110 --> 00:06:44,710
 家长默认看不到任何新内容，删除学生账号会连同保险卡一起删除
 parents see nothing new by default, and deleting a student's account deletes their card.
 
 109
-00:06:45,130 --> 00:06:49,418
+00:06:45,030 --> 00:06:49,318
 还有一处要整理的：两个不同的决策，编号都是 0006
 And one piece of housekeeping: two different decisions are both numbered six.
 
 110
-00:06:51,967 --> 00:06:54,839
+00:06:51,867 --> 00:06:54,739
 所以：用 TypeScript，因为页面说了算
 So: TypeScript, because the page decides;
 
 111
-00:06:54,839 --> 00:06:57,361
+00:06:54,739 --> 00:06:57,261
 用 Postgres，因为数据的核心是关联
 Postgres, because the data is links;
 
 112
-00:06:57,361 --> 00:07:00,584
+00:06:57,261 --> 00:07:00,484
 用邮箱验证码，因为每个家长都有邮箱
 emailed codes, because every parent has email;
 
 113
-00:07:00,584 --> 00:07:03,807
+00:07:00,484 --> 00:07:03,707
 用容器，因为它必须在任何电脑上都能跑
 containers, because it must run on any laptop.
 
 114
-00:07:04,127 --> 00:07:07,199
+00:07:04,027 --> 00:07:07,099
 还有一个数据结构，它真正的工作是保护隐私
 And a data model whose real job is privacy.
 
 115
-00:07:07,434 --> 00:07:08,813
+00:07:07,334 --> 00:07:08,713
 三个问题
 Three questions.
 
 116
-00:07:08,863 --> 00:07:10,677
+00:07:08,763 --> 00:07:10,577
 为什么后端不用 Python？
 Why isn't the backend in Python?
 
 117
-00:07:10,997 --> 00:07:13,578
+00:07:10,897 --> 00:07:13,478
 是什么阻止学生把自己改成家长？
 What stops a student from making themselves a parent?
 
 118
-00:07:13,898 --> 00:07:16,479
+00:07:13,798 --> 00:07:16,379
 没有 bot 的话，什么能抓住解除关联的那个 bug？
 And what would have caught the unlink bug without a bot?
 
 119
-00:07:21,717 --> 00:07:23,317
+00:07:21,617 --> 00:07:23,217
 这一周的内容到这里结束
 That ends this week's batch.
 
 120
-00:07:23,637 --> 00:07:27,072
+00:07:23,537 --> 00:07:26,972
 下周的几集，从下周的 PR 开始
 Next week's episodes start from next week's pull requests.

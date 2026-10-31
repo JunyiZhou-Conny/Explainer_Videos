@@ -15,9 +15,9 @@ Python's main advantage would be its libraries for AI retrieval, but the triage 
 
 ## 02:33 — A database of links
 For the database, Postgres. The data is about links: a parent is linked to a student, and every permission check follows that link. MongoDB lost for exactly that reason, and SQLite because a single file doesn't suit many people online at once.
-One column is flexible on purpose: an insurance field stores not just a value but how sure the card scanner was, where it came from, and the raw text it was read from. The database we install also comes with an add-on for searching by meaning, but nothing needs it today; it is an open door, not a plan. Changes to the tables travel as numbered migration files, so every copy of the database ends up the same.
+One column is flexible on purpose: an insurance field stores not just a value but how sure the card scanner was, where it came from, and the raw text it was read from. The database we install also comes with an add-on for searching by meaning, but nothing needs it today. It is an open door, not a plan. Changes to the tables travel as numbered migration files, so every copy of the database ends up the same.
 
-## 03:18 — Login without passwords
+## 03:17 — Login without passwords
 Login uses no passwords at all. You type your email and receive a six-digit code, valid for five minutes, with three tries, and the record requires the server to keep only a scrambled hash of it, so the codes are never stored as readable text, plus its own limit of one code a minute per address, at most five an hour. The pull request notes you confirmed email-only on Friday. The record's reasons: every Chinese parent has an email address, and nobody has a password to forget.
 Text messages to Chinese numbers cost money, WeChat login needs a registered company, and hosted login services keep user data elsewhere and charge per user. Writing it from scratch is how security holes happen. The library chosen, Better Auth, runs inside our own server, and keeps everything in our own Postgres.
 

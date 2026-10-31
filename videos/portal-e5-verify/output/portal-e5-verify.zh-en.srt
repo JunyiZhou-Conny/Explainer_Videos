@@ -329,166 +329,166 @@ but it is the same move: let a machine walk every order a person would never try
 The second tool drives the app itself, the way a parent would.
 
 67
-00:04:15,036 --> 00:04:20,450
-agent 启动自己的一份 App 和自己的浏览器
-The agent starts its own copy of the app and its own browser from a saved demo state,
+00:04:15,036 --> 00:04:16,847
+agent 从一份保存好的演示状态出发
+From a saved demo state,
 
 68
-00:04:20,450 --> 00:04:22,934
-从一份保存好的演示状态出发，然后一步步点
-then clicks through: open the referral,
+00:04:16,847 --> 00:04:20,177
+启动自己的一份 App 和自己的浏览器
+the agent starts its own copy of the app and its own browser.
 
 69
-00:04:22,934 --> 00:04:25,545
-打开转诊，选一家网络内的诊所
-choose an in-network clinic, pick a time,
+00:04:20,497 --> 00:04:24,659
+然后它一步步点：打开转诊，选一家网络内的诊所
+Then it clicks through: open the referral, choose an in-network clinic,
 
 70
-00:04:25,545 --> 00:04:28,284
+00:04:24,659 --> 00:04:27,942
 选时间，提交，等待待确认，打开进度页
-submit, wait for pending, open the tracker.
+pick a time, submit, wait for pending, open the tracker.
 
 71
-00:04:28,604 --> 00:04:31,985
+00:04:28,262 --> 00:04:31,643
 它按角色和无障碍名称来找每一个控件
 It finds each control by its role and accessible name,
 
 72
-00:04:31,985 --> 00:04:34,239
+00:04:31,643 --> 00:04:33,897
 也就是读屏软件念出来的那个名字
 the label a screen reader announces,
 
 73
-00:04:34,239 --> 00:04:37,308
+00:04:33,897 --> 00:04:36,966
 并且每一步之后都等页面安静下来
 and waits for the page to settle after each step.
 
 74
-00:04:37,550 --> 00:04:41,781
+00:04:37,200 --> 00:04:41,431
 做对了，要两件事同时成立：屏幕上显示专科已预约
 Right means two things at once: the screen says the specialist is booked,
 
 75
-00:04:41,781 --> 00:04:45,955
+00:04:41,431 --> 00:04:45,605
 保存的数据里转诊也指向了这个新预约
 and the saved data says the referral now points to that new appointment.
 
 76
-00:04:46,275 --> 00:04:52,291
+00:04:45,925 --> 00:04:51,941
 每次运行都必须留下证据：截图、保存的状态，以及没有浏览器报错
 Each run is required to keep evidence: screenshots, the saved state, and no browser errors.
 
 77
-00:04:52,611 --> 00:04:55,982
+00:04:52,261 --> 00:04:55,632
 某一步失败时，它会告诉你它能看到哪些按钮
 When a step fails, it says which buttons it could see instead.
 
 78
-00:04:56,302 --> 00:04:59,332
+00:04:55,952 --> 00:04:58,982
 结束时，它只关掉自己启动的东西
 And when it's done, it shuts down only what it started.
 
 79
-00:05:00,667 --> 00:05:05,354
+00:05:00,317 --> 00:05:05,004
 这两个工具都来自一个公开插件 pstack 里的两个 skill
 Both tools came from trying two skills in a public plugin called pstack,
 
 80
-00:05:05,354 --> 00:05:09,456
+00:05:05,004 --> 00:05:09,106
 是周五下午试用时做的，两次提交相隔 27 分钟
 on Friday afternoon, in two commits twenty-seven minutes apart.
 
 81
-00:05:09,776 --> 00:05:13,929
+00:05:09,426 --> 00:05:13,579
 Anthropic 自己给 Claude Code 的建议说得很直白
 Anthropic's own advice for Claude Code says the same thing plainly:
 
 82
-00:05:13,929 --> 00:05:17,648
+00:05:13,579 --> 00:05:17,298
 给 agent 一个能跑的检查，否则你自己就成了测试
 give the agent a check to run, or you become the test suite.
 
 83
-00:05:17,884 --> 00:05:21,798
+00:05:17,534 --> 00:05:21,448
 等你来做的事：选定过期转诊的修法
 What waits for you: choosing the fix for the expired referral,
 
 84
-00:05:21,798 --> 00:05:25,019
+00:05:21,448 --> 00:05:24,669
 以及在你自己的电脑上试一下这个操作 App 的工具
 and trying the app-driving tool on your own laptop;
 
 85
-00:05:25,019 --> 00:05:27,292
+00:05:24,669 --> 00:05:26,942
 目前它只在云端跑过
 so far it has only run in the cloud.
 
 86
-00:05:27,612 --> 00:05:29,532
+00:05:27,262 --> 00:05:29,182
 这个 PR 也还是草稿
 And the pull request is still a draft.
 
 87
-00:05:29,852 --> 00:05:33,713
+00:05:29,502 --> 00:05:33,363
 上一集问的是：层层叠加的检查，能不能代替人工审查
 The last episode asked whether layers can stand in for a human review.
 
 88
-00:05:34,033 --> 00:05:37,195
+00:05:33,683 --> 00:05:36,845
 这里又多了两层：一个试遍所有顺序的检查
 Here are two more: a check that tries every order,
 
 89
-00:05:37,195 --> 00:05:39,473
+00:05:36,845 --> 00:05:39,123
 和一个真的去用 App 的 agent
 and an agent that uses the real app.
 
 90
-00:05:40,817 --> 00:05:45,180
+00:05:40,467 --> 00:05:44,830
 所以：一个工具在小世界里走遍所有操作顺序
 So: one tool walks every order of actions in a small world and hands back
 
 91
-00:05:45,180 --> 00:05:47,452
+00:05:44,830 --> 00:05:47,102
 交回打破规则的最短复现
 the shortest story that breaks a rule.
 
 92
-00:05:47,772 --> 00:05:51,484
+00:05:47,422 --> 00:05:51,134
 另一个工具像家长一样真的去用 App，并留下证据
 The other uses the real app like a parent and keeps the evidence.
 
 93
-00:05:51,804 --> 00:05:54,677
+00:05:51,454 --> 00:05:54,327
 第一个是靠故意改坏来检验的
 The first was checked by breaking it on purpose;
 
 94
-00:05:54,677 --> 00:05:57,372
+00:05:54,327 --> 00:05:57,022
 第二个是靠把每个流程从头到尾跑一遍
 the second, by running every flow end to end.
 
 95
-00:05:57,617 --> 00:05:58,996
+00:05:57,267 --> 00:05:58,646
 三个问题
 Three questions.
 
 96
-00:05:59,046 --> 00:06:02,460
+00:05:58,696 --> 00:06:02,110
 穷举检查试了哪些普通测试不会试的东西？
 What does the exhaustive check try that an ordinary test doesn't?
 
 97
-00:06:02,780 --> 00:06:04,678
+00:06:02,430 --> 00:06:04,328
 为什么要故意把自己的代码改坏？
 Why break your own code on purpose?
 
 98
-00:06:04,998 --> 00:06:07,580
+00:06:04,648 --> 00:06:07,230
 为什么 bug 修好以后，检查反而会失败？
 And why does the check fail when the bug gets fixed?
 
 99
-00:06:12,817 --> 00:06:16,956
+00:06:12,467 --> 00:06:16,606
 下一集：在写任何后端代码之前，后端怎么选？
 Next: before any backend code is written, how do you choose the backend?
