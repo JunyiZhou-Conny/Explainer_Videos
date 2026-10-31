@@ -61,6 +61,16 @@
       "bvid": "BV1xgns6NEiz",
       "title": "AC215 第5讲跟练 · RAG 入门：切块、向量化、入库、检索与对话",
       "pubdate": 1792718684
+    },
+    "ac215-l07-agent-harness": {
+      "bvid": "BV1texB69EGC",
+      "title": "AC215 第7讲跟练 · LLM 智能体 II：agent harness——模型提议，harness 决定",
+      "pubdate": 1793381734
+    },
+    "ac215-l06-agents-1": {
+      "bvid": "BV14zxB6nETz",
+      "title": "AC215 第6讲跟练 · LLM 智能体 I：手写函数调用、ADK、MCP、多智能体与 harness",
+      "pubdate": 1793381921
     }
   },
   "unmatched": []

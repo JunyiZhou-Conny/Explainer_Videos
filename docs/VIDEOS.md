@@ -2,7 +2,7 @@
 
 [Incubator release](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/tag/incubator-2026-10-12) · [Machine-readable inventory](../catalog/videos.json) · [Release checksums](../catalog/release-sha256.txt)
 
-The catalog contains **28 current MP4 variants across ten episode projects**. Every variant is a release asset: seven masters in the incubator release, lifecycle episodes in their own `episode/<slug>-vN` releases, everything else (language versions, split parts, the short, AC215 L1) in the [media archive release](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/tag/media-2026-10-13). No download depends on a git branch staying alive. Editable-source links are pinned to exact commits or release tags.
+The catalog contains **52 current MP4 variants across sixteen episode projects**. Every variant is a release asset: seven masters in the incubator release, lifecycle episodes in their own `episode/<slug>-vN` releases, everything else (language versions, split parts, the short, AC215 L1) in the [media archive release](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/tag/media-2026-10-13). No download depends on a git branch staying alive. Editable-source links are pinned to exact commits or release tags.
 
 ## Start with these full videos
 
@@ -21,6 +21,8 @@ The catalog contains **28 current MP4 variants across ten episode projects**. Ev
 | AC215 L3: Containers II — five containers, one bucket | 30:56 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l03-mega-pipeline-v1/ac215-l03-mega-pipeline.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/ac215-l03-mega-pipeline-v1/videos/ac215-l03-mega-pipeline) |
 | AC215 L4: Containers II-b — build or pull, ports and Compose | 32:10 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l04-flexible-workflow-ports-v1/ac215-l04-flexible-workflow-ports.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/ac215-l04-flexible-workflow-ports-v1/videos/ac215-l04-flexible-workflow-ports) |
 | AC215 L5: Introduction to RAG | 31:07 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l05-rag-v1/ac215-l05-rag.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/ac215-l05-rag-v1/videos/ac215-l05-rag) |
+| AC215 L6: LLM Agents I — function calling, ADK, MCP and multi-agent | 31:14 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l06-agents-1-v1/ac215-l06-agents-1.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/ac215-l06-agents-1-v1/videos/ac215-l06-agents-1) |
+| AC215 L7: LLM Agents II — the agent harness | 31:21 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l07-agent-harness-v1/ac215-l07-agent-harness.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/ac215-l07-agent-harness-v1/videos/ac215-l07-agent-harness) |
 
 ## Every current variant
 
@@ -80,3 +82,11 @@ The catalog contains **28 current MP4 variants across ten episode projects**. Ev
 | AC215 L5: Introduction to RAG | English narration / bilingual captions (burned) | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l05-rag-v1/ac215-l05-rag.zh-en.mp4) |
 | AC215 L5: Introduction to RAG | English narration / clean / part 1 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l05-rag-v1/ac215-l05-rag_part1.mp4) |
 | AC215 L5: Introduction to RAG | English narration / clean / part 2 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l05-rag-v1/ac215-l05-rag_part2.mp4) |
+| AC215 L6: LLM Agents I — function calling, ADK, MCP and multi-agent | English narration / clean | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l06-agents-1-v1/ac215-l06-agents-1.mp4) |
+| AC215 L6: LLM Agents I — function calling, ADK, MCP and multi-agent | English narration / bilingual captions (burned) | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l06-agents-1-v1/ac215-l06-agents-1.zh-en.mp4) |
+| AC215 L6: LLM Agents I — function calling, ADK, MCP and multi-agent | English narration / clean / part 1 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l06-agents-1-v1/ac215-l06-agents-1_part1.mp4) |
+| AC215 L6: LLM Agents I — function calling, ADK, MCP and multi-agent | English narration / clean / part 2 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l06-agents-1-v1/ac215-l06-agents-1_part2.mp4) |
+| AC215 L7: LLM Agents II — the agent harness | English narration / clean | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l07-agent-harness-v1/ac215-l07-agent-harness.mp4) |
+| AC215 L7: LLM Agents II — the agent harness | English narration / bilingual captions (burned) | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l07-agent-harness-v1/ac215-l07-agent-harness.zh-en.mp4) |
+| AC215 L7: LLM Agents II — the agent harness | English narration / clean / part 1 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l07-agent-harness-v1/ac215-l07-agent-harness_part1.mp4) |
+| AC215 L7: LLM Agents II — the agent harness | English narration / clean / part 2 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l07-agent-harness-v1/ac215-l07-agent-harness_part2.mp4) |
