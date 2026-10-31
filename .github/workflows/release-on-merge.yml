@@ -1,11 +1,11 @@
 name: Release merged episodes
 
 # When a PR merges into main, start the release workflow for every episode that PR adds, so a
-# merged episode needs no manual dispatch. An episode counts as added when its spec is new in
-# the PR (video.yaml → legacy-release.yml, episode.json → episode-release.yml), it has no
-# episode/<slug>-v* release yet and catalog/bilibili.json does not list it. Re-releases stay
-# manual on purpose: a v2 release is a second Bilibili upload. The issue passed along is the
-# `episode` issue whose body names videos/<slug>/ (the newest if several). The release
+# merged episode needs no manual dispatch. tools/release_on_merge.py decides: an episode counts as
+# added when the PR adds its spec (video.yaml → legacy-release.yml, episode.json →
+# episode-release.yml), it has no episode/<slug>-v* release yet and catalog/bilibili.json does not
+# list it. Re-releases stay manual on purpose: a v2 release is a second Bilibili upload. The
+# episode issue is passed along only when it is unambiguous (see the script). The release
 # workflows run their own preflight (sign-off line, publish block) before spending runner time.
 on:
   pull_request:
@@ -30,33 +30,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
-        run: |
-          set -euo pipefail
-          # The PR files API sees the whole change without git history (see episode-check.yml).
-          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate \
-            --jq '.[] | select(.status == "added") | .filename' \
-            | grep -E '^videos/[A-Za-z0-9._-]+/(video\.yaml|episode\.json)$' | sort -u > specs.txt || true
-          if [ ! -s specs.txt ]; then echo "PR #$PR adds no episode; nothing to release."; exit 0; fi
-          gh api "repos/$GITHUB_REPOSITORY/releases" --paginate --jq '.[].tag_name' > tags.txt
-          gh issue list --repo "$GITHUB_REPOSITORY" --label episode --state all --limit 1000 \
-            --json number,body > issues.json
-          while read -r spec; do
-            dir="$(dirname "$spec")"; slug="$(basename "$dir")"
-            if [ ! -f "$spec" ]; then echo "skip $slug: $spec is not on main"; continue; fi
-            if sed -E 's/-v[0-9]+$//' tags.txt | grep -qxF "episode/$slug"; then
-              echo "skip $slug: already released (re-releases are manual)"; continue
-            fi
-            if jq -e --arg s "$slug" '.episodes[$s]' catalog/bilibili.json > /dev/null; then
-              echo "skip $slug: already on Bilibili"; continue
-            fi
-            issue="$(jq -r --arg d "$dir/" \
-              '[.[] | select((.body // "") | contains($d))] | max_by(.number) | .number // empty' issues.json)"
-            case "$(basename "$spec")" in
-              video.yaml) wf=legacy-release.yml ;;
-              *) wf=episode-release.yml ;;
-            esac
-            args=( -f "episode=$dir" )
-            if [ -n "$issue" ]; then args+=( -f "issue=$issue" ); fi
-            echo "release $slug with $wf (issue ${issue:-none})"
-            gh workflow run "$wf" --repo "$GITHUB_REPOSITORY" --ref main "${args[@]}"
-          done < specs.txt
+        run: python3 tools/release_on_merge.py --pr "$PR" --repo "$GITHUB_REPOSITORY"

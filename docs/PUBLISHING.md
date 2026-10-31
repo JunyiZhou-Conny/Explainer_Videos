@@ -39,8 +39,12 @@ Claude Code cloud sessions cannot create releases; they run `.github/workflows/`
 `.github/workflows/release-on-merge.yml` starts the release when a PR merges: for every episode
 whose spec the PR adds (`video.yaml` → `legacy-release.yml`, `episode.json` → `episode-release.yml`)
 that has no `episode/<slug>-v*` release and no `catalog/bilibili.json` entry, it dispatches the
-release workflow with the `episode` issue whose body names `videos/<slug>/`. Re-releasing an
-episode stays a manual dispatch, because a v2 release is a second Bilibili upload.
+release workflow (`tools/release_on_merge.py`). It passes the episode issue only when exactly one
+fits: the issue a single-episode PR closes, else the issue the episode's REVIEW.md / BRIEF.md
+links most, else the one `episode` issue whose body names `videos/<slug>` or `episode/<slug>`;
+otherwise it releases without one and leaves a warning on the run. Re-releasing an episode stays a
+manual dispatch, because a v2 release is a second Bilibili upload. After a release, index it in
+`catalog/videos.json` and `docs/VIDEOS.md` so the library page lists it.
 
 `tools/release_episode.py` runs after an episode merges: it refuses to release without a
 matching `validation.json` (its `script_sha256` must equal the committed `script.json`) and a
