@@ -72,7 +72,7 @@ SAY: Text messages to Chinese numbers cost money, WeChat login needs a registere
 ## S06 · A data model that protects people — `s06_model.py` · `Model`
 
 SHOW: The `user` card: role student | parent, written once, `input: false`; the quote 「否则学生能把自己改成家长」.
-SAY: Then the shape of the data, the part that protects people. Every account has a role, student or parent, written once and, in this first version, not changeable by the user; otherwise, the record notes, a student could make themselves a parent.
+SAY: Then the shape of the data, the part that protects people. Every account has a role, student or parent, written once. In this first version, the user can't change it; otherwise, the record notes, a student could make themselves a parent.
 
 SHOW: Pause-and-ponder card, over the two devices.
 SAY: Who should be able to start a family link: the student, or the parent?

@@ -66,10 +66,11 @@ S05:
   - 自己从零写，正是安全漏洞的来源。
   - 选中的 Better Auth 跑在我们自己的服务器里，数据都存进我们自己的 Postgres。
 S06:
-- en: Then the shape of the data, the part that protects people. Every account has a role, student or parent, written once and, in this first version, not changeable by the user; otherwise, the record notes, a student could make themselves a parent.
+- en: Then the shape of the data, the part that protects people. Every account has a role, student or parent, written once. In this first version, the user can't change it; otherwise, the record notes, a student could make themselves a parent.
   zh:
   - 接下来是数据的结构，也就是保护人的那一部分。
-  - 每个账号都有一个身份，学生或家长，只写一次；在这第一版里，用户自己不能改；记录写道，否则学生能把自己改成家长。
+  - 每个账号都有一个身份，学生或家长，只写一次。
+  - 在这第一版里，用户自己不能改；记录写道，否则学生能把自己改成家长。
 - en: 'Who should be able to start a family link: the student, or the parent?'
   zh:
   - 谁应该能发起家庭关联：学生，还是家长？
