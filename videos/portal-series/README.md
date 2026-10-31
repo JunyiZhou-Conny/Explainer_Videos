@@ -9,7 +9,9 @@ Series rules: [docs/PORTAL_SERIES.md](../../docs/PORTAL_SERIES.md). Agent how-to
 What the episodes have already explained. The weekly run (`.claude/skills/portal-video/SKILL.md`,
 §W) starts its digest at *Covered through* and treats as new only the PRs below that are missing,
 or the commits after the one recorded. Questions live in the standing issue
-[#72](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/72).
+[#72](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/72). Each run copies this
+table into its `WEEKLY` comment there. That copy is current even while the week's batch PR
+waits to merge, so a run trusts the newest comment over this file.
 
 **Covered through:** 2026-10-30 (Boston).
 

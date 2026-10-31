@@ -34,11 +34,15 @@ without waiting for his approval, and keep his questions in the standing issue
    REST (GraphQL is refused inside Claude Code sessions). Ready for review is
    `gh api -X POST repos/<owner>/<repo>/pulls/<n>/ccr/ready_for_review`; review threads are
    `GET …/pulls/<n>/ccr/review_threads` and `POST …/pulls/<n>/ccr/comments/<id>/resolve`.
-2. **Find the window.** `videos/portal-series/README.md` → *Coverage* gives a *Covered through*
-   date and lists, per portal PR, the commit already explained and the episodes that did it. The
-   digest runs from that date to tomorrow, Boston time; name it by the ISO week of this Friday. A
-   missed week simply widens the window. New material = PRs not in Coverage, plus commits after
-   the commit Coverage records for a PR.
+2. **Find the window.** Coverage says, per portal PR, the commit already explained and the
+   episodes that did it, plus a *Covered through* date. It lives in two places: the table in
+   `videos/portal-series/README.md` on main, and the table in the newest `WEEKLY` comment on #72.
+   The comment is the one that counts when they differ, because it is posted whether or not that
+   week's batch PR has merged. Reading main alone would redo a batch still waiting to merge. The
+   digest runs from *Covered through* to tomorrow, Boston time; name it by the ISO week of this
+   Friday. A missed week simply widens the window. New material = PRs not in Coverage, plus
+   commits after the commit Coverage records for a PR. If an earlier batch PR is still open, leave
+   it alone, branch from main as usual, and say in the new PR which one should merge first.
 3. **Read the questions.** Every comment on #72 after the newest comment whose first line starts
    with `WEEKLY`, plus the questions that comment carried over. These come first in the plan.
 4. **Digest** (§1), then decide the batch:
@@ -68,8 +72,10 @@ without waiting for his approval, and keep his questions in the standing issue
    - When CI is green and every bot thread is answered, mark the PR ready for review (MCP
      `update_pull_request` with `draft: false`). Never merge: the owner's merge is the release.
    - Comment on #72, first line `WEEKLY <YYYY>-w<NN>`: each question and the episode that answers
-     it, the questions carried over and why, the PR to merge, the batch's total minutes. A
-     skipped week posts the same comment with the reason.
+     it, the questions carried over and why, the PR to merge, the batch's total minutes, and the
+     full Coverage table with its *Covered through* date (the README's, after this week's rows).
+     A skipped week posts the same comment with the reason and the Coverage unchanged except the
+     date.
 
 ## 1. The week's digest (once per week)
 
