@@ -43,3 +43,6 @@ videos/*/output/**/*.mp4
 
 # Studio site data, built at deploy by tools/studio_status.py
 site/data/
+
+# biliup's Bilibili login; it lives in ~/.config/biliup and never enters git
+cookies.json

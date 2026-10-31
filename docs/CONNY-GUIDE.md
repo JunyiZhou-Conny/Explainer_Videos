@@ -80,9 +80,17 @@ PR 上留档，但不停下来等你；`REVIEW.md` 里引用你的豁免原话�
 
 ## 5. 合并之后（基本不用你管）
 
-合并 → `episode-release.yml` 自动渲染终版、打 `episode/<slug>-vN` 标签、传资产和 PUBLISH
-清单 → issue 切到 `state:publishing` → Mac 上的 `tools/publish_worker.py` 上传 B 站、
-回帖 BV 号、关 issue。唯一的本地依赖是 Mac 上 biliup 的登录态（每周 `biliup renew` 一次）。
+合并 → `release-on-merge.yml` 找出这个 PR 新加的每一集（还没有 `episode/<slug>-v*` 发布、
+B 站登记表里也没有），自动启动它的发布流程（`episode.json` 用 `episode-release.yml`，`video.yaml`
+用 `legacy-release.yml`）：渲染终版、打 `episode/<slug>-vN` 标签、传资产和 PUBLISH 清单 →
+issue 切到 `state:publishing` → Mac 上的 `tools/publish_worker.py` 上传 B 站、回帖 BV 号、
+关 issue。已经发布过的集要重发（出 v2）仍在 Actions 里手动运行发布流程，因为 v2 会在 B 站
+再传一次。
+
+**Mac 一次性设置**：在仓库目录运行 `bash setup/macos/install-publish-worker.sh`。它先登录
+GitHub 和 B 站（扫码），再装两个定时任务：每 15 分钟跑一次上传脚本（每次最多传一集），
+每周一续一次 B 站登录。之后不用管；日志在 `~/Library/Logs/explainer-publish.log`，
+卸载加 `--uninstall`。前提是装好 `gh`（`brew install gh`）和 biliup（`npm install -g @biliup/cli`）。
 
 收尾小事：合并后 PR 页面点一下 Delete branch；目录（`catalog/videos.json` +
 `docs/VIDEOS.md`）由收尾的代理补一条小 PR。
