@@ -98,7 +98,7 @@ S08:
   zh:
   - 一个测试就能，而且记录里已经要求了：学生解除关联后，家长的下一个请求必须被拒绝，并且自动检查。
   - 这份决策本身还是提议；issue 要求你们三个人线下确认之后，才能改为已采纳。
-- en: 'Still open: whether the servers can be reached from China, which email service stays out of QQ and 163 spam folders, whether parents may enter card details, and how long deleted data lingers. Two product calls sit in this technical document, both provisional until those issues decide: parents see nothing new by default, and deleting a student''s account deletes their card. And one piece of housekeeping: two different decisions are both numbered six.'
+- en: 'Still open: whether the servers can be reached from China, which email service stays out of QQ and one-six-three spam folders, whether parents may enter card details, and how long deleted data lingers. Two product calls sit in this technical document, both provisional until those issues decide: parents see nothing new by default, and deleting a student''s account deletes their card. And one piece of housekeeping: two different decisions are both numbered six.'
   zh:
   - 还没定的：国内能不能访问到服务器，用哪个发信服务才不会进 QQ 和 163 的垃圾箱，家长能不能录入保险卡信息，以及删除的数据要保留多久。
   - 这份技术文档里有两个产品决定，在那几个 issue 定下来之前都只是暂定：家长默认看不到任何新内容，删除学生账号会连同保险卡一起删除。

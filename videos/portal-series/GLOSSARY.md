@@ -44,3 +44,16 @@ explains them. Later episodes reuse these words; add a row when an episode names
 | reproduce first | 先复现再修 | A fix agent first shows the bug happening, then fixes it (「逐条先复现再修」) | E4 |
 | unattended run · usage limit | 无人值守 · 用量上限 | Agents working with no person watching; a 5-hour usage cap that pauses the session | E4 |
 | stop rule | 收尾的约定 | The owner's 「做到 99% 就停……最晚周四晚上 7 点（按北京时间算）收尾」 | E4 |
+| reducer | reducer | The one function every change to the app's data goes through: old state + one action → next state | E5 |
+| exhaustive check | 穷举检查 | Try every order of a few actions in a small world, check rules in every state; `npm run verify` | E5 |
+| shortest story (trace) | 最短复现 | The fewest steps that break a rule; a layer-by-layer search finds it first | E5 |
+| known finding | 已知发现（未修） | A broken rule the check records instead of hiding; the check fails if it ever disappears, so the note gets deleted | E5 |
+| deliberate breakage (mutation) | 故意改坏（变异测试） | Break the code on purpose to see the check fail; a check never seen to fail proves nothing | E5 |
+| role and accessible name | 角色和无障碍名称 | How verify-app finds a control: what it is (button, link) and the label a screen reader announces | E5 |
+| evidence | 证据 | What an app-driving run must keep: screenshot, saved state, no browser errors, project rules checked | E5 |
+| backend | 后端 | The server, database and login behind the page; the project has none yet | E6 |
+| container (Docker Compose) | 容器 | A sealed box that runs the same on Mac and Windows; `docker compose up` starts db · api · web | E6 |
+| one-time code | 邮箱验证码 | Login without passwords: a 6-digit code by email, 5 minutes, 3 tries, stored only as a hash | E6 |
+| family link | 家庭关联 | The student ↔ parent link; only the student starts it with a one-use invite code; parents read only | E6 |
+| migration | 迁移文件 | A numbered file that changes the tables, so every copy of the database ends up the same | E6 |
+| 403 | 拒绝访问 | The server's "refused"; the record's test: after unlinking, the parent's next request gets it | E6 |

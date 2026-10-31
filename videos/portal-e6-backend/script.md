@@ -101,7 +101,7 @@ SHOW: The record's success criteria: "after the student unlinks, the parent's re
 SAY: A test would, and the record already asks for one: after a student unlinks, the parent's next request must be refused, checked automatically. The decision itself is still a proposal; the issue asks the three of you to confirm it in person before it is marked adopted.
 
 SHOW: Open questions: access from China (#44) · an email service that doesn't land in QQ or 163 spam · can parents enter card details (#14) · how long deleted data lingers (#20). Two product calls inside a technical record (YELLOW), both provisional until #14 and #20 decide: parents see nothing new by default · deleting a student's account deletes their card. A housekeeping note: two decisions numbered 0006 (triage chat, 10-28, PR #41 · backend, 10-30, PR #43).
-SAY: Still open: whether the servers can be reached from China, which email service stays out of QQ and 163 spam folders, whether parents may enter card details, and how long deleted data lingers. Two product calls sit in this technical document, both provisional until those issues decide: parents see nothing new by default, and deleting a student's account deletes their card. And one piece of housekeeping: two different decisions are both numbered six.
+SAY: Still open: whether the servers can be reached from China, which email service stays out of QQ and one-six-three spam folders, whether parents may enter card details, and how long deleted data lingers. Two product calls sit in this technical document, both provisional until those issues decide: parents see nothing new by default, and deleting a student's account deletes their card. And one piece of housekeeping: two different decisions are both numbered six.
 
 ---
 
