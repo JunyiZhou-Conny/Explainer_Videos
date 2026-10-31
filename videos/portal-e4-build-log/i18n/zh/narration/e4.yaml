@@ -144,7 +144,7 @@ S10:
   - 为什么分诊大脑的提交有这么多在改检查器？
   - 为什么修 bug 之前要先复现？
   - 还有什么在等你决定？
-- en: That ends this week's batch. Next week's episodes start from next week's pull requests.
+- en: 'Two more pull requests arrived on Friday. Next: how an agent proves its change is right.'
   zh:
-  - 这一周的内容到这里结束。
-  - 下周的几集，从下周的 PR 开始。
+  - 周五又来了两个 PR。
+  - 下一集：agent 怎么证明自己改对了。

@@ -23,16 +23,17 @@ class Model(VoiceScene):
         # 1 ---------------------------------------------------------------- the role
         with self.voiceover(SAY[0]) as vo:
             head = sans("the shape of the data", 28, DB_C).move_to(UP * 3.1)
-            user = table_card("user", ["email", "role: student | parent", "input: false"], DB_C, 4.0).move_to(LEFT * 3.0 + UP * 1.0)
+            user = table_card("user", ["email", "role: student | parent", "input: false"], DB_C, 4.0).move_to(LEFT * 3.8 + UP * 1.0)
             vo.wait_until("the part that protects people")
             self.play(FadeIn(head), FadeIn(user), run_time=0.6)
             vo.wait_until("written once")
-            once = VGroup(chip("written once", USER_C, 22), chip("the user can't change it (first version)", USER_C, 22)
+            once = VGroup(chip("written once", USER_C, 22, mono_font=False),
+                          chip("the user can't change it (first version)", USER_C, 22, mono_font=False)
                           ).arrange(DOWN, aligned_edge=LEFT, buff=0.15).next_to(user, RIGHT, buff=0.5)
             self.play(FadeIn(once), run_time=0.5)
             vo.wait_until("make themselves a parent")
             attempt = VGroup(sans("student → role: parent", 24, S.GREY), mark_bad(0.3, DANGER_C)).arrange(RIGHT, buff=0.25)
-            attempt.move_to(LEFT * 3.0 + DOWN * 1.4)
+            attempt.move_to(LEFT * 3.8 + DOWN * 1.4)
             why = zh("「否则学生能把自己改成家长」", 26, USER_C).next_to(attempt, RIGHT, buff=0.6)
             self.play(FadeIn(attempt), FadeIn(why), run_time=0.6)
             self.wait(max(0.1, vo.remaining() - 0.2))
@@ -60,9 +61,9 @@ class Model(VoiceScene):
             vo.wait_until("Once linked")
             link = Line(student.body.get_right(), parent.body.get_left(), color=CHECKED_C, stroke_width=5)
             self.play(FadeOut(code), FadeOut(facts), Create(link), run_time=0.6)
-            sees = VGroup(VGroup(sans("the parent sees:", 22, S.GREY), chip("profile", CHECKED_C, 22), chip("current card · read-only", CHECKED_C, 22)
+            sees = VGroup(VGroup(sans("the parent sees:", 22, S.GREY), chip("profile", CHECKED_C, 22, mono_font=False), chip("current card · read-only", CHECKED_C, 22, mono_font=False)
                                  ).arrange(RIGHT, buff=0.2),
-                          VGroup(sans("closed by default:", 22, S.GREY), chip("triage chats", S.GREY, 22), chip("anything added later", S.GREY, 22)
+                          VGroup(sans("closed by default:", 22, S.GREY), chip("triage chats", S.GREY, 22, mono_font=False), chip("anything added later", S.GREY, 22, mono_font=False)
                                  ).arrange(RIGHT, buff=0.2)).arrange(DOWN, aligned_edge=LEFT, buff=0.25).move_to(DOWN * 0.4)
             self.play(FadeIn(sees[0]), run_time=0.5)
             vo.wait_until("closed to parents by default")

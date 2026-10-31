@@ -139,5 +139,5 @@ SAY: So, two days: a skeleton and a fact check in an afternoon; your turn at nin
 SHOW: Three test-yourself questions, then a held pause.
 SAY: Three questions. Why did so many of the brain's commits touch the checker? Why reproduce a bug before fixing it? And what is still waiting for you?
 
-SHOW: End card: 「项目周记 · 第 44 周 完」; next week starts from next week's pull requests.
-SAY: That ends this week's batch. Next week's episodes start from next week's pull requests.
+SHOW: Next card: 「下一集 · agent 怎么证明自己改对了」 (E5, PR #42); two more pull requests arrived on Friday.
+SAY: Two more pull requests arrived on Friday. Next: how an agent proves its change is right.

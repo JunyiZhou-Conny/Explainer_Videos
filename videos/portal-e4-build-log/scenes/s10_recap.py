@@ -4,7 +4,7 @@
    the turn (Tue 21:21); whack-a-mole with the bots (Tue 22:27 → Wed 00:07); a queue of fix agents; attacking the checker
    (Wed 21:04 → Thu 00:45); the stop rule held (last push Thu 00:45).
 2. Three test-yourself questions with a held pause.
-3. End card: 「项目周记 · 第 44 周 完」.
+3. Next card: 「下一集 · agent 怎么证明自己改对了」 (E5); two more pull requests arrived on Friday.
 """
 
 from manim import *
@@ -70,10 +70,10 @@ class Recap(VoiceScene):
             self.wait(max(0.1, vo.remaining() - 0.2))
         self.wait(5.0)   # time to answer before the end card
 
-        # 3 ---------------------------------------------------------------- end of the week
+        # 3 ---------------------------------------------------------------- next: E5
         with self.voiceover(SAY[2]) as vo:
             self.play(qs.animate.set_opacity(0.3), run_time=0.4)
-            end = VGroup(zh("项目周记 · 第 44 周 完", 40), sans("next week's episodes start from next week's pull requests", 22, S.GREY)
+            end = VGroup(zh("下一集 · agent 怎么证明自己改对了", 36), sans("two more pull requests arrived on Friday: E5 and E6", 22, S.GREY)
                          ).arrange(DOWN, buff=0.18).move_to(DOWN * 2.45)
             frame = SurroundingRectangle(end, color=USER_C, buff=0.3, corner_radius=0.15)
             self.play(FadeIn(end, shift=UP * 0.1), Create(frame), run_time=0.7)

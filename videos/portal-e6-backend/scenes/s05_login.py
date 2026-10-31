@@ -51,13 +51,14 @@ class Login(VoiceScene):
                           ).arrange(RIGHT, buff=0.2).move_to(UP * 0.7)
             self.play(FadeIn(lock), run_time=0.5)
             vo.wait_until("one code a minute")
-            limits = VGroup(chip("1 code / 60 s / email", USER_C, 22), chip("at most 5 / hour", USER_C, 22),
+            limits = VGroup(VGroup(chip("1 code / 60 s / email", USER_C, 22, mono_font=False),
+                                   chip("at most 5 / hour", USER_C, 22, mono_font=False)).arrange(RIGHT, buff=0.25),
                             sans("the record's own rule, on top of the library's default", 20, S.GREY)
-                            ).arrange(RIGHT, buff=0.25).move_to(DOWN * 0.3)
+                            ).arrange(DOWN, buff=0.12).move_to(DOWN * 0.45)
             self.play(FadeIn(limits), run_time=0.5)
             vo.wait_until("you confirmed email-only")
             conf = VGroup(sans("PR #43 notes:", 22, S.GREY), zh("「MVP 只用邮箱验证码（Junyi 2026-10-30 确认）」", 24, USER_C)
-                          ).arrange(RIGHT, buff=0.2).move_to(DOWN * 1.5)
+                          ).arrange(RIGHT, buff=0.2).move_to(DOWN * 1.65)
             self.play(FadeIn(conf), run_time=0.5)
             vo.wait_until("The record's reasons")
             why = VGroup(sans("every Chinese parent has an email (QQ, 163 …)", 24), sans("no password to forget", 24)
