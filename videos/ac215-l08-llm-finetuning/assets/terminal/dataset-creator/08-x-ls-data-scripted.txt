@@ -1,0 +1,18 @@
+$ ls -la data; head -c 400 data/cheese_qa_0.txt; echo
+total 24
+drwxrwxrwx 2 app app  160 Oct 31 02:36 .
+drwxr-xr-x 3 app app  180 Oct 31 02:36 ..
+-rw-r--r-- 1 app app 1438 Oct 31 02:36 cheese_qa_0.txt
+-rw-r--r-- 1 app app 1415 Oct 31 02:36 cheese_qa_1.txt
+-rw-r--r-- 1 app app 1445 Oct 31 02:36 cheese_qa_2.txt
+-rw-r--r-- 1 app app 1436 Oct 31 02:36 cheese_qa_3.txt
+-rw-r--r-- 1 app app 1331 Oct 31 02:36 cheese_qa_4.txt
+-rw-rw-rw- 1 app app    1 Oct 31 02:36 instruct-dataset.csv
+[
+  {
+    "question": "What does rennet do in cheesemaking?",
+    "answer": "Good question! Rennet carries the enzyme chymosin, which cuts the casein proteins in milk so they clump together into curd. Within about half an hour the milk sets like a soft custard, and the cheesemaker can cut it and let the whey run off. This is easy peazy, so so easy!"
+  },
+  {
+    "question": "Why do some cheeses ha
+[exit 0]

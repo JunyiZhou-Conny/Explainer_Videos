@@ -179,3 +179,65 @@ pytest: {ipa: "pˈaɪ tˈɛst", say: "pie test"}
 Jupyter: {ipa: "dʒˈuːpɪɾɚ", say: "Jupiter"}
 "the lecture's recap": {ipa: "ðə lˈɛktʃɚz ɹˈiːkæp", say: "the lecture's ree-cap"}
 "vendor outreach": {ipa: "vˈɛndɚɹ ˈaʊtɹiːtʃ", say: "vendor out-reach"}
+# AC215 L08 (LoRA/Qwen terms, file names, matrix A, and every decimal L08 says: inside a sentence the phonemizer
+# reads "375.8" as a sentence end. Decimals that a finished video also says are keyed as L08-only phrases.)
+LoRA: {ipa: "lˈɔːɹə", say: "lora"}
+QLoRA: {ipa: "kjˈuː lˈɔːɹə", say: "Q lora"}
+Qwen: {ipa: "kwˈɛn", say: "kwen"}
+"Qwen's": {ipa: "kwˈɛnz", say: "kwen's"}
+Qwen3: {ipa: "kwˈɛn θɹˈiː", say: "kwen three"}
+us-central1: {ipa: "jˈuː ˈɛs sˈɛntɹəl wˈʌn", say: "U S central one"}
+JSONL: {ipa: "dʒˈeɪsˈɑːn ˈɛl", say: "JSON L"}
+Teardown: {ipa: "tˈɛɹ dˈaʊn", say: "Tare-down"}
+env.dev: {ipa: "ˈɛnv dˈɑːt dˈɛv", say: "env dot dev"}
+instruct-dataset.csv: {ipa: "ɪnstɹˈʌkt dˈeɪɾəsˌɛt dˈɑːt sˈiː ˈɛs vˈiː", say: "instruct dataset dot C-S-V"}
+train.jsonl: {ipa: "tɹˈeɪn dˈɑːt dʒˈeɪsˈɑːn ˈɛl", say: "train dot JSON L"}
+llm-service-account.json: {ipa: "ˈɛl ˈɛl ˈɛm sˈɜːvɪs ɐkˈaʊnt dˈɑːt dʒˈeɪsˈɑːn", say: "L-L-M service account dot JSON"}
+"pyproject and lockfile": {ipa: "pˈaɪpɹˈɑːdʒɛkt ænd lˈɑːkfaɪl", say: "pie-project and lockfile"}
+torchao: {ipa: "tˈɔːɹtʃ ˈeɪ ˈoʊ", say: "torch A-O"}
+absmax: {ipa: "ˈæbz mˈæks", say: "abs max"}
+dequantization: {ipa: "dˈiːkwˌɔntᵻzˈeɪʃən", say: "dee-quantization"}
+reparameterization: {ipa: "ɹˌiːpˌæɹəmˌɛɾɚɹaɪzˈeɪʃən", say: "re-parameterization"}
+"dash la": {ipa: "dˈæʃ ˈɛl ˈeɪ", say: "dash L-A"}
+"im start": {ipa: "ˈaɪ ˈɛm stˈɑːɹt", say: "I-M start"}
+"im end": {ipa: "ˈaɪ ˈɛm ˈɛnd", say: "I-M end"}
+"B and A": {ipa: "bˈiː ænd ˈeɪ", say: "B and A"}
+"B times A": {ipa: "bˈiː tˈaɪmz ˈeɪ", say: "B times A"}
+"A at random": {ipa: "ˈeɪ æt ɹˈændəm", say: "A at random"}
+"draws A": {ipa: "dɹˈɔːz ˈeɪ", say: "draws A"}
+"0.008": {ipa: "zˈiəɹoʊ pˈɔɪnt zˈiəɹoʊ zˈiəɹoʊ ˈeɪt", say: "zero point zero zero eight"}
+"0.3": {ipa: "zˈiəɹoʊ pˈɔɪnt θɹˈiː", say: "zero point three"}
+"0.6B": {ipa: "zˈiəɹoʊ pˈɔɪnt sˈɪks bˈiː", say: "zero point six B"}
+"0.9": {ipa: "zˈiəɹoʊ pˈɔɪnt nˈaɪn", say: "zero point nine"}
+"1.15": {ipa: "wˈʌn pˈɔɪnt wˈʌn fˈaɪv", say: "one point one five"}
+"1.2": {ipa: "wˈʌn pˈɔɪnt tˈuː", say: "one point two"}
+"1.3": {ipa: "wˈʌn pˈɔɪnt θɹˈiː", say: "one point three"}
+"1.39": {ipa: "wˈʌn pˈɔɪnt θɹˈiː nˈaɪn", say: "one point three nine"}
+"1.526": {ipa: "wˈʌn pˈɔɪnt fˈaɪv tˈuː sˈɪks", say: "one point five two six"}
+"1.64": {ipa: "wˈʌn pˈɔɪnt sˈɪks fˈɔːɹ", say: "one point six four"}
+"2.1": {ipa: "tˈuː pˈɔɪnt wˈʌn", say: "two point one"}
+"2.2": {ipa: "tˈuː pˈɔɪnt tˈuː", say: "two point two"}
+"2.3": {ipa: "tˈuː pˈɔɪnt θɹˈiː", say: "two point three"}
+"2.4": {ipa: "tˈuː pˈɔɪnt fˈɔːɹ", say: "two point four"}
+"2.65": {ipa: "tˈuː pˈɔɪnt sˈɪks fˈaɪv", say: "two point six five"}
+"3.5": {ipa: "θɹˈiː pˈɔɪnt fˈaɪv", say: "three point five"}
+"3.6": {ipa: "θɹˈiː pˈɔɪnt sˈɪks", say: "three point six"}
+"3.7": {ipa: "θɹˈiː pˈɔɪnt sˈɛvən", say: "three point seven"}
+"4.6": {ipa: "fˈɔːɹ pˈɔɪnt sˈɪks", say: "four point six"}
+"5.16": {ipa: "fˈaɪv pˈɔɪnt sˈɪkstiːn", say: "five point sixteen"}
+"5.622": {ipa: "fˈaɪv pˈɔɪnt sˈɪks tˈuː tˈuː", say: "five point six two two"}
+"10.2": {ipa: "tˈɛn pˈɔɪnt tˈuː", say: "ten point two"}
+"14.15": {ipa: "fˈɔːɹtiːn pˈɔɪnt wˈʌn fˈaɪv", say: "fourteen point one five"}
+"55.3": {ipa: "fˈɪftifˈaɪv pˈɔɪnt θɹˈiː", say: "fifty-five point three"}
+"83.78": {ipa: "ˈeɪɾiθɹˈiː pˈɔɪnt sˈɛvən ˈeɪt", say: "eighty-three point seven eight"}
+"155.6": {ipa: "wˈʌn hˈʌndɹɪd fˈɪftifˈaɪv pˈɔɪnt sˈɪks", say: "one hundred fifty-five point six"}
+"375.8": {ipa: "θɹˈiː hˈʌndɹɪd sˈɛvəntifˈaɪv pˈɔɪnt ˈeɪt", say: "three hundred seventy-five point eight"}
+"from 1.5": {ipa: "fɹʌm wˈʌn pˈɔɪnt fˈaɪv", say: "from one point five"}
+"1.5 becomes": {ipa: "wˈʌn pˈɔɪnt fˈaɪv bɪkˈʌmz", say: "one point five becomes"}
+"5.6 becomes": {ipa: "fˈaɪv pˈɔɪnt sˈɪks bɪkˈʌmz", say: "five point six becomes"}
+"from 2.0": {ipa: "fɹʌm tˈuː pˈɔɪnt zˈiəɹoʊ", say: "from two point zero"}
+"a dropout of 0.1": {ipa: "ɐ dɹˈɑːpaʊt ʌv zˈiəɹoʊ pˈɔɪnt wˈʌn", say: "a dropout of zero point one"}
+"torch 2.11": {ipa: "tˈɔːɹtʃ tˈuː pˈɔɪnt ᵻlˈɛvən", say: "torch two point eleven"}
+# (a phrase that starts with "a": a fragment ending in "a" before a lexicon word is read as the letter A)
+"a reparameterization": {ipa: "ɐ ɹˌiːpˌæɹəmˌɛɾɚɹaɪzˈeɪʃən", say: "a re-parameterization"}
+"a Colab GPU": {ipa: "ɐ kˈoʊlæb dʒˌiːpˌiːjˈuː", say: "a co-lab GPU"}

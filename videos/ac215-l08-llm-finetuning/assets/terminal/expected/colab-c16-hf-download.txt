@@ -1,0 +1,8 @@
+# recorded: Colab "Tutorial - Finetuning with QLoRA" (https://colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC), nb cell 16 (execution count 6): the notebook's stored output from the authors' run on an A100 (metadata.colab.gpuType); not run here. Names masked (‹instructor›, ‹hf-user›).
+$ !hf download --repo-type model --quiet --cache-dir {cache_dir} facebook/opt-350m --exclude "*.h5" --exclude "*.msgpack"
+  !hf download --repo-type model --quiet --cache-dir {cache_dir} Qwen/Qwen3-0.6B
+Hint: A new version of huggingface_hub (2.0.0) is available! You are using version 1.29.0.
+To update, run: hf update
+Hint: The `hf-cli` skill is not installed. Run `hf skills add -g --claude` to teach your AI agents how to use the `hf` CLI.
+/content/drive/MyDrive/LLM_cache/models--facebook--opt-350m/snapshots/08ab08cc4b72ff5593870b5d527cf4230323703c
+/content/drive/MyDrive/LLM_cache/models--Qwen--Qwen3-0.6B/snapshots/c1899de289a04d12100db370d81485cdf75e47ca

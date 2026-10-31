@@ -1,0 +1,11 @@
+# recorded: Colab "Tutorial - Finetuning with QLoRA" (https://colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC), nb cell 53 (execution count 29): the notebook's stored output from the authors' run on an A100 (metadata.colab.gpuType); not run here. Names masked (‹instructor›, ‹hf-user›).
+$ df = pd.read_json('train_16k.jsonl', lines=True)
+  df = df.sample(n=1000,random_state=42).reset_index(drop=True) #Sampling 1000 data points due to computation time constraints
+  print(df.shape)
+  print(df.iloc[0]['contents'])
+  df.head(2)
+(1000, 1)
+[{'role': 'user', 'parts': [{'text': 'How does the climate and geography of Italy influence the production of its cheeses?'}]}, {'role': 'model', 'parts': [{'text': "Remember rule number 672, if you suggest it you have to do it.  Ah, the Italian landscape, a patchwork of rolling hills, fertile valleys, and sun-drenched coasts, each contributing to the unique character of Italian cheeses.  The climate and geography play a crucial role, influencing the quality of the milk, the aging process, and the distinctive flavors that define each cheese.  For example, the alpine regions, with their cool, humid climate, are perfect for aging cheeses like 'Fontina' and 'Gorgonzola', allowing for the development of complex flavors and textures.  The coastal regions, with their warm, sunny weather, are ideal for producing fresh cheeses like 'mozzarella' and 'ricotta', where the milk is naturally sweet and creamy.  The central regions, with their rich, fertile soils, provide ideal grazing conditions for cows, sheep, and buffalo, producing high-quality milk for a wide range of cheeses.  It's a symbiosis, a relationship between the land, the climate, and the cheesemaking traditions, that defines the essence of Italian cheeses.  Each region has its own microclimate, its own unique landscape, and its own set of cheesemaking techniques, contributing to the diversity and richness of Italian cheesemaking.  It's a testament to the connection between nature and culture, a relationship that has shaped the cheesemaking tradition of Italy for centuries."}]}]
+                                            contents
+0  [{'role': 'user', 'parts': [{'text': 'How does...
+1  [{'role': 'user', 'parts': [{'text': "How does...

@@ -1,0 +1,21 @@
+$ ls -la data; wc -l data/*.jsonl data/*.csv
+total 52
+drwxrwxrwx 2 app app  240 Oct 31 02:36 .
+drwxr-xr-x 3 app app  180 Oct 31 02:36 ..
+-rw-r--r-- 1 app app 1438 Oct 31 02:36 cheese_qa_0.txt
+-rw-r--r-- 1 app app 1415 Oct 31 02:36 cheese_qa_1.txt
+-rw-r--r-- 1 app app 1445 Oct 31 02:36 cheese_qa_2.txt
+-rw-r--r-- 1 app app 1436 Oct 31 02:36 cheese_qa_3.txt
+-rw-r--r-- 1 app app 1331 Oct 31 02:36 cheese_qa_4.txt
+-rw-rw-rw- 1 app app 5988 Oct 31 02:36 instruct-dataset.csv
+-rw-rw-rw- 1 app app  627 Oct 31 02:36 test.csv
+-rw-rw-rw- 1 app app  774 Oct 31 02:36 test.jsonl
+-rw-rw-rw- 1 app app 5581 Oct 31 02:36 train.csv
+-rw-rw-rw- 1 app app 6868 Oct 31 02:36 train.jsonl
+    2 data/test.jsonl
+   17 data/train.jsonl
+   20 data/instruct-dataset.csv
+    5 data/test.csv
+   35 data/train.csv
+   79 total
+[exit 0]

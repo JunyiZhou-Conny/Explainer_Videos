@@ -1,0 +1,52 @@
+$ python /checks/snippets/make_pairs.py 21
+21 pairs in 2 files
+[exit 0]
+
+$ python cli.py --prepare | grep Shape
+Shape: (21, 2)
+[exit 0]
+
+$ wc -l data/train.jsonl data/test.jsonl; python -c "import pandas as pd; print(\"test.csv rows:\", len(pd.read_csv(\"data/test.csv\")), \" train.csv rows:\", len(pd.read_csv(\"data/train.csv\")))"
+  18 data/train.jsonl
+   3 data/test.jsonl
+  21 total
+test.csv rows: 3  train.csv rows: 18
+[exit 0]
+
+$ python /checks/snippets/make_pairs.py 100
+100 pairs in 5 files
+[exit 0]
+
+$ python cli.py --prepare | grep Shape
+Shape: (100, 2)
+[exit 0]
+
+$ wc -l data/train.jsonl data/test.jsonl; python -c "import pandas as pd; print(\"test.csv rows:\", len(pd.read_csv(\"data/test.csv\")), \" train.csv rows:\", len(pd.read_csv(\"data/train.csv\")))"
+   90 data/train.jsonl
+   10 data/test.jsonl
+  100 total
+test.csv rows: 10  train.csv rows: 90
+[exit 0]
+
+$ python /checks/snippets/make_pairs.py 2600
+2600 pairs in 130 files
+[exit 0]
+
+$ python cli.py --prepare | grep Shape
+Shape: (2600, 2)
+[exit 0]
+
+$ wc -l data/train.jsonl data/test.jsonl; python -c "import pandas as pd; print(\"test.csv rows:\", len(pd.read_csv(\"data/test.csv\")), \" train.csv rows:\", len(pd.read_csv(\"data/train.csv\")))"
+  2340 data/train.jsonl
+   256 data/test.jsonl
+  2596 total
+test.csv rows: 260  train.csv rows: 2340
+[exit 0]
+
+$ ls data | head -4
+cheese_qa_0.txt
+cheese_qa_1.txt
+cheese_qa_10.txt
+cheese_qa_100.txt
+[exit 0]
+

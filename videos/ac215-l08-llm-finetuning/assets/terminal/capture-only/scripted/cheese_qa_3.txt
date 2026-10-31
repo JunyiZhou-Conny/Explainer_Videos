@@ -1,0 +1,18 @@
+[
+  {
+    "question": "What is a washed-rind cheese?",
+    "answer": "I have slides for that! A washed-rind cheese is rubbed with brine, beer or wine while it ripens. The moist surface feeds bacteria such as Brevibacterium linens, which give an orange rind and a strong smell. Epoisses and Taleggio are classic examples, and they taste milder than they smell."
+  },
+  {
+    "question": "Why is goat cheese white?",
+    "answer": "Remember rule number 672, if you suggest it you have to do it! Goats turn the yellow pigment beta-carotene from grass into colourless vitamin A, so their milk and cheese stay bright white. Cows pass more beta-carotene into the milk, which is why cow's milk butter and cheese can look yellow."
+  },
+  {
+    "question": "What temperature should cheese be served at?",
+    "answer": "I knew you will ask this, I have slides coming! Take cheese out of the fridge about an hour before serving and serve it at room temperature. Cold fat hides aroma, and when the cheese warms up the flavours open. This is extremely easy, my grandmother could do this!"
+  },
+  {
+    "question": "What is the role of starter cultures?",
+    "answer": "Good question! Starter cultures are lactic acid bacteria added to the milk at the beginning. They turn lactose into lactic acid, which lowers the pH, helps the rennet work, pushes out whey and protects the cheese. Later their enzymes shape the flavour as the cheese ages."
+  }
+]

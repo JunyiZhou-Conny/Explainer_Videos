@@ -1,6 +1,6 @@
 # L08 · LLM: Finetuning — tutorial digest
 
-- **Ed lesson:** https://edstem.org/us/courses/97373/lessons/166032/ (course-site map: `2026-AC215/tutorials_demo.md:112-118`). The weekly schedule lists "LLM - Finetuning" on **Oct 1** but labels it "Lecture 7" (`2026-AC215/_modules/week-05.md:11-13`). I couldn't open Ed itself, so this digest is built from the repo and the Colab notebook.
+- **Ed lesson:** https://edstem.org/us/courses/97373/lessons/166032/ (course-site map: `2026-AC215/tutorials_demo.md:112-118`). The weekly schedule lists "LLM - Finetuning" on **Oct 1** but labels it "Lecture 7" (`2026-AC215/_modules/week-05.md:11-13`). I couldn't open Ed itself, so this digest is built from the repo and the Colab notebook. (The 2026-10-31 re-check found `tutorials_demo.md:110-118` in a saved copy; `week-05.md` was not available to re-check.)
 - **Repo used:** `dlops-io/llm-finetuning`, branch **`main`** (default), commit `44ef6f0a70315aa0a551b8565ca862679a87c1eb`, committed 2026-10-05 22:52:07 -0400 ("remove pipfile from gemini-finetuning"). This is also the course map's pin (`MLOps_Learning/course/lectures.yaml:27`).
   - Commits that shape this year's version:
     - `c9b52dd` (2025-10-14): Pipenv → uv, `vertexai` SDK → `google-genai`; generator and tuning base both moved from Gemini 1.5 Flash to `gemini-2.0-flash-001`
@@ -8,6 +8,7 @@
     - `aee790a` (2026-09-26): separate train/chat clients, with tuning in `us-central1` and serving in multi-region `us`
     - `6e4c3f7` (2026-09-30, the night before the lecture): dataset generator moved to `gemini-3.1-flash-lite` at `location="global"`; new answer openers in the system prompt; `dataset-creator/data/.gitkeep` deleted
     - `3b9f6a3` + `0ce885e` (2026-10-04): README rewritten for the Vertex AI → "Agent Platform" rename and the location of the secrets folder
+- **Names and identifiers (series rule, as in L06/L07).** The persona is the instructor's first name ("Yello - this is Pavlos your cheese monker"). The code, README samples, nb cell 0, nb cells 55/63/82 outputs and the 16k dataset also carry the instructor's **full name**; this digest elides the surname. On screen, mask the persona name as a grey chip ‹instructor›; the narration says "the instructor" or "the instructor's voice", never a full name. The hard-coded endpoint in `gemini-finetuner/cli.py:107` (and `cheese-app-v0/api-service/api/routers/rag.py:22`) contains the instructor's real project number: this digest writes it as `‹instructor-project-number›`/`‹endpoint-id›`; frames must mask it the same way. nb cell 88's stored output and `autotrain-runner/environment_droplet.yml:260` contain other real people's names: never show them.
 - **Other branch, read for comparison only:** `pipenv` @ `fb0073a87ec81ad1e5acb0adc58f3c1a6c307341` (2025-03-10). This is last year's version (Pipenv, `vertexai.preview.tuning.sft`, `gemini-1.5-flash-002`). It's an ancestor of `main`.
 - **README sections this lecture covers:** the whole README (`README.md:1-316`), with GitHub anchors:
   - [Prerequisites](https://github.com/dlops-io/llm-finetuning#prerequisites) `README.md:31-69`, including [Setup GCP Service Account](https://github.com/dlops-io/llm-finetuning#setup-gcp-service-account) `:38-69`
@@ -144,7 +145,7 @@ The tuned Gemini endpoint from Track A is used again in L10 (`cheese-app-v0`, `/
 | `GCP_PROJECT` | `"ac215-project"`, **change it** | `env.dev:6`; required, `os.environ["GCP_PROJECT"]` at `dataset-creator/cli.py:17` and `gemini-finetuner/cli.py:9` |
 | `GCS_BUCKET_NAME` | `"cheese-dataset"`, **change it** (bucket names are global and this one belongs to the course) | `env.dev:7`; required by `dataset-creator/cli.py:21`. Passed to gemini-finetuner but **not read there** |
 | Training data URIs (Gemini) | `gs://cheese-dataset/llm-finetune-dataset-small/{train,test}.jsonl`, **hard-coded; edit them** | `gemini-finetuner/cli.py:10-11` |
-| Tuned endpoint for `--chat` | `projects/129349313346/locations/us/endpoints/7655908260297310208`, the **instructor's endpoint; replace with yours** | `gemini-finetuner/cli.py:107` |
+| Tuned endpoint for `--chat` | `projects/‹instructor-project-number›/locations/us/endpoints/‹endpoint-id›`, the **instructor's endpoint; replace with yours** | `gemini-finetuner/cli.py:107` |
 | `GCP_SERVICE_ACCOUNT`, `LOCATION` | defined but unused by these two containers | `env.dev:9-10` (only `autotrain-runner/docker-shell.sh:20` passes `GCP_SERVICE_ACCOUNT`) |
 | Code inside the container | `/app` is a **bind mount** of the folder you ran the script from, so host edits are live without a rebuild | `-v "$BASE_DIR":/app` (`docker-shell.sh:17` / `:16`), `BASE_DIR=$(pwd)` (`env.dev:4`) |
 | Python venv | `/.venv`, outside `/app` so the bind mount doesn't hide it | `ENV UV_PROJECT_ENVIRONMENT=/.venv` (`Dockerfile:18`) |
@@ -244,7 +245,7 @@ Concepts marked **[ANIMATE]** most deserve a 3Blue1Brown-style animated explanat
 ### 3.5 Quantization: 16 buckets per weight (NF4, double quantization, compute dtype) **[ANIMATE]**
 - **Explanation.** Loading with `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_use_double_quant=True, bnb_4bit_compute_dtype=...)` (nb cell 18:7-12, nb cell 34:1-6) replaces each `nn.Linear` with `Linear4bit` (nb cell 21 output for OPT-350m: `(q_proj): Linear4bit(in_features=1024, out_features=1024, bias=True)`; its `lm_head` stays `Linear`). It has three parts:
   - **The storage format.** Each weight is replaced by a 4-bit index into **16 levels**, scaled per small block of weights by an "absmax" constant.
-  - **NF4 ("NormalFloat4").** Its 16 levels are spaced so that each is equally likely for normally distributed weights: denser near 0, sparser in the tails (QLoRA paper). The bitsandbytes default is FP4 (nb cell 28).
+  - **NF4 ("NormalFloat4").** Its 16 levels are placed at quantiles of a standard normal (rescaled to [-1, 1]), so for normally distributed weights each bucket catches roughly the same share: denser near 0, sparser in the tails. It is slightly asymmetric (8 positive levels, 7 negative, plus an exact 0) so that zero is represented exactly (QLoRA paper). The bitsandbytes default is FP4 (nb cell 28), a tiny float format (sign, 2 exponent bits, 1 mantissa bit) whose levels are also non-uniform but not matched to a bell curve.
   - **Double quantization** quantizes the per-block constants themselves. Per the QLoRA paper, that saves about 0.37 bits per parameter: roughly 20 MB on Qwen3-0.6B's 440 M quantized weights.
   - **Compute dtype** is what the weights are *dequantized to* for each matmul: `float16` here, so it also works on T4s, which lack fast bf16 (nb cell 30-31).
 - **What gets quantized.** The stored run shows it isn't everything:
@@ -255,7 +256,7 @@ Concepts marked **[ANIMATE]** most deserve a 3Blue1Brown-style animated explanat
 - **Mental model.** Rounding every weight to the nearest of 16 crayons, with a separate "brightness knob" for every block of 64 weights.
 - **Analogy.** Saving a photo as a 16-colour GIF with a smart palette: most of the picture survives at ⅛ of the size of 32-bit floats (¼ of fp16).
 - **Common misconception.** "A 4-bit model does 4-bit arithmetic." Storage is 4-bit; the math runs in the compute dtype after on-the-fly dequantization. Another: "4-bit makes it faster" (Poll 1, nb cell 20). The main win is **memory**; dequantization can make it slower.
-- **Animation idea.** A bell-shaped histogram of one layer's weights. 16 vertical lines drop onto it: first evenly spaced (FP4-like), then sliding to crowd near zero (NF4). Each weight-dot snaps to its nearest line, and the dot's 32-bit label shrinks to a 4-bit index `0b1011`. A row of per-block "absmax" knobs then gets its own little quantization (double quant), with a memory bar shrinking at each stage.
+- **Animation idea.** A bell-shaped histogram of one layer's weights. 16 vertical lines drop onto it: first evenly spaced (plain INT4-style rounding), then sliding to crowd near zero (NF4, one line per equal-probability slice of the bell). Each weight-dot snaps to its nearest line, and the dot's 32-bit label shrinks to a 4-bit index `0b1011`. A row of per-block "absmax" knobs then gets its own little quantization (double quant), with a memory bar shrinking at each stage.
 
 ### 3.6 LoRA: learn a thin correction instead of the whole matrix **[ANIMATE]**
 - **Explanation.** For a frozen weight `W` (d_out × d_in), LoRA learns `ΔW = (α/r)·B·A`, where `A` is r × d_in and `B` is d_out × r.
@@ -294,13 +295,13 @@ Concepts marked **[ANIMATE]** most deserve a 3Blue1Brown-style animated explanat
     Fine-tuned (4-bit + LoRA)   1.3872        4.00
     ```
   - Training loss fell from 2.007381 at step 50 to 1.350437 at step 450 (nb cell 75 HTML table).
-  - Qualitatively (nb cell 82), every fine-tuned answer opens with a Pavlos phrase: the two cheese answers with "Welcome welcome welcome, cheese lovers! This is your lecturer Pavlos Protopapas here…", the sky answer with "Yello - this is Pavlos your cheese monker…".
+  - Qualitatively (nb cell 82), every fine-tuned answer opens with a Pavlos phrase: the two cheese answers with "Welcome welcome welcome, cheese lovers! This is your lecturer Pavlos [surname elided] here…", the sky answer with "Yello - this is Pavlos your cheese monker…".
 - **Track A.** The console shows the same kind of curves for Gemini: "Total loss" and "Fraction of correct next step preds" for training and validation (`README.md:310-316`, `images/training-1.png`).
 - **Mental model.** Perplexity measures how *surprised* the model is by Pavlos-style text. The drop from 14 to 4 says "now this style is what it expects", not "now it's more correct".
 - **Common misconceptions.**
   - "Lower perplexity = better answers." Here the loss counts every token, including the question and chat-template tokens (nb cell 79). It mostly measures style fit: compare the sky-blue answer in §3.1.
   - In 5.2 the "Base Model" column is an **FP16, unquantized** Qwen (nb cell 82:55-61, `quantization_config` commented out), while 5.1's base is the 4-bit model with its adapter off. These are two different baselines.
-- **Animation idea.** A probability bar chart over the next token after `<|im_start|>assistant\n<think>\n\n</think>\n\n`. For the base model, the mass is spread over "The", "Sure", "**"… (perplexity ≈ 14 → the bar "width" covers ~14 options). Flip the adapter switch and the bars collapse onto "Welcome", "Yello" and "Remember" (≈ 4 options). A toggle labelled `disable_adapter()` flips back and forth.
+- **Animation idea.** A probability bar chart over the next token after `<|im_start|>assistant\n<think>\n\n</think>\n\n`. For the base model, the mass is spread over "The", "Sure", "**"… Illustrative only: the stored perplexities (14.15 → 4.00) are averages over *all* tokens of each test example, question and template tokens included (nb cell 79), not the distribution at this one position; label it "illustration" on screen. Flip the adapter switch and the bars collapse onto "Welcome", "Yello" and "Remember" (≈ 4 options). A toggle labelled `disable_adapter()` flips back and forth.
 
 ---
 
@@ -398,6 +399,8 @@ Commands in code spans are verbatim from the README, code or notebook unless mar
 - **README vs code:**
   - The README's "System Prompt" excerpt (`README.md:114-135`) shows the *old* openers ("Welcome welcome welcome, cheese lovers! …", "Let us do system3"). The code now lists "Good question", "Glad you ask", "I have slides for that" and "I knew you will ask this, I have slides coming", plus new phrases "Look at this horse" and "Best thing after sliced bread" (`cli.py:83-101`, changed in `6e4c3f7`). The prompt's own sample JSON was not updated: its example answers still open with "Welcome welcome welcome, cheese lovers!…", "Yello - this is Pavlos your cheese monker…" and "Welcome welcome to AC215…" (`cli.py:133`, `:137`, `:140`).
   - The README says "Change any of the default parameters" (`README.md:106`), but there are no CLI parameters: you edit `NUM_ITERATIONS` (`cli.py:170`) in the file.
+  - The README's "Input Prompt" (`README.md:139-145`) is still word for word the code's `INPUT_PROMPT` (`cli.py:169`); its "Number of Iterations" block (`README.md:149-155`) matches `NUM_ITERATIONS = 5` (`cli.py:170`).
+- **README "Sample Question Answers"** (`README.md:159-175`): two sample objects, both with the *old* openers ("Welcome welcome welcome, cheese lovers!…", "Yello - this is Pavlos your cheese monker…"). Your `cheese_qa_*.txt` files have the same `[{"question":…,"answer":…}]` shape; the openers will differ (§6.8).
 
 **Step 7. Prepare** (`README.md:181-187`): `python cli.py --prepare`
 - **Under the hood** (`cli.py:204-273`):
@@ -405,10 +408,11 @@ Commands in code spans are verbatim from the README, code or notebook unless mar
   2. Strip any ```` ```json ```` fences (`:219`), then `json.loads` each file; failures go into `errors` (`:221-226`).
   3. Build a DataFrame, drop duplicate questions and NaNs, and save `instruct-dataset.csv` (`:232-238`).
   4. Add a `text` column (`human:/bot:`) and a `contents` column (Gemini turns) (`:241-257`).
-  5. `train_test_split(test_size=0.1, random_state=42)` (`:260-262`), then write `train.csv`/`test.csv` (text only) and `train.jsonl`/`test.jsonl` (contents only). The test set is capped at 256 rows, Gemini's validation limit (`:266-273`).
+  5. `train_test_split(test_size=0.1, random_state=42)` (`:260-262`), then write `train.csv`/`test.csv` (text only, `:263-264`), cap the test frame at 256 rows, Gemini's validation limit (`:266-267`; it only affects `test.jsonl`, since `test.csv` was already written), and write `train.jsonl`/`test.jsonl` (contents only, `:270-273`).
 - **Checkpoint:** "Processing file: data/cheese_qa_0.txt" … then `Number of errors: 0`, `[]`, `Shape: (N, 2)` with N ≈ 100 (fewer after deduplication), and the DataFrame head. With 100 rows the split is 90/10.
   - *(extra)* `head -c 300 data/train.jsonl` shows `{"contents":[{"role":"user","parts":[{"text":"...`. pandas may write `/` as `\/`, which is valid JSON.
   - *(extra)* `wc -l data/*.jsonl`.
+  - Compare one line with the README's "For Gemini fine-tuning the required data format" block (`README.md:189-212`): the same `contents`/`role`/`parts`/`text` nesting, pretty-printed there, one line per example in the file.
 - **If it fails:**
   - `KeyError: 'question'` right after `Shape: (0, 0)` means every generation batch failed in Step 6, so the DataFrame has no columns (I reproduced this with pandas). Go back and read Step 6's error lines.
   - `Number of errors: 1` with "Unterminated string…" means a batch was cut off at the 8,192-token limit. The others still work.
@@ -433,7 +437,7 @@ Commands in code spans are verbatim from the README, code or notebook unless mar
 ### Part B: Fine-tune Gemini (`README.md:228-316`)
 
 **Step 9. Enter the second container** (`README.md:236-247`): `exit`, then `cd ../gemini-finetuner`, `sh docker-shell.sh`, `python cli.py --help`.
-- **Under the hood:** this is the same Dockerfile and the same `uv.lock`, byte-identical to dataset-creator's (`diff` shows no difference). Docker's layer cache reuses every layer up to and including `uv sync` (same base, same commands, same `pyproject.toml`/`uv.lock` content); only the final `COPY . ./` differs, so this build is fast. The image is `gemini-finetuner` (`docker-shell.sh:9`). The two `docker-shell.sh` files differ only in `IMAGE_NAME` and one blank line, which is why `source` is on line 7 here and line 8 in dataset-creator.
+- **Under the hood:** this is the same Dockerfile and the same `uv.lock`, byte-identical to dataset-creator's (`diff` shows no difference). Docker's layer cache reuses every layer up to and including `uv sync` (same base, same commands, same `pyproject.toml`/`uv.lock` content); only the final `COPY . ./` differs, so this build is fast. The image is `gemini-finetuner` (`docker-shell.sh:9`). The two `docker-shell.sh` files differ only in `IMAGE_NAME` and one blank line, which is why `source` is on line 7 here and line 8 in dataset-creator. (Their file modes differ too: `gemini-finetuner/docker-shell.sh` became executable in `1947094`, dataset-creator's is not; irrelevant with `sh`/`bash docker-shell.sh`.)
 - **Checkpoint:** `usage: cli.py [-h] [--train] [--chat]` with `--train  Train model` and `--chat  Chat with model`.
 - **If it fails:** the same as Step 4 (`gemini-finetuner/docker-shell.sh:7` is the `source` line).
 
@@ -462,6 +466,8 @@ Commands in code spans are verbatim from the README, code or notebook unless mar
   - A 400 naming the base model: `gemini-3.1-flash-lite` isn't tunable in your region/project (§10). Check the console's list of tunable models.
   - Want the CLI to wait? Change `:126` to `train(wait_for_job=True)`. It then prints `Job in progress... State: JobState.JOB_STATE_RUNNING` every minute until a terminal state.
 
+**Step 10b. Read the cost section** (`README.md:265-278`). Nothing to run. The table prices "Gemini 1.5 Flash Tuning" at $0.008 per 1,000 tokens over 3 epochs (88 documents, 23,874 tokens → $0.573; the 16,444-document row is marked "Way too much data"). The code now tunes `gemini-3.1-flash-lite` for 1 epoch, so treat the numbers as stale and use the linked pricing page (§2, §10.6).
+
 **Step 11. Get your endpoint** *(extra; the README skips this)*.
 - **Action:** when the job shows **Succeeded**, copy the tuned model's endpoint (`projects/<num>/locations/us/endpoints/<id>`) from the console and paste it into `MODEL_ENDPOINT` at `gemini-finetuner/cli.py:107`.
 - Lines `:93-96` print exactly this instruction, but only when `tuned_model` is already set, which the default flow doesn't reach.
@@ -480,7 +486,7 @@ Commands in code spans are verbatim from the README, code or notebook unless mar
   Fine-tuned LLM Response: <a Pavlos-style answer>
   ```
   The README's example (`README.md:295-301`) uses an older query, "How is cheese made?", and an answer opening "Yello - this is Pavlos your cheese monker…".
-- **If it fails:** `403 PERMISSION_DENIED` or `404 NOT_FOUND` on `projects/129349313346/...` means you're still calling the instructor's endpoint. Do Step 11.
+- **If it fails:** `403 PERMISSION_DENIED` or `404 NOT_FOUND` on `projects/‹instructor-project-number›/...` means you're still calling the instructor's endpoint. Do Step 11.
 
 **Step 13. Try the hosted demo and look at the metrics** (`README.md:303-316`). The README links "[Pavlos Cheese Model](https://ac215-llm-rag.dlops.io/finetunechat)". It notes "it is assumed you have your vector database that is running locally", which refers to the RAG app of L05/L10, not this repo. A note recommends Chrome for that page (`README.md:305-306`). The README ends with the two console screenshots, "Training Monitor" and "Data distribution" (`README.md:310-316`).
 
@@ -540,7 +546,7 @@ Commands in code spans are verbatim from the README, code or notebook unless mar
 **Step 26. Save** (nb cells 84, 86, 88).
 - **Adapters:** saved to `LLM_cache/Qwen0.6B-finetune_cheese`.
 - **Merged model:** reload FP16 → `PeftModel.from_pretrained` → `merge_and_unload()` → save to `…_merged`. The stored outputs list `tokenizer_config.json`, `chat_template.jinja` and `tokenizer.json` paths.
-- **Optional:** a private HF repo `<user>/Qwen0.6B-finetune_cheese_merged`. Stored output: "✓ Detected Hugging Face username: rashmi" and "Model successfully uploaded to https://huggingface.co/rashmi/Qwen0.6B-finetune_cheese_merged".
+- **Optional:** a private HF repo `<user>/Qwen0.6B-finetune_cheese_merged`. Stored output: "✓ Detected Hugging Face username: ‹hf-user›" and "Model successfully uploaded to https://huggingface.co/‹hf-user›/Qwen0.6B-finetune_cheese_merged" (the stored output names a real person's HF account: never show it; mask it as ‹hf-user›).
 - **Wrap-up:** nb cell 89 renders a "QLoRA Fine-Tuning Steps" flow diagram by sending Mermaid code to `https://mermaid.ink` (needs internet); nb cell 90 lists further reading.
 
 ---
@@ -551,7 +557,7 @@ Commands in code spans are verbatim from the README, code or notebook unless mar
 llm-finetuning/  (main @ 44ef6f0)
 ├── README.md                      # the tutorial (Track A); 316 lines
 ├── env.dev                        # shared settings, sourced by each docker-shell.sh (GCP_PROJECT, bucket, key path)
-├── .gitignore                     # ignores *.csv, *.json, dataset-creator/data/*, .DS_Store, .idea
+├── .gitignore                     # ignores *.csv, *.json, *.log, dataset-creator/data/* (listed twice), .DS_Store, .idea, for_local_exp
 ├── dataset-creator/               # container 1: make + upload the Q&A dataset
 │   ├── cli.py                     #   --generate (Gemini, JSON schema) / --prepare (csv+jsonl, split) / --upload (GCS)
 │   ├── Dockerfile                 #   python:3.12-slim-bookworm + uv sync --frozen into /.venv, user app (identical to llm-rag's)
@@ -731,7 +737,7 @@ chat_client = genai.Client(
     # Get the model endpoint from Vertex AI Tuning UI after the job succeeds.
     # For gemini-3.1-flash-lite serving, use locations/us/endpoints/...
     # https://console.cloud.google.com/vertex-ai/studio/tuning?project=ac215-project
-    MODEL_ENDPOINT = "projects/129349313346/locations/us/endpoints/7655908260297310208"
+    MODEL_ENDPOINT = "projects/‹instructor-project-number›/locations/us/endpoints/‹endpoint-id›"
 
     query = "How is cheese made in Greece? Answer pavlos style?"
     print("query: ", query)
@@ -851,7 +857,7 @@ print_trainable_parameters(trainer.model)
    - Also: the SA lacks Storage Admin or `roles/aiplatform.user` (`README.md:43-44`), or `aiplatform.googleapis.com` isn't enabled.
    - **Fix:** use your own bucket in both places; grant the roles; enable the API (§2).
 
-5. **`--chat` returns 403/404 for `projects/129349313346/...`.**
+5. **`--chat` returns 403/404 for `projects/‹instructor-project-number›/...`.**
    - **Cause:** `MODEL_ENDPOINT` is hard-coded to the instructor's endpoint (`gemini-finetuner/cli.py:107`). L10's `cheese-app-v0/api-service/api/routers/rag.py:22` has the same trap.
    - **Fix:** paste your endpoint from the console after the job succeeds (Step 11).
 
@@ -865,7 +871,7 @@ print_trainable_parameters(trainer.model)
 
 8. **The README's system prompt and outputs don't match what you get.**
    - **Cause:** the README excerpt (`README.md:114-135`) and the samples (`:163-175`, `:295-301`) predate commit `6e4c3f7`, which changed the openers in `dataset-creator/cli.py:83-101` and the chat query in `gemini-finetuner/cli.py:109`.
-   - **Fix:** trust the code, but expect a mix: the old openers are gone from the opener list, yet the prompt's sample JSON still uses them (`dataset-creator/cli.py:133`, `:137`, `:140`). Also expect the Colab's 16k dataset to use the *old* openers, e.g. "Yello - this is Pavlos your cheese monker" and "Welcome students, this is Pavlos…" (nb cell 55 output) or "Welcome welcome, cheese lovers! This is your lecturer Pavlos Protopapas…" (nb cell 63 output). None of the stored samples use the new "Good question"/"Glad you ask" openers. ("Remember rule number 672…" appears in both the old and the new prompt.)
+   - **Fix:** trust the code, but expect a mix: the old openers are gone from the opener list, yet the prompt's sample JSON still uses them (`dataset-creator/cli.py:133`, `:137`, `:140`). Also expect the Colab's 16k dataset to use the *old* openers, e.g. "Yello - this is Pavlos your cheese monker" and "Welcome students, this is Pavlos…" (nb cell 55 output) or "Welcome welcome, cheese lovers! This is your lecturer Pavlos [surname elided]…" (nb cell 63 output). None of the stored samples use the new "Good question"/"Glad you ask" openers. ("Remember rule number 672…" appears in both the old and the new prompt.)
 
 9. **Slow first build and a big image.**
    - **Cause:** `pyproject.toml:8-16` is llm-rag's dependency list (`chromadb`, `langchain`, `langchain-community`, `openai`, `openai-agents`) plus `google-cloud-storage` and `scikit-learn`. The code imports only pandas, sklearn, google-cloud-storage and google-genai (`dataset-creator/cli.py:1-14`; `gemini-finetuner/cli.py:1-6`). Two images also get built.
@@ -914,7 +920,7 @@ print_trainable_parameters(trainer.model)
     - `gcp-push.py:7` opens `llm_training_config.yaml`
     - `gcp-pull.py:33-36` reads `csv_downloaded`/`yaml_downloaded`, which are only assigned inside the loop (`:23`, `:28`); if no `.csv` (or no `.yaml`) blob exists, that read raises `UnboundLocalError` (a `NameError` subclass). `gcp-pull.py:20` also downloads CSVs into `./data/`, which exists only because of `autotrain-runner/data/.gitkeep`
     - the bucket `autotrain_trainer` is hard-coded (`gcp-pull.py:39`, `gcp-push.py:34`)
-    - `environment_droplet.yml:260` pins `prefix: /home/karthik_rathod/anaconda3/envs/autotrain-env`
+    - `environment_droplet.yml:260` pins a personal conda prefix `/home/<a contributor>/anaconda3/envs/autotrain-env` (a real person's name in the path: never show it)
     - `docker-shell.sh:15` needs `--gpus all` (an NVIDIA GPU)
     - `Dockerfile:2` uses `continuumio/miniconda3:latest`
 
@@ -1078,7 +1084,7 @@ print_trainable_parameters(trainer.model)
 **E6. Whose endpoint? (debugging + conceptual)**
 - `python cli.py --chat` returns `403 PERMISSION_DENIED`. Your `GCP_PROJECT` is correct and your SA has `roles/aiplatform.user`. What's wrong, and why doesn't `project=GCP_PROJECT` in the client fix it?
 - *Worked answer:*
-  - `MODEL_ENDPOINT` (`cli.py:107`) is the instructor's resource `projects/129349313346/…`.
+  - `MODEL_ENDPOINT` (`cli.py:107`) is the instructor's resource `projects/‹instructor-project-number›/…`.
   - For model names starting with `projects/`, google-genai uses the path as-is (`_transformers.py:173-177`) and skips prefixing your project (`_api_client.py:1008-1014`). The request goes to the instructor's project, where your SA has no rights.
   - Paste your own endpoint (`projects/<your-number>/locations/us/endpoints/<id>`) from the console.
 
@@ -1107,7 +1113,7 @@ print_trainable_parameters(trainer.model)
 **Errata (wrong, outdated, ambiguous or inconsistent)**
 
 1. **The README doesn't tell you to edit the code.**
-   - `gemini-finetuner/cli.py:10-11` (dataset URIs in the course's `cheese-dataset` bucket) and `:107` (the instructor's endpoint `projects/129349313346/…`) must be changed. The README only says "Change any of the default parameters if needed" (`README.md:259`).
+   - `gemini-finetuner/cli.py:10-11` (dataset URIs in the course's `cheese-dataset` bucket) and `:107` (the instructor's endpoint `projects/‹instructor-project-number›/…`) must be changed. The README only says "Change any of the default parameters if needed" (`README.md:259`).
    - `env.dev:6-7` also needs editing; only its inline comments say so.
 2. **Missing setup steps:** the README never says to enable the Vertex AI API or create a bucket (Prerequisites at `README.md:31-69` cover only Docker, the clone and the SA). `upload()` assumes the bucket exists (`dataset-creator/cli.py:280`).
 3. **`sh docker-shell.sh` fails on dash systems** (`README.md:87`, `:240` vs `docker-shell.sh:8`/`:7`). It should be `bash docker-shell.sh`, or the scripts should use `.`.
@@ -1119,7 +1125,7 @@ print_trainable_parameters(trainer.model)
    - `README.md:151` ("$2.0 for 1000 iterations") also predates the current generator.
    - The screenshots (`images/*.png`, added 2024-09-29 in `d03f044`) come from a ~16k-example run of the old setup.
 7. **"Parameters" are constants, not flags.** `README.md:106` and `:259` say "Change any of the default parameters". There are no CLI options beyond the three/two flags; the values are module constants (`dataset-creator/cli.py:170`, `gemini-finetuner/cli.py:52-58`).
-8. **The CLI never waits.** `main()` hard-codes `wait_for_job=False` (`gemini-finetuner/cli.py:126`), so the polling loop and the endpoint hint (`:74-96`) are dead code in the documented flow.
+8. **The CLI never waits.** `main()` hard-codes `wait_for_job=False` (`gemini-finetuner/cli.py:126`), so the polling loop (`:74-87`) is dead code in the documented flow, and the endpoint hint (`:90-96`) is practically unreachable: it only prints if the job already has a tuned model 60 s after submission.
 9. **Type mismatch that happens to work.** A `TuningDataset` is passed as `validation_dataset` (`gemini-finetuner/cli.py:49`, `:57`), which is typed `TuningValidationDataset` (`google/genai/types.py:10541`). pydantic's `from_attributes=True` (`_common.py:437`) coerces it. `types.TuningValidationDataset(gcs_uri=...)` would be correct.
 10. **Mangled prompt instructions.**
     - `dataset-creator/cli.py:123` asks the model to escape apostrophes "with a backslash (\')". In a non-raw Python string, `\'` becomes `'`, so the model actually reads "(')".
@@ -1156,4 +1162,4 @@ print_trainable_parameters(trainer.model)
 - Whether the hosted demo `https://ac215-llm-rag.dlops.io/finetunechat` (`README.md:303`) is still live.
 - Exact Docker image size and build time; I built nothing.
 
-_Verified against the repos on 2026-10-13 (adversarial check)._
+_Verified against the repos on 2026-10-13 (adversarial check). Re-verified 2026-10-31 for the L08 video: every repo `path:line` re-read with `sed -n` at `44ef6f0` (`git rev-parse` matches the pin); notebook cells and stored outputs re-read from the JSON; google-genai 1.39.1, google-auth 2.41.1, peft 0.20.0, trl 1.14.0 and transformers 5.16.1 line references re-read from the wheels; the `dash` "source: not found" and wrong-folder messages re-reproduced with a script of my own; `cheese-app-v0` references re-read at `cb6fb94`. google-genai 2.29/2.30 line numbers, `_modules/week-05.md` and Ed were not re-checked._

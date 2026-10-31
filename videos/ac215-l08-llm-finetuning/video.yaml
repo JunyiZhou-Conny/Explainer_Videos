@@ -1,0 +1,54 @@
+id: ac215-l08-llm-finetuning
+title: "AC215 · Lecture 8 — LLM: Finetuning (follow-along: llm-finetuning)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 8
+  lecture_title: "LLM: Finetuning"
+  ed: https://edstem.org/us/courses/97373/lessons/166032/
+  repos:
+    # the whole README is L08's (Track A: a persona dataset with Gemini, then a managed Gemini tuning job)
+    - {repo: dlops-io/llm-finetuning, branch: main, commit: 44ef6f0a70315aa0a551b8565ca862679a87c1eb,
+       sections: ["Prerequisites", "Setup GCP Service Account",
+                  "Generate Question Answer Dataset", "Run Container", "Generate Text",
+                  "Sample Question Answers", "Prepare Dataset", "Upload Dataset",
+                  "Fine-tune Gemini", "Run Container", "Fine-tune Model", "Cost of Fine-tuning",
+                  "Chat with Fine-tuned Model"]}
+  colab:
+    # Track B. A notebook has no commit: the copy used is in assets/source/colab/ (downloaded for this video),
+    # its stored outputs (an A100 run) in assets/terminal/expected/colab-*.txt (tagged "recorded").
+    - {name: "Tutorial - Finetuning with QLoRA", url: "https://colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC",
+       sections: ["Part A: Setup / Environment", "Part B - The 'Q' in QLoRA - Understanding 4-bit Quantization",
+                  "Part C: Fine-Tuning Qwen3 0.6B with QLoRA", "Step 1: Load the Quantized Model",
+                  "Step 2: Inspect the Base Model", "Step 3: Prepare the Training Dataset",
+                  "Step 4: Configure and Execute Fine-Tuning", "Step 5: Evaluate the Fine-Tuned Model",
+                  "Step 6: Save Your Work"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L08-llm-finetuning.md
+audience: "AC215 student who has done L1–L7 (uv and lockfiles, containers and docker-shell.sh, L05's RAG with the same service account and secrets folder, structured outputs); knows basic ML (loss, optimizer, training loop), has never fine-tuned an LLM; watching with their llm-finetuning clone open and Docker running, optionally with a GCP project and key, and the course Colab in another tab, pausing to run each command"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,       cls: Hook,             title: "Why is the sky blue?"}
+  - {file: scenes/s02_dials.py,      cls: ThreeDials,       title: "Three dials: prompt, context, weights"}
+  - {file: scenes/s03_setup.py,      cls: KeyNextToRepo,    title: "A key next to the repo"}
+  - {file: scenes/s04_container.py,  cls: DatasetContainer, title: "The dataset-creator container"}
+  - {file: scenes/s05_persona.py,    cls: Persona,          title: "Manufacturing a persona"}
+  - {file: scenes/s06_prepare.py,    cls: LateFailure,      title: "Prepare: a failure that surfaces late"}
+  - {file: scenes/s07_jsonl.py,      cls: RowsToJsonl,      title: "Rows to JSONL, then upload"}
+  - {file: scenes/s08_tuning.py,     cls: TuningJob,        title: "Hand it to Google: the tuning job"}
+  - {file: scenes/s09_chat.py,       cls: CostAndChat,      title: "Cost, endpoint and chat"}
+  - {file: scenes/s10_memory.py,     cls: MemoryBill,       title: "Colab, and the 120 GB bill"}
+  - {file: scenes/s11_quantize.py,   cls: Buckets,          title: "Quantization: 16 buckets per weight"}
+  - {file: scenes/s12_qwen.py,       cls: QwenInFourBits,   title: "Qwen in 4 bits, and its chat template"}
+  - {file: scenes/s13_lora.py,       cls: LowRank,          title: "LoRA: a thin correction"}
+  - {file: scenes/s14_train.py,      cls: SmallGpu,         title: "Training on a small GPU"}
+  - {file: scenes/s15_eval.py,       cls: DidItWork,        title: "Did it work? Perplexity and the sky"}
+  - {file: scenes/s16_recap.py,      cls: Recap,            title: "Ship it, tear down, recap"}
+parts:
+  - id: part1
+    title: "AC215 · L8, part 1: a persona dataset with Gemini and a managed tuning job (the README)"
+    scenes: [s01_hook, s02_dials, s03_setup, s04_container, s05_persona, s06_prepare, s07_jsonl, s08_tuning, s09_chat]
+  - id: part2
+    title: "AC215 · L8, part 2: QLoRA in Colab — quantization, LoRA, training and evaluation"
+    scenes: [s10_memory, s11_quantize, s12_qwen, s13_lora, s14_train, s15_eval, s16_recap]

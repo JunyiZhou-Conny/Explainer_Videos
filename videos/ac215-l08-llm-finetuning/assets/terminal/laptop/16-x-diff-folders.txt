@@ -1,0 +1,11 @@
+$ diff dataset-creator/uv.lock gemini-finetuner/uv.lock && echo "uv.lock: identical"; diff dataset-creator/pyproject.toml gemini-finetuner/pyproject.toml && echo "pyproject.toml: identical"; diff dataset-creator/Dockerfile gemini-finetuner/Dockerfile && echo "Dockerfile: identical"; diff dataset-creator/docker-shell.sh gemini-finetuner/docker-shell.sh
+uv.lock: identical
+pyproject.toml: identical
+Dockerfile: identical
+6d5
+< 
+10c9
+< export IMAGE_NAME="llm-dataset-creator"
+---
+> export IMAGE_NAME="gemini-finetuner"
+[exit 1]

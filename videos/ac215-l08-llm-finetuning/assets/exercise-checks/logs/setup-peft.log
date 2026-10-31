@@ -1,0 +1,12 @@
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: pip install --upgrade pip
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+Using Python 3.12.15 environment at: /venv
+accelerate        1.15.0
+huggingface-hub   1.29.0
+peft              0.20.0
+tokenizers        0.23.1
+torch             2.11.0+cpu
+transformers      5.16.1
+909M	/venv

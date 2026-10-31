@@ -1,0 +1,29 @@
+$ sh docker-shell.sh
+
+[+] Building 45.1s (11/11) FINISHED                              docker:default
+ => [internal] load build definition from Dockerfile                       0.0s
+ => => transferring dockerfile: 1.48kB                                     0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim-bookw  0.0s
+ => [internal] load .dockerignore                                          0.0s
+ => => transferring context: 2B                                            0.0s
+ => [1/6] FROM docker.io/library/python:3.12-slim-bookworm                 0.0s
+ => [internal] load build context                                          0.0s
+ => => transferring context: 497.32kB                                      0.0s
+ => [2/6] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/  26.0s
+ => [3/6] WORKDIR /app                                                     0.0s
+ => [4/6] COPY --chown=app:app pyproject.toml uv.lock* ./                  0.0s
+ => [5/6] RUN uv sync --frozen                                             9.0s
+ => [6/6] COPY --chown=app:app . ./                                        0.0s
+ => exporting to image                                                    10.1s
+ => => exporting layers                                                   10.1s
+ => => writing image sha256:aa7c4de9d4cb214c63b9a9eaf94bef6f009d6be2bfe36  0.0s
+ => => naming to docker.io/library/llm-dataset-creator                     0.0s
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.16
+UV version: uv 0.13.6 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+app@6f5113cdb660:/app$ exit
+exit
+[exit 0]

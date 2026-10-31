@@ -1,0 +1,16 @@
+# recorded: Colab "Tutorial - Finetuning with QLoRA" (https://colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC), nb cell 75 (execution count 40): the notebook's stored output from the authors' run on an A100 (metadata.colab.gpuType); not run here. Names masked (‹instructor›, ‹hf-user›).
+$ # Train model
+  trainer.train() ### ~3.5 min on A100, ~4.5 min on L4, ~6-7 min on T4
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None}.
+[450/450 03:36, Epoch 2/2]
+Step	Training Loss
+50	2.007381
+100	1.629233
+150	1.509897
+200	1.467495
+250	1.407929
+300	1.354591
+350	1.376134
+400	1.364813
+450	1.350437
+TrainOutput(global_step=450, training_loss=1.4964344957139757, metrics={'train_runtime': 217.4211, 'train_samples_per_second': 8.279, 'train_steps_per_second': 2.07, 'total_flos': 1477592107450368.0, 'train_loss': 1.4964344957139757, 'epoch': 2.0})

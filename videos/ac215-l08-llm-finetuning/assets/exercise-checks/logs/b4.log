@@ -1,0 +1,17 @@
+$ sh /checks/snippets/b4-batch.sh | sed -n 1,2p\;8,12p
+CLI Arguments: Namespace(generate=False, prepare=True, upload=False)
+prepare()
+Processing file: data/cheese_qa_7.txt
+Number of errors: 0
+[]
+Shape: (20, 2)
+                                            question                                             answer
+[exit 0]
+
+$ grep -c "" data/instruct-dataset.csv; grep -i "rennet do" data/instruct-dataset.csv | cut -c1-90; grep -c "Is Feta\|Is Mozzarella" data/instruct-dataset.csv
+21
+What does rennet do in cheesemaking?,"Good question! Rennet carries the enzyme chymosin, w
+what does rennet do in cheesemaking?,Good question! Lower case. (scripted)
+0
+[exit 1]
+

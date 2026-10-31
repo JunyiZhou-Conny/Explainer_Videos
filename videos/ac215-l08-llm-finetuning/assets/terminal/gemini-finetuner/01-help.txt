@@ -1,0 +1,10 @@
+$ python cli.py --help
+usage: cli.py [-h] [--train] [--chat]
+
+CLI
+
+options:
+  -h, --help  show this help message and exit
+  --train     Train model
+  --chat      Chat with model
+[exit 0]

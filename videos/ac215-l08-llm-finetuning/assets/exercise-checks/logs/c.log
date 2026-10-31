@@ -1,0 +1,62 @@
+$ readlink -f /bin/sh; sh docker-shell.sh; echo "status: $?"
+/usr/bin/dash
+docker-shell.sh: 8: source: not found
+status: 127
+[exit 0]
+
+$ bash docker-shell.sh 2>&1 | head -3; grep -n "^source\|^\. " docker-shell.sh
+docker-shell.sh: line 13: docker: command not found
+8:source ../env.dev
+[exit 0]
+
+$ readlink -f /bin/sh; sh docker-shell.sh; echo "status: $?"
+/usr/bin/dash
+docker-shell.sh: 7: source: not found
+status: 127
+[exit 0]
+
+$ bash docker-shell.sh 2>&1 | head -3; grep -n "^source\|^\. " docker-shell.sh
+docker-shell.sh: line 12: docker: command not found
+7:source ../env.dev
+[exit 0]
+
+$ python -c "
+from google.genai import types
+r = types.GenerateContentResponse(candidates=[types.Candidate(content=types.Content(role=\"model\", parts=[]), finish_reason=\"MAX_TOKENS\")])
+print(\"response.text:\", r.text, \"| no candidates:\", types.GenerateContentResponse(candidates=[]).text)
+try:
+    with open(\"data/cheese_qa_4.txt\", \"w\") as file:
+        file.write(r.text)
+except Exception as e:
+    print(f\"Error occurred while generating content: {e}\")
+"
+response.text: None | no candidates: None
+Error occurred while generating content: write() argument must be str, not None
+[exit 0]
+
+$ wc -c data/cheese_qa_4.txt; python cli.py --prepare | sed -n 8,10p
+0 data/cheese_qa_4.txt
+Number of errors: 1
+[{'file': 'data/cheese_qa_4.txt', 'error': 'Expecting value: line 1 column 1 (char 0)'}]
+Shape: (16, 2)
+[exit 0]
+
+$ python -c "
+from google.genai import types
+print([s.value for s in types.JobState])
+done = {\"JOB_STATE_SUCCEEDED\", \"JOB_STATE_FAILED\", \"JOB_STATE_CANCELLED\"}
+print(\"never leaves the loop:\", [s.value for s in types.JobState if s not in done and s.value not in (\"JOB_STATE_UNSPECIFIED\",)])
+print(\"RUNNING in done?\", types.JobState.JOB_STATE_RUNNING in done, \"| SUCCEEDED in done?\", types.JobState.JOB_STATE_SUCCEEDED in done)
+print(\"has_ended:\", hasattr(types.TuningJob, \"has_ended\"))
+for s in (\"JOB_STATE_PAUSED\", \"JOB_STATE_EXPIRED\", \"JOB_STATE_SUCCEEDED\"):
+    print(s, types.TuningJob(state=s).has_ended)
+"
+['JOB_STATE_UNSPECIFIED', 'JOB_STATE_QUEUED', 'JOB_STATE_PENDING', 'JOB_STATE_RUNNING', 'JOB_STATE_SUCCEEDED', 'JOB_STATE_FAILED', 'JOB_STATE_CANCELLING', 'JOB_STATE_CANCELLED', 'JOB_STATE_PAUSED', 'JOB_STATE_EXPIRED', 'JOB_STATE_UPDATING', 'JOB_STATE_PARTIALLY_SUCCEEDED']
+never leaves the loop: ['JOB_STATE_QUEUED', 'JOB_STATE_PENDING', 'JOB_STATE_RUNNING', 'JOB_STATE_CANCELLING', 'JOB_STATE_PAUSED', 'JOB_STATE_EXPIRED', 'JOB_STATE_UPDATING', 'JOB_STATE_PARTIALLY_SUCCEEDED']
+RUNNING in done? False | SUCCEEDED in done? True
+has_ended: True
+JOB_STATE_PAUSED False
+JOB_STATE_EXPIRED True
+JOB_STATE_SUCCEEDED True
+[exit 0]
+

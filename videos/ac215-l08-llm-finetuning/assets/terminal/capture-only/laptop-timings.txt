@@ -1,0 +1,23 @@
+00-x-env	02:35:33 UTC	0.1s
+01-x-clone	02:35:34 UTC	1.1s
+02-x-git-log	02:35:34 UTC	0.1s
+03-x-ls	02:35:34 UTC	0.1s
+04-x-env-dev	02:35:35 UTC	0.1s
+05-x-mkdir-secrets	02:35:35 UTC	0.1s
+06-x-ls-workspace	02:35:35 UTC	0.1s
+08-x-docker-ps	02:36:22 UTC	0.1s
+09-x-docker-images	02:36:22 UTC	0.1s
+10-x-mounts	02:36:22 UTC	0.2s
+11-x-docker-shell-again.txt	exit=+0.3s
+12-x-exec-no-venv	02:36:23 UTC	0.2s
+13-x-scripted-data	02:36:40 UTC	0.1s
+07-docker-shell-dataset-creator.txt	exit=+74.5s
+14-x-ps-after-exit	02:36:51 UTC	0.1s
+15-x-data-on-host	02:36:51 UTC	0.1s
+16-x-diff-folders	02:36:51 UTC	0.1s
+17-x-cd-gemini-finetuner	02:36:51 UTC	0.1s
+19-x-docker-images	02:36:52 UTC	0.1s
+18-docker-shell-gemini-finetuner.txt	exit=+11.4s
+20-x-dash	02:37:03 UTC	0.1s
+21-x-wrong-folder	02:37:03 UTC	0.1s
+22-x-image-rm	02:37:03 UTC	0.1s

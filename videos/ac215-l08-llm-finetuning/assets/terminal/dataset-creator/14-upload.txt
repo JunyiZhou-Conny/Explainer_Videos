@@ -1,0 +1,37 @@
+$ python cli.py --upload
+CLI Arguments: Namespace(generate=False, prepare=False, upload=True)
+upload()
+Traceback (most recent call last):
+  File "/app/cli.py", line 333, in <module>
+    main(args)
+  File "/app/cli.py", line 307, in main
+    upload()
+  File "/app/cli.py", line 279, in upload
+    storage_client = storage.Client()
+                     ^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/cloud/storage/client.py", line 247, in __init__
+    super(Client, self).__init__(
+  File "/.venv/lib/python3.12/site-packages/google/cloud/client/__init__.py", line 338, in __init__
+    _ClientProjectMixin.__init__(self, project=project, credentials=credentials)
+  File "/.venv/lib/python3.12/site-packages/google/cloud/client/__init__.py", line 286, in __init__
+    project = self._determine_default(project)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/cloud/client/__init__.py", line 305, in _determine_default
+    return _determine_default_project(project)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/cloud/_helpers/__init__.py", line 152, in _determine_default_project
+    _, project = google.auth.default()
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 705, in default
+    credentials, project_id = checker()
+                              ^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 698, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 346, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 173, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+google.auth.exceptions.DefaultCredentialsError: File /secrets/llm-service-account.json was not found.
+[exit 1]

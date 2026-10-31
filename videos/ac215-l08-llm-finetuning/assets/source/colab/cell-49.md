@@ -1,0 +1,2 @@
+Notice that the number of trainable parameters is zero — this is because we use prepare_model_for_kbit_training(base_model).
+We’ll only train the A and B matrices below when we configure the LoRA layers.

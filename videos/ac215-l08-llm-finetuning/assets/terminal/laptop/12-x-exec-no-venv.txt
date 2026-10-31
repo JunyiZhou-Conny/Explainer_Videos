@@ -1,0 +1,6 @@
+$ docker exec llm-dataset-creator bash -c 'which python; python -c "import pandas"'
+/usr/local/bin/python
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'
+[exit 1]

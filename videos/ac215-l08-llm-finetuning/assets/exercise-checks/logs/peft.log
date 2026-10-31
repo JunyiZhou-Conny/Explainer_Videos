@@ -1,0 +1,16 @@
+$ python /checks/snippets/peft_meta.py 2>&1 | grep -v "^ *warnings.warn"
+PEFT default target modules for qwen3: ['q_proj', 'v_proj']
+parameters as downloaded: 596,049,920
+by kind (lm_head shares the embedding): {'Linear': '595,984,384', 'Embedding': '155,582,464', 'Qwen3RMSNorm': '65,536'}
+nb cell 67 (r=8, no target_modules): trainable 1,146,880 of 597,196,800; adapted: ['q_proj', 'v_proj']
+r=16: trainable 2,293,760 of 598,343,680; adapted: ['q_proj', 'v_proj']
+target_modules='all-linear': trainable 5,046,272 of 601,096,192; adapted: ['down_proj', 'gate_proj', 'k_proj', 'o_proj', 'q_proj', 'up_proj', 'v_proj']
+warning: You are trying to modify a model with PEFT for a second time. If you want to reload the model with a different config, make sure to call `.unload()` before.
+warning: Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[exit 0]
+
+$ python -c "import inspect, peft.utils.other as o; src = inspect.getsource(o.prepare_model_for_kbit_training); print(chr(10).join(l for l in src.splitlines() if \"float32\" in l or \"param.requires_grad = False\" in l))"
+        param.requires_grad = False
+                param.data = param.data.to(torch.float32)
+[exit 0]
+

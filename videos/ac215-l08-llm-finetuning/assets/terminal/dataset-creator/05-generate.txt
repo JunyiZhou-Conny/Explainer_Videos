@@ -1,0 +1,14 @@
+$ python cli.py --generate
+CLI Arguments: Namespace(generate=True, prepare=False, upload=False)
+generate()
+Generating batch: 0
+Error occurred while generating content: File /secrets/llm-service-account.json was not found.
+Generating batch: 1
+Error occurred while generating content: File /secrets/llm-service-account.json was not found.
+Generating batch: 2
+Error occurred while generating content: File /secrets/llm-service-account.json was not found.
+Generating batch: 3
+Error occurred while generating content: File /secrets/llm-service-account.json was not found.
+Generating batch: 4
+Error occurred while generating content: File /secrets/llm-service-account.json was not found.
+[exit 0]

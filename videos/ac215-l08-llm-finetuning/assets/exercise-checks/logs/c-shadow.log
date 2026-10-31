@@ -1,0 +1,12 @@
+$ ls; python count.py 2>&1 | tail -3
+count.py
+numbers.py
+  File "/venv/lib/python3.12/site-packages/torch/_tensor.py", line 10, in <module>
+    from numbers import Number
+ImportError: cannot import name 'Number' from 'numbers' (/tmp/work/numbers.py)
+[exit 0]
+
+$ mv numbers.py ppl.py; python count.py
+2.11.0+cpu
+[exit 0]
+

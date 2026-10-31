@@ -1,0 +1,9 @@
+$ cd ../gemini-finetuner && pwd && ls
+/home/student/AC215/llm-finetuning/gemini-finetuner
+Dockerfile
+cli.py
+docker-entrypoint.sh
+docker-shell.sh
+pyproject.toml
+uv.lock
+[exit 0]

@@ -1,0 +1,11 @@
+$ ls -la /app
+total 504
+drwxr-xr-x 2 app  app     160 Oct 31 02:35 .
+drwxr-xr-x 1 root root     80 Oct 31 02:36 ..
+-rw-r--r-- 1 app  app    1442 Oct 31 02:35 Dockerfile
+-rw-r--r-- 1 app  app   17485 Oct 31 02:35 cli.py
+-rwxr-xr-x 1 app  app     348 Oct 31 02:35 docker-entrypoint.sh
+-rw-r--r-- 1 app  app     510 Oct 31 02:35 docker-shell.sh
+-rw-r--r-- 1 app  app     394 Oct 31 02:35 pyproject.toml
+-rw-r--r-- 1 app  app  476773 Oct 31 02:35 uv.lock
+[exit 0]

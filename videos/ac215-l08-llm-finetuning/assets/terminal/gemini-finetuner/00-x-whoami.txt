@@ -1,0 +1,11 @@
+$ whoami; pwd; which python; python --version; echo "GCP_PROJECT=$GCP_PROJECT"; echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS"; ls -la /secrets
+app
+/app
+/.venv/bin/python
+Python 3.12.16
+GCP_PROJECT=ac215-project
+GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account.json
+total 0
+drwxr-xr-x 2 app  app  40 Oct 31 02:35 .
+drwxr-xr-x 1 root root 60 Oct 31 02:36 ..
+[exit 0]

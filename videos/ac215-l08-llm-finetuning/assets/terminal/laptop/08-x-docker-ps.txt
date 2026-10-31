@@ -1,0 +1,4 @@
+$ docker ps
+CONTAINER ID   IMAGE                 COMMAND                  CREATED         STATUS        PORTS     NAMES
+6f5113cdb660   llm-dataset-creator   "/bin/bash docker-en…"   2 seconds ago   Up 1 second             llm-dataset-creator
+[exit 0]

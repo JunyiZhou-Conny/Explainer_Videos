@@ -1,0 +1,9 @@
+# recorded: Colab "Tutorial - Finetuning with QLoRA" (https://colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC), nb cell 31 (execution count 13): the notebook's stored output from the authors' run on an A100 (metadata.colab.gpuType); not run here. Names masked (‹instructor›, ‹hf-user›).
+$ # @title
+  # Check GPU compatibility with bfloat16
+  major, _ = torch.cuda.get_device_capability()
+  if major >= 8:
+      print("Your GPU supports bfloat16. This notebook still trains in float16, so the same settings also work on T4 GPUs.")
+  else:
+      print("Your GPU does not support bfloat16. This notebook trains in float16, which works on this GPU.")
+Your GPU supports bfloat16. This notebook still trains in float16, so the same settings also work on T4 GPUs.

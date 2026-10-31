@@ -1,0 +1,6 @@
+$ docker images
+IMAGE                        ID             DISK USAGE   CONTENT SIZE   EXTRA
+gemini-finetuner:latest      9ea1b51f3d50       1.64GB             0B   U    
+llm-dataset-creator:latest   aa7c4de9d4cb       1.64GB             0B        
+python:3.12-slim-bookworm    c001f7a4f1df        124MB             0B        
+[exit 0]

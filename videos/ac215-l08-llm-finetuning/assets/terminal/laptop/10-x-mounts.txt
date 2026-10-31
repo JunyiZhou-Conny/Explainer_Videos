@@ -1,0 +1,9 @@
+$ docker inspect llm-dataset-creator --format '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{println}}{{end}}'; docker inspect llm-dataset-creator --format '{{range .Config.Env}}{{println .}}{{end}}' | grep -E '^(GCP_PROJECT|GCS_BUCKET_NAME|GOOGLE_APPLICATION_CREDENTIALS)='; docker inspect llm-dataset-creator --format 'ports: {{json .NetworkSettings.Ports}}  user: {{.Config.User}}  workdir: {{.Config.WorkingDir}}'
+/home/student/AC215/llm-finetuning/dataset-creator -> /app
+/home/student/AC215/secrets -> /secrets
+
+GCP_PROJECT=ac215-project
+GCS_BUCKET_NAME=cheese-dataset
+GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account.json
+ports: {}  user: app  workdir: /app
+[exit 0]

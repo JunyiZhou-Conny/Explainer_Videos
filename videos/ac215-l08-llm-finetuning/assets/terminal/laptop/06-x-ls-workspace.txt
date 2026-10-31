@@ -1,0 +1,10 @@
+$ ls -la; ls -la secrets
+total 0
+drwxrwxrwx 4 student student  80 Oct 31 02:35 .
+drwxr-xr-x 5 student student 120 Oct 31 02:35 ..
+drwxr-xr-x 7 student student 200 Oct 31 02:35 llm-finetuning
+drwxr-xr-x 2 student student  40 Oct 31 02:35 secrets
+total 0
+drwxr-xr-x 2 student student 40 Oct 31 02:35 .
+drwxrwxrwx 4 student student 80 Oct 31 02:35 ..
+[exit 0]

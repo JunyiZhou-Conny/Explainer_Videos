@@ -1,0 +1,5 @@
+$ ls -la data
+total 0
+drwxrwxrwx 2 app app  40 Oct 31 02:36 .
+drwxr-xr-x 3 app app 180 Oct 31 02:36 ..
+[exit 0]
