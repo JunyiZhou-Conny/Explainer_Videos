@@ -1,0 +1,490 @@
+1
+00:00:00,000 --> 00:00:01,856
+Here is a bug in our prototype.
+
+2
+00:00:02,176 --> 00:00:06,429
+A student has a referral
+to an ear, nose and throat specialist,
+
+3
+00:00:06,429 --> 00:00:08,725
+valid until January twenty-second.
+
+4
+00:00:09,045 --> 00:00:11,244
+Their parent opens the booking page,
+
+5
+00:00:11,244 --> 00:00:14,421
+leaves it open past that moment,
+and presses submit.
+
+6
+00:00:14,741 --> 00:00:19,382
+By the agent's reading of the code,
+the expired referral is attached anyway,
+
+7
+00:00:19,382 --> 00:00:23,168
+and the tracker shows the specialist
+as booked, never expired.
+
+8
+00:00:23,417 --> 00:00:28,857
+All 245 existing tests passed;
+none of them books after the expiry.
+
+9
+00:00:29,177 --> 00:00:33,529
+The code even carries a comment saying
+expired referrals are left alone.
+
+10
+00:00:33,849 --> 00:00:35,300
+No person had noticed.
+
+11
+00:00:35,620 --> 00:00:38,305
+On Friday afternoon an agent reported it,
+
+12
+00:00:38,305 --> 00:00:42,169
+after trying every order of a few actions
+in a small world.
+
+13
+00:00:42,489 --> 00:00:47,459
+This episode is about how an agent can prove
+a change is right before anyone looks.
+
+14
+00:00:48,800 --> 00:00:52,981
+Every change to the app's data goes
+through one function, called the reducer.
+
+15
+00:00:53,301 --> 00:00:57,225
+It takes the current state
+and a single action, such as book,
+
+16
+00:00:57,225 --> 00:01:01,600
+confirm, reschedule, cancel or complete,
+and returns the next state.
+
+17
+00:01:01,920 --> 00:01:04,786
+The booking page checks the referral
+when it draws,
+
+18
+00:01:04,786 --> 00:01:07,147
+but the booking reaches the reducer later.
+
+19
+00:01:07,467 --> 00:01:11,221
+So the order of events matters,
+and time passing is an event too.
+
+20
+00:01:11,467 --> 00:01:13,728
+A test follows a path someone chose.
+
+21
+00:01:14,048 --> 00:01:16,287
+The bug lives on a path nobody chose:
+
+22
+00:01:16,287 --> 00:01:19,253
+first time passes,
+then the booking goes through.
+
+23
+00:01:19,500 --> 00:01:21,932
+A test checks the cases someone thought of.
+
+24
+00:01:22,252 --> 00:01:24,151
+What checks the ones nobody thought of?
+
+25
+00:01:28,000 --> 00:01:32,229
+Build a small world instead:
+two referrals, three specialist slots,
+
+26
+00:01:32,229 --> 00:01:34,375
+and a clock with just two moments,
+
+27
+00:01:34,375 --> 00:01:38,667
+right after the referrals are written
+and an hour after they expire.
+
+28
+00:01:38,987 --> 00:01:42,080
+From the starting state there
+are thirteen possible moves.
+
+29
+00:01:42,400 --> 00:01:45,241
+Make each one,
+then every move from each result,
+
+30
+00:01:45,241 --> 00:01:48,437
+layer by layer,
+merging any state you've already seen.
+
+31
+00:01:48,757 --> 00:01:53,628
+In this world that is 13,898 states,
+reached in about a second,
+
+32
+00:01:53,628 --> 00:01:58,421
+and every one of them comes
+from the real reducer, not a copy.
+
+33
+00:01:58,667 --> 00:02:02,742
+Four rules are checked at every state
+and a fifth on every step,
+
+34
+00:02:02,742 --> 00:02:04,653
+all written in plain language,
+
+35
+00:02:04,653 --> 00:02:08,219
+such as one referral backs
+at most one live appointment,
+
+36
+00:02:08,219 --> 00:02:11,275
+and an expired referral
+is never newly attached.
+
+37
+00:02:11,595 --> 00:02:13,635
+Because the search goes layer by layer,
+
+38
+00:02:13,635 --> 00:02:17,611
+the first broken rule it meets comes
+with the shortest story that breaks it.
+
+39
+00:02:17,931 --> 00:02:21,429
+Here, two steps:
+time passes, then book with that referral.
+
+40
+00:02:22,767 --> 00:02:24,068
+Why did it slip through?
+
+41
+00:02:24,388 --> 00:02:27,119
+Booking looks only
+at the referral's stored status.
+
+42
+00:02:27,439 --> 00:02:31,108
+Expired is never stored;
+it is only worked out for the screen.
+
+43
+00:02:31,428 --> 00:02:34,372
+And the page checks when it draws,
+not when you submit.
+
+44
+00:02:34,692 --> 00:02:37,103
+The agent did not change the product code.
+
+45
+00:02:37,423 --> 00:02:41,870
+It recorded the bug as a known finding
+and left the fix to a person:
+
+46
+00:02:41,870 --> 00:02:46,383
+compare the expiry date inside the reducer,
+or check again on submit.
+
+47
+00:02:46,617 --> 00:02:49,348
+The rule was not loosened
+to make the check pass.
+
+48
+00:02:49,668 --> 00:02:52,271
+And the check is built to fail in two ways:
+
+49
+00:02:52,271 --> 00:02:56,025
+if any new rule breaks,
+and if this known bug ever disappears.
+
+50
+00:02:56,345 --> 00:02:59,876
+That second failure reminds whoever
+fixes it to delete the note,
+
+51
+00:02:59,876 --> 00:03:02,745
+so the note can never hide the bug
+if it comes back.
+
+52
+00:03:04,083 --> 00:03:06,814
+Why would an agent break its own code
+on purpose?
+
+53
+00:03:10,683 --> 00:03:13,435
+Because a check you have never seen
+fail proves nothing.
+
+54
+00:03:13,755 --> 00:03:15,376
+Maybe it can't fail at all.
+
+55
+00:03:15,696 --> 00:03:18,982
+So the agent broke the reducer five times
+on purpose,
+
+56
+00:03:18,982 --> 00:03:22,267
+in five different ways,
+and ran the check after each.
+
+57
+00:03:22,587 --> 00:03:26,528
+All five were caught,
+each with a story of two steps or fewer,
+
+58
+00:03:26,528 --> 00:03:28,688
+and each breakage was then undone.
+
+59
+00:03:29,008 --> 00:03:33,889
+It is a hand-made version
+of what testers call mutation testing;
+
+60
+00:03:33,889 --> 00:03:36,710
+the classic paper on it is from 1978.
+
+61
+00:03:38,050 --> 00:03:39,927
+The idea is old and serious.
+
+62
+00:03:40,247 --> 00:03:45,087
+In 2015 Amazon described
+checking its designs this way,
+
+63
+00:03:45,087 --> 00:03:49,399
+using TLA+,
+a language created by Leslie Lamport.
+
+64
+00:03:49,719 --> 00:03:52,881
+In one database
+service it found a data-loss bug
+
+65
+00:03:52,881 --> 00:03:56,439
+whose shortest story
+was thirty-five steps long, a bug
+
+66
+00:03:56,439 --> 00:04:00,194
+that had passed design
+reviews, code reviews and testing.
+
+67
+00:04:00,514 --> 00:04:04,499
+Ours is tiny by comparison,
+two steps in a one-second check,
+
+68
+00:04:04,499 --> 00:04:06,113
+but it is the same move:
+
+69
+00:04:06,113 --> 00:04:09,879
+let a machine walk every order
+a person would never try.
+
+70
+00:04:11,217 --> 00:04:14,716
+The second tool drives the app itself,
+the way a parent would.
+
+71
+00:04:15,036 --> 00:04:20,424
+The agent starts its own copy of the app
+and its own browser from a saved demo state,
+
+72
+00:04:20,424 --> 00:04:24,734
+then clicks through: open the referral,
+choose an in-network clinic,
+
+73
+00:04:24,734 --> 00:04:28,284
+pick a time, submit, wait for pending,
+open the tracker.
+
+74
+00:04:28,604 --> 00:04:31,985
+It finds each control
+by its role and accessible name,
+
+75
+00:04:31,985 --> 00:04:34,239
+the label a screen reader announces,
+
+76
+00:04:34,239 --> 00:04:37,308
+and waits for the page
+to settle after each step.
+
+77
+00:04:37,550 --> 00:04:41,781
+Right means two things at once:
+the screen says the specialist is booked,
+
+78
+00:04:41,781 --> 00:04:45,955
+and the saved data says the referral now
+points to that new appointment.
+
+79
+00:04:46,275 --> 00:04:48,815
+Each run is required to keep evidence:
+
+80
+00:04:48,815 --> 00:04:52,291
+screenshots, the saved state,
+and no browser errors.
+
+81
+00:04:52,611 --> 00:04:55,982
+When a step fails,
+it says which buttons it could see instead.
+
+82
+00:04:56,302 --> 00:04:59,332
+And when it's done,
+it shuts down only what it started.
+
+83
+00:05:00,667 --> 00:05:05,354
+Both tools came from trying two skills
+in a public plugin called pstack,
+
+84
+00:05:05,354 --> 00:05:09,456
+on Friday afternoon,
+in two commits twenty-seven minutes apart.
+
+85
+00:05:09,776 --> 00:05:13,929
+Anthropic's own advice
+for Claude Code says the same thing plainly:
+
+86
+00:05:13,929 --> 00:05:17,648
+give the agent a check to run,
+or you become the test suite.
+
+87
+00:05:17,884 --> 00:05:21,798
+What waits for you:
+choosing the fix for the expired referral,
+
+88
+00:05:21,798 --> 00:05:25,019
+and trying the app-driving tool
+on your own laptop;
+
+89
+00:05:25,019 --> 00:05:27,292
+so far it has only run in the cloud.
+
+90
+00:05:27,612 --> 00:05:29,532
+And the pull request is still a draft.
+
+91
+00:05:29,852 --> 00:05:31,083
+The last episode asked
+
+92
+00:05:31,083 --> 00:05:33,713
+whether layers can stand
+in for a human review.
+
+93
+00:05:34,033 --> 00:05:37,195
+Here are two more:
+a check that tries every order,
+
+94
+00:05:37,195 --> 00:05:39,473
+and an agent that uses the real app.
+
+95
+00:05:40,817 --> 00:05:43,267
+So: one tool walks every order of actions
+
+96
+00:05:43,267 --> 00:05:47,452
+in a small world and hands back
+the shortest story that breaks a rule.
+
+97
+00:05:47,772 --> 00:05:51,484
+The other uses the real app like a parent
+and keeps the evidence.
+
+98
+00:05:51,804 --> 00:05:54,677
+The first was checked
+by breaking it on purpose;
+
+99
+00:05:54,677 --> 00:05:57,372
+the second,
+by running every flow end to end.
+
+100
+00:05:57,617 --> 00:05:58,726
+Three questions.
+
+101
+00:05:59,046 --> 00:06:02,460
+What does the exhaustive check try
+that an ordinary test doesn't?
+
+102
+00:06:02,780 --> 00:06:04,678
+Why break your own code on purpose?
+
+103
+00:06:04,998 --> 00:06:07,580
+And why does the check fail
+when the bug gets fixed?
+
+104
+00:06:12,817 --> 00:06:16,956
+Next: before any backend code is written,
+how do you choose the backend?
+

@@ -79,56 +79,56 @@ Dialogue: 0,0:03:46.47,0:03:48.74,Bilingual,,0,0,0,,而且没有密码可忘\N{\
 Dialogue: 0,0:03:48.98,0:03:54.63,Bilingual,,0,0,0,,给国内手机号发短信要花钱，微信登录需要注册公司\N{\fs33\c&H00C8C0B8&\bord1.4}Text messages to Chinese numbers cost money, WeChat login needs a registered company,
 Dialogue: 0,0:03:54.63,0:03:59.35,Bilingual,,0,0,0,,托管登录服务把用户数据放在别处，还按用户数收费\N{\fs33\c&H00C8C0B8&\bord1.4}and hosted login services keep user data elsewhere and charge per user.
 Dialogue: 0,0:03:59.67,0:04:02.76,Bilingual,,0,0,0,,自己从零写，正是安全漏洞的来源\N{\fs33\c&H00C8C0B8&\bord1.4}Writing it from scratch is how security holes happen.
-Dialogue: 0,0:04:03.08,0:04:06.81,Bilingual,,0,0,0,,选中的 Better Auth 跑在我们自己的服务器里\N{\fs33\c&H00C8C0B8&\bord1.4}The library chosen, Better Auth, runs inside our own server and keeps everything in our own Postgres.
-Dialogue: 0,0:04:06.81,0:04:09.48,Bilingual,,0,0,0,,数据都存进我们自己的 Postgres\N{\fs33\c&H00C8C0B8&\bord1.4}The library chosen, Better Auth, runs inside our own server and keeps everything in our own Postgres.
-Dialogue: 0,0:04:10.83,0:04:13.99,Bilingual,,0,0,0,,接下来是数据的结构，也就是保护人的那一部分\N{\fs33\c&H00C8C0B8&\bord1.4}Then the shape of the data, the part that protects people.
-Dialogue: 0,0:04:14.31,0:04:18.17,Bilingual,,0,0,0,,每个账号都有一个身份，学生或家长\N{\fs33\c&H00C8C0B8&\bord1.4}Every account has a role, student or parent, written once and,
-Dialogue: 0,0:04:18.17,0:04:21.28,Bilingual,,0,0,0,,只写一次，在这第一版里用户自己不能改\N{\fs33\c&H00C8C0B8&\bord1.4}in this first version, not changeable by the user;
-Dialogue: 0,0:04:21.28,0:04:25.64,Bilingual,,0,0,0,,记录写道，否则学生能把自己改成家长\N{\fs33\c&H00C8C0B8&\bord1.4}otherwise, the record notes, a student could make themselves a parent.
-Dialogue: 0,0:04:25.88,0:04:29.68,Bilingual,,0,0,0,,谁应该能发起家庭关联：学生，还是家长？\N{\fs33\c&H00C8C0B8&\bord1.4}Who should be able to start a family link: the student, or the parent?
-Dialogue: 0,0:04:32.38,0:04:34.80,Bilingual,,0,0,0,,只有学生能发起家庭关联\N{\fs33\c&H00C8C0B8&\bord1.4}Only the student can start a family link,
-Dialogue: 0,0:04:34.80,0:04:38.34,Bilingual,,0,0,0,,因为学生是病人，健康数据归学生所有\N{\fs33\c&H00C8C0B8&\bord1.4}because the student is the patient and owns the health data.
-Dialogue: 0,0:04:38.66,0:04:40.39,Bilingual,,0,0,0,,学生生成一个邀请码\N{\fs33\c&H00C8C0B8&\bord1.4}They create an invite code:
-Dialogue: 0,0:04:40.39,0:04:44.76,Bilingual,,0,0,0,,至少 8 个字符，72 小时内有效，只能用一次\N{\fs33\c&H00C8C0B8&\bord1.4}at least eight characters, valid for seventy-two hours, usable once.
-Dialogue: 0,0:04:45.08,0:04:50.47,Bilingual,,0,0,0,,关联之后，家长只能看到学生的资料和当前的保险卡，而且只读\N{\fs33\c&H00C8C0B8&\bord1.4}Once linked, a parent sees the student's profile and current insurance card, read-only,
-Dialogue: 0,0:04:50.47,0:04:51.97,Bilingual,,0,0,0,,其他什么都看不到\N{\fs33\c&H00C8C0B8&\bord1.4}and nothing else;
-Dialogue: 0,0:04:51.97,0:04:57.00,Bilingual,,0,0,0,,以后新增的内容，比如分诊对话，默认不对家长开放\N{\fs33\c&H00C8C0B8&\bord1.4}anything added later, such as triage chats, is closed to parents by default.
-Dialogue: 0,0:04:57.32,0:04:59.55,Bilingual,,0,0,0,,目前不存保险卡照片\N{\fs33\c&H00C8C0B8&\bord1.4}For now, card photos are not stored;
-Dialogue: 0,0:04:59.55,0:05:03.64,Bilingual,,0,0,0,,保险卡在设备上识别，只保留文字字段\N{\fs33\c&H00C8C0B8&\bord1.4}the card is read on the device, and only the text fields are kept.
-Dialogue: 0,0:05:04.98,0:05:09.23,Bilingual,,0,0,0,,初稿由四个审查者从不同角度读过\N{\fs33\c&H00C8C0B8&\bord1.4}The first draft was read by four reviewers from different angles:
-Dialogue: 0,0:05:09.23,0:05:14.12,Bilingual,,0,0,0,,外部事实、和仓库是否一致、隐私和数据结构\N{\fs33\c&H00C8C0B8&\bord1.4}outside facts, consistency with the repository, privacy and the data model,
-Dialogue: 0,0:05:14.12,0:05:15.82,Bilingual,,0,0,0,,以及 issue 的验收清单\N{\fs33\c&H00C8C0B8&\bord1.4}and the issue's checklist.
-Dialogue: 0,0:05:16.14,0:05:19.94,Bilingual,,0,0,0,,他们一共提了 31 条意见，一个裁判 agent 保留了 14 条\N{\fs33\c&H00C8C0B8&\bord1.4}They raised thirty-one comments, and a judge agent kept fourteen.
-Dialogue: 0,0:05:20.26,0:05:24.38,Bilingual,,0,0,0,,第二版修正了不少问题，其中有三个真错误\N{\fs33\c&H00C8C0B8&\bord1.4}The second version fixed, among other things, three real mistakes:
-Dialogue: 0,0:05:24.38,0:05:28.64,Bilingual,,0,0,0,,它给保险字段自己起了状态和来源的名称\N{\fs33\c&H00C8C0B8&\bord1.4}it had made up its own status and source labels for insurance fields
-Dialogue: 0,0:05:28.64,0:05:31.01,Bilingual,,0,0,0,,而不是先读保险的代码\N{\fs33\c&H00C8C0B8&\bord1.4}instead of reading the insurance code,
-Dialogue: 0,0:05:31.01,0:05:32.95,Bilingual,,0,0,0,,让关联的家长录入保险卡\N{\fs33\c&H00C8C0B8&\bord1.4}let linked parents enter cards,
-Dialogue: 0,0:05:32.95,0:05:36.45,Bilingual,,0,0,0,,还打算复用带着模拟数据的服务\N{\fs33\c&H00C8C0B8&\bord1.4}and planned to reuse services that carry fictional data.
-Dialogue: 0,0:05:36.70,0:05:40.24,Bilingual,,0,0,0,,但修订本身也带进了一个错误，被 Bugbot 抓到了\N{\fs33\c&H00C8C0B8&\bord1.4}But the revision added a mistake of its own, and Bugbot caught it.
-Dialogue: 0,0:05:40.56,0:05:44.51,Bilingual,,0,0,0,,解除关联时只记下了时间，关联还标着有效\N{\fs33\c&H00C8C0B8&\bord1.4}Unlinking only recorded the time and left the link marked active,
-Dialogue: 0,0:05:44.51,0:05:46.64,Bilingual,,0,0,0,,家长就会一直保留访问权限\N{\fs33\c&H00C8C0B8&\bord1.4}so a parent would have kept access.
-Dialogue: 0,0:05:46.96,0:05:50.59,Bilingual,,0,0,0,,只差一个词，还是在一份书面计划里，代码都还没写\N{\fs33\c&H00C8C0B8&\bord1.4}One missing word, in a written plan, before any code existed.
-Dialogue: 0,0:05:50.91,0:05:53.89,Bilingual,,0,0,0,,修正在那条评论之后 21 秒就提交了\N{\fs33\c&H00C8C0B8&\bord1.4}The fix landed twenty-one seconds after the comment.
-Dialogue: 0,0:05:54.13,0:05:56.84,Bilingual,,0,0,0,,如果没有 bot 盯着，什么能抓住它？\N{\fs33\c&H00C8C0B8&\bord1.4}If no bot had been watching, what would have caught it?
-Dialogue: 0,0:06:02.63,0:06:05.77,Bilingual,,0,0,0,,一个测试就能，而且记录里已经要求了\N{\fs33\c&H00C8C0B8&\bord1.4}A test would, and the record already asks for one:
-Dialogue: 0,0:06:05.77,0:06:11.42,Bilingual,,0,0,0,,学生解除关联后，家长的下一个请求必须被拒绝，并且自动检查\N{\fs33\c&H00C8C0B8&\bord1.4}after a student unlinks, the parent's next request must be refused, checked automatically.
-Dialogue: 0,0:06:11.74,0:06:14.23,Bilingual,,0,0,0,,这份决策本身还是提议\N{\fs33\c&H00C8C0B8&\bord1.4}The decision itself is still a proposal;
-Dialogue: 0,0:06:14.23,0:06:19.47,Bilingual,,0,0,0,,issue 要求你们三个人线下确认之后，才能改为已采纳\N{\fs33\c&H00C8C0B8&\bord1.4}the issue asks the three of you to confirm it in person before it is marked adopted.
-Dialogue: 0,0:06:19.70,0:06:23.54,Bilingual,,0,0,0,,还没定的：国内能不能访问到服务器\N{\fs33\c&H00C8C0B8&\bord1.4}Still open: whether the servers can be reached from China,
-Dialogue: 0,0:06:23.54,0:06:27.98,Bilingual,,0,0,0,,用哪个发信服务才不会进 QQ 和 163 的垃圾箱\N{\fs33\c&H00C8C0B8&\bord1.4}which email service stays out of QQ and one-six-three spam folders,
-Dialogue: 0,0:06:27.98,0:06:32.88,Bilingual,,0,0,0,,家长能不能录入保险卡信息，以及删除的数据要保留多久\N{\fs33\c&H00C8C0B8&\bord1.4}whether parents may enter card details, and how long deleted data lingers.
-Dialogue: 0,0:06:33.20,0:06:36.32,Bilingual,,0,0,0,,这份技术文档里有两个产品决定\N{\fs33\c&H00C8C0B8&\bord1.4}Two product calls sit in this technical document,
-Dialogue: 0,0:06:36.32,0:06:39.06,Bilingual,,0,0,0,,在那几个 issue 定下来之前都只是暂定\N{\fs33\c&H00C8C0B8&\bord1.4}both provisional until those issues decide:
-Dialogue: 0,0:06:39.06,0:06:44.66,Bilingual,,0,0,0,,家长默认看不到任何新内容，删除学生账号会连同保险卡一起删除\N{\fs33\c&H00C8C0B8&\bord1.4}parents see nothing new by default, and deleting a student's account deletes their card.
-Dialogue: 0,0:06:44.98,0:06:49.27,Bilingual,,0,0,0,,还有一处要整理的：两个不同的决策，编号都是 0006\N{\fs33\c&H00C8C0B8&\bord1.4}And one piece of housekeeping: two different decisions are both numbered six.
-Dialogue: 0,0:06:51.82,0:06:54.69,Bilingual,,0,0,0,,所以：用 TypeScript，因为页面说了算\N{\fs33\c&H00C8C0B8&\bord1.4}So: TypeScript, because the page decides;
-Dialogue: 0,0:06:54.69,0:06:57.21,Bilingual,,0,0,0,,用 Postgres，因为数据的核心是关联\N{\fs33\c&H00C8C0B8&\bord1.4}Postgres, because the data is links;
-Dialogue: 0,0:06:57.21,0:07:00.43,Bilingual,,0,0,0,,用邮箱验证码，因为每个家长都有邮箱\N{\fs33\c&H00C8C0B8&\bord1.4}emailed codes, because every parent has email;
-Dialogue: 0,0:07:00.43,0:07:03.66,Bilingual,,0,0,0,,用容器，因为它必须在任何电脑上都能跑\N{\fs33\c&H00C8C0B8&\bord1.4}containers, because it must run on any laptop.
-Dialogue: 0,0:07:03.98,0:07:07.05,Bilingual,,0,0,0,,还有一个数据结构，它真正的工作是保护隐私\N{\fs33\c&H00C8C0B8&\bord1.4}And a data model whose real job is privacy.
-Dialogue: 0,0:07:07.28,0:07:08.66,Bilingual,,0,0,0,,三个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Three questions.
-Dialogue: 0,0:07:08.71,0:07:10.53,Bilingual,,0,0,0,,为什么后端不用 Python？\N{\fs33\c&H00C8C0B8&\bord1.4}Why isn't the backend in Python?
-Dialogue: 0,0:07:10.85,0:07:13.43,Bilingual,,0,0,0,,是什么阻止学生把自己改成家长？\N{\fs33\c&H00C8C0B8&\bord1.4}What stops a student from making themselves a parent?
-Dialogue: 0,0:07:13.75,0:07:16.33,Bilingual,,0,0,0,,没有 bot 的话，什么能抓住解除关联的那个 bug？\N{\fs33\c&H00C8C0B8&\bord1.4}And what would have caught the unlink bug without a bot?
-Dialogue: 0,0:07:21.57,0:07:23.17,Bilingual,,0,0,0,,这一周的内容到这里结束\N{\fs33\c&H00C8C0B8&\bord1.4}That ends this week's batch.
-Dialogue: 0,0:07:23.49,0:07:26.92,Bilingual,,0,0,0,,下周的几集，从下周的 PR 开始\N{\fs33\c&H00C8C0B8&\bord1.4}Next week's episodes start from next week's pull requests.
+Dialogue: 0,0:04:03.08,0:04:06.98,Bilingual,,0,0,0,,选中的 Better Auth 跑在我们自己的服务器里\N{\fs33\c&H00C8C0B8&\bord1.4}The library chosen, Better Auth, runs inside our own server,
+Dialogue: 0,0:04:06.98,0:04:09.63,Bilingual,,0,0,0,,数据都存进我们自己的 Postgres\N{\fs33\c&H00C8C0B8&\bord1.4}and keeps everything in our own Postgres.
+Dialogue: 0,0:04:10.98,0:04:14.14,Bilingual,,0,0,0,,接下来是数据的结构，也就是保护人的那一部分\N{\fs33\c&H00C8C0B8&\bord1.4}Then the shape of the data, the part that protects people.
+Dialogue: 0,0:04:14.46,0:04:18.32,Bilingual,,0,0,0,,每个账号都有一个身份，学生或家长\N{\fs33\c&H00C8C0B8&\bord1.4}Every account has a role, student or parent, written once and,
+Dialogue: 0,0:04:18.32,0:04:21.43,Bilingual,,0,0,0,,只写一次，在这第一版里用户自己不能改\N{\fs33\c&H00C8C0B8&\bord1.4}in this first version, not changeable by the user;
+Dialogue: 0,0:04:21.43,0:04:25.79,Bilingual,,0,0,0,,记录写道，否则学生能把自己改成家长\N{\fs33\c&H00C8C0B8&\bord1.4}otherwise, the record notes, a student could make themselves a parent.
+Dialogue: 0,0:04:26.03,0:04:29.83,Bilingual,,0,0,0,,谁应该能发起家庭关联：学生，还是家长？\N{\fs33\c&H00C8C0B8&\bord1.4}Who should be able to start a family link: the student, or the parent?
+Dialogue: 0,0:04:32.53,0:04:34.95,Bilingual,,0,0,0,,只有学生能发起家庭关联\N{\fs33\c&H00C8C0B8&\bord1.4}Only the student can start a family link,
+Dialogue: 0,0:04:34.95,0:04:38.49,Bilingual,,0,0,0,,因为学生是病人，健康数据归学生所有\N{\fs33\c&H00C8C0B8&\bord1.4}because the student is the patient and owns the health data.
+Dialogue: 0,0:04:38.81,0:04:40.54,Bilingual,,0,0,0,,学生生成一个邀请码\N{\fs33\c&H00C8C0B8&\bord1.4}They create an invite code:
+Dialogue: 0,0:04:40.54,0:04:44.91,Bilingual,,0,0,0,,至少 8 个字符，72 小时内有效，只能用一次\N{\fs33\c&H00C8C0B8&\bord1.4}at least eight characters, valid for seventy-two hours, usable once.
+Dialogue: 0,0:04:45.23,0:04:50.62,Bilingual,,0,0,0,,关联之后，家长只能看到学生的资料和当前的保险卡，而且只读\N{\fs33\c&H00C8C0B8&\bord1.4}Once linked, a parent sees the student's profile and current insurance card, read-only,
+Dialogue: 0,0:04:50.62,0:04:52.12,Bilingual,,0,0,0,,其他什么都看不到\N{\fs33\c&H00C8C0B8&\bord1.4}and nothing else;
+Dialogue: 0,0:04:52.12,0:04:57.15,Bilingual,,0,0,0,,以后新增的内容，比如分诊对话，默认不对家长开放\N{\fs33\c&H00C8C0B8&\bord1.4}anything added later, such as triage chats, is closed to parents by default.
+Dialogue: 0,0:04:57.47,0:04:59.70,Bilingual,,0,0,0,,目前不存保险卡照片\N{\fs33\c&H00C8C0B8&\bord1.4}For now, card photos are not stored;
+Dialogue: 0,0:04:59.70,0:05:03.79,Bilingual,,0,0,0,,保险卡在设备上识别，只保留文字字段\N{\fs33\c&H00C8C0B8&\bord1.4}the card is read on the device, and only the text fields are kept.
+Dialogue: 0,0:05:05.13,0:05:09.38,Bilingual,,0,0,0,,初稿由四个审查者从不同角度读过\N{\fs33\c&H00C8C0B8&\bord1.4}The first draft was read by four reviewers from different angles:
+Dialogue: 0,0:05:09.38,0:05:14.27,Bilingual,,0,0,0,,外部事实、和仓库是否一致、隐私和数据结构\N{\fs33\c&H00C8C0B8&\bord1.4}outside facts, consistency with the repository, privacy and the data model,
+Dialogue: 0,0:05:14.27,0:05:15.97,Bilingual,,0,0,0,,以及 issue 的验收清单\N{\fs33\c&H00C8C0B8&\bord1.4}and the issue's checklist.
+Dialogue: 0,0:05:16.29,0:05:20.09,Bilingual,,0,0,0,,他们一共提了 31 条意见，一个裁判 agent 保留了 14 条\N{\fs33\c&H00C8C0B8&\bord1.4}They raised thirty-one comments, and a judge agent kept fourteen.
+Dialogue: 0,0:05:20.41,0:05:24.53,Bilingual,,0,0,0,,第二版修正了不少问题，其中有三个真错误\N{\fs33\c&H00C8C0B8&\bord1.4}The second version fixed, among other things, three real mistakes:
+Dialogue: 0,0:05:24.53,0:05:28.79,Bilingual,,0,0,0,,它给保险字段自己起了状态和来源的名称\N{\fs33\c&H00C8C0B8&\bord1.4}it had made up its own status and source labels for insurance fields
+Dialogue: 0,0:05:28.79,0:05:31.16,Bilingual,,0,0,0,,而不是先读保险的代码\N{\fs33\c&H00C8C0B8&\bord1.4}instead of reading the insurance code,
+Dialogue: 0,0:05:31.16,0:05:33.10,Bilingual,,0,0,0,,让关联的家长录入保险卡\N{\fs33\c&H00C8C0B8&\bord1.4}let linked parents enter cards,
+Dialogue: 0,0:05:33.10,0:05:36.60,Bilingual,,0,0,0,,还打算复用带着模拟数据的服务\N{\fs33\c&H00C8C0B8&\bord1.4}and planned to reuse services that carry fictional data.
+Dialogue: 0,0:05:36.85,0:05:40.39,Bilingual,,0,0,0,,但修订本身也带进了一个错误，被 Bugbot 抓到了\N{\fs33\c&H00C8C0B8&\bord1.4}But the revision added a mistake of its own, and Bugbot caught it.
+Dialogue: 0,0:05:40.71,0:05:44.66,Bilingual,,0,0,0,,解除关联时只记下了时间，关联还标着有效\N{\fs33\c&H00C8C0B8&\bord1.4}Unlinking only recorded the time and left the link marked active,
+Dialogue: 0,0:05:44.66,0:05:46.79,Bilingual,,0,0,0,,家长就会一直保留访问权限\N{\fs33\c&H00C8C0B8&\bord1.4}so a parent would have kept access.
+Dialogue: 0,0:05:47.11,0:05:50.74,Bilingual,,0,0,0,,只差一个词，还是在一份书面计划里，代码都还没写\N{\fs33\c&H00C8C0B8&\bord1.4}One missing word, in a written plan, before any code existed.
+Dialogue: 0,0:05:51.06,0:05:54.04,Bilingual,,0,0,0,,修正在那条评论之后 21 秒就提交了\N{\fs33\c&H00C8C0B8&\bord1.4}The fix landed twenty-one seconds after the comment.
+Dialogue: 0,0:05:54.28,0:05:56.99,Bilingual,,0,0,0,,如果没有 bot 盯着，什么能抓住它？\N{\fs33\c&H00C8C0B8&\bord1.4}If no bot had been watching, what would have caught it?
+Dialogue: 0,0:06:02.78,0:06:05.92,Bilingual,,0,0,0,,一个测试就能，而且记录里已经要求了\N{\fs33\c&H00C8C0B8&\bord1.4}A test would, and the record already asks for one:
+Dialogue: 0,0:06:05.92,0:06:11.57,Bilingual,,0,0,0,,学生解除关联后，家长的下一个请求必须被拒绝，并且自动检查\N{\fs33\c&H00C8C0B8&\bord1.4}after a student unlinks, the parent's next request must be refused, checked automatically.
+Dialogue: 0,0:06:11.89,0:06:14.38,Bilingual,,0,0,0,,这份决策本身还是提议\N{\fs33\c&H00C8C0B8&\bord1.4}The decision itself is still a proposal;
+Dialogue: 0,0:06:14.38,0:06:19.62,Bilingual,,0,0,0,,issue 要求你们三个人线下确认之后，才能改为已采纳\N{\fs33\c&H00C8C0B8&\bord1.4}the issue asks the three of you to confirm it in person before it is marked adopted.
+Dialogue: 0,0:06:19.85,0:06:23.69,Bilingual,,0,0,0,,还没定的：国内能不能访问到服务器\N{\fs33\c&H00C8C0B8&\bord1.4}Still open: whether the servers can be reached from China,
+Dialogue: 0,0:06:23.69,0:06:28.13,Bilingual,,0,0,0,,用哪个发信服务才不会进 QQ 和 163 的垃圾箱\N{\fs33\c&H00C8C0B8&\bord1.4}which email service stays out of QQ and one-six-three spam folders,
+Dialogue: 0,0:06:28.13,0:06:33.03,Bilingual,,0,0,0,,家长能不能录入保险卡信息，以及删除的数据要保留多久\N{\fs33\c&H00C8C0B8&\bord1.4}whether parents may enter card details, and how long deleted data lingers.
+Dialogue: 0,0:06:33.35,0:06:36.47,Bilingual,,0,0,0,,这份技术文档里有两个产品决定\N{\fs33\c&H00C8C0B8&\bord1.4}Two product calls sit in this technical document,
+Dialogue: 0,0:06:36.47,0:06:39.21,Bilingual,,0,0,0,,在那几个 issue 定下来之前都只是暂定\N{\fs33\c&H00C8C0B8&\bord1.4}both provisional until those issues decide:
+Dialogue: 0,0:06:39.21,0:06:44.81,Bilingual,,0,0,0,,家长默认看不到任何新内容，删除学生账号会连同保险卡一起删除\N{\fs33\c&H00C8C0B8&\bord1.4}parents see nothing new by default, and deleting a student's account deletes their card.
+Dialogue: 0,0:06:45.13,0:06:49.42,Bilingual,,0,0,0,,还有一处要整理的：两个不同的决策，编号都是 0006\N{\fs33\c&H00C8C0B8&\bord1.4}And one piece of housekeeping: two different decisions are both numbered six.
+Dialogue: 0,0:06:51.97,0:06:54.84,Bilingual,,0,0,0,,所以：用 TypeScript，因为页面说了算\N{\fs33\c&H00C8C0B8&\bord1.4}So: TypeScript, because the page decides;
+Dialogue: 0,0:06:54.84,0:06:57.36,Bilingual,,0,0,0,,用 Postgres，因为数据的核心是关联\N{\fs33\c&H00C8C0B8&\bord1.4}Postgres, because the data is links;
+Dialogue: 0,0:06:57.36,0:07:00.58,Bilingual,,0,0,0,,用邮箱验证码，因为每个家长都有邮箱\N{\fs33\c&H00C8C0B8&\bord1.4}emailed codes, because every parent has email;
+Dialogue: 0,0:07:00.58,0:07:03.81,Bilingual,,0,0,0,,用容器，因为它必须在任何电脑上都能跑\N{\fs33\c&H00C8C0B8&\bord1.4}containers, because it must run on any laptop.
+Dialogue: 0,0:07:04.13,0:07:07.20,Bilingual,,0,0,0,,还有一个数据结构，它真正的工作是保护隐私\N{\fs33\c&H00C8C0B8&\bord1.4}And a data model whose real job is privacy.
+Dialogue: 0,0:07:07.43,0:07:08.81,Bilingual,,0,0,0,,三个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Three questions.
+Dialogue: 0,0:07:08.86,0:07:10.68,Bilingual,,0,0,0,,为什么后端不用 Python？\N{\fs33\c&H00C8C0B8&\bord1.4}Why isn't the backend in Python?
+Dialogue: 0,0:07:11.00,0:07:13.58,Bilingual,,0,0,0,,是什么阻止学生把自己改成家长？\N{\fs33\c&H00C8C0B8&\bord1.4}What stops a student from making themselves a parent?
+Dialogue: 0,0:07:13.90,0:07:16.48,Bilingual,,0,0,0,,没有 bot 的话，什么能抓住解除关联的那个 bug？\N{\fs33\c&H00C8C0B8&\bord1.4}And what would have caught the unlink bug without a bot?
+Dialogue: 0,0:07:21.72,0:07:23.32,Bilingual,,0,0,0,,这一周的内容到这里结束\N{\fs33\c&H00C8C0B8&\bord1.4}That ends this week's batch.
+Dialogue: 0,0:07:23.64,0:07:27.07,Bilingual,,0,0,0,,下周的几集，从下周的 PR 开始\N{\fs33\c&H00C8C0B8&\bord1.4}Next week's episodes start from next week's pull requests.
