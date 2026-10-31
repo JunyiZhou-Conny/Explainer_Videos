@@ -54,14 +54,19 @@ class Database(VoiceScene):
             clear(self, 0.4)
             cell = VGroup(mono("memberId", 26, USER_C),
                           VGroup(*[VGroup(mono(k, 22, DB_C), sans(v, 22, S.GREY)).arrange(RIGHT, buff=0.3) for k, v in
-                                   [("value", "the text as read"), ("confidence", "how sure the reader was"),
+                                   [("value", "the text as read"), ("confidence", "how sure the card scanner was"),
                                     ("source", "front · back · text · user"), ("raw", "the raw text it came from")]]
                                  ).arrange(DOWN, aligned_edge=LEFT, buff=0.1)).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
             frame = SurroundingRectangle(cell, color=DB_C, buff=0.3, corner_radius=0.14)
             box = VGroup(frame, cell).move_to(LEFT * 3.3 + UP * 1.4)
-            note = sans("one insurance field, one JSON cell", 22, S.GREY).next_to(box, UP, buff=0.15)
+            note = sans("one insurance field: one flexible box (JSON)", 22, S.GREY).next_to(box, UP, buff=0.15)
+            rows = cell[1]
+            rows.set_opacity(0.3)
             vo.wait_until("flexible on purpose")
             self.play(FadeIn(box), FadeIn(note), run_time=0.6)
+            for r, phrase in zip(rows, ["not just a value", "how sure the card scanner was", "where it came from", "the raw text"]):
+                vo.wait_until(phrase)
+                self.play(r.animate.set_opacity(1), run_time=0.35)
             door = VGroup(RoundedRectangle(width=2.6, height=2.0, corner_radius=0.1, stroke_color=S.GREY, stroke_width=2.5),
                           VGroup(mono("pgvector", 24, S.GREY), sans("search by meaning", 20, S.GREY), sans("not needed today", 20, S.GREY)
                                  ).arrange(DOWN, buff=0.08))

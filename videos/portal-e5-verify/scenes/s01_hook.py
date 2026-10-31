@@ -60,7 +60,7 @@ class Hook(VoiceScene):
                             zh("已过期", 26, S.GREY)).arrange(RIGHT, buff=0.6).next_to(page, DOWN, buff=0.35)
             self.play(FadeIn(status[0]), run_time=0.4)
             self.play(FadeIn(status[1]), Create(strike(status[1], DANGER_C)), run_time=0.5)
-            how = sans("the page path: the agent's reading of the code · the checker proved the booking step", 20, S.GREY)
+            how = sans("how the page gets there: the agent's reading of the code", 22, S.GREY)
             how.move_to(DOWN * 3.2)
             self.play(FadeIn(how), run_time=0.4)
             self.wait(max(0.1, vo.remaining() - 0.2))

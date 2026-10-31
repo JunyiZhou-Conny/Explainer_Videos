@@ -81,26 +81,44 @@ class Language(VoiceScene):
         # 4 ---------------------------------------------------------------- what lost, and why
         with self.voiceover(SAY[3]) as vo:
             clear(self, 0.4)
-            py = option("Python + FastAPI", "its strength, AI retrieval libraries, isn't needed: triage looks up fact cards "
-                        "by code, not by vector search; two copies of every type", False, width=6.4)
+            py = option("Python + FastAPI", "its strength, AI retrieval libraries, isn't needed: triage looks up checked fact cards "
+                        "by code, not by AI similarity search; and every type would exist twice", False, width=6.4)
             exit_ = sans("→ kept as a separate service later", 22, CHECKED_C)
-            opts = VGroup(option("Express", "没有内建的请求检查和类型，要自己拼", False, width=6.0),
-                          option("NestJS", "规矩多、样板代码多，对三个人的 MVP 太重", False, width=6.0),
+            opts = VGroup(option("Express", "no built-in request checks or types: you assemble them yourself", False, width=6.0),
+                          option("NestJS", "many rules, much boilerplate: too heavy for a three-person MVP", False, width=6.0),
                           option("Supabase · Firebase", "user and health data with a third party, before privacy rules exist",
                                  False, width=6.0),
-                          option("Fastify", "同样合适……没有决定性差异 · an equal alternative", True, width=6.0)
+                          option("Fastify", "equally suitable, no decisive difference: an equal alternative", True, width=6.0)
                           ).arrange(DOWN, aligned_edge=LEFT, buff=0.18)
-            left = VGroup(py, exit_).arrange(DOWN, aligned_edge=LEFT, buff=0.15).move_to(LEFT * 3.25 + UP * 1.0)
+            left = VGroup(py, exit_).arrange(DOWN, aligned_edge=LEFT, buff=0.15).move_to(LEFT * 3.25 + UP * 1.3)
             opts.move_to(RIGHT * 3.3 + DOWN * 0.1)
             opts[3][0].set_stroke(S.GREY)
+            # one question, two ways to answer it (illustration)
+            q = VGroup(Dot(radius=0.09, color=USER_C), sans("a question", 22)).arrange(RIGHT, buff=0.12).move_to(LEFT * 5.4 + DOWN * 1.75)
+            card = VGroup(RoundedRectangle(width=2.0, height=0.6, corner_radius=0.1, stroke_color=CHECKED_C, stroke_width=2.5),
+                          sans("fact card", 22, CHECKED_C))
+            card[1].move_to(card[0])
+            card.move_to(LEFT * 1.9 + DOWN * 1.15)
+            lookup = Arrow(q.get_right(), card.get_left(), color=CHECKED_C, buff=0.12)
+            look_lab = sans("looked up by code", 20, CHECKED_C).next_to(card, DOWN, buff=0.08)
+            rng = np.random.default_rng(3)
+            cloud = VGroup(*[Dot([-1.9 + rng.normal(0, 0.45), -2.65 + rng.normal(0, 0.18), 0], radius=0.05, color=S.GREY)
+                             for _ in range(18)])
+            fuzzy = DashedLine(q.get_right(), cloud.get_left(), color=S.GREY, dash_length=0.1).add_tip(tip_length=0.15)
+            fuzzy_lab = sans("AI similarity search: not needed", 20, S.GREY).next_to(cloud, RIGHT, buff=0.15)
+            illus = sans("illustration", 20, S.GREY).next_to(q, UP, buff=0.25).align_to(q, LEFT)
             vo.wait_until("Python's main advantage")
             self.play(FadeIn(py), run_time=0.5)
+            vo.wait_until("in checked fact cards")
+            self.play(FadeIn(q), FadeIn(illus), GrowArrow(lookup), FadeIn(card), FadeIn(look_lab), run_time=0.6)
+            vo.wait_until("not by AI similarity search")
+            self.play(Create(fuzzy), LaggedStart(*[FadeIn(d) for d in cloud], lag_ratio=0.05), FadeIn(fuzzy_lab), run_time=0.7)
             vo.wait_until("Python stays an exit")
             self.play(FadeIn(exit_), run_time=0.4)
-            for o, phrase in zip(opts[:3], ["Express lost", "NestJS", "hosted backends"]):
+            self.play(FadeOut(VGroup(q, illus, lookup, card, look_lab, fuzzy, cloud, fuzzy_lab)), run_time=0.3)
+            for o, phrase in zip(opts, ["Express lost", "NestJS", "hosted backends", "Fastify was just as good"]):
                 vo.wait_until(phrase)
                 self.play(FadeIn(o, shift=LEFT * 0.1), run_time=0.4)
-            self.play(FadeIn(opts[3]), run_time=0.4)
             self.wait(max(0.1, vo.remaining() - 0.2))
         self.wait(0.6)
         clear(self)

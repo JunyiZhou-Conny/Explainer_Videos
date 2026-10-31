@@ -15,4 +15,4 @@ terms:
 - {en: proposal / adopted, zh_subtitle: "提议 / 已采纳"}
 - {en: agent, zh_subtitle: "agent"}
 allowed_spoken_latin: [agent, Python, JavaScript, TypeScript, PR, Hono, Zod, Postgres, Better, Auth, Docker, Compose, Mac, Windows,
-  Express, NestJS, Supabase, MongoDB, SQLite, QQ, Bugbot, bot, issue, bug, AI]
+  Express, NestJS, Fastify, Supabase, MongoDB, SQLite, QQ, Bugbot, bot, issue, bug, AI]

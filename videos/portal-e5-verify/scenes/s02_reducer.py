@@ -45,8 +45,8 @@ class Reducer(VoiceScene):
             self.play(LaggedStart(*[FadeIn(a, shift=UP * 0.1) for a in acts], lag_ratio=0.15), run_time=1.0)
             vo.wait_until("returns the next state")
             moving = acts[0].copy()
-            self.play(moving.animate.move_to(fn.get_bottom() + DOWN * 0.35), run_time=0.5)
-            self.play(FadeOut(moving), Create(a1), Create(a2), FadeIn(new), run_time=0.7)
+            self.play(acts[0].animate.set_opacity(0.35), moving.animate.scale(1.2).move_to(fn.get_bottom() + DOWN * 0.4), run_time=0.6)
+            self.play(Create(a1), Create(a2), FadeIn(new), run_time=0.7)
             vo.wait_until("checks the referral when it draws")
             draw = VGroup(sans("page draws: referral OK", 22, S.GREY), sans("…time passes…", 22, USER_C),
                           sans("booking reaches the reducer", 22, S.GREY)).arrange(RIGHT, buff=0.35).move_to(DOWN * 2.3)
@@ -54,10 +54,10 @@ class Reducer(VoiceScene):
             vo.wait_until("reaches the reducer later")
             self.play(FadeIn(draw[1]), FadeIn(draw[2]), run_time=0.6)
             vo.wait_until("time passing is an event")
-            clock = VGroup(stopwatch(0.3, USER_C), sans("the clock: outside the data", 20, S.GREY)).arrange(RIGHT, buff=0.15)
-            clock.next_to(old, UP, buff=0.25)
-            tick = chip("time passes", USER_C, 22).next_to(clock, RIGHT, buff=0.3)
-            self.play(FadeIn(clock), FadeIn(tick, scale=1.2), run_time=0.5)
+            clock = VGroup(stopwatch(0.3, USER_C), chip("time passes", USER_C, 22),
+                           sans("a move of its own: the clock is not app data", 22, S.GREY)).arrange(RIGHT, buff=0.2)
+            clock.next_to(old, UP, buff=0.3).align_to(old, LEFT)
+            self.play(FadeIn(clock, scale=1.05), run_time=0.5)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
         # 2 ---------------------------------------------------------------- a test is one chosen path

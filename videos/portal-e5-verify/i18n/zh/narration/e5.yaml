@@ -34,13 +34,13 @@ S03:
 - en: 'Build a small world instead: two referrals, three specialist slots, and a clock with just two moments, right after the referrals are written and an hour after they expire. From the starting state there are thirteen possible moves. Make each one, then every move from each result, layer by layer, merging any state you''ve already seen. In this world that is 13,898 states, reached in about a second, and every one of them comes from the real reducer, not a copy.'
   zh:
   - 换个办法，搭一个很小的世界：两张转诊、三个专科时段，还有一个只有两个时刻的时钟，一个是转诊刚开出来，一个是过期后一小时。
-  - 从起点出发，一共有 13 种可能的操作。
+  - 从起点出发，第一步有 13 种可能。
   - 每一种都走一遍，再从每个结果出发走下一步，一层一层往下，遇到见过的状态就合并。
   - 在这个世界里一共是 13,898 个状态，大约一秒走完，而且每一个都来自真正的 reducer，不是复制品。
 - en: 'Four rules are checked at every state and a fifth on every step, all written in plain language, such as one referral backs at most one live appointment, and an expired referral is never newly attached. Because the search goes layer by layer, the first broken rule it meets comes with the shortest story that breaks it. Here, two steps: time passes, then book with that referral.'
   zh:
   - 每个状态检查四条规则，每一步再检查第五条，全部用大白话写成，比如一张转诊最多对应一个有效预约，过期的转诊不会被新关联上。
-  - 因为搜索是一层一层进行的，遇到的第一条被打破的规则，带着的就是最短的复现。
+  - 因为搜索是一层一层进行的，遇到的第一条被打破的规则，给出的就是打破它的最短步骤。
   - 这里是两步：时间过去，然后用这张转诊预约。
 S04:
 - en: 'Why did it slip through? Booking looks only at the referral''s stored status. Expired is never stored; it is only worked out for the screen. And the page checks when it draws, not when you submit. The agent did not change the product code. It recorded the bug as a known finding and left the fix to a person: compare the expiry date inside the reducer, or check again on submit.'
@@ -51,11 +51,11 @@ S04:
   - 而且页面在画出来时检查，不是在你提交时检查。
   - agent 没有改产品代码。
   - 它把这个 bug 记成已知发现，把修法留给人来定：在 reducer 里比较有效期，或者提交时再检查一次。
-- en: 'The rule was not loosened to make the check pass. And the check is built to fail in two ways: if any new rule breaks, and if this known bug ever disappears. That second failure is a reminder to whoever fixes it to delete the note.'
+- en: 'The rule was not loosened to make the check pass. And the check is built to fail in two ways: if any new rule breaks, and if this known bug ever disappears. That second failure reminds whoever fixes it to delete the note, so the note can never hide the bug if it comes back.'
   zh:
   - 规则没有为了让检查通过而放宽。
   - 而且检查会在两种情况下失败：任何一条新规则被打破，或者这个已知的 bug 消失了。
-  - 第二种失败是在提醒修好它的人，把这条记录删掉。
+  - 第二种失败会提醒修好它的人把这条记录删掉，免得这个 bug 哪天回来时被它挡住。
 S05:
 - en: Why would an agent break its own code on purpose?
   zh:
@@ -78,11 +78,11 @@ S07:
 - en: 'The second tool drives the app itself, the way a parent would. The agent starts its own copy of the app and its own browser from a saved demo state, then clicks through: open the referral, choose an in-network clinic, pick a time, submit, wait for pending, open the tracker. It finds each control by its role and accessible name, the label a screen reader announces, and waits for the page to settle after each step.'
   zh:
   - 第二个工具直接操作 App，就像家长那样。
-  - agent 从一份保存好的演示状态出发，启动自己的一份 App 和自己的浏览器，然后一步步点：打开转诊，选一家网络内的诊所，选时间，提交，等待待确认，打开进度页。
+  - agent 启动自己的一份 App 和自己的浏览器，从一份保存好的演示状态出发，然后一步步点：打开转诊，选一家网络内的诊所，选时间，提交，等待待确认，打开进度页。
   - 它按角色和无障碍名称来找每一个控件，也就是读屏软件念出来的那个名字，并且每一步之后都等页面安静下来。
 - en: 'Right means two things at once: the screen says the specialist is booked, and the saved data says the referral now points to that new appointment. Each run is required to keep evidence: screenshots, the saved state, and no browser errors. When a step fails, it says which buttons it could see instead. And when it''s done, it shuts down only what it started.'
   zh:
-  - 对，意味着两件事同时成立：屏幕上显示专科已预约，保存的数据里转诊也指向了这个新预约。
+  - 做对了，要两件事同时成立：屏幕上显示专科已预约，保存的数据里转诊也指向了这个新预约。
   - 每次运行都必须留下证据：截图、保存的状态，以及没有浏览器报错。
   - 某一步失败时，它会告诉你它能看到哪些按钮。
   - 结束时，它只关掉自己启动的东西。
@@ -91,14 +91,14 @@ S08:
   zh:
   - 这两个工具都来自一个公开插件 pstack 里的两个 skill，是周五下午试用时做的，两次提交相隔 27 分钟。
   - Anthropic 自己给 Claude Code 的建议说得很直白：给 agent 一个能跑的检查，否则你自己就成了测试。
-- en: 'What waits for you: choosing the fix for the expired referral, and trying the app-driving tool on your own laptop, which hasn''t been tried yet. And the pull request is still a draft. In the last episode, layers stood in for a human review. Here are two more: a check that tries every order, and an agent that uses the real app.'
+- en: 'What waits for you: choosing the fix for the expired referral, and trying the app-driving tool on your own laptop; so far it has only run in the cloud. And the pull request is still a draft. The last episode asked whether layers can stand in for a human review. Here are two more: a check that tries every order, and an agent that uses the real app.'
   zh:
-  - 等你来做的事：选定过期转诊的修法，以及在你自己的电脑上试一下这个操作 App 的工具，目前还没有人试过。
+  - 等你来做的事：选定过期转诊的修法，以及在你自己的电脑上试一下这个操作 App 的工具；目前它只在云端跑过。
   - 这个 PR 也还是草稿。
-  - 上一集里，是层层叠加的检查代替了人工审查。
+  - 上一集问的是：层层叠加的检查，能不能代替人工审查。
   - 这里又多了两层：一个试遍所有顺序的检查，和一个真的去用 App 的 agent。
 S09:
-- en: 'So: one tool walks every order of actions in a small world and hands back the shortest story that breaks a rule. The other uses the real app like a parent and keeps the evidence. The first was checked by breaking it on purpose; the second, by running every recipe end to end.'
+- en: 'So: one tool walks every order of actions in a small world and hands back the shortest story that breaks a rule. The other uses the real app like a parent and keeps the evidence. The first was checked by breaking it on purpose; the second, by running every flow end to end.'
   zh:
   - 所以：一个工具在小世界里走遍所有操作顺序，交回打破规则的最短复现。
   - 另一个工具像家长一样真的去用 App，并留下证据。

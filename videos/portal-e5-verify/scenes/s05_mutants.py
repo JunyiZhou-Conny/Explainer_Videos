@@ -54,7 +54,7 @@ class Mutants(VoiceScene):
             self.play(LaggedStart(*[FadeIn(r[1]) for r in rows], lag_ratio=0.2), run_time=1.4)
             vo.wait_until("each breakage was then undone")
             self.play(*[Create(strike(r[0], S.GREY, 3)) for r in rows], run_time=0.6)
-            note = sans("rules and steps: our re-run · the PR recorded results, not traces", 20, S.GREY).next_to(rows, DOWN, buff=0.3)
+            note = sans("which rule broke, in how many steps: our own re-run (the PR lists only that all five were caught)", 22, S.GREY).next_to(rows, DOWN, buff=0.3)
             note.align_to(rows, LEFT)
             self.play(FadeIn(note), run_time=0.3)
             vo.wait_until("mutation testing")

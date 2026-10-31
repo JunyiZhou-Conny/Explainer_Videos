@@ -37,8 +37,12 @@ class Amazon(VoiceScene):
             long = chain(35, 11.0, S.GREY, DANGER_C).move_to(UP * 0.5)
             lab = VGroup(sans("DynamoDB replication: a data-loss bug", 24, DANGER_C), sans("shortest story: 35 steps", 24)
                          ).arrange(RIGHT, buff=0.6).next_to(long, DOWN, buff=0.3)
+            vo.wait_until("In one database service")
+            self.play(Create(long[0]), LaggedStart(*[FadeIn(d) for d in long[1]], lag_ratio=0.06), run_time=2.6, rate_func=linear)
+            vo.wait_until("it found a")
+            self.play(FadeIn(lab[0]), Flash(long[1][-1], color=DANGER_C, flash_radius=0.3), run_time=0.5)
             vo.wait_until("thirty-five steps long")
-            self.play(Create(long[0]), LaggedStart(*[FadeIn(d) for d in long[1]], lag_ratio=0.03), FadeIn(lab), run_time=1.6)
+            self.play(FadeIn(lab[1]), run_time=0.4)
             vo.wait_until("passed design reviews")
             q = quote_panel("“…had passed unnoticed through extensive design reviews, code reviews, and testing.”",
                             "Newcombe et al., CACM 58(4), 2015", width=10.6, size=24).move_to(DOWN * 1.35)

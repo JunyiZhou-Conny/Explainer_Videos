@@ -2,7 +2,8 @@
 
 1. `user`: role student | parent, written once, `input: false` (Better Auth's default is `true`), not changeable by the
    user in this first version (D:116); 「否则学生能把自己改成家长」.
-2. `family_link`: only the student starts it (D:150); invite code ≥ 8 characters, 72 h, single use (HMAC-SHA256,
+2. Ponder: who should be able to start a family link, the student or the parent?
+3. `family_link`: only the student starts it (D:150); invite code ≥ 8 characters, 72 h, single use (HMAC-SHA256,
    D:152-156); once linked, the parent sees the profile and the current card, read-only (D:185); later data such as
    triage closed by default (D:162). 「不存保险卡图片」 (D:181, for the MVP); the card is read on the device (0005:33).
 """
@@ -12,8 +13,8 @@ from manim import *
 from explainer import style as S
 from explainer.scene import VoiceScene
 
-from common import (AUTH_C, CHECKED_C, DANGER_C, DB_C, NARRATION, USER_C, WEB_C, chip, clear, device, mark_bad, mono, sans,
-                    table_card, zh)
+from common import (AUTH_C, CHECKED_C, DANGER_C, DB_C, NARRATION, USER_C, WEB_C, chip, clear, device, mark_bad, mono, ponder_zh,
+                    sans, table_card, zh)
 
 SAY = NARRATION["S06"]
 
@@ -23,7 +24,7 @@ class Model(VoiceScene):
         # 1 ---------------------------------------------------------------- the role
         with self.voiceover(SAY[0]) as vo:
             head = sans("the shape of the data", 28, DB_C).move_to(UP * 3.1)
-            user = table_card("user", ["email", "role: student | parent", "input: false"], DB_C, 4.0).move_to(LEFT * 3.8 + UP * 1.0)
+            user = table_card("user", ["email", "role: student | parent"], DB_C, 4.0).move_to(LEFT * 3.8 + UP * 1.0)
             vo.wait_until("the part that protects people")
             self.play(FadeIn(head), FadeIn(user), run_time=0.6)
             vo.wait_until("written once")
@@ -38,13 +39,24 @@ class Model(VoiceScene):
             self.play(FadeIn(attempt), FadeIn(why), run_time=0.6)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
-        # 2 ---------------------------------------------------------------- the family link
+        # 2 ---------------------------------------------------------------- ponder: who starts the link?
         with self.voiceover(SAY[1]) as vo:
+            clear(self, 0.4)
+            ponder_zh(self, "Who should be able to start a family link:\nthe student, or the parent?",
+                      "谁应该能发起家庭关联：学生，还是家长？", seconds=3.5)
+        self.wait(2.0)
+
+        # 3 ---------------------------------------------------------------- the family link
+        with self.voiceover(SAY[2]) as vo:
             clear(self, 0.4)
             student = device("student", 2.6, 1.7).move_to(LEFT * 4.6 + UP * 1.6)
             parent = device("parent", phone=True, height=1.9).move_to(RIGHT * 4.6 + UP * 1.6)
-            vo.wait_until("Only the student")
             self.play(FadeIn(student), FadeIn(parent), run_time=0.5)
+            start_s = chip("start link", CHECKED_C, 20, mono_font=False).move_to(student.body)
+            start_p = RoundedRectangle(width=0.75, height=0.38, corner_radius=0.12, stroke_color=S.GREY, stroke_width=2).move_to(parent.body)
+            vo.wait_until("Only the student")
+            self.play(FadeIn(start_s), FadeIn(start_p), run_time=0.4)
+            self.play(Create(Line(start_p.get_left(), start_p.get_right(), color=DANGER_C, stroke_width=3)), run_time=0.3)
             only = sans("only the student starts it: the patient owns the health data", 22, USER_C).move_to(UP * 3.3)
             self.play(FadeIn(only), run_time=0.4)
             code = VGroup(RoundedRectangle(width=2.6, height=0.8, corner_radius=0.12, stroke_color=AUTH_C, stroke_width=2.5),

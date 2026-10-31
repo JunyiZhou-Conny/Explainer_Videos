@@ -26,9 +26,20 @@ class Explore(VoiceScene):
         rng = random.Random(5)
         # 1 ---------------------------------------------------------------- the small world, explored layer by layer
         with self.voiceover(SAY[0]) as vo:
-            world = VGroup(chip("2 referrals", USER_C, 22), chip("3 specialist slots", OURS_C, 22),
-                           chip("a clock with 2 moments", MODEL_C, 22)).arrange(RIGHT, buff=0.3)
-            world.move_to(UP * 3.15)
+            refs = VGroup(*[VGroup(RoundedRectangle(width=1.25, height=0.5, corner_radius=0.08, stroke_color=USER_C, stroke_width=2),
+                                   mono(t, 20, USER_C)) for t in ("ref-v1", "ref-v2")])
+            slots = VGroup(*[VGroup(Square(0.5, color=OURS_C, stroke_width=2), mono(f"S{i}", 20, OURS_C)) for i in (1, 2, 3)])
+            for g in (*refs, *slots):
+                g[1].move_to(g[0])
+            refs.arrange(RIGHT, buff=0.15)
+            slots.arrange(RIGHT, buff=0.12)
+            line = Line(LEFT * 1.0, RIGHT * 1.0, color=S.GREY, stroke_width=2)
+            expiry = Line(UP * 0.18, DOWN * 0.18, color=DANGER_C, stroke_width=3).move_to(line.point_from_proportion(0.62))
+            clock = VGroup(line, expiry, *[Dot(line.point_from_proportion(t), radius=0.09, color=MODEL_C) for t in (0.08, 0.9)])
+            world = VGroup(*[VGroup(g, sans(t, 20, S.GREY)).arrange(DOWN, buff=0.14) for g, t in
+                             [(refs, "2 referrals"), (slots, "3 specialist slots"), (clock, "a clock: 2 moments")]]
+                           ).arrange(RIGHT, buff=1.0, aligned_edge=DOWN)
+            world.move_to(UP * 3.1)
             moments = sans("moment 1: just after the referrals are written · moment 2: an hour after they expire", 20, S.GREY)
             moments.next_to(world, DOWN, buff=0.12)
             for c, phrase in zip(world, ["two referrals", "three specialist slots", "two moments"]):
@@ -41,8 +52,9 @@ class Explore(VoiceScene):
             xs1 = np.linspace(-5.4, 5.4, 13)
             layer1 = VGroup(*[Dot([x, 1.0, 0], radius=0.07, color=S.WHITE) for x in xs1])
             edges1 = VGroup(*[Line(root.get_center(), d.get_center(), color=S.GREY_DARK, stroke_width=1.5) for d in layer1])
-            n13 = VGroup(sans("13 first moves", 22, S.GREY), sans("1 tick + 3 slots × 4 referral choices", 20, S.GREY)
-                         ).arrange(DOWN, aligned_edge=RIGHT, buff=0.05).move_to(RIGHT * 4.3 + UP * 1.85)
+            n13 = VGroup(sans("13 first moves", 22, S.GREY), sans("1 tick + 3 slots × 4 referral choices", 20, S.GREY),
+                         sans("(none · ref-v1 · ref-v2 · a missing one)", 20, S.GREY)
+                         ).arrange(DOWN, aligned_edge=RIGHT, buff=0.05).move_to(UP * 1.75).align_to(RIGHT * 6.4, RIGHT)
             self.play(FadeIn(root), FadeIn(start), run_time=0.3)
             self.play(LaggedStart(*[Create(e) for e in edges1], lag_ratio=0.05), FadeIn(layer1), FadeIn(n13), run_time=1.0)
             vo.wait_until("layer by layer")

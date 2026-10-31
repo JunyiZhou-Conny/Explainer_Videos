@@ -1,7 +1,6 @@
 """S07 · Driving the real app (.claude/skills/verify-app/: control-app.mjs, SKILL.md, features/; ../SOURCES.md)
 
-1. Its own copy of the app and its own browser (`up`, own port and profile), a health check (`doctor`, 8 checks),
-   then the referral → specialist flow (features/referral-specialist.md:24-31); every element by ARIA role + accessible
+1. Its own copy of the app and its own browser (`up`, own port and profile), then the referral → specialist flow (features/referral-specialist.md:24-31); every element by ARIA role + accessible
    name; waits for the page to go quiet after each step (no 「查询中…」, no aria-busy, 400 ms without change).
 2. Right = the tracker shows 「已预约专科」 AND `state` shows the referral scheduled, pointing to the new appointment.
    Evidence: screenshot, saved state, browserErrors empty (and the project rules). A failure names the visible
@@ -31,9 +30,8 @@ class Drive(VoiceScene):
             vo.wait_until("drives the app itself")
             self.play(FadeIn(win), FadeIn(bar), FadeIn(url), run_time=0.6)
             vo.wait_until("its own browser")
-            own = VGroup(chip("up: own server, saved demo state", OURS_C, 22, mono_font=False),
-                         chip("own browser profile", OURS_C, 22, mono_font=False),
-                         chip("doctor: 8 checks", CHECKED_C, 22, mono_font=False)).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
+            own = VGroup(chip("own server, saved demo state", OURS_C, 22, mono_font=False),
+                         chip("own browser profile", OURS_C, 22, mono_font=False)).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
             own.move_to(RIGHT * 4.15 + UP * 1.6)
             self.play(LaggedStart(*[FadeIn(c, shift=LEFT * 0.1) for c in own], lag_ratio=0.25), run_time=0.9)
             strip = VGroup(*[zh(s, 22, S.GREY) for s in STEPS]).arrange(RIGHT, buff=0.35).move_to(DOWN * 1.75)
@@ -42,17 +40,32 @@ class Drive(VoiceScene):
             vo.wait_until("clicks through")
             self.play(FadeIn(strip), FadeIn(arrows), run_time=0.5)
             page = VGroup()
+            cursor = Polygon([0, 0, 0], [0.0, -0.36, 0], [0.1, -0.27, 0], [0.2, -0.36, 0], [0.24, -0.32, 0], [0.15, -0.23, 0],
+                             [0.28, -0.22, 0], color=S.WHITE, stroke_width=1.5).set_fill(S.WHITE, 1).move_to(win.get_corner(DR) + UL * 0.6)
+            self.add(cursor)
             for i, phrase in enumerate(["open the referral", "in-network clinic", "pick a time", "submit", "wait for pending",
                                         "open the tracker"]):
                 vo.wait_until(phrase)
-                label = zh(STEPS[i], 26).move_to(win.get_center() + UP * 0.2)
-                self.play(strip[i].animate.set_color(USER_C), FadeOut(page), FadeIn(label), run_time=0.35)
-                page = label
+                text = zh(STEPS[i], 26)
+                if i == 4:   # a wait, not a click
+                    ctl = VGroup(text, sans("waiting…", 20, S.GREY)).arrange(DOWN, buff=0.12)
+                else:
+                    box = RoundedRectangle(width=text.width + 0.6, height=0.72, corner_radius=0.12, stroke_color=OURS_C,
+                                           stroke_width=2).set_fill(OURS_C, 0.15)
+                    ctl = VGroup(box, text.move_to(box))
+                ctl.move_to(win.get_center() + UP * 0.1)
+                self.play(FadeOut(page), run_time=0.12)
+                self.play(FadeIn(ctl), strip[i].animate.set_color(USER_C), run_time=0.2)
+                if i != 4:
+                    self.play(cursor.animate.move_to(ctl.get_center() + RIGHT * 0.25 + DOWN * 0.2, aligned_edge=UL), run_time=0.25)
+                    self.play(ctl.animate(rate_func=there_and_back).scale(0.93), run_time=0.18)
+                page = ctl
             vo.wait_until("by its role and accessible name")
             target = VGroup(mono("button", 24, MODEL_C), zh("「提交模拟预约申请」", 24)).arrange(RIGHT, buff=0.15)
             target.move_to(win.get_bottom() + UP * 0.55)
             how = sans("found by role + accessible name: the label a screen reader announces", 22, S.GREY).next_to(strip, DOWN, buff=0.3)
-            self.play(FadeOut(page), FadeIn(target), FadeIn(how), run_time=0.5)   # an example control, not the tracker page
+            self.play(FadeOut(page), FadeOut(cursor), run_time=0.15)
+            self.play(FadeIn(target), FadeIn(how), run_time=0.4)   # an example control, not the tracker page
             vo.wait_until("settle after each step")
             quiet = sans("waits until quiet: no loading text, no busy flag, 400 ms unchanged", 20, S.GREY).next_to(how, DOWN, buff=0.15)
             self.play(FadeIn(quiet), run_time=0.4)
@@ -84,9 +97,12 @@ class Drive(VoiceScene):
             box = VGroup(frame, fail).move_to(DOWN * 1.7)
             self.play(FadeIn(box, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("shuts down only what it started")
-            down = VGroup(mono("down", 24, OURS_C), sans("stops only its own processes · keeps the evidence", 22, S.GREY)
-                          ).arrange(RIGHT, buff=0.25).move_to(DOWN * 3.05)
+            procs = VGroup(chip("its server", OURS_C, 22, mono_font=False), chip("its browser", OURS_C, 22, mono_font=False),
+                           chip("your own dev server", S.GREY, 22, mono_font=False)).arrange(RIGHT, buff=0.25)
+            down = VGroup(mono("down", 24, OURS_C), procs, sans("· evidence kept", 22, S.GREY)).arrange(RIGHT, buff=0.3)
+            down.move_to(DOWN * 3.05)
             self.play(FadeIn(down), run_time=0.4)
+            self.play(procs[0].animate.set_opacity(0.2), procs[1].animate.set_opacity(0.2), run_time=0.5)
             self.wait(max(0.1, vo.remaining() - 0.2))
         self.wait(0.6)
         clear(self)

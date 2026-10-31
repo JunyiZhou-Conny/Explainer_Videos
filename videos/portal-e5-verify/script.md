@@ -55,7 +55,7 @@ SHOW: Three cards: the booking step checks only the referral's stored status · 
 SAY: Why did it slip through? Booking looks only at the referral's stored status. Expired is never stored; it is only worked out for the screen. And the page checks when it draws, not when you submit. The agent did not change the product code. It recorded the bug as a known finding and left the fix to a person: compare the expiry date inside the reducer, or check again on submit.
 
 SHOW: The check's two failure modes: any new broken rule → fail; the known finding disappears (because someone fixed it) → also fail, with 「修好后把它从 KNOWN_FINDINGS 删掉」.
-SAY: The rule was not loosened to make the check pass. And the check is built to fail in two ways: if any new rule breaks, and if this known bug ever disappears. That second failure is a reminder to whoever fixes it to delete the note.
+SAY: The rule was not loosened to make the check pass. And the check is built to fail in two ways: if any new rule breaks, and if this known bug ever disappears. That second failure reminds whoever fixes it to delete the note, so the note can never hide the bug if it comes back.
 
 ---
 
@@ -92,17 +92,17 @@ SHOW: Origin: two skills from pstack, a public plugin of agent skills, 「create
 SAY: Both tools came from trying two skills in a public plugin called pstack, on Friday afternoon, in two commits twenty-seven minutes apart. Anthropic's own advice for Claude Code says the same thing plainly: give the agent a check to run, or you become the test suite.
 
 SHOW: What waits for a person (YELLOW): 1 · the expired-referral fix, in the reducer or on submit · 2 · verify-app was only run in the cloud container; the first local install is untested · 3 · the pull request is a draft. Then E4's layers again, with two more added: every order, and the real app.
-SAY: What waits for you: choosing the fix for the expired referral, and trying the app-driving tool on your own laptop, which hasn't been tried yet. And the pull request is still a draft. In the last episode, layers stood in for a human review. Here are two more: a check that tries every order, and an agent that uses the real app.
+SAY: What waits for you: choosing the fix for the expired referral, and trying the app-driving tool on your own laptop; so far it has only run in the cloud. And the pull request is still a draft. The last episode asked whether layers can stand in for a human review. Here are two more: a check that tries every order, and an agent that uses the real app.
 
 ---
 
 ## S09 · Recap — `s09_recap.py` · `Recap`
 
 SHOW: The two tools side by side: every order in a small world → the shortest story; the real app, by role and name → evidence.
-SAY: So: one tool walks every order of actions in a small world and hands back the shortest story that breaks a rule. The other uses the real app like a parent and keeps the evidence. The first was checked by breaking it on purpose; the second, by running every recipe end to end.
+SAY: So: one tool walks every order of actions in a small world and hands back the shortest story that breaks a rule. The other uses the real app like a parent and keeps the evidence. The first was checked by breaking it on purpose; the second, by running every flow end to end.
 
 SHOW: Three test-yourself questions, then a held pause.
 SAY: Three questions. What does the exhaustive check try that an ordinary test doesn't? Why break your own code on purpose? And why does the check fail when the bug gets fixed?
 
-SHOW: Next card: E6 「后端怎么选」.
+SHOW: Next card: E6 「后端怎么选」, "how do you choose a backend?".
 SAY: Next: before any backend code is written, how do you choose the backend?

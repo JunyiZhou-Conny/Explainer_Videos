@@ -25,7 +25,8 @@ class Open(VoiceScene):
             crit = VGroup(sans("the record's own success test (#13, #14)", 22, S.GREY),
                           VGroup(sans("student unlinks", 26), Arrow(LEFT * 0.4, RIGHT * 0.4, color=S.GREY, buff=0),
                                  sans("parent's next request", 26), Arrow(LEFT * 0.4, RIGHT * 0.4, color=S.GREY, buff=0),
-                                 mono("403", 32, DANGER_C)).arrange(RIGHT, buff=0.25),
+                                 VGroup(mono("403", 32, DANGER_C), sans("= refused", 22, DANGER_C)).arrange(RIGHT, buff=0.15)
+                                 ).arrange(RIGHT, buff=0.25),
                           VGroup(mark_ok(0.26, CHECKED_C), sans("checked by an automated test", 22, CHECKED_C)).arrange(RIGHT, buff=0.15)
                           ).arrange(DOWN, aligned_edge=LEFT, buff=0.2).move_to(UP * 1.9)
             vo.wait_until("A test would")
@@ -65,10 +66,10 @@ class Open(VoiceScene):
             clash = VGroup(mono("0006 · triage chat copies Claude · 10-28 · PR #41", 22, S.GREY),
                            mono("0006 · backend stack · 10-30 · PR #43", 22, S.GREY)).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
             frame = SurroundingRectangle(clash, color=DANGER_C, buff=0.2, corner_radius=0.1)
-            note = VGroup(frame, clash, sans("two decisions, one number", 22, DANGER_C).next_to(frame, RIGHT, buff=0.3))
+            note = VGroup(frame, clash, sans("two decisions, one number", 22, DANGER_C).next_to(frame, DOWN, buff=0.12))
             note.move_to(DOWN * 2.75)
-            vo.wait_until("both numbered six")
+            vo.wait_until("one piece of housekeeping")
             self.play(FadeIn(note), run_time=0.5)
             self.wait(max(0.1, vo.remaining() - 0.2))
-        self.wait(0.6)
+        self.wait(1.8)   # let the numbering clash be read
         clear(self)

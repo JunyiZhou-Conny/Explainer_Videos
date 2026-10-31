@@ -29,7 +29,6 @@ class Hook(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             lap = device("student · Boston", 3.4, 2.2).move_to(LEFT * 3.8 + UP * 1.2)
             phone = device("parent · China", phone=True, height=2.4).move_to(RIGHT * 3.8 + UP * 1.2)
-            vo.wait_until("no backend")
             self.play(FadeIn(lap), FadeIn(phone), run_time=0.6)
             d1 = drawer().move_to(lap.body)
             d2 = drawer(1.25, stacked=True).move_to(phone.body)
@@ -72,7 +71,7 @@ class Hook(VoiceScene):
             doc = VGroup(title, meta).arrange(DOWN, aligned_edge=LEFT, buff=0.35)
             frame = SurroundingRectangle(doc, color=S.GREY_DARK, buff=0.35, corner_radius=0.14).set_fill(S.GREY_DARKER, 1)
             rec = VGroup(frame, doc).move_to(UP * 0.6)
-            vo.wait_until("223-line decision record")
+            vo.wait_until("an agent wrote")
             self.play(FadeIn(rec, shift=UP * 0.1), run_time=0.7)
             when = sans("written by an agent · Friday 17:24, Boston", 24, S.GREY).next_to(rec, DOWN, buff=0.4)
             self.play(FadeIn(when), run_time=0.4)

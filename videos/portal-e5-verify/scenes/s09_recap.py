@@ -38,7 +38,7 @@ class Recap(VoiceScene):
             self.play(FadeIn(right, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("breaking it on purpose")
             both = VGroup(sans("the first: broken on purpose 5 times, 5 caught", 26, CHECKED_C),
-                          sans("the second: every recipe run end to end", 26, CHECKED_C)).arrange(DOWN, buff=0.1).move_to(DOWN * 1.6)
+                          sans("the second: every flow run end to end", 26, CHECKED_C)).arrange(DOWN, buff=0.1).move_to(DOWN * 1.6)
             self.play(FadeIn(both), run_time=0.5)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
@@ -63,7 +63,7 @@ class Recap(VoiceScene):
         # 3 ---------------------------------------------------------------- next
         with self.voiceover(SAY[2]) as vo:
             self.play(qs.animate.set_opacity(0.3), run_time=0.4)
-            nxt = VGroup(sans("next · E6", 24, S.GREY), zh("后端怎么选", 40), sans("how the backend was chosen, and what it protects", 22, S.GREY)
+            nxt = VGroup(sans("next · E6", 24, S.GREY), zh("后端怎么选", 40), sans("how do you choose a backend?", 22, S.GREY)
                          ).arrange(DOWN, buff=0.15).move_to(DOWN * 2.4)
             frame = SurroundingRectangle(nxt, color=USER_C, buff=0.3, corner_radius=0.15)
             self.play(FadeIn(nxt, shift=UP * 0.1), Create(frame), run_time=0.7)
