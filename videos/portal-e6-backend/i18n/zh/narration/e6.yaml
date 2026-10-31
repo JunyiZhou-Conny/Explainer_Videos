@@ -6,7 +6,7 @@ S01:
   zh:
   - 现在我们的原型没有后端。
   - 用户做的一切都只存在那一个浏览器里、那一台设备上，页面上的诊所和价格也都是编的。
-  - 所以，孩子在波士顿存的保险卡，在国内的家长看不到：根本没有地方可以去取。
+  - 所以，在国内的家长看不到孩子在波士顿存的保险卡：根本没有地方可以去取。
   - 账号、家庭关联和保险卡，都需要一个共同的地方来存。
 - en: Late on Friday afternoon an agent wrote a 223-line decision record proposing where. This episode is about how it chose, and what it protects.
   zh:
@@ -47,10 +47,11 @@ S04:
   - 数据库选的是 Postgres。
   - 这些数据的核心是关联：家长关联到学生，每一次权限检查都要顺着这条关联走。
   - MongoDB 正是因为这一点落选的，SQLite 则是因为单个文件不适合以后很多人同时在线。
-- en: 'One column is flexible on purpose: an insurance field stores not just a value but how sure the card scanner was, where it came from, and the raw text it was read from. The database we install also comes with an add-on for searching by meaning, but nothing needs it today; it is an open door, not a plan. Changes to the tables travel as numbered migration files, so every copy of the database ends up the same.'
+- en: 'One column is flexible on purpose: an insurance field stores not just a value but how sure the card scanner was, where it came from, and the raw text it was read from. The database we install also comes with an add-on for searching by meaning, but nothing needs it today. It is an open door, not a plan. Changes to the tables travel as numbered migration files, so every copy of the database ends up the same.'
   zh:
   - 有一列是故意做得灵活的：一个保险字段存的不只是值，还有扫描保险卡时有多确定、它从哪来，以及读出它的原文。
-  - 我们装的数据库还自带一个按语义搜索的扩展，但现在没有任何地方需要它；它是一扇开着的门，不是一个计划。
+  - 我们装的数据库还自带一个按语义搜索的扩展，但现在没有任何地方需要它。
+  - 它是一扇开着的门，不是一个计划。
   - 表结构的改动用带编号的迁移文件同步，所以每一份数据库最后都一样。
 S05:
 - en: 'Login uses no passwords at all. You type your email and receive a six-digit code, valid for five minutes, with three tries, and the record requires the server to keep only a scrambled hash of it, so the codes are never stored as readable text, plus its own limit of one code a minute per address, at most five an hour. The pull request notes you confirmed email-only on Friday. The record''s reasons: every Chinese parent has an email address, and nobody has a password to forget.'
@@ -68,7 +69,7 @@ S06:
 - en: Then the shape of the data, the part that protects people. Every account has a role, student or parent, written once and, in this first version, not changeable by the user; otherwise, the record notes, a student could make themselves a parent.
   zh:
   - 接下来是数据的结构，也就是保护人的那一部分。
-  - 每个账号都有一个身份，学生或家长，只写一次，在这第一版里用户自己不能改；记录写道，否则学生能把自己改成家长。
+  - 每个账号都有一个身份，学生或家长，只写一次；在这第一版里，用户自己不能改；记录写道，否则学生能把自己改成家长。
 - en: 'Who should be able to start a family link: the student, or the parent?'
   zh:
   - 谁应该能发起家庭关联：学生，还是家长？

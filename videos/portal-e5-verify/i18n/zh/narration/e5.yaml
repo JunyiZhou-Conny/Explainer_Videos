@@ -75,10 +75,11 @@ S06:
   - 在一个数据库服务里，它找到了一个会丢数据的 bug，最短的复现有 35 步，而这个 bug 之前通过了设计审查、代码审查和测试。
   - 我们的相比之下很小，一秒钟的检查里只有两步，但做的是同一件事：让机器去走人永远不会去试的每一种顺序。
 S07:
-- en: 'The second tool drives the app itself, the way a parent would. The agent starts its own copy of the app and its own browser from a saved demo state, then clicks through: open the referral, choose an in-network clinic, pick a time, submit, wait for pending, open the tracker. It finds each control by its role and accessible name, the label a screen reader announces, and waits for the page to settle after each step.'
+- en: 'The second tool drives the app itself, the way a parent would. From a saved demo state, the agent starts its own copy of the app and its own browser. Then it clicks through: open the referral, choose an in-network clinic, pick a time, submit, wait for pending, open the tracker. It finds each control by its role and accessible name, the label a screen reader announces, and waits for the page to settle after each step.'
   zh:
   - 第二个工具直接操作 App，就像家长那样。
-  - agent 启动自己的一份 App 和自己的浏览器，从一份保存好的演示状态出发，然后一步步点：打开转诊，选一家网络内的诊所，选时间，提交，等待待确认，打开进度页。
+  - agent 从一份保存好的演示状态出发，启动自己的一份 App 和自己的浏览器。
+  - 然后它一步步点：打开转诊，选一家网络内的诊所，选时间，提交，等待待确认，打开进度页。
   - 它按角色和无障碍名称来找每一个控件，也就是读屏软件念出来的那个名字，并且每一步之后都等页面安静下来。
 - en: 'Right means two things at once: the screen says the specialist is booked, and the saved data says the referral now points to that new appointment. Each run is required to keep evidence: screenshots, the saved state, and no browser errors. When a step fails, it says which buttons it could see instead. And when it''s done, it shuts down only what it started.'
   zh:

@@ -104,6 +104,10 @@ Recap: pass.
 - [02:06–02:18, 03:33–03:45][LAYOUT] The option cards mixed English and Chinese; Fastify shown, never
   said. FIX: the reasons are in English throughout (the captions carry the Chinese); the narration adds
   "Fastify was just as good; the record calls it an equal alternative."
+- [captions] After reading every split sentence of the first final cut pair by pair: s01's Chinese reordered
+  so "insurance / card" no longer splits across a reversed pair; s04's add-on sentence ends before "It is an
+  open door", so "searching / by meaning" no longer splits; s06's role sentence pauses after 「只写一次」 to
+  match "written once".
 - [captions] The Better Auth sentence gained a comma before "and keeps everything", so its English splits
   where the Chinese does instead of repeating under both halves (Bugbot caught that shortening the Chinese alone
   had not done it); s01's and s03's

@@ -103,8 +103,10 @@ Recap: pass.
 - [03:15][CONFUSING] The "not traces" footnote was opaque. FIX: "which rule broke, in how many steps: our
   own re-run (the PR lists only that all five were caught)".
 - [captions] 「一共有 13 种可能的操作」 → 「第一步有 13 种可能」; 「带着的就是最短的复现」 → 「给出的就是打破它的最短步骤」;
-  「对，意味着两件事同时成立」 → 「做对了，要两件事同时成立」; s07's sentence reordered so its Chinese and English
-  halves pair up.
+  「对，意味着两件事同时成立」 → 「做对了，要两件事同时成立」. s07's long sentence is now two ("From a saved demo
+  state, the agent starts its own copy… Then it clicks through: …"), in the same order in both languages:
+  in the first final cut its Chinese and English halves were one clause apart (Bugbot), so 「打开转诊」 sat
+  under "pick a time". I then read every split sentence of the bilingual track pair by pair.
 - [06:09][WRONG] The next card said "how the backend was chosen". FIX: "how do you choose a backend?"
 - [00:54][LAYOUT] The action entering the reducer was nearly invisible. FIX: it grows and stays below the
   reducer while its chip dims in the row.

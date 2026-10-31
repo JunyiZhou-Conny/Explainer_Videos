@@ -55,7 +55,7 @@ SHOW: Postgres as tables joined by arrows: user → family_link ← user, insura
 SAY: For the database, Postgres. The data is about links: a parent is linked to a student, and every permission check follows that link. MongoDB lost for exactly that reason, and SQLite because a single file doesn't suit many people online at once.
 
 SHOW: One insurance field opening up: value · confidence · source · raw text, all in one JSON cell. A grey door labelled pgvector: "search by meaning: not needed today". Migration files numbered 1, 2, 3 applied in the same order on two laptops → identical tables.
-SAY: One column is flexible on purpose: an insurance field stores not just a value but how sure the card scanner was, where it came from, and the raw text it was read from. The database we install also comes with an add-on for searching by meaning, but nothing needs it today; it is an open door, not a plan. Changes to the tables travel as numbered migration files, so every copy of the database ends up the same.
+SAY: One column is flexible on purpose: an insurance field stores not just a value but how sure the card scanner was, where it came from, and the raw text it was read from. The database we install also comes with an add-on for searching by meaning, but nothing needs it today. It is an open door, not a plan. Changes to the tables travel as numbered migration files, so every copy of the database ends up the same.
 
 ---
 
