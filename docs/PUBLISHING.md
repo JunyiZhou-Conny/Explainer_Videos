@@ -36,6 +36,16 @@ Claude Code cloud sessions cannot create releases; they run `.github/workflows/`
 
 ## The publish manifest and the Mac worker
 
+`.github/workflows/release-on-merge.yml` starts the release when a PR merges: for every episode
+whose spec the PR adds (`video.yaml` → `legacy-release.yml`, `episode.json` → `episode-release.yml`)
+that has no `episode/<slug>-v*` release and no `catalog/bilibili.json` entry, it dispatches the
+release workflow (`tools/release_on_merge.py`). It passes the episode issue only when exactly one
+fits: the issue a single-episode PR closes, else the issue the episode's REVIEW.md / BRIEF.md
+links most, else the one `episode` issue whose body names `videos/<slug>` or `episode/<slug>`;
+otherwise it releases without one and leaves a warning on the run. Re-releasing an episode stays a
+manual dispatch, because a v2 release is a second Bilibili upload. After a release, index it in
+`catalog/videos.json` and `docs/VIDEOS.md` so the library page lists it.
+
 `tools/release_episode.py` runs after an episode merges: it refuses to release without a
 matching `validation.json` (its `script_sha256` must equal the committed `script.json`) and a
 human-review line in `REVIEW.md`, then tags `episode/<slug>-vN`, uploads the deliverables plus
@@ -51,8 +61,12 @@ sha256-verifies the MP4, uploads with `biliup` (one-time QR login; `cookies.json
 upload lines once and pin `--line`), comments the BV link on the episode issue, flips the
 label to `state:published` and closes it. Failures (geetest `-352`, error 601 rate limits)
 are commented on the issue and retried next run; a computer-use agent or a human rescues the
-rest. Setup, once: `npm i -g @biliup/cli && biliup login && gh auth login`, then schedule
-`python3 tools/publish_worker.py --repo JunyiZhou-Conny/Explainer_Videos --upload`.
+rest. Setup, once: install `gh` and `npm i -g @biliup/cli`, then run
+`bash setup/macos/install-publish-worker.sh` from the checkout. It logs in to GitHub and to
+Bilibili (QR) if needed, keeps `cookies.json` in `~/.config/biliup/` (biliup reads it from the
+working directory, so both jobs run there), and installs two launchd jobs: the worker with
+`--upload` every 15 minutes (one upload per run) and `biliup renew` on Mondays. Logs go to
+`~/Library/Logs/explainer-publish.log`; `--uninstall` removes the jobs.
 
 ### Legacy-route episodes (`video.yaml`)
 

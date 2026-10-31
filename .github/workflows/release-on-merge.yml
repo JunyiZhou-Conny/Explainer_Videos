@@ -1,0 +1,33 @@
+name: Release merged episodes
+
+# When a PR merges into main, start the release workflow for every episode that PR adds, so a
+# merged episode needs no manual dispatch. tools/release_on_merge.py decides: an episode counts as
+# added when the PR adds its spec (video.yaml → legacy-release.yml, episode.json →
+# episode-release.yml), it has no episode/<slug>-v* release yet and catalog/bilibili.json does not
+# list it. Re-releases stay manual on purpose: a v2 release is a second Bilibili upload. The
+# episode issue is passed along only when it is unambiguous (see the script). The release
+# workflows run their own preflight (sign-off line, publish block) before spending runner time.
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: read
+  actions: write        # gh workflow run
+  issues: read
+  pull-requests: read
+
+jobs:
+  dispatch:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Start a release for each episode this PR adds
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: python3 tools/release_on_merge.py --pr "$PR" --repo "$GITHUB_REPOSITORY"

@@ -2,7 +2,7 @@
 
 [Incubator release](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/tag/incubator-2026-10-12) · [Machine-readable inventory](../catalog/videos.json) · [Release checksums](../catalog/release-sha256.txt)
 
-The catalog contains **52 current MP4 variants across sixteen episode projects**. Every variant is a release asset: seven masters in the incubator release, lifecycle episodes in their own `episode/<slug>-vN` releases, everything else (language versions, split parts, the short, AC215 L1) in the [media archive release](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/tag/media-2026-10-13). No download depends on a git branch staying alive. Editable-source links are pinned to exact commits or release tags.
+The catalog contains **63 current MP4 variants across twenty-two episode projects**. Every variant is a release asset: seven masters in the incubator release, lifecycle episodes in their own `episode/<slug>-vN` releases, everything else (language versions, split parts, the short, AC215 L1) in the [media archive release](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/tag/media-2026-10-13). No download depends on a git branch staying alive. Editable-source links are pinned to exact commits or release tags.
 
 ## Start with these full videos
 
@@ -23,6 +23,12 @@ The catalog contains **52 current MP4 variants across sixteen episode projects**
 | AC215 L5: Introduction to RAG | 31:07 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l05-rag-v1/ac215-l05-rag.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/ac215-l05-rag-v1/videos/ac215-l05-rag) |
 | AC215 L6: LLM Agents I — function calling, ADK, MCP and multi-agent | 31:14 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l06-agents-1-v1/ac215-l06-agents-1.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/ac215-l06-agents-1-v1/videos/ac215-l06-agents-1) |
 | AC215 L7: LLM Agents II — the agent harness | 31:21 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l07-agent-harness-v1/ac215-l07-agent-harness.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/ac215-l07-agent-harness-v1/videos/ac215-l07-agent-harness) |
+| 项目周记 E1: Isn't it just an API call? | 9:44 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e1-after-send-v1/portal-e1-after-send.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/portal-e1-after-send-v1/videos/portal-e1-after-send) |
+| 项目周记 E2: What is “thought for 3 seconds”? | 7:33 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e2-thinking-v1/portal-e2-thinking.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/portal-e2-thinking-v1/videos/portal-e2-thinking) |
+| 项目周记 E3: Copying Claude's chat page | 8:15 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e3-copying-claude-v1/portal-e3-copying-claude.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/portal-e3-copying-claude-v1/videos/portal-e3-copying-claude) |
+| 项目周记 E4: Two days, a hundred-plus commits | 8:55 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e4-build-log-v1/portal-e4-build-log.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/portal-e4-build-log-v1/videos/portal-e4-build-log) |
+| 项目周记 E5: How an agent proves its change is right | 6:18 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e5-verify-v1/portal-e5-verify.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/portal-e5-verify-v1/videos/portal-e5-verify) |
+| 项目周记 E6: How the backend was chosen | 7:28 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e6-backend-v1/portal-e6-backend.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/portal-e6-backend-v1/videos/portal-e6-backend) |
 
 ## Every current variant
 
@@ -56,6 +62,17 @@ The catalog contains **52 current MP4 variants across sixteen episode projects**
 | AC215 L1: VMs, venvs and uv | English narration / bilingual captions | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/ac215-l01-vms-venvs.zh-en.mp4) |
 | AC215 L1: VMs, venvs and uv | English narration / clean / part 1 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/ac215-l01-vms-venvs_part1.mp4) |
 | AC215 L1: VMs, venvs and uv | English narration / clean / part 2 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/ac215-l01-vms-venvs_part2.mp4) |
+| 项目周记 E1: Isn't it just an API call? | English narration / bilingual captions (burned) | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e1-after-send-v1/portal-e1-after-send.mp4) |
+| 项目周记 E2: What is “thought for 3 seconds”? | English narration / clean / composed score | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e2-thinking-v1/portal-e2-thinking.mp4) |
+| 项目周记 E2: What is “thought for 3 seconds”? | English narration / bilingual captions (burned) / composed score | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e2-thinking-v1/portal-e2-thinking.zh-en.mp4) |
+| 项目周记 E3: Copying Claude's chat page | English narration / clean / composed score | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e3-copying-claude-v1/portal-e3-copying-claude.mp4) |
+| 项目周记 E3: Copying Claude's chat page | English narration / bilingual captions (burned) / composed score | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e3-copying-claude-v1/portal-e3-copying-claude.zh-en.mp4) |
+| 项目周记 E4: Two days, a hundred-plus commits | English narration / clean / composed score | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e4-build-log-v1/portal-e4-build-log.mp4) |
+| 项目周记 E4: Two days, a hundred-plus commits | English narration / bilingual captions (burned) / composed score | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e4-build-log-v1/portal-e4-build-log.zh-en.mp4) |
+| 项目周记 E5: How an agent proves its change is right | English narration / clean / composed score | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e5-verify-v1/portal-e5-verify.mp4) |
+| 项目周记 E5: How an agent proves its change is right | English narration / bilingual captions (burned) / composed score | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e5-verify-v1/portal-e5-verify.zh-en.mp4) |
+| 项目周记 E6: How the backend was chosen | English narration / clean / composed score | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e6-backend-v1/portal-e6-backend.mp4) |
+| 项目周记 E6: How the backend was chosen | English narration / bilingual captions (burned) / composed score | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/portal-e6-backend-v1/portal-e6-backend.zh-en.mp4) |
 
 ## What is and is not established
 
