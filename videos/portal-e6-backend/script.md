@@ -65,7 +65,7 @@ SHOW: An email → a 6-digit code → a 5-minute timer → 3 tries; the record r
 SAY: Login uses no passwords at all. You type your email and receive a six-digit code, valid for five minutes, with three tries, and the record requires the server to keep only a scrambled hash of it, so the codes are never stored as readable text, plus its own limit of one code a minute per address, at most five an hour. The pull request notes you confirmed email-only on Friday. The record's reasons: every Chinese parent has an email address, and nobody has a password to forget.
 
 SHOW: Rejected, struck through: SMS 「发国内号码要花钱」; WeChat 「需要企业资质和开放平台审核」; Clerk / Auth0 「用户数据存在第三方；按用户数收费；国内访问情况不确定」; Lucia 「已停止维护」; building it ourselves 「容易出安全问题」. Chosen: Better Auth, inside our server, writing to our own Postgres.
-SAY: Text messages to Chinese numbers cost money, WeChat login needs a registered company, and hosted login services keep user data elsewhere and charge per user. Writing it from scratch is how security holes happen. The library chosen, Better Auth, runs inside our own server and keeps everything in our own Postgres.
+SAY: Text messages to Chinese numbers cost money, WeChat login needs a registered company, and hosted login services keep user data elsewhere and charge per user. Writing it from scratch is how security holes happen. The library chosen, Better Auth, runs inside our own server, and keeps everything in our own Postgres.
 
 ---
 

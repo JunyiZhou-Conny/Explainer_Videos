@@ -59,7 +59,7 @@ S05:
   - 你输入邮箱，收到一个 6 位验证码，5 分钟内有效，可以试 3 次；记录要求服务器只保存它打乱后的哈希，这样验证码不会以明文存着；还要加上自己的限流：每个邮箱每分钟一个，每小时最多五个。
   - PR 里写着，你周五确认了只用邮箱登录。
   - 记录给的理由是：每个中国家长都有邮箱，而且没有密码可忘。
-- en: Text messages to Chinese numbers cost money, WeChat login needs a registered company, and hosted login services keep user data elsewhere and charge per user. Writing it from scratch is how security holes happen. The library chosen, Better Auth, runs inside our own server and keeps everything in our own Postgres.
+- en: Text messages to Chinese numbers cost money, WeChat login needs a registered company, and hosted login services keep user data elsewhere and charge per user. Writing it from scratch is how security holes happen. The library chosen, Better Auth, runs inside our own server, and keeps everything in our own Postgres.
   zh:
   - 给国内手机号发短信要花钱，微信登录需要注册公司，托管登录服务把用户数据放在别处，还按用户数收费。
   - 自己从零写，正是安全漏洞的来源。

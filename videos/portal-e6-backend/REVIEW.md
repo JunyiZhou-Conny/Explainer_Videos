@@ -104,7 +104,9 @@ Recap: pass.
 - [02:06–02:18, 03:33–03:45][LAYOUT] The option cards mixed English and Chinese; Fastify shown, never
   said. FIX: the reasons are in English throughout (the captions carry the Chinese); the narration adds
   "Fastify was just as good; the record calls it an equal alternative."
-- [captions] The Better Auth line shortened so it no longer repeats across two cues; s01's and s03's
+- [captions] The Better Auth sentence gained a comma before "and keeps everything", so its English splits
+  where the Chinese does instead of repeating under both halves (Bugbot caught that shortening the Chinese alone
+  had not done it); s01's and s03's
   sentences reordered so their Chinese and English halves pair up; 「这些数据讲的是关联」 → 「这些数据的核心是关联」,
   「放在 TypeScript 后端的后面」 → 「由 TypeScript 后端来调用」, 「以编号的迁移文件传递」 → 「用带编号的迁移文件同步」,
   「还有一件内务」 → 「还有一处要整理的」.
