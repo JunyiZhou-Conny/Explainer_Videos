@@ -319,6 +319,10 @@ class Persona(VoiceScene):
             vo.wait_until("It tells the teacher")
             b84 = p3.bar(84, TURN)
             self.play(FadeIn(b84), run_time=0.4)
+            vo.wait_until("to open each answer")
+            self.play(flash(p3.span(84, "engaging introduction"), TURN, 1.08), run_time=0.6)
+            vo.wait_until("one of the instructor's")
+            self.play(flash(p3.span(84, PERSONA), TURN, 1.12), run_time=0.6)
             vo.wait_until("such as good question")
             bars = [p3.bar(n, TURN) for n in range(85, 90)]
             for b in bars:

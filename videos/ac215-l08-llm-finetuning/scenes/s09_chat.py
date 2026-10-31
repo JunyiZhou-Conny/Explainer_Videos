@@ -357,10 +357,15 @@ class CostAndChat(VoiceScene):
         sp107 = VGroup(sp107a, sp107b)
         head107 = w1.span(107, "MODEL_ENDPOINT =")
         err2 = erratum_tag("the instructor's endpoint")
-        place(err2, left=head107.get_right()[0] + 0.5, cy=head107.get_center()[1])
         con = console_card()
         place(con, cx=0, bottom=-3.45)
         assert con.get_top()[1] < w1.get_bottom()[1] - 0.05, (con.get_top(), w1.get_bottom())
+        # the tag sits just under the panel, below line 107's wrapped rows (no code row is covered),
+        # left of the console's 'illustration' tag and above its window
+        place(err2, left=head107.get_left()[0], top=w1.get_bottom()[1] - 0.06)
+        assert err2.get_top()[1] < w1.get_bottom()[1], (err2.get_top(), w1.get_bottom())
+        assert err2.get_bottom()[1] > con.window.get_top()[1] + 0.03, (err2.get_bottom(), con.window.get_top())
+        assert err2.get_right()[0] < con.tag.get_left()[0] - 0.2, (err2.get_right(), con.tag.get_left())
         sp114 = w2.span(114, "model=MODEL_ENDPOINT")
         no_reach = chip("the instructor's endpoint · your key can't reach it", ERR, size=CAPTION)
         with self.voiceover(SAY[2]) as vo:

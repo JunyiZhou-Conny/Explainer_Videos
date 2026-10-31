@@ -316,6 +316,8 @@ class ThreeDials(VoiceScene):
             self.play(lab1.frame.animate.set_stroke(INK, 3.5), Indicate(lab1.body, color=INK, scale_factor=1.08),
                       run_time=0.7)
             self.play(FadeIn(in_chip, shift=RIGHT * 0.3), FadeIn(in_cap), run_time=0.7)
+            vo.wait_until("hello, my cheese")
+            self.play(Indicate(in_chip, color=INK, scale_factor=1.05), run_time=0.7)
             vo.wait_until("It simply keeps going")
             self.play(FadeOut(in_cap), lab1.frame.animate.set_stroke(S.GREY, 2.5), FadeIn(out1.frame), FadeIn(out1.rule), FadeIn(in_glyphs),
                       FadeOut(in_chip), FadeIn(in_bar), FadeIn(rtag), run_time=0.7)

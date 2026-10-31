@@ -34,7 +34,7 @@ Beats (script.md "## S01", one voiceover block each):
    at "keep the weights", "you keep the weights".
 5. The map clears. The layout preview, piece by piece as named: the tracker top left ("README ›
    Prerequisites", 4 dots, none lit) with a pulsing YELLOW ring, GREY caption "the README step";
-   at "the gray tag" a GREY specimen tag "Lecture 8 · slides N" top right pulses once, caption "the
+   at "the gray tag" a GREY specimen tag "Lecture 8 · slides 7–8" top right pulses once, caption "the
    lecture slides"; at "When a tag says your turn" a 2-row laptop terminal strip (GREY "preview" tag
    on its title bar) and the YELLOW ▶ your turn tag drawn DIM (nothing is run here); at "pause and
    run" the tag row writes in under it, chip by chip: expected · recorded · scripted · illustration.
@@ -549,10 +549,7 @@ class Hook(VoiceScene):
         halo.move_to(tr)
         place(halo, left=max(halo.get_left()[0], -SAFE + 0.01))
         tr_cap = note("the README step").next_to(halo, DOWN, buff=0.12).align_to(tr, LEFT)
-        spec = tag("Lecture 8 · slides N", S.GREY)
-        ref = lref("7–8")
-        spec.move_to(ref)
-        place(spec, right=ref.get_right()[0])
+        spec = lref("7–8")  # the real tag the viewer saw in part 3, not a placeholder
         lr_cap = note("the lecture slides")
         place(lr_cap, right=spec.get_right()[0], top=spec.get_bottom()[1] - 0.12)
         t = term(P_WS, rows=2, top=0.2)

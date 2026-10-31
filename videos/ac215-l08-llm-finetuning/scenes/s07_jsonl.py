@@ -26,10 +26,12 @@ Beats (script.md "## S07", one voiceover block each):
     260–262 light, `test_size=0.1` and `random_state=42` YELLOW. On "17 examples" the code gives way
     to V4's splitter: 19 GREEN row bricks gather at the fork (GREY seed chip random_state=42), 17 go
     to `train.jsonl · 17`, 2 to `test.jsonl · 2`; a 3-row TEAL container strip (tags scripted ·
-    extra) types `ls -la data; wc -l data/*.jsonl data/*.csv` -> dataset-creator/10 lines 10–14
-    (names+sizes), 15–17; `2 data/test.jsonl` and `17 data/train.jsonl` light. On "The code's
-    comment" CODE(cli.py: 266–267) at the top with the GREY cap "≤ 256 · per the comment on line
-    266" beside line 267; the test bin flashes.
+    extra) comes after the cap. On "The code's comment" CODE(cli.py: 266–267) at the top with the
+    GREY cap "≤ 256 · per the comment on line 266" beside line 267; the test bin flashes. Then the
+    splitter moves up (the seed chip to the left of the fork) and a 5-row TEAL container strip
+    types `ls -la data; wc -l data/*.jsonl data/*.csv` -> dataset-creator/10: the command stays
+    visible, a GREY "…" stands for the ls rows 10–14, then 15–17; `2 data/test.jsonl` and
+    `17 data/train.jsonl` light and stay readable for about 2 s.
  4  LECTURE 8. The splitter and the strip leave; the single JSONL line returns at the top and its
     model turn lights YELLOW; under it token boxes "Glad" "you" "ask" "!" "…" (tag illustration)
     fill one at a time while a YELLOW arrow slides under them: "predict the next token". The tag
@@ -422,15 +424,19 @@ class RowsToJsonl(VoiceScene):
         seed = chip("random_state=42", S.GREY, size=CAPTION, font=MONO)
         seed.next_to(sp.fork[0], DOWN, buff=0.55).shift(LEFT * 0.62)    # clear of the test arrow and the bricks
         seed_lab = VGroup(seed)
-        t3 = term(P_CTR_DC, rows=3, container="dc")
+        t3 = term(P_CTR_DC, rows=5, container="dc")       # command row stays above "…" + lines 15-17
         tags3 = frame_tags(t3, scripted_tag(), extra_tag())
         p266 = src_panel(CLI, 266, 267, size=20)
-        place(p266, cx=0, top=TOP_Y - 0.1)
+        place(p266, cx=0, top=TOP_Y)
         cap256 = note("≤ 256 · per the comment on line 266")
         r267 = p266.code.code_lines[p266.rows_of(267)[0]]
         cap256.next_to(r267, RIGHT, buff=0.6)
+        LIFT = UP * 0.58                                   # the splitter's rise when the 5-row strip enters
+        seed_up = seed.copy().next_to(sp.fork[0].get_start() + LIFT, LEFT, buff=0.2)
         assert cap256.get_right()[0] < p266.get_right()[0] - 0.1, (cap256.get_right(), p266.get_right())
-        assert p266.get_bottom()[1] > sp.get_top()[1] + 0.1, (p266.get_bottom(), sp.get_top())
+        assert p266.get_bottom()[1] > sp.get_top()[1] + LIFT[1] + 0.1, (p266.get_bottom(), sp.get_top())
+        assert sp.get_bottom()[1] + LIFT[1] > t3.box.get_top()[1] + 0.08, (sp.get_bottom(), t3.box.get_top())
+        assert seed_up.get_bottom()[1] > t3.box.get_top()[1] + 0.3 and seed_up.get_left()[0] > -6.5, seed_up.get_left()
         assert seed.get_bottom()[1] > STRIP_TOP + 0.05, seed.get_bottom()
         assert sp.get_right()[0] < 6.4, sp.get_right()
         with self.voiceover(SAY[3]) as vo:
@@ -440,33 +446,23 @@ class RowsToJsonl(VoiceScene):
             bars = VGroup(*[p3.bar(n, TURN) for n in (260, 261, 262)])
             self.play(FadeIn(bars), p3.span(261, "test_size=0.1").animate.set_color(TURN), run_time=0.5)
             vo.wait_until("with a fixed seed")
-            self.play(p3.span(261, "random_state=42").animate.set_color(TURN), run_time=0.4)
+            self.play(p3.span(261, "random_state=42").animate.set_color(TURN), run_time=0.3)
             self.play(flash(p3.span(261, "random_state=42"), TURN, 1.1), run_time=0.5)
-            vo.wait_until("examples for training")
-            self.play(FadeOut(VGroup(p3, bars)), run_time=0.4)
+            self.play(FadeOut(VGroup(p3, bars)), run_time=0.3)
             self.play(LaggedStart(*[FadeIn(b, scale=0.6) for b in bricks], lag_ratio=0.04), FadeIn(n19),
-                      FadeIn(sp), FadeIn(seed_lab), run_time=0.8)
+                      FadeIn(sp), FadeIn(seed_lab), run_time=0.6)
+            vo.wait_until("examples for training")
             ip = sp.input_point()
             tgt_tr = sp.bins[0].get_left() + LEFT * 0.05
             tgt_te = sp.bins[1].get_left() + LEFT * 0.05
             order = list(range(19))
             test_ids = {4, 13}
             self.play(LaggedStart(*[b.animate.move_to(ip) for b in bricks], lag_ratio=0.05),
-                      FadeOut(n19), run_time=1.0)
+                      FadeOut(n19), run_time=0.7)
             self.play(LaggedStart(*[bricks[i].animate.move_to(tgt_te if i in test_ids else tgt_tr).set_opacity(0)
-                                    for i in order], lag_ratio=0.05), run_time=1.1)
+                                    for i in order], lag_ratio=0.05), run_time=0.9)
             self.remove(bricks)
-            self.play(flash(sp.bins[0], OWN, 1.1), flash(sp.bins[1], OWN, 1.15), run_time=0.6)
-            # the extra check in the container: ls + wc
-            self.play(FadeIn(t3, shift=UP * 0.2), FadeIn(tags3, shift=UP * 0.2), caption_extra(tr), run_time=0.5)
-            bare_prompt(self, t3)
-            type_cmd(self, t3, LSD.cmd, 0.6)
-            show(self, t3, LSD, *LSD.names_sizes((10, 12)), run_time=0.3)
-            show(self, t3, LSD, *LSD.names_sizes((13, 14)), run_time=0.3)
-            rows = show(self, t3, LSD, (15, 17), run_time=0.35)
-            r15, r16 = rows[0], rows[1]
-            self.play(substring(r15, "2 data/test.jsonl").animate.set_color(TURN),
-                      substring(r16, "17 data/train.jsonl").animate.set_color(TURN), run_time=0.5)
+            self.play(flash(sp.bins[0], OWN, 1.1), flash(sp.bins[1], OWN, 1.15), run_time=0.5)
             vo.wait_until("The code's comment")
             self.play(FadeIn(p266, shift=DOWN * 0.15), run_time=0.6)
             b266 = p266.bar(266, TURN)
@@ -474,6 +470,17 @@ class RowsToJsonl(VoiceScene):
             vo.wait_until("hence the cap")
             self.play(FadeIn(cap256, shift=LEFT * 0.1), p266.span(267, "[:256]").animate.set_color(TURN),
                       flash(sp.bins[1], TURN, 1.15), run_time=0.7)
+            # the extra check in the container: ls + wc (after the narration; the counts stay readable)
+            self.play(sp.animate.shift(LIFT), Transform(seed, seed_up), FadeIn(t3, shift=UP * 0.2),
+                      FadeIn(tags3, shift=UP * 0.2), caption_extra(tr), run_time=0.6)
+            bare_prompt(self, t3)
+            type_cmd(self, t3, LSD.cmd, 0.8)
+            rows = show(self, t3, LSD, "…", (15, 17), run_time=0.4)
+            r15, r16 = rows[1], rows[2]
+            self.play(substring(r15, "2 data/test.jsonl").animate.set_color(TURN),
+                      substring(r16, "17 data/train.jsonl").animate.set_color(TURN), run_time=0.5)
+            self.play(flash(VGroup(substring(r15, "2 data/test.jsonl"), sp.bins[1]), TURN, 1.1), run_time=0.6)
+            self.wait(1.2)
 
         # ========================================================== 4 · LECTURE 8: still next-token prediction
         o4 = mono_panel(one_rows, ONE.cmd.split(";")[0])

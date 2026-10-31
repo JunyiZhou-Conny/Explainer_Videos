@@ -288,14 +288,16 @@ def mini_column(w: float = 0.5, k: float = 0.009) -> VGroup:
     return g
 
 
-def over_span(sp, text: str) -> VGroup:
+def over_span(sp, text: str, pitch: float) -> VGroup:
     """`text` (YELLOW mono, the code's size) on an opaque patch exactly over the glyphs `sp` (the
-    value you type over the course's): a template edit, drawn where the old text was."""
+    value you type over the course's): a template edit, drawn where the old text was. The patch is
+    0.9 of a code row (`pitch`) tall, centred on the row, so it never touches the wrapped row below."""
     t = mono(text, 20, TURN)
-    t.move_to(sp).align_to(sp, LEFT)
-    patch = Rectangle(width=max(sp.width, t.width) + 0.12, height=t.height + 0.08, stroke_color=TURN,
+    h = max(pitch * 0.9, t.height + 0.01)
+    patch = Rectangle(width=max(sp.width, t.width) + 0.12, height=h, stroke_color=TURN,
                       stroke_width=1.5).set_fill(PANEL, 1)
-    patch.move_to(t).align_to(sp, LEFT).shift(LEFT * 0.06)
+    patch.move_to(sp).align_to(sp, LEFT).shift(LEFT * 0.06)
+    t.move_to(patch).align_to(sp, LEFT)
     g = VGroup(patch, t)
     return g
 
@@ -347,7 +349,12 @@ class TuningJob(VoiceScene):
         place(err1, right=p1.get_right()[0], top=p1.get_bottom()[1] - 0.04)
         assert err1.get_bottom()[1] > STRIP_TOP + 0.02, err1.get_bottom()
         sp10, sp11 = p1.span(10, "gs://cheese-dataset"), p1.span(11, "gs://cheese-dataset")
-        mine = [over_span(sp, BUCKET_TEMPLATE) for sp in (sp10, sp11)]
+        pitch1 = sp10.get_center()[1] - p1.span(10, 'train.jsonl"').get_center()[1]   # one code row
+        mine = [over_span(sp, BUCKET_TEMPLATE, pitch1) for sp in (sp10, sp11)]
+        for m, n in zip(mine, (10, 11)):
+            wrapped = p1.span(n, 'train.jsonl"' if n == 10 else 'test.jsonl"')
+            assert m.get_bottom()[1] > wrapped.get_top()[1] + 0.01, (n, m.get_bottom(), wrapped.get_top())
+            assert m.get_left()[0] < p1.span(n, "gs://cheese-dataset").get_left()[0], n
         start_spot = np.array([3.6, -0.9, 0])
         stg1 = Stage(show=("laptop", "gf", "mounts_gf"))
         live = VGroup(VGroup(label("files in the folder:", CAPTION, INK),
@@ -416,8 +423,8 @@ class TuningJob(VoiceScene):
             vo.wait_until("because both folders share")
             resize(self, t, 3, keep=[r15, r16, pr2], run_time=0.6)
             self.play(FadeIn(xc, shift=DOWN * 0.1), caption_extra(tr), run_time=0.5)
-            vo.wait_until("as an extra diff")
             self.play(LaggedStart(*[FadeIn(c, shift=UP * 0.1) for c in chips2], lag_ratio=0.3), run_time=0.9)
+        self.wait(1.0)          # the three "identical" chips stay up past the sentence
 
         # ========================================================== 3 · step 3: --help; the three locations
         cl = mini_cloud(Stage())
@@ -622,8 +629,9 @@ class TuningJob(VoiceScene):
             self.play(FadeIn(lr), FadeIn(stg7), run_time=0.6)
             vo.wait_until("far more GPU memory")
             key7.save_state()
-            self.play(lap_rows.animate.set_opacity(0.12), key7.animate.set_opacity(0.12), FadeIn(col, scale=0.8), FadeIn(col_lab, shift=UP * 0.1),
-                      run_time=0.6)
+            # the tree and key go fully out while the column stands over them (0.12 read as garbled text)
+            self.play(lap_rows.animate.set_opacity(0), key7.animate.set_opacity(0), FadeIn(col, scale=0.8),
+                      FadeIn(col_lab, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("than a laptop has")
             self.play(flash(lap, ERR, 1.03), run_time=0.6)
             vo.wait_until("here that's Google's problem")

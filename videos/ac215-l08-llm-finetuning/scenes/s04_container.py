@@ -345,6 +345,16 @@ class DatasetContainer(VoiceScene):
             pin(self, pr2, beside(differ_tag(), t, pr2, buff=0.4), run_time=0.4)
 
         # ========================================================== 3 · step 3: ls -la /secrets
+        # The README's numbered list has 3 steps (--help is its 3.); the tracker (and SAY) count the
+        # :69 tip as step 3, so its caption says so in GREY and keeps --help tied to the README's 3.
+        readme_no = {3: " · README tip", 4: " · README's step 3"}
+
+        def _cap(k, _tr=tr):
+            s = f"step {k} of {len(_tr.steps)}: {_tr.steps[k - 1]}"
+            suf = readme_no.get(k, "")
+            c = label(s + suf, _tr.size, _tr.hi_color, t2c={suf.strip(): S.GREY} if suf else None)
+            return c.next_to(_tr.dots, RIGHT, buff=0.25)
+        plain_caption, tr._caption = tr._caption, _cap
         c69 = readme_chip("README.md · line 69 · a Prerequisites tip, run inside the container")
         place(c69, right=6.4, cy=(t.box.get_top()[1] + 2.9) / 2)
         with self.voiceover(SAY[3]) as vo:
@@ -411,7 +421,8 @@ class DatasetContainer(VoiceScene):
             assert m.get_right()[0] < 6.5 and m.get_bottom()[1] > -3.58, (m.get_right(), m.get_bottom())
         with self.voiceover(SAY[5]) as vo:
             # the first terminal steps aside (it comes back at the end, still at the container prompt)
-            self.play(FadeOut(cap4), FadeOut(t, shift=DOWN * 0.2), run_time=0.4)
+            tr._caption = plain_caption          # " · README's step 3" leaves before " · extra" comes
+            self.play(FadeOut(cap4), FadeOut(t, shift=DOWN * 0.2), tr.goto(4), run_time=0.4)
             self.play(FadeIn(t2, shift=DOWN * 0.3), FadeIn(ft), caption_extra(tr, True), run_time=0.6)
             bare_prompt(self, t2)
             vo.wait_until("On Debian")

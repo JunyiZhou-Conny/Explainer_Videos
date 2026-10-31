@@ -10,9 +10,10 @@ Beats (script.md "## S03", one voiceover block each):
     laptop/01 line 2 (the extra tag sits on that output row: the folded command row is full).
     GREY caption "your prompt shows your own user and machine" beside the prompt row, whose
     user@host flashes.
- 1  `cd llm-finetuning` (extra) -> no output. The extra card becomes "which commit am I on" ->
-    laptop/02 line 2 cut after "44ef6f0", line 3; GREY tag "or newer". The card leaves, the
-    terminal clears and grows to 12 rows: `ls -a; ls -a dataset-creator gemini-finetuner` (extra)
+ 1  `cd llm-finetuning` (extra) -> no output. The extra card becomes "which commit am I on";
+    `git log -1 --format="%h %H%n%cd %s" --date=iso` (the half of laptop/02's command that prints
+    the shown lines; QA 03:18) -> laptop/02 line 2 cut after "44ef6f0", line 3; GREY tag "or newer",
+    a short hold. The card leaves, the terminal grows to 12 rows keeping the commit lines: `ls -a; ls -a dataset-creator gemini-finetuner` (extra)
     -> laptop/03 lines 6–11 (7 `autotrain-runner` dim GREY), 12, 15–20 folded, 22, 25–30 folded
     (10 rows). dataset-creator and gemini-finetuner underline YELLOW as named; GREY "6 files" tags
     on the two folder headers; on "autotrain" the GREY tag "not part of the README".
@@ -40,14 +41,16 @@ Beats (script.md "## S03", one voiceover block each):
     gemini-finetuner/.
  5  TRACKER Prereq 4 · extra. The picture and the strip leave (no terminal: see "Deviations").
     CODE(env.dev: 4–10) with lines 7, 8, 9 wrapped (12 rows), header tag `extra` + "implied by its
-    comments". Lines 6 and 7 light YELLOW, their values underline, GREY note "the README's
-    defaults · change to yours" beside them; on "pass both into the containers" the two lines
-    flash; then the GREY note on line 9 "line 9: its comment says change too · not passed to
+    comments". Lines 6 and 7 light YELLOW, their values underline, GREY note "the repo's
+    defaults · change to yours" beside them (SHOW says "README's"; the README never names them);
+    on "pass both into the containers" the two lines flash; then the GREY note on line 9 "line 9: its comment says change too · not passed to
     either container · optional".
  6  The panel fades. A GREY dashed card "not in the README, needed": `gcloud services enable …`
     and `gcloud storage buckets create gs://<your-bucket> --location=us-central1` (folded with
-    " \\", shown, never typed), `<your-bucket>` in a YELLOW template chip; GREY caption "bucket
-    names are global · cheese-dataset is the course's". On "Pause here" the card gives way to the
+    " \\", shown, never typed), `<your-bucket>` in a YELLOW template chip; both end in
+    `--project=<your-project>` (YELLOW chips; QA 04:39); GREY caption "bucket names are global ·
+    cheese-dataset is the course's" and under it a GREY note: the gcloud CLI, logged in, or the
+    console pages. On "Pause here" the card gives way to the
     static GREY your-turn card (▶ your turn), its last line GOLD "a bucket: storage billing,
     cents". Hold 2 s; fade to an empty frame.
 
@@ -97,6 +100,8 @@ ENV = capture("laptop/00")                       # line 4: Docker Engine 29.8.2 
 CLONE = capture("laptop/01")
 assert CLONE.cmd == "git clone https://github.com/dlops-io/llm-finetuning.git", CLONE.cmd
 GIT = capture("laptop/02")
+GIT_LOG = 'git log -1 --format="%h %H%n%cd %s" --date=iso'   # typed: the part of GIT.cmd behind lines 2-3
+assert GIT.cmd == GIT_LOG + "; git branch -a", GIT.cmd
 LS = capture("laptop/03")
 assert LS.cmd == "ls -a; ls -a dataset-creator gemini-finetuner", LS.cmd
 MKDIR = capture("laptop/05")
@@ -113,8 +118,8 @@ R5 = source_line("env.dev", 5)
 SECRETS_SUB = "SECRETS_DIR=$(pwd)/../../secrets/"
 assert SECRETS_SUB in R5
 
-GCLOUD_API = "gcloud services enable aiplatform.googleapis.com storage.googleapis.com"
-GCLOUD_BUCKET = "gcloud storage buckets create gs://<your-bucket> --location=us-central1"
+GCLOUD_API = "gcloud services enable aiplatform.googleapis.com storage.googleapis.com --project=<your-project>"
+GCLOUD_BUCKET = "gcloud storage buckets create gs://<your-bucket> --location=us-central1 --project=<your-project>"
 MV_TEMPLATE = "mv ~/Downloads/<downloaded-key>.json secrets/llm-service-account.json"
 
 SAFE = 6.5
@@ -248,12 +253,14 @@ class KeyNextToRepo(VoiceScene):
             pin_beside(self, t, cd, extra_tag(), run_time=0.3)
             t.set_prompt(P_REPO)
             self.play(FadeOut(ec0, shift=UP * 0.1), FadeOut(rtag), FadeIn(ec1, shift=DOWN * 0.1), run_time=0.4)
+            type_cmd(self, t, GIT_LOG, 0.5)          # the half of GIT.cmd that prints lines 2-3
             o_git = show(self, t, GIT, GIT.cut(2, "44ef6f0"), 3, run_time=0.4)
             vo.wait_until("yours may be newer")
             pin_beside(self, t, o_git[0], grey_tag("or newer"), run_time=0.35)
-            self.play(FadeOut(ec1, shift=UP * 0.1), FadeOut(c34), run_time=0.3)
-            t.clear(self, run_time=0.25)
-            resize(self, t, 12, run_time=0.5)
+            self.wait(0.8)                           # the commit stays readable (QA 03:19)
+            # no clear: the terminal grows with the commit lines kept; the ls output scrolls them off
+            resize(self, t, 12, run_time=0.5,
+                   extra=(FadeOut(ec1, shift=UP * 0.1), FadeOut(c34)))
             ls = type_cmd(self, t, LS.cmd, 0.9)
             pin_beside(self, t, ls, extra_tag(), run_time=0.3)
             vo.wait_until("Inside are two folders")
@@ -376,7 +383,8 @@ class KeyNextToRepo(VoiceScene):
             self.play(FadeIn(reuse, shift=UP * 0.1), run_time=0.4)
 
         # ========================================================== 3 · step 3: the secrets folder, next to the clone
-        chip_mv = chip("move the key in · name it exactly llm-service-account.json", S.GREY, size=CAPTION)
+        MV_S = "move the key in · name it exactly llm-service-account.json"
+        chip_mv = chip(MV_S, S.GREY, size=CAPTION)
         WARN_S = "not llm-service-account.json.json (hidden extensions · README.md:67)"
         chip_warn = chip(WARN_S, ERR, size=CAPTION)
         warn = VGroup(warning_sign(0.36, ERR), chip_warn).arrange(RIGHT, buff=0.15)
@@ -406,6 +414,9 @@ class KeyNextToRepo(VoiceScene):
             o_lw[2].add(b_sec)
             vo.wait_until("Move the key in")
             self.play(FadeIn(chip_mv, shift=DOWN * 0.1), run_time=0.4)
+            vo.wait_until("name it exactly")
+            self.play(Indicate(text_glyphs(chip_mv.text, MV_S, "llm-service-account.json"), color=TURN,
+                               scale_factor=1.1), run_time=0.7)
             vo.wait_until("with hidden file extensions")
             self.play(FadeIn(warn, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("as dot json dot json")
@@ -535,7 +546,7 @@ class KeyNextToRepo(VoiceScene):
         r7a, r7b = pan.rows_of(7)
         row7a = pan.code.code_lines[r7a]
         row7b = pan.code.code_lines[r7b]
-        n67 = tag("the README's defaults · change to yours", S.GREY, size=CAPTION)
+        n67 = tag("the repo's defaults · change to yours", S.GREY, size=CAPTION)
         r6b = pan.code.code_lines[pan.rows_of(6)[1]]
         place(n67, left=v7.get_right()[0] + 0.15, cy=r6b.get_center()[1])
         assert n67.get_right()[0] < pan.get_right()[0] - 0.1, n67.get_right()
@@ -561,10 +572,12 @@ class KeyNextToRepo(VoiceScene):
             self.play(FadeIn(bar9), FadeIn(n9, shift=LEFT * 0.1), run_time=0.5)
 
         # ========================================================== 6 · APIs + a bucket of your own; your turn
+        a2 = "    storage.googleapis.com --project=<your-project>"
         api_rows = [mono("gcloud services enable aiplatform.googleapis.com \\", CAPTION, INK),
-                    mono("    storage.googleapis.com", CAPTION, INK)]
+                    mono(a2, CAPTION, INK)]
         b1 = "gcloud storage buckets create gs://<your-bucket> \\"
-        bkt_rows = [mono(b1, CAPTION, INK), mono("    --location=us-central1", CAPTION, INK)]
+        b2 = "    --location=us-central1 --project=<your-project>"
+        bkt_rows = [mono(b1, CAPTION, INK), mono(b2, CAPTION, INK)]
         cw = cell_width(CAPTION)
         rows6 = VGroup(VGroup(*api_rows).arrange(DOWN, aligned_edge=LEFT, buff=0.08),
                        VGroup(*bkt_rows).arrange(DOWN, aligned_edge=LEFT, buff=0.08))
@@ -577,10 +590,22 @@ class KeyNextToRepo(VoiceScene):
         yb_chip = RoundedRectangle(width=yb.width + 0.05, height=yb.height + 0.18, corner_radius=0.08,
                                    stroke_color=TURN, stroke_width=2.5).move_to(yb)
         card6.add(yb_chip)
+        # <your-project> (QA 04:39: without a default project both commands fail): YELLOW template chips
+        yp_chips = VGroup()
+        for row, src in ((api_rows[1], a2), (bkt_rows[1], b2)):
+            yp = text_glyphs(row, src, "<your-project>").set_color(TURN)
+            yp_chips.add(RoundedRectangle(width=yp.width + 0.05, height=yp.height + 0.18, corner_radius=0.08,
+                                          stroke_color=TURN, stroke_width=2.5).move_to(yp))
+        card6.body[0].add(yp_chips[0])
+        card6.body[1].add(yp_chips[1])
         api_ai = text_glyphs(api_rows[0], "gcloud services enable aiplatform.googleapis.com \\", "aiplatform.googleapis.com")
         api_st = api_rows[1]
         cap6 = note("bucket names are global · cheese-dataset is the course's")
         place(cap6, cx=0, top=card6.frame.get_bottom()[1] - 0.3)
+        need6 = VGroup(note("needs the gcloud CLI, logged in (gcloud auth login)"),
+                       note("or in the console: APIs & Services › Enable APIs · Cloud Storage › Create bucket")) \
+            .arrange(DOWN, buff=0.1)
+        place(need6, cx=0, top=cap6.get_bottom()[1] - 0.3)
         mv_cmd = "mv ~/Downloads/<downloaded-key>.json \\\n    secrets/llm-service-account.json"
         tc = turn_card([
             (CLONE.cmd, "extra"),
@@ -599,13 +624,12 @@ class KeyNextToRepo(VoiceScene):
         dk = text_glyphs(mv_row, "mv ~/Downloads/<downloaded-key>.json \\", "<downloaded-key>").set_color(TURN)
         tc.add(RoundedRectangle(width=dk.width + 0.05, height=dk.height + 0.08, corner_radius=0.08,
                                 stroke_color=TURN, stroke_width=2.5).move_to(dk))
-        for m in (card6, cap6, tc):
+        for m in (card6, cap6, need6, tc):
             inside(m)
         assert tc.get_top()[1] < 2.9, tc.get_top()
         # the full commands of the card, as README-less extras (checked against the strings above)
-        assert GCLOUD_API.split() == " ".join(["gcloud services enable aiplatform.googleapis.com",
-                                               "storage.googleapis.com"]).split()
-        assert GCLOUD_BUCKET.split() == (b1.replace("\\", "") + " --location=us-central1").split()
+        assert GCLOUD_API.split() == ("gcloud services enable aiplatform.googleapis.com " + a2).split()
+        assert GCLOUD_BUCKET.split() == (b1.replace("\\", "") + b2).split()
         assert MV_TEMPLATE.split() == mv_cmd.replace("\\", "").split()
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(pan, ptag, bar6, bar7, n67, bar9, n9)), run_time=0.4)
@@ -618,13 +642,14 @@ class KeyNextToRepo(VoiceScene):
             vo.wait_until("and a bucket of your own")
             self.play(FadeIn(card6.body[1]), run_time=0.4)
             self.play(Create(yb_chip), run_time=0.35)
+            self.play(FadeIn(need6, shift=UP * 0.05), run_time=0.4)
             vo.wait_until("Bucket names are global")
             self.play(FadeIn(cap6, shift=UP * 0.05), run_time=0.4)
             vo.wait_until("and cheese-dataset belongs")
             self.play(Indicate(cap6, color=S.GREY, scale_factor=1.05), Indicate(yb, color=TURN, scale_factor=1.1),
                       run_time=0.7)
             vo.wait_until("Pause here")
-            self.play(FadeOut(VGroup(card6, cap6)), run_time=0.3)
+            self.play(FadeOut(VGroup(card6, cap6, need6)), run_time=0.3)
             self.play(FadeIn(tc, shift=UP * 0.1), run_time=0.4)
         self.wait(2)
         self.play(FadeOut(VGroup(tc, tr)), run_time=0.6)
