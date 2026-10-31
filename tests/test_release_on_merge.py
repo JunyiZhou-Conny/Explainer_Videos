@@ -65,3 +65,12 @@ def test_no_issue_found_warns(tmp_path, capsys):
     episode(tmp_path, "ep")
     assert rom.pick_issue("ep", 1, [], [{"number": 1, "body": "other"}], REPO, tmp_path) is None
     assert "::warning::ep: no episode issue found" in capsys.readouterr().out
+
+
+def test_closing_issue_of_a_released_episode_never_moves_to_another(tmp_path):
+    episode(tmp_path, "old")
+    episode(tmp_path, "new")
+    added = ["videos/old/video.yaml", "videos/new/video.yaml"]
+    issues = [{"number": 4, "body": "videos/old/"}, {"number": 9, "body": "videos/new/"}]
+    planned = rom.plan(added, ["episode/old-v1"], {}, [{"number": 4, "body": "videos/old/"}], issues, REPO, tmp_path)
+    assert planned == [("new", "legacy-release.yml", 9)]
