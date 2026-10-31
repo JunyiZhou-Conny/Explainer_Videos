@@ -61,7 +61,7 @@ facts and unclaimed reviews are kept separate.
   - the hash and the per-email limits are the record's requirements, not the library's defaults;
   - the owner's email-only confirmation is in the PR body; the reasons are the record's.
 
-## Whole-video QA (first draft, 7:05)
+## Whole-video QA (first draft, 7:05; final 7:28)
 
 **Who reviewed.** An independent agent played Conny, knowing nothing about backends, working from the
 bilingual subtitles and one frame every 3 s (plus exact frames it pulled to time static stretches). I
@@ -120,9 +120,29 @@ Recap: pass.
   drawn); the invite-code facts over the laptop; red marks colliding with the chips above;
   "status =active" missing a space; text touching the recap cards' edges.
 
-## Verified
+## Verified (final render, 2026-10-31)
 
-(filled in after the final render)
+- **Files:**
+  - `portal-e6-backend.mp4` (clean, 28.9 MB) and `portal-e6-backend.zh-en.mp4` (25.6 MB) both decode in full with no error (`ffmpeg -v error -i … -f null -`, exit 0).
+  - The `.zh-en.mp4` has the bilingual subtitles burned in, with the picture scaled above the subtitle band.
+  - Both run 448.256 s (7:28.3): 1920×1080 at 60 fps, H.264 High, yuv420p; AAC-LC 48 kHz stereo; 26,887 / 26,888 video frames.
+  - After the first final cut, s08 was re-rendered for a cue that never fired (26337fe), s05 for a caption that repeated its English (e919b64), and s04 and s06 for bilingual pairs one phrase apart (e23e399, 6050f2f); the cut was restitched from them.
+- **Loudness** (EBU R128): −16.1 LUFS integrated, LRA 2.5 LU, true peak −1.0 dBTP.
+  - The two files have the same AAC stream (MD5 `565a621d…`).
+  - The build's mix report: voice −16.0 LUFS, music −32.4 LUFS under speech and −22.0 LUFS in the gaps.
+- **Subtitles** (`output/*.srt`, committed):
+  - 124 English, 93 Chinese and 120 bilingual cues.
+  - All are numbered in order, never overlap and are never empty. None has more than two lines or lasts under 1.0 s.
+  - Every bilingual cue has Chinese above English, and the `.zh-en.ass` has the same 120 events. No two consecutive bilingual cues repeat the same English, and every split sentence was read pair by pair.
+  - The last cue ends at 7:26.4, 1.9 s before the end.
+  - `python -m explainer.i18n check videos/portal-e6-backend --lang zh`: OK.
+- **Layout:**
+  - `python -m explainer.check` reports no OUT, SMALL or missing-anchor problem in any of the nine scenes, the render logs report no missed anchor, and a script check confirms every anchor occurs verbatim in its narration.
+  - Two 480p drafts were read frame by frame.
+  - Four burned 1080p frames were spot-checked: s02's request path in its container, s03's shared data shape, s06's start-link buttons, s07's one-word fix and the refused request.
+- **Narration:** 1,125 words (`python -m explainer.script`), Kokoro `af_heart` at 0.95.
+- **Release preflight:** `tools/release_episode.py videos/portal-e6-backend --preflight` passes (exit 0, no LaTeX needed).
+- **Sources:** every figure on screen and every quote is listed in SOURCES.md, with the accuracy-pass corrections. Rendered MP4s are not in git; they become release assets after merge.
 
 ## Not claimed
 

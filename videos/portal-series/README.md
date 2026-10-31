@@ -43,7 +43,7 @@ the `video.yaml` route (owner, 2026-10-30: 「以后用 3BLUE1BROWN STYLE PLEASE
 | E3 | [`portal-e3-copying-claude`](../portal-e3-copying-claude/) · 照着 Claude 抄 | What did we copy from the Claude app, what not, what is ours, and what could we invent? | #41 | [#60](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/60) · full cut (3b1b) |
 | E4 | [`portal-e4-build-log`](../portal-e4-build-log/) · 两天、一百多个提交 | What did the agents actually do for two days, what did it cost, and who decided? | #36, #41, the week | [#61](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/61) · full cut (3b1b, 8:55) |
 | E5 | [`portal-e5-verify`](../portal-e5-verify/) · agent 怎么证明自己改对了 | Before any person looks, how can an agent prove a change is right? | #42 (draft) | [#66](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/66) · full cut (3b1b, 6:18) |
-| E6 | [`portal-e6-backend`](../portal-e6-backend/) · 后端怎么选 | How was the backend chosen, what lost and why, and what does the first data model protect? | #43 (draft) | [#67](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/67) · scenes (3b1b) |
+| E6 | [`portal-e6-backend`](../portal-e6-backend/) · 后端怎么选 | How was the backend chosen, what lost and why, and what does the first data model protect? | #43 (draft) | [#67](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/67) · full cut (3b1b, 7:28) |
 
 ### E1 · 不就是调一下 API 吗？ (Isn't it just an API call?)
 
