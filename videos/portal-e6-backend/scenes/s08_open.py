@@ -50,7 +50,7 @@ class Open(VoiceScene):
             qs = VGroup(sans("access from China? (#44)", 24), sans("an email service that stays out of QQ / 163 spam?", 24),
                         sans("may parents enter card details? (#14)", 24), sans("how long does deleted data linger? (#20)", 24)
                         ).arrange(DOWN, aligned_edge=LEFT, buff=0.14).move_to(LEFT * 1.6 + UP * 2.0)
-            for q, phrase in zip(qs, ["reached from China", "QQ and one six three", "enter card details", "deleted data lingers"]):
+            for q, phrase in zip(qs, ["reached from China", "QQ and", "enter card details", "deleted data lingers"]):
                 vo.wait_until(phrase)
                 self.play(FadeIn(q, shift=RIGHT * 0.1), run_time=0.35)
             calls = VGroup(sans("two product calls, provisional until #14 and #20 decide", 22, USER_C),
