@@ -47,7 +47,9 @@ class Hook(VoiceScene):
             self.play(Rotate(watch[2], angle=-2 * PI, about_point=watch[0].get_center()),
                       dot.animate.move_to(line.point_from_proportion(0.9)), run_time=1.6, rate_func=linear)
             vo.wait_until("presses submit")
-            self.play(Indicate(button, color=USER_C, scale_factor=1.05), run_time=0.5)
+            # a press, not Indicate: Indicate would paint the filled button over its own label
+            self.play(button.animate(rate_func=there_and_back).scale(0.92), Circumscribe(button, color=USER_C, buff=0.08),
+                      run_time=0.6)
             vo.wait_until("attached anyway")
             arrow = Arrow(ref.get_right(), used.get_left(), color=DANGER_C, buff=0.15)
             self.play(GrowArrow(arrow), ref[0].animate.set_color(DANGER_C), run_time=0.6)

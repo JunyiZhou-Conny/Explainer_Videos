@@ -18,9 +18,9 @@ from common import (DANGER_C, NARRATION, USER_C, WEB_C, chip, clear, device, mar
 SAY = NARRATION["S01"]
 
 
-def drawer(width: float = 2.2) -> VGroup:
-    box = RoundedRectangle(width=width, height=0.55, corner_radius=0.08, stroke_color=WEB_C, stroke_width=2)
-    return VGroup(box, mono("localStorage", 20, WEB_C).move_to(box))
+def drawer(width: float = 2.2, stacked: bool = False) -> VGroup:
+    box = RoundedRectangle(width=width, height=0.85 if stacked else 0.55, corner_radius=0.08, stroke_color=WEB_C, stroke_width=2)
+    return VGroup(box, mono("local\nStorage" if stacked else "localStorage", 18 if stacked else 20, WEB_C).move_to(box))
 
 
 class Hook(VoiceScene):
@@ -32,8 +32,7 @@ class Hook(VoiceScene):
             vo.wait_until("no backend")
             self.play(FadeIn(lap), FadeIn(phone), run_time=0.6)
             d1 = drawer().move_to(lap.body)
-            d2 = drawer(1.2).move_to(phone.body)
-            d2[1].scale_to_fit_width(1.0)
+            d2 = drawer(1.15, stacked=True).move_to(phone.body)
             vo.wait_until("in that one browser")
             self.play(FadeIn(d1), FadeIn(d2), run_time=0.5)
             vo.wait_until("made up")

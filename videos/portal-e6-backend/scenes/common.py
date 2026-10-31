@@ -42,6 +42,20 @@ def device(label: str, width: float = 3.0, height: float = 2.2, phone: bool = Fa
     return g
 
 
+def sans_wrap(s: str, width: float, size: float = 22, color: str = S.GREY, buff: float = 0.08) -> VGroup:
+    """English text broken at word boundaries into lines no wider than `width`."""
+    lines, cur = [], ""
+    for word in s.split():
+        trial = f"{cur} {word}".strip()
+        if cur and sans(trial, size).width > width:
+            lines.append(cur)
+            cur = word
+        else:
+            cur = trial
+    lines.append(cur)
+    return VGroup(*[sans(t, size, color) for t in lines]).arrange(DOWN, aligned_edge=LEFT, buff=buff)
+
+
 def option(name: str, reason: str | None, chosen: bool, width: float = 5.6, size: float = 22) -> VGroup:
     """A considered option: chosen (coloured frame) or rejected (grey, struck through), with its reason."""
     color = CHECKED_C if chosen else S.GREY
@@ -49,7 +63,7 @@ def option(name: str, reason: str | None, chosen: bool, width: float = 5.6, size
     rows = [head]
     if reason:
         rows.append(zh_wrap(reason, width - 0.5, size, S.GREY) if any("一" <= ch <= "鿿" for ch in reason)
-                    else sans(reason, size, S.GREY))
+                    else sans_wrap(reason, width - 0.5, size, S.GREY))
     body = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
     frame = RoundedRectangle(width=width, height=body.height + 0.4, corner_radius=0.14, stroke_color=color, stroke_width=2.5)
     body.move_to(frame).align_to(frame, LEFT).shift(RIGHT * 0.25)

@@ -79,6 +79,7 @@ class Explore(VoiceScene):
 
         # 2 ---------------------------------------------------------------- rules at every state; the shortest story
         with self.voiceover(SAY[1]) as vo:
+            counter.clear_updaters()   # otherwise always_redraw rebuilds it at full opacity during the fade
             self.play(FadeOut(VGroup(world, moments, n13, merge, more, real, counter, unit, layer3, start)), run_time=0.4)
             tree = VGroup(root, edges1, layer1, edges2, layer2)
             self.play(tree.animate.scale(0.55).move_to(RIGHT * 3.3 + UP * 1.0), run_time=0.6)
