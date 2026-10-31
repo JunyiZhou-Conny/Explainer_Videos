@@ -26,7 +26,7 @@ Then the shape of the data, the part that protects people. Every account has a r
 Who should be able to start a family link: the student, or the parent?
 Only the student can start a family link, because the student is the patient and owns the health data. They create an invite code: at least eight characters, valid for seventy-two hours, usable once. Once linked, a parent sees the student's profile and current insurance card, read-only, and nothing else; anything added later, such as triage chats, is closed to parents by default. For now, card photos are not stored; the card is read on the device, and only the text fields are kept.
 
-## 05:05 — Review, and one missing word
+## 05:04 — Review, and one missing word
 The first draft was read by four reviewers from different angles: outside facts, consistency with the repository, privacy and the data model, and the issue's checklist. They raised thirty-one comments, and a judge agent kept fourteen. The second version fixed, among other things, three real mistakes: it had made up its own status and source labels for insurance fields instead of reading the insurance code, let linked parents enter cards, and planned to reuse services that carry fictional data.
 But the revision added a mistake of its own, and Bugbot caught it. Unlinking only recorded the time and left the link marked active, so a parent would have kept access. One missing word, in a written plan, before any code existed. The fix landed twenty-one seconds after the comment.
 If no bot had been watching, what would have caught it?
