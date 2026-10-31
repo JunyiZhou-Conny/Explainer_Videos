@@ -98,15 +98,23 @@ GitHub 和 B 站（扫码），再装两个定时任务：每 15 分钟跑一次
 ## 6. 项目周记：每周把自己的 PR 做成视频
 
 讲 InternationalHealthportal 这周做了什么的系列（规则见 [PORTAL_SERIES.md](PORTAL_SERIES.md)，
-计划见 `videos/portal-series/README.md`）。每集 10 分钟以内，只讲概念，不读代码。每周一次，
-把下面这段发给一个新的 Claude 会话（会话里要挂上两个仓库：Explainer_Videos 和
-InternationalHealthportal）：
+计划与已讲过的内容见 `videos/portal-series/README.md`）。每集 10 分钟以内，只讲概念，不读代码。
+**2026-10-31 起全自动**（你选的：周五晚上、全自动、一个常驻 issue）：
 
-> 用 portal-video skill。做这周（<起始日>–<结束日>）的项目周记：先跑 PR 周报，按我这周看到、
-> 想问的东西规划一批视频（我的问题：<随手写几条>），每集开一个 issue，然后从第一集开始做。
+- **每周五 21:17（波士顿时间）**，一个定时任务开一个新的云端会话，按 portal-video skill 的 §W 做完
+  这一周：生成 PR 周报，读你的问题，规划 1–4 集（量少就 1 集或跳过），每集开 issue，在一个草稿 PR 里
+  全部做完（准确性核对、模拟观众审查、1080p、中英字幕、REVIEW.md），检查全绿后把 PR 标成
+  ready for review。
+- **你的问题写在常驻 issue [#72](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/72)**：
+  随时想到随时发评论，一条一个问题。每周会话读上一条 `WEEKLY` 评论之后的新评论，优先回答它们；
+  做完在 #72 回一条 `WEEKLY <年>-w<周>`：哪个问题由哪一集回答、没回答的留到哪周、要合并哪个 PR。
+- **你要做的只有一件事：合并那个 PR。** 合并后 release-on-merge 自动发版，Mac 上的发布任务（第 5 节）
+  每 15 分钟传一集到 B 站，并在每集的 issue 下回 BV 链接。
+- **想临时多做一次**：让任何一个 Claude 会话「立即运行一次项目周记的定时任务」，或者把下面这段发给
+  一个新的 Claude 会话（会话里挂上 Explainer_Videos 和 InternationalHealthportal 两个仓库）：
 
-- **你的问题最值钱。** 看界面时想到的「这是什么、怎么做到的、还能怎么做」，直接写进去；代理会把每个
-  问题对应到一集，并在脚本里用 PR、决策记录和代码核对过的事实回答。
+  > 用 portal-video skill 的 §W，做这周的项目周记。
+
 - **周报**在 `videos/portal-series/weeks/`：这周你名下的每个 PR、提交时间线（波士顿时间）、动了哪些
   目录、改了哪些决策。不想看视频时它本身就是一份周报。
 - **公开发布**：这个系列和其他视频一样公开、上传 B 站（2026-10-30 定的）。视频里队友只称角色，

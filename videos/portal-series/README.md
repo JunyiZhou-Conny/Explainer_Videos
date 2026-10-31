@@ -4,6 +4,23 @@ Series rules: [docs/PORTAL_SERIES.md](../../docs/PORTAL_SERIES.md). Agent how-to
 `.claude/skills/portal-video/SKILL.md`. Weekly digests: [`weeks/`](weeks/). Shared terms:
 [GLOSSARY.md](GLOSSARY.md).
 
+## Coverage
+
+What the episodes have already explained. The weekly run (`.claude/skills/portal-video/SKILL.md`,
+§W) starts its digest at *Covered through* and treats as new only the PRs below that are missing,
+or the commits after the one recorded. Questions live in the standing issue
+[#72](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/72).
+
+**Covered through:** 2026-10-30 (Boston).
+
+| Portal PR | Commit explained | Episodes |
+|---|---|---|
+| #36 triage MVP | `17228bd` | E1, E2, E4 |
+| #41 chat page after the Claude app | `b7ab98e` | E1, E2, E3, E4 |
+| #42 verification tools (`npm run verify`, verify-app) | `fe19a23` | E5 |
+| #43 backend stack (decision 0006) | `f163e90` | E6 |
+| #2, #4, #6, #8, #9, #35, #37 team scaffolding and notes | merged | E4, in passing |
+
 ## Week 44 (2026-10-26 → 11-01): the triage chat
 
 Digest: [weeks/2026-w44.md](weeks/2026-w44.md). PR numbers below are InternationalHealthportal's. Nine of the owner's PRs; two carry almost all of
