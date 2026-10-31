@@ -1,0 +1,9 @@
+00:00 Why is the sky blue?
+01:42 Three dials: prompt, context, weights
+03:04 A key next to the repo
+04:56 The dataset-creator container
+07:05 Manufacturing a persona
+09:26 Prepare: a failure that surfaces late
+11:10 Rows to JSONL, then upload
+13:03 Hand it to Google: the tuning job
+15:22 Cost, endpoint and chat
