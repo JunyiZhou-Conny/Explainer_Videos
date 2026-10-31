@@ -32,7 +32,7 @@ class Jobs(VoiceScene):
             web = slot("web", "the page", WEB_C, 2.0).move_to(LEFT * 3.5 + UP * 0.8)
             api = slot("api", "rules · permissions", API_C, 4.4).move_to(RIGHT * 0.6 + UP * 0.8)
             api[1].shift(RIGHT * 0.9)
-            gate = VGroup(RoundedRectangle(width=1.6, height=0.95, corner_radius=0.12, stroke_color=AUTH_C, stroke_width=2.5),
+            gate = VGroup(RoundedRectangle(width=1.8, height=0.95, corner_radius=0.12, stroke_color=AUTH_C, stroke_width=2.5),
                           VGroup(mono("login", 22, AUTH_C), sans("who are you?", 20, S.GREY)).arrange(DOWN, buff=0.05))
             gate[1].move_to(gate[0])
             gate.move_to(api.frame.get_left() + RIGHT * 1.0)
@@ -63,10 +63,11 @@ class Jobs(VoiceScene):
             cmd = mono("docker compose up", 24, S.WHITE).next_to(box, DOWN, buff=0.15).align_to(box, RIGHT)
             self.play(Create(box), FadeIn(cmd), run_time=0.8)
             vo.wait_until("The record fills each slot")
-            picks = VGroup(sans("Hono + Zod", 24, API_C).next_to(api, DOWN, buff=0.9).align_to(api, RIGHT).shift(LEFT * 0.3),
-                           sans("Postgres + Drizzle", 24, DB_C).next_to(db, DOWN, buff=0.9),
-                           sans("Better Auth · emailed code", 24, AUTH_C).next_to(gate, DOWN, buff=1.05),
-                           sans("Docker Compose", 24, S.WHITE).next_to(box, DOWN, buff=0.15).align_to(box, LEFT))
+            def pick(job: str, name: str, color) -> VGroup:
+                return VGroup(sans(job, 22, S.GREY), sans(name, 26, color)).arrange(RIGHT, buff=0.2)
+            picks = VGroup(pick("server", "Hono + Zod", API_C), pick("database", "Postgres + Drizzle", DB_C),
+                           pick("login", "Better Auth · emailed codes", AUTH_C), pick("containers", "Docker Compose", S.WHITE)
+                           ).arrange_in_grid(2, 2, buff=(1.0, 0.35), col_alignments="ll").move_to(DOWN * 2.1)
             for p, phrase in zip(picks, ["Hono and Zod", "Postgres for the database", "Better Auth", "Docker Compose"]):
                 vo.wait_until(phrase)
                 self.play(FadeIn(p, shift=UP * 0.1), run_time=0.35)

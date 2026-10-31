@@ -65,7 +65,7 @@ class Review(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             clear(self, 0.4)
             row = VGroup(mono("family_link", 26, WEB_C), mono("revokedAt = set", 24, S.WHITE),
-                         VGroup(mono("status = ", 24), mono("active", 24, DANGER_C)).arrange(RIGHT, buff=0.1)
+                         VGroup(mono("status =", 24), mono("active", 24, DANGER_C)).arrange(RIGHT, buff=0.22)
                          ).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
             frame = SurroundingRectangle(row, color=WEB_C, buff=0.3, corner_radius=0.12)
             plan = VGroup(sans("the second version's written rule for unlinking", 22, S.GREY), VGroup(frame, row)
@@ -93,7 +93,7 @@ class Review(VoiceScene):
 
         # 3 ---------------------------------------------------------------- ponder
         with self.voiceover(SAY[2]) as vo:
-            self.play(*[m.animate.set_opacity(0.15) for m in self.mobjects], run_time=0.4)
+            clear(self, 0.4)
             ponder_zh(self, "If no bot had been watching, what would have caught it?", "如果没有 bot 盯着，什么能抓住它？", seconds=4.0)
         self.wait(3.0)
         clear(self)

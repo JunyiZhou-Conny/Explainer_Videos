@@ -47,4 +47,4 @@ No single check does. It is layers: hundreds of tests, one of which replays the 
 ## 08:19 — Recap
 So, two days: a skeleton and a fact check in an afternoon; your turn at nine twenty-one; a night of whack-a-mole with the bots; a queue of fix agents; a second night of attacking the checker before the bots could; and a stop rule that held.
 Three questions. Why did so many of the brain's commits touch the checker? Why reproduce a bug before fixing it? And what is still waiting for you?
-That ends this week's batch. Next week's episodes start from next week's pull requests.
+Two more pull requests arrived on Friday. Next: how an agent proves its change is right.

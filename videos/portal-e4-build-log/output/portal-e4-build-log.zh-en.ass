@@ -146,5 +146,5 @@ Dialogue: 0,0:08:34.28,0:08:35.66,Bilingual,,0,0,0,,三个问题\N{\fs33\c&H00C8
 Dialogue: 0,0:08:35.71,0:08:38.44,Bilingual,,0,0,0,,为什么分诊大脑的提交有这么多在改检查器？\N{\fs33\c&H00C8C0B8&\bord1.4}Why did so many of the brain's commits touch the checker?
 Dialogue: 0,0:08:38.76,0:08:40.90,Bilingual,,0,0,0,,为什么修 bug 之前要先复现？\N{\fs33\c&H00C8C0B8&\bord1.4}Why reproduce a bug before fixing it?
 Dialogue: 0,0:08:41.22,0:08:42.86,Bilingual,,0,0,0,,还有什么在等你决定？\N{\fs33\c&H00C8C0B8&\bord1.4}And what is still waiting for you?
-Dialogue: 0,0:08:48.10,0:08:49.70,Bilingual,,0,0,0,,这一周的内容到这里结束\N{\fs33\c&H00C8C0B8&\bord1.4}That ends this week's batch.
-Dialogue: 0,0:08:50.02,0:08:53.45,Bilingual,,0,0,0,,下周的几集，从下周的 PR 开始\N{\fs33\c&H00C8C0B8&\bord1.4}Next week's episodes start from next week's pull requests.
+Dialogue: 0,0:08:48.10,0:08:50.47,Bilingual,,0,0,0,,周五又来了两个 PR\N{\fs33\c&H00C8C0B8&\bord1.4}Two more pull requests arrived on Friday.
+Dialogue: 0,0:08:50.79,0:08:53.58,Bilingual,,0,0,0,,下一集：agent 怎么证明自己改对了\N{\fs33\c&H00C8C0B8&\bord1.4}Next: how an agent proves its change is right.

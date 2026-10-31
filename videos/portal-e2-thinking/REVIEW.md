@@ -104,14 +104,15 @@ every 3 s), plus my own frame-by-frame layout pass over the same contact sheets:
   wrapper no longer starts a line with closing punctuation); the 「pulled back: too late」 label over
   the phone's edge; a wrapped status quote. All fixed and re-linted.
 
-## Verified (final render, 2026-10-30)
+## Verified (final render, 2026-10-30; ponder scenes re-rendered 2026-10-31)
 
 - **Files**: `portal-e2-thinking.mp4` (clean) and `portal-e2-thinking.zh-en.mp4` (bilingual subtitles
   burned in) both decode in full with no error (`ffmpeg -v error -i … -f null -`, exit 0). 452.906 s
   (7:32.9), 1920×1080 at 60 fps, H.264 High, yuv420p; AAC-LC 48 kHz stereo. 27,169 / 27,170 video
-  frames; 30.7 MB / 26.5 MB.
+  frames; 30.8 MB / 26.6 MB. S03 and S05 were re-rendered on 2026-10-31 after Bugbot found that the
+  ponder card dropped its Chinese line (b78d2b6), and the cut restitched; the duration is unchanged.
 - **Loudness** (EBU R128): −16.1 LUFS integrated, LRA 2.6 LU, true peak −1.1 dBTP, identical in both
-  files (the burned copy's audio stream has the same MD5, `13870bf5…`). The build's mix report: voice
+  files (the burned copy's AAC stream has the same MD5, `72e1dc21…`). The build's mix report: voice
   −16.0 LUFS, music −32.84 LUFS under speech and −22.01 LUFS in the gaps.
 - **Subtitles**: 135 English / 101 Chinese / 125 bilingual cues (`output/*.srt`, committed), numbered
   in order, never overlapping or empty, at most two lines, none shorter than 1.0 s; every bilingual cue

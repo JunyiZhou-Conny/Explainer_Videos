@@ -690,11 +690,11 @@ Why reproduce a bug before fixing it?
 And what is still waiting for you?
 
 150
-00:08:48,100 --> 00:08:49,700
-That ends this week's batch.
+00:08:48,100 --> 00:08:50,468
+Two more pull requests arrived on Friday.
 
 151
-00:08:50,020 --> 00:08:53,455
-Next week's episodes start
-from next week's pull requests.
+00:08:50,788 --> 00:08:53,583
+Next:
+how an agent proves its change is right.
 

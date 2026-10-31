@@ -145,27 +145,28 @@ facts and unclaimed reviews are kept separate.
 
 The ponder count is now four (s04, s06, s07, s09). The recap's three questions are each answered in the episode (s07; s06; s09).
 
-## Verified (final render, 2026-10-30)
+## Verified (final render, 2026-10-30; re-rendered scenes 2026-10-31)
 
 - **Files:**
-  - `portal-e4-build-log.mp4` (clean, 40.1 MB) and `portal-e4-build-log.zh-en.mp4` (33.4 MB) both decode in full with no error (`ffmpeg -v error -i … -f null -`, exit 0).
+  - `portal-e4-build-log.mp4` (clean, 40.3 MB) and `portal-e4-build-log.zh-en.mp4` (33.6 MB) both decode in full with no error (`ffmpeg -v error -i … -f null -`, exit 0).
   - The `.zh-en.mp4` has the bilingual subtitles burned in, with the picture scaled above the subtitle band.
-  - Both run 535.296 s (8:55.3): 1920×1080 at 60 fps, H.264 High, yuv420p; AAC-LC 48 kHz stereo; 32,112 / 32,113 video frames.
+  - Both run 535.402 s (8:55.4): 1920×1080 at 60 fps, H.264 High, yuv420p; AAC-LC 48 kHz stereo; 32,119 / 32,120 video frames.
   - s02 and s05 were re-rendered after Bugbot's two findings on 2750089 (97890f6), and the cut was restitched from them.
+  - On 2026-10-31, s04, s06, s07 and s09 were re-rendered after Bugbot found that the ponder card dropped its Chinese line (b78d2b6), and s10 after its last line was changed to lead into E5 (two more pull requests arrived on Friday). The cut was restitched; it is 0.1 s longer.
 - **Loudness** (EBU R128): −16.1 LUFS integrated, LRA 2.6 LU, true peak −1.0 dBFS.
-  - The two files have the same audio (MD5 `4fe6309e…`).
+  - The two files have the same AAC stream (MD5 `e1ca068d…`).
   - The build's mix report: voice −15.98 LUFS, music −32.47 LUFS under speech and −21.98 LUFS in the gaps.
 - **Subtitles** (`output/*.srt`, committed):
   - 151 English, 112 Chinese and 136 bilingual cues.
   - All are numbered in order, never overlap and are never empty. None has more than two lines or lasts under 1.0 s.
   - Every bilingual cue has Chinese above English, and the `.zh-en.ass` has the same 136 events.
-  - The last cue ends at 8:53.5, 1.8 s before the end.
+  - The last cue ends at 8:53.6, 1.8 s before the end.
   - `python -m explainer.i18n check videos/portal-e4-build-log --lang zh`: OK.
 - **Layout:**
   - `python -m explainer.check` reports no OUT, SMALL or missing-anchor problem in any of the ten scenes.
   - Four 480p drafts were read frame by frame.
   - Four burned 1080p frames were spot-checked: s01's lit review commits, s07's rule window, s07's jar, and s09's layers with decision 0004.
-- **Narration:** 1,329 words (`python -m explainer.script`), Kokoro `af_heart` at 0.95.
+- **Narration:** 1,331 words (`python -m explainer.script`), Kokoro `af_heart` at 0.95.
 - **Sources:** every figure on screen and every quote is listed in SOURCES.md, which also lists the accuracy-pass corrections. Rendered MP4s are not in git; they become release assets after merge.
 
 ## Not claimed

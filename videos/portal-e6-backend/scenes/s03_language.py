@@ -23,7 +23,7 @@ class Language(VoiceScene):
     def construct(self):
         # 1 ---------------------------------------------------------------- the question
         with self.voiceover(SAY[0]) as vo:
-            browser = VGroup(RoundedRectangle(width=4.6, height=1.4, corner_radius=0.16, stroke_color=WEB_C, stroke_width=2.5),
+            browser = VGroup(RoundedRectangle(width=6.2, height=1.5, corner_radius=0.16, stroke_color=WEB_C, stroke_width=2.5),
                              VGroup(sans("a browser runs", 22, S.GREY), mono("JavaScript / TypeScript", 26, WEB_C)
                                     ).arrange(DOWN, buff=0.08))
             browser[1].move_to(browser[0])
@@ -34,7 +34,7 @@ class Language(VoiceScene):
 
         # 2 ---------------------------------------------------------------- ponder
         with self.voiceover(SAY[1]) as vo:
-            self.play(*[m.animate.set_opacity(0.15) for m in self.mobjects], run_time=0.3)
+            clear(self, 0.3)
             card = ponder_zh(self, "You read Python. Why isn't the backend in Python?", "你看得懂 Python。为什么后端不用 Python？",
                              seconds=4.0)
         self.wait(2.0)
@@ -42,10 +42,12 @@ class Language(VoiceScene):
         # 3 ---------------------------------------------------------------- the page decides
         with self.voiceover(SAY[2]) as vo:
             clear(self, 0.3)
+            browser.move_to(UP * 1.2)
+            self.play(FadeIn(browser), run_time=0.4)
             rule = quote_panel("前端是固定的约束，应该是后端适配前端。", "decision record · backend stack", width=8.4, size=30,
                                color=USER_C).move_to(UP * 2.75)
             vo.wait_until("The record makes it a rule")
-            self.play(FadeIn(rule, shift=DOWN * 0.1), run_time=0.6)
+            self.play(FadeOut(browser), FadeIn(rule, shift=DOWN * 0.1), run_time=0.6)
             protos = VGroup(chip("triage · TypeScript · PR #36", WEB_C, 22), chip("insurance · TypeScript · PR #38", WEB_C, 22)
                             ).arrange(RIGHT, buff=0.4).move_to(UP * 1.25)
             vo.wait_until("Both prototypes")

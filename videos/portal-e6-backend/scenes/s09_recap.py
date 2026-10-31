@@ -24,11 +24,11 @@ class Recap(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             cards = VGroup()
             for name, why, color, _ in SLOTS:
-                body = VGroup(sans(name, 28, color), sans(why, 22, S.GREY)).arrange(DOWN, buff=0.12)
-                frame = RoundedRectangle(width=3.0, height=1.4, corner_radius=0.16, stroke_color=color, stroke_width=2.5)
+                body = VGroup(sans(name, 28, color), sans(why, 20, S.GREY)).arrange(DOWN, buff=0.12)
+                frame = RoundedRectangle(width=3.1, height=1.4, corner_radius=0.16, stroke_color=color, stroke_width=2.5)
                 body.move_to(frame)
                 cards.add(VGroup(frame, body))
-            cards.arrange(RIGHT, buff=0.2).move_to(UP * 1.6)
+            cards.arrange(RIGHT, buff=0.15).move_to(UP * 1.6)
             for c, (*_, phrase) in zip(cards, SLOTS):
                 vo.wait_until(phrase)
                 self.play(FadeIn(c, shift=UP * 0.1), run_time=0.4)

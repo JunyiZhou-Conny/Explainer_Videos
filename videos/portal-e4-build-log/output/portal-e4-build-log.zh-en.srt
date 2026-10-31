@@ -669,11 +669,11 @@ Why reproduce a bug before fixing it?
 And what is still waiting for you?
 
 135
-00:08:48,100 --> 00:08:49,700
-这一周的内容到这里结束
-That ends this week's batch.
+00:08:48,100 --> 00:08:50,468
+周五又来了两个 PR
+Two more pull requests arrived on Friday.
 
 136
-00:08:50,020 --> 00:08:53,455
-下周的几集，从下周的 PR 开始
-Next week's episodes start from next week's pull requests.
+00:08:50,788 --> 00:08:53,583
+下一集：agent 怎么证明自己改对了
+Next: how an agent proves its change is right.

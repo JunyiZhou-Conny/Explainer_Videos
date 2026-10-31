@@ -87,15 +87,16 @@ every 3 s), plus my own frame-by-frame pass:
   - **"Helper import needs missing script":** true at a WIP checkpoint, before `script.md` existed.
   - **"Chat page sits in caption band":** does not apply to the `video.yaml` route. Its burn mode scales the picture above the subtitle band. Answered on the thread.
 
-## Verified (final render, 2026-10-30)
+## Verified (final render, 2026-10-30; ponder scenes re-rendered 2026-10-31)
 
 - **Files**: `portal-e3-copying-claude.mp4` (clean) and `portal-e3-copying-claude.zh-en.mp4` (bilingual
   subtitles burned in, picture scaled above the subtitle band) both decode in full with no error
   (`ffmpeg -v error -i … -f null -`, exit 0). 495.210 s (8:15.2), 1920×1080 at 60 fps, H.264 High,
-  yuv420p; AAC-LC 48 kHz stereo; 29,709 / 29,710 video frames; 36.5 MB / 31.1 MB. S07 and S08 were
-  re-rendered after Bugbot's findings (1bbf9be) and the cut restitched from them.
+  yuv420p; AAC-LC 48 kHz stereo; 29,709 / 29,710 video frames; 36.7 MB / 31.2 MB. S07 and S08 were
+  re-rendered after Bugbot's findings (1bbf9be) and the cut restitched from them; S03 and S06 again on
+  2026-10-31, after the ponder card was found to drop its Chinese line (b78d2b6). The duration is unchanged.
 - **Loudness** (EBU R128): −16.1 LUFS integrated, LRA 2.3 LU, true peak −1.0 dBTP, identical in both files
-  (same audio MD5, `827ddba0…`). The build's mix report: voice −16.01 LUFS, music −32.05 LUFS under speech
+  (same AAC stream MD5, `121d9314…`). The build's mix report: voice −16.01 LUFS, music −32.05 LUFS under speech
   and −22.02 LUFS in the gaps.
 - **Subtitles**: 144 English / 116 Chinese / 130 bilingual cues (`output/*.srt`, committed), numbered in
   order, never overlapping or empty, at most two lines, none shorter than 1.0 s; every bilingual cue has
