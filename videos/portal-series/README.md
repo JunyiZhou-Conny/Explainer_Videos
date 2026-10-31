@@ -42,6 +42,8 @@ the `video.yaml` route (owner, 2026-10-30: 「以后用 3BLUE1BROWN STYLE PLEASE
 | E2 | [`portal-e2-thinking`](../portal-e2-thinking/) · 「思考了 3 秒」到底是什么 | What is the model doing during "thinking", and why do we show a receipt instead of its thoughts? | #41, #36 | [#59](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/59) · full cut (3b1b) |
 | E3 | [`portal-e3-copying-claude`](../portal-e3-copying-claude/) · 照着 Claude 抄 | What did we copy from the Claude app, what not, what is ours, and what could we invent? | #41 | [#60](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/60) · full cut (3b1b) |
 | E4 | [`portal-e4-build-log`](../portal-e4-build-log/) · 两天、一百多个提交 | What did the agents actually do for two days, what did it cost, and who decided? | #36, #41, the week | [#61](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/61) · full cut (3b1b, 8:55) |
+| E5 | `portal-e5-verify` · agent 怎么证明自己改对了 | Before any person looks, how can an agent prove a change is right? | #42 (draft) | [#66](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/66) · scripting (3b1b) |
+| E6 | `portal-e6-backend` · 后端怎么选 | How was the backend chosen, what lost and why, and what does the first data model protect? | #43 (draft) | [#67](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/67) · scripting (3b1b) |
 
 ### E1 · 不就是调一下 API 吗？ (Isn't it just an API call?)
 
@@ -105,3 +107,40 @@ guardrail (lint), fallback.
   container restarts in one night; the 99 % stop rule; the twelve decisions waiting for the owner.
 - **Ponder:** the team dropped word rules for symptoms but kept them for sentences; what would
   make the checker less of a whack-a-mole?
+
+### E5 · agent 怎么证明自己改对了 (How an agent proves its change is right)
+
+Added 2026-10-31 at the owner's request (「开始做吧」), from two PRs opened after the batch was planned.
+
+- **Hook:** a real bug no person had found: an expired referral still links to a new appointment.
+  An agent found it by trying every order of actions.
+- **Names:** reducer; invariant; exhaustive (model) checking; counterexample; deliberate breakage
+  (mutation testing); driving the real app by accessible role and name; evidence.
+- **Story:** PR #42's two tools:
+  - `npm run verify` walks about 14,000 states in about a second, and catches each of five
+    deliberate breakages with a counterexample of two steps or fewer.
+  - `verify-app` clicks through the running page like a parent and keeps screenshots and state
+    as evidence.
+
+  The tools came from the pstack verification skills, and the finding waits for a person's decision.
+- **Ponder:** a test checks the cases someone thought of; what checks the ones nobody thought of?
+
+### E6 · 后端怎么选 (How the backend stack was chosen)
+
+- **Hook:** the prototype has no backend, database or accounts. Accounts, insurance and family
+  links all need one place to live.
+- **Names:** backend; framework; database and migrations; one-time-code login; container; schema;
+  foreign key and cascade; decision record.
+- **Story:** PR #43's proposal (decision 「0006」, 提议):
+  - TypeScript + Hono + Zod;
+  - Postgres with Drizzle;
+  - Better Auth with email codes only;
+  - Docker Compose, with WSL on Windows.
+
+  Each choice comes with the options it rejected and why. The first data model: roles fixed after
+  choosing, a family link only the student can start, insurance cards read-only for parents and
+  with no images. It went through a four-angle review (31 comments, 14 kept). Open questions:
+  access from China, the email provider, parent edits, retention. The decision number clashes
+  with the triage-chat 0006 on PR #41.
+- **Ponder:** why decide the database before writing any code?
+
