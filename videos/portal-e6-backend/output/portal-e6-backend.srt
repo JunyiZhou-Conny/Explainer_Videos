@@ -334,247 +334,247 @@ Then the shape of the data,
 the part that protects people.
 
 73
-00:04:14,360 --> 00:04:18,219
+00:04:14,360 --> 00:04:17,774
 Every account has a role, student or parent,
-written once and,
+written once.
 
 74
-00:04:18,219 --> 00:04:21,331
-in this first version,
-not changeable by the user;
+00:04:18,094 --> 00:04:20,941
+In this first version,
+the user can't change it;
 
 75
-00:04:21,331 --> 00:04:25,688
+00:04:20,941 --> 00:04:25,091
 otherwise, the record notes, a student
 could make themselves a parent.
 
 76
-00:04:25,933 --> 00:04:29,730
+00:04:25,333 --> 00:04:29,130
 Who should be able to start a family link:
 the student, or the parent?
 
 77
-00:04:32,433 --> 00:04:34,849
+00:04:31,833 --> 00:04:34,249
 Only the student can start a family link,
 
 78
-00:04:34,849 --> 00:04:38,385
+00:04:34,249 --> 00:04:37,785
 because the student is the patient
 and owns the health data.
 
 79
-00:04:38,705 --> 00:04:42,173
+00:04:38,105 --> 00:04:41,573
 They create an invite code:
 at least eight characters,
 
 80
-00:04:42,173 --> 00:04:44,806
+00:04:41,573 --> 00:04:44,206
 valid for seventy-two hours, usable once.
 
 81
-00:04:45,126 --> 00:04:49,102
+00:04:44,526 --> 00:04:48,502
 Once linked, a parent sees
 the student's profile and current
 
 82
-00:04:49,102 --> 00:04:52,017
+00:04:48,502 --> 00:04:51,417
 insurance card, read-only, and nothing else;
 
 83
-00:04:52,017 --> 00:04:57,052
+00:04:51,417 --> 00:04:56,452
 anything added later, such as triage chats,
 is closed to parents by default.
 
 84
-00:04:57,372 --> 00:04:59,601
+00:04:56,772 --> 00:04:59,001
 For now, card photos are not stored;
 
 85
-00:04:59,601 --> 00:05:03,686
+00:04:59,001 --> 00:05:03,086
 the card is read on the device,
 and only the text fields are kept.
 
 86
-00:05:05,033 --> 00:05:09,277
+00:05:04,433 --> 00:05:08,677
 The first draft was read
 by four reviewers from different angles:
 
 87
-00:05:09,277 --> 00:05:12,345
+00:05:08,677 --> 00:05:11,745
 outside facts,
 consistency with the repository,
 
 88
-00:05:12,345 --> 00:05:15,870
+00:05:11,745 --> 00:05:15,270
 privacy and the data model,
 and the issue's checklist.
 
 89
-00:05:16,190 --> 00:05:19,988
+00:05:15,590 --> 00:05:19,388
 They raised thirty-one comments,
 and a judge agent kept fourteen.
 
 90
-00:05:20,308 --> 00:05:24,419
+00:05:19,708 --> 00:05:23,819
 The second version fixed,
 among other things, three real mistakes:
 
 91
-00:05:24,419 --> 00:05:28,218
+00:05:23,819 --> 00:05:27,618
 it had made up its own status and source
 labels for insurance
 
 92
-00:05:28,218 --> 00:05:31,057
+00:05:27,618 --> 00:05:30,457
 fields instead of reading
 the insurance code,
 
 93
-00:05:31,057 --> 00:05:33,013
+00:05:30,457 --> 00:05:32,413
 let linked parents enter cards,
 
 94
-00:05:33,013 --> 00:05:36,500
+00:05:32,413 --> 00:05:35,900
 and planned to reuse services
 that carry fictional data.
 
 95
-00:05:36,750 --> 00:05:40,291
+00:05:36,150 --> 00:05:39,691
 But the revision added a mistake of its own,
 and Bugbot caught it.
 
 96
-00:05:40,611 --> 00:05:44,563
+00:05:40,011 --> 00:05:43,963
 Unlinking only recorded the time
 and left the link marked active,
 
 97
-00:05:44,563 --> 00:05:46,691
+00:05:43,963 --> 00:05:46,091
 so a parent would have kept access.
 
 98
-00:05:47,011 --> 00:05:50,638
+00:05:46,411 --> 00:05:50,038
 One missing word, in a written plan,
 before any code existed.
 
 99
-00:05:50,958 --> 00:05:53,944
+00:05:50,358 --> 00:05:53,344
 The fix landed twenty-one seconds
 after the comment.
 
 100
-00:05:54,183 --> 00:05:56,892
+00:05:53,583 --> 00:05:56,292
 If no bot had been watching,
 what would have caught it?
 
 101
-00:06:02,683 --> 00:06:05,865
+00:06:02,083 --> 00:06:05,265
 A test would,
 and the record already asks for one:
 
 102
-00:06:05,865 --> 00:06:07,392
+00:06:05,265 --> 00:06:06,792
 after a student unlinks,
 
 103
-00:06:07,392 --> 00:06:11,472
+00:06:06,792 --> 00:06:10,872
 the parent's next request must be refused,
 checked automatically.
 
 104
-00:06:11,792 --> 00:06:14,284
+00:06:11,192 --> 00:06:13,684
 The decision itself is still a proposal;
 
 105
-00:06:14,284 --> 00:06:19,515
+00:06:13,684 --> 00:06:18,915
 the issue asks the three of you to confirm
 it in person before it is marked adopted.
 
 106
-00:06:19,750 --> 00:06:23,593
+00:06:19,150 --> 00:06:22,993
 Still open: whether the servers
 can be reached from China,
 
 107
-00:06:23,593 --> 00:06:28,032
+00:06:22,993 --> 00:06:27,432
 which email service stays out
 of QQ and one-six-three spam folders,
 
 108
-00:06:28,032 --> 00:06:32,934
+00:06:27,432 --> 00:06:32,334
 whether parents may enter card details,
 and how long deleted data lingers.
 
 109
-00:06:33,254 --> 00:06:36,373
+00:06:32,654 --> 00:06:35,773
 Two product calls sit
 in this technical document,
 
 110
-00:06:36,373 --> 00:06:41,401
+00:06:35,773 --> 00:06:40,801
 both provisional until those issues decide:
 parents see nothing new by default,
 
 111
-00:06:41,401 --> 00:06:44,710
+00:06:40,801 --> 00:06:44,110
 and deleting a student's account
 deletes their card.
 
 112
-00:06:45,030 --> 00:06:46,723
+00:06:44,430 --> 00:06:46,123
 And one piece of housekeeping:
 
 113
-00:06:46,723 --> 00:06:49,318
+00:06:46,123 --> 00:06:48,718
 two different decisions
 are both numbered six.
 
 114
-00:06:51,867 --> 00:06:54,722
+00:06:51,267 --> 00:06:54,122
 So: TypeScript, because the page decides;
 
 115
-00:06:54,722 --> 00:06:57,260
+00:06:54,122 --> 00:06:56,660
 Postgres, because the data is links;
 
 116
-00:06:57,260 --> 00:07:00,503
+00:06:56,660 --> 00:06:59,903
 emailed codes,
 because every parent has email;
 
 117
-00:07:00,503 --> 00:07:03,707
+00:06:59,903 --> 00:07:03,107
 containers,
 because it must run on any laptop.
 
 118
-00:07:04,027 --> 00:07:07,099
+00:07:03,427 --> 00:07:06,499
 And a data model whose real job is privacy.
 
 119
-00:07:07,334 --> 00:07:08,443
+00:07:06,734 --> 00:07:07,843
 Three questions.
 
 120
-00:07:08,763 --> 00:07:10,577
+00:07:08,163 --> 00:07:09,977
 Why isn't the backend in Python?
 
 121
-00:07:10,897 --> 00:07:13,478
+00:07:10,297 --> 00:07:12,878
 What stops a student
 from making themselves a parent?
 
 122
-00:07:13,798 --> 00:07:16,379
+00:07:13,198 --> 00:07:15,779
 And what would have caught the unlink bug
 without a bot?
 
 123
-00:07:21,617 --> 00:07:23,217
+00:07:21,017 --> 00:07:22,617
 That ends this week's batch.
 
 124
-00:07:23,537 --> 00:07:26,972
+00:07:22,937 --> 00:07:26,372
 Next week's episodes start
 from next week's pull requests.
 
