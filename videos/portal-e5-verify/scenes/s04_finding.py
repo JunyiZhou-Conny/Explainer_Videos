@@ -43,8 +43,10 @@ class Finding(VoiceScene):
             # "expired" exists only on the screen
             screen_ = panel("the screen", [zh("已过期", 26, DANGER_C)], S.GREY, width=2.6).move_to(RIGHT * 3.7 + UP * 0.6)
             worked = DashedLine(until.get_right(), screen_.get_left(), color=S.GREY, dash_length=0.12).add_tip(tip_length=0.18)
-            worked_lab = sans("worked out for display, never saved", 20, S.GREY).rotate(worked.get_angle())
-            worked_lab.move_to(worked.point_from_proportion(0.42)).shift(rotate_vector(UP * 0.22, worked.get_angle()))
+            w0, w1 = until.get_right(), screen_.get_left()
+            tilt = angle_of_vector(w1 - w0)
+            worked_lab = sans("worked out for display, never saved", 20, S.GREY).rotate(tilt)
+            worked_lab.move_to(w0 + 0.42 * (w1 - w0)).shift(rotate_vector(UP * 0.22, tilt))
             vo.wait_until("never stored")
             self.play(Create(worked), FadeIn(worked_lab), FadeIn(screen_), run_time=0.7)
             self.play(Indicate(status, color=USER_C, scale_factor=1.06), run_time=0.6)
