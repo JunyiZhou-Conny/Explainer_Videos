@@ -1,9 +1,9 @@
 """S03 · Try every order in a small world (verify/referral-links/model.ts; ../SOURCES.md)
 
-1. The world: 2 referrals (ref-v1, ref-v2), 3 specialist slots (S1–S3), a clock with two moments (1 h before and
-   1 h after validUntil); 13 first moves; breadth-first, states already seen merge; 13,898 states, 173,725
-   transitions, under a second (measured: explore() 0.69–0.80 s); the real reducer, not a copy.
-2. Five rules (model.ts:114-160) checked at every state; the first broken rule comes with the shortest story;
+1. The world: 2 referrals (ref-v1, ref-v2), 3 specialist slots (S1–S3), a clock with two moments (T0+1 h, just after the
+   referrals are written, and 1 h after validUntil; model.ts:15, :66-69); 13 first moves; breadth-first, states already seen merge; 13,898 states, 173,725
+   transitions, about a second (measured: explore() 0.68–1.01 s); the real reducer, not a copy.
+2. Four rules checked at every state, the fifth on every step (model.ts:114-160); the first broken rule comes with the shortest story;
    the tool's output, verbatim.
 """
 
@@ -26,19 +26,23 @@ class Explore(VoiceScene):
         rng = random.Random(5)
         # 1 ---------------------------------------------------------------- the small world, explored layer by layer
         with self.voiceover(SAY[0]) as vo:
-            world = VGroup(chip("2 referrals · ref-v1, ref-v2", USER_C, 22), chip("3 slots · S1 S2 S3", OURS_C, 22),
-                           chip("clock: 1 h before / 1 h after expiry", MODEL_C, 22)).arrange(RIGHT, buff=0.3)
-            world.move_to(UP * 3.1)
+            world = VGroup(chip("2 referrals", USER_C, 22), chip("3 specialist slots", OURS_C, 22),
+                           chip("a clock with 2 moments", MODEL_C, 22)).arrange(RIGHT, buff=0.3)
+            world.move_to(UP * 3.15)
+            moments = sans("moment 1: just after the referrals are written · moment 2: an hour after they expire", 20, S.GREY)
+            moments.next_to(world, DOWN, buff=0.12)
             for c, phrase in zip(world, ["two referrals", "three specialist slots", "two moments"]):
                 vo.wait_until(phrase)
                 self.play(FadeIn(c, shift=DOWN * 0.1), run_time=0.4)
-            root = Dot(UP * 2.1, radius=0.12, color=OURS_C)
+            self.play(FadeIn(moments), run_time=0.4)
+            root = Dot(UP * 1.95, radius=0.12, color=OURS_C)
             start = sans("start", 20, S.GREY).next_to(root, LEFT, buff=0.15)
             vo.wait_until("thirteen possible moves")
             xs1 = np.linspace(-5.4, 5.4, 13)
             layer1 = VGroup(*[Dot([x, 1.0, 0], radius=0.07, color=S.WHITE) for x in xs1])
             edges1 = VGroup(*[Line(root.get_center(), d.get_center(), color=S.GREY_DARK, stroke_width=1.5) for d in layer1])
-            n13 = sans("13 first moves", 22, S.GREY).move_to(RIGHT * 4.6 + UP * 2.1)
+            n13 = VGroup(sans("13 first moves", 22, S.GREY), sans("1 tick + 3 slots × 4 referral choices", 20, S.GREY)
+                         ).arrange(DOWN, aligned_edge=RIGHT, buff=0.05).move_to(RIGHT * 4.3 + UP * 1.85)
             self.play(FadeIn(root), FadeIn(start), run_time=0.3)
             self.play(LaggedStart(*[Create(e) for e in edges1], lag_ratio=0.05), FadeIn(layer1), FadeIn(n13), run_time=1.0)
             vo.wait_until("layer by layer")
@@ -65,7 +69,7 @@ class Explore(VoiceScene):
             unit = sans("states", 30, OURS_C).next_to(spot, RIGHT, buff=0.2)
             self.add(counter, unit)
             self.play(n.animate.set_value(13898), run_time=1.0)
-            more = VGroup(sans("173,725 transitions", 22, S.GREY), sans("under a second", 22, S.GREY)
+            more = VGroup(sans("173,725 transitions", 22, S.GREY), sans("about a second", 22, S.GREY)
                           ).arrange(DOWN, aligned_edge=LEFT, buff=0.06).next_to(unit, RIGHT, buff=0.5)
             self.play(FadeIn(more), run_time=0.4)
             vo.wait_until("the real reducer")
@@ -75,13 +79,13 @@ class Explore(VoiceScene):
 
         # 2 ---------------------------------------------------------------- rules at every state; the shortest story
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(world, n13, merge, more, real, counter, unit, layer3, start)), run_time=0.4)
+            self.play(FadeOut(VGroup(world, moments, n13, merge, more, real, counter, unit, layer3, start)), run_time=0.4)
             tree = VGroup(root, edges1, layer1, edges2, layer2)
             self.play(tree.animate.scale(0.55).move_to(RIGHT * 3.3 + UP * 1.0), run_time=0.6)
             rules = VGroup(*[zh(f"{i + 1}  {r}", 24) for i, r in enumerate(RULES)]).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
-            head = sans("five rules, checked at every state", 24, USER_C)
+            head = sans("four rules at every state, one on every step", 24, USER_C)
             panel = VGroup(head, rules).arrange(DOWN, aligned_edge=LEFT, buff=0.25).move_to(LEFT * 3.0 + UP * 1.0)
-            vo.wait_until("five rules are checked")
+            vo.wait_until("Four rules are checked")
             self.play(FadeIn(head), LaggedStart(*[FadeIn(r) for r in rules], lag_ratio=0.15), run_time=1.2)
             vo.wait_until("one referral backs at most one")
             self.play(Indicate(rules[0], color=USER_C, scale_factor=1.04), run_time=0.6)

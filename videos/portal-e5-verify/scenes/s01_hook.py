@@ -2,8 +2,8 @@
 
 1. A referral (ENT, valid until 2027-01-22, fictional demo data); the booking page left open past the
    expiry; submit; the expired referral is attached anyway and the tracker shows 「已预约」, not 「已过期」.
-2. 245 tests passed; the code comment 「过期…的转诊保持不变」 (reducer.ts:288) says the case is handled, and it
-   isn't; found Friday 16:13 Boston by an agent (c0920b0, PR #42).
+2. 245 existing tests passed (none books after the expiry); the code comment 「过期…的转诊保持不变」 (reducer.ts:288) says the case is handled, and it
+   isn't; reported Friday 16:13 Boston by an agent (c0920b0, PR #42).
 """
 
 from manim import *
@@ -33,7 +33,7 @@ class Hook(VoiceScene):
                             zh("提交模拟预约申请", 24, S.BG))
             button[1].move_to(button[0])
             button.move_to(page.get_bottom() + UP * 0.6)
-            vo.wait_until("open the booking page")
+            vo.wait_until("opens the booking page")
             self.play(FadeIn(page), FadeIn(head), FadeIn(used), FadeIn(button), run_time=0.6)
             # the clock passes the expiry while the page stays open
             watch = stopwatch(0.42).move_to(LEFT * 4.4 + DOWN * 1.4)
@@ -42,38 +42,44 @@ class Hook(VoiceScene):
                          ).arrange(DOWN, buff=0.06)
             exp.move_to(line.point_from_proportion(0.55) + DOWN * 0.12)
             dot = Dot(line.get_start(), radius=0.09, color=USER_C)
-            vo.wait_until("leave it open")
+            vo.wait_until("leaves it open")
             self.play(FadeIn(watch), Create(line), FadeIn(exp), FadeIn(dot), run_time=0.5)
             self.play(Rotate(watch[2], angle=-2 * PI, about_point=watch[0].get_center()),
                       dot.animate.move_to(line.point_from_proportion(0.9)), run_time=1.6, rate_func=linear)
-            vo.wait_until("press submit")
+            vo.wait_until("presses submit")
             self.play(Indicate(button, color=USER_C, scale_factor=1.05), run_time=0.5)
             vo.wait_until("attached anyway")
             arrow = Arrow(ref.get_right(), used.get_left(), color=DANGER_C, buff=0.15)
             self.play(GrowArrow(arrow), ref[0].animate.set_color(DANGER_C), run_time=0.6)
-            vo.wait_until("now says booked")
-            status = VGroup(VGroup(mark_ok(0.24, CHECKED_C), zh("已预约", 26, CHECKED_C)).arrange(RIGHT, buff=0.12),
+            vo.wait_until("shows the specialist as booked")
+            status = VGroup(VGroup(mark_ok(0.24, CHECKED_C), zh("已预约专科", 26, CHECKED_C)).arrange(RIGHT, buff=0.12),
                             zh("已过期", 26, S.GREY)).arrange(RIGHT, buff=0.6).next_to(page, DOWN, buff=0.35)
             self.play(FadeIn(status[0]), run_time=0.4)
             self.play(FadeIn(status[1]), Create(strike(status[1], DANGER_C)), run_time=0.5)
+            how = sans("the page path: the agent's reading of the code · the checker proved the booking step", 20, S.GREY)
+            how.move_to(DOWN * 3.2)
+            self.play(FadeIn(how), run_time=0.4)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
         # 2 ---------------------------------------------------------------- everything said it was fine
         with self.voiceover(SAY[1]) as vo:
             clear(self, 0.4)
-            tests = VGroup(mark_ok(0.4, CHECKED_C), sans("245 tests: all passed", 34, CHECKED_C)).arrange(RIGHT, buff=0.25)
+            tests = VGroup(mark_ok(0.4, CHECKED_C), sans("245 existing tests: all passed", 34, CHECKED_C)).arrange(RIGHT, buff=0.25)
             tests.move_to(UP * 2.4)
-            vo.wait_until("All 245 tests")
+            vo.wait_until("All 245 existing tests")
             self.play(FadeIn(tests), run_time=0.5)
+            none = sans("none of them books after the expiry", 24, S.GREY).next_to(tests, DOWN, buff=0.15)
+            vo.wait_until("none of them books")
+            self.play(FadeIn(none), run_time=0.4)
             comment = VGroup(sans("a comment in the code:", 22, S.GREY), zh("「过期……的转诊保持不变」", 30)
-                             ).arrange(DOWN, aligned_edge=LEFT, buff=0.12).move_to(UP * 0.8)
+                             ).arrange(DOWN, aligned_edge=LEFT, buff=0.12).move_to(UP * 0.4)
             vo.wait_until("carries a comment")
             self.play(FadeIn(comment), run_time=0.5)
             vo.wait_until("left alone")
             self.play(Create(strike(comment[1], DANGER_C)), FadeIn(sans("not what the code does", 22, DANGER_C)
                                                                       .next_to(comment, RIGHT, buff=0.4)), run_time=0.6)
             vo.wait_until("On Friday afternoon")
-            found = VGroup(sans("found by an agent · Fri 16:13 Boston", 28, USER_C), mono("PR #42 · npm run verify", 24, S.GREY)
+            found = VGroup(sans("reported by an agent · Fri 16:13 Boston", 28, USER_C), mono("PR #42 · npm run verify", 24, S.GREY)
                            ).arrange(DOWN, buff=0.12).move_to(DOWN * 1.2)
             self.play(FadeIn(found, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("before anyone looks")

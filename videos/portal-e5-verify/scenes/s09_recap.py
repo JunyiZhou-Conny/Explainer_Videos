@@ -27,17 +27,18 @@ class Recap(VoiceScene):
     def construct(self):
         # 1 ---------------------------------------------------------------- the two tools
         with self.voiceover(SAY[0]) as vo:
-            left = panel("every order, in a small world", ["13,898 states, under a second", "five rules at every state",
+            left = panel("every order, in a small world", ["13,898 states, about a second", "four rules per state, one per step",
                                                          "→ the shortest story that breaks one"], USER_C)
-            right = panel("the real app, like a parent", ["buttons by role and visible name", "screen and saved data agree",
+            right = panel("the real app, like a parent", ["controls by role and accessible name", "screen and saved data agree",
                                                        "→ evidence, kept"], OURS_C)
             VGroup(left, right).arrange(RIGHT, buff=0.5).move_to(UP * 1.2)
             vo.wait_until("walks every order")
             self.play(FadeIn(left, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("uses the real app")
             self.play(FadeIn(right, shift=UP * 0.1), run_time=0.6)
-            vo.wait_until("breaking things on purpose")
-            both = sans("both checked by breaking things on purpose: 5 breakages, 5 caught", 26, CHECKED_C).move_to(DOWN * 1.6)
+            vo.wait_until("breaking it on purpose")
+            both = VGroup(sans("the first: broken on purpose 5 times, 5 caught", 26, CHECKED_C),
+                          sans("the second: every recipe run end to end", 26, CHECKED_C)).arrange(DOWN, buff=0.1).move_to(DOWN * 1.6)
             self.play(FadeIn(both), run_time=0.5)
             self.wait(max(0.1, vo.remaining() - 0.2))
 

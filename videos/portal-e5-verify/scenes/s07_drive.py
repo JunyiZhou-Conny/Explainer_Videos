@@ -31,9 +31,10 @@ class Drive(VoiceScene):
             vo.wait_until("drives the app itself")
             self.play(FadeIn(win), FadeIn(bar), FadeIn(url), run_time=0.6)
             vo.wait_until("its own browser")
-            own = VGroup(chip("up · own server", OURS_C, 22), chip("own browser profile", OURS_C, 22),
-                         chip("doctor · 8 checks", CHECKED_C, 22)).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
-            own.move_to(RIGHT * 4.3 + UP * 1.6)
+            own = VGroup(chip("up: own server, saved demo state", OURS_C, 22, mono_font=False),
+                         chip("own browser profile", OURS_C, 22, mono_font=False),
+                         chip("doctor: 8 checks", CHECKED_C, 22, mono_font=False)).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
+            own.move_to(RIGHT * 4.15 + UP * 1.6)
             self.play(LaggedStart(*[FadeIn(c, shift=LEFT * 0.1) for c in own], lag_ratio=0.25), run_time=0.9)
             strip = VGroup(*[zh(s, 22, S.GREY) for s in STEPS]).arrange(RIGHT, buff=0.35).move_to(DOWN * 1.75)
             arrows = VGroup(*[Arrow(a.get_right(), b.get_left(), buff=0.06, color=S.GREY_DARK, stroke_width=2,
@@ -47,10 +48,10 @@ class Drive(VoiceScene):
                 label = zh(STEPS[i], 26).move_to(win.get_center() + UP * 0.2)
                 self.play(strip[i].animate.set_color(USER_C), FadeOut(page), FadeIn(label), run_time=0.35)
                 page = label
-            vo.wait_until("by its role and visible name")
+            vo.wait_until("by its role and accessible name")
             target = VGroup(mono("button", 24, MODEL_C), zh("「提交模拟预约申请」", 24)).arrange(RIGHT, buff=0.15)
             target.move_to(win.get_bottom() + UP * 0.55)
-            how = sans("found by role + visible name, as a screen reader does", 22, S.GREY).next_to(strip, DOWN, buff=0.3)
+            how = sans("found by role + accessible name: the label a screen reader announces", 22, S.GREY).next_to(strip, DOWN, buff=0.3)
             self.play(FadeIn(target), FadeIn(how), run_time=0.5)
             vo.wait_until("settle after each step")
             quiet = sans("waits until quiet: no loading text, no busy flag, 400 ms unchanged", 20, S.GREY).next_to(how, DOWN, buff=0.15)
@@ -72,9 +73,9 @@ class Drive(VoiceScene):
             vo.wait_until("the saved data says")
             self.play(FadeIn(b), run_time=0.4)
             ev = VGroup(chip("screenshot", S.GREY, 22), chip("saved state", S.GREY, 22), chip("browser errors: none", S.GREY, 22),
-                        chip("「模拟」 labels · both time zones", S.GREY, 22, mono_font=False)).arrange(RIGHT, buff=0.2)
-            ev.move_to(DOWN * 0.15)
-            vo.wait_until("keeps evidence")
+                        chip("「模拟」 labels · both time zones", S.GREY, 22, mono_font=False)).arrange_in_grid(2, 2, buff=(0.25, 0.15))
+            ev.move_to(DOWN * 0.1)
+            vo.wait_until("required to keep evidence")
             self.play(LaggedStart(*[FadeIn(c) for c in ev], lag_ratio=0.15), run_time=0.8)
             vo.wait_until("When a step fails")
             fail = VGroup(VGroup(mark_bad(0.24, DANGER_C), zh("没有找到可见的 button「预约」", 24, DANGER_C)).arrange(RIGHT, buff=0.15),

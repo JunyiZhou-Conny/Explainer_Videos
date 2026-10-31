@@ -1,0 +1,116 @@
+# Chinese subtitles for 项目周记 E6 (the narration is English; these lines are only shown),
+# sentence-aligned to script.md. Rules: ../GLOSSARY.md.
+
+S01:
+- en: 'Right now our prototype has no backend. Everything a user does is saved in that one browser, on that one device, and the clinics and prices it shows are made up. So a parent in China cannot see the insurance card their child added in Boston: there is nowhere to fetch it from. Accounts, family links and insurance cards all need one shared place to live.'
+  zh:
+  - 现在我们的原型没有后端。
+  - 用户做的一切都只存在那一台设备的那个浏览器里，页面上的诊所和价格也都是编的。
+  - 所以，孩子在波士顿存的保险卡，在国内的家长看不到：根本没有地方可以去取。
+  - 账号、家庭关联和保险卡，都需要一个共同的地方来存。
+- en: Late on Friday afternoon an agent wrote a 223-line decision record proposing where. This episode is about how it chose, and what it protects.
+  zh:
+  - 周五傍晚，一个 agent 写了一份 223 行的决策记录，提议把它们放在哪里。
+  - 这一集讲它是怎么选的，以及它保护了什么。
+S02:
+- en: 'A backend has a few jobs. A server receives every request and checks the rules: who is asking, and are they allowed. A database remembers. A login step proves who you are. And because the team set one hard rule at Monday''s meeting, that the product must run on both Mac and Windows, everything goes into containers that start with one command. The record fills each slot: Hono and Zod for the server, Postgres for the database, Better Auth with emailed codes for login, and Docker Compose to run the three boxes together.'
+  zh:
+  - 后端有几项工作。
+  - 服务器接收每一个请求，并检查规则：谁在问，有没有权限。
+  - 数据库负责记住。
+  - 登录这一步证明你是谁。
+  - 团队在周一的会上定了一条硬性要求：产品必须在 Mac 和 Windows 上都能跑，所以一切都装进容器，一条命令就能启动。
+  - 决策记录给每个位置都填上了：服务器用 Hono 和 Zod，数据库用 Postgres，登录用 Better Auth 加邮箱验证码，再用 Docker Compose 把三个盒子一起跑起来。
+S03:
+- en: The first question was language.
+  zh:
+  - 第一个问题是语言。
+- en: You read Python. Why isn't the backend in Python?
+  zh:
+  - 你看得懂 Python。
+  - 为什么后端不用 Python？
+- en: 'Because browsers only run JavaScript, and our page is written in TypeScript. The record makes it a rule: the front end is a fixed constraint, so the back end adapts to it. Both prototypes, triage and insurance, are already written in TypeScript, in their open pull requests. With one language, the server and the page share a single description of every piece of data; rename a field on the server, and the page fails its check before anyone runs it.'
+  zh:
+  - 因为浏览器只能运行 JavaScript，而我们的页面是用 TypeScript 写的。
+  - 决策记录把它写成一条规则：前端是固定的约束，应该是后端适配前端。
+  - 分诊和保险这两个原型，都已经用 TypeScript 写好了，在它们还没合并的 PR 里。
+  - 用同一种语言，服务器和页面就共用同一份数据描述；在服务器上改一个字段名，页面在任何人运行之前就会检查失败。
+- en: 'Python''s main advantage would be its libraries for AI retrieval, but the triage proposal looks up prices, phone numbers and opening hours in checked fact cards, not by AI similarity search. So Python stays an exit: a separate service later, behind the TypeScript one. Express lost for having no built-in request checks, NestJS for too much ceremony for three people, and hosted backends like Supabase because user and health data would sit with a third party before the team has settled its privacy rules.'
+  zh:
+  - Python 的主要优势是它做 AI 检索的库，但分诊的提议是在核对过的事实卡里查价格、电话和营业时间，而不是用 AI 相似度检索。
+  - 所以 Python 留作一条后路：以后做成一个独立的服务，放在 TypeScript 后端的后面。
+  - Express 落选是因为没有内建的请求检查，NestJS 是因为对三个人来说规矩太多，而 Supabase 这类托管后端，是因为在团队定下隐私规则之前，用户和健康数据会放在第三方那里。
+S04:
+- en: 'For the database, Postgres. The data is about links: a parent is linked to a student, and every permission check follows that link. MongoDB lost for exactly that reason, and SQLite because a single file doesn''t suit many people online at once.'
+  zh:
+  - 数据库选的是 Postgres。
+  - 这些数据讲的是关联：家长关联到学生，每一次权限检查都要顺着这条关联走。
+  - MongoDB 正是因为这一点落选的，SQLite 则是因为单个文件不适合以后很多人同时在线。
+- en: 'One column is flexible on purpose: an insurance field stores not just a value but how sure the reader was, where it came from, and the raw text it was read from. The database image also ships an add-on for searching by meaning, but nothing needs it today; it is an open door, not a plan. Changes to the tables travel as numbered migration files, so every copy of the database ends up the same.'
+  zh:
+  - 有一列是故意做得灵活的：一个保险字段存的不只是值，还有读取时有多确定、它从哪来，以及读出它的原文。
+  - 数据库镜像还带了一个按语义搜索的扩展，但现在没有任何地方需要它；它是一扇开着的门，不是一个计划。
+  - 表结构的改动以编号的迁移文件传递，所以每一份数据库最后都一样。
+S05:
+- en: 'Login uses no passwords at all. You type your email and receive a six-digit code, valid for five minutes, with three tries, and the record requires the server to keep only a scrambled hash of it, plus its own limit of one code a minute per address, at most five an hour. The pull request notes you confirmed email-only on Friday. The record''s reasons: every Chinese parent has an email address, and nobody has a password to forget.'
+  zh:
+  - 登录完全不用密码。
+  - 你输入邮箱，收到一个 6 位验证码，5 分钟内有效，可以试 3 次；记录要求服务器只保存它打乱后的哈希，并加上自己的限流：每个邮箱每分钟一个，每小时最多五个。
+  - PR 里写着，你周五确认了只用邮箱登录。
+  - 记录给的理由是：每个中国家长都有邮箱，而且没有密码可忘。
+- en: Text messages to Chinese numbers cost money, WeChat login needs a registered company, and hosted login services keep user data elsewhere and charge per user. Writing it from scratch is how security holes happen. The library chosen, Better Auth, runs inside our own server and keeps everything in our own Postgres.
+  zh:
+  - 给国内手机号发短信要花钱，微信登录需要注册公司，托管登录服务把用户数据放在别处，还按用户数收费。
+  - 自己从零写，正是安全漏洞的来源。
+  - 选中的库 Better Auth 运行在我们自己的服务器里，所有东西都存在我们自己的 Postgres 里。
+S06:
+- en: Then the shape of the data, the part that protects people. Every account has a role, student or parent, written once and, in this first version, not changeable by the user; otherwise, the record notes, a student could make themselves a parent.
+  zh:
+  - 接下来是数据的结构，也就是保护人的那一部分。
+  - 每个账号都有一个身份，学生或家长，只写一次，在这第一版里用户自己不能改；记录写道，否则学生能把自己改成家长。
+- en: 'Only the student can start a family link, because the student is the patient and owns the health data. They create an invite code: at least eight characters, valid for seventy-two hours, usable once. Once linked, a parent sees the student''s profile and current insurance card, read-only, and nothing else; anything added later, such as triage chats, is closed to parents by default. For now, card photos are not stored; the card is read on the device, and only the text fields are kept.'
+  zh:
+  - 只有学生能发起家庭关联，因为学生是病人，健康数据归学生所有。
+  - 学生生成一个邀请码：至少 8 个字符，72 小时内有效，只能用一次。
+  - 关联之后，家长只能看到学生的资料和当前的保险卡，而且只读，其他什么都看不到；以后新增的内容，比如分诊对话，默认不对家长开放。
+  - 目前不存保险卡照片；保险卡在设备上识别，只保留文字字段。
+S07:
+- en: 'The first draft was read by four reviewers from different angles: outside facts, consistency with the repository, privacy and the data model, and the issue''s checklist. They raised thirty-one comments, and a judge kept fourteen. The second version fixed, among other things, three real mistakes: it had made up its own status and source labels for insurance fields instead of reading the insurance code, let linked parents enter cards, and planned to reuse services that carry fictional data.'
+  zh:
+  - 初稿由四个审查者从不同角度读过：外部事实、和仓库是否一致、隐私和数据结构，以及 issue 的验收清单。
+  - 他们一共提了 31 条意见，一个裁判保留了 14 条。
+  - 第二版修正了不少问题，其中有三个真错误：它给保险字段自己起了状态和来源的名称，而不是先读保险的代码；让关联的家长录入保险卡；还打算复用带着模拟数据的服务。
+- en: But the revision added a mistake of its own, and Bugbot caught it. Unlinking only recorded the time and left the link marked active, so a parent would have kept access. One missing word, in a written plan, before any code existed. The fix landed twenty-one seconds after the comment.
+  zh:
+  - 但修订本身也带进了一个错误，被 Bugbot 抓到了。
+  - 解除关联时只记下了时间，关联还标着有效，家长就会一直保留访问权限。
+  - 只差一个词，还是在一份书面计划里，代码都还没写。
+  - 修正在那条评论之后 21 秒就提交了。
+- en: If no bot had been watching, what would have caught it?
+  zh:
+  - 如果没有 bot 盯着，什么能抓住它？
+S08:
+- en: 'A test would, and the record already asks for one: after a student unlinks, the parent''s next request must be refused, checked automatically. The decision itself is still a proposal; the issue asks the three of you to confirm it in person before it is marked adopted.'
+  zh:
+  - 一个测试就能，而且记录里已经要求了：学生解除关联后，家长的下一个请求必须被拒绝，并且自动检查。
+  - 这份决策本身还是提议；issue 要求你们三个人线下确认之后，才能改为已采纳。
+- en: 'Still open: whether the servers can be reached from China, which email service stays out of QQ and 163 spam folders, whether parents may enter card details, and how long deleted data lingers. Two product calls sit in this technical document, both provisional until those issues decide: parents see nothing new by default, and deleting a student''s account deletes their card. And one piece of housekeeping: two different decisions are both numbered six.'
+  zh:
+  - 还没定的：国内能不能访问到服务器，用哪个发信服务才不会进 QQ 和 163 的垃圾箱，家长能不能录入保险卡信息，以及删除的数据要保留多久。
+  - 这份技术文档里藏着两个产品决定，在那几个 issue 定下来之前都只是暂定：家长默认看不到任何新内容，删除学生账号会连同保险卡一起删除。
+  - 还有一件内务：两个不同的决策，编号都是 0006。
+S09:
+- en: 'So: TypeScript, because the page decides; Postgres, because the data is links; emailed codes, because every parent has email; containers, because it must run on any laptop. And a data model whose real job is privacy.'
+  zh:
+  - 所以：用 TypeScript，因为页面说了算；用 Postgres，因为数据讲的是关联；用邮箱验证码，因为每个家长都有邮箱；用容器，因为它必须在任何电脑上都能跑。
+  - 还有一个数据结构，它真正的工作是保护隐私。
+- en: Three questions. Why isn't the backend in Python? What stops a student from making themselves a parent? And what would have caught the unlink bug without a bot?
+  zh:
+  - 三个问题。
+  - 为什么后端不用 Python？
+  - 是什么阻止学生把自己改成家长？
+  - 没有 bot 的话，什么能抓住解除关联的那个 bug？
+- en: That ends this week's batch. Next week's episodes start from next week's pull requests.
+  zh:
+  - 这一周的内容到这里结束。
+  - 下周的几集，从下周的 PR 开始。

@@ -39,8 +39,9 @@ class Waits(VoiceScene):
             vo.wait_until("two commits")
             self.play(Create(line), FadeIn(c1), FadeIn(c2), FadeIn(gap), FadeIn(bots), run_time=0.8)
             vo.wait_until("Anthropic's own advice")
-            q = quote_panel("Give Claude a check to run … In practice that makes you the test suite.",
-                            "Claude Code docs · Best practices", width=10.6, size=26, color=USER_C).move_to(DOWN * 2.45)
+            q = quote_panel("If it has nothing to run that tells it whether the work actually is done, \"looks done\" is all it has to "
+                            "go on. In practice that makes you the test suite.", "Claude Code docs · Best practices", width=12.4,
+                            size=22, color=USER_C).move_to(DOWN * 2.55)
             self.play(FadeIn(q, shift=UP * 0.1), run_time=0.6)
             self.wait(max(0.1, vo.remaining() - 0.2))
 

@@ -1,6 +1,6 @@
 """S02 · One function, many orders (src/state/reducer.ts:217; AppProvider.tsx:147-181; ../SOURCES.md)
 
-1. The app's data as a box; one action at a time goes through the reducer (old state + action → new state);
+1. The app's data as a box (the clock drawn outside it: a flag in the model, not app state); one action at a time goes through the reducer (old state + action → new state);
    the page checks the referral when it draws, the booking reaches the reducer later; time passing is an event.
 2. A test is one chosen path; the bug's path (time passes → book) is one nobody chose.
 3. Ponder: a test checks the cases someone thought of; what checks the ones nobody thought of?
@@ -11,15 +11,15 @@ from manim import *
 from explainer import style as S
 from explainer.scene import VoiceScene
 
-from common import (CHECKED_C, DANGER_C, MODEL_C, NARRATION, OURS_C, USER_C, chip, clear, mark_ok, ponder_zh, sans, zh)
+from common import (CHECKED_C, DANGER_C, MODEL_C, NARRATION, OURS_C, USER_C, chip, clear, mark_ok, ponder_zh, sans, stopwatch,
+                    zh)
 
 SAY = NARRATION["S02"]
 ACTIONS = ["book", "confirm", "reschedule", "cancel", "complete"]
 
 
 def state_box(label: str, width: float = 3.0) -> VGroup:
-    rows = VGroup(sans("appointments", 22, S.GREY), sans("referrals", 22, S.GREY), sans("the clock", 22, S.GREY)
-                  ).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
+    rows = VGroup(sans("appointments", 22, S.GREY), sans("referrals", 22, S.GREY)).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
     frame = RoundedRectangle(width=width, height=rows.height + 0.9, corner_radius=0.16, stroke_color=OURS_C, stroke_width=2.5)
     head = sans(label, 24, OURS_C).move_to(frame.get_top() + DOWN * 0.3)
     rows.next_to(head, DOWN, buff=0.15)
@@ -45,7 +45,7 @@ class Reducer(VoiceScene):
             self.play(LaggedStart(*[FadeIn(a, shift=UP * 0.1) for a in acts], lag_ratio=0.15), run_time=1.0)
             vo.wait_until("returns the next state")
             moving = acts[0].copy()
-            self.play(moving.animate.move_to(fn.get_bottom() + DOWN * 0.1).scale(0.8), run_time=0.5)
+            self.play(moving.animate.move_to(fn.get_bottom() + DOWN * 0.35), run_time=0.5)
             self.play(FadeOut(moving), Create(a1), Create(a2), FadeIn(new), run_time=0.7)
             vo.wait_until("checks the referral when it draws")
             draw = VGroup(sans("page draws: referral OK", 22, S.GREY), sans("…time passes…", 22, USER_C),
@@ -54,8 +54,10 @@ class Reducer(VoiceScene):
             vo.wait_until("reaches the reducer later")
             self.play(FadeIn(draw[1]), FadeIn(draw[2]), run_time=0.6)
             vo.wait_until("time passing is an event")
-            tick = chip("time passes", USER_C, 22).next_to(acts, RIGHT, buff=0.25)
-            self.play(FadeIn(tick, scale=1.2), run_time=0.5)
+            clock = VGroup(stopwatch(0.3, USER_C), sans("the clock: outside the data", 20, S.GREY)).arrange(RIGHT, buff=0.15)
+            clock.next_to(old, UP, buff=0.25)
+            tick = chip("time passes", USER_C, 22).next_to(clock, RIGHT, buff=0.3)
+            self.play(FadeIn(clock), FadeIn(tick, scale=1.2), run_time=0.5)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
         # 2 ---------------------------------------------------------------- a test is one chosen path
@@ -69,7 +71,7 @@ class Reducer(VoiceScene):
             vo.wait_until("A test follows a path")
             self.play(FadeIn(start), Create(tested), FadeIn(labels), run_time=1.2)
             ok = VGroup(mark_ok(0.3, CHECKED_C), sans("a test: one chosen path", 24, CHECKED_C)).arrange(RIGHT, buff=0.15)
-            ok.next_to(pts[-1], RIGHT, buff=0.3)
+            ok.move_to(UP * 2.1 + RIGHT * 1.0)
             self.play(FadeIn(ok), run_time=0.4)
             bug = VMobject(color=DANGER_C, stroke_width=4).set_points_as_corners(
                 [start.get_center(), start.get_center() + RIGHT * 2.0 + DOWN * 1.6, start.get_center() + RIGHT * 4.2 + DOWN * 2.2])
@@ -87,7 +89,7 @@ class Reducer(VoiceScene):
         # 3 ---------------------------------------------------------------- ponder
         with self.voiceover(SAY[2]) as vo:
             self.play(*[m.animate.set_opacity(0.15) for m in self.mobjects], run_time=0.4)
-            ponder_zh(self, "A test checks the cases someone thought of. What checks the ones nobody thought of?",
+            ponder_zh(self, "A test checks the cases someone thought of.\nWhat checks the ones nobody thought of?",
                       "测试检查的是有人想到的情况。那没人想到的呢？", seconds=4.0)
         self.wait(3.0)
         clear(self)

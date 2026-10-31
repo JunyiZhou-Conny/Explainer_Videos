@@ -32,7 +32,7 @@ class Mutants(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(card), run_time=0.3)
             q = quote_panel("A check that you have never seen fail proves nothing.", "pstack · create-formal-verification-skill",
-                            width=9.6, size=28, color=USER_C).move_to(UP * 2.75)
+                            width=11.4, size=28, color=USER_C).move_to(UP * 2.8)
             vo.wait_until("never seen fail")
             self.play(FadeIn(q, shift=DOWN * 0.1), run_time=0.6)
             rows = VGroup()
@@ -54,11 +54,11 @@ class Mutants(VoiceScene):
             self.play(LaggedStart(*[FadeIn(r[1]) for r in rows], lag_ratio=0.2), run_time=1.4)
             vo.wait_until("each breakage was then undone")
             self.play(*[Create(strike(r[0], S.GREY, 3)) for r in rows], run_time=0.6)
-            note = sans("traces: our reproduction of the five breakages", 20, S.GREY).next_to(rows, DOWN, buff=0.3)
+            note = sans("rules and steps: our re-run · the PR recorded results, not traces", 20, S.GREY).next_to(rows, DOWN, buff=0.3)
             note.align_to(rows, LEFT)
             self.play(FadeIn(note), run_time=0.3)
             vo.wait_until("mutation testing")
-            term = VGroup(sans("mutation testing", 30, USER_C), sans("DeMillo, Lipton & Sayward · IEEE Computer · 1978", 22, S.GREY)
+            term = VGroup(sans("a hand-made mutation test", 30, USER_C), sans("DeMillo, Lipton & Sayward · IEEE Computer · 1978", 22, S.GREY)
                           ).arrange(DOWN, buff=0.08).move_to(DOWN * 3.05 + RIGHT * 2.6)
             self.play(FadeIn(term, shift=UP * 0.1), run_time=0.5)
             self.wait(max(0.1, vo.remaining() - 0.2))
