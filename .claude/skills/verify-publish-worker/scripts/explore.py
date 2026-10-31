@@ -26,8 +26,10 @@ Usage (from the repository root; plain python3, stdlib only):
   python3 .claude/skills/verify-publish-worker/scripts/explore.py baseline   # one scenario
   python3 .claude/skills/verify-publish-worker/scripts/explore.py --expect   # exit 1 on drift
 
-Exit status: 0 when every scenario matches its expected verdict under --expect (otherwise
-0 only when every property holds), 1 otherwise.
+Exit status: 2 on a modeling gap (the worker called something the fakes do not know). Under
+--expect, 0 when every verdict and every worker error type match the expectations recorded in
+SCENARIOS, else 1. Without --expect, 0 only when every property holds and no run died
+unexpectedly, else 1.
 """
 from __future__ import annotations
 
@@ -64,6 +66,7 @@ class Scenario:
     failures: int       # biliup failures allowed per schedule
     ambiguous: bool     # may biliup exit non-zero after Bilibili kept the video?
     expect: dict        # property -> True (holds) / False (known finding)
+    errors: frozenset = frozenset()   # exception types a worker run may die with here
 
 
 SCENARIOS = [
@@ -75,11 +78,16 @@ SCENARIOS = [
              expect={"at-most-once": False, "eventually": True}),
     Scenario("crash", "one run at a time; one run dies at any step, mid-write included",
              runs=2, parallel=1, crashes=1, failures=0, ambiguous=False,
-             expect={"at-most-once": False, "eventually": False}),
+             expect={"at-most-once": False, "eventually": False},
+             errors=frozenset({"JSONDecodeError"})),   # finding 4: the torn state.json
     Scenario("ambiguous", "one run at a time; biliup exits non-zero after Bilibili kept the video",
              runs=2, parallel=1, crashes=0, failures=1, ambiguous=True,
              expect={"at-most-once": False, "eventually": True}),
 ]
+
+
+class ModelGap(AssertionError):
+    """The worker did something the fake world does not model. Not a finding: extend the fakes."""
 
 
 class Crash(BaseException):
@@ -135,7 +143,7 @@ class FakeSubprocess:
         if args[:2] == ["gh", "api"] and args[2].endswith("contents/catalog/bilibili.json"):
             reg = {"schema_version": 1, "mid": 1, "episodes": {}, "unmatched": []}
             return json.dumps({"sha": "0", "content": base64.b64encode(json.dumps(reg).encode()).decode()})
-        raise AssertionError(f"unexpected check_output {args}")
+        raise ModelGap(f"unexpected check_output {args}")
 
     @staticmethod
     def run(args, **kw):
@@ -146,7 +154,7 @@ class FakeSubprocess:
             body = (json.dumps(m).encode() if pattern == "PUBLISH.json"
                     else WORLD.video(tag) if pattern == m["bilibili"]["asset"] else None)
             if body is None:
-                raise AssertionError(f"unexpected asset {pattern}")
+                raise ModelGap(f"unexpected asset {pattern}")
             pathlib.Path(out, pattern).write_bytes(body)
             return subprocess.CompletedProcess(args, 0, "", "")
         if args[:2] == ["biliup", "upload"]:
@@ -163,7 +171,7 @@ class FakeSubprocess:
             return subprocess.CompletedProcess(args, 0, "", "")
         if args[:2] == ["gh", "issue"]:
             return subprocess.CompletedProcess(args, 0, "", "")
-        raise AssertionError(f"unexpected run {args}")
+        raise ModelGap(f"unexpected run {args}")
 
 
 class StatePath(pathlib.PosixPath):
@@ -307,21 +315,30 @@ def execute(scenario: Scenario, prefix: list[int]):
         return SCHED.made, verdict, list(WORLD.trace), counts, list(WORLD.errors)
 
 
+def error_type(text: str) -> str:
+    return text.split(":", 1)[0]
+
+
 def explore(scenario: Scenario):
     prefix: list[int] = []
     schedules = 0
     shortest: dict[str, tuple] = {}
+    raised: dict[str, tuple] = {}   # exception type -> shortest schedule where a run died of it
     while True:
         made, verdict, trace, counts, errors = execute(scenario, prefix)
         schedules += 1
         for prop, ok in verdict.items():
             if not ok and (prop not in shortest or len(trace) < len(shortest[prop][0])):
                 shortest[prop] = (trace, counts, errors)
+        for _, text in errors:
+            kind = error_type(text)
+            if kind not in raised or len(trace) < len(raised[kind][0]):
+                raised[kind] = (trace, text)
         # backtrack to the deepest choice with an untried option
         while made and made[-1][0] + 1 >= made[-1][1]:
             made.pop()
         if not made:
-            return schedules, shortest
+            return schedules, shortest, raised
         prefix = [c for c, _ in made[:-1]] + [made[-1][0] + 1]
 
 
@@ -337,12 +354,30 @@ def main() -> int:
         ap.error(f"unknown scenario(s): {', '.join(sorted(unknown))}")
     sys.argv = ARGV
     pw.subprocess = FakeSubprocess
-    drift = violated = False
+    drift = violated = gap = False
     for scenario in chosen:
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            schedules, shortest = explore(scenario)
+            schedules, shortest, raised = explore(scenario)
         print(f"== {scenario.name}: {scenario.about}")
         print(f"   {schedules} schedules explored")
+        # A run that dies of an exception is behaviour to account for even when both
+        # properties hold (it may skip the issue comment, the label, the registry, ...).
+        for kind, (trace, text) in sorted(raised.items()):
+            if kind == ModelGap.__name__:
+                gap = True
+                label = "MODEL GAP (extend FakeSubprocess, not a finding)"
+            elif kind in scenario.errors:
+                label = "expected"
+            else:
+                drift = violated = True
+                label = "UNEXPECTED   <-- differs from the recorded expectation"
+            print(f"   worker run died: {text}  [{label}]")
+            if label != "expected":
+                for i, line in enumerate(trace, 1):
+                    print(f"       {i:2}. {line}")
+        for kind in sorted(scenario.errors - set(raised)):
+            drift = True
+            print(f"   expected worker error {kind} never happened   <-- differs from the recorded expectation")
         for prop in ("at-most-once", "eventually"):
             holds = prop not in shortest
             expected = scenario.expect[prop]
@@ -358,6 +393,10 @@ def main() -> int:
                     print(f"       {i:2}. {line}")
                 print("     uploads per tag: " + ", ".join(f"{t}={c}" for t, c in counts.items()))
         print()
+    if gap:
+        print("MODEL GAP: the worker made a call the fakes do not know; the verdicts above are not "
+              "trustworthy until FakeSubprocess models it")
+        return 2
     if args.expect:
         print("verdicts match the recorded expectations" if not drift else
               "VERDICTS DRIFTED from the recorded expectations (see '<--' above)")

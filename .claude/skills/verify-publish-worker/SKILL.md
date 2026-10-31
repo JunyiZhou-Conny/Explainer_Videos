@@ -51,8 +51,8 @@ python3 .claude/skills/verify-publish-worker/scripts/explore.py --expect        
 python3 .claude/skills/verify-publish-worker/scripts/explore.py overlap crash     # some; prints counterexamples
 ```
 
-`--expect` exits 0 when every verdict matches the expectation recorded in `SCENARIOS` at the top of
-the script. Known findings are recorded as expected violations, so the command stays green until
+`--expect` exits 0 when every verdict, and every exception type a worker run dies of, matches the
+expectations recorded in `SCENARIOS` at the top of the script. Known findings are recorded as expected violations, so the command stays green until
 something changes. Without `--expect` it exits 1 whenever a property is violated. Every violated
 property prints its shortest counterexample as numbered steps in the code's terms (`run2 read
 state.json`, `run1 biliup upload episode/alpha-v1`, `run2 dies before: write state.json`).
@@ -126,9 +126,15 @@ the fakes and the bounds still describe the code at the new commit, and run `--e
 - **`<--` on a known finding that now holds**: a fix landed. Check that the fix is intended and
   does not just skip uploads: `eventually` must still hold in that scenario. Then flip the
   expectation in `SCENARIOS`, update the findings and the table above, and move the sync commit.
-- **`AssertionError: unexpected run […]` or `unexpected check_output`**: a modeling gap. The worker
-  now calls a command the fake world does not know. Teach `FakeSubprocess` the command, and if
-  the command touches state another run reads, give it a pause.
+- **`MODEL GAP` and exit status 2** (`worker run died: ModelGap: unexpected run […]`): the worker now
+  calls a command the fake world does not know, so no verdict from that run can be trusted.
+  Teach `FakeSubprocess` the command, and if the command touches state another run reads,
+  give it a pause.
+- **`worker run died: <Type>: … [UNEXPECTED <--]`**: a run raised an exception that the scenario's
+  `errors` does not list. This counts as drift even when both properties hold, because the run
+  stopped early and skipped whatever came after (the issue comment, the label, the close).
+  It is a real bug unless the change meant it. Only `crash` expects one: the `JSONDecodeError`
+  from finding 4.
 - **`IndexError` inside `choose()`, or a hang**: replay is no longer deterministic. Some shared step
   now runs between pauses (a new file, a lock, a thread), or a blocking call waits on another
   run. Add a pause at that step. Model a lock as a pause before `fcntl.flock`, and model a

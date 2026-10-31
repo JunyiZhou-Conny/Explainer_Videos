@@ -123,6 +123,12 @@ def doctor(args) -> int:
 
 
 # ------------------------------------------------------------------------------ renderer
+def music_on(settings: dict) -> bool:
+    """Same reading as explainer.episode.music_settings: on unless false or enabled: false."""
+    music = settings.get("music", {"enabled": True})
+    return not (music is False or (isinstance(music, dict) and not music.get("enabled", True)))
+
+
 def render_sample(args) -> int:
     source = (ROOT / args.episode).resolve() if not Path(args.episode).is_absolute() else Path(args.episode)
     if not (source / "script.json").is_file() or not (source / "scenes.py").is_file():
@@ -171,7 +177,7 @@ def render_sample(args) -> int:
             ("validation: script unchanged during render", validation.get("source_matches_plan") is True),
             ("validation: narration audible", validation.get("audio_mean_db", -99) > -45, f"{validation.get('audio_mean_db')} dB"),
         ]
-        if plan["resolved_settings"].get("music", {}).get("enabled"):
+        if music_on(plan["resolved_settings"]):
             results.append(("validation: music measured", "music" in validation,
                             json.dumps({k: validation.get("music", {}).get(k) for k in
                                         ("voice_lufs", "music_under_speech_lufs", "music_in_gaps_lufs")})))
@@ -281,8 +287,9 @@ def browse(args) -> int:
 def cleanup(args) -> int:
     studio_down(args)
     removed = []
+    mine = re.compile(rf"verify-{args.run}(-.*)?")   # not verify-<run>2…, another run's
     for path in [run_dir(args.run) / "work", *ROOT.glob(f"outputs/*-vfy{args.run}"),
-                 *ROOT.glob(f"videos/verify-{args.run}*")]:
+                 *(p for p in ROOT.glob("videos/verify-*") if mine.fullmatch(p.name))]:
         if path.exists():
             shutil.rmtree(path)
             removed.append(str(path.relative_to(ROOT)))
