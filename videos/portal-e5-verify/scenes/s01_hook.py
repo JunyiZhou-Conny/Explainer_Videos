@@ -24,6 +24,8 @@ class Hook(VoiceScene):
             ref = VGroup(tag_box("referral", "ENT · ref-v1", None, USER_C, width=3.4),
                          zh("有效期至 2027-01-22", 24, S.GREY), sans("demo data", 20, S.GREY)
                          ).arrange(DOWN, aligned_edge=LEFT, buff=0.12).move_to(LEFT * 4.4 + UP * 1.4)
+            title = sans("a bug in our prototype", 30, S.GREY).move_to(UP * 3.2)
+            self.play(FadeIn(title), run_time=0.5)
             vo.wait_until("has a referral")
             self.play(FadeIn(ref, shift=UP * 0.1), run_time=0.5)
             page = screen(4.6, 3.2).move_to(RIGHT * 2.6 + UP * 0.9)

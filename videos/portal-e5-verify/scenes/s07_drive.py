@@ -52,7 +52,7 @@ class Drive(VoiceScene):
             target = VGroup(mono("button", 24, MODEL_C), zh("「提交模拟预约申请」", 24)).arrange(RIGHT, buff=0.15)
             target.move_to(win.get_bottom() + UP * 0.55)
             how = sans("found by role + accessible name: the label a screen reader announces", 22, S.GREY).next_to(strip, DOWN, buff=0.3)
-            self.play(FadeIn(target), FadeIn(how), run_time=0.5)
+            self.play(FadeOut(page), FadeIn(target), FadeIn(how), run_time=0.5)   # an example control, not the tracker page
             vo.wait_until("settle after each step")
             quiet = sans("waits until quiet: no loading text, no busy flag, 400 ms unchanged", 20, S.GREY).next_to(how, DOWN, buff=0.15)
             self.play(FadeIn(quiet), run_time=0.4)

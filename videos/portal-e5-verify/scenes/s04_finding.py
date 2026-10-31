@@ -17,9 +17,9 @@ from common import (CHECKED_C, DANGER_C, NARRATION, OURS_C, USER_C, clear, mark_
 SAY = NARRATION["S04"]
 
 
-def reason(n: str, text: str, width: float = 3.9) -> VGroup:
-    body = VGroup(sans(n, 30, DANGER_C), sans(text, 22)).arrange(DOWN, buff=0.15)
-    frame = RoundedRectangle(width=width, height=body.height + 0.5, corner_radius=0.14, stroke_color=DANGER_C, stroke_width=2.5)
+def reason(n: str, text: str, width: float = 4.0) -> VGroup:
+    body = VGroup(sans(n, 30, DANGER_C), sans(text, 20)).arrange(DOWN, buff=0.15)
+    frame = RoundedRectangle(width=max(width, body.width + 0.5), height=body.height + 0.5, corner_radius=0.14, stroke_color=DANGER_C, stroke_width=2.5)
     body.move_to(frame)
     return VGroup(frame, body)
 
@@ -29,8 +29,8 @@ class Finding(VoiceScene):
         # 1 ---------------------------------------------------------------- three gaps; the agent leaves the fix to a person
         with self.voiceover(SAY[0]) as vo:
             cards = VGroup(reason("1", "booking looks only at\nthe stored status"),
-                           reason("2", "\"expired\" is never stored,\nonly worked out for the screen"),
-                           reason("3", "the page checks when it draws,\nnot when you submit")).arrange(RIGHT, buff=0.3)
+                           reason("2", "“expired” is never stored,\nonly worked out for the screen"),
+                           reason("3", "the page checks when it draws,\nnot when you submit")).arrange(RIGHT, buff=0.25)
             cards.move_to(UP * 1.9)
             for c, phrase in zip(cards, ["looks only at", "never stored", "checks when it draws"]):
                 vo.wait_until(phrase)

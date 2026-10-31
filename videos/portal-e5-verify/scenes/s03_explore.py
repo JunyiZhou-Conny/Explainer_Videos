@@ -82,10 +82,10 @@ class Explore(VoiceScene):
             counter.clear_updaters()   # otherwise always_redraw rebuilds it at full opacity during the fade
             self.play(FadeOut(VGroup(world, moments, n13, merge, more, real, counter, unit, layer3, start)), run_time=0.4)
             tree = VGroup(root, edges1, layer1, edges2, layer2)
-            self.play(tree.animate.scale(0.55).move_to(RIGHT * 3.3 + UP * 1.0), run_time=0.6)
+            self.play(tree.animate.scale(0.5).move_to(RIGHT * 3.65 + UP * 0.9), run_time=0.6)
             rules = VGroup(*[zh(f"{i + 1}  {r}", 24) for i, r in enumerate(RULES)]).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
             head = sans("four rules at every state, one on every step", 24, USER_C)
-            panel = VGroup(head, rules).arrange(DOWN, aligned_edge=LEFT, buff=0.25).move_to(LEFT * 3.0 + UP * 1.0)
+            panel = VGroup(head, rules).arrange(DOWN, aligned_edge=LEFT, buff=0.25).move_to(LEFT * 3.4 + UP * 0.9)
             vo.wait_until("Four rules are checked")
             self.play(FadeIn(head), LaggedStart(*[FadeIn(r) for r in rules], lag_ratio=0.15), run_time=1.2)
             vo.wait_until("one referral backs at most one")
