@@ -158,10 +158,22 @@ def quote_panel(text: str, source: str, width: float = 10.5, size: float = 28, c
     return VGroup(bg, inner)
 
 
-def ponder_zh(scene, question: str, question_zh: str, seconds: float = 4.0) -> VGroup:
-    """The house pause-and-ponder card, with the Chinese question under it."""
-    from explainer.components import pause_and_ponder
-    card = pause_and_ponder(scene, question, seconds=seconds, width=10.5, size=32)
+def ponder_zh(scene, question: str, question_zh: str, seconds: float = 4.0, width: float = 10.5) -> VGroup:
+    """The house pause-and-ponder card (explainer.components.ponder_card's look and draining timer) with the
+    Chinese question under the English one, so the silent hold after the narration reads in both languages."""
+    from explainer.components import ponder_card
+    _, header, q, bar = ponder_card(question, width=width, size=32)
+    cn = zh(question_zh, 26, S.GREY)
+    if cn.width > width - 0.6:
+        cn.scale_to_fit_width(width - 0.6)
+    body = VGroup(header, q, cn).arrange(DOWN, buff=0.3)
+    frame = RoundedRectangle(width=width, height=body.height + 0.9, corner_radius=0.2, stroke_color=S.YELLOW,
+                             stroke_width=3).set_fill(S.BG, 0.96)
+    body.move_to(frame).shift(UP * .12)
+    bar.put_start_and_end_on(frame.get_corner(DL) + RIGHT * .3 + UP * .25, frame.get_corner(DR) + LEFT * .3 + UP * .25)
+    card = VGroup(frame, header, q, bar, cn)
+    scene.play(FadeIn(card, scale=0.95), run_time=0.6)
+    scene.play(bar.animate(rate_func=linear).become(bar.copy().scale(0.001, about_point=bar.get_start())), run_time=seconds)
     return card
 
 
