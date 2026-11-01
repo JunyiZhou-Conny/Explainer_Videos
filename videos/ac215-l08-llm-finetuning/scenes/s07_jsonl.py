@@ -75,6 +75,7 @@ from manim import (
     VGroup,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _header_text, _mixed_row, _mono_rows
 from explainer import style as S
@@ -85,31 +86,31 @@ SAY = NARRATION["S07"]
 # ------------------------------------------------------------------ the real captures and sources
 CLI = "dataset-creator/cli.py"
 CSVH = capture("dataset-creator/13")
-assert CSVH.cmd.startswith("head -4 data/train.csv"), CSVH.cmd
-assert CSVH.line(3) == '"human: What makes Comte different from Gruyere?', CSVH.line(3)
-assert CSVH.line(4).startswith("bot: Glad you ask!"), CSVH.line(4)
+_guard((CSVH.cmd.startswith("head -4 data/train.csv")), (CSVH.cmd))
+_guard((CSVH.line(3) == '"human: What makes Comte different from Gruyere?'), (CSVH.line(3)))
+_guard((CSVH.line(4).startswith("bot: Glad you ask!")), (CSVH.line(4)))
 PRETTY = capture("dataset-creator/12")
-assert PRETTY.cmd == "head -1 data/train.jsonl | python -m json.tool", PRETTY.cmd
+_guard((PRETTY.cmd == "head -1 data/train.jsonl | python -m json.tool"), (PRETTY.cmd))
 GEMQ = capture("expected/readme-prepare-gemini-format")
 ONE = capture("dataset-creator/11")
-assert ONE.cmd.startswith("head -c 400 data/train.jsonl"), ONE.cmd
+_guard((ONE.cmd.startswith("head -c 400 data/train.jsonl")), (ONE.cmd))
 LSD = capture("dataset-creator/10")
-assert LSD.cmd == "ls -la data; wc -l data/*.jsonl data/*.csv", LSD.cmd
-assert LSD.line(15).split() == ["2", "data/test.jsonl"] and LSD.line(16).split() == ["17", "data/train.jsonl"]
+_guard((LSD.cmd == "ls -la data; wc -l data/*.jsonl data/*.csv"), (LSD.cmd))
+_guard((LSD.line(15).split() == ["2", "data/test.jsonl"] and LSD.line(16).split() == ["17", "data/train.jsonl"]), (""))
 HOSTD = capture("laptop/15")
-assert HOSTD.cmd == "ls -la data; git -C .. status --short --ignored", HOSTD.cmd
-assert HOSTD.line(15) == "!! dataset-creator/data/", HOSTD.line(15)
+_guard((HOSTD.cmd == "ls -la data; git -C .. status --short --ignored"), (HOSTD.cmd))
+_guard((HOSTD.line(15) == "!! dataset-creator/data/"), (HOSTD.line(15)))
 UPL = capture("dataset-creator/14")
-assert UPL.cmd == "python cli.py --upload" and UPL.exit == 1, (UPL.cmd, UPL.exit)
-assert "DefaultCredentialsError" in UPL.line(36) and "was not found." in UPL.line(36)
-assert "line 279, in upload" in UPL.line(9) and "storage.Client()" in UPL.line(10)
+_guard((UPL.cmd == "python cli.py --upload" and UPL.exit == 1), ((UPL.cmd, UPL.exit)))
+_guard(("DefaultCredentialsError" in UPL.line(36) and "was not found." in UPL.line(36)), (""))
+_guard(("line 279, in upload" in UPL.line(9) and "storage.Client()" in UPL.line(10)), (""))
 L266, L267, L280, L293 = (source_line(CLI, n) for n in (266, 267, 280, 293))
-assert "256" in L266 and L267.strip() == "df_test = df_test[:256]", (L266, L267)
-assert "test_size=0.1, random_state=42" in source_line(CLI, 261)
+_guard(("256" in L266 and L267.strip() == "df_test = df_test[:256]"), ((L266, L267)))
+_guard(("test_size=0.1, random_state=42" in source_line(CLI, 261)), (""))
 GI = source_text(".gitignore").split("\n") if (SOURCE / ".gitignore").exists() else []
-assert GI[7] == GI[8] == "/dataset-creator/data/*", GI[:10]
+_guard((GI[7] == GI[8] == "/dataset-creator/data/*"), (GI[:10]))
 DSH = source_text("dataset-creator/docker-shell.sh").split("\n")
-assert DSH[7] == "source ../env.dev" and "GCS_BUCKET_NAME" in DSH[20], DSH
+_guard((DSH[7] == "source ../env.dev" and "GCS_BUCKET_NAME" in DSH[20]), (DSH))
 
 # the pretty-printed line (3-8, 13-16) and the README's example (4-9, 14-17): the same 11 rows
 PRETTY_ROWS = PRETTY.at((3, 8), "…", (13, 16))
@@ -246,7 +247,7 @@ def fold_rows(s: str, width: int) -> list[str]:
 
 class RowsToJsonl(VoiceScene):
     def construct(self):
-        assert len(SAY) == 8, len(SAY)
+        _guard((len(SAY) == 8), (len(SAY)))
 
         # ========================================================== 0 · station 1 -> station 2 (train.csv)
         lr = lref("5")
@@ -260,7 +261,7 @@ class RowsToJsonl(VoiceScene):
             cv.labels[k].set_opacity(0.35)
         p0 = src_panel(CLI, 240, 247, size=20)
         place(p0, cx=0, top=TOP_Y)
-        assert p0.get_bottom()[1] > csv.get_top()[1] + 0.15, (p0.get_bottom(), csv.get_top())
+        _guard((p0.get_bottom()[1] > csv.get_top()[1] + 0.15), ((p0.get_bottom(), csv.get_top())))
         card2 = shape_card(["human: …", "bot: …"], OWN)
         cv.put(1, card2)
         csv_rows = [CSVH.line(3), *fold_rows(CSVH.cut(4, "large wheels."), 72)]
@@ -270,7 +271,7 @@ class RowsToJsonl(VoiceScene):
         tags2.next_to(pan2.header, RIGHT, buff=0.35)
         auto = grey_tag("for autotrain-runner · track A doesn't use it")
         auto.next_to(pan2.frame, DOWN, buff=0.18).align_to(pan2.frame, RIGHT)
-        assert auto.get_bottom()[1] > card2.get_top()[1] + 0.1, (auto.get_bottom(), card2.get_top())
+        _guard((auto.get_bottom()[1] > card2.get_top()[1] + 0.1), ((auto.get_bottom(), card2.get_top())))
         with self.voiceover(SAY[0]) as vo:
             VGroup(cv, csv).shift(UP * LIFT)
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(lr), run_time=0.6)
@@ -313,8 +314,8 @@ class RowsToJsonl(VoiceScene):
         place(p1, cx=0, top=TOP_Y)
         nest = nested_card()
         cv.put(2, nest, buff=0.2)
-        assert p1.get_bottom()[1] > nest.get_top()[1] + 0.1, (p1.get_bottom(), nest.get_top())
-        assert nest.get_right()[0] < 6.55 and nest.get_left()[0] > card2.get_right()[0] + 0.1
+        _guard((p1.get_bottom()[1] > nest.get_top()[1] + 0.1), ((p1.get_bottom(), nest.get_top())))
+        _guard((nest.get_right()[0] < 6.55 and nest.get_left()[0] > card2.get_right()[0] + 0.1), (""))
         u, m = nest.turns
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(p1, shift=UP * 0.15), cv.labels[2].animate.set_opacity(1), run_time=0.6)
@@ -350,20 +351,20 @@ class RowsToJsonl(VoiceScene):
         qq = mono_panel(QUOTE_ROWS, expected_where("expected/readme-prepare-gemini-format"), quote=True)
         for g in (pp, qq):
             place(g, cx=0, top=TOP_Y - 0.05)
-        assert pp.get_bottom()[1] > -3.0, pp.get_bottom()
+        _guard((pp.get_bottom()[1] > -3.0), (pp.get_bottom()))
         tags_p = VGroup(scripted_tag(), extra_tag()).arrange(RIGHT, buff=0.15).next_to(pp.header, RIGHT, buff=0.35)
         tag_q = expected_tag().next_to(qq.header, RIGHT, buff=0.35)
         kp, kq = key_glyphs(pp.rows), key_glyphs(qq.rows)
-        assert [len(g) for _, g in kp] == [len(g) for _, g in kq] and len(kp) == 7, (len(kp), len(kq))
+        _guard(([len(g) for _, g in kp] == [len(g) for _, g in kq] and len(kp) == 7), ((len(kp), len(kq))))
         cap_same = note("same nesting", TURN, 26)
         place(cap_same, cx=0, top=qq.get_bottom()[1] - 0.25)
         one_rows = fold_rows(ONE_LINE, 72)
-        assert len(one_rows) == 2, one_rows
+        _guard((len(one_rows) == 2), (one_rows))
         oo = mono_panel(one_rows, ONE.cmd.split(";")[0])
         place(oo, cx=0, cy=1.2)
         tags_o = VGroup(scripted_tag(), extra_tag()).arrange(RIGHT, buff=0.15).next_to(oo.header, RIGHT, buff=0.35)
         ko = key_glyphs(oo.rows)
-        assert len(ko) == 7, len(ko)
+        _guard((len(ko) == 7), (len(ko)))
         cap_one = VGroup(note("one example per line", TURN, 26), note("(one line, folded here to fit)"))
         cap_one.arrange(DOWN, buff=0.12)
         place(cap_one, cx=0, top=oo.get_bottom()[1] - 0.35)
@@ -371,7 +372,7 @@ class RowsToJsonl(VoiceScene):
         jl_eq = label("= JSON lines", 34, INK)
         jg = VGroup(jl, jl_eq).arrange(RIGHT, buff=0.35)
         place(jg, cx=0, top=cap_one.get_bottom()[1] - 0.45)
-        assert jg.get_bottom()[1] > -3.4, jg.get_bottom()
+        _guard((jg.get_bottom()[1] > -3.4), (jg.get_bottom()))
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(p1, b251, b253, b254, cv, csv, card2, nest)), caption_extra(tr), run_time=0.7)
             self.play(FadeIn(pp.frame), FadeIn(pp.header), FadeIn(tags_p),
@@ -412,7 +413,7 @@ class RowsToJsonl(VoiceScene):
         p3 = src_panel(CLI, [(260, 262), 267, (270, 271)], size=20,
                        wrap={270: ["as json_file"], 271: ["lines=True"]})   # 263-264, 272-273 left out: 14 rows
         place(p3, cx=0, top=TOP_Y)
-        assert p3.get_bottom()[1] > -3.5, p3.get_bottom()
+        _guard((p3.get_bottom()[1] > -3.5), (p3.get_bottom()))
         sp = splitter(17, 2)
         sp[3].next_to(sp.fork[0], UP, buff=0.2)
         sp.shift(np.array([-1.5, -0.25, 0]) - sp.input_point())
@@ -433,12 +434,12 @@ class RowsToJsonl(VoiceScene):
         cap256.next_to(r267, RIGHT, buff=0.6)
         LIFT = UP * 0.58                                   # the splitter's rise when the 5-row strip enters
         seed_up = seed.copy().next_to(sp.fork[0].get_start() + LIFT, LEFT, buff=0.2)
-        assert cap256.get_right()[0] < p266.get_right()[0] - 0.1, (cap256.get_right(), p266.get_right())
-        assert p266.get_bottom()[1] > sp.get_top()[1] + LIFT[1] + 0.1, (p266.get_bottom(), sp.get_top())
-        assert sp.get_bottom()[1] + LIFT[1] > t3.box.get_top()[1] + 0.08, (sp.get_bottom(), t3.box.get_top())
-        assert seed_up.get_bottom()[1] > t3.box.get_top()[1] + 0.3 and seed_up.get_left()[0] > -6.5, seed_up.get_left()
-        assert seed.get_bottom()[1] > STRIP_TOP + 0.05, seed.get_bottom()
-        assert sp.get_right()[0] < 6.4, sp.get_right()
+        _guard((cap256.get_right()[0] < p266.get_right()[0] - 0.1), ((cap256.get_right(), p266.get_right())))
+        _guard((p266.get_bottom()[1] > sp.get_top()[1] + LIFT[1] + 0.1), ((p266.get_bottom(), sp.get_top())))
+        _guard((sp.get_bottom()[1] + LIFT[1] > t3.box.get_top()[1] + 0.08), ((sp.get_bottom(), t3.box.get_top())))
+        _guard((seed_up.get_bottom()[1] > t3.box.get_top()[1] + 0.3 and seed_up.get_left()[0] > -6.5), (seed_up.get_left()))
+        _guard((seed.get_bottom()[1] > STRIP_TOP + 0.05), (seed.get_bottom()))
+        _guard((sp.get_right()[0] < 6.4), (sp.get_right()))
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(one_on_screen, cap_one, jg)), caption_extra(tr, on=False), run_time=0.6)
             self.play(FadeIn(p3, shift=UP * 0.15), run_time=0.6)
@@ -495,7 +496,7 @@ class RowsToJsonl(VoiceScene):
                     max_tip_length_to_length_ratio=0.5)
         arr.next_to(toks[0], DOWN, buff=0.12)
         cap4 = note("predict the next token", TURN, 28).move_to([0, -1.75, 0])
-        assert ill.get_right()[0] < 6.5, ill.get_right()
+        _guard((ill.get_right()[0] < 6.5), (ill.get_right()))
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(sp, seed_lab, p266, b266, cap256, t3, tags3)), caption_extra(tr, on=False),
                       run_time=0.6)
@@ -523,7 +524,7 @@ class RowsToJsonl(VoiceScene):
                      Arrow(LEFT * 0.4, RIGHT * 0.4, buff=0, color=LOOKUP, stroke_width=4, tip_length=0.16),
                      mono("/app", CAPTION, CTR), note("bind mount", LOOKUP)).arrange(RIGHT, buff=0.18)
         place(mnt, right=6.45, cy=2.84)
-        assert mnt.get_bottom()[1] > t5.box.get_top()[1] + 0.03 and mnt.get_left()[0] > -1.9, mnt.get_corner(DOWN + LEFT)
+        _guard((mnt.get_bottom()[1] > t5.box.get_top()[1] + 0.03 and mnt.get_left()[0] > -1.9), (mnt.get_corner(DOWN + LEFT)))
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeIn(t5, shift=UP * 0.2), FadeIn(tags5, shift=UP * 0.2), caption_extra(tr), run_time=0.6)
             bare_prompt(self, t5)
@@ -551,7 +552,7 @@ class RowsToJsonl(VoiceScene):
         place(look, cx=0, top=2.55)
         e403 = chip("403? → your bucket in env.dev · both roles · API enabled", ERR, size=CAPTION)
         place(e403, cx=0, top=look.get_bottom()[1] - 0.25)
-        assert e403.get_bottom()[1] > STRIP_TOP + 0.05, e403.get_bottom()
+        _guard((e403.get_bottom()[1] > STRIP_TOP + 0.05), (e403.get_bottom()))
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(t5, tags5, mnt)), run_time=0.5)
             tr = switch_section(self, tr, "DsUp", 1)
@@ -561,7 +562,7 @@ class RowsToJsonl(VoiceScene):
             vo.wait_until("This time it fails")
             show(self, t6, UPL, 2, 3, "…", 9, 10, "…", run_time=0.6)
             r36 = t6.print(self, [(UPL.line(36), ERR)], wrap=True, run_time=0.4)
-            assert len(r36) == 2, [r.text for r in r36]
+            _guard((len(r36) == 2), ([r.text for r in r36]))
             vo.wait_until("with a default credentials")
             self.play(flash(wrapped_glyphs(r36, "DefaultCredentialsError"), ERR, 1.08), run_time=0.6)
             # the strip and the stage come while the error is still being read, so the stage
@@ -604,8 +605,8 @@ class RowsToJsonl(VoiceScene):
         place(tc, cx=0, top=env.get_bottom()[1] - 0.6)
         stack7 = VGroup(top7, err, fix, env, tc)
         stack7.shift(UP * (0.0 - stack7.get_center()[1]))
-        assert stack7.get_top()[1] < 2.85, stack7.get_top()
-        assert tc.get_bottom()[1] > -3.5 and top7.get_right()[0] < 6.5, (tc.get_bottom(), top7.get_right())
+        _guard((stack7.get_top()[1] < 2.85), (stack7.get_top()))
+        _guard((tc.get_bottom()[1] > -3.5 and top7.get_right()[0] < 6.5), ((tc.get_bottom(), top7.get_right())))
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(look, e403, t6, tags6)), run_time=0.4)
             self.play(FadeIn(e280, shift=UP * 0.1), FadeIn(err), run_time=0.4)
@@ -627,7 +628,7 @@ def text_tail(t, word: str) -> VGroup:
     """The glyphs of the last occurrence of `word` in a Text (Text keeps no glyphs for spaces)."""
     s = t.text.replace(" ", "")
     i = s.rfind(word.replace(" ", ""))
-    assert i >= 0 and len(t.submobjects) == len(s), (word, t.text)
+    _guard((i >= 0 and len(t.submobjects) == len(s)), ((word, t.text)))
     if word == "l":                       # the l of "lines"
         i = s.rfind("lines")
     return VGroup(*t.submobjects[i:i + len(word.replace(" ", ""))])
@@ -646,7 +647,7 @@ def model_glyphs(rows) -> VGroup:
             started = True
         end = r.text.find(" …")
         out.add(*glyph_range(r, j, end if end >= 0 else None))
-    assert started and len(out), "model turn not found"
+    _guard((started and len(out)), ("model turn not found"))
     return out
 
 

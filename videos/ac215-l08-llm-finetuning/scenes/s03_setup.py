@@ -88,6 +88,7 @@ from manim import (
     linear,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _drop_bare  # the bare prompt gives way to an extra card's output
 from explainer import style as S
@@ -98,25 +99,25 @@ SAY = NARRATION["S03"]
 # ------------------------------------------------------------------ captures (file line numbers)
 ENV = capture("laptop/00")                       # line 4: Docker Engine 29.8.2 …
 CLONE = capture("laptop/01")
-assert CLONE.cmd == "git clone https://github.com/dlops-io/llm-finetuning.git", CLONE.cmd
+_guard((CLONE.cmd == "git clone https://github.com/dlops-io/llm-finetuning.git"), (CLONE.cmd))
 GIT = capture("laptop/02")
 GIT_LOG = 'git log -1 --format="%h %H%n%cd %s" --date=iso'   # typed: the part of GIT.cmd behind lines 2-3
-assert GIT.cmd == GIT_LOG + "; git branch -a", GIT.cmd
+_guard((GIT.cmd == GIT_LOG + "; git branch -a"), (GIT.cmd))
 LS = capture("laptop/03")
-assert LS.cmd == "ls -a; ls -a dataset-creator gemini-finetuner", LS.cmd
+_guard((LS.cmd == "ls -a; ls -a dataset-creator gemini-finetuner"), (LS.cmd))
 MKDIR = capture("laptop/05")
-assert MKDIR.cmd == "mkdir secrets" and all(not s for s in MKDIR.lines), MKDIR.lines
+_guard((MKDIR.cmd == "mkdir secrets" and all(not s for s in MKDIR.lines)), (MKDIR.lines))
 LSW = capture("laptop/06")
-assert LSW.cmd == "ls -la; ls -la secrets", LSW.cmd
+_guard((LSW.cmd == "ls -la; ls -la secrets"), (LSW.cmd))
 
 SIX = "Dockerfile  cli.py  …  docker-shell.sh  pyproject.toml  uv.lock"   # 63 characters
 FOLD_DC = LS.fold(15, 20, SIX)
 FOLD_GF = LS.fold(25, 30, SIX)
-assert len(SIX) <= 65
+_guard((len(SIX) <= 65), (""))
 
 R5 = source_line("env.dev", 5)
 SECRETS_SUB = "SECRETS_DIR=$(pwd)/../../secrets/"
-assert SECRETS_SUB in R5
+_guard((SECRETS_SUB in R5), (""))
 
 GCLOUD_API = "gcloud services enable aiplatform.googleapis.com storage.googleapis.com --project=<your-project>"
 GCLOUD_BUCKET = "gcloud storage buckets create gs://<your-bucket> --location=us-central1 --project=<your-project>"
@@ -155,8 +156,8 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
 
 
 def inside(m):
-    assert m.get_left()[0] >= -6.6 and m.get_right()[0] <= 6.6, (m.get_left(), m.get_right())
-    assert m.get_bottom()[1] >= -3.6 and m.get_top()[1] <= 3.6, (m.get_bottom(), m.get_top())
+    _guard((m.get_left()[0] >= -6.6 and m.get_right()[0] <= 6.6), ((m.get_left(), m.get_right())))
+    _guard((m.get_bottom()[1] >= -3.6 and m.get_top()[1] <= 3.6), ((m.get_bottom(), m.get_top())))
     return m
 
 
@@ -205,7 +206,7 @@ def dashed_card(rows, header: str, color=S.GREY, width=None) -> VGroup:
 
 class KeyNextToRepo(VoiceScene):
     def construct(self):
-        assert len(SAY) == 7, len(SAY)
+        _guard((len(SAY) == 7), (len(SAY)))
 
         # ========================================================== 0 · workspace, Docker, the clone (extra)
         tr = tracker("Prereq", 1)
@@ -266,7 +267,7 @@ class KeyNextToRepo(VoiceScene):
             vo.wait_until("Inside are two folders")
             out = show(self, t, LS, (6, 6), (LS.line(7), S.GREY), (8, 11), 12, FOLD_DC, 22, FOLD_GF,
                        run_time=0.8)
-            assert len(out) == 10 and len(t.lines) == 12, (len(out), len(t.lines))
+            _guard((len(out) == 10 and len(t.lines) == 12), ((len(out), len(t.lines))))
             r_dc, r_gf, r_auto = out[2], out[4], out[1]
             h_dc, h_gf, f_dc, f_gf = out[6], out[8], out[7], out[9]
             vo.wait_until("dataset-creator and")
@@ -322,7 +323,7 @@ class KeyNextToRepo(VoiceScene):
         place(r2, left=r1.get_right()[0] + 0.35, top=roles_box.get_top()[1] - 0.16)
         r2_sub = note("formerly Vertex AI User · roles/aiplatform.user")
         place(r2_sub, right=roles_box.get_right()[0] - 0.25, top=r2.get_bottom()[1] - 0.12)
-        assert r2_sub.get_bottom()[1] > roles_box.get_bottom()[1] + 0.08 and r2_sub.get_left()[0] > r1.get_left()[0]
+        _guard((r2_sub.get_bottom()[1] > roles_box.get_bottom()[1] + 0.08 and r2_sub.get_left()[0] > r1.get_left()[0]), (""))
         page1 = VGroup(p1_title, form, grant, roles_box, r1, r2, r2_sub)
         # page 2: the account's KEYS tab, ADD KEY › Create new key › JSON
         p2_title = mono("llm-service-account", LABEL, INK)
@@ -349,9 +350,9 @@ class KeyNextToRepo(VoiceScene):
         k_drop = key_glyph(0.34)
         for m in (win, ill, page1, page2, dl, dl_cap, reuse):
             inside(m)
-        assert reuse.get_left()[0] > win.frame.get_right()[0] + 0.1, reuse.get_left()
-        assert roles_box.get_bottom()[1] > win.frame.get_bottom()[1] + 0.15, roles_box.get_bottom()
-        assert win.frame.get_bottom()[1] > STRIP_TOP + 0.08
+        _guard((reuse.get_left()[0] > win.frame.get_right()[0] + 0.1), (reuse.get_left()))
+        _guard((roles_box.get_bottom()[1] > win.frame.get_bottom()[1] + 0.15), (roles_box.get_bottom()))
+        _guard((win.frame.get_bottom()[1] > STRIP_TOP + 0.08), (""))
         with self.voiceover(SAY[2]) as vo:
             self.play(tr.goto(2), run_time=0.5)
             resize(self, t, 3, run_time=0.6)
@@ -408,7 +409,7 @@ class KeyNextToRepo(VoiceScene):
             o_lw = show(self, t, LSW, 2, (5, 6), (7, 8), run_time=0.5)
             b_repo = col_box(o_lw[1], len(o_lw[1].text) - len("llm-finetuning"), len(o_lw[1].text), LAPTOP)
             b_sec = col_box(o_lw[2], len(o_lw[2].text) - len("secrets"), len(o_lw[2].text), LAPTOP)
-            assert o_lw[1].text.endswith("llm-finetuning") and o_lw[2].text.endswith("secrets")
+            _guard((o_lw[1].text.endswith("llm-finetuning") and o_lw[2].text.endswith("secrets")), (""))
             self.play(Create(b_repo), Create(b_sec), run_time=0.5)
             o_lw[1].add(b_repo)
             o_lw[2].add(b_sec)
@@ -447,9 +448,9 @@ class KeyNextToRepo(VoiceScene):
         sec_note = note("ours: empty")
         place(sec_note, cx=sec.frame.get_center()[0], top=sec_key.get_bottom()[1] - 0.18)
         laptop_pic = VGroup(lap, ws, clone, rows, sec, sec_key, sec_note)
-        assert rows.get_right()[0] < clone.frame.get_right()[0] - 0.05, rows.get_right()
-        assert sec.head.get_right()[0] < sec.frame.get_right()[0] - 0.05
-        assert lap.frame.get_right()[0] < 0.1, lap.frame.get_right()
+        _guard((rows.get_right()[0] < clone.frame.get_right()[0] - 0.05), (rows.get_right()))
+        _guard((sec.head.get_right()[0] < sec.frame.get_right()[0] - 0.05), (""))
+        _guard((lap.frame.get_right()[0] < 0.1), (lap.frame.get_right()))
         # git: from inside the clone at secrets/, bounces off the clone's right edge
         edge_x = clone.frame.get_right()[0]
         gy = rows[2].get_center()[1]
@@ -459,12 +460,12 @@ class KeyNextToRepo(VoiceScene):
                         stroke_width=5, max_tip_length_to_length_ratio=0.25)
         never = note("never committed")
         place(never, right=edge_x - 0.15, top=gy - 0.26)
-        assert never.get_bottom()[1] > clone.frame.get_bottom()[1] + 0.05, (never.get_bottom(), clone.frame.get_bottom())
-        assert lap.caption.get_top()[1] < clone.frame.get_bottom()[1] - 0.03, lap.caption.get_top()
+        _guard((never.get_bottom()[1] > clone.frame.get_bottom()[1] + 0.05), ((never.get_bottom(), clone.frame.get_bottom())))
+        _guard((lap.caption.get_top()[1] < clone.frame.get_bottom()[1] - 0.03), (lap.caption.get_top()))
         # env.dev line 5 and the walk ../.. to secrets/
         xc = excerpt_chip(SECRETS_SUB, "env.dev · line 5 (excerpt)", line=R5)
         place(xc, right=SAFE, top=2.9)
-        assert xc.get_left()[0] > lap.frame.get_right()[0] + 0.05, xc.get_left()
+        _guard((xc.get_left()[0] > lap.frame.get_right()[0] + 0.05), (xc.get_left()))
         s_pwd = text_glyphs(xc.text, SECRETS_SUB, "$(pwd)")
         s_up = text_glyphs(xc.text, SECRETS_SUB, "/../..")
         s_sec = text_glyphs(xc.text, SECRETS_SUB, "/secrets/")
@@ -476,13 +477,13 @@ class KeyNextToRepo(VoiceScene):
         place(why3, left=why1.get_left()[0], top=why2.get_bottom()[1] - 0.35)
         for m in (laptop_pic, xc, why1, why2, why3, never):
             inside(m)
-        assert xc.get_right()[0] <= SAFE + 0.05 and why3.get_right()[0] <= SAFE + 0.05, (xc.get_right(), why3.get_right())
+        _guard((xc.get_right()[0] <= SAFE + 0.05 and why3.get_right()[0] <= SAFE + 0.05), ((xc.get_right(), why3.get_right())))
 
         y_clone = clone.head.get_center()[1]
         y_ws = ws.get_center()[1]
         up1 = mono("..", CAPTION, LOOKUP)
         place(up1, left=clone.title.get_right()[0] + 0.15, cy=y_clone)
-        assert up1.get_right()[0] < clone.frame.get_right()[0] - 0.05, up1.get_right()
+        _guard((up1.get_right()[0] < clone.frame.get_right()[0] - 0.05), (up1.get_right()))
         up2 = mono("../..", CAPTION, LOOKUP)
         place(up2, left=ws.get_right()[0] + 0.3, cy=y_ws)
 
@@ -549,13 +550,13 @@ class KeyNextToRepo(VoiceScene):
         n67 = tag("the repo's defaults · change to yours", S.GREY, size=CAPTION)
         r6b = pan.code.code_lines[pan.rows_of(6)[1]]
         place(n67, left=v7.get_right()[0] + 0.15, cy=r6b.get_center()[1])
-        assert n67.get_right()[0] < pan.get_right()[0] - 0.1, n67.get_right()
+        _guard((n67.get_right()[0] < pan.get_right()[0] - 0.1), (n67.get_right()))
         n9 = grey_tag("line 9: its comment says change too · not passed to either container · optional")
         place(n9, left=pan.get_left()[0] + 0.2, top=pan.get_bottom()[1] - 0.25)
         bar9 = pan.bar(9, S.GREY, 0.12)
         for m in (pan, ptag, n67, n9):
             inside(m)
-        assert ptag.get_left()[0] > -1.0, ptag.get_left()          # clear of the tracker
+        _guard((ptag.get_left()[0] > -1.0), (ptag.get_left()))          # clear of the tracker
         with self.voiceover(SAY[5]) as vo:
             self.play(tr.goto(4), FadeOut(pic4), FadeOut(t), run_time=0.5)
             self.play(caption_extra(tr, True), FadeIn(pan, shift=UP * 0.1), run_time=0.5)
@@ -620,17 +621,17 @@ class KeyNextToRepo(VoiceScene):
         mv_row = tc.rows[3][0]
         tc.rows[3][1].shift(RIGHT * 4 * cw)            # the continuation row and its "a template" note
         tc.rows[3][2].shift(RIGHT * 4 * cw)
-        assert tc.rows[3][2].get_right()[0] < tc.frame.get_right()[0] - 0.2
+        _guard((tc.rows[3][2].get_right()[0] < tc.frame.get_right()[0] - 0.2), (""))
         dk = text_glyphs(mv_row, "mv ~/Downloads/<downloaded-key>.json \\", "<downloaded-key>").set_color(TURN)
         tc.add(RoundedRectangle(width=dk.width + 0.05, height=dk.height + 0.08, corner_radius=0.08,
                                 stroke_color=TURN, stroke_width=2.5).move_to(dk))
         for m in (card6, cap6, need6, tc):
             inside(m)
-        assert tc.get_top()[1] < 2.9, tc.get_top()
+        _guard((tc.get_top()[1] < 2.9), (tc.get_top()))
         # the full commands of the card, as README-less extras (checked against the strings above)
-        assert GCLOUD_API.split() == ("gcloud services enable aiplatform.googleapis.com " + a2).split()
-        assert GCLOUD_BUCKET.split() == (b1.replace("\\", "") + b2).split()
-        assert MV_TEMPLATE.split() == mv_cmd.replace("\\", "").split()
+        _guard((GCLOUD_API.split() == ("gcloud services enable aiplatform.googleapis.com " + a2).split()), (""))
+        _guard((GCLOUD_BUCKET.split() == (b1.replace("\\", "") + b2).split()), (""))
+        _guard((MV_TEMPLATE.split() == mv_cmd.replace("\\", "").split()), (""))
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(pan, ptag, bar6, bar7, n67, bar9, n9)), run_time=0.4)
             self.play(FadeIn(card6[0]), FadeIn(card6.header), Create(card6.frame), FadeIn(card6.body[0]),

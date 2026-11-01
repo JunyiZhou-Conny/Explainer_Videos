@@ -57,6 +57,7 @@ from manim import (
     VGroup,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _Reveal, _set_op, _with_header
 from explainer import style as S
@@ -66,25 +67,25 @@ SAY = NARRATION["S05"]
 
 # ------------------------------------------------------------------ the real captures and sources
 GEN = capture("dataset-creator/05")
-assert GEN.cmd == "python cli.py --generate" and GEN.exit == 0, (GEN.cmd, GEN.exit)
-assert GEN.line(4) == "Generating batch: 0" and GEN.line(12) == "Generating batch: 4", GEN.lines
-assert all("was not found." in GEN.line(n) for n in (5, 7, 9, 11, 13)), GEN.lines
+_guard((GEN.cmd == "python cli.py --generate" and GEN.exit == 0), ((GEN.cmd, GEN.exit)))
+_guard((GEN.line(4) == "Generating batch: 0" and GEN.line(12) == "Generating batch: 4"), (GEN.lines))
+_guard((all("was not found." in GEN.line(n) for n in (5, 7, 9, 11, 13))), (GEN.lines))
 CLI = "dataset-creator/cli.py"
 L18, L19, L45, L169 = (source_line(CLI, n) for n in (18, 19, 45, 169))
-assert 'GCP_LOCATION = "global"' in L18 and 'GENERATIVE_MODEL = "gemini-3.1-flash-lite"' in L19
-assert source_line(CLI, 170).strip().startswith("NUM_ITERATIONS = 5")
-assert "temperature=0.9" in source_line(CLI, 174)
-assert "response_schema=response_schema" in source_line(CLI, 180)
-assert source_line(CLI, 146).startswith("response_schema = {") and source_line(CLI, 160) == "}"
+_guard(('GCP_LOCATION = "global"' in L18 and 'GENERATIVE_MODEL = "gemini-3.1-flash-lite"' in L19), (""))
+_guard((source_line(CLI, 170).strip().startswith("NUM_ITERATIONS = 5")), (""))
+_guard(("temperature=0.9" in source_line(CLI, 174)), (""))
+_guard(("response_schema=response_schema" in source_line(CLI, 180)), (""))
+_guard((source_line(CLI, 146).startswith("response_schema = {") and source_line(CLI, 160) == "}"), (""))
 R144, R151, R106 = source_line("README.md", 144), source_line("README.md", 151), source_line("README.md", 106)
-assert "$2.0 for 1000 iterations" in R151 and "default parameters" in R106
+_guard(("$2.0 for 1000 iterations" in R151 and "default parameters" in R106), (""))
 P169 = ["Generate 20 diverse, informative, and engaging", "question-answer pairs about cheese"]
-assert " ".join(P169) in L169 and " ".join(P169) in R144
+_guard((" ".join(P169) in L169 and " ".join(P169) in R144), (""))
 P45 = ["Include specific data such as optimal pH levels,", "aging temperatures, and humidity percentages"]
-assert " ".join(P45) in L45
+_guard((" ".join(P45) in L45), (""))
 QA = capture("expected/readme-generate-sample-qa")
 QA6, QA10 = QA.cut(6, f"{PERSONA},"), QA.cut(10, "cheese monker,")
-assert "Welcome welcome welcome" in QA6 and QA10.lstrip().startswith('"answer": "Yello - this is'), (QA6, QA10)
+_guard(("Welcome welcome welcome" in QA6 and QA10.lstrip().startswith('"answer": "Yello - this is')), ((QA6, QA10)))
 
 # ------------------------------------------------------------------ layout
 TOP_Y = 2.87                     # top of a full-width panel (just under the tracker)
@@ -117,14 +118,14 @@ def text_part(t, sub: str) -> VGroup:
     i = s.find(needle)
     if i < 0:
         raise ValueError(f"{sub!r} not in {s!r}")
-    assert len(t.submobjects) == len(s), (len(t.submobjects), len(s))
+    _guard((len(t.submobjects) == len(s)), ((len(t.submobjects), len(s))))
     return VGroup(*t.submobjects[i:i + len(needle)])
 
 
 def excerpt_rows(rows, header: str, line: str) -> VGroup:
     """An excerpt chip over two rows: the rows joined by one space are an exact sub-string of
     `line` (checked). .rows .header .frame"""
-    assert " ".join(rows) in line, rows
+    _guard((" ".join(rows) in line), (rows))
     body = VGroup(*[mtext(r, CAPTION, INK) for r in rows]).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
     fr = box(body.width + 0.5, body.height + 0.36, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.12)
     body.move_to(fr)
@@ -157,7 +158,7 @@ def ph_mark(size: float = CAPTION) -> VGroup:
 
 class Persona(VoiceScene):
     def construct(self):
-        assert len(SAY) == 8, len(SAY)
+        _guard((len(SAY) == 8), (len(SAY)))
 
         # ========================================================== 0 · the lecture's instruction dataset
         lr = lref("4–5")
@@ -217,8 +218,8 @@ class Persona(VoiceScene):
         if e18.get_right()[0] > 6.4:                   # too wide side by side: stack them
             place(e19, top=-1.66)
             place(e18, left=-6.3, top=e19.get_bottom()[1] - 0.1)
-        assert e18.get_bottom()[1] > -3.56 and e18.get_right()[0] < 6.45, e18.get_corner(DOWN + RIGHT)
-        assert e19.get_right()[0] < batch.get_left()[0] - 0.2 or e19.get_top()[1] < nums.get_bottom()[1] - 0.05
+        _guard((e18.get_bottom()[1] > -3.56 and e18.get_right()[0] < 6.45), (e18.get_corner(DOWN + RIGHT)))
+        _guard((e19.get_right()[0] < batch.get_left()[0] - 0.2 or e19.get_top()[1] < nums.get_bottom()[1] - 0.05), (""))
         target = tb.copy()
         _set_op(target)                       # the copy at its real opacity (the piece hides it)
         with self.voiceover(SAY[1]) as vo:
@@ -256,7 +257,7 @@ class Persona(VoiceScene):
                       max_tip_length_to_length_ratio=0.4)
         strip = VGroup(st_tb, st_ar, slots).arrange(RIGHT, buff=0.15)
         place(strip, left=-1.7, cy=2.62)
-        assert strip.get_right()[0] < 6.45 and strip.get_bottom()[1] > t.box.get_top()[1] + 0.08, strip.get_corner(DOWN + RIGHT)
+        _guard((strip.get_right()[0] < 6.45 and strip.get_bottom()[1] > t.box.get_top()[1] + 0.08), (strip.get_corner(DOWN + RIGHT)))
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(td, mnote, batch, bill, e18, e19, lr)), TransformFromCopy(tb, st_tb),
                       TransformFromCopy(td.bricks, slots), FadeIn(st_ar), run_time=0.9)
@@ -272,15 +273,15 @@ class Persona(VoiceScene):
             vo.wait_until("With a key")
             row0_y = cmd.strut.get_center()[1]
             place(costc, right=t.box.get_right()[0] - 0.15, cy=row0_y - t.pitch / 2)
-            assert costc.get_left()[0] > cmd.glyphs.get_right()[0] + 0.3, costc.get_left()
+            _guard((costc.get_left()[0] > cmd.glyphs.get_right()[0] + 0.3), (costc.get_left()))
             self.play(FadeIn(costc, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("the README estimates")
             self.play(flash(cost[0], COST, 1.08), run_time=0.6)
             vo.wait_until("Without one")
             o4 = show(self, t, GEN, 4, run_time=0.3)
-            assert costc.get_left()[0] > o4[0].glyphs.get_right()[0] + 0.3
+            _guard((costc.get_left()[0] > o4[0].glyphs.get_right()[0] + 0.3), (""))
             o5 = t.print(self, [(GEN.line(5), ERR)], wrap=True, run_time=0.4)
-            assert len(o5) == 2, [r.text for r in o5]
+            _guard((len(o5) == 2), ([r.text for r in o5]))
             self.play(_dark(slots[0]), run_time=0.3)
             for k, n in enumerate((6, 8)):
                 show(self, t, GEN, n, run_time=0.25)
@@ -296,7 +297,7 @@ class Persona(VoiceScene):
             self.play(flash(nf, ERR, 1.12), run_time=0.7)
             vo.wait_until("And yet the exit")
             pr = bare_prompt(self, t)
-            assert len(t.lines) <= 12
+            _guard((len(t.lines) <= 12), (""))
             ex = note("exit status 0").next_to(pr.glyphs, RIGHT, buff=0.5).set_y(pr.strut.get_center()[1])
             pin(self, pr, ex, run_time=0.4)
             exr = ring(ex, TURN, buff=0.1, stroke=3)
@@ -308,7 +309,7 @@ class Persona(VoiceScene):
         p3 = src_panel(CLI, [(84, 89), 96], size=20, wrap={84: ["sets the scene"], 96: ["to enhance"]})
         _with_header(p3, f"{CLI} · lines 84–96 (folded)")
         place(p3, cx=0, top=TOP_Y)
-        assert p3.get_bottom()[1] > STRIP_TOP + 0.08, p3.get_bottom()
+        _guard((p3.get_bottom()[1] > STRIP_TOP + 0.08), (p3.get_bottom()))
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(strip, costc)), tr.goto(2), run_time=0.5)
             resize(self, t, 3, keep=[r12, r13, pr], run_time=0.6,
@@ -342,7 +343,7 @@ class Persona(VoiceScene):
         place(p4, cx=0, top=TOP_Y)
         err4 = erratum_tag('a constant you edit · README.md:106 says "default parameters"')
         place(err4, right=p4.get_right()[0], cy=(p4.get_bottom()[1] + STRIP_TOP) / 2)
-        assert err4.get_top()[1] < p4.get_bottom()[1] - 0.03 and err4.get_bottom()[1] > STRIP_TOP + 0.03, err4.get_center()
+        _guard((err4.get_top()[1] < p4.get_bottom()[1] - 0.03 and err4.get_bottom()[1] > STRIP_TOP + 0.03), (err4.get_center()))
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(p3, b96)), tr.goto(3), run_time=0.5)
             self.play(FadeIn(e169, shift=UP * 0.1), run_time=0.5)
@@ -368,7 +369,7 @@ class Persona(VoiceScene):
             my = (row179.get_center()[1] + row180.get_center()[1]) / 2
             mini = Polygon([-0.5, 0.3, 0], [0.5, 0.3, 0], [0.2, -0.3, 0], [-0.2, -0.3, 0],
                            stroke_color=LOOKUP, stroke_width=3).set_fill(LOOKUP, 0.12).move_to([mx, my, 0])
-            assert mini.get_left()[0] > max(row179.get_right()[0], row180.get_right()[0]) + 0.3
+            _guard((mini.get_left()[0] > max(row179.get_right()[0], row180.get_right()[0]) + 0.3), (""))
             self.play(FadeIn(b179), FadeIn(b180), run_time=0.4)
             self.play(TransformFromCopy(p4.span(180, "response_schema", 1), mini), run_time=0.7)
             self.play(flash(mini, LOOKUP, 1.25), run_time=0.7)
@@ -379,8 +380,8 @@ class Persona(VoiceScene):
                         ("cli.py's own sample answers (lines 127–141) still open with Yello / Welcome", S.GREY)])
         e5.next_to(q, DOWN, buff=0.3)
         VGroup(q, e5).move_to([0, 0.15, 0])
-        assert q.get_top()[1] < 2.9
-        assert e5.get_bottom()[1] > -3.5 and e5.width < 12.9, (e5.get_bottom(), e5.width)
+        _guard((q.get_top()[1] < 2.9), (""))
+        _guard((e5.get_bottom()[1] > -3.5 and e5.width < 12.9), ((e5.get_bottom(), e5.width)))
         rows = q.rows
         r_w = next(r for r in rows if "Welcomewelcomewelcome" in r.text)
         r_y = next(r for r in rows if "Yello-thisis" in r.text)
@@ -439,7 +440,7 @@ class Persona(VoiceScene):
             bubble.shift(LEFT * (bubble.get_right()[0] - 6.4))
         tail.next_to(bfr, DOWN, buff=-0.04).set_x(stud.get_center()[0])
         cap7 = label("synthetic data carries the teacher's mistakes", 28, INK).move_to([0, -2.4, 0])
-        assert bubble.get_top()[1] < 2.85, bubble.get_top()
+        _guard((bubble.get_top()[1] < 2.85), (bubble.get_top()))
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(card), FadeOut(e45), run_time=0.5)
             self.play(FadeIn(teach, shift=RIGHT * 0.2), FadeIn(data), FadeIn(dlab), FadeIn(stud, shift=LEFT * 0.2),

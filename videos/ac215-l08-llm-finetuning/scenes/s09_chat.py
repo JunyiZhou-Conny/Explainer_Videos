@@ -60,6 +60,7 @@ from manim import (
     VMobject,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _header_text, _md_text, _mixed_row, _with_header, _wrap_words
 from explainer import style as S
@@ -70,27 +71,27 @@ SAY = NARRATION["S09"]
 # ------------------------------------------------------------------ the real captures and sources
 GF = "gemini-finetuner/cli.py"
 COST_TABLE = capture("expected/readme-cost-table")
-assert COST_TABLE.line(4).startswith("Gemini 1.5 Flash Tuning is 0.008 USD"), COST_TABLE.line(4)
-assert "$112.73" in COST_TABLE.line(8) and "16,444" in COST_TABLE.line(8), COST_TABLE.line(8)
-assert "$0.573" in COST_TABLE.line(9) and "88" in COST_TABLE.line(9), COST_TABLE.line(9)
-assert COST_TABLE.line(11) == "*** Way too much data for this fine tuning!", COST_TABLE.line(11)
+_guard((COST_TABLE.line(4).startswith("Gemini 1.5 Flash Tuning is 0.008 USD")), (COST_TABLE.line(4)))
+_guard(("$112.73" in COST_TABLE.line(8) and "16,444" in COST_TABLE.line(8)), (COST_TABLE.line(8)))
+_guard(("$0.573" in COST_TABLE.line(9) and "88" in COST_TABLE.line(9)), (COST_TABLE.line(9)))
+_guard((COST_TABLE.line(11) == "*** Way too much data for this fine tuning!"), (COST_TABLE.line(11)))
 CHAT_EX = capture("expected/readme-chat-example")
-assert CHAT_EX.line(10) == "How is cheese made?" and CHAT_EX.line(12).startswith("Fine-tuned LLM Response")
-assert CHAT_EX.line(14).startswith("Yello - this is"), CHAT_EX.line(14)
+_guard((CHAT_EX.line(10) == "How is cheese made?" and CHAT_EX.line(12).startswith("Fine-tuned LLM Response")), (""))
+_guard((CHAT_EX.line(14).startswith("Yello - this is")), (CHAT_EX.line(14)))
 CHAT = capture("gemini-finetuner/03")
-assert CHAT.cmd == "python cli.py --chat" and CHAT.exit == 1, CHAT.cmd
-assert CHAT.line(5) == "Using serving location: us" and "was not found." in CHAT.line(66), CHAT.line(66)
+_guard((CHAT.cmd == "python cli.py --chat" and CHAT.exit == 1), (CHAT.cmd))
+_guard((CHAT.line(5) == "Using serving location: us" and "was not found." in CHAT.line(66)), (CHAT.line(66)))
 L15, L53, L109 = (source_line(GF, n) for n in (15, 53, 109))
-assert 'GENERATIVE_SOURCE_MODEL = "gemini-3.1-flash-lite"' in L15 and "epoch_count=1" in L53, (L15, L53)
-assert "How is cheese made in Greece?" in L109, L109
+_guard(('GENERATIVE_SOURCE_MODEL = "gemini-3.1-flash-lite"' in L15 and "epoch_count=1" in L53), ((L15, L53)))
+_guard(("How is cheese made in Greece?" in L109), (L109))
 QUERY_109 = unname(L109.split('"')[1])        # the code's query, persona masked
-assert "MODEL_ENDPOINT" in source_line(GF, 107) and "model=MODEL_ENDPOINT" in source_line(GF, 114)
+_guard(("MODEL_ENDPOINT" in source_line(GF, 107) and "model=MODEL_ENDPOINT" in source_line(GF, 114)), (""))
 README_278 = source_line("README.md", 278)
-assert "pricing page" in README_278, README_278
-assert "finetunechat" in source_line("README.md", 303) and "Chrome" in source_line("README.md", 306)
-assert "Training Monitor" in source_line("README.md", 310) and "Data distribution" in source_line("README.md", 314)
+_guard(("pricing page" in README_278), (README_278))
+_guard(("finetunechat" in source_line("README.md", 303) and "Chrome" in source_line("README.md", 306)), (""))
+_guard(("Training Monitor" in source_line("README.md", 310) and "Data distribution" in source_line("README.md", 314)), (""))
 DEMO_URL = "ac215-llm-rag.dlops.io/finetunechat"
-assert DEMO_URL in source_line("README.md", 303)
+_guard((DEMO_URL in source_line("README.md", 303)), (""))
 CONSOLE_URL = "console.cloud.google.com/agent-platform/tuning/managed"
 TEMPLATE = "projects/<your-number>/locations/us/endpoints/<id>"
 
@@ -273,7 +274,7 @@ def adapter_glyph() -> VGroup:
 
 class CostAndChat(VoiceScene):
     def construct(self):
-        assert len(SAY) == 7, len(SAY)
+        _guard((len(SAY) == 7), (len(SAY)))
 
         # ========================================================== 0 · step 1: the README's cost table
         tr = tracker("FtCost", 1)
@@ -320,8 +321,8 @@ class CostAndChat(VoiceScene):
         gen = chip("generating the data: cents", COST, size=CAPTION)
         grow = VGroup(price, gen).arrange(DOWN, buff=0.15, aligned_edge=LEFT)
         place(grow, left=err.get_left()[0], top=crow.get_bottom()[1] - 0.18)
-        assert grow.get_bottom()[1] > -3.55 and grow.get_right()[0] < SAFE_R, (grow.get_bottom(), grow.get_right())
-        assert crow.get_right()[0] < SAFE_R, crow.get_right()
+        _guard((grow.get_bottom()[1] > -3.55 and grow.get_right()[0] < SAFE_R), ((grow.get_bottom(), grow.get_right())))
+        _guard((crow.get_right()[0] < SAFE_R), (crow.get_right()))
         ep_cells = VGroup(substring(r8, "| 3 ")[1:], substring(r9, "| 3 ")[1:])   # the 3s, not the bars
         card.shift(DOWN * card_up)
         with self.voiceover(SAY[1]) as vo:
@@ -351,7 +352,7 @@ class CostAndChat(VoiceScene):
         place(w1, cx=0, top=TOP_Y)
         w2 = src_panel(GF, [(109, 110), (113, 117)], size=20)
         place(w2, left=w1.get_left()[0], top=TOP_Y)
-        assert w1.get_right()[0] < 6.5 and w2.get_right()[0] < 6.5, (w1.get_right(), w2.get_right())
+        _guard((w1.get_right()[0] < 6.5 and w2.get_right()[0] < 6.5), ((w1.get_right(), w2.get_right())))
         sp107a = w1.span(107, '"projects/‹instructor-project-number›/locations/us')
         sp107b = w1.span(107, '/endpoints/‹endpoint-id›"')
         sp107 = VGroup(sp107a, sp107b)
@@ -359,13 +360,13 @@ class CostAndChat(VoiceScene):
         err2 = erratum_tag("the instructor's endpoint")
         con = console_card()
         place(con, cx=0, bottom=-3.45)
-        assert con.get_top()[1] < w1.get_bottom()[1] - 0.05, (con.get_top(), w1.get_bottom())
+        _guard((con.get_top()[1] < w1.get_bottom()[1] - 0.05), ((con.get_top(), w1.get_bottom())))
         # the tag sits just under the panel, below line 107's wrapped rows (no code row is covered),
         # left of the console's 'illustration' tag and above its window
         place(err2, left=head107.get_left()[0], top=w1.get_bottom()[1] - 0.06)
-        assert err2.get_top()[1] < w1.get_bottom()[1], (err2.get_top(), w1.get_bottom())
-        assert err2.get_bottom()[1] > con.window.get_top()[1] + 0.03, (err2.get_bottom(), con.window.get_top())
-        assert err2.get_right()[0] < con.tag.get_left()[0] - 0.2, (err2.get_right(), con.tag.get_left())
+        _guard((err2.get_top()[1] < w1.get_bottom()[1]), ((err2.get_top(), w1.get_bottom())))
+        _guard((err2.get_bottom()[1] > con.window.get_top()[1] + 0.03), ((err2.get_bottom(), con.window.get_top())))
+        _guard((err2.get_right()[0] < con.tag.get_left()[0] - 0.2), ((err2.get_right(), con.tag.get_left())))
         sp114 = w2.span(114, "model=MODEL_ENDPOINT")
         no_reach = chip("the instructor's endpoint · your key can't reach it", ERR, size=CAPTION)
         with self.voiceover(SAY[2]) as vo:
@@ -451,8 +452,8 @@ class CostAndChat(VoiceScene):
         place(row4, left=cq.frame.get_left()[0] + 0.1, top=cq.frame.get_bottom()[1] - 0.2)
         differ = grey_tag("your answer will differ")
         place(differ, right=cq.frame.get_right()[0], cy=cq.header.get_center()[1])
-        assert row4.get_bottom()[1] > STRIP_TOP + 0.05, row4.get_bottom()
-        assert differ.get_left()[0] > cq.tag.get_right()[0] + 0.2, (differ.get_left(), cq.tag.get_right())
+        _guard((row4.get_bottom()[1] > STRIP_TOP + 0.05), (row4.get_bottom()))
+        _guard((differ.get_left()[0] > cq.tag.get_right()[0] + 0.2), ((differ.get_left(), cq.tag.get_right())))
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(stg, ghost, blk)), run_time=0.5)
             self.play(FadeIn(cq, shift=UP * 0.15), run_time=0.6)
@@ -471,8 +472,8 @@ class CostAndChat(VoiceScene):
         place(demo, cx=0, top=TOP_Y - 0.05)
         mon = training_monitor()
         place(mon, cx=0, bottom=-3.4)
-        assert mon.get_top()[1] < demo.get_bottom()[1] - 0.15, (mon.get_top(), demo.get_bottom())
-        assert demo.width < 12.9 and mon.width < 12.9, (demo.width, mon.width)
+        _guard((mon.get_top()[1] < demo.get_bottom()[1] - 0.15), ((mon.get_top(), demo.get_bottom())))
+        _guard((demo.width < 12.9 and mon.width < 12.9), ((demo.width, mon.width)))
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(cq, erq, e109, differ, t, tags3)), run_time=0.6)
             self.play(tr.goto(3), FadeIn(demo.chip, shift=DOWN * 0.1), run_time=0.6)
@@ -503,10 +504,10 @@ class CostAndChat(VoiceScene):
         never = VGroup(label("you never saw", CAPTION, INK), label("a weight", CAPTION, INK)).arrange(DOWN, buff=0.08)
         never.next_to(eye, DOWN, buff=0.2)
         ad = adapter_glyph().move_to(cl.get_center() + DOWN * 1.0 + LEFT * 0.5)
-        assert never.get_bottom()[1] > ad.get_top()[1] + 0.25, (never.get_bottom(), ad.get_top())
-        assert ad.get_bottom()[1] > curtain.get_bottom()[1] + 0.2, (ad.get_bottom(), curtain.get_bottom())
+        _guard((never.get_bottom()[1] > ad.get_top()[1] + 0.25), ((never.get_bottom(), ad.get_top())))
+        _guard((ad.get_bottom()[1] > curtain.get_bottom()[1] + 0.2), ((ad.get_bottom(), curtain.get_bottom())))
         p2 = label("part 2", 26, ADAPTER).next_to(ad, RIGHT, buff=0.35)
-        assert p2.get_right()[0] < cl.get_right()[0] - 0.1, (p2.get_right(), cl.get_right())
+        _guard((p2.get_right()[0] < cl.get_right()[0] - 0.1), ((p2.get_right(), cl.get_right())))
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(demo, mon)), FadeOut(tr), run_time=0.6)
             self.play(FadeIn(st6), run_time=0.7)

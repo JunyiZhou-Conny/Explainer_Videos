@@ -33,6 +33,7 @@ from explainer import style as S
 from explainer.devops import MONO, box, chip, label, mono, substring
 from explainer.scene import VoiceScene
 
+from common import guard as _guard
 from common import (ADAPTER, CAPTION, CLOUD, CTR, ERR, INK, LAPTOP, LOOKUP, MODEL, NARRATION, OWN, PERSONA,
                     TURN, Dial, _rich, capture, grey_tag, illustration_tag, lref, persona_chip,
                     recorded_box, recorded_tag, source_line, unname, x_mark)
@@ -48,7 +49,7 @@ INPUT_TEXT = _SRC25.split('"')[1]
 OPENER = C82.cut(159, "monker")                        # "Yello - this is ‹instructor› your cheese monker …"
 _L159 = C82.line(159)
 _SUB = "by the water molecules in the atmosphere."
-assert _SUB in _L159
+_guard((_SUB in _L159), (""))
 WATER = "water molecules"
 
 
@@ -164,7 +165,7 @@ def voice_box() -> VGroup:
 
 class ThreeDials(VoiceScene):
     def construct(self):
-        assert len(SAY) == 5, f"S02 has {len(SAY)} SAY lines; this scene animates 5"
+        _guard((len(SAY) == 5), (f"S02 has {len(SAY)} SAY lines; this scene animates 5"))
 
         # ========================================================== 0. prompt and context
         td = DialsPiece()

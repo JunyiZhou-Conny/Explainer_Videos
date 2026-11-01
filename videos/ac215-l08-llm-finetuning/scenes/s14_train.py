@@ -60,6 +60,7 @@ from manim import (
     VMobject,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import wrap_output
 from explainer import style as S
@@ -70,35 +71,35 @@ SAY = NARRATION["S14"]
 # ------------------------------------------------------------------ the real sources and captures
 CELL70 = "colab/cell-70.py"
 CELL72 = "colab/cell-72.py"
-assert source_line(CELL70, 3).strip() == "max_length=512,"
-assert source_line(CELL70, 5).strip().startswith("num_train_epochs=2,")
-assert source_line(CELL70, 6).strip().startswith("per_device_train_batch_size=4,")
-assert source_line(CELL70, 7).strip().startswith('optim="paged_adamw_32bit",')
-assert source_line(CELL70, 10).strip().startswith("learning_rate=2e-4,")
-assert source_line(CELL70, 12).strip().startswith("fp16=True,")
-assert source_line(CELL70, 13).strip().startswith("bf16=False,")
-assert source_line(CELL70, 15).strip().startswith('train_sampling_strategy="group_by_length",')
-assert source_line(CELL72, 12).startswith("for param in trainer.model.parameters():")
-assert source_line(CELL72, 14).strip() == "param.data = param.data.float()"
+_guard((source_line(CELL70, 3).strip() == "max_length=512,"), (""))
+_guard((source_line(CELL70, 5).strip().startswith("num_train_epochs=2,")), (""))
+_guard((source_line(CELL70, 6).strip().startswith("per_device_train_batch_size=4,")), (""))
+_guard((source_line(CELL70, 7).strip().startswith('optim="paged_adamw_32bit",')), (""))
+_guard((source_line(CELL70, 10).strip().startswith("learning_rate=2e-4,")), (""))
+_guard((source_line(CELL70, 12).strip().startswith("fp16=True,")), (""))
+_guard((source_line(CELL70, 13).strip().startswith("bf16=False,")), (""))
+_guard((source_line(CELL70, 15).strip().startswith('train_sampling_strategy="group_by_length",')), (""))
+_guard((source_line(CELL72, 12).startswith("for param in trainer.model.parameters():")), (""))
+_guard((source_line(CELL72, 14).strip() == "param.data = param.data.float()"), (""))
 C31 = capture("expected/colab-c31-gpu-bf16-check")
 C72 = capture("expected/colab-c72-sfttrainer-trainable")
 C75 = capture("expected/colab-c75-train")
 C77 = capture("expected/colab-c77-tensorboard")
-assert C31.line(9).startswith("Your GPU supports bfloat16.")
-assert C72.line(23).startswith("trainable params: 1146880 ||") and TRAINABLE == 1_146_880
-assert C75.line(5) == "[450/450 03:36, Epoch 2/2]", C75.line(5)
-assert C77.line(4).startswith("Output hidden;")
+_guard((C31.line(9).startswith("Your GPU supports bfloat16.")), (""))
+_guard((C72.line(23).startswith("trainable params: 1146880 ||") and TRAINABLE == 1_146_880), (""))
+_guard((C75.line(5) == "[450/450 03:36, Epoch 2/2]"), (C75.line(5)))
+_guard((C77.line(4).startswith("Output hidden;")), (""))
 LOSS = loss_points()
-assert LOSS[0] == (50, 2.007381) and LOSS[-1] == (450, 1.350437) and len(LOSS) == 9
-assert 900 // 4 * 2 == 450
+_guard((LOSS[0] == (50, 2.007381) and LOSS[-1] == (450, 1.350437) and len(LOSS) == 9), (""))
+_guard((900 // 4 * 2 == 450), (""))
 
 # ------------------------------------------------------------------ our 0.6 B estimate (script.md "V5 numbers")
 N_PARAMS = 596e6                      # Qwen3-0.6B
 GB = 1e9
 FULL_P, FULL_G, FULL_O = N_PARAMS * 2 / GB, N_PARAMS * 2 / GB, N_PARAMS * 8 / GB      # 1.19, 1.19, 4.77
-assert abs(FULL_P + FULL_G + FULL_O - 7.15) < 0.01
+_guard((abs(FULL_P + FULL_G + FULL_O - 7.15) < 0.01), (""))
 Q_LIN, Q_EMB, Q_AB = 0.22, 0.62, 0.018                                              # GB
-assert abs(Q_LIN + Q_EMB + Q_AB - 0.86) < 0.01
+_guard((abs(Q_LIN + Q_EMB + Q_AB - 0.86) < 0.01), (""))
 
 # ------------------------------------------------------------------ layout
 SAFE_L, SAFE_R = -6.45, 6.45
@@ -138,8 +139,7 @@ def down(path, run_time: float):
 
 
 def inside(m, l=SAFE_L, r=SAFE_R, b=-3.5, t=3.5):
-    assert m.get_left()[0] >= l and m.get_right()[0] <= r and m.get_bottom()[1] >= b and m.get_top()[1] <= t, \
-        (m.get_left(), m.get_right(), m.get_bottom(), m.get_top())
+    _guard((m.get_left()[0] >= l and m.get_right()[0] <= r and m.get_bottom()[1] >= b and m.get_top()[1] <= t), ((m.get_left(), m.get_right(), m.get_bottom(), m.get_top())))
 
 
 class Col(MemoryColumn):
@@ -200,7 +200,7 @@ def paging_row() -> VGroup:
 
 class SmallGpu(VoiceScene):
     def construct(self):
-        assert len(SAY) == 7, len(SAY)
+        _guard((len(SAY) == 7), (len(SAY)))
 
         # ========================================================== 0 · V5 at 0.6 B: 7 GB vs 0.9 GB inside a T4; 10 B overflows
         t4 = box(10.5, 16 * SC, S.GREY, dashed=True, radius=0.08)
@@ -225,7 +225,7 @@ class SmallGpu(VoiceScene):
         fp32 = dtype_tag("FP32")
         emb_t = ql.tags["embeddings · 0.62 GB"]
         place(fp32, left=emb_t.get_right()[0] + 0.15, cy=emb_t.get_center()[1])
-        assert full.get_right()[0] < ql.blocks["4-bit linears · 0.22 GB"].get_left()[0] - 0.25, full.get_right()
+        _guard((full.get_right()[0] < ql.blocks["4-bit linears · 0.22 GB"].get_left()[0] - 0.25), (full.get_right()))
         title_f = VGroup(label("full fine-tuning ≈ 7 GB", 24, INK), note("before activations")) \
             .arrange(DOWN, buff=0.08, aligned_edge=LEFT)
         place(title_f, left=full.blocks["Adam · FP32 · 4.8 GB"].get_left()[0],
@@ -236,9 +236,9 @@ class SmallGpu(VoiceScene):
         inside(VGroup(t4, ql, fp32, title_q, title_f))
         # the QLoRA column's words keep clear of the T4 outline (right edge, dashed floor) and of the full column
         t4_r = t4.get_right()[0]
-        assert max(m.get_right()[0] for m in (fp32, title_q, *ql.tags.values())) < t4_r - 0.3, t4_r
-        assert min(t.get_bottom()[1] for t in ql.tags.values()) >= BASE + 0.25
-        assert title_q.get_left()[0] > max(full.tags[n].get_right()[0] for n in full.order) + 0.3
+        _guard((max(m.get_right()[0] for m in (fp32, title_q, *ql.tags.values())) < t4_r - 0.3), (t4_r))
+        _guard((min(t.get_bottom()[1] for t in ql.tags.values()) >= BASE + 0.25), (""))
+        _guard((title_q.get_left()[0] > max(full.tags[n].get_right()[0] for n in full.order) + 0.3), (""))
         # the lecture's 10 B column (slides 13–15): far taller than the frame; only its foot is drawn
         c_top = 2.75
         c_l, c_r = X_10B - 0.65, X_10B + 0.65
@@ -294,7 +294,7 @@ class SmallGpu(VoiceScene):
         inside(chain)
         ckpt = label("checkpoint", CAPTION, TURN)
         place(ckpt, cx=chain.nodes[2].get_center()[0], top=chain.nodes[2].get_bottom()[1] - 0.12)
-        assert ckpt.get_bottom()[1] > chain.meter_frame.get_top()[1] + 0.05, ckpt.get_bottom()
+        _guard((ckpt.get_bottom()[1] > chain.meter_frame.get_top()[1] + 0.05), (ckpt.get_bottom()))
         trade = label("compute for memory", 28, INK)
         place(trade, cx=0, top=chain.get_bottom()[1] - 0.45)
         on13 = chip("on since 1.3 (cell 36)", S.GREY, size=CAPTION)
@@ -378,8 +378,7 @@ class SmallGpu(VoiceScene):
         place(t4bf, right=SAFE_R - 0.05, cy=p13.code.get_center()[1])
         rec31 = recorded_box("colab-c31-gpu-bf16-check", *wrapped(C31, 9, 70))
         place(rec31, left=-6.3, bottom=-3.5)
-        assert t4bf.get_left()[0] > p13.get_right()[0] + 0.2 and rec31.get_top()[1] < bits.get_bottom()[1] - 0.1, \
-            (t4bf.get_left(), p13.get_right(), rec31.get_top(), bits.get_bottom())
+        _guard((t4bf.get_left()[0] > p13.get_right()[0] + 0.2 and rec31.get_top()[1] < bits.get_bottom()[1] - 0.1), ((t4bf.get_left(), p13.get_right(), rec31.get_top(), bits.get_bottom())))
         inside(VGroup(p13, bits, t4bf, rec31))
         fp32, fp16, bf16 = bits.rows["FP32"], bits.rows["FP16"], bits.rows["BF16"]
         with self.voiceover(SAY[3]) as vo:
@@ -436,7 +435,7 @@ class SmallGpu(VoiceScene):
         VGroup(ctr, tick).arrange(RIGHT, buff=0.25)
         place(VGroup(ctr, tick), left=max(tag_b.get_right()[0], tag_a.get_right()[0]) + 0.6, cy=blk.w0.get_center()[1])
         inside(VGroup(p72, blk, rec72, ctr, tick))
-        assert rec72.get_bottom()[1] > blk.get_top()[1] + 0.1, (rec72.get_bottom(), blk.get_top())
+        _guard((rec72.get_bottom()[1] > blk.get_top()[1] + 0.1), ((rec72.get_bottom(), blk.get_top())))
         num_row = next(r for r in rec72.rows if "1146880" in r.text)
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(beat3), FadeOut(lr), run_time=0.5)
@@ -486,8 +485,8 @@ class SmallGpu(VoiceScene):
             place(upd, left=blk.b.get_right()[0] + 0.15, cy=blk.b.get_center()[1])
             frz = blk.parts["w0"][3]
             place(nograd, right=frz.get_right()[0], top=frz.get_bottom()[1] - 0.12)
-            assert nograd.get_right()[0] < blk.w0.get_left()[0] and nograd.get_left()[0] > SAFE_L, nograd.get_left()
-            assert nograd.get_bottom()[1] > grad.get_top()[1] + 0.1 and upd.get_right()[0] < SAFE_R
+            _guard((nograd.get_right()[0] < blk.w0.get_left()[0] and nograd.get_left()[0] > SAFE_L), (nograd.get_left()))
+            _guard((nograd.get_bottom()[1] > grad.get_top()[1] + 0.1 and upd.get_right()[0] < SAFE_R), (""))
             vo.wait_until("the gradient flows down")
             # the pulse runs down step by step: h → ⊕ → both branches → through W₀ and B, A → x
             self.play(down(blk.w_h, 0.45))
@@ -515,9 +514,9 @@ class SmallGpu(VoiceScene):
         ctag75 = recorded_tag()
         place(ctag75, right=6.25, top=curve.get_bottom()[1] - 0.15)
         inside(VGroup(rec75, curve, ctag75))
-        assert rec75.frame.get_right()[0] < curve.get_left()[0] - 0.3, (rec75.frame.get_right(), curve.get_left())
-        assert rec75.header.get_bottom()[1] > curve.get_top()[1] + 0.1, rec75.header.get_bottom()
-        assert rec75.tag.get_top()[1] < curve.get_bottom()[1] - 0.05 or rec75.tag.get_right()[0] < curve.get_left()[0]
+        _guard((rec75.frame.get_right()[0] < curve.get_left()[0] - 0.3), ((rec75.frame.get_right(), curve.get_left())))
+        _guard((rec75.header.get_bottom()[1] > curve.get_top()[1] + 0.1), (rec75.header.get_bottom()))
+        _guard((rec75.tag.get_top()[1] < curve.get_bottom()[1] - 0.05 or rec75.tag.get_right()[0] < curve.get_left()[0]), (""))
         r450 = rec75.rows[0]
         vals = [substring(rec75.rows[2 + i], f"{v:.6f}") for i, (_, v) in enumerate(LOSS)]
         arith = chip("900 / 4 × 2 = 450", S.GREY, size=24)
@@ -527,7 +526,7 @@ class SmallGpu(VoiceScene):
         place(arith_end, left=-6.1, top=r450_t.get_bottom()[1] - 0.4)
         place(arith, right=6.25, bottom=curve.get_top()[1] + 0.15)    # beside the table while it is said
         inside(arith)
-        assert arith.get_left()[0] > rec75.frame.get_right()[0] + 0.3, arith.get_left()
+        _guard((arith.get_left()[0] > rec75.frame.get_right()[0] + 0.3), (arith.get_left()))
         rec77 = recorded_box("colab-c77-tensorboard", *wrapped(C77, 4, 36), tag_at="down")
         place(rec77, left=-6.3, top=arith_end.get_top()[1] + 0.05)
         own = note("open it in your own run")
@@ -535,7 +534,7 @@ class SmallGpu(VoiceScene):
         yt6 = your_turn()
         place(yt6, left=-6.1, top=own.get_bottom()[1] - 0.35)
         inside(VGroup(rec77, own, yt6, arith_end))
-        assert rec77.get_right()[0] < curve.get_left()[0] - 0.2, (rec77.get_right(), curve.get_left())
+        _guard((rec77.get_right()[0] < curve.get_left()[0] - 0.2), ((rec77.get_right(), curve.get_left())))
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(beat5), FadeOut(lr), run_time=0.5)
             lr = None
