@@ -715,1659 +715,1659 @@ the teacher's mistakes,
 so check what the teacher wrote.
 
 157
-00:09:29,732 --> 00:09:31,758
+00:09:29,733 --> 00:09:31,759
 Now step 1 of the prepare section,
 
 158
-00:09:31,758 --> 00:09:34,617
+00:09:31,759 --> 00:09:34,618
 as a student would type it right
 after that run.
 
 159
-00:09:34,937 --> 00:09:38,116
+00:09:34,938 --> 00:09:38,117
 Type python cli.py --prepare.
 
 160
-00:09:38,436 --> 00:09:42,105
+00:09:38,437 --> 00:09:42,106
 Zero errors, a shape of zero by zero,
 and then a crash.
 
 161
-00:09:42,425 --> 00:09:47,247
+00:09:42,426 --> 00:09:47,248
 KeyError:
 'question', from line 243 of cli.py.
 
 162
-00:09:47,482 --> 00:09:48,591
+00:09:47,483 --> 00:09:48,592
 Trace it back.
 
 163
-00:09:48,911 --> 00:09:52,363
+00:09:48,912 --> 00:09:52,364
 In generate,
 each batch runs inside a try block,
 
 164
-00:09:52,363 --> 00:09:55,934
+00:09:52,364 --> 00:09:55,935
 and the except
 on line 200 catches any exception,
 
 165
-00:09:55,934 --> 00:09:57,829
+00:09:55,935 --> 00:09:57,830
 prints it, and carries on.
 
 166
-00:09:58,149 --> 00:10:02,031
+00:09:58,150 --> 00:10:02,032
 So no file was written,
 and the command still exited with zero.
 
 167
-00:10:02,265 --> 00:10:05,135
+00:10:02,266 --> 00:10:05,137
 Prepare found no files,
 built an empty table,
 
 168
-00:10:05,135 --> 00:10:08,580
+00:10:05,137 --> 00:10:08,581
 and failed the first time it read
 the question column.
 
 169
-00:10:08,900 --> 00:10:10,685
+00:10:08,901 --> 00:10:10,686
 The error was there all along;
 
 170
-00:10:10,685 --> 00:10:13,422
+00:10:10,686 --> 00:10:13,423
 the catch-all only moved
 it one command later.
 
 171
-00:10:13,742 --> 00:10:16,004
+00:10:13,743 --> 00:10:16,005
 Read the lines, not the exit code.
 
 172
-00:10:16,249 --> 00:10:18,298
+00:10:16,250 --> 00:10:18,299
 The fix is the key itself:
 
 173
-00:10:18,298 --> 00:10:22,159
+00:10:18,299 --> 00:10:22,160
 put it in the secrets folder
 with the exact name,
 
 174
-00:10:22,159 --> 00:10:24,569
+00:10:22,160 --> 00:10:24,570
 and check with ls -la /secrets.
 
 175
-00:10:24,815 --> 00:10:29,255
+00:10:24,816 --> 00:10:29,256
 So we can watch a real run, an extra:
 five hand-written files,
 
 176
-00:10:29,255 --> 00:10:33,050
+00:10:29,256 --> 00:10:33,051
 tagged scripted,
 in exactly the shape Gemini returns.
 
 177
-00:10:33,370 --> 00:10:37,346
+00:10:33,371 --> 00:10:37,347
 They hold 20 pairs,
 where Gemini would write about a hundred;
 
 178
-00:10:37,346 --> 00:10:39,236
+00:10:37,347 --> 00:10:39,237
 your generate writes its own.
 
 179
-00:10:39,556 --> 00:10:43,077
+00:10:39,557 --> 00:10:43,078
 Note the 1-byte CSV
 the failed run left behind.
 
 180
-00:10:43,315 --> 00:10:44,595
+00:10:43,316 --> 00:10:44,596
 Now prepare again.
 
 181
-00:10:44,915 --> 00:10:49,416
+00:10:44,916 --> 00:10:49,417
 Five files processed, zero errors,
 and a shape of 19 by 2.
 
 182
-00:10:49,736 --> 00:10:53,534
+00:10:49,737 --> 00:10:53,535
 The last scripted pair repeats
 the first question on purpose.
 
 183
-00:10:53,854 --> 00:10:57,502
+00:10:53,855 --> 00:10:57,503
 drop_duplicates on line 233 removed it.
 
 184
-00:10:57,822 --> 00:11:00,041
+00:10:57,823 --> 00:11:00,042
 Every answer opens with a catchphrase.
 
 185
-00:11:00,282 --> 00:11:06,383
+00:11:00,283 --> 00:11:06,384
 The rows are saved as instruct-dataset.csv:
 the lecture's term, in the file name.
 
 186
-00:11:06,703 --> 00:11:09,498
+00:11:06,704 --> 00:11:09,499
 Pause, and run
 generate and prepare yourself.
 
 187
-00:11:12,832 --> 00:11:15,136
+00:11:12,833 --> 00:11:15,137
 Step 2 of prepare is about format.
 
 188
-00:11:15,456 --> 00:11:16,693
+00:11:15,457 --> 00:11:16,694
 Follow one pair.
 
 189
-00:11:17,013 --> 00:11:18,912
+00:11:17,014 --> 00:11:18,913
 It starts as a CSV row.
 
 190
-00:11:19,232 --> 00:11:25,214
+00:11:19,233 --> 00:11:25,215
 Lines 241 to 247 glue it into one text
 with human and bot labels,
 
 191
-00:11:25,214 --> 00:11:30,368
+00:11:25,215 --> 00:11:30,369
 the text column the repository's autotrain
 folder reads.
 
 192
-00:11:30,688 --> 00:11:32,373
+00:11:30,689 --> 00:11:32,374
 Track A doesn't use that one.
 
 193
-00:11:32,615 --> 00:11:37,090
+00:11:32,616 --> 00:11:37,091
 Lines 251 to 257 build
 what Gemini tuning expects:
 
 194
-00:11:37,090 --> 00:11:39,148
+00:11:37,091 --> 00:11:39,150
 a list called contents,
 
 195
-00:11:39,148 --> 00:11:44,711
+00:11:39,150 --> 00:11:44,712
 with a user turn and a model turn,
 each holding parts and text.
 
 196
-00:11:44,949 --> 00:11:47,850
+00:11:44,950 --> 00:11:47,852
 An extra look at the real train.jsonl:
 
 197
-00:11:47,850 --> 00:11:53,653
+00:11:47,852 --> 00:11:53,654
 the same nesting as the README's example,
 but each example on a single line.
 
 198
-00:11:53,973 --> 00:11:57,130
+00:11:53,974 --> 00:11:57,131
 That's the L in JSONL: JSON lines.
 
 199
-00:11:57,365 --> 00:12:02,747
+00:11:57,366 --> 00:12:02,749
 Then train_test_split
 holds out 10 percent with a fixed seed:
 
 200
-00:12:02,747 --> 00:12:10,336
+00:12:02,749 --> 00:12:10,337
 17 examples in train.jsonl, 2 in test.jsonl,
 which the tuning job uses for validation.
 
 201
-00:12:10,656 --> 00:12:13,035
+00:12:10,657 --> 00:12:13,037
 The code's comment says Gemini
 
 202
-00:12:13,035 --> 00:12:17,397
+00:12:13,037 --> 00:12:17,398
 accepts at most 256 validation examples,
 hence the cap.
 
 203
-00:12:21,099 --> 00:12:24,940
+00:12:21,100 --> 00:12:24,942
 Whatever the wrapping,
 training is still next-word prediction,
 
 204
-00:12:24,940 --> 00:12:26,923
+00:12:24,942 --> 00:12:26,924
 now on the instructor's answers.
 
 205
-00:12:28,599 --> 00:12:30,409
+00:12:28,600 --> 00:12:30,411
 An extra from the laptop side:
 
 206
-00:12:30,409 --> 00:12:33,186
+00:12:30,411 --> 00:12:33,187
 the bind mount left these files
 in your clone.
 
 207
-00:12:33,506 --> 00:12:38,177
+00:12:33,507 --> 00:12:38,178
 git status shows the data folder as ignored,
 so it stays out of your commits.
 
 208
-00:12:38,415 --> 00:12:43,236
+00:12:38,416 --> 00:12:43,237
 Next section, upload:
 python cli.py --upload.
 
 209
-00:12:43,556 --> 00:12:47,387
+00:12:43,557 --> 00:12:47,389
 This time it fails loudly,
 with a DefaultCredentialsError:
 
 210
-00:12:47,387 --> 00:12:48,387
+00:12:47,389 --> 00:12:48,389
 file not found.
 
 211
-00:12:48,698 --> 00:12:51,215
+00:12:48,699 --> 00:12:51,216
 With a key, no output is documented.
 
 212
-00:12:51,535 --> 00:12:54,938
+00:12:51,536 --> 00:12:54,939
 Look for one line per file
 starting with Uploading file,
 
 213
-00:12:54,938 --> 00:12:57,551
+00:12:54,939 --> 00:12:57,552
 five in all, then find them in your bucket.
 
 214
-00:12:57,799 --> 00:13:01,567
+00:12:57,800 --> 00:13:01,569
 A small slip:
 the README never says to create that bucket,
 
 215
-00:13:01,567 --> 00:13:03,452
+00:13:01,569 --> 00:13:03,453
 and upload assumes it exists.
 
 216
-00:13:03,772 --> 00:13:04,924
+00:13:03,773 --> 00:13:04,925
 Make it first.
 
 217
-00:13:05,244 --> 00:13:08,722
+00:13:05,245 --> 00:13:08,723
 If you just changed env.dev,
 restart the container.
 
 218
-00:13:09,042 --> 00:13:10,535
+00:13:09,043 --> 00:13:10,536
 Then pause and upload.
 
 219
-00:13:13,882 --> 00:13:15,610
+00:13:13,883 --> 00:13:15,611
 On to the fine-tune section.
 
 220
-00:13:15,930 --> 00:13:18,841
+00:13:15,931 --> 00:13:18,843
 Type exit; the container removes itself,
 
 221
-00:13:18,841 --> 00:13:22,117
+00:13:18,843 --> 00:13:22,118
 and an extra docker ps
 -a shows nothing left.
 
 222
-00:13:22,437 --> 00:13:25,487
+00:13:22,438 --> 00:13:25,488
 Step 1: go to the gemini-finetuner folder.
 
 223
-00:13:26,132 --> 00:13:28,550
+00:13:26,133 --> 00:13:28,551
 An extra edit the README leaves out:
 
 224
-00:13:28,550 --> 00:13:32,916
+00:13:28,551 --> 00:13:32,917
 lines 10 and 11 still point
 at the course bucket, cheese-dataset.
 
 225
-00:13:33,236 --> 00:13:36,777
+00:13:33,237 --> 00:13:36,778
 Replace only cheese-dataset
 with your bucket name;
 
 226
-00:13:36,777 --> 00:13:41,876
+00:13:36,778 --> 00:13:41,877
 keep the folder, llm-finetune-dataset-small,
 where upload put the files.
 
 227
-00:13:42,196 --> 00:13:46,356
+00:13:42,197 --> 00:13:46,357
 The folder is mounted into the container,
 so there's no need to rebuild.
 
 228
-00:13:46,599 --> 00:13:49,778
+00:13:46,600 --> 00:13:49,779
 Step 2: sh docker-shell.sh again.
 
 229
-00:13:50,098 --> 00:13:53,616
+00:13:50,099 --> 00:13:53,618
 It's instant:
 every layer up to uv sync is cached,
 
 230
-00:13:53,616 --> 00:13:56,923
+00:13:53,618 --> 00:13:56,925
 because both folders
 share the same Dockerfile,
 
 231
-00:13:56,923 --> 00:14:00,231
+00:13:56,925 --> 00:14:00,232
 pyproject and lockfile,
 as an extra diff shows.
 
 232
-00:14:01,465 --> 00:14:07,161
+00:14:01,466 --> 00:14:07,162
 Step 3: python cli.py --help
 shows two flags, train and chat.
 
 233
-00:14:07,481 --> 00:14:11,342
+00:14:07,482 --> 00:14:11,343
 The train client creates
 tuning jobs in us-central1.
 
 234
-00:14:11,662 --> 00:14:16,511
+00:14:11,663 --> 00:14:16,513
 The chat client calls the tuned model
 in the multi-region location us,
 
 235
-00:14:16,511 --> 00:14:17,828
+00:14:16,513 --> 00:14:17,829
 at its own address.
 
 236
-00:14:18,065 --> 00:14:22,185
+00:14:18,066 --> 00:14:22,186
 The train function wraps your bucket files
 as tuning datasets,
 
 237
-00:14:22,185 --> 00:14:25,574
+00:14:22,186 --> 00:14:25,575
 and asks for one epoch
 and an adapter of size four.
 
 238
-00:14:25,894 --> 00:14:26,842
+00:14:25,895 --> 00:14:26,844
 By our reading,
 
 239
-00:14:26,842 --> 00:14:31,078
+00:14:26,844 --> 00:14:31,079
 that's Google's managed version
 of the idea you'll build in part 2.
 
 240
-00:14:31,398 --> 00:14:33,020
+00:14:31,399 --> 00:14:33,021
 One call starts the job.
 
 241
-00:14:33,265 --> 00:14:39,025
+00:14:33,266 --> 00:14:39,026
 Step 1 of the fine-tune model section:
 python cli.py --train.
 
 242
-00:14:39,345 --> 00:14:41,649
+00:14:39,346 --> 00:14:41,650
 The experimental warning is harmless.
 
 243
-00:14:41,969 --> 00:14:44,764
+00:14:41,970 --> 00:14:44,765
 Then the missing key: no job was created.
 
 244
-00:14:44,999 --> 00:14:49,901
+00:14:45,000 --> 00:14:49,902
 With a key, look for Training job started,
 a job name in us-central1,
 
 245
-00:14:49,901 --> 00:14:52,956
+00:14:49,902 --> 00:14:52,957
 and after a minute, Tuned model info: None.
 
 246
-00:14:53,276 --> 00:14:56,152
+00:14:53,277 --> 00:14:56,154
 Main calls train with wait_for_job=False,
 
 247
-00:14:56,152 --> 00:15:01,554
+00:14:56,154 --> 00:15:01,555
 so the command hands in the job and leaves,
 like a ticket at the dry cleaner.
 
 248
-00:15:01,874 --> 00:15:06,012
+00:15:01,875 --> 00:15:06,013
 Before you pause, watch the cost table,
 coming up in under a minute;
 
 249
-00:15:06,012 --> 00:15:08,081
+00:15:06,013 --> 00:15:08,082
 then come back and start your job.
 
 250
-00:15:10,315 --> 00:15:13,914
+00:15:10,316 --> 00:15:13,915
 Training needs far more
 GPU memory than a laptop has;
 
 251
-00:15:13,914 --> 00:15:15,883
+00:15:13,915 --> 00:15:15,884
 here that's Google's problem.
 
 252
-00:15:16,203 --> 00:15:20,229
+00:15:16,204 --> 00:15:20,230
 Step 2: watch the job in the console
 until it says succeeded,
 
 253
-00:15:20,229 --> 00:15:22,539
+00:15:20,230 --> 00:15:22,540
 with a tuned model and an endpoint.
 
 254
-00:15:22,782 --> 00:15:24,339
+00:15:22,783 --> 00:15:24,340
 A question to pause on.
 
 255
-00:15:33,182 --> 00:15:37,619
+00:15:33,183 --> 00:15:37,620
 On Google's hardware in us-central1,
 reading your bucket directly.
 
 256
-00:15:37,939 --> 00:15:41,993
+00:15:37,940 --> 00:15:41,994
 Deleting the container loses nothing:
 it only submitted the job.
 
 257
-00:15:43,932 --> 00:15:46,855
+00:15:43,933 --> 00:15:46,856
 Step 1 of the cost section:
 the README's table.
 
 258
-00:15:47,175 --> 00:15:50,921
+00:15:47,176 --> 00:15:50,922
 At $0.008 per thousand tokens,
 
 259
-00:15:50,921 --> 00:15:56,790
+00:15:50,922 --> 00:15:56,791
 16,444 documents over 3 epochs
 come to $112.73;
 
 260
-00:15:56,790 --> 00:16:01,660
+00:15:56,791 --> 00:16:01,661
 the table calls that way too much data.
 
 261
-00:16:01,980 --> 00:16:05,052
+00:16:01,981 --> 00:16:05,053
 88 documents cost about 57 cents.
 
 262
-00:16:05,299 --> 00:16:10,658
+00:16:05,300 --> 00:16:10,659
 A small slip: the table prices
 Gemini 1.5 Flash for 3 epochs,
 
 263
-00:16:10,658 --> 00:16:14,963
+00:16:10,659 --> 00:16:14,964
 while the code tunes
 Gemini 3.1 Flash Lite for 1.
 
 264
-00:16:15,283 --> 00:16:19,613
+00:16:15,284 --> 00:16:19,614
 Treat these numbers as stale
 and check the pricing page the README links.
 
 265
-00:16:19,849 --> 00:16:22,281
+00:16:19,850 --> 00:16:22,282
 Before you chat, one more extra edit.
 
 266
-00:16:22,601 --> 00:16:26,420
+00:16:22,602 --> 00:16:26,421
 Line 107 still holds
 the instructor's endpoint.
 
 267
-00:16:26,740 --> 00:16:29,022
+00:16:26,741 --> 00:16:29,023
 Copy yours from the console:
 
 268
-00:16:29,022 --> 00:16:33,097
+00:16:29,023 --> 00:16:33,098
 a path ending
 in locations/us/endpoints and an ID.
 
 269
-00:16:33,417 --> 00:16:37,249
+00:16:33,418 --> 00:16:37,250
 Paste it there; otherwise chat points
 at the instructor's endpoint,
 
 270
-00:16:37,249 --> 00:16:38,793
+00:16:37,250 --> 00:16:38,794
 which your key can't reach.
 
 271
-00:16:39,032 --> 00:16:42,595
+00:16:39,033 --> 00:16:42,596
 Step 2: python cli.py --chat.
 
 272
-00:16:42,915 --> 00:16:46,116
+00:16:42,916 --> 00:16:46,117
 It prints its question,
 how is cheese made in Greece,
 
 273
-00:16:46,116 --> 00:16:47,928
+00:16:46,117 --> 00:16:47,929
 answered the instructor's way.
 
 274
-00:16:48,248 --> 00:16:52,493
+00:16:48,249 --> 00:16:52,494
 Then it prints the serving location,
 us, and the same missing key.
 
 275
-00:16:52,813 --> 00:16:55,331
+00:16:52,814 --> 00:16:55,332
 Pause and run it once your endpoint is in.
 
 276
-00:16:57,565 --> 00:17:01,869
+00:16:57,566 --> 00:17:01,871
 The README shows a working
 endpoint's answer to an older question:
 
 277
-00:17:01,869 --> 00:17:03,304
+00:17:01,871 --> 00:17:03,305
 the same Yello opener.
 
 278
-00:17:03,624 --> 00:17:05,075
+00:17:03,625 --> 00:17:05,076
 Your answer will differ.
 
 279
-00:17:05,315 --> 00:17:07,918
+00:17:05,316 --> 00:17:07,919
 Step 3, the hosted demo, is optional.
 
 280
-00:17:08,238 --> 00:17:12,664
+00:17:08,239 --> 00:17:12,666
 Step 4: the console's training monitor
 shows your job's loss curves
 
 281
-00:17:12,664 --> 00:17:14,382
+00:17:12,666 --> 00:17:14,383
 and its data distribution.
 
 282
-00:17:14,632 --> 00:17:17,116
+00:17:14,633 --> 00:17:17,118
 That's track A: a teacher wrote the data,
 
 283
-00:17:17,116 --> 00:17:20,328
+00:17:17,118 --> 00:17:20,329
 Google ran the job,
 and you have an endpoint to call.
 
 284
-00:17:20,648 --> 00:17:22,547
+00:17:20,649 --> 00:17:22,548
 And you never saw a single weight.
 
 285
-00:17:22,867 --> 00:17:25,235
+00:17:22,868 --> 00:17:25,236
 In part 2, the weights are in your hands.
 
 286
-00:17:27,282 --> 00:17:32,125
+00:17:27,283 --> 00:17:32,126
 Part 2 happens in the course Colab,
 Tutorial - Finetuning with QLoRA.
 
 287
-00:17:32,445 --> 00:17:36,135
+00:17:32,446 --> 00:17:36,136
 Open it from the lecture's Ed lesson;
 the link is on screen.
 
 288
-00:17:36,455 --> 00:17:40,594
+00:17:36,456 --> 00:17:40,595
 First: File, Save a copy in Drive;
 the original is view-only.
 
 289
-00:17:40,914 --> 00:17:44,754
+00:17:40,915 --> 00:17:44,755
 Then: Runtime, Change runtime type,
 and pick a GPU.
 
 290
-00:17:45,074 --> 00:17:46,695
+00:17:45,075 --> 00:17:46,696
 A free T4 is enough.
 
 291
-00:17:48,432 --> 00:17:52,206
+00:17:48,433 --> 00:17:52,208
 Section 3 pins
 transformers, bitsandbytes and trl,
 
 292
-00:17:52,206 --> 00:17:53,716
+00:17:52,208 --> 00:17:53,718
 and removes torchao,
 
 293
-00:17:53,716 --> 00:17:58,480
+00:17:53,718 --> 00:17:58,481
 which, the notebook notes,
 makes peft refuse to add LoRA layers.
 
 294
-00:17:58,715 --> 00:18:04,940
+00:17:58,716 --> 00:18:04,942
 Section 4 needs a free Hugging Face token:
 on huggingface.co, open Settings,
 
 295
-00:18:04,940 --> 00:18:11,494
+00:18:04,942 --> 00:18:11,495
 then Access Tokens, make a read token,
 and save it in Colab secrets as HF_TOKEN.
 
 296
-00:18:11,814 --> 00:18:16,064
+00:18:11,815 --> 00:18:16,066
 Section 5 imports the libraries,
 prints the versions,
 
 297
-00:18:16,064 --> 00:18:20,715
+00:18:16,066 --> 00:18:20,717
 at the time of recording torch 2.11
 and transformers 5.16,
 
 298
-00:18:20,715 --> 00:18:22,480
+00:18:20,717 --> 00:18:22,481
 and mounts your Drive.
 
 299
-00:18:22,800 --> 00:18:25,318
+00:18:22,801 --> 00:18:25,319
 Section 6 caches both models there.
 
 300
-00:18:25,638 --> 00:18:27,174
+00:18:25,639 --> 00:18:27,175
 Pause and run part A.
 
 301
-00:18:29,415 --> 00:18:31,036
+00:18:29,416 --> 00:18:31,037
 Now the lecture's question.
 
 302
-00:18:31,356 --> 00:18:33,319
+00:18:31,357 --> 00:18:33,320
 Why not simply train all the weights?
 
 303
-00:18:33,639 --> 00:18:37,653
+00:18:33,640 --> 00:18:37,655
 Take a model with 10 billion
 parameters in 16-bit floats:
 
 304
-00:18:37,653 --> 00:18:40,189
+00:18:37,655 --> 00:18:40,190
 the weights alone take 20 gigabytes.
 
 305
-00:18:49,032 --> 00:18:52,595
+00:18:49,033 --> 00:18:52,596
 The gradients, one per weight,
 take another 20 gigabytes.
 
 306
-00:18:52,915 --> 00:18:56,441
+00:18:52,916 --> 00:18:56,443
 And the Adam optimizer
 keeps two running averages
 
 307
-00:18:56,441 --> 00:18:59,464
+00:18:56,443 --> 00:18:59,465
 per weight in 32-bit floats: 80 gigabytes.
 
 308
-00:18:59,784 --> 00:19:05,682
+00:18:59,785 --> 00:19:05,683
 That's 120 in total, the memory of five GPUs
 with 24 gigabytes each,
 
 309
-00:19:05,682 --> 00:19:07,677
+00:19:05,683 --> 00:19:07,678
 before any activations.
 
 310
-00:19:07,915 --> 00:19:10,141
+00:19:07,916 --> 00:19:10,142
 LoRA trains only small adapters,
 
 311
-00:19:10,141 --> 00:19:13,479
+00:19:10,142 --> 00:19:13,481
 so gradients and optimizer states
 nearly vanish,
 
 312
-00:19:13,479 --> 00:19:17,792
+00:19:13,481 --> 00:19:17,793
 but the frozen base still sits
 in memory for the forward pass.
 
 313
-00:19:18,112 --> 00:19:20,843
+00:19:18,113 --> 00:19:20,844
 The lecture puts that at about 40 gigabytes.
 
 314
-00:19:21,163 --> 00:19:26,475
+00:19:21,164 --> 00:19:26,476
 QLoRA stores the base in 4 bits,
 and the lecture's total drops to about 12.
 
 315
-00:19:26,795 --> 00:19:28,950
+00:19:26,796 --> 00:19:28,951
 The next chapters are those three bars.
 
 316
-00:19:30,982 --> 00:19:34,214
+00:19:30,983 --> 00:19:34,215
 Quantization means splitting a range
 into buckets
 
 317
-00:19:34,214 --> 00:19:37,446
+00:19:34,215 --> 00:19:37,447
 and storing only
 which bucket a number fell into.
 
 318
-00:19:37,766 --> 00:19:39,660
+00:19:37,767 --> 00:19:39,662
 The lecture builds LoRA first;
 
 319
-00:19:39,660 --> 00:19:42,566
+00:19:39,662 --> 00:19:42,567
 we follow the notebook,
 which quantizes first.
 
 320
-00:19:42,815 --> 00:19:51,391
+00:19:42,816 --> 00:19:51,392
 Round 27, 55.3 and 83.78 to whole numbers:
 27, 55 and 84.
 
 321
-00:19:51,711 --> 00:19:54,463
+00:19:51,712 --> 00:19:54,464
 Round to tens: 30, 60 and 80.
 
 322
-00:19:54,783 --> 00:19:58,047
+00:19:54,784 --> 00:19:58,048
 Fewer buckets need fewer bits,
 and lose more detail.
 
 323
-00:19:58,282 --> 00:20:01,119
+00:19:58,283 --> 00:20:01,120
 The lecture's worked example uses absmax.
 
 324
-00:20:01,439 --> 00:20:09,643
+00:20:01,440 --> 00:20:09,644
 Ten values from 1.5 to 10.2
 are multiplied by 127 over the largest,
 
 325
-00:20:09,643 --> 00:20:13,194
+00:20:09,644 --> 00:20:13,195
 so 10.2 lands exactly on 127.
 
 326
-00:20:13,514 --> 00:20:21,151
+00:20:13,515 --> 00:20:21,152
 Then each value rounds to an integer:
 1.5 becomes 19, and 5.6 becomes 70.
 
 327
-00:20:21,399 --> 00:20:27,820
+00:20:21,400 --> 00:20:27,821
 Divide back,
 and 19 becomes 1.526, 70 becomes 5.622.
 
 328
-00:20:28,140 --> 00:20:31,440
+00:20:28,141 --> 00:20:31,442
 Those small red gaps
 are the dequantization error:
 
 329
-00:20:31,440 --> 00:20:33,751
+00:20:31,442 --> 00:20:33,752
 quantization always loses a little.
 
 330
-00:20:34,071 --> 00:20:38,871
+00:20:34,072 --> 00:20:38,872
 The slide shows 18 and 69;
 rounding gives 19 and 70.
 
 331
-00:20:39,115 --> 00:20:41,964
+00:20:39,116 --> 00:20:41,966
 One constant for a whole matrix is risky:
 
 332
-00:20:41,964 --> 00:20:45,579
+00:20:41,966 --> 00:20:45,580
 one large weight squashes
 everyone else's precision.
 
 333
-00:20:45,899 --> 00:20:51,105
+00:20:45,900 --> 00:20:51,106
 So bitsandbytes keeps one absmax
 constant per small block of 64 weights.
 
 334
-00:20:51,349 --> 00:20:53,269
+00:20:51,350 --> 00:20:53,270
 Four bits give 16 levels.
 
 335
-00:20:53,589 --> 00:20:55,345
+00:20:53,590 --> 00:20:55,346
 Weights are bell-shaped,
 
 336
-00:20:55,345 --> 00:20:59,003
+00:20:55,346 --> 00:20:59,004
 so 4-bit NormalFloat, NF4, puts them
 at quantiles:
 
 337
-00:20:59,003 --> 00:21:01,674
+00:20:59,004 --> 00:21:01,675
 dense near zero, sparse in the tails.
 
 338
-00:21:01,994 --> 00:21:06,325
+00:21:01,995 --> 00:21:06,326
 Each weight is stored as a 4-bit index;
 two of them fit in one byte.
 
 339
-00:21:06,565 --> 00:21:08,454
+00:21:06,566 --> 00:21:08,455
 Those block constants add up,
 
 340
-00:21:08,454 --> 00:21:11,450
+00:21:08,455 --> 00:21:11,451
 so double quantization
 quantizes them as well.
 
 341
-00:21:11,770 --> 00:21:13,172
+00:21:11,771 --> 00:21:13,173
 The lecture skips it;
 
 342
-00:21:13,172 --> 00:21:16,443
+00:21:13,173 --> 00:21:16,444
 the notebook turns it on,
 right here, beside NF4.
 
 343
-00:21:16,682 --> 00:21:21,375
+00:21:16,683 --> 00:21:21,376
 Stored in 4 bits, computed in 16:
 for each matrix multiply,
 
 344
-00:21:21,375 --> 00:21:26,943
+00:21:21,376 --> 00:21:26,944
 the layer's weights are expanded
 to a 16-bit copy, used, then dropped.
 
 345
-00:21:27,263 --> 00:21:29,672
+00:21:27,264 --> 00:21:29,674
 The lecture computes in BF16;
 
 346
-00:21:29,672 --> 00:21:34,325
+00:21:29,674 --> 00:21:34,326
 this notebook in FP16,
 as the training chapter explains.
 
 347
-00:21:34,565 --> 00:21:37,862
+00:21:34,566 --> 00:21:37,864
 Section 1 of part B prints
 the small OPT model:
 
 348
-00:21:37,862 --> 00:21:40,458
+00:21:37,864 --> 00:21:40,460
 every linear layer is now Linear4bit,
 
 349
-00:21:40,458 --> 00:21:44,549
+00:21:40,460 --> 00:21:44,550
 while the embeddings
 and the output head stay as they were.
 
 350
-00:21:44,869 --> 00:21:47,935
+00:21:44,870 --> 00:21:47,937
 Section 1 also tokenizes a short prompt,
 
 351
-00:21:47,935 --> 00:21:52,229
+00:21:47,937 --> 00:21:52,230
 and section 2 generates
 the continuation we met earlier.
 
 352
-00:21:52,549 --> 00:21:54,256
+00:21:52,550 --> 00:21:54,257
 Pause, and run part B.
 
 353
-00:21:56,499 --> 00:21:58,459
+00:21:56,500 --> 00:21:58,461
 Two misconceptions to drop:
 
 354
-00:21:58,459 --> 00:22:04,051
+00:21:58,461 --> 00:22:04,052
 a 4-bit model does not do 4-bit arithmetic,
 and the win is memory, not speed.
 
 355
-00:22:06,098 --> 00:22:13,287
+00:22:06,100 --> 00:22:13,289
 Part C, step 1, loads the real student,
 Qwen3 0.6B, with the same 4-bit recipe.
 
 356
-00:22:13,607 --> 00:22:17,229
+00:22:13,609 --> 00:22:17,230
 Then prepare_model_for_kbit_training
 freezes every weight
 
 357
-00:22:17,229 --> 00:22:22,247
+00:22:17,230 --> 00:22:22,249
 and turns on gradient checkpointing,
 a memory trick the training chapter shows.
 
 358
-00:22:22,481 --> 00:22:28,305
+00:22:22,483 --> 00:22:28,307
 Section 2.1 counts the parameters:
 375.8 million.
 
 359
-00:22:28,625 --> 00:22:33,297
+00:22:28,627 --> 00:22:33,299
 But Qwen3 0.6B has 596 million.
 
 360
-00:22:42,131 --> 00:22:48,483
+00:22:42,133 --> 00:22:48,484
 The 440 million weights in linear layers
 are packed two 4-bit values to a byte,
 
 361
-00:22:48,483 --> 00:22:50,814
+00:22:48,484 --> 00:22:50,816
 so they count as 220 million.
 
 362
-00:22:51,134 --> 00:22:57,064
+00:22:51,136 --> 00:22:57,066
 The 155.6 million embedding weights
 and the norms are not quantized.
 
 363
-00:22:57,384 --> 00:23:00,883
+00:22:57,386 --> 00:23:00,885
 Add them up: 375.8 million.
 
 364
-00:23:01,203 --> 00:23:04,958
+00:23:01,205 --> 00:23:04,960
 The configuration, in 2.2, confirms NF4.
 
 365
-00:23:05,198 --> 00:23:09,934
+00:23:05,200 --> 00:23:09,936
 In 2.3 the base model continues a sentence,
 and it drifts off topic.
 
 366
-00:23:10,254 --> 00:23:13,710
+00:23:10,256 --> 00:23:13,712
 And 2.4 counts trainable parameters: zero.
 
 367
-00:23:14,030 --> 00:23:15,438
+00:23:14,032 --> 00:23:15,440
 Everything is frozen.
 
 368
-00:23:16,481 --> 00:23:18,977
+00:23:16,483 --> 00:23:18,979
 The notebook's step 3 prepares the data.
 
 369
-00:23:19,297 --> 00:23:23,884
+00:23:19,299 --> 00:23:23,886
 It downloads a 23 megabyte file
 and samples 1,000 pairs.
 
 370
-00:23:24,204 --> 00:23:27,830
+00:23:24,206 --> 00:23:27,832
 Look at a row:
 contents, a user turn, a model turn.
 
 371
-00:23:28,150 --> 00:23:32,524
+00:23:28,152 --> 00:23:32,526
 It's exactly the format of track A:
 the brick from part 1 arrives here.
 
 372
-00:23:32,765 --> 00:23:37,200
+00:23:32,767 --> 00:23:37,201
 Section 3.5 lets the tokenizer
 write Qwen's chat template:
 
 373
-00:23:37,200 --> 00:23:40,487
+00:23:37,201 --> 00:23:40,489
 <|im_start|>user, the question, <|im_end|>,
 
 374
-00:23:40,487 --> 00:23:45,074
+00:23:40,489 --> 00:23:45,076
 <|im_start|>assistant,
 an empty think block, and the answer.
 
 375
-00:23:45,394 --> 00:23:49,514
+00:23:45,396 --> 00:23:49,516
 The empty think block is how
 Qwen3 answers without thinking,
 
 376
-00:23:49,514 --> 00:23:51,986
+00:23:49,516 --> 00:23:51,988
 and chat uses the same prefix later.
 
 377
-00:23:52,231 --> 00:23:55,704
+00:23:52,233 --> 00:23:55,706
 Section 3.6 splits 900 for training
 
 378
-00:23:55,704 --> 00:24:00,466
+00:23:55,706 --> 00:24:00,468
 and 100 for testing,
 and 3.7 checks one example.
 
 379
-00:24:00,786 --> 00:24:02,855
+00:24:00,788 --> 00:24:02,856
 Then the ribbon becomes integers,
 
 380
-00:24:02,855 --> 00:24:06,866
+00:24:02,856 --> 00:24:06,868
 and the loss covers every token,
 question and template included.
 
 381
-00:24:07,186 --> 00:24:09,042
+00:24:07,188 --> 00:24:09,044
 It's still next-word prediction.
 
 382
-00:24:09,362 --> 00:24:11,495
+00:24:09,364 --> 00:24:11,497
 Pause, and run steps 1 to 3.
 
 383
-00:24:14,832 --> 00:24:18,035
+00:24:14,833 --> 00:24:18,037
 Parameter-efficient
 fine-tuning trains a small part
 
 384
-00:24:18,035 --> 00:24:19,355
+00:24:18,037 --> 00:24:19,356
 and freezes the rest.
 
 385
-00:24:19,675 --> 00:24:23,127
+00:24:19,676 --> 00:24:23,128
 The lecture sorts the methods
 into three families:
 
 386
-00:24:23,127 --> 00:24:26,096
+00:24:23,128 --> 00:24:26,097
 additive, selective and reparameterization.
 
 387
-00:24:26,416 --> 00:24:28,741
+00:24:26,417 --> 00:24:28,742
 LoRA is a reparameterization.
 
 388
-00:24:28,982 --> 00:24:30,027
+00:24:28,983 --> 00:24:30,028
 Start small.
 
 389
-00:24:30,347 --> 00:24:33,377
+00:24:30,348 --> 00:24:33,378
 A 5 by 5 matrix has 25 numbers.
 
 390
-00:24:33,697 --> 00:24:39,401
+00:24:33,698 --> 00:24:39,403
 A 5 by 1 column times a 1
 by 5 row also makes a 5 by 5 matrix,
 
 391
-00:24:39,401 --> 00:24:41,334
+00:24:39,403 --> 00:24:41,335
 from only 10 numbers.
 
 392
-00:24:41,654 --> 00:24:44,086
+00:24:41,655 --> 00:24:44,087
 That's rank 1; rank 2 needs 20.
 
 393
-00:24:44,406 --> 00:24:46,497
+00:24:44,407 --> 00:24:46,498
 At this size it's barely a saving.
 
 394
-00:24:46,732 --> 00:24:48,524
+00:24:46,733 --> 00:24:48,525
 At real size it's different.
 
 395
-00:24:48,844 --> 00:24:53,798
+00:24:48,845 --> 00:24:53,800
 Qwen's query projection
 is a 2,048 by 1,024 matrix:
 
 396
-00:24:53,798 --> 00:24:56,033
+00:24:53,800 --> 00:24:56,034
 over 2 million numbers.
 
 397
-00:24:56,353 --> 00:25:05,761
+00:24:56,354 --> 00:25:05,762
 A rank 8 pair of strips,
 2,048 by 8 and 8 by 1,024, holds 24,576.
 
 398
-00:25:07,999 --> 00:25:10,986
+00:25:08,000 --> 00:25:10,987
 So LoRA decomposes the update,
 not the weights.
 
 399
-00:25:11,306 --> 00:25:16,874
+00:25:11,307 --> 00:25:16,875
 The new layer is the frozen W₀,
 plus α/r, times B times A.
 
 400
-00:25:17,194 --> 00:25:19,007
+00:25:17,195 --> 00:25:19,008
 Only B and A are trained.
 
 401
-00:25:19,249 --> 00:25:21,681
+00:25:19,250 --> 00:25:21,682
 B starts at zero and A at random.
 
 402
-00:25:22,001 --> 00:25:25,394
+00:25:22,002 --> 00:25:25,396
 The lecture draws
 A from a normal distribution;
 
 403
-00:25:25,394 --> 00:25:27,633
+00:25:25,396 --> 00:25:27,634
 the library uses a uniform one.
 
 404
-00:25:27,953 --> 00:25:31,601
+00:25:27,954 --> 00:25:31,603
 What matters is that B times A starts
 at exactly zero,
 
 405
-00:25:31,601 --> 00:25:34,844
+00:25:31,603 --> 00:25:34,845
 so at step zero the model
 is the pretrained one.
 
 406
-00:25:35,164 --> 00:25:36,998
+00:25:35,165 --> 00:25:36,999
 Both branches' outputs add.
 
 407
-00:25:37,232 --> 00:25:42,562
+00:25:37,233 --> 00:25:42,563
 Now the notebook's step 4,
 the LoRA config: alpha 16 and rank 8,
 
 408
-00:25:42,562 --> 00:25:48,475
+00:25:42,563 --> 00:25:48,476
 so the update is scaled by 2,
 plus a dropout of 0.1 for regularization.
 
 409
-00:25:48,795 --> 00:25:49,947
+00:25:48,796 --> 00:25:49,948
 Pause and run it.
 
 410
-00:25:52,182 --> 00:25:53,249
+00:25:52,183 --> 00:25:53,250
 Which layers?
 
 411
-00:25:53,569 --> 00:25:55,958
+00:25:53,570 --> 00:25:55,959
 The config names no target_modules.
 
 412
-00:25:56,278 --> 00:26:02,179
+00:25:56,279 --> 00:26:02,181
 So for Qwen3, the PEFT library's default
 adapts the query and value projections:
 
 413
-00:26:02,179 --> 00:26:05,942
+00:26:02,181 --> 00:26:05,943
 two of the seven matrices
 in each of the 28 blocks.
 
 414
-00:26:06,262 --> 00:26:13,793
+00:26:06,263 --> 00:26:13,794
 That's 40,960 per block, 1,146,880 in all.
 
 415
-00:26:14,032 --> 00:26:17,662
+00:26:14,033 --> 00:26:17,664
 The lecture's table treats a whole model
 as one square layer;
 
 416
-00:26:17,662 --> 00:26:19,984
+00:26:17,664 --> 00:26:19,985
 the real count depends on these shapes.
 
 417
-00:26:20,304 --> 00:26:21,776
+00:26:20,305 --> 00:26:21,777
 Now, try it yourself.
 
 418
-00:26:30,615 --> 00:26:36,439
+00:26:30,616 --> 00:26:36,440
 Rank 16 doubles it, to 2,293,760.
 
 419
-00:26:36,759 --> 00:26:42,903
+00:26:36,760 --> 00:26:42,904
 All seven projections
 at rank 8 give 5,046,272.
 
 420
-00:26:43,223 --> 00:26:46,770
+00:26:43,224 --> 00:26:46,772
 More rank buys capacity
 at more memory and time;
 
 421
-00:26:46,770 --> 00:26:50,540
+00:26:46,772 --> 00:26:50,541
 for a persona,
 rank 8 on two projections is plenty.
 
 422
-00:26:50,860 --> 00:26:54,103
+00:26:50,861 --> 00:26:54,104
 To try it, reload the model in 1.3 first.
 
 423
-00:26:55,448 --> 00:26:59,437
+00:26:55,450 --> 00:26:59,439
 Back to the memory column,
 at Qwen's size, by our own estimate.
 
 424
-00:26:59,757 --> 00:27:04,351
+00:26:59,759 --> 00:27:04,352
 Full fine-tuning would need
 about 7 gigabytes before activations;
 
 425
-00:27:04,351 --> 00:27:06,541
+00:27:04,352 --> 00:27:06,543
 this notebook's QLoRA, under 1.
 
 426
-00:27:06,861 --> 00:27:12,003
+00:27:06,863 --> 00:27:12,005
 At 0.6 billion parameters,
 even full fine-tuning would fit a T4.
 
 427
-00:27:12,323 --> 00:27:13,383
+00:27:12,325 --> 00:27:13,385
 The recipe matters
 
 428
-00:27:13,383 --> 00:27:16,739
+00:27:13,385 --> 00:27:16,741
 because the same notebook scales
 to models that wouldn't.
 
 429
-00:27:17,981 --> 00:27:20,589
+00:27:17,983 --> 00:27:20,591
 The rest of the memory goes to activations,
 
 430
-00:27:20,589 --> 00:27:23,661
+00:27:20,591 --> 00:27:23,663
 the values each layer computes
 on the way forward,
 
 431
-00:27:23,661 --> 00:27:25,320
+00:27:23,663 --> 00:27:25,322
 kept for the backward pass.
 
 432
-00:27:25,640 --> 00:27:30,584
+00:27:25,642 --> 00:27:30,586
 Gradient checkpointing keeps only a few
 and recomputes the rest when needed:
 
 433
-00:27:30,584 --> 00:27:32,275
+00:27:30,586 --> 00:27:32,277
 compute traded for memory.
 
 434
-00:27:32,515 --> 00:27:35,374
+00:27:32,517 --> 00:27:35,376
 Section 4.2, the training arguments.
 
 435
-00:27:35,694 --> 00:27:40,175
+00:27:35,696 --> 00:27:40,176
 Sequences are capped at 512 tokens
 and grouped by length:
 
 436
-00:27:40,175 --> 00:27:42,007
+00:27:40,176 --> 00:27:42,009
 2 epochs, batches of 4,
 
 437
-00:27:42,007 --> 00:27:45,912
+00:27:42,009 --> 00:27:45,914
 and a learning rate
 of 2 times 10 to the minus 4.
 
 438
-00:27:46,232 --> 00:27:49,262
+00:27:46,234 --> 00:27:49,264
 The optimizer is a paged 32-bit Adam.
 
 439
-00:27:49,582 --> 00:27:54,574
+00:27:49,584 --> 00:27:54,576
 Paging moves optimizer state to CPU memory
 when the GPU fills up.
 
 440
-00:27:54,894 --> 00:27:56,387
+00:27:54,896 --> 00:27:56,389
 Ours never needs to.
 
 441
-00:27:58,631 --> 00:28:01,703
+00:27:58,633 --> 00:28:01,705
 Then fp16 on and bf16 off.
 
 442
-00:28:02,023 --> 00:28:06,234
+00:28:02,025 --> 00:28:06,236
 BF16 keeps the range of float 32
 with less precision,
 
 443
-00:28:06,234 --> 00:28:08,935
+00:28:06,236 --> 00:28:08,937
 and the lecture uses it for QLoRA.
 
 444
-00:28:09,255 --> 00:28:14,802
+00:28:09,257 --> 00:28:14,804
 The T4 has no fast BF16,
 so this notebook computes in FP16.
 
 445
-00:28:15,048 --> 00:28:17,181
+00:28:15,050 --> 00:28:17,183
 4.3 builds the trainer.
 
 446
-00:28:17,501 --> 00:28:23,280
+00:28:17,503 --> 00:28:23,282
 The trainer turns the adapters into BF16,
 which FP16 training cannot handle,
 
 447
-00:28:23,280 --> 00:28:26,397
+00:28:23,282 --> 00:28:26,399
 so this cell casts them back to float 32.
 
 448
-00:28:26,717 --> 00:28:36,040
+00:28:26,719 --> 00:28:36,042
 And the count confirms our arithmetic:
 1,146,880 trainable parameters, 0.3 percent.
 
 449
-00:28:36,281 --> 00:28:40,367
+00:28:36,283 --> 00:28:40,369
 In the backward pass,
 the gradient flows down through W₀,
 
 450
-00:28:40,367 --> 00:28:42,446
+00:28:40,369 --> 00:28:42,448
 and only B and A are updated.
 
 451
-00:28:42,766 --> 00:28:48,100
+00:28:42,768 --> 00:28:48,102
 W₀ is used on the way down;
 it just gets no gradient and no update.
 
 452
-00:28:48,348 --> 00:28:53,972
+00:28:48,350 --> 00:28:53,974
 4.4, train:
 900 examples in batches of 4 for 2 epochs
 
 453
-00:28:53,972 --> 00:29:00,444
+00:28:53,974 --> 00:29:00,446
 is 450 steps, 3 minutes and 36 seconds
 on the saved A100 run.
 
 454
-00:29:00,764 --> 00:29:03,537
+00:29:00,766 --> 00:29:03,539
 The notebook says 6 to 7 minutes on a T4.
 
 455
-00:29:03,857 --> 00:29:07,569
+00:29:03,859 --> 00:29:07,571
 The loss falls from 2.0 to 1.35.
 
 456
-00:29:07,889 --> 00:29:12,113
+00:29:07,891 --> 00:29:12,115
 And 4.5, TensorBoard, shows these curves
 in your own run.
 
 457
-00:29:12,433 --> 00:29:13,585
+00:29:12,435 --> 00:29:13,587
 Pause and train.
 
 458
-00:29:16,932 --> 00:29:17,932
+00:29:16,933 --> 00:29:17,933
 Did it work?
 
 459
-00:29:18,233 --> 00:29:20,367
+00:29:18,234 --> 00:29:20,368
 Section 5.1 measures it.
 
 460
-00:29:20,687 --> 00:29:24,336
+00:29:20,688 --> 00:29:24,338
 Perplexity is the exponential
 of the average token loss:
 
 461
-00:29:24,336 --> 00:29:29,028
+00:29:24,338 --> 00:29:29,029
 roughly how many equally likely next tokens
 the model is choosing among.
 
 462
-00:29:29,815 --> 00:29:34,079
+00:29:29,816 --> 00:29:34,080
 On 100 test examples, 30,681 tokens,
 
 463
-00:29:34,079 --> 00:29:41,186
+00:29:34,080 --> 00:29:41,187
 the base model has
 a loss of 2.65 and a perplexity of 14.15.
 
 464
-00:29:41,506 --> 00:29:45,815
+00:29:41,507 --> 00:29:45,816
 The fine-tuned model:
 1.39, and a perplexity of 4.
 
 465
-00:29:46,065 --> 00:29:49,926
+00:29:46,066 --> 00:29:49,927
 The base row is the same model
 inside disable_adapter().
 
 466
-00:29:50,246 --> 00:29:53,492
+00:29:50,247 --> 00:29:53,494
 Switch the adapter off
 and the original model,
 
 467
-00:29:53,492 --> 00:29:56,668
+00:29:53,494 --> 00:29:56,669
 in 4 bits, is back,
 because W₀ never changed.
 
 468
-00:29:56,988 --> 00:30:00,517
+00:29:56,989 --> 00:30:00,519
 That's the lecture's point
 about catastrophic forgetting,
 
 469
-00:30:00,517 --> 00:30:05,905
+00:30:00,519 --> 00:30:05,906
 losing old skills while learning new ones:
 with LoRA, the old model is one switch away.
 
 470
-00:30:06,149 --> 00:30:09,712
+00:30:06,150 --> 00:30:09,713
 In the saved run,
 every base answer starts with the word The.
 
 471
-00:30:10,032 --> 00:30:15,088
+00:30:10,033 --> 00:30:15,089
 The fine-tuned ones start with welcome
 or Yello, the openers of its training data.
 
 472
-00:30:15,408 --> 00:30:19,653
+00:30:15,409 --> 00:30:19,654
 Those bars are an illustration;
 the measured numbers sit beside them.
 
 473
-00:30:19,899 --> 00:30:21,392
+00:30:19,900 --> 00:30:21,393
 What does the drop measure?
 
 474
-00:30:21,712 --> 00:30:25,446
+00:30:21,713 --> 00:30:25,447
 The loss counts every token,
 questions and template included.
 
 475
-00:30:25,766 --> 00:30:28,769
+00:30:25,767 --> 00:30:28,771
 It says this style is what the model
 now expects,
 
 476
-00:30:28,769 --> 00:30:31,099
+00:30:28,771 --> 00:30:31,100
 not that its answers are more correct.
 
 477
-00:30:31,349 --> 00:30:33,376
+00:30:31,350 --> 00:30:33,377
 5.2 compares answers.
 
 478
-00:30:33,696 --> 00:30:37,495
+00:30:33,697 --> 00:30:37,497
 Both cheese answers now open
 with welcome welcome welcome,
 
 479
-00:30:37,495 --> 00:30:40,181
+00:30:37,497 --> 00:30:40,182
 cheese lovers, in the instructor's voice.
 
 480
-00:30:40,501 --> 00:30:43,829
+00:30:40,502 --> 00:30:43,830
 And the sky:
 the voice transferred, the physics did not.
 
 481
-00:30:44,149 --> 00:30:46,047
+00:30:44,150 --> 00:30:46,048
 Pause, and run section 5.
 
 482
-00:30:48,282 --> 00:30:49,477
+00:30:48,283 --> 00:30:49,478
 Two kind notes.
 
 483
-00:30:49,797 --> 00:30:53,225
+00:30:49,798 --> 00:30:53,227
 In this comparison the base
 is a fresh 16-bit model,
 
 484
-00:30:53,225 --> 00:30:57,050
+00:30:53,227 --> 00:30:57,051
 not the 4-bit one from the table,
 so the baselines differ.
 
 485
-00:30:57,370 --> 00:31:02,311
+00:30:57,371 --> 00:31:02,313
 And the lecture shows LoRA matching
 full fine-tuning on a published benchmark;
 
 486
-00:31:02,311 --> 00:31:05,669
+00:31:02,313 --> 00:31:05,670
 this notebook measures style fit,
 not answer quality.
 
 487
-00:31:07,515 --> 00:31:09,648
+00:31:07,517 --> 00:31:09,650
 The notebook's step 6 saves your work.
 
 488
-00:31:09,968 --> 00:31:17,542
+00:31:09,970 --> 00:31:17,543
 First the adapters: 1,146,880 numbers,
 about 4.6 megabytes in float 32,
 
 489
-00:31:17,542 --> 00:31:21,702
+00:31:17,543 --> 00:31:21,704
 saved to your Drive with the tokenizer.
 
 490
-00:31:26,148 --> 00:31:27,172
+00:31:26,150 --> 00:31:27,174
 Then the merge.
 
 491
-00:31:27,492 --> 00:31:32,847
+00:31:27,494 --> 00:31:32,849
 The notebook loads a fresh 16-bit copy
 of the base and adds B times A into it.
 
 492
-00:31:33,167 --> 00:31:38,393
+00:31:33,169 --> 00:31:38,395
 Not into the 4-bit weights: there,
 the update would round back onto 16 levels.
 
 493
-00:31:38,713 --> 00:31:41,785
+00:31:38,715 --> 00:31:41,787
 The merged model is about 1.2 gigabytes.
 
 494
-00:31:42,105 --> 00:31:45,025
+00:31:42,107 --> 00:31:45,026
 If the merge raises a torchao ImportError,
 
 495
-00:31:45,025 --> 00:31:48,292
+00:31:45,026 --> 00:31:48,294
 rerun the install cell
 and restart the session.
 
 496
-00:31:50,532 --> 00:31:56,292
+00:31:50,534 --> 00:31:56,294
 Section 6.3 can push the merged model
 to a private Hugging Face repository.
 
 497
-00:31:56,612 --> 00:31:58,434
+00:31:56,614 --> 00:31:58,436
 So you can ship three things:
 
 498
-00:31:58,434 --> 00:32:02,518
+00:31:58,436 --> 00:32:02,520
 an adapter that needs its base,
 a merged model that stands alone,
 
 499
-00:32:02,518 --> 00:32:05,785
+00:32:02,520 --> 00:32:05,787
 or Google's endpoint,
 with no weights in your hands.
 
 500
-00:32:06,032 --> 00:32:07,032
+00:32:06,034 --> 00:32:07,034
 Teardown.
 
 501
-00:32:07,291 --> 00:32:12,005
+00:32:07,293 --> 00:32:12,007
 Exit the container
 and remove both images with docker image rm.
 
 502
-00:32:12,325 --> 00:32:14,864
+00:32:12,327 --> 00:32:14,866
 Delete the dataset folder in your bucket.
 
 503
-00:32:15,184 --> 00:32:16,425
+00:32:15,186 --> 00:32:16,427
 Keep the tuned model
 
 504
-00:32:16,425 --> 00:32:19,280
+00:32:16,427 --> 00:32:19,282
 and endpoint for lecture 10,
 then delete them.
 
 505
-00:32:19,600 --> 00:32:24,784
+00:32:19,602 --> 00:32:24,786
 Delete unused service account keys,
 and disconnect and delete the Colab runtime.
 
 506
-00:32:25,104 --> 00:32:26,469
+00:32:25,106 --> 00:32:26,471
 Pause, and tear down.
 
 507
-00:32:28,715 --> 00:32:29,952
+00:32:28,717 --> 00:32:29,954
 Here's where we are.
 
 508
-00:32:30,272 --> 00:32:32,640
+00:32:30,274 --> 00:32:32,641
 Prompts and retrieval change the input;
 
 509
-00:32:32,640 --> 00:32:36,950
+00:32:32,641 --> 00:32:36,952
 fine-tuning changes the weights,
 and here it taught a voice, not facts.
 
 510
-00:32:37,270 --> 00:32:41,344
+00:32:37,272 --> 00:32:41,346
 In track A, a teacher wrote the data
 and Google tuned the model.
 
 511
-00:32:41,664 --> 00:32:47,670
+00:32:41,666 --> 00:32:47,672
 In track B, QLoRA froze a 4-bit base
 and trained two thin matrices:
 
 512
-00:32:47,670 --> 00:32:50,539
+00:32:47,672 --> 00:32:50,541
 120, then 40, then 12 gigabytes.
 
 513
-00:32:54,382 --> 00:32:56,387
+00:32:54,384 --> 00:32:56,389
 Five questions to test yourself.
 
 514
-00:32:56,707 --> 00:32:59,331
+00:32:56,709 --> 00:32:59,333
 What did this fine-tune change,
 and what not?
 
 515
-00:32:59,651 --> 00:33:02,489
+00:32:59,653 --> 00:33:02,491
 Why did generate exit zero without a key?
 
 516
-00:33:02,809 --> 00:33:05,817
+00:33:02,811 --> 00:33:05,819
 Which shapes does one pair take
 on its way to the template?
 
 517
-00:33:06,137 --> 00:33:08,718
+00:33:06,139 --> 00:33:08,720
 Why does train print Tuned model info: None?
 
 518
-00:33:09,038 --> 00:33:14,030
+00:33:09,040 --> 00:33:14,032
 And where does 1,146,880 come from?
 
 519
-00:33:17,265 --> 00:33:19,129
+00:33:17,267 --> 00:33:19,131
 Next, lecture 9 tests code,
 
 520
-00:33:19,129 --> 00:33:22,236
+00:33:19,131 --> 00:33:22,238
 and in lecture 10 an app
 calls your endpoint.
 
 521
-00:33:22,556 --> 00:33:26,396
+00:33:22,558 --> 00:33:26,398
 The study guide
 and the exercises are in MLOps_Learning.
 
