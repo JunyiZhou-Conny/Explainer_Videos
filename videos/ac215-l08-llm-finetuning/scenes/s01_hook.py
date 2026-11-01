@@ -126,21 +126,21 @@ SAY = NARRATION["S01"]
 C82 = capture("expected/colab-c82-base-vs-finetuned")   # the staff's saved run of cell 82 (A100)
 C75 = capture("expected/colab-c75-train")
 C72 = capture("expected/colab-c72-sfttrainer-trainable")
-_guard(("[450/450 03:36" in C75.line(5)), (C75.line(5)))
-_guard(("trainable params: 1146880" in C72.line(23)), (C72.line(23)))
+assert "[450/450 03:36" in C75.line(5), C75.line(5)
+assert "trainable params: 1146880" in C72.line(23), C72.line(23)
 
 BASE_PARAS = [C82.cut(155, "atmosphere."), C82.cut(156, "(refracts)")]
 _FT_LINE = unname(C82.line(159))
 _FT_SUB = "The blue color of the sky is due to the scattering of light by the water molecules in the atmosphere."
-_guard((_FT_SUB in _FT_LINE and not _FT_LINE.rstrip().endswith(_FT_SUB)), (""))
+assert _FT_SUB in _FT_LINE and not _FT_LINE.rstrip().endswith(_FT_SUB)
 FT_PARAS = [C82.cut(159, "sky's blue!") + " " + _FT_SUB + " …"]
 OPENER = "Yello - this is ‹instructor› your cheese monker"
-_guard((FT_PARAS[0].startswith(OPENER)), (""))
+assert FT_PARAS[0].startswith(OPENER)
 REFRACT = "**Light Refraction**"
 WATER = "water molecules"
-_guard((REFRACT in BASE_PARAS[1] and WATER in FT_PARAS[0]), (""))
+assert REFRACT in BASE_PARAS[1] and WATER in FT_PARAS[0]
 SOURCE82 = colab_where(82)                               # "QLoRA notebook · 5.2 · cell 82"
-_guard((SOURCE82 == "QLoRA notebook · 5.2 · cell 82"), (SOURCE82))
+assert SOURCE82 == "QLoRA notebook · 5.2 · cell 82", SOURCE82
 
 QUESTION2 = "What did it learn — and what didn't it?"
 REASON = "the real reason: air molecules scatter blue light more than red (Rayleigh scattering)"
@@ -181,8 +181,8 @@ def apart(a, b, gap: float = 0.05):
     """Assert the bounding boxes of a and b do not overlap."""
     sep = (a.get_right()[0] + gap <= b.get_left()[0] or b.get_right()[0] + gap <= a.get_left()[0]
            or a.get_top()[1] + gap <= b.get_bottom()[1] or b.get_top()[1] + gap <= a.get_bottom()[1])
-    _guard((sep), ((a.get_corner(DOWN + LEFT), a.get_corner(UP + RIGHT), b.get_corner(DOWN + LEFT),
-                 b.get_corner(UP + RIGHT))))
+    _guard(sep, (a.get_corner(DOWN + LEFT), a.get_corner(UP + RIGHT), b.get_corner(DOWN + LEFT),
+                 b.get_corner(UP + RIGHT)))
 
 
 def pulse(m, color: str = TURN, k: float = 1.06, run_time: float = 0.7, width: float | None = None):
@@ -201,7 +201,7 @@ def rich(s: str, size: float = PT, color: str = INK, lead: tuple | None = None):
             spans.append((len(plain), len(plain) + len(p)))
         plain += p
     t = S.text(plain, size, color, t2f={f"[{a}:{b}]": MONO for a, b in spans}, disable_ligatures=True)
-    _guard((len(t) == len(plain)), ((len(t), plain)))
+    assert len(t) == len(plain), (len(t), plain)
     for sub in (*MASKS, "…"):
         i = plain.find(sub)
         while i >= 0:
@@ -339,7 +339,7 @@ class Hook(VoiceScene):
                 if m in fam or any(f in fam for f in m.get_family())]
 
     def construct(self):
-        _guard((len(SAY) == 7), (len(SAY)))
+        assert len(SAY) == 7, len(SAY)
 
         # ========================================================== 0. the question, two cards
         q = label("Why is the sky blue?", 30, INK)

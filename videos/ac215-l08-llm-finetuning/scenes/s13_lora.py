@@ -68,31 +68,31 @@ SAY = NARRATION["S13"]
 
 # ------------------------------------------------------------------ the real sources
 CELL67 = "colab/cell-67.py"
-_guard((source_line(CELL67, 2).startswith("peft_config = LoraConfig(lora_alpha=16,")), (source_line(CELL67, 2)))
-_guard((source_line(CELL67, 3).strip().startswith("lora_dropout=0.1,")), (source_line(CELL67, 3)))
-_guard((source_line(CELL67, 4).strip().startswith("r=8,")), (source_line(CELL67, 4)))
-_guard((source_line(CELL67, 6).strip().startswith('task_type="CAUSAL_LM",')), (source_line(CELL67, 6)))
-_guard(("target_modules" not in excerpt(CELL67, 1, 7)), (""))
+assert source_line(CELL67, 2).startswith("peft_config = LoraConfig(lora_alpha=16,"), source_line(CELL67, 2)
+assert source_line(CELL67, 3).strip().startswith("lora_dropout=0.1,"), source_line(CELL67, 3)
+assert source_line(CELL67, 4).strip().startswith("r=8,"), source_line(CELL67, 4)
+assert source_line(CELL67, 6).strip().startswith('task_type="CAUSAL_LM",'), source_line(CELL67, 6)
+assert "target_modules" not in excerpt(CELL67, 1, 7)
 C42 = capture("expected/colab-c42-qwen-config")
 _cfg = {k: C42.line(n).strip() for k, n in (("head", 16), ("hidden", 18), ("inter", 20), ("heads", 54),
                                              ("layers", 55), ("kv", 56))}
-_guard((_cfg == {"head": '"head_dim": 128,', "hidden": '"hidden_size": 1024,', "inter": '"intermediate_size": 3072,',
+assert _cfg == {"head": '"head_dim": 128,', "hidden": '"hidden_size": 1024,', "inter": '"intermediate_size": 3072,',
                 "heads": '"num_attention_heads": 16,', "layers": '"num_hidden_layers": 28,',
-                "kv": '"num_key_value_heads": 8,'}), (_cfg))
+                "kv": '"num_key_value_heads": 8,'}, _cfg
 
 # the counts, from the shapes (in + out per matrix)
 INTER = 3072
 SHAPES = (("q", HIDDEN, Q_OUT), ("k", HIDDEN, KV_OUT), ("v", HIDDEN, KV_OUT), ("o", Q_OUT, HIDDEN),
           ("gate", HIDDEN, INTER), ("up", HIDDEN, INTER), ("down", INTER, HIDDEN))
-_guard((Q_OUT == 16 * 128 and KV_OUT == 8 * 128 and HIDDEN == 1024), (""))
+assert Q_OUT == 16 * 128 and KV_OUT == 8 * 128 and HIDDEN == 1024
 PER_BLOCK = LORA_R * (HIDDEN + Q_OUT) + LORA_R * (HIDDEN + KV_OUT)
-_guard((PER_BLOCK == 40_960 and PER_BLOCK * QWEN_LAYERS == TRAINABLE == 1_146_880), (""))
+assert PER_BLOCK == 40_960 and PER_BLOCK * QWEN_LAYERS == TRAINABLE == 1_146_880
 R16 = 16 * (HIDDEN + Q_OUT + HIDDEN + KV_OUT) * QWEN_LAYERS
 ALL7 = sum(i + o for _, i, o in SHAPES)
-_guard((R16 == 2_293_760 and ALL7 == 22_528 and LORA_R * ALL7 * QWEN_LAYERS == 5_046_272), (""))
-_guard((Q_OUT * HIDDEN == 2_097_152 and LORA_R * (Q_OUT + HIDDEN) == 24_576), (""))
+assert R16 == 2_293_760 and ALL7 == 22_528 and LORA_R * ALL7 * QWEN_LAYERS == 5_046_272
+assert Q_OUT * HIDDEN == 2_097_152 and LORA_R * (Q_OUT + HIDDEN) == 24_576
 SQ = 83_666                                     # √(7 × 10⁹), the lecture's one square layer (slides 32–35)
-_guard((abs(SQ - (7e9) ** 0.5) < 1 and 2 * SQ == 167_332), (""))
+assert abs(SQ - (7e9) ** 0.5) < 1 and 2 * SQ == 167_332
 
 # ------------------------------------------------------------------ layout
 SAFE_L, SAFE_R = -6.45, 6.45
@@ -147,7 +147,7 @@ def family_card(title: str, sub: list[str], w: float = 3.95) -> VGroup:
 
 class LowRank(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 9), (len(SAY)))
+        assert len(SAY) == 9, len(SAY)
 
         # ========================================================== 0 · PEFT: three families; LoRA is a reparameterization
         model = model_box("pretrained model", w=3.4, h=1.0, color=FROZEN)

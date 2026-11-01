@@ -73,36 +73,36 @@ SAY = NARRATION["S04"]
 
 # ------------------------------------------------------------------ the real captures (file line numbers)
 BUILD = capture("laptop/07")
-_guard((BUILD.cmd == "sh docker-shell.sh"), (BUILD.cmd))
-_guard(("Building 45.1s (11/11) FINISHED" in BUILD.line(3)), (BUILD.line(3)))
-_guard(("python:3.12-slim-bookworm" in BUILD.line(9) and "uv sync" in BUILD.line(15)), (BUILD.lines))
-_guard((BUILD.line(23) == "Environment ready! Virtual environment activated."), (BUILD.line(23)))
-_guard((BUILD.line(26) == "Activating virtual environment..."), (BUILD.line(26)))
-_guard((BUILD.cut_before(27, " exit") == P_CTR_DC), (BUILD.line(27)))
+assert BUILD.cmd == "sh docker-shell.sh", BUILD.cmd
+assert "Building 45.1s (11/11) FINISHED" in BUILD.line(3), BUILD.line(3)
+assert "python:3.12-slim-bookworm" in BUILD.line(9) and "uv sync" in BUILD.line(15), BUILD.lines
+assert BUILD.line(23) == "Environment ready! Virtual environment activated.", BUILD.line(23)
+assert BUILD.line(26) == "Activating virtual environment...", BUILD.line(26)
+assert BUILD.cut_before(27, " exit") == P_CTR_DC, BUILD.line(27)
 WHO = capture("dataset-creator/00")            # (extra card, never typed) which python, which settings
-_guard((WHO.line(5) == "/.venv/bin/python"), (WHO.line(5)))
-_guard((WHO.line(11).startswith("GOOGLE_APPLICATION_CREDENTIALS=/secrets/")), (WHO.line(11)))
+assert WHO.line(5) == "/.venv/bin/python", WHO.line(5)
+assert WHO.line(11).startswith("GOOGLE_APPLICATION_CREDENTIALS=/secrets/"), WHO.line(11)
 LS = capture("dataset-creator/01")
-_guard((LS.cmd == "ls -la /secrets" and LS.line(2) == "total 0"), (LS.lines))
+assert LS.cmd == "ls -la /secrets" and LS.line(2) == "total 0", LS.lines
 HELP = capture("dataset-creator/04")
-_guard((HELP.cmd == "python cli.py --help"), (HELP.cmd))
+assert HELP.cmd == "python cli.py --help", HELP.cmd
 DASH = capture("laptop/20")
-_guard((DASH.cmd == "dash docker-shell.sh" and "source: not found" in DASH.line(2)), (DASH.lines))
+assert DASH.cmd == "dash docker-shell.sh" and "source: not found" in DASH.line(2), DASH.lines
 WRONG = capture("laptop/21")
-_guard((WRONG.cmd == "sh dataset-creator/docker-shell.sh" and "../env.dev" in WRONG.line(2)), (WRONG.lines))
+assert WRONG.cmd == "sh dataset-creator/docker-shell.sh" and "../env.dev" in WRONG.line(2), WRONG.lines
 AGAIN = capture("laptop/11")                   # the Conflict card's source (not printed)
-_guard(("Conflict." in AGAIN.line(21) and "already in use" in AGAIN.line(21) + AGAIN.line(22)), (AGAIN.lines))
+assert "Conflict." in AGAIN.line(21) and "already in use" in AGAIN.line(21) + AGAIN.line(22), AGAIN.lines
 IMG = capture("laptop/09")
-_guard((IMG.cmd == "docker images" and "1.64GB" in IMG.line(3)), (IMG.lines))
+assert IMG.cmd == "docker images" and "1.64GB" in IMG.line(3), IMG.lines
 PKG = capture("dataset-creator/02")            # 133 packages, 587M, chromadb and langchain installed
-_guard((PKG.line(13) == "packages in /.venv: 133" and PKG.line(14).startswith("587M")), (PKG.lines))
-_guard((PKG.line(2).startswith("chromadb ") and PKG.line(6).startswith("langchain ")), (PKG.lines))
+assert PKG.line(13) == "packages in /.venv: 133" and PKG.line(14).startswith("587M"), PKG.lines
+assert PKG.line(2).startswith("chromadb ") and PKG.line(6).startswith("langchain "), PKG.lines
 
 CD1 = "cd llm-finetuning/dataset-creator"        # README.md:83 "make sure you are inside" (no output)
 CD_UP = "cd .."                                  # (extra) navigation, no output
 CD_DC = "cd dataset-creator"                     # (extra) navigation, no output
-_guard((source_line("README.md", 68).find("Always `cd` into the container folder") >= 0), (""))
-_guard(("ls -la /secrets" in source_line("README.md", 69)), (""))
+assert source_line("README.md", 68).find("Always `cd` into the container folder") >= 0
+assert "ls -la /secrets" in source_line("README.md", 69)
 
 # ------------------------------------------------------------------ layout
 T_ROWS_MID = 10                 # beats 2-3: room for the extra card / README chip above the terminal
@@ -176,7 +176,7 @@ def mount_row(host: str, path: str, x_arrow: float, with_key: bool = False) -> V
 
 class DatasetContainer(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 7), (len(SAY)))
+        assert len(SAY) == 7, len(SAY)
 
         # ========================================================== 0 · steps 1-2: cd, sh docker-shell.sh
         tr = tracker("DsRun", 1)
@@ -305,7 +305,7 @@ class DatasetContainer(VoiceScene):
             _guard((xc.get_left()[0] > tr.get_right()[0] + 0.1 or xc.get_top()[1] < tr.get_bottom()[1]), (""))
             ban = t.print(self, BUILD.out((21, 26)), run_time=0.8)
             r22, r23, r26 = ban[1], ban[2], ban[5]
-            _guard((r23.text == BUILD.line(23) and r26.text == BUILD.line(26)), ((r23.text, r26.text)))
+            assert r23.text == BUILD.line(23) and r26.text == BUILD.line(26), (r23.text, r26.text)
             anims = enter_container(t, "dc")
             pr = bare_prompt(self, t)
             self.play(*anims, run_time=0.6)

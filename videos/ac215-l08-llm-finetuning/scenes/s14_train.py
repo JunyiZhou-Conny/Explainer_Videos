@@ -71,35 +71,35 @@ SAY = NARRATION["S14"]
 # ------------------------------------------------------------------ the real sources and captures
 CELL70 = "colab/cell-70.py"
 CELL72 = "colab/cell-72.py"
-_guard((source_line(CELL70, 3).strip() == "max_length=512,"), (""))
-_guard((source_line(CELL70, 5).strip().startswith("num_train_epochs=2,")), (""))
-_guard((source_line(CELL70, 6).strip().startswith("per_device_train_batch_size=4,")), (""))
-_guard((source_line(CELL70, 7).strip().startswith('optim="paged_adamw_32bit",')), (""))
-_guard((source_line(CELL70, 10).strip().startswith("learning_rate=2e-4,")), (""))
-_guard((source_line(CELL70, 12).strip().startswith("fp16=True,")), (""))
-_guard((source_line(CELL70, 13).strip().startswith("bf16=False,")), (""))
-_guard((source_line(CELL70, 15).strip().startswith('train_sampling_strategy="group_by_length",')), (""))
-_guard((source_line(CELL72, 12).startswith("for param in trainer.model.parameters():")), (""))
-_guard((source_line(CELL72, 14).strip() == "param.data = param.data.float()"), (""))
+assert source_line(CELL70, 3).strip() == "max_length=512,"
+assert source_line(CELL70, 5).strip().startswith("num_train_epochs=2,")
+assert source_line(CELL70, 6).strip().startswith("per_device_train_batch_size=4,")
+assert source_line(CELL70, 7).strip().startswith('optim="paged_adamw_32bit",')
+assert source_line(CELL70, 10).strip().startswith("learning_rate=2e-4,")
+assert source_line(CELL70, 12).strip().startswith("fp16=True,")
+assert source_line(CELL70, 13).strip().startswith("bf16=False,")
+assert source_line(CELL70, 15).strip().startswith('train_sampling_strategy="group_by_length",')
+assert source_line(CELL72, 12).startswith("for param in trainer.model.parameters():")
+assert source_line(CELL72, 14).strip() == "param.data = param.data.float()"
 C31 = capture("expected/colab-c31-gpu-bf16-check")
 C72 = capture("expected/colab-c72-sfttrainer-trainable")
 C75 = capture("expected/colab-c75-train")
 C77 = capture("expected/colab-c77-tensorboard")
-_guard((C31.line(9).startswith("Your GPU supports bfloat16.")), (""))
-_guard((C72.line(23).startswith("trainable params: 1146880 ||") and TRAINABLE == 1_146_880), (""))
-_guard((C75.line(5) == "[450/450 03:36, Epoch 2/2]"), (C75.line(5)))
-_guard((C77.line(4).startswith("Output hidden;")), (""))
+assert C31.line(9).startswith("Your GPU supports bfloat16.")
+assert C72.line(23).startswith("trainable params: 1146880 ||") and TRAINABLE == 1_146_880
+assert C75.line(5) == "[450/450 03:36, Epoch 2/2]", C75.line(5)
+assert C77.line(4).startswith("Output hidden;")
 LOSS = loss_points()
-_guard((LOSS[0] == (50, 2.007381) and LOSS[-1] == (450, 1.350437) and len(LOSS) == 9), (""))
-_guard((900 // 4 * 2 == 450), (""))
+assert LOSS[0] == (50, 2.007381) and LOSS[-1] == (450, 1.350437) and len(LOSS) == 9
+assert 900 // 4 * 2 == 450
 
 # ------------------------------------------------------------------ our 0.6 B estimate (script.md "V5 numbers")
 N_PARAMS = 596e6                      # Qwen3-0.6B
 GB = 1e9
 FULL_P, FULL_G, FULL_O = N_PARAMS * 2 / GB, N_PARAMS * 2 / GB, N_PARAMS * 8 / GB      # 1.19, 1.19, 4.77
-_guard((abs(FULL_P + FULL_G + FULL_O - 7.15) < 0.01), (""))
+assert abs(FULL_P + FULL_G + FULL_O - 7.15) < 0.01
 Q_LIN, Q_EMB, Q_AB = 0.22, 0.62, 0.018                                              # GB
-_guard((abs(Q_LIN + Q_EMB + Q_AB - 0.86) < 0.01), (""))
+assert abs(Q_LIN + Q_EMB + Q_AB - 0.86) < 0.01
 
 # ------------------------------------------------------------------ layout
 SAFE_L, SAFE_R = -6.45, 6.45
@@ -200,7 +200,7 @@ def paging_row() -> VGroup:
 
 class SmallGpu(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 7), (len(SAY)))
+        assert len(SAY) == 7, len(SAY)
 
         # ========================================================== 0 · V5 at 0.6 B: 7 GB vs 0.9 GB inside a T4; 10 B overflows
         t4 = box(10.5, 16 * SC, S.GREY, dashed=True, radius=0.08)

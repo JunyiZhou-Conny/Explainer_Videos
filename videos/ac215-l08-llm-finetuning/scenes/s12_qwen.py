@@ -81,29 +81,29 @@ SAY = NARRATION["S12"]
 CELL34, CELL18, CELL36 = "colab/cell-34.py", "colab/cell-18.py", "colab/cell-36.py"
 CELL38 = "colab/cell-38.py"
 CELL45, CELL53, CELL59 = "colab/cell-45.py", "colab/cell-53.py", "colab/cell-59.py"
-_guard((source_line(CELL34, 2).strip() == "load_in_4bit=True,"), (source_line(CELL34, 2)))
-_guard((source_line(CELL36, 18) == "base_model = prepare_model_for_kbit_training(base_model)"), (""))
-_guard((source_line(CELL45, 1) == 'text = "Hello my cheese name is"'), (""))
-_guard((source_line(CELL53, 4) == "print(df.iloc[0]['contents'])"), (""))
+assert source_line(CELL34, 2).strip() == "load_in_4bit=True,", source_line(CELL34, 2)
+assert source_line(CELL36, 18) == "base_model = prepare_model_for_kbit_training(base_model)"
+assert source_line(CELL45, 1) == 'text = "Hello my cheese name is"'
+assert source_line(CELL53, 4) == "print(df.iloc[0]['contents'])"
 L59 = source_line(CELL59, 13)
 TEMPLATE_CALL = "tokenizer.apply_chat_template(messages, tokenize=False)"
-_guard((TEMPLATE_CALL in L59), (L59))
+assert TEMPLATE_CALL in L59, L59
 C38 = capture("expected/colab-c38-num-params")
-_guard((C38.line(5) == "Number of parameters: 375.84896 millions."), (C38.line(5)))
+assert C38.line(5) == "Number of parameters: 375.84896 millions.", C38.line(5)
 C42 = capture("expected/colab-c42-qwen-config")
-_guard((C42.line(63).strip() == '"bnb_4bit_quant_type": "nf4",' and C42.line(71).strip() == '"quant_method": "bitsandbytes"'), (""))
+assert C42.line(63).strip() == '"bnb_4bit_quant_type": "nf4",' and C42.line(71).strip() == '"quant_method": "bitsandbytes"'
 C45 = capture("expected/colab-c45-baseline-generate")
 C48 = capture("expected/colab-c48-trainable-before")
-_guard((C48.line(5).startswith("trainable params: 0 ||")), (C48.line(5)))
+assert C48.line(5).startswith("trainable params: 0 ||"), C48.line(5)
 C51 = capture("expected/colab-c51-gdown-dataset")
-_guard((C51.line(5) == "To: /content/train_16k.jsonl" and "23.2M/23.2M" in C51.line(6)), (""))
+assert C51.line(5) == "To: /content/train_16k.jsonl" and "23.2M/23.2M" in C51.line(6)
 C53 = capture("expected/colab-c53-sample-1000")
-_guard((C53.line(7) == "(1000, 1)"), (C53.line(7)))
+assert C53.line(7) == "(1000, 1)", C53.line(7)
 ROW53 = C53.cut(8, "Italy influence the production of its cheeses?'}]}")
 C55 = capture("expected/colab-c55-extract-qa")
-_guard((C55.line(26).startswith("1  Hi everyone") and C55.line(28).startswith("3  Yello")), (C55.line(28)))
+assert C55.line(26).startswith("1  Hi everyone") and C55.line(28).startswith("3  Yello"), C55.line(28)
 C61 = capture("expected/colab-c61-train-test-split")
-_guard((C61.line(11) == "(900, 3)" and C61.line(12) == "(100, 3)"), (""))
+assert C61.line(11) == "(900, 3)" and C61.line(12) == "(100, 3)"
 C63 = capture("expected/colab-c63-one-example")
 EX63 = C63.line(3)                     # one long Column([...]) repr; the persona already masked
 
@@ -121,7 +121,7 @@ RIBBON = [
 
 def _check_ribbon() -> None:
     """Every piece is c63's own text in order; "…" marks the only places where text is left out."""
-    _guard((EX63.startswith('Column(["')), (EX63[:12]))
+    assert EX63.startswith('Column(["'), EX63[:12]
     pos, gap = len('Column(["'), False
     for row in RIBBON:
         for text, _ in row:
@@ -132,11 +132,11 @@ def _check_ribbon() -> None:
                     gap = True
                     continue
                 i = EX63.find(frag, pos)
-                _guard((i == pos or (gap and i > pos)), ((text, frag, pos, EX63[pos:pos + 30])))
+                assert i == pos or (gap and i > pos), (text, frag, pos, EX63[pos:pos + 30])
                 pos, gap = i + len(frag), False
             if text.endswith("…"):
                 gap = True
-    _guard((EX63[pos:] == '"])'), (EX63[pos:]))
+    assert EX63[pos:] == '"])', EX63[pos:]
 
 
 _check_ribbon()
@@ -221,7 +221,7 @@ def bar_cells(n: int, w: float, h: float, x0: float, y: float, fill: float = 0.3
 
 class QwenInFourBits(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 7), (len(SAY)))
+        assert len(SAY) == 7, len(SAY)
 
         # ========================================================== 0 · the same 4-bit recipe; prepare_model_for_kbit_training
         cf = colab_notebook()

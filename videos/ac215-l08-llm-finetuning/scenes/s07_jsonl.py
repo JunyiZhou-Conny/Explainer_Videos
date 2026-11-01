@@ -86,31 +86,31 @@ SAY = NARRATION["S07"]
 # ------------------------------------------------------------------ the real captures and sources
 CLI = "dataset-creator/cli.py"
 CSVH = capture("dataset-creator/13")
-_guard((CSVH.cmd.startswith("head -4 data/train.csv")), (CSVH.cmd))
-_guard((CSVH.line(3) == '"human: What makes Comte different from Gruyere?'), (CSVH.line(3)))
-_guard((CSVH.line(4).startswith("bot: Glad you ask!")), (CSVH.line(4)))
+assert CSVH.cmd.startswith("head -4 data/train.csv"), CSVH.cmd
+assert CSVH.line(3) == '"human: What makes Comte different from Gruyere?', CSVH.line(3)
+assert CSVH.line(4).startswith("bot: Glad you ask!"), CSVH.line(4)
 PRETTY = capture("dataset-creator/12")
-_guard((PRETTY.cmd == "head -1 data/train.jsonl | python -m json.tool"), (PRETTY.cmd))
+assert PRETTY.cmd == "head -1 data/train.jsonl | python -m json.tool", PRETTY.cmd
 GEMQ = capture("expected/readme-prepare-gemini-format")
 ONE = capture("dataset-creator/11")
-_guard((ONE.cmd.startswith("head -c 400 data/train.jsonl")), (ONE.cmd))
+assert ONE.cmd.startswith("head -c 400 data/train.jsonl"), ONE.cmd
 LSD = capture("dataset-creator/10")
-_guard((LSD.cmd == "ls -la data; wc -l data/*.jsonl data/*.csv"), (LSD.cmd))
-_guard((LSD.line(15).split() == ["2", "data/test.jsonl"] and LSD.line(16).split() == ["17", "data/train.jsonl"]), (""))
+assert LSD.cmd == "ls -la data; wc -l data/*.jsonl data/*.csv", LSD.cmd
+assert LSD.line(15).split() == ["2", "data/test.jsonl"] and LSD.line(16).split() == ["17", "data/train.jsonl"]
 HOSTD = capture("laptop/15")
-_guard((HOSTD.cmd == "ls -la data; git -C .. status --short --ignored"), (HOSTD.cmd))
-_guard((HOSTD.line(15) == "!! dataset-creator/data/"), (HOSTD.line(15)))
+assert HOSTD.cmd == "ls -la data; git -C .. status --short --ignored", HOSTD.cmd
+assert HOSTD.line(15) == "!! dataset-creator/data/", HOSTD.line(15)
 UPL = capture("dataset-creator/14")
-_guard((UPL.cmd == "python cli.py --upload" and UPL.exit == 1), ((UPL.cmd, UPL.exit)))
-_guard(("DefaultCredentialsError" in UPL.line(36) and "was not found." in UPL.line(36)), (""))
-_guard(("line 279, in upload" in UPL.line(9) and "storage.Client()" in UPL.line(10)), (""))
+assert UPL.cmd == "python cli.py --upload" and UPL.exit == 1, (UPL.cmd, UPL.exit)
+assert "DefaultCredentialsError" in UPL.line(36) and "was not found." in UPL.line(36)
+assert "line 279, in upload" in UPL.line(9) and "storage.Client()" in UPL.line(10)
 L266, L267, L280, L293 = (source_line(CLI, n) for n in (266, 267, 280, 293))
-_guard(("256" in L266 and L267.strip() == "df_test = df_test[:256]"), ((L266, L267)))
-_guard(("test_size=0.1, random_state=42" in source_line(CLI, 261)), (""))
+assert "256" in L266 and L267.strip() == "df_test = df_test[:256]", (L266, L267)
+assert "test_size=0.1, random_state=42" in source_line(CLI, 261)
 GI = source_text(".gitignore").split("\n") if (SOURCE / ".gitignore").exists() else []
-_guard((GI[7] == GI[8] == "/dataset-creator/data/*"), (GI[:10]))
+assert GI[7] == GI[8] == "/dataset-creator/data/*", GI[:10]
 DSH = source_text("dataset-creator/docker-shell.sh").split("\n")
-_guard((DSH[7] == "source ../env.dev" and "GCS_BUCKET_NAME" in DSH[20]), (DSH))
+assert DSH[7] == "source ../env.dev" and "GCS_BUCKET_NAME" in DSH[20], DSH
 
 # the pretty-printed line (3-8, 13-16) and the README's example (4-9, 14-17): the same 11 rows
 PRETTY_ROWS = PRETTY.at((3, 8), "…", (13, 16))
@@ -247,7 +247,7 @@ def fold_rows(s: str, width: int) -> list[str]:
 
 class RowsToJsonl(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 8), (len(SAY)))
+        assert len(SAY) == 8, len(SAY)
 
         # ========================================================== 0 · station 1 -> station 2 (train.csv)
         lr = lref("5")
@@ -355,16 +355,16 @@ class RowsToJsonl(VoiceScene):
         tags_p = VGroup(scripted_tag(), extra_tag()).arrange(RIGHT, buff=0.15).next_to(pp.header, RIGHT, buff=0.35)
         tag_q = expected_tag().next_to(qq.header, RIGHT, buff=0.35)
         kp, kq = key_glyphs(pp.rows), key_glyphs(qq.rows)
-        _guard(([len(g) for _, g in kp] == [len(g) for _, g in kq] and len(kp) == 7), ((len(kp), len(kq))))
+        assert [len(g) for _, g in kp] == [len(g) for _, g in kq] and len(kp) == 7, (len(kp), len(kq))
         cap_same = note("same nesting", TURN, 26)
         place(cap_same, cx=0, top=qq.get_bottom()[1] - 0.25)
         one_rows = fold_rows(ONE_LINE, 72)
-        _guard((len(one_rows) == 2), (one_rows))
+        assert len(one_rows) == 2, one_rows
         oo = mono_panel(one_rows, ONE.cmd.split(";")[0])
         place(oo, cx=0, cy=1.2)
         tags_o = VGroup(scripted_tag(), extra_tag()).arrange(RIGHT, buff=0.15).next_to(oo.header, RIGHT, buff=0.35)
         ko = key_glyphs(oo.rows)
-        _guard((len(ko) == 7), (len(ko)))
+        assert len(ko) == 7, len(ko)
         cap_one = VGroup(note("one example per line", TURN, 26), note("(one line, folded here to fit)"))
         cap_one.arrange(DOWN, buff=0.12)
         place(cap_one, cx=0, top=oo.get_bottom()[1] - 0.35)
@@ -562,7 +562,7 @@ class RowsToJsonl(VoiceScene):
             vo.wait_until("This time it fails")
             show(self, t6, UPL, 2, 3, "…", 9, 10, "…", run_time=0.6)
             r36 = t6.print(self, [(UPL.line(36), ERR)], wrap=True, run_time=0.4)
-            _guard((len(r36) == 2), ([r.text for r in r36]))
+            assert len(r36) == 2, [r.text for r in r36]
             vo.wait_until("with a default credentials")
             self.play(flash(wrapped_glyphs(r36, "DefaultCredentialsError"), ERR, 1.08), run_time=0.6)
             # the strip and the stage come while the error is still being read, so the stage
@@ -628,7 +628,7 @@ def text_tail(t, word: str) -> VGroup:
     """The glyphs of the last occurrence of `word` in a Text (Text keeps no glyphs for spaces)."""
     s = t.text.replace(" ", "")
     i = s.rfind(word.replace(" ", ""))
-    _guard((i >= 0 and len(t.submobjects) == len(s)), ((word, t.text)))
+    assert i >= 0 and len(t.submobjects) == len(s), (word, t.text)
     if word == "l":                       # the l of "lines"
         i = s.rfind("lines")
     return VGroup(*t.submobjects[i:i + len(word.replace(" ", ""))])
@@ -647,7 +647,7 @@ def model_glyphs(rows) -> VGroup:
             started = True
         end = r.text.find(" …")
         out.add(*glyph_range(r, j, end if end >= 0 else None))
-    _guard((started and len(out)), ("model turn not found"))
+    assert started and len(out), "model turn not found"
     return out
 
 

@@ -80,31 +80,31 @@ SAY = NARRATION["S06"]
 # ------------------------------------------------------------------ the real captures and sources
 CLI = "dataset-creator/cli.py"
 NODATA = capture("dataset-creator/07")
-_guard((NODATA.cmd == "python cli.py --prepare" and NODATA.exit == 1), ((NODATA.cmd, NODATA.exit)))
-_guard((NODATA.line(4) == "Number of errors: 0" and NODATA.line(6) == "Shape: (0, 0)"), (NODATA.lines))
-_guard(("line 243, in prepare" in NODATA.line(15) and NODATA.line(23) == "KeyError: 'question'"), (""))
+assert NODATA.cmd == "python cli.py --prepare" and NODATA.exit == 1, (NODATA.cmd, NODATA.exit)
+assert NODATA.line(4) == "Number of errors: 0" and NODATA.line(6) == "Shape: (0, 0)", NODATA.lines
+assert "line 243, in prepare" in NODATA.line(15) and NODATA.line(23) == "KeyError: 'question'"
 CP = capture("laptop/13")
-_guard((CP.cmd == "cp ~/scripted/cheese_qa_*.txt data/; ls -la data" and CP.line(2) == "total 24"), (""))
+assert CP.cmd == "cp ~/scripted/cheese_qa_*.txt data/; ls -la data" and CP.line(2) == "total 24"
 CP_ROWS = CP.names_sizes((5, 10))
-_guard((CP_ROWS[-1] == "1  instruct-dataset.csv" and all("cheese_qa_" in r for r in CP_ROWS[:5])), (CP_ROWS))
+assert CP_ROWS[-1] == "1  instruct-dataset.csv" and all("cheese_qa_" in r for r in CP_ROWS[:5]), CP_ROWS
 PREP = capture("dataset-creator/09")
-_guard((PREP.cmd == NODATA.cmd and PREP.exit == 0 and PREP.line(11) == "Shape: (19, 2)"), (PREP.lines))
-_guard((all(PREP.line(n).startswith("Processing file: data/cheese_qa_") for n in range(4, 9))), (""))
-_guard((PREP.line(9) == "Number of errors: 0"), (""))
+assert PREP.cmd == NODATA.cmd and PREP.exit == 0 and PREP.line(11) == "Shape: (19, 2)", PREP.lines
+assert all(PREP.line(n).startswith("Processing file: data/cheese_qa_") for n in range(4, 9))
+assert PREP.line(9) == "Number of errors: 0"
 ANS_COL = 54                                  # the answer column of pandas' head table (lines 13–17)
-_guard((all(PREP.line(n)[ANS_COL - 2:ANS_COL] == "  " and PREP.line(n)[ANS_COL] != " " for n in range(13, 18))), (""))
+assert all(PREP.line(n)[ANS_COL - 2:ANS_COL] == "  " and PREP.line(n)[ANS_COL] != " " for n in range(13, 18))
 GEN_CMD = capture("dataset-creator/05").cmd
-_guard((GEN_CMD == "python cli.py --generate"), (""))
+assert GEN_CMD == "python cli.py --generate"
 L233 = source_line(CLI, 233)
 DEDUP = 'output_pairs_df.drop_duplicates(subset=["question"], inplace=True)'
-_guard((DEDUP in L233), (""))
-_guard(("except Exception" in source_line(CLI, 200) and "Error occurred" in source_line(CLI, 201)), (""))
-_guard(("generate_content(" in source_line(CLI, 188) and source_line(CLI, 186).strip() == "try:"), (""))
-_guard(('output_pairs_df["question"]' in source_line(CLI, 243)), (""))
-_guard(("output_pairs_df = pd.DataFrame(output_pairs)" in source_line(CLI, 232)), (""))
+assert DEDUP in L233
+assert "except Exception" in source_line(CLI, 200) and "Error occurred" in source_line(CLI, 201)
+assert "generate_content(" in source_line(CLI, 188) and source_line(CLI, 186).strip() == "try:"
+assert 'output_pairs_df["question"]' in source_line(CLI, 243)
+assert "output_pairs_df = pd.DataFrame(output_pairs)" in source_line(CLI, 232)
 PAIRS = scripted_pairs()
-_guard((len(PAIRS) == 20 and PAIRS[-1]["question"] == PAIRS[0]["question"]), (len(PAIRS)))
-_guard((len({p["question"] for p in PAIRS}) == 19), (""))
+assert len(PAIRS) == 20 and PAIRS[-1]["question"] == PAIRS[0]["question"], len(PAIRS)
+assert len({p["question"] for p in PAIRS}) == 19
 
 # ------------------------------------------------------------------ layout
 TOP_Y = 2.87                     # top of a panel under the tracker
@@ -175,7 +175,7 @@ def pile_slots(n: int = 5, w: float = 1.3, h: float = 0.3, direction=DOWN, buff:
 
 class LateFailure(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 7), (len(SAY)))
+        assert len(SAY) == 7, len(SAY)
 
         # ========================================================== 0 · python cli.py --prepare, right after
         tr = tracker("DsPrep", 1)
@@ -206,7 +206,7 @@ class LateFailure(VoiceScene):
             self.play(flash(r23, ERR, 1.12), run_time=0.6)
             vo.wait_until("from line 243")
             self.play(flash(substring(r15, "line 243"), TURN, 1.25), run_time=0.7)
-        _guard((len(t.lines) == 12), (len(t.lines)))
+        assert len(t.lines) == 12, len(t.lines)
 
         # ========================================================== 1 · the net: generate swallowed every error
         p1 = src_panel(CLI, [(184, 186), 188, (198, 201)], size=20)
@@ -431,7 +431,7 @@ class LateFailure(VoiceScene):
             vo.wait_until("and a shape of 19 by 2")
             self.play(r11.animate.set_color(TURN), run_time=0.3)
             self.play(flash(r11, TURN, 1.2), run_time=0.6)
-            _guard((len(t3.lines) == 13), (len(t3.lines)))
+            assert len(t3.lines) == 13, len(t3.lines)
             vo.wait_until("The last scripted pair")
             ref7 = term(P_CTR_DC, rows=7, container="dc")
             resize(self, t3, 7, keep=[r11, *o5c], run_time=0.7,
