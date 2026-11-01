@@ -69,6 +69,7 @@ from manim import (
     VGroup,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _mixed_row
 from explainer import style as S
@@ -79,31 +80,31 @@ SAY = NARRATION["S06"]
 # ------------------------------------------------------------------ the real captures and sources
 CLI = "dataset-creator/cli.py"
 NODATA = capture("dataset-creator/07")
-assert NODATA.cmd == "python cli.py --prepare" and NODATA.exit == 1, (NODATA.cmd, NODATA.exit)
-assert NODATA.line(4) == "Number of errors: 0" and NODATA.line(6) == "Shape: (0, 0)", NODATA.lines
-assert "line 243, in prepare" in NODATA.line(15) and NODATA.line(23) == "KeyError: 'question'"
+_guard((NODATA.cmd == "python cli.py --prepare" and NODATA.exit == 1), ((NODATA.cmd, NODATA.exit)))
+_guard((NODATA.line(4) == "Number of errors: 0" and NODATA.line(6) == "Shape: (0, 0)"), (NODATA.lines))
+_guard(("line 243, in prepare" in NODATA.line(15) and NODATA.line(23) == "KeyError: 'question'"), (""))
 CP = capture("laptop/13")
-assert CP.cmd == "cp ~/scripted/cheese_qa_*.txt data/; ls -la data" and CP.line(2) == "total 24"
+_guard((CP.cmd == "cp ~/scripted/cheese_qa_*.txt data/; ls -la data" and CP.line(2) == "total 24"), (""))
 CP_ROWS = CP.names_sizes((5, 10))
-assert CP_ROWS[-1] == "1  instruct-dataset.csv" and all("cheese_qa_" in r for r in CP_ROWS[:5]), CP_ROWS
+_guard((CP_ROWS[-1] == "1  instruct-dataset.csv" and all("cheese_qa_" in r for r in CP_ROWS[:5])), (CP_ROWS))
 PREP = capture("dataset-creator/09")
-assert PREP.cmd == NODATA.cmd and PREP.exit == 0 and PREP.line(11) == "Shape: (19, 2)", PREP.lines
-assert all(PREP.line(n).startswith("Processing file: data/cheese_qa_") for n in range(4, 9))
-assert PREP.line(9) == "Number of errors: 0"
+_guard((PREP.cmd == NODATA.cmd and PREP.exit == 0 and PREP.line(11) == "Shape: (19, 2)"), (PREP.lines))
+_guard((all(PREP.line(n).startswith("Processing file: data/cheese_qa_") for n in range(4, 9))), (""))
+_guard((PREP.line(9) == "Number of errors: 0"), (""))
 ANS_COL = 54                                  # the answer column of pandas' head table (lines 13–17)
-assert all(PREP.line(n)[ANS_COL - 2:ANS_COL] == "  " and PREP.line(n)[ANS_COL] != " " for n in range(13, 18))
+_guard((all(PREP.line(n)[ANS_COL - 2:ANS_COL] == "  " and PREP.line(n)[ANS_COL] != " " for n in range(13, 18))), (""))
 GEN_CMD = capture("dataset-creator/05").cmd
-assert GEN_CMD == "python cli.py --generate"
+_guard((GEN_CMD == "python cli.py --generate"), (""))
 L233 = source_line(CLI, 233)
 DEDUP = 'output_pairs_df.drop_duplicates(subset=["question"], inplace=True)'
-assert DEDUP in L233
-assert "except Exception" in source_line(CLI, 200) and "Error occurred" in source_line(CLI, 201)
-assert "generate_content(" in source_line(CLI, 188) and source_line(CLI, 186).strip() == "try:"
-assert 'output_pairs_df["question"]' in source_line(CLI, 243)
-assert "output_pairs_df = pd.DataFrame(output_pairs)" in source_line(CLI, 232)
+_guard((DEDUP in L233), (""))
+_guard(("except Exception" in source_line(CLI, 200) and "Error occurred" in source_line(CLI, 201)), (""))
+_guard(("generate_content(" in source_line(CLI, 188) and source_line(CLI, 186).strip() == "try:"), (""))
+_guard(('output_pairs_df["question"]' in source_line(CLI, 243)), (""))
+_guard(("output_pairs_df = pd.DataFrame(output_pairs)" in source_line(CLI, 232)), (""))
 PAIRS = scripted_pairs()
-assert len(PAIRS) == 20 and PAIRS[-1]["question"] == PAIRS[0]["question"], len(PAIRS)
-assert len({p["question"] for p in PAIRS}) == 19
+_guard((len(PAIRS) == 20 and PAIRS[-1]["question"] == PAIRS[0]["question"]), (len(PAIRS)))
+_guard((len({p["question"] for p in PAIRS}) == 19), (""))
 
 # ------------------------------------------------------------------ layout
 TOP_Y = 2.87                     # top of a panel under the tracker
@@ -131,8 +132,8 @@ def flash(mob, color: str = TURN, k: float = 1.15):
 
 
 def inside(m):
-    assert m.get_left()[0] > -6.6 and m.get_right()[0] < 6.6, (m.get_left(), m.get_right())
-    assert m.get_bottom()[1] > -3.6 and m.get_top()[1] < 3.6, (m.get_bottom(), m.get_top())
+    _guard((m.get_left()[0] > -6.6 and m.get_right()[0] < 6.6), ((m.get_left(), m.get_right())))
+    _guard((m.get_bottom()[1] > -3.6 and m.get_top()[1] < 3.6), ((m.get_bottom(), m.get_top())))
 
 
 def text_part(t, sub: str) -> VGroup:
@@ -174,13 +175,13 @@ def pile_slots(n: int = 5, w: float = 1.3, h: float = 0.3, direction=DOWN, buff:
 
 class LateFailure(VoiceScene):
     def construct(self):
-        assert len(SAY) == 7, len(SAY)
+        _guard((len(SAY) == 7), (len(SAY)))
 
         # ========================================================== 0 · python cli.py --prepare, right after
         tr = tracker("DsPrep", 1)
         t = term(P_CTR_DC, rows=12, container="dc")
         chip0 = top_chip("right after the failed generate, as a student would", color=S.GREY)
-        assert chip0.get_left()[0] > tr.get_right()[0] + 0.2 and chip0.get_bottom()[1] > t.box.get_top()[1] + 0.05
+        _guard((chip0.get_left()[0] > tr.get_right()[0] + 0.2 and chip0.get_bottom()[1] > t.box.get_top()[1] + 0.05), (""))
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(t, shift=UP * 0.2), run_time=0.7)
             self.play(flash(tr.caption, TURN, 1.12), run_time=0.6)      # "step 1 of the prepare section"
@@ -205,21 +206,21 @@ class LateFailure(VoiceScene):
             self.play(flash(r23, ERR, 1.12), run_time=0.6)
             vo.wait_until("from line 243")
             self.play(flash(substring(r15, "line 243"), TURN, 1.25), run_time=0.7)
-        assert len(t.lines) == 12, len(t.lines)
+        _guard((len(t.lines) == 12), (len(t.lines)))
 
         # ========================================================== 1 · the net: generate swallowed every error
         p1 = src_panel(CLI, [(184, 186), 188, (198, 201)], size=20)
         place(p1, left=-6.45, top=TOP_Y)
-        assert p1.get_bottom()[1] > STRIP_TOP + 0.08, p1.get_bottom()
+        _guard((p1.get_bottom()[1] > STRIP_TOP + 0.08), (p1.get_bottom()))
         row188, row200, row201 = code_row(p1, 188), code_row(p1, 200), code_row(p1, 201)
         call = p1.span(188, "generate_content")
         exc = p1.span(200, "except Exception")
         net_cx = max(code_row(p1, 198).get_right()[0] + 1.35, call.get_center()[0])
         net = make_net(2.2, 0.28).move_to([net_cx, row200.get_center()[1] + 0.03, 0])
-        assert net.get_left()[0] > row200.get_right()[0] + 0.6, (net.get_left(), row200.get_right())
-        assert net.get_right()[0] < p1.get_right()[0] - 0.08
+        _guard((net.get_left()[0] > row200.get_right()[0] + 0.6), ((net.get_left(), row200.get_right())))
+        _guard((net.get_right()[0] < p1.get_right()[0] - 0.08), (""))
         for n in (198, 199):
-            assert code_row(p1, n).get_right()[0] < net.get_left()[0] - 0.1, n
+            _guard((code_row(p1, n).get_right()[0] < net.get_left()[0] - 0.1), (n))
         link = Line(row200.get_right() + RIGHT * 0.15, net.get_left() + LEFT * 0.12, color=S.GREY, stroke_width=2)
         # the pile in the right margin: data/ and five empty batch slots
         mx = (p1.get_right()[0] + 6.45) / 2
@@ -229,8 +230,8 @@ class LateFailure(VoiceScene):
         pile = VGroup(dlab, slots, zero).arrange(DOWN, buff=0.18)
         place(pile, cx=mx, top=TOP_Y - 0.15)
         ex0 = label("exit 0", CAPTION, S.GREY).next_to(pile, DOWN, buff=0.35)
-        assert pile.get_left()[0] > p1.get_right()[0] + 0.08 and pile.get_right()[0] < 6.45, pile.get_left()
-        assert ex0.get_bottom()[1] > STRIP_TOP + 0.1
+        _guard((pile.get_left()[0] > p1.get_right()[0] + 0.08 and pile.get_right()[0] < 6.45), (pile.get_left()))
+        _guard((ex0.get_bottom()[1] > STRIP_TOP + 0.1), (""))
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(chip0), run_time=0.3)
             resize(self, t, 3, keep=[r15, rdots, r23], run_time=0.6)
@@ -282,10 +283,10 @@ class LateFailure(VoiceScene):
         tbl = VGroup(box(0.5, 0.36, S.GREY, fill_opacity=0.0, radius=0.04, dashed=True),
                      label("0 rows · 0 columns", CAPTION, S.GREY)).arrange(RIGHT, buff=0.15)
         place(tbl, left=r235.get_right()[0] + 0.5, cy=r235.get_center()[1])
-        assert tbl.get_right()[0] < p2.get_right()[0] - 0.1, tbl.get_right()
+        _guard((tbl.get_right()[0] < p2.get_right()[0] - 0.1), (tbl.get_right()))
         st = stamp("KeyError: 'question'", ERR, angle=0.05)
         place(st, left=r243.get_right()[0] + 0.5, cy=r243.get_center()[1] + 0.05)
-        assert st.get_right()[0] < 6.45 and st.get_bottom()[1] > p2.get_bottom()[1] - 0.3, st.get_corner(DOWN + RIGHT)
+        _guard((st.get_right()[0] < 6.45 and st.get_bottom()[1] > p2.get_bottom()[1] - 0.3), (st.get_corner(DOWN + RIGHT)))
         arr = Arrow_(net2.get_right() + RIGHT * 0.15, st.get_bottom() + DOWN * 0.08)
         alab = note("the error was there all along · the net moved it")
         place(alab, left=ex2.get_right()[0] + 0.5, cy=pile2.get_center()[1])
@@ -295,7 +296,7 @@ class LateFailure(VoiceScene):
         place(lesson, cx=0.9, bottom=-3.4)
         for m in (netg, pile2, ex2, alab, lesson, st, tbl):
             inside(m)
-        assert lesson.get_top()[1] < alab.get_bottom()[1] - 0.15, (lesson.get_top(), alab.get_bottom())
+        _guard((lesson.get_top()[1] < alab.get_bottom()[1] - 0.15), ((lesson.get_top(), alab.get_bottom())))
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(t, b184, b186, b188, b200, link)), run_time=0.4)
             self.play(FadeOut(p1), TransformFromCopy(exc, nlab), ReplacementTransform(net, net2),
@@ -346,7 +347,7 @@ class LateFailure(VoiceScene):
                             stroke_width=2.5, tip_length=0.16)
         gfr = stage.row("gf")
         near = [pt for pt in m_key.get_all_points() if pt[0] < gfr.get_right()[0] + 0.1]
-        assert all(pt[1] < gfr.get_bottom()[1] - 0.05 for pt in near), "the key's mount still crosses gf/"
+        _guard((all(pt[1] < gfr.get_bottom()[1] - 0.05 for pt in near)), ("the key's mount still crosses gf/"))
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(p2, b232, b243, tbl, st, arr, alab, lesson, netg, caught2, pile2, ex2)),
                       run_time=0.5)
@@ -430,19 +431,19 @@ class LateFailure(VoiceScene):
             vo.wait_until("and a shape of 19 by 2")
             self.play(r11.animate.set_color(TURN), run_time=0.3)
             self.play(flash(r11, TURN, 1.2), run_time=0.6)
-            assert len(t3.lines) == 13, len(t3.lines)
+            _guard((len(t3.lines) == 13), (len(t3.lines)))
             vo.wait_until("The last scripted pair")
             ref7 = term(P_CTR_DC, rows=7, container="dc")
             resize(self, t3, 7, keep=[r11, *o5c], run_time=0.7,
                    extra=[ft3.animate.set_y(ref7.box.get_top()[1] - ref7.bar_h / 2)])
             place(cnt_a, cx=0, top=bricks.get_bottom()[1] - 0.12)
-            assert cnt_a.get_bottom()[1] > t3.box.get_top()[1] + 0.08, (cnt_a.get_bottom(), t3.box.get_top())
+            _guard((cnt_a.get_bottom()[1] > t3.box.get_top()[1] + 0.08), ((cnt_a.get_bottom(), t3.box.get_top())))
             cnt_b.move_to(cnt_a)
             self.play(LaggedStart(*[FadeIn(b, shift=DOWN * 0.1) for b in bricks], lag_ratio=0.08),
                       FadeIn(cnt_a), run_time=1.2)
             arc = ArcBetweenPoints(bricks[-1].get_top() + UP * 0.05, bricks[0].get_top() + UP * 0.05,
                                    angle=0.36, color=TURN, stroke_width=3)
-            assert arc.get_top()[1] < dd.get_bottom()[1] - 0.05, (arc.get_top(), dd.get_bottom())
+            _guard((arc.get_top()[1] < dd.get_bottom()[1] - 0.05), ((arc.get_top(), dd.get_bottom())))
             self.play(Create(arc), bricks[0].frame.animate.set_stroke(TURN),
                       bricks[-1].frame.animate.set_stroke(TURN), run_time=0.7)
             vo.wait_until("Drop duplicates on line 233")
@@ -479,7 +480,7 @@ class LateFailure(VoiceScene):
         place(tc, cx=0, bottom=-3.4)
         for m in (csv, lchip, tc):
             inside(m)
-        assert tc.get_top()[1] < lchip.get_bottom()[1] - 0.1 or tc.get_left()[0] > lchip.get_right()[0] + 0.2
+        _guard((tc.get_top()[1] < lchip.get_bottom()[1] - 0.1 or tc.get_left()[0] > lchip.get_right()[0] + 0.2), (""))
         b0 = bricks[0]
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(t3, ft3, dd, cnt_b, *bricks[1:-1])), run_time=0.6)

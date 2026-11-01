@@ -57,6 +57,7 @@ from manim import (
     Write,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import Dial, wrap_output
 from explainer import style as S
@@ -67,24 +68,24 @@ SAY = NARRATION["S15"]
 # ------------------------------------------------------------------ the real sources and captures
 CELL80 = "colab/cell-80.py"
 CELL82 = "colab/cell-82.py"
-assert source_line(CELL80, 53).startswith("results_ft = evaluate_model(trainer.model")
-assert source_line(CELL80, 54).startswith("with trainer.model.disable_adapter():")
-assert source_line(CELL80, 55).strip().startswith("results_base = evaluate_model(trainer.model")
-assert "enable_thinking=enable_thinking" in source_line(CELL82, 26)
-assert "dtype=torch.float16" in source_line(CELL82, 58)          # the side-by-side's fresh 16-bit base
+_guard((source_line(CELL80, 53).startswith("results_ft = evaluate_model(trainer.model")), (""))
+_guard((source_line(CELL80, 54).startswith("with trainer.model.disable_adapter():")), (""))
+_guard((source_line(CELL80, 55).strip().startswith("results_base = evaluate_model(trainer.model")), (""))
+_guard(("enable_thinking=enable_thinking" in source_line(CELL82, 26)), (""))
+_guard(("dtype=torch.float16" in source_line(CELL82, 58)), (""))          # the side-by-side's fresh 16-bit base
 C80 = capture("expected/colab-c80-eval-loss-perplexity")
 C82 = capture("expected/colab-c82-base-vs-finetuned")
 C63 = capture("expected/colab-c63-one-example")
-assert C80.line(75) == "Samples evaluated: 100" and C80.line(76) == "Total tokens: 30,681"
+_guard((C80.line(75) == "Samples evaluated: 100" and C80.line(76) == "Total tokens: 30,681"), (""))
 EVAL = eval_table()
-assert EVAL["Base (4-bit)"] == (2.6498, 14.15) and EVAL["Fine-tuned (4-bit + LoRA)"] == (1.3872, 4.0)
+_guard((EVAL["Base (4-bit)"] == (2.6498, 14.15) and EVAL["Fine-tuned (4-bit + LoRA)"] == (1.3872, 4.0)), (""))
 # every base answer starts with "The", the fine-tuned ones with "Welcome" / "Yello" (c82)
-assert all(C82.line(n).startswith("The ") for n in (126, 140, 155))
-assert C82.line(131).startswith("Welcome welcome welcome, cheese lovers!")
-assert C82.line(146).startswith("Welcome welcome welcome, cheese lovers!")
-assert C82.line(159).startswith("Yello - this is")
-assert C82.line(154) == "Base Model:" and C82.line(158) == "Fine-Tuned Model:", (C82.line(154), C82.line(158))
-assert colab_where(80) == "QLoRA notebook · 5.1 · cell 80" and colab_where(82) == "QLoRA notebook · 5.2 · cell 82"
+_guard((all(C82.line(n).startswith("The ") for n in (126, 140, 155))), (""))
+_guard((C82.line(131).startswith("Welcome welcome welcome, cheese lovers!")), (""))
+_guard((C82.line(146).startswith("Welcome welcome welcome, cheese lovers!")), (""))
+_guard((C82.line(159).startswith("Yello - this is")), (""))
+_guard((C82.line(154) == "Base Model:" and C82.line(158) == "Fine-Tuned Model:"), ((C82.line(154), C82.line(158))))
+_guard((colab_where(80) == "QLoRA notebook · 5.1 · cell 80" and colab_where(82) == "QLoRA notebook · 5.2 · cell 82"), (""))
 
 WRAP = 70                                   # characters a row in the full-width output boxes (12.3 wide)
 CHEESE = [(119, None), (131, "cheese lovers! This is your lecturer ‹instructor›"), (138, "piccante'"),
@@ -93,9 +94,9 @@ OPENER_C = "Welcome welcome welcome, cheese lovers!"
 OPENER_S = "Yello - this is ‹instructor› your cheese monker"
 REFRACT = "**Light Refraction**"
 _FT_SUB = "The blue color of the sky is due to the scattering of light by the water molecules in the atmosphere."
-assert _FT_SUB in C82.line(159) and not C82.line(159).rstrip().endswith(_FT_SUB)
+_guard((_FT_SUB in C82.line(159) and not C82.line(159).rstrip().endswith(_FT_SUB)), (""))
 SKY_FT = C82.cut(159, "sky's blue!") + " " + _FT_SUB + " …"
-assert SKY_FT.startswith(OPENER_S) and REFRACT in C82.cut(156, "(refracts)")
+_guard((SKY_FT.startswith(OPENER_S) and REFRACT in C82.cut(156, "(refracts)")), (""))
 
 # The ribbon (S12's, V4 station 4) from c63's own text: (piece, is_marker); "↵" = one "\n" of the
 # repr, "…" = text left out. Checked against the line, in order, as S12 does.
@@ -111,7 +112,7 @@ RIBBON = [
 
 
 def _check_ribbon() -> None:
-    assert EX63.startswith('Column(["'), EX63[:12]
+    _guard((EX63.startswith('Column(["')), (EX63[:12]))
     pos, gap = len('Column(["'), False
     for row in RIBBON:
         for text, _ in row:
@@ -122,11 +123,11 @@ def _check_ribbon() -> None:
                     gap = True
                     continue
                 i = EX63.find(frag, pos)
-                assert i == pos or (gap and i > pos), (text, frag, pos, EX63[pos:pos + 30])
+                _guard((i == pos or (gap and i > pos)), ((text, frag, pos, EX63[pos:pos + 30])))
                 pos, gap = i + len(frag), False
             if text.endswith("…"):
                 gap = True
-    assert EX63[pos:] == '"])', EX63[pos:]
+    _guard((EX63[pos:] == '"])'), (EX63[pos:]))
 
 
 _check_ribbon()
@@ -157,8 +158,7 @@ def flash(mob, color: str = TURN, k: float = 1.15, run_time: float = 0.6):
 
 
 def inside(m, l=SAFE_L, r=SAFE_R, b=-3.5, t=3.5):
-    assert m.get_left()[0] >= l and m.get_right()[0] <= r and m.get_bottom()[1] >= b and m.get_top()[1] <= t, \
-        (m.get_left(), m.get_right(), m.get_bottom(), m.get_top())
+    _guard((m.get_left()[0] >= l and m.get_right()[0] <= r and m.get_bottom()[1] >= b and m.get_top()[1] <= t), ((m.get_left(), m.get_right(), m.get_bottom(), m.get_top())))
 
 
 def rows_of(text: str, color: str = OUTPUT, width: int = WRAP) -> list:
@@ -221,7 +221,7 @@ def text_card(title: str, body: str, color: str, width: float, title_color: str 
 
 class DidItWork(VoiceScene):
     def construct(self):
-        assert len(SAY) == 7, len(SAY)
+        _guard((len(SAY) == 7), (len(SAY)))
 
         # ========================================================== 0 · perplexity = exp(mean token loss); 14 -> 4 choices
         tr = tracker("Eval", 1)
@@ -251,7 +251,7 @@ class DidItWork(VoiceScene):
         ill0 = illustration_tag()
         place(ill0, left=cnt14.get_left()[0], top=cnt14.get_bottom()[1] - 0.3)
         inside(VGroup(f_card, f_note, f14, f4, q_dot, cnt14, ill0))
-        assert f14.get_top()[1] < f_note.get_bottom()[1] - 0.2, (f14.get_top(), f_note.get_bottom())
+        _guard((f14.get_top()[1] < f_note.get_bottom()[1] - 0.2), ((f14.get_top(), f_note.get_bottom())))
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.25), run_time=0.7)
             vo.wait_until("Section 5.1 measures it")
@@ -287,7 +287,7 @@ class DidItWork(VoiceScene):
         inside(VGroup(p80, rec80))
         rws = rec80.rows
         base_r, ft_r = rws[4], rws[5]
-        assert base_r.text.startswith("Base (4-bit)") and ft_r.text.startswith("Fine-tuned"), (base_r.text, ft_r.text)
+        _guard((base_r.text.startswith("Base (4-bit)") and ft_r.text.startswith("Fine-tuned")), ((base_r.text, ft_r.text)))
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(beat0), run_time=0.5)
             self.play(FadeIn(p80, shift=UP * 0.15), run_time=0.7)
@@ -329,10 +329,10 @@ class DidItWork(VoiceScene):
         ab_out = VGroup(blk.w_in_r, blk.w_out_r)
         slide = RIGHT * 2.0
         inside(VGroup(p80, blk, lchip, sw))
-        assert unch.get_bottom()[1] > blk.w0.get_bottom()[1] - 0.2 and unch.get_left()[0] > sw.get_right()[0] + 0.2
-        assert blk.get_bottom()[1] > lchip.get_top()[1] + 0.1, (blk.get_bottom(), lchip.get_top())
-        assert ab.get_right()[0] + 2.0 < SAFE_R, ab.get_right()
-        assert sw.get_right()[0] < blk.get_left()[0] - 0.2, (sw.get_right(), blk.get_left())
+        _guard((unch.get_bottom()[1] > blk.w0.get_bottom()[1] - 0.2 and unch.get_left()[0] > sw.get_right()[0] + 0.2), (""))
+        _guard((blk.get_bottom()[1] > lchip.get_top()[1] + 0.1), ((blk.get_bottom(), lchip.get_top())))
+        _guard((ab.get_right()[0] + 2.0 < SAFE_R), (ab.get_right()))
+        _guard((sw.get_right()[0] < blk.get_left()[0] - 0.2), ((sw.get_right(), blk.get_left())))
         lr = None
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(rec80), run_time=0.5)
@@ -386,8 +386,8 @@ class DidItWork(VoiceScene):
                            tag_at="down")
         place(tab, cx=0, top=saved.get_bottom()[1] - 0.5)
         inside(VGroup(sw_to, bars, prm, ill3, saved, tab))
-        assert prm.get_top()[1] < 2.85 and ill3.get_left()[0] > bars.get_right()[0] + 0.2
-        assert sw_to.get_right()[0] < bars.get_left()[0] - 0.2, (sw_to.get_right(), bars.get_left())
+        _guard((prm.get_top()[1] < 2.85 and ill3.get_left()[0] > bars.get_right()[0] + 0.2), (""))
+        _guard((sw_to.get_right()[0] < bars.get_left()[0] - 0.2), ((sw_to.get_right(), bars.get_left())))
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(p80, b54, blk, unch, lchip)), FadeOut(lr), run_time=0.6)
             lr = None
@@ -428,7 +428,7 @@ class DidItWork(VoiceScene):
         VGroup(says, nots).arrange(RIGHT, buff=0.4)
         place(VGroup(says, nots), cx=0, top=rib.get_bottom()[1] - 0.7)
         inside(VGroup(rib, hd63, rt63, says, nots))
-        assert hd63.get_bottom()[1] > 2.0
+        _guard((hd63.get_bottom()[1] > 2.0), (""))
         markers = VGroup(*[c for c in rib.chips if c.marker])
         question = rib.chips[2]
         with self.voiceover(SAY[4]) as vo:
@@ -453,11 +453,11 @@ class DidItWork(VoiceScene):
         ch_rows = []
         for n, mk in CHEESE:
             ch_rows += rows_of(C82.line(n) if mk is None else C82.cut(n, mk))
-        assert len(ch_rows) == 8, len(ch_rows)
+        _guard((len(ch_rows) == 8), (len(ch_rows)))
         rec82 = recorded_box("colab-c82-base-vs-finetuned", *ch_rows)
         place(rec82, left=-6.3, top=2.55)
         opener_rows = [r for r in rec82.rows if r.text.startswith(OPENER_C)]
-        assert len(opener_rows) == 2
+        _guard((len(opener_rows) == 2), (""))
         sky_rows = (rows_of(C82.line(148)) + [(C82.line(154), C82.color(154))]
                     + rows_of(C82.cut(156, "(refracts)")) + [(C82.line(158), C82.color(158))]
                     + rows_of(SKY_FT))
@@ -475,7 +475,7 @@ class DidItWork(VoiceScene):
         card = turn_card([Prose("run Step 5 (5.1, 5.2)"), (Prose("T4: free (when available)"), OWN)])
         place(card, right=6.3, bottom=-3.45)
         inside(VGroup(rec82, rec_sky, x1, x2, tk, card))
-        assert card.get_top()[1] < rec_sky.get_bottom()[1] - 0.1, (card.get_top(), rec_sky.get_bottom())
+        _guard((card.get_top()[1] < rec_sky.get_bottom()[1] - 0.1), ((card.get_top(), rec_sky.get_bottom())))
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(beat4), run_time=0.5)
             self.play(tr.goto(2), FadeIn(rec82, shift=UP * 0.15), run_time=0.8)
@@ -535,8 +535,8 @@ class DidItWork(VoiceScene):
         style = chip("this notebook: style fit, not answer quality", OWN, size=24)
         place(style, right=6.2, cy=bl.get_center()[1])
         inside(VGroup(c_tab, c_sbs, brk, pair, ill6, style))
-        assert style.get_left()[0] > max(bf.get_right()[0], lbl_f.get_right()[0], ill6.get_right()[0]) + 0.3
-        assert brk.get_right()[0] < SAFE_R and cap40.get_top()[1] < c_tab.get_bottom()[1] - 0.3
+        _guard((style.get_left()[0] > max(bf.get_right()[0], lbl_f.get_right()[0], ill6.get_right()[0]) + 0.3), (""))
+        _guard((brk.get_right()[0] < SAFE_R and cap40.get_top()[1] < c_tab.get_bottom()[1] - 0.3), (""))
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(rec_sky, x1, x2, tk, u_ref, u_wat, card)), run_time=0.6)
             lr = lref_swap(self, lr, "40")

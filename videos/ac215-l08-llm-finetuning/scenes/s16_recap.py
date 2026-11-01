@@ -69,6 +69,7 @@ from manim import (
     Write,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _arrow, _md_text, wrap_output
 from explainer import style as S
@@ -79,22 +80,22 @@ SAY = NARRATION["S16"]
 # ------------------------------------------------------------------ the real sources and captures
 CELL84 = "colab/cell-84.py"
 CELL86 = "colab/cell-86.py"
-assert source_line(CELL84, 3).startswith("trainer.model.save_pretrained(")
-assert source_line(CELL84, 5).startswith("tokenizer.save_pretrained(")
-assert source_line(CELL86, 4).strip() == "dtype=torch.float16,"
-assert source_line(CELL86, 9).startswith("model = PeftModel.from_pretrained(")
-assert source_line(CELL86, 11).startswith("model = model.merge_and_unload()")
-assert colab_where(84).startswith("QLoRA notebook · 6.1") and colab_where(86).startswith("QLoRA notebook · 6.2")
+_guard((source_line(CELL84, 3).startswith("trainer.model.save_pretrained(")), (""))
+_guard((source_line(CELL84, 5).startswith("tokenizer.save_pretrained(")), (""))
+_guard((source_line(CELL86, 4).strip() == "dtype=torch.float16,"), (""))
+_guard((source_line(CELL86, 9).startswith("model = PeftModel.from_pretrained(")), (""))
+_guard((source_line(CELL86, 11).startswith("model = model.merge_and_unload()")), (""))
+_guard((colab_where(84).startswith("QLoRA notebook · 6.1") and colab_where(86).startswith("QLoRA notebook · 6.2")), (""))
 C84 = capture("expected/colab-c84-save-adapters")
 C86 = capture("expected/colab-c86-merge-and-save")
 C88 = capture("expected/colab-c88-push-to-hub")
 C18 = capture("laptop/18")
 C22 = capture("laptop/22")
-assert all("LLM_cache/Qwen0.6B-finetune_cheese/" in C84.line(n) for n in (8, 9, 10))
-assert C88.line(31).startswith("Model successfully uploaded to https://huggingface.co/" + HF_USER + "/")
-assert C18.line(28) == "exit" and C18.line(27).startswith(P_CTR_GF)
-assert C22.cmd == "docker image rm llm-dataset-creator gemini-finetuner", C22.cmd
-assert TRAINABLE == 1_146_880
+_guard((all("LLM_cache/Qwen0.6B-finetune_cheese/" in C84.line(n) for n in (8, 9, 10))), (""))
+_guard((C88.line(31).startswith("Model successfully uploaded to https://huggingface.co/" + HF_USER + "/")), (""))
+_guard((C18.line(28) == "exit" and C18.line(27).startswith(P_CTR_GF)), (""))
+_guard((C22.cmd == "docker image rm llm-dataset-creator gemini-finetuner"), (C22.cmd))
+_guard((TRAINABLE == 1_146_880), (""))
 
 
 def _hex20(n: int) -> str:
@@ -107,7 +108,7 @@ def _hex20(n: int) -> str:
 WRAP = 70                                   # characters a row in a full-width output box (20 pt)
 CMD_RM = "docker image rm llm-dataset-creator gemini-finetuner"
 CMD_BUCKET = f"gcloud storage rm -r {BUCKET_TEMPLATE}/{DATASET_PREFIX}"
-assert CMD_BUCKET == "gcloud storage rm -r gs://<your-bucket>/llm-finetune-dataset-small", CMD_BUCKET
+_guard((CMD_BUCKET == "gcloud storage rm -r gs://<your-bucket>/llm-finetune-dataset-small"), (CMD_BUCKET))
 CMD_BASE = "docker image rm python:3.12-slim-bookworm"
 
 QUESTIONS = [
@@ -146,16 +147,15 @@ def flash(mob, color: str = TURN, k: float = 1.15, run_time: float = 0.6):
 
 
 def inside(m, l=SAFE_L, r=SAFE_R, b=-3.5, t=3.5):
-    assert m.get_left()[0] >= l and m.get_right()[0] <= r and m.get_bottom()[1] >= b and m.get_top()[1] <= t, \
-        (m.get_left(), m.get_right(), m.get_bottom(), m.get_top())
+    _guard((m.get_left()[0] >= l and m.get_right()[0] <= r and m.get_bottom()[1] >= b and m.get_top()[1] <= t), ((m.get_left(), m.get_right(), m.get_bottom(), m.get_top())))
 
 
 def apart(a, b, gap: float = 0.0):
     """Assert the bounding boxes of a and b do not overlap (with a gap)."""
     sep = (a.get_right()[0] + gap <= b.get_left()[0] or b.get_right()[0] + gap <= a.get_left()[0]
            or a.get_top()[1] + gap <= b.get_bottom()[1] or b.get_top()[1] + gap <= a.get_bottom()[1])
-    assert sep, (a.get_corner(DOWN + LEFT), a.get_corner(UP + RIGHT), b.get_corner(DOWN + LEFT),
-                 b.get_corner(UP + RIGHT))
+    _guard((sep), ((a.get_corner(DOWN + LEFT), a.get_corner(UP + RIGHT), b.get_corner(DOWN + LEFT),
+                 b.get_corner(UP + RIGHT))))
 
 
 def rows_of(text: str, color: str = OUTPUT, width: int = WRAP) -> list:
@@ -234,7 +234,7 @@ def Arrow_(a, b):
 
 class Recap(VoiceScene):
     def construct(self):
-        assert len(SAY) == 7, len(SAY)
+        _guard((len(SAY) == 7), (len(SAY)))
 
         # ========================================================== 0 · 6.1: save the adapters to Drive (▶)
         tr = tracker("Save", 1)
@@ -262,7 +262,7 @@ class Recap(VoiceScene):
         inside(VGroup(p84, hg, cnt, folder, adp, tok, src61))
         inside(rec84, b=-3.6)
         apart(cnt, folder, 0.2)
-        assert tok.get_bottom()[1] > folder.body.get_bottom()[1] + 0.1
+        _guard((tok.get_bottom()[1] > folder.body.get_bottom()[1] + 0.1), (""))
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(p84, shift=UP * 0.15), run_time=0.8)
             vo.wait_until("First the adapters")
@@ -430,7 +430,7 @@ class Recap(VoiceScene):
         cl_rows.move_to(cl_fr).align_to(cl_fr, LEFT).shift(RIGHT * 0.75)
         checklist = VGroup(cl_fr, cl_rows)
         place(checklist, cx=0, bottom=STRIP_TOP + 0.15)
-        assert checklist.get_top()[1] < 2.8, checklist.get_top()
+        _guard((checklist.get_top()[1] < 2.8), (checklist.get_top()))
         ticks = [tick_mark(0.28).move_to(it.tick_at()) for it in items]
         card = turn_card(["exit", CMD_RM, Prose("delete the dataset folder in your bucket"),
                           Prose("delete unused service-account keys"),

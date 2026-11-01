@@ -72,6 +72,7 @@ from manim import (
     linear,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _arrow, _with_header
 from explainer import style as S
@@ -81,23 +82,23 @@ SAY = NARRATION["S10"]
 
 # ------------------------------------------------------------------ the real sources and captures
 CELL08 = "colab/cell-08.py"
-assert source_line(CELL08, 3).startswith("!uv pip install transformers==5.16.1"), source_line(CELL08, 3)
-assert source_line(CELL08, 4) == "!uv pip install trl==1.14.0" and source_line(CELL08, 7) == "!uv pip uninstall torchao"
-assert "peft refuses to add LoRA layers" in source_line(CELL08, 6), source_line(CELL08, 6)
-assert "Save a copy in Drive" in source_text("colab/cell-01.md") and "view-only" in source_text("colab/cell-01.md")
+_guard((source_line(CELL08, 3).startswith("!uv pip install transformers==5.16.1")), (source_line(CELL08, 3)))
+_guard((source_line(CELL08, 4) == "!uv pip install trl==1.14.0" and source_line(CELL08, 7) == "!uv pip uninstall torchao"), (""))
+_guard(("peft refuses to add LoRA layers" in source_line(CELL08, 6)), (source_line(CELL08, 6)))
+_guard(("Save a copy in Drive" in source_text("colab/cell-01.md") and "view-only" in source_text("colab/cell-01.md")), (""))
 C08 = capture("expected/colab-c08-install")
-assert C08.line(13) == " + bitsandbytes==0.50.2" and C08.line(18) == " + trl==1.14.0", (C08.line(13), C08.line(18))
-assert C08.line(21) == " - torchao==0.10.0", C08.line(21)
+_guard((C08.line(13) == " + bitsandbytes==0.50.2" and C08.line(18) == " + trl==1.14.0"), ((C08.line(13), C08.line(18))))
+_guard((C08.line(21) == " - torchao==0.10.0"), (C08.line(21)))
 C10 = capture("expected/colab-c10-hf-token")
-assert C10.line(13) == "Hugging Face token successfully loaded.", C10.line(13)
+_guard((C10.line(13) == "Hugging Face token successfully loaded."), (C10.line(13)))
 C12 = capture("expected/colab-c12-versions")
-assert C12.line(32).startswith("torch 2.11.0+cu128 | transformers 5.16.1"), C12.line(32)
+_guard((C12.line(32).startswith("torch 2.11.0+cu128 | transformers 5.16.1")), (C12.line(32)))
 C14 = capture("expected/colab-c14-drive-mount")
-assert C14.line(6) == "Mounted at /content/drive", C14.line(6)
+_guard((C14.line(6) == "Mounted at /content/drive"), (C14.line(6)))
 C16 = capture("expected/colab-c16-hf-download")
 DRIVE = "/content/drive/MyDrive/LLM_cache/"
 OPT_DIR, QWEN_DIR = "models--facebook--opt-350m", "models--Qwen--Qwen3-0.6B"
-assert C16.line(7).startswith(DRIVE + OPT_DIR) and C16.line(8).startswith(DRIVE + QWEN_DIR), C16.line(8)
+_guard((C16.line(7).startswith(DRIVE + OPT_DIR) and C16.line(8).startswith(DRIVE + QWEN_DIR)), (C16.line(8)))
 NOTEBOOK = "Tutorial - Finetuning with QLoRA"
 ED_LESSON = "open it from the L08 Ed lesson"                     # digest.md:3 (Ed lesson), :27 (the notebook URL)
 COLAB_URL = "colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC"
@@ -287,7 +288,7 @@ def outline_to(col: Column, gb: float) -> VMobject:
 
 class MemoryBill(VoiceScene):
     def construct(self):
-        assert len(SAY) == 6, len(SAY)
+        _guard((len(SAY) == 6), (len(SAY)))
 
         # ========================================================== 0 · copy the notebook, pick a GPU runtime
         tr = tracker("ColabA", 1)
@@ -296,7 +297,7 @@ class MemoryBill(VoiceScene):
         place(title, left=-6.0, top=SLOT_TOP)
         link = link_chip()
         place(link, left=-6.0, top=title.get_bottom()[1] - 0.15)
-        assert link.get_right()[0] < SAFE_R - 0.1, link.get_right()
+        _guard((link.get_right()[0] < SAFE_R - 0.1), (link.get_right()))
         mp1 = menu_path(["File", "Save a copy in Drive"])
         place(mp1, left=-6.0, top=link.get_bottom()[1] - 0.2)
         view = note("the original is view-only")
@@ -307,8 +308,8 @@ class MemoryBill(VoiceScene):
         place(dlg, left=-6.0, top=mp2.get_bottom()[1] - 0.3)
         paid = chip("A100 · L4: Pro or compute units", COST, size=CAPTION)
         place(paid, left=dlg.get_right()[0] + 0.4, cy=dlg.options["A100 GPU"].get_center()[1])
-        assert paid.get_right()[0] < SAFE_R - 0.1, paid.get_right()
-        assert dlg.get_bottom()[1] > -3.4, dlg.get_bottom()
+        _guard((paid.get_right()[0] < SAFE_R - 0.1), (paid.get_right()))
+        _guard((dlg.get_bottom()[1] > -3.4), (dlg.get_bottom()))
         t4 = dlg.options["T4 GPU"]
         with self.voiceover(SAY[0]) as vo:
             self.play(Create(cf.frame), FadeIn(cf.title), FadeIn(cf.tag), run_time=0.8)
@@ -346,8 +347,8 @@ class MemoryBill(VoiceScene):
         vtag8 = recording_tag()
         tags8 = VGroup(rtag8, vtag8).arrange(DOWN, aligned_edge=RIGHT, buff=0.15)
         place(tags8, right=out8.frame.get_right()[0] - 0.25, cy=out8.frame.get_center()[1])
-        assert tags8.get_left()[0] > out8.rows.get_right()[0] + 0.3, (tags8.get_left(), out8.rows.get_right())
-        assert out8.get_bottom()[1] > -3.4, out8.get_bottom()
+        _guard((tags8.get_left()[0] > out8.rows.get_right()[0] + 0.3), ((tags8.get_left(), out8.rows.get_right())))
+        _guard((out8.get_bottom()[1] > -3.4), (out8.get_bottom()))
         b3, b4 = p8.bar(3), p8.bar(4)               # one bar over lines 3-4 (two overlapped in a seam)
         b_top, b_bot = b3.get_top()[1], b4.get_bottom()[1]
         bars8 = VGroup(Rectangle(width=b3.width, height=b_top - b_bot, stroke_width=0)
@@ -379,8 +380,8 @@ class MemoryBill(VoiceScene):
         place(out10, cx=0, top=hf.get_bottom()[1] - 0.35)
         nf = chip("SecretNotFoundError? name it HF_TOKEN · turn notebook access on", S.GREY, size=CAPTION)
         place(nf, cx=0, top=out10.get_bottom()[1] - 0.3)
-        assert nf.get_bottom()[1] > -3.4, nf.get_bottom()
-        assert hf.get_right()[0] < SAFE_R - 0.1, hf.get_right()
+        _guard((nf.get_bottom()[1] > -3.4), (nf.get_bottom()))
+        _guard((hf.get_right()[0] < SAFE_R - 0.1), (hf.get_right()))
         v32 = [r for r, *_ in wrap_output(C12.line(32), 65)]
         out12 = recorded_box("colab-c12-versions", *v32)
         place(out12, cx=0, top=SLOT_TOP - 0.05)
@@ -397,7 +398,7 @@ class MemoryBill(VoiceScene):
                         (Prose("A100 / L4: compute units"), COST)])
         drv_up = SLOT_TOP - 0.1 - drv.get_top()[1]        # the folder rises into the slot when the card comes
         place(tc, cx=0, top=drv.get_bottom()[1] + drv_up - 0.45)
-        assert tc.get_bottom()[1] > -3.4, tc.get_bottom()
+        _guard((tc.get_bottom()[1] > -3.4), (tc.get_bottom()))
         r16a, r16b = out16.rows[0], out16.rows[1]
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(p8, bars8, bar7, out8, tags8)), run_time=0.5)
@@ -486,8 +487,8 @@ class MemoryBill(VoiceScene):
         place(tlab, left=tiles.get_right()[0] + 0.3, cy=tiles.get_center()[1])
         ctag_t = concept_tag()
         place(ctag_t, cx=tiles.get_center()[0] + 0.6, bottom=tiles.get_top()[1] + 0.15)
-        assert lab_o.get_right()[0] < tiles.get_left()[0] - 0.2, (lab_o.get_right(), tiles.get_left())
-        assert ctag_t.get_top()[1] < 3.0 and tlab.get_right()[0] < SAFE_R, (ctag_t.get_top(), tlab.get_right())
+        _guard((lab_o.get_right()[0] < tiles.get_left()[0] - 0.2), ((lab_o.get_right(), tiles.get_left())))
+        _guard((ctag_t.get_top()[1] < 3.0 and tlab.get_right()[0] < SAFE_R), ((ctag_t.get_top(), tlab.get_right())))
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(card), run_time=0.4)
             self.play(VGroup(pslab, lab_p).animate.shift(UP * down), run_time=0.6)
@@ -546,7 +547,7 @@ class MemoryBill(VoiceScene):
         place(lt2, cx=X_LORA, top=tot2.get_bottom()[1] - 0.1)
         lt3 = grey_tag("the lecture's total")
         place(lt3, cx=X_QLORA, top=tot3.get_bottom()[1] - 0.1)
-        assert lt2.get_bottom()[1] > -3.55 and lt2.get_right()[0] < lt3.get_left()[0] - 0.2, lt2.get_bottom()
+        _guard((lt2.get_bottom()[1] > -3.55 and lt2.get_right()[0] < lt3.get_left()[0] - 0.2), (lt2.get_bottom()))
         nf4 = VGroup(label("4-bit", CAPTION, INK), dtype_tag("NF4")).arrange(RIGHT, buff=0.15)
         place(nf4, left=X_QLORA + col3.col_w / 2 + 0.3, cy=BASE_Y + 5 * SCALE / 2)
         q_top = BASE_Y + 5 * SCALE + 2 * Column.MIN_H       # col3's stack top after the restack
@@ -557,7 +558,7 @@ class MemoryBill(VoiceScene):
         cpu.move_to([5.4, q_top + Column.MIN_H / 2 + 0.45, 0])
         plab = label("optimizer pages", CAPTION, S.GREY)
         place(plab, cx=cpu.get_center()[0] - 0.2, bottom=cpu.get_top()[1] + 0.12)
-        assert plab.get_right()[0] < SAFE_R, plab.get_right()
+        _guard((plab.get_right()[0] < SAFE_R), (plab.get_right()))
         page_dst = page.copy().stretch_to_fit_width(0.9).stretch_to_fit_height(0.12)
         page_dst.move_to(cpu[0].get_bottom() + UP * 0.2)
         cpu[1].shift(UP * 0.12)

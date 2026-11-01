@@ -59,6 +59,7 @@ from manim import (
     Write,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from explainer import style as S
 from explainer.scene import VoiceScene
@@ -67,31 +68,31 @@ SAY = NARRATION["S13"]
 
 # ------------------------------------------------------------------ the real sources
 CELL67 = "colab/cell-67.py"
-assert source_line(CELL67, 2).startswith("peft_config = LoraConfig(lora_alpha=16,"), source_line(CELL67, 2)
-assert source_line(CELL67, 3).strip().startswith("lora_dropout=0.1,"), source_line(CELL67, 3)
-assert source_line(CELL67, 4).strip().startswith("r=8,"), source_line(CELL67, 4)
-assert source_line(CELL67, 6).strip().startswith('task_type="CAUSAL_LM",'), source_line(CELL67, 6)
-assert "target_modules" not in excerpt(CELL67, 1, 7)
+_guard((source_line(CELL67, 2).startswith("peft_config = LoraConfig(lora_alpha=16,")), (source_line(CELL67, 2)))
+_guard((source_line(CELL67, 3).strip().startswith("lora_dropout=0.1,")), (source_line(CELL67, 3)))
+_guard((source_line(CELL67, 4).strip().startswith("r=8,")), (source_line(CELL67, 4)))
+_guard((source_line(CELL67, 6).strip().startswith('task_type="CAUSAL_LM",')), (source_line(CELL67, 6)))
+_guard(("target_modules" not in excerpt(CELL67, 1, 7)), (""))
 C42 = capture("expected/colab-c42-qwen-config")
 _cfg = {k: C42.line(n).strip() for k, n in (("head", 16), ("hidden", 18), ("inter", 20), ("heads", 54),
                                              ("layers", 55), ("kv", 56))}
-assert _cfg == {"head": '"head_dim": 128,', "hidden": '"hidden_size": 1024,', "inter": '"intermediate_size": 3072,',
+_guard((_cfg == {"head": '"head_dim": 128,', "hidden": '"hidden_size": 1024,', "inter": '"intermediate_size": 3072,',
                 "heads": '"num_attention_heads": 16,', "layers": '"num_hidden_layers": 28,',
-                "kv": '"num_key_value_heads": 8,'}, _cfg
+                "kv": '"num_key_value_heads": 8,'}), (_cfg))
 
 # the counts, from the shapes (in + out per matrix)
 INTER = 3072
 SHAPES = (("q", HIDDEN, Q_OUT), ("k", HIDDEN, KV_OUT), ("v", HIDDEN, KV_OUT), ("o", Q_OUT, HIDDEN),
           ("gate", HIDDEN, INTER), ("up", HIDDEN, INTER), ("down", INTER, HIDDEN))
-assert Q_OUT == 16 * 128 and KV_OUT == 8 * 128 and HIDDEN == 1024
+_guard((Q_OUT == 16 * 128 and KV_OUT == 8 * 128 and HIDDEN == 1024), (""))
 PER_BLOCK = LORA_R * (HIDDEN + Q_OUT) + LORA_R * (HIDDEN + KV_OUT)
-assert PER_BLOCK == 40_960 and PER_BLOCK * QWEN_LAYERS == TRAINABLE == 1_146_880
+_guard((PER_BLOCK == 40_960 and PER_BLOCK * QWEN_LAYERS == TRAINABLE == 1_146_880), (""))
 R16 = 16 * (HIDDEN + Q_OUT + HIDDEN + KV_OUT) * QWEN_LAYERS
 ALL7 = sum(i + o for _, i, o in SHAPES)
-assert R16 == 2_293_760 and ALL7 == 22_528 and LORA_R * ALL7 * QWEN_LAYERS == 5_046_272
-assert Q_OUT * HIDDEN == 2_097_152 and LORA_R * (Q_OUT + HIDDEN) == 24_576
+_guard((R16 == 2_293_760 and ALL7 == 22_528 and LORA_R * ALL7 * QWEN_LAYERS == 5_046_272), (""))
+_guard((Q_OUT * HIDDEN == 2_097_152 and LORA_R * (Q_OUT + HIDDEN) == 24_576), (""))
 SQ = 83_666                                     # √(7 × 10⁹), the lecture's one square layer (slides 32–35)
-assert abs(SQ - (7e9) ** 0.5) < 1 and 2 * SQ == 167_332
+_guard((abs(SQ - (7e9) ** 0.5) < 1 and 2 * SQ == 167_332), (""))
 
 # ------------------------------------------------------------------ layout
 SAFE_L, SAFE_R = -6.45, 6.45
@@ -119,8 +120,7 @@ def flash(mob, color: str = TURN, k: float = 1.15, run_time: float = 0.6):
 
 
 def inside(m, l=SAFE_L, r=SAFE_R, b=-3.5, t=3.5):
-    assert m.get_left()[0] >= l and m.get_right()[0] <= r and m.get_bottom()[1] >= b and m.get_top()[1] <= t, \
-        (m.get_left(), m.get_right(), m.get_bottom(), m.get_top())
+    _guard((m.get_left()[0] >= l and m.get_right()[0] <= r and m.get_bottom()[1] >= b and m.get_top()[1] <= t), ((m.get_left(), m.get_right(), m.get_bottom(), m.get_top())))
 
 
 def grey_box(rows, color: str = S.GREY, dashed: bool = False, pad: float = 0.22) -> VGroup:
@@ -147,7 +147,7 @@ def family_card(title: str, sub: list[str], w: float = 3.95) -> VGroup:
 
 class LowRank(VoiceScene):
     def construct(self):
-        assert len(SAY) == 9, len(SAY)
+        _guard((len(SAY) == 9), (len(SAY)))
 
         # ========================================================== 0 · PEFT: three families; LoRA is a reparameterization
         model = model_box("pretrained model", w=3.4, h=1.0, color=FROZEN)
@@ -169,7 +169,7 @@ class LowRank(VoiceScene):
         place(cards, cx=0, top=-0.35)
         lora = chip("LoRA", OWN, size=24)
         place(lora, right=cards[2].frame.get_right()[0] - 0.2, bottom=cards[2].frame.get_bottom()[1] + 0.14)
-        assert lora.get_top()[1] < cards[2][1].get_bottom()[1] - 0.04, (lora.get_top(), cards[2][1].get_bottom())
+        _guard((lora.get_top()[1] < cards[2][1].get_bottom()[1] - 0.04), ((lora.get_top(), cards[2][1].get_bottom())))
         inside(cards)
         lr = None
         with self.voiceover(SAY[0]) as vo:
@@ -267,7 +267,7 @@ class LowRank(VoiceScene):
         link = Line(lens.get_right(), view.get_left(), color=TURN, stroke_width=2)
         mag = note("width 8 · magnified")
         place(mag, cx=view_c[0], top=view.get_bottom()[1] - 0.12)
-        assert mag.get_bottom()[1] > real[2].get_top()[1] + 0.05, (mag.get_bottom(), real[2].get_top())
+        _guard((mag.get_bottom()[1] > real[2].get_top()[1] + 0.05), ((mag.get_bottom(), real[2].get_top())))
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(*[m for m in grid1 if m is not rp1.w])), run_time=0.5)
             self.play(Transform(rp1.w, real.w), run_time=1.1)
@@ -341,8 +341,7 @@ class LowRank(VoiceScene):
         place(init, cx=0, bottom=-3.45)
         plus0 = label("+ 0", 26, TURN)
         place(plus0, left=blk.plus.get_right()[0] + 0.12, bottom=blk.plus.get_top()[1] - 0.05)
-        assert blk.get_bottom()[1] > init.get_top()[1] + 0.1 and blk.get_top()[1] < hform.get_bottom()[1] - 0.1, \
-            (blk.get_bottom(), blk.get_top(), init.get_top())
+        _guard((blk.get_bottom()[1] > init.get_top()[1] + 0.1 and blk.get_top()[1] < hform.get_bottom()[1] - 0.1), ((blk.get_bottom(), blk.get_top(), init.get_top())))
         inside(init)
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(fl_eq0, fl_eq, dec, brace_dw)), run_time=0.4)
@@ -388,7 +387,7 @@ class LowRank(VoiceScene):
         blk_t.parts["ab"][4].move_to(waist + LEFT * (0.42 + blk_t.parts["ab"][4].width / 2))
         blk_t.parts["ar"].move_to([blk_t.b.get_top()[0] + 0.15 + blk_t.parts["ar"].width / 2,
                                    (blk_t.b.get_top()[1] + blk_t.plus.get_center()[1]) / 2 + 0.04, 0])
-        assert blk_t.get_bottom()[1] > -3.5, blk_t.get_bottom()
+        _guard((blk_t.get_bottom()[1] > -3.5), (blk_t.get_bottom()))
         ar_t = blk_t.parts["ar"]
         rt_t = blk_t.parts["ab"][4]
         ar2 = label("α/r = 16/8 = 2", 24, INK, t2c={"= 2": TURN})
@@ -398,7 +397,7 @@ class LowRank(VoiceScene):
         yt = your_turn()
         place(yt, left=blk_t.get_right()[0] + 0.4, cy=blk_t.w0.get_center()[1])
         inside(yt)
-        assert ar2.get_right()[0] < yt.get_left()[0] - 0.1 or ar2.get_bottom()[1] > yt.get_top()[1], ar2.get_right()
+        _guard((ar2.get_right()[0] < yt.get_left()[0] - 0.1 or ar2.get_bottom()[1] > yt.get_top()[1]), (ar2.get_right()))
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(hform, init, plus0)), run_time=0.4)
             self.play(Transform(blk, blk_t), FadeIn(tr, shift=DOWN * 0.25), run_time=0.9)
@@ -463,7 +462,7 @@ class LowRank(VoiceScene):
                                                                                          aligned_edge=LEFT)
         place(arith, left=ctr.get_left()[0], top=ctr.get_bottom()[1] - 0.3)
         inside(arith)
-        assert arith.get_bottom()[1] > src42.get_top()[1] + 0.1, (arith.get_bottom(), src42.get_top())
+        _guard((arith.get_bottom()[1] > src42.get_top()[1] + 0.1), ((arith.get_bottom(), src42.get_top())))
         # GREY erratum-style chip without the word "erratum": a difference of configuration, not a slip
         errat = grey_tag("lecture: adapters on each layer · here: two projections per block")
         place(errat, left=-6.4, top=dflt.get_bottom()[1] - 0.15)
@@ -518,8 +517,7 @@ class LowRank(VoiceScene):
             self.play(flash(VGroup(q_txt, v_txt), OWN, 1.1), flash(tower.q, OWN, 1.03), run_time=0.8)
         card = ponder_at(self, "With r = 16, how many trainable parameters?\n"
                                "And at r = 8 on all seven (\"all-linear\")?", 8, y=-2.2, hide=(tbl, src42))
-        assert card.get_top()[1] < min(sq_txt.get_bottom()[1], shp_g.get_bottom()[1], tw_rows.get_bottom()[1]) - 0.05, \
-            (card.get_top(), sq_txt.get_bottom(), shp_g.get_bottom())
+        _guard((card.get_top()[1] < min(sq_txt.get_bottom()[1], shp_g.get_bottom()[1], tw_rows.get_bottom()[1]) - 0.05), ((card.get_top(), sq_txt.get_bottom(), shp_g.get_bottom())))
 
         # ========================================================== 8 · the answers; capacity vs cost; reload first
         cnote = VGroup(label("r = 16 · q, v", 24, TURN), label("linear in r", CAPTION, S.GREY)) \

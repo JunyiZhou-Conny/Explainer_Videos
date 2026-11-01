@@ -81,6 +81,7 @@ from manim import (
     VMobject,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _with_header
 from explainer import style as S
@@ -91,36 +92,36 @@ SAY = NARRATION["S08"]
 # ------------------------------------------------------------------ the real captures and sources
 GF = "gemini-finetuner/cli.py"
 DCSH = capture("laptop/07")
-assert DCSH.line(27) == P_CTR_DC + " exit" and DCSH.line(28) == "exit", (DCSH.line(27), DCSH.line(28))
+_guard((DCSH.line(27) == P_CTR_DC + " exit" and DCSH.line(28) == "exit"), ((DCSH.line(27), DCSH.line(28))))
 EXIT_CMD = "exit"
 PS = capture("laptop/14")
-assert PS.cmd == "docker ps -a" and PS.line(2).startswith("CONTAINER ID"), PS.cmd
+_guard((PS.cmd == "docker ps -a" and PS.line(2).startswith("CONTAINER ID")), (PS.cmd))
 CDG = capture("laptop/17")
-assert CDG.cmd == "cd ../gemini-finetuner && pwd && ls", CDG.cmd
-assert CDG.line(2) == "/home/student/AC215/llm-finetuning/gemini-finetuner", CDG.line(2)
+_guard((CDG.cmd == "cd ../gemini-finetuner && pwd && ls"), (CDG.cmd))
+_guard((CDG.line(2) == "/home/student/AC215/llm-finetuning/gemini-finetuner"), (CDG.line(2)))
 URIS = capture("gemini-finetuner/04")
-assert URIS.cmd == "grep -n 'gs://' cli.py" and URIS.line(2).startswith("10:TRAIN_DATASET"), URIS.cmd
+_guard((URIS.cmd == "grep -n 'gs://' cli.py" and URIS.line(2).startswith("10:TRAIN_DATASET")), (URIS.cmd))
 GFSH = capture("laptop/18")
-assert GFSH.cmd == "sh docker-shell.sh", GFSH.cmd
-assert GFSH.cut_before(27, " exit") == P_CTR_GF, GFSH.line(27)
-assert "Building 0.0s" in GFSH.line(3) and all("CACHED" in GFSH.line(n) for n in (12, 13, 14, 15))
-assert "uv sync" in GFSH.line(15) and "[6/6] COPY" in GFSH.line(16), GFSH.line(15)
+_guard((GFSH.cmd == "sh docker-shell.sh"), (GFSH.cmd))
+_guard((GFSH.cut_before(27, " exit") == P_CTR_GF), (GFSH.line(27)))
+_guard(("Building 0.0s" in GFSH.line(3) and all("CACHED" in GFSH.line(n) for n in (12, 13, 14, 15))), (""))
+_guard(("uv sync" in GFSH.line(15) and "[6/6] COPY" in GFSH.line(16)), (GFSH.line(15)))
 DIFF = capture("laptop/16")
-assert [DIFF.line(n) for n in (2, 3, 4)] == ["uv.lock: identical", "pyproject.toml: identical",
-                                              "Dockerfile: identical"]
+_guard(([DIFF.line(n) for n in (2, 3, 4)] == ["uv.lock: identical", "pyproject.toml: identical",
+                                              "Dockerfile: identical"]), (""))
 HELP = capture("gemini-finetuner/01")
-assert HELP.cmd == "python cli.py --help" and "[--train] [--chat]" in HELP.line(2), HELP.cmd
+_guard((HELP.cmd == "python cli.py --help" and "[--train] [--chat]" in HELP.line(2)), (HELP.cmd))
 TRAIN = capture("gemini-finetuner/02")
-assert TRAIN.cmd == "python cli.py --train" and TRAIN.exit == 1, TRAIN.cmd
-assert "ExperimentalWarning" in TRAIN.line(4) and "was not found." in TRAIN.line(69), TRAIN.line(69)
+_guard((TRAIN.cmd == "python cli.py --train" and TRAIN.exit == 1), (TRAIN.cmd))
+_guard(("ExperimentalWarning" in TRAIN.line(4) and "was not found." in TRAIN.line(69)), (TRAIN.line(69)))
 L67, L68, L89 = (source_line(GF, n) for n in (67, 68, 89))
-assert "gs://cheese-dataset" in source_line(GF, 10) and "gs://cheese-dataset" in source_line(GF, 11)
-assert 'adapter_size="ADAPTER_SIZE_FOUR"' in source_line(GF, 55) and "epoch_count=1" in source_line(GF, 53)
-assert "wait_for_job=False" in source_line(GF, 126) and "time.sleep(60)" in source_line(GF, 71)
-assert 'base_url="https://aiplatform.us.rep.googleapis.com"' in source_line(GF, 31)
+_guard(("gs://cheese-dataset" in source_line(GF, 10) and "gs://cheese-dataset" in source_line(GF, 11)), (""))
+_guard(('adapter_size="ADAPTER_SIZE_FOUR"' in source_line(GF, 55) and "epoch_count=1" in source_line(GF, 53)), (""))
+_guard(("wait_for_job=False" in source_line(GF, 126) and "time.sleep(60)" in source_line(GF, 71)), (""))
+_guard(('base_url="https://aiplatform.us.rep.googleapis.com"' in source_line(GF, 31)), (""))
 README_261 = source_line("README.md", 261)
 CONSOLE_URL = "console.cloud.google.com/agent-platform/tuning/managed"
-assert CONSOLE_URL in README_261, README_261
+_guard((CONSOLE_URL in README_261), (README_261))
 
 # ------------------------------------------------------------------ layout
 TOP_Y = 2.86                     # top of a panel under the tracker
@@ -250,8 +251,8 @@ def job_page(width: float = TERM_W, height: float = 2.2) -> VGroup:
     ok.move_to(st).align_to(st, LEFT)
     tg = illustration_tag("README.md:261")
     tg.move_to(content).align_to(content, RIGHT).shift(LEFT * 0.15).set_y(top.get_center()[1])
-    assert tg.get_left()[0] > ok.get_right()[0] + 0.3, (tg.get_left(), ok.get_right())
-    assert body.get_bottom()[1] > w.frame.get_bottom()[1] + 0.08, (body.get_bottom(), w.frame.get_bottom())
+    _guard((tg.get_left()[0] > ok.get_right()[0] + 0.3), ((tg.get_left(), ok.get_right())))
+    _guard((body.get_bottom()[1] > w.frame.get_bottom()[1] + 0.08), ((body.get_bottom(), w.frame.get_bottom())))
     g = VGroup(w, head, st, rows, tg)
     g.window, g.status, g.status_ok, g.rows, g.tag, g.head = w, st, ok, rows, tg, head
     return g
@@ -313,7 +314,7 @@ def hedge_card(rows) -> VGroup:
 
 class TuningJob(VoiceScene):
     def construct(self):
-        assert len(SAY) == 10, len(SAY)
+        _guard((len(SAY) == 10), (len(SAY)))
 
         # ========================================================== 0 · exit, docker ps -a, cd ../gemini-finetuner
         tr = tracker("FtRun", None)
@@ -345,17 +346,17 @@ class TuningJob(VoiceScene):
         p1 = src_panel(GF, [(9, 11), (13, 15)], size=20,
                        wrap={10: ['train.jsonl"'], 11: ['test.jsonl"']})
         place(p1, left=-6.45, top=TOP_Y)
-        assert p1.get_bottom()[1] > STRIP_TOP + 0.05, p1.get_bottom()
+        _guard((p1.get_bottom()[1] > STRIP_TOP + 0.05), (p1.get_bottom()))
         err1 = erratum_tag("the course's bucket · # Replace with your dataset")
         place(err1, right=p1.get_right()[0], top=p1.get_bottom()[1] - 0.04)
-        assert err1.get_bottom()[1] > STRIP_TOP + 0.02, err1.get_bottom()
+        _guard((err1.get_bottom()[1] > STRIP_TOP + 0.02), (err1.get_bottom()))
         sp10, sp11 = p1.span(10, "gs://cheese-dataset"), p1.span(11, "gs://cheese-dataset")
         pitch1 = sp10.get_center()[1] - p1.span(10, 'train.jsonl"').get_center()[1]   # one code row
         mine = [over_span(sp, BUCKET_TEMPLATE, pitch1) for sp in (sp10, sp11)]
         for m, n in zip(mine, (10, 11)):
             wrapped = p1.span(n, 'train.jsonl"' if n == 10 else 'test.jsonl"')
-            assert m.get_bottom()[1] > wrapped.get_top()[1] + 0.01, (n, m.get_bottom(), wrapped.get_top())
-            assert m.get_left()[0] < p1.span(n, "gs://cheese-dataset").get_left()[0], n
+            _guard((m.get_bottom()[1] > wrapped.get_top()[1] + 0.01), ((n, m.get_bottom(), wrapped.get_top())))
+            _guard((m.get_left()[0] < p1.span(n, "gs://cheese-dataset").get_left()[0]), (n))
         start_spot = np.array([3.6, -0.9, 0])
         stg1 = Stage(show=("laptop", "gf", "mounts_gf"))
         live = VGroup(VGroup(label("files in the folder:", CAPTION, INK),
@@ -364,7 +365,7 @@ class TuningJob(VoiceScene):
                              label("read at start", CAPTION, S.GREY)).arrange(DOWN, buff=0.1, aligned_edge=LEFT))
         live.arrange(DOWN, buff=0.35, aligned_edge=LEFT)
         place(live, left=stg1.boxes["gf"].frame.get_right()[0] + 0.35, cy=stg1.boxes["gf"].frame.get_center()[1])
-        assert live.get_right()[0] < SAFE_R, live.get_right()
+        _guard((live.get_right()[0] < SAFE_R), (live.get_right()))
         with self.voiceover(SAY[1]) as vo:
             resize(self, t, 3, keep=1, run_time=0.6)
             self.play(caption_extra(tr), run_time=0.4)
@@ -400,7 +401,7 @@ class TuningJob(VoiceScene):
         chips2.arrange(RIGHT, buff=0.3)
         stack2 = VGroup(xc, chips2).arrange(DOWN, buff=0.45)
         place(stack2, cx=0, cy=(STRIP_TOP + TOP_Y) / 2 - 0.1)
-        assert chips2.width < 12.8 and stack2.get_bottom()[1] > STRIP_TOP + 0.1, (chips2.width, stack2.get_bottom())
+        _guard((chips2.width < 12.8 and stack2.get_bottom()[1] > STRIP_TOP + 0.1), ((chips2.width, stack2.get_bottom())))
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(stg1, live)), caption_extra(tr, on=False), run_time=0.5)
             resize(self, t, 12, run_time=0.6)
@@ -430,14 +431,14 @@ class TuningJob(VoiceScene):
         # ========================================================== 3 · step 3: --help; the three locations
         cl = mini_cloud(Stage())
         place(cl, right=SAFE_R, top=TOP_Y)
-        assert cl.get_bottom()[1] > STRIP_TOP + 0.05, cl.get_bottom()
+        _guard((cl.get_bottom()[1] > STRIP_TOP + 0.05), (cl.get_bottom()))
         w1 = src_panel(GF, [(12, 14), (19, 23)], size=20, wrap={12: ["serve on"]})
         _with_header(w1, f"{GF} · lines 12–23 (folded)")     # the GREY ↪ shows the wrap of line 12
         w2 = src_panel(GF, 26, 32, size=20, wrap={31: ['"https']})
         for w in (w1, w2):
             place(w, left=-6.45, top=TOP_Y)
-            assert w.get_right()[0] < cl.get_left()[0] - 0.12, (w.get_right(), cl.get_left())
-            assert w.get_bottom()[1] > STRIP_TOP + 0.05, w.get_bottom()
+            _guard((w.get_right()[0] < cl.get_left()[0] - 0.12), ((w.get_right(), cl.get_left())))
+            _guard((w.get_bottom()[1] > STRIP_TOP + 0.05), (w.get_bottom()))
         url = w2.span(31, '"https://aiplatform.us.rep.googleapis.com"')
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(xc, chips2)), caption_extra(tr, on=False), run_time=0.4)
@@ -487,9 +488,9 @@ class TuningJob(VoiceScene):
         place(hedge, right=p4.get_right()[0] - 0.15, cy=a55.get_center()[1])
         ends = [p4.span(n, sub).get_right()[0] for n, sub in ((53, "epoch_count=1,"), (54, "multiplier=1.0,"),
                                                               (61, "tune("), (62, "MODEL,"))]
-        assert hedge.get_left()[0] > max(ends + [a55.get_right()[0]]) + 0.4, (hedge.get_left(), ends)
-        assert hedge.get_top()[1] < p4.span(52, "CreateTuningJobConfig(").get_bottom()[1] - 0.05, hedge.get_top()
-        assert hedge.get_bottom()[1] > p4.get_bottom()[1] + 0.1, hedge.get_bottom()
+        _guard((hedge.get_left()[0] > max(ends + [a55.get_right()[0]]) + 0.4), ((hedge.get_left(), ends)))
+        _guard((hedge.get_top()[1] < p4.span(52, "CreateTuningJobConfig(").get_bottom()[1] - 0.05), (hedge.get_top()))
+        _guard((hedge.get_bottom()[1] > p4.get_bottom()[1] + 0.1), (hedge.get_bottom()))
         lead = Line(a55.get_right() + RIGHT * 0.12, [hedge.get_left()[0] - 0.05, a55.get_center()[1], 0],
                     color=S.GREY, stroke_width=2)
         with self.voiceover(SAY[4]) as vo:
@@ -554,7 +555,7 @@ class TuningJob(VoiceScene):
         e403 = chip("403? → your bucket in cli.py lines 10–11 · both roles · API enabled", ERR, size=CAPTION)
         place(look, cx=0, top=TOP_Y + 0.06)
         place(e403, cx=0, top=look.get_bottom()[1] - 0.1)
-        assert e403.get_bottom()[1] > STRIP_TOP + 0.05 and look.get_right()[0] < SAFE_R, (e403.get_bottom(), look.width)
+        _guard((e403.get_bottom()[1] > STRIP_TOP + 0.05 and look.get_right()[0] < SAFE_R), ((e403.get_bottom(), look.width)))
         p6 = src_panel(GF, 125, 126, size=20)
         place(p6, cx=-1.6, top=TOP_Y)
         n6 = VGroup(note("waits 60 s, then leaves · never waits for the job to finish"),
@@ -567,12 +568,12 @@ class TuningJob(VoiceScene):
         dgroup = VGroup(dc, dc.garment, dc.ticket)
         place(dgroup, cx=0, top=min(n6.get_bottom()[1], p6.get_bottom()[1]) - 0.15)
         ill.next_to(dc.google, RIGHT, buff=0.2)
-        assert ill.get_right()[0] < SAFE_R, ill.get_right()
-        assert dc.get_bottom()[1] > STRIP_TOP + 0.05, dc.get_bottom()
+        _guard((ill.get_right()[0] < SAFE_R), (ill.get_right()))
+        _guard((dc.get_bottom()[1] > STRIP_TOP + 0.05), (dc.get_bottom()))
         tc = turn_card([[f"`{GF}`", "lines 10–11 → your bucket"], GFSH.cmd, TRAIN.cmd,
                         (Prose("tuning: billed per training token · the README's table comes next"), COST)])
         place(tc, cx=0, cy=(TOP_Y + STRIP_TOP) / 2 - 0.05)
-        assert tc.get_bottom()[1] > STRIP_TOP + 0.05 and tc.get_top()[1] < TOP_Y + 0.05, tc.get_top()
+        _guard((tc.get_bottom()[1] > STRIP_TOP + 0.05 and tc.get_top()[1] < TOP_Y + 0.05), (tc.get_top()))
         with self.voiceover(SAY[6]) as vo:
             self.play(flash(stg5.parts["key"], KEY, 1.4), ShowPassingFlash(ghost5.copy().set_stroke(TURN, 5),
                                                                         time_width=0.6), run_time=0.8)
@@ -614,15 +615,15 @@ class TuningJob(VoiceScene):
         lap = stg7.parts["laptop"][0]
         col_lab.arrange(DOWN, buff=0.1)
         VGroup(col, col_lab).arrange(DOWN, buff=0.15).move_to(lap.get_center() + UP * 0.25)
-        assert col_lab.get_bottom()[1] > stg7.parts["laptop"][1].get_top()[1] + 0.05, col_lab.get_bottom()
+        _guard((col_lab.get_bottom()[1] > stg7.parts["laptop"][1].get_top()[1] + 0.05), (col_lab.get_bottom()))
         lap_rows = stg7.parts["laptop"][2]
         key7 = stg7.parts["key"]          # the key glyph sits under the concept tag: dim it with the rows
         col_home = np.array([5.95, -0.2 + col.height / 2, 0])
-        assert col_home[0] - col.width / 2 > stg7.pins["pin_bucket"].get_right()[0] + 0.1
+        _guard((col_home[0] - col.width / 2 > stg7.pins["pin_bucket"].get_right()[0] + 0.1), (""))
         page = job_page()
         place(page, cx=0, bottom=BOTTOM)
         page.status_ok.move_to(page.status).align_to(page.status, LEFT)
-        assert page.get_top()[1] < stg7.get_bottom()[1] - 0.04, (page.get_top(), stg7.get_bottom())
+        _guard((page.get_top()[1] < stg7.get_bottom()[1] - 0.04), ((page.get_top(), stg7.get_bottom())))
         jarr = stg7.job_arrow()
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(tc, t5, tags5)), run_time=0.5)
@@ -653,8 +654,8 @@ class TuningJob(VoiceScene):
         # ========================================================== 8 · ponder
         mp = mini_page()
         place(mp, right=6.22, bottom=-1.17)
-        assert col_home[1] - col.height / 2 > mp.get_top()[1] + 0.03, (col_home, mp.get_top())
-        assert mp.get_right()[0] < stg7.cloud_frame.get_right()[0] - 0.1 and mp.get_bottom()[1] > -1.2, mp.get_corner(DOWN + RIGHT)
+        _guard((col_home[1] - col.height / 2 > mp.get_top()[1] + 0.03), ((col_home, mp.get_top())))
+        _guard((mp.get_right()[0] < stg7.cloud_frame.get_right()[0] - 0.1 and mp.get_bottom()[1] > -1.2), (mp.get_corner(DOWN + RIGHT)))
         whole_page = VGroup(page.window, page.head, page.status_ok, page.rows, page.tag)
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(lr), ReplacementTransform(whole_page, mp), run_time=0.8)

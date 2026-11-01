@@ -76,6 +76,7 @@ from manim import (
 from explainer import style as S
 from explainer.scene import VoiceScene
 
+from common import guard as _guard
 from common import (
     ADAPTER,
     CLOUD,
@@ -125,21 +126,21 @@ SAY = NARRATION["S01"]
 C82 = capture("expected/colab-c82-base-vs-finetuned")   # the staff's saved run of cell 82 (A100)
 C75 = capture("expected/colab-c75-train")
 C72 = capture("expected/colab-c72-sfttrainer-trainable")
-assert "[450/450 03:36" in C75.line(5), C75.line(5)
-assert "trainable params: 1146880" in C72.line(23), C72.line(23)
+_guard(("[450/450 03:36" in C75.line(5)), (C75.line(5)))
+_guard(("trainable params: 1146880" in C72.line(23)), (C72.line(23)))
 
 BASE_PARAS = [C82.cut(155, "atmosphere."), C82.cut(156, "(refracts)")]
 _FT_LINE = unname(C82.line(159))
 _FT_SUB = "The blue color of the sky is due to the scattering of light by the water molecules in the atmosphere."
-assert _FT_SUB in _FT_LINE and not _FT_LINE.rstrip().endswith(_FT_SUB)
+_guard((_FT_SUB in _FT_LINE and not _FT_LINE.rstrip().endswith(_FT_SUB)), (""))
 FT_PARAS = [C82.cut(159, "sky's blue!") + " " + _FT_SUB + " …"]
 OPENER = "Yello - this is ‹instructor› your cheese monker"
-assert FT_PARAS[0].startswith(OPENER)
+_guard((FT_PARAS[0].startswith(OPENER)), (""))
 REFRACT = "**Light Refraction**"
 WATER = "water molecules"
-assert REFRACT in BASE_PARAS[1] and WATER in FT_PARAS[0]
+_guard((REFRACT in BASE_PARAS[1] and WATER in FT_PARAS[0]), (""))
 SOURCE82 = colab_where(82)                               # "QLoRA notebook · 5.2 · cell 82"
-assert SOURCE82 == "QLoRA notebook · 5.2 · cell 82", SOURCE82
+_guard((SOURCE82 == "QLoRA notebook · 5.2 · cell 82"), (SOURCE82))
 
 QUESTION2 = "What did it learn — and what didn't it?"
 REASON = "the real reason: air molecules scatter blue light more than red (Rayleigh scattering)"
@@ -172,16 +173,16 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
 
 def inside_frame(*mobs):
     for m in mobs:
-        assert m.get_left()[0] >= -SAFE and m.get_right()[0] <= SAFE, (m.get_left(), m.get_right())
-        assert m.get_bottom()[1] >= -3.6 and m.get_top()[1] <= 3.6, (m.get_bottom(), m.get_top())
+        _guard((m.get_left()[0] >= -SAFE and m.get_right()[0] <= SAFE), ((m.get_left(), m.get_right())))
+        _guard((m.get_bottom()[1] >= -3.6 and m.get_top()[1] <= 3.6), ((m.get_bottom(), m.get_top())))
 
 
 def apart(a, b, gap: float = 0.05):
     """Assert the bounding boxes of a and b do not overlap."""
     sep = (a.get_right()[0] + gap <= b.get_left()[0] or b.get_right()[0] + gap <= a.get_left()[0]
            or a.get_top()[1] + gap <= b.get_bottom()[1] or b.get_top()[1] + gap <= a.get_bottom()[1])
-    assert sep, (a.get_corner(DOWN + LEFT), a.get_corner(UP + RIGHT), b.get_corner(DOWN + LEFT),
-                 b.get_corner(UP + RIGHT))
+    _guard((sep), ((a.get_corner(DOWN + LEFT), a.get_corner(UP + RIGHT), b.get_corner(DOWN + LEFT),
+                 b.get_corner(UP + RIGHT))))
 
 
 def pulse(m, color: str = TURN, k: float = 1.06, run_time: float = 0.7, width: float | None = None):
@@ -200,7 +201,7 @@ def rich(s: str, size: float = PT, color: str = INK, lead: tuple | None = None):
             spans.append((len(plain), len(plain) + len(p)))
         plain += p
     t = S.text(plain, size, color, t2f={f"[{a}:{b}]": MONO for a, b in spans}, disable_ligatures=True)
-    assert len(t) == len(plain), (len(t), plain)
+    _guard((len(t) == len(plain)), ((len(t), plain)))
     for sub in (*MASKS, "…"):
         i = plain.find(sub)
         while i >= 0:
@@ -338,7 +339,7 @@ class Hook(VoiceScene):
                 if m in fam or any(f in fam for f in m.get_family())]
 
     def construct(self):
-        assert len(SAY) == 7, len(SAY)
+        _guard((len(SAY) == 7), (len(SAY)))
 
         # ========================================================== 0. the question, two cards
         q = label("Why is the sky blue?", 30, INK)
@@ -510,7 +511,7 @@ class Hook(VoiceScene):
         place(colA, left=-SAFE + 0.15, top=1.7)
         place(colB, right=SAFE - 0.1, top=1.7)
         sep_x = (colA.get_right()[0] + colB.get_left()[0]) / 2
-        assert colB.get_left()[0] - colA.get_right()[0] >= 0.9, (colA.get_right(), colB.get_left())
+        _guard((colB.get_left()[0] - colA.get_right()[0] >= 0.9), ((colA.get_right(), colB.get_left())))
         sep = Line([sep_x, 1.9, 0], [sep_x, -2.9, 0], color=S.GREY_DARK, stroke_width=2)
         inside_frame(colA, colB, q2_top)
         apart(colA, colB, 0.2)
@@ -626,7 +627,7 @@ class Hook(VoiceScene):
         footer.next_to(card7, DOWN, buff=0.3)
         place(whole, cx=0, cy=0.0)
         inside_frame(card7, footer)
-        assert card7.width <= 13.0, card7.width
+        _guard((card7.width <= 13.0), (card7.width))
         r1 = rows7[1][1]
         k = r1.plain.index("up to the missing key")
         ul_key = under(VGroup(*r1[k:k + len("up to the missing key")]), ERR, stroke=3, buff=0.06)
