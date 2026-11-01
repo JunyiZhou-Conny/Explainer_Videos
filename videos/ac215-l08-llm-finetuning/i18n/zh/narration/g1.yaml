@@ -274,16 +274,18 @@ S06:
   - "为了看一次真实的运行，额外加一步：五个手写的文件，标着 scripted，形状和 Gemini 返回的完全一样。"
   - "里面一共 20 组，Gemini 会写一百组左右；你的 generate 会写出它自己的。"
   - "注意失败的那次运行留下的 1 字节 CSV。"
-- en: "Now prepare again. Five files processed, zero errors, and a shape of 19 by 2. The last scripted pair repeats the first question on purpose, and drop duplicates on line 233 removed it. Every answer opens with a catchphrase."
+- en: "Now prepare again. Five files processed, zero errors, and a shape of 19 by 2. The last scripted pair repeats the first question on purpose. Drop duplicates on line 233 removed it. Every answer opens with a catchphrase."
   zh:
   - "现在再跑一次 prepare。"
   - "处理了五个文件，0 个错误，形状是 19 乘 2。"
-  - "最后一组脚本数据故意重复了第一个问题，第 233 行的 drop duplicates 把它去掉了。"
+  - "最后一组脚本数据故意重复了第一个问题。"
+  - "第 233 行的 drop duplicates 把它去掉了。"
   - "每个回答都以一句口头禅开头。"
   en_display:
   - null
   - null
-  - "The last scripted pair repeats the first question on purpose, and drop_duplicates on line 233 removed it."
+  - null
+  - "drop_duplicates on line 233 removed it."
   - null
 - en: "The rows are saved as instruct-dataset.csv: the lecture's term, in the file name. Pause, and run generate and prepare yourself."
   zh:
@@ -304,12 +306,12 @@ S07:
   zh:
   - "额外看一眼真正的 train.jsonl：嵌套方式和 README 的例子一样，只是每个样本只占一行。"
   - "这就是 JSONL 里的 L：JSON lines。"
-- en: "Then train test split holds out 10 percent with a fixed seed: 17 examples for training, 2 for validation. The code's comment says Gemini accepts at most 256 validation examples, hence the cap."
+- en: "Then train test split holds out 10 percent with a fixed seed: 17 examples in train.jsonl, 2 in test.jsonl, which the tuning job uses for validation. The code's comment says Gemini accepts at most 256 validation examples, hence the cap."
   zh:
-  - "然后 train test split 用固定的随机种子留出 10%：17 个样本用来训练，2 个用来验证。"
+  - "然后 train test split 用固定的随机种子留出 10%：17 个样本放进 train.jsonl，2 个放进 test.jsonl，微调任务拿它们做验证。"
   - "代码注释说 Gemini 最多接受 256 个验证样本，所以才有这个上限。"
   en_display:
-  - "Then train_test_split holds out 10 percent with a fixed seed: 17 examples for training, 2 for validation."
+  - "Then train_test_split holds out 10 percent with a fixed seed: 17 examples in train.jsonl, 2 in test.jsonl, which the tuning job uses for validation."
   - null
 - en: "Whatever the wrapping, training is still next-word prediction, now on the instructor's answers."
   zh:

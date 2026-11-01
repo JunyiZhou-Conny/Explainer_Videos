@@ -2,7 +2,7 @@
 Lecture: 30, 41, 52–53, 71–72.
 
 Beats (script.md "## S16", one voiceover block each):
- 0  TRACKER Save 1. CODE(colab/cell-84.py: 1–5) with a YELLOW `▶ your turn` tag on its header row.
+ 0  TRACKER Save 1. CODE(colab/cell-84.py: 1–5).
     "First the adapters": line 3 lights; V7's GREEN A/B hourglass appears under the panel with
     "1,146,880 numbers"; "about 4.6 megabytes": it becomes a GREEN file "adapter · ≈ 4.6 MB ·
     float 32"; "saved to your Drive": a GREY Drive folder `MyDrive/LLM_cache/` appears and the file
@@ -12,11 +12,12 @@ Beats (script.md "## S16", one voiceover block each):
  1  LECTURE 30. TRACKER Save 2. CODE(colab/cell-86.py: 1–11) folded to 1–5, 9, 11 (line 9 wrapped:
     8 rows); line 4 `dtype=torch.float16` lights. V7 merge under the panel: a fresh GREY W₀ (tag
     FP16, snowflake) loads; the GREEN B·A hourglass slides over and fuses into it (lines 9, 11
-    light). "Not into the 4-bit weights": the panel leaves, the merge row moves up, the GREY chip
-    "torchao ImportError here? run the install cell, restart the session" rises at the bottom, a GREY
+    light). "Not into the 4-bit weights": the panel leaves, the merge row moves up, a GREY
     chip "not into the 4-bit weights: the update would round back onto 16 levels". "The merged model":
     the snowflake melts, W₀ becomes "merged model · ≈ 1.2 GB" (GREEN outline) and
-    RECORDED(expected/colab-c86-merge-and-save.txt: 26 cut after "_merged") fades in; 2 s hold.
+    RECORDED(expected/colab-c86-merge-and-save.txt: 26 cut after "_merged") fades in. "If the merge
+    raises": the GREY chip "torchao ImportError here? run the install cell, restart the session" rises
+    under it and lights on "torchao import error"; 2 s hold.
  2  TRACKER Save 3. RECORDED(expected/colab-c88-push-to-hub.txt: 31, wrapped: 2 rows; ‹hf-user› GREY)
     with the GREY tag "optional · private repo · token with write role". Then the three cards side by
     side as named: GREEN adapter, GREEN-outlined merged model, BLUE endpoint, with a GREY dashed arrow
@@ -239,9 +240,6 @@ class Recap(VoiceScene):
         tr = tracker("Save", 1)
         p84 = src_panel(CELL84, 1, 5)
         place(p84, cx=0, top=2.78)
-        yt = your_turn()
-        place(yt, right=p84.get_right()[0] - 0.05, cy=p84.header.get_center()[1])
-        apart(yt, p84.header, 0.2)
         hg = hourglass()
         place(hg, left=-6.0, top=p84.get_bottom()[1] - 0.6)
         cnt = VGroup(label(f"{TRAINABLE:,}", 28, OWN), label("numbers", 28, INK)).arrange(RIGHT, buff=0.18)
@@ -261,13 +259,12 @@ class Recap(VoiceScene):
             rec84_rows += rows_of(C84.line(n))
         rec84 = recorded_box("colab-c84-save-adapters", *rec84_rows, tag_at="top")
         place(rec84, left=-6.15, top=p84.get_bottom()[1] - 0.2)
-        inside(VGroup(p84, yt, hg, cnt, folder, adp, tok, src61))
+        inside(VGroup(p84, hg, cnt, folder, adp, tok, src61))
         inside(rec84, b=-3.6)
         apart(cnt, folder, 0.2)
         assert tok.get_bottom()[1] > folder.body.get_bottom()[1] + 0.1
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(p84, shift=UP * 0.15), run_time=0.8)
-            self.play(FadeIn(yt, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("First the adapters")
             b3 = p84.bar(3)
             self.play(FadeIn(b3), FadeIn(hg, scale=0.8), run_time=0.6)
@@ -344,7 +341,7 @@ class Recap(VoiceScene):
         apart(ghost_g, rec86, 0.1)
         lr = None
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(p84, yt, rec84)), run_time=0.5)
+            self.play(FadeOut(VGroup(p84, rec84)), run_time=0.5)
             lr = lref_swap(self, lr, "30")
             self.play(tr.goto(2), FadeIn(p86, shift=UP * 0.15), run_time=0.8)
             vo.wait_until("loads a fresh 16-bit copy")
@@ -361,8 +358,7 @@ class Recap(VoiceScene):
             self.remove(fuse)
             self.play(flash(w0.frame, OWN, 1.08, 0.6))
             vo.wait_until("Not into the 4-bit weights")
-            self.play(FadeOut(VGroup(p86, b9, b11, fresh)), w0.animate.shift(up).scale(GROW),
-                      FadeIn(tao, shift=UP * 0.1), run_time=0.7)    # cell 86's troubleshooting tip, ~10 s up
+            self.play(FadeOut(VGroup(p86, b9, b11, fresh)), w0.animate.shift(up).scale(GROW), run_time=0.7)
             self.play(FadeIn(ghost), FadeIn(g_cap), FadeIn(g_ab, shift=RIGHT * 0.2), run_time=0.6)
             self.play(g_ab.animate.next_to(ghost.frame, RIGHT, buff=0.06), run_time=0.4)
             self.play(g_ab.animate.shift(RIGHT * 0.3).set_opacity(0.25), FadeIn(g_x, scale=0.6),
@@ -375,6 +371,10 @@ class Recap(VoiceScene):
                       FadeIn(rec86, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("about 1.2 gigabytes")
             self.play(flash(merged_t, OWN, 1.06, 0.6))
+            vo.wait_until("If the merge raises")
+            self.play(FadeIn(tao, shift=UP * 0.1), run_time=0.5)   # cell 86's troubleshooting tip
+            vo.wait_until("torchao import error")
+            self.play(flash(tao, INK, 1.04, 0.6))
         self.wait(2)                                     # time to read the saved path under the merged model
         self.remove(w0.name, w0.flake, w0.dtype)
         merged = VGroup(w0.frame, merged_t)

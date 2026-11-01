@@ -192,6 +192,7 @@ Teardown: {ipa: "tˈɛɹ dˈaʊn", say: "Tare-down"}
 env.dev: {ipa: "ˈɛnv dˈɑːt dˈɛv", say: "env dot dev"}
 instruct-dataset.csv: {ipa: "ɪnstɹˈʌkt dˈeɪɾəsˌɛt dˈɑːt sˈiː ˈɛs vˈiː", say: "instruct dataset dot C-S-V"}
 train.jsonl: {ipa: "tɹˈeɪn dˈɑːt dʒˈeɪsˈɑːn ˈɛl", say: "train dot JSON L"}
+test.jsonl: {ipa: "tˈɛst dˈɑːt dʒˈeɪsˈɑːn ˈɛl", say: "test dot JSON L"}
 llm-service-account.json: {ipa: "ˈɛl ˈɛl ˈɛm sˈɜːvɪs ɐkˈaʊnt dˈɑːt dʒˈeɪsˈɑːn", say: "L-L-M service account dot JSON"}
 "pyproject and lockfile": {ipa: "pˈaɪpɹˈɑːdʒɛkt ænd lˈɑːkfaɪl", say: "pie-project and lockfile"}
 torchao: {ipa: "tˈɔːɹtʃ ˈeɪ ˈoʊ", say: "torch A-O"}
@@ -241,6 +242,7 @@ reparameterization: {ipa: "ɹˌiːpˌæɹəmˌɛɾɚɹaɪzˈeɪʃən", say: "re-
 # (a phrase that starts with "a": a fragment ending in "a" before a lexicon word is read as the letter A)
 "a reparameterization": {ipa: "ɐ ɹˌiːpˌæɹəmˌɛɾɚɹaɪzˈeɪʃən", say: "a re-parameterization"}
 "a Colab GPU": {ipa: "ɐ kˈoʊlæb dʒˌiːpˌiːjˈuː", say: "a co-lab GPU"}
+"a torchao": {ipa: "ɐ tˈɔːɹtʃ ˈeɪ ˈoʊ", say: "a torch A-O"}
 # (L08 notebook section numbers; "dataset" is flapped to "day-ruh-set" by Kokoro: L08-only phrases, never a bare key)
 "4.2": {ipa: "fˈɔːɹ pˈɔɪnt tˈuː", say: "four point two"}
 "4.3": {ipa: "fˈɔːɹ pˈɔɪnt θɹˈiː", say: "four point three"}

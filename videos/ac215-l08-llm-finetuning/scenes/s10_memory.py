@@ -313,7 +313,9 @@ class MemoryBill(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             self.play(Create(cf.frame), FadeIn(cf.title), FadeIn(cf.tag), run_time=0.8)
             self.play(FadeIn(title, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("Open it from the lecture's Ed lesson")
             self.play(FadeIn(link, shift=UP * 0.1), run_time=0.5)
+            self.play(flash(link.box, S.GREY, 1.06), run_time=0.6)
             vo.wait_until("First")
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(mp1, shift=RIGHT * 0.15), run_time=0.6)
             vo.wait_until("Save a copy in Drive")

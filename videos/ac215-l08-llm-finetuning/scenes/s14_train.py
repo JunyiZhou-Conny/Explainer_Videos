@@ -21,7 +21,7 @@ Beats (script.md "## S14", one voiceover block each):
     BF16's exponent and FP32's light together. GREY chip "T4: no fast BF16 → FP16 here (lecture:
     BF16 for QLoRA)"; RECORDED(c31: 9, wrapped).
  4  TRACKER Tune 3. CODE(colab/cell-72.py: 10–14) (comments wrapped); V7's block (small) with
-    `BF16` tags on A and B, which turn RED on "cannot unscale" and transform into `FP32` when lines
+    `BF16` tags on A and B, which turn RED on "cannot handle" and transform into `FP32` when lines
     12–14 light. The panel leaves for RECORDED(c72: 23, wrapped) on top; `1146880` lights YELLOW, and the
     count from the LoRA chapter, "our count: 1,146,880", writes beside the block with a ✓.
  5  LECTURE 29, 70. The block returns full size; a YELLOW pulse runs down from h through W₀ (W₀
@@ -445,7 +445,7 @@ class SmallGpu(VoiceScene):
             vo.wait_until("The trainer turns the adapters")
             self.play(*blk.parts_in("x", "w0", "ab", "sum", "h", "wires"), run_time=0.8)
             self.play(FadeIn(tag_a, scale=0.8), FadeIn(tag_b, scale=0.8), run_time=0.4)
-            vo.wait_until("which FP16 training cannot unscale")
+            vo.wait_until("which FP16 training cannot handle")
             # RED outline and text (a filled Indicate would hide the text on its pill)
             self.play(*[m.animate.set_stroke(ERR, 3) for m in (tag_a.box, tag_b.box)],
                       *[m.animate.set_color(ERR) for m in (tag_a.text, tag_b.text)], run_time=0.5)

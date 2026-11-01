@@ -445,7 +445,7 @@ class LateFailure(VoiceScene):
             assert arc.get_top()[1] < dd.get_bottom()[1] - 0.05, (arc.get_top(), dd.get_bottom())
             self.play(Create(arc), bricks[0].frame.animate.set_stroke(TURN),
                       bricks[-1].frame.animate.set_stroke(TURN), run_time=0.7)
-            vo.wait_until("and drop duplicates")
+            vo.wait_until("Drop duplicates on line 233")
             self.play(FadeIn(dd, shift=DOWN * 0.1), run_time=0.5)
             self.play(flash(dd.chip, TURN, 1.04), run_time=0.5)
             vo.wait_until("removed it")

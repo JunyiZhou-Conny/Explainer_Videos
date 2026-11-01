@@ -451,7 +451,7 @@ class RowsToJsonl(VoiceScene):
             self.play(FadeOut(VGroup(p3, bars)), run_time=0.3)
             self.play(LaggedStart(*[FadeIn(b, scale=0.6) for b in bricks], lag_ratio=0.04), FadeIn(n19),
                       FadeIn(sp), FadeIn(seed_lab), run_time=0.6)
-            vo.wait_until("examples for training")
+            vo.wait_until("17 examples in")
             ip = sp.input_point()
             tgt_tr = sp.bins[0].get_left() + LEFT * 0.05
             tgt_te = sp.bins[1].get_left() + LEFT * 0.05

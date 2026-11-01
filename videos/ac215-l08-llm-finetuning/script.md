@@ -355,8 +355,8 @@ the clone, an extra card "is Docker running" (README.md:33 "Have Docker installe
 with the tag `at the time of recording`.
 SAY: Start in your workspace, the AC215 folder, with Docker installed and running. The README only links the repository, so cloning it is an extra step. Your prompt shows your own user name and machine.
 
-SHOW: It types `cd llm-finetuning` (extra) → (no output). An extra card "which commit am I on" →
-TERM(laptop/02-x-git-log.txt: 2 cut after "44ef6f0", 3) with a GRAY tag "or newer". Then it types
+SHOW: It types `cd llm-finetuning` (extra) → (no output). An extra card "which commit am I on" types
+`git log -1 --format="%h %H%n%cd %s" --date=iso` → TERM(laptop/02-x-git-log.txt: 2 cut after "44ef6f0", 3) with a GRAY tag "or newer". Then it types
 `ls -a; ls -a dataset-creator gemini-finetuner` (extra) → TERM(laptop/03-x-ls.txt: 6–11, 12, 15–20 folded to
 "Dockerfile  cli.py  docker-entrypoint.sh  docker-shell.sh  pyproject.toml  uv.lock", 22, 25–30 folded the same
 way) (10 rows). Line 7 `autotrain-runner` prints dim GRAY with a GRAY tag "not part of the README".
@@ -385,16 +385,17 @@ excerpt chip `env.dev · line 5 (excerpt)`: `SECRETS_DIR=$(pwd)/../../secrets/`;
 SAY: Why next to the repository? A key outside the clone can never be committed by accident. The env.dev file looks two folders up from wherever the script runs, so both container folders reach the same key.
 
 SHOW: TRACKER Prereq 4 · extra. CODE(env.dev: 4–10) above the strip (7 lines); lines 6 and 7 light YELLOW, their
-values `"ac215-project"` and `"cheese-dataset"` get GRAY tags "the README's defaults · change to yours". Line 9 gets
+values `"ac215-project"` and `"cheese-dataset"` get GRAY tags "the repo's defaults · change to yours". Line 9 gets
 a GRAY tag "its comment says change too · not passed to either container · optional". An extra tag
 on the panel header ("implied by its comments"). The strip shows TERM(laptop/04-x-env-dev.txt) typed as `cat env.dev`
 (extra), its last line visible.
 SAY: An extra step 4, implied by the file's own comments: in env.dev, set your own project ID and bucket name on lines 6 and 7. The scripts pass both into the containers.
 
 SHOW: The panel fades. A GREY dashed card "not in the README, needed" with two lines (shown, never typed, no terminal):
-`gcloud services enable aiplatform.googleapis.com storage.googleapis.com` and `gcloud storage buckets create
-gs://<your-bucket> --location=us-central1`; `<your-bucket>` is a YELLOW template chip; GRAY caption "bucket names are
-global · cheese-dataset is the course's". Then the GRAY "your turn" card with a YELLOW `▶ your turn` tag lists:
+`gcloud services enable aiplatform.googleapis.com storage.googleapis.com --project=<your-project>` and `gcloud storage buckets create
+gs://<your-bucket> --location=us-central1 --project=<your-project>`; `<your-bucket>` and `<your-project>` are YELLOW template chips; GRAY caption "bucket names are
+global · cheese-dataset is the course's", and under it a GREY two-line note (the gcloud CLI, logged in with `gcloud auth login`, or the
+console pages), which leaves on "Pause here". Then the GRAY "your turn" card with a YELLOW `▶ your turn` tag lists:
 `git clone https://github.com/dlops-io/llm-finetuning.git` (extra) · service account + JSON key · `mkdir secrets` ·
 `mv ~/Downloads/<downloaded-key>.json secrets/llm-service-account.json` (a template line, YELLOW template chips, shown,
 never run) · env.dev lines 6–7 · API + bucket; last line GOLD "a bucket: storage
@@ -562,7 +563,7 @@ errors: 0", `Shape: (19, 2)` and the five rows; lines 13–17 cut at 65 characte
 `Shape: (19, 2)` lights YELLOW. An excerpt chip `dataset-creator/cli.py · line 233 (excerpt)`:
 `output_pairs_df.drop_duplicates(subset=["question"], inplace=True)`; a small animation: 20 bricks, the last
 (BLUE dashed) matches the first's question and drops out → 19. The openers in lines 13–17 light BLUE.
-SAY: Now prepare again. Five files processed, zero errors, and a shape of 19 by 2. The last scripted pair repeats the first question on purpose, and drop duplicates on line 233 removed it. Every answer opens with a catchphrase.
+SAY: Now prepare again. Five files processed, zero errors, and a shape of 19 by 2. The last scripted pair repeats the first question on purpose. Drop duplicates on line 233 removed it. Every answer opens with a catchphrase.
 
 SHOW: V4 station 1 appears: one brick lands on a conveyor as a GREEN CSV-row card `question,answer`, file chip
 `instruct-dataset.csv` (GREEN); the word "instruct" lights, with a GRAY lecture chip "instruction dataset · slide 5".
@@ -600,9 +601,9 @@ SAY: An extra look at the real train.jsonl: the same nesting as the README's exa
 SHOW: CODE(dataset-creator/cli.py: 259–273) folded to 260–264, 267, 270–273 (10 lines + 2 gap rows = 12). V4's
 splitter: 19 bricks enter, a GRAY seed chip "random_state=42", 17 go to a GREEN `train.jsonl`, 2 to a GREEN
 `test.jsonl`; on line 267 a GRAY cap "≤ 256 · per the comment on line 266". The second laptop terminal (extra) types
-`ls -la data; wc -l data/*.jsonl data/*.csv` → TERM(dataset-creator/10-x-ls-data-after.txt: 10–14 names+sizes, 15–17)
+`ls -la data; wc -l data/*.jsonl data/*.csv` → TERM(dataset-creator/10-x-ls-data-after.txt: "…", 15–17)
 as a 3-row strip that scrolls; `2 data/test.jsonl` and `17 data/train.jsonl` light.
-SAY: Then train test split holds out 10 percent with a fixed seed: 17 examples for training, 2 for validation. The code's comment says Gemini accepts at most 256 validation examples, hence the cap.
+SAY: Then train test split holds out 10 percent with a fixed seed: 17 examples in train.jsonl, 2 in test.jsonl, which the tuning job uses for validation. The code's comment says Gemini accepts at most 256 validation examples, hence the cap.
 
 SHOW: LECTURE 8. The JSONL line's model turn lights; under it a row of token boxes for the answer's first words
 ("Glad", "you", "ask", …) with a YELLOW arrow sliding one box at a time: "predict the next token".
@@ -760,10 +761,11 @@ SAY: That's track A: a teacher wrote the data, Google ran the job, and you have 
 Lecture: 11–16, 37–39, 71–72.
 
 SHOW: Part 2 opens on the BLUE Colab frame "QLoRA notebook · Colab" (tag `illustration`). TRACKER ColabA 1: a
-schematic File menu, "Save a copy in Drive" lights YELLOW (from `cell-01.md`), GRAY note "the original is view-only".
+schematic File menu, "Save a copy in Drive" lights YELLOW (from `cell-01.md`), GRAY note "the original is view-only"; a GREY two-row chip
+under the title: "open it from the L08 Ed lesson" + the notebook URL.
 TRACKER ColabA 2: a schematic "Change runtime type" dialog, "T4 GPU" selected; GOLD chip "A100 · L4: Pro or compute
 units".
-SAY: Part 2 happens in the course Colab, Tutorial, Finetuning with QLoRA. First: File, Save a copy in Drive; the original is view-only. Then: Runtime, Change runtime type, and pick a GPU. A free T4 is enough.
+SAY: Part 2 happens in the course Colab, Tutorial, Finetuning with QLoRA. Open it from the lecture's Ed lesson; the link is on screen. First: File, Save a copy in Drive; the original is view-only. Then: Runtime, Change runtime type, and pick a GPU. A free T4 is enough.
 
 SHOW: TRACKER ColabA 3. CODE(colab/cell-08.py: 1–7) (7 lines, wrap); lines 3–4 and 7 light. Below it
 RECORDED(expected/colab-c08-install.txt: 13, 18, 21): `+ bitsandbytes==0.50.2`, `+ trl==1.14.0` GREEN, `- torchao==0.10.0`
@@ -772,8 +774,8 @@ SAY: Section 3 pins transformers, bitsandbytes and trl, and removes torchao, whi
 
 SHOW: One slot below the tracker; each step *replaces* the previous one in it (at most one output on screen at a
 time). TRACKER ColabA 4: a schematic Secrets panel (illustration): a row `HF_TOKEN`, value a row of GRAY dots,
-"notebook access" switch on; RECORDED(expected/colab-c10-hf-token.txt: 13); a GRAY chip "SecretNotFoundError? name it
-HF_TOKEN · turn notebook access on". TRACKER ColabA 5: the panel Transforms into RECORDED(expected/colab-c12-
+"notebook access" switch on; RECORDED(expected/colab-c10-hf-token.txt: 13); the GREY chip "huggingface.co › Settings ›
+Access Tokens › New token · Read (Write only for 6.3)". TRACKER ColabA 5: the panel Transforms into RECORDED(expected/colab-c12-
 versions.txt: 32; wrap), tag `at the time of recording`, then RECORDED(expected/colab-c14-drive-mount.txt: 6). TRACKER
 ColabA 6: RECORDED(expected/colab-c16-hf-download.txt: 7–8 cut after "models--Qwen--Qwen3-0.6B"), whose path
 Transforms into a GREY Drive folder glyph `MyDrive/LLM_cache` with two model boxes inside. Then the GRAY "your turn"
@@ -856,7 +858,7 @@ SHOW: TRACKER ColabB 2. RECORDED(expected/colab-c21-opt-350m-4bit-model.txt: 3, 
 rows); every `Linear4bit` lights GREY; line 6 `(embed_tokens): Embedding(...)` lights white with a GRAY note "not
 4-bit", and `(lm_head): Linear(...)` with a GRAY note "stays 16-bit". TRACKER ColabB 3: RECORDED(expected/colab-c25-
 tokenize.txt: 4) then RECORDED(expected/colab-c27-opt-generate.txt: 11–12) (the continuation from the three dials
-chapter). Then the GRAY "your turn" card with a YELLOW `▶ your turn` tag: "run Part B, sections 1 and 2"; last line
+chapter). Then the GRAY "your turn" card with a YELLOW `▶ your turn` tag: "run Part B from Loading Models in 4-bit through section 2"; last line
 GREEN "T4: free (when available)". 2 s hold.
 SAY: Section 1 of part B prints the small OPT model: every linear layer is now Linear4bit, while the embeddings and the output head stay as they were. Section 1 also tokenizes a short prompt, and section 2 generates the continuation we met earlier. Pause, and run part B.
 
@@ -900,7 +902,7 @@ sample-1000.txt: 7, 8 cut after "Italy influence the production of its cheeses?'
 part 1: the JSONL brick from S07 slides in from the left and lands on the `contents` row, matching key for key; caption
 "exactly track A's format". A GRAY note "the staff's 16k file: Remember / Hi everyone / Welcome / Yello openers
 (3.3 · cell 55)" (`expected/colab-c55-extract-qa.txt` lines 25–29). A GRAY chip by the c51 line: "Too many users …?
-retry later, or use your own train.jsonl from part 1 (same format)".
+retry the gdown cell later".
 SAY: The notebook's step 3 prepares the data. It downloads a 23 megabyte file and samples 1,000 pairs. Look at a row: contents, a user turn, a model turn. It's exactly the format of track A: the brick from part 1 arrives here.
 
 SHOW: TRACKER Data 3. CODE(colab/cell-59.py: 10–15) (6 lines); line 13 `apply_chat_template` lights. V4 station 4: the
@@ -968,7 +970,7 @@ SHOW: LECTURE 32–35. A GRAY dashed square "7 B weights as one square · 83,666
 under it "rank 1: 2 × 83,666 ≈ 167 K" (the table's first cell), GRAY chip "the lecture's table · one square matrix
 (slide 35's own warning)"; the tower and its shape row stay lit. Then the ponder card enters.
 SAY: The lecture's table treats a whole model as one square layer; the real count depends on these shapes. Now, try it yourself.
-PONDER(8 s, "With r=16, how many trainable parameters? And with target_modules=\"all-linear\" at r = 8?")
+PONDER(8 s, "With r = 16, how many trainable parameters? / And at r = 8 on all seven (\"all-linear\")?")
 
 SHOW: The ponder card leaves. The counter doubles to 2,293,760 ("linear in r"); then all seven matrices in each block
 light, the counter runs to 5,046,272 (8 × 22,528 × 28). A GRAY chip "more rank: more capacity · more memory and time"
@@ -994,8 +996,7 @@ the meter climbs. Checkpointing: all but the checkpoint (h₂) empty, the meter 
 (a small replay arrow), the meter stays low; caption "compute for memory". GRAY chip "on since 1.3 (cell 36)".
 SAY: The rest of the memory goes to activations, the values each layer computes on the way forward, kept for the backward pass. Gradient checkpointing keeps only a few and recomputes the rest when needed: compute traded for memory.
 
-SHOW: TRACKER Tune 2. CODE(colab/cell-70.py: 2–17) folded to 3, 5–7, 10, 12–13, 15 (8 rows) with a YELLOW `▶ your
-turn` tag. Line 3 `max_length=512` and line 15 `group_by_length` light first; then lines 5–6, line 10
+SHOW: TRACKER Tune 2. CODE(colab/cell-70.py: 2–17) folded to 3, 5–7, 10, 12–13, 15 (8 rows). Line 3 `max_length=512` and line 15 `group_by_length` light first; then lines 5–6, line 10
 `learning_rate=2e-4`, line 7 `optim="paged_adamw_32bit"`. LECTURE 65: V8's paging: pages of optimizer state slide from a
 GPU box to a CPU box along PINK arrows when the GPU fills, and back; GRAY footnote "our ≈ 18 MB never needs it".
 SAY: Section 4.2, the training arguments. Sequences are capped at 512 tokens and grouped by length: 2 epochs, batches of 4, and a learning rate of 2 times 10 to the minus 4. The optimizer is a paged 32-bit Adam. Paging moves optimizer state to CPU memory when the GPU fills up. Ours never needs to.
@@ -1009,7 +1010,7 @@ SAY: Then fp16 on and bf16 off. BF16 keeps the range of float 32 with less preci
 SHOW: TRACKER Tune 3. CODE(colab/cell-72.py: 10–14) (5 lines); A and B in the LoRA block flip their dtype tags from
 `BF16` to `FP32`. RECORDED(expected/colab-c72-sfttrainer-trainable.txt: 23; wrap); `1146880` lights YELLOW and the S13
 counter "1,146,880" flashes beside it: ✓.
-SAY: 4.3 builds the trainer. The trainer turns the adapters into BF16, which FP16 training cannot unscale, so this cell casts them back to float 32. And the count confirms our arithmetic: 1,146,880 trainable parameters, 0.3 percent.
+SAY: 4.3 builds the trainer. The trainer turns the adapters into BF16, which FP16 training cannot handle, so this cell casts them back to float 32. And the count confirms our arithmetic: 1,146,880 trainable parameters, 0.3 percent.
 
 SHOW: LECTURE 29, 70. V7's block diagram returns: W₀ greys further; a YELLOW pulse runs down from `h`, passes through
 W₀ without changing it (W₀ stays GREY, a snowflake flashes), and reaches B and A, which update (their grids shimmer).
@@ -1074,7 +1075,7 @@ SAY: Two kind notes. In this comparison the base is a fresh 16-bit model, not th
 
 Lecture: 30, 41, 52–53, 71–72.
 
-SHOW: TRACKER Save 1. CODE(colab/cell-84.py: 1–5) (5 lines) with a YELLOW `▶ your turn` tag;
+SHOW: TRACKER Save 1. CODE(colab/cell-84.py: 1–5) (5 lines);
 RECORDED(expected/colab-c84-save-adapters.txt: 8–10; wrap) (the folder `LLM_cache/Qwen0.6B-finetune_cheese`); V7's GREEN
 A/B block drops into a GREY Drive folder as a GREEN file "≈ 4.6 MB · float 32" (source chip "QLoRA notebook · 6.1").
 SAY: The notebook's step 6 saves your work. First the adapters: 1,146,880 numbers, about 4.6 megabytes in float 32, saved to your Drive with the tokenizer.
@@ -1083,8 +1084,8 @@ SHOW: LECTURE 30. TRACKER Save 2. CODE(colab/cell-86.py: 1–11) folded to 1–5
 lights. V7 merge: a fresh GREY W₀ (tag `FP16`) loads; B·A slides over and fuses into it; the snowflake melts, the block
 turns into one "merged model · ≈ 1.2 GB" (GREEN outline). A GRAY chip "not into the 4-bit weights: the update would
 round back onto 16 levels". RECORDED(expected/colab-c86-merge-and-save.txt: 26 cut after "_merged"). A GRAY chip
-"torchao ImportError here? run the install cell, restart the session".
-SAY: Then the merge. The notebook loads a fresh 16-bit copy of the base and adds B times A into it. Not into the 4-bit weights: there, the update would round back onto 16 levels. The merged model is about 1.2 gigabytes.
+"torchao ImportError here? run the install cell, restart the session", on screen while the torchao sentence is spoken.
+SAY: Then the merge. The notebook loads a fresh 16-bit copy of the base and adds B times A into it. Not into the 4-bit weights: there, the update would round back onto 16 levels. The merged model is about 1.2 gigabytes. If the merge raises a torchao import error, rerun the install cell and restart the session.
 
 SHOW: TRACKER Save 3. RECORDED(expected/colab-c88-push-to-hub.txt: 31) (`‹hf-user›` GRAY chip), tag "optional · private
 repo · token with write role". Then three cards side by side: GREEN "adapter · 4.6 MB · needs its base", GREEN-outlined

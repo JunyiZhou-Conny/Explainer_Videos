@@ -18,14 +18,16 @@
 # prepare_model_for_kbit_training, <|im_start|> / <|im_end|>, W₀, α/r, target_modules, disable_adapter(),
 # Tuned model info: None, MLOps_Learning); null = the SAY text.
 S10:
-- en: "Part 2 happens in the course Colab, Tutorial, Finetuning with QLoRA. First: File, Save a copy in Drive; the original is view-only. Then: Runtime, Change runtime type, and pick a GPU. A free T4 is enough."
+- en: "Part 2 happens in the course Colab, Tutorial, Finetuning with QLoRA. Open it from the lecture's Ed lesson; the link is on screen. First: File, Save a copy in Drive; the original is view-only. Then: Runtime, Change runtime type, and pick a GPU. A free T4 is enough."
   zh:
   - "第二部分在课程的 Colab 里做：Tutorial - Finetuning with QLoRA。"
+  - "从这一讲的 Ed 课程页面打开它，链接就在屏幕上。"
   - "先点 File，再点 Save a copy in Drive；原版是只读的。"
   - "然后点 Runtime，再点 Change runtime type，选一个 GPU。"
   - "免费的 T4 就够了。"
   en_display:
   - "Part 2 happens in the course Colab, Tutorial - Finetuning with QLoRA."
+  - null
   - null
   - null
   - null
@@ -227,10 +229,10 @@ S14:
   - "然后打开 fp16，关掉 bf16。"
   - "BF16 保留了 FP32 的范围但精度低一些，课上做 QLoRA 用的就是它。"
   - "T4 没有快速的 BF16，所以这个 notebook 用 FP16 计算。"
-- en: "4.3 builds the trainer. The trainer turns the adapters into BF16, which FP16 training cannot unscale, so this cell casts them back to float 32. And the count confirms our arithmetic: 1,146,880 trainable parameters, 0.3 percent."
+- en: "4.3 builds the trainer. The trainer turns the adapters into BF16, which FP16 training cannot handle, so this cell casts them back to float 32. And the count confirms our arithmetic: 1,146,880 trainable parameters, 0.3 percent."
   zh:
   - "第 4.3 节构建 trainer。"
-  - "这个 trainer 会把 adapter 转成 BF16，而 FP16 训练没法对它们 unscale，所以这个单元格把它们转回 FP32。"
+  - "这个 trainer 会把 adapter 转成 BF16，而 FP16 训练处理不了 BF16，所以这个单元格把它们转回 FP32。"
   - "而且这个数字证实了我们的算术：1146880 个可训练参数，占 0.3%。"
 - en: "In the backward pass, the gradient flows down through W naught, and only B and A are updated. W naught is used on the way down; it just gets no gradient and no update."
   zh:
@@ -282,7 +284,7 @@ S15:
 - en: "5.2 compares answers. Both cheese answers now open with welcome welcome welcome, cheese lovers, in the instructor's voice. And the sky: the voice transferred, the physics did not. Pause, and run section 5."
   zh:
   - "第 5.2 节比较回答。"
-  - "两个奶酪问题的回答现在开头都是 welcome welcome welcome, cheese lovers，用的是授课老师的口吻。"
+  - "两个奶酪问题的回答现在都用授课老师的口吻开头：welcome welcome welcome, cheese lovers。"
   - "再看天空：口吻学过去了，物理没有。"
   - "暂停一下，跑完第 5 节。"
 - en: "Two kind notes. In this comparison the base is a fresh 16-bit model, not the 4-bit one from the table, so the baselines differ. And the lecture shows LoRA matching full fine-tuning on a published benchmark; this notebook measures style fit, not answer quality."
@@ -295,12 +297,19 @@ S16:
   zh:
   - "这个 notebook 的第 6 步保存你的成果。"
   - "先存 adapter：1146880 个数，用 FP32 存大约 4.6 MB，连同 tokenizer 一起存到你的 Drive。"
-- en: "Then the merge. The notebook loads a fresh 16-bit copy of the base and adds B times A into it. Not into the 4-bit weights: there, the update would round back onto 16 levels. The merged model is about 1.2 gigabytes."
+- en: "Then the merge. The notebook loads a fresh 16-bit copy of the base and adds B times A into it. Not into the 4-bit weights: there, the update would round back onto 16 levels. The merged model is about 1.2 gigabytes. If the merge raises a torchao import error, rerun the install cell and restart the session."
   zh:
   - "然后是合并。"
   - "这个 notebook 加载一份全新的 16 位基座副本，把 B 乘 A 加进去。"
   - "不是加进 4 位的权重里：在那里，更新量会被舍入回 16 个级别上。"
   - "合并后的模型大约 1.2 GB。"
+  - "如果合并时报 torchao 的导入错误，就重新运行安装单元格，再重启会话。"
+  en_display:
+  - null
+  - null
+  - null
+  - null
+  - "If the merge raises a torchao ImportError, rerun the install cell and restart the session."
 - en: "Section 6.3 can push the merged model to a private Hugging Face repository. So you can ship three things: an adapter that needs its base, a merged model that stands alone, or Google's endpoint, with no weights in your hands."
   zh:
   - "第 6.3 节可以把合并后的模型 push 到一个私有的 Hugging Face repo。"
