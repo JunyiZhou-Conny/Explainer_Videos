@@ -41,10 +41,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l08-llm-finetuning.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l08-llm-finetuning.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 33:29 (2009.75 s), 105.0 MiB. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l08-llm-finetuning.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. A release asset, not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l08-llm-finetuning_part1.mp4` | part 1, DURATION_P1: a persona dataset with Gemini and a managed tuning job, the README (Track A; S01–S09). A release asset, not in Git |
-| `output/ac215-l08-llm-finetuning_part2.mp4` | part 2, DURATION_P2: QLoRA in Colab — quantization, LoRA, training and evaluation (Track B; S10–S16). A release asset, not in Git |
+| `output/ac215-l08-llm-finetuning_part1.mp4` | part 1, 17:27 (1047.33 s): a persona dataset with Gemini and a managed tuning job, the README (Track A; S01–S09). A release asset, not in Git |
+| `output/ac215-l08-llm-finetuning_part2.mp4` | part 2, 16:02 (962.52 s): QLoRA in Colab — quantization, LoRA, training and evaluation (Track B; S10–S16). A release asset, not in Git |
 | `output/ac215-l08-llm-finetuning.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l08-llm-finetuning.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l08-llm-finetuning.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -64,7 +64,38 @@ the two part cuts) are GitHub release assets.
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts).
+
+```
+00:00 Why is the sky blue?
+01:43 Three dials: prompt, context, weights
+03:05 A key next to the repo
+04:57 The dataset-creator container
+07:06 Manufacturing a persona
+09:29 Prepare: a failure that surfaces late
+11:12 Rows to JSONL, then upload
+13:13 Hand it to Google: the tuning job
+15:43 Cost, endpoint and chat
+17:27 Colab, and the 120 GB bill
+19:30 Quantization: 16 buckets per weight
+22:06 Qwen in 4 bits, and its chat template
+24:14 LoRA: a thin correction
+26:55 Training on a small GPU
+29:16 Did it work? Perplexity and the sky
+31:07 Ship it, tear down, recap
+```
+
+Part 1 uses the first nine lines as they are. Part 2 starts its clock at 0:00:
+
+```
+00:00 Colab, and the 120 GB bill
+02:03 Quantization: 16 buckets per weight
+04:38 Qwen in 4 bits, and its chat template
+06:47 LoRA: a thin correction
+09:28 Training on a small GPU
+11:49 Did it work? Perplexity and the sky
+13:40 Ship it, tear down, recap
+```
 
 ## What you'll learn
 

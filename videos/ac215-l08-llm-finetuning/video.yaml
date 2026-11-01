@@ -52,3 +52,17 @@ parts:
   - id: part2
     title: "AC215 · L8, part 2: QLoRA in Colab — quantization, LoRA, training and evaluation"
     scenes: [s10_memory, s11_quantize, s12_qwen, s13_lora, s14_train, s15_eval, s16_recap]
+publish:
+  title_zh: "AC215 第8讲跟练 · LLM 微调：教模型学会一种口吻——Gemini 托管微调与 QLoRA"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 8 讲教程的逐条命令跟练：dlops-io/llm-finetuning 的整份 README，以及课程的 Colab 笔记本 Finetuning with QLoRA。
+    第一部分走托管路线：在 dataset-creator 容器里让 Gemini 生成授课老师口吻的问答数据，去重、按 9:1 划分、写成 Gemini 的 JSONL 并上传到 bucket；再在 gemini-finetuner 容器里提交 Vertex AI（现名 Agent Platform）的监督微调任务，看成本，并和微调后的端点对话。
+    第二部分在 Colab 上走开源路线：用 bitsandbytes 把 Qwen3 0.6B 以 4 位 NF4 加载，挂上只占 0.30% 参数的 LoRA 适配器，训练两个 epoch，再用 loss 和困惑度比较适配器开与关，最后合并保存。
+    这里没有 GCP 凭据和 GPU：不需要凭据的命令都真实运行，需要凭据的命令运行到真实的报错为止；Gemini 生成、微调任务和对话来自 README 记录的输出，QLoRA 训练来自课程团队保存的 Colab 运行结果，并在画面上标明。边看边暂停，在自己的电脑上跑每一条命令。英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/llm-finetuning
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L08-llm-finetuning.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, 大模型微调, LLM, LoRA, QLoRA, 量化, Gemini, Vertex AI, 哈佛, 教程跟练]
+  tid: 231
