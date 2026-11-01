@@ -34,10 +34,15 @@ series is public and published to Bilibili like every other episode.
 
 ## The unit: one week, one batch
 
-- Each week (Monday to Sunday, Boston time), `tools/pr_digest.py` lists the owner's pull requests
-  from a local clone of the portal repository: merged and open, with commit timelines, areas
-  touched and decision records. The digest and the PR list it was made from are committed to
-  `videos/portal-series/weeks/<YYYY>-w<NN>.md`.
+- Every Friday evening (Boston time) a scheduled session runs the week without waiting for
+  approval (owner, 2026-10-31: 「周五晚上」「全自动」; the portal-video skill, §W).
+  `tools/pr_digest.py` lists the owner's pull requests since the last run (the *Covered through*
+  date in `videos/portal-series/README.md`) from a local clone of the portal repository: merged and
+  open, with commit timelines, areas touched and decision records. The digest and the PR list it
+  was made from are committed to `videos/portal-series/weeks/<YYYY>-w<NN>.md`.
+- The owner's questions come from the standing issue
+  [#72](https://github.com/JunyiZhou-Conny/Explainer_Videos/issues/72), and each run answers there
+  with a `WEEKLY <YYYY>-w<NN>` comment mapping every question to an episode or a later week.
 - From the digest, plus the PR descriptions, handoff comments and review threads, the agent plans
   a **batch of one to four episodes**. An episode answers **one question raised by something
   visible** in the product ("what is 'thought for 3 seconds'?"), not one pull request; it may draw on
@@ -130,8 +135,9 @@ From E2: the `video.yaml` route, as in the CareOneX and AC215 series (`docs/WORK
 `docs/STYLE_GUIDE.md`): `script.md` (SHOW/SAY), `scenes/` (one file per scene plus `common.py`,
 which imports the CareOneX kit), `i18n/zh/` (glossary, `meta.yaml`, sentence-aligned narration),
 `video.yaml` with a `publish:` block, built with `python -m explainer.build videos/<id> --burn`
-(1080p60, Kokoro `af_heart` 0.95, music, Chinese-above-English subtitles burned in). Release after
-merge with `.github/workflows/legacy-release.yml`. Each folder also holds `BRIEF.md`,
+(1080p60, Kokoro `af_heart` 0.95, music, Chinese-above-English subtitles burned in). Merging the
+batch PR starts `.github/workflows/legacy-release.yml` for each new episode
+(`release-on-merge.yml`); the Mac publish worker uploads the releases to Bilibili. Each folder also holds `BRIEF.md`,
 `SOURCES.md` and `REVIEW.md`, and the episode lifecycle and content gates in `AGENTS.md` apply.
 E1 (`videos/portal-e1-after-send/`, `episode.json` route) remains the record of the Swiss start.
 
