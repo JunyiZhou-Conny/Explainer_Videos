@@ -101,6 +101,11 @@
       "bvid": "BV1ytxr6xED9",
       "title": "不就是调一下 API 吗？",
       "pubdate": 1793418346
+    },
+    "ac215-l08-llm-finetuning": {
+      "bvid": "BV1Zox46uEk8",
+      "title": "AC215 第8讲跟练 · LLM 微调：教模型学会一种口吻——Gemini 托管微调与 QLoRA",
+      "pubdate": 1793553861
     }
   },
   "unmatched": []
