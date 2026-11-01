@@ -192,6 +192,7 @@ from __future__ import annotations
 
 import json
 import os
+import warnings
 import re
 import subprocess
 from functools import lru_cache
@@ -249,7 +250,7 @@ def guard(ok, msg=""):
     if ok:
         return
     if os.environ.get("GITHUB_ACTIONS") == "true":
-        print(f"layout guard tolerated on CI: {msg}", flush=True)
+        warnings.warn(f"layout guard tolerated on CI: {msg}", stacklevel=2)
         return
     raise AssertionError(msg)
 from explainer.components import ponder_card  # noqa: F401  (re-exported for the scenes)
