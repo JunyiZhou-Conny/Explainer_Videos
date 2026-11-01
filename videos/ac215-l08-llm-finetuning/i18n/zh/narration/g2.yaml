@@ -24,15 +24,25 @@ S10:
   - "先点 File，再点 Save a copy in Drive；原版是只读的。"
   - "然后点 Runtime，再点 Change runtime type，选一个 GPU。"
   - "免费的 T4 就够了。"
+  en_display:
+  - "Part 2 happens in the course Colab, Tutorial - Finetuning with QLoRA."
+  - null
+  - null
+  - null
 - en: "Section 3 pins transformers, bitsandbytes and trl, and removes torchao, which, the notebook notes, makes peft refuse to add LoRA layers."
   zh:
-  - "第 3 节 pin 住 transformers、bitsandbytes 和 trl 的版本，并卸载 torchao，notebook 里说，有它在的话 peft 不肯添加 LoRA 层。"
-- en: "Section 4 reads your Hugging Face token from Colab secrets; both models are public, so it matters mostly for the optional upload. Section 5 imports the libraries, prints the versions, at the time of recording torch 2.11 and transformers 5.16, and mounts your Drive. Section 6 caches both models there. Pause and run part A."
+  - "第 3 节 pin 住 transformers、bitsandbytes 和 trl，并卸载 torchao；notebook 里说，有它在的话 peft 不肯添加 LoRA 层。"
+- en: "Section 4 needs a free Hugging Face token: on the Hugging Face website, open Settings, then Access Tokens, make a read token, and save it in Colab secrets as HF token. Section 5 imports the libraries, prints the versions, at the time of recording torch 2.11 and transformers 5.16, and mounts your Drive. Section 6 caches both models there. Pause and run part A."
   zh:
-  - "第 4 节从 Colab 的 Secrets 里读取你的 Hugging Face token；两个模型都是公开的，所以它主要用于可选的上传。"
+  - "第 4 节需要一个免费的 Hugging Face token：在 Hugging Face 网站上打开 Settings，再点 Access Tokens，建一个只读的 token，存进 Colab 的 Secrets，命名为 HF token。"
   - "第 5 节导入这些库，打印版本，录制时是 torch 2.11 和 transformers 5.16，然后挂载你的 Drive。"
   - "第 6 节把两个模型都缓存到那里。"
   - "暂停一下，跑完 Part A。"
+  en_display:
+  - "Section 4 needs a free Hugging Face token: on huggingface.co, open Settings, then Access Tokens, make a read token, and save it in Colab secrets as HF_TOKEN."
+  - null
+  - null
+  - null
 - en: "Now the lecture's question. Why not simply train all the weights? Take a model with 10 billion parameters in 16-bit floats: the weights alone take 20 gigabytes."
   zh:
   - "现在来看课上的问题。"
@@ -72,7 +82,7 @@ S11:
 - en: "One constant for a whole matrix is risky: one large weight squashes everyone else's precision. So bitsandbytes keeps one absmax constant per small block of 64 weights."
   zh:
   - "整个矩阵只用一个常数有风险：一个很大的权重会挤掉其他所有权重的精度。"
-  - "所以 bitsandbytes 给每一小块、也就是每 64 个权重，单独存一个 absmax 常数。"
+  - "所以 bitsandbytes 给每块 64 个权重单独存一个 absmax 常数。"
 - en: "Four bits give 16 levels. Weights are bell-shaped, so 4-bit NormalFloat, NF4, puts them at quantiles: dense near zero, sparse in the tails. Each weight is stored as a 4-bit index; two of them fit in one byte."
   zh:
   - "4 位能表示 16 个级别。"
@@ -86,19 +96,19 @@ S11:
   zh:
   - "用 4 位存，用 16 位算：每次做矩阵乘法，这一层的权重都会展开成一份 16 位的副本，用完就丢。"
   - "课上用 BF16 计算；这个 notebook 用 FP16，训练那一章会解释原因。"
-- en: "Section 1 of part B prints the small OPT model: every linear layer is now Linear4bit, while the embeddings and the output head stay as they were. Section 2 tokenizes and generates the continuation we met earlier. Pause, and run part B."
+- en: "Section 1 of part B prints the small OPT model: every linear layer is now Linear4bit, while the embeddings and the output head stay as they were. Section 1 also tokenizes a short prompt, and section 2 generates the continuation we met earlier. Pause, and run part B."
   zh:
   - "Part B 的第 1 节把小的 OPT 模型打印出来：每个线性层现在都是 Linear4bit，而 embedding 和输出头保持原样。"
-  - "第 2 节先分词，再生成我们前面见过的那段续写。"
+  - "第 1 节还把一句话分词，第 2 节生成我们前面见过的那段续写。"
   - "暂停一下，跑完 Part B。"
 - en: "Two misconceptions to drop: a 4-bit model does not do 4-bit arithmetic, and the win is memory, not speed."
   zh:
   - "有两个误解要丢掉：4 位模型并不做 4 位运算，省下来的是显存，不是速度。"
 S12:
-- en: "Step 1 loads the real student, Qwen3 0.6B, with the same 4-bit recipe. Then prepare model for k-bit training freezes every weight and turns on gradient checkpointing, a memory trick the training chapter shows."
+- en: "Part C, step 1, loads the real student, Qwen3 0.6B, with the same 4-bit recipe. Then prepare model for k-bit training freezes every weight and turns on gradient checkpointing, a memory trick the training chapter shows."
   zh:
-  - "第 1 步用同样的 4 位配方，加载真正的学生模型 Qwen3 0.6B。"
-  - "接着 prepare model for k-bit training 冻结所有权重，并打开梯度检查点，这是一个省显存的技巧，训练那一章会讲。"
+  - "Part C 的第 1 步用同样的 4 位配方，加载真正的学生模型 Qwen3 0.6B。"
+  - "接着 prepare model for k-bit training：冻结所有权重，并打开梯度检查点，这是一个省显存的技巧，训练那一章会讲。"
   en_display:
   - null
   - "Then prepare_model_for_kbit_training freezes every weight and turns on gradient checkpointing, a memory trick the training chapter shows."
@@ -133,7 +143,7 @@ S12:
 - en: "Section 3.6 splits 900 for training and 100 for testing, and 3.7 checks one example. Then the ribbon becomes integers, and the loss covers every token, question and template included. It's still next-word prediction. Pause, and run steps 1 to 3."
   zh:
   - "第 3.6 节分出 900 个训练、100 个测试，3.7 检查一个样本。"
-  - "然后这条带子变成整数，loss 覆盖每一个 token，连问题和模板也算在内。"
+  - "然后这条带子变成整数，这个 loss 覆盖每一个 token，连问题和模板也算在内。"
   - "说到底还是预测下一个词。"
   - "暂停一下，把第 1 到第 3 步跑一遍。"
 S13:
@@ -152,7 +162,7 @@ S13:
 - en: "At real size it's different. Qwen's query projection is a 2,048 by 1,024 matrix: over 2 million numbers. A rank 8 pair of strips, 2,048 by 8 and 8 by 1,024, holds 24,576."
   zh:
   - "到了真实尺寸，就不一样了。"
-  - "Qwen 的 query 投影是一个 2048 乘 1024 的矩阵：200 多万个数。"
+  - "Qwen 的 query 投影，是 2048 乘 1024 的矩阵：200 多万个数。"
   - "秩为 8 的一对细条，2048 乘 8 和 8 乘 1024，一共 24576 个数。"
 - en: "So LoRA decomposes the update, not the weights. The new layer is the frozen W naught, plus alpha over r, times B times A. Only B and A are trained."
   zh:
@@ -205,9 +215,9 @@ S14:
   zh:
   - "剩下的显存给了激活值，也就是每一层在前向时算出来的值，留给反向传播用。"
   - "梯度检查点只保留少数几个，其余的在需要时重新计算：用计算换显存。"
-- en: "Step 2, the training arguments. Sequences are capped at 512 tokens and grouped by length: 2 epochs, batches of 4, and a learning rate of 2 times 10 to the minus 4. The optimizer is a paged 32-bit Adam. Paging moves optimizer state to CPU memory when the GPU fills up. Ours never needs to."
+- en: "Section 4.2, the training arguments. Sequences are capped at 512 tokens and grouped by length: 2 epochs, batches of 4, and a learning rate of 2 times 10 to the minus 4. The optimizer is a paged 32-bit Adam. Paging moves optimizer state to CPU memory when the GPU fills up. Ours never needs to."
   zh:
-  - "第 2 步，训练参数。"
+  - "第 4.2 节，训练参数。"
   - "序列最长 512 个 token，按长度分组：2 个 epoch，batch 大小为 4，学习率是 2 乘 10 的负 4 次方。"
   - "优化器是分页的 32 位 Adam。"
   - "分页会在 GPU 显存满了的时候，把优化器状态挪到 CPU 内存里。"
@@ -215,11 +225,11 @@ S14:
 - en: "Then fp16 on and bf16 off. BF16 keeps the range of float 32 with less precision, and the lecture uses it for QLoRA. The T4 has no fast BF16, so this notebook computes in FP16."
   zh:
   - "然后打开 fp16，关掉 bf16。"
-  - "BF16 保留了 FP32 的范围，精度低一些，课上做 QLoRA 用的就是它。"
+  - "BF16 保留了 FP32 的范围但精度低一些，课上做 QLoRA 用的就是它。"
   - "T4 没有快速的 BF16，所以这个 notebook 用 FP16 计算。"
-- en: "Step 3 builds the trainer. The trainer turns the adapters into BF16, which FP16 training cannot unscale, so this cell casts them back to float 32. And the count confirms our arithmetic: 1,146,880 trainable parameters, 0.3 percent."
+- en: "4.3 builds the trainer. The trainer turns the adapters into BF16, which FP16 training cannot unscale, so this cell casts them back to float 32. And the count confirms our arithmetic: 1,146,880 trainable parameters, 0.3 percent."
   zh:
-  - "第 3 步构建 trainer。"
+  - "第 4.3 节构建 trainer。"
   - "这个 trainer 会把 adapter 转成 BF16，而 FP16 训练没法对它们 unscale，所以这个单元格把它们转回 FP32。"
   - "而且这个数字证实了我们的算术：1146880 个可训练参数，占 0.3%。"
 - en: "In the backward pass, the gradient flows down through W naught, and only B and A are updated. W naught is used on the way down; it just gets no gradient and no update."
@@ -229,19 +239,19 @@ S14:
   en_display:
   - "In the backward pass, the gradient flows down through W₀, and only B and A are updated."
   - "W₀ is used on the way down; it just gets no gradient and no update."
-- en: "Step 4, train: 900 examples in batches of 4 for 2 epochs is 450 steps, 3 minutes and 36 seconds on the saved A100 run. The notebook says 6 to 7 minutes on a T4. The loss falls from 2.0 to 1.35. Step 5, TensorBoard, shows these curves in your own run. Pause and train."
+- en: "4.4, train: 900 examples in batches of 4 for 2 epochs is 450 steps, 3 minutes and 36 seconds on the saved A100 run. The notebook says 6 to 7 minutes on a T4. The loss falls from 2.0 to 1.35. And 4.5, TensorBoard, shows these curves in your own run. Pause and train."
   zh:
-  - "第 4 步，训练：900 个样本，batch 大小为 4，跑 2 个 epoch，就是 450 步，在保存的 A100 运行里用了 3 分 36 秒。"
+  - "第 4.4 节，训练：900 个样本，batch 大小为 4，跑 2 个 epoch，就是 450 步，在保存的 A100 运行里用了 3 分 36 秒。"
   - "这个 notebook 说，在 T4 上要 6 到 7 分钟。"
   - "这个 loss 从 2.0 降到了 1.35。"
-  - "第 5 步，TensorBoard 会在你自己的运行里显示这些曲线。"
+  - "还有第 4.5 节，TensorBoard 会在你自己的运行里显示这些曲线。"
   - "暂停一下，开始训练。"
 S15:
-- en: "Did it work? Step 1 measures it. Perplexity is the exponential of the average token loss: roughly how many equally likely next tokens the model is choosing among."
+- en: "Did it work? Section 5.1 measures it. Perplexity is the exponential of the average token loss: roughly how many equally likely next tokens the model is choosing among."
   zh:
   - "有效吗？"
-  - "第 1 步来衡量。"
-  - "困惑度就是平均每个 token 的 loss 取指数：大致相当于模型在多少个等可能的下一个 token 里做选择。"
+  - "第 5.1 节来衡量。"
+  - "困惑度就是平均每个 token 的 loss 取指数，大致相当于：模型在多少个等可能的下一个 token 里做选择。"
 - en: "On 100 test examples, 30,681 tokens, the base model has a loss of 2.65 and a perplexity of 14.15. The fine-tuned model: 1.39, and a perplexity of 4."
   zh:
   - "在 100 个测试样本、30681 个 token 上，基座模型的 loss 是 2.65，困惑度 14.15。"
@@ -260,17 +270,21 @@ S15:
   - "在保存的运行里，基座模型的每个回答都以 The 开头。"
   - "微调后的回答以 welcome 或 Yello 开头，也就是它训练数据里的开场白。"
   - "那些柱子只是示意；实测的数字就在旁边。"
+  en_display:
+  - "In the saved run, every base answer starts with the word The."
+  - null
+  - null
 - en: "What does the drop measure? The loss counts every token, questions and template included. It says this style is what the model now expects, not that its answers are more correct."
   zh:
   - "这个下降衡量的是什么？"
   - "这个 loss 算的是每一个 token，连问题和模板也算在内。"
   - "它说明这种风格是模型现在预期的，而不是它的回答更正确了。"
-- en: "Step 2 compares answers. Both cheese answers now open with welcome welcome welcome, cheese lovers, in the instructor's voice. And the sky: the voice transferred, the physics did not. Pause, and run step 5."
+- en: "5.2 compares answers. Both cheese answers now open with welcome welcome welcome, cheese lovers, in the instructor's voice. And the sky: the voice transferred, the physics did not. Pause, and run section 5."
   zh:
-  - "第 2 步比较回答。"
-  - "两个奶酪问题的回答现在都以 welcome welcome welcome, cheese lovers 开头，用的是授课老师的口吻。"
+  - "第 5.2 节比较回答。"
+  - "两个奶酪问题的回答现在开头都是 welcome welcome welcome, cheese lovers，用的是授课老师的口吻。"
   - "再看天空：口吻学过去了，物理没有。"
-  - "暂停一下，跑第 5 步。"
+  - "暂停一下，跑完第 5 节。"
 - en: "Two kind notes. In this comparison the base is a fresh 16-bit model, not the 4-bit one from the table, so the baselines differ. And the lecture shows LoRA matching full fine-tuning on a published benchmark; this notebook measures style fit, not answer quality."
   zh:
   - "两点友情提示。"
@@ -287,9 +301,9 @@ S16:
   - "这个 notebook 加载一份全新的 16 位基座副本，把 B 乘 A 加进去。"
   - "不是加进 4 位的权重里：在那里，更新量会被舍入回 16 个级别上。"
   - "合并后的模型大约 1.2 GB。"
-- en: "Step 3 can push the merged model to a private Hugging Face repository. So you can ship three things: an adapter that needs its base, a merged model that stands alone, or Google's endpoint, with no weights in your hands."
+- en: "Section 6.3 can push the merged model to a private Hugging Face repository. So you can ship three things: an adapter that needs its base, a merged model that stands alone, or Google's endpoint, with no weights in your hands."
   zh:
-  - "第 3 步可以把合并后的模型 push 到一个私有的 Hugging Face repo。"
+  - "第 6.3 节可以把合并后的模型 push 到一个私有的 Hugging Face repo。"
   - "所以你可以交付三样东西：一个离不开基座的 adapter，一个能独立运行的合并模型，或者 Google 的 endpoint，权重不在你手里。"
 - en: "Teardown. Exit the container and remove both images with docker image rm. Delete the dataset folder in your bucket. Keep the tuned model and endpoint for lecture 10, then delete them. Delete unused service account keys, and disconnect and delete the Colab runtime. Pause, and tear down."
   zh:
@@ -311,7 +325,7 @@ S16:
   - "这次微调改变了什么，没改变什么？"
   - "为什么 generate 在没有密钥时退出码也是 0？"
   - "一组问答在变成模板的路上，要经过哪些形状？"
-  - "为什么 train 会打印 Tuned model info: None？"
+  - "为什么 train 打印出来的是：Tuned model info: None？"
   - "还有，1146880 是怎么来的？"
   en_display:
   - null

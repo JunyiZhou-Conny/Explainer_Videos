@@ -254,7 +254,7 @@ class DidItWork(VoiceScene):
         assert f14.get_top()[1] < f_note.get_bottom()[1] - 0.2, (f14.get_top(), f_note.get_bottom())
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.25), run_time=0.7)
-            vo.wait_until("Step 1 measures it")
+            vo.wait_until("Section 5.1 measures it")
             self.play(flash(tr, TURN, 1.06, 0.7))
             vo.wait_until("Perplexity is the exponential")
             self.play(FadeIn(f_card[0]), Write(VGroup(f_parts[0], f_parts[1])), run_time=0.7)
@@ -498,7 +498,7 @@ class DidItWork(VoiceScene):
                       run_time=0.5)
             self.play(substring(r_wat, "water molecules").animate.set_color(ERR), Create(u_wat),
                       FadeIn(x2, scale=0.6), run_time=0.5)
-            vo.wait_until("Pause, and run step 5")
+            vo.wait_until("Pause, and run section 5")
             self.play(FadeIn(card, shift=UP * 0.15), run_time=0.6)
         self.wait(2)
 

@@ -491,7 +491,7 @@ SHOW: TRACKER DsGen 2. The terminal shrinks to a 3-row strip (its last line and 
 Above it CODE(dataset-creator/cli.py: 83–102) folded to lines 83–90, 96, 102 (10 lines + 2 gap rows = 12, persona
 masked by `unname()`); the five openers on lines 85–89 light one by one ("Good question", "Glad you ask", "I have slides for
 that", "I knew you will ask this…", "Remember rule number 672…").
-SAY: Step 2 explains the system prompt, which lives in cli.py. It tells the teacher to open each answer with one of the instructor's catchphrases, such as good question, or glad you ask. And it asks for technical, passionate answers.
+SAY: Step 2 explains the system prompt, which lives in cli.py. It tells the teacher to open each answer with one of the instructor's catchphrases, such as good question, or glad you ask. And it asks for enthusiastic exclamations, in the instructor's character.
 
 SHOW: TRACKER DsGen 3, then DsGen 4. An excerpt chip `dataset-creator/cli.py · line 169 (excerpt)`: "Generate 20
 diverse, informative, and engaging question-answer pairs about cheese …" with a GRAY note "= README.md · line 144".
@@ -527,7 +527,7 @@ SHOW: TRACKER DsPrep 1. Full-width TEAL terminal at `app@6f5113cdb660:/app$`. GR
 generate, as a student would". It types `python cli.py --prepare` → TERM(dataset-creator/07-prepare-no-data.txt:
 2–6, …, 15–17, …, 23) (11 rows); line 6 `Shape: (0, 0)` lights YELLOW; line 15 (`line 243, in prepare`) and line 23
 `KeyError: 'question'` print RED.
-SAY: Now step 1 of the prepare section, as a student would type it right after that run: python cli.py dash dash prepare. Zero errors, a shape of zero by zero, and then a crash: key error, question, from line 243 of cli.py.
+SAY: Now step 1 of the prepare section, as a student would type it right after that run. Type python cli.py dash dash prepare. Zero errors, a shape of zero by zero, and then a crash. Key error, question, from line 243 of cli.py.
 
 SHOW: The terminal shrinks to a 3-row strip (the KeyError). Above it V3's net: CODE(dataset-creator/cli.py: 184–201)
 folded to 184–186, 188, 196–201 (10 rows). Five RED sparks (one per batch) fly out of line 188's call and fall into
@@ -648,7 +648,7 @@ TERM(gemini-finetuner/04-x-dataset-uris.txt: 2–3; wrap). Above it CODE(gemini-
 `gs://cheese-dataset` on lines 10–11 lights YELLOW with `erratum` tag "the course's bucket · # Replace with your
 dataset"; a YELLOW template chip `gs://<your-bucket>/llm-finetune-dataset-small/…` slides over each. V2's PINK mount
 `gemini-finetuner → /app` pulses: "files in the folder: live inside · no rebuild" (env.dev is different: read at start).
-SAY: An extra edit the README leaves out: lines 10 and 11 still point at the course bucket, cheese-dataset. Point them at your own. The folder is mounted into the container, so there's no need to rebuild.
+SAY: An extra edit the README leaves out: lines 10 and 11 still point at the course bucket, cheese-dataset. Replace only cheese-dataset with your bucket name; keep the folder, llm-finetune-dataset-small, where upload put the files. The folder is mounted into the container, so there's no need to rebuild.
 
 SHOW: TRACKER FtRun 2. Full terminal again. It types `sh docker-shell.sh` with a YELLOW `▶ your turn` tag →
 TERM(laptop/18-docker-shell-gemini-finetuner.txt: 3, 12–16, …, 21, 27 cut before " exit") (BuildKit spaces
@@ -685,7 +685,7 @@ waits for the job to finish" (`cli.py` lines 71–72). A small dry-cleaner glyph
 over a counter, a ticket comes back. Then the GRAY "your turn" card with a YELLOW `▶ your turn` tag:
 "`gemini-finetuner/cli.py` lines 10–11 → your bucket · `sh docker-shell.sh` · `python cli.py --train`"; last line GOLD
 "tuning: billed per training token · the README's table comes next". 2 s hold.
-SAY: With a key, look for training job started, a job name in us-central1, and after a minute, tuned model info, none. Main calls train with wait for job set to false, so the command hands in the job and leaves, like a ticket at the dry cleaner. Read the cost table next, then pause and start your job.
+SAY: With a key, look for training job started, a job name in us-central1, and after a minute, tuned model info, none. Main calls train with wait for job set to false, so the command hands in the job and leaves, like a ticket at the dry cleaner. Before you pause, watch the cost table, coming up in under a minute; then come back and start your job.
 
 SHOW: LECTURE 13–16. A GREY dashed miniature of the memory column (V5 preview, `concept · lecture only`) labelled "GPU
 memory · part 2" (no number yet) slides from the laptop side across to the BLUE `us-central1` pin and settles there.
@@ -779,7 +779,7 @@ ColabA 6: RECORDED(expected/colab-c16-hf-download.txt: 7–8 cut after "models--
 Transforms into a GREY Drive folder glyph `MyDrive/LLM_cache` with two model boxes inside. Then the GRAY "your turn"
 card with a YELLOW `▶ your turn` tag: "Save a copy · T4 runtime · HF_TOKEN secret · run Part A, sections 3 to 6"; last
 line GREEN "T4: free (when available)" and GOLD "A100 / L4: compute units". 2 s hold.
-SAY: Section 4 reads your Hugging Face token from Colab secrets; both models are public, so it matters mostly for the optional upload. Section 5 imports the libraries, prints the versions, at the time of recording torch 2.11 and transformers 5.16, and mounts your Drive. Section 6 caches both models there. Pause and run part A.
+SAY: Section 4 needs a free Hugging Face token: on the Hugging Face website, open Settings, then Access Tokens, make a read token, and save it in Colab secrets as HF token. Section 5 imports the libraries, prints the versions, at the time of recording torch 2.11 and transformers 5.16, and mounts your Drive. Section 6 caches both models there. Pause and run part A.
 
 SHOW: LECTURE 11–16. The Colab frame shrinks to a corner. A GREY dashed model block "10 B parameters" (`concept ·
 lecture only`) pours into a column: a first slab "Parameters · FP16 · 20 GB". The ponder setup: the column stops.
@@ -858,7 +858,7 @@ rows); every `Linear4bit` lights GREY; line 6 `(embed_tokens): Embedding(...)` l
 tokenize.txt: 4) then RECORDED(expected/colab-c27-opt-generate.txt: 11–12) (the continuation from the three dials
 chapter). Then the GRAY "your turn" card with a YELLOW `▶ your turn` tag: "run Part B, sections 1 and 2"; last line
 GREEN "T4: free (when available)". 2 s hold.
-SAY: Section 1 of part B prints the small OPT model: every linear layer is now Linear4bit, while the embeddings and the output head stay as they were. Section 2 tokenizes and generates the continuation we met earlier. Pause, and run part B.
+SAY: Section 1 of part B prints the small OPT model: every linear layer is now Linear4bit, while the embeddings and the output head stay as they were. Section 1 also tokenizes a short prompt, and section 2 generates the continuation we met earlier. Pause, and run part B.
 
 SHOW: Two RED-crossed misconception chips write in: "4-bit model = 4-bit arithmetic ✗" → GREEN "computed in 16 bits";
 "quantization = speed ✗" → GREEN "the win is memory". Everything fades to an empty frame.
@@ -875,7 +875,7 @@ mini copy of S11's `cell-18` lines 8–11; then it Transforms into CODE(colab/ce
 rows); line 18 `prepare_model_for_kbit_training` lights; two chips write under it: GREY snowflake "freezes every
 weight", YELLOW "gradient checkpointing: on" with a GRAY note "the training chapter shows it". (`c31`, the BF16
 check, is shown in the training chapter's FP16 beat instead.)
-SAY: Step 1 loads the real student, Qwen3 0.6B, with the same 4-bit recipe. Then prepare model for k-bit training freezes every weight and turns on gradient checkpointing, a memory trick the training chapter shows.
+SAY: Part C, step 1, loads the real student, Qwen3 0.6B, with the same 4-bit recipe. Then prepare model for k-bit training freezes every weight and turns on gradient checkpointing, a memory trick the training chapter shows.
 
 SHOW: TRACKER Qwen 2. RECORDED(expected/colab-c38-num-params.txt: 5); `375.84896` lights YELLOW. Beside it a GRAY chip
 "Qwen3-0.6B: 596 M parameters". The panel stays; the ponder card enters.
@@ -998,7 +998,7 @@ SHOW: TRACKER Tune 2. CODE(colab/cell-70.py: 2–17) folded to 3, 5–7, 10, 12�
 turn` tag. Line 3 `max_length=512` and line 15 `group_by_length` light first; then lines 5–6, line 10
 `learning_rate=2e-4`, line 7 `optim="paged_adamw_32bit"`. LECTURE 65: V8's paging: pages of optimizer state slide from a
 GPU box to a CPU box along PINK arrows when the GPU fills, and back; GRAY footnote "our ≈ 18 MB never needs it".
-SAY: Step 2, the training arguments. Sequences are capped at 512 tokens and grouped by length: 2 epochs, batches of 4, and a learning rate of 2 times 10 to the minus 4. The optimizer is a paged 32-bit Adam. Paging moves optimizer state to CPU memory when the GPU fills up. Ours never needs to.
+SAY: Section 4.2, the training arguments. Sequences are capped at 512 tokens and grouped by length: 2 epochs, batches of 4, and a learning rate of 2 times 10 to the minus 4. The optimizer is a paged 32-bit Adam. Paging moves optimizer state to CPU memory when the GPU fills up. Ours never needs to.
 
 SHOW: LECTURE 66–67. Lines 12–13 `fp16=True`, `bf16=False` light. V8's bit strips: FP32 1 / 8 / 23, FP16 1 / 5 / 10,
 BF16 1 / 8 / 7 (sign WHITE, exponent PINK "range", fraction GREEN "precision"); BF16's exponent box matches FP32's.
@@ -1009,7 +1009,7 @@ SAY: Then fp16 on and bf16 off. BF16 keeps the range of float 32 with less preci
 SHOW: TRACKER Tune 3. CODE(colab/cell-72.py: 10–14) (5 lines); A and B in the LoRA block flip their dtype tags from
 `BF16` to `FP32`. RECORDED(expected/colab-c72-sfttrainer-trainable.txt: 23; wrap); `1146880` lights YELLOW and the S13
 counter "1,146,880" flashes beside it: ✓.
-SAY: Step 3 builds the trainer. The trainer turns the adapters into BF16, which FP16 training cannot unscale, so this cell casts them back to float 32. And the count confirms our arithmetic: 1,146,880 trainable parameters, 0.3 percent.
+SAY: 4.3 builds the trainer. The trainer turns the adapters into BF16, which FP16 training cannot unscale, so this cell casts them back to float 32. And the count confirms our arithmetic: 1,146,880 trainable parameters, 0.3 percent.
 
 SHOW: LECTURE 29, 70. V7's block diagram returns: W₀ greys further; a YELLOW pulse runs down from `h`, passes through
 W₀ without changing it (W₀ stays GREY, a snowflake flashes), and reaches B and A, which update (their grids shimmer).
@@ -1022,7 +1022,7 @@ then the output Transforms into a falling curve (each loss value flies to its po
 No excerpt chip (the SAY gives the T4 time). TRACKER Tune 5: RECORDED(expected/colab-c77-tensorboard.txt: 4) GRAY,
 "open it in your own run", replaces the arithmetic chip on the last sentence. YELLOW `▶ your turn`. Everything fades
 to an empty frame.
-SAY: Step 4, train: 900 examples in batches of 4 for 2 epochs is 450 steps, 3 minutes and 36 seconds on the saved A100 run. The notebook says 6 to 7 minutes on a T4. The loss falls from 2.0 to 1.35. Step 5, TensorBoard, shows these curves in your own run. Pause and train.
+SAY: 4.4, train: 900 examples in batches of 4 for 2 epochs is 450 steps, 3 minutes and 36 seconds on the saved A100 run. The notebook says 6 to 7 minutes on a T4. The loss falls from 2.0 to 1.35. And 4.5, TensorBoard, shows these curves in your own run. Pause and train.
 
 ---
 
@@ -1032,7 +1032,7 @@ Lecture: 9–10, 36, 40.
 
 SHOW: TRACKER Eval 1. A formula card: "perplexity = exp(mean token loss)"; beside it, a fan of equally likely
 next-token boxes shrinks from 14 to 4 as an illustration (tag `illustration`).
-SAY: Did it work? Step 1 measures it. Perplexity is the exponential of the average token loss: roughly how many equally likely next tokens the model is choosing among.
+SAY: Did it work? Section 5.1 measures it. Perplexity is the exponential of the average token loss: roughly how many equally likely next tokens the model is choosing among.
 
 SHOW: CODE(colab/cell-80.py: 53–55) (3 lines); line 54 `with trainer.model.disable_adapter():` lights. Then
 RECORDED(expected/colab-c80-eval-loss-perplexity.txt: 75–80): `Base (4-bit) 2.6498 14.15` GRAY, `Fine-tuned (4-bit +
@@ -1060,7 +1060,7 @@ your lecturer ‹instructor›", 138 cut after "piccante'", 146 cut after "‹in
 openers light BLUE. Then the sky pair from S01 returns: RECORDED(…: 148, 156 cut after "(refracts)", 159 cut after "sky's
 blue!"), the two RED ✗ and the GREEN tick on the voice. Then the GRAY "your turn" card with a YELLOW `▶ your turn`
 tag: "run Step 5 (5.1, 5.2)"; last line GREEN "T4: free (when available)". 2 s hold.
-SAY: Step 2 compares answers. Both cheese answers now open with welcome welcome welcome, cheese lovers, in the instructor's voice. And the sky: the voice transferred, the physics did not. Pause, and run step 5.
+SAY: 5.2 compares answers. Both cheese answers now open with welcome welcome welcome, cheese lovers, in the instructor's voice. And the sky: the voice transferred, the physics did not. Pause, and run section 5.
 
 SHOW: LECTURE 40. Two GRAY chips: "loss table: the 4-bit model, adapter off" and "side by side: a fresh 16-bit
 model" with a GRAY note "two different baselines". Then a GRAY redrawn bar pair "LoRA ≈ full fine-tuning on a
@@ -1090,7 +1090,7 @@ SHOW: TRACKER Save 3. RECORDED(expected/colab-c88-push-to-hub.txt: 31) (`‹hf-u
 repo · token with write role". Then three cards side by side: GREEN "adapter · 4.6 MB · needs its base", GREEN-outlined
 "merged model · stands alone", BLUE "endpoint (track A) · no weights in your hands" with a GREY dashed arrow to "L10 ·
 cheese app".
-SAY: Step 3 can push the merged model to a private Hugging Face repository. So you can ship three things: an adapter that needs its base, a merged model that stands alone, or Google's endpoint, with no weights in your hands.
+SAY: Section 6.3 can push the merged model to a private Hugging Face repository. So you can ship three things: an adapter that needs its base, a merged model that stands alone, or Google's endpoint, with no weights in your hands.
 
 SHOW: TRACKER Down 1. Full TEAL terminal at `app@2a2550dec953:/app$` types `exit` → TERM(laptop/18-docker-shell-gemini-
 finetuner.txt: 28); the frame turns GRAY. It types `cd ..` → (no output). TRACKER Down 2: `docker image rm

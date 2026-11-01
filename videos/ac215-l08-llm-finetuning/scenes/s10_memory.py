@@ -3,11 +3,12 @@ Lecture: 11–16, 37–39, 71–72. Opens part 2.
 
 Beats (script.md "## S10", one voiceover block each):
  0  The BLUE Colab frame "QLoRA notebook · Colab" (tag `illustration`; its tab and tag sit on the
-    right half of the top border, clear of the tracker), the notebook's title inside. TRACKER
+    right half of the top border, clear of the tracker), the notebook's title inside, and under it a GREY
+    two-row chip: "open it from the L08 Ed lesson" + the notebook URL (digest.md:3, :27). TRACKER
     ColabA 1: schematic File › Save a copy in Drive, the second chip lights YELLOW (cell-01.md),
     GREY note "the original is view-only". TRACKER ColabA 2: Runtime › Change runtime type, then a
-    schematic "Change runtime type" dialog; "T4 GPU" selected (YELLOW); GOLD chip "A100 · L4: Pro or
-    compute units".
+    schematic "Change runtime type" dialog and, with it, the GOLD chip "A100 · L4: Pro or compute
+    units"; then "T4 GPU" selected (YELLOW). 1.5 s hold so the cost chip stays readable.
  1  TRACKER ColabA 3. CODE(colab/cell-08.py: 1–7) (long lines wrapped), header "QLoRA notebook · 3 ·
     cell 8 · lines 1–7"; lines 3–4 and 7 light. Below it, as the cell's output area (no second
     header: the cell is named just above), RECORDED(expected/colab-c08-install: 13, 18, 21):
@@ -15,9 +16,10 @@ Beats (script.md "## S10", one voiceover block each):
     `at the time of recording` inside the output area's right end.
  2  One slot below the tracker; each step replaces the previous one. TRACKER ColabA 4: a schematic
     Secrets panel (illustration): HF_TOKEN, a row of GREY dots, "notebook access" switch on;
-    RECORDED(c10: 13); GREY chip "SecretNotFoundError? name it HF_TOKEN · turn notebook access on";
-    on "both models are public" a GREY note "both models are public: the token matters mostly for the
-    optional upload (6.3)" (not in SHOW: the SAY's clause otherwise had nothing moving for 5 s).
+    on "on the Hugging Face website" a GREY chip with cell-09.md's token steps "huggingface.co ›
+    Settings › Access Tokens › New token · Read (Write only for 6.3)", flashed on "make a read token";
+    on "and save it in Colab secrets" the panel's name flashes, then RECORDED(c10: 13) and the GREY
+    chip "SecretNotFoundError? name it HF_TOKEN · turn notebook access on".
     TRACKER ColabA 5: the Secrets panel Transforms into RECORDED(c12: 32, wrapped) + `at the time of
     recording`, torch and transformers versions light; then RECORDED(c14: 6) below it. TRACKER ColabA
     6: RECORDED(c16: 7–8, each cut after the model folder); the Drive path Transforms into a GREY
@@ -31,7 +33,9 @@ Beats (script.md "## S10", one voiceover block each):
  4  The ponder card leaves; the column settles to the floor. V5: Gradients · FP16 · 20 GB and
     Optimizer states · FP32 · 80 GB (momentum + variance) stack in proportion 1 : 1 : 4; "120 GB"
     writes under it. Five GREY dashed 24 GB GPU tiles line up (the concept tag moves onto them) and
-    a copy of the column pours into them, filling all five.
+    a copy of the column pours into them, filling all five. On "two running averages" the optimizer
+    slab's two halves light in turn, outlined (lower with "momentum", upper with "variance"); on
+    "80 gigabytes" the slab's label flashes.
  5  LECTURE 37–39. The tiles leave; the column copies twice to the right. LoRA: gradients and
     optimizer slabs turn GREEN and shrink to two small blocks "A, B"; the 20 GB parameters slab stays
     GREY with a snowflake beside it ("frozen, but needed for the forward pass"); dashed outline up to 40 GB,
@@ -95,6 +99,8 @@ DRIVE = "/content/drive/MyDrive/LLM_cache/"
 OPT_DIR, QWEN_DIR = "models--facebook--opt-350m", "models--Qwen--Qwen3-0.6B"
 assert C16.line(7).startswith(DRIVE + OPT_DIR) and C16.line(8).startswith(DRIVE + QWEN_DIR), C16.line(8)
 NOTEBOOK = "Tutorial - Finetuning with QLoRA"
+ED_LESSON = "open it from the L08 Ed lesson"                     # digest.md:3 (Ed lesson), :27 (the notebook URL)
+COLAB_URL = "colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC"
 
 # ------------------------------------------------------------------ layout
 SAFE_R = 6.45
@@ -163,6 +169,17 @@ def runtime_dialog() -> VGroup:
     body.move_to(fr)
     g = VGroup(fr, body)
     g.frame, g.options, g.head = fr, opts, head
+    return g
+
+
+def link_chip() -> VGroup:
+    """A GREY two-row chip: where to open the notebook (the README has no Colab link). .box .rows"""
+    rows = VGroup(label(ED_LESSON, CAPTION, INK), mono(COLAB_URL, CAPTION, INK)).arrange(DOWN, aligned_edge=LEFT,
+                                                                                         buff=0.12)
+    b = box(rows.width + 0.5, rows.height + 0.3, S.GREY, fill_opacity=0.16, radius=0.14)
+    rows.move_to(b)
+    g = VGroup(b, rows)
+    g.box, g.rows = b, rows
     return g
 
 
@@ -277,14 +294,17 @@ class MemoryBill(VoiceScene):
         cf = colab_notebook()
         title = label(NOTEBOOK, 30, INK)
         place(title, left=-6.0, top=SLOT_TOP)
+        link = link_chip()
+        place(link, left=-6.0, top=title.get_bottom()[1] - 0.15)
+        assert link.get_right()[0] < SAFE_R - 0.1, link.get_right()
         mp1 = menu_path(["File", "Save a copy in Drive"])
-        place(mp1, left=-6.0, cy=1.25)
+        place(mp1, left=-6.0, top=link.get_bottom()[1] - 0.2)
         view = note("the original is view-only")
         place(view, left=mp1.get_right()[0] + 0.4, cy=mp1.get_center()[1])
         mp2 = menu_path(["Runtime", "Change runtime type"])
-        place(mp2, left=-6.0, cy=0.2)
+        place(mp2, left=-6.0, top=mp1.get_bottom()[1] - 0.45)
         dlg = runtime_dialog()
-        place(dlg, left=-6.0, top=-0.35)
+        place(dlg, left=-6.0, top=mp2.get_bottom()[1] - 0.3)
         paid = chip("A100 · L4: Pro or compute units", COST, size=CAPTION)
         place(paid, left=dlg.get_right()[0] + 0.4, cy=dlg.options["A100 GPU"].get_center()[1])
         assert paid.get_right()[0] < SAFE_R - 0.1, paid.get_right()
@@ -293,6 +313,7 @@ class MemoryBill(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             self.play(Create(cf.frame), FadeIn(cf.title), FadeIn(cf.tag), run_time=0.8)
             self.play(FadeIn(title, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeIn(link, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("First")
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(mp1, shift=RIGHT * 0.15), run_time=0.6)
             vo.wait_until("Save a copy in Drive")
@@ -304,10 +325,12 @@ class MemoryBill(VoiceScene):
             vo.wait_until("Change runtime type")
             self.play(mp2.light(1), run_time=0.4)
             self.play(FadeIn(dlg, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeIn(paid, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("A free T4")
             self.play(t4.box.animate.set_stroke(TURN, 3).set_fill(TURN, 0.15), t4.text.animate.set_color(TURN),
                       run_time=0.5)
-            self.play(flash(t4, TURN, 1.12), FadeIn(paid, shift=LEFT * 0.1), run_time=0.7)
+            self.play(flash(t4, TURN, 1.12), run_time=0.7)
+        self.wait(1.5)                                  # the GOLD cost chip stays readable
 
         # ========================================================== 1 · section 3: install
         p8 = src_panel(CELL08, 1, 7, size=20,
@@ -329,7 +352,7 @@ class MemoryBill(VoiceScene):
                        .set_fill(TURN, 0.18).move_to([b3.get_center()[0], (b_top + b_bot) / 2, 0]))
         bar7 = p8.bar(7)
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(title, mp1, view, mp2, dlg, paid)), run_time=0.5)
+            self.play(FadeOut(VGroup(title, link, mp1, view, mp2, dlg, paid)), run_time=0.5)
             self.play(tr.goto(3), FadeIn(p8, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("Section 3 pins")
             self.play(FadeIn(bars8), run_time=0.5)
@@ -346,13 +369,16 @@ class MemoryBill(VoiceScene):
         # ========================================================== 2 · sections 4-6: token, imports + Drive, download; your turn
         sec = secrets_panel()
         place(sec, cx=0, top=SLOT_TOP - 0.05)
+        # cell-09.md: where the token comes from (Read is enough up to 6.2; the optional upload in 6.3 needs Write)
+        hf = chip("huggingface.co › Settings › Access Tokens › New token · Read (Write only for 6.3)", S.GREY,
+                  size=CAPTION)
+        place(hf, cx=0, top=sec.get_bottom()[1] - 0.3)
         out10 = recorded_box("colab-c10-hf-token", 13)
-        place(out10, cx=0, top=sec.get_bottom()[1] - 0.3)
+        place(out10, cx=0, top=hf.get_bottom()[1] - 0.35)
         nf = chip("SecretNotFoundError? name it HF_TOKEN · turn notebook access on", S.GREY, size=CAPTION)
         place(nf, cx=0, top=out10.get_bottom()[1] - 0.3)
-        pub = note("both models are public: the token matters mostly for the optional upload (6.3)")
-        place(pub, cx=0, top=nf.get_bottom()[1] - 0.25)
-        assert pub.get_bottom()[1] > -3.4, pub.get_bottom()
+        assert nf.get_bottom()[1] > -3.4, nf.get_bottom()
+        assert hf.get_right()[0] < SAFE_R - 0.1, hf.get_right()
         v32 = [r for r, *_ in wrap_output(C12.line(32), 65)]
         out12 = recorded_box("colab-c12-versions", *v32)
         place(out12, cx=0, top=SLOT_TOP - 0.05)
@@ -374,13 +400,16 @@ class MemoryBill(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(p8, bars8, bar7, out8, tags8)), run_time=0.5)
             self.play(tr.goto(4), FadeIn(sec, shift=UP * 0.15), run_time=0.6)
+            vo.wait_until("on the Hugging Face website")
+            self.play(FadeIn(hf, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("make a read token")
+            self.play(flash(hf, TURN, 1.06), run_time=0.6)
+            vo.wait_until("and save it in Colab secrets")
             self.play(flash(sec.name, TURN, 1.15), run_time=0.6)
             self.play(FadeIn(out10, shift=UP * 0.1), run_time=0.5)
             self.play(FadeIn(nf, shift=UP * 0.1), run_time=0.5)
-            vo.wait_until("both models are public")
-            self.play(FadeIn(pub, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Section 5 imports")
-            self.play(FadeOut(VGroup(out10, nf, pub)), run_time=0.4)
+            self.play(FadeOut(VGroup(hf, out10, nf)), run_time=0.4)
             sg = VGroup(sec.frame, sec.body)
             self.play(tr.goto(5), Transform(sg, out12.frame.copy()), run_time=0.7)
             self.remove(sg, sec)
@@ -443,7 +472,9 @@ class MemoryBill(VoiceScene):
             col.parts[name].shift(UP * down)
         lab_g = block_label(["Gradients · FP16 · 20 GB"])
         place(lab_g, left=lab_p.get_left()[0], cy=col.blocks[GRAD].get_center()[1])
-        lab_o = block_label(["Optimizer states · FP32 · 80 GB", "momentum + variance"])
+        mv = VGroup(*[label(w, CAPTION, S.GREY) for w in ("momentum", "+", "variance")]).arrange(RIGHT, buff=0.12)
+        lab_o = VGroup(label("Optimizer states · FP32 · 80 GB", CAPTION, INK), mv).arrange(DOWN, aligned_edge=LEFT,
+                                                                                           buff=0.06)
         place(lab_o, left=lab_p.get_left()[0], cy=col.blocks[OPT].get_center()[1])
         tot = label("120 GB", 26, INK)
         place(tot, cx=X_FULL_4, top=BASE_Y - 0.15)
@@ -464,6 +495,24 @@ class MemoryBill(VoiceScene):
             vo.wait_until("And the Adam optimizer")
             self.play(GrowFromEdge(col.blocks[OPT], DOWN), run_time=1.2)
             self.play(FadeIn(VGroup(*col.parts[OPT][1:])), FadeIn(lab_o, shift=LEFT * 0.1), run_time=0.5)
+            vo.wait_until("two running averages")
+            ob = col.blocks[OPT]
+            half_h = ob.height / 2
+            # the split: each half lights with its own outline (a bare line would cross the FP32 tag)
+            halves = [Rectangle(width=ob.width, height=half_h, stroke_color=TURN, stroke_width=3).set_fill(TURN, 0.3)
+                      .move_to(ob.get_center() + DOWN * half_h / 2 * s) for s in (1, -1)]   # momentum low, variance up
+            dt = col.parts[OPT][-1]                     # the FP32 tag stays above the lit halves' edges
+            self.add(*halves)
+            for h in halves:
+                h.set_fill(opacity=0).set_stroke(opacity=0)
+            self.bring_to_front(dt)
+            self.play(halves[0].animate.set_fill(TURN, 0.3).set_stroke(TURN, 3, opacity=1),
+                      mv[0].animate.set_color(TURN), run_time=0.6)
+            self.play(FadeOut(halves[0]), halves[1].animate.set_fill(TURN, 0.3).set_stroke(TURN, 3, opacity=1),
+                      mv[0].animate.set_color(S.GREY), mv[2].animate.set_color(TURN), run_time=0.6)
+            self.play(FadeOut(halves[1]), mv[2].animate.set_color(S.GREY), run_time=0.5)
+            vo.wait_until("80 gigabytes")
+            self.play(flash(lab_o[0], TURN, 1.1), run_time=0.7)
             vo.wait_until("That's 120 in total")
             self.play(Write(tot), run_time=0.6)
             self.play(flash(tot, INK, 1.2), run_time=0.6)

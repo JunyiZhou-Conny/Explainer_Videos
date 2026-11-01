@@ -241,3 +241,17 @@ reparameterization: {ipa: "ɹˌiːpˌæɹəmˌɛɾɚɹaɪzˈeɪʃən", say: "re-
 # (a phrase that starts with "a": a fragment ending in "a" before a lexicon word is read as the letter A)
 "a reparameterization": {ipa: "ɐ ɹˌiːpˌæɹəmˌɛɾɚɹaɪzˈeɪʃən", say: "a re-parameterization"}
 "a Colab GPU": {ipa: "ɐ kˈoʊlæb dʒˌiːpˌiːjˈuː", say: "a co-lab GPU"}
+# (L08 notebook section numbers; "dataset" is flapped to "day-ruh-set" by Kokoro: L08-only phrases, never a bare key)
+"4.2": {ipa: "fˈɔːɹ pˈɔɪnt tˈuː", say: "four point two"}
+"4.3": {ipa: "fˈɔːɹ pˈɔɪnt θɹˈiː", say: "four point three"}
+"4.4": {ipa: "fˈɔːɹ pˈɔɪnt fˈɔːɹ", say: "four point four"}
+"4.5": {ipa: "fˈɔːɹ pˈɔɪnt fˈaɪv", say: "four point five"}
+"5.1": {ipa: "fˈaɪv pˈɔɪnt wˈʌn", say: "five point one"}
+"5.2": {ipa: "fˈaɪv pˈɔɪnt tˈuː", say: "five point two"}
+"6.3": {ipa: "sˈɪks pˈɔɪnt θɹˈiː", say: "six point three"}
+"dataset section": {ipa: "dˈeɪtə sˌɛt sˈɛkʃən", say: "data set section"}
+"dataset-creator": {ipa: "dˈeɪtə sˌɛt kɹiːˈeɪɾɚ", say: "data set creator"}
+"bigger dataset": {ipa: "bˈɪɡɚ dˈeɪtə sˌɛt", say: "bigger data set"}
+"the dataset folder": {ipa: "ðə dˈeɪtə sˌɛt fˈoʊldɚ", say: "the data set folder"}
+"llm-finetune-dataset-small": {ipa: "ˈɛl ˈɛl ˈɛm fˈaɪntuːn dˈeɪtə sˌɛt smˈɔːl", say: "L-L-M finetune data set small"}
+"the pretrained one": {ipa: "ðə pɹˌiːtɹˈeɪnd wˌʌn", say: "the pre-trained one"}

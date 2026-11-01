@@ -25,7 +25,7 @@ Beats (script.md "## S13", one voiceover block each):
     GREY card under the tower: the c42 shapes and each matrix's in + out sizes (q and v GREEN).
     GREY chip "4.1 names no target_modules → PEFT's Qwen3 default: q_proj, v_proj". The arithmetic
     8 × (1024 + 2048) + 8 × (1024 + 1024) = 40,960 per block; the counter ticks up the tower × 28
-    to 1,146,880. GREY erratum chip "lecture: adapters on each layer · here: two projections per
+    to 1,146,880. GREY erratum-style chip (no word "erratum") "lecture: adapters on each layer · here: two projections per
     block".
  7  LECTURE 32–35. A GREY dashed square "7 B weights as one square · 83,666 × 83,666", "rank 1:
     2 × 83,666 ≈ 167 K", GREY chip "the lecture's table · one square matrix (slide 35's own
@@ -293,6 +293,8 @@ class LowRank(VoiceScene):
             vo.wait_until("holds 24,576")
             self.play(FadeIn(real[2][1], shift=UP * 0.1), run_time=0.5)
             self.play(flash(real[2][1], OWN, 1.2), Write(ratio), run_time=1.0)
+            self.play(flash(ratio[1], TURN, 1.15), run_time=0.6)
+        self.wait(2.0)              # the ratio is the payoff: hold it readable before beat 3 clears it
         beat2 = VGroup(real, dim_w, dim_h, lens, link, view, cols8, mag, ratio)
 
         # ========================================================== 3 · decompose the update: the equation
@@ -462,7 +464,8 @@ class LowRank(VoiceScene):
         place(arith, left=ctr.get_left()[0], top=ctr.get_bottom()[1] - 0.3)
         inside(arith)
         assert arith.get_bottom()[1] > src42.get_top()[1] + 0.1, (arith.get_bottom(), src42.get_top())
-        errat = erratum_tag("lecture: adapters on each layer · here: two projections per block")
+        # GREY erratum-style chip without the word "erratum": a difference of configuration, not a slip
+        errat = grey_tag("lecture: adapters on each layer · here: two projections per block")
         place(errat, left=-6.4, top=dflt.get_bottom()[1] - 0.15)
         inside(errat)
         sweep = Rectangle(width=row0.width + 0.12, height=row0.height + 0.06, stroke_color=TURN, stroke_width=2.5)
@@ -513,8 +516,8 @@ class LowRank(VoiceScene):
             vo.wait_until("the real count depends")
             self.play(FadeIn(tbl, shift=UP * 0.1), run_time=0.5)
             self.play(flash(VGroup(q_txt, v_txt), OWN, 1.1), flash(tower.q, OWN, 1.03), run_time=0.8)
-        card = ponder_at(self, "With r=16, how many trainable parameters?\n"
-                               "And with target_modules=\"all-linear\" at r = 8?", 8, y=-2.2, hide=(tbl, src42))
+        card = ponder_at(self, "With r = 16, how many trainable parameters?\n"
+                               "And at r = 8 on all seven (\"all-linear\")?", 8, y=-2.2, hide=(tbl, src42))
         assert card.get_top()[1] < min(sq_txt.get_bottom()[1], shp_g.get_bottom()[1], tw_rows.get_bottom()[1]) - 0.05, \
             (card.get_top(), sq_txt.get_bottom(), shp_g.get_bottom())
 

@@ -190,7 +190,7 @@ def poly_arrow(points, color=LOOKUP, stroke=4) -> VGroup:
 
 
 def dashed_card(rows, header: str, color=S.GREY, width=None) -> VGroup:
-    body = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
+    body = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.24)
     w = max(width or 0, body.width + 0.6)
     fr = box(w, body.height + 0.5, color, dashed=True, radius=0.14)
     bg = RoundedRectangle(width=w, height=body.height + 0.5, corner_radius=0.14, stroke_width=0) \
@@ -579,22 +579,22 @@ class KeyNextToRepo(VoiceScene):
         b2 = "    --location=us-central1 --project=<your-project>"
         bkt_rows = [mono(b1, CAPTION, INK), mono(b2, CAPTION, INK)]
         cw = cell_width(CAPTION)
-        rows6 = VGroup(VGroup(*api_rows).arrange(DOWN, aligned_edge=LEFT, buff=0.08),
-                       VGroup(*bkt_rows).arrange(DOWN, aligned_edge=LEFT, buff=0.08))
+        rows6 = VGroup(VGroup(*api_rows).arrange(DOWN, aligned_edge=LEFT, buff=0.16),
+                       VGroup(*bkt_rows).arrange(DOWN, aligned_edge=LEFT, buff=0.16))   # room for the chips
         api_rows[1].shift(RIGHT * 4 * cw)              # Text drops the leading spaces of a continuation row
         bkt_rows[1].shift(RIGHT * 4 * cw)
         card6 = dashed_card(list(rows6), "not in the README, needed")
         place(card6, cx=0, cy=0.9)
         yb = text_glyphs(bkt_rows[0], b1, "<your-bucket>")
         yb.set_color(TURN)
-        yb_chip = RoundedRectangle(width=yb.width + 0.05, height=yb.height + 0.18, corner_radius=0.08,
+        yb_chip = RoundedRectangle(width=yb.width + 0.05, height=yb.height + 0.1, corner_radius=0.08,
                                    stroke_color=TURN, stroke_width=2.5).move_to(yb)
         card6.add(yb_chip)
         # <your-project> (QA 04:39: without a default project both commands fail): YELLOW template chips
         yp_chips = VGroup()
         for row, src in ((api_rows[1], a2), (bkt_rows[1], b2)):
             yp = text_glyphs(row, src, "<your-project>").set_color(TURN)
-            yp_chips.add(RoundedRectangle(width=yp.width + 0.05, height=yp.height + 0.18, corner_radius=0.08,
+            yp_chips.add(RoundedRectangle(width=yp.width + 0.05, height=yp.height + 0.1, corner_radius=0.08,
                                           stroke_color=TURN, stroke_width=2.5).move_to(yp))
         card6.body[0].add(yp_chips[0])
         card6.body[1].add(yp_chips[1])

@@ -331,6 +331,8 @@ class Persona(VoiceScene):
             b96 = p3.bar(96, TURN)
             self.play(FadeOut(VGroup(b84, *bars)), FadeIn(b96), run_time=0.5)
             self.play(flash(p3.span(96, "enthusiastic exclamations"), TURN, 1.08), run_time=0.7)
+            vo.wait_until("in the instructor's character")
+            self.play(flash(p3.span(96, PERSONA), TURN, 1.12), run_time=0.6)
 
         # ========================================================== 4 · steps 3-4: input prompt, iterations, config
         e169 = excerpt_rows(P169, f"{CLI} · line 169 (excerpt)", L169)

@@ -12,11 +12,11 @@ Beats (script.md "## S16", one voiceover block each):
  1  LECTURE 30. TRACKER Save 2. CODE(colab/cell-86.py: 1–11) folded to 1–5, 9, 11 (line 9 wrapped:
     8 rows); line 4 `dtype=torch.float16` lights. V7 merge under the panel: a fresh GREY W₀ (tag
     FP16, snowflake) loads; the GREEN B·A hourglass slides over and fuses into it (lines 9, 11
-    light). "Not into the 4-bit weights": the panel leaves, the merge row moves up, a GREY chip "not
-    into the 4-bit weights: the update would round back onto 16 levels". "about 1.2 gigabytes": the
-    snowflake melts, W₀ becomes "merged model · ≈ 1.2 GB" (GREEN outline);
-    RECORDED(expected/colab-c86-merge-and-save.txt: 26 cut after "_merged") and a GREY chip
-    "torchao ImportError here? run the install cell, restart the session".
+    light). "Not into the 4-bit weights": the panel leaves, the merge row moves up, the GREY chip
+    "torchao ImportError here? run the install cell, restart the session" rises at the bottom, a GREY
+    chip "not into the 4-bit weights: the update would round back onto 16 levels". "The merged model":
+    the snowflake melts, W₀ becomes "merged model · ≈ 1.2 GB" (GREEN outline) and
+    RECORDED(expected/colab-c86-merge-and-save.txt: 26 cut after "_merged") fades in; 2 s hold.
  2  TRACKER Save 3. RECORDED(expected/colab-c88-push-to-hub.txt: 31, wrapped: 2 rows; ‹hf-user› GREY)
     with the GREY tag "optional · private repo · token with write role". Then the three cards side by
     side as named: GREEN adapter, GREEN-outlined merged model, BLUE endpoint, with a GREY dashed arrow
@@ -361,7 +361,8 @@ class Recap(VoiceScene):
             self.remove(fuse)
             self.play(flash(w0.frame, OWN, 1.08, 0.6))
             vo.wait_until("Not into the 4-bit weights")
-            self.play(FadeOut(VGroup(p86, b9, b11, fresh)), w0.animate.shift(up).scale(GROW), run_time=0.7)
+            self.play(FadeOut(VGroup(p86, b9, b11, fresh)), w0.animate.shift(up).scale(GROW),
+                      FadeIn(tao, shift=UP * 0.1), run_time=0.7)    # cell 86's troubleshooting tip, ~10 s up
             self.play(FadeIn(ghost), FadeIn(g_cap), FadeIn(g_ab, shift=RIGHT * 0.2), run_time=0.6)
             self.play(g_ab.animate.next_to(ghost.frame, RIGHT, buff=0.06), run_time=0.4)
             self.play(g_ab.animate.shift(RIGHT * 0.3).set_opacity(0.25), FadeIn(g_x, scale=0.6),
@@ -370,10 +371,11 @@ class Recap(VoiceScene):
             self.play(flash(no4, INK, 1.04, 0.6), flash(ghost.dtype, INK, 1.2, 0.6))
             vo.wait_until("The merged model")
             self.play(FadeOut(w0.flake, scale=0.4), FadeOut(w0.dtype), run_time=0.5)
-            self.play(Transform(w0.frame, merged_fr), FadeOut(w0.name), FadeIn(merged_t), run_time=0.8)
+            self.play(Transform(w0.frame, merged_fr), FadeOut(w0.name), FadeIn(merged_t),
+                      FadeIn(rec86, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("about 1.2 gigabytes")
-            self.play(FadeIn(rec86, shift=UP * 0.1), run_time=0.6)
-            self.play(FadeIn(tao, shift=UP * 0.1), run_time=0.5)
+            self.play(flash(merged_t, OWN, 1.06, 0.6))
+        self.wait(2)                                     # time to read the saved path under the merged model
         self.remove(w0.name, w0.flake, w0.dtype)
         merged = VGroup(w0.frame, merged_t)
 
@@ -618,6 +620,7 @@ class Recap(VoiceScene):
                     anims += [pb[0].animate.set_stroke(S.GREY), pb[1].animate.set_color(S.GREY)]
                 self.play(*anims, run_time=0.5)
             pb = blocks[-1].badge
+            vo.wait_until("come from")
             self.play(pb[0].animate.set_stroke(S.GREY), pb[1].animate.set_color(S.GREY), FadeIn(ans, shift=UP * 0.08),
                       run_time=0.5)
         self.wait(3)                                    # time to read the five questions

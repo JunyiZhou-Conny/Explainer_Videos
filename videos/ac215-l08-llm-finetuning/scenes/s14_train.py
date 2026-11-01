@@ -8,12 +8,12 @@ Beats (script.md "## S14", one voiceover block each):
     4-bit linears 0.22 GB, GREY embeddings 0.62 GB (WHITE `FP32` tag), a hairline GREEN "A, B +
     grads + Adam ≈ 18 MB" (drawn thicker than true). On "fit a T4" both columns pulse inside the outline. On "scales" the
     lecture's GREY dashed 10 B column slides in on the right and runs past the T4 line out of the
-    picture ("↑ 120 GB", `concept · lecture only`).
+    picture ("↑ 120 GB", `concept · lecture only`, in with the column); on "wouldn't" the arrow flashes; 1 s hold.
  1  LECTURE 57–64. V8: X → h₁ → h₂ → h₃ → ŷ with an activation-memory meter. Forward: each node
     fills, the meter climbs. Checkpointing: all but h₂ empty, the meter drops; h₃ is recomputed
     from h₂ (PINK replay arc); caption "compute for memory"; GREY chip "on since 1.3 (cell 36)".
- 2  TRACKER Tune 2. CODE(colab/cell-70.py: 2–17) folded to 3, 5–7, 10, 12–13, 15 (long comment cut),
-    YELLOW ▶ your turn beside it. Lines 3 and 15 light, then 5–6, 10, 7. LECTURE 65: V8's paging
+ 2  TRACKER Tune 2. CODE(colab/cell-70.py: 2–17) folded to 3, 5–7, 10, 12–13, 15 (long comment cut);
+    no ▶ here (the SAY has no "pause": the checkpoint is "Pause and train" in beat 6). Lines 3 and 15 light, then 5–6, 10, 7. LECTURE 65: V8's paging
     (compact, under the panel): optimizer pages slide GPU → CPU along PINK arrows and back; GREY
     footnote "our ≈ 18 MB never needs it". 2 s hold.
  3  LECTURE 66–67. Lines 12–13 light; the panel gives way to those two lines. V8's bit strips FP32
@@ -105,7 +105,7 @@ SAFE_L, SAFE_R = -6.45, 6.45
 SC = 0.3375                           # GB -> units: the T4's 16 GB is 5.4 tall
 BASE = -2.9                           # the columns' floor
 T4_TOP = BASE + 16 * SC               # 2.5
-X_FULL, X_Q, X_10B = -5.7, -1.0, 5.1
+X_FULL, X_Q, X_10B = -5.7, -1.1, 5.1
 K_BLK = 0.62                          # V7's block, small, in the trainer beat
 NODE_K = 1.35                         # ... with its x, h and + circles widened back around their labels
 
@@ -147,15 +147,22 @@ class Col(MemoryColumn):
     MIN_H = 0.05
 
 
-def lift_labels(col: MemoryColumn, floor: float) -> None:
+def lift_labels(col: MemoryColumn, floor: float, gap: float | None = None) -> None:
     """Raise a column's block labels so the lowest sits above `floor` (clear of the T4 outline's
-    bottom edge); the leaders are re-drawn from each block to its label."""
+    bottom edge); with `gap`, restack them bottom to top that far apart. The leaders are re-drawn
+    from each block to its label."""
     low = min(t.get_bottom()[1] for t in col.tags.values())
     dy = max(0.0, floor - low)
     for n in col.order:
-        t = col.tags[n]
-        t.shift(UP * dy)
-        col.leads[n].put_start_and_end_on(col.blocks[n].get_right(), t.get_left() + LEFT * 0.05)
+        col.tags[n].shift(UP * dy)
+    if gap is not None:
+        y = floor
+        for n in col.order:
+            t = col.tags[n]
+            t.shift(UP * (y - t.get_bottom()[1]))
+            y = t.get_top()[1] + gap
+    for n in col.order:
+        col.leads[n].put_start_and_end_on(col.blocks[n].get_right(), col.tags[n].get_left() + LEFT * 0.05)
 
 
 def wrapped(cap, n: int, width: int) -> list[str]:
@@ -208,10 +215,10 @@ class SmallGpu(VoiceScene):
         full.shift(RIGHT * X_FULL + UP * BASE)
         ql = Col([("4-bit linears · 0.22 GB", Q_LIN, FROZEN, None),
                   ("embeddings · 0.62 GB", Q_EMB, FROZEN, None),
-                  ("A, B + grads + Adam ≈ 18 MB", Q_AB, OWN, None)], scale=SC, col_w=1.1)
+                  ("A, B + grads + Adam ≈ 18 MB", Q_AB, OWN, None)], scale=SC, col_w=0.9)
         ql.shift(RIGHT * X_Q + UP * BASE)
         lift_labels(full, BASE + 0.1)
-        lift_labels(ql, BASE + 0.1)
+        lift_labels(ql, BASE + 0.3, gap=0.08)
         ql.blocks["4-bit linears · 0.22 GB"].set_fill(FROZEN, 0.15)
         ql.blocks["embeddings · 0.62 GB"].set_fill(FROZEN, 0.6)
         ql.tags["A, B + grads + Adam ≈ 18 MB"].set_color(OWN)
@@ -219,15 +226,19 @@ class SmallGpu(VoiceScene):
         emb_t = ql.tags["embeddings · 0.62 GB"]
         place(fp32, left=emb_t.get_right()[0] + 0.15, cy=emb_t.get_center()[1])
         assert full.get_right()[0] < ql.blocks["4-bit linears · 0.22 GB"].get_left()[0] - 0.25, full.get_right()
-        title_f = VGroup(label("full fine-tuning ≈ 7 GB", 26, INK), note("before activations")) \
+        title_f = VGroup(label("full fine-tuning ≈ 7 GB", 24, INK), note("before activations")) \
             .arrange(DOWN, buff=0.08, aligned_edge=LEFT)
         place(title_f, left=full.blocks["Adam · FP32 · 4.8 GB"].get_left()[0],
               bottom=full.blocks["Adam · FP32 · 4.8 GB"].get_top()[1] + 0.2)
-        title_q = label("QLoRA in this notebook ≈ 0.9 GB", 26, INK)
+        title_q = label("QLoRA in this notebook ≈ 0.9 GB", 24, INK)
         place(title_q, left=ql.blocks["4-bit linears · 0.22 GB"].get_left()[0],
               bottom=max(t.get_top()[1] for t in ql.tags.values()) + 0.3)
         inside(VGroup(t4, ql, fp32, title_q, title_f))
-        assert fp32.get_right()[0] < t4.get_right()[0] - 0.1, fp32.get_right()
+        # the QLoRA column's words keep clear of the T4 outline (right edge, dashed floor) and of the full column
+        t4_r = t4.get_right()[0]
+        assert max(m.get_right()[0] for m in (fp32, title_q, *ql.tags.values())) < t4_r - 0.3, t4_r
+        assert min(t.get_bottom()[1] for t in ql.tags.values()) >= BASE + 0.25
+        assert title_q.get_left()[0] > max(full.tags[n].get_right()[0] for n in full.order) + 0.3
         # the lecture's 10 B column (slides 13–15): far taller than the frame; only its foot is drawn
         c_top = 2.75
         c_l, c_r = X_10B - 0.65, X_10B + 0.65
@@ -271,10 +282,10 @@ class SmallGpu(VoiceScene):
             self.play(t4.animate.set_stroke(S.GREY, 2.5), t4_l.animate.set_color(S.GREY), run_time=0.4)
             vo.wait_until("The recipe matters")
             self.play(Create(t4_line), FadeIn(VGroup(big_fill, big, big_l), shift=LEFT * 0.4), run_time=0.8)
-            self.play(FadeIn(ctag, shift=UP * 0.1), run_time=0.4)
+            self.play(Create(up), FadeIn(up_l, shift=UP * 0.1), FadeIn(ctag, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("to models that wouldn't")
-            self.play(Create(up), FadeIn(up_l, shift=UP * 0.1), run_time=0.6)
-            self.play(flash(up_l, INK, 1.2), run_time=0.6)
+            self.play(flash(VGroup(up, up_l), INK, 1.15, 0.7), run_time=0.7)
+        self.wait(1)
         beat0 = VGroup(t4, t4_l, est, full, ql, fp32, title_f, title_q, big_all, t4_line, ctag)
 
         # ========================================================== 1 · activations and gradient checkpointing
@@ -320,14 +331,11 @@ class SmallGpu(VoiceScene):
         tr = tracker("Tune", 2)
         p70 = src_panel(CELL70, [3, (5, 7), 10, (12, 13), 15], size=20, cut_comments=True)
         place(p70, left=-6.3, top=2.72)
-        yt = your_turn()
-        place(yt, right=SAFE_R, bottom=p70.code.get_top()[1] + 0.1)
         pg = paging_row()
         place(pg, left=-6.3, top=p70.get_bottom()[1] - 0.25)
         foot = note("our ≈ 18 MB never needs it")
         place(foot, left=pg.get_right()[0] + 0.4, cy=pg.cpu.get_center()[1])
-        inside(VGroup(p70, yt, pg, foot))
-        assert yt.get_left()[0] > p70.header.get_right()[0] + 0.15, (yt.get_left(), p70.header.get_right())
+        inside(VGroup(p70, pg, foot))
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(beat1), FadeOut(lr), run_time=0.5)
             lr = None
@@ -347,7 +355,6 @@ class SmallGpu(VoiceScene):
             vo.wait_until("The optimizer is")
             b7 = p70.bar(7)
             self.play(FadeOut(b10), FadeIn(b7), run_time=0.5)
-            self.play(FadeIn(yt, shift=LEFT * 0.15), run_time=0.4)
             vo.wait_until("Paging moves")
             lr = lref_swap(self, lr, "65")
             self.play(FadeIn(pg), run_time=0.6)
@@ -376,7 +383,7 @@ class SmallGpu(VoiceScene):
         inside(VGroup(p13, bits, t4bf, rec31))
         fp32, fp16, bf16 = bits.rows["FP32"], bits.rows["FP16"], bits.rows["BF16"]
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(pg, foot, b7, yt)), run_time=0.4)
+            self.play(FadeOut(VGroup(pg, foot, b7)), run_time=0.4)
             lr = lref_swap(self, lr, "66–67")
             b1213 = VGroup(p70.bar(12), p70.bar(13))
             self.play(FadeIn(b1213), run_time=0.5)
@@ -550,7 +557,7 @@ class SmallGpu(VoiceScene):
             self.play(FadeOut(VGroup(*[m for m in rec75 if m is not rec75.rows])),
                       FadeOut(VGroup(*rec75.rows[1:])), r450.animate.move_to(r450_t), FadeIn(ctag75),
                       arith.animate.move_to(arith_end), run_time=0.8)
-            vo.wait_until("Step 5, TensorBoard")
+            vo.wait_until("And 4.5, TensorBoard")
             self.play(tr.goto(5), FadeOut(arith), FadeIn(rec77, shift=UP * 0.1), run_time=0.7)
             self.play(FadeIn(own, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("Pause and train")

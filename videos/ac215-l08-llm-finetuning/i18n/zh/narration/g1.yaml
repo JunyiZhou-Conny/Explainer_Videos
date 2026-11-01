@@ -39,6 +39,10 @@ S01:
   - "聊天模型的习惯也是这样学来的；课上展示过一个，开口总是 Sure, here's。"
   - "这个模型冻结了 5.96 亿个权重，只训练了 115 万个新的。"
   - "在 A100 上用了大约三分半钟，存下来的文件大约 4.6 MB。"
+  en_display:
+  - "Chat models learn their habits the same way; the lecture shows one that starts with the words, Sure, here's."
+  - null
+  - null
 - en: "So what did it learn, and what didn't it? Two tracks answer that. In track A, the README, Gemini writes a persona dataset and Google tunes Gemini for you. In track B, the course Colab, you fine-tune an open model yourself and keep the weights."
   zh:
   - "那它学到了什么，又没学到什么？"
@@ -70,12 +74,16 @@ S02:
   zh:
   - "对比一个从没做过指令微调的模型。"
   - "这个 notebook 给 OPT 350m 的开头是：“你好，我的奶酪名字是”。"
-  - "它就这么接着往下写：“我的奶酪名字是奶酪，我不确定你是不是在开玩笑”。"
+  - "它就这么接着往下写：“我的奶酪名字叫奶酪，不知道你是不是在开玩笑”。"
 - en: "An instruction-tuned model answers instead of continuing, often with a habit like, sure, here's. Our fine-tuned Qwen answers the way the instructor would. That's the lesson of the saved run: style is learnable; facts are not guaranteed."
   zh:
   - "经过指令微调的模型会回答，而不是续写，常常还带着一个习惯，比如 Sure, here's。"
   - "我们微调后的 Qwen，会以授课老师的方式回答。"
   - "这就是保存的那次运行给我们的一课：风格学得会；事实没有保证。"
+  en_display:
+  - "An instruction-tuned model answers instead of continuing, often with a habit like, Sure, here's."
+  - null
+  - null
 - en: "A useful mental model: fine-tuning moves the model's default voice; RAG changes the open book on its desk. In track A, Google trains the model and you never see a weight. In track B, you train a small adapter on a Colab GPU, and it is yours to save."
   zh:
   - "一个好用的理解方式：微调动的是模型默认的口吻；RAG 换的是它桌上摊开的那本书。"
@@ -120,7 +128,7 @@ S03:
   - "脚本会把这两项传进 container。"
 - en: "The README also assumes the Agent Platform and Storage APIs are enabled, and a bucket of your own. Bucket names are global, and cheese-dataset belongs to the course. Pause here and finish all four steps."
   zh:
-  - "README 还默认你已经启用了 Agent Platform 和 Storage 的 API，并且有一个你自己的 bucket。"
+  - "README 还默认：Agent Platform 和 Storage 的 API 已经启用，你也有一个自己的 bucket。"
   - "每个 bucket 的名称都是全局唯一的，cheese-dataset 是课程的。"
   - "在这里暂停，把四步都做完。"
 S04:
@@ -150,7 +158,7 @@ S04:
   - "The --rm flag removes the container when you exit."
 - en: "Read the banner kindly: it says activated before the activation line runs, and the prompt never shows an app prefix. Both are harmless; an extra check shows Python comes from slash dot venv, and your settings arrived. The part after app and the at sign is the container ID; yours will differ."
   zh:
-  - "对横幅宽容一点：激活那一行还没运行，它就说已激活，提示符也从来不显示 app 前缀。"
+  - "对横幅宽容一点：它在激活那一行运行之前就说已激活，提示符也从来不显示 app 前缀。"
   - "两个都无害；额外检查一下，Python 来自 /.venv，你的设置也都传进来了。"
   - "提示符里 app 和 @ 符号后面那一段，就是 container ID；你的会不一样。"
   en_display:
@@ -196,7 +204,7 @@ S05:
 - en: "Here the teacher is Gemini 3.1 Flash Lite, called in the global location. It gets a system instruction describing the persona, an input prompt asking for 20 pairs, and a JSON schema that fixes the answer's shape: question and answer objects."
   zh:
   - "这里的教师模型是 Gemini 3.1 Flash Lite，在 global 区域调用。"
-  - "它拿到一段描述人设的系统指令，一个要 20 组问答的输入 prompt，还有一个 JSON schema，规定回答的形状：question 和 answer 两个字段。"
+  - "它拿到一段描述人设的系统指令，一个要 20 组问答的输入 prompt，还有一个规定回答形状的 JSON schema：question 和 answer 两个字段。"
 - en: "Step 1: python cli.py dash dash generate. With a key, it costs cents: the README estimates 2 dollars per 1,000 iterations. Without one, every batch prints the same line: the key file was not found. And yet the exit status is zero, which means success. Remember that zero."
   zh:
   - "第 1 步：python cli.py --generate。"
@@ -210,20 +218,20 @@ S05:
   - null
   - null
   - null
-- en: "Step 2 explains the system prompt, which lives in cli.py. It tells the teacher to open each answer with one of the instructor's catchphrases, such as good question, or glad you ask. And it asks for technical, passionate answers."
+- en: "Step 2 explains the system prompt, which lives in cli.py. It tells the teacher to open each answer with one of the instructor's catchphrases, such as good question, or glad you ask. And it asks for enthusiastic exclamations, in the instructor's character."
   zh:
   - "第 2 步讲的是 system prompt，它就写在 cli.py 里。"
   - "它要教师模型在每个回答开头用一句授课老师的口头禅，比如 good question，或者 glad you ask。"
-  - "它还要求回答要专业、有激情。"
+  - "它还要求加入热情的感叹语，突出授课老师的个性。"
 - en: "Step 3 is the input prompt, asking for 20 diverse pairs. Step 4: the number of iterations is a constant on line 170, not a flag; edit it for a bigger dataset. Temperature 0.9 adds variety, and the response schema makes Gemini return JSON in that shape."
   zh:
   - "第 3 步是输入 prompt，要 20 组各不相同的问答。"
   - "第 4 步：迭代次数是第 170 行的一个常量，不是参数；想要更大的数据集，就改它。"
-  - "把 temperature 设成 0.9 是为了增加多样性，response schema 让 Gemini 按那个形状返回 JSON。"
+  - "把 temperature 设成 0.9 是为了增加多样性，这个 response schema 让 Gemini 按那个形状返回 JSON。"
 - en: "With a key, the files would hold answers like the README's samples: Yello, this is the instructor, your cheese monker. A small slip: the README's prompt excerpt lists older openers than cli.py, but cli.py's own samples still open with Yello and Welcome. Expect a mix."
   zh:
   - "有密钥的话，这些文件里会是 README 样例那样的回答：“Yello，我是授课老师，你的 cheese monker”。"
-  - "一个小疏漏：README 摘录的 prompt 列的开场白比 cli.py 的旧，但 cli.py 自己的样例还是以 Yello 和 Welcome 开头。"
+  - "一个小疏漏：README 摘录的 prompt 里列出的开场白比 cli.py 的旧，但 cli.py 自己的样例还是以 Yello 和 Welcome 开头。"
   - "你会看到两样混着出现。"
 - en: "One question before we move on. The prompt asks the teacher for specifics, such as optimal pH levels."
   zh:
@@ -235,13 +243,17 @@ S05:
   - "学生模型学着把它说出来，说得很自信，用的是授课老师的口吻。"
   - "合成数据会带上教师模型的错误，所以要检查教师模型写了什么。"
 S06:
-- en: "Now step 1 of the prepare section, as a student would type it right after that run: python cli.py dash dash prepare. Zero errors, a shape of zero by zero, and then a crash: key error, question, from line 243 of cli.py."
+- en: "Now step 1 of the prepare section, as a student would type it right after that run. Type python cli.py dash dash prepare. Zero errors, a shape of zero by zero, and then a crash. Key error, question, from line 243 of cli.py."
   zh:
-  - "现在到 prepare 那一节的第 1 步，学生跑完刚才那条，接着就会敲：python cli.py --prepare。"
-  - "0 个错误，形状是 0 乘 0，然后崩溃：cli.py 第 243 行报 KeyError: 'question'。"
+  - "现在到 prepare 那一节的第 1 步，学生跑完刚才那条，接着就会敲它。"
+  - "输入这条命令：python cli.py --prepare。"
+  - "0 个错误，形状是 0 乘 0，然后崩溃。"
+  - "在 cli.py 第 243 行报 KeyError: 'question'。"
   en_display:
-  - "Now step 1 of the prepare section, as a student would type it right after that run: python cli.py --prepare."
-  - "Zero errors, a shape of zero by zero, and then a crash: KeyError: 'question', from line 243 of cli.py."
+  - null
+  - "Type python cli.py --prepare."
+  - null
+  - "KeyError: 'question', from line 243 of cli.py."
 - en: "Trace it back. In generate, each batch runs inside a try block, and the except on line 200 catches any exception, prints it, and carries on. So no file was written, and the command still exited with zero."
   zh:
   - "往回追。"
@@ -304,7 +316,7 @@ S07:
   - "不管外面怎么包装，训练的仍然是预测下一个词，只不过现在预测的是授课老师的回答。"
 - en: "An extra from the laptop side: the bind mount left these files in your clone. Git status shows the data folder as ignored, so it stays out of your commits."
   zh:
-  - "额外从笔记本这边看一眼：bind mount 把这些文件留在了你的 clone 里。"
+  - "额外从笔记本这边看一眼：这个 bind mount 把这些文件留在了你的 clone 里。"
   - "用 git status 看，data 目录是被忽略的，所以它不会进到你的 commit 里。"
   en_display:
   - null
@@ -336,10 +348,10 @@ S08:
   - null
   - "Type exit; the container removes itself, and an extra docker ps -a shows nothing left."
   - null
-- en: "An extra edit the README leaves out: lines 10 and 11 still point at the course bucket, cheese-dataset. Point them at your own. The folder is mounted into the container, so there's no need to rebuild."
+- en: "An extra edit the README leaves out: lines 10 and 11 still point at the course bucket, cheese-dataset. Replace only cheese-dataset with your bucket name; keep the folder, llm-finetune-dataset-small, where upload put the files. The folder is mounted into the container, so there's no need to rebuild."
   zh:
   - "README 漏掉了一个额外的修改：第 10、11 行还指向课程的 bucket，cheese-dataset。"
-  - "把它们改成你自己的。"
+  - "只把 cheese-dataset 换成你的 bucket 名；目录 llm-finetune-dataset-small 保留不动，upload 就把文件放在那里。"
   - "这个目录挂载进了 container，所以不用重新构建。"
 - en: "Step 2: sh docker-shell.sh again. It's instant: every layer up to uv sync is cached, because both folders share the same Dockerfile, pyproject and lockfile, as an extra diff shows."
   zh:
@@ -349,15 +361,15 @@ S08:
   zh:
   - "第 3 步：python cli.py --help 显示两个参数，train 和 chat。"
   - "负责训练的客户端在 us-central1 创建微调任务。"
-  - "负责聊天的客户端调用多区域 US 里的微调后的模型，用的是它自己的地址。"
+  - "负责聊天的客户端调用多区域 us 里的微调后的模型，用的是它自己的地址。"
   en_display:
   - "Step 3: python cli.py --help shows two flags, train and chat."
   - null
-  - null
+  - "The chat client calls the tuned model in the multi-region location us, at its own address."
 - en: "The train function wraps your bucket files as tuning datasets, and asks for one epoch and an adapter of size four. By our reading, that's Google's managed version of the idea you'll build in part 2. One call starts the job."
   zh:
   - "这个 train 函数把你 bucket 里的文件包装成微调数据集，要求跑一个 epoch，adapter 大小为 4。"
-  - "按我们的理解，这就是你在第二部分要亲手搭的那个思路的 Google 托管版本。"
+  - "按我们的理解，这就是那个思路的 Google 托管版本，你会在第二部分亲手搭建。"
   - "一次调用就启动了这个任务。"
 - en: "Step 1 of the fine-tune model section: python cli.py dash dash train. The experimental warning is harmless. Then the missing key: no job was created."
   zh:
@@ -368,11 +380,11 @@ S08:
   - "Step 1 of the fine-tune model section: python cli.py --train."
   - null
   - null
-- en: "With a key, look for training job started, a job name in us-central1, and after a minute, tuned model info, none. Main calls train with wait for job set to false, so the command hands in the job and leaves, like a ticket at the dry cleaner. Read the cost table next, then pause and start your job."
+- en: "With a key, look for training job started, a job name in us-central1, and after a minute, tuned model info, none. Main calls train with wait for job set to false, so the command hands in the job and leaves, like a ticket at the dry cleaner. Before you pause, watch the cost table, coming up in under a minute; then come back and start your job."
   zh:
-  - "有密钥的话，要找的是 Training job started、us-central1 里的一个任务名，一分钟后还有 Tuned model info: None。"
+  - "有密钥的话，要找的是 Training job started、一个在 us-central1 的任务名，一分钟后还有 Tuned model info: None。"
   - "这里 main 调用 train 时把 wait for job 设为 false，所以这条命令交了任务就走，就像在干洗店拿一张取衣单。"
-  - "接下来看价格表，然后暂停，启动你的任务。"
+  - "暂停之前，先看价格表，不到一分钟就会出现；然后再回来启动你的任务。"
   en_display:
   - "With a key, look for Training job started, a job name in us-central1, and after a minute, Tuned model info: None."
   - "Main calls train with wait_for_job=False, so the command hands in the job and leaves, like a ticket at the dry cleaner."
@@ -406,18 +418,23 @@ S09:
   zh:
   - "聊天之前，还有一个额外的修改。"
   - "第 107 行写的还是授课老师的 endpoint。"
-  - "从控制台复制你自己的：一个以 locations、US、endpoints 和一个 ID 结尾的路径。"
+  - "从控制台复制你自己的：一个以 locations、us、endpoints 和一个 ID 结尾的路径。"
   - "把它贴到那里；否则 chat 会指向授课老师的 endpoint，你的密钥访问不了。"
+  en_display:
+  - null
+  - null
+  - "Copy yours from the console: a path ending in locations/us/endpoints and an ID."
+  - null
 - en: "Step 2: python cli.py dash dash chat. It prints its question, how is cheese made in Greece, answered the instructor's way. Then it prints the serving location, US, and the same missing key. Pause and run it once your endpoint is in."
   zh:
   - "第 2 步：python cli.py --chat。"
   - "它会打印它的问题，“希腊的奶酪是怎么做的，用授课老师的方式回答”。"
-  - "然后打印部署区域 US，还有同样的缺少密钥。"
+  - "然后打印部署区域 us，还有同样的缺少密钥。"
   - "暂停一下，填好你的 endpoint 之后跑一遍。"
   en_display:
   - "Step 2: python cli.py --chat."
   - null
-  - null
+  - "Then it prints the serving location, us, and the same missing key."
   - null
 - en: "The README shows a working endpoint's answer to an older question: the same Yello opener. Your answer will differ."
   zh:

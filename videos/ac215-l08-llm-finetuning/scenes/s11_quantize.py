@@ -37,7 +37,10 @@ Beats (script.md "## S11", one voiceover block each):
     rows, long rows cut); the Linear4bit rows get GREY bars, the embeddings row a white bar + note
     "not 4-bit", lm_head a white bar + note "stays 16-bit". TRACKER ColabB 3: RECORDED(c25: 4, cut
     after the token ids) then RECORDED(c27: 11–12). The GREY "your turn" card (YELLOW ▶): "run Part
-    B, sections 1 and 2", GREEN "T4: free (when available)". 2 s hold.
+    B from Loading Models in 4-bit through section 2" (QA: the bnb_config / OPT-loading cells sit
+    before the notebook's heading 1), GREEN "T4: free (when available)". 2 s hold.
+    Beats 6-8: while notebook code or a saved output is on screen, S10's small BLUE "QLoRA notebook ·
+    Colab" chip sits at top centre beside the tracker (in with cell 18, out at beat 9).
  9  Two misconception chips, each RED-crossed: "4-bit model = 4-bit arithmetic" → GREEN "computed
     in 16 bits"; "quantization = speed" → GREEN "the win is memory". Everything fades to an empty
     frame.
@@ -61,6 +64,7 @@ from manim import (
     Line,
     Polygon,
     Rectangle,
+    RoundedRectangle,
     Transform,
     TransformFromCopy,
     VGroup,
@@ -146,6 +150,19 @@ def swap_lref(scene, old, slides: str, *anims, run_time: float = 0.9) -> VGroup:
     scene.play(Succession(FadeOut(old), FadeIn(new)) if old is not None else FadeIn(new), *anims,
                run_time=run_time)
     return new
+
+
+def colab_chip() -> VGroup:
+    """S10's mini_colab(): the Colab frame shrunk to a small BLUE box with the notebook title (same
+    size, colour and text), shown at top centre beside the tracker while notebook code or a saved
+    output is on screen. .frame .text"""
+    t = label(COLAB_TITLE, 22, CLOUD)
+    fr = RoundedRectangle(width=t.width + 0.5, height=t.height + 0.3, corner_radius=0.14, stroke_color=CLOUD,
+                          stroke_width=3).set_fill(CLOUD, 0.03)
+    t.move_to(fr)
+    g = VGroup(fr, t)
+    g.frame, g.text = fr, t
+    return place(g, cx=0.2, top=3.55)
 
 
 def row_bar(row, x0: float, x1: float, color: str = S.GREY, opacity: float = 0.22) -> Rectangle:
@@ -424,6 +441,7 @@ class Buckets(VoiceScene):
         skip = rows_note(["the lecture skips it", "the notebook turns it on"])
         place(skip, left=p18.get_right()[0] + 0.35, cy=p18.code.code_lines[p18.rows_of(10)[0]].get_center()[1])
         assert skip.get_right()[0] < SAFE_R, skip.get_right()
+        cchip = colab_chip()
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(bell, strips, share, lv16, nf4_chip, wdots, flt, byte_box, byte_cap)),
                       run_time=0.5)
@@ -435,7 +453,8 @@ class Buckets(VoiceScene):
                       run_time=0.9)
             vo.wait_until("The lecture skips it")
             tr = switch_section(self, tr, "ColabB", 1, run_time=0.6)
-            self.play(FadeIn(p18, shift=UP * 0.2), run_time=0.6)
+            assert cchip.get_left()[0] > tr.get_right()[0] + 0.3 and cchip.get_right()[0] < lr.get_left()[0] - 0.3
+            self.play(FadeIn(p18, shift=UP * 0.2), FadeIn(cchip, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("the notebook turns it on")
             self.play(FadeIn(bar10.set_fill(TURN, 0.25)), FadeIn(skip, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("beside NF4")
@@ -471,7 +490,11 @@ class Buckets(VoiceScene):
                       FadeIn(bar11.set_fill(TURN, 0.25)), run_time=0.9)
             vo.wait_until("for each matrix multiply")
             self.play(FadeIn(vec, shift=LEFT * 0.2), FadeIn(x_lab), FadeIn(times_sign), run_time=0.6)
-            self.play(Create(eq_arrow), TransformFromCopy(vec, out_vec), run_time=0.8)
+            # QA 20:49: the old 5 s still — the 16-bit copy lights on "expanded", the multiply runs on "used"
+            vo.wait_until("the layer's weights")
+            self.play(flash(big, TURN, 1.08), run_time=0.7)
+            vo.wait_until("used")
+            self.play(Create(eq_arrow), TransformFromCopy(vec, out_vec), run_time=0.5)
             vo.wait_until("then dropped")
             self.play(Transform(big[0], small[0].copy().set_opacity(0)), FadeOut(big[1]), FadeOut(c_lab),
                       FadeOut(VGroup(vec, x_lab, times_sign, eq_arrow, out_vec)), run_time=0.8)
@@ -506,7 +529,7 @@ class Buckets(VoiceScene):
         place(r25, left=-6.3, top=2.55)
         r27 = recorded_box("colab-c27-opt-generate", (11, 12))
         place(r27, left=-6.3, top=r25.get_bottom()[1] - 0.45)
-        card = turn_card([Prose("run Part B, sections 1 and 2"), (Prose("T4: free (when available)"), OWN)])
+        card = turn_card([Prose("run Part B from Loading Models in 4-bit through section 2"), (Prose("T4: free (when available)"), OWN)])
         place(card, left=-6.3, bottom=-3.45)
         assert r27.get_bottom()[1] > card.get_top()[1] + 0.2, (r27.get_bottom(), card.get_top())
         with self.voiceover(SAY[8]) as vo:
@@ -521,12 +544,13 @@ class Buckets(VoiceScene):
             self.play(emb_bar.animate.set_fill(INK, 0.14), FadeIn(emb_note, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("and the output head")
             self.play(head_bar.animate.set_fill(INK, 0.14), FadeIn(head_note, shift=LEFT * 0.1), run_time=0.5)
-            vo.wait_until("Section 2 tokenizes")
+            vo.wait_until("Section 1 also tokenizes")
             self.play(FadeOut(VGroup(r21, emb_note, head_note)), run_time=0.5)
             # cell 25 (tokenize) sits under the notebook's heading 1; generation (cell 27) under heading 2
             self.play(FadeIn(r25, shift=UP * 0.15), run_time=0.6)
-            vo.wait_until("and generates the continuation")
+            vo.wait_until("and section 2 generates")
             self.play(tr.goto(3), FadeIn(r27, shift=UP * 0.15), run_time=0.6)
+            assert cchip.get_left()[0] > tr.get_right()[0] + 0.3, (cchip.get_left(), tr.get_right())
             vo.wait_until("Pause, and run part B")
             self.play(FadeIn(card, shift=UP * 0.15), run_time=0.6)
         self.wait(2)
@@ -547,7 +571,7 @@ class Buckets(VoiceScene):
         s1, s2 = strike(m1.text), strike(m2.text)
         assert max(f1.get_right()[0], f2.get_right()[0]) < SAFE_R, (f1.get_right(), f2.get_right())
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(r25, r27, card)), run_time=0.5)
+            self.play(FadeOut(VGroup(r25, r27, card, cchip)), run_time=0.5)
             vo.wait_until("Two misconceptions")
             self.play(FadeIn(m1, shift=RIGHT * 0.15), FadeIn(m2, shift=RIGHT * 0.15), run_time=0.6)
             vo.wait_until("a 4-bit model does not")

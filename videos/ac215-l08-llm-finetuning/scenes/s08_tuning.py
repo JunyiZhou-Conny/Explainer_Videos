@@ -294,9 +294,10 @@ def over_span(sp, text: str, pitch: float) -> VGroup:
     0.9 of a code row (`pitch`) tall, centred on the row, so it never touches the wrapped row below."""
     t = mono(text, 20, TURN)
     h = max(pitch * 0.9, t.height + 0.01)
-    patch = Rectangle(width=max(sp.width, t.width) + 0.12, height=h, stroke_color=TURN,
+    patch = Rectangle(width=max(sp.width, t.width) + 0.05, height=h, stroke_color=TURN,
                       stroke_width=1.5).set_fill(PANEL, 1)
-    patch.move_to(sp).align_to(sp, LEFT).shift(LEFT * 0.06)
+    # a hair left of the span only: a wider margin put the stroke over the opening quote
+    patch.move_to(sp).align_to(sp, LEFT).shift(LEFT * 0.02)
     t.move_to(patch).align_to(sp, LEFT)
     g = VGroup(patch, t)
     return g
@@ -376,7 +377,7 @@ class TuningJob(VoiceScene):
             vo.wait_until("the course bucket")
             self.play(sp10.animate.set_color(TURN), sp11.animate.set_color(TURN), FadeIn(err1, shift=UP * 0.1),
                       run_time=0.6)
-            vo.wait_until("Point them at your own")
+            vo.wait_until("Replace only cheese-dataset")
             for c in mine:
                 c.save_state()
                 c.move_to(start_spot)
@@ -598,10 +599,10 @@ class TuningJob(VoiceScene):
             vo.wait_until("like a ticket")
             self.play(FadeIn(dc.ticket, scale=0.8), run_time=0.3)
             self.play(dc.ticket.animate.move_to(dc.ticket_home.get_center()), run_time=0.9)
-            vo.wait_until("Read the cost table")
+            vo.wait_until("Before you pause")
             self.play(FadeOut(VGroup(p6, b126, n6, dc, dc.garment, dc.ticket, ill)), run_time=0.5)
             self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.5)
-            vo.wait_until("then pause")
+            vo.wait_until("then come back")
             self.play(flash(tc.tag, TURN, 1.1), run_time=0.5)
         self.wait(2)
 

@@ -3,7 +3,7 @@ Lecture: 68–69, then 8.
 
 Beats (script.md "## S12", one voiceover block each), all inside the BLUE Colab frame (tab and
 `illustration` tag on the right half of its top border, clear of the tracker):
- 0  LECTURE 68–69. TRACKER Qwen 1. CODE(colab/cell-34.py: 1–6) on top; under it "= the same recipe"
+ 0  LECTURE 68–69. TRACKER Qwen 1 ("1.2–1.3 Load"). CODE(colab/cell-34.py: 1–6) on top; under it "= the same recipe"
     points at a mini copy of S11's CODE(colab/cell-18.py: 8–11, comments cut). Then cell-34 gives
     way to CODE(colab/cell-36.py: 8–13, 18 folded; line 10 wrapped); line 18
     `prepare_model_for_kbit_training` lights; two chips write under it: GREY snowflake "freezes
@@ -22,8 +22,8 @@ Beats (script.md "## S12", one voiceover block each), all inside the BLUE Colab 
  3  TRACKER Qwen 4: CODE(colab/cell-45.py: 1) and under it RECORDED(c45: 8; wrap) with a GREY
     note "drifts off topic". TRACKER Qwen 5: RECORDED(c48: 5); `trainable params: 0` lights; a
     GREY model glyph "Qwen3-0.6B" gets a snowflake.
- 4  TRACKER Data 1: RECORDED(c51: 5–6), `23.2M` lights, GREY chip "Too many users …? retry later,
-    or use your own train.jsonl from part 1 (same format)". TRACKER Data 2: CODE(colab/cell-53.py:
+ 4  TRACKER Data 1: RECORDED(c51: 5–6), `23.2M` lights, GREY chip "Too many users …? retry the
+    gdown cell later" (no part-1 fallback: its 17 rows break n=1000). TRACKER Data 2: CODE(colab/cell-53.py:
     4) with RECORDED(c53: 7, 8 cut after "…cheeses?'}]}", wrapped) under it. V4's conveyor
     (stations train.jsonl · chat template · tokens) at the bottom. On "Look at a row" the keys
     'contents', 'role': 'user', 'parts', 'text' light; on "exactly the format of track A" the
@@ -224,7 +224,14 @@ class QwenInFourBits(VoiceScene):
 
         # ========================================================== 0 · the same 4-bit recipe; prepare_model_for_kbit_training
         cf = colab_notebook()
-        tr = tracker("Qwen", 1)
+        # cell 34 (the first panel) is section 1.2, cell 36 is 1.3: step 1 names both (scene-local,
+        # common.py's SECTIONS["Qwen"] still reads "1.3 Load"; restored right after)
+        _qwen = SECTIONS["Qwen"]
+        SECTIONS["Qwen"] = (_qwen[0], _qwen[1], ["1.2–1.3 Load", *_qwen[2][1:]])
+        try:
+            tr = tracker("Qwen", 1)
+        finally:
+            SECTIONS["Qwen"] = _qwen
         p34 = src_panel(CELL34, 1, 6, size=20)
         place(p34, left=-6.0, top=TOP)
         p18 = src_panel(CELL18, 8, 11, size=20, cut_comments=True)
@@ -419,8 +426,7 @@ class QwenInFourBits(VoiceScene):
         out51 = recorded_box("colab-c51-gdown-dataset", (5, 6))
         place(out51, left=-6.0, top=TOP - 0.05)
         mb = substring(out51.rows[1], "23.2M/23.2M")
-        busy = chip("Too many users …? retry later, or use your own train.jsonl from part 1 (same format)",
-                    S.GREY, size=CAPTION)
+        busy = chip("Too many users …? retry the gdown cell later", S.GREY, size=CAPTION)   # part 1's 17 rows: n=1000 fails
         place(busy, left=-6.0, top=out51.get_bottom()[1] - 0.3)
         assert busy.get_right()[0] < SAFE_R, busy.get_right()
         p53 = src_panel(CELL53, 4, 4, size=20)
@@ -466,7 +472,7 @@ class QwenInFourBits(VoiceScene):
                       run_time=0.7)
             self.play(r_shape.animate.set_color(TURN), run_time=0.4)
             vo.wait_until("Look at a row")
-            self.play(FadeIn(cv), run_time=0.6)
+            self.play(FadeIn(cv), FadeIn(openers, shift=UP * 0.05), run_time=0.6)   # ~9 s to read, not ~2
             self.play(k_contents.animate(rate_func=there_and_back).scale(1.25), run_time=0.5)   # already a YELLOW string
             vo.wait_until("a user turn")
             self.play(k_user.animate.set_color(TURN), run_time=0.4)
@@ -478,8 +484,7 @@ class QwenInFourBits(VoiceScene):
                               *[t.body for t in brk.turns])
             self.play(brk_keys.animate.set_color(TURN), FadeIn(fmt, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("the brick from part 1")
-            self.play(brk.animate(rate_func=there_and_back).scale(1.06), FadeIn(openers, shift=UP * 0.05),
-                      run_time=0.8)
+            self.play(brk.animate(rate_func=there_and_back).scale(1.06), run_time=0.8)
 
         # ========================================================== 5 · the chat template: a ribbon
         p59 = src_panel(CELL59, 10, 15, size=20, wrap={13: ["tokenize=False"]})
