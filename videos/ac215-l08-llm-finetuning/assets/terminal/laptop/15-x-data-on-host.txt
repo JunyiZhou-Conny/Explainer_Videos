@@ -1,0 +1,16 @@
+$ ls -la data; git -C .. status --short --ignored
+total 52
+drwxrwxrwx 2 student student  240 Oct 31 02:36 .
+drwxr-xr-x 3 student student  180 Oct 31 02:36 ..
+-rw-r--r-- 1 student student 1438 Oct 31 02:36 cheese_qa_0.txt
+-rw-r--r-- 1 student student 1415 Oct 31 02:36 cheese_qa_1.txt
+-rw-r--r-- 1 student student 1445 Oct 31 02:36 cheese_qa_2.txt
+-rw-r--r-- 1 student student 1436 Oct 31 02:36 cheese_qa_3.txt
+-rw-r--r-- 1 student student 1331 Oct 31 02:36 cheese_qa_4.txt
+-rw-rw-rw- 1 student student 5988 Oct 31 02:36 instruct-dataset.csv
+-rw-rw-rw- 1 student student  627 Oct 31 02:36 test.csv
+-rw-rw-rw- 1 student student  774 Oct 31 02:36 test.jsonl
+-rw-rw-rw- 1 student student 5581 Oct 31 02:36 train.csv
+-rw-rw-rw- 1 student student 6868 Oct 31 02:36 train.jsonl
+!! dataset-creator/data/
+[exit 0]

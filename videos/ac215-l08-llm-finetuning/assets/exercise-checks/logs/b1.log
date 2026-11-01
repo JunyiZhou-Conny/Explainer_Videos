@@ -1,0 +1,33 @@
+$ cat /checks/snippets/b1-batches.sh
+printf '```json\n[{"question": "What is the rind of Camembert made of?", "answer": "Good question! A bloomy white mould. (scripted)"},\n {"question": "Why is Halloumi good for grilling?", "answer": "Glad you ask! Its high melting point. (scripted)"}]\n```\n' > data/cheese_qa_5.txt
+printf '[{"question": "What is a washed-rind cheese?", "answer": "I have slides for that! Brine. (scripted)"},\n {"question": "How long is Comte aged?", "answer": "Remember rule number 672, at least four months, and the best' > data/cheese_qa_6.txt
+python cli.py --prepare
+[exit 0]
+
+$ sh /checks/snippets/b1-batches.sh
+CLI Arguments: Namespace(generate=False, prepare=True, upload=False)
+prepare()
+Processing file: data/cheese_qa_0.txt
+Processing file: data/cheese_qa_1.txt
+Processing file: data/cheese_qa_2.txt
+Processing file: data/cheese_qa_3.txt
+Processing file: data/cheese_qa_4.txt
+Processing file: data/cheese_qa_5.txt
+Processing file: data/cheese_qa_6.txt
+Number of errors: 1
+[{'file': 'data/cheese_qa_6.txt', 'error': 'Unterminated string starting at: line 2 column 52 (char 154)'}]
+Shape: (21, 2)
+                                            question                                             answer
+0               What does rennet do in cheesemaking?  Good question! Rennet carries the enzyme chymo...
+1                    Why do some cheeses have holes?  Glad you ask! In Swiss-type cheeses like Emmen...
+2            What is the white rind on Brie made of?  I have slides for that! The bloomy white rind ...
+3  What is the difference between mozzarella and ...  Remember rule number 672, if you suggest it yo...
+4           Why is Parmigiano-Reggiano aged so long?  I knew you will ask this, I have slides coming...
+[exit 0]
+
+$ wc -l data/train.jsonl data/test.jsonl
+  18 data/train.jsonl
+   3 data/test.jsonl
+  21 total
+[exit 0]
+

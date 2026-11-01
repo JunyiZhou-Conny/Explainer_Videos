@@ -1,0 +1,32 @@
+/work:
+README.md
+dataset-creator
+env.dev
+gemini-finetuner
+scripted
+
+/work/dataset-creator:
+Dockerfile
+cli.py
+docker-entrypoint.sh
+docker-shell.sh
+pyproject.toml
+uv.lock
+
+/work/scripted:
+cheese_qa_0.txt
+cheese_qa_1.txt
+cheese_qa_2.txt
+cheese_qa_3.txt
+cheese_qa_4.txt
+Python 3.12.15
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: pip install --upgrade pip
+uv 0.13.6 (x86_64-unknown-linux-gnu)
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+451
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+Using Python 3.12.15 environment at: /venv
+43
+283M	/venv

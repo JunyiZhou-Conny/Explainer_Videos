@@ -1,0 +1,15 @@
+$ uv pip list 2>/dev/null | grep -E "^(google-genai|google-cloud-storage|google-auth|pandas|scikit-learn|chromadb|langchain|langchain-community|openai|openai-agents|onnxruntime) "; echo "packages in /.venv: $(uv pip list 2>/dev/null | tail -n +3 | wc -l)"; du -sh /.venv
+chromadb                                 1.1.0
+google-auth                              2.41.1
+google-cloud-storage                     3.4.1
+google-genai                             1.39.1
+langchain                                0.3.27
+langchain-community                      0.3.30
+onnxruntime                              1.23.0
+openai                                   1.109.1
+openai-agents                            0.3.2
+pandas                                   2.3.3
+scikit-learn                             1.7.2
+packages in /.venv: 133
+587M	/.venv
+[exit 0]

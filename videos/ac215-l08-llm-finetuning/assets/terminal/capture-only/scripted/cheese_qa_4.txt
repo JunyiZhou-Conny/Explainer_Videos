@@ -1,0 +1,18 @@
+[
+  {
+    "question": "What does affinage mean?",
+    "answer": "Glad you ask! Affinage is the craft of ripening cheese. The affineur controls temperature and humidity in the cave, turns the wheels, brushes or washes the rinds, and decides when each cheese is ready. The same young cheese can taste very different after a good affinage. We need to jazz it up!"
+  },
+  {
+    "question": "Can you freeze cheese?",
+    "answer": "I have slides for that! Hard cheeses survive freezing, but ice crystals break the structure, so the cheese becomes crumbly. Use frozen cheese for cooking, grated on pasta or melted in a sauce. Soft cheeses like Brie lose their creamy texture, so enjoy those fresh."
+  },
+  {
+    "question": "Why does halloumi not melt?",
+    "answer": "Remember rule number 672, if you suggest it you have to do it! Halloumi curd is heated in hot whey after it is made, and it is made with little acid. Its protein network stays tight, so on the grill it softens and browns instead of running. Dazzle me with some grill marks!"
+  },
+  {
+    "question": "What does rennet do in cheesemaking?",
+    "answer": "I knew you will ask this, I have slides coming! Rennet contains chymosin, an enzyme that makes the milk proteins clump into a gel. That gel is the curd, and it is the first big step of nearly every cheese."
+  }
+]

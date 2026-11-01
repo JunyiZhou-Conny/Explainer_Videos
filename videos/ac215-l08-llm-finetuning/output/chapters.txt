@@ -1,0 +1,16 @@
+00:00 Why is the sky blue?
+01:43 Three dials: prompt, context, weights
+03:05 A key next to the repo
+04:57 The dataset-creator container
+07:06 Manufacturing a persona
+09:29 Prepare: a failure that surfaces late
+11:12 Rows to JSONL, then upload
+13:13 Hand it to Google: the tuning job
+15:43 Cost, endpoint and chat
+17:27 Colab, and the 120 GB bill
+19:30 Quantization: 16 buckets per weight
+22:06 Qwen in 4 bits, and its chat template
+24:14 LoRA: a thin correction
+26:55 Training on a small GPU
+29:16 Did it work? Perplexity and the sky
+31:07 Ship it, tear down, recap

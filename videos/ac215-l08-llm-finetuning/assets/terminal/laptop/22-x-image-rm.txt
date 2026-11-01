@@ -1,0 +1,6 @@
+$ docker image rm llm-dataset-creator gemini-finetuner
+Untagged: llm-dataset-creator:latest
+Deleted: sha256:aa7c4de9d4cb214c63b9a9eaf94bef6f009d6be2bfe36532cb1f51c82c4aab1c
+Untagged: gemini-finetuner:latest
+Deleted: sha256:9ea1b51f3d5065769ee05ac0c142821e9e0498fbf5d16b44f480d50a9d342427
+[exit 0]

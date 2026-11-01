@@ -1,0 +1,4 @@
+$ grep -n 'gs://' cli.py
+10:TRAIN_DATASET = "gs://cheese-dataset/llm-finetune-dataset-small/train.jsonl"  # Replace with your dataset
+11:VALIDATION_DATASET = "gs://cheese-dataset/llm-finetune-dataset-small/test.jsonl"  # Replace with your dataset
+[exit 0]

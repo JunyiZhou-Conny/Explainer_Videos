@@ -1,0 +1,23 @@
+# recorded: Colab "Tutorial - Finetuning with QLoRA" (https://colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC), nb cell 72 (execution count 39): the notebook's stored output from the authors' run on an A100 (metadata.colab.gpuType); not run here. Names masked (‹instructor›, ‹hf-user›).
+$ # Set supervised fine-tuning parameters
+  trainer = SFTTrainer(
+      model=base_model,             # Model to be fine-tunned
+      train_dataset=train_dataset,  # The dataset to train with
+      peft_config=peft_config,      # LoRA configuration
+      args=training_arguments,      # Trainig arguments defined before
+  
+  )
+  
+  # trl converts the LoRA weights of a 4-bit model to bfloat16. fp16 training (fp16=True above) cannot
+  # unscale bfloat16 gradients on the GPU, so keep the LoRA weights in float32.
+  for param in trainer.model.parameters():
+      if param.requires_grad:
+          param.data = param.data.float()
+  
+  print_trainable_parameters(trainer.model)
+[progress widget] Adding EOS to train dataset:   0%|          | 0/900 [00:00<?, ? examples/s]
+[progress widget] Tokenizing train dataset:   0%|          | 0/900 [00:00<?, ? examples/s]
+[progress widget] Building labels for train dataset:   0%|          | 0/900 [00:00<?, ? examples/s]
+[progress widget] Truncating train dataset:   0%|          | 0/900 [00:00<?, ? examples/s]
+[progress widget] Dropping fully masked examples from train dataset:   0%|          | 0/900 [00:00<?, ? examples/s]
+trainable params: 1146880 || all params: 376995840 || trainable%: 0.3042155584528466

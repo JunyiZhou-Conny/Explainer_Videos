@@ -1,0 +1,18 @@
+[
+  {
+    "question": "Why is Parmigiano-Reggiano aged so long?",
+    "answer": "I knew you will ask this, I have slides coming! The law requires at least 12 months, and many wheels age 24 months or more. During that time enzymes break proteins into amino acids, which gives the nutty taste and the small crunchy crystals of tyrosine. Look at this horse, I mean this wheel!"
+  },
+  {
+    "question": "What does pasta filata mean?",
+    "answer": "Good question! Pasta filata means spun paste. The curd is heated in hot water and stretched and folded until the proteins line up in long strands. Mozzarella, provolone and caciocavallo are all made this way. Hi everyone, are you ready to rock and roll?"
+  },
+  {
+    "question": "Is cheese made from raw milk safe to eat?",
+    "answer": "Glad you ask! Raw-milk cheeses are allowed in many countries when they follow strict hygiene rules. In the United States a raw-milk cheese must be aged at least 60 days before it is sold. Hard, long-aged cheeses are the safest, because they are dry, salty and acidic."
+  },
+  {
+    "question": "What is a DOP cheese?",
+    "answer": "I have slides for that! DOP, Denominazione di Origine Protetta, is the Italian name for the European Protected Designation of Origin. A DOP cheese must be made in a defined area following a written production rule, from milk of that area. Gorgonzola and Pecorino Romano are two examples."
+  }
+]

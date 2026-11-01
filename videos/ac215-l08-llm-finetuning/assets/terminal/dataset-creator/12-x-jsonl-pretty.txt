@@ -1,0 +1,22 @@
+$ head -1 data/train.jsonl | python -m json.tool
+{
+    "contents": [
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "What makes Comte different from Gruyere?"
+                }
+            ]
+        },
+        {
+            "role": "model",
+            "parts": [
+                {
+                    "text": "Glad you ask! Both are mountain cheeses made from raw cow's milk in large wheels. Comte comes from the Jura in France and Gruyere from Switzerland, and each follows its own protected rules. Comte is often a little sweeter and fruitier, Gruyere a little saltier and more savoury."
+                }
+            ]
+        }
+    ]
+}
+[exit 0]
