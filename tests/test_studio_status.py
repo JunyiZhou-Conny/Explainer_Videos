@@ -1,7 +1,10 @@
 """The Studio data builder: stage derivation, the series map and the library model."""
 import importlib.util
 import json
+import re
 from pathlib import Path
+
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("studio_status", ROOT / "tools" / "studio_status.py")
@@ -204,16 +207,40 @@ def test_library_groups_orders_and_fills_from_releases():
     assert lib["totals"] == {"episodes": 4, "published": 2, "seconds": 1900}
 
 
-def test_main_writes_both_files(tmp_path):
+def test_main_writes_all_three_files(tmp_path):
     snap = tmp_path / "snap.json"
     snap.write_text(json.dumps(snapshot()), encoding="utf-8")
     assert st.main(["--snapshot", str(snap), "--out", str(tmp_path / "data"), "--now", at(6),
                     "--repo", "o/r"]) == 0
     status = json.loads((tmp_path / "data" / "status.json").read_text(encoding="utf-8"))
     library = json.loads((tmp_path / "data" / "library.json").read_text(encoding="utf-8"))
+    composer = json.loads((tmp_path / "data" / "composer.json").read_text(encoding="utf-8"))
     assert status["generated_at"] == at(6) and status["episodes"]
     assert status["worker_command"].endswith("publish_worker.py --repo o/r --upload")
     assert library["series"][0]["id"] == "ac215"
+    assert composer["default_style"] == json.loads(st.DEFAULTS.read_text())["preset"]
+
+
+def test_composer_default_follows_defaults_json(tmp_path):
+    defaults = tmp_path / "defaults.json"
+    defaults.write_text(json.dumps({"schema_version": 1, "preset": "swiss"}), encoding="utf-8")
+    assert st.main(["--offline", "--defaults", str(defaults), "--out", str(tmp_path / "data")]) == 0
+    composer = json.loads((tmp_path / "data" / "composer.json").read_text(encoding="utf-8"))
+    assert composer["default_style"] == "swiss"
+
+
+def test_issue_form_and_composer_lead_with_the_saved_default():
+    """The composer prefills the issue form, so both offer the same labels; both lead with the
+    defaults.json preset, which is what each shows when it has nothing else to go on."""
+    preset = json.loads(st.DEFAULTS.read_text())["preset"]
+    form = yaml.safe_load((ROOT / ".github/ISSUE_TEMPLATE/episode-request.yml").read_text(encoding="utf-8"))
+    style = next(f for f in form["body"] if f.get("id") == "style")
+    options = style["attributes"]["options"]
+    page = (ROOT / "site/new.html").read_text(encoding="utf-8")
+    select = re.search(r'<select id="style"[^>]*>(.*?)</select>', page, re.S).group(1)
+    assert re.findall(r"<option>([^<]+)</option>", select) == options
+    assert options[style["attributes"].get("default", 0)].split(" (")[0] == preset
+    assert options[0].split(" (")[0] == preset
 
 
 def test_committed_series_registry_is_well_formed():

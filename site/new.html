@@ -47,8 +47,8 @@
       <label>风格 / 时长</label>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <select id="style" style="max-width:260px">
-          <option>swiss (ready)</option>
           <option>3b1b (ready)</option>
+          <option>swiss (ready)</option>
           <option>cassette-futurism (experimental)</option>
           <option>de-stijl (experimental)</option>
           <option>bauhaus (experimental)</option>
@@ -85,10 +85,25 @@
     <div class="actions"><button onclick="copyPrompt()">复制</button><span id="copied" style="display:none;color:var(--red);font-weight:600">已复制 ✓</span></div>
   </div>
 </main>
+<script src="app.js"></script>
 <script>
 const REPO = 'JunyiZhou-Conny/Explainer_Videos';
 const v = id => document.getElementById(id).value.trim();
 const agent = () => document.querySelector('input[name=agent]:checked').value;
+
+// The saved preset for new episodes comes from defaults.json through data/composer.json
+// (tools/studio_status.py), so the page never repeats it. Until that loads, the first option
+// (the same default, kept first by tests/test_studio_status.py) stands in.
+const styleSel = document.getElementById('style');
+let defaultStyle = styleSel.options[0].text;
+let stylePicked = false;
+styleSel.addEventListener('change', () => { stylePicked = true; });
+loadData('composer.json').then(d => {
+  const opt = [...styleSel.options].find(o => o.text.split(' (')[0] === d.default_style);
+  if(!opt) throw new Error(`no style option for the saved default ${d.default_style}`);
+  defaultStyle = opt.text;
+  if(!stylePicked) styleSel.value = defaultStyle;
+}).catch(e => console.error('composer defaults:', e));
 
 function openIssue(){
   if(!v('question') || !v('audience') || !v('sources')){ alert('问题、观众、素材三项必填。'); return; }
@@ -105,7 +120,7 @@ function openIssue(){
       '); automatic agents must not claim it.';
   }
   p.set('sources', sources);
-  p.set('style', v('style') || 'swiss (ready)');
+  p.set('style', v('style') || defaultStyle);
   if(v('length')) p.set('length', v('length'));
   if(v('scope')) p.set('scope', v('scope'));
   window.open(`https://github.com/${REPO}/issues/new?${p.toString()}`, '_blank');

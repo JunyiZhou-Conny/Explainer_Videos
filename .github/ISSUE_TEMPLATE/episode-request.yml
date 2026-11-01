@@ -32,8 +32,8 @@ body:
       label: Style
       description: Ready styles have reusable components and a rendered sample. Experimental styles need your approval of a 20-30s sample scene first (see docs/STYLES.md).
       options:
-        - swiss (ready)
         - 3b1b (ready)
+        - swiss (ready)
         - cassette-futurism (experimental)
         - de-stijl (experimental)
         - bauhaus (experimental)

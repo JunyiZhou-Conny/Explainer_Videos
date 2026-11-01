@@ -239,7 +239,7 @@ def studio_up(args) -> int:
         build += ["--save-snapshot", evidence(args.run) / "studio-snapshot.json"]
     if record(args.run, "studio-build", build):
         return 1
-    for name in ("status.json", "library.json"):
+    for name in ("status.json", "library.json", "composer.json"):
         shutil.copy2(site / "data" / name, evidence(args.run) / f"studio-{name}")
     port = args.port or free_port()
     log = (evidence(args.run) / "studio-server.log").open("w")

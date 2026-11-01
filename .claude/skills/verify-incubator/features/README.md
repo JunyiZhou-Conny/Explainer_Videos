@@ -61,5 +61,5 @@ It then uses exactly four H2 sections in this order:
   frozen style snapshot and the refusal to overwrite.
 - [Studio progress board and library](./studio-board.md) covers the board Conny follows and the
   video library, built by `tools/studio_status.py`.
-- [Studio new-episode composer](./studio-composer.md) covers required fields, the prefilled issue
-  link, the manual-dispatch note and the kickoff prompt.
+- [Studio new-episode composer](./studio-composer.md) covers the default style, required fields,
+  the prefilled issue link, the manual-dispatch note and the kickoff prompt.
