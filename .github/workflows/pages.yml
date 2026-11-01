@@ -3,12 +3,14 @@ name: Deploy site
 # Publishes site/ (the Studio: progress board, library, composer) to GitHub Pages with its data
 # built fresh by tools/studio_status.py, so the browser never calls the GitHub API. Issues are the
 # source of truth, so every episode label or comment rebuilds the board within a minute or two;
-# pushes to the catalog or the site rebuild it too, and an hourly run catches anything missed
+# pushes to the catalog, the site or the saved defaults (the composer's preselected style)
+# rebuild it too, and an hourly run catches anything missed
 # (pushes made with the Actions token, like the daily Bilibili sync, trigger no workflows).
 on:
   push:
     branches: [main]
-    paths: ["site/**", "catalog/**", "tools/studio_status.py", ".github/workflows/pages.yml"]
+    paths: ["site/**", "catalog/**", "tools/studio_status.py", ".github/workflows/pages.yml",
+            "skill-library/conny-explainer-video/defaults.json"]
   issues:
     types: [opened, edited, closed, reopened, labeled, unlabeled, deleted]
   issue_comment:

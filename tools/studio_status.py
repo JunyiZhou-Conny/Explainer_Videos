@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""Build the Studio site's data: episode progress (status.json) and the video library (library.json).
+"""Build the Studio site's data: episode progress (status.json), the video library (library.json)
+and the new-episode composer's defaults (composer.json).
 
 The site is static glass over the repository. At every deploy (.github/workflows/pages.yml runs
 on issue labels, issue comments, pushes to main and hourly) this reads
 
   - episode issues, their comments and label timelines, open pull requests and episode
     releases (GitHub REST API; GH_TOKEN or GITHUB_TOKEN if set), and
-  - catalog/videos.json, catalog/bilibili.json and catalog/series.json,
+  - catalog/videos.json, catalog/bilibili.json and catalog/series.json, and
+  - the skill's defaults.json, whose preset the composer (new.html) preselects,
 
-and writes <out>/status.json and <out>/library.json, so the browser makes no API calls.
+and writes <out>/status.json, <out>/library.json and <out>/composer.json, so the browser makes
+no API calls and the composer cannot drift from the saved default for new episodes.
 
 An episode's progress follows the stage vocabulary in AGENTS.md ("Progress on the Studio
 board"): the state: labels at the end of the pipeline win; otherwise the newer of the episode's
@@ -39,6 +42,7 @@ ROOT = Path(__file__).resolve().parents[1]
 API = "https://api.github.com"
 DEFAULT_REPO = "JunyiZhou-Conny/Explainer_Videos"
 WORKER = "python3 tools/publish_worker.py --repo {repo} --upload"
+DEFAULTS = ROOT / "skill-library" / "conny-explainer-video" / "defaults.json"
 
 # key, label, short (bar legend), weight (% of an episode's work, from the measured AC215
 # cycle: digest+script ~half a day, scenes ~1 day, QA+fixes ~1 day, render+stitch ~half a
@@ -538,6 +542,12 @@ def build_library(catalog: dict, registry: dict, series: list[dict], releases: l
             "unmatched": registry.get("unmatched", [])}
 
 
+# ----------------------------------------------------------------------------- composer
+def build_composer(defaults: dict, now: float) -> dict:
+    """What new.html preselects: the saved preset for new episodes (AGENTS.md defaults)."""
+    return {"schema": 1, "generated_at": ts_iso(now), "default_style": defaults["preset"]}
+
+
 def fetch_validations(snap: dict, have: set[str]) -> None:
     """Durations for uncatalogued releases come from their small validation sidecar."""
     for r in snap.get("releases", []):
@@ -559,6 +569,7 @@ def main(argv=None) -> int:
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", DEFAULT_REPO))
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--catalog", type=Path, default=ROOT / "catalog")
+    ap.add_argument("--defaults", type=Path, default=DEFAULTS, help="saved production defaults")
     ap.add_argument("--offline", action="store_true", help="files only; no GitHub API")
     ap.add_argument("--snapshot", type=Path, help="build from saved API payloads")
     ap.add_argument("--save-snapshot", type=Path, help="also write the raw API payloads here")
@@ -569,6 +580,7 @@ def main(argv=None) -> int:
     series = load_series(args.catalog / "series.json")
     catalog = json.loads((args.catalog / "videos.json").read_text(encoding="utf-8"))
     registry = json.loads((args.catalog / "bilibili.json").read_text(encoding="utf-8"))
+    defaults = json.loads(args.defaults.read_text(encoding="utf-8"))
     if args.snapshot:
         snap = json.loads(args.snapshot.read_text(encoding="utf-8"))
         snap.setdefault("validations", {})
@@ -585,14 +597,17 @@ def main(argv=None) -> int:
     status = build_status(snap, series, registry, args.repo, now)
     library = build_library(catalog, registry, series, snap.get("releases", []),
                             snap.get("validations", {}), now)
+    composer = build_composer(defaults, now)
     args.out.mkdir(parents=True, exist_ok=True)
-    for name, data in (("status.json", status), ("library.json", library)):
+    for name, data in (("status.json", status), ("library.json", library),
+                       ("composer.json", composer)):
         (args.out / name).write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")),
                                      encoding="utf-8")
     live = [e for e in status["episodes"] if e["state"] != "published"]
     print(f"status: {len(status['episodes'])} episodes ({len(live)} in flight), "
           f"{len(status['pulls'])} open PRs; library: {library['totals']['episodes']} videos "
-          f"in {len(library['series'])} series -> {args.out}")
+          f"in {len(library['series'])} series; composer default {composer['default_style']} "
+          f"-> {args.out}")
     return 0
 
 
