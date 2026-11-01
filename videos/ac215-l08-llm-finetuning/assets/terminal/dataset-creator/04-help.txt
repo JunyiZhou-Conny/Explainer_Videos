@@ -1,0 +1,11 @@
+$ python cli.py --help
+usage: cli.py [-h] [--generate] [--prepare] [--upload]
+
+CLI
+
+options:
+  -h, --help  show this help message and exit
+  --generate  Generate data
+  --prepare   Prepare data
+  --upload    Upload data to bucket
+[exit 0]

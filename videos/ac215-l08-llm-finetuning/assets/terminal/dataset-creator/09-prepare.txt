@@ -1,0 +1,18 @@
+$ python cli.py --prepare
+CLI Arguments: Namespace(generate=False, prepare=True, upload=False)
+prepare()
+Processing file: data/cheese_qa_0.txt
+Processing file: data/cheese_qa_1.txt
+Processing file: data/cheese_qa_2.txt
+Processing file: data/cheese_qa_3.txt
+Processing file: data/cheese_qa_4.txt
+Number of errors: 0
+[]
+Shape: (19, 2)
+                                            question                                             answer
+0               What does rennet do in cheesemaking?  Good question! Rennet carries the enzyme chymo...
+1                    Why do some cheeses have holes?  Glad you ask! In Swiss-type cheeses like Emmen...
+2            What is the white rind on Brie made of?  I have slides for that! The bloomy white rind ...
+3  What is the difference between mozzarella and ...  Remember rule number 672, if you suggest it yo...
+4           Why is Parmigiano-Reggiano aged so long?  I knew you will ask this, I have slides coming...
+[exit 0]

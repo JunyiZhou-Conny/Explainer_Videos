@@ -1,0 +1,5 @@
+# recorded: Colab "Tutorial - Finetuning with QLoRA" (https://colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC), nb cell 25 (execution count 11): the notebook's stored output from the authors' run on an A100 (metadata.colab.gpuType); not run here. Names masked (‹instructor›, ‹hf-user›).
+$ for key in inputs.keys():
+    print(key, inputs[key])
+input_ids tensor([[    2, 31414,   127,  7134,   766,    16]], device='cuda:0')
+attention_mask tensor([[1, 1, 1, 1, 1, 1]], device='cuda:0')

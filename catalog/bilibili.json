@@ -71,6 +71,36 @@
       "bvid": "BV14zxB6nETz",
       "title": "AC215 第6讲跟练 · LLM 智能体 I：手写函数调用、ADK、MCP、多智能体与 harness",
       "pubdate": 1793381921
+    },
+    "portal-e6-backend": {
+      "bvid": "BV1Fvxr6DEwL",
+      "title": "项目周记 E6 · 后端怎么选：每一块做什么、谁落选了、数据结构保护了谁",
+      "pubdate": 1793418193
+    },
+    "portal-e5-verify": {
+      "bvid": "BV1cvxr6DELB",
+      "title": "项目周记 E5 · agent 怎么证明自己改对了：穷举每一种顺序，再真的去点一遍",
+      "pubdate": 1793418221
+    },
+    "portal-e4-build-log": {
+      "bvid": "BV1Ntxr6xETX",
+      "title": "项目周记 E4 · 两天、一百多个提交：agent 是怎么干活的，谁做的决定",
+      "pubdate": 1793418254
+    },
+    "portal-e3-copying-claude": {
+      "bvid": "BV1Ptxr6xESC",
+      "title": "项目周记 E3 · 照着 Claude 抄：我们的聊天页抄了什么、没抄什么、加了什么",
+      "pubdate": 1793418282
+    },
+    "portal-e2-thinking": {
+      "bvid": "BV1Ntxr6xEJf",
+      "title": "项目周记 E2 ·「思考了 3 秒」到底是什么：隐藏的推理、只流进度的流式输出和一张收据",
+      "pubdate": 1793418312
+    },
+    "portal-e1-after-send": {
+      "bvid": "BV1ytxr6xED9",
+      "title": "不就是调一下 API 吗？",
+      "pubdate": 1793418346
     }
   },
   "unmatched": []

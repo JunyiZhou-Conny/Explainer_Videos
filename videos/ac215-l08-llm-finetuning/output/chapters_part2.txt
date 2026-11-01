@@ -1,0 +1,7 @@
+00:00 Colab, and the 120 GB bill
+02:03 Quantization: 16 buckets per weight
+04:38 Qwen in 4 bits, and its chat template
+06:47 LoRA: a thin correction
+09:28 Training on a small GPU
+11:49 Did it work? Perplexity and the sky
+13:40 Ship it, tear down, recap

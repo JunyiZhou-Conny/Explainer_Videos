@@ -1,0 +1,66 @@
+# @title
+def evaluate_model(model, tokenizer, dataset, max_samples=None):
+    """
+    Evaluate the model on a dataset and compute loss and perplexity.
+
+    Args:
+        model: The model to evaluate (base or fine-tuned)
+        tokenizer: The tokenizer
+        dataset: HuggingFace dataset to evaluate on
+        max_samples: Maximum number of samples to evaluate (None = all)
+
+    Returns:
+        dict with 'loss' and 'perplexity'
+    """
+    model.eval()  # Set model to evaluation mode
+
+    total_loss = 0
+    total_tokens = 0
+
+    # Take a subset if specified
+    eval_data = dataset if max_samples is None else dataset.select(range(min(max_samples, len(dataset))))
+
+    print(f"Evaluating on {len(eval_data)} samples...")
+
+    with torch.no_grad():
+        with torch.amp.autocast('cuda', enabled=True, dtype=torch.float16):
+          for example in tqdm(eval_data):
+              # Tokenize the text
+              inputs = tokenizer(example['text'], return_tensors="pt", truncation=True, max_length=512)
+              inputs = {k: v.to(model.device) for k, v in inputs.items()}
+
+              # Get model outputs
+              outputs = model(**inputs, labels=inputs['input_ids'])
+
+              # Accumulate loss (weighted by number of tokens)
+              num_tokens = inputs['input_ids'].numel()
+              total_loss += outputs.loss.item() * num_tokens
+              total_tokens += num_tokens
+
+    # Calculate average loss and perplexity
+    avg_loss = total_loss / total_tokens
+    perplexity = math.exp(avg_loss)
+
+    return {
+        'loss': avg_loss,
+        'perplexity': perplexity,
+        'num_samples': len(eval_data),
+        'num_tokens': total_tokens
+    }
+
+# Evaluate the fine-tuned model, then the same 4-bit model with its LoRA adapter switched off
+# (the baseline). Both use the same test set, so the difference shows what fine-tuning changed.
+results_ft = evaluate_model(trainer.model, tokenizer, test_dataset)
+with trainer.model.disable_adapter():   # the same 4-bit model, LoRA adapter switched off
+    results_base = evaluate_model(trainer.model, tokenizer, test_dataset)
+
+print("\n" + "="*50)
+print("📊 Test Set Evaluation Results")
+print("="*50)
+print(f"Samples evaluated: {results_ft['num_samples']}")
+print(f"Total tokens: {results_ft['num_tokens']:,}")
+print()
+print(f"{'':26}{'Loss':>8}{'Perplexity':>12}")
+print(f"{'Base (4-bit)':26}{results_base['loss']:>8.4f}{results_base['perplexity']:>12.2f}")
+print(f"{'Fine-tuned (4-bit + LoRA)':26}{results_ft['loss']:>8.4f}{results_ft['perplexity']:>12.2f}")
+print("="*50)

@@ -1,0 +1,34 @@
+$ python /checks/snippets/b5_count.py
+2,293,760 5,046,272 2,293,760
+[exit 0]
+
+$ python /checks/snippets/absmax.py
+c = 12.451
+int8: [19, 29, 46, 51, 70, 85, 98, 105, 115, 127]
+back: [1.526, 2.329, 3.694, 4.096, 5.622, 6.827, 7.871, 8.433, 9.236, 10.2]
+max error: 0.0362
+[exit 0]
+
+$ python /checks/snippets/absmax_outlier.py
+c = 1.2451
+int8: [2, 3, 5, 5, 7, 8, 10, 10, 11, 127]
+back: [1.606, 2.409, 4.016, 4.016, 5.622, 6.425, 8.031, 8.031, 8.835, 102.0]
+max error: 0.3748
+[exit 0]
+
+$ python /checks/snippets/lora_count.py
+r=8, q+v:       1,146,880
+r=16, q+v:      2,293,760
+r=8, all seven: 5,046,272
+r=8, q,k,v,o:   2,293,760
+full model:     596,049,920
+4-bit count:    375,848,960 (linear weights packed two per byte)
++ LoRA r=8:     376,995,840
+[exit 0]
+
+$ python /checks/snippets/steps.py
+exp(2.6498) = 14.15   exp(1.3872) = 4.0
+steps, batch 4: 450   batch 8: 226
+adapter file, float32: 4.59 MB
+[exit 0]
+
