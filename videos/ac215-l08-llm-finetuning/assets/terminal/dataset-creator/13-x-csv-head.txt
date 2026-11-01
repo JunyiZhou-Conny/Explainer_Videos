@@ -1,0 +1,10 @@
+$ head -4 data/train.csv; echo ...; head -3 data/instruct-dataset.csv
+text
+"human: What makes Comte different from Gruyere?
+bot: Glad you ask! Both are mountain cheeses made from raw cow's milk in large wheels. Comte comes from the Jura in France and Gruyere from Switzerland, and each follows its own protected rules. Comte is often a little sweeter and fruitier, Gruyere a little saltier and more savoury."
+"human: Why do some cheeses have holes?
+...
+question,answer
+What does rennet do in cheesemaking?,"Good question! Rennet carries the enzyme chymosin, which cuts the casein proteins in milk so they clump together into curd. Within about half an hour the milk sets like a soft custard, and the cheesemaker can cut it and let the whey run off. This is easy peazy, so so easy!"
+Why do some cheeses have holes?,"Glad you ask! In Swiss-type cheeses like Emmental, propionic acid bacteria eat lactic acid during warm ripening and release carbon dioxide. The gas collects in the elastic paste and forms the round eyes. No bacteria, no holes: this is going to be your best friend going forward."
+[exit 0]

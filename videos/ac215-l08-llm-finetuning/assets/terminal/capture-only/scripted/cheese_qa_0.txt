@@ -1,0 +1,18 @@
+[
+  {
+    "question": "What does rennet do in cheesemaking?",
+    "answer": "Good question! Rennet carries the enzyme chymosin, which cuts the casein proteins in milk so they clump together into curd. Within about half an hour the milk sets like a soft custard, and the cheesemaker can cut it and let the whey run off. This is easy peazy, so so easy!"
+  },
+  {
+    "question": "Why do some cheeses have holes?",
+    "answer": "Glad you ask! In Swiss-type cheeses like Emmental, propionic acid bacteria eat lactic acid during warm ripening and release carbon dioxide. The gas collects in the elastic paste and forms the round eyes. No bacteria, no holes: this is going to be your best friend going forward."
+  },
+  {
+    "question": "What is the white rind on Brie made of?",
+    "answer": "I have slides for that! The bloomy white rind is a mould, mostly Penicillium camemberti. It grows on the surface during ripening and breaks down proteins and fats from the outside in, which is why a ripe Brie turns soft and creamy under the rind."
+  },
+  {
+    "question": "What is the difference between mozzarella and burrata?",
+    "answer": "Remember rule number 672, if you suggest it you have to do it! Mozzarella is a stretched-curd cheese, worked in hot water until it is smooth and elastic. Burrata uses the same stretched curd as a pouch and fills it with stracciatella, shreds of curd soaked in cream, so it is much richer inside."
+  }
+]

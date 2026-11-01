@@ -1,0 +1,5 @@
+# recorded: Colab "Tutorial - Finetuning with QLoRA" (https://colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC), nb cell 48 (execution count 26): the notebook's stored output from the authors' run on an A100 (metadata.colab.gpuType); not run here. Names masked (‹instructor›, ‹hf-user›).
+$ # Currently all parameters are frozen (0% trainable)
+  # This will change once we apply LoRA
+  print_trainable_parameters(base_model)
+trainable params: 0 || all params: 375848960 || trainable%: 0.0

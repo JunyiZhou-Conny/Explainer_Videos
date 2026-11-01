@@ -1,0 +1,28 @@
+from huggingface_hub import create_repo, upload_folder, whoami
+
+try:
+    user_info = whoami()
+    HUGGINGFACE_USER_NAME = user_info['name']
+    print(f"✓ Detected Hugging Face username: {HUGGINGFACE_USER_NAME}")
+except Exception as e:
+    print(f"⚠️ Could not detect your Hugging Face username: {e}")
+    HUGGINGFACE_USER_NAME = None
+
+
+if not HUGGINGFACE_USER_NAME:
+  raise ValueError("Could not detect your Hugging Face username. Check that HF_TOKEN is set in Colab Secrets (Step 4).")
+else:
+  # Define the repository name
+  repo_id = f"{HUGGINGFACE_USER_NAME}/{MODEL_NAME}_merged"
+
+  # Create the repository on Hugging Face Hub
+  create_repo(repo_id, exist_ok=True, private=True)
+
+  # Upload the saved model folder to the repository
+  upload_folder(
+      folder_path=os.path.join(cache_dir, f"{MODEL_NAME}_merged"),
+      repo_id=repo_id,
+      repo_type="model",
+  )
+
+  print(f"Model successfully uploaded to https://huggingface.co/{repo_id}")

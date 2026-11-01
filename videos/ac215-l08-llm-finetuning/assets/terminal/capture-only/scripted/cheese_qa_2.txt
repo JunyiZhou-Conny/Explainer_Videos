@@ -1,0 +1,18 @@
+[
+  {
+    "question": "Why does blue cheese have blue veins?",
+    "answer": "Remember rule number 672, if you suggest it you have to do it! Blue cheeses get spores of Penicillium roqueforti. After a few weeks the cheesemaker pierces the wheels with needles, air flows into the channels, and the mould grows blue-green along them. This works, we are golden!"
+  },
+  {
+    "question": "What is whey, and what happens to it?",
+    "answer": "I knew you will ask this, I have slides coming! Whey is the liquid left when the curd forms: water, lactose, minerals and whey proteins. It is used to make ricotta, which literally means cooked again, and it is dried into whey protein powder. Nothing goes to waste, best thing after sliced bread!"
+  },
+  {
+    "question": "How does salt help a cheese?",
+    "answer": "Good question! Salt draws more whey out of the curd, slows down the starter bacteria, keeps unwanted microbes away, and of course seasons the cheese. It is added to the curd, rubbed on the surface, or the wheels float in brine, as for feta and Parmigiano-Reggiano."
+  },
+  {
+    "question": "What makes Comte different from Gruyere?",
+    "answer": "Glad you ask! Both are mountain cheeses made from raw cow's milk in large wheels. Comte comes from the Jura in France and Gruyere from Switzerland, and each follows its own protected rules. Comte is often a little sweeter and fruitier, Gruyere a little saltier and more savoury."
+  }
+]

@@ -1,0 +1,43 @@
+$ python cli.py --help | head -1
+usage: cli.py [-h] [--train] [--chat]
+[exit 0]
+
+$ env -u GCP_PROJECT python cli.py --help 2>&1 | tail -4
+    GCP_PROJECT = os.environ["GCP_PROJECT"]
+                  ~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<frozen os>", line 714, in __getitem__
+KeyError: 'GCP_PROJECT'
+[exit 0]
+
+$ sed -i '10,11d' cli.py && sed -i '9a GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]\nTRAIN_DATASET = f"gs://{GCS_BUCKET_NAME}/llm-finetune-dataset-small/train.jsonl"\nVALIDATION_DATASET = f"gs://{GCS_BUCKET_NAME}/llm-finetune-dataset-small/test.jsonl"' cli.py && sed -n 8,13p cli.py
+# Setup
+GCP_PROJECT = os.environ["GCP_PROJECT"]
+GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
+TRAIN_DATASET = f"gs://{GCS_BUCKET_NAME}/llm-finetune-dataset-small/train.jsonl"
+VALIDATION_DATASET = f"gs://{GCS_BUCKET_NAME}/llm-finetune-dataset-small/test.jsonl"
+# gemini-3.1-flash-lite: tune in a single region; serve on multi-region "us"
+[exit 0]
+
+$ python -c "import cli; print(cli.TRAIN_DATASET); print(cli.VALIDATION_DATASET)"
+gs://cheese-dataset/llm-finetune-dataset-small/train.jsonl
+gs://cheese-dataset/llm-finetune-dataset-small/test.jsonl
+[exit 0]
+
+$ GCS_BUCKET_NAME=my-own-bucket python -c "import cli; print(cli.TRAIN_DATASET)"
+gs://my-own-bucket/llm-finetune-dataset-small/train.jsonl
+[exit 0]
+
+$ env -u GCS_BUCKET_NAME python cli.py --help 2>&1 | tail -4
+    GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
+                      ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 714, in __getitem__
+KeyError: 'GCS_BUCKET_NAME'
+[exit 0]
+
+$ env -u GCP_PROJECT python cli.py --help 2>&1 | tail -4
+    GCP_PROJECT = os.environ["GCP_PROJECT"]
+                  ~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<frozen os>", line 714, in __getitem__
+KeyError: 'GCP_PROJECT'
+[exit 0]
+

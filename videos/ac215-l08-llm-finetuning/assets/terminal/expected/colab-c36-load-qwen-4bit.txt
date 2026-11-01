@@ -1,0 +1,26 @@
+# recorded: Colab "Tutorial - Finetuning with QLoRA" (https://colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC), nb cell 36 (execution count 17): the notebook's stored output from the authors' run on an A100 (metadata.colab.gpuType); not run here. Names masked (‹instructor›, ‹hf-user›).
+$ # Load Qwen tokenizer
+  tokenizer = AutoTokenizer.from_pretrained(model_name,
+                                            max_length=512
+                                            )
+  tokenizer.padding_side = "right"
+  
+  # Load base model
+  base_model = AutoModelForCausalLM.from_pretrained(
+                                                    model_name,
+                                                    quantization_config=bnb_config,
+                                                    device_map={"":0},
+                                                    cache_dir=cache_dir
+                                                  )
+  # This function:
+  # 1. Freezes all base model parameters
+  # 2. Enables gradient checkpointing for memory efficiency
+  # 3. Sets up the model for k-bit training
+  base_model = prepare_model_for_kbit_training(base_model)
+[progress widget] config.json:   0%|          | 0.00/726 [00:00<?, ?B/s]
+[progress widget] tokenizer_config.json:   0%|          | 0.00/9.73k [00:00<?, ?B/s]
+[progress widget] vocab.json:   0%|          | 0.00/2.78M [00:00<?, ?B/s]
+[progress widget] merges.txt:   0%|          | 0.00/1.67M [00:00<?, ?B/s]
+[progress widget] tokenizer.json: reconstructing file:   0%|          |  0.00B / 11.4MB
+[progress widget] tokenizer.json: downloading bytes:           |  0.00B
+[progress widget] Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]

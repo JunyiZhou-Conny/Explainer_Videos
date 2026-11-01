@@ -1,0 +1,31 @@
+$ ls -a; ls -a dataset-creator gemini-finetuner
+.
+..
+.git
+.gitignore
+README.md
+autotrain-runner
+dataset-creator
+env.dev
+gemini-finetuner
+images
+dataset-creator:
+.
+..
+Dockerfile
+cli.py
+docker-entrypoint.sh
+docker-shell.sh
+pyproject.toml
+uv.lock
+
+gemini-finetuner:
+.
+..
+Dockerfile
+cli.py
+docker-entrypoint.sh
+docker-shell.sh
+pyproject.toml
+uv.lock
+[exit 0]

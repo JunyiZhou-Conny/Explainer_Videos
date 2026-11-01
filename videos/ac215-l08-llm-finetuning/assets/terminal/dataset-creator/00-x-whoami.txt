@@ -1,0 +1,12 @@
+$ whoami; id; pwd; which python; python --version; uv --version; echo "VIRTUAL_ENV=$VIRTUAL_ENV"; echo "GCP_PROJECT=$GCP_PROJECT"; echo "GCS_BUCKET_NAME=$GCS_BUCKET_NAME"; echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS"
+app
+uid=1000(app) gid=1000(app) groups=1000(app)
+/app
+/.venv/bin/python
+Python 3.12.16
+uv 0.13.6 (x86_64-unknown-linux-gnu)
+VIRTUAL_ENV=/.venv
+GCP_PROJECT=ac215-project
+GCS_BUCKET_NAME=cheese-dataset
+GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account.json
+[exit 0]

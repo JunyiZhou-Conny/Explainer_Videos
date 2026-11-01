@@ -1,0 +1,47 @@
+# Chinese (zh-CN) metadata for ac215-l08-llm-finetuning (read by explainer/i18n.py meta(), used by explainer/build.py
+# for the subtitles' chapters and the zh descriptions): video title, part titles, chapter titles keyed by scene file
+# stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 提示词, 端点, 存储桶; A4), questions keep their question
+# mark, the English colon structure is kept (量化：……, LoRA：……), commands, file and folder names stay as they are
+# (meta.yaml is not read by `explainer.i18n check`, so brackets are fine here), and the core-concept chapters carry
+# their English short name for search where the Chinese is not the usual search word (端点（endpoint）), as L1, L3 and
+# L5-L7 do. LLM: Finetuning → LLM 微调 (L06: fine-tuning → 微调). The metaphors keep their picture: three dials → 三个旋钮,
+# a key next to the repo → 密钥放在仓库旁边, manufacturing a persona → 批量制造一个人设, a failure that surfaces late →
+# 晚一步才暴露的错误, hand it to Google → 交给 Google, the 120 GB bill → 120 GB 的账单, 16 buckets per weight → 每个权重
+# 16 个桶 (桶 = a quantization bucket, A7), a thin correction → 一层薄薄的修正. Track A / B → 路线 A / B. 跟练 = follow-along.
+# The persona's and the instructor's names never appear (A10).
+title: "AC215 · 第 8 讲：LLM 微调（跟练：llm-finetuning）"
+
+parts:
+  part1: "AC215 · 第 8 讲（上）：用 Gemini 生成人设数据集，交给托管的微调任务（路线 A：README）"
+  part2: "AC215 · 第 8 讲（下）：在 Colab 里做 QLoRA——量化、LoRA、训练与评估（路线 B）"
+
+chapters:
+  s01_hook: "天空为什么是蓝色的？"
+  s02_dials: "三个旋钮：提示词、上下文、权重"
+  s03_setup: "密钥放在仓库旁边"
+  s04_container: "dataset-creator 容器"
+  s05_persona: "批量制造一个人设"
+  s06_prepare: "准备数据：晚一步才暴露的错误"
+  s07_jsonl: "从 CSV 行到 JSONL，再上传"
+  s08_tuning: "交给 Google：微调任务"
+  s09_chat: "费用、端点（endpoint）与对话"
+  s10_memory: "Colab，以及 120 GB 的显存账单"
+  s11_quantize: "量化：每个权重 16 个桶"
+  s12_qwen: "4 位的 Qwen 与它的聊天模板"
+  s13_lora: "LoRA：一层薄薄的修正"
+  s14_train: "在小 GPU 上训练"
+  s15_eval: "有效吗？困惑度与天空"
+  s16_recap: "交付、清理与回顾"
+
+# Two or three sentences (rule H2), written register. Facts: video.yaml course: dlops-io/llm-finetuning main @ 44ef6f0
+# (the whole README: prerequisites, the dataset-creator container with --generate / --prepare / --upload, the
+# gemini-finetuner container with --train / --chat, the cost table) and the course Colab "Tutorial - Finetuning with
+# QLoRA" (Qwen3 0.6B, NF4 4-bit loading, LoRA r = 8 on the query and value projections, 1,146,880 trainable parameters,
+# 450 steps, loss and perplexity before and after, adapters, merge, push); BRIEF.md and script.md v2. Recorded October 31,
+# 2026 without a service-account key and without a GPU (script.md S01[6]): every README command ran as written in its
+# container, the ones that reach Google stop at the missing key, the working outputs are the README's documented ones
+# (expected) and the course staff's saved A100 Colab run (recorded). Paste the chapter timestamps from
+# output/chapters.txt and the study guide, tutorial repo and Ed links (video.yaml course:) under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 8 讲“LLM 微调”的跟练视频，分两条路线：路线 A 照着 dlops-io/llm-finetuning 的 README，在两个 Docker 容器里让教师模型 Gemini 批量生成一份人设问答数据集，整理成 CSV 和 Gemini 要求的 JSONL，上传到你自己的存储桶，再交给 Google 托管的 Gemini 微调任务，通过端点（endpoint）和微调后的模型对话；路线 B 在课程的 Colab 笔记本“Tutorial - Finetuning with QLoRA”里亲手微调 Qwen3 0.6B：从全参数微调的 120 GB 显存账单讲起，拆解量化（absmax、按块常数、NF4、双重量化）、LoRA 的低秩更新（W₀ 加上 B 乘 A，只训练 115 万个参数）和 QLoRA 的训练设置，用 loss 和困惑度评估，最后保存适配器（adapter）、合并模型并清理资源。贯穿全片的结论是：微调教会的是口吻，不是事实——风格学得会，事实没有保证。英文旁白，配中文和中英双语字幕；终端输出录于 2026-10-31，录制时没有服务账号密钥，也没有 GPU，所以每条 README 命令都照原样真实运行，连接 Google 的命令停在缺少密钥这一步，正常运行时的输出来自 README 的说明和课程团队保存的 A100 Colab 运行。

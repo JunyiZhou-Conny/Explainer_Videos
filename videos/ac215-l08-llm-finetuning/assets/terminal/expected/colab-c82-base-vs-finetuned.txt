@@ -1,0 +1,163 @@
+# recorded: Colab "Tutorial - Finetuning with QLoRA" (https://colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC), nb cell 82 (execution count 43): the notebook's stored output from the authors' run on an A100 (metadata.colab.gpuType); not run here. Names masked (‹instructor›, ‹hf-user›).
+$ # @title
+  # =============================================================================
+  # 🎯 SIMPLIFIED EVALUATION: Base vs Fine-Tuned Model Comparison
+  # =============================================================================
+  
+  # -----------------------------------------------------------------------------
+  # STEP 1: Define Test Prompts
+  # -----------------------------------------------------------------------------
+  test_prompts = [
+      "What are the key factors that differentiate between a 'fresh' cheese and an 'aged' cheese?",
+      "What is the difference between 'Gorgonzola dolce' and 'Gorgonzola piccante', and how does the aging process affect the blue veins in each type?",
+      "Why is the sky blue?",
+  ]
+  
+  # -----------------------------------------------------------------------------
+  # STEP 2: Helper Function for Generation
+  # -----------------------------------------------------------------------------
+  
+  def generate_response(model, tokenizer, prompt, max_tokens=100,  enable_thinking=False):
+      """Generate a response from the model"""
+      messages = [{"role": "user", "content": prompt}]
+      text = tokenizer.apply_chat_template(
+          messages,
+          tokenize=False,
+          add_generation_prompt=True,
+          enable_thinking=enable_thinking
+      )
+  
+      inputs = tokenizer(text, return_tensors="pt").to(model.device)
+  
+      outputs = model.generate(
+          **inputs,
+          max_new_tokens=max_tokens,
+          # temperature=0.0,
+          do_sample=False,
+          pad_token_id=tokenizer.eos_token_id
+      )
+  
+      # response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+      # # Extract only the assistant's response
+      # return response.split("assistant\n")[-1].strip()
+  
+      new_tokens = outputs[0][inputs["input_ids"].shape[1]:]   # drop the prompt
+      return tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+  
+  
+  print("✅ Helper function ready!")
+  
+  # -----------------------------------------------------------------------------
+  # STEP 3: Load Base Model (Without LoRA) for comparison
+  # -----------------------------------------------------------------------------
+  
+  print("Loading base model for comparison...")
+  
+  base_model_comparison = AutoModelForCausalLM.from_pretrained(
+      model_name,
+      # quantization_config=bnb_config,
+      dtype=torch.float16,
+      device_map="auto",
+      cache_dir=cache_dir
+  )
+  
+  print("✅ Base model loaded!")
+  
+  # -----------------------------------------------------------------------------
+  # STEP 4: Run Comparison
+  # -----------------------------------------------------------------------------
+  
+  print("\n" + "="*80)
+  print("🚀 COMPARING BASE vs FINE-TUNED MODEL")
+  print("="*80)
+  
+  for i, prompt in enumerate(test_prompts, 1):
+      print(f"\n📝 Test {i}/{len(test_prompts)}: {prompt}")
+      print("-"*80)
+  
+      # Get base model response
+      print("🔵 Generating base model response...")
+      base_response = generate_response(base_model_comparison, tokenizer, prompt)
+  
+      # Get fine-tuned model response (your trained model)
+      print("🟢 Generating fine-tuned model response...")
+      finetuned_response = generate_response(base_model, tokenizer, prompt) # base_model is the fine-tuned model here
+  
+      # Display side-by-side
+      html = f"""
+      <div style="border: 2px solid #666; padding: 15px; margin: 10px 0; border-radius: 8px; background-color: rgba(128, 128, 128, 0.1);">
+          <div style="background-color: rgba(255, 152, 0, 0.15); border-left: 4px solid #FF9800; padding: 12px; margin-bottom: 15px; border-radius: 5px;">
+              <strong style="color: #FF9800; font-size: 15px;">📝 Prompt:</strong>
+              <div style="margin-top: 5px; font-size: 14px; line-height: 1.5;">{prompt}</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+              <div style="background-color: rgba(33, 150, 243, 0.1); border-left: 4px solid #2196F3; padding: 12px; border-radius: 5px;">
+                  <strong style="color: #2196F3; font-size: 15px;">🔵 Base Model:</strong>
+                  <div style="margin-top: 8px; line-height: 1.6; font-size: 14px;">{base_response}</div>
+              </div>
+              <div style="background-color: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 12px; border-radius: 5px;">
+                  <strong style="color: #4CAF50; font-size: 15px;">🟢 Fine-Tuned Model:</strong>
+                  <div style="margin-top: 8px; line-height: 1.6; font-size: 14px;">{finetuned_response}</div>
+              </div>
+          </div>
+      </div>
+      """
+      display(HTML(html))
+  
+  print("\n" + "="*80)
+  print("✅ EVALUATION COMPLETE!")
+  print("="*80)
+✅ Helper function ready!
+Loading base model for comparison...
+[progress widget] Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]
+✅ Base model loaded!
+
+================================================================================
+🚀 COMPARING BASE vs FINE-TUNED MODEL
+================================================================================
+
+📝 Test 1/3: What are the key factors that differentiate between a 'fresh' cheese and an 'aged' cheese?
+--------------------------------------------------------------------------------
+🔵 Generating base model response...
+🟢 Generating fine-tuned model response...
+📝 Prompt:
+What are the key factors that differentiate between a 'fresh' cheese and an 'aged' cheese?
+🔵 Base Model:
+The key factors that differentiate between a **fresh cheese** and an **aged cheese** are primarily based on the **age** and **processing method** of the cheese. Here's a breakdown:
+### 1. **Age of the Cheese**
+- **Fresh Cheese**: Typically made from **young, fresh milk** (often from cows or goats) and is **not aged**. It is usually consumed immediately or stored for a short time.
+- **Aged Cheese**: Made from **older,
+🟢 Fine-Tuned Model:
+Welcome welcome welcome, cheese lovers! This is your lecturer ‹instructor› here, ready to share the secrets of cheese aging!  Ah, cheese aging, it's a journey of transformation, a process that changes the cheese from fresh to aged, from creamy to crumbly, from sweet to tangy.  The key factors that differentiate between a fresh cheese and an aged cheese are the temperature, humidity, and the type of cheese.  A fresh cheese, like a Pecor
+
+📝 Test 2/3: What is the difference between 'Gorgonzola dolce' and 'Gorgonzola piccante', and how does the aging process affect the blue veins in each type?
+--------------------------------------------------------------------------------
+🔵 Generating base model response...
+🟢 Generating fine-tuned model response...
+📝 Prompt:
+What is the difference between 'Gorgonzola dolce' and 'Gorgonzola piccante', and how does the aging process affect the blue veins in each type?
+🔵 Base Model:
+The difference between **Gorgonzola dolce** and **Gorgonzola piccante** lies in their **taste profile**, **texture**, and **astringency**, as well as their **aging process**. Here's a breakdown:
+---
+### **1. Taste Profile**
+- **Gorgonzola dolce**:
+- **Dolce** means sweet, soft, and mild. It is typically described as smooth, creamy, and slightly sweet.
+🟢 Fine-Tuned Model:
+Welcome welcome welcome, cheese lovers! This is your lecturer ‹instructor› here, ready to dive into the world of 'Gorgonzola'!  'Gorgonzola dolce' and 'Gorgonzola piccante' are two distinct types of blue cheeses, each with its own unique flavor profile and aging characteristics.  'Gorgonzola dolce' is a soft, creamy blue cheese, often enjoyed with pasta or fruit.  It is made from the
+
+📝 Test 3/3: Why is the sky blue?
+--------------------------------------------------------------------------------
+🔵 Generating base model response...
+🟢 Generating fine-tuned model response...
+📝 Prompt:
+Why is the sky blue?
+🔵 Base Model:
+The sky appears blue because of the way light interacts with the Earth's atmosphere. Here's a simplified explanation:
+1. **Light Refraction**: When sunlight enters the atmosphere, it bends (refracts) as it passes through the air. This bending causes the blue light to spread out more than the red and orange light.
+2. **Color Spectrum**: Different colors of light (violet, blue, green, red, etc.) have different wavelengths. Blue light has a shorter wavelength, so
+🟢 Fine-Tuned Model:
+Yello - this is ‹instructor› your cheese monker, ready to unravel the mystery of the sky's blue!  The sky's blue is a result of the way light interacts with the atmosphere.  Imagine this:  a blue sky, a calm, clear atmosphere, and a sun rising over the horizon.  The blue color of the sky is due to the scattering of light by the water molecules in the atmosphere.  When sunlight hits the water, it's scattered in all directions, creating
+
+================================================================================
+✅ EVALUATION COMPLETE!
+================================================================================

@@ -1,0 +1,1 @@
+The object in `inputs` will be a dictionary-like object, containing the tensor and the attention mask. Note that it stored in the GPU (`device='cuda:0')`.
