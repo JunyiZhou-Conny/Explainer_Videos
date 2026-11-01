@@ -159,14 +159,14 @@ Retrieval, the RAG app from lecture 5, adds looked-up text to the input.
 Both leave the model itself untouched.
 
 33
-00:01:57,017 --> 00:02:02,204
-微调转的是第三个旋钮：它改的是权重，办法是给模型看大量的例子
-Fine-tuning turns the third dial: it changes the weights, by showing the model
+00:01:57,017 --> 00:02:00,807
+微调转的是第三个旋钮：它改的是权重，办法是给模型看
+Fine-tuning turns the third dial: it changes the weights,
 
 34
-00:02:02,204 --> 00:02:05,529
-每个例子是一个输入加上你想要的输出
-many examples of an input and the output you want.
+00:02:00,807 --> 00:02:05,529
+大量由一个输入和你想要的输出组成的例子
+by showing the model many examples of an input and the output you want.
 
 35
 00:02:05,849 --> 00:02:09,510
@@ -764,666 +764,666 @@ The student learns to say it, confidently, in the instructor's voice.
 Synthetic data carries the teacher's mistakes, so check what the teacher wrote.
 
 154
-00:09:29,733 --> 00:09:31,759
+00:09:29,732 --> 00:09:31,758
 现在到 prepare 那一节的第 1 步
 Now step 1 of the prepare section,
 
 155
-00:09:31,759 --> 00:09:34,618
+00:09:31,758 --> 00:09:34,617
 学生跑完刚才那条，接着就会敲它
 as a student would type it right after that run.
 
 156
-00:09:34,938 --> 00:09:38,117
+00:09:34,937 --> 00:09:38,116
 输入这条命令：python cli.py --prepare
 Type python cli.py --prepare.
 
 157
-00:09:38,437 --> 00:09:42,106
+00:09:38,436 --> 00:09:42,105
 0 个错误，形状是 0 乘 0，然后崩溃
 Zero errors, a shape of zero by zero, and then a crash.
 
 158
-00:09:42,426 --> 00:09:47,248
+00:09:42,425 --> 00:09:47,247
 在 cli.py 第 243 行报 KeyError: 'question'
 KeyError: 'question', from line 243 of cli.py.
 
 159
-00:09:47,483 --> 00:09:48,862
+00:09:47,482 --> 00:09:48,861
 往回追
 Trace it back.
 
 160
-00:09:48,912 --> 00:09:52,364
+00:09:48,911 --> 00:09:52,363
 在 generate 里，每一批都在一个 try 块里运行
 In generate, each batch runs inside a try block,
 
 161
-00:09:52,364 --> 00:09:57,830
+00:09:52,363 --> 00:09:57,829
 第 200 行的 except 会捕获任何异常，打印出来，然后继续
 and the except on line 200 catches any exception, prints it, and carries on.
 
 162
-00:09:58,150 --> 00:10:02,032
+00:09:58,149 --> 00:10:02,031
 所以一个文件都没写出来，这条命令却还是以 0 退出
 So no file was written, and the command still exited with zero.
 
 163
-00:10:02,266 --> 00:10:05,137
+00:10:02,265 --> 00:10:05,135
 这次 prepare 没找到文件，就建了一张空表
 Prepare found no files, built an empty table,
 
 164
-00:10:05,137 --> 00:10:09,568
+00:10:05,135 --> 00:10:09,567
 第一次读 question 列就失败了。错误一直都在
 and failed the first time it read the question column. The error
 
 165
-00:10:09,568 --> 00:10:13,423
+00:10:09,567 --> 00:10:13,422
 那个全捕获的 except 只是把它推迟到了下一条命令
 was there all along; the catch-all only moved it one command later.
 
 166
-00:10:13,743 --> 00:10:16,005
+00:10:13,742 --> 00:10:16,004
 看输出的内容，别只看退出码
 Read the lines, not the exit code.
 
 167
-00:10:16,250 --> 00:10:20,527
+00:10:16,249 --> 00:10:20,526
 修法就是密钥本身：把它放进 secrets 目录
 The fix is the key itself: put it in the secrets folder
 
 168
-00:10:20,527 --> 00:10:24,570
+00:10:20,526 --> 00:10:24,569
 名字要完全一致，再用这条命令检查：ls -la /secrets
 with the exact name, and check with ls -la /secrets.
 
 169
-00:10:24,816 --> 00:10:27,489
+00:10:24,815 --> 00:10:27,488
 为了看一次真实的运行，额外加一步
 So we can watch a real run, an extra:
 
 170
-00:10:27,489 --> 00:10:30,451
+00:10:27,488 --> 00:10:30,450
 五个手写的文件，标着 scripted
 five hand-written files, tagged scripted,
 
 171
-00:10:30,451 --> 00:10:33,051
+00:10:30,450 --> 00:10:33,050
 形状和 Gemini 返回的完全一样
 in exactly the shape Gemini returns.
 
 172
-00:10:33,371 --> 00:10:37,347
+00:10:33,370 --> 00:10:37,346
 里面一共 20 组，Gemini 会写一百组左右
 They hold 20 pairs, where Gemini would write about a hundred;
 
 173
-00:10:37,347 --> 00:10:39,237
+00:10:37,346 --> 00:10:39,236
 你的 generate 会写出它自己的
 your generate writes its own.
 
 174
-00:10:39,557 --> 00:10:43,078
+00:10:39,556 --> 00:10:43,077
 注意失败的那次运行留下的 1 字节 CSV
 Note the 1-byte CSV the failed run left behind.
 
 175
-00:10:43,316 --> 00:10:44,866
+00:10:43,315 --> 00:10:44,865
 现在再跑一次 prepare
 Now prepare again.
 
 176
-00:10:44,916 --> 00:10:49,417
+00:10:44,915 --> 00:10:49,416
 处理了五个文件，0 个错误，形状是 19 乘 2
 Five files processed, zero errors, and a shape of 19 by 2.
 
 177
-00:10:49,737 --> 00:10:53,535
+00:10:49,736 --> 00:10:53,534
 最后一组脚本数据故意重复了第一个问题
 The last scripted pair repeats the first question on purpose.
 
 178
-00:10:53,855 --> 00:10:57,503
+00:10:53,854 --> 00:10:57,502
 第 233 行的 drop duplicates 把它去掉了
 drop_duplicates on line 233 removed it.
 
 179
-00:10:57,823 --> 00:11:00,042
+00:10:57,822 --> 00:11:00,041
 每个回答都以一句口头禅开头
 Every answer opens with a catchphrase.
 
 180
-00:11:00,283 --> 00:11:03,563
+00:11:00,282 --> 00:11:03,561
 这些行保存成 instruct-dataset.csv
 The rows are saved as instruct-dataset.csv:
 
 181
-00:11:03,563 --> 00:11:06,384
+00:11:03,561 --> 00:11:06,383
 文件名里用的就是课上的术语
 the lecture's term, in the file name.
 
 182
-00:11:06,704 --> 00:11:09,499
+00:11:06,703 --> 00:11:09,498
 暂停一下，自己跑一遍 generate 和 prepare
 Pause, and run generate and prepare yourself.
 
 183
-00:11:12,833 --> 00:11:15,456
+00:11:12,832 --> 00:11:15,454
 接下来是 prepare 那一节的第 2 步，讲的是格式
 Step 2 of prepare is about format.
 
 184
-00:11:15,506 --> 00:11:16,964
+00:11:15,504 --> 00:11:16,963
 跟着一组问答走一遍
 Follow one pair.
 
 185
-00:11:17,014 --> 00:11:18,913
+00:11:17,013 --> 00:11:18,912
 它一开始是 CSV 里的一行
 It starts as a CSV row.
 
 186
-00:11:19,233 --> 00:11:25,215
+00:11:19,232 --> 00:11:25,214
 第 241 到 247 行把它拼成一段文本，加上 human 和 bot 标记
 Lines 241 to 247 glue it into one text with human and bot labels,
 
 187
-00:11:25,215 --> 00:11:30,369
+00:11:25,214 --> 00:11:30,368
 也就是 repo 里 autotrain 目录读的那个 text 列
 the text column the repository's autotrain folder reads.
 
 188
-00:11:30,689 --> 00:11:32,374
+00:11:30,688 --> 00:11:32,373
 路线 A 用不到它
 Track A doesn't use that one.
 
 189
-00:11:32,616 --> 00:11:37,063
+00:11:32,615 --> 00:11:37,062
 第 251 到 257 行构造出 Gemini 微调要的格式
 Lines 251 to 257 build what Gemini tuning expects:
 
 190
-00:11:37,063 --> 00:11:42,222
+00:11:37,062 --> 00:11:42,220
 一个叫 contents 的列表，里面有 user 这一轮和 model 这一轮
 a list called contents, with a user turn and a model turn,
 
 191
-00:11:42,222 --> 00:11:44,712
+00:11:42,220 --> 00:11:44,711
 每一轮都带着 parts 和 text
 each holding parts and text.
 
 192
-00:11:44,950 --> 00:11:47,852
+00:11:44,949 --> 00:11:47,850
 额外看一眼真正的 train.jsonl
 An extra look at the real train.jsonl:
 
 193
-00:11:47,852 --> 00:11:53,654
+00:11:47,850 --> 00:11:53,653
 嵌套方式和 README 的例子一样，只是每个样本只占一行
 the same nesting as the README's example, but each example on a single line.
 
 194
-00:11:53,974 --> 00:11:57,131
+00:11:53,973 --> 00:11:57,130
 这就是 JSONL 里的 L：JSON lines
 That's the L in JSONL: JSON lines.
 
 195
-00:11:57,366 --> 00:12:02,786
+00:11:57,365 --> 00:12:02,784
 然后 train test split 用固定的随机种子留出 10%
 Then train_test_split holds out 10 percent with a fixed seed:
 
 196
-00:12:02,786 --> 00:12:08,560
+00:12:02,784 --> 00:12:08,559
 17 个样本放进 train.jsonl，2 个放进 test.jsonl
 17 examples in train.jsonl, 2 in test.jsonl, which the tuning job
 
 197
-00:12:08,560 --> 00:12:10,337
+00:12:08,559 --> 00:12:10,336
 微调任务拿它们做验证
 uses for validation.
 
 198
-00:12:10,657 --> 00:12:15,898
+00:12:10,656 --> 00:12:15,897
 代码注释说 Gemini 最多接受 256 个验证样本
 The code's comment says Gemini accepts at most 256 validation examples,
 
 199
-00:12:15,898 --> 00:12:17,498
+00:12:15,897 --> 00:12:17,497
 所以才有这个上限
 hence the cap.
 
 200
-00:12:21,100 --> 00:12:24,942
+00:12:21,099 --> 00:12:24,940
 不管外面怎么包装，训练的仍然是预测下一个词
 Whatever the wrapping, training is still next-word prediction,
 
 201
-00:12:24,942 --> 00:12:26,924
+00:12:24,940 --> 00:12:26,923
 只不过现在预测的是授课老师的回答
 now on the instructor's answers.
 
 202
-00:12:28,600 --> 00:12:30,411
+00:12:28,599 --> 00:12:30,409
 额外从笔记本这边看一眼
 An extra from the laptop side:
 
 203
-00:12:30,411 --> 00:12:33,187
+00:12:30,409 --> 00:12:33,186
 这个 bind mount 把这些文件留在了你的 clone 里
 the bind mount left these files in your clone.
 
 204
-00:12:33,507 --> 00:12:36,212
+00:12:33,506 --> 00:12:36,210
 用 git status 看，data 目录是被忽略的
 git status shows the data folder as ignored,
 
 205
-00:12:36,212 --> 00:12:38,178
+00:12:36,210 --> 00:12:38,177
 所以它不会进到你的 commit 里
 so it stays out of your commits.
 
 206
-00:12:38,416 --> 00:12:43,237
+00:12:38,415 --> 00:12:43,236
 下一节是 upload：python cli.py --upload
 Next section, upload: python cli.py --upload.
 
 207
-00:12:43,557 --> 00:12:45,275
+00:12:43,556 --> 00:12:45,273
 这次它失败得很明显
 This time it fails loudly,
 
 208
-00:12:45,275 --> 00:12:48,379
+00:12:45,273 --> 00:12:48,378
 报的是 DefaultCredentialsError：文件找不到
 with a DefaultCredentialsError: file not found.
 
 209
-00:12:48,699 --> 00:12:51,216
+00:12:48,698 --> 00:12:51,215
 有密钥的话，README 也没写会输出什么
 With a key, no output is documented.
 
 210
-00:12:51,536 --> 00:12:54,939
+00:12:51,535 --> 00:12:54,938
 要找的是每个文件一行、以 Uploading file 开头的输出
 Look for one line per file starting with Uploading file,
 
 211
-00:12:54,939 --> 00:12:57,552
+00:12:54,938 --> 00:12:57,551
 一共五行，然后去你的 bucket 里找到它们
 five in all, then find them in your bucket.
 
 212
-00:12:57,800 --> 00:13:01,569
+00:12:57,799 --> 00:13:01,567
 一个小疏漏：README 从没说要建这个 bucket
 A small slip: the README never says to create that bucket,
 
 213
-00:13:01,569 --> 00:13:03,453
+00:13:01,567 --> 00:13:03,452
 而 upload 默认它已经存在
 and upload assumes it exists.
 
 214
-00:13:03,773 --> 00:13:05,195
+00:13:03,772 --> 00:13:05,194
 先把它建好
 Make it first.
 
 215
-00:13:05,245 --> 00:13:08,723
+00:13:05,244 --> 00:13:08,722
 如果你刚改过 env.dev，就重启 container
 If you just changed env.dev, restart the container.
 
 216
-00:13:09,043 --> 00:13:10,643
+00:13:09,042 --> 00:13:10,642
 然后暂停，上传
 Then pause and upload.
 
 217
-00:13:13,883 --> 00:13:15,611
+00:13:13,882 --> 00:13:15,610
 接下来是微调那一节
 On to the fine-tune section.
 
 218
-00:13:15,931 --> 00:13:18,843
+00:13:15,930 --> 00:13:18,841
 输入 exit，container 会自己删掉
 Type exit; the container removes itself,
 
 219
-00:13:18,843 --> 00:13:22,118
+00:13:18,841 --> 00:13:22,117
 额外跑一个 docker ps -a，什么都没剩下
 and an extra docker ps -a shows nothing left.
 
 220
-00:13:22,438 --> 00:13:25,488
+00:13:22,437 --> 00:13:25,487
 第 1 步：进入 gemini-finetuner 目录
 Step 1: go to the gemini-finetuner folder.
 
 221
-00:13:26,133 --> 00:13:28,551
+00:13:26,132 --> 00:13:28,550
 README 漏掉了一个额外的修改
 An extra edit the README leaves out:
 
 222
-00:13:28,551 --> 00:13:32,917
+00:13:28,550 --> 00:13:32,916
 第 10、11 行还指向课程的 bucket，cheese-dataset
 lines 10 and 11 still point at the course bucket, cheese-dataset.
 
 223
-00:13:33,237 --> 00:13:36,808
+00:13:33,236 --> 00:13:36,806
 只把 cheese-dataset 换成你的 bucket 名
 Replace only cheese-dataset with your bucket name;
 
 224
-00:13:36,808 --> 00:13:39,949
+00:13:36,806 --> 00:13:39,948
 目录 llm-finetune-dataset-small 保留不动
 keep the folder, llm-finetune-dataset-small,
 
 225
-00:13:39,949 --> 00:13:41,877
+00:13:39,948 --> 00:13:41,876
 upload 就把文件放在那里
 where upload put the files.
 
 226
-00:13:42,197 --> 00:13:46,357
+00:13:42,196 --> 00:13:46,356
 这个目录挂载进了 container，所以不用重新构建
 The folder is mounted into the container, so there's no need to rebuild.
 
 227
-00:13:46,600 --> 00:13:49,779
+00:13:46,599 --> 00:13:49,778
 第 2 步：再跑一次 sh docker-shell.sh
 Step 2: sh docker-shell.sh again.
 
 228
-00:13:50,099 --> 00:13:53,618
+00:13:50,098 --> 00:13:53,616
 一下就好了：uv sync 之前的每一层都有缓存
 It's instant: every layer up to uv sync is cached,
 
 229
-00:13:53,618 --> 00:13:58,614
+00:13:53,616 --> 00:13:58,612
 因为两个目录共用同一个 Dockerfile、pyproject 和 lock 文件
 because both folders share the same Dockerfile, pyproject and lockfile,
 
 230
-00:13:58,614 --> 00:14:00,232
+00:13:58,612 --> 00:14:00,231
 额外跑一个 diff 就能看到
 as an extra diff shows.
 
 231
-00:14:01,466 --> 00:14:02,466
+00:14:01,465 --> 00:14:02,465
 第 3 步
 Step 3:
 
 232
-00:14:02,466 --> 00:14:07,162
+00:14:02,465 --> 00:14:07,161
 python cli.py --help 显示两个参数，train 和 chat
 python cli.py --help shows two flags, train and chat.
 
 233
-00:14:07,482 --> 00:14:11,343
+00:14:07,481 --> 00:14:11,342
 负责训练的客户端在 us-central1 创建微调任务
 The train client creates tuning jobs in us-central1.
 
 234
-00:14:11,663 --> 00:14:16,329
+00:14:11,662 --> 00:14:16,328
 负责聊天的客户端调用多区域 us 里的微调后的模型
 The chat client calls the tuned model in the multi-region location us,
 
 235
-00:14:16,329 --> 00:14:17,929
+00:14:16,328 --> 00:14:17,928
 用的是它自己的地址
 at its own address.
 
 236
-00:14:18,066 --> 00:14:22,186
+00:14:18,065 --> 00:14:22,185
 这个 train 函数把你 bucket 里的文件包装成微调数据集
 The train function wraps your bucket files as tuning datasets,
 
 237
-00:14:22,186 --> 00:14:25,575
+00:14:22,185 --> 00:14:25,574
 要求跑一个 epoch，adapter 大小为 4
 and asks for one epoch and an adapter of size four.
 
 238
-00:14:25,895 --> 00:14:29,579
+00:14:25,894 --> 00:14:29,578
 按我们的理解，这就是那个思路的 Google 托管版本
 By our reading, that's Google's managed version of the idea
 
 239
-00:14:29,579 --> 00:14:31,179
+00:14:29,578 --> 00:14:31,178
 你会在第二部分亲手搭建
 you'll build in part 2.
 
 240
-00:14:31,399 --> 00:14:33,021
+00:14:31,398 --> 00:14:33,020
 一次调用就启动了这个任务
 One call starts the job.
 
 241
-00:14:33,266 --> 00:14:39,026
+00:14:33,265 --> 00:14:39,025
 微调模型那一节的第 1 步：python cli.py --train
 Step 1 of the fine-tune model section: python cli.py --train.
 
 242
-00:14:39,346 --> 00:14:41,650
+00:14:39,345 --> 00:14:41,649
 实验性警告没有关系
 The experimental warning is harmless.
 
 243
-00:14:41,970 --> 00:14:44,765
+00:14:41,969 --> 00:14:44,764
 然后是缺少密钥：没有创建任务
 Then the missing key: no job was created.
 
 244
-00:14:45,000 --> 00:14:48,011
+00:14:44,999 --> 00:14:48,009
 有密钥的话，要找的是 Training job started
 With a key, look for Training job started,
 
 245
-00:14:48,011 --> 00:14:49,875
+00:14:48,009 --> 00:14:49,873
 一个在 us-central1 的任务名
 a job name in us-central1,
 
 246
-00:14:49,875 --> 00:14:52,957
+00:14:49,873 --> 00:14:52,956
 一分钟后还有 Tuned model info: None
 and after a minute, Tuned model info: None.
 
 247
-00:14:53,277 --> 00:14:56,183
+00:14:53,276 --> 00:14:56,181
 这里 main 调用 train 时把 wait for job 设为 false
 Main calls train with wait_for_job=False,
 
 248
-00:14:56,183 --> 00:15:01,555
+00:14:56,181 --> 00:15:01,554
 所以这条命令交了任务就走，就像在干洗店拿一张取衣单
 so the command hands in the job and leaves, like a ticket at the dry cleaner.
 
 249
-00:15:01,875 --> 00:15:06,013
+00:15:01,874 --> 00:15:06,012
 暂停之前，先看价格表，不到一分钟就会出现
 Before you pause, watch the cost table, coming up in under a minute;
 
 250
-00:15:06,013 --> 00:15:08,082
+00:15:06,012 --> 00:15:08,081
 然后再回来启动你的任务
 then come back and start your job.
 
 251
-00:15:10,316 --> 00:15:13,915
+00:15:10,315 --> 00:15:13,914
 训练需要的显存比笔记本多得多
 Training needs far more GPU memory than a laptop has;
 
 252
-00:15:13,915 --> 00:15:15,884
+00:15:13,914 --> 00:15:15,883
 在这里，那是 Google 要操心的事
 here that's Google's problem.
 
 253
-00:15:16,204 --> 00:15:20,230
+00:15:16,203 --> 00:15:20,229
 第 2 步：在控制台里盯着这个任务，直到它显示 succeeded
 Step 2: watch the job in the console until it says succeeded,
 
 254
-00:15:20,230 --> 00:15:22,540
+00:15:20,229 --> 00:15:22,539
 并且有了微调后的模型和一个 endpoint
 with a tuned model and an endpoint.
 
 255
-00:15:22,783 --> 00:15:24,383
+00:15:22,782 --> 00:15:24,382
 暂停一下，想一个问题
 A question to pause on.
 
 256
-00:15:33,183 --> 00:15:37,620
+00:15:33,182 --> 00:15:37,619
 在 Google 位于 us-central1 的硬件上，直接读取你的 bucket
 On Google's hardware in us-central1, reading your bucket directly.
 
 257
-00:15:37,940 --> 00:15:41,994
+00:15:37,939 --> 00:15:41,993
 删掉 container 不会丢任何东西：它只是提交了任务
 Deleting the container loses nothing: it only submitted the job.
 
 258
-00:15:43,933 --> 00:15:46,856
+00:15:43,932 --> 00:15:46,855
 费用那一节的第 1 步：README 里的价格表
 Step 1 of the cost section: the README's table.
 
 259
-00:15:47,176 --> 00:15:50,955
+00:15:47,175 --> 00:15:50,953
 按每千个 token 0.008 美元算
 At $0.008 per thousand tokens,
 
 260
-00:15:50,955 --> 00:15:55,364
+00:15:50,953 --> 00:15:55,362
 16444 个文档跑 3 个 epoch
 16,444 documents over 3 epochs come
 
 261
-00:15:55,364 --> 00:15:58,764
+00:15:55,362 --> 00:15:58,763
 一共 112.73 美元
 to $112.73; the table calls
 
 262
-00:15:58,764 --> 00:16:01,661
+00:15:58,763 --> 00:16:01,660
 表里说这数据太多了
 that way too much data.
 
 263
-00:16:01,981 --> 00:16:05,053
+00:16:01,980 --> 00:16:05,052
 88 个文档大约 57 美分
 88 documents cost about 57 cents.
 
 264
-00:16:05,300 --> 00:16:10,659
+00:16:05,299 --> 00:16:10,658
 一个小疏漏：这张表算的是 Gemini 1.5 Flash 跑 3 个 epoch
 A small slip: the table prices Gemini 1.5 Flash for 3 epochs,
 
 265
-00:16:10,659 --> 00:16:14,964
+00:16:10,658 --> 00:16:14,963
 而代码微调的是 Gemini 3.1 Flash Lite，跑 1 个
 while the code tunes Gemini 3.1 Flash Lite for 1.
 
 266
-00:16:15,284 --> 00:16:19,614
+00:16:15,283 --> 00:16:19,613
 这些数字就当是过时的，去看 README 链接的价格页面
 Treat these numbers as stale and check the pricing page the README links.
 
 267
-00:16:19,850 --> 00:16:22,282
+00:16:19,849 --> 00:16:22,281
 聊天之前，还有一个额外的修改
 Before you chat, one more extra edit.
 
 268
-00:16:22,602 --> 00:16:26,421
+00:16:22,601 --> 00:16:26,420
 第 107 行写的还是授课老师的 endpoint
 Line 107 still holds the instructor's endpoint.
 
 269
-00:16:26,741 --> 00:16:29,023
+00:16:26,740 --> 00:16:29,022
 从控制台复制你自己的
 Copy yours from the console:
 
 270
-00:16:29,023 --> 00:16:33,098
+00:16:29,022 --> 00:16:33,097
 一个以 locations、us、endpoints 和一个 ID 结尾的路径
 a path ending in locations/us/endpoints and an ID.
 
 271
-00:16:33,418 --> 00:16:34,418
+00:16:33,417 --> 00:16:34,417
 把它贴到那里
 Paste it there;
 
 272
-00:16:34,418 --> 00:16:38,794
+00:16:34,417 --> 00:16:38,793
 否则 chat 会指向授课老师的 endpoint，你的密钥访问不了
 otherwise chat points at the instructor's endpoint, which your key can't reach.
 
 273
-00:16:39,033 --> 00:16:42,596
+00:16:39,032 --> 00:16:42,595
 第 2 步：python cli.py --chat
 Step 2: python cli.py --chat.
 
 274
-00:16:42,916 --> 00:16:44,305
+00:16:42,915 --> 00:16:44,304
 它会打印它的问题
 It prints its question,
 
 275
-00:16:44,305 --> 00:16:47,929
+00:16:44,304 --> 00:16:47,928
 “希腊的奶酪是怎么做的，用授课老师的方式回答”
 how is cheese made in Greece, answered the instructor's way.
 
 276
-00:16:48,249 --> 00:16:52,494
+00:16:48,248 --> 00:16:52,493
 然后打印部署区域 us，还有同样的缺少密钥
 Then it prints the serving location, us, and the same missing key.
 
 277
-00:16:52,814 --> 00:16:55,332
+00:16:52,813 --> 00:16:55,331
 暂停一下，填好你的 endpoint 之后跑一遍
 Pause and run it once your endpoint is in.
 
 278
-00:16:57,566 --> 00:17:01,808
+00:16:57,565 --> 00:17:01,807
 README 展示了一个能用的 endpoint 对一个旧问题的回答
 The README shows a working endpoint's answer to an older question:
 
 279
-00:17:01,808 --> 00:17:03,408
+00:17:01,807 --> 00:17:03,407
 开场白同样是 Yello
 the same Yello opener.
 
 280
-00:17:03,625 --> 00:17:05,225
+00:17:03,624 --> 00:17:05,224
 你的回答会不一样
 Your answer will differ.
 
 281
-00:17:05,316 --> 00:17:08,702
+00:17:05,315 --> 00:17:08,700
 第 3 步是托管的演示，可选。第 4 步
 Step 3, the hosted demo, is optional. Step 4:
 
 282
-00:17:08,702 --> 00:17:14,383
+00:17:08,700 --> 00:17:14,382
 控制台的训练监控会显示你这次任务的 loss 曲线和数据分布
 the console's training monitor shows your job's loss curves and its data distribution.
 
 283
-00:17:14,633 --> 00:17:18,330
+00:17:14,632 --> 00:17:18,328
 这就是路线 A：教师模型写数据，Google 跑任务
 That's track A: a teacher wrote the data, Google ran the job,
 
 284
-00:17:18,330 --> 00:17:20,329
+00:17:18,328 --> 00:17:20,328
 你有一个 endpoint 可以调用
 and you have an endpoint to call.
 
 285
-00:17:20,649 --> 00:17:22,548
+00:17:20,648 --> 00:17:22,547
 而你一个权重都没见过
 And you never saw a single weight.
 
 286
-00:17:22,868 --> 00:17:25,236
+00:17:22,867 --> 00:17:25,235
 第二部分，权重就在你自己手里了
 In part 2, the weights are in your hands.

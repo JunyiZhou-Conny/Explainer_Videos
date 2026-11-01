@@ -33,7 +33,7 @@ S10:
   - null
 - en: "Section 3 pins transformers, bitsandbytes and trl, and removes torchao, which, the notebook notes, makes peft refuse to add LoRA layers."
   zh:
-  - "第 3 节 pin 住 transformers、bitsandbytes 和 trl，并卸载 torchao；notebook 里说，有它在的话 peft 不肯添加 LoRA 层。"
+  - "第 3 节 pin 住 transformers、bitsandbytes 和 trl，并卸载 torchao，notebook 里说，有它在的话 peft 不肯添加 LoRA 层。"
 - en: "Section 4 needs a free Hugging Face token: on the Hugging Face website, open Settings, then Access Tokens, make a read token, and save it in Colab secrets as HF token. Section 5 imports the libraries, prints the versions, at the time of recording torch 2.11 and transformers 5.16, and mounts your Drive. Section 6 caches both models there. Pause and run part A."
   zh:
   - "第 4 节需要一个免费的 Hugging Face token：在 Hugging Face 网站上打开 Settings，再点 Access Tokens，建一个只读的 token，存进 Colab 的 Secrets，命名为 HF token。"
@@ -109,8 +109,8 @@ S11:
 S12:
 - en: "Part C, step 1, loads the real student, Qwen3 0.6B, with the same 4-bit recipe. Then prepare model for k-bit training freezes every weight and turns on gradient checkpointing, a memory trick the training chapter shows."
   zh:
-  - "Part C 的第 1 步用同样的 4 位配方，加载真正的学生模型 Qwen3 0.6B。"
-  - "接着 prepare model for k-bit training：冻结所有权重，并打开梯度检查点，这是一个省显存的技巧，训练那一章会讲。"
+  - "Part C 的第 1 步加载真正的学生模型，Qwen3 0.6B，用的是同样的 4 位配方。"
+  - "接着 prepare model for k-bit training 冻结所有权重，并打开梯度检查点，这是一个省显存的技巧，训练那一章会讲。"
   en_display:
   - null
   - "Then prepare_model_for_kbit_training freezes every weight and turns on gradient checkpointing, a memory trick the training chapter shows."
@@ -253,7 +253,7 @@ S15:
   zh:
   - "有效吗？"
   - "第 5.1 节来衡量。"
-  - "困惑度就是平均每个 token 的 loss 取指数，大致相当于：模型在多少个等可能的下一个 token 里做选择。"
+  - "困惑度就是平均每个 token 的 loss 取指数：大致相当于模型在多少个等可能的下一个 token 里做选择。"
 - en: "On 100 test examples, 30,681 tokens, the base model has a loss of 2.65 and a perplexity of 14.15. The fine-tuned model: 1.39, and a perplexity of 4."
   zh:
   - "在 100 个测试样本、30681 个 token 上，基座模型的 loss 是 2.65，困惑度 14.15。"
@@ -284,7 +284,7 @@ S15:
 - en: "5.2 compares answers. Both cheese answers now open with welcome welcome welcome, cheese lovers, in the instructor's voice. And the sky: the voice transferred, the physics did not. Pause, and run section 5."
   zh:
   - "第 5.2 节比较回答。"
-  - "两个奶酪问题的回答现在都用授课老师的口吻开头：welcome welcome welcome, cheese lovers。"
+  - "两个奶酪问题的回答现在都以 welcome welcome welcome, cheese lovers 开头，用的是授课老师的口吻。"
   - "再看天空：口吻学过去了，物理没有。"
   - "暂停一下，跑完第 5 节。"
 - en: "Two kind notes. In this comparison the base is a fresh 16-bit model, not the 4-bit one from the table, so the baselines differ. And the lecture shows LoRA matching full fine-tuning on a published benchmark; this notebook measures style fit, not answer quality."

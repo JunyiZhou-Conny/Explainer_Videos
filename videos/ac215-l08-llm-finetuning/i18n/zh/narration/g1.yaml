@@ -67,7 +67,7 @@ S02:
   - "这两种都不碰模型本身。"
 - en: "Fine-tuning turns the third dial: it changes the weights, by showing the model many examples of an input and the output you want. In this course that usually means instruction fine-tuning: pairs of an instruction and its answer. A persona is a task-specific fine-tune."
   zh:
-  - "微调转的是第三个旋钮：它改的是权重，办法是给模型看大量的例子，每个例子是一个输入加上你想要的输出。"
+  - "微调转的是第三个旋钮：它改的是权重，办法是给模型看，大量由一个输入和你想要的输出组成的例子。"
   - "在这门课里，通常指的是指令微调：一条指令和它的回答，成对出现。"
   - "人设属于针对特定任务的微调。"
 - en: "Compare a model that was never instruction-tuned. The notebook gives OPT 350m the words, hello, my cheese name is. It simply keeps going: my cheese name is cheese, I'm not sure if you're joking or not."

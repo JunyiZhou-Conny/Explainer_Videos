@@ -29,19 +29,19 @@ Then: Runtime, Change runtime type, and pick a GPU.
 A free T4 is enough.
 
 7
-00:00:21,150 --> 00:00:25,641
+00:00:21,150 --> 00:00:24,899
 第 3 节 pin 住 transformers、bitsandbytes 和 trl
-Section 3 pins transformers, bitsandbytes and trl, and removes
+Section 3 pins transformers, bitsandbytes and trl,
 
 8
-00:00:25,641 --> 00:00:26,928
-并卸载 torchao
-torchao, which,
+00:00:24,899 --> 00:00:28,424
+并卸载 torchao，notebook 里说
+and removes torchao, which, the notebook notes,
 
 9
-00:00:26,928 --> 00:00:31,198
-notebook 里说，有它在的话 peft 不肯添加 LoRA 层
-the notebook notes, makes peft refuse to add LoRA layers.
+00:00:28,424 --> 00:00:31,198
+有它在的话 peft 不肯添加 LoRA 层
+makes peft refuse to add LoRA layers.
 
 10
 00:00:31,433 --> 00:00:34,918
@@ -325,815 +325,810 @@ and the win is memory, not speed.
 
 66
 00:04:38,817 --> 00:04:42,411
-Part C 的第 1 步用同样的 4 位配方
+Part C 的第 1 步加载真正的学生模型
 Part C, step 1, loads the real student,
 
 67
 00:04:42,411 --> 00:04:46,006
-加载真正的学生模型 Qwen3 0.6B
+Qwen3 0.6B，用的是同样的 4 位配方
 Qwen3 0.6B, with the same 4-bit recipe.
 
 68
-00:04:46,326 --> 00:04:49,974
-接着 prepare model for k-bit training
+00:04:46,326 --> 00:04:49,947
+接着 prepare model for k-bit training 冻结所有权重
 Then prepare_model_for_kbit_training freezes every weight
 
 69
-00:04:49,974 --> 00:04:52,278
-冻结所有权重，并打开梯度检查点
-and turns on gradient checkpointing,
+00:04:49,947 --> 00:04:54,966
+并打开梯度检查点，这是一个省显存的技巧，训练那一章会讲
+and turns on gradient checkpointing, a memory trick the training chapter shows.
 
 70
-00:04:52,278 --> 00:04:54,966
-这是一个省显存的技巧，训练那一章会讲
-a memory trick the training chapter shows.
-
-71
 00:04:55,200 --> 00:05:01,024
 第 2.1 节数参数：3.758 亿
 Section 2.1 counts the parameters: 375.8 million.
 
-72
+71
 00:05:01,344 --> 00:05:06,016
 可 Qwen3 0.6B 有 5.96 亿
 But Qwen3 0.6B has 596 million.
 
-73
+72
 00:05:14,850 --> 00:05:18,066
 线性层里的 4.4 亿个权重
 The 440 million weights in linear layers
 
-74
+73
 00:05:18,066 --> 00:05:23,533
 每两个 4 位的值打包进一个字节，所以只算 2.2 亿
 are packed two 4-bit values to a byte, so they count as 220 million.
 
-75
+74
 00:05:23,853 --> 00:05:29,783
 1.556 亿个 embedding 权重和归一化层都没有量化
 The 155.6 million embedding weights and the norms are not quantized.
 
-76
+75
 00:05:30,103 --> 00:05:33,602
 加起来：3.758 亿
 Add them up: 375.8 million.
 
-77
+76
 00:05:33,922 --> 00:05:37,677
 配置在 2.2 里，确认用的是 NF4
 The configuration, in 2.2, confirms NF4.
 
-78
+77
 00:05:37,917 --> 00:05:42,653
 在 2.3 里，基座模型续写一句话，写着写着就跑题了
 In 2.3 the base model continues a sentence, and it drifts off topic.
 
-79
+78
 00:05:42,973 --> 00:05:46,429
 然后 2.4 数可训练参数：0 个
 And 2.4 counts trainable parameters: zero.
 
-80
+79
 00:05:46,749 --> 00:05:48,349
 全都冻结了
 Everything is frozen.
 
-81
+80
 00:05:49,200 --> 00:05:51,696
 这个 notebook 的第 3 步准备数据
 The notebook's step 3 prepares the data.
 
-82
+81
 00:05:52,016 --> 00:05:56,603
 它下载一个 23 MB 的文件，从中抽取 1000 组问答
 It downloads a 23 megabyte file and samples 1,000 pairs.
 
-83
+82
 00:05:56,923 --> 00:06:00,549
 看一行：contents，user 这一轮，model 这一轮
 Look at a row: contents, a user turn, a model turn.
 
-84
+83
 00:06:00,869 --> 00:06:05,243
 这和路线 A 的格式一模一样：第一部分的那块砖，到了这里
 It's exactly the format of track A: the brick from part 1 arrives here.
 
-85
+84
 00:06:05,484 --> 00:06:09,918
 第 3.5 节让 tokenizer 写出 Qwen 的聊天模板
 Section 3.5 lets the tokenizer write Qwen's chat template:
 
-86
+85
 00:06:09,918 --> 00:06:14,964
 im start user，问题，im end，im start assistant
 <|im_start|>user, the question, <|im_end|>, <|im_start|>assistant,
 
-87
+86
 00:06:14,964 --> 00:06:17,793
 一个空的 think 块，然后是回答
 an empty think block, and the answer.
 
-88
+87
 00:06:18,113 --> 00:06:22,233
 空的 think 块就是 Qwen3 不思考、直接回答的方式
 The empty think block is how Qwen3 answers without thinking,
 
-89
+88
 00:06:22,233 --> 00:06:24,705
 之后聊天也用同样的前缀
 and chat uses the same prefix later.
 
-90
+89
 00:06:24,950 --> 00:06:33,185
 第 3.6 节分出 900 个训练、100 个测试，3.7 检查一个样本
 Section 3.6 splits 900 for training and 100 for testing, and 3.7 checks one example.
 
-91
+90
 00:06:33,505 --> 00:06:35,573
 然后这条带子变成整数
 Then the ribbon becomes integers,
 
-92
+91
 00:06:35,573 --> 00:06:39,585
 这个 loss 覆盖每一个 token，连问题和模板也算在内
 and the loss covers every token, question and template included.
 
-93
+92
 00:06:39,905 --> 00:06:41,761
 说到底还是预测下一个词
 It's still next-word prediction.
 
-94
+93
 00:06:42,081 --> 00:06:44,214
 暂停一下，把第 1 到第 3 步跑一遍
 Pause, and run steps 1 to 3.
 
-95
+94
 00:06:47,550 --> 00:06:52,073
 参数高效微调只训练一小部分，其余的冻结
 Parameter-efficient fine-tuning trains a small part and freezes the rest.
 
-96
+95
 00:06:52,393 --> 00:06:58,814
 课上把这些方法分成三大类：加性、选择性和重参数化
 The lecture sorts the methods into three families: additive, selective and reparameterization.
 
-97
+96
 00:06:59,134 --> 00:07:01,459
 LoRA 属于重参数化
 LoRA is a reparameterization.
 
-98
+97
 00:07:01,700 --> 00:07:03,015
 先从小的说起
 Start small.
 
-99
+98
 00:07:03,065 --> 00:07:06,095
 一个 5 乘 5 的矩阵有 25 个数
 A 5 by 5 matrix has 25 numbers.
 
-100
+99
 00:07:06,415 --> 00:07:09,543
 一个 5 乘 1 的列乘以一个 1 乘 5 的行
 A 5 by 1 column times a 1 by 5 row
 
-101
+100
 00:07:09,543 --> 00:07:14,052
 也能得到 5 乘 5 的矩阵，只用 10 个数
 also makes a 5 by 5 matrix, from only 10 numbers.
 
-102
+101
 00:07:14,372 --> 00:07:16,804
 这就是秩为 1；秩为 2 需要 20 个
 That's rank 1; rank 2 needs 20.
 
-103
+102
 00:07:17,124 --> 00:07:19,215
 在这个尺寸上，几乎省不了什么
 At this size it's barely a saving.
 
-104
+103
 00:07:19,450 --> 00:07:21,242
 到了真实尺寸，就不一样了
 At real size it's different.
 
-105
+104
 00:07:21,562 --> 00:07:28,751
 Qwen 的 query 投影，是 2048 乘 1024 的矩阵：200 多万个数
 Qwen's query projection is a 2,048 by 1,024 matrix: over 2 million numbers.
 
-106
+105
 00:07:29,071 --> 00:07:32,599
 秩为 8 的一对细条
 A rank 8 pair of strips,
 
-107
+106
 00:07:32,599 --> 00:07:38,479
 2048 乘 8 和 8 乘 1024，一共 24576 个数
 2,048 by 8 and 8 by 1,024, holds 24,576.
 
-108
+107
 00:07:40,717 --> 00:07:43,704
 所以 LoRA 分解的是更新量，不是权重
 So LoRA decomposes the update, not the weights.
 
-109
+108
 00:07:44,024 --> 00:07:47,052
 新的这一层，就是冻结的 W₀
 The new layer is the frozen W₀,
 
-110
+109
 00:07:47,052 --> 00:07:49,592
 加上 alpha 除以 r，再乘以 B 乘 A
 plus α/r, times B times A.
 
-111
+110
 00:07:49,912 --> 00:07:51,725
 只训练 B 和 A
 Only B and A are trained.
 
-112
+111
 00:07:51,967 --> 00:07:54,399
 B 从 0 开始，A 随机初始化
 B starts at zero and A at random.
 
-113
+112
 00:07:54,719 --> 00:08:00,351
 课上从正态分布里取 A；这个库用的是均匀分布
 The lecture draws A from a normal distribution; the library uses a uniform one.
 
-114
+113
 00:08:00,671 --> 00:08:04,319
 关键是 B 乘 A 一开始正好是 0
 What matters is that B times A starts at exactly zero,
 
-115
+114
 00:08:04,319 --> 00:08:07,562
 所以第 0 步的模型就是预训练的那个
 so at step zero the model is the pretrained one.
 
-116
+115
 00:08:07,882 --> 00:08:09,716
 两个分支的输出相加
 Both branches' outputs add.
 
-117
+116
 00:08:09,950 --> 00:08:15,280
 接下来是 notebook 的第 4 步，LoRA 配置：alpha 16，秩 8
 Now the notebook's step 4, the LoRA config: alpha 16 and rank 8,
 
-118
+117
 00:08:15,280 --> 00:08:21,193
 所以更新量缩放 2 倍，再加上 0.1 的 dropout 做正则化
 so the update is scaled by 2, plus a dropout of 0.1 for regularization.
 
-119
+118
 00:08:21,513 --> 00:08:23,113
 暂停一下，跑一遍
 Pause and run it.
 
-120
+119
 00:08:24,900 --> 00:08:26,237
 哪些层？
 Which layers?
 
-121
+120
 00:08:26,287 --> 00:08:29,962
 配置里没有写 target modules。所以对 Qwen3
 The config names no target_modules. So for Qwen3,
 
-122
+121
 00:08:29,962 --> 00:08:34,869
 PEFT 库的默认设置改的是 query 投影和 value 投影
 the PEFT library's default adapts the query and value projections:
 
-123
+122
 00:08:34,869 --> 00:08:38,660
 28 层里每一层七个矩阵中的两个
 two of the seven matrices in each of the 28 blocks.
 
-124
+123
 00:08:38,980 --> 00:08:46,511
 也就是每层 40960 个，一共 1146880 个
 That's 40,960 per block, 1,146,880 in all.
 
-125
+124
 00:08:46,750 --> 00:08:50,381
 课上的表把整个模型当成一个方形的层
 The lecture's table treats a whole model as one square layer;
 
-126
+125
 00:08:50,381 --> 00:08:52,702
 真实的数量取决于这些形状
 the real count depends on these shapes.
 
-127
+126
 00:08:53,022 --> 00:08:54,622
 现在，你自己试试
 Now, try it yourself.
 
-128
+127
 00:09:03,333 --> 00:09:09,157
 秩为 16 会翻倍，变成 2293760
 Rank 16 doubles it, to 2,293,760.
 
-129
+128
 00:09:09,477 --> 00:09:15,621
 七个投影矩阵全用秩 8，是 5046272
 All seven projections at rank 8 give 5,046,272.
 
-130
+129
 00:09:15,941 --> 00:09:19,489
 秩越大，容量越大，代价是更多的显存和时间
 More rank buys capacity at more memory and time;
 
-131
+130
 00:09:19,489 --> 00:09:23,258
 做人设的话，两个投影矩阵上用秩 8 就够了
 for a persona, rank 8 on two projections is plenty.
 
-132
+131
 00:09:23,578 --> 00:09:26,821
 要试的话，先在 1.3 重新加载模型
 To try it, reload the model in 1.3 first.
 
-133
+132
 00:09:28,167 --> 00:09:32,156
 回到显存柱，按 Qwen 的大小，用我们自己的估算
 Back to the memory column, at Qwen's size, by our own estimate.
 
-134
+133
 00:09:32,476 --> 00:09:37,069
 全参数微调大约要 7 GB，还没算激活值
 Full fine-tuning would need about 7 gigabytes before activations;
 
-135
+134
 00:09:37,069 --> 00:09:39,260
 这个 notebook 的 QLoRA，不到 1 GB
 this notebook's QLoRA, under 1.
 
-136
+135
 00:09:39,580 --> 00:09:44,722
 参数只有 6 亿的话，就算全参数微调，也放得进一块 T4
 At 0.6 billion parameters, even full fine-tuning would fit a T4.
 
-137
+136
 00:09:45,042 --> 00:09:46,303
 这套配方之所以重要
 The recipe matters
 
-138
+137
 00:09:46,303 --> 00:09:49,458
 是因为同一个 notebook 能扩展到放不进去的模型
 because the same notebook scales to models that wouldn't.
 
-139
+138
 00:09:50,700 --> 00:09:53,308
 剩下的显存给了激活值
 The rest of the memory goes to activations,
 
-140
+139
 00:09:53,308 --> 00:09:58,039
 也就是每一层在前向时算出来的值，留给反向传播用
 the values each layer computes on the way forward, kept for the backward pass.
 
-141
+140
 00:09:58,359 --> 00:10:00,896
 梯度检查点只保留少数几个
 Gradient checkpointing keeps only a few
 
-142
+141
 00:10:00,896 --> 00:10:04,994
 其余的在需要时重新计算：用计算换显存
 and recomputes the rest when needed: compute traded for memory.
 
-143
+142
 00:10:05,234 --> 00:10:08,093
 第 4.2 节，训练参数
 Section 4.2, the training arguments.
 
-144
+143
 00:10:08,413 --> 00:10:12,893
 序列最长 512 个 token，按长度分组
 Sequences are capped at 512 tokens and grouped by length:
 
-145
+144
 00:10:12,893 --> 00:10:18,631
 2 个 epoch，batch 大小为 4，学习率是 2 乘 10 的负 4 次方
 2 epochs, batches of 4, and a learning rate of 2 times 10 to the minus 4.
 
-146
+145
 00:10:18,951 --> 00:10:21,981
 优化器是分页的 32 位 Adam
 The optimizer is a paged 32-bit Adam.
 
-147
+146
 00:10:22,301 --> 00:10:27,293
 分页会在 GPU 显存满了的时候，把优化器状态挪到 CPU 内存里
 Paging moves optimizer state to CPU memory when the GPU fills up.
 
-148
+147
 00:10:27,613 --> 00:10:29,213
 我们的用不着
 Ours never needs to.
 
-149
+148
 00:10:31,350 --> 00:10:34,422
 然后打开 fp16，关掉 bf16
 Then fp16 on and bf16 off.
 
-150
+149
 00:10:34,742 --> 00:10:38,952
 BF16 保留了 FP32 的范围但精度低一些
 BF16 keeps the range of float 32 with less precision,
 
-151
+150
 00:10:38,952 --> 00:10:41,654
 课上做 QLoRA 用的就是它
 and the lecture uses it for QLoRA.
 
-152
+151
 00:10:41,974 --> 00:10:47,521
 T4 没有快速的 BF16，所以这个 notebook 用 FP16 计算
 The T4 has no fast BF16, so this notebook computes in FP16.
 
-153
+152
 00:10:47,767 --> 00:10:49,900
 第 4.3 节构建 trainer
 4.3 builds the trainer.
 
-154
+153
 00:10:50,220 --> 00:10:53,337
 这个 trainer 会把 adapter 转成 BF16
 The trainer turns the adapters into BF16,
 
-155
+154
 00:10:53,337 --> 00:10:59,116
 而 FP16 训练处理不了 BF16，所以这个单元格把它们转回 FP32
 which FP16 training cannot handle, so this cell casts them back to float 32.
 
-156
+155
 00:10:59,436 --> 00:11:03,756
 而且这个数字证实了我们的算术
 And the count confirms our arithmetic:
 
-157
+156
 00:11:03,756 --> 00:11:08,759
 1146880 个可训练参数，占 0.3%
 1,146,880 trainable parameters, 0.3 percent.
 
-158
+157
 00:11:09,000 --> 00:11:15,165
 在反向传播里，梯度会往下穿过 W₀，只有 B 和 A 被更新
 In the backward pass, the gradient flows down through W₀, and only B and A are updated.
 
-159
+158
 00:11:15,485 --> 00:11:20,819
 W₀ 在往下传的时候会用到；只是它得不到梯度，也不会被更新
 W₀ is used on the way down; it just gets no gradient and no update.
 
-160
+159
 00:11:21,067 --> 00:11:25,348
 第 4.4 节，训练：900 个样本，batch 大小为 4
 4.4, train: 900 examples in batches of 4
 
-161
+160
 00:11:25,348 --> 00:11:28,132
 跑 2 个 epoch，就是 450 步
 for 2 epochs is 450 steps,
 
-162
+161
 00:11:28,132 --> 00:11:33,163
 在保存的 A100 运行里用了 3 分 36 秒
 3 minutes and 36 seconds on the saved A100 run.
 
-163
+162
 00:11:33,483 --> 00:11:36,256
 这个 notebook 说，在 T4 上要 6 到 7 分钟
 The notebook says 6 to 7 minutes on a T4.
 
-164
+163
 00:11:36,576 --> 00:11:40,288
 这个 loss 从 2.0 降到了 1.35
 The loss falls from 2.0 to 1.35.
 
-165
+164
 00:11:40,608 --> 00:11:44,832
 还有第 4.5 节，TensorBoard 会在你自己的运行里显示这些曲线
 And 4.5, TensorBoard, shows these curves in your own run.
 
-166
+165
 00:11:45,152 --> 00:11:46,752
 暂停一下，开始训练
 Pause and train.
 
-167
+166
 00:11:49,650 --> 00:11:53,085
 有效吗？第 5.1 节来衡量
 Did it work? Section 5.1 measures it.
 
-168
+167
 00:11:53,405 --> 00:11:57,054
-困惑度就是平均每个 token 的 loss 取指数，大致相当于
+困惑度就是平均每个 token 的 loss 取指数
 Perplexity is the exponential of the average token loss:
 
-169
+168
 00:11:57,054 --> 00:12:01,746
-模型在多少个等可能的下一个 token 里做选择
+大致相当于模型在多少个等可能的下一个 token 里做选择
 roughly how many equally likely next tokens the model is choosing among.
 
-170
+169
 00:12:02,533 --> 00:12:06,797
 在 100 个测试样本、30681 个 token 上
 On 100 test examples, 30,681 tokens,
 
-171
+170
 00:12:06,797 --> 00:12:13,904
 基座模型的 loss 是 2.65，困惑度 14.15
 the base model has a loss of 2.65 and a perplexity of 14.15.
 
-172
+171
 00:12:14,224 --> 00:12:18,533
 微调后的模型：loss 1.39，困惑度 4
 The fine-tuned model: 1.39, and a perplexity of 4.
 
-173
+172
 00:12:18,783 --> 00:12:22,644
 基座那一行，就是同一个模型放在 disable adapter 里
 The base row is the same model inside disable_adapter().
 
-174
+173
 00:12:22,964 --> 00:12:29,386
 把 adapter 关掉，原来的 4 位模型就回来了，因为 W₀ 从来没变
 Switch the adapter off and the original model, in 4 bits, is back, because W₀ never changed.
 
-175
+174
 00:12:29,706 --> 00:12:35,898
 这正是课上讲灾难性遗忘时的要点，也就是学新本事时丢了旧本事
 That's the lecture's point about catastrophic forgetting, losing old skills while learning new ones:
 
-176
+175
 00:12:35,898 --> 00:12:38,623
 用 LoRA 的话，原来的模型只差一个开关
 with LoRA, the old model is one switch away.
 
-177
+176
 00:12:38,867 --> 00:12:42,430
 在保存的运行里，基座模型的每个回答都以 The 开头
 In the saved run, every base answer starts with the word The.
 
-178
+177
 00:12:42,750 --> 00:12:45,746
 微调后的回答以 welcome 或 Yello 开头
 The fine-tuned ones start with welcome or Yello,
 
-179
+178
 00:12:45,746 --> 00:12:47,806
 也就是它训练数据里的开场白
 the openers of its training data.
 
-180
+179
 00:12:48,126 --> 00:12:52,371
 那些柱子只是示意；实测的数字就在旁边
 Those bars are an illustration; the measured numbers sit beside them.
 
-181
+180
 00:12:52,617 --> 00:12:54,217
 这个下降衡量的是什么？
 What does the drop measure?
 
-182
+181
 00:12:54,430 --> 00:12:58,164
 这个 loss 算的是每一个 token，连问题和模板也算在内
 The loss counts every token, questions and template included.
 
-183
+182
 00:12:58,484 --> 00:13:03,817
 它说明这种风格是模型现在预期的，而不是它的回答更正确了
 It says this style is what the model now expects, not that its answers are more correct.
 
-184
+183
 00:13:04,067 --> 00:13:06,094
 第 5.2 节比较回答
 5.2 compares answers.
 
-185
+184
 00:13:06,414 --> 00:13:10,213
-两个奶酪问题的回答现在都用授课老师的口吻开头
+两个奶酪问题的回答现在都以 welcome welcome welcome
 Both cheese answers now open with welcome welcome welcome,
 
-186
+185
 00:13:10,213 --> 00:13:12,899
-welcome welcome welcome, cheese lovers
+cheese lovers 开头，用的是授课老师的口吻
 cheese lovers, in the instructor's voice.
 
-187
+186
 00:13:13,219 --> 00:13:16,547
 再看天空：口吻学过去了，物理没有
 And the sky: the voice transferred, the physics did not.
 
-188
+187
 00:13:16,867 --> 00:13:18,765
 暂停一下，跑完第 5 节
 Pause, and run section 5.
 
-189
+188
 00:13:21,000 --> 00:13:22,465
 两点友情提示
 Two kind notes.
 
-190
+189
 00:13:22,515 --> 00:13:25,944
 在这次比较里，基座是一个全新的 16 位模型
 In this comparison the base is a fresh 16-bit model,
 
-191
+190
 00:13:25,944 --> 00:13:29,768
 不是表里那个 4 位的，所以两个基线不一样
 not the 4-bit one from the table, so the baselines differ.
 
-192
+191
 00:13:30,088 --> 00:13:35,029
 另外，课上展示了 LoRA 在一个公开的基准测试上追平全参数微调
 And the lecture shows LoRA matching full fine-tuning on a published benchmark;
 
-193
+192
 00:13:35,029 --> 00:13:38,387
 这个 notebook 衡量的是风格契合度，不是回答质量
 this notebook measures style fit, not answer quality.
 
-194
+193
 00:13:40,233 --> 00:13:42,366
 这个 notebook 的第 6 步保存你的成果
 The notebook's step 6 saves your work.
 
-195
+194
 00:13:42,686 --> 00:13:50,260
 先存 adapter：1146880 个数，用 FP32 存大约 4.6 MB
 First the adapters: 1,146,880 numbers, about 4.6 megabytes in float 32,
 
-196
+195
 00:13:50,260 --> 00:13:54,420
 连同 tokenizer 一起存到你的 Drive
 saved to your Drive with the tokenizer.
 
-197
+196
 00:13:58,866 --> 00:14:00,160
 然后是合并
 Then the merge.
 
-198
+197
 00:14:00,210 --> 00:14:04,084
 这个 notebook 加载一份全新的 16 位基座副本
 The notebook loads a fresh 16-bit copy of the base and adds
 
-199
+198
 00:14:04,084 --> 00:14:05,684
 把 B 乘 A 加进去
 B times A into it.
 
-200
+199
 00:14:05,885 --> 00:14:11,111
 不是加进 4 位的权重里：在那里，更新量会被舍入回 16 个级别上
 Not into the 4-bit weights: there, the update would round back onto 16 levels.
 
-201
+200
 00:14:11,431 --> 00:14:14,503
 合并后的模型大约 1.2 GB
 The merged model is about 1.2 gigabytes.
 
-202
+201
 00:14:14,823 --> 00:14:17,743
 如果合并时报 torchao 的导入错误
 If the merge raises a torchao ImportError,
 
-203
+202
 00:14:17,743 --> 00:14:21,010
 就重新运行安装单元格，再重启会话
 rerun the install cell and restart the session.
 
-204
+203
 00:14:23,250 --> 00:14:26,130
 第 6.3 节可以把合并后的模型 push
 Section 6.3 can push the merged model
 
-205
+204
 00:14:26,130 --> 00:14:29,010
 到一个私有的 Hugging Face repo
 to a private Hugging Face repository.
 
-206
+205
 00:14:29,330 --> 00:14:31,152
 所以你可以交付三样东西
 So you can ship three things:
 
-207
+206
 00:14:31,152 --> 00:14:35,236
 一个离不开基座的 adapter，一个能独立运行的合并模型
 an adapter that needs its base, a merged model that stands alone,
 
-208
+207
 00:14:35,236 --> 00:14:38,503
 或者 Google 的 endpoint，权重不在你手里
 or Google's endpoint, with no weights in your hands.
 
-209
+208
 00:14:38,750 --> 00:14:44,723
 清理。退出 container，用 docker image rm 删掉两个 image
 Teardown. Exit the container and remove both images with docker image rm.
 
-210
+209
 00:14:45,043 --> 00:14:47,582
 删掉你的 bucket 里的数据集目录
 Delete the dataset folder in your bucket.
 
-211
+210
 00:14:47,902 --> 00:14:51,998
 微调后的模型和 endpoint 留到第 10 讲，之后再删掉
 Keep the tuned model and endpoint for lecture 10, then delete them.
 
-212
+211
 00:14:52,318 --> 00:14:57,502
 删掉没用的服务账号密钥，再断开并删除 Colab 运行时
 Delete unused service account keys, and disconnect and delete the Colab runtime.
 
-213
+212
 00:14:57,822 --> 00:14:59,422
 暂停一下，把它们都清理掉
 Pause, and tear down.
 
-214
+213
 00:15:01,433 --> 00:15:02,940
 回顾一下
 Here's where we are.
 
-215
+214
 00:15:02,990 --> 00:15:05,358
 改 prompt 和做检索，变的是输入
 Prompts and retrieval change the input;
 
-216
+215
 00:15:05,358 --> 00:15:09,668
 微调变的是权重，而这里它教会的是口吻，不是事实
 fine-tuning changes the weights, and here it taught a voice, not facts.
 
-217
+216
 00:15:09,988 --> 00:15:14,062
 路线 A 里，教师模型写数据，Google 微调模型
 In track A, a teacher wrote the data and Google tuned the model.
 
-218
+217
 00:15:14,382 --> 00:15:17,610
 路线 B 里，QLoRA 冻结了一个 4 位的基座
 In track B, QLoRA froze a 4-bit base
 
-219
+218
 00:15:17,610 --> 00:15:23,257
 只训练两个细细的矩阵：120、40，再到 12 GB
 and trained two thin matrices: 120, then 40, then 12 gigabytes.
 
-220
+219
 00:15:27,100 --> 00:15:29,105
 五道题，自测一下
 Five questions to test yourself.
 
-221
+220
 00:15:29,425 --> 00:15:32,049
 这次微调改变了什么，没改变什么？
 What did this fine-tune change, and what not?
 
-222
+221
 00:15:32,369 --> 00:15:35,207
 为什么 generate 在没有密钥时退出码也是 0？
 Why did generate exit zero without a key?
 
-223
+222
 00:15:35,527 --> 00:15:38,535
 一组问答在变成模板的路上，要经过哪些形状？
 Which shapes does one pair take on its way to the template?
 
-224
+223
 00:15:38,855 --> 00:15:41,850
 为什么 train 打印出来的是：Tuned model info: None？
 Why does train print Tuned model info: None?
 
-225
+224
 00:15:41,900 --> 00:15:46,748
 还有，1146880 是怎么来的？
 And where does 1,146,880 come from?
 
-226
+225
 00:15:49,983 --> 00:15:51,847
 接下来，第 9 讲测试代码
 Next, lecture 9 tests code,
 
-227
+226
 00:15:51,847 --> 00:15:54,954
 第 10 讲会有一个应用调用你的 endpoint
 and in lecture 10 an app calls your endpoint.
 
-228
+227
 00:15:55,274 --> 00:15:59,114
 学习指南和练习都在 MLOps Learning 里
 The study guide and the exercises are in MLOps_Learning.

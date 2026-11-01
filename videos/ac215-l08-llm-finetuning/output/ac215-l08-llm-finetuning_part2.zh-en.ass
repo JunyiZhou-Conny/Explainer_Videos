@@ -18,9 +18,9 @@ Dialogue: 0,0:00:05.16,0:00:08.85,Bilingual,,0,0,0,,从这一讲的 Ed 课程页
 Dialogue: 0,0:00:09.17,0:00:13.31,Bilingual,,0,0,0,,先点 File，再点 Save a copy in Drive；原版是只读的\N{\fs33\c&H00C8C0B8&\bord1.4}First: File, Save a copy in Drive; the original is view-only.
 Dialogue: 0,0:00:13.63,0:00:17.47,Bilingual,,0,0,0,,然后点 Runtime，再点 Change runtime type，选一个 GPU\N{\fs33\c&H00C8C0B8&\bord1.4}Then: Runtime, Change runtime type, and pick a GPU.
 Dialogue: 0,0:00:17.79,0:00:19.41,Bilingual,,0,0,0,,免费的 T4 就够了\N{\fs33\c&H00C8C0B8&\bord1.4}A free T4 is enough.
-Dialogue: 0,0:00:21.15,0:00:25.64,Bilingual,,0,0,0,,第 3 节 pin 住 transformers、bitsandbytes 和 trl\N{\fs33\c&H00C8C0B8&\bord1.4}Section 3 pins transformers, bitsandbytes and trl, and removes
-Dialogue: 0,0:00:25.64,0:00:26.93,Bilingual,,0,0,0,,并卸载 torchao\N{\fs33\c&H00C8C0B8&\bord1.4}torchao, which,
-Dialogue: 0,0:00:26.93,0:00:31.20,Bilingual,,0,0,0,,notebook 里说，有它在的话 peft 不肯添加 LoRA 层\N{\fs33\c&H00C8C0B8&\bord1.4}the notebook notes, makes peft refuse to add LoRA layers.
+Dialogue: 0,0:00:21.15,0:00:24.90,Bilingual,,0,0,0,,第 3 节 pin 住 transformers、bitsandbytes 和 trl\N{\fs33\c&H00C8C0B8&\bord1.4}Section 3 pins transformers, bitsandbytes and trl,
+Dialogue: 0,0:00:24.90,0:00:28.42,Bilingual,,0,0,0,,并卸载 torchao，notebook 里说\N{\fs33\c&H00C8C0B8&\bord1.4}and removes torchao, which, the notebook notes,
+Dialogue: 0,0:00:28.42,0:00:31.20,Bilingual,,0,0,0,,有它在的话 peft 不肯添加 LoRA 层\N{\fs33\c&H00C8C0B8&\bord1.4}makes peft refuse to add LoRA layers.
 Dialogue: 0,0:00:31.43,0:00:34.92,Bilingual,,0,0,0,,第 4 节需要一个免费的 Hugging Face token\N{\fs33\c&H00C8C0B8&\bord1.4}Section 4 needs a free Hugging Face token:
 Dialogue: 0,0:00:34.92,0:00:37.66,Bilingual,,0,0,0,,在 Hugging Face 网站上打开 Settings\N{\fs33\c&H00C8C0B8&\bord1.4}on huggingface.co, open Settings,
 Dialogue: 0,0:00:37.66,0:00:40.81,Bilingual,,0,0,0,,再点 Access Tokens，建一个只读的 token\N{\fs33\c&H00C8C0B8&\bord1.4}then Access Tokens, make a read token,
@@ -77,11 +77,10 @@ Dialogue: 0,0:04:20.65,0:04:24.95,Bilingual,,0,0,0,,第 2 节生成我们前面�
 Dialogue: 0,0:04:25.27,0:04:26.97,Bilingual,,0,0,0,,暂停一下，跑完 Part B\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and run part B.
 Dialogue: 0,0:04:29.22,0:04:34.37,Bilingual,,0,0,0,,有两个误解要丢掉：4 位模型并不做 4 位运算\N{\fs33\c&H00C8C0B8&\bord1.4}Two misconceptions to drop: a 4-bit model does not do 4-bit arithmetic,
 Dialogue: 0,0:04:34.37,0:04:36.77,Bilingual,,0,0,0,,省下来的是显存，不是速度\N{\fs33\c&H00C8C0B8&\bord1.4}and the win is memory, not speed.
-Dialogue: 0,0:04:38.82,0:04:42.41,Bilingual,,0,0,0,,Part C 的第 1 步用同样的 4 位配方\N{\fs33\c&H00C8C0B8&\bord1.4}Part C, step 1, loads the real student,
-Dialogue: 0,0:04:42.41,0:04:46.01,Bilingual,,0,0,0,,加载真正的学生模型 Qwen3 0.6B\N{\fs33\c&H00C8C0B8&\bord1.4}Qwen3 0.6B, with the same 4-bit recipe.
-Dialogue: 0,0:04:46.33,0:04:49.97,Bilingual,,0,0,0,,接着 prepare model for k-bit training\N{\fs33\c&H00C8C0B8&\bord1.4}Then prepare_model_for_kbit_training freezes every weight
-Dialogue: 0,0:04:49.97,0:04:52.28,Bilingual,,0,0,0,,冻结所有权重，并打开梯度检查点\N{\fs33\c&H00C8C0B8&\bord1.4}and turns on gradient checkpointing,
-Dialogue: 0,0:04:52.28,0:04:54.97,Bilingual,,0,0,0,,这是一个省显存的技巧，训练那一章会讲\N{\fs33\c&H00C8C0B8&\bord1.4}a memory trick the training chapter shows.
+Dialogue: 0,0:04:38.82,0:04:42.41,Bilingual,,0,0,0,,Part C 的第 1 步加载真正的学生模型\N{\fs33\c&H00C8C0B8&\bord1.4}Part C, step 1, loads the real student,
+Dialogue: 0,0:04:42.41,0:04:46.01,Bilingual,,0,0,0,,Qwen3 0.6B，用的是同样的 4 位配方\N{\fs33\c&H00C8C0B8&\bord1.4}Qwen3 0.6B, with the same 4-bit recipe.
+Dialogue: 0,0:04:46.33,0:04:49.95,Bilingual,,0,0,0,,接着 prepare model for k-bit training 冻结所有权重\N{\fs33\c&H00C8C0B8&\bord1.4}Then prepare_model_for_kbit_training freezes every weight
+Dialogue: 0,0:04:49.95,0:04:54.97,Bilingual,,0,0,0,,并打开梯度检查点，这是一个省显存的技巧，训练那一章会讲\N{\fs33\c&H00C8C0B8&\bord1.4}and turns on gradient checkpointing, a memory trick the training chapter shows.
 Dialogue: 0,0:04:55.20,0:05:01.02,Bilingual,,0,0,0,,第 2.1 节数参数：3.758 亿\N{\fs33\c&H00C8C0B8&\bord1.4}Section 2.1 counts the parameters: 375.8 million.
 Dialogue: 0,0:05:01.34,0:05:06.02,Bilingual,,0,0,0,,可 Qwen3 0.6B 有 5.96 亿\N{\fs33\c&H00C8C0B8&\bord1.4}But Qwen3 0.6B has 596 million.
 Dialogue: 0,0:05:14.85,0:05:18.07,Bilingual,,0,0,0,,线性层里的 4.4 亿个权重\N{\fs33\c&H00C8C0B8&\bord1.4}The 440 million weights in linear layers
@@ -179,8 +178,8 @@ Dialogue: 0,0:11:36.58,0:11:40.29,Bilingual,,0,0,0,,这个 loss 从 2.0 降到�
 Dialogue: 0,0:11:40.61,0:11:44.83,Bilingual,,0,0,0,,还有第 4.5 节，TensorBoard 会在你自己的运行里显示这些曲线\N{\fs33\c&H00C8C0B8&\bord1.4}And 4.5, TensorBoard, shows these curves in your own run.
 Dialogue: 0,0:11:45.15,0:11:46.75,Bilingual,,0,0,0,,暂停一下，开始训练\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and train.
 Dialogue: 0,0:11:49.65,0:11:53.08,Bilingual,,0,0,0,,有效吗？第 5.1 节来衡量\N{\fs33\c&H00C8C0B8&\bord1.4}Did it work? Section 5.1 measures it.
-Dialogue: 0,0:11:53.40,0:11:57.05,Bilingual,,0,0,0,,困惑度就是平均每个 token 的 loss 取指数，大致相当于\N{\fs33\c&H00C8C0B8&\bord1.4}Perplexity is the exponential of the average token loss:
-Dialogue: 0,0:11:57.05,0:12:01.75,Bilingual,,0,0,0,,模型在多少个等可能的下一个 token 里做选择\N{\fs33\c&H00C8C0B8&\bord1.4}roughly how many equally likely next tokens the model is choosing among.
+Dialogue: 0,0:11:53.40,0:11:57.05,Bilingual,,0,0,0,,困惑度就是平均每个 token 的 loss 取指数\N{\fs33\c&H00C8C0B8&\bord1.4}Perplexity is the exponential of the average token loss:
+Dialogue: 0,0:11:57.05,0:12:01.75,Bilingual,,0,0,0,,大致相当于模型在多少个等可能的下一个 token 里做选择\N{\fs33\c&H00C8C0B8&\bord1.4}roughly how many equally likely next tokens the model is choosing among.
 Dialogue: 0,0:12:02.53,0:12:06.80,Bilingual,,0,0,0,,在 100 个测试样本、30681 个 token 上\N{\fs33\c&H00C8C0B8&\bord1.4}On 100 test examples, 30,681 tokens,
 Dialogue: 0,0:12:06.80,0:12:13.90,Bilingual,,0,0,0,,基座模型的 loss 是 2.65，困惑度 14.15\N{\fs33\c&H00C8C0B8&\bord1.4}the base model has a loss of 2.65 and a perplexity of 14.15.
 Dialogue: 0,0:12:14.22,0:12:18.53,Bilingual,,0,0,0,,微调后的模型：loss 1.39，困惑度 4\N{\fs33\c&H00C8C0B8&\bord1.4}The fine-tuned model: 1.39, and a perplexity of 4.
@@ -196,8 +195,8 @@ Dialogue: 0,0:12:52.62,0:12:54.22,Bilingual,,0,0,0,,这个下降衡量的是什�
 Dialogue: 0,0:12:54.43,0:12:58.16,Bilingual,,0,0,0,,这个 loss 算的是每一个 token，连问题和模板也算在内\N{\fs33\c&H00C8C0B8&\bord1.4}The loss counts every token, questions and template included.
 Dialogue: 0,0:12:58.48,0:13:03.82,Bilingual,,0,0,0,,它说明这种风格是模型现在预期的，而不是它的回答更正确了\N{\fs33\c&H00C8C0B8&\bord1.4}It says this style is what the model now expects, not that its answers are more correct.
 Dialogue: 0,0:13:04.07,0:13:06.09,Bilingual,,0,0,0,,第 5.2 节比较回答\N{\fs33\c&H00C8C0B8&\bord1.4}5.2 compares answers.
-Dialogue: 0,0:13:06.41,0:13:10.21,Bilingual,,0,0,0,,两个奶酪问题的回答现在都用授课老师的口吻开头\N{\fs33\c&H00C8C0B8&\bord1.4}Both cheese answers now open with welcome welcome welcome,
-Dialogue: 0,0:13:10.21,0:13:12.90,Bilingual,,0,0,0,,welcome welcome welcome, cheese lovers\N{\fs33\c&H00C8C0B8&\bord1.4}cheese lovers, in the instructor's voice.
+Dialogue: 0,0:13:06.41,0:13:10.21,Bilingual,,0,0,0,,两个奶酪问题的回答现在都以 welcome welcome welcome\N{\fs33\c&H00C8C0B8&\bord1.4}Both cheese answers now open with welcome welcome welcome,
+Dialogue: 0,0:13:10.21,0:13:12.90,Bilingual,,0,0,0,,cheese lovers 开头，用的是授课老师的口吻\N{\fs33\c&H00C8C0B8&\bord1.4}cheese lovers, in the instructor's voice.
 Dialogue: 0,0:13:13.22,0:13:16.55,Bilingual,,0,0,0,,再看天空：口吻学过去了，物理没有\N{\fs33\c&H00C8C0B8&\bord1.4}And the sky: the voice transferred, the physics did not.
 Dialogue: 0,0:13:16.87,0:13:18.76,Bilingual,,0,0,0,,暂停一下，跑完第 5 节\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and run section 5.
 Dialogue: 0,0:13:21.00,0:13:22.46,Bilingual,,0,0,0,,两点友情提示\N{\fs33\c&H00C8C0B8&\bord1.4}Two kind notes.

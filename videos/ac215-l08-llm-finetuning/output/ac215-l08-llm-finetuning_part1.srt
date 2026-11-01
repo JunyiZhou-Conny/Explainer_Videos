@@ -715,587 +715,587 @@ the teacher's mistakes,
 so check what the teacher wrote.
 
 157
-00:09:29,733 --> 00:09:31,759
+00:09:29,732 --> 00:09:31,758
 Now step 1 of the prepare section,
 
 158
-00:09:31,759 --> 00:09:34,618
+00:09:31,758 --> 00:09:34,617
 as a student would type it right
 after that run.
 
 159
-00:09:34,938 --> 00:09:38,117
+00:09:34,937 --> 00:09:38,116
 Type python cli.py --prepare.
 
 160
-00:09:38,437 --> 00:09:42,106
+00:09:38,436 --> 00:09:42,105
 Zero errors, a shape of zero by zero,
 and then a crash.
 
 161
-00:09:42,426 --> 00:09:47,248
+00:09:42,425 --> 00:09:47,247
 KeyError:
 'question', from line 243 of cli.py.
 
 162
-00:09:47,483 --> 00:09:48,592
+00:09:47,482 --> 00:09:48,591
 Trace it back.
 
 163
-00:09:48,912 --> 00:09:52,364
+00:09:48,911 --> 00:09:52,363
 In generate,
 each batch runs inside a try block,
 
 164
-00:09:52,364 --> 00:09:55,935
+00:09:52,363 --> 00:09:55,934
 and the except
 on line 200 catches any exception,
 
 165
-00:09:55,935 --> 00:09:57,830
+00:09:55,934 --> 00:09:57,829
 prints it, and carries on.
 
 166
-00:09:58,150 --> 00:10:02,032
+00:09:58,149 --> 00:10:02,031
 So no file was written,
 and the command still exited with zero.
 
 167
-00:10:02,266 --> 00:10:05,137
+00:10:02,265 --> 00:10:05,135
 Prepare found no files,
 built an empty table,
 
 168
-00:10:05,137 --> 00:10:08,581
+00:10:05,135 --> 00:10:08,580
 and failed the first time it read
 the question column.
 
 169
-00:10:08,901 --> 00:10:10,686
+00:10:08,900 --> 00:10:10,685
 The error was there all along;
 
 170
-00:10:10,686 --> 00:10:13,423
+00:10:10,685 --> 00:10:13,422
 the catch-all only moved
 it one command later.
 
 171
-00:10:13,743 --> 00:10:16,005
+00:10:13,742 --> 00:10:16,004
 Read the lines, not the exit code.
 
 172
-00:10:16,250 --> 00:10:18,299
+00:10:16,249 --> 00:10:18,298
 The fix is the key itself:
 
 173
-00:10:18,299 --> 00:10:22,160
+00:10:18,298 --> 00:10:22,159
 put it in the secrets folder
 with the exact name,
 
 174
-00:10:22,160 --> 00:10:24,570
+00:10:22,159 --> 00:10:24,569
 and check with ls -la /secrets.
 
 175
-00:10:24,816 --> 00:10:29,256
+00:10:24,815 --> 00:10:29,255
 So we can watch a real run, an extra:
 five hand-written files,
 
 176
-00:10:29,256 --> 00:10:33,051
+00:10:29,255 --> 00:10:33,050
 tagged scripted,
 in exactly the shape Gemini returns.
 
 177
-00:10:33,371 --> 00:10:37,347
+00:10:33,370 --> 00:10:37,346
 They hold 20 pairs,
 where Gemini would write about a hundred;
 
 178
-00:10:37,347 --> 00:10:39,237
+00:10:37,346 --> 00:10:39,236
 your generate writes its own.
 
 179
-00:10:39,557 --> 00:10:43,078
+00:10:39,556 --> 00:10:43,077
 Note the 1-byte CSV
 the failed run left behind.
 
 180
-00:10:43,316 --> 00:10:44,596
+00:10:43,315 --> 00:10:44,595
 Now prepare again.
 
 181
-00:10:44,916 --> 00:10:49,417
+00:10:44,915 --> 00:10:49,416
 Five files processed, zero errors,
 and a shape of 19 by 2.
 
 182
-00:10:49,737 --> 00:10:53,535
+00:10:49,736 --> 00:10:53,534
 The last scripted pair repeats
 the first question on purpose.
 
 183
-00:10:53,855 --> 00:10:57,503
+00:10:53,854 --> 00:10:57,502
 drop_duplicates on line 233 removed it.
 
 184
-00:10:57,823 --> 00:11:00,042
+00:10:57,822 --> 00:11:00,041
 Every answer opens with a catchphrase.
 
 185
-00:11:00,283 --> 00:11:06,384
+00:11:00,282 --> 00:11:06,383
 The rows are saved as instruct-dataset.csv:
 the lecture's term, in the file name.
 
 186
-00:11:06,704 --> 00:11:09,499
+00:11:06,703 --> 00:11:09,498
 Pause, and run
 generate and prepare yourself.
 
 187
-00:11:12,833 --> 00:11:15,137
+00:11:12,832 --> 00:11:15,136
 Step 2 of prepare is about format.
 
 188
-00:11:15,457 --> 00:11:16,694
+00:11:15,456 --> 00:11:16,693
 Follow one pair.
 
 189
-00:11:17,014 --> 00:11:18,913
+00:11:17,013 --> 00:11:18,912
 It starts as a CSV row.
 
 190
-00:11:19,233 --> 00:11:25,215
+00:11:19,232 --> 00:11:25,214
 Lines 241 to 247 glue it into one text
 with human and bot labels,
 
 191
-00:11:25,215 --> 00:11:30,369
+00:11:25,214 --> 00:11:30,368
 the text column the repository's autotrain
 folder reads.
 
 192
-00:11:30,689 --> 00:11:32,374
+00:11:30,688 --> 00:11:32,373
 Track A doesn't use that one.
 
 193
-00:11:32,616 --> 00:11:37,091
+00:11:32,615 --> 00:11:37,090
 Lines 251 to 257 build
 what Gemini tuning expects:
 
 194
-00:11:37,091 --> 00:11:39,150
+00:11:37,090 --> 00:11:39,148
 a list called contents,
 
 195
-00:11:39,150 --> 00:11:44,712
+00:11:39,148 --> 00:11:44,711
 with a user turn and a model turn,
 each holding parts and text.
 
 196
-00:11:44,950 --> 00:11:47,852
+00:11:44,949 --> 00:11:47,850
 An extra look at the real train.jsonl:
 
 197
-00:11:47,852 --> 00:11:53,654
+00:11:47,850 --> 00:11:53,653
 the same nesting as the README's example,
 but each example on a single line.
 
 198
-00:11:53,974 --> 00:11:57,131
+00:11:53,973 --> 00:11:57,130
 That's the L in JSONL: JSON lines.
 
 199
-00:11:57,366 --> 00:12:02,749
+00:11:57,365 --> 00:12:02,747
 Then train_test_split
 holds out 10 percent with a fixed seed:
 
 200
-00:12:02,749 --> 00:12:10,337
+00:12:02,747 --> 00:12:10,336
 17 examples in train.jsonl, 2 in test.jsonl,
 which the tuning job uses for validation.
 
 201
-00:12:10,657 --> 00:12:13,037
+00:12:10,656 --> 00:12:13,035
 The code's comment says Gemini
 
 202
-00:12:13,037 --> 00:12:17,398
+00:12:13,035 --> 00:12:17,397
 accepts at most 256 validation examples,
 hence the cap.
 
 203
-00:12:21,100 --> 00:12:24,942
+00:12:21,099 --> 00:12:24,940
 Whatever the wrapping,
 training is still next-word prediction,
 
 204
-00:12:24,942 --> 00:12:26,924
+00:12:24,940 --> 00:12:26,923
 now on the instructor's answers.
 
 205
-00:12:28,600 --> 00:12:30,411
+00:12:28,599 --> 00:12:30,409
 An extra from the laptop side:
 
 206
-00:12:30,411 --> 00:12:33,187
+00:12:30,409 --> 00:12:33,186
 the bind mount left these files
 in your clone.
 
 207
-00:12:33,507 --> 00:12:38,178
+00:12:33,506 --> 00:12:38,177
 git status shows the data folder as ignored,
 so it stays out of your commits.
 
 208
-00:12:38,416 --> 00:12:43,237
+00:12:38,415 --> 00:12:43,236
 Next section, upload:
 python cli.py --upload.
 
 209
-00:12:43,557 --> 00:12:47,389
+00:12:43,556 --> 00:12:47,387
 This time it fails loudly,
 with a DefaultCredentialsError:
 
 210
-00:12:47,389 --> 00:12:48,389
+00:12:47,387 --> 00:12:48,387
 file not found.
 
 211
-00:12:48,699 --> 00:12:51,216
+00:12:48,698 --> 00:12:51,215
 With a key, no output is documented.
 
 212
-00:12:51,536 --> 00:12:54,939
+00:12:51,535 --> 00:12:54,938
 Look for one line per file
 starting with Uploading file,
 
 213
-00:12:54,939 --> 00:12:57,552
+00:12:54,938 --> 00:12:57,551
 five in all, then find them in your bucket.
 
 214
-00:12:57,800 --> 00:13:01,569
+00:12:57,799 --> 00:13:01,567
 A small slip:
 the README never says to create that bucket,
 
 215
-00:13:01,569 --> 00:13:03,453
+00:13:01,567 --> 00:13:03,452
 and upload assumes it exists.
 
 216
-00:13:03,773 --> 00:13:04,925
+00:13:03,772 --> 00:13:04,924
 Make it first.
 
 217
-00:13:05,245 --> 00:13:08,723
+00:13:05,244 --> 00:13:08,722
 If you just changed env.dev,
 restart the container.
 
 218
-00:13:09,043 --> 00:13:10,536
+00:13:09,042 --> 00:13:10,535
 Then pause and upload.
 
 219
-00:13:13,883 --> 00:13:15,611
+00:13:13,882 --> 00:13:15,610
 On to the fine-tune section.
 
 220
-00:13:15,931 --> 00:13:18,843
+00:13:15,930 --> 00:13:18,841
 Type exit; the container removes itself,
 
 221
-00:13:18,843 --> 00:13:22,118
+00:13:18,841 --> 00:13:22,117
 and an extra docker ps
 -a shows nothing left.
 
 222
-00:13:22,438 --> 00:13:25,488
+00:13:22,437 --> 00:13:25,487
 Step 1: go to the gemini-finetuner folder.
 
 223
-00:13:26,133 --> 00:13:28,551
+00:13:26,132 --> 00:13:28,550
 An extra edit the README leaves out:
 
 224
-00:13:28,551 --> 00:13:32,917
+00:13:28,550 --> 00:13:32,916
 lines 10 and 11 still point
 at the course bucket, cheese-dataset.
 
 225
-00:13:33,237 --> 00:13:36,778
+00:13:33,236 --> 00:13:36,777
 Replace only cheese-dataset
 with your bucket name;
 
 226
-00:13:36,778 --> 00:13:41,877
+00:13:36,777 --> 00:13:41,876
 keep the folder, llm-finetune-dataset-small,
 where upload put the files.
 
 227
-00:13:42,197 --> 00:13:46,357
+00:13:42,196 --> 00:13:46,356
 The folder is mounted into the container,
 so there's no need to rebuild.
 
 228
-00:13:46,600 --> 00:13:49,779
+00:13:46,599 --> 00:13:49,778
 Step 2: sh docker-shell.sh again.
 
 229
-00:13:50,099 --> 00:13:53,618
+00:13:50,098 --> 00:13:53,616
 It's instant:
 every layer up to uv sync is cached,
 
 230
-00:13:53,618 --> 00:13:56,925
+00:13:53,616 --> 00:13:56,923
 because both folders
 share the same Dockerfile,
 
 231
-00:13:56,925 --> 00:14:00,232
+00:13:56,923 --> 00:14:00,231
 pyproject and lockfile,
 as an extra diff shows.
 
 232
-00:14:01,466 --> 00:14:07,162
+00:14:01,465 --> 00:14:07,161
 Step 3: python cli.py --help
 shows two flags, train and chat.
 
 233
-00:14:07,482 --> 00:14:11,343
+00:14:07,481 --> 00:14:11,342
 The train client creates
 tuning jobs in us-central1.
 
 234
-00:14:11,663 --> 00:14:16,513
+00:14:11,662 --> 00:14:16,511
 The chat client calls the tuned model
 in the multi-region location us,
 
 235
-00:14:16,513 --> 00:14:17,829
+00:14:16,511 --> 00:14:17,828
 at its own address.
 
 236
-00:14:18,066 --> 00:14:22,186
+00:14:18,065 --> 00:14:22,185
 The train function wraps your bucket files
 as tuning datasets,
 
 237
-00:14:22,186 --> 00:14:25,575
+00:14:22,185 --> 00:14:25,574
 and asks for one epoch
 and an adapter of size four.
 
 238
-00:14:25,895 --> 00:14:26,844
+00:14:25,894 --> 00:14:26,842
 By our reading,
 
 239
-00:14:26,844 --> 00:14:31,079
+00:14:26,842 --> 00:14:31,078
 that's Google's managed version
 of the idea you'll build in part 2.
 
 240
-00:14:31,399 --> 00:14:33,021
+00:14:31,398 --> 00:14:33,020
 One call starts the job.
 
 241
-00:14:33,266 --> 00:14:39,026
+00:14:33,265 --> 00:14:39,025
 Step 1 of the fine-tune model section:
 python cli.py --train.
 
 242
-00:14:39,346 --> 00:14:41,650
+00:14:39,345 --> 00:14:41,649
 The experimental warning is harmless.
 
 243
-00:14:41,970 --> 00:14:44,765
+00:14:41,969 --> 00:14:44,764
 Then the missing key: no job was created.
 
 244
-00:14:45,000 --> 00:14:49,902
+00:14:44,999 --> 00:14:49,901
 With a key, look for Training job started,
 a job name in us-central1,
 
 245
-00:14:49,902 --> 00:14:52,957
+00:14:49,901 --> 00:14:52,956
 and after a minute, Tuned model info: None.
 
 246
-00:14:53,277 --> 00:14:56,154
+00:14:53,276 --> 00:14:56,152
 Main calls train with wait_for_job=False,
 
 247
-00:14:56,154 --> 00:15:01,555
+00:14:56,152 --> 00:15:01,554
 so the command hands in the job and leaves,
 like a ticket at the dry cleaner.
 
 248
-00:15:01,875 --> 00:15:06,013
+00:15:01,874 --> 00:15:06,012
 Before you pause, watch the cost table,
 coming up in under a minute;
 
 249
-00:15:06,013 --> 00:15:08,082
+00:15:06,012 --> 00:15:08,081
 then come back and start your job.
 
 250
-00:15:10,316 --> 00:15:13,915
+00:15:10,315 --> 00:15:13,914
 Training needs far more
 GPU memory than a laptop has;
 
 251
-00:15:13,915 --> 00:15:15,884
+00:15:13,914 --> 00:15:15,883
 here that's Google's problem.
 
 252
-00:15:16,204 --> 00:15:20,230
+00:15:16,203 --> 00:15:20,229
 Step 2: watch the job in the console
 until it says succeeded,
 
 253
-00:15:20,230 --> 00:15:22,540
+00:15:20,229 --> 00:15:22,539
 with a tuned model and an endpoint.
 
 254
-00:15:22,783 --> 00:15:24,340
+00:15:22,782 --> 00:15:24,339
 A question to pause on.
 
 255
-00:15:33,183 --> 00:15:37,620
+00:15:33,182 --> 00:15:37,619
 On Google's hardware in us-central1,
 reading your bucket directly.
 
 256
-00:15:37,940 --> 00:15:41,994
+00:15:37,939 --> 00:15:41,993
 Deleting the container loses nothing:
 it only submitted the job.
 
 257
-00:15:43,933 --> 00:15:46,856
+00:15:43,932 --> 00:15:46,855
 Step 1 of the cost section:
 the README's table.
 
 258
-00:15:47,176 --> 00:15:50,922
+00:15:47,175 --> 00:15:50,921
 At $0.008 per thousand tokens,
 
 259
-00:15:50,922 --> 00:15:56,791
+00:15:50,921 --> 00:15:56,790
 16,444 documents over 3 epochs
 come to $112.73;
 
 260
-00:15:56,791 --> 00:16:01,661
+00:15:56,790 --> 00:16:01,660
 the table calls that way too much data.
 
 261
-00:16:01,981 --> 00:16:05,053
+00:16:01,980 --> 00:16:05,052
 88 documents cost about 57 cents.
 
 262
-00:16:05,300 --> 00:16:10,659
+00:16:05,299 --> 00:16:10,658
 A small slip: the table prices
 Gemini 1.5 Flash for 3 epochs,
 
 263
-00:16:10,659 --> 00:16:14,964
+00:16:10,658 --> 00:16:14,963
 while the code tunes
 Gemini 3.1 Flash Lite for 1.
 
 264
-00:16:15,284 --> 00:16:19,614
+00:16:15,283 --> 00:16:19,613
 Treat these numbers as stale
 and check the pricing page the README links.
 
 265
-00:16:19,850 --> 00:16:22,282
+00:16:19,849 --> 00:16:22,281
 Before you chat, one more extra edit.
 
 266
-00:16:22,602 --> 00:16:26,421
+00:16:22,601 --> 00:16:26,420
 Line 107 still holds
 the instructor's endpoint.
 
 267
-00:16:26,741 --> 00:16:29,023
+00:16:26,740 --> 00:16:29,022
 Copy yours from the console:
 
 268
-00:16:29,023 --> 00:16:33,098
+00:16:29,022 --> 00:16:33,097
 a path ending
 in locations/us/endpoints and an ID.
 
 269
-00:16:33,418 --> 00:16:37,250
+00:16:33,417 --> 00:16:37,249
 Paste it there; otherwise chat points
 at the instructor's endpoint,
 
 270
-00:16:37,250 --> 00:16:38,794
+00:16:37,249 --> 00:16:38,793
 which your key can't reach.
 
 271
-00:16:39,033 --> 00:16:42,596
+00:16:39,032 --> 00:16:42,595
 Step 2: python cli.py --chat.
 
 272
-00:16:42,916 --> 00:16:46,117
+00:16:42,915 --> 00:16:46,116
 It prints its question,
 how is cheese made in Greece,
 
 273
-00:16:46,117 --> 00:16:47,929
+00:16:46,116 --> 00:16:47,928
 answered the instructor's way.
 
 274
-00:16:48,249 --> 00:16:52,494
+00:16:48,248 --> 00:16:52,493
 Then it prints the serving location,
 us, and the same missing key.
 
 275
-00:16:52,814 --> 00:16:55,332
+00:16:52,813 --> 00:16:55,331
 Pause and run it once your endpoint is in.
 
 276
-00:16:57,566 --> 00:17:01,871
+00:16:57,565 --> 00:17:01,869
 The README shows a working
 endpoint's answer to an older question:
 
 277
-00:17:01,871 --> 00:17:03,305
+00:17:01,869 --> 00:17:03,304
 the same Yello opener.
 
 278
-00:17:03,625 --> 00:17:05,076
+00:17:03,624 --> 00:17:05,075
 Your answer will differ.
 
 279
-00:17:05,316 --> 00:17:07,919
+00:17:05,315 --> 00:17:07,918
 Step 3, the hosted demo, is optional.
 
 280
-00:17:08,239 --> 00:17:12,666
+00:17:08,238 --> 00:17:12,664
 Step 4: the console's training monitor
 shows your job's loss curves
 
 281
-00:17:12,666 --> 00:17:14,383
+00:17:12,664 --> 00:17:14,382
 and its data distribution.
 
 282
-00:17:14,633 --> 00:17:17,118
+00:17:14,632 --> 00:17:17,116
 That's track A: a teacher wrote the data,
 
 283
-00:17:17,118 --> 00:17:20,329
+00:17:17,116 --> 00:17:20,328
 Google ran the job,
 and you have an endpoint to call.
 
 284
-00:17:20,649 --> 00:17:22,548
+00:17:20,648 --> 00:17:22,547
 And you never saw a single weight.
 
 285
-00:17:22,868 --> 00:17:25,236
+00:17:22,867 --> 00:17:25,235
 In part 2, the weights are in your hands.
 
