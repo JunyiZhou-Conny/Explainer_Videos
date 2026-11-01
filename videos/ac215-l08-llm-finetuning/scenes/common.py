@@ -244,9 +244,10 @@ from explainer import style as S
 
 
 def guard(ok, msg=""):
-    """Authoring layout guard. Raises locally like an assert; on the GitHub release runner, whose
-    fonts set text up to ~1% wider, a miss is logged instead so a sub-pixel difference cannot stop
-    the release render of an already reviewed layout."""
+    """Layout guard for positions and sizes. Raises locally like an assert; on the GitHub release
+    runner, whose fonts set text up to ~1% wider, a miss is only warned about, so a sub-pixel
+    difference cannot stop the release render of an already reviewed layout. Content checks
+    (captures, narration, arithmetic) stay plain asserts and fail everywhere."""
     if ok:
         return
     if os.environ.get("GITHUB_ACTIONS") == "true":
@@ -1429,7 +1430,7 @@ def resize(scene, t: Terminal, rows: int, keep=None, run_time: float = 0.8, extr
     ref.shift(np.array([t.box.get_center()[0] - ref.box.get_center()[0], dy, 0]))
     ref.box.set_stroke(t.box.get_stroke_color(), t.box.get_stroke_width())
     if isinstance(keep, (list, tuple)):
-        guard((len(keep) <= rows), (""))
+        assert len(keep) <= rows
         kept = [ln for ln in t.lines.submobjects if ln in keep]
     else:
         n_keep = min(len(t.lines), rows, len(t.lines) if keep is None else keep)

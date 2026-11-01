@@ -99,25 +99,25 @@ SAY = NARRATION["S03"]
 # ------------------------------------------------------------------ captures (file line numbers)
 ENV = capture("laptop/00")                       # line 4: Docker Engine 29.8.2 …
 CLONE = capture("laptop/01")
-_guard((CLONE.cmd == "git clone https://github.com/dlops-io/llm-finetuning.git"), (CLONE.cmd))
+assert CLONE.cmd == "git clone https://github.com/dlops-io/llm-finetuning.git", CLONE.cmd
 GIT = capture("laptop/02")
 GIT_LOG = 'git log -1 --format="%h %H%n%cd %s" --date=iso'   # typed: the part of GIT.cmd behind lines 2-3
-_guard((GIT.cmd == GIT_LOG + "; git branch -a"), (GIT.cmd))
+assert GIT.cmd == GIT_LOG + "; git branch -a", GIT.cmd
 LS = capture("laptop/03")
-_guard((LS.cmd == "ls -a; ls -a dataset-creator gemini-finetuner"), (LS.cmd))
+assert LS.cmd == "ls -a; ls -a dataset-creator gemini-finetuner", LS.cmd
 MKDIR = capture("laptop/05")
-_guard((MKDIR.cmd == "mkdir secrets" and all(not s for s in MKDIR.lines)), (MKDIR.lines))
+assert MKDIR.cmd == "mkdir secrets" and all(not s for s in MKDIR.lines), MKDIR.lines
 LSW = capture("laptop/06")
-_guard((LSW.cmd == "ls -la; ls -la secrets"), (LSW.cmd))
+assert LSW.cmd == "ls -la; ls -la secrets", LSW.cmd
 
 SIX = "Dockerfile  cli.py  …  docker-shell.sh  pyproject.toml  uv.lock"   # 63 characters
 FOLD_DC = LS.fold(15, 20, SIX)
 FOLD_GF = LS.fold(25, 30, SIX)
-_guard((len(SIX) <= 65), (""))
+assert len(SIX) <= 65
 
 R5 = source_line("env.dev", 5)
 SECRETS_SUB = "SECRETS_DIR=$(pwd)/../../secrets/"
-_guard((SECRETS_SUB in R5), (""))
+assert SECRETS_SUB in R5
 
 GCLOUD_API = "gcloud services enable aiplatform.googleapis.com storage.googleapis.com --project=<your-project>"
 GCLOUD_BUCKET = "gcloud storage buckets create gs://<your-bucket> --location=us-central1 --project=<your-project>"
@@ -206,7 +206,7 @@ def dashed_card(rows, header: str, color=S.GREY, width=None) -> VGroup:
 
 class KeyNextToRepo(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 7), (len(SAY)))
+        assert len(SAY) == 7, len(SAY)
 
         # ========================================================== 0 · workspace, Docker, the clone (extra)
         tr = tracker("Prereq", 1)
@@ -267,7 +267,7 @@ class KeyNextToRepo(VoiceScene):
             vo.wait_until("Inside are two folders")
             out = show(self, t, LS, (6, 6), (LS.line(7), S.GREY), (8, 11), 12, FOLD_DC, 22, FOLD_GF,
                        run_time=0.8)
-            _guard((len(out) == 10 and len(t.lines) == 12), ((len(out), len(t.lines))))
+            assert len(out) == 10 and len(t.lines) == 12, (len(out), len(t.lines))
             r_dc, r_gf, r_auto = out[2], out[4], out[1]
             h_dc, h_gf, f_dc, f_gf = out[6], out[8], out[7], out[9]
             vo.wait_until("dataset-creator and")
@@ -409,7 +409,7 @@ class KeyNextToRepo(VoiceScene):
             o_lw = show(self, t, LSW, 2, (5, 6), (7, 8), run_time=0.5)
             b_repo = col_box(o_lw[1], len(o_lw[1].text) - len("llm-finetuning"), len(o_lw[1].text), LAPTOP)
             b_sec = col_box(o_lw[2], len(o_lw[2].text) - len("secrets"), len(o_lw[2].text), LAPTOP)
-            _guard((o_lw[1].text.endswith("llm-finetuning") and o_lw[2].text.endswith("secrets")), (""))
+            assert o_lw[1].text.endswith("llm-finetuning") and o_lw[2].text.endswith("secrets")
             self.play(Create(b_repo), Create(b_sec), run_time=0.5)
             o_lw[1].add(b_repo)
             o_lw[2].add(b_sec)
@@ -629,9 +629,9 @@ class KeyNextToRepo(VoiceScene):
             inside(m)
         _guard((tc.get_top()[1] < 2.9), (tc.get_top()))
         # the full commands of the card, as README-less extras (checked against the strings above)
-        _guard((GCLOUD_API.split() == ("gcloud services enable aiplatform.googleapis.com " + a2).split()), (""))
-        _guard((GCLOUD_BUCKET.split() == (b1.replace("\\", "") + b2).split()), (""))
-        _guard((MV_TEMPLATE.split() == mv_cmd.replace("\\", "").split()), (""))
+        assert GCLOUD_API.split() == ("gcloud services enable aiplatform.googleapis.com " + a2).split()
+        assert GCLOUD_BUCKET.split() == (b1.replace("\\", "") + b2).split()
+        assert MV_TEMPLATE.split() == mv_cmd.replace("\\", "").split()
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(pan, ptag, bar6, bar7, n67, bar9, n9)), run_time=0.4)
             self.play(FadeIn(card6[0]), FadeIn(card6.header), Create(card6.frame), FadeIn(card6.body[0]),

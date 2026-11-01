@@ -71,27 +71,27 @@ SAY = NARRATION["S09"]
 # ------------------------------------------------------------------ the real captures and sources
 GF = "gemini-finetuner/cli.py"
 COST_TABLE = capture("expected/readme-cost-table")
-_guard((COST_TABLE.line(4).startswith("Gemini 1.5 Flash Tuning is 0.008 USD")), (COST_TABLE.line(4)))
-_guard(("$112.73" in COST_TABLE.line(8) and "16,444" in COST_TABLE.line(8)), (COST_TABLE.line(8)))
-_guard(("$0.573" in COST_TABLE.line(9) and "88" in COST_TABLE.line(9)), (COST_TABLE.line(9)))
-_guard((COST_TABLE.line(11) == "*** Way too much data for this fine tuning!"), (COST_TABLE.line(11)))
+assert COST_TABLE.line(4).startswith("Gemini 1.5 Flash Tuning is 0.008 USD"), COST_TABLE.line(4)
+assert "$112.73" in COST_TABLE.line(8) and "16,444" in COST_TABLE.line(8), COST_TABLE.line(8)
+assert "$0.573" in COST_TABLE.line(9) and "88" in COST_TABLE.line(9), COST_TABLE.line(9)
+assert COST_TABLE.line(11) == "*** Way too much data for this fine tuning!", COST_TABLE.line(11)
 CHAT_EX = capture("expected/readme-chat-example")
-_guard((CHAT_EX.line(10) == "How is cheese made?" and CHAT_EX.line(12).startswith("Fine-tuned LLM Response")), (""))
-_guard((CHAT_EX.line(14).startswith("Yello - this is")), (CHAT_EX.line(14)))
+assert CHAT_EX.line(10) == "How is cheese made?" and CHAT_EX.line(12).startswith("Fine-tuned LLM Response")
+assert CHAT_EX.line(14).startswith("Yello - this is"), CHAT_EX.line(14)
 CHAT = capture("gemini-finetuner/03")
-_guard((CHAT.cmd == "python cli.py --chat" and CHAT.exit == 1), (CHAT.cmd))
-_guard((CHAT.line(5) == "Using serving location: us" and "was not found." in CHAT.line(66)), (CHAT.line(66)))
+assert CHAT.cmd == "python cli.py --chat" and CHAT.exit == 1, CHAT.cmd
+assert CHAT.line(5) == "Using serving location: us" and "was not found." in CHAT.line(66), CHAT.line(66)
 L15, L53, L109 = (source_line(GF, n) for n in (15, 53, 109))
-_guard(('GENERATIVE_SOURCE_MODEL = "gemini-3.1-flash-lite"' in L15 and "epoch_count=1" in L53), ((L15, L53)))
-_guard(("How is cheese made in Greece?" in L109), (L109))
+assert 'GENERATIVE_SOURCE_MODEL = "gemini-3.1-flash-lite"' in L15 and "epoch_count=1" in L53, (L15, L53)
+assert "How is cheese made in Greece?" in L109, L109
 QUERY_109 = unname(L109.split('"')[1])        # the code's query, persona masked
-_guard(("MODEL_ENDPOINT" in source_line(GF, 107) and "model=MODEL_ENDPOINT" in source_line(GF, 114)), (""))
+assert "MODEL_ENDPOINT" in source_line(GF, 107) and "model=MODEL_ENDPOINT" in source_line(GF, 114)
 README_278 = source_line("README.md", 278)
-_guard(("pricing page" in README_278), (README_278))
-_guard(("finetunechat" in source_line("README.md", 303) and "Chrome" in source_line("README.md", 306)), (""))
-_guard(("Training Monitor" in source_line("README.md", 310) and "Data distribution" in source_line("README.md", 314)), (""))
+assert "pricing page" in README_278, README_278
+assert "finetunechat" in source_line("README.md", 303) and "Chrome" in source_line("README.md", 306)
+assert "Training Monitor" in source_line("README.md", 310) and "Data distribution" in source_line("README.md", 314)
 DEMO_URL = "ac215-llm-rag.dlops.io/finetunechat"
-_guard((DEMO_URL in source_line("README.md", 303)), (""))
+assert DEMO_URL in source_line("README.md", 303)
 CONSOLE_URL = "console.cloud.google.com/agent-platform/tuning/managed"
 TEMPLATE = "projects/<your-number>/locations/us/endpoints/<id>"
 
@@ -274,7 +274,7 @@ def adapter_glyph() -> VGroup:
 
 class CostAndChat(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 7), (len(SAY)))
+        assert len(SAY) == 7, len(SAY)
 
         # ========================================================== 0 · step 1: the README's cost table
         tr = tracker("FtCost", 1)

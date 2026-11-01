@@ -80,22 +80,22 @@ SAY = NARRATION["S16"]
 # ------------------------------------------------------------------ the real sources and captures
 CELL84 = "colab/cell-84.py"
 CELL86 = "colab/cell-86.py"
-_guard((source_line(CELL84, 3).startswith("trainer.model.save_pretrained(")), (""))
-_guard((source_line(CELL84, 5).startswith("tokenizer.save_pretrained(")), (""))
-_guard((source_line(CELL86, 4).strip() == "dtype=torch.float16,"), (""))
-_guard((source_line(CELL86, 9).startswith("model = PeftModel.from_pretrained(")), (""))
-_guard((source_line(CELL86, 11).startswith("model = model.merge_and_unload()")), (""))
-_guard((colab_where(84).startswith("QLoRA notebook · 6.1") and colab_where(86).startswith("QLoRA notebook · 6.2")), (""))
+assert source_line(CELL84, 3).startswith("trainer.model.save_pretrained(")
+assert source_line(CELL84, 5).startswith("tokenizer.save_pretrained(")
+assert source_line(CELL86, 4).strip() == "dtype=torch.float16,"
+assert source_line(CELL86, 9).startswith("model = PeftModel.from_pretrained(")
+assert source_line(CELL86, 11).startswith("model = model.merge_and_unload()")
+assert colab_where(84).startswith("QLoRA notebook · 6.1") and colab_where(86).startswith("QLoRA notebook · 6.2")
 C84 = capture("expected/colab-c84-save-adapters")
 C86 = capture("expected/colab-c86-merge-and-save")
 C88 = capture("expected/colab-c88-push-to-hub")
 C18 = capture("laptop/18")
 C22 = capture("laptop/22")
-_guard((all("LLM_cache/Qwen0.6B-finetune_cheese/" in C84.line(n) for n in (8, 9, 10))), (""))
-_guard((C88.line(31).startswith("Model successfully uploaded to https://huggingface.co/" + HF_USER + "/")), (""))
-_guard((C18.line(28) == "exit" and C18.line(27).startswith(P_CTR_GF)), (""))
-_guard((C22.cmd == "docker image rm llm-dataset-creator gemini-finetuner"), (C22.cmd))
-_guard((TRAINABLE == 1_146_880), (""))
+assert all("LLM_cache/Qwen0.6B-finetune_cheese/" in C84.line(n) for n in (8, 9, 10))
+assert C88.line(31).startswith("Model successfully uploaded to https://huggingface.co/" + HF_USER + "/")
+assert C18.line(28) == "exit" and C18.line(27).startswith(P_CTR_GF)
+assert C22.cmd == "docker image rm llm-dataset-creator gemini-finetuner", C22.cmd
+assert TRAINABLE == 1_146_880
 
 
 def _hex20(n: int) -> str:
@@ -108,7 +108,7 @@ def _hex20(n: int) -> str:
 WRAP = 70                                   # characters a row in a full-width output box (20 pt)
 CMD_RM = "docker image rm llm-dataset-creator gemini-finetuner"
 CMD_BUCKET = f"gcloud storage rm -r {BUCKET_TEMPLATE}/{DATASET_PREFIX}"
-_guard((CMD_BUCKET == "gcloud storage rm -r gs://<your-bucket>/llm-finetune-dataset-small"), (CMD_BUCKET))
+assert CMD_BUCKET == "gcloud storage rm -r gs://<your-bucket>/llm-finetune-dataset-small", CMD_BUCKET
 CMD_BASE = "docker image rm python:3.12-slim-bookworm"
 
 QUESTIONS = [
@@ -154,8 +154,8 @@ def apart(a, b, gap: float = 0.0):
     """Assert the bounding boxes of a and b do not overlap (with a gap)."""
     sep = (a.get_right()[0] + gap <= b.get_left()[0] or b.get_right()[0] + gap <= a.get_left()[0]
            or a.get_top()[1] + gap <= b.get_bottom()[1] or b.get_top()[1] + gap <= a.get_bottom()[1])
-    _guard((sep), ((a.get_corner(DOWN + LEFT), a.get_corner(UP + RIGHT), b.get_corner(DOWN + LEFT),
-                 b.get_corner(UP + RIGHT))))
+    _guard(sep, (a.get_corner(DOWN + LEFT), a.get_corner(UP + RIGHT), b.get_corner(DOWN + LEFT),
+                 b.get_corner(UP + RIGHT)))
 
 
 def rows_of(text: str, color: str = OUTPUT, width: int = WRAP) -> list:
@@ -234,7 +234,7 @@ def Arrow_(a, b):
 
 class Recap(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 7), (len(SAY)))
+        assert len(SAY) == 7, len(SAY)
 
         # ========================================================== 0 · 6.1: save the adapters to Drive (▶)
         tr = tracker("Save", 1)

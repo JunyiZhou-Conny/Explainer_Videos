@@ -82,23 +82,23 @@ SAY = NARRATION["S10"]
 
 # ------------------------------------------------------------------ the real sources and captures
 CELL08 = "colab/cell-08.py"
-_guard((source_line(CELL08, 3).startswith("!uv pip install transformers==5.16.1")), (source_line(CELL08, 3)))
-_guard((source_line(CELL08, 4) == "!uv pip install trl==1.14.0" and source_line(CELL08, 7) == "!uv pip uninstall torchao"), (""))
-_guard(("peft refuses to add LoRA layers" in source_line(CELL08, 6)), (source_line(CELL08, 6)))
-_guard(("Save a copy in Drive" in source_text("colab/cell-01.md") and "view-only" in source_text("colab/cell-01.md")), (""))
+assert source_line(CELL08, 3).startswith("!uv pip install transformers==5.16.1"), source_line(CELL08, 3)
+assert source_line(CELL08, 4) == "!uv pip install trl==1.14.0" and source_line(CELL08, 7) == "!uv pip uninstall torchao"
+assert "peft refuses to add LoRA layers" in source_line(CELL08, 6), source_line(CELL08, 6)
+assert "Save a copy in Drive" in source_text("colab/cell-01.md") and "view-only" in source_text("colab/cell-01.md")
 C08 = capture("expected/colab-c08-install")
-_guard((C08.line(13) == " + bitsandbytes==0.50.2" and C08.line(18) == " + trl==1.14.0"), ((C08.line(13), C08.line(18))))
-_guard((C08.line(21) == " - torchao==0.10.0"), (C08.line(21)))
+assert C08.line(13) == " + bitsandbytes==0.50.2" and C08.line(18) == " + trl==1.14.0", (C08.line(13), C08.line(18))
+assert C08.line(21) == " - torchao==0.10.0", C08.line(21)
 C10 = capture("expected/colab-c10-hf-token")
-_guard((C10.line(13) == "Hugging Face token successfully loaded."), (C10.line(13)))
+assert C10.line(13) == "Hugging Face token successfully loaded.", C10.line(13)
 C12 = capture("expected/colab-c12-versions")
-_guard((C12.line(32).startswith("torch 2.11.0+cu128 | transformers 5.16.1")), (C12.line(32)))
+assert C12.line(32).startswith("torch 2.11.0+cu128 | transformers 5.16.1"), C12.line(32)
 C14 = capture("expected/colab-c14-drive-mount")
-_guard((C14.line(6) == "Mounted at /content/drive"), (C14.line(6)))
+assert C14.line(6) == "Mounted at /content/drive", C14.line(6)
 C16 = capture("expected/colab-c16-hf-download")
 DRIVE = "/content/drive/MyDrive/LLM_cache/"
 OPT_DIR, QWEN_DIR = "models--facebook--opt-350m", "models--Qwen--Qwen3-0.6B"
-_guard((C16.line(7).startswith(DRIVE + OPT_DIR) and C16.line(8).startswith(DRIVE + QWEN_DIR)), (C16.line(8)))
+assert C16.line(7).startswith(DRIVE + OPT_DIR) and C16.line(8).startswith(DRIVE + QWEN_DIR), C16.line(8)
 NOTEBOOK = "Tutorial - Finetuning with QLoRA"
 ED_LESSON = "open it from the L08 Ed lesson"                     # digest.md:3 (Ed lesson), :27 (the notebook URL)
 COLAB_URL = "colab.research.google.com/drive/1oX3ADMHphW2v7mwV7zkEWD5oYewJZEAC"
@@ -288,7 +288,7 @@ def outline_to(col: Column, gb: float) -> VMobject:
 
 class MemoryBill(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 6), (len(SAY)))
+        assert len(SAY) == 6, len(SAY)
 
         # ========================================================== 0 · copy the notebook, pick a GPU runtime
         tr = tracker("ColabA", 1)

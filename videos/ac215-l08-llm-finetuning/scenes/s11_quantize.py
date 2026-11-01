@@ -83,15 +83,15 @@ SAY = NARRATION["S11"]
 
 # ------------------------------------------------------------------ the real sources and captures
 CELL18 = "colab/cell-18.py"
-_guard((source_line(CELL18, 8).strip().startswith("load_in_4bit=True")), (source_line(CELL18, 8)))
-_guard(('"nf4"' in source_line(CELL18, 9) and "use_double_quant=True" in source_line(CELL18, 10)), (""))
-_guard(("compute_dtype=torch.float16" in source_line(CELL18, 11)), (""))
+assert source_line(CELL18, 8).strip().startswith("load_in_4bit=True"), source_line(CELL18, 8)
+assert '"nf4"' in source_line(CELL18, 9) and "use_double_quant=True" in source_line(CELL18, 10)
+assert "compute_dtype=torch.float16" in source_line(CELL18, 11)
 C21 = capture("expected/colab-c21-opt-350m-4bit-model")
-_guard(("(embed_tokens): Embedding" in C21.line(6) and "(lm_head): Linear(" in C21.line(27)), (""))
+assert "(embed_tokens): Embedding" in C21.line(6) and "(lm_head): Linear(" in C21.line(27)
 C25 = capture("expected/colab-c25-tokenize")
-_guard((C25.line(4).startswith("input_ids tensor([[")), (""))
+assert C25.line(4).startswith("input_ids tensor([[")
 C27 = capture("expected/colab-c27-opt-generate")
-_guard((C27.line(11) == "Hello my cheese name is cheese."), (C27.line(11)))
+assert C27.line(11) == "Hello my cheese name is cheese.", C27.line(11)
 
 # ------------------------------------------------------------------ layout
 SAFE_R = 6.45
@@ -174,7 +174,7 @@ def row_bar(row, x0: float, x1: float, color: str = S.GREY, opacity: float = 0.2
 
 class Buckets(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 10), (len(SAY)))
+        assert len(SAY) == 10, len(SAY)
 
         # ========================================================== 0 · buckets; the notebook's order
         lr = None
@@ -275,7 +275,7 @@ class Buckets(VoiceScene):
 
         # ========================================================== 3 · divide back: the error; slide 50's slip
         d0, d4 = ab.dq[0] - ABSMAX_X[0], ab.dq[4] - ABSMAX_X[4]
-        _guard((f"{ab.dq[0]:.3f}" == "1.526" and f"{ab.dq[4]:.3f}" == "5.622"), (ab.dq))
+        assert f"{ab.dq[0]:.3f}" == "1.526" and f"{ab.dq[4]:.3f}" == "5.622", ab.dq
         errs = ab.errors((0, 4))
         deltas = VGroup(*[mono(f"+{d:.3f}", CAPTION, ERR).next_to(ab.d_cells[i], DOWN, buff=0.15)
                           for d, i in ((d0, 0), (d4, 4))])
@@ -390,7 +390,7 @@ class Buckets(VoiceScene):
         wdots.values = w_vals
         i_a, i_b = w_vals.index(0.3412), w_vals.index(-0.0874)
         lvl = lambda v: min(range(16), key=lambda k: abs(NF4_LEVELS[k] - v))  # noqa: E731
-        _guard(((lvl(0.3412), lvl(-0.0874)) == (11, 6)), (""))
+        assert (lvl(0.3412), lvl(-0.0874)) == (11, 6)
         fa = mono("0.3412…", CAPTION, MODEL)
         place(fa, cx=bell.x(0.3412)[0], top=org[1] - 0.6)
         fb = mono("-0.0874…", CAPTION, MODEL)
@@ -513,7 +513,7 @@ class Buckets(VoiceScene):
                            width=12.9, tag_at="top")
         place(r21, cx=0, top=2.8)
         rows = r21.rows
-        _guard((len(rows) == 12), (len(rows)))
+        assert len(rows) == 12, len(rows)
         fx0, fx1 = r21.frame.get_left()[0] + 0.3, r21.frame.get_right()[0] - 0.12
         lin_bars = VGroup(*[row_bar(rows[k], fx0, fx1, S.GREY, 0.2) for k in (4, 5, 6, 7, 8, 9)])
         lin_spans = VGroup(*[substring(rows[k], "Linear4bit") for k in (4, 5, 6, 7, 8, 9)])

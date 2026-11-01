@@ -67,25 +67,25 @@ SAY = NARRATION["S05"]
 
 # ------------------------------------------------------------------ the real captures and sources
 GEN = capture("dataset-creator/05")
-_guard((GEN.cmd == "python cli.py --generate" and GEN.exit == 0), ((GEN.cmd, GEN.exit)))
-_guard((GEN.line(4) == "Generating batch: 0" and GEN.line(12) == "Generating batch: 4"), (GEN.lines))
-_guard((all("was not found." in GEN.line(n) for n in (5, 7, 9, 11, 13))), (GEN.lines))
+assert GEN.cmd == "python cli.py --generate" and GEN.exit == 0, (GEN.cmd, GEN.exit)
+assert GEN.line(4) == "Generating batch: 0" and GEN.line(12) == "Generating batch: 4", GEN.lines
+assert all("was not found." in GEN.line(n) for n in (5, 7, 9, 11, 13)), GEN.lines
 CLI = "dataset-creator/cli.py"
 L18, L19, L45, L169 = (source_line(CLI, n) for n in (18, 19, 45, 169))
-_guard(('GCP_LOCATION = "global"' in L18 and 'GENERATIVE_MODEL = "gemini-3.1-flash-lite"' in L19), (""))
-_guard((source_line(CLI, 170).strip().startswith("NUM_ITERATIONS = 5")), (""))
-_guard(("temperature=0.9" in source_line(CLI, 174)), (""))
-_guard(("response_schema=response_schema" in source_line(CLI, 180)), (""))
-_guard((source_line(CLI, 146).startswith("response_schema = {") and source_line(CLI, 160) == "}"), (""))
+assert 'GCP_LOCATION = "global"' in L18 and 'GENERATIVE_MODEL = "gemini-3.1-flash-lite"' in L19
+assert source_line(CLI, 170).strip().startswith("NUM_ITERATIONS = 5")
+assert "temperature=0.9" in source_line(CLI, 174)
+assert "response_schema=response_schema" in source_line(CLI, 180)
+assert source_line(CLI, 146).startswith("response_schema = {") and source_line(CLI, 160) == "}"
 R144, R151, R106 = source_line("README.md", 144), source_line("README.md", 151), source_line("README.md", 106)
-_guard(("$2.0 for 1000 iterations" in R151 and "default parameters" in R106), (""))
+assert "$2.0 for 1000 iterations" in R151 and "default parameters" in R106
 P169 = ["Generate 20 diverse, informative, and engaging", "question-answer pairs about cheese"]
-_guard((" ".join(P169) in L169 and " ".join(P169) in R144), (""))
+assert " ".join(P169) in L169 and " ".join(P169) in R144
 P45 = ["Include specific data such as optimal pH levels,", "aging temperatures, and humidity percentages"]
-_guard((" ".join(P45) in L45), (""))
+assert " ".join(P45) in L45
 QA = capture("expected/readme-generate-sample-qa")
 QA6, QA10 = QA.cut(6, f"{PERSONA},"), QA.cut(10, "cheese monker,")
-_guard(("Welcome welcome welcome" in QA6 and QA10.lstrip().startswith('"answer": "Yello - this is')), ((QA6, QA10)))
+assert "Welcome welcome welcome" in QA6 and QA10.lstrip().startswith('"answer": "Yello - this is'), (QA6, QA10)
 
 # ------------------------------------------------------------------ layout
 TOP_Y = 2.87                     # top of a full-width panel (just under the tracker)
@@ -118,14 +118,14 @@ def text_part(t, sub: str) -> VGroup:
     i = s.find(needle)
     if i < 0:
         raise ValueError(f"{sub!r} not in {s!r}")
-    _guard((len(t.submobjects) == len(s)), ((len(t.submobjects), len(s))))
+    assert len(t.submobjects) == len(s), (len(t.submobjects), len(s))
     return VGroup(*t.submobjects[i:i + len(needle)])
 
 
 def excerpt_rows(rows, header: str, line: str) -> VGroup:
     """An excerpt chip over two rows: the rows joined by one space are an exact sub-string of
     `line` (checked). .rows .header .frame"""
-    _guard((" ".join(rows) in line), (rows))
+    assert " ".join(rows) in line, rows
     body = VGroup(*[mtext(r, CAPTION, INK) for r in rows]).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
     fr = box(body.width + 0.5, body.height + 0.36, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.12)
     body.move_to(fr)
@@ -158,7 +158,7 @@ def ph_mark(size: float = CAPTION) -> VGroup:
 
 class Persona(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 8), (len(SAY)))
+        assert len(SAY) == 8, len(SAY)
 
         # ========================================================== 0 · the lecture's instruction dataset
         lr = lref("4–5")
@@ -281,7 +281,7 @@ class Persona(VoiceScene):
             o4 = show(self, t, GEN, 4, run_time=0.3)
             _guard((costc.get_left()[0] > o4[0].glyphs.get_right()[0] + 0.3), (""))
             o5 = t.print(self, [(GEN.line(5), ERR)], wrap=True, run_time=0.4)
-            _guard((len(o5) == 2), ([r.text for r in o5]))
+            assert len(o5) == 2, [r.text for r in o5]
             self.play(_dark(slots[0]), run_time=0.3)
             for k, n in enumerate((6, 8)):
                 show(self, t, GEN, n, run_time=0.25)
@@ -297,7 +297,7 @@ class Persona(VoiceScene):
             self.play(flash(nf, ERR, 1.12), run_time=0.7)
             vo.wait_until("And yet the exit")
             pr = bare_prompt(self, t)
-            _guard((len(t.lines) <= 12), (""))
+            assert len(t.lines) <= 12
             ex = note("exit status 0").next_to(pr.glyphs, RIGHT, buff=0.5).set_y(pr.strut.get_center()[1])
             pin(self, pr, ex, run_time=0.4)
             exr = ring(ex, TURN, buff=0.1, stroke=3)

@@ -92,36 +92,36 @@ SAY = NARRATION["S08"]
 # ------------------------------------------------------------------ the real captures and sources
 GF = "gemini-finetuner/cli.py"
 DCSH = capture("laptop/07")
-_guard((DCSH.line(27) == P_CTR_DC + " exit" and DCSH.line(28) == "exit"), ((DCSH.line(27), DCSH.line(28))))
+assert DCSH.line(27) == P_CTR_DC + " exit" and DCSH.line(28) == "exit", (DCSH.line(27), DCSH.line(28))
 EXIT_CMD = "exit"
 PS = capture("laptop/14")
-_guard((PS.cmd == "docker ps -a" and PS.line(2).startswith("CONTAINER ID")), (PS.cmd))
+assert PS.cmd == "docker ps -a" and PS.line(2).startswith("CONTAINER ID"), PS.cmd
 CDG = capture("laptop/17")
-_guard((CDG.cmd == "cd ../gemini-finetuner && pwd && ls"), (CDG.cmd))
-_guard((CDG.line(2) == "/home/student/AC215/llm-finetuning/gemini-finetuner"), (CDG.line(2)))
+assert CDG.cmd == "cd ../gemini-finetuner && pwd && ls", CDG.cmd
+assert CDG.line(2) == "/home/student/AC215/llm-finetuning/gemini-finetuner", CDG.line(2)
 URIS = capture("gemini-finetuner/04")
-_guard((URIS.cmd == "grep -n 'gs://' cli.py" and URIS.line(2).startswith("10:TRAIN_DATASET")), (URIS.cmd))
+assert URIS.cmd == "grep -n 'gs://' cli.py" and URIS.line(2).startswith("10:TRAIN_DATASET"), URIS.cmd
 GFSH = capture("laptop/18")
-_guard((GFSH.cmd == "sh docker-shell.sh"), (GFSH.cmd))
-_guard((GFSH.cut_before(27, " exit") == P_CTR_GF), (GFSH.line(27)))
-_guard(("Building 0.0s" in GFSH.line(3) and all("CACHED" in GFSH.line(n) for n in (12, 13, 14, 15))), (""))
-_guard(("uv sync" in GFSH.line(15) and "[6/6] COPY" in GFSH.line(16)), (GFSH.line(15)))
+assert GFSH.cmd == "sh docker-shell.sh", GFSH.cmd
+assert GFSH.cut_before(27, " exit") == P_CTR_GF, GFSH.line(27)
+assert "Building 0.0s" in GFSH.line(3) and all("CACHED" in GFSH.line(n) for n in (12, 13, 14, 15))
+assert "uv sync" in GFSH.line(15) and "[6/6] COPY" in GFSH.line(16), GFSH.line(15)
 DIFF = capture("laptop/16")
-_guard(([DIFF.line(n) for n in (2, 3, 4)] == ["uv.lock: identical", "pyproject.toml: identical",
-                                              "Dockerfile: identical"]), (""))
+assert [DIFF.line(n) for n in (2, 3, 4)] == ["uv.lock: identical", "pyproject.toml: identical",
+                                              "Dockerfile: identical"]
 HELP = capture("gemini-finetuner/01")
-_guard((HELP.cmd == "python cli.py --help" and "[--train] [--chat]" in HELP.line(2)), (HELP.cmd))
+assert HELP.cmd == "python cli.py --help" and "[--train] [--chat]" in HELP.line(2), HELP.cmd
 TRAIN = capture("gemini-finetuner/02")
-_guard((TRAIN.cmd == "python cli.py --train" and TRAIN.exit == 1), (TRAIN.cmd))
-_guard(("ExperimentalWarning" in TRAIN.line(4) and "was not found." in TRAIN.line(69)), (TRAIN.line(69)))
+assert TRAIN.cmd == "python cli.py --train" and TRAIN.exit == 1, TRAIN.cmd
+assert "ExperimentalWarning" in TRAIN.line(4) and "was not found." in TRAIN.line(69), TRAIN.line(69)
 L67, L68, L89 = (source_line(GF, n) for n in (67, 68, 89))
-_guard(("gs://cheese-dataset" in source_line(GF, 10) and "gs://cheese-dataset" in source_line(GF, 11)), (""))
-_guard(('adapter_size="ADAPTER_SIZE_FOUR"' in source_line(GF, 55) and "epoch_count=1" in source_line(GF, 53)), (""))
-_guard(("wait_for_job=False" in source_line(GF, 126) and "time.sleep(60)" in source_line(GF, 71)), (""))
-_guard(('base_url="https://aiplatform.us.rep.googleapis.com"' in source_line(GF, 31)), (""))
+assert "gs://cheese-dataset" in source_line(GF, 10) and "gs://cheese-dataset" in source_line(GF, 11)
+assert 'adapter_size="ADAPTER_SIZE_FOUR"' in source_line(GF, 55) and "epoch_count=1" in source_line(GF, 53)
+assert "wait_for_job=False" in source_line(GF, 126) and "time.sleep(60)" in source_line(GF, 71)
+assert 'base_url="https://aiplatform.us.rep.googleapis.com"' in source_line(GF, 31)
 README_261 = source_line("README.md", 261)
 CONSOLE_URL = "console.cloud.google.com/agent-platform/tuning/managed"
-_guard((CONSOLE_URL in README_261), (README_261))
+assert CONSOLE_URL in README_261, README_261
 
 # ------------------------------------------------------------------ layout
 TOP_Y = 2.86                     # top of a panel under the tracker
@@ -314,7 +314,7 @@ def hedge_card(rows) -> VGroup:
 
 class TuningJob(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 10), (len(SAY)))
+        assert len(SAY) == 10, len(SAY)
 
         # ========================================================== 0 · exit, docker ps -a, cd ../gemini-finetuner
         tr = tracker("FtRun", None)

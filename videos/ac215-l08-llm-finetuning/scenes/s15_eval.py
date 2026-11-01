@@ -68,24 +68,24 @@ SAY = NARRATION["S15"]
 # ------------------------------------------------------------------ the real sources and captures
 CELL80 = "colab/cell-80.py"
 CELL82 = "colab/cell-82.py"
-_guard((source_line(CELL80, 53).startswith("results_ft = evaluate_model(trainer.model")), (""))
-_guard((source_line(CELL80, 54).startswith("with trainer.model.disable_adapter():")), (""))
-_guard((source_line(CELL80, 55).strip().startswith("results_base = evaluate_model(trainer.model")), (""))
-_guard(("enable_thinking=enable_thinking" in source_line(CELL82, 26)), (""))
-_guard(("dtype=torch.float16" in source_line(CELL82, 58)), (""))          # the side-by-side's fresh 16-bit base
+assert source_line(CELL80, 53).startswith("results_ft = evaluate_model(trainer.model")
+assert source_line(CELL80, 54).startswith("with trainer.model.disable_adapter():")
+assert source_line(CELL80, 55).strip().startswith("results_base = evaluate_model(trainer.model")
+assert "enable_thinking=enable_thinking" in source_line(CELL82, 26)
+assert "dtype=torch.float16" in source_line(CELL82, 58)          # the side-by-side's fresh 16-bit base
 C80 = capture("expected/colab-c80-eval-loss-perplexity")
 C82 = capture("expected/colab-c82-base-vs-finetuned")
 C63 = capture("expected/colab-c63-one-example")
-_guard((C80.line(75) == "Samples evaluated: 100" and C80.line(76) == "Total tokens: 30,681"), (""))
+assert C80.line(75) == "Samples evaluated: 100" and C80.line(76) == "Total tokens: 30,681"
 EVAL = eval_table()
-_guard((EVAL["Base (4-bit)"] == (2.6498, 14.15) and EVAL["Fine-tuned (4-bit + LoRA)"] == (1.3872, 4.0)), (""))
+assert EVAL["Base (4-bit)"] == (2.6498, 14.15) and EVAL["Fine-tuned (4-bit + LoRA)"] == (1.3872, 4.0)
 # every base answer starts with "The", the fine-tuned ones with "Welcome" / "Yello" (c82)
-_guard((all(C82.line(n).startswith("The ") for n in (126, 140, 155))), (""))
-_guard((C82.line(131).startswith("Welcome welcome welcome, cheese lovers!")), (""))
-_guard((C82.line(146).startswith("Welcome welcome welcome, cheese lovers!")), (""))
-_guard((C82.line(159).startswith("Yello - this is")), (""))
-_guard((C82.line(154) == "Base Model:" and C82.line(158) == "Fine-Tuned Model:"), ((C82.line(154), C82.line(158))))
-_guard((colab_where(80) == "QLoRA notebook · 5.1 · cell 80" and colab_where(82) == "QLoRA notebook · 5.2 · cell 82"), (""))
+assert all(C82.line(n).startswith("The ") for n in (126, 140, 155))
+assert C82.line(131).startswith("Welcome welcome welcome, cheese lovers!")
+assert C82.line(146).startswith("Welcome welcome welcome, cheese lovers!")
+assert C82.line(159).startswith("Yello - this is")
+assert C82.line(154) == "Base Model:" and C82.line(158) == "Fine-Tuned Model:", (C82.line(154), C82.line(158))
+assert colab_where(80) == "QLoRA notebook · 5.1 · cell 80" and colab_where(82) == "QLoRA notebook · 5.2 · cell 82"
 
 WRAP = 70                                   # characters a row in the full-width output boxes (12.3 wide)
 CHEESE = [(119, None), (131, "cheese lovers! This is your lecturer ‹instructor›"), (138, "piccante'"),
@@ -94,9 +94,9 @@ OPENER_C = "Welcome welcome welcome, cheese lovers!"
 OPENER_S = "Yello - this is ‹instructor› your cheese monker"
 REFRACT = "**Light Refraction**"
 _FT_SUB = "The blue color of the sky is due to the scattering of light by the water molecules in the atmosphere."
-_guard((_FT_SUB in C82.line(159) and not C82.line(159).rstrip().endswith(_FT_SUB)), (""))
+assert _FT_SUB in C82.line(159) and not C82.line(159).rstrip().endswith(_FT_SUB)
 SKY_FT = C82.cut(159, "sky's blue!") + " " + _FT_SUB + " …"
-_guard((SKY_FT.startswith(OPENER_S) and REFRACT in C82.cut(156, "(refracts)")), (""))
+assert SKY_FT.startswith(OPENER_S) and REFRACT in C82.cut(156, "(refracts)")
 
 # The ribbon (S12's, V4 station 4) from c63's own text: (piece, is_marker); "↵" = one "\n" of the
 # repr, "…" = text left out. Checked against the line, in order, as S12 does.
@@ -112,7 +112,7 @@ RIBBON = [
 
 
 def _check_ribbon() -> None:
-    _guard((EX63.startswith('Column(["')), (EX63[:12]))
+    assert EX63.startswith('Column(["'), EX63[:12]
     pos, gap = len('Column(["'), False
     for row in RIBBON:
         for text, _ in row:
@@ -123,11 +123,11 @@ def _check_ribbon() -> None:
                     gap = True
                     continue
                 i = EX63.find(frag, pos)
-                _guard((i == pos or (gap and i > pos)), ((text, frag, pos, EX63[pos:pos + 30])))
+                assert i == pos or (gap and i > pos), (text, frag, pos, EX63[pos:pos + 30])
                 pos, gap = i + len(frag), False
             if text.endswith("…"):
                 gap = True
-    _guard((EX63[pos:] == '"])'), (EX63[pos:]))
+    assert EX63[pos:] == '"])', EX63[pos:]
 
 
 _check_ribbon()
@@ -221,7 +221,7 @@ def text_card(title: str, body: str, color: str, width: float, title_color: str 
 
 class DidItWork(VoiceScene):
     def construct(self):
-        _guard((len(SAY) == 7), (len(SAY)))
+        assert len(SAY) == 7, len(SAY)
 
         # ========================================================== 0 · perplexity = exp(mean token loss); 14 -> 4 choices
         tr = tracker("Eval", 1)
@@ -287,7 +287,7 @@ class DidItWork(VoiceScene):
         inside(VGroup(p80, rec80))
         rws = rec80.rows
         base_r, ft_r = rws[4], rws[5]
-        _guard((base_r.text.startswith("Base (4-bit)") and ft_r.text.startswith("Fine-tuned")), ((base_r.text, ft_r.text)))
+        assert base_r.text.startswith("Base (4-bit)") and ft_r.text.startswith("Fine-tuned"), (base_r.text, ft_r.text)
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(beat0), run_time=0.5)
             self.play(FadeIn(p80, shift=UP * 0.15), run_time=0.7)
@@ -453,11 +453,11 @@ class DidItWork(VoiceScene):
         ch_rows = []
         for n, mk in CHEESE:
             ch_rows += rows_of(C82.line(n) if mk is None else C82.cut(n, mk))
-        _guard((len(ch_rows) == 8), (len(ch_rows)))
+        assert len(ch_rows) == 8, len(ch_rows)
         rec82 = recorded_box("colab-c82-base-vs-finetuned", *ch_rows)
         place(rec82, left=-6.3, top=2.55)
         opener_rows = [r for r in rec82.rows if r.text.startswith(OPENER_C)]
-        _guard((len(opener_rows) == 2), (""))
+        assert len(opener_rows) == 2
         sky_rows = (rows_of(C82.line(148)) + [(C82.line(154), C82.color(154))]
                     + rows_of(C82.cut(156, "(refracts)")) + [(C82.line(158), C82.color(158))]
                     + rows_of(SKY_FT))
