@@ -1,0 +1,16 @@
+[
+  {"goto": "index.html"},
+  {"expect": "h1", "text": "制作进度"},
+  {"expect": "#fresh", "text": "数据更新于"},
+  {"expectCount": "a.stat", "min": 5},
+  {"expect": "h2", "text": "课程地图"},
+  {"expectCount": "[role=img][aria-label^=\"当前阶段\"]", "min": 1},
+  {"aria": "board", "of": "main"},
+  {"shot": "board"},
+  {"click": "role=link[name=\"视频库\"]"},
+  {"expect": "h1", "text": "视频库"},
+  {"expect": "#totals", "text": "个视频"},
+  {"expectCount": "article.vid", "min": 1},
+  {"aria": "library", "of": "main"},
+  {"shot": "library"}
+]
