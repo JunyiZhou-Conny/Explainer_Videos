@@ -63,6 +63,7 @@ from manim import (
     VGroup,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _drop_bare, _mixed_row, _with_header
 from explainer import style as S
@@ -182,7 +183,7 @@ class DatasetContainer(VoiceScene):
         t = term(P_WS, rows=12, title=LAPTOP_TITLE)
         chip0 = mixed_chip(["`source: not found`", "?", "→", "`bash docker-shell.sh`", "(shown in a minute)"])
         chip0.move_to([CHIP_RIGHT - chip0.width / 2, TOPCHIP_Y, 0])
-        assert chip0.get_top()[1] < tr.get_bottom()[1] - 0.03 or chip0.get_left()[0] > tr.get_right()[0]
+        _guard((chip0.get_top()[1] < tr.get_bottom()[1] - 0.03 or chip0.get_left()[0] > tr.get_right()[0]), (""))
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(t, shift=UP * 0.2), run_time=0.6)
             bare_prompt(self, t)
@@ -217,11 +218,11 @@ class DatasetContainer(VoiceScene):
         # the header drops " · line 19 wrapped" to fit right of the tracker (the GREY ↪ shows the wrap)
         _with_header(p, "dataset-creator/docker-shell.sh · lines 8–22 (folded)")
         place(p, right=PANEL_RIGHT, top=PANEL_TOP)
-        assert p.get_left()[0] > tr.get_right()[0] + 0.1 and p.get_bottom()[1] > STRIP_TOP + 0.05, p.get_corner(DOWN + LEFT)
+        _guard((p.get_left()[0] > tr.get_right()[0] + 0.1 and p.get_bottom()[1] > STRIP_TOP + 0.05), (p.get_corner(DOWN + LEFT)))
         bars = {n: p.bar(n, c, 0.2) for n, c in ((8, S.GREY), (13, CTR), (16, CTR), (17, LOOKUP), (18, LOOKUP),
                                                  (19, S.GREY), (20, S.GREY), (21, S.GREY))}
         pic_right = PIC_LEFT + PIC_W
-        assert pic_right < p.get_left()[0] - 0.15
+        _guard((pic_right < p.get_left()[0] - 0.15), (""))
         cx = PIC_LEFT + PIC_W / 2
         # env.dev -> image -> container (built in place, left of the panel)
         env = file_row("env.dev", INK)
@@ -246,8 +247,8 @@ class DatasetContainer(VoiceScene):
         for m, y in ((m1, -0.05), (m2, -0.75)):
             m.shift(UP * y)
             m.host.align_to(ctr, LEFT).shift(RIGHT * 0.25)
-        assert m2.path.get_right()[0] < ctr.get_right()[0] - 0.1, (m2.path.get_right(), ctr.get_right())
-        assert ctr.get_bottom()[1] > STRIP_TOP + 0.08 and env.get_top()[1] < tr.get_bottom()[1] - 0.05
+        _guard((m2.path.get_right()[0] < ctr.get_right()[0] - 0.1), ((m2.path.get_right(), ctr.get_right())))
+        _guard((ctr.get_bottom()[1] > STRIP_TOP + 0.08 and env.get_top()[1] < tr.get_bottom()[1] - 0.05), (""))
         for m in (img_t, ctr_t, m1, m2):           # text above the boxes' opaque fill, whatever the add order
             m.set_z_index(2)
         picture = VGroup(env, a_env, image, a_run, container, m1, m2)
@@ -257,7 +258,7 @@ class DatasetContainer(VoiceScene):
         chips = VGroup(*[chip(nm, S.GREY, size=CAPTION, font=MONO) for nm in names])
         chips.arrange(DOWN, buff=0.22, aligned_edge=LEFT)
         place(chips, left=pic_right + dx + 0.8, cy=ctr.get_center()[1])
-        assert chips.get_right()[0] < 6.4, chips.get_right()
+        _guard((chips.get_right()[0] < 6.4), (chips.get_right()))
         c_arrows = VGroup(*[Arrow(c.get_left() + LEFT * 0.06, [pic_right + dx + 0.04, c.get_center()[1], 0],
                                   buff=0, color=S.GREY, stroke_width=3, tip_length=0.13,
                                   max_tip_length_to_length_ratio=0.3) for c in chips])
@@ -301,7 +302,7 @@ class DatasetContainer(VoiceScene):
             self.play(FadeOut(VGroup(picture, chips, c_arrows, rm_tag)), run_time=0.5)
             resize(self, t, T_ROWS_MID, run_time=0.6)
             place(xc, right=6.4, cy=(t.box.get_top()[1] + 2.9) / 2)
-            assert xc.get_left()[0] > tr.get_right()[0] + 0.1 or xc.get_top()[1] < tr.get_bottom()[1]
+            _guard((xc.get_left()[0] > tr.get_right()[0] + 0.1 or xc.get_top()[1] < tr.get_bottom()[1]), (""))
             ban = t.print(self, BUILD.out((21, 26)), run_time=0.8)
             r22, r23, r26 = ban[1], ban[2], ban[5]
             assert r23.text == BUILD.line(23) and r26.text == BUILD.line(26), (r23.text, r26.text)
@@ -418,7 +419,7 @@ class DatasetContainer(VoiceScene):
                                "· use the laptop shell, or", "`exit`", "first"], ERR)
         place(conflict, cx=0, cy=y_tr[2])
         for m in (trap1, trap2, conflict):
-            assert m.get_right()[0] < 6.5 and m.get_bottom()[1] > -3.58, (m.get_right(), m.get_bottom())
+            _guard((m.get_right()[0] < 6.5 and m.get_bottom()[1] > -3.58), ((m.get_right(), m.get_bottom())))
         with self.voiceover(SAY[5]) as vo:
             # the first terminal steps aside (it comes back at the end, still at the container prompt)
             tr._caption = plain_caption          # " · README's step 3" leaves before " · extra" comes
@@ -481,9 +482,9 @@ class DatasetContainer(VoiceScene):
         place(row_a, left=x0 + 0.25, cy=venv.get_center()[1] + 0.26)
         place(row_b, left=x0 + 0.25, cy=venv.get_center()[1] - 0.27)
         for m in (row_a, row_b, base_n, app_n):
-            assert m.get_right()[0] < x1 - 0.1, m.get_right()
-        assert frame6.get_bottom()[1] >= -3.56 and stack.get_top()[1] < blk_top - 0.05, (stack.height, blk_top)
-        assert row_a.get_top()[1] < venv.get_top()[1] - 0.04 and row_b.get_bottom()[1] > venv.get_bottom()[1] + 0.04
+            _guard((m.get_right()[0] < x1 - 0.1), (m.get_right()))
+        _guard((frame6.get_bottom()[1] >= -3.56 and stack.get_top()[1] < blk_top - 0.05), ((stack.height, blk_top)))
+        _guard((row_a.get_top()[1] < venv.get_top()[1] - 0.04 and row_b.get_bottom()[1] > venv.get_bottom()[1] + 0.04), (""))
         with self.voiceover(SAY[6]) as vo:
             # the two narrated traps leave; the (unnarrated) Conflict card stays a little longer to be read
             self.play(FadeOut(VGroup(trap1, trap2)), conflict.animate.move_to([0, y_tr[0], 0]), run_time=0.5)

@@ -69,6 +69,7 @@ from manim import (
     there_and_back,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _arrow
 from explainer import style as S
@@ -239,7 +240,7 @@ class QwenInFourBits(VoiceScene):
         same = label("= the same recipe", 26, INK)
         place(same, left=p18.get_right()[0] + 0.5, cy=p18.code.get_center()[1])
         arr_same = _arrow(same.get_left() + LEFT * 0.1, p18.code.get_right() + RIGHT * 0.1, S.GREY, 3)
-        assert same.get_right()[0] < SAFE_R and p18.get_bottom()[1] > -3.35, (same.get_right(), p18.get_bottom())
+        _guard((same.get_right()[0] < SAFE_R and p18.get_bottom()[1] > -3.35), ((same.get_right(), p18.get_bottom())))
         p36 = src_panel(CELL36, [(8, 13), 18], size=20, wrap={10: ["bnb_config,"]})
         place(p36, left=-6.0, top=TOP)
         frz = VGroup(snowflake(0.17), label("freezes every weight", CAPTION, INK)).arrange(RIGHT, buff=0.15)
@@ -252,7 +253,7 @@ class QwenInFourBits(VoiceScene):
         place(chips0, left=-6.0, top=p36.get_bottom()[1] - 0.35)
         later = note("the training chapter shows it")
         place(later, left=chip_gc.get_left()[0] + 0.1, top=chip_gc.get_bottom()[1] - 0.15)
-        assert later.get_bottom()[1] > -3.35, later.get_bottom()
+        _guard((later.get_bottom()[1] > -3.35), (later.get_bottom()))
         lr = None
         with self.voiceover(SAY[0]) as vo:
             self.play(Create(cf.frame), FadeIn(cf.title), FadeIn(cf.tag), FadeIn(tr, shift=DOWN * 0.25),
@@ -289,11 +290,11 @@ class QwenInFourBits(VoiceScene):
         up38 = TOP - 0.05 - out38.get_top()[1]          # beat 2: the output rises into the code's place
         rtag38 = recorded_tag()
         place(rtag38, right=SAFE_R - 0.05, cy=out38.header.get_center()[1])
-        assert rtag38.get_left()[0] > out38.header.get_right()[0] + 0.12, (rtag38.get_left(), out38.header.get_right())
+        _guard((rtag38.get_left()[0] > out38.header.get_right()[0] + 0.12), ((rtag38.get_left(), out38.header.get_right())))
         n38 = substring(out38.rows[0], "375.84896")
         c596 = chip("Qwen3-0.6B: 596 M parameters", S.GREY, size=CAPTION)
         place(c596, left=out38.frame.get_right()[0] + 0.4, cy=out38.frame.get_center()[1])
-        assert c596.get_right()[0] < SAFE_R and rtag38.get_right()[0] < SAFE_R, (c596.get_right(), rtag38.get_right())
+        _guard((c596.get_right()[0] < SAFE_R and rtag38.get_right()[0] < SAFE_R), ((c596.get_right(), rtag38.get_right())))
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(p36, b18, chips0, later)), run_time=0.5)
             self.play(tr.goto(2), FadeIn(p38, shift=UP * 0.15), run_time=0.6)
@@ -324,8 +325,8 @@ class QwenInFourBits(VoiceScene):
         place(not4, cx=emb.get_center()[0], top=BAR_Y - H / 2 - 0.15)
         lab_norm = label("norms · 0.07 M", CAPTION, INK)
         place(lab_norm, left=norm.get_right()[0] + 0.2, cy=BAR_Y)
-        assert lab_norm.get_right()[0] < SAFE_R, lab_norm.get_right()
-        assert lab_lin.get_top()[1] < out38.frame.get_bottom()[1] + up38 - 0.15, (lab_lin.get_top(), out38.frame.get_bottom())
+        _guard((lab_norm.get_right()[0] < SAFE_R), (lab_norm.get_right()))
+        _guard((lab_lin.get_top()[1] < out38.frame.get_bottom()[1] + up38 - 0.15), ((lab_lin.get_top(), out38.frame.get_bottom())))
         # packing: 16 four-bit cells -> 8 byte boxes, two halves each (cell 2k on top, 2k+1 below)
         cw = w_lin / 16
         halves = VGroup()
@@ -346,9 +347,8 @@ class QwenInFourBits(VoiceScene):
         out42 = recorded_box("colab-c42-qwen-config", 58, (63, 64), 71, tag_at="top")
         place(out42, right=SAFE_R - 0.1, bottom=-3.3)
         nf4 = substring(out42.rows[1], '"nf4"')
-        assert out42.get_top()[1] < not4.get_bottom()[1] - 0.1, (out42.get_top(), not4.get_bottom())
-        assert sum_.get_right()[0] < out42.get_left()[0] - 0.2 or sum_.get_bottom()[1] > out42.get_top()[1] + 0.1, \
-            (sum_.get_right(), sum_.get_bottom(), out42.get_left(), out42.get_top())
+        _guard((out42.get_top()[1] < not4.get_bottom()[1] - 0.1), ((out42.get_top(), not4.get_bottom())))
+        _guard((sum_.get_right()[0] < out42.get_left()[0] - 0.2 or sum_.get_bottom()[1] > out42.get_top()[1] + 0.1), ((sum_.get_right(), sum_.get_bottom(), out42.get_left(), out42.get_top())))
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(card), FadeOut(p38), run_time=0.4)
             # the tag and the chip rise 0.12 less: the tag stays clear of the Colab tab above it
@@ -394,7 +394,7 @@ class QwenInFourBits(VoiceScene):
         place(out48, left=-6.0, top=drift.get_bottom()[1] - 0.35)
         rtag48 = recorded_tag()
         place(rtag48, right=SAFE_R - 0.05, cy=out48.header.get_center()[1])
-        assert rtag48.get_left()[0] > out48.header.get_right()[0] + 0.12, rtag48.get_left()
+        _guard((rtag48.get_left()[0] > out48.header.get_right()[0] + 0.12), (rtag48.get_left()))
         t0 = substring(out48.rows[0], "trainable params: 0")
         mdl = model_box("Qwen3-0.6B", w=2.6, h=0.9, color=FROZEN)
         place(mdl, left=-6.0, top=out48.get_bottom()[1] - 0.3)
@@ -402,7 +402,7 @@ class QwenInFourBits(VoiceScene):
         place(flake, left=mdl.frame.get_right()[0] + 0.25, cy=mdl.frame.get_center()[1])
         allfrz = note("every weight frozen")
         place(allfrz, left=flake.get_right()[0] + 0.2, cy=mdl.frame.get_center()[1])
-        assert mdl.get_bottom()[1] > -3.35 and out45.get_right()[0] < SAFE_R, (mdl.get_bottom(), out45.get_right())
+        _guard((mdl.get_bottom()[1] > -3.35 and out45.get_right()[0] < SAFE_R), ((mdl.get_bottom(), out45.get_right())))
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(beat2), FadeOut(lr), run_time=0.6)
             lr = None
@@ -428,7 +428,7 @@ class QwenInFourBits(VoiceScene):
         mb = substring(out51.rows[1], "23.2M/23.2M")
         busy = chip("Too many users …? retry the gdown cell later", S.GREY, size=CAPTION)   # part 1's 17 rows: n=1000 fails
         place(busy, left=-6.0, top=out51.get_bottom()[1] - 0.3)
-        assert busy.get_right()[0] < SAFE_R, busy.get_right()
+        _guard((busy.get_right()[0] < SAFE_R), (busy.get_right()))
         p53 = src_panel(CELL53, 4, 4, size=20)
         place(p53, left=-6.0, top=TOP)
         w53 = [r for r, *_ in wrap_output(ROW53, 65)]
@@ -456,9 +456,9 @@ class QwenInFourBits(VoiceScene):
         fmt = label("exactly track A's format", 26, OWN)
         place(fmt, left=brk_home[0] + brk.width / 2 + 0.4, bottom=brk_home[1] + 0.12)
         place(openers, left=fmt.get_left()[0], top=fmt.get_bottom()[1] - 0.2)
-        assert brk_home[1] + brk.height / 2 < out53.get_bottom()[1] - 0.15, (brk_home, out53.get_bottom())
-        assert fmt.get_top()[1] < rtag53.get_bottom()[1] - 0.12, (fmt.get_top(), rtag53.get_bottom())
-        assert fmt.get_right()[0] < SAFE_R and openers.get_right()[0] < SAFE_R, (fmt.get_right(), openers.get_right())
+        _guard((brk_home[1] + brk.height / 2 < out53.get_bottom()[1] - 0.15), ((brk_home, out53.get_bottom())))
+        _guard((fmt.get_top()[1] < rtag53.get_bottom()[1] - 0.12), ((fmt.get_top(), rtag53.get_bottom())))
+        _guard((fmt.get_right()[0] < SAFE_R and openers.get_right()[0] < SAFE_R), ((fmt.get_right(), openers.get_right())))
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(beat3), run_time=0.5)
             tr = switch_section(self, tr, "Data", 1)
@@ -489,7 +489,7 @@ class QwenInFourBits(VoiceScene):
         # ========================================================== 5 · the chat template: a ribbon
         p59 = src_panel(CELL59, 10, 15, size=20, wrap={13: ["tokenize=False"]})
         place(p59, left=-6.0, top=TOP)
-        assert p59.get_bottom()[1] > brk_home[1] + brk.height / 2 + 0.1, (p59.get_bottom(), brk_home)
+        _guard((p59.get_bottom()[1] > brk_home[1] + brk.height / 2 + 0.1), ((p59.get_bottom(), brk_home)))
         x59 = excerpt_chip(TEMPLATE_CALL, f"{shown_path(CELL59)} · line 13 (excerpt)", line=L59)
         place(x59, left=-6.0, top=TOP)
         rib = ChatRibbon(RIBBON, max_w=12.2)
@@ -500,7 +500,7 @@ class QwenInFourBits(VoiceScene):
         hd63 = label(f"{colab_where(63)} · saved output", CAPTION, S.GREY)
         place(hd63, left=-6.0, bottom=rib.get_top()[1] + 0.12)
         place(rtag63, left=hd63.get_right()[0] + 0.2, cy=hd63.get_center()[1])
-        assert rtag63.get_right()[0] < SAFE_R, rtag63.get_right()
+        _guard((rtag63.get_right()[0] < SAFE_R), (rtag63.get_right()))
         chips = [list(r) for r in rows]
         think = VGroup(chips[2][0], chips[2][1], chips[2][2])
         eos_t = grey_tag("EOS · already there")
@@ -512,14 +512,13 @@ class QwenInFourBits(VoiceScene):
         why = VGroup(note("answer without thinking ·"), note("the same prefix at inference"))
         why.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
         place(why, left=rows[1].get_right()[0] + 0.9, top=rows[1].get_top()[1])
-        assert why.get_bottom()[1] > rows[2].get_top()[1] + 0.08, (why.get_bottom(), rows[2].get_top())
+        _guard((why.get_bottom()[1] > rows[2].get_top()[1] + 0.08), ((why.get_bottom(), rows[2].get_top())))
         why_arr = _arrow(why.get_left() + LEFT * 0.1 + DOWN * 0.12, think.get_top() + UP * 0.08 + RIGHT * 0.6,
                          S.GREY, 2.5)
-        assert eos.get_right()[0] < SAFE_R and why.get_right()[0] < SAFE_R, (eos.get_right(), why.get_right())
-        assert eos.get_bottom()[1] > BELT_Y + 0.2, eos.get_bottom()
-        assert hd63.get_top()[1] < x59.get_bottom()[1] - 0.12, (hd63.get_top(), x59.get_bottom())
-        assert rib.get_bottom()[1] > BELT_Y + 0.4 and hd63.get_bottom()[1] > x59.get_bottom()[1] - 0.8 + 0.0, \
-            (rib.get_bottom(), hd63.get_bottom())
+        _guard((eos.get_right()[0] < SAFE_R and why.get_right()[0] < SAFE_R), ((eos.get_right(), why.get_right())))
+        _guard((eos.get_bottom()[1] > BELT_Y + 0.2), (eos.get_bottom()))
+        _guard((hd63.get_top()[1] < x59.get_bottom()[1] - 0.12), ((hd63.get_top(), x59.get_bottom())))
+        _guard((rib.get_bottom()[1] > BELT_Y + 0.4 and hd63.get_bottom()[1] > x59.get_bottom()[1] - 0.8 + 0.0), ((rib.get_bottom(), hd63.get_bottom())))
         shells = VGroup(*[c.box.copy() for c in rib.chips])
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(p53, out53, rtag53, openers, fmt)), brk_keys.animate.set_color(INK),
@@ -568,7 +567,7 @@ class QwenInFourBits(VoiceScene):
         place(hd61, left=out61.frame.get_right()[0] + 0.3, cy=out61.rows[0].get_center()[1])
         rtag61 = VGroup(hd61, recorded_tag())
         place(rtag61[1], left=hd61.get_left()[0], cy=out61.rows[1].get_center()[1])
-        assert out61.get_bottom()[1] > rib.get_top()[1] + 0.15, (out61.get_bottom(), rib.get_top())
+        _guard((out61.get_bottom()[1] > rib.get_top()[1] + 0.15), ((out61.get_bottom(), rib.get_top())))
         cap = label("loss on every token", 26, TURN)
         place(cap, cx=0, top=rib.get_bottom()[1] - 0.2)
         illu = illustration_tag("token boxes")

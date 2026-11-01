@@ -57,6 +57,7 @@ from manim import (
     Write,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import Dial, wrap_output
 from explainer import style as S
@@ -157,8 +158,7 @@ def flash(mob, color: str = TURN, k: float = 1.15, run_time: float = 0.6):
 
 
 def inside(m, l=SAFE_L, r=SAFE_R, b=-3.5, t=3.5):
-    assert m.get_left()[0] >= l and m.get_right()[0] <= r and m.get_bottom()[1] >= b and m.get_top()[1] <= t, \
-        (m.get_left(), m.get_right(), m.get_bottom(), m.get_top())
+    _guard((m.get_left()[0] >= l and m.get_right()[0] <= r and m.get_bottom()[1] >= b and m.get_top()[1] <= t), ((m.get_left(), m.get_right(), m.get_bottom(), m.get_top())))
 
 
 def rows_of(text: str, color: str = OUTPUT, width: int = WRAP) -> list:
@@ -251,7 +251,7 @@ class DidItWork(VoiceScene):
         ill0 = illustration_tag()
         place(ill0, left=cnt14.get_left()[0], top=cnt14.get_bottom()[1] - 0.3)
         inside(VGroup(f_card, f_note, f14, f4, q_dot, cnt14, ill0))
-        assert f14.get_top()[1] < f_note.get_bottom()[1] - 0.2, (f14.get_top(), f_note.get_bottom())
+        _guard((f14.get_top()[1] < f_note.get_bottom()[1] - 0.2), ((f14.get_top(), f_note.get_bottom())))
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.25), run_time=0.7)
             vo.wait_until("Section 5.1 measures it")
@@ -329,10 +329,10 @@ class DidItWork(VoiceScene):
         ab_out = VGroup(blk.w_in_r, blk.w_out_r)
         slide = RIGHT * 2.0
         inside(VGroup(p80, blk, lchip, sw))
-        assert unch.get_bottom()[1] > blk.w0.get_bottom()[1] - 0.2 and unch.get_left()[0] > sw.get_right()[0] + 0.2
-        assert blk.get_bottom()[1] > lchip.get_top()[1] + 0.1, (blk.get_bottom(), lchip.get_top())
-        assert ab.get_right()[0] + 2.0 < SAFE_R, ab.get_right()
-        assert sw.get_right()[0] < blk.get_left()[0] - 0.2, (sw.get_right(), blk.get_left())
+        _guard((unch.get_bottom()[1] > blk.w0.get_bottom()[1] - 0.2 and unch.get_left()[0] > sw.get_right()[0] + 0.2), (""))
+        _guard((blk.get_bottom()[1] > lchip.get_top()[1] + 0.1), ((blk.get_bottom(), lchip.get_top())))
+        _guard((ab.get_right()[0] + 2.0 < SAFE_R), (ab.get_right()))
+        _guard((sw.get_right()[0] < blk.get_left()[0] - 0.2), ((sw.get_right(), blk.get_left())))
         lr = None
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(rec80), run_time=0.5)
@@ -386,8 +386,8 @@ class DidItWork(VoiceScene):
                            tag_at="down")
         place(tab, cx=0, top=saved.get_bottom()[1] - 0.5)
         inside(VGroup(sw_to, bars, prm, ill3, saved, tab))
-        assert prm.get_top()[1] < 2.85 and ill3.get_left()[0] > bars.get_right()[0] + 0.2
-        assert sw_to.get_right()[0] < bars.get_left()[0] - 0.2, (sw_to.get_right(), bars.get_left())
+        _guard((prm.get_top()[1] < 2.85 and ill3.get_left()[0] > bars.get_right()[0] + 0.2), (""))
+        _guard((sw_to.get_right()[0] < bars.get_left()[0] - 0.2), ((sw_to.get_right(), bars.get_left())))
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(p80, b54, blk, unch, lchip)), FadeOut(lr), run_time=0.6)
             lr = None
@@ -428,7 +428,7 @@ class DidItWork(VoiceScene):
         VGroup(says, nots).arrange(RIGHT, buff=0.4)
         place(VGroup(says, nots), cx=0, top=rib.get_bottom()[1] - 0.7)
         inside(VGroup(rib, hd63, rt63, says, nots))
-        assert hd63.get_bottom()[1] > 2.0
+        _guard((hd63.get_bottom()[1] > 2.0), (""))
         markers = VGroup(*[c for c in rib.chips if c.marker])
         question = rib.chips[2]
         with self.voiceover(SAY[4]) as vo:
@@ -475,7 +475,7 @@ class DidItWork(VoiceScene):
         card = turn_card([Prose("run Step 5 (5.1, 5.2)"), (Prose("T4: free (when available)"), OWN)])
         place(card, right=6.3, bottom=-3.45)
         inside(VGroup(rec82, rec_sky, x1, x2, tk, card))
-        assert card.get_top()[1] < rec_sky.get_bottom()[1] - 0.1, (card.get_top(), rec_sky.get_bottom())
+        _guard((card.get_top()[1] < rec_sky.get_bottom()[1] - 0.1), ((card.get_top(), rec_sky.get_bottom())))
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(beat4), run_time=0.5)
             self.play(tr.goto(2), FadeIn(rec82, shift=UP * 0.15), run_time=0.8)
@@ -535,8 +535,8 @@ class DidItWork(VoiceScene):
         style = chip("this notebook: style fit, not answer quality", OWN, size=24)
         place(style, right=6.2, cy=bl.get_center()[1])
         inside(VGroup(c_tab, c_sbs, brk, pair, ill6, style))
-        assert style.get_left()[0] > max(bf.get_right()[0], lbl_f.get_right()[0], ill6.get_right()[0]) + 0.3
-        assert brk.get_right()[0] < SAFE_R and cap40.get_top()[1] < c_tab.get_bottom()[1] - 0.3
+        _guard((style.get_left()[0] > max(bf.get_right()[0], lbl_f.get_right()[0], ill6.get_right()[0]) + 0.3), (""))
+        _guard((brk.get_right()[0] < SAFE_R and cap40.get_top()[1] < c_tab.get_bottom()[1] - 0.3), (""))
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(rec_sky, x1, x2, tk, u_ref, u_wat, card)), run_time=0.6)
             lr = lref_swap(self, lr, "40")

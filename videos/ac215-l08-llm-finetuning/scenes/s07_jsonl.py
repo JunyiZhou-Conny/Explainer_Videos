@@ -75,6 +75,7 @@ from manim import (
     VGroup,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _header_text, _mixed_row, _mono_rows
 from explainer import style as S
@@ -260,7 +261,7 @@ class RowsToJsonl(VoiceScene):
             cv.labels[k].set_opacity(0.35)
         p0 = src_panel(CLI, 240, 247, size=20)
         place(p0, cx=0, top=TOP_Y)
-        assert p0.get_bottom()[1] > csv.get_top()[1] + 0.15, (p0.get_bottom(), csv.get_top())
+        _guard((p0.get_bottom()[1] > csv.get_top()[1] + 0.15), ((p0.get_bottom(), csv.get_top())))
         card2 = shape_card(["human: …", "bot: …"], OWN)
         cv.put(1, card2)
         csv_rows = [CSVH.line(3), *fold_rows(CSVH.cut(4, "large wheels."), 72)]
@@ -270,7 +271,7 @@ class RowsToJsonl(VoiceScene):
         tags2.next_to(pan2.header, RIGHT, buff=0.35)
         auto = grey_tag("for autotrain-runner · track A doesn't use it")
         auto.next_to(pan2.frame, DOWN, buff=0.18).align_to(pan2.frame, RIGHT)
-        assert auto.get_bottom()[1] > card2.get_top()[1] + 0.1, (auto.get_bottom(), card2.get_top())
+        _guard((auto.get_bottom()[1] > card2.get_top()[1] + 0.1), ((auto.get_bottom(), card2.get_top())))
         with self.voiceover(SAY[0]) as vo:
             VGroup(cv, csv).shift(UP * LIFT)
             self.play(FadeIn(tr, shift=DOWN * 0.25), FadeIn(lr), run_time=0.6)
@@ -313,8 +314,8 @@ class RowsToJsonl(VoiceScene):
         place(p1, cx=0, top=TOP_Y)
         nest = nested_card()
         cv.put(2, nest, buff=0.2)
-        assert p1.get_bottom()[1] > nest.get_top()[1] + 0.1, (p1.get_bottom(), nest.get_top())
-        assert nest.get_right()[0] < 6.55 and nest.get_left()[0] > card2.get_right()[0] + 0.1
+        _guard((p1.get_bottom()[1] > nest.get_top()[1] + 0.1), ((p1.get_bottom(), nest.get_top())))
+        _guard((nest.get_right()[0] < 6.55 and nest.get_left()[0] > card2.get_right()[0] + 0.1), (""))
         u, m = nest.turns
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(p1, shift=UP * 0.15), cv.labels[2].animate.set_opacity(1), run_time=0.6)
@@ -350,7 +351,7 @@ class RowsToJsonl(VoiceScene):
         qq = mono_panel(QUOTE_ROWS, expected_where("expected/readme-prepare-gemini-format"), quote=True)
         for g in (pp, qq):
             place(g, cx=0, top=TOP_Y - 0.05)
-        assert pp.get_bottom()[1] > -3.0, pp.get_bottom()
+        _guard((pp.get_bottom()[1] > -3.0), (pp.get_bottom()))
         tags_p = VGroup(scripted_tag(), extra_tag()).arrange(RIGHT, buff=0.15).next_to(pp.header, RIGHT, buff=0.35)
         tag_q = expected_tag().next_to(qq.header, RIGHT, buff=0.35)
         kp, kq = key_glyphs(pp.rows), key_glyphs(qq.rows)
@@ -371,7 +372,7 @@ class RowsToJsonl(VoiceScene):
         jl_eq = label("= JSON lines", 34, INK)
         jg = VGroup(jl, jl_eq).arrange(RIGHT, buff=0.35)
         place(jg, cx=0, top=cap_one.get_bottom()[1] - 0.45)
-        assert jg.get_bottom()[1] > -3.4, jg.get_bottom()
+        _guard((jg.get_bottom()[1] > -3.4), (jg.get_bottom()))
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(p1, b251, b253, b254, cv, csv, card2, nest)), caption_extra(tr), run_time=0.7)
             self.play(FadeIn(pp.frame), FadeIn(pp.header), FadeIn(tags_p),
@@ -412,7 +413,7 @@ class RowsToJsonl(VoiceScene):
         p3 = src_panel(CLI, [(260, 262), 267, (270, 271)], size=20,
                        wrap={270: ["as json_file"], 271: ["lines=True"]})   # 263-264, 272-273 left out: 14 rows
         place(p3, cx=0, top=TOP_Y)
-        assert p3.get_bottom()[1] > -3.5, p3.get_bottom()
+        _guard((p3.get_bottom()[1] > -3.5), (p3.get_bottom()))
         sp = splitter(17, 2)
         sp[3].next_to(sp.fork[0], UP, buff=0.2)
         sp.shift(np.array([-1.5, -0.25, 0]) - sp.input_point())
@@ -433,12 +434,12 @@ class RowsToJsonl(VoiceScene):
         cap256.next_to(r267, RIGHT, buff=0.6)
         LIFT = UP * 0.58                                   # the splitter's rise when the 5-row strip enters
         seed_up = seed.copy().next_to(sp.fork[0].get_start() + LIFT, LEFT, buff=0.2)
-        assert cap256.get_right()[0] < p266.get_right()[0] - 0.1, (cap256.get_right(), p266.get_right())
-        assert p266.get_bottom()[1] > sp.get_top()[1] + LIFT[1] + 0.1, (p266.get_bottom(), sp.get_top())
-        assert sp.get_bottom()[1] + LIFT[1] > t3.box.get_top()[1] + 0.08, (sp.get_bottom(), t3.box.get_top())
-        assert seed_up.get_bottom()[1] > t3.box.get_top()[1] + 0.3 and seed_up.get_left()[0] > -6.5, seed_up.get_left()
-        assert seed.get_bottom()[1] > STRIP_TOP + 0.05, seed.get_bottom()
-        assert sp.get_right()[0] < 6.4, sp.get_right()
+        _guard((cap256.get_right()[0] < p266.get_right()[0] - 0.1), ((cap256.get_right(), p266.get_right())))
+        _guard((p266.get_bottom()[1] > sp.get_top()[1] + LIFT[1] + 0.1), ((p266.get_bottom(), sp.get_top())))
+        _guard((sp.get_bottom()[1] + LIFT[1] > t3.box.get_top()[1] + 0.08), ((sp.get_bottom(), t3.box.get_top())))
+        _guard((seed_up.get_bottom()[1] > t3.box.get_top()[1] + 0.3 and seed_up.get_left()[0] > -6.5), (seed_up.get_left()))
+        _guard((seed.get_bottom()[1] > STRIP_TOP + 0.05), (seed.get_bottom()))
+        _guard((sp.get_right()[0] < 6.4), (sp.get_right()))
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(one_on_screen, cap_one, jg)), caption_extra(tr, on=False), run_time=0.6)
             self.play(FadeIn(p3, shift=UP * 0.15), run_time=0.6)
@@ -495,7 +496,7 @@ class RowsToJsonl(VoiceScene):
                     max_tip_length_to_length_ratio=0.5)
         arr.next_to(toks[0], DOWN, buff=0.12)
         cap4 = note("predict the next token", TURN, 28).move_to([0, -1.75, 0])
-        assert ill.get_right()[0] < 6.5, ill.get_right()
+        _guard((ill.get_right()[0] < 6.5), (ill.get_right()))
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(sp, seed_lab, p266, b266, cap256, t3, tags3)), caption_extra(tr, on=False),
                       run_time=0.6)
@@ -523,7 +524,7 @@ class RowsToJsonl(VoiceScene):
                      Arrow(LEFT * 0.4, RIGHT * 0.4, buff=0, color=LOOKUP, stroke_width=4, tip_length=0.16),
                      mono("/app", CAPTION, CTR), note("bind mount", LOOKUP)).arrange(RIGHT, buff=0.18)
         place(mnt, right=6.45, cy=2.84)
-        assert mnt.get_bottom()[1] > t5.box.get_top()[1] + 0.03 and mnt.get_left()[0] > -1.9, mnt.get_corner(DOWN + LEFT)
+        _guard((mnt.get_bottom()[1] > t5.box.get_top()[1] + 0.03 and mnt.get_left()[0] > -1.9), (mnt.get_corner(DOWN + LEFT)))
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeIn(t5, shift=UP * 0.2), FadeIn(tags5, shift=UP * 0.2), caption_extra(tr), run_time=0.6)
             bare_prompt(self, t5)
@@ -551,7 +552,7 @@ class RowsToJsonl(VoiceScene):
         place(look, cx=0, top=2.55)
         e403 = chip("403? → your bucket in env.dev · both roles · API enabled", ERR, size=CAPTION)
         place(e403, cx=0, top=look.get_bottom()[1] - 0.25)
-        assert e403.get_bottom()[1] > STRIP_TOP + 0.05, e403.get_bottom()
+        _guard((e403.get_bottom()[1] > STRIP_TOP + 0.05), (e403.get_bottom()))
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(t5, tags5, mnt)), run_time=0.5)
             tr = switch_section(self, tr, "DsUp", 1)
@@ -604,8 +605,8 @@ class RowsToJsonl(VoiceScene):
         place(tc, cx=0, top=env.get_bottom()[1] - 0.6)
         stack7 = VGroup(top7, err, fix, env, tc)
         stack7.shift(UP * (0.0 - stack7.get_center()[1]))
-        assert stack7.get_top()[1] < 2.85, stack7.get_top()
-        assert tc.get_bottom()[1] > -3.5 and top7.get_right()[0] < 6.5, (tc.get_bottom(), top7.get_right())
+        _guard((stack7.get_top()[1] < 2.85), (stack7.get_top()))
+        _guard((tc.get_bottom()[1] > -3.5 and top7.get_right()[0] < 6.5), ((tc.get_bottom(), top7.get_right())))
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(look, e403, t6, tags6)), run_time=0.4)
             self.play(FadeIn(e280, shift=UP * 0.1), FadeIn(err), run_time=0.4)

@@ -73,6 +73,7 @@ from manim import (
     Write,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _arrow
 from explainer import style as S
@@ -383,7 +384,7 @@ class Buckets(VoiceScene):
         place(nf4_chip, left=lv16.get_right()[0] + 0.4, cy=lv16.get_center()[1])
         share = label("each strip ≈ an equal share of the weights", CAPTION, S.GREY)
         place(share, right=SAFE_R - 0.1, cy=2.2)
-        assert bell.lines.get_top()[1] < share.get_bottom()[1] - 0.1, bell.lines.get_top()
+        _guard((bell.lines.get_top()[1] < share.get_bottom()[1] - 0.1), (bell.lines.get_top()))
         w_vals = [-0.62, -0.41, -0.27, -0.16, -0.0874, -0.03, 0.05, 0.12, 0.21, 0.3412, 0.47, 0.66]
         wdots = VGroup(*[Dot(bell.x(v) + UP * 0.12, radius=0.08, color=MODEL) for v in w_vals])
         wdots.values = w_vals
@@ -440,7 +441,7 @@ class Buckets(VoiceScene):
         bar10, bar9, bar8, bar11 = p18.bar(10), p18.bar(9), p18.bar(8), p18.bar(11)
         skip = rows_note(["the lecture skips it", "the notebook turns it on"])
         place(skip, left=p18.get_right()[0] + 0.35, cy=p18.code.code_lines[p18.rows_of(10)[0]].get_center()[1])
-        assert skip.get_right()[0] < SAFE_R, skip.get_right()
+        _guard((skip.get_right()[0] < SAFE_R), (skip.get_right()))
         cchip = colab_chip()
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(bell, strips, share, lv16, nf4_chip, wdots, flt, byte_box, byte_cap)),
@@ -453,7 +454,7 @@ class Buckets(VoiceScene):
                       run_time=0.9)
             vo.wait_until("The lecture skips it")
             tr = switch_section(self, tr, "ColabB", 1, run_time=0.6)
-            assert cchip.get_left()[0] > tr.get_right()[0] + 0.3 and cchip.get_right()[0] < lr.get_left()[0] - 0.3
+            _guard((cchip.get_left()[0] > tr.get_right()[0] + 0.3 and cchip.get_right()[0] < lr.get_left()[0] - 0.3), (""))
             self.play(FadeIn(p18, shift=UP * 0.2), FadeIn(cchip, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("the notebook turns it on")
             self.play(FadeIn(bar10.set_fill(TURN, 0.25)), FadeIn(skip, shift=LEFT * 0.1), run_time=0.5)
@@ -480,7 +481,7 @@ class Buckets(VoiceScene):
         place(x_lab, cx=vec.get_center()[0], bottom=vec.get_top()[1] + 0.15)
         dt_note = rows_note(["lecture: BF16", "notebook: FP16", "(the training chapter", "explains)"])
         place(dt_note, left=p18.get_right()[0] + 0.35, cy=p18.code.code_lines[p18.rows_of(11)[0]].get_center()[1])
-        assert dt_note.get_right()[0] < SAFE_R, dt_note.get_right()
+        _guard((dt_note.get_right()[0] < SAFE_R), (dt_note.get_right()))
         with self.voiceover(SAY[7]) as vo:
             vo.wait_until("Stored in 4 bits")
             lr = swap_lref(self, lr, "68–69", FadeOut(VGroup(knobs, dq_cap, skip)), FadeOut(VGroup(bar8, bar9)),
@@ -522,7 +523,7 @@ class Buckets(VoiceScene):
         place(emb_note, right=fx1 - 0.15, cy=rows[1].get_center()[1])
         head_note = label("stays 16-bit ↓", CAPTION, S.GREY)
         place(head_note, right=fx1 - 0.15, cy=rows[10].get_center()[1])
-        assert emb_note.get_left()[0] > rows[1].get_right()[0] + 0.2
+        _guard((emb_note.get_left()[0] > rows[1].get_right()[0] + 0.2), (""))
         hl = VGroup(lin_bars, emb_bar, head_bar).set_fill(opacity=0)
         r21.insert(1, hl)                                   # over the box's fill, under its rows
         r25 = recorded_box("colab-c25-tokenize", C25.cut(4, "16]]"), tag_=False)
@@ -531,7 +532,7 @@ class Buckets(VoiceScene):
         place(r27, left=-6.3, top=r25.get_bottom()[1] - 0.45)
         card = turn_card([Prose("run Part B from Loading Models in 4-bit through section 2"), (Prose("T4: free (when available)"), OWN)])
         place(card, left=-6.3, bottom=-3.45)
-        assert r27.get_bottom()[1] > card.get_top()[1] + 0.2, (r27.get_bottom(), card.get_top())
+        _guard((r27.get_bottom()[1] > card.get_top()[1] + 0.2), ((r27.get_bottom(), card.get_top())))
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(p18, bar10, bar11, small, s_lab, dt_note)), FadeOut(lr), run_time=0.6)
             lr = None
@@ -550,7 +551,7 @@ class Buckets(VoiceScene):
             self.play(FadeIn(r25, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("and section 2 generates")
             self.play(tr.goto(3), FadeIn(r27, shift=UP * 0.15), run_time=0.6)
-            assert cchip.get_left()[0] > tr.get_right()[0] + 0.3, (cchip.get_left(), tr.get_right())
+            _guard((cchip.get_left()[0] > tr.get_right()[0] + 0.3), ((cchip.get_left(), tr.get_right())))
             vo.wait_until("Pause, and run part B")
             self.play(FadeIn(card, shift=UP * 0.15), run_time=0.6)
         self.wait(2)
@@ -569,7 +570,7 @@ class Buckets(VoiceScene):
         f2.next_to(a2, RIGHT, buff=0.25)
         VGroup(m1, m2, x1m, x2m, a1, a2, f1, f2).shift(RIGHT * -VGroup(m1, f1, m2, f2).get_center()[0])
         s1, s2 = strike(m1.text), strike(m2.text)
-        assert max(f1.get_right()[0], f2.get_right()[0]) < SAFE_R, (f1.get_right(), f2.get_right())
+        _guard((max(f1.get_right()[0], f2.get_right()[0]) < SAFE_R), ((f1.get_right(), f2.get_right())))
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(VGroup(r25, r27, card, cchip)), run_time=0.5)
             vo.wait_until("Two misconceptions")

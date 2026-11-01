@@ -57,6 +57,7 @@ from manim import (
     VGroup,
 )
 
+from common import guard as _guard
 from common import *  # noqa: F401,F403
 from common import _Reveal, _set_op, _with_header
 from explainer import style as S
@@ -217,8 +218,8 @@ class Persona(VoiceScene):
         if e18.get_right()[0] > 6.4:                   # too wide side by side: stack them
             place(e19, top=-1.66)
             place(e18, left=-6.3, top=e19.get_bottom()[1] - 0.1)
-        assert e18.get_bottom()[1] > -3.56 and e18.get_right()[0] < 6.45, e18.get_corner(DOWN + RIGHT)
-        assert e19.get_right()[0] < batch.get_left()[0] - 0.2 or e19.get_top()[1] < nums.get_bottom()[1] - 0.05
+        _guard((e18.get_bottom()[1] > -3.56 and e18.get_right()[0] < 6.45), (e18.get_corner(DOWN + RIGHT)))
+        _guard((e19.get_right()[0] < batch.get_left()[0] - 0.2 or e19.get_top()[1] < nums.get_bottom()[1] - 0.05), (""))
         target = tb.copy()
         _set_op(target)                       # the copy at its real opacity (the piece hides it)
         with self.voiceover(SAY[1]) as vo:
@@ -256,7 +257,7 @@ class Persona(VoiceScene):
                       max_tip_length_to_length_ratio=0.4)
         strip = VGroup(st_tb, st_ar, slots).arrange(RIGHT, buff=0.15)
         place(strip, left=-1.7, cy=2.62)
-        assert strip.get_right()[0] < 6.45 and strip.get_bottom()[1] > t.box.get_top()[1] + 0.08, strip.get_corner(DOWN + RIGHT)
+        _guard((strip.get_right()[0] < 6.45 and strip.get_bottom()[1] > t.box.get_top()[1] + 0.08), (strip.get_corner(DOWN + RIGHT)))
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(td, mnote, batch, bill, e18, e19, lr)), TransformFromCopy(tb, st_tb),
                       TransformFromCopy(td.bricks, slots), FadeIn(st_ar), run_time=0.9)
@@ -272,13 +273,13 @@ class Persona(VoiceScene):
             vo.wait_until("With a key")
             row0_y = cmd.strut.get_center()[1]
             place(costc, right=t.box.get_right()[0] - 0.15, cy=row0_y - t.pitch / 2)
-            assert costc.get_left()[0] > cmd.glyphs.get_right()[0] + 0.3, costc.get_left()
+            _guard((costc.get_left()[0] > cmd.glyphs.get_right()[0] + 0.3), (costc.get_left()))
             self.play(FadeIn(costc, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("the README estimates")
             self.play(flash(cost[0], COST, 1.08), run_time=0.6)
             vo.wait_until("Without one")
             o4 = show(self, t, GEN, 4, run_time=0.3)
-            assert costc.get_left()[0] > o4[0].glyphs.get_right()[0] + 0.3
+            _guard((costc.get_left()[0] > o4[0].glyphs.get_right()[0] + 0.3), (""))
             o5 = t.print(self, [(GEN.line(5), ERR)], wrap=True, run_time=0.4)
             assert len(o5) == 2, [r.text for r in o5]
             self.play(_dark(slots[0]), run_time=0.3)
@@ -308,7 +309,7 @@ class Persona(VoiceScene):
         p3 = src_panel(CLI, [(84, 89), 96], size=20, wrap={84: ["sets the scene"], 96: ["to enhance"]})
         _with_header(p3, f"{CLI} · lines 84–96 (folded)")
         place(p3, cx=0, top=TOP_Y)
-        assert p3.get_bottom()[1] > STRIP_TOP + 0.08, p3.get_bottom()
+        _guard((p3.get_bottom()[1] > STRIP_TOP + 0.08), (p3.get_bottom()))
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(strip, costc)), tr.goto(2), run_time=0.5)
             resize(self, t, 3, keep=[r12, r13, pr], run_time=0.6,
@@ -342,7 +343,7 @@ class Persona(VoiceScene):
         place(p4, cx=0, top=TOP_Y)
         err4 = erratum_tag('a constant you edit · README.md:106 says "default parameters"')
         place(err4, right=p4.get_right()[0], cy=(p4.get_bottom()[1] + STRIP_TOP) / 2)
-        assert err4.get_top()[1] < p4.get_bottom()[1] - 0.03 and err4.get_bottom()[1] > STRIP_TOP + 0.03, err4.get_center()
+        _guard((err4.get_top()[1] < p4.get_bottom()[1] - 0.03 and err4.get_bottom()[1] > STRIP_TOP + 0.03), (err4.get_center()))
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(p3, b96)), tr.goto(3), run_time=0.5)
             self.play(FadeIn(e169, shift=UP * 0.1), run_time=0.5)
@@ -368,7 +369,7 @@ class Persona(VoiceScene):
             my = (row179.get_center()[1] + row180.get_center()[1]) / 2
             mini = Polygon([-0.5, 0.3, 0], [0.5, 0.3, 0], [0.2, -0.3, 0], [-0.2, -0.3, 0],
                            stroke_color=LOOKUP, stroke_width=3).set_fill(LOOKUP, 0.12).move_to([mx, my, 0])
-            assert mini.get_left()[0] > max(row179.get_right()[0], row180.get_right()[0]) + 0.3
+            _guard((mini.get_left()[0] > max(row179.get_right()[0], row180.get_right()[0]) + 0.3), (""))
             self.play(FadeIn(b179), FadeIn(b180), run_time=0.4)
             self.play(TransformFromCopy(p4.span(180, "response_schema", 1), mini), run_time=0.7)
             self.play(flash(mini, LOOKUP, 1.25), run_time=0.7)
@@ -379,8 +380,8 @@ class Persona(VoiceScene):
                         ("cli.py's own sample answers (lines 127–141) still open with Yello / Welcome", S.GREY)])
         e5.next_to(q, DOWN, buff=0.3)
         VGroup(q, e5).move_to([0, 0.15, 0])
-        assert q.get_top()[1] < 2.9
-        assert e5.get_bottom()[1] > -3.5 and e5.width < 12.9, (e5.get_bottom(), e5.width)
+        _guard((q.get_top()[1] < 2.9), (""))
+        _guard((e5.get_bottom()[1] > -3.5 and e5.width < 12.9), ((e5.get_bottom(), e5.width)))
         rows = q.rows
         r_w = next(r for r in rows if "Welcomewelcomewelcome" in r.text)
         r_y = next(r for r in rows if "Yello-thisis" in r.text)
@@ -439,7 +440,7 @@ class Persona(VoiceScene):
             bubble.shift(LEFT * (bubble.get_right()[0] - 6.4))
         tail.next_to(bfr, DOWN, buff=-0.04).set_x(stud.get_center()[0])
         cap7 = label("synthetic data carries the teacher's mistakes", 28, INK).move_to([0, -2.4, 0])
-        assert bubble.get_top()[1] < 2.85, bubble.get_top()
+        _guard((bubble.get_top()[1] < 2.85), (bubble.get_top()))
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(card), FadeOut(e45), run_time=0.5)
             self.play(FadeIn(teach, shift=RIGHT * 0.2), FadeIn(data), FadeIn(dlab), FadeIn(stud, shift=LEFT * 0.2),

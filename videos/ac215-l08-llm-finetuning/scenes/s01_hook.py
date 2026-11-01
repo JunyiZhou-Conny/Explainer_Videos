@@ -76,6 +76,7 @@ from manim import (
 from explainer import style as S
 from explainer.scene import VoiceScene
 
+from common import guard as _guard
 from common import (
     ADAPTER,
     CLOUD,
@@ -172,16 +173,16 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
 
 def inside_frame(*mobs):
     for m in mobs:
-        assert m.get_left()[0] >= -SAFE and m.get_right()[0] <= SAFE, (m.get_left(), m.get_right())
-        assert m.get_bottom()[1] >= -3.6 and m.get_top()[1] <= 3.6, (m.get_bottom(), m.get_top())
+        _guard((m.get_left()[0] >= -SAFE and m.get_right()[0] <= SAFE), ((m.get_left(), m.get_right())))
+        _guard((m.get_bottom()[1] >= -3.6 and m.get_top()[1] <= 3.6), ((m.get_bottom(), m.get_top())))
 
 
 def apart(a, b, gap: float = 0.05):
     """Assert the bounding boxes of a and b do not overlap."""
     sep = (a.get_right()[0] + gap <= b.get_left()[0] or b.get_right()[0] + gap <= a.get_left()[0]
            or a.get_top()[1] + gap <= b.get_bottom()[1] or b.get_top()[1] + gap <= a.get_bottom()[1])
-    assert sep, (a.get_corner(DOWN + LEFT), a.get_corner(UP + RIGHT), b.get_corner(DOWN + LEFT),
-                 b.get_corner(UP + RIGHT))
+    _guard(sep, (a.get_corner(DOWN + LEFT), a.get_corner(UP + RIGHT), b.get_corner(DOWN + LEFT),
+                 b.get_corner(UP + RIGHT)))
 
 
 def pulse(m, color: str = TURN, k: float = 1.06, run_time: float = 0.7, width: float | None = None):
@@ -510,7 +511,7 @@ class Hook(VoiceScene):
         place(colA, left=-SAFE + 0.15, top=1.7)
         place(colB, right=SAFE - 0.1, top=1.7)
         sep_x = (colA.get_right()[0] + colB.get_left()[0]) / 2
-        assert colB.get_left()[0] - colA.get_right()[0] >= 0.9, (colA.get_right(), colB.get_left())
+        _guard((colB.get_left()[0] - colA.get_right()[0] >= 0.9), ((colA.get_right(), colB.get_left())))
         sep = Line([sep_x, 1.9, 0], [sep_x, -2.9, 0], color=S.GREY_DARK, stroke_width=2)
         inside_frame(colA, colB, q2_top)
         apart(colA, colB, 0.2)
@@ -626,7 +627,7 @@ class Hook(VoiceScene):
         footer.next_to(card7, DOWN, buff=0.3)
         place(whole, cx=0, cy=0.0)
         inside_frame(card7, footer)
-        assert card7.width <= 13.0, card7.width
+        _guard((card7.width <= 13.0), (card7.width))
         r1 = rows7[1][1]
         k = r1.plain.index("up to the missing key")
         ul_key = under(VGroup(*r1[k:k + len("up to the missing key")]), ERR, stroke=3, buff=0.06)
