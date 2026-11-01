@@ -221,9 +221,9 @@ reparameterization: {ipa: "ɹˌiːpˌæɹəmˌɛɾɚɹaɪzˈeɪʃən", say: "re-
 "2.3": {ipa: "tˈuː pˈɔɪnt θɹˈiː", say: "two point three"}
 "2.4": {ipa: "tˈuː pˈɔɪnt fˈɔːɹ", say: "two point four"}
 "2.65": {ipa: "tˈuː pˈɔɪnt sˈɪks fˈaɪv", say: "two point six five"}
-"3.5": {ipa: "θɹˈiː pˈɔɪnt fˈaɪv", say: "three point five"}
+"Section 3.5": {ipa: "sˈɛkʃən θɹˈiː pˈɔɪnt fˈaɪv", say: "Section three point five"}
 "3.6": {ipa: "θɹˈiː pˈɔɪnt sˈɪks", say: "three point six"}
-"3.7": {ipa: "θɹˈiː pˈɔɪnt sˈɛvən", say: "three point seven"}
+"3.7 checks": {ipa: "θɹˈiː pˈɔɪnt sˈɛvən tʃˈɛks", say: "three point seven checks"}
 "4.6": {ipa: "fˈɔːɹ pˈɔɪnt sˈɪks", say: "four point six"}
 "5.16": {ipa: "fˈaɪv pˈɔɪnt sˈɪkstiːn", say: "five point sixteen"}
 "5.622": {ipa: "fˈaɪv pˈɔɪnt sˈɪks tˈuː tˈuː", say: "five point six two two"}
