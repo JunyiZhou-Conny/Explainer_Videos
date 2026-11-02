@@ -300,3 +300,6 @@ preprocesses: {ipa: "pɹˌiːpɹˈɑːsɛsᵻz", say: "pree-processes"}
 preprocessing: {ipa: "pɹˌiːpɹˈɑːsɛsɪŋ", say: "pree-processing"}
 Preprocessing: {ipa: "pɹˌiːpɹˈɑːsɛsɪŋ", say: "Pree-processing"}
 preprocess_image: {ipa: "pɹˌiːpɹˈɑːsɛs ˈɪmɪdʒ", say: "pree-process image"}
+
+# AC215 L15-exam: Kokoro says "KEER-uhz" (ASR heard "Kira's"); phrase key, as L13-exam's "that Keras holds"
+"Keras export archive": {ipa: "kˈɛɹəs ˈɛkspɔːɹt ˈɑːɹkaɪv", say: "keh-rus export archive"}
