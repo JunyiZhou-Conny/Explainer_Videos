@@ -116,6 +116,11 @@
       "bvid": "BV1mC4N6aEpD",
       "title": "AC215 第14讲 · 考前精讲：Cloud Run 的 service 与 job、按需计费、预处理放在哪、serving signature",
       "pubdate": 1793649382
+    },
+    "ac215-l15-exam": {
+      "bvid": "BV1Qq4N6iE8X",
+      "title": "AC215 第15讲 · 考前精讲：Pipeline 是一张 DAG、task.output、最大安全并行、用依赖边而不是定时",
+      "pubdate": 1793650303
     }
   },
   "unmatched": []
