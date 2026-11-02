@@ -24,7 +24,7 @@ audience: "AC215 student the day before Quiz 4: sat (or skimmed) Lecture 15, kno
 voice: {backend: kokoro, voice: af_heart, speed: 0.9}
 # Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
 # build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
-# One part: no parts: key. No publish: block yet.
+# One part: no parts: key.
 scenes:
   - {file: scenes/s01_race.py,     cls: Race,               title: "The 2 a.m. race"}
   - {file: scenes/s02_graph.py,    cls: TasksAndEdges,      title: "A pipeline is a graph"}
@@ -34,3 +34,16 @@ scenes:
   - {file: scenes/s06_deploy.py,   cls: RegistryToEndpoint, title: "Registry, endpoint, deploy, predict"}
   - {file: scenes/s07_cheese.py,   cls: CheesePipeline,     title: "The Cheese App pipeline, and the same DAG on AWS"}
   - {file: scenes/s08_recap.py,    cls: Recap,              title: "Seven rules for the quiz"}
+publish:
+  title_zh: "AC215 第15讲 · 考前精讲：Pipeline 是一张 DAG、task.output、最大安全并行、用依赖边而不是定时"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 15 讲 ML Workflows with Vertex AI 的考前精讲版，约 13 分钟，为 Quiz 4 准备。
+    用动画讲清这一讲的考点：pipeline 就是一张 DAG（任务是节点、数据依赖是边）、task.output 同时传值又建立依赖、怎样在安全前提下最大程度并行（fan-out / fan-in）、为什么要用依赖边而不是 cron 定时或后台命令来保证顺序，以及模型从 registry 到 endpoint 的部署流程和 serving signature。最后看 Cheese App 的 pipeline 和 AWS 上的同一张 DAG。中间有三道新的选择题可以暂停作答，最后是七条速记规则。
+    代码面板引用 dlops-io/ml-workflow 和 dlops-io/model-deployment 仓库的原文。英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/ml-workflow
+    学习笔记：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L15-vertex-ml-workflows.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, 考前复习, Vertex AI Pipelines, Kubeflow, DAG, 模型部署, 机器学习工作流, 哈佛, 教程]
+  tid: 231
