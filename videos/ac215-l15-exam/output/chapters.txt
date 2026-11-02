@@ -1,0 +1,8 @@
+00:00 The 2 a.m. race
+01:13 A pipeline is a graph
+03:03 task.output: the wire that makes an edge
+05:07 Maximum safe overlap
+06:50 Enforcing order: edges, not clocks
+09:09 Registry, endpoint, deploy, predict
+10:48 The Cheese App pipeline, and the same DAG on AWS
+12:16 Seven rules for the quiz

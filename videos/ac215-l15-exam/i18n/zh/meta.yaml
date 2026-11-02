@@ -1,0 +1,32 @@
+# Chinese (zh-CN) metadata for ac215-l15-exam (read by explainer/i18n.py meta(), used by explainer/build.py for the
+# subtitles' chapters and the zh descriptions): video title, chapter titles keyed by scene file stem (as video.yaml's
+# scenes), and the Bilibili / YouTube description. One part: no parts: key (video.yaml has none).
+# Titles follow GLOSSARY.md rule H1: written register (端点, 有向无环图, 模型注册表, 镜像仓库; A4), the English colon
+# structure is kept (task.output：……; 强制顺序：……), kfp names stay as they are (meta.yaml is not read by
+# `explainer.i18n check`, so brackets are fine here), and the core-concept chapters carry their English short name for
+# search where the Chinese is not the usual search word (有向无环图（DAG）, 最大安全重叠（maximum safe overlap）,
+# 端点（endpoint）), as L1, L3 and L5-L13 do. ML Workflows with Vertex AI → Vertex AI 上的机器学习工作流; exam edition →
+# 考前版 (as ac215-l13-exam; 跟练 = follow-along). The metaphors keep their picture: the 2 a.m. race → 凌晨两点的竞态, the
+# wire that makes an edge → 造出边的那根连线, edges, not clocks → 靠边，不靠时钟, seven rules for the quiz → 小测要记住的
+# 七条规则. No person's name (A10).
+title: "AC215 · 第 15 讲：Vertex AI 上的机器学习工作流（考前版）"
+
+chapters:
+  s01_race: "凌晨两点的竞态"
+  s02_graph: "pipeline 是一张图：有向无环图（DAG）"
+  s03_output: "task.output：造出边的那根连线"
+  s04_overlap: "最大安全重叠（maximum safe overlap）"
+  s05_order: "强制顺序：靠边，不靠时钟"
+  s06_deploy: "模型注册表、端点（endpoint）、部署与预测"
+  s07_cheese: "cheese app 的 pipeline，以及 AWS 上的同一个 DAG"
+  s08_recap: "小测要记住的七条规则"
+
+# Two or three sentences (rule H2), written register. Facts: video.yaml course: dlops-io/ml-workflow main @ 3730009
+# (src/workflow/cli.py sample_pipeline and ml_pipeline, model.py with sync=True, sample-pipeline1.yaml, pipeline.yaml,
+# README), dlops-io/model-deployment main @ cf0b7c7 (cli.py: versioned upload to the Model Registry, the reused
+# cheese-app-endpoint, deploy, predict, cleanup) and dlops-io/ml-workflow-aws main @ f165c6e (SageMaker Pipelines);
+# BRIEF.md and script.md v2 (S01-S08, three new ponder questions, no captures, nothing run). Paste the chapter
+# timestamps from output/chapters.txt and the study guide and tutorial repo links (video.yaml course:) under it when
+# uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 15 讲“Vertex AI 上的机器学习工作流”的考前版，写给 Quiz 4 前一天的你：不跟着敲命令，而是把小测考的机制各画成一张动画图——在 kfp 里，pipeline 是由任务（task）和数据依赖组成的有向无环图（DAG），在 @dsl.pipeline 里调用组件只是创建任务；上游任务的 .output / .outputs 既传递这次运行的值，又造出依赖边，写死或猜出来的路径没有边、可能读到过期数据，.after 只排顺序不传数据；没有路径相连的任务并行运行，汇合点要等齐所有输入，一次运行的时长等于最长路径；预处理 → 训练 → 部署的顺序要靠 pipeline 的边来保证，而不是 cron 错开时间、后台命令或从实验追踪工具里挑最好的模型；部署则是上传到模型注册表（Model Registry）、创建端点（endpoint）、部署（从这一步开始计费）、预测，最后取消部署并删除端点。每个机制都以 dlops-io/ml-workflow 和 model-deployment 仓库里的代码为依据，结尾用 cheese app 的四步 pipeline（数据采集 → 数据处理 → 模型训练 → 模型部署）串起来，并说明 AWS 上的 SageMaker Pipelines 是同一个 DAG 思路；片中有三道小测风格的选择题，逐个讲清每个错误选项错在哪。英文旁白，配中文和中英双语字幕。
