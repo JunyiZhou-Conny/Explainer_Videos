@@ -255,12 +255,16 @@ class TasksAndEdges(VoiceScene):
         k8s_x = strike(k8s, ERR)
         ex = excerpt_chip(AGENT, "ml-workflow/README.md · line 212 (excerpt)", line=README_212)
         place(ex, right=SAFE_R, bottom=-3.35)
-        small_target = (-3.85, 0.15)
+        small_target = (-3.1, 0.15)       # rescale 0.68: frames still hold their (unscaled) titles
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(dag_chip, node_lbl, node_ptr, edge_lbl, edge_ptr)), run_time=0.5)
             lr = lref_swap(self, lr, "24–25")
-            self.play(chain.animate.rescale(0.5).move_to([*small_target, 0]), run_time=0.9)
+            self.play(chain.animate.rescale(0.68).move_to([*small_target, 0]), run_time=0.9)
+            self.play(*[chain.node[n].title.animate.move_to(chain.node[n].frame)
+                        for n in ("prep", "train", "deploy")], run_time=0.3)
             inside(chain)
+            for n in ("prep", "train", "deploy"):
+                _guard(chain.node[n].frame.width >= chain.node[n].title.width + 0.15, f"title {n} overflows its frame")
             g_arrow = _arrow(chain.get_right() + RIGHT * 0.1, vx_box.get_left() + LEFT * 0.05, S.GREY, 3)
             apart(chain, vertex, 0.3, "graph vs Vertex box")
             self.play(FadeIn(vertex, shift=LEFT * 0.2), Create(g_arrow), run_time=0.8)
@@ -369,11 +373,16 @@ class TasksAndEdges(VoiceScene):
         place(pc, left=SAFE_L, top=TOP_Y)
         inside(pc)
         SLIDE = 0.5                       # the tracer moves left before the press (the roller's label)
+        DROP = 0.45                       # ... and down, so the roller's label clears the panel header
         _guard(pc.code.get_right()[0] + 0.1 <= tracer.get_left()[0] - SLIDE
                and pc.header.get_right()[0] + 0.1 <= tracer.parts["stamp"].get_left()[0] - SLIDE,
                "compile panel vs tracer")      # the header reaches over the tracer's empty top-left corner
         _guard(tracer.get_right()[0] - SLIDE + 0.3 + compiler_roller(1).title.width / 2 <= 6.6,
                "the compiler roller's label leaves the frame")
+        _roller = compiler_roller(tracer.height + 0.3)
+        _label_top = tracer.get_bottom()[1] - DROP - 0.15 + _roller.height
+        _guard(_label_top + 0.05 <= pc.header.submobjects[0].get_bottom()[1], "roller label vs compile panel header")
+        _guard(tracer.get_bottom()[1] - DROP - 0.15 >= -3.55, "roller bottom leaves the frame")
         pd = src_panel(CLI, 311, 318)
         place(pd, left=SAFE_L, top=TOP_Y)
         inside(pd)
@@ -405,7 +414,7 @@ class TasksAndEdges(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(once), FadeOut(pipe_bar), run_time=0.3)
             lr = lref_swap(self, lr, "29–30, 32–33, 40")
-            self.play(ReplacementTransform(pb, pc), tracer.animate.shift(LEFT * SLIDE), run_time=0.8)
+            self.play(ReplacementTransform(pb, pc), tracer.animate.shift(LEFT * SLIDE + DOWN * DROP), run_time=0.8)
             b304 = pc.bar(304, TOOL, 0.3)
             self.play(FadeIn(b304), pc.span(304, "compiler").animate.set_color(TOOL), run_time=0.4)
             press(self, tracer, sheet)
@@ -455,10 +464,12 @@ class TasksAndEdges(VoiceScene):
             self.play(*run_g.succeed("add", TOY_VALUES["add"]), run_time=0.45)
             self.play(*run_g.run("square-root"), run_time=0.35)
             self.play(*run_g.succeed("square-root", TOY_VALUES["square-root"]), run_time=0.45)
+            self.play(flash(run_g.node["square-root"].sockets[0], OWN, 1.3), run_time=0.6)
+            self.wait(0.6)
 
         # ========================================================== 8 · takeaway
         card = takeaway("calling `train()` inside the pipeline function → creates a task (a node), trains nothing"
-                        " · nothing runs until the compiled job runs on Vertex")
+                        " · nothing runs until the compiled job runs on Vertex", width=12.6)
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(region, r_cap, run_g, machines, m_cap)), FadeOut(lr), run_time=0.6)
             lr = None

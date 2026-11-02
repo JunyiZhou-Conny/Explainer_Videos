@@ -57,6 +57,7 @@ from manim import (
     VGroup,
     Write,
     linear,
+    there_and_back,
 )
 
 from common import *  # noqa: F401,F403
@@ -68,7 +69,7 @@ SAY = NARRATION["S01"]
 # ------------------------------------------------------------------ the toy night (illustration)
 X0, HOUR = -3.6, 2.4                     # timeline: 0:00 at x = X0, one hour = HOUR units
 AXIS_Y = 2.55
-ROW_Y = {"prep": 1.45, "train": 0.15, "deploy": -1.1}
+ROW_Y = {"prep": 1.4, "train": -0.05, "deploy": -1.5}
 JOBS = (("prep", 1, 40), ("train", 2, 50), ("deploy", 3, 45))      # name, start hour, minutes (normal night)
 BAR_H = 0.5
 PREP_LATE = 75                           # the bad night (script.md S01 SAY 1)
@@ -219,7 +220,7 @@ class Race(VoiceScene):
         assert len(SAY) == 8, len(SAY)
 
         # ========================================================== 0 · three nightly jobs on a clock
-        clock = ClockFace(r=0.9, hour=0, minute=45).move_to([-5.25, 0.9, 0])
+        clock = ClockFace(r=0.9, hour=0, minute=45).move_to([-5.25, 0.6, 0])
         ill = illustration_tag().next_to(clock, DOWN, buff=0.45)
         axis = Line([tx(0) - 0.15, AXIS_Y, 0], [tx(4) + 0.15, AXIS_Y, 0], color=CLOCK, stroke_width=3)
         ticks = VGroup(*[Line([tx(h), AXIS_Y - 0.1, 0], [tx(h), AXIS_Y + 0.1, 0], color=CLOCK, stroke_width=3)
@@ -271,7 +272,7 @@ class Race(VoiceScene):
             self.play(night.count_to(90, run_time=2.4),
                       Rotate(clock.m_hand, angle=-TAU * 12, about_point=c, rate_func=linear),
                       Rotate(clock.h_hand, angle=-TAU, about_point=c, rate_func=linear),
-                      LaggedStart(*[Indicate(badges[n], color=OWN, scale_factor=1.35) for n, _, _ in JOBS],
+                      LaggedStart(*[badges[n].animate(rate_func=there_and_back).scale(1.35) for n, _, _ in JOBS],
                                   lag_ratio=0.3), run_time=2.4)
 
         # ========================================================== 1 · night 91: prep takes 75 minutes
@@ -286,8 +287,8 @@ class Race(VoiceScene):
         read = Arrow(bars["train"].frame.get_left() + UP * 0.12, f.get_right() + RIGHT * 0.05, buff=0.08,
                      color=TURN, stroke_width=4, max_tip_length_to_length_ratio=0.15)
         half_lbl = label("half written", 22, ERR).next_to(f, DOWN, buff=0.12)
-        model = model_box("model", w=1.15, h=0.55, color=OWN).move_to([5.45, -2.3, 0])
-        model_lbl = label("trained on half the data", 22, ERR).next_to(model, DOWN, buff=0.45)
+        model = model_box("model", w=1.3, h=0.6, color=OWN, size=24).move_to([5.3, -2.45, 0])
+        model_lbl = label("trained on half the data", 22, ERR).next_to(model, DOWN, buff=0.36)
         model_lbl.shift(RIGHT * (min(6.45, model_lbl.get_right()[0]) - model_lbl.get_right()[0]))
         for m, nm in ((f_lbl, "clean data label"), (half_lbl, "half written"), (model, "model"),
                       (model_lbl, "model label"), (late, "late prep bar")):
@@ -349,7 +350,7 @@ class Race(VoiceScene):
         model_ring = ring(model.frame, ERR, buff=0.08, stroke=4)
         failed = label("Nothing failed.", 34, OWN)
         right = label("Nothing was right.", 34, ERR)
-        lines = VGroup(failed, right).arrange(DOWN, buff=0.22, aligned_edge=LEFT).move_to([-0.4, -2.4, 0])
+        lines = VGroup(failed, right).arrange(DOWN, buff=0.22, aligned_edge=LEFT).move_to([-0.4, -2.55, 0])
         for m, nm in ((exits, "exit chips"), (ep, "endpoint"), (lines, "two lines")):
             inside(m, nm)
         guard(lines.get_right()[0] < ep.get_left()[0] - 0.3, "two lines vs endpoint")

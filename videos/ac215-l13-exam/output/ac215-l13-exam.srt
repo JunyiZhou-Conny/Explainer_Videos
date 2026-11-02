@@ -1,0 +1,1188 @@
+1
+00:00:00,000 --> 00:00:03,371
+Here is a training run
+that finished without a single error.
+
+2
+00:00:03,691 --> 00:00:07,467
+The job succeeded,
+and the run exists in Weights & Biases.
+
+3
+00:00:07,787 --> 00:00:10,709
+Its config is there,
+and so are its system charts.
+
+4
+00:00:11,683 --> 00:00:14,798
+But there is no loss chart,
+and no accuracy chart.
+
+5
+00:00:15,118 --> 00:00:16,291
+Where are the curves?
+
+6
+00:00:16,611 --> 00:00:18,830
+Here is the line that trained this model.
+
+7
+00:00:19,150 --> 00:00:22,073
+Hold that thought;
+we come back to it in a few minutes.
+
+8
+00:00:22,317 --> 00:00:26,776
+The gray tag in the corner names
+the lecture slides behind each idea.
+
+9
+00:00:27,096 --> 00:00:30,937
+On the lecture's roadmap,
+experiment tracking is set up early,
+
+10
+00:00:30,937 --> 00:00:34,839
+together with the baseline models,
+right after data collection.
+
+11
+00:00:35,083 --> 00:00:38,176
+This is the exam edition of Lecture 13.
+
+12
+00:00:38,496 --> 00:00:42,870
+It follows five places
+where a training workflow quietly breaks:
+
+13
+00:00:42,870 --> 00:00:46,267
+the run record,
+the package, the GPUs, the batch,
+
+14
+00:00:46,267 --> 00:00:47,585
+and the job itself.
+
+15
+00:00:47,833 --> 00:00:51,972
+Each part ends with one rule:
+if the question says this, think that.
+
+16
+00:00:52,292 --> 00:00:55,662
+Three times,
+a quiz-style question appears on screen.
+
+17
+00:00:55,982 --> 00:00:57,299
+Pause, pick an answer,
+
+18
+00:00:57,299 --> 00:00:59,993
+and then hear why
+each wrong option is wrong.
+
+19
+00:01:00,367 --> 00:01:03,034
+The lecture names the reason
+to track at all.
+
+20
+00:01:03,354 --> 00:01:06,328
+If the question says
+experiment tracking, think:
+
+21
+00:01:06,328 --> 00:01:09,241
+what produced this result,
+and can I repeat it?
+
+22
+00:01:11,583 --> 00:01:13,247
+What should a run record hold?
+
+23
+00:01:13,567 --> 00:01:17,137
+The lecture lists seven things:
+the environment, the code,
+
+24
+00:01:17,137 --> 00:01:21,076
+the data, the model, the metrics,
+the artifacts, and your notes.
+
+25
+00:01:21,550 --> 00:01:23,470
+Most of these already have a home.
+
+26
+00:01:23,790 --> 00:01:27,107
+Code lives in GitHub,
+data in a versioning system,
+
+27
+00:01:27,107 --> 00:01:31,086
+and the environment in the pyproject file
+and the lock file.
+
+28
+00:01:31,406 --> 00:01:34,222
+Weights, metrics and logs
+get a question mark.
+
+29
+00:01:34,466 --> 00:01:35,789
+One word on data.
+
+30
+00:01:36,109 --> 00:01:40,043
+A data version is a pair:
+the archived snapshot in a bucket,
+
+31
+00:01:40,043 --> 00:01:44,173
+and the version record that names it,
+linked by a content hash.
+
+32
+00:01:44,493 --> 00:01:48,004
+This trainer instead downloads
+a fixed release of the data,
+
+33
+00:01:48,004 --> 00:01:50,146
+and never writes it into the config.
+
+34
+00:01:50,383 --> 00:01:52,529
+Recording by hand gets forgotten,
+
+35
+00:01:52,529 --> 00:01:55,780
+so the lecture automates it
+with Weights & Biases.
+
+36
+00:01:56,100 --> 00:01:59,642
+Picture a ledger
+in which every training run is one row.
+
+37
+00:01:59,883 --> 00:02:04,427
+The repo trainer,
+task.py, talks to that ledger in four calls.
+
+38
+00:02:04,747 --> 00:02:09,078
+First it logs in with a key passed
+as a flag, never written in the code.
+
+39
+00:02:09,316 --> 00:02:14,381
+Then wandb.init opens a new row,
+with a project, a name, and a config:
+
+40
+00:02:14,381 --> 00:02:17,999
+learning rate, epochs, batch size,
+and model name.
+
+41
+00:02:18,319 --> 00:02:21,000
+It also makes that row the active run,
+
+42
+00:02:21,000 --> 00:02:24,527
+and the pointer called
+wandb.run now points at it.
+
+43
+00:02:24,766 --> 00:02:28,380
+After training,
+the script adds one more config value,
+
+44
+00:02:28,380 --> 00:02:29,651
+the execution time.
+
+45
+00:02:29,971 --> 00:02:35,156
+Then wandb.run.finish() seals the row,
+and the pointer falls back to nothing.
+
+46
+00:02:35,400 --> 00:02:38,331
+Notice what this run recorded on its own:
+
+47
+00:02:38,331 --> 00:02:42,120
+the config,
+and system charts such as CPU and memory.
+
+48
+00:02:42,440 --> 00:02:44,083
+It did not record a loss.
+
+49
+00:02:44,403 --> 00:02:46,642
+Something still has to log the metrics.
+
+50
+00:02:47,483 --> 00:02:50,325
+If the question says record of a run, think:
+
+51
+00:02:50,325 --> 00:02:54,523
+init opens it, a logger writes the metrics,
+and finish closes it.
+
+52
+00:02:54,766 --> 00:02:55,918
+First question.
+
+53
+00:02:56,238 --> 00:02:59,118
+The run shows its config but no loss curve.
+
+54
+00:02:59,438 --> 00:03:01,465
+Which change puts a loss curve on it?
+
+55
+00:03:01,785 --> 00:03:05,198
+Three options can be ruled out
+with what you know already.
+
+56
+00:03:05,518 --> 00:03:06,884
+Pause here if you want.
+
+57
+00:03:18,033 --> 00:03:19,162
+The answer is C:
+
+58
+00:03:19,162 --> 00:03:24,241
+pass the WandbMetricsLogger
+in the callbacks of fit, created after init.
+
+59
+00:03:24,561 --> 00:03:26,822
+A: a name only labels the row.
+
+60
+00:03:27,142 --> 00:03:31,132
+B: one number in the config
+is not a history over epochs.
+
+61
+00:03:31,452 --> 00:03:33,926
+D: logging in again writes no metrics.
+
+62
+00:03:34,166 --> 00:03:37,238
+A callback is a pen
+that Keras holds during training.
+
+63
+00:03:37,558 --> 00:03:40,884
+At the end of every epoch it calls
+wandb.log,
+
+64
+00:03:40,884 --> 00:03:43,396
+and that call writes to wandb.run:
+
+65
+00:03:43,396 --> 00:03:48,716
+whichever row is active right now,
+not the run the pen was created with.
+
+66
+00:03:48,950 --> 00:03:51,318
+The lecture's notebook does exactly this.
+
+67
+00:03:51,638 --> 00:03:53,354
+It calls init, and then fit,
+
+68
+00:03:53,354 --> 00:03:56,480
+with a callbacks list
+that holds the WandbCallback.
+
+69
+00:03:56,716 --> 00:03:59,788
+By default,
+that is one history entry per epoch.
+
+70
+00:04:00,108 --> 00:04:02,263
+Per batch happens only if you ask.
+
+71
+00:04:02,816 --> 00:04:04,288
+Now four experiments.
+
+72
+00:04:04,608 --> 00:04:05,845
+First, no pen.
+
+73
+00:04:06,165 --> 00:04:09,259
+Fit runs two epochs,
+and the strip stays empty.
+
+74
+00:04:09,579 --> 00:04:11,158
+That is our opening run.
+
+75
+00:04:11,400 --> 00:04:13,495
+Second: init, fit for two epochs,
+
+76
+00:04:13,495 --> 00:04:16,669
+then fit for four more,
+with no finish in between.
+
+77
+00:04:16,989 --> 00:04:21,021
+The pointer never moved,
+so ticks three to six land on the same row.
+
+78
+00:04:21,341 --> 00:04:23,005
+One run, six entries.
+
+79
+00:04:23,250 --> 00:04:26,480
+Third: finish after the first fit,
+then init again,
+
+80
+00:04:26,480 --> 00:04:29,202
+and fit four epochs with the same callback.
+
+81
+00:04:29,522 --> 00:04:31,762
+The first row is sealed with two entries.
+
+82
+00:04:32,082 --> 00:04:36,229
+The callback was made during row one,
+but it follows the pointer,
+
+83
+00:04:36,229 --> 00:04:38,780
+so the new row gets entries one to four.
+
+84
+00:04:39,016 --> 00:04:42,195
+Fourth:
+finish, then fit again without a new init.
+
+85
+00:04:42,515 --> 00:04:43,929
+The first epoch trains,
+
+86
+00:04:43,929 --> 00:04:46,819
+and then the pen follows the pointer
+to nothing
+
+87
+00:04:46,819 --> 00:04:50,152
+and stops with an error:
+you must call init before log.
+
+88
+00:04:50,472 --> 00:04:52,008
+Nothing reaches any row.
+
+89
+00:04:52,250 --> 00:04:55,663
+Creating the logger
+with no active run fails at once.
+
+90
+00:04:55,900 --> 00:04:56,903
+Now the hook.
+
+91
+00:04:57,223 --> 00:05:01,625
+The repo trainer imports both callbacks
+but passes none to fit,
+
+92
+00:05:01,625 --> 00:05:05,607
+so its run has a config and system charts,
+and no curves.
+
+93
+00:05:05,927 --> 00:05:09,852
+The lecture's middle line,
+the callback, is the line that is missing.
+
+94
+00:05:10,916 --> 00:05:15,673
+One detail: the notebook warns
+that the WandbCallback is deprecated.
+
+95
+00:05:15,993 --> 00:05:20,047
+For the curves,
+its replacement is the WandbMetricsLogger.
+
+96
+00:05:20,283 --> 00:05:23,246
+If the question
+counts history entries, think:
+
+97
+00:05:23,246 --> 00:05:27,238
+one per epoch, into whichever run is open
+when the epoch ends.
+
+98
+00:05:27,558 --> 00:05:30,907
+A finish ends the count,
+and a new init starts a new one.
+
+99
+00:05:32,050 --> 00:05:35,899
+The lecture moves training
+to the cloud in three steps:
+
+100
+00:05:35,899 --> 00:05:37,929
+a Python file with arguments,
+
+101
+00:05:37,929 --> 00:05:41,778
+a package in a bucket,
+and a training job on Vertex AI.
+
+102
+00:05:42,017 --> 00:05:44,463
+Here is the package folder: setup.py,
+
+103
+00:05:44,463 --> 00:05:49,355
+and a trainer folder with an empty init file
+and the two training scripts.
+
+104
+00:05:49,600 --> 00:05:51,627
+setup.py keeps two lists.
+
+105
+00:05:51,947 --> 00:05:57,824
+install_requires is a shopping list that pip
+downloads from the Python Package Index;
+
+106
+00:05:57,824 --> 00:05:59,968
+here, one pinned wandb version.
+
+107
+00:06:00,288 --> 00:06:04,527
+find_packages() decides
+which of your own folders get installed:
+
+108
+00:06:04,527 --> 00:06:06,581
+only folders with an init file.
+
+109
+00:06:06,817 --> 00:06:09,517
+The packaging script
+tars the package folder,
+
+110
+00:06:09,517 --> 00:06:12,278
+compresses it,
+and copies it into your bucket.
+
+111
+00:06:12,598 --> 00:06:18,422
+The job script points Vertex AI at that file
+and names the module: trainer.task.
+
+112
+00:06:18,667 --> 00:06:20,032
+Here is the key fact.
+
+113
+00:06:20,352 --> 00:06:23,911
+Your own Docker image
+packages, uploads and submits,
+
+114
+00:06:23,911 --> 00:06:25,280
+but it never trains.
+
+115
+00:06:25,600 --> 00:06:28,525
+The job runs
+in Google's prebuilt training image,
+
+116
+00:06:28,525 --> 00:06:31,509
+and your code reaches it only
+through the tarball.
+
+117
+00:06:31,750 --> 00:06:36,102
+That image already ships
+TensorFlow, scikit-learn and requests,
+
+118
+00:06:36,102 --> 00:06:40,454
+so the trainer imports them
+although setup.py never names them.
+
+119
+00:06:40,700 --> 00:06:43,431
+On the job machine, pip unwraps the tarball.
+
+120
+00:06:43,751 --> 00:06:47,953
+The shopping list fetches wandb,
+and the trainer package is installed.
+
+121
+00:06:48,273 --> 00:06:51,516
+Then Vertex runs python -m trainer.task.
+
+122
+00:06:51,750 --> 00:06:54,641
+Now add a teammate's module, augment.py,
+
+123
+00:06:54,641 --> 00:06:57,894
+a made-up example,
+beside the package folder.
+
+124
+00:06:58,214 --> 00:07:02,630
+The script tars only that folder,
+so the module never leaves your laptop.
+
+125
+00:07:02,950 --> 00:07:08,326
+Placed next to setup.py instead,
+it travels, but find_packages() skips it.
+
+126
+00:07:09,067 --> 00:07:11,265
+The task reaches import augment;
+
+127
+00:07:11,265 --> 00:07:14,699
+Python searches
+its import path and finds nothing.
+
+128
+00:07:15,019 --> 00:07:20,374
+ModuleNotFoundError, right under the line
+that says every dependency installed.
+
+129
+00:07:20,694 --> 00:07:21,764
+Locally it worked,
+
+130
+00:07:21,764 --> 00:07:24,619
+because the file sat
+in the folder you ran from.
+
+131
+00:07:24,867 --> 00:07:28,299
+The fix:
+put the file inside the trainer folder,
+
+132
+00:07:28,299 --> 00:07:29,944
+or list it in setup.py.
+
+133
+00:07:30,264 --> 00:07:34,296
+A new import line alone moves nothing;
+the file has to travel.
+
+134
+00:07:34,533 --> 00:07:36,944
+Adding it to install_requires is wrong.
+
+135
+00:07:37,264 --> 00:07:40,226
+That list downloads
+from the Python Package Index,
+
+136
+00:07:40,226 --> 00:07:41,664
+never from your tarball,
+
+137
+00:07:41,664 --> 00:07:45,499
+and a package there with that name
+would be someone else's code.
+
+138
+00:07:45,733 --> 00:07:51,105
+If the question says dependencies installed
+but ModuleNotFoundError, think:
+
+139
+00:07:51,105 --> 00:07:55,760
+the file never travelled inside the package
+that setup.py builds.
+
+140
+00:07:57,000 --> 00:07:59,901
+The lecture sorts training hardware
+into three shapes.
+
+141
+00:08:00,221 --> 00:08:04,253
+One machine with one GPU
+uses OneDeviceStrategy.
+
+142
+00:08:04,573 --> 00:08:08,477
+One machine with several GPUs
+uses MirroredStrategy.
+
+143
+00:08:08,797 --> 00:08:12,253
+Several machines use
+MultiWorkerMirroredStrategy.
+
+144
+00:08:12,500 --> 00:08:14,463
+The repo sits on the middle row.
+
+145
+00:08:14,783 --> 00:08:21,860
+Its multi GPU script asks Vertex AI
+for one machine, type n1-standard-32,
+
+146
+00:08:21,860 --> 00:08:23,508
+with two T4 GPUs.
+
+147
+00:08:23,828 --> 00:08:26,729
+A replica count of one there
+means one machine.
+
+148
+00:08:26,967 --> 00:08:32,650
+The trainer creates the MirroredStrategy
+and asks how many replicas are in sync:
+
+149
+00:08:32,650 --> 00:08:34,071
+one per GPU, so two.
+
+150
+00:08:34,391 --> 00:08:38,965
+Then it builds and compiles
+the model inside strategy.scope(),
+
+151
+00:08:38,965 --> 00:08:44,055
+so every weight and optimizer variable
+is mirrored, one copy per GPU.
+
+152
+00:08:44,300 --> 00:08:45,900
+Here is one training step.
+
+153
+00:08:46,220 --> 00:08:50,679
+Each GPU takes its own slice of the batch
+and computes a gradient.
+
+154
+00:08:50,999 --> 00:08:54,079
+The gradients meet in an all-reduce
+and are averaged,
+
+155
+00:08:54,079 --> 00:08:56,695
+and the same update goes back
+to both copies.
+
+156
+00:08:56,933 --> 00:08:58,012
+Now two machines,
+
+157
+00:08:58,012 --> 00:09:02,266
+each running its own MirroredStrategy
+on its own shard of the data.
+
+158
+00:09:02,586 --> 00:09:07,408
+Inside each machine the ring works,
+but between the machines there is no wire.
+
+159
+00:09:07,728 --> 00:09:10,410
+After a few steps they
+hold different weights:
+
+160
+00:09:10,410 --> 00:09:12,101
+two separate models, not one.
+
+161
+00:09:12,350 --> 00:09:17,001
+To train one model across machines,
+use MultiWorkerMirroredStrategy.
+
+162
+00:09:17,321 --> 00:09:19,428
+Each machine reads a TF_CONFIG:
+
+163
+00:09:19,428 --> 00:09:23,507
+the list of all the workers,
+and its own index in that list.
+
+164
+00:09:23,827 --> 00:09:25,384
+Same shards as before;
+
+165
+00:09:25,384 --> 00:09:29,843
+the only change is the wire,
+and now every copy stays the same.
+
+166
+00:09:31,450 --> 00:09:33,204
+The repo does not use it;
+
+167
+00:09:33,204 --> 00:09:37,765
+on Vertex AI the extra machines
+would go in a second worker pool,
+
+168
+00:09:37,765 --> 00:09:40,431
+and Vertex sets the TF_CONFIG for you.
+
+169
+00:09:40,751 --> 00:09:43,869
+One naming trap: the repo, like the lecture,
+
+170
+00:09:43,869 --> 00:09:48,901
+calls its replica count num_workers,
+but it counts GPUs on one machine.
+
+171
+00:09:49,150 --> 00:09:53,101
+If the question says
+several machines must train one model,
+
+172
+00:09:53,101 --> 00:09:56,382
+think MultiWorkerMirroredStrategy
+with TF_CONFIG.
+
+173
+00:09:56,702 --> 00:09:59,902
+A MirroredStrategy never looks
+past its own machine.
+
+174
+00:10:01,150 --> 00:10:02,217
+Now the batch.
+
+175
+00:10:02,537 --> 00:10:03,731
+Under a strategy,
+
+176
+00:10:03,731 --> 00:10:07,383
+whatever dataset.batch produces
+is the global batch,
+
+177
+00:10:07,383 --> 00:10:09,321
+the whole tray for one step.
+
+178
+00:10:09,641 --> 00:10:13,907
+The strategy cuts that tray
+into equal slices, one per replica.
+
+179
+00:10:15,017 --> 00:10:20,500
+So the per replica batch is the global batch
+divided by the number of replicas in sync.
+
+180
+00:10:20,820 --> 00:10:25,875
+Turn it around, and the global batch
+is the per replica batch times the replicas.
+
+181
+00:10:26,117 --> 00:10:29,893
+Take 8 replicas,
+and say you want 16 examples on each.
+
+182
+00:10:30,213 --> 00:10:33,498
+Batch by 16, and each GPU gets only 2.
+
+183
+00:10:33,818 --> 00:10:35,610
+Batch by 128.
+
+184
+00:10:35,930 --> 00:10:37,722
+Each GPU gets 16.
+
+185
+00:10:38,567 --> 00:10:41,127
+The repo does the same multiplication.
+
+186
+00:10:41,447 --> 00:10:45,504
+It takes the batch size flag,
+multiplies it by the replica count,
+
+187
+00:10:45,504 --> 00:10:48,188
+and hands the product to the data pipeline.
+
+188
+00:10:48,508 --> 00:10:52,305
+Its own comment says it:
+batch expects the global batch size.
+
+189
+00:10:53,550 --> 00:10:54,787
+Second question.
+
+190
+00:10:55,107 --> 00:11:01,977
+The repo's multi GPU trainer now runs
+on 4 GPUs, with a batch size flag of 32.
+
+191
+00:11:02,297 --> 00:11:06,030
+What is the global batch,
+and what does each GPU see per step?
+
+192
+00:11:06,350 --> 00:11:07,715
+Pause here if you want.
+
+193
+00:11:18,550 --> 00:11:19,851
+The answer is B.
+
+194
+00:11:20,171 --> 00:11:25,186
+The trainer multiplies first:
+32 times 4 is 128,
+
+195
+00:11:25,186 --> 00:11:31,350
+and the strategy splits 128 four ways,
+so each GPU sees 32.
+
+196
+00:11:31,670 --> 00:11:34,273
+A: that is a script that never multiplied.
+
+197
+00:11:34,593 --> 00:11:38,625
+C: the flag is the per replica size,
+not the global batch.
+
+198
+00:11:38,945 --> 00:11:42,998
+D: the global batch is split,
+not copied to every GPU.
+
+199
+00:11:43,733 --> 00:11:47,584
+If the question says per replica,
+multiply before you batch:
+
+200
+00:11:47,584 --> 00:11:51,499
+the global batch is the per replica
+batch times the replicas.
+
+201
+00:11:52,633 --> 00:11:53,913
+Last mechanism.
+
+202
+00:11:54,233 --> 00:11:58,222
+Suppose a web app has a retrain button,
+and training takes an hour.
+
+203
+00:11:58,542 --> 00:11:59,972
+Where should that hour run?
+
+204
+00:12:00,216 --> 00:12:03,779
+Every piece of work lives
+as long as the thing that holds it.
+
+205
+00:12:04,099 --> 00:12:07,875
+Inside the request handler,
+it dies at the request timeout.
+
+206
+00:12:08,116 --> 00:12:12,303
+In a server thread, it lives
+only as long as that server instance,
+
+207
+00:12:12,303 --> 00:12:15,220
+which the platform
+recycles whenever it likes.
+
+208
+00:12:15,466 --> 00:12:18,389
+A longer client timeout
+moves the wrong clock.
+
+209
+00:12:18,709 --> 00:12:21,901
+The server and the proxies
+still cut the request,
+
+210
+00:12:21,901 --> 00:12:24,896
+and a sleeping laptop
+loses the answer anyway.
+
+211
+00:12:25,133 --> 00:12:31,405
+And W&B is not a clock at all: it logs runs,
+but has no engine to execute them.
+
+212
+00:12:31,650 --> 00:12:32,850
+The right design:
+
+213
+00:12:32,850 --> 00:12:37,154
+the handler submits a durable job
+and returns its id at once.
+
+214
+00:12:37,474 --> 00:12:41,838
+The job moves through its states,
+queued, pending, running, succeeded,
+
+215
+00:12:41,838 --> 00:12:44,706
+on its own machine,
+billed only while it runs.
+
+216
+00:12:45,026 --> 00:12:48,332
+Anyone with access
+to the project can poll the id.
+
+217
+00:12:51,233 --> 00:12:53,824
+That is the lecture's serverless training:
+
+218
+00:12:53,824 --> 00:12:58,017
+hardware rented only for the training step,
+and no server to manage.
+
+219
+00:12:58,337 --> 00:13:01,686
+There is still a machine;
+you just do not own its lifetime.
+
+220
+00:13:01,933 --> 00:13:06,746
+In the repo, the ticket is one command,
+gcloud ai custom-jobs create,
+
+221
+00:13:06,746 --> 00:13:10,214
+with a region,
+a name, the package in the bucket,
+
+222
+00:13:10,214 --> 00:13:11,489
+and a worker pool:
+
+223
+00:13:11,489 --> 00:13:15,394
+machine type,
+replica count, prebuilt image, and module.
+
+224
+00:13:16,233 --> 00:13:17,385
+Third question.
+
+225
+00:13:17,705 --> 00:13:21,673
+Your custom job shows running,
+and you close the laptop for the night.
+
+226
+00:13:21,993 --> 00:13:23,550
+What happens to the training?
+
+227
+00:13:23,870 --> 00:13:25,236
+Pause here if you want.
+
+228
+00:13:36,083 --> 00:13:37,099
+The answer is B:
+
+229
+00:13:37,099 --> 00:13:41,096
+it keeps running on its own machine
+until it finishes or fails.
+
+230
+00:13:41,416 --> 00:13:44,360
+A: the CLI container only submitted it.
+
+231
+00:13:44,680 --> 00:13:48,350
+C: W&B only logs; it never drives training.
+
+232
+00:13:48,670 --> 00:13:51,720
+D: nothing on your laptop
+holds the job's state.
+
+233
+00:13:52,466 --> 00:13:56,868
+If the question says training takes
+longer than the request, think:
+
+234
+00:13:56,868 --> 00:13:59,890
+submit a durable job,
+return its id, and poll.
+
+235
+00:14:00,210 --> 00:14:02,152
+W&B only watches.
+
+236
+00:14:03,300 --> 00:14:04,900
+Six rules for Tuesday.
+
+237
+00:14:05,220 --> 00:14:09,994
+Rule one: a callback logs one entry
+per epoch into the active run;
+
+238
+00:14:09,994 --> 00:14:12,815
+init opens a run, and finish closes it.
+
+239
+00:14:13,050 --> 00:14:16,850
+Rule two:
+pip installs only what setup.py declares;
+
+240
+00:14:16,850 --> 00:14:20,922
+your own modules
+must be inside the package it builds,
+
+241
+00:14:20,922 --> 00:14:23,034
+not just inside the tarball.
+
+242
+00:14:23,283 --> 00:14:27,863
+Rule three: a MirroredStrategy
+covers the GPUs of one machine;
+
+243
+00:14:27,863 --> 00:14:29,064
+across machines,
+
+244
+00:14:29,064 --> 00:14:32,591
+use MultiWorkerMirroredStrategy
+with TF_CONFIG,
+
+245
+00:14:32,591 --> 00:14:36,211
+because separate strategies
+make separate models.
+
+246
+00:14:36,450 --> 00:14:38,482
+Rule four: under a strategy,
+
+247
+00:14:38,482 --> 00:14:41,748
+what dataset.batch makes
+is the global batch,
+
+248
+00:14:41,748 --> 00:14:44,215
+split across the replicas in sync.
+
+249
+00:14:44,450 --> 00:14:48,718
+Rule five: long training goes
+to a durable job with an id,
+
+250
+00:14:48,718 --> 00:14:53,133
+never into a request handler,
+a thread, or a longer timeout.
+
+251
+00:14:53,367 --> 00:14:55,034
+Rule six: a data version
+
+252
+00:14:55,034 --> 00:14:59,063
+is an archived snapshot plus the record
+that points at it.
+
+253
+00:14:59,300 --> 00:15:03,070
+The lecture began with three levers
+for better deep learning:
+
+254
+00:15:03,070 --> 00:15:05,913
+more data, better models,
+and faster hardware.
+
+255
+00:15:06,233 --> 00:15:07,862
+Today was the hardware lever,
+
+256
+00:15:07,862 --> 00:15:10,671
+plus the bookkeeping that shows
+whether it helped.
+
+257
+00:15:10,991 --> 00:15:12,377
+Good luck on Tuesday.
+

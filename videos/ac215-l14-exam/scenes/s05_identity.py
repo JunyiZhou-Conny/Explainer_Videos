@@ -333,7 +333,7 @@ class TwoQuestions(VoiceScene):
         none_ = role_chip("no bucket roles", S.GREY).move_to([COL_L, ROW0 - 2 * STEP, 0])
         p685 = src_panel(README, [685, 687], size=20, wrap_at=88)
         p685.move_to([0, j_out.get_bottom()[1] - 0.08 - p685.height / 2, 0])
-        p689 = src_panel(README, 689, 690, size=20, wrap_at=72)
+        p689 = src_panel(README, 689, 690, size=20, wrap={689: ["It does not"]})
         p689.move_to([0, j_out.get_bottom()[1] - 0.08 - p689.height / 2, 0])
         b685 = VGroup(p685.bar(685, ROUTE, 0.2), p685.bar(687, ROUTE, 0.2))
         b689 = VGroup(p689.bar(689, S.GREY, 0.25), p689.bar(690, S.GREY, 0.25))
