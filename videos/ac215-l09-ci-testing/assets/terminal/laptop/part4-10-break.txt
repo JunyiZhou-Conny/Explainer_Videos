@@ -1,0 +1,2 @@
+$ sed -i '1i import os' src/api-service/api/service.py && git add -u
+[exit 0]

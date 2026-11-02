@@ -1,0 +1,5 @@
+$ python -c 'import os; print("Number of items:",len(os.listdir("cheese_dataset")))'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: 'cheese_dataset'
+[exit 1]

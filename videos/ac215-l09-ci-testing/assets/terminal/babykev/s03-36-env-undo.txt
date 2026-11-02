@@ -1,0 +1,2 @@
+$ git rm --cached -q .env && rm .env
+[exit 0]

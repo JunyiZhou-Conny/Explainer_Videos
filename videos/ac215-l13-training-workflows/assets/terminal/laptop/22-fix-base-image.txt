@@ -1,0 +1,4 @@
+$ sed -i '2s/python:3.13-slim-bullseye/python:3.13-slim-bookworm/' Dockerfile && sed -n '1,2p' Dockerfile
+# Use the official Python image as the base with Python 3.13
+FROM python:3.13-slim-bookworm
+[exit 0]

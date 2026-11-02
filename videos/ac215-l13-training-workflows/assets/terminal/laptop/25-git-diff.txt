@@ -1,0 +1,25 @@
+$ git diff --stat; git diff Dockerfile
+ Dockerfile      | 4 ++--
+ docker-shell.sh | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+diff --git a/Dockerfile b/Dockerfile
+index d9d1e68..2861fc7 100755
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -1,5 +1,5 @@
+ # Use the official Python image as the base with Python 3.13
+-FROM python:3.13-slim-bullseye
++FROM python:3.13-slim-bookworm
+ 
+ # Prevent apt from showing prompts
+ ENV DEBIAN_FRONTEND=noninteractive
+@@ -34,7 +34,7 @@ RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/d
+ 
+ # Install packages
+ RUN apt-get update && \
+-    apt-get install -y google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin jq docker-ce
++    apt-get install -y google-cloud-cli jq docker-ce
+ 
+ # Install UV (Python package installer)
+ RUN pip install uv
+[exit 0]

@@ -1,0 +1,2 @@
+$ git restore Dockerfile
+[exit 0]

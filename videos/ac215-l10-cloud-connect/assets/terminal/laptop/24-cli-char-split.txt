@@ -1,0 +1,188 @@
+$ sh docker-shell.sh
+[+] run 1/1
+ ✔ Container llm-rag-chromadb Running                                                                     0.0s
+Container llm-rag-llm-rag-cli-run-456b0d824cc7 Creating
+Container llm-rag-llm-rag-cli-run-456b0d824cc7 Created
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.15
+UV version: uv 0.13.2 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+app@f9965bfbee29:/app$ python cli.py --chunk --embed --load --chunk_type char-split
+CLI Arguments: Namespace(chunk=True, embed=True, load=True, query=False, chat=False, get=False, agent=False, chunk_type='char-split')
+chunk()
+Number of files to process: 11
+Processing file: input-datasets/books/The Complete Book of Cheese.txt
+Number of chunks: 1355
+Shape: (1355, 2)
+                                               chunk                         book
+0  ﻿The Project Gutenberg eBook of The Complete B...  The Complete Book of Cheese
+1   ebook or online\nat www.gutenberg.org. If you...  The Complete Book of Cheese
+2  , 2020\n\nLanguage: English\n\nCredits: Produc...  The Complete Book of Cheese
+3  e Book\nof Cheese\n\n\n_Illustrations by_ Eric...  The Complete Book of Cheese
+4  INING AND DINING QUIZ\n\nMOST FOR YOUR MONEY\n...  The Complete Book of Cheese
+Processing file: input-datasets/books/Theres Pippins and Cheese to Come.txt
+Number of chunks: 636
+Shape: (636, 2)
+                                               chunk                               book
+0  ﻿The Project Gutenberg eBook of There's Pippin...  Theres Pippins and Cheese to Come
+1  th this ebook or online\nat www.gutenberg.org....  Theres Pippins and Cheese to Come
+2  y updated: December 19, 2020\n\nLanguage: Engl...  Theres Pippins and Cheese to Come
+3  \n  "Journeys to Bagdad"\n  _Sixth printing_.\...  Theres Pippins and Cheese to Come
+4  III. Any Stick Will Do to Beat a Dog\n\nIV. Ro...  Theres Pippins and Cheese to Come
+Processing file: input-datasets/books/Womans Institute Library of Cookery. Volume 2_ Milk, Butter and Cheese Eggs Vegetables.txt
+Number of chunks: 1505
+Shape: (1505, 2)
+                                               chunk                                 book
+0  ﻿The Project Gutenberg eBook of Woman's Instit...  Womans Institute Library of Cookery
+1   the terms\nof the Project Gutenberg License i...  Womans Institute Library of Cookery
+2  etables\n\nAuthor: Woman's Institute of Domest...  Womans Institute Library of Cookery
+3  RG EBOOK WOMAN'S INSTITUTE LIBRARY OF COOKERY....  Womans Institute Library of Cookery
+4  ESTIC ARTS AND SCIENCES, Inc.\n\n\n\nPREFACE\n...  Womans Institute Library of Cookery
+Processing file: input-datasets/books/Tolminc Cheese.txt
+Number of chunks: 24
+Shape: (24, 2)
+                                               chunk            book
+0  Author: Pavlos Protopapas\n\n# Tolminc: A Chee...  Tolminc Cheese
+1  s she intended to accomplish during her visit....  Tolminc Cheese
+2  he kitchen smelled of coffee and the wood her ...  Tolminc Cheese
+3  fter she swallowed.\n\n“Well?” he asked.\n\n“I...  Tolminc Cheese
+4  arrowed as they climbed. Houses gave way to sc...  Tolminc Cheese
+Processing file: input-datasets/books/Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer.txt
+Number of chunks: 640
+Shape: (640, 2)
+                                               chunk                                               book
+0  ﻿The Project Gutenberg eBook of Hints on chees...  Hints on cheese-making, for the dairyman, the ...
+1  of the Project Gutenberg License included with...  Hints on cheese-making, for the dairyman, the ...
+2   Curtis\n\nRelease date: July 27, 2013 [eBook ...  Hints on cheese-making, for the dairyman, the ...
+3  TENBERG EBOOK HINTS ON CHEESE-MAKING, FOR THE ...  Hints on cheese-making, for the dairyman, the ...
+4  R THE\n\nDAIRYMAN, THE FACTORYMAN,\n\nAND THE ...  Hints on cheese-making, for the dairyman, the ...
+Processing file: input-datasets/books/Hand-book on cheese making.txt
+Number of chunks: 395
+Shape: (395, 2)
+                                               chunk                        book
+0  ﻿The Project Gutenberg eBook of Hand-book on c...  Hand-book on cheese making
+1  ebook or online\nat www.gutenberg.org. If you ...  Hand-book on cheese making
+2  States: The Michigan Dairyman, 1889\n\nCredits...  Hand-book on cheese making
+3   Transcriber’s Note\n  Italic text displayed a...  Hand-book on cheese making
+4   D. H. Burrell & Co., of Little Falls, N. Y., ...  Hand-book on cheese making
+Processing file: input-datasets/books/Cheese and its economical uses in the diet.txt
+Number of chunks: 401
+Shape: (401, 2)
+                                               chunk                                        book
+0  ﻿The Project Gutenberg eBook of Cheese and its...  Cheese and its economical uses in the diet
+1  luded with this ebook or online\nat www.gutenb...  Cheese and its economical uses in the diet
+2  3 [eBook #70067]\n\nLanguage: English\n\nOrigi...  Cheese and its economical uses in the diet
+3  RT OF THE PROJECT GUTENBERG EBOOK CHEESE AND I...  Cheese and its economical uses in the diet
+4  E DIET.\n\n\n  BY\n\n  C. F. LANGWORTHY, PH. D...  Cheese and its economical uses in the diet
+Processing file: input-datasets/books/The Book of Cheese.txt
+Number of chunks: 2047
+Shape: (2047, 2)
+                                               chunk                book
+0  ﻿The Project Gutenberg eBook of The Book of Ch...  The Book of Cheese
+1   online\nat www.gutenberg.org. If you are not ...  The Book of Cheese
+2  usan Carr, Turgut Dincer, Charlene Taylor, and...  The Book of Cheese
+3  he\nOnline Distributed Proofreading Team (http...  The Book of Cheese
+4  /cache/epub/40318/pg40318-images.html)\n      ...  The Book of Cheese
+Processing file: input-datasets/books/The book of The Cheese Being traits and stories of Ye Olde Cheshire Cheese.txt
+Number of chunks: 522
+Shape: (522, 2)
+                                               chunk                                               book
+0  The Project Gutenberg eBook of The book of The...  The book of The Cheese Being traits and storie...
+1   or online\nat www.gutenberg.org. If you are n...  The book of The Cheese Being traits and storie...
+2  eld\n        William Hussey Graham\n\nIllustra...  The book of The Cheese Being traits and storie...
+3  aylor, deaurider and the Online Distributed Pr...  The book of The Cheese Being traits and storie...
+4   Cheese\n\n  BEING TRAITS AND STORIES OF\n\n  ...  The book of The Cheese Being traits and storie...
+Processing file: input-datasets/books/Cottage Cheese Recipe Book.txt
+Number of chunks: 178
+Shape: (178, 2)
+                                               chunk                        book
+0  ﻿The Project Gutenberg eBook of Cottage Cheese...  Cottage Cheese Recipe Book
+1  ebook or online\nat www.gutenberg.org. If you ...  Cottage Cheese Recipe Book
+2  cheson and the Online Distributed Proofreading...  Cottage Cheese Recipe Book
+3  ings_\n                                _Breads...  Cottage Cheese Recipe Book
+4  the protein, calcium, phosphorous, iron, and\n...  Cottage Cheese Recipe Book
+Processing file: input-datasets/books/Dairying exemplified, or, The business of cheese-making.txt
+Number of chunks: 545
+Shape: (545, 2)
+                                               chunk                                               book
+0  ﻿The Project Gutenberg eBook of Dairying exemp...  Dairying exemplified, or, The business of chee...
+1  g License included with this ebook or online\n...  Dairying exemplified, or, The business of chee...
+2  69922]\n\nLanguage: English\n\nOriginal public...  Dairying exemplified, or, The business of chee...
+3  BERG EBOOK DAIRYING EXEMPLIFIED, OR, THE BUSIN...  Dairying exemplified, or, The business of chee...
+4    From a Series of Observations,\n  during _Th...  Dairying exemplified, or, The business of chee...
+embed()
+Number of files to process: 11
+Processing file: outputs/chunks-char-split-Hand-book on cheese making.jsonl
+Shape: (395, 2)
+                                               chunk                        book
+0  ﻿The Project Gutenberg eBook of Hand-book on c...  Hand-book on cheese making
+1  ebook or online\nat www.gutenberg.org. If you ...  Hand-book on cheese making
+2  States: The Michigan Dairyman, 1889\n\nCredits...  Hand-book on cheese making
+3   Transcriber’s Note\n  Italic text displayed a...  Hand-book on cheese making
+4   D. H. Burrell & Co., of Little Falls, N. Y., ...  Hand-book on cheese making
+Traceback (most recent call last):
+  File "/app/cli.py", line 551, in <module>
+    main(args)
+  File "/app/cli.py", line 488, in main
+    embed(method=args.chunk_type)
+  File "/app/cli.py", line 252, in embed
+    embeddings = generate_text_embeddings(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/cli.py", line 98, in generate_text_embeddings
+    response = llm_client.models.embed_content(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/models.py", line 5460, in embed_content
+    response = self._api_client.request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 1291, in request
+    response = self._request(http_request, http_options, stream=False)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 1127, in _request
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 378, in iter
+    result = action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 420, in exc_check
+    raise retry_exc.reraise()
+          ^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 187, in reraise
+    raise self.last_attempt.result()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 1070, in _request_once
+    http_request.headers['Authorization'] = f'Bearer {self._access_token()}'
+                                                      ^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 906, in _access_token
+    self._credentials, project = load_auth(project=self.project)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 184, in load_auth
+    credentials, loaded_project_id = google.auth.default(  # type: ignore[no-untyped-call]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 705, in default
+    credentials, project_id = checker()
+                              ^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 698, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 346, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 173, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+google.auth.exceptions.DefaultCredentialsError: File /secrets/llm-service-account.json was not found.
+app@f9965bfbee29:/app$ exit
+exit
+[exit 1]

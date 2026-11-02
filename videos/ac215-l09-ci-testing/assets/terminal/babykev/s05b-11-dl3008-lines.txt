@@ -1,0 +1,5 @@
+$ sed -n '46,48p' Dockerfile
+# hadolint asks for a pinned version of each Debian package (DL3008). Debian replaces a package
+# with each security fix, so a pinned version stops building within weeks. The base image is the pin
+# hadolint ignore=DL3008
+[exit 0]

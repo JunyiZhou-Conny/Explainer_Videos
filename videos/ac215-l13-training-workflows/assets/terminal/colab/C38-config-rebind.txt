@@ -1,0 +1,18 @@
+$ cat /tmp/e14.py; python /tmp/e14.py
+import wandb
+wandb.init(project="cheese-app-demo", mode="offline")
+wandb.config = {"learning_rate": 0.001, "epochs": 25, "batch_size": 32, "model_name": "2_block"}
+wandb.config.update({"execution_time": 1.5})
+print("type(wandb.config):", type(wandb.config).__name__)
+print("the run's config:", dict(wandb.run.config))
+wandb.finish()
+wandb: Tracking run with wandb version 0.31.0
+wandb: W&B syncing is set to `offline` in this directory. Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+wandb: Run data is saved locally in /content/wandb/offline-run-20261023_123411-c6xc4wck
+wandb: View this run in the terminal with `wandb leet`
+wandb: You can sync this run to the cloud by running:
+wandb: wandb sync /content/wandb/offline-run-20261023_123411-c6xc4wck
+wandb: Find logs at: ./wandb/offline-run-20261023_123411-c6xc4wck/logs
+type(wandb.config): dict
+the run's config: {}
+[exit 0]

@@ -1,0 +1,42 @@
+# Chinese (zh-CN) metadata for ac215-l09-ci-testing (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 仓库, 克隆, 提交, 钩子, 质量门 / 门禁, 掩码;
+# A4), the English colon structure kept, commands, tools and file names as they are (pytest, black, flake8,
+# pre-commit, uv, just, CI), the core-concept chapter with its English short name for search (hermetic), and
+# S15 sharing L1-L4's Chinese for the same English title. 跟练 = follow-along.
+# The title agrees with video.yaml's publish.title_zh ("AC215 第9讲跟练 · CI 与单元测试：pytest、pre-commit，
+# 提交前的质量门"), in the series pattern of the other meta.yaml titles; the Bilibili upload itself uses
+# publish.title_zh.
+# meta.yaml is not read by `explainer.i18n check`, so brackets are fine here.
+title: "AC215 · 第 9 讲：CI 与单元测试——pytest、pre-commit，提交前的质量门（跟练：cheese-app-ci-cd + babykev）"
+
+parts:
+  part1: "AC215 · 第 9 讲（上）：pytest、black 与 flake8，以及 pre-commit 门禁"
+  part2: "AC215 · 第 9 讲（下）：一条命令的门禁、全绿却是错的，以及属性测试"
+
+chapters:
+  s01_hook: "谁有权说不？"
+  s02_bug: "差点上线的 bug"
+  s03_kinds: "三类测试与一道门禁（hermetic）"
+  s04_run_app: "克隆仓库，运行应用"
+  s05_format_lint: "格式化工具与代码检查工具（linter）"
+  s06_pytest: "pytest 的内部机制"
+  s07_container_tests: "在要交付的镜像里跑测试"
+  s08_silent_skip: "系统测试与悄悄的跳过"
+  s09_precommit: "你电脑上的门禁"
+  s10_babykev: "客座讲座：uv、just 和两个失败的测试"
+  s11_just_check: "一条命令就是门禁"
+  s12_green_wrong: "全绿，可掩码（mask）是错的"
+  s13_properties: "属性，而不是例子"
+  s14_ci: "钩子只在本地；CI 再查一遍"
+  s15_recap: "收尾、回顾和下节预告"
+
+# Two or three sentences (rule H2), written register, consistent with video.yaml's publish.description_zh.
+# Facts: README Parts 1-4 and Docker Cleanup of dlops-io/cheese-app-ci-cd at b8458ff; babykev's walk, steps
+# 00-05b; captures dated 2026-10-19 (ASSETS.md); babykev recorded on a plain Debian 12 machine without Docker
+# (the docker recipes fail politely; just test at steps 05a/05b shows 1 failed, 102 passed there, the author's
+# 103 passed is shown as recorded); nothing billable. Paste the chapter timestamps from output/chapters.txt
+# under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 9 讲“自动化软件开发：CI 与单元测试”的跟练视频。上半场照着 dlops-io/cheese-app-ci-cd 的 README，在 Docker 镜像里跑单元、集成和系统三类 pytest 测试，讲清测试金字塔、封闭测试（hermetic）和“skipped 不等于 passed”的陷阱，用 black 和 flake8 分清格式化工具和代码检查工具（以及 120 列的宽度为什么必须处处一致），再装上 pre-commit 钩子，看一次提交被拦下、修好、再放行；下半场跟着 Rahul Dave 的客座讲座项目 babykev：uv 的锁文件、just check 一条命令当门禁、覆盖率下限、94% 的覆盖率仍然放过一个错的掩码（mask），以及 hypothesis 属性测试自己找到并收缩出最小的反例，最后说明为什么还需要 CI。英文旁白，配中文和中英双语字幕；README 的每条命令都按原样、按顺序出现，终端输出录于 2026-10-19，全程在本地运行，不需要任何云资源；babykev 部分在一台没有 Docker 的 Debian 12 机器上录制，所以 Docker 相关的 recipe 会如实报错，作者 Mac 上的结果以录制记录的形式展示。

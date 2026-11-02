@@ -1,0 +1,4 @@
+$ git log --oneline --decorate
+b841355 (HEAD -> main, tag: dataset_v20) Track initial cheese dataset with DVC
+0e04cc8 Initial commit
+[exit 0]

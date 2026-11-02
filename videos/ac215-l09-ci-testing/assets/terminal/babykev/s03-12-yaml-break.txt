@@ -1,0 +1,2 @@
+$ sed -i 's/^        args: \[--maxkb=1000\]$/          args: [--maxkb=1000]/' .pre-commit-config.yaml
+[exit 0]

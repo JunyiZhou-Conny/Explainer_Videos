@@ -1,0 +1,6 @@
+$ ls -l trainer.tar.gz; git status --short; git check-ignore -v trainer.tar.gz
+-rw-r--r--    1 root     student       4016 Oct 23 12:29 trainer.tar.gz
+ M Dockerfile
+ M docker-shell.sh
+.gitignore:4:trainer.tar.gz	trainer.tar.gz
+[exit 0]

@@ -1,0 +1,5 @@
+$ curl -s --max-time 300 -o /tmp/l10-chat.html -w 'HTTP %{http_code}\n' http://localhost:3200/chat && grep -o '<title>[^<]*</title>' /tmp/l10-chat.html
+HTTP 200
+<title>RAG App</title>
+<title>RAG App</title>
+[exit 0]

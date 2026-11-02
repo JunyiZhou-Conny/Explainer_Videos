@@ -1,0 +1,8 @@
+$ for i in tf-cpu.2-17.py310 tf-gpu.2-17.py310 tf-gpu.2-14.py310; do echo "us-docker.pkg.dev/vertex-ai/training/$i:latest"; docker manifest inspect us-docker.pkg.dev/vertex-ai/training/$i:latest | python3 -c 'import sys, json; m = json.load(sys.stdin); print("  ", m["mediaType"].split(".")[-1], len(m["layers"]), "layers,", round(sum(l["size"] for l in m["layers"]) / 1e9, 2), "GB compressed")'; done
+us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest
+   v2+json 29 layers, 4.31 GB compressed
+us-docker.pkg.dev/vertex-ai/training/tf-gpu.2-17.py310:latest
+   v2+json 40 layers, 8.93 GB compressed
+us-docker.pkg.dev/vertex-ai/training/tf-gpu.2-14.py310:latest
+   v2+json 38 layers, 7.61 GB compressed
+[exit 0]

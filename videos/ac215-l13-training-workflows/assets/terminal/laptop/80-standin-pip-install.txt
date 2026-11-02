@@ -1,0 +1,75 @@
+$ docker run --name trainer-standin -v "$PWD/trainer.tar.gz":/tmp/trainer.tar.gz python:3.10-slim-bookworm pip install /tmp/trainer.tar.gz
+Processing /tmp/trainer.tar.gz
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting wandb==0.15.11
+  Downloading wandb-0.15.11-py3-none-any.whl (2.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 8.2 MB/s eta 0:00:00
+Collecting Click!=8.0.0,>=7.1
+  Downloading click-8.5.0-py3-none-any.whl (125 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 125.3/125.3 kB 8.3 MB/s eta 0:00:00
+Collecting pathtools
+  Downloading pathtools-0.1.2.tar.gz (11 kB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting setproctitle
+  Downloading setproctitle-1.3.8-cp310-cp310-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (31 kB)
+Collecting protobuf!=4.21.0,<5,>=3.19.0
+  Downloading protobuf-4.25.9-cp37-abi3-manylinux2014_x86_64.whl (295 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 295.2/295.2 kB 10.3 MB/s eta 0:00:00
+Collecting appdirs>=1.4.3
+  Downloading appdirs-1.4.4-py2.py3-none-any.whl (9.6 kB)
+Collecting sentry-sdk>=1.0.0
+  Downloading sentry_sdk-2.73.0-py3-none-any.whl (549 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 549.0/549.0 kB 12.2 MB/s eta 0:00:00
+Collecting requests<3,>=2.0.0
+  Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.1/73.1 kB 6.0 MB/s eta 0:00:00
+Collecting PyYAML
+  Downloading pyyaml-6.0.3-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (770 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 770.3/770.3 kB 16.7 MB/s eta 0:00:00
+Collecting GitPython!=3.1.29,>=1.0.0
+  Downloading gitpython-3.2.1-py3-none-any.whl (231 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 231.5/231.5 kB 36.2 MB/s eta 0:00:00
+Collecting psutil>=5.0.0
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 155.6/155.6 kB 2.9 MB/s eta 0:00:00
+Requirement already satisfied: setuptools in /usr/local/lib/python3.10/site-packages (from wandb==0.15.11->cheese-app-trainer==0.0.1) (79.0.1)
+Collecting docker-pycreds>=0.4.0
+  Downloading docker_pycreds-0.4.0-py2.py3-none-any.whl (9.0 kB)
+Collecting six>=1.4.0
+  Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Collecting gitdb<5,>=4.0.1
+  Downloading gitdb-4.0.12-py3-none-any.whl (62 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.8/62.8 kB 8.3 MB/s eta 0:00:00
+Collecting urllib3<3,>=1.26
+  Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 135.7/135.7 kB 6.7 MB/s eta 0:00:00
+Collecting charset_normalizer<4,>=2
+  Downloading charset_normalizer-3.5.2-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (271 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 271.1/271.1 kB 2.6 MB/s eta 0:00:00
+Collecting idna<4,>=2.5
+  Downloading idna-3.20-py3-none-any.whl (69 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 69.6/69.6 kB 1.7 MB/s eta 0:00:00
+Collecting certifi>=2023.5.7
+  Downloading certifi-2026.10.23-py3-none-any.whl (135 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 135.1/135.1 kB 6.5 MB/s eta 0:00:00
+Collecting smmap<6,>=3.0.1
+  Downloading smmap-5.0.3-py3-none-any.whl (24 kB)
+Building wheels for collected packages: cheese-app-trainer, pathtools
+  Building wheel for cheese-app-trainer (setup.py): started
+  Building wheel for cheese-app-trainer (setup.py): finished with status 'done'
+  Created wheel for cheese-app-trainer: filename=cheese_app_trainer-0.0.1-py3-none-any.whl size=7948 sha256=3bbe79a0c278990d5d233d6a5a8f8c0e5e23ab70a222fec52e0fd665f2b2f71b
+  Stored in directory: /tmp/pip-ephem-wheel-cache-racf2ztw/wheels/fa/5b/33/09ac02042b0224cf0438ccdfaa3d3f136a96c6ffa50195a4d3
+  Building wheel for pathtools (setup.py): started
+  Building wheel for pathtools (setup.py): finished with status 'done'
+  Created wheel for pathtools: filename=pathtools-0.1.2-py3-none-any.whl size=8884 sha256=8249f9b445a7817f39c98eaeb23e0be0a56757a3287443b70a3adaf9044c0dc6
+  Stored in directory: /root/.cache/pip/wheels/e7/f3/22/152153d6eb222ee7a56ff8617d80ee5207207a8c00a7aab794
+Successfully built cheese-app-trainer pathtools
+Installing collected packages: pathtools, appdirs, urllib3, smmap, six, setproctitle, PyYAML, psutil, protobuf, idna, Click, charset_normalizer, certifi, sentry-sdk, requests, gitdb, docker-pycreds, GitPython, wandb, cheese-app-trainer
+Successfully installed Click-8.5.0 GitPython-3.2.1 PyYAML-6.0.3 appdirs-1.4.4 certifi-2026.10.23 charset_normalizer-3.5.2 cheese-app-trainer-0.0.1 docker-pycreds-0.4.0 gitdb-4.0.12 idna-3.20 pathtools-0.1.2 protobuf-4.25.9 psutil-7.2.2 requests-2.34.2 sentry-sdk-2.73.0 setproctitle-1.3.8 six-1.17.0 smmap-5.0.3 urllib3-2.8.0 wandb-0.15.11
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+
+[notice] A new release of pip is available: 23.0.1 -> 26.2.2
+[notice] To update, run: pip install --upgrade pip
+[exit 0]

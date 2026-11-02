@@ -1,0 +1,2 @@
+$ curl -s http://localhost:9000/
+{"message":"Welcome to the API Service"}[exit 0]

@@ -1,0 +1,4 @@
+$ git switch --detach step-05
+Previous HEAD position was a9a391d step-04b: every function documented; docs check joins just check
+HEAD is now at 46cf862 step-05: the model, model.py, with its tests and a smoke run on this machine
+[exit 0]

@@ -1,0 +1,30 @@
+$ ls cheeses_unlabeled; ls cheeses_unlabeled | wc -l; ls -a __MACOSX/cheeses_unlabeled | head -5; ls -A __MACOSX/cheeses_unlabeled | wc -l
+Image_1.jpg
+Image_10.jpg
+Image_19.jpg
+Image_2.jpg
+Image_20.jpg
+Image_21.jpg
+Image_22.jpg
+Image_23.jpg
+Image_3.jpg
+Image_3.png
+Image_4.jpg
+Image_49.jpg
+Image_5.jpg
+Image_50.jpg
+Image_51.jpg
+Image_52.jpg
+Image_53.jpg
+Image_6.jpg
+Image_7.jpg
+Image_8.jpg
+Image_9.jpg
+21
+.
+..
+._Image_1.jpg
+._Image_10.jpg
+._Image_19.jpg
+21
+[exit 0]

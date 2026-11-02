@@ -1,0 +1,146 @@
+$ sh docker-shell.sh
+Building Docker image: cheese-app-api-service
+[+] Building 0.2s (16/16) FINISHED                                                   docker:default
+ => [internal] load build definition from Dockerfile                                           0.0s
+ => => transferring dockerfile: 1.25kB                                                         0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-slim-bookworm                   0.0s
+ => [internal] load .dockerignore                                                              0.0s
+ => => transferring context: 2B                                                                0.0s
+ => [ 1/11] FROM docker.io/library/python:3.11-slim-bookworm@sha256:01f91ffadd9a08f0159de679c  0.0s
+ => => resolve docker.io/library/python:3.11-slim-bookworm@sha256:01f91ffadd9a08f0159de679c45  0.0s
+ => [internal] load build context                                                              0.0s
+ => => transferring context: 655B                                                              0.0s
+ => CACHED [ 2/11] RUN set -ex;     apt-get update &&     apt-get upgrade -y &&     apt-get i  0.0s
+ => CACHED [ 3/11] RUN useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&  0.0s
+ => CACHED [ 4/11] WORKDIR /app                                                                0.0s
+ => CACHED [ 5/11] COPY --chown=app:app pyproject.toml ./                                      0.0s
+ => CACHED [ 6/11] RUN pip install --no-cache-dir --user .                                     0.0s
+ => CACHED [ 7/11] COPY --chown=app:app src/api-service/api/ ./api/                            0.0s
+ => CACHED [ 8/11] COPY --chown=app:app tests/ ./tests/                                        0.0s
+ => CACHED [ 9/11] COPY --chown=app:app pytest.ini ./                                          0.0s
+ => CACHED [10/11] COPY --chown=app:app docker-entrypoint.sh ./                                0.0s
+ => CACHED [11/11] RUN chmod +x docker-entrypoint.sh                                           0.0s
+ => exporting to image                                                                         0.1s
+ => => exporting layers                                                                        0.0s
+ => => exporting manifest sha256:f7464e575f750cc35da1b112ff03628b0a49926849a2029aabf01d85b6b9  0.0s
+ => => exporting config sha256:f6d59621f78d26f114fd18be5a9ac679faa50d93fda1d77188526acd635a9c  0.0s
+ => => exporting attestation manifest sha256:3faaef4fe3555ab956fe2310d993316cbf337749ef763072  0.0s
+ => => exporting manifest list sha256:c5ff5e772b356e33488ddccd3e60e6af45bbe2ad46225ce7ca8bf2e  0.0s
+ => => naming to docker.io/library/cheese-app-api-service:latest                               0.0s
+ => => unpacking to docker.io/library/cheese-app-api-service:latest                            0.0s
+Starting interactive container shell: cheese-app-api-service
+Container is running!!!
+Executing command: /bin/bash
+app@f738c22fed33:/app$ pytest tests/unit/ -v
+======================================= test session starts ========================================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /app
+configfile: pytest.ini
+plugins: platformdirs-4.13.5, asyncio-1.4.0, anyio-4.15.1, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 11 items
+
+tests/unit/test_utils.py::TestPower::test_power_positive_integers PASSED                     [  9%]
+tests/unit/test_utils.py::TestPower::test_power_with_zero_exponent PASSED                    [ 18%]
+tests/unit/test_utils.py::TestPower::test_power_with_one PASSED                              [ 27%]
+tests/unit/test_utils.py::TestPower::test_power_negative_base PASSED                         [ 36%]
+tests/unit/test_utils.py::TestPower::test_power_negative_exponent PASSED                     [ 45%]
+tests/unit/test_utils.py::TestPower::test_power_with_floats PASSED                           [ 54%]
+tests/unit/test_utils.py::TestPower::test_power_large_numbers PASSED                         [ 63%]
+tests/unit/test_utils.py::TestPower::test_power_fractional_exponent PASSED                   [ 72%]
+tests/unit/test_utils.py::TestPower::test_power_special_float_values PASSED                  [ 81%]
+tests/unit/test_utils.py::TestPower::test_power_invalid_inputs PASSED                        [ 90%]
+tests/unit/test_utils.py::TestPower::test_power_boolean_values PASSED                        [100%]
+
+======================================== 11 passed in 0.04s ========================================
+app@f738c22fed33:/app$ pytest tests/integration/ -v
+======================================= test session starts ========================================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /app
+configfile: pytest.ini
+plugins: platformdirs-4.13.5, asyncio-1.4.0, anyio-4.15.1, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 10 items
+
+tests/integration/test_api.py::TestAPIEndpoints::test_root_endpoint PASSED                   [ 10%]
+tests/integration/test_api.py::TestAPIEndpoints::test_root_returns_json PASSED               [ 20%]
+tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_endpoint PASSED     [ 30%]
+tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_default_parameters PASSED [ 40%]
+tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_with_floats PASSED  [ 50%]
+tests/integration/test_api.py::TestAPIEndpoints::test_invalid_route_returns_404 PASSED       [ 60%]
+tests/integration/test_api.py::TestAPIEndpoints::test_method_not_allowed PASSED              [ 70%]
+tests/integration/test_api.py::TestCORS::test_cors_enabled PASSED                            [ 80%]
+tests/integration/test_api.py::TestCORS::test_cors_allows_all_origins PASSED                 [ 90%]
+tests/integration/test_api.py::test_api_health_check PASSED                                  [100%]
+
+================================== 10 passed, 1 warning in 0.47s ===================================
+app@f738c22fed33:/app$ pytest tests/unit/ tests/integration/ -v
+======================================= test session starts ========================================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /app
+configfile: pytest.ini
+plugins: platformdirs-4.13.5, asyncio-1.4.0, anyio-4.15.1, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 21 items
+
+tests/unit/test_utils.py::TestPower::test_power_positive_integers PASSED                     [  4%]
+tests/unit/test_utils.py::TestPower::test_power_with_zero_exponent PASSED                    [  9%]
+tests/unit/test_utils.py::TestPower::test_power_with_one PASSED                              [ 14%]
+tests/unit/test_utils.py::TestPower::test_power_negative_base PASSED                         [ 19%]
+tests/unit/test_utils.py::TestPower::test_power_negative_exponent PASSED                     [ 23%]
+tests/unit/test_utils.py::TestPower::test_power_with_floats PASSED                           [ 28%]
+tests/unit/test_utils.py::TestPower::test_power_large_numbers PASSED                         [ 33%]
+tests/unit/test_utils.py::TestPower::test_power_fractional_exponent PASSED                   [ 38%]
+tests/unit/test_utils.py::TestPower::test_power_special_float_values PASSED                  [ 42%]
+tests/unit/test_utils.py::TestPower::test_power_invalid_inputs PASSED                        [ 47%]
+tests/unit/test_utils.py::TestPower::test_power_boolean_values PASSED                        [ 52%]
+tests/integration/test_api.py::TestAPIEndpoints::test_root_endpoint PASSED                   [ 57%]
+tests/integration/test_api.py::TestAPIEndpoints::test_root_returns_json PASSED               [ 61%]
+tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_endpoint PASSED     [ 66%]
+tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_default_parameters PASSED [ 71%]
+tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_with_floats PASSED  [ 76%]
+tests/integration/test_api.py::TestAPIEndpoints::test_invalid_route_returns_404 PASSED       [ 80%]
+tests/integration/test_api.py::TestAPIEndpoints::test_method_not_allowed PASSED              [ 85%]
+tests/integration/test_api.py::TestCORS::test_cors_enabled PASSED                            [ 90%]
+tests/integration/test_api.py::TestCORS::test_cors_allows_all_origins PASSED                 [ 95%]
+tests/integration/test_api.py::test_api_health_check PASSED                                  [100%]
+
+================================== 21 passed, 1 warning in 0.46s ===================================
+app@f738c22fed33:/app$ pytest tests/unit/ --cov=api --cov-report=html
+======================================= test session starts ========================================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /app
+configfile: pytest.ini
+plugins: platformdirs-4.13.5, asyncio-1.4.0, anyio-4.15.1, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 11 items
+
+tests/unit/test_utils.py::TestPower::test_power_positive_integers PASSED                     [  9%]
+tests/unit/test_utils.py::TestPower::test_power_with_zero_exponent PASSED                    [ 18%]
+tests/unit/test_utils.py::TestPower::test_power_with_one PASSED                              [ 27%]
+tests/unit/test_utils.py::TestPower::test_power_negative_base PASSED                         [ 36%]
+tests/unit/test_utils.py::TestPower::test_power_negative_exponent PASSED                     [ 45%]
+tests/unit/test_utils.py::TestPower::test_power_with_floats PASSED                           [ 54%]
+tests/unit/test_utils.py::TestPower::test_power_large_numbers PASSED                         [ 63%]
+tests/unit/test_utils.py::TestPower::test_power_fractional_exponent PASSED                   [ 72%]
+tests/unit/test_utils.py::TestPower::test_power_special_float_values PASSED                  [ 81%]
+tests/unit/test_utils.py::TestPower::test_power_invalid_inputs PASSED                        [ 90%]
+tests/unit/test_utils.py::TestPower::test_power_boolean_values PASSED                        [100%]
+
+========================================== tests coverage ==========================================
+_________________________ coverage: platform linux, python 3.11.17-final-0 _________________________
+
+Coverage HTML written to dir htmlcov
+======================================== 11 passed in 0.07s ========================================
+app@f738c22fed33:/app$ ls htmlcov/ | head -4
+class_index.html
+coverage_html_cb_15cffcd0.js
+favicon_32_cb_c827f16f.png
+function_index.html
+app@f738c22fed33:/app$ exit
+exit
+[exit 0]

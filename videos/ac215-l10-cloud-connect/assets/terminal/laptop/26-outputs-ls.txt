@@ -1,0 +1,18 @@
+$ ls -la outputs | head -16
+total 8372
+drwxr-sr-x    2 student  student       4096 Oct 19 22:13 .
+drwxrwsrwx    7 student  student       4096 Oct 19 22:13 ..
+-rw-r--r--    1 student  student     171164 Oct 19 22:13 chunks-char-split-Cheese and its economical uses in the diet.jsonl
+-rw-r--r--    1 student  student      74261 Oct 19 22:13 chunks-char-split-Cottage Cheese Recipe Book.jsonl
+-rw-r--r--    1 student  student     238167 Oct 19 22:13 chunks-char-split-Dairying exemplified, or, The business of cheese-making.jsonl
+-rw-r--r--    1 student  student     161921 Oct 19 22:13 chunks-char-split-Hand-book on cheese making.jsonl
+-rw-r--r--    1 student  student     293884 Oct 19 22:13 chunks-char-split-Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer.jsonl
+-rw-r--r--    1 student  student     818929 Oct 19 22:13 chunks-char-split-The Book of Cheese.jsonl
+-rw-r--r--    1 student  student     562264 Oct 19 22:13 chunks-char-split-The Complete Book of Cheese.jsonl
+-rw-r--r--    1 student  student     245108 Oct 19 22:13 chunks-char-split-The book of The Cheese Being traits and stories of Ye Olde Cheshire Cheese.jsonl
+-rw-r--r--    1 student  student     262750 Oct 19 22:13 chunks-char-split-Theres Pippins and Cheese to Come.jsonl
+-rw-r--r--    1 student  student       9845 Oct 19 22:13 chunks-char-split-Tolminc Cheese.jsonl
+-rw-r--r--    1 student  student     626707 Oct 19 22:13 chunks-char-split-Womans Institute Library of Cookery.jsonl
+-rw-r--r--    1 student  student     240155 Oct 19 22:13 chunks-recursive-split-Cheese and its economical uses in the diet.jsonl
+-rw-r--r--    1 student  student      91103 Oct 19 22:13 chunks-recursive-split-Cottage Cheese Recipe Book.jsonl
+[exit 0]

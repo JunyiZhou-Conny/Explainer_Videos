@@ -1,0 +1,51 @@
+$ docker network inspect cheese-app-network
+[
+    {
+        "Name": "cheese-app-network",
+        "Id": "c0ebf9f7f30d92834fe0e0f3b14012a4b2e6c9103ed9e7886ee08025fa6c6c0f",
+        "Created": "2026-10-19T22:11:26.767211583Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.19.0.0/16",
+                    "Gateway": "172.19.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {},
+        "Labels": {},
+        "Containers": {
+            "ed21c759d782e4049d2019af9e936a26628667d4258a6ba651aba253c24df81a": {
+                "Name": "llm-rag-analysis-api-service",
+                "EndpointID": "25d3cc6d441afc6e6313a28ebea43a0749ac7f7cdfa62c71cde17206900d560f",
+                "MacAddress": "1a:8b:5d:d8:3d:7d",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.19.0.0/16": {
+                        "IPsInUse": 4,
+                        "DynamicIPsAvailable": 65532
+                    }
+                }
+            }
+        }
+    }
+]
+[exit 0]

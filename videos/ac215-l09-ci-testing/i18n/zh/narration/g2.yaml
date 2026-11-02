@@ -1,0 +1,280 @@
+# zh narration for S10-S15 (part 2, group g2: the guest lecture's babykev, steps 00-05b, then the README's
+# Docker Cleanup), sentence-aligned to script.md: one zh sentence per English sentence
+# (explainer.voice.split_sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh
+# line is shown on the English timing, so each sentence keeps the English order of ideas (D8).
+# Artifacts the checker does not allow in a displayed line are described in words (rule A6):
+# line-length = 100 -> line-length 设成 100; torch.ones_like -> torch 的 ones like; branch_mask -> branch mask.
+# babykev's steps are written as their tags (step-00 ... step-05b, A10); the honest platform note of S13
+# (1 failed, 102 passed on this Linux machine; 103 on the author's Mac, as walk.md records) is translated
+# as kindly as the English says it, never as babykev's bug.
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: git switch
+# --detach, step-00, uv sync --locked, line-length = 100, .env, Steps 4 and 4b, torch.ones_like,
+# branch_mask, Step 5a, Step 5b, non-hermetic, just test -m system, git commit --no-verify,
+# detect-private-key, --no-verify); null = the SAY text.
+S10:
+- en: "Part 2 is the guest lecture, by Rahul Dave. It builds the same gate around a small machine learning project, babykev, which answers questions about cheese and reports how confident it is; a pure guess should score zero. No Docker until the very end. Two tools first, as extras: the package manager uv from lecture 2, 0.13.2 at the time of recording, and the command runner just, 1.59.0."
+  zh:
+  - "第二部分是 Rahul Dave 的客座讲座。"
+  - "它围绕一个小型机器学习项目 babykev 搭起同样的门禁；babykev 回答关于奶酪的问题，还会报告自己有多大把握；纯粹的猜测应该得零分。"
+  - "直到最后才用到 Docker。"
+  - "先装两个工具，作为额外步骤：第 2 讲的包管理器 uv，录制时是 0.13.2；还有命令运行器 just，1.59.0。"
+- en: "Clone babykev and list its tags: 9 steps, one per lecture stage. The repo is its own slide deck, and git switch, dash dash detach, moves you to any step. Pause and run both."
+  zh:
+  - "先 clone babykev，再列出它的 tag：一共 9 步，课上每个阶段一步。"
+  - "这个 repo 本身就是一套幻灯片，用 git switch --detach 就能跳到任意一步。"
+  - "暂停一下，两条都跑一遍。"
+  en_display:
+  - null
+  - "The repo is its own slide deck, and git switch --detach moves you to any step."
+  - null
+- en: "At step zero zero, one command builds the environment: uv sync, dash dash locked. It installs Python 3.13.16 and the project exactly as the lockfile says. Locked means stop rather than silently upgrade. Its warning is harmless, at the time of recording. The cheese repo froze an image; babykev pins a lockfile. Typing just, alone, lists the recipes: one name per task, for people, hook, and later CI. Pause and run these."
+  zh:
+  - "在 step-00，一条命令就建好环境：uv sync --locked。"
+  - "它安装 Python 3.13.16 和项目本身，完全按 lock 文件写的来。"
+  - "加上 --locked，意思是宁可停下，也不悄悄升级。"
+  - "录制时它打印的那条警告是无害的。"
+  - "前面 cheese 的 repo 冻结的是 image；而 babykev pin 住的是 lock 文件。"
+  - "单独输入 just，会列出所有 recipe：每个任务一个名字，人、hook，以及之后的 CI 都用它。"
+  - "暂停一下，把这些都跑一遍。"
+  en_display:
+  - "At step-00, one command builds the environment: uv sync --locked."
+  - null
+  - null
+  - null
+  - null
+  - null
+  - null
+- en: "Step 1 brings the contract and its tests. Run uv run pytest: 2 failed, 50 passed, and the tests are right. One failure is a pure guess scored as half confident; the other is 77 rounded probabilities that sum to 0.77. Same rule as the cheese demo: fix the code, not the tests. Pause and run it."
+  zh:
+  - "到了 step-01，加进来的是契约和它的测试。"
+  - "运行 uv run pytest：2 failed, 50 passed，而且测试是对的。"
+  - "一个失败是纯粹的猜测被打成了一半的把握；另一个是 77 个四舍五入后的概率，加起来只有 0.77。"
+  - "和 cheese 的演示同一条规则：改代码，不改测试。"
+  - "暂停一下，自己跑一遍。"
+- en: "Step 2 is format and lint at scale, ruff in both roles. After formatting, the linter counts 70 findings. Safe automatic fixes remove one. Unsafe fixes, applied deliberately, remove 32 more; 37 remain; those need a person. And the width war from part 1 is settled in one line, line length 100, written once in pyproject.toml; the formatter and the linter both follow it."
+  zh:
+  - "接着 step-02：大规模的格式化和 lint，ruff 一个工具兼两个角色。"
+  - "格式化之后，linter 数出 70 个问题。"
+  - "安全的自动修复去掉了一个。"
+  - "有意识地用上不安全的修复，又去掉 32 个；剩下 37 个，这些得靠人。"
+  - "第一部分的宽度之争，用一行就解决了：line-length 设成 100，在 pyproject.toml 里只写一次；格式化工具和 linter 都照它来。"
+  en_display:
+  - null
+  - null
+  - null
+  - null
+  - "And the width war from part 1 is settled in one line, line-length = 100, written once in pyproject.toml; the formatter and the linter both follow it."
+S11:
+- en: "Step 3 installs the gate with one recipe, just setup: lockfile sync and hook install together. Pause and run it. The walk's next command prints the hook file: the same hand-over chain as before, with one difference. This machine's own venv path is baked inside, so it is never committed."
+  zh:
+  - "到了 step-03，用一个 recipe 装好门禁：just setup，同步 lock 文件和安装 hook 一起完成。"
+  - "暂停一下，自己跑一遍。"
+  - "按 walk.md，下一条命令打印出这个 hook 文件：和前面一样的交接链，只有一处不同。"
+  - "里面写死了这台机器自己的 venv 路径，所以它永远不会被 commit。"
+- en: "The config here has four hooks, not nine: large files, merge markers, a policy hook refusing any dot env file, and one local hook that runs just check. So the hook runs exactly what you type. At this step, just check means format check, lint, tests with a 90 percent coverage floor, and config linting."
+  zh:
+  - "这里的配置只有四个 hook，不是九个：大文件、合并冲突标记、一个拒绝任何 .env 文件的策略 hook，还有一个运行 just check 的本地 hook。"
+  - "所以 hook 跑的正是你自己敲的那条命令。"
+  - "在这一步，just check 包括格式检查、lint、带 90% 覆盖率下限的测试，以及配置文件的 lint。"
+  en_display:
+  - "The config here has four hooks, not nine: large files, merge markers, a policy hook refusing any .env file, and one local hook that runs just check."
+  - null
+  - null
+- en: "Run just check: everything green, coverage 100 percent over a floor of 90. Now watch it bite: ask for only the confidence tests, keeping the floor. 9 tests pass, half the code is never exercised, and the run fails at 49.4 percent coverage. A floor is a gate, not a goal. Pause and run both."
+  zh:
+  - "运行 just check：全部是绿的，覆盖率 100%，高于 90% 的下限。"
+  - "现在看它咬人：只跑 confidence 相关的测试，下限不变。"
+  - "9 个测试通过，一半的代码根本没跑到，这次运行以 49.4% 的覆盖率失败。"
+  - "下限是门禁，不是目标。"
+  - "暂停一下，两条都跑一遍。"
+- en: "Config files are checked too: a broken hook config breaks every commit. One wrong indent in the pre-commit config, and yamllint names the exact line. Restored, the recipe runs green; it also validates pyproject.toml and checks the lockfile."
+  zh:
+  - "配置文件也要检查：hook 配置一坏，每次 commit 都会坏。"
+  - "在 pre-commit 配置里缩进错一处，yamllint 就会指出具体是哪一行。"
+  - "恢复之后，这个 recipe 跑绿了；它还会校验 pyproject.toml，检查 lock 文件。"
+- en: "Now the gate refuses, twice; pause and try the first. An unused import goes in; the commit fails on F401, no commit made. Then a dot env file is staged, and the refusal is the config's own sentence: a dot env file holds the settings and secrets of one machine. It is never committed."
+  zh:
+  - "现在门禁要拒绝了，两次；暂停一下，试试第一次。"
+  - "加进一个没用到的 import；commit 在 F401 上失败，没有生成 commit。"
+  - "接着暂存一个 .env 文件，拒绝的理由就是配置里自己写的那句话：.env 文件装的是一台机器的设置和密钥。"
+  - "它永远不能 commit。"
+  en_display:
+  - null
+  - null
+  - "Then a .env file is staged, and the refusal is the config's own sentence: a .env file holds the settings and secrets of one machine."
+  - null
+- en: "Two gate styles, both fine: this one points and you run just fmt; the cheese gate rewrites and makes you look. Steps 4 and 4 b put documentation in the gate: first 50 of 88 functions, methods and classes typed and documented, one step later 88 of 88; deleting one description blocks a commit. Two rows join the table."
+  zh:
+  - "两种门禁风格，都没问题：这个只指出问题，由你来跑 just fmt；cheese 的门禁直接改写，再逼你看一眼。"
+  - "接下来 step-04 和 step-04b 把文档放进门禁：一开始 88 个函数、方法和类里有 50 个带类型标注和文档，下一步是 88 个全都有；删掉一条说明就会拦下 commit。"
+  - "表里又多了两行。"
+  en_display:
+  - null
+  - "Steps 4 and 4b put documentation in the gate: first 50 of 88 functions, methods and classes typed and documented, one step later 88 of 88; deleting one description blocks a commit."
+  - null
+S12:
+- en: "Step 5 brings the model: the setup recipe now pulls the model stack, 38 packages including torch 2.14.1 for the CPU, at the time of recording. Then just test: 92 passed, coverage 94 percent, all green. Pause and run both."
+  zh:
+  - "到了 step-05，模型来了：setup 这个 recipe 现在会拉下整套模型依赖，录制时是 38 个包，包括 CPU 版的 torch 2.14.1。"
+  - "然后是 just test：92 passed，覆盖率 94%，全绿。"
+  - "暂停一下，两条都跑一遍。"
+- en: "What does the model do? A request packs one state and several questions into one sequence. A mask enforces one rule: a question may see the state and itself, never a sibling question. Questions must be answered independently; a peek would leak one answer into another. That one forbidden cell is the whole difference from a causal mask."
+  zh:
+  - "这个模型做什么？"
+  - "一个请求把一段状态和几个问题打包进同一个序列。"
+  - "有一个 mask 强制执行一条规则：一个问题可以看到状态和它自己，绝不能看到兄弟问题。"
+  - "问题必须各自独立回答；偷看一眼，就会把一个答案泄露进另一个。"
+  - "这一个禁止的格子，就是它和 causal mask 的全部区别。"
+- en: "The walk prints the mask the code builds, for two state tokens and two questions of two; pause and print yours. Rows 5 and 6 say question 2 sees everything, including question 1. The cause is one line: torch dot ones like marks every pair of tokens as the same question."
+  zh:
+  - "按 walk.md 打印出代码构建的 mask：两个状态 token，加两个各有两个 token 的问题；暂停一下，打印你自己的。"
+  - "第 5 行和第 6 行说明，问题 2 什么都能看到，包括问题 1。"
+  - "原因只有一行：torch 的 ones like 把每一对 token 都标成同一个问题。"
+  en_display:
+  - null
+  - null
+  - "The cause is one line: torch.ones_like marks every pair of tokens as the same question."
+- en: "A checker script compares the built mask against the one we meant, and prints WRONG on those rows. But nothing in just check runs it; a printout you read by eye is not a test. Something to ponder: every line of branch mask ran, and coverage reads 94 percent. Can any coverage number catch this bug?"
+  zh:
+  - "一个检查脚本把构建出的 mask 和我们想要的那个对比，在那几行打印出 WRONG。"
+  - "可是 just check 里没有任何东西会运行它；靠眼睛看的打印结果不是测试。"
+  - "来想一个问题：branch mask 的每一行都跑到了，覆盖率显示 94%。"
+  - "有哪个覆盖率数字能抓到这个 bug 吗？"
+  en_display:
+  - null
+  - null
+  - "Something to ponder: every line of branch_mask ran, and coverage reads 94 percent."
+  - null
+- en: "No. Coverage counts lines that ran, never whether anyone checked what they produced. Necessary, and never sufficient."
+  zh:
+  - "不能。"
+  - "覆盖率数的是跑过的行，从不管有没有人检查它们算出了什么。"
+  - "必要，但永远不充分。"
+- en: "Also green and blind: the type checker, which reads declared types without running the code. Running ty finds 6 diagnostics, yet just check is green: types are not in the gate yet, and a check outside the gate protects nobody."
+  zh:
+  - "同样绿着却看不见的，还有类型检查器：它只读声明的类型，不运行代码。"
+  - "运行 ty，发现 6 条诊断，可 just check 还是绿的：类型还没进门禁，而门禁之外的检查谁也保护不了。"
+- en: "Last, the smoke on the real model: half a billion parameters, downloaded once from the Hugging Face Hub, a public model host, answering 15 cheese questions on CPU; pause and run it. 6 of 15 right. Nothing is trained, these are guesses; hold that number."
+  zh:
+  - "最后，在真实模型上跑冒烟测试：5 亿参数，从公开的模型托管平台 Hugging Face Hub 下载一次，在 CPU 上回答 15 个奶酪问题；暂停一下，自己跑一遍。"
+  - "15 个里答对了 6 个。"
+  - "什么都没训练，这些都是猜的；先记住这个数字。"
+S13:
+- en: "Step five a answers with tests that could tell. First, honesty: on this machine just test says 1 failed, 102 passed. The failing test changes one question and demands that the other answers stay bit for bit equal. On this Linux CPU, torch sums in a different order than the author's Mac; there all 103 pass, as the walk records. Hermetic means only your code can make it fail; bit exactness across machines is a stronger promise; this machine measured it."
+  zh:
+  - "到了 step-05a，用真正能看出问题的测试来回应。"
+  - "先说实话：在这台机器上，just test 显示 1 failed, 102 passed。"
+  - "失败的那个测试改动一个问题，要求其他问题的答案逐位不变。"
+  - "在这台 Linux 的 CPU 上，torch 求和的顺序和作者的 Mac 不一样；在 Mac 上 103 个全部通过，walk.md 里有记录。"
+  - "所谓 hermetic，是只有你的代码能让它失败；跨机器逐位一致是一个更强的承诺；这台机器把它量了出来。"
+  en_display:
+  - "Step 5a answers with tests that could tell."
+  - null
+  - null
+  - null
+  - null
+- en: "Now the lesson. A deliberately wrong fix goes in, one that blocks only the question just before. The six token picture says all ok; it cannot tell. A four token picture can: its last row reads WRONG."
+  zh:
+  - "现在说正题。"
+  - "故意放进一个错的修复：它只挡住紧挨在前面的那个问题。"
+  - "6 个 token 的图说一切正常；它看不出来。"
+  - "4 个 token 的图就能：它的最后一行显示 WRONG。"
+- en: "State the rule once instead. The property test lets hypothesis draw any request shape: a state of 1 to 6 tokens, up to 4 questions of 1 to 5. Those sizes allow 4,686 shapes, too many for pictures. It asserts that no allowed pair is ever a sibling pair. Something to ponder before we run it."
+  zh:
+  - "换个办法：把规则写一次。"
+  - "属性测试让 hypothesis 随便抽请求的形状：状态 1 到 6 个 token，最多 4 个问题，每个 1 到 5 个 token。"
+  - "这些尺寸一共允许 4686 种形状，多到没法一张张画图。"
+  - "它断言：任何被允许的一对，都绝不是兄弟问题的一对。"
+  - "跑之前，先想一个问题。"
+- en: "You need a question two steps back, so one state token and three questions of one token each. And hypothesis finds it on its own: the one test fails, then shrinks the counter example to exactly that shape. Pause and run it. A property test does not only say no; it hands you the smallest witness."
+  zh:
+  - "你需要一个往回隔两步的问题，所以是一个状态 token 加三个各有一个 token 的问题。"
+  - "而 hypothesis 自己就找到了：这一个测试失败，然后把反例收缩成正好这个形状。"
+  - "暂停一下，自己跑一遍。"
+  - "属性测试不只是说不；它还把最小的证据交到你手上。"
+- en: "Proof the gate grew teeth: put step 5's wrong mask line back and run just test; pause and try it. 8 failed, 95 passed; code that sailed through before is refused. A gate refuses only what its tests can see. The real fix is one line: same question means same segment ID."
+  zh:
+  - "证明门禁长了牙：把 step-05 那行错的 mask 放回去，再运行 just test；暂停一下，试一试。"
+  - "8 failed, 95 passed；之前一路放行的代码，现在被拒绝了。"
+  - "门禁只能拒绝它的测试看得见的东西。"
+  - "真正的修复只有一行：同一个问题，意思是同一个 segment ID。"
+- en: "Types join the gate too: the new recipe, just types, passes, and check has six lines. And the smoke, with the right mask? 4 of 15, lower than before. Pause and run the smoke. The 6 was luck; an untrained score means nothing."
+  zh:
+  - "类型检查也进了门禁：新的 recipe just types 通过了，check 现在有六行。"
+  - "那换上正确的 mask，冒烟测试呢？"
+  - "15 个里答对 4 个，比之前还低。"
+  - "暂停一下，跑一下冒烟测试。"
+  - "之前的 6 是运气；没训练过的模型，分数说明不了什么。"
+S14:
+- en: "Step five b gives non hermetic tests an honest home. A new real model test is marked system, and the config deselects that marker by default: every just test says 1 deselected, on purpose."
+  zh:
+  - "到了 step-05b，不 hermetic 的测试有了一个诚实的家。"
+  - "新加的真实模型测试标上了 system，配置默认把这个 marker 排除在外：每次 just test 都显示 1 deselected，这是有意的。"
+  en_display:
+  - "Step 5b gives non-hermetic tests an honest home."
+  - null
+- en: "Asked for explicitly, just test, dash m system, says 1 passed, 103 deselected: the real model ran, and it had to pass, not skip. That is the honest version of part 1's silent skip. Pause and run both forms."
+  zh:
+  - "明确要求时，just test -m system 显示 1 passed, 103 deselected：真实模型确实跑了，而且它必须通过，不能跳过。"
+  - "这就是第一部分那次悄悄跳过的诚实版本。"
+  - "暂停一下，两种写法都跑一遍。"
+  en_display:
+  - "Asked for explicitly, just test -m system says 1 passed, 103 deselected: the real model ran, and it had to pass, not skip."
+  - null
+  - null
+- en: "Smaller rows join the gate: hadolint lints the Dockerfile, clean. Part 2 was recorded on a plain machine without Docker, so the recipes fail politely: docker build is command not found, and the image recipe explains itself. On your laptop, with Docker Desktop, both images build for real. The walk's record shows the rest. Two images from one lockfile, 1.15 and 1.84 gigabytes. And just check runs green inside a container with no network: the hermetic claim, proved by experiment."
+  zh:
+  - "门禁里又多了几行小的：hadolint 对 Dockerfile 做 lint，结果干净。"
+  - "第二部分是在一台没有 Docker 的普通机器上录的，所以这些 recipe 礼貌地失败了：docker build 报 command not found，构建 image 的 recipe 也会说明原因。"
+  - "在你装了 Docker Desktop 的笔记本上，两个 image 都会真正构建出来。"
+  - "剩下的看 walk.md 里的记录。"
+  - "同一个 lock 文件生成两个 image，1.15 GB 和 1.84 GB。"
+  - "而且 just check 在一个没有网络的 container 里也跑绿了：hermetic 的说法，用实验证明了。"
+- en: "The gate table is full: six rows, system outside the turnstile. Now the limit. A hook runs on one machine, and git commit, dash dash no verify, walks straight past it."
+  zh:
+  - "门禁表填满了：六行，系统测试在闸机外面。"
+  - "再说局限。"
+  - "一个 hook 只在一台机器上运行，而 git commit --no-verify 能直接绕过它。"
+  en_display:
+  - null
+  - null
+  - "A hook runs on one machine, and git commit --no-verify walks straight past it."
+- en: "So CI re-runs the same checks on a server nobody can skip: part 5 of this same repo, in lecture 21. It is also why the hook, CI and the README should spell the checks one way; the cheese repo does not quite manage that. One command for everyone is the lesson for your milestone. Coverage floors in one line: babykev chose 90; milestone 5 asks at least 70."
+  zh:
+  - "所以 CI 在一台谁也绕不过的服务器上，把同样的检查再跑一遍：就是同一个 repo 的 Part 5，第 21 讲。"
+  - "也正因为这样，hook、CI 和 README 应该用同一套写法来写这些检查；cheese 的 repo 还没完全做到。"
+  - "所有人用同一条命令，这是你做 milestone 时要带走的经验。"
+  - "覆盖率下限一句话说完：babykev 选了 90；milestone 5 要求至少 70。"
+S15:
+- en: "Before the recap, clean up. The README's Docker cleanup: docker container ls shows nothing running, so nothing to stop. Then docker system prune; type y: about 95 megabytes of build cache, at the time of recording. A final docker image ls shows the two cheese images. One extra undoes the hook: pre-commit uninstall. On the babykev side, delete the venv; and if you ran the smoke, the roughly 1 gigabyte model in the Hugging Face cache. Nothing today was billable: the gate lives on your laptop, and that is the point."
+  zh:
+  - "回顾之前，先清理。"
+  - "README 的 Docker 清理：docker container ls 显示没有在运行的，所以不用停。"
+  - "然后是 docker system prune；输入 y：录制时清掉了大约 95 MB 的构建缓存。"
+  - "最后 docker image ls 显示两个 cheese 的 image。"
+  - "一个额外步骤把 hook 卸掉：pre-commit uninstall。"
+  - "在 babykev 那边，删掉 venv；如果跑过冒烟测试，再删掉 Hugging Face 缓存里那个大约 1 GB 的模型。"
+  - "今天没有任何计费：门禁就在你的笔记本上，这正是重点。"
+- en: "5 questions to test yourself. One: what runs in a unit, an integration and a system test of the cheese app, file by file? Two: the system tests pass with no server at all. What does pytest actually print, and are those four tests hermetic?"
+  zh:
+  - "五道自测题。"
+  - "第一题：逐个文件说说，cheese 应用的单元测试、集成测试和系统测试分别运行了什么？"
+  - "第二题：系统测试在完全没有服务器的情况下也通过了。"
+  - "这时 pytest 实际打印了什么，这四个测试又是不是 hermetic 的？"
+- en: "Three: what does pre-commit install actually create, and why must every clone run it again? Four: black says failed, files were modified. Is your code broken, and what do you do next? Five: babykev had 94 percent coverage and a wrong mask. What kind of test finally saw the bug, and why was coverage blind to it?"
+  zh:
+  - "第三题：pre-commit install 到底创建了什么，为什么每个 clone 都要重新运行它？"
+  - "第四题：black 显示 Failed，files were modified。"
+  - "你的代码坏了吗，接下来该做什么？"
+  - "第五题：babykev 有 94% 的覆盖率，mask 却是错的。"
+  - "最后是哪一类测试看到了这个 bug，覆盖率又为什么看不见它？"
+- en: "The answers are in the exercises, and every command is in the study guide. Next lecture brings cloud credentials, where the detect private key hook earns its keep. And in lecture 21, this very repo's checks run on GitHub, where nobody can walk past them with dash dash no verify."
+  zh:
+  - "答案在练习里，每条命令都在学习指南里。"
+  - "下节课会用到云上的凭据，到时 detect-private-key 这个 hook 就派上用场了。"
+  - "到了第 21 讲，这个 repo 的检查会在 GitHub 上运行，在那里谁也没法用 --no-verify 绕过去。"
+  en_display:
+  - null
+  - "Next lecture brings cloud credentials, where the detect-private-key hook earns its keep."
+  - "And in lecture 21, this very repo's checks run on GitHub, where nobody can walk past them with --no-verify."

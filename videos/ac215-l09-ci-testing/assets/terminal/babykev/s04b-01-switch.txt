@@ -1,0 +1,4 @@
+$ git switch --detach step-04b
+Previous HEAD position was d27a7f1 step-04: the documentation comes from the code; a docs command and a site
+HEAD is now at a9a391d step-04b: every function documented; docs check joins just check
+[exit 0]

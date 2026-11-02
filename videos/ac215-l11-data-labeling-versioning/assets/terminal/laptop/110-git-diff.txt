@@ -1,0 +1,16 @@
+$ git diff HEAD~1 -- cheese_dataset.dvc
+diff --git a/cheese_dataset.dvc b/cheese_dataset.dvc
+index 7ed3031..4b782d5 100644
+--- a/cheese_dataset.dvc
++++ b/cheese_dataset.dvc
+@@ -1,6 +1,6 @@
+ outs:
+-- md5: 89db50de27acfd6822faabc3da39b0a8.dir
+-  size: 611101
+-  nfiles: 4
++- md5: 6b3428441b34d1c1217aa55e963f7716.dir
++  size: 712574
++  nfiles: 5
+   hash: md5
+   path: cheese_dataset
+[exit 0]

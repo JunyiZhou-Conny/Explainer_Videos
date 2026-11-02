@@ -1,0 +1,33 @@
+$ sh docker-shell.sh
+[+] run 1/1
+ ✔ Container llm-rag-chromadb Running                                                                     0.0s
+Container llm-rag-llm-rag-cli-run-837d49b181d0 Creating
+Container llm-rag-llm-rag-cli-run-837d49b181d0 Created
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.15
+UV version: uv 0.13.2 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+app@bccd254e50ae:/app$ ls -la /secrets
+total 8
+drwxrwsrwx 2 app  app  4096 Oct 19 22:13 .
+drwxr-xr-x 1 root root 4096 Oct 19 22:13 ..
+app@bccd254e50ae:/app$ python -c "import google.auth; c, p = google.auth.default(); print(type(c).__name__, getattr(c, 'service_account_email', None), p)"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 705, in default
+    credentials, project_id = checker()
+                              ^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 698, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 346, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 173, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+google.auth.exceptions.DefaultCredentialsError: File /secrets/llm-service-account.json was not found.
+app@bccd254e50ae:/app$ exit
+exit
+[exit 1]

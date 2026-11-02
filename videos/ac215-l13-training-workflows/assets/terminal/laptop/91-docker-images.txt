@@ -1,0 +1,8 @@
+$ docker image ls
+IMAGE                       ID             DISK USAGE   CONTENT SIZE   EXTRA
+model-training-cli:latest   13d89e20697d       2.59GB          539MB        
+python:3.10-slim-bookworm   924f18b47d6f        206MB         50.2MB        
+python:3.13-slim-bookworm   bc7fb531d8f5        182MB         44.6MB        
+python:3.13-slim-bullseye   afcbdc9f527c        184MB         44.7MB        
+trainer-standin:latest      ded20ceb2a7d        278MB         68.3MB        
+[exit 0]

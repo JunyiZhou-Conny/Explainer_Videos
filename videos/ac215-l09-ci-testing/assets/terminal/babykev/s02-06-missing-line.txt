@@ -1,0 +1,6 @@
+$ sed -n '88,91p' src/babykev/api.py
+    L = len(p)
+    if L == 1:
+        return 1.0
+    mode = max(range(L), key=lambda i: p[i])
+[exit 0]

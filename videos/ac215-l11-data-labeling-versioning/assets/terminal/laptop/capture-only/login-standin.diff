@@ -1,0 +1,33 @@
+ docker-compose.yml | 3 ++-
+ docker-shell.sh    | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+diff --git a/docker-compose.yml b/docker-compose.yml
+index 46a8606..bdf10b8 100755
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -28,8 +28,9 @@ services:
+             - ../secrets:/secrets
+         environment:
+             LABEL_STUDIO_DISABLE_SIGNUP_WITHOUT_LINK: "true"
+-            LABEL_STUDIO_USERNAME: "<instructor e-mail>"
++            LABEL_STUDIO_USERNAME: "student@example.com"
+             LABEL_STUDIO_PASSWORD: "awesome"
++            LABEL_STUDIO_USER_TOKEN: "student-demo-token-not-a-secret"
+             GOOGLE_APPLICATION_CREDENTIALS: /secrets/data-service-account.json
+             GCP_PROJECT: "ac215-project"
+             GCP_ZONE: "us-central1-a"
+diff --git a/docker-shell.sh b/docker-shell.sh
+index f293883..78fb002 100755
+--- a/docker-shell.sh
++++ b/docker-shell.sh
+@@ -16,8 +16,9 @@ docker run -d \
+   -v "$(pwd)/docker-volumes/label-studio:/label-studio/data" \
+   -v "$(pwd)/../secrets:/secrets" \
+   -e LABEL_STUDIO_DISABLE_SIGNUP_WITHOUT_LINK="true" \
+-  -e LABEL_STUDIO_USERNAME="<instructor e-mail>" \
++  -e LABEL_STUDIO_USERNAME="student@example.com" \
+   -e LABEL_STUDIO_PASSWORD="awesome" \
++  -e LABEL_STUDIO_USER_TOKEN="student-demo-token-not-a-secret" \
+   -e GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json" \
+   -e GCP_PROJECT="ac215-project" \
+   -e GCP_ZONE="us-central1-a" \

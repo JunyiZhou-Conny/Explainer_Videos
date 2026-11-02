@@ -1,0 +1,8 @@
+$ uv run babykev help
+babykev: a small decision model. Context, typed questions, and a probability for every answer.
+
+usage: babykev COMMAND [FLAGS]
+       babykev help
+
+There are no commands yet.
+[exit 0]

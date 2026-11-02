@@ -1,0 +1,26 @@
+$ just setup
+uv sync --locked && uv run pre-commit install
+Resolved 29 packages in 1ms
+   Building babykev @ file:///home/student/babykev
+warning: `build_system.requires = ["uv-build>=0.12.13,<0.13.0"]` does not contain the current uv version 0.13.2
+      Built babykev @ file:///home/student/babykev
+Prepared 2 packages in 244ms
+Uninstalled 1 package in 0.87ms
+Installed 15 packages in 10ms
+ ~ babykev==0.1.0 (from file:///home/student/babykev)
+ + cfgv==3.5.0
+ + distlib==0.4.3
+ + fastjsonschema==2.22.2
+ + filelock==4.0.10
+ + identify==2.6.20
+ + nodeenv==1.11.0
+ + pathspec==1.1.1
+ + platformdirs==4.12.3
+ + pre-commit==4.6.2
+ + python-discovery==1.6.1
+ + pyyaml==6.0.3
+ + validate-pyproject==0.26
+ + virtualenv==21.14.5
+ + yamllint==1.38.0
+pre-commit installed at .git/hooks/pre-commit
+[exit 0]

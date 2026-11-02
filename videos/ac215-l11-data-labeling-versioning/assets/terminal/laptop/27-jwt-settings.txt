@@ -1,0 +1,2 @@
+$ curl -s -b /tmp/ls.cookies http://localhost:8080/api/jwt/settings
+{"api_tokens_enabled":true,"legacy_api_tokens_enabled":false}[exit 0]

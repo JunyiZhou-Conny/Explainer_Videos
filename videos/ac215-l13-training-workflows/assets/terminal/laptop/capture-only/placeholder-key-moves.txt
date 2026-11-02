@@ -1,0 +1,1 @@
+shell: moved the placeholder key out of ~/secrets before the first docker-shell.sh

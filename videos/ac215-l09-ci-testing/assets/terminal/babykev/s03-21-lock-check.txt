@@ -1,0 +1,6 @@
+$ uv lock --check
+Resolved 29 packages in 1.06s
+error: The lockfile at `uv.lock` needs to be updated, but `--check` was provided.
+
+hint: To update the lockfile, run `uv lock`.
+[exit 1]
