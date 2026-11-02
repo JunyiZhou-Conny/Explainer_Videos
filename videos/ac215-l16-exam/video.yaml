@@ -1,0 +1,40 @@
+id: ac215-l16-exam
+title: "AC215 · Lecture 16 — System Tradeoffs: networking, runtime config and capacity (with L10) (exam edition)"
+papers: []                     # not a paper: a concept-first exam explainer of course lectures
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 16
+  lecture_title: "System Tradeoffs: Performance, Cost, and Design Choices"
+  edition: exam                # not a follow-along: no README walk, no captures (see BRIEF.md)
+  also_lectures:
+    # the opener (laptop vs cloud, credentials mounted at runtime); slides digested in
+    # ../ac215-l10-cloud-connect/SLIDES.md (read-only)
+    - {lecture: 10, lecture_title: "Connecting to the Cloud: Networking, Authentication & Storage"}
+  # ed: omitted (videos/ac215-l10-cloud-connect/ has no video.yaml yet; the course map lists the Ed links)
+  repos:
+    # quoted as evidence only; the files the code panels read are in assets/source/<repo>/ (unchanged
+    # at these commits; the two frontend .env.* files are stored without the leading dot, see BRIEF.md)
+    - {repo: dlops-io/cheese-app-v0, branch: main, commit: cb6fb94576aa37bb0b94a8745e5e94e6a504f4bb,
+       files: [api-service/docker-entrypoint.sh, api-service/docker-shell.sh,
+               frontend-ai-chatbot/docker-shell.sh, frontend-ai-chatbot/.env.development,
+               frontend-ai-chatbot/.env.production, frontend-ai-chatbot/src/services/Common.js,
+               README.md]}
+    - {repo: dlops-io/cheese-app-v2, branch: main, commit: 14f2a1420b43e9f24e977a9e67b53d7e2614013d,
+       files: [src/api-service/docker-shell.sh, src/api-service/docker-entrypoint.sh,
+               src/api-service/api/utils/llm_rag_utils.py, src/vector-db/docker-compose.yml,
+               src/frontend-react/src/services/DataService.js, README.md]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L10-cloud-connect-cheese-app-v0.md
+audience: "AC215 student the day before Quiz 4: sat (or skimmed) Lectures 10 and 16, has run the cheese app's containers on a laptop (docker-shell.sh, localhost:9000, the secrets folder), may never have deployed into a VPC; wants to answer conceptual multiple-choice questions on private vs public addresses and the load balancer, subnets, route tables and NAT, where browser code must send requests, build-once runtime configuration and secrets, autoscaling bounded by database connections, and PostgreSQL + pgvector, and say why the wrong options are wrong"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+# One part: no parts: key. No publish: block yet.
+scenes:
+  - {file: scenes/s01_launch.py,     cls: LaunchDay,        title: "Launch day: three alarms"}
+  - {file: scenes/s02_address.py,    cls: LaptopToCloud,    title: "From localhost to a front door"}
+  - {file: scenes/s03_nat.py,        cls: RouteAndNat,      title: "Private subnets, route tables and NAT"}
+  - {file: scenes/s04_browser.py,    cls: BrowserOutside,   title: "The browser lives outside the VPC"}
+  - {file: scenes/s05_config.py,     cls: BuildOnce,        title: "Build once, configure at startup"}
+  - {file: scenes/s06_capacity.py,   cls: ConnectionBudget, title: "Autoscaling meets the connection budget"}
+  - {file: scenes/s07_database.py,   cls: OneDatabase,      title: "Relational plus vectors: one database"}
+  - {file: scenes/s08_recap.py,      cls: Recap,            title: "Seven rules for the quiz"}

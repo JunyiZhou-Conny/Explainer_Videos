@@ -1,0 +1,30 @@
+# Chinese (zh-CN) metadata for ac215-l16-exam (read by explainer/i18n.py meta(), used by explainer/build.py for the
+# subtitles' chapters and the zh descriptions): video title, chapter titles keyed by scene file stem (as video.yaml's
+# scenes), and the Bilibili / YouTube description. The video has no parts, so there is no parts: key.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 端口, 虚拟私有云, NAT 网关, 负载均衡器; A4), the
+# English colon structure is kept, product and code names stay as they are (meta.yaml is not read by `explainer.i18n
+# check`, so brackets are fine here), and the core-concept chapters carry their English short name for search where the
+# Chinese is not the usual search word (NAT 网关（NAT Gateway）, 负载均衡器（load balancer）, 虚拟私有云（VPC）), as L1-L14
+# do. System Tradeoffs → 系统权衡; with L10 → 含第 10 讲; exam edition → 考前精讲版 (as L14). The metaphors keep their
+# picture: three alarms → 三个告警, a front door → 大门, the connection budget → 连接数预算, Seven rules for the quiz →
+# 小测的七条规则. No person's name, no practice question.
+title: "AC215 · 第 16 讲：系统权衡——网络、运行时配置与容量（含第 10 讲）（考前精讲版）"
+
+chapters:
+  s01_launch: "上线日：三个告警"
+  s02_address: "从 localhost 到大门：IP 地址、端口与负载均衡器（load balancer）"
+  s03_nat: "私有子网、路由表与 NAT 网关（NAT Gateway）"
+  s04_browser: "浏览器在虚拟私有云（VPC）之外"
+  s05_config: "构建一次，启动时配置：同一个镜像与密钥"
+  s06_capacity: "自动扩缩遇上连接数预算"
+  s07_database: "关系型加向量：一个数据库（PostgreSQL + pgvector）"
+  s08_recap: "小测的七条规则"
+
+# Two or three sentences (rule H2), written register. Facts: video.yaml course: (Lecture 16, System Tradeoffs:
+# Performance, Cost, and Design Choices, with Lecture 10, Connecting to the Cloud, as the opener; edition: exam;
+# dlops-io/cheese-app-v0 main @ cb6fb94 and dlops-io/cheese-app-v2 main @ 14f2a14, quoted as evidence only), BRIEF.md
+# and script.md v2 (no live runs, no captures; three new multiple-choice ponders; the lecture draws AWS names, the
+# course runs on GCP). Paste the chapter timestamps from output/chapters.txt and the study guide link (video.yaml
+# course.guide) under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 16 讲“系统权衡”的考前精讲版（以第 10 讲“连接云端”开场），为第 4 次小测准备：不逐条跟练 README，而是用动画把小测考的机制讲透，并以演示仓库 dlops-io/cheese-app-v0 和 dlops-io/cheese-app-v2 的代码和 README 原文为依据。内容包括：localhost、私有地址与公网地址、端口、域名和负载均衡器怎样把外界的请求送到私有子网里的服务；虚拟私有云（VPC）的子网与路由表，NAT 网关只转发从内部发起的连接，所以它故障时只断互联网出口、VPC 内部的数据库照常可用；浏览器在 VPC 之外，前端代码必须调用公网 HTTPS 端点（endpoint）；同一个不可变镜像在各环境间晋级，运行时配置和密钥在启动时注入；按数据库连接数上限算出自动扩缩的最大副本数；以及关系型加向量需求为什么选 PostgreSQL + pgvector。中间穿插三道新的选择题，最后用七条规则回顾；英文旁白，配中文和中英双语字幕，视频不做任何现场运行，每个面板都是仓库源码或我们自己重画的课件示意图。

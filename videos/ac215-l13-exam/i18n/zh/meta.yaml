@@ -1,0 +1,30 @@
+# Chinese (zh-CN) metadata for ac215-l13-exam (read by explainer/i18n.py meta(), used by explainer/build.py for the
+# subtitles' chapters and the zh descriptions): video title, chapter titles keyed by scene file stem (as video.yaml's
+# scenes), and the Bilibili / YouTube description. One part: no parts: key (video.yaml has none).
+# Titles follow GLOSSARY.md rule H1: written register (运行, 回调, 镜像, 批次, 训练任务; A4), questions keep their question
+# mark, the English colon structure is kept, class, function and file names stay as they are (meta.yaml is not read by
+# `explainer.i18n check`, so brackets are fine here), and the core-concept chapters carry their English short name for
+# search where the Chinese is not the usual search word (运行（run）, 回调（callback）, 全局批次（global batch）), as L1,
+# L3 and L5-L8 do. Advanced Training Workflows → 进阶训练工作流; exam edition → 考前版 (as 跟练 = follow-along). The
+# metaphors keep their picture: the run with no curves → 没有曲线的运行, what pip unwraps → 包里装了什么, training that
+# outlives the request → 比请求活得更久的训练, six rules for Tuesday → 周二要记住的六条规则. No person's name (A10).
+title: "AC215 · 第 13 讲：进阶训练工作流（考前版）"
+
+chapters:
+  s01_hook: "一个没有曲线的运行（run）"
+  s02_record: "一次运行记录了什么：init、config 与 finish"
+  s03_callback: "回调（callback）写进活跃的运行"
+  s04_package: "训练包里装了什么：setup.py 与 ModuleNotFoundError"
+  s05_mirror: "一台机器还是多台：MirroredStrategy 与 MultiWorkerMirroredStrategy"
+  s06_batch: "全局批次（global batch）与每副本批次"
+  s07_jobs: "比请求活得更久的训练：持久的训练任务"
+  s08_recap: "周二要记住的六条规则"
+
+# Two or three sentences (rule H2), written register. Facts: video.yaml course: dlops-io/model-training main @ b9aee1c
+# (package/setup.py, package/trainer/task.py and task_multi_gpu.py, package-trainer.sh, cli.sh, cli-multi-gpu.sh) and
+# cell 38 of the course notebook "Experiment Tracking using Weights & Bias"; script.md v2 (S01-S08, three ponder
+# questions, no captures, nothing run). W&B behaviour as stated for wandb==0.15.11 (setup.py line 5). Paste the chapter
+# timestamps from output/chapters.txt and the study guide, tutorial repo and notebook links (video.yaml course:) under
+# it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 13 讲“进阶训练工作流”的考前版，写给 Quiz 4 前一天的你：不跟着敲命令，而是把小测考的五个机制各画成一张动画图——Weights & Biases 的运行（run）：wandb.init 开启并设为活跃的运行，回调（WandbMetricsLogger / WandbCallback）每个轮次（epoch）往活跃的运行写一条历史记录，finish 之后再 fit 会怎样；打包 Vertex AI 自定义训练任务时，为什么所有依赖都装好了却报 ModuleNotFoundError（自己的模块必须跟着 setup.py 打的包一起走）；MirroredStrategy 只同步一台机器上的 GPU，跨机器要用 MultiWorkerMirroredStrategy 和 TF_CONFIG；策略下 dataset.batch 给的是全局批次，每副本批次等于它除以同步的副本数；长时间的训练要提交成持久的训练任务并轮询，而不是放进请求处理函数、后台线程或调长超时；另外顺带讲一句数据版本。每个机制都配有 dlops-io/model-training 仓库里的代码作为依据，片中有三道小测风格的选择题，逐个讲清每个错误选项错在哪。英文旁白，配中文和中英双语字幕。

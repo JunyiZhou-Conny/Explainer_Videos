@@ -57,16 +57,18 @@ Conventions
   excerpts are code panels of `README.md` lines (markdown shown as plain text, `**` stripped, line numbers kept). An
   *excerpt chip* quotes an exact sub-string of one line, headed `path · line N (excerpt)`. Lit lines: a YELLOW bar
   behind the named line(s) unless the SHOW names another colour.
-- `PONDER(8 s, Pn)`: the multiple-choice ponder. After that SAY block, the question card (YELLOW outline, lower
-  two-thirds of the frame) shows the question and four options A–D, each a row with its letter in a circle; an
-  8-second YELLOW timer bar drains under it. Nothing during the timer shows the answer. The next SAY block reveals:
-  the right option's row fills YELLOW with a ✓; under each wrong option a one-line RED reason writes in (the text
-  given in the SHOW) as the SAY reaches it; then the card fades. Three in the video: P1 (end of S02), P2 (end of S03),
-  P3 (S07). They are new scenarios (BRIEF.md "Ponder questions"); the course's practice questions are never quoted,
-  paraphrased or answered.
+- `PONDER(10 s, Pn)`: the multiple-choice ponder. The SAY before it speaks a short stem. After that SAY block, the
+  question card (YELLOW outline, lower two-thirds of the frame) shows the shortened question and four options A–D,
+  each a row with its letter in a circle; a YELLOW timer bar drains under it (P1 10 s, P2 10 s, P3 12 s: BRIEF's 8 s
+  lengthened so the card can be read). While a card is up, everything else in the frame fades to ≤ 20 % opacity.
+  Nothing during the timer shows the answer. The next SAY block(s) reveal: the right option's row fills YELLOW with a
+  ✓; under each wrong option a one-line RED reason writes in (the text given in the SHOW) as the SAY reaches it; then
+  the card fades. Three in the video: P1 (end of S02), P2 (end of S03), P3 (S07, a prediction before the plugs). They
+  are new scenarios (BRIEF.md "Ponder questions"); the course's practice questions are never quoted, paraphrased or
+  answered. `PONDER(6 s, "…")` with a quoted line (S06) is L08's one-line `pause_and_ponder`, no options.
 - `RULE: "…"`: the scene's exam-rule card: a GREEN-outlined card at the bottom third titled "exam rule", the rule in
   two lines, written in as the SAY says it; it shrinks into the S01 exam map slot it fills (top strip, see S01), so the
-  map fills scene by scene. S08 reuses the seven cards.
+  map fills scene by scene. S08 reuses the six cards, splitting S03's into rules 2 and 3.
 - `Lecture: 14 · 14.` under a scene header lists the slides the scene stands on. `LECTURE 14 · 14` in a SHOW line: from
   that SAY block on, the GRAY `lecture_ref(14, "14")` tag sits top right ("Lecture 14 · slide 14"; "slides" for a
   range), until a SHOW changes it. `LECTURE 15 · 13` → `lecture_ref(15, "13")`. The slides are never shown: every
@@ -88,8 +90,18 @@ Notes for scene authors
 - Set pieces V1–V6 (BRIEF.md) are shared objects in `scenes/common.py`: `LifecycleStrip` (V1), `TwoMeters` (V2),
   `HandoverGrid` (V3), `TwoDoors` (V4), `ThinClients` (V5), `ServingPlug` (V6), plus `mcq_ponder(...)` for the
   PONDER cards and `exam_map()` / `rule_card()` for the RULE cards.
-- Words that may need lexicon entries (check with `explainer/voice.py` before render): gunicorn, googletrans, base64,
-  JPEG, Keras, parmigiano, gruyere, gouda, brie, HTTPS, hello underscore HTTP, Artifact Registry, 8080 (has one).
+- Exam map and lecture tag share the top: the map occupies x ∈ [−6.6, 3.2], y ≈ 3.3; `lecture_ref` stays right of
+  x = 3.4. The map is dimmed to 35 % except the active slot; slots show icon + number only (the label appears only on
+  the active slot).
+- Toolkit pieces: from `explainer/devops.py` `box`, `chip`, `tag`, `lecture_ref`, `check_mark`, `cross_mark`,
+  `code_panel`, `server` (VM rack), `cloud`, `laptop`, `browser_window`, `file_glyph`, `step_badge` (option letters);
+  from `explainer/components.py` `person_icon`, `timeline` (24-hour axis, S06 release bars), `connect`,
+  `highlight_box`, `pause_and_ponder` (S06). New small shapes in `scenes/common.py`: ear glyph, gear, version dial,
+  slider, clock, token, doors, plug and socket, and `mcq_ponder` (reusing `ponder_card`'s timer bar, the `card[3]`
+  pattern).
+- Lexicon entries added for this script (`# AC215 L14-exam`): gunicorn, main.py, 403, "a 403", "A 403". Checked and
+  fine without one: JPEG, base64, HTTPS, HTTP, Vertex, JSON, cron, Scheduler, 224, lockstep, invocations; 8080 and
+  README's have entries. The cheese names are on screen only, never spoken.
 - Word budget (BRIEF.md): S01 190 · S02 290 · S03 290 · S04 260 · S05 250 · S06 240 · S07 290 · S08 180 = 1,990
   (allowed 1,800–2,300).
 
@@ -115,23 +127,24 @@ SHOW: The strip shrinks to the top. CODE(serverless-deployment/tutorial/app/Dock
 "-m", "translation_demo", "serve"]` lit RED on "serve". Then, under it, CODE(serverless-deployment/README.md: 1035–1036,
 1044) (folded): the table header and the row "Job starts a server instead of finishing | Command `python` and separate
 batch arguments", the row lit YELLOW.
-SAY: The clue is the last line of the image's Dockerfile. Its default command starts the web server. And the README's own troubleshooting table lists this exact symptom: a job that starts a server instead of finishing.
+SAY: The clue is the last line of the Dockerfile: its default command starts the web server. The README's troubleshooting table even lists the symptom: a job that starts a server instead of finishing.
 
 SHOW: The panels fade. A YELLOW question writes across the middle (no timer): "Same image, same code. Why does the web
-app work — and the job never end?"
-SAY: Same image, same code. So why does the web app work, while the job never ends? Hold that question. The answer is the first rule for the quiz.
+app work — and the job never end?" Under it, a beat later, two tiny strips grow from one TEAL image block: a web-app
+strip answering YELLOW pulses, and a job strip that runs on and on.
+SAY: Same image, same code. So why does the web app work, while the job never ends? Hold that question.
 
 SHOW: The question moves up and shrinks. The exam map builds along the top strip: five empty GRAY-outlined slots
 writing in left to right as the SAY names them, each with a small icon: "1 · service or job" (two tiny strips), "2 ·
 who pays for idle" (a GOLD meter), "3 · what you hand over" (a 2×2 grid), "4 · who calls, who it runs as" (two doors),
 "5 · the model endpoint" (a gear + plug). A GRAY caption under them: "Quiz 4 · Lecture 14 (+ Lecture 15 · slides
-11–14)".
-SAY: Quiz 4 asks about this lecture in five places. Service or job. Who pays for idle time. What you hand over to deploy. Who may call your code, and who it runs as. And the model endpoint: where preprocessing lives, and which function it calls.
+11–17)".
+SAY: For the quiz, this lecture comes down to five ideas. Service or job. Who pays for idle time. What you hand over to deploy. Who may call your code, and who it runs as. And the model endpoint: where preprocessing lives, and which function it calls.
 
 SHOW: A GRAY specimen tag "Lecture 14 · slide 14" pulses once top right; a GRAY code-panel header specimen
 `__main__.py · lines 1–1` pulses once; a GRAY chip "no live runs · concepts, not clicks". The map stays (dimmed) at
 the top for S02; everything else fades.
-SAY: The gray tag, top right, names the lecture slide behind each idea. Code panels quote the demo repositories as they are today. Nothing here is a live run: this video is about the concepts, not the clicks.
+SAY: The gray tag, top right, names the lecture slide behind each idea.
 
 ---
 
@@ -143,17 +156,17 @@ SHOW: LECTURE 14 · 14. The map's slot 1 pulses YELLOW. A redrawn slide-14 line 
 service or job." Below it the V1 TEAL image block, with two GREEN command tags hanging under it, `serve` and `batch`.
 CODE(serverless-deployment/tutorial/app/translation_demo/__main__.py: 1–1) above the block, line 1 lit; then the
 panel grows to lines 12–13 (folded) with `"serve"` and `"batch"` and their help texts lit GREEN.
-SAY: The lecture says Cloud Run runs a container as a service or as a job. The demo app says it in its first line: one image, different startup commands, serve or batch.
+SAY: The lecture says Cloud Run runs a container as a service or a job. The demo app shows both: one image, two startup commands, serve or batch.
 
 SHOW: The panel switches to CODE(…/__main__.py: 22–26), lines 23–24 lit (`PORT` default "8080", `--bind
 0.0.0.0:{port}`); a PURPLE "gunicorn" chip slides out of the `serve` tag. The service strip draws: a dashed BLUE
 instance with an ear glyph "listening on :8080"; YELLOW request pulses arrive from the left (PINK arrows), each answered
 by a return arrow.
-SAY: Serve starts gunicorn, a web server, on the port Cloud Run gives it, 8080 by default. Then it waits. A request arrives, gets an answer, and the instance goes on listening.
+SAY: Serve starts gunicorn, a web server, on the port Cloud Run gives it, 8080 by default. Then it waits, and answers each request that arrives.
 
 SHOW: A burst of pulses: a second dashed instance splits off (a GRAY chip "max instances 2"), both answer; the pulses
 stop, both instances dissolve to nothing ("scale to zero"). A PINK URL chip `https://…run.app` stays above the strip.
-SAY: That shape is a service. It has a URL, it adds instances when traffic rises, and it can scale to zero when traffic stops. A service never finishes on purpose: listening is its job.
+SAY: That shape is a service. It has a URL, adds instances when traffic rises, and can scale to zero when it stops. It never finishes on purpose: listening is its job.
 
 SHOW: The service strip shrinks to the upper half. The job strip draws under it from the `batch` tag: one TEAL block
 running through four GREEN segments as each is named: "read", "translate", "speak", "save", then a hard right edge
@@ -161,39 +174,39 @@ running through four GREEN segments as each is named: "read", "translate", "spea
 second, short strip ends in a RED edge "exit 1"; line 59's comment "so execution status is truthful" lights YELLOW.
 SAY: Batch has a different shape. It reads the passage, translates it, generates speech, saves the files, and exits. If a step fails, it exits with status 1, so the execution shows failed, not a false success.
 
-SHOW: The code panel switches to CODE(serverless-deployment/README.md: 581–584), "That is a **job**, rather than an
-HTTP service waiting for requests" lit YELLOW. Beside the job strip: a crossed-out PINK URL chip and a GRAY chip
+SHOW: The code panel switches to CODE(serverless-deployment/README.md: 582–585), line 585 "That is a **job**, rather
+than an HTTP service waiting for requests" lit YELLOW. Beside the job strip: a crossed-out PINK URL chip and a GRAY chip
 "no URL · it exits" (excerpt chip `README.md · line 833 (excerpt)`: "The job exits; it does not provide a web URL").
-SAY: The README names this shape: a job, rather than an HTTP service waiting for requests. A job has no URL. Something starts it, and it runs to completion.
+SAY: The README calls this a job: no URL, nothing waiting for requests. Something starts it, and it runs to completion.
 
 SHOW: S01's endless RED-edged strip returns from the top and lands on the job row, its `serve` tag lit RED. CODE(
 serverless-deployment/README.md: 747–748) lights "This replaces the image's web-server command". The `serve` tag
-transforms into a GREEN chip row `python` · `-m translation_demo batch …` (excerpt chip `README.md · lines 754–765`,
+transforms into a GREEN chip row `python` · `-m translation_demo batch …` (excerpt chip `README.md · lines 755–765`,
 the argument chips shown with `gs://YOUR_INPUT_BUCKET/…`, `gs://YOUR_OUTPUT_BUCKET/…`); the endless strip is cut and
 snaps into the four-segment job shape with its "exit 0" edge.
-SAY: Now the hook. The job inherited the image's default command, serve, so it started a web server and waited for requests nobody sends. The fix: the command python, with the batch arguments. Same image, and now the strip ends.
+SAY: Now the hook. The job inherited the image's default command, serve, so it started a web server and waited for requests that never come. The fix: the command python, with the batch arguments. Same image, and now the strip ends.
 
 SHOW: The two strips side by side, small. Above the job strip: a GREY "Execute" button presses, a PINK trigger drops
 onto the strip, it runs and ends. Then a BLUE Cloud Scheduler clock (no logo) appears beside it with a GRAY caption
 "not in this README"; at each "night" tick on a small timeline a PINK trigger drops and a new job strip runs and ends.
-SAY: Who presses start? In the README, you click Execute. For a nightly run, Cloud Scheduler is the usual trigger. It is not in this README, but timetables are its job.
+SAY: Who presses start? In the README, you click Execute. For a nightly run, the usual trigger is Cloud Scheduler, which this README does not use.
 
-SHOW: The strips shrink to the right edge. PONDER P1 card. Question: "A container reads all new documents in a bucket,
-writes their embeddings to another bucket, and exits. It should run once an hour. Which deployment fits best?"
-A · "A Cloud Run service with minimum instances 1 that runs the indexing loop" · B · "A Cloud Run job, executed every
-hour by Cloud Scheduler" · C · "A Cloud Run service whose container indexes at startup, then exits" · D · "A
-Compute Engine VM with a cron entry".
-SAY: Try one. Read the lifecycle, not the product names.
-PONDER(8 s, P1)
+SHOW: The strips and the Scheduler clock fade out (everything else ≤ 20 %). PONDER P1 card. Question: "A container
+indexes new documents from a bucket, writes embeddings to another bucket, then exits. It runs once an hour. Best fit?"
+A · "Cloud Run service, min instances 1, looping" · B · "Cloud Run job, run hourly by Cloud Scheduler" · C · "Cloud
+Run service that indexes at startup, then exits" · D · "Compute Engine VM with a cron entry".
+SAY: Try one. A container indexes new documents and exits, once an hour. Read the lifecycle, not the product names.
+PONDER(10 s, P1)
 
 SHOW: Reveal. B fills YELLOW ✓, GREEN note "finite work · runs to completion · billed only while it runs". RED reasons
-write in under A "always-on instance paid between runs · a service listens, it doesn't loop", under C "a service must
-keep listening on $PORT · exiting = a crashed instance", under D "works, but pays for ~55 idle minutes every hour".
-SAY: B, a job on a Cloud Scheduler timetable: finite work that runs to completion and costs nothing between runs. A pays for an instance all hour, and loops instead of listening. C breaks the service contract: an instance that exits has crashed. D works, but the VM bills every idle minute.
+write in under A "pays for an always-on instance · between requests its CPU is throttled, so a loop stalls", under C "a
+service must keep listening on $PORT · exiting = a crashed instance", under D "works, but the VM bills every idle
+minute between runs".
+SAY: B, a job on a Cloud Scheduler timetable: it runs to completion and costs nothing between runs. A pays for an instance all hour, and an idle service's CPU is throttled, so the loop stalls. C breaks the service contract: an instance that exits has crashed. D works, but the VM is paid for all hour while it idles. Why that matters is next.
 
 SHOW: The card fades. RULE: "runs, writes output, exits · 'every night' → job (+ Cloud Scheduler) / answers requests ·
 URL · port → service". The card shrinks into map slot 1, which turns GREEN-ticked. Everything else fades.
-SAY: So the rule: if the question says it runs, writes its output, and exits, or every night, pick a job. If it says it answers requests, has a URL, or a port, pick a service.
+SAY: So the rule: if the question says it runs, writes its output and exits, or that it runs every night, pick a job. If it says it answers requests, has a URL, or listens on a port, pick a service.
 
 ---
 
@@ -204,11 +217,11 @@ Lecture: 14 · 8, 11, 14, 16; then 15 · 11.
 SHOW: LECTURE 14 · 8, 11, 14. Map slot 2 pulses. Three GRAY lecture chips write in and stack top left: "brings down
 code execution cost" (slide 8), "pay only for the time your code runs" (11), "only pay when your code is running" (14).
 V2 builds: a 24-hour axis (00:00 to 24:00) across the middle, with nine YELLOW request ticks scattered in two clusters.
-SAY: The lecture promises that with serverless you pay only while your code runs. Let's make that exact with two meters on one day. The yellow ticks are requests.
+SAY: The lecture promises you pay only while your code runs. Let's make that exact: two meters, one day. The yellow ticks are requests.
 
 SHOW: Top row: a solid BLUE VM rack at the left, a GOLD bar meter on the right filling at a constant rate as a cursor
 sweeps the day; the stretches between ticks shade GOLD ("idle · billed").
-SAY: The top row is a virtual machine. Its meter runs from boot to shutdown at a constant rate, requests or not. The gold shading is idle time, and you pay for all of it.
+SAY: The top row is a virtual machine. Its meter runs from boot to shutdown, requests or not. The gold shading is idle time, and you pay for all of it.
 
 SHOW: Bottom row: at each tick a dashed BLUE instance blinks into existence for an instant and vanishes; its GOLD meter
 steps up by one small block per tick, flat in between. CODE(serverless-deployment/README.md: 281–283) beside it,
@@ -220,39 +233,39 @@ VM meter grows by the added gold; the function meter does not move (a GRAY "+0" 
 time".
 SAY: Now stretch the quiet gaps between requests. The VM meter grows, because idle hours are still provisioned hours. The function meter does not move at all: no requests, no charge.
 
-SHOW: Transform 2. The axis snaps back to one day; every tick splits into two (18 ticks); the function meter doubles,
-block by block; the VM meter stays exactly where it was (a GRAY "flat" chip), with a small GRAY footnote "until it runs
-out of capacity".
-SAY: Now double the requests on the same day. The function meter doubles, since every invocation is billed. The VM meter stays flat. It was paid for anyway, until it runs out of capacity.
-
 SHOW: LECTURE 14 · 16. On the bottom row, after the longest gap, a small GRAY puff appears in front of the first tick's
-instance and the tick is delayed by a beat (RED "cold start"). CODE(serverless-deployment/README.md: 218–224), lines
-219–220 and 223–224 lit. A GOLD slider "minimum instances" moves from 0 to 1: a faint dashed instance stays on along the
-whole bottom row with its own steady GOLD drip, and the cold-start puff disappears.
-SAY: Zero idle cost has a price, and slide 16 names it: the cold start. After a quiet stretch, the first request waits while an instance starts. The README's remedy is minimum instances. Set it to 1, and a warm instance stays on, with its own meter running.
+instance and the tick is delayed by a beat (RED "cold start"). Excerpt chip `README.md · line 223 (excerpt)` with the
+minimum-instances sentence. A GOLD slider "minimum instances" moves from 0 to 1: a faint dashed instance stays on along
+the whole bottom row with its own steady GOLD drip, and the puff on the first tick after the gap disappears; during the
+next burst a second instance still starts with a small GRAY puff, chip "fewer cold starts, not none".
+SAY: Zero idle cost has a price, and slide 16 names it: the cold start. After a quiet stretch, the first request waits while an instance starts. The README's remedy is minimum instances. Set it to 1, and a warm instance stays on for the first request, with its own meter running.
 
 SHOW: The always-on instance and its drip lift up into the VM row, beside the rack (a GRAY bracket "always on").
-LECTURE 15 · 11. A BLUE "Vertex AI endpoint" card slides into the same row; CODE(model-deployment/cli.py: 210–218), line
-215 `min_replica_count=1` lit GOLD; excerpt chip `model-deployment/README.md · line 66 (excerpt)`: "This is the part that
-costs money."
-SAY: That always-on instance has joined the VM row. So has next lecture's Vertex AI endpoint: its deploy call asks for a minimum replica count of 1, and the README calls that running machine the part that costs money.
+LECTURE 15 · 11. A BLUE "Vertex AI endpoint" card slides into the same row; excerpt chip `model-deployment/cli.py ·
+line 215`: `min_replica_count=1` lit GOLD, next to excerpt chip `model-deployment/README.md · line 66 (excerpt)`: "This is
+the part that costs money."
+SAY: That always-on instance now sits in the VM row. So does next lecture's Vertex AI endpoint: its deploy call asks for a minimum replica count of 1, which the README calls the part that costs money.
 
-SHOW: The panels fade. A GOLD-outlined card: "Is anything always on?" with two arrows: "idle time → always-on bills
-only" and "requests × duration → pay-per-use bill only". A RED-struck chip "serverless = cheap".
-SAY: So the rule is not, serverless is cheap. The rule is: is anything always on? Idle time moves only the bills of always-on things. Request count and duration move only the pay-per-use bill.
-
-SHOW: The card shrinks. PONDER P2 card. Question: "Ignore free tiers. Your translation endpoint runs as a Cloud Run
-function (minimum instances 0) and, for comparison, on an always-on VM. Next month: twice as many requests, each just
-as long, in the same 24-hour days. Which bill changes?" A · "Only the VM's" · B · "Only the function's" · C · "Both
+SHOW: The meters and chips fade to a single GRAY "?" (everything else ≤ 20 %), then the PONDER P2 card. Question:
+"Ignore free tiers. Same work on a Cloud Run function (min instances 0) and on an always-on VM. Next month: twice the
+requests, same length, same days. Which bill changes?" A · "Only the VM's" · B · "Only the function's" · C · "Both
 double" · D · "Neither: serverless has no minimum charge".
-SAY: Test it on a new case.
-PONDER(8 s, P2)
+SAY: Test it on a new case. Twice as many requests, each just as long, in the same days. Which bill changes?
+PONDER(10 s, P2)
 
-SHOW: Reveal. B fills YELLOW ✓, GREEN note "invocations and execution time doubled". RED reasons: A "the VM bills
-provisioned hours: unchanged"; C "the VM is flat with traffic"; D "no minimum ≠ free work: idle is free, requests are
-not". Then RULE: "idle time changes → only always-on bills move (VM · min instances ≥ 1 · endpoint replica) / request
-count or duration changes → only the pay-per-use bill moves"; it shrinks into map slot 2. Everything else fades.
-SAY: B, only the function's: its invocations and execution time doubled. A is backwards: the VM bills provisioned hours, which did not change. C forgets that the VM is flat with traffic. D confuses no minimum charge with free work. Idle is free; requests are not.
+SHOW: Reveal. The meters come back and transform 2 plays: the axis is one day again, every tick splits into two (18
+ticks), the function meter climbs block by block, the VM meter stays exactly where it was (a GRAY "flat" chip, small
+GRAY footnote "until it runs out of capacity"). B fills YELLOW ✓, GREEN note "more invocations · more execution time".
+RED reasons write in: A "the VM bills provisioned hours: unchanged"; C "the VM is flat with traffic"; D "no minimum ≠
+free work: idle is free, requests are not".
+SAY: B, only the function's. Watch: every request splits in two, and the function meter climbs, since every invocation and its running time are billed. The VM meter does not move, because it bills provisioned hours: A is backwards, and C is wrong. D confuses no minimum charge with free work.
+
+SHOW: The card fades. A GOLD-outlined card: "Is anything always on?" with two arrows drawing one after the other as
+they are said: "idle time → always-on bills only" and "requests × duration → pay-per-use bill only"; a chip "serverless
+= cheap" is struck RED on "is not". Then RULE: "idle time changes → only always-on bills move (VM · min instances ≥ 1 ·
+endpoint replica) / request count or duration changes → only the pay-per-use bill moves"; it shrinks into map slot 2.
+Everything else fades.
+SAY: So the rule is not, serverless is cheap. The rule is: is anything always on? Idle time moves only the bills of always-on things. Request count and duration move only the pay-per-use bill.
 
 ---
 
@@ -264,7 +277,7 @@ SHOW: LECTURE 14 · 10. Map slot 3 pulses. V3: a GREEN code block "Simple Transl
 slide's sketch, three comment lines only) with four arrows to a 2×2 grid: rows "virtual machine" (solid BLUE racks) and
 "serverless" (dashed BLUE outlines), columns "a code file" (`main.py` page) and "a container" (TEAL box). The two VM
 cells tick in with GRAY chips "Lecture 1", "Lecture 2"; the two serverless cells light YELLOW.
-SAY: Next, what you hand over. The lecture deploys one translate app four ways: on a virtual machine or serverless, as a code file or a container. Lectures 1 and 2 filled the VM row. Today fills the serverless row.
+SAY: Next, what you hand over. The lecture deploys one translate app four ways: virtual machine or serverless, code file or container. Earlier lectures filled the VM row. Today fills the serverless row.
 
 SHOW: LECTURE 14 · 11–12. The serverless-file cell zooms open. Three GREEN items slide in: a `main.py` page, a
 `requirements.txt` page, and a name tag "entry point: hello_http". CODE(serverless-deployment/tutorial/function/main.py:
@@ -290,15 +303,15 @@ SAY: The framework finds your function by that name. Type main as the entry poin
 SHOW: Two GRAY lecture chips: slide 11 "without managing servers or containers" with "managing" underlined YELLOW,
 and the slides' product name "Cloud Function" beside the README's path "Cloud Run → Services → Write a function"
 (excerpt chip `README.md · line 99 (excerpt)`); a TEAL container outline fades in around the running function.
-SAY: Slide 11 says a function runs without managing containers. True: you do not manage one, but Google still builds one. And the slides' Cloud Functions now live inside Cloud Run, as Cloud Run functions.
+SAY: Slide 11 says a function runs without managing containers. You do not manage one, but Google still builds one. And the slides' Cloud Functions are now Cloud Run functions.
 
 SHOW: LECTURE 14 · 14–15. The serverless-container cell zooms open: a PINK image URL chip
 `cgumb/ac215-translation-demo:lecture14-agent-platform-20261022` goes straight to a dashed BLUE revision, with no build
 box (a GRAY struck-out "Cloud Build"). CODE(serverless-deployment/tutorial/app/Dockerfile: 1–12) (folded: 1, 2, 11,
-12): line 1 `FROM python:3.12-slim-bookworm` lit ORANGE, line 11 `EXPOSE 8080` and line 12 `CMD …` lit GREEN; the
-instance gains the ear "listening on :8080". Excerpt chip `README.md · lines 271–273 (excerpt)`: "Deploy one
-revision from an existing container image".
-SAY: For a Cloud Run service, you hand over a finished image by its URL. There is no build step. Its Dockerfile picks the base Python, the port, 8080, and the startup command. You control all three.
+12): line 1 `FROM python:3.12-slim-bookworm` lit ORANGE, line 2's `PORT=8080` and line 12 `CMD …` lit GREEN (line 11
+`EXPOSE` stays unlit: it only documents the port); the instance gains the ear "listening on :8080". Excerpt chip
+`README.md · lines 273–274 (excerpt)`: "Deploy one revision from an existing container image".
+SAY: For a Cloud Run service, you hand over a finished image by its URL. Deploying it builds nothing: the image was built beforehand. Its Dockerfile picks the base Python, the default port, 8080, and the startup command. You control all three.
 
 SHOW: Both cells' instances side by side. A PINK URL with a query string writes onto the function's instance:
 `…?text=Good%20afternoon%20everyone&src=en&dest=fr` (excerpt chip `README.md · line 163`), the three parameters light
@@ -310,7 +323,7 @@ SHOW: The two instances slide together and become one dashed BLUE instance with 
 function is a container you did not write". RULE: "source + requirements + entry point → function (Google builds the
 image) / your image · OS libraries · startup command → Cloud Run service"; it shrinks into map slot 3. Everything else
 fades.
-SAY: Both end as the same thing: a container instance on Cloud Run. A function is a container you did not write. On the quiz, source plus an entry point means a function; your own image or startup command means a service.
+SAY: Both end as the same thing: a container instance on Cloud Run. A function is a container you did not write. On the quiz, source plus an entry point means a function. Your own image, or your own startup command, means a service.
 
 ---
 
@@ -321,7 +334,7 @@ Lecture: 14 · 16.
 SHOW: Map slot 4 pulses. V4: a BLUE service box "translation-demo" center with a door on each side. CODE(
 serverless-deployment/README.md: 361–362) above it, "who may call our public app" lit PINK, "what the running app may
 access" lit BLUE.
-SAY: Every deployed service faces two permission questions, and the README insists they are separate. Who may call our public app? And what may the running app access?
+SAY: Every deployed service faces two permission questions, and the README keeps them separate. Who may call our public app? And what may the running app access?
 
 SHOW: Left door, "who may call it". A schematic toggle "Allow public access" (tag `illustration`, excerpt chip
 `README.md · line 281 (excerpt)`): ON — a GREY browser's PINK request passes through the door; OFF — the next request
@@ -334,11 +347,12 @@ Platform User", "Service Usage Consumer". CODE(serverless-deployment/README.md: 
 380 "You do not need to create or download a key" lit YELLOW; a dashed GOLD key glyph appears and is crossed out.
 SAY: The right door is who your code is when it calls out. The web app wears a service account badge, translation demo runtime, with two roles: Agent Platform User and Service Usage Consumer. You do not create or download a key.
 
-SHOW: CODE(serverless-deployment/tutorial/app/translation_demo/speech.py: 101–109), lines 102–105
+SHOW: The left door and the README panel fade first. CODE(serverless-deployment/tutorial/app/translation_demo/speech.py:
+101–109), lines 102–105
 `google.auth.default(...)` lit BLUE, line 109's message ("Configure local ADC or attach an authorized runtime service
 account") lit GRAY. A small token glyph flows from a BLUE "Cloud Run" platform block into the badge, then a PINK request
 leaves the right door toward a BLUE "Agent Platform" block.
-SAY: The code asks the environment for default credentials. On Cloud Run, the platform hands it a token for the attached account. On your laptop, the same line finds your local credentials. No key file anywhere.
+SAY: The code just asks for default credentials, and on Cloud Run the platform hands it a token for the attached account. No key file anywhere.
 
 SHOW: A GREY "you" figure at the bottom; a thin arrow from "you" to the badge, labelled "Service Account User"
 (CODE(serverless-deployment/README.md: 432–434), "to attach it" lit). A GRAY chip "a deployment permission ≠ the
@@ -346,20 +360,23 @@ badge's roles".
 SAY: One more arrow, from you. To attach that badge to a service, your own identity needs Service Account User on it. That is a deployment permission, separate from what the badge itself may do.
 
 SHOW: A second, smaller BLUE box "translation-audio (job)" slides in beside the service with its own badge
-"translation-audio-job"; two PINK bucket chips attach: "Storage Object Viewer · input bucket", "Storage Object Creator ·
-output bucket" (CODE(serverless-deployment/README.md: 683–690) (folded: 683–688, 689–690)). The web badge gets a GRAY
-"no bucket roles" chip.
-SAY: The job gets its own badge: Storage Object Viewer on the input bucket, Storage Object Creator on the output bucket. The web app's account needs neither, because its audio goes straight to the browser. One badge per workload.
+"translation-audio-job"; four chips attach: BLUE "Agent Platform User", "Service Usage Consumer", PINK "Storage Object
+Viewer · input bucket", "Storage Object Creator · output bucket" (CODE(serverless-deployment/README.md: 681–690)
+(folded: 681–682, 683–685, 686–688, 689–690)). The web badge gets a GRAY "no bucket roles" chip.
+SAY: The job gets its own badge. It has the same two Agent Platform roles, plus Storage Object Viewer on the input bucket and Storage Object Creator on the output bucket. The web app's account needs no bucket roles, because its audio goes straight to the browser. One badge per workload.
 
 SHOW: LECTURE 14 · 16. The doors fade. A GRAY lecture chip "limited control and debugging" (slide 16). Three log
 windows light up in turn as named: "build logs" (function build), "service logs" (a failed request), "job execution
-logs". CODE(serverless-deployment/README.md: 1038–1039, 1043–1044) (folded); excerpt chip `README.md · lines 228–229
-(excerpt)`: "inspect logs rather than treating a completed build as proof that translation worked", lit YELLOW.
-SAY: Slide 16 warns that serverless is harder to debug. The README says where to look: build logs when a function build fails, service logs when a request fails, and the job's execution logs. A completed build is not proof that it works.
+logs". CODE(serverless-deployment/README.md: 1038–1040, 1043, 1045) (folded): line 1038 with the build-logs window,
+line 1040 ("Speech request is denied | Attached identity…") lit BLUE, line 1045 ("Output folder is empty or incomplete |
+Execution status, logs…") with the job-execution-logs window; excerpt chip `README.md · lines 228–229 (excerpt)`:
+"inspect logs rather than treating a completed build as proof that translation worked", lit YELLOW.
+SAY: Slide 16 warns that serverless is harder to debug. The README says where to look: build logs when a function build fails, service logs when a request fails, and the job's execution logs. A finished build is not proof that it works.
 
-SHOW: RULE: "public access / invoker → who may call / service account → what the code may touch (no key) · a 403 from
-inside the app → the badge's roles"; it shrinks into map slot 4. Everything else fades.
-SAY: The rule: public access answers who may call. The service account answers what the code may touch. A 403 from inside your app points at the badge's roles, not at the caller.
+SHOW: RULE: "who may call → public access · refused at the door, code never runs / what the code may touch → the
+service account's roles (no key) · a denied call from your code → fix the badge"; it shrinks into map slot 4.
+Everything else fades.
+SAY: The rule: public access answers who may call, and a refused caller is stopped before your code runs. The service account answers what your code may touch. When your own code is denied, fix the badge's roles, not the caller.
 
 ---
 
@@ -369,13 +386,15 @@ Lecture: 15 · 11, 13.
 
 SHOW: LECTURE 15 · 11. Map slot 5 pulses. A dashed BLUE Cloud Run instance morphs into a BLUE "Vertex AI endpoint"
 box at the right. Two GREY clients write in at the left: a phone app and a web page.
-SAY: Cloud Run hosts any container. To serve a trained model, the next lecture uses a Vertex AI endpoint, and the quiz asks where its preprocessing should live. Picture two clients: a phone app, and a web page.
+SAY: To serve a trained model, the next lecture uses a Vertex AI endpoint, and the quiz asks where its preprocessing should live. Picture two clients: a phone app, and a web page.
 
-SHOW: LECTURE 15 · 13. V5: each client gets a GREEN gear with three teeth labelled as named: "decode JPEG", "scale to
-0–1", "resize 224×224"; a PINK arrow from each gear carries a "float tensor" chip to the endpoint.
+SHOW: LECTURE 15 · 13. V5: each client gets a GREEN gear icon; beside the first client's gear a GREEN chip column writes
+in as named: "decode JPEG", "scale to 0–1", "resize 224×224" (shown once; the second client's gear stays unlabelled);
+a PINK arrow from each gear carries a "float tensor" chip to the endpoint.
 SAY: Each client carries the same gear: decode the JPEG, scale the pixels to between 0 and 1, and resize to 224 by 224. Only then does it send numbers to the model. That is two copies of one recipe, in two code bases.
 
-SHOW: The web page's gear quietly changes one tooth ("resize: crop first", RED outline); its arrow's tensor chip turns
+SHOW: The web page's gear quietly changes one step ("resize: crop first", RED outline); its arrow's tensor chip turns
+RED and travels along the arrow into the endpoint at "quietly receives another"; the web page's answer bubble turns
 RED. A GRAY lecture chip: "client-side brittleness" (slide 13).
 SAY: The lecture calls this client-side brittleness. Every client preprocesses slightly differently, and a model trained on one recipe quietly receives another.
 
@@ -383,7 +402,7 @@ SHOW: Both gears lift off the clients and merge into one GREEN gear inside the e
 `{"bytes_inputs": {"b64": "…"}}` chips (excerpt chip `model-deployment/README.md · line 191`). CODE(
 model-deployment/README.md: 60–60) (wrap), "The preprocessing travels with the model, so every client gets exactly the
 same preprocessing that was used in training" lit YELLOW.
-SAY: Now move the gear into the endpoint. Clients send raw JPEG bytes, wrapped as base64, because JSON cannot carry raw bytes. The README says it simply: the preprocessing travels with the model, so every client gets exactly the preprocessing used in training.
+SAY: Now move the gear into the endpoint. Clients send raw JPEG bytes, wrapped as base64, because JSON cannot carry raw bytes. The preprocessing travels with the model, so every client gets exactly the preprocessing used in training.
 
 SHOW: CODE(model-deployment/cli.py: 245–255): lines 250–253 (the base64 `instances` list) lit PINK, line 255
 `endpoint.predict(instances=instances)` lit YELLOW; a GRAY chip "no resize · no normalize" next to the phone.
@@ -394,15 +413,18 @@ clients' answer bubbles turn RED at the same instant. It turns back to "v1": bot
 (a YELLOW flash on both). GRAY chip "one deployment · no client release".
 SAY: Now ship a bad resize in version 2. Both clients break at once. Roll back to version 1, and both are healthy at the same instant. One deployment fixed everyone, with no client release.
 
-SHOW: Replay, labelled "preprocessing on the clients": the gears return to the clients; the fix becomes two release
-trains on a timeline: "phone app · app-store review" leaving late, "web deploy" leaving early; between their arrivals a
-RED band "clients disagree".
-SAY: Replay that with the gears on the clients. The fix becomes two releases: a phone update waiting in app store review, and a web deploy. They land at different times, and in between the clients disagree.
+SHOW: Replay, labelled "preprocessing on the clients": the gears return to the clients, the version dial grays out.
+SAY: Now put the gears back on the clients. What does the same rollback cost?
+PONDER(6 s, "Gears on the clients: what does one rollback cost?")
+
+SHOW: The fix becomes two horizontal release bars on a `timeline` (no GOLD): "phone app · app-store review" ending
+late, "web deploy" ending early; between their right ends a RED band "clients disagree".
+SAY: Two releases: a phone update waiting in app store review, and a web deploy. They land at different times, and in between, the clients disagree.
 
 SHOW: RULE: "several clients · update or roll back once · no client release → preprocessing at the endpoint / on the
 clients → every client re-released in lockstep"; it shrinks into map slot 5 (half-filled: the gear). Everything else
 fades.
-SAY: The rule: several clients, one place to update or roll back, no client release? Preprocessing at the endpoint. Preprocessing on the clients means every client is re-released in lockstep.
+SAY: The rule: when the question says several clients, one place to update or roll back, and no client release, put preprocessing at the endpoint. Preprocessing on the clients means every client is re-released in lockstep.
 
 ---
 
@@ -418,51 +440,49 @@ SAY: Preprocessing at the endpoint works only if the endpoint calls the right fu
 SHOW: CODE(model-deployment/cli.py: 100–105): line 102 `decode_jpeg`, 103 `convert_image_dtype(…, tf.float32)`, 104
 `resize(…, size=(224, 224))` light in step with the three GREEN blocks; a bracket "preprocess_image" closes around
 them; line 105 `return resized` lit, and a small 224×224×3 image glyph pops out of the bracket.
-SAY: In the repo, preprocess image does the first three steps for one image: decode the JPEG, convert to floats, and resize to 224 by 224. It returns an image, not an answer.
+SAY: In the repo, preprocess image does the first three steps, for one image. It returns an image, not an answer.
 
 SHOW: CODE(model-deployment/cli.py: 107–114): line 109 `input_signature=[tf.TensorSpec([None], tf.string)]` lit PINK
 ("a batch of strings"), lines 111–113 `tf.map_fn(preprocess_image, …)` lit GREEN, line 114 `prediction_model(images,
-training=False)` lit GREEN; a larger bracket "serving_function" closes around all five blocks. Line 108's comment
-("The argument name (bytes_inputs) is the key clients must use") lit YELLOW, linking to S06's PINK request chip.
-SAY: The serving function takes a batch of strings, maps preprocess image over each one, and then calls the trained model. Preprocessing and inference, in one function. Its argument, bytes inputs, is the key clients use in their requests.
+training=False)` lit GREEN; a larger bracket "serving_function" closes around all five blocks, with a small GRAY alias
+chip "a.k.a. serve" under it. Line 108's comment ("The argument name (bytes_inputs) is the key clients must use") lit
+YELLOW, linking to S06's PINK request chip.
+SAY: The serving function takes a batch of strings, maps preprocess image over each one, then calls the model. Preprocessing and inference, in one function. Its argument, bytes inputs, is the key clients use. Exam questions may call this function serve: not the web app's serve command, but the function that preprocesses, then predicts.
 
 SHOW: CODE(model-deployment/cli.py: 116–123): line 122 `add_endpoint(name="serving_default", fn=serving_function)` lit
-YELLOW. An export socket labelled `serving_default` appears on a GREEN "SavedModel" block; a PURPLE "model server" box
-connects to it. A GRAY lecture chip "slide 14: tf.saved_model.save(…, signatures={"serving_default": …})" beside lines
-117–119 (the comment) lit GRAY.
-SAY: The export registers it under the name serving default, and the model server calls whatever sits behind that name. The slide saves with the saved model save call; today's repo uses a Keras export archive, which the Vertex model server loads reliably. Same idea.
+YELLOW. An export socket labelled `serving_default` appears on a GREEN "SavedModel" block, empty; a PURPLE "model
+server" box connects to it. A GRAY lecture chip "slide 14: tf.saved_model.save(…, signatures={"serving_default": …})"
+beside lines 117–119 (the comment) lit GRAY.
+SAY: The export registers it under the name serving default, and the model server calls whatever sits behind that name. The slide saves it with a different call; the idea is the same.
 
-SHOW: Plug 1: a GREEN plug "preprocess_image" pushes into the socket; a request's JPEG bytes go in and a 224×224×3 image
-glyph comes out (RED ✗, "no prediction").
-SAY: Now try the wrong plugs. Register preprocess image alone, and a request comes back as a 224 by 224 image. Nothing was classified.
+SHOW: The socket stays, empty, docked at the right; everything else ≤ 20 %. PONDER P3 card. Question: "serving_default
+is the raw model. The phone app sends resized float arrays; a new web client sends JPEG bytes. One place to fix or roll
+back preprocessing: what do they register?" A · "The raw model: the server decodes JPEGs" · B · "preprocess_image" ·
+C · "A function: preprocess each image, then call the model" · D · "The raw model, plus the resize code copied into the
+web client".
+SAY: Before we try plugs, one last check. A phone app sends float arrays, a new web client sends JPEG bytes, and the team wants one place to fix preprocessing. What should they register?
+PONDER(12 s, P3)
 
-SHOW: Plug 2: the plug "raw model" pushes in; the socket's label changes to "expects float tensors 224×224×3"; the PINK
-bytes chip bounces RED; S06's gears jump back onto the two GREY clients (V5 rewound), the RED "clients disagree" band
-flickers once.
-SAY: Register the raw model, and the endpoint demands float tensors. JPEG bytes no longer fit, so the gears jump back onto every client, and the brittle clients are back.
+SHOW: Reveal by plugs. The card docks small at the right; each plug carries its option letter badge. Plug B: a GREEN
+plug "preprocess_image" pushes into the socket; a request's JPEG bytes go in and a 224×224×3 image glyph comes out (RED
+✗, "no prediction"); on the card, under B, RED "returns 224×224 images, not predictions".
+SAY: Try B first: register preprocess image alone. A request comes back as a 224 by 224 image. Nothing was classified.
 
-SHOW: Plug 3: "serving_function" pushes in; bytes go in, the four probability bars rise, brie tallest, YELLOW. CODE(
+SHOW: Plug A/D: the plug "raw model" pushes in; the socket's label changes to "expects float tensors 224×224×3"; the
+PINK bytes chip bounces RED; S06's gears jump back onto the two GREY clients (V5 rewound), the RED "clients disagree"
+band flickers once. On the card, RED under A "the server only turns base64 into bytes · the signature decides what they
+become"; under D "two copies to keep in sync · every rollback = two client releases".
+SAY: A and D keep the raw model. It demands float tensors, so JPEG bytes no longer fit. The server only turns base64 back into bytes. The gears jump back onto every client: two copies to keep in sync.
+
+SHOW: Plug C: "serving_function" pushes in; bytes go in, the four probability bars rise, brie tallest, YELLOW. On the
+card, C fills YELLOW ✓, GREEN note "after one switch to bytes · every later fix or rollback = one deployment". CODE(
 model-deployment/cli.py: 157–163) (folded: 157–158, 160, 163): line 158 `signature_def["serving_default"]` and line
-163 `signature.inputs["bytes_inputs"]` lit YELLOW; line 160's comment lit GRAY.
-SAY: Register the serving function, and bytes go in, probabilities come out. The repo's test step checks exactly that: it loads serving default and feeds it bytes inputs, as the server will.
+163 `signature.inputs["bytes_inputs"]` lit YELLOW; line 160's comment lit GRAY. The card fades.
+SAY: C, the serving function: bytes go in, probabilities come out. The phone app switches to sending bytes once; after that, one exported version holds the recipe, and every fix or rollback is one deployment. The repo's test step loads serving default and feeds it bytes inputs, as the server will.
 
 SHOW: S04's name tag "entry point: hello_http" slides in on the left, the socket "serving_default" on the right, and a
 YELLOW bracket joins them: "the platform calls the name you register".
-SAY: Notice the echo of the function's entry point. In both cases, the platform calls exactly the name you registered, and nothing downstream can fix a wrong one.
-
-SHOW: The echo shrinks. PONDER P3 card. Question: "A team exports a cheese classifier whose serving_default is the raw
-Keras model. Their phone app resizes and normalizes before sending float arrays. They add a web client that sends JPEG
-bytes, and want one place to fix or roll back preprocessing. What should they register?" A · "Keep the raw model: the
-model server decodes JPEGs for you" · B · "preprocess_image as serving_default" · C · "A serving function that maps
-the preprocessing over the batch, then calls the model" · D · "Keep the raw model and copy the resize code into the
-web client".
-SAY: One last check.
-PONDER(8 s, P3)
-
-SHOW: Reveal. C fills YELLOW ✓, GREEN note "both clients send bytes · one exported version holds the recipe". RED
-reasons: A "the server only turns base64 into bytes · the signature decides what they become"; B "returns 224×224
-images, not predictions"; D "two copies to keep in sync · every rollback = two client releases".
-SAY: C, a serving function that preprocesses, then calls the model: both clients send bytes, and one exported version holds the recipe. A fails, because the server only turns base64 back into bytes. B returns images, not predictions. D leaves two copies, and every rollback needs two client releases.
+SAY: This echoes the function's entry point: the platform calls exactly the name you registered, and nothing downstream can fix a wrong one.
 
 SHOW: RULE: "register the function that does preprocessing AND inference / preprocess alone → images · raw model →
 every client preprocesses"; it shrinks into map slot 5, which is now full and GREEN-ticked. Everything else fades.
@@ -484,13 +504,13 @@ image"; "who may call (public access) ≠ who it runs as (service account · no 
 SAY: Four: a function is source, requirements and an entry point, and Google builds the image; a service is your own image. Five: who may call it is not who it runs as, and the runtime service account needs no key.
 
 SHOW: Rows 6–7 write in: "preprocess at the endpoint: one deployment updates or rolls back every client"; "register
-serve = preprocess, then model · the platform calls the name you register". All seven rows glow YELLOW once.
+the serving function (serve) = preprocess, then model · the platform calls the name you register". All seven rows glow YELLOW once.
 SAY: Six: preprocess at the endpoint, so one deployment updates or rolls back every client. Seven: register the serving function that preprocesses and then calls the model, because the platform calls exactly the name you register.
 
 SHOW: LECTURE 15 · 16–17. The list shrinks left. Right: a two-column card (our drawing of the comparison's last row)
 "Vertex AI Online Prediction · serve a trained model in production" vs "Cloud Run · ML as part of a broader app".
 LECTURE 14 · 16: under it three GRAY chips "vendor lock-in", "cold starts", "harder debugging".
-SAY: Which one to use? The next lecture's rule of thumb: Vertex AI to serve a trained model in production, and Cloud Run when the model is one part of a broader application. And keep slide 16's costs in mind: vendor lock-in, cold starts, and harder debugging.
+SAY: Which one to use? The next lecture's rule of thumb: Vertex AI to serve a trained model in production, Cloud Run when the model is part of a broader app. And remember the costs on slide 16: vendor lock-in, cold starts, harder debugging.
 
 SHOW: Everything fades except a small GRAY line "AC215 · Lecture 14 · exam edition"; it fades to an empty frame.
 SAY: That's the lecture in seven rules. Good luck on Tuesday.
