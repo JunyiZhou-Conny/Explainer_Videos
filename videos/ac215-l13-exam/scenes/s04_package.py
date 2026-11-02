@@ -44,8 +44,8 @@ Beats (script.md "## S04", one voiceover block each):
 
 Deviations from SHOW: beat 1 wraps setup.py line 12 (the tree and an unwrapped panel do not fit
 side by side); package-trainer.sh line 4 and cli.sh line 10 are wrapped before $GCS_BUCKET_URI for
-the same reason. The scanner's find_packages() label stays fixed above the tree (beside the moving
-bar it would run into the code panel). Beat 7's "inset" is the same laptop tree morphing so that
+the same reason. The scanner's find_packages() label stays fixed beside the tree's top row (beside the
+moving bar it would run into the code panel); the bar fades once its sweep is done. Beat 7's "inset" is the same laptop tree morphing so that
 augment.py moves beside setup.py (one tree on screen at a time, ≤ 3 groups). The excerpt chips
 are headed "task.py · line N (excerpt)" as SHOW writes them.
 """
@@ -169,8 +169,9 @@ def scanner_for(tree):
     sc = Scanner(width=tree.width + 0.3)
     sc.remove(sc.label)
     lab = sc.label
-    sc.set_x(tree.get_center()[0]).set_y(tree.get_top()[1] + 0.1)
-    place(lab, left=tree.get_left()[0], bottom=tree.get_top()[1] + 0.12)
+    rows = list(tree.tree.rows if hasattr(tree, "tree") else tree[0].tree.rows)
+    sc.set_x(tree.get_center()[0]).set_y(rows[0].get_top()[1] + 0.1)
+    place(lab, left=rows[0].get_right()[0] + 0.4, cy=rows[0].get_center()[1])
     return sc, lab
 
 
@@ -226,7 +227,7 @@ class WhatPipInstalls(VoiceScene):
         place(tree, left=-6.4, top=2.0)
         inside(tree)
         setup = src_panel(SETUP, [1, 5, (7, 13)], wrap={12: ['"Cheese']})
-        place(setup, right=6.45, top=2.0)
+        place(setup, right=6.45, top=1.6)
         inside(setup)
         apart(tree, setup, "tree runs into the setup panel")
         fl_arrows = [m for m in fl if m not in fl.items]
@@ -255,12 +256,14 @@ class WhatPipInstalls(VoiceScene):
         sc, sc_lab = scanner_for(tree)
         inside(sc_lab)
         apart(sc_lab, fl, "scanner label runs into the strip", buff=0.02)
+        apart(sc_lab, setup, "scanner label runs into the setup panel", buff=0.05)
         with self.voiceover(SAY[2]) as vo:
             self.play(flash(setup.code, INK, 1.02, 0.7))
             vo.wait_until("Install requires")
             self.play(FadeIn(b5), FadeIn(b10), run_time=0.5)
             pin = setup.span(5, "wandb==0.15.11").copy()
-            self.play(FadeIn(sl.frame), FadeIn(sl.header), ReplacementTransform(pin, sl.chip), run_time=1.0)
+            self.play(FadeIn(sl.frame), FadeIn(sl.header), run_time=0.4)
+            self.play(ReplacementTransform(pin, sl.chip), run_time=0.8)
             vo.wait_until("from the Python Package Index")
             self.play(flash(sl.header, S.GREY, 1.08), run_time=0.6)
             vo.wait_until("one pinned wandb version")
@@ -269,7 +272,7 @@ class WhatPipInstalls(VoiceScene):
             self.play(FadeOut(b5), FadeOut(b10), FadeIn(b11), FadeIn(sc), FadeIn(sc_lab), run_time=0.5)
             vo.wait_until("get installed")
             self.play(*sc.sweep(tree, lit=("trainer/",)), run_time=1.6)
-            self.play(*dim_rows(tree, ("setup.cfg", "PKG-INFO")), run_time=0.5)
+            self.play(*dim_rows(tree, ("setup.cfg", "PKG-INFO")), FadeOut(sc), run_time=0.5)
             vo.wait_until("only folders with an init file")
             self.play(flash(tree.row("__init__.py"), OWN, 1.12), flash(tree.row("trainer/"), OWN, 1.1), run_time=0.8)
 
@@ -293,7 +296,7 @@ class WhatPipInstalls(VoiceScene):
         tar1 = tarball("trainer.tar").move_to(tree.get_center())
         tar2 = tarball("trainer.tar.gz").move_to(tar1)
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(sl, sc, sc_lab, b11, fl)), ReplacementTransform(setup, pts), run_time=0.9)
+            self.play(FadeOut(VGroup(sl, sc_lab, b11, fl)), ReplacementTransform(setup, pts), run_time=0.9)
             self.play(FadeIn(bk, shift=UP * 0.2), run_time=0.5)
             vo.wait_until("tars the package folder")
             p2 = pts.bar(2, OWN, 0.22)
@@ -355,7 +358,7 @@ class WhatPipInstalls(VoiceScene):
             vo.wait_until("packages, uploads")
             a_up = arrow(ctr.get_right() + UP * 0.2, bk.glyph.get_left(), S.GREY)
             l_up = label("package & upload", CAPTION, S.GREY)
-            l_up.move_to(a_up.get_center()).shift(UP * 0.32 + LEFT * 0.1)
+            place(l_up, left=lap.frame.get_right()[0] + 0.12, bottom=a_up.get_top()[1] + 0.04)
             apart(l_up, bk.glyph, "label runs into the bucket", buff=0.0)
             self.play(GrowArrow(a_up), FadeIn(l_up), run_time=0.6)
             vo.wait_until("and submits")
@@ -372,7 +375,7 @@ class WhatPipInstalls(VoiceScene):
             vo.wait_until("but it never trains")
             no = DashedLine(ctr.get_bottom() + RIGHT * 0.6, vm.vm.frame.get_left() + UP * 0.3,
                             color=S.GREY, stroke_width=3, dash_length=0.12)
-            xm = x_mark(0.34).move_to(no.get_center())
+            xm = x_mark(0.34).move_to(no.get_start() + 0.62 * (no.get_end() - no.get_start()))
             self.play(Create(no), run_time=0.5)
             self.play(FadeIn(xm, scale=1.3), run_time=0.4)
             vo.wait_until("The job runs in")
@@ -520,9 +523,11 @@ class WhatPipInstalls(VoiceScene):
             vo.wait_until("but find packages skips it")
             sc7, sc7_lab = scanner_for(tree7b)
             apart(sc7_lab, ex2, "scanner label runs into the excerpt")
+            guard(sc7_lab.get_right()[0] < lap7.frame.get_right()[0] - 0.1, "scanner label leaves the laptop")
             self.play(FadeIn(sc7), FadeIn(sc7_lab), run_time=0.3)
             self.play(*sc7.sweep(tree7b, lit=("trainer/",)), run_time=1.4)
-            self.play(flash(tree7b.row("augment.py"), S.GREY, 1.1), FadeIn(uploaded, shift=LEFT * 0.2), run_time=0.6)
+            self.play(flash(tree7b.row("augment.py"), S.GREY, 1.1), FadeIn(uploaded, shift=LEFT * 0.2), FadeOut(sc7),
+                      run_time=0.6)
 
         # ========================================================== 8 · ModuleNotFoundError under "Successfully installed"
         vm8 = JobVM()
@@ -533,8 +538,8 @@ class WhatPipInstalls(VoiceScene):
         place(err, left=log8.get_left()[0], top=log8.get_bottom()[1] - 0.12)
         imp = cmd_chip("import augment", color=S.GREY, size=24)
         itag = illustration_tag()
-        imp_g = VGroup(imp, itag).arrange(RIGHT, buff=0.2)
-        place(imp_g, left=lft, cy=2.3)
+        imp_g = VGroup(imp, itag).arrange(DOWN, buff=0.1, aligned_edge=LEFT)
+        place(imp_g, left=lft, top=2.75)
         lap8 = laptop_zone(5.6, 1.9, caption="your laptop", corner=DOWN + RIGHT)
         place(lap8, left=lft, top=1.35)
         f8 = file_row("augment.py", color=INK)
@@ -551,7 +556,7 @@ class WhatPipInstalls(VoiceScene):
         guard(tk8.get_right()[0] < lap8.get_right()[0] - 0.1, "tick sticks out of the inset")
         apart(VGroup(row8, tk8), lap8.caption, "inset rows run into the laptop caption", buff=0.05)
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(lap7, tree7b, tar7b, rides, uploaded, ex2, bk7, tar7.glyph, sc7, sc7_lab)),
+            self.play(FadeOut(VGroup(lap7, tree7b, tar7b, rides, uploaded, ex2, bk7, tar7.glyph, sc7_lab)),
                       run_time=0.6)
             self.play(FadeIn(vm8), run_time=0.5)
             self.play(*vm8.install("wandb"), *vm8.install("trainer"), FadeIn(log8), run_time=0.5)
@@ -562,7 +567,7 @@ class WhatPipInstalls(VoiceScene):
             self.play(*vm8.search(run_time=1.5))
             vo.wait_until("and finds nothing")
             xi = x_mark(0.34)
-            place(xi, left=itag.get_right()[0] + 0.25, cy=imp.get_center()[1])
+            place(xi, left=imp.get_right()[0] + 0.25, cy=imp.get_center()[1])
             inside(xi)
             guard(xi.get_right()[0] < vm8.get_left()[0] - 0.05, "x runs into the VM")
             self.play(FadeOut(vm8.beam), FadeIn(xi, scale=1.3), run_time=0.5)
@@ -640,7 +645,7 @@ class WhatPipInstalls(VoiceScene):
         wrong_n = note("fetches from PyPI · not your file", size=24)
         place(wrong_n, left=-6.0, top=wrong.get_bottom()[1] - 0.15)
         else_n = note("same name on PyPI = someone else's code", size=24)
-        place(else_n, cx=py10.get_center()[0], bottom=py10.get_top()[1] + 0.15)
+        place(else_n, right=6.4, bottom=py10.get_top()[1] + 0.15)
         for m in (sl10, py10, tar10, wrong, wrong_n, else_n):
             inside(m)
         guard(else_n.get_top()[1] < LREF_BOTTOM - 0.05, "note runs into the lecture tag")

@@ -61,7 +61,9 @@ Deviations from SHOW: beat 2 keeps the helper's honest header "lines 42–61 (fo
 quoted line is 42; line 41 is the "# W&B" comment, and adding it makes 13 rows) and the ledger
 becomes a text-free thumbnail (shrinking it would take its text under 20 pt). Variant (a) also
 shows the "init" chip and a GREY "callbacks: none" tag where the pen would be (the run is open,
-only the pen is missing). The takeaway sits beside the bracket timeline (width 7.8), not centred.
+only the pen is missing). The takeaway sits beside the bracket timeline (width 7.8), not centred. In every variant the
+pen rides each epoch bar's end and then carries the tick up to the row (it parks back at its rest
+when a variant's count is shown), so its name never sits on the row's outline for long.
 """
 
 import numpy as np
@@ -125,6 +127,8 @@ NONE_AT = np.array([-5.5, 1.3, 0])      # the pointer's None slot (left of the a
 REST1 = np.array([-4.4, -1.75, 0])        # the pen's rest (beats 1-3): its nib
 REST2 = np.array([-5.6, -2.45, 0])        # the pen's rest (variants)
 BAR_Y = -1.95                             # variant epoch bars (segments' centre)
+REST3 = np.array([-5.6, -3.3, 0])         # the pen's rest in variant (c), under its tag-wide bar
+NIB = UP * 0.06                           # the pen nib above a strip slot (keeps its name inside the row)
 
 
 # ------------------------------------------------------------------ layout helpers
@@ -213,15 +217,15 @@ def error_box(body):
 # ------------------------------------------------------------------ the scene
 class ActiveRun(VoiceScene):
     def epoch(self, bar, i, row, k, pen, rt=0.45):
-        """One epoch: segment i fills, then the pen drops tick k into `row`."""
-        self.play(bar.run(i, run_time=rt))
-        self.play(pen.move_tip(row.slot_point(k) + UP * 0.22), run_time=0.25)
+        """One epoch: segment i fills with the pen riding its end, then the pen drops tick k into `row`."""
+        self.play(bar.run(i, run_time=rt), pen.move_tip(bar.end(i) + UP * 0.2, run_time=rt))
+        self.play(pen.move_tip(row.slot_point(k) + NIB), run_time=0.25)
         self.play(*row.tick(k), run_time=0.25)
 
     def ride(self, pen, ptr, row, k=1, rt=0.45):
         """The pen climbs to the pointer, then rides its arrow to the row's strip slot k."""
         self.play(pen.move_tip(ptr.label.get_right() + RIGHT * 0.15 + DOWN * 0.1), run_time=rt)
-        self.play(pen.move_tip(row.slot_point(k) + UP * 0.22), run_time=rt)
+        self.play(pen.move_tip(row.slot_point(k) + NIB), run_time=rt)
 
     def construct(self):
         assert len(SAY) == 12, len(SAY)
@@ -266,10 +270,12 @@ class ActiveRun(VoiceScene):
             vo.wait_until("At the end of every epoch")
             self.play(bar.run(0, run_time=1.0), pen.move_tip(bar.end(0) + UP * 0.2, run_time=1.0))
             vo.wait_until("it calls wandb dot log")
-            self.play(FadeIn(wl, shift=RIGHT * 0.2),
-                      pen.move_tip(ptr.label.get_right() + RIGHT * 0.15 + DOWN * 0.1), run_time=0.9)
+            self.play(FadeIn(wl, shift=RIGHT * 0.2), run_time=0.6)
+            self.play(flash(wl, LOOKUP, 1.06, 0.6))
+            vo.wait_until("and that call")
+            self.play(pen.move_tip(ptr.label.get_right() + RIGHT * 0.15 + DOWN * 0.1), run_time=0.6)
             vo.wait_until("writes to wandb dot run")
-            self.play(pen.move_tip(row1.slot_point(1) + UP * 0.22), flash(ptr.label, LOOKUP, 1.1), run_time=0.8)
+            self.play(pen.move_tip(row1.slot_point(1) + NIB), flash(ptr.label, LOOKUP, 1.1), run_time=0.8)
             self.play(*row1.tick(1), run_time=0.4)
             vo.wait_until("whichever row is active")
             self.play(flash(row1.frame, TURN, 1.02, 0.8), flash(ptr.arrow, LOOKUP, 1.1, 0.8))
@@ -330,7 +336,7 @@ class ActiveRun(VoiceScene):
             vo.wait_until("one history entry per epoch")
             for i, k in ((1, 2), (2, 3)):
                 self.play(bar.run(i, run_time=0.6), pen.move_tip(bar.end(i) + UP * 0.2, run_time=0.6))
-                self.play(pen.move_tip(row1.slot_point(k) + UP * 0.22), run_time=0.5)
+                self.play(pen.move_tip(row1.slot_point(k) + NIB), run_time=0.5)
                 self.play(*row1.tick(k), run_time=0.3)
             self.play(pen.move_tip(REST1), run_time=0.5)
             vo.wait_until("Per batch")
@@ -408,7 +414,7 @@ class ActiveRun(VoiceScene):
             for i in range(4):
                 self.epoch(b2, i, rb, i + 3, pen, rt=0.35)
             vo.wait_until("One run, six entries")
-            self.play(*rb.set_count("6 entries · 1 run"), run_time=0.5)
+            self.play(*rb.set_count("6 entries · 1 run"), pen.move_tip(REST2), run_time=0.5)
             self.play(flash(rb.count, INK, 1.08))
 
         # ========================================================== 6 · variant (c): finish, init, same pen
@@ -416,7 +422,7 @@ class ActiveRun(VoiceScene):
         rc2 = led2.new_row(1, "run 2")
         fc = flow(["init", "fit · 2", "finish", "init", "fit · 4"])
         place(fc, right=6.4, cy=-1.0)
-        c1, c2 = bar_at(2, "fit · 2"), bar_at(4, "fit · 4")
+        c1, c2 = bar_at(2, "fit · 2", cx=-1.0, cy=BAR_Y - 0.5), bar_at(4, "fit · 4", cx=-1.0, cy=BAR_Y - 0.5)
         inside(fc, c1, c2)
         apart(fc, led2, 0.05)
         with self.voiceover(SAY[6]) as vo:
@@ -437,6 +443,7 @@ class ActiveRun(VoiceScene):
             self.ride(pen, ptr, rc2, rt=0.35)
             for i in range(4):
                 self.epoch(c2, i, rc2, i + 1, pen, rt=0.3)
+            self.play(pen.move_tip(REST3), run_time=0.4)
             vo.wait_until("The first row is sealed")
             self.play(*rc1.set_count("row 1: 2"), run_time=0.5)
             self.play(flash(rc1.parts["lock"], S.GREY, 1.3))
@@ -457,7 +464,12 @@ class ActiveRun(VoiceScene):
         place(err1, cx=0.0, bottom=-3.45)
         inside(fd, d1, err1)
         apart(d1, err1, 0.05)
-        none_nib = ptr.none_slot.get_top() + DOWN * 0.05
+        none_nib = ptr.none_slot.get_corner(DOWN + RIGHT) + LEFT * 0.2 + DOWN * 0.08   # pokes the slot from below
+        pen_none = put_pen(pen.copy(), none_nib)
+        if pen_none.badge is not None:   # the tag comes off before this variant
+            pen_none.remove(pen_none.badge)
+        apart(pen_none, led2, 0.1)
+        inside(pen_none)
         with self.voiceover(SAY[7]) as vo:
             badge = pen.badge
             pen.remove(badge)

@@ -143,15 +143,15 @@ def tiny_strips():
     blk_t = label("one image", CAPTION, INK).move_to(blk)
     block = VGroup(blk, blk_t).move_to([-5.4, -1.55, 0])
     x0 = block.get_right()[0] + 0.35
-    ys = (-0.95, -2.15)
+    ys = (-0.8, -2.3)
     svc = Rectangle(width=0.05, height=0.36, stroke_color=CLOUD, stroke_width=2).set_fill(CLOUD, 0.2)
     svc.move_to([x0, ys[0], 0], aligned_edge=LEFT)
     job = Rectangle(width=0.05, height=0.36, stroke_color=CTR, stroke_width=2).set_fill(CTR, 0.35)
     job.move_to([x0, ys[1], 0], aligned_edge=LEFT)
     wires = VGroup(*[Line(block.get_right(), [x0, y, 0], color=S.GREY, stroke_width=2) for y in ys])
-    svc_l = label("web app · answers each request", CAPTION, CLOUD).next_to([x0, ys[0] + 0.18, 0], UP, buff=0.1,
+    svc_l = label("web app · answers each request", CAPTION, CLOUD).next_to([x0, ys[0] - 0.18, 0], DOWN, buff=0.1,
                                                                             aligned_edge=LEFT)
-    job_l = label("job · never ends", CAPTION, ERR).next_to([x0, ys[1] + 0.18, 0], UP, buff=0.1,
+    job_l = label("job · never ends", CAPTION, ERR).next_to([x0, ys[1] - 0.18, 0], DOWN, buff=0.1,
                                                             aligned_edge=LEFT)
     end = DashedLine([x0 + 4.2, ys[1] - 0.3, 0], [x0 + 4.2, ys[1] + 0.3, 0], color=S.GREY, stroke_width=3)
     end_l = note("where a job should end", S.GREY).next_to(end, DOWN, buff=0.08)
@@ -173,9 +173,9 @@ class Hook(VoiceScene):
         same.next_to(img, DOWN, buff=0.3).align_to(img, RIGHT)
 
         en = EndlessStrip(9.4)
-        en.shift([exe.get_center()[0] - en.parts["axis"].get_left()[0], -1.05, 0])
+        en.shift([exe.get_center()[0] - en.parts["axis"].get_left()[0], -1.17, 0])
         x_start = en.parts["axis"].get_left()[0]
-        bucket = bucket_glyph(0.55).move_to([5.75, -1.05, 0])
+        bucket = bucket_glyph(0.55).move_to([5.75, -1.17, 0])
         uri = url_chip(OUT_URI, size=CAPTION)
         uri.move_to([SAFE_X - 0.1 - uri.width / 2, -2.75, 0])
         empty = note("empty", S.GREY).next_to(bucket, UP, buff=0.15)
@@ -183,7 +183,8 @@ class Hook(VoiceScene):
                         stroke_width=2)
         xw = en.parts["wall"].get_center()[0]
         tmo = excerpt_chip(TIMEOUT_SUB, f"{README} · line 778 (excerpt)", line=source_line(README, 778))
-        tmo.move_to([min(xw, SAFE_X - tmo.width / 2 - 0.05), 1.15, 0])
+        tmo.move_to([min(xw, SAFE_X - tmo.width / 2 - 0.05), 0, 0])
+        tmo.shift(UP * (en.parts["wall_label"].get_top()[1] + 0.12 - tmo.get_bottom()[1]))
 
         pulse_dot = Dot(radius=0.11, color=PULSE).move_to(exe.get_bottom())
         pulse_path = Line(exe.get_bottom(), [x_start, en.parts["bar"].get_center()[1], 0])
@@ -196,6 +197,8 @@ class Hook(VoiceScene):
         apart(en, bucket, 0.02)
         apart(uri, en.parts["fail"])
         apart(tmo, img)
+        apart(tmo, same, 0.08)
+        apart(tmo, exe, 0.08)
         apart(tmo, en.parts["wall_label"])
 
         with self.voiceover(SAY[0]) as vo:
@@ -225,13 +228,18 @@ class Hook(VoiceScene):
             self.play(Indicate(en.parts["wall_label"], color=ERR, scale_factor=1.1), run_time=vo.remaining(0.6))
 
         # ========================================================== 2. the clue: CMD … serve
+        strip = VGroup(en, bucket)
+        tgt = strip.copy()
+        tgt[0].rescale(0.6)
+        tgt[1].scale(0.6).next_to(tgt[0], RIGHT, buff=0.25)
+        tgt.move_to([0, 0, 0]).shift(UP * (SAFE_Y - 0.08 - tgt.get_top()[1]))
         dock = src_panel(DOCKERFILE, 11, 12)
         tab = src_panel(README, [1035, 1036, 1044])
-        top_y = 2.75
-        dock.move_to([0, 1.05, 0])
-        tab.next_to(dock, DOWN, buff=0.35)
-        inside_frame(dock, tab)
+        dock.next_to(tgt, DOWN, buff=0.12).set_x(0)
+        tab.next_to(dock, DOWN, buff=0.3)
+        inside_frame(tgt, dock, tab)
         apart(dock, tab)
+        apart(tgt, dock, 0.05)
         bar12 = dock.bar(12, ERR, 0.25)
         serve = dock.span(12, '"serve"')
         ul = under(serve, ERR, stroke=4)
@@ -241,14 +249,8 @@ class Hook(VoiceScene):
             en.clock.freeze()
             self.play(FadeOut(VGroup(job_chip, ill, img, exe, same, tmo, empty, uri, uri_wire)),
                       *en.parts_out("wall_label", "fail"), run_time=0.6)
-            strip = VGroup(en, bucket)
-            tgt = strip.copy()
-            tgt[0].rescale(0.6)
-            tgt[1].scale(0.6).next_to(tgt[0], RIGHT, buff=0.25)
-            tgt.move_to([0, top_y, 0])
             self.play(en.animate.rescale(0.6).move_to(tgt[0]), bucket.animate.scale(0.6).move_to(tgt[1]),
                       run_time=0.8)
-            guard(VGroup(en, bucket).get_bottom()[1] > dock.get_top()[1] + 0.05, "strip over the Dockerfile panel")
             self.play(FadeIn(dock, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("its default command")
             self.play(FadeIn(bar12), Write(ul), serve.animate.set_color(ERR), run_time=0.7)
@@ -266,7 +268,8 @@ class Hook(VoiceScene):
         block, wires, svc, job, svc_l, job_l, end, x0, ys = tiny_strips()
         inside_frame(q, block, svc_l, job_l, end)
         apart(q, svc_l, 0.15)
-        apart(job_l, svc, 0.05)
+        apart(job_l, end, 0.1)
+        apart(svc_l, job, 0.05)
         ticks = []
         for k, x in enumerate((x0 + 1.0, x0 + 2.6, x0 + 3.5, x0 + 5.2, x0 + 7.4)):
             d = Dot(radius=0.08, color=PULSE).move_to([x, ys[0] + 0.55, 0])
