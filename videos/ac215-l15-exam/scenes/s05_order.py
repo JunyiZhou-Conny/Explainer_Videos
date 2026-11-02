@@ -357,7 +357,7 @@ class EdgesNotClocks(VoiceScene):
                 vo.wait_until(anchor)
                 bars[n] = pc.bar(n, EDGE, 0.3)
                 self.play(FadeIn(bars[n]), *chain.parts_in(f"node:{b}"), run_time=0.5)
-                self.play(chain.wire[(a, b)].draw(run_time=0.5), *chain.parts_in(f"wire:{a}->{b}"), run_time=0.5)
+                self.play(*chain.parts_in(f"wire:{a}->{b}", anim=Create), run_time=0.5)
             vo.wait_until("each with dot after")
             self.play(*[flash(pc.span(n, ".after"), EDGE, 1.15) for n in AFTER],
                       *[chain.wire[(a, b)].light(EDGE) for a, b in zip(keys, keys[1:])], run_time=0.8)
