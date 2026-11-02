@@ -324,12 +324,12 @@ class ConnectionBudget(VoiceScene):
         y1, y2 = -1.6, -2.85
         lb_ = formula("⌊(", 26, TURN)
         t_lim = label("limit", 26, CLOUD)
-        mid1 = formula(" − ", 26)
+        mid1 = formula("−", 26)
         t_oth = label("other clients", 26, SHARED)
-        mid2 = formula(") ÷ ", 26)
+        mid2 = formula(") ÷", 26)
         t_per = label("connections per replica", 26, OWN)
         rb_ = formula("⌋", 26, TURN)
-        row1 = VGroup(lb_, t_lim, mid1, t_oth, mid2, t_per, rb_).arrange(RIGHT, buff=0.1)
+        row1 = VGroup(lb_, t_lim, mid1, t_oth, mid2, t_per, rb_).arrange(RIGHT, buff=0.16)
         for m in (t_lim, t_oth, t_per):
             m.match_y(mid1)
         row1.move_to([0, y1, 0])

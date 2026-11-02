@@ -280,7 +280,7 @@ class OneDatabase(VoiceScene):
         vec1, vec2 = c_vec.copy(), c_vec.copy()
         notes_b1 = cs.parts["b1"][2]
         base1 = cs.box(1).get_bottom()
-        slot_vec, slot_fk, slot_tx = [base1 + UP * (0.32 + 0.48 * k) for k in range(3)]   # 0.42 pitch: borders touched
+        slot_vec, slot_fk, slot_tx = [base1 + UP * (0.3 + 0.52 * k) for k in range(3)]   # 0.42 pitch: borders touched
         guard(slot_tx[1] + c_tx.height / 2 + 0.03 <= notes_b1.get_bottom()[1], "slot 2 runs into box 1's note")
 
         with self.voiceover(SAY[2]) as vo:
