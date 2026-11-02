@@ -1,0 +1,1082 @@
+1
+00:00:00,000 --> 00:00:02,027
+Three nightly jobs on a clock.
+
+2
+00:00:02,347 --> 00:00:04,608
+Prepare the data at 1 in the morning.
+
+3
+00:00:04,928 --> 00:00:06,037
+Train at 2.
+
+4
+00:00:06,357 --> 00:00:07,573
+Deploy at 3.
+
+5
+00:00:07,893 --> 00:00:09,216
+For months, it works.
+
+6
+00:00:11,717 --> 00:00:14,896
+Then one night,
+preparation takes 75 minutes.
+
+7
+00:00:15,216 --> 00:00:19,290
+At 2, training starts anyway,
+on a file that is only half written.
+
+8
+00:00:19,610 --> 00:00:22,639
+At 3, deployment ships
+whatever training produced.
+
+9
+00:00:23,833 --> 00:00:26,137
+Every job exits with status zero.
+
+10
+00:00:26,457 --> 00:00:27,566
+Nothing failed.
+
+11
+00:00:27,886 --> 00:00:31,470
+And the endpoint now serves a model trained
+on half the data.
+
+12
+00:00:31,790 --> 00:00:33,241
+Nothing was right either.
+
+13
+00:00:33,483 --> 00:00:35,899
+The lecture opens on the same problem:
+
+14
+00:00:35,899 --> 00:00:40,032
+four steps of the cheese app,
+each run by a person at a terminal.
+
+15
+00:00:40,352 --> 00:00:42,187
+How do we execute these steps?
+
+16
+00:00:42,507 --> 00:00:44,150
+Can we automate this flow?
+
+17
+00:00:44,500 --> 00:00:47,124
+To automate it,
+you need a different instruction.
+
+18
+00:00:47,444 --> 00:00:48,831
+Not: train at 2.
+
+19
+00:00:49,151 --> 00:00:51,839
+Instead:
+train when preparation has finished.
+
+20
+00:00:52,159 --> 00:00:54,015
+That is what a pipeline is for.
+
+21
+00:00:54,250 --> 00:00:55,366
+Here is the plan:
+
+22
+00:00:55,366 --> 00:00:59,434
+graphs, wires, overlap, order, deployment,
+and the cheese app.
+
+23
+00:00:59,683 --> 00:01:03,758
+The gray tag, top right, names
+the slides behind each idea.
+
+24
+00:01:04,078 --> 00:01:05,763
+Nothing here is a live run.
+
+25
+00:01:06,000 --> 00:01:09,637
+If an option schedules steps at fixed times,
+think race:
+
+26
+00:01:09,637 --> 00:01:11,781
+a clock knows nothing about data.
+
+27
+00:01:13,117 --> 00:01:17,341
+Workflow management, in the lecture's words,
+knows which step needs which.
+
+28
+00:01:17,661 --> 00:01:22,226
+The structure that records this
+is a directed acyclic graph, or DAG.
+
+29
+00:01:22,467 --> 00:01:26,670
+Directed, because data flows one way,
+from producer to consumer.
+
+30
+00:01:26,990 --> 00:01:30,062
+Acyclic,
+because no step ever waits on itself.
+
+31
+00:01:30,382 --> 00:01:33,987
+Tasks are the nodes;
+data dependencies are the edges.
+
+32
+00:01:34,234 --> 00:01:37,391
+Vertex AI Pipelines runs
+these graphs for you.
+
+33
+00:01:37,711 --> 00:01:40,957
+You describe the graph
+with Kubeflow Pipelines,
+
+34
+00:01:40,957 --> 00:01:44,687
+the kfp library,
+and there is no Kubernetes to manage.
+
+35
+00:01:45,007 --> 00:01:47,780
+Today's console calls it Agent Platform.
+
+36
+00:01:48,017 --> 00:01:51,814
+Here is the toy pipeline from the slides
+and the demo repo.
+
+37
+00:01:52,134 --> 00:01:55,684
+Three Python functions
+marked @dsl.component:
+
+38
+00:01:55,684 --> 00:01:57,894
+square, add and square root.
+
+39
+00:01:58,214 --> 00:02:02,225
+A fourth,
+marked @dsl.pipeline, wires them together.
+
+40
+00:02:02,467 --> 00:02:06,414
+When the pipeline function runs,
+the component calls compute nothing.
+
+41
+00:02:06,734 --> 00:02:10,955
+Calling square on a,
+the pipeline's input, which defaults to 3,
+
+42
+00:02:10,955 --> 00:02:15,310
+creates a task: a node in the graph,
+with an empty output socket.
+
+43
+00:02:15,630 --> 00:02:16,782
+No number yet.
+
+44
+00:02:17,017 --> 00:02:19,812
+Line by line, four calls drop four nodes.
+
+45
+00:02:20,132 --> 00:02:23,949
+Square is called twice,
+so one component gives two tasks;
+
+46
+00:02:23,949 --> 00:02:25,892
+the second is named square-2.
+
+47
+00:02:26,212 --> 00:02:29,241
+The function ran once,
+and produced only a graph.
+
+48
+00:02:29,484 --> 00:02:32,407
+The compiler presses
+that graph into a YAML file.
+
+49
+00:02:32,727 --> 00:02:36,490
+The Vertex AI SDK,
+the lecture's remote control,
+
+50
+00:02:36,490 --> 00:02:38,764
+submits it as a pipeline job.
+
+51
+00:02:39,084 --> 00:02:41,175
+Your laptop compiles and submits.
+
+52
+00:02:41,495 --> 00:02:42,924
+Vertex executes.
+
+53
+00:02:44,284 --> 00:02:46,291
+Only now, on Google's machines,
+
+54
+00:02:46,291 --> 00:02:49,788
+does each task get a container,
+and do numbers appear.
+
+55
+00:02:52,067 --> 00:02:56,789
+If an option says calling train
+in the pipeline function trains the model,
+
+56
+00:02:56,789 --> 00:02:59,086
+think again: it only creates a task.
+
+57
+00:02:59,406 --> 00:03:02,286
+Nothing runs until the compiled job runs.
+
+58
+00:03:03,433 --> 00:03:04,756
+Look at the add call.
+
+59
+00:03:05,076 --> 00:03:08,532
+For x, it passes
+the first square task, .output.
+
+60
+00:03:08,852 --> 00:03:11,454
+For y, the second task, .output.
+
+61
+00:03:11,774 --> 00:03:13,225
+So what is being passed?
+
+62
+00:03:13,466 --> 00:03:14,490
+Not a number.
+
+63
+00:03:14,810 --> 00:03:18,204
+.output is a placeholder
+for a value that exists
+
+64
+00:03:18,204 --> 00:03:20,890
+only after the upstream task succeeds.
+
+65
+00:03:21,210 --> 00:03:22,938
+Plugging it in draws a wire.
+
+66
+00:03:23,400 --> 00:03:26,561
+The compiled YAML
+writes down each wire twice:
+
+67
+00:03:26,561 --> 00:03:29,722
+add's dependentTasks
+list square and square-2,
+
+68
+00:03:29,722 --> 00:03:32,402
+and each input names its producer task.
+
+69
+00:03:34,966 --> 00:03:40,278
+At run time, square turns green,
+and only then does 9 ride the wire into add.
+
+70
+00:03:40,598 --> 00:03:44,481
+One argument gave add both its data
+and its dependency.
+
+71
+00:03:44,716 --> 00:03:47,495
+With several outputs,
+you name the one you want:
+
+72
+00:03:47,495 --> 00:03:50,562
+.outputs["name"],
+with the output's name in brackets.
+
+73
+00:03:50,800 --> 00:03:52,080
+Now the contrast.
+
+74
+00:03:52,400 --> 00:03:56,155
+Often the output is itself a path:
+the file this run wrote.
+
+75
+00:03:56,475 --> 00:04:00,528
+With the wire, train gets that exact path,
+after prep succeeds.
+
+76
+00:04:00,848 --> 00:04:03,960
+Hard-code a path instead,
+and there is no wire:
+
+77
+00:04:03,960 --> 00:04:06,608
+train starts right away, alongside prep.
+
+78
+00:04:06,850 --> 00:04:10,925
+The file there is last week's,
+and the step succeeds on stale data.
+
+79
+00:04:11,245 --> 00:04:15,148
+A guessed path looks like a dependency
+to you, not to the pipeline.
+
+80
+00:04:15,383 --> 00:04:18,800
+For order without data,
+.after() adds a dashed edge:
+
+81
+00:04:18,800 --> 00:04:23,596
+the task waits for the other one to succeed,
+but nothing travels down it.
+
+82
+00:04:23,833 --> 00:04:24,833
+Try one.
+
+83
+00:04:25,113 --> 00:04:26,478
+Pause here if you want.
+
+84
+00:04:32,433 --> 00:04:33,433
+B.
+
+85
+00:04:33,585 --> 00:04:36,305
+Naming the output hands
+over this run's file,
+
+86
+00:04:36,305 --> 00:04:37,574
+and creates the wait.
+
+87
+00:04:37,894 --> 00:04:39,275
+A hard-codes a path:
+
+88
+00:04:39,275 --> 00:04:43,484
+no edge, so train may start
+at once and read last run's file.
+
+89
+00:04:43,733 --> 00:04:47,893
+C waits, but it reads a path you assumed,
+not the one split reported.
+
+90
+00:04:48,213 --> 00:04:54,400
+D fails before anything runs:
+with two outputs, kfp refuses plain .output.
+
+91
+00:04:54,650 --> 00:04:57,087
+If the question says .output, think:
+
+92
+00:04:57,087 --> 00:05:00,133
+waits for success,
+and gets this run's value.
+
+93
+00:05:00,453 --> 00:05:03,823
+A hard-coded or guessed path:
+no edge, maybe stale.
+
+94
+00:05:04,143 --> 00:05:06,447
+.after(): order, but no data.
+
+95
+00:05:07,583 --> 00:05:08,948
+Back to the toy graph.
+
+96
+00:05:09,268 --> 00:05:12,330
+No path of wires connects
+the two square tasks,
+
+97
+00:05:12,330 --> 00:05:15,391
+so Vertex is free
+to run them at the same time.
+
+98
+00:05:15,633 --> 00:05:16,806
+Add is a join.
+
+99
+00:05:17,126 --> 00:05:20,007
+Its YAML lists both squares
+as dependentTasks,
+
+100
+00:05:20,007 --> 00:05:22,950
+so it starts
+only when the second one finishes.
+
+101
+00:05:23,616 --> 00:05:27,109
+The same shape, one size up:
+one preprocessing task,
+
+102
+00:05:27,109 --> 00:05:32,214
+two trainings that read its output,
+and a comparison that reads both models.
+
+103
+00:05:32,450 --> 00:05:36,226
+A task lights up
+when every incoming wire carries a token.
+
+104
+00:05:36,546 --> 00:05:38,322
+Both trainings start together,
+
+105
+00:05:38,322 --> 00:05:41,815
+and the comparison starts exactly
+when the slower one ends.
+
+106
+00:05:42,433 --> 00:05:46,465
+Add an edge the data does not need:
+same answer, longer run.
+
+107
+00:05:47,450 --> 00:05:49,939
+Replace those wires with guessed paths,
+
+108
+00:05:49,939 --> 00:05:54,469
+and the comparison starts at time zero
+and reads half-finished results.
+
+109
+00:05:54,789 --> 00:05:55,919
+That is a race.
+
+110
+00:05:56,166 --> 00:06:00,528
+Maximum safe overlap means
+exactly the edges the data needs,
+
+111
+00:06:00,528 --> 00:06:02,054
+no more and no fewer.
+
+112
+00:06:02,374 --> 00:06:04,486
+The run then lasts its longest path.
+
+113
+00:06:04,806 --> 00:06:07,900
+If an upstream task fails,
+the join never runs.
+
+114
+00:06:08,150 --> 00:06:09,729
+Your turn to compute one.
+
+115
+00:06:10,049 --> 00:06:11,414
+Pause here if you want.
+
+116
+00:06:17,350 --> 00:06:18,843
+B, 16 minutes.
+
+117
+00:06:19,163 --> 00:06:23,323
+The longest path is ingest, clean,
+the big training, and compare.
+
+118
+00:06:23,643 --> 00:06:26,118
+2, plus 3, plus 10, plus 1.
+
+119
+00:06:26,438 --> 00:06:29,830
+The small training
+and the report overlap with the big one.
+
+120
+00:06:30,066 --> 00:06:32,157
+A adds every task in sequence.
+
+121
+00:06:32,477 --> 00:06:35,186
+D runs the two trainings one
+after the other.
+
+122
+00:06:35,506 --> 00:06:36,871
+C ignores the edges:
+
+123
+00:06:36,871 --> 00:06:41,032
+training needs clean data,
+and compare waits for both models.
+
+124
+00:06:41,266 --> 00:06:45,063
+If there is no path of wires
+between two steps, think parallel.
+
+125
+00:06:45,383 --> 00:06:49,202
+If a step consumes several outputs,
+it waits for all of them.
+
+126
+00:06:50,350 --> 00:06:53,379
+Now the sequence: preprocess, train, deploy.
+
+127
+00:06:53,699 --> 00:06:57,006
+Here are four ways to make each step wait,
+on one clock.
+
+128
+00:06:57,250 --> 00:06:59,021
+Lane one, cron offsets.
+
+129
+00:06:59,341 --> 00:07:01,602
+Lane two, background & jobs.
+
+130
+00:07:01,922 --> 00:07:06,449
+Lane three, an event starts training
+when preprocessing writes its output,
+
+131
+00:07:06,449 --> 00:07:09,325
+and deploy takes the best model
+in the tracker.
+
+132
+00:07:09,645 --> 00:07:11,650
+Lane four, pipeline edges.
+
+133
+00:07:11,900 --> 00:07:13,884
+Roll the length of preprocessing.
+
+134
+00:07:14,204 --> 00:07:15,249
+40 minutes.
+
+135
+00:07:15,569 --> 00:07:16,849
+Then 75.
+
+136
+00:07:17,169 --> 00:07:18,407
+Then 55.
+
+137
+00:07:18,650 --> 00:07:22,062
+The clock lane is fine at 40,
+and broken at 75:
+
+138
+00:07:22,062 --> 00:07:24,602
+training reads a half-written file.
+
+139
+00:07:24,922 --> 00:07:28,741
+The background lane is broken on every roll,
+because nothing waits.
+
+140
+00:07:28,983 --> 00:07:30,818
+The tracker lane fails twice.
+
+141
+00:07:31,138 --> 00:07:35,212
+The event can fire on the first file,
+before preprocessing is done.
+
+142
+00:07:35,532 --> 00:07:39,714
+And the tracker's best model
+is the best of all runs, not this run's.
+
+143
+00:07:40,034 --> 00:07:42,636
+Only the edge lane is right on every roll.
+
+144
+00:07:42,956 --> 00:07:44,215
+It just stretches.
+
+145
+00:07:45,250 --> 00:07:50,131
+The cheese app pipeline does exactly this:
+processing after collection,
+
+146
+00:07:50,131 --> 00:07:51,943
+training after processing,
+
+147
+00:07:51,943 --> 00:07:55,149
+deployment after training,
+each with .after().
+
+148
+00:07:55,383 --> 00:07:58,455
+In the compiled YAML they
+become dependentTasks.
+
+149
+00:07:58,775 --> 00:08:00,751
+And the README says it plainly:
+
+150
+00:08:00,751 --> 00:08:04,194
+each step starts
+only after the previous one succeeds.
+
+151
+00:08:04,433 --> 00:08:06,097
+One more, a subtle one.
+
+152
+00:08:06,417 --> 00:08:09,169
+Some steps only launch work
+on another machine.
+
+153
+00:08:09,489 --> 00:08:12,113
+Remember exactly what an edge waits for.
+
+154
+00:08:12,433 --> 00:08:13,799
+Pause here if you want.
+
+155
+00:08:21,633 --> 00:08:22,633
+B.
+
+156
+00:08:22,785 --> 00:08:27,201
+An edge waits for the task,
+and this task succeeded after 5 seconds.
+
+157
+00:08:27,521 --> 00:08:30,366
+The pipeline never sees the job it launched,
+
+158
+00:08:30,366 --> 00:08:33,857
+so A is wrong,
+and deploy may ship the previous model.
+
+159
+00:08:34,100 --> 00:08:36,233
+C: .after() needs no data.
+
+160
+00:08:36,553 --> 00:08:41,311
+D: .after() is enforced,
+written into the YAML as a dependent task.
+
+161
+00:08:41,550 --> 00:08:44,195
+The repo's training step is such a launcher.
+
+162
+00:08:44,515 --> 00:08:49,284
+With sync=True, it waits for its job,
+and fails if the job fails,
+
+163
+00:08:49,284 --> 00:08:52,366
+so deploy never runs on a failed training.
+
+164
+00:08:52,686 --> 00:08:55,289
+A recent commit made that wait explicit.
+
+165
+00:08:55,533 --> 00:08:59,007
+If an option uses cron offsets,
+background commands,
+
+166
+00:08:59,007 --> 00:09:03,149
+or the best model from the tracker,
+think race or wrong model.
+
+167
+00:09:03,469 --> 00:09:08,120
+Edges from preprocess to train
+to deploy are correct by construction.
+
+168
+00:09:09,267 --> 00:09:15,111
+The lecture draws deployment in five steps:
+get the saved model, update its signature,
+
+169
+00:09:15,111 --> 00:09:19,528
+upload it to a bucket, register it,
+and deploy it to an endpoint.
+
+170
+00:09:19,767 --> 00:09:24,418
+The signature step moves
+preprocessing into the model:
+
+171
+00:09:24,418 --> 00:09:31,138
+decode the JPEG, convert to floats,
+resize to 224 by 224, then call the model.
+
+172
+00:09:31,458 --> 00:09:35,831
+The slides save it one way,
+the repo with the Keras ExportArchive.
+
+173
+00:09:36,067 --> 00:09:38,392
+Registering creates a catalog card.
+
+174
+00:09:38,712 --> 00:09:42,211
+It records where the files are,
+and which container serves them.
+
+175
+00:09:42,531 --> 00:09:44,942
+Nothing is running, and it costs nothing.
+
+176
+00:09:45,262 --> 00:09:47,608
+Can you call it? Not yet.
+
+177
+00:09:47,850 --> 00:09:50,047
+Next, the endpoint: an address.
+
+178
+00:09:50,367 --> 00:09:54,613
+The repo reuses cheese-app-endpoint
+if it exists, or creates it.
+
+179
+00:09:54,884 --> 00:09:59,044
+Deploy slides a machine under that address
+and sends it all the traffic.
+
+180
+00:09:59,364 --> 00:10:01,666
+From now on, you pay for that machine
+
+181
+00:10:01,666 --> 00:10:04,654
+while it is deployed,
+even when nobody calls it.
+
+182
+00:10:05,650 --> 00:10:09,253
+To predict,
+the client wraps each JPEG in base64,
+
+183
+00:10:09,253 --> 00:10:11,239
+under the key bytes_inputs.
+
+184
+00:10:11,559 --> 00:10:15,224
+The signature unfolds it,
+the model returns four scores,
+
+185
+00:10:15,224 --> 00:10:17,384
+and the largest names the cheese.
+
+186
+00:10:17,634 --> 00:10:19,371
+Cleanup undeploys the model,
+
+187
+00:10:19,371 --> 00:10:22,349
+so the machine stops,
+then deletes the endpoint.
+
+188
+00:10:22,669 --> 00:10:25,463
+The registry card and the bucket files stay.
+
+189
+00:10:25,700 --> 00:10:28,943
+The pipeline's deploy step
+makes the same two calls.
+
+190
+00:10:29,263 --> 00:10:31,259
+And by the slides' rule of thumb,
+
+191
+00:10:31,259 --> 00:10:34,767
+Cloud Run fits
+when the model is one part of a bigger app.
+
+192
+00:10:35,017 --> 00:10:37,484
+If the question says registered, think:
+
+193
+00:10:37,484 --> 00:10:40,585
+not callable until it is deployed
+to an endpoint.
+
+194
+00:10:40,905 --> 00:10:45,321
+If it says deployed, think:
+a machine is billing until you undeploy it.
+
+195
+00:10:45,641 --> 00:10:47,284
+Then delete the endpoint too.
+
+196
+00:10:48,433 --> 00:10:53,297
+Now the whole cheese app pipeline:
+collector, processor, training, deploy.
+
+197
+00:10:53,617 --> 00:10:55,857
+Each gets a green check as it succeeds.
+
+198
+00:10:56,100 --> 00:10:57,423
+Two kinds of steps.
+
+199
+00:10:57,743 --> 00:11:03,004
+The collector and processor are container
+components that pull published images
+
+200
+00:11:03,004 --> 00:11:07,199
+from a registry, Docker Hub in this repo,
+the Artifact Registry
+
+201
+00:11:07,199 --> 00:11:11,460
+on the slides, because Google's machines
+cannot see your laptop.
+
+202
+00:11:11,780 --> 00:11:16,985
+Training and deploy are Python components
+that call the Vertex AI SDK.
+
+203
+00:11:17,233 --> 00:11:19,793
+So why .after(), and not .output?
+
+204
+00:11:20,113 --> 00:11:22,012
+The steps never call each other.
+
+205
+00:11:22,332 --> 00:11:27,665
+Each reads from the bucket and writes back:
+raw.zip, clean.zip, then the model/ folder.
+
+206
+00:11:27,985 --> 00:11:30,908
+The pipeline only decides
+when each step starts.
+
+207
+00:11:31,150 --> 00:11:33,318
+So deploy finds the model by name,
+
+208
+00:11:33,318 --> 00:11:36,889
+in the model/ folder,
+and the edges make that name safe.
+
+209
+00:11:37,209 --> 00:11:40,467
+Delete one,
+and deploy may grab last run's model:
+
+210
+00:11:40,467 --> 00:11:42,328
+the stale read from earlier.
+
+211
+00:11:42,566 --> 00:11:46,289
+One difference from the slides:
+on the main branch today,
+
+212
+00:11:46,289 --> 00:11:51,057
+training downloads its own dataset,
+so these edges carry order, not data.
+
+213
+00:11:51,300 --> 00:11:55,396
+On AWS,
+SageMaker Pipelines runs the same idea.
+
+214
+00:11:55,716 --> 00:11:59,986
+The training step's input points
+at the processing step's output property,
+
+215
+00:11:59,986 --> 00:12:01,774
+and that reference is the edge.
+
+216
+00:12:02,266 --> 00:12:06,160
+Shuffle the pipeline's list of steps,
+and the graph does not move:
+
+217
+00:12:06,160 --> 00:12:08,048
+order comes from the references.
+
+218
+00:12:08,283 --> 00:12:12,294
+If the question says SageMaker Pipelines,
+think: the same DAG.
+
+219
+00:12:12,614 --> 00:12:15,131
+Referencing a step's properties
+makes the edge.
+
+220
+00:12:16,267 --> 00:12:17,398
+Seven rules.
+
+221
+00:12:17,718 --> 00:12:19,446
+One: pipelines are DAGs.
+
+222
+00:12:19,766 --> 00:12:22,390
+Calling a component creates a task, a node.
+
+223
+00:12:22,710 --> 00:12:25,590
+Nothing runs until the compiled job runs.
+
+224
+00:12:25,834 --> 00:12:31,295
+Two: .output, or a named output,
+makes the edge and passes this run's value.
+
+225
+00:12:31,615 --> 00:12:34,858
+Three: a guessed path makes no edge,
+and may be stale.
+
+226
+00:12:35,100 --> 00:12:37,617
+Four: .after() orders without data.
+
+227
+00:12:37,937 --> 00:12:40,987
+Five: no path between tasks means parallel,
+
+228
+00:12:40,987 --> 00:12:45,810
+a join waits for all its inputs,
+and the run lasts its longest path.
+
+229
+00:12:46,050 --> 00:12:48,590
+Six: order comes from edges, not clocks,
+
+230
+00:12:48,590 --> 00:12:51,576
+and a step
+that launches work must wait for it.
+
+231
+00:12:51,817 --> 00:12:56,980
+Seven: upload to the Model Registry,
+create an endpoint, deploy, then predict.
+
+232
+00:12:57,300 --> 00:12:58,857
+Billing starts at deploy.
+
+233
+00:12:59,177 --> 00:13:02,569
+SageMaker builds the same DAG
+from step properties.
+
+234
+00:13:02,817 --> 00:13:07,694
+And the lecture's chain:
+a recipe in the DSL, printed as YAML,
+
+235
+00:13:07,694 --> 00:13:11,548
+submitted by the SDK,
+run on the Kubeflow engine,
+
+236
+00:13:11,548 --> 00:13:16,662
+and managed by Vertex AI Pipelines,
+with no Kubernetes to set up.
+
+237
+00:13:16,900 --> 00:13:19,887
+When you are done,
+undeploy and delete the endpoint.
+
+238
+00:13:20,207 --> 00:13:21,551
+Good luck on the quiz.
+

@@ -1,0 +1,1149 @@
+1
+00:00:00,000 --> 00:00:02,027
+时钟上排着每晚的三个任务
+Three nightly jobs on a clock.
+
+2
+00:00:02,347 --> 00:00:04,608
+凌晨 1 点准备数据
+Prepare the data at 1 in the morning.
+
+3
+00:00:04,928 --> 00:00:06,307
+2 点训练
+Train at 2.
+
+4
+00:00:06,357 --> 00:00:07,843
+3 点部署
+Deploy at 3.
+
+5
+00:00:07,893 --> 00:00:09,493
+几个月来，一切正常
+For months, it works.
+
+6
+00:00:11,717 --> 00:00:14,896
+后来有一晚，准备数据花了 75 分钟
+Then one night, preparation takes 75 minutes.
+
+7
+00:00:15,216 --> 00:00:19,290
+2 点，训练照样开始，读的是一个只写了一半的文件
+At 2, training starts anyway, on a file that is only half written.
+
+8
+00:00:19,610 --> 00:00:22,639
+3 点，部署把训练出来的东西发布了出去
+At 3, deployment ships whatever training produced.
+
+9
+00:00:23,833 --> 00:00:26,137
+每个任务的退出码都是 0
+Every job exits with status zero.
+
+10
+00:00:26,457 --> 00:00:27,836
+没有一个失败
+Nothing failed.
+
+11
+00:00:27,886 --> 00:00:31,470
+而 endpoint 现在提供的，是一个只用一半数据训练出来的模型
+And the endpoint now serves a model trained on half the data.
+
+12
+00:00:31,790 --> 00:00:33,390
+可也没有一个是对的
+Nothing was right either.
+
+13
+00:00:33,483 --> 00:00:35,899
+课上也从同一个问题讲起
+The lecture opens on the same problem:
+
+14
+00:00:35,899 --> 00:00:40,032
+cheese app 的四个步骤，每一步都由一个人在终端上运行
+four steps of the cheese app, each run by a person at a terminal.
+
+15
+00:00:40,352 --> 00:00:42,187
+这些步骤要怎么执行？
+How do we execute these steps?
+
+16
+00:00:42,507 --> 00:00:44,150
+能不能把这个流程自动化？
+Can we automate this flow?
+
+17
+00:00:44,500 --> 00:00:47,124
+要自动化，你需要一条不同的指令
+To automate it, you need a different instruction.
+
+18
+00:00:47,444 --> 00:00:49,044
+不是：2 点训练
+Not: train at 2.
+
+19
+00:00:49,151 --> 00:00:51,839
+而是：准备数据完成之后再训练
+Instead: train when preparation has finished.
+
+20
+00:00:52,159 --> 00:00:54,015
+这正是 pipeline 的用处
+That is what a pipeline is for.
+
+21
+00:00:54,250 --> 00:00:59,434
+接下来的安排：图、连线、重叠、顺序、部署，还有 cheese app
+Here is the plan: graphs, wires, overlap, order, deployment, and the cheese app.
+
+22
+00:00:59,683 --> 00:01:03,758
+右上角的灰色标签，标出每个想法背后的课件页
+The gray tag, top right, names the slides behind each idea.
+
+23
+00:01:04,078 --> 00:01:05,763
+这里没有任何现场运行
+Nothing here is a live run.
+
+24
+00:01:06,000 --> 00:01:11,781
+选项要是在固定时间调度步骤，就想：竞态，时钟对数据一无所知
+If an option schedules steps at fixed times, think race: a clock knows nothing about data.
+
+25
+00:01:13,117 --> 00:01:17,341
+工作流管理，用课上的话说，知道哪一步需要哪一步
+Workflow management, in the lecture's words, knows which step needs which.
+
+26
+00:01:17,661 --> 00:01:22,226
+记录这件事的结构叫有向无环图，也就是 DAG
+The structure that records this is a directed acyclic graph, or DAG.
+
+27
+00:01:22,467 --> 00:01:26,670
+有向，是因为数据只朝一个方向流，从生产者流到消费者
+Directed, because data flows one way, from producer to consumer.
+
+28
+00:01:26,990 --> 00:01:30,062
+无环，是因为没有哪一步会等它自己
+Acyclic, because no step ever waits on itself.
+
+29
+00:01:30,382 --> 00:01:33,987
+这些 task 就是节点；数据依赖就是边
+Tasks are the nodes; data dependencies are the edges.
+
+30
+00:01:34,234 --> 00:01:37,391
+Vertex AI Pipelines 替你运行这些图
+Vertex AI Pipelines runs these graphs for you.
+
+31
+00:01:37,711 --> 00:01:42,131
+你描述这个图用的是 Kubeflow Pipelines，也就是 kfp 这个库
+You describe the graph with Kubeflow Pipelines, the kfp library,
+
+32
+00:01:42,131 --> 00:01:44,687
+而且不用你管 Kubernetes
+and there is no Kubernetes to manage.
+
+33
+00:01:45,007 --> 00:01:47,780
+现在的控制台把它叫作 Agent Platform
+Today's console calls it Agent Platform.
+
+34
+00:01:48,017 --> 00:01:51,814
+这是课件和示例 repo 里的那个玩具 pipeline
+Here is the toy pipeline from the slides and the demo repo.
+
+35
+00:01:52,134 --> 00:01:55,684
+三个标了 @dsl.component 的 Python 函数
+Three Python functions marked @dsl.component:
+
+36
+00:01:55,684 --> 00:01:57,894
+square、add 和 square root
+square, add and square root.
+
+37
+00:01:58,214 --> 00:02:02,225
+第四个标了 @dsl.pipeline，把它们连起来
+A fourth, marked @dsl.pipeline, wires them together.
+
+38
+00:02:02,467 --> 00:02:06,414
+在 pipeline 函数运行时，这些 component 调用什么都不算
+When the pipeline function runs, the component calls compute nothing.
+
+39
+00:02:06,734 --> 00:02:10,955
+在 a 上调用 square，a 是 pipeline 的输入，默认值是 3
+Calling square on a, the pipeline's input, which defaults to 3,
+
+40
+00:02:10,955 --> 00:02:15,310
+这会创建一个 task：图里的一个节点，带着一个空的输出插口
+creates a task: a node in the graph, with an empty output socket.
+
+41
+00:02:15,630 --> 00:02:16,967
+还没有数字
+No number yet.
+
+42
+00:02:17,017 --> 00:02:19,812
+一行一行地，四个调用放下四个节点
+Line by line, four calls drop four nodes.
+
+43
+00:02:20,132 --> 00:02:21,690
+这里 square 被调用了两次
+Square is called twice,
+
+44
+00:02:21,690 --> 00:02:23,926
+所以一个 component 产生了两个 task
+so one component gives two tasks;
+
+45
+00:02:23,926 --> 00:02:25,892
+第二个叫 square-2
+the second is named square-2.
+
+46
+00:02:26,212 --> 00:02:29,241
+这个函数只跑了一次，产出的只有一个图
+The function ran once, and produced only a graph.
+
+47
+00:02:29,484 --> 00:02:32,407
+编译器把这个图压成一个 YAML 文件
+The compiler presses that graph into a YAML file.
+
+48
+00:02:32,727 --> 00:02:36,490
+Vertex AI SDK，也就是课上说的遥控器
+The Vertex AI SDK, the lecture's remote control,
+
+49
+00:02:36,490 --> 00:02:38,764
+把它提交成一个 pipeline 任务
+submits it as a pipeline job.
+
+50
+00:02:39,084 --> 00:02:41,175
+你的笔记本负责编译和提交
+Your laptop compiles and submits.
+
+51
+00:02:41,495 --> 00:02:43,095
+执行的是 Vertex
+Vertex executes.
+
+52
+00:02:44,284 --> 00:02:46,291
+直到这时，在 Google 的机器上
+Only now, on Google's machines,
+
+53
+00:02:46,291 --> 00:02:49,788
+每个 task 才有了 container，数字才出现
+does each task get a container, and do numbers appear.
+
+54
+00:02:52,067 --> 00:02:56,789
+选项要是说，在 pipeline 函数里调用 train 就会训练模型
+If an option says calling train in the pipeline function trains the model,
+
+55
+00:02:56,789 --> 00:02:59,086
+再想想：它只是创建了一个 task
+think again: it only creates a task.
+
+56
+00:02:59,406 --> 00:03:02,286
+什么都不会运行，要等到编译好的任务真正运行
+Nothing runs until the compiled job runs.
+
+57
+00:03:03,433 --> 00:03:05,026
+看这个 add 调用
+Look at the add call.
+
+58
+00:03:05,076 --> 00:03:08,532
+对 x，它传的是第一个 square task 的 .output
+For x, it passes the first square task, .output.
+
+59
+00:03:08,852 --> 00:03:11,454
+对 y，传的是第二个 task 的 .output
+For y, the second task, .output.
+
+60
+00:03:11,774 --> 00:03:13,374
+那传的到底是什么？
+So what is being passed?
+
+61
+00:03:13,466 --> 00:03:14,760
+不是一个数
+Not a number.
+
+62
+00:03:14,810 --> 00:03:17,355
+这里的 .output 是一个占位符
+.output is a placeholder for a value
+
+63
+00:03:17,355 --> 00:03:20,890
+代表一个只有上游 task 成功之后才存在的值
+that exists only after the upstream task succeeds.
+
+64
+00:03:21,210 --> 00:03:22,938
+把它接上，就画出了一根连线
+Plugging it in draws a wire.
+
+65
+00:03:23,400 --> 00:03:26,561
+编译出来的 YAML 把每根连线写了两遍
+The compiled YAML writes down each wire twice:
+
+66
+00:03:26,561 --> 00:03:29,722
+add 的 dependentTasks 列出 square 和 square-2
+add's dependentTasks list square and square-2,
+
+67
+00:03:29,722 --> 00:03:32,402
+每个输入也写明了它的生产者 task
+and each input names its producer task.
+
+68
+00:03:34,966 --> 00:03:40,278
+运行的时候，square 变绿，然后 9 才顺着连线进入 add
+At run time, square turns green, and only then does 9 ride the wire into add.
+
+69
+00:03:40,598 --> 00:03:44,481
+一个参数，就同时给了 add 数据和依赖
+One argument gave add both its data and its dependency.
+
+70
+00:03:44,716 --> 00:03:47,495
+有多个输出时，就点名要哪一个
+With several outputs, you name the one you want:
+
+71
+00:03:47,495 --> 00:03:50,562
+用 .outputs，在方括号里写上输出的名字
+.outputs["name"], with the output's name in brackets.
+
+72
+00:03:50,800 --> 00:03:52,350
+再看对比
+Now the contrast.
+
+73
+00:03:52,400 --> 00:03:56,155
+输出本身常常就是一个路径：这次运行写出的文件
+Often the output is itself a path: the file this run wrote.
+
+74
+00:03:56,475 --> 00:04:00,528
+有了连线，train 拿到的正是那个路径，而且是在 prep 成功之后
+With the wire, train gets that exact path, after prep succeeds.
+
+75
+00:04:00,848 --> 00:04:06,608
+改成把路径写死，就没有连线：train 马上开始，和 prep 一起跑
+Hard-code a path instead, and there is no wire: train starts right away, alongside prep.
+
+76
+00:04:06,850 --> 00:04:10,925
+那里的文件是上周的，这一步在过期数据上成功了
+The file there is last week's, and the step succeeds on stale data.
+
+77
+00:04:11,245 --> 00:04:15,148
+猜出来的路径在你看来像依赖，在 pipeline 看来不是
+A guessed path looks like a dependency to you, not to the pipeline.
+
+78
+00:04:15,383 --> 00:04:18,800
+要只管顺序、不传数据，就用 .after 加一条虚线边
+For order without data, .after() adds a dashed edge:
+
+79
+00:04:18,800 --> 00:04:23,596
+这个 task 会等另一个成功，但边上什么都不传
+the task waits for the other one to succeed, but nothing travels down it.
+
+80
+00:04:23,833 --> 00:04:26,478
+来做一题。想停的话，就在这里暂停
+Try one. Pause here if you want.
+
+81
+00:04:32,433 --> 00:04:33,535
+答案是 B
+B.
+
+82
+00:04:33,585 --> 00:04:37,574
+点名这个输出，就把这次运行的文件传了过去，也建立了等待
+Naming the output hands over this run's file, and creates the wait.
+
+83
+00:04:37,894 --> 00:04:39,275
+A 把路径写死了
+A hard-codes a path:
+
+84
+00:04:39,275 --> 00:04:43,484
+没有边，所以 train 可能马上开始，读到上一次运行的文件
+no edge, so train may start at once and read last run's file.
+
+85
+00:04:43,733 --> 00:04:47,893
+C 会等，但它读的是你假设的路径，不是 split 报告的那个
+C waits, but it reads a path you assumed, not the one split reported.
+
+86
+00:04:48,213 --> 00:04:50,671
+D 在任何东西运行之前就失败了
+D fails before anything runs:
+
+87
+00:04:50,671 --> 00:04:54,400
+有两个输出时，kfp 不接受单独的 .output
+with two outputs, kfp refuses plain .output.
+
+88
+00:04:54,650 --> 00:05:00,133
+题目说 .output，就想：等上游成功，拿到这次运行的值
+If the question says .output, think: waits for success, and gets this run's value.
+
+89
+00:05:00,453 --> 00:05:03,823
+写死或猜出来的路径：没有边，可能过期
+A hard-coded or guessed path: no edge, maybe stale.
+
+90
+00:05:04,143 --> 00:05:06,447
+.after：有顺序，没有数据
+.after(): order, but no data.
+
+91
+00:05:07,583 --> 00:05:09,183
+回到那个玩具图
+Back to the toy graph.
+
+92
+00:05:09,268 --> 00:05:12,330
+两个 square task 之间没有连线组成的路径
+No path of wires connects the two square tasks,
+
+93
+00:05:12,330 --> 00:05:15,391
+所以 Vertex 可以同时运行它们
+so Vertex is free to run them at the same time.
+
+94
+00:05:15,633 --> 00:05:17,076
+这个 add 是一个汇合点
+Add is a join.
+
+95
+00:05:17,126 --> 00:05:20,007
+它的 YAML 把两个 square 都列为 dependentTasks
+Its YAML lists both squares as dependentTasks,
+
+96
+00:05:20,007 --> 00:05:22,950
+所以它只在第二个完成之后才开始
+so it starts only when the second one finishes.
+
+97
+00:05:23,616 --> 00:05:27,109
+同样的形状，放大一号：一个预处理 task
+The same shape, one size up: one preprocessing task,
+
+98
+00:05:27,109 --> 00:05:32,214
+两个读它输出的训练，再加一个读两个模型的比较
+two trainings that read its output, and a comparison that reads both models.
+
+99
+00:05:32,450 --> 00:05:36,226
+一个 task 亮起来，要等每根输入连线都带上值
+A task lights up when every incoming wire carries a token.
+
+100
+00:05:36,546 --> 00:05:41,815
+两个训练一起开始，比较正好在慢的那个结束时开始
+Both trainings start together, and the comparison starts exactly when the slower one ends.
+
+101
+00:05:42,433 --> 00:05:46,465
+加一条数据不需要的边：答案一样，跑得更久
+Add an edge the data does not need: same answer, longer run.
+
+102
+00:05:47,450 --> 00:05:49,939
+把这些连线换成猜出来的路径
+Replace those wires with guessed paths,
+
+103
+00:05:49,939 --> 00:05:54,469
+比较就会在 0 时刻开始，读到没算完的结果
+and the comparison starts at time zero and reads half-finished results.
+
+104
+00:05:54,789 --> 00:05:56,116
+这就是竞态
+That is a race.
+
+105
+00:05:56,166 --> 00:06:02,054
+最大安全重叠的意思是：数据需要的边，一条不多，一条也不少
+Maximum safe overlap means exactly the edges the data needs, no more and no fewer.
+
+106
+00:06:02,374 --> 00:06:04,486
+这样一次运行的时长就等于它的最长路径
+The run then lasts its longest path.
+
+107
+00:06:04,806 --> 00:06:07,900
+如果上游有 task 失败，汇合点就永远不会运行
+If an upstream task fails, the join never runs.
+
+108
+00:06:08,150 --> 00:06:09,750
+轮到你算一题
+Your turn to compute one.
+
+109
+00:06:10,049 --> 00:06:11,649
+想停的话，就在这里暂停
+Pause here if you want.
+
+110
+00:06:17,350 --> 00:06:18,950
+答案是 B，16 分钟
+B, 16 minutes.
+
+111
+00:06:19,163 --> 00:06:23,323
+最长路径是 ingest、clean、大的那个训练和 compare
+The longest path is ingest, clean, the big training, and compare.
+
+112
+00:06:23,643 --> 00:06:26,118
+2 加 3 加 10 加 1
+2, plus 3, plus 10, plus 1.
+
+113
+00:06:26,438 --> 00:06:29,830
+小的那个训练和 report 都和大的那个重叠
+The small training and the report overlap with the big one.
+
+114
+00:06:30,066 --> 00:06:32,157
+A 把所有 task 依次加起来
+A adds every task in sequence.
+
+115
+00:06:32,477 --> 00:06:35,186
+D 让两个训练一个接一个地跑
+D runs the two trainings one after the other.
+
+116
+00:06:35,506 --> 00:06:41,032
+C 忽略了这些边：训练需要清洗过的数据，compare 要等两个模型
+C ignores the edges: training needs clean data, and compare waits for both models.
+
+117
+00:06:41,266 --> 00:06:45,063
+两个步骤之间要是没有连线组成的路径，就想：并行
+If there is no path of wires between two steps, think parallel.
+
+118
+00:06:45,383 --> 00:06:49,202
+一个步骤要是用到多个输出，就会等齐所有输出
+If a step consumes several outputs, it waits for all of them.
+
+119
+00:06:50,350 --> 00:06:53,379
+现在说顺序：预处理、训练、部署
+Now the sequence: preprocess, train, deploy.
+
+120
+00:06:53,699 --> 00:06:57,006
+这里有四种让每一步等待的办法，放在同一个时钟上
+Here are four ways to make each step wait, on one clock.
+
+121
+00:06:57,250 --> 00:06:59,021
+第一条泳道：cron 错开时间
+Lane one, cron offsets.
+
+122
+00:06:59,341 --> 00:07:01,602
+第二条泳道：后台的 &
+Lane two, background & jobs.
+
+123
+00:07:01,922 --> 00:07:06,449
+第三条泳道：一个事件在预处理写出输出时启动训练
+Lane three, an event starts training when preprocessing writes its output,
+
+124
+00:07:06,449 --> 00:07:09,325
+部署取实验追踪工具里最好的模型
+and deploy takes the best model in the tracker.
+
+125
+00:07:09,645 --> 00:07:11,650
+第四条泳道：pipeline 的边
+Lane four, pipeline edges.
+
+126
+00:07:11,900 --> 00:07:13,884
+掷一下骰子，决定预处理要多久
+Roll the length of preprocessing.
+
+127
+00:07:14,204 --> 00:07:15,519
+40 分钟
+40 minutes.
+
+128
+00:07:15,569 --> 00:07:17,119
+然后 75
+Then 75.
+
+129
+00:07:17,169 --> 00:07:18,600
+然后 55
+Then 55.
+
+130
+00:07:18,650 --> 00:07:22,062
+时钟那条泳道在 40 没问题，75 就出错
+The clock lane is fine at 40, and broken at 75:
+
+131
+00:07:22,062 --> 00:07:24,602
+训练读到一个写了一半的文件
+training reads a half-written file.
+
+132
+00:07:24,922 --> 00:07:28,741
+后台那条泳道每次都出错，因为什么都不等
+The background lane is broken on every roll, because nothing waits.
+
+133
+00:07:28,983 --> 00:07:30,818
+追踪工具那条泳道错在两处
+The tracker lane fails twice.
+
+134
+00:07:31,138 --> 00:07:35,212
+这个事件可能在第一个文件写出来时就触发，那时预处理还没做完
+The event can fire on the first file, before preprocessing is done.
+
+135
+00:07:35,532 --> 00:07:39,714
+而且追踪工具里最好的模型，是所有运行里最好的，不是这次运行的
+And the tracker's best model is the best of all runs, not this run's.
+
+136
+00:07:40,034 --> 00:07:42,636
+只有边那条泳道每一次都是对的
+Only the edge lane is right on every roll.
+
+137
+00:07:42,956 --> 00:07:44,556
+它只是被拉长了
+It just stretches.
+
+138
+00:07:45,250 --> 00:07:48,137
+这个 cheese app 的 pipeline 正是这样做的
+The cheese app pipeline does exactly this:
+
+139
+00:07:48,137 --> 00:07:55,149
+采集之后处理，处理之后训练，训练之后部署，每一步都用 .after
+processing after collection, training after processing, deployment after training, each with .after().
+
+140
+00:07:55,383 --> 00:07:58,455
+在编译出来的 YAML 里，它们变成了 dependentTasks
+In the compiled YAML they become dependentTasks.
+
+141
+00:07:58,775 --> 00:08:04,194
+README 也说得很直白：每一步都要等上一步成功之后才开始
+And the README says it plainly: each step starts only after the previous one succeeds.
+
+142
+00:08:04,433 --> 00:08:06,097
+再来一题，有点绕
+One more, a subtle one.
+
+143
+00:08:06,417 --> 00:08:09,169
+有些步骤只是在另一台机器上启动工作
+Some steps only launch work on another machine.
+
+144
+00:08:09,489 --> 00:08:12,113
+记清楚一条边到底在等什么
+Remember exactly what an edge waits for.
+
+145
+00:08:12,433 --> 00:08:14,033
+想停的话，就在这里暂停
+Pause here if you want.
+
+146
+00:08:21,633 --> 00:08:27,201
+答案是 B。一条边等的是 task，而这个 task 5 秒后就成功了
+B. An edge waits for the task, and this task succeeded after 5 seconds.
+
+147
+00:08:27,521 --> 00:08:30,366
+这个 pipeline 从来看不到它启动的任务
+The pipeline never sees the job it launched,
+
+148
+00:08:30,366 --> 00:08:33,857
+所以 A 是错的，deploy 可能把上一个模型发布出去
+so A is wrong, and deploy may ship the previous model.
+
+149
+00:08:34,100 --> 00:08:36,233
+C：.after 不需要数据
+C: .after() needs no data.
+
+150
+00:08:36,553 --> 00:08:38,283
+D：.after 是强制执行的
+D: .after() is enforced,
+
+151
+00:08:38,283 --> 00:08:41,311
+会作为 dependentTasks 的一项写进 YAML
+written into the YAML as a dependent task.
+
+152
+00:08:41,550 --> 00:08:44,195
+这个 repo 的训练步骤就是这种只负责启动的步骤
+The repo's training step is such a launcher.
+
+153
+00:08:44,515 --> 00:08:47,230
+把 sync 设为 True 之后，它会等自己的任务
+With sync=True, it waits for its job,
+
+154
+00:08:47,230 --> 00:08:52,366
+任务失败它也失败，所以 deploy 永远不会在失败的训练之后运行
+and fails if the job fails, so deploy never runs on a failed training.
+
+155
+00:08:52,686 --> 00:08:55,289
+最近一次 commit 把这个等待写明了
+A recent commit made that wait explicit.
+
+156
+00:08:55,533 --> 00:08:57,604
+选项要是用 cron 错开时间、后台命令
+If an option uses cron offsets,
+
+157
+00:08:57,604 --> 00:09:03,149
+或者追踪工具里最好的模型，就想：竞态，或者部署错了模型
+background commands, or the best model from the tracker, think race or wrong model.
+
+158
+00:09:03,469 --> 00:09:08,120
+从预处理到训练再到部署的边，从结构上就保证了正确
+Edges from preprocess to train to deploy are correct by construction.
+
+159
+00:09:09,267 --> 00:09:15,111
+课上把部署画成五步：拿到保存的模型，更新它的签名
+The lecture draws deployment in five steps: get the saved model, update its signature,
+
+160
+00:09:15,111 --> 00:09:19,528
+上传到 bucket，注册，再部署到 endpoint
+upload it to a bucket, register it, and deploy it to an endpoint.
+
+161
+00:09:19,767 --> 00:09:24,418
+签名这一步把预处理搬进模型里
+The signature step moves preprocessing into the model:
+
+162
+00:09:24,418 --> 00:09:31,138
+解码 JPEG，转成浮点数，缩放到 224 乘 224，再调用模型
+decode the JPEG, convert to floats, resize to 224 by 224, then call the model.
+
+163
+00:09:31,458 --> 00:09:35,831
+课件用一种方式保存，repo 用的是 Keras 的 ExportArchive
+The slides save it one way, the repo with the Keras ExportArchive.
+
+164
+00:09:36,067 --> 00:09:38,392
+注册就是建一张目录卡片
+Registering creates a catalog card.
+
+165
+00:09:38,712 --> 00:09:42,211
+它记录文件在哪里，以及由哪个 container 来提供服务
+It records where the files are, and which container serves them.
+
+166
+00:09:42,531 --> 00:09:44,942
+什么都没在运行，也不花钱
+Nothing is running, and it costs nothing.
+
+167
+00:09:45,262 --> 00:09:46,598
+能调用它吗？
+Can you call it?
+
+168
+00:09:46,648 --> 00:09:50,047
+还不能。接下来是 endpoint：一个地址
+Not yet. Next, the endpoint: an address.
+
+169
+00:09:50,367 --> 00:09:53,613
+这个 repo 会复用 cheese-app-endpoint，如果它已经存在
+The repo reuses cheese-app-endpoint if it exists,
+
+170
+00:09:53,613 --> 00:09:54,834
+不存在就新建一个
+or creates it.
+
+171
+00:09:54,884 --> 00:09:59,044
+部署就是在这个地址下面放一台机器，把全部流量都给它
+Deploy slides a machine under that address and sends it all the traffic.
+
+172
+00:09:59,364 --> 00:10:04,654
+从现在起，你要为这台机器付钱，只要它还部署着，即使没人调用它
+From now on, you pay for that machine while it is deployed, even when nobody calls it.
+
+173
+00:10:05,650 --> 00:10:09,253
+预测时，客户端把每张 JPEG 用 base64 编码
+To predict, the client wraps each JPEG in base64,
+
+174
+00:10:09,253 --> 00:10:11,239
+放在 bytes inputs 这个键下面
+under the key bytes_inputs.
+
+175
+00:10:11,559 --> 00:10:17,384
+签名把它解开，模型返回四个分数，最大的那个说出是哪种奶酪
+The signature unfolds it, the model returns four scores, and the largest names the cheese.
+
+176
+00:10:17,634 --> 00:10:22,349
+清理时先取消部署模型，机器就停了，然后删除 endpoint
+Cleanup undeploys the model, so the machine stops, then deletes the endpoint.
+
+177
+00:10:22,669 --> 00:10:25,463
+注册的那张卡片和 bucket 里的文件都还在
+The registry card and the bucket files stay.
+
+178
+00:10:25,700 --> 00:10:28,943
+这个 pipeline 的部署步骤做的也是这两个调用
+The pipeline's deploy step makes the same two calls.
+
+179
+00:10:29,263 --> 00:10:31,259
+而按课件的经验法则
+And by the slides' rule of thumb,
+
+180
+00:10:31,259 --> 00:10:34,767
+Cloud Run 适合模型只是一个更大应用的一部分的时候
+Cloud Run fits when the model is one part of a bigger app.
+
+181
+00:10:35,017 --> 00:10:40,585
+题目说已注册，就想：还不能调用，要等部署到一个 endpoint 上
+If the question says registered, think: not callable until it is deployed to an endpoint.
+
+182
+00:10:40,905 --> 00:10:45,321
+题目说已部署，就想：机器一直在计费，直到你取消部署
+If it says deployed, think: a machine is billing until you undeploy it.
+
+183
+00:10:45,641 --> 00:10:47,284
+然后把 endpoint 也删掉
+Then delete the endpoint too.
+
+184
+00:10:48,433 --> 00:10:50,699
+现在看完整的 cheese app pipeline
+Now the whole cheese app pipeline:
+
+185
+00:10:50,699 --> 00:10:53,297
+采集器、处理器、训练、部署
+collector, processor, training, deploy.
+
+186
+00:10:53,617 --> 00:10:55,857
+每一步成功时，都会打上一个绿色的勾
+Each gets a green check as it succeeds.
+
+187
+00:10:56,100 --> 00:10:57,693
+两类步骤
+Two kinds of steps.
+
+188
+00:10:57,743 --> 00:11:01,223
+采集器和处理器是 container component
+The collector and processor are container components
+
+189
+00:11:01,223 --> 00:11:04,100
+从 registry 拉取发布好的 image
+that pull published images from a registry,
+
+190
+00:11:04,100 --> 00:11:08,182
+这个 repo 用的是 Docker Hub，课件上是 Artifact Registry
+Docker Hub in this repo, the Artifact Registry on the slides,
+
+191
+00:11:08,182 --> 00:11:11,460
+因为 Google 的机器看不到你的笔记本
+because Google's machines cannot see your laptop.
+
+192
+00:11:11,780 --> 00:11:16,985
+训练和部署是 Python component，调用的是 Vertex AI SDK
+Training and deploy are Python components that call the Vertex AI SDK.
+
+193
+00:11:17,233 --> 00:11:19,793
+那为什么用 .after，而不用 .output？
+So why .after(), and not .output?
+
+194
+00:11:20,113 --> 00:11:22,012
+这些步骤从不互相调用
+The steps never call each other.
+
+195
+00:11:22,332 --> 00:11:24,999
+每一步都从 bucket 读，再写回去
+Each reads from the bucket and writes back:
+
+196
+00:11:24,999 --> 00:11:27,665
+raw.zip、clean.zip，然后是 model 目录
+raw.zip, clean.zip, then the model/ folder.
+
+197
+00:11:27,985 --> 00:11:30,908
+这个 pipeline 只决定每一步什么时候开始
+The pipeline only decides when each step starts.
+
+198
+00:11:31,150 --> 00:11:34,721
+所以 deploy 按名字在 model 目录里找模型
+So deploy finds the model by name, in the model/ folder,
+
+199
+00:11:34,721 --> 00:11:36,889
+而这些边保证了这个名字是安全的
+and the edges make that name safe.
+
+200
+00:11:37,209 --> 00:11:40,467
+删掉一条，deploy 就可能拿到上一次运行的模型
+Delete one, and deploy may grab last run's model:
+
+201
+00:11:40,467 --> 00:11:42,328
+也就是前面说的读到过期数据
+the stale read from earlier.
+
+202
+00:11:42,566 --> 00:11:46,289
+和课件有一处不同：现在的 main 分支上
+One difference from the slides: on the main branch today,
+
+203
+00:11:46,289 --> 00:11:51,057
+训练会自己下载数据集，所以这些边传的是顺序，不是数据
+training downloads its own dataset, so these edges carry order, not data.
+
+204
+00:11:51,300 --> 00:11:55,396
+在 AWS 上，SageMaker Pipelines 用的是同一个思路
+On AWS, SageMaker Pipelines runs the same idea.
+
+205
+00:11:55,716 --> 00:11:59,986
+训练步骤的输入指向处理步骤的输出属性
+The training step's input points at the processing step's output property,
+
+206
+00:11:59,986 --> 00:12:01,774
+这个引用就是边
+and that reference is the edge.
+
+207
+00:12:02,266 --> 00:12:04,449
+把 pipeline 的步骤列表打乱
+Shuffle the pipeline's list of steps,
+
+208
+00:12:04,449 --> 00:12:08,048
+图也不会动：顺序来自引用
+and the graph does not move: order comes from the references.
+
+209
+00:12:08,283 --> 00:12:12,294
+题目说 SageMaker Pipelines，就想：同一个 DAG
+If the question says SageMaker Pipelines, think: the same DAG.
+
+210
+00:12:12,614 --> 00:12:15,131
+引用一个步骤的属性，就造出了边
+Referencing a step's properties makes the edge.
+
+211
+00:12:16,267 --> 00:12:17,668
+七条规则
+Seven rules.
+
+212
+00:12:17,718 --> 00:12:19,446
+第一条：pipeline 是 DAG
+One: pipelines are DAGs.
+
+213
+00:12:19,766 --> 00:12:22,521
+调用一个 component 就创建一个 task，即一个节点
+Calling a component creates a task, a node.
+
+214
+00:12:22,710 --> 00:12:25,590
+什么都不会运行，要等到编译好的任务真正运行
+Nothing runs until the compiled job runs.
+
+215
+00:12:25,834 --> 00:12:28,164
+第二条：.output，或者一个有名字的输出
+Two: .output, or a named output,
+
+216
+00:12:28,164 --> 00:12:31,295
+会造出边，并传递这次运行的值
+makes the edge and passes this run's value.
+
+217
+00:12:31,615 --> 00:12:34,858
+第三条：猜出来的路径不会造出边，还可能是过期的
+Three: a guessed path makes no edge, and may be stale.
+
+218
+00:12:35,100 --> 00:12:37,617
+第四条：.after 只排顺序，不传数据
+Four: .after() orders without data.
+
+219
+00:12:37,937 --> 00:12:40,987
+第五条：task 之间没有路径就是并行
+Five: no path between tasks means parallel,
+
+220
+00:12:40,987 --> 00:12:45,810
+汇合点要等齐所有输入，一次运行的时长等于它的最长路径
+a join waits for all its inputs, and the run lasts its longest path.
+
+221
+00:12:46,050 --> 00:12:51,576
+第六条：顺序来自边，不来自时钟；启动了工作的步骤必须等它完成
+Six: order comes from edges, not clocks, and a step that launches work must wait for it.
+
+222
+00:12:51,817 --> 00:12:54,231
+第七条：上传到 Model Registry
+Seven: upload to the Model Registry,
+
+223
+00:12:54,231 --> 00:12:56,980
+创建一个 endpoint，部署，然后预测
+create an endpoint, deploy, then predict.
+
+224
+00:12:57,300 --> 00:12:58,900
+计费从部署开始
+Billing starts at deploy.
+
+225
+00:12:59,177 --> 00:13:02,569
+SageMaker 用步骤属性搭出同一个 DAG
+SageMaker builds the same DAG from step properties.
+
+226
+00:13:02,817 --> 00:13:07,694
+还有课上的那条链：用 DSL 写的配方，印成 YAML
+And the lecture's chain: a recipe in the DSL, printed as YAML,
+
+227
+00:13:07,694 --> 00:13:11,548
+由 SDK 提交，在 Kubeflow 引擎上运行
+submitted by the SDK, run on the Kubeflow engine,
+
+228
+00:13:11,548 --> 00:13:16,662
+由 Vertex AI Pipelines 托管，不用自己搭 Kubernetes
+and managed by Vertex AI Pipelines, with no Kubernetes to set up.
+
+229
+00:13:16,900 --> 00:13:19,887
+用完之后，取消部署，再删除 endpoint
+When you are done, undeploy and delete the endpoint.
+
+230
+00:13:20,207 --> 00:13:21,807
+祝你小测顺利
+Good luck on the quiz.
