@@ -1,0 +1,8 @@
+00:00 Launch day: three alarms
+01:08 From localhost to a front door
+03:45 Private subnets, route tables and NAT
+06:56 The browser lives outside the VPC
+09:15 Build once, configure at startup
+11:48 Autoscaling meets the connection budget
+14:05 Relational plus vectors: one database
+15:39 Seven rules for the quiz
