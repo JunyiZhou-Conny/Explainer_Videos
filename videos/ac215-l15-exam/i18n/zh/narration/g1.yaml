@@ -312,7 +312,7 @@ S05:
   - null
 - en: "If an option uses cron offsets, background commands, or the best model from the tracker, think race or wrong model. Edges from preprocess to train to deploy are correct by construction."
   zh:
-  - "选项要是用 cron 错开时间、后台命令，或者追踪工具里最好的模型，就想：竞态，或者部署错了模型。"
+  - "选项要是用 cron 错开时间，或者后台命令、追踪工具里最好的模型，就想：竞态，或者部署错了模型。"
   - "从预处理到训练再到部署的边，从结构上就保证了正确。"
 S06:
 - en: "The lecture draws deployment in five steps: get the saved model, update its signature, upload it to a bucket, register it, and deploy it to an endpoint."

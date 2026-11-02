@@ -167,8 +167,9 @@ Dialogue: 0,0:08:41.55,0:08:44.20,Bilingual,,0,0,0,,这个 repo 的训练步骤�
 Dialogue: 0,0:08:44.52,0:08:47.23,Bilingual,,0,0,0,,把 sync 设为 True 之后，它会等自己的任务\N{\fs33\c&H00C8C0B8&\bord1.4}With sync=True, it waits for its job,
 Dialogue: 0,0:08:47.23,0:08:52.37,Bilingual,,0,0,0,,任务失败它也失败，所以 deploy 永远不会在失败的训练之后运行\N{\fs33\c&H00C8C0B8&\bord1.4}and fails if the job fails, so deploy never runs on a failed training.
 Dialogue: 0,0:08:52.69,0:08:55.29,Bilingual,,0,0,0,,最近一次 commit 把这个等待写明了\N{\fs33\c&H00C8C0B8&\bord1.4}A recent commit made that wait explicit.
-Dialogue: 0,0:08:55.53,0:08:57.60,Bilingual,,0,0,0,,选项要是用 cron 错开时间、后台命令\N{\fs33\c&H00C8C0B8&\bord1.4}If an option uses cron offsets,
-Dialogue: 0,0:08:57.60,0:09:03.15,Bilingual,,0,0,0,,或者追踪工具里最好的模型，就想：竞态，或者部署错了模型\N{\fs33\c&H00C8C0B8&\bord1.4}background commands, or the best model from the tracker, think race or wrong model.
+Dialogue: 0,0:08:55.53,0:08:57.62,Bilingual,,0,0,0,,选项要是用 cron 错开时间\N{\fs33\c&H00C8C0B8&\bord1.4}If an option uses cron offsets,
+Dialogue: 0,0:08:57.62,0:09:01.40,Bilingual,,0,0,0,,或者后台命令、追踪工具里最好的模型，就想\N{\fs33\c&H00C8C0B8&\bord1.4}background commands, or the best model from the tracker,
+Dialogue: 0,0:09:01.40,0:09:03.15,Bilingual,,0,0,0,,竞态，或者部署错了模型\N{\fs33\c&H00C8C0B8&\bord1.4}think race or wrong model.
 Dialogue: 0,0:09:03.47,0:09:08.12,Bilingual,,0,0,0,,从预处理到训练再到部署的边，从结构上就保证了正确\N{\fs33\c&H00C8C0B8&\bord1.4}Edges from preprocess to train to deploy are correct by construction.
 Dialogue: 0,0:09:09.27,0:09:15.11,Bilingual,,0,0,0,,课上把部署画成五步：拿到保存的模型，更新它的签名\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture draws deployment in five steps: get the saved model, update its signature,
 Dialogue: 0,0:09:15.11,0:09:19.53,Bilingual,,0,0,0,,上传到 bucket，注册，再部署到 endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}upload it to a bucket, register it, and deploy it to an endpoint.

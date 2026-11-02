@@ -774,376 +774,381 @@ and fails if the job fails, so deploy never runs on a failed training.
 A recent commit made that wait explicit.
 
 156
-00:08:55,533 --> 00:08:57,604
-选项要是用 cron 错开时间、后台命令
+00:08:55,533 --> 00:08:57,622
+选项要是用 cron 错开时间
 If an option uses cron offsets,
 
 157
-00:08:57,604 --> 00:09:03,149
-或者追踪工具里最好的模型，就想：竞态，或者部署错了模型
-background commands, or the best model from the tracker, think race or wrong model.
+00:08:57,622 --> 00:09:01,397
+或者后台命令、追踪工具里最好的模型，就想
+background commands, or the best model from the tracker,
 
 158
+00:09:01,397 --> 00:09:03,149
+竞态，或者部署错了模型
+think race or wrong model.
+
+159
 00:09:03,469 --> 00:09:08,120
 从预处理到训练再到部署的边，从结构上就保证了正确
 Edges from preprocess to train to deploy are correct by construction.
 
-159
+160
 00:09:09,267 --> 00:09:15,111
 课上把部署画成五步：拿到保存的模型，更新它的签名
 The lecture draws deployment in five steps: get the saved model, update its signature,
 
-160
+161
 00:09:15,111 --> 00:09:19,528
 上传到 bucket，注册，再部署到 endpoint
 upload it to a bucket, register it, and deploy it to an endpoint.
 
-161
+162
 00:09:19,767 --> 00:09:24,418
 签名这一步把预处理搬进模型里
 The signature step moves preprocessing into the model:
 
-162
+163
 00:09:24,418 --> 00:09:31,138
 解码 JPEG，转成浮点数，缩放到 224 乘 224，再调用模型
 decode the JPEG, convert to floats, resize to 224 by 224, then call the model.
 
-163
+164
 00:09:31,458 --> 00:09:35,831
 课件用一种方式保存，repo 用的是 Keras 的 ExportArchive
 The slides save it one way, the repo with the Keras ExportArchive.
 
-164
+165
 00:09:36,067 --> 00:09:38,392
 注册就是建一张目录卡片
 Registering creates a catalog card.
 
-165
+166
 00:09:38,712 --> 00:09:42,211
 它记录文件在哪里，以及由哪个 container 来提供服务
 It records where the files are, and which container serves them.
 
-166
+167
 00:09:42,531 --> 00:09:44,942
 什么都没在运行，也不花钱
 Nothing is running, and it costs nothing.
 
-167
+168
 00:09:45,262 --> 00:09:46,598
 能调用它吗？
 Can you call it?
 
-168
+169
 00:09:46,648 --> 00:09:50,047
 还不能。接下来是 endpoint：一个地址
 Not yet. Next, the endpoint: an address.
 
-169
+170
 00:09:50,367 --> 00:09:53,613
 这个 repo 会复用 cheese-app-endpoint，如果它已经存在
 The repo reuses cheese-app-endpoint if it exists,
 
-170
+171
 00:09:53,613 --> 00:09:54,834
 不存在就新建一个
 or creates it.
 
-171
+172
 00:09:54,884 --> 00:09:59,044
 部署就是在这个地址下面放一台机器，把全部流量都给它
 Deploy slides a machine under that address and sends it all the traffic.
 
-172
+173
 00:09:59,364 --> 00:10:04,654
 从现在起，你要为这台机器付钱，只要它还部署着，即使没人调用它
 From now on, you pay for that machine while it is deployed, even when nobody calls it.
 
-173
+174
 00:10:05,650 --> 00:10:09,253
 预测时，客户端把每张 JPEG 用 base64 编码
 To predict, the client wraps each JPEG in base64,
 
-174
+175
 00:10:09,253 --> 00:10:11,239
 放在 bytes inputs 这个键下面
 under the key bytes_inputs.
 
-175
+176
 00:10:11,559 --> 00:10:17,384
 签名把它解开，模型返回四个分数，最大的那个说出是哪种奶酪
 The signature unfolds it, the model returns four scores, and the largest names the cheese.
 
-176
+177
 00:10:17,634 --> 00:10:22,349
 清理时先取消部署模型，机器就停了，然后删除 endpoint
 Cleanup undeploys the model, so the machine stops, then deletes the endpoint.
 
-177
+178
 00:10:22,669 --> 00:10:25,463
 注册的那张卡片和 bucket 里的文件都还在
 The registry card and the bucket files stay.
 
-178
+179
 00:10:25,700 --> 00:10:28,943
 这个 pipeline 的部署步骤做的也是这两个调用
 The pipeline's deploy step makes the same two calls.
 
-179
+180
 00:10:29,263 --> 00:10:31,259
 而按课件的经验法则
 And by the slides' rule of thumb,
 
-180
+181
 00:10:31,259 --> 00:10:34,767
 Cloud Run 适合模型只是一个更大应用的一部分的时候
 Cloud Run fits when the model is one part of a bigger app.
 
-181
+182
 00:10:35,017 --> 00:10:40,585
 题目说已注册，就想：还不能调用，要等部署到一个 endpoint 上
 If the question says registered, think: not callable until it is deployed to an endpoint.
 
-182
+183
 00:10:40,905 --> 00:10:45,321
 题目说已部署，就想：机器一直在计费，直到你取消部署
 If it says deployed, think: a machine is billing until you undeploy it.
 
-183
+184
 00:10:45,641 --> 00:10:47,284
 然后把 endpoint 也删掉
 Then delete the endpoint too.
 
-184
+185
 00:10:48,433 --> 00:10:50,699
 现在看完整的 cheese app pipeline
 Now the whole cheese app pipeline:
 
-185
+186
 00:10:50,699 --> 00:10:53,297
 采集器、处理器、训练、部署
 collector, processor, training, deploy.
 
-186
+187
 00:10:53,617 --> 00:10:55,857
 每一步成功时，都会打上一个绿色的勾
 Each gets a green check as it succeeds.
 
-187
+188
 00:10:56,100 --> 00:10:57,693
 两类步骤
 Two kinds of steps.
 
-188
+189
 00:10:57,743 --> 00:11:01,223
 采集器和处理器是 container component
 The collector and processor are container components
 
-189
+190
 00:11:01,223 --> 00:11:04,100
 从 registry 拉取发布好的 image
 that pull published images from a registry,
 
-190
+191
 00:11:04,100 --> 00:11:08,182
 这个 repo 用的是 Docker Hub，课件上是 Artifact Registry
 Docker Hub in this repo, the Artifact Registry on the slides,
 
-191
+192
 00:11:08,182 --> 00:11:11,460
 因为 Google 的机器看不到你的笔记本
 because Google's machines cannot see your laptop.
 
-192
+193
 00:11:11,780 --> 00:11:16,985
 训练和部署是 Python component，调用的是 Vertex AI SDK
 Training and deploy are Python components that call the Vertex AI SDK.
 
-193
+194
 00:11:17,233 --> 00:11:19,793
 那为什么用 .after，而不用 .output？
 So why .after(), and not .output?
 
-194
+195
 00:11:20,113 --> 00:11:22,012
 这些步骤从不互相调用
 The steps never call each other.
 
-195
+196
 00:11:22,332 --> 00:11:24,999
 每一步都从 bucket 读，再写回去
 Each reads from the bucket and writes back:
 
-196
+197
 00:11:24,999 --> 00:11:27,665
 raw.zip、clean.zip，然后是 model 目录
 raw.zip, clean.zip, then the model/ folder.
 
-197
+198
 00:11:27,985 --> 00:11:30,908
 这个 pipeline 只决定每一步什么时候开始
 The pipeline only decides when each step starts.
 
-198
+199
 00:11:31,150 --> 00:11:34,721
 所以 deploy 按名字在 model 目录里找模型
 So deploy finds the model by name, in the model/ folder,
 
-199
+200
 00:11:34,721 --> 00:11:36,889
 而这些边保证了这个名字是安全的
 and the edges make that name safe.
 
-200
+201
 00:11:37,209 --> 00:11:40,467
 删掉一条，deploy 就可能拿到上一次运行的模型
 Delete one, and deploy may grab last run's model:
 
-201
+202
 00:11:40,467 --> 00:11:42,328
 也就是前面说的读到过期数据
 the stale read from earlier.
 
-202
+203
 00:11:42,566 --> 00:11:46,289
 和课件有一处不同：现在的 main 分支上
 One difference from the slides: on the main branch today,
 
-203
+204
 00:11:46,289 --> 00:11:51,057
 训练会自己下载数据集，所以这些边传的是顺序，不是数据
 training downloads its own dataset, so these edges carry order, not data.
 
-204
+205
 00:11:51,300 --> 00:11:55,396
 在 AWS 上，SageMaker Pipelines 用的是同一个思路
 On AWS, SageMaker Pipelines runs the same idea.
 
-205
+206
 00:11:55,716 --> 00:11:59,986
 训练步骤的输入指向处理步骤的输出属性
 The training step's input points at the processing step's output property,
 
-206
+207
 00:11:59,986 --> 00:12:01,774
 这个引用就是边
 and that reference is the edge.
 
-207
+208
 00:12:02,266 --> 00:12:04,449
 把 pipeline 的步骤列表打乱
 Shuffle the pipeline's list of steps,
 
-208
+209
 00:12:04,449 --> 00:12:08,048
 图也不会动：顺序来自引用
 and the graph does not move: order comes from the references.
 
-209
+210
 00:12:08,283 --> 00:12:12,294
 题目说 SageMaker Pipelines，就想：同一个 DAG
 If the question says SageMaker Pipelines, think: the same DAG.
 
-210
+211
 00:12:12,614 --> 00:12:15,131
 引用一个步骤的属性，就造出了边
 Referencing a step's properties makes the edge.
 
-211
+212
 00:12:16,267 --> 00:12:17,668
 七条规则
 Seven rules.
 
-212
+213
 00:12:17,718 --> 00:12:19,446
 第一条：pipeline 是 DAG
 One: pipelines are DAGs.
 
-213
+214
 00:12:19,766 --> 00:12:22,521
 调用一个 component 就创建一个 task，即一个节点
 Calling a component creates a task, a node.
 
-214
+215
 00:12:22,710 --> 00:12:25,590
 什么都不会运行，要等到编译好的任务真正运行
 Nothing runs until the compiled job runs.
 
-215
+216
 00:12:25,834 --> 00:12:28,164
 第二条：.output，或者一个有名字的输出
 Two: .output, or a named output,
 
-216
+217
 00:12:28,164 --> 00:12:31,295
 会造出边，并传递这次运行的值
 makes the edge and passes this run's value.
 
-217
+218
 00:12:31,615 --> 00:12:34,858
 第三条：猜出来的路径不会造出边，还可能是过期的
 Three: a guessed path makes no edge, and may be stale.
 
-218
+219
 00:12:35,100 --> 00:12:37,617
 第四条：.after 只排顺序，不传数据
 Four: .after() orders without data.
 
-219
+220
 00:12:37,937 --> 00:12:40,987
 第五条：task 之间没有路径就是并行
 Five: no path between tasks means parallel,
 
-220
+221
 00:12:40,987 --> 00:12:45,810
 汇合点要等齐所有输入，一次运行的时长等于它的最长路径
 a join waits for all its inputs, and the run lasts its longest path.
 
-221
+222
 00:12:46,050 --> 00:12:51,576
 第六条：顺序来自边，不来自时钟；启动了工作的步骤必须等它完成
 Six: order comes from edges, not clocks, and a step that launches work must wait for it.
 
-222
+223
 00:12:51,817 --> 00:12:54,231
 第七条：上传到 Model Registry
 Seven: upload to the Model Registry,
 
-223
+224
 00:12:54,231 --> 00:12:56,980
 创建一个 endpoint，部署，然后预测
 create an endpoint, deploy, then predict.
 
-224
+225
 00:12:57,300 --> 00:12:58,900
 计费从部署开始
 Billing starts at deploy.
 
-225
+226
 00:12:59,177 --> 00:13:02,569
 SageMaker 用步骤属性搭出同一个 DAG
 SageMaker builds the same DAG from step properties.
 
-226
+227
 00:13:02,817 --> 00:13:07,694
 还有课上的那条链：用 DSL 写的配方，印成 YAML
 And the lecture's chain: a recipe in the DSL, printed as YAML,
 
-227
+228
 00:13:07,694 --> 00:13:11,548
 由 SDK 提交，在 Kubeflow 引擎上运行
 submitted by the SDK, run on the Kubeflow engine,
 
-228
+229
 00:13:11,548 --> 00:13:16,662
 由 Vertex AI Pipelines 托管，不用自己搭 Kubernetes
 and managed by Vertex AI Pipelines, with no Kubernetes to set up.
 
-229
+230
 00:13:16,900 --> 00:13:19,887
 用完之后，取消部署，再删除 endpoint
 When you are done, undeploy and delete the endpoint.
 
-230
+231
 00:13:20,207 --> 00:13:21,807
 祝你小测顺利
 Good luck on the quiz.
