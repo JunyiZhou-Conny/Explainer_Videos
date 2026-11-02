@@ -260,3 +260,35 @@ reparameterization: {ipa: "ɹˌiːpˌæɹəmˌɛɾɚɹaɪzˈeɪʃən", say: "re-
 "the dataset folder": {ipa: "ðə dˈeɪtə sˌɛt fˈoʊldɚ", say: "the data set folder"}
 "llm-finetune-dataset-small": {ipa: "ˈɛl ˈɛl ˈɛm fˈaɪntuːn dˈeɪtə sˌɛt smˈɔːl", say: "L-L-M finetune data set small"}
 "the pretrained one": {ipa: "ðə pɹˌiːtɹˈeɪnd wˌʌn", say: "the pre-trained one"}
+
+# AC215 L14-exam
+gunicorn: {ipa: "dʒˈiː jˈuːnɪkˌɔːɹn", say: "G unicorn"}
+main.py: {ipa: "mˈeɪn dˈɑːt pˈaɪ", say: "main dot pie"}
+"403": {ipa: "fˈɔːɹ ˈoʊ θɹˈiː", say: "four oh three"}
+"a 403": {ipa: "ɐ fˈɔːɹ ˈoʊ θɹˈiː", say: "a four oh three"}
+"A 403": {ipa: "ɐ fˈɔːɹ ˈoʊ θɹˈiː", say: "A four oh three"}
+# AC215 L13-exam ("Keras", "dataset" and "pyproject" are said by other videos: L13-exam-only phrases, never bare keys)
+wandb: {ipa: "wˈɑːnd bˈiː", say: "wand-B"}
+Wandb: {ipa: "wˈɑːnd bˈiː", say: "Wand-B"}
+scikit-learn: {ipa: "sˈaɪkɪt lˈɜːn", say: "sy-kit learn"}
+"dataset dot batch": {ipa: "dˈeɪtə sˌɛt dˈɑːt bˈætʃ", say: "data set dot batch"}
+"the pyproject file": {ipa: "ðə pˈaɪpɹɑːdʒɛkt fˈaɪl", say: "the pie-project file"}
+"that Keras holds": {ipa: "ðæt kˈɛɹəs hˈoʊldz", say: "that keh-rus holds"}
+# AC215 L15-exam (no other video says DAG, acyclic or Kubeflow; bare "A" before a verb is read as the article: phrases only)
+DAG: {ipa: "dˈæɡ", say: "dag"}
+DAGs: {ipa: "dˈæɡz", say: "dags"}
+acyclic: {ipa: "eɪsˈaɪklɪk", say: "ay-cyclic"}
+Acyclic: {ipa: "eɪsˈaɪklɪk", say: "Ay-cyclic"}
+Kubeflow: {ipa: "kjˈuːbflˌoʊ", say: "cube-flow"}
+"A hard-codes": {ipa: "ˈeɪ hˈɑːɹdkˈoʊdz", say: "Ay hard-codes"}
+"A adds": {ipa: "ˈeɪ ˈædz", say: "Ay adds"}
+"so A is wrong": {ipa: "sˌoʊ ˈeɪ ɪz ɹˈɔŋ", say: "so Ay is wrong"}
+# AC215 L16-exam (IP addresses: Kokoro reads "10." as a sentence end and the rest as decimals; NAT as a word, not letters.
+# No other video's SAY says these, on main or locally)
+"10.0.0.0": {ipa: "tˈɛn dˈɑːt zˈiəɹoʊ dˈɑːt zˈiəɹoʊ dˈɑːt zˈiəɹoʊ", say: "ten dot zero dot zero dot zero"}
+"10.0.2.5": {ipa: "tˈɛn dˈɑːt zˈiəɹoʊ dˈɑːt tˈuː dˈɑːt fˈaɪv", say: "ten dot zero dot two dot five"}
+"10.0.3.7": {ipa: "tˈɛn dˈɑːt zˈiəɹoʊ dˈɑːt θɹˈiː dˈɑːt sˈɛvən", say: "ten dot zero dot three dot seven"}
+"192.168": {ipa: "wˈʌnhˈʌndɹɪd nˈaɪnti tˈuː dˈɑːt wˈʌnhˈʌndɹɪd sˈɪksti ˈeɪt", say: "one hundred ninety-two dot one hundred sixty-eight"}
+"172.16": {ipa: "wˈʌnhˈʌndɹɪd sˈɛvənti tˈuː dˈɑːt sˈɪkstiːn", say: "one hundred seventy-two dot sixteen"}
+"172.31": {ipa: "wˈʌnhˈʌndɹɪd sˈɛvənti tˈuː dˈɑːt θˈɜːɾi wˈʌn", say: "one hundred seventy-two dot thirty-one"}
+NAT: {ipa: "nˈæt", say: "nat"}
