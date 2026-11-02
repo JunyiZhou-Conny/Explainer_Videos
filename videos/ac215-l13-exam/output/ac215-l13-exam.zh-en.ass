@@ -1,0 +1,255 @@
+[Script Info]
+Title: AC215 · Lecture 13 — Advanced Training Workflows (exam edition)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.37,Bilingual,,0,0,0,,这是一个训练 run，跑完了，一个报错都没有\N{\fs33\c&H00C8C0B8&\bord1.4}Here is a training run that finished without a single error.
+Dialogue: 0,0:00:03.69,0:00:07.47,Bilingual,,0,0,0,,任务成功了，这个 run 也在 Weights & Biases 里\N{\fs33\c&H00C8C0B8&\bord1.4}The job succeeded, and the run exists in Weights & Biases.
+Dialogue: 0,0:00:07.79,0:00:10.71,Bilingual,,0,0,0,,它的 config 在，系统图表也在\N{\fs33\c&H00C8C0B8&\bord1.4}Its config is there, and so are its system charts.
+Dialogue: 0,0:00:11.68,0:00:14.80,Bilingual,,0,0,0,,但是没有 loss 图，也没有准确率图\N{\fs33\c&H00C8C0B8&\bord1.4}But there is no loss chart, and no accuracy chart.
+Dialogue: 0,0:00:15.12,0:00:16.56,Bilingual,,0,0,0,,曲线去哪了？\N{\fs33\c&H00C8C0B8&\bord1.4}Where are the curves?
+Dialogue: 0,0:00:16.61,0:00:18.83,Bilingual,,0,0,0,,这是训练这个模型的那一行代码\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the line that trained this model.
+Dialogue: 0,0:00:19.15,0:00:22.07,Bilingual,,0,0,0,,先记着，过几分钟我们再回来\N{\fs33\c&H00C8C0B8&\bord1.4}Hold that thought; we come back to it in a few minutes.
+Dialogue: 0,0:00:22.32,0:00:26.78,Bilingual,,0,0,0,,角落里的灰色标签，标出每个想法背后的课件\N{\fs33\c&H00C8C0B8&\bord1.4}The gray tag in the corner names the lecture slides behind each idea.
+Dialogue: 0,0:00:27.10,0:00:30.94,Bilingual,,0,0,0,,在课上的路线图里，实验追踪很早就搭好\N{\fs33\c&H00C8C0B8&\bord1.4}On the lecture's roadmap, experiment tracking is set up early,
+Dialogue: 0,0:00:30.94,0:00:34.84,Bilingual,,0,0,0,,和基线模型一起，紧跟在数据收集之后\N{\fs33\c&H00C8C0B8&\bord1.4}together with the baseline models, right after data collection.
+Dialogue: 0,0:00:35.08,0:00:38.18,Bilingual,,0,0,0,,这是第 13 讲的考前版\N{\fs33\c&H00C8C0B8&\bord1.4}This is the exam edition of Lecture 13.
+Dialogue: 0,0:00:38.50,0:00:42.87,Bilingual,,0,0,0,,它沿着训练工作流悄悄出错的五个地方走一遍\N{\fs33\c&H00C8C0B8&\bord1.4}It follows five places where a training workflow quietly breaks:
+Dialogue: 0,0:00:42.87,0:00:47.58,Bilingual,,0,0,0,,run 的记录、包、GPU、batch，还有任务本身\N{\fs33\c&H00C8C0B8&\bord1.4}the run record, the package, the GPUs, the batch, and the job itself.
+Dialogue: 0,0:00:47.83,0:00:51.97,Bilingual,,0,0,0,,每一部分都以一条规则收尾：题目说这个，就想那个\N{\fs33\c&H00C8C0B8&\bord1.4}Each part ends with one rule: if the question says this, think that.
+Dialogue: 0,0:00:52.29,0:00:55.66,Bilingual,,0,0,0,,有三次，屏幕上会出现一道小测风格的题\N{\fs33\c&H00C8C0B8&\bord1.4}Three times, a quiz-style question appears on screen.
+Dialogue: 0,0:00:55.98,0:00:59.99,Bilingual,,0,0,0,,先暂停，选一个答案，再听每个错误选项错在哪\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, pick an answer, and then hear why each wrong option is wrong.
+Dialogue: 0,0:01:00.37,0:01:03.03,Bilingual,,0,0,0,,课上讲了到底为什么要追踪\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture names the reason to track at all.
+Dialogue: 0,0:01:03.35,0:01:09.24,Bilingual,,0,0,0,,题目说实验追踪，就想：这个结果是怎么来的，我能不能重复出来？\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says experiment tracking, think: what produced this result, and can I repeat it?
+Dialogue: 0,0:01:11.58,0:01:13.25,Bilingual,,0,0,0,,一个 run 的记录应该装些什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What should a run record hold?
+Dialogue: 0,0:01:13.57,0:01:15.48,Bilingual,,0,0,0,,课上列了七样\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture lists seven things:
+Dialogue: 0,0:01:15.48,0:01:21.08,Bilingual,,0,0,0,,环境、代码、数据、模型、指标、产物，还有你的笔记\N{\fs33\c&H00C8C0B8&\bord1.4}the environment, the code, the data, the model, the metrics, the artifacts, and your notes.
+Dialogue: 0,0:01:21.55,0:01:23.47,Bilingual,,0,0,0,,其中大部分已经有地方放了\N{\fs33\c&H00C8C0B8&\bord1.4}Most of these already have a home.
+Dialogue: 0,0:01:23.79,0:01:27.11,Bilingual,,0,0,0,,代码在 GitHub，数据在版本管理系统里\N{\fs33\c&H00C8C0B8&\bord1.4}Code lives in GitHub, data in a versioning system,
+Dialogue: 0,0:01:27.11,0:01:31.09,Bilingual,,0,0,0,,环境在 pyproject 文件和 lock 文件里\N{\fs33\c&H00C8C0B8&\bord1.4}and the environment in the pyproject file and the lock file.
+Dialogue: 0,0:01:31.41,0:01:34.22,Bilingual,,0,0,0,,权重、指标和日志，先打个问号\N{\fs33\c&H00C8C0B8&\bord1.4}Weights, metrics and logs get a question mark.
+Dialogue: 0,0:01:34.47,0:01:36.06,Bilingual,,0,0,0,,关于数据，说一句\N{\fs33\c&H00C8C0B8&\bord1.4}One word on data.
+Dialogue: 0,0:01:36.11,0:01:40.04,Bilingual,,0,0,0,,数据版本是一对东西：bucket 里归档的快照\N{\fs33\c&H00C8C0B8&\bord1.4}A data version is a pair: the archived snapshot in a bucket,
+Dialogue: 0,0:01:40.04,0:01:44.17,Bilingual,,0,0,0,,加上给它命名的版本记录，两者靠内容哈希连起来\N{\fs33\c&H00C8C0B8&\bord1.4}and the version record that names it, linked by a content hash.
+Dialogue: 0,0:01:44.49,0:01:48.00,Bilingual,,0,0,0,,而这个训练脚本下载的是数据的一个固定版本\N{\fs33\c&H00C8C0B8&\bord1.4}This trainer instead downloads a fixed release of the data,
+Dialogue: 0,0:01:48.00,0:01:50.15,Bilingual,,0,0,0,,也从不把它写进 config\N{\fs33\c&H00C8C0B8&\bord1.4}and never writes it into the config.
+Dialogue: 0,0:01:50.38,0:01:55.78,Bilingual,,0,0,0,,手工记录总会忘，所以课上用 Weights & Biases 把它自动化\N{\fs33\c&H00C8C0B8&\bord1.4}Recording by hand gets forgotten, so the lecture automates it with Weights & Biases.
+Dialogue: 0,0:01:56.10,0:01:59.64,Bilingual,,0,0,0,,想象一个账本，每个训练 run 是其中一行\N{\fs33\c&H00C8C0B8&\bord1.4}Picture a ledger in which every training run is one row.
+Dialogue: 0,0:01:59.88,0:02:04.43,Bilingual,,0,0,0,,这个 repo 的训练脚本 task.py，用四个调用和这个账本打交道\N{\fs33\c&H00C8C0B8&\bord1.4}The repo trainer, task.py, talks to that ledger in four calls.
+Dialogue: 0,0:02:04.75,0:02:09.08,Bilingual,,0,0,0,,首先它用一个密钥登录，密钥作为命令行参数传入，从不写进代码\N{\fs33\c&H00C8C0B8&\bord1.4}First it logs in with a key passed as a flag, never written in the code.
+Dialogue: 0,0:02:09.32,0:02:14.38,Bilingual,,0,0,0,,然后 wandb.init 开一个新行，带上项目、名字和 config\N{\fs33\c&H00C8C0B8&\bord1.4}Then wandb.init opens a new row, with a project, a name, and a config:
+Dialogue: 0,0:02:14.38,0:02:18.00,Bilingual,,0,0,0,,学习率、epoch 数、batch 大小和模型名\N{\fs33\c&H00C8C0B8&\bord1.4}learning rate, epochs, batch size, and model name.
+Dialogue: 0,0:02:18.32,0:02:21.00,Bilingual,,0,0,0,,它还把这一行设成活跃的 run\N{\fs33\c&H00C8C0B8&\bord1.4}It also makes that row the active run,
+Dialogue: 0,0:02:21.00,0:02:24.53,Bilingual,,0,0,0,,叫 wandb.run 的指针现在就指向它\N{\fs33\c&H00C8C0B8&\bord1.4}and the pointer called wandb.run now points at it.
+Dialogue: 0,0:02:24.77,0:02:29.65,Bilingual,,0,0,0,,训练结束后，脚本再加一个 config 值：执行时间\N{\fs33\c&H00C8C0B8&\bord1.4}After training, the script adds one more config value, the execution time.
+Dialogue: 0,0:02:29.97,0:02:35.16,Bilingual,,0,0,0,,然后 wandb.run.finish 把这一行封存，指针变回空\N{\fs33\c&H00C8C0B8&\bord1.4}Then wandb.run.finish() seals the row, and the pointer falls back to nothing.
+Dialogue: 0,0:02:35.40,0:02:38.33,Bilingual,,0,0,0,,注意这个 run 自己记下了什么\N{\fs33\c&H00C8C0B8&\bord1.4}Notice what this run recorded on its own:
+Dialogue: 0,0:02:38.33,0:02:42.12,Bilingual,,0,0,0,,config，还有 CPU 和内存这样的系统图表\N{\fs33\c&H00C8C0B8&\bord1.4}the config, and system charts such as CPU and memory.
+Dialogue: 0,0:02:42.44,0:02:44.08,Bilingual,,0,0,0,,它没有记录 loss\N{\fs33\c&H00C8C0B8&\bord1.4}It did not record a loss.
+Dialogue: 0,0:02:44.40,0:02:46.64,Bilingual,,0,0,0,,还得有个东西来记录指标\N{\fs33\c&H00C8C0B8&\bord1.4}Something still has to log the metrics.
+Dialogue: 0,0:02:47.48,0:02:50.33,Bilingual,,0,0,0,,题目说 run 的记录，就想\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says record of a run, think:
+Dialogue: 0,0:02:50.33,0:02:54.52,Bilingual,,0,0,0,,init 开启它，logger 写入指标，finish 关闭它\N{\fs33\c&H00C8C0B8&\bord1.4}init opens it, a logger writes the metrics, and finish closes it.
+Dialogue: 0,0:02:54.77,0:02:56.19,Bilingual,,0,0,0,,第一题\N{\fs33\c&H00C8C0B8&\bord1.4}First question.
+Dialogue: 0,0:02:56.24,0:02:59.12,Bilingual,,0,0,0,,这个 run 显示了 config，却没有 loss 曲线\N{\fs33\c&H00C8C0B8&\bord1.4}The run shows its config but no loss curve.
+Dialogue: 0,0:02:59.44,0:03:01.47,Bilingual,,0,0,0,,哪个改动能让它出现 loss 曲线？\N{\fs33\c&H00C8C0B8&\bord1.4}Which change puts a loss curve on it?
+Dialogue: 0,0:03:01.79,0:03:05.20,Bilingual,,0,0,0,,有三个选项，用你已经知道的就能排除\N{\fs33\c&H00C8C0B8&\bord1.4}Three options can be ruled out with what you know already.
+Dialogue: 0,0:03:05.52,0:03:07.12,Bilingual,,0,0,0,,想停的话，就在这里暂停\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here if you want.
+Dialogue: 0,0:03:18.03,0:03:22.74,Bilingual,,0,0,0,,答案是 C：在 fit 的 callbacks 里传入 WandbMetricsLogger\N{\fs33\c&H00C8C0B8&\bord1.4}The answer is C: pass the WandbMetricsLogger in the callbacks of fit,
+Dialogue: 0,0:03:22.74,0:03:24.34,Bilingual,,0,0,0,,并且要在 init 之后创建\N{\fs33\c&H00C8C0B8&\bord1.4}created after init.
+Dialogue: 0,0:03:24.56,0:03:26.82,Bilingual,,0,0,0,,A：名字只是给这一行贴个标签\N{\fs33\c&H00C8C0B8&\bord1.4}A: a name only labels the row.
+Dialogue: 0,0:03:27.14,0:03:31.13,Bilingual,,0,0,0,,B：config 里的一个数，不是跨 epoch 的历史\N{\fs33\c&H00C8C0B8&\bord1.4}B: one number in the config is not a history over epochs.
+Dialogue: 0,0:03:31.45,0:03:33.93,Bilingual,,0,0,0,,D：再登录一次，不会写入任何指标\N{\fs33\c&H00C8C0B8&\bord1.4}D: logging in again writes no metrics.
+Dialogue: 0,0:03:34.17,0:03:37.24,Bilingual,,0,0,0,,这个 callback 就是训练时 Keras 握在手里的一支笔\N{\fs33\c&H00C8C0B8&\bord1.4}A callback is a pen that Keras holds during training.
+Dialogue: 0,0:03:37.56,0:03:40.88,Bilingual,,0,0,0,,每个 epoch 结束时，它调用 wandb.log\N{\fs33\c&H00C8C0B8&\bord1.4}At the end of every epoch it calls wandb.log,
+Dialogue: 0,0:03:40.88,0:03:43.40,Bilingual,,0,0,0,,而这个调用写进 wandb.run\N{\fs33\c&H00C8C0B8&\bord1.4}and that call writes to wandb.run:
+Dialogue: 0,0:03:43.40,0:03:48.72,Bilingual,,0,0,0,,也就是此刻活跃的那一行，不是创建这支笔时的那个 run\N{\fs33\c&H00C8C0B8&\bord1.4}whichever row is active right now, not the run the pen was created with.
+Dialogue: 0,0:03:48.95,0:03:51.32,Bilingual,,0,0,0,,课上的 notebook 正是这么做的\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's notebook does exactly this.
+Dialogue: 0,0:03:51.64,0:03:53.35,Bilingual,,0,0,0,,它先调用 init，再调用 fit\N{\fs33\c&H00C8C0B8&\bord1.4}It calls init, and then fit,
+Dialogue: 0,0:03:53.35,0:03:56.48,Bilingual,,0,0,0,,callbacks 列表里放着 WandbCallback\N{\fs33\c&H00C8C0B8&\bord1.4}with a callbacks list that holds the WandbCallback.
+Dialogue: 0,0:03:56.72,0:03:59.79,Bilingual,,0,0,0,,默认情况下，每个 epoch 写一条历史记录\N{\fs33\c&H00C8C0B8&\bord1.4}By default, that is one history entry per epoch.
+Dialogue: 0,0:04:00.11,0:04:02.26,Bilingual,,0,0,0,,按 batch 记录，只有你要求才会发生\N{\fs33\c&H00C8C0B8&\bord1.4}Per batch happens only if you ask.
+Dialogue: 0,0:04:02.82,0:04:04.42,Bilingual,,0,0,0,,现在做四个实验\N{\fs33\c&H00C8C0B8&\bord1.4}Now four experiments.
+Dialogue: 0,0:04:04.61,0:04:06.12,Bilingual,,0,0,0,,第一个，没有笔\N{\fs33\c&H00C8C0B8&\bord1.4}First, no pen.
+Dialogue: 0,0:04:06.17,0:04:09.26,Bilingual,,0,0,0,,调用 fit 跑两个 epoch，记录栏一直空着\N{\fs33\c&H00C8C0B8&\bord1.4}Fit runs two epochs, and the strip stays empty.
+Dialogue: 0,0:04:09.58,0:04:11.18,Bilingual,,0,0,0,,这就是我们开头那个 run\N{\fs33\c&H00C8C0B8&\bord1.4}That is our opening run.
+Dialogue: 0,0:04:11.40,0:04:13.50,Bilingual,,0,0,0,,第二个：init，fit 两个 epoch\N{\fs33\c&H00C8C0B8&\bord1.4}Second: init, fit for two epochs,
+Dialogue: 0,0:04:13.50,0:04:16.67,Bilingual,,0,0,0,,再 fit 四个，中间没有 finish\N{\fs33\c&H00C8C0B8&\bord1.4}then fit for four more, with no finish in between.
+Dialogue: 0,0:04:16.99,0:04:21.02,Bilingual,,0,0,0,,指针从没动过，所以第三到第六条落在同一行\N{\fs33\c&H00C8C0B8&\bord1.4}The pointer never moved, so ticks three to six land on the same row.
+Dialogue: 0,0:04:21.34,0:04:23.01,Bilingual,,0,0,0,,一个 run，六条记录\N{\fs33\c&H00C8C0B8&\bord1.4}One run, six entries.
+Dialogue: 0,0:04:23.25,0:04:26.48,Bilingual,,0,0,0,,第三个：第一次 fit 之后 finish，再 init 一次\N{\fs33\c&H00C8C0B8&\bord1.4}Third: finish after the first fit, then init again,
+Dialogue: 0,0:04:26.48,0:04:29.20,Bilingual,,0,0,0,,用同一个 callback fit 四个 epoch\N{\fs33\c&H00C8C0B8&\bord1.4}and fit four epochs with the same callback.
+Dialogue: 0,0:04:29.52,0:04:31.76,Bilingual,,0,0,0,,第一行封存了，里面有两条记录\N{\fs33\c&H00C8C0B8&\bord1.4}The first row is sealed with two entries.
+Dialogue: 0,0:04:32.08,0:04:34.44,Bilingual,,0,0,0,,这个 callback 是在第一行时创建的\N{\fs33\c&H00C8C0B8&\bord1.4}The callback was made during row one,
+Dialogue: 0,0:04:34.44,0:04:38.78,Bilingual,,0,0,0,,但它跟着指针走，所以新的一行拿到第一到第四条\N{\fs33\c&H00C8C0B8&\bord1.4}but it follows the pointer, so the new row gets entries one to four.
+Dialogue: 0,0:04:39.02,0:04:42.20,Bilingual,,0,0,0,,第四个：先 finish，然后不重新 init 就再 fit 一次\N{\fs33\c&H00C8C0B8&\bord1.4}Fourth: finish, then fit again without a new init.
+Dialogue: 0,0:04:42.52,0:04:46.82,Bilingual,,0,0,0,,第一个 epoch 训练完，然后笔跟着指针指向空\N{\fs33\c&H00C8C0B8&\bord1.4}The first epoch trains, and then the pen follows the pointer to nothing
+Dialogue: 0,0:04:46.82,0:04:50.15,Bilingual,,0,0,0,,报错停下：你必须先调用 init，再 log\N{\fs33\c&H00C8C0B8&\bord1.4}and stops with an error: you must call init before log.
+Dialogue: 0,0:04:50.47,0:04:52.07,Bilingual,,0,0,0,,哪一行都没收到记录\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing reaches any row.
+Dialogue: 0,0:04:52.25,0:04:55.66,Bilingual,,0,0,0,,没有活跃的 run 时创建这个 logger，会马上报错\N{\fs33\c&H00C8C0B8&\bord1.4}Creating the logger with no active run fails at once.
+Dialogue: 0,0:04:55.90,0:04:57.17,Bilingual,,0,0,0,,回到开头\N{\fs33\c&H00C8C0B8&\bord1.4}Now the hook.
+Dialogue: 0,0:04:57.22,0:04:59.97,Bilingual,,0,0,0,,这个 repo 的训练脚本导入了两个 callback\N{\fs33\c&H00C8C0B8&\bord1.4}The repo trainer imports both callbacks
+Dialogue: 0,0:04:59.97,0:05:01.59,Bilingual,,0,0,0,,却一个也没传给 fit\N{\fs33\c&H00C8C0B8&\bord1.4}but passes none to fit,
+Dialogue: 0,0:05:01.59,0:05:05.61,Bilingual,,0,0,0,,所以它的 run 有 config 和系统图表，却没有曲线\N{\fs33\c&H00C8C0B8&\bord1.4}so its run has a config and system charts, and no curves.
+Dialogue: 0,0:05:05.93,0:05:09.85,Bilingual,,0,0,0,,课上中间那一行，也就是 callback，正是缺的那一行\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's middle line, the callback, is the line that is missing.
+Dialogue: 0,0:05:10.92,0:05:15.67,Bilingual,,0,0,0,,有个细节：这个 notebook 会提示 WandbCallback 已经弃用\N{\fs33\c&H00C8C0B8&\bord1.4}One detail: the notebook warns that the WandbCallback is deprecated.
+Dialogue: 0,0:05:15.99,0:05:20.05,Bilingual,,0,0,0,,要画曲线，它的替代品是 WandbMetricsLogger\N{\fs33\c&H00C8C0B8&\bord1.4}For the curves, its replacement is the WandbMetricsLogger.
+Dialogue: 0,0:05:20.28,0:05:24.21,Bilingual,,0,0,0,,题目问有几条历史记录，就想：每个 epoch 一条\N{\fs33\c&H00C8C0B8&\bord1.4}If the question counts history entries, think: one per epoch,
+Dialogue: 0,0:05:24.21,0:05:27.24,Bilingual,,0,0,0,,写进 epoch 结束时开着的那个 run\N{\fs33\c&H00C8C0B8&\bord1.4}into whichever run is open when the epoch ends.
+Dialogue: 0,0:05:27.56,0:05:30.91,Bilingual,,0,0,0,,一次 finish 结束计数，一次新的 init 开始新的计数\N{\fs33\c&H00C8C0B8&\bord1.4}A finish ends the count, and a new init starts a new one.
+Dialogue: 0,0:05:32.05,0:05:35.90,Bilingual,,0,0,0,,课上分三步把训练从本地搬到云上\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture moves training to the cloud in three steps:
+Dialogue: 0,0:05:35.90,0:05:39.54,Bilingual,,0,0,0,,一个带参数的 Python 文件、bucket 里的一个包\N{\fs33\c&H00C8C0B8&\bord1.4}a Python file with arguments, a package in a bucket,
+Dialogue: 0,0:05:39.54,0:05:41.78,Bilingual,,0,0,0,,以及 Vertex AI 上的一个训练任务\N{\fs33\c&H00C8C0B8&\bord1.4}and a training job on Vertex AI.
+Dialogue: 0,0:05:42.02,0:05:45.85,Bilingual,,0,0,0,,这是 package 目录：setup.py，还有一个 trainer 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the package folder: setup.py, and a trainer folder
+Dialogue: 0,0:05:45.85,0:05:49.36,Bilingual,,0,0,0,,里面是一个空的 init 文件和两个训练脚本\N{\fs33\c&H00C8C0B8&\bord1.4}with an empty init file and the two training scripts.
+Dialogue: 0,0:05:49.60,0:05:51.63,Bilingual,,0,0,0,,这个 setup.py 里有两张清单\N{\fs33\c&H00C8C0B8&\bord1.4}setup.py keeps two lists.
+Dialogue: 0,0:05:51.95,0:05:57.82,Bilingual,,0,0,0,,其中 install requires 是一张购物清单，pip 从 PyPI 下载\N{\fs33\c&H00C8C0B8&\bord1.4}install_requires is a shopping list that pip downloads from the Python Package Index;
+Dialogue: 0,0:05:57.82,0:05:59.97,Bilingual,,0,0,0,,这里只有一个 pin 了版本的 wandb\N{\fs33\c&H00C8C0B8&\bord1.4}here, one pinned wandb version.
+Dialogue: 0,0:06:00.29,0:06:04.53,Bilingual,,0,0,0,,而 find packages 决定你自己的哪些目录会被安装\N{\fs33\c&H00C8C0B8&\bord1.4}find_packages() decides which of your own folders get installed:
+Dialogue: 0,0:06:04.53,0:06:06.58,Bilingual,,0,0,0,,只有带 init 文件的目录\N{\fs33\c&H00C8C0B8&\bord1.4}only folders with an init file.
+Dialogue: 0,0:06:06.82,0:06:09.52,Bilingual,,0,0,0,,打包脚本把 package 目录打成 tar 包\N{\fs33\c&H00C8C0B8&\bord1.4}The packaging script tars the package folder,
+Dialogue: 0,0:06:09.52,0:06:12.28,Bilingual,,0,0,0,,压缩，再复制到你的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}compresses it, and copies it into your bucket.
+Dialogue: 0,0:06:12.60,0:06:15.84,Bilingual,,0,0,0,,提交任务的脚本让 Vertex AI 指向这个文件\N{\fs33\c&H00C8C0B8&\bord1.4}The job script points Vertex AI at that file
+Dialogue: 0,0:06:15.84,0:06:18.42,Bilingual,,0,0,0,,并指定模块：trainer.task\N{\fs33\c&H00C8C0B8&\bord1.4}and names the module: trainer.task.
+Dialogue: 0,0:06:18.67,0:06:20.27,Bilingual,,0,0,0,,关键在这里\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the key fact.
+Dialogue: 0,0:06:20.35,0:06:25.28,Bilingual,,0,0,0,,你自己的 Docker image 负责打包、上传和提交，但从不训练\N{\fs33\c&H00C8C0B8&\bord1.4}Your own Docker image packages, uploads and submits, but it never trains.
+Dialogue: 0,0:06:25.60,0:06:28.52,Bilingual,,0,0,0,,任务跑在 Google 预构建的训练 image 里\N{\fs33\c&H00C8C0B8&\bord1.4}The job runs in Google's prebuilt training image,
+Dialogue: 0,0:06:28.52,0:06:31.51,Bilingual,,0,0,0,,你的代码只能通过 tar 包到达那里\N{\fs33\c&H00C8C0B8&\bord1.4}and your code reaches it only through the tarball.
+Dialogue: 0,0:06:31.75,0:06:36.10,Bilingual,,0,0,0,,这个 image 已经自带 TensorFlow、scikit-learn 和 requests\N{\fs33\c&H00C8C0B8&\bord1.4}That image already ships TensorFlow, scikit-learn and requests,
+Dialogue: 0,0:06:36.10,0:06:40.45,Bilingual,,0,0,0,,所以训练脚本照样能 import 它们，虽然 setup.py 从没写过\N{\fs33\c&H00C8C0B8&\bord1.4}so the trainer imports them although setup.py never names them.
+Dialogue: 0,0:06:40.70,0:06:43.43,Bilingual,,0,0,0,,在跑任务的机器上，pip 把 tar 包解开\N{\fs33\c&H00C8C0B8&\bord1.4}On the job machine, pip unwraps the tarball.
+Dialogue: 0,0:06:43.75,0:06:47.95,Bilingual,,0,0,0,,购物清单拉来 wandb，trainer 包被安装好\N{\fs33\c&H00C8C0B8&\bord1.4}The shopping list fetches wandb, and the trainer package is installed.
+Dialogue: 0,0:06:48.27,0:06:51.52,Bilingual,,0,0,0,,然后 Vertex 运行：python -m trainer.task\N{\fs33\c&H00C8C0B8&\bord1.4}Then Vertex runs python -m trainer.task.
+Dialogue: 0,0:06:51.75,0:06:54.64,Bilingual,,0,0,0,,现在加一个队友写的模块 augment.py\N{\fs33\c&H00C8C0B8&\bord1.4}Now add a teammate's module, augment.py,
+Dialogue: 0,0:06:54.64,0:06:57.89,Bilingual,,0,0,0,,一个编出来的例子，放在 package 目录旁边\N{\fs33\c&H00C8C0B8&\bord1.4}a made-up example, beside the package folder.
+Dialogue: 0,0:06:58.21,0:07:02.63,Bilingual,,0,0,0,,脚本只打包那个目录，所以这个模块从没离开你的笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}The script tars only that folder, so the module never leaves your laptop.
+Dialogue: 0,0:07:02.95,0:07:06.19,Bilingual,,0,0,0,,如果改放在 setup.py 旁边，它会跟着走\N{\fs33\c&H00C8C0B8&\bord1.4}Placed next to setup.py instead, it travels,
+Dialogue: 0,0:07:06.19,0:07:08.33,Bilingual,,0,0,0,,但 find packages 会跳过它\N{\fs33\c&H00C8C0B8&\bord1.4}but find_packages() skips it.
+Dialogue: 0,0:07:09.07,0:07:11.26,Bilingual,,0,0,0,,任务执行到 import augment\N{\fs33\c&H00C8C0B8&\bord1.4}The task reaches import augment;
+Dialogue: 0,0:07:11.26,0:07:14.70,Bilingual,,0,0,0,,Python 在导入路径里找，什么也没找到\N{\fs33\c&H00C8C0B8&\bord1.4}Python searches its import path and finds nothing.
+Dialogue: 0,0:07:15.02,0:07:20.37,Bilingual,,0,0,0,,ModuleNotFoundError，就在写着依赖全部装好的那一行下面\N{\fs33\c&H00C8C0B8&\bord1.4}ModuleNotFoundError, right under the line that says every dependency installed.
+Dialogue: 0,0:07:20.69,0:07:24.62,Bilingual,,0,0,0,,在本地它能跑，因为文件就在你运行命令的那个目录里\N{\fs33\c&H00C8C0B8&\bord1.4}Locally it worked, because the file sat in the folder you ran from.
+Dialogue: 0,0:07:24.87,0:07:29.94,Bilingual,,0,0,0,,修法：把文件放进 trainer 目录，或者在 setup.py 里列出来\N{\fs33\c&H00C8C0B8&\bord1.4}The fix: put the file inside the trainer folder, or list it in setup.py.
+Dialogue: 0,0:07:30.26,0:07:34.30,Bilingual,,0,0,0,,只加一行 import 什么也带不过去；文件得跟着走\N{\fs33\c&H00C8C0B8&\bord1.4}A new import line alone moves nothing; the file has to travel.
+Dialogue: 0,0:07:34.53,0:07:36.94,Bilingual,,0,0,0,,把它加到 install requires 里是错的\N{\fs33\c&H00C8C0B8&\bord1.4}Adding it to install_requires is wrong.
+Dialogue: 0,0:07:37.26,0:07:41.71,Bilingual,,0,0,0,,那张清单从 PyPI 下载，绝不会从你的 tar 包里拿\N{\fs33\c&H00C8C0B8&\bord1.4}That list downloads from the Python Package Index, never from your tarball,
+Dialogue: 0,0:07:41.71,0:07:45.50,Bilingual,,0,0,0,,而那里同名的包，会是别人的代码\N{\fs33\c&H00C8C0B8&\bord1.4}and a package there with that name would be someone else's code.
+Dialogue: 0,0:07:45.73,0:07:51.10,Bilingual,,0,0,0,,题目说依赖都装好了却报 ModuleNotFoundError，就想\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says dependencies installed but ModuleNotFoundError, think:
+Dialogue: 0,0:07:51.10,0:07:55.76,Bilingual,,0,0,0,,这个文件没有跟着 setup.py 打的包一起走\N{\fs33\c&H00C8C0B8&\bord1.4}the file never travelled inside the package that setup.py builds.
+Dialogue: 0,0:07:57.00,0:07:59.90,Bilingual,,0,0,0,,课上把训练硬件分成三种形态\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture sorts training hardware into three shapes.
+Dialogue: 0,0:08:00.22,0:08:04.25,Bilingual,,0,0,0,,一台机器、一块 GPU，用 OneDeviceStrategy\N{\fs33\c&H00C8C0B8&\bord1.4}One machine with one GPU uses OneDeviceStrategy.
+Dialogue: 0,0:08:04.57,0:08:08.48,Bilingual,,0,0,0,,一台机器、多块 GPU，用 MirroredStrategy\N{\fs33\c&H00C8C0B8&\bord1.4}One machine with several GPUs uses MirroredStrategy.
+Dialogue: 0,0:08:08.80,0:08:12.25,Bilingual,,0,0,0,,多台机器，用 MultiWorkerMirroredStrategy\N{\fs33\c&H00C8C0B8&\bord1.4}Several machines use MultiWorkerMirroredStrategy.
+Dialogue: 0,0:08:12.50,0:08:14.46,Bilingual,,0,0,0,,这个 repo 在中间那一行\N{\fs33\c&H00C8C0B8&\bord1.4}The repo sits on the middle row.
+Dialogue: 0,0:08:14.78,0:08:19.82,Bilingual,,0,0,0,,它的多 GPU 脚本向 Vertex AI 要一台机器\N{\fs33\c&H00C8C0B8&\bord1.4}Its multi GPU script asks Vertex AI for one machine,
+Dialogue: 0,0:08:19.82,0:08:23.51,Bilingual,,0,0,0,,机型 n1-standard-32，带两块 T4 GPU\N{\fs33\c&H00C8C0B8&\bord1.4}type n1-standard-32, with two T4 GPUs.
+Dialogue: 0,0:08:23.83,0:08:26.73,Bilingual,,0,0,0,,那里的副本数为 1，意思是一台机器\N{\fs33\c&H00C8C0B8&\bord1.4}A replica count of one there means one machine.
+Dialogue: 0,0:08:26.97,0:08:32.57,Bilingual,,0,0,0,,训练脚本创建 MirroredStrategy，再问有多少个副本在同步\N{\fs33\c&H00C8C0B8&\bord1.4}The trainer creates the MirroredStrategy and asks how many replicas are in sync:
+Dialogue: 0,0:08:32.57,0:08:34.17,Bilingual,,0,0,0,,每块 GPU 一个，所以是两个\N{\fs33\c&H00C8C0B8&\bord1.4}one per GPU, so two.
+Dialogue: 0,0:08:34.39,0:08:38.96,Bilingual,,0,0,0,,然后它在 strategy.scope 里构建并编译模型\N{\fs33\c&H00C8C0B8&\bord1.4}Then it builds and compiles the model inside strategy.scope(),
+Dialogue: 0,0:08:38.96,0:08:44.05,Bilingual,,0,0,0,,所以每个权重和优化器变量都被复制，每块 GPU 一份\N{\fs33\c&H00C8C0B8&\bord1.4}so every weight and optimizer variable is mirrored, one copy per GPU.
+Dialogue: 0,0:08:44.30,0:08:45.90,Bilingual,,0,0,0,,这是一个训练步\N{\fs33\c&H00C8C0B8&\bord1.4}Here is one training step.
+Dialogue: 0,0:08:46.22,0:08:50.68,Bilingual,,0,0,0,,每块 GPU 拿自己那一份 batch，算出一个梯度\N{\fs33\c&H00C8C0B8&\bord1.4}Each GPU takes its own slice of the batch and computes a gradient.
+Dialogue: 0,0:08:51.00,0:08:54.08,Bilingual,,0,0,0,,这些梯度在 all-reduce 里汇合、取平均\N{\fs33\c&H00C8C0B8&\bord1.4}The gradients meet in an all-reduce and are averaged,
+Dialogue: 0,0:08:54.08,0:08:56.70,Bilingual,,0,0,0,,同一份更新再发回两份拷贝\N{\fs33\c&H00C8C0B8&\bord1.4}and the same update goes back to both copies.
+Dialogue: 0,0:08:56.93,0:09:00.42,Bilingual,,0,0,0,,现在换成两台机器，每台跑自己的 MirroredStrategy\N{\fs33\c&H00C8C0B8&\bord1.4}Now two machines, each running its own MirroredStrategy
+Dialogue: 0,0:09:00.42,0:09:02.27,Bilingual,,0,0,0,,用的是自己那份数据分片\N{\fs33\c&H00C8C0B8&\bord1.4}on its own shard of the data.
+Dialogue: 0,0:09:02.59,0:09:07.41,Bilingual,,0,0,0,,每台机器内部，环是通的，但两台机器之间没有连线\N{\fs33\c&H00C8C0B8&\bord1.4}Inside each machine the ring works, but between the machines there is no wire.
+Dialogue: 0,0:09:07.73,0:09:12.10,Bilingual,,0,0,0,,几步之后，它们的权重就不一样了：是两个独立的模型，不是一个\N{\fs33\c&H00C8C0B8&\bord1.4}After a few steps they hold different weights: two separate models, not one.
+Dialogue: 0,0:09:12.35,0:09:17.00,Bilingual,,0,0,0,,要跨机器训练一个模型，用 MultiWorkerMirroredStrategy\N{\fs33\c&H00C8C0B8&\bord1.4}To train one model across machines, use MultiWorkerMirroredStrategy.
+Dialogue: 0,0:09:17.32,0:09:19.43,Bilingual,,0,0,0,,每台机器读取一份 TF config\N{\fs33\c&H00C8C0B8&\bord1.4}Each machine reads a TF_CONFIG:
+Dialogue: 0,0:09:19.43,0:09:23.51,Bilingual,,0,0,0,,所有 worker 的列表，以及它自己在列表里的索引\N{\fs33\c&H00C8C0B8&\bord1.4}the list of all the workers, and its own index in that list.
+Dialogue: 0,0:09:23.83,0:09:29.84,Bilingual,,0,0,0,,分片和之前一样；唯一的变化是这根连线，现在每份拷贝都保持一致\N{\fs33\c&H00C8C0B8&\bord1.4}Same shards as before; the only change is the wire, and now every copy stays the same.
+Dialogue: 0,0:09:31.45,0:09:33.20,Bilingual,,0,0,0,,这个 repo 没用它\N{\fs33\c&H00C8C0B8&\bord1.4}The repo does not use it;
+Dialogue: 0,0:09:33.20,0:09:37.76,Bilingual,,0,0,0,,在 Vertex AI 上多出来的机器会放进第二个 worker pool\N{\fs33\c&H00C8C0B8&\bord1.4}on Vertex AI the extra machines would go in a second worker pool,
+Dialogue: 0,0:09:37.76,0:09:40.43,Bilingual,,0,0,0,,Vertex 会替你设好 TF config\N{\fs33\c&H00C8C0B8&\bord1.4}and Vertex sets the TF_CONFIG for you.
+Dialogue: 0,0:09:40.75,0:09:43.87,Bilingual,,0,0,0,,还有一个命名陷阱：repo 和课上一样\N{\fs33\c&H00C8C0B8&\bord1.4}One naming trap: the repo, like the lecture,
+Dialogue: 0,0:09:43.87,0:09:48.90,Bilingual,,0,0,0,,把副本数叫作 num workers，但它数的是一台机器上的 GPU\N{\fs33\c&H00C8C0B8&\bord1.4}calls its replica count num_workers, but it counts GPUs on one machine.
+Dialogue: 0,0:09:49.15,0:09:53.10,Bilingual,,0,0,0,,题目说多台机器必须训练同一个模型，就想\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says several machines must train one model,
+Dialogue: 0,0:09:53.10,0:09:56.38,Bilingual,,0,0,0,,MultiWorkerMirroredStrategy 加 TF config\N{\fs33\c&H00C8C0B8&\bord1.4}think MultiWorkerMirroredStrategy with TF_CONFIG.
+Dialogue: 0,0:09:56.70,0:09:59.90,Bilingual,,0,0,0,,MirroredStrategy 从不越过自己这台机器\N{\fs33\c&H00C8C0B8&\bord1.4}A MirroredStrategy never looks past its own machine.
+Dialogue: 0,0:10:01.15,0:10:02.49,Bilingual,,0,0,0,,再看 batch\N{\fs33\c&H00C8C0B8&\bord1.4}Now the batch.
+Dialogue: 0,0:10:02.54,0:10:07.38,Bilingual,,0,0,0,,在策略下，dataset.batch 产出的就是全局 batch\N{\fs33\c&H00C8C0B8&\bord1.4}Under a strategy, whatever dataset.batch produces is the global batch,
+Dialogue: 0,0:10:07.38,0:10:09.32,Bilingual,,0,0,0,,也就是一步用的整个托盘\N{\fs33\c&H00C8C0B8&\bord1.4}the whole tray for one step.
+Dialogue: 0,0:10:09.64,0:10:13.91,Bilingual,,0,0,0,,策略把这个托盘切成相等的几份，每个副本一份\N{\fs33\c&H00C8C0B8&\bord1.4}The strategy cuts that tray into equal slices, one per replica.
+Dialogue: 0,0:10:15.02,0:10:20.50,Bilingual,,0,0,0,,所以每个副本的 batch 等于全局 batch 除以同步的副本数\N{\fs33\c&H00C8C0B8&\bord1.4}So the per replica batch is the global batch divided by the number of replicas in sync.
+Dialogue: 0,0:10:20.82,0:10:25.88,Bilingual,,0,0,0,,反过来，全局 batch 就是每个副本的 batch 乘以副本数\N{\fs33\c&H00C8C0B8&\bord1.4}Turn it around, and the global batch is the per replica batch times the replicas.
+Dialogue: 0,0:10:26.12,0:10:29.89,Bilingual,,0,0,0,,假设有 8 个副本，你想让每个副本拿到 16 个样本\N{\fs33\c&H00C8C0B8&\bord1.4}Take 8 replicas, and say you want 16 examples on each.
+Dialogue: 0,0:10:30.21,0:10:33.50,Bilingual,,0,0,0,,按 16 分 batch，每块 GPU 只拿到 2 个\N{\fs33\c&H00C8C0B8&\bord1.4}Batch by 16, and each GPU gets only 2.
+Dialogue: 0,0:10:33.82,0:10:35.61,Bilingual,,0,0,0,,按 128 分 batch\N{\fs33\c&H00C8C0B8&\bord1.4}Batch by 128.
+Dialogue: 0,0:10:35.93,0:10:37.72,Bilingual,,0,0,0,,每块 GPU 拿到 16 个\N{\fs33\c&H00C8C0B8&\bord1.4}Each GPU gets 16.
+Dialogue: 0,0:10:38.57,0:10:41.13,Bilingual,,0,0,0,,这个 repo 做的是同样的乘法\N{\fs33\c&H00C8C0B8&\bord1.4}The repo does the same multiplication.
+Dialogue: 0,0:10:41.45,0:10:45.50,Bilingual,,0,0,0,,它拿 batch 大小参数乘以副本数\N{\fs33\c&H00C8C0B8&\bord1.4}It takes the batch size flag, multiplies it by the replica count,
+Dialogue: 0,0:10:45.50,0:10:48.19,Bilingual,,0,0,0,,再把乘积交给数据 pipeline\N{\fs33\c&H00C8C0B8&\bord1.4}and hands the product to the data pipeline.
+Dialogue: 0,0:10:48.51,0:10:52.30,Bilingual,,0,0,0,,它自己的注释就写着：batch 期望的是全局 batch 大小\N{\fs33\c&H00C8C0B8&\bord1.4}Its own comment says it: batch expects the global batch size.
+Dialogue: 0,0:10:53.55,0:10:55.06,Bilingual,,0,0,0,,第二题\N{\fs33\c&H00C8C0B8&\bord1.4}Second question.
+Dialogue: 0,0:10:55.11,0:10:59.39,Bilingual,,0,0,0,,这个 repo 的多 GPU 训练脚本现在跑在 4 块 GPU 上\N{\fs33\c&H00C8C0B8&\bord1.4}The repo's multi GPU trainer now runs on 4 GPUs,
+Dialogue: 0,0:10:59.39,0:11:01.98,Bilingual,,0,0,0,,batch 大小参数是 32\N{\fs33\c&H00C8C0B8&\bord1.4}with a batch size flag of 32.
+Dialogue: 0,0:11:02.30,0:11:06.03,Bilingual,,0,0,0,,全局 batch 是多少，每块 GPU 每一步看到多少？\N{\fs33\c&H00C8C0B8&\bord1.4}What is the global batch, and what does each GPU see per step?
+Dialogue: 0,0:11:06.35,0:11:07.95,Bilingual,,0,0,0,,想停的话，就在这里暂停\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here if you want.
+Dialogue: 0,0:11:18.55,0:11:20.12,Bilingual,,0,0,0,,答案是 B\N{\fs33\c&H00C8C0B8&\bord1.4}The answer is B.
+Dialogue: 0,0:11:20.17,0:11:29.26,Bilingual,,0,0,0,,训练脚本先做乘法：32 乘 4 等于 128，策略再把 128 分成四份\N{\fs33\c&H00C8C0B8&\bord1.4}The trainer multiplies first: 32 times 4 is 128, and the strategy splits 128 four ways,
+Dialogue: 0,0:11:29.26,0:11:31.35,Bilingual,,0,0,0,,所以每块 GPU 看到 32 个\N{\fs33\c&H00C8C0B8&\bord1.4}so each GPU sees 32.
+Dialogue: 0,0:11:31.67,0:11:34.27,Bilingual,,0,0,0,,A：这是一个从没做乘法的脚本\N{\fs33\c&H00C8C0B8&\bord1.4}A: that is a script that never multiplied.
+Dialogue: 0,0:11:34.59,0:11:38.62,Bilingual,,0,0,0,,C：这个参数是每个副本的大小，不是全局 batch\N{\fs33\c&H00C8C0B8&\bord1.4}C: the flag is the per replica size, not the global batch.
+Dialogue: 0,0:11:38.94,0:11:43.00,Bilingual,,0,0,0,,D：全局 batch 是被切分的，不是复制给每块 GPU\N{\fs33\c&H00C8C0B8&\bord1.4}D: the global batch is split, not copied to every GPU.
+Dialogue: 0,0:11:43.73,0:11:47.58,Bilingual,,0,0,0,,题目说每个副本，就先乘再分 batch\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says per replica, multiply before you batch:
+Dialogue: 0,0:11:47.58,0:11:51.50,Bilingual,,0,0,0,,全局 batch 等于每个副本的 batch 乘以副本数\N{\fs33\c&H00C8C0B8&\bord1.4}the global batch is the per replica batch times the replicas.
+Dialogue: 0,0:11:52.63,0:11:54.18,Bilingual,,0,0,0,,最后一个机制\N{\fs33\c&H00C8C0B8&\bord1.4}Last mechanism.
+Dialogue: 0,0:11:54.23,0:11:58.22,Bilingual,,0,0,0,,假设一个网页应用有个重新训练的按钮，训练要一个小时\N{\fs33\c&H00C8C0B8&\bord1.4}Suppose a web app has a retrain button, and training takes an hour.
+Dialogue: 0,0:11:58.54,0:12:00.14,Bilingual,,0,0,0,,这一个小时应该在哪里跑？\N{\fs33\c&H00C8C0B8&\bord1.4}Where should that hour run?
+Dialogue: 0,0:12:00.22,0:12:03.78,Bilingual,,0,0,0,,每一段工作，都只活得和承载它的东西一样久\N{\fs33\c&H00C8C0B8&\bord1.4}Every piece of work lives as long as the thing that holds it.
+Dialogue: 0,0:12:04.10,0:12:07.88,Bilingual,,0,0,0,,放在请求处理函数里，它会在请求超时的时候死掉\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the request handler, it dies at the request timeout.
+Dialogue: 0,0:12:08.12,0:12:12.30,Bilingual,,0,0,0,,放在服务器线程里，它只能活到这个服务器实例结束\N{\fs33\c&H00C8C0B8&\bord1.4}In a server thread, it lives only as long as that server instance,
+Dialogue: 0,0:12:12.30,0:12:15.22,Bilingual,,0,0,0,,而平台想什么时候回收它就什么时候回收\N{\fs33\c&H00C8C0B8&\bord1.4}which the platform recycles whenever it likes.
+Dialogue: 0,0:12:15.47,0:12:18.39,Bilingual,,0,0,0,,把客户端超时调长，调的是错的那个时钟\N{\fs33\c&H00C8C0B8&\bord1.4}A longer client timeout moves the wrong clock.
+Dialogue: 0,0:12:18.71,0:12:21.90,Bilingual,,0,0,0,,服务器和代理照样会切断请求\N{\fs33\c&H00C8C0B8&\bord1.4}The server and the proxies still cut the request,
+Dialogue: 0,0:12:21.90,0:12:24.90,Bilingual,,0,0,0,,而休眠的笔记本无论如何都会丢掉结果\N{\fs33\c&H00C8C0B8&\bord1.4}and a sleeping laptop loses the answer anyway.
+Dialogue: 0,0:12:25.13,0:12:31.41,Bilingual,,0,0,0,,而 W&B 根本不是时钟：它记录 run，但没有执行它们的引擎\N{\fs33\c&H00C8C0B8&\bord1.4}And W&B is not a clock at all: it logs runs, but has no engine to execute them.
+Dialogue: 0,0:12:31.65,0:12:37.15,Bilingual,,0,0,0,,正确的设计：处理函数提交一个持久的任务，马上返回它的 ID\N{\fs33\c&H00C8C0B8&\bord1.4}The right design: the handler submits a durable job and returns its id at once.
+Dialogue: 0,0:12:37.47,0:12:41.84,Bilingual,,0,0,0,,任务依次经过 QUEUED、PENDING、RUNNING、SUCCEEDED\N{\fs33\c&H00C8C0B8&\bord1.4}The job moves through its states, queued, pending, running, succeeded,
+Dialogue: 0,0:12:41.84,0:12:44.71,Bilingual,,0,0,0,,在自己的机器上，只在运行时计费\N{\fs33\c&H00C8C0B8&\bord1.4}on its own machine, billed only while it runs.
+Dialogue: 0,0:12:45.03,0:12:48.33,Bilingual,,0,0,0,,有项目权限的任何人都可以轮询这个 ID\N{\fs33\c&H00C8C0B8&\bord1.4}Anyone with access to the project can poll the id.
+Dialogue: 0,0:12:51.23,0:12:53.82,Bilingual,,0,0,0,,这就是课上讲的无服务器训练\N{\fs33\c&H00C8C0B8&\bord1.4}That is the lecture's serverless training:
+Dialogue: 0,0:12:53.82,0:12:58.02,Bilingual,,0,0,0,,硬件只为训练这一步租用，也没有服务器要管\N{\fs33\c&H00C8C0B8&\bord1.4}hardware rented only for the training step, and no server to manage.
+Dialogue: 0,0:12:58.34,0:13:01.69,Bilingual,,0,0,0,,机器还是有的；只是它的生命周期不归你管\N{\fs33\c&H00C8C0B8&\bord1.4}There is still a machine; you just do not own its lifetime.
+Dialogue: 0,0:13:01.93,0:13:04.67,Bilingual,,0,0,0,,在 repo 里，这张工单就是一条命令\N{\fs33\c&H00C8C0B8&\bord1.4}In the repo, the ticket is one command,
+Dialogue: 0,0:13:04.67,0:13:06.70,Bilingual,,0,0,0,,gcloud ai custom-jobs create\N{\fs33\c&H00C8C0B8&\bord1.4}gcloud ai custom-jobs create,
+Dialogue: 0,0:13:06.70,0:13:11.47,Bilingual,,0,0,0,,再带上区域、名字和 bucket 里的包，以及一个 worker pool\N{\fs33\c&H00C8C0B8&\bord1.4}with a region, a name, the package in the bucket, and a worker pool:
+Dialogue: 0,0:13:11.47,0:13:15.39,Bilingual,,0,0,0,,机器类型、副本数、预构建的 image 和模块\N{\fs33\c&H00C8C0B8&\bord1.4}machine type, replica count, prebuilt image, and module.
+Dialogue: 0,0:13:16.23,0:13:17.66,Bilingual,,0,0,0,,第三题\N{\fs33\c&H00C8C0B8&\bord1.4}Third question.
+Dialogue: 0,0:13:17.71,0:13:21.67,Bilingual,,0,0,0,,你的自定义任务显示 RUNNING，你合上笔记本过夜\N{\fs33\c&H00C8C0B8&\bord1.4}Your custom job shows running, and you close the laptop for the night.
+Dialogue: 0,0:13:21.99,0:13:23.59,Bilingual,,0,0,0,,训练会怎样？\N{\fs33\c&H00C8C0B8&\bord1.4}What happens to the training?
+Dialogue: 0,0:13:23.87,0:13:25.47,Bilingual,,0,0,0,,想停的话，就在这里暂停\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here if you want.
+Dialogue: 0,0:13:36.08,0:13:41.10,Bilingual,,0,0,0,,答案是 B：它在自己的机器上一直跑，直到完成或失败\N{\fs33\c&H00C8C0B8&\bord1.4}The answer is B: it keeps running on its own machine until it finishes or fails.
+Dialogue: 0,0:13:41.42,0:13:44.36,Bilingual,,0,0,0,,A：CLI container 只负责提交\N{\fs33\c&H00C8C0B8&\bord1.4}A: the CLI container only submitted it.
+Dialogue: 0,0:13:44.68,0:13:48.35,Bilingual,,0,0,0,,C：W&B 只做记录；它从不驱动训练\N{\fs33\c&H00C8C0B8&\bord1.4}C: W&B only logs; it never drives training.
+Dialogue: 0,0:13:48.67,0:13:51.72,Bilingual,,0,0,0,,D：你的笔记本上不保存任务的状态\N{\fs33\c&H00C8C0B8&\bord1.4}D: nothing on your laptop holds the job's state.
+Dialogue: 0,0:13:52.47,0:13:56.87,Bilingual,,0,0,0,,题目说训练要跑得比请求还久，就想\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says training takes longer than the request, think:
+Dialogue: 0,0:13:56.87,0:13:59.89,Bilingual,,0,0,0,,提交一个持久的任务，返回它的 ID，然后轮询\N{\fs33\c&H00C8C0B8&\bord1.4}submit a durable job, return its id, and poll.
+Dialogue: 0,0:14:00.21,0:14:02.15,Bilingual,,0,0,0,,W&B 只是旁观\N{\fs33\c&H00C8C0B8&\bord1.4}W&B only watches.
+Dialogue: 0,0:14:03.30,0:14:04.90,Bilingual,,0,0,0,,周二要记住的六条规则\N{\fs33\c&H00C8C0B8&\bord1.4}Six rules for Tuesday.
+Dialogue: 0,0:14:05.22,0:14:09.99,Bilingual,,0,0,0,,第一条：callback 每个 epoch 往活跃的 run 里记一条\N{\fs33\c&H00C8C0B8&\bord1.4}Rule one: a callback logs one entry per epoch into the active run;
+Dialogue: 0,0:14:09.99,0:14:12.82,Bilingual,,0,0,0,,init 开启 run，finish 关闭它\N{\fs33\c&H00C8C0B8&\bord1.4}init opens a run, and finish closes it.
+Dialogue: 0,0:14:13.05,0:14:16.85,Bilingual,,0,0,0,,第二条：pip 只安装 setup.py 声明的东西\N{\fs33\c&H00C8C0B8&\bord1.4}Rule two: pip installs only what setup.py declares;
+Dialogue: 0,0:14:16.85,0:14:23.03,Bilingual,,0,0,0,,你自己的模块必须在它打出的包里，而不只是在 tar 包里\N{\fs33\c&H00C8C0B8&\bord1.4}your own modules must be inside the package it builds, not just inside the tarball.
+Dialogue: 0,0:14:23.28,0:14:27.86,Bilingual,,0,0,0,,第三条：MirroredStrategy 管一台机器的 GPU\N{\fs33\c&H00C8C0B8&\bord1.4}Rule three: a MirroredStrategy covers the GPUs of one machine;
+Dialogue: 0,0:14:27.86,0:14:32.59,Bilingual,,0,0,0,,跨机器，用 MultiWorkerMirroredStrategy 加 TF config\N{\fs33\c&H00C8C0B8&\bord1.4}across machines, use MultiWorkerMirroredStrategy with TF_CONFIG,
+Dialogue: 0,0:14:32.59,0:14:36.21,Bilingual,,0,0,0,,因为独立的策略训出独立的模型\N{\fs33\c&H00C8C0B8&\bord1.4}because separate strategies make separate models.
+Dialogue: 0,0:14:36.45,0:14:41.77,Bilingual,,0,0,0,,第四条：在策略下，dataset.batch 产出的是全局 batch\N{\fs33\c&H00C8C0B8&\bord1.4}Rule four: under a strategy, what dataset.batch makes is the global batch,
+Dialogue: 0,0:14:41.77,0:14:44.21,Bilingual,,0,0,0,,切分给同步的各个副本\N{\fs33\c&H00C8C0B8&\bord1.4}split across the replicas in sync.
+Dialogue: 0,0:14:44.45,0:14:48.72,Bilingual,,0,0,0,,第五条：长时间训练要交给一个有 ID 的持久任务\N{\fs33\c&H00C8C0B8&\bord1.4}Rule five: long training goes to a durable job with an id,
+Dialogue: 0,0:14:48.72,0:14:53.13,Bilingual,,0,0,0,,绝不放进请求处理函数、线程，或者更长的超时\N{\fs33\c&H00C8C0B8&\bord1.4}never into a request handler, a thread, or a longer timeout.
+Dialogue: 0,0:14:53.37,0:14:59.06,Bilingual,,0,0,0,,第六条：数据版本，就是归档的快照，加上指向它的记录\N{\fs33\c&H00C8C0B8&\bord1.4}Rule six: a data version is an archived snapshot plus the record that points at it.
+Dialogue: 0,0:14:59.30,0:15:03.07,Bilingual,,0,0,0,,课上一开始讲了让深度学习变好的三个杠杆\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture began with three levers for better deep learning:
+Dialogue: 0,0:15:03.07,0:15:05.91,Bilingual,,0,0,0,,更多数据、更好的模型、更快的硬件\N{\fs33\c&H00C8C0B8&\bord1.4}more data, better models, and faster hardware.
+Dialogue: 0,0:15:06.23,0:15:10.67,Bilingual,,0,0,0,,今天讲的是硬件这个杠杆，外加能看出它有没有用的记账\N{\fs33\c&H00C8C0B8&\bord1.4}Today was the hardware lever, plus the bookkeeping that shows whether it helped.
+Dialogue: 0,0:15:10.99,0:15:12.59,Bilingual,,0,0,0,,祝你周二考试顺利\N{\fs33\c&H00C8C0B8&\bord1.4}Good luck on Tuesday.

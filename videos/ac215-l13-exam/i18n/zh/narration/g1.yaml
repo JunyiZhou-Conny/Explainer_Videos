@@ -1,0 +1,458 @@
+# zh narration for S01-S08 (the whole exam edition, one part, group g1: the run record, the package, the GPUs, the
+# batch, the job), sentence-aligned to script.md v2: one zh sentence per English sentence
+# (explainer.voice.split_sentences; 73 SAY lines, 176 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml
+# (binding).
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is shown
+# on the English timing, so each sentence keeps the English clause order and about its length (D8, D9: S04[5] keeps
+# 虽然 after the main clause, S07[1] keeps 放在请求处理函数里 first, S07[9] keeps 直到 at the end).
+# Underscore names and code expressions are written the way the SAY speaks them (rule A6: install requires, find
+# packages, num workers, TF config, strategy.scope, wandb.run.finish); no brackets and no symbols the checker refuses
+# (B3: 32 乘 4 等于 128, 除以, 乘以). Numbers as on screen (C1: 第 13 讲, 8 个副本, 16, 128, 4 块 GPU, 32, 副本数为 1);
+# narrative counts in Hanzi (七样, 四个调用, 两张清单, 两块 T4 GPU, 六条记录, 三个杠杆). Commands sit at the end of a
+# clause, after a full-width colon (G3: python -m trainer.task, gcloud ai custom-jobs create). No sentence opens with
+# an artifact or a lower-case kept-English word (A5). Fixed phrases per D6 (题目说……，就想……; 第一题。; 答案是 C：……;
+# 想停的话，就在这里暂停。). The ponder lead-ins (S02[9], S06[4], S07[8]) give nothing away (A9).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: Weights & Biases, W&B,
+# task.py, wandb.init, wandb.run, wandb.run.finish(), wandb.log, WandbMetricsLogger, WandbCallback, setup.py,
+# install_requires, find_packages(), trainer.task, python -m trainer.task, augment.py, ModuleNotFoundError,
+# OneDeviceStrategy, MirroredStrategy, MultiWorkerMirroredStrategy, n1-standard-32, strategy.scope(), TF_CONFIG,
+# num_workers, dataset.batch, gcloud ai custom-jobs create); null = the SAY text.
+S01:
+- en: "Here is a training run that finished without a single error. The job succeeded, and the run exists in Weights and Biases. Its config is there, and so are its system charts."
+  zh:
+  - "这是一个训练 run，跑完了，一个报错都没有。"
+  - "任务成功了，这个 run 也在 Weights & Biases 里。"
+  - "它的 config 在，系统图表也在。"
+  en_display:
+  - null
+  - "The job succeeded, and the run exists in Weights & Biases."
+  - null
+- en: "But there is no loss chart, and no accuracy chart. Where are the curves? Here is the line that trained this model. Hold that thought; we come back to it in a few minutes."
+  zh:
+  - "但是没有 loss 图，也没有准确率图。"
+  - "曲线去哪了？"
+  - "这是训练这个模型的那一行代码。"
+  - "先记着，过几分钟我们再回来。"
+- en: "The gray tag in the corner names the lecture slides behind each idea. On the lecture's roadmap, experiment tracking is set up early, together with the baseline models, right after data collection."
+  zh:
+  - "角落里的灰色标签，标出每个想法背后的课件。"
+  - "在课上的路线图里，实验追踪很早就搭好，和基线模型一起，紧跟在数据收集之后。"
+- en: "This is the exam edition of Lecture 13. It follows five places where a training workflow quietly breaks: the run record, the package, the GPUs, the batch, and the job itself."
+  zh:
+  - "这是第 13 讲的考前版。"
+  - "它沿着训练工作流悄悄出错的五个地方走一遍：run 的记录、包、GPU、batch，还有任务本身。"
+- en: "Each part ends with one rule: if the question says this, think that. Three times, a quiz-style question appears on screen. Pause, pick an answer, and then hear why each wrong option is wrong."
+  zh:
+  - "每一部分都以一条规则收尾：题目说这个，就想那个。"
+  - "有三次，屏幕上会出现一道小测风格的题。"
+  - "先暂停，选一个答案，再听每个错误选项错在哪。"
+- en: "The lecture names the reason to track at all. If the question says experiment tracking, think: what produced this result, and can I repeat it?"
+  zh:
+  - "课上讲了到底为什么要追踪。"
+  - "题目说实验追踪，就想：这个结果是怎么来的，我能不能重复出来？"
+S02:
+- en: "What should a run record hold? The lecture lists seven things: the environment, the code, the data, the model, the metrics, the artifacts, and your notes."
+  zh:
+  - "一个 run 的记录应该装些什么？"
+  - "课上列了七样：环境、代码、数据、模型、指标、产物，还有你的笔记。"
+- en: "Most of these already have a home. Code lives in GitHub, data in a versioning system, and the environment in the pyproject file and the lock file. Weights, metrics and logs get a question mark."
+  zh:
+  - "其中大部分已经有地方放了。"
+  - "代码在 GitHub，数据在版本管理系统里，环境在 pyproject 文件和 lock 文件里。"
+  - "权重、指标和日志，先打个问号。"
+- en: "One word on data. A data version is a pair: the archived snapshot in a bucket, and the version record that names it, linked by a content hash. This trainer instead downloads a fixed release of the data, and never writes it into the config."
+  zh:
+  - "关于数据，说一句。"
+  - "数据版本是一对东西：bucket 里归档的快照，加上给它命名的版本记录，两者靠内容哈希连起来。"
+  - "而这个训练脚本下载的是数据的一个固定版本，也从不把它写进 config。"
+- en: "Recording by hand gets forgotten, so the lecture automates it with Weights and Biases. Picture a ledger in which every training run is one row."
+  zh:
+  - "手工记录总会忘，所以课上用 Weights & Biases 把它自动化。"
+  - "想象一个账本，每个训练 run 是其中一行。"
+  en_display:
+  - "Recording by hand gets forgotten, so the lecture automates it with Weights & Biases."
+  - null
+- en: "The repo trainer, task dot py, talks to that ledger in four calls. First it logs in with a key passed as a flag, never written in the code."
+  zh:
+  - "这个 repo 的训练脚本 task.py，用四个调用和这个账本打交道。"
+  - "首先它用一个密钥登录，密钥作为命令行参数传入，从不写进代码。"
+  en_display:
+  - "The repo trainer, task.py, talks to that ledger in four calls."
+  - null
+- en: "Then wandb dot init opens a new row, with a project, a name, and a config: learning rate, epochs, batch size, and model name. It also makes that row the active run, and the pointer called wandb dot run now points at it."
+  zh:
+  - "然后 wandb.init 开一个新行，带上项目、名字和 config：学习率、epoch 数、batch 大小和模型名。"
+  - "它还把这一行设成活跃的 run，叫 wandb.run 的指针现在就指向它。"
+  en_display:
+  - "Then wandb.init opens a new row, with a project, a name, and a config: learning rate, epochs, batch size, and model name."
+  - "It also makes that row the active run, and the pointer called wandb.run now points at it."
+- en: "After training, the script adds one more config value, the execution time. Then wandb dot run dot finish seals the row, and the pointer falls back to nothing."
+  zh:
+  - "训练结束后，脚本再加一个 config 值：执行时间。"
+  - "然后 wandb.run.finish 把这一行封存，指针变回空。"
+  en_display:
+  - null
+  - "Then wandb.run.finish() seals the row, and the pointer falls back to nothing."
+- en: "Notice what this run recorded on its own: the config, and system charts such as CPU and memory. It did not record a loss. Something still has to log the metrics."
+  zh:
+  - "注意这个 run 自己记下了什么：config，还有 CPU 和内存这样的系统图表。"
+  - "它没有记录 loss。"
+  - "还得有个东西来记录指标。"
+- en: "If the question says record of a run, think: init opens it, a logger writes the metrics, and finish closes it."
+  zh:
+  - "题目说 run 的记录，就想：init 开启它，logger 写入指标，finish 关闭它。"
+- en: "First question. The run shows its config but no loss curve. Which change puts a loss curve on it? Three options can be ruled out with what you know already. Pause here if you want."
+  zh:
+  - "第一题。"
+  - "这个 run 显示了 config，却没有 loss 曲线。"
+  - "哪个改动能让它出现 loss 曲线？"
+  - "有三个选项，用你已经知道的就能排除。"
+  - "想停的话，就在这里暂停。"
+S03:
+- en: "The answer is C: pass the Wandb Metrics Logger in the callbacks of fit, created after init. A: a name only labels the row. B: one number in the config is not a history over epochs. D: logging in again writes no metrics."
+  zh:
+  - "答案是 C：在 fit 的 callbacks 里传入 WandbMetricsLogger，并且要在 init 之后创建。"
+  - "A：名字只是给这一行贴个标签。"
+  - "B：config 里的一个数，不是跨 epoch 的历史。"
+  - "D：再登录一次，不会写入任何指标。"
+  en_display:
+  - "The answer is C: pass the WandbMetricsLogger in the callbacks of fit, created after init."
+  - null
+  - null
+  - null
+- en: "A callback is a pen that Keras holds during training. At the end of every epoch it calls wandb dot log, and that call writes to wandb dot run: whichever row is active right now, not the run the pen was created with."
+  zh:
+  - "这个 callback 就是训练时 Keras 握在手里的一支笔。"
+  - "每个 epoch 结束时，它调用 wandb.log，而这个调用写进 wandb.run：也就是此刻活跃的那一行，不是创建这支笔时的那个 run。"
+  en_display:
+  - null
+  - "At the end of every epoch it calls wandb.log, and that call writes to wandb.run: whichever row is active right now, not the run the pen was created with."
+- en: "The lecture's notebook does exactly this. It calls init, and then fit, with a callbacks list that holds the Wandb Callback."
+  zh:
+  - "课上的 notebook 正是这么做的。"
+  - "它先调用 init，再调用 fit，callbacks 列表里放着 WandbCallback。"
+  en_display:
+  - null
+  - "It calls init, and then fit, with a callbacks list that holds the WandbCallback."
+- en: "By default, that is one history entry per epoch. Per batch happens only if you ask."
+  zh:
+  - "默认情况下，每个 epoch 写一条历史记录。"
+  - "按 batch 记录，只有你要求才会发生。"
+- en: "Now four experiments. First, no pen. Fit runs two epochs, and the strip stays empty. That is our opening run."
+  zh:
+  - "现在做四个实验。"
+  - "第一个，没有笔。"
+  - "调用 fit 跑两个 epoch，记录栏一直空着。"
+  - "这就是我们开头那个 run。"
+- en: "Second: init, fit for two epochs, then fit for four more, with no finish in between. The pointer never moved, so ticks three to six land on the same row. One run, six entries."
+  zh:
+  - "第二个：init，fit 两个 epoch，再 fit 四个，中间没有 finish。"
+  - "指针从没动过，所以第三到第六条落在同一行。"
+  - "一个 run，六条记录。"
+- en: "Third: finish after the first fit, then init again, and fit four epochs with the same callback. The first row is sealed with two entries. The callback was made during row one, but it follows the pointer, so the new row gets entries one to four."
+  zh:
+  - "第三个：第一次 fit 之后 finish，再 init 一次，用同一个 callback fit 四个 epoch。"
+  - "第一行封存了，里面有两条记录。"
+  - "这个 callback 是在第一行时创建的，但它跟着指针走，所以新的一行拿到第一到第四条。"
+- en: "Fourth: finish, then fit again without a new init. The first epoch trains, and then the pen follows the pointer to nothing and stops with an error: you must call init before log. Nothing reaches any row."
+  zh:
+  - "第四个：先 finish，然后不重新 init 就再 fit 一次。"
+  - "第一个 epoch 训练完，然后笔跟着指针指向空，报错停下：你必须先调用 init，再 log。"
+  - "哪一行都没收到记录。"
+- en: "Creating the logger with no active run fails at once."
+  zh:
+  - "没有活跃的 run 时创建这个 logger，会马上报错。"
+- en: "Now the hook. The repo trainer imports both callbacks but passes none to fit, so its run has a config and system charts, and no curves. The lecture's middle line, the callback, is the line that is missing."
+  zh:
+  - "回到开头。"
+  - "这个 repo 的训练脚本导入了两个 callback，却一个也没传给 fit，所以它的 run 有 config 和系统图表，却没有曲线。"
+  - "课上中间那一行，也就是 callback，正是缺的那一行。"
+- en: "One detail: the notebook warns that the Wandb Callback is deprecated. For the curves, its replacement is the Wandb Metrics Logger."
+  zh:
+  - "有个细节：这个 notebook 会提示 WandbCallback 已经弃用。"
+  - "要画曲线，它的替代品是 WandbMetricsLogger。"
+  en_display:
+  - "One detail: the notebook warns that the WandbCallback is deprecated."
+  - "For the curves, its replacement is the WandbMetricsLogger."
+- en: "If the question counts history entries, think: one per epoch, into whichever run is open when the epoch ends. A finish ends the count, and a new init starts a new one."
+  zh:
+  - "题目问有几条历史记录，就想：每个 epoch 一条，写进 epoch 结束时开着的那个 run。"
+  - "一次 finish 结束计数，一次新的 init 开始新的计数。"
+S04:
+- en: "The lecture moves training to the cloud in three steps: a Python file with arguments, a package in a bucket, and a training job on Vertex AI."
+  zh:
+  - "课上分三步把训练从本地搬到云上：一个带参数的 Python 文件、bucket 里的一个包，以及 Vertex AI 上的一个训练任务。"
+- en: "Here is the package folder: setup dot py, and a trainer folder with an empty init file and the two training scripts."
+  zh:
+  - "这是 package 目录：setup.py，还有一个 trainer 目录，里面是一个空的 init 文件和两个训练脚本。"
+  en_display:
+  - "Here is the package folder: setup.py, and a trainer folder with an empty init file and the two training scripts."
+- en: "Setup dot py keeps two lists. Install requires is a shopping list that pip downloads from the Python Package Index; here, one pinned wandb version. Find packages decides which of your own folders get installed: only folders with an init file."
+  zh:
+  - "这个 setup.py 里有两张清单。"
+  - "其中 install requires 是一张购物清单，pip 从 PyPI 下载；这里只有一个 pin 了版本的 wandb。"
+  - "而 find packages 决定你自己的哪些目录会被安装：只有带 init 文件的目录。"
+  en_display:
+  - "setup.py keeps two lists."
+  - "install_requires is a shopping list that pip downloads from the Python Package Index; here, one pinned wandb version."
+  - "find_packages() decides which of your own folders get installed: only folders with an init file."
+- en: "The packaging script tars the package folder, compresses it, and copies it into your bucket. The job script points Vertex AI at that file and names the module: trainer dot task."
+  zh:
+  - "打包脚本把 package 目录打成 tar 包，压缩，再复制到你的 bucket。"
+  - "提交任务的脚本让 Vertex AI 指向这个文件，并指定模块：trainer.task。"
+  en_display:
+  - null
+  - "The job script points Vertex AI at that file and names the module: trainer.task."
+- en: "Here is the key fact. Your own Docker image packages, uploads and submits, but it never trains. The job runs in Google's prebuilt training image, and your code reaches it only through the tarball."
+  zh:
+  - "关键在这里。"
+  - "你自己的 Docker image 负责打包、上传和提交，但从不训练。"
+  - "任务跑在 Google 预构建的训练 image 里，你的代码只能通过 tar 包到达那里。"
+- en: "That image already ships TensorFlow, scikit-learn and requests, so the trainer imports them although setup dot py never names them."
+  zh:
+  - "这个 image 已经自带 TensorFlow、scikit-learn 和 requests，所以训练脚本照样能 import 它们，虽然 setup.py 从没写过。"
+  en_display:
+  - "That image already ships TensorFlow, scikit-learn and requests, so the trainer imports them although setup.py never names them."
+- en: "On the job machine, pip unwraps the tarball. The shopping list fetches wandb, and the trainer package is installed. Then Vertex runs python dash m trainer dot task."
+  zh:
+  - "在跑任务的机器上，pip 把 tar 包解开。"
+  - "购物清单拉来 wandb，trainer 包被安装好。"
+  - "然后 Vertex 运行：python -m trainer.task。"
+  en_display:
+  - null
+  - null
+  - "Then Vertex runs python -m trainer.task."
+- en: "Now add a teammate's module, augment dot py, a made-up example, beside the package folder. The script tars only that folder, so the module never leaves your laptop. Placed next to setup dot py instead, it travels, but find packages skips it."
+  zh:
+  - "现在加一个队友写的模块 augment.py，一个编出来的例子，放在 package 目录旁边。"
+  - "脚本只打包那个目录，所以这个模块从没离开你的笔记本。"
+  - "如果改放在 setup.py 旁边，它会跟着走，但 find packages 会跳过它。"
+  en_display:
+  - "Now add a teammate's module, augment.py, a made-up example, beside the package folder."
+  - null
+  - "Placed next to setup.py instead, it travels, but find_packages() skips it."
+- en: "The task reaches import augment; Python searches its import path and finds nothing. Module Not Found Error, right under the line that says every dependency installed. Locally it worked, because the file sat in the folder you ran from."
+  zh:
+  - "任务执行到 import augment；Python 在导入路径里找，什么也没找到。"
+  - "ModuleNotFoundError，就在写着依赖全部装好的那一行下面。"
+  - "在本地它能跑，因为文件就在你运行命令的那个目录里。"
+  en_display:
+  - null
+  - "ModuleNotFoundError, right under the line that says every dependency installed."
+  - null
+- en: "The fix: put the file inside the trainer folder, or list it in setup dot py. A new import line alone moves nothing; the file has to travel."
+  zh:
+  - "修法：把文件放进 trainer 目录，或者在 setup.py 里列出来。"
+  - "只加一行 import 什么也带不过去；文件得跟着走。"
+  en_display:
+  - "The fix: put the file inside the trainer folder, or list it in setup.py."
+  - null
+- en: "Adding it to install requires is wrong. That list downloads from the Python Package Index, never from your tarball, and a package there with that name would be someone else's code."
+  zh:
+  - "把它加到 install requires 里是错的。"
+  - "那张清单从 PyPI 下载，绝不会从你的 tar 包里拿，而那里同名的包，会是别人的代码。"
+  en_display:
+  - "Adding it to install_requires is wrong."
+  - null
+- en: "If the question says dependencies installed but Module Not Found Error, think: the file never travelled inside the package that setup dot py builds."
+  zh:
+  - "题目说依赖都装好了却报 ModuleNotFoundError，就想：这个文件没有跟着 setup.py 打的包一起走。"
+  en_display:
+  - "If the question says dependencies installed but ModuleNotFoundError, think: the file never travelled inside the package that setup.py builds."
+S05:
+- en: "The lecture sorts training hardware into three shapes. One machine with one GPU uses One Device Strategy. One machine with several GPUs uses Mirrored Strategy. Several machines use Multi Worker Mirrored Strategy."
+  zh:
+  - "课上把训练硬件分成三种形态。"
+  - "一台机器、一块 GPU，用 OneDeviceStrategy。"
+  - "一台机器、多块 GPU，用 MirroredStrategy。"
+  - "多台机器，用 MultiWorkerMirroredStrategy。"
+  en_display:
+  - null
+  - "One machine with one GPU uses OneDeviceStrategy."
+  - "One machine with several GPUs uses MirroredStrategy."
+  - "Several machines use MultiWorkerMirroredStrategy."
+- en: "The repo sits on the middle row. Its multi GPU script asks Vertex AI for one machine, type n1 standard 32, with two T4 GPUs. A replica count of one there means one machine."
+  zh:
+  - "这个 repo 在中间那一行。"
+  - "它的多 GPU 脚本向 Vertex AI 要一台机器，机型 n1-standard-32，带两块 T4 GPU。"
+  - "那里的副本数为 1，意思是一台机器。"
+  en_display:
+  - null
+  - "Its multi GPU script asks Vertex AI for one machine, type n1-standard-32, with two T4 GPUs."
+  - null
+- en: "The trainer creates the Mirrored Strategy and asks how many replicas are in sync: one per GPU, so two. Then it builds and compiles the model inside strategy dot scope, so every weight and optimizer variable is mirrored, one copy per GPU."
+  zh:
+  - "训练脚本创建 MirroredStrategy，再问有多少个副本在同步：每块 GPU 一个，所以是两个。"
+  - "然后它在 strategy.scope 里构建并编译模型，所以每个权重和优化器变量都被复制，每块 GPU 一份。"
+  en_display:
+  - "The trainer creates the MirroredStrategy and asks how many replicas are in sync: one per GPU, so two."
+  - "Then it builds and compiles the model inside strategy.scope(), so every weight and optimizer variable is mirrored, one copy per GPU."
+- en: "Here is one training step. Each GPU takes its own slice of the batch and computes a gradient. The gradients meet in an all-reduce and are averaged, and the same update goes back to both copies."
+  zh:
+  - "这是一个训练步。"
+  - "每块 GPU 拿自己那一份 batch，算出一个梯度。"
+  - "这些梯度在 all-reduce 里汇合、取平均，同一份更新再发回两份拷贝。"
+- en: "Now two machines, each running its own Mirrored Strategy on its own shard of the data. Inside each machine the ring works, but between the machines there is no wire. After a few steps they hold different weights: two separate models, not one."
+  zh:
+  - "现在换成两台机器，每台跑自己的 MirroredStrategy，用的是自己那份数据分片。"
+  - "每台机器内部，环是通的，但两台机器之间没有连线。"
+  - "几步之后，它们的权重就不一样了：是两个独立的模型，不是一个。"
+  en_display:
+  - "Now two machines, each running its own MirroredStrategy on its own shard of the data."
+  - null
+  - null
+- en: "To train one model across machines, use Multi Worker Mirrored Strategy. Each machine reads a TF config: the list of all the workers, and its own index in that list. Same shards as before; the only change is the wire, and now every copy stays the same."
+  zh:
+  - "要跨机器训练一个模型，用 MultiWorkerMirroredStrategy。"
+  - "每台机器读取一份 TF config：所有 worker 的列表，以及它自己在列表里的索引。"
+  - "分片和之前一样；唯一的变化是这根连线，现在每份拷贝都保持一致。"
+  en_display:
+  - "To train one model across machines, use MultiWorkerMirroredStrategy."
+  - "Each machine reads a TF_CONFIG: the list of all the workers, and its own index in that list."
+  - null
+- en: "The repo does not use it; on Vertex AI the extra machines would go in a second worker pool, and Vertex sets the TF config for you. One naming trap: the repo, like the lecture, calls its replica count num workers, but it counts GPUs on one machine."
+  zh:
+  - "这个 repo 没用它；在 Vertex AI 上多出来的机器会放进第二个 worker pool，Vertex 会替你设好 TF config。"
+  - "还有一个命名陷阱：repo 和课上一样，把副本数叫作 num workers，但它数的是一台机器上的 GPU。"
+  en_display:
+  - "The repo does not use it; on Vertex AI the extra machines would go in a second worker pool, and Vertex sets the TF_CONFIG for you."
+  - "One naming trap: the repo, like the lecture, calls its replica count num_workers, but it counts GPUs on one machine."
+- en: "If the question says several machines must train one model, think Multi Worker Mirrored Strategy with TF config. A Mirrored Strategy never looks past its own machine."
+  zh:
+  - "题目说多台机器必须训练同一个模型，就想：MultiWorkerMirroredStrategy 加 TF config。"
+  - "MirroredStrategy 从不越过自己这台机器。"
+  en_display:
+  - "If the question says several machines must train one model, think MultiWorkerMirroredStrategy with TF_CONFIG."
+  - "A MirroredStrategy never looks past its own machine."
+S06:
+- en: "Now the batch. Under a strategy, whatever dataset dot batch produces is the global batch, the whole tray for one step. The strategy cuts that tray into equal slices, one per replica."
+  zh:
+  - "再看 batch。"
+  - "在策略下，dataset.batch 产出的就是全局 batch，也就是一步用的整个托盘。"
+  - "策略把这个托盘切成相等的几份，每个副本一份。"
+  en_display:
+  - null
+  - "Under a strategy, whatever dataset.batch produces is the global batch, the whole tray for one step."
+  - null
+- en: "So the per replica batch is the global batch divided by the number of replicas in sync. Turn it around, and the global batch is the per replica batch times the replicas."
+  zh:
+  - "所以每个副本的 batch 等于全局 batch 除以同步的副本数。"
+  - "反过来，全局 batch 就是每个副本的 batch 乘以副本数。"
+- en: "Take 8 replicas, and say you want 16 examples on each. Batch by 16, and each GPU gets only 2. Batch by 128. Each GPU gets 16."
+  zh:
+  - "假设有 8 个副本，你想让每个副本拿到 16 个样本。"
+  - "按 16 分 batch，每块 GPU 只拿到 2 个。"
+  - "按 128 分 batch。"
+  - "每块 GPU 拿到 16 个。"
+- en: "The repo does the same multiplication. It takes the batch size flag, multiplies it by the replica count, and hands the product to the data pipeline. Its own comment says it: batch expects the global batch size."
+  zh:
+  - "这个 repo 做的是同样的乘法。"
+  - "它拿 batch 大小参数乘以副本数，再把乘积交给数据 pipeline。"
+  - "它自己的注释就写着：batch 期望的是全局 batch 大小。"
+- en: "Second question. The repo's multi GPU trainer now runs on 4 GPUs, with a batch size flag of 32. What is the global batch, and what does each GPU see per step? Pause here if you want."
+  zh:
+  - "第二题。"
+  - "这个 repo 的多 GPU 训练脚本现在跑在 4 块 GPU 上，batch 大小参数是 32。"
+  - "全局 batch 是多少，每块 GPU 每一步看到多少？"
+  - "想停的话，就在这里暂停。"
+- en: "The answer is B. The trainer multiplies first: 32 times 4 is 128, and the strategy splits 128 four ways, so each GPU sees 32. A: that is a script that never multiplied. C: the flag is the per replica size, not the global batch. D: the global batch is split, not copied to every GPU."
+  zh:
+  - "答案是 B。"
+  - "训练脚本先做乘法：32 乘 4 等于 128，策略再把 128 分成四份，所以每块 GPU 看到 32 个。"
+  - "A：这是一个从没做乘法的脚本。"
+  - "C：这个参数是每个副本的大小，不是全局 batch。"
+  - "D：全局 batch 是被切分的，不是复制给每块 GPU。"
+- en: "If the question says per replica, multiply before you batch: the global batch is the per replica batch times the replicas."
+  zh:
+  - "题目说每个副本，就先乘再分 batch：全局 batch 等于每个副本的 batch 乘以副本数。"
+S07:
+- en: "Last mechanism. Suppose a web app has a retrain button, and training takes an hour. Where should that hour run?"
+  zh:
+  - "最后一个机制。"
+  - "假设一个网页应用有个重新训练的按钮，训练要一个小时。"
+  - "这一个小时应该在哪里跑？"
+- en: "Every piece of work lives as long as the thing that holds it. Inside the request handler, it dies at the request timeout."
+  zh:
+  - "每一段工作，都只活得和承载它的东西一样久。"
+  - "放在请求处理函数里，它会在请求超时的时候死掉。"
+- en: "In a server thread, it lives only as long as that server instance, which the platform recycles whenever it likes."
+  zh:
+  - "放在服务器线程里，它只能活到这个服务器实例结束，而平台想什么时候回收它就什么时候回收。"
+- en: "A longer client timeout moves the wrong clock. The server and the proxies still cut the request, and a sleeping laptop loses the answer anyway."
+  zh:
+  - "把客户端超时调长，调的是错的那个时钟。"
+  - "服务器和代理照样会切断请求，而休眠的笔记本无论如何都会丢掉结果。"
+- en: "And W and B is not a clock at all: it logs runs, but has no engine to execute them."
+  zh:
+  - "而 W&B 根本不是时钟：它记录 run，但没有执行它们的引擎。"
+  en_display:
+  - "And W&B is not a clock at all: it logs runs, but has no engine to execute them."
+- en: "The right design: the handler submits a durable job and returns its id at once. The job moves through its states, queued, pending, running, succeeded, on its own machine, billed only while it runs. Anyone with access to the project can poll the id."
+  zh:
+  - "正确的设计：处理函数提交一个持久的任务，马上返回它的 ID。"
+  - "任务依次经过 QUEUED、PENDING、RUNNING、SUCCEEDED，在自己的机器上，只在运行时计费。"
+  - "有项目权限的任何人都可以轮询这个 ID。"
+- en: "That is the lecture's serverless training: hardware rented only for the training step, and no server to manage. There is still a machine; you just do not own its lifetime."
+  zh:
+  - "这就是课上讲的无服务器训练：硬件只为训练这一步租用，也没有服务器要管。"
+  - "机器还是有的；只是它的生命周期不归你管。"
+- en: "In the repo, the ticket is one command, gcloud AI custom jobs create, with a region, a name, the package in the bucket, and a worker pool: machine type, replica count, prebuilt image, and module."
+  zh:
+  - "在 repo 里，这张工单就是一条命令：gcloud ai custom-jobs create，再带上区域、名字和 bucket 里的包，以及一个 worker pool：机器类型、副本数、预构建的 image 和模块。"
+  en_display:
+  - "In the repo, the ticket is one command, gcloud ai custom-jobs create, with a region, a name, the package in the bucket, and a worker pool: machine type, replica count, prebuilt image, and module."
+- en: "Third question. Your custom job shows running, and you close the laptop for the night. What happens to the training? Pause here if you want."
+  zh:
+  - "第三题。"
+  - "你的自定义任务显示 RUNNING，你合上笔记本过夜。"
+  - "训练会怎样？"
+  - "想停的话，就在这里暂停。"
+- en: "The answer is B: it keeps running on its own machine until it finishes or fails. A: the CLI container only submitted it. C: W and B only logs; it never drives training. D: nothing on your laptop holds the job's state."
+  zh:
+  - "答案是 B：它在自己的机器上一直跑，直到完成或失败。"
+  - "A：CLI container 只负责提交。"
+  - "C：W&B 只做记录；它从不驱动训练。"
+  - "D：你的笔记本上不保存任务的状态。"
+  en_display:
+  - null
+  - null
+  - "C: W&B only logs; it never drives training."
+  - null
+- en: "If the question says training takes longer than the request, think: submit a durable job, return its id, and poll. W and B only watches."
+  zh:
+  - "题目说训练要跑得比请求还久，就想：提交一个持久的任务，返回它的 ID，然后轮询。"
+  - "W&B 只是旁观。"
+  en_display:
+  - null
+  - "W&B only watches."
+S08:
+- en: "Six rules for Tuesday. Rule one: a callback logs one entry per epoch into the active run; init opens a run, and finish closes it."
+  zh:
+  - "周二要记住的六条规则。"
+  - "第一条：callback 每个 epoch 往活跃的 run 里记一条；init 开启 run，finish 关闭它。"
+- en: "Rule two: pip installs only what setup dot py declares; your own modules must be inside the package it builds, not just inside the tarball."
+  zh:
+  - "第二条：pip 只安装 setup.py 声明的东西；你自己的模块必须在它打出的包里，而不只是在 tar 包里。"
+  en_display:
+  - "Rule two: pip installs only what setup.py declares; your own modules must be inside the package it builds, not just inside the tarball."
+- en: "Rule three: a Mirrored Strategy covers the GPUs of one machine; across machines, use Multi Worker Mirrored Strategy with TF config, because separate strategies make separate models."
+  zh:
+  - "第三条：MirroredStrategy 管一台机器的 GPU；跨机器，用 MultiWorkerMirroredStrategy 加 TF config，因为独立的策略训出独立的模型。"
+  en_display:
+  - "Rule three: a MirroredStrategy covers the GPUs of one machine; across machines, use MultiWorkerMirroredStrategy with TF_CONFIG, because separate strategies make separate models."
+- en: "Rule four: under a strategy, what dataset dot batch makes is the global batch, split across the replicas in sync."
+  zh:
+  - "第四条：在策略下，dataset.batch 产出的是全局 batch，切分给同步的各个副本。"
+  en_display:
+  - "Rule four: under a strategy, what dataset.batch makes is the global batch, split across the replicas in sync."
+- en: "Rule five: long training goes to a durable job with an id, never into a request handler, a thread, or a longer timeout."
+  zh:
+  - "第五条：长时间训练要交给一个有 ID 的持久任务，绝不放进请求处理函数、线程，或者更长的超时。"
+- en: "Rule six: a data version is an archived snapshot plus the record that points at it."
+  zh:
+  - "第六条：数据版本，就是归档的快照，加上指向它的记录。"
+- en: "The lecture began with three levers for better deep learning: more data, better models, and faster hardware. Today was the hardware lever, plus the bookkeeping that shows whether it helped. Good luck on Tuesday."
+  zh:
+  - "课上一开始讲了让深度学习变好的三个杠杆：更多数据、更好的模型、更快的硬件。"
+  - "今天讲的是硬件这个杠杆，外加能看出它有没有用的记账。"
+  - "祝你周二考试顺利。"
