@@ -18,7 +18,7 @@ audience: "AC215 student the day before Quiz 4: sat Lecture 13, has skimmed the 
 voice: {backend: kokoro, voice: af_heart, speed: 0.9}
 # Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
 # build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
-# One part: no parts: key. No publish: block yet.
+# One part: no parts: key.
 scenes:
   - {file: scenes/s01_hook.py,     cls: Hook,              title: "The run with no curves"}
   - {file: scenes/s02_record.py,   cls: RunRecord,         title: "What a run records"}
@@ -28,3 +28,16 @@ scenes:
   - {file: scenes/s06_batch.py,    cls: GlobalBatch,       title: "Global batch, per-replica batch"}
   - {file: scenes/s07_jobs.py,     cls: DurableJob,        title: "Training that outlives the request"}
   - {file: scenes/s08_recap.py,    cls: Recap,             title: "Six rules for Tuesday"}
+publish:
+  title_zh: "AC215 第13讲 · 考前精讲：W&B、Vertex AI 打包、多 GPU 与 batch、长时间训练"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 13 讲 Advanced Training Workflows 的考前精讲版，约 15 分钟，为 Quiz 4 准备。
+    用动画讲清这一讲的考点：W&B 的 run 与 callback（指标写进当前 active 的 run）、Vertex AI custom job 只运行你上传的 package、MirroredStrategy（单机多卡）与 MultiWorkerMirroredStrategy（多机）的区别、global batch 与 per-replica batch 的换算，以及为什么几个小时的训练要交给 durable job 而不是在请求里跑。中间有三道新的选择题可以暂停作答，最后是六条速记规则。
+    代码面板引用 dlops-io/model-training 仓库和课程 Colab 的原文。英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/model-training
+    学习笔记：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L13-training-workflows.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, 考前复习, Weights & Biases, Vertex AI, 分布式训练, MirroredStrategy, TensorFlow, 哈佛, 教程]
+  tid: 231
