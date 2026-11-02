@@ -1,0 +1,264 @@
+[Script Info]
+Title: AC215 · Lecture 14 — Serverless Deployment (exam edition)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.37,Bilingual,,0,0,0,,这是一个叫 translation-audio 的 Cloud Run job\N{\fs33\c&H00C8C0B8&\bord1.4}Here is a Cloud Run job called translation-audio.
+Dialogue: 0,0:00:03.69,0:00:08.28,Bilingual,,0,0,0,,它用的 image 和一个运行得好好的翻译 web 应用一样\N{\fs33\c&H00C8C0B8&\bord1.4}It uses the same image as a translation web app that works perfectly.
+Dialogue: 0,0:00:08.60,0:00:11.05,Bilingual,,0,0,0,,我们点 Execute，这个 job 就开始了\N{\fs33\c&H00C8C0B8&\bord1.4}We press Execute, and the job starts.
+Dialogue: 0,0:00:11.73,0:00:12.98,Bilingual,,0,0,0,,几分钟过去了\N{\fs33\c&H00C8C0B8&\bord1.4}Minutes pass.
+Dialogue: 0,0:00:13.03,0:00:17.37,Bilingual,,0,0,0,,输出 bucket 里什么也没有，这个 job 也从来不说自己完成了\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing lands in the output bucket, and the job never says it is done.
+Dialogue: 0,0:00:17.69,0:00:20.59,Bilingual,,0,0,0,,它一头撞上我们设的任务超时\N{\fs33\c&H00C8C0B8&\bord1.4}It runs straight into the task timeout we gave it.
+Dialogue: 0,0:00:20.91,0:00:23.23,Bilingual,,0,0,0,,5 分钟，平台把它停掉了\N{\fs33\c&H00C8C0B8&\bord1.4}5 minutes, and the platform stops it.
+Dialogue: 0,0:00:23.47,0:00:26.16,Bilingual,,0,0,0,,线索在 Dockerfile 的最后一行\N{\fs33\c&H00C8C0B8&\bord1.4}The clue is the last line of the Dockerfile:
+Dialogue: 0,0:00:26.16,0:00:28.74,Bilingual,,0,0,0,,它的默认命令会启动 web 服务器\N{\fs33\c&H00C8C0B8&\bord1.4}its default command starts the web server.
+Dialogue: 0,0:00:29.06,0:00:32.79,Bilingual,,0,0,0,,README 的故障排查表甚至列出了这个症状\N{\fs33\c&H00C8C0B8&\bord1.4}The README's troubleshooting table even lists the symptom:
+Dialogue: 0,0:00:32.79,0:00:35.88,Bilingual,,0,0,0,,一个 job 启动了服务器，而不是跑完\N{\fs33\c&H00C8C0B8&\bord1.4}a job that starts a server instead of finishing.
+Dialogue: 0,0:00:36.12,0:00:37.80,Bilingual,,0,0,0,,同一个 image，同一份代码\N{\fs33\c&H00C8C0B8&\bord1.4}Same image, same code.
+Dialogue: 0,0:00:38.12,0:00:41.39,Bilingual,,0,0,0,,那为什么 web 应用能用，这个 job 却永远不结束？\N{\fs33\c&H00C8C0B8&\bord1.4}So why does the web app work, while the job never ends?
+Dialogue: 0,0:00:41.71,0:00:43.31,Bilingual,,0,0,0,,先记着这个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Hold that question.
+Dialogue: 0,0:00:44.82,0:00:48.08,Bilingual,,0,0,0,,对这次小测来说，这一讲归结为五个考点\N{\fs33\c&H00C8C0B8&\bord1.4}For the quiz, this lecture comes down to five ideas.
+Dialogue: 0,0:00:48.40,0:00:50.00,Bilingual,,0,0,0,,是 service 还是 job\N{\fs33\c&H00C8C0B8&\bord1.4}Service or job.
+Dialogue: 0,0:00:50.06,0:00:51.73,Bilingual,,0,0,0,,谁为空闲时间付钱\N{\fs33\c&H00C8C0B8&\bord1.4}Who pays for idle time.
+Dialogue: 0,0:00:52.05,0:00:53.76,Bilingual,,0,0,0,,部署时你要交出什么\N{\fs33\c&H00C8C0B8&\bord1.4}What you hand over to deploy.
+Dialogue: 0,0:00:54.08,0:00:56.51,Bilingual,,0,0,0,,谁能调用你的代码，它又以谁的身份运行\N{\fs33\c&H00C8C0B8&\bord1.4}Who may call your code, and who it runs as.
+Dialogue: 0,0:00:56.83,0:01:01.41,Bilingual,,0,0,0,,还有模型 endpoint：预处理放在哪里，它调用哪个函数\N{\fs33\c&H00C8C0B8&\bord1.4}And the model endpoint: where preprocessing lives, and which function it calls.
+Dialogue: 0,0:01:01.65,0:01:06.11,Bilingual,,0,0,0,,右上角的灰色标签，标出每个考点背后的那页课件\N{\fs33\c&H00C8C0B8&\bord1.4}The gray tag, top right, names the lecture slide behind each idea.
+Dialogue: 0,0:01:10.45,0:01:13.44,Bilingual,,0,0,0,,课上说，Cloud Run 可以把一个 container\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture says Cloud Run runs a container
+Dialogue: 0,0:01:13.44,0:01:15.04,Bilingual,,0,0,0,,作为 service 或 job 来运行\N{\fs33\c&H00C8C0B8&\bord1.4}as a service or a job.
+Dialogue: 0,0:01:15.29,0:01:16.90,Bilingual,,0,0,0,,这个演示应用两种都有\N{\fs33\c&H00C8C0B8&\bord1.4}The demo app shows both:
+Dialogue: 0,0:01:16.90,0:01:20.11,Bilingual,,0,0,0,,一个 image，两个启动命令，serve 或 batch\N{\fs33\c&H00C8C0B8&\bord1.4}one image, two startup commands, serve or batch.
+Dialogue: 0,0:01:20.35,0:01:23.05,Bilingual,,0,0,0,,这个 serve 命令启动 gunicorn，一个 web 服务器\N{\fs33\c&H00C8C0B8&\bord1.4}Serve starts gunicorn, a web server,
+Dialogue: 0,0:01:23.05,0:01:26.64,Bilingual,,0,0,0,,跑在 Cloud Run 给它的 port 上，默认是 8080\N{\fs33\c&H00C8C0B8&\bord1.4}on the port Cloud Run gives it, 8080 by default.
+Dialogue: 0,0:01:26.96,0:01:30.06,Bilingual,,0,0,0,,然后它就等着，来一个请求就回答一个\N{\fs33\c&H00C8C0B8&\bord1.4}Then it waits, and answers each request that arrives.
+Dialogue: 0,0:01:30.65,0:01:32.25,Bilingual,,0,0,0,,这种形状就是 service\N{\fs33\c&H00C8C0B8&\bord1.4}That shape is a service.
+Dialogue: 0,0:01:32.48,0:01:38.69,Bilingual,,0,0,0,,它有 URL，流量上来时加实例，流量停了可以缩容到零\N{\fs33\c&H00C8C0B8&\bord1.4}It has a URL, adds instances when traffic rises, and can scale to zero when it stops.
+Dialogue: 0,0:01:39.01,0:01:42.36,Bilingual,,0,0,0,,它本来就不会结束：监听就是它的本职工作\N{\fs33\c&H00C8C0B8&\bord1.4}It never finishes on purpose: listening is its job.
+Dialogue: 0,0:01:42.60,0:01:44.20,Bilingual,,0,0,0,,而 batch 是另一种形状\N{\fs33\c&H00C8C0B8&\bord1.4}Batch has a different shape.
+Dialogue: 0,0:01:44.41,0:01:49.88,Bilingual,,0,0,0,,它读入那段文字，翻译它，生成语音，保存文件，然后退出\N{\fs33\c&H00C8C0B8&\bord1.4}It reads the passage, translates it, generates speech, saves the files, and exits.
+Dialogue: 0,0:01:50.20,0:01:52.92,Bilingual,,0,0,0,,如果某一步失败，它以退出码 1 退出\N{\fs33\c&H00C8C0B8&\bord1.4}If a step fails, it exits with status 1,
+Dialogue: 0,0:01:52.92,0:01:56.40,Bilingual,,0,0,0,,所以这次执行显示失败，而不是假的成功\N{\fs33\c&H00C8C0B8&\bord1.4}so the execution shows failed, not a false success.
+Dialogue: 0,0:01:56.65,0:02:01.45,Bilingual,,0,0,0,,README 把这叫做 job：没有 URL，没有东西在等请求\N{\fs33\c&H00C8C0B8&\bord1.4}The README calls this a job: no URL, nothing waiting for requests.
+Dialogue: 0,0:02:01.77,0:02:04.50,Bilingual,,0,0,0,,有东西启动它，它就一直跑到完成\N{\fs33\c&H00C8C0B8&\bord1.4}Something starts it, and it runs to completion.
+Dialogue: 0,0:02:04.75,0:02:06.02,Bilingual,,0,0,0,,现在回到开头\N{\fs33\c&H00C8C0B8&\bord1.4}Now the hook.
+Dialogue: 0,0:02:06.07,0:02:09.55,Bilingual,,0,0,0,,这个 job 继承了 image 的默认命令，也就是 serve\N{\fs33\c&H00C8C0B8&\bord1.4}The job inherited the image's default command, serve,
+Dialogue: 0,0:02:09.55,0:02:13.94,Bilingual,,0,0,0,,所以它启动了 web 服务器，等着永远不会来的请求\N{\fs33\c&H00C8C0B8&\bord1.4}so it started a web server and waited for requests that never come.
+Dialogue: 0,0:02:14.26,0:02:17.40,Bilingual,,0,0,0,,修复：命令用 python，再加上 batch 参数\N{\fs33\c&H00C8C0B8&\bord1.4}The fix: the command python, with the batch arguments.
+Dialogue: 0,0:02:17.72,0:02:20.07,Bilingual,,0,0,0,,同一个 image，现在时间条有了尽头\N{\fs33\c&H00C8C0B8&\bord1.4}Same image, and now the strip ends.
+Dialogue: 0,0:02:20.32,0:02:21.82,Bilingual,,0,0,0,,谁来按开始？\N{\fs33\c&H00C8C0B8&\bord1.4}Who presses start?
+Dialogue: 0,0:02:21.87,0:02:24.05,Bilingual,,0,0,0,,在 README 里，是你点 Execute\N{\fs33\c&H00C8C0B8&\bord1.4}In the README, you click Execute.
+Dialogue: 0,0:02:24.37,0:02:27.94,Bilingual,,0,0,0,,如果要每晚运行，常用的触发器是 Cloud Scheduler\N{\fs33\c&H00C8C0B8&\bord1.4}For a nightly run, the usual trigger is Cloud Scheduler,
+Dialogue: 0,0:02:27.94,0:02:29.92,Bilingual,,0,0,0,,不过这个 README 没有用它\N{\fs33\c&H00C8C0B8&\bord1.4}which this README does not use.
+Dialogue: 0,0:02:30.62,0:02:31.85,Bilingual,,0,0,0,,来试一道\N{\fs33\c&H00C8C0B8&\bord1.4}Try one.
+Dialogue: 0,0:02:31.90,0:02:35.78,Bilingual,,0,0,0,,一个 container 给新文档建索引，然后退出，每小时一次\N{\fs33\c&H00C8C0B8&\bord1.4}A container indexes new documents and exits, once an hour.
+Dialogue: 0,0:02:36.10,0:02:38.60,Bilingual,,0,0,0,,看生命周期，别看产品名\N{\fs33\c&H00C8C0B8&\bord1.4}Read the lifecycle, not the product names.
+Dialogue: 0,0:02:49.93,0:02:52.94,Bilingual,,0,0,0,,选 B，按 Cloud Scheduler 时间表运行的 job\N{\fs33\c&H00C8C0B8&\bord1.4}B, a job on a Cloud Scheduler timetable:
+Dialogue: 0,0:02:52.94,0:02:56.93,Bilingual,,0,0,0,,它跑到完成，两次运行之间不花钱\N{\fs33\c&H00C8C0B8&\bord1.4}it runs to completion and costs nothing between runs.
+Dialogue: 0,0:02:57.25,0:02:59.44,Bilingual,,0,0,0,,A 整个小时都在为一个实例付钱\N{\fs33\c&H00C8C0B8&\bord1.4}A pays for an instance all hour,
+Dialogue: 0,0:02:59.44,0:03:03.48,Bilingual,,0,0,0,,而且空闲的 service 的 CPU 会被节流，所以循环会卡住\N{\fs33\c&H00C8C0B8&\bord1.4}and an idle service's CPU is throttled, so the loop stalls.
+Dialogue: 0,0:03:03.80,0:03:07.96,Bilingual,,0,0,0,,C 违反了 service 的约定：一个退出了的实例就是崩溃了\N{\fs33\c&H00C8C0B8&\bord1.4}C breaks the service contract: an instance that exits has crashed.
+Dialogue: 0,0:03:08.28,0:03:11.93,Bilingual,,0,0,0,,D 能用，但这台 VM 整个小时都要付钱，哪怕它闲着\N{\fs33\c&H00C8C0B8&\bord1.4}D works, but the VM is paid for all hour while it idles.
+Dialogue: 0,0:03:12.25,0:03:13.89,Bilingual,,0,0,0,,为什么这很重要，下面就讲\N{\fs33\c&H00C8C0B8&\bord1.4}Why that matters is next.
+Dialogue: 0,0:03:14.13,0:03:18.80,Bilingual,,0,0,0,,所以规则是：如果题目说它运行、写出结果然后退出\N{\fs33\c&H00C8C0B8&\bord1.4}So the rule: if the question says it runs, writes its output and exits,
+Dialogue: 0,0:03:18.80,0:03:21.43,Bilingual,,0,0,0,,或者说它每晚运行，选 job\N{\fs33\c&H00C8C0B8&\bord1.4}or that it runs every night, pick a job.
+Dialogue: 0,0:03:21.75,0:03:24.60,Bilingual,,0,0,0,,如果题目说它回答请求、有 URL\N{\fs33\c&H00C8C0B8&\bord1.4}If it says it answers requests, has a URL,
+Dialogue: 0,0:03:24.60,0:03:27.10,Bilingual,,0,0,0,,或者监听一个 port，选 service\N{\fs33\c&H00C8C0B8&\bord1.4}or listens on a port, pick a service.
+Dialogue: 0,0:03:32.38,0:03:35.56,Bilingual,,0,0,0,,课上承诺，只有代码运行时你才付钱\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture promises you pay only while your code runs.
+Dialogue: 0,0:03:35.88,0:03:38.70,Bilingual,,0,0,0,,我们把它说准确：两个计价器，一天\N{\fs33\c&H00C8C0B8&\bord1.4}Let's make that exact: two meters, one day.
+Dialogue: 0,0:03:39.02,0:03:40.77,Bilingual,,0,0,0,,黄色刻度是请求\N{\fs33\c&H00C8C0B8&\bord1.4}The yellow ticks are requests.
+Dialogue: 0,0:03:41.02,0:03:43.13,Bilingual,,0,0,0,,上面一行是一台虚拟机\N{\fs33\c&H00C8C0B8&\bord1.4}The top row is a virtual machine.
+Dialogue: 0,0:03:43.45,0:03:47.03,Bilingual,,0,0,0,,它的计价器从开机走到关机，不管有没有请求\N{\fs33\c&H00C8C0B8&\bord1.4}Its meter runs from boot to shutdown, requests or not.
+Dialogue: 0,0:03:47.35,0:03:50.89,Bilingual,,0,0,0,,金色阴影是空闲时间，这些你全部都要付钱\N{\fs33\c&H00C8C0B8&\bord1.4}The gold shading is idle time, and you pay for all of it.
+Dialogue: 0,0:03:51.13,0:03:53.16,Bilingual,,0,0,0,,下面一行是一个函数\N{\fs33\c&H00C8C0B8&\bord1.4}The bottom row is a function,
+Dialogue: 0,0:03:53.16,0:03:58.09,Bilingual,,0,0,0,,或者一个按请求计费、最小实例数为 0 的 Cloud Run service\N{\fs33\c&H00C8C0B8&\bord1.4}or a Cloud Run service with request-based billing and minimum instances 0,
+Dialogue: 0,0:03:58.09,0:03:59.69,Bilingual,,0,0,0,,和 README 里一样\N{\fs33\c&H00C8C0B8&\bord1.4}as in the README.
+Dialogue: 0,0:03:59.86,0:04:04.04,Bilingual,,0,0,0,,它的计价器只随调用次数和每次运行多长时间而动\N{\fs33\c&H00C8C0B8&\bord1.4}Its meter moves only with invocations and how long each one runs.
+Dialogue: 0,0:04:04.45,0:04:07.14,Bilingual,,0,0,0,,现在把请求之间的安静间隔拉长\N{\fs33\c&H00C8C0B8&\bord1.4}Now stretch the quiet gaps between requests.
+Dialogue: 0,0:04:07.46,0:04:12.00,Bilingual,,0,0,0,,VM 的计价器往上涨，因为空闲的小时仍然是预配的小时\N{\fs33\c&H00C8C0B8&\bord1.4}The VM meter grows, because idle hours are still provisioned hours.
+Dialogue: 0,0:04:12.32,0:04:16.48,Bilingual,,0,0,0,,函数的计价器完全不动：没有请求，就没有费用\N{\fs33\c&H00C8C0B8&\bord1.4}The function meter does not move at all: no requests, no charge.
+Dialogue: 0,0:04:16.72,0:04:21.88,Bilingual,,0,0,0,,零空闲成本是有代价的，课件第 16 页点出了它：冷启动\N{\fs33\c&H00C8C0B8&\bord1.4}Zero idle cost has a price, and slide 16 names it: the cold start.
+Dialogue: 0,0:04:22.20,0:04:26.27,Bilingual,,0,0,0,,安静一阵之后，第一个请求要等一个实例启动\N{\fs33\c&H00C8C0B8&\bord1.4}After a quiet stretch, the first request waits while an instance starts.
+Dialogue: 0,0:04:26.59,0:04:29.37,Bilingual,,0,0,0,,README 的办法是最小实例数\N{\fs33\c&H00C8C0B8&\bord1.4}The README's remedy is minimum instances.
+Dialogue: 0,0:04:29.69,0:04:33.75,Bilingual,,0,0,0,,把它设成 1，就有一个热实例一直开着等第一个请求\N{\fs33\c&H00C8C0B8&\bord1.4}Set it to 1, and a warm instance stays on for the first request,
+Dialogue: 0,0:04:33.75,0:04:35.47,Bilingual,,0,0,0,,它自己的计价器也在走\N{\fs33\c&H00C8C0B8&\bord1.4}with its own meter running.
+Dialogue: 0,0:04:35.72,0:04:38.96,Bilingual,,0,0,0,,这个常驻实例现在就落在 VM 那一行\N{\fs33\c&H00C8C0B8&\bord1.4}That always-on instance now sits in the VM row.
+Dialogue: 0,0:04:39.28,0:04:42.24,Bilingual,,0,0,0,,下一讲的 Vertex AI endpoint 也一样\N{\fs33\c&H00C8C0B8&\bord1.4}So does next lecture's Vertex AI endpoint:
+Dialogue: 0,0:04:42.24,0:04:49.56,Bilingual,,0,0,0,,它的部署调用要求最小副本数为 1，README 说这就是花钱的部分\N{\fs33\c&H00C8C0B8&\bord1.4}its deploy call asks for a minimum replica count of 1, which the README calls the part that costs money.
+Dialogue: 0,0:04:49.80,0:04:51.40,Bilingual,,0,0,0,,换个新情况试试\N{\fs33\c&H00C8C0B8&\bord1.4}Test it on a new case.
+Dialogue: 0,0:04:51.61,0:04:55.45,Bilingual,,0,0,0,,请求数翻倍，每个一样长，天数不变\N{\fs33\c&H00C8C0B8&\bord1.4}Twice as many requests, each just as long, in the same days.
+Dialogue: 0,0:04:55.77,0:04:57.37,Bilingual,,0,0,0,,哪份账单会变？\N{\fs33\c&H00C8C0B8&\bord1.4}Which bill changes?
+Dialogue: 0,0:05:08.00,0:05:09.60,Bilingual,,0,0,0,,选 B，只有函数的\N{\fs33\c&H00C8C0B8&\bord1.4}B, only the function's.
+Dialogue: 0,0:05:09.92,0:05:14.13,Bilingual,,0,0,0,,看：每个请求一分为二，函数的计价器往上涨\N{\fs33\c&H00C8C0B8&\bord1.4}Watch: every request splits in two, and the function meter climbs,
+Dialogue: 0,0:05:14.13,0:05:17.64,Bilingual,,0,0,0,,因为每次调用和它的运行时间都要计费\N{\fs33\c&H00C8C0B8&\bord1.4}since every invocation and its running time are billed.
+Dialogue: 0,0:05:17.96,0:05:24.41,Bilingual,,0,0,0,,VM 的计价器不动，因为它按预配的时长计费：A 说反了，C 是错的\N{\fs33\c&H00C8C0B8&\bord1.4}The VM meter does not move, because it bills provisioned hours: A is backwards, and C is wrong.
+Dialogue: 0,0:05:24.73,0:05:27.86,Bilingual,,0,0,0,,D 把没有最低收费和免费干活混为一谈\N{\fs33\c&H00C8C0B8&\bord1.4}D confuses no minimum charge with free work.
+Dialogue: 0,0:05:28.10,0:05:30.51,Bilingual,,0,0,0,,所以规则不是：serverless 很便宜\N{\fs33\c&H00C8C0B8&\bord1.4}So the rule is not, serverless is cheap.
+Dialogue: 0,0:05:30.83,0:05:33.28,Bilingual,,0,0,0,,规则是：有没有什么东西一直开着？\N{\fs33\c&H00C8C0B8&\bord1.4}The rule is: is anything always on?
+Dialogue: 0,0:05:33.60,0:05:37.12,Bilingual,,0,0,0,,空闲时间只影响常驻资源的账单\N{\fs33\c&H00C8C0B8&\bord1.4}Idle time moves only the bills of always-on things.
+Dialogue: 0,0:05:37.44,0:05:41.24,Bilingual,,0,0,0,,请求数和时长只影响按用量计费的账单\N{\fs33\c&H00C8C0B8&\bord1.4}Request count and duration move only the pay-per-use bill.
+Dialogue: 0,0:05:45.98,0:05:47.73,Bilingual,,0,0,0,,接下来，你要交出什么\N{\fs33\c&H00C8C0B8&\bord1.4}Next, what you hand over.
+Dialogue: 0,0:05:48.05,0:05:51.43,Bilingual,,0,0,0,,课上用四种方式部署同一个翻译应用\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture deploys one translate app four ways:
+Dialogue: 0,0:05:51.43,0:05:55.22,Bilingual,,0,0,0,,虚拟机或 serverless，代码文件或 container\N{\fs33\c&H00C8C0B8&\bord1.4}virtual machine or serverless, code file or container.
+Dialogue: 0,0:05:55.54,0:05:57.95,Bilingual,,0,0,0,,前面几讲填好了 VM 那一行\N{\fs33\c&H00C8C0B8&\bord1.4}Earlier lectures filled the VM row.
+Dialogue: 0,0:05:58.27,0:06:00.28,Bilingual,,0,0,0,,今天填 serverless 那一行\N{\fs33\c&H00C8C0B8&\bord1.4}Today fills the serverless row.
+Dialogue: 0,0:06:00.52,0:06:03.14,Bilingual,,0,0,0,,部署函数，你交出一个源文件\N{\fs33\c&H00C8C0B8&\bord1.4}For a function you hand over a source file,
+Dialogue: 0,0:06:03.14,0:06:05.34,Bilingual,,0,0,0,,它的 requirements 文件，再加一个名字\N{\fs33\c&H00C8C0B8&\bord1.4}its requirements file, and one name.
+Dialogue: 0,0:06:05.66,0:06:07.45,Bilingual,,0,0,0,,这个文件是 main.py\N{\fs33\c&H00C8C0B8&\bord1.4}The file is main.py:
+Dialogue: 0,0:06:07.45,0:06:10.51,Bilingual,,0,0,0,,一个叫 hello 下划线 http 的 HTTP 处理函数\N{\fs33\c&H00C8C0B8&\bord1.4}an HTTP handler called hello_http,
+Dialogue: 0,0:06:10.51,0:06:15.98,Bilingual,,0,0,0,,它从请求里读出文本和两个语言代码\N{\fs33\c&H00C8C0B8&\bord1.4}which reads the text and two language codes from the request.
+Dialogue: 0,0:06:16.23,0:06:20.54,Bilingual,,0,0,0,,这个名字就是入口点：框架应该调用的那个 Python 函数\N{\fs33\c&H00C8C0B8&\bord1.4}That name is the entry point: the Python function the framework should call.
+Dialogue: 0,0:06:20.86,0:06:23.49,Bilingual,,0,0,0,,不是文件名，也不是 service 名称\N{\fs33\c&H00C8C0B8&\bord1.4}Not the file name, and not the service name.
+Dialogue: 0,0:06:23.73,0:06:25.30,Bilingual,,0,0,0,,然后由 Google 构建\N{\fs33\c&H00C8C0B8&\bord1.4}Then Google builds.
+Dialogue: 0,0:06:25.35,0:06:30.34,Bilingual,,0,0,0,,Cloud Build 安装依赖，配置 Functions Framework\N{\fs33\c&H00C8C0B8&\bord1.4}Cloud Build installs the requirements, configures the Functions Framework,
+Dialogue: 0,0:06:30.34,0:06:33.31,Bilingual,,0,0,0,,再把一个 image 发布到 Artifact Registry\N{\fs33\c&H00C8C0B8&\bord1.4}and publishes an image to Artifact Registry.
+Dialogue: 0,0:06:33.63,0:06:37.22,Bilingual,,0,0,0,,这只在构建时发生一次，不是每个请求都来一次\N{\fs33\c&H00C8C0B8&\bord1.4}This happens once, at build time, not on every request.
+Dialogue: 0,0:06:37.45,0:06:39.99,Bilingual,,0,0,0,,框架靠这个名字找到你的函数\N{\fs33\c&H00C8C0B8&\bord1.4}The framework finds your function by that name.
+Dialogue: 0,0:06:40.31,0:06:44.38,Bilingual,,0,0,0,,入口点填 main，就找不到任何叫 main 的东西\N{\fs33\c&H00C8C0B8&\bord1.4}Type main as the entry point, and there is nothing called main to find.
+Dialogue: 0,0:06:44.70,0:06:48.16,Bilingual,,0,0,0,,函数构建失败，构建日志会告诉你原因\N{\fs33\c&H00C8C0B8&\bord1.4}The function build fails, and its build logs tell you why.
+Dialogue: 0,0:06:48.40,0:06:52.62,Bilingual,,0,0,0,,课件第 11 页说，运行函数不用管理 container\N{\fs33\c&H00C8C0B8&\bord1.4}Slide 11 says a function runs without managing containers.
+Dialogue: 0,0:06:52.94,0:06:55.97,Bilingual,,0,0,0,,你不用管理它，但 Google 照样会构建一个\N{\fs33\c&H00C8C0B8&\bord1.4}You do not manage one, but Google still builds one.
+Dialogue: 0,0:06:56.29,0:06:59.98,Bilingual,,0,0,0,,课件里的 Cloud Functions 现在叫 Cloud Run functions\N{\fs33\c&H00C8C0B8&\bord1.4}And the slides' Cloud Functions are now Cloud Run functions.
+Dialogue: 0,0:07:00.23,0:07:01.89,Bilingual,,0,0,0,,部署 Cloud Run service\N{\fs33\c&H00C8C0B8&\bord1.4}For a Cloud Run service,
+Dialogue: 0,0:07:01.89,0:07:04.80,Bilingual,,0,0,0,,你交出一个现成的 image，给出它的 URL\N{\fs33\c&H00C8C0B8&\bord1.4}you hand over a finished image by its URL.
+Dialogue: 0,0:07:05.12,0:07:08.85,Bilingual,,0,0,0,,部署它什么也不构建：这个 image 事先就构建好了\N{\fs33\c&H00C8C0B8&\bord1.4}Deploying it builds nothing: the image was built beforehand.
+Dialogue: 0,0:07:09.17,0:07:13.24,Bilingual,,0,0,0,,它的 Dockerfile 选定了基础 Python、默认 port 8080\N{\fs33\c&H00C8C0B8&\bord1.4}Its Dockerfile picks the base Python, the default port, 8080,
+Dialogue: 0,0:07:13.24,0:07:14.85,Bilingual,,0,0,0,,以及启动命令\N{\fs33\c&H00C8C0B8&\bord1.4}and the startup command.
+Dialogue: 0,0:07:15.17,0:07:16.77,Bilingual,,0,0,0,,这三样都由你控制\N{\fs33\c&H00C8C0B8&\bord1.4}You control all three.
+Dialogue: 0,0:07:16.90,0:07:19.84,Bilingual,,0,0,0,,两者都通过 HTTPS URL 调用\N{\fs33\c&H00C8C0B8&\bord1.4}Both are called through an HTTPS URL.
+Dialogue: 0,0:07:20.16,0:07:24.52,Bilingual,,0,0,0,,函数通过查询字符串接收新的输入，不用重新部署\N{\fs33\c&H00C8C0B8&\bord1.4}The function takes new inputs through its query string, with no redeploy.
+Dialogue: 0,0:07:25.95,0:07:30.32,Bilingual,,0,0,0,,两者最后都是同一样东西：Cloud Run 上的一个 container 实例\N{\fs33\c&H00C8C0B8&\bord1.4}Both end as the same thing: a container instance on Cloud Run.
+Dialogue: 0,0:07:30.64,0:07:33.33,Bilingual,,0,0,0,,函数就是一个不用你自己写的 container\N{\fs33\c&H00C8C0B8&\bord1.4}A function is a container you did not write.
+Dialogue: 0,0:07:33.65,0:07:36.87,Bilingual,,0,0,0,,在小测上，源代码加入口点，就是函数\N{\fs33\c&H00C8C0B8&\bord1.4}On the quiz, source plus an entry point means a function.
+Dialogue: 0,0:07:37.19,0:07:40.90,Bilingual,,0,0,0,,你自己的 image，或者你自己的启动命令，就是 service\N{\fs33\c&H00C8C0B8&\bord1.4}Your own image, or your own startup command, means a service.
+Dialogue: 0,0:07:46.15,0:07:49.24,Bilingual,,0,0,0,,每个部署好的 service 都面对两个权限问题\N{\fs33\c&H00C8C0B8&\bord1.4}Every deployed service faces two permission questions,
+Dialogue: 0,0:07:49.24,0:07:51.25,Bilingual,,0,0,0,,README 把它们分开处理\N{\fs33\c&H00C8C0B8&\bord1.4}and the README keeps them separate.
+Dialogue: 0,0:07:51.57,0:07:53.17,Bilingual,,0,0,0,,谁能调用我们的公开应用？\N{\fs33\c&H00C8C0B8&\bord1.4}Who may call our public app?
+Dialogue: 0,0:07:53.45,0:07:55.39,Bilingual,,0,0,0,,运行中的应用又能访问什么？\N{\fs33\c&H00C8C0B8&\bord1.4}And what may the running app access?
+Dialogue: 0,0:07:55.63,0:07:57.25,Bilingual,,0,0,0,,左边的门是调用方\N{\fs33\c&H00C8C0B8&\bord1.4}The left door is the caller.
+Dialogue: 0,0:07:57.57,0:08:01.31,Bilingual,,0,0,0,,允许公开访问时，任何浏览器的请求都能进来\N{\fs33\c&H00C8C0B8&\bord1.4}With public access allowed, any browser's request gets in.
+Dialogue: 0,0:08:01.63,0:08:06.03,Bilingual,,0,0,0,,不允许的话，没有权限的调用方会被 403 挡回去\N{\fs33\c&H00C8C0B8&\bord1.4}Without it, a caller with no permission is turned away with a 403,
+Dialogue: 0,0:08:06.03,0:08:07.84,Bilingual,,0,0,0,,你的代码根本不会运行\N{\fs33\c&H00C8C0B8&\bord1.4}before your code even runs.
+Dialogue: 0,0:08:08.08,0:08:10.92,Bilingual,,0,0,0,,右边的门是你的代码向外调用时的身份\N{\fs33\c&H00C8C0B8&\bord1.4}The right door is who your code is when it calls out.
+Dialogue: 0,0:08:11.24,0:08:14.20,Bilingual,,0,0,0,,这个 web 应用戴着服务账号工牌\N{\fs33\c&H00C8C0B8&\bord1.4}The web app wears a service account badge,
+Dialogue: 0,0:08:14.20,0:08:17.10,Bilingual,,0,0,0,,translation-demo-runtime，有两个角色\N{\fs33\c&H00C8C0B8&\bord1.4}translation-demo-runtime, with two roles:
+Dialogue: 0,0:08:17.10,0:08:20.41,Bilingual,,0,0,0,,Agent Platform User 和 Service Usage Consumer\N{\fs33\c&H00C8C0B8&\bord1.4}Agent Platform User and Service Usage Consumer.
+Dialogue: 0,0:08:20.73,0:08:22.91,Bilingual,,0,0,0,,你不用创建或下载密钥\N{\fs33\c&H00C8C0B8&\bord1.4}You do not create or download a key.
+Dialogue: 0,0:08:23.15,0:08:25.84,Bilingual,,0,0,0,,代码只是请求默认凭据\N{\fs33\c&H00C8C0B8&\bord1.4}The code just asks for default credentials,
+Dialogue: 0,0:08:25.84,0:08:30.34,Bilingual,,0,0,0,,而在 Cloud Run 上平台会把所挂账号的 token 交给它\N{\fs33\c&H00C8C0B8&\bord1.4}and on Cloud Run the platform hands it a token for the attached account.
+Dialogue: 0,0:08:30.66,0:08:32.26,Bilingual,,0,0,0,,哪里都没有密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}No key file anywhere.
+Dialogue: 0,0:08:32.47,0:08:34.07,Bilingual,,0,0,0,,还有一个箭头，来自你\N{\fs33\c&H00C8C0B8&\bord1.4}One more arrow, from you.
+Dialogue: 0,0:08:34.32,0:08:36.49,Bilingual,,0,0,0,,要把这个工牌挂到一个 service 上\N{\fs33\c&H00C8C0B8&\bord1.4}To attach that badge to a service,
+Dialogue: 0,0:08:36.49,0:08:39.74,Bilingual,,0,0,0,,你自己的身份需要这个账号的 Service Account User 角色\N{\fs33\c&H00C8C0B8&\bord1.4}your own identity needs Service Account User on it.
+Dialogue: 0,0:08:40.06,0:08:44.41,Bilingual,,0,0,0,,这是部署权限，和工牌本身能做什么是两回事\N{\fs33\c&H00C8C0B8&\bord1.4}That is a deployment permission, separate from what the badge itself may do.
+Dialogue: 0,0:08:44.65,0:08:46.44,Bilingual,,0,0,0,,这个 job 有自己的工牌\N{\fs33\c&H00C8C0B8&\bord1.4}The job gets its own badge.
+Dialogue: 0,0:08:46.76,0:08:49.50,Bilingual,,0,0,0,,它有同样的两个 Agent Platform 角色\N{\fs33\c&H00C8C0B8&\bord1.4}It has the same two Agent Platform roles,
+Dialogue: 0,0:08:49.50,0:08:52.58,Bilingual,,0,0,0,,另外在输入 bucket 上有 Storage Object Viewer\N{\fs33\c&H00C8C0B8&\bord1.4}plus Storage Object Viewer on the input bucket
+Dialogue: 0,0:08:52.58,0:08:55.79,Bilingual,,0,0,0,,在输出 bucket 上有 Storage Object Creator\N{\fs33\c&H00C8C0B8&\bord1.4}and Storage Object Creator on the output bucket.
+Dialogue: 0,0:08:56.11,0:08:58.76,Bilingual,,0,0,0,,这个 web 应用的账号不需要任何 bucket 角色\N{\fs33\c&H00C8C0B8&\bord1.4}The web app's account needs no bucket roles,
+Dialogue: 0,0:08:58.76,0:09:01.59,Bilingual,,0,0,0,,因为它的音频直接发给浏览器\N{\fs33\c&H00C8C0B8&\bord1.4}because its audio goes straight to the browser.
+Dialogue: 0,0:09:01.91,0:09:03.51,Bilingual,,0,0,0,,一个工作负载一个工牌\N{\fs33\c&H00C8C0B8&\bord1.4}One badge per workload.
+Dialogue: 0,0:09:03.73,0:09:07.36,Bilingual,,0,0,0,,课件第 16 页提醒，serverless 更难调试\N{\fs33\c&H00C8C0B8&\bord1.4}Slide 16 warns that serverless is harder to debug.
+Dialogue: 0,0:09:07.68,0:09:12.30,Bilingual,,0,0,0,,README 说了去哪看：函数构建失败看构建日志\N{\fs33\c&H00C8C0B8&\bord1.4}The README says where to look: build logs when a function build fails,
+Dialogue: 0,0:09:12.30,0:09:16.53,Bilingual,,0,0,0,,请求失败看 service 日志，还有 job 的执行日志\N{\fs33\c&H00C8C0B8&\bord1.4}service logs when a request fails, and the job's execution logs.
+Dialogue: 0,0:09:16.85,0:09:19.24,Bilingual,,0,0,0,,构建成功不代表它能用\N{\fs33\c&H00C8C0B8&\bord1.4}A finished build is not proof that it works.
+Dialogue: 0,0:09:19.48,0:09:22.39,Bilingual,,0,0,0,,规则是：公开访问回答谁能调用\N{\fs33\c&H00C8C0B8&\bord1.4}The rule: public access answers who may call,
+Dialogue: 0,0:09:22.39,0:09:25.88,Bilingual,,0,0,0,,被拒绝的调用方在你的代码运行之前就被挡住了\N{\fs33\c&H00C8C0B8&\bord1.4}and a refused caller is stopped before your code runs.
+Dialogue: 0,0:09:26.20,0:09:29.19,Bilingual,,0,0,0,,服务账号回答你的代码能碰什么\N{\fs33\c&H00C8C0B8&\bord1.4}The service account answers what your code may touch.
+Dialogue: 0,0:09:29.51,0:09:33.39,Bilingual,,0,0,0,,当你自己的代码被拒绝时，修的是工牌的角色，不是调用方\N{\fs33\c&H00C8C0B8&\bord1.4}When your own code is denied, fix the badge's roles, not the caller.
+Dialogue: 0,0:09:38.43,0:09:42.95,Bilingual,,0,0,0,,要部署一个训练好的模型，下一讲用的是 Vertex AI endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}To serve a trained model, the next lecture uses a Vertex AI endpoint,
+Dialogue: 0,0:09:42.95,0:09:46.48,Bilingual,,0,0,0,,小测问的是它的预处理应该放在哪里\N{\fs33\c&H00C8C0B8&\bord1.4}and the quiz asks where its preprocessing should live.
+Dialogue: 0,0:09:46.80,0:09:49.83,Bilingual,,0,0,0,,想象两个客户端：一个手机应用，一个网页\N{\fs33\c&H00C8C0B8&\bord1.4}Picture two clients: a phone app, and a web page.
+Dialogue: 0,0:09:50.07,0:09:53.32,Bilingual,,0,0,0,,每个客户端都带着同一个齿轮\N{\fs33\c&H00C8C0B8&\bord1.4}Each client carries the same gear:
+Dialogue: 0,0:09:53.32,0:09:58.40,Bilingual,,0,0,0,,解码 JPEG，把像素缩放到 0 到 1 之间\N{\fs33\c&H00C8C0B8&\bord1.4}decode the JPEG, scale the pixels to between 0 and 1,
+Dialogue: 0,0:09:58.40,0:10:00.80,Bilingual,,0,0,0,,再 resize 到 224 乘 224\N{\fs33\c&H00C8C0B8&\bord1.4}and resize to 224 by 224.
+Dialogue: 0,0:10:01.12,0:10:03.72,Bilingual,,0,0,0,,然后它才把数字发给模型\N{\fs33\c&H00C8C0B8&\bord1.4}Only then does it send numbers to the model.
+Dialogue: 0,0:10:04.04,0:10:07.56,Bilingual,,0,0,0,,这是同一份配方的两个副本，在两个代码库里\N{\fs33\c&H00C8C0B8&\bord1.4}That is two copies of one recipe, in two code bases.
+Dialogue: 0,0:10:07.80,0:10:10.36,Bilingual,,0,0,0,,课上把这叫做客户端的脆弱性\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture calls this client-side brittleness.
+Dialogue: 0,0:10:10.68,0:10:13.66,Bilingual,,0,0,0,,每个客户端的预处理都略有不同\N{\fs33\c&H00C8C0B8&\bord1.4}Every client preprocesses slightly differently,
+Dialogue: 0,0:10:13.66,0:10:17.40,Bilingual,,0,0,0,,用一份配方训练的模型，悄悄收到了另一份\N{\fs33\c&H00C8C0B8&\bord1.4}and a model trained on one recipe quietly receives another.
+Dialogue: 0,0:10:17.72,0:10:19.72,Bilingual,,0,0,0,,现在把齿轮挪进 endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}Now move the gear into the endpoint.
+Dialogue: 0,0:10:20.04,0:10:22.23,Bilingual,,0,0,0,,客户端发送原始的 JPEG 字节\N{\fs33\c&H00C8C0B8&\bord1.4}Clients send raw JPEG bytes,
+Dialogue: 0,0:10:22.23,0:10:26.53,Bilingual,,0,0,0,,用 base64 包起来，因为 JSON 装不了原始字节\N{\fs33\c&H00C8C0B8&\bord1.4}wrapped as base64, because JSON cannot carry raw bytes.
+Dialogue: 0,0:10:26.85,0:10:30.69,Bilingual,,0,0,0,,预处理跟着模型走，所以每个客户端得到的\N{\fs33\c&H00C8C0B8&\bord1.4}The preprocessing travels with the model, so every client gets
+Dialogue: 0,0:10:30.69,0:10:33.35,Bilingual,,0,0,0,,正好是训练时用的预处理\N{\fs33\c&H00C8C0B8&\bord1.4}exactly the preprocessing used in training.
+Dialogue: 0,0:10:33.60,0:10:35.41,Bilingual,,0,0,0,,看这个 repo 自己的客户端\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the repo's own client.
+Dialogue: 0,0:10:35.73,0:10:40.30,Bilingual,,0,0,0,,它读入图片文件，做 base64 编码，然后调用 predict\N{\fs33\c&H00C8C0B8&\bord1.4}It reads the image files, base64 encodes them, and calls predict.
+Dialogue: 0,0:10:40.62,0:10:42.97,Bilingual,,0,0,0,,不 resize，不归一化\N{\fs33\c&H00C8C0B8&\bord1.4}No resizing, no normalizing.
+Dialogue: 0,0:10:43.29,0:10:44.89,Bilingual,,0,0,0,,这就是瘦客户端\N{\fs33\c&H00C8C0B8&\bord1.4}That is a thin client.
+Dialogue: 0,0:10:45.02,0:10:47.43,Bilingual,,0,0,0,,现在在版本 2 里发布一个有问题的 resize\N{\fs33\c&H00C8C0B8&\bord1.4}Now ship a bad resize in version 2.
+Dialogue: 0,0:10:47.75,0:10:49.45,Bilingual,,0,0,0,,两个客户端同时坏掉\N{\fs33\c&H00C8C0B8&\bord1.4}Both clients break at once.
+Dialogue: 0,0:10:49.77,0:10:53.83,Bilingual,,0,0,0,,回滚到版本 1，两个客户端在同一瞬间恢复正常\N{\fs33\c&H00C8C0B8&\bord1.4}Roll back to version 1, and both are healthy at the same instant.
+Dialogue: 0,0:10:54.15,0:10:57.54,Bilingual,,0,0,0,,一次部署修好了所有人，不用发布任何客户端\N{\fs33\c&H00C8C0B8&\bord1.4}One deployment fixed everyone, with no client release.
+Dialogue: 0,0:10:57.78,0:10:59.92,Bilingual,,0,0,0,,现在把齿轮放回客户端\N{\fs33\c&H00C8C0B8&\bord1.4}Now put the gears back on the clients.
+Dialogue: 0,0:11:00.24,0:11:02.03,Bilingual,,0,0,0,,同样的回滚要付出什么代价？\N{\fs33\c&H00C8C0B8&\bord1.4}What does the same rollback cost?
+Dialogue: 0,0:11:08.87,0:11:13.97,Bilingual,,0,0,0,,两次发布：一个等着应用商店审核的手机更新，再加一次网页部署\N{\fs33\c&H00C8C0B8&\bord1.4}Two releases: a phone update waiting in app store review, and a web deploy.
+Dialogue: 0,0:11:14.29,0:11:18.25,Bilingual,,0,0,0,,它们上线的时间不同，在这中间，两个客户端的结果不一致\N{\fs33\c&H00C8C0B8&\bord1.4}They land at different times, and in between, the clients disagree.
+Dialogue: 0,0:11:18.50,0:11:23.88,Bilingual,,0,0,0,,规则是：当题目说有好几个客户端，要在一个地方更新或回滚\N{\fs33\c&H00C8C0B8&\bord1.4}The rule: when the question says several clients, one place to update or roll back,
+Dialogue: 0,0:11:23.88,0:11:27.57,Bilingual,,0,0,0,,而且不用发布客户端时，把预处理放在 endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}and no client release, put preprocessing at the endpoint.
+Dialogue: 0,0:11:27.89,0:11:32.69,Bilingual,,0,0,0,,预处理放在客户端，就意味着每个客户端都要同步重新发布\N{\fs33\c&H00C8C0B8&\bord1.4}Preprocessing on the clients means every client is re-released in lockstep.
+Dialogue: 0,0:11:37.63,0:11:39.41,Bilingual,,0,0,0,,把预处理放在 endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}Preprocessing at the endpoint
+Dialogue: 0,0:11:39.41,0:11:42.58,Bilingual,,0,0,0,,只有在 endpoint 调用了正确的函数时才有用\N{\fs33\c&H00C8C0B8&\bord1.4}works only if the endpoint calls the right function.
+Dialogue: 0,0:11:42.90,0:11:47.23,Bilingual,,0,0,0,,这条链是：JPEG 字节，解码，转成浮点数，resize\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the chain: JPEG bytes, decode, convert to floats, resize,
+Dialogue: 0,0:11:47.23,0:11:50.56,Bilingual,,0,0,0,,模型，最后是四个概率，每种奶酪一个\N{\fs33\c&H00C8C0B8&\bord1.4}the model, and four probabilities, one per cheese.
+Dialogue: 0,0:11:50.80,0:11:55.28,Bilingual,,0,0,0,,在这个 repo 里，preprocess image 做前三步，一次处理一张图\N{\fs33\c&H00C8C0B8&\bord1.4}In the repo, preprocess_image does the first three steps, for one image.
+Dialogue: 0,0:11:55.60,0:11:57.88,Bilingual,,0,0,0,,它返回的是一张图片，不是答案\N{\fs33\c&H00C8C0B8&\bord1.4}It returns an image, not an answer.
+Dialogue: 0,0:11:58.12,0:12:00.95,Bilingual,,0,0,0,,这个 serving function 接收一批字符串\N{\fs33\c&H00C8C0B8&\bord1.4}The serving_function takes a batch of strings,
+Dialogue: 0,0:12:00.95,0:12:04.52,Bilingual,,0,0,0,,对每一个都套用 preprocess image，然后调用模型\N{\fs33\c&H00C8C0B8&\bord1.4}maps preprocess_image over each one, then calls the model.
+Dialogue: 0,0:12:04.84,0:12:07.63,Bilingual,,0,0,0,,预处理和推理，在同一个函数里\N{\fs33\c&H00C8C0B8&\bord1.4}Preprocessing and inference, in one function.
+Dialogue: 0,0:12:07.95,0:12:11.26,Bilingual,,0,0,0,,它的参数 bytes inputs，就是客户端要用的键\N{\fs33\c&H00C8C0B8&\bord1.4}Its argument, bytes_inputs, is the key clients use.
+Dialogue: 0,0:12:11.58,0:12:14.45,Bilingual,,0,0,0,,考题可能把这个函数叫做 serve\N{\fs33\c&H00C8C0B8&\bord1.4}Exam questions may call this function serve:
+Dialogue: 0,0:12:14.45,0:12:19.88,Bilingual,,0,0,0,,不是 web 应用的 serve 命令，而是先预处理、再预测的那个函数\N{\fs33\c&H00C8C0B8&\bord1.4}not the web app's serve command, but the function that preprocesses, then predicts.
+Dialogue: 0,0:12:20.12,0:12:23.38,Bilingual,,0,0,0,,导出时把它注册在 serving default 这个名字下面\N{\fs33\c&H00C8C0B8&\bord1.4}The export registers it under the name serving_default,
+Dialogue: 0,0:12:23.38,0:12:26.82,Bilingual,,0,0,0,,模型服务器调用的就是这个名字背后的东西\N{\fs33\c&H00C8C0B8&\bord1.4}and the model server calls whatever sits behind that name.
+Dialogue: 0,0:12:27.14,0:12:30.95,Bilingual,,0,0,0,,课件用另一种调用来保存它；道理是一样的\N{\fs33\c&H00C8C0B8&\bord1.4}The slide saves it with a different call; the idea is the same.
+Dialogue: 0,0:12:31.20,0:12:33.55,Bilingual,,0,0,0,,试插头之前，最后检查一次\N{\fs33\c&H00C8C0B8&\bord1.4}Before we try plugs, one last check.
+Dialogue: 0,0:12:33.87,0:12:38.35,Bilingual,,0,0,0,,一个手机应用发送浮点数组，一个新的网页客户端发送 JPEG 字节\N{\fs33\c&H00C8C0B8&\bord1.4}A phone app sends float arrays, a new web client sends JPEG bytes,
+Dialogue: 0,0:12:38.35,0:12:41.74,Bilingual,,0,0,0,,团队想只在一个地方修预处理\N{\fs33\c&H00C8C0B8&\bord1.4}and the team wants one place to fix preprocessing.
+Dialogue: 0,0:12:42.06,0:12:43.66,Bilingual,,0,0,0,,他们应该注册什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What should they register?
+Dialogue: 0,0:12:56.37,0:12:59.80,Bilingual,,0,0,0,,先试 B：只注册 preprocess image\N{\fs33\c&H00C8C0B8&\bord1.4}Try B first: register preprocess_image alone.
+Dialogue: 0,0:13:00.12,0:13:05.24,Bilingual,,0,0,0,,请求返回的是一张 224 乘 224 的图片\N{\fs33\c&H00C8C0B8&\bord1.4}A request comes back as a 224 by 224 image.
+Dialogue: 0,0:13:05.56,0:13:07.16,Bilingual,,0,0,0,,根本没有做分类\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing was classified.
+Dialogue: 0,0:13:07.32,0:13:09.07,Bilingual,,0,0,0,,A 和 D 保留原始模型\N{\fs33\c&H00C8C0B8&\bord1.4}A and D keep the raw model.
+Dialogue: 0,0:13:09.39,0:13:13.31,Bilingual,,0,0,0,,它要的是浮点张量，所以 JPEG 字节插不进去\N{\fs33\c&H00C8C0B8&\bord1.4}It demands float tensors, so JPEG bytes no longer fit.
+Dialogue: 0,0:13:13.63,0:13:16.85,Bilingual,,0,0,0,,服务器只会把 base64 变回字节\N{\fs33\c&H00C8C0B8&\bord1.4}The server only turns base64 back into bytes.
+Dialogue: 0,0:13:17.17,0:13:21.42,Bilingual,,0,0,0,,齿轮又跳回了每个客户端：两个副本要保持同步\N{\fs33\c&H00C8C0B8&\bord1.4}The gears jump back onto every client: two copies to keep in sync.
+Dialogue: 0,0:13:21.67,0:13:25.74,Bilingual,,0,0,0,,选 C，serving function：字节进去，概率出来\N{\fs33\c&H00C8C0B8&\bord1.4}C, the serving_function: bytes go in, probabilities come out.
+Dialogue: 0,0:13:26.06,0:13:29.13,Bilingual,,0,0,0,,手机应用改成发送字节，只需一次\N{\fs33\c&H00C8C0B8&\bord1.4}The phone app switches to sending bytes once;
+Dialogue: 0,0:13:29.13,0:13:35.62,Bilingual,,0,0,0,,之后，一个导出的版本就装着配方，每次修复或回滚都是一次部署\N{\fs33\c&H00C8C0B8&\bord1.4}after that, one exported version holds the recipe, and every fix or rollback is one deployment.
+Dialogue: 0,0:13:35.94,0:13:38.66,Bilingual,,0,0,0,,这个 repo 的测试步骤加载 serving default\N{\fs33\c&H00C8C0B8&\bord1.4}The repo's test step loads serving_default
+Dialogue: 0,0:13:38.66,0:13:41.63,Bilingual,,0,0,0,,喂给它 bytes inputs，和服务器的做法一样\N{\fs33\c&H00C8C0B8&\bord1.4}and feeds it bytes_inputs, as the server will.
+Dialogue: 0,0:13:41.88,0:13:44.39,Bilingual,,0,0,0,,这和函数的入口点是同一个道理\N{\fs33\c&H00C8C0B8&\bord1.4}This echoes the function's entry point:
+Dialogue: 0,0:13:44.39,0:13:50.48,Bilingual,,0,0,0,,平台只调用你注册的那个名字，名字错了，下游什么也补救不了\N{\fs33\c&H00C8C0B8&\bord1.4}the platform calls exactly the name you registered, and nothing downstream can fix a wrong one.
+Dialogue: 0,0:13:50.72,0:13:55.03,Bilingual,,0,0,0,,规则是：注册那个做预处理和推理的函数\N{\fs33\c&H00C8C0B8&\bord1.4}The rule: register the function that does preprocessing and inference.
+Dialogue: 0,0:13:55.35,0:14:01.11,Bilingual,,0,0,0,,单独的预处理返回的是图片，原始模型会让每个客户端自己预处理\N{\fs33\c&H00C8C0B8&\bord1.4}Preprocessing alone returns images, and the raw model makes every client preprocess.
+Dialogue: 0,0:14:05.55,0:14:07.17,Bilingual,,0,0,0,,周二的七条规则\N{\fs33\c&H00C8C0B8&\bord1.4}Seven rules for Tuesday.
+Dialogue: 0,0:14:07.49,0:14:09.22,Bilingual,,0,0,0,,第一：看生命周期\N{\fs33\c&H00C8C0B8&\bord1.4}One: read the lifecycle.
+Dialogue: 0,0:14:09.54,0:14:11.83,Bilingual,,0,0,0,,如果它在监听，它就是 service\N{\fs33\c&H00C8C0B8&\bord1.4}If it listens, it is a service;
+Dialogue: 0,0:14:11.83,0:14:14.33,Bilingual,,0,0,0,,如果它运行完就退出，它就是 job\N{\fs33\c&H00C8C0B8&\bord1.4}if it runs and exits, it is a job,
+Dialogue: 0,0:14:14.33,0:14:17.28,Bilingual,,0,0,0,,按需启动或者由 Cloud Scheduler 启动\N{\fs33\c&H00C8C0B8&\bord1.4}started on demand or by Cloud Scheduler.
+Dialogue: 0,0:14:17.60,0:14:20.70,Bilingual,,0,0,0,,第二：空闲时间只让一直开着的东西花钱\N{\fs33\c&H00C8C0B8&\bord1.4}Two: idle time costs only what is always on.
+Dialogue: 0,0:14:21.02,0:14:25.16,Bilingual,,0,0,0,,第三：按用量计费，计的是调用次数和执行时间\N{\fs33\c&H00C8C0B8&\bord1.4}Three: pay-per-use bills invocations and execution time,
+Dialogue: 0,0:14:25.16,0:14:28.12,Bilingual,,0,0,0,,零空闲成本换来的是冷启动\N{\fs33\c&H00C8C0B8&\bord1.4}and zero idle cost buys you cold starts.
+Dialogue: 0,0:14:28.37,0:14:34.18,Bilingual,,0,0,0,,第四：函数是源代码、依赖和入口点，image 由 Google 构建\N{\fs33\c&H00C8C0B8&\bord1.4}Four: a function is source, requirements and an entry point, and Google builds the image;
+Dialogue: 0,0:14:34.18,0:14:36.00,Bilingual,,0,0,0,,service 是你自己的 image\N{\fs33\c&H00C8C0B8&\bord1.4}a service is your own image.
+Dialogue: 0,0:14:36.32,0:14:39.16,Bilingual,,0,0,0,,第五：谁能调用它，不等于它以谁的身份运行\N{\fs33\c&H00C8C0B8&\bord1.4}Five: who may call it is not who it runs as,
+Dialogue: 0,0:14:39.16,0:14:42.06,Bilingual,,0,0,0,,运行时的服务账号也不需要密钥\N{\fs33\c&H00C8C0B8&\bord1.4}and the runtime service account needs no key.
+Dialogue: 0,0:14:42.30,0:14:44.51,Bilingual,,0,0,0,,第六：在 endpoint 做预处理\N{\fs33\c&H00C8C0B8&\bord1.4}Six: preprocess at the endpoint,
+Dialogue: 0,0:14:44.51,0:14:48.17,Bilingual,,0,0,0,,这样一次部署就能更新或回滚每个客户端\N{\fs33\c&H00C8C0B8&\bord1.4}so one deployment updates or rolls back every client.
+Dialogue: 0,0:14:48.49,0:14:53.57,Bilingual,,0,0,0,,第七：注册先预处理、再调用模型的 serving function\N{\fs33\c&H00C8C0B8&\bord1.4}Seven: register the serving function that preprocesses and then calls the model,
+Dialogue: 0,0:14:53.57,0:14:57.19,Bilingual,,0,0,0,,因为平台只调用你注册的那个名字\N{\fs33\c&H00C8C0B8&\bord1.4}because the platform calls exactly the name you register.
+Dialogue: 0,0:14:57.43,0:14:58.94,Bilingual,,0,0,0,,该用哪一个？\N{\fs33\c&H00C8C0B8&\bord1.4}Which one to use?
+Dialogue: 0,0:14:58.99,0:15:04.61,Bilingual,,0,0,0,,下一讲的经验法则：Vertex AI 用来在生产环境部署训练好的模型\N{\fs33\c&H00C8C0B8&\bord1.4}The next lecture's rule of thumb: Vertex AI to serve a trained model in production,
+Dialogue: 0,0:15:04.61,0:15:07.99,Bilingual,,0,0,0,,Cloud Run 用在模型只是更大应用一部分的时候\N{\fs33\c&H00C8C0B8&\bord1.4}Cloud Run when the model is part of a broader app.
+Dialogue: 0,0:15:08.31,0:15:14.05,Bilingual,,0,0,0,,还要记住课件第 16 页说的代价：厂商锁定、冷启动、更难调试\N{\fs33\c&H00C8C0B8&\bord1.4}And remember the costs on slide 16: vendor lock-in, cold starts, harder debugging.
+Dialogue: 0,0:15:14.30,0:15:16.30,Bilingual,,0,0,0,,这就是这一讲的七条规则\N{\fs33\c&H00C8C0B8&\bord1.4}That's the lecture in seven rules.
+Dialogue: 0,0:15:16.63,0:15:18.23,Bilingual,,0,0,0,,周二小测加油\N{\fs33\c&H00C8C0B8&\bord1.4}Good luck on Tuesday.

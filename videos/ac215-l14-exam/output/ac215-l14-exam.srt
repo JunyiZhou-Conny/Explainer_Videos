@@ -1,0 +1,1164 @@
+1
+00:00:00,000 --> 00:00:03,371
+Here is a Cloud Run job
+called translation-audio.
+
+2
+00:00:03,691 --> 00:00:08,277
+It uses the same image as a translation
+web app that works perfectly.
+
+3
+00:00:08,597 --> 00:00:11,051
+We press Execute, and the job starts.
+
+4
+00:00:11,733 --> 00:00:12,733
+Minutes pass.
+
+5
+00:00:13,034 --> 00:00:17,365
+Nothing lands in the output bucket,
+and the job never says it is done.
+
+6
+00:00:17,685 --> 00:00:20,586
+It runs straight
+into the task timeout we gave it.
+
+7
+00:00:20,906 --> 00:00:23,232
+5 minutes, and the platform stops it.
+
+8
+00:00:23,467 --> 00:00:28,736
+The clue is the last line of the Dockerfile:
+its default command starts the web server.
+
+9
+00:00:29,056 --> 00:00:32,792
+The README's troubleshooting table even
+lists the symptom:
+
+10
+00:00:32,792 --> 00:00:35,883
+a job that starts a server
+instead of finishing.
+
+11
+00:00:36,117 --> 00:00:37,802
+Same image, same code.
+
+12
+00:00:38,122 --> 00:00:41,386
+So why does the web app work,
+while the job never ends?
+
+13
+00:00:41,706 --> 00:00:42,986
+Hold that question.
+
+14
+00:00:44,817 --> 00:00:48,081
+For the quiz,
+this lecture comes down to five ideas.
+
+15
+00:00:48,401 --> 00:00:49,745
+Service or job.
+
+16
+00:00:50,065 --> 00:00:51,729
+Who pays for idle time.
+
+17
+00:00:52,049 --> 00:00:53,756
+What you hand over to deploy.
+
+18
+00:00:54,076 --> 00:00:56,508
+Who may call your code, and who it runs as.
+
+19
+00:00:56,828 --> 00:00:58,180
+And the model endpoint:
+
+20
+00:00:58,180 --> 00:01:01,414
+where preprocessing lives,
+and which function it calls.
+
+21
+00:01:01,650 --> 00:01:06,109
+The gray tag, top right, names
+the lecture slide behind each idea.
+
+22
+00:01:10,450 --> 00:01:14,973
+The lecture says Cloud Run runs a container
+as a service or a job.
+
+23
+00:01:15,293 --> 00:01:20,114
+The demo app shows both: one image,
+two startup commands, serve or batch.
+
+24
+00:01:20,350 --> 00:01:23,047
+Serve starts gunicorn, a web server,
+
+25
+00:01:23,047 --> 00:01:26,643
+on the port Cloud Run gives it,
+8080 by default.
+
+26
+00:01:26,963 --> 00:01:30,057
+Then it waits,
+and answers each request that arrives.
+
+27
+00:01:30,650 --> 00:01:32,165
+That shape is a service.
+
+28
+00:01:32,485 --> 00:01:36,032
+It has a URL,
+adds instances when traffic rises,
+
+29
+00:01:36,032 --> 00:01:38,693
+and can scale to zero when it stops.
+
+30
+00:01:39,013 --> 00:01:42,362
+It never finishes on purpose:
+listening is its job.
+
+31
+00:01:42,600 --> 00:01:44,093
+Batch has a different shape.
+
+32
+00:01:44,413 --> 00:01:45,829
+It reads the passage,
+
+33
+00:01:45,829 --> 00:01:49,875
+translates it, generates
+speech, saves the files, and exits.
+
+34
+00:01:50,195 --> 00:01:52,924
+If a step fails, it exits with status 1,
+
+35
+00:01:52,924 --> 00:01:56,403
+so the execution shows failed,
+not a false success.
+
+36
+00:01:56,650 --> 00:02:01,450
+The README calls this a job:
+no URL, nothing waiting for requests.
+
+37
+00:02:01,770 --> 00:02:04,501
+Something starts it,
+and it runs to completion.
+
+38
+00:02:04,750 --> 00:02:05,753
+Now the hook.
+
+39
+00:02:06,073 --> 00:02:09,550
+The job inherited
+the image's default command, serve,
+
+40
+00:02:09,550 --> 00:02:13,945
+so it started a web server
+and waited for requests that never come.
+
+41
+00:02:14,265 --> 00:02:17,401
+The fix: the command python,
+with the batch arguments.
+
+42
+00:02:17,721 --> 00:02:20,067
+Same image, and now the strip ends.
+
+43
+00:02:20,317 --> 00:02:21,554
+Who presses start?
+
+44
+00:02:21,874 --> 00:02:24,050
+In the README, you click Execute.
+
+45
+00:02:24,370 --> 00:02:27,940
+For a nightly run,
+the usual trigger is Cloud Scheduler,
+
+46
+00:02:27,940 --> 00:02:29,917
+which this README does not use.
+
+47
+00:02:30,617 --> 00:02:31,617
+Try one.
+
+48
+00:02:31,897 --> 00:02:35,780
+A container indexes new documents and exits,
+once an hour.
+
+49
+00:02:36,100 --> 00:02:38,595
+Read the lifecycle, not the product names.
+
+50
+00:02:49,933 --> 00:02:52,942
+B, a job on a Cloud Scheduler timetable:
+
+51
+00:02:52,942 --> 00:02:56,930
+it runs to completion and costs
+nothing between runs.
+
+52
+00:02:57,250 --> 00:02:59,441
+A pays for an instance all hour,
+
+53
+00:02:59,441 --> 00:03:03,480
+and an idle service's CPU is throttled,
+so the loop stalls.
+
+54
+00:03:03,800 --> 00:03:07,960
+C breaks the service contract:
+an instance that exits has crashed.
+
+55
+00:03:08,280 --> 00:03:11,928
+D works, but the VM is paid for all hour
+while it idles.
+
+56
+00:03:12,248 --> 00:03:13,891
+Why that matters is next.
+
+57
+00:03:14,133 --> 00:03:16,894
+So the rule: if the question says it runs,
+
+58
+00:03:16,894 --> 00:03:21,429
+writes its output and exits,
+or that it runs every night, pick a job.
+
+59
+00:03:21,749 --> 00:03:27,104
+If it says it answers requests, has a URL,
+or listens on a port, pick a service.
+
+60
+00:03:32,383 --> 00:03:35,562
+The lecture promises you pay only
+while your code runs.
+
+61
+00:03:35,882 --> 00:03:38,698
+Let's make that exact: two meters, one day.
+
+62
+00:03:39,018 --> 00:03:40,767
+The yellow ticks are requests.
+
+63
+00:03:41,016 --> 00:03:43,128
+The top row is a virtual machine.
+
+64
+00:03:43,448 --> 00:03:47,032
+Its meter runs from boot to shutdown,
+requests or not.
+
+65
+00:03:47,352 --> 00:03:50,894
+The gold shading is idle time,
+and you pay for all of it.
+
+66
+00:03:51,133 --> 00:03:54,745
+The bottom row is a function,
+or a Cloud Run service
+
+67
+00:03:54,745 --> 00:03:59,538
+with request-based billing
+and minimum instances 0, as in the README.
+
+68
+00:03:59,858 --> 00:04:04,040
+Its meter moves only
+with invocations and how long each one runs.
+
+69
+00:04:04,450 --> 00:04:07,138
+Now stretch the quiet gaps between requests.
+
+70
+00:04:07,458 --> 00:04:08,766
+The VM meter grows,
+
+71
+00:04:08,766 --> 00:04:12,002
+because idle hours
+are still provisioned hours.
+
+72
+00:04:12,322 --> 00:04:16,482
+The function meter does not move at all:
+no requests, no charge.
+
+73
+00:04:16,716 --> 00:04:21,879
+Zero idle cost has a price,
+and slide 16 names it: the cold start.
+
+74
+00:04:22,199 --> 00:04:24,839
+After a quiet stretch,
+the first request waits
+
+75
+00:04:24,839 --> 00:04:26,273
+while an instance starts.
+
+76
+00:04:26,593 --> 00:04:29,367
+The README's remedy is minimum instances.
+
+77
+00:04:29,687 --> 00:04:33,753
+Set it to 1, and a warm instance
+stays on for the first request,
+
+78
+00:04:33,753 --> 00:04:35,468
+with its own meter running.
+
+79
+00:04:35,716 --> 00:04:38,959
+That always-on instance
+now sits in the VM row.
+
+80
+00:04:39,279 --> 00:04:42,258
+So does next lecture's Vertex AI endpoint:
+
+81
+00:04:42,258 --> 00:04:46,087
+its deploy call asks
+for a minimum replica count of 1,
+
+82
+00:04:46,087 --> 00:04:49,562
+which the README calls the part
+that costs money.
+
+83
+00:04:49,800 --> 00:04:51,293
+Test it on a new case.
+
+84
+00:04:51,613 --> 00:04:55,453
+Twice as many requests,
+each just as long, in the same days.
+
+85
+00:04:55,773 --> 00:04:57,160
+Which bill changes?
+
+86
+00:05:08,000 --> 00:05:09,600
+B, only the function's.
+
+87
+00:05:09,920 --> 00:05:14,133
+Watch: every request splits in two,
+and the function meter climbs,
+
+88
+00:05:14,133 --> 00:05:17,643
+since every invocation
+and its running time are billed.
+
+89
+00:05:17,963 --> 00:05:22,281
+The VM meter does not move,
+because it bills provisioned hours:
+
+90
+00:05:22,281 --> 00:05:24,405
+A is backwards, and C is wrong.
+
+91
+00:05:24,725 --> 00:05:27,861
+D confuses no minimum charge with free work.
+
+92
+00:05:28,100 --> 00:05:30,511
+So the rule is not, serverless is cheap.
+
+93
+00:05:30,831 --> 00:05:33,284
+The rule is: is anything always on?
+
+94
+00:05:33,604 --> 00:05:37,124
+Idle time moves only
+the bills of always-on things.
+
+95
+00:05:37,444 --> 00:05:41,241
+Request count and duration
+move only the pay-per-use bill.
+
+96
+00:05:45,983 --> 00:05:47,732
+Next, what you hand over.
+
+97
+00:05:48,052 --> 00:05:51,426
+The lecture deploys one translate
+app four ways:
+
+98
+00:05:51,426 --> 00:05:55,220
+virtual machine or serverless,
+code file or container.
+
+99
+00:05:55,540 --> 00:05:57,951
+Earlier lectures filled the VM row.
+
+100
+00:05:58,271 --> 00:06:00,276
+Today fills the serverless row.
+
+101
+00:06:00,516 --> 00:06:05,337
+For a function you hand over a source file,
+its requirements file, and one name.
+
+102
+00:06:05,657 --> 00:06:10,553
+The file is main.py:
+an HTTP handler called hello_http,
+
+103
+00:06:10,553 --> 00:06:15,983
+which reads the text
+and two language codes from the request.
+
+104
+00:06:16,233 --> 00:06:17,899
+That name is the entry point:
+
+105
+00:06:17,899 --> 00:06:20,542
+the Python function
+the framework should call.
+
+106
+00:06:20,862 --> 00:06:23,486
+Not the file name, and not the service name.
+
+107
+00:06:23,733 --> 00:06:25,034
+Then Google builds.
+
+108
+00:06:25,354 --> 00:06:30,345
+Cloud Build installs the requirements,
+configures the Functions Framework,
+
+109
+00:06:30,345 --> 00:06:33,312
+and publishes an image to Artifact Registry.
+
+110
+00:06:33,632 --> 00:06:37,216
+This happens once, at build time,
+not on every request.
+
+111
+00:06:37,450 --> 00:06:39,989
+The framework finds your function
+by that name.
+
+112
+00:06:40,309 --> 00:06:44,383
+Type main as the entry point,
+and there is nothing called main to find.
+
+113
+00:06:44,703 --> 00:06:48,159
+The function build fails,
+and its build logs tell you why.
+
+114
+00:06:48,400 --> 00:06:52,624
+Slide 11 says a function runs
+without managing containers.
+
+115
+00:06:52,944 --> 00:06:55,973
+You do not manage one,
+but Google still builds one.
+
+116
+00:06:56,293 --> 00:06:59,984
+And the slides' Cloud Functions
+are now Cloud Run functions.
+
+117
+00:07:00,233 --> 00:07:04,798
+For a Cloud Run service,
+you hand over a finished image by its URL.
+
+118
+00:07:05,118 --> 00:07:08,852
+Deploying it builds nothing:
+the image was built beforehand.
+
+119
+00:07:09,172 --> 00:07:11,642
+Its Dockerfile picks the base Python,
+
+120
+00:07:11,642 --> 00:07:14,846
+the default port, 8080,
+and the startup command.
+
+121
+00:07:15,166 --> 00:07:16,660
+You control all three.
+
+122
+00:07:16,900 --> 00:07:19,844
+Both are called through an HTTPS URL.
+
+123
+00:07:20,164 --> 00:07:24,516
+The function takes new inputs
+through its query string, with no redeploy.
+
+124
+00:07:25,950 --> 00:07:30,323
+Both end as the same thing:
+a container instance on Cloud Run.
+
+125
+00:07:30,643 --> 00:07:33,331
+A function is a container you did not write.
+
+126
+00:07:33,651 --> 00:07:36,873
+On the quiz,
+source plus an entry point means a function.
+
+127
+00:07:37,193 --> 00:07:40,904
+Your own image, or your own startup command,
+means a service.
+
+128
+00:07:46,150 --> 00:07:49,244
+Every deployed service
+faces two permission questions,
+
+129
+00:07:49,244 --> 00:07:51,249
+and the README keeps them separate.
+
+130
+00:07:51,569 --> 00:07:53,126
+Who may call our public app?
+
+131
+00:07:53,446 --> 00:07:55,387
+And what may the running app access?
+
+132
+00:07:55,633 --> 00:07:57,254
+The left door is the caller.
+
+133
+00:07:57,574 --> 00:08:01,308
+With public access allowed,
+any browser's request gets in.
+
+134
+00:08:01,628 --> 00:08:06,034
+Without it, a caller with no permission
+is turned away with a 403,
+
+135
+00:08:06,034 --> 00:08:07,836
+before your code even runs.
+
+136
+00:08:08,083 --> 00:08:10,920
+The right door is who your code
+is when it calls out.
+
+137
+00:08:11,240 --> 00:08:16,002
+The web app wears a service account badge,
+translation-demo-runtime,
+
+138
+00:08:16,002 --> 00:08:17,069
+with two roles:
+
+139
+00:08:17,069 --> 00:08:20,414
+Agent Platform User
+and Service Usage Consumer.
+
+140
+00:08:20,734 --> 00:08:22,910
+You do not create or download a key.
+
+141
+00:08:23,150 --> 00:08:25,838
+The code just asks for default credentials,
+
+142
+00:08:25,838 --> 00:08:30,339
+and on Cloud Run the platform hands it
+a token for the attached account.
+
+143
+00:08:30,659 --> 00:08:32,217
+No key file anywhere.
+
+144
+00:08:32,467 --> 00:08:34,003
+One more arrow, from you.
+
+145
+00:08:34,323 --> 00:08:36,491
+To attach that badge to a service,
+
+146
+00:08:36,491 --> 00:08:39,742
+your own identity needs
+Service Account User on it.
+
+147
+00:08:40,062 --> 00:08:44,413
+That is a deployment permission,
+separate from what the badge itself may do.
+
+148
+00:08:44,650 --> 00:08:46,442
+The job gets its own badge.
+
+149
+00:08:46,762 --> 00:08:49,503
+It has the same two Agent Platform roles,
+
+150
+00:08:49,503 --> 00:08:52,577
+plus Storage Object Viewer
+on the input bucket
+
+151
+00:08:52,577 --> 00:08:55,786
+and Storage Object Creator
+on the output bucket.
+
+152
+00:08:56,106 --> 00:08:58,757
+The web app's account needs no bucket roles,
+
+153
+00:08:58,757 --> 00:09:01,589
+because its audio goes
+straight to the browser.
+
+154
+00:09:01,909 --> 00:09:03,487
+One badge per workload.
+
+155
+00:09:03,733 --> 00:09:07,360
+Slide 16 warns
+that serverless is harder to debug.
+
+156
+00:09:07,680 --> 00:09:12,305
+The README says where to look:
+build logs when a function build fails,
+
+157
+00:09:12,305 --> 00:09:16,533
+service logs when a request fails,
+and the job's execution logs.
+
+158
+00:09:16,853 --> 00:09:19,243
+A finished build is not proof that it works.
+
+159
+00:09:19,483 --> 00:09:22,392
+The rule:
+public access answers who may call,
+
+160
+00:09:22,392 --> 00:09:25,883
+and a refused caller is stopped
+before your code runs.
+
+161
+00:09:26,203 --> 00:09:29,190
+The service account answers
+what your code may touch.
+
+162
+00:09:29,510 --> 00:09:33,393
+When your own code is denied,
+fix the badge's roles, not the caller.
+
+163
+00:09:38,433 --> 00:09:42,945
+To serve a trained model,
+the next lecture uses a Vertex AI endpoint,
+
+164
+00:09:42,945 --> 00:09:46,476
+and the quiz asks
+where its preprocessing should live.
+
+165
+00:09:46,796 --> 00:09:49,825
+Picture two clients:
+a phone app, and a web page.
+
+166
+00:09:50,066 --> 00:09:54,910
+Each client carries the same gear:
+decode the JPEG,
+
+167
+00:09:54,910 --> 00:10:00,797
+scale the pixels to between 0 and 1,
+and resize to 224 by 224.
+
+168
+00:10:01,117 --> 00:10:03,719
+Only then does it send numbers to the model.
+
+169
+00:10:04,039 --> 00:10:07,560
+That is two copies of one recipe,
+in two code bases.
+
+170
+00:10:07,800 --> 00:10:10,360
+The lecture calls
+this client-side brittleness.
+
+171
+00:10:10,680 --> 00:10:13,660
+Every client preprocesses
+slightly differently,
+
+172
+00:10:13,660 --> 00:10:17,400
+and a model trained
+on one recipe quietly receives another.
+
+173
+00:10:17,716 --> 00:10:19,721
+Now move the gear into the endpoint.
+
+174
+00:10:20,041 --> 00:10:23,714
+Clients send raw JPEG bytes,
+wrapped as base64,
+
+175
+00:10:23,714 --> 00:10:26,527
+because JSON cannot carry raw bytes.
+
+176
+00:10:26,847 --> 00:10:29,388
+The preprocessing travels with the model,
+
+177
+00:10:29,388 --> 00:10:33,354
+so every client gets exactly
+the preprocessing used in training.
+
+178
+00:10:33,600 --> 00:10:35,413
+Look at the repo's own client.
+
+179
+00:10:35,733 --> 00:10:40,299
+It reads the image files,
+base64 encodes them, and calls predict.
+
+180
+00:10:40,619 --> 00:10:42,965
+No resizing, no normalizing.
+
+181
+00:10:43,285 --> 00:10:44,778
+That is a thin client.
+
+182
+00:10:45,016 --> 00:10:47,427
+Now ship a bad resize in version 2.
+
+183
+00:10:47,747 --> 00:10:49,453
+Both clients break at once.
+
+184
+00:10:49,773 --> 00:10:53,827
+Roll back to version 1,
+and both are healthy at the same instant.
+
+185
+00:10:54,147 --> 00:10:57,539
+One deployment fixed everyone,
+with no client release.
+
+186
+00:10:57,783 --> 00:10:59,916
+Now put the gears back on the clients.
+
+187
+00:11:00,236 --> 00:11:02,028
+What does the same rollback cost?
+
+188
+00:11:08,866 --> 00:11:12,794
+Two releases:
+a phone update waiting in app store review,
+
+189
+00:11:12,794 --> 00:11:13,965
+and a web deploy.
+
+190
+00:11:14,285 --> 00:11:18,253
+They land at different times,
+and in between, the clients disagree.
+
+191
+00:11:18,500 --> 00:11:21,697
+The rule:
+when the question says several clients,
+
+192
+00:11:21,697 --> 00:11:23,849
+one place to update or roll back,
+
+193
+00:11:23,849 --> 00:11:27,567
+and no client release,
+put preprocessing at the endpoint.
+
+194
+00:11:27,887 --> 00:11:32,686
+Preprocessing on the clients means
+every client is re-released in lockstep.
+
+195
+00:11:37,633 --> 00:11:42,582
+Preprocessing at the endpoint works only
+if the endpoint calls the right function.
+
+196
+00:11:42,902 --> 00:11:46,699
+Here is the chain:
+JPEG bytes, decode, convert to floats,
+
+197
+00:11:46,699 --> 00:11:50,561
+resize, the model,
+and four probabilities, one per cheese.
+
+198
+00:11:50,800 --> 00:11:55,280
+In the repo, preprocess_image
+does the first three steps, for one image.
+
+199
+00:11:55,600 --> 00:11:57,882
+It returns an image, not an answer.
+
+200
+00:11:58,116 --> 00:12:00,947
+The serving_function
+takes a batch of strings,
+
+201
+00:12:00,947 --> 00:12:04,516
+maps preprocess_image over each one,
+then calls the model.
+
+202
+00:12:04,836 --> 00:12:07,631
+Preprocessing and inference,
+in one function.
+
+203
+00:12:07,951 --> 00:12:11,257
+Its argument, bytes_inputs,
+is the key clients use.
+
+204
+00:12:11,577 --> 00:12:16,609
+Exam questions may call this function serve:
+not the web app's serve command,
+
+205
+00:12:16,609 --> 00:12:19,876
+but the function
+that preprocesses, then predicts.
+
+206
+00:12:20,116 --> 00:12:23,377
+The export registers it
+under the name serving_default,
+
+207
+00:12:23,377 --> 00:12:26,815
+and the model server calls
+whatever sits behind that name.
+
+208
+00:12:27,135 --> 00:12:30,954
+The slide saves it with a different call;
+the idea is the same.
+
+209
+00:12:31,200 --> 00:12:33,547
+Before we try plugs, one last check.
+
+210
+00:12:33,867 --> 00:12:38,346
+A phone app sends float arrays,
+a new web client sends JPEG bytes,
+
+211
+00:12:38,346 --> 00:12:41,739
+and the team wants one place
+to fix preprocessing.
+
+212
+00:12:42,059 --> 00:12:43,530
+What should they register?
+
+213
+00:12:56,366 --> 00:12:59,801
+Try B first:
+register preprocess_image alone.
+
+214
+00:13:00,121 --> 00:13:05,241
+A request comes back as a 224 by 224 image.
+
+215
+00:13:05,561 --> 00:13:07,076
+Nothing was classified.
+
+216
+00:13:07,316 --> 00:13:09,065
+A and D keep the raw model.
+
+217
+00:13:09,385 --> 00:13:13,311
+It demands float tensors,
+so JPEG bytes no longer fit.
+
+218
+00:13:13,631 --> 00:13:16,852
+The server only turns
+base64 back into bytes.
+
+219
+00:13:17,172 --> 00:13:21,418
+The gears jump back onto every client:
+two copies to keep in sync.
+
+220
+00:13:21,666 --> 00:13:25,741
+C, the serving_function:
+bytes go in, probabilities come out.
+
+221
+00:13:26,061 --> 00:13:29,155
+The phone app switches
+to sending bytes once;
+
+222
+00:13:29,155 --> 00:13:32,593
+after that,
+one exported version holds the recipe,
+
+223
+00:13:32,593 --> 00:13:35,618
+and every fix or rollback is one deployment.
+
+224
+00:13:35,938 --> 00:13:40,405
+The repo's test step loads serving_default
+and feeds it bytes_inputs,
+
+225
+00:13:40,405 --> 00:13:41,634
+as the server will.
+
+226
+00:13:41,883 --> 00:13:44,404
+This echoes the function's entry point:
+
+227
+00:13:44,404 --> 00:13:47,701
+the platform calls exactly
+the name you registered,
+
+228
+00:13:47,701 --> 00:13:50,480
+and nothing downstream can fix a wrong one.
+
+229
+00:13:50,716 --> 00:13:55,025
+The rule: register the function
+that does preprocessing and inference.
+
+230
+00:13:55,345 --> 00:13:57,775
+Preprocessing alone returns images,
+
+231
+00:13:57,775 --> 00:14:01,106
+and the raw model makes
+every client preprocess.
+
+232
+00:14:05,550 --> 00:14:07,171
+Seven rules for Tuesday.
+
+233
+00:14:07,491 --> 00:14:09,219
+One: read the lifecycle.
+
+234
+00:14:09,539 --> 00:14:11,804
+If it listens, it is a service;
+
+235
+00:14:11,804 --> 00:14:17,283
+if it runs and exits, it is a job,
+started on demand or by Cloud Scheduler.
+
+236
+00:14:17,603 --> 00:14:20,697
+Two: idle time costs only what is always on.
+
+237
+00:14:21,017 --> 00:14:25,161
+Three: pay-per-use bills
+invocations and execution time,
+
+238
+00:14:25,161 --> 00:14:28,121
+and zero idle cost buys you cold starts.
+
+239
+00:14:28,367 --> 00:14:32,283
+Four: a function is source,
+requirements and an entry point,
+
+240
+00:14:32,283 --> 00:14:36,004
+and Google builds the image;
+a service is your own image.
+
+241
+00:14:36,324 --> 00:14:39,161
+Five: who may call it is not who it runs as,
+
+242
+00:14:39,161 --> 00:14:42,063
+and the runtime
+service account needs no key.
+
+243
+00:14:42,300 --> 00:14:44,509
+Six: preprocess at the endpoint,
+
+244
+00:14:44,509 --> 00:14:48,167
+so one deployment
+updates or rolls back every client.
+
+245
+00:14:48,487 --> 00:14:53,570
+Seven: register the serving function
+that preprocesses and then calls the model,
+
+246
+00:14:53,570 --> 00:14:57,191
+because the platform calls
+exactly the name you register.
+
+247
+00:14:57,433 --> 00:14:58,670
+Which one to use?
+
+248
+00:14:58,990 --> 00:15:01,251
+The next lecture's rule of thumb:
+
+249
+00:15:01,251 --> 00:15:04,608
+Vertex AI to serve a trained model
+in production,
+
+250
+00:15:04,608 --> 00:15:07,993
+Cloud Run
+when the model is part of a broader app.
+
+251
+00:15:08,313 --> 00:15:10,793
+And remember the costs on slide 16:
+
+252
+00:15:10,793 --> 00:15:14,052
+vendor lock-in,
+cold starts, harder debugging.
+
+253
+00:15:14,300 --> 00:15:16,305
+That's the lecture in seven rules.
+
+254
+00:15:16,625 --> 00:15:18,012
+Good luck on Tuesday.
+
