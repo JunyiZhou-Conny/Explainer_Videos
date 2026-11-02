@@ -121,6 +121,11 @@
       "bvid": "BV1Qq4N6iE8X",
       "title": "AC215 第15讲 · 考前精讲：Pipeline 是一张 DAG、task.output、最大安全并行、用依赖边而不是定时",
       "pubdate": 1793650303
+    },
+    "ac215-l16-exam": {
+      "bvid": "BV1qg4M6QEjH",
+      "title": "AC215 第16讲（含第10讲）· 考前精讲：私有子网与 NAT、浏览器在 VPC 外、启动时注入配置、连接数预算、pgvector",
+      "pubdate": 1793657583
     }
   },
   "unmatched": []
