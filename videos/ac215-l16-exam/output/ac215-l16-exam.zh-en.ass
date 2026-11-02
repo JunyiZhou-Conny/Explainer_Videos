@@ -1,0 +1,280 @@
+[Script Info]
+Title: AC215 · Lecture 16 — System Tradeoffs: networking, runtime config and capacity (with L10) (exam edition)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.60,Bilingual,,0,0,0,,Cheese App 上线日\N{\fs33\c&H00C8C0B8&\bord1.4}Launch day for the Cheese App.
+Dialogue: 0,0:00:01.92,0:00:03.92,Bilingual,,0,0,0,,上周它还跑在一台笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}Last week it ran on a laptop.
+Dialogue: 0,0:00:04.24,0:00:08.06,Bilingual,,0,0,0,,今天早上它跑在云上，在一个私有网络里面\N{\fs33\c&H00C8C0B8&\bord1.4}This morning it runs in the cloud, inside a private network.
+Dialogue: 0,0:00:08.38,0:00:10.69,Bilingual,,0,0,0,,不到一个小时，三个告警响了\N{\fs33\c&H00C8C0B8&\bord1.4}Within an hour, three alarms go off.
+Dialogue: 0,0:00:10.93,0:00:12.31,Bilingual,,0,0,0,,第一个告警\N{\fs33\c&H00C8C0B8&\bord1.4}First alarm.
+Dialogue: 0,0:00:12.36,0:00:15.95,Bilingual,,0,0,0,,调用外部语言模型的聊天回答都超时了\N{\fs33\c&H00C8C0B8&\bord1.4}Chat answers that call an outside language model time out.
+Dialogue: 0,0:00:16.27,0:00:20.30,Bilingual,,0,0,0,,可是从数据库读出的聊天记录，照常加载\N{\fs33\c&H00C8C0B8&\bord1.4}Yet the saved chat history, read from the database, loads fine.
+Dialogue: 0,0:00:21.03,0:00:22.43,Bilingual,,0,0,0,,第二个告警\N{\fs33\c&H00C8C0B8&\bord1.4}Second alarm.
+Dialogue: 0,0:00:22.48,0:00:26.37,Bilingual,,0,0,0,,页面对每个访客都能加载，但 Predict 按钮失败了\N{\fs33\c&H00C8C0B8&\bord1.4}The page loads for every visitor, but the Predict button fails.
+Dialogue: 0,0:00:26.69,0:00:29.67,Bilingual,,0,0,0,,在开发者的笔记本上，同一个按钮是好的\N{\fs33\c&H00C8C0B8&\bord1.4}On the developer's laptop, the same button worked.
+Dialogue: 0,0:00:30.42,0:00:31.73,Bilingual,,0,0,0,,第三个告警\N{\fs33\c&H00C8C0B8&\bord1.4}Third alarm.
+Dialogue: 0,0:00:31.78,0:00:36.26,Bilingual,,0,0,0,,早上 9 点流量翻倍，自动扩缩器加了副本\N{\fs33\c&H00C8C0B8&\bord1.4}At 9 in the morning traffic doubles, and the autoscaler adds replicas.
+Dialogue: 0,0:00:36.58,0:00:39.22,Bilingual,,0,0,0,,最新的几个副本报 too many connections 失败了\N{\fs33\c&H00C8C0B8&\bord1.4}The newest ones fail with too many connections,
+Dialogue: 0,0:00:39.22,0:00:41.02,Bilingual,,0,0,0,,而它们的 CPU 闲着\N{\fs33\c&H00C8C0B8&\bord1.4}while their processors sit idle.
+Dialogue: 0,0:00:41.87,0:00:44.56,Bilingual,,0,0,0,,还有一个没人注意到的隐患\N{\fs33\c&H00C8C0B8&\bord1.4}And one problem nobody has noticed yet.
+Dialogue: 0,0:00:44.88,0:00:48.33,Bilingual,,0,0,0,,生产环境的密钥就放在 container image 里面\N{\fs33\c&H00C8C0B8&\bord1.4}The production key is sitting inside the container image.
+Dialogue: 0,0:00:48.57,0:00:52.60,Bilingual,,0,0,0,,每个告警都对应第 10 讲和第 16 讲里的一个机制\N{\fs33\c&H00C8C0B8&\bord1.4}Each alarm is one mechanism from Lectures 10 and 16.
+Dialogue: 0,0:00:52.92,0:00:56.59,Bilingual,,0,0,0,,我们从地址，到路由和 NAT，到浏览器\N{\fs33\c&H00C8C0B8&\bord1.4}We go from addresses, to routes and NAT, to the browser,
+Dialogue: 0,0:00:56.59,0:01:00.45,Bilingual,,0,0,0,,到配置，到容量，最后到数据库\N{\fs33\c&H00C8C0B8&\bord1.4}to configuration, to capacity, and finally to the database.
+Dialogue: 0,0:01:00.68,0:01:04.76,Bilingual,,0,0,0,,右上角的灰色标签，标出每个概念背后的课件\N{\fs33\c&H00C8C0B8&\bord1.4}The gray tag, top right, names the slides behind each idea.
+Dialogue: 0,0:01:05.08,0:01:06.76,Bilingual,,0,0,0,,这里没有任何现场运行\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing here is a live run.
+Dialogue: 0,0:01:08.00,0:01:09.60,Bilingual,,0,0,0,,先从笔记本说起\N{\fs33\c&H00C8C0B8&\bord1.4}Start on the laptop.
+Dialogue: 0,0:01:09.66,0:01:16.42,Bilingual,,0,0,0,,在课程的应用里，uvicorn 在 container 里启动 FastAPI\N{\fs33\c&H00C8C0B8&\bord1.4}In the course app, uvicorn starts FastAPI inside a container,
+Dialogue: 0,0:01:16.42,0:01:19.41,Bilingual,,0,0,0,,host 是 0.0.0.0，port 是 9000\N{\fs33\c&H00C8C0B8&\bord1.4}on host 0.0.0.0, port 9000.
+Dialogue: 0,0:01:19.73,0:01:22.36,Bilingual,,0,0,0,,这个 host 的意思是：在所有网络接口上监听\N{\fs33\c&H00C8C0B8&\bord1.4}That host means listen on every interface.
+Dialogue: 0,0:01:22.68,0:01:30.08,Bilingual,,0,0,0,,要是绑定到 127.0.0.1，它就只会回应 container 里面的请求\N{\fs33\c&H00C8C0B8&\bord1.4}Bound to 127.0.0.1 instead, it would answer only from inside the container.
+Dialogue: 0,0:01:30.82,0:01:33.87,Bilingual,,0,0,0,,这个 container 是封起来的，直到你发布一个 port\N{\fs33\c&H00C8C0B8&\bord1.4}The container is sealed off until you publish a port.
+Dialogue: 0,0:01:34.19,0:01:35.69,Bilingual,,0,0,0,,这个 -p 9000:9000\N{\fs33\c&H00C8C0B8&\bord1.4}-p 9000:9000
+Dialogue: 0,0:01:35.69,0:01:40.31,Bilingual,,0,0,0,,就是从笔记本的门通进 container 那扇门的隧道\N{\fs33\c&H00C8C0B8&\bord1.4}is the tunnel from the laptop's door into the container's.
+Dialogue: 0,0:01:40.95,0:01:45.94,Bilingual,,0,0,0,,所以 README 写着，应用在 localhost:3200 提供服务\N{\fs33\c&H00C8C0B8&\bord1.4}So the README says the app is served at localhost:3200,
+Dialogue: 0,0:01:45.94,0:01:49.48,Bilingual,,0,0,0,,并调用 localhost:9000 上的 API\N{\fs33\c&H00C8C0B8&\bord1.4}and it calls the API at localhost:9000.
+Dialogue: 0,0:01:49.80,0:01:53.92,Bilingual,,0,0,0,,所谓 localhost，永远指这台机器：代码运行的那一台\N{\fs33\c&H00C8C0B8&\bord1.4}Localhost always means this machine: the one the code runs on.
+Dialogue: 0,0:01:54.17,0:01:58.28,Bilingual,,0,0,0,,IP 地址选的是机器，port 选的是机器上的服务\N{\fs33\c&H00C8C0B8&\bord1.4}An IP address picks the machine, and a port picks the service on it.
+Dialogue: 0,0:01:58.60,0:02:04.63,Bilingual,,0,0,0,,以 10、192.168\N{\fs33\c&H00C8C0B8&\bord1.4}Addresses that start with 10, with 192.168,
+Dialogue: 0,0:02:04.63,0:02:10.51,Bilingual,,0,0,0,,或者 172.16 到 172.31 开头的地址，都是私有地址\N{\fs33\c&H00C8C0B8&\bord1.4}or with 172.16 through 172.31 are private.
+Dialogue: 0,0:02:10.83,0:02:12.70,Bilingual,,0,0,0,,互联网不会路由它们\N{\fs33\c&H00C8C0B8&\bord1.4}The internet does not route them.
+Dialogue: 0,0:02:12.95,0:02:15.13,Bilingual,,0,0,0,,把同一个 container 搬到云上\N{\fs33\c&H00C8C0B8&\bord1.4}Move the same container into the cloud.
+Dialogue: 0,0:02:15.45,0:02:20.63,Bilingual,,0,0,0,,在私有网络里，它的地址是 10.0.2.5\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the private network it gets the address 10.0.2.5.
+Dialogue: 0,0:02:20.95,0:02:26.58,Bilingual,,0,0,0,,来自互联网的数据包到不了它：外面谁都没有通往私有地址的路由\N{\fs33\c&H00C8C0B8&\bord1.4}A packet from the internet cannot reach it: nobody out there has a route to a private address.
+Dialogue: 0,0:02:26.82,0:02:28.63,Bilingual,,0,0,0,,第 10 讲把它总结了一下\N{\fs33\c&H00C8C0B8&\bord1.4}Lecture 10 sums it up.
+Dialogue: 0,0:02:28.95,0:02:31.62,Bilingual,,0,0,0,,在笔记本上，你的路由器把外界挡在外面\N{\fs33\c&H00C8C0B8&\bord1.4}On the laptop, your router keeps the world out.
+Dialogue: 0,0:02:31.94,0:02:35.27,Bilingual,,0,0,0,,在云上，外界通过域名找到你\N{\fs33\c&H00C8C0B8&\bord1.4}In the cloud, the public finds you by a DNS name,
+Dialogue: 0,0:02:35.27,0:02:39.49,Bilingual,,0,0,0,,防火墙一开始是关着的，负载均衡器把流量放进来\N{\fs33\c&H00C8C0B8&\bord1.4}a firewall starts closed, and a load balancer lets traffic in.
+Dialogue: 0,0:02:39.73,0:02:43.34,Bilingual,,0,0,0,,浏览器向解析器查询 api.example.com\N{\fs33\c&H00C8C0B8&\bord1.4}The browser asks a resolver for api.example.com,
+Dialogue: 0,0:02:43.34,0:02:50.17,Bilingual,,0,0,0,,解析器再问权威 DNS，负载均衡器的公网地址就返回来了\N{\fs33\c&H00C8C0B8&\bord1.4}the resolver asks the authoritative DNS, and the load balancer's public address comes back.
+Dialogue: 0,0:02:50.48,0:02:55.01,Bilingual,,0,0,0,,然后浏览器连到负载均衡器的 port 443\N{\fs33\c&H00C8C0B8&\bord1.4}Then the browser connects to the load balancer on port 443.
+Dialogue: 0,0:02:55.25,0:02:58.71,Bilingual,,0,0,0,,负载均衡器终止 HTTPS 连接\N{\fs33\c&H00C8C0B8&\bord1.4}The load balancer ends the HTTPS connection
+Dialogue: 0,0:02:58.71,0:03:02.74,Bilingual,,0,0,0,,再向任务的 port 8000 发出自己的请求\N{\fs33\c&H00C8C0B8&\bord1.4}and sends its own request to the task's port 8000.
+Dialogue: 0,0:03:03.06,0:03:08.22,Bilingual,,0,0,0,,在那里，安全组只允许负载均衡器访问 port 8000\N{\fs33\c&H00C8C0B8&\bord1.4}There, a security group allows only the load balancer, on port 8000.
+Dialogue: 0,0:03:08.54,0:03:10.26,Bilingual,,0,0,0,,陌生人的数据包会被挡回去\N{\fs33\c&H00C8C0B8&\bord1.4}A stranger's packet bounces,
+Dialogue: 0,0:03:10.26,0:03:14.86,Bilingual,,0,0,0,,而回复能出去，因为防火墙记得这条连接\N{\fs33\c&H00C8C0B8&\bord1.4}and the reply goes back out, because the firewall remembers the connection.
+Dialogue: 0,0:03:15.10,0:03:18.77,Bilingual,,0,0,0,,SSH 连到机器，而客户端连到服务\N{\fs33\c&H00C8C0B8&\bord1.4}SSH reaches the machine, while clients reach the service.
+Dialogue: 0,0:03:19.09,0:03:21.07,Bilingual,,0,0,0,,课上画的是 Amazon 的名字\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture draws Amazon names.
+Dialogue: 0,0:03:21.39,0:03:23.29,Bilingual,,0,0,0,,在 Google Cloud 上，对应的是\N{\fs33\c&H00C8C0B8&\bord1.4}On Google Cloud the neighbors
+Dialogue: 0,0:03:23.29,0:03:26.88,Bilingual,,0,0,0,,Compute Engine、Cloud Load Balancing 和 Cloud NAT\N{\fs33\c&H00C8C0B8&\bord1.4}are Compute Engine, Cloud Load Balancing and Cloud NAT.
+Dialogue: 0,0:03:27.12,0:03:31.28,Bilingual,,0,0,0,,题目里出现 localhost，就想：代码运行的那台机器\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says localhost, think: the machine the code runs on.
+Dialogue: 0,0:03:31.60,0:03:35.46,Bilingual,,0,0,0,,10 开头的地址：私有的，从互联网上到不了\N{\fs33\c&H00C8C0B8&\bord1.4}A 10.x address: private, unreachable from the internet.
+Dialogue: 0,0:03:35.78,0:03:40.69,Bilingual,,0,0,0,,公网客户端：域名，port 443 上的负载均衡器\N{\fs33\c&H00C8C0B8&\bord1.4}Public clients: a DNS name, the load balancer on 443,
+Dialogue: 0,0:03:40.69,0:03:43.65,Bilingual,,0,0,0,,再到 port 8000 上的私有目标\N{\fs33\c&H00C8C0B8&\bord1.4}then the private target on 8000.
+Dialogue: 0,0:03:45.78,0:03:50.95,Bilingual,,0,0,0,,现在看第一个告警：语言模型超时，但数据库有回应\N{\fs33\c&H00C8C0B8&\bord1.4}Now the first alarm: the language model times out, but the database answers.
+Dialogue: 0,0:03:51.27,0:03:58.07,Bilingual,,0,0,0,,一个 VPC 就是一整块地址，这里是 10.0.0.0/16\N{\fs33\c&H00C8C0B8&\bord1.4}A VPC is one block of addresses, here 10.0.0.0/16.
+Dialogue: 0,0:03:58.39,0:04:01.12,Bilingual,,0,0,0,,斜杠后面的数，是 32 位里固定的位数\N{\fs33\c&H00C8C0B8&\bord1.4}The slash counts the fixed bits out of 32.
+Dialogue: 0,0:04:01.44,0:04:08.10,Bilingual,,0,0,0,,写 /16，就留下 16 位可变：65536 个地址\N{\fs33\c&H00C8C0B8&\bord1.4}/16 leaves 16 bits to vary: 65,536 addresses.
+Dialogue: 0,0:04:08.42,0:04:11.72,Bilingual,,0,0,0,,写 /24，就留下 8 位：256 个\N{\fs33\c&H00C8C0B8&\bord1.4}/24 leaves 8: 256.
+Dialogue: 0,0:04:11.97,0:04:14.31,Bilingual,,0,0,0,,课上把它切成三个子网\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture cuts it into three subnets.
+Dialogue: 0,0:04:14.63,0:04:16.79,Bilingual,,0,0,0,,一个公有子网，放负载均衡器\N{\fs33\c&H00C8C0B8&\bord1.4}A public one for the load balancer.
+Dialogue: 0,0:04:17.11,0:04:20.20,Bilingual,,0,0,0,,一个私有应用子网，放 FastAPI 任务\N{\fs33\c&H00C8C0B8&\bord1.4}A private app subnet for the FastAPI tasks.
+Dialogue: 0,0:04:20.52,0:04:22.97,Bilingual,,0,0,0,,一个私有数据子网，放数据库\N{\fs33\c&H00C8C0B8&\bord1.4}A private data subnet for the database.
+Dialogue: 0,0:04:23.22,0:04:25.24,Bilingual,,0,0,0,,每个子网都有一张路由表\N{\fs33\c&H00C8C0B8&\bord1.4}Every subnet has a route table.
+Dialogue: 0,0:04:25.56,0:04:28.68,Bilingual,,0,0,0,,两张表都把 VPC 自己的地址块交给 local 路由\N{\fs33\c&H00C8C0B8&\bord1.4}Both send the VPC's own block to the local route.
+Dialogue: 0,0:04:29.00,0:04:35.01,Bilingual,,0,0,0,,唯一的区别是默认那一行，0.0.0.0/0\N{\fs33\c&H00C8C0B8&\bord1.4}The only difference is the default row, 0.0.0.0/0.
+Dialogue: 0,0:04:35.33,0:04:38.29,Bilingual,,0,0,0,,公有子网把它发给 Internet Gateway\N{\fs33\c&H00C8C0B8&\bord1.4}A public subnet sends it to the Internet Gateway,
+Dialogue: 0,0:04:38.29,0:04:40.45,Bilingual,,0,0,0,,私有子网发给 NAT Gateway\N{\fs33\c&H00C8C0B8&\bord1.4}a private subnet to the NAT Gateway.
+Dialogue: 0,0:04:40.70,0:04:43.71,Bilingual,,0,0,0,,光有路由还不够，课件第 13 页补充说\N{\fs33\c&H00C8C0B8&\bord1.4}A route alone is not enough, slide 13 adds:
+Dialogue: 0,0:04:43.71,0:04:47.97,Bilingual,,0,0,0,,机器还需要公网地址和打开的防火墙\N{\fs33\c&H00C8C0B8&\bord1.4}the machine also needs a public address and an open firewall.
+Dialogue: 0,0:04:48.22,0:04:53.84,Bilingual,,0,0,0,,发往 10.0.3.7 上数据库的数据包，两行都匹配\N{\fs33\c&H00C8C0B8&\bord1.4}A packet for the database at 10.0.3.7 matches both rows,
+Dialogue: 0,0:04:53.84,0:04:58.56,Bilingual,,0,0,0,,而最具体的那条匹配胜出：/16 胜过 /0\N{\fs33\c&H00C8C0B8&\bord1.4}and the most specific match wins: /16 beats /0.
+Dialogue: 0,0:04:58.88,0:05:01.70,Bilingual,,0,0,0,,这个数据包留在里面，走 local 路由\N{\fs33\c&H00C8C0B8&\bord1.4}The packet stays inside, on the local route.
+Dialogue: 0,0:05:02.43,0:05:06.99,Bilingual,,0,0,0,,发往语言模型 API 的数据包只匹配默认那一行\N{\fs33\c&H00C8C0B8&\bord1.4}A packet for the language model API matches only the default row,
+Dialogue: 0,0:05:06.99,0:05:09.09,Bilingual,,0,0,0,,所以它去了 NAT Gateway\N{\fs33\c&H00C8C0B8&\bord1.4}so it goes to the NAT Gateway.
+Dialogue: 0,0:05:09.41,0:05:12.91,Bilingual,,0,0,0,,NAT 把私有的源地址改写成自己的公网地址\N{\fs33\c&H00C8C0B8&\bord1.4}NAT rewrites the private source to its own public address,
+Dialogue: 0,0:05:12.91,0:05:16.11,Bilingual,,0,0,0,,把映射记在小本子上，再发出去\N{\fs33\c&H00C8C0B8&\bord1.4}writes the mapping in its notebook, and sends it out.
+Dialogue: 0,0:05:17.08,0:05:21.07,Bilingual,,0,0,0,,回复回来了，NAT 找到那一行，把它交给任务\N{\fs33\c&H00C8C0B8&\bord1.4}The reply comes back, NAT finds the line, and hands it to the task.
+Dialogue: 0,0:05:21.39,0:05:25.06,Bilingual,,0,0,0,,没人请求过的数据包没有对应的那一行，所以直接丢弃\N{\fs33\c&H00C8C0B8&\bord1.4}A packet nobody asked for has no line, so it is dropped.
+Dialogue: 0,0:05:25.38,0:05:28.24,Bilingual,,0,0,0,,NAT 只转发从里面发起的连接\N{\fs33\c&H00C8C0B8&\bord1.4}NAT only carries connections that start inside.
+Dialogue: 0,0:05:28.56,0:05:32.70,Bilingual,,0,0,0,,不请自来的一律进不来，私有子网也就保持私有\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing uninvited gets in, which keeps the private subnet private.
+Dialogue: 0,0:05:32.93,0:05:34.46,Bilingual,,0,0,0,,现在 NAT 坏了\N{\fs33\c&H00C8C0B8&\bord1.4}Now NAT fails.
+Dialogue: 0,0:05:34.51,0:05:37.18,Bilingual,,0,0,0,,每个访问互联网的调用，都卡在坏掉的那一跳上\N{\fs33\c&H00C8C0B8&\bord1.4}Every call to the internet stalls at the dead hop.
+Dialogue: 0,0:05:37.50,0:05:40.70,Bilingual,,0,0,0,,但数据库的数据包仍然匹配 local 路由\N{\fs33\c&H00C8C0B8&\bord1.4}But the database packet still matches the local route,
+Dialogue: 0,0:05:40.70,0:05:43.43,Bilingual,,0,0,0,,负载均衡器也仍然连得到任务\N{\fs33\c&H00C8C0B8&\bord1.4}and the load balancer still reaches the tasks.
+Dialogue: 0,0:05:43.75,0:05:45.35,Bilingual,,0,0,0,,这就是第一个告警\N{\fs33\c&H00C8C0B8&\bord1.4}That is the first alarm.
+Dialogue: 0,0:05:45.53,0:05:46.96,Bilingual,,0,0,0,,第一道题\N{\fs33\c&H00C8C0B8&\bord1.4}First question.
+Dialogue: 0,0:05:47.01,0:05:52.47,Bilingual,,0,0,0,,私有子网里的一个 worker，启动时从公开网站下载模型权重\N{\fs33\c&H00C8C0B8&\bord1.4}A worker in a private subnet downloads model weights from a public website at startup,
+Dialogue: 0,0:05:52.47,0:05:55.97,Bilingual,,0,0,0,,而互联网上谁都不能主动连接它\N{\fs33\c&H00C8C0B8&\bord1.4}and nobody on the internet may open a connection to it.
+Dialogue: 0,0:05:56.29,0:05:58.14,Bilingual,,0,0,0,,它的默认路由应该指向哪里？\N{\fs33\c&H00C8C0B8&\bord1.4}Where should its default route point?
+Dialogue: 0,0:05:58.46,0:06:00.06,Bilingual,,0,0,0,,想停一下的话，就在这里暂停\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here if you want.
+Dialogue: 0,0:06:10.07,0:06:13.63,Bilingual,,0,0,0,,选 C。NAT 把这个 worker 的请求带出去\N{\fs33\c&H00C8C0B8&\bord1.4}C. NAT carries the worker's request out,
+Dialogue: 0,0:06:13.63,0:06:17.32,Bilingual,,0,0,0,,把回复映射回来，并拒绝不请自来的连接\N{\fs33\c&H00C8C0B8&\bord1.4}maps the reply back, and refuses uninvited connections.
+Dialogue: 0,0:06:17.64,0:06:22.82,Bilingual,,0,0,0,,A，Internet Gateway，也能下载，但它让子网变成公有的\N{\fs33\c&H00C8C0B8&\bord1.4}A, the Internet Gateway, would download too, but it makes the subnet public,
+Dialogue: 0,0:06:22.82,0:06:26.15,Bilingual,,0,0,0,,多了一条直接进来的路，只靠防火墙规则把守\N{\fs33\c&H00C8C0B8&\bord1.4}a direct path in, guarded only by firewall rules.
+Dialogue: 0,0:06:26.40,0:06:30.48,Bilingual,,0,0,0,,B 不对：local 路由只覆盖 VPC 自己的地址块\N{\fs33\c&H00C8C0B8&\bord1.4}B fails: the local route covers only the VPC's own block,
+Dialogue: 0,0:06:30.48,0:06:32.63,Bilingual,,0,0,0,,而那个网站在外面\N{\fs33\c&H00C8C0B8&\bord1.4}and the website is outside it.
+Dialogue: 0,0:06:32.95,0:06:37.05,Bilingual,,0,0,0,,D 不对：负载均衡器是把请求带进来，交给它的目标\N{\fs33\c&H00C8C0B8&\bord1.4}D fails: a load balancer brings requests in to its targets.
+Dialogue: 0,0:06:37.37,0:06:38.97,Bilingual,,0,0,0,,它不是出去的路\N{\fs33\c&H00C8C0B8&\bord1.4}It is not a way out.
+Dialogue: 0,0:06:39.65,0:06:44.26,Bilingual,,0,0,0,,题目里出现私有子网，就想：默认路由指向 NAT\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says private subnet, think: the default route goes to NAT.
+Dialogue: 0,0:06:44.58,0:06:47.44,Bilingual,,0,0,0,,NAT 只转发从里面发起的连接\N{\fs33\c&H00C8C0B8&\bord1.4}NAT only carries connections that start inside.
+Dialogue: 0,0:06:47.76,0:06:50.47,Bilingual,,0,0,0,,而如果 NAT 挂了，互联网调用会失败\N{\fs33\c&H00C8C0B8&\bord1.4}And if NAT is down, internet calls fail,
+Dialogue: 0,0:06:50.47,0:06:54.60,Bilingual,,0,0,0,,VPC 内部的流量，比如数据库，照样能用\N{\fs33\c&H00C8C0B8&\bord1.4}while traffic inside the VPC, like the database, still works.
+Dialogue: 0,0:06:56.75,0:06:59.33,Bilingual,,0,0,0,,现在看第二个告警，那个失败的按钮\N{\fs33\c&H00C8C0B8&\bord1.4}Now the second alarm, the failing button.
+Dialogue: 0,0:06:59.65,0:07:01.49,Bilingual,,0,0,0,,加载一个页面要跑两趟\N{\fs33\c&H00C8C0B8&\bord1.4}Loading a page is two trips.
+Dialogue: 0,0:07:01.81,0:07:07.63,Bilingual,,0,0,0,,先是浏览器从静态托管下载 HTML、CSS 和 JavaScript\N{\fs33\c&H00C8C0B8&\bord1.4}First the browser downloads HTML, CSS and JavaScript from a static host.
+Dialogue: 0,0:07:07.95,0:07:12.79,Bilingual,,0,0,0,,然后这段 JavaScript 在访客自己的机器上运行，并调用 API\N{\fs33\c&H00C8C0B8&\bord1.4}Then that JavaScript runs on the visitor's own machine, and calls the API.
+Dialogue: 0,0:07:13.03,0:07:15.61,Bilingual,,0,0,0,,所以，浏览器在 VPC 外面\N{\fs33\c&H00C8C0B8&\bord1.4}So the browser lives outside the VPC.
+Dialogue: 0,0:07:15.93,0:07:17.79,Bilingual,,0,0,0,,静态文件从不进入 VPC\N{\fs33\c&H00C8C0B8&\bord1.4}Static files never enter it,
+Dialogue: 0,0:07:17.79,0:07:22.89,Bilingual,,0,0,0,,而每个 API 请求都必须从大门进来，也就是负载均衡器\N{\fs33\c&H00C8C0B8&\bord1.4}and every API request must come in through the front door, the load balancer.
+Dialogue: 0,0:07:23.13,0:07:24.58,Bilingual,,0,0,0,,再看课程的应用\N{\fs33\c&H00C8C0B8&\bord1.4}Now the course app.
+Dialogue: 0,0:07:24.63,0:07:25.87,Bilingual,,0,0,0,,在开发环境里\N{\fs33\c&H00C8C0B8&\bord1.4}In development,
+Dialogue: 0,0:07:25.87,0:07:31.24,Bilingual,,0,0,0,,前端从 next public base API URL 读取 API 地址\N{\fs33\c&H00C8C0B8&\bord1.4}the frontend takes its API address from NEXT_PUBLIC_BASE_API_URL,
+Dialogue: 0,0:07:31.24,0:07:34.38,Bilingual,,0,0,0,,而这个变量写的是 localhost:9000\N{\fs33\c&H00C8C0B8&\bord1.4}and that variable says localhost:9000.
+Dialogue: 0,0:07:34.70,0:07:38.86,Bilingual,,0,0,0,,在开发者的笔记本上，那正是 API 运行的地方\N{\fs33\c&H00C8C0B8&\bord1.4}On the developer's laptop, that was exactly where the API ran.
+Dialogue: 0,0:07:39.10,0:07:43.18,Bilingual,,0,0,0,,把它发给访客，localhost 就成了访客自己的笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}Ship that to a visitor, and localhost means the visitor's laptop.
+Dialogue: 0,0:07:43.50,0:07:46.16,Bilingual,,0,0,0,,那里没有东西在监听，所以请求失败了\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing listens there, so the request fails.
+Dialogue: 0,0:07:46.48,0:07:48.10,Bilingual,,0,0,0,,这就是第二个告警\N{\fs33\c&H00C8C0B8&\bord1.4}That is the second alarm.
+Dialogue: 0,0:07:48.35,0:07:54.51,Bilingual,,0,0,0,,换成私有地址 10.0.2.5，请求永远到不了 VPC\N{\fs33\c&H00C8C0B8&\bord1.4}Swap in the private address, 10.0.2.5, and the request never reaches the VPC:
+Dialogue: 0,0:07:54.51,0:07:59.87,Bilingual,,0,0,0,,这个地址只在访客自己的网络里才有意义\N{\fs33\c&H00C8C0B8&\bord1.4}that address means something only inside the visitor's own network.
+Dialogue: 0,0:08:00.19,0:08:05.61,Bilingual,,0,0,0,,用公网的 HTTPS 域名就行：DNS，负载均衡器，再到一个任务\N{\fs33\c&H00C8C0B8&\bord1.4}The public HTTPS name works: DNS, the load balancer, then a task.
+Dialogue: 0,0:08:06.60,0:08:09.33,Bilingual,,0,0,0,,生产环境的配置文件里只写了 /api\N{\fs33\c&H00C8C0B8&\bord1.4}The production file says just /api.
+Dialogue: 0,0:08:09.65,0:08:14.34,Bilingual,,0,0,0,,相对路径会回到提供这个页面的那台主机。这行得通的前提是\N{\fs33\c&H00C8C0B8&\bord1.4}A relative path goes back to the host that served the page. That works
+Dialogue: 0,0:08:14.34,0:08:21.09,Bilingual,,0,0,0,,一个公网大门同时提供页面和 API，也就是课上的布局 B\N{\fs33\c&H00C8C0B8&\bord1.4}when one public front door serves both the page and the API, the lecture's layout B,
+Dialogue: 0,0:08:21.09,0:08:23.28,Bilingual,,0,0,0,,并把 /api 路由到 FastAPI\N{\fs33\c&H00C8C0B8&\bord1.4}and routes /api to FastAPI.
+Dialogue: 0,0:08:23.52,0:08:26.06,Bilingual,,0,0,0,,课件第 24 页把这条规则写了两遍\N{\fs33\c&H00C8C0B8&\bord1.4}Slide 24 writes that rule twice,
+Dialogue: 0,0:08:26.06,0:08:30.19,Bilingual,,0,0,0,,一条 Nginx 的 proxy pass，或者一条负载均衡器的路径规则\N{\fs33\c&H00C8C0B8&\bord1.4}as an Nginx proxy_pass or a load balancer path rule.
+Dialogue: 0,0:08:30.51,0:08:35.57,Bilingual,,0,0,0,,要是用单独的静态托管，代码就必须写明公网 API 地址\N{\fs33\c&H00C8C0B8&\bord1.4}With a separate static host, the code must name the public API address instead.
+Dialogue: 0,0:08:35.82,0:08:41.28,Bilingual,,0,0,0,,注意私有地址在哪里：在代理的配置里，在 VPC 里面\N{\fs33\c&H00C8C0B8&\bord1.4}Notice where the private address lives: in the proxy's config, inside the VPC.
+Dialogue: 0,0:08:41.60,0:08:43.20,Bilingual,,0,0,0,,绝不出现在浏览器代码里\N{\fs33\c&H00C8C0B8&\bord1.4}Never in browser code.
+Dialogue: 0,0:08:43.35,0:08:44.75,Bilingual,,0,0,0,,再说两点\N{\fs33\c&H00C8C0B8&\bord1.4}Two more facts.
+Dialogue: 0,0:08:44.80,0:08:49.62,Bilingual,,0,0,0,,所有 next public 变量都会在构建时编译进 JavaScript\N{\fs33\c&H00C8C0B8&\bord1.4}NEXT_PUBLIC_ variables are compiled into the JavaScript at build time,
+Dialogue: 0,0:08:49.62,0:08:54.17,Bilingual,,0,0,0,,所以每个访客都会下载它们：本来就是公开的，绝不是密钥\N{\fs33\c&H00C8C0B8&\bord1.4}so every visitor downloads them: public by design, never a secret.
+Dialogue: 0,0:08:54.49,0:08:59.88,Bilingual,,0,0,0,,而且 NAT 在这里帮不上忙：它只转发从 VPC 里面发起的流量\N{\fs33\c&H00C8C0B8&\bord1.4}And NAT does not help here: it only carries traffic that starts inside the VPC.
+Dialogue: 0,0:09:00.13,0:09:05.55,Bilingual,,0,0,0,,题目里出现在浏览器里运行的代码，就想：它在 VPC 外面\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says code that runs in the browser, think: it is outside the VPC.
+Dialogue: 0,0:09:05.87,0:09:08.43,Bilingual,,0,0,0,,调用公网的 HTTPS endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}Call the public HTTPS endpoint,
+Dialogue: 0,0:09:08.43,0:09:11.23,Bilingual,,0,0,0,,绝不用 localhost 或 10 开头的地址\N{\fs33\c&H00C8C0B8&\bord1.4}never localhost or a 10.x address.
+Dialogue: 0,0:09:11.55,0:09:13.28,Bilingual,,0,0,0,,NAT 对入站没有帮助\N{\fs33\c&H00C8C0B8&\bord1.4}NAT does not help inbound.
+Dialogue: 0,0:09:15.42,0:09:18.42,Bilingual,,0,0,0,,现在看那个悄无声息的隐患：image 里的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Now the quiet problem, the key inside the image.
+Dialogue: 0,0:09:18.74,0:09:20.64,Bilingual,,0,0,0,,先看一次发布应该怎么做\N{\fs33\c&H00C8C0B8&\bord1.4}First, how a release should work.
+Dialogue: 0,0:09:20.96,0:09:24.11,Bilingual,,0,0,0,,把 image 构建一次，打上版本 tag 再 push\N{\fs33\c&H00C8C0B8&\bord1.4}Build the image once, push it with a version tag,
+Dialogue: 0,0:09:24.11,0:09:27.06,Bilingual,,0,0,0,,每次部署都 pull 这个确切的版本\N{\fs33\c&H00C8C0B8&\bord1.4}and every deployment pulls that exact version.
+Dialogue: 0,0:09:27.38,0:09:28.98,Bilingual,,0,0,0,,不重新构建\N{\fs33\c&H00C8C0B8&\bord1.4}No rebuild.
+Dialogue: 0,0:09:29.38,0:09:31.11,Bilingual,,0,0,0,,这个 image 是不可变的\N{\fs33\c&H00C8C0B8&\bord1.4}The image is immutable.
+Dialogue: 0,0:09:31.43,0:09:36.81,Bilingual,,0,0,0,,它从开发环境到预发环境再到生产环境，digest 从不改变\N{\fs33\c&H00C8C0B8&\bord1.4}It moves from development to staging to production, and its digest never changes.
+Dialogue: 0,0:09:37.13,0:09:42.06,Bilingual,,0,0,0,,不同的是 container 启动时插进去的运行时的值\N{\fs33\c&H00C8C0B8&\bord1.4}What differs is the runtime values plugged in when the container starts:
+Dialogue: 0,0:09:42.06,0:09:45.55,Bilingual,,0,0,0,,开发环境里 log level 是 debug，生产环境里是 info\N{\fs33\c&H00C8C0B8&\bord1.4}LOG_LEVEL=debug in development, info in production.
+Dialogue: 0,0:09:45.80,0:09:47.66,Bilingual,,0,0,0,,密钥也遵循同样的规则\N{\fs33\c&H00C8C0B8&\bord1.4}Secrets follow the same rule.
+Dialogue: 0,0:09:47.98,0:09:53.95,Bilingual,,0,0,0,,密钥管理服务在启动时交付密钥，只交给获得授权的工作负载\N{\fs33\c&H00C8C0B8&\bord1.4}A secret manager delivers the key at startup, only to the workload that is authorized for it.
+Dialogue: 0,0:09:54.27,0:09:58.88,Bilingual,,0,0,0,,绝不要把密钥放进源代码、container image 或 Git\N{\fs33\c&H00C8C0B8&\bord1.4}Never place secrets in source code, in container images, or in Git.
+Dialogue: 0,0:09:59.12,0:10:01.61,Bilingual,,0,0,0,,课程已经做了笔记本上的版本\N{\fs33\c&H00C8C0B8&\bord1.4}The course already does the laptop version.
+Dialogue: 0,0:10:01.93,0:10:05.62,Bilingual,,0,0,0,,运行脚本把 secrets 目录挂载到 /secrets\N{\fs33\c&H00C8C0B8&\bord1.4}The run script mounts the secrets folder at /secrets,
+Dialogue: 0,0:10:05.62,0:10:08.48,Bilingual,,0,0,0,,再把 Google Application Credentials\N{\fs33\c&H00C8C0B8&\bord1.4}and points GOOGLE_APPLICATION_CREDENTIALS
+Dialogue: 0,0:10:08.48,0:10:11.19,Bilingual,,0,0,0,,指向 container 里密钥的路径\N{\fs33\c&H00C8C0B8&\bord1.4}at the key's path inside the container.
+Dialogue: 0,0:10:11.43,0:10:16.36,Bilingual,,0,0,0,,项目和 ChromaDB 的 host 也作为环境变量传进来\N{\fs33\c&H00C8C0B8&\bord1.4}The project and the ChromaDB host arrive as environment variables too.
+Dialogue: 0,0:10:16.68,0:10:20.03,Bilingual,,0,0,0,,应用在启动时用 os.environ 读取它们\N{\fs33\c&H00C8C0B8&\bord1.4}The app reads them with os.environ when it starts.
+Dialogue: 0,0:10:20.30,0:10:24.44,Bilingual,,0,0,0,,README 说了原因：我们不希望任何安全信息进入 Git\N{\fs33\c&H00C8C0B8&\bord1.4}The README says why: we do not want any secure information in Git.
+Dialogue: 0,0:10:24.76,0:10:28.26,Bilingual,,0,0,0,,密钥放在 repo 旁边，绝不放在里面\N{\fs33\c&H00C8C0B8&\bord1.4}The key lives next to the repository, never inside it.
+Dialogue: 0,0:10:28.50,0:10:29.99,Bilingual,,0,0,0,,再看错误的做法\N{\fs33\c&H00C8C0B8&\bord1.4}Now the wrong way.
+Dialogue: 0,0:10:30.04,0:10:34.28,Bilingual,,0,0,0,,把密钥打进 image，任何能 pull 这个 image 的人都能读到它\N{\fs33\c&H00C8C0B8&\bord1.4}Bake the key into the image, and anyone who can pull the image can read it.
+Dialogue: 0,0:10:34.60,0:10:38.64,Bilingual,,0,0,0,,轮换密钥就意味着重新构建，而每个环境各一个 image\N{\fs33\c&H00C8C0B8&\bord1.4}Rotating it means a rebuild, and per environment images mean
+Dialogue: 0,0:10:38.64,0:10:41.13,Bilingual,,0,0,0,,就意味着你测试过的不是你交付的\N{\fs33\c&H00C8C0B8&\bord1.4}what you tested is not what you ship.
+Dialogue: 0,0:10:41.37,0:10:42.87,Bilingual,,0,0,0,,第二道题\N{\fs33\c&H00C8C0B8&\bord1.4}Second question.
+Dialogue: 0,0:10:42.92,0:10:45.92,Bilingual,,0,0,0,,一个队友把 API 密钥写进 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}A teammate bakes an API key into the Dockerfile
+Dialogue: 0,0:10:45.92,0:10:49.24,Bilingual,,0,0,0,,再把 image push 到团队的私有 registry\N{\fs33\c&H00C8C0B8&\bord1.4}and pushes the image to the team's private registry.
+Dialogue: 0,0:10:49.56,0:10:51.16,Bilingual,,0,0,0,,哪个说法是对的？\N{\fs33\c&H00C8C0B8&\bord1.4}Which statement is true?
+Dialogue: 0,0:10:51.33,0:10:52.93,Bilingual,,0,0,0,,想停一下的话，就在这里暂停\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here if you want.
+Dialogue: 0,0:11:02.93,0:11:08.28,Bilingual,,0,0,0,,选 D。这个 image 的配置和层，任何 pull 它的人都能读到\N{\fs33\c&H00C8C0B8&\bord1.4}D. The image's settings and layers are readable by anyone who pulls it,
+Dialogue: 0,0:11:08.28,0:11:10.59,Bilingual,,0,0,0,,而换密钥就意味着重新构建\N{\fs33\c&H00C8C0B8&\bord1.4}and changing the key means a rebuild.
+Dialogue: 0,0:11:10.91,0:11:15.48,Bilingual,,0,0,0,,A，私有 registry，能访问它的仍然是一长串的人和机器\N{\fs33\c&H00C8C0B8&\bord1.4}A, the private registry, is still a long list of people and machines,
+Dialogue: 0,0:11:15.48,0:11:17.99,Bilingual,,0,0,0,,而且 image 会复制到每台主机上\N{\fs33\c&H00C8C0B8&\bord1.4}and the image is copied to every host.
+Dialogue: 0,0:11:18.23,0:11:21.02,Bilingual,,0,0,0,,B 不对：密钥写在 Dockerfile 里\N{\fs33\c&H00C8C0B8&\bord1.4}B fails: the key is written in the Dockerfile,
+Dialogue: 0,0:11:21.02,0:11:23.27,Bilingual,,0,0,0,,而 Dockerfile 在 Git 里，也在 image 里\N{\fs33\c&H00C8C0B8&\bord1.4}which is in Git, and in the image.
+Dialogue: 0,0:11:23.59,0:11:25.96,Bilingual,,0,0,0,,忽略另一个文件，什么也改变不了\N{\fs33\c&H00C8C0B8&\bord1.4}Ignoring a different file changes nothing.
+Dialogue: 0,0:11:26.28,0:11:28.80,Bilingual,,0,0,0,,C 也不对：开发环境的 image 会泄露\N{\fs33\c&H00C8C0B8&\bord1.4}C fails too: development images leak,
+Dialogue: 0,0:11:28.80,0:11:31.33,Bilingual,,0,0,0,,而分开的 image 违背了构建一次\N{\fs33\c&H00C8C0B8&\bord1.4}and separate images break build once.
+Dialogue: 0,0:11:32.17,0:11:35.63,Bilingual,,0,0,0,,题目问怎么把 image 发到生产环境\N{\fs33\c&H00C8C0B8&\bord1.4}If a question asks how to move an image to production,
+Dialogue: 0,0:11:35.63,0:11:38.33,Bilingual,,0,0,0,,就想：同一个 image，原样晋级\N{\fs33\c&H00C8C0B8&\bord1.4}think: the same image, promoted unchanged.
+Dialogue: 0,0:11:38.65,0:11:43.03,Bilingual,,0,0,0,,各环境的值和获得授权的密钥，在启动时注入\N{\fs33\c&H00C8C0B8&\bord1.4}Environment values and authorized secrets are injected at startup.
+Dialogue: 0,0:11:43.35,0:11:46.74,Bilingual,,0,0,0,,绝不要按环境重新构建，也绝不要打进密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Never rebuild per environment, and never bake a secret.
+Dialogue: 0,0:11:48.88,0:11:50.48,Bilingual,,0,0,0,,现在看第三个告警\N{\fs33\c&H00C8C0B8&\bord1.4}Now the third alarm.
+Dialogue: 0,0:11:50.61,0:11:54.26,Bilingual,,0,0,0,,自动扩缩器测量一个信号，比如 CPU 使用率\N{\fs33\c&H00C8C0B8&\bord1.4}An autoscaler measures a signal, like processor use,
+Dialogue: 0,0:11:54.26,0:11:58.20,Bilingual,,0,0,0,,再套用一个带目标值、最小值和最大值的策略\N{\fs33\c&H00C8C0B8&\bord1.4}applies a policy with a target, a minimum and a maximum,
+Dialogue: 0,0:11:58.20,0:12:00.45,Bilingual,,0,0,0,,然后请求那么多个副本\N{\fs33\c&H00C8C0B8&\bord1.4}and asks for that many replicas.
+Dialogue: 0,0:12:00.77,0:12:03.35,Bilingual,,0,0,0,,但下游的限制仍然约束着结果\N{\fs33\c&H00C8C0B8&\bord1.4}But downstream limits still bound the result.
+Dialogue: 0,0:12:03.58,0:12:07.57,Bilingual,,0,0,0,,数据库只接受固定数量的连接，这里是 100 个\N{\fs33\c&H00C8C0B8&\bord1.4}The database accepts a fixed number of connections, here 100.
+Dialogue: 0,0:12:07.89,0:12:12.22,Bilingual,,0,0,0,,其他客户端已经占了一些：一个管理控制台，一个批处理任务\N{\fs33\c&H00C8C0B8&\bord1.4}Other clients already hold some: an admin console, a batch job.
+Dialogue: 0,0:12:12.47,0:12:14.96,Bilingual,,0,0,0,,每个副本都开自己的连接\N{\fs33\c&H00C8C0B8&\bord1.4}Each replica opens its own connections.
+Dialogue: 0,0:12:15.28,0:12:16.63,Bilingual,,0,0,0,,在课程的应用里\N{\fs33\c&H00C8C0B8&\bord1.4}In the course app,
+Dialogue: 0,0:12:16.63,0:12:21.02,Bilingual,,0,0,0,,每个 API 进程在导入时都创建自己的数据库客户端\N{\fs33\c&H00C8C0B8&\bord1.4}every API process creates its own database client at import.
+Dialogue: 0,0:12:21.34,0:12:25.50,Bilingual,,0,0,0,,这个客户端是 ChromaDB，在这里就把它当作连接池\N{\fs33\c&H00C8C0B8&\bord1.4}That client is ChromaDB, standing in here for a connection pool.
+Dialogue: 0,0:12:25.75,0:12:27.73,Bilingual,,0,0,0,,自动扩缩器不断加副本\N{\fs33\c&H00C8C0B8&\bord1.4}The autoscaler adds replicas,
+Dialogue: 0,0:12:27.73,0:12:32.11,Bilingual,,0,0,0,,每个都把自己的连接池插进空闲插槽，直到插槽用完\N{\fs33\c&H00C8C0B8&\bord1.4}each plugging its pool into free slots, until the slots run out.
+Dialogue: 0,0:12:32.43,0:12:36.05,Bilingual,,0,0,0,,下一个副本连不上，尽管它的 CPU 闲着\N{\fs33\c&H00C8C0B8&\bord1.4}The next replica cannot connect, though its processor is idle.
+Dialogue: 0,0:12:36.30,0:12:38.16,Bilingual,,0,0,0,,所以，直接从图上读出规则\N{\fs33\c&H00C8C0B8&\bord1.4}So read the rule off the picture.
+Dialogue: 0,0:12:38.48,0:12:42.49,Bilingual,,0,0,0,,100 个插槽，减去其他客户端的 10 个，剩下 90 个\N{\fs33\c&H00C8C0B8&\bord1.4}100 slots, minus 10 for the other clients, leaves 90.
+Dialogue: 0,0:12:42.81,0:12:45.99,Bilingual,,0,0,0,,除以每个副本的 20：得 4.5\N{\fs33\c&H00C8C0B8&\bord1.4}Divide by 20 per replica: 4.5.
+Dialogue: 0,0:12:46.31,0:12:50.24,Bilingual,,0,0,0,,一个副本不能只开半个连接池，所以向下取整到 4\N{\fs33\c&H00C8C0B8&\bord1.4}A replica cannot open half a pool, so round down to 4,
+Dialogue: 0,0:12:50.24,0:12:53.00,Bilingual,,0,0,0,,再把 4 设成自动扩缩器的最大值\N{\fs33\c&H00C8C0B8&\bord1.4}and set 4 as the autoscaler's maximum.
+Dialogue: 0,0:12:53.25,0:12:55.63,Bilingual,,0,0,0,,要再往上加，就加一个连接池代理\N{\fs33\c&H00C8C0B8&\bord1.4}To go higher, add a connection pooler
+Dialogue: 0,0:12:55.63,0:12:58.90,Bilingual,,0,0,0,,或者把每个连接池调小，或者买更大的数据库规格\N{\fs33\c&H00C8C0B8&\bord1.4}or shrink each pool, or buy a bigger database tier.
+Dialogue: 0,0:12:59.22,0:13:01.66,Bilingual,,0,0,0,,只调高最大值没有用\N{\fs33\c&H00C8C0B8&\bord1.4}Raising the maximum alone does not help.
+Dialogue: 0,0:13:01.90,0:13:03.32,Bilingual,,0,0,0,,第三道题\N{\fs33\c&H00C8C0B8&\bord1.4}Third question.
+Dialogue: 0,0:13:03.37,0:13:07.60,Bilingual,,0,0,0,,每个副本开 15 个连接，其他客户端占了 30 个\N{\fs33\c&H00C8C0B8&\bord1.4}Each replica opens 15 connections, other clients hold 30,
+Dialogue: 0,0:13:07.60,0:13:10.05,Bilingual,,0,0,0,,高峰时你需要 10 个副本\N{\fs33\c&H00C8C0B8&\bord1.4}and at peak you need 10 replicas.
+Dialogue: 0,0:13:10.37,0:13:12.97,Bilingual,,0,0,0,,能用的最小数据库规格是哪一个？\N{\fs33\c&H00C8C0B8&\bord1.4}Which is the smallest database tier that works?
+Dialogue: 0,0:13:13.29,0:13:14.89,Bilingual,,0,0,0,,想停一下的话，就在这里暂停\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here if you want.
+Dialogue: 0,0:13:24.90,0:13:26.50,Bilingual,,0,0,0,,选 B，200\N{\fs33\c&H00C8C0B8&\bord1.4}B, 200.
+Dialogue: 0,0:13:26.56,0:13:31.75,Bilingual,,0,0,0,,十个 15 的连接池就是 150，加上其他的 30 个：180\N{\fs33\c&H00C8C0B8&\bord1.4}Ten pools of 15 make 150, plus 30 others: 180.
+Dialogue: 0,0:13:32.07,0:13:33.75,Bilingual,,0,0,0,,200 装得下\N{\fs33\c&H00C8C0B8&\bord1.4}That fits under 200.
+Dialogue: 0,0:13:34.00,0:13:38.20,Bilingual,,0,0,0,,A，150，装得下连接池，却忘了其他客户端\N{\fs33\c&H00C8C0B8&\bord1.4}A, 150, holds the pools but forgets the other clients.
+Dialogue: 0,0:13:38.52,0:13:42.41,Bilingual,,0,0,0,,C，250，能用，但花了不必要的钱\N{\fs33\c&H00C8C0B8&\bord1.4}C, 250, works, but costs more than it needs to.
+Dialogue: 0,0:13:42.73,0:13:47.67,Bilingual,,0,0,0,,D：更高的最大值不会增加连接，所以多出来的副本会失败\N{\fs33\c&H00C8C0B8&\bord1.4}D: a higher maximum adds no connections, so the extra replicas fail.
+Dialogue: 0,0:13:48.52,0:13:52.29,Bilingual,,0,0,0,,题目给了数据库的连接数上限，就想\N{\fs33\c&H00C8C0B8&\bord1.4}If the question gives a database connection limit, think:
+Dialogue: 0,0:13:52.29,0:13:57.58,Bilingual,,0,0,0,,上限减去其他客户端，除以每个副本的连接数，向下取整\N{\fs33\c&H00C8C0B8&\bord1.4}the limit minus other clients, divided by connections per replica, rounded down.
+Dialogue: 0,0:13:57.90,0:14:02.96,Bilingual,,0,0,0,,再把它设成最大值，因为自动扩缩器不知道数据库的上限\N{\fs33\c&H00C8C0B8&\bord1.4}And set it as the maximum, because the autoscaler does not know the database limit.
+Dialogue: 0,0:14:05.10,0:14:07.85,Bilingual,,0,0,0,,最后一个机制，是数据放在哪里\N{\fs33\c&H00C8C0B8&\bord1.4}The last mechanism is where the data lives.
+Dialogue: 0,0:14:08.17,0:14:09.77,Bilingual,,0,0,0,,先分类\N{\fs33\c&H00C8C0B8&\bord1.4}Classify it first.
+Dialogue: 0,0:14:09.94,0:14:12.80,Bilingual,,0,0,0,,用户和订单，用外键关联\N{\fs33\c&H00C8C0B8&\bord1.4}Users and orders, linked by foreign keys,
+Dialogue: 0,0:14:12.80,0:14:17.41,Bilingual,,0,0,0,,存在全有或全无的事务里：这就是关系型\N{\fs33\c&H00C8C0B8&\bord1.4}saved in transactions that are all or nothing: that is relational.
+Dialogue: 0,0:14:17.73,0:14:21.42,Bilingual,,0,0,0,,找出最相似的五种奶酪：这就是向量检索\N{\fs33\c&H00C8C0B8&\bord1.4}Find the five most similar cheeses: that is vector search.
+Dialogue: 0,0:14:21.67,0:14:25.23,Bilingual,,0,0,0,,现在课程把 ChromaDB 单独跑在一个 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}Today the course runs ChromaDB as its own container.
+Dialogue: 0,0:14:25.55,0:14:29.63,Bilingual,,0,0,0,,它是带元数据的向量库，由团队自己运维\N{\fs33\c&H00C8C0B8&\bord1.4}It is a vector store with metadata, and the team operates it:
+Dialogue: 0,0:14:29.63,0:14:32.31,Bilingual,,0,0,0,,补丁、备份和恢复都归你管\N{\fs33\c&H00C8C0B8&\bord1.4}patches, backups and recovery are yours.
+Dialogue: 0,0:14:32.55,0:14:37.22,Bilingual,,0,0,0,,课上比较了三个去处：虚拟机上的 ChromaDB\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture compares three homes: ChromaDB on a virtual machine,
+Dialogue: 0,0:14:37.22,0:14:41.89,Bilingual,,0,0,0,,带 pgvector 的 PostgreSQL 服务，以及一个向量检索服务\N{\fs33\c&H00C8C0B8&\bord1.4}a PostgreSQL service with pgvector, and a vector search service.
+Dialogue: 0,0:14:42.21,0:14:44.01,Bilingual,,0,0,0,,向量卡片落进哪里都行\N{\fs33\c&H00C8C0B8&\bord1.4}Vector chips land everywhere.
+Dialogue: 0,0:14:44.33,0:14:48.76,Bilingual,,0,0,0,,外键和事务会从两个只做向量的去处弹开\N{\fs33\c&H00C8C0B8&\bord1.4}Foreign keys and transactions bounce off the two vector-only homes.
+Dialogue: 0,0:14:49.00,0:14:50.94,Bilingual,,0,0,0,,你也可以跑两个数据库\N{\fs33\c&H00C8C0B8&\bord1.4}You could run two databases.
+Dialogue: 0,0:14:51.26,0:14:54.75,Bilingual,,0,0,0,,但那样它们就必须保持同步，总有一天，一个订单在一个库里存在\N{\fs33\c&H00C8C0B8&\bord1.4}But then they must stay in sync, and one day an order exists
+Dialogue: 0,0:14:54.75,0:14:57.83,Bilingual,,0,0,0,,而它的 embedding 在另一个库里却没有\N{\fs33\c&H00C8C0B8&\bord1.4}in one while its embedding is missing from the other.
+Dialogue: 0,0:14:58.07,0:15:02.04,Bilingual,,0,0,0,,只有带 pgvector 的 PostgreSQL 能接住所有卡片\N{\fs33\c&H00C8C0B8&\bord1.4}Only PostgreSQL with pgvector takes every chip.
+Dialogue: 0,0:15:02.36,0:15:07.29,Bilingual,,0,0,0,,向量列和关系型的列放在同一张表里\N{\fs33\c&H00C8C0B8&\bord1.4}The vector column sits beside the relational columns in the same table,
+Dialogue: 0,0:15:07.29,0:15:11.19,Bilingual,,0,0,0,,一条查询就能用 SQL 过滤，再按相似度排序\N{\fs33\c&H00C8C0B8&\bord1.4}and one query filters with SQL and orders by similarity.
+Dialogue: 0,0:15:11.43,0:15:14.80,Bilingual,,0,0,0,,托管的意思是，云厂商负责运行主机和打补丁\N{\fs33\c&H00C8C0B8&\bord1.4}Managed means the provider runs the hosts and the patching.
+Dialogue: 0,0:15:15.12,0:15:19.37,Bilingual,,0,0,0,,你的团队仍然负责 schema、查询、连接池管理和恢复演练\N{\fs33\c&H00C8C0B8&\bord1.4}Your team still owns the schema, queries, pooling and restore tests.
+Dialogue: 0,0:15:19.69,0:15:21.23,Bilingual,,0,0,0,,在 Google Cloud 上\N{\fs33\c&H00C8C0B8&\bord1.4}On Google Cloud:
+Dialogue: 0,0:15:21.23,0:15:24.81,Bilingual,,0,0,0,,就是 Cloud SQL for PostgreSQL，或者 AlloyDB\N{\fs33\c&H00C8C0B8&\bord1.4}Cloud SQL for PostgreSQL, or AlloyDB.
+Dialogue: 0,0:15:25.05,0:15:30.58,Bilingual,,0,0,0,,题目里出现一个托管数据库同时要满足关系型和向量的需求\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says relational and vector needs in one managed database,
+Dialogue: 0,0:15:30.58,0:15:33.01,Bilingual,,0,0,0,,就想：PostgreSQL 加 pgvector\N{\fs33\c&H00C8C0B8&\bord1.4}think: PostgreSQL plus pgvector.
+Dialogue: 0,0:15:33.33,0:15:37.38,Bilingual,,0,0,0,,外键、事务和相似度检索，都在一个地方\N{\fs33\c&H00C8C0B8&\bord1.4}Foreign keys, transactions and similarity search, in one place.
+Dialogue: 0,0:15:39.52,0:15:41.12,Bilingual,,0,0,0,,小测的七条规则\N{\fs33\c&H00C8C0B8&\bord1.4}Seven rules for the quiz.
+Dialogue: 0,0:15:41.44,0:15:44.83,Bilingual,,0,0,0,,第一：localhost 是代码运行的那台机器\N{\fs33\c&H00C8C0B8&\bord1.4}One: localhost is the machine the code runs on,
+Dialogue: 0,0:15:44.83,0:15:47.07,Bilingual,,0,0,0,,10 开头的地址是私有的\N{\fs33\c&H00C8C0B8&\bord1.4}and 10.x addresses are private.
+Dialogue: 0,0:15:47.39,0:15:50.87,Bilingual,,0,0,0,,外界访问的是域名和负载均衡器\N{\fs33\c&H00C8C0B8&\bord1.4}The public reaches a DNS name and a load balancer.
+Dialogue: 0,0:15:51.10,0:15:56.67,Bilingual,,0,0,0,,第二：VPC 是一个切成子网的地址块，最具体的路由胜出\N{\fs33\c&H00C8C0B8&\bord1.4}Two: a VPC is an address block cut into subnets, and the most specific route wins.
+Dialogue: 0,0:15:56.99,0:16:00.23,Bilingual,,0,0,0,,第三：NAT 只转发从里面发起的连接\N{\fs33\c&H00C8C0B8&\bord1.4}Three: NAT only carries connections that start inside.
+Dialogue: 0,0:16:00.55,0:16:04.65,Bilingual,,0,0,0,,如果它坏了，互联网调用会失败，而数据库照样有回应\N{\fs33\c&H00C8C0B8&\bord1.4}If it fails, internet calls fail, and the database still answers.
+Dialogue: 0,0:16:04.88,0:16:10.88,Bilingual,,0,0,0,,第四：浏览器在 VPC 外面，所以它调用公网的 HTTPS endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}Four: the browser is outside the VPC, so it calls the public HTTPS endpoint.
+Dialogue: 0,0:16:11.20,0:16:15.57,Bilingual,,0,0,0,,第五：只构建一个 image，在它启动时注入配置和密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Five: build one image, and inject settings and secrets when it starts.
+Dialogue: 0,0:16:15.82,0:16:20.53,Bilingual,,0,0,0,,第六：最大副本数等于连接数上限减去其他客户端\N{\fs33\c&H00C8C0B8&\bord1.4}Six: maximum replicas is the connection limit minus other clients,
+Dialogue: 0,0:16:20.53,0:16:23.03,Bilingual,,0,0,0,,除以每个连接池的连接数，向下取整\N{\fs33\c&H00C8C0B8&\bord1.4}divided by each pool, rounded down.
+Dialogue: 0,0:16:23.35,0:16:26.93,Bilingual,,0,0,0,,第七：关系型加向量、一个托管数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Seven: relational plus vectors in one managed database means PostgreSQL with pgvector.
+Dialogue: 0,0:16:26.93,0:16:30.02,Bilingual,,0,0,0,,就是 PostgreSQL 加 pgvector\N{\fs33\c&H00C8C0B8&\bord1.4}Seven: relational plus vectors in one managed database means PostgreSQL with pgvector.
+Dialogue: 0,0:16:30.27,0:16:33.08,Bilingual,,0,0,0,,这就是全貌，每个告警都修好了\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the whole picture, every alarm fixed.
+Dialogue: 0,0:16:33.40,0:16:37.73,Bilingual,,0,0,0,,静态文件来自边缘节点，请求经过负载均衡器\N{\fs33\c&H00C8C0B8&\bord1.4}Static files from the edge, requests through the load balancer,
+Dialogue: 0,0:16:37.73,0:16:39.92,Bilingual,,0,0,0,,任务在私有应用子网里\N{\fs33\c&H00C8C0B8&\bord1.4}tasks in the private app subnet,
+Dialogue: 0,0:16:39.92,0:16:43.56,Bilingual,,0,0,0,,PostgreSQL 在数据子网里，NAT 负责往外的调用\N{\fs33\c&H00C8C0B8&\bord1.4}PostgreSQL in the data subnet, and NAT for calls out.
+Dialogue: 0,0:16:43.80,0:16:47.02,Bilingual,,0,0,0,,题目看起来难的时候，就照课上最后做的那样做\N{\fs33\c&H00C8C0B8&\bord1.4}When a question looks hard, do what the lecture does last.
+Dialogue: 0,0:16:47.34,0:16:48.94,Bilingual,,0,0,0,,先追踪请求\N{\fs33\c&H00C8C0B8&\bord1.4}Trace the request first.
+Dialogue: 0,0:16:49.26,0:16:50.86,Bilingual,,0,0,0,,小测加油\N{\fs33\c&H00C8C0B8&\bord1.4}Good luck on the quiz.
