@@ -949,6 +949,36 @@
       "human_review": "series-listening-waiver-recorded-in-REVIEW.md"
     },
     {
+      "episode": "ac215-l16-exam",
+      "title": "AC215 L16 with L10 (exam edition): System Tradeoffs — private subnets and NAT, the browser outside the VPC, runtime config, the connection budget, pgvector",
+      "variant": "English narration / clean",
+      "source_commit": "a06652183694f16cd59b31535254f5c7135162c9",
+      "path": "videos/ac215-l16-exam/output/ac215-l16-exam.mp4",
+      "bytes": 50695053,
+      "sha256": "e3d410f086dfda2a7d6ced0d04b8d4b22c5f44d779f447cf6ad4e97d91c4a456",
+      "duration_seconds": 1012.611,
+      "availability": "release-asset",
+      "release_tag": "episode/ac215-l16-exam-v1",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l16-exam-v1/ac215-l16-exam.mp4",
+      "technical_review": "measured-at-release (duration, loudness, cues, committed-subtitle match)",
+      "human_review": "series-listening-waiver-recorded-in-REVIEW.md"
+    },
+    {
+      "episode": "ac215-l16-exam",
+      "title": "AC215 L16 with L10 (exam edition): System Tradeoffs — private subnets and NAT, the browser outside the VPC, runtime config, the connection budget, pgvector",
+      "variant": "English narration / bilingual captions (burned)",
+      "source_commit": "a06652183694f16cd59b31535254f5c7135162c9",
+      "path": "videos/ac215-l16-exam/output/ac215-l16-exam.zh-en.mp4",
+      "bytes": 51217434,
+      "sha256": "348c3db8013923044a15ad9e44ab2aff643b4356f03836b7b6ab960193ac41ae",
+      "duration_seconds": 1012.611,
+      "availability": "release-asset",
+      "release_tag": "episode/ac215-l16-exam-v1",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l16-exam-v1/ac215-l16-exam.zh-en.mp4",
+      "technical_review": "measured-at-release (duration, loudness, cues, committed-subtitle match)",
+      "human_review": "series-listening-waiver-recorded-in-REVIEW.md"
+    },
+    {
       "episode": "portal-e1-after-send",
       "title": "项目周记 E1 · Isn't it just an API call?",
       "variant": "English narration / bilingual captions (burned) / composed score",
