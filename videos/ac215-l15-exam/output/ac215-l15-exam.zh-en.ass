@@ -1,0 +1,245 @@
+[Script Info]
+Title: AC215 · Lecture 15 — ML Workflows with Vertex AI (exam edition)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:02.03,Bilingual,,0,0,0,,时钟上排着每晚的三个任务\N{\fs33\c&H00C8C0B8&\bord1.4}Three nightly jobs on a clock.
+Dialogue: 0,0:00:02.35,0:00:04.61,Bilingual,,0,0,0,,凌晨 1 点准备数据\N{\fs33\c&H00C8C0B8&\bord1.4}Prepare the data at 1 in the morning.
+Dialogue: 0,0:00:04.93,0:00:06.31,Bilingual,,0,0,0,,2 点训练\N{\fs33\c&H00C8C0B8&\bord1.4}Train at 2.
+Dialogue: 0,0:00:06.36,0:00:07.84,Bilingual,,0,0,0,,3 点部署\N{\fs33\c&H00C8C0B8&\bord1.4}Deploy at 3.
+Dialogue: 0,0:00:07.89,0:00:09.49,Bilingual,,0,0,0,,几个月来，一切正常\N{\fs33\c&H00C8C0B8&\bord1.4}For months, it works.
+Dialogue: 0,0:00:11.72,0:00:14.90,Bilingual,,0,0,0,,后来有一晚，准备数据花了 75 分钟\N{\fs33\c&H00C8C0B8&\bord1.4}Then one night, preparation takes 75 minutes.
+Dialogue: 0,0:00:15.22,0:00:19.29,Bilingual,,0,0,0,,2 点，训练照样开始，读的是一个只写了一半的文件\N{\fs33\c&H00C8C0B8&\bord1.4}At 2, training starts anyway, on a file that is only half written.
+Dialogue: 0,0:00:19.61,0:00:22.64,Bilingual,,0,0,0,,3 点，部署把训练出来的东西发布了出去\N{\fs33\c&H00C8C0B8&\bord1.4}At 3, deployment ships whatever training produced.
+Dialogue: 0,0:00:23.83,0:00:26.14,Bilingual,,0,0,0,,每个任务的退出码都是 0\N{\fs33\c&H00C8C0B8&\bord1.4}Every job exits with status zero.
+Dialogue: 0,0:00:26.46,0:00:27.84,Bilingual,,0,0,0,,没有一个失败\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing failed.
+Dialogue: 0,0:00:27.89,0:00:31.47,Bilingual,,0,0,0,,而 endpoint 现在提供的，是一个只用一半数据训练出来的模型\N{\fs33\c&H00C8C0B8&\bord1.4}And the endpoint now serves a model trained on half the data.
+Dialogue: 0,0:00:31.79,0:00:33.39,Bilingual,,0,0,0,,可也没有一个是对的\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing was right either.
+Dialogue: 0,0:00:33.48,0:00:35.90,Bilingual,,0,0,0,,课上也从同一个问题讲起\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture opens on the same problem:
+Dialogue: 0,0:00:35.90,0:00:40.03,Bilingual,,0,0,0,,cheese app 的四个步骤，每一步都由一个人在终端上运行\N{\fs33\c&H00C8C0B8&\bord1.4}four steps of the cheese app, each run by a person at a terminal.
+Dialogue: 0,0:00:40.35,0:00:42.19,Bilingual,,0,0,0,,这些步骤要怎么执行？\N{\fs33\c&H00C8C0B8&\bord1.4}How do we execute these steps?
+Dialogue: 0,0:00:42.51,0:00:44.15,Bilingual,,0,0,0,,能不能把这个流程自动化？\N{\fs33\c&H00C8C0B8&\bord1.4}Can we automate this flow?
+Dialogue: 0,0:00:44.50,0:00:47.12,Bilingual,,0,0,0,,要自动化，你需要一条不同的指令\N{\fs33\c&H00C8C0B8&\bord1.4}To automate it, you need a different instruction.
+Dialogue: 0,0:00:47.44,0:00:49.04,Bilingual,,0,0,0,,不是：2 点训练\N{\fs33\c&H00C8C0B8&\bord1.4}Not: train at 2.
+Dialogue: 0,0:00:49.15,0:00:51.84,Bilingual,,0,0,0,,而是：准备数据完成之后再训练\N{\fs33\c&H00C8C0B8&\bord1.4}Instead: train when preparation has finished.
+Dialogue: 0,0:00:52.16,0:00:54.02,Bilingual,,0,0,0,,这正是 pipeline 的用处\N{\fs33\c&H00C8C0B8&\bord1.4}That is what a pipeline is for.
+Dialogue: 0,0:00:54.25,0:00:59.43,Bilingual,,0,0,0,,接下来的安排：图、连线、重叠、顺序、部署，还有 cheese app\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the plan: graphs, wires, overlap, order, deployment, and the cheese app.
+Dialogue: 0,0:00:59.68,0:01:03.76,Bilingual,,0,0,0,,右上角的灰色标签，标出每个想法背后的课件页\N{\fs33\c&H00C8C0B8&\bord1.4}The gray tag, top right, names the slides behind each idea.
+Dialogue: 0,0:01:04.08,0:01:05.76,Bilingual,,0,0,0,,这里没有任何现场运行\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing here is a live run.
+Dialogue: 0,0:01:06.00,0:01:11.78,Bilingual,,0,0,0,,选项要是在固定时间调度步骤，就想：竞态，时钟对数据一无所知\N{\fs33\c&H00C8C0B8&\bord1.4}If an option schedules steps at fixed times, think race: a clock knows nothing about data.
+Dialogue: 0,0:01:13.12,0:01:17.34,Bilingual,,0,0,0,,工作流管理，用课上的话说，知道哪一步需要哪一步\N{\fs33\c&H00C8C0B8&\bord1.4}Workflow management, in the lecture's words, knows which step needs which.
+Dialogue: 0,0:01:17.66,0:01:22.23,Bilingual,,0,0,0,,记录这件事的结构叫有向无环图，也就是 DAG\N{\fs33\c&H00C8C0B8&\bord1.4}The structure that records this is a directed acyclic graph, or DAG.
+Dialogue: 0,0:01:22.47,0:01:26.67,Bilingual,,0,0,0,,有向，是因为数据只朝一个方向流，从生产者流到消费者\N{\fs33\c&H00C8C0B8&\bord1.4}Directed, because data flows one way, from producer to consumer.
+Dialogue: 0,0:01:26.99,0:01:30.06,Bilingual,,0,0,0,,无环，是因为没有哪一步会等它自己\N{\fs33\c&H00C8C0B8&\bord1.4}Acyclic, because no step ever waits on itself.
+Dialogue: 0,0:01:30.38,0:01:33.99,Bilingual,,0,0,0,,这些 task 就是节点；数据依赖就是边\N{\fs33\c&H00C8C0B8&\bord1.4}Tasks are the nodes; data dependencies are the edges.
+Dialogue: 0,0:01:34.23,0:01:37.39,Bilingual,,0,0,0,,Vertex AI Pipelines 替你运行这些图\N{\fs33\c&H00C8C0B8&\bord1.4}Vertex AI Pipelines runs these graphs for you.
+Dialogue: 0,0:01:37.71,0:01:42.13,Bilingual,,0,0,0,,你描述这个图用的是 Kubeflow Pipelines，也就是 kfp 这个库\N{\fs33\c&H00C8C0B8&\bord1.4}You describe the graph with Kubeflow Pipelines, the kfp library,
+Dialogue: 0,0:01:42.13,0:01:44.69,Bilingual,,0,0,0,,而且不用你管 Kubernetes\N{\fs33\c&H00C8C0B8&\bord1.4}and there is no Kubernetes to manage.
+Dialogue: 0,0:01:45.01,0:01:47.78,Bilingual,,0,0,0,,现在的控制台把它叫作 Agent Platform\N{\fs33\c&H00C8C0B8&\bord1.4}Today's console calls it Agent Platform.
+Dialogue: 0,0:01:48.02,0:01:51.81,Bilingual,,0,0,0,,这是课件和示例 repo 里的那个玩具 pipeline\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the toy pipeline from the slides and the demo repo.
+Dialogue: 0,0:01:52.13,0:01:55.68,Bilingual,,0,0,0,,三个标了 @dsl.component 的 Python 函数\N{\fs33\c&H00C8C0B8&\bord1.4}Three Python functions marked @dsl.component:
+Dialogue: 0,0:01:55.68,0:01:57.89,Bilingual,,0,0,0,,square、add 和 square root\N{\fs33\c&H00C8C0B8&\bord1.4}square, add and square root.
+Dialogue: 0,0:01:58.21,0:02:02.22,Bilingual,,0,0,0,,第四个标了 @dsl.pipeline，把它们连起来\N{\fs33\c&H00C8C0B8&\bord1.4}A fourth, marked @dsl.pipeline, wires them together.
+Dialogue: 0,0:02:02.47,0:02:06.41,Bilingual,,0,0,0,,在 pipeline 函数运行时，这些 component 调用什么都不算\N{\fs33\c&H00C8C0B8&\bord1.4}When the pipeline function runs, the component calls compute nothing.
+Dialogue: 0,0:02:06.73,0:02:10.95,Bilingual,,0,0,0,,在 a 上调用 square，a 是 pipeline 的输入，默认值是 3\N{\fs33\c&H00C8C0B8&\bord1.4}Calling square on a, the pipeline's input, which defaults to 3,
+Dialogue: 0,0:02:10.95,0:02:15.31,Bilingual,,0,0,0,,这会创建一个 task：图里的一个节点，带着一个空的输出插口\N{\fs33\c&H00C8C0B8&\bord1.4}creates a task: a node in the graph, with an empty output socket.
+Dialogue: 0,0:02:15.63,0:02:16.97,Bilingual,,0,0,0,,还没有数字\N{\fs33\c&H00C8C0B8&\bord1.4}No number yet.
+Dialogue: 0,0:02:17.02,0:02:19.81,Bilingual,,0,0,0,,一行一行地，四个调用放下四个节点\N{\fs33\c&H00C8C0B8&\bord1.4}Line by line, four calls drop four nodes.
+Dialogue: 0,0:02:20.13,0:02:21.69,Bilingual,,0,0,0,,这里 square 被调用了两次\N{\fs33\c&H00C8C0B8&\bord1.4}Square is called twice,
+Dialogue: 0,0:02:21.69,0:02:23.93,Bilingual,,0,0,0,,所以一个 component 产生了两个 task\N{\fs33\c&H00C8C0B8&\bord1.4}so one component gives two tasks;
+Dialogue: 0,0:02:23.93,0:02:25.89,Bilingual,,0,0,0,,第二个叫 square-2\N{\fs33\c&H00C8C0B8&\bord1.4}the second is named square-2.
+Dialogue: 0,0:02:26.21,0:02:29.24,Bilingual,,0,0,0,,这个函数只跑了一次，产出的只有一个图\N{\fs33\c&H00C8C0B8&\bord1.4}The function ran once, and produced only a graph.
+Dialogue: 0,0:02:29.48,0:02:32.41,Bilingual,,0,0,0,,编译器把这个图压成一个 YAML 文件\N{\fs33\c&H00C8C0B8&\bord1.4}The compiler presses that graph into a YAML file.
+Dialogue: 0,0:02:32.73,0:02:36.49,Bilingual,,0,0,0,,Vertex AI SDK，也就是课上说的遥控器\N{\fs33\c&H00C8C0B8&\bord1.4}The Vertex AI SDK, the lecture's remote control,
+Dialogue: 0,0:02:36.49,0:02:38.76,Bilingual,,0,0,0,,把它提交成一个 pipeline 任务\N{\fs33\c&H00C8C0B8&\bord1.4}submits it as a pipeline job.
+Dialogue: 0,0:02:39.08,0:02:41.17,Bilingual,,0,0,0,,你的笔记本负责编译和提交\N{\fs33\c&H00C8C0B8&\bord1.4}Your laptop compiles and submits.
+Dialogue: 0,0:02:41.49,0:02:43.09,Bilingual,,0,0,0,,执行的是 Vertex\N{\fs33\c&H00C8C0B8&\bord1.4}Vertex executes.
+Dialogue: 0,0:02:44.28,0:02:46.29,Bilingual,,0,0,0,,直到这时，在 Google 的机器上\N{\fs33\c&H00C8C0B8&\bord1.4}Only now, on Google's machines,
+Dialogue: 0,0:02:46.29,0:02:49.79,Bilingual,,0,0,0,,每个 task 才有了 container，数字才出现\N{\fs33\c&H00C8C0B8&\bord1.4}does each task get a container, and do numbers appear.
+Dialogue: 0,0:02:52.07,0:02:56.79,Bilingual,,0,0,0,,选项要是说，在 pipeline 函数里调用 train 就会训练模型\N{\fs33\c&H00C8C0B8&\bord1.4}If an option says calling train in the pipeline function trains the model,
+Dialogue: 0,0:02:56.79,0:02:59.09,Bilingual,,0,0,0,,再想想：它只是创建了一个 task\N{\fs33\c&H00C8C0B8&\bord1.4}think again: it only creates a task.
+Dialogue: 0,0:02:59.41,0:03:02.29,Bilingual,,0,0,0,,什么都不会运行，要等到编译好的任务真正运行\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing runs until the compiled job runs.
+Dialogue: 0,0:03:03.43,0:03:05.03,Bilingual,,0,0,0,,看这个 add 调用\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the add call.
+Dialogue: 0,0:03:05.08,0:03:08.53,Bilingual,,0,0,0,,对 x，它传的是第一个 square task 的 .output\N{\fs33\c&H00C8C0B8&\bord1.4}For x, it passes the first square task, .output.
+Dialogue: 0,0:03:08.85,0:03:11.45,Bilingual,,0,0,0,,对 y，传的是第二个 task 的 .output\N{\fs33\c&H00C8C0B8&\bord1.4}For y, the second task, .output.
+Dialogue: 0,0:03:11.77,0:03:13.37,Bilingual,,0,0,0,,那传的到底是什么？\N{\fs33\c&H00C8C0B8&\bord1.4}So what is being passed?
+Dialogue: 0,0:03:13.47,0:03:14.76,Bilingual,,0,0,0,,不是一个数\N{\fs33\c&H00C8C0B8&\bord1.4}Not a number.
+Dialogue: 0,0:03:14.81,0:03:17.36,Bilingual,,0,0,0,,这里的 .output 是一个占位符\N{\fs33\c&H00C8C0B8&\bord1.4}.output is a placeholder for a value
+Dialogue: 0,0:03:17.36,0:03:20.89,Bilingual,,0,0,0,,代表一个只有上游 task 成功之后才存在的值\N{\fs33\c&H00C8C0B8&\bord1.4}that exists only after the upstream task succeeds.
+Dialogue: 0,0:03:21.21,0:03:22.94,Bilingual,,0,0,0,,把它接上，就画出了一根连线\N{\fs33\c&H00C8C0B8&\bord1.4}Plugging it in draws a wire.
+Dialogue: 0,0:03:23.40,0:03:26.56,Bilingual,,0,0,0,,编译出来的 YAML 把每根连线写了两遍\N{\fs33\c&H00C8C0B8&\bord1.4}The compiled YAML writes down each wire twice:
+Dialogue: 0,0:03:26.56,0:03:29.72,Bilingual,,0,0,0,,add 的 dependentTasks 列出 square 和 square-2\N{\fs33\c&H00C8C0B8&\bord1.4}add's dependentTasks list square and square-2,
+Dialogue: 0,0:03:29.72,0:03:32.40,Bilingual,,0,0,0,,每个输入也写明了它的生产者 task\N{\fs33\c&H00C8C0B8&\bord1.4}and each input names its producer task.
+Dialogue: 0,0:03:34.97,0:03:40.28,Bilingual,,0,0,0,,运行的时候，square 变绿，然后 9 才顺着连线进入 add\N{\fs33\c&H00C8C0B8&\bord1.4}At run time, square turns green, and only then does 9 ride the wire into add.
+Dialogue: 0,0:03:40.60,0:03:44.48,Bilingual,,0,0,0,,一个参数，就同时给了 add 数据和依赖\N{\fs33\c&H00C8C0B8&\bord1.4}One argument gave add both its data and its dependency.
+Dialogue: 0,0:03:44.72,0:03:47.49,Bilingual,,0,0,0,,有多个输出时，就点名要哪一个\N{\fs33\c&H00C8C0B8&\bord1.4}With several outputs, you name the one you want:
+Dialogue: 0,0:03:47.49,0:03:50.56,Bilingual,,0,0,0,,用 .outputs，在方括号里写上输出的名字\N{\fs33\c&H00C8C0B8&\bord1.4}.outputs["name"], with the output's name in brackets.
+Dialogue: 0,0:03:50.80,0:03:52.35,Bilingual,,0,0,0,,再看对比\N{\fs33\c&H00C8C0B8&\bord1.4}Now the contrast.
+Dialogue: 0,0:03:52.40,0:03:56.16,Bilingual,,0,0,0,,输出本身常常就是一个路径：这次运行写出的文件\N{\fs33\c&H00C8C0B8&\bord1.4}Often the output is itself a path: the file this run wrote.
+Dialogue: 0,0:03:56.48,0:04:00.53,Bilingual,,0,0,0,,有了连线，train 拿到的正是那个路径，而且是在 prep 成功之后\N{\fs33\c&H00C8C0B8&\bord1.4}With the wire, train gets that exact path, after prep succeeds.
+Dialogue: 0,0:04:00.85,0:04:06.61,Bilingual,,0,0,0,,改成把路径写死，就没有连线：train 马上开始，和 prep 一起跑\N{\fs33\c&H00C8C0B8&\bord1.4}Hard-code a path instead, and there is no wire: train starts right away, alongside prep.
+Dialogue: 0,0:04:06.85,0:04:10.93,Bilingual,,0,0,0,,那里的文件是上周的，这一步在过期数据上成功了\N{\fs33\c&H00C8C0B8&\bord1.4}The file there is last week's, and the step succeeds on stale data.
+Dialogue: 0,0:04:11.25,0:04:15.15,Bilingual,,0,0,0,,猜出来的路径在你看来像依赖，在 pipeline 看来不是\N{\fs33\c&H00C8C0B8&\bord1.4}A guessed path looks like a dependency to you, not to the pipeline.
+Dialogue: 0,0:04:15.38,0:04:18.80,Bilingual,,0,0,0,,要只管顺序、不传数据，就用 .after 加一条虚线边\N{\fs33\c&H00C8C0B8&\bord1.4}For order without data, .after() adds a dashed edge:
+Dialogue: 0,0:04:18.80,0:04:23.60,Bilingual,,0,0,0,,这个 task 会等另一个成功，但边上什么都不传\N{\fs33\c&H00C8C0B8&\bord1.4}the task waits for the other one to succeed, but nothing travels down it.
+Dialogue: 0,0:04:23.83,0:04:26.48,Bilingual,,0,0,0,,来做一题。想停的话，就在这里暂停\N{\fs33\c&H00C8C0B8&\bord1.4}Try one. Pause here if you want.
+Dialogue: 0,0:04:32.43,0:04:33.54,Bilingual,,0,0,0,,答案是 B\N{\fs33\c&H00C8C0B8&\bord1.4}B.
+Dialogue: 0,0:04:33.59,0:04:37.57,Bilingual,,0,0,0,,点名这个输出，就把这次运行的文件传了过去，也建立了等待\N{\fs33\c&H00C8C0B8&\bord1.4}Naming the output hands over this run's file, and creates the wait.
+Dialogue: 0,0:04:37.89,0:04:39.27,Bilingual,,0,0,0,,A 把路径写死了\N{\fs33\c&H00C8C0B8&\bord1.4}A hard-codes a path:
+Dialogue: 0,0:04:39.27,0:04:43.48,Bilingual,,0,0,0,,没有边，所以 train 可能马上开始，读到上一次运行的文件\N{\fs33\c&H00C8C0B8&\bord1.4}no edge, so train may start at once and read last run's file.
+Dialogue: 0,0:04:43.73,0:04:47.89,Bilingual,,0,0,0,,C 会等，但它读的是你假设的路径，不是 split 报告的那个\N{\fs33\c&H00C8C0B8&\bord1.4}C waits, but it reads a path you assumed, not the one split reported.
+Dialogue: 0,0:04:48.21,0:04:50.67,Bilingual,,0,0,0,,D 在任何东西运行之前就失败了\N{\fs33\c&H00C8C0B8&\bord1.4}D fails before anything runs:
+Dialogue: 0,0:04:50.67,0:04:54.40,Bilingual,,0,0,0,,有两个输出时，kfp 不接受单独的 .output\N{\fs33\c&H00C8C0B8&\bord1.4}with two outputs, kfp refuses plain .output.
+Dialogue: 0,0:04:54.65,0:05:00.13,Bilingual,,0,0,0,,题目说 .output，就想：等上游成功，拿到这次运行的值\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says .output, think: waits for success, and gets this run's value.
+Dialogue: 0,0:05:00.45,0:05:03.82,Bilingual,,0,0,0,,写死或猜出来的路径：没有边，可能过期\N{\fs33\c&H00C8C0B8&\bord1.4}A hard-coded or guessed path: no edge, maybe stale.
+Dialogue: 0,0:05:04.14,0:05:06.45,Bilingual,,0,0,0,,.after：有顺序，没有数据\N{\fs33\c&H00C8C0B8&\bord1.4}.after(): order, but no data.
+Dialogue: 0,0:05:07.58,0:05:09.18,Bilingual,,0,0,0,,回到那个玩具图\N{\fs33\c&H00C8C0B8&\bord1.4}Back to the toy graph.
+Dialogue: 0,0:05:09.27,0:05:12.33,Bilingual,,0,0,0,,两个 square task 之间没有连线组成的路径\N{\fs33\c&H00C8C0B8&\bord1.4}No path of wires connects the two square tasks,
+Dialogue: 0,0:05:12.33,0:05:15.39,Bilingual,,0,0,0,,所以 Vertex 可以同时运行它们\N{\fs33\c&H00C8C0B8&\bord1.4}so Vertex is free to run them at the same time.
+Dialogue: 0,0:05:15.63,0:05:17.08,Bilingual,,0,0,0,,这个 add 是一个汇合点\N{\fs33\c&H00C8C0B8&\bord1.4}Add is a join.
+Dialogue: 0,0:05:17.13,0:05:20.01,Bilingual,,0,0,0,,它的 YAML 把两个 square 都列为 dependentTasks\N{\fs33\c&H00C8C0B8&\bord1.4}Its YAML lists both squares as dependentTasks,
+Dialogue: 0,0:05:20.01,0:05:22.95,Bilingual,,0,0,0,,所以它只在第二个完成之后才开始\N{\fs33\c&H00C8C0B8&\bord1.4}so it starts only when the second one finishes.
+Dialogue: 0,0:05:23.62,0:05:27.11,Bilingual,,0,0,0,,同样的形状，放大一号：一个预处理 task\N{\fs33\c&H00C8C0B8&\bord1.4}The same shape, one size up: one preprocessing task,
+Dialogue: 0,0:05:27.11,0:05:32.21,Bilingual,,0,0,0,,两个读它输出的训练，再加一个读两个模型的比较\N{\fs33\c&H00C8C0B8&\bord1.4}two trainings that read its output, and a comparison that reads both models.
+Dialogue: 0,0:05:32.45,0:05:36.23,Bilingual,,0,0,0,,一个 task 亮起来，要等每根输入连线都带上值\N{\fs33\c&H00C8C0B8&\bord1.4}A task lights up when every incoming wire carries a token.
+Dialogue: 0,0:05:36.55,0:05:41.82,Bilingual,,0,0,0,,两个训练一起开始，比较正好在慢的那个结束时开始\N{\fs33\c&H00C8C0B8&\bord1.4}Both trainings start together, and the comparison starts exactly when the slower one ends.
+Dialogue: 0,0:05:42.43,0:05:46.47,Bilingual,,0,0,0,,加一条数据不需要的边：答案一样，跑得更久\N{\fs33\c&H00C8C0B8&\bord1.4}Add an edge the data does not need: same answer, longer run.
+Dialogue: 0,0:05:47.45,0:05:49.94,Bilingual,,0,0,0,,把这些连线换成猜出来的路径\N{\fs33\c&H00C8C0B8&\bord1.4}Replace those wires with guessed paths,
+Dialogue: 0,0:05:49.94,0:05:54.47,Bilingual,,0,0,0,,比较就会在 0 时刻开始，读到没算完的结果\N{\fs33\c&H00C8C0B8&\bord1.4}and the comparison starts at time zero and reads half-finished results.
+Dialogue: 0,0:05:54.79,0:05:56.12,Bilingual,,0,0,0,,这就是竞态\N{\fs33\c&H00C8C0B8&\bord1.4}That is a race.
+Dialogue: 0,0:05:56.17,0:06:02.05,Bilingual,,0,0,0,,最大安全重叠的意思是：数据需要的边，一条不多，一条也不少\N{\fs33\c&H00C8C0B8&\bord1.4}Maximum safe overlap means exactly the edges the data needs, no more and no fewer.
+Dialogue: 0,0:06:02.37,0:06:04.49,Bilingual,,0,0,0,,这样一次运行的时长就等于它的最长路径\N{\fs33\c&H00C8C0B8&\bord1.4}The run then lasts its longest path.
+Dialogue: 0,0:06:04.81,0:06:07.90,Bilingual,,0,0,0,,如果上游有 task 失败，汇合点就永远不会运行\N{\fs33\c&H00C8C0B8&\bord1.4}If an upstream task fails, the join never runs.
+Dialogue: 0,0:06:08.15,0:06:09.75,Bilingual,,0,0,0,,轮到你算一题\N{\fs33\c&H00C8C0B8&\bord1.4}Your turn to compute one.
+Dialogue: 0,0:06:10.05,0:06:11.65,Bilingual,,0,0,0,,想停的话，就在这里暂停\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here if you want.
+Dialogue: 0,0:06:17.35,0:06:18.95,Bilingual,,0,0,0,,答案是 B，16 分钟\N{\fs33\c&H00C8C0B8&\bord1.4}B, 16 minutes.
+Dialogue: 0,0:06:19.16,0:06:23.32,Bilingual,,0,0,0,,最长路径是 ingest、clean、大的那个训练和 compare\N{\fs33\c&H00C8C0B8&\bord1.4}The longest path is ingest, clean, the big training, and compare.
+Dialogue: 0,0:06:23.64,0:06:26.12,Bilingual,,0,0,0,,2 加 3 加 10 加 1\N{\fs33\c&H00C8C0B8&\bord1.4}2, plus 3, plus 10, plus 1.
+Dialogue: 0,0:06:26.44,0:06:29.83,Bilingual,,0,0,0,,小的那个训练和 report 都和大的那个重叠\N{\fs33\c&H00C8C0B8&\bord1.4}The small training and the report overlap with the big one.
+Dialogue: 0,0:06:30.07,0:06:32.16,Bilingual,,0,0,0,,A 把所有 task 依次加起来\N{\fs33\c&H00C8C0B8&\bord1.4}A adds every task in sequence.
+Dialogue: 0,0:06:32.48,0:06:35.19,Bilingual,,0,0,0,,D 让两个训练一个接一个地跑\N{\fs33\c&H00C8C0B8&\bord1.4}D runs the two trainings one after the other.
+Dialogue: 0,0:06:35.51,0:06:41.03,Bilingual,,0,0,0,,C 忽略了这些边：训练需要清洗过的数据，compare 要等两个模型\N{\fs33\c&H00C8C0B8&\bord1.4}C ignores the edges: training needs clean data, and compare waits for both models.
+Dialogue: 0,0:06:41.27,0:06:45.06,Bilingual,,0,0,0,,两个步骤之间要是没有连线组成的路径，就想：并行\N{\fs33\c&H00C8C0B8&\bord1.4}If there is no path of wires between two steps, think parallel.
+Dialogue: 0,0:06:45.38,0:06:49.20,Bilingual,,0,0,0,,一个步骤要是用到多个输出，就会等齐所有输出\N{\fs33\c&H00C8C0B8&\bord1.4}If a step consumes several outputs, it waits for all of them.
+Dialogue: 0,0:06:50.35,0:06:53.38,Bilingual,,0,0,0,,现在说顺序：预处理、训练、部署\N{\fs33\c&H00C8C0B8&\bord1.4}Now the sequence: preprocess, train, deploy.
+Dialogue: 0,0:06:53.70,0:06:57.01,Bilingual,,0,0,0,,这里有四种让每一步等待的办法，放在同一个时钟上\N{\fs33\c&H00C8C0B8&\bord1.4}Here are four ways to make each step wait, on one clock.
+Dialogue: 0,0:06:57.25,0:06:59.02,Bilingual,,0,0,0,,第一条泳道：cron 错开时间\N{\fs33\c&H00C8C0B8&\bord1.4}Lane one, cron offsets.
+Dialogue: 0,0:06:59.34,0:07:01.60,Bilingual,,0,0,0,,第二条泳道：后台的 &\N{\fs33\c&H00C8C0B8&\bord1.4}Lane two, background & jobs.
+Dialogue: 0,0:07:01.92,0:07:06.45,Bilingual,,0,0,0,,第三条泳道：一个事件在预处理写出输出时启动训练\N{\fs33\c&H00C8C0B8&\bord1.4}Lane three, an event starts training when preprocessing writes its output,
+Dialogue: 0,0:07:06.45,0:07:09.33,Bilingual,,0,0,0,,部署取实验追踪工具里最好的模型\N{\fs33\c&H00C8C0B8&\bord1.4}and deploy takes the best model in the tracker.
+Dialogue: 0,0:07:09.65,0:07:11.65,Bilingual,,0,0,0,,第四条泳道：pipeline 的边\N{\fs33\c&H00C8C0B8&\bord1.4}Lane four, pipeline edges.
+Dialogue: 0,0:07:11.90,0:07:13.88,Bilingual,,0,0,0,,掷一下骰子，决定预处理要多久\N{\fs33\c&H00C8C0B8&\bord1.4}Roll the length of preprocessing.
+Dialogue: 0,0:07:14.20,0:07:15.52,Bilingual,,0,0,0,,40 分钟\N{\fs33\c&H00C8C0B8&\bord1.4}40 minutes.
+Dialogue: 0,0:07:15.57,0:07:17.12,Bilingual,,0,0,0,,然后 75\N{\fs33\c&H00C8C0B8&\bord1.4}Then 75.
+Dialogue: 0,0:07:17.17,0:07:18.60,Bilingual,,0,0,0,,然后 55\N{\fs33\c&H00C8C0B8&\bord1.4}Then 55.
+Dialogue: 0,0:07:18.65,0:07:22.06,Bilingual,,0,0,0,,时钟那条泳道在 40 没问题，75 就出错\N{\fs33\c&H00C8C0B8&\bord1.4}The clock lane is fine at 40, and broken at 75:
+Dialogue: 0,0:07:22.06,0:07:24.60,Bilingual,,0,0,0,,训练读到一个写了一半的文件\N{\fs33\c&H00C8C0B8&\bord1.4}training reads a half-written file.
+Dialogue: 0,0:07:24.92,0:07:28.74,Bilingual,,0,0,0,,后台那条泳道每次都出错，因为什么都不等\N{\fs33\c&H00C8C0B8&\bord1.4}The background lane is broken on every roll, because nothing waits.
+Dialogue: 0,0:07:28.98,0:07:30.82,Bilingual,,0,0,0,,追踪工具那条泳道错在两处\N{\fs33\c&H00C8C0B8&\bord1.4}The tracker lane fails twice.
+Dialogue: 0,0:07:31.14,0:07:35.21,Bilingual,,0,0,0,,这个事件可能在第一个文件写出来时就触发，那时预处理还没做完\N{\fs33\c&H00C8C0B8&\bord1.4}The event can fire on the first file, before preprocessing is done.
+Dialogue: 0,0:07:35.53,0:07:39.71,Bilingual,,0,0,0,,而且追踪工具里最好的模型，是所有运行里最好的，不是这次运行的\N{\fs33\c&H00C8C0B8&\bord1.4}And the tracker's best model is the best of all runs, not this run's.
+Dialogue: 0,0:07:40.03,0:07:42.64,Bilingual,,0,0,0,,只有边那条泳道每一次都是对的\N{\fs33\c&H00C8C0B8&\bord1.4}Only the edge lane is right on every roll.
+Dialogue: 0,0:07:42.96,0:07:44.56,Bilingual,,0,0,0,,它只是被拉长了\N{\fs33\c&H00C8C0B8&\bord1.4}It just stretches.
+Dialogue: 0,0:07:45.25,0:07:48.14,Bilingual,,0,0,0,,这个 cheese app 的 pipeline 正是这样做的\N{\fs33\c&H00C8C0B8&\bord1.4}The cheese app pipeline does exactly this:
+Dialogue: 0,0:07:48.14,0:07:55.15,Bilingual,,0,0,0,,采集之后处理，处理之后训练，训练之后部署，每一步都用 .after\N{\fs33\c&H00C8C0B8&\bord1.4}processing after collection, training after processing, deployment after training, each with .after().
+Dialogue: 0,0:07:55.38,0:07:58.46,Bilingual,,0,0,0,,在编译出来的 YAML 里，它们变成了 dependentTasks\N{\fs33\c&H00C8C0B8&\bord1.4}In the compiled YAML they become dependentTasks.
+Dialogue: 0,0:07:58.78,0:08:04.19,Bilingual,,0,0,0,,README 也说得很直白：每一步都要等上一步成功之后才开始\N{\fs33\c&H00C8C0B8&\bord1.4}And the README says it plainly: each step starts only after the previous one succeeds.
+Dialogue: 0,0:08:04.43,0:08:06.10,Bilingual,,0,0,0,,再来一题，有点绕\N{\fs33\c&H00C8C0B8&\bord1.4}One more, a subtle one.
+Dialogue: 0,0:08:06.42,0:08:09.17,Bilingual,,0,0,0,,有些步骤只是在另一台机器上启动工作\N{\fs33\c&H00C8C0B8&\bord1.4}Some steps only launch work on another machine.
+Dialogue: 0,0:08:09.49,0:08:12.11,Bilingual,,0,0,0,,记清楚一条边到底在等什么\N{\fs33\c&H00C8C0B8&\bord1.4}Remember exactly what an edge waits for.
+Dialogue: 0,0:08:12.43,0:08:14.03,Bilingual,,0,0,0,,想停的话，就在这里暂停\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here if you want.
+Dialogue: 0,0:08:21.63,0:08:27.20,Bilingual,,0,0,0,,答案是 B。一条边等的是 task，而这个 task 5 秒后就成功了\N{\fs33\c&H00C8C0B8&\bord1.4}B. An edge waits for the task, and this task succeeded after 5 seconds.
+Dialogue: 0,0:08:27.52,0:08:30.37,Bilingual,,0,0,0,,这个 pipeline 从来看不到它启动的任务\N{\fs33\c&H00C8C0B8&\bord1.4}The pipeline never sees the job it launched,
+Dialogue: 0,0:08:30.37,0:08:33.86,Bilingual,,0,0,0,,所以 A 是错的，deploy 可能把上一个模型发布出去\N{\fs33\c&H00C8C0B8&\bord1.4}so A is wrong, and deploy may ship the previous model.
+Dialogue: 0,0:08:34.10,0:08:36.23,Bilingual,,0,0,0,,C：.after 不需要数据\N{\fs33\c&H00C8C0B8&\bord1.4}C: .after() needs no data.
+Dialogue: 0,0:08:36.55,0:08:38.28,Bilingual,,0,0,0,,D：.after 是强制执行的\N{\fs33\c&H00C8C0B8&\bord1.4}D: .after() is enforced,
+Dialogue: 0,0:08:38.28,0:08:41.31,Bilingual,,0,0,0,,会作为 dependentTasks 的一项写进 YAML\N{\fs33\c&H00C8C0B8&\bord1.4}written into the YAML as a dependent task.
+Dialogue: 0,0:08:41.55,0:08:44.20,Bilingual,,0,0,0,,这个 repo 的训练步骤就是这种只负责启动的步骤\N{\fs33\c&H00C8C0B8&\bord1.4}The repo's training step is such a launcher.
+Dialogue: 0,0:08:44.52,0:08:47.23,Bilingual,,0,0,0,,把 sync 设为 True 之后，它会等自己的任务\N{\fs33\c&H00C8C0B8&\bord1.4}With sync=True, it waits for its job,
+Dialogue: 0,0:08:47.23,0:08:52.37,Bilingual,,0,0,0,,任务失败它也失败，所以 deploy 永远不会在失败的训练之后运行\N{\fs33\c&H00C8C0B8&\bord1.4}and fails if the job fails, so deploy never runs on a failed training.
+Dialogue: 0,0:08:52.69,0:08:55.29,Bilingual,,0,0,0,,最近一次 commit 把这个等待写明了\N{\fs33\c&H00C8C0B8&\bord1.4}A recent commit made that wait explicit.
+Dialogue: 0,0:08:55.53,0:08:57.62,Bilingual,,0,0,0,,选项要是用 cron 错开时间\N{\fs33\c&H00C8C0B8&\bord1.4}If an option uses cron offsets,
+Dialogue: 0,0:08:57.62,0:09:01.40,Bilingual,,0,0,0,,或者后台命令、追踪工具里最好的模型，就想\N{\fs33\c&H00C8C0B8&\bord1.4}background commands, or the best model from the tracker,
+Dialogue: 0,0:09:01.40,0:09:03.15,Bilingual,,0,0,0,,竞态，或者部署错了模型\N{\fs33\c&H00C8C0B8&\bord1.4}think race or wrong model.
+Dialogue: 0,0:09:03.47,0:09:08.12,Bilingual,,0,0,0,,从预处理到训练再到部署的边，从结构上就保证了正确\N{\fs33\c&H00C8C0B8&\bord1.4}Edges from preprocess to train to deploy are correct by construction.
+Dialogue: 0,0:09:09.27,0:09:15.11,Bilingual,,0,0,0,,课上把部署画成五步：拿到保存的模型，更新它的签名\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture draws deployment in five steps: get the saved model, update its signature,
+Dialogue: 0,0:09:15.11,0:09:19.53,Bilingual,,0,0,0,,上传到 bucket，注册，再部署到 endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}upload it to a bucket, register it, and deploy it to an endpoint.
+Dialogue: 0,0:09:19.77,0:09:24.42,Bilingual,,0,0,0,,签名这一步把预处理搬进模型里\N{\fs33\c&H00C8C0B8&\bord1.4}The signature step moves preprocessing into the model:
+Dialogue: 0,0:09:24.42,0:09:31.14,Bilingual,,0,0,0,,解码 JPEG，转成浮点数，缩放到 224 乘 224，再调用模型\N{\fs33\c&H00C8C0B8&\bord1.4}decode the JPEG, convert to floats, resize to 224 by 224, then call the model.
+Dialogue: 0,0:09:31.46,0:09:35.83,Bilingual,,0,0,0,,课件用一种方式保存，repo 用的是 Keras 的 ExportArchive\N{\fs33\c&H00C8C0B8&\bord1.4}The slides save it one way, the repo with the Keras ExportArchive.
+Dialogue: 0,0:09:36.07,0:09:38.39,Bilingual,,0,0,0,,注册就是建一张目录卡片\N{\fs33\c&H00C8C0B8&\bord1.4}Registering creates a catalog card.
+Dialogue: 0,0:09:38.71,0:09:42.21,Bilingual,,0,0,0,,它记录文件在哪里，以及由哪个 container 来提供服务\N{\fs33\c&H00C8C0B8&\bord1.4}It records where the files are, and which container serves them.
+Dialogue: 0,0:09:42.53,0:09:44.94,Bilingual,,0,0,0,,什么都没在运行，也不花钱\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing is running, and it costs nothing.
+Dialogue: 0,0:09:45.26,0:09:46.60,Bilingual,,0,0,0,,能调用它吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Can you call it?
+Dialogue: 0,0:09:46.65,0:09:50.05,Bilingual,,0,0,0,,还不能。接下来是 endpoint：一个地址\N{\fs33\c&H00C8C0B8&\bord1.4}Not yet. Next, the endpoint: an address.
+Dialogue: 0,0:09:50.37,0:09:53.61,Bilingual,,0,0,0,,这个 repo 会复用 cheese-app-endpoint，如果它已经存在\N{\fs33\c&H00C8C0B8&\bord1.4}The repo reuses cheese-app-endpoint if it exists,
+Dialogue: 0,0:09:53.61,0:09:54.83,Bilingual,,0,0,0,,不存在就新建一个\N{\fs33\c&H00C8C0B8&\bord1.4}or creates it.
+Dialogue: 0,0:09:54.88,0:09:59.04,Bilingual,,0,0,0,,部署就是在这个地址下面放一台机器，把全部流量都给它\N{\fs33\c&H00C8C0B8&\bord1.4}Deploy slides a machine under that address and sends it all the traffic.
+Dialogue: 0,0:09:59.36,0:10:04.65,Bilingual,,0,0,0,,从现在起，你要为这台机器付钱，只要它还部署着，即使没人调用它\N{\fs33\c&H00C8C0B8&\bord1.4}From now on, you pay for that machine while it is deployed, even when nobody calls it.
+Dialogue: 0,0:10:05.65,0:10:09.25,Bilingual,,0,0,0,,预测时，客户端把每张 JPEG 用 base64 编码\N{\fs33\c&H00C8C0B8&\bord1.4}To predict, the client wraps each JPEG in base64,
+Dialogue: 0,0:10:09.25,0:10:11.24,Bilingual,,0,0,0,,放在 bytes inputs 这个键下面\N{\fs33\c&H00C8C0B8&\bord1.4}under the key bytes_inputs.
+Dialogue: 0,0:10:11.56,0:10:17.38,Bilingual,,0,0,0,,签名把它解开，模型返回四个分数，最大的那个说出是哪种奶酪\N{\fs33\c&H00C8C0B8&\bord1.4}The signature unfolds it, the model returns four scores, and the largest names the cheese.
+Dialogue: 0,0:10:17.63,0:10:22.35,Bilingual,,0,0,0,,清理时先取消部署模型，机器就停了，然后删除 endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}Cleanup undeploys the model, so the machine stops, then deletes the endpoint.
+Dialogue: 0,0:10:22.67,0:10:25.46,Bilingual,,0,0,0,,注册的那张卡片和 bucket 里的文件都还在\N{\fs33\c&H00C8C0B8&\bord1.4}The registry card and the bucket files stay.
+Dialogue: 0,0:10:25.70,0:10:28.94,Bilingual,,0,0,0,,这个 pipeline 的部署步骤做的也是这两个调用\N{\fs33\c&H00C8C0B8&\bord1.4}The pipeline's deploy step makes the same two calls.
+Dialogue: 0,0:10:29.26,0:10:31.26,Bilingual,,0,0,0,,而按课件的经验法则\N{\fs33\c&H00C8C0B8&\bord1.4}And by the slides' rule of thumb,
+Dialogue: 0,0:10:31.26,0:10:34.77,Bilingual,,0,0,0,,Cloud Run 适合模型只是一个更大应用的一部分的时候\N{\fs33\c&H00C8C0B8&\bord1.4}Cloud Run fits when the model is one part of a bigger app.
+Dialogue: 0,0:10:35.02,0:10:40.58,Bilingual,,0,0,0,,题目说已注册，就想：还不能调用，要等部署到一个 endpoint 上\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says registered, think: not callable until it is deployed to an endpoint.
+Dialogue: 0,0:10:40.90,0:10:45.32,Bilingual,,0,0,0,,题目说已部署，就想：机器一直在计费，直到你取消部署\N{\fs33\c&H00C8C0B8&\bord1.4}If it says deployed, think: a machine is billing until you undeploy it.
+Dialogue: 0,0:10:45.64,0:10:47.28,Bilingual,,0,0,0,,然后把 endpoint 也删掉\N{\fs33\c&H00C8C0B8&\bord1.4}Then delete the endpoint too.
+Dialogue: 0,0:10:48.43,0:10:50.70,Bilingual,,0,0,0,,现在看完整的 cheese app pipeline\N{\fs33\c&H00C8C0B8&\bord1.4}Now the whole cheese app pipeline:
+Dialogue: 0,0:10:50.70,0:10:53.30,Bilingual,,0,0,0,,采集器、处理器、训练、部署\N{\fs33\c&H00C8C0B8&\bord1.4}collector, processor, training, deploy.
+Dialogue: 0,0:10:53.62,0:10:55.86,Bilingual,,0,0,0,,每一步成功时，都会打上一个绿色的勾\N{\fs33\c&H00C8C0B8&\bord1.4}Each gets a green check as it succeeds.
+Dialogue: 0,0:10:56.10,0:10:57.69,Bilingual,,0,0,0,,两类步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Two kinds of steps.
+Dialogue: 0,0:10:57.74,0:11:01.22,Bilingual,,0,0,0,,采集器和处理器是 container component\N{\fs33\c&H00C8C0B8&\bord1.4}The collector and processor are container components
+Dialogue: 0,0:11:01.22,0:11:04.10,Bilingual,,0,0,0,,从 registry 拉取发布好的 image\N{\fs33\c&H00C8C0B8&\bord1.4}that pull published images from a registry,
+Dialogue: 0,0:11:04.10,0:11:08.18,Bilingual,,0,0,0,,这个 repo 用的是 Docker Hub，课件上是 Artifact Registry\N{\fs33\c&H00C8C0B8&\bord1.4}Docker Hub in this repo, the Artifact Registry on the slides,
+Dialogue: 0,0:11:08.18,0:11:11.46,Bilingual,,0,0,0,,因为 Google 的机器看不到你的笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}because Google's machines cannot see your laptop.
+Dialogue: 0,0:11:11.78,0:11:16.99,Bilingual,,0,0,0,,训练和部署是 Python component，调用的是 Vertex AI SDK\N{\fs33\c&H00C8C0B8&\bord1.4}Training and deploy are Python components that call the Vertex AI SDK.
+Dialogue: 0,0:11:17.23,0:11:19.79,Bilingual,,0,0,0,,那为什么用 .after，而不用 .output？\N{\fs33\c&H00C8C0B8&\bord1.4}So why .after(), and not .output?
+Dialogue: 0,0:11:20.11,0:11:22.01,Bilingual,,0,0,0,,这些步骤从不互相调用\N{\fs33\c&H00C8C0B8&\bord1.4}The steps never call each other.
+Dialogue: 0,0:11:22.33,0:11:25.00,Bilingual,,0,0,0,,每一步都从 bucket 读，再写回去\N{\fs33\c&H00C8C0B8&\bord1.4}Each reads from the bucket and writes back:
+Dialogue: 0,0:11:25.00,0:11:27.67,Bilingual,,0,0,0,,raw.zip、clean.zip，然后是 model 目录\N{\fs33\c&H00C8C0B8&\bord1.4}raw.zip, clean.zip, then the model/ folder.
+Dialogue: 0,0:11:27.99,0:11:30.91,Bilingual,,0,0,0,,这个 pipeline 只决定每一步什么时候开始\N{\fs33\c&H00C8C0B8&\bord1.4}The pipeline only decides when each step starts.
+Dialogue: 0,0:11:31.15,0:11:34.72,Bilingual,,0,0,0,,所以 deploy 按名字在 model 目录里找模型\N{\fs33\c&H00C8C0B8&\bord1.4}So deploy finds the model by name, in the model/ folder,
+Dialogue: 0,0:11:34.72,0:11:36.89,Bilingual,,0,0,0,,而这些边保证了这个名字是安全的\N{\fs33\c&H00C8C0B8&\bord1.4}and the edges make that name safe.
+Dialogue: 0,0:11:37.21,0:11:40.47,Bilingual,,0,0,0,,删掉一条，deploy 就可能拿到上一次运行的模型\N{\fs33\c&H00C8C0B8&\bord1.4}Delete one, and deploy may grab last run's model:
+Dialogue: 0,0:11:40.47,0:11:42.33,Bilingual,,0,0,0,,也就是前面说的读到过期数据\N{\fs33\c&H00C8C0B8&\bord1.4}the stale read from earlier.
+Dialogue: 0,0:11:42.57,0:11:46.29,Bilingual,,0,0,0,,和课件有一处不同：现在的 main 分支上\N{\fs33\c&H00C8C0B8&\bord1.4}One difference from the slides: on the main branch today,
+Dialogue: 0,0:11:46.29,0:11:51.06,Bilingual,,0,0,0,,训练会自己下载数据集，所以这些边传的是顺序，不是数据\N{\fs33\c&H00C8C0B8&\bord1.4}training downloads its own dataset, so these edges carry order, not data.
+Dialogue: 0,0:11:51.30,0:11:55.40,Bilingual,,0,0,0,,在 AWS 上，SageMaker Pipelines 用的是同一个思路\N{\fs33\c&H00C8C0B8&\bord1.4}On AWS, SageMaker Pipelines runs the same idea.
+Dialogue: 0,0:11:55.72,0:11:59.99,Bilingual,,0,0,0,,训练步骤的输入指向处理步骤的输出属性\N{\fs33\c&H00C8C0B8&\bord1.4}The training step's input points at the processing step's output property,
+Dialogue: 0,0:11:59.99,0:12:01.77,Bilingual,,0,0,0,,这个引用就是边\N{\fs33\c&H00C8C0B8&\bord1.4}and that reference is the edge.
+Dialogue: 0,0:12:02.27,0:12:04.45,Bilingual,,0,0,0,,把 pipeline 的步骤列表打乱\N{\fs33\c&H00C8C0B8&\bord1.4}Shuffle the pipeline's list of steps,
+Dialogue: 0,0:12:04.45,0:12:08.05,Bilingual,,0,0,0,,图也不会动：顺序来自引用\N{\fs33\c&H00C8C0B8&\bord1.4}and the graph does not move: order comes from the references.
+Dialogue: 0,0:12:08.28,0:12:12.29,Bilingual,,0,0,0,,题目说 SageMaker Pipelines，就想：同一个 DAG\N{\fs33\c&H00C8C0B8&\bord1.4}If the question says SageMaker Pipelines, think: the same DAG.
+Dialogue: 0,0:12:12.61,0:12:15.13,Bilingual,,0,0,0,,引用一个步骤的属性，就造出了边\N{\fs33\c&H00C8C0B8&\bord1.4}Referencing a step's properties makes the edge.
+Dialogue: 0,0:12:16.27,0:12:17.67,Bilingual,,0,0,0,,七条规则\N{\fs33\c&H00C8C0B8&\bord1.4}Seven rules.
+Dialogue: 0,0:12:17.72,0:12:19.45,Bilingual,,0,0,0,,第一条：pipeline 是 DAG\N{\fs33\c&H00C8C0B8&\bord1.4}One: pipelines are DAGs.
+Dialogue: 0,0:12:19.77,0:12:22.52,Bilingual,,0,0,0,,调用一个 component 就创建一个 task，即一个节点\N{\fs33\c&H00C8C0B8&\bord1.4}Calling a component creates a task, a node.
+Dialogue: 0,0:12:22.71,0:12:25.59,Bilingual,,0,0,0,,什么都不会运行，要等到编译好的任务真正运行\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing runs until the compiled job runs.
+Dialogue: 0,0:12:25.83,0:12:28.16,Bilingual,,0,0,0,,第二条：.output，或者一个有名字的输出\N{\fs33\c&H00C8C0B8&\bord1.4}Two: .output, or a named output,
+Dialogue: 0,0:12:28.16,0:12:31.29,Bilingual,,0,0,0,,会造出边，并传递这次运行的值\N{\fs33\c&H00C8C0B8&\bord1.4}makes the edge and passes this run's value.
+Dialogue: 0,0:12:31.61,0:12:34.86,Bilingual,,0,0,0,,第三条：猜出来的路径不会造出边，还可能是过期的\N{\fs33\c&H00C8C0B8&\bord1.4}Three: a guessed path makes no edge, and may be stale.
+Dialogue: 0,0:12:35.10,0:12:37.62,Bilingual,,0,0,0,,第四条：.after 只排顺序，不传数据\N{\fs33\c&H00C8C0B8&\bord1.4}Four: .after() orders without data.
+Dialogue: 0,0:12:37.94,0:12:40.99,Bilingual,,0,0,0,,第五条：task 之间没有路径就是并行\N{\fs33\c&H00C8C0B8&\bord1.4}Five: no path between tasks means parallel,
+Dialogue: 0,0:12:40.99,0:12:45.81,Bilingual,,0,0,0,,汇合点要等齐所有输入，一次运行的时长等于它的最长路径\N{\fs33\c&H00C8C0B8&\bord1.4}a join waits for all its inputs, and the run lasts its longest path.
+Dialogue: 0,0:12:46.05,0:12:51.58,Bilingual,,0,0,0,,第六条：顺序来自边，不来自时钟；启动了工作的步骤必须等它完成\N{\fs33\c&H00C8C0B8&\bord1.4}Six: order comes from edges, not clocks, and a step that launches work must wait for it.
+Dialogue: 0,0:12:51.82,0:12:54.23,Bilingual,,0,0,0,,第七条：上传到 Model Registry\N{\fs33\c&H00C8C0B8&\bord1.4}Seven: upload to the Model Registry,
+Dialogue: 0,0:12:54.23,0:12:56.98,Bilingual,,0,0,0,,创建一个 endpoint，部署，然后预测\N{\fs33\c&H00C8C0B8&\bord1.4}create an endpoint, deploy, then predict.
+Dialogue: 0,0:12:57.30,0:12:58.90,Bilingual,,0,0,0,,计费从部署开始\N{\fs33\c&H00C8C0B8&\bord1.4}Billing starts at deploy.
+Dialogue: 0,0:12:59.18,0:13:02.57,Bilingual,,0,0,0,,SageMaker 用步骤属性搭出同一个 DAG\N{\fs33\c&H00C8C0B8&\bord1.4}SageMaker builds the same DAG from step properties.
+Dialogue: 0,0:13:02.82,0:13:07.69,Bilingual,,0,0,0,,还有课上的那条链：用 DSL 写的配方，印成 YAML\N{\fs33\c&H00C8C0B8&\bord1.4}And the lecture's chain: a recipe in the DSL, printed as YAML,
+Dialogue: 0,0:13:07.69,0:13:11.55,Bilingual,,0,0,0,,由 SDK 提交，在 Kubeflow 引擎上运行\N{\fs33\c&H00C8C0B8&\bord1.4}submitted by the SDK, run on the Kubeflow engine,
+Dialogue: 0,0:13:11.55,0:13:16.66,Bilingual,,0,0,0,,由 Vertex AI Pipelines 托管，不用自己搭 Kubernetes\N{\fs33\c&H00C8C0B8&\bord1.4}and managed by Vertex AI Pipelines, with no Kubernetes to set up.
+Dialogue: 0,0:13:16.90,0:13:19.89,Bilingual,,0,0,0,,用完之后，取消部署，再删除 endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}When you are done, undeploy and delete the endpoint.
+Dialogue: 0,0:13:20.21,0:13:21.81,Bilingual,,0,0,0,,祝你小测顺利\N{\fs33\c&H00C8C0B8&\bord1.4}Good luck on the quiz.
