@@ -175,8 +175,8 @@ def arrow_row(left: str, right: str, width: float = 2.0):
 
 
 def ponder(scene, question, options, seconds, dimmed=(), hide=()):
-    """common.mcq_ponder, inlined: its `dim=` parameter shadows common.dim(), so the call raises
-    "'list' object is not callable" (reported). Same card, same place, same guard, same timer."""
+    """common.mcq_ponder, inlined (written while its `dim=` argument still shadowed common.dim()).
+    Same card, same place, same guard, same timer."""
     card = MCQCard(question, options)
     card.move_to([0, -3.55 + card.frame.height / 2, 0])
     guard(card.get_top()[1] <= 2.58, f"ponder card top {card.get_top()[1]:.2f} reaches the exam map's label")

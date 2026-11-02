@@ -534,7 +534,7 @@ class ServiceOrJob(VoiceScene):
             self.play(Indicate(thumb, color=TURN, scale_factor=1.06), run_time=0.9)
             self.play(Indicate(VGroup(job2.parts["edge"], job2.parts["exit"]), color=TURN, scale_factor=1.25),
                       run_time=vo.remaining(0.9))
-        # mcq_ponder(dim=[...]) cannot be used: its `dim` parameter shadows common.dim() (reported)
+        # the stage is dimmed here, before the card, so the card comes in on its own
         self.play(FadeOut(VGroup(sv, lab_row)), FadeOut(VGroup(job2, exe, ill)), FadeOut(stem),
                   dim(m), dim(lr), run_time=0.5)
         card = mcq_ponder(self, P1_Q, P1_OPTS, seconds=10)
