@@ -5,8 +5,8 @@ Beats (script.md "## S05", one voiceover block each):
  0  LECTURE 20–22. The sequence prep → train → deploy as three nodes (GREY dotted: how does each
     one wait?); they give way to V4 (tag `illustration`): one clock axis 1:00 → 5:00.
  1  The four lanes write in as the SAY names them, each with three bars prep / train / deploy:
-    ORANGE "cron · 1:00 / 2:00 / 3:00" (bars hang from ORANGE ticks); ORANGE `prep & train & deploy`
-    (all three bars at the left edge); "event → train · tracker → deploy" with a BLUE leaderboard
+    ORANGE "cron at 1:00, 2:00, 3:00" (bars hang from ORANGE ticks); ORANGE `prep & train & deploy`
+    (all three bars at the left edge); "event → train, tracker → deploy" with a BLUE leaderboard
     beside it (top row `model · run 12 · acc 0.91`, GREY dashed: an older run); PINK "pipeline
     edges" (each bar snapped to a GREEN ✓).
  2  A die (bottom left) rolls the length of prep: 40, 75, 55 min; every lane re-lays its bars by
@@ -38,7 +38,6 @@ Beats (script.md "## S05", one voiceover block each):
 11  Everything fades. TAKEAWAY (two rows), each row flashes as the SAY reaches it; empty frame.
 """
 
-import numpy as np
 from manim import (
     DOWN,
     LEFT,

@@ -5,14 +5,14 @@ Beats (script.md "## S07", one voiceover block each):
  0  LECTURE 37. V6 (TwoClouds, lifted 0.25): slide 37's zig-zag redrawn, four WHITE nodes "Data
     Collector", "Data Processor", "Model Training", "Model Deploy" on the BLUE Vertex region, GREY
     dotted connections (their kind is told in beat 2); each node fills YELLOW, then gets its GREEN ✓.
- 1  LECTURE 34. Bottom band: CODE(ml-workflow/src/workflow/cli.py: 190–203) folded to 190–193, …,
-    202–203 (7 rows: the collector's @dsl.container_component, line 193 image=DATA_COLLECTOR_IMAGE
-    lit) and the excerpt chip `cli.py · line 27 (excerpt)` "dlops/cheese-app-data-collector"; the
+ 1  LECTURE 34. Bottom band: CODE(ml-workflow/src/workflow/cli.py: 190–193) (4 rows: the
+    collector's @dsl.container_component, line 193 image=DATA_COLLECTOR_IMAGE lit) and under it the
+    excerpt chip `cli.py · line 27 (excerpt)` "dlops/cheese-app-data-collector"; the
     collector and processor turn TEAL with a TEAL chip "image from Docker Hub"; a GREY note
     "slide 34: Artifact Registry · repo: Docker Hub · any registry Vertex can reach". Then the band
     becomes a README card (ml-workflow/README.md lines 73, 76, 78, excerpts): 73 lights at "cannot
-    see your laptop", 78 at "Training and deploy", and the PURPLE chip "Python + Vertex AI SDK"
-    lands above the training/deploy pair.
+    see your laptop", 78 at "Training and deploy"; the PURPLE note "Python + Vertex AI SDK" lands
+    right of training and the training/deploy outlines turn PURPLE.
  2  Tag out, chips out, nodes back to pending. A `.after()` / `.output` chip pair asks the
     question; every edge turns PINK dashed. The BLUE bucket blackboard spreads under the chain; the
     chain runs again and raw.zip, clean.zip, model/ chalk in (GREEN write arrows) as each step
@@ -47,13 +47,14 @@ from manim import (
     RIGHT,
     UP,
     Arrow,
-    CurvedArrow,
     FadeIn,
     FadeOut,
     GrowFromEdge,
     Indicate,
     LaggedStart,
     Line,
+    ShowPassingFlash,
+    VMobject,
     VGroup,
 )
 
@@ -73,7 +74,6 @@ RM = "ml-workflow/README.md"
 assert source_line(WF, 27).strip() == f'DATA_COLLECTOR_IMAGE = "{COLLECTOR_IMAGE}"', source_line(WF, 27)
 assert source_line(WF, 190).strip() == "@dsl.container_component", source_line(WF, 190)
 assert source_line(WF, 193).strip() == "image=DATA_COLLECTOR_IMAGE,", source_line(WF, 193)
-assert source_line(WF, 203).strip() == "return container_spec", source_line(WF, 203)
 assert source_line(MP, 84).strip() == 'ARTIFACT_URI = f"gs://{bucket_name}/model"', source_line(MP, 84)
 assert "releases/download/v4.0/cheese_4_labels.zip" in source_line(TK, 104), source_line(TK, 104)
 assert source_line(TK, 103).strip() == "download_file(", source_line(TK, 103)
@@ -175,9 +175,44 @@ def short_ex(sub: str, path: str, n: int):
     return excerpt_chip(sub, f"{path} · line {n} (excerpt)", line=source_line(path, n))
 
 
+def outline_flash(frame, color: str = TURN):
+    """A bright copy of a node's outline runs around it once (the node itself is not touched)."""
+    return ShowPassingFlash(frame.copy().set_fill(opacity=0).set_stroke(color, 6, opacity=1), time_width=0.5)
+
+
+ROW_W, CHIP_GAP, ROW_GAP = 11.6, 0.3, 0.22
+
+
+def flow_points(row, order):
+    """Centres for `steps=[`, the chips in `order` and `]`, in rows at most ROW_W wide, with a clear
+    gap between chips (relative to the head's current place)."""
+    mobs = [row.head, *[row.chips[k] for k in order], row.tail]
+    pts, x, y = [], 0.0, 0.0
+    h = max(m.height for m in mobs)
+    for m in mobs:
+        if x > 0 and x + m.width > ROW_W:
+            x, y = 0.0, y - h - ROW_GAP
+        pts.append(np.array([x + m.width / 2, y, 0.0]))
+        x += m.width + CHIP_GAP
+    lo = min(p[0] - m.width / 2 for p, m in zip(pts, mobs))
+    hi = max(p[0] + m.width / 2 for p, m in zip(pts, mobs))
+    off = np.array([-(lo + hi) / 2, row.head.get_center()[1] - pts[0][1], 0.0])   # centred at x 0
+    return [p + off for p in pts]
+
+
+def reflow(row, order) -> list:
+    """Animations: `steps=[`, the chips and `]` take their places for `order` (the list stays
+    centred at x 0)."""
+    mobs = [row.head, *[row.chips[k] for k in order], row.tail]
+    pts = flow_points(row, order)
+    for m, p in zip(mobs, pts):
+        guard(abs(p[0]) + m.width / 2 <= 6.45, f"steps list chip {m} out of the frame")
+    return [m.animate.move_to(p) for m, p in zip(mobs, pts) if np.linalg.norm(m.get_center() - p) > 1e-3]
+
+
 def release_glyph():
     """A BLUE "release download" chip with a small download arrow on its left."""
-    c = chip("release download", CLOUD, size=CAPTION)
+    c = note_chip(["release", "download"], CLOUD)
     a = Arrow(UP * 0.2, DOWN * 0.2, buff=0, color=CLOUD, stroke_width=4, tip_length=0.14,
               max_tip_length_to_length_ratio=0.5)
     base = Line(LEFT * 0.16, RIGHT * 0.16, color=CLOUD, stroke_width=4).next_to(a, DOWN, buff=0.02)
@@ -210,39 +245,40 @@ class CheesePipeline(VoiceScene):
                 self.play(*tc.chain.run(k), run_time=0.35)
                 self.play(*tc.chain.succeed(k), run_time=0.35)
             vo.wait_until("Each gets a green check")
-            self.play(LaggedStart(*[flash(nd[k].ok, OWN, 1.4) for k in tc.keys], lag_ratio=0.25), run_time=1.4)
+            self.play(*[flash(nd[k].ok, OWN, 1.4) for k in tc.keys], run_time=1.0)
 
         # ========================================================== 1 · two kinds of steps
-        cli = src_panel(WF, [(190, 193), (202, 203)])
+        cli = src_panel(WF, 190, 193)
         place(cli, left=SAFE_L, top=BAND_TOP)
         inside(cli)
         b193 = cli.bar(193)
         b190 = cli.bar(190)
         ex27 = excerpt_chip(f'"{COLLECTOR_IMAGE}"', "cli.py · line 27 (excerpt)", line=source_line(WF, 27))
-        place(ex27, right=SAFE_R, top=BAND_TOP)
+        place(ex27, left=SAFE_L, top=cli.get_bottom()[1] - 0.12)
+        inside(ex27)
         s34 = note_chip(["slide 34: Artifact Registry", "repo: Docker Hub", "any registry Vertex can reach"])
-        place(s34, right=SAFE_R, top=ex27.get_bottom()[1] - 0.3)
+        place(s34, right=SAFE_R, top=BAND_TOP - 0.1)
         inside(s34)
-        apart(cli, ex27, 0.15, "cli panel / excerpt 27")
+        apart(cli, ex27, 0.08, "cli panel / excerpt 27")
+        apart(ex27, s34, 0.15, "excerpt 27 / slide 34 note")
         apart(cli, s34, 0.15, "cli panel / slide 34 note")
-        teal = chip("image from Docker Hub", CTR, size=CAPTION)
-        place(teal, left=col.frame.get_left()[0] - 0.05, cy=prc.frame.get_center()[1])
+        teal = note_chip(["image from", "Docker Hub"], CTR)
+        place(teal, cx=col.frame.get_center()[0], top=col.frame.get_bottom()[1] - 0.2)
         apart(teal, prc, 0.15, "TEAL chip / processor")
         apart(teal, col, 0.15, "TEAL chip / collector")
-        guard(teal.get_left()[0] >= tc.region.get_left()[0] + 0.05, "TEAL chip inside the region")
-        purple = chip("Python + Vertex AI SDK", TOOL, size=CAPTION)
-        place(purple, right=tc.region.get_right()[0] - 0.12, bottom=trn.frame.get_top()[1] + 0.06)
+        guard(teal.get_bottom()[1] >= tc.region.get_bottom()[1] + 0.1, "TEAL chip inside the region")
+        purple = note_chip(["Python +", "Vertex AI SDK"], TOOL)
+        place(purple, right=tc.region.get_right()[0] - 0.2, cy=trn.frame.get_center()[1])
+        apart(purple, trn, 0.4, "PURPLE chip / training (and its edge to deploy)")
         guard(purple.get_top()[1] <= tc.region.get_top()[1] - 0.05, "PURPLE chip inside the region")
         apart(purple, dep, 0.15, "PURPLE chip / deploy")
         rcard = readme_card(f"{RM} · lines 73, 76, 78 (excerpts)",
                             [numbered(73, f"… {R73} …"), numbered(76, R76),
-                             numbered(78, f"{R78A} … {R78B}")])
+                             numbered(78, f"{R78A} …"), numbered(78, f"… {R78B}")])
         place(rcard, left=SAFE_L, top=BAND_TOP)
         inside(rcard)
         guard(rcard.width <= 12.9, "README card width")
-        row78 = rcard.rows[2]
-        if row78.width > 12.0:
-            raise ValueError("row 78 too wide")
+        row78 = VGroup(rcard.rows[2], rcard.rows[3])
         with self.voiceover(SAY[1]) as vo:
             lr = lref_swap(self, lr, "34")
             self.play(FadeIn(cli, shift=UP * 0.15), run_time=0.6)
@@ -262,10 +298,11 @@ class CheesePipeline(VoiceScene):
             hb73 = ring(rcard.rows[0], TURN, buff=0.06)
             self.play(FadeIn(hb73), run_time=0.4)
             vo.wait_until("Training and deploy")
-            hb78 = ring(rcard.rows[2], TOOL, buff=0.06)
+            hb78 = ring(row78, TOOL, buff=0.06)
             self.play(FadeOut(hb73), FadeIn(hb78), FadeIn(purple, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("call the Vertex AI SDK")
-            self.play(flash(purple, TOOL, 1.08), *[flash(n.frame, TOOL, 1.04) for n in (trn, dep)], run_time=0.7)
+            self.play(flash(purple, TOOL, 1.08), *[n.frame.animate.set_stroke(TOOL, 3.5) for n in (trn, dep)],
+                      run_time=0.7)
 
         # ========================================================== 2 · why .after(): the bucket
         q_after = chip(".after()", EDGE, size=CAPTION, font=MONO)
@@ -285,7 +322,7 @@ class CheesePipeline(VoiceScene):
             writes[f] = tc.reach(f, k, OWN)
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(lr), FadeOut(VGroup(rcard, hb78, purple, teal)),
-                      *[n.frame.animate.set_stroke(INK, 2.5) for n in (col, prc)], run_time=0.6)
+                      *[nd[k].frame.animate.set_stroke(INK, 2.5) for k in tc.keys], run_time=0.6)
             lr = None
             self.play(FadeIn(q_after, shift=UP * 0.1), run_time=0.4)
             restyles = []
@@ -298,7 +335,7 @@ class CheesePipeline(VoiceScene):
             vo.wait_until("The steps never call")
             resets = [a for k in tc.keys for a in nd[k].reset()]
             self.play(*resets, run_time=0.5)
-            self.play(LaggedStart(*[flash(nd[k].frame, INK, 1.05) for k in tc.keys], lag_ratio=0.2), run_time=1.0)
+            self.play(*[outline_flash(nd[k].frame, INK) for k in tc.keys], run_time=1.0)
             vo.wait_until("Each reads from the bucket")
             self.play(FadeOut(VGroup(q, q_strike)), *tc.parts_in("board", anim=lambda m: GrowFromEdge(m, UP)),
                       run_time=0.7)
@@ -360,17 +397,24 @@ class CheesePipeline(VoiceScene):
         chips_row = VGroup(s37, main).arrange(RIGHT, buff=0.3)
         place(chips_row, cx=0, top=BAND_TOP - 0.25)
         inside(chips_row)
-        tf_arrow = CurvedArrow(prc.frame.get_top() + UP * 0.06 + LEFT * 0.3,
-                               trn.frame.get_left() + LEFT * 0.08 + UP * 0.12,
-                               angle=-1.2, color=CTR, stroke_width=4, tip_length=0.16)
+        x_up = prc.frame.get_left()[0] + 1.0           # the TF records route: up from the processor,
+        y_top = tc.region.get_top()[1] - 0.4             # over to training, down into its top
+        x_in = trn.frame.get_left()[0] + 0.7
+        tf_line = VMobject(stroke_color=CTR, stroke_width=4).set_points_as_corners(
+            [[x_up, prc.frame.get_top()[1] + 0.06, 0], [x_up, y_top, 0], [x_in, y_top, 0]])
+        tf_tip = Arrow([x_in, y_top + 0.02, 0], [x_in, trn.frame.get_top()[1] + 0.04, 0], buff=0, color=CTR,
+                       stroke_width=4, tip_length=0.16, max_tip_length_to_length_ratio=0.6)
+        tf_arrow = VGroup(tf_line, tf_tip)
         tf_lab = label("TF records", CAPTION, CTR)
-        place(tf_lab, right=tf_arrow.get_left()[0] - 0.08, cy=trn.frame.get_center()[1])
-        apart(tf_lab, col, 0.12, "TF records label / collector")
+        place(tf_lab, left=x_up + 0.15, cy=(prc.frame.get_top()[1] + y_top) / 2 - 0.15)
+        guard(tf_lab.get_right()[0] <= trn.frame.get_left()[0] - 0.3, "TF records label left of the edge")
+        guard(tf_line.get_top()[1] <= tc.region.get_top()[1] - 0.2, "TF route inside the region")
+        apart(tf_line, col, 0.2, "TF route / collector")
         rel = release_glyph()
-        place(rel, right=tc.region.get_right()[0] - 0.15, top=tc.region.get_top()[1] - 0.15)
-        apart(rel, trn, 0.3, "release glyph / training")
+        place(rel, right=tc.region.get_right()[0] - 0.2, cy=trn.frame.get_center()[1])
+        apart(rel, trn, 0.8, "release glyph / training")
         apart(rel, dep, 0.15, "release glyph / deploy")
-        rel_arrow = Arrow(rel.get_left() + RIGHT * 0.02, trn.frame.get_right() + UP * 0.12, buff=0.06,
+        rel_arrow = Arrow(rel.get_left(), trn.frame.get_right(), buff=0.08,
                           color=CLOUD, stroke_width=4, tip_length=0.16, max_tip_length_to_length_ratio=0.4)
         ex104 = short_ex("releases/download/v4.0/cheese_4_labels.zip", TK, 104)
         place(ex104, cx=0, top=chips_row.get_bottom()[1] - 0.45)
@@ -415,8 +459,9 @@ class CheesePipeline(VoiceScene):
             self.play(*tc.to_sagemaker(), run_time=1.0)
             vo.wait_until("runs the same idea")
             self.play(flash(tc.region_title, CLOUD, 1.1), run_time=0.6)
-            vo.wait_until("The training step")
             self.play(FadeIn(aws, shift=UP * 0.15), run_time=0.6)
+            vo.wait_until("The training step")
+            self.play(flash(aws.span(262, "TrainingStep"), TURN, 1.08), run_time=0.6)
             vo.wait_until("points at")
             self.play(FadeIn(b_ref), flash(aws.span(266, "step_process.properties"), EDGE, 1.06), run_time=0.6)
             vo.wait_until("output property")
@@ -428,7 +473,7 @@ class CheesePipeline(VoiceScene):
             vo.wait_until("and that reference")
             self.play(FadeOut(VGroup(aws, b_ref, tok)), run_time=0.4)
             for chip_, (a, b) in zip(ex_chips, follow):
-                self.play(FadeIn(chip_, shift=UP * 0.1), *sm.restyle(a, b, "data"), run_time=0.45)
+                self.play(FadeIn(chip_, shift=UP * 0.1), *sm.restyle(a, b, "data"), run_time=0.4)
 
         # ========================================================== 6 · shuffle the steps list
         p320 = src_panel(AWS, 320, 324, wrap=True)
@@ -436,18 +481,22 @@ class CheesePipeline(VoiceScene):
         inside(p320)
         b322 = p320.bar(322)
         row = tc.steps_list()
+        for m, p in zip([row.head, *[row.chips[k] for k in STEP_VARS], row.tail], flow_points(row, STEP_VARS)):
+            m.move_to(p)
         place(row, cx=0, cy=-1.7)
         inside(row)
         sm_wires = [sm.wire[(a, b)] for a, b in zip(SAGEMAKER, SAGEMAKER[1:])]
         with self.voiceover(SAY[6]) as vo:
+            vo.wait_until("list of steps")
             self.play(FadeOut(ex_chips), FadeIn(p320, shift=UP * 0.15), run_time=0.6)
             self.play(FadeIn(b322), flash(p320.span(322, "steps=["), TURN, 1.1), run_time=0.6)
             vo.wait_until("and the graph")
             self.play(FadeOut(VGroup(p320, b322)), FadeIn(row, shift=DOWN * 0.2), run_time=0.6)
-            self.play(*tc.shuffle(row, SHUFFLE_1), run_time=0.9)
+            self.play(*reflow(row, SHUFFLE_1), run_time=0.9)
             vo.wait_until("order comes from")
-            self.play(LaggedStart(*[w.light(EDGE, 0.8) for w in sm_wires], lag_ratio=0.25),
-                      *tc.shuffle(row, SHUFFLE_2), run_time=1.4)
+            lag = LaggedStart(*[w.light(EDGE, 0.8) for w in sm_wires], lag_ratio=0.25)
+            self.play(lag, *reflow(row, SHUFFLE_2), run_time=1.4)
+            C._drop_groups(self, [lag])
 
         # ========================================================== 7 · takeaway
         tk = takeaway("SageMaker Pipelines → the same DAG idea: referencing a step's properties makes the edge")
@@ -456,7 +505,7 @@ class CheesePipeline(VoiceScene):
             self.play(FadeOut(VGroup(tc, row)), run_time=0.6)
             self.play(*tk.write(), run_time=1.4)
             vo.wait_until("Referencing")
-            self.play(flash(tk.rows[-1], TURN, 1.04), run_time=0.6)
+            self.play(flash(tk.rows, TURN, 1.04), run_time=0.6)
         self.play(FadeOut(tk), run_time=0.6)
         self.wait(0.3)
 
