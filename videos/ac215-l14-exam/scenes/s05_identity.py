@@ -23,7 +23,7 @@ Beats (script.md "## S05", one voiceover block each):
    lit GRAY) and a PINK request leaves the right door for "Agent Platform"; at "No key file
    anywhere" the crossed key pulses GOLD.
 4. At "One more arrow" the GREY "you" with an arrow to the badge, "Service Account User";
-   CODE(README.md: 432-433), "Service Account User" and "to attach it" lit; at "That is a deployment
+   CODE(README.md: 432-434), "Service Account User" and "to attach it" lit; at "That is a deployment
    permission" the GRAY chip "a deployment permission ≠ the badge's roles"; the roles pulse.
 5. Two columns: the service box shrinks to the left column with its badge and two roles; at "The
    job gets its own badge" the BLUE "translation-audio (job)" box and its badge "translation-audio-job"
@@ -288,7 +288,7 @@ class TwoQuestions(VoiceScene):
 
         # ========================================================== 4. your own arrow: Service Account User
         you = td.parts["you"]
-        p432 = band(src_panel(README, 432, 433, size=20, wrap_at=88))
+        p432 = band(src_panel(README, 432, 434, size=20, wrap_at=88))
         u_sau = under(p432.span(432, "Service Account User"), TURN)
         u_att = under(p432.span(433, "to attach it"), TURN)
         dep = chip("a deployment permission ≠ badge roles", S.GREY, size=CAPTION)

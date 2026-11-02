@@ -30,3 +30,16 @@ scenes:
   - {file: scenes/s06_preprocess.py,  cls: ThinClients,     title: "Where preprocessing lives"}
   - {file: scenes/s07_signature.py,   cls: ServeSignature,  title: "Register serve: preprocess, then model"}
   - {file: scenes/s08_recap.py,       cls: Recap,           title: "Seven rules for Tuesday"}
+publish:
+  title_zh: "AC215 第14讲 · 考前精讲：Cloud Run 的 service 与 job、按需计费、预处理放在哪、serving signature"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 14 讲 Serverless Deployment 的考前精讲版，约 15 分钟，为 Quiz 4 准备。
+    用动画讲清这一讲的考点：Cloud Run 的 service（处理请求）与 job（跑完退出）怎么选、Cloud Function 与 VM 在空闲时间上的计费差别、交出去的是代码文件还是容器、谁能调用服务与服务以谁的身份运行、为什么预处理要放在 endpoint 里（回滚一次、客户端不用跟着发版），以及 serving signature 要注册 serve（先预处理再推理）。中间有三道新的选择题可以暂停作答，最后是七条速记规则。
+    代码面板引用 dlops-io/serverless-deployment 和 dlops-io/model-deployment 仓库的原文。英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/serverless-deployment
+    学习笔记：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L14-serverless-deployment.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, 考前复习, Cloud Run, Cloud Functions, Serverless, Vertex AI, 模型部署, 哈佛, 教程]
+  tid: 231
