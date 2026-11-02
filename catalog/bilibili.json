@@ -111,6 +111,11 @@
       "bvid": "BV16f4N6HEjK",
       "title": "AC215 第13讲 · 考前精讲：W&B、Vertex AI 打包、多 GPU 与 batch、长时间训练",
       "pubdate": 1793645762
+    },
+    "ac215-l14-exam": {
+      "bvid": "BV1mC4N6aEpD",
+      "title": "AC215 第14讲 · 考前精讲：Cloud Run 的 service 与 job、按需计费、预处理放在哪、serving signature",
+      "pubdate": 1793649382
     }
   },
   "unmatched": []
