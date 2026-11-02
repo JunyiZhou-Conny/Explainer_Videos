@@ -1,0 +1,29 @@
+# Chinese (zh-CN) metadata for ac215-l14-exam (read by explainer/i18n.py meta(), used by explainer/build.py for the
+# subtitles' chapters and the zh descriptions): video title, chapter titles keyed by scene file stem (as video.yaml's
+# scenes), and the Bilibili / YouTube description. The video has no parts, so there is no parts: key.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 服务, 作业, 端点, 无服务器; A4), questions keep their
+# question mark, the English colon structure is kept (服务还是作业：……; 注册 serve：……), code names stay as they are
+# (meta.yaml is not read by `explainer.i18n check`, so brackets are fine here), and the core-concept chapters carry their
+# English short name for search where the Chinese is not the usual search word (作业（job）, 服务（service）, 端点（endpoint）),
+# as L1-L8 do. Serverless Deployment → 无服务器部署; exam edition → 考前精讲版 (follow-along → 跟练 in L1-L8). The metaphors
+# keep their picture: a job that never finishes → 一个永远跑不完的作业, who pays for the idle hours → 空闲的时间谁来买单,
+# what you hand over → 你交出的是什么, Seven rules for Tuesday → 周二小测的七条规则. No person's name, no practice question.
+title: "AC215 · 第 14 讲：无服务器部署（考前精讲版）"
+
+chapters:
+  s01_hook: "一个永远跑不完的作业（job）"
+  s02_lifecycle: "服务（service）还是作业：看生命周期"
+  s03_meter: "空闲的时间谁来买单？"
+  s04_handover: "函数还是容器：你交出的是什么"
+  s05_identity: "谁能调用它，它以谁的身份运行，日志去哪看"
+  s06_preprocess: "预处理放在哪里：端点（endpoint）与瘦客户端"
+  s07_signature: "注册 serve：先预处理，再调用模型"
+  s08_recap: "周二小测的七条规则"
+
+# Two or three sentences (rule H2), written register. Facts: video.yaml course: (Lecture 14, Serverless Deployment:
+# Cloud Functions, Cloud Run; edition: exam; dlops-io/serverless-deployment main @ 46cc62f and dlops-io/model-deployment
+# main @ cf0b7c7, quoted as evidence only), BRIEF.md and script.md v1 (no live runs, no captures; Lecture 15 slides
+# 11-17 for the serving-signature half of Quiz 4). Paste the chapter timestamps from output/chapters.txt and the study
+# guide link (video.yaml course.guide) under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 14 讲“无服务器部署”的考前精讲版，为第 4 次小测准备：不逐条跟练 README，而是用动画把小测考的机制讲透，并以演示仓库 dlops-io/serverless-deployment 和 dlops-io/model-deployment 的代码和 README 原文为依据。内容包括：按容器的生命周期区分 Cloud Run 服务（service）和作业（job）、空闲时间只让常驻的资源计费（虚拟机、最小实例数、端点副本）而请求数和时长只影响按用量计费的账单、部署函数交出的是源代码和入口点而部署服务交出的是镜像、“谁能调用”与“以谁的身份运行”的区别（服务账号不需要密钥），以及把预处理放在端点（endpoint）上、注册同时做预处理和推理的 serving 函数，让一次部署就能更新或回滚所有客户端；中间穿插三道新的选择题，最后用七条规则回顾。英文旁白，配中文和中英双语字幕；视频不做任何现场运行，每个面板都是仓库源码或我们自己的示意图。

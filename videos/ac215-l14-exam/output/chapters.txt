@@ -1,0 +1,8 @@
+00:00 A job that never finishes
+01:10 Service or job: read the lifecycle
+03:32 Who pays for the idle hours?
+05:45 Function or container: what you hand over
+07:46 Who may call it, who it runs as, where to look
+09:38 Where preprocessing lives
+11:37 Register serve: preprocess, then model
+14:05 Seven rules for Tuesday
