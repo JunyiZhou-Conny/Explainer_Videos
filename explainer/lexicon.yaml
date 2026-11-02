@@ -292,3 +292,11 @@ Kubeflow: {ipa: "kjˈuːbflˌoʊ", say: "cube-flow"}
 "172.16": {ipa: "wˈʌnhˈʌndɹɪd sˈɛvənti tˈuː dˈɑːt sˈɪkstiːn", say: "one hundred seventy-two dot sixteen"}
 "172.31": {ipa: "wˈʌnhˈʌndɹɪd sˈɛvənti tˈuː dˈɑːt θˈɜːɾi wˈʌn", say: "one hundred seventy-two dot thirty-one"}
 NAT: {ipa: "nˈæt", say: "nat"}
+
+# AC215 L14/L15 exam editions: Kokoro reduces the prefix ("prih-PRAH-sess"); the ASR round trip heard
+# "per process" in 19 places. Keys are whole words, so "processing" and "process" are unaffected.
+preprocess: {ipa: "pɹˌiːpɹˈɑːsɛs", say: "pree-process"}
+preprocesses: {ipa: "pɹˌiːpɹˈɑːsɛsᵻz", say: "pree-processes"}
+preprocessing: {ipa: "pɹˌiːpɹˈɑːsɛsɪŋ", say: "pree-processing"}
+Preprocessing: {ipa: "pɹˌiːpɹˈɑːsɛsɪŋ", say: "Pree-processing"}
+preprocess_image: {ipa: "pɹˌiːpɹˈɑːsɛs ˈɪmɪdʒ", say: "pree-process image"}

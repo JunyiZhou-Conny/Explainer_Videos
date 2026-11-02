@@ -859,6 +859,36 @@
       "human_review": "series-listening-waiver-recorded-in-REVIEW.md"
     },
     {
+      "episode": "ac215-l13-exam",
+      "title": "AC215 L13 (exam edition): Advanced Training Workflows — W&B, Vertex AI packaging, multi-GPU, long jobs",
+      "variant": "English narration / clean",
+      "source_commit": "90eef0f2ccd49b7c2ef458b6d8f9e0498fff0f8d",
+      "path": "videos/ac215-l13-exam/output/ac215-l13-exam.mp4",
+      "bytes": 49157565,
+      "sha256": "7193cd9a811dfb1bdcf14906eb6f9dce3344b7d5c65e9b379c90377e5ae61491",
+      "duration_seconds": 914.408,
+      "availability": "release-asset",
+      "release_tag": "episode/ac215-l13-exam-v1",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l13-exam-v1/ac215-l13-exam.mp4",
+      "technical_review": "measured-at-release (duration, loudness, cues, committed-subtitle match)",
+      "human_review": "series-listening-waiver-recorded-in-REVIEW.md"
+    },
+    {
+      "episode": "ac215-l13-exam",
+      "title": "AC215 L13 (exam edition): Advanced Training Workflows — W&B, Vertex AI packaging, multi-GPU, long jobs",
+      "variant": "English narration / bilingual captions (burned)",
+      "source_commit": "90eef0f2ccd49b7c2ef458b6d8f9e0498fff0f8d",
+      "path": "videos/ac215-l13-exam/output/ac215-l13-exam.zh-en.mp4",
+      "bytes": 49203330,
+      "sha256": "37236783605b4e1e6ad2cb6429a03e8a89d616299aadb6349f9e745dc94fad3e",
+      "duration_seconds": 914.408,
+      "availability": "release-asset",
+      "release_tag": "episode/ac215-l13-exam-v1",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/ac215-l13-exam-v1/ac215-l13-exam.zh-en.mp4",
+      "technical_review": "measured-at-release (duration, loudness, cues, committed-subtitle match)",
+      "human_review": "series-listening-waiver-recorded-in-REVIEW.md"
+    },
+    {
       "episode": "portal-e1-after-send",
       "title": "项目周记 E1 · Isn't it just an API call?",
       "variant": "English narration / bilingual captions (burned) / composed score",
