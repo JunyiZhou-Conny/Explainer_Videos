@@ -1681,6 +1681,9 @@ def dim(m, k: float = 0.2) -> Transform:
     return _op_to(m, k, "_dop")
 
 
+_dim = dim    # for mcq_ponder, whose `dim=` argument (the list to dim) shadows the helper
+
+
 def undim(m) -> Transform:
     """Animation: back to the opacities dim(m) saved."""
     if isinstance(m, Piece):
@@ -2503,7 +2506,7 @@ def mcq_ponder(scene, question: str | None, options, seconds: float = 10.0, bott
     card = MCQCard(question, options, **kw)
     card.move_to([0, bottom + card.frame.height / 2, 0])
     guard(card.get_top()[1] <= 2.58, f"ponder card top {card.get_top()[1]:.2f} reaches the exam map's label")
-    scene.play(FadeIn(card, scale=0.97), *[dim(m) for m in dim], *[FadeOut(m) for m in hide], run_time=0.6)
+    scene.play(FadeIn(card, scale=0.97), *[_dim(m) for m in dim], *[FadeOut(m) for m in hide], run_time=0.6)
     card.run_timer(scene, seconds)
     return card
 
