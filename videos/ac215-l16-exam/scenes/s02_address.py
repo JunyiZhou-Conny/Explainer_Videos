@@ -157,12 +157,15 @@ class LaptopToCloud(VoiceScene):
         lh = LaptopHost(show=("zone", "ctr", "uvicorn", "api", "sockets"))
         place(lh, left=-6.35, top=3.45)
         inside(lh, "laptop")
+        tn_label = lh.parts["tunnel"].label       # the helper centres "-p" on the tunnel: it lands on a socket
+        tn_label.set_x((lh.host_door.frame.get_right()[0] + lh.sockets.get_left()[0]) / 2)
+        apart(tn_label, lh.sockets, "-p label / sockets")
         p0 = src_panel(ENTRY, 6, 9, wrap=True, focus=7)
         place(p0, cx=0, top=-0.55)
         inside(p0, "entrypoint panel")
         apart(lh, p0, "laptop / entrypoint panel")
         bar0 = p0.bar(7)
-        ul0 = under(p0.span(7, "--host 0.0.0.0 --port 9000"))
+        ul0 = under(p0.span(7, "--host 0.0.0.0 --port 9000"), stroke=3, buff=0.012)   # rows are tight
         b_all = lh.bind_all()
         b_lo = lh.bind_loopback()
         br_bot = lh.parts["browser"].get_bottom()[1]
@@ -179,6 +182,11 @@ class LaptopToCloud(VoiceScene):
             self.play(flash(lh.parts["uvicorn"], TOOL, 1.15), run_time=0.6)
             self.play(FadeIn(p0, shift=UP * 0.2), run_time=0.7)
             self.play(FadeIn(bar0), run_time=0.4)
+            vo.wait_until("starts FastAPI")
+            self.play(flash(lh.parts["api"], CTR, 1.1), run_time=0.6)
+            vo.wait_until("inside a container")
+            self.play(lh.parts["ctr"].frame.animate.set_stroke(width=6), run_time=0.3)
+            self.play(lh.parts["ctr"].frame.animate.set_stroke(width=3), run_time=0.3)
             vo.wait_until("on host")
             self.play(Create(ul0), run_time=0.6)
             self.play(flash(lh.api_door, TURN, 1.2), run_time=0.6)
@@ -188,9 +196,14 @@ class LaptopToCloud(VoiceScene):
                       run_time=1.0)
             vo.wait_until("Bound to")
             self.play(b_all.animate.set_opacity(0.3), Create(b_lo.ring), run_time=0.6)
-            self.play(FadeIn(b_lo.chip, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("it would answer only")
+            self.play(FadeIn(b_lo.chip, shift=UP * 0.1), *[s.animate.set_stroke(opacity=0.25) for s in lh.sockets[1:]],
+                      run_time=0.6)
             self.play(flash(lh.loopback_label, ERR, 1.15), run_time=0.6)
-        self.play(FadeOut(b_all), FadeOut(b_lo), run_time=0.5)
+            vo.wait_until("inside the container")
+            self.play(flash(b_lo.chip, ERR, 1.06), run_time=0.6)
+        self.play(FadeOut(b_all), FadeOut(b_lo), *[s.animate.set_stroke(opacity=1) for s in lh.sockets[1:]],
+                  run_time=0.5)
 
         # ========================================================== 1 · -p 9000:9000: the tunnel
         p1 = src_panel(SHELL, [19, 20, 27], focus=20)
@@ -214,16 +227,16 @@ class LaptopToCloud(VoiceScene):
             self.play(*lh.parts_in("browser"), run_time=0.5)
             self.play(FadeIn(pk), run_time=0.3)
             self.play(trip)
-            self.play(FadeIn(ok1, scale=0.6), flash(lh.api_door, OWN, 1.2), run_time=0.6)
-        self.play(FadeOut(pk), FadeOut(ok1), run_time=0.4)
+            self.play(FadeOut(pk), FadeIn(ok1, scale=0.6), flash(lh.api_door, OWN, 1.2), run_time=0.6)
+        self.play(FadeOut(ok1), run_time=0.4)
 
         # ========================================================== 2 · the README: localhost = this machine
         p2 = readme_panel("cheese-app-v0", 173, 175, focus=(174, 175))
         place(p2, cx=0, top=-0.55)
         inside(p2, "README panel")
         apart(lh, p2, "laptop / README panel")
-        ul_a = under(p2.clause(174, "localhost:3200"))
-        ul_b = under(p2.clause(175, "localhost:9000"))
+        ul_a = under(p2.clause(174, "localhost:3200"), stroke=3, buff=0.012)
+        ul_b = under(p2.clause(175, "localhost:9000"), stroke=3, buff=0.012)
         this = label("localhost = this machine", 26, LAPTOP)
         place(this, left=lh.get_right()[0] + 1.0, cy=lh.get_center()[1] + 0.4)
         inside(this, "localhost label", t=3.05)
@@ -273,9 +286,13 @@ class LaptopToCloud(VoiceScene):
             self.play(FadeIn(l_port, shift=RIGHT * 0.15), flash(st.doors, TURN, 1.2), run_time=0.7)
             vo.wait_until("Addresses that start")
             self.play(FadeIn(VGroup(tb.frame, tb[1], *tb.heads)), run_time=0.5)
-            for r in range(3):
+            for r, phrase in ((0, "start with 10"), (2, "with 192.168"), (1, "with 172.16")):
+                vo.wait_until(phrase)
                 self.play(FadeIn(tb.cells[r][0], shift=RIGHT * 0.1), run_time=0.35)
+                self.play(flash(tb.cells[r][0], TURN, 1.1), run_time=0.45)
+            vo.wait_until("are private")
             self.play(FadeIn(tb.cells[0][1], shift=RIGHT * 0.1), run_time=0.4)
+            self.play(flash(tb.heads[1], SHARED, 1.15), run_time=0.5)
             vo.wait_until("The internet does not")
             self.play(Write(nr), GrowArrow(nr_ar), run_time=0.7)
             self.play(flash(pr_col, ERR, 1.08), run_time=0.6)
@@ -293,6 +310,7 @@ class LaptopToCloud(VoiceScene):
         tg_end = tg.copy()
         tg_end.shift(target - tg_end.box.get_center())
         guard(tg_end.door.frame.get_left()[0] >= vm.boxes["app"].get_left()[0] + 0.25, "task door outside the app subnet")
+        port8000 = mono(":8000", CAPTION, CTR).move_to(tg_end.door.label)
         ip = mono(TASK_IP, CAPTION, S.GREY).next_to(tg_end.box, DOWN, buff=0.1)
         apart(ip, tg_end.door.label, "IP / door label")
         port_chip = card_rows([("lecture: :8000", S.GREY), ("course repo: :9000", S.GREY)])
@@ -317,7 +335,7 @@ class LaptopToCloud(VoiceScene):
             self.add(vm)
             self.play(*vm.parts_in("internet", "vpc", "app"), FadeIn(aws), run_time=0.7)
             self.play(tg.animate.shift(target - tg.box.get_center()), run_time=1.0)
-            self.play(*swap_text(tg.door, tg.door.label, tg_end.door.label.copy().set_color(CTR)), run_time=0.5)
+            self.play(*swap_text(tg.door, tg.door.label, port8000), run_time=0.5)
             vo.wait_until("Inside the private network")
             self.play(Write(ip), flash(vm.parts["app"][2], CLOUD, 1.3), run_time=0.8)
             self.play(FadeIn(port_chip, shift=UP * 0.1), run_time=0.5)
@@ -332,7 +350,7 @@ class LaptopToCloud(VoiceScene):
 
         # ========================================================== 5 · L10 slide 11: laptop vs cloud
         rt = ReachTable()
-        place(rt, cx=0, cy=0.3)
+        place(rt, cx=0, cy=0.0)
         inside(rt, "reach table", t=3.05)
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(beat4), FadeOut(aws), run_time=0.5)
@@ -355,8 +373,8 @@ class LaptopToCloud(VoiceScene):
         apart(aws, dp, "aws chip / dns path")
         pk6 = Packet("", "ALB-IP:443", color=BROWSER)
         a5 = dp.arrows[4]
-        end6 = dp.node("alb").get_left() + LEFT * (pk6.width / 2 + 0.12) + UP * 0.45
-        start6 = a5.get_start() + RIGHT * (pk6.width / 2) + UP * 0.45
+        end6 = dp.node("alb").get_left() + LEFT * (pk6.width / 2 + 0.12) + UP * 0.6
+        start6 = a5.get_start() + RIGHT * (pk6.width / 2) + UP * 0.6
         ride = pk6.travel([start6, end6], run_time=1.4)
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(rt), run_time=0.5)
@@ -416,7 +434,10 @@ class LaptopToCloud(VoiceScene):
         r_end = [alb.get_center()[0] + 0.2, lane, 0]
         back = rep.travel([r_start, r_end], run_time=1.6)
         state = fix_chip("stateful: reply allowed")
-        place(state, cx=gx + 0.6, bottom=lane + 0.45)
+        place(state, left=gx + 0.35, bottom=lane + 0.45)
+        sg = label("security group", CAPTION, S.GREY)
+        place(sg, right=gx - 0.2, bottom=lane + 0.5)
+        guard(sg.get_left()[0] >= app.frame.get_left()[0] + 0.1, "security-group label crosses the subnet edge")
         guard(state.get_top()[1] <= app.head.get_bottom()[1] - 0.05, "stateful chip under the subnet header")
         guard(state.get_left()[0] >= app.frame.get_left()[0] + 0.05, "stateful chip crosses the subnet edge")
         zoom = VGroup(pub, app, alb, albt, task, ip7, gate.bar)
@@ -436,7 +457,7 @@ class LaptopToCloud(VoiceScene):
             self.play(to_gate)
             self.play(*req.settle(), run_time=0.3)
             vo.wait_until("a security group allows")
-            self.play(FadeIn(gate.rule, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeIn(gate.rule, shift=UP * 0.1), FadeIn(sg), run_time=0.5)
             self.play(*gate.flash(True), run_time=0.6)
             self.play(to_door)
             self.play(FadeIn(ok7, scale=0.6), run_time=0.4)
@@ -453,11 +474,11 @@ class LaptopToCloud(VoiceScene):
             self.play(back)
             vo.wait_until("because the firewall remembers")
             self.play(FadeIn(state, shift=UP * 0.1), *gate.flash(True), run_time=0.6)
-        beat7 = VGroup(pub, app, alb, albt, task, ip7, gate, tls, rep, state, aws)
+        beat7 = VGroup(pub, app, alb, albt, task, ip7, gate, sg, tls, rep, state, aws)
 
         # ========================================================== 8 · SSH vs HTTPS; the GCP neighbors
-        c_ssh = card_rows([("administrative access", S.GREY), "`SSH` → the machine"], width=4.6)
-        c_web = card_rows([("client access", S.GREY), "`HTTPS` → the service"], width=4.6)
+        c_ssh = card_rows([("administrative access", S.GREY), "SSH → the machine"], width=4.9, size=26)
+        c_web = card_rows([("client access", S.GREY), "HTTPS → the service"], width=4.9, size=26)
         VGroup(c_ssh, c_web).arrange(RIGHT, buff=0.8)
         place(VGroup(c_ssh, c_web), cx=0, top=2.75)
         cols_x = (-2.6, 1.0, 4.6)

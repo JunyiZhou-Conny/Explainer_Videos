@@ -34,6 +34,7 @@ Beats (script.md "## S03", one voiceover block each):
 
 import numpy as np
 from manim import (
+    AnimationGroup,
     DOWN,
     LEFT,
     RIGHT,
@@ -112,6 +113,16 @@ def at(p, x, y):
     return p.copy().move_to([x, y, 0])
 
 
+def unwrap(scene, anim):
+    """Remove the wrapper groups an AnimationGroup (and the ones nested in it, as in Packet.drop's
+    Succession) leaves on the scene, so a dropped packet does not come back."""
+    if isinstance(anim, AnimationGroup):
+        if anim.group in scene.mobjects:
+            scene.remove(anim.group)
+        for a in anim.animations:
+            unwrap(scene, a)
+
+
 def gate_glyph(h: float = 0.9) -> VGroup:
     """A small community gate: two BLUE posts and a GREY bar between them (vertical, on an edge)."""
     p1 = Rectangle(width=0.14, height=0.14, stroke_color=CLOUD, stroke_width=2).set_fill(CLOUD, 0.8)
@@ -135,14 +146,24 @@ class RouteAndNat(VoiceScene):
         place(cr, cx=0, top=-0.15)
         inside(cr, "CIDR ruler")
         apart(cr, mini, "ruler / VPC box")
+        a_llm = fix_chip("language model API · timeout", ERR)
+        a_db = fix_chip("database · answers", OWN)
+        alarm = VGroup(bell(0.45), a_llm, a_db).arrange(RIGHT, buff=0.35)
+        place(alarm, cx=0, cy=-1.6)
+        inside(alarm, "alarm")
+        apart(alarm, mini, "alarm / VPC box")
         slash = mt[1][-3:]                       # "/16"
         ul16 = under(slash)
         with self.voiceover(SAY[0]) as vo:
             lr = lref_swap(self, None, 16, "5, 15–16")
             self.play(Create(mini), FadeIn(gate), run_time=0.8)
-            self.play(Write(mt), run_time=0.8)
+            self.play(Write(mt), FadeIn(alarm[0], scale=0.7), run_time=0.8)
+            self.play(FadeIn(a_llm, shift=UP * 0.1), Indicate(alarm[0], color=ERR), run_time=0.6)
+            self.play(FadeIn(a_db, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("A VPC is one block")
-            self.play(flash(mt[1], CLOUD, 1.1), run_time=0.7)
+            self.play(FadeOut(alarm, shift=DOWN * 0.15), flash(mt[1], CLOUD, 1.1), run_time=0.7)
+            self.play(mini.animate.set_stroke(width=7), run_time=0.5)
+            self.play(mini.animate.set_stroke(width=3), run_time=0.5)
             vo.wait_until("The slash counts")
             self.play(Create(ul16), slash.animate.set_color(TURN), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.1) for c in cr.cells], lag_ratio=0.04),
@@ -278,7 +299,6 @@ class RouteAndNat(VoiceScene):
         apart(at(pk, *p_nat[:2]), vm.boxes["alb"], "LLM packet / ALB")
         apart(at(pk, *p_nat[:2]), vm.boxes["nat"], "LLM packet / NAT")
         p_out = [-4.0, 0.5, 0]
-        out = pk.travel([p_nat, [-3.2, y_nat, 0], p_out], run_time=1.2)
         nb = NatNotebook(slots=1, width=5.6)
         place(nb, right=vm.boxes["task2"].get_left()[0] - 0.1, bottom=-3.5)
         apart(nb, vm.boxes["nat"], "notebook / NAT")
@@ -301,24 +321,23 @@ class RouteAndNat(VoiceScene):
             self.play(*nb.add_line(f"{TASK_IP}:{EPHEMERAL}", f"NAT-IP:{NAT_PORT}"), run_time=0.6)
             vo.wait_until("and sends it out")
             self.play(*pk.settle(), run_time=0.3)
-            self.play(out)
+            self.play(pk.travel([p_nat, [-3.2, y_nat, 0], p_out], run_time=1.2))
             self.play(FadeOut(pk, shift=LEFT * 0.6), flash(vm.boxes["igw"], CLOUD, 1.1), run_time=0.5)
 
         # ========================================================== 6 · the reply comes back; the stranger is dropped
         rp = Packet(LLM_DST, f"NAT-IP:{NAT_PORT}", slot=len(f"{TASK_IP}:{EPHEMERAL}"))
         back_in = rp.travel([p_out, [-3.2, y_nat, 0], p_nat], run_time=1.2)
-        to_task = rp.travel([p_nat, p_task], run_time=1.2)
         apart(at(rp, *p_task[:2]), vm.parts["tasks"][2], "reply / task IP")
         ok_task = tick_mark(0.34).next_to(vm.boxes["task"], RIGHT, buff=0.15)
         apart(ok_task, rc, "task tick / route card")
         st = Packet("", f"NAT-IP:{int(NAT_PORT) + 999}", color=SHARED)
         st_in = st.travel([[-5.2, 0.5, 0], [-3.2, y_nat, 0], p_nat], run_time=1.2)
-        miss = nb.miss_note()
-        place(miss, left=vm.boxes["app"].get_left()[0] + 0.15, cy=y_db)
-        apart(miss, vm.boxes["task2"], "miss note / task 2")
-        guard(miss.get_right()[0] <= vm.boxes["app"].get_right()[0] - 0.05, "miss note crosses the app subnet")
-        guard(miss.get_bottom()[1] >= vm.boxes["app"].get_bottom()[1] + 0.03, "miss note below the app subnet")
-        miss_ar = arrow_(miss.get_left() + LEFT * 0.05, nb.frame.get_right() + RIGHT * 0.05 + DOWN * 0.1, ERR, stroke=3)
+        miss = VGroup(mono("no line", CAPTION, ERR), mono("→ dropped", CAPTION, ERR)).arrange(DOWN, buff=0.06)
+        miss.move_to([nat_c[0], y_nat, 0])
+        apart(miss, vm.boxes["alb"], "miss note / ALB")
+        apart(miss, vm.boxes["nat"], "miss note / NAT")
+        guard(miss.get_left()[0] >= vm.boxes["public"].get_left()[0] + 0.05
+              and miss.get_right()[0] <= vm.boxes["public"].get_right()[0] - 0.05, "miss note wider than the subnet")
         locks = VGroup(vm.parts["app"][2], vm.parts["data"][2])
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeIn(rp), run_time=0.3)
@@ -328,7 +347,7 @@ class RouteAndNat(VoiceScene):
             self.play(*rp.set_dst(f"{TASK_IP}:{EPHEMERAL}"), run_time=0.7)
             vo.wait_until("and hands it")
             self.play(*rp.settle(), run_time=0.3)
-            self.play(to_task)
+            self.play(rp.travel([p_nat, p_task], run_time=1.2))
             self.play(FadeIn(ok_task, scale=0.6), run_time=0.4)
             self.play(FadeOut(rp), FadeOut(ok_task), run_time=0.4)
             vo.wait_until("A packet nobody asked")
@@ -336,7 +355,10 @@ class RouteAndNat(VoiceScene):
             self.play(st_in)
             sp = spark(0.18).next_to(st.frame, DOWN, buff=0.04)
             self.play(FadeIn(sp, scale=0.5), Indicate(nb.frame, color=ERR, scale_factor=1.02), run_time=0.5)
-            self.play(FadeOut(sp), st.drop(), FadeIn(miss), GrowArrow(miss_ar), run_time=0.8)
+            gone = st.drop()
+            self.play(FadeOut(sp), gone, run_time=0.8)
+            unwrap(self, gone)
+            self.play(FadeIn(miss, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("NAT only carries")
             self.play(flash(nb.lines[0], TURN, 1.06), run_time=0.7)
             vo.wait_until("Nothing uninvited")
@@ -369,10 +391,9 @@ class RouteAndNat(VoiceScene):
             apart(at(ab, x, y_ab), vm.boxes["alb"], "ALB request / ALB")
             apart(at(ab, x, y_ab), at(pk2, *p_nat[:2]), "ALB request / stalled LLM packet")
             apart(at(ab, x, y_ab), rc, "ALB request / route card")
-        alb_ar = arrow_(vm.boxes["alb"].get_bottom() + RIGHT * 0.6, [ab_x0 - 0.3, y_ab + 0.27, 0], ROUTE, stroke=3)
         ok_ab = tick_mark(0.34).next_to(vm.boxes["task"], RIGHT, buff=0.15)
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(nb, miss, miss_ar)), *rc.unlight(1), run_time=0.5)
+            self.play(FadeOut(VGroup(nb, miss)), *rc.unlight(1), run_time=0.5)
             self.play(*vm.nat_down(), run_time=0.7)
             vo.wait_until("Every call to the internet")
             self.play(FadeIn(pk2), *rc.light(1), run_time=0.4)
@@ -386,7 +407,7 @@ class RouteAndNat(VoiceScene):
             self.play(db2, flash(local, OWN, 1.03, run_time=1.2))
             self.play(FadeIn(ok_db2, scale=0.6), run_time=0.4)
             vo.wait_until("and the load balancer still")
-            self.play(GrowArrow(alb_ar), FadeIn(ab), run_time=0.5)
+            self.play(FadeIn(ab, shift=RIGHT * 0.2), flash(vm.boxes["alb"], CLOUD, 1.08), run_time=0.5)
             self.play(ab_go)
             self.play(FadeIn(ok_ab, scale=0.6), run_time=0.4)
             vo.wait_until("That is the first alarm")
@@ -395,7 +416,7 @@ class RouteAndNat(VoiceScene):
         # ========================================================== 8 · PONDER P1
         card = McqCard(STEM, OPTIONS, answer="C", seconds=10)
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(vm, rc, local, pk2, mir, sp1, sp2, pk_db2, ok_db2, ab, alb_ar, ok_ab, chip)),
+            self.play(FadeOut(VGroup(vm, rc, local, pk2, mir, sp1, sp2, pk_db2, ok_db2, ab, ok_ab, chip)),
                       FadeOut(lr), run_time=0.6)
             self.play(FadeIn(card, scale=0.97), run_time=0.6)
             vo.wait_until("Where should its default")

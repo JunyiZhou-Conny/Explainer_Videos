@@ -1,0 +1,8 @@
+00:00 The run with no curves
+01:11 What a run records
+03:18 The callback writes to the active run
+05:32 What the package carries
+07:57 One machine or many
+10:01 Global batch, per-replica batch
+11:52 Training that outlives the request
+14:03 Six rules for Tuesday
