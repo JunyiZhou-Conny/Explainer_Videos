@@ -103,7 +103,7 @@ Conventions
   - D = "Run Frontend Container" (`README.md:153-180`), 4 steps: 1 docker-shell · 2 npm install ·
     3 npm run dev · 4 Open :3200.
   - E = "The five UI steps" (`README.md:184-255`), 5 steps: 1 Text Chunking · 2 Vector DB UI ·
-    3 Chat · 4 Cheese Expert Agent · 5 Pavlos Cheese Model (README heading text, quoted).
+    3 Chat · 4 Cheese Expert Agent · 5 ‹instructor› Cheese Model (README heading text, the name masked).
   - F = "Shut down" (`README.md:106` + digest §2 checklist), 2 steps: 1 Ctrl-C + exit each ·
     2 docker compose down.
   S07, S08 and S10 are concept scenes with no tracker; S01 has none until the preview.
@@ -164,10 +164,11 @@ Conventions
   course folder is the home folder: V3's tree is labelled `AC215/` with a GREY caption "here:
   ~" (S04). A fresh Docker 29.8.2 engine (`x86_64`) stands in for Docker Desktop. The project id
   on screen is always `your-gcp-project`; `ac215-project` and project `129349313346` appear only
-  inside CODE panels quoting the repo and in RED story beats. The name "Pavlos" appears only
-  inside quoted repo content (tracker E5's README heading, the chunk in `28`, the "Pavlos' fun
-  fact" label, the `pavlos_fun_fact_tool` name); the narration says "the instructor" and "the
-  fine-tuned cheese model".
+  inside CODE panels quoting the repo and in RED story beats. The instructor's name never
+  appears on screen (series rule, 2026-11-02 takeover): quoted repo content shows it masked as
+  ‹instructor› (tracker E5's README heading, the chunk in `28`, the "‹instructor›'s fun fact"
+  label, the `‹instructor›_fun_fact_tool` name; `common.unname()` does this for every capture and
+  source file); the narration says "the instructor" and "the fine-tuned cheese model".
 - V6, the running map (BRIEF): built in S02 and kept as persistent state (`AppMap`); each scene
   lights its piece (streets S05, Chroma S05, API S09, frontend S11, doors S06/S09/S11, the secrets
   drawer S04) and S15 shows it complete, then unlit.
@@ -828,12 +829,12 @@ text becomes an embedding); a choice chip `get_book_by_author` / `get_book_by_se
 ② browser → Chroma `:8000`, CODE(cheese-app-v0/frontend-ai-chatbot/src/services/DataService.js:
 45–47) small (`"where": { "author": author }`); ③ browser → `POST :9000/rag/llm-agent-response`,
 CODE(cheese-app-v0/api-service/api/routers/rag.py: 190–203) with a chip `MAX_AGENT_STEPS = 5`
-(rag.py:83), a loop arrow, and a server-side tool chip `pavlos_fun_fact_tool` (quoted name). GOLD
+(rag.py:83), a loop arrow, and a server-side tool chip `‹instructor›_fun_fact_tool` (quoted name, masked). GOLD
 `cost_tag()` "1 embedding + 3 to 7 generation calls". `▶ your turn` after the GOLD tag.
 SAY: Step 4 is the cheese expert agent: the chat's three calls, with one twist. Gemini first picks a retrieval tool: search by author, or search by content. The API turns the search text into an embedding. Then your browser queries the database, filtered by author if Gemini chose that tool. The API loops up to five times, and Gemini may call a fun fact tool on the server. A gold tag: one agent question costs one embedding and three to seven generation calls. Pause, pick a collection, and ask it something.
 
 SHOW: The answer frame (`illustration`) with GREY skeleton bars (no glyphs), its last paragraph
-drawn as an amber box labelled "Pavlos' fun fact" (README.md · line 239;
+drawn as an amber box labelled "‹instructor›'s fun fact" (README.md · line 239, name masked;
 CODE(cheese-app-v0/frontend-ai-chatbot/src/components/chat/ChatComponent.jsx: 22–28) small, line 24
 highlighted). No answer text.
 SAY: Look for an answer ending in a highlighted fun fact paragraph.

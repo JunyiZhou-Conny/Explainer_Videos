@@ -62,8 +62,9 @@ module-level name that shadows a common.py export (`from common import *` then y
   Indicate captures the faded state and keeps it invisible).
 - No invented numbers, outputs, prices, answer text, embedding values or key material, not even under
   `illustration`. Every number is from a capture/source/ASSETS.md; schematic ideas use symbols.
-  Project id on screen is always `your-gcp-project`; `ac215-project`, `129349313346` and "Pavlos"
-  only inside quoted repo content and RED story beats. No GCP logos, console screenshots, slide images.
+  Project id on screen is always `your-gcp-project`; `ac215-project` and `129349313346`
+  only inside quoted repo content and RED story beats. The instructor's name never appears on screen:
+  `unname()` masks it as ‹instructor› in every capture and source file; never type it in a label. No GCP logos, console screenshots, slide images.
 - Prefer transforms that show what became what.
 
 ## Colours (BRIEF table; names in common.py)
@@ -241,7 +242,7 @@ row_head=None, fun_fact=False)` 9.6 × 6.0 (centre (0, −0.35) leaves room for 
 tag above): `.shell` (everything but the question), `type_question()`, `grow_bars()` (five GREY
 skeleton bars, no glyphs), `open_drawer()` (ten empty rows; `row_head='book · author · dist'` for
 S12); `picker='char-split-collection ▾'` (S12/S13); `fun_fact=True` (S13: last bar is a YELLOW box
-"Pavlos' fun fact", README:239). No answer text, ever.
+"‹instructor›'s fun fact", README:239, name masked). No answer text, ever.
 
 ## Traps carried over from L09 (general; each cost time there)
 

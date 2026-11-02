@@ -137,6 +137,16 @@ RIDDLES = (("-p 3200:3000", "two numbers: why?"), ("localhost:9000", "which mach
 KNOCK = "once anything can knock: who's allowed in?"
 
 
+# Series rule: the instructor's name never appears on screen (masked as ‹instructor›, as in L08 and
+# the exam editions). Applied where captures and source files are read, so line numbers stay put.
+_NAME_RE = re.compile(r"Pavlos(?: Protopapas)?", re.IGNORECASE)
+
+
+def unname(s: str) -> str:
+    """s with the instructor's name masked: 'Pavlos Protopapas' / 'Pavlos' / 'pavlos_' -> '‹instructor›'."""
+    return _NAME_RE.sub("‹instructor›", s)
+
+
 def readme(n: int) -> str:
     """cheese-app-v0/README.md line n (1-based), stripped: assert cap.cmd == readme(88)."""
     return excerpt("cheese-app-v0/README.md", n, n).strip()
@@ -158,7 +168,7 @@ STEPS = {
           "Exit (Chroma stays up)"],
     "C": ["Edit GCP_PROJECT", "docker-shell", "uvicorn_server", "/docs"],
     "D": ["docker-shell", "npm install", "npm run dev", "Open :3200"],
-    "E": ["Text Chunking", "Vector DB UI", "Chat", "Cheese Expert Agent", "Pavlos Cheese Model"],
+    "E": ["Text Chunking", "Vector DB UI", "Chat", "Cheese Expert Agent", "‹instructor› Cheese Model"],
     "F": ["Ctrl-C + exit each", "docker compose down"],
 }
 
@@ -318,7 +328,7 @@ def capture(name: str) -> Capture:
         p = hits[0]
     with open(p, encoding="utf-8", newline="") as f:
         text = f.read()
-    raw = [s.rstrip("\r").expandtabs(8) for s in text.rstrip("\n").split("\n")]
+    raw = [unname(s.rstrip("\r").expandtabs(8)) for s in text.rstrip("\n").split("\n")]
     m = re.fullmatch(r"(.*\S)\[exit (-?\d+)\]", raw[-1]) if len(raw) > 1 else None
     if m:                                   # '"1.0.0"[exit 0]': output and status on one line
         raw = raw[:-1] + [m.group(1), f"[exit {m.group(2)}]"]
@@ -423,7 +433,7 @@ def _src(path: str) -> Path:
 def source_text(path: str) -> str:
     """An assets/source file: 'cheese-app-v0/api-service/docker-shell.sh' (the 'cheese-app-v0/'
     prefix may be left out) or a neighbour repo 'llm-finetuning/dataset-creator/cli.py'."""
-    return _src(path).read_text(encoding="utf-8")
+    return unname(_src(path).read_text(encoding="utf-8"))
 
 
 def excerpt(path: str, first: int, last: int) -> str:
@@ -2558,7 +2568,7 @@ class ChatWireframe(Rig):
         self.play(cw.grow_bars())                    # 5 GREY skeleton bars, no glyphs
         self.play(cw.open_drawer())                  # 10 empty GREY rows
     picker='char-split-collection ▾' (S12/S13); row_head='book · author · dist' (S12's drawer header);
-    fun_fact=True (S13): the answer's last bar is a YELLOW box 'Pavlos' fun fact' (.fun, not added).
+    fun_fact=True (S13): the answer's last bar is a YELLOW box '‹instructor›'s fun fact' (.fun, not added).
     .window .shell (everything shown before typing) .picker .bubble .question .answer .bars (not
     added) .drawer .rows (not added) .row_head (not added) .fun (not added)"""
 
@@ -2593,7 +2603,7 @@ class ChatWireframe(Rig):
             .shift(RIGHT * 0.3)
         self.fun = None
         if fun_fact:
-            ft = label("Pavlos' fun fact", 20, TURN)
+            ft = label("‹instructor›'s fun fact", 20, TURN)
             fb = RoundedRectangle(width=aw * 0.7, height=0.42, corner_radius=0.08, stroke_color=TURN,
                                   stroke_width=2.5).set_fill(TURN, 0.12)
             ft.move_to(fb).align_to(fb, LEFT).shift(RIGHT * 0.15)
