@@ -1,0 +1,439 @@
+# zh narration for the whole exam edition, S01-S08 (one file: g1 holds every SAY line of script.md v2, 73 SAY
+# lines, 206 sentences), sentence-aligned: one zh sentence per English sentence (explainer.voice.split_sentences).
+# Terms and rules: ../GLOSSARY.md, ../glossary.yaml (binding).
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses and about its length (D8, D9:
+# S02[1] keeps 直到 after the main clause, S03[3] keeps the conclusion before 课件第 13 页补充说, S03[11] and
+# S08[1] keep the if-clause where the English has it, S04[3] keeps 把它发给访客 first, S04[5] puts the when-clause
+# after 前提是：, S06[3] keeps 尽管 last, S06[9] keeps 因为 last).
+# Underscore names and code expressions are written the way the SAY speaks them (A6: next public base API URL,
+# next public 变量, Google Application Credentials, log level 是 debug, proxy pass); no brackets and no symbols the
+# checker refuses (B3: 减去, 除以, 向下取整, 加). Addresses, CIDR blocks and ports as on screen, no thousands
+# separators (C1: 10.0.2.5, 10.0.0.0/16, /16, /24, 0.0.0.0/0, 65536, port 443). Sentences never open with an
+# artifact or a lower-case kept-English word (A5: 这个 -p 9000:9000, 所谓 localhost, 写 /16, 把 image, 这个 image,
+# 所有 next public 变量). Ponder lead-ins and stems (S03[8], S05[7], S06[6]) give nothing away (A9); reveals open
+# with the letter (选 C。/ 选 D。/ 选 B，200。).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: -p 9000:9000,
+# localhost:3200, localhost:9000, api.example.com, 10.x, 10.0.0.0/16, /16, /24, 0.0.0.0/0, /16 beats /0, /api,
+# NEXT_PUBLIC_BASE_API_URL, NEXT_PUBLIC_, proxy_pass, LOG_LEVEL=debug, /secrets, GOOGLE_APPLICATION_CREDENTIALS,
+# os.environ); null = the SAY text.
+S01:
+- en: "Launch day for the Cheese App. Last week it ran on a laptop. This morning it runs in the cloud, inside a private network. Within an hour, three alarms go off."
+  zh:
+  - "Cheese App 上线日。"
+  - "上周它还跑在一台笔记本上。"
+  - "今天早上它跑在云上，在一个私有网络里面。"
+  - "不到一个小时，三个告警响了。"
+- en: "First alarm. Chat answers that call an outside language model time out. Yet the saved chat history, read from the database, loads fine."
+  zh:
+  - "第一个告警。"
+  - "调用外部语言模型的聊天回答都超时了。"
+  - "可是从数据库读出的聊天记录，照常加载。"
+- en: "Second alarm. The page loads for every visitor, but the Predict button fails. On the developer's laptop, the same button worked."
+  zh:
+  - "第二个告警。"
+  - "页面对每个访客都能加载，但 Predict 按钮失败了。"
+  - "在开发者的笔记本上，同一个按钮是好的。"
+- en: "Third alarm. At 9 in the morning traffic doubles, and the autoscaler adds replicas. The newest ones fail with too many connections, while their processors sit idle."
+  zh:
+  - "第三个告警。"
+  - "早上 9 点流量翻倍，自动扩缩器加了副本。"
+  - "最新的几个副本报 too many connections 失败了，而它们的 CPU 闲着。"
+- en: "And one problem nobody has noticed yet. The production key is sitting inside the container image."
+  zh:
+  - "还有一个没人注意到的隐患。"
+  - "生产环境的密钥就放在 container image 里面。"
+- en: "Each alarm is one mechanism from Lectures 10 and 16. We go from addresses, to routes and NAT, to the browser, to configuration, to capacity, and finally to the database."
+  zh:
+  - "每个告警都对应第 10 讲和第 16 讲里的一个机制。"
+  - "我们从地址，到路由和 NAT，到浏览器，到配置，到容量，最后到数据库。"
+- en: "The gray tag, top right, names the slides behind each idea. Nothing here is a live run."
+  zh:
+  - "右上角的灰色标签，标出每个概念背后的课件。"
+  - "这里没有任何现场运行。"
+S02:
+- en: "Start on the laptop. In the course app, uvicorn starts FastAPI inside a container, on host 0.0.0.0, port 9000. That host means listen on every interface. Bound to 127.0.0.1 instead, it would answer only from inside the container."
+  zh:
+  - "先从笔记本说起。"
+  - "在课程的应用里，uvicorn 在 container 里启动 FastAPI，host 是 0.0.0.0，port 是 9000。"
+  - "这个 host 的意思是：在所有网络接口上监听。"
+  - "要是绑定到 127.0.0.1，它就只会回应 container 里面的请求。"
+- en: "The container is sealed off until you publish a port. Dash p, 9000 to 9000, is the tunnel from the laptop's door into the container's."
+  zh:
+  - "这个 container 是封起来的，直到你发布一个 port。"
+  - "这个 -p 9000:9000，就是从笔记本的门通进 container 那扇门的隧道。"
+  en_display:
+  - null
+  - "-p 9000:9000 is the tunnel from the laptop's door into the container's."
+- en: "So the README says the app is served at localhost 3200, and it calls the API at localhost 9000. Localhost always means this machine: the one the code runs on."
+  zh:
+  - "所以 README 写着，应用在 localhost:3200 提供服务，并调用 localhost:9000 上的 API。"
+  - "所谓 localhost，永远指这台机器：代码运行的那一台。"
+  en_display:
+  - "So the README says the app is served at localhost:3200, and it calls the API at localhost:9000."
+  - null
+- en: "An IP address picks the machine, and a port picks the service on it. Addresses that start with 10, with 192.168, or with 172.16 through 172.31 are private. The internet does not route them."
+  zh:
+  - "IP 地址选的是机器，port 选的是机器上的服务。"
+  - "以 10、192.168，或者 172.16 到 172.31 开头的地址，都是私有地址。"
+  - "互联网不会路由它们。"
+- en: "Move the same container into the cloud. Inside the private network it gets the address 10.0.2.5. A packet from the internet cannot reach it: nobody out there has a route to a private address."
+  zh:
+  - "把同一个 container 搬到云上。"
+  - "在私有网络里，它的地址是 10.0.2.5。"
+  - "来自互联网的数据包到不了它：外面谁都没有通往私有地址的路由。"
+- en: "Lecture 10 sums it up. On the laptop, your router keeps the world out. In the cloud, the public finds you by a DNS name, a firewall starts closed, and a load balancer lets traffic in."
+  zh:
+  - "第 10 讲把它总结了一下。"
+  - "在笔记本上，你的路由器把外界挡在外面。"
+  - "在云上，外界通过域名找到你，防火墙一开始是关着的，负载均衡器把流量放进来。"
+- en: "The browser asks a resolver for api dot example dot com, the resolver asks the authoritative DNS, and the load balancer's public address comes back. Then the browser connects to the load balancer on port 443."
+  zh:
+  - "浏览器向解析器查询 api.example.com，解析器再问权威 DNS，负载均衡器的公网地址就返回来了。"
+  - "然后浏览器连到负载均衡器的 port 443。"
+  en_display:
+  - "The browser asks a resolver for api.example.com, the resolver asks the authoritative DNS, and the load balancer's public address comes back."
+  - null
+- en: "The load balancer ends the HTTPS connection and sends its own request to the task's port 8000. There, a security group allows only the load balancer, on port 8000. A stranger's packet bounces, and the reply goes back out, because the firewall remembers the connection."
+  zh:
+  - "负载均衡器终止 HTTPS 连接，再向任务的 port 8000 发出自己的请求。"
+  - "在那里，安全组只允许负载均衡器访问 port 8000。"
+  - "陌生人的数据包会被挡回去，而回复能出去，因为防火墙记得这条连接。"
+- en: "SSH reaches the machine, while clients reach the service. The lecture draws Amazon names. On Google Cloud the neighbors are Compute Engine, Cloud Load Balancing and Cloud NAT."
+  zh:
+  - "SSH 连到机器，而客户端连到服务。"
+  - "课上画的是 Amazon 的名字。"
+  - "在 Google Cloud 上，对应的是 Compute Engine、Cloud Load Balancing 和 Cloud NAT。"
+- en: "If the question says localhost, think: the machine the code runs on. A 10 dot address: private, unreachable from the internet. Public clients: a DNS name, the load balancer on 443, then the private target on 8000."
+  zh:
+  - "题目里出现 localhost，就想：代码运行的那台机器。"
+  - "10 开头的地址：私有的，从互联网上到不了。"
+  - "公网客户端：域名，port 443 上的负载均衡器，再到 port 8000 上的私有目标。"
+  en_display:
+  - null
+  - "A 10.x address: private, unreachable from the internet."
+  - null
+S03:
+- en: "Now the first alarm: the language model times out, but the database answers. A VPC is one block of addresses, here 10.0.0.0 slash 16. The slash counts the fixed bits out of 32. Slash 16 leaves 16 bits to vary: 65,536 addresses. Slash 24 leaves 8: 256."
+  zh:
+  - "现在看第一个告警：语言模型超时，但数据库有回应。"
+  - "一个 VPC 就是一整块地址，这里是 10.0.0.0/16。"
+  - "斜杠后面的数，是 32 位里固定的位数。"
+  - "写 /16，就留下 16 位可变：65536 个地址。"
+  - "写 /24，就留下 8 位：256 个。"
+  en_display:
+  - null
+  - "A VPC is one block of addresses, here 10.0.0.0/16."
+  - null
+  - "/16 leaves 16 bits to vary: 65,536 addresses."
+  - "/24 leaves 8: 256."
+- en: "The lecture cuts it into three subnets. A public one for the load balancer. A private app subnet for the FastAPI tasks. A private data subnet for the database."
+  zh:
+  - "课上把它切成三个子网。"
+  - "一个公有子网，放负载均衡器。"
+  - "一个私有应用子网，放 FastAPI 任务。"
+  - "一个私有数据子网，放数据库。"
+- en: "Every subnet has a route table. Both send the VPC's own block to the local route. The only difference is the default row, 0.0.0.0 slash 0. A public subnet sends it to the Internet Gateway, a private subnet to the NAT Gateway."
+  zh:
+  - "每个子网都有一张路由表。"
+  - "两张表都把 VPC 自己的地址块交给 local 路由。"
+  - "唯一的区别是默认那一行，0.0.0.0/0。"
+  - "公有子网把它发给 Internet Gateway，私有子网发给 NAT Gateway。"
+  en_display:
+  - null
+  - null
+  - "The only difference is the default row, 0.0.0.0/0."
+  - null
+- en: "A route alone is not enough, slide 13 adds: the machine also needs a public address and an open firewall."
+  zh:
+  - "光有路由还不够，课件第 13 页补充说：机器还需要公网地址和打开的防火墙。"
+- en: "A packet for the database at 10.0.3.7 matches both rows, and the most specific match wins: slash 16 beats slash 0. The packet stays inside, on the local route."
+  zh:
+  - "发往 10.0.3.7 上数据库的数据包，两行都匹配，而最具体的那条匹配胜出：/16 胜过 /0。"
+  - "这个数据包留在里面，走 local 路由。"
+  en_display:
+  - "A packet for the database at 10.0.3.7 matches both rows, and the most specific match wins: /16 beats /0."
+  - null
+- en: "A packet for the language model API matches only the default row, so it goes to the NAT Gateway. NAT rewrites the private source to its own public address, writes the mapping in its notebook, and sends it out."
+  zh:
+  - "发往语言模型 API 的数据包只匹配默认那一行，所以它去了 NAT Gateway。"
+  - "NAT 把私有的源地址改写成自己的公网地址，把映射记在小本子上，再发出去。"
+- en: "The reply comes back, NAT finds the line, and hands it to the task. A packet nobody asked for has no line, so it is dropped. NAT only carries connections that start inside. Nothing uninvited gets in, which keeps the private subnet private."
+  zh:
+  - "回复回来了，NAT 找到那一行，把它交给任务。"
+  - "没人请求过的数据包没有对应的那一行，所以直接丢弃。"
+  - "NAT 只转发从里面发起的连接。"
+  - "不请自来的一律进不来，私有子网也就保持私有。"
+- en: "Now NAT fails. Every call to the internet stalls at the dead hop. But the database packet still matches the local route, and the load balancer still reaches the tasks. That is the first alarm."
+  zh:
+  - "现在 NAT 坏了。"
+  - "每个访问互联网的调用，都卡在坏掉的那一跳上。"
+  - "但数据库的数据包仍然匹配 local 路由，负载均衡器也仍然连得到任务。"
+  - "这就是第一个告警。"
+- en: "First question. A worker in a private subnet downloads model weights from a public website at startup, and nobody on the internet may open a connection to it. Where should its default route point? Pause here if you want."
+  zh:
+  - "第一道题。"
+  - "私有子网里的一个 worker，启动时从公开网站下载模型权重，而互联网上谁都不能主动连接它。"
+  - "它的默认路由应该指向哪里？"
+  - "想停一下的话，就在这里暂停。"
+- en: "C. NAT carries the worker's request out, maps the reply back, and refuses uninvited connections. A, the Internet Gateway, would download too, but it makes the subnet public, a direct path in, guarded only by firewall rules."
+  zh:
+  - "选 C。"
+  - "NAT 把这个 worker 的请求带出去，把回复映射回来，并拒绝不请自来的连接。"
+  - "A，Internet Gateway，也能下载，但它让子网变成公有的，多了一条直接进来的路，只靠防火墙规则把守。"
+- en: "B fails: the local route covers only the VPC's own block, and the website is outside it. D fails: a load balancer brings requests in to its targets. It is not a way out."
+  zh:
+  - "B 不对：local 路由只覆盖 VPC 自己的地址块，而那个网站在外面。"
+  - "D 不对：负载均衡器是把请求带进来，交给它的目标。"
+  - "它不是出去的路。"
+- en: "If the question says private subnet, think: the default route goes to NAT. NAT only carries connections that start inside. And if NAT is down, internet calls fail, while traffic inside the VPC, like the database, still works."
+  zh:
+  - "题目里出现私有子网，就想：默认路由指向 NAT。"
+  - "NAT 只转发从里面发起的连接。"
+  - "而如果 NAT 挂了，互联网调用会失败，VPC 内部的流量，比如数据库，照样能用。"
+S04:
+- en: "Now the second alarm, the failing button. Loading a page is two trips. First the browser downloads HTML, CSS and JavaScript from a static host. Then that JavaScript runs on the visitor's own machine, and calls the API."
+  zh:
+  - "现在看第二个告警，那个失败的按钮。"
+  - "加载一个页面要跑两趟。"
+  - "先是浏览器从静态托管下载 HTML、CSS 和 JavaScript。"
+  - "然后这段 JavaScript 在访客自己的机器上运行，并调用 API。"
+- en: "So the browser lives outside the VPC. Static files never enter it, and every API request must come in through the front door, the load balancer."
+  zh:
+  - "所以，浏览器在 VPC 外面。"
+  - "静态文件从不进入 VPC，而每个 API 请求都必须从大门进来，也就是负载均衡器。"
+- en: "Now the course app. In development, the frontend takes its API address from next public base API URL, and that variable says localhost 9000. On the developer's laptop, that was exactly where the API ran."
+  zh:
+  - "再看课程的应用。"
+  - "在开发环境里，前端从 next public base API URL 读取 API 地址，而这个变量写的是 localhost:9000。"
+  - "在开发者的笔记本上，那正是 API 运行的地方。"
+  en_display:
+  - null
+  - "In development, the frontend takes its API address from NEXT_PUBLIC_BASE_API_URL, and that variable says localhost:9000."
+  - null
+- en: "Ship that to a visitor, and localhost means the visitor's laptop. Nothing listens there, so the request fails. That is the second alarm."
+  zh:
+  - "把它发给访客，localhost 就成了访客自己的笔记本。"
+  - "那里没有东西在监听，所以请求失败了。"
+  - "这就是第二个告警。"
+- en: "Swap in the private address, 10.0.2.5, and the request never reaches the VPC: that address means something only inside the visitor's own network. The public HTTPS name works: DNS, the load balancer, then a task."
+  zh:
+  - "换成私有地址 10.0.2.5，请求永远到不了 VPC：这个地址只在访客自己的网络里才有意义。"
+  - "用公网的 HTTPS 域名就行：DNS，负载均衡器，再到一个任务。"
+- en: "The production file says just slash api. A relative path goes back to the host that served the page. That works when one public front door serves both the page and the API, the lecture's layout B, and routes slash api to FastAPI."
+  zh:
+  - "生产环境的配置文件里只写了 /api。"
+  - "相对路径会回到提供这个页面的那台主机。"
+  - "这行得通的前提是：一个公网大门同时提供页面和 API，也就是课上的布局 B，并把 /api 路由到 FastAPI。"
+  en_display:
+  - "The production file says just /api."
+  - null
+  - "That works when one public front door serves both the page and the API, the lecture's layout B, and routes /api to FastAPI."
+- en: "Slide 24 writes that rule twice, as an Nginx proxy pass or a load balancer path rule. With a separate static host, the code must name the public API address instead."
+  zh:
+  - "课件第 24 页把这条规则写了两遍：一条 Nginx 的 proxy pass，或者一条负载均衡器的路径规则。"
+  - "要是用单独的静态托管，代码就必须写明公网 API 地址。"
+  en_display:
+  - "Slide 24 writes that rule twice, as an Nginx proxy_pass or a load balancer path rule."
+  - null
+- en: "Notice where the private address lives: in the proxy's config, inside the VPC. Never in browser code."
+  zh:
+  - "注意私有地址在哪里：在代理的配置里，在 VPC 里面。"
+  - "绝不出现在浏览器代码里。"
+- en: "Two more facts. Next public variables are compiled into the JavaScript at build time, so every visitor downloads them: public by design, never a secret. And NAT does not help here: it only carries traffic that starts inside the VPC."
+  zh:
+  - "再说两点。"
+  - "所有 next public 变量都会在构建时编译进 JavaScript，所以每个访客都会下载它们：本来就是公开的，绝不是密钥。"
+  - "而且 NAT 在这里帮不上忙：它只转发从 VPC 里面发起的流量。"
+  en_display:
+  - null
+  - "NEXT_PUBLIC_ variables are compiled into the JavaScript at build time, so every visitor downloads them: public by design, never a secret."
+  - null
+- en: "If the question says code that runs in the browser, think: it is outside the VPC. Call the public HTTPS endpoint, never localhost or a 10 dot address. NAT does not help inbound."
+  zh:
+  - "题目里出现在浏览器里运行的代码，就想：它在 VPC 外面。"
+  - "调用公网的 HTTPS endpoint，绝不用 localhost 或 10 开头的地址。"
+  - "NAT 对入站没有帮助。"
+  en_display:
+  - null
+  - "Call the public HTTPS endpoint, never localhost or a 10.x address."
+  - null
+S05:
+- en: "Now the quiet problem, the key inside the image. First, how a release should work. Build the image once, push it with a version tag, and every deployment pulls that exact version. No rebuild."
+  zh:
+  - "现在看那个悄无声息的隐患：image 里的密钥。"
+  - "先看一次发布应该怎么做。"
+  - "把 image 构建一次，打上版本 tag 再 push，每次部署都 pull 这个确切的版本。"
+  - "不重新构建。"
+- en: "The image is immutable. It moves from development to staging to production, and its digest never changes. What differs is the runtime values plugged in when the container starts: log level debug in development, info in production."
+  zh:
+  - "这个 image 是不可变的。"
+  - "它从开发环境到预发环境再到生产环境，digest 从不改变。"
+  - "不同的是 container 启动时插进去的运行时的值：开发环境里 log level 是 debug，生产环境里是 info。"
+  en_display:
+  - null
+  - null
+  - "What differs is the runtime values plugged in when the container starts: LOG_LEVEL=debug in development, info in production."
+- en: "Secrets follow the same rule. A secret manager delivers the key at startup, only to the workload that is authorized for it. Never place secrets in source code, in container images, or in Git."
+  zh:
+  - "密钥也遵循同样的规则。"
+  - "密钥管理服务在启动时交付密钥，只交给获得授权的工作负载。"
+  - "绝不要把密钥放进源代码、container image 或 Git。"
+- en: "The course already does the laptop version. The run script mounts the secrets folder at slash secrets, and points Google Application Credentials at the key's path inside the container."
+  zh:
+  - "课程已经做了笔记本上的版本。"
+  - "运行脚本把 secrets 目录挂载到 /secrets，再把 Google Application Credentials 指向 container 里密钥的路径。"
+  en_display:
+  - null
+  - "The run script mounts the secrets folder at /secrets, and points GOOGLE_APPLICATION_CREDENTIALS at the key's path inside the container."
+- en: "The project and the ChromaDB host arrive as environment variables too. The app reads them with os dot environ when it starts."
+  zh:
+  - "项目和 ChromaDB 的 host 也作为环境变量传进来。"
+  - "应用在启动时用 os.environ 读取它们。"
+  en_display:
+  - null
+  - "The app reads them with os.environ when it starts."
+- en: "The README says why: we do not want any secure information in Git. The key lives next to the repository, never inside it."
+  zh:
+  - "README 说了原因：我们不希望任何安全信息进入 Git。"
+  - "密钥放在 repo 旁边，绝不放在里面。"
+- en: "Now the wrong way. Bake the key into the image, and anyone who can pull the image can read it. Rotating it means a rebuild, and per environment images mean what you tested is not what you ship."
+  zh:
+  - "再看错误的做法。"
+  - "把密钥打进 image，任何能 pull 这个 image 的人都能读到它。"
+  - "轮换密钥就意味着重新构建，而每个环境各一个 image，就意味着你测试过的不是你交付的。"
+- en: "Second question. A teammate bakes an API key into the Dockerfile and pushes the image to the team's private registry. Which statement is true? Pause here if you want."
+  zh:
+  - "第二道题。"
+  - "一个队友把 API 密钥写进 Dockerfile，再把 image push 到团队的私有 registry。"
+  - "哪个说法是对的？"
+  - "想停一下的话，就在这里暂停。"
+- en: "D. The image's settings and layers are readable by anyone who pulls it, and changing the key means a rebuild. A, the private registry, is still a long list of people and machines, and the image is copied to every host."
+  zh:
+  - "选 D。"
+  - "这个 image 的配置和层，任何 pull 它的人都能读到，而换密钥就意味着重新构建。"
+  - "A，私有 registry，能访问它的仍然是一长串的人和机器，而且 image 会复制到每台主机上。"
+- en: "B fails: the key is written in the Dockerfile, which is in Git, and in the image. Ignoring a different file changes nothing. C fails too: development images leak, and separate images break build once."
+  zh:
+  - "B 不对：密钥写在 Dockerfile 里，而 Dockerfile 在 Git 里，也在 image 里。"
+  - "忽略另一个文件，什么也改变不了。"
+  - "C 也不对：开发环境的 image 会泄露，而分开的 image 违背了构建一次。"
+- en: "If a question asks how to move an image to production, think: the same image, promoted unchanged. Environment values and authorized secrets are injected at startup. Never rebuild per environment, and never bake a secret."
+  zh:
+  - "题目问怎么把 image 发到生产环境，就想：同一个 image，原样晋级。"
+  - "各环境的值和获得授权的密钥，在启动时注入。"
+  - "绝不要按环境重新构建，也绝不要打进密钥。"
+S06:
+- en: "Now the third alarm. An autoscaler measures a signal, like processor use, applies a policy with a target, a minimum and a maximum, and asks for that many replicas. But downstream limits still bound the result."
+  zh:
+  - "现在看第三个告警。"
+  - "自动扩缩器测量一个信号，比如 CPU 使用率，再套用一个带目标值、最小值和最大值的策略，然后请求那么多个副本。"
+  - "但下游的限制仍然约束着结果。"
+- en: "The database accepts a fixed number of connections, here 100. Other clients already hold some: an admin console, a batch job."
+  zh:
+  - "数据库只接受固定数量的连接，这里是 100 个。"
+  - "其他客户端已经占了一些：一个管理控制台，一个批处理任务。"
+- en: "Each replica opens its own connections. In the course app, every API process creates its own database client at import. That client is ChromaDB, standing in here for a connection pool."
+  zh:
+  - "每个副本都开自己的连接。"
+  - "在课程的应用里，每个 API 进程在导入时都创建自己的数据库客户端。"
+  - "这个客户端是 ChromaDB，在这里就把它当作连接池。"
+- en: "The autoscaler adds replicas, each plugging its pool into free slots, until the slots run out. The next replica cannot connect, though its processor is idle."
+  zh:
+  - "自动扩缩器不断加副本，每个都把自己的连接池插进空闲插槽，直到插槽用完。"
+  - "下一个副本连不上，尽管它的 CPU 闲着。"
+- en: "So read the rule off the picture. 100 slots, minus 10 for the other clients, leaves 90. Divide by 20 per replica: 4.5. A replica cannot open half a pool, so round down to 4, and set 4 as the autoscaler's maximum."
+  zh:
+  - "所以，直接从图上读出规则。"
+  - "100 个插槽，减去其他客户端的 10 个，剩下 90 个。"
+  - "除以每个副本的 20：得 4.5。"
+  - "一个副本不能只开半个连接池，所以向下取整到 4，再把 4 设成自动扩缩器的最大值。"
+- en: "To go higher, add a connection pooler or shrink each pool, or buy a bigger database tier. Raising the maximum alone does not help."
+  zh:
+  - "要再往上加，就加一个连接池代理，或者把每个连接池调小，或者买更大的数据库规格。"
+  - "只调高最大值没有用。"
+- en: "Third question. Each replica opens 15 connections, other clients hold 30, and at peak you need 10 replicas. Which is the smallest database tier that works? Pause here if you want."
+  zh:
+  - "第三道题。"
+  - "每个副本开 15 个连接，其他客户端占了 30 个，高峰时你需要 10 个副本。"
+  - "能用的最小数据库规格是哪一个？"
+  - "想停一下的话，就在这里暂停。"
+- en: "B, 200. Ten pools of 15 make 150, plus 30 others: 180. That fits under 200."
+  zh:
+  - "选 B，200。"
+  - "十个 15 的连接池就是 150，加上其他的 30 个：180。"
+  - "200 装得下。"
+- en: "A, 150, holds the pools but forgets the other clients. C, 250, works, but costs more than it needs to. D: a higher maximum adds no connections, so the extra replicas fail."
+  zh:
+  - "A，150，装得下连接池，却忘了其他客户端。"
+  - "C，250，能用，但花了不必要的钱。"
+  - "D：更高的最大值不会增加连接，所以多出来的副本会失败。"
+- en: "If the question gives a database connection limit, think: the limit minus other clients, divided by connections per replica, rounded down. And set it as the maximum, because the autoscaler does not know the database limit."
+  zh:
+  - "题目给了数据库的连接数上限，就想：上限减去其他客户端，除以每个副本的连接数，向下取整。"
+  - "再把它设成最大值，因为自动扩缩器不知道数据库的上限。"
+S07:
+- en: "The last mechanism is where the data lives. Classify it first. Users and orders, linked by foreign keys, saved in transactions that are all or nothing: that is relational. Find the five most similar cheeses: that is vector search."
+  zh:
+  - "最后一个机制，是数据放在哪里。"
+  - "先分类。"
+  - "用户和订单，用外键关联，存在全有或全无的事务里：这就是关系型。"
+  - "找出最相似的五种奶酪：这就是向量检索。"
+- en: "Today the course runs ChromaDB as its own container. It is a vector store with metadata, and the team operates it: patches, backups and recovery are yours."
+  zh:
+  - "现在课程把 ChromaDB 单独跑在一个 container 里。"
+  - "它是带元数据的向量库，由团队自己运维：补丁、备份和恢复都归你管。"
+- en: "The lecture compares three homes: ChromaDB on a virtual machine, a PostgreSQL service with pgvector, and a vector search service. Vector chips land everywhere. Foreign keys and transactions bounce off the two vector-only homes."
+  zh:
+  - "课上比较了三个去处：虚拟机上的 ChromaDB，带 pgvector 的 PostgreSQL 服务，以及一个向量检索服务。"
+  - "向量卡片落进哪里都行。"
+  - "外键和事务会从两个只做向量的去处弹开。"
+- en: "You could run two databases. But then they must stay in sync, and one day an order exists in one while its embedding is missing from the other."
+  zh:
+  - "你也可以跑两个数据库。"
+  - "但那样它们就必须保持同步，总有一天，一个订单在一个库里存在，而它的 embedding 在另一个库里却没有。"
+- en: "Only PostgreSQL with pgvector takes every chip. The vector column sits beside the relational columns in the same table, and one query filters with SQL and orders by similarity."
+  zh:
+  - "只有带 pgvector 的 PostgreSQL 能接住所有卡片。"
+  - "向量列和关系型的列放在同一张表里，一条查询就能用 SQL 过滤，再按相似度排序。"
+- en: "Managed means the provider runs the hosts and the patching. Your team still owns the schema, queries, pooling and restore tests. On Google Cloud: Cloud SQL for PostgreSQL, or AlloyDB."
+  zh:
+  - "托管的意思是，云厂商负责运行主机和打补丁。"
+  - "你的团队仍然负责 schema、查询、连接池管理和恢复演练。"
+  - "在 Google Cloud 上，就是 Cloud SQL for PostgreSQL，或者 AlloyDB。"
+- en: "If the question says relational and vector needs in one managed database, think: PostgreSQL plus pgvector. Foreign keys, transactions and similarity search, in one place."
+  zh:
+  - "题目里出现一个托管数据库同时要满足关系型和向量的需求，就想：PostgreSQL 加 pgvector。"
+  - "外键、事务和相似度检索，都在一个地方。"
+S08:
+- en: "Seven rules for the quiz. One: localhost is the machine the code runs on, and 10 dot addresses are private. The public reaches a DNS name and a load balancer."
+  zh:
+  - "小测的七条规则。"
+  - "第一：localhost 是代码运行的那台机器，10 开头的地址是私有的。"
+  - "外界访问的是域名和负载均衡器。"
+  en_display:
+  - null
+  - "One: localhost is the machine the code runs on, and 10.x addresses are private."
+  - null
+- en: "Two: a VPC is an address block cut into subnets, and the most specific route wins. Three: NAT only carries connections that start inside. If it fails, internet calls fail, and the database still answers."
+  zh:
+  - "第二：VPC 是一个切成子网的地址块，最具体的路由胜出。"
+  - "第三：NAT 只转发从里面发起的连接。"
+  - "如果它坏了，互联网调用会失败，而数据库照样有回应。"
+- en: "Four: the browser is outside the VPC, so it calls the public HTTPS endpoint. Five: build one image, and inject settings and secrets when it starts."
+  zh:
+  - "第四：浏览器在 VPC 外面，所以它调用公网的 HTTPS endpoint。"
+  - "第五：只构建一个 image，在它启动时注入配置和密钥。"
+- en: "Six: maximum replicas is the connection limit minus other clients, divided by each pool, rounded down. Seven: relational plus vectors in one managed database means PostgreSQL with pgvector."
+  zh:
+  - "第六：最大副本数等于连接数上限减去其他客户端，除以每个连接池的连接数，向下取整。"
+  - "第七：关系型加向量、一个托管数据库，就是 PostgreSQL 加 pgvector。"
+- en: "Here is the whole picture, every alarm fixed. Static files from the edge, requests through the load balancer, tasks in the private app subnet, PostgreSQL in the data subnet, and NAT for calls out."
+  zh:
+  - "这就是全貌，每个告警都修好了。"
+  - "静态文件来自边缘节点，请求经过负载均衡器，任务在私有应用子网里，PostgreSQL 在数据子网里，NAT 负责往外的调用。"
+- en: "When a question looks hard, do what the lecture does last. Trace the request first. Good luck on the quiz."
+  zh:
+  - "题目看起来难的时候，就照课上最后做的那样做。"
+  - "先追踪请求。"
+  - "小测加油。"

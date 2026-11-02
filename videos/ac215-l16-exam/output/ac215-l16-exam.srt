@@ -1,0 +1,1274 @@
+1
+00:00:00,000 --> 00:00:01,600
+Launch day for the Cheese App.
+
+2
+00:00:01,920 --> 00:00:03,925
+Last week it ran on a laptop.
+
+3
+00:00:04,245 --> 00:00:08,064
+This morning it runs in the cloud,
+inside a private network.
+
+4
+00:00:08,384 --> 00:00:10,688
+Within an hour, three alarms go off.
+
+5
+00:00:10,933 --> 00:00:12,042
+First alarm.
+
+6
+00:00:12,362 --> 00:00:15,946
+Chat answers that call an outside
+language model time out.
+
+7
+00:00:16,266 --> 00:00:20,299
+Yet the saved chat history,
+read from the database, loads fine.
+
+8
+00:00:21,033 --> 00:00:22,164
+Second alarm.
+
+9
+00:00:22,484 --> 00:00:26,366
+The page loads for every visitor,
+but the Predict button fails.
+
+10
+00:00:26,686 --> 00:00:29,673
+On the developer's laptop,
+the same button worked.
+
+11
+00:00:30,417 --> 00:00:31,462
+Third alarm.
+
+12
+00:00:31,782 --> 00:00:36,262
+At 9 in the morning traffic doubles,
+and the autoscaler adds replicas.
+
+13
+00:00:36,582 --> 00:00:39,222
+The newest ones fail
+with too many connections,
+
+14
+00:00:39,222 --> 00:00:41,019
+while their processors sit idle.
+
+15
+00:00:41,867 --> 00:00:44,555
+And one problem nobody has noticed yet.
+
+16
+00:00:44,875 --> 00:00:48,331
+The production key is sitting
+inside the container image.
+
+17
+00:00:48,567 --> 00:00:52,599
+Each alarm is one mechanism
+from Lectures 10 and 16.
+
+18
+00:00:52,919 --> 00:00:56,586
+We go from addresses,
+to routes and NAT, to the browser,
+
+19
+00:00:56,586 --> 00:01:00,449
+to configuration, to capacity,
+and finally to the database.
+
+20
+00:01:00,683 --> 00:01:04,758
+The gray tag, top right, names
+the slides behind each idea.
+
+21
+00:01:05,078 --> 00:01:06,763
+Nothing here is a live run.
+
+22
+00:01:08,000 --> 00:01:09,344
+Start on the laptop.
+
+23
+00:01:09,664 --> 00:01:16,422
+In the course app,
+uvicorn starts FastAPI inside a container,
+
+24
+00:01:16,422 --> 00:01:19,413
+on host 0.0.0.0, port 9000.
+
+25
+00:01:19,733 --> 00:01:22,357
+That host means listen on every interface.
+
+26
+00:01:22,677 --> 00:01:25,378
+Bound to 127.0.0.1 instead,
+
+27
+00:01:25,378 --> 00:01:30,080
+it would answer only
+from inside the container.
+
+28
+00:01:30,817 --> 00:01:33,868
+The container is sealed off
+until you publish a port.
+
+29
+00:01:34,188 --> 00:01:40,310
+-p 9000:9000 is the tunnel
+from the laptop's door into the container's.
+
+30
+00:01:40,950 --> 00:01:45,943
+So the README says
+the app is served at localhost:3200,
+
+31
+00:01:45,943 --> 00:01:49,483
+and it calls the API at localhost:9000.
+
+32
+00:01:49,803 --> 00:01:53,921
+Localhost always means this machine:
+the one the code runs on.
+
+33
+00:01:54,167 --> 00:01:58,284
+An IP address picks the machine,
+and a port picks the service on it.
+
+34
+00:01:58,604 --> 00:02:10,508
+Addresses that start with 10, with 192.168,
+or with 172.16 through 172.31 are private.
+
+35
+00:02:10,828 --> 00:02:12,705
+The internet does not route them.
+
+36
+00:02:12,950 --> 00:02:15,126
+Move the same container into the cloud.
+
+37
+00:02:15,446 --> 00:02:20,630
+Inside the private network it gets
+the address 10.0.2.5.
+
+38
+00:02:20,950 --> 00:02:23,554
+A packet from the internet cannot reach it:
+
+39
+00:02:23,554 --> 00:02:26,582
+nobody out there has a route
+to a private address.
+
+40
+00:02:26,817 --> 00:02:28,630
+Lecture 10 sums it up.
+
+41
+00:02:28,950 --> 00:02:31,617
+On the laptop,
+your router keeps the world out.
+
+42
+00:02:31,937 --> 00:02:35,271
+In the cloud,
+the public finds you by a DNS name,
+
+43
+00:02:35,271 --> 00:02:39,489
+a firewall starts closed,
+and a load balancer lets traffic in.
+
+44
+00:02:39,733 --> 00:02:43,362
+The browser asks a resolver
+for api.example.com,
+
+45
+00:02:43,362 --> 00:02:46,385
+the resolver asks the authoritative DNS,
+
+46
+00:02:46,385 --> 00:02:50,165
+and the load
+balancer's public address comes back.
+
+47
+00:02:50,485 --> 00:02:55,008
+Then the browser connects
+to the load balancer on port 443.
+
+48
+00:02:55,250 --> 00:02:58,712
+The load balancer ends the HTTPS connection
+
+49
+00:02:58,712 --> 00:03:02,738
+and sends its own request
+to the task's port 8000.
+
+50
+00:03:03,058 --> 00:03:08,221
+There, a security group allows only
+the load balancer, on port 8000.
+
+51
+00:03:08,541 --> 00:03:12,035
+A stranger's packet bounces,
+and the reply goes back out,
+
+52
+00:03:12,035 --> 00:03:14,855
+because the firewall
+remembers the connection.
+
+53
+00:03:15,100 --> 00:03:18,769
+SSH reaches the machine,
+while clients reach the service.
+
+54
+00:03:19,089 --> 00:03:21,073
+The lecture draws Amazon names.
+
+55
+00:03:21,393 --> 00:03:24,591
+On Google Cloud the neighbors
+are Compute Engine,
+
+56
+00:03:24,591 --> 00:03:26,876
+Cloud Load Balancing and Cloud NAT.
+
+57
+00:03:27,117 --> 00:03:31,277
+If the question says localhost, think:
+the machine the code runs on.
+
+58
+00:03:31,597 --> 00:03:35,458
+A 10.x address:
+private, unreachable from the internet.
+
+59
+00:03:35,778 --> 00:03:40,686
+Public clients:
+a DNS name, the load balancer on 443,
+
+60
+00:03:40,686 --> 00:03:43,650
+then the private target on 8000.
+
+61
+00:03:45,783 --> 00:03:47,160
+Now the first alarm:
+
+62
+00:03:47,160 --> 00:03:50,946
+the language model times out,
+but the database answers.
+
+63
+00:03:51,266 --> 00:03:58,071
+A VPC is one block of addresses,
+here 10.0.0.0/16.
+
+64
+00:03:58,391 --> 00:04:01,122
+The slash counts the fixed bits out of 32.
+
+65
+00:04:01,442 --> 00:04:08,098
+/16 leaves 16 bits to vary:
+65,536 addresses.
+
+66
+00:04:08,418 --> 00:04:11,724
+/24 leaves 8: 256.
+
+67
+00:04:11,966 --> 00:04:14,313
+The lecture cuts it into three subnets.
+
+68
+00:04:14,633 --> 00:04:16,787
+A public one for the load balancer.
+
+69
+00:04:17,107 --> 00:04:20,201
+A private app subnet for the FastAPI tasks.
+
+70
+00:04:20,521 --> 00:04:22,974
+A private data subnet for the database.
+
+71
+00:04:23,216 --> 00:04:25,243
+Every subnet has a route table.
+
+72
+00:04:25,563 --> 00:04:28,677
+Both send the VPC's own block
+to the local route.
+
+73
+00:04:28,997 --> 00:04:35,013
+The only difference is the default row,
+0.0.0.0/0.
+
+74
+00:04:35,333 --> 00:04:38,285
+A public subnet sends it
+to the Internet Gateway,
+
+75
+00:04:38,285 --> 00:04:40,454
+a private subnet to the NAT Gateway.
+
+76
+00:04:40,700 --> 00:04:43,708
+A route alone is not enough, slide 13 adds:
+
+77
+00:04:43,708 --> 00:04:47,974
+the machine also needs a public address
+and an open firewall.
+
+78
+00:04:48,216 --> 00:04:53,842
+A packet for the database
+at 10.0.3.7 matches both rows,
+
+79
+00:04:53,842 --> 00:04:58,563
+and the most specific match wins:
+/16 beats /0.
+
+80
+00:04:58,883 --> 00:05:01,699
+The packet stays inside, on the local route.
+
+81
+00:05:02,433 --> 00:05:06,987
+A packet for the language model
+API matches only the default row,
+
+82
+00:05:06,987 --> 00:05:09,089
+so it goes to the NAT Gateway.
+
+83
+00:05:09,409 --> 00:05:12,910
+NAT rewrites the private source
+to its own public address,
+
+84
+00:05:12,910 --> 00:05:16,108
+writes the mapping in its notebook,
+and sends it out.
+
+85
+00:05:17,083 --> 00:05:21,072
+The reply comes back, NAT finds the line,
+and hands it to the task.
+
+86
+00:05:21,392 --> 00:05:25,062
+A packet nobody asked for has no line,
+so it is dropped.
+
+87
+00:05:25,382 --> 00:05:28,240
+NAT only carries connections
+that start inside.
+
+88
+00:05:28,560 --> 00:05:32,699
+Nothing uninvited gets in,
+which keeps the private subnet private.
+
+89
+00:05:32,933 --> 00:05:34,192
+Now NAT fails.
+
+90
+00:05:34,512 --> 00:05:37,178
+Every call to the internet
+stalls at the dead hop.
+
+91
+00:05:37,498 --> 00:05:40,701
+But the database packet
+still matches the local route,
+
+92
+00:05:40,701 --> 00:05:43,429
+and the load balancer
+still reaches the tasks.
+
+93
+00:05:43,749 --> 00:05:45,285
+That is the first alarm.
+
+94
+00:05:45,533 --> 00:05:46,685
+First question.
+
+95
+00:05:47,005 --> 00:05:50,310
+A worker in a private subnet
+downloads model weights
+
+96
+00:05:50,310 --> 00:05:52,431
+from a public website at startup,
+
+97
+00:05:52,431 --> 00:05:55,965
+and nobody on the internet
+may open a connection to it.
+
+98
+00:05:56,285 --> 00:05:58,141
+Where should its default route point?
+
+99
+00:05:58,461 --> 00:05:59,826
+Pause here if you want.
+
+100
+00:06:10,066 --> 00:06:11,066
+C.
+
+101
+00:06:11,154 --> 00:06:13,634
+NAT carries the worker's request out,
+
+102
+00:06:13,634 --> 00:06:17,319
+maps the reply back,
+and refuses uninvited connections.
+
+103
+00:06:17,639 --> 00:06:22,815
+A, the Internet Gateway, would download too,
+but it makes the subnet public,
+
+104
+00:06:22,815 --> 00:06:26,152
+a direct path in,
+guarded only by firewall rules.
+
+105
+00:06:26,400 --> 00:06:30,481
+B fails: the local route
+covers only the VPC's own block,
+
+106
+00:06:30,481 --> 00:06:32,629
+and the website is outside it.
+
+107
+00:06:32,949 --> 00:06:37,045
+D fails: a load balancer brings
+requests in to its targets.
+
+108
+00:06:37,365 --> 00:06:38,816
+It is not a way out.
+
+109
+00:06:39,650 --> 00:06:44,258
+If the question says private subnet, think:
+the default route goes to NAT.
+
+110
+00:06:44,578 --> 00:06:47,437
+NAT only carries connections
+that start inside.
+
+111
+00:06:47,757 --> 00:06:50,469
+And if NAT is down, internet calls fail,
+
+112
+00:06:50,469 --> 00:06:54,604
+while traffic inside the VPC,
+like the database, still works.
+
+113
+00:06:56,750 --> 00:06:59,331
+Now the second alarm, the failing button.
+
+114
+00:06:59,651 --> 00:07:01,486
+Loading a page is two trips.
+
+115
+00:07:01,806 --> 00:07:07,630
+First the browser downloads
+HTML, CSS and JavaScript from a static host.
+
+116
+00:07:07,950 --> 00:07:11,599
+Then that JavaScript runs
+on the visitor's own machine,
+
+117
+00:07:11,599 --> 00:07:12,793
+and calls the API.
+
+118
+00:07:13,033 --> 00:07:15,614
+So the browser lives outside the VPC.
+
+119
+00:07:15,934 --> 00:07:17,810
+Static files never enter it,
+
+120
+00:07:17,810 --> 00:07:21,697
+and every API request must come
+in through the front door,
+
+121
+00:07:21,697 --> 00:07:22,889
+the load balancer.
+
+122
+00:07:23,133 --> 00:07:24,306
+Now the course app.
+
+123
+00:07:24,626 --> 00:07:25,870
+In development,
+
+124
+00:07:25,870 --> 00:07:31,263
+the frontend takes its API address
+from NEXT_PUBLIC_BASE_API_URL,
+
+125
+00:07:31,263 --> 00:07:34,376
+and that variable says localhost:9000.
+
+126
+00:07:34,696 --> 00:07:38,856
+On the developer's laptop,
+that was exactly where the API ran.
+
+127
+00:07:39,100 --> 00:07:43,175
+Ship that to a visitor,
+and localhost means the visitor's laptop.
+
+128
+00:07:43,495 --> 00:07:46,161
+Nothing listens there, so the request fails.
+
+129
+00:07:46,481 --> 00:07:48,103
+That is the second alarm.
+
+130
+00:07:48,350 --> 00:07:54,510
+Swap in the private address, 10.0.2.5,
+and the request never reaches the VPC:
+
+131
+00:07:54,510 --> 00:07:59,870
+that address means something
+only inside the visitor's own network.
+
+132
+00:08:00,190 --> 00:08:05,609
+The public HTTPS name works:
+DNS, the load balancer, then a task.
+
+133
+00:08:06,600 --> 00:08:09,331
+The production file says just /api.
+
+134
+00:08:09,651 --> 00:08:13,128
+A relative path goes back
+to the host that served the page.
+
+135
+00:08:13,448 --> 00:08:19,172
+That works when one public front
+door serves both the page and the API,
+
+136
+00:08:19,172 --> 00:08:23,283
+the lecture's layout B,
+and routes /api to FastAPI.
+
+137
+00:08:23,517 --> 00:08:26,061
+Slide 24 writes that rule twice,
+
+138
+00:08:26,061 --> 00:08:30,194
+as an Nginx proxy_pass
+or a load balancer path rule.
+
+139
+00:08:30,514 --> 00:08:35,570
+With a separate static host, the code
+must name the public API address instead.
+
+140
+00:08:35,817 --> 00:08:41,278
+Notice where the private address lives:
+in the proxy's config, inside the VPC.
+
+141
+00:08:41,598 --> 00:08:43,113
+Never in browser code.
+
+142
+00:08:43,350 --> 00:08:44,481
+Two more facts.
+
+143
+00:08:44,801 --> 00:08:49,621
+NEXT_PUBLIC_ variables are compiled
+into the JavaScript at build time,
+
+144
+00:08:49,621 --> 00:08:54,166
+so every visitor downloads them:
+public by design, never a secret.
+
+145
+00:08:54,486 --> 00:08:56,354
+And NAT does not help here:
+
+146
+00:08:56,354 --> 00:08:59,883
+it only carries traffic
+that starts inside the VPC.
+
+147
+00:09:00,133 --> 00:09:04,062
+If the question says code
+that runs in the browser, think:
+
+148
+00:09:04,062 --> 00:09:05,552
+it is outside the VPC.
+
+149
+00:09:05,872 --> 00:09:11,226
+Call the public HTTPS endpoint,
+never localhost or a 10.x address.
+
+150
+00:09:11,546 --> 00:09:13,275
+NAT does not help inbound.
+
+151
+00:09:15,417 --> 00:09:18,425
+Now the quiet problem,
+the key inside the image.
+
+152
+00:09:18,745 --> 00:09:20,644
+First, how a release should work.
+
+153
+00:09:20,964 --> 00:09:24,110
+Build the image once,
+push it with a version tag,
+
+154
+00:09:24,110 --> 00:09:27,065
+and every deployment pulls
+that exact version.
+
+155
+00:09:27,385 --> 00:09:28,473
+No rebuild.
+
+156
+00:09:29,384 --> 00:09:31,112
+The image is immutable.
+
+157
+00:09:31,432 --> 00:09:34,859
+It moves from development
+to staging to production,
+
+158
+00:09:34,859 --> 00:09:36,808
+and its digest never changes.
+
+159
+00:09:37,128 --> 00:09:42,060
+What differs is the runtime values
+plugged in when the container starts:
+
+160
+00:09:42,060 --> 00:09:45,554
+LOG_LEVEL=debug in development,
+info in production.
+
+161
+00:09:45,800 --> 00:09:47,656
+Secrets follow the same rule.
+
+162
+00:09:47,976 --> 00:09:50,897
+A secret manager delivers the key
+at startup,
+
+163
+00:09:50,897 --> 00:09:53,949
+only to the workload
+that is authorized for it.
+
+164
+00:09:54,269 --> 00:09:58,878
+Never place secrets in source code,
+in container images, or in Git.
+
+165
+00:09:59,117 --> 00:10:01,613
+The course already does the laptop version.
+
+166
+00:10:01,933 --> 00:10:05,595
+The run script mounts the secrets folder
+at /secrets,
+
+167
+00:10:05,595 --> 00:10:11,192
+and points GOOGLE_APPLICATION_CREDENTIALS
+at the key's path inside the container.
+
+168
+00:10:11,434 --> 00:10:16,362
+The project and the ChromaDB host arrive
+as environment variables too.
+
+169
+00:10:16,682 --> 00:10:20,031
+The app reads them with os.environ
+when it starts.
+
+170
+00:10:20,300 --> 00:10:21,573
+The README says why:
+
+171
+00:10:21,573 --> 00:10:24,439
+we do not want any secure
+information in Git.
+
+172
+00:10:24,759 --> 00:10:28,258
+The key lives next to the repository,
+never inside it.
+
+173
+00:10:28,500 --> 00:10:29,716
+Now the wrong way.
+
+174
+00:10:30,036 --> 00:10:34,281
+Bake the key into the image, and anyone
+who can pull the image can read it.
+
+175
+00:10:34,601 --> 00:10:36,485
+Rotating it means a rebuild,
+
+176
+00:10:36,485 --> 00:10:41,130
+and per environment images mean
+what you tested is not what you ship.
+
+177
+00:10:41,367 --> 00:10:42,604
+Second question.
+
+178
+00:10:42,924 --> 00:10:45,922
+A teammate bakes an API key
+into the Dockerfile
+
+179
+00:10:45,922 --> 00:10:49,239
+and pushes the image
+to the team's private registry.
+
+180
+00:10:49,559 --> 00:10:51,010
+Which statement is true?
+
+181
+00:10:51,330 --> 00:10:52,695
+Pause here if you want.
+
+182
+00:11:02,934 --> 00:11:03,934
+D.
+
+183
+00:11:04,043 --> 00:11:08,285
+The image's settings and layers
+are readable by anyone who pulls it,
+
+184
+00:11:08,285 --> 00:11:10,593
+and changing the key means a rebuild.
+
+185
+00:11:10,913 --> 00:11:15,480
+A, the private registry,
+is still a long list of people and machines,
+
+186
+00:11:15,480 --> 00:11:17,995
+and the image is copied to every host.
+
+187
+00:11:18,234 --> 00:11:21,129
+B fails:
+the key is written in the Dockerfile,
+
+188
+00:11:21,129 --> 00:11:23,269
+which is in Git, and in the image.
+
+189
+00:11:23,589 --> 00:11:25,957
+Ignoring a different file changes nothing.
+
+190
+00:11:26,277 --> 00:11:31,332
+C fails too: development images leak,
+and separate images break build once.
+
+191
+00:11:32,167 --> 00:11:36,084
+If a question asks how
+to move an image to production, think:
+
+192
+00:11:36,084 --> 00:11:38,332
+the same image, promoted unchanged.
+
+193
+00:11:38,652 --> 00:11:39,863
+Environment values
+
+194
+00:11:39,863 --> 00:11:43,026
+and authorized secrets
+are injected at startup.
+
+195
+00:11:43,346 --> 00:11:46,738
+Never rebuild per environment,
+and never bake a secret.
+
+196
+00:11:48,883 --> 00:11:50,291
+Now the third alarm.
+
+197
+00:11:50,611 --> 00:11:54,264
+An autoscaler measures a signal,
+like processor use,
+
+198
+00:11:54,264 --> 00:11:56,442
+applies a policy with a target,
+
+199
+00:11:56,442 --> 00:12:00,446
+a minimum and a maximum,
+and asks for that many replicas.
+
+200
+00:12:00,766 --> 00:12:03,347
+But downstream limits
+still bound the result.
+
+201
+00:12:03,583 --> 00:12:07,572
+The database accepts a fixed number
+of connections, here 100.
+
+202
+00:12:07,892 --> 00:12:12,223
+Other clients already hold some:
+an admin console, a batch job.
+
+203
+00:12:12,466 --> 00:12:14,962
+Each replica opens its own connections.
+
+204
+00:12:15,282 --> 00:12:21,021
+In the course app, every API process
+creates its own database client at import.
+
+205
+00:12:21,341 --> 00:12:25,501
+That client is ChromaDB,
+standing in here for a connection pool.
+
+206
+00:12:25,750 --> 00:12:27,733
+The autoscaler adds replicas,
+
+207
+00:12:27,733 --> 00:12:32,107
+each plugging its pool into free slots,
+until the slots run out.
+
+208
+00:12:32,427 --> 00:12:36,054
+The next replica cannot connect,
+though its processor is idle.
+
+209
+00:12:36,300 --> 00:12:38,156
+So read the rule off the picture.
+
+210
+00:12:38,476 --> 00:12:42,487
+100 slots,
+minus 10 for the other clients, leaves 90.
+
+211
+00:12:42,807 --> 00:12:45,985
+Divide by 20 per replica: 4.5.
+
+212
+00:12:46,305 --> 00:12:50,237
+A replica cannot open half a pool,
+so round down to 4,
+
+213
+00:12:50,237 --> 00:12:53,004
+and set 4 as the autoscaler's maximum.
+
+214
+00:12:53,250 --> 00:12:56,976
+To go higher,
+add a connection pooler or shrink each pool,
+
+215
+00:12:56,976 --> 00:12:58,903
+or buy a bigger database tier.
+
+216
+00:12:59,223 --> 00:13:01,655
+Raising the maximum alone does not help.
+
+217
+00:13:01,900 --> 00:13:03,052
+Third question.
+
+218
+00:13:03,372 --> 00:13:05,895
+Each replica opens 15 connections,
+
+219
+00:13:05,895 --> 00:13:10,049
+other clients hold 30,
+and at peak you need 10 replicas.
+
+220
+00:13:10,369 --> 00:13:12,972
+Which is the smallest database tier
+that works?
+
+221
+00:13:13,292 --> 00:13:14,657
+Pause here if you want.
+
+222
+00:13:24,900 --> 00:13:26,244
+B, 200.
+
+223
+00:13:26,564 --> 00:13:31,748
+Ten pools of 15 make 150,
+plus 30 others: 180.
+
+224
+00:13:32,068 --> 00:13:33,753
+That fits under 200.
+
+225
+00:13:34,000 --> 00:13:38,203
+A, 150, holds the pools
+but forgets the other clients.
+
+226
+00:13:38,523 --> 00:13:42,405
+C, 250, works,
+but costs more than it needs to.
+
+227
+00:13:42,725 --> 00:13:47,674
+D: a higher maximum adds no connections,
+so the extra replicas fail.
+
+228
+00:13:48,516 --> 00:13:52,289
+If the question gives a database
+connection limit, think:
+
+229
+00:13:52,289 --> 00:13:54,299
+the limit minus other clients,
+
+230
+00:13:54,299 --> 00:13:57,583
+divided by connections per replica,
+rounded down.
+
+231
+00:13:57,903 --> 00:13:59,506
+And set it as the maximum,
+
+232
+00:13:59,506 --> 00:14:02,959
+because the autoscaler
+does not know the database limit.
+
+233
+00:14:05,100 --> 00:14:07,852
+The last mechanism is where the data lives.
+
+234
+00:14:08,172 --> 00:14:09,623
+Classify it first.
+
+235
+00:14:09,943 --> 00:14:12,804
+Users and orders, linked by foreign keys,
+
+236
+00:14:12,804 --> 00:14:17,409
+saved in transactions that are all
+or nothing: that is relational.
+
+237
+00:14:17,729 --> 00:14:21,420
+Find the five most similar cheeses:
+that is vector search.
+
+238
+00:14:21,667 --> 00:14:25,230
+Today the course runs ChromaDB
+as its own container.
+
+239
+00:14:25,550 --> 00:14:29,634
+It is a vector store with metadata,
+and the team operates it:
+
+240
+00:14:29,634 --> 00:14:32,312
+patches, backups and recovery are yours.
+
+241
+00:14:32,550 --> 00:14:37,222
+The lecture compares three homes:
+ChromaDB on a virtual machine,
+
+242
+00:14:37,222 --> 00:14:41,894
+a PostgreSQL service with pgvector,
+and a vector search service.
+
+243
+00:14:42,214 --> 00:14:44,006
+Vector chips land everywhere.
+
+244
+00:14:44,326 --> 00:14:48,763
+Foreign keys and transactions
+bounce off the two vector-only homes.
+
+245
+00:14:49,000 --> 00:14:50,941
+You could run two databases.
+
+246
+00:14:51,261 --> 00:14:53,122
+But then they must stay in sync,
+
+247
+00:14:53,122 --> 00:14:56,301
+and one day an order exists in one
+while its embedding
+
+248
+00:14:56,301 --> 00:14:57,832
+is missing from the other.
+
+249
+00:14:58,067 --> 00:15:02,035
+Only PostgreSQL
+with pgvector takes every chip.
+
+250
+00:15:02,355 --> 00:15:07,293
+The vector column sits beside
+the relational columns in the same table,
+
+251
+00:15:07,293 --> 00:15:11,187
+and one query filters with SQL
+and orders by similarity.
+
+252
+00:15:11,433 --> 00:15:14,804
+Managed means the provider runs the hosts
+and the patching.
+
+253
+00:15:15,124 --> 00:15:19,369
+Your team still owns the schema,
+queries, pooling and restore tests.
+
+254
+00:15:19,689 --> 00:15:24,809
+On Google Cloud:
+Cloud SQL for PostgreSQL, or AlloyDB.
+
+255
+00:15:25,050 --> 00:15:31,112
+If the question says relational and vector
+needs in one managed database, think:
+
+256
+00:15:31,112 --> 00:15:33,007
+PostgreSQL plus pgvector.
+
+257
+00:15:33,327 --> 00:15:37,381
+Foreign keys, transactions
+and similarity search, in one place.
+
+258
+00:15:39,517 --> 00:15:41,117
+Seven rules for the quiz.
+
+259
+00:15:41,437 --> 00:15:44,830
+One:
+localhost is the machine the code runs on,
+
+260
+00:15:44,830 --> 00:15:47,069
+and 10.x addresses are private.
+
+261
+00:15:47,389 --> 00:15:50,866
+The public reaches a DNS name
+and a load balancer.
+
+262
+00:15:51,100 --> 00:15:54,399
+Two:
+a VPC is an address block cut into subnets,
+
+263
+00:15:54,399 --> 00:15:56,668
+and the most specific route wins.
+
+264
+00:15:56,988 --> 00:16:00,231
+Three: NAT only carries connections
+that start inside.
+
+265
+00:16:00,551 --> 00:16:04,647
+If it fails, internet calls fail,
+and the database still answers.
+
+266
+00:16:04,884 --> 00:16:10,879
+Four: the browser is outside the VPC,
+so it calls the public HTTPS endpoint.
+
+267
+00:16:11,199 --> 00:16:15,572
+Five: build one image, and inject settings
+and secrets when it starts.
+
+268
+00:16:15,817 --> 00:16:20,529
+Six: maximum replicas
+is the connection limit minus other clients,
+
+269
+00:16:20,529 --> 00:16:23,028
+divided by each pool, rounded down.
+
+270
+00:16:23,348 --> 00:16:27,590
+Seven: relational plus vectors
+in one managed database
+
+271
+00:16:27,590 --> 00:16:30,025
+means PostgreSQL with pgvector.
+
+272
+00:16:30,267 --> 00:16:33,083
+Here is the whole picture,
+every alarm fixed.
+
+273
+00:16:33,403 --> 00:16:37,696
+Static files from the edge,
+requests through the load balancer,
+
+274
+00:16:37,696 --> 00:16:39,903
+tasks in the private app subnet,
+
+275
+00:16:39,903 --> 00:16:43,558
+PostgreSQL in the data subnet,
+and NAT for calls out.
+
+276
+00:16:43,800 --> 00:16:47,021
+When a question looks hard,
+do what the lecture does last.
+
+277
+00:16:47,341 --> 00:16:48,941
+Trace the request first.
+
+278
+00:16:49,261 --> 00:16:50,606
+Good luck on the quiz.
+
