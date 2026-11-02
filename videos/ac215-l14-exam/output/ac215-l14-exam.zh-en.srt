@@ -1,0 +1,1249 @@
+1
+00:00:00,000 --> 00:00:03,371
+这是一个叫 translation-audio 的 Cloud Run job
+Here is a Cloud Run job called translation-audio.
+
+2
+00:00:03,691 --> 00:00:08,277
+它用的 image 和一个运行得好好的翻译 web 应用一样
+It uses the same image as a translation web app that works perfectly.
+
+3
+00:00:08,597 --> 00:00:11,051
+我们点 Execute，这个 job 就开始了
+We press Execute, and the job starts.
+
+4
+00:00:11,733 --> 00:00:12,984
+几分钟过去了
+Minutes pass.
+
+5
+00:00:13,034 --> 00:00:17,365
+输出 bucket 里什么也没有，这个 job 也从来不说自己完成了
+Nothing lands in the output bucket, and the job never says it is done.
+
+6
+00:00:17,685 --> 00:00:20,586
+它一头撞上我们设的任务超时
+It runs straight into the task timeout we gave it.
+
+7
+00:00:20,906 --> 00:00:23,232
+5 分钟，平台把它停掉了
+5 minutes, and the platform stops it.
+
+8
+00:00:23,467 --> 00:00:26,163
+线索在 Dockerfile 的最后一行
+The clue is the last line of the Dockerfile:
+
+9
+00:00:26,163 --> 00:00:28,736
+它的默认命令会启动 web 服务器
+its default command starts the web server.
+
+10
+00:00:29,056 --> 00:00:32,792
+README 的故障排查表甚至列出了这个症状
+The README's troubleshooting table even lists the symptom:
+
+11
+00:00:32,792 --> 00:00:35,883
+一个 job 启动了服务器，而不是跑完
+a job that starts a server instead of finishing.
+
+12
+00:00:36,117 --> 00:00:37,802
+同一个 image，同一份代码
+Same image, same code.
+
+13
+00:00:38,122 --> 00:00:41,386
+那为什么 web 应用能用，这个 job 却永远不结束？
+So why does the web app work, while the job never ends?
+
+14
+00:00:41,706 --> 00:00:43,306
+先记着这个问题
+Hold that question.
+
+15
+00:00:44,817 --> 00:00:48,081
+对这次小测来说，这一讲归结为五个考点
+For the quiz, this lecture comes down to five ideas.
+
+16
+00:00:48,401 --> 00:00:50,001
+是 service 还是 job
+Service or job.
+
+17
+00:00:50,065 --> 00:00:51,729
+谁为空闲时间付钱
+Who pays for idle time.
+
+18
+00:00:52,049 --> 00:00:53,756
+部署时你要交出什么
+What you hand over to deploy.
+
+19
+00:00:54,076 --> 00:00:56,508
+谁能调用你的代码，它又以谁的身份运行
+Who may call your code, and who it runs as.
+
+20
+00:00:56,828 --> 00:01:01,414
+还有模型 endpoint：预处理放在哪里，它调用哪个函数
+And the model endpoint: where preprocessing lives, and which function it calls.
+
+21
+00:01:01,650 --> 00:01:06,109
+右上角的灰色标签，标出每个考点背后的那页课件
+The gray tag, top right, names the lecture slide behind each idea.
+
+22
+00:01:10,450 --> 00:01:13,442
+课上说，Cloud Run 可以把一个 container
+The lecture says Cloud Run runs a container
+
+23
+00:01:13,442 --> 00:01:15,042
+作为 service 或 job 来运行
+as a service or a job.
+
+24
+00:01:15,293 --> 00:01:16,900
+这个演示应用两种都有
+The demo app shows both:
+
+25
+00:01:16,900 --> 00:01:20,114
+一个 image，两个启动命令，serve 或 batch
+one image, two startup commands, serve or batch.
+
+26
+00:01:20,350 --> 00:01:23,047
+这个 serve 命令启动 gunicorn，一个 web 服务器
+Serve starts gunicorn, a web server,
+
+27
+00:01:23,047 --> 00:01:26,643
+跑在 Cloud Run 给它的 port 上，默认是 8080
+on the port Cloud Run gives it, 8080 by default.
+
+28
+00:01:26,963 --> 00:01:30,057
+然后它就等着，来一个请求就回答一个
+Then it waits, and answers each request that arrives.
+
+29
+00:01:30,650 --> 00:01:32,250
+这种形状就是 service
+That shape is a service.
+
+30
+00:01:32,485 --> 00:01:38,693
+它有 URL，流量上来时加实例，流量停了可以缩容到零
+It has a URL, adds instances when traffic rises, and can scale to zero when it stops.
+
+31
+00:01:39,013 --> 00:01:42,362
+它本来就不会结束：监听就是它的本职工作
+It never finishes on purpose: listening is its job.
+
+32
+00:01:42,600 --> 00:01:44,200
+而 batch 是另一种形状
+Batch has a different shape.
+
+33
+00:01:44,413 --> 00:01:49,875
+它读入那段文字，翻译它，生成语音，保存文件，然后退出
+It reads the passage, translates it, generates speech, saves the files, and exits.
+
+34
+00:01:50,195 --> 00:01:52,924
+如果某一步失败，它以退出码 1 退出
+If a step fails, it exits with status 1,
+
+35
+00:01:52,924 --> 00:01:56,403
+所以这次执行显示失败，而不是假的成功
+so the execution shows failed, not a false success.
+
+36
+00:01:56,650 --> 00:02:01,450
+README 把这叫做 job：没有 URL，没有东西在等请求
+The README calls this a job: no URL, nothing waiting for requests.
+
+37
+00:02:01,770 --> 00:02:04,501
+有东西启动它，它就一直跑到完成
+Something starts it, and it runs to completion.
+
+38
+00:02:04,750 --> 00:02:06,023
+现在回到开头
+Now the hook.
+
+39
+00:02:06,073 --> 00:02:09,550
+这个 job 继承了 image 的默认命令，也就是 serve
+The job inherited the image's default command, serve,
+
+40
+00:02:09,550 --> 00:02:13,945
+所以它启动了 web 服务器，等着永远不会来的请求
+so it started a web server and waited for requests that never come.
+
+41
+00:02:14,265 --> 00:02:17,401
+修复：命令用 python，再加上 batch 参数
+The fix: the command python, with the batch arguments.
+
+42
+00:02:17,721 --> 00:02:20,067
+同一个 image，现在时间条有了尽头
+Same image, and now the strip ends.
+
+43
+00:02:20,317 --> 00:02:21,824
+谁来按开始？
+Who presses start?
+
+44
+00:02:21,874 --> 00:02:24,050
+在 README 里，是你点 Execute
+In the README, you click Execute.
+
+45
+00:02:24,370 --> 00:02:27,940
+如果要每晚运行，常用的触发器是 Cloud Scheduler
+For a nightly run, the usual trigger is Cloud Scheduler,
+
+46
+00:02:27,940 --> 00:02:29,917
+不过这个 README 没有用它
+which this README does not use.
+
+47
+00:02:30,617 --> 00:02:31,847
+来试一道
+Try one.
+
+48
+00:02:31,897 --> 00:02:35,780
+一个 container 给新文档建索引，然后退出，每小时一次
+A container indexes new documents and exits, once an hour.
+
+49
+00:02:36,100 --> 00:02:38,595
+看生命周期，别看产品名
+Read the lifecycle, not the product names.
+
+50
+00:02:49,933 --> 00:02:52,942
+选 B，按 Cloud Scheduler 时间表运行的 job
+B, a job on a Cloud Scheduler timetable:
+
+51
+00:02:52,942 --> 00:02:56,930
+它跑到完成，两次运行之间不花钱
+it runs to completion and costs nothing between runs.
+
+52
+00:02:57,250 --> 00:02:59,441
+A 整个小时都在为一个实例付钱
+A pays for an instance all hour,
+
+53
+00:02:59,441 --> 00:03:03,480
+而且空闲的 service 的 CPU 会被节流，所以循环会卡住
+and an idle service's CPU is throttled, so the loop stalls.
+
+54
+00:03:03,800 --> 00:03:07,960
+C 违反了 service 的约定：一个退出了的实例就是崩溃了
+C breaks the service contract: an instance that exits has crashed.
+
+55
+00:03:08,280 --> 00:03:11,928
+D 能用，但这台 VM 整个小时都要付钱，哪怕它闲着
+D works, but the VM is paid for all hour while it idles.
+
+56
+00:03:12,248 --> 00:03:13,891
+为什么这很重要，下面就讲
+Why that matters is next.
+
+57
+00:03:14,133 --> 00:03:18,800
+所以规则是：如果题目说它运行、写出结果然后退出
+So the rule: if the question says it runs, writes its output and exits,
+
+58
+00:03:18,800 --> 00:03:21,429
+或者说它每晚运行，选 job
+or that it runs every night, pick a job.
+
+59
+00:03:21,749 --> 00:03:24,596
+如果题目说它回答请求、有 URL
+If it says it answers requests, has a URL,
+
+60
+00:03:24,596 --> 00:03:27,104
+或者监听一个 port，选 service
+or listens on a port, pick a service.
+
+61
+00:03:32,383 --> 00:03:35,562
+课上承诺，只有代码运行时你才付钱
+The lecture promises you pay only while your code runs.
+
+62
+00:03:35,882 --> 00:03:38,698
+我们把它说准确：两个计价器，一天
+Let's make that exact: two meters, one day.
+
+63
+00:03:39,018 --> 00:03:40,767
+黄色刻度是请求
+The yellow ticks are requests.
+
+64
+00:03:41,016 --> 00:03:43,128
+上面一行是一台虚拟机
+The top row is a virtual machine.
+
+65
+00:03:43,448 --> 00:03:47,032
+它的计价器从开机走到关机，不管有没有请求
+Its meter runs from boot to shutdown, requests or not.
+
+66
+00:03:47,352 --> 00:03:50,894
+金色阴影是空闲时间，这些你全部都要付钱
+The gold shading is idle time, and you pay for all of it.
+
+67
+00:03:51,133 --> 00:03:53,165
+下面一行是一个函数
+The bottom row is a function,
+
+68
+00:03:53,165 --> 00:03:58,089
+或者一个按请求计费、最小实例数为 0 的 Cloud Run service
+or a Cloud Run service with request-based billing and minimum instances 0,
+
+69
+00:03:58,089 --> 00:03:59,689
+和 README 里一样
+as in the README.
+
+70
+00:03:59,858 --> 00:04:04,040
+它的计价器只随调用次数和每次运行多长时间而动
+Its meter moves only with invocations and how long each one runs.
+
+71
+00:04:04,450 --> 00:04:07,138
+现在把请求之间的安静间隔拉长
+Now stretch the quiet gaps between requests.
+
+72
+00:04:07,458 --> 00:04:12,002
+VM 的计价器往上涨，因为空闲的小时仍然是预配的小时
+The VM meter grows, because idle hours are still provisioned hours.
+
+73
+00:04:12,322 --> 00:04:16,482
+函数的计价器完全不动：没有请求，就没有费用
+The function meter does not move at all: no requests, no charge.
+
+74
+00:04:16,716 --> 00:04:21,879
+零空闲成本是有代价的，课件第 16 页点出了它：冷启动
+Zero idle cost has a price, and slide 16 names it: the cold start.
+
+75
+00:04:22,199 --> 00:04:26,273
+安静一阵之后，第一个请求要等一个实例启动
+After a quiet stretch, the first request waits while an instance starts.
+
+76
+00:04:26,593 --> 00:04:29,367
+README 的办法是最小实例数
+The README's remedy is minimum instances.
+
+77
+00:04:29,687 --> 00:04:33,753
+把它设成 1，就有一个热实例一直开着等第一个请求
+Set it to 1, and a warm instance stays on for the first request,
+
+78
+00:04:33,753 --> 00:04:35,468
+它自己的计价器也在走
+with its own meter running.
+
+79
+00:04:35,716 --> 00:04:38,959
+这个常驻实例现在就落在 VM 那一行
+That always-on instance now sits in the VM row.
+
+80
+00:04:39,279 --> 00:04:42,237
+下一讲的 Vertex AI endpoint 也一样
+So does next lecture's Vertex AI endpoint:
+
+81
+00:04:42,237 --> 00:04:49,562
+它的部署调用要求最小副本数为 1，README 说这就是花钱的部分
+its deploy call asks for a minimum replica count of 1, which the README calls the part that costs money.
+
+82
+00:04:49,800 --> 00:04:51,400
+换个新情况试试
+Test it on a new case.
+
+83
+00:04:51,613 --> 00:04:55,453
+请求数翻倍，每个一样长，天数不变
+Twice as many requests, each just as long, in the same days.
+
+84
+00:04:55,773 --> 00:04:57,373
+哪份账单会变？
+Which bill changes?
+
+85
+00:05:08,000 --> 00:05:09,600
+选 B，只有函数的
+B, only the function's.
+
+86
+00:05:09,920 --> 00:05:14,133
+看：每个请求一分为二，函数的计价器往上涨
+Watch: every request splits in two, and the function meter climbs,
+
+87
+00:05:14,133 --> 00:05:17,643
+因为每次调用和它的运行时间都要计费
+since every invocation and its running time are billed.
+
+88
+00:05:17,963 --> 00:05:24,405
+VM 的计价器不动，因为它按预配的时长计费：A 说反了，C 是错的
+The VM meter does not move, because it bills provisioned hours: A is backwards, and C is wrong.
+
+89
+00:05:24,725 --> 00:05:27,861
+D 把没有最低收费和免费干活混为一谈
+D confuses no minimum charge with free work.
+
+90
+00:05:28,100 --> 00:05:30,511
+所以规则不是：serverless 很便宜
+So the rule is not, serverless is cheap.
+
+91
+00:05:30,831 --> 00:05:33,284
+规则是：有没有什么东西一直开着？
+The rule is: is anything always on?
+
+92
+00:05:33,604 --> 00:05:37,124
+空闲时间只影响常驻资源的账单
+Idle time moves only the bills of always-on things.
+
+93
+00:05:37,444 --> 00:05:41,241
+请求数和时长只影响按用量计费的账单
+Request count and duration move only the pay-per-use bill.
+
+94
+00:05:45,983 --> 00:05:47,732
+接下来，你要交出什么
+Next, what you hand over.
+
+95
+00:05:48,052 --> 00:05:51,426
+课上用四种方式部署同一个翻译应用
+The lecture deploys one translate app four ways:
+
+96
+00:05:51,426 --> 00:05:55,220
+虚拟机或 serverless，代码文件或 container
+virtual machine or serverless, code file or container.
+
+97
+00:05:55,540 --> 00:05:57,951
+前面几讲填好了 VM 那一行
+Earlier lectures filled the VM row.
+
+98
+00:05:58,271 --> 00:06:00,276
+今天填 serverless 那一行
+Today fills the serverless row.
+
+99
+00:06:00,516 --> 00:06:03,140
+部署函数，你交出一个源文件
+For a function you hand over a source file,
+
+100
+00:06:03,140 --> 00:06:05,337
+它的 requirements 文件，再加一个名字
+its requirements file, and one name.
+
+101
+00:06:05,657 --> 00:06:07,453
+这个文件是 main.py
+The file is main.py:
+
+102
+00:06:07,453 --> 00:06:10,506
+一个叫 hello 下划线 http 的 HTTP 处理函数
+an HTTP handler called hello_http,
+
+103
+00:06:10,506 --> 00:06:15,983
+它从请求里读出文本和两个语言代码
+which reads the text and two language codes from the request.
+
+104
+00:06:16,233 --> 00:06:20,542
+这个名字就是入口点：框架应该调用的那个 Python 函数
+That name is the entry point: the Python function the framework should call.
+
+105
+00:06:20,862 --> 00:06:23,486
+不是文件名，也不是 service 名称
+Not the file name, and not the service name.
+
+106
+00:06:23,733 --> 00:06:25,304
+然后由 Google 构建
+Then Google builds.
+
+107
+00:06:25,354 --> 00:06:30,345
+Cloud Build 安装依赖，配置 Functions Framework
+Cloud Build installs the requirements, configures the Functions Framework,
+
+108
+00:06:30,345 --> 00:06:33,312
+再把一个 image 发布到 Artifact Registry
+and publishes an image to Artifact Registry.
+
+109
+00:06:33,632 --> 00:06:37,216
+这只在构建时发生一次，不是每个请求都来一次
+This happens once, at build time, not on every request.
+
+110
+00:06:37,450 --> 00:06:39,989
+框架靠这个名字找到你的函数
+The framework finds your function by that name.
+
+111
+00:06:40,309 --> 00:06:44,383
+入口点填 main，就找不到任何叫 main 的东西
+Type main as the entry point, and there is nothing called main to find.
+
+112
+00:06:44,703 --> 00:06:48,159
+函数构建失败，构建日志会告诉你原因
+The function build fails, and its build logs tell you why.
+
+113
+00:06:48,400 --> 00:06:52,624
+课件第 11 页说，运行函数不用管理 container
+Slide 11 says a function runs without managing containers.
+
+114
+00:06:52,944 --> 00:06:55,973
+你不用管理它，但 Google 照样会构建一个
+You do not manage one, but Google still builds one.
+
+115
+00:06:56,293 --> 00:06:59,984
+课件里的 Cloud Functions 现在叫 Cloud Run functions
+And the slides' Cloud Functions are now Cloud Run functions.
+
+116
+00:07:00,233 --> 00:07:01,893
+部署 Cloud Run service
+For a Cloud Run service,
+
+117
+00:07:01,893 --> 00:07:04,798
+你交出一个现成的 image，给出它的 URL
+you hand over a finished image by its URL.
+
+118
+00:07:05,118 --> 00:07:08,852
+部署它什么也不构建：这个 image 事先就构建好了
+Deploying it builds nothing: the image was built beforehand.
+
+119
+00:07:09,172 --> 00:07:13,244
+它的 Dockerfile 选定了基础 Python、默认 port 8080
+Its Dockerfile picks the base Python, the default port, 8080,
+
+120
+00:07:13,244 --> 00:07:14,846
+以及启动命令
+and the startup command.
+
+121
+00:07:15,166 --> 00:07:16,766
+这三样都由你控制
+You control all three.
+
+122
+00:07:16,900 --> 00:07:19,844
+两者都通过 HTTPS URL 调用
+Both are called through an HTTPS URL.
+
+123
+00:07:20,164 --> 00:07:24,516
+函数通过查询字符串接收新的输入，不用重新部署
+The function takes new inputs through its query string, with no redeploy.
+
+124
+00:07:25,950 --> 00:07:30,323
+两者最后都是同一样东西：Cloud Run 上的一个 container 实例
+Both end as the same thing: a container instance on Cloud Run.
+
+125
+00:07:30,643 --> 00:07:33,331
+函数就是一个不用你自己写的 container
+A function is a container you did not write.
+
+126
+00:07:33,651 --> 00:07:36,873
+在小测上，源代码加入口点，就是函数
+On the quiz, source plus an entry point means a function.
+
+127
+00:07:37,193 --> 00:07:40,904
+你自己的 image，或者你自己的启动命令，就是 service
+Your own image, or your own startup command, means a service.
+
+128
+00:07:46,150 --> 00:07:49,244
+每个部署好的 service 都面对两个权限问题
+Every deployed service faces two permission questions,
+
+129
+00:07:49,244 --> 00:07:51,249
+README 把它们分开处理
+and the README keeps them separate.
+
+130
+00:07:51,569 --> 00:07:53,169
+谁能调用我们的公开应用？
+Who may call our public app?
+
+131
+00:07:53,446 --> 00:07:55,387
+运行中的应用又能访问什么？
+And what may the running app access?
+
+132
+00:07:55,633 --> 00:07:57,254
+左边的门是调用方
+The left door is the caller.
+
+133
+00:07:57,574 --> 00:08:01,308
+允许公开访问时，任何浏览器的请求都能进来
+With public access allowed, any browser's request gets in.
+
+134
+00:08:01,628 --> 00:08:06,034
+不允许的话，没有权限的调用方会被 403 挡回去
+Without it, a caller with no permission is turned away with a 403,
+
+135
+00:08:06,034 --> 00:08:07,836
+你的代码根本不会运行
+before your code even runs.
+
+136
+00:08:08,083 --> 00:08:10,920
+右边的门是你的代码向外调用时的身份
+The right door is who your code is when it calls out.
+
+137
+00:08:11,240 --> 00:08:14,204
+这个 web 应用戴着服务账号工牌
+The web app wears a service account badge,
+
+138
+00:08:14,204 --> 00:08:17,097
+translation-demo-runtime，有两个角色
+translation-demo-runtime, with two roles:
+
+139
+00:08:17,097 --> 00:08:20,414
+Agent Platform User 和 Service Usage Consumer
+Agent Platform User and Service Usage Consumer.
+
+140
+00:08:20,734 --> 00:08:22,910
+你不用创建或下载密钥
+You do not create or download a key.
+
+141
+00:08:23,150 --> 00:08:25,838
+代码只是请求默认凭据
+The code just asks for default credentials,
+
+142
+00:08:25,838 --> 00:08:30,339
+而在 Cloud Run 上平台会把所挂账号的 token 交给它
+and on Cloud Run the platform hands it a token for the attached account.
+
+143
+00:08:30,659 --> 00:08:32,259
+哪里都没有密钥文件
+No key file anywhere.
+
+144
+00:08:32,467 --> 00:08:34,067
+还有一个箭头，来自你
+One more arrow, from you.
+
+145
+00:08:34,323 --> 00:08:36,491
+要把这个工牌挂到一个 service 上
+To attach that badge to a service,
+
+146
+00:08:36,491 --> 00:08:39,742
+你自己的身份需要这个账号的 Service Account User 角色
+your own identity needs Service Account User on it.
+
+147
+00:08:40,062 --> 00:08:44,413
+这是部署权限，和工牌本身能做什么是两回事
+That is a deployment permission, separate from what the badge itself may do.
+
+148
+00:08:44,650 --> 00:08:46,442
+这个 job 有自己的工牌
+The job gets its own badge.
+
+149
+00:08:46,762 --> 00:08:49,503
+它有同样的两个 Agent Platform 角色
+It has the same two Agent Platform roles,
+
+150
+00:08:49,503 --> 00:08:52,577
+另外在输入 bucket 上有 Storage Object Viewer
+plus Storage Object Viewer on the input bucket
+
+151
+00:08:52,577 --> 00:08:55,786
+在输出 bucket 上有 Storage Object Creator
+and Storage Object Creator on the output bucket.
+
+152
+00:08:56,106 --> 00:08:58,757
+这个 web 应用的账号不需要任何 bucket 角色
+The web app's account needs no bucket roles,
+
+153
+00:08:58,757 --> 00:09:01,589
+因为它的音频直接发给浏览器
+because its audio goes straight to the browser.
+
+154
+00:09:01,909 --> 00:09:03,509
+一个工作负载一个工牌
+One badge per workload.
+
+155
+00:09:03,733 --> 00:09:07,360
+课件第 16 页提醒，serverless 更难调试
+Slide 16 warns that serverless is harder to debug.
+
+156
+00:09:07,680 --> 00:09:12,305
+README 说了去哪看：函数构建失败看构建日志
+The README says where to look: build logs when a function build fails,
+
+157
+00:09:12,305 --> 00:09:16,533
+请求失败看 service 日志，还有 job 的执行日志
+service logs when a request fails, and the job's execution logs.
+
+158
+00:09:16,853 --> 00:09:19,243
+构建成功不代表它能用
+A finished build is not proof that it works.
+
+159
+00:09:19,483 --> 00:09:22,392
+规则是：公开访问回答谁能调用
+The rule: public access answers who may call,
+
+160
+00:09:22,392 --> 00:09:25,883
+被拒绝的调用方在你的代码运行之前就被挡住了
+and a refused caller is stopped before your code runs.
+
+161
+00:09:26,203 --> 00:09:29,190
+服务账号回答你的代码能碰什么
+The service account answers what your code may touch.
+
+162
+00:09:29,510 --> 00:09:33,393
+当你自己的代码被拒绝时，修的是工牌的角色，不是调用方
+When your own code is denied, fix the badge's roles, not the caller.
+
+163
+00:09:38,433 --> 00:09:42,945
+要部署一个训练好的模型，下一讲用的是 Vertex AI endpoint
+To serve a trained model, the next lecture uses a Vertex AI endpoint,
+
+164
+00:09:42,945 --> 00:09:46,476
+小测问的是它的预处理应该放在哪里
+and the quiz asks where its preprocessing should live.
+
+165
+00:09:46,796 --> 00:09:49,825
+想象两个客户端：一个手机应用，一个网页
+Picture two clients: a phone app, and a web page.
+
+166
+00:09:50,066 --> 00:09:53,324
+每个客户端都带着同一个齿轮
+Each client carries the same gear:
+
+167
+00:09:53,324 --> 00:09:58,402
+解码 JPEG，把像素缩放到 0 到 1 之间
+decode the JPEG, scale the pixels to between 0 and 1,
+
+168
+00:09:58,402 --> 00:10:00,797
+再 resize 到 224 乘 224
+and resize to 224 by 224.
+
+169
+00:10:01,117 --> 00:10:03,719
+然后它才把数字发给模型
+Only then does it send numbers to the model.
+
+170
+00:10:04,039 --> 00:10:07,560
+这是同一份配方的两个副本，在两个代码库里
+That is two copies of one recipe, in two code bases.
+
+171
+00:10:07,800 --> 00:10:10,360
+课上把这叫做客户端的脆弱性
+The lecture calls this client-side brittleness.
+
+172
+00:10:10,680 --> 00:10:13,660
+每个客户端的预处理都略有不同
+Every client preprocesses slightly differently,
+
+173
+00:10:13,660 --> 00:10:17,400
+用一份配方训练的模型，悄悄收到了另一份
+and a model trained on one recipe quietly receives another.
+
+174
+00:10:17,716 --> 00:10:19,721
+现在把齿轮挪进 endpoint
+Now move the gear into the endpoint.
+
+175
+00:10:20,041 --> 00:10:22,229
+客户端发送原始的 JPEG 字节
+Clients send raw JPEG bytes,
+
+176
+00:10:22,229 --> 00:10:26,527
+用 base64 包起来，因为 JSON 装不了原始字节
+wrapped as base64, because JSON cannot carry raw bytes.
+
+177
+00:10:26,847 --> 00:10:30,690
+预处理跟着模型走，所以每个客户端得到的
+The preprocessing travels with the model, so every client gets
+
+178
+00:10:30,690 --> 00:10:33,354
+正好是训练时用的预处理
+exactly the preprocessing used in training.
+
+179
+00:10:33,600 --> 00:10:35,413
+看这个 repo 自己的客户端
+Look at the repo's own client.
+
+180
+00:10:35,733 --> 00:10:40,299
+它读入图片文件，做 base64 编码，然后调用 predict
+It reads the image files, base64 encodes them, and calls predict.
+
+181
+00:10:40,619 --> 00:10:42,965
+不 resize，不归一化
+No resizing, no normalizing.
+
+182
+00:10:43,285 --> 00:10:44,885
+这就是瘦客户端
+That is a thin client.
+
+183
+00:10:45,016 --> 00:10:47,427
+现在在版本 2 里发布一个有问题的 resize
+Now ship a bad resize in version 2.
+
+184
+00:10:47,747 --> 00:10:49,453
+两个客户端同时坏掉
+Both clients break at once.
+
+185
+00:10:49,773 --> 00:10:53,827
+回滚到版本 1，两个客户端在同一瞬间恢复正常
+Roll back to version 1, and both are healthy at the same instant.
+
+186
+00:10:54,147 --> 00:10:57,539
+一次部署修好了所有人，不用发布任何客户端
+One deployment fixed everyone, with no client release.
+
+187
+00:10:57,783 --> 00:10:59,916
+现在把齿轮放回客户端
+Now put the gears back on the clients.
+
+188
+00:11:00,236 --> 00:11:02,028
+同样的回滚要付出什么代价？
+What does the same rollback cost?
+
+189
+00:11:08,866 --> 00:11:13,965
+两次发布：一个等着应用商店审核的手机更新，再加一次网页部署
+Two releases: a phone update waiting in app store review, and a web deploy.
+
+190
+00:11:14,285 --> 00:11:18,253
+它们上线的时间不同，在这中间，两个客户端的结果不一致
+They land at different times, and in between, the clients disagree.
+
+191
+00:11:18,500 --> 00:11:23,876
+规则是：当题目说有好几个客户端，要在一个地方更新或回滚
+The rule: when the question says several clients, one place to update or roll back,
+
+192
+00:11:23,876 --> 00:11:27,567
+而且不用发布客户端时，把预处理放在 endpoint
+and no client release, put preprocessing at the endpoint.
+
+193
+00:11:27,887 --> 00:11:32,686
+预处理放在客户端，就意味着每个客户端都要同步重新发布
+Preprocessing on the clients means every client is re-released in lockstep.
+
+194
+00:11:37,633 --> 00:11:39,405
+把预处理放在 endpoint
+Preprocessing at the endpoint
+
+195
+00:11:39,405 --> 00:11:42,582
+只有在 endpoint 调用了正确的函数时才有用
+works only if the endpoint calls the right function.
+
+196
+00:11:42,902 --> 00:11:47,231
+这条链是：JPEG 字节，解码，转成浮点数，resize
+Here is the chain: JPEG bytes, decode, convert to floats, resize,
+
+197
+00:11:47,231 --> 00:11:50,561
+模型，最后是四个概率，每种奶酪一个
+the model, and four probabilities, one per cheese.
+
+198
+00:11:50,800 --> 00:11:55,280
+在这个 repo 里，preprocess image 做前三步，一次处理一张图
+In the repo, preprocess_image does the first three steps, for one image.
+
+199
+00:11:55,600 --> 00:11:57,882
+它返回的是一张图片，不是答案
+It returns an image, not an answer.
+
+200
+00:11:58,116 --> 00:12:00,947
+这个 serving function 接收一批字符串
+The serving_function takes a batch of strings,
+
+201
+00:12:00,947 --> 00:12:04,516
+对每一个都套用 preprocess image，然后调用模型
+maps preprocess_image over each one, then calls the model.
+
+202
+00:12:04,836 --> 00:12:07,631
+预处理和推理，在同一个函数里
+Preprocessing and inference, in one function.
+
+203
+00:12:07,951 --> 00:12:11,257
+它的参数 bytes inputs，就是客户端要用的键
+Its argument, bytes_inputs, is the key clients use.
+
+204
+00:12:11,577 --> 00:12:14,453
+考题可能把这个函数叫做 serve
+Exam questions may call this function serve:
+
+205
+00:12:14,453 --> 00:12:19,876
+不是 web 应用的 serve 命令，而是先预处理、再预测的那个函数
+not the web app's serve command, but the function that preprocesses, then predicts.
+
+206
+00:12:20,116 --> 00:12:23,377
+导出时把它注册在 serving default 这个名字下面
+The export registers it under the name serving_default,
+
+207
+00:12:23,377 --> 00:12:26,815
+模型服务器调用的就是这个名字背后的东西
+and the model server calls whatever sits behind that name.
+
+208
+00:12:27,135 --> 00:12:30,954
+课件用另一种调用来保存它；道理是一样的
+The slide saves it with a different call; the idea is the same.
+
+209
+00:12:31,200 --> 00:12:33,547
+试插头之前，最后检查一次
+Before we try plugs, one last check.
+
+210
+00:12:33,867 --> 00:12:38,346
+一个手机应用发送浮点数组，一个新的网页客户端发送 JPEG 字节
+A phone app sends float arrays, a new web client sends JPEG bytes,
+
+211
+00:12:38,346 --> 00:12:41,739
+团队想只在一个地方修预处理
+and the team wants one place to fix preprocessing.
+
+212
+00:12:42,059 --> 00:12:43,659
+他们应该注册什么？
+What should they register?
+
+213
+00:12:56,366 --> 00:12:59,801
+先试 B：只注册 preprocess image
+Try B first: register preprocess_image alone.
+
+214
+00:13:00,121 --> 00:13:05,241
+请求返回的是一张 224 乘 224 的图片
+A request comes back as a 224 by 224 image.
+
+215
+00:13:05,561 --> 00:13:07,161
+根本没有做分类
+Nothing was classified.
+
+216
+00:13:07,316 --> 00:13:09,065
+A 和 D 保留原始模型
+A and D keep the raw model.
+
+217
+00:13:09,385 --> 00:13:13,311
+它要的是浮点张量，所以 JPEG 字节插不进去
+It demands float tensors, so JPEG bytes no longer fit.
+
+218
+00:13:13,631 --> 00:13:16,852
+服务器只会把 base64 变回字节
+The server only turns base64 back into bytes.
+
+219
+00:13:17,172 --> 00:13:21,418
+齿轮又跳回了每个客户端：两个副本要保持同步
+The gears jump back onto every client: two copies to keep in sync.
+
+220
+00:13:21,666 --> 00:13:25,741
+选 C，serving function：字节进去，概率出来
+C, the serving_function: bytes go in, probabilities come out.
+
+221
+00:13:26,061 --> 00:13:29,133
+手机应用改成发送字节，只需一次
+The phone app switches to sending bytes once;
+
+222
+00:13:29,133 --> 00:13:35,618
+之后，一个导出的版本就装着配方，每次修复或回滚都是一次部署
+after that, one exported version holds the recipe, and every fix or rollback is one deployment.
+
+223
+00:13:35,938 --> 00:13:38,657
+这个 repo 的测试步骤加载 serving default
+The repo's test step loads serving_default
+
+224
+00:13:38,657 --> 00:13:41,634
+喂给它 bytes inputs，和服务器的做法一样
+and feeds it bytes_inputs, as the server will.
+
+225
+00:13:41,883 --> 00:13:44,385
+这和函数的入口点是同一个道理
+This echoes the function's entry point:
+
+226
+00:13:44,385 --> 00:13:50,480
+平台只调用你注册的那个名字，名字错了，下游什么也补救不了
+the platform calls exactly the name you registered, and nothing downstream can fix a wrong one.
+
+227
+00:13:50,716 --> 00:13:55,025
+规则是：注册那个做预处理和推理的函数
+The rule: register the function that does preprocessing and inference.
+
+228
+00:13:55,345 --> 00:14:01,106
+单独的预处理返回的是图片，原始模型会让每个客户端自己预处理
+Preprocessing alone returns images, and the raw model makes every client preprocess.
+
+229
+00:14:05,550 --> 00:14:07,171
+周二的七条规则
+Seven rules for Tuesday.
+
+230
+00:14:07,491 --> 00:14:09,219
+第一：看生命周期
+One: read the lifecycle.
+
+231
+00:14:09,539 --> 00:14:11,825
+如果它在监听，它就是 service
+If it listens, it is a service;
+
+232
+00:14:11,825 --> 00:14:14,333
+如果它运行完就退出，它就是 job
+if it runs and exits, it is a job,
+
+233
+00:14:14,333 --> 00:14:17,283
+按需启动或者由 Cloud Scheduler 启动
+started on demand or by Cloud Scheduler.
+
+234
+00:14:17,603 --> 00:14:20,697
+第二：空闲时间只让一直开着的东西花钱
+Two: idle time costs only what is always on.
+
+235
+00:14:21,017 --> 00:14:25,161
+第三：按用量计费，计的是调用次数和执行时间
+Three: pay-per-use bills invocations and execution time,
+
+236
+00:14:25,161 --> 00:14:28,121
+零空闲成本换来的是冷启动
+and zero idle cost buys you cold starts.
+
+237
+00:14:28,367 --> 00:14:34,176
+第四：函数是源代码、依赖和入口点，image 由 Google 构建
+Four: a function is source, requirements and an entry point, and Google builds the image;
+
+238
+00:14:34,176 --> 00:14:36,004
+service 是你自己的 image
+a service is your own image.
+
+239
+00:14:36,324 --> 00:14:39,161
+第五：谁能调用它，不等于它以谁的身份运行
+Five: who may call it is not who it runs as,
+
+240
+00:14:39,161 --> 00:14:42,063
+运行时的服务账号也不需要密钥
+and the runtime service account needs no key.
+
+241
+00:14:42,300 --> 00:14:44,509
+第六：在 endpoint 做预处理
+Six: preprocess at the endpoint,
+
+242
+00:14:44,509 --> 00:14:48,167
+这样一次部署就能更新或回滚每个客户端
+so one deployment updates or rolls back every client.
+
+243
+00:14:48,487 --> 00:14:53,570
+第七：注册先预处理、再调用模型的 serving function
+Seven: register the serving function that preprocesses and then calls the model,
+
+244
+00:14:53,570 --> 00:14:57,191
+因为平台只调用你注册的那个名字
+because the platform calls exactly the name you register.
+
+245
+00:14:57,433 --> 00:14:58,940
+该用哪一个？
+Which one to use?
+
+246
+00:14:58,990 --> 00:15:04,608
+下一讲的经验法则：Vertex AI 用来在生产环境部署训练好的模型
+The next lecture's rule of thumb: Vertex AI to serve a trained model in production,
+
+247
+00:15:04,608 --> 00:15:07,993
+Cloud Run 用在模型只是更大应用一部分的时候
+Cloud Run when the model is part of a broader app.
+
+248
+00:15:08,313 --> 00:15:14,052
+还要记住课件第 16 页说的代价：厂商锁定、冷启动、更难调试
+And remember the costs on slide 16: vendor lock-in, cold starts, harder debugging.
+
+249
+00:15:14,300 --> 00:15:16,305
+这就是这一讲的七条规则
+That's the lecture in seven rules.
+
+250
+00:15:16,625 --> 00:15:18,225
+周二小测加油
+Good luck on Tuesday.
