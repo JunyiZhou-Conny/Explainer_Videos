@@ -1,0 +1,32 @@
+id: ac215-l14-exam
+title: "AC215 · Lecture 14 — Serverless Deployment (exam edition)"
+papers: []                     # not a paper: a concept-first exam explainer of one lecture
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 14
+  lecture_title: "Serverless Deployment: Cloud Functions, Cloud Run"
+  edition: exam                # not a follow-along: no README walk, no captures (see BRIEF.md)
+  repos:
+    # quoted as evidence only; the files the code panels read are in assets/source/<repo>/ (unchanged at these commits)
+    - {repo: dlops-io/serverless-deployment, branch: main, commit: 46cc62fd8b1ac94ce733571a834b46002d8dd8c4,
+       sections: ["Part 1: Deploy a translation function", "Part 2: Deploy a translation web app",
+                  "Part 3: Give the web app access to Agent Platform",
+                  "Part 4: Generate and save a translated audio edition",
+                  "Clean up after the tutorial", "Troubleshooting and further reading"]}
+    # the serving-signature half of Quiz 4 (taught with Lecture 15's slides 13-14)
+    - {repo: dlops-io/model-deployment, branch: main, commit: cf0b7c72f284f9340bf75df8b03b7ffadd0042d9,
+       sections: ["Key Ideas Before You Start", "Step 2: Prepare the model", "Step 4: Predict"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L14-serverless-deployment.md
+audience: "AC215 student the day before Quiz 4: has done L1–L13 and seen Lecture 14, wants to answer conceptual multiple-choice questions on serverless deployment (service vs job, billing, function vs container, identity, preprocessing placement, the serving signature) and explain why the wrong options are wrong"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,        cls: Hook,            title: "A job that never finishes"}
+  - {file: scenes/s02_lifecycle.py,   cls: ServiceOrJob,    title: "Service or job: read the lifecycle"}
+  - {file: scenes/s03_meter.py,       cls: IdleMeter,       title: "Who pays for the idle hours?"}
+  - {file: scenes/s04_handover.py,    cls: WhatYouHandOver, title: "Function or container: what you hand over"}
+  - {file: scenes/s05_identity.py,    cls: TwoQuestions,    title: "Who may call it, who it runs as, where to look"}
+  - {file: scenes/s06_preprocess.py,  cls: ThinClients,     title: "Where preprocessing lives"}
+  - {file: scenes/s07_signature.py,   cls: ServeSignature,  title: "Register serve: preprocess, then model"}
+  - {file: scenes/s08_recap.py,       cls: Recap,           title: "Seven rules for Tuesday"}

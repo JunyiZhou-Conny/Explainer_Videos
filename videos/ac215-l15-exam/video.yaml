@@ -1,0 +1,36 @@
+id: ac215-l15-exam
+title: "AC215 · Lecture 15 — ML Workflows with Vertex AI (exam edition)"
+papers: []                     # not a paper: a concept-first exam review of a course lecture
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 15
+  lecture_title: "ML Workflows with Vertex AI"
+  # ed: omitted (videos/ac215-l15-vertex-ml-workflows/ has no video.yaml yet; the course map lists it)
+  repos:
+    # Exam edition: no captures, no README walkthrough. Code/README panels quote these files,
+    # copied unchanged into assets/source/<repo>/<path> at the commits below.
+    - {repo: dlops-io/ml-workflow, branch: main, commit: 37300090aa6c75581f713a48ff21d21f7b0916f0,
+       files: [src/workflow/cli.py, src/workflow/model.py, src/workflow/sample-pipeline1.yaml,
+               src/workflow/pipeline.yaml, src/model-training/package/trainer/task.py, README.md]}
+    - {repo: dlops-io/model-deployment, branch: main, commit: cf0b7c72f284f9340bf75df8b03b7ffadd0042d9,
+       files: [cli.py, README.md]}
+    # AWS variants: mentioned only as the same DAG idea (SageMaker Pipelines)
+    - {repo: dlops-io/ml-workflow-aws, branch: main, commit: f165c6e17895d3d6c33a150d349f4b2649c807db,
+       files: [src/workflow/cli.py]}
+    - {repo: dlops-io/model-deployment-aws, branch: main, commit: 077f4dbc7b13ccef208c65a8e29489331261029e,
+       files: []}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L15-vertex-ml-workflows.md
+audience: "AC215 student the day before Quiz 4: sat (or skimmed) Lecture 15, knows Python and the cheese app's collector/processor/trainer from earlier lectures, may never have run the tutorial; wants to answer conceptual multiple-choice questions on pipelines as DAGs, task.output edges, parallelism, enforcing order and model deployment, and say why the wrong options are wrong"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+# One part: no parts: key. No publish: block yet.
+scenes:
+  - {file: scenes/s01_race.py,     cls: Race,               title: "The 2 a.m. race"}
+  - {file: scenes/s02_graph.py,    cls: TasksAndEdges,      title: "A pipeline is a graph"}
+  - {file: scenes/s03_output.py,   cls: OutputWire,         title: "task.output: the wire that makes an edge"}
+  - {file: scenes/s04_overlap.py,  cls: SafeOverlap,        title: "Maximum safe overlap"}
+  - {file: scenes/s05_order.py,    cls: EdgesNotClocks,     title: "Enforcing order: edges, not clocks"}
+  - {file: scenes/s06_deploy.py,   cls: RegistryToEndpoint, title: "Registry, endpoint, deploy, predict"}
+  - {file: scenes/s07_cheese.py,   cls: CheesePipeline,     title: "The Cheese App pipeline, and the same DAG on AWS"}
+  - {file: scenes/s08_recap.py,    cls: Recap,              title: "Seven rules for the quiz"}
