@@ -71,7 +71,7 @@ RULES = [
     "public → DNS → load balancer `:443` → target `:8000`",
     "VPC = CIDR block cut into subnets · most specific route wins · `0.0.0.0/0` → IGW (public) or NAT (private)",
     "NAT carries only connections that start inside · NAT down → internet fails, DB still works",
-    "browser is outside the VPC → public HTTPS endpoint, never `localhost` / `10.x`",
+    "browser is outside the VPC → public HTTPS endpoint · never `localhost` or `10.x`",
     "one image promoted · values + secrets at startup · never in image, source or Git",
     "max replicas = `⌊(limit − other clients) ÷ per replica⌋` · set it as the max",
     "relational + vector in one DB → PostgreSQL + pgvector",
@@ -113,7 +113,7 @@ def thumb_dns():
     a1 = Line(b.get_right(), alb.get_left(), color=ROUTE, stroke_width=4)
     a2 = Line(alb.get_right(), t.get_left(), color=ROUTE, stroke_width=4)
     out = VGroup(g, a1, a2)
-    out.path = [b.get_center(), alb.get_center(), t.get_center()]
+    out.stops = [b, alb, t]          # read their centres when the dot runs (the row moves later)
     return out
 
 
@@ -178,7 +178,7 @@ def thumb_db():
     tbl = VGroup(_rr(0.55, 0.16, OWN, fill=0.5, sw=2, r=0.02),
                  *[_rr(0.55, 0.14, OWN, fill=0.1, sw=2, r=0.02) for _ in range(2)]).arrange(DOWN, buff=0.03)
     vec = VGroup(*[Line(ORIGIN_, np.array([np.cos(a), np.sin(a), 0]) * 0.28, color=ROUTE, stroke_width=3)
-                   for a in (0.3, 1.1, 1.9)])
+                   for a in (-0.45, 0.0, 0.45)])
     vec.add(Dot(ORIGIN_, radius=0.05, color=ROUTE))
     left = VGroup(tbl, vec).arrange(DOWN, buff=0.08)
     cyl = cylinder(None, None, CLOUD, w=0.6, h=0.42)
@@ -307,34 +307,35 @@ class Recap(VoiceScene):
             self.play(LaggedStart(*[FadeIn(VGroup(r.badge, s, g)) for r, s, g in zip(rows, slots, guides)],
                                   lag_ratio=0.15), run_time=1.4)
             vo.wait_until("One")
-            self.play(Indicate(rows[0].badge, color=TURN), run_time=0.5)
+            self.play(pulse(rows[0].badge, 1.3), run_time=0.5)
             self.play(*write_row(0))
             vo.wait_until("The public reaches")
-            dot = Dot(radius=0.07, color=TURN).move_to(rows[0].thumb.path[0])
+            path = [m.get_center() for m in rows[0].thumb.stops]
+            dot = Dot(radius=0.07, color=TURN).move_to(path[0])
             self.play(FadeIn(dot), run_time=0.2)
-            self.play(MoveAlongPath(dot, _poly(rows[0].thumb.path, TURN)), run_time=1.3, rate_func=linear)
+            self.play(MoveAlongPath(dot, _poly(path, TURN)), run_time=1.3, rate_func=linear)
             self.play(FadeOut(dot), Indicate(rows[0].thumb[0][2], color=TURN), run_time=0.5)
 
         # ------------------------------------------------------------ beat 1
         with self.voiceover(SAY[1]) as vo:
-            self.play(Indicate(rows[1].badge, color=TURN), run_time=0.5)
+            self.play(pulse(rows[1].badge, 1.3), run_time=0.5)
             self.play(*write_row(1))
             vo.wait_until("most specific")
             self.play(pulse(rows[1].thumb.bar, 1.1), run_time=0.7)
             vo.wait_until("Three")
-            self.play(Indicate(rows[2].badge, color=TURN), run_time=0.5)
+            self.play(pulse(rows[2].badge, 1.3), run_time=0.5)
             self.play(*write_row(2))
             vo.wait_until("If it fails")
             self.play(ShowPassingFlash(rows[2].thumb.arr.copy().set_stroke(TURN, 7), time_width=0.6), run_time=0.9)
 
         # ------------------------------------------------------------ beat 2
         with self.voiceover(SAY[2]) as vo:
-            self.play(Indicate(rows[3].badge, color=TURN), run_time=0.5)
+            self.play(pulse(rows[3].badge, 1.3), run_time=0.5)
             self.play(*write_row(3))
             vo.wait_until("so it calls")
             self.play(ShowPassingFlash(rows[3].thumb.arr.copy().set_stroke(TURN, 7), time_width=0.6), run_time=0.8)
             vo.wait_until("Five")
-            self.play(Indicate(rows[4].badge, color=TURN), run_time=0.5)
+            self.play(pulse(rows[4].badge, 1.3), run_time=0.5)
             self.play(*write_row(4))
             th = rows[4].thumb
             for k in (1, 2):
@@ -342,12 +343,12 @@ class Recap(VoiceScene):
 
         # ------------------------------------------------------------ beat 3
         with self.voiceover(SAY[3]) as vo:
-            self.play(Indicate(rows[5].badge, color=TURN), run_time=0.5)
+            self.play(pulse(rows[5].badge, 1.3), run_time=0.5)
             self.play(*write_row(5))
             vo.wait_until("rounded down")
             self.play(Indicate(rows[5].text, color=TURN, scale_factor=1.03), run_time=0.7)
             vo.wait_until("Seven")
-            self.play(Indicate(rows[6].badge, color=TURN), run_time=0.5)
+            self.play(pulse(rows[6].badge, 1.3), run_time=0.5)
             self.play(*write_row(6))
             self.play(LaggedStart(*[Indicate(r.text, color=TURN, scale_factor=1.03) for r in rows],
                                   lag_ratio=0.18), run_time=2.0)
@@ -390,7 +391,7 @@ class Recap(VoiceScene):
                       run_time=0.7)
             vo.wait_until("PostgreSQL in the data")
             run([P["tasks"][2].get_center(), P["db"].get_center()], 0.6)
-            self.play(Indicate(P["pgv"], color=TURN, scale_factor=1.08), run_time=0.6)
+            self.play(pulse(P["pgv"], 1.12), run_time=0.6)
             vo.wait_until("and NAT for calls")
             run(P["nat_pts"] + [P["nat"].get_center(), P["net"].get_center()], 1.0)
             self.play(Transform(bells[0], green[0]), run_time=0.5)
@@ -400,15 +401,17 @@ class Recap(VoiceScene):
         xs = [-5.1 + 2.55 * k for k in range(5)]
         for k, s in enumerate(STEPS):
             b = step_badge(k + 1, TURN if k == 0 else S.GREY, radius=0.26)
+            b.move_to([xs[k], 0.75, 0])
             t = fit_rows(s, 2.3, 22, align=ORIGIN).next_to(b, DOWN, buff=0.2)
-            g = VGroup(b, t).move_to([xs[k], 0.4, 0])
+            g = VGroup(b, t)
             g.badge, g.text = b, t
             steps.add(g)
-        arrows = VGroup(*[arrow_(steps[k].badge.get_right(), steps[k + 1].badge.get_left(), S.GREY, stroke=3)
-                          for k in range(4)])
+        halo = _rr(steps[0].width + 0.4, steps[0].height + 0.35, TURN, fill=0.08, sw=4, r=0.15).move_to(steps[0])
+        starts = [np.array([halo.get_right()[0] + 0.05, steps[0].badge.get_y(), 0])] + \
+                 [steps[k].badge.get_right() for k in (1, 2, 3)]
+        arrows = VGroup(*[arrow_(starts[k], steps[k + 1].badge.get_left(), S.GREY, stroke=3) for k in range(4)])
         for k in range(4):
             apart(steps[k], steps[k + 1], f"steps {k + 1}/{k + 2}")
-        halo = _rr(steps[0].width + 0.4, steps[0].height + 0.35, TURN, fill=0.08, sw=4, r=0.15).move_to(steps[0])
         sign = label("AC215 · Lecture 16 · exam edition", CAPTION, S.GREY).move_to([0, -2.6, 0])
         inside(VGroup(steps, arrows, halo, sign), "steps out of frame")
         for k in range(4):
@@ -420,7 +423,7 @@ class Recap(VoiceScene):
                       LaggedStart(*[GrowArrow(a) for a in arrows], lag_ratio=0.2), run_time=1.6)
             vo.wait_until("Trace the request")
             self.play(Create(halo), steps[0].text.animate.set_color(TURN), run_time=0.6)
-            self.play(Indicate(steps[0].badge, color=TURN, scale_factor=1.3), run_time=0.6)
+            self.play(pulse(steps[0].badge, 1.3), run_time=0.6)
             vo.wait_until("Good luck")
             self.play(FadeOut(VGroup(steps, arrows, halo)), FadeOut(lr), FadeIn(sign, shift=UP * 0.1), run_time=0.7)
         self.wait(0.8)
