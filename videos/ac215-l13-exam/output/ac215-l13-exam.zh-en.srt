@@ -1,0 +1,1204 @@
+1
+00:00:00,000 --> 00:00:03,371
+这是一个训练 run，跑完了，一个报错都没有
+Here is a training run that finished without a single error.
+
+2
+00:00:03,691 --> 00:00:07,467
+任务成功了，这个 run 也在 Weights & Biases 里
+The job succeeded, and the run exists in Weights & Biases.
+
+3
+00:00:07,787 --> 00:00:10,709
+它的 config 在，系统图表也在
+Its config is there, and so are its system charts.
+
+4
+00:00:11,683 --> 00:00:14,798
+但是没有 loss 图，也没有准确率图
+But there is no loss chart, and no accuracy chart.
+
+5
+00:00:15,118 --> 00:00:16,561
+曲线去哪了？
+Where are the curves?
+
+6
+00:00:16,611 --> 00:00:18,830
+这是训练这个模型的那一行代码
+Here is the line that trained this model.
+
+7
+00:00:19,150 --> 00:00:22,073
+先记着，过几分钟我们再回来
+Hold that thought; we come back to it in a few minutes.
+
+8
+00:00:22,317 --> 00:00:26,776
+角落里的灰色标签，标出每个想法背后的课件
+The gray tag in the corner names the lecture slides behind each idea.
+
+9
+00:00:27,096 --> 00:00:30,937
+在课上的路线图里，实验追踪很早就搭好
+On the lecture's roadmap, experiment tracking is set up early,
+
+10
+00:00:30,937 --> 00:00:34,839
+和基线模型一起，紧跟在数据收集之后
+together with the baseline models, right after data collection.
+
+11
+00:00:35,083 --> 00:00:38,176
+这是第 13 讲的考前版
+This is the exam edition of Lecture 13.
+
+12
+00:00:38,496 --> 00:00:42,870
+它沿着训练工作流悄悄出错的五个地方走一遍
+It follows five places where a training workflow quietly breaks:
+
+13
+00:00:42,870 --> 00:00:47,585
+run 的记录、包、GPU、batch，还有任务本身
+the run record, the package, the GPUs, the batch, and the job itself.
+
+14
+00:00:47,833 --> 00:00:51,972
+每一部分都以一条规则收尾：题目说这个，就想那个
+Each part ends with one rule: if the question says this, think that.
+
+15
+00:00:52,292 --> 00:00:55,662
+有三次，屏幕上会出现一道小测风格的题
+Three times, a quiz-style question appears on screen.
+
+16
+00:00:55,982 --> 00:00:59,993
+先暂停，选一个答案，再听每个错误选项错在哪
+Pause, pick an answer, and then hear why each wrong option is wrong.
+
+17
+00:01:00,367 --> 00:01:03,034
+课上讲了到底为什么要追踪
+The lecture names the reason to track at all.
+
+18
+00:01:03,354 --> 00:01:09,241
+题目说实验追踪，就想：这个结果是怎么来的，我能不能重复出来？
+If the question says experiment tracking, think: what produced this result, and can I repeat it?
+
+19
+00:01:11,583 --> 00:01:13,247
+一个 run 的记录应该装些什么？
+What should a run record hold?
+
+20
+00:01:13,567 --> 00:01:15,475
+课上列了七样
+The lecture lists seven things:
+
+21
+00:01:15,475 --> 00:01:21,076
+环境、代码、数据、模型、指标、产物，还有你的笔记
+the environment, the code, the data, the model, the metrics, the artifacts, and your notes.
+
+22
+00:01:21,550 --> 00:01:23,470
+其中大部分已经有地方放了
+Most of these already have a home.
+
+23
+00:01:23,790 --> 00:01:27,107
+代码在 GitHub，数据在版本管理系统里
+Code lives in GitHub, data in a versioning system,
+
+24
+00:01:27,107 --> 00:01:31,086
+环境在 pyproject 文件和 lock 文件里
+and the environment in the pyproject file and the lock file.
+
+25
+00:01:31,406 --> 00:01:34,222
+权重、指标和日志，先打个问号
+Weights, metrics and logs get a question mark.
+
+26
+00:01:34,466 --> 00:01:36,059
+关于数据，说一句
+One word on data.
+
+27
+00:01:36,109 --> 00:01:40,043
+数据版本是一对东西：bucket 里归档的快照
+A data version is a pair: the archived snapshot in a bucket,
+
+28
+00:01:40,043 --> 00:01:44,173
+加上给它命名的版本记录，两者靠内容哈希连起来
+and the version record that names it, linked by a content hash.
+
+29
+00:01:44,493 --> 00:01:48,004
+而这个训练脚本下载的是数据的一个固定版本
+This trainer instead downloads a fixed release of the data,
+
+30
+00:01:48,004 --> 00:01:50,146
+也从不把它写进 config
+and never writes it into the config.
+
+31
+00:01:50,383 --> 00:01:55,780
+手工记录总会忘，所以课上用 Weights & Biases 把它自动化
+Recording by hand gets forgotten, so the lecture automates it with Weights & Biases.
+
+32
+00:01:56,100 --> 00:01:59,642
+想象一个账本，每个训练 run 是其中一行
+Picture a ledger in which every training run is one row.
+
+33
+00:01:59,883 --> 00:02:04,427
+这个 repo 的训练脚本 task.py，用四个调用和这个账本打交道
+The repo trainer, task.py, talks to that ledger in four calls.
+
+34
+00:02:04,747 --> 00:02:09,078
+首先它用一个密钥登录，密钥作为命令行参数传入，从不写进代码
+First it logs in with a key passed as a flag, never written in the code.
+
+35
+00:02:09,316 --> 00:02:14,381
+然后 wandb.init 开一个新行，带上项目、名字和 config
+Then wandb.init opens a new row, with a project, a name, and a config:
+
+36
+00:02:14,381 --> 00:02:17,999
+学习率、epoch 数、batch 大小和模型名
+learning rate, epochs, batch size, and model name.
+
+37
+00:02:18,319 --> 00:02:21,000
+它还把这一行设成活跃的 run
+It also makes that row the active run,
+
+38
+00:02:21,000 --> 00:02:24,527
+叫 wandb.run 的指针现在就指向它
+and the pointer called wandb.run now points at it.
+
+39
+00:02:24,766 --> 00:02:29,651
+训练结束后，脚本再加一个 config 值：执行时间
+After training, the script adds one more config value, the execution time.
+
+40
+00:02:29,971 --> 00:02:35,156
+然后 wandb.run.finish 把这一行封存，指针变回空
+Then wandb.run.finish() seals the row, and the pointer falls back to nothing.
+
+41
+00:02:35,400 --> 00:02:38,331
+注意这个 run 自己记下了什么
+Notice what this run recorded on its own:
+
+42
+00:02:38,331 --> 00:02:42,120
+config，还有 CPU 和内存这样的系统图表
+the config, and system charts such as CPU and memory.
+
+43
+00:02:42,440 --> 00:02:44,083
+它没有记录 loss
+It did not record a loss.
+
+44
+00:02:44,403 --> 00:02:46,642
+还得有个东西来记录指标
+Something still has to log the metrics.
+
+45
+00:02:47,483 --> 00:02:50,325
+题目说 run 的记录，就想
+If the question says record of a run, think:
+
+46
+00:02:50,325 --> 00:02:54,523
+init 开启它，logger 写入指标，finish 关闭它
+init opens it, a logger writes the metrics, and finish closes it.
+
+47
+00:02:54,766 --> 00:02:56,188
+第一题
+First question.
+
+48
+00:02:56,238 --> 00:02:59,118
+这个 run 显示了 config，却没有 loss 曲线
+The run shows its config but no loss curve.
+
+49
+00:02:59,438 --> 00:03:01,465
+哪个改动能让它出现 loss 曲线？
+Which change puts a loss curve on it?
+
+50
+00:03:01,785 --> 00:03:05,198
+有三个选项，用你已经知道的就能排除
+Three options can be ruled out with what you know already.
+
+51
+00:03:05,518 --> 00:03:07,118
+想停的话，就在这里暂停
+Pause here if you want.
+
+52
+00:03:18,033 --> 00:03:22,741
+答案是 C：在 fit 的 callbacks 里传入 WandbMetricsLogger
+The answer is C: pass the WandbMetricsLogger in the callbacks of fit,
+
+53
+00:03:22,741 --> 00:03:24,341
+并且要在 init 之后创建
+created after init.
+
+54
+00:03:24,561 --> 00:03:26,822
+A：名字只是给这一行贴个标签
+A: a name only labels the row.
+
+55
+00:03:27,142 --> 00:03:31,132
+B：config 里的一个数，不是跨 epoch 的历史
+B: one number in the config is not a history over epochs.
+
+56
+00:03:31,452 --> 00:03:33,926
+D：再登录一次，不会写入任何指标
+D: logging in again writes no metrics.
+
+57
+00:03:34,166 --> 00:03:37,238
+这个 callback 就是训练时 Keras 握在手里的一支笔
+A callback is a pen that Keras holds during training.
+
+58
+00:03:37,558 --> 00:03:40,884
+每个 epoch 结束时，它调用 wandb.log
+At the end of every epoch it calls wandb.log,
+
+59
+00:03:40,884 --> 00:03:43,396
+而这个调用写进 wandb.run
+and that call writes to wandb.run:
+
+60
+00:03:43,396 --> 00:03:48,716
+也就是此刻活跃的那一行，不是创建这支笔时的那个 run
+whichever row is active right now, not the run the pen was created with.
+
+61
+00:03:48,950 --> 00:03:51,318
+课上的 notebook 正是这么做的
+The lecture's notebook does exactly this.
+
+62
+00:03:51,638 --> 00:03:53,354
+它先调用 init，再调用 fit
+It calls init, and then fit,
+
+63
+00:03:53,354 --> 00:03:56,480
+callbacks 列表里放着 WandbCallback
+with a callbacks list that holds the WandbCallback.
+
+64
+00:03:56,716 --> 00:03:59,788
+默认情况下，每个 epoch 写一条历史记录
+By default, that is one history entry per epoch.
+
+65
+00:04:00,108 --> 00:04:02,263
+按 batch 记录，只有你要求才会发生
+Per batch happens only if you ask.
+
+66
+00:04:02,816 --> 00:04:04,416
+现在做四个实验
+Now four experiments.
+
+67
+00:04:04,608 --> 00:04:06,115
+第一个，没有笔
+First, no pen.
+
+68
+00:04:06,165 --> 00:04:09,259
+调用 fit 跑两个 epoch，记录栏一直空着
+Fit runs two epochs, and the strip stays empty.
+
+69
+00:04:09,579 --> 00:04:11,179
+这就是我们开头那个 run
+That is our opening run.
+
+70
+00:04:11,400 --> 00:04:13,495
+第二个：init，fit 两个 epoch
+Second: init, fit for two epochs,
+
+71
+00:04:13,495 --> 00:04:16,669
+再 fit 四个，中间没有 finish
+then fit for four more, with no finish in between.
+
+72
+00:04:16,989 --> 00:04:21,021
+指针从没动过，所以第三到第六条落在同一行
+The pointer never moved, so ticks three to six land on the same row.
+
+73
+00:04:21,341 --> 00:04:23,005
+一个 run，六条记录
+One run, six entries.
+
+74
+00:04:23,250 --> 00:04:26,480
+第三个：第一次 fit 之后 finish，再 init 一次
+Third: finish after the first fit, then init again,
+
+75
+00:04:26,480 --> 00:04:29,202
+用同一个 callback fit 四个 epoch
+and fit four epochs with the same callback.
+
+76
+00:04:29,522 --> 00:04:31,762
+第一行封存了，里面有两条记录
+The first row is sealed with two entries.
+
+77
+00:04:32,082 --> 00:04:34,443
+这个 callback 是在第一行时创建的
+The callback was made during row one,
+
+78
+00:04:34,443 --> 00:04:38,780
+但它跟着指针走，所以新的一行拿到第一到第四条
+but it follows the pointer, so the new row gets entries one to four.
+
+79
+00:04:39,016 --> 00:04:42,195
+第四个：先 finish，然后不重新 init 就再 fit 一次
+Fourth: finish, then fit again without a new init.
+
+80
+00:04:42,515 --> 00:04:46,819
+第一个 epoch 训练完，然后笔跟着指针指向空
+The first epoch trains, and then the pen follows the pointer to nothing
+
+81
+00:04:46,819 --> 00:04:50,152
+报错停下：你必须先调用 init，再 log
+and stops with an error: you must call init before log.
+
+82
+00:04:50,472 --> 00:04:52,072
+哪一行都没收到记录
+Nothing reaches any row.
+
+83
+00:04:52,250 --> 00:04:55,663
+没有活跃的 run 时创建这个 logger，会马上报错
+Creating the logger with no active run fails at once.
+
+84
+00:04:55,900 --> 00:04:57,173
+回到开头
+Now the hook.
+
+85
+00:04:57,223 --> 00:04:59,971
+这个 repo 的训练脚本导入了两个 callback
+The repo trainer imports both callbacks
+
+86
+00:04:59,971 --> 00:05:01,591
+却一个也没传给 fit
+but passes none to fit,
+
+87
+00:05:01,591 --> 00:05:05,607
+所以它的 run 有 config 和系统图表，却没有曲线
+so its run has a config and system charts, and no curves.
+
+88
+00:05:05,927 --> 00:05:09,852
+课上中间那一行，也就是 callback，正是缺的那一行
+The lecture's middle line, the callback, is the line that is missing.
+
+89
+00:05:10,916 --> 00:05:15,673
+有个细节：这个 notebook 会提示 WandbCallback 已经弃用
+One detail: the notebook warns that the WandbCallback is deprecated.
+
+90
+00:05:15,993 --> 00:05:20,047
+要画曲线，它的替代品是 WandbMetricsLogger
+For the curves, its replacement is the WandbMetricsLogger.
+
+91
+00:05:20,283 --> 00:05:24,212
+题目问有几条历史记录，就想：每个 epoch 一条
+If the question counts history entries, think: one per epoch,
+
+92
+00:05:24,212 --> 00:05:27,238
+写进 epoch 结束时开着的那个 run
+into whichever run is open when the epoch ends.
+
+93
+00:05:27,558 --> 00:05:30,907
+一次 finish 结束计数，一次新的 init 开始新的计数
+A finish ends the count, and a new init starts a new one.
+
+94
+00:05:32,050 --> 00:05:35,899
+课上分三步把训练从本地搬到云上
+The lecture moves training to the cloud in three steps:
+
+95
+00:05:35,899 --> 00:05:39,538
+一个带参数的 Python 文件、bucket 里的一个包
+a Python file with arguments, a package in a bucket,
+
+96
+00:05:39,538 --> 00:05:41,778
+以及 Vertex AI 上的一个训练任务
+and a training job on Vertex AI.
+
+97
+00:05:42,017 --> 00:05:45,851
+这是 package 目录：setup.py，还有一个 trainer 目录
+Here is the package folder: setup.py, and a trainer folder
+
+98
+00:05:45,851 --> 00:05:49,355
+里面是一个空的 init 文件和两个训练脚本
+with an empty init file and the two training scripts.
+
+99
+00:05:49,600 --> 00:05:51,627
+这个 setup.py 里有两张清单
+setup.py keeps two lists.
+
+100
+00:05:51,947 --> 00:05:57,824
+其中 install requires 是一张购物清单，pip 从 PyPI 下载
+install_requires is a shopping list that pip downloads from the Python Package Index;
+
+101
+00:05:57,824 --> 00:05:59,968
+这里只有一个 pin 了版本的 wandb
+here, one pinned wandb version.
+
+102
+00:06:00,288 --> 00:06:04,527
+而 find packages 决定你自己的哪些目录会被安装
+find_packages() decides which of your own folders get installed:
+
+103
+00:06:04,527 --> 00:06:06,581
+只有带 init 文件的目录
+only folders with an init file.
+
+104
+00:06:06,817 --> 00:06:09,517
+打包脚本把 package 目录打成 tar 包
+The packaging script tars the package folder,
+
+105
+00:06:09,517 --> 00:06:12,278
+压缩，再复制到你的 bucket
+compresses it, and copies it into your bucket.
+
+106
+00:06:12,598 --> 00:06:15,842
+提交任务的脚本让 Vertex AI 指向这个文件
+The job script points Vertex AI at that file
+
+107
+00:06:15,842 --> 00:06:18,422
+并指定模块：trainer.task
+and names the module: trainer.task.
+
+108
+00:06:18,667 --> 00:06:20,267
+关键在这里
+Here is the key fact.
+
+109
+00:06:20,352 --> 00:06:25,280
+你自己的 Docker image 负责打包、上传和提交，但从不训练
+Your own Docker image packages, uploads and submits, but it never trains.
+
+110
+00:06:25,600 --> 00:06:28,525
+任务跑在 Google 预构建的训练 image 里
+The job runs in Google's prebuilt training image,
+
+111
+00:06:28,525 --> 00:06:31,509
+你的代码只能通过 tar 包到达那里
+and your code reaches it only through the tarball.
+
+112
+00:06:31,750 --> 00:06:36,102
+这个 image 已经自带 TensorFlow、scikit-learn 和 requests
+That image already ships TensorFlow, scikit-learn and requests,
+
+113
+00:06:36,102 --> 00:06:40,454
+所以训练脚本照样能 import 它们，虽然 setup.py 从没写过
+so the trainer imports them although setup.py never names them.
+
+114
+00:06:40,700 --> 00:06:43,431
+在跑任务的机器上，pip 把 tar 包解开
+On the job machine, pip unwraps the tarball.
+
+115
+00:06:43,751 --> 00:06:47,953
+购物清单拉来 wandb，trainer 包被安装好
+The shopping list fetches wandb, and the trainer package is installed.
+
+116
+00:06:48,273 --> 00:06:51,516
+然后 Vertex 运行：python -m trainer.task
+Then Vertex runs python -m trainer.task.
+
+117
+00:06:51,750 --> 00:06:54,641
+现在加一个队友写的模块 augment.py
+Now add a teammate's module, augment.py,
+
+118
+00:06:54,641 --> 00:06:57,894
+一个编出来的例子，放在 package 目录旁边
+a made-up example, beside the package folder.
+
+119
+00:06:58,214 --> 00:07:02,630
+脚本只打包那个目录，所以这个模块从没离开你的笔记本
+The script tars only that folder, so the module never leaves your laptop.
+
+120
+00:07:02,950 --> 00:07:06,190
+如果改放在 setup.py 旁边，它会跟着走
+Placed next to setup.py instead, it travels,
+
+121
+00:07:06,190 --> 00:07:08,326
+但 find packages 会跳过它
+but find_packages() skips it.
+
+122
+00:07:09,067 --> 00:07:11,265
+任务执行到 import augment
+The task reaches import augment;
+
+123
+00:07:11,265 --> 00:07:14,699
+Python 在导入路径里找，什么也没找到
+Python searches its import path and finds nothing.
+
+124
+00:07:15,019 --> 00:07:20,374
+ModuleNotFoundError，就在写着依赖全部装好的那一行下面
+ModuleNotFoundError, right under the line that says every dependency installed.
+
+125
+00:07:20,694 --> 00:07:24,619
+在本地它能跑，因为文件就在你运行命令的那个目录里
+Locally it worked, because the file sat in the folder you ran from.
+
+126
+00:07:24,867 --> 00:07:29,944
+修法：把文件放进 trainer 目录，或者在 setup.py 里列出来
+The fix: put the file inside the trainer folder, or list it in setup.py.
+
+127
+00:07:30,264 --> 00:07:34,296
+只加一行 import 什么也带不过去；文件得跟着走
+A new import line alone moves nothing; the file has to travel.
+
+128
+00:07:34,533 --> 00:07:36,944
+把它加到 install requires 里是错的
+Adding it to install_requires is wrong.
+
+129
+00:07:37,264 --> 00:07:41,707
+那张清单从 PyPI 下载，绝不会从你的 tar 包里拿
+That list downloads from the Python Package Index, never from your tarball,
+
+130
+00:07:41,707 --> 00:07:45,499
+而那里同名的包，会是别人的代码
+and a package there with that name would be someone else's code.
+
+131
+00:07:45,733 --> 00:07:51,105
+题目说依赖都装好了却报 ModuleNotFoundError，就想
+If the question says dependencies installed but ModuleNotFoundError, think:
+
+132
+00:07:51,105 --> 00:07:55,760
+这个文件没有跟着 setup.py 打的包一起走
+the file never travelled inside the package that setup.py builds.
+
+133
+00:07:57,000 --> 00:07:59,901
+课上把训练硬件分成三种形态
+The lecture sorts training hardware into three shapes.
+
+134
+00:08:00,221 --> 00:08:04,253
+一台机器、一块 GPU，用 OneDeviceStrategy
+One machine with one GPU uses OneDeviceStrategy.
+
+135
+00:08:04,573 --> 00:08:08,477
+一台机器、多块 GPU，用 MirroredStrategy
+One machine with several GPUs uses MirroredStrategy.
+
+136
+00:08:08,797 --> 00:08:12,253
+多台机器，用 MultiWorkerMirroredStrategy
+Several machines use MultiWorkerMirroredStrategy.
+
+137
+00:08:12,500 --> 00:08:14,463
+这个 repo 在中间那一行
+The repo sits on the middle row.
+
+138
+00:08:14,783 --> 00:08:19,824
+它的多 GPU 脚本向 Vertex AI 要一台机器
+Its multi GPU script asks Vertex AI for one machine,
+
+139
+00:08:19,824 --> 00:08:23,508
+机型 n1-standard-32，带两块 T4 GPU
+type n1-standard-32, with two T4 GPUs.
+
+140
+00:08:23,828 --> 00:08:26,729
+那里的副本数为 1，意思是一台机器
+A replica count of one there means one machine.
+
+141
+00:08:26,967 --> 00:08:32,571
+训练脚本创建 MirroredStrategy，再问有多少个副本在同步
+The trainer creates the MirroredStrategy and asks how many replicas are in sync:
+
+142
+00:08:32,571 --> 00:08:34,171
+每块 GPU 一个，所以是两个
+one per GPU, so two.
+
+143
+00:08:34,391 --> 00:08:38,965
+然后它在 strategy.scope 里构建并编译模型
+Then it builds and compiles the model inside strategy.scope(),
+
+144
+00:08:38,965 --> 00:08:44,055
+所以每个权重和优化器变量都被复制，每块 GPU 一份
+so every weight and optimizer variable is mirrored, one copy per GPU.
+
+145
+00:08:44,300 --> 00:08:45,900
+这是一个训练步
+Here is one training step.
+
+146
+00:08:46,220 --> 00:08:50,679
+每块 GPU 拿自己那一份 batch，算出一个梯度
+Each GPU takes its own slice of the batch and computes a gradient.
+
+147
+00:08:50,999 --> 00:08:54,079
+这些梯度在 all-reduce 里汇合、取平均
+The gradients meet in an all-reduce and are averaged,
+
+148
+00:08:54,079 --> 00:08:56,695
+同一份更新再发回两份拷贝
+and the same update goes back to both copies.
+
+149
+00:08:56,933 --> 00:09:00,425
+现在换成两台机器，每台跑自己的 MirroredStrategy
+Now two machines, each running its own MirroredStrategy
+
+150
+00:09:00,425 --> 00:09:02,266
+用的是自己那份数据分片
+on its own shard of the data.
+
+151
+00:09:02,586 --> 00:09:07,408
+每台机器内部，环是通的，但两台机器之间没有连线
+Inside each machine the ring works, but between the machines there is no wire.
+
+152
+00:09:07,728 --> 00:09:12,101
+几步之后，它们的权重就不一样了：是两个独立的模型，不是一个
+After a few steps they hold different weights: two separate models, not one.
+
+153
+00:09:12,350 --> 00:09:17,001
+要跨机器训练一个模型，用 MultiWorkerMirroredStrategy
+To train one model across machines, use MultiWorkerMirroredStrategy.
+
+154
+00:09:17,321 --> 00:09:19,428
+每台机器读取一份 TF config
+Each machine reads a TF_CONFIG:
+
+155
+00:09:19,428 --> 00:09:23,507
+所有 worker 的列表，以及它自己在列表里的索引
+the list of all the workers, and its own index in that list.
+
+156
+00:09:23,827 --> 00:09:29,843
+分片和之前一样；唯一的变化是这根连线，现在每份拷贝都保持一致
+Same shards as before; the only change is the wire, and now every copy stays the same.
+
+157
+00:09:31,450 --> 00:09:33,204
+这个 repo 没用它
+The repo does not use it;
+
+158
+00:09:33,204 --> 00:09:37,765
+在 Vertex AI 上多出来的机器会放进第二个 worker pool
+on Vertex AI the extra machines would go in a second worker pool,
+
+159
+00:09:37,765 --> 00:09:40,431
+Vertex 会替你设好 TF config
+and Vertex sets the TF_CONFIG for you.
+
+160
+00:09:40,751 --> 00:09:43,869
+还有一个命名陷阱：repo 和课上一样
+One naming trap: the repo, like the lecture,
+
+161
+00:09:43,869 --> 00:09:48,901
+把副本数叫作 num workers，但它数的是一台机器上的 GPU
+calls its replica count num_workers, but it counts GPUs on one machine.
+
+162
+00:09:49,150 --> 00:09:53,101
+题目说多台机器必须训练同一个模型，就想
+If the question says several machines must train one model,
+
+163
+00:09:53,101 --> 00:09:56,382
+MultiWorkerMirroredStrategy 加 TF config
+think MultiWorkerMirroredStrategy with TF_CONFIG.
+
+164
+00:09:56,702 --> 00:09:59,902
+MirroredStrategy 从不越过自己这台机器
+A MirroredStrategy never looks past its own machine.
+
+165
+00:10:01,150 --> 00:10:02,487
+再看 batch
+Now the batch.
+
+166
+00:10:02,537 --> 00:10:07,383
+在策略下，dataset.batch 产出的就是全局 batch
+Under a strategy, whatever dataset.batch produces is the global batch,
+
+167
+00:10:07,383 --> 00:10:09,321
+也就是一步用的整个托盘
+the whole tray for one step.
+
+168
+00:10:09,641 --> 00:10:13,907
+策略把这个托盘切成相等的几份，每个副本一份
+The strategy cuts that tray into equal slices, one per replica.
+
+169
+00:10:15,017 --> 00:10:20,500
+所以每个副本的 batch 等于全局 batch 除以同步的副本数
+So the per replica batch is the global batch divided by the number of replicas in sync.
+
+170
+00:10:20,820 --> 00:10:25,875
+反过来，全局 batch 就是每个副本的 batch 乘以副本数
+Turn it around, and the global batch is the per replica batch times the replicas.
+
+171
+00:10:26,117 --> 00:10:29,893
+假设有 8 个副本，你想让每个副本拿到 16 个样本
+Take 8 replicas, and say you want 16 examples on each.
+
+172
+00:10:30,213 --> 00:10:33,498
+按 16 分 batch，每块 GPU 只拿到 2 个
+Batch by 16, and each GPU gets only 2.
+
+173
+00:10:33,818 --> 00:10:35,610
+按 128 分 batch
+Batch by 128.
+
+174
+00:10:35,930 --> 00:10:37,722
+每块 GPU 拿到 16 个
+Each GPU gets 16.
+
+175
+00:10:38,567 --> 00:10:41,127
+这个 repo 做的是同样的乘法
+The repo does the same multiplication.
+
+176
+00:10:41,447 --> 00:10:45,504
+它拿 batch 大小参数乘以副本数
+It takes the batch size flag, multiplies it by the replica count,
+
+177
+00:10:45,504 --> 00:10:48,188
+再把乘积交给数据 pipeline
+and hands the product to the data pipeline.
+
+178
+00:10:48,508 --> 00:10:52,305
+它自己的注释就写着：batch 期望的是全局 batch 大小
+Its own comment says it: batch expects the global batch size.
+
+179
+00:10:53,550 --> 00:10:55,057
+第二题
+Second question.
+
+180
+00:10:55,107 --> 00:10:59,390
+这个 repo 的多 GPU 训练脚本现在跑在 4 块 GPU 上
+The repo's multi GPU trainer now runs on 4 GPUs,
+
+181
+00:10:59,390 --> 00:11:01,977
+batch 大小参数是 32
+with a batch size flag of 32.
+
+182
+00:11:02,297 --> 00:11:06,030
+全局 batch 是多少，每块 GPU 每一步看到多少？
+What is the global batch, and what does each GPU see per step?
+
+183
+00:11:06,350 --> 00:11:07,950
+想停的话，就在这里暂停
+Pause here if you want.
+
+184
+00:11:18,550 --> 00:11:20,121
+答案是 B
+The answer is B.
+
+185
+00:11:20,171 --> 00:11:29,260
+训练脚本先做乘法：32 乘 4 等于 128，策略再把 128 分成四份
+The trainer multiplies first: 32 times 4 is 128, and the strategy splits 128 four ways,
+
+186
+00:11:29,260 --> 00:11:31,350
+所以每块 GPU 看到 32 个
+so each GPU sees 32.
+
+187
+00:11:31,670 --> 00:11:34,273
+A：这是一个从没做乘法的脚本
+A: that is a script that never multiplied.
+
+188
+00:11:34,593 --> 00:11:38,625
+C：这个参数是每个副本的大小，不是全局 batch
+C: the flag is the per replica size, not the global batch.
+
+189
+00:11:38,945 --> 00:11:42,998
+D：全局 batch 是被切分的，不是复制给每块 GPU
+D: the global batch is split, not copied to every GPU.
+
+190
+00:11:43,733 --> 00:11:47,584
+题目说每个副本，就先乘再分 batch
+If the question says per replica, multiply before you batch:
+
+191
+00:11:47,584 --> 00:11:51,499
+全局 batch 等于每个副本的 batch 乘以副本数
+the global batch is the per replica batch times the replicas.
+
+192
+00:11:52,633 --> 00:11:54,183
+最后一个机制
+Last mechanism.
+
+193
+00:11:54,233 --> 00:11:58,222
+假设一个网页应用有个重新训练的按钮，训练要一个小时
+Suppose a web app has a retrain button, and training takes an hour.
+
+194
+00:11:58,542 --> 00:12:00,142
+这一个小时应该在哪里跑？
+Where should that hour run?
+
+195
+00:12:00,216 --> 00:12:03,779
+每一段工作，都只活得和承载它的东西一样久
+Every piece of work lives as long as the thing that holds it.
+
+196
+00:12:04,099 --> 00:12:07,875
+放在请求处理函数里，它会在请求超时的时候死掉
+Inside the request handler, it dies at the request timeout.
+
+197
+00:12:08,116 --> 00:12:12,303
+放在服务器线程里，它只能活到这个服务器实例结束
+In a server thread, it lives only as long as that server instance,
+
+198
+00:12:12,303 --> 00:12:15,220
+而平台想什么时候回收它就什么时候回收
+which the platform recycles whenever it likes.
+
+199
+00:12:15,466 --> 00:12:18,389
+把客户端超时调长，调的是错的那个时钟
+A longer client timeout moves the wrong clock.
+
+200
+00:12:18,709 --> 00:12:21,901
+服务器和代理照样会切断请求
+The server and the proxies still cut the request,
+
+201
+00:12:21,901 --> 00:12:24,896
+而休眠的笔记本无论如何都会丢掉结果
+and a sleeping laptop loses the answer anyway.
+
+202
+00:12:25,133 --> 00:12:31,405
+而 W&B 根本不是时钟：它记录 run，但没有执行它们的引擎
+And W&B is not a clock at all: it logs runs, but has no engine to execute them.
+
+203
+00:12:31,650 --> 00:12:37,154
+正确的设计：处理函数提交一个持久的任务，马上返回它的 ID
+The right design: the handler submits a durable job and returns its id at once.
+
+204
+00:12:37,474 --> 00:12:41,838
+任务依次经过 QUEUED、PENDING、RUNNING、SUCCEEDED
+The job moves through its states, queued, pending, running, succeeded,
+
+205
+00:12:41,838 --> 00:12:44,706
+在自己的机器上，只在运行时计费
+on its own machine, billed only while it runs.
+
+206
+00:12:45,026 --> 00:12:48,332
+有项目权限的任何人都可以轮询这个 ID
+Anyone with access to the project can poll the id.
+
+207
+00:12:51,233 --> 00:12:53,824
+这就是课上讲的无服务器训练
+That is the lecture's serverless training:
+
+208
+00:12:53,824 --> 00:12:58,017
+硬件只为训练这一步租用，也没有服务器要管
+hardware rented only for the training step, and no server to manage.
+
+209
+00:12:58,337 --> 00:13:01,686
+机器还是有的；只是它的生命周期不归你管
+There is still a machine; you just do not own its lifetime.
+
+210
+00:13:01,933 --> 00:13:04,668
+在 repo 里，这张工单就是一条命令
+In the repo, the ticket is one command,
+
+211
+00:13:04,668 --> 00:13:06,701
+gcloud ai custom-jobs create
+gcloud ai custom-jobs create,
+
+212
+00:13:06,701 --> 00:13:11,468
+再带上区域、名字和 bucket 里的包，以及一个 worker pool
+with a region, a name, the package in the bucket, and a worker pool:
+
+213
+00:13:11,468 --> 00:13:15,394
+机器类型、副本数、预构建的 image 和模块
+machine type, replica count, prebuilt image, and module.
+
+214
+00:13:16,233 --> 00:13:17,655
+第三题
+Third question.
+
+215
+00:13:17,705 --> 00:13:21,673
+你的自定义任务显示 RUNNING，你合上笔记本过夜
+Your custom job shows running, and you close the laptop for the night.
+
+216
+00:13:21,993 --> 00:13:23,593
+训练会怎样？
+What happens to the training?
+
+217
+00:13:23,870 --> 00:13:25,470
+想停的话，就在这里暂停
+Pause here if you want.
+
+218
+00:13:36,083 --> 00:13:41,096
+答案是 B：它在自己的机器上一直跑，直到完成或失败
+The answer is B: it keeps running on its own machine until it finishes or fails.
+
+219
+00:13:41,416 --> 00:13:44,360
+A：CLI container 只负责提交
+A: the CLI container only submitted it.
+
+220
+00:13:44,680 --> 00:13:48,350
+C：W&B 只做记录；它从不驱动训练
+C: W&B only logs; it never drives training.
+
+221
+00:13:48,670 --> 00:13:51,720
+D：你的笔记本上不保存任务的状态
+D: nothing on your laptop holds the job's state.
+
+222
+00:13:52,466 --> 00:13:56,868
+题目说训练要跑得比请求还久，就想
+If the question says training takes longer than the request, think:
+
+223
+00:13:56,868 --> 00:13:59,890
+提交一个持久的任务，返回它的 ID，然后轮询
+submit a durable job, return its id, and poll.
+
+224
+00:14:00,210 --> 00:14:02,152
+W&B 只是旁观
+W&B only watches.
+
+225
+00:14:03,300 --> 00:14:04,900
+周二要记住的六条规则
+Six rules for Tuesday.
+
+226
+00:14:05,220 --> 00:14:09,994
+第一条：callback 每个 epoch 往活跃的 run 里记一条
+Rule one: a callback logs one entry per epoch into the active run;
+
+227
+00:14:09,994 --> 00:14:12,815
+init 开启 run，finish 关闭它
+init opens a run, and finish closes it.
+
+228
+00:14:13,050 --> 00:14:16,850
+第二条：pip 只安装 setup.py 声明的东西
+Rule two: pip installs only what setup.py declares;
+
+229
+00:14:16,850 --> 00:14:23,034
+你自己的模块必须在它打出的包里，而不只是在 tar 包里
+your own modules must be inside the package it builds, not just inside the tarball.
+
+230
+00:14:23,283 --> 00:14:27,863
+第三条：MirroredStrategy 管一台机器的 GPU
+Rule three: a MirroredStrategy covers the GPUs of one machine;
+
+231
+00:14:27,863 --> 00:14:32,591
+跨机器，用 MultiWorkerMirroredStrategy 加 TF config
+across machines, use MultiWorkerMirroredStrategy with TF_CONFIG,
+
+232
+00:14:32,591 --> 00:14:36,211
+因为独立的策略训出独立的模型
+because separate strategies make separate models.
+
+233
+00:14:36,450 --> 00:14:41,770
+第四条：在策略下，dataset.batch 产出的是全局 batch
+Rule four: under a strategy, what dataset.batch makes is the global batch,
+
+234
+00:14:41,770 --> 00:14:44,215
+切分给同步的各个副本
+split across the replicas in sync.
+
+235
+00:14:44,450 --> 00:14:48,718
+第五条：长时间训练要交给一个有 ID 的持久任务
+Rule five: long training goes to a durable job with an id,
+
+236
+00:14:48,718 --> 00:14:53,133
+绝不放进请求处理函数、线程，或者更长的超时
+never into a request handler, a thread, or a longer timeout.
+
+237
+00:14:53,367 --> 00:14:59,063
+第六条：数据版本，就是归档的快照，加上指向它的记录
+Rule six: a data version is an archived snapshot plus the record that points at it.
+
+238
+00:14:59,300 --> 00:15:03,070
+课上一开始讲了让深度学习变好的三个杠杆
+The lecture began with three levers for better deep learning:
+
+239
+00:15:03,070 --> 00:15:05,913
+更多数据、更好的模型、更快的硬件
+more data, better models, and faster hardware.
+
+240
+00:15:06,233 --> 00:15:10,671
+今天讲的是硬件这个杠杆，外加能看出它有没有用的记账
+Today was the hardware lever, plus the bookkeeping that shows whether it helped.
+
+241
+00:15:10,991 --> 00:15:12,591
+祝你周二考试顺利
+Good luck on Tuesday.
