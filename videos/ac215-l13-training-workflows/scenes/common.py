@@ -2037,12 +2037,12 @@ class TrainingMap(Rig):
     Built in place for the band above a 3-row strip (x -6.5 … 6.5, y -1.3 … 2.75); never scale it.
       Colab lane (y ≈ 2.3): .parts['nbA'] (BLUE card 'notebook A') → ['laneA'] → ['folder'] (GREY
       drawer 'experiment_<ts>/') → down into the bucket; ['nbB'] → ['laneB'] → the wandb.ai building.
-      Repo lane: ['laptop'] GREY frame 'laptop' (x -6.5 … -3.75) with ['cockpit'] (TEAL house
+      Repo lane: ['laptop'] GREY frame 'laptop' (x -6.5 … -3.55, y -1.3 … 1.8) with ['cockpit'] (TEAL house
       'model-training-cli', hollow until solid()), ['secrets'] (GREEN drawer), ['key'] (GREEN chip
       'W&B key', hidden); ['gcp'] BLUE dashed boundary 'your-gcp-project' (x -2.75 … 3.6) holding
       ['bucket'] (BLUE vault titled 'bucket' until name_bucket(); ['tarball'] parcel inside, hidden)
       and ['vertex'] ('Vertex AI' with ['cpu_tile'] 'CPU, RAM' and ['gpu_tile'] with a T4, hidden);
-      ['wandb'] the separate BLUE building 'wandb.ai' (x 3.85 … 6.5).
+      ['wandb'] the separate BLUE building 'wandb.ai' (x 4.0 … 6.4).
       Routes (hidden): ['upload'] PINK cockpit → bucket ('package & upload'), ['submit'] GREY
       cockpit → Vertex AI ('create job'; the cockpit has exactly these two and none into a job),
       ['pull'] PINK bucket → CPU tile (--python-package-uris), ['stream'] PINK CPU tile → wandb.ai.
@@ -2062,53 +2062,54 @@ class TrainingMap(Rig):
         super().__init__(**kw)
         self.size = size
         P = {}
-        # ---- Colab lane
+        # ---- Colab lane (y 2.3)
         P["nbA"] = notebook_card("A", size).move_to([-5.45, 2.3, 0])
-        P["folder"] = drawer("experiment_<ts>/", LAPTOP, size).move_to([-0.95, 2.3, 0])
-        P["nbB"] = notebook_card("B", size).move_to([1.95, 2.3, 0])
-        # ---- repo lane frames
-        self.laptop_frame = RoundedRectangle(width=2.95, height=2.75, corner_radius=0.16, stroke_color=LAPTOP,
-                                             stroke_width=2.5).set_fill(LAPTOP, 0.04).move_to([-5.025, 0.075, 0])
+        P["folder"] = drawer("experiment_<ts>/", LAPTOP, size).move_to([-0.65, 2.3, 0])
+        P["nbB"] = notebook_card("B", size).move_to([2.2, 2.3, 0])
+        # ---- repo lane frames (y -1.3 … 1.8): laptop x -6.5 … -3.9 | gap for the route words | GCP -2.3 … 3.6
+        self.laptop_frame = RoundedRectangle(width=2.95, height=3.1, corner_radius=0.16, stroke_color=LAPTOP,
+                                             stroke_width=2.5).set_fill(LAPTOP, 0.04).move_to([-5.025, 0.25, 0])
         lt = label("laptop", size, LAPTOP).move_to(self.laptop_frame.get_corner(UL) + np.array([0.15, -0.22, 0]),
                                                    aligned_edge=LEFT)
         P["laptop"] = VGroup(self.laptop_frame, lt)
-        P["cockpit"] = house(COCKPIT, 2.45, 0.95, IMAGE, size=size).move_to([-5.025, 0.0, 0], aligned_edge=DOWN)
-        P["secrets"] = drawer("secrets/", KEY, size, drawer_w=1.5, glyph=False).move_to([-5.65, -0.85, 0])
-        P["key"] = chip("W&B key", KEY, size=size, pad_x=0.12).move_to([-4.27, -0.85, 0])
-        gfr = outline_box(6.2, 2.75, CLOUD, solid=False).move_to([0.5, 0.075, 0])
+        P["cockpit"] = house(COCKPIT, 2.3, 0.9, IMAGE, size=size).move_to([-5.025, 0.15, 0], aligned_edge=DOWN)
+        P["secrets"] = drawer("secrets/", KEY, size, glyph=False, mono_font=False).move_to([-5.75, -0.75, 0])
+        P["key"] = chip("W&B key", KEY, size=size, pad_x=0.12).move_to([-4.3, -0.75, 0])
+        gfr = outline_box(5.9, 3.1, CLOUD, solid=False).move_to([0.65, 0.25, 0])
         gt = mono(PROJECT_ID, size, CLOUD).move_to(gfr.get_corner(UL) + np.array([0.15, -0.22, 0]), aligned_edge=LEFT)
         P["gcp"] = VGroup(gfr, gt)
         bfr = RoundedRectangle(width=3.0, height=1.3, corner_radius=0.14, stroke_color=CLOUD,
-                               stroke_width=3).set_fill(CLOUD, 0.08).move_to([-0.95, 0.4, 0])
+                               stroke_width=3).set_fill(CLOUD, 0.08).move_to([-0.65, 0.45, 0])
         self.bucket_title = steady("bucket", size, CLOUD).move_to(bfr.get_top() + DOWN * 0.25)
         P["bucket"] = VGroup(bfr, self.bucket_title)
         P["tarball"] = parcel(None, OWNED, size, 0.55, 0.4).move_to(bfr.get_center() + DOWN * 0.18)
-        vfr = RoundedRectangle(width=2.8, height=2.3, corner_radius=0.14, stroke_color=CLOUD,
-                               stroke_width=2.5).set_fill(CLOUD, 0.05).move_to([2.1, 0.0, 0])
+        vfr = RoundedRectangle(width=2.45, height=2.55, corner_radius=0.14, stroke_color=CLOUD,
+                               stroke_width=2.5).set_fill(CLOUD, 0.05).move_to([2.27, 0.18, 0])
         vt = label("Vertex AI", size, CLOUD).move_to(vfr.get_top() + DOWN * 0.24)
         P["vertex"] = VGroup(vfr, vt)
-        P["cpu_tile"] = job_tile("CPU, RAM", False, size, 1.25, 1.55).move_to([1.42, -0.27, 0])
-        P["gpu_tile"] = job_tile("GPU", True, size, 1.25, 1.55).move_to([2.78, -0.27, 0])
-        wb = building(WB_HOST, 2.4, 2.45, size)
-        P["wandb"] = wb.move_to([5.17, -1.3, 0], aligned_edge=DOWN)
+        P["cpu_tile"] = job_tile("CPU, RAM", False, size, 1.08, 1.6).move_to([1.66, -0.1, 0])
+        P["gpu_tile"] = job_tile("GPU", True, size, 1.08, 1.6).move_to([2.88, -0.1, 0])
+        wb = building(WB_HOST, 2.4, 2.75, size)
+        P["wandb"] = wb.move_to([5.2, -1.3, 0], aligned_edge=DOWN)
         # ---- routes
         hr = P["cockpit"].body.get_right()[0]
+        fx = P["folder"].get_center()[0]
         P["laneA"] = VGroup(arrow(P["nbA"].frame.get_right(), P["folder"].get_left(), LAPTOP, buff=0.1),
-                            arrow(np.array([-0.95, P["folder"].get_bottom()[1], 0]),
-                                  np.array([-0.95, bfr.get_top()[1] + 0.02, 0]), LAPTOP))
+                            arrow(np.array([fx, P["folder"].get_bottom()[1], 0]),
+                                  np.array([fx, bfr.get_top()[1] + 0.02, 0]), LAPTOP))
         bx = wb.get_center()[0]
         P["laneB"] = _poly([P["nbB"].frame.get_right() + RIGHT * 0.08, [bx, 2.3, 0], [bx, wb.get_top()[1] + 0.08, 0]],
                            ROUTE, 3)
-        P["upload"] = _poly([[hr + 0.05, 0.42, 0], [bfr.get_left()[0] - 0.05, 0.42, 0]], ROUTE, 4)
-        P["submit"] = _poly([[hr + 0.05, 0.15, 0], [-3.08, 0.15, 0], [-3.08, -0.95, 0], [vfr.get_left()[0] - 0.05, -0.95, 0]],
+        P["upload"] = _poly([[hr + 0.12, 0.6, 0], [bfr.get_left()[0] - 0.05, 0.6, 0]], ROUTE, 4)
+        P["submit"] = _poly([[hr + 0.12, 0.3, 0], [-3.1, 0.3, 0], [-3.1, -1.0, 0], [vfr.get_left()[0] - 0.05, -1.0, 0]],
                             LAPTOP, 3)
         ct = P["cpu_tile"]
-        P["pull"] = _poly([[bfr.get_right()[0] + 0.02, 0.4, 0], [ct.frame.get_left()[0] - 0.02, 0.4, 0]], ROUTE, 3)
+        P["pull"] = _poly([[bfr.get_right()[0] + 0.02, 0.45, 0], [ct.frame.get_left()[0] - 0.02, 0.45, 0]], ROUTE, 3)
         P["stream"] = _poly([[ct.frame.get_center()[0], ct.frame.get_bottom()[1] - 0.02, 0],
-                             [ct.frame.get_center()[0], -1.18, 0], [wb.get_left()[0] + 0.1, -1.18, 0]], ROUTE, 3)
+                             [ct.frame.get_center()[0], -1.2, 0], [wb.get_left()[0] + 0.1, -1.2, 0]], ROUTE, 3)
         self.parts = P
-        self.base = band("bullseye · Debian 11", SYSTEM, 2.45, 0.34, size)
-        self.base.move_to([-5.025, -0.24, 0])
+        self.base = band("bullseye · Debian 11", SYSTEM, 2.85, 0.34, size)
+        self.base.move_to([-5.025, -0.06, 0])
         self.base_text = None
         self._lit = {k: P[k].copy() for k in MAP_KEYS}
         self.state = {k: False for k in MAP_KEYS}
@@ -2202,7 +2203,7 @@ class TrainingMap(Rig):
         return Transform(self.parts["bucket"], self._version("bucket", self.state["bucket"]), run_time=run_time)
 
     def _set_base_now(self, text):
-        b = band(text, SYSTEM, 2.45, 0.34, self.size).move_to(self.base)
+        b = band(text, SYSTEM, 2.85, 0.34, self.size).move_to(self.base)
         self.base.become(b)
         self.base.text = self.base[1]
         self.base_text = text
@@ -2212,7 +2213,7 @@ class TrainingMap(Rig):
     def relabel_base(self, text: str, run_time: float = 0.7):
         """Animation: the cockpit's ORANGE base band (Debian under the image) appears or relabels:
         'bullseye · Debian 11' → 'bookworm · Debian 12'."""
-        new = band(text, SYSTEM, 2.45, 0.34, self.size).move_to(self.base)
+        new = band(text, SYSTEM, 2.85, 0.34, self.size).move_to(self.base)
         if self.base_text is None:
             self.base.become(new)
             self.base_text = text
@@ -2245,15 +2246,15 @@ class TrainingMap(Rig):
         t.move_to(b)
         g = VGroup(b, t)
         g.box, g.text = b, t
-        return g.move_to([-4.3, 1.02, 0])
+        return g.move_to([-4.35, 1.42, 0])
 
     def labels(self, k: str) -> VGroup:
         """The words of route k (not added): 'upload' → 'package & upload' (two lines in the gap
         above it), 'submit' → 'create job' (under the bucket)."""
         if k == "upload":
-            return VGroup(note("package", INK), note("& upload", INK)).arrange(DOWN, buff=0.03).move_to([-3.08, 0.98, 0])
+            return VGroup(note("package", INK), note("& upload", INK)).arrange(DOWN, buff=0.03).move_to([-3.1, 1.08, 0])
         if k == "submit":
-            return note("create job", INK).move_to([-0.95, -0.95, 0])
+            return note("create job", INK).move_to([-0.65, -0.78, 0])
         raise KeyError(k)
 
 
@@ -2367,7 +2368,7 @@ class RunLedger(Rig):
         ax = Line([x0, yb, 0], [x0 + slot_w, yb, 0], color=S.GREY, stroke_width=2.5)
         t1 = mono("1", 20, S.GREY).next_to(ax.get_start(), DOWN, buff=0.08)
         t2 = mono(str(epochs), 20, S.GREY).next_to(ax.get_end(), DOWN, buff=0.08)
-        tl = label("epoch · one shared axis", 20, S.GREY).next_to(ax, DOWN, buff=0.08)
+        tl = label("epoch · one shared axis", 20, S.GREY).next_to(VGroup(t1, t2), DOWN, buff=0.06)
         axis = VGroup(ax, t1, t2, tl)
         g = VGroup(*boxes, axis)
         g.boxes, g.axis = boxes, axis
@@ -2420,7 +2421,7 @@ class ExperimentFolder(Rig):
 
     def __init__(self, size: float = 20):
         super().__init__()
-        title = mono(EXPERIMENT + "/", size + 2, INK)
+        title = VGroup(folder_glyph(0.34, LAPTOP), mono(EXPERIMENT + "/", size + 2, INK)).arrange(RIGHT, buff=0.15)
         leg = VGroup(*[VGroup(file_glyph(0.26, INK), mono(s, size, INK)).arrange(RIGHT, buff=0.12)
                        for s in FIVE_FILES]).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         self.stacks = []
@@ -2429,15 +2430,14 @@ class ExperimentFolder(Rig):
             self.stacks.append(st)
         sgrid = VGroup(*[outline_box(0.6, 2.4, S.GREY, solid=False, radius=0.06) for _ in range(5)]).arrange(RIGHT,
                                                                                                           buff=0.18)
-        for st, b in zip(self.stacks, sgrid):
-            st.move_to(b)
         inner = VGroup(sgrid, leg).arrange(RIGHT, buff=0.6)
         body = VGroup(title, inner).arrange(DOWN, aligned_edge=LEFT, buff=0.3)
         fr = RoundedRectangle(width=body.width + 0.7, height=body.height + 0.6, corner_radius=0.16,
                               stroke_color=LAPTOP, stroke_width=2.5).set_fill(S.GREY_DARKER, 1)
         body.move_to(fr)
-        fg = folder_glyph(0.34, LAPTOP).next_to(title, LEFT, buff=0.15)
-        self.add(fr, fg, title, sgrid, leg)
+        for st, b in zip(self.stacks, sgrid):
+            st.move_to(b)
+        self.add(fr, title, sgrid, leg)
         self.card, self.title, self.legend, self.slots_ = fr, title, leg, sgrid
         self.ride(*self.stacks)
 
@@ -2528,16 +2528,16 @@ class ConfigBinding(Rig):
     def __init__(self, size: float = 22):
         super().__init__()
         self.size = size
-        rf = RoundedRectangle(width=5.6, height=3.6, corner_radius=0.18, stroke_color=CLOUD,
+        rf = RoundedRectangle(width=5.6, height=3.8, corner_radius=0.18, stroke_color=CLOUD,
                               stroke_width=3).set_fill(CLOUD, 0.06).move_to([-3.4, 0.6, 0])
         rt = label("run", size, CLOUD).move_to(rf.get_corner(UL) + np.array([0.2, -0.25, 0]), aligned_edge=LEFT)
-        df = RoundedRectangle(width=4.4, height=2.5, corner_radius=0.12, stroke_color=OWNED,
-                              stroke_width=3).set_fill(OWNED, 0.08).move_to([-3.4, 0.35, 0])
+        df = RoundedRectangle(width=4.4, height=2.8, corner_radius=0.12, stroke_color=OWNED,
+                              stroke_width=3).set_fill(OWNED, 0.08).move_to([-3.4, 0.3, 0])
         dt = mono("Config", size, OWNED).move_to(df.get_corner(UL) + np.array([0.2, -0.25, 0]), aligned_edge=LEFT)
         self.run = VGroup(rf, rt)
         self.drawer = VGroup(df, dt)
         self.add(self.run, self.drawer)
-        self.init = chip("wandb.init(project=…)", TOOL, size=size, font=MONO).move_to([2.6, 2.3, 0])
+        self.init = chip("wandb.init(project=…)", TOOL, size=size, font=MONO).move_to([-0.3, 2.35, 0])
         self.label = sticky("wandb.config", TURN, size)
         self.label.move_to([1.0, 1.25, 0])
         self.arrow = Arrow(self.label.get_left(), df.get_right(), buff=0.1, color=ROUTE, stroke_width=5,
@@ -2545,8 +2545,8 @@ class ConfigBinding(Rig):
         self.init_link = DashedLine(self.init.get_bottom(), self.label.get_top() + UP * 0.02, color=TOOL,
                                     stroke_width=3)
         # the loose dict outside the run (RED outline: config that went nowhere)
-        lf = RoundedRectangle(width=4.3, height=2.6, corner_radius=0.12, stroke_color=ERR, stroke_width=3)
-        lf.set_fill(S.GREY_DARKER, 1).move_to([3.7, -0.35, 0])
+        lf = RoundedRectangle(width=4.3, height=2.8, corner_radius=0.12, stroke_color=ERR, stroke_width=3)
+        lf.set_fill(S.GREY_DARKER, 1).move_to([3.7, -0.15, 0])
         lt = mono("dict", size, INK).move_to(lf.get_corner(UL) + np.array([0.2, -0.25, 0]), aligned_edge=LEFT)
         self.loose = VGroup(lf, lt)
         self.loose_rows = self._rows(CONFIG_KEYS, lf)
@@ -2564,7 +2564,7 @@ class ConfigBinding(Rig):
         top = fr.get_top()[1] - 0.6
         for i, k in enumerate(keys):
             t = mono(f'"{k}": …', 20, INK)
-            t.move_to([fr.get_left()[0] + 0.35 + t.width / 2, top - i * 0.36, 0])
+            t.move_to([fr.get_left()[0] + 0.35 + t.width / 2, top - i * 0.42, 0])
             rows.append(t)
         return rows
 
@@ -2575,16 +2575,17 @@ class ConfigBinding(Rig):
 
     def rebind(self, run_time: float = 1.6):
         lf = self.loose[0]
-        spot = lf.get_top() + UP * (self.label.height / 2 + 0.12) + LEFT * 0.5
-        new_arrow = Arrow(spot + DOWN * self.label.height / 2, lf.get_top() + LEFT * 0.5 + DOWN * 0.02, buff=0.05,
+        spot = lf.get_top() + UP * (self.label.height / 2 + 0.75) + LEFT * 0.9
+        new_arrow = Arrow(spot + DOWN * self.label.height / 2, lf.get_top() + LEFT * 0.9 + DOWN * 0.02, buff=0.05,
                           color=ROUTE, stroke_width=5, tip_length=0.24)
         self.add(self.loose, *self.loose_rows)
+        self.remove(self.init_link)
         self.points_at = "loose"
         return Succession(
             AnimationGroup(FadeIn(self.loose, shift=LEFT * 0.3), LaggedStart(*[FadeIn(r) for r in self.loose_rows],
                                                                              lag_ratio=0.15)),
             AnimationGroup(self.label.animate.move_to(spot), Transform(self.arrow, new_arrow),
-                           self.init_link.animate.set_opacity(0.25)),
+                           FadeOut(self.init_link)),
             run_time=run_time)
 
     def write_update(self, run_time: float = 0.8):
