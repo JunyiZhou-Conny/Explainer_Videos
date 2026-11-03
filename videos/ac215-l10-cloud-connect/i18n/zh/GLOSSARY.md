@@ -133,7 +133,7 @@
 
 | English | 字幕 | 首次出现 | 说明 |
 |---|---|---|---|
-| the API's Google client / built from a project and a location / location | Google 客户端 / 项目 / 区域 | S07[0]：API 的 Google 客户端只用一个项目和一个区域来构建，别的什么都没有。 | L5: Google 客户端; L6: 区域. So what failed? → 那么，到底是什么失败了？ |
+| the loader's Google client, like the API's / built from a project and a location / location | Google 客户端 / 项目 / 区域 | S07[0]：加载器的 Google 客户端和 API 的一样，只用一个项目和一个区域来构建，别的什么都没有。 | L5: Google 客户端; L6: 区域. So what failed? → 那么，到底是什么失败了？ |
 | application default credentials / ADC / a convention / a library opens the key file | 应用默认凭据 / ADC / 约定 / 库 | S07[0]：这个 repo 里没有代码去打开密钥文件；打开它的是一个库，靠的是一个叫应用默认凭据的约定，简称 ADC。 | A3 (L3): 应用默认凭据 on first use, then ADC. |
 | three places / in order / the file named by the variable / a login file the gcloud tool writes / the metadata server / inside Google's cloud | 三个位置 / 按顺序 / 登录文件 / gcloud / 元数据服务器 | S07[1]：第三，元数据服务器，在你的代码跑在 Google 的云里时才有。 | ADC looks in three places, in order → ADC 按顺序看三个位置. Second, a login file the gcloud tool writes for you, as a person → 第二，gcloud 工具为你本人写的一个登录文件. ADC moves to the next place only when the one before is not set → 只有前一个位置没有设置时，ADC 才会去看下一个. Inside these containers, only the first place exists → 在这些 container 里，只有第一个位置存在. |
 | a small note / a JSON web token / signs it with your private key / Google's token desk / the address in your key file | 纸条 / JSON Web Token / 签名 / 令牌柜台 | S07[2]：这个库写一张小纸条，也就是一个 JSON Web Token，用你的私钥签名。 | A3. D4: a JSON web token → a JSON Web Token. It sends that note to Google's token desk, at the address in your key file → 它把这张纸条送到 Google 的令牌柜台，地址就写在你的密钥文件里. |

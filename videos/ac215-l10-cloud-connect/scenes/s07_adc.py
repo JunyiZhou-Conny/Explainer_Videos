@@ -221,7 +221,9 @@ class AdcToToken(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref), FadeIn(win_a, shift=UP * 0.2), run_time=0.9)
-            vo.wait_until("The API's Google client")
+            vo.wait_until("The loader's Google client")
+            self.play(FadeIn(VGroup(win_c, cbars), shift=UP * 0.2), FadeIn(same), run_time=0.6)
+            vo.wait_until("like the API's")
             self.play(Indicate(win_a.code.code_lines[1], color=INK, scale_factor=1.04), run_time=0.7)
             vo.wait_until("built from a project")
             proj = code_span(win_a.code, 1, 'os.environ["GCP_PROJECT"]')
@@ -235,7 +237,6 @@ class AdcToToken(VoiceScene):
                             code_span(win_b.code, 3, 'location="global"')], TURN, scale=1.08, lag=0.5),
                       run_time=1.0)
             vo.wait_until("No code in this repo")
-            self.play(FadeIn(VGroup(win_c, cbars), shift=UP * 0.2), FadeIn(same), run_time=0.6)
             self.play(FadeIn(nokey, shift=LEFT * 0.2),
                       each([code_span(win_c.code, 1, "project=GCP_PROJECT"),
                             code_span(win_c.code, 1, "location=GCP_LOCATION")], TURN, scale=1.08, lag=0.5),

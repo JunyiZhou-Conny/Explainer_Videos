@@ -269,12 +269,14 @@ S06:
   - "DefaultCredentialsError: the key file was not found."
   - null
   - null
-- en: "With a real key, the run continues: it embeds every book, creates the char split collection, and finishes inserting. Pause and run it; with your key, it takes a while."
+- en: "With a real key, the run continues: it embeds every book, creates the char split collection, and finishes inserting. Pause and run it; with your key, it takes a while. If instead you see a 403 saying the API is disabled, enable the Vertex AI API; the IAM scene shows the command."
   zh:
   - "有真实密钥的话，运行会继续：向量化每一本书，创建 char-split-collection，最后完成插入。"
   - "暂停一下，自己跑一遍；用你的密钥，这要花一阵子。"
+  - "如果你看到的是 403，说 API 没有启用，就启用 Vertex AI API；讲 IAM 的那一段会给出命令。"
   en_display:
   - "With a real key, the run continues: it embeds every book, creates the char-split-collection, and finishes inserting."
+  - null
   - null
 - en: "The second command does the same with recursive split. Pause and run it, then type exit. An extra count shows 8,248 chunks for char split and 14,228 for recursive split, at the time of recording. Recursive split makes more chunks, mostly from a default overlap of up to 200 characters, and it cuts at paragraph and word breaks."
   zh:
@@ -300,10 +302,10 @@ S06:
   - "再额外 curl 一下它的版本：录制时是 1.0.0。"
   - "关掉它放在最后。"
 S07:
-- en: "So what failed? The API's Google client is built from a project and a location, nothing else. No code in this repo opens the key file; a library does, by a convention called application default credentials, or ADC."
+- en: "So what failed? The loader's Google client, like the API's, is built from a project and a location, nothing else. No code in this repo opens the key file; a library does, by a convention called application default credentials, or ADC."
   zh:
   - "那么，到底是什么失败了？"
-  - "API 的 Google 客户端只用一个项目和一个区域来构建，别的什么都没有。"
+  - "加载器的 Google 客户端和 API 的一样，只用一个项目和一个区域来构建，别的什么都没有。"
   - "这个 repo 里没有代码去打开密钥文件；打开它的是一个库，靠的是一个叫应用默认凭据的约定，简称 ADC。"
 - en: "ADC looks in three places, in order. First, the file named by the Google application credentials variable: a service account key, as in this tutorial. Second, a login file the gcloud tool writes for you, as a person. Third, the metadata server, when your code runs inside Google's cloud. ADC moves to the next place only when the one before is not set. Inside these containers, only the first place exists."
   zh:

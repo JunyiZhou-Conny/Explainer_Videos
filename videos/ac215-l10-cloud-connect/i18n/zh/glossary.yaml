@@ -294,9 +294,9 @@ terms:
   first_use: 'S06[6]：再额外 curl 一下它的版本：录制时是 1.0.0。'
   note: 'C2. Stopping it comes at the very end → 关掉它放在最后.'
 # ---------------------------------------------------------------- S07: ADC
-- en: 'the API''s Google client / built from a project and a location / location'
+- en: 'the loader''s Google client, like the API''s / built from a project and a location / location'
   zh_subtitle: 'Google 客户端 / 项目 / 区域'
-  first_use: 'S07[0]：API 的 Google 客户端只用一个项目和一个区域来构建，别的什么都没有。'
+  first_use: 'S07[0]：加载器的 Google 客户端和 API 的一样，只用一个项目和一个区域来构建，别的什么都没有。'
   note: 'L5: Google 客户端; L6: 区域. So what failed? → 那么，到底是什么失败了？'
 - en: 'application default credentials / ADC / a convention / a library opens the key file'
   zh_subtitle: '应用默认凭据 / ADC / 约定 / 库'

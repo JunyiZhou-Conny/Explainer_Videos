@@ -16,8 +16,8 @@ Beats (script.md, ## S06; one voiceover block each):
    circumscribed on 'The next scene builds that chain'.
 3. A GREY card `recorded · cli.py prints (231, 236, 278, 285, 160–161) + README.md:98–105`, the
    success checkpoints in the code's own words (a literal N, no counts); README.md line 94 as a
-   card with the GOLD cost tag and, on 'Pause and run it', `▶ your turn` plus a GREY chip
-   '403 · API disabled → see IAM scene' (whole-video QA: S08 has the enable command).
+   card with the GOLD cost tag and, on 'Pause and run it', `▶ your turn`; on 'If instead you see a
+   403' a GREY chip '403 · API disabled → see IAM scene' (whole-video QA: S08 has the enable command).
 4. TRACKER B4: straight cut to laptop/25's prompt `app@ae87a706e772:/app$` under the GREY chip 'our
    capture: a fresh container for each command · stay in yours'; README.md line 95 typed (folds) →
    TERM(25: 14–17, …, 185; wrap), line 17 YELLOW, 185 RED, the GOLD row tag again, `▶ your turn`.
@@ -276,7 +276,10 @@ class ChunksNeedAKey(VoiceScene):
             vo.wait_until("Pause and run it")
             self.play(FadeIn(yt3, shift=LEFT * 0.15), run_time=0.4)
             flash_tag(self, yt3, TURN)
+            vo.wait_until("If instead you see a 403")
             self.play(FadeIn(api403, shift=LEFT * 0.15), run_time=0.4)   # QA: forward pointer to S08
+            vo.wait_until("the IAM scene shows the command")
+            flash_tag(self, api403)
 
         # ========================================================== 4. recursive split, exit, an extra count
         p25, cmd25 = cap25.istep(12)

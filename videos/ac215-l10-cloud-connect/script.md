@@ -444,8 +444,9 @@ the success checkpoints as plain lines in the code's own words: `embed()` · `Nu
 process: 11` · `Creating collection: char-split-collection` · `Collection 'char-split-collection'
 did not exist. Creating new.` · `Finished inserting N items into collection
 'char-split-collection'` (a literal N). No timings, no counts. Then `▶ your turn` beside the
-char-split command line (B3), after the cost has been said.
-SAY: With a real key, the run continues: it embeds every book, creates the char split collection, and finishes inserting. Pause and run it; with your key, it takes a while.
+char-split command line (B3), after the cost has been said, and on "If instead you see a 403" a
+GREY chip "403 · API disabled → see IAM scene".
+SAY: With a real key, the run continues: it embeds every book, creates the char split collection, and finishes inserting. Pause and run it; with your key, it takes a while. If instead you see a 403 saying the API is disabled, enable the Vertex AI API; the IAM scene shows the command.
 
 SHOW: TRACKER B4. A straight cut, with no `exit` and no new `sh docker-shell.sh` typed, to the
 capture's prompt `app@ae87a706e772:/app$`, under a GREY chip: "our capture: a fresh container for
@@ -487,10 +488,11 @@ SAY: The README says ChromaDB keeps running after you exit, and an extra docker 
 
 SHOW: No tracker (concept scene). GREY tag `lecture_ref(10, "19–31, 42")` top right, whole scene.
 CODE(cheese-app-v0/api-service/api/routers/rag.py: 14–27); line 26
-`llm_client = genai.Client(vertexai=True, project=GCP_PROJECT, location="global")` YELLOW; a GREY
-chip "no key path anywhere". Slide 42's chain redrawn beside it: "mounted key → env var → client →
+`llm_client = genai.Client(vertexai=True, project=GCP_PROJECT, location="global")` YELLOW;
+CODE(cheese-app-v0/llm-rag/cli.py: 35–36), both lines YELLOW, header note "· the loader's client:
+the same call" (the failure just watched came from the loader); a GREY chip "no key path anywhere". Slide 42's chain redrawn beside it: "mounted key → env var → client →
 ?? → IAM check"; the "??" box opens into V1.
-SAY: So what failed? The API's Google client is built from a project and a location, nothing else. No code in this repo opens the key file; a library does, by a convention called application default credentials, or ADC.
+SAY: So what failed? The loader's Google client, like the API's, is built from a project and a location, nothing else. No code in this repo opens the key file; a library does, by a convention called application default credentials, or ADC.
 
 SHOW: V1's magnifying glass walks three slots: (1) "the file named by
 GOOGLE_APPLICATION_CREDENTIALS · a service-account key · this tutorial" GREEN; (2) "gcloud auth
