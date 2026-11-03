@@ -358,7 +358,7 @@ class IdentityForCode(VoiceScene):
             vo.wait_until("The lecture's rule")
             self.play(ec.body[2].animate.set_opacity(1), run_time=0.6)
             vo.wait_until("least privilege")
-            self.play(Indicate(ec.body[2], color=TURN, scale_factor=1.06), run_time=0.8)
+            self.play(Indicate(ec.body[2], color=TURN, scale_factor=1.03), run_time=0.8)  # 1.06 poked past the card edge
             vo.wait_until("meaning only the access")
             self.play(Create(need_u), run_time=0.5)
             vo.wait_until("would grant less")

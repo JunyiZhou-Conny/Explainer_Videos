@@ -134,7 +134,7 @@ def words(*parts, size: float = 22) -> VGroup:
             ms.append(mono(p[0], size, p[2]))
         else:
             ms.append(label(p[0], size, p[1]))
-    return VGroup(*ms).arrange(RIGHT, buff=0.12, aligned_edge=DOWN)
+    return VGroup(*ms).arrange(RIGHT, buff=0.12)
 
 
 class TimeTravel(VoiceScene):
@@ -152,7 +152,7 @@ class TimeTravel(VoiceScene):
         # ========================================================== 0. J6 → K5: time travel, the rope pull
         ref = lref("22, 26")
         tr = tracker("J", 6)
-        from13 = grey_chip("from scene 13").next_to(tr.caption, RIGHT, buff=0.3)
+        from13 = grey_chip("from scene 13").next_to(tr.caption, RIGHT, buff=0.3).shift(DOWN * 0.14)
         m = PipelineMap.at("S15")
         term_card = card([label("time travel", 44, TURN), label("reaching an earlier version", 32, INK),
                           label("only while its files are kept", 32, INK)],
@@ -439,11 +439,12 @@ class TimeTravel(VoiceScene):
             r118 = out(self, lt5, c118.at(2, 4, 6), run_time=0.5)
             self.play(*[substring(r, f"dataset_v{v}").animate.set_color(TURN) for r, v in zip(r118, (20, 21, 30))],
                       run_time=0.6)
+            self.play(FadeIn(gh.flag, shift=DOWN * 0.15), run_time=0.5)
+            self.play(Create(gh.rope), FadeIn(air, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("v20, v21 and v30")
             self.play(each([substring(r, f"dataset_v{v}") for r, v in zip(r118, (20, 21, 30))], TURN, scale=1.12,
                            lag=0.25), run_time=0.9)
-            self.play(FadeIn(gh.flag, shift=DOWN * 0.15), run_time=0.5)
-            self.play(Create(gh.rope), FadeIn(air, shift=DOWN * 0.1), run_time=0.6)
+            self.play(Indicate(gh.flag.text, color=S.GREY, scale_factor=1.12), run_time=0.6)
             vo.wait_until("The stored count of 3")
             gone = VGroup(*base3, gh, air)
             self.play(FadeOut(gone), run_time=0.5)
