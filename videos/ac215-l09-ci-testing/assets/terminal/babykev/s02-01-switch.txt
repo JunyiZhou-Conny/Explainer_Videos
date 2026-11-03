@@ -1,0 +1,4 @@
+$ git switch --detach step-02
+Previous HEAD position was 9cc0343 step-01: the contract, api.py, and its tests
+HEAD is now at 4681f25 step-02: two fixes for the failing tests
+[exit 0]

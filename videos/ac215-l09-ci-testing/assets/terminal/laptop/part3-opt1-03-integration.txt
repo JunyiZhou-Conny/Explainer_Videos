@@ -1,0 +1,25 @@
+$ docker run --rm cheese-app-api:local pytest tests/integration/ -v
+Container is running!!!
+Executing command: pytest tests/integration/ -v
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /app
+configfile: pytest.ini
+plugins: platformdirs-4.13.5, asyncio-1.4.0, anyio-4.15.1, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 10 items
+
+tests/integration/test_api.py::TestAPIEndpoints::test_root_endpoint PASSED [ 10%]
+tests/integration/test_api.py::TestAPIEndpoints::test_root_returns_json PASSED [ 20%]
+tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_endpoint PASSED [ 30%]
+tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_default_parameters PASSED [ 40%]
+tests/integration/test_api.py::TestAPIEndpoints::test_euclidean_distance_with_floats PASSED [ 50%]
+tests/integration/test_api.py::TestAPIEndpoints::test_invalid_route_returns_404 PASSED [ 60%]
+tests/integration/test_api.py::TestAPIEndpoints::test_method_not_allowed PASSED [ 70%]
+tests/integration/test_api.py::TestCORS::test_cors_enabled PASSED        [ 80%]
+tests/integration/test_api.py::TestCORS::test_cors_allows_all_origins PASSED [ 90%]
+tests/integration/test_api.py::test_api_health_check PASSED              [100%]
+
+======================== 10 passed, 1 warning in 0.41s =========================
+[exit 0]

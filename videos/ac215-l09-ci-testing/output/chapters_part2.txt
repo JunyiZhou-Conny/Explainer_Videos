@@ -1,0 +1,6 @@
+00:00 Guest lecture: uv, just, and two failing tests
+02:07 One command is the gate
+04:18 All green, and the mask is wrong
+06:34 Properties, not examples
+08:49 Hooks are local; CI checks again
+10:36 Tear down, recap, and what's next

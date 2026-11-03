@@ -1,0 +1,24 @@
+$ just test -k single_level
+uv run pytest "$@"
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/student/babykev
+configfile: pyproject.toml
+testpaths: tests
+plugins: platformdirs-4.12.3, cov-7.1.0
+collected 53 items / 52 deselected / 1 selected
+
+tests/unit/test_api.py .                                                 [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                      Stmts   Miss  Cover   Missing
+-------------------------------------------------------
+src/babykev/__init__.py       0      0   100%
+src/babykev/api.py           75     43    43%   33-35, 58-65, 75, 80-100, 105-106, 119-122, 131, 136-157
+src/babykev/cli.py            8      5    38%   17-21
+-------------------------------------------------------
+TOTAL                        83     48    42%
+======================= 1 passed, 52 deselected in 0.17s =======================
+[exit 0]

@@ -1,0 +1,15 @@
+00:00 Who gets to say no?
+01:24 The bug that almost shipped
+02:55 Three kinds of test, and a gate
+04:51 Clone, and run the app
+06:43 Formatter vs linter
+09:12 pytest, under the hood
+11:03 Tests inside the shipping image
+13:18 The system test and the silent skip
+15:34 The gate on your machine
+18:11 Guest lecture: uv, just, and two failing tests
+20:18 One command is the gate
+22:30 All green, and the mask is wrong
+24:46 Properties, not examples
+27:01 Hooks are local; CI checks again
+28:47 Tear down, recap, and what's next

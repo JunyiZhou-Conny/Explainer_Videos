@@ -1,0 +1,57 @@
+$ just types
+uv run ty check "$@"
+error[invalid-return-type]: Return type does not match returned value
+  --> src/babykev/model.py:68:12
+   |
+66 | ) -> PreTrainedTokenizerBase:  # Its tokenizer
+   |      ----------------------- Expected `PreTrainedTokenizerBase` because of return type
+67 |     """Load the tokenizer that belongs to a base model."""
+68 |     return AutoTokenizer.from_pretrained(name)
+   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `PreTrainedTokenizerBase`, found `Unknown | TokenizersBackend | None | SentencePieceBackend`
+info: element `None` of union `Unknown | TokenizersBackend | None | SentencePieceBackend` is not assignable to `PreTrainedTokenizerBase`
+
+error[not-iterable]: Object of type `int` is not iterable
+  --> src/babykev/model.py:97:36
+   |
+97 |     s_id, q_id, o_id, c_id, d_id = tok.convert_tokens_to_ids(SPECIAL)
+   |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+info: It doesn't have an `__iter__` method or a `__getitem__` method
+
+error[not-iterable]: Object of type `int` is not iterable
+  --> tests/unit/test_model.py:49:21
+   |
+49 |     s, q, o, c, d = tok.convert_tokens_to_ids(SPECIAL)
+   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+info: It doesn't have an `__iter__` method or a `__getitem__` method
+
+error[not-subscriptable]: Cannot subscript object of type `int` with no `__getitem__` method
+   --> tests/unit/test_model.py:100:14
+    |
+100 |     decide = tok.convert_tokens_to_ids(SPECIAL)[4]
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[invalid-argument-type]: Argument to `set.__init__` is incorrect
+   --> tests/unit/test_model.py:111:31
+    |
+111 |     assert not set(ids) & set(tok.convert_tokens_to_ids(SPECIAL))
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Expected `Iterable[Unknown]`, found `int | list[int]`
+info: element `int` of union `int | list[int]` is not assignable to `Iterable[Unknown]`
+info: └── type `int` is not assignable to protocol `Iterable[Unknown]`
+info:     └── protocol member `__iter__` is not defined on type `int`
+info: Matching overload defined here
+    --> stdlib/builtins.pyi:3316:9
+     |
+3316 |     def __init__(self, iterable: Iterable[_T], /) -> None: ...
+     |         ^^^^^^^^       ---------------------- Parameter declared here
+info: Non-matching overloads for bound method `__init__`:
+info:   (self) -> None
+
+error[not-iterable]: Object of type `int` is not iterable
+   --> tests/unit/test_model.py:120:21
+    |
+120 |     s, q, o, c, d = TOK.convert_tokens_to_ids(SPECIAL)
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+info: It doesn't have an `__iter__` method or a `__getitem__` method
+
+Found 6 diagnostics
+[exit 1]

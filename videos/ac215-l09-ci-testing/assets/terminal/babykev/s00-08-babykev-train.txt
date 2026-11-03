@@ -1,0 +1,3 @@
+$ uv run babykev train
+babykev: no command named 'train'. Run `babykev help`.
+[exit 2]

@@ -1,0 +1,35 @@
+$ git commit -am "try"
+[INFO] Initializing environment for https://github.com/pre-commit/pre-commit-hooks.
+[INFO] Installing environment for https://github.com/pre-commit/pre-commit-hooks.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+check for added large files..............................................Passed
+check for merge conflicts................................................Passed
+no .env file.........................................(no files to check)Skipped
+just check...............................................................Failed
+- hook id: check
+- exit code: 1
+
+uv run ruff format "$@"
+6 files already formatted
+uv run ruff check "$@"
+F401 [*] `os` imported but unused
+ --> src/babykev/api.py:8:8
+  |
+6 | """
+7 |
+8 | import os
+  |        ^^
+9 | from typing import Any, Literal, Self
+  |
+help: Remove unused import: `os`
+  |
+7 |
+  - import os
+8 | from typing import Any, Literal, Self
+  |
+
+Found 1 error.
+[*] 1 fixable with the `--fix` option.
+
+[exit 1]

@@ -1,0 +1,13 @@
+$ git commit -m "Your commit message"
+Trim trailing whitespace.................................................Passed
+Fix end of files.........................................................Passed
+Check YAML syntax....................................(no files to check)Skipped
+Check for large files....................................................Passed
+Check JSON syntax....................................(no files to check)Skipped
+Check for merge conflicts................................................Passed
+Detect private keys......................................................Passed
+Format Python code with Black............................................Passed
+Check Python code with Flake8............................................Passed
+[main b72d50d] Your commit message
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+[exit 0]

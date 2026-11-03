@@ -1,0 +1,4 @@
+$ git switch --detach step-01
+Previous HEAD position was ee96429 step-00: the project, with a command that has nothing to do yet
+HEAD is now at 9cc0343 step-01: the contract, api.py, and its tests
+[exit 0]

@@ -1,0 +1,7 @@
+$ sed -n '68,72p' src/babykev/api.py
+def render(
+    v: JSONContent,  # Text, a number, a list or an object, from a request
+    indent: int = 0,  # How deeply nested this value is; each level indents by two spaces
+) -> str:  # The text the model sees
+    """Flatten str | object | array into text the model sees. Field names are kept as labels."""
+[exit 0]

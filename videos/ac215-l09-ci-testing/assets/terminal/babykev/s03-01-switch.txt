@@ -1,0 +1,4 @@
+$ git switch --detach step-03
+Previous HEAD position was 4681f25 step-02: two fixes for the failing tests
+HEAD is now at 651cd62 step-03: format and lint, and docstrings and types everywhere, comprehensive checks, and hooks
+[exit 0]

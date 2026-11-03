@@ -1,0 +1,918 @@
+1
+00:00:00,000 --> 00:00:02,923
+Part 2 is the guest lecture.
+
+2
+00:00:03,243 --> 00:00:07,489
+It builds the same gate
+around a small machine learning project,
+
+3
+00:00:07,489 --> 00:00:11,270
+babykev, which answers questions
+about cheese and reports
+
+4
+00:00:11,270 --> 00:00:14,720
+how confident it is;
+a pure guess should score zero.
+
+5
+00:00:15,040 --> 00:00:16,960
+No Docker until the very end.
+
+6
+00:00:17,280 --> 00:00:19,850
+Two tools first, as extras:
+
+7
+00:00:19,850 --> 00:00:26,610
+the package manager uv from lecture
+2, 0.13.2 at the time of recording,
+
+8
+00:00:26,610 --> 00:00:30,037
+and the command runner just, 1.59.0.
+
+9
+00:00:30,283 --> 00:00:35,019
+Clone babykev and list its tags:
+9 steps, one per lecture stage.
+
+10
+00:00:35,339 --> 00:00:37,658
+The repo is its own slide deck,
+
+11
+00:00:37,658 --> 00:00:41,099
+and git switch --detach
+moves you to any step.
+
+12
+00:00:41,419 --> 00:00:42,721
+Pause and run both.
+
+13
+00:00:42,967 --> 00:00:47,400
+At step-00,
+one command builds the environment:
+
+14
+00:00:47,400 --> 00:00:49,004
+uv sync --locked.
+
+15
+00:00:49,324 --> 00:00:55,746
+It installs Python 3.13.16 and the project
+exactly as the lockfile says.
+
+16
+00:00:56,066 --> 00:00:58,882
+Locked means stop rather
+than silently upgrade.
+
+17
+00:00:59,202 --> 00:01:02,103
+Its warning is harmless,
+at the time of recording.
+
+18
+00:01:02,423 --> 00:01:06,306
+The cheese repo froze an image;
+babykev pins a lockfile.
+
+19
+00:01:06,626 --> 00:01:09,352
+Typing just, alone, lists the recipes:
+
+20
+00:01:09,352 --> 00:01:12,940
+one name per task,
+for people, hook, and later CI.
+
+21
+00:01:13,260 --> 00:01:14,561
+Pause and run these.
+
+22
+00:01:14,800 --> 00:01:17,424
+Step 1 brings the contract and its tests.
+
+23
+00:01:17,744 --> 00:01:22,800
+Run uv run pytest: 2 failed, 50 passed,
+and the tests are right.
+
+24
+00:01:23,120 --> 00:01:27,684
+One failure is a pure guess
+scored as half confident;
+
+25
+00:01:27,684 --> 00:01:32,421
+the other is 77 rounded probabilities
+that sum to 0.77.
+
+26
+00:01:32,741 --> 00:01:36,432
+Same rule as the cheese demo:
+fix the code, not the tests.
+
+27
+00:01:36,752 --> 00:01:37,904
+Pause and run it.
+
+28
+00:01:38,150 --> 00:01:41,905
+Step 2 is format and lint at scale,
+ruff in both roles.
+
+29
+00:01:42,225 --> 00:01:45,233
+After formatting,
+the linter counts 70 findings.
+
+30
+00:01:45,553 --> 00:01:47,857
+Safe automatic fixes remove one.
+
+31
+00:01:48,177 --> 00:01:52,317
+Unsafe fixes,
+applied deliberately, remove 32 more;
+
+32
+00:01:52,317 --> 00:01:54,833
+37 remain; those need a person.
+
+33
+00:01:55,153 --> 00:02:00,280
+And the width war from part 1 is settled
+in one line, line-length = 100,
+
+34
+00:02:00,280 --> 00:02:05,691
+written once in pyproject.toml;
+the formatter and the linter both follow it.
+
+35
+00:02:07,533 --> 00:02:11,169
+Step 3 installs the gate with one recipe,
+just setup:
+
+36
+00:02:11,169 --> 00:02:13,912
+lockfile sync and hook install together.
+
+37
+00:02:14,232 --> 00:02:15,384
+Pause and run it.
+
+38
+00:02:15,704 --> 00:02:18,499
+The walk's next command
+prints the hook file:
+
+39
+00:02:18,499 --> 00:02:21,976
+the same hand-over chain as before,
+with one difference.
+
+40
+00:02:22,296 --> 00:02:25,108
+This machine's own venv path
+is baked inside,
+
+41
+00:02:25,108 --> 00:02:26,669
+so it is never committed.
+
+42
+00:02:26,916 --> 00:02:31,913
+The config here has four hooks, not nine:
+large files, merge markers,
+
+43
+00:02:31,913 --> 00:02:37,561
+a policy hook refusing any .env file,
+and one local hook that runs just check.
+
+44
+00:02:37,881 --> 00:02:40,164
+So the hook runs exactly what you type.
+
+45
+00:02:40,484 --> 00:02:43,404
+At this step, just check means format check,
+
+46
+00:02:43,404 --> 00:02:46,436
+lint, tests with a 90 percent
+coverage floor,
+
+47
+00:02:46,436 --> 00:02:47,716
+and config linting.
+
+48
+00:02:48,216 --> 00:02:49,360
+Run just check:
+
+49
+00:02:49,360 --> 00:02:53,784
+everything green,
+coverage 100 percent over a floor of 90.
+
+50
+00:02:54,104 --> 00:02:55,229
+Now watch it bite:
+
+51
+00:02:55,229 --> 00:02:58,541
+ask for only the confidence tests,
+keeping the floor.
+
+52
+00:02:58,861 --> 00:03:02,727
+9 tests pass,
+half the code is never exercised,
+
+53
+00:03:02,727 --> 00:03:06,264
+and the run fails at 49.4 percent coverage.
+
+54
+00:03:06,584 --> 00:03:08,525
+A floor is a gate, not a goal.
+
+55
+00:03:08,845 --> 00:03:10,147
+Pause and run both.
+
+56
+00:03:10,383 --> 00:03:14,884
+Config files are checked too:
+a broken hook config breaks every commit.
+
+57
+00:03:15,204 --> 00:03:20,303
+One wrong indent in the pre-commit config,
+and yamllint names the exact line.
+
+58
+00:03:20,623 --> 00:03:23,116
+Restored, the recipe runs green;
+
+59
+00:03:23,116 --> 00:03:27,556
+it also validates pyproject.toml
+and checks the lockfile.
+
+60
+00:03:27,800 --> 00:03:31,384
+Now the gate refuses, twice;
+pause and try the first.
+
+61
+00:03:31,704 --> 00:03:37,293
+An unused import goes in;
+the commit fails on F401, no commit made.
+
+62
+00:03:37,613 --> 00:03:39,602
+Then a .env file is staged,
+
+63
+00:03:39,602 --> 00:03:42,916
+and the refusal
+is the config's own sentence:
+
+64
+00:03:42,916 --> 00:03:47,128
+a .env file holds the settings
+and secrets of one machine.
+
+65
+00:03:47,448 --> 00:03:48,856
+It is never committed.
+
+66
+00:03:51,050 --> 00:03:55,465
+Two gate styles, both fine:
+this one points and you run just fmt;
+
+67
+00:03:55,465 --> 00:03:58,453
+the cheese gate rewrites and makes you look.
+
+68
+00:03:58,773 --> 00:04:02,419
+Steps 4 and 4b put
+documentation in the gate:
+
+69
+00:04:02,419 --> 00:04:07,847
+first 50 of 88 functions,
+methods and classes typed and documented,
+
+70
+00:04:07,847 --> 00:04:13,194
+one step later 88 of 88;
+deleting one description blocks a commit.
+
+71
+00:04:13,514 --> 00:04:15,199
+Two rows join the table.
+
+72
+00:04:18,750 --> 00:04:24,655
+Step 5 brings the model:
+the setup recipe now pulls the model stack,
+
+73
+00:04:24,655 --> 00:04:30,995
+38 packages including torch 2.14.1
+for the CPU, at the time of recording.
+
+74
+00:04:31,315 --> 00:04:36,201
+Then just test:
+92 passed, coverage 94 percent, all green.
+
+75
+00:04:36,521 --> 00:04:37,822
+Pause and run both.
+
+76
+00:04:38,117 --> 00:04:39,525
+What does the model do?
+
+77
+00:04:39,845 --> 00:04:43,984
+A request packs one state
+and several questions into one sequence.
+
+78
+00:04:44,304 --> 00:04:45,998
+A mask enforces one rule:
+
+79
+00:04:45,998 --> 00:04:50,469
+a question may see the state and itself,
+never a sibling question.
+
+80
+00:04:50,789 --> 00:04:55,930
+Questions must be answered independently;
+a peek would leak one answer into another.
+
+81
+00:04:56,250 --> 00:05:00,069
+That one forbidden cell
+is the whole difference from a causal mask.
+
+82
+00:05:01,583 --> 00:05:04,183
+The walk prints the mask the code builds,
+
+83
+00:05:04,183 --> 00:05:07,143
+for two state tokens
+and two questions of two;
+
+84
+00:05:07,143 --> 00:05:08,559
+pause and print yours.
+
+85
+00:05:08,879 --> 00:05:13,807
+Rows 5 and 6 say question 2 sees everything,
+including question 1.
+
+86
+00:05:14,127 --> 00:05:15,639
+The cause is one line:
+
+87
+00:05:15,639 --> 00:05:20,037
+torch.ones_like marks every pair of tokens
+as the same question.
+
+88
+00:05:20,283 --> 00:05:24,057
+A checker script compares the built mask
+against the one we meant,
+
+89
+00:05:24,057 --> 00:05:25,830
+and prints WRONG on those rows.
+
+90
+00:05:26,150 --> 00:05:31,035
+But nothing in just check runs it;
+a printout you read by eye is not a test.
+
+91
+00:05:31,355 --> 00:05:32,788
+Something to ponder:
+
+92
+00:05:32,788 --> 00:05:37,158
+every line of branch_mask ran,
+and coverage reads 94 percent.
+
+93
+00:05:37,478 --> 00:05:39,633
+Can any coverage number catch this bug?
+
+94
+00:05:48,467 --> 00:05:54,142
+No. Coverage counts lines that ran, never
+whether anyone checked what they produced.
+
+95
+00:05:54,462 --> 00:05:56,616
+Necessary, and never sufficient.
+
+96
+00:05:56,850 --> 00:05:59,319
+Also green and blind: the type checker,
+
+97
+00:05:59,319 --> 00:06:02,610
+which reads declared types
+without running the code.
+
+98
+00:06:02,930 --> 00:06:06,813
+Running ty finds 6 diagnostics,
+yet just check is green:
+
+99
+00:06:06,813 --> 00:06:08,920
+types are not in the gate yet,
+
+100
+00:06:08,920 --> 00:06:12,082
+and a check outside
+the gate protects nobody.
+
+101
+00:06:12,317 --> 00:06:16,641
+Last, the smoke on the real model:
+half a billion parameters,
+
+102
+00:06:16,641 --> 00:06:19,618
+downloaded once from the Hugging Face Hub,
+
+103
+00:06:19,618 --> 00:06:23,730
+a public model host,
+answering 15 cheese questions on CPU.
+
+104
+00:06:24,050 --> 00:06:27,698
+The first run downloads about a gigabyte;
+pause and run it.
+
+105
+00:06:28,018 --> 00:06:29,512
+6 of 15 right.
+
+106
+00:06:29,832 --> 00:06:33,138
+Nothing is trained, these are guesses;
+hold that number.
+
+107
+00:06:34,783 --> 00:06:37,556
+Step 5a answers with tests that could tell.
+
+108
+00:06:37,876 --> 00:06:39,066
+First, honesty:
+
+109
+00:06:39,066 --> 00:06:43,188
+on this machine just test says 1 failed,
+102 passed.
+
+110
+00:06:43,508 --> 00:06:46,743
+The failing test changes
+one question and demands
+
+111
+00:06:46,743 --> 00:06:49,780
+that the other answers
+stay bit for bit equal.
+
+112
+00:06:50,100 --> 00:06:55,613
+On this Linux CPU, torch sums
+in a different order than the author's Mac;
+
+113
+00:06:55,613 --> 00:06:58,634
+there all 103 pass, as the walk records.
+
+114
+00:06:58,954 --> 00:07:02,067
+Hermetic means only your code
+can make it fail;
+
+115
+00:07:02,067 --> 00:07:05,511
+bit exactness across machines
+is a stronger promise;
+
+116
+00:07:05,511 --> 00:07:07,167
+this machine measured it.
+
+117
+00:07:07,416 --> 00:07:08,525
+Now the lesson.
+
+118
+00:07:08,845 --> 00:07:10,922
+A deliberately wrong fix goes in,
+
+119
+00:07:10,922 --> 00:07:13,816
+one that blocks only
+the question just before.
+
+120
+00:07:14,136 --> 00:07:17,677
+The six token picture says all ok;
+it cannot tell.
+
+121
+00:07:17,997 --> 00:07:21,496
+A four token picture can:
+its last row reads WRONG.
+
+122
+00:07:21,733 --> 00:07:23,504
+State the rule once instead.
+
+123
+00:07:23,824 --> 00:07:28,294
+The property test lets hypothesis
+draw any request shape:
+
+124
+00:07:28,294 --> 00:07:32,528
+a state of 1 to 6 tokens,
+up to 4 questions of 1 to 5.
+
+125
+00:07:32,848 --> 00:07:38,117
+Those sizes allow 4,686 shapes,
+too many for pictures.
+
+126
+00:07:38,437 --> 00:07:41,594
+It asserts
+that no allowed pair is ever a sibling pair.
+
+127
+00:07:41,914 --> 00:07:44,069
+Something to ponder before we run it.
+
+128
+00:07:52,916 --> 00:07:55,124
+You need a question two steps back,
+
+129
+00:07:55,124 --> 00:07:58,719
+so one state token
+and three questions of one token each.
+
+130
+00:07:59,039 --> 00:08:02,730
+And hypothesis finds it on its own:
+the one test fails,
+
+131
+00:08:02,730 --> 00:08:06,420
+then shrinks the counter example
+to exactly that shape.
+
+132
+00:08:06,740 --> 00:08:07,892
+Pause and run it.
+
+133
+00:08:08,212 --> 00:08:12,607
+A property test does not only say no;
+it hands you the smallest witness.
+
+134
+00:08:12,850 --> 00:08:14,566
+Proof the gate grew teeth:
+
+135
+00:08:14,566 --> 00:08:19,186
+put step 5's wrong mask line back
+and run just test; pause and try it.
+
+136
+00:08:19,506 --> 00:08:24,327
+8 failed, 95 passed;
+code that sailed through before is refused.
+
+137
+00:08:24,647 --> 00:08:27,463
+A gate refuses only what its tests can see.
+
+138
+00:08:27,783 --> 00:08:32,242
+The real fix is one line:
+same question means same segment ID.
+
+139
+00:08:32,483 --> 00:08:37,987
+Types join the gate too: the new recipe,
+just types, passes, and check has six lines.
+
+140
+00:08:38,307 --> 00:08:40,270
+And the smoke, with the right mask?
+
+141
+00:08:40,590 --> 00:08:42,830
+4 of 15, lower than before.
+
+142
+00:08:43,150 --> 00:08:44,664
+Pause and run the smoke.
+
+143
+00:08:44,984 --> 00:08:48,035
+The 6 was luck;
+an untrained score means nothing.
+
+144
+00:08:49,683 --> 00:08:53,096
+Step 5b gives non-hermetic tests
+an honest home.
+
+145
+00:08:53,416 --> 00:08:56,269
+A new real model test is marked system,
+
+146
+00:08:56,269 --> 00:08:59,780
+and the config deselects
+that marker by default:
+
+147
+00:08:59,780 --> 00:09:03,144
+every just test says 1 deselected,
+on purpose.
+
+148
+00:09:03,383 --> 00:09:05,099
+Asked for explicitly,
+
+149
+00:09:05,099 --> 00:09:09,184
+just test -m system says 1 passed,
+103 deselected:
+
+150
+00:09:09,184 --> 00:09:13,132
+the real model ran,
+and it had to pass, not skip.
+
+151
+00:09:13,452 --> 00:09:16,524
+That is the honest version
+of part 1's silent skip.
+
+152
+00:09:16,844 --> 00:09:18,551
+Pause and run both forms.
+
+153
+00:09:18,800 --> 00:09:23,003
+Smaller rows join the gate:
+hadolint lints the Dockerfile, clean.
+
+154
+00:09:23,323 --> 00:09:26,995
+Part 2 was recorded
+on a plain machine without Docker,
+
+155
+00:09:26,995 --> 00:09:28,966
+so the recipes fail politely:
+
+156
+00:09:28,966 --> 00:09:33,861
+docker build is command not found,
+and the image recipe explains itself.
+
+157
+00:09:34,181 --> 00:09:38,533
+On your laptop, with Docker Desktop,
+both images build for real.
+
+158
+00:09:38,853 --> 00:09:40,688
+The walk's record shows the rest.
+
+159
+00:09:41,008 --> 00:09:46,555
+Two images
+from one lockfile, 1.15 and 1.84 gigabytes.
+
+160
+00:09:46,875 --> 00:09:50,958
+And just check runs green inside a container
+with no network:
+
+161
+00:09:50,958 --> 00:09:53,701
+the hermetic claim, proved by experiment.
+
+162
+00:09:53,950 --> 00:09:58,323
+The gate table is full:
+six rows, system outside the turnstile.
+
+163
+00:09:58,643 --> 00:09:59,731
+Now the limit.
+
+164
+00:10:00,051 --> 00:10:02,004
+A hook runs on one machine,
+
+165
+00:10:02,004 --> 00:10:05,619
+and git commit --no-verify walks
+straight past it.
+
+166
+00:10:07,583 --> 00:10:12,368
+So CI re-runs the same checks
+on a server nobody can skip:
+
+167
+00:10:12,368 --> 00:10:15,668
+part 5 of this same repo, in lecture 21.
+
+168
+00:10:15,988 --> 00:10:20,884
+It is also why the hook, CI and the README
+should spell the checks one way;
+
+169
+00:10:20,884 --> 00:10:23,690
+the cheese repo does not quite manage that.
+
+170
+00:10:24,010 --> 00:10:27,679
+One command for everyone
+is the lesson for your milestone.
+
+171
+00:10:27,999 --> 00:10:31,912
+Coverage floors in one line:
+babykev chose 90;
+
+172
+00:10:31,912 --> 00:10:34,378
+milestone 5 asks at least 70.
+
+173
+00:10:36,017 --> 00:10:37,681
+Before the recap, clean up.
+
+174
+00:10:38,001 --> 00:10:39,839
+The README's Docker cleanup:
+
+175
+00:10:39,839 --> 00:10:43,910
+docker container ls shows nothing running,
+so nothing to stop.
+
+176
+00:10:44,230 --> 00:10:46,076
+Then docker system prune;
+
+177
+00:10:46,076 --> 00:10:51,100
+type y: about 95 megabytes of build cache,
+at the time of recording.
+
+178
+00:10:51,420 --> 00:10:55,174
+A final docker image ls
+shows the two cheese images.
+
+179
+00:10:55,494 --> 00:10:58,801
+One extra undoes the hook:
+pre-commit uninstall.
+
+180
+00:10:59,121 --> 00:11:03,312
+On the babykev side, delete the venv;
+and if you ran the smoke,
+
+181
+00:11:03,312 --> 00:11:06,972
+the roughly 1 gigabyte model
+in the Hugging Face cache.
+
+182
+00:11:07,292 --> 00:11:08,926
+Nothing today was billable:
+
+183
+00:11:08,926 --> 00:11:12,134
+the gate lives on your laptop,
+and that is the point.
+
+184
+00:11:12,384 --> 00:11:14,389
+5 questions to test yourself.
+
+185
+00:11:14,709 --> 00:11:16,380
+One: what runs in a unit,
+
+186
+00:11:16,380 --> 00:11:20,725
+an integration and a system test
+of the cheese app, file by file?
+
+187
+00:11:21,045 --> 00:11:24,181
+Two:
+the system tests pass with no server at all.
+
+188
+00:11:24,501 --> 00:11:28,469
+What does pytest actually print,
+and are those four tests hermetic?
+
+189
+00:11:28,717 --> 00:11:31,983
+Three: what does pre-commit install
+actually create,
+
+190
+00:11:31,983 --> 00:11:34,370
+and why must every clone run it again?
+
+191
+00:11:34,690 --> 00:11:37,784
+Four: black says failed,
+files were modified.
+
+192
+00:11:38,104 --> 00:11:40,642
+Is your code broken,
+and what do you do next?
+
+193
+00:11:40,962 --> 00:11:45,293
+Five: babykev had 94 percent coverage
+and a wrong mask.
+
+194
+00:11:45,613 --> 00:11:49,986
+What kind of test finally saw the bug,
+and why was coverage blind to it?
+
+195
+00:11:50,517 --> 00:11:55,210
+The answers are in the exercises,
+and every command is in the study guide.
+
+196
+00:11:55,530 --> 00:11:57,869
+Next lecture brings cloud credentials,
+
+197
+00:11:57,869 --> 00:12:00,885
+where the detect-private-key hook
+earns its keep.
+
+198
+00:12:01,205 --> 00:12:05,564
+And in lecture 21,
+this very repo's checks run on GitHub,
+
+199
+00:12:05,564 --> 00:12:09,312
+where nobody can walk past them
+with --no-verify.
+

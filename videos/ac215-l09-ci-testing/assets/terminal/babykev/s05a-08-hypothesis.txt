@@ -1,0 +1,70 @@
+$ just test -k no_question_sees_another
+uv run pytest "$@"
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/student/babykev
+configfile: pyproject.toml
+testpaths: tests
+plugins: platformdirs-4.12.3, anyio-4.15.1, hypothesis-6.168.4, cov-7.1.0
+collected 103 items / 102 deselected / 1 selected
+
+tests/unit/test_mask.py F                                                [100%]
+
+=================================== FAILURES ===================================
+____________________ test_no_question_sees_another_question ____________________
+
+    @given(shapes)
+>   def test_no_question_sees_another_question(
+                   ^^^
+        shape: tuple[int, list[int]],  # The lengths of a state and of its questions
+    ) -> None:
+
+tests/unit/test_mask.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+shape = (1, [1, 1, 1])
+
+    @given(shapes)
+    def test_no_question_sees_another_question(
+        shape: tuple[int, list[int]],  # The lengths of a state and of its questions
+    ) -> None:
+        """A token of one question never attends to a token of another."""
+        seg = torch.tensor(segments(*shape))
+        siblings = (seg[:, None] != seg[None, :]) & (seg[:, None] > 0) & (seg[None, :] > 0)
+>       assert not (allowed(seg.tolist()) & siblings).any()
+E       assert not tensor(True)
+E        +  where tensor(True) = <built-in method any of Tensor object at 0x7ff71e3dca50>()
+E        +    where <built-in method any of Tensor object at 0x7ff71e3dca50> = (tensor([[ True, False, False, False],\n        [ True,  True, False, False],\n        [ True, False,  True, False],\n        [ True,  True, False,  True]]) & tensor([[False, False, False, False],\n        [False, False,  True,  True],\n        [False,  True, False,  True],\n        [False,  True,  True, False]])).any
+E        +      where tensor([[ True, False, False, False],\n        [ True,  True, False, False],\n        [ True, False,  True, False],\n        [ True,  True, False,  True]]) = allowed([0, 1, 2, 3])
+E        +        where [0, 1, 2, 3] = <built-in method tolist of Tensor object at 0x7ff71e3dc5f0>()
+E        +          where <built-in method tolist of Tensor object at 0x7ff71e3dc5f0> = tensor([0, 1, 2, 3]).tolist
+E       Failing test case: test_no_question_sees_another_question(
+E           shape=(
+E               1,  # or any other generated value
+E               [1, 1, 1],
+E           ),
+E       )
+E       Explanation:
+E           These lines were always and only run by failing test cases:
+E               /home/student/babykev/.venv/lib/python3.13/site-packages/torch/autograd/grad_mode.py:86
+E               /home/student/babykev/.venv/lib/python3.13/site-packages/torch/utils/_python_dispatch.py:392
+E               /home/student/babykev/.venv/lib/python3.13/site-packages/torch/utils/_python_dispatch.py:441
+
+tests/unit/test_mask.py:65: AssertionError
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                      Stmts   Miss  Cover   Missing
+-------------------------------------------------------
+src/babykev/__init__.py       0      0   100%
+src/babykev/api.py           75     46    39%   39-41, 73-80, 93, 100-120, 127-128, 140-146, 157, 165-186
+src/babykev/cli.py           15     11    27%   21-32
+src/babykev/docs.py         250    195    22%   64-66, 73-74, 81-91, 99-102, 109, 116, 123, 130-131, 139-146, 153, 161-163, 170-171, 178-189, 197-202, 210-227, 235-251, 258, 266-269, 277-288, 296-300, 307, 315-318, 325, 333-345, 353-359, 366-391, 398-401, 409-421, 430-451
+src/babykev/model.py         97     56    42%   57-61, 68-71, 78-79, 93, 108-127, 166-168, 176, 190-210, 217-220, 227-228, 239, 243
+src/babykev/smoke.py         72     53    26%   37-38, 47-51, 59-71, 80-95, 102-122
+-------------------------------------------------------
+TOTAL                       509    361    29%
+=========================== short test summary info ============================
+FAILED tests/unit/test_mask.py::test_no_question_sees_another_question - asse...
+====================== 1 failed, 102 deselected in 0.85s =======================
+[exit 1]
