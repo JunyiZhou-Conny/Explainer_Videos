@@ -1,0 +1,8 @@
+00:00 A repo of your own, from the starter
+01:49 A bucket that looks like a folder
+03:48 The starter that no longer builds
+05:38 Files named by their fingerprint
+08:20 A pointer in git, the bytes in a bucket
+10:13 One more photo: what moves?
+12:18 Time travel from anywhere
+14:12 Monitoring, teardown and recap
