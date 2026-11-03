@@ -228,10 +228,10 @@ SAY: Three small riddles hide in this app. The flag dash p, 3200 colon 3000, has
 SHOW: A checklist card: "✓ your clone of cheese-app-v0", "✓ Docker Desktop running", "✓ a GCP
 project with billing", the GOLD `cost_tag()` beside the third line ("this lecture bills"). Layout
 preview: `tracker_a(1)` appears top-left with a YELLOW ring; the ring cycles the six tracker titles
-A–F as "six sections" is said. A 2-row strip terminal (GREY tag "preview", prompt
+A–F as "six stages" is said. A 2-row strip terminal (GREY tag "preview", prompt
 `student@laptop:~$`) shows a YELLOW `▶ your turn` row tag, then a GREY `extra` row tag, then a GREY
 `recorded` chip (one after the other, never stacked). Fade out.
-SAY: To follow along you need your clone of cheese-app-v0, Docker Desktop, and a Google Cloud project with billing. This lecture makes real, paid calls to Vertex AI; a gold tag marks each one, and the video ends by shutting everything down. The tracker in the top left follows the README's six sections. A yellow your-turn tag means pause and run it, and a gray extra tag marks a check that is not in the README. Every command is in the study guide, linked below.
+SAY: To follow along you need your clone of cheese-app-v0, Docker Desktop, and a Google Cloud project with billing. This lecture makes real, paid calls to Vertex AI; a gold tag marks each one, and the video ends by shutting everything down. The tracker in the top left follows the README in six stages, from setup to shutdown. A yellow your-turn tag means pause and run it, and a gray extra tag marks a check that is not in the README. Every command is in the study guide, linked below.
 
 ---
 
@@ -808,7 +808,7 @@ door 8000 with no pass (`61`); the bouncer at the browser stops the query packet
 leaves, RED; ③ never leaves the browser, GREY dashed, caption "awaits call 2 ·
 ChatComponent.jsx:163–171". A `curl` figure walks straight to door 8000, past no bouncer, and gets
 an answer. A last chip: "127.0.0.1:3200 ≠ localhost:3200".
-SAY: Call one works: the API allows any origin. Call two never leaves the browser. Call three waits for it, so it is never sent. And curl ignores it all. CORS is enforced by the browser, configured by the server, and keyed on the page's origin.
+SAY: Call one works: the API allows any origin. Call two never leaves the browser. Call three waits for it, so it is never sent. And curl ignores it all. CORS is enforced by the browser, configured by the server, and keyed on the page's origin. Even 127.0.0.1, port 3200, is a different origin from localhost 3200, so open the app at localhost.
 
 SHOW: The chat wireframe (`illustration`): the collection picker, an answer area with GREY
 skeleton bars (no glyphs) and a "References" drawer of ten empty GREY rows labelled book · author ·
@@ -855,7 +855,7 @@ no error panel (caption "nothing documents this error's exact text").
 CODE(cheese-app-v0/api-service/api/routers/rag.py: 110–113) small, line 111 `location="us"`
 highlighted. GOLD `cost_tag()` "tuned-model calls bill the endpoint's project". `▶ your turn` on
 the README's `/finetunechat` step, after the GOLD tag. Fade out.
-SAY: Then open localhost 3200 slash finetunechat and ask the same question. Here the part 1 puzzle gets its answer. With the default, the endpoint path points into the instructor's project, where your account has no role, so you get a 403. This call also uses a second client, in the U S location, because tuned models need it. A final gold tag: calls to a tuned model are billed to whichever project owns the endpoint. Pause and try it; without your own endpoint, expect the 403.
+SAY: Then open localhost 3200 slash finetunechat and ask the same question. Here the part 1 puzzle gets its answer. With the default, the endpoint path points into the instructor's project, where your account has no role, so expect a 403, or a not-found error. This call also uses a second client, in the U S location, because tuned models need it. A final gold tag: calls to a tuned model are billed to whichever project owns the endpoint. Pause and try it; without your own endpoint, expect a 403, or a not-found error. If your own endpoint returns 404 instead, see the base URL note in the study guide.
 
 ---
 

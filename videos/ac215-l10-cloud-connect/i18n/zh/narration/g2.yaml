@@ -42,6 +42,11 @@ S10:
   - "从 API container 里面，按名字问数据库。"
   - "回答是：Name or service not known。"
   - "API 那条街的电话簿里，没有这个名字的条目。"
+  en_display:
+  - null
+  - null
+  - "The answer: Name or service not known."
+  - null
 - en: "Something to ponder. Suppose you want the API itself to query the database. What address would it use, and what must change on the map for that name to resolve?"
   zh:
   - "来想一个问题。"
@@ -82,7 +87,7 @@ S11:
   - "接着是 npm install：录制时装了 773 个包，外加一些弃用警告。"
   - "它们通过挂载落到你的目录里，所以我们录制时可以退出再进来，也不会丢。"
   - "然后运行：npm run dev。"
-  - "Next.js 服务器显示 Ready，录制时版本是 14.2.4，还打印出那行谁都会上当的：Local，localhost:3000。"
+  - "Next.js 服务器显示 Ready，录制时版本是 14.2.4，还打印出那行谁都会上当的：Local: http://localhost:3000。"
   - "暂停一下，两条都跑一遍。"
   en_display:
   - null
@@ -186,13 +191,21 @@ S12:
   - "来想一个问题。"
   - "你把前端重新发布到 port 3300。"
   - "三个调用里哪一个会失败，curl 又在不在乎？"
-- en: "Call one works: the API allows any origin. Call two never leaves the browser. Call three waits for it, so it is never sent. And curl ignores it all. CORS is enforced by the browser, configured by the server, and keyed on the page's origin."
+- en: "Call one works: the API allows any origin. Call two never leaves the browser. Call three waits for it, so it is never sent. And curl ignores it all. CORS is enforced by the browser, configured by the server, and keyed on the page's origin. Even 127.0.0.1, port 3200, is a different origin from localhost 3200, so open the app at localhost."
   zh:
   - "第一个调用能成功：API 允许任何 origin。"
   - "第二个调用根本出不了浏览器。"
   - "第三个调用在等它，所以永远不会发出去。"
   - "而 curl 对这一切都不理会。"
   - "CORS 由浏览器执行，由服务器配置，按页面的 origin 来判断。"
+  - "就连 127.0.0.1:3200 和 localhost:3200 也是不同的 origin，所以要用 localhost 打开这个应用。"
+  en_display:
+  - null
+  - null
+  - null
+  - null
+  - null
+  - "Even 127.0.0.1:3200 is a different origin from localhost:3200, so open the app at localhost."
 - en: "Look for an answer and ten references, with book, author and distance. Last thought: CORS decides which page may see a reply; nothing here decides who may call. An unprotected AI endpoint, spending your key, is running on your laptop."
   zh:
   - "要看的是一个回答和 10 条参考来源，带着书名、作者和距离。"
@@ -224,19 +237,21 @@ S13:
   - null
   - null
   - "Its neighbor, the agent tools file, is not watched; for that one, press Ctrl-C and start the server again."
-- en: "Then open localhost 3200 slash finetunechat and ask the same question. Here the part 1 puzzle gets its answer. With the default, the endpoint path points into the instructor's project, where your account has no role, so you get a 403. This call also uses a second client, in the U S location, because tuned models need it. A final gold tag: calls to a tuned model are billed to whichever project owns the endpoint. Pause and try it; without your own endpoint, expect the 403."
+- en: "Then open localhost 3200 slash finetunechat and ask the same question. Here the part 1 puzzle gets its answer. With the default, the endpoint path points into the instructor's project, where your account has no role, so expect a 403, or a not-found error. This call also uses a second client, in the U S location, because tuned models need it. A final gold tag: calls to a tuned model are billed to whichever project owns the endpoint. Pause and try it; without your own endpoint, expect a 403, or a not-found error. If your own endpoint returns 404 instead, see the base URL note in the study guide."
   zh:
   - "然后打开 localhost:3200/finetunechat，问同一个问题。"
   - "第一部分的那个谜题，在这里揭晓答案。"
-  - "用默认值的话，endpoint 路径指向授课老师的项目，你的账号在那里没有角色，所以你会拿到 403。"
+  - "用默认值的话，endpoint 路径指向授课老师的项目，你的账号在那里没有角色，所以预计会是 403，或者“找不到”的错误。"
   - "这个调用还用了第二个客户端，位于 us 区域，因为微调过的模型需要它。"
   - "最后一个金色标签：调用微调过的模型，费用记在拥有这个 endpoint 的项目上。"
-  - "暂停一下，试一试；没有你自己的 endpoint 的话，看到的会是 403。"
+  - "暂停一下，试一试；没有你自己的 endpoint 的话，预计会是 403，或者“找不到”的错误。"
+  - "要是你自己的 endpoint 返回 404，请看学习指南里关于基础地址的说明。"
   en_display:
   - "Then open localhost:3200/finetunechat and ask the same question."
   - null
   - null
   - "This call also uses a second client, in the us location, because tuned models need it."
+  - null
   - null
   - null
 S14:
@@ -253,7 +268,7 @@ S14:
   - "Both containers ran with --rm, so an extra docker ps shows only the database left."
 - en: "Now the README's stop command, docker compose down, inside llm-rag. Pause and run it. The database and its network are removed. Two warnings say variables are not set, because we ran this outside the shell script, and Compose fills those blanks from your shell. That is the mechanism from part 1, caught in the wild. Something to ponder: the database is gone, but are your embeddings gone too? And what would make them gone?"
   zh:
-  - "现在是 README 的停止命令，在 llm-rag 里：docker compose down。"
+  - "现在是 README 的停止命令 docker compose down，在 llm-rag 里运行。"
   - "暂停一下，自己跑一遍。"
   - "数据库和它的网络都被删掉了。"
   - "两条警告说变量没有设置，因为我们是在 shell 脚本之外跑的这条命令，Compose 就用你 shell 里的值来填这些空。"
@@ -342,4 +357,4 @@ S15:
 - en: "Answers are in the exercises, commands in the study guide. Next lecture: a new service account, and real buckets with their own CORS list."
   zh:
   - "答案在练习里，命令在学习指南里。"
-  - "下节课：一个新的服务账号，以及真正的 bucket，带着它们自己的 CORS 白名单。"
+  - "下节课：一个新的服务账号，以及带着自己 CORS 白名单的真正的 bucket。"

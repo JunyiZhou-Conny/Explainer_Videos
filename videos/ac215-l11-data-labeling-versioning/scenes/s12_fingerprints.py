@@ -80,7 +80,7 @@ def ownership_picture() -> VGroup:
     who = grey_chip("you: root", color=ROOT).next_to(app, DOWN, buff=0.22)
     git = tool_chip("git").move_to([0, 1.15, 0])
     chk = label("ownership check", 20, ROOT).next_to(git, DOWN, buff=0.15)
-    a = Arrow(box.get_left() + UP * 0.05, disk_fr.get_right() + UP * 0.05, buff=0.1, color=ERR, stroke_width=4,
+    a = Arrow(box.get_left() + DOWN * 0.45, disk_fr.get_right() + DOWN * 0.45, buff=0.1, color=ERR, stroke_width=4,
               tip_length=0.2)
     x = cross_mark(0.45, ERR).move_to([0, a.get_center()[1] - 0.05, 0])
     g = VGroup(disk_fr, disk_t, repo, own, box, box_t, app, who, git, chk, a, x)
@@ -191,8 +191,9 @@ class Fingerprints(VoiceScene):
             type_cmd(self, t, c92.cmd, type_time=0.6)
             out(self, t, c92.at((2, 4)) + [(x, PASS) for x in c92.at((5, 6))], run_time=0.5)
             top = t.box.get_top()[1]
-            p23.move_to([0, PIC_TOP - p23.height / 2 - 0.05, 0])
-            cfg_g.move_to([0, (p23.get_bottom()[1] + top) / 2, 0])
+            mid = (PIC_TOP + top) / 2
+            p23.move_to([-6.45 + p23.width / 2, mid, 0])
+            cfg_g.move_to([6.4 - cfg_g.width / 2, mid, 0])
             self.play(FadeIn(p23, shift=DOWN * 0.1), run_time=0.4)
             self.play(FadeIn(g_home), FadeIn(host_n), run_time=0.3)
             self.play(GrowArrow(a_cfg), FadeIn(g_etc), FadeIn(box_n), run_time=0.5)
@@ -306,16 +307,15 @@ class Fingerprints(VoiceScene):
             self.play(Indicate(r5b.label, color=HASH, scale_factor=1.3), FadeIn(path_chip, shift=UP * 0.1),
                       run_time=0.7)
             vo.wait_until("Then it fingerprints a manifest")
-            self.play(FadeOut(VGroup(*tiles)), FadeOut(path_chip), run_time=0.4)
+            self.play(FadeOut(VGroup(*tiles)), FadeOut(path_chip), FadeOut(chips4), run_time=0.4)
             hs.remove(*tiles)
-            self.remove(*tiles, path_chip)
+            self.remove(*tiles, path_chip, chips4)
             mf = hs.manifest()
             self.play(FadeIn(mf, shift=RIGHT * 0.2), run_time=0.6)
             vo.wait_until("the list of fingerprints and names")
             self.play(each(list(mf.rows), INK, scale=1.06, lag=0.2), run_time=1.0)
-            self.play(FadeOut(chips4), run_time=0.3)
-            self.remove(chips4)
             pred = hs.hash_manifest(self, mf, predict=True)
+            self.remove(*mf.get_family())
             dir_chip.move_to(chips4[0])
             self.play(FadeIn(dir_chip, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("and writes that fingerprint into the pointer file")
@@ -335,7 +335,7 @@ class Fingerprints(VoiceScene):
             self.play(FadeIn(gb.text, shift=UP * 0.1), Indicate(pc.head, color=POINTER, scale_factor=1.08), run_time=0.6)
 
         # ========================================================== 5. J3: the second trap, an empty version
-        empty_chip = grey_chip("the same machine, fed nothing")
+        empty_chip = VGroup(note("the same machine,", INK), note("fed nothing", INK)).arrange(DOWN, buff=0.06)
         rule = card([words(("ls cheese_dataset", "mono"), "before", ("dvc add", "mono"), size=22)], TURN, size=22,
                     head="rule for today")
 
@@ -349,7 +349,7 @@ class Fingerprints(VoiceScene):
             istep(self, t, c93.line(70), type_time=0.3)
             out(self, t, [*edge(c93.line(71)), c93.line(73), c93.line(75)], run_time=0.5)
             vo.wait_until("the mount failed")
-            empty_chip.next_to(hs.machine, DOWN, buff=0.3)
+            empty_chip.next_to(hs.machine, DOWN, buff=0.25).shift(RIGHT * 0.15)
             self.play(FadeIn(empty_chip, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("so the folder is empty")
             e = hs.empty_run(self)
@@ -377,16 +377,16 @@ class Fingerprints(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(rule), run_time=0.3)
             self.remove(rule)
-            istep(self, t, c93.line(107), type_time=0.2)
-            out(self, t, c93.at(108), run_time=0.2)
+            istep(self, t, c93.line(107), type_time=0.15)
+            out(self, t, c93.at(108), run_time=0.15)
             t.set_prompt(P_VERSIONING)
-            resize(self, t, 3, keep=1, run_time=0.5)
+            resize(self, t, 3, keep=1, run_time=0.4)
             xt6 = on_bar(t, extra_row("stand-in"))
-            self.play(FadeIn(ml), FadeIn(ml.v_pipe), FadeIn(ml.v_label), Create(gone_bind), run_time=0.8)
+            self.play(FadeIn(ml), FadeIn(ml.v_pipe), FadeIn(ml.v_label), Create(gone_bind), run_time=0.6)
             self.play(FadeIn(xt6, shift=LEFT * 0.1), track(tr, 3, extra="stand-in"), run_time=0.4)
+            type_cmd(self, t, c94.cmd, type_time=0.8)
             vo.wait_until("our stand-in copies four photos")
-            type_cmd(self, t, c94.cmd, type_time=1.0)
-            out(self, t, c94.at((2, 8)), run_time=0.5)
+            out(self, t, c94.at((2, 8)), run_time=0.4)
             self.play(LaggedStart(*[FadeIn(x, shift=LEFT * 0.15) for x in tiles6], lag_ratio=0.2),
                       FadeIn(where, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("which the container sees through the repo mount")
@@ -445,10 +445,11 @@ class Fingerprints(VoiceScene):
             self.play(Indicate(the_empty.text, color=INK, scale_factor=1.08), run_time=0.5)
 
         # ========================================================== 8. one line pins 600 kB; the class tag
-        s8 = term(P_LAPTOP_HOME, 3, T_SECOND, size=TS)
+        s8 = term(P_LAPTOP_HOME, 10, T_SECOND, size=TS)
         clone = card([label("the class repo, cloned as class-data-versioning (extra):", 20, INK),
-                      mono("git clone -q https://github.com/dlops-io/data-versioning", 20, INK),
-                      mono("    class-data-versioning", 20, INK)], S.GREY, size=20)
+                      mono("git clone -q", 20, INK),
+                      mono("  https://github.com/dlops-io/data-versioning", 20, INK),
+                      mono("  class-data-versioning", 20, INK)], S.GREY, size=20, buff=0.08)
         xt8 = on_bar(s8, extra_row())
         cv20 = {k: c120.line(n).split(":", 1)[1].strip() for k, n in (("md5", 3), ("size", 4), ("nfiles", 5))}
         assert cv20 == V20, cv20
@@ -458,25 +459,29 @@ class Fingerprints(VoiceScene):
         c_lab = note("class repo · dataset_v20 · 120:2–7")
 
         with self.voiceover(SAY[8]) as vo:
-            gone = [p for p in parts if p is not pc] + [the_empty]
-            self.play(FadeOut(Group(*gone)), run_time=0.5)
-            self.remove(*gone)
-            self.play(pc.animate.move_to([-3.3, -0.1, 0]), run_time=0.6)
-            o_lab.next_to(pc, UP, buff=0.12).align_to(pc, LEFT)
             vo.wait_until("So one line pins 600 kilobytes")
-            self.play(FadeIn(o_lab), Indicate(pc.lines[1], color=HASH, scale_factor=1.06), run_time=0.6)
+            self.play(Indicate(pc.lines[1], color=HASH, scale_factor=1.06), run_time=0.6)
             self.play(Indicate(pc.fields["size"], color=INK, scale_factor=1.3), run_time=0.5)
             vo.wait_until("it fingerprints the list of fingerprints")
-            self.play(Indicate(pc.fields["md5"], color=HASH, scale_factor=1.15), run_time=0.7)
+            self.play(Indicate(pc.fields["md5"], color=HASH, scale_factor=1.15),
+                      Indicate(hs.rows["89"].label, color=HASH, scale_factor=1.3), run_time=0.8)
             vo.wait_until("And the instructor's tag")
-            self.play(FadeOut(VGroup(t, xt7)), run_time=0.4)
-            self.remove(t, *t.lines, xt7)
-            clone.move_to([6.45 - clone.width / 2, band_mid(s8), 0])
+            gone = parts + [the_empty, t, xt7]
+            self.play(FadeOut(Group(*gone)), run_time=0.5)
+            self.remove(*gone, *t.lines)
+            clone.move_to([0, band_mid(s8), 0])
             self.play(FadeIn(s8, shift=UP * 0.2), FadeIn(clone, shift=DOWN * 0.1), FadeIn(xt8), run_time=0.5)
             type_cmd(self, s8, c120.cmd, type_time=0.8)
             out(self, s8, c120.at((2, 7)), run_time=0.5)
-            self.play(FadeOut(clone), run_time=0.3)
-            self.remove(clone)
+            keep8 = [s8.find("- md5: 89db"), s8.find("size: 611101"), s8.find("nfiles: 4")]
+            self.play(FadeOut(clone), FadeOut(xt8), run_time=0.3)
+            self.remove(clone, xt8)
+            resize(self, s8, 3, keep=keep8, run_time=0.5)
+            xt8 = on_bar(s8, extra_row())
+            pc.move_to([-3.3, -0.1, 0])
+            self.play(FadeIn(pc, shift=RIGHT * 0.3), FadeIn(xt8), run_time=0.6)
+            o_lab.next_to(pc, UP, buff=0.12).align_to(pc, LEFT)
+            self.play(FadeIn(o_lab), run_time=0.3)
             ccard.move_to([3.3, -0.1, 0])
             c_lab.next_to(ccard, UP, buff=0.12).align_to(ccard, LEFT)
             self.play(FadeIn(ccard, shift=LEFT * 0.4), FadeIn(c_lab), run_time=0.6)
@@ -508,43 +513,43 @@ class Fingerprints(VoiceScene):
         pond = ponder(self, PONDER_Q, seconds=8)
 
         # ========================================================== 10. the answer; the reverse; whole files
-        new_name = steady("brie_2.jpg", 20, TURN, mono_font=True).move_to(n2, aligned_edge=LEFT)
         old_dir = slip(short(V20["md5"]), HASH)
         new_dir = slip("????????….dir", HASH)
         same_blob = VGroup(slip("ba/" + MD5["Image_2.jpg"][2:8] + "…", PASS), label("same blob", 20, PASS))
         same_size = mono("size: " + V20["size"], 20, PASS)
         same_n = mono("nfiles: " + V20["nfiles"], 20, PASS)
         mon, fri = day_card("Monday"), day_card("Friday", odd=2)
-        VGroup(mon, fri).arrange(RIGHT, buff=1.2).move_to([0, 0.9, 0])
+        VGroup(mon, fri).arrange(RIGHT, buff=1.2).move_to([0, -2.3, 0])
         neq = label("≠", 30, TURN).next_to(fri.bars[2], LEFT, buff=0.08)
         rg = ring(fri.bars[2], TURN, buff=0.06)
         myth = card(list(MYTH), S.GREY, size=22)
-        myth.next_to(VGroup(mon, fri), DOWN, buff=0.35)
+        myth.move_to([0, 1.2, 0])
 
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(pond), mf2.animate.move_to([-3.4, 0.4, 0]), hb.animate.shift(LEFT * 3.4), run_time=0.6)
+            self.play(FadeOut(pond), mf2.animate.move_to([-3.4, 0.9, 0]), hb.animate.shift(LEFT * 3.4 + UP * 0.5), run_time=0.6)
             self.remove(pond)
+            new_name = steady("brie_2.jpg", 20, TURN, mono_font=True).move_to(n2, aligned_edge=LEFT)
             self.play(FadeOut(hb), Transform(n2, new_name), run_time=0.7)
             col = VGroup(VGroup(old_dir, Arrow(LEFT * 0.4, RIGHT * 0.4, color=S.GREY, stroke_width=3,
                                                tip_length=0.16), new_dir).arrange(RIGHT, buff=0.2),
                          same_blob.arrange(RIGHT, buff=0.25), same_size, same_n)
-            col.arrange(DOWN, aligned_edge=LEFT, buff=0.35).move_to([2.9, 0.4, 0])
+            col.arrange(DOWN, aligned_edge=LEFT, buff=0.35).move_to([2.9, 0.9, 0])
             vo.wait_until("Only the manifest fingerprint")
             self.play(FadeIn(col[0][0]), run_time=0.3)
             self.play(GrowArrow(col[0][1]), FadeIn(new_dir, shift=LEFT * 0.2), run_time=0.6)
+            self.play(LaggedStart(*[FadeIn(x, shift=UP * 0.1) for x in col[1:]], lag_ratio=0.3), run_time=0.9)
             vo.wait_until("because one name in the list changed")
             self.play(Indicate(n2, color=TURN, scale_factor=1.15), run_time=0.6)
-            self.play(LaggedStart(*[FadeIn(x, shift=UP * 0.1) for x in col[1:]], lag_ratio=0.3), run_time=1.0)
             vo.wait_until("The opening's two folders were the reverse")
-            self.play(FadeOut(VGroup(mf2, col)), run_time=0.5)
-            self.remove(mf2, col)
-            self.play(FadeIn(mon, shift=RIGHT * 0.3), FadeIn(fri, shift=LEFT * 0.3), run_time=0.7)
+            self.play(FadeIn(mon, shift=UP * 0.3), FadeIn(fri, shift=UP * 0.3), run_time=0.7)
             vo.wait_until("same names, new bytes")
             self.play(each([r[1] for r in mon.rows] + [r[1] for r in fri.rows], INK, scale=1.05, lag=0.08),
                       run_time=0.8)
             self.play(Create(rg), FadeIn(neq), run_time=0.6)
             vo.wait_until("And DVC stores whole files")
-            self.play(FadeIn(myth, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeOut(VGroup(mf2, col)), run_time=0.4)
+            self.remove(mf2, col)
+            self.play(FadeIn(myth, shift=DOWN * 0.15), run_time=0.6)
             vo.wait_until("one changed pixel")
             self.play(Indicate(myth.body[1], color=INK, scale_factor=1.04), run_time=0.7)
 

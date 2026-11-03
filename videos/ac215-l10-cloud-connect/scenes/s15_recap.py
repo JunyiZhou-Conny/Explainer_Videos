@@ -1,4 +1,5 @@
-"""S15 · Tear down, recap, and what's next (AC215 L10) — tracker F2 · extra, `lref("26, 31, 53")` the whole scene.
+"""S15 · Tear down, recap, and what's next (AC215 L10) — tracker F2 · extra through beats 0–1 (it fades
+with the key card at the recap), `lref("26, 31, 53")` the whole scene.
 
 Beats (script.md, ## S15; one voiceover block each):
 0. The map as S14 left it after the extra restart (laptop/73): both streets, Chroma lit, the frontend
@@ -268,18 +269,19 @@ class Recap(VoiceScene):
             self.play(FadeIn(gm), run_time=0.4)
             self.play(meter_tick(gm, run_time=0.8))
             vo.wait_until("Delete keys you no longer use")
-            self.play(FadeOut(VGroup(gb, n1, n2, gm)), FadeOut(VGroup(kg, kfile.glyph, kfile.text)), run_time=0.5)
-            self.play(FadeTransform(kc_fr, hy_fr), run_time=0.7)          # a point-wise morph stripes the frame
+            # the whole card is built inside this ~3.5 s sentence, so every row is up while it plays
+            self.play(FadeOut(VGroup(gb, n1, n2, gm)), FadeOut(VGroup(kg, kfile.glyph, kfile.text)),
+                      FadeTransform(kc_fr, hy_fr), run_time=0.6)          # a point-wise morph stripes the frame
             self.remove(kc)
-            self.play(FadeIn(head), run_time=0.4)
-            self.play(FadeIn(cmds[0], shift=DOWN * 0.1), run_time=0.5)
-            self.play(FadeIn(cmds[1], shift=DOWN * 0.1), FadeIn(pid), run_time=0.5)
-            self.play(FadeIn(console, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeIn(head), FadeIn(cmds[0], shift=DOWN * 0.1), run_time=0.45)
+            self.play(FadeIn(cmds[1], shift=DOWN * 0.1), FadeIn(pid), run_time=0.4)
+            self.play(FadeIn(console, shift=DOWN * 0.1), FadeIn(local, shift=DOWN * 0.1), run_time=0.45)
             vo.wait_until("and their local files")
-            self.play(FadeIn(local, shift=DOWN * 0.1), run_time=0.5)
             self.play(Indicate(local, color=KEY, scale_factor=1.05), run_time=0.7)
             vo.wait_until("If one reaches GitHub")
-            self.play(VGroup(hy_fr, body).animate.fade(0.55), FadeIn(gh, shift=UP * 0.15), run_time=0.6)
+            # the card stays at full contrast: the GitHub card and the turnstile sit below it (y < -1.3)
+            assert hy_fr.get_bottom()[1] > max(gh.get_top()[1], gate.get_top()[1]) + 0.1
+            self.play(FadeIn(gh, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("delete it in IAM at once")
             self.play(Indicate(gh.body[0], color=ERR, scale_factor=1.06), run_time=0.8)
             vo.wait_until("last lecture's private key hook")
@@ -336,7 +338,7 @@ class Recap(VoiceScene):
                                                  scale_factor=1.08), *anims, run_time=0.6)
 
         with self.voiceover(SAY[2]) as vo:
-            clear_but(self, tr, ref, run_time=0.6)
+            clear_but(self, ref, run_time=0.6)           # the README tracker goes: this is the lecture's recap
             self.play(FadeIn(m, scale=1.03), run_time=0.7)
             self.play(LaggedStart(*[FadeIn(x, shift=RIGHT * 1.5) for x in lbls], lag_ratio=0.2), run_time=1.0)
             vo.wait_until("Your code's badge and key")
@@ -382,7 +384,7 @@ class Recap(VoiceScene):
             self.play(Indicate(vf.text, color=KEY, scale_factor=1.1),
                       Indicate(m.houses["chroma"].text, color=INK, scale_factor=1.15), run_time=0.8)
 
-        whole = Group(*[x for x in self.mobjects if x not in (tr, ref)])
+        whole = Group(*[x for x in self.mobjects if x is not ref])
         self.play(whole.animate.fade(0.75), run_time=0.9)           # everything unlit
 
         # ========================================================== 3. the debugging flowchart
@@ -429,7 +431,7 @@ class Recap(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(whole), run_time=0.5)
             self.remove(*whole)
-            self.add(tr, ref)
+            self.add(ref)
             vo.wait_until("find its layer")
             self.play(FadeIn(heads, shift=DOWN * 0.1), run_time=0.5)
             for r, a in zip(rows_, anchors):

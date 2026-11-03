@@ -16,7 +16,7 @@ Beats (script.md, ## S10; one voiceover block each):
    API's IP address on its street · yours will differ'. The browser looks around; a GREY dashed
    book with '?' beside it.
 2. The house loops but the API's leave, and so do Google and the public street: the laptop rises
-   0.62 and the strip grows to 6 rows (a probe is 4 rows, 41's error 2: the prompt row stays on
+   0.69 and the strip grows to 6 rows (a probe is 4 rows, 41's error 2: the prompt row stays on
    screen). `docker exec … llm-rag-chromadb:8000 …` (laptop/41's command in whole-token rows, see
    exec_type) → TERM(41: 47; wrap) RED, 'Name or service not known' ringed RED. On the map a PINK magnifier from the API house searches its street's
    phone book: a RED cross.
@@ -147,7 +147,7 @@ class TwoAddresses(VoiceScene):
         own.move_to([(m.header.get_right()[0] + m.drawer.get_left()[0]) / 2, m.header.get_center()[1], 0])
         pb_rag = book(m, "llm-rag", [CONTAINERS["chroma"]])
         pb_api = book(m, "cheese-app", [CONTAINERS["api"]])
-        t = term(P_API, rows=4, title=T_SECOND, size=20)
+        t = term(P_API, rows=4, title=T_SECOND, size=20).shift(DOWN * 0.08)   # bottom at -3.58: room for 6 rows later
         xb = on_bar(t, extra_row())
         c40 = capture("40")
         rows40 = c40.at((30, 37))
@@ -208,7 +208,7 @@ class TwoAddresses(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             # QA 18:27: a probe takes 4 rows and 41's error 2, so the strip grows to 6 rows (the
             # prompt row stays on screen under the error). Room for it: Google and the public street
-            # (not part of this demo) leave, and the laptop rises 0.62 to just under the frame's top.
+            # (not part of this demo) leave, and the laptop rises 0.69 to just under the frame's top.
             gone1 = VGroup(g35, cap1, slot, own, loops["chroma"], loops["loader"], loops["frontend"])
             gp = [m.google, m.public]
             if m in self.mobjects:
@@ -218,7 +218,7 @@ class TwoAddresses(VoiceScene):
             keep = {id(x) for g in (t, xb, ref, *gp, gone1) for x in g.get_family()}
             lift = [x for x in self.mobjects if id(x) not in keep]
             resize(self, t, 6, extra=[FadeOut(gone1), FadeOut(VGroup(*gp)), xb.animate.shift(UP * 2 * t.pitch),
-                                      *[x.animate.shift(UP * 0.62) for x in lift]], run_time=0.8)
+                                      *[x.animate.shift(UP * 0.69) for x in lift]], run_time=0.8)
             self.remove(gone1, *gone1, *gp)
             lens = magnifier(0.2).move_to(m.houses["api"].body.get_center())
             spot = np.array([pb_api.get_right()[0] - 0.5, pb_api.head.get_center()[1], 0])   # head row's free end

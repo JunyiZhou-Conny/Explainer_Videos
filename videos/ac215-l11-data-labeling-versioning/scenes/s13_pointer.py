@@ -72,10 +72,10 @@ def shelf_box(title: str, colour, box_w: float = 4.6) -> VGroup:
         s = slip(short(h))
         rows.add(VGroup(a, s).arrange(RIGHT, buff=0.2))
         slips.add(s)
-    rows.arrange(DOWN, aligned_edge=LEFT, buff=0.12)
-    body = VGroup(tt, sub, rows).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
+    rows.arrange(DOWN, aligned_edge=LEFT, buff=0.07)
+    body = VGroup(tt, sub, rows).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
     rows.shift(RIGHT * 0.35)
-    fr = RoundedRectangle(width=box_w, height=body.height + 0.4, corner_radius=0.16, stroke_color=colour,
+    fr = RoundedRectangle(width=box_w, height=body.height + 0.34, corner_radius=0.16, stroke_color=colour,
                           stroke_width=3).set_fill(colour, 0.07)
     body.move_to(fr).align_to(fr, LEFT).shift(RIGHT * 0.3)
     g = VGroup(fr, body)
@@ -148,13 +148,13 @@ class PointerAndBytes(VoiceScene):
             flash_tag(self, pchip, INK)
 
         # ========================================================== 1. the cache's mirror, the three homes
-        cache = shelf_box(".dvc/cache", LAPTOP).move_to([-3.9, 0.0, 0]).align_to(np.array([0, 2.7, 0]), UP)
-        store = shelf_box("dvc_store/", CLOUD).move_to([3.9, 0.0, 0]).align_to(np.array([0, 2.7, 0]), UP)
+        cache = shelf_box(".dvc/cache", LAPTOP).move_to([-3.9, 0.0, 0]).align_to(np.array([0, 2.75, 0]), UP)
+        store = shelf_box("dvc_store/", CLOUD).move_to([3.9, 0.0, 0]).align_to(np.array([0, 2.75, 0]), UP)
         ill = illustration_tag()
         ill.move_to([store.frame.get_right()[0] - 0.2 - ill.width / 2, store.title.get_center()[1], 0])
         dvc_chip = tool_chip("dvc push").move_to([0, 1.6, 0])
         dvc_arrow = arrow(np.array([-1.3, 1.05, 0]), np.array([1.3, 1.05, 0]), TOOL, stroke=4)
-        bill = cost_tag(COST_NOTE).move_to([0, (cache.get_bottom()[1] - 1.55) / 2, 0])
+        bill = cost_tag(COST_NOTE).move_to([0, (cache.get_bottom()[1] - 1.62) / 2, 0])
         tg = TagRope()
         hm = tg.homes().move_to([0, 0.3, 0])
         s33 = grey_chip(SLIDE33).next_to(hm.cache, DOWN, buff=0.18)
@@ -200,8 +200,8 @@ class PointerAndBytes(VoiceScene):
 
         # ========================================================== 2. J5: outside the container, git
         c312 = readme_card(312, VGroup(
-            s13_words("Run these commands", ("outside the container", TURN), ","),
-            s13_words("from your local", (DV, "mono"), "folder:")).arrange(DOWN, aligned_edge=LEFT, buff=0.16),
+            s13_words("Run these commands", ("outside the container,", TURN), size=24),
+            s13_words("from your local", (DV, "mono"), "folder:", size=24)).arrange(DOWN, aligned_edge=LEFT, buff=0.18),
             size=20, repo=DV).move_to([0, 0.6, 0])
         assert "outside the container" in readme(312, DV)
         gi = code(f"{STARTER}/.gitignore", 3, 3)
@@ -308,11 +308,11 @@ class PointerAndBytes(VoiceScene):
         assert c121.cmd and capture("120").at((2, 7)) == c95.at((58, 63)) == c102.at((2, 7))
         theirs.move_to(ours).set_x(2.6)
         lab_t = dashed_chip("class repo · dataset_v20").next_to(theirs, UP, buff=0.15)
-        hook = mono(HOOK_LINE, 20, HASH).move_to([-0.5, 2.3, 0])
+        hook = mono(HOOK_LINE, 20, HASH).move_to([2.6, 0.0, 0])
         md5_row = ours.lines[1]
         x2 = on_bar(t2, extra_row())
         rope = None
-        trick = note(TRICK, S.GREY, 20).move_to([0, -2.2, 0])
+        trick = note(TRICK, S.GREY, 22).move_to([0, -2.2, 0])
 
         with self.voiceover(SAY[4]) as vo:
             gone = VGroup(t, *t.lines)
@@ -329,8 +329,10 @@ class PointerAndBytes(VoiceScene):
             self.play(FadeOut(theirs), run_time=0.3)
             self.remove(theirs)
             self.play(FadeIn(hook, shift=DOWN * 0.3), run_time=0.4)
-            self.play(hook.animate.move_to(md5_row, aligned_edge=LEFT), run_time=0.6)
-            self.play(FadeOut(hook), Indicate(ours.fields["md5"], color=HASH, scale_factor=1.15), run_time=0.6)
+            land = np.array([ours.get_right()[0] + 0.35 + hook.width / 2, ours.fields["md5"].get_center()[1], 0])
+            self.play(hook.animate.move_to(land), run_time=0.6)
+            self.play(FadeOut(hook, target_position=ours.fields["md5"].get_center(), scale=0.6),
+                      Indicate(ours.fields["md5"], color=HASH, scale_factor=1.15), run_time=0.7)
             vo.wait_until("on any machine")
             gone = VGroup(t2, x2, *t2.lines)
             self.play(FadeOut(gone), run_time=0.5)
@@ -356,14 +358,14 @@ class PointerAndBytes(VoiceScene):
         quote = VGroup(label("The name-tag of the dataset might not be 'dataset_v20' for you", 24, INK),
                        s13_words("as", ("this tag is taken.", TURN), size=24)).arrange(DOWN, aligned_edge=LEFT, buff=0.16)
         assert "this tag is taken" in readme(321, DV)
-        c321 = readme_card(321, quote, quote=True, size=24, repo=DV).move_to([0, 0.7, 0])
+        c321 = readme_card(321, quote, quote=True, size=24, repo=DV).move_to([0, 0.3, 0])
         err = erratum_tag().next_to(c321, UP, buff=0.15).align_to(c321, RIGHT)
         fork = grey_chip(FORK).next_to(c321, DOWN, buff=0.3)
         tbl = readme_table(24)
-        ctbl = readme_card((256, 260), tbl, size=24, repo=DV).move_to([0, 0.9, 0])
+        ctbl = readme_card((256, 260), tbl, size=24, repo=DV).move_to([0, 0.5, 0])
         cn = note(COLAB_NOTE, S.GREY, 26)
         cn_head = label("README.md · lines 324–328", 20, S.GREY)
-        colab_n = VGroup(cn_head, cn).arrange(DOWN, aligned_edge=LEFT, buff=0.12).move_to([0, -2.0, 0])
+        colab_n = VGroup(cn_head, cn).arrange(DOWN, aligned_edge=LEFT, buff=0.12).move_to([0, -2.2, 0])
 
         with self.voiceover(SAY[5]) as vo:
             v6 = VGroup(tg.line, tg.beads[0], tg.beads[1], tg.bead_labels[0], tg.bead_labels[1], fl, ours,

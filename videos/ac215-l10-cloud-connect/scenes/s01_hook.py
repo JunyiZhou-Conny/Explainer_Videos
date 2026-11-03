@@ -19,7 +19,7 @@ Beats (script.md, ## S01; one voiceover block each):
    who's allowed in?"; the knocker swings on "once anything can knock".
 3. Checklist card (✓ your clone of cheese-app-v0 · ✓ Docker Desktop running · ✓ a GCP project with
    billing + the GOLD cost tag 'this lecture bills'). Layout preview: tracker A (step 1) top-left in
-   a YELLOW ring; on "six sections" the ring cycles trackers A–F and returns to A. A 3-row strip
+   a YELLOW ring; on "follows the README in six stages" the ring cycles trackers A–F and returns to A. A 3-row strip
    (GREY tag 'preview', prompt student@laptop:~$) types `git clone https://github.com/dlops-io/
    cheese-app-v0` (laptop/01's command; it folds onto 2 rows) with the YELLOW `▶ your turn` row tag, then
    `docker ps` (laptop/22's command) with the GREY `extra` row tag (tracker caption gains ' · extra'),
@@ -211,15 +211,14 @@ class Hook(VoiceScene):
             self.play(FadeOut(VGroup(frame, body, bill)), run_time=0.5)
             self.remove(frame, body, bill)
             self.play(FadeIn(tr, shift=DOWN * 0.15), Create(rng), run_time=0.8)
-            vo.wait_until("six sections")
+            vo.wait_until("follows the README in six stages")
             for k in "BCDEF":
                 new = trs[k]
-                tr = swap_tracker(self, tr, new, Transform(rng, tracker_ring(new)), run_time=0.4)
+                tr = swap_tracker(self, tr, new, Transform(rng, tracker_ring(new)), run_time=0.6)
             back = tracker("A", 1)
-            tr = swap_tracker(self, tr, back, Transform(rng, tracker_ring(back)), run_time=0.5)
-            vo.wait_until("A yellow your-turn tag")
-            self.play(FadeIn(strip), FadeIn(prev, shift=RIGHT * 0.2), rng.animate.set_stroke(opacity=0.35),
-                      run_time=0.6)
+            vo.wait_until("A yellow your-turn tag")                # F ('Shut down') holds until here
+            tr = swap_tracker(self, tr, back, Transform(rng, tracker_ring(back, opacity=0.35)),
+                              FadeIn(strip), FadeIn(prev, shift=RIGHT * 0.2), run_time=0.6)
             ln1 = type_cmd(self, strip, clone, type_time=1.2)
             yt = beside(turn_row(), ln1)
             pin(self, ln1, yt)

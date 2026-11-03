@@ -29,7 +29,7 @@ Beats (script.md, ## S13; one voiceover block each):
    'nothing documents this error's exact text' (no error panel). CODE(rag.py 110–113) at 20 pt,
    line 111 wrapped once at a space (note 'line 111 · wrapped to fit'), `location="us"` YELLOW.
    GOLD `cost_tag("tuned-model calls bill the endpoint's project")`, then the README card 249 with
-   `▶ your turn` and a RED '403' chip on "expect the 403". Fade to an empty frame.
+   `▶ your turn` and a RED '403' chip with a GREY 'expected' tag on "without your own endpoint". Fade to an empty frame.
 """
 
 import re
@@ -40,7 +40,7 @@ from explainer.scene import VoiceScene
 
 from common import (CLOUD, COST, ERR, INK, PASS, ROUTE, NARRATION, SAY_COUNT, TOOL, TURN, CAPTION,
                     ChatWireframe, EmbeddingBars, IamGridRig, card, chip, code, code_panel, code_span,
-                    cost_tag, err_chip, excerpt, flash_tag, grey_chip, illustration_tag, label, line_bar,
+                    cost_tag, err_chip, excerpt, extra_tag, flash_tag, grey_chip, illustration_tag, label, line_bar,
                     mono, MONO, note, readme, readme_card, ring, shown_path, step_badge, tool_chip, track,
                     tracker, your_turn, browser_glyph, each)
 from explainer import style as S
@@ -430,6 +430,7 @@ class AgentAndTuned(VoiceScene):
         c249b = card_249().move_to([-1.6, 0.55, 0])
         yt3 = your_turn().next_to(c249b, RIGHT, buff=0.35)
         e403 = err_chip("403").next_to(yt3, RIGHT, buff=0.3)
+        exp3 = extra_tag("expected").next_to(e403, DOWN, buff=0.15)   # not captured output
 
         with self.voiceover(SAY[3]) as vo:
             clear_but(self, tr, anims=[FadeIn(c249, shift=UP * 0.2)], run_time=0.6)
@@ -451,30 +452,32 @@ class AgentAndTuned(VoiceScene):
             self.play(Indicate(p_req.middle, color=ERR, scale_factor=1.15), g.pulse_col(2), run_time=0.9)
             vo.wait_until("where your account has no role")
             self.play(col.animate(rate_func=there_and_back).set_stroke(TURN, 6), run_time=0.8)
-            vo.wait_until("so you get a 403")
+            vo.wait_until("so expect a 403")
             self.play(Create(up), run_time=0.5)
             mark = g.verdict(1, 2, ok=False)
             flash = col.copy().set_stroke(ERR, 5)
-            self.play(FadeIn(mark, scale=1.3), FadeIn(flash), run_time=0.45)
-            self.play(FadeOut(flash), FadeIn(cap), run_time=0.4)
+            self.play(FadeIn(mark, scale=1.3), FadeIn(flash), FadeIn(cap, shift=UP * 0.1), run_time=0.45)
+            self.play(FadeOut(flash), run_time=0.3)
             self.remove(flash)
 
             vo.wait_until("This call also uses a second client")
-            drop(self, br3, to_req, req, p_req, up, run_time=0.5)
+            drop(self, br3, to_req, req, p_req, up, cap, run_time=0.5)
             self.play(FadeIn(p6, shift=UP * 0.2), FadeIn(wrapped), run_time=0.6)
             vo.wait_until("in the U S location")
             self.play(Create(ring6), each(us, TURN, scale=1.15, lag=0.04), run_time=0.8)
             vo.wait_until("A final gold tag")
-            drop(self, grid, mark, cap, anims=[FadeIn(gold3, shift=UP * 0.2)], run_time=0.6)
+            drop(self, grid, mark, anims=[FadeIn(gold3, shift=UP * 0.2)], run_time=0.6)
             flash_tag(self, gold3, COST)
             vo.wait_until("whichever project owns the endpoint")
             self.play(Indicate(gold3.text, color=COST, scale_factor=1.08), run_time=0.7)
             vo.wait_until("Pause and try it")
             self.play(FadeIn(c249b, shift=UP * 0.2), FadeIn(yt3, shift=LEFT * 0.15), run_time=0.6)
             flash_tag(self, yt3, TURN)
-            vo.wait_until("expect the 403")
-            self.play(FadeIn(e403, scale=1.2), run_time=0.5)
+            vo.wait_until("without your own endpoint")
+            self.play(FadeIn(e403, scale=1.2), FadeIn(exp3, shift=UP * 0.1), run_time=0.5)
             self.play(Indicate(e403.text, color=ERR, scale_factor=1.15), run_time=0.6)
+            vo.wait_until("If your own endpoint returns 404")
+            self.play(Indicate(c249b, color=TURN, scale_factor=1.04), run_time=0.8)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

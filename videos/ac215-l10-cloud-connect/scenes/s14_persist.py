@@ -18,13 +18,15 @@ Beats (script.md, ## S14; one voiceover block each):
    `$GCP_PROJECT` YELLOW, a GREY note that llm-rag/docker-shell.sh exports both before Compose runs.
    Then the map returns over a 3-row strip: `docker ps` (extra) → 71: 2, an empty table; a GREY dashed
    empty lot where the Chroma house stood. PONDER (6 s).
-2. TRACKER F2 · extra. `ls -la docker-volumes/chromadb` (extra) → 72: 2–5, `chroma.sqlite3` GREEN; the
+2. TRACKER F2 · extra. The strip grows to 5 rows so the command stays above its output:
+   `ls -la docker-volumes/chromadb` (extra) → 72: 2–5, `chroma.sqlite3` GREEN; the
    GREEN docker-volumes folder lights on the empty lot. CODE(docker-compose.yml 18–24) above the strip,
    line 24 YELLOW, its host path GREEN and `/data` TEAL. `sh docker-shell.sh` (extra) → 73: 2–4
    (squashed), …, 12; `exit` (73: 13 typed, 14 printed); `curl -s http://localhost:8000/api/v2/version`
-   (extra) → 74: 2, `"1.0.0"` GREEN, caption 'same folder, served again'. On "Deleting" the map returns
-   with the folder: a RED trash glyph hovers over it, caption 'this deletes them'
-   (`llm-rag/docker-volumes/`). On "A fresh load" CODE(llm-rag/cli.py 280–288, 20 pt), line 282
+   (extra) → 74: 2, `"1.0.0"` GREEN, caption 'same folder, served again'. On "Deleting" the strip goes
+   and the map returns as the restart left it: the llm-rag street and the lit Chroma house, the folder
+   in the top band (S15 recap's spot) with a GREEN dashed mount line to the house, ringed RED; below
+   the map a RED trash glyph hovers over `llm-rag/docker-volumes/`, caption 'this deletes them'. On "A fresh load" CODE(llm-rag/cli.py 280–288, 20 pt), line 282
    YELLOW, line 287 GREEN, caption 'a reload deletes, then creates'.
 3. TRACKER F2. Slides 40–45 redrawn: the laptop folder (docker-volumes/ > chromadb/ > chroma.sqlite3,
    caption 'a folder this laptop can see') morphs into a BLUE bucket ('a folder any authorized machine
@@ -341,9 +343,19 @@ class WhatSurvives(VoiceScene):
         data = code_span(p18.code, 6, "/data")
         served = note("same folder, served again", PASS)
         xt2 = extra_row()
-        trash = trash_glyph().move_to(folder[0].get_center() + UP * 0.62)
-        del_cap = VGroup(mono("llm-rag/docker-volumes/", 20, ERR), note("this deletes them", ERR)) \
-            .arrange(DOWN, aligned_edge=LEFT, buff=0.08).next_to(trash, RIGHT, buff=0.3)
+        # after the restart the map shows Chroma back (lit, on its street) with the folder mounted from
+        # the top band, as S15's opening and recap do; the trash and its caption take the strip's place
+        m_back = AppMap.at("S14")
+        house2, street2 = m_back.houses["chroma"], m_back.streets["llm-rag"]
+        folder_top = [-4.55 + folder.width / 2, m.header.get_center()[1], 0]      # S15 recap's spot
+        mount = DashedLine(folder[0].get_bottom() + (folder_top - folder.get_center()) + DOWN * 0.04,
+                           house2.roof.get_top() + UP * 0.04, color=KEY, stroke_width=3)
+        del_path = mono("llm-rag/docker-volumes/", 20, ERR)
+        del_cap = VGroup(del_path, note("this deletes them", ERR)).arrange(DOWN, aligned_edge=LEFT, buff=0.08)
+        trash = trash_glyph()
+        VGroup(trash, del_cap).arrange(RIGHT, buff=0.3).move_to([-6.1, -2.35, 0], aligned_edge=LEFT)
+        trash.align_to(del_path, UP).shift(UP * 0.05)          # hovering over the path
+        del_ring = ring(folder, ERR).move_to(folder_top)
         p280 = code(LOADER, 280, 288, dedent=True, font_size=20)
         place_top(p280, 2.4, 0.0)
         bar282, bar287 = line_bar(p280.code, 2, TURN), line_bar(p280.code, 7, PASS, opacity=0.2)
@@ -353,11 +365,19 @@ class WhatSurvives(VoiceScene):
             self.play(FadeOut(pc), run_time=0.4)
             self.remove(pc)
             vo.wait_until("An extra listing")
+            # 5 rows: the command stays above its four rows (a 3-row strip scrolled it off at once); the
+            # taller strip sits in front of the map's floor like a window (the browser and loopback step
+            # aside until the map returns)
+            bar3_y = api_t.bar.get_center()[1]
+            floor = [m.browser, m.loop]
+            self.bring_to_front(api_t)
+            resize(self, api_t, 5, keep=0, extra=[FadeOut(xt1), FadeOut(VGroup(*floor))], run_time=0.4)
+            m.remove(*floor)
+            self.remove(xt1, *floor)
             on_bar(api_t, xt2)
-            self.play(FadeOut(xt1), FadeIn(xt2), run_time=0.2)
-            self.remove(xt1)
+            self.play(FadeIn(xt2), run_time=0.2)
             type_cmd(self, api_t, C72.cmd, type_time=0.5)
-            out(self, api_t, C72.at((2, 5)), chunk=3, run_time=0.5)
+            out(self, api_t, C72.at((2, 5)), run_time=0.5)
             sq = substring(api_t.find("chroma.sqlite3"), "chroma.sqlite3")
             self.play(sq.animate.set_color(PASS), run_time=0.3)
             self.play(Indicate(sq, color=PASS, scale_factor=1.15), run_time=0.5)
@@ -365,7 +385,9 @@ class WhatSurvives(VoiceScene):
             self.play(ReplacementTransform(lot, folder), run_time=0.7)
             self.play(Indicate(folder[1], color=KEY, scale_factor=1.1), run_time=0.6)
             vo.wait_until("mounted into the container")
-            self.play(FadeOut(VGroup(m, folder, *bricked)), run_time=0.4)
+            resize(self, api_t, 3, extra=[FadeOut(VGroup(m, folder, *bricked)),
+                                          xt2.animate.shift(UP * (bar3_y - api_t.bar.get_center()[1]))],
+                   run_time=0.5)
             self.remove(m, folder, *bricked)
             self.play(FadeIn(p18, shift=UP * 0.2), run_time=0.5)
             self.play(FadeIn(bar24), data.animate.set_color(IMAGE), host.animate.set_color(KEY), run_time=0.5)
@@ -385,11 +407,18 @@ class WhatSurvives(VoiceScene):
             self.play(FadeIn(served, shift=LEFT * 0.15), Indicate(r74.glyphs, color=PASS, scale_factor=1.2),
                       run_time=0.6)
             vo.wait_until("Deleting the docker volumes folder")
-            self.play(FadeOut(VGroup(p18, bar24)), run_time=0.3)    # the caption stays beside "1.0.0"
-            self.remove(p18, bar24)
-            self.play(FadeIn(VGroup(m, folder, *bricked)), run_time=0.4)
-            self.play(FadeIn(trash, shift=DOWN * 0.2), run_time=0.4)
-            self.play(Wiggle(trash, scale_value=1.15), FadeIn(del_cap, shift=LEFT * 0.15), run_time=0.8)
+            folder.move_to(folder_top)
+            m.add(*floor)
+            self.play(FadeOut(VGroup(p18, bar24, api_t, xt2, served)), FadeIn(VGroup(m, folder, *bricked)),
+                      run_time=0.4)
+            self.remove(p18, bar24, api_t, xt2, served)
+            # the restart brought Chroma back: its street and lit house, over the same folder
+            self.play(FadeIn(street2), FadeIn(house2, scale=0.85), Create(mount), run_time=0.5)
+            m.add(street2, house2)
+            m.streets["llm-rag"], m.houses["chroma"] = street2, house2
+            self.play(FadeIn(trash, shift=DOWN * 0.2), FadeIn(del_cap, shift=LEFT * 0.15), Create(del_ring),
+                      run_time=0.5)
+            self.play(Wiggle(trash, scale_value=1.15), run_time=0.7)
             vo.wait_until("A fresh load")
             clear_but(self, tr, ref, run_time=0.5)
             self.play(FadeIn(p280, shift=UP * 0.2), run_time=0.5)

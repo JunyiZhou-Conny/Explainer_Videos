@@ -9,7 +9,7 @@
 # uvicorn_server -> uvicorn server; x86_64 -> x86.
 # The instructor rule (A10): the instructor -> 授课老师, never a name and never the on-screen mask.
 # en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: -p 3200:3000,
-# localhost:9000, llm-service-account@your-project, Sign in with Google, IAM & Admin, -v, /secrets,
+# localhost:9000, llm-service-account@your-gcp-project.iam.gserviceaccount.com, Sign in with Google, IAM & Admin, -v, /secrets,
 # GOOGLE_APPLICATION_CREDENTIALS, llm-service-account.json, .json.json, cheese-app-v0/secrets,
 # DefaultCredentialsError, GCP_PROJECT, char-split, recursive-split, char-split-collection, JSON Web Token,
 # set -e, uvicorn_server, localhost:9000/docs); null = the SAY text.
@@ -41,11 +41,11 @@ S01:
   - null
   - null
   - null
-- en: "To follow along you need your clone of cheese-app-v0, Docker Desktop, and a Google Cloud project with billing. This lecture makes real, paid calls to Vertex AI; a gold tag marks each one, and the video ends by shutting everything down. The tracker in the top left follows the README's six sections. A yellow your-turn tag means pause and run it, and a gray extra tag marks a check that is not in the README. Every command is in the study guide, linked below."
+- en: "To follow along you need your clone of cheese-app-v0, Docker Desktop, and a Google Cloud project with billing. This lecture makes real, paid calls to Vertex AI; a gold tag marks each one, and the video ends by shutting everything down. The tracker in the top left follows the README in six stages, from setup to shutdown. A yellow your-turn tag means pause and run it, and a gray extra tag marks a check that is not in the README. Every command is in the study guide, linked below."
   zh:
-  - "跟着做，你需要自己 clone 的 cheese-app-v0、Docker Desktop，以及一个开通了结算的 Google Cloud 项目。"
+  - "跟着做需要你 clone 的 cheese-app-v0、Docker Desktop，以及一个开通了结算的 Google Cloud 项目。"
   - "这一讲会真的发起付费的 Vertex AI 调用；每一处都有金色标签标出，视频最后会把一切都关掉。"
-  - "左上角的进度条跟着 README 的六节走。"
+  - "左上角的进度条按六个阶段跟着 README 走，从准备一直到关闭。"
   - "看到黄色的 your turn 标签，就暂停，自己跑一遍；灰色的 extra 标签表示这个检查 README 里没有。"
   - "每条命令都在学习指南里，链接在下方。"
 S02:
@@ -92,7 +92,7 @@ S03:
   en_display:
   - null
   - null
-  - "Its email looks like this badge: llm-service-account@your-project."
+  - "Its email looks like this badge: llm-service-account@your-gcp-project.iam.gserviceaccount.com."
   - null
 - en: "A metered public call gets an API key. An app acting for a consenting user gets OAuth, the sign in with Google flow. Our code calls Vertex AI in your own project, so it gets a service account. The rule's last line says code outside Google should use federation. That needs someone to vouch for your code, as GitHub does for code in GitHub Actions. A laptop has nobody, so the course hands you a key file instead."
   zh:
@@ -280,7 +280,7 @@ S06:
   zh:
   - "第二条命令用 recursive-split 做同样的事。"
   - "暂停一下，自己跑一遍，然后输入 exit。"
-  - "额外数一下：录制时 char-split 有 8248 个 chunk，recursive-split 有 14228 个。"
+  - "额外数一下：char-split 有 8248 个 chunk，recursive-split 有 14228 个，这是录制时的数字。"
   - "递归切分产生的 chunk 更多，主要是因为默认最多 200 个字符的重叠，而且它在段落和单词之间的断点处切。"
   en_display:
   - "The second command does the same with recursive-split."
@@ -369,7 +369,7 @@ S08:
   - "三个请求检验三个格子。"
   - "IAM 检查的是请求里点名的资源；对 embedding 来说，这个名字是客户端根据你的 GCP project 这个变量写出来的。"
   - "在你自己项目里的 embedding 是允许的。"
-  - "同样的调用换成脚本里没改过的默认项目，就会被拒绝，返回 403，因为你的账号在那里没有角色。"
+  - "同样的调用换成脚本里没改过的默认项目，会以 403 被拒绝，因为你的账号在那里没有角色。"
   - "所以两个脚本都要改。"
   - "第三根箭头留到第二部分。"
 - en: "A default credentials error, or a 401, means no valid token: check the path, the mount, and the file name. A 403 means authentication worked, but authorization failed. The cause: a missing role, the wrong project, or an API that is not enabled."
@@ -424,7 +424,7 @@ S09:
 - en: "Run the script again. The first build installs 170 pinned packages from Pipfile.lock, which took about three minutes at the time of recording. You land in the pipenv shell. Type uvicorn server, and the API starts on port 9000, listening on 0.0.0.0. Pause and run both."
   zh:
   - "再跑一次脚本。"
-  - "第一次构建会从 Pipfile.lock 安装 170 个 pin 住的包，录制时花了大约三分钟。"
+  - "第一次构建会从 Pipfile.lock 安装 170 个 pin 住的包，这在录制时花了大约三分钟。"
   - "你会进到 pipenv shell 里。"
   - "输入 uvicorn server，API 就在 port 9000 上启动，监听 0.0.0.0。"
   - "暂停一下，两条都跑一遍。"

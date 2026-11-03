@@ -8,11 +8,11 @@ Beats (script.md, ## S12; one voiceover block each):
    container inside the bundle, which flies to the browser. A GREEN check on `localhost:9000`; the
    API's container name struck RED ("never a container name").
 1. TRACKER E1: a schematic browser at `localhost:3200/chunkviz` (`illustration`): book text splits into
-   coloured chunks inside the window; GREY note 'no API · no cloud · no bill'. A 3-row strip (extra)
-   types laptop/56's curl → 56:2–3. `▶ your turn`. TRACKER E2: the browser at
+   coloured chunks inside the window; GREY note 'no API · no cloud · no bill'. A 6-row strip (extra),
+   in with the browser, types laptop/56's curl → 56:2–3 (on screen until "Step 2"). `▶ your turn`. TRACKER E2: the browser at
    `localhost:3200/chromaui` (`illustration`), the form's three defaults from
    CODE(src/app/chromaui/page.jsx: 22–27); "Connect" sends a PINK arrow to door :8000. The strip
-   (extra) types laptop/63's curl (soft-wrapped) → `[]`, caption 'ours: empty'; the panel gives way
+   (extra) types laptop/63's curl (wrapped at a '/') → `[]`, caption 'ours: empty (no key in our capture)'; the panel gives way
    to a GREY card tagged `recorded · README.md:103, 206`. `▶ your turn`.
 2. TRACKER E3. The /chat page (`illustration`, picker `char-split-collection ▾`), the README's
    question types in; GOLD cost tag 'each question: 1 embedding + 1 generation'; `▶ your turn`.
@@ -136,12 +136,6 @@ def preflight_rows(t, cmd: str) -> list[str]:
     return rows
 
 
-def soft_rows(t, cmd: str) -> list[str]:
-    full = t.prompt + " " + cmd
-    n = t.max_chars
-    return [full[i:i + n] for i in range(0, len(full), n)]
-
-
 def ponder_at(scene, question: str, seconds: float, card_w: float, center) -> VGroup:
     """pause_and_ponder, placed; opaque so the picture does not ghost through (S08 critic)."""
     pc = ponder_card(question, width=card_w).move_to(center)
@@ -168,10 +162,11 @@ def chunk_page(br) -> VGroup:
     x0, x1 = w.get_left()[0] + 0.4, w.get_right()[0] - 0.4
     top = br.url.get_bottom()[1] - 0.3
     rows = VGroup()
-    for i in range(5):
-        rows.add(Rectangle(width=(x1 - x0) * (1.0 if i < 4 else 0.55), height=0.16, stroke_width=0)
+    for i in range(4):
+        rows.add(Rectangle(width=(x1 - x0) * (1.0 if i < 3 else 0.55), height=0.16, stroke_width=0)
                  .set_fill(S.GREY, 0.45))
-    rows.arrange(DOWN, aligned_edge=LEFT, buff=0.16).move_to([x0, top, 0], aligned_edge=UL)
+    rows.arrange(DOWN, aligned_edge=LEFT, buff=0.14).move_to([x0, top, 0], aligned_edge=UL)
+    assert rows.get_bottom()[1] > br.window[0].get_bottom()[1] + 0.1, "chunk rows leave the window"
     return rows
 
 
@@ -271,16 +266,20 @@ class BrowserIntegrator(VoiceScene):
         assert c56.cmd.startswith("curl -s --max-time 300 -o /tmp/l10-chunkviz.html"), c56.cmd
         assert c63.cmd == ("curl -s http://localhost:8000/api/v2/tenants/default_tenant/databases/"
                            "default_database/collections"), c63.cmd
-        strip = term(P_LAPTOP_HOME, rows=3, size=SIZE)
+        # laptop/56 folds to 4 rows + 2 output rows: a 6-row strip (QA 22:29), so the browser sits
+        # higher and shorter, its name right of the window instead of under it
+        strip = term(P_LAPTOP_HOME, rows=6, size=SIZE)
         strip2 = term(P_LAPTOP_HOME, rows=3, size=SIZE)
-        brc = browser_glyph(url="localhost:3200/chunkviz", glyph_w=7.6, glyph_h=2.55, name="your browser")
-        brc.move_to([-2.1, 0.85, 0])
+        brc = browser_glyph(url="localhost:3200/chunkviz", glyph_w=7.6, glyph_h=2.1, name="your browser")
+        brc.shift([-2.1 - brc.window.get_center()[0], 2.3 - brc.window.get_top()[1], 0])
+        brc.text.next_to(brc.window, RIGHT, buff=0.3).align_to(brc.window, DOWN)
         ill1 = illustration_tag().next_to(brc.window, UP, buff=0.1).align_to(brc.window, RIGHT)
         text_rows = chunk_page(brc)
         chunks = chunk_split(text_rows)
         local = note("no API · no cloud · no bill", LAPTOP).next_to(brc.window, RIGHT, buff=0.3)
-        local.shift(UP * 0.5)
-        yt1 = your_turn().next_to(local, DOWN, buff=0.35).align_to(local, LEFT)
+        local.align_to(brc.window, UP).shift(DOWN * 0.3)
+        yt1 = your_turn().next_to(local, DOWN, buff=0.3).align_to(local, LEFT)
+        assert brc.window.get_bottom()[1] > strip.get_top()[1] + 0.2, "browser on the strip"
         xt1 = extra_row()
 
         # E2: the chromaui page
@@ -305,16 +304,16 @@ class BrowserIntegrator(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             clear_but(self, tr, run_time=0.6)
-            self.play(FadeIn(brc, shift=UP * 0.15), FadeIn(ill1), FadeIn(text_rows), run_time=0.7)
+            on_bar(strip, xt1)
+            self.play(FadeIn(brc, shift=UP * 0.15), FadeIn(ill1), FadeIn(text_rows),
+                      FadeIn(strip, shift=UP * 0.2), FadeIn(xt1), track(tr, extra=True), run_time=0.7)
+            type_cmd(self, strip, c56.cmd, type_time=0.8)
+            out(self, strip, c56.at((2, 3)), color=PASS, run_time=0.4)
             vo.wait_until("text chunking")
             self.play(ReplacementTransform(text_rows, chunks), run_time=1.0)
             vo.wait_until("runs in your browser")
             self.play(Indicate(brc.text, color=LAPTOP, scale_factor=1.15), FadeIn(local, shift=LEFT * 0.15),
                       FadeIn(yt1, shift=LEFT * 0.15), run_time=0.7)
-            on_bar(strip, xt1)
-            self.play(FadeIn(strip, shift=UP * 0.2), FadeIn(xt1), track(tr, extra=True), run_time=0.5)
-            type_cmd(self, strip, c56.cmd, type_time=0.8)
-            out(self, strip, c56.at((2, 3)), color=PASS, run_time=0.4)
             vo.wait_until("Step 2, the database UI")
             clear_but(self, tr, anims=[track(tr, 2, extra=False)], run_time=0.5)
             self.play(FadeIn(pg, shift=DOWN * 0.15), FadeIn(brd, shift=UP * 0.15), FadeIn(ill2),
@@ -335,9 +334,12 @@ class BrowserIntegrator(VoiceScene):
             self.remove(pg)
             self.play(VGroup(brd, form, d8, conn, yt2, ill2).animate.shift(UP * 1.35), FadeIn(strip2, shift=UP * 0.2),
                       FadeIn(xt2), track(tr, extra=True), run_time=0.6)
-            type_rows(self, strip2, c63.cmd, soft_rows(strip2, c63.cmd), type_time=0.7)
+            # the URL (90 chars) cannot fit one 72-column row even folded: break at a '/' (QA 22:37)
+            cut63 = "/api/v2/tenants/"
+            r1 = f"{strip2.prompt} {c63.cmd[:c63.cmd.index(cut63) + len(cut63)]}"
+            type_rows(self, strip2, c63.cmd, [r1, c63.cmd[len(r1) - len(strip2.prompt) - 1:]], type_time=0.7)
             r63 = out(self, strip2, c63.at(2), run_time=0.3)[0]
-            empty = note("ours: empty", S.GREY, SIZE)
+            empty = note("ours: empty (no key in our capture)", S.GREY, SIZE)
             beside(empty, r63)
             pin(self, r63, empty)
             vo.wait_until("yours shows two collections")
@@ -580,7 +582,11 @@ class BrowserIntegrator(VoiceScene):
             vo.wait_until("configured by the server")
             self.play(Indicate(pr.guest.rows, color=INK, scale_factor=1.08), run_time=0.6)
             vo.wait_until("and keyed on the page's origin")
-            self.play(Indicate(pr.page.url, color=TURN, scale_factor=1.15), FadeIn(last, shift=UP * 0.1), run_time=0.7)
+            self.play(Indicate(pr.page.url, color=TURN, scale_factor=1.15), run_time=0.7)
+            vo.wait_until("Even 127.0.0.1")
+            self.play(FadeIn(last, shift=UP * 0.1), run_time=0.6)
+            vo.wait_until("so open the app at localhost")
+            self.play(Indicate(last, color=TURN, scale_factor=1.08), run_time=0.7)
 
         # ========================================================== 8. what to look for; the open door
         ref = lref("11, 13")
