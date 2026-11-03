@@ -370,8 +370,18 @@ class WhatSurvives(VoiceScene):
             # the public street and Google, whose lower halves it would cut, step aside until the map returns)
             bar3_y = api_t.bar.get_center()[1]
             floor = [m.browser, m.loop, m.public, m.google]
+            # the laptop frame's lower corners would peek out beside the taller strip: the frame ends
+            # just above it while the strip is tall, and is restored when the map returns
+            frame0 = m.frame.copy()
+            tall = Terminal(prompt=api_t.prompt, width=api_t.box.width, rows=5, size=api_t.size,
+                            title=api_t.title.text if api_t.title is not None else None)
+            tall_top = api_t.box.get_bottom()[1] + tall.get_top()[1] - tall.box.get_bottom()[1]
+            f_top = m.frame.get_top()[1]
+            short = RoundedRectangle(width=m.frame.width, height=f_top - tall_top - 0.15, corner_radius=0.2)
+            short.match_style(m.frame).move_to(m.frame, aligned_edge=UP)
             self.bring_to_front(api_t)
-            resize(self, api_t, 5, keep=0, extra=[FadeOut(xt1), FadeOut(VGroup(*floor))], run_time=0.4)
+            resize(self, api_t, 5, keep=0, extra=[FadeOut(xt1), FadeOut(VGroup(*floor)), Transform(m.frame, short)],
+                   run_time=0.4)
             m.remove(*floor)
             self.remove(xt1, *floor)
             on_bar(api_t, xt2)
@@ -408,6 +418,7 @@ class WhatSurvives(VoiceScene):
                       run_time=0.6)
             vo.wait_until("Deleting the docker volumes folder")
             folder.move_to(folder_top)
+            m.frame.become(frame0)
             m.add(*floor)
             self.play(FadeOut(VGroup(p18, bar24, api_t, xt2, served)), FadeIn(VGroup(m, folder, *bricked)),
                       run_time=0.4)
