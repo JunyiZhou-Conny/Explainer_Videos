@@ -17,8 +17,9 @@ Beats (script.md, ## S09; one voiceover block each):
 3. TRACKER D3: `git commit -m "Your commit message"` (README:255) -> part4-03: 2–3 (wrap), 4–6, …,
    15–23, …, 27. The `[WARNING]` row ringed with `at the time of recording`; the nine Skipped rows ringed;
    `nothing to commit, working tree clean` highlighted. `▶ your turn`.
-4. TRACKER D4: `pre-commit run --all-files` (README:262) -> part4-04: 2–14, …, 16 (line 9 RED,
-   line 11 YELLOW). The terminal shrinks to a strip (rows 9, 11, 13) under the V1 gate (9 named
+4. TRACKER D4: the terminal is cleared, `pre-commit run --all-files` (README:262) on row 1 ->
+   part4-04: 2–12 (line 9 RED, line 11 YELLOW; the command stays on screen through "Pause and run
+   it"). The terminal shrinks to a strip (rows 9, 11; 13 prints into it at "reformatted") under the V1 gate (9 named
    arches, staging tray, HISTORY vault): six arches pass, JSON skips, black's arch flashes amber,
    the envelope bounces back to the tray. `▶ your turn`. PONDER (6 s).
 5. The strip prints part4-04: 18 (Flake8 Passed, GREEN). Above it a before/after pair of utils.py:7,
@@ -30,8 +31,10 @@ Beats (script.md, ## S09; one voiceover block each):
 7. TRACKER D5 · extra: the sed line (folds) -> no output, GREY note "on a Mac: sed -i '' …";
    `git commit -m "try an unused import"` -> part4-11: 9–13, …, 18–22 (both Failed RED, line 11 `files
    were modified` RED as scripted, F401 RED). Strip (rows 9, 18, 22) under the gate: an `import os` envelope, black amber, flake8
-   RED, back to the tray; `git status` -> part4-12: 2–3, …, 6–8, "still staged · not committed";
-   the restore line (folds) -> no output, the envelope leaves the tray; the vault stays shut. A
+   RED, back to the tray; the strip grows (cleared) to 7 rows and the gate rises with it; `git status`
+   -> part4-12: 6–8, … ("still staged · not committed" on 6, GREY "+ unstaged: black's reformat" on
+   the …; lines 2–4 'ahead of origin/main by 1 commit' are b72d50d and read against the narration);
+   the restore line (folds, under the status rows, which stay until the fade) -> no output, the envelope leaves the tray; the vault stays shut. A
    YELLOW card "this gate never ran a test" appears and parks in the top-right corner. Fade to an
    empty frame (end of part 1).
 
@@ -48,8 +51,9 @@ Deviations (reported to the coordinator):
   keeping the rows the narration names.
 - Beat 2's arches are a shorter Turnstile (arch_h 1.0) that the chain's turnstile turns into: with
   the chain's 1.3 the 10-line panel and the arch names above the lamps collide.
-- `pre-commit run --all-files` leaves no room for a row tag: `▶ your turn` stands over the
-  terminal's top-right corner and the command is underlined YELLOW. Beat 6's "pause and walk the
+- `pre-commit run --all-files` leaves no room for a row tag: the terminal is cleared first so the
+  command sits on row 1, `▶ your turn` stands just above it at the terminal's top-right corner and
+  the command is underlined YELLOW. Beat 6's "pause and walk the
   loop" puts `▶ your turn` on the `[main b72d50d]` row (the command has scrolled out of the strip).
 - Local workarounds for common.py: CommitGate builds its arch names before moving its turnstile
   (they sit 0.75 low; `place_gate` rebuilds them); Terminal.print/type scroll by sliding the old
@@ -69,7 +73,7 @@ from explainer import style as S
 from explainer.devops import tag
 
 from common import (ERR, INK, LAPTOP, MODIFIED, NARRATION, P_LAPTOP, PASS, STATE, SYSTEM, TURN,
-                    CHEESE_HOOKS, CommitGate, HandoverChain, Turnstile, attach, bare_prompt, beside, box,
+                    CHEESE_HOOKS, TRACK_BOTTOM, CommitGate, HandoverChain, Turnstile, attach, bare_prompt, beside, box,
                     capture, code_panel, code_span, dashed_chip, excerpt, extra_row, glyph_range, label,
                     line_bar, lref, mono, mono_line, pin, ponder_card, readme, recording_tag, resize, ring,
                     row_tag, shown_path, substring, term, track, tracker, turn_row, type_cmd, under, unpin,
@@ -142,6 +146,16 @@ def out(scene, t, lines, wrap: bool = False, run_time: float = 0.6, lag: float =
         rows.add(*t.print(scene, [(s, c) if c else s for s, c in ch], run_time=run_time / len(chunks) + 0.1,
                           lag=lag))
     return rows
+
+
+def wipe(scene, t, run_time: float = 0.3) -> None:
+    """Clear the terminal (every row fades where it is): the next command lands on row 1."""
+    if len(t.lines):
+        gone = VGroup(*t.lines.submobjects)
+        scene.play(FadeOut(gone), run_time=run_time)
+        for m in gone:
+            t.lines.remove(m)
+        scene.remove(gone)
 
 
 def typ(scene, t, cmd: str, type_time: float | None = None):
@@ -496,15 +510,16 @@ class PreCommitGate(VoiceScene):
         gpic = place_gate(gate)
 
         with self.voiceover(SAY[4]) as vo:
+            wipe(self, t)              # the command on row 1, its `your turn` tag right above it
             a_ln = typ(self, t, allf.cmd, type_time=1.0)
             a_row, a_tag = tag_on(self, a_ln, turn_row, anim=track(tr, 4), tm=t)
-            res = out(self, t, fit(allf.at((2, 14), "…", 16), {7: ERR, 9: MODIFIED}), run_time=1.0)
-            black_ln, mod_ln, ref_ln = res[7], res[9], res[11]
-            assert "Black" in black_ln.text and "modified" in mod_ln.text and "reformatted" in ref_ln.text
+            res = out(self, t, fit(allf.at((2, 12)), {7: ERR, 9: MODIFIED}), run_time=1.0, chunk=11)
+            black_ln, mod_ln = res[7], res[9]           # 1 + 11 rows: the command stays on screen
+            assert "Black" in black_ln.text and "modified" in mod_ln.text
             vo.wait_until("Pause and run it")
-            self.play(flash(a_tag, TURN), run_time=0.6)
+            self.play(flash(a_tag, TURN), run_time=0.5)
             drop_tag(self, a_row, a_tag)
-            resize(self, t, 3, keep=[black_ln, mod_ln, ref_ln], extra=[late_in(gpic)], run_time=0.7)
+            resize(self, t, 3, keep=[black_ln, mod_ln], extra=[late_in(gpic)], run_time=0.7)
             vo.wait_until("Six hooks pass")
             for i, s in enumerate(["pass", "pass", "pass", "pass", "skip", "pass", "pass"]):
                 step_to(self, gate, i, s, run_time=0.15)
@@ -520,6 +535,8 @@ class PreCommitGate(VoiceScene):
             self.play(Indicate(substring(mod_ln, "files were modified by this hook"), color=MODIFIED,
                                scale_factor=1.08), run_time=0.7)
             vo.wait_until("it reformatted utils.py")
+            ref_ln = out(self, t, allf.at(13), run_time=0.4)[0]
+            assert "reformatted" in ref_ln.text, ref_ln.text
             self.play(gate.go_home(), Indicate(substring(ref_ln, "utils.py"), color=INK, scale_factor=1.12),
                       run_time=0.8)
             vo.wait_until("A quick ponder")
@@ -659,12 +676,22 @@ class PreCommitGate(VoiceScene):
             self.play(env.animate.move_to([a8.get_left()[0] - env.width / 2 + 0.3, gate.home[1], 0]),
                       a8.to("fail"), run_time=0.35)
             self.play(Indicate(a8, color=ERR, scale_factor=1.15), gate.go_home(), run_time=0.7)
+            # git status needs the command, its staged block and the restore at once: the strip grows
+            # to 7 rows (cleared) and the gate rises with it
+            up = (7 - t.rows) * t.pitch                # the strip's top edge rises by this much
+            # the arch names stay under the tracker's bottom; only the vault's HISTORY (far right, where
+            # the tracker has nothing) rises above that line, inside the frame
+            assert gate.turnstile.labels.get_top()[1] + up <= TRACK_BOTTOM - 0.05, gate.turnstile.labels.get_top()
+            assert gpic.get_top()[1] + up <= 3.5 and gate.vault.get_left()[0] > 2, gpic.get_top()
+            resize(self, t, 7, keep=[], extra=[gpic.animate.shift(UP * up)], run_time=0.7)
             vo.wait_until("git status confirms")
             typ(self, t, status.cmd, type_time=0.4)
-            still = out(self, t, status.at((2, 3), "…", (6, 8)), run_time=0.6)[3:]
+            still = out(self, t, status.at((6, 8), "…"), run_time=0.6, chunk=4)
             assert still[0].text.startswith("Changes to be committed"), still[0].text
             stag = beside(row_tag("still staged · not committed", TURN), still[0])
             pin(self, still[0], stag)
+            utag = beside(row_tag("+ unstaged: black's reformat", S.GREY), still[3], buff=0.3)
+            pin(self, still[3], utag)
             self.play(each([env.text, gate.tray.shape, gate.tray.text], TURN, 1.12), run_time=0.7)
             vo.wait_until("Restore the file")
             r_ln = typ(self, t, restore.cmd, type_time=0.8)

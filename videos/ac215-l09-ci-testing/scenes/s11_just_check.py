@@ -281,6 +281,28 @@ def style_card(head: str, body: str, color) -> VGroup:
     return g
 
 
+def mac_chip() -> VGroup:
+    """S09's chip: the walk spells the in-place sed for a Mac (local copy; common.py is shared)."""
+    parts = VGroup(label("on a Mac:", 20, S.GREY), mono("sed -i '' …", 20, INK)).arrange(RIGHT, buff=0.18)
+    b = box(parts.width + 0.45, parts.height + 0.3, S.GREY, fill_opacity=0.1, radius=0.12)
+    parts.move_to(b)
+    return VGroup(b, parts)
+
+
+def restore_chip() -> VGroup:
+    """Step 2's lint --fix edits api.py, and step 3 changes it too: a plain clone must drop them
+    before the move (walk.md:13: in timewalk, a move throws away edits)."""
+    parts = VGroup(label("step 2's lint --fix edits? drop them first:", 20, S.GREY),
+                   mono("git restore .", 20, INK)).arrange(RIGHT, buff=0.18)
+    b = box(parts.width + 0.45, parts.height + 0.3, S.GREY, fill_opacity=0.1, radius=0.12)
+    parts.move_to(b)
+    return VGroup(b, parts)
+
+
+def undo_row() -> VGroup:
+    return row_tag("undo", S.GREY)
+
+
 class Gauge(VGroup):
     """A coverage gauge 0–100 % with the floor marked: .track .fill .floor .floor_label .value (None at first).
     set_to(pct, colour) -> animations."""
@@ -330,6 +352,14 @@ class JustCheck(VoiceScene):
                               capture("babykev/s03-33"))
         env, c2, undo = capture("babykev/s03-34"), capture("babykev/s03-35"), capture("babykev/s03-36")
         d4, d4b, c4b = capture("babykev/s04-04"), capture("babykev/s04b-03"), capture("babykev/s04b-09")
+        sw4, setup4, sw4b, setup4b = (capture("babykev/s04-01"), capture("babykev/s04-02"), capture("babykev/s04b-01"),
+                                      capture("babykev/s04b-02"))
+        dele, rst4b = capture("babykev/s04b-07"), capture("babykev/s04b-11")
+        assert sw4.cmd == "git switch --detach step-04" and sw4b.cmd == "git switch --detach step-04b"
+        assert setup4.cmd == walk(319)[2:] and setup4b.cmd == walk(413)[2:]
+        assert c4b.cmd == walk(447)[2:] and rst4b.cmd == walk(449)[2:]
+        assert walk(446)[2:].replace("sed -i '' ", "sed -i ") == dele.cmd, dele.cmd
+        assert setup4.line(10).strip() == "+ fastcore==2.2.32", setup4.line(10)
         assert sw3.cmd == "git switch --detach step-03" and setup3.cmd == "just setup", (sw3.cmd, setup3.cmd)
         assert hook.cmd == walk(230)[2:] and show.cmd == walk(245)[2:] and check.cmd == walk(249)[2:]
         assert floor.cmd == walk(253)[2:] and yl.cmd == walk(261)[2:] and rst.cmd == walk(262)[2:]
@@ -350,10 +380,14 @@ class JustCheck(VoiceScene):
         cap0 = VGroup(label("this machine's path", 22, TURN), label("· why it is never committed", 22, INK))
         cap0.arrange(RIGHT, buff=0.15)
         cap0[1].align_to(cap0[0], DOWN)
+        r_chip = restore_chip()
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref), FadeIn(t, shift=UP * 0.2), run_time=0.8)
-            typ(self, t, sw3.cmd, type_time=0.8)
+            r_chip.move_to([0, (t.box.get_top()[1] + 2.9) / 2, 0])
+            self.play(FadeIn(r_chip, shift=DOWN * 0.15), run_time=0.4)
+            sw_ln = typ(self, t, sw3.cmd, type_time=0.8)
+            self.play(Indicate(r_chip[1][1], color=INK, scale_factor=1.1), run_time=0.6)
             out(self, t, [cut(sw3.line(3), "and docstrings")], run_time=0.3)
             vo.wait_until("one recipe, just setup")
             s_ln = typ(self, t, setup3.cmd, type_time=0.5)
@@ -374,7 +408,7 @@ class JustCheck(VoiceScene):
             k_setup, y_setup = tag_on(self, t, s_ln, turn_row)
             self.play(*flash(y_setup, TURN), run_time=0.7)
             vo.wait_until("The walk's next command")
-            wipe(self, t)
+            wipe(self, t, r_chip)
             c_ln = typ(self, t, hook.cmd, type_time=1.2)
             h_out = out(self, t, hook.at((2, 3), "…", (6, 9), "…", 15), run_time=0.9)
             l7, l8, l15 = h_out[4], h_out[5], h_out[8]
@@ -625,8 +659,10 @@ class JustCheck(VoiceScene):
             s_out = out(self, t, st.at((2, 3), "…", 6), run_time=0.5)
             nc = beside(row_tag("no commit", S.GREY), s_out[3])
             pin(self, s_out[3], nc)
-            typ(self, t, rst2.cmd, type_time=0.6)
+            r2_ln = typ(self, t, rst2.cmd, type_time=0.6)
             bare(self, t)
+            pin(self, r2_ln, beside(undo_row(), r2_ln), run_time=0.3)
+            self.wait(1.5)
             vo.wait_until("Then a dot env file is staged")
             wipe(self, t)
             typ(self, t, env.cmd, type_time=0.7)
@@ -650,8 +686,10 @@ class JustCheck(VoiceScene):
             vo.wait_until("It is never committed.")
             tail = quote[0][-len("Itisnevercommitted"):]
             self.play(Indicate(tail, color=ERR, scale_factor=1.08), run_time=0.8)
-            typ(self, t, undo.cmd, type_time=0.7)
+            u_ln = typ(self, t, undo.cmd, type_time=0.7)
             bare(self, t)
+            pin(self, u_ln, beside(undo_row(), u_ln), run_time=0.3)
+            self.wait(1.5)
 
         # ========================================================== 5. two styles; docs join the gate
         cards = VGroup(style_card("babykev", "check points, you run just fmt yourself", VENV),

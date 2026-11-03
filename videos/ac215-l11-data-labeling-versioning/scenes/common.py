@@ -1883,7 +1883,7 @@ class StationMap(Rig):
         """The compose file draped over both houses: a GREY dashed outline + 'docker-compose.yml'."""
         both = VGroup(self.studio, self.cli)
         ob = outline_box(both.width + 0.5, both.height + 0.35, S.GREY, solid=False).move_to(both)
-        t = mono("docker-compose.yml", self.size, S.GREY).next_to(ob, RIGHT, buff=0.2).align_to(ob, UP)
+        t = mono("docker-compose.yml", self.size, S.GREY).next_to(ob, UP, buff=0.15).align_to(ob, RIGHT)
         g = VGroup(ob, t)
         g.box, g.text = ob, t
         return g
@@ -1893,7 +1893,7 @@ class StationMap(Rig):
         'started' (not 'ready'). .arrow .watch"""
         a = self.cli.roof.get_top() + UP * 0.1
         b = self.studio.roof.get_top() + UP * 0.1
-        ar = Arrow(a, b, buff=0, path_arc=0.5, color=S.GREY, stroke_width=3, tip_length=0.18)
+        ar = Arrow(a, b, buff=0, path_arc=0.25, color=S.GREY, stroke_width=3, tip_length=0.18)
         w = stopwatch("started", size=self.size).next_to(self.cli, RIGHT, buff=0.4).shift(UP * 0.3)
         g = VGroup(ar, w)
         g.arrow, g.watch = ar, w
@@ -1927,8 +1927,10 @@ class SignedTicket(Rig):
       relay() -> VGroup         the dashed GREY relay route vault → house → browser and a GREY strike
                                 (.route .strike; not added: Create the route, then the strike)
       stamp(scene)              a BLUE url_ticket appears at the house (the seal stamps on) and
-                                slides to the browser (parks above it: fade the 'task 1?' bubble
-                                first); the key stays; returns the ticket
+                                slides to the browser (parks above it, right edge at the browser's:
+                                fade the 'task 1?' bubble first, and the task cards except the top
+                                row, cards[:7] stays: the ticket rides under the grid's lower rows);
+                                the key stays; returns the ticket
       walk(scene, ticket)       the ticket rides a PINK route from where stamp() parked it to the
                                 vault's door (its right edge on the line); the seal is
                                 checked (GREEN check); a blank tile rides back and bounces off the
@@ -1965,7 +1967,7 @@ class SignedTicket(Rig):
 
     def reach(self, scene, run_time: float = 1.2):
         a = self.studio.body.get_right() + RIGHT * 0.1 + UP * 0.1
-        b = self.vault.frame.get_left() + LEFT * 0.08 + UP * 0.35
+        b = self.vault.frame.get_left() + LEFT * 0.08 + UP * 0.45      # passes over the task cards
         ar = arrow(a, b, S.GREY, buff=0)
         k = self.key.copy()
         scene.play(Create(ar), run_time=run_time * 0.4)
@@ -1976,8 +1978,9 @@ class SignedTicket(Rig):
         return ar
 
     def cards(self, n: int = 21) -> VGroup:
-        cs = task_cards(n, 0.3, 7)
-        return cs.move_to([-1.35, 0.25 + 0.75, 0])
+        cs = task_cards(n, 0.3, 7)          # right of the house, clear of the reach arrow and the ticket
+        return cs.move_to(np.array([self.studio.get_right()[0] + 0.12 + cs.width / 2,
+                                    self.browser.window.get_top()[1] + 1.03, 0]))
 
     def fan(self, cs: VGroup, run_time: float = 1.2):
         src = self.vault.drawers["cheeses_unlabeled/"].get_center()
@@ -1994,12 +1997,17 @@ class SignedTicket(Rig):
         return g
 
     def relay(self) -> VGroup:
-        v = self.vault.frame.get_left() + DOWN * 0.3
-        h = self.studio.body.get_right() + DOWN * 0.15
-        br = self.browser.window.get_top() + UP * 0.05
-        rt = _poly([v, h, [h[0] - 1.3, h[1] - 0.2, 0], br], S.GREY, 3, dashed=True)
-        st = Line(rt.line.get_corner(DL) + UP * 0.2, rt.line.get_corner(UR) + DOWN * 0.2, color=S.GREY,
-                  stroke_width=5)
+        # over the task cards (y of the house's upper body), then down the gap between the house and
+        # the cards to the browser's top-right corner (clear of the 'task 1?' bubble); the strike
+        # crosses the first leg halfway
+        y = self.studio.body.get_top()[1] - 0.12
+        v = np.array([self.vault.frame.get_left()[0] - 0.05, y, 0])
+        h = np.array([self.studio.body.get_right()[0] + 0.05, y, 0])
+        w = self.browser.window
+        br = w.get_corner(UR) + np.array([-0.05, 0.05, 0])
+        rt = _poly([v, h, [h[0], br[1] + 0.25, 0], br], S.GREY, 3, dashed=True)
+        mx = (v[0] + h[0]) / 2
+        st = Line([mx - 0.15, y - 0.2, 0], [mx + 0.15, y + 0.2, 0], color=S.GREY, stroke_width=5)
         g = VGroup(rt, st)
         g.route, g.strike = rt, st
         return g
@@ -2009,7 +2017,9 @@ class SignedTicket(Rig):
         seal = tk.seal
         scene.play(FadeIn(VGroup(tk.frame, tk[1], tk.glass, tk.text), shift=DOWN * 0.1), run_time=0.5)
         scene.play(FadeIn(seal, scale=2.2), Indicate(self.key, color=KEY, scale_factor=1.15), run_time=0.6)
-        tgt = self.browser.window.get_top() + UP * (tk.height / 2 + 0.15)
+        # parks above the browser, its right edge at the browser's right (left of the task cards)
+        w = self.browser.window
+        tgt = np.array([w.get_right()[0] - 0.05 - tk.width / 2, w.get_top()[1] + tk.height / 2 + 0.12, 0])
         scene.play(tk.animate.move_to(tgt), run_time=0.9)
         return tk
 
@@ -2042,7 +2052,7 @@ class SignedTicket(Rig):
         c = env.copy()
         lab = self.vault.drawers["cheeses_labeled/"]
         unl = self.vault.drawers["cheeses_unlabeled/"]
-        tgt = lab.box.get_right() + LEFT * (c.width / 2 + 0.1)
+        tgt = lab.box.get_right() + LEFT * (c.width / 2 - 0.05)      # the drawer's free right end, past its name
         scene.play(c.animate.move_to(tgt), run_time=1.0)
         ph = tile(None, 0.36, CLOUD).move_to(unl.box.get_right() + LEFT * 0.3)
         th = Line(c.get_top(), ph.get_bottom(), color=NOTE, stroke_width=2)
@@ -2157,7 +2167,7 @@ class OriginGate(Rig):
             x = cross_mark(0.45, ERR).move_to(pk[0])
             scene.play(Create(x), Indicate(self.bouncer, color=ERR, scale_factor=1.05), run_time=0.6)
             return pk, x
-        ck = check_mark(0.4, PASS).next_to(self.bouncer, UP, buff=0.1)
+        ck = check_mark(0.4, PASS).next_to(self.bouncer, UP, buff=0.1).shift(LEFT * 0.35)   # clear of preflight()
         scene.play(Create(ck), Indicate(pk.hdr.text, color=PASS, scale_factor=1.05), run_time=0.6)
         filled = tile(None, 0.9, S.GREY, filled=True).move_to(self.tile)
         scene.play(pk.animate.move_to(self.tile).set_opacity(0), Transform(self.tile, filled), run_time=0.9)
@@ -2192,10 +2202,10 @@ class OriginGate(Rig):
 
     def curl_walk(self, scene, run_time: float = 2.0):
         fig = VGroup(person_icon(S.GREY, 0.6), mono("curl", self.size, S.GREY)).arrange(RIGHT, buff=0.12)
-        y = self.lane - 0.85
-        fig.move_to([5.6, y, 0])
+        y = self.lane - 0.85          # strolls left along the bottom, clear of other_bucket() (x > 2.4)
+        fig.move_to([1.7, y, 0])
         scene.play(FadeIn(fig, shift=LEFT * 0.3), run_time=0.4)
-        scene.play(fig.animate.move_to([-1.2, y, 0]), rate_func=linear, run_time=run_time)
+        scene.play(fig.animate.move_to([-4.6, y, 0]), rate_func=linear, run_time=run_time)
         return fig
 
     def other_bucket(self) -> VGroup:
@@ -2237,7 +2247,7 @@ class FuseMount(Rig):
     .bind_label.
       stage(i) -> Animation      box i lights YELLOW (earlier ones turn GREY-lit, later stay dark)
       authenticate(scene)        the key slides to the gcsfuse pipe's start and back (plays)
-      mount() / bind() -> Animation   the pipe draws with its label
+      mount() / bind_on() -> Animation   the pipe draws with its label (.bind is the pipe itself)
       use() -> Animation         the dvc chip sits on /app/cheese_dataset
       fetch(scene)               a request dot runs from dvc up both pipes to the bucket and a blank
                                  tile comes back down to /app/cheese_dataset (plays; returns the tile)
@@ -2332,7 +2342,7 @@ class FuseMount(Rig):
         down = up.copy().reverse_points()
         scene.play(FadeOut(d), FadeIn(tl), run_time=0.2)
         scene.play(MoveAlongPath(tl, down), run_time=1.2)
-        scene.play(tl.animate.move_to(self.app.get_top() + UP * 0.32), run_time=0.4)
+        scene.play(tl.animate.next_to(self.app, RIGHT, buff=0.15), run_time=0.4)   # clear of the dvc chip
         return tl
 
     def side_note(self) -> VGroup:
@@ -2347,7 +2357,8 @@ class FuseMount(Rig):
         top = self.bucket.frame.get_bottom()[1]
         stub = pipe([[mx, top, 0], [mx, top - 0.35, 0]], ERR, glow=False, dashed=True)
         x2 = cross_mark(0.3, ERR).move_to([mx, top - 0.55, 0])
-        msg = note("special device does not exist", ERR).next_to(self.mnt_images, DOWN, buff=0.18)
+        msg = note("special device does not exist", ERR).next_to(self.mnt_images, DOWN, buff=0.18).align_to(
+            self.mnt, LEFT)
         scene.play(Create(x1), run_time=0.5)
         scene.play(Create(stub), run_time=0.5)
         scene.play(Create(x2), run_time=0.4)
@@ -2655,7 +2666,7 @@ class HashShelf(Rig):
         scene.play(*anims, run_time=1.0)
 
     def git_box(self, card) -> VGroup:
-        ob = outline_box(card.width + 0.5, card.height + 0.75, LAPTOP, solid=True, fill_opacity=0.04)
+        ob = outline_box(card.width + 0.3, card.height + 0.75, LAPTOP, solid=True, fill_opacity=0.04)
         ob.move_to(card).shift(DOWN * 0.12)
         t = mono("git", self.size, LAPTOP).move_to(ob.get_corner(DR) + np.array([-0.35, 0.22, 0]))
         g = VGroup(ob, t)
@@ -2834,8 +2845,8 @@ class TagRope(Rig):
         return VGroup(d, e)
 
     def ghost(self, t: str = "dataset_v25") -> VGroup:
-        f = flag_at(flag(t, S.GREY, 0.4, self.size, dashed=True),
-                    [self.store.frame.get_center()[0] - 0.4, self.line.get_center()[1], 0])
+        f = flag_at(flag(t, S.GREY, 0.4, self.size, dashed=True),     # past the line's end: on no bead
+                    [self.line.get_right()[0] + 0.45, self.line.get_center()[1], 0])
         tip = f.pole.get_start() + DOWN * 0.05
         r = DashedLine(tip, tip + DOWN * 0.45, color=S.GREY, stroke_width=3)
         g = VGroup(f, r)
@@ -2917,9 +2928,11 @@ SLIDE6 = ("Unlabeled", "How do we do this?", "Labeled", "training · L13")
 class PipelineMap(Rig):
     """V7 · the running map (built S02; each scene lights its piece; S08 closes part 1, S16 shows it
     complete, then unlit). 12.9 × 3.7, built in place for the band above a 3-row strip (body
-    y -1.3 … 2.4; the thin slide-6 strip .slide6 at y 2.45 … 2.8 under the tracker). Never scale it.
+    y -1.3 … 2.37; the thin slide-6 strip .slide6 at y 2.38 … 2.9 under the tracker). Never scale it.
       Row A, the labeling station: GREY frame (.lab) with the TEAL houses .houses['studio' | 'cli']
-      ('command line container' caption .cli_caption, not added) on the PINK street .street; BLUE
+      ('command line / container', two lines in the frame's top-right corner, .cli_caption, not added:
+      it shares that corner with the cli pipe's lane, so fade it before pipe_on('cli')) on the PINK
+      street .street; BLUE
       bucket 1 (.bucket1: cheese-app-data-demo, drawers cheeses_unlabeled/ cheeses_labeled/).
       Row B, the versioning station: GREY frame (.ver) with the TEAL data-version-cli house
       (.houses['dvc']); BLUE bucket 2 (.bucket2: images/, dvc_store/, title 'versioning bucket' at
@@ -2941,48 +2954,56 @@ class PipelineMap(Rig):
                                         'rule', 'bouncer', 'envelope', 'fuse', 'shelf', 'rope'
       all_dark() -> Animation           everything unlit (S16's teardown)"""
 
+    STREET = (-4.6, 0.08, 0.79)     # the street's x from, x to, y
+    COL_X = 4.45                    # the right column's left edge (repo, Colab, bridge caption, tower)
+
     def __init__(self, secrets: bool = False, lit=(), size: float = 20, **kw):
         super().__init__(**kw)
         self.size = size
         self.state = {k: False for k in MAP_PIECES}
         # ---- frames
-        self.lab = self._frame(-4.72, -0.3, 0.64, 2.4, "labeling station")
-        self.ver = self._frame(-4.72, -0.3, -1.3, 0.42, "versioning station")
-        # ---- row A
-        self.street = street(-4.6, -0.42, 0.79, NETWORK, False, size, band_h=0.28)
+        # x layout: secrets drawer -6.44..-4.80 | stations -4.72..0.2 | buckets 0.35..4.35 | column 4.45..6.5
+        self.lab = self._frame(-4.72, 0.2, 0.64, 2.36, "labeling station")
+        self.ver = self._frame(-4.72, 0.2, -1.3, 0.42, "versioning station")
+        # ---- row A (the houses never touch: studio eaves -4.62..-2.16, cli eaves -2.04..-0.04)
+        self.street = street(*self.STREET, NETWORK, False, size, band_h=0.28)
         self.houses = {
-            "studio": house(CONTAINERS["studio"], 2.3, 0.82).move_to([-3.5, 0.94, 0], aligned_edge=DOWN),
-            "cli": house(CONTAINERS["cli"], 1.84, 0.72).move_to([-1.39, 0.94, 0], aligned_edge=DOWN),
+            "studio": house(CONTAINERS["studio"], 2.3, 0.82).move_to([-3.39, 0.94, 0], aligned_edge=DOWN),
+            "cli": house(CONTAINERS["cli"], 1.84, 0.72).move_to([-1.04, 0.94, 0], aligned_edge=DOWN),
             "dvc": house(CONTAINERS["dvc"], 2.1, 0.82).move_to([-2.95, -1.12, 0], aligned_edge=DOWN),
         }
-        self.cli_caption = note("command line container").next_to(self.lab.frame, UP, buff=0.05).align_to(
-            self.lab.frame, RIGHT)
+        # two lines inside the frame's top-right corner (the slide-6 strip owns the band above the frame);
+        # it shares that corner with the cli pipe's lane: fade it before pipe_on("cli")
+        self.cli_caption = VGroup(note("command line"), note("container")).arrange(DOWN, aligned_edge=RIGHT,
+                                                                                    buff=0.04)
+        self.cli_caption.move_to(self.lab.frame.get_corner(UR) + np.array([-0.12, -0.1, 0]), aligned_edge=UR)
         self.bucket1 = vault(BUCKET1, ("cheeses_unlabeled/", "cheeses_labeled/"), CLOUD, size, vault_w=4.0)
-        self.bucket1.move_to([1.93, 1.52, 0])
+        self.bucket1.move_to([2.35, 1.52, 0])
         self.bucket2 = vault("versioning bucket", ("images/", "dvc_store/"), CLOUD, size, mono_title=False,
                              title_bottom=True, vault_w=4.0)
-        self.bucket2.move_to([1.93, -0.44, 0])
-        # ---- right column
-        self.repo = self._box(["your private", "GitHub repo"], LAPTOP, 2.3, 0.78).move_to([5.25, 0.03, 0])
-        self.repo.align_to(self.repo, LEFT)
-        self.repo.shift(RIGHT * (4.15 - self.repo.get_left()[0]))
+        self.bucket2.move_to([2.35, -0.44, 0])
+        # ---- right column (x 4.45 .. 6.5); the repo's two flag stubs stand on its top edge, right end
+        col = self.COL_X
+        self.repo = self._box(["your private", "GitHub repo"], LAPTOP, 2.05, 0.78)
+        self.repo.shift(np.array([col - self.repo.get_left()[0], 0.03 - self.repo.get_center()[1], 0]))
         self.flags = {}
         for i, k in enumerate(("v20", "v21")):
             f = VGroup(Line([0, 0, 0], [0, 0.42, 0], color=POINTER, stroke_width=3),
                        Polygon([0, 0.42, 0], [0.26, 0.33, 0], [0, 0.24, 0], stroke_color=POINTER,
                                stroke_width=2).set_fill(POINTER, 0.45))
-            f.move_to(self.repo.frame.get_corner(DR) + np.array([-0.62 + i * 0.32, 0.36, 0]))
+            f.shift(self.repo.frame.get_corner(UR) + np.array([-0.72 + i * 0.34, 0.0, 0]))
             self.flags[k] = f
         self.repo.add(*self.flags.values())
-        self.colab = self._box(["Colab", "view versions"], CLOUD, 2.3, 0.78).move_to([5.3, -0.9, 0])
-        self.colab.shift(RIGHT * (4.15 - self.colab.get_left()[0]))
+        self.colab = self._box(["Colab", "view versions"], CLOUD, 2.05, 0.78)
+        self.colab.shift(np.array([col - self.colab.get_left()[0], -0.9 - self.colab.get_center()[1], 0]))
         # ---- secrets drawer and pipes
         self.secrets = drawer("secrets/", KEY, size, glyph=False).move_to([-5.62, 0.53, 0])
         sx, st, sb = self.secrets.get_center()[0], self.secrets.get_top()[1], self.secrets.get_bottom()[1]
         hs, hc, hd = self.houses["studio"], self.houses["cli"], self.houses["dvc"]
         self.pipes = {
             "studio": pipe([[sx - 0.3, st, 0], [sx - 0.3, 1.2, 0], [hs.body.get_left()[0], 1.2, 0]], KEY),
-            "cli": pipe([[sx + 0.3, st, 0], [sx + 0.3, 1.88, 0], [-1.15, 1.88, 0], [-1.15, roof_y(hc, -1.15), 0]], KEY),
+            "cli": pipe([[sx + 0.3, st, 0], [sx + 0.3, 1.88, 0], [-1.78, 1.88, 0], [-1.78, roof_y(hc, -1.78), 0]],
+                        KEY),
             "dvc": pipe([[sx, sb, 0], [sx, -0.85, 0], [hd.body.get_left()[0], -0.85, 0]], KEY),
         }
         # ---- links from the DVC house to bucket 2 (fresh mobjects each time they light: _make_link)
@@ -2993,13 +3014,15 @@ class PipelineMap(Rig):
         bx = cl.get_center()[0] + 1.2
         br = DashedLine([bx, cl.get_bottom()[1], 0], [bx, i2.get_top()[1], 0], color=S.GREY, stroke_width=3)
         cap = VGroup(*[note(s) for s in ("not connected", "in the code", "exercise E7")]).arrange(
-            DOWN, aligned_edge=LEFT, buff=0.06).move_to([4.15, 1.05, 0], aligned_edge=LEFT)
-        lead = DashedLine([bx + 0.05, 0.54, 0], [4.05, 0.54, 0], color=S.GREY, stroke_width=2)
-        lead2 = DashedLine([4.05, 0.54, 0], [4.05, cap.get_bottom()[1] + 0.1, 0], color=S.GREY, stroke_width=2)
+            DOWN, aligned_edge=LEFT, buff=0.06).move_to([col + 0.05, 1.25, 0], aligned_edge=LEFT)
+        lx = col - 0.05
+        lead = DashedLine([bx + 0.05, 0.54, 0], [lx, 0.54, 0], color=S.GREY, stroke_width=2)
+        lead2 = DashedLine([lx, 0.54, 0], [lx, cap.get_bottom()[1] + 0.1, 0], color=S.GREY, stroke_width=2)
         self.bridge = VGroup(br, lead, lead2, cap)
         self.bridge.line, self.bridge.caption = br, cap
         # ---- tower and the slide-6 rows
-        self.tower = self._tower().move_to([5.3, 2.2, 0])
+        self.tower = self._tower()
+        self.tower.move_to([6.55 - self.tower.width / 2, 2.25, 0])
         self.slide6 = self._strip()
         self.slide6_big = self._big()
         # ---- assemble
@@ -3059,7 +3082,7 @@ class PipelineMap(Rig):
         cab = DashedVMobject(Rectangle(width=0.5, height=0.3), num_dashes=12).move_to([0, 0.9, 0])
         roof = DashedVMobject(Polygon([-0.35, 1.05, 0], [0, 1.3, 0], [0.35, 1.05, 0]), num_dashes=10)
         g = VGroup(legs, cab, roof).set_stroke(FUTURE, 2.5)
-        t = label("monitoring", self.size, FUTURE).next_to(g, RIGHT, buff=0.15).align_to(g, DOWN)
+        t = label("monitoring", self.size, FUTURE).next_to(g, RIGHT, buff=0.15).align_to(g, UP)
         return VGroup(g, t)
 
     def _strip(self):
@@ -3070,7 +3093,7 @@ class PipelineMap(Rig):
             row.add(c)
             if i < len(cs) - 1:
                 row.add(Arrow(ORIGIN, RIGHT * 0.55, buff=0, color=S.GREY, stroke_width=3, tip_length=0.14))
-        row.arrange(RIGHT, buff=0.12).move_to([-1.6, 2.62, 0])
+        row.arrange(RIGHT, buff=0.12).move_to([-1.45, 2.64, 0])
         row.items = cs
         return row
 
@@ -3090,7 +3113,7 @@ class PipelineMap(Rig):
         lab = VGroup(lb, rows, lt)
         lab.rows = rows
         tr = dashed_chip(SLIDE6[3], size=s)
-        VGroup(unl, lab, tr).arrange(RIGHT, buff=2.75).move_to([0, 0.6, 0])
+        VGroup(unl, lab, tr).arrange(RIGHT, buff=3.0).move_to([0, 0.6, 0])     # the question fits over its arrow
         a1 = Arrow(unl.get_right(), lab.get_left(), buff=0.15, color=S.GREY, stroke_width=4)
         q = label(SLIDE6[1], s, ERR).next_to(a1, UP, buff=0.12)
         a2 = Arrow(lab.get_right(), tr.get_left(), buff=0.15, color=S.GREY, stroke_width=3)
@@ -3110,7 +3133,7 @@ class PipelineMap(Rig):
         """A fresh copy of piece k as it looks lit (on) or dark, where the piece is now."""
         m = self._targets(k)
         if k == "street":
-            st = street(-4.6, -0.42, 0.79, NETWORK, on, self.size, band_h=0.28)
+            st = street(*self.STREET, NETWORK, on, self.size, band_h=0.28)
             return st.shift(m.band.get_center() - st.band.get_center())
         if k in ("studio", "cli", "dvc"):
             v = lit_house(m, True)
@@ -3202,13 +3225,15 @@ class PipelineMap(Rig):
             gl = Line([-0.13, -0.1, 0], [0.13, 0.1, 0], color=c, stroke_width=4)
         gl.move_to(ring_)
         g = VGroup(ring_, gl)
-        h, b1 = self.houses, self.bucket1
-        where = {"door": h["studio"].body.get_corner(DL) + np.array([0.0, 0.05, 0]),
-                 "ticket": self.lab.frame.get_right() + np.array([0.12, 0.35, 0]),
-                 "rule": b1.frame.get_corner(UR) + np.array([-0.05, -0.05, 0]),
-                 "bouncer": self.lab.frame.get_corner(UR) + np.array([-0.05, -0.05, 0]),
-                 "envelope": b1.drawers["cheeses_labeled/"].box.get_right() + LEFT * 0.33,
-                 "fuse": self.links["fuse"].core.get_center(),
-                 "shelf": [-1.0, 0.0, 0],
-                 "rope": [self.repo.frame.get_left()[0] - 0.12, -0.45, 0]}[k]
+        h, b1, b2 = self.houses, self.bucket1, self.bucket2
+        fz = self.links["fuse"].core.get_anchors()       # house → riser foot, riser foot → top, top → images/
+        # badges never cover a word: ticket/envelope sit on bucket 1's left edge at their drawers
+        where = {"door": [h["studio"].body.get_left()[0] + 0.25, self.street.band.get_center()[1], 0],
+                 "ticket": [b1.frame.get_left()[0], b1.drawers["cheeses_unlabeled/"].get_center()[1], 0],
+                 "rule": b1.frame.get_corner(UR) + np.array([-0.28, 0.1, 0]),
+                 "bouncer": self.lab.frame.get_corner(UR) + np.array([-0.45, -0.3, 0]),
+                 "envelope": [b1.frame.get_left()[0], b1.drawers["cheeses_labeled/"].get_center()[1], 0],
+                 "fuse": [fz[1][0], (fz[1][1] + fz[3][1]) / 2, 0],      # on the gcsfuse link's riser
+                 "shelf": h["dvc"].body.get_corner(UL) + np.array([-0.4, 0.15, 0]),   # .dvc/cache, in the house
+                 "rope": b2.drawers["dvc_store/"].box.get_right() + LEFT * 0.33}[k]
         return g.move_to(where)

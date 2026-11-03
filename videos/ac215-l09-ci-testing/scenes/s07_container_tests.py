@@ -326,11 +326,11 @@ class TestsInImage(VoiceScene):
         gt.move_to([0, 0.75, 0])
         # Option 3, README lines 210 and 216–225: the shell, then the same four pytest commands
         o3_lines = [readme(n) for n in (210, 216, 219, 222, 225)]
-        o3_body = VGroup(*[mono(s, 22, INK) for s in o3_lines]).arrange(DOWN, aligned_edge=LEFT, buff=0.16)
+        o3_body = VGroup(*[mono(s, 22, INK) for s in o3_lines]).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
         o3 = readme_card((210, 225), o3_body)
         o3.move_to([-1.2, 0.55, 0])
         o3_turn = your_turn().next_to(o3, RIGHT, buff=0.4).align_to(o3, UP)
-        o3_bars = [ring(r, TURN, buff=0.07) for r in o3_body]
+        o3_bars = [ring(r, TURN, buff=0.05) for r in o3_body]
 
         with self.voiceover(SAY[4]) as vo:
             unpin(self, c_row, c_tag)
@@ -348,25 +348,23 @@ class TestsInImage(VoiceScene):
             vo.wait_until("Option 2 waits")
             self.play(*[Indicate(d, color=S.GREY, scale_factor=1.6) for d in tr.dots[5:8]], run_time=0.8)
             vo.wait_until("Option 3 is the same")
-            # the README's Option 3 commands stay readable on a card while the strip runs them
-            # (the strip scrolls each one out within a second or two)
-            self.play(track(tr, 9), FadeOut(gt, shift=UP * 0.2), run_time=0.5)
+            # the README's Option 3 commands stay readable on a card (with '▶ your turn') while the
+            # strip runs them: the narration gives the whole route ~5 s, too fast to copy from the
+            # strip alone; the strip starts at once so the trap below stays on its words
+            self.play(track(tr, 9), FadeOut(gt, shift=UP * 0.2), FadeIn(o3), FadeIn(o3_turn, shift=LEFT * 0.15),
+                      run_time=0.6)
             self.remove(gt)
-            self.play(FadeIn(o3), run_time=0.6)
-            self.play(FadeIn(o3_turn, shift=LEFT * 0.15), run_time=0.4)
-            vo.wait_until("docker-shell again")
-            self.play(Create(o3_bars[0]), run_time=0.25)
-            type_cmd(self, t, shell.cmd, type_time=0.8)
-            t.print(self, shell.at("…", 33), run_time=0.3, lag=0.15)
-            vo.wait_until("the same pytest commands")
-            self.play(track(tr, 10), run_time=0.3)
+            self.play(Create(o3_bars[0]), run_time=0.2)
+            type_cmd(self, t, shell.cmd, type_time=0.6)
+            t.print(self, shell.at("…", 33), run_time=0.25, lag=0.15)
             prev = o3_bars[0]
             for k, (ln, out_n) in enumerate(((34, [56]), (57, [78]), (79, [111]), (112, [137, 138])), 1):
-                self.play(ReplacementTransform(prev, o3_bars[k]), run_time=0.2)
+                self.play(ReplacementTransform(prev, o3_bars[k]), *([track(tr, 10)] if k == 1 else []),
+                          run_time=0.15)
                 prev = o3_bars[k]
-                istep(self, t, shell.line(ln), type_time=0.45)
+                istep(self, t, shell.line(ln), type_time=0.3)
                 outs = [shell.line(n) if n == 137 else (summary(shell, n), PASS) for n in out_n]
-                t.print(self, outs, run_time=0.25)
+                t.print(self, outs, run_time=0.2)
             vo.wait_until("One trap:")
             resize(self, t, 10, keep=2, extra=[FadeOut(o3), FadeOut(o3_turn), FadeOut(prev)])
             self.remove(o3, o3_turn, *o3_bars)

@@ -19,7 +19,7 @@ Beats (script.md, ## S08; one voiceover block each):
    rm api-server` (README:199) -> part3-opt2-06: 2–3. `▶ your turn`.
 5. TRACKER C8 · extra: the same system command (extra) -> part3-opt2-07: 13–17, 19–24 (wrap).
    `1 passed, 4 skipped` GREEN with a YELLOW "still green" tag; the four dots turn GREY dashed "s";
-   the four SKIPPED rows are ringed.
+   the four SKIPPED rows (soft-broken before 'at localhost:9000') are ringed.
 6. CODE(test_system_api.py: 15–25): is_api_running, line 24's skipif YELLOW, a YELLOW clock chip
    "evaluated once · at collection"; a smoke detector whose battery slides out, GREY zzz,
    "silent ≠ no fire".
@@ -37,11 +37,13 @@ Deviations (reported to the coordinator):
   NAMES (`cols`), which carry what the narration names ("shows the server up").
 - The script puts the wire picture "beside the terminal"; a full terminal and a picture never share
   the frame, so the terminal first shrinks to a strip (command + `5 passed`) and the picture stands
-  above it. The dots row above the 10-row terminal in beats 4–5 is a one-row legend, not a picture.
+  above it. Under the picture, while the command is on screen, a GREY two-line chip (digest G3/Q2,
+  no narration): "4 skipped with the server up? (Docker Desktop host networking) → docker exec
+  api-server python -m pytest tests/system/ -v · study guide". The dots row above the 10-row terminal in beats 4–5 is a one-row legend, not a picture.
 - Border dots: SCENE-NOTES' kinds colouring (11 GREEN unit + 11 TEAL), not "21 GREEN": the 10
   integration tests run in-process (TEAL, as S03 taught); the 22nd TEAL dot is ringed.
 - pytest's summary lines are shown without their '=' padding (as S03/S07 do); long PASSED/SKIPPED
-  test-id rows break as S07's soft() does; the -ra SKIPPED rows wrap at the terminal edge.
+  test-id rows and the -ra SKIPPED rows break as S07's soft() does (at the last space that fits).
 """
 
 from manim import *  # noqa: I001  (manim first, then common: common must win)
@@ -265,8 +267,8 @@ class SilentSkip(VoiceScene):
 
             # the strip keeps the command and its verdict; the wire picture stands above it
             resize(self, t, 3, keep=[*rows_of(s_ln), s_sum])
-            left = container("test container", 3.1, 3.2).move_to([-4.85, 0.85, 0])
-            right = container("api-server", 2.9, 3.2, mono_title=True).move_to([4.95, 0.85, 0])
+            left = container("test container", 3.1, 2.8).move_to([-4.85, 1.15, 0])
+            right = container("api-server", 2.9, 2.8, mono_title=True).move_to([4.95, 1.15, 0])
             dots = TestDots(5, SYSTEM_TEST).move_to(left.frame).shift(DOWN * 0.15)
             pyt = tool_chip("pytest").next_to(dots, DOWN, buff=0.35)
             srv = chip("server :9000", SYSTEM_TEST, size=20).move_to(right.frame)
@@ -288,7 +290,20 @@ class SilentSkip(VoiceScene):
                       run_time=1.0)
             vo.wait_until("Pause and run it")
             s_row, s_tag = tag_on(self, s_ln, turn_row)
-            self.play(Indicate(s_tag, color=TURN, scale_factor=1.15), run_time=0.6)
+            # digest G3/Q2: Docker Desktop's host networking may not reach api-server (no narration)
+            dd1 = label("4 skipped with the server up? (Docker Desktop host networking)", 20, S.GREY)
+            dd2 = VGroup(label("→", 20, S.GREY), mono("docker exec api-server python -m pytest tests/system/ -v",
+                                                     20, INK), label("· study guide", 20, S.GREY))
+            dd2.arrange(RIGHT, buff=0.15)
+            ddt = VGroup(dd1, dd2).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
+            ddf = RoundedRectangle(width=ddt.width + 0.5, height=ddt.height + 0.3, corner_radius=0.12,
+                                   stroke_color=S.GREY, stroke_width=2).set_fill(S.GREY, 0.1)
+            ddt.move_to(ddf)
+            dd = VGroup(ddf, ddt).move_to([0, (left.frame.get_bottom()[1] + t.box.get_top()[1]) / 2, 0])
+            assert dd.get_top()[1] < left.frame.get_bottom()[1] - 0.08, dd.get_top()
+            assert dd.get_bottom()[1] > t.box.get_top()[1] + 0.08, dd.get_bottom()
+            assert dd.width < 12.6, dd.width
+            self.play(Indicate(s_tag, color=TURN, scale_factor=1.15), FadeIn(dd, shift=UP * 0.1), run_time=0.6)
 
         # ========================================================== 3. ponder: no server
         checks = VGroup(*[check_mark(0.24, PASS).next_to(d, UP, buff=0.1) for d in dots.dots])
@@ -312,7 +327,7 @@ class SilentSkip(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(ponder), run_time=0.5)
             self.remove(ponder)
-            rest = VGroup(left, right, pyt, srv, wire, wlab, checks)
+            rest = VGroup(left, right, pyt, srv, wire, wlab, checks, dd)
             self.play(FadeOut(rest), track(tr, 8), run_time=0.6)
             self.remove(rest)
             # two plays: dots.to() Transforms toward targets built where the dots stand now
@@ -337,7 +352,9 @@ class SilentSkip(VoiceScene):
             t.print(self, soft(nosrv.at((13, 17)), t.max_chars), run_time=0.7, lag=0.08)
             self.wait(0.4)
             t.print(self, [summary(nosrv, 19)], run_time=0.3)
-            skipped = t.print(self, nosrv.at((20, 23)), wrap=True, run_time=0.6, lag=0.08)
+            # break at the last space (soft), so 'at localhost:9000' starts its own row
+            skipped = t.print(self, soft(nosrv.at((20, 23)), t.max_chars), run_time=0.6, lag=0.08)
+            assert sum(r.text.startswith("SKIPPED") for r in skipped) == 4, [r.text for r in skipped]
             n_sum = t.print(self, [(summary(nosrv, 24), PASS)], run_time=0.3)[0]
             vo.wait_until("1 passed, 4 skipped")
             self.play(Indicate(substring(n_sum, "1 passed, 4 skipped"), color=PASS, scale_factor=1.12),
@@ -358,7 +375,9 @@ class SilentSkip(VoiceScene):
             words = [substring(r, "SKIPPED") for r in skipped if "SKIPPED" in r.text]
             self.play(flash(words, TURN, 1.15))
             vo.wait_until("API not running")
-            apis = [substring(r, "API not running") for r in skipped if "API not running" in r.text]
+            apis = [substring(r, s) for r in skipped for s in ("API not running", "at localhost:9000")
+                    if s in r.text]
+            assert len(apis) == 8, [r.text for r in skipped]
             self.play(flash(apis, TURN, 1.1))
 
         # ========================================================== 6. why: evaluated at collection

@@ -12,13 +12,16 @@ Beats (script.md, ## S10; one voiceover block each):
    2, each output row tagged `at the time of recording`.
 1. `git clone https://github.com/rahuldave/babykev` -> babykev/05: 2, `cd babykev` (prompt flashes),
    `git tag -n1 --list 'step-*'` (README.md:148) -> babykev/07: 2–10. The nine step names light in
-   turn; a GREY row tag "the repo is its own slide deck"; a ring jumps between steps on "moves you to
+   turn; a GREY row tag "the repo is its own slide deck"; a GREY row tag "04 + 04b: one tracker
+   step" on the step-04b row (nine tags, eight dots); a ring jumps between steps on "moves you to
    any step". `▶ your turn` on the clone's output row and on the tag command.
 2. TRACKER E1. `git switch --detach step-00` (README.md:150) -> s00-01: 2; `uv sync --locked` (walk
    step-00) -> s00-02: 2–4, 6 (soft-wrapped), 9–10; `Using CPython 3.13.16` GREEN. The terminal
    shrinks to a 3-row strip (CPython + the warning) and the lockfile mechanism plays above it
    (tagged `illustration`): a dashed GREY "no lockfile" column whose symbolic versions move on
-   (`x.y` -> `x.z`, ORANGE, "↑ newer") as a time marker slides (no invented version numbers), and a GREEN `uv sync --locked` column under a GREEN `uv.lock` card with a lock
+   (`x.y` -> `x.z`, ORANGE, "↑ newer") as a time marker slides (no invented version numbers), and a
+   GREEN `uv sync --locked` column of symbolic pins (`==x.y`: step-00 installs babykev alone, so no
+   real version is shown) under a GREEN `uv.lock` card with a lock
    glyph that shakes at every tick and prints a RED "stop". The warning row gets `at the time of
    recording`. A TEAL frost glyph "the cheese way: freeze an image". Then `just` -> s00-05: 2–6; the
    recipe names ringed; three row tags beside `[setup]` (for people GREY, the hook PURPLE, CI · later
@@ -30,8 +33,10 @@ Beats (script.md, ## S10; one voiceover block each):
    the guess `[1 / 3] * 3` YELLOW, `0.5` RED, `pytest.approx(0)` GREEN. Row tags: RED "77 × 0.01 =
    0.77" on the rounding test (77 options of 1/77 from s01-06:18-19; step-01 api.py:89-90 `r2` rounds
    each to 2 decimals, round(1/77, 2) = 0.01; s01-06:26 `Obtained: 0.77`), GREEN "fix the code, not the tests" on the card. `▶ your turn`.
-4. TRACKER E3. PURPLE chips `ruff format` / `ruff check` ("both roles"). V4 funnel reprise over a
-   6-row strip: `uv run ruff check --statistics` (walk step-02) -> s02-12: 2–6, …, 14–15 ("Found 70
+4. TRACKER E3. The walk's way in, in a 6-row strip: `git switch --detach step-02` -> s02-01: 3,
+   `just setup` (walk.md:112) -> s02-02: 2, …, 11 (`+ ruff`), PURPLE chips `ruff format` / `ruff
+   check` ("both roles"), `just fmt` (walk.md:158) -> s02-09: 3 with `▶ your turn`. V4 funnel
+   reprise over the strip: `uv run ruff check --statistics` (walk step-02) -> s02-12: 2–6, …, 14–15 ("Found 70
    errors."); `just lint --fix` -> s02-14: 692 (69); `just lint --fix --unsafe-fixes` -> s02-15:
    360 (37). The bar starts at 70 with a faint notch above it at 79 carrying the GREY chip
    `recorded · walk.md: 79 before just fmt` (not spoken); it settles at 37, "the rest need a person".
@@ -206,7 +211,7 @@ def babykev_demo() -> VGroup:
 
 # ---------------------------------------------------------------- beat 2: lockfile mechanism
 PKGS = ("pydantic", "pytest", "coverage")
-LOCKED = ("2.13.5", "9.1.1", "7.16.2")                      # s01-02:16, 19, 12 (the lock at step-01)
+LOCKED = ("x.y",) * 3     # symbolic pins: step-00 installs babykev alone (s00-02:4), so no real version
 FLOAT = ("x.y", "x.z")              # unlocked: symbolic marks only, never invented version numbers
 
 
@@ -239,10 +244,12 @@ class OneCommand(VoiceScene):
         sw1, setup1, pyt = capture("babykev/s01-01"), capture("babykev/s01-02"), capture("babykev/s01-03")
         two = capture("babykev/s01-06")
         stats, fix, unsafe = capture("babykev/s02-12"), capture("babykev/s02-14"), capture("babykev/s02-15")
+        sw2, setup2, fmt2 = capture("babykev/s02-01"), capture("babykev/s02-02"), capture("babykev/s02-09")
         assert tags.cmd == readme_cmd(148) and sw0.cmd == readme_cmd(150), (tags.cmd, sw0.cmd)
         assert sync.cmd == walk(22)[2:] and pyt.cmd == walk(65)[2:], (sync.cmd, pyt.cmd)
         assert stats.cmd == walk(181)[2:] and fix.cmd == walk(190)[2:] and unsafe.cmd == walk(195)[2:]
         assert just0.cmd == "just" and setup1.cmd == "just setup" and sw1.cmd == "git switch --detach step-01"
+        assert sw2.cmd == "git switch --detach step-02" and setup2.cmd == walk(112)[2:] and fmt2.cmd == walk(158)[2:]
 
         # ========================================================== 0. part 2: babykev; two tools
         tr = tracker("E", 1)
@@ -334,6 +341,9 @@ class OneCommand(VoiceScene):
             names = [substring(r, r.text.split()[0]) for r in rows]
             vo.wait_until("9 steps")
             self.play(LaggedStart(*[n.animate.set_color(TURN) for n in names], lag_ratio=0.25), run_time=1.6)
+            # nine tags, eight tracker dots: step-04 and step-04b share one (tracker E5 'step-04/04b')
+            one = beside(row_tag("04 + 04b: one tracker step", S.GREY), rows[5])
+            pin(self, rows[5], one, run_time=0.3)
             vo.wait_until("The repo is its own slide deck")
             deck = beside(row_tag("the repo is its own slide deck", S.GREY), rows[0])
             pin(self, rows[0], deck)
@@ -538,15 +548,25 @@ class OneCommand(VoiceScene):
             self.remove(pin_marks, *pin_marks.get_family())
             for m in list(t.lines):
                 t.lines.remove(m)
-            resize(self, t, 6, keep=0, run_time=0.6)
+            resize(self, t, 6, keep=0, run_time=0.5)
+            # the walk's way into step-02: switch, setup (adds ruff), then `just fmt` (79 -> 70)
+            typ(self, t, sw2.cmd, type_time=0.5)
+            put(self, t, sw2.at(3), run_time=0.2)
+            typ(self, t, setup2.cmd, type_time=0.25)
+            put(self, t, setup2.at(2, "…", 11), run_time=0.4, lag=0.08)
             vo.wait_until("ruff in both roles")
-            self.play(FadeIn(r_fmt, shift=DOWN * 0.15), FadeIn(r_chk, shift=DOWN * 0.15), run_time=0.6)
-            typ(self, t, stats.cmd, type_time=0.8)
+            self.play(FadeIn(r_fmt, shift=DOWN * 0.15), FadeIn(r_chk, shift=DOWN * 0.15), run_time=0.5)
+            fmt_ln = typ(self, t, fmt2.cmd, type_time=0.25)
+            put(self, t, fmt2.at(3), run_time=0.2)
+            yf = beside(turn_row(), fmt_ln)
+            pin(self, fmt_ln, yf, anim=AnimationGroup(FadeIn(yf, shift=LEFT * 0.1),
+                                                      Indicate(r_fmt.text, color=TOOL, scale_factor=1.15)))
+            vo.wait_until("After formatting")
+            typ(self, t, stats.cmd, type_time=0.6)
             self.play(Indicate(r_chk.text, color=TOOL, scale_factor=1.15), run_time=0.5)
-            put(self, t, stats.at((2, 6)), run_time=0.7, lag=0.08)
-            st = put(self, t, ["…"] + stats.at(14) + soft(stats.at(15), t.max_chars), run_time=0.6, lag=0.08)
+            put(self, t, stats.at((2, 6)), run_time=0.5, lag=0.06)
+            st = put(self, t, ["…"] + stats.at(14) + soft(stats.at(15), t.max_chars), run_time=0.5, lag=0.06)
             found70 = st[1]
-            vo.wait_until("the linter counts 70 findings")
             self.play(FadeIn(ff.track), FadeIn(ff.bar, shift=RIGHT * 0.3), FadeIn(ff.count), FadeIn(ff.note),
                       FadeIn(notch79), FadeIn(rec), Create(tick), run_time=0.7)
             self.play(substring(found70, "Found 70 errors.").animate.set_color(ERR),

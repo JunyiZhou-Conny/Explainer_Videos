@@ -371,7 +371,7 @@ class FormatterLinter(VoiceScene):
             vo.wait_until("Option B runs the same checks")
             p_line = type_cmd(self, t, pip.cmd, type_time=1.0)
             vo.wait_until("install black and flake8 with pip")
-            p_out = t.print(self, pip.at((2, 5), "…", 37), run_time=0.9, lag=0.12, wrap=True)
+            p_out = t.print(self, soft(pip.at((2, 5), "…", 37), t.max_chars), run_time=0.9, lag=0.12)
             host = beside(row_tag("on the host", HOST), p_line)
             vo.wait_until("on the host")
             pin(self, p_line, host)
@@ -437,7 +437,7 @@ class FormatterLinter(VoiceScene):
             o6 = t.print(self, soft(blk_local.at("…", 19, 37, "…", 40), t.max_chars), run_time=0.9,
                          lag=0.12)
             vo.wait_until("the same two files changed")
-            names = [tail(row) for row in o6 if row.text.startswith("/")]   # each path's file name
+            names = [tail(row) for row in o6 if row.text.endswith(".py")]   # each path's file name
             r_files = VGroup(*[under(g, INK, stroke=3) for g in names])
             self.play(Create(r_files), run_time=0.6)
             self.play(Indicate(o6[-1], color=INK, scale_factor=1.04), run_time=0.7)
