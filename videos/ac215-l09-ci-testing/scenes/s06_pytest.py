@@ -275,6 +275,9 @@ class PytestInside(VoiceScene):
         fw = FixtureWiring()
         look = note("what it could look like · not this repo's code", S.GREY, 22)
         look.move_to([-6.4 + look.width / 2, 2.85, 0])
+        # QA r2: name the box for newcomers (the narration says only "a fixture")
+        cfg = note("pytest loads this file itself · shared fixtures", S.GREY, 22)
+        cfg.next_to(fw.conftest.frame, UP, buff=0.18).align_to(fw.conftest.frame, LEFT)
         copies, per_anims = fw.per_test()
         fresh = grey_chip('scope="function" · the default', size=20, mono_font=True)
         fresh.next_to(copies, DOWN, buff=0.25).align_to(fw.conftest.frame, LEFT)
@@ -296,6 +299,8 @@ class PytestInside(VoiceScene):
             self.remove(pa, bar11, glob)
             self.play(FadeIn(fw.conftest), FadeIn(fw.fixture.box, scale=1.15), ReplacementTransform(fly, fw.fixture.text),
                       FadeIn(look, shift=DOWN * 0.1), run_time=0.6)
+            self.play(FadeIn(cfg, shift=UP * 0.1), Indicate(fw.conftest.title, color=INK, scale_factor=1.1),
+                      run_time=0.7)
             vo.wait_until("A test asks for client by name")
             self.play(LaggedStart(*[FadeIn(t, shift=LEFT * 0.2) for t in fw.tests], lag_ratio=0.25), run_time=0.9)
             self.play(LaggedStart(*[GrowArrow(a) for a in fw.asks], lag_ratio=0.2), FadeIn(fw.ask_label),
@@ -326,8 +331,8 @@ class PytestInside(VoiceScene):
             pz.cards.move_to([0, -1.75, 0])
             m = pz.merged
             m.move_to([0, 0.75, 0])
-            self.play(FadeOut(VGroup(fw, fw.ask_label, inst, shared)), run_time=0.5)
-            self.remove(fw, fw.ask_label, inst, shared)
+            self.play(FadeOut(VGroup(fw, fw.ask_label, inst, shared, cfg)), run_time=0.5)
+            self.remove(fw, fw.ask_label, inst, shared, cfg)
             self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in pz.cards], lag_ratio=0.15), run_time=0.7)
             vo.wait_until("into one function")
             # each copy's inputs leave its card and become one input row of the single function

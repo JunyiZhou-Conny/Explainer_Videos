@@ -15,10 +15,15 @@
 S10:
 - en: "Part 2 is the guest lecture, by Rahul Dave. It builds the same gate around a small machine learning project, babykev, which answers questions about cheese and reports how confident it is; a pure guess should score zero. No Docker until the very end. Two tools first, as extras: the package manager uv from lecture 2, 0.13.2 at the time of recording, and the command runner just, 1.59.0."
   zh:
-  - "第二部分是 Rahul Dave 的客座讲座。"
+  - "第二部分是客座讲座。"
   - "它围绕一个小型机器学习项目 babykev 搭起同样的门禁；babykev 回答关于奶酪的问题，还会报告自己有多大把握；纯粹的猜测应该得零分。"
   - "直到最后才用到 Docker。"
   - "先装两个工具，作为额外步骤：第 2 讲的包管理器 uv，录制时是 0.13.2；还有命令运行器 just，1.59.0。"
+  en_display:
+  - "Part 2 is the guest lecture."
+  - null
+  - null
+  - null
 - en: "Clone babykev and list its tags: 9 steps, one per lecture stage. The repo is its own slide deck, and git switch, dash dash detach, moves you to any step. Pause and run both."
   zh:
   - "先 clone babykev，再列出它的 tag：一共 9 步，课上每个阶段一步。"
@@ -76,7 +81,7 @@ S11:
   zh:
   - "这里的配置只有四个 hook，不是九个：大文件、合并冲突标记、一个拒绝任何 .env 文件的策略 hook，还有一个运行 just check 的本地 hook。"
   - "所以 hook 跑的正是你自己敲的那条命令。"
-  - "在这一步，just check 包括格式检查、lint、带 90% 覆盖率下限的测试，以及配置文件的 lint。"
+  - "在这一步，just check 包括格式检查和 lint，还有带 90% 覆盖率下限的测试，以及配置文件的 lint。"
   en_display:
   - "The config here has four hooks, not nine: large files, merge markers, a policy hook refusing any .env file, and one local hook that runs just check."
   - null
@@ -116,7 +121,7 @@ S11:
 S12:
 - en: "Step 5 brings the model: the setup recipe now pulls the model stack, 38 packages including torch 2.14.1 for the CPU, at the time of recording. Then just test: 92 passed, coverage 94 percent, all green. Pause and run both."
   zh:
-  - "到了 step-05，模型来了：setup 这个 recipe 现在会拉下整套模型依赖，录制时是 38 个包，包括 CPU 版的 torch 2.14.1。"
+  - "到了 step-05，模型来了：setup 这个 recipe 现在会拉下整套模型依赖：38 个包，包括 CPU 版的 torch 2.14.1，这是录制时的情况。"
   - "然后是 just test：92 passed，覆盖率 94%，全绿。"
   - "暂停一下，两条都跑一遍。"
 - en: "What does the model do? A request packs one state and several questions into one sequence. A mask enforces one rule: a question may see the state and itself, never a sibling question. Questions must be answered independently; a peek would leak one answer into another. That one forbidden cell is the whole difference from a causal mask."
@@ -139,7 +144,7 @@ S12:
   zh:
   - "一个检查脚本把构建出的 mask 和我们想要的那个对比，在那几行打印出 WRONG。"
   - "可是 just check 里没有任何东西会运行它；靠眼睛看的打印结果不是测试。"
-  - "来想一个问题：branch mask 的每一行都跑到了，覆盖率显示 94%。"
+  - "来想一个问题：branch mask 里每行代码都跑到了，覆盖率显示 94%。"
   - "有哪个覆盖率数字能抓到这个 bug 吗？"
   en_display:
   - null
@@ -155,9 +160,10 @@ S12:
   zh:
   - "同样绿着却看不见的，还有类型检查器：它只读声明的类型，不运行代码。"
   - "运行 ty，发现 6 条诊断，可 just check 还是绿的：类型还没进门禁，而门禁之外的检查谁也保护不了。"
-- en: "Last, the smoke on the real model: half a billion parameters, downloaded once from the Hugging Face Hub, a public model host, answering 15 cheese questions on CPU; pause and run it. 6 of 15 right. Nothing is trained, these are guesses; hold that number."
+- en: "Last, the smoke on the real model: half a billion parameters, downloaded once from the Hugging Face Hub, a public model host, answering 15 cheese questions on CPU. The first run downloads about a gigabyte; pause and run it. 6 of 15 right. Nothing is trained, these are guesses; hold that number."
   zh:
-  - "最后，在真实模型上跑冒烟测试：5 亿参数，从公开的模型托管平台 Hugging Face Hub 下载一次，在 CPU 上回答 15 个奶酪问题；暂停一下，自己跑一遍。"
+  - "最后，在真实模型上跑冒烟测试：5 亿参数，从 Hugging Face Hub 下载一次，这是一个公开的模型托管平台，在 CPU 上回答 15 个奶酪问题。"
+  - "第一次运行要下载大约 1 GB；暂停一下，自己跑一遍。"
   - "15 个里答对了 6 个。"
   - "什么都没训练，这些都是猜的；先记住这个数字。"
 S13:
@@ -195,7 +201,7 @@ S13:
   - "属性测试不只是说不；它还把最小的证据交到你手上。"
 - en: "Proof the gate grew teeth: put step 5's wrong mask line back and run just test; pause and try it. 8 failed, 95 passed; code that sailed through before is refused. A gate refuses only what its tests can see. The real fix is one line: same question means same segment ID."
   zh:
-  - "证明门禁长了牙：把 step-05 那行错的 mask 放回去，再运行 just test；暂停一下，试一试。"
+  - "来证明门禁长了牙：把 step-05 那行错的 mask 放回去，再运行 just test；暂停一下，试一试。"
   - "8 failed, 95 passed；之前一路放行的代码，现在被拒绝了。"
   - "门禁只能拒绝它的测试看得见的东西。"
   - "真正的修复只有一行：同一个问题，意思是同一个 segment ID。"
@@ -230,7 +236,7 @@ S14:
   - "在你装了 Docker Desktop 的笔记本上，两个 image 都会真正构建出来。"
   - "剩下的看 walk.md 里的记录。"
   - "同一个 lock 文件生成两个 image，1.15 GB 和 1.84 GB。"
-  - "而且 just check 在一个没有网络的 container 里也跑绿了：hermetic 的说法，用实验证明了。"
+  - "而且 just check 在一个断网的 container 里也跑绿了：hermetic 的说法，用实验证明了。"
 - en: "The gate table is full: six rows, system outside the turnstile. Now the limit. A hook runs on one machine, and git commit, dash dash no verify, walks straight past it."
   zh:
   - "门禁表填满了：六行，系统测试在闸机外面。"
@@ -251,7 +257,7 @@ S15:
   zh:
   - "回顾之前，先清理。"
   - "README 的 Docker 清理：docker container ls 显示没有在运行的，所以不用停。"
-  - "然后是 docker system prune；输入 y：录制时清掉了大约 95 MB 的构建缓存。"
+  - "然后是 docker system prune，输入 y：清掉了大约 95 MB 的构建缓存，这是录制时的数字。"
   - "最后 docker image ls 显示两个 cheese 的 image。"
   - "一个额外步骤把 hook 卸掉：pre-commit uninstall。"
   - "在 babykev 那边，删掉 venv；如果跑过冒烟测试，再删掉 Hugging Face 缓存里那个大约 1 GB 的模型。"
@@ -259,7 +265,7 @@ S15:
 - en: "5 questions to test yourself. One: what runs in a unit, an integration and a system test of the cheese app, file by file? Two: the system tests pass with no server at all. What does pytest actually print, and are those four tests hermetic?"
   zh:
   - "五道自测题。"
-  - "第一题：逐个文件说说，cheese 应用的单元测试、集成测试和系统测试分别运行了什么？"
+  - "第一题：cheese 应用的单元测试、集成测试和系统测试，逐个文件说说，分别运行了什么？"
   - "第二题：系统测试在完全没有服务器的情况下也通过了。"
   - "这时 pytest 实际打印了什么，这四个测试又是不是 hermetic 的？"
 - en: "Three: what does pre-commit install actually create, and why must every clone run it again? Four: black says failed, files were modified. Is your code broken, and what do you do next? Five: babykev had 94 percent coverage and a wrong mask. What kind of test finally saw the bug, and why was coverage blind to it?"

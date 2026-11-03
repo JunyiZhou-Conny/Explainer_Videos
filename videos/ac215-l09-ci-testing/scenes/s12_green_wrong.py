@@ -8,15 +8,15 @@ Beats (script.md, ## S12; one voiceover block each):
    warning (its tag from S10). The terminal keeps the setup command and line 44; `just test` ->
    s05-03: …, 11–15 (cut after the dots), …, 29, 30 (cut): the dots, `TOTAL … 94%` and `92 passed`
    GREEN. `▶ your turn` on both commands.
-1. The model in one picture (slides 54–55 redrawn): a packed sequence bar (state GREEN, three TEAL
-   questions) and V6's 6×6 grid beside it, assembling; the rule as one GREY sentence under the
+1. The model in one picture (slides 54–55 redrawn): a packed sequence bar (state GREEN, two TEAL
+   questions: the grid's own six tokens) and V6's 6×6 grid beside it, assembling; the rule as one GREY sentence under the
    grid. Attention arrows from question 2's token to the state and to itself (and the grid's row 6
    lights the same cells); a GREY dashed arrow sneaks toward question 1 and is crossed out RED. The
-   question-2 × question-1 block of the grid gets a YELLOW box: "this cell is the whole
+   question-2 × question-1 block of the grid gets a YELLOW box: "this block is the whole
    difference"; on "from a causal mask" the block fills (a causal mask, GREY note) and empties again.
-2. TRACKER E6. The picture clears; the grid empties and shrinks over a 4-row strip. The walk's
+2. TRACKER E6. The picture clears; the grid empties and shrinks (cell 0.36) over a 6-row strip. The walk's
    one-liner (walk.md:589) folds over four rows at 20 pt; `[0, 0, 1, 1, 2, 2]` ringed with the grid's
-   segment band; `▶ your turn`. s05-04: 2–7 print in two chunks and each printed row flies into the
+   segment band; `▶ your turn`. s05-04: 2–7 print in two chunks (rows 1–2 under the whole command, then 3–6) and each printed row flies into the
    grid (the cells light as the glyphs land). Rows 5–6 flash RED, in the strip and the grid, and the
    four question-1 cells of rows 5–6 get RED boxes. `sed -n '140p' src/babykev/model.py` -> s05-05: 2,
    `torch.ones_like` RED.
@@ -32,7 +32,8 @@ Beats (script.md, ## S12; one voiceover block each):
    RED; `just check` -> s05-11: 2–6, …, 22–23, `92 passed` and `Required test coverage of 90%
    reached` GREEN; a YELLOW bracket pairs the two.
 6. TRACKER E6. `just smoke local` -> s05-12: 2, …, 5, …, 22–23, 24–25 (cut after the answer), …,
-   32–33. `▶ your turn`. `503M parameters` ringed, the model name ringed BLUE (the Hub), `6 of 15
+   32–33. `▶ your turn`. GREY row tag "first run downloads about 1 GB" beside the model line (ASSETS.md;
+   QA round 2). `503M parameters` ringed, the model name ringed BLUE (the Hub), `6 of 15
    right` YELLOW, line 33 GREY. The ms figures are not highlighted. Fade to an empty frame.
 
 Deviations (reported to the coordinator):
@@ -47,8 +48,8 @@ Deviations (reported to the coordinator):
 - The one-liner is hand-folded at spaces inside its double quotes (bash drops a backslash-newline
   there; Python ignores the extra spaces), because the house fold would break it mid-token; the rows
   paste back as exactly walk.md:589 (asserted).
-- The sequence bar packs a state of 2 tokens and three questions of 2 (no numbers on it); the grid is
-  slide 72's six tokens. The "causal" fill of the forbidden block is an added beat for "the whole
+- The script's SHOW says three questions on the bar; it packs the grid's six tokens (state, q1, q2:
+  slide 72) so every arrow lands on the grid's own columns (QA round 2, director). The "causal" fill of the forbidden block is an added beat for "the whole
   difference from a causal mask" (GREY note "causal mask").
 - The want/built labels ("we meant", "built") and the beat-4 captions ("lines that ran", "what they
   produced", "necessary · never sufficient") are the narration's own words.
@@ -65,7 +66,7 @@ from explainer.devops import code_span, tag
 
 from common import (CLOUD, ERR, INK, NARRATION, P_BABYKEV, PASS, SEG_SIX, TURN, T_BABYKEV, MaskGrid, attach,
                     beside, capture, code_panel, coverage_sweep, cut, excerpt, glyph_range, label, lref,
-                    mask_rows, note, pause_and_ponder, pin, resize, ring, segment_ids, sequence_bar, shown_path,
+                    mask_rows, note, pause_and_ponder, pin, resize, ring, row_tag, sequence_bar, shown_path,
                     substring, term, time_row, track, tracker, turn_row, type_cmd, walk)
 
 SAY = NARRATION["S12"]
@@ -176,7 +177,7 @@ def dots_cut(s: str) -> str:
 
 
 # ---------------------------------------------------------------- mask helpers
-def empty_grid(cell: float = 0.45) -> MaskGrid:
+def empty_grid(cell: float = 0.36) -> MaskGrid:     # small: it sits over a 6-row strip
     return MaskGrid(SEG_SIX, rows=["......"] * 6, cell=cell)
 
 
@@ -305,9 +306,8 @@ class GreenButWrong(VoiceScene):
             self.play(*flash(y1, TURN), *flash(y2, TURN), run_time=0.8)
 
         # ========================================================== 1. the model in one picture
-        seg8 = segment_ids(2, [2, 2, 2])
-        bar = sequence_bar(seg8, cell=0.7)
-        bar.move_to([-3.35, 0.55, 0])
+        bar = sequence_bar(SEG_SIX, cell=0.7)      # the grid's own six tokens (state, q1, q2)
+        bar.move_to([-3.35, 0.8, 0])
         toks = bar.tokens
         grid = MaskGrid(SEG_SIX, "want", cell=0.5).move_to([3.55, 0.75, 0])
         rule = VGroup(label("a question sees the state and itself —", 22, S.GREY),
@@ -319,7 +319,7 @@ class GreenButWrong(VoiceScene):
         block = VGroup(*[grid.cells[i][j] for i in (4, 5) for j in (2, 3)])
         ybox = Rectangle(width=block.width + 0.1, height=block.height + 0.1, stroke_color=TURN,
                          stroke_width=4).move_to(block)
-        diff_cap = label("this cell is the whole difference", 22, TURN)
+        diff_cap = label("this block is the whole difference", 22, TURN)
         diff_cap.move_to([grid.get_left()[0] - 0.3 - diff_cap.width / 2, block.get_center()[1], 0])
         causal = note("causal mask", S.GREY, 22).next_to(diff_cap, DOWN, buff=0.2).align_to(diff_cap, RIGHT)
 
@@ -363,9 +363,10 @@ class GreenButWrong(VoiceScene):
             self.remove(causal)
 
         # ========================================================== 2. the mask the code builds
-        s = term(P_BABYKEV, rows=4, title=T_BABYKEV, size=PT)
-        g2 = empty_grid().move_to([0, 0.95, 0])
-        assert g2.get_bottom()[1] > s.box.get_top()[1] + 0.15, (g2.get_bottom(), s.box.get_top())
+        s = term(P_BABYKEV, rows=6, title=T_BABYKEV, size=PT)   # the 4-row command + 2 printed rows
+        g2 = empty_grid()
+        g2.move_to([0, 0, 0]).align_to([0, 2.55, 0], UP)         # under the tracker's second line
+        assert g2.get_bottom()[1] > s.box.get_top()[1] + 0.1, (g2.get_bottom(), s.box.get_top())
 
         with self.voiceover(SAY[2]) as vo:
             pic = VGroup(bar, sneak, xmark, rule, diff_cap, ybox)
@@ -386,12 +387,13 @@ class GreenButWrong(VoiceScene):
             vo.wait_until("pause and print yours")
             _, yy = tag_on(self, o_ln, turn_row)
             self.play(*flash(yy, TURN), run_time=0.7)
-            p1 = out(self, s, built_rows[:3], run_time=0.4)
-            land(self, grid, p1, built_rows[:3], 0)
-            p2 = out(self, s, built_rows[3:], run_time=0.4)
-            land(self, grid, p2, built_rows[3:], 3)
+            # rows 1-2 print under the whole command (it stays to copy); rows 3-6 then scroll it off
+            p1 = out(self, s, built_rows[:2], run_time=0.4)
+            land(self, grid, p1, built_rows[:2], 0, run_time=1.1)
+            p2 = out(self, s, built_rows[2:], run_time=0.4)
+            land(self, grid, p2, built_rows[2:], 2)
             vo.wait_until("Rows 5 and 6")
-            self.play(p2[1].animate.set_color(ERR), p2[2].animate.set_color(ERR), grid.flash_rows([4, 5]),
+            self.play(p2[2].animate.set_color(ERR), p2[3].animate.set_color(ERR), grid.flash_rows([4, 5]),
                       run_time=0.8)
             vo.wait_until("including question 1")
             wrong = [(i, j) for i in (4, 5) for j in (2, 3)]
@@ -553,6 +555,12 @@ class GreenButWrong(VoiceScene):
             self.play(LaggedStart(*[Indicate(m_out[k], color=INK, scale_factor=1.04) for k in (4, 5, 6, 7)],
                                   lag_ratio=0.2),
                       Indicate(substring(l2, "on cpu"), color=INK, scale_factor=1.2), run_time=1.0)
+            vo.wait_until("The first run downloads")
+            gb = beside(row_tag("first run downloads about 1 GB", S.GREY), l2, buff=0.45)
+            assert gb.get_right()[0] <= 6.55, gb.get_right()
+            self.play(FadeIn(gb, shift=LEFT * 0.1), run_time=0.5)
+            attach(self, l2, gb)
+            self.play(Indicate(gb.text, color=S.GREY, scale_factor=1.1), run_time=0.6)
             vo.wait_until("pause and run it")
             _, ym = tag_on(self, m_ln, turn_row)
             self.play(*flash(ym, TURN), run_time=0.7)

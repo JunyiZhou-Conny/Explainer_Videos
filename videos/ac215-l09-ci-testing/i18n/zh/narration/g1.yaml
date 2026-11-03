@@ -122,7 +122,7 @@ S03:
   - "系统测试跨过了它：一台运行中的服务器可能会挂掉，原因却不是你的 bug。"
 - en: "Two more kinds get faint rows: a smoke test, which only asks whether it answers, and acceptance tests, which this project lacks, for now. One note about kinds: a test's kind is named by what runs, not by its folder. This repo's system test file calls itself integration tests, and its pytest config defines markers, labels for selecting tests, that nobody uses; markers return in the guest lecture."
   zh:
-  - "还有两类测试只占淡淡的两行：冒烟测试，只问它有没有响应；还有验收测试，这个项目暂时还没有。"
+  - "还有两类测试只占淡淡的两行：一类是冒烟测试，只问它有没有响应；另一类是验收测试，这个项目暂时还没有。"
   - "关于类型说一句：测试属于哪一类，看的是实际运行了什么，而不是它放在哪个目录。"
   - "这个 repo 的系统测试文件管自己叫集成测试，它的 pytest 配置还定义了一些 marker，也就是用来挑选测试的记号，却没人用；marker 会在客座讲座里回来。"
 - en: "Last picture: an empty table, four columns. What is checked, how, with which command, and does it run on every commit. Part 1 fills it in."
@@ -140,7 +140,7 @@ S04:
 - en: "An extra look around, not in the README: ls dash l a. Everything today is here: three test folders under tests, a pytest config, a pre-commit config, and the Dockerfile that bakes them into one image."
   zh:
   - "额外看一圈，README 里没有这一步：ls -la。"
-  - "今天的东西全在这儿：tests 下面的三个测试目录、一个 pytest 配置、一个 pre-commit 配置，还有把它们打包进一个 image 的 Dockerfile。"
+  - "今天的东西全在这儿：三个测试目录都在 tests 下面，还有一个 pytest 配置、一个 pre-commit 配置，以及把它们打包进一个 image 的 Dockerfile。"
   en_display:
   - "An extra look around, not in the README: ls -la."
   - null
@@ -152,7 +152,7 @@ S04:
   - "看一下提示符：用户是 app，不是 root，而且 ID 每次运行都会变。"
 - en: "Inside, start the server: uvicorn api dot service colon app, host 0.0.0.0, port 9000, with reload. When it says application startup complete, open the three README URLs in your browser; pause and do it. Here, from a second terminal on the laptop, three curl calls stand in for the browser: welcome, health, and the distance answer."
   zh:
-  - "在里面启动服务器：uvicorn api.service:app，host 是 0.0.0.0，port 是 9000，加上 --reload。"
+  - "在里面启动服务器，命令是 uvicorn api.service:app --host 0.0.0.0 --port 9000 --reload。"
   - "等它显示 Application startup complete，就在浏览器里打开 README 的三个 URL；暂停一下，照着做。"
   - "这里在笔记本电脑上另开一个终端，用三次 curl 代替浏览器：欢迎信息、health，还有距离的结果。"
   en_display:
@@ -192,7 +192,7 @@ S05:
   - null
 - en: "Now the linter, inside the image: flake8, max line length 120, on the api folder. Pause and run it. Two findings in utils.py, a missing space after a comma, and too many blank lines: mess left on purpose."
   zh:
-  - "现在在 image 里跑 linter：flake8，--max-line-length 设成 120，检查 api 目录。"
+  - "现在跑 linter，在 image 里面：flake8，--max-line-length 设成 120，检查 api 目录。"
   - "暂停一下，自己跑一遍。"
   - "在 utils.py 里发现两个问题，逗号后面少了空格，还有空行太多：都是故意留下的乱代码。"
   en_display:
@@ -225,10 +225,10 @@ S05:
   - null
   - null
   - "If pip refuses with externally-managed-environment, as Homebrew Pythons do, use any lecture 1 virtual environment, or pipx; the study guide has the one-liner."
-- en: "Pause and run both. The local flake8, at its default of 79, adds a third finding, that same 95 character line; local black wants the same two files changed."
+- en: "The local flake8, at its default of 79, adds a third finding, that same 95 character line; local black wants the same two files changed. Pause and run both."
   zh:
-  - "暂停一下，两条都跑一遍。"
   - "本地的 flake8 用默认的 79，多报了第三个问题，就是那行 95 个字符的代码；本地的 black 要改的还是那两个文件。"
+  - "暂停一下，两条都跑一遍。"
 - en: "What can a formatter fix? On the messy service.py from the repo's history, black sweeps away almost every finding, and exactly 2 survive: an unused import, which a formatter cannot delete, and a long quoted sentence black must not rewrite. The class fixed both by hand."
   zh:
   - "格式化工具能修好什么？"
@@ -250,7 +250,7 @@ S06:
 - en: "Something to ponder. A later README part appends the line def broken, assert False, to a test file, hoping to break the build. Will the unit test run go red?"
   zh:
   - "来想一个问题。"
-  - "README 后面有一部分，往一个测试文件末尾追加一行 def broken，内容是 assert False，想让构建失败。"
+  - "README 后面有一部分往一个测试文件末尾追加一行 def broken，内容是 assert False，想以此让构建失败。"
   - "单元测试会变红吗？"
   en_display:
   - null
@@ -274,7 +274,7 @@ S06:
   - "再用 30 秒讲 pytest 的三个动作。"
   - "普通的 assert 会被改写，失败时两边的值都会显示出来。"
   - "对浮点数，pytest.approx 带着容差来比较。"
-  - "而 pytest.raises 只有在代码块抛出指定的错误时才通过：就是前面那个非法输入的托盘。"
+  - "而 pytest.raises 只有在里面的代码抛出指定错误时才通过：就是前面那个非法输入的托盘。"
   en_display:
   - null
   - null
@@ -307,7 +307,7 @@ S07:
   zh:
   - "集成测试显示 10 passed, 1 warning；两个测试集一起跑，是 21 passed, 1 warning。"
   - "暂停一下，把它们都跑一遍。"
-  - "那个 1 warning 是录制时 pytest 9 的摘要行，把这份配置隐藏掉的一个警告也算了进去：测试相同，结果也相同。"
+  - "那个 1 warning 是 pytest 9 的摘要行，把这份配置隐藏掉的一个警告也算了进去，这是录制时的情况：测试相同，结果也相同。"
 - en: "Now the coverage run: unit tests, measuring the api package. Pause and run it. Look at service.py: 0 percent; the unit tests never import it. Coverage is a list of lines nobody has asked about, not a score. Hold that thought."
   zh:
   - "现在跑覆盖率：单元测试，统计 api 这个包。"
@@ -396,7 +396,7 @@ S09:
 - en: "Part 4 installs the gate. Outside the container, pip install pre-commit, 4.7.0 at the time of recording; then, from the repo root, pre-commit install: a hook file now sits in dot git. Pause and run both."
   zh:
   - "Part 4 装上门禁。"
-  - "在 container 外面执行 pip install pre-commit，录制时是 4.7.0；然后在 repo 根目录运行 pre-commit install：.git 里就多了一个 hook 文件。"
+  - "在 container 外面执行 pip install pre-commit，版本 4.7.0 是录制时的；然后在 repo 根目录运行 pre-commit install：.git 里就多了一个 hook 文件。"
   - "暂停一下，两条都跑一遍。"
   en_display:
   - null
@@ -443,20 +443,20 @@ S09:
   zh:
   - "两个额外步骤把这个循环走完：git diff 显示改了什么；git add -u 把它重新暂存。"
   - "再 commit 一次：七个 hook 通过，两个没东西可查，一个真正的 commit 进入了历史；暂停一下，把这个循环走一遍。"
-  - "README 的最后一个变体，不带参数的 pre-commit run，只检查暂存的文件；全部跳过。"
+  - "README 的最后一个变体，不带参数的 pre-commit run 只检查暂存的文件；全部跳过。"
   en_display:
   - "Two extras close the loop: git diff shows the fix; git add -u re-stages it."
   - null
   - null
-- en: "A last demo, as an extra: sed adds and stages an unused import; on a Mac, sed dash i, needs empty quotes after it. The commit fails twice: black reformats the file, and flake8 reports F401, which no formatter can fix; git status confirms no commit exists. Restore the file: your machine now says no. But this gate never ran a single test. The guest lecture builds one that does, and shows what even it can miss."
+- en: "A last demo, as an extra: sed adds and stages an unused import; on a Mac, add import os as the first line of service.py in your editor, then git add dash u. The commit fails twice: black reformats the file, and flake8 reports F401, which no formatter can fix; git status confirms no commit exists. Unstage and restore the file, both copies: your machine now says no. But this gate never ran a single test. The guest lecture builds one that does, and shows what even it can miss."
   zh:
-  - "最后一个演示，是额外的：用 sed 加一个没用到的 import 并暂存；在 Mac 上，sed -i 后面要跟一对空引号。"
+  - "最后一个演示，是额外的：用 sed 加一个没用到的 import 并暂存；在 Mac 上，把这行 import 放到 service.py 的第一行，在编辑器里改就行，然后执行 git add -u。"
   - "这次 commit 被拦了两道：black 重新格式化了文件，flake8 报出 F401，这是任何格式化工具都修不了的；git status 确认 commit 没有生成。"
-  - "把文件恢复原样：你的电脑现在会说不了。"
+  - "把文件取消暂存、再恢复原样，两份都要：你的电脑现在会说不了。"
   - "可这个门禁一个测试都没跑过。"
   - "客座讲座会搭一个会跑测试的门禁，再看看连它也会漏掉什么。"
   en_display:
-  - "A last demo, as an extra: sed adds and stages an unused import; on a Mac, sed -i needs empty quotes after it."
+  - "A last demo, as an extra: sed adds and stages an unused import; on a Mac, add import os as the first line of service.py in your editor, then git add -u."
   - null
   - null
   - null

@@ -3,7 +3,8 @@
 Beats (script.md, ## S11; one voiceover block each):
 0. TRACKER E4, `Lecture 9 · slides 34–43` (top right, until the refusals). An 11-row `laptop ·
    babykev` terminal (20 pt): `git switch --detach step-03` -> s03-01: 3 (cut); `just setup` ->
-   s03-02: 2, …, 19, …, 25; on "lockfile sync" / "hook install" the two halves of line 2 ring, line
+   s03-02: 2, …, 19, …, 25 (a GREY chip above the terminal while it switches: step 2's lint --fix
+   edits must be dropped first, `git restore .`, as timewalk does, walk.md:13); on "lockfile sync" / "hook install" the two halves of line 2 ring, line
    25 rings YELLOW; `▶ your turn` on the setup. Cleared, then `cat "$(git rev-parse --git-path
    hooks)/pre-commit"` (walk.md:230, folds) -> s03-05: 2–3, …, 6–9, …, 15. The hand-over: TEAL ring
    on `.pre-commit-config.yaml` (line 8), PURPLE ring on `-mpre_commit` (line 15) with a PURPLE row
@@ -25,7 +26,7 @@ Beats (script.md, ## S11; one voiceover block each):
    49.40 % RED under the floor. `▶ your turn` on both.
 3. Config beat: CODE(babykev/.pre-commit-config.yaml: 9–10) as a card above a 10-row terminal; the
    walk's mis-indent sed (Linux form, as captured; walk.md:260 spells it `sed -i ''` for a Mac)
-   folds over three rows -> no output, and line 10 shifts right two columns, RED; `uv run yamllint
+   folds over three rows (S09's "on a Mac: sed -i '' …" chip beside the card) -> no output, and line 10 shifts right two columns, RED; `uv run yamllint
    --strict .` -> s03-13: 2–3, line 3 RED (cut), `10:15` ringed; `git restore
    .pre-commit-config.yaml` -> no output, line 10 shifts back; `just lint-config` -> s03-28: …, 7–8
    GREEN. The card gives way to three GREY chips `validate-pyproject` · `uv lock --check` ·
@@ -37,16 +38,19 @@ Beats (script.md, ## S11; one voiceover block each):
    (walk.md:302). Cleared: `echo X=1 > .env && git add -f .env` -> no output, `git commit -m "try"`
    -> s03-35: 2–10, `no .env file…Failed` RED and line 8 (the config's own sentence) RED, quoted
    whole in a RED card above the terminal; the undo `git rm --cached -q .env && rm .env`
-   (walk.md:311).
+   (walk.md:311). Both clean-up commands carry a GREY "undo" row tag and hold 1.5 s.
 5. TRACKER E5. Two style cards: GREEN "babykev: check points, you run just fmt yourself", TEAL
    "cheese: black rewrites, you look and re-stage", over the gate table (tests and system filled,
    S09 left "format + lint" empty): as the two format styles are named, the "format + lint" row
-   fills (YELLOW on babykev's card, settles on cheese's: both styles are that gate row); cards and
-   table clear. One 11-row terminal: `just docs
-   check` (row tag "at step-04") -> s04-04: 2–7, …, 93, `50 of 88` RED; it keeps the command and
-   line 93 and runs it again (row tag "at step-04b") -> s04b-03: 2–9, `88 of 88` GREEN. A capture
-   card `git commit -am "try"` with s04b-09: 5–7, 35–36 and the GREY chip "one deleted description
-   blocks the commit". V1: the gate table returns (tests, format + lint, system) and the two rows
+   fills with cheese's card (black, flake8 are cheese's tools) and settles; cards and table clear.
+   One 11-row terminal: `git switch --detach step-04` -> s04-01: 3 (cut), `just setup` -> s04-02:
+   2, …, 10 (fastcore), `just docs check` (row tag "at step-04") -> s04-04: 2–7, …, 93, `50 of 88`
+   RED; wiped, `git switch --detach step-04b` -> s04b-01: 3 (cut), `just setup` -> s04b-02: 2, …,
+   `just docs check` (row tag "at step-04b") -> s04b-03: 2–9, `88 of 88` GREEN. Wiped: the walk's
+   deletion `sed -i 's|,  # How deeply nested.*|,|' src/babykev/api.py` (s04b-07, Linux form; hand
+   fold outside the quotes; GREY chip "walk.md:446 deletes one description on purpose" and the Mac
+   chip), `git commit -am "try"` -> s04b-09: 5–7, …, 35–36, `git restore src/babykev/api.py`
+   (s04b-11, "undo" tag). V1: the gate table returns (tests, format + lint, system) and the two rows
    join, "docs" and "config files", GREEN inside the turnstile frame. Fade to an empty frame.
 
 Deviations (reported to the coordinator):
@@ -142,10 +146,10 @@ def room(scene, t, n: int, run_time: float = 0.3) -> None:
         scene.play(stay.animate.shift(UP * t.pitch * over), run_time=run_time * 0.6)
 
 
-def out(scene, t, lines, run_time: float = 0.6, lag: float = 0.08) -> VGroup:
+def out(scene, t, lines, run_time: float = 0.6, lag: float = 0.08, chunk: int = 4) -> VGroup:
     """Print capture lines ((text, colour) or text) in chunks that fit; returns the new rows."""
     items = [(x, None) if isinstance(x, str) else x for x in fit(lines)]
-    k = max(1, min(t.rows, 4))
+    k = max(1, min(t.rows, chunk))
     chunks = [items[i:i + k] for i in range(0, len(items), k)]
     rows = VGroup()
     for ch in chunks:
@@ -581,6 +585,7 @@ class JustCheck(VoiceScene):
         chips = VGroup(*[grey_chip(s, 20, mono_font=True) for s in ("validate-pyproject", "uv lock --check",
                                                                     "just --fmt --check")])
         chips.arrange(RIGHT, buff=0.35)
+        mac = mac_chip()
 
         with self.voiceover(SAY[3]) as vo:
             drop = VGroup(gauge, y_fl, *([k_fl[1]] if isinstance(k_fl, tuple) else []))
@@ -589,13 +594,16 @@ class JustCheck(VoiceScene):
             for m in list(t.lines):
                 t.lines.remove(m)
             resize(self, t, 10, keep=0, run_time=0.5)
-            card.move_to([0, (t.box.get_top()[1] + 2.85) / 2, 0])
+            card.move_to([-0.5, (t.box.get_top()[1] + 2.85) / 2, 0])    # room for the Mac chip on its right
             vo.wait_until("Config files are checked too")
             self.play(FadeIn(card, shift=DOWN * 0.15), run_time=0.6)
             args = code_span(card.code, 1, "args: [--maxkb=1000]")
             vo.wait_until("a broken hook config breaks every commit")
             self.play(Indicate(card.header, color=INK, scale_factor=1.08), run_time=0.6)
             vo.wait_until("One wrong indent")
+            mac.move_to([6.4 - mac.width / 2, card.get_center()[1], 0])
+            assert mac.get_left()[0] > card.get_right()[0] + 0.15, (mac.get_left(), card.get_right())
+            self.play(FadeIn(mac, shift=LEFT * 0.1), run_time=0.3)
             typ(self, t, brk.cmd, type_time=1.6, rows=sed_rows)
             bare(self, t)
             bar10 = line_bar(card.code, 1, ERR, 0.2)
@@ -610,6 +618,8 @@ class JustCheck(VoiceScene):
             self.play(Indicate(substring(err, "10:15"), color=ERR, scale_factor=1.2),
                       Indicate(args, color=ERR, scale_factor=1.08), run_time=0.8)
             vo.wait_until("Restored,")
+            self.play(FadeOut(mac), run_time=0.3)
+            self.remove(mac)
             typ(self, t, rst.cmd, type_time=0.6)
             bare(self, t)
             self.play(args.animate.shift(LEFT * 2 * 0.1667).set_color(INK), FadeOut(bar10), run_time=0.6)
@@ -619,7 +629,7 @@ class JustCheck(VoiceScene):
             valid, locked = l_out[1], l_out[2]
             self.play(valid.animate.set_color(PASS), locked.animate.set_color(PASS), run_time=0.5)
             vo.wait_until("it also validates pyproject.toml")
-            chips.move_to(card)
+            chips.move_to([0, card.get_center()[1], 0])
             self.play(FadeOut(card, shift=UP * 0.15), FadeIn(chips[0], shift=DOWN * 0.15),
                       Indicate(substring(valid, "pyproject.toml"), color=PASS, scale_factor=1.1), run_time=0.7)
             self.remove(card)
@@ -701,11 +711,13 @@ class JustCheck(VoiceScene):
                        rows={"config": ("config files", "yamllint, uv, just", "just lint-config", "yes", True)})
         gt.shift(UP * (cards.get_bottom()[1] - 0.35 - gt.get_top()[1]))     # under the style cards
         assert gt.get_bottom()[1] >= -3.5, gt.get_bottom()
-        cc_lines = fit(c4b.at((5, 7), "…", (35, 36)))
-        cc = term(P_BABYKEV, rows=len(cc_lines), title=c4b.cmd, size=PT, place=False)
-        cc.move_to([0, 0.35, 0])
-        cc_chip = grey_chip("one deleted description blocks the commit", 22)
-        cc_chip.next_to(cc.box, DOWN, buff=0.3)
+        cc_lines = c4b.at((5, 7), "…", (35, 36))
+        cc_chip = grey_chip("walk.md:446 deletes one description on purpose", 22)
+        cc_chip.move_to([-0.2, (t2.box.get_top()[1] + 2.9) / 2, 0]).align_to([-6.3, 0, 0], LEFT)
+        mac2 = mac_chip()
+        mac2.move_to([6.4 - mac2.width / 2, cc_chip.get_center()[1], 0])
+        assert mac2.get_left()[0] > cc_chip.get_right()[0] + 0.15, (mac2.get_left(), cc_chip.get_right())
+        del_rows = [f"{P_BABYKEV} sed -i 's|,  # How deeply nested.*|,|' \\", "  src/babykev/api.py"]
 
         with self.voiceover(SAY[5]) as vo:
             gone = VGroup(t, q_box, quote)
@@ -715,15 +727,20 @@ class JustCheck(VoiceScene):
             self.play(FadeIn(cards[0].frame), FadeIn(cards[1].frame), FadeIn(gt), run_time=0.6)
             vo.wait_until("this one points and you run just fmt")
             self.play(FadeIn(cards[0].head), FadeIn(cards[0].body, shift=RIGHT * 0.2), run_time=0.6)
-            gt.fill(self, "format", run_time=0.6)           # just check's fmt --check + lint: the row S09 left empty
             vo.wait_until("the cheese gate rewrites and makes you look")
             self.play(FadeIn(cards[1].head), FadeIn(cards[1].body, shift=RIGHT * 0.2), run_time=0.6)
+            gt.fill(self, "format", run_time=0.6)           # the row S09 left empty: both styles are that gate
             gt.settle(self, "format")
             vo.wait_until("Steps 4 and 4 b put documentation in the gate")
-            self.play(FadeOut(VGroup(cards, gt)), FadeIn(t2, shift=UP * 0.2), run_time=0.6)
+            self.play(FadeOut(VGroup(cards, gt)), FadeIn(t2, shift=UP * 0.2), run_time=0.5)
             self.remove(cards, gt)
             gt.move_to([0, -0.35, 0])                       # it returns centred for the last beat
-            d_ln = typ(self, t2, d4.cmd, type_time=0.5)
+            typ(self, t2, sw4.cmd, type_time=0.35)
+            out(self, t2, [cut(sw4.line(3), "comes from the code")], run_time=0.25)
+            typ(self, t2, setup4.cmd, type_time=0.25)
+            out(self, t2, setup4.at(2, "…", 10), run_time=0.3)
+            self.wait(0.4)                  # the switch and the setup stay up until the docs output scrolls them
+            d_ln = typ(self, t2, d4.cmd, type_time=0.4)
             pin(self, d_ln, beside(row_tag("at step-04", S.GREY), d_ln))
             d_out = out(self, t2, d4.at((2, 7), "…", 93), run_time=0.8)
             l93 = d_out[7]
@@ -732,34 +749,42 @@ class JustCheck(VoiceScene):
             self.play(Indicate(substring(l93, "50 of 88"), color=ERR, scale_factor=1.2), run_time=0.6)
             vo.wait_until("classes typed and documented")
             self.play(Indicate(substring(l93, "typed and documented"), color=INK, scale_factor=1.1), run_time=0.7)
+            wipe(self, t2, run_time=0.3)
+            typ(self, t2, sw4b.cmd, type_time=0.3)
+            out(self, t2, [cut(sw4b.line(3), "every function documented")], run_time=0.2)
+            typ(self, t2, setup4b.cmd, type_time=0.2)
+            out(self, t2, setup4b.at(2, "…"), run_time=0.2)
             vo.wait_until("one step later 88 of 88")
-            resize(self, t2, 11, keep=[d_ln, l93], run_time=0.5)
-            e_ln = typ(self, t2, d4b.cmd, type_time=0.5)
-            pin(self, e_ln, beside(row_tag("at step-04b", S.GREY), e_ln))
-            e_out = out(self, t2, d4b.at((2, 9)), run_time=0.7)
+            e_ln = typ(self, t2, d4b.cmd, type_time=0.35)
+            pin(self, e_ln, beside(row_tag("at step-04b", S.GREY), e_ln), run_time=0.3)
+            e_out = out(self, t2, d4b.at((2, 9)), run_time=0.5, chunk=8)
             l9 = e_out[7]
-            self.play(substring(l9, "88 of 88").animate.set_color(PASS), run_time=0.3)
-            self.play(Indicate(substring(l9, "88 of 88"), color=PASS, scale_factor=1.2), run_time=0.6)
+            g88 = substring(l9, "88 of 88")
+            self.play(g88.animate.set_color(PASS).scale(1.2), run_time=0.3)
+            self.play(g88.animate.scale(1 / 1.2), run_time=0.25)
             vo.wait_until("deleting one description blocks a commit")
-            self.play(FadeOut(t2), run_time=0.4)
-            self.remove(t2, *t2.get_family())
-            self.play(FadeIn(cc, shift=UP * 0.2), run_time=0.4)
-            c_rows = cc.print(self, cc_lines, run_time=0.4, lag=0.08)
+            self.play(FadeIn(cc_chip, shift=DOWN * 0.15), FadeIn(mac2, shift=LEFT * 0.1), run_time=0.3)
+            wipe(self, t2, run_time=0.25)
+            typ(self, t2, dele.cmd, type_time=0.4, rows=del_rows)
+            bare(self, t2)
+            typ(self, t2, c4b.cmd, type_time=0.3)
+            c_rows = out(self, t2, cc_lines, run_time=0.4, chunk=6)
             self.play(c_rows[0].animate.set_color(ERR), substring(c_rows[4], "no docment").animate.set_color(ERR),
-                      substring(c_rows[5], "87 of 88").animate.set_color(ERR), FadeIn(cc_chip, shift=UP * 0.15),
-                      run_time=0.5)
-            self.play(Indicate(substring(c_rows[0], "Failed"), color=ERR, scale_factor=1.2),
+                      substring(c_rows[5], "87 of 88").animate.set_color(ERR),
                       Indicate(substring(c_rows[4], "babykev.api:render(indent)"), color=ERR, scale_factor=1.1),
-                      run_time=0.9)
-            self.wait(0.6)
+                      run_time=0.6)
+            r4_ln = typ(self, t2, rst4b.cmd, type_time=0.3)
+            bare(self, t2)
+            pin(self, r4_ln, beside(undo_row(), r4_ln), run_time=0.3)
+            self.wait(1.2)                  # the undo stays readable (a left-over edit blocks the next switch)
             vo.wait_until("Two rows join the table.")
-            self.play(FadeOut(VGroup(cc, cc_chip)), run_time=0.5)
-            self.remove(cc, cc_chip, *cc.get_family())
-            self.play(FadeIn(gt), run_time=0.6)
-            gt.fill(self, "docs", run_time=0.6)
-            gt.settle(self, "docs")
-            gt.fill(self, "config", run_time=0.6)
-            gt.settle(self, "config")
+            gone = VGroup(t2, cc_chip, mac2)
+            self.play(FadeOut(gone), FadeIn(gt), run_time=0.5)     # a cross-fade: the table arrives on its line
+            self.remove(gone, *gone.get_family())
+            gt.fill(self, "docs", run_time=0.45)
+            gt.settle(self, "docs", run_time=0.35)
+            gt.fill(self, "config", run_time=0.45)
+            gt.settle(self, "config", run_time=0.35)
             self.play(Indicate(gt.rows["docs"].cells[3], color=PASS, scale_factor=1.2),
                       Indicate(gt.rows["config"].cells[3], color=PASS, scale_factor=1.2), run_time=0.7)
         self.wait(0.8)

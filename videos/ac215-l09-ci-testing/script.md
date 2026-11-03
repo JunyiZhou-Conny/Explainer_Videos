@@ -369,7 +369,7 @@ SHOW: TRACKER B5: it types `flake8 src/api-service/api/` (README.md line 121) �
 TERM(laptop/part2-05: 2–4); line 2's `E501 (95 > 79)` highlights RED, caption "flake8's default:
 79". TRACKER B6: it types `black --check --diff src/api-service/api/` (README.md line 124) →
 TERM(laptop/part2-06: …, 19, 37, …, 40). `▶ your turn` on each.
-SAY: Pause and run both. The local flake8, at its default of 79, adds a third finding, that same 95 character line; local black wants the same two files changed.
+SAY: The local flake8, at its default of 79, adds a third finding, that same 95 character line; local black wants the same two files changed. Pause and run both.
 
 SHOW: V4 funnel on the pre-demo file: CODE(cheese-app-ci-cd-history/8eb63fc-service.py: 7–14),
 header `8eb63fc · service.py · lines 7–14`, line 10 `import os` RED. A RED findings bar shrinks as
@@ -581,7 +581,7 @@ caption "still staged · not committed" on lines 6–8, and
 `git restore --staged src/api-service/api/service.py && git restore src/api-service/api/service.py`
 (extra; folds) → (no output). The vault stays shut; a parked YELLOW question card slides to the
 corner: "this gate never ran a test". Fade to an empty frame (end of part 1).
-SAY: A last demo, as an extra: sed adds and stages an unused import; on a Mac, sed dash i, needs empty quotes after it. The commit fails twice: black reformats the file, and flake8 reports F401, which no formatter can fix; git status confirms no commit exists. Restore the file: your machine now says no. But this gate never ran a single test. The guest lecture builds one that does, and shows what even it can miss.
+SAY: A last demo, as an extra: sed adds and stages an unused import; on a Mac, add import os as the first line of service.py in your editor, then git add dash u. The commit fails twice: black reformats the file, and flake8 reports F401, which no formatter can fix; git status confirms no commit exists. Unstage and restore the file, both copies: your machine now says no. But this gate never ran a single test. The guest lecture builds one that does, and shows what even it can miss.
 
 ---
 
@@ -731,7 +731,7 @@ SHOW: TRACKER E6. It types `just smoke local` (walk step-05) → TERM(babykev/s0
 22–25, 32–33). `▶ your turn` (BRIEF). Line 5 `503M parameters, 9.3M of them trainable`; line 32
 `6 of 15 right` YELLOW; line 33 `Nothing is trained yet: these are guesses.` GREY. The ms figure
 is not highlighted. Fade out.
-SAY: Last, the smoke on the real model: half a billion parameters, downloaded once from the Hugging Face Hub, a public model host, answering 15 cheese questions on CPU; pause and run it. 6 of 15 right. Nothing is trained, these are guesses; hold that number.
+SAY: Last, the smoke on the real model: half a billion parameters, downloaded once from the Hugging Face Hub, a public model host, answering 15 cheese questions on CPU. The first run downloads about a gigabyte; pause and run it. 6 of 15 right. Nothing is trained, these are guesses; hold that number.
 
 ---
 

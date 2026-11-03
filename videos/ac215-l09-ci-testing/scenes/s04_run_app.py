@@ -205,7 +205,8 @@ class RunTheApp(VoiceScene):
             lab_path = caption("the working folder")
             targets = ((app_p, -4.3), (id_p, 0.2), (path_p, 4.5))   # by name: the copy re-indexes big
             vo.wait_until("Read the prompt")
-            resize(self, t, 3)
+            # keep the tagged `sh docker-shell.sh` row (and the prompt) up while the prompt is read
+            resize(self, t, 3, keep=[sh_line, box_line])
             self.play(TransformFromCopy(substring(box_line, app_prompt), big), run_time=1.0)
             vo.wait_until("the user is app")
             self.play(*[p.animate.set_x(x) for p, x in targets], FadeOut(seps), run_time=0.8)
@@ -232,7 +233,7 @@ class RunTheApp(VoiceScene):
         evidence.move_to([4.2, curl_t.box.get_top()[1] + 0.27, 0])
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(prompt_group), run_time=0.5)
+            unpin(self, sh_line, yt, FadeOut(prompt_group), run_time=0.5)
             self.remove(prompt_group)
             resize(self, t, 11, extra=(track(tr, 3),))
             uv_line = istep(self, t, shell.line(34), type_time=1.6)
@@ -257,7 +258,8 @@ class RunTheApp(VoiceScene):
                       run_time=1.0)
             vo.wait_until("pause and do it")
             self.play(FadeIn(turn_tag, shift=LEFT * 0.15), run_time=0.5)
-            self.play(Indicate(turn_tag, color=TURN, scale_factor=1.12), run_time=0.6)
+            self.play(Indicate(turn_tag.text, color=TURN, scale_factor=1.2),
+                      turn_tag.box.animate(rate_func=there_and_back).set_stroke(width=4), run_time=0.6)
             vo.wait_until("three curl calls")
             self.play(FadeTransform(VGroup(browser, illus, turn_tag), curl_t), FadeIn(evidence),
                       track(tr, extra=True), run_time=0.8)

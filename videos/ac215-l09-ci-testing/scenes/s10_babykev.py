@@ -544,33 +544,33 @@ class OneCommand(VoiceScene):
 
         with self.voiceover(SAY[4]) as vo:
             pin_marks = VGroup(card, *t.lines, g_ring, rr)
-            self.play(FadeOut(pin_marks), track(tr, 3), run_time=0.6)
+            self.play(FadeOut(pin_marks), track(tr, 3), run_time=0.4)
             self.remove(pin_marks, *pin_marks.get_family())
             for m in list(t.lines):
                 t.lines.remove(m)
-            resize(self, t, 6, keep=0, run_time=0.5)
-            # the walk's way into step-02: switch, setup (adds ruff), then `just fmt` (79 -> 70)
-            typ(self, t, sw2.cmd, type_time=0.5)
+            resize(self, t, 6, keep=0, run_time=0.3)
+            # the walk's way into step-02: switch, setup (adds ruff), then `just fmt` (79 -> 70), all
+            # under the first sentence so the stats and the funnel keep pace with the narration
+            typ(self, t, sw2.cmd, type_time=0.4)
             put(self, t, sw2.at(3), run_time=0.2)
             typ(self, t, setup2.cmd, type_time=0.25)
-            put(self, t, setup2.at(2, "…", 11), run_time=0.4, lag=0.08)
-            vo.wait_until("ruff in both roles")
-            self.play(FadeIn(r_fmt, shift=DOWN * 0.15), FadeIn(r_chk, shift=DOWN * 0.15), run_time=0.5)
+            put(self, t, setup2.at(2, "…", 11), run_time=0.35, lag=0.08)
             fmt_ln = typ(self, t, fmt2.cmd, type_time=0.25)
+            vo.wait_until("ruff in both roles")
+            self.play(FadeIn(r_fmt, shift=DOWN * 0.15), FadeIn(r_chk, shift=DOWN * 0.15), run_time=0.4)
             put(self, t, fmt2.at(3), run_time=0.2)
             yf = beside(turn_row(), fmt_ln)
             pin(self, fmt_ln, yf, anim=AnimationGroup(FadeIn(yf, shift=LEFT * 0.1),
                                                       Indicate(r_fmt.text, color=TOOL, scale_factor=1.15)))
             vo.wait_until("After formatting")
             typ(self, t, stats.cmd, type_time=0.6)
-            self.play(Indicate(r_chk.text, color=TOOL, scale_factor=1.15), run_time=0.5)
-            put(self, t, stats.at((2, 6)), run_time=0.5, lag=0.06)
-            st = put(self, t, ["…"] + stats.at(14) + soft(stats.at(15), t.max_chars), run_time=0.5, lag=0.06)
+            put(self, t, stats.at((2, 6)), run_time=0.35, lag=0.05)
+            st = put(self, t, ["…"] + stats.at(14) + soft(stats.at(15), t.max_chars), run_time=0.35, lag=0.05)
             found70 = st[1]
             self.play(FadeIn(ff.track), FadeIn(ff.bar, shift=RIGHT * 0.3), FadeIn(ff.count), FadeIn(ff.note),
-                      FadeIn(notch79), FadeIn(rec), Create(tick), run_time=0.7)
-            self.play(substring(found70, "Found 70 errors.").animate.set_color(ERR),
-                      Indicate(ff.count, color=ERR, scale_factor=1.15), run_time=0.6)
+                      FadeIn(notch79), FadeIn(rec), Create(tick),
+                      substring(found70, "Found 70 errors.").animate.set_color(ERR),
+                      Indicate(r_chk.text, color=TOOL, scale_factor=1.15), run_time=0.8)
             vo.wait_until("Safe automatic fixes")
             typ(self, t, fix.cmd, type_time=0.5)
             f_out = put(self, t, fix.at(692), run_time=0.3)[0]

@@ -309,7 +309,8 @@ class SilentSkip(VoiceScene):
         checks = VGroup(*[check_mark(0.24, PASS).next_to(d, UP, buff=0.1) for d in dots.dots])
 
         with self.voiceover(SAY[3]) as vo:
-            unpin(self, s_row, s_tag)
+            # `▶ your turn` stays with the fallback chip through the ponder (the token run makes it
+            # land only ~1 s before this beat); both leave with the picture in beat 4
             self.play(FadeOut(back), dots.to(range(5), "pass", run_time=0.8), run_time=0.8)
             self.remove(back)
             self.play(LaggedStart(*[Create(c) for c in checks], lag_ratio=0.15),
@@ -328,7 +329,7 @@ class SilentSkip(VoiceScene):
             self.play(FadeOut(ponder), run_time=0.5)
             self.remove(ponder)
             rest = VGroup(left, right, pyt, srv, wire, wlab, checks, dd)
-            self.play(FadeOut(rest), track(tr, 8), run_time=0.6)
+            unpin(self, s_row, s_tag, FadeOut(rest), track(tr, 8), run_time=0.6)
             self.remove(rest)
             # two plays: dots.to() Transforms toward targets built where the dots stand now
             self.play(dots.to(range(5), "idle", run_time=0.5), run_time=0.5)

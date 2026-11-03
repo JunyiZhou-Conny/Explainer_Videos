@@ -361,7 +361,7 @@ terms:
   note: 'Terminal text verbatim; the narration''s own words are translated (black fails → black 失败; Failed here does not mean broken → 这里的 Failed 不代表代码坏了).'
 - en: 'sed / sed dash i / needs empty quotes after it / on a Mac'
   zh_subtitle: 'sed / sed -i / 空引号'
-  first_use: 'S09[7]：最后一个演示，是额外的：用 sed 加一个没用到的 import 并暂存；在 Mac 上，sed -i 后面要跟一对空引号。'
+  first_use: 'S09[7]：最后一个演示，是额外的：用 sed 加一个没用到的 import 并暂存；在 Mac 上，把这行 import 放到 service.py 的第一行，在编辑器里改就行。'
   note: 'D4: sed dash i → sed -i.'
 - en: 'your machine now says no / this gate never ran a single test'
   zh_subtitle: '说不'

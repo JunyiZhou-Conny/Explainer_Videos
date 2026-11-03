@@ -25,7 +25,7 @@ Beats (script.md, ## S01; one voiceover block each):
 4. Layout preview: tracker A (step 1) top-left in a YELLOW ring; the ring cycles the six trackers
    A–D (on "4 from the cheese README"), E ("1 for the guest lecture"), F ("1 for cleanup", where
    it stays: step 1 of 3: container ls). A centred row of six GREY chips (Part 1-4 | guest lecture |
-   cleanup, brace "cheese README" under the first four) counts along: the chip of the tracker in
+   cleanup, brace "cheese README · Parts 5–7 not today" under the first four) counts along: the chip of the tracker in
    the ring is YELLOW; it fades before the strip. A 2-row strip (GREY tag "preview", prompt
    student@laptop:~$) types `docker container ls` with the YELLOW `▶ your turn` row tag; that tag
    clears, then `ls -la` with the GREY `extra` row tag (the tracker caption gains " · extra").
@@ -59,7 +59,8 @@ def tracker_ring(tr, stroke: float = 3, opacity: float = 1.0) -> RoundedRectangl
 
 def section_row() -> tuple[VGroup, VGroup]:
     """The six sections as GREY chips (Part 1-4 | guest lecture | cleanup, in tracker order A-F)
-    with a GREY brace 'cheese README' under the first four; returns (chips, brace group)."""
+    with a GREY brace 'cheese README · Parts 5–7 not today' under the first four (the README has 7
+    Parts; 5–7 are out of L9 scope, BRIEF.md); returns (chips, brace group)."""
     names = ["Part 1", "Part 2", "Part 3", "Part 4", "guest lecture", "cleanup"]
     chips = VGroup()
     for s in names:
@@ -74,7 +75,7 @@ def section_row() -> tuple[VGroup, VGroup]:
     chips[4].shift(RIGHT * 0.3)
     chips[5].shift(RIGHT * 0.6)
     br = Brace(VGroup(*chips[:4]), DOWN, buff=0.15, color=S.GREY)
-    brace = VGroup(br, label("cheese README", 24, S.GREY).next_to(br, DOWN, buff=0.12))
+    brace = VGroup(br, label("cheese README · Parts 5–7 not today", 24, S.GREY).next_to(br, DOWN, buff=0.12))
     return chips, brace
 
 

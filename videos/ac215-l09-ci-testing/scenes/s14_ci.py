@@ -49,7 +49,11 @@ Deviations (reported to the coordinator):
   hermetic rows become five named arches); the table itself has no room for an envelope beside it at
   13 wide. "The gate table clears before the server arrives" is that gate leaving in beat 4.
 - The config row is common.py's step-05b row ("yamllint, uv, hadolint": justfile:125 puts hadolint in
-  lint-config at this step, as the narration says); the table is 13.1 wide.
+  lint-config at this step, as the narration says); the table is 13.1 wide. S11/S13 showed
+  "yamllint, uv, just": beat 2 tags the hadolint row `joins: config files`, and beat 3 shows the table
+  with S13's "just" first, then fades it out and brings "hadolint" in YELLOW (QA round 2, 27:54).
+- Beat 4 (QA round 2, 28:06): the laptop names fade first, the gate moves down bare, only the arches
+  are copied up, and the server names fade in (two copies of a moving name read as doubled text).
 """
 
 import re
@@ -358,6 +362,11 @@ class HooksThenCI(VoiceScene):
             vo.wait_until("clean.")
             self.play(Create(ok), run_time=0.5)
             attach(self, h_ln, ok)
+            # the change S13's table has not seen yet: hadolint joins the config row (beat 3 morphs it)
+            cfg_tag = row_tag("joins: config files", S.GREY)
+            cfg_tag.next_to(ok, RIGHT, buff=0.35)
+            assert cfg_tag.get_right()[0] <= 6.55, cfg_tag.get_right()
+            pin(self, h_ln, cfg_tag)
             vo.wait_until("so the recipes fail politely")
             d_ln = typ(self, t, dbuild.cmd, type_time=0.8)
             vo.wait_until("docker build is command not found")
@@ -434,6 +443,14 @@ class HooksThenCI(VoiceScene):
         gt.move_to([0, -0.35, 0])
         assert gt.get_top()[1] <= 2.8 and gt.get_bottom()[1] >= -3.5 and gt.width <= 13.2, \
             (gt.get_top(), gt.get_bottom(), gt.width)
+        how_cfg = gt.rows["config"].cells[1]
+        assert how_cfg.original_text == "yamllint, uv, hadolint", how_cfg.original_text
+        hado_w = part(how_cfg, "hadolint")
+        old_how = label("yamllint, uv, just", 20, INK).align_to(how_cfg, LEFT).align_to(how_cfg, DOWN)
+        was_just = part(old_how, "just")
+        assert abs(was_just.get_left()[0] - hado_w.get_left()[0]) < 0.05, (was_just.get_left(), hado_w.get_left())
+        hado_w.set_opacity(0)
+        gt.add(was_just)
         dim_box = outline_box(tr.width + 0.18, tr.height + 0.2, S.GREY, solid=False).move_to(tr)
         gate = CommitGate(5, arch_h=1.2)
         gate.shift(np.array([GATE_X - gate.get_center()[0], FLOOR - gate.floor.get_center()[1], 0]))
@@ -456,6 +473,12 @@ class HooksThenCI(VoiceScene):
             self.play(FadeOut(t), tr.animate.fade(0.6), Create(dim_box), run_time=0.5)
             self.remove(t)
             self.play(FadeIn(gt, shift=UP * 0.15), run_time=0.7)
+            # S11/S13 showed "yamllint, uv, just": the last word becomes beat 2's hadolint
+            self.play(FadeOut(was_just, shift=UP * 0.15), run_time=0.35)
+            gt.remove(was_just)
+            self.remove(was_just)
+            self.play(hado_w.animate.set_opacity(1).set_color(TURN), run_time=0.4)
+            self.play(hado_w.animate.set_color(INK), run_time=0.4)
             vo.wait_until("six rows")
             whats = [gt.rows[k].cells[0] for k in GATE_ORDER]
             self.play(LaggedStart(*[Indicate(w, color=INK, scale_factor=1.12) for w in whats], lag_ratio=0.15),
@@ -575,14 +598,17 @@ class HooksThenCI(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(one_m, sys_chip)), run_time=0.4)
             self.remove(one_m, sys_chip)
-            self.play(VGroup(gate, names).animate.shift(DOWN * drop), run_time=0.6)
+            # the names leave first (two copies of a moving name read as doubled text); the bare
+            # arches are copied up, and the names come back on the server
+            self.play(FadeOut(names), run_time=0.4)
+            self.remove(names)
+            self.play(gate.animate.shift(DOWN * drop), run_time=0.6)
             self.play(Create(srv_box.frame), FadeIn(srv_box.fill), FadeIn(srv_lab),
-                      TransformFromCopy(gate.turnstile.arches, srv_ts.arches),
-                      TransformFromCopy(names, srv_names), run_time=1.0)
-            self.play(Create(srv_ts.floor), run_time=0.3)
+                      TransformFromCopy(gate.turnstile.arches, srv_ts.arches), run_time=1.0)
+            self.play(Create(srv_ts.floor), FadeIn(srv_names, shift=DOWN * 0.1), run_time=0.5)
             self.add(srv_ts, srv_names)
-            self.play(FadeOut(VGroup(gate, names)), run_time=0.5)
-            self.remove(gate, names)
+            self.play(FadeOut(gate), run_time=0.5)
+            self.remove(gate)
             vo.wait_until("on a server nobody can skip")
             self.play(FadeIn(s_env, shift=RIGHT * 0.3), run_time=0.4)
             for a in srv_ts.arches:

@@ -28,13 +28,14 @@ Beats (script.md, ## S09; one voiceover block each):
    output. TRACKER D3: the commit again -> part4-07: 2–12; strip (rows 10–12) under the gate: seven
    arches GREEN, two GREY dashed, the envelope goes into the vault; `[main b72d50d]` GREEN.
    `▶ your turn`. TRACKER D5: `pre-commit run` (README:265) -> part4-08: 2–10, all arches GREY dashed.
-7. TRACKER D5 · extra: the sed line (folds) -> no output, GREY note "on a Mac: sed -i '' …";
+7. TRACKER D5 · extra: the sed line (folds) -> no output, GREY note "on a Mac: add `import os` as
+   line 1 in your editor · git add -u" (BSD sed rejects the one-line `1i`);
    `git commit -m "try an unused import"` -> part4-11: 9–13, …, 18–22 (both Failed RED, line 11 `files
    were modified` RED as scripted, F401 RED). Strip (rows 9, 18, 22) under the gate: an `import os` envelope, black amber, flake8
    RED, back to the tray; the strip grows (cleared) to 7 rows and the gate rises with it; `git status`
    -> part4-12: 6–8, … ("still staged · not committed" on 6, GREY "+ unstaged: black's reformat" on
    the …; lines 2–4 'ahead of origin/main by 1 commit' are b72d50d and read against the narration);
-   the restore line (folds, under the status rows, which stay until the fade) -> no output, the envelope leaves the tray; the vault stays shut. A
+   the restore line (folds, under the status rows, which stay until the fade) -> no output, the envelope leaves the tray; the vault stays shut. The terminal fades, the gate settles back down; a
    YELLOW card "this gate never ran a test" appears and parks in the top-right corner. Fade to an
    empty frame (end of part 1).
 
@@ -304,7 +305,12 @@ def remedy_chip() -> VGroup:
 
 
 def mac_chip() -> VGroup:
-    parts = VGroup(label("on a Mac:", 20, S.GREY), mono("sed -i '' …", 20, INK)).arrange(RIGHT, buff=0.18)
+    """The narration's Mac route (BSD sed has no one-line `1i`): edit the file, then stage it."""
+    parts = VGroup(label("on a Mac: add", 20, S.GREY), mono("import os", 20, INK),
+                   label("as line 1 in your editor ·", 20, S.GREY), mono("git add -u", 20, INK))
+    parts.arrange(RIGHT, buff=0.15)
+    for p in parts[1:]:
+        p.align_to(parts[0], DOWN)
     b = box(parts.width + 0.45, parts.height + 0.3, S.GREY, fill_opacity=0.1, radius=0.12)
     parts.move_to(b)
     return VGroup(b, parts)
@@ -643,6 +649,7 @@ class PreCommitGate(VoiceScene):
             self.remove(gpic)
             resize(self, t, 12)
             mac.move_to([6.35 - mac.width / 2, (t.box.get_top()[1] + 2.9) / 2, 0])
+            assert mac.get_left()[0] >= -6.5, mac.get_left()
             vo.wait_until("sed adds and stages")
             b_ln = typ(self, t, brk.cmd, type_time=1.4)
             tag_on(self, b_ln, extra_row)
@@ -650,7 +657,7 @@ class PreCommitGate(VoiceScene):
             bare_prompt(self, t)
             vo.wait_until("on a Mac")
             self.play(FadeIn(mac, shift=DOWN * 0.15), run_time=0.5)
-            vo.wait_until("after it.")
+            vo.wait_until("then git add dash u")
             k2 = typ(self, t, blocked.cmd, type_time=0.9)
             tag_on(self, k2, extra_row)
             bl = out(self, t, fit(blocked.at((9, 13), "…", (18, 22)), {0: ERR, 2: ERR, 6: ERR, 10: ERR}),
@@ -693,7 +700,7 @@ class PreCommitGate(VoiceScene):
             utag = beside(row_tag("+ unstaged: black's reformat", S.GREY), still[3], buff=0.3)
             pin(self, still[3], utag)
             self.play(each([env.text, gate.tray.shape, gate.tray.text], TURN, 1.12), run_time=0.7)
-            vo.wait_until("Restore the file")
+            vo.wait_until("Unstage and restore the file")
             r_ln = typ(self, t, restore.cmd, type_time=0.8)
             tag_on(self, r_ln, extra_row, anim=FadeOut(env, shift=DOWN * 0.3))
             gate.remove(env)
@@ -703,12 +710,15 @@ class PreCommitGate(VoiceScene):
             self.play(Indicate(gate.vault.door[1], color=INK, scale_factor=1.25),
                       each([gate.arches[7], gate.arches[8]], ERR, 1.1), run_time=0.9)
             vo.wait_until("But this gate never ran")
-            self.play(FadeOut(t), run_time=0.4)
+            # the gate settles back down as the terminal goes: raised, its HISTORY label would sit
+            # under the parked corner card
+            self.play(FadeOut(t), gpic.animate.shift(DOWN * up), run_time=0.6)
             self.remove(t)
+            corner = [6.5 - qcard.width / 2, 3.55 - qcard.height / 2, 0]
+            assert gpic.get_top()[1] < corner[1] - qcard.height / 2 - 0.1, (gpic.get_top(), corner)
             self.play(FadeIn(qcard, scale=0.9), each(list(gate.arches), S.GREY, 1.08, lag=0.06),
                       run_time=0.8)
             vo.wait_until("The guest lecture builds one")
-            corner = [6.5 - qcard.width / 2, 3.55 - qcard.height / 2, 0]
             self.play(qcard.animate.move_to(corner), run_time=1.0)
             vo.wait_until("what even it can miss")
             self.play(Indicate(q, color=TURN, scale_factor=1.06), run_time=0.7)

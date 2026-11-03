@@ -48,6 +48,7 @@ Deviations (reported to the coordinator):
 - The two perl lines (211 and 179 characters, one single-quoted argument with spaces inside the
   quotes) cannot fold at a space outside quotes with a backslash: they soft-wrap at the terminal's edge,
   exactly as a terminal shows a long typed line (the rows join back to the command; asserted).
+  A GREY row tag `one line · copy from study guide` beside the last wrapped row says so (QA 25:08).
 - The checker heredocs are walk.md:628–634 and 635–641 (the script cites 628–635 / 636–641).
 - Over-wide lines get the house "…" cut (s05a-01:3, s05a-03:11–17/66/67, s05a-08:11, s05a-11:14–17/
   306/307, test_mask.py:60/64); every skipped range gets a "…" row (s05a-01 before 3, s05a-02 after 2, s05a-03 before 11
@@ -188,6 +189,11 @@ def f_glyphs(row) -> VGroup:
 def study_tag() -> VGroup:
     """'full script: study guide', row-sized: pinned beside the '…' that stands for the heredoc."""
     return row_tag("full script: study guide", S.GREY)
+
+
+def one_line_tag() -> VGroup:
+    """Beside the last row of a soft-wrapped command: the rows are one line, copied from the guide."""
+    return row_tag("one line · copy from study guide", S.GREY)
 
 
 def pulse(mobs, color, width: float = 6, run_time: float = 0.7):
@@ -366,7 +372,8 @@ class PropertyTests(VoiceScene):
             wipe(self, t, pic, run_time=0.5)
             resize(self, t, 6, run_time=0.4)
             vo.wait_until("A deliberately wrong fix goes in")
-            typ(self, t, wrong.cmd, type_time=1.3, soft=True)
+            w_ln = typ(self, t, wrong.cmd, type_time=1.3, soft=True)
+            tag_on(self, w_ln, one_line_tag, buff=0.3)       # soft-wrapped: says it is one line
             self.play(FadeIn(g4), run_time=0.6)
             vo.wait_until("blocks only the question just before")
             self.play(LaggedStart(*[Create(b) for b in blocked], lag_ratio=0.3), run_time=0.6)
@@ -578,7 +585,8 @@ class PropertyTests(VoiceScene):
             self.play(FadeIn(t4, shift=UP * 0.2), run_time=0.4)
             typ(self, t4, rst1.cmd, type_time=0.4)
             vo.wait_until("put step 5's wrong mask line back")
-            typ(self, t4, back.cmd, type_time=1.2, soft=True)
+            b_ln = typ(self, t4, back.cmd, type_time=1.2, soft=True)
+            tag_on(self, b_ln, one_line_tag, buff=0.3)       # soft-wrapped: says it is one line
             vo.wait_until("and run just test")
             a_ln = typ(self, t4, again.cmd, type_time=0.3)
             vo.wait_until("pause and try it")
@@ -638,6 +646,7 @@ class PropertyTests(VoiceScene):
             assert jt.text == "    just types", jt.text
             self.play(jt.animate.set_color(TURN), Indicate(VGroup(*[r.glyphs for r in s_out[1:] if r is not jt]),
                                                            color=INK, scale_factor=1.04), run_time=0.45)
+            self.wait(1.5)                                # time to count the six lines
             self.play(FadeOut(t4), FadeIn(gt), run_time=0.35)
             self.remove(t4, *t4.get_family())
             for m in list(t4.lines):

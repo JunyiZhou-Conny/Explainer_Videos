@@ -413,7 +413,7 @@ class TestsInImage(VoiceScene):
         err = erratum_tag()
         left_f = RoundedRectangle(width=max(pp.width, left_t.width + 0.7) + 0.2,
                                   height=max(pp.height, left_t.height + err.height + 0.9) + 0.2,
-                                  corner_radius=0.16, stroke_color=IMAGE, stroke_width=3).set_fill(S.BG, 0.85)
+                                  corner_radius=0.16, stroke_color=IMAGE, stroke_width=3).set_fill(S.BG, 0.94)
         left_f.move_to(pp)
         left_t.move_to(left_f).shift(DOWN * (err.height + 0.2) / 2)
         err.next_to(left_t, UP, buff=0.3).align_to(left_t, LEFT)

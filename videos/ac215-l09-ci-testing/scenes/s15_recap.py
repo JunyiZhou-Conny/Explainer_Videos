@@ -1,7 +1,8 @@
 """S15 · Tear down, recap, and what's next (README "Docker Cleanup", tracker F1 -> F3; the last scene).
 
 Beats (script.md, ## S15; one voiceover block each):
-0. TRACKER F1 (tracker F appears). A 10-row `laptop` terminal at 20 pt (the squeezed `docker image
+0. TRACKER F1 (tracker F appears). A 10-row `laptop` terminal at 20 pt opens at ~/babykev (where part
+   2 left the viewer) and types `cd ~/cheese-app-ci-cd` (extra tag, the prompt flashes) (the squeezed `docker image
    ls` table is 69 columns: 22 pt holds 65). `docker container ls` (README.md line 571) ->
    clean-01: 2 (squeezed), header only. A README card `README.md · line 572` "Stop any container
    that is running" above the terminal, with the GREY chip "nothing to stop here". TRACKER F2:
@@ -13,7 +14,8 @@ Beats (script.md, ## S15; one voiceover block each):
    `pre-commit uninstall` (extra; the tracker caption gains " · extra") -> clean-04: 2. The
    terminal leaves; a GREY `laptop · babykev` card: `.venv/` (GREEN file card) is struck out on
    "delete the venv"; the BLUE model chip `Qwen/Qwen2.5-0.5B` with "about 1 GB · Hugging Face cache"
-   (ASSETS.md:230's "~1 GB") and "if you ran the smoke", struck out too. The card leaves; a laptop glyph
+   (ASSETS.md:230's "~1 GB") and "if you ran the smoke", struck out too; a GREY chip below gives the
+   paths (~/babykev/.venv, the HF hub cache dir) and "commands: study guide". The card leaves; a laptop glyph
    with a five-arch turnstile on its screen, GREEN "nothing billable today" and GREY "the gate
    lives on your laptop" (the GOLD rule, said once): the arches pass GREEN on that phrase.
 1. Tracker and laptop leave. "Test yourself" (YELLOW underline) top-left; one question at a time
@@ -55,8 +57,8 @@ from explainer import style as S
 from explainer.devops import laptop as laptop_glyph, server as server_glyph
 
 from common import (CLOUD, ERR, FUTURE, HERMETIC, IMAGE, INK, INTEG, LAPTOP, NARRATION, OUTPUT,
-                    P_LAPTOP, SEG_SIX, SYSTEM_TEST, TOOL, TURN, UNIT, VENV, ROUTE, Arch,
-                    MaskGrid, TestDot, Turnstile, ask, attach, beside, box, capture, envelope,
+                    P_BABYKEV, P_LAPTOP, SEG_SIX, SYSTEM_TEST, TOOL, TURN, UNIT, VENV, ROUTE, Arch,
+                    MaskGrid, TestDot, Turnstile, ask, attach, beside, box, capture, cd_prompt, envelope,
                     extra_row, file_card, file_glyph, grey_chip, label, mono, mono_line,
                     outline_box, pin, readme, readme_card, ring, squeeze, steady, strike, substring, term,
                     time_row, track, tracker, turn_row, type_cmd)
@@ -94,6 +96,9 @@ assert UN_OUT == ["pre-commit uninstalled"], UN_OUT
 
 MODEL = "Qwen/Qwen2.5-0.5B"                   # ASSETS.md:53 (smoke.py:25), ~1 GB (ASSETS.md:230;
                                               # shown "about 1 GB": the serif font raises "~")
+CD_CHEESE = "cd ~/cheese-app-ci-cd"          # extra: part 2 left the viewer in ~/babykev (S10–S14)
+VENV_PATH = "~/babykev/.venv"
+HF_PATH = "~/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B"   # huggingface_hub's default cache
 GUIDE_REPO = "github.com/JunyiZhou-Conny/MLOps_Learning"
 GUIDE_PATH = "guides/L09-ci-testing-precommit.md"
 
@@ -268,7 +273,7 @@ class Recap(VoiceScene):
 
         # ========================================================== 0. tear down
         tr = tracker("F", 1)
-        t = term(P_LAPTOP, rows=10, size=TERM_SIZE)
+        t = term(P_BABYKEV, rows=10, size=TERM_SIZE)     # part 2 ended in ~/babykev
         card = readme_card(572, STOP[2:])
         chip_ = grey_chip("nothing to stop here")
         VGroup(card, chip_).arrange(RIGHT, buff=0.4)
@@ -276,6 +281,10 @@ class Recap(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(t), run_time=0.8)
+            cd_ln = type_cmd(self, t, CD_CHEESE, type_time=0.6)    # extra: back to the cheese repo
+            cd_xt = beside(extra_row(), cd_ln)
+            pin(self, cd_ln, cd_xt, run_time=0.3)
+            cd_prompt(self, t, P_LAPTOP)
             vo.wait_until("The README's Docker cleanup")
             type_cmd(self, t, LS.cmd)
             vo.wait_until("shows nothing running")
@@ -338,7 +347,13 @@ class Recap(VoiceScene):
             frame = box(inner.width + 0.8, inner.height + 0.7, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
             inner.move_to(frame)
             bk = VGroup(frame, head_b, venv)
-            VGroup(frame, inner).move_to([0, -0.3, 0])
+            venv_p, hf_p = mono(VENV_PATH, 20, S.GREY), mono(HF_PATH, 20, S.GREY)
+            paths = VGroup(venv_p, hf_p, label("commands: study guide", 20, S.GREY))
+            paths.arrange(DOWN, buff=0.12, aligned_edge=LEFT)
+            pbox = box(paths.width + 0.5, paths.height + 0.4, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
+            paths.move_to(pbox)
+            where_chip = VGroup(pbox, paths)
+            VGroup(VGroup(frame, inner), where_chip).arrange(DOWN, buff=0.3).move_to([0, -0.45, 0])
             s_venv = strike(venv, S.GREY, stroke=5)
             s_model = strike(model_card, S.GREY, stroke=5)
 
@@ -348,10 +363,11 @@ class Recap(VoiceScene):
             self.play(FadeIn(bk, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("delete the venv")
             self.play(Create(s_venv), venv.animate.fade(0.55), run_time=0.6)
+            self.play(FadeIn(VGroup(pbox, venv_p, paths[2]), shift=UP * 0.1), run_time=0.5)
             vo.wait_until("and if you ran the smoke")
             self.play(FadeIn(smoke, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("the roughly 1 gigabyte model")
-            self.play(FadeIn(model_card, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeIn(model_card, shift=UP * 0.1), FadeIn(hf_p, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("in the Hugging Face cache")
             self.play(Create(s_model), model_card.animate.fade(0.55), run_time=0.6)
 
@@ -364,8 +380,9 @@ class Recap(VoiceScene):
             where = label("the gate lives on your laptop", 24, S.GREY)
             caps = VGroup(free, where).arrange(DOWN, buff=0.18).next_to(lap_g, DOWN, buff=0.4)
             vo.wait_until("Nothing today was billable")
-            self.play(FadeOut(VGroup(frame, head_b, venv, s_venv, model_card, s_model, smoke)), run_time=0.5)
-            self.remove(frame, head_b, venv, s_venv, model_card, s_model, smoke)
+            self.play(FadeOut(VGroup(frame, head_b, venv, s_venv, model_card, s_model, smoke, where_chip)),
+                      run_time=0.5)
+            self.remove(frame, head_b, venv, s_venv, model_card, s_model, smoke, where_chip)
             self.play(FadeIn(lap_g, shift=UP * 0.15), FadeIn(free, shift=UP * 0.1), run_time=0.7)
             vo.wait_until("the gate lives on your laptop")
             self.play(FadeIn(where, shift=UP * 0.1), gate.mark_all(["pass"] * 5, run_time=1.0))
