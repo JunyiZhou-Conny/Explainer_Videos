@@ -334,12 +334,11 @@ class YourOwnRepo(VoiceScene):
             self.play(FadeIn(came, shift=LEFT * 0.15),
                       each([s2.find(".dvc"), hit, s2.find("cheese_dataset.dvc")], ERR, scale=1.08), run_time=0.9)
             vo.wait_until("This video follows the course's pinned README")
-            self.play(FadeOut(VGroup(s2, came), shift=DOWN * 0.2), FadeIn(t, shift=UP * 0.2),
-                      track(tr, 3, extra=False), run_time=0.7)
+            flash_tag(self, came, INK)
+            vo.wait_until("the starter branch, plus one fix")
+            self.play(FadeOut(VGroup(s2, came)), run_time=0.35)
             self.remove(s2, came)
-            self.add(t)
-            vo.wait_until("plus one fix")
-            self.play(Indicate(t.lines[-1], color=INK, scale_factor=1.03), run_time=0.5)
+            self.play(FadeIn(t), track(tr, 3, extra=False), run_time=0.45)
 
         # ========================================================== 4. G3: rm -rf .git, git init
         c104 = readme_card(104, words("Why remove", (".git", "mono"), "? The cloned repository is connected "

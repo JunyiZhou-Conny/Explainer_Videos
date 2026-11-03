@@ -11,9 +11,11 @@ Beats (script.md, ## S03; one voiceover block each):
 2. A schematic console (`illustration`, README.md · lines 48–52): IAM & Admin → Service accounts →
    Create service account (name typed) → Grant this service account access to project: Storage
    Admin · Gemini Enterprise Agent Platform User, with the GREY 'formerly Vertex AI User' chip
-   (llm-finetuning README.md:44–46). `▶ your turn`; a GREY `extra` card (gcloud equivalents,
-   digest §4 step 1, project id your-gcp-project; not spoken) in the bottom-right corner.
-3. The `erratum` card, three lines, one per sentence.
+   (llm-finetuning README.md:44–46). `▶ your turn`; a GREY `extra` card (a gcloud sketch of digest
+   §4 step 1, project id your-gcp-project, pointing to the study guide for the full text; not
+   spoken) in the bottom-right corner.
+3. The `erratum` card, three lines, one per sentence; line 3 flashes YELLOW on 'least privilege',
+   'and only when needed' is underlined, and a GREY 'part 2' chip pins beside it.
 4. Tracker A3. Console continued (README.md · lines 54–55): the account → KEYS → ADD Key (Create New
    Key) → JSON; a key file drops out; the two banners in our own words; `▶ your turn`. The key card
    (`illustration`, KEY_FIELDS: zeroed ids, PLACEHOLDER) unfolds from the file; its rows light as
@@ -286,12 +288,15 @@ class IdentityForCode(VoiceScene):
                             "llm-finetuning README.md:44–46")
         was.next_to(role2, DOWN, buff=0.1).align_to(role2, LEFT)
         yt = your_turn().move_to([-5.3, -1.75, 0])
-        xc = card([VGroup(extra_tag(), note("the same from a terminal · suggested, not in the repo"))
+        # a sketch, not runnable: the --member email alone is 84 mono cells (14 units at 20 pt), so the
+        # full binding cannot be shown on screen; the study guide carries it (digest §4 step 1).
+        xc = card([VGroup(extra_tag(), note("sketch · repeat for roles/storage.admin · full text: study guide"))
                    .arrange(RIGHT, buff=0.25),
-                   mono("gcloud iam service-accounts create \\", 20, INK),
-                   indent(mono("llm-service-account --project=your-gcp-project", 20, INK)),
-                   mono("gcloud projects add-iam-policy-binding \\", 20, INK),
-                   indent(mono("your-gcp-project --member=… --role=…", 20, INK))], size=20, buff=0.1)
+                   mono("gcloud iam service-accounts create llm-service-account \\", 20, INK),
+                   indent(mono("--project=your-gcp-project", 20, INK)),
+                   mono("gcloud projects add-iam-policy-binding your-gcp-project \\", 20, INK),
+                   indent(mono("--member=serviceAccount:… --role=roles/aiplatform.user", 20, INK))],
+                  size=20, buff=0.1)
         xc.move_to([6.5, -1.1, 0], aligned_edge=UR)
         old1 = VGroup(rc, ptr, r3, ci, lap, st_ci, st_lap, kg, kl)
 
@@ -332,6 +337,8 @@ class IdentityForCode(VoiceScene):
         for ln in ec.body:
             ln.set_opacity(0)
         both = grey_chip("README.md · lines 50–52: grant both", 22).next_to(ec.frame, DOWN, buff=0.4)
+        p2 = grey_chip("part 2", 22).next_to(ec.body[2], RIGHT, buff=0.4)
+        need_u = under(ec.body[2][-len("andonlywhenneeded"):], TURN)   # Text drops spaces
         old2 = VGroup(con, sel, h2, r1, r2, was, xc, yt)
 
         with self.voiceover(SAY[3]) as vo:
@@ -348,12 +355,17 @@ class IdentityForCode(VoiceScene):
             self.play(Indicate(ec.body[1], color=INK, scale_factor=1.04), run_time=0.7)
             vo.wait_until("Grant both anyway")
             self.play(FadeIn(both, shift=UP * 0.15), run_time=0.5)
-            vo.wait_until("The lecture's rule, least privilege")
+            vo.wait_until("The lecture's rule")
             self.play(ec.body[2].animate.set_opacity(1), run_time=0.6)
+            vo.wait_until("least privilege")
+            self.play(Indicate(ec.body[2], color=TURN, scale_factor=1.06), run_time=0.8)
+            vo.wait_until("meaning only the access")
+            self.play(Create(need_u), run_time=0.5)
             vo.wait_until("would grant less")
             self.play(Indicate(ec.body[2], color=INK, scale_factor=1.04), run_time=0.7)
-            vo.wait_until("part 2 comes back to it")
-            flash_tag(self, et, INK)
+            vo.wait_until("part 2 comes back")
+            self.play(FadeIn(p2, shift=LEFT * 0.2), run_time=0.5)
+            flash_tag(self, p2, S.GREY)
 
         # ========================================================== 4. the key: KEYS → ADD Key → JSON
         con2 = console_window("README.md · lines 54–55").move_to([0, 0.9, 0])
@@ -398,8 +410,8 @@ class IdentityForCode(VoiceScene):
             .arrange(RIGHT, buff=0.2).move_to(props).align_to(kc.frame, LEFT)
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(ec, et, both), shift=UP * 0.2), track(tr, 3), run_time=0.6)
-            self.remove(ec, et, both)
+            self.play(FadeOut(VGroup(ec, et, both, p2, need_u), shift=UP * 0.2), track(tr, 3), run_time=0.6)
+            self.remove(ec, et, both, p2, need_u)
             self.play(FadeIn(con2, shift=UP * 0.2), FadeIn(sel2), FadeIn(acct), FadeIn(tabline), run_time=0.7)
             vo.wait_until("On the account's Keys tab")
             self.play(FadeIn(keys, shift=UP * 0.1), Create(keys_u), run_time=0.5)

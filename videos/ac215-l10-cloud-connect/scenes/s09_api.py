@@ -70,13 +70,41 @@ CLI = "cheese-app-v0/llm-rag/cli.py"
 
 
 # ------------------------------------------------------------------ local helpers
+def wrap_rows(full: str, n: int, max_rows: int, lo: int) -> list[str]:
+    """Rows of at most `n` characters that join back to exactly `full` (a terminal's soft wrap),
+    with the fewest breaks inside a word: a break after a space costs 0, after punctuation 1,
+    after '_' 2, anywhere else 4; the first row ends after column `lo` (never inside the prompt);
+    ties keep earlier rows long. None when `max_rows` rows cannot hold it."""
+    def cost(j):
+        c = full[j - 1]
+        return 0 if c == " " else 1 if c in "|/.,;:([=" else 2 if c == "_" else 4
+    memo = {}
+
+    def best(i, k):
+        if len(full) - i <= n:
+            return (0, (full[i:],))
+        if k == 1:
+            return None
+        if (i, k) not in memo:
+            out_ = None
+            for j in range(min(len(full) - 1, i + n), max(i + 1, lo if i == 0 else i + 1) - 1, -1):
+                r = best(j, k - 1)
+                if r is not None and (out_ is None or cost(j) + r[0] < out_[0]):
+                    out_ = (cost(j) + r[0], (full[i:j],) + r[1])
+            memo[(i, k)] = out_
+        return memo[(i, k)]
+    r = best(0, max_rows)
+    return None if r is None else list(r[1])
+
+
 def soft_type(scene, t, cmd: str, type_time: float | None = None):
     """Type a command whose long quoted argument cannot fold at a space outside quotes: it
-    soft-wraps at the terminal's edge, as a terminal shows a long typed line (the rows join back
-    to exactly the prompt and the command). Same as S05's."""
+    soft-wraps as a terminal shows a long typed line (the rows join back to exactly the prompt and
+    the command), at spaces or punctuation where the rows allow (wrap_rows)."""
     full = t.prompt + " " + cmd
     n = t.max_chars
-    rows = [full[i:i + n] for i in range(0, len(full), n)]
+    rows = wrap_rows(full, n, t.rows, len(t.prompt) + 12)
+    assert rows is not None, (len(full), n, t.rows)
     assert "".join(rows) == full and all(len(r) <= n for r in rows)
     assert len(rows) <= t.rows, (len(rows), t.rows)
     t.fold = lambda text, first_prefix=0: list(rows)
@@ -112,17 +140,18 @@ def sticky_note() -> VGroup:
     return card([mono("inspect … || create", 22, INK), label("remember this shape", 22, S.GREY)])
 
 
-def big_line(s: str, breaks=(" >/dev/null", " docker network create"), size: float = 24, color=PASS) -> VGroup:
-    """laptop/32:2 shown large: the line broken into rows at the spaces before `breaks` (whitespace
-    only: the rows joined with single spaces are the line)."""
-    parts, rest = [], s
-    for b in breaks:
-        i = rest.index(b)
-        parts.append(rest[:i])
-        rest = rest[i + 1:]
-    parts.append(rest)
-    assert " ".join(parts) == s, parts
-    return VGroup(*[mono(p, size, color) for p in parts]).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
+def big_line(s: str, at: str = " || ", size: float = 22, color=PASS) -> VGroup:
+    """laptop/32:2 shown large, folded once as a shell continuation: row 1 ends with ' \\', row 2
+    is indented 4 spaces and starts at `at` (pasted as shown it is still one command; the rows with
+    the ' \\' and indent removed are the line)."""
+    i = s.index(at)
+    a, b = s[:i] + " \\", "    " + s[i + 1:]
+    assert a[:-2] + " " + b[4:] == s, (a, b)
+    r1, r2 = mono(a, size, color), mono(b[4:], size, color)     # mono drops leading spaces: shift
+    g = VGroup(r1, r2).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
+    cell = mono("x" * 20, size, color).width / 20
+    r2.shift(RIGHT * 4 * cell)
+    return g
 
 
 def swagger_page() -> VGroup:
@@ -130,7 +159,7 @@ def swagger_page() -> VGroup:
     localhost:9000/docs with GREY placeholder rows (no route names, no logo). .page .rows"""
     page = browser_glyph(url="localhost:9000/docs", glyph_w=4.6, glyph_h=3.2, name=None)
     rows = VGroup()
-    for i in range(5):
+    for i in range(4):
         pill = RoundedRectangle(width=0.62, height=0.26, corner_radius=0.08, stroke_color=S.GREY,
                                 stroke_width=2).set_fill(S.GREY, 0.25)
         bar = RoundedRectangle(width=2.7 - 0.25 * (i % 3), height=0.16, corner_radius=0.06,
@@ -140,6 +169,7 @@ def swagger_page() -> VGroup:
     title = RoundedRectangle(width=1.9, height=0.22, corner_radius=0.06, stroke_width=0).set_fill(S.GREY, 0.6)
     body = VGroup(title, rows).arrange(DOWN, aligned_edge=LEFT, buff=0.28)
     body.next_to(page.url, DOWN, buff=0.3).align_to(page.window, LEFT).shift(RIGHT * 0.35)
+    assert body.get_bottom()[1] > page.window.get_bottom()[1] + 0.1, (body.get_bottom(), page.window.get_bottom())
     g = VGroup(page, body)
     g.page, g.rows = page, rows
     return g
@@ -253,6 +283,7 @@ class ApiService(VoiceScene):
         assert new14 == readme(74), (new14, readme(74))
         big = big_line(new14)
         new_cap = label("your new line 14", 24, PASS)
+        one = note("README.md line 74 has it on one line", S.GREY, 22)
         yt2 = your_turn()
         ed2, xt2 = editor_row(), extra_row()
 
@@ -285,13 +316,14 @@ class ApiService(VoiceScene):
             self.play(FadeIn(t2, shift=UP * 0.2), FadeIn(ed2), FadeIn(xt2), run_time=0.5)
             soft_type(self, t2, fix.cmd, type_time=2.2)
             new_rows = out(self, t2, fix.at(2), wrap=True)
-            big.move_to([-6.2 + big.width / 2, -0.4, 0])
-            new_cap.next_to(big, UP, buff=0.18).align_to(big, LEFT)
+            big.move_to([-6.2 + big.width / 2, -0.14, 0])
+            new_cap.next_to(big, UP, buff=0.12).align_to(big, LEFT)
             self.play(FadeIn(big, target_position=new_rows.get_center(), scale=0.8),
                       Create(strike(w_span, ERR)), run_time=0.9)
-            self.play(FadeIn(new_cap, shift=UP * 0.1), run_time=0.4)
+            one.next_to(big, DOWN, buff=0.12).align_to(big, LEFT)
+            self.play(FadeIn(new_cap, shift=UP * 0.1), FadeIn(one, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Pause and make that edit")
-            yt2.next_to(big, RIGHT, buff=0.45)
+            yt2.next_to(new_cap, RIGHT, buff=0.45)
             self.play(FadeIn(yt2, shift=LEFT * 0.15), run_time=0.4)
             flash_tag(self, yt2, TURN)
             vo.wait_until("the sed is ours")
@@ -511,9 +543,9 @@ class ApiService(VoiceScene):
             self.play(Create(g35), Indicate(sw.rows, color=INK, scale_factor=1.04), run_time=0.6)
             vo.wait_until("and the README's five routes")
             drop(self, g35, xt6, c149, yt6, sw, ill, run_time=0.4)
-            resize(self, t4, 7, run_time=0.5)
+            resize(self, t4, 9, run_time=0.5)          # 3 command rows + 6 output rows
             on_bar(t4, xt6)
-            rc.move_to([-6.4 + rc.width / 2, t4.box.get_top()[1] + 0.2 + rc.height / 2, 0])
+            rc.move_to([6.4 - rc.width / 2, t4.box.get_top()[1] + 0.2 + rc.height / 2, 0])
             self.play(FadeIn(rc, shift=DOWN * 0.15), FadeIn(xt6), run_time=0.5)
             soft_type(self, t4, c36.cmd, type_time=1.0)
             out(self, t4, c36.at((2, 7)), run_time=0.6)

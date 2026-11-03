@@ -17,7 +17,9 @@ Beats (script.md, ## S04; one voiceover block each):
 3. TRACKER A3 · extra: the running map (AppMap.at("S04")) over a 3-row strip; `mkdir ../secrets`
    (laptop/04, extra; GREY row tag 'the README shows a tree, not a command' on the waiting prompt); the GREEN secrets/
    drawer appears on the map. TRACKER A3: a GREY file slides from Downloads into secrets/ and is
-   renamed llm-service-account.json (`illustration`); 'Check that name' rings it, a struck RED
+   renamed llm-service-account.json (`illustration`), a GREY template row above the strip
+   'mv ~/Downloads/<your-key>.json ../secrets/llm-service-account.json' with 'yours: your download's
+   name' over <your-key> (a template, not a capture); 'Check that name' rings it, a struck RED
    `.json.json` below. TRACKER A4 · extra: the strip grows; `cd ..`, `tree -L 2 .` (laptop/05: 2–11)
    beside the README card (README.md · lines 60–67), folder-for-folder YELLOW links, README.md
    dimmed; GREY chip 'no tree? …'; `ls -la secrets` (laptop/06: 2–5, the long row soft-wrapped),
@@ -304,14 +306,25 @@ class SecretsPortal(VoiceScene):
         tree_cap, ls_cap = capture("05"), capture("06")
         assert mk.cmd == "mkdir ../secrets" and not mk.lines, mk.cmd
         dl = VGroup(folder_glyph(0.5, LAPTOP), label("Downloads", 24, LAPTOP)).arrange(DOWN, buff=0.15)
-        dl.move_to([-4.6, 0.55, 0])
+        dl.move_to([-4.6, 0.85, 0])
         sf = VGroup(folder_glyph(0.5, KEY), mono("secrets/", 24, KEY)).arrange(DOWN, buff=0.15)
-        sf.move_to([-0.9, 0.55, 0])
+        sf.move_to([-0.9, 0.85, 0])
         beside_repo = note("~/secrets/ · beside cheese-app-v0/").next_to(sf, DOWN, buff=0.25)
         f_icon = file_glyph(0.5, LAPTOP).next_to(dl[0], UP, buff=0.05)
         f_lab = label("the downloaded key", 22, S.GREY).next_to(f_icon, RIGHT, buff=0.3)
         landing = sf[0].get_center() + UP * 0.12
-        ill = illustration_tag().move_to([5.4, -0.95, 0])
+        ill = illustration_tag().move_to([5.4, -0.2, 0])
+        # the move as a command: a GREY template (not a capture), the download's name is the student's
+        mv_ln = mono_line("mv ~/Downloads/<your-key>.json ../secrets/llm-service-account.json", 20, S.GREY)
+        mv_box = RoundedRectangle(width=mv_ln.width + 0.4, height=mv_ln.strut.height + 0.16, corner_radius=0.12,
+                                  stroke_color=S.GREY, stroke_width=2).set_fill(S.BG, 0.92)
+        mv_ln.move_to(mv_box)
+        mv_box_g = VGroup(mv_box, mv_ln)
+        mv_box_g.move_to([strip.box.get_left()[0] + mv_box_g.width / 2, strip.box.get_top()[1] + 0.12
+                          + mv_box_g.height / 2, 0])
+        mine = substring(mv_ln, "<your-key>")
+        yours = note("yours: your download's name").next_to(mine, UP, buff=0.22)
+        mv_hint = VGroup(mv_box_g, yours)
 
         with self.voiceover(SAY[3]) as vo:
             gone = VGroup(sp.tree, sp.caption, sp.box, sp.tube_mob, sp.host_cap, sp.cont_cap, cur, unders, u_s,
@@ -337,6 +350,7 @@ class SecretsPortal(VoiceScene):
             vo.wait_until("and rename it")
             new_name = mono("llm-service-account.json", 24, KEY).next_to(sf[0], RIGHT, buff=0.45)
             self.play(FadeTransform(f_lab, new_name), f_icon.animate.set_color(KEY), run_time=0.8)
+            self.play(FadeIn(mv_box_g, shift=UP * 0.1), FadeIn(yours, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("Check that name")
             nr = ring(new_name, TURN, buff=0.1)
             self.play(Create(nr), run_time=0.5)
@@ -348,7 +362,7 @@ class SecretsPortal(VoiceScene):
             self.play(FadeIn(bad, shift=DOWN * 0.15), FadeIn(hid), run_time=0.5)
             self.play(Create(bad_x), run_time=0.4)
             vo.wait_until("An extra tree view")
-            pic = VGroup(dl, sf, beside_repo, ill, f_icon, new_name, nr, bad, bad_x, hid)
+            pic = VGroup(dl, sf, beside_repo, ill, f_icon, new_name, nr, bad, bad_x, hid, mv_hint)
             unpin(self, ln, xt, FadeOut(pic), track(tr, 4, extra=True), run_time=0.5)
             self.remove(pic)
             resize(self, strip, 11)

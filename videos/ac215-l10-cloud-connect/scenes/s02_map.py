@@ -32,7 +32,7 @@ from explainer.scene import VoiceScene
 from common import (CLOUD, IMAGE, INK, MONO, NARRATION, P_LAPTOP_HOME, P_REPO, ROUTE, SAY_COUNT, TURN,
                     AppMap, beside, capture, cd_prompt, chip, each, erratum_tag, extra_row, flash_tag, house,
                     label, lref, mono, note, on_bar, out, outline_box, pin, readme, readme_card, resize, ring,
-                    row_tag, strike, substring, term, track, tracker, turn_row, type_cmd)
+                    row_tag, strike, substring, term, track, tracker, turn_row, type_cmd, unpin)
 from explainer import style as S
 
 SAY = NARRATION["S02"]
@@ -191,6 +191,9 @@ class TheMap(VoiceScene):
             flash_tag(self, yt, TURN)
             type_cmd(self, t, "cd cheese-app-v0", type_time=0.6)
             cd_prompt(self, t, P_REPO)
+            # step 1 is done: the turn tag leaves before the tracker reads '· extra' (QA 2:28). It stays on
+            # the output row: the clone command reaches x ~ 5.5, no room beside it, and the bar holds dk.
+            unpin(self, got[0], yt)
             # the pause the narration asks for: the card leaves, the strip shrinks, then the map returns
             # (after the resize, so the map never fades in over the shrinking terminal)
             resize(self, t, 3, extra=(FadeOut(VGroup(card43, noaddr, dk)),))

@@ -8,7 +8,9 @@ Beats (script.md, ## S07; one voiceover block each):
    parentheses, whitespace only, GREY note 'line 26 · wrapped to fit') with line 26 YELLOW and its
    project / location arguments flashing. GREY chip 'no key path anywhere'. Slide 42's chain
    redrawn under the panel: mounted key → env var → client → ?? → IAM check; on "or ADC" the YELLOW
-   '??' becomes a PINK 'ADC'.
+   '??' becomes a PINK 'ADC'. On "No code in this repo" CODE(llm-rag/cli.py: 35–36) joins below,
+   lines YELLOW, header note 'the loader's client: the same call' (QA: the failure watched in S06
+   came from the loader, not the API), its project / location arguments flashing.
 1. The 'ADC' box rises to a heading ('looks in three places, in order'); V1's AdcPlaces rows arrive
    one per sentence while the PINK glass walks them; on "only when the one before is not set" a
    GREY note and the glass walks 1 → 2 → 3 again; on "Inside these containers" a TEAL container
@@ -29,7 +31,9 @@ Beats (script.md, ## S07; one voiceover block each):
 4. AdcPlaces again (rows 2, 3 empty) above a 3-row strip at P_LLMRAG with the `extra` tag on its
    bar: `sh docker-shell.sh` → TERM(29: 6–7); `ls -la /secrets` at the capture's prompt → (29:
    13–15) and a GREEN '/secrets/ · empty' beside row 1; the one-liner (soft-wrapped: every space
-   but one is inside its quotes) → TERM(29: 17, …, 25–26, …, 30; wrap), the
+   but one is inside its quotes: three rows broken at spaces inside the quotes, continuation rows
+   indented 4 spaces, no backslash; a GREY row tag 'full command · study guide' beside `extra`
+   holds it after the traceback scrolls it away) → TERM(29: 17, …, 25–26, …, 30; wrap), the
    `_get_explicit_environ_credentials` frame ringed PINK (= place 1), line 30 RED; the glass flashes
    RED at row 1 and the rows grey out, the glass never walks on; GREY chip 'variable set → no
    fallback'. `exit` (29: 31–32), the laptop prompt returns.
@@ -49,13 +53,14 @@ from common import (CAPTION, CLOUD, ERR, IMAGE, INK, KEY, NARRATION, P_LLMRAG, P
                     code, code_panel, code_span, cross_mark, cut, desk_glyph, each, envelope, excerpt,
                     extra_row, file_card,
                     file_glyph, folder_glyph, greyed, grey_chip, illustration_tag, key_card, key_glyph, label,
-                    line_bar, lref, mono, note, on_bar, out, outline_box, person_icon, ring, shown_path,
+                    line_bar, lref, mono, note, on_bar, out, outline_box, person_icon, ring, row_tag, shown_path,
                     split_prompt, strike, substring, term, type_cmd, under)
 from explainer import style as S
 
 SAY = NARRATION["S07"]
 RAG = "cheese-app-v0/api-service/api/routers/rag.py"
 SHELL = "cheese-app-v0/llm-rag/docker-shell.sh"
+LOADER = "cheese-app-v0/llm-rag/cli.py"
 CAP = capture("29")
 
 
@@ -161,12 +166,21 @@ def oauth_card(desk_x: float, ticket_x: float) -> VGroup:
 
 
 def soft_type(scene, t, cmd: str, type_time: float | None = None):
-    """Type a command whose spaces are (all but one) inside its quotes: it soft-wraps at the
-    terminal's edge, as a terminal shows a long typed line (rows join back to prompt + command)."""
+    """Type a command whose spaces are (all but one) inside its quotes, as rows broken at spaces
+    inside the quoted argument, each continuation row indented 4 spaces (visual only: no ' \\', a
+    backslash inside the quotes would change the command). Rows join back to prompt + command."""
     full = t.prompt + " " + cmd
     n = t.max_chars
-    rows = [full[i:i + n] for i in range(0, len(full), n)]
-    assert "".join(rows) == full and all(len(r) <= n for r in rows)
+    marks = ("google.auth.default();", "getattr(c,")
+    rows, rest = [], full
+    for m in marks:
+        i = rest.index(" " + m)
+        rows.append(rest[:i])
+        rest = rest[i + 1:]
+    rows.append(rest)
+    rows = [rows[0]] + ["    " + r for r in rows[1:]]
+    assert " ".join([rows[0]] + [r[4:] for r in rows[1:]]) == full
+    assert all(len(r) <= n for r in rows), [len(r) for r in rows]
     assert len(rows) <= t.rows, (len(rows), t.rows)
     t.fold = lambda text, first_prefix=0: list(rows)
     try:
@@ -194,7 +208,12 @@ class AdcToToken(VoiceScene):
         wrapped = note("line 26 · wrapped to fit").next_to(win_b, DOWN, buff=0.15).align_to(win_b, LEFT)
         bars = VGroup(line_bar(win_b.code, 2, TURN), line_bar(win_b.code, 3, TURN))
         nokey = grey_chip("no key path anywhere").next_to(win_b.code, RIGHT, buff=0.35)
-        chain42 = slide42_chain().move_to([0, -2.45, 0])
+        # the loader's client (the failure just watched came from llm-rag/cli.py): the same call
+        win_c = code(LOADER, 35, 36, font_size=20)
+        win_c.next_to(wrapped, DOWN, buff=0.3).align_to(win_b, LEFT)
+        cbars = VGroup(line_bar(win_c.code, 0, TURN), line_bar(win_c.code, 1, TURN))
+        same = note("· the loader's client: the same call").next_to(win_c.header, RIGHT, buff=0.15)
+        chain42 = slide42_chain().move_to([0, -2.95, 0])
         cap42 = note("slide 42's chain, with this app").next_to(chain42, UP, buff=0.25).align_to(chain42, LEFT)
         qbox = chain42.boxes[3]
         adc_t = label("ADC", 26, ROUTE).move_to(qbox.frame)
@@ -216,7 +235,11 @@ class AdcToToken(VoiceScene):
                             code_span(win_b.code, 3, 'location="global"')], TURN, scale=1.08, lag=0.5),
                       run_time=1.0)
             vo.wait_until("No code in this repo")
-            self.play(FadeIn(nokey, shift=LEFT * 0.2), run_time=0.5)
+            self.play(FadeIn(VGroup(win_c, cbars), shift=UP * 0.2), FadeIn(same), run_time=0.6)
+            self.play(FadeIn(nokey, shift=LEFT * 0.2),
+                      each([code_span(win_c.code, 1, "project=GCP_PROJECT"),
+                            code_span(win_c.code, 1, "location=GCP_LOCATION")], TURN, scale=1.08, lag=0.5),
+                      run_time=0.8)
             self.play(Indicate(nokey.text, color=INK, scale_factor=1.08), run_time=0.6)
             vo.wait_until("a library does")
             self.play(FadeIn(cap42), LaggedStart(*[FadeIn(b, shift=RIGHT * 0.15) for b in chain42.boxes],
@@ -236,7 +259,7 @@ class AdcToToken(VoiceScene):
         encl, encl_anim = ap.enclose()
 
         with self.voiceover(SAY[1]) as vo:
-            rest = VGroup(win_b, bars, wrapped, nokey, cap42, chain42.arrows,
+            rest = VGroup(win_b, bars, wrapped, nokey, win_c, cbars, same, cap42, chain42.arrows,
                           *[chain42.boxes[i] for i in (0, 1, 2, 4)])
             self.play(FadeOut(rest), run_time=0.6)
             self.remove(rest)
@@ -380,6 +403,8 @@ class AdcToToken(VoiceScene):
         sec.arrange(RIGHT, buff=0.12).next_to(r0, RIGHT, buff=0.25)
         nofall = grey_chip("variable set → no fallback").move_to([0, 2.5, 0]).align_to(r0, LEFT)
         rows_l = [CAP.line(n) for n in (17, 25, 26, 30)]
+        guide = row_tag("full command · study guide")
+        guide.next_to(xt, LEFT, buff=0.15)
 
         with self.voiceover(SAY[4]) as vo:
             old = VGroup(ch, ch.url, oc, oc.caption, link, crosses)
@@ -397,6 +422,7 @@ class AdcToToken(VoiceScene):
             prompt, typed = CAP.istep(16)
             assert prompt == split_prompt(CAP.line(12))[0]
             soft_type(self, t, typed, type_time=1.6)
+            self.play(FadeIn(guide, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("The variable is set")
             out(self, t, [rows_l[0], ("…", S.GREY)], run_time=0.4)
             fr = out(self, t, [rows_l[1]], wrap=True, run_time=0.4)
@@ -452,8 +478,8 @@ class AdcToToken(VoiceScene):
                     stroke_width=4, tip_length=0.2, max_tip_length_to_length_ratio=0.25)
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(ap4.rows, ap4.glass, sec, nofall, t, xt)), run_time=0.6)
-            self.remove(ap4, ap4.glass, sec, nofall, t, xt)
+            self.play(FadeOut(VGroup(ap4.rows, ap4.glass, sec, nofall, t, xt, guide)), run_time=0.6)
+            self.remove(ap4, ap4.glass, sec, nofall, t, xt, guide)
             self.play(FadeIn(mc, shift=DOWN * 0.2), run_time=0.7)
             vo.wait_until("authenticates nothing")
             self.play(Create(sk), run_time=0.5)

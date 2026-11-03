@@ -54,7 +54,7 @@ API_SHELL = "cheese-app-v0/api-service/docker-shell.sh"
 RAG_SHELL = "cheese-app-v0/llm-rag/docker-shell.sh"
 DEFAULT = "ac215-project"                      # quoted: docker-shell.sh's unedited default
 TUNED = "129349313346"                         # quoted: rag.py:22's endpoint project
-PONDER_2 = ("Your key works for embeddings. You paste the\ninstructor's endpoint projects/129349313346/….\n"
+PONDER_2 = ("Your key works for embeddings. You paste the\ninstructor's endpoint projects/129349313346/…\n"
             "Which part decides whose IAM is checked:\nGCP_PROJECT, the key's project_id, or the path?")
 GRID_Y = 1.0
 PATH_Y = -1.85                                 # the resource-path row under the request chips
@@ -348,9 +348,12 @@ class IamGrid(VoiceScene):
                     "if not, the 403 says so, with an enable link"], head="API not enabled", size=24)
         crd.move_to([0, 0.75, 0])
         err_t = erratum_tag().next_to(crd.frame, UP, buff=0.12).align_to(crd.frame, RIGHT)
-        cmd = grey_chip("gcloud services enable aiplatform.googleapis.com", mono_font=True)
+        cmd = grey_chip("gcloud services enable aiplatform.googleapis.com --project=your-gcp-project",
+                        mono_font=True)
         x_t = extra_tag()
-        fix = VGroup(cmd, x_t).arrange(RIGHT, buff=0.3).next_to(crd.frame, DOWN, buff=0.45)
+        cmd.next_to(crd.frame, DOWN, buff=0.45).set_x(0)       # 13 units wide: the tag sits under it
+        x_t.next_to(cmd, DOWN, buff=0.15).align_to(cmd, RIGHT)
+        fix = VGroup(cmd, x_t)
 
         with self.voiceover(SAY[3]) as vo:
             self.play(Indicate(api, color=TURN, scale_factor=1.15), run_time=0.8)

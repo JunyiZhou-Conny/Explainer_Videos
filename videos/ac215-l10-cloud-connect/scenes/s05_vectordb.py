@@ -1,7 +1,7 @@
 """S05 · A network, a compose file, a running Chroma (AC215 L10) — tracker A5 → B1 → B2,
 `Lecture 10 · slides 9–10` for the whole scene. One 20 pt laptop terminal throughout (laptop/20's
-sed is 201 characters with its prompt: three rows at 72 columns; at 22 pt it would need four, more
-than the 3-row strip holds).
+sed is 201 characters with its prompt: four rows at 72 columns when broken at spaces, so B1's strip
+has 4 rows; at 22 pt it would need more).
 
 Beats (script.md, ## S05; one voiceover block each):
 0. TRACKER A5. The running map (AppMap.at("S05"): drawer, two planned GREY dashed streets, hollow
@@ -16,8 +16,9 @@ Beats (script.md, ## S05; one voiceover block each):
    remember this shape' rises from the command and parks in the top-right corner.
 2. TRACKER B1. `cd cheese-app-v0/llm-rag` → prompt ~/cheese-app-v0/llm-rag. The strip shrinks,
    CODE(llm-rag/docker-shell.sh: 6–12, 20 pt) above it, line 7 RED. The sed of laptop/20 types
-   (soft-wrapped at the edge: its one long quoted argument cannot fold at a space outside quotes;
-   the rows join back to the command, asserted) with the GREY bar tag 'our editor; use yours' →
+   (soft-wrapped at spaces, before each GCP_PROJECT= and before `docker-shell.sh &&`, no indent:
+   its one long quoted argument cannot fold at a space outside quotes; the rows join back to the
+   command with single spaces, asserted) with the GREY bar tag 'our editor; use yours' →
    laptop/20: 2–5 (line 4, 73 wide, cut with the house '…'), line 3 `export GCP_PROJECT="your-gcp-project"` ringed GREEN. `▶ your turn`.
 3. TRACKER B2. The panel leaves, the map returns. `sh docker-shell.sh` (README.md line 88) with
    `▶ your turn` → laptop/21: 2–5 (squash), lines 3–5 ringed one by one: the llm-rag street lays
@@ -28,7 +29,7 @@ Beats (script.md, ## S05; one voiceover block each):
    Hub → built locally' on line 8; …, 34, …, 37–41: `x86_64` (GREY chip 'Apple Silicon: aarch64')
    and `Python 3.12.15` ringed, `at the time of recording`. The container prompt returns.
 4. TRACKER B2 · extra. The strip shrinks, the map returns. At laptop/21's own prompt
-   `app@3c41bc0606ad:/app$`: `ls -la /secrets` → 44–47, the file name ringed GREEN (not its size);
+   `app@3c41bc0606ad:/app$`: `ls -la /secrets` → '…' + 47 (the command stays in the strip), the file name ringed GREEN (not its size);
    the GREEN tube from the drawer into the loader draws. `echo $GOOGLE_APPLICATION_CREDENTIALS
    $GCP_PROJECT` → 49, both values ringed. The map gives way to CODE(llm-rag/docker-compose.yml:
    13–15, dedent, 20 pt), its two `$…` references YELLOW with the values, caption 'copied from the
@@ -59,14 +60,26 @@ COMPOSE = "cheese-app-v0/llm-rag/docker-compose.yml"
 NET_ID = "c0ebf9f7f30d"         # laptop/10:2's first 12 characters = laptop/12:4's NETWORK ID
 
 
+BREAK_BEFORE = ("GCP_PROJECT=", "docker-shell.sh &&")
+
+
 def soft_type(scene, t, cmd: str, type_time: float | None = None):
     """Type a command whose long quoted argument cannot fold at a space outside quotes: it
-    soft-wraps at the terminal's edge, as a terminal shows a long typed line (the rows join back
-    to exactly the prompt and the command)."""
+    soft-wraps, each row ending at a space (inside the quotes too) so no word or value is split;
+    continuation rows are not indented (an indent would put spaces into the sed pattern for anyone
+    retyping it). The rows, joined by single spaces, are exactly the prompt and the command."""
     full = t.prompt + " " + cmd
     n = t.max_chars
-    rows = [full[i:i + n] for i in range(0, len(full), n)]
-    assert "".join(rows) == full and all(len(r) <= n for r in rows)
+    rows, cur = [], full
+    while len(cur) > n:
+        k = cur.rfind(" ", 0, n + 1)
+        assert k > 0, cur
+        nice = [i for i in range(n // 3, k + 1) if cur[i] == " " and cur.startswith(BREAK_BEFORE, i + 1)]
+        k = nice[-1] if nice else k             # prefer a row that starts a value or the next command
+        rows.append(cur[:k])
+        cur = cur[k + 1:]
+    rows.append(cur)
+    assert " ".join(rows) == full and all(len(r) <= n for r in rows)
     assert len(rows) <= t.rows, (len(rows), t.rows)
     t.fold = lambda text, first_prefix=0: list(rows)
     try:
@@ -219,7 +232,7 @@ class NetworkAndShell(VoiceScene):
             vo.wait_until("the shell script ships")
             self.play(FadeOut(sticky), run_time=0.3)
             self.remove(sticky)
-            resize(self, t, 3)
+            resize(self, t, 4)                               # the sed soft-wraps to 4 rows at spaces
             self.play(FadeIn(panel, shift=DOWN * 0.2), run_time=0.7)
             vo.wait_until("that is not yours")
             self.play(FadeIn(bar7), Create(red7), run_time=0.6)
@@ -252,6 +265,7 @@ class NetworkAndShell(VoiceScene):
             gone2 = VGroup(panel, bar7, red7, ed, yt2)
             self.play(FadeOut(gone2), track(tr, 2), run_time=0.6)
             self.remove(gone2)
+            resize(self, t, 3)                               # back to the strip the map sits above
             self.play(FadeIn(m), run_time=0.7)
             vo.wait_until("Now the README's command")
             ln_sh = type_cmd(self, t, sh.cmd, type_time=0.6)
@@ -304,7 +318,7 @@ class NetworkAndShell(VoiceScene):
             bare_prompt(self, t)
 
         # ========================================================== 4. B2 · extra: inside the container
-        ls_ = sh.at((44, 47))
+        ls_ = sh.at("…", 47)            # the key file's row only: the command stays on screen with it
         echo_out = sh.at(49)
         assert echo_out == ["/secrets/llm-service-account.json your-gcp-project"], echo_out
         c15 = code(COMPOSE, 13, 15, font_size=20, dedent=True).move_to([0, 1.1, 0])
@@ -373,14 +387,22 @@ class NetworkAndShell(VoiceScene):
                 vo.wait_until(anchor)
                 self.play(FadeIn(note_card.body[i], shift=RIGHT * 0.2), run_time=0.6)
                 if i == 1:
-                    vo.wait_until("It is there so the folder listings")
+                    vo.wait_until("an obviously invalid stand-in")
+                    ul = Underline(note_card.body[1], color=S.GREY, buff=0.06, stroke_width=3)
+                    self.play(Create(ul), run_time=0.6)
+                    vo.wait_until("so the folder listings match")
                     self.play(Indicate(note_card.body[1], color=INK, scale_factor=1.04), run_time=0.8)
+                if i == 2:
+                    self.play(FadeOut(ul), run_time=0.4)
+                    self.remove(ul)
             vo.wait_until("So from here on")
             self.play(FadeIn(ch, shift=UP * 0.2), run_time=0.7)
             vo.wait_until("fails exactly the way a missing key fails")
             self.play(FadeIn(dce, target_position=note_card.body[1].get_center(), scale=0.7), run_time=0.9)
             self.play(Create(down), Transform(ch.slots[0], red0), Create(x0), run_time=0.6)
             self.play(FadeIn(dce_note, shift=LEFT * 0.15), run_time=0.5)
+            vo.wait_until("It is the most common mistake")
+            self.play(Wiggle(VGroup(ch.slots[0], x0), scale_value=1.12, rotation_angle=0.03 * TAU), run_time=0.9)
             vo.wait_until("so learn it on sight")
             flash_tag(self, dce, ERR)
             vo.wait_until("Every success you should expect")

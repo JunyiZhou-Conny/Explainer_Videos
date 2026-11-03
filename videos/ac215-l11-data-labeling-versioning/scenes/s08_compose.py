@@ -274,10 +274,17 @@ class ComposeAndClean(VoiceScene):
             istep(self, t, c54.line(125), type_time=1.2)
             up, rest = c54.line(126).split("app@", 1)
             p_cli = t.prompt
+            n = len(up)
+            colors = {"[0:%d]" % n: OUTPUT}
+            for k, c in t._prompt_colors(p_cli).items():          # the prompt keeps its colours after the JSON
+                x, y = k[1:-1].split(":")
+                colors["[%d:%d]" % (int(x) + n, int(y) + n)] = c
             t.set_prompt(up + "app@" + rest.split(" ", 1)[0])
-            ln126 = type_cmd(self, t, rest.split(" ", 1)[1], type_time=1.0)
-            first = ln126.rows[0] if hasattr(ln126, "rows") else ln126
-            glyph_range(first, 0, len(up)).set_color(OUTPUT)
+            t._prompt_colors = lambda _p: colors
+            try:
+                type_cmd(self, t, rest.split(" ", 1)[1], type_time=1.0)
+            finally:
+                del t._prompt_colors
             t.set_prompt(p_cli)
             vo.wait_until("project 1 is back")
             r127 = out(self, t, [c54.line(127), c54.line(128), (c54.line(129), PASS), c54.line(130)], wrap=True,
@@ -292,13 +299,13 @@ class ComposeAndClean(VoiceScene):
         tr_f = tracker("F", 1, extra=True)
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(xt3, same)), run_time=0.3)
-            self.remove(xt3, same)
+            self.play(FadeOut(xt3), run_time=0.3)
+            self.remove(xt3)
             tr = swap_tracker(self, tr, tr_f)
             istep(self, t, c54.line(131), type_time=0.3)
             out(self, t, c54.at(132), run_time=0.3)
             t.set_prompt(P_LABELING)
-            gone = VGroup(sm.cli, bl, od)
+            gone = VGroup(sm.cli, bl, od, same)
             xt4 = on_bar(t, extra_row())
             self.play(FadeOut(gone, shift=RIGHT * 0.3), FadeIn(xt4), run_time=0.5)
             drop(self, gone)

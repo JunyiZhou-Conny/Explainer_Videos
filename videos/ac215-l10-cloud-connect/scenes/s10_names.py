@@ -10,13 +10,15 @@ Beats (script.md, ## S10; one voiceover block each):
 1. The running map (AppMap.at("S10"), lifted 0.12 so a 4-row 20 pt strip fits under it). Each TEAL
    house grows its own loop 'localhost'; then a phone book under each street: llm-rag-network lists
    llm-rag-chromadb, cheese-app-network lists llm-rag-analysis-api-service. The strip (second
-   terminal, P_API) types `docker network inspect cheese-app-network` (extra, bar) → TERM(40: 30–37;
+   terminal, P_API) types `docker network inspect cheese-app-network` (extra, bar; typed a sentence
+   early and held 1 s after "This extra inspect shows") → TERM(40: 30–37;
    lines 31 and 33 cut with the house '…'), line 35's address ringed YELLOW, caption on the bar 'the
    API's IP address on its street · yours will differ'. The browser looks around; a GREY dashed
    book with '?' beside it.
-2. The house loops but the API's leave. `docker exec … llm-rag-chromadb:8000 …` (laptop/41's
-   command, soft-wrapped: its spaces are inside quotes) → TERM(41: 47; wrap) RED, 'Name or service
-   not known' ringed RED. On the map a PINK magnifier from the API house searches its street's
+2. The house loops but the API's leave, and so do Google and the public street: the laptop rises
+   0.62 and the strip grows to 6 rows (a probe is 4 rows, 41's error 2: the prompt row stays on
+   screen). `docker exec … llm-rag-chromadb:8000 …` (laptop/41's command in whole-token rows, see
+   exec_type) → TERM(41: 47; wrap) RED, 'Name or service not known' ringed RED. On the map a PINK magnifier from the API house searches its street's
    phone book: a RED cross.
 3. The API house pulses with a YELLOW '?'. PONDER (8 s), card over the left of the map.
 4. `docker network connect cheese-app-network llm-rag-chromadb` → TERM(42: no output). On the map
@@ -40,7 +42,7 @@ from explainer.components import ponder_card
 from common import (CONTAINERS, ERR, IMAGE, INK, NARRATION, P_API, PASS, ROUTE, SAY_COUNT, T_SECOND, TURN,
                     AppMap, TwoArrows, bare_prompt, capture, check_mark, code, code_span, cut,
                     erratum_tag, extra_row, extra_tag, flash_tag, label, line_bar, lref, magnifier, mono,
-                    note, on_bar, out, readme, readme_card, ring, substring, term, type_cmd, under)
+                    note, on_bar, out, readme, readme_card, resize, ring, substring, term, type_cmd, under)
 from explainer.devops import cross_mark
 from explainer import style as S
 
@@ -50,14 +52,22 @@ PONDER_3 = ("You want the API itself to query Chroma.\nWhat URL does it use, and
 
 
 # ------------------------------------------------------------------ local helpers
-def soft_type(scene, t, cmd: str, type_time: float | None = None):
-    """Type a command whose spaces are all inside quotes (laptop/41, 43, 44): it soft-wraps at the
-    terminal's edge, as a terminal shows a long typed line; the rows join back to exactly the
-    prompt and the command (S05/S09's helper)."""
-    full = t.prompt + " " + cmd
-    n = t.max_chars
-    rows = [full[i:i + n] for i in range(0, len(full), n)]
-    assert "".join(rows) == full and all(len(r) <= n for r in rows)
+EXEC = "docker exec llm-rag-analysis-api-service "
+
+
+def exec_type(scene, t, cmd: str, type_time: float | None = None):
+    """Type a `docker exec … python -c "…"` probe (laptop/41, 43, 44) in four whole-token rows:
+    `docker exec \\` and `llm-rag-analysis-api-service \\` fold at the spaces outside the quotes
+    (the container name stays whole); the quoted program breaks once, right after `urlopen(`, where a
+    newline, a space or nothing all give the same Python. QA 18:27: soft-wrapping split the container
+    name (`llm-rag-analysis|-api-service`) and `urlo|pen`."""
+    assert cmd.startswith(EXEC + 'python -c "'), cmd
+    prog = cmd[len(EXEC):]
+    k = prog.index("urlopen(") + len("urlopen(")
+    p = t.prompt + " "
+    rows = [p + "docker exec \\", "    " + EXEC.split()[2] + " \\", "    " + prog[:k], "    " + prog[k:]]
+    assert rows[0][len(p):-2] + " " + rows[1][4:-2] + " " + rows[2][4:] + rows[3][4:] == cmd
+    assert all(len(r) <= t.max_chars for r in rows), [len(r) for r in rows]
     assert len(rows) <= t.rows, (len(rows), t.rows)
     t.fold = lambda text, first_prefix=0: list(rows)
     try:
@@ -167,9 +177,12 @@ class TwoAddresses(VoiceScene):
             self.play(FadeIn(pb_api, shift=DOWN * 0.15), run_time=0.6)
             vo.wait_until("IP addresses change")
             self.play(each_flash([pb_rag.rows[0], pb_api.rows[0]], INK), run_time=1.0)
-            vo.wait_until("This extra inspect shows")
+            # QA 18:09: the command is typed a sentence early and held, so it can be read before
+            # the output scrolls it away
             self.play(FadeIn(t, shift=UP * 0.2), FadeIn(xb), run_time=0.5)
-            type_cmd(self, t, c40.cmd, type_time=0.6)
+            type_cmd(self, t, c40.cmd, type_time=0.8)
+            vo.wait_until("This extra inspect shows")
+            self.wait(1.0)
             out(self, t, rows40, run_time=1.2, chunk=4)
             r35 = t.find('"IPv4Address": "172.19.0.2/16"')
             g35 = ring(substring(r35, "172.19.0.2/16"), TURN, buff=0.05)
@@ -191,14 +204,27 @@ class TwoAddresses(VoiceScene):
 
         # ========================================================== 2. the proof: a name off the street
         c41, c43, c44 = capture("41"), capture("43"), capture("44")
-        lens = magnifier(0.2).move_to(m.houses["api"].body.get_center())
-        spot = np.array([pb_api.get_right()[0] - 0.5, pb_api.head.get_center()[1], 0])   # the head row's free end
-        x41 = cross_mark(0.3, ERR).move_to(spot)
 
         with self.voiceover(SAY[2]) as vo:
-            drop(self, g35, cap1, slot, own, loops["chroma"], loops["loader"], loops["frontend"], run_time=0.5)
+            # QA 18:27: a probe takes 4 rows and 41's error 2, so the strip grows to 6 rows (the
+            # prompt row stays on screen under the error). Room for it: Google and the public street
+            # (not part of this demo) leave, and the laptop rises 0.62 to just under the frame's top.
+            gone1 = VGroup(g35, cap1, slot, own, loops["chroma"], loops["loader"], loops["frontend"])
+            gp = [m.google, m.public]
+            if m in self.mobjects:
+                m.remove(*gp)
+                self.add(*gp)
+            # by id over whole families: room() has split the terminal into its parts on the scene
+            keep = {id(x) for g in (t, xb, ref, *gp, gone1) for x in g.get_family()}
+            lift = [x for x in self.mobjects if id(x) not in keep]
+            resize(self, t, 6, extra=[FadeOut(gone1), FadeOut(VGroup(*gp)), xb.animate.shift(UP * 2 * t.pitch),
+                                      *[x.animate.shift(UP * 0.62) for x in lift]], run_time=0.8)
+            self.remove(gone1, *gone1, *gp)
+            lens = magnifier(0.2).move_to(m.houses["api"].body.get_center())
+            spot = np.array([pb_api.get_right()[0] - 0.5, pb_api.head.get_center()[1], 0])   # head row's free end
+            x41 = cross_mark(0.3, ERR).move_to(spot)
             vo.wait_until("From inside the API container")
-            soft_type(self, t, c41.cmd, type_time=1.0)
+            exec_type(self, t, c41.cmd, type_time=1.0)
             self.play(Indicate(m.houses["api"].text, color=INK, scale_factor=1.2), run_time=0.5)
             vo.wait_until("The answer: name or service")
             out(self, t, [(s, ERR) for s in [c41.line(47)]], wrap=True, run_time=0.4)
@@ -256,7 +282,7 @@ class TwoAddresses(VoiceScene):
             self.play(Transform(pb_api[0], pb_both[0]),
                       FadeIn(pb_both.rows[1], shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("and the same name answers")
-            soft_type(self, t, c43.cmd, type_time=0.8)
+            exec_type(self, t, c43.cmd, type_time=0.8)
             r43 = out(self, t, [(c43.line(2), PASS)], run_time=0.3)[0]
             g43 = ring(r43.glyphs, PASS, buff=0.06)
             self.play(Create(g43), Create(ok43), run_time=0.5)
@@ -270,7 +296,7 @@ class TwoAddresses(VoiceScene):
             self.remove(dot)
             vo.wait_until("And localhost 8000, from inside the API?")
             drop(self, g43, run_time=0.2)
-            soft_type(self, t, c44.cmd, type_time=0.8)
+            exec_type(self, t, c44.cmd, type_time=0.8)
             vo.wait_until("Connection refused.")
             out(self, t, [(c44.line(45), ERR)], run_time=0.3)
             hit = t.find("Connection refused")

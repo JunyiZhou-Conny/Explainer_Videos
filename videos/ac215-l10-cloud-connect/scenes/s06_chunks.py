@@ -7,7 +7,8 @@ Beats (script.md, ## S06; one voiceover block each):
    container id in the prompt is ringed ('new every run'). TERM(24: 14–17, …, 43–44; the long
    'Processing file' row soft-wraps); line 15 and lines 43–44 get YELLOW bars.
 1. The GOLD beat: `this bills your project` row tag on the command line; --embed flashes GOLD; a
-   GOLD meter ticks; slide 13's warning as one GOLD line; `Lecture 10 · slides 13` top right.
+   GOLD meter ticks; a GOLD '≈ 7 M characters embedded · both runs · our estimate' line (digest §2)
+   on 'about 7 million', then slide 13's warning as one GOLD line; `Lecture 10 · slides 13` top right.
 2. TERM(24: 115–117, …, 125, …, 165–166, …, 185; wrap): line 166 YELLOW ('Authorization' flashes,
    the Bearer part underlined BLUE), line 185 RED. The terminal shrinks to a 3-row strip under the
    V1 teaser (AuthChain(teaser=True): GREEN key slot, four hollow slots) with a GREEN '/secrets/ ·
@@ -15,7 +16,8 @@ Beats (script.md, ## S06; one voiceover block each):
    circumscribed on 'The next scene builds that chain'.
 3. A GREY card `recorded · cli.py prints (231, 236, 278, 285, 160–161) + README.md:98–105`, the
    success checkpoints in the code's own words (a literal N, no counts); README.md line 94 as a
-   card with the GOLD cost tag and, on 'Pause and run it', `▶ your turn`.
+   card with the GOLD cost tag and, on 'Pause and run it', `▶ your turn` plus a GREY chip
+   '403 · API disabled → see IAM scene' (whole-video QA: S08 has the enable command).
 4. TRACKER B4: straight cut to laptop/25's prompt `app@ae87a706e772:/app$` under the GREY chip 'our
    capture: a fresh container for each command · stay in yours'; README.md line 95 typed (folds) →
    TERM(25: 14–17, …, 185; wrap), line 17 YELLOW, 185 RED, the GOLD row tag again, `▶ your turn`.
@@ -177,7 +179,9 @@ class ChunksNeedAKey(VoiceScene):
         bill = beside(cost_row(), ln)
         m_ = meter(0.7)
         warn = label("an unprotected AI endpoint invites runaway bills", 22, COST)
-        gold = VGroup(m_, warn).arrange(RIGHT, buff=0.3)
+        est = label("≈ 7 M characters embedded · both runs · our estimate", 22, COST)
+        words = VGroup(est, warn).arrange(DOWN, aligned_edge=LEFT, buff=0.16)
+        gold = VGroup(m_, words).arrange(RIGHT, buff=0.3)
         gold.move_to([-6.4 + gold.width / 2, 2.2, 0])
 
         with self.voiceover(SAY[1]) as vo:
@@ -190,7 +194,7 @@ class ChunksNeedAKey(VoiceScene):
             self.play(FadeIn(m_, shift=UP * 0.1), run_time=0.5)
             self.play(meter_tick(m_, -0.7), run_time=0.8)
             vo.wait_until("about 7 million characters")
-            self.play(meter_tick(m_, -0.6), run_time=0.8)
+            self.play(meter_tick(m_, -0.6), FadeIn(est, shift=RIGHT * 0.2), run_time=0.8)
             vo.wait_until("by our estimate")
             self.play(FadeIn(warn, shift=RIGHT * 0.2), run_time=0.6)
             vo.wait_until("That bills your project")
@@ -254,6 +258,7 @@ class ChunksNeedAKey(VoiceScene):
         c94 = readme_card(94, mono(readme(94), 22, INK)).move_to([0, -2.75, 0])
         bill3 = cost_tag().next_to(c94, UP, buff=0.18).align_to(c94, LEFT)
         yt3 = your_turn().next_to(bill3, RIGHT, buff=0.3)
+        api403 = grey_chip("403 · API disabled → see IAM scene").next_to(yt3, RIGHT, buff=0.3)
 
         with self.voiceover(SAY[3]) as vo:
             clear_but(self, tr)
@@ -271,6 +276,7 @@ class ChunksNeedAKey(VoiceScene):
             vo.wait_until("Pause and run it")
             self.play(FadeIn(yt3, shift=LEFT * 0.15), run_time=0.4)
             flash_tag(self, yt3, TURN)
+            self.play(FadeIn(api403, shift=LEFT * 0.15), run_time=0.4)   # QA: forward pointer to S08
 
         # ========================================================== 4. recursive split, exit, an extra count
         p25, cmd25 = cap25.istep(12)

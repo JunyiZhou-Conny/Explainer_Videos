@@ -29,16 +29,19 @@ Beats (script.md, ## S11; one voiceover block each):
 5. The honest beat: CODE(api-service/docker-entrypoint.sh: 6–9; 7 and 8 cut after `--host 0.0.0.0`),
    'listen: every side of the container'; the TEAL API house with its loop and street-side door: a
    PINK packet arrives at the door, the ear on the loop alone stays deaf, it widens to every side and
-   the packet is heard. Right: the 54 cell, 'publish: every side of the laptop'. Then the map
+   the packet is heard. Right: the API's own cell from 39 (`0.0.0.0:9000->9000/tcp`; QA: the 54 cell is
+   the frontend's, which misled), 'publish: every side of the laptop'. Then the map
    (AppMap.at("S11"); the frontend lights and door 3200 opens: S12's starting state) with the Wi-Fi
    street and reach lines; a GREY neighbour walks up to door 9000; `-p 127.0.0.1:9000:9000` bricks
-   up its Wi-Fi side; GREY caption 'port_toy (L04) wrote 127.0.0.1:'. Fade to an empty frame.
+   up its Wi-Fi side; GREY caption 'port_toy (L04) wrote 127.0.0.1:' left of the chip. Fade out.
 
 Deviations: 54's row is shown as its PORTS and NAMES columns only (`cols(…, ["PORTS", "NAMES"])`):
 IMAGE + PORTS + NAMES is 103 characters (IMAGE equals NAMES here); 51:31–33 are cut with '…' rather
 than wrapped so 26/27 stay on screen with 36. The map's Wi-Fi reach line under door 9000 crosses
 the floor label 'localhost · 127.0.0.1': the scene draws its own reach segments around the label.
 """
+
+import re
 
 from manim import *  # noqa: I001  (manim first, then common: common must win)
 
@@ -249,22 +252,24 @@ class FrontendPorts(VoiceScene):
             self.play(Create(g28), FadeIn(tm1, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("plus deprecation warnings")
             self.play(each([t.find("rimraf@3.0.2"), t.find("glob@7.2.3")], INK, scale=1.05), run_time=0.8)
+            drop(self, g28, tm1)                       # the echo's stage is set before its sentence
+            resize(self, t, 3, run_time=0.5)
+            self.play(FadeIn(echo.host), FadeIn(echo.cont), Create(echo.tube[:2]), FadeIn(echo.tube[2]),
+                      run_time=0.6)
             vo.wait_until("They land in your folder")
-            drop(self, g28, tm1)
-            resize(self, t, 3, run_time=0.6)
-            self.play(FadeIn(echo.host), FadeIn(echo.cont), run_time=0.5)
-            self.play(Create(echo.tube[:2]), FadeIn(echo.tube[2]), run_time=0.6)
             self.play(FadeIn(echo.nm_c, shift=DOWN * 0.15), run_time=0.4)
             dot = Dot(echo.core.get_end(), radius=0.09, color=INK)
             self.play(FadeIn(dot, scale=0.5), run_time=0.2)
             self.play(MoveAlongPath(dot, Line(echo.core.get_end(), echo.core.get_start())), run_time=0.7)
             self.play(FadeOut(dot), FadeIn(echo.nm_h, shift=DOWN * 0.15), run_time=0.4)
+            self.wait(0.8)                             # the result is held
             vo.wait_until("so our capture could step out")
+            self.play(FadeOut(VGroup(echo, echo.nm_c, echo.nm_h)), run_time=0.4)
+            self.remove(echo, echo.nm_c, echo.nm_h)
             wipe(self, t)
             t.set_prompt(p51)
             bare_prompt(self, t)
-            self.play(FadeOut(VGroup(echo, echo.nm_c, echo.nm_h)), FadeIn(fresh, shift=DOWN * 0.2), run_time=0.6)
-            self.remove(echo, echo.nm_c, echo.nm_h)
+            self.play(FadeIn(fresh, shift=DOWN * 0.2), run_time=0.5)
             self.play(Indicate(fresh.body[2], color=INK, scale_factor=1.05), run_time=0.8)
             vo.wait_until("Then npm run dev")
             self.play(track(tr, 3), run_time=0.4)
@@ -302,7 +307,7 @@ class FrontendPorts(VoiceScene):
         br.move_to([-1.2, -0.75, 0])
         bars = page_skeleton(br)
         ill = illustration_tag().next_to(br.window, UP, buff=0.12).align_to(br.window, RIGHT)
-        rc = readme_card(177, readme(177), size=SIZE)
+        rc = readme_card(177, re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", readme(177)), size=SIZE)   # as S13
         rc.move_to([-6.3 + rc.width / 2, 2.15, 0])
         yt3 = your_turn().next_to(rc, RIGHT, buff=0.3)
         quote = readme(180).lstrip("> ").strip()
@@ -374,8 +379,9 @@ class FrontendPorts(VoiceScene):
             vo.wait_until("One server, two addresses")
             self.play(FadeIn(a_out, shift=UP * 0.1), FadeIn(a_in, shift=UP * 0.1), run_time=0.6)
             self.play(each([a_out, a_in], INK, scale=1.12, lag=0.4), run_time=0.9)
+            self.play(FadeIn(strip, shift=UP * 0.2), run_time=0.5)      # the strip waits for its sentence
             vo.wait_until("An extra docker ps")
-            self.play(FadeIn(strip, shift=UP * 0.2), track(tr, extra=True), run_time=0.5)
+            self.play(track(tr, extra=True), run_time=0.3)
             lp = type_cmd(self, strip, c54.cmd, type_time=0.4)
             beside(xt3, lp)
             pin(self, lp, xt3)
@@ -383,6 +389,7 @@ class FrontendPorts(VoiceScene):
             cell = substring(strip.find("0.0.0.0:3200->3000/tcp"), "0.0.0.0:3200->3000/tcp")
             g_cell = ring(cell, TURN, buff=0.05)
             self.play(Create(g_cell), Indicate(pd.door.text, color=TURN, scale_factor=1.15), run_time=0.7)
+            self.wait(1.5)                                              # the ringed door is held
 
         # ========================================================== 4. the number line
         pl = PortLine().move_to([0, 0.1, 0])
@@ -414,8 +421,8 @@ class FrontendPorts(VoiceScene):
         ear_t2 = label("listens: 0.0.0.0", SIZE, IMAGE).move_to(ear_t1)
         tun_a = ah.door.get_right() + np.array([2.0, -0.05, 0])
         tun = route(tun_a, ah.door.get_right() + RIGHT * 0.06)
-        cell_txt = "0.0.0.0:3200->3000/tcp"
-        assert cell_txt in c54.line(3)
+        cell_txt = "0.0.0.0:9000->9000/tcp"            # the API's own row (39), not the frontend's (54)
+        assert cell_txt in capture("39").line(3) and "api-service" in capture("39").line(3)
         pub = chip(cell_txt, S.GREY, size=22, font=MONO).move_to([3.7, -0.9, 0])
         cap_pub = note("publish: every side of the laptop", LAPTOP, SIZE).next_to(pub, DOWN, buff=0.2)
         m = AppMap.at("S11")
@@ -428,7 +435,7 @@ class FrontendPorts(VoiceScene):
         r9 = reach["9000"]
         prefix = chip("-p 127.0.0.1:9000:9000", S.GREY, size=22, font=MONO)
         toy = note("port_toy (L04) wrote 127.0.0.1:", S.GREY, SIZE)
-        VGroup(prefix, toy).arrange(RIGHT, buff=0.5).move_to([-1.0, -3.15, 0])
+        VGroup(toy, prefix).arrange(RIGHT, buff=0.3).move_to([-1.0, -3.15, 0])
         wall = bricks(0.42, 0.34).move_to([x9, wf[0].get_center()[1], 0])     # on the Wi-Fi side only
 
         with self.voiceover(SAY[5]) as vo:
