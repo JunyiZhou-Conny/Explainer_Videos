@@ -47,10 +47,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l09-ci-testing.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 30:00 (1800.4 s). Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l09-ci-testing.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 30:22 (1822.4 s). Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l09-ci-testing.mp4` | the same video without burned-in subtitles (1920×1080 at 60 fps, h264/AAC 48 kHz stereo, −16.1 LUFS integrated); load any `.srt` below in your player. Not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l09-ci-testing_part1.mp4` | part 1, 17:56: pytest, black & flake8, and the pre-commit gate (S01–S09). Not in Git: rebuilt with `--no-render` |
-| `output/ac215-l09-ci-testing_part2.mp4` | part 2, 12:04: one command, green-but-wrong, and property tests (S10–S15). Not in Git: rebuilt with `--no-render` |
+| `output/ac215-l09-ci-testing_part1.mp4` | part 1, 18:11 (1091.5 s): pytest, black & flake8, and the pre-commit gate (S01–S09). Not in Git: rebuilt with `--no-render` |
+| `output/ac215-l09-ci-testing_part2.mp4` | part 2, 12:11 (731.0 s): one command, green-but-wrong, and property tests (S10–S15). Not in Git: rebuilt with `--no-render` |
 | `output/ac215-l09-ci-testing.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l09-ci-testing.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l09-ci-testing.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -68,24 +68,24 @@ Git keeps the subtitles, the chapter files and the transcript; the MP4s are rele
 
 ## Chapters
 
-Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts).
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts). Part 1 (18:11) is chapters 00:00–15:34 below; part 2 (12:11) restarts at 00:00 with the guest lecture, its chapters at 00:00, 02:07, 04:18, 06:34, 08:49, 10:36.
 
 ```
 00:00 Who gets to say no?
 01:24 The bug that almost shipped
 02:55 Three kinds of test, and a gate
-04:50 Clone, and run the app
-06:40 Formatter vs linter
-09:07 pytest, under the hood
-10:58 Tests inside the shipping image
-13:10 The system test and the silent skip
-15:25 The gate on your machine
-17:56 Guest lecture: uv, just, and two failing tests
-20:04 One command is the gate
-22:13 All green, and the mask is wrong
-24:27 Properties, not examples
-26:39 Hooks are local; CI checks again
-28:25 Tear down, recap, and what's next
+04:51 Clone, and run the app
+06:43 Formatter vs linter
+09:12 pytest, under the hood
+11:03 Tests inside the shipping image
+13:18 The system test and the silent skip
+15:34 The gate on your machine
+18:11 Guest lecture: uv, just, and two failing tests
+20:18 One command is the gate
+22:30 All green, and the mask is wrong
+24:46 Properties, not examples
+27:01 Hooks are local; CI checks again
+28:47 Tear down, recap, and what's next
 ```
 
 ## What you'll learn
