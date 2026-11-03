@@ -1,0 +1,3 @@
+$ git switch --detach step-00
+HEAD is now at ee96429 step-00: the project, with a command that has nothing to do yet
+[exit 0]

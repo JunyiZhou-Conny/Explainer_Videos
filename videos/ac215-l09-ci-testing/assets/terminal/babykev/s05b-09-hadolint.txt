@@ -1,0 +1,3 @@
+$ uv run hadolint Dockerfile
+Dockerfile:69 DL3059 info: Multiple consecutive `RUN` instructions. Consider consolidation.
+[exit 1]

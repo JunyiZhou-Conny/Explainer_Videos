@@ -1,0 +1,62 @@
+$ docker build -t cheese-app-api:local .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.25kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.11-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/11] FROM docker.io/library/python:3.11-slim-bookworm@sha256:01f91ffadd9a08f0159de679c4551a0a5ed92a1b8e70dd1870dc8c6fd38ec105
+#4 resolve docker.io/library/python:3.11-slim-bookworm@sha256:01f91ffadd9a08f0159de679c4551a0a5ed92a1b8e70dd1870dc8c6fd38ec105 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 655B done
+#5 DONE 0.0s
+
+#6 [ 7/11] COPY --chown=app:app src/api-service/api/ ./api/
+#6 CACHED
+
+#7 [ 4/11] WORKDIR /app
+#7 CACHED
+
+#8 [ 5/11] COPY --chown=app:app pyproject.toml ./
+#8 CACHED
+
+#9 [ 3/11] RUN useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     chown app:app /app
+#9 CACHED
+
+#10 [10/11] COPY --chown=app:app docker-entrypoint.sh ./
+#10 CACHED
+
+#11 [ 2/11] RUN set -ex;     apt-get update &&     apt-get upgrade -y &&     apt-get install -y --no-install-recommends         build-essential         curl &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     pip install --no-cache-dir --upgrade pip
+#11 CACHED
+
+#12 [ 6/11] RUN pip install --no-cache-dir --user .
+#12 CACHED
+
+#13 [ 9/11] COPY --chown=app:app pytest.ini ./
+#13 CACHED
+
+#14 [ 8/11] COPY --chown=app:app tests/ ./tests/
+#14 CACHED
+
+#15 [11/11] RUN chmod +x docker-entrypoint.sh
+#15 CACHED
+
+#16 exporting to image
+#16 exporting layers done
+#16 exporting manifest sha256:f7464e575f750cc35da1b112ff03628b0a49926849a2029aabf01d85b6b9f253 done
+#16 exporting config sha256:f6d59621f78d26f114fd18be5a9ac679faa50d93fda1d77188526acd635a9c6a done
+#16 exporting attestation manifest sha256:64130dff3b03c91c0271397508d1087b38ea073fde249ba8eb7bac3cd34801f4 done
+#16 exporting manifest list sha256:75a6d62f85d33a798b20712533262338e69a44fb40a43e3d9c2cf50adaaa1134 done
+#16 naming to docker.io/library/cheese-app-api:local done
+#16 unpacking to docker.io/library/cheese-app-api:local done
+#16 DONE 0.1s
+[exit 0]

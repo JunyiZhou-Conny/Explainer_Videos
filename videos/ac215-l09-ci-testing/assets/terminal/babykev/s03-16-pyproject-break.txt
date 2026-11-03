@@ -1,0 +1,2 @@
+$ sed -i 's/^requires-python = /requires_python = /' pyproject.toml
+[exit 0]

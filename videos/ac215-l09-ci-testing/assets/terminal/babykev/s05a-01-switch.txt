@@ -1,0 +1,4 @@
+$ git switch --detach step-05a
+Previous HEAD position was 46cf862 step-05: the model, model.py, with its tests and a smoke run on this machine
+HEAD is now at c954af4 step-05a: the tests that see the mask, the fix, ty in the gate, the model explained
+[exit 0]

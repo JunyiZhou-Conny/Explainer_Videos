@@ -1,0 +1,7 @@
+$ date -u '+%Y-%m-%d %H:%M UTC'; uname -sm; head -2 /etc/os-release; git --version
+2026-10-19 21:42 UTC
+Linux x86_64
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+git version 2.39.5
+[exit 0]

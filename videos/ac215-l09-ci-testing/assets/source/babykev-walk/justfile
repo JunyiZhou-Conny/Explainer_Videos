@@ -1,0 +1,63 @@
+# The walk through babykev: replay the class with timewalk. Run `just` to see the list.
+#
+# This file names the project and the upstream owner here. `just setup` clones the project into repo/, and
+# timewalk puts its replay copy in worktree/. Both folders are in .gitignore.
+
+project := "babykev"
+upstream := "rahuldave"
+# timewalk is not pinned: each run fetches the newest. TIMEWALK names another source, a working copy say
+timewalk := env("TIMEWALK", "git+https://github.com/rahuldave/timewalk")
+
+[private]
+default:
+    @just --list --unsorted
+
+# Open the walk: the page with the steps, the files, the terminals and the notes. Prints the address to open
+present *args: setup
+    #!/usr/bin/env bash
+    set -euo pipefail
+    slides=()
+    if [ -f slides/slides.toml ]; then slides=(--slides slides/slides.toml); fi
+    uvx --refresh-package timewalk --from "{{ timewalk }}" timewalk repo --replay worktree --notes walk.md ${slides[@]+"${slides[@]}"} --discard-edits {{ args }}
+
+# Clone the project into repo/: your own fork if you have one, or else the upstream. Then fetch the tags of the steps
+setup url="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export GIT_TERMINAL_PROMPT=0
+    upstream_url="https://github.com/{{ upstream }}/{{ project }}.git"
+    if [ ! -d repo/.git ]; then
+        url="{{ url }}"
+        if [ -z "$url" ]; then
+            url="$upstream_url"
+            owner="$(git remote get-url origin 2>/dev/null | sed -nE 's#.*github\.com[:/]([^/]+)/.*#\1#p')"
+            mine="https://github.com/$owner/{{ project }}.git"
+            if [ -n "$owner" ] && [ "$owner" != "{{ upstream }}" ] && git ls-remote --exit-code "$mine" HEAD >/dev/null 2>&1; then
+                url="$mine"
+            fi
+        fi
+        echo "setup: cloning $url into repo/"
+        git clone --quiet "$url" repo
+    fi
+    if ! git -C repo remote get-url upstream >/dev/null 2>&1; then
+        git -C repo remote add upstream "$upstream_url"
+    fi
+    git -C repo fetch --quiet --tags --force upstream
+    echo "setup: repo/ is $(git -C repo remote get-url origin), with $(git -C repo tag -l 'step-*' | wc -l | tr -d ' ') steps from {{ upstream }}/{{ project }}"
+    # The project's `just docs` needs Quarto 1.4 or newer: an older one fails on its sidebar
+    if command -v quarto >/dev/null 2>&1; then
+        have="$(quarto --version)"
+        if [ "$(printf '%s\n' 1.4 "$have" | sort -V | head -1)" != 1.4 ]; then
+            echo "setup: Quarto $have is older than 1.4, and just docs needs 1.4 or newer: https://quarto.org/docs/get-started/"
+        fi
+    else
+        echo "setup: Quarto is not on this machine; just docs needs it: https://quarto.org/docs/get-started/"
+    fi
+
+# Make build/walk.pdf: the slides, one page each. The notes are for the step browser, `just present`, and are not in it
+pdf:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    test -f slides/slides.toml || { echo "pdf: this walk has no slides; the notes are for the step browser: just present" >&2; exit 1; }
+    mkdir -p build
+    uvx --refresh-package timewalk --from "{{ timewalk }}" timewalk-pdf slides/slides.toml --notes walk.md --title "{{ project }}" -o build/walk.pdf

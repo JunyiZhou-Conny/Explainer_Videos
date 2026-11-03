@@ -1,0 +1,4 @@
+$ just types
+uv run ty check "$@"
+All checks passed!
+[exit 0]

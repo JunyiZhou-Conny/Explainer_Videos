@@ -1,0 +1,8 @@
+b8458ff demo class 1
+c3b227f demo class 1
+1a5e363 update ci.yml - add slack
+199abd9 update ci.yml
+3dea317 update readme
+8eb63fc fixed the a problem
+c2dce32 readd messy code v2 - with wrong variable
+91eb786 readd  messy code

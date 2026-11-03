@@ -1,0 +1,5 @@
+$ uv run yamllint --strict .
+./.pre-commit-config.yaml
+  10:15     error    syntax error: mapping values are not allowed here (syntax)
+
+[exit 1]

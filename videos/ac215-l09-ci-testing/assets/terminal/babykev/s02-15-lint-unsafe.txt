@@ -1,0 +1,361 @@
+$ just lint --fix --unsafe-fixes
+uv run ruff check "$@"
+D104 Missing docstring in public package
+--> src/babykev/__init__.py:1:1
+
+E501 Line too long (103 > 100)
+ --> src/babykev/api.py:5:101
+  |
+3 | Noul   -> 2 options [false, true];            answer = p(true)
+4 | Choice -> options 'name' or 'name: desc';      answer = argmax, probabilities by name, confidence
+5 | Score  -> options = ordered level descriptions; answer = expected level, legend, probabilities by index
+  |                                                                                                     ^^^
+6 | """
+  |
+
+UP007 Use `X | Y` for type annotations
+  --> src/babykev/api.py:12:15
+   |
+10 | from pydantic import BaseModel, Field, model_validator
+11 |
+12 | JSONContent = Union[str, dict, list, int, float, bool, None]
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+13 | MAX_OPTIONS = 255
+   |
+help: Convert to `X | Y`
+
+D101 Missing docstring in public class
+  --> src/babykev/api.py:16:7
+   |
+16 | class Noul(BaseModel):
+   |       ^^^^
+17 |     type: Literal["noul"]
+18 |     instructions: JSONContent
+   |
+
+D101 Missing docstring in public class
+  --> src/babykev/api.py:22:7
+   |
+22 | class Choice(BaseModel):
+   |       ^^^^^^
+23 |     type: Literal["choice"]
+24 |     instructions: JSONContent
+   |
+
+ANN202 Missing return type annotation for private function `_check`
+  --> src/babykev/api.py:28:9
+   |
+27 |     @model_validator(mode="after")
+28 |     def _check(self):
+   |         ^^^^^^
+29 |         if not 1 <= len(self.criteria) <= MAX_OPTIONS:
+30 |             raise ValueError(f"criteria must have 1..{MAX_OPTIONS} options")
+   |
+help: Add return type annotation
+
+D101 Missing docstring in public class
+  --> src/babykev/api.py:34:7
+   |
+34 | class Score(BaseModel):
+   |       ^^^^^
+35 |     type: Literal["score"]
+36 |     instructions: JSONContent
+   |
+
+UP007 Use `X | Y` for type annotations
+  --> src/babykev/api.py:40:12
+   |
+40 | Question = Union[Noul, Choice, Score]
+   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: Convert to `X | Y`
+
+D101 Missing docstring in public class
+  --> src/babykev/api.py:43:7
+   |
+43 | class SystemOneRequest(BaseModel):
+   |       ^^^^^^^^^^^^^^^^
+44 |     state: JSONContent
+45 |     questions: dict[str, Question] = Field(min_length=1)
+   |
+
+D103 Missing docstring in public function
+  --> src/babykev/api.py:65:5
+   |
+65 | def option_text(name: str, desc: JSONContent) -> str:
+   |     ^^^^^^^^^^^
+66 |     return name if desc is None or desc == "" else f"{name}: {render(desc)}"
+   |
+
+ANN201 Missing return type annotation for public function `to_record`
+  --> src/babykev/api.py:69:5
+   |
+69 | def to_record(req: SystemOneRequest):
+   |     ^^^^^^^^^
+70 |     """-> internal record for encode(), plus per-question metadata to map probabilities back."""
+71 |     qs, meta = [], []
+   |
+help: Add return type annotation
+
+D103 Missing docstring in public function
+  --> src/babykev/api.py:94:5
+   |
+94 | def choice_confidence(p: list[float]) -> float:
+   |     ^^^^^^^^^^^^^^^^^
+95 |     K = len(p)
+96 |     return 1.0 if K == 1 else (max(p) - 1 / K) / (1 - 1 / K)
+   |
+
+N806 Variable `K` in function should be lowercase
+  --> src/babykev/api.py:95:5
+   |
+94 | def choice_confidence(p: list[float]) -> float:
+95 |     K = len(p)
+   |     ^
+96 |     return 1.0 if K == 1 else (max(p) - 1 / K) / (1 - 1 / K)
+   |
+
+E501 Line too long (107 > 100)
+   --> src/babykev/api.py:100:101
+    |
+ 99 | def score_confidence(p: list[float]) -> float:
+100 |     """How closely a score's probabilities sit around the most likely level: 1 when certain, 0 for a guess.
+    |                                                                                                     ^^^^^^^
+101 |
+102 |     The expected distance from the most likely level, divided by the distance a guess would have: equal
+    |
+
+E501 Line too long (103 > 100)
+   --> src/babykev/api.py:102:101
+    |
+100 |     """How closely a score's probabilities sit around the most likely level: 1 when certain, 0 for a guess.
+101 |
+102 |     The expected distance from the most likely level, divided by the distance a guess would have: equal
+    |                                                                                                     ^^^
+103 |     probability on every level, measured from the middle of the scale.
+104 |     """
+    |
+
+N806 Variable `L` in function should be lowercase
+   --> src/babykev/api.py:105:5
+    |
+103 |     probability on every level, measured from the middle of the scale.
+104 |     """
+105 |     L = len(p)
+    |     ^
+106 |     if L == 1:
+107 |         return 1.0
+    |
+
+E501 Line too long (103 > 100)
+   --> src/babykev/api.py:115:101
+    |
+114 | def round_prob(x: float) -> float:
+115 |     """Round a number for output. Four decimals keep a rounded distribution's sum within 0.02 of 1 even
+    |                                                                                                     ^^^
+116 |     with MAX_OPTIONS options; two decimals did not: 77 equal options summed to 0.77."""
+117 |     return round(float(x), 4)
+    |
+
+D103 Missing docstring in public function
+   --> src/babykev/api.py:120:5
+    |
+120 | def to_answers(probs: list[list[float]], meta: list[dict]) -> dict[str, Any]:
+    |     ^^^^^^^^^^
+121 |     out = {}
+122 |     for p, m in zip(probs, meta, strict=False):
+    |
+
+E501 Line too long (105 > 100)
+ --> tests/unit/test_api.py:1:101
+  |
+1 | """Unit tests for the contract in `babykev.api`: validation, rendering, the mappings, the confidences."""
+  |                                                                                                     ^^^^^
+2 |
+3 | import json
+  |
+
+ANN201 Missing return type annotation for public function `cheese_request`
+  --> tests/unit/test_api.py:30:5
+   |
+30 | def cheese_request():
+   |     ^^^^^^^^^^^^^^
+31 |     """One request that asks a question of each type."""
+32 |     return SystemOneRequest.model_validate(
+   |
+help: Add return type annotation
+
+ANN001 Missing type annotation for function argument `line`
+  --> tests/unit/test_api.py:48:40
+   |
+47 | @pytest.mark.parametrize("line", SAMPLE_LINES)
+48 | def test_sample_line_fits_the_contract(line) -> None:
+   |                                        ^^^^
+49 |     """Every line of the sample data is a valid request and gives one record question per question."""
+50 |     request = SystemOneRequest.model_validate(line)
+   |
+
+E501 Line too long (102 > 100)
+  --> tests/unit/test_api.py:49:101
+   |
+47 | @pytest.mark.parametrize("line", SAMPLE_LINES)
+48 | def test_sample_line_fits_the_contract(line) -> None:
+49 |     """Every line of the sample data is a valid request and gives one record question per question."""
+   |                                                                                                     ^^
+50 |     request = SystemOneRequest.model_validate(line)
+51 |     record, meta = to_record(request)
+   |
+
+ANN001 Missing type annotation for function argument `line`
+  --> tests/unit/test_api.py:58:59
+   |
+57 | @pytest.mark.parametrize("line", SAMPLE_LINES)
+58 | def test_sample_line_has_a_usable_label_on_every_question(line) -> None:
+   |                                                           ^^^^
+59 |     """A label is a boolean for noul, one of the option names for choice, a level index for score."""
+60 |     for question in line["questions"].values():
+   |
+
+E501 Line too long (101 > 100)
+  --> tests/unit/test_api.py:59:101
+   |
+57 | @pytest.mark.parametrize("line", SAMPLE_LINES)
+58 | def test_sample_line_has_a_usable_label_on_every_question(line) -> None:
+59 |     """A label is a boolean for noul, one of the option names for choice, a level index for score."""
+   |                                                                                                     ^
+60 |     for question in line["questions"].values():
+61 |         label = question["label"]
+   |
+
+ANN001 Missing type annotation for function argument `value`
+   --> tests/unit/test_api.py:141:41
+    |
+139 |     ],
+140 | )
+141 | def test_render_flattens_json_into_text(value, text) -> None:
+    |                                         ^^^^^
+142 |     """Strings, numbers, lists and objects all become the text the model reads."""
+143 |     assert render(value) == text
+    |
+
+ANN001 Missing type annotation for function argument `text`
+   --> tests/unit/test_api.py:141:48
+    |
+139 |     ],
+140 | )
+141 | def test_render_flattens_json_into_text(value, text) -> None:
+    |                                                ^^^^
+142 |     """Strings, numbers, lists and objects all become the text the model reads."""
+143 |     assert render(value) == text
+    |
+
+ANN001 Missing type annotation for function argument `name`
+   --> tests/unit/test_api.py:154:64
+    |
+152 |     ],
+153 | )
+154 | def test_option_text_adds_a_description_only_when_there_is_one(name, description, text) -> None:
+    |                                                                ^^^^
+155 |     """An option is its name, followed by its description when it has one."""
+156 |     assert option_text(name, description) == text
+    |
+
+ANN001 Missing type annotation for function argument `description`
+   --> tests/unit/test_api.py:154:70
+    |
+152 |     ],
+153 | )
+154 | def test_option_text_adds_a_description_only_when_there_is_one(name, description, text) -> None:
+    |                                                                      ^^^^^^^^^^^
+155 |     """An option is its name, followed by its description when it has one."""
+156 |     assert option_text(name, description) == text
+    |
+
+ANN001 Missing type annotation for function argument `text`
+   --> tests/unit/test_api.py:154:83
+    |
+152 |     ],
+153 | )
+154 | def test_option_text_adds_a_description_only_when_there_is_one(name, description, text) -> None:
+    |                                                                                   ^^^^
+155 |     """An option is its name, followed by its description when it has one."""
+156 |     assert option_text(name, description) == text
+    |
+
+ANN001 Missing type annotation for function argument `level`
+   --> tests/unit/test_api.py:279:47
+    |
+278 | @pytest.mark.parametrize("level", [0, 1, 2])
+279 | def test_score_confidence_is_one_when_certain(level) -> None:
+    |                                               ^^^^^
+280 |     """All the probability on one level is certainty, wherever the level is."""
+281 |     p = [0.0, 0.0, 0.0]
+    |
+
+ANN001 Missing type annotation for function argument `monkeypatch`
+  --> tests/unit/test_cli.py:8:9
+   |
+ 8 | def run(monkeypatch, *words) -> None:
+   |         ^^^^^^^^^^^
+ 9 |     """Run `babykev` with these words as its command line."""
+10 |     monkeypatch.setattr("sys.argv", ["babykev", *words])
+   |
+
+ANN002 Missing type annotation for `*words`
+  --> tests/unit/test_cli.py:8:22
+   |
+ 8 | def run(monkeypatch, *words) -> None:
+   |                      ^^^^^^
+ 9 |     """Run `babykev` with these words as its command line."""
+10 |     monkeypatch.setattr("sys.argv", ["babykev", *words])
+   |
+
+ANN001 Missing type annotation for function argument `monkeypatch`
+  --> tests/unit/test_cli.py:15:52
+   |
+14 | @pytest.mark.parametrize("words", [(), ("help",), ("--help",), ("-h",)])
+15 | def test_help_is_printed_for_help_and_for_no_words(monkeypatch, capsys, words) -> None:
+   |                                                    ^^^^^^^^^^^
+16 |     """`babykev`, `babykev help`, `--help` and `-h` all print the help text, and nothing else."""
+17 |     run(monkeypatch, *words)
+   |
+
+ANN001 Missing type annotation for function argument `capsys`
+  --> tests/unit/test_cli.py:15:65
+   |
+14 | @pytest.mark.parametrize("words", [(), ("help",), ("--help",), ("-h",)])
+15 | def test_help_is_printed_for_help_and_for_no_words(monkeypatch, capsys, words) -> None:
+   |                                                                 ^^^^^^
+16 |     """`babykev`, `babykev help`, `--help` and `-h` all print the help text, and nothing else."""
+17 |     run(monkeypatch, *words)
+   |
+
+ANN001 Missing type annotation for function argument `words`
+  --> tests/unit/test_cli.py:15:73
+   |
+14 | @pytest.mark.parametrize("words", [(), ("help",), ("--help",), ("-h",)])
+15 | def test_help_is_printed_for_help_and_for_no_words(monkeypatch, capsys, words) -> None:
+   |                                                                         ^^^^^
+16 |     """`babykev`, `babykev help`, `--help` and `-h` all print the help text, and nothing else."""
+17 |     run(monkeypatch, *words)
+   |
+
+ANN001 Missing type annotation for function argument `monkeypatch`
+  --> tests/unit/test_cli.py:21:57
+   |
+21 | def test_an_unknown_command_is_refused_with_exit_code_2(monkeypatch, capsys) -> None:
+   |                                                         ^^^^^^^^^^^
+22 |     """A word that is not a command is named, the help is pointed to, and the exit code is 2."""
+23 |     with pytest.raises(SystemExit) as exit_info:
+   |
+
+ANN001 Missing type annotation for function argument `capsys`
+  --> tests/unit/test_cli.py:21:70
+   |
+21 | def test_an_unknown_command_is_refused_with_exit_code_2(monkeypatch, capsys) -> None:
+   |                                                                      ^^^^^^
+22 |     """A word that is not a command is named, the help is pointed to, and the exit code is 2."""
+23 |     with pytest.raises(SystemExit) as exit_info:
+   |
+
+Found 69 errors (32 fixed, 37 remaining).
+[exit 1]

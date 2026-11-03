@@ -1,0 +1,5 @@
+$ git log --oneline -3
+b72d50d Your commit message
+b8458ff demo class 1
+c3b227f demo class 1
+[exit 0]

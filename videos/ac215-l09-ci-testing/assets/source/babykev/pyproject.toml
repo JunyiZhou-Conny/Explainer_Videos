@@ -1,0 +1,101 @@
+[project]
+name = "babykev"
+version = "0.1.0"
+description = "A small decision model: one state, typed questions, a probability for every answer"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Rahul Dave" }]
+requires-python = ">=3.13"
+dependencies = [
+    "fastcore>=2.2.32",
+    "peft>=0.21",
+    "pydantic>=2.11",
+    "safetensors>=0.5",
+    "torch>=2.14,<2.15",
+    "transformers>=5.17,<6",
+]
+
+[project.scripts]
+babykev = "babykev.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+test = [
+    "hypothesis>=6.168",
+    "pytest>=9.1",
+    "pytest-cov>=7.1.0",
+]
+dev = [{ include-group = "test" }, { include-group = "lint" }]
+lint = [
+    "hadolint-bin>=2.15.1",
+    "pre-commit>=4.6",
+    "ruff>=0.16",
+    "ty>=0.0.84",
+    "validate-pyproject>=0.26",
+    "yamllint>=1.38",
+]
+
+# torch comes in several builds. This project installs the CPU build everywhere, from PyTorch's own
+# index: small, and enough for the tests and for inference on a laptop. `explicit` keeps every other
+# package on PyPI. A GPU build arrives with the first platform that has a GPU.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."] # so that a test can import its helpers as tests.tiny
+# Every run measures how much of src/babykev the tests touch and lists the lines they do not. A test
+# marked system needs something besides our code (the Hub, the real weights, a device) and runs
+# only when asked for: just test -m system
+addopts = "--cov=babykev --cov-report=term-missing -m 'not system'"
+markers = ["system: needs the network, the real model or a device; run with -m system"]
+
+[tool.ruff]
+# The one setting the formatter and the linter share. Ruff's own default is 88; this project reads better
+# at 100. A docment (the comment beside a parameter, read by `babykev docs`) must fit on its line: the
+# formatter wraps a longer line, the comment lands away from its parameter, and `docs check` reports it
+# as missing. Nothing else in the formatter or the linter touches a docment: a line with a comment is
+# never joined with another, and no rule here looks inside a comment.
+line-length = 100
+
+[tool.ruff.format]
+# The formatter has no style to argue about. These are ruff's defaults, written out so the choice is visible.
+quote-style = "double"            # "text", not 'text'
+indent-style = "space"            # four spaces, never tabs
+skip-magic-trailing-comma = false # a trailing comma means "keep this one item per line"
+line-ending = "auto"              # the file's own line endings
+docstring-code-format = false     # code examples inside docstrings are left as written
+
+[tool.ruff.lint]
+# What the linter checks. A family of rules per line, and why it is on.
+select = [
+    "E",   # pycodestyle errors: the basics, from indentation to line length
+    "W",   # pycodestyle warnings: stray whitespace and the like
+    "F",   # pyflakes: names that are unused, undefined or redefined
+    "I",   # isort: imports in one order, standard library first
+    "B",   # bugbear: constructs that are likely bugs, such as a mutable default argument
+    "UP",  # pyupgrade: older syntax that this Python has a newer form for
+    "SIM", # simplify: code that can be said in fewer words
+    "S",   # bandit: security, from `assert` in production code to `eval`
+    "N",   # pep8-naming: classes CamelCase, functions and variables lower_case
+    "ANN", # annotations: every parameter and every return value has a type
+    "D1",  # pydocstyle: every module, class and function has a docstring
+]
+# random is used to shuffle and to augment data, never for secrets
+ignore = ["S311"]
+
+[tool.ruff.lint.per-file-ignores]
+# A test is written with assert. S106 mistakes the tokenizer argument `unk_token` for a password
+"tests/**" = ["S101", "S106"]
+# A notebook imports the renderer under the name nbdev users know it by, and its helper functions
+# are part of the story it tells, not of the code
+"docs/guide/*.ipynb" = ["N813", "ANN", "D1"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" } # the CPU build, from the index above

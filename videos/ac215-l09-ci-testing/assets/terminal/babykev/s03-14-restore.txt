@@ -1,0 +1,2 @@
+$ git restore .pre-commit-config.yaml
+[exit 0]

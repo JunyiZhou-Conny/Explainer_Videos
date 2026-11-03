@@ -1,0 +1,56 @@
+$ just test -k "score_confidence_is_zero or rounded_probabilities"
+uv run pytest "$@"
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/student/babykev
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0
+collected 52 items / 50 deselected / 2 selected
+
+tests/unit/test_api.py FF                                                [100%]
+
+=================================== FAILURES ===================================
+_________________ test_rounded_probabilities_still_sum_to_one __________________
+
+    def test_rounded_probabilities_still_sum_to_one():
+        """Rounding for output must not lose probability, even with many options."""
+        keys = [f"intent{i}" for i in range(77)]
+        answer = to_answers([[1 / 77] * 77], [{"id": "intent", "type": "choice", "keys": keys}])[
+            "intent"
+        ]
+>       assert sum(answer["probabilities"].values()) == pytest.approx(1, abs=0.02)
+E       assert 0.77 == 1 ± 0.02
+E         
+E         comparison failed
+E         Obtained: 0.77
+E         Expected: 1 ± 0.02
+
+tests/unit/test_api.py:256: AssertionError
+__________________ test_score_confidence_is_zero_for_a_guess ___________________
+
+    def test_score_confidence_is_zero_for_a_guess():
+        """Equal probabilities over the levels are a guess, as they are for a choice."""
+>       assert score_confidence([1 / 3] * 3) == pytest.approx(0)
+E       assert 0.5 == 0 ± 1.0e-12
+E         
+E         comparison failed
+E         Obtained: 0.5
+E         Expected: 0 ± 1.0e-12
+
+tests/unit/test_api.py:288: AssertionError
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                      Stmts   Miss  Cover   Missing
+-------------------------------------------------------
+src/babykev/__init__.py       0      0   100%
+src/babykev/api.py           66     25    62%   27-28, 47-51, 55, 60-74, 97, 102-103
+src/babykev/cli.py            8      5    38%   17-21
+-------------------------------------------------------
+TOTAL                        74     30    59%
+=========================== short test summary info ============================
+FAILED tests/unit/test_api.py::test_rounded_probabilities_still_sum_to_one - ...
+FAILED tests/unit/test_api.py::test_score_confidence_is_zero_for_a_guess - as...
+======================= 2 failed, 50 deselected in 0.19s =======================
+[exit 1]
