@@ -2,7 +2,7 @@
 
 Beats (script.md, ## S16; one voiceover block each):
 0. No tracker. Slide 36 redrawn: three question cards (left) and three GREY dashed tool chips in a
-   shuffled column (right): Delta Lake / Iceberg · DVC · lakeFS. QUICK 4 s.
+   shuffled row below them: Delta Lake / Iceberg · DVC · lakeFS. QUICK 4 s.
 1. The chips land beside their questions in the spoken order: DVC ("uses git") · lakeFS ("its own
    history") · Delta Lake / Iceberg ("table versions"). Slide 35's GREY line "no single standard";
    a GREY chip "Milestone 2 accepts a light tool like this one".
@@ -136,8 +136,8 @@ def checklist() -> VGroup:
     rows = [
         parts_row("containers and the labeling network: already gone (scene 8)"),
         parts_row("keeping bucket 1? in", ("data-labeling", m), "run, in order:"),
-        parts_row(("    ", m), ("sh docker-shell.sh", m), "·", ("sh docker-shell-CLI.sh", m), "·"),
-        parts_row(("    ", m), ("python cli.py -r", m), "·", ("exit", m), ("(cli.py:35–38)", S.GREY),
+        parts_row(("sh docker-shell.sh", m), "·", ("sh docker-shell-CLI.sh", m), "·"),
+        parts_row(("python cli.py -r", m), "·", ("exit", m), ("(cli.py:35–38)", S.GREY),
                   "· deleting the bucket removes its rule too"),
         parts_row(("docker-volumes/label-studio", m), "· delete only when done with the project (sudo on Linux)"),
         parts_row("buckets bill until deleted:", ("cheeses_unlabeled/", m), "·", ("cheeses_labeled/", m), "·",
@@ -145,12 +145,14 @@ def checklist() -> VGroup:
         parts_row("never", ("dvc_store/", m, ERR), "while a tag should still work"),
         parts_row((".dvc/cache", m), "· safe to delete once pushed"),
         parts_row("delete the key and its JSON in secrets when the course is done"),
-        parts_row(("    ", m), ("(IAM › Service accounts › Keys)", S.GREY)),
+        parts_row(("(IAM › Service accounts › Keys)", S.GREY)),
         parts_row(("optional, frees about 6 GB:", S.GREY)),
         parts_row((IMAGE_RM[0], m, S.GREY)),
         parts_row((IMAGE_RM[1], m, S.GREY)),
     ]
-    c = card(rows, color=COST, size=20, buff=0.11, head="shutdown list")
+    c = card(rows, color=COST, size=20, buff=0.14, head="shutdown list")
+    for k in (2, 3, 9, 12):                         # continuation rows, indented (Text drops leading spaces)
+        rows[k].shift(RIGHT * 0.4)
     c.rows = rows
     return c
 
@@ -317,13 +319,11 @@ class Recap(VoiceScene):
             for i, anchor in enumerate(("One: who fetches", "Two: why can't", "Three: what is in",
                                         "Four: where do", "Five: without")):
                 vo.wait_until(anchor)
-                anims = [FadeIn(qs[i], shift=UP * 0.2), FadeIn(ths[i], shift=UP * 0.2)]
-                if i:
-                    anims = [FadeOut(VGroup(qs[i - 1], ths[i - 1]), shift=LEFT * 0.4),
-                             FadeIn(lbls[i - 1], shift=LEFT * 0.4)] + anims
-                self.play(*anims, run_time=0.7)
-                if i:
+                if i:                                # the old question leaves before the new one lands
+                    self.play(FadeOut(VGroup(qs[i - 1], ths[i - 1]), shift=LEFT * 0.4),
+                              FadeIn(lbls[i - 1], shift=LEFT * 0.4), run_time=0.35)
                     drop(self, qs[i - 1], ths[i - 1])
+                self.play(FadeIn(qs[i], shift=UP * 0.2), FadeIn(ths[i], shift=UP * 0.2), run_time=0.45)
             self.play(Indicate(ths[4][2], color=ROUTE, scale_factor=1.1), run_time=0.7)
             self.play(FadeIn(lbls[4], shift=LEFT * 0.4), run_time=0.5)
 
@@ -340,7 +340,7 @@ class Recap(VoiceScene):
         ck.move_to([0, -0.35, 0])
         ct = cost_tag("storage bills until deleted")
         ct.move_to(ck.frame.get_corner(UR) + np.array([-0.3 - ct.width / 2, 0, 0]))
-        red = ring(ck.rows[6], ERR, buff=0.1)
+        red = ring(ck.rows[6], ERR, buff=0.06)
 
         with self.voiceover(SAY[5]) as vo:
             self.play(track(tr, 2), run_time=0.3)

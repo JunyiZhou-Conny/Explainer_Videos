@@ -116,8 +116,7 @@ class SecondVersion(VoiceScene):
             vo.wait_until("so list before you add")
             self.play(Indicate(fuse.text, color=INK, scale_factor=1.05), run_time=0.6)
             vo.wait_until("Pause and upload")
-            self.play(FadeIn(yt0, shift=LEFT * 0.15), FadeOut(sb0), track(tr, 1), run_time=0.5)
-            self.remove(sb0)
+            self.play(FadeIn(yt0, shift=LEFT * 0.15), track(tr, 1), run_time=0.5)
             flash_tag(self, yt0, TURN)
 
         # ========================================================== 1. the shelf as it stands; ponder
@@ -158,7 +157,7 @@ class SecondVersion(VoiceScene):
             self.play(FadeIn(ans, shift=UP * 0.1), Indicate(t5.frame, color=INK, scale_factor=1.1), run_time=0.6)
             self.play(Indicate(hs.machine.frame, color=TOOL, scale_factor=1.05), run_time=0.5)
             vo.wait_until("Start the container again")
-            shelf = VGroup(hs.rack, *aisles, hs.machine, *filed, t5, ans)
+            shelf = VGroup(hs.rack, *aisles, hs.machine, *filed, t5, ans, sb0)
             self.play(FadeOut(shelf), track(tr, 2), run_time=0.5)
             self.remove(*shelf.get_family())
             resize(self, t, 11, run_time=0.5)
@@ -218,10 +217,14 @@ class SecondVersion(VoiceScene):
             self.play(Indicate(t.lines[-1], color=ERR, scale_factor=1.04), run_time=0.5)
             vo.wait_until("Here the local stand-in")
             lb = on_bar(t, local_row())
-            self.play(FadeIn(lb, shift=LEFT * 0.1), track(tr, 3, extra="local remote"), run_time=0.4)
+            store_hd = mono("dvc_store/", hs.size, CLOUD).move_to(hs.rack.head, aligned_edge=LEFT)
+            self.play(FadeIn(lb, shift=LEFT * 0.1), track(tr, 3, extra="local remote"),
+                      Transform(hs.rack.head, store_hd), hs.rack.frame.animate.set_stroke(CLOUD).set_fill(CLOUD, 0.05),
+                      FadeOut(new_photo), FadeOut(man21), run_time=0.6)
             istep(self, t, c104.line(70), type_time=0.4)
             vo.wait_until("2 files pushed")
             rows73 = out(self, t, [squash(c104.line(71)), c104.line(72), (c104.line(73), y)], run_time=0.5)
+            self.play(FadeIn(new_photo, shift=RIGHT * 0.3), FadeIn(man21, shift=RIGHT * 0.3), run_time=0.5)
             self.play(Indicate(rows73[-1], color=TURN, scale_factor=1.08),
                       Indicate(new_photo.text, color=HASH, scale_factor=1.15),
                       Indicate(man21.text, color=HASH, scale_factor=1.15), run_time=0.7)
@@ -233,7 +236,7 @@ class SecondVersion(VoiceScene):
             count.move_to([-0.4, -0.75, 0])
             self.play(FadeIn(count, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("That is the saved space")
-            self.play(Indicate(count.text, color=INK, scale_factor=1.1), Indicate(ref, color=INK, scale_factor=1.05),
+            self.play(Indicate(count.text, color=INK, scale_factor=1.1), Indicate(ref.text, color=INK, scale_factor=1.05),
                       run_time=0.8)
 
         # ========================================================== 4. K4: git ×5, v21 on the rope; extras
@@ -243,6 +246,8 @@ class SecondVersion(VoiceScene):
         v6_base = [tg.line, tg.beads[0], tg.beads[1], tg.bead_labels[0], tg.bead_labels[1], tg.flags["dataset_v20"],
                    tg.store, tg.dirs["v20"], *[tg.blobs[n] for n in IMAGES[:4]]]
         rope = tg.rope("v21")
+        fans20 = tg.rope("v20", origin=tg.beads[1].get_right()).fans    # v20's fans only: the shared blobs
+        v6_base.append(fans20)
         dch = differ_chip("our hashes · yours differ")
 
         with self.voiceover(SAY[4]) as vo:
@@ -294,7 +299,7 @@ class SecondVersion(VoiceScene):
             type_cmd(self, t, c110.cmd, type_time=0.4)
             r110 = out(self, t, [c110.line(7)] + [(x, y) for x in c110.at((8, 13))] + c110.at((14, 15)), run_time=0.6)
             vo.wait_until("the whole change in three lines")
-            self.play(each(list(r110[1:4]), ERR, scale=1.04), run_time=0.7)
+            self.play(each(list(r110[1:4]), INK, scale=1.04), run_time=0.7)
             self.play(each(list(r110[4:7]), PASS, scale=1.04), run_time=0.7)
             type_cmd(self, t, c111.cmd, type_time=0.3)
             r111 = out(self, t, c111.at((2, 4)), run_time=0.4)

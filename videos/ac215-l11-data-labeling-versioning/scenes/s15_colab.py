@@ -249,7 +249,7 @@ class TimeTravel(VoiceScene):
         tail = c13.line(5)
         tail = tail[tail.index("Anonymous caller"):]
         tg2 = TagRope()
-        tg2.dirs["class"] = blob(CLASS_V21["md5"]).move_to(tg2.dirs["v21"])
+        tg2.dirs["class"] = blob(CLASS_V21["md5"]).move_to(tg2.dirs["v21"]).shift(RIGHT * 0.9)   # the 401 stop lands inside the bucket
         cls_chip = dashed_chip("class bucket").next_to(tg2.store.frame, UP, buff=0.12).align_to(tg2.store.frame, RIGHT)
         lt = term(P_LAPTOP_HOME, rows=11, title=T_LAPTOP, size=20)
         lxt = on_bar(lt, extra_row())
@@ -380,12 +380,13 @@ class TimeTravel(VoiceScene):
         c19c = stack([nb_cell(19, [src_item(361), src_item(362)])], fr4.content_top)[0]
         c20c = stack([nb_cell(20, [src_item(367), src_item(368)])], c19c.box.get_bottom()[1] - 0.2)[0]
         ct = colab_term(rows=4)
+        xt4 = on_bar(ct, extra_row())
 
         with self.voiceover(SAY[4]) as vo:
             gone = VGroup(fr3, mine[1], gives, priv, pill, yt)
             self.play(FadeOut(gone), run_time=0.5)
             self.remove(*gone.get_family())
-            self.play(FadeIn(fr4), FadeIn(c19c, shift=UP * 0.15), FadeIn(ct), run_time=0.6)
+            self.play(FadeIn(fr4), FadeIn(c19c, shift=UP * 0.15), FadeIn(ct), FadeIn(xt4), run_time=0.6)
             vo.wait_until("Cell 19 asks quietly")
             self.play(Indicate(substring(c19c.parts[1][-1], "dataset_v25"), color=TURN, scale_factor=1.1),
                       Indicate(substring(next(r for r in c19c.parts[1] if "--quiet" in r.text), "--quiet"),
@@ -421,6 +422,11 @@ class TimeTravel(VoiceScene):
             self.play(Indicate(next(r for r in r20 if "No such file" in r.text), color=ERR, scale_factor=1.05),
                       run_time=0.6)
             vo.wait_until("Without the quiet flag")
+            nb = VGroup(fr4, c19c, c20c)                 # the strip grows so the loud command shows whole
+            self.play(FadeOut(xt4), run_time=0.2)
+            self.remove(xt4)
+            resize(self, ct, 9, extra=[FadeOut(nb)], run_time=0.6)
+            self.remove(*nb.get_family())
             xt5 = on_bar(ct, extra_row())
             self.play(FadeIn(xt5), run_time=0.3)
             type_cmd(self, ct, c19b.cmd, type_time=0.8)
@@ -432,7 +438,7 @@ class TimeTravel(VoiceScene):
             hits = [substring(r, k) for r in r19 for k in keys if k in r.text]
             self.play(each(hits, ERR, scale=1.1, lag=0.2), run_time=0.8)
             vo.wait_until("The class repo only has tags")
-            gone = VGroup(fr4, c19c, c20c, ct, *ct.lines, xt5)
+            gone = VGroup(ct, *ct.lines, xt5)
             self.play(FadeOut(gone), run_time=0.5)
             self.remove(*gone.get_family())
             self.play(FadeIn(lt5), FadeIn(lx5), *[FadeIn(x) for x in base3], run_time=0.6)
