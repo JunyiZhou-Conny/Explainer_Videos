@@ -17,7 +17,8 @@ Beats (script.md, ## S04; one voiceover block each):
 4. TRACKER B2 · extra. docker logs … → 13: 4–12 (line 5 RED, 8 and the owner root YELLOW); the strip
    shrinks under the map, the drawer ORANGE; ls -la … → 14: 2–6 (root ORANGE); docker run --rm
    --entrypoint id … → 15: 2 (uid=1001 YELLOW).
-5. TRACKER B1 · extra · Linux. sudo chown … → 16: 2–5 (1001 GREEN), drawer GREY; TRACKER B1
+5. TRACKER B1 · extra · Linux. sudo chown … → 16: 2–5 (1001 GREEN), drawer GREY; the command stays
+   on a card in the map's lower band (it replaces the Mac chip) until the closing ▶; TRACKER B1
    sh docker-shell.sh → 17: 2–3 (▶); TRACKER B2 docker container ls → 18, Up GREEN, house stands.
 6. TRACKER B2 · extra. docker logs … | grep … → 19: 10–13, 16, 20–21 (box YELLOW + 'at the time
    of recording'); curl …/health → 20: 2; curl -s -o … → 21: 2.
@@ -63,6 +64,25 @@ def readme_check_card() -> VGroup:
     c = readme_card((91, 97), body, size=20)
     c.table, c.row = tbl, tbl[2]
     return c
+
+
+def chown_card(cmd: str) -> VGroup:
+    """The Linux fix kept on screen until '▶ your turn' (the 3-row strip scrolls it away): capture 16's
+    command folded like type_cmd folds (' \\', 4-space continuation), tagged 'extra · Linux'. It sits
+    in the map's lower band, right of the door. .rows .tag"""
+    a, b = cmd.split(" && ")
+    first = a + " \\"
+    rows = VGroup(mono(first, 20, INK), mono("&& " + b, 20, INK))
+    rows.arrange(DOWN, aligned_edge=LEFT, buff=0.16)
+    rows[1].shift(RIGHT * 4 * rows[0].width / len(first))      # the 4-space continuation indent
+    tg = extra_row("Linux")
+    tg.move_to([rows.get_right()[0] - tg.width / 2, rows[1].get_center()[1], 0])
+    fr = RoundedRectangle(width=rows.width + 0.5, height=rows.height + 0.28, corner_radius=0.12,
+                          stroke_color=S.GREY, stroke_width=2).set_fill(S.GREY_DARKER, 1)
+    fr.move_to(rows)
+    g = VGroup(fr, rows, tg)
+    g.rows, g.tag = rows, tg
+    return g
 
 
 def wizard_row(*parts, size: float = 22) -> VGroup:
@@ -126,8 +146,10 @@ class StudioInABox(VoiceScene):
             self.play(FadeIn(bar9), FadeIn(rm_l, shift=UP * 0.1), run_time=0.5)
 
         # ========================================================== 1. one docker run, flag by flag
-        p12 = code(SH, 12, 23, cuts={21: '"/secrets/'}).move_to([0, -0.3, 0])
-        p24 = code(SH, 13, 24, cuts={21: '"/secrets/'}).move_to([0, -0.3, 0])
+        # 20 pt (73 characters a row): line 21 keeps the whole key path, only its trailing ' \' is cut
+        KEY_CUT = {21: '"/secrets/data-service-account.json"'}
+        p12 = code(SH, 12, 23, font_size=20, cuts=KEY_CUT).move_to([0, -0.3, 0])
+        p24 = code(SH, 13, 24, font_size=20, cuts=KEY_CUT).move_to([0, -0.3, 0])
         sm = StationMap(laid=False, lit=("studio",))
         skel = VGroup(sm.frame, sm.header, sm.street, sm.wall)
         hshape = VGroup(sm.studio.body, sm.studio.roof)
@@ -308,6 +330,7 @@ class StudioInABox(VoiceScene):
         # ========================================================== 5. the Linux fix: chown to 1001
         c16, c17, c18 = capture("16"), capture("17"), capture("18")
         mac = grey_chip("Docker Desktop for Mac normally avoids this").move_to([6.1, -0.85, 0], aligned_edge=RIGHT)
+        cc = chown_card(c16.cmd).move_to([6.1, -0.67, 0], aligned_edge=RIGHT)
 
         with self.voiceover(SAY[5]) as vo:
             xl = on_bar(t3, extra_row("Linux"))
@@ -315,13 +338,15 @@ class StudioInABox(VoiceScene):
             vo.wait_until("Docker Desktop for Mac")
             self.play(FadeIn(mac, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("Give the folder")
+            self.play(FadeOut(mac), FadeIn(cc, shift=UP * 0.1), run_time=0.5)
+            self.remove(mac)
             type_cmd(self, t3, c16.cmd, type_time=0.6)
             out(self, t3, c16.at((2, 5)), run_time=0.5, chunk=3)
             r16 = t3.lines[-1]
             self.play(substring(r16, "1001").animate.set_color(PASS), sm.alert(LAPTOP), run_time=0.6)
             vo.wait_until("run the script again")
-            self.play(FadeOut(VGroup(xl, mac)), track(tr, 1), run_time=0.3)
-            self.remove(xl, mac)
+            self.play(FadeOut(xl), track(tr, 1), run_time=0.3)
+            self.remove(xl)
             l17 = type_cmd(self, t3, c17.cmd, type_time=0.3)
             yt3 = beside(turn_row(), l17)
             pin(self, l17, yt3)
@@ -338,15 +363,15 @@ class StudioInABox(VoiceScene):
             vo.wait_until("On Linux, pause")
             yt4 = on_bar(t3, turn_row())
             self.play(FadeIn(yt4, shift=LEFT * 0.1), run_time=0.3)
-            flash_tag(self, yt4, TURN)
+            flash_tag(self, yt4, TURN, 1.15, 0.8, Indicate(cc.rows, color=TURN, scale_factor=1.03))
 
         # ========================================================== 6. extra checks: the update box, health
         c19, c20, c21 = capture("19"), capture("20"), capture("21")
         box = [(c19.line(n).rstrip(), TURN) for n in range(10, 14)]
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(mapall), FadeOut(yt4), track(tr, 2, extra=True), run_time=0.5)
-            self.remove(mapall, *mapall, yt4)
+            self.play(FadeOut(mapall), FadeOut(VGroup(yt4, cc)), track(tr, 2, extra=True), run_time=0.5)
+            self.remove(mapall, *mapall, yt4, cc)
             resize(self, t3, 11, run_time=0.6)
             xb = on_bar(t3, extra_row())
             self.play(FadeIn(xb, shift=LEFT * 0.1), run_time=0.3)

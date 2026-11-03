@@ -94,6 +94,20 @@ def ill_tag(og) -> VMobject:
     return illustration_tag().next_to(og.page, DOWN, buff=0.15).align_to(og.page, LEFT)
 
 
+def sed_split(line: str) -> list[str]:
+    """The sed edit (laptop/40 line 1) in four rows of at most 72: ' \\' + 4-space indent at the two
+    spaces outside quotes (valid shell), and one break inside the quoted s|…|…| at the '|' between
+    the two GCS_BUCKET_NAME halves (no text added there; the scene marks it with a GREY ↩), so no
+    row ends inside a name. Asserted to join back to the exact command."""
+    a = line.index(" 's|") + 1                     # the space before the quoted argument
+    b = line.index('"|GCS_BUCKET_NAME=') + 2        # just after 'cheese-app-data-demo"|'
+    c = line.index(" sed -n")                       # the space before the second sed
+    rows = [line[:a - 1] + " \\", "    " + line[a:b], line[b:c] + " \\", "    " + line[c + 1:]]
+    assert rows[0][:-2] + " " + rows[1][4:] + rows[2][:-2] + " " + rows[3][4:] == line
+    assert all(len(r) <= 72 for r in rows), [len(r) for r in rows]
+    return rows
+
+
 def refresh_arrow(r: float = 0.32, color=TURN) -> VMobject:
     """A circular refresh arrow."""
     a = Arc(radius=r, start_angle=PI * 0.6, angle=-PI * 1.6, color=color, stroke_width=5)
@@ -169,12 +183,12 @@ class CorsOnTheBucket(VoiceScene):
             st = strike(dns, S.GREY, 3)
             self.play(Indicate(dns, color=INK, scale_factor=1.06), run_time=0.5)
             self.play(Create(st), dns.animate.set_color(S.GREY), run_time=0.5)
+            u = under(prog, S.GREY, stroke=3)
+            self.play(Create(u), FadeIn(nochip, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("but the cause")
             self.play(FadeIn(fix[0]), Create(fix_st), run_time=0.4)
             self.play(FadeIn(fix[1], shift=RIGHT * 0.2), FadeIn(fix[2], shift=RIGHT * 0.2), run_time=0.6)
             self.play(Indicate(fix[2], color=INK, scale_factor=1.05), run_time=0.6)
-            u = under(prog, S.GREY, stroke=3)
-            self.play(Create(u), FadeIn(nochip, shift=UP * 0.15), run_time=0.6)
 
         # ========================================================== 2. edit line 23, run docker-shell-CLI.sh
         c40, c41 = capture("40"), capture("41")
@@ -187,6 +201,12 @@ class CorsOnTheBucket(VoiceScene):
         names = grey_chip("the README names the script")
         top = VGroup(r165, names).arrange(RIGHT, buff=0.3).move_to([0, 2.2, 0])
         ref = lref("13")
+        sed_rows = sed_split(P_LABELING + " " + c40.cmd)
+
+        def sed_fold(text, first_prefix=0):
+            assert text == P_LABELING + " " + c40.cmd, text
+            return sed_rows
+
         out41 = c41.at(3, "…", (26, 31))
         out41[0] = squash(out41[0])
 
@@ -199,7 +219,13 @@ class CorsOnTheBucket(VoiceScene):
             self.play(Indicate(demo, color=ERR, scale_factor=1.08), run_time=0.6)
             vo.wait_until("Put your bucket name")
             self.play(FadeIn(ed, shift=LEFT * 0.1), run_time=0.3)
-            type_cmd(self, t, c40.cmd, type_time=1.6, soft=True)
+            t.fold = sed_fold
+            try:
+                l40 = type_cmd(self, t, c40.cmd, type_time=1.6)
+            finally:
+                del t.fold
+            cont = beside(row_tag("↩ continues · no space"), l40.rows[1])
+            self.play(FadeIn(cont, shift=LEFT * 0.1), run_time=0.3)
             r40 = out(self, t, c40.at((2, 3)), run_time=0.5)
             ph = substring(r40[0], BUCKET)
             self.play(ph.animate.set_color(PASS), run_time=0.4)
@@ -207,8 +233,8 @@ class CorsOnTheBucket(VoiceScene):
             pin(self, r40[0], yt1)
             flash_tag(self, yt1, TURN)
             vo.wait_until("then run it with sh")
-            self.play(FadeOut(VGroup(p23, ed)), FadeOut(VGroup(*t.lines)), track(tr, 2), run_time=0.5)
-            drop(self, p23, ed, *t.lines)
+            self.play(FadeOut(VGroup(p23, ed, cont)), FadeOut(VGroup(*t.lines)), track(tr, 2), run_time=0.5)
+            drop(self, p23, ed, cont, *t.lines)
             for m in list(t.lines):
                 t.lines.remove(m)
             self.play(FadeIn(r165, shift=DOWN * 0.15), FadeIn(names, shift=LEFT * 0.15), FadeIn(ref), run_time=0.6)

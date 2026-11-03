@@ -32,6 +32,7 @@ PONDER_Q = "Label Studio holds the key;\nyour browser never sees it.\nHow can it
 SLIDE_CHIP = "the slide links the browser only to Label Studio"
 MISSING_CHIP = "may be missing in newer versions · carry on"
 EMPTY_CHIP = "empty = the key the container already has"
+NAME_CHIP = "the README's example name · yours differs"
 MSG_SRC = "File /secrets/data-service-account.json was not found."
 MSG_TGT = "Error validating storage connection"
 CALL_SRC = "POST /api/storages/gcs/validate · stand-in"
@@ -102,13 +103,27 @@ def button(s: str, color=S.GREY) -> VGroup:
     return g
 
 
-def stand_in_strip(call: str):
-    """An output-only 3-row stand-in strip (never typed): the call as its heading on the title bar,
-    'extra · stand-in' at the bar's right end. Returns (terminal, heading, tag)."""
-    t = term(P_LABELING, rows=3, title=None)
+def stand_in_strip(call: str, rows: int = 4):
+    """An output-only stand-in strip (never typed): the call as its heading on the title bar,
+    'extra · stand-in' at the bar's right end. 4 rows: the whole folded JSON reply fits, so no
+    row scrolls away and none starts mid-word. Returns (terminal, heading, tag)."""
+    t = term(P_LABELING, rows=rows, title=None)
     hd = strip_head(call).move_to([t.box.get_center()[0] - 0.9, t.box.get_top()[1] - t.bar_h / 2, 0])
     tg = on_bar(t, standin_row())
     return t, hd, tg
+
+
+def fold_json(s: str, n: int = 65) -> list[str]:
+    """A one-line JSON reply folded at its own commas/brackets (text unchanged, only the row breaks
+    move: the script's `wrap`), so every row starts on a key or a value, never mid-word."""
+    rows = []
+    while len(s) > n:
+        k = max(s.rfind(",", 0, n), s.rfind("[", 0, n))
+        if k <= 0:
+            return rows + soft([s], n)
+        rows.append(s[:k + 1])
+        s = s[k + 1:]
+    return rows + [s]
 
 
 def mini_form(head: str, prefix: str) -> VGroup:
@@ -226,12 +241,13 @@ class WhoTouchesBytes(VoiceScene):
             self.play(Indicate(src.btn.text, color=TURN, scale_factor=1.1), FadeIn(t1), FadeIn(hd1),
                       FadeIn(tg1), run_time=0.7)
             vo.wait_until("Here it fails")
-            r30 = out(self, t1, c30.at(3), wrap=True, run_time=0.8)
+            r30 = out(self, t1, fold_json(c30.at(3)[0], t1.max_chars), run_time=0.8)
             msg = substring(r30[-1], MSG_SRC)
             self.play(msg.animate.set_color(ERR), run_time=0.4)
             u30 = under(msg, ERR, stroke=3)
             self.play(Create(u30), run_time=0.4)
             vo.wait_until("An extra listing shows why")
+            self.wait(1.5)          # hold the red message: it went RED only ~1.5 s before this sentence
             old = VGroup(win, r_prefix, src.head, src.btn, ill_m, t1, hd1, tg1, u30)
             self.play(FadeOut(old), FadeOut(VGroup(*t1.lines)), FadeIn(lt), run_time=0.5)
             drop(self, old, *t1.lines)
@@ -254,7 +270,7 @@ class WhoTouchesBytes(VoiceScene):
             vo.wait_until("fails too")
             self.play(Indicate(tgt.btn.text, color=TURN, scale_factor=1.1), FadeIn(t2), FadeIn(hd2), FadeIn(tg2),
                       run_time=0.6)
-            r31 = out(self, t2, c31.at(3), wrap=True, run_time=0.8)
+            r31 = out(self, t2, fold_json(c31.at(3)[0], t2.max_chars), run_time=0.8)
             msg2 = substring(r31[-1], MSG_TGT)
             self.play(msg2.animate.set_color(ERR), run_time=0.4)
 
@@ -336,9 +352,10 @@ class WhoTouchesBytes(VoiceScene):
                       Indicate(bk.drawers["cheeses_unlabeled/"].text, color=CLOUD, scale_factor=1.06), run_time=0.6)
             src_pt = bk.drawers["cheeses_unlabeled/"].get_center()
             self.play(LaggedStart(*[FadeIn(c, target_position=src_pt, scale=0.5) for c in cs], lag_ratio=0.04),
-                      run_time=1.3)
+                      FadeIn(rec, shift=UP * 0.15), run_time=1.3)
             vo.wait_until("one task per photo")
-            self.play(FadeIn(n21, shift=UP * 0.15), FadeIn(rec, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeIn(n21, shift=UP * 0.15), run_time=0.5)
+            self.play(Indicate(n21.text, color=INK, scale_factor=1.08), run_time=0.5)
             vo.wait_until("Our stand-in imports")
             pic = VGroup(p_src, p_tgt, ill3, bk, cs, n21, rec)
             self.play(FadeOut(pic), run_time=0.5)
@@ -358,12 +375,17 @@ class WhoTouchesBytes(VoiceScene):
 
         # ========================================================== 4. who touches the photos?
         v2 = SignedTicket()
+        # the vault is the README's bucket name (script: V2 'cheese-app-data-demo'); the forms said
+        # your-bucket-placeholder, so say once that the README's name is an example
+        nm = grey_chip(NAME_CHIP).next_to(v2.host, DOWN, buff=0.2).align_to(v2.vault.frame, RIGHT)
 
         with self.voiceover(SAY[4]) as vo:
             gone = VGroup(t3, hd3, tg3, ours, yt)
             self.play(FadeOut(gone), FadeOut(VGroup(*t3.lines)), run_time=0.5)
             drop(self, gone, *t3.lines)
             self.play(FadeIn(v2), run_time=0.8)
+            self.play(FadeIn(nm, shift=UP * 0.15), Indicate(v2.vault.title, color=CLOUD, scale_factor=1.06),
+                      run_time=0.6)
             vo.wait_until("Label Studio holds the key")
             self.play(Indicate(v2.key, color=KEY, scale_factor=1.15), run_time=0.6)
             vo.wait_until("and lists the bucket")
@@ -373,7 +395,8 @@ class WhoTouchesBytes(VoiceScene):
             vo.wait_until("your browser asks for task 1")
             bub = v2.hand()
             self.play(FadeIn(bub, shift=UP * 0.15), Indicate(v2.browser.window, color=INK, scale_factor=1.06),
-                      run_time=0.7)
+                      FadeOut(nm), run_time=0.7)      # nm off before the ponder card half-covers it
+            self.remove(nm)
         pc = ponder(self, PONDER_Q, seconds=8)
 
         # ========================================================== 5. a signed ticket; the cliff-hanger

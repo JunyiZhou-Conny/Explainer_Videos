@@ -7,7 +7,8 @@ Beats (script.md, ## S03; one voiceover block each):
    GREEN secrets/ box and is renamed data-service-account.json. On "every bucket in the project" a
    GREY chip under the role. ▶ your turn.
 1. TRACKER A3 · extra. `ls -la secrets` (06: 2–5, the long row folds); the file name ringed (never its
-   size); a GREY `stand-in` row tag + "explained in scene 5".
+   size); a GREY `stand-in` row tag + "explained at Source storage" (S05 explains it at step B5,
+   the name its tracker shows; the video shows no scene numbers).
 2. TRACKER A4. README card (lines 62–65) above the terminal. The README's link with curl (07: 2,
    3720496 ringed), then `unzip` (08: 2–9, …, 44–45); the __MACOSX twin rows flash GREY. ▶ your turn.
 3. The two folders side by side, counts hidden ('? files'). QUICK(4 s).
@@ -33,6 +34,24 @@ SAY = NARRATION["S03"]
 ROLE_NOTE = "project-wide · this tutorial needs object read/write + storage.buckets.update (for CORS)"
 COST_NOTE = "storage starts here · ≈ 3.8 MB · a fraction of a cent a month · check the pricing page"
 QUICK_Q = "The zip held 42 files.\nHow many tasks (one item to label each)\nshould Label Studio make?"
+
+
+def curl_fold(t, cmd: str):
+    """t.fold for c07's curl: ' \\' before the URL and before '&&'; the 76-character URL is longer
+    than a 22 pt row (65), so it soft-wraps once, after 'v4.0/', with no marker inside it (a ' \\'
+    there would split the URL). Rows join back to the exact command, asserted."""
+    head, rest = cmd.split(" https://", 1)
+    url, tail = rest.split(" && ", 1)
+    url = "https://" + url
+    cut = url.index("/cheeses_unlabeled.zip") + 1
+
+    def fold(text: str, first_prefix: int = 0) -> list[str]:
+        rows = [text[:first_prefix] + head + " \\", "    " + url[:cut], url[cut:] + " \\", "    && " + tail]
+        assert all(len(r) <= t.max_chars for r in rows), rows
+        joined = rows[0][:-2] + " " + rows[1][4:] + rows[2][:-2] + " " + rows[3][4:]
+        assert joined == text, (joined, text)
+        return rows
+    return fold
 
 
 def arrow_word() -> Text:
@@ -160,7 +179,7 @@ class KeyAndPhotos(VoiceScene):
             vo.wait_until("a stand-in")
             st = beside(row_tag("stand-in", S.GREY), frow)
             pin(self, frow, st)
-            cap5 = note("explained in scene 5").next_to(st, RIGHT, buff=0.25)
+            cap5 = note("explained at Source storage").next_to(st, RIGHT, buff=0.25)
             self.play(FadeIn(cap5, shift=LEFT * 0.1), run_time=0.4)
             attach(self, frow, cap5)
             flash_tag(self, st, INK)
@@ -183,14 +202,20 @@ class KeyAndPhotos(VoiceScene):
             self.play(Indicate(rc.body[0], color=INK, scale_factor=1.04), run_time=0.6)
             vo.wait_until("we use curl")
             self.play(FadeIn(curl_chip, shift=LEFT * 0.2), run_time=0.4)
-            type_cmd(self, t, c07.cmd, type_time=1.2, soft=True)
+            t.fold = curl_fold(t, c07.cmd)
+            try:
+                cl = type_cmd(self, t, c07.cmd, type_time=1.2)
+            finally:
+                del t.fold
+            wtag = beside(row_tag("one URL · wrapped, no space"), cl.rows[2])
+            pin(self, cl.rows[2], wtag)
             zrows = out(self, t, c07.at(2), wrap=True)
             zring = ring(substring(zrows[0], "3720496"), TURN)
             vo.wait_until("and a browser works too")
             self.play(Create(zring), run_time=0.5)
             vo.wait_until("Then extract the zip")
-            self.play(FadeOut(zring), Indicate(rc.body[1], color=INK, scale_factor=1.04),
-                      FadeIn(unz_chip, shift=LEFT * 0.2), run_time=0.6)
+            unpin(self, cl.rows[2], wtag, FadeOut(zring), Indicate(rc.body[1], color=INK, scale_factor=1.04),
+                  FadeIn(unz_chip, shift=LEFT * 0.2), run_time=0.6)
             self.remove(zring)
             type_cmd(self, t, c08.cmd, type_time=0.5)
             out(self, t, c08.at((2, 9), "…", (44, 45)), chunk=4)

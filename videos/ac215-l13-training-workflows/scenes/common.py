@@ -319,13 +319,13 @@ SECTIONS = {
 STEPS = {
     "A": ["Setup Notebook", "Dataset", "Build Data Pipelines", "Image Classification Models",
           "Experiment Results", "Upload Experiment to Cloud Storage"],
-    "B": ["Setup (pip install wandb)", "Dataset & pipelines", "W&B login", "Train five models",
+    "B": ["Setup (pip install)", "Dataset & pipelines", "W&B login", "Train five models",
           "Experiment Results", "Upload"],
     "C": ["Clone", "Vertex AI API", "GPU Quotas", "secrets folder", "Service account + key", "GCS bucket",
           "WandB key"],
     "D": ["Edit docker-shell.sh", "sh docker-shell.sh"],
     "E": ["Review setup.py", "Review task.py", "sh package-trainer.sh"],
-    "F": ["Review cli.sh", "sh cli.sh", "CPU (optional — already the default)", "View Jobs",
+    "F": ["Review cli.sh", "sh cli.sh", "CPU (optional)", "View Jobs",
           "View Training Metrics"],
     "G": ["Review cli-multi-gpu.sh", "Review task_multi_gpu.py", "Make changes", "sh cli-multi-gpu.sh"],
     "cleanup": ["jobs & bucket", "cockpit & images", "notebooks & keys"],
@@ -1424,12 +1424,22 @@ def editor_tag(s: str = "our editor; use yours") -> VGroup:
     return tag(s, S.GREY)
 
 
-def cost_tag(s: str = "billed while it runs · see the Vertex AI pricing page") -> VGroup:
+def cost_tag(s: str = "billed while it runs · see the Vertex AI pricing page", size: float = TAG) -> VGroup:
     """The GOLD money tag: text only, never a number or a price (raises on '$', cents, 'per hour',
     'price'). S01 (checklist), S03 (experiment folder), S07 (bucket), S09 (tarball), S10 (the job's
     VM), S13 (a GPU), S14 (n1-standard-32 + 2 × T4), S15's card. Compute tags end 'see the Vertex AI
-    pricing page'."""
-    return tag(_no_amount(s), COST)
+    pricing page'. A '\n' in s gives a multi-line tag (the long ones: a tag is one line, 22 pt, and
+    the frame holds ~90 characters). .box .text"""
+    _no_amount(s)
+    if "\n" not in s:
+        return tag(s, COST, size)
+    t = VGroup(*[label(x, size, COST) for x in s.split("\n")]).arrange(DOWN, buff=0.08)
+    b = RoundedRectangle(width=t.width + 0.5, height=t.height + 0.3, corner_radius=0.18, stroke_color=COST,
+                         stroke_width=2).set_fill(S.BG, 0.92)
+    t.move_to(b)
+    g = VGroup(b, t)
+    g.box, g.text = b, t
+    return g
 
 
 def grey_chip(s: str, size: float = 20, mono_font: bool = False, color=S.GREY) -> VGroup:
@@ -2054,7 +2064,8 @@ class TrainingMap(Rig):
       relabel_base(text) -> Animation       the cockpit's ORANGE base band appears / relabels (S08)
       crack() -> VGroup                 RED cracks over the cockpit (not added; S08's failed build)
       solid() -> Animation              the cockpit house fills TEAL (it built)
-      stamp() -> VGroup                 the 'submits · never trains' chip on the cockpit (S09; .stamp)
+      stamp() -> VGroup                 the 'submits · never trains' chip on the cockpit (not added)
+      stamp_on() -> Animation           the same, shown and kept on the map (.stamp_; S09)
       labels(k) -> VGroup               the route's words ('package & upload' / 'create job'), not added"""
 
     def __init__(self, lit=(), shown=(), named: bool = False, base: str | None = None, stamped: bool = False,
@@ -2164,7 +2175,10 @@ class TrainingMap(Rig):
         return AnimationGroup(*anims, run_time=run_time)
 
     def all_dark(self, run_time: float = 1.0):
-        return self.unlight(*[k for k in MAP_KEYS if self.state[k] and self.shown[k]], run_time=run_time)
+        """Animation: everything unlit (S15's close), the base band and the stamp greyed too."""
+        extra = [Transform(m, greyed(m)) for m in (self.base, self.stamp_) if m is not None and m in self.submobjects]
+        return AnimationGroup(self.unlight(*[k for k in MAP_KEYS if self.state[k] and self.shown[k]]), *extra,
+                              run_time=run_time)
 
     def reveal(self, *keys, run_time: float = 0.8):
         """Animation: hidden parts appear lit (routes draw, the rest fade in)."""
@@ -2248,11 +2262,17 @@ class TrainingMap(Rig):
         g.box, g.text = b, t
         return g.move_to([-4.35, 1.42, 0])
 
+    def stamp_on(self, run_time: float = 0.7):
+        """Animation: the stamp appears on the cockpit and stays part of the map (.stamp_)."""
+        self.stamp_ = self.stamp()
+        self.add(self.stamp_)
+        return FadeIn(self.stamp_, scale=1.3, run_time=run_time)
+
     def labels(self, k: str) -> VGroup:
         """The words of route k (not added): 'upload' → 'package & upload' (two lines in the gap
         above it), 'submit' → 'create job' (under the bucket)."""
         if k == "upload":
-            return VGroup(note("package", INK), note("& upload", INK)).arrange(DOWN, buff=0.03).move_to([-3.1, 1.08, 0])
+            return VGroup(note("package", INK), note("& upload", INK)).arrange(DOWN, buff=0.03).move_to([-2.93, 1.08, 0])
         if k == "submit":
             return note("create job", INK).move_to([-0.65, -0.78, 0])
         raise KeyError(k)
@@ -2471,7 +2491,7 @@ class RunRecord(Rig):
             self.heads[j].next_to(b, UP, buff=0.12)
         self.run_label = VGroup(mono(name, size, RUN), label(f"· W&B project {project}", size, S.GREY))
         self.run_label.arrange(RIGHT, buff=0.15).next_to(self.heads, UP, buff=0.25).align_to(boxes, LEFT)
-        self.tag = illustration_tag().next_to(boxes, DOWN, buff=0.12).align_to(boxes, RIGHT)
+        self.tag = illustration_tag().next_to(self.heads, UP, buff=0.2).align_to(boxes, RIGHT)
         self.add(self.run_label, self.heads, boxes, self.tag)
         self.boxes = boxes
 
@@ -2603,7 +2623,7 @@ class ConfigBinding(Rig):
         df = self.drawer[0]
         if self.filled:
             st = VGroup(check_mark(0.3, PASS), mono("Config · 5 keys", self.size, PASS)).arrange(RIGHT, buff=0.15)
-            st.move_to(df.get_corner(DR) + np.array([-st.width / 2 - 0.2, 0.3, 0]))
+            st.next_to(self.run[0], RIGHT, buff=0.35).align_to(df, DOWN)
         else:
             st = mono("{}", 44, ERR).move_to(df.get_center() + DOWN * 0.1)
         self.stamp_ = st
@@ -2681,20 +2701,20 @@ class TarballTrip(Rig):
     @classmethod
     def pack(cls, size: float = 20) -> "TarballTrip":
         g = cls()
-        pfr = RoundedRectangle(width=3.6, height=2.4, corner_radius=0.14, stroke_color=OWNED,
-                               stroke_width=3).set_fill(OWNED, 0.06).move_to([-2.6, 0.55, 0])
+        pfr = RoundedRectangle(width=3.6, height=2.7, corner_radius=0.14, stroke_color=OWNED,
+                               stroke_width=3).set_fill(OWNED, 0.06).move_to([-2.6, 0.6, 0])
         pt = mono("package/", size, OWNED).move_to(pfr.get_corner(UL) + np.array([0.2, -0.25, 0]), aligned_edge=LEFT)
         g.package = VGroup(pfr, pt)
-        g.trainer = drawer("trainer/", OWNED, size, drawer_w=2.9).move_to(pfr.get_center() + DOWN * 0.05)
+        g.trainer = drawer("trainer/", OWNED, size, drawer_w=2.9).move_to(pfr.get_center() + UP * 0.45)
         g.files = [file_chip("task.py", INK, size).move_to([-5.4, 1.6, 0]),
                    file_chip("__init__.py", INK, size).move_to([-5.4, 0.9, 0])]
-        g.slots_ = [g.trainer.get_center() + np.array([-0.15, -0.55, 0]), g.trainer.get_center() + np.array([1.0, -0.55, 0])]
+        g.slots_ = [pfr.get_center() + np.array([0.15, -0.2, 0]), pfr.get_center() + np.array([0.15, -0.72, 0])]
         g.setup = sticky("setup.py · install_requires = wandb==0.15.11", OWNED, size)
         g.setup.next_to(pfr, DOWN, buff=0.18).align_to(pfr, LEFT)
         g.tar = tool_chip("tar", size).next_to(pfr, RIGHT, buff=0.45).shift(UP * 0.5)
         g.gzip = tool_chip("gzip", size).next_to(g.tar, DOWN, buff=0.35)
         g.parcel = parcel(f"{TARBALL_BYTES} bytes", OWNED, size, 0.9, 0.62).move_to([2.2, 0.55, 0])
-        g.wrap_box = RoundedRectangle(width=3.8, height=2.6, corner_radius=0.05, stroke_color=TOOL,
+        g.wrap_box = RoundedRectangle(width=3.8, height=2.9, corner_radius=0.05, stroke_color=TOOL,
                                       stroke_width=4).move_to(pfr)
         g.add(g.package, g.trainer)
         g.ride(*g.files, g.setup, g.tar, g.gzip, g.parcel, g.wrap_box)
@@ -2782,9 +2802,9 @@ class TarballTrip(Rig):
     def vm(cls, mini: bool = False, size: float = 20, center=(0.0, 0.7)) -> "TarballTrip":
         g = cls()
         g.mini = mini
-        w, h = (3.4, 2.6) if mini else (8.0, 3.9)
+        w, h = (4.6, 2.8) if mini else (8.0, 4.2)
         fr = RoundedRectangle(width=w, height=h, corner_radius=0.16, stroke_color=CLOUD,
-                              stroke_width=3).set_fill(CLOUD, 0.08).move_to([center[0], center[1], 0])
+                              stroke_width=3).set_fill(CLOUD, 0.08).move_to([center[0], center[1] - (0.02 if mini else 0.02), 0])
         ft = label("job VM" if mini else "job VM · Vertex AI", size, CLOUD)
         ft.move_to(fr.get_corner(UL) + np.array([0.2 + ft.width / 2, -0.25, 0]))
         g.meter = meter(0.5).move_to(fr.get_corner(UR) + np.array([-0.4, -0.32, 0]))
@@ -2797,7 +2817,8 @@ class TarballTrip(Rig):
         g.layer.next_to(g.image, UP, buff=0.06)
         g.parcel = parcel(None, OWNED, size, 0.6, 0.42).move_to(fr.get_top() + UP * 0.6)
         g.trainer = drawer("trainer/", OWNED, size).next_to(g.layer, UP, buff=0.15).align_to(g.layer, LEFT)
-        g.wandb_chip = chip("wandb 0.15.11", OWNED, size=size, font=MONO).next_to(g.trainer, RIGHT, buff=0.2)
+        g.wandb_chip = chip("wandb" if mini else "wandb 0.15.11", OWNED, size=size, font=MONO).next_to(g.trainer, RIGHT,
+                                                                                                    buff=0.2)
         if mini:
             g.argv = VGroup(mono("python -m trainer.task", size, INK)).next_to(g.trainer, UP, buff=0.15).align_to(
                 g.trainer, LEFT)
@@ -2807,8 +2828,9 @@ class TarballTrip(Rig):
                                                                   for a in ARGV]
             row1 = VGroup(toks[0])
             row2 = VGroup(*toks[1:3]).arrange(RIGHT, buff=0.12)
-            row3 = VGroup(*toks[3:]).arrange(RIGHT, buff=0.12)
-            g.argv = VGroup(row1, row2, row3).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+            row3 = VGroup(*toks[3:5]).arrange(RIGHT, buff=0.12)
+            row4 = VGroup(*toks[5:])
+            g.argv = VGroup(row1, row2, row3, row4).arrange(DOWN, aligned_edge=LEFT, buff=0.08)
             g.argv.next_to(g.trainer, UP, buff=0.15).align_to(g.trainer, LEFT)
             g.argv.tokens = toks
         out_y = fr.get_center()[1]
@@ -2820,7 +2842,7 @@ class TarballTrip(Rig):
                                   color=ROUTE, stroke_width=4, tip_length=0.18))
         g.ghost = VGroup(outline_box(1.6, 0.6, FUTURE, solid=False), label("trained weights", size, FUTURE))
         g.ghost[1].move_to(g.ghost[0])
-        g.ghost.move_to(fr.get_center() + RIGHT * (w / 2 - 1.2) + UP * 0.1)
+        g.ghost.move_to(fr.get_center())
         g.ride(g.box, g.meter, g.image, g.layer, g.parcel, g.trainer, g.wandb_chip, g.argv, g.logs, g.wb,
                g.streams_, g.ghost)
         return g
@@ -2838,9 +2860,11 @@ class TarballTrip(Rig):
 
     def unwrap(self, run_time: float = 1.0):
         """The GREEN tarball lands and unwraps into trainer/."""
-        self.add(self.parcel)
-        return Succession(FadeIn(self.parcel, shift=DOWN * 0.3),
-                          ReplacementTransform(self.parcel, self.trainer), run_time=run_time)
+        self.add(self.trainer)
+        anim = Succession(FadeIn(self.parcel, shift=DOWN * 0.3),
+                          AnimationGroup(FadeOut(self.parcel, scale=1.5), FadeIn(self.trainer, scale=0.6)),
+                          run_time=run_time)
+        return anim
 
     def pip(self, run_time: float = 0.7):
         self.add(self.wandb_chip)
@@ -2864,9 +2888,8 @@ class TarballTrip(Rig):
         inside = [m for m in (self.box, self.image, self.layer, self.trainer, self.wandb_chip, self.argv,
                               self.streams_, self.logs, self.wb) if m in self.submobjects]
         self.add(self.ghost)
-        anim = Succession(FadeIn(self.ghost), AnimationGroup(meter_stop(self.meter),
-                                                             *[FadeOut(m) for m in inside], FadeOut(self.meter)),
-                          run_time=run_time)
+        anim = Succession(meter_stop(self.meter), AnimationGroup(*[FadeOut(m) for m in inside], FadeOut(self.meter)),
+                          FadeIn(self.ghost), run_time=run_time)
         for m in inside + [self.meter]:
             self.remove(m)
         return anim
@@ -2974,8 +2997,8 @@ class ThreeBadges(Rig):
 
 # ================================================================== V6 · GpuSwitchboard (three switches, one GPU)
 SWITCHES = ("accelerator", "image", "quota")
-SWITCH_VALUES = {"accelerator": ("no accelerator", "T4 × 1"), "image": ("tf-cpu.*", "tf-gpu.* · CUDA"),
-                 "quota": ("no T4 quota here", f"T4 quota · {REGION}")}
+SWITCH_VALUES = {"accelerator": ("none", "T4 × 1"), "image": ("tf-cpu.*\nno CUDA", "tf-gpu.*\nwith CUDA"),
+                 "quota": ("no T4 quota", f"T4 quota\nin {REGION}")}
 
 
 class GpuSwitchboard(Rig):
@@ -3003,9 +3026,9 @@ class GpuSwitchboard(Rig):
         self.tile = VGroup(fr, self.title)
         self.switches = {}
         self.state = {k: k in on for k in SWITCHES}
-        for k, x in zip(SWITCHES, (-3.1, -0.9, 1.3)):
+        for k, x in zip(SWITCHES, (-3.3, -0.95, 1.4)):
             self.switches[k] = self._switch(k, self.state[k]).move_to([x, 0.55, 0])
-        self.slot = outline_box(1.1, 1.1, S.GREY, solid=False).move_to([3.4, 0.55, 0])
+        self.slot = outline_box(1.1, 1.1, S.GREY, solid=False).move_to([3.45, 0.55, 0])
         sl = label("GPU slot", size, S.GREY).next_to(self.slot, DOWN, buff=0.12)
         self.chip = t4_chip(False, size, 0.7).move_to(self.slot)
         self.add(self.tile, self.meter, *self.switches.values(), self.slot, sl)
@@ -3017,7 +3040,8 @@ class GpuSwitchboard(Rig):
                               stroke_width=3).set_fill(col, 0.3 if on else 0.05)
         knob = Circle(radius=0.17, stroke_width=0).set_fill(col, 1).move_to(tg.get_center() + RIGHT * (0.27 if on else -0.27))
         nm = label(k, self.size + 2, INK).next_to(tg, UP, buff=0.18)
-        v = label(SWITCH_VALUES[k][1 if on else 0], self.size, col).next_to(tg, DOWN, buff=0.18)
+        v = VGroup(*[label(w, self.size, col) for w in SWITCH_VALUES[k][1 if on else 0].split("\n")])
+        v.arrange(DOWN, buff=0.05).next_to(tg, DOWN, buff=0.18)
         g = VGroup(nm, tg, knob, v)
         g.toggle, g.knob, g.title_, g.value = tg, knob, nm, v
         return g
@@ -3108,9 +3132,9 @@ class MirroredReplicas(Rig):
         for x in (-1.45, 1.95):
             cfr = RoundedRectangle(width=2.7, height=1.75, corner_radius=0.12, stroke_color=CLOUD,
                                    stroke_width=2.5).set_fill(S.GREY_DARKER, 1).move_to([x, 0.05, 0])
-            ch = t4_chip(True, size, 0.5).move_to(cfr.get_corner(UL) + np.array([0.45, -0.45, 0]))
-            net = network_glyph(S.TEAL).move_to(cfr.get_center() + RIGHT * 0.45 + DOWN * 0.05)
-            rl = label("replica", size, S.GREY).next_to(ch, DOWN, buff=0.15)
+            ch = t4_chip(True, size, 0.5).move_to(cfr.get_corner(UL) + np.array([0.42, -0.42, 0]))
+            net = network_glyph(S.TEAL, net_w=1.1, net_h=0.95).move_to(cfr.get_center() + RIGHT * 0.65 + UP * 0.15)
+            rl = label("replica", size, S.GREY).next_to(net, DOWN, buff=0.08)
             g = VGroup(cfr, ch, net, rl)
             g.frame, g.chip, g.net = cfr, ch, net
             self.gpus.append(g)
@@ -3134,9 +3158,9 @@ class MirroredReplicas(Rig):
         anims = []
         for h, g in zip(halves, self.gpus):
             tgt = h.copy().arrange_in_grid(rows=4, cols=8, buff=0.035)
-            tgt.move_to(g.frame.get_corner(DL) + np.array([0.75, 0.32, 0]))
+            tgt.move_to(g.frame.get_corner(DL) + np.array([0.75, 0.42, 0]))
             anims.append(Transform(h, tgt))
-        n32 = [label("32", self.size, INK).next_to(g.frame.get_corner(DL) + np.array([1.5, 0.32, 0]), RIGHT, buff=0.1)
+        n32 = [label("32", self.size, INK).move_to(g.frame.get_corner(DL) + np.array([0.75, 0.95, 0]))
                for g in self.gpus]
         self.n32 = n32
         self.add(*n32)
