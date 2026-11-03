@@ -666,8 +666,9 @@ def code(path: str, first: int, last: int | None = None, language: str | None = 
     """CODE(path: first–last) of script.md: a code_panel quoting assets/source/<path> (masked), header
     '<shown> · lines a–b'. path may omit 'model-training/' ('cli.sh', 'package/trainer/task.py';
     'model-training-history/88f3374.diff' for a diff). <= 12 lines. 22 pt fits <= 66 characters a
-    line, 20 pt <= 73: a longer line raises; cut it with cuts={file_line: 'text it ends after'}
-    (the house '…', recoloured GREY) or use font_size=20. .code .header; highlight with
+    line, 20 pt <= 73: a longer line raises; shorten it with cuts={file_line: how} (elide(): 'text it
+    ends after', or ('keep', 'resume') to elide the middle, or ('keep', 'resume', 'after'); the house
+    '…', recoloured GREY) or use font_size=20. .code .header; highlight with
     code_span(p.code, k, "sub"), line_bar(p.code, k, colour), k = file line - first. dedent=True
     removes the excerpt's common leading indentation, nothing else."""
     path = _mt(path)
@@ -681,8 +682,8 @@ def code(path: str, first: int, last: int | None = None, language: str | None = 
         text = textwrap.dedent(text)
     lines = text.split("\n")
     cuts = cuts or {}
-    for n, after in cuts.items():
-        lines[n - first] = cut(lines[n - first], after)
+    for n, how in cuts.items():
+        lines[n - first] = elide(lines[n - first], how)
     limit = 66 if font_size >= 22 else 73
     for i, s in enumerate(lines):
         if len(s.expandtabs(4)) > limit:
@@ -692,8 +693,25 @@ def code(path: str, first: int, last: int | None = None, language: str | None = 
     p = code_panel("\n".join(lines), shown or shown_path(path), first, language, focus=focus,
                    font_size=font_size)
     for n in cuts:
-        code_span(p.code, n - first, "…").set_color(S.GREY)
+        for k in range(lines[n - first].count("…")):
+            code_span(p.code, n - first, "…", k).set_color(S.GREY)
     return p
+
+
+def elide(s: str, how) -> str:
+    """A long source line shortened with the house '…' (the panel's cuts= values):
+    'after' -> cut after it ('…' at the end); ('keep', 'resume') -> keep through 'keep', '…', resume
+    at 'resume' (the middle elided: cli.sh:9 ('"', 'tf-gpu') -> export EXECUTOR_IMAGE_URI="…tf-gpu.2-17.py310:latest");
+    ('keep', 'resume', 'after') -> both: the middle elided, then cut after 'after'."""
+    if isinstance(how, str):
+        return cut(s, how)
+    keep, resume = how[0], how[1]
+    i = s.index(keep) + len(keep)
+    j = s.index(resume, i)
+    out_ = s[:i] + "…" + s[j:]
+    if len(how) > 2:
+        out_ = cut(out_, how[2])
+    return out_
 
 
 def source_rows(path: str, n: int, size: float = 20, color=INK, width: int | None = None,
@@ -1925,7 +1943,7 @@ def band(text: str, color=SYSTEM, band_w: float = 2.4, band_h: float = 0.36, siz
     """A horizontal layer band (ORANGE: a Debian base, an apt layer, what the prebuilt image is
     assumed to hold; TEAL: an image name). .box .text"""
     b = outline_box(band_w, band_h, color, solid=not dashed, fill_opacity=0.2, radius=0.06)
-    t = (mono if mono_font else label)(text, size, INK).move_to(b)
+    t = steady(text, size, INK, mono_font=mono_font).move_to(b)        # steady: bands relabel in place
     g = VGroup(b, t)
     g.box, g.text = b, t
     return g
@@ -2089,7 +2107,7 @@ class TrainingMap(Rig):
         P["stream"] = _poly([[ct.frame.get_center()[0], ct.frame.get_bottom()[1] - 0.02, 0],
                              [ct.frame.get_center()[0], -1.18, 0], [wb.get_left()[0] + 0.1, -1.18, 0]], ROUTE, 3)
         self.parts = P
-        self.base = band("", SYSTEM, 2.45, 0.34, size)
+        self.base = band("bullseye · Debian 11", SYSTEM, 2.45, 0.34, size)
         self.base.move_to([-5.025, -0.24, 0])
         self.base_text = None
         self._lit = {k: P[k].copy() for k in MAP_KEYS}
@@ -2763,7 +2781,7 @@ class TarballTrip(Rig):
     def vm(cls, mini: bool = False, size: float = 20, center=(0.0, 0.7)) -> "TarballTrip":
         g = cls()
         g.mini = mini
-        w, h = (3.4, 2.6) if mini else (7.2, 3.6)
+        w, h = (3.4, 2.6) if mini else (8.0, 3.9)
         fr = RoundedRectangle(width=w, height=h, corner_radius=0.16, stroke_color=CLOUD,
                               stroke_width=3).set_fill(CLOUD, 0.08).move_to([center[0], center[1], 0])
         ft = label("job VM" if mini else "job VM · Vertex AI", size, CLOUD)
@@ -2786,9 +2804,10 @@ class TarballTrip(Rig):
             toks = [mono("python -m trainer.task", size, INK)] + [chip(a if not a.startswith("--wandb_key")
                                                                        else "--wandb_key=…", KEY, size=size, font=MONO)
                                                                   for a in ARGV]
-            row1 = VGroup(*toks[:3]).arrange(RIGHT, buff=0.12)
-            row2 = VGroup(*toks[3:]).arrange(RIGHT, buff=0.12)
-            g.argv = VGroup(row1, row2).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+            row1 = VGroup(toks[0])
+            row2 = VGroup(*toks[1:3]).arrange(RIGHT, buff=0.12)
+            row3 = VGroup(*toks[3:]).arrange(RIGHT, buff=0.12)
+            g.argv = VGroup(row1, row2, row3).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
             g.argv.next_to(g.trainer, UP, buff=0.15).align_to(g.trainer, LEFT)
             g.argv.tokens = toks
         out_y = fr.get_center()[1]

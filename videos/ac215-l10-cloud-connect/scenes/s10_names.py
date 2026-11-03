@@ -317,7 +317,7 @@ class TwoAddresses(VoiceScene):
         l2b = label("it does not connect to ChromaDB.", 22, INK)
         l2 = VGroup(l2a, l2b).arrange(RIGHT, buff=0.14, aligned_edge=DOWN)
         rc = readme_card(127, VGroup(l1, l2).arrange(DOWN, aligned_edge=LEFT, buff=0.12), quote=True)
-        rc.move_to([0, 2.35, 0])
+        rc.move_to([0, 2.2, 0])
         ul = under(l2b, TURN, stroke=3)
         nc = code("frontend-ai-chatbot/next.config.js", 19, 25, font_size=20).move_to([-0.9, -0.35, 0])
         er = erratum_tag().next_to(nc, RIGHT, buff=0.25).align_to(nc, UP)

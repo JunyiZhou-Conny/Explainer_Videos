@@ -613,7 +613,7 @@ class BrowserIntegrator(VoiceScene):
 
         with self.voiceover(SAY[8]) as vo:
             clear_but(self, tr, run_time=0.5)
-            self.play(FadeIn(cw2.shell, shift=UP * 0.15), FadeIn(ill4), FadeIn(look), FadeIn(ref), run_time=0.7)
+            self.play(FadeIn(cw2.shell, shift=UP * 0.15), FadeIn(ill4), FadeIn(look), run_time=0.7)
             self.add(cw2.question)
             vo.wait_until("Look for an answer")
             self.play(cw2.grow_bars(0.9))
@@ -622,8 +622,8 @@ class BrowserIntegrator(VoiceScene):
             vo.wait_until("with book, author and distance")
             self.play(Indicate(head8, color=INK, scale_factor=1.12), run_time=0.7)
             vo.wait_until("Last thought")
-            clear_but(self, tr, ref, run_time=0.5)
-            self.play(FadeIn(m, scale=1.03), run_time=0.6)
+            clear_but(self, tr, run_time=0.5)
+            self.play(FadeIn(m, scale=1.03), FadeIn(ref), run_time=0.6)
             vo.wait_until("CORS decides which page may see a reply")
             cors_note.move_to([-6.3 + cors_note.width / 2, -1.68, 0])
             self.play(FadeIn(cors_note, shift=LEFT * 0.1), Indicate(m.browser, color=LAPTOP, scale_factor=1.1),

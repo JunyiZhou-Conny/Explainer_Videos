@@ -366,10 +366,10 @@ class WhatSurvives(VoiceScene):
             self.remove(pc)
             vo.wait_until("An extra listing")
             # 5 rows: the command stays above its four rows (a 3-row strip scrolled it off at once); the
-            # taller strip sits in front of the map's floor like a window (the browser and loopback step
-            # aside until the map returns)
+            # taller strip sits in front of the map's floor like a window (the browser, the loopback and
+            # the public street and Google, whose lower halves it would cut, step aside until the map returns)
             bar3_y = api_t.bar.get_center()[1]
-            floor = [m.browser, m.loop]
+            floor = [m.browser, m.loop, m.public, m.google]
             self.bring_to_front(api_t)
             resize(self, api_t, 5, keep=0, extra=[FadeOut(xt1), FadeOut(VGroup(*floor))], run_time=0.4)
             m.remove(*floor)
