@@ -336,6 +336,8 @@ a 401: {ipa: "ɐ fˈɔːɹ ˈoʊ wˈʌn", say: "a four oh one"}
 A 401: {ipa: "ɐ fˈɔːɹ ˈoʊ wˈʌn", say: "a four oh one"}
 IAM: {ipa: "ˌaɪˌeɪˈɛm", say: "I-A-M"}
 finetunechat: {ipa: "fˈaɪn tˈuːn tʃˈæt", say: "fine tune chat"}
+# L10 S05 only (L11 says "aarch64 where", probed clean there): a sentence-final phrase key, so other videos keep their voice
+"says aarch64.": {ipa: "sˈɛz ˈeɪ ˈɑːɹtʃ sˈɪksti fˈɔːɹ.", say: "says A arch sixty-four."}
 # AC215 L11 (videos/ac215-l11-data-labeling-versioning); verified against Kokoro af_heart phonemes
 "1.23.0": {ipa: "wˈʌn pɔɪnt twˈɛnti θɹˈiː pɔɪnt zˈiəɹoʊ", say: "one point twenty-three point zero"}
 "1.23.2": {ipa: "wˈʌn pɔɪnt twˈɛnti θɹˈiː pɔɪnt tˈuː", say: "one point twenty-three point two"}
