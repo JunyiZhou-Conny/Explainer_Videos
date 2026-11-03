@@ -431,10 +431,10 @@ class ApiService(VoiceScene):
         rec_card = card([VGroup(emb, brace, n256)])
         rec_card.move_to([-6.35 + rec_card.width / 2, -0.9, 0])
         rec = recorded_tag("recorded · rag.py:218–223 · EMBEDDING_DIMENSION = 256 (rag.py:17)")
-        rec.next_to(rec_card.frame, DOWN, buff=0.15).align_to(rec_card.frame, LEFT)
+        rec.next_to(rec_card.frame, DOWN, buff=0.45).align_to(rec_card.frame, LEFT)   # below the 256 -> must-match link
         c26 = code(CLI, 26)
         c26.move_to([6.4 - c26.width / 2, -0.95, 0])
-        must = label("must match", 24, INK).next_to(c26, DOWN, buff=0.3)
+        must = label("must match", 24, INK).next_to(c26, DOWN, buff=0.15).align_to(c26, RIGHT)   # clear of rec
         link = DashedLine(n256.get_right() + RIGHT * 0.15, must.get_left() + LEFT * 0.15, color=S.GREY,
                           stroke_width=2.5, dash_length=0.1)
         ok200 = VGroup(check_mark(0.3, PASS), mono("200", 26, PASS)).arrange(RIGHT, buff=0.12)
