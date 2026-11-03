@@ -123,16 +123,19 @@ class RunTheApp(VoiceScene):
             vo.wait_until("Pause and run both")
             yt = beside(turn_row(), cd_line)
             pin(self, cd_line, yt)
-            self.play(Indicate(yt, color=TURN, scale_factor=1.15), run_time=0.7)
+            # flash the word and the outline only: Indicate on the whole tag fills its box (S01)
+            self.play(Indicate(yt.text, color=TURN, scale_factor=1.2),
+                      yt.box.animate(rate_func=there_and_back).set_stroke(width=4), run_time=0.8)
 
         # ================================================== 1. ls -la (extra)
         rows = ls_align(ls.at((5, 17)))
         with self.voiceover(SAY[1]) as vo:
-            unpin(self, cd_line, yt)
             self.play(FadeOut(VGroup(card, gap), shift=UP * 0.2), run_time=0.5)
             self.remove(card, gap)
-            resize(self, t, 14, keep=1)
+            # the cd row and its `your turn` tag stay up while ls -la is typed under them
+            resize(self, t, 14, keep=[cd_line, t.lines[-1]])
             ls_line = type_cmd(self, t, ls.cmd, type_time=0.4)
+            unpin(self, cd_line, yt)
             xt = beside(extra_row(), ls_line)
             pin(self, ls_line, xt, anim=AnimationGroup(FadeIn(xt, shift=LEFT * 0.1), track(tr, extra=True)))
             vo.wait_until("Everything today is here")
@@ -182,7 +185,8 @@ class RunTheApp(VoiceScene):
             vo.wait_until("Pause and run it")
             yt = beside(turn_row(), sh_line)
             pin(self, sh_line, yt)
-            self.play(Indicate(yt, color=TURN, scale_factor=1.15), run_time=0.7)
+            self.play(Indicate(yt.text, color=TURN, scale_factor=1.2),
+                      yt.box.animate(rate_func=there_and_back).set_stroke(width=4), run_time=0.8)
 
             # the prompt, large, splitting into its three parts
             parts = [("app", "user"), ("@", "sep"), ("44b7ce455073", "user"), (":", "sep"),

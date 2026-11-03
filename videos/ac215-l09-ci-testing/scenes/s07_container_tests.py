@@ -51,8 +51,8 @@ from common import (CLOUD, ERR, IMAGE, INK, LAPTOP, MODIFIED, NARRATION, P_LAPTO
                     ROUTE, SYSTEM, TURN, VENV, GateTable, LayerStack, arrow, attach, bare_prompt,
                     beside, capture, chip, code, code_span, cross_mark, dashed_chip, erratum_tag,
                     extra_row, file_card, grey_chip, istep, label, line_bar, lref, mono, note,
-                    outline_box, pin, readme, resize, ring, row_tag, substring, term, time_row,
-                    tool_chip, track, tracker, turn_row, type_cmd, unpin)
+                    outline_box, pin, readme, readme_card, resize, ring, row_tag, substring, term, time_row,
+                    tool_chip, track, tracker, turn_row, type_cmd, unpin, your_turn)
 
 SAY = NARRATION["S07"]
 DOCKERFILE = "cheese-app-ci-cd/Dockerfile"
@@ -324,6 +324,13 @@ class TestsInImage(VoiceScene):
         # ========================================================== 4. the gate table, Option 3
         gt = GateTable(keys=("tests",))
         gt.move_to([0, 0.75, 0])
+        # Option 3, README lines 210 and 216–225: the shell, then the same four pytest commands
+        o3_lines = [readme(n) for n in (210, 216, 219, 222, 225)]
+        o3_body = VGroup(*[mono(s, 22, INK) for s in o3_lines]).arrange(DOWN, aligned_edge=LEFT, buff=0.16)
+        o3 = readme_card((210, 225), o3_body)
+        o3.move_to([-1.2, 0.55, 0])
+        o3_turn = your_turn().next_to(o3, RIGHT, buff=0.4).align_to(o3, UP)
+        o3_bars = [ring(r, TURN, buff=0.07) for r in o3_body]
 
         with self.voiceover(SAY[4]) as vo:
             unpin(self, c_row, c_tag)
@@ -341,19 +348,28 @@ class TestsInImage(VoiceScene):
             vo.wait_until("Option 2 waits")
             self.play(*[Indicate(d, color=S.GREY, scale_factor=1.6) for d in tr.dots[5:8]], run_time=0.8)
             vo.wait_until("Option 3 is the same")
-            self.play(track(tr, 9), run_time=0.3)
+            # the README's Option 3 commands stay readable on a card while the strip runs them
+            # (the strip scrolls each one out within a second or two)
+            self.play(track(tr, 9), FadeOut(gt, shift=UP * 0.2), run_time=0.5)
+            self.remove(gt)
+            self.play(FadeIn(o3), run_time=0.6)
+            self.play(FadeIn(o3_turn, shift=LEFT * 0.15), run_time=0.4)
             vo.wait_until("docker-shell again")
-            type_cmd(self, t, shell.cmd, type_time=0.5)
-            t.print(self, shell.at((31, 33)), run_time=0.4, lag=0.15)
+            self.play(Create(o3_bars[0]), run_time=0.25)
+            type_cmd(self, t, shell.cmd, type_time=0.8)
+            t.print(self, shell.at("…", 33), run_time=0.3, lag=0.15)
             vo.wait_until("the same pytest commands")
             self.play(track(tr, 10), run_time=0.3)
-            for ln, out_n in ((34, [56]), (57, [78]), (79, [111]), (112, [137, 138])):
-                istep(self, t, shell.line(ln), type_time=0.4)
+            prev = o3_bars[0]
+            for k, (ln, out_n) in enumerate(((34, [56]), (57, [78]), (79, [111]), (112, [137, 138])), 1):
+                self.play(ReplacementTransform(prev, o3_bars[k]), run_time=0.2)
+                prev = o3_bars[k]
+                istep(self, t, shell.line(ln), type_time=0.45)
                 outs = [shell.line(n) if n == 137 else (summary(shell, n), PASS) for n in out_n]
                 t.print(self, outs, run_time=0.25)
             vo.wait_until("One trap:")
-            resize(self, t, 10, keep=2, extra=[FadeOut(gt)])
-            self.remove(gt)
+            resize(self, t, 10, keep=2, extra=[FadeOut(o3), FadeOut(o3_turn), FadeOut(prev)])
+            self.remove(o3, o3_turn, *o3_bars)
             ls_ln = istep(self, t, shell.line(139), type_time=0.5)
             x_tag = beside(extra_row(), ls_ln)
             pin(self, ls_ln, x_tag, anim=AnimationGroup(FadeIn(x_tag, shift=LEFT * 0.1), track(tr, extra=True)))
@@ -394,12 +410,16 @@ class TestsInImage(VoiceScene):
 
         left_t = column(["this image:", "black, flake8, pytest, pre-commit", "ship as runtime deps",
                          ">= pins · no lockfile"], INK, IMAGE)
-        left_f = RoundedRectangle(width=left_t.width + 0.7, height=left_t.height + 0.6, corner_radius=0.16,
-                                  stroke_color=IMAGE, stroke_width=3).set_fill(S.BG, 0.82)
+        # the card covers the whole (dimmed) panel, so no code ghosts out around it; the erratum
+        # tag sits inside the card, above the column
+        err = erratum_tag()
+        left_f = RoundedRectangle(width=max(pp.width, left_t.width + 0.7) + 0.2,
+                                  height=max(pp.height, left_t.height + err.height + 0.9) + 0.2,
+                                  corner_radius=0.16, stroke_color=IMAGE, stroke_width=3).set_fill(S.BG, 0.85)
+        left_f.move_to(pp)
+        left_t.move_to(left_f).shift(DOWN * (err.height + 0.2) / 2)
+        err.next_to(left_t, UP, buff=0.3).align_to(left_t, LEFT)
         left = VGroup(left_f, left_t)
-        left_t.move_to(left_f)
-        left.move_to(pp.code)
-        err = erratum_tag().next_to(left_f, UP, buff=0.15).align_to(left_f, LEFT)
         right_t = column(["part 2:", "dev tools in groups", "one lockfile"], INK, VENV)
         right_f = outline_box(right_t.width + 0.8, left_f.height, VENV)
         right_t.move_to(right_f)
@@ -458,6 +478,7 @@ class TestsInImage(VoiceScene):
             pbc = note("packages before code", S.GREY, 24).next_to(VGroup(s2[0], s2[1]), LEFT, buff=0.4)
             self.play(FadeIn(pbc, shift=RIGHT * 0.15),
                       *[Indicate(s.box, color=SYSTEM, scale_factor=1.03) for s in s2[:2]], run_time=0.9)
+            self.wait(2.0)                # "packages before code" stays readable before the fade
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

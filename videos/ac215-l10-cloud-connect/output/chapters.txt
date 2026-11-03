@@ -1,0 +1,15 @@
+00:00 Three phone calls, one question
+01:25 One laptop, three containers, one cloud
+03:04 An identity for code
+04:58 Two filesystems, one folder
+07:08 A network, a compose file, a running Chroma
+08:54 Chunks for free, embeddings need a key
+11:03 ADC: from key file to bearer token
+13:06 IAM: may this identity do this, here?
+15:12 Run the API, and survive line 14
+17:34 A name is not localhost
+19:40 One server, two addresses
+22:12 The browser is the integrator
+24:51 The agent, and a model that isn't yours
+26:29 What survives: volumes now, buckets next
+28:28 Tear down, recap, and what's next

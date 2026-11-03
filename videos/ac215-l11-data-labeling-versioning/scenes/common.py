@@ -155,6 +155,18 @@ NEVER_RE = (re.compile(r"^Added environment "), re.compile(r"172\.17\.0\.1"),
             re.compile(r'"severity":"INFO"'))
 NEVER_FILES = {("laptop", "119-clone-class-repo.txt")}               # the class repo's head date: never shown
 
+# series rule: the instructor's name never appears on screen. The snapshots' e-mail address is
+# replaced by mask() (student@example.com); any spelled-out name, and the Colab extracts'
+# '<course instructor>' placeholder, read '‹instructor›'. capture() and source_text() apply it.
+_NAME_RE = re.compile(r"Pavlos(?:[ _]Protopapas)?|Protopapas|<course instructor>", re.IGNORECASE)
+
+
+def unname(s: str) -> str:
+    """s with the instructor's name masked: 'Pavlos Protopapas' / 'Pavlos' / '<course instructor>'
+    -> '‹instructor›' (an e-mail address is mask()'s job and is replaced before this runs)."""
+    return _NAME_RE.sub("‹instructor›", s)
+
+
 _PROMPT_RE = re.compile(r"^((?:\([^)]*\) )?(?:[\w.-]+@)?[\w.-]+:[^#$\s]*[#$])(?: (.*))?$")
 
 
@@ -230,7 +242,7 @@ def capture(name: str) -> Capture:
         raise ValueError(f"{p.name} is never shown (script.md Crops)")
     with open(p, encoding="utf-8", newline="") as f:
         text = f.read()
-    raw = [s.rstrip("\r").expandtabs(8) for s in text.rstrip("\n").split("\n")]
+    raw = [unname(s.rstrip("\r").expandtabs(8)) for s in text.rstrip("\n").split("\n")]
     m = re.fullmatch(r"(.*\S)\[exit (-?\d+)\]", raw[-1]) if len(raw) > 1 else None
     if m:                                   # '{"status": "UP"}[exit 0]': output and status on one line
         raw = raw[:-1] + [m.group(1), f"[exit {m.group(2)}]"]
@@ -526,9 +538,10 @@ _GHUSER_RE = re.compile(r"(github\.com[/:])(?!dlops-io/)(?!YOUR_GITHUB_USERNAME/
 
 def mask(s: str) -> str:
     """Source text with the personal data replaced: e-mails -> student@example.com, a GitHub user
-    in a data-versioning URL -> YOUR_GITHUB_USERNAME. excerpt()/code()/readme() apply it."""
+    in a data-versioning URL -> YOUR_GITHUB_USERNAME, the instructor's name -> '‹instructor›'
+    (unname()). excerpt()/code()/readme()/source_rows() apply it."""
     s = _EMAIL_RE.sub(LOGIN[0], s)
-    return _GHUSER_RE.sub(r"\1" + GH_USER + r"\2", s)
+    return unname(_GHUSER_RE.sub(r"\1" + GH_USER + r"\2", s))
 
 
 def _src(path: str) -> Path:
@@ -1622,7 +1635,9 @@ def task_cards(n: int = 21, card_w: float = 0.32, cols: int = 7, color=S.GREY) -
 
 def window(url: str, win_w: float = 6.0, win_h: float = 3.6, size: float = 20) -> VGroup:
     """A schematic browser/console window (no logo, no screenshot): always tag it `illustration`.
-    .frame .address .content (the page rectangle) — browser_window() at 20 pt."""
+    .frame .address .content (the page rectangle) — browser_window() at 20 pt. win_w grows to fit
+    the address (browser_window() would shrink a long address below 20 pt: SMALL)."""
+    win_w = max(win_w, mono(url, size).width + 1.75)
     return browser_window(url, win_w, win_h, size)
 
 

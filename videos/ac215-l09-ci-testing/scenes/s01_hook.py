@@ -5,7 +5,8 @@ Beats (script.md, ## S01; one voiceover block each):
    `c3b227f · service.py · lines 38–48` (the script's 38–50 crops to 11 lines: 49 is 78 characters
    and the panel may not exceed the frame or 12 lines). Line 44 gets a faint WHITE bar at once
    ("Here is a line of code"). On "The distance from a point" the docstring's `sqrt(x^2 + y^2)`
-   (line 40) is underlined WHITE; on "This line takes" line 44 `result = math.sqrt(2 * z)` glows
+   (line 40) is underlined WHITE, and midway to "This line takes" line 43's sum pulses WHITE; on
+   "This line takes" line 44 `result = math.sqrt(2 * z)` glows
    RED (the bar turns RED); on "just wrong" its `2 *` wiggles. A GREY chip under the panel:
    "committed live, in class" (source: git-log-oneline.txt, c3b227f "demo class 1").
 1. The lecture tag `Lecture 9 · slides 41, 98–99` (top right, until the checklist). The panel dims
@@ -111,6 +112,7 @@ class Hook(VoiceScene):
         mark = line_bar(panel.code, bug, INK, 0.12)     # "a line of code": the eye goes to 44 at once
         bug_span = code_span(panel.code, bug, "math.sqrt(2 * z)")
         two = code_span(panel.code, bug, "2 *")
+        z_sum = code_span(panel.code, 43 - FIRST, "power(x, 2) + power(y, 2)")
         note = grey_chip("committed live, in class")
         note.next_to(panel, DOWN, buff=0.3).align_to(panel, RIGHT)
 
@@ -121,6 +123,12 @@ class Hook(VoiceScene):
             self.play(FadeIn(note, shift=LEFT * 0.2), run_time=0.6)
             vo.wait_until("The distance from a point")
             self.play(Create(doc_line), Indicate(doc, color=INK, scale_factor=1.08), run_time=1.0)
+            # "...of x squared plus y squared": line 43 computes exactly that sum; pulse it midway
+            # through the gap (no static hold > 4 s before "This line takes"; no mid-clause anchor)
+            gap = vo.time_until("This line takes")
+            if gap > 2.0:
+                self.wait((gap - 1.2) / 2)
+                self.play(Indicate(z_sum, color=INK, scale_factor=1.06), run_time=1.2)
             vo.wait_until("This line takes")
             self.play(ReplacementTransform(mark, bar), bug_span.animate.set_color(ERR), run_time=0.7)
             self.play(Indicate(bug_span, color=ERR, scale_factor=1.08), run_time=0.8)

@@ -82,6 +82,23 @@ def find_in(line, sub: str) -> VGroup:
     raise KeyError(sub)
 
 
+def soft(lines: list[str], n: int) -> list[str]:
+    """Long output rows broken at the last space that fits (as S08's soft()), so 'characters)' and
+    a file path never split mid-word; a word longer than a row breaks at the edge."""
+    out = []
+    for s in lines:
+        while len(s) > n:
+            k = s.rfind(" ", 0, n + 1)
+            if k > 0:
+                out.append(s[:k])
+                s = s[k + 1:]
+            else:
+                out.append(s[:n])
+                s = s[n:]
+        out.append(s)
+    return out
+
+
 def detach(scene, line, mob):
     """Take a pinned tag off its row without fading it (it stays on the scene on its own)."""
     row = line.rows[-1] if hasattr(line, "rows") else line
@@ -98,9 +115,10 @@ def broom(label_text: str = "black") -> VGroup:
                                stroke_width=3).set_fill(TOOL, 0.6).move_to([0, -0.62, 0])
     bristles = VGroup(*[Line([0.26 * u, -0.72, 0], [0.62 * u, -1.55, 0], color=TOOL, stroke_width=4)
                         for u in np.linspace(-1, 1, 9)])
-    name = tool_chip(label_text, size=22).move_to([0, 0.55, 0])
+    name = tool_chip(label_text, size=22)
+    name.next_to(handle, LEFT, buff=0.14).set_y(0.55)   # beside the stick, never crossed by it
     g = VGroup(handle, binding, bristles, name)
-    g.name = name
+    g.name, g.handle = name, handle
     return g
 
 
@@ -402,10 +420,11 @@ class FormatterLinter(VoiceScene):
             yt6 = beside(turn_row(), l5, buff=0.3)
             pin(self, l5, yt6)
             vo.wait_until("The local flake8")
-            o5 = t.print(self, f8_local.at((2, 4)), run_time=0.7, wrap=True)
+            o5 = t.print(self, soft(f8_local.at((2, 4)), t.max_chars), run_time=0.7)
             vo.wait_until("at its default of 79")
             e501 = VGroup(substring(o5[0], "E501"), substring(o5[0], "(95 > 79"))
             dflt = beside(row_tag("flake8's default: 79", S.GREY), o5[1])
+            dflt.set_x(e501[1].get_right()[0] - dflt.width / 2)    # right under '(95 > 79'
             self.play(e501.animate.set_color(ERR), run_time=0.4)
             pin(self, o5[1], dflt)
             vo.wait_until("adds a third finding")
@@ -415,14 +434,10 @@ class FormatterLinter(VoiceScene):
             l6 = type_cmd(self, t, blk_local.cmd, type_time=0.9)
             yt7 = beside(turn_row(), l6)
             pin(self, l6, yt7)
-            o6 = t.print(self, blk_local.at("…", 19, 37, "…", 40), run_time=0.9, lag=0.12, wrap=True)
+            o6 = t.print(self, soft(blk_local.at("…", 19, 37, "…", 40), t.max_chars), run_time=0.9,
+                         lag=0.12)
             vo.wait_until("the same two files changed")
-            names = []
-            for row in o6:                         # the file names, over their wrapped rows
-                if row.text.startswith("would reformat"):
-                    names.append(tail(row))
-                elif not row.text.startswith(("…", "2 files")):
-                    names.append(row.glyphs)
+            names = [tail(row) for row in o6 if row.text.startswith("/")]   # each path's file name
             r_files = VGroup(*[under(g, INK, stroke=3) for g in names])
             self.play(Create(r_files), run_time=0.6)
             self.play(Indicate(o6[-1], color=INK, scale_factor=1.04), run_time=0.7)
@@ -438,7 +453,7 @@ class FormatterLinter(VoiceScene):
         ff.move_to([-0.9, -0.55, 0])
         sweeper = broom()
         p_mid = panel2.code.background.get_center()[1]
-        sweeper.move_to([-5.7, p_mid, 0])
+        sweeper.move_to([0, p_mid, 0]).shift(RIGHT * (-5.0 - sweeper.handle.get_x()))  # label inside x>=-6.6
         survivors = VGroup(finding_chip("F401", "'os' imported but unused"),
                            finding_chip("E501", "a 147-character line · a string black must not break"))
         survivors.arrange(DOWN, aligned_edge=LEFT, buff=0.18).move_to([0, -2.15, 0])
@@ -456,7 +471,7 @@ class FormatterLinter(VoiceScene):
             self.play(FadeIn(imp_bar), imp.animate.set_color(ERR), run_time=0.5)
             vo.wait_until("black sweeps away almost every finding")
             self.play(FadeIn(sweeper, shift=RIGHT * 0.3), run_time=0.4)
-            self.play(sweeper.animate.set_x(5.7), ff.step(run_time=1.6), run_time=1.8, rate_func=smooth)
+            self.play(sweeper.animate.shift(RIGHT * 10.6), ff.step(run_time=1.6), run_time=1.8, rate_func=smooth)
             self.play(FadeOut(sweeper, shift=RIGHT * 0.3), run_time=0.4)
             self.remove(sweeper)
             vo.wait_until("exactly 2 survive")
