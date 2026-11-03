@@ -89,6 +89,11 @@ def broken_page() -> VGroup:
     return g
 
 
+def ill_tag(og) -> VMobject:
+    """The `illustration` tag under V3's schematic page window (left edge, clear of packages and curl)."""
+    return illustration_tag().next_to(og.page, DOWN, buff=0.15).align_to(og.page, LEFT)
+
+
 def refresh_arrow(r: float = 0.32, color=TURN) -> VMobject:
     """A circular refresh arrow."""
     a = Arc(radius=r, start_angle=PI * 0.6, angle=-PI * 1.6, color=color, stroke_width=5)
@@ -107,13 +112,14 @@ class CorsOnTheBucket(VoiceScene):
         og = OriginGate()
         left = VGroup(og.page, og.tile, og.origin_l, *og.parts_l.values())
         right = VGroup(og.bucket, og.origin_r, *og.parts_r.values())
+        il0 = ill_tag(og)
         chroma = grey_chip("L10: the Chroma bouncer · now on a bucket").move_to([0, -2.85, 0])
         mode = card(["Label Studio's page fetches the photo in CORS mode → the browser checks",
                      "a plain image tag would not"], size=20).move_to([0, -2.85, 0])
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(tut), run_time=0.6)
-            self.play(FadeIn(left, shift=RIGHT * 0.3), run_time=0.7)
+            self.play(FadeIn(left, shift=RIGHT * 0.3), FadeIn(il0), run_time=0.7)
             self.play(Indicate(og.origin_l, color=INK, scale_factor=1.06), run_time=0.6)
             vo.wait_until("the photo from Google's storage address")
             self.play(FadeIn(right, shift=LEFT * 0.3), run_time=0.7)
@@ -155,7 +161,7 @@ class CorsOnTheBucket(VoiceScene):
         nochip.move_to([0, -2.35, 0])
 
         with self.voiceover(SAY[1]) as vo:
-            gone = VGroup(og, pk, x, mode, tut)
+            gone = VGroup(og, pk, x, mode, tut, il0)
             self.play(FadeOut(gone), run_time=0.5)
             drop(self, gone)
             self.play(FadeIn(rc, shift=UP * 0.2), FadeIn(er), run_time=0.6)
@@ -345,6 +351,7 @@ class CorsOnTheBucket(VoiceScene):
         g2 = recorded_tag("recorded · cli.py:47–72").move_to(k2).align_to(k1, RIGHT).align_to(k2, UP)
         og2 = OriginGate()
         rule = og2.rule()
+        il5 = ill_tag(og2)
 
         with self.voiceover(SAY[5]) as vo:
             gone = VGroup(p2, *bs2, adc, ref)
@@ -360,7 +367,7 @@ class CorsOnTheBucket(VoiceScene):
             gone = VGroup(k1, k2, g1, g2)
             self.play(FadeOut(gone), run_time=0.4)
             drop(self, gone)
-            self.play(FadeIn(og2), FadeIn(rule, shift=UP * 0.2), run_time=0.6)
+            self.play(FadeIn(og2), FadeIn(il5), FadeIn(rule, shift=UP * 0.2), run_time=0.6)
             og2.stick(self, rule, run_time=0.8)
             pk2, ck = og2.deliver(self, header=True)
             vo.wait_until("The max age")
@@ -376,7 +383,7 @@ class CorsOnTheBucket(VoiceScene):
         ill = illustration_tag().next_to(bp.win, DOWN, buff=0.2).align_to(bp.win, RIGHT)
 
         with self.voiceover(SAY[6]) as vo:
-            gone = VGroup(og2, pk2, ck, pf, rule)
+            gone = VGroup(og2, pk2, ck, pf, rule, il5)
             self.play(FadeOut(gone), run_time=0.5)
             drop(self, gone)
             self.play(FadeIn(bp.win), FadeIn(ill), run_time=0.5)
@@ -396,6 +403,7 @@ class CorsOnTheBucket(VoiceScene):
         og3 = OriginGate()
         ob = og3.other_bucket()
         rule3 = og3.rule().move_to(og3.slot)
+        il7 = ill_tag(og3)
         chk = grey_chip("check with python cli.py -m").move_to([-2.3, -2.75, 0])
         ra = refresh_arrow().move_to(og3.page.content).shift(LEFT * 1.3)
         hard = grey_chip("hard refresh · or a private window").move_to([0, -2.75, 0])
@@ -414,7 +422,7 @@ class CorsOnTheBucket(VoiceScene):
             gone = VGroup(q23, e66, untouched)
             self.play(FadeOut(gone), run_time=0.4)
             drop(self, gone)
-            self.play(FadeIn(og3), FadeIn(rule3), FadeIn(ob, shift=UP * 0.2), run_time=0.6)
+            self.play(FadeIn(og3), FadeIn(il7), FadeIn(rule3), FadeIn(ob, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("another bucket of yours")
             self.play(rule3.animate.move_to(ob.slot), run_time=1.0)
             self.play(Indicate(og3.slot, color=TURN, scale_factor=1.05), run_time=0.5)

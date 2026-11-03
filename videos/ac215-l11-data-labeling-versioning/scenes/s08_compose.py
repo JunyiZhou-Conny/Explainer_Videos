@@ -124,6 +124,8 @@ class ComposeAndClean(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref), run_time=0.6)
             self.play(FadeIn(rc, shift=UP * 0.15), FadeIn(t), run_time=0.6)
+            t.set_prompt(split_prompt(c42.line(73))[0])      # S07's last prompt waits
+            bare_prompt(self, t)
             vo.wait_until("runs both containers from one compose file")
             self.play(Indicate(rc.rows[1][1], color=TURN, scale_factor=1.08), run_time=0.7)
             vo.wait_until("Leave the command line container with exit")
@@ -150,9 +152,12 @@ class ComposeAndClean(VoiceScene):
             type_cmd(self, t, c52.cmd, type_time=0.8)
             self.play(FadeIn(hint, shift=LEFT * 0.15), Indicate(rc.rows[1][1], color=TURN, scale_factor=1.06),
                       run_time=0.6)
-            vo.wait_until("Here it stops on a name conflict")
             r26 = out(self, t, [(x, S.GREY) for x in c52.at(26)], wrap=True, run_time=0.6)
-            pin(self, r26[-1], beside(row_tag("harmless"), r26[-1]))
+            hl = row_tag("harmless")                           # an output row's strut spans the box: place by glyphs
+            hl.next_to(r26[-1].glyphs, RIGHT, buff=0.45).set_y(r26[-1].strut.get_center()[1])
+            pin(self, r26[-1], hl)
+            self.wait(0.6)
+            vo.wait_until("Here it stops on a name conflict")
             r30 = out(self, t, ["…"] + [(x, ERR) for x in c52.at(30)], wrap=True, run_time=0.8)
             conf = substring(row_with(r30, "Conflict."), "Conflict.")
             self.play(Indicate(conf, color=ERR, scale_factor=1.15), run_time=0.6)
@@ -282,10 +287,11 @@ class ComposeAndClean(VoiceScene):
             t.set_prompt(up + "app@" + rest.split(" ", 1)[0])
             t._prompt_colors = lambda _p: colors
             try:
-                type_cmd(self, t, rest.split(" ", 1)[1], type_time=1.0)
+                ln126 = type_cmd(self, t, rest.split(" ", 1)[1], type_time=1.0)
             finally:
                 del t._prompt_colors
             t.set_prompt(p_cli)
+            pin(self, ln126, beside(row_tag("obviously fake"), ln126, buff=0.3))
             vo.wait_until("project 1 is back")
             r127 = out(self, t, [c54.line(127), c54.line(128), (c54.line(129), PASS), c54.line(130)], wrap=True,
                        run_time=0.6)

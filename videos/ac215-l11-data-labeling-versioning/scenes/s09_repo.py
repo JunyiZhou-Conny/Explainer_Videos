@@ -203,12 +203,13 @@ class YourOwnRepo(VoiceScene):
             vo.wait_until("and a bucket holds the photos")
             self.play(Indicate(si[0][2], color=INK, scale_factor=1.05), run_time=0.7)
             vo.wait_until("The tool is DVC")
-            dvc.next_to(ap.frame, UP, buff=-0.62).align_to(ap.frame, RIGHT).shift(LEFT * 0.3)
-            dvc.move_to([dvc.get_center()[0], last.get_center()[1] + 0.62, 0])
+            dvc.align_to(ap.frame, RIGHT).shift(LEFT * 0.3)
+            dvc.move_to([dvc.get_center()[0], last.get_center()[1], 0])     # on the file-based row
             self.play(FadeIn(dvc, scale=1.2), FadeOut(VGroup(si, si_chip)), run_time=0.6)
             self.remove(si, si_chip)
             self.play(FadeIn(rc, shift=UP * 0.2), run_time=0.5)
             self.play(rc.last.animate.set_color(TURN), FadeIn(rc_chip, shift=UP * 0.1), run_time=0.5)
+        self.wait(2.0)          # the five reasons arrive at the block's end: hold them readable
 
         # ========================================================== 1. G1: cd .., clean Docker
         tr = tracker("G", 1)
@@ -232,7 +233,8 @@ class YourOwnRepo(VoiceScene):
             type_cmd(self, t, "cd ..", type_time=0.3)
             ln = cd_prompt(self, t, P_LAPTOP_HOME)
             vo.wait_until("sits beside data-labeling and secrets")
-            self.play(Indicate(c136.body[1], color=INK), Indicate(c136.body[3], color=INK), run_time=0.8)
+            self.play(Indicate(c136.body[1], color=INK, scale_factor=1.04),
+                      Indicate(c136.body[3], color=INK, scale_factor=1.04), run_time=0.8)
             vo.wait_until("The data-versioning README")
             self.play(FadeOut(c136, shift=UP * 0.15), FadeIn(pin_card, shift=DOWN * 0.15), run_time=0.6)
             self.remove(c136)
@@ -343,6 +345,7 @@ class YourOwnRepo(VoiceScene):
         # ========================================================== 4. G3: rm -rf .git, git init
         c104 = readme_card(104, words("Why remove", (".git", "mono"), "? The cloned repository is connected "
                                       "to the original class repository."), size=20, repo=DV)
+        c104.body[2].shift(LEFT * 0.08)          # '.git?' — the '?' sits against the mono word
         c104.move_to([0, mid, 0])
         c76, c77, c78 = capture("76"), capture("77"), capture("78")
         assert c76.cmd == readme(95, DV) and c77.cmd == readme(101, DV)
@@ -387,8 +390,8 @@ class YourOwnRepo(VoiceScene):
         c79, c80, c81, c82 = capture("79"), capture("80"), capture("81"), capture("82")
         assert [c.cmd for c in (c79, c80, c81, c82)] == [readme(n, DV) for n in range(121, 125)]
         push = readme(125, DV)
-        https_card = card([words("no SSH key? use", (HTTPS_ORIGIN, "mono")),
-                           label("as origin · GitHub asks for a token, not your password", 20, INK)],
+        https_card = card([label("no SSH key? use this as origin:", 20, INK), mono(HTTPS_ORIGIN, 20, INK),
+                           label("GitHub asks for a token, not your password", 20, INK)],
                           S.GREY, size=20, buff=0.1)
         seven = card([label(SEVEN, 22, INK)], S.GREY)
         m = PipelineMap.at("S09")
@@ -412,8 +415,8 @@ class YourOwnRepo(VoiceScene):
             self.play(FadeOut(VGroup(form, ill, yt4)), track(tr, 5), run_time=0.5)
             self.remove(form, ill, yt4)
             resize(self, t, 9, run_time=0.5)
-            https_card.move_to([0, (2.8 + t.box.get_top()[1] + 0.12) / 2, 0])
-            ill2 = illustration_tag().move_to(https_card.frame.get_corner(UR) + np.array([-1.1, 0, 0]))
+            https_card.move_to([0, (2.8 + t.box.get_top()[1] + 0.12) / 2, 0]).align_to(t.box, LEFT)
+            ill2 = illustration_tag().next_to(https_card.frame, RIGHT, buff=0.2).align_to(https_card.frame, UP)
             type_cmd(self, t, c79.cmd, type_time=0.4)
             bare_prompt(self, t)
             vo.wait_until("add your repo as origin")

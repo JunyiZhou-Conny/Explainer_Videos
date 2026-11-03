@@ -349,6 +349,8 @@ class LabelsAndTokens(VoiceScene):
             self.play(Indicate(frows[0][0], color=INK, scale_factor=1.25), run_time=0.4)
             self.play(FadeIn(env_big, target_position=frows[0][0].get_center(), scale=0.3), run_time=0.8)
             self.play(FadeIn(note_card, shift=UP * 0.15), FadeIn(shape_chip, shift=LEFT * 0.15), run_time=0.6)
+        self.play(Indicate(glyphs(shape[0], '["gouda"]'), color=NOTE, scale_factor=1.1), run_time=0.8)
+        self.wait(1.4)      # the opened note is the beat's payoff: let it be read
 
         # ========================================================== 2. the CLI house, by name; ponder
         sm = StationMap(laid=True, lit=("studio", "cli"), shown=("door", "browser"))
@@ -464,18 +466,18 @@ class LabelsAndTokens(VoiceScene):
             vo.wait_until("The page shows a newer personal token")
             self.play(Indicate(pers.label, color=INK, scale_factor=1.08), run_time=0.6)
             vo.wait_until("the legacy kind is switched off")
-            self.play(leg.animate.set_opacity(0.35), run_time=0.5)
-            self.play(FadeIn(s5), FadeIn(hd5), FadeIn(tg5), run_time=0.4)
-            r27 = out(self, s5, c27.at(2), run_time=0.5)
+            self.play(leg.animate.set_opacity(0.35), FadeIn(s5), FadeIn(hd5), FadeIn(tg5), run_time=0.5)
+            r27 = out(self, s5, c27.at(2), run_time=0.4)
             off = substring(r27[0], '"legacy_api_tokens_enabled":false')
             self.play(off.animate.set_color(ERR), run_time=0.4)
-            vo.wait_until("speaks only legacy")
+            vo.wait_until("and cli.py speaks only legacy")
             gone = VGroup(two, s5, hd5, tg5)
             self.play(FadeOut(gone), FadeOut(VGroup(*s5.lines)), run_time=0.5)
             drop(self, gone, *s5.lines)
             self.play(FadeIn(p79), run_time=0.6)
             self.play(FadeIn(bar79), FadeIn(chip79, shift=UP * 0.15), run_time=0.6)
             self.play(Indicate(code_span(p79.code, 79 - 75, "Client("), color=TURN, scale_factor=1.1), run_time=0.6)
+        self.wait(1.5)      # the panel arrives at the sentence's end: give it reading time
 
         # ========================================================== 6. the fix: legacy tokens on; copy that one
         org = settings_page(("Organization", "API Tokens Settings"), [label("legacy tokens", 22, INK)], y=0.95,
@@ -499,11 +501,11 @@ class LabelsAndTokens(VoiceScene):
                       FadeIn(org.rows[0]), FadeIn(sw_off), run_time=0.6)
             vo.wait_until("enable legacy tokens")
             self.play(ReplacementTransform(sw_off, sw_on), Indicate(org.rows[0], color=PASS, scale_factor=1.06),
-                      run_time=0.7)
-            self.play(FadeIn(s6), FadeIn(hd6), FadeIn(tg6), run_time=0.4)
-            r43 = out(self, s6, c43.at(2), run_time=0.5)
+                      FadeIn(s6), FadeIn(hd6), FadeIn(tg6), run_time=0.7)
+            r43 = out(self, s6, c43.at(2), run_time=0.4)
             on = substring(r43[0], '"legacy_api_tokens_enabled":true')
             self.play(on.animate.set_color(PASS), run_time=0.4)
+            self.wait(1.2)      # the GREEN true is the proof of the fix: let it be read
             vo.wait_until("Then copy the legacy token")
             gone = VGroup(org, sw_on, s6, hd6, tg6)
             self.play(FadeOut(gone), FadeOut(VGroup(*s6.lines)), run_time=0.5)
@@ -513,9 +515,9 @@ class LabelsAndTokens(VoiceScene):
             vo.wait_until("not the personal one")
             self.play(Indicate(two2.rows[0].label, color=S.GREY, scale_factor=1.06), run_time=0.6)
             vo.wait_until("Pause and do both")
-            self.play(FadeIn(yt6, shift=UP * 0.15), run_time=0.4)
+            self.play(FadeIn(yt6, shift=UP * 0.15), FadeIn(sdk, shift=UP * 0.15), run_time=0.5)
             flash_tag(self, yt6, TURN)
-            self.play(FadeIn(sdk, shift=UP * 0.15), run_time=0.5)
+        self.wait(2.0)      # the unspoken SDK chip needs reading time
 
         # ========================================================== 7. -p and -t with the legacy token; amanita
         c44 = capture("44")
