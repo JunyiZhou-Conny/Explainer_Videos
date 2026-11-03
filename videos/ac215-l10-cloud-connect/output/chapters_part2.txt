@@ -1,6 +1,6 @@
 00:00 A name is not localhost
-02:05 One server, two addresses
-04:38 The browser is the integrator
-07:17 The agent, and a model that isn't yours
-08:55 What survives: volumes now, buckets next
-10:53 Tear down, recap, and what's next
+02:06 One server, two addresses
+04:36 The browser is the integrator
+07:24 The agent, and a model that isn't yours
+09:12 What survives: volumes now, buckets next
+11:10 Tear down, recap, and what's next

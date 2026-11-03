@@ -1,0 +1,954 @@
+1
+00:00:00,000 --> 00:00:04,288
+Part 2 starts with addresses;
+every command in this scene is an extra.
+
+2
+00:00:04,608 --> 00:00:10,176
+The loader dials the database by name:
+llm-rag-chromadb:8000.
+
+3
+00:00:10,496 --> 00:00:15,317
+Your browser will ring localhost:8000,
+through a door in the laptop wall.
+
+4
+00:00:15,637 --> 00:00:17,429
+One server, two addresses.
+
+5
+00:00:17,749 --> 00:00:19,179
+Why can they not swap?
+
+6
+00:00:19,417 --> 00:00:22,916
+Each container is its own house,
+with its own localhost.
+
+7
+00:00:23,236 --> 00:00:26,670
+Inside a container,
+localhost means that container.
+
+8
+00:00:26,990 --> 00:00:30,681
+Names work through Docker DNS,
+a phone book on each street.
+
+9
+00:00:31,001 --> 00:00:35,161
+IP addresses change when containers restart,
+but names do not.
+
+10
+00:00:35,481 --> 00:00:39,748
+This extra inspect shows
+the API's IP address on its street.
+
+11
+00:00:40,068 --> 00:00:44,697
+Yours will differ, which is the point:
+dial names, not IP addresses.
+
+12
+00:00:45,017 --> 00:00:48,752
+And your laptop is not on any street,
+so it has no phone book:
+
+13
+00:00:48,752 --> 00:00:51,161
+that name means nothing to your browser.
+
+14
+00:00:51,400 --> 00:00:52,445
+Now the proof.
+
+15
+00:00:52,765 --> 00:00:57,011
+From inside the API container,
+ask for the database by name.
+
+16
+00:00:57,331 --> 00:00:59,933
+The answer: Name or service not known.
+
+17
+00:01:00,253 --> 00:01:03,325
+The API's street has no entry for that name.
+
+18
+00:01:03,567 --> 00:01:04,911
+Something to ponder.
+
+19
+00:01:05,231 --> 00:01:08,943
+Suppose you want the API itself
+to query the database.
+
+20
+00:01:09,263 --> 00:01:10,673
+What address would it use,
+
+21
+00:01:10,673 --> 00:01:13,764
+and what must change on the map
+for that name to resolve?
+
+22
+00:01:22,600 --> 00:01:25,480
+Put the database
+on the API's street as well,
+
+23
+00:01:25,480 --> 00:01:27,848
+with an extra docker network connect,
+
+24
+00:01:27,848 --> 00:01:30,920
+and the same name answers
+with Chroma's version.
+
+25
+00:01:31,240 --> 00:01:33,672
+Docker DNS works on a shared street.
+
+26
+00:01:33,992 --> 00:01:37,448
+And localhost:8000, from inside the API?
+
+27
+00:01:37,768 --> 00:01:39,176
+Connection refused.
+
+28
+00:01:39,496 --> 00:01:43,080
+Inside the API, nothing listens on 8000.
+
+29
+00:01:43,317 --> 00:01:46,218
+Then disconnect it:
+that was only an experiment.
+
+30
+00:01:46,538 --> 00:01:50,976
+Nothing in this app needs that shortcut,
+because the browser makes every call.
+
+31
+00:01:51,296 --> 00:01:55,634
+One small slip: the frontend's config
+still forwards its docs path
+
+32
+00:01:55,634 --> 00:01:58,592
+to a container name
+that does not exist here.
+
+33
+00:01:58,912 --> 00:02:04,671
+For the API docs, use localhost:9000/docs,
+as the README says.
+
+34
+00:02:06,217 --> 00:02:07,679
+Leave the API running,
+
+35
+00:02:07,679 --> 00:02:10,804
+and open a new terminal
+in the frontend folder.
+
+36
+00:02:11,124 --> 00:02:13,449
+Run its shell script; pause and do it.
+
+37
+00:02:13,769 --> 00:02:18,192
+The image holds just Node and a shell,
+so you run npm yourself;
+
+38
+00:02:18,192 --> 00:02:20,510
+the hash sign means you are root.
+
+39
+00:02:20,750 --> 00:02:22,351
+Then npm install:
+
+40
+00:02:22,351 --> 00:02:28,473
+773 packages at the time of recording,
+plus deprecation warnings.
+
+41
+00:02:28,793 --> 00:02:31,055
+They land in your folder through the mount,
+
+42
+00:02:31,055 --> 00:02:34,318
+so our capture could step out
+and back in without losing them.
+
+43
+00:02:34,638 --> 00:02:36,302
+Then npm run dev.
+
+44
+00:02:36,622 --> 00:02:42,326
+The Next.js server says ready,
+version 14.2.4 at the time of recording,
+
+45
+00:02:42,326 --> 00:02:47,950
+and prints the line that fools everyone:
+Local: http://localhost:3000.
+
+46
+00:02:48,270 --> 00:02:49,572
+Pause and run both.
+
+47
+00:02:49,817 --> 00:02:52,420
+In a second terminal, three extra checks.
+
+48
+00:02:52,740 --> 00:02:57,092
+First, predict:
+will localhost:3000 answer from your laptop?
+
+49
+00:02:57,412 --> 00:02:59,140
+No, it fails to connect.
+
+50
+00:02:59,460 --> 00:03:03,641
+From your laptop,
+localhost:3200 answers with the RAG app.
+
+51
+00:03:03,961 --> 00:03:08,974
+And from inside the container,
+localhost:3000 answers with the same page.
+
+52
+00:03:09,294 --> 00:03:14,585
+Now open localhost:3200 in your browser;
+the README suggests Chrome.
+
+53
+00:03:14,905 --> 00:03:15,993
+Pause and look.
+
+54
+00:03:16,234 --> 00:03:17,471
+That is the tunnel.
+
+55
+00:03:17,791 --> 00:03:26,858
+The flag -p 3200:3000 means host port
+3200 forwards to container port 3000.
+
+56
+00:03:27,178 --> 00:03:31,202
+The Next server listens
+on 3000 inside its own house,
+
+57
+00:03:31,202 --> 00:03:34,239
+and your browser knocks on 3200 outside.
+
+58
+00:03:34,559 --> 00:03:36,351
+One server, two addresses.
+
+59
+00:03:36,671 --> 00:03:39,444
+An extra docker ps shows the same door.
+
+60
+00:03:40,467 --> 00:03:42,280
+Port numbers come in three bands.
+
+61
+00:03:42,600 --> 00:03:46,718
+The low ones belong to the system,
+like 80 and 443.
+
+62
+00:03:47,038 --> 00:03:53,246
+Pick yours from the middle band:
+3000, 3200, 8000, and 9000.
+
+63
+00:03:53,566 --> 00:03:56,936
+The top band holds throw-away ports
+for outgoing calls.
+
+64
+00:03:57,184 --> 00:04:03,093
+0.0.0.0 has now appeared twice,
+as two different facts.
+
+65
+00:04:03,413 --> 00:04:07,443
+Inside the container,
+the tunnel arrives at the street side,
+
+66
+00:04:07,443 --> 00:04:11,541
+not at the loopback,
+so the API server listens on every side.
+
+67
+00:04:11,861 --> 00:04:14,833
+Docker publishes
+on every side of your laptop,
+
+68
+00:04:14,833 --> 00:04:16,384
+unless you add a prefix.
+
+69
+00:04:16,704 --> 00:04:21,283
+The ports lecture wrote 127.0.0.1
+before its port,
+
+70
+00:04:21,283 --> 00:04:23,573
+but this app writes none.
+
+71
+00:04:23,893 --> 00:04:28,309
+So these doors face your Wi-Fi too,
+and anyone on that network can knock.
+
+72
+00:04:28,629 --> 00:04:34,602
+Adding 127.0.0.1
+before the host port closes that side.
+
+73
+00:04:36,250 --> 00:04:40,366
+This setting, baked
+into the JavaScript your browser downloads,
+
+74
+00:04:40,366 --> 00:04:42,522
+gives the page the API's address.
+
+75
+00:04:42,842 --> 00:04:48,602
+So it must be one your browser can reach:
+localhost:9000, never a container name.
+
+76
+00:04:48,850 --> 00:04:53,010
+Step 1 of 5, text chunking, runs
+in your browser, with no bill.
+
+77
+00:04:53,330 --> 00:04:57,767
+Step 2, the database UI,
+connects to localhost:8000.
+
+78
+00:04:58,087 --> 00:04:59,453
+Pause and try both.
+
+79
+00:04:59,773 --> 00:05:03,463
+Our extra listing is empty;
+yours shows two collections.
+
+80
+00:05:03,700 --> 00:05:06,989
+Step 3, the chat, has a gold tag:
+one embedding
+
+81
+00:05:06,989 --> 00:05:09,439
+and one Gemini answer per question.
+
+82
+00:05:09,759 --> 00:05:12,084
+Pause, pick a collection, and ask one.
+
+83
+00:05:12,404 --> 00:05:14,623
+On your machine, it makes three calls.
+
+84
+00:05:14,943 --> 00:05:19,913
+Call one: the API asks Google,
+and 256 numbers come back.
+
+85
+00:05:20,967 --> 00:05:24,231
+Call two asks the database
+for the 10 nearest chunks.
+
+86
+00:05:24,551 --> 00:05:27,724
+An origin is scheme, host and port,
+
+87
+00:05:27,724 --> 00:05:32,167
+so a page
+from 3200 calling 8000 crosses origins.
+
+88
+00:05:32,417 --> 00:05:37,238
+By default, a browser will not let
+a page see replies from another origin.
+
+89
+00:05:37,558 --> 00:05:39,696
+A server can allow named origins;
+
+90
+00:05:39,696 --> 00:05:44,556
+that is CORS, and it keeps other websites
+from reading your local services.
+
+91
+00:05:44,876 --> 00:05:48,609
+So the browser first sends a preflight
+with the page's origin.
+
+92
+00:05:48,929 --> 00:05:51,406
+The database checks its guest list,
+
+93
+00:05:51,406 --> 00:05:56,289
+the course's site and localhost:3200,
+and returns a pass, or nothing.
+
+94
+00:05:56,609 --> 00:05:59,787
+Your browser is the bouncer:
+no pass, no query.
+
+95
+00:06:02,067 --> 00:06:03,993
+Call three sends the question
+
+96
+00:06:03,993 --> 00:06:07,315
+and ten chunks to the API,
+and the answer returns.
+
+97
+00:06:07,635 --> 00:06:10,600
+An extra curl writes its own Origin header.
+
+98
+00:06:10,920 --> 00:06:15,761
+Both preflights get 200 OK,
+but only 3200 gets a pass;
+
+99
+00:06:15,761 --> 00:06:18,899
+to a browser, no pass is a refusal.
+
+100
+00:06:21,433 --> 00:06:22,777
+Something to ponder.
+
+101
+00:06:23,097 --> 00:06:26,361
+You republish the frontend on port 3300.
+
+102
+00:06:26,681 --> 00:06:29,497
+Which of the three calls fails,
+and does curl care?
+
+103
+00:06:38,333 --> 00:06:41,704
+Call one works: the API allows any origin.
+
+104
+00:06:42,024 --> 00:06:44,178
+Call two never leaves the browser.
+
+105
+00:06:44,498 --> 00:06:47,080
+Call three waits for it,
+so it is never sent.
+
+106
+00:06:47,400 --> 00:06:48,936
+And curl ignores it all.
+
+107
+00:06:49,256 --> 00:06:51,419
+CORS is enforced by the browser,
+
+108
+00:06:51,419 --> 00:06:55,272
+configured by the server,
+and keyed on the page's origin.
+
+109
+00:06:55,592 --> 00:07:03,252
+Even 127.0.0.1:3200
+is a different origin from localhost:3200,
+
+110
+00:07:03,252 --> 00:07:06,835
+so open the app at localhost.
+
+111
+00:07:07,083 --> 00:07:11,435
+Look for an answer and ten references,
+with book, author and distance.
+
+112
+00:07:11,755 --> 00:07:15,316
+Last thought:
+CORS decides which page may see a reply;
+
+113
+00:07:15,316 --> 00:07:17,558
+nothing here decides who may call.
+
+114
+00:07:17,878 --> 00:07:19,678
+An unprotected AI endpoint,
+
+115
+00:07:19,678 --> 00:07:22,678
+spending your key,
+is running on your laptop.
+
+116
+00:07:24,217 --> 00:07:29,358
+Step 4 is the cheese expert agent:
+the chat's three calls, with one twist.
+
+117
+00:07:29,678 --> 00:07:35,118
+Gemini first picks a retrieval tool:
+search by author, or search by content.
+
+118
+00:07:35,438 --> 00:07:38,617
+The API turns the search text
+into an embedding.
+
+119
+00:07:38,937 --> 00:07:41,512
+Then your browser queries the database,
+
+120
+00:07:41,512 --> 00:07:44,484
+filtered by author
+if Gemini chose that tool.
+
+121
+00:07:44,804 --> 00:07:47,008
+The API loops up to five times,
+
+122
+00:07:47,008 --> 00:07:50,564
+and Gemini may call a fun
+fact tool on the server.
+
+123
+00:07:50,884 --> 00:07:54,356
+A gold tag:
+one agent question costs one embedding
+
+124
+00:07:54,356 --> 00:07:56,857
+and three to seven generation calls.
+
+125
+00:07:57,177 --> 00:07:59,737
+Pause, pick a collection,
+and ask it something.
+
+126
+00:07:59,984 --> 00:08:03,866
+Look for an answer ending
+in a highlighted fun fact paragraph.
+
+127
+00:08:04,100 --> 00:08:06,703
+Step 5 is the fine-tuned cheese model.
+
+128
+00:08:07,023 --> 00:08:09,892
+The README says to swap
+in your own endpoint,
+
+129
+00:08:09,892 --> 00:08:13,081
+the one your fine-tuning run
+printed in lecture 8.
+
+130
+00:08:13,401 --> 00:08:14,873
+Pause and paste yours.
+
+131
+00:08:15,193 --> 00:08:20,228
+The server reloads by itself,
+because this file sits under the api folder.
+
+132
+00:08:20,548 --> 00:08:23,947
+Its neighbor,
+the agent tools file, is not watched;
+
+133
+00:08:23,947 --> 00:08:27,546
+for that one,
+press Ctrl-C and start the server again.
+
+134
+00:08:27,784 --> 00:08:33,395
+Then open localhost:3200/finetunechat
+and ask the same question.
+
+135
+00:08:33,715 --> 00:08:35,955
+Here the part 1 puzzle gets its answer.
+
+136
+00:08:36,275 --> 00:08:37,465
+With the default,
+
+137
+00:08:37,465 --> 00:08:41,317
+the endpoint path points
+into the instructor's project,
+
+138
+00:08:41,317 --> 00:08:46,152
+where your account has no role,
+so expect a 403, or a not-found error.
+
+139
+00:08:46,472 --> 00:08:49,038
+This call also uses a second client,
+
+140
+00:08:49,038 --> 00:08:52,531
+in the us location,
+because tuned models need it.
+
+141
+00:08:52,851 --> 00:08:54,003
+A final gold tag:
+
+142
+00:08:54,003 --> 00:08:58,952
+calls to a tuned model are billed
+to whichever project owns the endpoint.
+
+143
+00:08:59,272 --> 00:09:05,075
+Pause and try it; without your own endpoint,
+expect a 403, or a not-found error.
+
+144
+00:09:05,395 --> 00:09:11,218
+If your own endpoint returns 404 instead,
+see the base URL note in the study guide.
+
+145
+00:09:12,267 --> 00:09:14,763
+Time to shut down, and see what survives.
+
+146
+00:09:15,083 --> 00:09:19,990
+In the API and frontend terminals,
+press Ctrl-C, then type exit.
+
+147
+00:09:20,310 --> 00:09:21,483
+Pause and do it.
+
+148
+00:09:21,803 --> 00:09:24,394
+Both containers ran with --rm,
+
+149
+00:09:24,394 --> 00:09:28,800
+so an extra docker ps shows
+only the database left.
+
+150
+00:09:29,034 --> 00:09:33,941
+Now the README's stop command,
+docker compose down, inside llm-rag.
+
+151
+00:09:34,261 --> 00:09:35,413
+Pause and run it.
+
+152
+00:09:35,733 --> 00:09:38,293
+The database and its network are removed.
+
+153
+00:09:38,613 --> 00:09:40,988
+Two warnings say variables are not set,
+
+154
+00:09:40,988 --> 00:09:43,728
+because we ran this outside
+the shell script,
+
+155
+00:09:43,728 --> 00:09:46,591
+and Compose fills those blanks
+from your shell.
+
+156
+00:09:46,911 --> 00:09:50,261
+That is the mechanism from part 1,
+caught in the wild.
+
+157
+00:09:50,581 --> 00:09:55,231
+Something to ponder: the database is gone,
+but are your embeddings gone too?
+
+158
+00:09:55,551 --> 00:09:57,108
+And what would make them gone?
+
+159
+00:10:03,950 --> 00:10:08,809
+No. An extra listing shows
+the database file still on disk,
+
+160
+00:10:08,809 --> 00:10:13,273
+in a folder on your laptop,
+mounted into the container at /data.
+
+161
+00:10:13,593 --> 00:10:16,473
+Containers come and go;
+mounted folders stay.
+
+162
+00:10:16,793 --> 00:10:21,017
+An extra restart brings the database back
+over that same folder.
+
+163
+00:10:21,337 --> 00:10:25,433
+Deleting the docker-volumes folder
+is what loses your embeddings.
+
+164
+00:10:25,753 --> 00:10:27,631
+A fresh load rebuilds cleanly,
+
+165
+00:10:27,631 --> 00:10:31,513
+because the loader deletes
+and then recreates each collection.
+
+166
+00:10:31,750 --> 00:10:35,651
+The cloud version of a mounted folder
+is a storage bucket,
+
+167
+00:10:35,651 --> 00:10:38,342
+a folder any authorized machine can see.
+
+168
+00:10:38,662 --> 00:10:41,051
+Its folders are only name prefixes.
+
+169
+00:10:41,371 --> 00:10:45,785
+The storage client takes no key path,
+so ADC finds the same key,
+
+170
+00:10:45,785 --> 00:10:49,372
+and a storage role allows it
+to write to the bucket.
+
+171
+00:10:49,617 --> 00:10:54,210
+This app never calls a bucket,
+which is why Storage Admin sat gray;
+
+172
+00:10:54,210 --> 00:10:55,718
+next lecture uses one.
+
+173
+00:10:56,038 --> 00:10:57,724
+The lecture gives four rules.
+
+174
+00:10:58,044 --> 00:11:00,518
+Grant object admin, not full admin.
+
+175
+00:11:00,838 --> 00:11:02,310
+Keep buckets private.
+
+176
+00:11:02,630 --> 00:11:04,806
+Prefix their globally unique names.
+
+177
+00:11:05,126 --> 00:11:09,756
+And delete what you no longer need,
+because storage and downloads cost money.
+
+178
+00:11:10,800 --> 00:11:14,384
+If you tried the restart,
+run docker compose down once more.
+
+179
+00:11:14,704 --> 00:11:17,520
+An extra command removes the shared network.
+
+180
+00:11:17,840 --> 00:11:19,824
+Pause, and leave your machine clean.
+
+181
+00:11:20,067 --> 00:11:22,307
+This lecture started nothing in the cloud.
+
+182
+00:11:22,627 --> 00:11:26,510
+What stays behind is the key,
+and a leaked key can spend your money.
+
+183
+00:11:26,830 --> 00:11:30,051
+Delete keys you no longer use,
+and their local files.
+
+184
+00:11:30,371 --> 00:11:33,752
+If one reaches GitHub,
+delete it in IAM at once;
+
+185
+00:11:33,752 --> 00:11:37,533
+last lecture's private key hook
+would catch it first,
+
+186
+00:11:37,533 --> 00:11:39,245
+once added to your repo.
+
+187
+00:11:39,483 --> 00:11:41,424
+The whole lecture, on one map.
+
+188
+00:11:41,744 --> 00:11:46,352
+Your code's badge and key buy
+a one-hour ticket at Google's token desk.
+
+189
+00:11:46,672 --> 00:11:49,979
+One IAM cell lets that badge call Gemini.
+
+190
+00:11:50,299 --> 00:11:52,667
+A mount carries the key to /secrets.
+
+191
+00:11:52,987 --> 00:11:57,332
+Containers dial names;
+your browser dials localhost,
+
+192
+00:11:57,332 --> 00:12:02,011
+through doors like 3200 to 3000,
+open to your Wi-Fi too.
+
+193
+00:12:02,331 --> 00:12:05,744
+The browser stitches three calls
+past the CORS bouncer,
+
+194
+00:12:05,744 --> 00:12:08,475
+and the vectors survive in a mounted folder.
+
+195
+00:12:09,617 --> 00:12:11,814
+When something breaks, find its layer.
+
+196
+00:12:12,134 --> 00:12:14,758
+A credentials error: the path or the mount.
+
+197
+00:12:15,078 --> 00:12:17,446
+A 401: no valid token.
+
+198
+00:12:17,766 --> 00:12:20,945
+A 403: role, project, or API.
+
+199
+00:12:21,265 --> 00:12:23,185
+A CORS line: the origin.
+
+200
+00:12:23,505 --> 00:12:25,276
+A taken port: the doors.
+
+201
+00:12:25,596 --> 00:12:27,750
+A dying script: line 14.
+
+202
+00:12:28,000 --> 00:12:30,005
+5 questions to test yourself.
+
+203
+00:12:30,325 --> 00:12:34,677
+One: the three places ADC looks;
+which does this tutorial fill?
+
+204
+00:12:34,997 --> 00:12:37,280
+Two: why /secrets, not your Mac?
+
+205
+00:12:37,600 --> 00:12:42,101
+Three: why can the loader's name
+and your browser's localhost not swap?
+
+206
+00:12:42,421 --> 00:12:48,373
+Four: on port 3300, which call breaks first,
+and why does the API survive?
+
+207
+00:12:48,693 --> 00:12:52,832
+Five: a 403 has three causes;
+how do you tell them apart?
+
+208
+00:12:53,067 --> 00:12:56,758
+Answers are in the exercises,
+commands in the study guide.
+
+209
+00:12:57,078 --> 00:13:02,240
+Next lecture: a new service account,
+and real buckets with their own CORS list.
+
