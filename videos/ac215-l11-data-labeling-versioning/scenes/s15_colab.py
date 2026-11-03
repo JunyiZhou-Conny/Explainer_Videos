@@ -251,7 +251,7 @@ class TimeTravel(VoiceScene):
         tg2 = TagRope()
         tg2.dirs["class"] = blob(CLASS_V21["md5"]).move_to(tg2.dirs["v21"])
         cls_chip = dashed_chip("class bucket").next_to(tg2.store.frame, UP, buff=0.12).align_to(tg2.store.frame, RIGHT)
-        lt = term(P_LAPTOP_HOME, rows=8, title=T_LAPTOP, size=20)
+        lt = term(P_LAPTOP_HOME, rows=11, title=T_LAPTOP, size=20)
         lxt = on_bar(lt, extra_row())
 
         with self.voiceover(SAY[2]) as vo:
@@ -332,10 +332,11 @@ class TimeTravel(VoiceScene):
         priv = card([label("private repo:", 22, INK), mono_line(PRIVATE_URL[0], 20, INK), mono_line("    " + PRIVATE_URL[1], 20, INK),
                      label("or make it public for this step", 22, S.GREY)], size=20, buff=0.12)
         lift = fr3.content_top - mine[1].box.get_top()[1]          # cell 15 moves up when cell 13 goes
-        priv.next_to(gives, DOWN, buff=0.25).align_to(mine[1].box, LEFT).shift(UP * lift)
-        pill = illustration_tag().next_to(priv, RIGHT, buff=0.25).align_to(priv, UP)
+        priv.next_to(gives, DOWN, buff=0.25).align_to(fr3.frame, LEFT).shift(RIGHT * 0.2 + UP * lift)
+        pill = illustration_tag().align_to(mine[1].box, RIGHT).align_to(priv, UP)
         token = substring(priv.body[1], "<read-only token>")
-        yt = your_turn().next_to(priv, RIGHT, buff=0.25).align_to(priv, DOWN)
+        yt = your_turn().align_to(mine[1].box, RIGHT).align_to(priv, DOWN)
+        assert pill.get_left()[0] > priv.get_right()[0] + 0.2 and yt.get_left()[0] > priv.get_right()[0] + 0.2
 
         with self.voiceover(SAY[3]) as vo:
             gone = VGroup(lt, *lt.lines, lxt)

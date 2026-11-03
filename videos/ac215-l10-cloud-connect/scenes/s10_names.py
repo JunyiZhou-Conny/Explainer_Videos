@@ -269,7 +269,7 @@ class TwoAddresses(VoiceScene):
         pb_both = book(m, "cheese-app", [CONTAINERS["api"], CONTAINERS["chroma"]])
         c42, c45 = capture("42"), capture("45")
         ok43 = check_mark(0.3, PASS).move_to([pb_both.get_right()[0] - 0.35, pb_both.rows[1].get_center()[1], 0])
-        x44 = cross_mark(0.26, ERR).next_to(loops["api"][0], RIGHT, buff=0.1)
+        x44 = cross_mark(0.26, ERR).next_to(loops["api"][0], LEFT, buff=0.1)   # right of it runs the secrets tube
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(pc), FadeOut(q3), run_time=0.5)

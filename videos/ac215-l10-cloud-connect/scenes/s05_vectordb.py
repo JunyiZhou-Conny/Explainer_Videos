@@ -19,8 +19,9 @@ Beats (script.md, ## S05; one voiceover block each):
    (soft-wrapped at spaces, before each GCP_PROJECT= and before `docker-shell.sh &&`, no indent:
    its one long quoted argument cannot fold at a space outside quotes; the rows join back to the
    command with single spaces, asserted) with the GREY bar tag 'our editor; use yours' →
+   the panel leaves and the strip grows to 8 rows (the sed stays above its output) →
    laptop/20: 2–5 (line 4, 73 wide, cut with the house '…'), line 3 `export GCP_PROJECT="your-gcp-project"` ringed GREEN. `▶ your turn`.
-3. TRACKER B2. The panel leaves, the map returns. `sh docker-shell.sh` (README.md line 88) with
+3. TRACKER B2. The tags leave, the strip shrinks, the map returns. `sh docker-shell.sh` (README.md line 88) with
    `▶ your turn` → laptop/21: 2–5 (squash), lines 3–5 ringed one by one: the llm-rag street lays
    PINK on line 4, the chroma house lights on line 5. On "Every service in this file" the map
    gives way to CODE(llm-rag/docker-compose.yml: 1–3), `llm-rag-network` ringed PINK there and in
@@ -239,6 +240,10 @@ class NetworkAndShell(VoiceScene):
             vo.wait_until("Update the GCP project variable")
             soft_type(self, t, sed.cmd, type_time=2.0)
             vo.wait_until("we use the sed tool")
+            gone_p = VGroup(panel, bar7, red7)            # the strip grows so the sed stays above its output
+            self.play(FadeOut(gone_p), run_time=0.5)
+            self.remove(gone_p)
+            resize(self, t, 8)
             on_bar(t, ed)
             self.play(FadeIn(ed, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, ed, INK)
@@ -262,7 +267,7 @@ class NetworkAndShell(VoiceScene):
         prompt43, typed43 = sh.istep(43)
 
         with self.voiceover(SAY[3]) as vo:
-            gone2 = VGroup(panel, bar7, red7, ed, yt2)
+            gone2 = VGroup(ed, yt2)
             self.play(FadeOut(gone2), track(tr, 2), run_time=0.6)
             self.remove(gone2)
             resize(self, t, 3)                               # back to the strip the map sits above

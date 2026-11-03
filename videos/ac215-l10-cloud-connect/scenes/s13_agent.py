@@ -29,7 +29,9 @@ Beats (script.md, ## S13; one voiceover block each):
    'nothing documents this error's exact text' (no error panel). CODE(rag.py 110–113) at 20 pt,
    line 111 wrapped once at a space (note 'line 111 · wrapped to fit'), `location="us"` YELLOW.
    GOLD `cost_tag("tuned-model calls bill the endpoint's project")`, then the README card 249 with
-   `▶ your turn` and a RED '403' chip with a GREY 'expected' tag on "without your own endpoint". Fade to an empty frame.
+   `▶ your turn` and a RED '403' chip with a GREY 'expected' tag on "without your own endpoint" (the
+   grid's 403 also carries 'expected'); on "If your own endpoint returns 404" line 111's genai.Client is
+   ringed with the note 'your own endpoint, 404? study guide: base_url note'. Fade to an empty frame.
 """
 
 import re
@@ -417,7 +419,7 @@ class AgentAndTuned(VoiceScene):
         br3 = browser_glyph(glyph_w=1.2, name="your browser").move_to([-5.5, -2.4, 0])
         to_req = Arrow(br3.window.get_right() + RIGHT * 0.1, req.get_left() + LEFT * 0.1, buff=0, color=ROUTE,
                        stroke_width=4, path_arc=0.25, tip_length=0.2, max_tip_length_to_length_ratio=0.2)
-        up = Arrow(req.get_top(), [cx, col.get_center()[1] + 0.05, 0], buff=0.05, color=ROUTE, stroke_width=4,
+        up = Arrow(req.get_top(), [cx, col.get_bottom()[1] + 0.3, 0], buff=0.05, color=ROUTE, stroke_width=4,
                    tip_length=0.18, max_tip_length_to_length_ratio=0.5)
         cap = note("nothing documents this error's exact text").move_to([0.6, -3.25, 0])
 
@@ -431,6 +433,10 @@ class AgentAndTuned(VoiceScene):
         yt3 = your_turn().next_to(c249b, RIGHT, buff=0.35)
         e403 = err_chip("403").next_to(yt3, RIGHT, buff=0.3)
         exp3 = extra_tag("expected").next_to(e403, DOWN, buff=0.15)   # not captured output
+        cli111 = code_span(p6.code, 1, "genai.Client")                    # line 111's client (base_url note)
+        ring111 = ring(cli111, TURN, buff=0.05)
+        bu_note = note("your own endpoint, 404? study guide: base_url note")
+        bu_note.move_to([0, -0.62, 0]).align_to(exp3, RIGHT)
 
         with self.voiceover(SAY[3]) as vo:
             clear_but(self, tr, anims=[FadeIn(c249, shift=UP * 0.2)], run_time=0.6)
@@ -455,8 +461,10 @@ class AgentAndTuned(VoiceScene):
             vo.wait_until("so expect a 403")
             self.play(Create(up), run_time=0.5)
             mark = g.verdict(1, 2, ok=False)
+            exp_m = extra_tag("expected").next_to(mark, DOWN, buff=0.1).align_to(mark, RIGHT)
             flash = col.copy().set_stroke(ERR, 5)
-            self.play(FadeIn(mark, scale=1.3), FadeIn(flash), FadeIn(cap, shift=UP * 0.1), run_time=0.45)
+            self.play(FadeIn(mark, scale=1.3), FadeIn(exp_m), FadeIn(flash), FadeIn(cap, shift=UP * 0.1),
+                      run_time=0.45)
             self.play(FadeOut(flash), run_time=0.3)
             self.remove(flash)
 
@@ -466,7 +474,7 @@ class AgentAndTuned(VoiceScene):
             vo.wait_until("in the U S location")
             self.play(Create(ring6), each(us, TURN, scale=1.15, lag=0.04), run_time=0.8)
             vo.wait_until("A final gold tag")
-            drop(self, grid, mark, anims=[FadeIn(gold3, shift=UP * 0.2)], run_time=0.6)
+            drop(self, grid, mark, exp_m, anims=[FadeIn(gold3, shift=UP * 0.2)], run_time=0.6)
             flash_tag(self, gold3, COST)
             vo.wait_until("whichever project owns the endpoint")
             self.play(Indicate(gold3.text, color=COST, scale_factor=1.08), run_time=0.7)
@@ -477,7 +485,8 @@ class AgentAndTuned(VoiceScene):
             self.play(FadeIn(e403, scale=1.2), FadeIn(exp3, shift=UP * 0.1), run_time=0.5)
             self.play(Indicate(e403.text, color=ERR, scale_factor=1.15), run_time=0.6)
             vo.wait_until("If your own endpoint returns 404")
-            self.play(Indicate(c249b, color=TURN, scale_factor=1.04), run_time=0.8)
+            self.play(Create(ring111), FadeIn(bu_note, shift=UP * 0.1), run_time=0.6)
+            self.play(each(cli111, TURN, scale=1.12, lag=0.03), run_time=0.7)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

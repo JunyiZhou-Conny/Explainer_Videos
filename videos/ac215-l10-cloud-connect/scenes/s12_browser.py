@@ -266,7 +266,7 @@ class BrowserIntegrator(VoiceScene):
         assert c56.cmd.startswith("curl -s --max-time 300 -o /tmp/l10-chunkviz.html"), c56.cmd
         assert c63.cmd == ("curl -s http://localhost:8000/api/v2/tenants/default_tenant/databases/"
                            "default_database/collections"), c63.cmd
-        # laptop/56 folds to 4 rows + 2 output rows: a 6-row strip (QA 22:29), so the browser sits
+        # laptop/56 folds to 3 rows + 2 output rows: a 6-row strip (QA 22:29), so the browser sits
         # higher and shorter, its name right of the window instead of under it
         strip = term(P_LAPTOP_HOME, rows=6, size=SIZE)
         strip2 = term(P_LAPTOP_HOME, rows=3, size=SIZE)
@@ -303,11 +303,12 @@ class BrowserIntegrator(VoiceScene):
         assert "char-split-collection" in readme(103) and "recursive-split-collection" in readme(206)
 
         with self.voiceover(SAY[1]) as vo:
-            clear_but(self, tr, run_time=0.6)
             on_bar(strip, xt1)
+            # quick clear and fade-in, so laptop/56's output is up ~0.5 s sooner (QA 22:29)
+            clear_but(self, tr, run_time=0.4)
             self.play(FadeIn(brc, shift=UP * 0.15), FadeIn(ill1), FadeIn(text_rows),
-                      FadeIn(strip, shift=UP * 0.2), FadeIn(xt1), track(tr, extra=True), run_time=0.7)
-            type_cmd(self, strip, c56.cmd, type_time=0.8)
+                      FadeIn(strip, shift=UP * 0.2), FadeIn(xt1), track(tr, extra=True), run_time=0.5)
+            type_cmd(self, strip, c56.cmd, type_time=0.7)
             out(self, strip, c56.at((2, 3)), color=PASS, run_time=0.4)
             vo.wait_until("text chunking")
             self.play(ReplacementTransform(text_rows, chunks), run_time=1.0)
@@ -585,6 +586,10 @@ class BrowserIntegrator(VoiceScene):
             self.play(Indicate(pr.page.url, color=TURN, scale_factor=1.15), run_time=0.7)
             vo.wait_until("Even 127.0.0.1")
             self.play(FadeIn(last, shift=UP * 0.1), run_time=0.6)
+            vo.wait_until("is a different origin from localhost")
+            g = last.text.submobjects            # 14 glyphs · '≠' · 14 glyphs (spaces carry none)
+            assert len(g) == 29, len(g)
+            self.play(each([VGroup(*g[:14]), g[14], VGroup(*g[15:])], INK, scale=1.15, lag=0.35), run_time=1.0)
             vo.wait_until("so open the app at localhost")
             self.play(Indicate(last, color=TURN, scale_factor=1.08), run_time=0.7)
 

@@ -318,12 +318,12 @@ class IdentityForCode(VoiceScene):
             self.play(FadeIn(r1, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("and Gemini Enterprise")
             self.play(FadeIn(r2, shift=DOWN * 0.15), run_time=0.5)
+            self.play(FadeIn(xc, shift=LEFT * 0.2), run_time=0.6)   # early: ~10 s to read, not ~3
             vo.wait_until("The second role was formerly")
             self.play(FadeIn(was, shift=DOWN * 0.15), Indicate(role2.text, color=INK, scale_factor=1.05),
                       run_time=0.7)
             vo.wait_until("it is the same role underneath")
             self.play(Indicate(was.text[0], color=INK, scale_factor=1.06), run_time=0.7)
-            self.play(FadeIn(xc, shift=LEFT * 0.2), run_time=0.6)
             vo.wait_until("Pause and create yours")
             self.play(FadeIn(yt, shift=RIGHT * 0.2), run_time=0.4)
             flash_tag(self, yt, TURN)

@@ -192,9 +192,16 @@ class TwoStations(VoiceScene):
         blanket = outline_box(x1 - x0, y1 - y0, S.GREY, solid=False).move_to([(x0 + x1) / 2, (y0 + y1) / 2, 0])
         extra_lbl = dashed_chip("the README's Extra")
         extra_lbl.move_to([env.get_right()[0] + 0.3, -1.75, 0], aligned_edge=LEFT)
-        lead_x = blanket.get_right()[0] - 0.3          # inside the blanket, right of the DVC house
-        assert extra_lbl.get_left()[0] + 0.3 < lead_x < extra_lbl.get_right()[0] - 0.3
-        lead = DashedLine([lead_x, extra_lbl.get_top()[1] + 0.04, 0], [lead_x, y0, 0], color=S.GREY, stroke_width=2)
+        # the lead leaves the blanket and runs in the gaps between the station frames (a line down
+        # through the versioning station read as Compose belonging to part 2)
+        lead_x = blanket.get_right()[0] - 0.3          # inside the blanket, above the gap
+        gap_y = (m.lab.get_bottom()[1] + m.ver.get_top()[1]) / 2
+        gap_x = (m.ver.get_right()[0] + m.bucket2.get_left()[0]) / 2
+        assert m.ver.get_top()[1] < gap_y < m.lab.get_bottom()[1] and m.ver.get_right()[0] < gap_x < m.bucket2.get_left()[0]
+        assert extra_lbl.get_left()[0] + 0.3 < gap_x < extra_lbl.get_right()[0] - 0.3
+        lead_path = VMobject().set_points_as_corners([[lead_x, y0, 0], [lead_x, gap_y, 0], [gap_x, gap_y, 0],
+                                                      [gap_x, extra_lbl.get_top()[1] + 0.04, 0]])
+        lead = DashedVMobject(lead_path.set_stroke(S.GREY, 2), num_dashes=24, dashed_ratio=0.5)
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(pc), run_time=0.5)
@@ -305,12 +312,14 @@ class TwoStations(VoiceScene):
             out(self, t, listing, run_time=1.0, chunk=3)
             vo.wait_until("shows the scripts")
             scripts = ("docker-shell-CLI.sh", "docker-shell-compose.sh", "docker-shell.sh")
-            self.play(each([substring(t.find(n), n) for n in scripts], INK, scale=1.12, lag=0.2), run_time=0.9)
+            # look-here flashes in place: the rows are white (an INK flash only scaled, and the long names
+            # grew over the time column)
+            self.play(each([substring(t.find(n), n) for n in scripts], TURN, scale=1.0, lag=0.2), run_time=0.9)
             vo.wait_until("cli.py")
-            self.play(Indicate(substring(t.find("cli.py"), "cli.py"), color=INK, scale_factor=1.15), run_time=0.6)
+            self.play(Indicate(substring(t.find("cli.py"), "cli.py"), color=TURN, scale_factor=1.0), run_time=0.6)
             vo.wait_until("and three pictures")
             pngs = ("cheeses-labels.png", "data-labeling-flow.png", "pipeline-flow.png")
-            self.play(each([substring(t.find(n), n) for n in pngs], INK, scale=1.12, lag=0.25), run_time=1.0)
+            self.play(each([substring(t.find(n), n) for n in pngs], TURN, scale=1.0, lag=0.25), run_time=1.0)
             pf = ring(substring(t.find("pipeline-flow.png"), "pipeline-flow.png"), S.GREY)
             flow_chip.move_to([pf.get_center()[0] - 0.6, t.box.get_top()[1] + 0.42, 0])
             flow_chip.shift(LEFT * max(0, flow_chip.get_right()[0] - 6.4))
