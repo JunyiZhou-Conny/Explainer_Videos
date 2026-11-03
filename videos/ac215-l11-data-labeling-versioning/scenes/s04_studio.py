@@ -115,8 +115,9 @@ class StudioInABox(VoiceScene):
             self.play(FadeIn(why, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("Its script creates the network")
             old = VGroup(img, img_l, hs, hs_l, why)
-            self.play(FadeOut(old), FadeIn(p59, shift=UP * 0.15), run_time=0.7)
+            self.play(FadeOut(old), run_time=0.35)
             self.remove(old, *old)
+            self.play(FadeIn(p59, shift=UP * 0.15), run_time=0.4)
             self.play(FadeIn(bar6), run_time=0.4)
             vo.wait_until("only if it is missing")
             self.play(FadeIn(stk, scale=1.2), run_time=0.5)
@@ -152,8 +153,9 @@ class StudioInABox(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             old = VGroup(p59, bar6, bar9, stk, rm_l)
-            self.play(FadeOut(old), FadeIn(p12, shift=UP * 0.15), run_time=0.7)
+            self.play(FadeOut(old), run_time=0.35)
             self.remove(old, *old)
+            self.play(FadeIn(p12, shift=UP * 0.15), run_time=0.4)
             vo.wait_until("flag by flag")
             bars = [line_bar(p12.code, k, TURN) for k in (0, 2, 3, 4, 5)]
             self.play(LaggedStart(*[FadeIn(b) for b in bars], lag_ratio=0.3), run_time=1.0)
@@ -207,7 +209,7 @@ class StudioInABox(VoiceScene):
                       run_time=0.8)
 
         # ========================================================== 2. run it; the README's check
-        t = term(P_LAPTOP_HOME, rows=6, size=20)
+        t = term(P_LAPTOP_HOME, rows=8, size=20)
         c10, c11 = capture("10"), capture("11")
         rc = readme_check_card().move_to([0, 1.25, 0])
         rc.dim_95 = rc.table[1]
@@ -223,14 +225,14 @@ class StudioInABox(VoiceScene):
             pin(self, l10, yt)
             flash_tag(self, yt, TURN)
             vo.wait_until("it pulls the image")
-            unpin(self, l10, yt)
             out(self, t, c10.at((2, 3), "…", (70, 72)), wrap=True, run_time=0.8)
             dc = on_bar(t, differ_chip())
             idrow = t.lines[-1]
             self.play(FadeIn(dc, shift=LEFT * 0.1), Indicate(idrow, color=INK, scale_factor=1.02), run_time=0.6)
             vo.wait_until("Then the README")
-            self.play(FadeOut(dc), FadeIn(rc, shift=DOWN * 0.2), track(tr, 2), run_time=0.7)
+            unpin(self, l10, yt, FadeOut(dc))
             self.remove(dc)
+            resize(self, t, 6, extra=[FadeIn(rc, shift=DOWN * 0.2), track(tr, 2)], run_time=0.7)
             l11 = type_cmd(self, t, c11.cmd, type_time=0.4)
             yt2 = beside(turn_row(), l11)
             pin(self, l11, yt2)
@@ -275,7 +277,7 @@ class StudioInABox(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(pc), FadeOut(VGroup(mapall, late)), FadeOut(xb), run_time=0.5)
             self.remove(pc, mapall, *mapall, late, xb)
-            resize(self, t3, 11, run_time=0.6)
+            resize(self, t3, 12, run_time=0.6)
             xb = on_bar(t3, extra_row())
             self.play(FadeIn(xb, shift=LEFT * 0.1), run_time=0.3)
             vo.wait_until("The logs")
@@ -360,11 +362,19 @@ class StudioInABox(VoiceScene):
             tt = beside(time_row(), up)
             pin(self, up, tt)
             vo.wait_until("The tag is latest")
+            tag_l = mono("latest", 22, IMAGE)
+            name_l = VGroup(mono(IMAGE_NAME[:-len("latest")], 22, IMAGE), tag_l).arrange(RIGHT, buff=0.04,
+                                                                                    aligned_edge=DOWN)
+            lt = VGroup(note("docker-shell.sh · line 24", S.GREY), name_l).arrange(RIGHT, buff=0.3)
+            lt.move_to([0, 2.3, 0])
+            self.play(FadeIn(lt, shift=DOWN * 0.1), run_time=0.4)
+            self.play(Indicate(tag_l, color=TURN, scale_factor=1.2), run_time=0.6)
             type_cmd(self, t3, c20.cmd, type_time=0.4)
             out(self, t3, c20.at(2), run_time=0.3)
             self.play(substring(t3.lines[-1], '"UP"').animate.set_color(PASS), run_time=0.3)
             type_cmd(self, t3, c21.cmd, type_time=0.5)
             out(self, t3, c21.at(2), run_time=0.3)
+            self.wait(1.2)
 
         # ========================================================== 7. log in, create the project; the stand-ins
         win = window("http://localhost:8080/", 7.2, 2.7).move_to([-1.9, 1.3, 0])
@@ -392,7 +402,7 @@ class StudioInABox(VoiceScene):
         ytw = your_turn().move_to([0, -2.6, 0]).align_to(wiz, RIGHT)
 
         t7 = term(P_LABELING, rows=8, size=20)
-        heads = {"23": "POST /user/login/ · stand-in", "24": "GET /api/current-user/whoami · stand-in",
+        heads = {"23": "POST /user/login/ · GET /api/current-user/whoami · stand-in",
                  "28": "POST /api/projects · stand-in"}
 
         def head(k):
@@ -402,8 +412,8 @@ class StudioInABox(VoiceScene):
         l28 = cut(c28.line(6), '</View>"')
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(t3, xb, tt)), track(tr, 3), run_time=0.5)
-            self.remove(t3, xb, tt, *t3.lines)
+            self.play(FadeOut(VGroup(t3, xb, tt, lt)), track(tr, 3), run_time=0.5)
+            self.remove(t3, xb, tt, lt, *t3.lines)
             self.play(FadeIn(win, scale=0.97), FadeIn(ill), run_time=0.6)
             self.play(FadeIn(form, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("and log in with the username")
@@ -440,16 +450,16 @@ class StudioInABox(VoiceScene):
             sb = on_bar(t7, standin_row())
             self.play(FadeIn(sb, shift=LEFT * 0.1), run_time=0.3)
             out(self, t7, c23.at(2), run_time=0.3)
-            vo.wait_until("we are logged in")
-            self.play(Indicate(t7.lines[-1], color=INK, scale_factor=1.03), run_time=0.5)
-            h2 = head("24")
-            self.play(FadeTransform(h, h2), run_time=0.4)
+            r23 = t7.lines[-1]
             out(self, t7, c24.at((2, 7)), run_time=0.6)
+            vo.wait_until("we are logged in")
             em = t7.find('"email"')
-            self.play(substring(em, '"email": "student@example.com"').animate.set_color(TURN), run_time=0.5)
+            self.play(Indicate(r23, color=INK, scale_factor=1.03),
+                      substring(em, '"email": "student@example.com"').animate.set_color(TURN), run_time=0.6)
             vo.wait_until("and project 1 holds")
             h3 = head("28")
-            self.play(FadeTransform(h2, h3), track(tr, 4, extra="stand-in"), run_time=0.4)
+            room(self, t7, t7.rows)
+            self.play(FadeTransform(h, h3), track(tr, 4, extra="stand-in"), run_time=0.4)
             rows28 = out(self, t7, [l28], wrap=True, run_time=0.6)
             hl = [substring(rows28[0], '"id":1'), substring(rows28[0], '"title":"Cheese')]
             hl.append(substring(rows28[1], 'labels"'))

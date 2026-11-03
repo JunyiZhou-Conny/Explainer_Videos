@@ -34,9 +34,9 @@ MISSING_CHIP = "may be missing in newer versions · carry on"
 EMPTY_CHIP = "empty = the key the container already has"
 MSG_SRC = "File /secrets/data-service-account.json was not found."
 MSG_TGT = "Error validating storage connection"
-CALL_SRC = "POST /api/storages/gcs/validate"
-CALL_TGT = "POST /api/storages/export/gcs/validate"
-CALL_IMPORT = "POST /api/projects/1/import"
+CALL_SRC = "POST /api/storages/gcs/validate · stand-in"
+CALL_TGT = "POST /api/storages/export/gcs/validate · stand-in"
+CALL_IMPORT = "POST /api/projects/1/import · stand-in"
 HONEST = (("This recording machine has no Google account, no bucket,",
            "no browser and no SSH route to GitHub."),
           ("The key in the folder listings is an obviously invalid stand-in,",
@@ -274,6 +274,11 @@ class WhoTouchesBytes(VoiceScene):
             self.play(FadeIn(hcard.frame, scale=0.97), FadeIn(hcard.head), run_time=0.6)
             vo.wait_until("This machine has no Google account")
             self.play(FadeIn(items[0], shift=UP * 0.15), run_time=0.7)
+            vo.wait_until("no browser")
+            self.play(Indicate(glyphs(items[0][1], "no browser"), color=INK, scale_factor=1.06), run_time=0.6)
+            vo.wait_until("and no SSH route to GitHub")
+            self.play(Indicate(glyphs(items[0][1], "no SSH route to GitHub"), color=INK, scale_factor=1.06),
+                      run_time=0.7)
             vo.wait_until("The key in the folder listings")
             self.play(FadeIn(items[1], shift=UP * 0.15), run_time=0.7)
             vo.wait_until("moved out before every cloud step")
@@ -390,8 +395,8 @@ class WhoTouchesBytes(VoiceScene):
             vo.wait_until("does not relay the photos")
             self.play(FadeOut(VGroup(bub, ar, *cards[7:])), run_time=0.4)
             drop(self, bub, ar, *cards[7:])
-            self.play(Create(rl.route), run_time=0.8)
-            self.play(Create(rl.strike), run_time=0.4)
+            self.play(Create(rl.route), run_time=0.6)
+            self.play(Create(rl.strike), run_time=0.3)
             vo.wait_until("it signs a web address")
             self.play(FadeOut(rl), run_time=0.3)
             drop(self, rl)
@@ -415,6 +420,7 @@ class WhoTouchesBytes(VoiceScene):
             self.play(FadeIn(rc, shift=LEFT * 0.2), run_time=0.6)
             vo.wait_until("it is CORS")
             self.play(Indicate(cors, color=TURN, scale_factor=1.25), run_time=0.7)
+        self.wait(2.0)              # let the README quote be read before the fade (it arrives ~2 s before the end)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

@@ -33,7 +33,9 @@ Beats (script.md, ## S11; one voiceover block each):
    the frontend's, which misled), 'publish: every side of the laptop'. Then the map
    (AppMap.at("S11"); the frontend lights and door 3200 opens: S12's starting state) with the Wi-Fi
    street and reach lines; a GREY neighbour walks up to door 9000; `-p 127.0.0.1:9000:9000` bricks
-   up its Wi-Fi side; GREY caption 'port_toy (L04) wrote 127.0.0.1:' left of the chip. Fade out.
+   up its Wi-Fi side; GREY caption 'port_toy (L04) wrote 127.0.0.1:' left of the chip, both on "The
+   ports lecture wrote" (QA: the colon never points at empty space); the chip is ringed on "Adding
+   127.0.0.1". Fade out.
 
 Deviations: 54's row is shown as its PORTS and NAMES columns only (`cols(…, ["PORTS", "NAMES"])`):
 IMAGE + PORTS + NAMES is 103 characters (IMAGE equals NAMES here); 51:31–33 are cut with '…' rather
@@ -468,9 +470,11 @@ class FrontendPorts(VoiceScene):
             self.play(FadeIn(m, scale=1.04), run_time=0.6)
             self.play(m.light("frontend"), m.open_door("3200"), run_time=0.7)
             vo.wait_until("The ports lecture wrote")
-            self.play(FadeIn(toy, shift=UP * 0.1), run_time=0.5)
+            # QA: the caption ends in a colon, so the chip it points at arrives with it (not 12 s later)
+            self.play(FadeIn(toy, shift=UP * 0.1), FadeIn(prefix, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("before its port")
-            self.play(Indicate(toy, color=INK, scale_factor=1.08), run_time=0.7)
+            self.play(Indicate(toy, color=INK, scale_factor=1.08), Indicate(prefix.text, color=INK, scale_factor=1.08),
+                      run_time=0.7)
             vo.wait_until("but this app writes none")
             self.play(each([m.doors[p].text for p in ("8000", "3200", "9000")], INK, scale=1.15, lag=0.25),
                       run_time=0.9)
@@ -483,7 +487,7 @@ class FrontendPorts(VoiceScene):
             self.play(bounce(nb, nb.get_center() + UP * 0.22), Indicate(m.doors["9000"].text, color=INK,
                       scale_factor=1.15), run_time=0.7)
             vo.wait_until("Adding 127.0.0.1 before the host port")
-            self.play(FadeIn(prefix, shift=UP * 0.1), run_time=0.5)
+            self.play(Circumscribe(prefix, color=PASS, buff=0.08), run_time=0.6)
             vo.wait_until("before the host port")
             self.play(Indicate(prefix.text, color=INK, scale_factor=1.08), run_time=0.7)
             vo.wait_until("closes that side")

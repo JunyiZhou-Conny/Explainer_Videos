@@ -8,9 +8,10 @@ Beats (script.md, ## S07; one voiceover block each):
    parentheses, whitespace only, GREY note 'line 26 · wrapped to fit') with line 26 YELLOW and its
    project / location arguments flashing. GREY chip 'no key path anywhere'. Slide 42's chain
    redrawn under the panel: mounted key → env var → client → ?? → IAM check; on "or ADC" the YELLOW
-   '??' becomes a PINK 'ADC'. On "No code in this repo" CODE(llm-rag/cli.py: 35–36) joins below,
-   lines YELLOW, header note 'the loader's client: the same call' (QA: the failure watched in S06
-   came from the loader, not the API), its project / location arguments flashing.
+   '??' becomes a PINK 'ADC'. On "The loader's Google client" CODE(llm-rag/cli.py: 35–36) comes in
+   under the first rag.py panel (and rides up under the second when it swaps in), lines YELLOW,
+   header note 'the loader's client: the same call' (QA: the failure watched in S06 came from the
+   loader, not the API); on "No code in this repo" its project / location arguments flash.
 1. The 'ADC' box rises to a heading ('looks in three places, in order'); V1's AdcPlaces rows arrive
    one per sentence while the PINK glass walks them; on "only when the one before is not set" a
    GREY note and the glass walks 1 → 2 → 3 again; on "Inside these containers" a TEAL container
@@ -222,7 +223,10 @@ class AdcToToken(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref), FadeIn(win_a, shift=UP * 0.2), run_time=0.9)
             vo.wait_until("The loader's Google client")
-            self.play(FadeIn(VGroup(win_c, cbars), shift=UP * 0.2), FadeIn(same), run_time=0.6)
+            loader = VGroup(win_c, cbars, same)
+            final = loader.get_center()
+            loader.next_to(win_a, DOWN, buff=0.35).align_to(win_a, LEFT)   # under win_a until win_b swaps in
+            self.play(FadeIn(loader, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("like the API's")
             self.play(Indicate(win_a.code.code_lines[1], color=INK, scale_factor=1.04), run_time=0.7)
             vo.wait_until("built from a project")
@@ -230,7 +234,8 @@ class AdcToToken(VoiceScene):
             u = under(proj, TURN)
             self.play(Create(u), Indicate(proj, color=TURN, scale_factor=1.08), run_time=0.7)
             vo.wait_until("and a location")
-            self.play(FadeOut(VGroup(win_a, u), shift=UP * 0.3), FadeIn(win_b, shift=UP * 0.3), run_time=0.7)
+            self.play(FadeOut(VGroup(win_a, u), shift=UP * 0.3), FadeIn(win_b, shift=UP * 0.3),
+                      loader.animate.move_to(final), run_time=0.7)
             self.remove(win_a, u)
             self.play(FadeIn(bars), FadeIn(wrapped), run_time=0.4)
             self.play(each([code_span(win_b.code, 3, "project=GCP_PROJECT"),

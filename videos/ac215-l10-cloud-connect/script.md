@@ -559,11 +559,11 @@ SAY: A default credentials error, or a 401, means no valid token: check the path
 
 SHOW: A kind card, tag `erratum`: "no README in this repo says to enable the Vertex AI API ·
 probably done in an earlier lecture · if not, the 403 says so, with an enable link". Under it a
-small GREY `extra` chip: `gcloud services enable aiplatform.googleapis.com`.
+small GREY `extra` chip: `gcloud services enable aiplatform.googleapis.com --project=your-gcp-project`.
 SAY: That last cause is a small gap: no README here says to enable the Vertex AI API. If you never did, the 403 says so, and one extra gcloud command fixes it.
 
 SHOW: The grid returns; arrow (3)'s target column pulses.
-PONDER(8 s, "Your key works for embeddings. You paste the\ninstructor's endpoint projects/129349313346/….\nWhich part decides whose IAM is checked:\nGCP_PROJECT, the key's project_id, or the path?")
+PONDER(8 s, "Your key works for embeddings. You paste the\ninstructor's endpoint projects/129349313346/…\nWhich part decides whose IAM is checked:\nGCP_PROJECT, the key's project_id, or the path?")
 SAY: Something to ponder. Your key works for embeddings. Now you paste the instructor's endpoint, which begins with projects and a long number. Which part decides whose IAM is checked: the project variable, the project inside your key, or the endpoint path?
 
 SHOW: The endpoint path lights as the resource; the two distractors grey out in turn (the key's
@@ -737,8 +737,9 @@ Right: the
 `0.0.0.0:3200->3000/tcp` cell, caption "publish: every side of the laptop". On the map the
 wall doors face two sides, the laptop's loopback and a "Wi-Fi" street; a GREY neighbour figure on
 the Wi-Fi street walks up to door 9000 (all doors neutral GREY, never GREEN). Then a diagram only,
-no capture: `-p 127.0.0.1:9000:9000` bricks up the Wi-Fi side of door 9000; GREY caption "port_toy
-(L04) wrote 127.0.0.1:". Fade out.
+no capture: GREY caption "port_toy (L04) wrote 127.0.0.1:" and the chip `-p 127.0.0.1:9000:9000`
+arrive together on "The ports lecture wrote"; on "closes that side" the chip bricks up the Wi-Fi
+side of door 9000. Fade out.
 SAY: 0.0.0.0 has now appeared twice, as two different facts. Inside the container, the tunnel arrives at the street side, not at the loopback, so the API server listens on every side. Docker publishes on every side of your laptop, unless you add a prefix. The ports lecture wrote 127.0.0.1 before its port, but this app writes none. So these doors face your Wi-Fi too, and anyone on that network can knock. Adding 127.0.0.1 before the host port closes that side.
 
 ---
