@@ -61,6 +61,71 @@
       "bvid": "BV1xgns6NEiz",
       "title": "AC215 第5讲跟练 · RAG 入门：切块、向量化、入库、检索与对话",
       "pubdate": 1792718684
+    },
+    "ac215-l07-agent-harness": {
+      "bvid": "BV1texB69EGC",
+      "title": "AC215 第7讲跟练 · LLM 智能体 II：agent harness——模型提议，harness 决定",
+      "pubdate": 1793381734
+    },
+    "ac215-l06-agents-1": {
+      "bvid": "BV14zxB6nETz",
+      "title": "AC215 第6讲跟练 · LLM 智能体 I：手写函数调用、ADK、MCP、多智能体与 harness",
+      "pubdate": 1793381921
+    },
+    "portal-e6-backend": {
+      "bvid": "BV1Fvxr6DEwL",
+      "title": "项目周记 E6 · 后端怎么选：每一块做什么、谁落选了、数据结构保护了谁",
+      "pubdate": 1793418193
+    },
+    "portal-e5-verify": {
+      "bvid": "BV1cvxr6DELB",
+      "title": "项目周记 E5 · agent 怎么证明自己改对了：穷举每一种顺序，再真的去点一遍",
+      "pubdate": 1793418221
+    },
+    "portal-e4-build-log": {
+      "bvid": "BV1Ntxr6xETX",
+      "title": "项目周记 E4 · 两天、一百多个提交：agent 是怎么干活的，谁做的决定",
+      "pubdate": 1793418254
+    },
+    "portal-e3-copying-claude": {
+      "bvid": "BV1Ptxr6xESC",
+      "title": "项目周记 E3 · 照着 Claude 抄：我们的聊天页抄了什么、没抄什么、加了什么",
+      "pubdate": 1793418282
+    },
+    "portal-e2-thinking": {
+      "bvid": "BV1Ntxr6xEJf",
+      "title": "项目周记 E2 ·「思考了 3 秒」到底是什么：隐藏的推理、只流进度的流式输出和一张收据",
+      "pubdate": 1793418312
+    },
+    "portal-e1-after-send": {
+      "bvid": "BV1ytxr6xED9",
+      "title": "不就是调一下 API 吗？",
+      "pubdate": 1793418346
+    },
+    "ac215-l08-llm-finetuning": {
+      "bvid": "BV1Zox46uEk8",
+      "title": "AC215 第8讲跟练 · LLM 微调：教模型学会一种口吻——Gemini 托管微调与 QLoRA",
+      "pubdate": 1793553861
+    },
+    "ac215-l13-exam": {
+      "bvid": "BV16f4N6HEjK",
+      "title": "AC215 第13讲 · 考前精讲：W&B、Vertex AI 打包、多 GPU 与 batch、长时间训练",
+      "pubdate": 1793645762
+    },
+    "ac215-l14-exam": {
+      "bvid": "BV1mC4N6aEpD",
+      "title": "AC215 第14讲 · 考前精讲：Cloud Run 的 service 与 job、按需计费、预处理放在哪、serving signature",
+      "pubdate": 1793649382
+    },
+    "ac215-l15-exam": {
+      "bvid": "BV1Qq4N6iE8X",
+      "title": "AC215 第15讲 · 考前精讲：Pipeline 是一张 DAG、task.output、最大安全并行、用依赖边而不是定时",
+      "pubdate": 1793650303
+    },
+    "ac215-l16-exam": {
+      "bvid": "BV1qg4M6QEjH",
+      "title": "AC215 第16讲（含第10讲）· 考前精讲：私有子网与 NAT、浏览器在 VPC 外、启动时注入配置、连接数预算、pgvector",
+      "pubdate": 1793657583
     }
   },
   "unmatched": []

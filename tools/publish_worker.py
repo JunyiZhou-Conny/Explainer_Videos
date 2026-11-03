@@ -12,11 +12,13 @@ intent (PUBLISH.md), this file only remembers what was already uploaded or faile
 cookies.json (biliup's login) stays in ~/.config/biliup/ and must never enter git,
 GitHub secrets, or a cloud container.
 
-Prerequisites, once:
+Set up once with setup/macos/install-publish-worker.sh: it logs in (gh auth login; biliup login
+in ~/.config/biliup, where biliup reads cookies.json from the working directory) and installs
+launchd jobs that run this worker with --upload every 15 minutes and `biliup renew` weekly.
+By hand, the prerequisites are:
   npm install -g @biliup/cli            # or the release binary from github.com/biliup/biliup
-  biliup login                          # scan the QR with the Bilibili app
+  cd ~/.config/biliup && biliup login   # scan the QR with the Bilibili app
   gh auth login                         # any account that can read the repo and comment
-Weekly (also scheduled by the launchd plist): biliup renew
 
 Dry run (default is to do nothing destructive without --upload):
   python3 tools/publish_worker.py --repo JunyiZhou-Conny/Explainer_Videos

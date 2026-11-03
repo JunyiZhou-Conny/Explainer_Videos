@@ -34,6 +34,15 @@
       "code": "E{}"
     },
     {
+      "id": "portal",
+      "name": "项目周记 · 看懂这周的 PR",
+      "short": "项目周记",
+      "description": "我的创业项目（给中国家长和在美留学生的就医导航原型）每周 PR 的概念讲解：这周解决了什么问题、AI agent 一步步怎么做的、照着谁做、还能怎么做。每集 10 分钟以内，不读代码。",
+      "slug_prefix": "portal-",
+      "slug_number": "^portal-e(\\d+)",
+      "code": "E{}"
+    },
+    {
       "id": "standalone",
       "name": "单集",
       "short": "单集",

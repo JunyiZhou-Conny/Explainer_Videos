@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "swiss",
+  "preset": "3b1b",
   "duration_seconds": 300,
   "video": {
     "width": 1920,

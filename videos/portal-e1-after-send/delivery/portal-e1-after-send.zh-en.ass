@@ -1,0 +1,158 @@
+[Script Info]
+Title: 
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,43,&H00F3F0E7,&H00F3F0E7,&H00171717,&H00171717,0,0,0,0,100,100,0,0,1,0,0,2,90,90,27,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.40,0:00:03.30,Bilingual,,0,0,0,,你在分诊聊天里只打了一个词：你好\N{\fs30\fnInter\c&H00C9C9C9&\bord0}You typed one word into the triage chat: hello.
+Dialogue: 0,0:00:03.47,0:00:05.20,Bilingual,,0,0,0,,回来的却是三样东西\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And three things came back.
+Dialogue: 0,0:00:05.20,0:00:10.89,Bilingual,,0,0,0,,给你的一句问候；一段写给在中国的家长的摘要；还有一张折起来的收据\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A greeting for you. A summary written for a parent in China. And, folded away, a receipt:
+Dialogue: 0,0:00:10.89,0:00:16.91,Bilingual,,0,0,0,,思考了 3 秒、依据、检查通过、判断，还有模型和价钱\N{\fs30\fnInter\c&H00C9C9C9&\bord0}thought for three seconds, sources, a check that passed, a judgment, and a model with a price.
+Dialogue: 0,0:00:17.07,0:00:22.49,Bilingual,,0,0,0,,可这个应用建在 OpenAI 的 API 上，而一次 API 调用只会返回一段文字\N{\fs30\fnInter\c&H00C9C9C9&\bord0}But the app is built on the OpenAI API, and an API call returns text.
+Dialogue: 0,0:00:22.81,0:00:24.83,Bilingual,,0,0,0,,没人要过家长摘要\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Nobody asked for a parent summary.
+Dialogue: 0,0:00:25.15,0:00:27.12,Bilingual,,0,0,0,,那是谁决定要有这一段的？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So who decided there would be one?
+Dialogue: 0,0:00:27.44,0:00:29.24,Bilingual,,0,0,0,,又是谁检查过它？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And who checked it?
+Dialogue: 0,0:00:32.40,0:00:34.60,Bilingual,,0,0,0,,我们心里通常是这样一张图\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Here is the picture most of us carry:
+Dialogue: 0,0:00:34.60,0:00:38.82,Bilingual,,0,0,0,,页面把你的话发给模型，模型再把话发回来\N{\fs30\fnInter\c&H00C9C9C9&\bord0}the page sends your words to the model, and the model sends words back.
+Dialogue: 0,0:00:39.00,0:00:45.10,Bilingual,,0,0,0,,实际上，页面只和我们自己的一个小服务器说话，再由服务器去调模型\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Here is what really happens. The page talks only to our own small server, and the server talks
+Dialogue: 0,0:00:45.10,0:00:47.90,Bilingual,,0,0,0,,API key 只放在服务器上\N{\fs30\fnInter\c&H00C9C9C9&\bord0}to the model. The API key lives only there.
+Dialogue: 0,0:00:48.07,0:00:51.20,Bilingual,,0,0,0,,包在模型调用外面的这层代码，叫 harness\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The code wrapped around a model call is called a harness.
+Dialogue: 0,0:00:51.52,0:00:56.83,Bilingual,,0,0,0,,我们的 harness 干四件事：组装请求、规定回答的格式、检查回答\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Ours does four jobs: build the request, set the shape of the reply, check the reply,
+Dialogue: 0,0:00:56.83,0:00:59.93,Bilingual,,0,0,0,,最后回到页面上，把回答变成你看到的样子\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and, back in the page, turn it into what you saw.
+Dialogue: 0,0:01:03.67,0:01:05.30,Bilingual,,0,0,0,,先看请求\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Start with the request.
+Dialogue: 0,0:01:05.35,0:01:07.42,Bilingual,,0,0,0,,你的「你好」是里面最小的一块\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Your hello is the smallest part of it.
+Dialogue: 0,0:01:07.60,0:01:14.26,Bilingual,,0,0,0,,最上面是学校医疗中心和学生保险的 15 份官方资料\N{\fs30\fnInter\c&H00C9C9C9&\bord0}On top sit 15 official pages from the university's health service and its student insurance,
+Dialogue: 0,0:01:14.26,0:01:20.70,Bilingual,,0,0,0,,清洗成纯文字，大约 25,000 个 token\N{\fs30\fnInter\c&H00C9C9C9&\bord0}cleaned into plain text: about 25,000 tokens, the word pieces a model reads and bills by.
+Dialogue: 0,0:01:21.02,0:01:22.75,Bilingual,,0,0,0,,token 是模型读字、算钱的单位；这些加起来，相当于一本小册子\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A small booklet.
+Dialogue: 0,0:01:22.80,0:01:25.83,Bilingual,,0,0,0,,下面是事实卡里 89 条核对过的事实\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Below them, 89 checked facts from our fact cards:
+Dialogue: 0,0:01:25.83,0:01:28.49,Bilingual,,0,0,0,,每个电话、每个金额、每段营业时间\N{\fs30\fnInter\c&H00C9C9C9&\bord0}every phone number, price and opening hour.
+Dialogue: 0,0:01:28.81,0:01:32.99,Bilingual,,0,0,0,,每张卡都引用了原文里的那一句，但发给模型的只有事实本身\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Each card quotes the sentence it came from; the model gets just the fact.
+Dialogue: 0,0:01:33.17,0:01:38.48,Bilingual,,0,0,0,,然后是规则，用大白话写：不诊断，不给剂量\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Then the rules, in plain language. Never diagnose. Never give a dose.
+Dialogue: 0,0:01:38.48,0:01:45.18,Bilingual,,0,0,0,,紧急时先行动、后谈钱；还有，家长在中国拨 911 打不到波士顿\N{\fs30\fnInter\c&H00C9C9C9&\bord0}In an emergency, action before money. And a parent in China cannot dial 911 for Boston.
+Dialogue: 0,0:01:45.33,0:01:48.66,Bilingual,,0,0,0,,最后是回答必须填的那张表的说明\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Last comes a description of the form the answer must fill.
+Dialogue: 0,0:01:48.98,0:01:53.85,Bilingual,,0,0,0,,这四块合起来叫 instructions，聊天应用里叫系统提示词\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Together, these four parts are the instructions; chat apps call them the system prompt.
+Dialogue: 0,0:01:54.00,0:01:56.33,Bilingual,,0,0,0,,它们每次都一样，这一点很要紧\N{\fs30\fnInter\c&H00C9C9C9&\bord0}They never change, and that matters.
+Dialogue: 0,0:01:56.33,0:02:02.86,Bilingual,,0,0,0,,OpenAI 的缓存从请求的第一个字开始比对，所以不变的东西必须放在最前面\N{\fs30\fnInter\c&H00C9C9C9&\bord0}OpenAI's cache matches a request from its very first word, so whatever never changes must come first.
+Dialogue: 0,0:02:02.86,0:02:06.40,Bilingual,,0,0,0,,第一次之后，前面这一大段就直接从缓存里读\N{\fs30\fnInter\c&H00C9C9C9&\bord0}After the first call, the long top is read from the cache.
+Dialogue: 0,0:02:06.40,0:02:08.10,Bilingual,,0,0,0,,这叫 prompt caching，提示缓存\N{\fs30\fnInter\c&H00C9C9C9&\bord0}This is prompt caching,
+Dialogue: 0,0:02:08.10,0:02:12.37,Bilingual,,0,0,0,,在 Luna 模型上，命中缓存的 token 只要原价的十分之一\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and on the Luna model a cached token costs a tenth of a fresh one.
+Dialogue: 0,0:02:12.53,0:02:13.92,Bilingual,,0,0,0,,后面才是会变的\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Then what changes:
+Dialogue: 0,0:02:13.92,0:02:19.97,Bilingual,,0,0,0,,前面聊过的话、谁在问、波士顿和中国此刻几点、学校医疗中心开没开门\N{\fs30\fnInter\c&H00C9C9C9&\bord0}the chat so far, who is asking, the time in Boston and in China, whether the student clinic is open,
+Dialogue: 0,0:02:19.97,0:02:21.58,Bilingual,,0,0,0,,最后才是那句「你好」\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and finally, hello.
+Dialogue: 0,0:02:21.63,0:02:25.45,Bilingual,,0,0,0,,你的一句「你好」带着整本小册子出发，只花了 0.0004 美元\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Your hello carried the whole booklet, and cost four hundredths of a cent.
+Dialogue: 0,0:02:25.60,0:02:30.64,Bilingual,,0,0,0,,停一下：为什么要由我们的代码告诉模型现在几点、诊所开没开门\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Pause here. Why does our code tell the model the time, and whether the clinic is open,
+Dialogue: 0,0:02:30.64,0:02:33.05,Bilingual,,0,0,0,,而不是让模型自己去算？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}instead of letting the model work it out?
+Dialogue: 0,0:02:37.70,0:02:39.51,Bilingual,,0,0,0,,因为模型没有钟\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Because a model has no clock.
+Dialogue: 0,0:02:39.83,0:02:44.82,Bilingual,,0,0,0,,代码查公布的营业时间和时区，每次都用同一套算法\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Code reads the posted hours and the time zone, works it out the same way every time,
+Dialogue: 0,0:02:44.82,0:02:47.73,Bilingual,,0,0,0,,算不准的时候，就写「待确认」\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and writes 'to be confirmed' when it cannot know.
+Dialogue: 0,0:02:53.27,0:02:59.01,Bilingual,,0,0,0,,接下来是回答的格式。 我们不是请模型「回答」，而是递给它一张表\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Next, the shape of the reply. We do not ask the model for an answer. We hand it a form.
+Dialogue: 0,0:02:59.17,0:03:01.95,Bilingual,,0,0,0,,13 个格子，每个都有名字和类型\N{\fs30\fnInter\c&H00C9C9C9&\bord0}13 boxes, each with a name and a type.
+Dialogue: 0,0:03:01.95,0:03:03.41,Bilingual,,0,0,0,,有的填自由文字\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Some take free text.
+Dialogue: 0,0:03:03.41,0:03:05.53,Bilingual,,0,0,0,,有的只能从固定选项里选\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Some take only fixed choices:
+Dialogue: 0,0:03:05.53,0:03:07.65,Bilingual,,0,0,0,,紧急程度只能是六档之一\N{\fs30\fnInter\c&H00C9C9C9&\bord0}urgency is one of six levels,
+Dialogue: 0,0:03:07.65,0:03:12.12,Bilingual,,0,0,0,,从「可能危及生命」一直到「只是规则或保险问题」\N{\fs30\fnInter\c&H00C9C9C9&\bord0}from possibly life-threatening down to just a rules question.
+Dialogue: 0,0:03:12.27,0:03:14.78,Bilingual,,0,0,0,,API 里这叫 structured outputs，结构化输出\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The API calls this structured outputs.
+Dialogue: 0,0:03:15.00,0:03:19.95,Bilingual,,0,0,0,,它仍然是一次调用，回来的仍然是文字，只是文字长成了这张表的样子\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It is still one call, and the reply is still text, just text shaped like the form.
+Dialogue: 0,0:03:20.27,0:03:24.58,Bilingual,,0,0,0,,开了严格模式，别的样子都不行：不能少一格，也不能多一格\N{\fs30\fnInter\c&H00C9C9C9&\bord0}In strict mode nothing else fits: no missing box, no extra box.
+Dialogue: 0,0:03:24.73,0:03:27.28,Bilingual,,0,0,0,,现在看其中一格：家长摘要\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Now look at one box: the parent summary.
+Dialogue: 0,0:03:27.28,0:03:32.45,Bilingual,,0,0,0,,规则给了它一条说明：写给在中国的家长两三句话\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The rules give it an instruction: two or three sentences for the parent in China.
+Dialogue: 0,0:03:32.45,0:03:35.96,Bilingual,,0,0,0,,孩子怎么了、要去哪里、家长能做什么\N{\fs30\fnInter\c&H00C9C9C9&\bord0}What is happening, where to go, what the parent can do.
+Dialogue: 0,0:03:35.96,0:03:37.15,Bilingual,,0,0,0,,永远要写\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Always filled in.
+Dialogue: 0,0:03:37.20,0:03:43.13,Bilingual,,0,0,0,,秘密就这么多：一次调用填满全部 13 格，家长摘要也在其中\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That is the whole secret: one call fills all 13 boxes, the parent summary included.
+Dialogue: 0,0:03:43.45,0:03:47.59,Bilingual,,0,0,0,,不是模型自己想得周到，而是规则说这一格必须填\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The model did not decide to be thoughtful; the rules say fill that box.
+Dialogue: 0,0:03:47.91,0:03:52.57,Bilingual,,0,0,0,,严格模式只保证这一格存在，不保证里面有字\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And strict mode only promises the box is there, not that anything is in it,
+Dialogue: 0,0:03:52.57,0:03:54.57,Bilingual,,0,0,0,,所以空着交上来，检查就不让过\N{\fs30\fnInter\c&H00C9C9C9&\bord0}so the checker rejects it empty.
+Dialogue: 0,0:03:54.73,0:03:58.98,Bilingual,,0,0,0,,收据也一样：「依据」就是 citations 那一格\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The receipt works the same way. Sources is the citations box.
+Dialogue: 0,0:03:58.98,0:04:03.44,Bilingual,,0,0,0,,「判断」就是紧急程度和该去哪里这两格，翻成了中文\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Judgment is the urgency and where-to-go boxes, put into Chinese.
+Dialogue: 0,0:04:10.90,0:04:13.40,Bilingual,,0,0,0,,填好的表还不会直接上屏\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The filled form does not go to the screen yet.
+Dialogue: 0,0:04:13.72,0:04:15.81,Bilingual,,0,0,0,,先要过我们自己写的一道检查\N{\fs30\fnInter\c&H00C9C9C9&\bord0}First it passes a checker we wrote,
+Dialogue: 0,0:04:15.81,0:04:19.41,Bilingual,,0,0,0,,叫 lint，名字借自给代码挑错的工具\N{\fs30\fnInter\c&H00C9C9C9&\bord0}called the lint, after the tools that flag mistakes in code.
+Dialogue: 0,0:04:19.57,0:04:22.44,Bilingual,,0,0,0,,二十多条规则逐句读\N{\fs30\fnInter\c&H00C9C9C9&\bord0}More than twenty rules read every line.
+Dialogue: 0,0:04:22.44,0:04:26.21,Bilingual,,0,0,0,,拦下剂量，比如「每六小时两片」\N{\fs30\fnInter\c&H00C9C9C9&\bord0}They stop a dose, like two tablets every six hours.
+Dialogue: 0,0:04:26.21,0:04:30.70,Bilingual,,0,0,0,,拦下诊断；拦下不在任何事实卡上的电话和金额\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A diagnosis. A phone number or price that is on no fact card.
+Dialogue: 0,0:04:30.70,0:04:33.14,Bilingual,,0,0,0,,拦下紧急时先谈钱\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Money before 911 in an emergency.
+Dialogue: 0,0:04:33.14,0:04:35.20,Bilingual,,0,0,0,,也拦下空着的家长摘要\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And an empty parent summary.
+Dialogue: 0,0:04:35.77,0:04:38.84,Bilingual,,0,0,0,,有不通过的，表就被退回去，附一张条子\N{\fs30\fnInter\c&H00C9C9C9&\bord0}If anything fails, the form goes back with a note:
+Dialogue: 0,0:04:38.84,0:04:41.61,Bilingual,,0,0,0,,改掉这几处，重新交一份完整的表\N{\fs30\fnInter\c&H00C9C9C9&\bord0}fix these problems and return the whole form.
+Dialogue: 0,0:04:41.93,0:04:43.48,Bilingual,,0,0,0,,只给一次重写机会\N{\fs30\fnInter\c&H00C9C9C9&\bord0}One rewrite, no more.
+Dialogue: 0,0:04:43.53,0:04:49.10,Bilingual,,0,0,0,,第二版还不过，或者调用出错了，模型写的字一个都不给人看\N{\fs30\fnInter\c&H00C9C9C9&\bord0}If the second version still fails, or the call breaks, nobody sees the model's words.
+Dialogue: 0,0:04:49.10,0:04:52.18,Bilingual,,0,0,0,,换成我们自己写好的兜底\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A fallback we wrote ourselves goes out instead:
+Dialogue: 0,0:04:52.18,0:04:56.44,Bilingual,,0,0,0,,紧急就现在打 911，不紧急就打学校医疗中心\N{\fs30\fnInter\c&H00C9C9C9&\bord0}call 911 now if it was urgent, otherwise call the student clinic.
+Dialogue: 0,0:04:56.60,0:05:01.80,Bilingual,,0,0,0,,还有，只要有一版说了紧急，重写和兜底都只能还是紧急\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And once any version says emergency, the rewrite and the fallback must stay emergency.
+Dialogue: 0,0:05:02.12,0:05:06.60,Bilingual,,0,0,0,,重写只该改掉检查挑出的毛病，不该改变对危险的判断\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A rewrite should fix what the checker flagged, not change its mind about danger.
+Dialogue: 0,0:05:06.92,0:05:10.49,Bilingual,,0,0,0,,真要错，宁可错在打 911 这一边\N{\fs30\fnInter\c&H00C9C9C9&\bord0}If we must be wrong, we would rather be wrong toward 911.
+Dialogue: 0,0:05:10.67,0:05:15.49,Bilingual,,0,0,0,,可规则里已经告诉过模型「不要诊断」了，为什么还要再查一遍？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}But the rules already told the model never to diagnose. Why check again?
+Dialogue: 0,0:05:20.17,0:05:23.18,Bilingual,,0,0,0,,因为指令只是请求，不是保证\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Because an instruction is a request, not a guarantee.
+Dialogue: 0,0:05:23.50,0:05:27.06,Bilingual,,0,0,0,,收据上的「检查」那一行，写的就是这条回答走了哪条路\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The check row on your receipt says which path the answer took:
+Dialogue: 0,0:05:27.06,0:05:29.13,Bilingual,,0,0,0,,一次通过、重写过一次，还是被换掉了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}passed, rewritten once, or replaced.
+Dialogue: 0,0:05:31.97,0:05:36.28,Bilingual,,0,0,0,,只有检查过的表才会到页面上，页面再把它排成聊天的样子\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Only a checked form reaches the page, and the page lays it out like a chat.
+Dialogue: 0,0:05:36.43,0:05:38.69,Bilingual,,0,0,0,,紧急的步骤排最前面，放在红框里\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Urgent steps first, in a red block.
+Dialogue: 0,0:05:38.69,0:05:44.09,Bilingual,,0,0,0,,然后是说明、去处、要带什么、可以照着说的英文句子\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Then the explanation, the places to go, what to bring, a sentence to say in English,
+Dialogue: 0,0:05:44.09,0:05:48.98,Bilingual,,0,0,0,,最后是折起来的家长摘要，学生还有一个复制按钮\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and near the end the folded parent summary, with a copy button for students.
+Dialogue: 0,0:05:49.13,0:05:50.33,Bilingual,,0,0,0,,那张收据呢？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And the receipt?
+Dialogue: 0,0:05:50.33,0:05:52.73,Bilingual,,0,0,0,,「依据」和「判断」来自表\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Sources and judgment come from the form.
+Dialogue: 0,0:05:52.73,0:05:54.60,Bilingual,,0,0,0,,「检查」来自检查器\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Check comes from the checker.
+Dialogue: 0,0:05:54.60,0:05:58.20,Bilingual,,0,0,0,,「模型」和价钱来自服务器和它的价目表\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Model and price come from the server and its price list.
+Dialogue: 0,0:05:58.37,0:06:00.95,Bilingual,,0,0,0,,那「过程」呢？ Luna 是推理模型\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And process? Luna is a reasoning model.
+Dialogue: 0,0:06:00.95,0:06:07.24,Bilingual,,0,0,0,,动笔之前，它先在看不见的地方一步步推理，这部分我们付了钱，却看不到\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Before writing a word, it reasons in hidden steps that we pay for but never see, and the effort
+Dialogue: 0,0:06:07.24,0:06:09.49,Bilingual,,0,0,0,,菜单里的思考强度，决定它想多少\N{\fs30\fnInter\c&H00C9C9C9&\bord0}setting in the menu says how much.
+Dialogue: 0,0:06:09.49,0:06:14.72,Bilingual,,0,0,0,,页面给每一段计时：第一个字到来之前算「思考」，之后算「写」\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The page times each phase: thinking until the first word arrives, then writing.
+Dialogue: 0,0:06:14.72,0:06:18.83,Bilingual,,0,0,0,,所以思考是真的；它想了些什么，下一集讲\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So the thinking is real. What it contains is the next episode.
+Dialogue: 0,0:06:19.00,0:06:21.00,Bilingual,,0,0,0,,想一想：五行里有两行是模型自己写的\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Now a question to sit with.
+Dialogue: 0,0:06:21.05,0:06:23.61,Bilingual,,0,0,0,,检查器会读其中一行\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Two of the five rows are the model's own words.
+Dialogue: 0,0:06:23.93,0:06:25.73,Bilingual,,0,0,0,,另一行，从来没有任何东西检查它\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The checker reads one of them.
+Dialogue: 0,0:06:25.95,0:06:27.75,Bilingual,,0,0,0,,是哪一行？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Which one does nothing ever check?
+Dialogue: 0,0:06:32.10,0:06:37.11,Bilingual,,0,0,0,,是「依据」。 检查器会读「判断」，确保紧急情况排在最前\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Sources. The checker reads the judgment to make sure an emergency comes first,
+Dialogue: 0,0:06:37.11,0:06:41.28,Bilingual,,0,0,0,,也会拿事实卡核对每个电话和金额\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and it tests every phone number and price against the fact cards.
+Dialogue: 0,0:06:41.28,0:06:46.16,Bilingual,,0,0,0,,但没有任何东西读依据列表，那只是模型自己说它参考了什么\N{\fs30\fnInter\c&H00C9C9C9&\bord0}But nothing reads the source list. It is simply what the model says it used.
+Dialogue: 0,0:06:49.27,0:06:51.70,Bilingual,,0,0,0,,这套设计不是一开始的样子\N{\fs30\fnInter\c&H00C9C9C9&\bord0}This design is not where the work started.
+Dialogue: 0,0:06:52.02,0:06:57.46,Bilingual,,0,0,0,,背后那个 PR 前后 36 个小时、60 个提交，是用 Claude Code 写出来的\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The pull request behind it ran 36 hours and 60 commits, written with Claude Code.
+Dialogue: 0,0:06:57.63,0:07:03.90,Bilingual,,0,0,0,,周二先做的是知识库，结果发现资料之间互相打架\N{\fs30\fnInter\c&H00C9C9C9&\bord0}On Tuesday, the knowledge base came first, and the sources turned out to disagree.
+Dialogue: 0,0:07:03.90,0:07:10.69,Bilingual,,0,0,0,,一份保险文件说自付上限是 5,550 美元，另一份说 5,500\N{\fs30\fnInter\c&H00C9C9C9&\bord0}One insurance document puts the out-of-pocket maximum at 5,550 dollars, another at 5,500.
+Dialogue: 0,0:07:10.69,0:07:15.81,Bilingual,,0,0,0,,七处这样的冲突被逐条裁定，或者标成「待确认」\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Seven conflicts like that were ruled on, or marked to be confirmed.
+Dialogue: 0,0:07:15.97,0:07:21.62,Bilingual,,0,0,0,,第一版引擎是规则：代码按关键词表判断症状有多急\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The first engine was rules: code judged how urgent a symptom was from keyword lists,
+Dialogue: 0,0:07:21.62,0:07:25.05,Bilingual,,0,0,0,,模型只负责抽取信息、把结果讲清楚\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and the model only extracted details and explained.
+Dialogue: 0,0:07:25.37,0:07:28.88,Bilingual,,0,0,0,,还搭了一套评估，准备比较六种做法\N{\fs30\fnInter\c&H00C9C9C9&\bord0}We also built an evaluation to compare six approaches,
+Dialogue: 0,0:07:28.88,0:07:31.60,Bilingual,,0,0,0,,但在真正比较之前就暂停了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}then shelved it before the comparison ran.
+Dialogue: 0,0:07:31.77,0:07:34.92,Bilingual,,0,0,0,,然后，周二晚上九点二十一分，转向\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Then, at nine twenty-one on Tuesday night, the turn.
+Dialogue: 0,0:07:35.24,0:07:39.81,Bilingual,,0,0,0,,关键词表一边漏掉真正的危险信号，一边误报无害的说法\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The keyword lists kept missing real warning signs and flagging harmless ones.
+Dialogue: 0,0:07:40.13,0:07:45.14,Bilingual,,0,0,0,,于是你决定：让推理模型带着整本资料自己判断\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So you decided: let a reasoning model judge, with the whole booklet in front of it,
+Dialogue: 0,0:07:45.14,0:07:48.04,Bilingual,,0,0,0,,把对输出的检查当作唯一的安全层\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and make the output check the only safety layer.
+Dialogue: 0,0:07:48.20,0:07:51.53,Bilingual,,0,0,0,,二十二分钟后，一个最朴素的聊天框就有了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Twenty-two minutes later, the plainest chat box existed.
+Dialogue: 0,0:07:51.85,0:07:53.48,Bilingual,,0,0,0,,之后又有四十个提交\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Forty more commits followed,
+Dialogue: 0,0:07:53.48,0:07:57.54,Bilingual,,0,0,0,,大部分都在堵坏句子溜过检查的路\N{\fs30\fnInter\c&H00C9C9C9&\bord0}most of them closing a way a bad sentence could slip past the checker.
+Dialogue: 0,0:07:57.70,0:08:01.66,Bilingual,,0,0,0,,注意这里的反转：判断症状时，词语规则被放弃了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Notice the twist: word rules were dropped for judging symptoms,
+Dialogue: 0,0:08:01.66,0:08:06.38,Bilingual,,0,0,0,,可安全网仍然是词语规则，只是对准了模型写的句子\N{\fs30\fnInter\c&H00C9C9C9&\bord0}yet the safety net is still word rules, now aimed at the model's sentences.
+Dialogue: 0,0:08:06.70,0:08:08.69,Bilingual,,0,0,0,,这个取舍，留到第四集\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That trade-off is episode four.
+Dialogue: 0,0:08:16.93,0:08:20.34,Bilingual,,0,0,0,,从外面看，它很像 ChatGPT 或 Claude\N{\fs30\fnInter\c&H00C9C9C9&\bord0}From the outside, this looks like ChatGPT or Claude;
+Dialogue: 0,0:08:20.34,0:08:25.45,Bilingual,,0,0,0,,样子是有意照着 Claude 的应用做的，那是第三集\N{\fs30\fnInter\c&H00C9C9C9&\bord0}the look was borrowed from Claude's app on purpose, and that is episode three.
+Dialogue: 0,0:08:25.77,0:08:27.79,Bilingual,,0,0,0,,里面却是另一台机器\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Inside, it is a different machine.
+Dialogue: 0,0:08:27.97,0:08:30.49,Bilingual,,0,0,0,,通用的聊天应用用自由的文字回答\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A general chat app answers in free prose,
+Dialogue: 0,0:08:30.49,0:08:33.75,Bilingual,,0,0,0,,靠系统提示词和模型的训练守规矩\N{\fs30\fnInter\c&H00C9C9C9&\bord0}guided by its system prompt and the model's training.
+Dialogue: 0,0:08:34.07,0:08:39.73,Bilingual,,0,0,0,,我们也有系统提示词，此外还有一张我们设计的表、只从事实卡里取的金额\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Ours has a system prompt too, and adds a form we designed, prices only from fact cards,
+Dialogue: 0,0:08:39.73,0:08:43.05,Bilingual,,0,0,0,,以及挡在模型和屏幕之间的我们自己的规则\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and our own rules between the model and the screen.
+Dialogue: 0,0:08:43.60,0:08:46.50,Bilingual,,0,0,0,,这张表也是下一步的钥匙\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That form is also the key to what comes next,
+Dialogue: 0,0:08:46.50,0:08:49.21,Bilingual,,0,0,0,,因为一个新功能，多半就是多一格\N{\fs30\fnInter\c&H00C9C9C9&\bord0}because a new feature is mostly a new box.
+Dialogue: 0,0:08:49.21,0:08:51.27,Bilingual,,0,0,0,,一段能转给室友的话\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A note to forward to a roommate.
+Dialogue: 0,0:08:51.27,0:08:53.07,Bilingual,,0,0,0,,看医生时可以问的问题\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Questions to ask the doctor.
+Dialogue: 0,0:08:53.23,0:08:57.72,Bilingual,,0,0,0,,每多一格，都要做三件事：表上加一行和它的说明\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Each new box needs three things: a line on the form with its instruction,
+Dialogue: 0,0:08:57.72,0:09:00.61,Bilingual,,0,0,0,,检查里加一条规则，页面上给它一个位置\N{\fs30\fnInter\c&H00C9C9C9&\bord0}a rule in the checker, and a place on the page.
+Dialogue: 0,0:09:00.93,0:09:03.56,Bilingual,,0,0,0,,不管哪个 agent 来做，配方都是这三步\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That recipe holds whichever agent builds it.
+Dialogue: 0,0:09:08.53,0:09:10.43,Bilingual,,0,0,0,,所以：一句「你好」，四件事\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So: one hello, four jobs.
+Dialogue: 0,0:09:10.60,0:09:14.54,Bilingual,,0,0,0,,组装请求，不变的放前面，好命中缓存\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Build the request, unchanging parts first so they are cached.
+Dialogue: 0,0:09:14.54,0:09:15.63,Bilingual,,0,0,0,,递一张表\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Hand over a form.
+Dialogue: 0,0:09:15.63,0:09:19.05,Bilingual,,0,0,0,,逐句检查，给一次重写，备好兜底\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Check every line, allow one rewrite, keep a fallback.
+Dialogue: 0,0:09:19.05,0:09:21.12,Bilingual,,0,0,0,,最后排成页面，附一张收据\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Then lay it out, with a receipt.
+Dialogue: 0,0:09:21.27,0:09:27.19,Bilingual,,0,0,0,,三个问题考考自己：请求里哪一部分会被缓存，为什么位置很重要？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Three questions to test yourself. Which part of the request is cached, and why does its position matter?
+Dialogue: 0,0:09:27.19,0:09:29.86,Bilingual,,0,0,0,,为什么重写不准收回「紧急」？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Why may a rewrite never take back an emergency?
+Dialogue: 0,0:09:29.86,0:09:33.11,Bilingual,,0,0,0,,想加一段「给室友的话」，要改哪几处？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And what would you change to add a note for the roommate?
+Dialogue: 0,0:09:33.27,0:09:37.15,Bilingual,,0,0,0,,下一集：「思考了 3 秒」的这几秒里，模型在干什么\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Next time: what the model is doing during thought for three seconds,
+Dialogue: 0,0:09:37.15,0:09:40.24,Bilingual,,0,0,0,,以及为什么我们给你看的是收据，而不是它的思考\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and why we show you a receipt instead of its thoughts.

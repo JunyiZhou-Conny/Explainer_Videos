@@ -1,0 +1,28 @@
+id: portal-e6-backend
+title: "项目周记 E6 · How the backend was chosen: what each piece does, what lost, and what it protects"
+papers: []                     # not a paper: an explainer of the team's own pull requests (series: docs/PORTAL_SERIES.md)
+audience: "Conny, the founder, after E1–E5: directs AI agents, reads Python but not TypeScript, has no backend experience, cares about parents and privacy"
+source: "JunyiZhou-Conny/InternationalHealthportal PR #43 (claude/wonderful-meitner-r752lh @ f163e90): docs/decisions/0006-backend-stack.md, its review and Bugbot thread, issues #11–#14 and #44; tool facts and every figure: SOURCES.md"
+# Narrated (Kokoro, af_heart) over a quiet music bed that ducks under the voice; the bilingual
+# (Chinese over English) subtitles are burned in, as in E2–E5.
+voice: {backend: kokoro, voice: af_heart, speed: 0.95}
+burn_subtitles: true
+music: {seed: 13, volume_db: 0}
+scenes:
+  - {file: scenes/s01_hook.py,     cls: Hook,     title: "Nowhere to fetch it from"}
+  - {file: scenes/s02_jobs.py,     cls: Jobs,     title: "Four jobs"}
+  - {file: scenes/s03_language.py, cls: Language, title: "The page decides the language"}
+  - {file: scenes/s04_database.py, cls: Database, title: "A database of links"}
+  - {file: scenes/s05_login.py,    cls: Login,    title: "Login without passwords"}
+  - {file: scenes/s06_model.py,    cls: Model,    title: "A data model that protects people"}
+  - {file: scenes/s07_review.py,   cls: Review,   title: "Review, and one missing word"}
+  - {file: scenes/s08_open.py,     cls: Open,     title: "What is still open"}
+  - {file: scenes/s09_recap.py,    cls: Recap,    title: "Recap"}
+publish:
+  title_zh: "项目周记 E6 · 后端怎么选：每一块做什么、谁落选了、数据结构保护了谁"
+  description_zh: |
+    我的创业项目（给中国家长和在美留学生的就医导航原型）每周 PR 的概念讲解，第 6 集。
+    原型现在没有后端：数据只存在一台设备的浏览器里，家长在国内看不到孩子在波士顿存的保险卡。一份 223 行的决策记录怎么选后端：为什么页面决定了语言（不是 Python）、为什么数据库选 Postgres、为什么登录只用邮箱验证码、为什么用容器；最小的数据结构怎样保护人（身份写定、只有学生能发起关联、家长只读、不存保险卡图片）；四个角度的审查和一个只差一个词的 bug；以及还没定的事。
+    所有数据都是虚构的；不是医疗建议。英文旁白，中英双语字幕。
+  tags_zh: [AI, AI agent, 软件工程, 后端, 数据库, 隐私, 创业, 科普]
+  tid: 231

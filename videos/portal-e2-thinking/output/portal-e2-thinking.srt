@@ -1,0 +1,621 @@
+1
+00:00:00,000 --> 00:00:03,947
+While you wait for an answer, our app says:
+thinking, eleven seconds.
+
+2
+00:00:04,183 --> 00:00:06,513
+Afterwards it folds into a receipt:
+
+3
+00:00:06,513 --> 00:00:09,708
+thought for 22 seconds,
+which is the whole wait.
+
+4
+00:00:10,028 --> 00:00:12,817
+Open it, and the wait splits in two:
+
+5
+00:00:12,817 --> 00:00:17,389
+only 13.5 seconds of thinking,
+then 8.7 seconds of writing.
+
+6
+00:00:17,633 --> 00:00:18,892
+Thinking about what?
+
+7
+00:00:19,212 --> 00:00:22,369
+Three years ago,
+no chat app showed you a model thinking.
+
+8
+00:00:22,689 --> 00:00:25,591
+And why does ours show you a clock,
+but never the thoughts?
+
+9
+00:00:27,133 --> 00:00:29,074
+The idea is older than the apps.
+
+10
+00:00:29,394 --> 00:00:32,339
+In January 2022, Google researchers showed
+
+11
+00:00:32,339 --> 00:00:37,736
+that a model solves more problems
+if you ask it to write out its steps first.
+
+12
+00:00:38,056 --> 00:00:39,592
+They called it chain of thought.
+
+13
+00:00:39,912 --> 00:00:43,410
+Months later, one sentence did it:
+let's think step by step.
+
+14
+00:00:43,730 --> 00:00:45,309
+It was a trick in the prompt.
+
+15
+00:00:45,550 --> 00:00:48,705
+In September 2024, OpenAI released o1,
+
+16
+00:00:48,705 --> 00:00:54,681
+a model trained with reinforcement
+learning to reason before it answers.
+
+17
+00:00:55,001 --> 00:00:59,351
+OpenAI chose not to show the raw thoughts,
+citing user experience,
+
+18
+00:00:59,351 --> 00:01:02,909
+competitive advantage,
+and the chance to monitor them,
+
+19
+00:01:02,909 --> 00:01:06,072
+and showed a summary written
+by a model instead.
+
+20
+00:01:06,316 --> 00:01:07,745
+Others chose differently.
+
+21
+00:01:08,065 --> 00:01:11,799
+DeepSeek's R1 handed its reasoning text
+to developers.
+
+22
+00:01:12,119 --> 00:01:15,959
+Claude 3.7 showed its raw thinking,
+as a research preview.
+
+23
+00:01:16,279 --> 00:01:19,335
+From Claude 4, long thinking was summarized,
+
+24
+00:01:19,335 --> 00:01:22,530
+and today's Claude API
+returns only a summary.
+
+25
+00:01:22,766 --> 00:01:25,582
+Today, thinking is a setting
+you choose and pay for.
+
+26
+00:01:25,902 --> 00:01:28,078
+OpenAI calls it reasoning effort.
+
+27
+00:01:28,398 --> 00:01:31,119
+Our menu puts it next to the model choice,
+
+28
+00:01:31,119 --> 00:01:35,524
+Luna, Terra and two others,
+with three levels: low, medium and high.
+
+29
+00:01:36,867 --> 00:01:39,064
+Here is what happens inside one call.
+
+30
+00:01:39,384 --> 00:01:43,032
+A model writes one small piece of text
+at a time, a token.
+
+31
+00:01:43,352 --> 00:01:46,190
+A reasoning model first
+writes tokens for itself.
+
+32
+00:01:46,510 --> 00:01:47,768
+Those are its thoughts.
+
+33
+00:01:50,017 --> 00:01:52,790
+OpenAI never sends those tokens back.
+
+34
+00:01:53,110 --> 00:01:57,676
+They stay hidden, but they take up room,
+and you pay for them at the output price.
+
+35
+00:01:57,917 --> 00:02:01,202
+Only then does it write the answer,
+our thirteen-box form.
+
+36
+00:02:01,522 --> 00:02:03,741
+So our stopwatch can tell the two apart.
+
+37
+00:02:04,061 --> 00:02:05,341
+Thinking is the time
+
+38
+00:02:05,341 --> 00:02:08,413
+until the first character
+of the answer arrives:
+
+39
+00:02:08,413 --> 00:02:12,189
+the model reads the request,
+then reasons in hidden tokens.
+
+40
+00:02:12,509 --> 00:02:15,350
+Writing runs from there
+until the model finishes;
+
+41
+00:02:15,350 --> 00:02:16,626
+then the checker runs.
+
+42
+00:02:16,867 --> 00:02:19,790
+The effort setting sets how
+much thinking the model may do.
+
+43
+00:02:20,110 --> 00:02:24,580
+Even on the same setting,
+the model decides how much it needs:
+
+44
+00:02:24,580 --> 00:02:27,320
+your greeting thought for 1.6 seconds,
+
+45
+00:02:27,320 --> 00:02:30,926
+a real question
+about the student clinic for 13.5.
+
+46
+00:02:33,167 --> 00:02:34,589
+If the thoughts are hidden,
+
+47
+00:02:34,589 --> 00:02:37,540
+what exactly are you paying for,
+and how would you know?
+
+48
+00:02:41,667 --> 00:02:44,261
+Every response ends with a usage report,
+
+49
+00:02:44,261 --> 00:02:48,152
+and it counts the reasoning tokens
+inside the output tokens.
+
+50
+00:02:48,472 --> 00:02:49,565
+Our server reads it,
+
+51
+00:02:49,565 --> 00:02:53,720
+and the price list turns those counts
+into the dollar figure on the receipt.
+
+52
+00:02:55,067 --> 00:02:56,838
+Why show anything while you wait?
+
+53
+00:02:57,158 --> 00:02:59,220
+The decision record puts it plainly:
+
+54
+00:02:59,220 --> 00:03:03,344
+ten to thirty seconds of waiting,
+and nobody can tell what is happening.
+
+55
+00:03:03,664 --> 00:03:05,993
+Most chat apps answer that by streaming:
+
+56
+00:03:05,993 --> 00:03:09,835
+every few words travel
+to your screen the moment they are written,
+
+57
+00:03:09,835 --> 00:03:12,048
+over a pipe called server-sent events.
+
+58
+00:03:12,284 --> 00:03:15,484
+Our server does receive
+that stream from OpenAI.
+
+59
+00:03:15,804 --> 00:03:17,596
+But it does not pass the words on.
+
+60
+00:03:17,916 --> 00:03:22,310
+It reads the form as it fills,
+notes which box the model is in,
+
+61
+00:03:22,310 --> 00:03:23,844
+counts the characters,
+
+62
+00:03:23,844 --> 00:03:28,518
+and sends the page only progress,
+one small line of JSON at a time.
+
+63
+00:03:28,767 --> 00:03:31,775
+That is what you watch:
+thinking, eleven seconds.
+
+64
+00:03:32,095 --> 00:03:35,956
+Writing the places to go,
+320 characters so far.
+
+65
+00:03:36,276 --> 00:03:37,276
+Checking.
+
+66
+00:03:37,407 --> 00:03:40,479
+The page never sees a word
+before the checker has.
+
+67
+00:03:41,817 --> 00:03:44,370
+Why not stream the words,
+the way Claude does,
+
+68
+00:03:44,370 --> 00:03:46,702
+and pull them back if the checker objects?
+
+69
+00:03:50,450 --> 00:03:52,583
+Because a screen cannot unsay something.
+
+70
+00:03:52,903 --> 00:03:56,527
+If a dose or a made-up phone
+number flashes for two seconds,
+
+71
+00:03:56,527 --> 00:03:59,367
+a worried parent may already
+have a screenshot.
+
+72
+00:03:59,687 --> 00:04:03,357
+So the decision record says:
+stream the progress, not the text.
+
+73
+00:04:03,600 --> 00:04:04,944
+You asked for streaming.
+
+74
+00:04:05,264 --> 00:04:08,897
+The agent, working
+unattended, chose this kind on its own,
+
+75
+00:04:08,897 --> 00:04:13,094
+and wrote it down as a proposal
+that is still waiting for your yes.
+
+76
+00:04:14,433 --> 00:04:16,566
+Progress streaming has one more trick.
+
+77
+00:04:16,886 --> 00:04:19,981
+The form's first five boxes
+are all about urgency,
+
+78
+00:04:19,981 --> 00:04:21,900
+so the model writes them first.
+
+79
+00:04:22,150 --> 00:04:26,941
+The moment those first boxes say emergency,
+the server raises a flag,
+
+80
+00:04:26,941 --> 00:04:30,273
+and the page shows
+a warning we wrote ourselves:
+
+81
+00:04:30,273 --> 00:04:33,883
+possibly life-threatening,
+don't wait, call 911 now.
+
+82
+00:04:34,116 --> 00:04:37,865
+In a real test,
+the warning appeared at 3.5 seconds,
+
+83
+00:04:37,865 --> 00:04:40,964
+and the checked answer at about 21 seconds.
+
+84
+00:04:41,284 --> 00:04:45,764
+And since an emergency is never taken back,
+that answer is bound to agree.
+
+85
+00:04:47,100 --> 00:04:49,541
+When the checked answer finally arrives,
+
+86
+00:04:49,541 --> 00:04:52,957
+the page plays it out
+in at most two and a half seconds:
+
+87
+00:04:52,957 --> 00:04:55,825
+sentences type themselves,
+lists drop in whole.
+
+88
+00:04:56,145 --> 00:04:57,468
+It looks like streaming.
+
+89
+00:04:57,788 --> 00:05:00,412
+It is a replay of text
+that has already passed.
+
+90
+00:05:00,650 --> 00:05:03,637
+Emergency answers skip the show
+and appear at once.
+
+91
+00:05:03,957 --> 00:05:07,079
+And the stop button really stops:
+the page hangs up,
+
+92
+00:05:07,079 --> 00:05:10,442
+and the server cancels the model
+call it was paying for.
+
+93
+00:05:11,783 --> 00:05:16,284
+On Wednesday morning, Boston time,
+the streaming went in within twenty minutes.
+
+94
+00:05:16,604 --> 00:05:19,275
+A few minutes later, a note for the menu:
+
+95
+00:05:19,275 --> 00:05:22,337
+switching model or effort
+starts a fresh cache,
+
+96
+00:05:22,337 --> 00:05:26,311
+so on Terra that first answer costs
+about five times as much.
+
+97
+00:05:26,550 --> 00:05:30,042
+Much of the rest of the day went
+to what reviews found:
+
+98
+00:05:30,042 --> 00:05:34,359
+keeping the 911 warning
+through stop, retry and dropped connections,
+
+99
+00:05:34,359 --> 00:05:37,914
+and a test that fails
+if any four consecutive characters
+
+100
+00:05:37,914 --> 00:05:42,230
+of the model's text show up
+in the progress lines before the result.
+
+101
+00:05:42,550 --> 00:05:47,478
+That test is the proof that no words reach
+the page before the checker has passed them.
+
+102
+00:05:48,817 --> 00:05:51,740
+So what sits behind "thought
+for 22 seconds"?
+
+103
+00:05:52,060 --> 00:05:55,612
+Claude's app also shows a timer
+while it thinks, and,
+
+104
+00:05:55,612 --> 00:05:59,633
+like ChatGPT, opens
+onto a summary of the model's reasoning.
+
+105
+00:05:59,953 --> 00:06:01,600
+Ours opens onto a receipt:
+
+106
+00:06:01,600 --> 00:06:06,353
+the timings, the sources, the check,
+the judgment, the model and the price.
+
+107
+00:06:06,600 --> 00:06:08,776
+The reason is in the decision record.
+
+108
+00:06:09,096 --> 00:06:11,763
+Raw reasoning
+may contain diagnostic guesses,
+
+109
+00:06:11,763 --> 00:06:13,363
+and nothing has checked it.
+
+110
+00:06:13,683 --> 00:06:17,694
+In a medical product,
+a guess on screen reads like a diagnosis.
+
+111
+00:06:19,033 --> 00:06:20,206
+Where could this go?
+
+112
+00:06:20,526 --> 00:06:23,790
+OpenAI can return a summary
+of the hidden reasoning.
+
+113
+00:06:24,110 --> 00:06:26,301
+But a summary is written by a model too,
+
+114
+00:06:26,301 --> 00:06:29,806
+so it would have to pass the same checker
+before anyone sees it.
+
+115
+00:06:30,126 --> 00:06:34,265
+The progress line could name real steps,
+like checking the clinic's hours.
+
+116
+00:06:34,585 --> 00:06:37,159
+And the agent raised a developer-only switch
+
+117
+00:06:37,159 --> 00:06:39,790
+to see unchecked drafts
+while tuning prompts.
+
+118
+00:06:40,110 --> 00:06:41,284
+It was not built.
+
+119
+00:06:41,533 --> 00:06:43,154
+Three decisions wait for you.
+
+120
+00:06:43,474 --> 00:06:48,052
+Progress-only streaming and the model menu
+are written down as proposals;
+
+121
+00:06:48,052 --> 00:06:50,685
+the developer switch, as an open question.
+
+122
+00:06:52,033 --> 00:06:54,102
+So, thought for 22 seconds.
+
+123
+00:06:54,422 --> 00:06:58,042
+First thinking:
+hidden tokens the model writes for itself,
+
+124
+00:06:58,042 --> 00:06:59,414
+billed but never sent.
+
+125
+00:06:59,734 --> 00:07:03,062
+Then writing,
+which our server watches box by box,
+
+126
+00:07:03,062 --> 00:07:05,324
+passing on progress but not words.
+
+127
+00:07:05,644 --> 00:07:08,950
+An early warning
+when the first boxes say emergency.
+
+128
+00:07:09,270 --> 00:07:11,425
+A replay once the checker has passed it.
+
+129
+00:07:11,745 --> 00:07:13,708
+And a receipt instead of the thoughts.
+
+130
+00:07:13,950 --> 00:07:15,059
+Three questions.
+
+131
+00:07:15,379 --> 00:07:17,854
+What exactly does our stopwatch
+call thinking?
+
+132
+00:07:18,174 --> 00:07:21,118
+Why do the urgency boxes
+come first in the form?
+
+133
+00:07:21,438 --> 00:07:24,616
+And what would a reasoning summary need
+before it could be shown?
+
+134
+00:07:24,866 --> 00:07:28,543
+Next time, the page itself:
+what we copied from Claude's app,
+
+135
+00:07:28,543 --> 00:07:31,074
+what we refused, and what we could invent.
+

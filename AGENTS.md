@@ -22,9 +22,10 @@ Do not depend on a personal skill with the same name being the same version.
 - Work on a topic branch, inspect the diff, run relevant checks, and publish only the work
   requested. Never merge other agents' unrelated open PRs as a shortcut to obtain a toolkit.
 
-Defaults for new episodes: Swiss, five minutes, 1920×1080 at 30 fps, English narration,
-Chinese above English captions, background music (a composed score mixed under the
-narration). Current request and saved episode specs take precedence.
+Defaults for new episodes: 3b1b (since 2026-10-30, owner: 「以后默认用3blue1brown的style」; Swiss
+before), five minutes, 1920×1080 at 30 fps, English narration, Chinese above English captions,
+background music (a composed score mixed under the narration). Current request and saved episode
+specs take precedence; existing episodes keep the preset in their own spec.
 
 ## The episode lifecycle
 

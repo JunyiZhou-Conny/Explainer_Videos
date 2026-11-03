@@ -1,0 +1,30 @@
+id: portal-e2-thinking
+title: "项目周记 E2 · What is \"thought for 3 seconds\"? Hidden reasoning, progress streaming and a receipt"
+papers: []                     # not a paper: an explainer of the team's own pull requests (series: docs/PORTAL_SERIES.md)
+audience: "Conny, the founder, after E1: directs AI agents, reads Python but not TypeScript, uses ChatGPT and Claude; has seen the triage chat's 'thinking' line and receipt but not how they work"
+source: "JunyiZhou-Conny/InternationalHealthportal junyi/40-triage-chat-ui @ b7ab98e (PR #41, containing PR #36 @ 17228bd); outside claims: SOURCES.md"
+# Narrated (Kokoro, af_heart) over a quiet music bed that ducks under the voice; the bilingual
+# (Chinese over English) subtitles are burned in, as in the CareOneX series.
+voice: {backend: kokoro, voice: af_heart, speed: 0.95}
+burn_subtitles: true
+music: {seed: 5, volume_db: 0}
+scenes:
+  - {file: scenes/s01_hook.py,     cls: Hook,         title: "Eleven seconds of what?"}
+  - {file: scenes/s02_history.py,  cls: History,      title: "From \"think step by step\" to a thinking dial"}
+  - {file: scenes/s03_tokens.py,   cls: HiddenTokens, title: "Hidden tokens and the stopwatch"}
+  - {file: scenes/s04_streams.py,  cls: TwoStreams,   title: "Two kinds of streaming"}
+  - {file: scenes/s05_why.py,      cls: WhyNot,       title: "Why not the words, and who decided"}
+  - {file: scenes/s06_early911.py, cls: Early911,     title: "The early 911"}
+  - {file: scenes/s07_replay.py,   cls: Replay,       title: "A replay, and a real stop"}
+  - {file: scenes/s08_path.py,     cls: Path,         title: "How it got built"}
+  - {file: scenes/s09_receipt.py,  cls: Receipt,      title: "A receipt, not the thoughts"}
+  - {file: scenes/s10_next.py,     cls: Next,         title: "What else, and what waits for you"}
+  - {file: scenes/s11_recap.py,    cls: Recap,        title: "Recap"}
+publish:
+  title_zh: "项目周记 E2 ·「思考了 3 秒」到底是什么：隐藏的推理、只流进度的流式输出和一张收据"
+  description_zh: |
+    我的创业项目（给中国家长和在美留学生的就医导航原型）每周 PR 的概念讲解，第 2 集。
+    分诊聊天里「正在思考 · 11 秒」时，模型在做什么？推理模型先写给自己看的 token 不返回、但按输出计费，思考强度决定它想多少；我们的服务器收下模型的流，却只把「写到哪一格、写了多少字」的进度发给页面，因为没检查过的字一旦上屏就收不回来；写到「紧急」时提前给出我们写好的 911 提醒；检查过的回答再用 2.5 秒回放出来；展开后看到的是一张能核对的收据，而不是模型的推理原文。
+    也讲了思维链从 2022 年的提示词技巧到推理模型的来历、这些做法是怎么一步步做出来的，以及还在等我拍板的几个决定。所有案例都是虚构的；不是医疗建议。英文旁白，中英双语字幕。
+  tags_zh: [AI, 大模型, 推理模型, 思维链, 流式输出, OpenAI API, 产品设计, 创业, 科普]
+  tid: 231

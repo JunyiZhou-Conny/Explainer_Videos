@@ -1,0 +1,12 @@
+title: "项目周记 E3 · 照着 Claude 抄：我们的聊天页抄了什么、没抄什么、加了什么"
+description: "分诊聊天页为什么一比一照抄 Claude 的聊天界面：聊天页的各个部分、决策 0006、抄了什么、没抄什么、为安全和家长加了什么、agent 怎么做出来的，以及还能做什么。"
+chapters:
+  s01_hook: "照抄，是有意的"
+  s02_anatomy: "聊天页的各个部分"
+  s03_decision: "为什么照抄？"
+  s04_copied: "抄了什么"
+  s05_refused: "没抄什么"
+  s06_added: "我们加了什么"
+  s07_built: "怎么做出来的"
+  s08_next: "还能做什么"
+  s09_recap: "回顾"

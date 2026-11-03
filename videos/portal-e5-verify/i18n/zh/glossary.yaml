@@ -1,0 +1,17 @@
+# Chinese subtitle glossary for 项目周记 E5 (subtitles only: the narration is English). Policy as in E2–E4.
+policy: "Mandarin first; product, company and API names and the team's working words stay in English; numbers as digits; half-width space between Chinese and Latin/digits."
+terms:
+- {en: reducer, zh_subtitle: "reducer"}
+- {en: state, zh_subtitle: "状态"}
+- {en: action, zh_subtitle: "操作"}
+- {en: rule (invariant), zh_subtitle: "规则"}
+- {en: exhaustive check, zh_subtitle: "穷举检查"}
+- {en: shortest story (counterexample), zh_subtitle: "最短复现"}
+- {en: known finding, zh_subtitle: "已知发现"}
+- {en: mutation testing, zh_subtitle: "变异测试"}
+- {en: accessible name, zh_subtitle: "无障碍名称"}
+- {en: screen reader, zh_subtitle: "读屏软件"}
+- {en: evidence, zh_subtitle: "证据"}
+- {en: referral, zh_subtitle: "转诊"}
+- {en: agent, zh_subtitle: "agent"}
+allowed_spoken_latin: [agent, bug, App, reducer, Amazon, TLA, plus, Leslie, Lamport, pstack, skill, Anthropic, Claude, Code, PR]

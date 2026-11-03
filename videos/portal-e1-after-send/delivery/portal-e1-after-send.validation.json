@@ -1,0 +1,87 @@
+{
+  "probe": {
+    "programs": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "584.085000"
+    }
+  },
+  "target_seconds": 584.0,
+  "audio_mean_db": -19.5,
+  "caption_cues": 144,
+  "script_sha256": "20c705d9fc65b8306f55002e8263f1d27869e79fa1cd2a227416f24e72ed61fe",
+  "source_matches_plan": true,
+  "chapters": [
+    {
+      "start": 0.0,
+      "id": "s01",
+      "title": "One word in, three answers out"
+    },
+    {
+      "start": 32.0,
+      "id": "s02",
+      "title": "More than a call: a harness"
+    },
+    {
+      "start": 63.266666666666666,
+      "id": "s03",
+      "title": "Job one: what we send"
+    },
+    {
+      "start": 172.86666666666667,
+      "id": "s04",
+      "title": "Job two: a form, not an essay"
+    },
+    {
+      "start": 250.5,
+      "id": "s05",
+      "title": "Job three: check before anyone sees it"
+    },
+    {
+      "start": 331.56666666666666,
+      "id": "s06",
+      "title": "Job four: the form becomes the page"
+    },
+    {
+      "start": 408.8666666666667,
+      "id": "s07",
+      "title": "How we got here"
+    },
+    {
+      "start": 496.53333333333336,
+      "id": "s08",
+      "title": "Same look, different machine"
+    },
+    {
+      "start": 548.1333333333333,
+      "id": "s09",
+      "title": "Recap: one hello, four jobs"
+    }
+  ],
+  "music": {
+    "score_coverage": 0.759,
+    "notes": 748,
+    "fx": 46,
+    "chords": 82,
+    "dropped_in_silences": 0,
+    "duration": 584.0,
+    "voice_lufs": -16.03,
+    "music_in_gaps_lufs": -22.03,
+    "music_under_speech_lufs": -32.65,
+    "mix_lufs": -16.29,
+    "mix_true_peak_dbtp": -0.97
+  }
+}

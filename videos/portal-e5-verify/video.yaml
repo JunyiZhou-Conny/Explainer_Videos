@@ -1,0 +1,28 @@
+id: portal-e5-verify
+title: "项目周记 E5 · How an agent proves its change is right: every order, and the real app"
+papers: []                     # not a paper: an explainer of the team's own pull requests (series: docs/PORTAL_SERIES.md)
+audience: "Conny, the founder, after E1–E4: directs AI agents, reads Python but not TypeScript; knows the triage checker and E4's 'layers instead of a human review', but not model checking or browser automation"
+source: "JunyiZhou-Conny/InternationalHealthportal PR #42 (claude/lucid-cannon-44cg7u @ fe19a23): verify/referral-links, the verify-referral-links and verify-app skills, src/state; outside context and every figure: SOURCES.md"
+# Narrated (Kokoro, af_heart) over a quiet music bed that ducks under the voice; the bilingual
+# (Chinese over English) subtitles are burned in, as in E2–E4.
+voice: {backend: kokoro, voice: af_heart, speed: 0.95}
+burn_subtitles: true
+music: {seed: 11, volume_db: 0}
+scenes:
+  - {file: scenes/s01_hook.py,    cls: Hook,    title: "A bug nobody had seen"}
+  - {file: scenes/s02_reducer.py, cls: Reducer, title: "One function, many orders"}
+  - {file: scenes/s03_explore.py, cls: Explore, title: "Try every order in a small world"}
+  - {file: scenes/s04_finding.py, cls: Finding, title: "Why it slipped through"}
+  - {file: scenes/s05_mutants.py, cls: Mutants, title: "Breaking it on purpose"}
+  - {file: scenes/s06_amazon.py,  cls: Amazon,  title: "The same idea at Amazon's scale"}
+  - {file: scenes/s07_drive.py,   cls: Drive,   title: "Driving the real app"}
+  - {file: scenes/s08_waits.py,   cls: Waits,   title: "Where it came from, and what waits"}
+  - {file: scenes/s09_recap.py,   cls: Recap,   title: "Recap"}
+publish:
+  title_zh: "项目周记 E5 · agent 怎么证明自己改对了：穷举每一种顺序，再真的去点一遍"
+  description_zh: |
+    我的创业项目（给中国家长和在美留学生的就医导航原型）每周 PR 的概念讲解，第 5 集。
+    一个没人发现过的 bug：转诊过期以后，页面还开着时提交，过期的转诊照样被关联上，245 个测试全部通过。agent 是怎么找到它的？在一个很小的世界里试遍所有操作顺序（约 1.4 万个状态，不到一秒），每个状态都检查五条规则，并给出最短的复现；为什么要故意把自己的代码改坏五次（从没见过失败的检查什么也证明不了）；亚马逊怎样用同样的思路找到 35 步才出现的数据丢失 bug；第二个工具怎样像家长一样操作真实的 App、留下证据；以及还有什么在等人来决定。
+    所有案例都是虚构的；不是医疗建议。英文旁白，中英双语字幕。
+  tags_zh: [AI, AI agent, 软件工程, 软件测试, 形式化验证, Claude, 创业, 科普]
+  tid: 231

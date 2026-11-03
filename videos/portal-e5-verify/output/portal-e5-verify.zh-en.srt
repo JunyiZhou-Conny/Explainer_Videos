@@ -1,0 +1,494 @@
+1
+00:00:00,000 --> 00:00:01,856
+这是我们原型里的一个 bug
+Here is a bug in our prototype.
+
+2
+00:00:02,176 --> 00:00:06,429
+一个学生拿到了耳鼻喉专科的转诊
+A student has a referral to an ear, nose and throat specialist,
+
+3
+00:00:06,429 --> 00:00:08,725
+有效期到 1 月 22 日
+valid until January twenty-second.
+
+4
+00:00:09,045 --> 00:00:14,421
+家长打开预约页面，一直开着，过了有效期才点提交
+Their parent opens the booking page, leaves it open past that moment, and presses submit.
+
+5
+00:00:14,741 --> 00:00:19,382
+按 agent 对代码的分析，过期的转诊照样被关联上
+By the agent's reading of the code, the expired referral is attached anyway,
+
+6
+00:00:19,382 --> 00:00:23,168
+进度页显示已预约专科，而不是已过期
+and the tracker shows the specialist as booked, never expired.
+
+7
+00:00:23,417 --> 00:00:28,857
+现有的 245 个测试全部通过；没有一个是在过期之后预约的
+All 245 existing tests passed; none of them books after the expiry.
+
+8
+00:00:29,177 --> 00:00:33,529
+代码里甚至有一行注释，说过期的转诊保持不变
+The code even carries a comment saying expired referrals are left alone.
+
+9
+00:00:33,849 --> 00:00:35,449
+没有人注意到
+No person had noticed.
+
+10
+00:00:35,620 --> 00:00:38,305
+周五下午，一个 agent 报告了它
+On Friday afternoon an agent reported it,
+
+11
+00:00:38,305 --> 00:00:42,169
+它在一个很小的世界里，试遍了几种操作的所有顺序
+after trying every order of a few actions in a small world.
+
+12
+00:00:42,489 --> 00:00:47,459
+这一集讲的是：在有人看之前，agent 怎么证明一个改动是对的
+This episode is about how an agent can prove a change is right before anyone looks.
+
+13
+00:00:48,800 --> 00:00:52,981
+App 数据的每一次变化，都要经过同一个函数，叫 reducer
+Every change to the app's data goes through one function, called the reducer.
+
+14
+00:00:53,301 --> 00:00:56,325
+它拿到当前状态和一个操作
+It takes the current state and a single action,
+
+15
+00:00:56,325 --> 00:01:01,600
+比如预约、确认、改期、取消、完成，然后返回下一个状态
+such as book, confirm, reschedule, cancel or complete, and returns the next state.
+
+16
+00:01:01,920 --> 00:01:04,786
+预约页面在画出来的时候检查转诊
+The booking page checks the referral when it draws,
+
+17
+00:01:04,786 --> 00:01:07,147
+但预约要过一会儿才到 reducer
+but the booking reaches the reducer later.
+
+18
+00:01:07,467 --> 00:01:11,221
+所以事件的顺序很重要，时间流逝也是一个事件
+So the order of events matters, and time passing is an event too.
+
+19
+00:01:11,467 --> 00:01:13,728
+测试走的是某人选好的一条路
+A test follows a path someone chose.
+
+20
+00:01:14,048 --> 00:01:19,253
+bug 藏在一条没人选的路上：先是时间过去，然后预约成功
+The bug lives on a path nobody chose: first time passes, then the booking goes through.
+
+21
+00:01:19,500 --> 00:01:21,932
+测试检查的是有人想到的情况
+A test checks the cases someone thought of.
+
+22
+00:01:22,252 --> 00:01:24,151
+那没人想到的情况，谁来检查？
+What checks the ones nobody thought of?
+
+23
+00:01:28,000 --> 00:01:29,767
+换个办法，搭一个很小的世界
+Build a small world instead:
+
+24
+00:01:29,767 --> 00:01:34,375
+两张转诊、三个专科时段，还有一个只有两个时刻的时钟
+two referrals, three specialist slots, and a clock with just two moments,
+
+25
+00:01:34,375 --> 00:01:38,667
+一个是转诊刚开出来，一个是过期后一小时
+right after the referrals are written and an hour after they expire.
+
+26
+00:01:38,987 --> 00:01:42,080
+从起点出发，第一步有 13 种可能
+From the starting state there are thirteen possible moves.
+
+27
+00:01:42,400 --> 00:01:45,241
+每一种都走一遍，再从每个结果出发走下一步
+Make each one, then every move from each result,
+
+28
+00:01:45,241 --> 00:01:48,437
+一层一层往下，遇到见过的状态就合并
+layer by layer, merging any state you've already seen.
+
+29
+00:01:48,757 --> 00:01:53,628
+在这个世界里一共是 13,898 个状态，大约一秒走完
+In this world that is 13,898 states, reached in about a second,
+
+30
+00:01:53,628 --> 00:01:58,421
+而且每一个都来自真正的 reducer，不是复制品
+and every one of them comes from the real reducer, not a copy.
+
+31
+00:01:58,667 --> 00:02:01,011
+每个状态检查四条规则
+Four rules are checked at every state
+
+32
+00:02:01,011 --> 00:02:04,623
+每一步再检查第五条，全部用大白话写成
+and a fifth on every step, all written in plain language,
+
+33
+00:02:04,623 --> 00:02:11,275
+比如一张转诊最多对应一个有效预约，过期的转诊不会被新关联上
+such as one referral backs at most one live appointment, and an expired referral is never newly attached.
+
+34
+00:02:11,595 --> 00:02:15,571
+因为搜索是一层一层进行的，遇到的第一条被打破的规则
+Because the search goes layer by layer, the first broken rule it meets comes
+
+35
+00:02:15,571 --> 00:02:17,611
+给出的就是打破它的最短步骤
+with the shortest story that breaks it.
+
+36
+00:02:17,931 --> 00:02:21,429
+这里是两步：时间过去，然后用这张转诊预约
+Here, two steps: time passes, then book with that referral.
+
+37
+00:02:22,767 --> 00:02:24,338
+它为什么没被发现？
+Why did it slip through?
+
+38
+00:02:24,388 --> 00:02:27,119
+预约只看转诊里存着的状态
+Booking looks only at the referral's stored status.
+
+39
+00:02:27,439 --> 00:02:31,108
+已过期这个状态从来不存，只是显示的时候算出来
+Expired is never stored; it is only worked out for the screen.
+
+40
+00:02:31,428 --> 00:02:34,372
+而且页面在画出来时检查，不是在你提交时检查
+And the page checks when it draws, not when you submit.
+
+41
+00:02:34,692 --> 00:02:37,103
+agent 没有改产品代码
+The agent did not change the product code.
+
+42
+00:02:37,423 --> 00:02:41,870
+它把这个 bug 记成已知发现，把修法留给人来定
+It recorded the bug as a known finding and left the fix to a person:
+
+43
+00:02:41,870 --> 00:02:46,383
+在 reducer 里比较有效期，或者提交时再检查一次
+compare the expiry date inside the reducer, or check again on submit.
+
+44
+00:02:46,617 --> 00:02:49,348
+规则没有为了让检查通过而放宽
+The rule was not loosened to make the check pass.
+
+45
+00:02:49,668 --> 00:02:52,271
+而且检查会在两种情况下失败
+And the check is built to fail in two ways:
+
+46
+00:02:52,271 --> 00:02:56,025
+任何一条新规则被打破，或者这个已知的 bug 消失了
+if any new rule breaks, and if this known bug ever disappears.
+
+47
+00:02:56,345 --> 00:02:59,876
+第二种失败会提醒修好它的人把这条记录删掉
+That second failure reminds whoever fixes it to delete the note,
+
+48
+00:02:59,876 --> 00:03:02,745
+免得这个 bug 哪天回来时被它挡住
+so the note can never hide the bug if it comes back.
+
+49
+00:03:04,083 --> 00:03:06,814
+agent 为什么要故意把自己的代码改坏？
+Why would an agent break its own code on purpose?
+
+50
+00:03:10,683 --> 00:03:13,435
+因为一个你从没见过它失败的检查，什么也证明不了
+Because a check you have never seen fail proves nothing.
+
+51
+00:03:13,755 --> 00:03:15,376
+也许它根本就不会失败
+Maybe it can't fail at all.
+
+52
+00:03:15,696 --> 00:03:18,982
+所以 agent 故意把 reducer 改坏了五次
+So the agent broke the reducer five times on purpose,
+
+53
+00:03:18,982 --> 00:03:22,267
+五种不同的改法，每次改完都跑一遍检查
+in five different ways, and ran the check after each.
+
+54
+00:03:22,587 --> 00:03:26,528
+五次都被抓到了，每次的复现都不超过两步
+All five were caught, each with a story of two steps or fewer,
+
+55
+00:03:26,528 --> 00:03:28,688
+改坏的地方随后都改了回去
+and each breakage was then undone.
+
+56
+00:03:29,008 --> 00:03:33,889
+这是测试人员所说的变异测试的手工版
+It is a hand-made version of what testers call mutation testing;
+
+57
+00:03:33,889 --> 00:03:36,710
+这方面的经典论文发表于 1978 年
+the classic paper on it is from 1978.
+
+58
+00:03:38,050 --> 00:03:39,927
+这个思路由来已久，也很严肃
+The idea is old and serious.
+
+59
+00:03:40,247 --> 00:03:45,087
+2015 年，Amazon 介绍了他们用这种方法检查设计
+In 2015 Amazon described checking its designs this way,
+
+60
+00:03:45,087 --> 00:03:49,399
+用的是 TLA plus，一种由 Leslie Lamport 创造的语言
+using TLA+, a language created by Leslie Lamport.
+
+61
+00:03:49,719 --> 00:03:52,881
+在一个数据库服务里，它找到了一个会丢数据的 bug
+In one database service it found a data-loss bug
+
+62
+00:03:52,881 --> 00:03:56,044
+最短的复现有 35 步
+whose shortest story was thirty-five steps long,
+
+63
+00:03:56,044 --> 00:04:00,194
+而这个 bug 之前通过了设计审查、代码审查和测试
+a bug that had passed design reviews, code reviews and testing.
+
+64
+00:04:00,514 --> 00:04:04,499
+我们的相比之下很小，一秒钟的检查里只有两步
+Ours is tiny by comparison, two steps in a one-second check,
+
+65
+00:04:04,499 --> 00:04:09,879
+但做的是同一件事：让机器去走人永远不会去试的每一种顺序
+but it is the same move: let a machine walk every order a person would never try.
+
+66
+00:04:11,217 --> 00:04:14,716
+第二个工具直接操作 App，就像家长那样
+The second tool drives the app itself, the way a parent would.
+
+67
+00:04:15,036 --> 00:04:16,847
+agent 从一份保存好的演示状态出发
+From a saved demo state,
+
+68
+00:04:16,847 --> 00:04:20,177
+启动自己的一份 App 和自己的浏览器
+the agent starts its own copy of the app and its own browser.
+
+69
+00:04:20,497 --> 00:04:24,659
+然后它一步步点：打开转诊，选一家网络内的诊所
+Then it clicks through: open the referral, choose an in-network clinic,
+
+70
+00:04:24,659 --> 00:04:27,942
+选时间，提交，等待待确认，打开进度页
+pick a time, submit, wait for pending, open the tracker.
+
+71
+00:04:28,262 --> 00:04:31,643
+它按角色和无障碍名称来找每一个控件
+It finds each control by its role and accessible name,
+
+72
+00:04:31,643 --> 00:04:33,897
+也就是读屏软件念出来的那个名字
+the label a screen reader announces,
+
+73
+00:04:33,897 --> 00:04:36,966
+并且每一步之后都等页面安静下来
+and waits for the page to settle after each step.
+
+74
+00:04:37,200 --> 00:04:41,431
+做对了，要两件事同时成立：屏幕上显示专科已预约
+Right means two things at once: the screen says the specialist is booked,
+
+75
+00:04:41,431 --> 00:04:45,605
+保存的数据里转诊也指向了这个新预约
+and the saved data says the referral now points to that new appointment.
+
+76
+00:04:45,925 --> 00:04:51,941
+每次运行都必须留下证据：截图、保存的状态，以及没有浏览器报错
+Each run is required to keep evidence: screenshots, the saved state, and no browser errors.
+
+77
+00:04:52,261 --> 00:04:55,632
+某一步失败时，它会告诉你它能看到哪些按钮
+When a step fails, it says which buttons it could see instead.
+
+78
+00:04:55,952 --> 00:04:58,982
+结束时，它只关掉自己启动的东西
+And when it's done, it shuts down only what it started.
+
+79
+00:05:00,317 --> 00:05:05,004
+这两个工具都来自一个公开插件 pstack 里的两个 skill
+Both tools came from trying two skills in a public plugin called pstack,
+
+80
+00:05:05,004 --> 00:05:09,106
+是周五下午试用时做的，两次提交相隔 27 分钟
+on Friday afternoon, in two commits twenty-seven minutes apart.
+
+81
+00:05:09,426 --> 00:05:13,579
+Anthropic 自己给 Claude Code 的建议说得很直白
+Anthropic's own advice for Claude Code says the same thing plainly:
+
+82
+00:05:13,579 --> 00:05:17,298
+给 agent 一个能跑的检查，否则你自己就成了测试
+give the agent a check to run, or you become the test suite.
+
+83
+00:05:17,534 --> 00:05:21,448
+等你来做的事：选定过期转诊的修法
+What waits for you: choosing the fix for the expired referral,
+
+84
+00:05:21,448 --> 00:05:24,669
+以及在你自己的电脑上试一下这个操作 App 的工具
+and trying the app-driving tool on your own laptop;
+
+85
+00:05:24,669 --> 00:05:26,942
+目前它只在云端跑过
+so far it has only run in the cloud.
+
+86
+00:05:27,262 --> 00:05:29,182
+这个 PR 也还是草稿
+And the pull request is still a draft.
+
+87
+00:05:29,502 --> 00:05:33,363
+上一集问的是：层层叠加的检查，能不能代替人工审查
+The last episode asked whether layers can stand in for a human review.
+
+88
+00:05:33,683 --> 00:05:36,845
+这里又多了两层：一个试遍所有顺序的检查
+Here are two more: a check that tries every order,
+
+89
+00:05:36,845 --> 00:05:39,123
+和一个真的去用 App 的 agent
+and an agent that uses the real app.
+
+90
+00:05:40,467 --> 00:05:44,830
+所以：一个工具在小世界里走遍所有操作顺序
+So: one tool walks every order of actions in a small world and hands back
+
+91
+00:05:44,830 --> 00:05:47,102
+交回打破规则的最短复现
+the shortest story that breaks a rule.
+
+92
+00:05:47,422 --> 00:05:51,134
+另一个工具像家长一样真的去用 App，并留下证据
+The other uses the real app like a parent and keeps the evidence.
+
+93
+00:05:51,454 --> 00:05:54,327
+第一个是靠故意改坏来检验的
+The first was checked by breaking it on purpose;
+
+94
+00:05:54,327 --> 00:05:57,022
+第二个是靠把每个流程从头到尾跑一遍
+the second, by running every flow end to end.
+
+95
+00:05:57,267 --> 00:05:58,646
+三个问题
+Three questions.
+
+96
+00:05:58,696 --> 00:06:02,110
+穷举检查试了哪些普通测试不会试的东西？
+What does the exhaustive check try that an ordinary test doesn't?
+
+97
+00:06:02,430 --> 00:06:04,328
+为什么要故意把自己的代码改坏？
+Why break your own code on purpose?
+
+98
+00:06:04,648 --> 00:06:07,230
+为什么 bug 修好以后，检查反而会失败？
+And why does the check fail when the bug gets fixed?
+
+99
+00:06:12,467 --> 00:06:16,606
+下一集：在写任何后端代码之前，后端怎么选？
+Next: before any backend code is written, how do you choose the backend?

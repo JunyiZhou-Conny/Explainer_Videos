@@ -21,7 +21,7 @@ Open this repository in your agent and paste:
 
 Usually you only need **the idea, the audience, the source material, and a style name**.
 Defaults for new episodes are **five minutes, 1080p30, English narration, Chinese above English
-subtitles, Swiss style**. An explicit request overrides those defaults for that episode.
+subtitles, 3b1b style** (Swiss until 2026-10-30). An explicit request overrides those defaults for that episode.
 You do not need to repeat a long style paragraph. [More prompts and input examples](docs/VIDEO-WORKFLOW.md).
 
 To add a style:

@@ -1,0 +1,36 @@
+# Chinese subtitle glossary for 项目周记 E4 (subtitles only: the narration is English). Policy as in E2–E3:
+# mainland Simplified Chinese; product, company and API names and the team's English working words stay in
+# English; numbers as digits; a half-width space between Chinese and Latin or digits; no brackets in lines.
+policy: "Mandarin first; product, company and API names and the team's working words stay in English; numbers as digits; half-width space between Chinese and Latin/digits."
+terms:
+- {en: pull request, zh_subtitle: "PR"}
+- {en: commit, zh_subtitle: "提交"}
+- {en: merge, zh_subtitle: "合并"}
+- {en: branch, zh_subtitle: "分支"}
+- {en: issue, zh_subtitle: "issue"}
+- {en: draft pull request, zh_subtitle: "草稿 PR"}
+- {en: ready for review, zh_subtitle: "标成可以 review"}
+- {en: review bot, zh_subtitle: "review bot"}
+- {en: handoff note, zh_subtitle: "交接"}
+- {en: decision record, zh_subtitle: "决策记录"}
+- {en: proposed / proposal, zh_subtitle: "提议"}
+- {en: adopted, zh_subtitle: "已采纳"}
+- {en: session, zh_subtitle: "会话"}
+- {en: the triage brain, zh_subtitle: "分诊大脑"}
+- {en: fact card, zh_subtitle: "事实卡"}
+- {en: rules engine, zh_subtitle: "规则引擎"}
+- {en: checker, zh_subtitle: "检查器"}
+- {en: miss / false alarm, zh_subtitle: "漏判 / 误报"}
+- {en: probe, zh_subtitle: "探测说法"}
+- {en: whack-a-mole, zh_subtitle: "打地鼠；按下葫芦浮起瓢"}
+- {en: reproduce a bug, zh_subtitle: "复现 bug"}
+- {en: usage limit, zh_subtitle: "用量上限"}
+- {en: token, zh_subtitle: "token"}
+- {en: stop rule, zh_subtitle: "收尾的约定"}
+- {en: urgent care, zh_subtitle: "urgent care"}
+- {en: deductible, zh_subtitle: "deductible"}
+- {en: git identity, zh_subtitle: "git 身份"}
+- {en: agent, zh_subtitle: "agent"}
+- {en: review, zh_subtitle: "review"}
+allowed_spoken_latin: [PR, agent, GitHub, git, review, bot, Bugbot, Codex, Cursor, OpenAI, issue, urgent, care, deductible,
+  bug, token, Claude]

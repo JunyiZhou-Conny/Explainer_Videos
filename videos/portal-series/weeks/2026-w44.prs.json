@@ -1,0 +1,146 @@
+[
+ {
+  "number": 41,
+  "title": "分诊聊天页照 Claude App 重做：思考过程、输入框、逐段出字、演示回放",
+  "state": "open",
+  "draft": true,
+  "user": {
+   "login": "JunyiZhou-Conny"
+  },
+  "head": {
+   "ref": "junyi/40-triage-chat-ui"
+  }
+ },
+ {
+  "number": 38,
+  "title": "保险卡识别：BU 保险计划调研、字段决策和提取原型",
+  "state": "open",
+  "draft": false,
+  "user": {
+   "login": "JohnZhu96"
+  },
+  "head": {
+   "ref": "claude/project-thread-3xxfbg"
+  }
+ },
+ {
+  "number": 37,
+  "title": "Tech radar：记录 Reason Network（观察，暂不采用）",
+  "state": "closed",
+  "draft": false,
+  "user": {
+   "login": "JunyiZhou-Conny"
+  },
+  "head": {
+   "ref": "claude/loving-johnson-x4kuhc"
+  }
+ },
+ {
+  "number": 36,
+  "title": "分诊 MVP（BU）：模型判断 + 输出检查，App 里的聊天框，事实卡知识库",
+  "state": "open",
+  "draft": false,
+  "user": {
+   "login": "JunyiZhou-Conny"
+  },
+  "head": {
+   "ref": "claude/affectionate-franklin-igh419"
+  }
+ },
+ {
+  "number": 35,
+  "title": "会议纪要：2026-10-26 MVP 范围与分工",
+  "state": "closed",
+  "draft": false,
+  "user": {
+   "login": "JunyiZhou-Conny"
+  },
+  "head": {
+   "ref": "claude/modest-meitner-qbuzy8"
+  }
+ },
+ {
+  "number": 9,
+  "title": "/kickoff 改为两个人以上开会时用；/handoff 支持无人值守；补全 Discord webhook 步骤",
+  "state": "closed",
+  "draft": false,
+  "user": {
+   "login": "JunyiZhou-Conny"
+  },
+  "head": {
+   "ref": "claude/clever-noether-mbxp76"
+  }
+ },
+ {
+  "number": 8,
+  "title": "删掉「枫桥 / Maple Bridge」，产品暂称「项目」",
+  "state": "closed",
+  "draft": false,
+  "user": {
+   "login": "JunyiZhou-Conny"
+  },
+  "head": {
+   "ref": "junyi/7-remove-maple-bridge"
+  }
+ },
+ {
+  "number": 6,
+  "title": "status.md 链接想法收件箱 #5",
+  "state": "closed",
+  "draft": false,
+  "user": {
+   "login": "JunyiZhou-Conny"
+  },
+  "head": {
+   "ref": "claude/clever-noether-mbxp76"
+  }
+ },
+ {
+  "number": 4,
+  "title": "四个日常 skill 与阶段 issue 流程：/kickoff、/pickup、/handoff、/retro",
+  "state": "closed",
+  "draft": false,
+  "user": {
+   "login": "JunyiZhou-Conny"
+  },
+  "head": {
+   "ref": "claude/clever-noether-mbxp76"
+  }
+ },
+ {
+  "number": 3,
+  "title": "startup/: resources, eligibility and action plan for the founding team",
+  "state": "open",
+  "draft": true,
+  "user": {
+   "login": "JunyiZhou-Conny"
+  },
+  "head": {
+   "ref": "claude/friendly-dijkstra-glx26s"
+  }
+ },
+ {
+  "number": 2,
+  "title": "搭建团队与 AI agent 协作骨架 + 10/25 UI 评审纪要",
+  "state": "closed",
+  "draft": false,
+  "user": {
+   "login": "JunyiZhou-Conny"
+  },
+  "head": {
+   "ref": "claude/modest-meitner-qbuzy8"
+  }
+ },
+ {
+  "number": 1,
+  "title": "Maple Bridge (枫桥): interactive care-navigation prototype for Chinese parents of BU students",
+  "state": "closed",
+  "draft": false,
+  "user": {
+   "login": "JunyiZhou-Conny"
+  },
+  "head": {
+   "ref": "claude/boston-care-navigator-prototype"
+  }
+ }
+]

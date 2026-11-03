@@ -1,0 +1,150 @@
+[Script Info]
+Title: 项目周记 E4 · Two days, a hundred-plus commits: how the agents worked, and who decided
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:04.34,Bilingual,,0,0,0,,这是我们两个分诊 PR 上的每一个提交，放在同一个时钟上\N{\fs33\c&H00C8C0B8&\bord1.4}This is every commit on our two triage pull requests, on one clock:
+Dialogue: 0,0:00:04.34,0:00:07.51,Bilingual,,0,0,0,,波士顿时间，从周二中午到周四凌晨\N{\fs33\c&H00C8C0B8&\bord1.4}Boston time, from Tuesday noon to early Thursday.
+Dialogue: 0,0:00:07.83,0:00:11.24,Bilingual,,0,0,0,,一共 109 个提交，每一个都是 agent 做的\N{\fs33\c&H00C8C0B8&\bord1.4}109 commits, every one made by an agent:
+Dialogue: 0,0:00:11.24,0:00:15.76,Bilingual,,0,0,0,,88 个改动，21 个把一个分支合并进另一个分支\N{\fs33\c&H00C8C0B8&\bord1.4}88 changes, and 21 merges of one branch into another.
+Dialogue: 0,0:00:16.08,0:00:18.66,Bilingual,,0,0,0,,GitHub 上有 40 个显示在你的名下\N{\fs33\c&H00C8C0B8&\bord1.4}GitHub shows forty of them under your name,
+Dialogue: 0,0:00:18.66,0:00:21.12,Bilingual,,0,0,0,,因为 agent 用了你的 git 身份\N{\fs33\c&H00C8C0B8&\bord1.4}because the agent used your git identity.
+Dialogue: 0,0:00:21.37,0:00:22.68,Bilingual,,0,0,0,,两个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Two questions.
+Dialogue: 0,0:00:22.73,0:00:24.44,Bilingual,,0,0,0,,为什么大多数都是修复？\N{\fs33\c&H00C8C0B8&\bord1.4}Why are most of them fixes?
+Dialogue: 0,0:00:24.76,0:00:28.14,Bilingual,,0,0,0,,88 个改动里，有 53 个在提交说明里提到了 review\N{\fs33\c&H00C8C0B8&\bord1.4}53 of the 88 name a review in their message:
+Dialogue: 0,0:00:28.14,0:00:30.67,Bilingual,,0,0,0,,Bugbot、Codex，或者做审查的 agent\N{\fs33\c&H00C8C0B8&\bord1.4}Bugbot, Codex, or a review agent.
+Dialogue: 0,0:00:30.99,0:00:34.59,Bilingual,,0,0,0,,而且到现在还没有一个人 review 过，那到底是谁做的决定？\N{\fs33\c&H00C8C0B8&\bord1.4}And no person has reviewed them yet, so who decided anything?
+Dialogue: 0,0:00:35.93,0:00:37.53,Bilingual,,0,0,0,,先看机制\N{\fs33\c&H00C8C0B8&\bord1.4}First, the machinery.
+Dialogue: 0,0:00:37.60,0:00:40.65,Bilingual,,0,0,0,,每件事从一个 issue 开始，有自己的分支\N{\fs33\c&H00C8C0B8&\bord1.4}Each job starts as an issue, gets its own branch,
+Dialogue: 0,0:00:40.65,0:00:44.02,Bilingual,,0,0,0,,第一次提交后就开一个草稿 PR\N{\fs33\c&H00C8C0B8&\bord1.4}and opens a draft pull request after the first commit.
+Dialogue: 0,0:00:44.34,0:00:47.85,Bilingual,,0,0,0,,推送会唤醒两家公司的 review bot\N{\fs33\c&H00C8C0B8&\bord1.4}Pushes wake two review bots from different companies:
+Dialogue: 0,0:00:47.85,0:00:49.84,Bilingual,,0,0,0,,Cursor 的 Bugbot 每次推送都审\N{\fs33\c&H00C8C0B8&\bord1.4}Cursor's Bugbot on every push,
+Dialogue: 0,0:00:49.84,0:00:54.34,Bilingual,,0,0,0,,OpenAI 的 Codex 要等 PR 标成可以 review 之后才审\N{\fs33\c&H00C8C0B8&\bord1.4}and OpenAI's Codex once the pull request is marked ready for review.
+Dialogue: 0,0:00:54.66,0:00:56.97,Bilingual,,0,0,0,,它们可以评论，但从不改代码\N{\fs33\c&H00C8C0B8&\bord1.4}They may comment, but never change code.
+Dialogue: 0,0:00:57.22,0:01:01.29,Bilingual,,0,0,0,,agent 停下来的时候，会在 PR 下写一条交接\N{\fs33\c&H00C8C0B8&\bord1.4}When an agent stops, it writes a handoff note on the pull request,
+Dialogue: 0,0:01:01.29,0:01:03.94,Bilingual,,0,0,0,,没人看着的时候，标为无人值守\N{\fs33\c&H00C8C0B8&\bord1.4}marked unattended when nobody was watching.
+Dialogue: 0,0:01:04.26,0:01:06.58,Bilingual,,0,0,0,,重大选择写成决策记录，标为「提议」\N{\fs33\c&H00C8C0B8&\bord1.4}Big choices become decision records,
+Dialogue: 0,0:01:06.58,0:01:09.80,Bilingual,,0,0,0,,直到有人把它改成「已采纳」\N{\fs33\c&H00C8C0B8&\bord1.4}marked proposed until a person marks them adopted.
+Dialogue: 0,0:01:10.12,0:01:14.33,Bilingual,,0,0,0,,团队的规则是：聊天是临时的，仓库是永久的\N{\fs33\c&H00C8C0B8&\bord1.4}The team's rule: chat is temporary, the repository is permanent.
+Dialogue: 0,0:01:14.57,0:01:19.10,Bilingual,,0,0,0,,提交来自两个 agent 会话：第一个到午夜刚过\N{\fs33\c&H00C8C0B8&\bord1.4}Two agent sessions made the commits: the first until just after midnight,
+Dialogue: 0,0:01:19.10,0:01:24.25,Bilingual,,0,0,0,,第二个从周三凌晨 1 点 51 分到周四凌晨 0 点 45 分\N{\fs33\c&H00C8C0B8&\bord1.4}the second from one fifty-one on Wednesday morning to a quarter to one on Thursday.
+Dialogue: 0,0:01:24.57,0:01:27.86,Bilingual,,0,0,0,,聊天页叠在分诊大脑之上\N{\fs33\c&H00C8C0B8&\bord1.4}The chat page was stacked on top of the triage brain,
+Dialogue: 0,0:01:27.86,0:01:30.52,Bilingual,,0,0,0,,把大脑的改动合并进来 13 次\N{\fs33\c&H00C8C0B8&\bord1.4}and pulled in the brain's changes 13 times.
+Dialogue: 0,0:01:32.17,0:01:37.44,Bilingual,,0,0,0,,周二中午 12 点 22 分，规划了一夜之后，第一个会话开始提交\N{\fs33\c&H00C8C0B8&\bord1.4}Tuesday, at twelve twenty-two, after a night of planning, the first session started committing.
+Dialogue: 0,0:01:37.76,0:01:42.65,Bilingual,,0,0,0,,不到 40 分钟就有了骨架：15 个来源整理成的事实卡\N{\fs33\c&H00C8C0B8&\bord1.4}Within forty minutes it had a skeleton: fact cards from 15 sources,
+Dialogue: 0,0:01:42.65,0:01:47.97,Bilingual,,0,0,0,,一个规则引擎来决定紧急程度，11 个测试案例，还有一个评估\N{\fs33\c&H00C8C0B8&\bord1.4}a rules engine that decided urgency, eleven test cases and an evaluation.
+Dialogue: 0,0:01:48.22,0:01:49.82,Bilingual,,0,0,0,,然后它核对自己的事实\N{\fs33\c&H00C8C0B8&\bord1.4}Then it checked its own facts.
+Dialogue: 0,0:01:50.03,0:01:55.98,Bilingual,,0,0,0,,4 个互不通信的审查 agent 逐张对照来源读卡片\N{\fs33\c&H00C8C0B8&\bord1.4}Four reviewer agents that could not talk to each other read every card against its source
+Dialogue: 0,0:01:55.98,0:01:57.65,Bilingual,,0,0,0,,报告了 75 个问题\N{\fs33\c&H00C8C0B8&\bord1.4}and reported 75 problems.
+Dialogue: 0,0:01:57.97,0:02:02.04,Bilingual,,0,0,0,,第一批 74 张卡之后 23 分钟，卡片变成了 97 张\N{\fs33\c&H00C8C0B8&\bord1.4}Twenty-three minutes after the first 74 cards, there were 97.
+Dialogue: 0,0:02:02.36,0:02:06.23,Bilingual,,0,0,0,,有一张卡说网络外的 urgent care 你自付 20%\N{\fs33\c&H00C8C0B8&\bord1.4}One had said out-of-network urgent care costs you 20 percent;
+Dialogue: 0,0:02:06.23,0:02:10.23,Bilingual,,0,0,0,,来源说的是先付 500 美元的 deductible\N{\fs33\c&H00C8C0B8&\bord1.4}the source said you pay a five-hundred-dollar deductible first.
+Dialogue: 0,0:02:11.57,0:02:13.63,Bilingual,,0,0,0,,那天晚上 9 点 21 分\N{\fs33\c&H00C8C0B8&\bord1.4}At nine twenty-one that evening,
+Dialogue: 0,0:02:13.63,0:02:18.09,Bilingual,,0,0,0,,波士顿时间，也就是北京时间周三早上，一个提交改变了计划\N{\fs33\c&H00C8C0B8&\bord1.4}Boston time, Wednesday morning in Beijing, a commit changed the plan.
+Dialogue: 0,0:02:18.41,0:02:23.80,Bilingual,,0,0,0,,规则引擎靠匹配词语，而词表既会漏判，也会误报\N{\fs33\c&H00C8C0B8&\bord1.4}The rules engine matched words, and word lists both missed things and flagged the wrong things;
+Dialogue: 0,0:02:23.80,0:02:25.67,Bilingual,,0,0,0,,每补一处，就坏另一处\N{\fs33\c&H00C8C0B8&\bord1.4}every patch broke something else.
+Dialogue: 0,0:02:25.92,0:02:29.91,Bilingual,,0,0,0,,记录上写着你的决定：先做能演示的版本，评估以后再做\N{\fs33\c&H00C8C0B8&\bord1.4}The record says you decided: a demo first, evaluation later;
+Dialogue: 0,0:02:29.91,0:02:36.69,Bilingual,,0,0,0,,紧急程度和去处由模型判断，模型输出上的检查器成为唯一的安全层\N{\fs33\c&H00C8C0B8&\bord1.4}the model judges urgency and where to go, and the checker on its output becomes the only safety layer.
+Dialogue: 0,0:02:37.01,0:02:42.60,Bilingual,,0,0,0,,规则引擎和对照实验留在仓库里，不再推进\N{\fs33\c&H00C8C0B8&\bord1.4}The rules engine and the comparison experiments stay in the repository, no longer pursued.
+Dialogue: 0,0:02:42.83,0:02:46.05,Bilingual,,0,0,0,,但请注意：检查器本身也是由词规则组成的\N{\fs33\c&H00C8C0B8&\bord1.4}But notice: the checker is also made of word rules,
+Dialogue: 0,0:02:46.05,0:02:48.64,Bilingual,,0,0,0,,只不过查的是句子，不是症状\N{\fs33\c&H00C8C0B8&\bord1.4}applied to sentences instead of symptoms.
+Dialogue: 0,0:02:48.96,0:02:50.75,Bilingual,,0,0,0,,怎样才能不再按下葫芦浮起瓢？\N{\fs33\c&H00C8C0B8&\bord1.4}What would make it less of a whack-a-mole?
+Dialogue: 0,0:02:54.98,0:02:56.36,Bilingual,,0,0,0,,接下来是循环\N{\fs33\c&H00C8C0B8&\bord1.4}Then came the loop.
+Dialogue: 0,0:02:56.41,0:02:59.19,Bilingual,,0,0,0,,波士顿时间当晚 10 点 23 分\N{\fs33\c&H00C8C0B8&\bord1.4}At ten twenty-three that night, Boston time,
+Dialogue: 0,0:02:59.19,0:03:02.85,Bilingual,,0,0,0,,agent 把大脑的 PR 标成可以 review\N{\fs33\c&H00C8C0B8&\bord1.4}the agent marked the brain's pull request ready for review
+Dialogue: 0,0:03:02.85,0:03:07.53,Bilingual,,0,0,0,,请两位队友来看，两个 bot 从此审每一次推送\N{\fs33\c&H00C8C0B8&\bord1.4}and asked two teammates to look, and both bots began reviewing every push.
+Dialogue: 0,0:03:07.85,0:03:11.22,Bilingual,,0,0,0,,推送，bot 审查，agent 修复，再推送\N{\fs33\c&H00C8C0B8&\bord1.4}Push, the bots review, the agent fixes, push again.
+Dialogue: 0,0:03:11.54,0:03:13.15,Bilingual,,0,0,0,,从 10 点 27 分到午夜刚过\N{\fs33\c&H00C8C0B8&\bord1.4}Between ten twenty-seven
+Dialogue: 0,0:03:13.15,0:03:19.20,Bilingual,,0,0,0,,第一个会话推送了 19 个提交，大约每 5 分钟一个\N{\fs33\c&H00C8C0B8&\bord1.4}and just after midnight the first session pushed 19 commits, about one every five minutes.
+Dialogue: 0,0:03:19.52,0:03:24.72,Bilingual,,0,0,0,,在这个 PR 上，bot 写了 72 条评论，其中 64 条带来了修复\N{\fs33\c&H00C8C0B8&\bord1.4}On that pull request the bots wrote 72 comments, and 64 led to fixes.
+Dialogue: 0,0:03:24.97,0:03:29.10,Bilingual,,0,0,0,,到了午夜 12 点半，你和 agent 已经商定了一个改变\N{\fs33\c&H00C8C0B8&\bord1.4}By half past midnight, you and the agent had agreed on one change:
+Dialogue: 0,0:03:29.10,0:03:31.05,Bilingual,,0,0,0,,修复先攒起来，再一起推送\N{\fs33\c&H00C8C0B8&\bord1.4}batch the fixes before pushing.
+Dialogue: 0,0:03:32.38,0:03:36.95,Bilingual,,0,0,0,,周三，第二个会话做出了聊天页，也就是第三集讲的那一页\N{\fs33\c&H00C8C0B8&\bord1.4}On Wednesday the second session built the chat page from episode three and kept
+Dialogue: 0,0:03:36.95,0:03:38.55,Bilingual,,0,0,0,,同时继续修大脑\N{\fs33\c&H00C8C0B8&\bord1.4}fixing the brain beside it.
+Dialogue: 0,0:03:38.83,0:03:44.78,Bilingual,,0,0,0,,下午，一次最终审查同时从 5 个角度看，找出了大约 30 个问题\N{\fs33\c&H00C8C0B8&\bord1.4}In the afternoon a final review looked from five angles at once and found about 30 problems.
+Dialogue: 0,0:03:45.02,0:03:47.75,Bilingual,,0,0,0,,6 个修复 agent 一个接一个地接手\N{\fs33\c&H00C8C0B8&\bord1.4}Six fix agents took them one after another,
+Dialogue: 0,0:03:47.75,0:03:52.50,Bilingual,,0,0,0,,各用自己的分支，每个都先复现自己的 bug 再修\N{\fs33\c&H00C8C0B8&\bord1.4}each on its own branch, and each first reproduced its bug before fixing it.
+Dialogue: 0,0:03:52.75,0:03:54.88,Bilingual,,0,0,0,,为什么修 bug 之前要先复现？\N{\fs33\c&H00C8C0B8&\bord1.4}Why reproduce a bug before fixing it?
+Dialogue: 0,0:03:59.75,0:04:02.71,Bilingual,,0,0,0,,因为复现能证明这个 bug 是真的，还能给出一项检查\N{\fs33\c&H00C8C0B8&\bord1.4}Because a reproduction proves the bug is real,
+Dialogue: 0,0:04:02.71,0:04:05.74,Bilingual,,0,0,0,,修之前不通过，修之后必须通过\N{\fs33\c&H00C8C0B8&\bord1.4}and gives a check that has to flip from failing
+Dialogue: 0,0:04:05.74,0:04:09.54,Bilingual,,0,0,0,,一个没人见过它失败的 bug，修了也证明不了什么\N{\fs33\c&H00C8C0B8&\bord1.4}to passing; a fix for a bug nobody saw fail proves nothing.
+Dialogue: 0,0:04:09.86,0:04:13.93,Bilingual,,0,0,0,,把分支合并回去花了大约一个小时，还发生了冲突\N{\fs33\c&H00C8C0B8&\bord1.4}Merging the branches back took about an hour and had collisions;
+Dialogue: 0,0:04:13.93,0:04:18.44,Bilingual,,0,0,0,,其中一次，一个分支加了一个字段，另一个分支的新测试却不接受它\N{\fs33\c&H00C8C0B8&\bord1.4}in one, a branch added a field that another branch's new test rejected.
+Dialogue: 0,0:04:18.76,0:04:21.72,Bilingual,,0,0,0,,对合并结果的第二次审查又找出了 8 个\N{\fs33\c&H00C8C0B8&\bord1.4}A second review of the merged result found eight more.
+Dialogue: 0,0:04:21.97,0:04:26.31,Bilingual,,0,0,0,,这期间会话两次碰到 5 小时用量上限\N{\fs33\c&H00C8C0B8&\bord1.4}Along the way the session hit its five-hour usage limit twice,
+Dialogue: 0,0:04:26.31,0:04:30.16,Bilingual,,0,0,0,,第二次是因为 6 个修复 agent 排队跑\N{\fs33\c&H00C8C0B8&\bord1.4}the second time because the six fix agents ran in a row
+Dialogue: 0,0:04:30.16,0:04:32.19,Bilingual,,0,0,0,,每个大约 80 万 token\N{\fs33\c&H00C8C0B8&\bord1.4}at about 800,000 tokens each,
+Dialogue: 0,0:04:32.19,0:04:34.57,Bilingual,,0,0,0,,容器也重启了两次\N{\fs33\c&H00C8C0B8&\bord1.4}and the container restarted twice.
+Dialogue: 0,0:04:34.89,0:04:38.09,Bilingual,,0,0,0,,agent 之后的规则：一次最多 3 个\N{\fs33\c&H00C8C0B8&\bord1.4}The agents' rule afterwards: at most three at a time.
+Dialogue: 0,0:04:39.43,0:04:40.90,Bilingual,,0,0,0,,回到检查器\N{\fs33\c&H00C8C0B8&\bord1.4}Back to the checker.
+Dialogue: 0,0:04:40.95,0:04:43.02,Bilingual,,0,0,0,,bot 的评论大多是关于它的\N{\fs33\c&H00C8C0B8&\bord1.4}Most of the bots' comments were about it.
+Dialogue: 0,0:04:43.34,0:04:48.25,Bilingual,,0,0,0,,转向之后，它从 459 行长到 1,326 行\N{\fs33\c&H00C8C0B8&\bord1.4}After the turn it grew from 459 lines to 1,326,
+Dialogue: 0,0:04:48.25,0:04:52.64,Bilingual,,0,0,0,,此后的 45 个提交里有 27 个改过它\N{\fs33\c&H00C8C0B8&\bord1.4}and 27 of the 45 commits since touched it.
+Dialogue: 0,0:04:52.96,0:04:54.74,Bilingual,,0,0,0,,每次修复都只是把问题挪了个地方\N{\fs33\c&H00C8C0B8&\bord1.4}Each fix moved the problem.
+Dialogue: 0,0:04:54.92,0:04:58.29,Bilingual,,0,0,0,,周三，一段家长摘要说别因为保险耽误救援\N{\fs33\c&H00C8C0B8&\bord1.4}On Wednesday a parent summary saying don't delay help
+Dialogue: 0,0:04:58.29,0:05:01.84,Bilingual,,0,0,0,,却被判成先谈钱，白白多重写一次\N{\fs33\c&H00C8C0B8&\bord1.4}because of insurance was flagged as putting money first,
+Dialogue: 0,0:05:01.84,0:05:04.63,Bilingual,,0,0,0,,当天晚上，收窄一条类似的规则\N{\fs33\c&H00C8C0B8&\bord1.4}which cost a needless rewrite; that evening,
+Dialogue: 0,0:05:04.63,0:05:10.35,Bilingual,,0,0,0,,又让一句真正先谈钱的话漏了过去，直到 Bugbot 发现\N{\fs33\c&H00C8C0B8&\bord1.4}narrowing a similar rule let a real money-first line slip through, until Bugbot caught it.
+Dialogue: 0,0:05:10.58,0:05:13.95,Bilingual,,0,0,0,,于是第二天夜里，agent 不再等 bot\N{\fs33\c&H00C8C0B8&\bord1.4}So on the second night the agents stopped waiting for the bots.
+Dialogue: 0,0:05:14.27,0:05:20.26,Bilingual,,0,0,0,,挨打最多的是两条规则：没核对过营业时间，就不能说诊所此刻开着\N{\fs33\c&H00C8C0B8&\bord1.4}Two rules took the beating: never claim a clinic is open right now unless its hours are checked,
+Dialogue: 0,0:05:20.26,0:05:23.06,Bilingual,,0,0,0,,紧急情况下，不能让费用挡路\N{\fs33\c&H00C8C0B8&\bord1.4}and keep cost out of the way of an emergency.
+Dialogue: 0,0:05:23.38,0:05:30.10,Bilingual,,0,0,0,,推送之前，agent 先攻击这两条规则：写了大约 3,000 种说法\N{\fs33\c&H00C8C0B8&\bord1.4}Before pushing, the agents attacked those two rules: they wrote about 3,000 ways to say a risky thing,
+Dialogue: 0,0:05:30.10,0:05:32.66,Bilingual,,0,0,0,,有危险的，也有无害的孪生版本，全部跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}or its harmless twin, and ran them all.
+Dialogue: 0,0:05:32.98,0:05:38.04,Bilingual,,0,0,0,,第一轮找出 142 个漏判和 230 个误报\N{\fs33\c&H00C8C0B8&\bord1.4}The first round found 142 misses and 230 false alarms.
+Dialogue: 0,0:05:38.28,0:05:39.93,Bilingual,,0,0,0,,bot 迟早也会找到这些\N{\fs33\c&H00C8C0B8&\bord1.4}The bots would have found these too.
+Dialogue: 0,0:05:40.25,0:05:42.27,Bilingual,,0,0,0,,为什么要先自己攻击检查器？\N{\fs33\c&H00C8C0B8&\bord1.4}Why attack the checker yourself first?
+Dialogue: 0,0:05:45.28,0:05:50.32,Bilingual,,0,0,0,,因为 bot 一次只报一条，每次修复都要等下一轮审查\N{\fs33\c&H00C8C0B8&\bord1.4}Because the bots report one finding at a time, and every fix waits for the next review.
+Dialogue: 0,0:05:50.64,0:05:53.94,Bilingual,,0,0,0,,一次探测就找出了 372 个\N{\fs33\c&H00C8C0B8&\bord1.4}One probing run found 372 at once.
+Dialogue: 0,0:05:54.26,0:05:59.45,Bilingual,,0,0,0,,两轮下来，判错过的 1,060 个说法都修好了，留作测试\N{\fs33\c&H00C8C0B8&\bord1.4}Across both rounds, 1,060 phrasings it got wrong were fixed and kept as tests
+Dialogue: 0,0:05:59.45,0:06:04.97,Bilingual,,0,0,0,,和单元测试一起跑；还有大约 20 个更难的，列为已知漏判\N{\fs33\c&H00C8C0B8&\bord1.4}that run with the unit tests; about twenty harder ones are listed as known misses.
+Dialogue: 0,0:06:05.29,0:06:09.55,Bilingual,,0,0,0,,第二轮里，第一版修法甚至带出了 20 个新误报\N{\fs33\c&H00C8C0B8&\bord1.4}In the second round, the first fix even created 20 new false alarms;
+Dialogue: 0,0:06:09.55,0:06:12.93,Bilingual,,0,0,0,,这一次，它们在推送之前就被抓住了，而不是之后\N{\fs33\c&H00C8C0B8&\bord1.4}this time they were caught before the push, not after.
+Dialogue: 0,0:06:14.27,0:06:15.62,Bilingual,,0,0,0,,花了多少钱？\N{\fs33\c&H00C8C0B8&\bord1.4}What did it cost?
+Dialogue: 0,0:06:15.67,0:06:21.84,Bilingual,,0,0,0,,产品自己调用模型的花费有记录：一次真实回答大约 4 美分\N{\fs33\c&H00C8C0B8&\bord1.4}The model calls the product made are on the record: about 4 cents for one real answer,
+Dialogue: 0,0:06:21.84,0:06:28.22,Bilingual,,0,0,0,,整个第一天大约 77 美分，最后一晚 27 美分，上限是 50 美分\N{\fs33\c&H00C8C0B8&\bord1.4}about 77 cents for the whole first day, 27 cents on the last night against a 50-cent cap.
+Dialogue: 0,0:06:28.54,0:06:32.58,Bilingual,,0,0,0,,agent 自己的工作在仓库里没有任何标价\N{\fs33\c&H00C8C0B8&\bord1.4}The agents' own work is priced nowhere in the repository;
+Dialogue: 0,0:06:32.58,0:06:36.49,Bilingual,,0,0,0,,唯一的数字是 token：每个修复 agent 大约 80 万\N{\fs33\c&H00C8C0B8&\bord1.4}the only number is tokens: about 800,000 per fix agent,
+Dialogue: 0,0:06:36.49,0:06:41.17,Bilingual,,0,0,0,,6 个加起来接近 500 万，其余的没有记录\N{\fs33\c&H00C8C0B8&\bord1.4}close to five million for the six, and none recorded for the rest.
+Dialogue: 0,0:06:42.92,0:06:44.42,Bilingual,,0,0,0,,那么，是谁做的决定？\N{\fs33\c&H00C8C0B8&\bord1.4}So who decided?
+Dialogue: 0,0:06:44.47,0:06:47.83,Bilingual,,0,0,0,,由 agent 写下的记录列出了你的决定，其中包括\N{\fs33\c&H00C8C0B8&\bord1.4}The record, written by the agents, names your calls,
+Dialogue: 0,0:06:47.83,0:06:52.41,Bilingual,,0,0,0,,模型和思考强度、把判断交给模型的转向、把修复攒\N{\fs33\c&H00C8C0B8&\bord1.4}among them the model and its effort, the turn to the model's judgement,
+Dialogue: 0,0:06:52.41,0:06:56.34,Bilingual,,0,0,0,,在一起推送、照抄 Claude 的页面，还有收尾的约定\N{\fs33\c&H00C8C0B8&\bord1.4}batching the fixes, copying Claude's page, and the stop rule:
+Dialogue: 0,0:06:56.34,0:07:01.31,Bilingual,,0,0,0,,做到 99% 就停，最晚北京时间周四晚上 7 点收尾\N{\fs33\c&H00C8C0B8&\bord1.4}stop at 99 percent, finish by Thursday at seven in the evening, Beijing time.
+Dialogue: 0,0:07:01.63,0:07:05.29,Bilingual,,0,0,0,,代码守住了它：最后一次推送提前了 6 个多小时\N{\fs33\c&H00C8C0B8&\bord1.4}The code kept it: the last push came more than six hours early,
+Dialogue: 0,0:07:05.29,0:07:09.14,Bilingual,,0,0,0,,之后 bot 新报的 4 条写了下来，留给下一个人\N{\fs33\c&H00C8C0B8&\bord1.4}and four later bot findings were written down for the next person.
+Dialogue: 0,0:07:09.38,0:07:12.28,Bilingual,,0,0,0,,许多较小的选择是 agent 自己做的\N{\fs33\c&H00C8C0B8&\bord1.4}Many smaller choices the agents made alone,
+Dialogue: 0,0:07:12.28,0:07:17.47,Bilingual,,0,0,0,,写成了提议，标着无人值守、未经人确认\N{\fs33\c&H00C8C0B8&\bord1.4}and wrote down as proposals, marked unattended and not confirmed by a person.
+Dialogue: 0,0:07:17.79,0:07:21.21,Bilingual,,0,0,0,,有一条交接甚至把团队流程留给人来做的一次点击\N{\fs33\c&H00C8C0B8&\bord1.4}One handoff even lists, among the agent's own steps,
+Dialogue: 0,0:07:21.21,0:07:27.20,Bilingual,,0,0,0,,列为 agent 自己做的事：把 PR 标成可以 review\N{\fs33\c&H00C8C0B8&\bord1.4}a click the team's workflow reserves for a person: marking a pull request ready for review.
+Dialogue: 0,0:07:27.52,0:07:29.75,Bilingual,,0,0,0,,交接也会诚实地记下失误\N{\fs33\c&H00C8C0B8&\bord1.4}The notes are honest about slips too:
+Dialogue: 0,0:07:29.75,0:07:34.75,Bilingual,,0,0,0,,其中一条承认，早先说 Bugbot 的意见都修了，其实有 2 条没修\N{\fs33\c&H00C8C0B8&\bord1.4}one admits an earlier claim that all Bugbot comments were fixed, when two were not.
+Dialogue: 0,0:07:34.98,0:07:38.75,Bilingual,,0,0,0,,这就引出一个问题：还没有人审过\N{\fs33\c&H00C8C0B8&\bord1.4}Which raises a question: with no person having reviewed it yet,
+Dialogue: 0,0:07:38.75,0:07:40.72,Bilingual,,0,0,0,,这份代码凭什么可信？\N{\fs33\c&H00C8C0B8&\bord1.4}what makes this code trustworthy?
+Dialogue: 0,0:07:44.87,0:07:47.54,Bilingual,,0,0,0,,没有哪一道检查能单独做到。靠的是层层叠加\N{\fs33\c&H00C8C0B8&\bord1.4}No single check does. It is layers:
+Dialogue: 0,0:07:47.54,0:07:51.58,Bilingual,,0,0,0,,几百个测试，其中一个会重放那 1,060 个探测说法\N{\fs33\c&H00C8C0B8&\bord1.4}hundreds of tests, one of which replays the 1,060 probes,
+Dialogue: 0,0:07:51.58,0:07:57.11,Bilingual,,0,0,0,,两个 review bot；还有在你签字前一直是提议的决策记录\N{\fs33\c&H00C8C0B8&\bord1.4}two review bots, and decision records that stay proposals until you sign them.
+Dialogue: 0,0:07:57.43,0:08:00.18,Bilingual,,0,0,0,,决策 0004 本身也还是提议\N{\fs33\c&H00C8C0B8&\bord1.4}Decision four itself is still a proposal,
+Dialogue: 0,0:08:00.18,0:08:06.54,Bilingual,,0,0,0,,给真实用户之前，它要求先做评估，并请团队的医疗审核人看过\N{\fs33\c&H00C8C0B8&\bord1.4}and before any real user it asks for an evaluation and a look from the team's medical reviewer.
+Dialogue: 0,0:08:06.86,0:08:10.71,Bilingual,,0,0,0,,还有 12 个问题在等你，从决策 0006 的补充\N{\fs33\c&H00C8C0B8&\bord1.4}Twelve more questions wait for you, from decision six's addendum
+Dialogue: 0,0:08:10.71,0:08:14.37,Bilingual,,0,0,0,,到要不要给家长一个拨打危机热线的链接\N{\fs33\c&H00C8C0B8&\bord1.4}to whether a parent should get a dial link for a crisis line.
+Dialogue: 0,0:08:19.12,0:08:22.80,Bilingual,,0,0,0,,所以，两天里：一个下午搭好骨架、核对事实\N{\fs33\c&H00C8C0B8&\bord1.4}So, two days: a skeleton and a fact check in an afternoon;
+Dialogue: 0,0:08:22.80,0:08:24.65,Bilingual,,0,0,0,,你在 9 点 21 分的转向\N{\fs33\c&H00C8C0B8&\bord1.4}your turn at nine twenty-one;
+Dialogue: 0,0:08:24.65,0:08:27.06,Bilingual,,0,0,0,,和 bot 打地鼠的一夜\N{\fs33\c&H00C8C0B8&\bord1.4}a night of whack-a-mole with the bots;
+Dialogue: 0,0:08:27.06,0:08:28.56,Bilingual,,0,0,0,,排队的修复 agent\N{\fs33\c&H00C8C0B8&\bord1.4}a queue of fix agents;
+Dialogue: 0,0:08:28.56,0:08:32.40,Bilingual,,0,0,0,,第二个夜晚，赶在 bot 之前先攻击检查器\N{\fs33\c&H00C8C0B8&\bord1.4}a second night of attacking the checker before the bots could;
+Dialogue: 0,0:08:32.40,0:08:34.05,Bilingual,,0,0,0,,还有一条守住了的收尾约定\N{\fs33\c&H00C8C0B8&\bord1.4}and a stop rule that held.
+Dialogue: 0,0:08:34.28,0:08:35.66,Bilingual,,0,0,0,,三个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Three questions.
+Dialogue: 0,0:08:35.71,0:08:38.44,Bilingual,,0,0,0,,为什么分诊大脑的提交有这么多在改检查器？\N{\fs33\c&H00C8C0B8&\bord1.4}Why did so many of the brain's commits touch the checker?
+Dialogue: 0,0:08:38.76,0:08:40.90,Bilingual,,0,0,0,,为什么修 bug 之前要先复现？\N{\fs33\c&H00C8C0B8&\bord1.4}Why reproduce a bug before fixing it?
+Dialogue: 0,0:08:41.22,0:08:42.86,Bilingual,,0,0,0,,还有什么在等你决定？\N{\fs33\c&H00C8C0B8&\bord1.4}And what is still waiting for you?
+Dialogue: 0,0:08:48.10,0:08:50.47,Bilingual,,0,0,0,,周五又来了两个 PR\N{\fs33\c&H00C8C0B8&\bord1.4}Two more pull requests arrived on Friday.
+Dialogue: 0,0:08:50.79,0:08:53.58,Bilingual,,0,0,0,,下一集：agent 怎么证明自己改对了\N{\fs33\c&H00C8C0B8&\bord1.4}Next: how an agent proves its change is right.
