@@ -1,0 +1,412 @@
+# zh narration for S09-S16 (part 2, group g2: a repo of your own from the starter, a bucket that looks like a
+# folder, the starter that no longer builds, files named by their fingerprint, a pointer in git and the bytes in a
+# bucket, one more photo, time travel from anywhere, monitoring, teardown and recap), sentence-aligned to script.md:
+# one zh sentence per English sentence (explainer.voice.split_sentences). Terms and rules: ../GLOSSARY.md,
+# ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of ideas (A9, D8): clauses stay where the
+# English puts them (with gcsfuse -> 用的是 gcsfuse, last; while any tag should still work -> 只要还有哪个 tag 要用,
+# after the main clause; when the course is done -> 等课程结束的时候, last).
+# Artifacts with an underscore are written the way the narration says them (A6: cheese dataset, DVC store,
+# dataset v20 / v21 / v25, Image 1 ... Image 5, brie 2); error messages the narration paraphrases are translated
+# (A7: 包 google-cloud-sdk 没有可安装的候选版本, 特殊设备不存在, 仓库路径不属于当前用户, remote origin 已经存在,
+# 未知的 Git 修订版本). The instructor's name is never written (A17: 授课老师). The ponders (S11, S12, S14, S15, S16)
+# ask without answering (A10). Commands sit after a full-width colon at the end of a clause (G3).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: .gitignore, dvc_store,
+# Image_1 ... Image_5, brie_2, cheese_dataset, --implicit-dirs, -v, --privileged, /app, dataset_v20 / v21 / v25,
+# --quiet, -r); null = the SAY text.
+
+S09:
+- en: "Part 2: freezing which photos a model saw. Git alone would copy every photo version into every clone. Of the lecture's four approaches, we build the file-based one: git versions a small file of fingerprints, and a bucket holds the photos. The tool is DVC."
+  zh:
+  - "第二部分：把模型看到的照片冻结下来。"
+  - "只用 git 的话，每个照片版本都会被复制进每一个 clone。"
+  - "课上的四种做法里，我们搭的是基于文件的做法：git 给一个记着指纹的小文件做版本管理，bucket 存照片。"
+  - "用的工具是 DVC。"
+- en: "First, move up one folder, so the new clone sits beside data-labeling and secrets. The data-versioning README starts with the same three cleanup commands. Pause and run them."
+  zh:
+  - "先退到上一级目录，让新的 clone 和 data-labeling、secrets 放在一起。"
+  - "这份 data-versioning 的 README 一开头也是那三条清理命令。"
+  - "暂停一下，把它们跑一遍。"
+- en: "Then clone the starter branch the README names. Its SSH command needs your key on GitHub, and this machine has no SSH route. So the same branch comes over HTTPS, which the README allows. Pause, clone it, and move in."
+  zh:
+  - "然后 clone README 指定的 starter 分支。"
+  - "它的 SSH 命令需要你在 GitHub 上配好 SSH 密钥，而这台机器没有 SSH 通道。"
+  - "所以同一个分支改走 HTTPS，README 也允许这样做。"
+  - "暂停一下，clone 下来，再进去。"
+- en: "One note: on the day of the lecture the README changed, and it now says to clone main. That branch brings the instructor's finished DVC files along, as an extra second clone shows. This video follows the course's pinned README: the starter branch, plus one fix."
+  zh:
+  - "有一点要说明：上课那天 README 改了，现在它让你 clone main。"
+  - "这个分支会把授课老师做好的 DVC 文件一起带过来，额外再 clone 一份就能看到。"
+  - "这个视频跟的是课程 pin 住的那版 README：starter 分支，外加一处修复。"
+- en: "Remove the old git history, so the code is no longer tied to the class repo, and start fresh with git init. Pause and run both. Git's hint mentions master, which is why the branch gets renamed next."
+  zh:
+  - "删掉旧的 git 历史，这样代码就不再和课程的 repo 绑在一起，再用 git init 重新开始。"
+  - "暂停一下，两条都跑一遍。"
+  - "Git 的提示里提到了 master，所以下一步要给分支改名。"
+- en: "On GitHub, create an empty private repo called data-versioning, with no README, license or git ignore file. Then the five commands: rename the branch, add your repo as origin, add, commit, and push. Pause and run them. Your repo now shows the 7 files on main."
+  zh:
+  - "在 GitHub 上建一个空的私有 repo，叫 data-versioning，不要 README、许可证，也不要 .gitignore 文件。"
+  - "然后是五条命令：改分支名、把你的 repo 加为 origin、add、commit、push。"
+  - "暂停一下，把它们跑一遍。"
+  - "你的 repo 现在在 main 上显示 7 个文件。"
+  en_display:
+  - "On GitHub, create an empty private repo called data-versioning, with no README, license or .gitignore file."
+  - null
+  - null
+  - null
+S10:
+- en: "A bucket stores named objects, nothing else. Add tools, like versioning, and the lecture calls it a data lake. Its folders are only shared name prefixes, which sets a trap."
+  zh:
+  - "一个 bucket 只存有名字的对象，别的什么都不存。"
+  - "再加上版本管理之类的工具，课上就把它叫做数据湖。"
+  - "它的目录只是共同的名字前缀，这就埋下了一个陷阱。"
+- en: "The secrets folder from part 1 already sits beside this repo, as an extra tree view shows. The README wants the same service account and key, so reuse both."
+  zh:
+  - "第一部分的 secrets 目录已经在这个 repo 旁边了，额外用 tree 看一下就能看到。"
+  - "README 要的是同一个服务账号和密钥，所以两个都直接复用。"
+- en: "In your bucket, create two folders in the console: DVC store and images. A small gap: the course's README never says to put the first photos into the images folder, yet later it says to add more. So upload Image 1 through Image 4 from the zip. Pause and do it."
+  zh:
+  - "在你的 bucket 里，用控制台建两个目录：DVC store 和 images。"
+  - "有一个小疏漏：课程的 README 从没说要把第一批照片放进 images 目录，后面却说再加一些。"
+  - "所以把 zip 里的 Image 1 到 Image 4 上传上去。"
+  - "暂停一下，照着做。"
+  en_display:
+  - "In your bucket, create two folders in the console: dvc_store and images."
+  - null
+  - "So upload Image_1 through Image_4 from the zip."
+  - null
+- en: "In docker-shell.sh, replace the bucket, project and zone with yours. Only the bucket name is ever used. Pause and edit it."
+  zh:
+  - "在 docker-shell.sh 里，把 bucket、项目和可用区换成你自己的。"
+  - "真正用到的只有 bucket 名字。"
+  - "暂停一下，改好它。"
+- en: "The entrypoint runs the four stages the lecture draws. Authenticate with the key. Mount the whole bucket as a folder, with gcsfuse. Bind its images folder to the path the app expects, cheese dataset. Then use the data: DVC works on that folder as if it were local, while each file is fetched from the bucket."
+  zh:
+  - "这个 entrypoint 会跑课上画的四个阶段。"
+  - "用密钥做身份验证。"
+  - "把整个 bucket 挂载成一个目录，用的是 gcsfuse。"
+  - "把它的 images 目录绑定到应用要的路径上：cheese dataset。"
+  - "然后使用数据：DVC 把这个目录当本地目录用，而每个文件其实都是从 bucket 取来的。"
+  en_display:
+  - null
+  - null
+  - null
+  - "Bind its images folder to the path the app expects, cheese_dataset."
+  - null
+- en: "The lecture takes the mount line apart: tool, key file, bucket, mount point. One flag is not passed, implicit dirs, so gcsfuse only shows folders the console made, which leave a marker object. That was the trap."
+  zh:
+  - "课上把挂载那一行拆开讲：工具、密钥文件、bucket、挂载点。"
+  - "有一个参数没传，--implicit-dirs，所以 gcsfuse 只显示控制台建的目录，它们会留下一个标记对象。"
+  - "这就是那个陷阱。"
+  en_display:
+  - null
+  - "One flag is not passed, --implicit-dirs, so gcsfuse only shows folders the console made, which leave a marker object."
+  - null
+- en: "Note the two bind mounts: dash v joins your laptop's repo to the container, and the inner one joins the bucket's images folder."
+  zh:
+  - "注意这两个 bind mount：-v 把你笔记本上的 repo 接到 container 里，里面那个则把 bucket 的 images 目录接进来。"
+  en_display:
+  - "Note the two bind mounts: -v joins your laptop's repo to the container, and the inner one joins the bucket's images folder."
+- en: "Mounting needs the fuse device and mount rights, hence the privileged flag and the extra capability. The script also mounts your repo, secrets and git config. Set up git before the first run, or Docker creates a folder in its place."
+  zh:
+  - "挂载需要 fuse 设备和挂载权限，所以要加 --privileged 参数和多加的那个 capability。"
+  - "脚本还会挂载你的 repo、secrets 和 git 配置。"
+  - "先把 git 配好，再做第一次运行，不然 Docker 会在那个位置建一个目录。"
+  en_display:
+  - "Mounting needs the fuse device and mount rights, hence the --privileged flag and the extra capability."
+  - null
+  - null
+S11:
+- en: "You are already in the data-versioning folder, so run sh docker-shell.sh. Pause and run it. On the starter branch, the build dies: package google-cloud-sdk has no installation candidate. The message even names the replacement, google-cloud-cli."
+  zh:
+  - "你已经在 data-versioning 目录里了，所以跑：sh docker-shell.sh。"
+  - "暂停一下，自己跑一遍。"
+  - "在 starter 分支上，构建直接挂了：包 google-cloud-sdk 没有可安装的候选版本。"
+  - "报错里甚至点出了替代品：google-cloud-cli。"
+- en: "A small slip, and not your fault: Google renamed the package, the main branch fixed line 36, and the starter never got the fix. Make the same one-word change, as an extra. Pause and edit it."
+  zh:
+  - "有一个小疏漏，不是你的错：Google 给这个包改了名，main 分支修了第 36 行，starter 却一直没修。"
+  - "你也照样改这一个词，这是额外步骤。"
+  - "暂停一下，改好它。"
+- en: "Pause and run it again. The first build is slow. Then the entrypoint runs, and every stage fails the way a missing key fails. The gcloud tool cannot find the key file, and neither can gcsfuse, so the bucket never mounts. Yet the next line says bucket mounted, because the script prints it no matter what. Then the bind mount fails: special device does not exist."
+  zh:
+  - "暂停一下，再跑一遍。"
+  - "第一次构建比较慢。"
+  - "然后 entrypoint 开始跑，每个阶段失败的方式都和缺了密钥时一样。"
+  - "gcloud 工具找不到密钥文件，gcsfuse 也找不到，所以 bucket 根本没挂载上。"
+  - "可下一行却写着 bucket 已挂载，因为脚本不管怎样都会打印这一行。"
+  - "接着 bind mount 失败了：特殊设备不存在。"
+- en: "And still you get a root prompt, because the entrypoint does not stop at errors. Extra checks: the cheese dataset folder is empty, and DVC 3.63.0 is installed, pinned by the lock file. So the rule for today: list the folder before you add it."
+  zh:
+  - "可你还是拿到了一个 root 提示符，因为 entrypoint 遇到错误不会停。"
+  - "额外检查：cheese dataset 目录是空的，装的是 DVC 3.63.0，由 lock 文件 pin 住。"
+  - "所以今天的规则是：先列一下目录，再 add 它。"
+  en_display:
+  - null
+  - "Extra checks: the cheese_dataset folder is empty, and DVC 3.63.0 is installed, pinned by the lock file."
+  - null
+- en: "With a real key, the folder inside lists your four photos. Something to ponder: on your laptop, the same folder is empty. Is the mount broken?"
+  zh:
+  - "有了真的密钥，里面的目录会列出你的四张照片。"
+  - "来想一个问题：在你的笔记本上，同一个目录是空的。"
+  - "挂载坏了吗？"
+- en: "No. Both mounts exist only inside the container. Your laptop sees the empty folder the entrypoint made through the repo mount; an extra listing shows it, owned by root."
+  zh:
+  - "没有。"
+  - "两个挂载都只存在于 container 里面。"
+  - "你的笔记本看到的，是 entrypoint 通过 repo 的挂载建出来的空目录；额外列一下就能看到，它属于 root。"
+S12:
+- en: "Inside the container, run dvc init. On Linux it may stop: the repository path is not owned by the current user. You are root inside, the repo is yours on disk, so git refuses, leaving a half-made folder."
+  zh:
+  - "在 container 里面跑：dvc init。"
+  - "在 Linux 上它可能会停下：仓库路径不属于当前用户。"
+  - "你在里面是 root，而 repo 在磁盘上属于你，所以 git 拒绝了，留下一个半成品目录。"
+- en: "The fix is an extra, for Linux: on your laptop, remove the half-made files. Then mark slash app as a safe directory in your git config. Start the container again, and dvc init works. Pause and run it."
+  zh:
+  - "修法是一个额外步骤，只针对 Linux：在你的笔记本上删掉那些半成品文件。"
+  - "然后把 /app 标成安全目录，写进你的 git 配置。"
+  - "再启动一次 container，dvc init 就成功了。"
+  - "暂停一下，自己跑一遍。"
+  en_display:
+  - null
+  - "Then mark /app as a safe directory in your git config."
+  - null
+  - null
+- en: "If you cloned main, it stops here: DVC is already set up, the remote is refused, and the config points at the class bucket. Start from the starter."
+  zh:
+  - "如果你 clone 的是 main，就会停在这里：DVC 已经配置好了，remote 被拒绝，配置还指向课程的 bucket。"
+  - "从 starter 开始。"
+- en: "Then point DVC at the DVC store folder in your bucket, as its default remote. Pause and add it."
+  zh:
+  - "然后把 DVC 指向你 bucket 里的 DVC store 目录，作为它的默认 remote。"
+  - "暂停一下，加上它。"
+  en_display:
+  - "Then point DVC at the dvc_store folder in your bucket, as its default remote."
+  - null
+- en: "Here is what dvc add will do with photos. It fingerprints each photo with MD5. It files a copy in its cache under that fingerprint, on a shelf named by the first 2 characters. Then it fingerprints a manifest, the list of fingerprints and names, and writes that fingerprint into the pointer file, which stands in for the folder in git."
+  zh:
+  - "来看 dvc add 会对照片做什么。"
+  - "它用 MD5 给每张照片算指纹。"
+  - "它把一份副本按这个指纹放进缓存，放在用指纹前 2 个字符命名的架子上。"
+  - "然后它给一个 manifest 算指纹，也就是指纹和文件名的列表，再把这个指纹写进指针文件，在 git 里由它代替这个目录。"
+- en: "A second trap: the mount failed, so the folder is empty, and dvc add happily makes a version with zero files."
+  zh:
+  - "第二个陷阱：挂载失败了，所以目录是空的，而 dvc add 照样高高兴兴地做出一个 0 个文件的版本。"
+- en: "With no bucket mounted, our stand-in copies four photos into the laptop folder, which the container sees through the repo mount, and we add again. Now the pointer file says 4 files and one fingerprint for the folder. Pause and add yours."
+  zh:
+  - "没有挂载 bucket，我们的替身就把四张照片复制进笔记本上的目录，container 通过 repo 的挂载能看到它们，我们再 add 一次。"
+  - "现在指针文件写着 4 个文件，整个目录一个指纹。"
+  - "暂停一下，add 你自己的。"
+- en: "The cache shows those shelves, plus the empty version from before."
+  zh:
+  - "缓存里能看到这些架子，还有之前那个空版本。"
+- en: "So one line pins 600 kilobytes: it fingerprints the list of fingerprints. And the instructor's tag in the class repo holds the same fingerprint, character for character."
+  zh:
+  - "所以一行字能锁定 600 KB：它给指纹的列表算指纹。"
+  - "而授课老师在课程 repo 里打的 tag，存的是同一个指纹，一个字符都不差。"
+- en: "Something to ponder. You give Image 2 the new name brie 2, and add again. Which changes: the photo fingerprint, the manifest fingerprint, the size, or the file count?"
+  zh:
+  - "来想一个问题。"
+  - "你把 Image 2 改名叫 brie 2，再 add 一次。"
+  - "哪个会变：照片的指纹、manifest 的指纹、大小，还是文件数？"
+  en_display:
+  - null
+  - "You give Image_2 the new name brie_2, and add again."
+  - null
+- en: "Only the manifest fingerprint, because one name in the list changed. The opening's two folders were the reverse: same names, new bytes. And DVC stores whole files, not differences; one changed pixel means a new fingerprint and a new copy."
+  zh:
+  - "只有 manifest 的指纹变了，因为列表里有一个名字变了。"
+  - "开头那两个目录正好反过来：名字一样，字节是新的。"
+  - "而且 DVC 存的是整个文件，不是差异；改一个像素，就是一个新指纹、一份新副本。"
+S13:
+- en: "Next, dvc push. Pause and run it. Here it fails without credentials. To show what a push uploads, an extra push goes to a local stand-in remote: 5 files pushed, the four photos and the manifest."
+  zh:
+  - "接下来是 dvc push。"
+  - "暂停一下，自己跑一遍。"
+  - "这里没有凭据，失败了。"
+  - "为了展示 push 会上传什么，额外 push 到一个本地的替身 remote：推送了 5 个文件，四张照片加上 manifest。"
+- en: "In your bucket, the DVC store now mirrors the cache. A gold tag: a second copy of the photos, still a fraction of a cent a month. So the bytes now sit in three places: the images folder you upload to, and the cache on your disk, filled by dvc add. The third is the DVC store, where every file is named by its fingerprint. The images folder can change; the DVC store never overwrites, because new bytes get a new name."
+  zh:
+  - "在你的 bucket 里，DVC store 现在和缓存一模一样。"
+  - "金色标签：照片的第二份副本，仍然每月不到一美分。"
+  - "所以现在这些字节在三个地方：你上传到的 images 目录，还有你磁盘上由 dvc add 填满的缓存。"
+  - "第三个是 DVC store，那里每个文件都用它的指纹命名。"
+  - "这个 images 目录可以变；DVC store 从不覆盖，因为新的字节会有新的名字。"
+  en_display:
+  - "In your bucket, the dvc_store now mirrors the cache."
+  - null
+  - null
+  - "The third is the dvc_store, where every file is named by its fingerprint."
+  - "The images folder can change; the dvc_store never overwrites, because new bytes get a new name."
+- en: "Now git, outside the container. Here, git status shows the DVC files that dvc init already staged, the new pointer file, and your two edits. Add and commit: 6 small text files and no photos, because the git ignore file excludes the dataset folder."
+  zh:
+  - "现在在 container 外面用 git。"
+  - "这里 git status 显示 dvc init 已经暂存的 DVC 文件、新的指针文件，还有你的两处改动。"
+  - "接着 add 再 commit：6 个小文本文件，没有照片，因为 .gitignore 文件把数据集目录排除了。"
+  en_display:
+  - null
+  - null
+  - "Add and commit: 6 small text files and no photos, because the .gitignore file excludes the dataset folder."
+- en: "Tag the commit as dataset v20, a permanent name, and push the branch and the tag together; atomic means both arrive, or neither. Pause and run them. An extra log shows the tag, which pins these six lines."
+  zh:
+  - "给这个 commit 打上 dataset v20 这个 tag，一个永久的名字，再把分支和 tag 一起 push；atomic 的意思是两个都到，或者都不到。"
+  - "暂停一下，把它们跑一遍。"
+  - "额外看一下 log，能看到这个 tag，它锁定了这六行。"
+  en_display:
+  - "Tag the commit as dataset_v20, a permanent name, and push the branch and the tag together; atomic means both arrive, or neither."
+  - null
+  - null
+- en: "An extra diff against the instructor's tag: identical, same bytes, same fingerprint, on any machine. That is the whole trick: git keeps the fingerprint of a list of fingerprints. A rope leads from the tag to the bytes in your bucket."
+  zh:
+  - "额外和授课老师的 tag 做一次 diff：完全一样，同样的字节，同样的指纹，在任何机器上都一样。"
+  - "整个诀窍就在这儿：git 保存的是指纹列表的指纹。"
+  - "一根绳子从 tag 一直通到你 bucket 里的字节。"
+- en: "The README warns that this tag may be taken; that applies only to a fork, and your fresh repo has no tags. Its table sums it up: git holds code and small DVC files, DVC tracks the dataset, the bucket stores the versions."
+  zh:
+  - "README 提醒说这个 tag 可能已经被占用；这只适用于 fork，你的新 repo 一个 tag 都没有。"
+  - "它的表格总结得很清楚：git 管代码和小小的 DVC 文件，DVC 跟踪数据集，bucket 存各个版本。"
+S14:
+- en: "Now a second version. Upload a few more photos to the images folder; our stand-in copies in one, Image 5. With a real bucket, the mount can take a little while to notice, so list before you add. Pause and upload one or two."
+  zh:
+  - "现在做第二个版本。"
+  - "上传几张新照片到 images 目录；我们的替身复制进去一张：Image 5。"
+  - "用真的 bucket 时，挂载可能要过一会儿才能发现新文件，所以先列一下再 add。"
+  - "暂停一下，上传一两张。"
+  en_display:
+  - null
+  - "Upload a few more photos to the images folder; our stand-in copies in one, Image_5."
+  - null
+  - null
+- en: "Something to ponder. Four photos are already in the DVC store, and you add one. How many objects will dvc push upload?"
+  zh:
+  - "来想一个问题。"
+  - "四张照片已经在 DVC store 里了，你再加一张。"
+  - "这时 dvc push 会上传多少个对象？"
+  en_display:
+  - null
+  - "Four photos are already in the dvc_store, and you add one."
+  - null
+- en: "Two: the new photo and a new manifest. Start the container again, list the folder, and add it; pause and run them. It gives 5 files and a new manifest fingerprint. The class version 21 has a different one, because its fifth photo was another image."
+  zh:
+  - "两个：新照片和一个新的 manifest。"
+  - "再启动 container，列一下目录，然后 add；暂停一下，把它们跑一遍。"
+  - "结果是 5 个文件，还有一个新的 manifest 指纹。"
+  - "课程的 v21 版本指纹不一样，因为它的第五张照片是另一张图。"
+- en: "Then dvc push; pause and run it. Here the local stand-in shows 2 files pushed, because the four old photos are already on the shelf. That is the saved space the lecture promised."
+  zh:
+  - "然后是 dvc push；暂停一下，自己跑一遍。"
+  - "这里本地替身显示推送了 2 个文件，因为四张旧照片已经在架子上了。"
+  - "这就是课上承诺的省下来的空间。"
+- en: "Back on your laptop, the five git commands again: status shows only the pointer file changed; then add, commit, tag dataset v21, and push. Pause and run them. An extra diff shows the whole change in three lines."
+  zh:
+  - "回到你的笔记本上，再来那五条 git 命令：status 只显示指针文件改了；然后 add、commit、打 dataset v21 这个 tag，再 push。"
+  - "暂停一下，把它们跑一遍。"
+  - "额外做一次 diff，整个改动只有三行。"
+  en_display:
+  - "Back on your laptop, the five git commands again: status shows only the pointer file changed; then add, commit, tag dataset_v21, and push."
+  - null
+  - null
+- en: "The starter branch keeps an older README that adds the remote again at this point. That fails: remote origin already exists. The pinned README says not to."
+  zh:
+  - "这个 starter 分支里留着一份旧版 README，在这一步又加一次 remote。"
+  - "这会失败：remote origin 已经存在。"
+  - "课程 pin 住的那版 README 说不要这么做。"
+- en: "One extra experiment, on our stand-in folder: check out the old pointer file with git, run dvc checkout, and the folder holds four photos again. Back to main, and five, from the cache on disk. With a real mount, this folder is your bucket's images folder, so checkout deletes and rewrites photos there."
+  zh:
+  - "再做一个额外的实验，在我们的替身目录上：用 git checkout 出旧的指针文件，跑 dvc checkout，目录里又变回四张照片。"
+  - "回到 main，又是五张，来自磁盘上的缓存。"
+  - "用真的挂载时，这个目录就是你 bucket 的 images 目录，所以 checkout 会在那里删除并重写照片。"
+S15:
+- en: "Now, time travel from anywhere: the lecture's phrase for reaching an earlier version, which works only while its files are kept. The command dvc get, with a tag, walks the rope. It clones the repo at that tag, reads that commit's config to find the bucket, then fetches the manifest, then the photos."
+  zh:
+  - "现在来看从任何地方做时间旅行：这是课上的说法，指回到之前的某个版本，前提是它的文件还保留着。"
+  - "命令 dvc get 带上一个 tag，就会顺着这根绳子走。"
+  - "它在那个 tag 上 clone 这个 repo，读那个 commit 的配置找到 bucket，然后取 manifest，再取照片。"
+- en: "Open the notebook from the README and save a copy. Install DVC, load the libraries, and sign in with your Google account. Then list a repo, fetch a version, and count the files."
+  zh:
+  - "打开 README 里的 notebook，保存一份副本。"
+  - "装 DVC、加载库，再用你的 Google 账号登录。"
+  - "然后列出一个 repo，取一个版本，数一数文件。"
+- en: "Our stand-in is not signed in, and pip gives it a newer DVC, 3.67.1, at the time of recording. Listing the class repo fails with a 401, and look where: at the manifest, because DVC fetches the list first, in the rope's order."
+  zh:
+  - "我们的替身没有登录，而 pip 给它装了一个更新的 DVC，录制时是 3.67.1。"
+  - "列出课程的 repo 时报了 401，看看是在哪儿：在 manifest 那一步，因为 DVC 先取列表，按绳子的顺序来。"
+- en: "The instructor's signed-in run lists five files on the class repo, the same set as its version 21, and counts 5. Your account probably cannot access the class bucket, so use your repo: replace the address and the tag; your version 20 gives 4. Your repo is private, so put an access token in the address, or make it public. Pause and work through it."
+  zh:
+  - "授课老师登录后的那次运行，在课程 repo 上列出五个文件，和它的 v21 版本是同一组，数出来是 5。"
+  - "你的账号多半访问不了课程的 bucket，所以用你自己的 repo：换掉地址和 tag；你的 v20 版本会得到 4。"
+  - "你的 repo 是私有的，所以要在地址里放一个访问令牌，或者把它设成公开。"
+  - "暂停一下，从头做一遍。"
+- en: "Something to ponder. Cell 19 asks quietly for dataset v25, and prints nothing. Did it work?"
+  zh:
+  - "来想一个问题。"
+  - "第 19 个单元格悄悄地要 dataset v25，什么都没打印。"
+  - "它成功了吗？"
+  en_display:
+  - null
+  - "Cell 19 asks quietly for dataset_v25, and prints nothing."
+  - null
+- en: "No. The next cell fails: no such folder. Without the quiet flag, the error appears: unknown Git revision. The class repo only has tags v20, v21 and v30. The stored count of 3 is left over from an older run; the quiet flag hides errors too."
+  zh:
+  - "没有。"
+  - "下一个单元格失败了：没有这个目录。"
+  - "去掉 --quiet 参数，错误就出来了：未知的 Git 修订版本。"
+  - "课程的 repo 只有 v20、v21 和 v30 这几个 tag。"
+  - "存下来的计数 3 是以前某次运行留下的；--quiet 参数连错误也一起藏起来了。"
+  en_display:
+  - null
+  - null
+  - "Without the --quiet flag, the error appears: unknown Git revision."
+  - null
+  - "The stored count of 3 is left over from an older run; the --quiet flag hides errors too."
+S16:
+- en: "A quick prediction: three questions, three tools. Match Delta Lake or Iceberg, DVC, and lakeFS."
+  zh:
+  - "快速预测一下：三个问题，三个工具。"
+  - "把 Delta Lake 或 Iceberg、DVC 和 lakeFS 配对上去。"
+- en: "DVC, lakeFS, then the table formats. There is no single standard; your project milestone accepts a light tool like this."
+  zh:
+  - "DVC、lakeFS，然后是表格式。"
+  - "没有统一的标准；你的项目里程碑接受这样的轻量工具。"
+- en: "The lecture ends with monitoring: watch quality, freshness, drift, cost and broken steps. Versioning tells you what changed; monitoring tells you that something changed."
+  zh:
+  - "课上最后讲监控：盯住质量、新鲜度、漂移、成本和出错的步骤。"
+  - "版本管理告诉你改了什么；监控告诉你有东西变了。"
+- en: "On one map: Label Studio runs in a container and signs tickets for the photos. A rule on the bucket satisfies the browser's bouncer. Labels are small notes; a mounted bucket feeds DVC. Photos are filed by fingerprint; a tag pins the list. So Monday's photos come back with one dvc get; their labels join in exercise E7."
+  zh:
+  - "放在一张地图上看：Label Studio 跑在 container 里，替照片签票。"
+  - "配在 bucket 上的一条规则，让浏览器的保安放行。"
+  - "每条 label 是一张小纸条；挂载的 bucket 给 DVC 供数据。"
+  - "照片按指纹归档；一个 tag 锁定这份列表。"
+  - "所以周一的照片用一次 dvc get 就能拿回来；它们的 label 会在练习 E7 里接上。"
+- en: "5 questions to test yourself. One: who fetches the photos, and why does the bucket need its CORS rule? Two: why can't the command line container and your browser swap addresses? Three: what is in the pointer file, and what changes on a rename? Four: where do the bytes sit after a push? Five: without the DVC store, what does dvc get do?"
+  zh:
+  - "五道自测题。"
+  - "第一题：谁去取照片，bucket 为什么需要它的 CORS 规则？"
+  - "第二题：命令行 container 和你的浏览器，为什么不能互换地址？"
+  - "第三题：指针文件里有什么，改名时什么会变？"
+  - "第四题：push 之后，字节都在哪儿？"
+  - "第五题：没有 DVC store，dvc get 会怎样？"
+  en_display:
+  - null
+  - null
+  - null
+  - null
+  - null
+  - "Five: without the dvc_store, what does dvc get do?"
+- en: "Cleanup is the README's three commands; pause and run them. If you keep the labeling bucket, remove its CORS rule with dash r. Buckets cost money until you delete them, but never delete the DVC store while any tag should still work; a tag is only a pointer. Delete the key and its JSON file when the course is done."
+  zh:
+  - "清理就是 README 的三条命令；暂停一下，把它们跑一遍。"
+  - "如果你保留标注用的 bucket，就用 -r 删掉它的 CORS 规则。"
+  - "每个 bucket 都会一直花钱，直到你删掉它，但绝不要删 DVC store，只要还有哪个 tag 要用；一个 tag 只是一个指针。"
+  - "把密钥和它的 JSON 文件删掉，等课程结束的时候。"
+  en_display:
+  - null
+  - "If you keep the labeling bucket, remove its CORS rule with -r."
+  - "Buckets cost money until you delete them, but never delete the dvc_store while any tag should still work; a tag is only a pointer."
+  - null
+- en: "Answers are in the exercises. Lecture 13 trains from a prepared zip; a tagged version would make that run reproducible."
+  zh:
+  - "答案在练习里。"
+  - "第 13 讲用一个准备好的 zip 来训练；要是用打了 tag 的版本，那次运行就能复现。"
