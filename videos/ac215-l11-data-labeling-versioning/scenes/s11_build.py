@@ -179,13 +179,13 @@ class StarterFix(VoiceScene):
             slow = grey_chip("slow the first time · at the time of recording").next_to(s.box, UP, buff=0.2) \
                 .align_to(s.box, RIGHT)
             self.play(FadeIn(slow, shift=LEFT * 0.1), Indicate(substring(r3, "409.4s"), color=INK), run_time=0.5)
-            vo.wait_until("Then the entrypoint runs")
             out(self, s, ["…", *c88.at((27, 31))], run_time=0.6)
             r30 = s.find("Python 3.11.17")
             tm = beside(time_row(), r30, buff=0.3)
             pin(self, r30, tm)
+            vo.wait_until("Then the entrypoint runs")
             self.play(Indicate(substring(r30, "3.11.17"), color=INK, scale_factor=1.1), run_time=0.5)
-            vo.wait_until("and every stage fails")
+            vo.wait_until("the way a missing key fails")
             self.play(FadeOut(slow), run_time=0.3)
             self.remove(slow)
             unpin(self, r30, tm)
@@ -219,7 +219,7 @@ class StarterFix(VoiceScene):
         # ========================================================== 3. a root prompt anyway: extra checks
         rule = card([words(("ls cheese_dataset", "mono"), "before", ("dvc add", "mono"), size=22)], TURN, size=22,
                     head="rule for today")
-        xt3 = on_bar(s, extra_row())
+        xt3 = extra_row()
         p45, cmd45 = c88.istep(45)
         assert cmd45 == "ls -la cheese_dataset"
 
@@ -227,6 +227,7 @@ class StarterFix(VoiceScene):
             self.play(FadeOut(VGroup(fm, x_key, stub, x_pipe, sign, msg)), run_time=0.5)
             self.remove(fm, x_key, stub, x_pipe, sign, msg)
             resize(self, s, 9, keep=0, run_time=0.6)
+            on_bar(s, xt3)                # place on the 9-row title bar (after resize)
             s.set_prompt(p45)
             ln_root = bare_prompt(self, s)
             self.play(Indicate(substring(ln_root, "root@9a9e6dff5c15:/app#"), color=INK, scale_factor=1.06),
@@ -286,7 +287,7 @@ class StarterFix(VoiceScene):
         c89 = capture("89")
         made = grey_chip("made by the entrypoint's mkdir -p, through /app")
         same = grey_chip("here the mount failed · with a real key, this view is the same")
-        xt5 = on_bar(s, extra_row())
+        xt5 = extra_row()
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(pc), run_time=0.4)
@@ -308,6 +309,7 @@ class StarterFix(VoiceScene):
                                      ml.inner_label)), run_time=0.5)
             self.remove(ml, glow, own, ill, tiles, ml.v_pipe, ml.v_label, ml.fuse, ml.inner, ml.inner_label)
             resize(self, s, 6, keep=1, run_time=0.5)
+            on_bar(s, xt5)                # place on the 6-row title bar (after resize)
             self.play(FadeIn(xt5, shift=LEFT * 0.1), track(tr, 3, extra=True), run_time=0.4)
             type_cmd(self, s, c89.cmd, type_time=0.3)
             out(self, s, c89.at((2, 4)), run_time=0.4)

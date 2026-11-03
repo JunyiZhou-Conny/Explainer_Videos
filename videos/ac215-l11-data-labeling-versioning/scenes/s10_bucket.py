@@ -289,6 +289,8 @@ class BucketAsFolder(VoiceScene):
             self.remove(con, *con)
             self.play(FadeIn(c338, shift=DOWN * 0.15), FadeIn(ert), run_time=0.6)
             flash_tag(self, ert, INK)
+            vo.wait_until("never says to put the first photos")
+            self.play(Indicate(c338.body[1][0], color=CLOUD, scale_factor=1.12), run_time=0.7)
             vo.wait_until("yet later it says to add more")
             self.play(Indicate(c338.body[0], color=INK, scale_factor=1.04), FadeIn(cap, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("So upload Image 1 through Image 4")
@@ -335,20 +337,24 @@ class BucketAsFolder(VoiceScene):
             self.play(LaggedStart(*[FadeIn(b) for b in bars5], lag_ratio=0.3), run_time=0.8)
             self.play(Indicate(n201, color=INK, scale_factor=1.05), run_time=0.6)
             vo.wait_until("Only the bucket name is ever used")
-            self.play(FadeOut(VGroup(p5, n201, *bars5)), run_time=0.35)
+            # said here, shown here: project and zone go GREY under the chip; the bucket line stays lit
+            unused = VGroup(grey_chip("passed in · read by nothing"), erratum_tag()).arrange(RIGHT, buff=0.12)
+            unused.next_to(p5, UP, buff=0.12).align_to(p5, RIGHT)
+            self.play(FadeOut(n201), FadeIn(unused, shift=DOWN * 0.1),
+                      *[b.animate.set_color(S.GREY) for b in bars5[1:]], run_time=0.6)
+            self.wait(0.5)
+            self.play(FadeOut(VGroup(p5, *bars5)), run_time=0.35)
             self.remove(p5, n201, *bars5)
             resize(self, t, 11, run_time=0.5)
             ed = on_bar(t, editor_row())
             self.play(FadeIn(ed, shift=LEFT * 0.1), run_time=0.3)
-            type_cmd(self, t, c85.cmd, type_time=1.4, soft=True)
+            type_cmd(self, t, c85.cmd, type_time=1.2, soft=True)
             r85 = out(self, t, o85, run_time=0.5)
-            self.play(*[r85[k].animate.set_color(PASS) for k in (2, 3, 4)], run_time=0.4)
-            unused = VGroup(grey_chip("passed in · read by nothing"), erratum_tag()).arrange(RIGHT, buff=0.12)
             ymid = (r85[3].strut.get_center()[1] + r85[4].strut.get_center()[1]) / 2
             xr = max(substring(r, r.text).get_right()[0] for r in (r85[3], r85[4]))
-            unused.move_to([min(xr + 0.4, 6.5 - unused.width) + unused.width / 2, ymid, 0])
-            self.play(FadeIn(unused, shift=LEFT * 0.15), run_time=0.6)
-            self.play(Indicate(substring(r85[2], BUCKET), color=PASS, scale_factor=1.08), run_time=0.6)
+            self.play(*[r85[k].animate.set_color(PASS) for k in (2, 3, 4)],
+                      unused.animate.move_to([min(xr + 0.4, 6.5 - unused.width) + unused.width / 2, ymid, 0]),
+                      run_time=0.6)
             vo.wait_until("Pause and edit it")
             beside(yt3, r85[2], buff=0.5)
             self.play(FadeIn(yt3, shift=LEFT * 0.1), run_time=0.4)
@@ -430,6 +436,8 @@ class BucketAsFolder(VoiceScene):
         imp = VGroup(mc.implicit, label("not passed here", 22, ERR)).arrange(RIGHT, buff=0.25)
         imp.move_to([-6.4 + imp.width / 2, -0.2, 0])
         hy.move_to([6.4 - hy.width / 2, -0.2, 0])
+        hx = min(hy.get_right()[0] - 0.5, mc.chips[1].get_right()[0] - 0.5)
+        hy_arrow = arrow(np.array([hx, hy.get_top()[1] + 0.05, 0]), np.array([hx, mc.chips[1].get_bottom()[1] - 0.05, 0]))
         marker = object_row("images/", "", 20)
         marker_note = note("empty object · made by Create folder")
         rows5 = [object_row(p, r, 20) for p, r in OBJECTS]
@@ -446,6 +454,7 @@ class BucketAsFolder(VoiceScene):
         notes5 = VGroup(note("slides: disks → here: a bucket"),
                         note("slide 33: no local copy → DVC keeps one in .dvc/cache (scene 13)"))
         notes5.arrange(RIGHT, buff=0.6).move_to([0, -3.3, 0])
+        ill5 = illustration_tag().next_to(ol5.frame, RIGHT, buff=0.15).align_to(ol5.frame, DOWN)
 
         with self.voiceover(SAY[5]) as vo:
             keep = VGroup(l10a, l10b)
@@ -464,12 +473,12 @@ class BucketAsFolder(VoiceScene):
                 vo.wait_until(anchor)
                 self.play(FadeIn(mc.chips[i], shift=UP * 0.15), Create(uls[i]), run_time=0.4)
                 if i == 1:
-                    self.play(FadeIn(hy, shift=LEFT * 0.1), run_time=0.3)
+                    self.play(FadeIn(hy, shift=LEFT * 0.1), GrowArrow(hy_arrow), run_time=0.3)
             vo.wait_until("One flag is not passed")
             self.play(FadeIn(imp[0], shift=UP * 0.1), run_time=0.5)
             self.play(FadeIn(imp[1], shift=RIGHT * 0.1), FadeIn(notes5, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("so gcsfuse only shows folders the console made")
-            self.play(FadeIn(ol5.frame), FadeIn(ol5.title), *[FadeIn(r) for r in rows5], run_time=0.6)
+            self.play(FadeIn(ol5.frame), FadeIn(ol5.title), *[FadeIn(r) for r in rows5], FadeIn(ill5), run_time=0.6)
             self.play(FadeIn(mv_head), FadeIn(mnt, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("which leave a marker object")
             self.play(FadeIn(marker, shift=RIGHT * 0.15), FadeIn(glow), FadeIn(marker_note), run_time=0.6)
@@ -483,7 +492,7 @@ class BucketAsFolder(VoiceScene):
         ml.shift(DOWN * 0.45)
 
         with self.voiceover(SAY[6]) as vo:
-            gone = VGroup(keep, *uls, *mc.chips, hy, imp, ol5, marker, glow, marker_note, mview, notes5)
+            gone = VGroup(keep, *uls, *mc.chips, hy, hy_arrow, imp, ol5, ill5, marker, glow, marker_note, mview, notes5)
             self.play(FadeOut(gone), run_time=0.6)
             self.remove(gone, *gone.get_family())
             self.play(FadeIn(ml, scale=1.25), run_time=0.9)

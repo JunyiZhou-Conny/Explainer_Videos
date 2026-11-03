@@ -227,7 +227,8 @@ class PointerAndBytes(VoiceScene):
             vo.wait_until("that dvc init already staged")
             self.play(each(list(r1[3:6]), PASS, scale=1.04), run_time=0.8)
             r2 = out(self, t, [c96.line(n) for n in range(9, 12)] + [(c96.line(12), y)]
-                     + [c96.line(n) for n in range(13, 18)] + [(c96.line(18), y)], run_time=0.7)
+                     + [(c96.line(13), S.GREY), (c96.line(14), S.GREY)]              # GREY: "our two edits"
+                     + [c96.line(n) for n in range(15, 18)] + [(c96.line(18), y)], run_time=0.7)
             vo.wait_until("the new pointer file")
             self.play(Indicate(r2[-1], color=TURN, scale_factor=1.06), run_time=0.6)
             vo.wait_until("and your two edits")
