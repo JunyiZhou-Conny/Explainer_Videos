@@ -23,7 +23,7 @@ The lecture adds a sharper lens: a border. A test is hermetic when only your cod
 Two more kinds get faint rows: a smoke test, which only asks whether it answers, and acceptance tests, which this project lacks, for now. One note about kinds: a test's kind is named by what runs, not by its folder. This repo's system test file calls itself integration tests, and its pytest config defines markers, labels for selecting tests, that nobody uses; markers return in the guest lecture.
 Last picture: an empty table, four columns. What is checked, how, with which command, and does it run on every commit. Part 1 fills it in.
 
-## 04:50 — Clone, and run the app
+## 04:51 — Clone, and run the app
 Time to type. The README says clone or download from your repository, without an address, so here is the repo. Clone it, then cd into cheese-app-ci-cd. Pause and run both.
 An extra look around, not in the README: ls dash l a. Everything today is here: three test folders under tests, a pytest config, a pre-commit config, and the Dockerfile that bakes them into one image.
 Now the README's first command: sh docker-shell.sh. It builds the image, about a minute at the time of recording, and drops you into a shell inside the container. Pause and run it. Read the prompt: the user is app, not root, and the ID changes every run.
@@ -31,17 +31,17 @@ Inside, start the server: uvicorn api dot service colon app, host 0.0.0.0, port 
 One small gap: the README says this endpoint returns 5.0. Really it returns a JSON object whose distance field is 5.0, as the code shows.
 Stop the server with control C, then type exit. Because the shell script used dash dash rm, nothing is left behind; an extra docker ps dash a, confirms it. One warning that pays off soon: your files are not mounted into this container. The reload flag watches the copy baked into the image, so an edit on your laptop changes nothing until you rebuild.
 
-## 06:42 — Formatter vs linter
+## 06:43 — Formatter vs linter
 The README's Part 2 hunts for quality issues with two tools not to confuse. A formatter rewrites code into one layout and never changes behavior. A linter only reports: style issues, likely bugs, things needing a person. Format first, then lint.
 First build the image, cheese-app-api tagged local. Every step says CACHED: the shell script already built this Dockerfile. Pause and run it.
 Now the linter, inside the image: flake8, max line length 120, on the api folder. Pause and run it. Two findings in utils.py, a missing space after a comma, and too many blank lines: mess left on purpose.
 Then black, in check and diff mode. Pause and run it. It reports 2 files would be reformatted, not just utils.py. This command gives black no width, so it falls back to its default of 88 and also folds a 95 character line in service.py.
 Watch the trap. At width 88, black folds that line into three; at 120, it unfolds to one. The hook and CI here both use 120, but several README commands pass no width, so the same file gets different answers. Always pass 120, or set it once in config.
 Option B runs the same checks on your laptop: install black and flake8 with pip, on the host, 26.10.1 and 7.4.1 at the time of recording. Pause and run it. If pip refuses with externally managed environment, as Homebrew Pythons do, use any lecture 1 virtual environment, or pipx; the study guide has the one-liner.
-Pause and run both. The local flake8, at its default of 79, adds a third finding, that same 95 character line; local black wants the same two files changed.
+The local flake8, at its default of 79, adds a third finding, that same 95 character line; local black wants the same two files changed. Pause and run both.
 What can a formatter fix? On the messy service.py from the repo's history, black sweeps away almost every finding, and exactly 2 survive: an unused import, which a formatter cannot delete, and a long quoted sentence black must not rewrite. The class fixed both by hand.
 
-## 09:11 — pytest, under the hood
+## 09:12 — pytest, under the hood
 Before running tests in bulk, meet the machine that finds them. The config file pytest.ini sets the rules: files named test underscore something, classes named Test, functions named test underscore. It also adds options to every run, and the one to remember is dash r a, the summary of everything not plainly passed.
 Watch the collector sweep the tests folder: every matching name lights up, 26 tests in all.
 Something to ponder. A later README part appends the line def broken, assert False, to a test file, hoping to break the build. Will the unit test run go red?
@@ -49,7 +49,7 @@ No. Watch the collector: the appended name stays dark. The name does not match t
 Three more pytest verbs in 30 seconds. A plain assert is rewritten so a failure shows both values. For floats, pytest dot approx compares with a tolerance. And pytest dot raises passes only when the block raises the named error: the invalid tray from earlier.
 One gift from the lecture that this repo does not use yet. The integration tests build their test client once, as a module global. A fixture would do it better. A test asks for client by name, and pytest builds and injects it. A setting says whether each test gets a fresh one or the whole run shares one. And parametrize folds four copies into one function with four inputs.
 
-## 11:02 — Tests inside the shipping image
+## 11:03 — Tests inside the shipping image
 Part 3 runs tests where the app lives, inside the image, by three routes: docker run per suite, a live server for the system tests, or an interactive shell. The Dockerfile copies pyproject.toml and installs the dependencies, one fat layer. Then four thin copy lines bake in the api code, the tests, the pytest config and the entrypoint. The entrypoint puts pytest on PATH, and its exec line hands the container to whatever command you pass. The container's exit code is how docker run can fail a CI step.
 Build again, all cached, then run the unit tests: docker run, dash dash rm, the image, pytest tests slash unit: 11 passed. Pause and run both.
 The integration suite says 10 passed, 1 warning; both suites together, 21 passed, 1 warning. Pause and run them. The 1 warning is pytest 9's summary line counting a warning this config hides, at the time of recording: same tests, same results.
@@ -57,7 +57,7 @@ Now the coverage run: unit tests, measuring the api package. Pause and run it. L
 The gate table gets its first row: unit and integration tests, hermetic, one docker command. Option 2 waits; it gets the next scene. Option 3 is the same interactively: docker-shell again, the same pytest commands, the same counts. One trap: the HTML report lands inside a container that dash dash rm deletes, gone when you exit. Prefer the terminal report.
 This image ships its dev tools as runtime dependencies, open ended pins, no lockfile; the guest lecture keeps them in groups behind one lockfile. And the warning from the README's Part 1 pays off: edit utils.py on your laptop, and this container still tests yesterday's copy. Rebuild, or you test the past.
 
-## 13:14 — The system test and the silent skip
+## 13:18 — The system test and the silent skip
 Option 2 is the system test, and the lecture's question: can anything but our code make it fail? Start a live server, detached, named api-server, on port 9000, with DEV equals 1. All you get back is a container ID. Pause and run it.
 The README runs the tests immediately. We add one extra first: a loop curling the health endpoint until it answers. CI waits too, in its own way; you will see why soon. A second extra, docker ps, shows the server up.
 Now the README's system command: docker run with network host, pytest tests slash system. 5 passed, and this time the request really crossed the wire. Pause and run it.
@@ -67,7 +67,7 @@ Here is the answer, as an extra run. 1 passed, 4 skipped, and the headline is st
 Why does it skip? The test file probes the server once, when pytest collects the module. That one answer marks the whole class: a server that comes up a second late is too late. A smoke detector with its battery removed will never beep, and that is not the same as no fire.
 On the border picture, 22 tests live inside: the 21 from last scene, plus the one system folder test that never needed the server. These 4 stand outside. The honest remedy is a marker the run must select on purpose; the guest lecture shows it. CI's version is loud: it curls the server first, and if the server is down, the whole job fails. The system row enters the gate table outside the turnstile: not on every commit, not hermetic.
 
-## 15:30 — The gate on your machine
+## 15:34 — The gate on your machine
 Part 4 installs the gate. Outside the container, pip install pre-commit, 4.7.0 at the time of recording; then, from the repo root, pre-commit install: a hook file now sits in dot git. Pause and run both.
 Git runs that hook file before every commit. It lives in dot git, which is never committed: every clone installs it again. It hands over to pre-commit, which reads the repo's config.
 The config names nine hooks: seven hygiene guards, from whitespace to private keys. Then black and flake8, both at width 120, both seeing only Python files under src: the tests are never linted.
@@ -75,16 +75,16 @@ Now the README's commit, on a clean tree. Pause and run it. The first run downlo
 To exercise them anyway, pre-commit run, dash dash all dash files. Pause and run it. Six hooks pass, one has no files to check, then black fails: files were modified by this hook; it reformatted utils.py. A quick ponder: flake8 runs next. Does it report the two findings it made earlier?
 No. Black had already rewritten the file, so flake8 saw clean code and passed. Failed here does not mean broken; it means the hook changed files: look at the change, then re-stage.
 Two extras close the loop: git diff shows the fix; git add dash u, re-stages it. Commit again: seven hooks pass, two have nothing to check, and a real commit enters history; pause and walk the loop. The README's last variant, plain pre-commit run, checks only staged files; everything skips.
-A last demo, as an extra: sed adds and stages an unused import; on a Mac, sed dash i, needs empty quotes after it. The commit fails twice: black reformats the file, and flake8 reports F401, which no formatter can fix; git status confirms no commit exists. Restore the file: your machine now says no. But this gate never ran a single test. The guest lecture builds one that does, and shows what even it can miss.
+A last demo, as an extra: sed adds and stages an unused import; on a Mac, add import os as the first line of service.py in your editor, then git add dash u. The commit fails twice: black reformats the file, and flake8 reports F401, which no formatter can fix; git status confirms no commit exists. Unstage and restore the file, both copies: your machine now says no. But this gate never ran a single test. The guest lecture builds one that does, and shows what even it can miss.
 
-## 18:01 — Guest lecture: uv, just, and two failing tests
+## 18:11 — Guest lecture: uv, just, and two failing tests
 Part 2 is the guest lecture, by Rahul Dave. It builds the same gate around a small machine learning project, babykev, which answers questions about cheese and reports how confident it is; a pure guess should score zero. No Docker until the very end. Two tools first, as extras: the package manager uv from lecture 2, 0.13.2 at the time of recording, and the command runner just, 1.59.0.
 Clone babykev and list its tags: 9 steps, one per lecture stage. The repo is its own slide deck, and git switch, dash dash detach, moves you to any step. Pause and run both.
 At step zero zero, one command builds the environment: uv sync, dash dash locked. It installs Python 3.13.16 and the project exactly as the lockfile says. Locked means stop rather than silently upgrade. Its warning is harmless, at the time of recording. The cheese repo froze an image; babykev pins a lockfile. Typing just, alone, lists the recipes: one name per task, for people, hook, and later CI. Pause and run these.
 Step 1 brings the contract and its tests. Run uv run pytest: 2 failed, 50 passed, and the tests are right. One failure is a pure guess scored as half confident; the other is 77 rounded probabilities that sum to 0.77. Same rule as the cheese demo: fix the code, not the tests. Pause and run it.
 Step 2 is format and lint at scale, ruff in both roles. After formatting, the linter counts 70 findings. Safe automatic fixes remove one. Unsafe fixes, applied deliberately, remove 32 more; 37 remain; those need a person. And the width war from part 1 is settled in one line, line length 100, written once in pyproject.toml; the formatter and the linter both follow it.
 
-## 20:09 — One command is the gate
+## 20:18 — One command is the gate
 Step 3 installs the gate with one recipe, just setup: lockfile sync and hook install together. Pause and run it. The walk's next command prints the hook file: the same hand-over chain as before, with one difference. This machine's own venv path is baked inside, so it is never committed.
 The config here has four hooks, not nine: large files, merge markers, a policy hook refusing any dot env file, and one local hook that runs just check. So the hook runs exactly what you type. At this step, just check means format check, lint, tests with a 90 percent coverage floor, and config linting.
 Run just check: everything green, coverage 100 percent over a floor of 90. Now watch it bite: ask for only the confidence tests, keeping the floor. 9 tests pass, half the code is never exercised, and the run fails at 49.4 percent coverage. A floor is a gate, not a goal. Pause and run both.
@@ -92,16 +92,16 @@ Config files are checked too: a broken hook config breaks every commit. One wron
 Now the gate refuses, twice; pause and try the first. An unused import goes in; the commit fails on F401, no commit made. Then a dot env file is staged, and the refusal is the config's own sentence: a dot env file holds the settings and secrets of one machine. It is never committed.
 Two gate styles, both fine: this one points and you run just fmt; the cheese gate rewrites and makes you look. Steps 4 and 4 b put documentation in the gate: first 50 of 88 functions, methods and classes typed and documented, one step later 88 of 88; deleting one description blocks a commit. Two rows join the table.
 
-## 22:20 — All green, and the mask is wrong
+## 22:30 — All green, and the mask is wrong
 Step 5 brings the model: the setup recipe now pulls the model stack, 38 packages including torch 2.14.1 for the CPU, at the time of recording. Then just test: 92 passed, coverage 94 percent, all green. Pause and run both.
 What does the model do? A request packs one state and several questions into one sequence. A mask enforces one rule: a question may see the state and itself, never a sibling question. Questions must be answered independently; a peek would leak one answer into another. That one forbidden cell is the whole difference from a causal mask.
 The walk prints the mask the code builds, for two state tokens and two questions of two; pause and print yours. Rows 5 and 6 say question 2 sees everything, including question 1. The cause is one line: torch dot ones like marks every pair of tokens as the same question.
 A checker script compares the built mask against the one we meant, and prints WRONG on those rows. But nothing in just check runs it; a printout you read by eye is not a test. Something to ponder: every line of branch mask ran, and coverage reads 94 percent. Can any coverage number catch this bug?
 No. Coverage counts lines that ran, never whether anyone checked what they produced. Necessary, and never sufficient.
 Also green and blind: the type checker, which reads declared types without running the code. Running ty finds 6 diagnostics, yet just check is green: types are not in the gate yet, and a check outside the gate protects nobody.
-Last, the smoke on the real model: half a billion parameters, downloaded once from the Hugging Face Hub, a public model host, answering 15 cheese questions on CPU; pause and run it. 6 of 15 right. Nothing is trained, these are guesses; hold that number.
+Last, the smoke on the real model: half a billion parameters, downloaded once from the Hugging Face Hub, a public model host, answering 15 cheese questions on CPU. The first run downloads about a gigabyte; pause and run it. 6 of 15 right. Nothing is trained, these are guesses; hold that number.
 
-## 24:33 — Properties, not examples
+## 24:46 — Properties, not examples
 Step five a answers with tests that could tell. First, honesty: on this machine just test says 1 failed, 102 passed. The failing test changes one question and demands that the other answers stay bit for bit equal. On this Linux CPU, torch sums in a different order than the author's Mac; there all 103 pass, as the walk records. Hermetic means only your code can make it fail; bit exactness across machines is a stronger promise; this machine measured it.
 Now the lesson. A deliberately wrong fix goes in, one that blocks only the question just before. The six token picture says all ok; it cannot tell. A four token picture can: its last row reads WRONG.
 State the rule once instead. The property test lets hypothesis draw any request shape: a state of 1 to 6 tokens, up to 4 questions of 1 to 5. Those sizes allow 4,686 shapes, too many for pictures. It asserts that no allowed pair is ever a sibling pair. Something to ponder before we run it.
@@ -109,14 +109,14 @@ You need a question two steps back, so one state token and three questions of on
 Proof the gate grew teeth: put step 5's wrong mask line back and run just test; pause and try it. 8 failed, 95 passed; code that sailed through before is refused. A gate refuses only what its tests can see. The real fix is one line: same question means same segment ID.
 Types join the gate too: the new recipe, just types, passes, and check has six lines. And the smoke, with the right mask? 4 of 15, lower than before. Pause and run the smoke. The 6 was luck; an untrained score means nothing.
 
-## 26:48 — Hooks are local; CI checks again
+## 27:01 — Hooks are local; CI checks again
 Step five b gives non hermetic tests an honest home. A new real model test is marked system, and the config deselects that marker by default: every just test says 1 deselected, on purpose.
 Asked for explicitly, just test, dash m system, says 1 passed, 103 deselected: the real model ran, and it had to pass, not skip. That is the honest version of part 1's silent skip. Pause and run both forms.
 Smaller rows join the gate: hadolint lints the Dockerfile, clean. Part 2 was recorded on a plain machine without Docker, so the recipes fail politely: docker build is command not found, and the image recipe explains itself. On your laptop, with Docker Desktop, both images build for real. The walk's record shows the rest. Two images from one lockfile, 1.15 and 1.84 gigabytes. And just check runs green inside a container with no network: the hermetic claim, proved by experiment.
 The gate table is full: six rows, system outside the turnstile. Now the limit. A hook runs on one machine, and git commit, dash dash no verify, walks straight past it.
 So CI re-runs the same checks on a server nobody can skip: part 5 of this same repo, in lecture 21. It is also why the hook, CI and the README should spell the checks one way; the cheese repo does not quite manage that. One command for everyone is the lesson for your milestone. Coverage floors in one line: babykev chose 90; milestone 5 asks at least 70.
 
-## 28:34 — Tear down, recap, and what's next
+## 28:47 — Tear down, recap, and what's next
 Before the recap, clean up. The README's Docker cleanup: docker container ls shows nothing running, so nothing to stop. Then docker system prune; type y: about 95 megabytes of build cache, at the time of recording. A final docker image ls shows the two cheese images. One extra undoes the hook: pre-commit uninstall. On the babykev side, delete the venv; and if you ran the smoke, the roughly 1 gigabyte model in the Hugging Face cache. Nothing today was billable: the gate lives on your laptop, and that is the point.
 5 questions to test yourself. One: what runs in a unit, an integration and a system test of the cheese app, file by file? Two: the system tests pass with no server at all. What does pytest actually print, and are those four tests hermetic?
 Three: what does pre-commit install actually create, and why must every clone run it again? Four: black says failed, files were modified. Is your code broken, and what do you do next? Five: babykev had 94 percent coverage and a wrong mask. What kind of test finally saw the bug, and why was coverage blind to it?

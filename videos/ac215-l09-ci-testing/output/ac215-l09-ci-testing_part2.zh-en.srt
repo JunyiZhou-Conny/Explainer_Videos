@@ -1,0 +1,1034 @@
+1
+00:00:00,000 --> 00:00:02,923
+第二部分是客座讲座
+Part 2 is the guest lecture.
+
+2
+00:00:03,243 --> 00:00:08,086
+它围绕一个小型机器学习项目 babykev 搭起同样的门禁
+It builds the same gate around a small machine learning project, babykev,
+
+3
+00:00:08,086 --> 00:00:12,663
+babykev 回答关于奶酪的问题，还会报告自己有多大把握
+which answers questions about cheese and reports how confident it is;
+
+4
+00:00:12,663 --> 00:00:14,720
+纯粹的猜测应该得零分
+a pure guess should score zero.
+
+5
+00:00:15,040 --> 00:00:16,960
+直到最后才用到 Docker
+No Docker until the very end.
+
+6
+00:00:17,280 --> 00:00:23,517
+先装两个工具，作为额外步骤：第 2 讲的包管理器 uv
+Two tools first, as extras: the package manager uv from lecture 2,
+
+7
+00:00:23,517 --> 00:00:30,037
+录制时是 0.13.2；还有命令运行器 just，1.59.0
+0.13.2 at the time of recording, and the command runner just, 1.59.0.
+
+8
+00:00:30,283 --> 00:00:32,689
+先 clone babykev，再列出它的 tag
+Clone babykev and list its tags:
+
+9
+00:00:32,689 --> 00:00:35,019
+一共 9 步，课上每个阶段一步
+9 steps, one per lecture stage.
+
+10
+00:00:35,339 --> 00:00:37,658
+这个 repo 本身就是一套幻灯片
+The repo is its own slide deck,
+
+11
+00:00:37,658 --> 00:00:41,099
+用 git switch --detach 就能跳到任意一步
+and git switch --detach moves you to any step.
+
+12
+00:00:41,419 --> 00:00:42,917
+暂停一下，两条都跑一遍
+Pause and run both.
+
+13
+00:00:42,967 --> 00:00:49,004
+在 step-00，一条命令就建好环境：uv sync --locked
+At step-00, one command builds the environment: uv sync --locked.
+
+14
+00:00:49,324 --> 00:00:55,746
+它安装 Python 3.13.16 和项目本身，完全按 lock 文件写的来
+It installs Python 3.13.16 and the project exactly as the lockfile says.
+
+15
+00:00:56,066 --> 00:00:58,882
+加上 --locked，意思是宁可停下，也不悄悄升级
+Locked means stop rather than silently upgrade.
+
+16
+00:00:59,202 --> 00:01:02,103
+录制时它打印的那条警告是无害的
+Its warning is harmless, at the time of recording.
+
+17
+00:01:02,423 --> 00:01:04,645
+前面 cheese 的 repo 冻结的是 image
+The cheese repo froze an image;
+
+18
+00:01:04,645 --> 00:01:06,473
+而 babykev pin 住的是 lock 文件
+babykev pins a lockfile.
+
+19
+00:01:06,626 --> 00:01:09,352
+单独输入 just，会列出所有 recipe
+Typing just, alone, lists the recipes:
+
+20
+00:01:09,352 --> 00:01:12,940
+每个任务一个名字，人、hook，以及之后的 CI 都用它
+one name per task, for people, hook, and later CI.
+
+21
+00:01:13,260 --> 00:01:14,750
+暂停一下，把这些都跑一遍
+Pause and run these.
+
+22
+00:01:14,800 --> 00:01:17,424
+到了 step-01，加进来的是契约和它的测试
+Step 1 brings the contract and its tests.
+
+23
+00:01:17,744 --> 00:01:22,800
+运行 uv run pytest：2 failed, 50 passed，而且测试是对的
+Run uv run pytest: 2 failed, 50 passed, and the tests are right.
+
+24
+00:01:23,120 --> 00:01:27,684
+一个失败是纯粹的猜测被打成了一半的把握
+One failure is a pure guess scored as half confident;
+
+25
+00:01:27,684 --> 00:01:32,421
+另一个是 77 个四舍五入后的概率，加起来只有 0.77
+the other is 77 rounded probabilities that sum to 0.77.
+
+26
+00:01:32,741 --> 00:01:36,432
+和 cheese 的演示同一条规则：改代码，不改测试
+Same rule as the cheese demo: fix the code, not the tests.
+
+27
+00:01:36,752 --> 00:01:38,100
+暂停一下，自己跑一遍
+Pause and run it.
+
+28
+00:01:38,150 --> 00:01:40,429
+接着 step-02：大规模的格式化和 lint
+Step 2 is format and lint at scale,
+
+29
+00:01:40,429 --> 00:01:42,029
+ruff 一个工具兼两个角色
+ruff in both roles.
+
+30
+00:01:42,225 --> 00:01:45,233
+格式化之后，linter 数出 70 个问题
+After formatting, the linter counts 70 findings.
+
+31
+00:01:45,553 --> 00:01:47,857
+安全的自动修复去掉了一个
+Safe automatic fixes remove one.
+
+32
+00:01:48,177 --> 00:01:52,317
+有意识地用上不安全的修复，又去掉 32 个
+Unsafe fixes, applied deliberately, remove 32 more;
+
+33
+00:01:52,317 --> 00:01:54,833
+剩下 37 个，这些得靠人
+37 remain; those need a person.
+
+34
+00:01:55,153 --> 00:01:58,952
+第一部分的宽度之争，用一行就解决了
+And the width war from part 1 is settled in one line,
+
+35
+00:01:58,952 --> 00:02:02,537
+line-length 设成 100，在 pyproject.toml 里只写一次
+line-length = 100, written once in pyproject.toml;
+
+36
+00:02:02,537 --> 00:02:05,691
+格式化工具和 linter 都照它来
+the formatter and the linter both follow it.
+
+37
+00:02:07,533 --> 00:02:10,346
+到了 step-03，用一个 recipe 装好门禁
+Step 3 installs the gate with one recipe,
+
+38
+00:02:10,346 --> 00:02:13,912
+just setup，同步 lock 文件和安装 hook 一起完成
+just setup: lockfile sync and hook install together.
+
+39
+00:02:14,232 --> 00:02:15,654
+暂停一下，自己跑一遍
+Pause and run it.
+
+40
+00:02:15,704 --> 00:02:18,499
+按 walk.md，下一条命令打印出这个 hook 文件
+The walk's next command prints the hook file:
+
+41
+00:02:18,499 --> 00:02:21,976
+和前面一样的交接链，只有一处不同
+the same hand-over chain as before, with one difference.
+
+42
+00:02:22,296 --> 00:02:25,108
+里面写死了这台机器自己的 venv 路径
+This machine's own venv path is baked inside,
+
+43
+00:02:25,108 --> 00:02:26,708
+所以它永远不会被 commit
+so it is never committed.
+
+44
+00:02:26,916 --> 00:02:29,906
+这里的配置只有四个 hook，不是九个
+The config here has four hooks, not nine:
+
+45
+00:02:29,906 --> 00:02:34,645
+大文件、合并冲突标记、一个拒绝任何 .env 文件的策略 hook
+large files, merge markers, a policy hook refusing any .env file,
+
+46
+00:02:34,645 --> 00:02:37,561
+还有一个运行 just check 的本地 hook
+and one local hook that runs just check.
+
+47
+00:02:37,881 --> 00:02:40,164
+所以 hook 跑的正是你自己敲的那条命令
+So the hook runs exactly what you type.
+
+48
+00:02:40,484 --> 00:02:43,404
+在这一步，just check 包括格式检查和 lint
+At this step, just check means format check,
+
+49
+00:02:43,404 --> 00:02:47,716
+还有带 90% 覆盖率下限的测试，以及配置文件的 lint
+lint, tests with a 90 percent coverage floor, and config linting.
+
+50
+00:02:48,216 --> 00:02:53,784
+运行 just check：全部是绿的，覆盖率 100%，高于 90% 的下限
+Run just check: everything green, coverage 100 percent over a floor of 90.
+
+51
+00:02:54,104 --> 00:02:58,541
+现在看它咬人：只跑 confidence 相关的测试，下限不变
+Now watch it bite: ask for only the confidence tests, keeping the floor.
+
+52
+00:02:58,861 --> 00:03:02,727
+9 个测试通过，一半的代码根本没跑到
+9 tests pass, half the code is never exercised,
+
+53
+00:03:02,727 --> 00:03:06,264
+这次运行以 49.4% 的覆盖率失败
+and the run fails at 49.4 percent coverage.
+
+54
+00:03:06,584 --> 00:03:08,525
+下限是门禁，不是目标
+A floor is a gate, not a goal.
+
+55
+00:03:08,845 --> 00:03:10,333
+暂停一下，两条都跑一遍
+Pause and run both.
+
+56
+00:03:10,383 --> 00:03:14,884
+配置文件也要检查：hook 配置一坏，每次 commit 都会坏
+Config files are checked too: a broken hook config breaks every commit.
+
+57
+00:03:15,204 --> 00:03:18,022
+在 pre-commit 配置里缩进错一处
+One wrong indent in the pre-commit config,
+
+58
+00:03:18,022 --> 00:03:20,303
+yamllint 就会指出具体是哪一行
+and yamllint names the exact line.
+
+59
+00:03:20,623 --> 00:03:23,116
+恢复之后，这个 recipe 跑绿了
+Restored, the recipe runs green;
+
+60
+00:03:23,116 --> 00:03:27,556
+它还会校验 pyproject.toml，检查 lock 文件
+it also validates pyproject.toml and checks the lockfile.
+
+61
+00:03:27,800 --> 00:03:31,384
+现在门禁要拒绝了，两次；暂停一下，试试第一次
+Now the gate refuses, twice; pause and try the first.
+
+62
+00:03:31,704 --> 00:03:33,821
+加进一个没用到的 import
+An unused import goes in;
+
+63
+00:03:33,821 --> 00:03:37,293
+commit 在 F401 上失败，没有生成 commit
+the commit fails on F401, no commit made.
+
+64
+00:03:37,613 --> 00:03:42,916
+接着暂存一个 .env 文件，拒绝的理由就是配置里自己写的那句话
+Then a .env file is staged, and the refusal is the config's own sentence:
+
+65
+00:03:42,916 --> 00:03:47,128
+.env 文件装的是一台机器的设置和密钥
+a .env file holds the settings and secrets of one machine.
+
+66
+00:03:47,448 --> 00:03:49,048
+它永远不能 commit
+It is never committed.
+
+67
+00:03:51,050 --> 00:03:55,465
+两种门禁风格，都没问题：这个只指出问题，由你来跑 just fmt
+Two gate styles, both fine: this one points and you run just fmt;
+
+68
+00:03:55,465 --> 00:03:58,453
+cheese 的门禁直接改写，再逼你看一眼
+the cheese gate rewrites and makes you look.
+
+69
+00:03:58,773 --> 00:04:02,440
+接下来 step-04 和 step-04b 把文档放进门禁
+Steps 4 and 4b put documentation in the gate:
+
+70
+00:04:02,440 --> 00:04:07,898
+一开始 88 个函数、方法和类里有 50 个带类型标注和文档
+first 50 of 88 functions, methods and classes typed and documented,
+
+71
+00:04:07,898 --> 00:04:09,854
+下一步是 88 个全都有
+one step later 88 of 88;
+
+72
+00:04:09,854 --> 00:04:13,194
+删掉一条说明就会拦下 commit
+deleting one description blocks a commit.
+
+73
+00:04:13,514 --> 00:04:15,199
+表里又多了两行
+Two rows join the table.
+
+74
+00:04:18,750 --> 00:04:20,849
+到了 step-05，模型来了
+Step 5 brings the model:
+
+75
+00:04:20,849 --> 00:04:24,610
+setup 这个 recipe 现在会拉下整套模型依赖
+the setup recipe now pulls the model stack,
+
+76
+00:04:24,610 --> 00:04:30,995
+38 个包，包括 CPU 版的 torch 2.14.1，这是录制时的情况
+38 packages including torch 2.14.1 for the CPU, at the time of recording.
+
+77
+00:04:31,315 --> 00:04:36,201
+然后是 just test：92 passed，覆盖率 94%，全绿
+Then just test: 92 passed, coverage 94 percent, all green.
+
+78
+00:04:36,521 --> 00:04:38,067
+暂停一下，两条都跑一遍
+Pause and run both.
+
+79
+00:04:38,117 --> 00:04:39,717
+这个模型做什么？
+What does the model do?
+
+80
+00:04:39,845 --> 00:04:43,984
+一个请求把一段状态和几个问题打包进同一个序列
+A request packs one state and several questions into one sequence.
+
+81
+00:04:44,304 --> 00:04:45,998
+有一个 mask 强制执行一条规则
+A mask enforces one rule:
+
+82
+00:04:45,998 --> 00:04:50,469
+一个问题可以看到状态和它自己，绝不能看到兄弟问题
+a question may see the state and itself, never a sibling question.
+
+83
+00:04:50,789 --> 00:04:55,930
+问题必须各自独立回答；偷看一眼，就会把一个答案泄露进另一个
+Questions must be answered independently; a peek would leak one answer into another.
+
+84
+00:04:56,250 --> 00:05:00,069
+这一个禁止的格子，就是它和 causal mask 的全部区别
+That one forbidden cell is the whole difference from a causal mask.
+
+85
+00:05:01,583 --> 00:05:04,207
+按 walk.md 打印出代码构建的 mask
+The walk prints the mask the code builds,
+
+86
+00:05:04,207 --> 00:05:07,115
+两个状态 token，加两个各有两个 token 的问题
+for two state tokens and two questions of two;
+
+87
+00:05:07,115 --> 00:05:08,715
+暂停一下，打印你自己的
+pause and print yours.
+
+88
+00:05:08,879 --> 00:05:13,807
+第 5 行和第 6 行说明，问题 2 什么都能看到，包括问题 1
+Rows 5 and 6 say question 2 sees everything, including question 1.
+
+89
+00:05:14,127 --> 00:05:15,639
+原因只有一行
+The cause is one line:
+
+90
+00:05:15,639 --> 00:05:20,037
+torch 的 ones like 把每一对 token 都标成同一个问题
+torch.ones_like marks every pair of tokens as the same question.
+
+91
+00:05:20,283 --> 00:05:24,057
+一个检查脚本把构建出的 mask 和我们想要的那个对比
+A checker script compares the built mask against the one we meant,
+
+92
+00:05:24,057 --> 00:05:25,830
+在那几行打印出 WRONG
+and prints WRONG on those rows.
+
+93
+00:05:26,150 --> 00:05:28,365
+可是 just check 里没有任何东西会运行它
+But nothing in just check runs it;
+
+94
+00:05:28,365 --> 00:05:31,035
+靠眼睛看的打印结果不是测试
+a printout you read by eye is not a test.
+
+95
+00:05:31,355 --> 00:05:32,788
+来想一个问题
+Something to ponder:
+
+96
+00:05:32,788 --> 00:05:37,158
+branch mask 里每行代码都跑到了，覆盖率显示 94%
+every line of branch_mask ran, and coverage reads 94 percent.
+
+97
+00:05:37,478 --> 00:05:39,633
+有哪个覆盖率数字能抓到这个 bug 吗？
+Can any coverage number catch this bug?
+
+98
+00:05:48,467 --> 00:05:54,142
+不能。覆盖率数的是跑过的行，从不管有没有人检查它们算出了什么
+No. Coverage counts lines that ran, never whether anyone checked what they produced.
+
+99
+00:05:54,462 --> 00:05:56,616
+必要，但永远不充分
+Necessary, and never sufficient.
+
+100
+00:05:56,850 --> 00:05:59,319
+同样绿着却看不见的，还有类型检查器
+Also green and blind: the type checker,
+
+101
+00:05:59,319 --> 00:06:02,610
+它只读声明的类型，不运行代码
+which reads declared types without running the code.
+
+102
+00:06:02,930 --> 00:06:06,813
+运行 ty，发现 6 条诊断，可 just check 还是绿的
+Running ty finds 6 diagnostics, yet just check is green:
+
+103
+00:06:06,813 --> 00:06:12,082
+类型还没进门禁，而门禁之外的检查谁也保护不了
+types are not in the gate yet, and a check outside the gate protects nobody.
+
+104
+00:06:12,317 --> 00:06:14,727
+最后，在真实模型上跑冒烟测试
+Last, the smoke on the real model:
+
+105
+00:06:14,727 --> 00:06:19,618
+5 亿参数，从 Hugging Face Hub 下载一次
+half a billion parameters, downloaded once from the Hugging Face Hub,
+
+106
+00:06:19,618 --> 00:06:23,730
+这是一个公开的模型托管平台，在 CPU 上回答 15 个奶酪问题
+a public model host, answering 15 cheese questions on CPU.
+
+107
+00:06:24,050 --> 00:06:27,698
+第一次运行要下载大约 1 GB；暂停一下，自己跑一遍
+The first run downloads about a gigabyte; pause and run it.
+
+108
+00:06:28,018 --> 00:06:29,618
+15 个里答对了 6 个
+6 of 15 right.
+
+109
+00:06:29,832 --> 00:06:33,138
+什么都没训练，这些都是猜的；先记住这个数字
+Nothing is trained, these are guesses; hold that number.
+
+110
+00:06:34,783 --> 00:06:37,556
+到了 step-05a，用真正能看出问题的测试来回应
+Step 5a answers with tests that could tell.
+
+111
+00:06:37,876 --> 00:06:39,066
+先说实话
+First, honesty:
+
+112
+00:06:39,066 --> 00:06:43,188
+在这台机器上，just test 显示 1 failed, 102 passed
+on this machine just test says 1 failed, 102 passed.
+
+113
+00:06:43,508 --> 00:06:49,780
+失败的那个测试改动一个问题，要求其他问题的答案逐位不变
+The failing test changes one question and demands that the other answers stay bit for bit equal.
+
+114
+00:06:50,100 --> 00:06:51,600
+在这台 Linux 的 CPU 上
+On this Linux CPU,
+
+115
+00:06:51,600 --> 00:06:55,586
+torch 求和的顺序和作者的 Mac 不一样
+torch sums in a different order than the author's Mac;
+
+116
+00:06:55,586 --> 00:06:58,634
+在 Mac 上 103 个全部通过，walk.md 里有记录
+there all 103 pass, as the walk records.
+
+117
+00:06:58,954 --> 00:07:02,067
+所谓 hermetic，是只有你的代码能让它失败
+Hermetic means only your code can make it fail;
+
+118
+00:07:02,067 --> 00:07:05,511
+跨机器逐位一致是一个更强的承诺
+bit exactness across machines is a stronger promise;
+
+119
+00:07:05,511 --> 00:07:07,167
+这台机器把它量了出来
+this machine measured it.
+
+120
+00:07:07,416 --> 00:07:08,795
+现在说正题
+Now the lesson.
+
+121
+00:07:08,845 --> 00:07:13,816
+故意放进一个错的修复：它只挡住紧挨在前面的那个问题
+A deliberately wrong fix goes in, one that blocks only the question just before.
+
+122
+00:07:14,136 --> 00:07:17,677
+6 个 token 的图说一切正常；它看不出来
+The six token picture says all ok; it cannot tell.
+
+123
+00:07:17,997 --> 00:07:21,496
+4 个 token 的图就能：它的最后一行显示 WRONG
+A four token picture can: its last row reads WRONG.
+
+124
+00:07:21,733 --> 00:07:23,504
+换个办法：把规则写一次
+State the rule once instead.
+
+125
+00:07:23,824 --> 00:07:28,294
+属性测试让 hypothesis 随便抽请求的形状
+The property test lets hypothesis draw any request shape:
+
+126
+00:07:28,294 --> 00:07:32,528
+状态 1 到 6 个 token，最多 4 个问题，每个 1 到 5 个 token
+a state of 1 to 6 tokens, up to 4 questions of 1 to 5.
+
+127
+00:07:32,848 --> 00:07:38,117
+这些尺寸一共允许 4686 种形状，多到没法一张张画图
+Those sizes allow 4,686 shapes, too many for pictures.
+
+128
+00:07:38,437 --> 00:07:41,594
+它断言：任何被允许的一对，都绝不是兄弟问题的一对
+It asserts that no allowed pair is ever a sibling pair.
+
+129
+00:07:41,914 --> 00:07:44,069
+跑之前，先想一个问题
+Something to ponder before we run it.
+
+130
+00:07:52,916 --> 00:07:55,124
+你需要一个往回隔两步的问题
+You need a question two steps back,
+
+131
+00:07:55,124 --> 00:07:58,719
+所以是一个状态 token 加三个各有一个 token 的问题
+so one state token and three questions of one token each.
+
+132
+00:07:59,039 --> 00:08:01,388
+而 hypothesis 自己就找到了
+And hypothesis finds it on its own:
+
+133
+00:08:01,388 --> 00:08:06,420
+这一个测试失败，然后把反例收缩成正好这个形状
+the one test fails, then shrinks the counter example to exactly that shape.
+
+134
+00:08:06,740 --> 00:08:08,162
+暂停一下，自己跑一遍
+Pause and run it.
+
+135
+00:08:08,212 --> 00:08:12,607
+属性测试不只是说不；它还把最小的证据交到你手上
+A property test does not only say no; it hands you the smallest witness.
+
+136
+00:08:12,850 --> 00:08:14,584
+来证明门禁长了牙
+Proof the gate grew teeth:
+
+137
+00:08:14,584 --> 00:08:18,053
+把 step-05 那行错的 mask 放回去，再运行 just test
+put step 5's wrong mask line back and run just test;
+
+138
+00:08:18,053 --> 00:08:19,456
+暂停一下，试一试
+pause and try it.
+
+139
+00:08:19,506 --> 00:08:24,327
+8 failed, 95 passed；之前一路放行的代码，现在被拒绝了
+8 failed, 95 passed; code that sailed through before is refused.
+
+140
+00:08:24,647 --> 00:08:27,463
+门禁只能拒绝它的测试看得见的东西
+A gate refuses only what its tests can see.
+
+141
+00:08:27,783 --> 00:08:32,242
+真正的修复只有一行：同一个问题，意思是同一个 segment ID
+The real fix is one line: same question means same segment ID.
+
+142
+00:08:32,483 --> 00:08:34,056
+类型检查也进了门禁
+Types join the gate too:
+
+143
+00:08:34,056 --> 00:08:37,987
+新的 recipe just types 通过了，check 现在有六行
+the new recipe, just types, passes, and check has six lines.
+
+144
+00:08:38,307 --> 00:08:40,270
+那换上正确的 mask，冒烟测试呢？
+And the smoke, with the right mask?
+
+145
+00:08:40,590 --> 00:08:42,830
+15 个里答对 4 个，比之前还低
+4 of 15, lower than before.
+
+146
+00:08:43,150 --> 00:08:44,750
+暂停一下，跑一下冒烟测试
+Pause and run the smoke.
+
+147
+00:08:44,984 --> 00:08:48,035
+之前的 6 是运气；没训练过的模型，分数说明不了什么
+The 6 was luck; an untrained score means nothing.
+
+148
+00:08:49,683 --> 00:08:53,096
+到了 step-05b，不 hermetic 的测试有了一个诚实的家
+Step 5b gives non-hermetic tests an honest home.
+
+149
+00:08:53,416 --> 00:08:56,269
+新加的真实模型测试标上了 system
+A new real model test is marked system,
+
+150
+00:08:56,269 --> 00:08:59,780
+配置默认把这个 marker 排除在外
+and the config deselects that marker by default:
+
+151
+00:08:59,780 --> 00:09:03,144
+每次 just test 都显示 1 deselected，这是有意的
+every just test says 1 deselected, on purpose.
+
+152
+00:09:03,383 --> 00:09:07,895
+明确要求时，just test -m system 显示 1 passed
+Asked for explicitly, just test -m system says 1 passed,
+
+153
+00:09:07,895 --> 00:09:13,132
+103 deselected：真实模型确实跑了，而且它必须通过，不能跳过
+103 deselected: the real model ran, and it had to pass, not skip.
+
+154
+00:09:13,452 --> 00:09:16,524
+这就是第一部分那次悄悄跳过的诚实版本
+That is the honest version of part 1's silent skip.
+
+155
+00:09:16,844 --> 00:09:18,551
+暂停一下，两种写法都跑一遍
+Pause and run both forms.
+
+156
+00:09:18,800 --> 00:09:20,573
+门禁里又多了几行小的
+Smaller rows join the gate:
+
+157
+00:09:20,573 --> 00:09:23,003
+hadolint 对 Dockerfile 做 lint，结果干净
+hadolint lints the Dockerfile, clean.
+
+158
+00:09:23,323 --> 00:09:27,018
+第二部分是在一台没有 Docker 的普通机器上录的
+Part 2 was recorded on a plain machine without Docker,
+
+159
+00:09:27,018 --> 00:09:29,003
+所以这些 recipe 礼貌地失败了
+so the recipes fail politely:
+
+160
+00:09:29,003 --> 00:09:31,329
+docker build 报 command not found
+docker build is command not found,
+
+161
+00:09:31,329 --> 00:09:33,861
+构建 image 的 recipe 也会说明原因
+and the image recipe explains itself.
+
+162
+00:09:34,181 --> 00:09:36,668
+在你装了 Docker Desktop 的笔记本上
+On your laptop, with Docker Desktop,
+
+163
+00:09:36,668 --> 00:09:38,533
+两个 image 都会真正构建出来
+both images build for real.
+
+164
+00:09:38,853 --> 00:09:40,688
+剩下的看 walk.md 里的记录
+The walk's record shows the rest.
+
+165
+00:09:41,008 --> 00:09:46,555
+同一个 lock 文件生成两个 image，1.15 GB 和 1.84 GB
+Two images from one lockfile, 1.15 and 1.84 gigabytes.
+
+166
+00:09:46,875 --> 00:09:50,958
+而且 just check 在一个断网的 container 里也跑绿了
+And just check runs green inside a container with no network:
+
+167
+00:09:50,958 --> 00:09:53,701
+hermetic 的说法，用实验证明了
+the hermetic claim, proved by experiment.
+
+168
+00:09:53,950 --> 00:09:58,323
+门禁表填满了：六行，系统测试在闸机外面
+The gate table is full: six rows, system outside the turnstile.
+
+169
+00:09:58,643 --> 00:10:00,001
+再说局限
+Now the limit.
+
+170
+00:10:00,051 --> 00:10:02,004
+一个 hook 只在一台机器上运行
+A hook runs on one machine,
+
+171
+00:10:02,004 --> 00:10:05,619
+而 git commit --no-verify 能直接绕过它
+and git commit --no-verify walks straight past it.
+
+172
+00:10:07,583 --> 00:10:12,368
+所以 CI 在一台谁也绕不过的服务器上，把同样的检查再跑一遍
+So CI re-runs the same checks on a server nobody can skip:
+
+173
+00:10:12,368 --> 00:10:15,668
+就是同一个 repo 的 Part 5，第 21 讲
+part 5 of this same repo, in lecture 21.
+
+174
+00:10:15,988 --> 00:10:17,568
+也正因为这样
+It is also why the hook,
+
+175
+00:10:17,568 --> 00:10:20,860
+hook、CI 和 README 应该用同一套写法来写这些检查
+CI and the README should spell the checks one way;
+
+176
+00:10:20,860 --> 00:10:23,690
+cheese 的 repo 还没完全做到
+the cheese repo does not quite manage that.
+
+177
+00:10:24,010 --> 00:10:27,679
+所有人用同一条命令，这是你做 milestone 时要带走的经验
+One command for everyone is the lesson for your milestone.
+
+178
+00:10:27,999 --> 00:10:31,912
+覆盖率下限一句话说完：babykev 选了 90
+Coverage floors in one line: babykev chose 90;
+
+179
+00:10:31,912 --> 00:10:34,378
+milestone 5 要求至少 70
+milestone 5 asks at least 70.
+
+180
+00:10:36,017 --> 00:10:37,681
+回顾之前，先清理
+Before the recap, clean up.
+
+181
+00:10:38,001 --> 00:10:39,839
+README 的 Docker 清理
+The README's Docker cleanup:
+
+182
+00:10:39,839 --> 00:10:43,910
+docker container ls 显示没有在运行的，所以不用停
+docker container ls shows nothing running, so nothing to stop.
+
+183
+00:10:44,230 --> 00:10:46,667
+然后是 docker system prune，输入 y
+Then docker system prune; type y:
+
+184
+00:10:46,667 --> 00:10:51,100
+清掉了大约 95 MB 的构建缓存，这是录制时的数字
+about 95 megabytes of build cache, at the time of recording.
+
+185
+00:10:51,420 --> 00:10:55,174
+最后 docker image ls 显示两个 cheese 的 image
+A final docker image ls shows the two cheese images.
+
+186
+00:10:55,494 --> 00:10:58,801
+一个额外步骤把 hook 卸掉：pre-commit uninstall
+One extra undoes the hook: pre-commit uninstall.
+
+187
+00:10:59,121 --> 00:11:01,603
+在 babykev 那边，删掉 venv
+On the babykev side, delete the venv;
+
+188
+00:11:01,603 --> 00:11:03,281
+如果跑过冒烟测试
+and if you ran the smoke,
+
+189
+00:11:03,281 --> 00:11:06,972
+再删掉 Hugging Face 缓存里那个大约 1 GB 的模型
+the roughly 1 gigabyte model in the Hugging Face cache.
+
+190
+00:11:07,292 --> 00:11:12,134
+今天没有任何计费：门禁就在你的笔记本上，这正是重点
+Nothing today was billable: the gate lives on your laptop, and that is the point.
+
+191
+00:11:12,384 --> 00:11:14,389
+五道自测题
+5 questions to test yourself.
+
+192
+00:11:14,709 --> 00:11:18,516
+第一题：cheese 应用的单元测试、集成测试和系统测试
+One: what runs in a unit, an integration and a system test of the cheese app, file by file?
+
+193
+00:11:18,516 --> 00:11:20,725
+逐个文件说说，分别运行了什么？
+One: what runs in a unit, an integration and a system test of the cheese app, file by file?
+
+194
+00:11:21,045 --> 00:11:24,181
+第二题：系统测试在完全没有服务器的情况下也通过了
+Two: the system tests pass with no server at all.
+
+195
+00:11:24,501 --> 00:11:26,425
+这时 pytest 实际打印了什么
+What does pytest actually print,
+
+196
+00:11:26,425 --> 00:11:28,469
+这四个测试又是不是 hermetic 的？
+and are those four tests hermetic?
+
+197
+00:11:28,717 --> 00:11:31,983
+第三题：pre-commit install 到底创建了什么
+Three: what does pre-commit install actually create,
+
+198
+00:11:31,983 --> 00:11:34,370
+为什么每个 clone 都要重新运行它？
+and why must every clone run it again?
+
+199
+00:11:34,690 --> 00:11:37,784
+第四题：black 显示 Failed，files were modified
+Four: black says failed, files were modified.
+
+200
+00:11:38,104 --> 00:11:40,642
+你的代码坏了吗，接下来该做什么？
+Is your code broken, and what do you do next?
+
+201
+00:11:40,962 --> 00:11:45,293
+第五题：babykev 有 94% 的覆盖率，mask 却是错的
+Five: babykev had 94 percent coverage and a wrong mask.
+
+202
+00:11:45,613 --> 00:11:49,986
+最后是哪一类测试看到了这个 bug，覆盖率又为什么看不见它？
+What kind of test finally saw the bug, and why was coverage blind to it?
+
+203
+00:11:50,517 --> 00:11:55,210
+答案在练习里，每条命令都在学习指南里
+The answers are in the exercises, and every command is in the study guide.
+
+204
+00:11:55,530 --> 00:11:57,869
+下节课会用到云上的凭据
+Next lecture brings cloud credentials,
+
+205
+00:11:57,869 --> 00:12:00,885
+到时 detect-private-key 这个 hook 就派上用场了
+where the detect-private-key hook earns its keep.
+
+206
+00:12:01,205 --> 00:12:05,564
+到了第 21 讲，这个 repo 的检查会在 GitHub 上运行
+And in lecture 21, this very repo's checks run on GitHub,
+
+207
+00:12:05,564 --> 00:12:09,312
+在那里谁也没法用 --no-verify 绕过去
+where nobody can walk past them with --no-verify.

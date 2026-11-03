@@ -1,9 +1,9 @@
 00:00 Who gets to say no?
 01:24 The bug that almost shipped
 02:55 Three kinds of test, and a gate
-04:50 Clone, and run the app
-06:42 Formatter vs linter
-09:11 pytest, under the hood
-11:02 Tests inside the shipping image
-13:14 The system test and the silent skip
-15:30 The gate on your machine
+04:51 Clone, and run the app
+06:43 Formatter vs linter
+09:12 pytest, under the hood
+11:03 Tests inside the shipping image
+13:18 The system test and the silent skip
+15:34 The gate on your machine
