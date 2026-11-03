@@ -126,6 +126,11 @@
       "bvid": "BV1qg4M6QEjH",
       "title": "AC215 第16讲（含第10讲）· 考前精讲：私有子网与 NAT、浏览器在 VPC 外、启动时注入配置、连接数预算、pgvector",
       "pubdate": 1793657583
+    },
+    "ac215-l09-ci-testing": {
+      "bvid": "BV1z8xU6TE41",
+      "title": "AC215 第9讲跟练 · CI 与单元测试：pytest、pre-commit，提交前的质量门",
+      "pubdate": 1793741227
     }
   },
   "unmatched": []
