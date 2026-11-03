@@ -36,7 +36,7 @@ SAY = NARRATION["S01"]
 # our own invented names (slide 24's habit; tagged `illustration`), never the slide's screenshot
 FINAL_FINAL = ("cheese-final.zip", "cheese-final-v2.zip", "cheese-final-final-v3.zip",
                "cheese-final-final-v3-USE-THIS.zip", "…")
-CAPTION = "which photos, with which labels, did Monday's model see?"
+HOOK_QUESTION = "which photos, with which labels, did Monday's model see?"
 
 
 def tracker_ring(tr, stroke: float = 3, opacity: float = 1.0) -> RoundedRectangle:
@@ -94,7 +94,7 @@ class Hook(VoiceScene):
         down = Arrow(UP * 0.3, DOWN * 0.3, buff=0, color=ERR, stroke_width=6, tip_length=0.22)
         down.move_to(mdl.frame.get_center() + np.array([-0.3, -0.25, 0]))
         q_mdl = label("?", 36, ERR).next_to(down, RIGHT, buff=0.2)
-        cap = label(CAPTION, 30, TURN).move_to([0, 2.75, 0])
+        cap = label(HOOK_QUESTION, 30, TURN).move_to([0, 2.75, 0])
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(mon, shift=RIGHT * 0.4), FadeIn(fri, shift=LEFT * 0.4), run_time=1.0)
@@ -134,7 +134,7 @@ class Hook(VoiceScene):
             self.play(Indicate(q, color=ERR, scale_factor=1.3), run_time=0.6)
 
         # ========================================================== 2. one short line
-        small = label(CAPTION, 22, TURN).move_to([-6.5, 3.38, 0], aligned_edge=LEFT)
+        small = label(HOOK_QUESTION, 22, TURN).move_to([-6.5, 3.38, 0], aligned_edge=LEFT)
         line = mono(HOOK_LINE, 32, HASH).move_to([0, 0.5, 0])
         fp = grey_chip("same bytes, same fingerprint").next_to(line, DOWN, buff=0.4)
         tiles = VGroup(*[tile(n, 0.6, LAPTOP) for n in IMAGES[:4]]).arrange(RIGHT, buff=0.55)
@@ -193,7 +193,7 @@ class Hook(VoiceScene):
         rng = tracker_ring(tr)
         strip = term(P_LAPTOP_HOME, rows=2, title="laptop")
         prev = preview_tag().next_to(strip.box, UP, buff=0.15).align_to(strip.box, LEFT)
-        rec = recorded_tag("recorded · source named").next_to(strip.box, UP, buff=0.15).align_to(strip.box, RIGHT)
+        rec = recorded_tag().next_to(strip.box, UP, buff=0.15).align_to(strip.box, RIGHT)
         clone, log = capture("01").cmd, capture("02").cmd
 
         with self.voiceover(SAY[4]) as vo:

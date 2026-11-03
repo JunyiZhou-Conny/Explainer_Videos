@@ -647,7 +647,8 @@ def source_rows(path: str, n: int, size: float = 20, color=INK, width: int | Non
 def readme(n: int, repo: str = "data-labeling") -> str:
     """README.md line n (1-based) of a source folder ('data-labeling', 'data-versioning' = the pin
     b240b1a, 'data-versioning@data-versioning-ac215' = the starter's, 'data-versioning@2515e5e' =
-    today's), stripped and masked: assert capture("01").cmd == readme(14)."""
+    today's), stripped and masked. A README command is often inside backticks or prose: compare
+    with `in`, e.g. capture("11").cmd in readme(91)."""
     return excerpt(f"{repo}/README.md", n, n).strip()
 
 
@@ -1173,8 +1174,10 @@ def ponder(scene, question: str, seconds: float = 8, quick: bool = False, center
            width: float = 9.5) -> VGroup:
     """Plays a PONDER card (timer drains over `seconds`); quick=True is the script's QUICK(4 s):
     the header says 'Quick predict'. center=(x, y) moves the card (default: the frame's centre).
+    The frame is opaque, so the card may sit over a set piece.
     Returns the card (still on screen): FadeOut it at the start of the next block."""
     c = ponder_card(question, width=width)
+    c[0].set_fill(S.BG, 1)        # opaque: at 0.96 the words of a set piece behind it ghost through (L10 S08)
     if quick:
         hd = c[1]
         new = S.text("Quick predict", S.SMALL_SIZE, TURN, weight="BOLD").move_to(hd)
@@ -2385,7 +2388,7 @@ class FuseMount(Rig):
 
 class MountLayers(Rig):
     """V4's pull-back: two bind mounts at two layers (S10's last beat, S11's two-view and Ponder 7,
-    S12's stand-in picture). 12.6 × 3.25 (+ a label line above and below), built for the band above
+    S12's stand-in picture). 12.5 × 3.25 (+ a label line above and below), built for the band above
     a 3-row strip (y -1.25 … 2.75). The GREY laptop (.laptop) holds,
     left, your repo on disk (.host: 'data-versioning/' with its cheese_dataset/ row, .host_data, GREY
     and dark) and, right, the TEAL container (.box) with the /app window (.app: the repo seen inside,
@@ -2402,24 +2405,27 @@ class MountLayers(Rig):
     def __init__(self, size: float = 20, **kw):
         super().__init__(**kw)
         self.size = size
-        self.laptop = RoundedRectangle(width=9.6, height=3.25, corner_radius=0.2, stroke_color=LAPTOP,
-                                       stroke_width=3).set_fill(LAPTOP, 0.04).move_to([-1.5, 0, 0])
+        self.laptop = RoundedRectangle(width=9.8, height=3.25, corner_radius=0.2, stroke_color=LAPTOP,
+                                       stroke_width=3).set_fill(LAPTOP, 0.04).move_to([-1.4, 0, 0])
         self.header = label("your laptop", size, LAPTOP).move_to(self.laptop.get_corner(DL) + np.array([0.2, 0.25, 0]),
                                                                  aligned_edge=LEFT)
-        self.host = self._repo("data-versioning/", LAPTOP).move_to([-4.3, 0.3, 0])
+        self.host = self._repo("data-versioning/", LAPTOP)
+        self.host.move_to([-6.19 + self.host.width / 2, 0.3, 0])
         self.host_data = self.host.rows[1]
-        self.box = outline_box(5.4, 2.85, IMAGE, solid=False).move_to([0.45, 0.0, 0])
+        self.box = outline_box(5.6, 2.85, IMAGE, solid=False).move_to([0.5, 0.0, 0])
         self.box_title = mono(CONTAINERS["dvc"], size, IMAGE).move_to(
             self.box.get_corner(UL) + np.array([0.15, -0.25, 0]), aligned_edge=LEFT)
-        self.app = self._repo("/app", IMAGE, extra_w=1.8).move_to([-0.12, 0.12, 0])
+        # the /app window sits inside the container (left -2.15 … right 2.85; the inner pipe turns at +0.3)
+        self.app = self._repo("/app", IMAGE, extra_w=1.42)
+        self.app.move_to([-2.15 + self.app.width / 2, 0.12, 0])
         self.app_data = self.app.rows[1]
-        self.mnt = drawer("/mnt/gcs_data/images", ROUTE, size, glyph=False).move_to([0.45, -0.95, 0])
+        self.mnt = drawer("/mnt/gcs_data/images", ROUTE, size, glyph=False).move_to([0.5, -0.95, 0])
         self.bucket = vault("your bucket", ("images/",), CLOUD, size, mono_title=False).move_to([5.05, 0.6, 0])
         self.v_pipe = pipe([self.host.frame.get_right() + RIGHT * 0.02 + UP * 0.15,
                             self.app.frame.get_left() + LEFT * 0.02 + UP * 0.15], LAPTOP)
         self.v_label = note("bind mount · host → container (-v)").next_to(self.laptop, UP, buff=0.12) \
             .align_to(self.laptop, LEFT)
-        ax = self.app.frame.get_right()[0] + 0.45
+        ax = self.app.frame.get_right()[0] + 0.3
         self.inner = pipe([self.mnt.get_right() + RIGHT * 0.02, [ax, self.mnt.get_center()[1], 0],
                            [ax, self.app_data.get_center()[1], 0],
                            [self.app.frame.get_right()[0] + 0.02, self.app_data.get_center()[1], 0]], ROUTE)
@@ -2456,7 +2462,7 @@ class MountLayers(Rig):
         return DashedVMobject(self.inner.core.copy(), num_dashes=30).set_stroke(S.GREY, 3)
 
     def photos(self, n: int = 4) -> VGroup:
-        ts = VGroup(*[tile(None, 0.36, CLOUD) for _ in range(n)]).arrange(RIGHT, buff=0.06)
+        ts = VGroup(*[tile(None, 0.3, CLOUD) for _ in range(n)]).arrange(RIGHT, buff=0.05)
         return ts.next_to(self.app_data, RIGHT, buff=0.15)
 
     def dark(self, run_time: float = 0.6):
