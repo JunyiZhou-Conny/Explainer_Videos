@@ -1,0 +1,364 @@
+# zh narration for S01-S07 (part 1, group g1: two tables and two winners, three levers and the map, notebook A's
+# folder tracker, notebook B and W&B on a shared axis, the three-line pattern and the empty config, serverless
+# training, setup: clone, API, GPU quota, secrets, service account, bucket, W&B key), sentence-aligned to script.md:
+# one zh sentence per English sentence (explainer.voice.split_sentences; 49 SAY lines, 149 sentences).
+# Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is shown
+# on the English timing, so each sentence keeps the English order of ideas (D8, D9): no condition or time clause
+# moved to the front where the English puts it last (S02[3] MLflow ... 用在你必须自己托管的时候; S05[0] 最后在训练结束时
+# 结束这个 run; S06[1] 计费在这一步结束时就停了; S07[1] cli.sh 没有配额也能在 CPU 上跑).
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (rule A6):
+# validation_percent / test_percent -> validation percent / test percent; 2_block -> 2 block; train_base -> train base;
+# wandb.run.save("test") -> wandb.run.save 加上 test 这个词.
+# The instructor rule (A17): the instructors -> 授课老师, never a name and never the on-screen mask.
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: W and B -> W&B, Weights &
+# Biases, wandb.init, wandb.config, wandb.finish, wandb.run.save, model.fit, 2_block, validation_percent, test_percent,
+# -U, cheese-app-demo, train_base, model-training, model-trainer); null = the SAY text.
+
+S01:
+- en: "Two notebooks from this lecture, run by the instructors: the same data pipeline, the same 1,156 cheese photos, the same five models. Notebook A crowns the fine-tuned MobileNet, at 68.97 percent. Notebook B crowns the frozen MobileNet, also at 68.97 percent, and puts the fine-tuned one at 62.93."
+  zh:
+  - "这节课的两个 notebook，都是授课老师跑过的：同样的数据 pipeline，同样的 1156 张奶酪照片，同样的五个模型。"
+  - "Notebook A 选出的冠军是微调过的 MobileNet，准确率 68.97%。"
+  - "Notebook B 选出的冠军是冻结的 MobileNet，也是 68.97%，而微调过的那个只有 62.93。"
+- en: "So which recipe is better, fine-tuning or freezing? And from these two tables, can you even tell what was different? One clue is visible: look at the epochs column. Hold that question. Part of the answer is in the table, and part of it is in what the table never wrote down."
+  zh:
+  - "那么哪种做法更好，微调还是冻结？"
+  - "而且光看这两张表，你能看出到底哪里不一样吗？"
+  - "有一条线索看得见：看 epochs 这一列。"
+  - "先记着这个问题。"
+  - "答案一部分在表里，另一部分在这张表从没写下的东西里。"
+- en: "Then the fine-tuned MobileNet leaves Colab. It gets packed into a 4 kilobyte tarball and trains on a machine you rent for the length of one job, from one command. That command carries your W and B key."
+  zh:
+  - "然后，微调过的 MobileNet 离开 Colab。"
+  - "它被打进一个 4 KB 的 tar 包，在一台只租一个任务那么久的机器上训练，只用一条命令。"
+  - "这条命令里带着你的 W&B 密钥。"
+  en_display:
+  - null
+  - null
+  - "That command carries your W&B key."
+- en: "To follow along you need two Colab copies with a free T4 GPU, a free account on W and B, Docker, and a Google Cloud project with billing. Vertex AI jobs cost money while they run; gold tags mark each point, without amounts. A yellow tag means pause and run it, and the study guide has every command. Today's two words, from the lecture: reproducibility and accountability."
+  zh:
+  - "跟着做，你需要两份 Colab 拷贝，带免费的 T4 GPU，一个免费的 W&B 账号、Docker，以及一个开通了结算的 Google Cloud 项目。"
+  - "Vertex AI 任务运行时会花钱；金色标签标出每一个计费点，不写金额。"
+  - "黄色标签的意思是：暂停一下，自己跑一遍；每条命令都在学习指南里。"
+  - "今天的两个关键词，来自课上：可复现和可追责。"
+  en_display:
+  - "To follow along you need two Colab copies with a free T4 GPU, a free account on W&B, Docker, and a Google Cloud project with billing."
+  - null
+  - null
+  - null
+S02:
+- en: "The lecture starts from three levers for better deep learning: more data, better models, and faster hardware. Today we pull the third one: you rent hardware. And you add the bookkeeping that shows whether it helped."
+  zh:
+  - "课上从让深度学习变好的三个杠杆讲起：更多数据、更好的模型、更快的硬件。"
+  - "今天拉第三个：你去租硬件。"
+  - "再加上能看出它有没有用的记账。"
+- en: "On the Cheese App roadmap, the dashed box around experiment tracking and baseline models is today. Your third milestone asks for exactly this."
+  zh:
+  - "在 Cheese App 的路线图上，围住实验追踪和基线模型的那个虚线框，就是今天。"
+  - "你的第三个项目里程碑要的正是这个。"
+- en: "Where does each piece of an experiment go? Code to GitHub, data to the versioning from lecture 11, and the environment to pyproject.toml and uv.lock. Weights, metrics and logs have no home yet. A complete run should keep seven things: environment, code, data, model, metrics, artifacts and notes."
+  zh:
+  - "一个实验的每一部分该放在哪里？"
+  - "代码放 GitHub，数据放第 11 讲的版本管理，环境放 pyproject.toml 和 uv.lock。"
+  - "权重、指标和日志还没有地方放。"
+  - "一个完整的 run 应该存下七样东西：环境、代码、数据、模型、指标、产物和笔记。"
+- en: "The course uses Weights and Biases, W and B for short, which is hosted for you. MLflow is the usual choice if you must host it yourself."
+  zh:
+  - "课程用的是 Weights & Biases，简称 W&B，它帮你托管。"
+  - "MLflow 是常见的选择，用在你必须自己托管的时候。"
+  en_display:
+  - "The course uses Weights & Biases, W&B for short, which is hosted for you."
+  - null
+- en: "Here is the map. On top, the Colab lane: notebook A fills a folder and uploads it, and notebook B streams its runs to W and B. Below, the repo lane: your laptop packs the code, a bucket holds it, Vertex AI runs it, and the run reports to W and B. Today we light both."
+  zh:
+  - "这是地图。"
+  - "上面是 Colab 这条线：notebook A 把文件装进一个目录再上传，notebook B 把它的 run 实时传到 W&B。"
+  - "下面是 repo 这条线：你的笔记本打包代码，bucket 存着它，Vertex AI 运行它，这个 run 向 W&B 汇报。"
+  - "今天两条线都点亮。"
+  en_display:
+  - null
+  - "On top, the Colab lane: notebook A fills a folder and uploads it, and notebook B streams its runs to W&B."
+  - "Below, the repo lane: your laptop packs the code, a bucket holds it, Vertex AI runs it, and the run reports to W&B."
+  - null
+S03:
+- en: "Open notebook A from the course page, save a copy, and switch the runtime to a GPU; pause and set it up. Its stored outputs show the instructors' run on one Tesla T4."
+  zh:
+  - "从课程页面打开 notebook A，另存一份，把运行时切到 GPU；暂停一下，把它配好。"
+  - "它保存下来的输出，是授课老师在一块 Tesla T4 上的那次运行。"
+- en: "Run the dataset cells: 1,156 photos from one GitHub release, with four cheese labels. Remember their order. Then the split: 936 to train, 104 to validate, 116 to test. Pause and run them."
+  zh:
+  - "跑数据集的单元格：1156 张照片，来自一个 GitHub release，有四个奶酪 label。"
+  - "记住它们的顺序。"
+  - "然后是划分：936 张用来训练，104 张用来验证，116 张用来测试。"
+  - "暂停一下，把它们跑一遍。"
+- en: "Something to ponder. The cell sets the validation percent to 0.2, yet validation is 104 out of 1,156. What did the code actually do?"
+  zh:
+  - "来想一个问题。"
+  - "这个单元格把 validation percent 设成 0.2，可验证集只有 1156 张里的 104 张。"
+  - "这段代码实际上做了什么？"
+  en_display:
+  - null
+  - "The cell sets validation_percent to 0.2, yet validation is 104 out of 1,156."
+  - null
+- en: "Both splits use the test percent. 10 percent of 1,156 is 116 for testing, then 10 percent of the remaining 1,040 is 104, the validation set. A small slip, copied into the repo trainer."
+  zh:
+  - "两次划分用的都是 test percent。"
+  - "1156 的 10% 是 116 张，用来测试；剩下 1040 张的 10% 是 104 张，也就是验证集。"
+  - "一个小疏漏，还被复制进了 repo 的训练脚本。"
+  en_display:
+  - "Both splits use test_percent."
+  - null
+  - null
+- en: "Now the home-made tracker. Cell 31 makes a folder named after the current Unix time. After each model trains, the helper from cell 12 drops five files into it: the model, its weights, its structure, its history and its metrics. Pause and train the five models."
+  zh:
+  - "现在看自己动手做的实验追踪工具。"
+  - "第 31 个单元格建了一个目录，用当前的 Unix 时间命名。"
+  - "每个模型训练完，第 12 个单元格里的辅助函数就往目录里放五个文件：模型、权重、结构、训练历史和指标。"
+  - "暂停一下，把五个模型训练一遍。"
+- en: "Cell 54 gathers the metric files into one table, and cell 56 picks its top row as the best model; pause and run through the predictions. A small slip: accuracy becomes text before sorting, so it sorts strings; 9.5 percent would rank above 68 percent."
+  zh:
+  - "第 54 个单元格把指标文件汇总成一张表，第 56 个单元格把第一行当成最好的模型；暂停一下，一直跑到预测那几个单元格。"
+  - "有一个小疏漏：准确率在排序前变成了文本，所以按字符串排序；9.5% 会排在 68% 前面。"
+- en: "Here is a first answer. The folder keeps settings and scores, but not which 116 photos were the test set. The split has no seed, so every run is graded on a different 116. One photo is worth 0.86 points, and the winner in notebook A leads by two photos."
+  zh:
+  - "先给第一个答案。"
+  - "这个目录存了设置和分数，却没存哪 116 张照片是测试集。"
+  - "划分没有随机种子，所以每次运行都拿不同的 116 张来评分。"
+  - "一张照片值 0.86 个百分点，而 notebook A 的冠军只领先两张照片。"
+- en: "Sign in with cell 62, put your own project and bucket into cell 63, and run cell 66. Any bucket of yours works; scene 7 creates one. Pause and run it. A gold tag: those files now sit in your bucket, 10 to 104 megabytes of weights per model, plus a copy."
+  zh:
+  - "用第 62 个单元格登录，在第 63 个单元格里填上你自己的项目和 bucket，再跑第 66 个单元格。"
+  - "你的任何一个 bucket 都行；第 7 个场景会建一个。"
+  - "暂停一下，自己跑一遍。"
+  - "金色标签：这些文件现在放在你的 bucket 里，每个模型 10 到 104 MB 的权重，外加一份拷贝。"
+S04:
+- en: "Notebook B adds W and B. Its first cell installs it, and the dash U flag means whatever is newest. An extra check in our signed-out stand-in shows 0.31.0 at the time of recording, while the stored run used 0.22.2. Pause and run it."
+  zh:
+  - "Notebook B 加上了 W&B。"
+  - "它的第一个单元格安装 W&B，-U 参数的意思是装最新版。"
+  - "在我们没有登录的替身里额外检查一下：录制时是 0.31.0，而保存下来的那次运行用的是 0.22.2。"
+  - "暂停一下，自己跑一遍。"
+  en_display:
+  - "Notebook B adds W&B."
+  - "Its first cell installs it, and the -U flag means whatever is newest."
+  - null
+  - null
+- en: "The data cells, through cell 32, match notebook A, but one also downloads a zip of about 510 megabytes you never use. You may delete that line; then pause and run them."
+  zh:
+  - "数据相关的单元格，一直到第 32 个，都和 notebook A 一样，但其中一个还会下载一个大约 510 MB、你根本用不上的 zip 包。"
+  - "你可以删掉那一行，然后暂停一下，把它们跑一遍。"
+- en: "Copy your API key from the user settings on W and B. In Colab, open the key icon and add a secret named exactly as on screen, with notebook access on. Pause and add yours. Cell 34 signs in with it."
+  zh:
+  - "在 W&B 的 User Settings 里复制你的 API key。"
+  - "在 Colab 里打开钥匙图标，添加一个 secret，名字和画面上一字不差，并打开 Notebook access。"
+  - "暂停一下，加上你自己的。"
+  - "第 34 个单元格用它登录。"
+  en_display:
+  - "Copy your API key from the user settings on W&B."
+  - null
+  - null
+  - null
+- en: "Now pause and run the five training cells. Each starts its run with wandb init in one project, cheese app demo. In the ledger, the five rows become five runs on one shared epoch axis."
+  zh:
+  - "现在暂停一下，把五个训练单元格跑一遍。"
+  - "每个单元格都用 wandb.init 开启自己的 run，都在同一个项目 cheese-app-demo 里。"
+  - "在账本里，这五行变成了五个 run，共用一条 epoch 轴。"
+  en_display:
+  - null
+  - "Each starts its run with wandb.init in one project, cheese-app-demo."
+  - null
+- en: "But only the two block run shows curves. Compare its model fit call with another cell's. Something to ponder: what do the other four lack?"
+  zh:
+  - "可是只有 2 block 那个 run 有曲线。"
+  - "把它的 model.fit 调用和另一个单元格的比一比。"
+  - "来想一个问题：另外四个缺了什么？"
+  en_display:
+  - "But only the 2_block run shows curves."
+  - "Compare its model.fit call with another cell's."
+  - null
+- en: "A callback: code that model fit calls after every epoch. Only the two block cell passes the W and B callback, so only its loss and accuracy arrive, epoch by epoch. Without one, wandb init gives you system charts, never your curves."
+  zh:
+  - "一个 callback：model.fit 在每个 epoch 之后调用的代码。"
+  - "只有 2 block 那个单元格传了 W&B 的 callback，所以只有它的 loss 和准确率一个 epoch 一个 epoch 地传过来。"
+  - "没有 callback，wandb.init 只给你系统图表，从不给你的曲线。"
+  en_display:
+  - "A callback: code that model.fit calls after every epoch."
+  - "Only the 2_block cell passes the W&B callback, so only its loss and accuracy arrive, epoch by epoch."
+  - "Without one, wandb.init gives you system charts, never your curves."
+- en: "Both MobileNet runs share one name, so tell them apart by run ID. No cell finishes the last run, so add wandb finish after cell 52, an extra."
+  zh:
+  - "两个 MobileNet 的 run 名字一样，所以要靠 run ID 区分。"
+  - "没有哪个单元格结束最后一个 run，所以在第 52 个单元格后面加上 wandb.finish，这是额外步骤。"
+  en_display:
+  - null
+  - "No cell finishes the last run, so add wandb.finish after cell 52, an extra."
+- en: "Cell 55 builds the second table from the opening. The fine-tuned MobileNet trained 10 epochs here and 15 in notebook A: not a fair comparison. Now the frozen MobileNet, with the same settings and epochs: 67.24 in notebook A, 68.97 here. Two photos apart by chance alone: the size of the winning margin."
+  zh:
+  - "第 55 个单元格生成了开头的第二张表。"
+  - "微调过的 MobileNet 在这里训练了 10 个 epoch，在 notebook A 里是 15 个：这不是公平的比较。"
+  - "再看冻结的 MobileNet，设置和 epoch 都一样：notebook A 里是 67.24，这里是 68.97。"
+  - "光凭运气就差了两张照片：正好是冠军领先的差距。"
+- en: "To upload, edit the bucket and project inside cell 13 and run cell 13 again, then run cells 64 and 66; pause and do it."
+  zh:
+  - "要上传的话，改第 13 个单元格里的 bucket 和项目，再跑一次第 13 个单元格，然后跑第 64 和第 66 个单元格；暂停一下，照着做。"
+S05:
+- en: "The lecture shows the pattern as three lines around unchanged training code. Start the run with wandb init. Watch the model with a callback inside model fit. And finish the run when training ends."
+  zh:
+  - "课上把这个写法画成三行，包在不变的训练代码外面。"
+  - "用 wandb.init 开启 run。"
+  - "在 model.fit 里用 callback 盯住模型。"
+  - "最后在训练结束时结束这个 run。"
+  en_display:
+  - null
+  - "Start the run with wandb.init."
+  - "Watch the model with a callback inside model.fit."
+  - null
+- en: "Now notebook B's real cell. It starts the run, then assigns a dictionary to wandb config, renames the run, and calls run save."
+  zh:
+  - "现在看 notebook B 里真正的单元格。"
+  - "它先开启 run，然后把一个字典赋给 wandb.config，给 run 改名，再调用 wandb.run.save。"
+  en_display:
+  - null
+  - "It starts the run, then assigns a dictionary to wandb.config, renames the run, and calls wandb.run.save."
+- en: "Something to ponder. After that assignment, and a later update with the execution time, what does the run's config hold?"
+  zh:
+  - "来想一个问题。"
+  - "经过这次赋值，再加上后面用执行时间做的一次 update，这个 run 的 config 里有什么？"
+- en: "Watch the name. The call wandb init points the name wandb config at the run's config drawer. The assignment does not fill that drawer; it moves the name onto a new, loose dictionary. The update then writes into the loose one, and the run finishes with its drawer empty."
+  zh:
+  - "盯住这个名字。"
+  - "调用 wandb.init，会让 wandb.config 这个名字指向这个 run 的 config 抽屉。"
+  - "这次赋值并没有装满那个抽屉；它把名字挪到了一个新的、散落在外的字典上。"
+  - "接着 update 写进的是那个散落的字典，run 结束时抽屉还是空的。"
+  en_display:
+  - null
+  - "The call wandb.init points the name wandb.config at the run's config drawer."
+  - null
+  - null
+- en: "The proof, on today's W and B in offline mode, as our stand-in. The name points at a plain dict, and the run's config is empty. The fix passes the dictionary to wandb init itself, and the config holds all four keys plus the execution time."
+  zh:
+  - "证据：用今天的 W&B，开离线模式，作为我们的替身。"
+  - "这个名字指向一个普通的 dict，而 run 的 config 是空的。"
+  - "修法是把这个字典直接传给 wandb.init，这样 config 里就有全部四个键，再加上执行时间。"
+  en_display:
+  - "The proof, on today's W&B in offline mode, as our stand-in."
+  - null
+  - "The fix passes the dictionary to wandb.init itself, and the config holds all four keys plus the execution time."
+- en: "The call run save with the word test uploads files matching test; it does not save the run."
+  zh:
+  - "调用 wandb.run.save 加上 test 这个词，会上传名字匹配 test 的文件；它并不保存这个 run。"
+  en_display:
+  - "The call wandb.run.save with the word test uploads files matching test; it does not save the run."
+- en: "The repo's trainer gets the first and last lines right: config inside wandb init, then update and finish. But the middle line is gone. One commit in October 2025 removed the callback, without saying why. So its runs get config and system charts, and no curves; exercise 1 adds the callback again."
+  zh:
+  - "这个 repo 的训练脚本把第一行和最后一行写对了：config 放在 wandb.init 里，然后是 update 和 finish。"
+  - "可中间那一行没了。"
+  - "2025 年 10 月的一次 commit 删掉了这个 callback，没说原因。"
+  - "所以它的 run 有 config 和系统图表，没有曲线；练习 1 会把 callback 加回去。"
+  en_display:
+  - "The repo's trainer gets the first and last lines right: config inside wandb.init, then update and finish."
+  - null
+  - null
+  - null
+S06:
+- en: "The second half of the lecture is Vertex AI, Google Cloud's machine learning platform. Three console entries matter: Workbench for notebooks, Training for jobs, and Pipelines for workflows. Today is Training, on the custom jobs tab; lecture 15 uses Pipelines."
+  zh:
+  - "课的后半部分讲 Vertex AI，也就是 Google Cloud 的机器学习平台。"
+  - "控制台里有三个入口要紧：Workbench 管 notebook，Training 管任务，Pipelines 管工作流。"
+  - "今天用的是 Training，在 Custom jobs 标签页上；第 15 讲用 Pipelines。"
+- en: "Serverless training means you rent the hardware only for the training step. Nobody sets up a server, and billing stops when the step ends. There is still a machine; you just don't manage its lifetime."
+  zh:
+  - "无服务器训练的意思是：只在训练这一步租用硬件。"
+  - "没人去搭服务器，计费在这一步结束时就停了。"
+  - "机器还是有的，你只是不用管它的生命周期。"
+- en: "Step one: move the notebook code into a Python file, and turn its hard-coded choices into flags. The flags are epochs, batch size and model name, plus train base and your W and B key."
+  zh:
+  - "第一步：把 notebook 里的代码搬进一个 Python 文件，再把写死的选项改成命令行参数。"
+  - "这些参数是 epoch 数、batch 大小和模型名，再加上 train base 和你的 W&B 密钥。"
+  en_display:
+  - null
+  - "The flags are epochs, batch size and model name, plus train_base and your W&B key."
+- en: "Step two packs that file into a tarball, one compressed archive, and uploads it to a bucket. Step three runs from what the lecture calls the Model Trainer CLI Container, our cockpit on your laptop: it asks Vertex AI for a job. Vertex AI then starts a machine, CPU only or with one T4. It loads Google's prebuilt TensorFlow image, installs your tarball, runs your trainer with your flags, and deletes the machine."
+  zh:
+  - "第二步把这个文件打成一个 tar 包，也就是一个压缩归档文件，再上传到一个 bucket。"
+  - "第三步在课上叫作 Model Trainer CLI Container 的地方运行，也就是你笔记本上的驾驶舱：它向 Vertex AI 申请一个任务。"
+  - "然后 Vertex AI 启动一台机器，只有 CPU，或者带一块 T4。"
+  - "它加载 Google 预构建的 TensorFlow image，安装你的 tar 包，用你的参数运行你的训练脚本，然后删掉这台机器。"
+- en: "Two facts drive everything after this. The job cannot see your laptop: its data comes from the internet, and anything it should keep must be written somewhere durable. And the image is Google's, not yours."
+  zh:
+  - "有两个事实决定了后面的一切。"
+  - "任务看不到你的笔记本：它的数据来自网上，任何要留下来的东西都必须写到某个持久的地方。"
+  - "而且 image 是 Google 的，不是你的。"
+- en: "A quick prediction. Your laptop has no GPU and no TensorFlow. Which machines in this picture will ever import TensorFlow?"
+  zh:
+  - "快速预测一下。"
+  - "你的笔记本没有 GPU，也没有 TensorFlow。"
+  - "这张图里，哪些机器会 import TensorFlow？"
+- en: "Two: the Colab runtime, and the container inside each Vertex job. Never the cockpit on your laptop; scene 9 proves it."
+  zh:
+  - "两个：Colab 运行时，以及每个 Vertex 任务里的 container。"
+  - "从来不是你笔记本上的驾驶舱；第 9 个场景会证明这一点。"
+S07:
+- en: "Clone the model training repo and move into it; pause and run it. Two extras show the course pin and the repo's files."
+  zh:
+  - "把 model-training 这个 repo clone 下来，再进去；暂停一下，自己跑一遍。"
+  - "两个额外检查显示课程 pin 住的版本，以及 repo 里的文件。"
+  en_display:
+  - "Clone the model-training repo and move into it; pause and run it."
+  - null
+- en: "In the console, enable the Vertex AI API. Then request GPU quota, an allowance per region. Filter for custom model training, pick T4 GPUs, include us-central1, where cli.sh runs, set a new limit and submit. Pause and do both. Approval may take hours or be refused; cli.sh runs on CPU without it."
+  zh:
+  - "在控制台里启用 Vertex AI API。"
+  - "然后申请 GPU 配额，也就是每个区域的额度。"
+  - "筛选 custom model training，选 T4 GPU，包含 us-central1，也就是 cli.sh 运行的区域，设一个新的上限，然后提交。"
+  - "暂停一下，两件都做了。"
+  - "审批可能要好几个小时，也可能被拒；cli.sh 没有配额也能在 CPU 上跑。"
+- en: "Next, a secrets folder beside the repo, never inside it; pause and make it."
+  zh:
+  - "接下来，在 repo 旁边建一个 secrets 目录，绝不放在里面；暂停一下，建好它。"
+- en: "Then the identity: a service account called model trainer, with Storage Admin, AI Platform Admin and Vertex AI Administrator, and one JSON key saved in secrets as model-trainer.json. Pause and create yours."
+  zh:
+  - "然后是身份：一个叫 model-trainer 的服务账号，角色是 Storage Admin、AI Platform Admin 和 Vertex AI Administrator，再在 secrets 里存一个 JSON 密钥：model-trainer.json。"
+  - "暂停一下，建一个你自己的。"
+  en_display:
+  - "Then the identity: a service account called model-trainer, with Storage Admin, AI Platform Admin and Vertex AI Administrator, and one JSON key saved in secrets as model-trainer.json."
+  - null
+- en: "One honest note. This recording machine has no Google credentials, no W and B account, no GPU and no browser. The key in that listing is an obviously invalid stand-in, moved out before the container starts. So each cloud step shows the failure a misplaced key gives, and successes come from named sources."
+  zh:
+  - "如实说一句。"
+  - "这台录制用的机器没有 Google 凭据，没有 W&B 账号，没有 GPU，也没有浏览器。"
+  - "列表里的那个密钥是一个明显无效的替身，在 container 启动之前就被移走了。"
+  - "所以每个云端步骤都展示放错位置的密钥会带来的失败，成功的结果都注明出处。"
+  en_display:
+  - null
+  - "This recording machine has no Google credentials, no W&B account, no GPU and no browser."
+  - null
+  - null
+- en: "Then create a bucket with your own name; pause and create it. Two extras show why: our placeholder returns 404, it exists nowhere, while the README's name returns 401, it belongs to someone else. A gold tag: the bucket stores your code and experiment folders."
+  zh:
+  - "然后用你自己的名字建一个 bucket；暂停一下，建好它。"
+  - "两个额外检查说明了原因：我们的占位名返回 404，它根本不存在；而 README 里的名字返回 401，它属于别人。"
+  - "金色标签：这个 bucket 存着你的代码和实验目录。"
+- en: "Last, copy your W and B key and export it in the terminal you'll use for the container. Pause and do it. An extra echo prints its length, 40 for our placeholder. It must not be zero, and the trainer's pinned wandb accepts exactly 40."
+  zh:
+  - "最后，复制你的 W&B 密钥，在你要用来起 container 的那个终端里 export 它。"
+  - "暂停一下，照着做。"
+  - "额外用 echo 打印它的长度，我们的占位密钥是 40。"
+  - "它不能是 0，而且训练脚本 pin 住的 wandb 只接受正好 40 个字符。"
+  en_display:
+  - "Last, copy your W&B key and export it in the terminal you'll use for the container."
+  - null
+  - null
+  - null
+- en: "Something to ponder. You exported the key, closed that terminal, and opened a new one. What does the same echo print now?"
+  zh:
+  - "来想一个问题。"
+  - "你 export 了密钥，关掉那个终端，又开了一个新的。"
+  - "同样的 echo 现在会打印什么？"
+- en: "Zero: an exported variable exists only in that shell and its children. Part 1 is done: the key is set, the bucket has a name. Next, we build the cockpit, and today it won't build."
+  zh:
+  - "0：export 过的变量只存在于那个 shell 和它的子进程里。"
+  - "第一部分完成了：密钥设好了，bucket 也有名字了。"
+  - "接下来我们构建驾驶舱，而今天它构建不了。"

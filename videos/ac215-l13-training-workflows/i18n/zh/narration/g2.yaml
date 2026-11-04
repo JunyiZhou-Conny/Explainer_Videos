@@ -1,0 +1,454 @@
+# zh narration for S08-S15 (part 2, group g2: the two Dockerfile fixes and the cockpit that now builds, what goes
+# in the tarball, one command and the W&B key inside it, who submits and who runs, what the job prints and what W&B
+# can show, three switches for one GPU, two GPUs and MirroredStrategy, the missing model, shutdown and recap),
+# sentence-aligned to script.md: one zh sentence per English sentence (explainer.voice.split_sentences).
+# Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of ideas (D9): if typed inline -> 要是你直接
+# 敲在命令里的话, last; only when all three are on -> 芯片只在三个都打开时才会亮; at the time of recording -> 这是录制时
+# 的情况, last; in README order -> 按 README 的顺序, after the command.
+# Artifacts with an underscore are written the way the narration says them (A6: x86 64, find packages, init 文件,
+# 密钥参数, batch 大小参数, region 变量, model dir 参数, api key not configured); error and status text the narration
+# quotes stays verbatim (A7: 404 Not Found, no installation candidate, API key must be 40 characters long, yours was
+# 2, Training Job Complete, GPU Available). The instructor's name is never written (A17). The ponders (S08, S09,
+# S10, S11, S12, S13, S14) ask without answering (A10). Commands sit at the end of a clause (G3).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: W&B, set -e, x86_64,
+# /secrets, find_packages(), __init__.py, python -m trainer.task, --wandb_key, sh -x, model-trainer, api_key,
+# Training Job Complete, cheese-training-vertex-ai, GPU Available: [], model.fit, --batch_size=32, GCP_REGION,
+# model.save, --model-dir, wandb.init); null = the SAY text.
+
+S08:
+- en: "Part 2 ships the trainer: build the cockpit, pack the code, send one job. Put your bucket and project on lines 8 and 9 of docker-shell.sh; pause and edit yours."
+  zh:
+  - "第二部分要把训练脚本送出去：构建驾驶舱，打包代码，发一个任务。"
+  - "把你的 bucket 和项目填到 docker-shell.sh 的第 8 行和第 9 行；暂停一下，改成你自己的。"
+- en: "A small slip: the README's copy of this script is not the real file. It has notes in brackets and an older line for Apple chips, so edit the script itself. It builds for amd64 and mounts your code and secrets."
+  zh:
+  - "有一个小疏漏：README 里贴的这份脚本，不是真正的文件。"
+  - "它有方括号里的注释，还有一行给 Apple 芯片的旧写法，所以要改脚本文件本身。"
+  - "它按 amd64 构建，并挂载你的代码和 secrets。"
+- en: "Now run sh docker-shell.sh from inside the repo; pause and run it. Today it fails at step 2 of 14. All 22 packages return 404 Not Found from the Debian mirror, and the build stops at line 18. The script's set dash e, exit on error, then stops it before docker run."
+  zh:
+  - "现在在 repo 里面跑 sh docker-shell.sh；暂停一下，自己跑一遍。"
+  - "今天它在 14 步里的第 2 步就失败了。"
+  - "全部 22 个包都从 Debian 软件源返回 404 Not Found，构建停在第 18 行。"
+  - "脚本里的 set -e，也就是出错就退出，于是在 docker run 之前就把它停下了。"
+  en_display:
+  - null
+  - null
+  - null
+  - "The script's set -e, exit on error, then stops it before docker run."
+- en: "Something to ponder. Every error says 404 from the Debian mirror, and your internet works. Which line of the Dockerfile picks your Debian?"
+  zh:
+  - "来想一个问题。"
+  - "每条报错都是 Debian 软件源返回的 404，而你的网络是通的。"
+  - "Dockerfile 的哪一行决定了你的 Debian？"
+- en: "Line 2, the FROM line. Bullseye is Debian 11, and at the time of recording its security mirror lists packages it no longer serves; they moved to an archive. The first fix, an extra, switches the base to bookworm, Debian 12; pause and make it."
+  zh:
+  - "第 2 行，FROM 那一行。"
+  - "代号 bullseye 就是 Debian 11，录制时它的安全更新源列出的包已经不再提供，这些包搬到了归档源。"
+  - "第一处修复，是额外步骤：把 base image 换成 bookworm，也就是 Debian 12；暂停一下，改好它。"
+- en: "Pause and run it again. Now it stops at step 8: google-cloud-sdk has no installation candidate, and google-cloud-cli replaces it. Google renamed its apt package."
+  zh:
+  - "暂停一下，再跑一遍。"
+  - "这次它停在第 8 步：google-cloud-sdk 报 no installation candidate，取而代之的是 google-cloud-cli。"
+  - "Google 给它的 apt 包改了名。"
+- en: "The second fix, also an extra: install google-cloud-cli instead, on line 37; pause and make it. An extra git diff shows everything you changed: your two values, the two fixes, and nothing else."
+  zh:
+  - "第二处修复，也是额外步骤：在第 37 行改装 google-cloud-cli；暂停一下，改好它。"
+  - "额外跑一下 git diff，能看到你改过的全部内容：你填的两个值，两处修复，没有别的。"
+- en: "Pause and run it a third time: it builds, about 5 minutes here, longer on Apple Silicon, where amd64 is emulated. The banner says running, then gcloud cannot open the key file: our missing key. With yours, this line confirms the service account. The script carries on anyway, because the entrypoint has no set dash e."
+  zh:
+  - "暂停一下，跑第三遍：它构建成功了，这里大约 5 分钟，在 Apple Silicon 上更久，因为 amd64 要模拟运行。"
+  - "横幅显示它在运行，接着 gcloud 打不开密钥文件：这是我们缺的那把密钥。"
+  - "换成你的密钥，这一行会确认服务账号。"
+  - "脚本照样往下走，因为 entrypoint 里没有 set -e。"
+  en_display:
+  - null
+  - null
+  - null
+  - "The script carries on anyway, because the entrypoint has no set -e."
+- en: "The architecture is x86 64, on a Mac too; the versions are on screen. A small slip: activated is printed before the activation, a label, not a fact."
+  zh:
+  - "架构是 x86 64，在 Mac 上也一样；版本号都在画面上。"
+  - "有一个小疏漏：activated 是在激活之前打印的，只是一句话，不是事实。"
+  en_display:
+  - "The architecture is x86_64, on a Mac too; the versions are on screen."
+  - null
+S09:
+- en: "Inside the cockpit, a few extra checks. Slash secrets is empty, our sandbox. Project, bucket and key came through; gcloud, gsutil and uv are here. Pause and check yours: the last number must be 40, not 0. But importing TensorFlow fails: this container submits jobs, it never trains."
+  zh:
+  - "在驾驶舱里做几个额外检查。"
+  - "/secrets 是空的，这是我们的沙盒。"
+  - "项目、bucket 和密钥都传进来了；gcloud、gsutil 和 uv 都在。"
+  - "暂停一下，检查你的：最后那个数必须是 40，不是 0。"
+  - "可是 import TensorFlow 失败了：这个 container 只提交任务，从不训练。"
+  en_display:
+  - null
+  - "/secrets is empty, our sandbox."
+  - null
+  - null
+  - null
+- en: "Review setup.py; pause and open it. It is the label pip uses to install the tarball. The only declared dependency is wandb, pinned to 0.15.11. Its find packages call finds the trainer folder because the folder has its own init file, so once installed, python dash m trainer dot task works. TensorFlow and scikit-learn are not declared: they are assumed to come from the image Google provides, and scene 11 shows the tarball lacks them. Requests only arrives because wandb needs it."
+  zh:
+  - "先看 setup.py；暂停一下，打开它。"
+  - "它就是 pip 安装 tar 包时看的铭牌。"
+  - "唯一声明的依赖是 wandb，pin 在 0.15.11。"
+  - "它的 find packages 调用能找到 trainer 目录，因为这个目录有自己的 init 文件，所以装好之后，python -m trainer.task 就能跑。"
+  - "TensorFlow 和 scikit-learn 都没有声明：默认它们来自 Google 提供的 image，第 11 个场景会看到 tar 包里没有它们。"
+  - "而 requests 只是因为 wandb 需要它才被带进来的。"
+  en_display:
+  - null
+  - null
+  - null
+  - "Its find_packages() call finds the trainer folder because the folder has its own __init__.py, so once installed, python -m trainer.task works."
+  - null
+  - null
+- en: "Review task.py next; pause and open it. The notebook choices are flags now, and the key flag defaults to the text 16: remember that. The data comes from one GitHub release, since the job cannot see your laptop, and the W and B login runs after that download."
+  zh:
+  - "接着看 task.py；暂停一下，打开它。"
+  - "现在 notebook 里的选项都成了命令行参数，而密钥参数默认是文本 16：记住这一点。"
+  - "数据来自一个 GitHub release，因为任务看不到你的笔记本，而 W&B 的登录在下载之后才运行。"
+  en_display:
+  - null
+  - "The notebook choices are flags now, and the --wandb_key flag defaults to the text 16: remember that."
+  - "The data comes from one GitHub release, since the job cannot see your laptop, and the W&B login runs after that download."
+- en: "Now pack it: run sh package-trainer.sh inside the container; pause and run it. Tar lists eight entries, and the upload fails: our placeholder bucket does not exist. Line 4 uses a fixed name, so each upload overwrites the last."
+  zh:
+  - "现在打包：在 container 里跑 sh package-trainer.sh；暂停一下，自己跑一遍。"
+  - "命令 tar 列出了八个条目，而上传失败了：我们的占位 bucket 并不存在。"
+  - "第 4 行用的是固定的文件名，所以每次上传都会覆盖上一次。"
+- en: "Extra checks: the tarball is 4,016 bytes. On our Linux engine it belongs to root, because the container wrote it; on Docker Desktop, to you. Git ignores it either way."
+  zh:
+  - "额外检查：这个 tar 包是 4016 字节。"
+  - "在我们的 Linux 引擎上，它属于 root，因为是 container 写的；在 Docker Desktop 上，它属于你。"
+  - "不管哪种情况，Git 都会忽略它。"
+- en: "Something to ponder. You fix a typo in task.py. Do you rebuild the image, run the package script again, or both?"
+  zh:
+  - "来想一个问题。"
+  - "你改了 task.py 里的一个错字。"
+  - "你是重新构建 image，再跑一次打包脚本，还是两个都做？"
+- en: "Only the package script. Vertex AI runs the tarball in your bucket, and your image never travels. The cockpit mounts your code folder, so it already sees the edit. A gold tag: the tarball is stored in your bucket, and it is tiny."
+  zh:
+  - "只要重跑打包脚本。"
+  - "Vertex AI 运行的是你 bucket 里的 tar 包，你的 image 从来不会被带过去。"
+  - "驾驶舱挂载了你的代码目录，所以已经能看到这次修改。"
+  - "金色标签：tar 包存在你的 bucket 里，而且很小。"
+S10:
+- en: "Review cli.sh; pause and open it. It names the job with random hex, asks for one n1-standard-4 machine, and sets a GPU image. Then it points at your tarball in the bucket and the module to run, and builds the arguments, ending with your W and B key."
+  zh:
+  - "再看 cli.sh；暂停一下，打开它。"
+  - "它用随机的十六进制串给任务命名，申请一台 n1-standard-4 机器，并设定一个 GPU image。"
+  - "然后它指向 bucket 里你的 tar 包和要运行的模块，再拼出参数，最后是你的 W&B 密钥。"
+  en_display:
+  - null
+  - null
+  - "Then it points at your tarball in the bucket and the module to run, and builds the arguments, ending with your W&B key."
+- en: "Further down, the GPU block is commented out and line 31 swaps in the CPU image, so only the CPU command runs. A small slip: the README shows GPU first and CPU as optional, but the script already runs on CPU."
+  zh:
+  - "再往下，GPU 那一段被注释掉了，第 31 行换成 CPU image，所以只有 CPU 那条命令会运行。"
+  - "有一个小疏漏：README 先讲 GPU，把 CPU 写成可选，可这个脚本本来就在 CPU 上跑。"
+- en: "A gold tag first: once the job's machine is provisioned, your project pays until the script exits. Check that your key length is 40; if not, watch scene 11 before you submit. Now sh cli.sh; pause and run it. The first line is real: the Vertex AI endpoint in us-central1. Then it stops with no active account, because the key never loaded; an extra auth list confirms it. With your key, gcloud reports the job as created."
+  zh:
+  - "先看金色标签：一旦任务的机器分配好，你的项目就一直付费，直到脚本退出。"
+  - "确认你的密钥长度是 40；如果不是，先看第 11 个场景，再提交。"
+  - "现在跑 sh cli.sh；暂停一下，自己跑一遍。"
+  - "第一行是真的：us-central1 的 Vertex AI endpoint。"
+  - "然后它停下了，没有激活的账号，因为密钥从来没加载过；额外跑一下 gcloud auth list，就能确认。"
+  - "换成你的密钥，gcloud 会报告任务已创建。"
+- en: "An extra trace with sh dash x shows the job it tried to send. The GPU image is set, then overridden by the CPU image. Then the full command. The worker pool spec is the job's machine order: machine type, one replica, meaning one machine, image and module. Last come the arguments, ending with your W and B key in plain text."
+  zh:
+  - "额外用 sh -x 跟踪一遍，能看到它想发出去的任务。"
+  - "GPU image 先被设好，然后被 CPU image 覆盖。"
+  - "然后是完整的命令。"
+  - "这个 worker pool spec 就是这个任务的机器订单：机器类型、一个副本，也就是一台机器，再加上 image 和模块。"
+  - "最后是参数，结尾是明文的 W&B 密钥。"
+  en_display:
+  - "An extra trace with sh -x shows the job it tried to send."
+  - null
+  - null
+  - null
+  - "Last come the arguments, ending with your W&B key in plain text."
+- en: "Something to ponder. Your W and B key is now part of the job's arguments. Who can see it later?"
+  zh:
+  - "来想一个问题。"
+  - "你的 W&B 密钥现在成了任务参数的一部分。"
+  - "以后谁能看到它？"
+  en_display:
+  - null
+  - "Your W&B key is now part of the job's arguments."
+  - null
+- en: "Anyone who can view jobs in this project, because the job spec keeps its arguments, plus your shell history if typed inline. Use a dedicated key and rotate it at the end; the exercises use Secret Manager."
+  zh:
+  - "这个项目里能查看任务的任何人，因为任务规格会保存它的参数；还有你的 shell 历史，要是你直接敲在命令里的话。"
+  - "用一把专用的密钥，结束时轮换掉；练习里用的是 Secret Manager。"
+- en: "The other way it goes wrong: a terminal where the key was never exported. Inside, its length is 0, and the arguments end with an empty key. So the job would download its data, and only then fail at login. Exit, export, and start again; first exit any old cockpit, which holds the name."
+  zh:
+  - "另一种出错的方式：在一个从没 export 过密钥的终端里。"
+  - "进去之后，它的长度是 0，参数的结尾是一个空的密钥。"
+  - "所以任务会先下载数据，然后才在登录时失败。"
+  - "退出、export，再重新开始；先退出旧的驾驶舱，名字还被它占着。"
+S11:
+- en: "Three badges take part in every job. The first is your key file, for the model trainer service account. Its three roles let it write to your bucket and create jobs: it submits."
+  zh:
+  - "每个任务都有三枚徽章参与。"
+  - "第一枚是你的密钥文件，属于 model-trainer 这个服务账号。"
+  - "它的三个角色让它能写你的 bucket、创建任务：它负责提交。"
+  en_display:
+  - null
+  - "The first is your key file, for the model-trainer service account."
+  - null
+- en: "The third is your W and B key, for a different building altogether, carried by hand inside the job's arguments. The middle lanyard is still empty."
+  zh:
+  - "第三枚是你的 W&B 密钥，进的完全是另一栋楼，靠手动放进任务的参数里带过去。"
+  - "中间那根挂绳还空着。"
+  en_display:
+  - "The third is your W&B key, for a different building altogether, carried by hand inside the job's arguments."
+  - null
+- en: "Something to ponder. The job installs your package from your private bucket, but your key file never left your laptop. How?"
+  zh:
+  - "来想一个问题。"
+  - "任务从你的私有 bucket 安装你的包，可你的密钥文件从没离开过你的笔记本。"
+  - "这是怎么做到的？"
+- en: "The second badge: your project's Vertex AI service agent, a service account Google manages. By default the job runs as it, and it can open buckets in the same project. Your key only proved who submitted. If a job ever gets a 403 on your bucket, that is the identity to grant access."
+  zh:
+  - "第二枚徽章：你项目的 Vertex AI 服务代理，一个由 Google 管理的服务账号。"
+  - "任务默认以它的身份运行，它能打开同一个项目里的 bucket。"
+  - "你的密钥只证明了是谁提交的。"
+  - "如果任务访问你的 bucket 时报 403，就要给这个身份授予访问权限。"
+- en: "On Vertex, the job's first step installs your tarball into Google's image. We can't run Vertex here, so we rerun that step on the laptop, tagged as a stand-in. In a plain Python 3.10 container, pip installs the tarball: your package, plus wandb 0.15.11."
+  zh:
+  - "在 Vertex 上，任务的第一步是把你的 tar 包安装进 Google 的 image。"
+  - "我们这里跑不了 Vertex，所以在笔记本上把这一步重跑一遍，标成替身。"
+  - "在一个普通的 Python 3.10 container 里，pip 安装这个 tar 包：你的包，加上 wandb 0.15.11。"
+- en: "An extra pip list shows wandb, requests and their helpers, but no TensorFlow and no scikit-learn. The trainer counts on the prebuilt image for those, which we did not pull to check. Without it, the trainer cannot even print its help."
+  zh:
+  - "额外跑一下 pip list：有 wandb、requests 和它们的辅助依赖，但没有 TensorFlow，也没有 scikit-learn。"
+  - "训练脚本指望预构建的 image 提供这些，而我们没有把它拉下来检查。"
+  - "没有它，训练脚本连帮助信息都打不出来。"
+- en: "Then the trainer's first W and B step, line 153, with three keys. The empty key from scene 10 fails with api key not configured, and on Vertex that comes after the data download, on billed machine time. The default of 16 fails: API key must be 40 characters long, yours was 2. Our 40 character placeholder passes the offline length check, and nothing more."
+  zh:
+  - "然后是训练脚本里 W&B 的第一步，第 153 行，用三个密钥试一试。"
+  - "第 10 个场景里那个空的密钥，报 api key not configured，而在 Vertex 上，这发生在数据下载之后，用的是计费的机器时间。"
+  - "默认的 16 会失败，报：API key must be 40 characters long, yours was 2。"
+  - "我们 40 个字符的占位密钥能通过离线的长度检查，仅此而已。"
+  en_display:
+  - "Then the trainer's first W&B step, line 153, with three keys."
+  - "The empty key from scene 10 fails with api_key not configured, and on Vertex that comes after the data download, on billed machine time."
+  - null
+  - null
+- en: "One more: this old wandb pin accepts exactly 40 characters, and 47 fails. We could not check which key format W and B gives out today. If yours differs, this pin refuses it, so check before you submit."
+  zh:
+  - "还有一点：这个老的 wandb pin 只接受正好 40 个字符，47 个就会失败。"
+  - "我们没法确认 W&B 现在发的密钥是什么格式。"
+  - "如果你的不一样，这个 pin 会拒绝它，所以提交之前先检查。"
+  en_display:
+  - null
+  - "We could not check which key format W&B gives out today."
+  - null
+S12:
+- en: "To view jobs, open Vertex AI, then Training, then Custom jobs; pause and look for yours. It is a custom job, not a training pipeline, so look on that tab. Open your job and follow its logs link; wait for the line training job complete."
+  zh:
+  - "要查看任务，打开 Vertex AI，再点 Training，再点 Custom jobs；暂停一下，找找你的。"
+  - "它是一个自定义任务，不是训练 pipeline，所以要去那个标签页找。"
+  - "打开你的任务，点它的日志链接；等那行 Training Job Complete 出现。"
+  en_display:
+  - null
+  - null
+  - "Open your job and follow its logs link; wait for the line Training Job Complete."
+- en: "What will the job print? No job log exists for this video, so here is its shape, built from the code's own print lines. The counts are the ones both notebooks printed for the same code."
+  zh:
+  - "任务会打印什么？"
+  - "这期视频没有任何任务日志，所以这里给出的是它的样子，按代码自己的 print 语句拼出来的。"
+  - "这些数量是两个 notebook 用同样的代码打印出来的。"
+- en: "The labels line has no fixed order, as the two notebooks show, and no label map is saved. The summary ends with a stray None, because the code prints what summary returns. Training itself is a gap here, with no epochs, loss or times, then the line training job complete."
+  zh:
+  - "打印 label 的那一行没有固定的顺序，两个 notebook 就能说明这一点，而且也没有保存 label 映射。"
+  - "这段 summary 最后多出来一个 None，因为代码打印的是 summary 的返回值。"
+  - "训练本身在这里是一段空白，没有 epoch、loss，也没有时间，然后是那行 Training Job Complete。"
+  en_display:
+  - null
+  - null
+  - "Training itself is a gap here, with no epochs, loss or times, then the line Training Job Complete."
+- en: "To view metrics, the README sends you to the W and B project cheese training vertex AI. It promises training metrics, tracked and updated automatically. To put it kindly, not with this code. From task.py, the run named after the model gets its config, including the execution time, and system charts, and its curve slots stay empty. Pause and open your project."
+  zh:
+  - "要查看指标，README 让你去 W&B 的项目 cheese-training-vertex-ai。"
+  - "它承诺训练指标会被自动追踪、自动更新。"
+  - "说得客气点，用这份代码做不到。"
+  - "按 task.py 的写法，以模型命名的那个 run 有 config，包括执行时间，还有系统图表，而它的曲线位置一直是空的。"
+  - "暂停一下，打开你的项目。"
+  en_display:
+  - "To view metrics, the README sends you to the W&B project cheese-training-vertex-ai."
+  - null
+  - null
+  - null
+  - null
+- en: "Something to ponder, with the lecture's list of seven. Which of them does this run actually keep?"
+  zh:
+  - "来想一个问题，用课上列的七样。"
+  - "这个 run 实际存下了哪几样？"
+- en: "The model and its settings, yes. The environment only partly: system charts, while the image tag sits in cli.sh. Metrics, none: the execution time goes into the config. Logs yes, weights no. Code, data and notes, no: no commit, a fixed zip, and an unseeded split. The folder from notebook A has no commit, no split and no notes either. So the verdict: these tables cannot crown a recipe. Seed the split, match the epochs, keep the code version, then compare. Exercise 1 adds a small callback."
+  zh:
+  - "模型和它的设置，有。"
+  - "环境只算一部分：有系统图表，而 image 的 tag 写在 cli.sh 里。"
+  - "指标，没有：执行时间进了 config。"
+  - "日志有，权重没有。"
+  - "代码、数据和笔记，没有：没有 commit，一个固定的 zip 包，还有一次没有随机种子的划分。"
+  - "来自 notebook A 的那个目录，也没有 commit、没有划分，也没有笔记。"
+  - "所以结论是：这些表选不出哪种做法更好。"
+  - "给划分加上随机种子，对齐 epoch，记下代码版本，然后再比较。"
+  - "练习 1 会加一个小小的 callback。"
+S13:
+- en: "Now the reverse of the README's optional CPU step: what would it take to train on a GPU? Three switches must agree. The accelerator: one T4 in the worker pool spec. The image: TensorFlow built for GPUs, with CUDA, the GPU libraries. And the quota: T4s for custom training in this region. The chip lights only when all three are on."
+  zh:
+  - "现在反过来看 README 那个可选的 CPU 步骤：要在 GPU 上训练，需要什么？"
+  - "三个开关必须一致。"
+  - "加速器：worker pool spec 里的一块 T4。"
+  - "image：为 GPU 构建的 TensorFlow，带 CUDA，也就是 GPU 的库。"
+  - "还有配额：这个区域里给自定义训练用的 T4。"
+  - "芯片只在三个都打开时才会亮。"
+- en: "The quota is the console request from scene 7. An extra check shows Google still serves both GPU images, at the time of recording."
+  zh:
+  - "配额就是第 7 个场景里在控制台提交的申请。"
+  - "额外检查显示，Google 还在提供这两个 GPU image，这是录制时的情况。"
+- en: "To switch, uncomment the GPU block and comment out the CPU block. Leave both active, and you submit two jobs with the same name."
+  zh:
+  - "要切换，就取消 GPU 那一段的注释，再把 CPU 那一段注释掉。"
+  - "两段都留着，你就会提交两个同名的任务。"
+- en: "Here the GPU block would fail the same way as in scene 10, with no active account, so there is nothing new to show, and nothing we fake."
+  zh:
+  - "在这里，GPU 那一段会和第 10 个场景一样失败，因为没有激活的账号，所以没有新东西可看，我们也不造假。"
+- en: "A gold tag: a GPU adds to the bill for as long as it is attached, used or not."
+  zh:
+  - "金色标签：GPU 会增加费用，只要它挂着，不管用没用。"
+- en: "Something to ponder. You add the accelerator to the CPU block. The job runs, and its log says GPU available, with an empty list. Why?"
+  zh:
+  - "来想一个问题。"
+  - "你在 CPU 那一段里加上加速器。"
+  - "任务跑起来了，日志里 GPU Available 后面是一个空列表。"
+  - "为什么？"
+  en_display:
+  - null
+  - null
+  - "The job runs, and its log says GPU Available: [], an empty list."
+  - null
+- en: "Line 31 sets a CPU image, which has no CUDA. The T4 is attached, idle, and still billed. Exercise 5 lets you try it."
+  zh:
+  - "第 31 行设的是 CPU image，里面没有 CUDA。"
+  - "这块 T4 挂着、闲着，照样计费。"
+  - "练习 5 让你自己试一试。"
+S14:
+- en: "The last idea of the lecture is multi-GPU training, in three shapes: one machine with one GPU, one machine with several, and several machines. Today is the middle one, the mirrored strategy. The single-GPU trainer also creates one, but only to count GPUs."
+  zh:
+  - "课上讲的最后一个想法是多 GPU 训练，有三种形态：一台机器一块 GPU，一台机器多块 GPU，以及多台机器。"
+  - "今天讲中间那种形态，也就是 MirroredStrategy。"
+  - "单 GPU 的训练脚本也会创建一个，但只是用来数 GPU。"
+- en: "Here is the idea. Each GPU holds an identical copy of the model, called a replica. A global batch of 64, one step's worth, splits into two halves of 32. Each GPU computes gradients on its half. The two are averaged across a link called all-reduce, and both copies take the same step, so they stay identical. Variables created inside the scope are mirrored, one synced copy per GPU; a model built outside is not mirrored."
+  zh:
+  - "思路是这样的。"
+  - "每块 GPU 上都有一份一模一样的模型拷贝，叫作副本。"
+  - "64 的全局 batch，也就是一步的量，被分成两半，每半 32。"
+  - "每块 GPU 在自己那一半上算梯度。"
+  - "两份梯度通过一条叫 all-reduce 的连线取平均，两份拷贝走同样的一步，所以一直保持一致。"
+  - "在 strategy.scope 里创建的变量会被复制，每块 GPU 一份同步的拷贝；在外面构建的模型不会被复制。"
+- en: "Review cli-multi-gpu.sh first, in README order; pause and open it. It asks for one n1-standard-32 machine with two T4s, for 5 epochs. A small slip: its TensorFlow image is older, 2.14, where cli.sh uses 2.17."
+  zh:
+  - "先看 cli-multi-gpu.sh，按 README 的顺序；暂停一下，打开它。"
+  - "它申请一台 n1-standard-32 机器，带两块 T4，训练 5 个 epoch。"
+  - "有一个小疏漏：它的 TensorFlow image 比较老，是 2.14，而 cli.sh 用的是 2.17。"
+- en: "Then review the multi-GPU trainer; pause and open it. These are the lecture's three changes. It creates the mirrored strategy. It multiplies the batch size by the number of replicas. And it builds and compiles the model inside the scope of the strategy. Model fit is unchanged."
+  zh:
+  - "然后看多 GPU 训练脚本；暂停一下，打开它。"
+  - "这就是课上讲的三处改动。"
+  - "它创建 MirroredStrategy。"
+  - "它把 batch 大小乘以副本数。"
+  - "并且在 strategy.scope 里构建、编译模型。"
+  - "而 model.fit 没变。"
+  en_display:
+  - null
+  - null
+  - null
+  - null
+  - null
+  - "model.fit is unchanged."
+- en: "Something to ponder. Two GPUs, a batch size flag of 32, and 936 training images. How many steps per epoch, and how many images does each GPU see per step?"
+  zh:
+  - "来想一个问题。"
+  - "两块 GPU，batch 大小参数是 32，一共 936 张训练图片。"
+  - "每个 epoch 有多少步，每块 GPU 每一步看到多少张图片？"
+  en_display:
+  - null
+  - "Two GPUs, --batch_size=32, and 936 training images."
+  - null
+- en: "The global batch is 64, so 15 steps, the last one partial, and 32 images per GPU on each full step. Two caveats. The learning rate stays at 0.001 while the batch doubles. And two GPUs are not twice as fast, because start-up, image pull and download don't shrink."
+  zh:
+  - "全局 batch 是 64，所以是 15 步，最后一步不满，每个完整的步里每块 GPU 拿 32 张。"
+  - "有两点要注意。"
+  - "学习率还是 0.001，而 batch 翻了一倍。"
+  - "而且两块 GPU 不会快一倍，因为启动、拉取 image 和下载都不会变短。"
+- en: "You need quota for two T4s and 32 virtual CPUs of custom training in your region. A gold tag: this is the biggest machine of the lecture, so check the pricing page first. If your quota came through, pause and run sh cli-multi-gpu.sh. Here it fails like cli.sh, with no active account."
+  zh:
+  - "你需要所在区域里自定义训练的配额：两块 T4 和 32 个虚拟 CPU。"
+  - "金色标签：这是这节课最大的机器，所以先看价目页。"
+  - "如果你的配额批下来了，暂停一下，跑 sh cli-multi-gpu.sh。"
+  - "在这里，它和 cli.sh 一样失败，没有激活的账号。"
+S15:
+- en: "One launcher the README never mentions is cli.py, the Python SDK route. As an extra run, it fails at once, because only cli.sh sets the region variable. Export it, and it fails at the missing key file."
+  zh:
+  - "还有一种 README 从没提过的启动方式：cli.py，走 Python SDK 的路线。"
+  - "额外跑一下，它马上就失败了，因为只有 cli.sh 设置了 region 变量。"
+  - "把它 export 之后，它又卡在缺失的密钥文件上。"
+  en_display:
+  - null
+  - "As an extra run, it fails at once, because only cli.sh sets the GCP_REGION variable."
+  - null
+- en: "And where is the trained model? When the script ends, the machine is deleted, and the weights with it: nothing calls model save, and the model dir flag is ignored. Lecture 15 saves the model to a bucket; exercise 4 does it today."
+  zh:
+  - "那训练好的模型在哪儿？"
+  - "脚本结束时，机器被删掉，权重也跟着没了：没有任何地方调用 model.save，model dir 参数也被忽略了。"
+  - "第 15 讲会把模型存进 bucket；练习 4 今天就做。"
+  en_display:
+  - null
+  - "When the script ends, the machine is deleted, and the weights with it: nothing calls model.save, and the --model-dir flag is ignored."
+  - null
+- en: "Time to shut down; pause and work through the list. From inside the cockpit, or in the console, make sure no custom job is running or pending. Remove the tarball and experiment folders too. Then exit; an extra docker ps shows nothing left. Finish the last W and B run, and disconnect the Colab runtimes. At the end of term, delete the model trainer key and rotate your W and B key, which traveled in a job."
+  zh:
+  - "该收尾了；暂停一下，照着清单一项项做。"
+  - "在驾驶舱里或者控制台上，确认没有自定义任务还在运行或者排队。"
+  - "也把 tar 包和实验目录删掉。"
+  - "然后 exit；额外跑一下 docker ps，什么都没剩。"
+  - "结束最后一个 W&B run，断开 Colab 的运行时。"
+  - "学期结束时，删掉 model-trainer 的密钥，并轮换你的 W&B 密钥，因为它跟着任务出去过。"
+  en_display:
+  - null
+  - null
+  - null
+  - null
+  - "Finish the last W&B run, and disconnect the Colab runtimes."
+  - "At the end of term, delete the model-trainer key and rotate your W&B key, which traveled in a job."
+- en: "The whole lecture on one map. A run is only as useful as what it keeps. Curves need a callback; config goes into wandb init. Only the tarball travels, into Google's image, run as the service agent, your key in its arguments. One GPU needs three switches; two GPUs split the batch and average gradients."
+  zh:
+  - "整节课都在一张地图上。"
+  - "一个 run 有多大用处，取决于它存下了什么。"
+  - "曲线要靠 callback；config 要放进 wandb.init。"
+  - "只有 tar 包会被带过去，装进 Google 的 image，以服务代理的身份运行，你的密钥就在它的参数里。"
+  - "一块 GPU 要三个开关；两块 GPU 分开 batch，再平均梯度。"
+  en_display:
+  - null
+  - null
+  - "Curves need a callback; config goes into wandb.init."
+  - null
+  - null
+- en: "5 questions to test yourself. One: what did neither table write down? Two: what travels to Vertex AI, and what never does? Three: why is the config empty? Four: who submits, who runs, and where does your key end up? Five: with two GPUs, what is split, averaged, and created inside the scope?"
+  zh:
+  - "五道自测题。"
+  - "第一题：两张表都没写下来的是什么？"
+  - "第二题：什么会被带到 Vertex AI，什么从来不会？"
+  - "第三题：为什么 config 是空的？"
+  - "第四题：谁提交，谁运行，你的密钥最后到了哪里？"
+  - "第五题：用两块 GPU 时，什么被分开、什么被平均、什么在 strategy.scope 里创建？"
+- en: "Answers are in the exercises. Next, lecture 14 serves containers without servers, and lecture 15 saves this model and chains the steps. Hardware rented, and a log of what you rented it for."
+  zh:
+  - "答案在练习里。"
+  - "接下来，第 14 讲不用自己管服务器就把 container 部署成服务，第 15 讲会保存这个模型，并把各个步骤串起来。"
+  - "硬件租到了，还有一份记录，写着你租它做了什么。"

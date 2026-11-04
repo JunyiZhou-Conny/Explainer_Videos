@@ -1,0 +1,53 @@
+# Chinese (zh-CN) metadata for ac215-l13-training-workflows (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter titles
+# keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 仓库, 存储桶, 运行, 回调, 配置, 训练任务, 自定义训练任务,
+# 无服务器训练, 服务账号, 服务代理, 配额; A13), questions keep their question mark, the English colon structure is kept,
+# commands, tools, class and file names stay as they are (W&B, Vertex AI, Colab, MirroredStrategy, Dockerfile), the
+# core-concept chapters carry their English short name for search where the Chinese is not the usual search word
+# (运行（run）, 无服务器训练（serverless training）), and S15 is the series' 收尾 pattern. 跟练 = follow-along;
+# Advanced Training Workflows → 进阶训练工作流, as the exam edition of this lecture (videos/ac215-l13-exam/i18n/zh).
+# The metaphors keep their picture: a run is a record, a job is a rented machine → 运行是一份记录，任务是一台租来的机器;
+# rent the machine, not the server → 租机器，不租服务器; the cockpit that won't build → 构建不了的驾驶舱.
+# video.yaml's publish.title_zh ("AC215 第13讲跟练 · 高级训练流程：W&B 实验追踪、Vertex AI 无服务器训练与多 GPU") is the
+# Bilibili upload title and is not changed by this file; the title here follows the pattern of the other meta.yaml
+# titles of the series.
+# SERIES RULE (A17): no title, chapter or description names the instructor (the narration's "the instructors" →
+# 授课老师); no placeholder, project id, W&B team or key is written.
+# meta.yaml is not read by `explainer.i18n check`, so brackets are fine here.
+title: "AC215 · 第 13 讲：进阶训练工作流——运行是一份记录，任务是一台租来的机器（跟练：model-training + 两个 Colab 笔记本）"
+
+parts:
+  part1: "AC215 · 第 13 讲（上）：实验追踪——一个目录里的运行、W&B，以及无服务器训练的准备工作"
+  part2: "AC215 · 第 13 讲（下）：Vertex AI 自定义训练任务——构建、打包、提交、两种身份、GPU 与 MirroredStrategy"
+
+chapters:
+  s01_hook: "两张表，两个冠军"
+  s02_levers: "三个杠杆和缺了位置的一行"
+  s03_notebook_a: "用目录做的实验追踪"
+  s04_wandb: "同一条坐标轴上的运行（run）"
+  s05_config: "三行代码，和一次落空的赋值"
+  s06_serverless: "租机器，不租服务器：无服务器训练（serverless training）"
+  s07_setup: "一个项目、两把密钥和一个存储桶"
+  s08_build: "构建不了的驾驶舱：两处一行修复"
+  s09_package: "tar 包里装了什么"
+  s10_submit: "一条命令，里面藏着一把密钥"
+  s11_identity: "谁提交，谁运行：服务账号与服务代理"
+  s12_logs: "任务会打印什么，W&B 能显示什么"
+  s13_gpu: "一块 GPU 的三个开关"
+  s14_multigpu: "两块 GPU，一个模型：MirroredStrategy"
+  s15_recap: "缺席的模型、收尾与回顾"
+
+# Two or three sentences (rule H2), written register, consistent with video.yaml's publish.description_zh but without
+# the instructor's name (A17). Facts: the lecture's two Colab notebooks (stored outputs of the instructors' runs on a
+# Tesla T4, 2025-10-14 and 2025-10-20) and dlops-io/model-training @ b9aee1c (README Prerequisites to OPTIONAL: Multi
+# GPU Training) run with the two one-line Dockerfile fixes (Dockerfile:2 → bookworm, Dockerfile:37 → google-cloud-cli);
+# captures on a machine without Google credentials, a W&B account, a GPU or a browser, so the cloud successes are shown
+# as recorded with their sources and the Vertex job's first step is replayed in a local stand-in; wandb pinned at
+# 0.15.11 in setup.py; Vertex AI jobs billed while they run (GOLD tags without amounts, shutdown checklist in S15);
+# 11 pause-and-ponder cards, 1 quick predict and 5 recap questions. Paste the chapter timestamps from
+# output/chapters.txt and the study guide, tutorial repo and notebook links (video.yaml course:) under it when
+# uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 13 讲“进阶训练工作流”的跟练视频。上半部分跟着课上的两个 Colab 笔记本训练五个奶酪分类模型：先看 notebook A 手写的 experiment_<时间戳>/ 目录记录了每次运行的什么、漏掉了什么，以及为什么两个笔记本选出了不同的冠军（没有随机种子的数据划分、不一样的轮次数），再用 Weights & Biases（W&B）把运行放到同一条坐标轴上：为什么只有带回调（callback）的运行才有曲线，为什么 wandb.config = {...} 会让运行的配置变成空的，以及 init、callback、finish 三行的正确写法；然后讲清无服务器训练就是“只为训练这一步租一台机器”，并照着 dlops-io/model-training 的 README 准备 Vertex AI API、GPU 配额、服务账号、存储桶和 W&B 密钥。下半部分构建本地的 model-training-cli 容器（包括今天会遇到的两处 Dockerfile 报错和两处一行修复），证明它只负责提交、从不训练；把训练代码打成 tar 包上传到存储桶，用 sh cli.sh 提交 Vertex AI 自定义训练任务，用 sh -x 看清 W&B 密钥怎样明文出现在任务参数里，分清提交任务的服务账号和运行任务的服务代理，看任务会打印什么、W&B 能显示什么，再看一块 GPU 需要一致的三个开关，以及 MirroredStrategy 的数据并行：拆分全局批次、用 all-reduce 平均梯度、在 strategy.scope() 里构建模型，最后收尾，并指出训练好的模型目前还没有保存到任何地方。
+  英文旁白，配中文和中英双语字幕；README 和笔记本的每一步都按原样、按顺序出现，录制机器没有 Google 凭据和 W&B 账号，所以云端操作成功的结果以录制记录的形式展示并注明出处。本讲的 Vertex AI 训练任务在运行期间会向你的项目计费，视频用金色标签标出每个计费点（不写具体金额，请以官方价目页为准），结尾有完整的收尾清单。
