@@ -310,7 +310,8 @@ class BeforeYouBegin(VoiceScene):
 
         with self.voiceover(SAY[5]) as vo:
             t.clear(self)
-            resize(self, t, 6, extra=[retitle(t, T_GCLOUD), track(tr, 5)])
+            resize(self, t, 6, extra=[track(tr, 5)])
+            self.play(retitle(t, T_GCLOUD), run_time=0.5)
             self.play(FadeIn(rc2, shift=DOWN * 0.15), run_time=0.5)
             self.play(track(tr, 5, True), run_time=0.4)
             la = type_cmd(self, t, c03g.cmd, type_time=0.6)
