@@ -116,7 +116,7 @@ S04:
   zh:
   - "第 1 部分：一个函数。"
   - "课上说它是一段由事件触发的轻量代码，比如一次文件上传、一次数据库变更，或者今天的 HTTP 请求。"
-  - "它只在运行时计费，而且会自己扩缩。"
+  - "它只在运行时计费，而且会自动扩缩。"
 - en: "Its four steps: open the console, enable the APIs, write a Python file, deploy. One name has changed: Cloud Functions are now Cloud Run functions, so the README starts at Cloud Run, Services, Write a function."
   zh:
   - "它的四步：打开控制台、启用 API、写一个 Python 文件、部署。"
@@ -310,7 +310,7 @@ S07:
 - en: "Step 3: translate. The button sends JSON in a post request and gets back Bonjour à tous, once the browser decodes that escape. Pause and try it."
   zh:
   - "第 3 步：翻译。"
-  - "这个按钮用一个 POST 请求发送 JSON，拿回 Bonjour à tous，前提是浏览器把那个转义解码出来。"
+  - "这个按钮用一个 POST 请求发送 JSON，拿回 Bonjour à tous，不过要等浏览器把那个转义解码。"
   - "暂停一下，试一试。"
 - en: "The query string from part 1 gets 405 here, method not allowed: this app wants JSON posts. A made-up language gets 400."
   zh:

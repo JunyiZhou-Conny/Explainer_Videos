@@ -24,6 +24,11 @@ one part away use piece.drop(self, part): never FadeOut a member of a piece dire
 when the piece is next drawn). Pieces are built centred near ORIGIN in the layout noted below; place
 them (shift / move_to / next_to) BEFORE their first PLAYS call, or between calls: every PLAYS
 method builds its new parts at the piece's current position.
+Split trap: animating a group that is not itself on the scene (substring(), glyph_range(),
+code_span(), a VGroup you just made of existing parts) makes Manim split every parent holding
+those members into loose top-level pieces; a later FadeOut of the parent then misses nothing, but
+removing or moving the parent does. Re-seat the parent right after with self.add(parent) (a piece:
+piece.heal(self)), or animate the members one by one (each(), [g.animate… for g in span]).
 
 Frame budget. Safe frame x in [-6.6, 6.6], y in [-3.6, 3.6]. Tracker top-left (left -6.5, top 3.5,
 lowest point TRACK_BOTTOM 2.9); lecture tag lref("10–11") top right; pictures stay below PIC_TOP
@@ -107,9 +112,11 @@ Console (CONSOLE beats; tag them with illustration_tag())
         bucket placeholders YELLOW; wraps into rows; .chips (list).
 
 Set pieces (V numbers = BRIEF)
-    V1 DeployGrid(built=True, sketch=False)   the lecture's 2x2. Layout: sketch card x -6.45..-3.65,
-        row headers -3.45..-1.25, cells (2.6 x 1.5) at x 0.25 / 3.15, rows y 1.2 / -0.45, column
-        headers y 2.45, part chips from y -1.45 down, 'today' chip right of row 1 (to x 6.5).
+    V1 DeployGrid(built=True, sketch=True)   the lecture's 2x2. Layout: sketch card centre x -4.4
+        (-6.55..-2.25), row headers centre x -0.95, cells (2.65 x 1.5) at x 1.7 / 4.55 (to 5.9),
+        rows y 1.2 / -0.45, column headers y 2.45, part chips from y -1.45 down (to about -2.9),
+        'today' chip under the row header 'serverless'. sketch=False leaves the card out (then
+        .move_to(ORIGIN) centres the grid).
         built=False starts with the sketch only (S02). PLAYS: fan(scene) arrows fan out from the
         sketch and the four cells appear · headers(scene, which="cols"|"rows") · tick_vm(scene) L1/L2
         ticks · today(scene) · parts(scene) the README's four parts as chips · open_lid(scene) TEAL
@@ -131,8 +138,9 @@ Set pieces (V numbers = BRIEF)
         text) · dissolve(scene) (scale to zero).
     Slider(text, values=(0, 1)) .to(v) ANIM · Switch(text, on=True) .flip(on) ANIM (public access,
         request/instance-based).
-    V3 BuildLine(entry=ENTRY)  inputs x -5.4 (main.py, requirements.txt, entry tag) -> PURPLE Cloud
-        Build x -2.2 -> BLUE Artifact Registry shelf x 1.2 -> dashed revision x 4.6, around y 0.
+    V3 BuildLine(entry=ENTRY)  inputs x -4.8 (main.py, requirements.txt, entry tag; -6.55..-3.05) ->
+        PURPLE Cloud Build x -1.25 -> BLUE Artifact Registry shelf x 1.75 -> dashed revision x 4.85,
+        around y 0 (the lookup path runs under them to y -1.6).
         PLAYS: feed(scene) · stamp(scene, text) · publish(scene) TEAL image onto the shelf ·
         start(scene) the revision starts · lookup(scene) the entry name reaches into main.py (GREEN
         tick, or RED snap + 'revision not ready' when entry != hello_http) · set_entry(scene, name) ·
@@ -165,14 +173,15 @@ Set pieces (V numbers = BRIEF)
         no_key(scene) · you(scene, text) · token(scene) · revision(scene, text).
     V6 ImpersonationRibbon()  you + 'your Google account' (left), laptop disk (bottom left), the
         runtime badge (right). PLAYS: sign_in · ribbon · tickets(n) · adc_file · empty_slot · no_key.
-    V6 BadgeBoard()  web badge (top) + job badge (bottom) with ORANGE project roles, input / output
-        buckets on the right. PLAYS: job_badge(scene) · grant(scene, "input"|"output") ·
+    V6 BadgeBoard()  web badge (x -2.9, y 2.0) + job badge (y -0.9), each with two ORANGE project
+        roles under it; input / output buckets on the right (x 4.9, y 0.9 / -2.0). PLAYS: job_badge(scene) · grant(scene, "input"|"output") ·
         web_note(scene, text).
     V7 LifecycleStrips()  TEAL image block with 'serve' / 'batch' (top left), service strip y 0.9,
         job strip y -0.9 (x -3.0 .. 6.0). PLAYS: serve(scene) · run_job(scene, fail_at=None) ·
         set_exit(scene, code) · endless(scene) the job that never finishes hits 'task timeout 5 min'
         · buckets(scene) · disk_gone(scene).
-    V8 AttemptFolders(prefix="run-001/")  BLUE output bucket (9.6 x 4.2) with a prefix tab.
+    V8 AttemptFolders(prefix="run-001/")  BLUE output bucket (10.6 x 4.2, centred) with a prefix tab;
+        up to three attempt columns (left edges x -4.9, -1.4, 2.1).
         PLAYS: attempt(scene, name) a folder drops in · files(scene, i=-1, fail_after=None) text and
         audio with GREEN 'create only' stamps, manifest last + receipt (or RED 'not a success') ·
         shield(scene, i) · prefix(scene, text) · flash_receipt(scene, i).
@@ -195,16 +204,17 @@ from pathlib import Path
 
 import numpy as np
 import yaml
-from manim import (DL, DOWN, DR, LEFT, ORIGIN, PI, RIGHT, UL, UP, UR, AnimationGroup, Arc, Arrow,
+from manim import (DL, DOWN, DR, LEFT, ORIGIN, PI, RIGHT, UL, UP, UR, AnimationGroup, Arc, Arrow,  # noqa: F401
                    Circle, Create, DashedLine, DashedVMobject, Dot, FadeIn, FadeOut, GrowArrow,
                    GrowFromCenter, Indicate, LaggedStart, Line, MoveAlongPath, Polygon, Rectangle,
-                   RoundedRectangle, Rotate, ShowIncreasingSubsets, Succession, Text, Transform,
+                   ReplacementTransform, RoundedRectangle, Rotate, ShowIncreasingSubsets, Succession, Text,
+                   Transform,
                    UpdateFromAlphaFunc, VGroup, VMobject, linear, there_and_back)
 
 from explainer import style as S
 from explainer.components import pause_and_ponder, person_icon, ponder_card  # noqa: F401 (re-export)
 from explainer.devops import (CAPTION, LABEL, MONO, OUTPUT, PANEL, SMALL, TAG, TERM_BG,  # noqa: F401
-                              ReadmeTracker, Terminal, box, browser_window, cell_width, chip, code_block,
+                              PROMPT_PATH, ReadmeTracker, Terminal, box, browser_window, cell_width, chip, code_block,
                               code_panel, code_span, file_glyph, folder_glyph, glyph_range, label,
                               lecture_ref, line_bar, line_pitch, mono, mono_line, server, substring, tag)
 from explainer.script import load_narration
@@ -932,8 +942,9 @@ def cd_prompt(scene, t: Terminal, new_prompt: str, color=LAPTOP, run_time: float
     t.set_prompt(new_prompt)
     ln = bare_prompt(scene, t)
     path = new_prompt.split(":", 1)[1].rstrip("$# ")
-    scene.play(Indicate(substring(ln, path), color=color, scale_factor=1.04), run_time=run_time)
-    scene.add(ln)
+    scene.play(*[g.animate.set_color(color) for g in substring(ln, path)], run_time=run_time * 0.5)
+    scene.play(*[g.animate.set_color(PROMPT_PATH) for g in substring(ln, path)], run_time=run_time * 0.5)
+    scene.add(t)                             # re-seat the terminal as one mobject
     return ln
 
 
@@ -1386,8 +1397,8 @@ def envelope(text: str = "PORT=8080", color=S.GREY, size: float = 20, env_w: flo
     h = 0.62
     body = Rectangle(width=w, height=h, stroke_color=color, stroke_width=2.5).set_fill(S.BG, 1)
     flap = VMobject(stroke_color=color, stroke_width=2.5).set_points_as_corners(
-        [body.get_corner(UL), body.get_center() + DOWN * 0.05, body.get_corner(UR)])
-    t.move_to(body).shift(DOWN * 0.1)
+        [body.get_corner(UL), body.get_center() + UP * 0.14, body.get_corner(UR)])
+    t.move_to(body).shift(DOWN * 0.12)
     g = VGroup(body, flap, t)
     g.body, g.flap, g.text = body, flap, t
     return g
@@ -1762,6 +1773,12 @@ class Piece(VGroup):
         if self not in scene.mobjects:
             scene.add(self)
 
+    def heal(self, scene):
+        """Re-seat the piece as ONE top-level mobject. Animating a group that is not itself on the
+        scene (a glyph_range, a code_span) makes Manim split every parent that holds its members into
+        top-level pieces; scene.add(piece) undoes that. The PLAYS methods call it for you."""
+        scene.add(self)
+
     def show(self, scene, *mobs, anims=None, run_time: float = 0.6, extra=(), into=None):
         """PLAYS: FadeIn (or `anims`) of new mobjects, then they become parts of the piece (of the
         sub-group `into` when given). Returns the first mobject (or all, as a tuple)."""
@@ -1770,12 +1787,20 @@ class Piece(VGroup):
         scene.play(*a, *extra, run_time=run_time)
         scene.remove(*mobs)
         (into if into is not None else self).add(*mobs)
+        self.heal(scene)
         return mobs[0] if len(mobs) == 1 else mobs
 
     def _detach(self, m):
+        """Take m off the piece; a wrapper group that was never added itself (VGroup(a, b) of parts
+        shown separately) has its members taken off instead."""
+        found = False
         for sub in self.get_family():
             if m in sub.submobjects:
                 sub.remove(m)
+                found = True
+        if not found:
+            for c in list(m.submobjects):
+                self._detach(c)
 
     def drop(self, scene, *mobs, run_time: float = 0.4, extra=(), shift=None):
         """PLAYS: fade parts of the piece out and take them off it (they never snap back)."""
@@ -1785,6 +1810,7 @@ class Piece(VGroup):
         anims = [FadeOut(m, shift=shift) if shift is not None else FadeOut(m) for m in mobs]
         scene.play(*anims, *extra, run_time=run_time)
         scene.remove(*mobs)
+        self.heal(scene)
 
     def swap(self, scene, old, new, run_time: float = 0.6, extra=(), into=None):
         """PLAYS: `old` (a part) morphs into `new` (not yet shown); afterwards `new` is the part."""
@@ -1796,10 +1822,18 @@ class Piece(VGroup):
                     break
         self._detach(old)
         scene.add(old)
-        scene.play(Transform(old, new), *extra, run_time=run_time)
-        scene.remove(old)
+        scene.play(ReplacementTransform(old, new), *extra, run_time=run_time)
+        scene.remove(old, new)
         (parent if parent is not None else self).add(new)
+        self.heal(scene)
         return new
+
+
+def keep_inside(m, margin: float = 0.05):
+    """Shift `m` (no scaling) so that it sits inside the safe frame x in [-6.6, 6.6], y in [-3.6, 3.6]."""
+    dx = max(0.0, -SAFE_X + margin - m.get_left()[0]) - max(0.0, m.get_right()[0] - SAFE_X + margin)
+    dy = max(0.0, -SAFE_Y + margin - m.get_bottom()[1]) - max(0.0, m.get_top()[1] - SAFE_Y + margin)
+    return m.shift(np.array([dx, dy, 0]))
 
 
 def _morph_anims(olds, news):
@@ -1860,9 +1894,9 @@ class DeployGrid(_Anchored):
     then fan(), headers('cols'), headers('rows'), tick_vm(), today(), parts().
     .sketch .cells[r][c] (.frame .glyph) .cols .rows_ .part_chips .con_cards"""
 
-    CX = (1.65, 4.45)
+    CX = (1.7, 4.55)
     RY = (1.2, -0.45)
-    CELL_W, CELL_H = 2.5, 1.5
+    CELL_W, CELL_H = 2.65, 1.5
     COLH_Y = 2.45
     ROWH_X = -0.95
     SK = (-4.4, 0.4)
@@ -2075,7 +2109,7 @@ class DeployGrid(_Anchored):
 class InstanceStrip(_Anchored):
     """V2 · scale to zero, scale out, cold start, the meter. One time axis per row (x -3.0 .. 5.4 of
     the layout), its glyph + label on the left (x -5.4), rows 2.2 apart (centred on the origin).
-    Above each axis: instance lives (lane 0 at +0.35, lane 1 at +0.9); under it: the GOLD meter.
+    Above each axis: instance lives (lane 0 at +0.35, lane 1 at +1.1); under it: the GOLD meter.
     rows: names from ("vm", "serverless"). No prices: the meter is a picture of WHICH time is billed.
     .x(t) (t in [0, 1]) .axis[row] .label_[row] .meters[row] (list of segments)"""
 
@@ -2104,7 +2138,7 @@ class InstanceStrip(_Anchored):
             self.add(ax, self.label_[r])
         self.times = None
         if times:
-            ys = self.y[rows[-1]] - 0.75
+            ys = self.y[rows[-1]] - 1.05
             ts = VGroup(*[label(s, 20, S.GREY) for s in times])
             for k, t in enumerate(ts):
                 t.move_to(self.p(self.X0 + (self.X1 - self.X0) * (k + 0.5) / len(times), ys))
@@ -2121,7 +2155,7 @@ class InstanceStrip(_Anchored):
 
     def _bar(self, row, t0, t1, lane=0, solid=False, faint=False) -> VGroup:
         h = 0.42
-        dy = 0.35 + 0.55 * lane
+        dy = 0.35 + 0.75 * lane
         w = max(0.12, self.x(t1) - self.x(t0))
         if solid:
             b = Rectangle(width=w, height=h, stroke_color=CLOUD, stroke_width=2.5).set_fill(CLOUD, 0.18)
@@ -2139,11 +2173,11 @@ class InstanceStrip(_Anchored):
     def _meter(self, row, t0, t1, lane=0) -> Rectangle:
         w = max(0.08, self.x(t1) - self.x(t0))
         m = Rectangle(width=w, height=0.14, stroke_width=0).set_fill(COST, 0.85)
-        return m.move_to([(self.x(t0) + self.x(t1)) / 2, self._pt(row, 0, -0.3 - 0.22 * lane)[1], 0])
+        return m.move_to([(self.x(t0) + self.x(t1)) / 2, self._pt(row, 0, -0.28 - 0.2 * lane)[1], 0])
 
     def pulses(self, scene, row: str, ts, lane: int = 0, run_time: float = 0.8) -> VGroup:
         """PLAYS: PINK request pulses drop onto the row's axis at times ts. Returns them."""
-        dots = [pulse_dot().move_to(self._pt(row, t, 0.35 + 0.55 * lane + 0.42)) for t in ts]
+        dots = [pulse_dot().move_to(self._pt(row, t, 0.35 + 0.75 * lane + 0.42)) for t in ts]
         self.show(scene, *dots, anims=[LaggedStart(*[FadeIn(d, shift=DOWN * 0.25) for d in dots], lag_ratio=0.3)],
                   run_time=run_time)
         return VGroup(*dots)
@@ -2176,7 +2210,7 @@ class InstanceStrip(_Anchored):
         instance dissolves (its life stays as a faint trace)."""
         from manim import GrowFromEdge
         bar = self._bar(row, t0, t1, lane)
-        dots = [pulse_dot().move_to(self._pt(row, t, 0.35 + 0.55 * lane + 0.42)) for t in pulses]
+        dots = [pulse_dot().move_to(self._pt(row, t, 0.35 + 0.75 * lane + 0.42)) for t in pulses]
         if billing == "instance":
             segs = [self._meter(row, t0, t1, lane)]
         else:
@@ -2184,7 +2218,7 @@ class InstanceStrip(_Anchored):
         self.meters[row] += segs
         self.spans[row].append((t0, t1, tuple(pulses), lane, segs))
         if cold:
-            pf = puff().move_to(self._pt(row, t0, 0.35 + 0.55 * lane) + LEFT * 0.25)
+            pf = puff(0.26).move_to(self._pt(row, t0, 0.35 + 0.75 * lane) + LEFT * 0.3)
             self.show(scene, pf, anims=[FadeIn(pf, scale=0.5)], run_time=0.3)
             self.drop(scene, pf, run_time=0.25, extra=[GrowFromEdge(bar, LEFT, run_time=0.25)])
             self.add(bar)
@@ -2420,9 +2454,9 @@ def registry_shelf(with_image: bool = True, shelf_w: float = 2.4, size: float = 
 
 
 class BuildLine(_Anchored):
-    """V3 · a function is a container you did not write. Inputs (x -4.9: main.py, requirements.txt,
-    the entry tag) -> PURPLE Cloud Build (x -1.5) -> BLUE Artifact Registry shelf (x 1.6) -> dashed
-    BLUE revision (x 4.7); around y 0. .inputs (.main .req .entry) .build .shelf .revision .image"""
+    """V3 · a function is a container you did not write. Inputs (x -4.8: main.py, requirements.txt,
+    the entry tag) -> PURPLE Cloud Build (x -1.25) -> BLUE Artifact Registry shelf (x 1.75) -> dashed
+    BLUE revision (x 4.85); around y 0. .inputs (.main .req .entry) .build .shelf .revision .image"""
 
     def __init__(self, entry: str = ENTRY, size: float = 20, **kw):
         super().__init__(**kw)
@@ -2431,17 +2465,17 @@ class BuildLine(_Anchored):
         req = file_card("requirements.txt", OWN)
         ent = entry_tag(entry, ok=(entry == ENTRY))
         self.inputs = VGroup(main, req, ent).arrange(DOWN, buff=0.25, aligned_edge=LEFT)
-        self.inputs.move_to(self.p(-4.9, 0.1))
+        self.inputs.move_to(self.p(-4.8, 0.1))
         self.inputs.main, self.inputs.req, self.inputs.entry = main, req, ent
         bb = RoundedRectangle(width=2.6, height=1.9, corner_radius=0.14, stroke_color=TOOL,
-                              stroke_width=3).set_fill(TOOL, 0.12).move_to(self.p(-1.5, 0.1))
+                              stroke_width=3).set_fill(TOOL, 0.12).move_to(self.p(-1.25, 0.1))
         bt = VGroup(label("Cloud Build", 22, INK), label("buildpacks ·", 20, S.GREY),
                     VGroup(label("base", 20, S.GREY), mono("python312", 20, S.GREY)).arrange(RIGHT, buff=0.1))
         bt.arrange(DOWN, buff=0.1).move_to(bb)
         self.build = VGroup(bb, bt)
         self.build.frame, self.build.text = bb, bt
-        self.shelf = registry_shelf(False).move_to(self.p(1.6, -0.35))
-        self.revision = instance(2.0, 1.3, inner=False).move_to(self.p(4.7, 0.1))
+        self.shelf = registry_shelf(False).move_to(self.p(1.75, -0.35))
+        self.revision = instance(2.0, 1.3, inner=False).move_to(self.p(4.85, 0.1))
         self.rev_label = label("revision", 20, CLOUD).next_to(self.revision, UP, buff=0.12)
         self.a1 = arrow(self.inputs.get_right() + RIGHT * 0.1, bb.get_left(), S.GREY, buff=0.05)
         self.a2 = arrow(bb.get_right(), self.shelf.board.get_left() + UP * 0.35, S.GREY, buff=0.08)
@@ -2516,6 +2550,9 @@ class BuildLine(_Anchored):
     def skip_build(self, scene, text: str = "no build this time", run_time: float = 0.8):
         """PLAYS (S08): the Cloud Build box turns GREY-dashed with a GREY cross and a label."""
         bb = self.build.frame
+        if self.stamp_ is not None:
+            self.drop(scene, self.stamp_, run_time=0.2)
+            self.stamp_ = None
         dash = outline_box(bb.width, bb.height, S.GREY, solid=False).move_to(bb)
         x = cross_glyph(0.9, S.GREY, 5).move_to(bb)
         lab = label(text, 20, S.GREY).next_to(bb, DOWN, buff=0.2)
@@ -2563,7 +2600,8 @@ class FunctionInside(_Anchored):
         self.ear = ear(None).move_to(self.outer.get_left() + np.array([0.15, 0, 0]))
         self.ear.move_to([self.outer.get_left()[0] + 0.12, gb.get_center()[1], 0])
         self.wire = Line(self.ear.get_right(), gb.get_left(), color=ROUTE, stroke_width=3)
-        self.entry = entry_tag(entry, ok=(entry == ENTRY)).move_to(self.p(-1.3, 0.85))
+        self.entry = entry_tag(entry, ok=(entry == ENTRY)).move_to(self.p(-0.9, 1.12))
+        self.look_arrow = None
         deco, dfn = excerpt("tutorial/function/main.py", 7, 8).split("\n")
         rows = VGroup(mono_line(deco, 20, S.GREY), mono_line(dfn, 20, INK)).arrange(DOWN, buff=0.18,
                                                                                     aligned_edge=LEFT)
@@ -2600,17 +2638,21 @@ class FunctionInside(_Anchored):
         tgt = substring(self.card.defline, ENTRY)
         a = arrow(self.entry.get_right(), tgt.get_left() + LEFT * 0.05 if ok else self.card.get_left(),
                   col, stroke=4, buff=0.08)
+        if self.look_arrow is not None:
+            self.drop(scene, self.look_arrow, run_time=0.2)
+        self.look_arrow = a
         self.show(scene, a, anims=[GrowArrow(a)], run_time=run_time * 0.4)
         if ok:
             back = pulse_dot(OWN, r=0.11).move_to(tgt)
-            scene.play(tgt.animate.set_color(OWN), Indicate(tgt, color=OWN, scale_factor=1.15),
-                       run_time=run_time * 0.3)
+            scene.play(*[g.animate.set_color(OWN) for g in tgt], run_time=run_time * 0.3)
+            self.heal(scene)
             self.show(scene, back, run_time=0.1)
             scene.play(back.animate.move_to(self.ear.get_left() + LEFT * 0.3), run_time=run_time * 0.4)
             self.drop(scene, back, run_time=0.2)
         else:
-            nd = label("no such def", 20, ERR).next_to(a, DOWN, buff=0.12)
+            nd = label("no such def", 20, ERR).next_to(self.card, DOWN, buff=0.15)
             self.show(scene, nd, run_time=run_time * 0.3, extra=[Indicate(a, color=ERR)])
+            self.look_arrow = VGroup(a, nd)
         return a
 
 
@@ -2664,9 +2706,8 @@ class QueryToArgs(_Anchored):
         self._ensure(scene)
         if self.query in self.submobjects:
             self.remove(self.query)
-        scene.play(ShowIncreasingSubsets(self.query.glyphs if hasattr(self.query, "glyphs") else self.query,
-                                         rate_func=linear), run_time=run_time)
-        scene.remove(self.query)
+        scene.play(ShowIncreasingSubsets(self.query.glyphs, rate_func=linear), run_time=run_time)
+        scene.remove(self.query.glyphs, self.query)
         self.add(self.query)
 
     def _segments(self):
@@ -2685,7 +2726,7 @@ class QueryToArgs(_Anchored):
         into rows. .pairs (mono_line rows, PINK)"""
         segs, texts, hinges = self._segments()
         self._ensure(scene)
-        scene.play(*[Indicate(h, color=TURN, scale_factor=1.5) for h in hinges], run_time=hinge_time)
+        scene.play(*[Indicate(g, color=TURN, scale_factor=1.5) for h in hinges for g in h], run_time=hinge_time)
         news = []
         for k, s in enumerate(texts):
             ln = mono_line(s, self.size, ROUTE)
@@ -2707,7 +2748,7 @@ class QueryToArgs(_Anchored):
         new = mono_line(s, self.size, ROUTE)
         new.shift(old.strut.get_left() - new.strut.get_left())
         spots = [glyph_range(old, m.start(), m.end()) for m in re.finditer("%20", old.text)]
-        scene.play(*[Indicate(sp, color=TURN, scale_factor=1.3) for sp in spots], run_time=run_time * 0.4)
+        scene.play(*[Indicate(g, color=TURN, scale_factor=1.3) for sp in spots for g in sp], run_time=run_time * 0.4)
         self.swap(scene, old, new, run_time=run_time * 0.6, into=self.pairs)
         self.pairs.submobjects.insert(0, self.pairs.submobjects.pop())
 
@@ -2726,10 +2767,14 @@ class QueryToArgs(_Anchored):
             scene.remove(pair)
             scene.play(dsp.animate.set_color(S.GREY).set_opacity(0.45), run_time=run_time / 3 * 0.4)
         self.pairs = None
+        scene.add(panel)                     # re-seat the panel (animating its spans split it)
+        self.heal(scene)
 
     def defaults(self, panel, color=TURN):
-        """ANIM: with no query string the three defaults of a code(main.py, 9, 12) panel light up."""
-        return LaggedStart(*[Indicate(code_span(panel.code, k, d), color=color, scale_factor=1.1)
+        """ANIM: with no query string the three defaults of a code(main.py, 9, 12) panel turn `color`.
+        Afterwards call self.add(panel) once (animating code spans splits the panel; re-adding it
+        re-seats it)."""
+        return LaggedStart(*[AnimationGroup(*[g.animate.set_color(color) for g in code_span(panel.code, k, d)])
                              for k, d in enumerate(self.DEFAULTS)], lag_ratio=0.3)
 
     def join(self, scene, run_time: float = 1.2):
@@ -2746,21 +2791,31 @@ class QueryToArgs(_Anchored):
     def provider(self, scene, src, text: str = "googletrans'\npublic endpoint", run_time: float = 1.4,
                  cloud_at=None):
         """PLAYS: a dashed BLUE 'Google Cloud' outline around `src` (a mobject: the handler), an
-        ORANGE cloud for googletrans' endpoint (right of src, or at cloud_at=(x, y)), an ORANGE arrow
-        out and a dashed one back. Returns VGroup(outline, cloud, out_arrow, back_arrow)."""
+        ORANGE cloud for googletrans' endpoint (right of src when it fits, else under its right end,
+        or at cloud_at=(x, y)), an ORANGE arrow out and a dashed one back. Returns VGroup(outline, cloud, out_arrow, back_arrow)."""
         ol = outline_box(src.width + 0.4, src.height + 0.6, CLOUD, solid=False).move_to(src).shift(UP * 0.12)
         olab = label("Google Cloud", 20, CLOUD).move_to(ol.get_corner(UL) + np.array([0.95, -0.2, 0]))
         cl = cloud_shape(text, SHARED, 2.6)
+        below = False
         if cloud_at is not None:
             cl.move_to([cloud_at[0], cloud_at[1], 0])
-        else:
+            below = cl.get_top()[1] < ol.get_bottom()[1]
+        elif ol.get_right()[0] + 0.9 + cl.width <= SAFE_X:
             cl.next_to(ol, RIGHT, buff=0.9)
-            if cl.get_right()[0] > SAFE_X:
-                cl.shift(LEFT * (cl.get_right()[0] - SAFE_X))
-        a_out = Arrow(ol.get_right() + UP * 0.15, cl.get_left() + UP * 0.15, buff=0.05, color=SHARED,
-                      stroke_width=4, tip_length=0.2)
-        a_back = DashedLine(cl.get_left() + DOWN * 0.2, ol.get_right() + DOWN * 0.2, color=SHARED,
-                            stroke_width=3).add_tip(tip_length=0.18)
+        else:
+            below = True
+            cl.next_to(ol, DOWN, buff=0.6).align_to(ol, RIGHT).shift(LEFT * 0.4)
+        if below:
+            a_out = Arrow([cl.get_center()[0] - 0.3, ol.get_bottom()[1], 0], [cl.get_center()[0] - 0.3, cl.get_top()[1], 0],
+                          buff=0.05, color=SHARED, stroke_width=4, tip_length=0.2)
+            a_back = DashedLine([cl.get_center()[0] + 0.3, cl.get_top()[1], 0],
+                                [cl.get_center()[0] + 0.3, ol.get_bottom()[1], 0], color=SHARED,
+                                stroke_width=3).add_tip(tip_length=0.18)
+        else:
+            a_out = Arrow(ol.get_right() + UP * 0.15, cl.get_left() + UP * 0.15, buff=0.05, color=SHARED,
+                          stroke_width=4, tip_length=0.2)
+            a_back = DashedLine(cl.get_left() + DOWN * 0.2, ol.get_right() + DOWN * 0.2, color=SHARED,
+                                stroke_width=3).add_tip(tip_length=0.18)
         self.show(scene, ol, olab, cl, run_time=run_time * 0.4)
         self.show(scene, a_out, anims=[GrowArrow(a_out)], run_time=run_time * 0.3)
         self.show(scene, a_back, anims=[Create(a_back)], run_time=run_time * 0.3)
@@ -2877,9 +2932,9 @@ class CommandSlots(_Anchored):
         fade = [self.entry_slot, self.cmd_slot, self.entry_name, self.cmd_name]
         for m in fade:
             self.remove(m)
-        scene.play(*[Transform(o, n) for o, n in zip(olds, cr.chips)], *[FadeOut(m) for m in fade],
+        scene.play(*[ReplacementTransform(o, n) for o, n in zip(olds, cr.chips)], *[FadeOut(m) for m in fade],
                    FadeIn(belts), FadeIn(lab), run_time=run_time)
-        scene.remove(*olds, *fade, belts, lab)
+        scene.remove(*olds, *cr.chips, *fade, belts, lab)
         self.add(*cr.chips, belts, lab)
         self.arg_chips, self.command_chip, self.argv = VGroup(*cr.chips), None, cr
         return cr
@@ -2902,8 +2957,9 @@ class CommandSlots(_Anchored):
         for o in olds:
             self._detach(o)
         scene.add(*olds)
-        scene.play(*[Transform(o, fat.copy()) for o in olds], run_time=run_time)
-        scene.remove(*olds)
+        cps = [fat.copy() for _ in olds]
+        scene.play(*[ReplacementTransform(o, c) for o, c in zip(olds, cps)], run_time=run_time)
+        scene.remove(*olds, *cps)
         self.add(fat)
         self.arg_chips, self.fat = None, fat
         return fat
@@ -2918,7 +2974,8 @@ class CommandSlots(_Anchored):
         lab = label("program?", 20, ERR).next_to(self.entry_slot, RIGHT, buff=-1.6)
         lab.move_to([self.entry_slot.get_right()[0] - lab.width / 2 - 0.2, self.entry_slot.get_center()[1], 0])
         self.show(scene, lab, run_time=run_time,
-                  extra=[first.animate.move_to(tgt).set_color(ERR)])
+                  extra=[first.animate.move_to(tgt), first.box.animate.set_stroke(ERR),
+                         first.text.animate.set_color(ERR)])
         self.program_label = lab
         return first
 
@@ -2956,8 +3013,9 @@ class CommandSlots(_Anchored):
 
 class PortEnvelope(_Anchored):
     """V5 · the container contract. A TEAL container (5.0 x 2.8, x -1.5 .. 3.5 of the layout) with a
-    PURPLE process box (2.6 x 1.1); its ear on the container's left edge; a GREY laptop wall at x -3.9
-    with a PINK door and a pipe to the ear (wall()). Extent x -4.9 .. 3.5 once the wall shows.
+    PURPLE process box (2.6 x 1.1); its ear on the container's left edge, the ear's address under the
+    pipe, between the wall and the container; a GREY laptop wall at x -3.9 with a PINK door and a
+    pipe to the ear (wall()). Extent x -4.9 .. 4.6 (the envelope's writer label sits right of it).
     .box .proc (.frame .text) .ear_ .pipe .door .wall_"""
 
     def __init__(self, size: float = 20, **kw):
@@ -2994,17 +3052,17 @@ class PortEnvelope(_Anchored):
         'cloud' BLUE 'Cloud Run', 'you' GREY 'you'), opens, and the PINK ear '0.0.0.0:<port>' grows on
         the container's left edge."""
         col, who = {"image": (IMAGE, "image ENV"), "cloud": (CLOUD, "Cloud Run"), "you": (YOU, "you")}[writer]
-        env = envelope(f"PORT={port}", col).move_to(self.p(1.4, 0.95))
-        wl = label(who, 20, col).next_to(env, RIGHT, buff=0.15)
+        env = envelope(f"PORT={port}", col).move_to(self.p(1.9, 0.95))
+        wl = label(who, 20, col).next_to(env, LEFT, buff=0.15)
         if self.env is not None:
             self.drop(scene, self.env, run_time=0.2)
         self.env = VGroup(env, wl)
         self.show(scene, self.env, anims=[FadeIn(env, shift=DOWN * 0.3), FadeIn(wl)], run_time=run_time * 0.5)
         e = ear(f"0.0.0.0:{port}", size=self.size)
-        e.glyph.move_to([self.box.get_left()[0] + 0.12, self.ear_y, 0])
-        e.text.next_to(e.glyph, DOWN, buff=0.12).align_to(self.box, LEFT).shift(RIGHT * 0.15)
+        e.glyph.move_to([self.box.get_left()[0] + 0.12, self.ear_y + getattr(self, "ear_dy", 0.0), 0])
+        e.text.next_to(e.glyph, DOWN, buff=0.15).align_to(e.glyph, RIGHT).shift(LEFT * 0.2)
         if self.ear_ is not None:
-            self.drop(scene, self.ear_, run_time=0.2)
+            self.drop(scene, *[m for m in (self.ear_, getattr(self, "wire", None)) if m is not None], run_time=0.2)
         self.ear_ = e
         wire = Line(e.glyph.get_right(), self.proc.frame.get_left(), color=ROUTE, stroke_width=3) \
             if self.proc is not None else VGroup()
@@ -3072,7 +3130,7 @@ class PortEnvelope(_Anchored):
     def repipe(self, scene, host: str = "8086", target: str = "9090", run_time: float = 0.8):
         """PLAYS: the pipe reattaches to the moved ear; its label reads '-p host:target'."""
         door = self.door[0]
-        mid = np.array([self.box.get_left()[0] - 0.6, door.get_center()[1], 0])
+        mid = np.array([door.get_right()[0] + 0.35, door.get_center()[1], 0])
         new = VMobject(stroke_color=ROUTE, stroke_width=5).set_points_as_corners(
             [door.get_right(), mid, [mid[0], self.ear_.glyph.get_center()[1], 0], self.ear_.glyph.get_left()])
         nl = mono(f"-p {host}:{target}", 20, ROUTE).move_to(self.pipe_label)
@@ -3088,8 +3146,9 @@ class PortEnvelope(_Anchored):
                   tip_length=0.18)
         lab = mono("SIGINT", 20, INK).next_to(a.get_start(), UP, buff=0.08)
         self.show(scene, a, lab, anims=[GrowArrow(a), FadeIn(lab)], run_time=run_time * 0.4)
-        parts = [self.proc] + ([self.slots] if self.slots is not None else [])
+        parts = [self.proc] + [m for m in (self.slots, getattr(self, "wire", None)) if m is not None]
         self.drop(scene, *parts, a, lab, run_time=run_time * 0.6)
+        self.wire = None
         self.proc = self.slots = None
 
 
@@ -3106,7 +3165,8 @@ class IdentityDoors(_Anchored):
     """V6 · who may call it (left door) and who it runs as (right door). Browser x -5.7; BLUE service
     box (5.4 x 2.4) centred (-0.6, 0.6); left door at its left edge, right door at its right edge;
     Agent Platform cloud (5.2, 1.4); the switch 'Allow public access' under the box (x -3.0, y -1.2);
-    a badge hangs below the right door at (3.0, -1.0), its role chips under it.
+    a badge hangs below the right door at (3.0, -1.0), its role chips under it; you() puts 'you' at
+    (-5.6, -2.9) with its label to the right.
     .browser .service .left_door .right_door .cloud .switch .badge_ (or None) .role_chips"""
 
     def __init__(self, name: str = SERVICE, public: bool = True, **kw):
@@ -3160,6 +3220,8 @@ class IdentityDoors(_Anchored):
         new = [a]
         if not ok:
             new.append(cross_glyph(0.3).next_to(self.right_door, RIGHT, buff=0.12))
+        if getattr(self, "out_arrow", None) is not None:
+            self.drop(scene, self.out_arrow, run_time=0.2)
         self.show(scene, *new, anims=[GrowArrow(a)] + [FadeIn(m) for m in new[1:]], run_time=run_time)
         self.out_arrow = VGroup(*new)
         return self.out_arrow
@@ -3219,10 +3281,11 @@ class IdentityDoors(_Anchored):
 
     def you(self, scene, text: str = "Service Account User", run_time: float = 0.8):
         """PLAYS: a GREY 'you' figure (bottom left) and a thin GREY arrow to the badge, labelled."""
-        y_ = you().move_to(self.p(-5.6, -2.4))
+        y_ = you().move_to(self.p(-5.6, -2.9))
         tgt = self.badge_ if self.badge_ is not None else self.right_door
         a = arrow(y_.figure.get_right(), tgt.get_left(), S.GREY, stroke=2.5, buff=0.1)
-        lab = label(text, 20, S.GREY).next_to(a.get_center(), DOWN, buff=0.12)
+        lab = label(text, 20, S.GREY).next_to(y_.figure, RIGHT, buff=0.25).align_to(y_.figure, DOWN)
+        lab.shift(DOWN * 0.15)
         self.you_ = VGroup(y_, a, lab)
         self.show(scene, y_, run_time=run_time * 0.4)
         self.show(scene, a, lab, anims=[GrowArrow(a), FadeIn(lab)], run_time=run_time * 0.6)
@@ -3254,7 +3317,7 @@ class ImpersonationRibbon(_Anchored):
 
     def sign_in(self, scene, text: str = "your Google account", run_time: float = 0.6):
         """PLAYS: a GREY card beside 'you'."""
-        c = grey_chip(text).next_to(self.you_, UP, buff=0.15)
+        c = keep_inside(grey_chip(text).next_to(self.you_, UP, buff=0.15))
         self.show(scene, c, run_time=run_time)
         return c
 
@@ -3303,17 +3366,18 @@ class ImpersonationRibbon(_Anchored):
 
 
 class BadgeBoard(_Anchored):
-    """V6 · S13's badges: the web badge (x -3.2, y 1.7) with its two ORANGE project roles, then the
-    job badge (x -3.2, y -0.6) with the same two; input / output buckets on the right (x 3.6, y 1.1 /
-    -1.5) take GREEN bucket-scoped grants. .web .job (or None) .buckets {'input', 'output'}"""
+    """V6 · S13's badges: the web badge (x -2.9, y 2.0) with its two ORANGE project roles under it,
+    then the job badge (x -2.9, y -0.9) with the same two; input / output buckets on the right (x 4.9,
+    y 0.9 / -2.0) take GREEN bucket-scoped grants (the chip sits just left of its bucket, a line from
+    the job badge runs through it). .web .job (or None) .buckets {'input', 'output'} .grants"""
 
     ROLES = ("Agent Platform User", "Service Usage Consumer")
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.web = self._badge_with_roles(RUNTIME_SA, self.p(-3.2, 1.7))
-        bi = bucket(IN_BUCKET, 0.9).move_to(self.p(3.6, 1.1))
-        bo = bucket(OUT_BUCKET, 0.9).move_to(self.p(3.6, -1.5))
+        self.web = self._badge_with_roles(RUNTIME_SA, self.p(-2.9, 2.0))
+        bi = bucket(IN_BUCKET, 0.9).move_to(self.p(4.9, 0.9))
+        bo = bucket(OUT_BUCKET, 0.9).move_to(self.p(4.9, -2.0))
         self.buckets = {"input": bi, "output": bo}
         self.job = None
         self.grants = {}
@@ -3329,7 +3393,7 @@ class BadgeBoard(_Anchored):
 
     def job_badge(self, scene, run_time: float = 0.8):
         """PLAYS: the job's badge forms with the same two ORANGE project roles."""
-        self.job = self._badge_with_roles(JOB_SA, self.p(-3.2, -0.6))
+        self.job = self._badge_with_roles(JOB_SA, self.p(-2.9, -0.9))
         self.show(scene, self.job, anims=[FadeIn(self.job.badge, scale=0.8),
                                           LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in self.job.roles],
                                                       lag_ratio=0.3)], run_time=run_time)
@@ -3339,9 +3403,10 @@ class BadgeBoard(_Anchored):
         'Creator → output', tied to that bucket only."""
         text = {"input": "Viewer → input", "output": "Creator → output"}[which]
         bk = self.buckets[which]
-        src = self.job.badge.get_right()
-        line = Line(src, bk.pail.get_left(), color=OWN, stroke_width=3)
-        ch = chip(text, OWN, size=20).move_to(line.get_center()).shift(UP * 0.3 if which == "input" else DOWN * 0.3)
+        ch = chip(text, OWN, size=20)
+        ch.move_to([bk.pail.get_left()[0] - 0.35 - ch.width / 2, bk.pail.get_center()[1], 0])
+        line = VGroup(Line(self.job.badge.get_right(), ch.get_left(), color=OWN, stroke_width=3),
+                      Line(ch.get_right(), bk.pail.get_left(), color=OWN, stroke_width=3))
         self.grants[which] = VGroup(line, ch)
         self.show(scene, line, ch, anims=[Create(line), FadeIn(ch)], run_time=run_time)
         return ch
@@ -3496,17 +3561,17 @@ class LifecycleStrips(_Anchored):
 
 # ------------------------------------------------------------------ V8 · AttemptFolders
 class AttemptFolders(_Anchored):
-    """V8 · a result you can prove. The BLUE output bucket (9.6 x 4.2, centred) titled
+    """V8 · a result you can prove. The BLUE output bucket (10.6 x 4.2, centred) titled
     YOUR_OUTPUT_BUCKET, a PINK prefix tab 'run-001/' (yours, from the arguments); attempt folders
-    drop in as columns (x -3.0, 0.3, 3.4 of the layout), each with its files and, when complete, the
-    GREEN receipt. .frame .tabs .attempts (list of VGroups: .folder .name .files .receipt)"""
+    drop in as columns (left edges x -4.9, -1.4, 2.1 of the layout; 3.3 wide each), each with its
+    files and, when complete, the GREEN receipt. .frame .tabs .attempts (list of VGroups: .folder .name .files .receipt)"""
 
-    COLS = (-3.0, 0.3, 3.4)
+    COLS = (-4.9, -1.4, 2.1)          # left edges of the attempt columns
     FILES = ("translated.txt", "speech.wav", "manifest.json")
 
     def __init__(self, prefix: str = "run-001/", bucket_name: str = OUT_BUCKET, **kw):
         super().__init__(**kw)
-        self.frame = outline_box(9.6, 4.2, CLOUD, solid=True, fill_opacity=0.06).move_to(self.p(0, 0))
+        self.frame = outline_box(10.6, 4.2, CLOUD, solid=True, fill_opacity=0.06).move_to(self.p(0, 0))
         hd = VGroup(bucket(None, 0.45), mono(bucket_name, 20, INK)).arrange(RIGHT, buff=0.15)
         hd.move_to(self.frame.get_corner(UL) + np.array([hd.width / 2 + 0.3, -0.35, 0]))
         self.head = hd
@@ -3543,7 +3608,7 @@ class AttemptFolders(_Anchored):
         fg = folder_glyph(0.42, CLOUD)
         nm = mono(name, 20, INK).next_to(fg, RIGHT, buff=0.12)
         col = VGroup(fg, nm)
-        col.move_to(self.p(self.COLS[i], 0.55))
+        col.move_to(self.p(self.COLS[i], 0.55), aligned_edge=LEFT)
         col.folder, col.name, col.files, col.receipt = fg, nm, VGroup(), None
         self.attempts.append(col)
         self.show(scene, col, anims=[FadeIn(col, shift=DOWN * 0.5)], run_time=run_time)
