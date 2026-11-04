@@ -1,0 +1,3 @@
+$ python -c 'import wandb; print(wandb.__version__)'
+0.31.0
+[exit 0]

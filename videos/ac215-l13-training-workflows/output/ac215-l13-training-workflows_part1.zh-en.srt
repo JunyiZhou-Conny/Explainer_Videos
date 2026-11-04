@@ -1,0 +1,1099 @@
+1
+00:00:00,000 --> 00:00:04,540
+这节课的两个 notebook，都是授课老师跑过的
+Two notebooks from this lecture, run by the instructors:
+
+2
+00:00:04,540 --> 00:00:06,404
+同样的数据 pipeline
+the same data pipeline,
+
+3
+00:00:06,404 --> 00:00:10,539
+同样的 1156 张奶酪照片，同样的五个模型
+the same 1,156 cheese photos, the same five models.
+
+4
+00:00:10,859 --> 00:00:16,363
+Notebook A 选出的冠军是微调过的 MobileNet，准确率 68.97%
+Notebook A crowns the fine-tuned MobileNet, at 68.97 percent.
+
+5
+00:00:16,683 --> 00:00:22,708
+Notebook B 选出的冠军是冻结的 MobileNet，也是 68.97%
+Notebook B crowns the frozen MobileNet, also at 68.97 percent,
+
+6
+00:00:22,708 --> 00:00:26,304
+而微调过的那个只有 62.93
+and puts the fine-tuned one at 62.93.
+
+7
+00:00:26,550 --> 00:00:29,729
+那么哪种做法更好，微调还是冻结？
+So which recipe is better, fine-tuning or freezing?
+
+8
+00:00:30,049 --> 00:00:33,569
+而且光看这两张表，你能看出到底哪里不一样吗？
+And from these two tables, can you even tell what was different?
+
+9
+00:00:33,889 --> 00:00:36,811
+有一条线索看得见：看 epochs 这一列
+One clue is visible: look at the epochs column.
+
+10
+00:00:37,131 --> 00:00:38,681
+先记着这个问题
+Hold that question.
+
+11
+00:00:38,731 --> 00:00:43,809
+答案一部分在表里，另一部分在这张表从没写下的东西里
+Part of the answer is in the table, and part of it is in what the table never wrote down.
+
+12
+00:00:44,050 --> 00:00:46,781
+然后，微调过的 MobileNet 离开 Colab
+Then the fine-tuned MobileNet leaves Colab.
+
+13
+00:00:47,101 --> 00:00:49,588
+它被打进一个 4 KB 的 tar 包
+It gets packed into a 4 kilobyte tarball
+
+14
+00:00:49,588 --> 00:00:54,375
+在一台只租一个任务那么久的机器上训练，只用一条命令
+and trains on a machine you rent for the length of one job, from one command.
+
+15
+00:00:54,695 --> 00:00:57,170
+这条命令里带着你的 W&B 密钥
+That command carries your W&B key.
+
+16
+00:00:57,417 --> 00:01:02,185
+跟着做，你需要两份带免费 T4 GPU 的 Colab 拷贝
+To follow along you need two Colab copies with a free T4 GPU,
+
+17
+00:01:02,185 --> 00:01:04,530
+一个免费的 W&B 账号、Docker
+a free account on W&B, Docker,
+
+18
+00:01:04,530 --> 00:01:07,657
+以及一个开通了结算的 Google Cloud 项目
+and a Google Cloud project with billing.
+
+19
+00:01:07,977 --> 00:01:10,913
+Vertex AI 任务在运行期间会花钱
+Vertex AI jobs cost money while they run;
+
+20
+00:01:10,913 --> 00:01:13,993
+金色标签标出每一个计费点，不写金额
+gold tags mark each point, without amounts.
+
+21
+00:01:14,313 --> 00:01:16,524
+黄色标签的意思是：暂停一下，自己跑一遍
+A yellow tag means pause and run it,
+
+22
+00:01:16,524 --> 00:01:18,857
+每条命令都在学习指南里
+and the study guide has every command.
+
+23
+00:01:19,177 --> 00:01:23,678
+今天的两个关键词，来自课上：可复现和可追责
+Today's two words, from the lecture: reproducibility and accountability.
+
+24
+00:01:24,717 --> 00:01:28,452
+课上从让深度学习变好的三个杠杆讲起
+The lecture starts from three levers for better deep learning:
+
+25
+00:01:28,452 --> 00:01:31,224
+更多数据、更好的模型、更快的硬件
+more data, better models, and faster hardware.
+
+26
+00:01:31,544 --> 00:01:34,338
+今天拉第三个：你去租硬件
+Today we pull the third one: you rent hardware.
+
+27
+00:01:34,658 --> 00:01:37,368
+再加上能看出它有没有用的记账
+And you add the bookkeeping that shows whether it helped.
+
+28
+00:01:37,617 --> 00:01:39,252
+在 Cheese App 的路线图上
+On the Cheese App roadmap,
+
+29
+00:01:39,252 --> 00:01:43,718
+围住实验追踪和基线模型的那个虚线框，就是今天
+the dashed box around experiment tracking and baseline models is today.
+
+30
+00:01:44,038 --> 00:01:46,726
+你的第三个项目里程碑要的正是这个
+Your third milestone asks for exactly this.
+
+31
+00:01:46,967 --> 00:01:49,250
+一个实验的每一部分该放在哪里？
+Where does each piece of an experiment go?
+
+32
+00:01:49,570 --> 00:01:54,017
+代码放 GitHub，数据放第 11 讲的版本管理
+Code to GitHub, data to the versioning from lecture 11,
+
+33
+00:01:54,017 --> 00:01:58,060
+环境放 pyproject.toml 和 uv.lock
+and the environment to pyproject.toml and uv.lock.
+
+34
+00:01:58,380 --> 00:02:01,047
+权重、指标和日志还没有地方放
+Weights, metrics and logs have no home yet.
+
+35
+00:02:01,367 --> 00:02:04,138
+一个完整的 run 应该存下七样东西
+A complete run should keep seven things:
+
+36
+00:02:04,138 --> 00:02:08,364
+环境、代码、数据、模型、指标、产物和笔记
+environment, code, data, model, metrics, artifacts and notes.
+
+37
+00:02:08,600 --> 00:02:13,976
+课程用的是 Weights & Biases，简称 W&B，它帮你托管
+The course uses Weights & Biases, W&B for short, which is hosted for you.
+
+38
+00:02:14,296 --> 00:02:18,307
+MLflow 是常见的选择，用在你必须自己托管的时候
+MLflow is the usual choice if you must host it yourself.
+
+39
+00:02:18,550 --> 00:02:19,929
+这是地图
+Here is the map.
+
+40
+00:02:19,979 --> 00:02:24,966
+上面是 Colab 这条线：notebook A 把文件装进一个目录再上传
+On top, the Colab lane: notebook A fills a folder and uploads it,
+
+41
+00:02:24,966 --> 00:02:27,958
+notebook B 把它的 run 实时传到 W&B
+and notebook B streams its runs to W&B.
+
+42
+00:02:28,278 --> 00:02:33,801
+下面是 repo 这条线：你的笔记本打包代码，bucket 存着它
+Below, the repo lane: your laptop packs the code, a bucket holds it,
+
+43
+00:02:33,801 --> 00:02:37,537
+Vertex AI 运行它，这个 run 向 W&B 汇报
+Vertex AI runs it, and the run reports to W&B.
+
+44
+00:02:37,857 --> 00:02:39,457
+今天两条线都点亮
+Today we light both.
+
+45
+00:02:40,300 --> 00:02:46,096
+从课程页面打开 notebook A，另存一份，把运行时切到 GPU
+Open notebook A from the course page, save a copy, and switch the runtime to a GPU;
+
+46
+00:02:46,096 --> 00:02:47,696
+暂停一下，把它配好
+pause and set it up.
+
+47
+00:02:47,916 --> 00:02:52,311
+它保存下来的输出，是授课老师在一块 Tesla T4 上的那次运行
+Its stored outputs show the instructors' run on one Tesla T4.
+
+48
+00:02:53,667 --> 00:02:55,606
+跑数据集的单元格
+Run the dataset cells:
+
+49
+00:02:55,606 --> 00:03:01,070
+1156 张照片，来自一个 GitHub release，有四个奶酪 label
+1,156 photos from one GitHub release, with four cheese labels.
+
+50
+00:03:01,390 --> 00:03:02,940
+记住它们的顺序
+Remember their order.
+
+51
+00:03:02,990 --> 00:03:09,987
+然后是划分：936 张用来训练，104 张用来验证，116 张用来测试
+Then the split: 936 to train, 104 to validate, 116 to test.
+
+52
+00:03:10,307 --> 00:03:11,750
+暂停一下，把它们跑一遍
+Pause and run them.
+
+53
+00:03:11,800 --> 00:03:13,400
+来想一个问题
+Something to ponder.
+
+54
+00:03:13,464 --> 00:03:18,151
+这个单元格把 validation percent 设成 0.2
+The cell sets validation_percent to 0.2,
+
+55
+00:03:18,151 --> 00:03:22,253
+可验证集只有 1156 张里的 104 张
+yet validation is 104 out of 1,156.
+
+56
+00:03:22,573 --> 00:03:24,323
+这段代码实际上做了什么？
+What did the code actually do?
+
+57
+00:03:33,167 --> 00:03:35,130
+两次划分用的都是 test percent
+Both splits use test_percent.
+
+58
+00:03:35,450 --> 00:03:39,840
+1156 的 10% 是 116 张，用来测试
+10 percent of 1,156 is 116 for testing,
+
+59
+00:03:39,840 --> 00:03:47,268
+剩下 1040 张的 10% 是 104 张，也就是验证集
+then 10 percent of the remaining 1,040 is 104, the validation set.
+
+60
+00:03:47,588 --> 00:03:50,447
+一个小疏漏，还被复制进了 repo 的训练脚本
+A small slip, copied into the repo trainer.
+
+61
+00:03:50,683 --> 00:03:52,461
+现在看自己动手做的实验追踪工具
+Now the home-made tracker.
+
+62
+00:03:52,560 --> 00:03:56,592
+第 31 个单元格建了一个目录，用当前的 Unix 时间命名
+Cell 31 makes a folder named after the current Unix time.
+
+63
+00:03:56,912 --> 00:03:58,514
+每个模型训练完
+After each model trains,
+
+64
+00:03:58,514 --> 00:04:03,386
+第 12 个单元格里的辅助函数就往目录里放五个文件
+the helper from cell 12 drops five files into it: the model, its weights,
+
+65
+00:04:03,386 --> 00:04:06,256
+模型、权重、结构、训练历史和指标
+its structure, its history and its metrics.
+
+66
+00:04:06,576 --> 00:04:08,582
+暂停一下，把五个模型训练一遍
+Pause and train the five models.
+
+67
+00:04:09,367 --> 00:04:12,913
+第 54 个单元格把指标文件汇总成一张表
+Cell 54 gathers the metric files into one table,
+
+68
+00:04:12,913 --> 00:04:16,459
+第 56 个单元格把第一行当成最好的模型
+and cell 56 picks its top row as the best model;
+
+69
+00:04:16,459 --> 00:04:19,266
+暂停一下，一直跑到预测那几个单元格
+pause and run through the predictions.
+
+70
+00:04:19,586 --> 00:04:25,332
+有一个小疏漏：准确率在排序前变成了文本，所以按字符串排序
+A small slip: accuracy becomes text before sorting, so it sorts strings;
+
+71
+00:04:25,332 --> 00:04:28,524
+9.5% 会排在 68% 前面
+9.5 percent would rank above 68 percent.
+
+72
+00:04:28,767 --> 00:04:30,367
+先给第一个答案
+Here is a first answer.
+
+73
+00:04:30,580 --> 00:04:36,191
+这个目录存了设置和分数，却没存哪 116 张照片是测试集
+The folder keeps settings and scores, but not which 116 photos were the test set.
+
+74
+00:04:36,511 --> 00:04:41,460
+划分没有随机种子，所以每次运行都拿不同的 116 张来评分
+The split has no seed, so every run is graded on a different 116.
+
+75
+00:04:41,780 --> 00:04:44,326
+一张照片值 0.86 个百分点
+One photo is worth 0.86 points,
+
+76
+00:04:44,326 --> 00:04:48,351
+而 notebook A 的冠军只领先两张照片
+and the winner in notebook A leads by two photos.
+
+77
+00:04:48,600 --> 00:04:50,403
+用第 62 个单元格登录
+Sign in with cell 62,
+
+78
+00:04:50,403 --> 00:04:54,140
+在第 63 个单元格里填上你自己的项目和 bucket
+put your own project and bucket into cell 63,
+
+79
+00:04:54,140 --> 00:04:55,740
+再跑第 66 个单元格
+and run cell 66.
+
+80
+00:04:55,960 --> 00:04:57,549
+你的任何一个 bucket 都行
+Any bucket of yours works;
+
+81
+00:04:57,549 --> 00:05:02,253
+要是还没有，先跳过这次上传，等准备工作那一章建好再回来
+if you have none yet, skip this upload and come back after the setup chapter.
+
+82
+00:05:02,573 --> 00:05:03,995
+暂停一下，自己跑一遍
+Pause and run it.
+
+83
+00:05:04,045 --> 00:05:07,579
+金色标签：这些文件现在放在你的 bucket 里
+A gold tag: those files now sit in your bucket,
+
+84
+00:05:07,579 --> 00:05:11,640
+每个模型 10 到 104 MB 的权重，外加一份拷贝
+10 to 104 megabytes of weights per model, plus a copy.
+
+85
+00:05:12,683 --> 00:05:14,752
+Notebook B 加上了 W&B
+Notebook B adds W&B.
+
+86
+00:05:15,072 --> 00:05:19,638
+它的第一个单元格安装 W&B，-U 参数的意思是装最新版
+Its first cell installs it, and the -U flag means whatever is newest.
+
+87
+00:05:19,958 --> 00:05:24,226
+在我们没有登录的替身里额外检查一下
+An extra check in our signed-out stand-in shows
+
+88
+00:05:24,226 --> 00:05:30,219
+录制时是 0.31.0，而保存下来的那次运行用的是 0.22.2
+0.31.0 at the time of recording, while the stored run used 0.22.2.
+
+89
+00:05:30,539 --> 00:05:31,883
+暂停一下，自己跑一遍
+Pause and run it.
+
+90
+00:05:31,933 --> 00:05:35,933
+数据相关的单元格，一直到第 32 个，都和 notebook A 一样
+The data cells, through cell 32, match notebook A,
+
+91
+00:05:35,933 --> 00:05:41,213
+但其中一个还会下载一个 zip 包，大约 510 MB，你根本用不上
+but one also downloads a zip of about 510 megabytes you never use.
+
+92
+00:05:41,533 --> 00:05:44,413
+你可以删掉那一行，然后暂停一下，把它们跑一遍
+You may delete that line; then pause and run them.
+
+93
+00:05:44,650 --> 00:05:48,703
+在 W&B 的 User Settings 里复制你的 API key
+Copy your API key from the user settings on W&B.
+
+94
+00:05:49,023 --> 00:05:52,270
+在 Colab 里打开钥匙图标，添加一个 secret
+In Colab, open the key icon and add a secret
+
+95
+00:05:52,270 --> 00:05:56,106
+名字和画面上一字不差，并打开 Notebook access
+named exactly as on screen, with notebook access on.
+
+96
+00:05:56,426 --> 00:05:58,026
+暂停一下，加上你自己的
+Pause and add yours.
+
+97
+00:05:58,133 --> 00:06:00,074
+第 34 个单元格用它登录
+Cell 34 signs in with it.
+
+98
+00:06:00,316 --> 00:06:02,812
+现在暂停一下，把五个训练单元格跑一遍
+Now pause and run the five training cells.
+
+99
+00:06:03,132 --> 00:06:05,666
+每个单元格都用 wandb.init 开启自己的 run
+Each starts its run with wandb.init in one project,
+
+100
+00:06:05,666 --> 00:06:07,593
+都在同一个项目 cheese-app-demo 里
+cheese-app-demo.
+
+101
+00:06:07,868 --> 00:06:12,690
+在账本里，这五行变成了五个 run，共用一条 epoch 轴
+In the ledger, the five rows become five runs on one shared epoch axis.
+
+102
+00:06:12,933 --> 00:06:15,216
+可是只有 2 block 那个 run 有曲线
+But only the 2_block run shows curves.
+
+103
+00:06:15,536 --> 00:06:18,138
+把它的 model.fit 调用和另一个单元格的比一比
+Compare its model.fit call with another cell's.
+
+104
+00:06:18,458 --> 00:06:21,146
+来想一个问题：另外四个缺了什么？
+Something to ponder: what do the other four lack?
+
+105
+00:06:27,983 --> 00:06:31,695
+一个 callback：model.fit 在每个 epoch 之后调用的代码
+A callback: code that model.fit calls after every epoch.
+
+106
+00:06:32,015 --> 00:06:35,604
+只有 2 block 那个单元格传了 W&B 的 callback
+Only the 2_block cell passes the W&B callback,
+
+107
+00:06:35,604 --> 00:06:39,738
+所以只有它的 loss 和准确率一个 epoch 一个 epoch 地传过来
+so only its loss and accuracy arrive, epoch by epoch.
+
+108
+00:06:40,058 --> 00:06:44,239
+没有 callback，wandb.init 只给你系统图表，从不给你的曲线
+Without one, wandb.init gives you system charts, never your curves.
+
+109
+00:06:44,483 --> 00:06:48,920
+两个 MobileNet 的 run 名字一样，所以要靠 run ID 区分
+Both MobileNet runs share one name, so tell them apart by run ID.
+
+110
+00:06:49,240 --> 00:06:51,481
+没有哪个单元格结束最后一个 run
+No cell finishes the last run,
+
+111
+00:06:51,481 --> 00:06:54,766
+所以在第 52 个单元格后面加上 wandb.finish，这是额外步骤
+so add wandb.finish after cell 52, an extra.
+
+112
+00:06:55,500 --> 00:06:59,105
+第 55 个单元格生成了开头的第二张表
+Cell 55 builds the second table from the opening.
+
+113
+00:06:59,425 --> 00:07:02,720
+微调过的 MobileNet 在这里训练了 10 个 epoch
+The fine-tuned MobileNet trained 10 epochs here
+
+114
+00:07:02,720 --> 00:07:05,804
+在 notebook A 里是 15 个：这不是公平的比较
+and 15 in notebook A: not a fair comparison.
+
+115
+00:07:06,124 --> 00:07:12,343
+再看冻结的 MobileNet，设置和 epoch 都一样
+Now the frozen MobileNet, with the same settings and epochs:
+
+116
+00:07:12,343 --> 00:07:15,660
+notebook A 里是 67.24，这里是 68.97
+67.24 in notebook A, 68.97 here.
+
+117
+00:07:15,980 --> 00:07:20,268
+光凭运气就差了两张照片：正好是冠军领先的差距
+Two photos apart by chance alone: the size of the winning margin.
+
+118
+00:07:20,516 --> 00:07:27,071
+要上传的话，改第 13 个单元格里的 bucket 和项目并重跑它
+To upload, edit the bucket and project inside cell 13 and run cell 13 again,
+
+119
+00:07:27,071 --> 00:07:29,227
+然后跑第 64 和第 66 个单元格
+then run cells 64 and 66;
+
+120
+00:07:29,227 --> 00:07:30,827
+暂停一下，照着做
+pause and do it.
+
+121
+00:07:35,150 --> 00:07:39,715
+课上把这个写法画成三行，包在不变的训练代码外面
+The lecture shows the pattern as three lines around unchanged training code.
+
+122
+00:07:40,035 --> 00:07:41,977
+用 wandb.init 开启 run
+Start the run with wandb.init.
+
+123
+00:07:42,297 --> 00:07:45,454
+在 model.fit 里用 callback 盯住模型
+Watch the model with a callback inside model.fit.
+
+124
+00:07:45,774 --> 00:07:47,715
+最后在训练结束时结束这个 run
+And finish the run when training ends.
+
+125
+00:07:47,950 --> 00:07:49,906
+现在看 notebook B 里真正的单元格
+Now notebook B's real cell.
+
+126
+00:07:50,126 --> 00:07:54,093
+它先开启 run，然后把一个字典赋给 wandb.config
+It starts the run, then assigns a dictionary to wandb.config,
+
+127
+00:07:54,093 --> 00:07:56,825
+给 run 改名，再调用 wandb.run.save
+renames the run, and calls wandb.run.save.
+
+128
+00:07:57,067 --> 00:07:58,667
+来想一个问题
+Something to ponder.
+
+129
+00:07:58,731 --> 00:08:02,869
+经过这次赋值，再加上后面用执行时间做的一次 update
+After that assignment, and a later update with the execution time,
+
+130
+00:08:02,869 --> 00:08:04,875
+这个 run 的 config 里有什么？
+what does the run's config hold?
+
+131
+00:08:13,717 --> 00:08:15,075
+盯住这个名字
+Watch the name.
+
+132
+00:08:15,125 --> 00:08:16,444
+调用 wandb.init
+The call wandb.init
+
+133
+00:08:16,444 --> 00:08:20,330
+会让 wandb.config 这个名字指向这个 run 的 config 抽屉
+points the name wandb.config at the run's config drawer.
+
+134
+00:08:20,650 --> 00:08:23,105
+这次赋值并没有装满那个抽屉
+The assignment does not fill that drawer;
+
+135
+00:08:23,105 --> 00:08:25,920
+它把名字挪到了一个新的、散落在外的字典上
+it moves the name onto a new, loose dictionary.
+
+136
+00:08:26,240 --> 00:08:31,167
+接着 update 写进的是那个散落的字典，run 结束时抽屉还是空的
+The update then writes into the loose one, and the run finishes with its drawer empty.
+
+137
+00:08:31,417 --> 00:08:35,961
+证据：用今天的 W&B，开离线模式，作为我们的替身
+The proof, on today's W&B in offline mode, as our stand-in.
+
+138
+00:08:36,281 --> 00:08:39,993
+这个名字指向一个普通的 dict，而 run 的 config 是空的
+The name points at a plain dict, and the run's config is empty.
+
+139
+00:08:40,313 --> 00:08:43,953
+修法是把这个字典直接传给 wandb.init
+The fix passes the dictionary to wandb.init itself,
+
+140
+00:08:43,953 --> 00:08:48,163
+这样 config 里就有全部四个键，再加上执行时间
+and the config holds all four keys plus the execution time.
+
+141
+00:08:51,650 --> 00:08:54,291
+调用 wandb.run.save 加上 test 这个词
+The call wandb.run.save with the word test
+
+142
+00:08:54,291 --> 00:08:56,051
+会上传名字匹配 test 的文件
+uploads files matching test;
+
+143
+00:08:56,051 --> 00:08:57,651
+它并不保存这个 run
+it does not save the run.
+
+144
+00:08:57,867 --> 00:09:01,737
+这个 repo 的训练脚本把第一行和最后一行写对了
+The repo's trainer gets the first and last lines right:
+
+145
+00:09:01,737 --> 00:09:05,184
+config 放在 wandb.init 里，然后是 update 和 finish
+config inside wandb.init, then update and finish.
+
+146
+00:09:05,504 --> 00:09:07,104
+可中间那一行没了
+But the middle line is gone.
+
+147
+00:09:07,424 --> 00:09:12,822
+2025 年 10 月的一次 commit 删掉了这个 callback，没说原因
+One commit in October 2025 removed the callback, without saying why.
+
+148
+00:09:13,142 --> 00:09:17,133
+所以它的 run 有 config 和系统图表，没有曲线
+So its runs get config and system charts, and no curves;
+
+149
+00:09:17,133 --> 00:09:19,627
+练习 1 会把 callback 加回去
+exercise 1 adds the callback again.
+
+150
+00:09:20,667 --> 00:09:23,472
+课的后半部分讲 Vertex AI
+The second half of the lecture is Vertex AI,
+
+151
+00:09:23,472 --> 00:09:26,086
+也就是 Google Cloud 的机器学习平台
+Google Cloud's machine learning platform.
+
+152
+00:09:26,406 --> 00:09:30,021
+控制台里有三个入口要紧：Workbench 管 notebook
+Three console entries matter: Workbench for notebooks,
+
+153
+00:09:30,021 --> 00:09:33,168
+Training 管任务，Pipelines 管工作流
+Training for jobs, and Pipelines for workflows.
+
+154
+00:09:33,488 --> 00:09:36,690
+今天用的是 Training，在 Custom jobs 标签页上
+Today is Training, on the custom jobs tab;
+
+155
+00:09:36,690 --> 00:09:38,672
+第 15 讲用 Pipelines
+lecture 15 uses Pipelines.
+
+156
+00:09:38,917 --> 00:09:42,906
+无服务器训练的意思是：只在训练这一步租用硬件
+Serverless training means you rent the hardware only for the training step.
+
+157
+00:09:43,226 --> 00:09:46,896
+没人去搭服务器，计费在这一步结束时就停了
+Nobody sets up a server, and billing stops when the step ends.
+
+158
+00:09:47,216 --> 00:09:50,586
+机器还是有的，你只是不用管它的生命周期
+There is still a machine; you just don't manage its lifetime.
+
+159
+00:09:50,834 --> 00:09:54,173
+第一步：把 notebook 里的代码搬进一个 Python 文件
+Step one: move the notebook code into a Python file,
+
+160
+00:09:54,173 --> 00:09:56,935
+再把写死的选项改成命令行参数
+and turn its hard-coded choices into flags.
+
+161
+00:09:57,255 --> 00:10:00,693
+这些参数是 epoch 数、batch 大小和模型名
+The flags are epochs, batch size and model name,
+
+162
+00:10:00,693 --> 00:10:03,058
+再加上 train base 和你的 W&B 密钥
+plus train_base and your W&B key.
+
+163
+00:10:03,300 --> 00:10:07,576
+第二步把这个文件打成一个 tar 包，也就是一个压缩归档文件
+Step two packs that file into a tarball, one compressed archive,
+
+164
+00:10:07,576 --> 00:10:09,380
+再上传到一个 bucket
+and uploads it to a bucket.
+
+165
+00:10:09,700 --> 00:10:15,165
+第三步在课上叫作 Model Trainer CLI Container 的地方运行
+Step three runs from what the lecture calls the Model Trainer CLI Container,
+
+166
+00:10:15,165 --> 00:10:19,193
+也就是你笔记本上的驾驶舱：它向 Vertex AI 申请一个任务
+our cockpit on your laptop: it asks Vertex AI for a job.
+
+167
+00:10:19,513 --> 00:10:24,420
+然后 Vertex AI 启动一台机器，只有 CPU，或者带一块 T4
+Vertex AI then starts a machine, CPU only or with one T4.
+
+168
+00:10:24,740 --> 00:10:28,858
+它加载 Google 预构建的 TensorFlow image，安装你的 tar 包
+It loads Google's prebuilt TensorFlow image, installs your tarball,
+
+169
+00:10:28,858 --> 00:10:32,484
+用你的参数运行你的训练脚本，然后删掉这台机器
+runs your trainer with your flags, and deletes the machine.
+
+170
+00:10:32,734 --> 00:10:35,017
+有两个事实决定了后面的一切
+Two facts drive everything after this.
+
+171
+00:10:35,337 --> 00:10:39,245
+任务看不到你的笔记本：它的数据来自网上
+The job cannot see your laptop: its data comes from the internet,
+
+172
+00:10:39,245 --> 00:10:42,974
+任何要留下来的东西都必须写到某个持久的地方
+and anything it should keep must be written somewhere durable.
+
+173
+00:10:43,294 --> 00:10:45,704
+而且 image 是 Google 的，不是你的
+And the image is Google's, not yours.
+
+174
+00:10:45,950 --> 00:10:47,500
+快速预测一下
+A quick prediction.
+
+175
+00:10:47,550 --> 00:10:50,878
+你的笔记本没有 GPU，也没有 TensorFlow
+Your laptop has no GPU and no TensorFlow.
+
+176
+00:10:51,198 --> 00:10:54,782
+这张图里，哪些机器会 import TensorFlow？
+Which machines in this picture will ever import TensorFlow?
+
+177
+00:10:59,617 --> 00:11:04,353
+两个：Colab 运行时，以及每个 Vertex 任务里的 container
+Two: the Colab runtime, and the container inside each Vertex job.
+
+178
+00:11:04,673 --> 00:11:08,449
+从来不是你笔记本上的驾驶舱；讲 tar 包的那一章会证明这一点
+Never the cockpit on your laptop; the tarball chapter proves it.
+
+179
+00:11:09,483 --> 00:11:12,352
+把 model-training 这个 repo clone 下来，再进去
+Clone the model-training repo and move into it;
+
+180
+00:11:12,352 --> 00:11:13,742
+暂停一下，自己跑一遍
+pause and run it.
+
+181
+00:11:13,792 --> 00:11:16,909
+两个额外检查显示课程 pin 住的版本，以及 repo 里的文件
+Two extras show the course pin and the repo's files.
+
+182
+00:11:24,316 --> 00:11:27,687
+在控制台里启用 Vertex AI API
+In the console, enable the Vertex AI API.
+
+183
+00:11:28,007 --> 00:11:31,484
+然后申请 GPU 配额，也就是每个区域的额度
+Then request GPU quota, an allowance per region.
+
+184
+00:11:31,804 --> 00:11:35,984
+筛选 custom model training，选 T4 GPU
+Filter for custom model training, pick T4 GPUs,
+
+185
+00:11:35,984 --> 00:11:39,451
+包含 us-central1，也就是 cli.sh 运行的区域
+include us-central1, where cli.sh runs,
+
+186
+00:11:39,451 --> 00:11:41,852
+设一个新的上限，然后提交
+set a new limit and submit.
+
+187
+00:11:42,172 --> 00:11:43,722
+暂停一下，两件都做了
+Pause and do both.
+
+188
+00:11:43,772 --> 00:11:47,313
+审批可能要好几个小时，也可能被拒
+Approval may take hours or be refused;
+
+189
+00:11:47,313 --> 00:11:50,108
+cli.sh 没有配额也能在 CPU 上跑
+cli.sh runs on CPU without it.
+
+190
+00:11:50,350 --> 00:11:54,257
+接下来，在 repo 旁边建一个 secrets 目录，绝不放在里面
+Next, a secrets folder beside the repo, never inside it;
+
+191
+00:11:54,257 --> 00:11:55,857
+暂停一下，建好它
+pause and make it.
+
+192
+00:11:58,866 --> 00:12:03,164
+然后是身份：一个叫 model-trainer 的服务账号
+Then the identity: a service account model-trainer
+
+193
+00:12:03,164 --> 00:12:06,345
+角色是 Storage Admin、AI Platform Admin
+with Storage Admin, AI Platform Admin
+
+194
+00:12:06,345 --> 00:12:08,752
+和 Vertex AI Administrator
+and Vertex AI Administrator,
+
+195
+00:12:08,752 --> 00:12:13,565
+再在 secrets 里存一个 JSON 密钥：model-trainer.json
+and one JSON key saved in secrets as model-trainer.json.
+
+196
+00:12:13,885 --> 00:12:15,485
+暂停一下，建一个你自己的
+Pause and create yours.
+
+197
+00:12:19,300 --> 00:12:20,807
+如实说一句
+One honest note.
+
+198
+00:12:20,857 --> 00:12:24,763
+这台录制用的机器没有 Google 凭据
+This recording machine has no Google credentials,
+
+199
+00:12:24,763 --> 00:12:27,791
+没有 W&B 账号，没有 GPU，也没有浏览器
+no W&B account, no GPU and no browser.
+
+200
+00:12:28,111 --> 00:12:31,900
+列表里的那个密钥是一个明显无效的替身
+The key in that listing is an obviously invalid stand-in,
+
+201
+00:12:31,900 --> 00:12:34,425
+在 container 启动之前就被移走了
+moved out before the container starts.
+
+202
+00:12:34,745 --> 00:12:38,470
+所以每个云端步骤都展示放错位置的密钥会带来的失败
+So each cloud step shows the failure a misplaced key gives,
+
+203
+00:12:38,470 --> 00:12:40,868
+成功的结果都注明出处
+and successes come from named sources.
+
+204
+00:12:41,116 --> 00:12:44,529
+然后用你自己的名字建一个 bucket；暂停一下，建好它
+Then create a bucket with your own name; pause and create it.
+
+205
+00:12:44,849 --> 00:12:49,894
+两个额外检查说明了原因：我们的占位名返回 404，它根本不存在
+Two extras show why: our placeholder returns 404, it exists nowhere,
+
+206
+00:12:49,894 --> 00:12:54,641
+而 README 里的名字返回 401，它属于别人
+while the README's name returns 401, it belongs to someone else.
+
+207
+00:12:54,961 --> 00:12:59,015
+金色标签：这个 bucket 存着你的代码和实验目录
+A gold tag: the bucket stores your code and experiment folders.
+
+208
+00:12:59,250 --> 00:13:00,842
+最后，复制你的 W&B 密钥
+Last, copy your W&B key
+
+209
+00:13:00,842 --> 00:13:04,925
+在起 container 要用的那个终端里 export 它
+and export it in the terminal you'll use for the container.
+
+210
+00:13:05,245 --> 00:13:06,688
+暂停一下，照着做
+Pause and do it.
+
+211
+00:13:06,738 --> 00:13:10,471
+额外用 echo 打印它的长度，我们的占位密钥是 40
+An extra echo prints its length, 40 for our placeholder.
+
+212
+00:13:10,791 --> 00:13:15,826
+它不能是 0；训练脚本 pin 住的 wandb，只接受正好 40 个字符
+It must not be zero, and the trainer's pinned wandb accepts exactly 40.
+
+213
+00:13:16,146 --> 00:13:18,800
+如果你的长度不一样，先继续往下做
+If yours is a different length, keep going,
+
+214
+00:13:18,800 --> 00:13:23,058
+但提交任务之前，要先看“谁提交，谁运行”那一章
+but watch the chapter Who submits, who runs, before you submit a job.
+
+215
+00:13:24,133 --> 00:13:25,733
+来想一个问题
+Something to ponder.
+
+216
+00:13:25,797 --> 00:13:29,573
+你 export 了密钥，关掉那个终端，又开了一个新的
+You exported the key, closed that terminal, and opened a new one.
+
+217
+00:13:29,893 --> 00:13:31,792
+同样的 echo 现在会打印什么？
+What does the same echo print now?
+
+218
+00:13:38,633 --> 00:13:43,156
+0：export 过的变量，只存在于那个 shell 和它的子进程里
+Zero: an exported variable exists only in that shell and its children.
+
+219
+00:13:43,476 --> 00:13:46,932
+第一部分完成了：密钥设好了，bucket 也有名字了
+Part 1 is done: the key is set, the bucket has a name.
+
+220
+00:13:47,252 --> 00:13:50,366
+接下来我们构建驾驶舱，而今天它构建不了
+Next, we build the cockpit, and today it won't build.

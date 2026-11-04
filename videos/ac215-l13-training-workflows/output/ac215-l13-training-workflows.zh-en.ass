@@ -1,0 +1,517 @@
+[Script Info]
+Title: AC215 · Lecture 13 — Advanced training workflows: a run is a record, a job is a rented machine (follow-along: model-training + two Colab notebooks)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:04.54,Bilingual,,0,0,0,,这节课的两个 notebook，都是授课老师跑过的\N{\fs33\c&H00C8C0B8&\bord1.4}Two notebooks from this lecture, run by the instructors:
+Dialogue: 0,0:00:04.54,0:00:06.40,Bilingual,,0,0,0,,同样的数据 pipeline\N{\fs33\c&H00C8C0B8&\bord1.4}the same data pipeline,
+Dialogue: 0,0:00:06.40,0:00:10.54,Bilingual,,0,0,0,,同样的 1156 张奶酪照片，同样的五个模型\N{\fs33\c&H00C8C0B8&\bord1.4}the same 1,156 cheese photos, the same five models.
+Dialogue: 0,0:00:10.86,0:00:16.36,Bilingual,,0,0,0,,Notebook A 选出的冠军是微调过的 MobileNet，准确率 68.97%\N{\fs33\c&H00C8C0B8&\bord1.4}Notebook A crowns the fine-tuned MobileNet, at 68.97 percent.
+Dialogue: 0,0:00:16.68,0:00:22.71,Bilingual,,0,0,0,,Notebook B 选出的冠军是冻结的 MobileNet，也是 68.97%\N{\fs33\c&H00C8C0B8&\bord1.4}Notebook B crowns the frozen MobileNet, also at 68.97 percent,
+Dialogue: 0,0:00:22.71,0:00:26.30,Bilingual,,0,0,0,,而微调过的那个只有 62.93\N{\fs33\c&H00C8C0B8&\bord1.4}and puts the fine-tuned one at 62.93.
+Dialogue: 0,0:00:26.55,0:00:29.73,Bilingual,,0,0,0,,那么哪种做法更好，微调还是冻结？\N{\fs33\c&H00C8C0B8&\bord1.4}So which recipe is better, fine-tuning or freezing?
+Dialogue: 0,0:00:30.05,0:00:33.57,Bilingual,,0,0,0,,而且光看这两张表，你能看出到底哪里不一样吗？\N{\fs33\c&H00C8C0B8&\bord1.4}And from these two tables, can you even tell what was different?
+Dialogue: 0,0:00:33.89,0:00:36.81,Bilingual,,0,0,0,,有一条线索看得见：看 epochs 这一列\N{\fs33\c&H00C8C0B8&\bord1.4}One clue is visible: look at the epochs column.
+Dialogue: 0,0:00:37.13,0:00:38.68,Bilingual,,0,0,0,,先记着这个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Hold that question.
+Dialogue: 0,0:00:38.73,0:00:43.81,Bilingual,,0,0,0,,答案一部分在表里，另一部分在这张表从没写下的东西里\N{\fs33\c&H00C8C0B8&\bord1.4}Part of the answer is in the table, and part of it is in what the table never wrote down.
+Dialogue: 0,0:00:44.05,0:00:46.78,Bilingual,,0,0,0,,然后，微调过的 MobileNet 离开 Colab\N{\fs33\c&H00C8C0B8&\bord1.4}Then the fine-tuned MobileNet leaves Colab.
+Dialogue: 0,0:00:47.10,0:00:49.59,Bilingual,,0,0,0,,它被打进一个 4 KB 的 tar 包\N{\fs33\c&H00C8C0B8&\bord1.4}It gets packed into a 4 kilobyte tarball
+Dialogue: 0,0:00:49.59,0:00:54.37,Bilingual,,0,0,0,,在一台只租一个任务那么久的机器上训练，只用一条命令\N{\fs33\c&H00C8C0B8&\bord1.4}and trains on a machine you rent for the length of one job, from one command.
+Dialogue: 0,0:00:54.69,0:00:57.17,Bilingual,,0,0,0,,这条命令里带着你的 W&B 密钥\N{\fs33\c&H00C8C0B8&\bord1.4}That command carries your W&B key.
+Dialogue: 0,0:00:57.42,0:01:02.19,Bilingual,,0,0,0,,跟着做，你需要两份带免费 T4 GPU 的 Colab 拷贝\N{\fs33\c&H00C8C0B8&\bord1.4}To follow along you need two Colab copies with a free T4 GPU,
+Dialogue: 0,0:01:02.19,0:01:04.53,Bilingual,,0,0,0,,一个免费的 W&B 账号、Docker\N{\fs33\c&H00C8C0B8&\bord1.4}a free account on W&B, Docker,
+Dialogue: 0,0:01:04.53,0:01:07.66,Bilingual,,0,0,0,,以及一个开通了结算的 Google Cloud 项目\N{\fs33\c&H00C8C0B8&\bord1.4}and a Google Cloud project with billing.
+Dialogue: 0,0:01:07.98,0:01:10.91,Bilingual,,0,0,0,,Vertex AI 任务在运行期间会花钱\N{\fs33\c&H00C8C0B8&\bord1.4}Vertex AI jobs cost money while they run;
+Dialogue: 0,0:01:10.91,0:01:13.99,Bilingual,,0,0,0,,金色标签标出每一个计费点，不写金额\N{\fs33\c&H00C8C0B8&\bord1.4}gold tags mark each point, without amounts.
+Dialogue: 0,0:01:14.31,0:01:16.52,Bilingual,,0,0,0,,黄色标签的意思是：暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}A yellow tag means pause and run it,
+Dialogue: 0,0:01:16.52,0:01:18.86,Bilingual,,0,0,0,,每条命令都在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}and the study guide has every command.
+Dialogue: 0,0:01:19.18,0:01:23.68,Bilingual,,0,0,0,,今天的两个关键词，来自课上：可复现和可追责\N{\fs33\c&H00C8C0B8&\bord1.4}Today's two words, from the lecture: reproducibility and accountability.
+Dialogue: 0,0:01:24.72,0:01:28.45,Bilingual,,0,0,0,,课上从让深度学习变好的三个杠杆讲起\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture starts from three levers for better deep learning:
+Dialogue: 0,0:01:28.45,0:01:31.22,Bilingual,,0,0,0,,更多数据、更好的模型、更快的硬件\N{\fs33\c&H00C8C0B8&\bord1.4}more data, better models, and faster hardware.
+Dialogue: 0,0:01:31.54,0:01:34.34,Bilingual,,0,0,0,,今天拉第三个：你去租硬件\N{\fs33\c&H00C8C0B8&\bord1.4}Today we pull the third one: you rent hardware.
+Dialogue: 0,0:01:34.66,0:01:37.37,Bilingual,,0,0,0,,再加上能看出它有没有用的记账\N{\fs33\c&H00C8C0B8&\bord1.4}And you add the bookkeeping that shows whether it helped.
+Dialogue: 0,0:01:37.62,0:01:39.25,Bilingual,,0,0,0,,在 Cheese App 的路线图上\N{\fs33\c&H00C8C0B8&\bord1.4}On the Cheese App roadmap,
+Dialogue: 0,0:01:39.25,0:01:43.72,Bilingual,,0,0,0,,围住实验追踪和基线模型的那个虚线框，就是今天\N{\fs33\c&H00C8C0B8&\bord1.4}the dashed box around experiment tracking and baseline models is today.
+Dialogue: 0,0:01:44.04,0:01:46.73,Bilingual,,0,0,0,,你的第三个项目里程碑要的正是这个\N{\fs33\c&H00C8C0B8&\bord1.4}Your third milestone asks for exactly this.
+Dialogue: 0,0:01:46.97,0:01:49.25,Bilingual,,0,0,0,,一个实验的每一部分该放在哪里？\N{\fs33\c&H00C8C0B8&\bord1.4}Where does each piece of an experiment go?
+Dialogue: 0,0:01:49.57,0:01:54.02,Bilingual,,0,0,0,,代码放 GitHub，数据放第 11 讲的版本管理\N{\fs33\c&H00C8C0B8&\bord1.4}Code to GitHub, data to the versioning from lecture 11,
+Dialogue: 0,0:01:54.02,0:01:58.06,Bilingual,,0,0,0,,环境放 pyproject.toml 和 uv.lock\N{\fs33\c&H00C8C0B8&\bord1.4}and the environment to pyproject.toml and uv.lock.
+Dialogue: 0,0:01:58.38,0:02:01.05,Bilingual,,0,0,0,,权重、指标和日志还没有地方放\N{\fs33\c&H00C8C0B8&\bord1.4}Weights, metrics and logs have no home yet.
+Dialogue: 0,0:02:01.37,0:02:04.14,Bilingual,,0,0,0,,一个完整的 run 应该存下七样东西\N{\fs33\c&H00C8C0B8&\bord1.4}A complete run should keep seven things:
+Dialogue: 0,0:02:04.14,0:02:08.36,Bilingual,,0,0,0,,环境、代码、数据、模型、指标、产物和笔记\N{\fs33\c&H00C8C0B8&\bord1.4}environment, code, data, model, metrics, artifacts and notes.
+Dialogue: 0,0:02:08.60,0:02:13.98,Bilingual,,0,0,0,,课程用的是 Weights & Biases，简称 W&B，它帮你托管\N{\fs33\c&H00C8C0B8&\bord1.4}The course uses Weights & Biases, W&B for short, which is hosted for you.
+Dialogue: 0,0:02:14.30,0:02:18.31,Bilingual,,0,0,0,,MLflow 是常见的选择，用在你必须自己托管的时候\N{\fs33\c&H00C8C0B8&\bord1.4}MLflow is the usual choice if you must host it yourself.
+Dialogue: 0,0:02:18.55,0:02:19.93,Bilingual,,0,0,0,,这是地图\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the map.
+Dialogue: 0,0:02:19.98,0:02:24.97,Bilingual,,0,0,0,,上面是 Colab 这条线：notebook A 把文件装进一个目录再上传\N{\fs33\c&H00C8C0B8&\bord1.4}On top, the Colab lane: notebook A fills a folder and uploads it,
+Dialogue: 0,0:02:24.97,0:02:27.96,Bilingual,,0,0,0,,notebook B 把它的 run 实时传到 W&B\N{\fs33\c&H00C8C0B8&\bord1.4}and notebook B streams its runs to W&B.
+Dialogue: 0,0:02:28.28,0:02:33.80,Bilingual,,0,0,0,,下面是 repo 这条线：你的笔记本打包代码，bucket 存着它\N{\fs33\c&H00C8C0B8&\bord1.4}Below, the repo lane: your laptop packs the code, a bucket holds it,
+Dialogue: 0,0:02:33.80,0:02:37.54,Bilingual,,0,0,0,,Vertex AI 运行它，这个 run 向 W&B 汇报\N{\fs33\c&H00C8C0B8&\bord1.4}Vertex AI runs it, and the run reports to W&B.
+Dialogue: 0,0:02:37.86,0:02:39.46,Bilingual,,0,0,0,,今天两条线都点亮\N{\fs33\c&H00C8C0B8&\bord1.4}Today we light both.
+Dialogue: 0,0:02:40.30,0:02:46.10,Bilingual,,0,0,0,,从课程页面打开 notebook A，另存一份，把运行时切到 GPU\N{\fs33\c&H00C8C0B8&\bord1.4}Open notebook A from the course page, save a copy, and switch the runtime to a GPU;
+Dialogue: 0,0:02:46.10,0:02:47.70,Bilingual,,0,0,0,,暂停一下，把它配好\N{\fs33\c&H00C8C0B8&\bord1.4}pause and set it up.
+Dialogue: 0,0:02:47.92,0:02:52.31,Bilingual,,0,0,0,,它保存下来的输出，是授课老师在一块 Tesla T4 上的那次运行\N{\fs33\c&H00C8C0B8&\bord1.4}Its stored outputs show the instructors' run on one Tesla T4.
+Dialogue: 0,0:02:53.67,0:02:55.61,Bilingual,,0,0,0,,跑数据集的单元格\N{\fs33\c&H00C8C0B8&\bord1.4}Run the dataset cells:
+Dialogue: 0,0:02:55.61,0:03:01.07,Bilingual,,0,0,0,,1156 张照片，来自一个 GitHub release，有四个奶酪 label\N{\fs33\c&H00C8C0B8&\bord1.4}1,156 photos from one GitHub release, with four cheese labels.
+Dialogue: 0,0:03:01.39,0:03:02.94,Bilingual,,0,0,0,,记住它们的顺序\N{\fs33\c&H00C8C0B8&\bord1.4}Remember their order.
+Dialogue: 0,0:03:02.99,0:03:09.99,Bilingual,,0,0,0,,然后是划分：936 张用来训练，104 张用来验证，116 张用来测试\N{\fs33\c&H00C8C0B8&\bord1.4}Then the split: 936 to train, 104 to validate, 116 to test.
+Dialogue: 0,0:03:10.31,0:03:11.75,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
+Dialogue: 0,0:03:11.80,0:03:13.40,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:03:13.46,0:03:18.15,Bilingual,,0,0,0,,这个单元格把 validation percent 设成 0.2\N{\fs33\c&H00C8C0B8&\bord1.4}The cell sets validation_percent to 0.2,
+Dialogue: 0,0:03:18.15,0:03:22.25,Bilingual,,0,0,0,,可验证集只有 1156 张里的 104 张\N{\fs33\c&H00C8C0B8&\bord1.4}yet validation is 104 out of 1,156.
+Dialogue: 0,0:03:22.57,0:03:24.32,Bilingual,,0,0,0,,这段代码实际上做了什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What did the code actually do?
+Dialogue: 0,0:03:33.17,0:03:35.13,Bilingual,,0,0,0,,两次划分用的都是 test percent\N{\fs33\c&H00C8C0B8&\bord1.4}Both splits use test_percent.
+Dialogue: 0,0:03:35.45,0:03:39.84,Bilingual,,0,0,0,,1156 的 10% 是 116 张，用来测试\N{\fs33\c&H00C8C0B8&\bord1.4}10 percent of 1,156 is 116 for testing,
+Dialogue: 0,0:03:39.84,0:03:47.27,Bilingual,,0,0,0,,剩下 1040 张的 10% 是 104 张，也就是验证集\N{\fs33\c&H00C8C0B8&\bord1.4}then 10 percent of the remaining 1,040 is 104, the validation set.
+Dialogue: 0,0:03:47.59,0:03:50.45,Bilingual,,0,0,0,,一个小疏漏，还被复制进了 repo 的训练脚本\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip, copied into the repo trainer.
+Dialogue: 0,0:03:50.68,0:03:52.46,Bilingual,,0,0,0,,现在看自己动手做的实验追踪工具\N{\fs33\c&H00C8C0B8&\bord1.4}Now the home-made tracker.
+Dialogue: 0,0:03:52.56,0:03:56.59,Bilingual,,0,0,0,,第 31 个单元格建了一个目录，用当前的 Unix 时间命名\N{\fs33\c&H00C8C0B8&\bord1.4}Cell 31 makes a folder named after the current Unix time.
+Dialogue: 0,0:03:56.91,0:03:58.51,Bilingual,,0,0,0,,每个模型训练完\N{\fs33\c&H00C8C0B8&\bord1.4}After each model trains,
+Dialogue: 0,0:03:58.51,0:04:03.39,Bilingual,,0,0,0,,第 12 个单元格里的辅助函数就往目录里放五个文件\N{\fs33\c&H00C8C0B8&\bord1.4}the helper from cell 12 drops five files into it: the model, its weights,
+Dialogue: 0,0:04:03.39,0:04:06.26,Bilingual,,0,0,0,,模型、权重、结构、训练历史和指标\N{\fs33\c&H00C8C0B8&\bord1.4}its structure, its history and its metrics.
+Dialogue: 0,0:04:06.58,0:04:08.58,Bilingual,,0,0,0,,暂停一下，把五个模型训练一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and train the five models.
+Dialogue: 0,0:04:09.37,0:04:12.91,Bilingual,,0,0,0,,第 54 个单元格把指标文件汇总成一张表\N{\fs33\c&H00C8C0B8&\bord1.4}Cell 54 gathers the metric files into one table,
+Dialogue: 0,0:04:12.91,0:04:16.46,Bilingual,,0,0,0,,第 56 个单元格把第一行当成最好的模型\N{\fs33\c&H00C8C0B8&\bord1.4}and cell 56 picks its top row as the best model;
+Dialogue: 0,0:04:16.46,0:04:19.27,Bilingual,,0,0,0,,暂停一下，一直跑到预测那几个单元格\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run through the predictions.
+Dialogue: 0,0:04:19.59,0:04:25.33,Bilingual,,0,0,0,,有一个小疏漏：准确率在排序前变成了文本，所以按字符串排序\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: accuracy becomes text before sorting, so it sorts strings;
+Dialogue: 0,0:04:25.33,0:04:28.52,Bilingual,,0,0,0,,9.5% 会排在 68% 前面\N{\fs33\c&H00C8C0B8&\bord1.4}9.5 percent would rank above 68 percent.
+Dialogue: 0,0:04:28.77,0:04:30.37,Bilingual,,0,0,0,,先给第一个答案\N{\fs33\c&H00C8C0B8&\bord1.4}Here is a first answer.
+Dialogue: 0,0:04:30.58,0:04:36.19,Bilingual,,0,0,0,,这个目录存了设置和分数，却没存哪 116 张照片是测试集\N{\fs33\c&H00C8C0B8&\bord1.4}The folder keeps settings and scores, but not which 116 photos were the test set.
+Dialogue: 0,0:04:36.51,0:04:41.46,Bilingual,,0,0,0,,划分没有随机种子，所以每次运行都拿不同的 116 张来评分\N{\fs33\c&H00C8C0B8&\bord1.4}The split has no seed, so every run is graded on a different 116.
+Dialogue: 0,0:04:41.78,0:04:44.33,Bilingual,,0,0,0,,一张照片值 0.86 个百分点\N{\fs33\c&H00C8C0B8&\bord1.4}One photo is worth 0.86 points,
+Dialogue: 0,0:04:44.33,0:04:48.35,Bilingual,,0,0,0,,而 notebook A 的冠军只领先两张照片\N{\fs33\c&H00C8C0B8&\bord1.4}and the winner in notebook A leads by two photos.
+Dialogue: 0,0:04:48.60,0:04:50.40,Bilingual,,0,0,0,,用第 62 个单元格登录\N{\fs33\c&H00C8C0B8&\bord1.4}Sign in with cell 62,
+Dialogue: 0,0:04:50.40,0:04:54.14,Bilingual,,0,0,0,,在第 63 个单元格里填上你自己的项目和 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}put your own project and bucket into cell 63,
+Dialogue: 0,0:04:54.14,0:04:55.74,Bilingual,,0,0,0,,再跑第 66 个单元格\N{\fs33\c&H00C8C0B8&\bord1.4}and run cell 66.
+Dialogue: 0,0:04:55.96,0:04:57.55,Bilingual,,0,0,0,,你的任何一个 bucket 都行\N{\fs33\c&H00C8C0B8&\bord1.4}Any bucket of yours works;
+Dialogue: 0,0:04:57.55,0:05:02.25,Bilingual,,0,0,0,,要是还没有，先跳过这次上传，等准备工作那一章建好再回来\N{\fs33\c&H00C8C0B8&\bord1.4}if you have none yet, skip this upload and come back after the setup chapter.
+Dialogue: 0,0:05:02.57,0:05:04.00,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:05:04.04,0:05:07.58,Bilingual,,0,0,0,,金色标签：这些文件现在放在你的 bucket 里\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: those files now sit in your bucket,
+Dialogue: 0,0:05:07.58,0:05:11.64,Bilingual,,0,0,0,,每个模型 10 到 104 MB 的权重，外加一份拷贝\N{\fs33\c&H00C8C0B8&\bord1.4}10 to 104 megabytes of weights per model, plus a copy.
+Dialogue: 0,0:05:12.68,0:05:14.75,Bilingual,,0,0,0,,Notebook B 加上了 W&B\N{\fs33\c&H00C8C0B8&\bord1.4}Notebook B adds W&B.
+Dialogue: 0,0:05:15.07,0:05:19.64,Bilingual,,0,0,0,,它的第一个单元格安装 W&B，-U 参数的意思是装最新版\N{\fs33\c&H00C8C0B8&\bord1.4}Its first cell installs it, and the -U flag means whatever is newest.
+Dialogue: 0,0:05:19.96,0:05:24.23,Bilingual,,0,0,0,,在我们没有登录的替身里额外检查一下\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check in our signed-out stand-in shows
+Dialogue: 0,0:05:24.23,0:05:30.22,Bilingual,,0,0,0,,录制时是 0.31.0，而保存下来的那次运行用的是 0.22.2\N{\fs33\c&H00C8C0B8&\bord1.4}0.31.0 at the time of recording, while the stored run used 0.22.2.
+Dialogue: 0,0:05:30.54,0:05:31.88,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:05:31.93,0:05:35.93,Bilingual,,0,0,0,,数据相关的单元格，一直到第 32 个，都和 notebook A 一样\N{\fs33\c&H00C8C0B8&\bord1.4}The data cells, through cell 32, match notebook A,
+Dialogue: 0,0:05:35.93,0:05:41.21,Bilingual,,0,0,0,,但其中一个还会下载一个 zip 包，大约 510 MB，你根本用不上\N{\fs33\c&H00C8C0B8&\bord1.4}but one also downloads a zip of about 510 megabytes you never use.
+Dialogue: 0,0:05:41.53,0:05:44.41,Bilingual,,0,0,0,,你可以删掉那一行，然后暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}You may delete that line; then pause and run them.
+Dialogue: 0,0:05:44.65,0:05:48.70,Bilingual,,0,0,0,,在 W&B 的 User Settings 里复制你的 API key\N{\fs33\c&H00C8C0B8&\bord1.4}Copy your API key from the user settings on W&B.
+Dialogue: 0,0:05:49.02,0:05:52.27,Bilingual,,0,0,0,,在 Colab 里打开钥匙图标，添加一个 secret\N{\fs33\c&H00C8C0B8&\bord1.4}In Colab, open the key icon and add a secret
+Dialogue: 0,0:05:52.27,0:05:56.11,Bilingual,,0,0,0,,名字和画面上一字不差，并打开 Notebook access\N{\fs33\c&H00C8C0B8&\bord1.4}named exactly as on screen, with notebook access on.
+Dialogue: 0,0:05:56.43,0:05:58.03,Bilingual,,0,0,0,,暂停一下，加上你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and add yours.
+Dialogue: 0,0:05:58.13,0:06:00.07,Bilingual,,0,0,0,,第 34 个单元格用它登录\N{\fs33\c&H00C8C0B8&\bord1.4}Cell 34 signs in with it.
+Dialogue: 0,0:06:00.32,0:06:02.81,Bilingual,,0,0,0,,现在暂停一下，把五个训练单元格跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Now pause and run the five training cells.
+Dialogue: 0,0:06:03.13,0:06:05.67,Bilingual,,0,0,0,,每个单元格都用 wandb.init 开启自己的 run\N{\fs33\c&H00C8C0B8&\bord1.4}Each starts its run with wandb.init in one project,
+Dialogue: 0,0:06:05.67,0:06:07.59,Bilingual,,0,0,0,,都在同一个项目 cheese-app-demo 里\N{\fs33\c&H00C8C0B8&\bord1.4}cheese-app-demo.
+Dialogue: 0,0:06:07.87,0:06:12.69,Bilingual,,0,0,0,,在账本里，这五行变成了五个 run，共用一条 epoch 轴\N{\fs33\c&H00C8C0B8&\bord1.4}In the ledger, the five rows become five runs on one shared epoch axis.
+Dialogue: 0,0:06:12.93,0:06:15.22,Bilingual,,0,0,0,,可是只有 2 block 那个 run 有曲线\N{\fs33\c&H00C8C0B8&\bord1.4}But only the 2_block run shows curves.
+Dialogue: 0,0:06:15.54,0:06:18.14,Bilingual,,0,0,0,,把它的 model.fit 调用和另一个单元格的比一比\N{\fs33\c&H00C8C0B8&\bord1.4}Compare its model.fit call with another cell's.
+Dialogue: 0,0:06:18.46,0:06:21.15,Bilingual,,0,0,0,,来想一个问题：另外四个缺了什么？\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: what do the other four lack?
+Dialogue: 0,0:06:27.98,0:06:31.70,Bilingual,,0,0,0,,一个 callback：model.fit 在每个 epoch 之后调用的代码\N{\fs33\c&H00C8C0B8&\bord1.4}A callback: code that model.fit calls after every epoch.
+Dialogue: 0,0:06:32.02,0:06:35.60,Bilingual,,0,0,0,,只有 2 block 那个单元格传了 W&B 的 callback\N{\fs33\c&H00C8C0B8&\bord1.4}Only the 2_block cell passes the W&B callback,
+Dialogue: 0,0:06:35.60,0:06:39.74,Bilingual,,0,0,0,,所以只有它的 loss 和准确率一个 epoch 一个 epoch 地传过来\N{\fs33\c&H00C8C0B8&\bord1.4}so only its loss and accuracy arrive, epoch by epoch.
+Dialogue: 0,0:06:40.06,0:06:44.24,Bilingual,,0,0,0,,没有 callback，wandb.init 只给你系统图表，从不给你的曲线\N{\fs33\c&H00C8C0B8&\bord1.4}Without one, wandb.init gives you system charts, never your curves.
+Dialogue: 0,0:06:44.48,0:06:48.92,Bilingual,,0,0,0,,两个 MobileNet 的 run 名字一样，所以要靠 run ID 区分\N{\fs33\c&H00C8C0B8&\bord1.4}Both MobileNet runs share one name, so tell them apart by run ID.
+Dialogue: 0,0:06:49.24,0:06:51.48,Bilingual,,0,0,0,,没有哪个单元格结束最后一个 run\N{\fs33\c&H00C8C0B8&\bord1.4}No cell finishes the last run,
+Dialogue: 0,0:06:51.48,0:06:54.77,Bilingual,,0,0,0,,所以在第 52 个单元格后面加上 wandb.finish，这是额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}so add wandb.finish after cell 52, an extra.
+Dialogue: 0,0:06:55.50,0:06:59.11,Bilingual,,0,0,0,,第 55 个单元格生成了开头的第二张表\N{\fs33\c&H00C8C0B8&\bord1.4}Cell 55 builds the second table from the opening.
+Dialogue: 0,0:06:59.43,0:07:02.72,Bilingual,,0,0,0,,微调过的 MobileNet 在这里训练了 10 个 epoch\N{\fs33\c&H00C8C0B8&\bord1.4}The fine-tuned MobileNet trained 10 epochs here
+Dialogue: 0,0:07:02.72,0:07:05.80,Bilingual,,0,0,0,,在 notebook A 里是 15 个：这不是公平的比较\N{\fs33\c&H00C8C0B8&\bord1.4}and 15 in notebook A: not a fair comparison.
+Dialogue: 0,0:07:06.12,0:07:12.34,Bilingual,,0,0,0,,再看冻结的 MobileNet，设置和 epoch 都一样\N{\fs33\c&H00C8C0B8&\bord1.4}Now the frozen MobileNet, with the same settings and epochs:
+Dialogue: 0,0:07:12.34,0:07:15.66,Bilingual,,0,0,0,,notebook A 里是 67.24，这里是 68.97\N{\fs33\c&H00C8C0B8&\bord1.4}67.24 in notebook A, 68.97 here.
+Dialogue: 0,0:07:15.98,0:07:20.27,Bilingual,,0,0,0,,光凭运气就差了两张照片：正好是冠军领先的差距\N{\fs33\c&H00C8C0B8&\bord1.4}Two photos apart by chance alone: the size of the winning margin.
+Dialogue: 0,0:07:20.52,0:07:27.07,Bilingual,,0,0,0,,要上传的话，改第 13 个单元格里的 bucket 和项目并重跑它\N{\fs33\c&H00C8C0B8&\bord1.4}To upload, edit the bucket and project inside cell 13 and run cell 13 again,
+Dialogue: 0,0:07:27.07,0:07:29.23,Bilingual,,0,0,0,,然后跑第 64 和第 66 个单元格\N{\fs33\c&H00C8C0B8&\bord1.4}then run cells 64 and 66;
+Dialogue: 0,0:07:29.23,0:07:30.83,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}pause and do it.
+Dialogue: 0,0:07:35.15,0:07:39.72,Bilingual,,0,0,0,,课上把这个写法画成三行，包在不变的训练代码外面\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture shows the pattern as three lines around unchanged training code.
+Dialogue: 0,0:07:40.04,0:07:41.98,Bilingual,,0,0,0,,用 wandb.init 开启 run\N{\fs33\c&H00C8C0B8&\bord1.4}Start the run with wandb.init.
+Dialogue: 0,0:07:42.30,0:07:45.45,Bilingual,,0,0,0,,在 model.fit 里用 callback 盯住模型\N{\fs33\c&H00C8C0B8&\bord1.4}Watch the model with a callback inside model.fit.
+Dialogue: 0,0:07:45.77,0:07:47.72,Bilingual,,0,0,0,,最后在训练结束时结束这个 run\N{\fs33\c&H00C8C0B8&\bord1.4}And finish the run when training ends.
+Dialogue: 0,0:07:47.95,0:07:49.91,Bilingual,,0,0,0,,现在看 notebook B 里真正的单元格\N{\fs33\c&H00C8C0B8&\bord1.4}Now notebook B's real cell.
+Dialogue: 0,0:07:50.13,0:07:54.09,Bilingual,,0,0,0,,它先开启 run，然后把一个字典赋给 wandb.config\N{\fs33\c&H00C8C0B8&\bord1.4}It starts the run, then assigns a dictionary to wandb.config,
+Dialogue: 0,0:07:54.09,0:07:56.82,Bilingual,,0,0,0,,给 run 改名，再调用 wandb.run.save\N{\fs33\c&H00C8C0B8&\bord1.4}renames the run, and calls wandb.run.save.
+Dialogue: 0,0:07:57.07,0:07:58.67,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:07:58.73,0:08:02.87,Bilingual,,0,0,0,,经过这次赋值，再加上后面用执行时间做的一次 update\N{\fs33\c&H00C8C0B8&\bord1.4}After that assignment, and a later update with the execution time,
+Dialogue: 0,0:08:02.87,0:08:04.88,Bilingual,,0,0,0,,这个 run 的 config 里有什么？\N{\fs33\c&H00C8C0B8&\bord1.4}what does the run's config hold?
+Dialogue: 0,0:08:13.72,0:08:15.08,Bilingual,,0,0,0,,盯住这个名字\N{\fs33\c&H00C8C0B8&\bord1.4}Watch the name.
+Dialogue: 0,0:08:15.12,0:08:16.44,Bilingual,,0,0,0,,调用 wandb.init\N{\fs33\c&H00C8C0B8&\bord1.4}The call wandb.init
+Dialogue: 0,0:08:16.44,0:08:20.33,Bilingual,,0,0,0,,会让 wandb.config 这个名字指向这个 run 的 config 抽屉\N{\fs33\c&H00C8C0B8&\bord1.4}points the name wandb.config at the run's config drawer.
+Dialogue: 0,0:08:20.65,0:08:23.11,Bilingual,,0,0,0,,这次赋值并没有装满那个抽屉\N{\fs33\c&H00C8C0B8&\bord1.4}The assignment does not fill that drawer;
+Dialogue: 0,0:08:23.11,0:08:25.92,Bilingual,,0,0,0,,它把名字挪到了一个新的、散落在外的字典上\N{\fs33\c&H00C8C0B8&\bord1.4}it moves the name onto a new, loose dictionary.
+Dialogue: 0,0:08:26.24,0:08:31.17,Bilingual,,0,0,0,,接着 update 写进的是那个散落的字典，run 结束时抽屉还是空的\N{\fs33\c&H00C8C0B8&\bord1.4}The update then writes into the loose one, and the run finishes with its drawer empty.
+Dialogue: 0,0:08:31.42,0:08:35.96,Bilingual,,0,0,0,,证据：用今天的 W&B，开离线模式，作为我们的替身\N{\fs33\c&H00C8C0B8&\bord1.4}The proof, on today's W&B in offline mode, as our stand-in.
+Dialogue: 0,0:08:36.28,0:08:39.99,Bilingual,,0,0,0,,这个名字指向一个普通的 dict，而 run 的 config 是空的\N{\fs33\c&H00C8C0B8&\bord1.4}The name points at a plain dict, and the run's config is empty.
+Dialogue: 0,0:08:40.31,0:08:43.95,Bilingual,,0,0,0,,修法是把这个字典直接传给 wandb.init\N{\fs33\c&H00C8C0B8&\bord1.4}The fix passes the dictionary to wandb.init itself,
+Dialogue: 0,0:08:43.95,0:08:48.16,Bilingual,,0,0,0,,这样 config 里就有全部四个键，再加上执行时间\N{\fs33\c&H00C8C0B8&\bord1.4}and the config holds all four keys plus the execution time.
+Dialogue: 0,0:08:51.65,0:08:54.29,Bilingual,,0,0,0,,调用 wandb.run.save 加上 test 这个词\N{\fs33\c&H00C8C0B8&\bord1.4}The call wandb.run.save with the word test
+Dialogue: 0,0:08:54.29,0:08:56.05,Bilingual,,0,0,0,,会上传名字匹配 test 的文件\N{\fs33\c&H00C8C0B8&\bord1.4}uploads files matching test;
+Dialogue: 0,0:08:56.05,0:08:57.65,Bilingual,,0,0,0,,它并不保存这个 run\N{\fs33\c&H00C8C0B8&\bord1.4}it does not save the run.
+Dialogue: 0,0:08:57.87,0:09:01.74,Bilingual,,0,0,0,,这个 repo 的训练脚本把第一行和最后一行写对了\N{\fs33\c&H00C8C0B8&\bord1.4}The repo's trainer gets the first and last lines right:
+Dialogue: 0,0:09:01.74,0:09:05.18,Bilingual,,0,0,0,,config 放在 wandb.init 里，然后是 update 和 finish\N{\fs33\c&H00C8C0B8&\bord1.4}config inside wandb.init, then update and finish.
+Dialogue: 0,0:09:05.50,0:09:07.10,Bilingual,,0,0,0,,可中间那一行没了\N{\fs33\c&H00C8C0B8&\bord1.4}But the middle line is gone.
+Dialogue: 0,0:09:07.42,0:09:12.82,Bilingual,,0,0,0,,2025 年 10 月的一次 commit 删掉了这个 callback，没说原因\N{\fs33\c&H00C8C0B8&\bord1.4}One commit in October 2025 removed the callback, without saying why.
+Dialogue: 0,0:09:13.14,0:09:17.13,Bilingual,,0,0,0,,所以它的 run 有 config 和系统图表，没有曲线\N{\fs33\c&H00C8C0B8&\bord1.4}So its runs get config and system charts, and no curves;
+Dialogue: 0,0:09:17.13,0:09:19.63,Bilingual,,0,0,0,,练习 1 会把 callback 加回去\N{\fs33\c&H00C8C0B8&\bord1.4}exercise 1 adds the callback again.
+Dialogue: 0,0:09:20.67,0:09:23.47,Bilingual,,0,0,0,,课的后半部分讲 Vertex AI\N{\fs33\c&H00C8C0B8&\bord1.4}The second half of the lecture is Vertex AI,
+Dialogue: 0,0:09:23.47,0:09:26.09,Bilingual,,0,0,0,,也就是 Google Cloud 的机器学习平台\N{\fs33\c&H00C8C0B8&\bord1.4}Google Cloud's machine learning platform.
+Dialogue: 0,0:09:26.41,0:09:30.02,Bilingual,,0,0,0,,控制台里有三个入口要紧：Workbench 管 notebook\N{\fs33\c&H00C8C0B8&\bord1.4}Three console entries matter: Workbench for notebooks,
+Dialogue: 0,0:09:30.02,0:09:33.17,Bilingual,,0,0,0,,Training 管任务，Pipelines 管工作流\N{\fs33\c&H00C8C0B8&\bord1.4}Training for jobs, and Pipelines for workflows.
+Dialogue: 0,0:09:33.49,0:09:36.69,Bilingual,,0,0,0,,今天用的是 Training，在 Custom jobs 标签页上\N{\fs33\c&H00C8C0B8&\bord1.4}Today is Training, on the custom jobs tab;
+Dialogue: 0,0:09:36.69,0:09:38.67,Bilingual,,0,0,0,,第 15 讲用 Pipelines\N{\fs33\c&H00C8C0B8&\bord1.4}lecture 15 uses Pipelines.
+Dialogue: 0,0:09:38.92,0:09:42.91,Bilingual,,0,0,0,,无服务器训练的意思是：只在训练这一步租用硬件\N{\fs33\c&H00C8C0B8&\bord1.4}Serverless training means you rent the hardware only for the training step.
+Dialogue: 0,0:09:43.23,0:09:46.90,Bilingual,,0,0,0,,没人去搭服务器，计费在这一步结束时就停了\N{\fs33\c&H00C8C0B8&\bord1.4}Nobody sets up a server, and billing stops when the step ends.
+Dialogue: 0,0:09:47.22,0:09:50.59,Bilingual,,0,0,0,,机器还是有的，你只是不用管它的生命周期\N{\fs33\c&H00C8C0B8&\bord1.4}There is still a machine; you just don't manage its lifetime.
+Dialogue: 0,0:09:50.83,0:09:54.17,Bilingual,,0,0,0,,第一步：把 notebook 里的代码搬进一个 Python 文件\N{\fs33\c&H00C8C0B8&\bord1.4}Step one: move the notebook code into a Python file,
+Dialogue: 0,0:09:54.17,0:09:56.93,Bilingual,,0,0,0,,再把写死的选项改成命令行参数\N{\fs33\c&H00C8C0B8&\bord1.4}and turn its hard-coded choices into flags.
+Dialogue: 0,0:09:57.25,0:10:00.69,Bilingual,,0,0,0,,这些参数是 epoch 数、batch 大小和模型名\N{\fs33\c&H00C8C0B8&\bord1.4}The flags are epochs, batch size and model name,
+Dialogue: 0,0:10:00.69,0:10:03.06,Bilingual,,0,0,0,,再加上 train base 和你的 W&B 密钥\N{\fs33\c&H00C8C0B8&\bord1.4}plus train_base and your W&B key.
+Dialogue: 0,0:10:03.30,0:10:07.58,Bilingual,,0,0,0,,第二步把这个文件打成一个 tar 包，也就是一个压缩归档文件\N{\fs33\c&H00C8C0B8&\bord1.4}Step two packs that file into a tarball, one compressed archive,
+Dialogue: 0,0:10:07.58,0:10:09.38,Bilingual,,0,0,0,,再上传到一个 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}and uploads it to a bucket.
+Dialogue: 0,0:10:09.70,0:10:15.17,Bilingual,,0,0,0,,第三步在课上叫作 Model Trainer CLI Container 的地方运行\N{\fs33\c&H00C8C0B8&\bord1.4}Step three runs from what the lecture calls the Model Trainer CLI Container,
+Dialogue: 0,0:10:15.17,0:10:19.19,Bilingual,,0,0,0,,也就是你笔记本上的驾驶舱：它向 Vertex AI 申请一个任务\N{\fs33\c&H00C8C0B8&\bord1.4}our cockpit on your laptop: it asks Vertex AI for a job.
+Dialogue: 0,0:10:19.51,0:10:24.42,Bilingual,,0,0,0,,然后 Vertex AI 启动一台机器，只有 CPU，或者带一块 T4\N{\fs33\c&H00C8C0B8&\bord1.4}Vertex AI then starts a machine, CPU only or with one T4.
+Dialogue: 0,0:10:24.74,0:10:28.86,Bilingual,,0,0,0,,它加载 Google 预构建的 TensorFlow image，安装你的 tar 包\N{\fs33\c&H00C8C0B8&\bord1.4}It loads Google's prebuilt TensorFlow image, installs your tarball,
+Dialogue: 0,0:10:28.86,0:10:32.48,Bilingual,,0,0,0,,用你的参数运行你的训练脚本，然后删掉这台机器\N{\fs33\c&H00C8C0B8&\bord1.4}runs your trainer with your flags, and deletes the machine.
+Dialogue: 0,0:10:32.73,0:10:35.02,Bilingual,,0,0,0,,有两个事实决定了后面的一切\N{\fs33\c&H00C8C0B8&\bord1.4}Two facts drive everything after this.
+Dialogue: 0,0:10:35.34,0:10:39.25,Bilingual,,0,0,0,,任务看不到你的笔记本：它的数据来自网上\N{\fs33\c&H00C8C0B8&\bord1.4}The job cannot see your laptop: its data comes from the internet,
+Dialogue: 0,0:10:39.25,0:10:42.97,Bilingual,,0,0,0,,任何要留下来的东西都必须写到某个持久的地方\N{\fs33\c&H00C8C0B8&\bord1.4}and anything it should keep must be written somewhere durable.
+Dialogue: 0,0:10:43.29,0:10:45.70,Bilingual,,0,0,0,,而且 image 是 Google 的，不是你的\N{\fs33\c&H00C8C0B8&\bord1.4}And the image is Google's, not yours.
+Dialogue: 0,0:10:45.95,0:10:47.50,Bilingual,,0,0,0,,快速预测一下\N{\fs33\c&H00C8C0B8&\bord1.4}A quick prediction.
+Dialogue: 0,0:10:47.55,0:10:50.88,Bilingual,,0,0,0,,你的笔记本没有 GPU，也没有 TensorFlow\N{\fs33\c&H00C8C0B8&\bord1.4}Your laptop has no GPU and no TensorFlow.
+Dialogue: 0,0:10:51.20,0:10:54.78,Bilingual,,0,0,0,,这张图里，哪些机器会 import TensorFlow？\N{\fs33\c&H00C8C0B8&\bord1.4}Which machines in this picture will ever import TensorFlow?
+Dialogue: 0,0:10:59.62,0:11:04.35,Bilingual,,0,0,0,,两个：Colab 运行时，以及每个 Vertex 任务里的 container\N{\fs33\c&H00C8C0B8&\bord1.4}Two: the Colab runtime, and the container inside each Vertex job.
+Dialogue: 0,0:11:04.67,0:11:08.45,Bilingual,,0,0,0,,从来不是你笔记本上的驾驶舱；讲 tar 包的那一章会证明这一点\N{\fs33\c&H00C8C0B8&\bord1.4}Never the cockpit on your laptop; the tarball chapter proves it.
+Dialogue: 0,0:11:09.48,0:11:12.35,Bilingual,,0,0,0,,把 model-training 这个 repo clone 下来，再进去\N{\fs33\c&H00C8C0B8&\bord1.4}Clone the model-training repo and move into it;
+Dialogue: 0,0:11:12.35,0:11:13.74,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run it.
+Dialogue: 0,0:11:13.79,0:11:16.91,Bilingual,,0,0,0,,两个额外检查显示课程 pin 住的版本，以及 repo 里的文件\N{\fs33\c&H00C8C0B8&\bord1.4}Two extras show the course pin and the repo's files.
+Dialogue: 0,0:11:24.32,0:11:27.69,Bilingual,,0,0,0,,在控制台里启用 Vertex AI API\N{\fs33\c&H00C8C0B8&\bord1.4}In the console, enable the Vertex AI API.
+Dialogue: 0,0:11:28.01,0:11:31.48,Bilingual,,0,0,0,,然后申请 GPU 配额，也就是每个区域的额度\N{\fs33\c&H00C8C0B8&\bord1.4}Then request GPU quota, an allowance per region.
+Dialogue: 0,0:11:31.80,0:11:35.98,Bilingual,,0,0,0,,筛选 custom model training，选 T4 GPU\N{\fs33\c&H00C8C0B8&\bord1.4}Filter for custom model training, pick T4 GPUs,
+Dialogue: 0,0:11:35.98,0:11:39.45,Bilingual,,0,0,0,,包含 us-central1，也就是 cli.sh 运行的区域\N{\fs33\c&H00C8C0B8&\bord1.4}include us-central1, where cli.sh runs,
+Dialogue: 0,0:11:39.45,0:11:41.85,Bilingual,,0,0,0,,设一个新的上限，然后提交\N{\fs33\c&H00C8C0B8&\bord1.4}set a new limit and submit.
+Dialogue: 0,0:11:42.17,0:11:43.72,Bilingual,,0,0,0,,暂停一下，两件都做了\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do both.
+Dialogue: 0,0:11:43.77,0:11:47.31,Bilingual,,0,0,0,,审批可能要好几个小时，也可能被拒\N{\fs33\c&H00C8C0B8&\bord1.4}Approval may take hours or be refused;
+Dialogue: 0,0:11:47.31,0:11:50.11,Bilingual,,0,0,0,,cli.sh 没有配额也能在 CPU 上跑\N{\fs33\c&H00C8C0B8&\bord1.4}cli.sh runs on CPU without it.
+Dialogue: 0,0:11:50.35,0:11:54.26,Bilingual,,0,0,0,,接下来，在 repo 旁边建一个 secrets 目录，绝不放在里面\N{\fs33\c&H00C8C0B8&\bord1.4}Next, a secrets folder beside the repo, never inside it;
+Dialogue: 0,0:11:54.26,0:11:55.86,Bilingual,,0,0,0,,暂停一下，建好它\N{\fs33\c&H00C8C0B8&\bord1.4}pause and make it.
+Dialogue: 0,0:11:58.87,0:12:03.16,Bilingual,,0,0,0,,然后是身份：一个叫 model-trainer 的服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}Then the identity: a service account model-trainer
+Dialogue: 0,0:12:03.16,0:12:06.34,Bilingual,,0,0,0,,角色是 Storage Admin、AI Platform Admin\N{\fs33\c&H00C8C0B8&\bord1.4}with Storage Admin, AI Platform Admin
+Dialogue: 0,0:12:06.34,0:12:08.75,Bilingual,,0,0,0,,和 Vertex AI Administrator\N{\fs33\c&H00C8C0B8&\bord1.4}and Vertex AI Administrator,
+Dialogue: 0,0:12:08.75,0:12:13.57,Bilingual,,0,0,0,,再在 secrets 里存一个 JSON 密钥：model-trainer.json\N{\fs33\c&H00C8C0B8&\bord1.4}and one JSON key saved in secrets as model-trainer.json.
+Dialogue: 0,0:12:13.89,0:12:15.49,Bilingual,,0,0,0,,暂停一下，建一个你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and create yours.
+Dialogue: 0,0:12:19.30,0:12:20.81,Bilingual,,0,0,0,,如实说一句\N{\fs33\c&H00C8C0B8&\bord1.4}One honest note.
+Dialogue: 0,0:12:20.86,0:12:24.76,Bilingual,,0,0,0,,这台录制用的机器没有 Google 凭据\N{\fs33\c&H00C8C0B8&\bord1.4}This recording machine has no Google credentials,
+Dialogue: 0,0:12:24.76,0:12:27.79,Bilingual,,0,0,0,,没有 W&B 账号，没有 GPU，也没有浏览器\N{\fs33\c&H00C8C0B8&\bord1.4}no W&B account, no GPU and no browser.
+Dialogue: 0,0:12:28.11,0:12:31.90,Bilingual,,0,0,0,,列表里的那个密钥是一个明显无效的替身\N{\fs33\c&H00C8C0B8&\bord1.4}The key in that listing is an obviously invalid stand-in,
+Dialogue: 0,0:12:31.90,0:12:34.43,Bilingual,,0,0,0,,在 container 启动之前就被移走了\N{\fs33\c&H00C8C0B8&\bord1.4}moved out before the container starts.
+Dialogue: 0,0:12:34.75,0:12:38.47,Bilingual,,0,0,0,,所以每个云端步骤都展示放错位置的密钥会带来的失败\N{\fs33\c&H00C8C0B8&\bord1.4}So each cloud step shows the failure a misplaced key gives,
+Dialogue: 0,0:12:38.47,0:12:40.87,Bilingual,,0,0,0,,成功的结果都注明出处\N{\fs33\c&H00C8C0B8&\bord1.4}and successes come from named sources.
+Dialogue: 0,0:12:41.12,0:12:44.53,Bilingual,,0,0,0,,然后用你自己的名字建一个 bucket；暂停一下，建好它\N{\fs33\c&H00C8C0B8&\bord1.4}Then create a bucket with your own name; pause and create it.
+Dialogue: 0,0:12:44.85,0:12:49.89,Bilingual,,0,0,0,,两个额外检查说明了原因：我们的占位名返回 404，它根本不存在\N{\fs33\c&H00C8C0B8&\bord1.4}Two extras show why: our placeholder returns 404, it exists nowhere,
+Dialogue: 0,0:12:49.89,0:12:54.64,Bilingual,,0,0,0,,而 README 里的名字返回 401，它属于别人\N{\fs33\c&H00C8C0B8&\bord1.4}while the README's name returns 401, it belongs to someone else.
+Dialogue: 0,0:12:54.96,0:12:59.02,Bilingual,,0,0,0,,金色标签：这个 bucket 存着你的代码和实验目录\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: the bucket stores your code and experiment folders.
+Dialogue: 0,0:12:59.25,0:13:00.84,Bilingual,,0,0,0,,最后，复制你的 W&B 密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Last, copy your W&B key
+Dialogue: 0,0:13:00.84,0:13:04.93,Bilingual,,0,0,0,,在起 container 要用的那个终端里 export 它\N{\fs33\c&H00C8C0B8&\bord1.4}and export it in the terminal you'll use for the container.
+Dialogue: 0,0:13:05.25,0:13:06.69,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it.
+Dialogue: 0,0:13:06.74,0:13:10.47,Bilingual,,0,0,0,,额外用 echo 打印它的长度，我们的占位密钥是 40\N{\fs33\c&H00C8C0B8&\bord1.4}An extra echo prints its length, 40 for our placeholder.
+Dialogue: 0,0:13:10.79,0:13:15.83,Bilingual,,0,0,0,,它不能是 0；训练脚本 pin 住的 wandb，只接受正好 40 个字符\N{\fs33\c&H00C8C0B8&\bord1.4}It must not be zero, and the trainer's pinned wandb accepts exactly 40.
+Dialogue: 0,0:13:16.15,0:13:18.80,Bilingual,,0,0,0,,如果你的长度不一样，先继续往下做\N{\fs33\c&H00C8C0B8&\bord1.4}If yours is a different length, keep going,
+Dialogue: 0,0:13:18.80,0:13:23.06,Bilingual,,0,0,0,,但提交任务之前，要先看“谁提交，谁运行”那一章\N{\fs33\c&H00C8C0B8&\bord1.4}but watch the chapter Who submits, who runs, before you submit a job.
+Dialogue: 0,0:13:24.13,0:13:25.73,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:13:25.80,0:13:29.57,Bilingual,,0,0,0,,你 export 了密钥，关掉那个终端，又开了一个新的\N{\fs33\c&H00C8C0B8&\bord1.4}You exported the key, closed that terminal, and opened a new one.
+Dialogue: 0,0:13:29.89,0:13:31.79,Bilingual,,0,0,0,,同样的 echo 现在会打印什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What does the same echo print now?
+Dialogue: 0,0:13:38.63,0:13:43.16,Bilingual,,0,0,0,,0：export 过的变量，只存在于那个 shell 和它的子进程里\N{\fs33\c&H00C8C0B8&\bord1.4}Zero: an exported variable exists only in that shell and its children.
+Dialogue: 0,0:13:43.48,0:13:46.93,Bilingual,,0,0,0,,第一部分完成了：密钥设好了，bucket 也有名字了\N{\fs33\c&H00C8C0B8&\bord1.4}Part 1 is done: the key is set, the bucket has a name.
+Dialogue: 0,0:13:47.25,0:13:50.37,Bilingual,,0,0,0,,接下来我们构建驾驶舱，而今天它构建不了\N{\fs33\c&H00C8C0B8&\bord1.4}Next, we build the cockpit, and today it won't build.
+Dialogue: 0,0:13:52.20,0:13:57.00,Bilingual,,0,0,0,,第二部分要把训练脚本送出去：构建驾驶舱，打包代码，发一个任务\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 ships the trainer: build the cockpit, pack the code, send one job.
+Dialogue: 0,0:13:57.32,0:14:02.20,Bilingual,,0,0,0,,把你的 bucket 和项目填进 docker-shell.sh 第 8、9 行\N{\fs33\c&H00C8C0B8&\bord1.4}Put your bucket and project on lines 8 and 9 of docker-shell.sh;
+Dialogue: 0,0:14:02.20,0:14:03.81,Bilingual,,0,0,0,,暂停一下，改成你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}pause and edit yours.
+Dialogue: 0,0:14:05.05,0:14:09.45,Bilingual,,0,0,0,,有一个小疏漏：README 里贴的这份脚本，不是真正的文件\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the README's copy of this script is not the real file.
+Dialogue: 0,0:14:09.77,0:14:13.47,Bilingual,,0,0,0,,它有方括号里的注释，还有一行旧写法是给 Apple 芯片用的\N{\fs33\c&H00C8C0B8&\bord1.4}It has notes in brackets and an older line for Apple chips,
+Dialogue: 0,0:14:13.47,0:14:15.10,Bilingual,,0,0,0,,所以要改脚本文件本身\N{\fs33\c&H00C8C0B8&\bord1.4}so edit the script itself.
+Dialogue: 0,0:14:15.42,0:14:19.56,Bilingual,,0,0,0,,它按 amd64 构建，并挂载你的代码和 secrets\N{\fs33\c&H00C8C0B8&\bord1.4}It builds for amd64 and mounts your code and secrets.
+Dialogue: 0,0:14:19.80,0:14:23.53,Bilingual,,0,0,0,,现在在 repo 里面跑 sh docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Now run sh docker-shell.sh from inside the repo;
+Dialogue: 0,0:14:23.53,0:14:25.13,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run it.
+Dialogue: 0,0:14:25.35,0:14:27.67,Bilingual,,0,0,0,,今天它在 14 步里的第 2 步就失败了\N{\fs33\c&H00C8C0B8&\bord1.4}Today it fails at step 2 of 14.
+Dialogue: 0,0:14:27.99,0:14:32.77,Bilingual,,0,0,0,,全部 22 个包都从 Debian 软件源返回 404 Not Found\N{\fs33\c&H00C8C0B8&\bord1.4}All 22 packages return 404 Not Found from the Debian mirror,
+Dialogue: 0,0:14:32.77,0:14:35.25,Bilingual,,0,0,0,,构建停在第 18 行\N{\fs33\c&H00C8C0B8&\bord1.4}and the build stops at line 18.
+Dialogue: 0,0:14:35.57,0:14:37.96,Bilingual,,0,0,0,,脚本里的 set -e，也就是出错就退出\N{\fs33\c&H00C8C0B8&\bord1.4}The script's set -e, exit on error,
+Dialogue: 0,0:14:37.96,0:14:40.15,Bilingual,,0,0,0,,于是在 docker run 之前就把它停下了\N{\fs33\c&H00C8C0B8&\bord1.4}then stops it before docker run.
+Dialogue: 0,0:14:40.40,0:14:42.00,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:14:42.06,0:14:46.42,Bilingual,,0,0,0,,每条报错都是 Debian 软件源返回的 404，而你的网络是通的\N{\fs33\c&H00C8C0B8&\bord1.4}Every error says 404 from the Debian mirror, and your internet works.
+Dialogue: 0,0:14:46.74,0:14:49.21,Bilingual,,0,0,0,,Dockerfile 的哪一行决定了你的 Debian？\N{\fs33\c&H00C8C0B8&\bord1.4}Which line of the Dockerfile picks your Debian?
+Dialogue: 0,0:14:58.05,0:14:59.65,Bilingual,,0,0,0,,第 2 行，FROM 那一行\N{\fs33\c&H00C8C0B8&\bord1.4}Line 2, the FROM line.
+Dialogue: 0,0:14:59.89,0:15:01.55,Bilingual,,0,0,0,,代号 bullseye 就是 Debian 11\N{\fs33\c&H00C8C0B8&\bord1.4}Bullseye is Debian 11,
+Dialogue: 0,0:15:01.55,0:15:08.55,Bilingual,,0,0,0,,录制时它的安全更新源列出的包已经不再提供，这些包搬到了归档源\N{\fs33\c&H00C8C0B8&\bord1.4}and at the time of recording its security mirror lists packages it no longer serves; they moved to an archive.
+Dialogue: 0,0:15:08.87,0:15:10.50,Bilingual,,0,0,0,,第一处修复，是额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}The first fix, an extra,
+Dialogue: 0,0:15:10.50,0:15:12.27,Bilingual,,0,0,0,,把 base image 换成 bookworm\N{\fs33\c&H00C8C0B8&\bord1.4}switches the base to bookworm,
+Dialogue: 0,0:15:12.27,0:15:14.43,Bilingual,,0,0,0,,也就是 Debian 12；暂停一下，改好它\N{\fs33\c&H00C8C0B8&\bord1.4}Debian 12; pause and make it.
+Dialogue: 0,0:15:14.78,0:15:16.38,Bilingual,,0,0,0,,暂停一下，再跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it again.
+Dialogue: 0,0:15:16.58,0:15:18.43,Bilingual,,0,0,0,,这次它停在第 8 步\N{\fs33\c&H00C8C0B8&\bord1.4}Now it stops at step 8:
+Dialogue: 0,0:15:18.43,0:15:22.23,Bilingual,,0,0,0,,google-cloud-sdk 报 no installation candidate\N{\fs33\c&H00C8C0B8&\bord1.4}google-cloud-sdk has no installation candidate,
+Dialogue: 0,0:15:22.23,0:15:24.90,Bilingual,,0,0,0,,取而代之的是 google-cloud-cli\N{\fs33\c&H00C8C0B8&\bord1.4}and google-cloud-cli replaces it.
+Dialogue: 0,0:15:25.22,0:15:27.18,Bilingual,,0,0,0,,Google 给它的 apt 包改了名\N{\fs33\c&H00C8C0B8&\bord1.4}Google renamed its apt package.
+Dialogue: 0,0:15:27.42,0:15:33.64,Bilingual,,0,0,0,,第二处修复，也是额外步骤：在第 37 行改装 google-cloud-cli\N{\fs33\c&H00C8C0B8&\bord1.4}The second fix, also an extra: install google-cloud-cli instead, on line 37;
+Dialogue: 0,0:15:33.64,0:15:35.24,Bilingual,,0,0,0,,暂停一下，改好它\N{\fs33\c&H00C8C0B8&\bord1.4}pause and make it.
+Dialogue: 0,0:15:35.46,0:15:38.47,Bilingual,,0,0,0,,额外跑一下 git diff，能看到你改过的全部内容\N{\fs33\c&H00C8C0B8&\bord1.4}An extra git diff shows everything you changed:
+Dialogue: 0,0:15:38.47,0:15:41.60,Bilingual,,0,0,0,,你填的两个值，两处修复，没有别的\N{\fs33\c&H00C8C0B8&\bord1.4}your two values, the two fixes, and nothing else.
+Dialogue: 0,0:15:41.85,0:15:46.81,Bilingual,,0,0,0,,暂停一下，跑第三遍：它构建成功了，这里大约 5 分钟\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it a third time: it builds, about 5 minutes here,
+Dialogue: 0,0:15:46.81,0:15:50.66,Bilingual,,0,0,0,,在 Apple Silicon 上更久，因为 amd64 要模拟运行\N{\fs33\c&H00C8C0B8&\bord1.4}longer on Apple Silicon, where amd64 is emulated.
+Dialogue: 0,0:15:50.98,0:15:54.30,Bilingual,,0,0,0,,横幅显示它在运行，接着 gcloud 打不开密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}The banner says running, then gcloud cannot open the key file:
+Dialogue: 0,0:15:54.30,0:15:55.90,Bilingual,,0,0,0,,这是我们缺的那把密钥\N{\fs33\c&H00C8C0B8&\bord1.4}our missing key.
+Dialogue: 0,0:15:56.10,0:15:59.13,Bilingual,,0,0,0,,换成你的密钥，这一行会确认服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}With yours, this line confirms the service account.
+Dialogue: 0,0:15:59.45,0:16:03.89,Bilingual,,0,0,0,,脚本照样往下走，因为 entrypoint 里没有 set -e\N{\fs33\c&H00C8C0B8&\bord1.4}The script carries on anyway, because the entrypoint has no set -e.
+Dialogue: 0,0:16:04.13,0:16:09.70,Bilingual,,0,0,0,,架构是 x86 64，在 Mac 上也一样；版本号都在画面上\N{\fs33\c&H00C8C0B8&\bord1.4}The architecture is x86_64, on a Mac too; the versions are on screen.
+Dialogue: 0,0:16:10.02,0:16:14.00,Bilingual,,0,0,0,,有一个小疏漏：activated 是在激活之前打印的\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: activated is printed before the activation,
+Dialogue: 0,0:16:14.00,0:16:15.60,Bilingual,,0,0,0,,只是一句话，不是事实\N{\fs33\c&H00C8C0B8&\bord1.4}a label, not a fact.
+Dialogue: 0,0:16:17.15,0:16:19.77,Bilingual,,0,0,0,,在驾驶舱里做几个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the cockpit, a few extra checks.
+Dialogue: 0,0:16:20.09,0:16:22.68,Bilingual,,0,0,0,,/secrets 是空的，这是我们的沙盒\N{\fs33\c&H00C8C0B8&\bord1.4}/secrets is empty, our sandbox.
+Dialogue: 0,0:16:23.00,0:16:28.29,Bilingual,,0,0,0,,项目、bucket 和密钥都传进来了；gcloud、gsutil 和 uv 都在\N{\fs33\c&H00C8C0B8&\bord1.4}Project, bucket and key came through; gcloud, gsutil and uv are here.
+Dialogue: 0,0:16:28.61,0:16:30.19,Bilingual,,0,0,0,,暂停一下，检查你的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and check yours:
+Dialogue: 0,0:16:30.19,0:16:34.30,Bilingual,,0,0,0,,最后那个数，对这个 wandb pin 应该是 40，绝不能是 0\N{\fs33\c&H00C8C0B8&\bord1.4}the last number should be 40 for this wandb pin, never 0;
+Dialogue: 0,0:16:34.30,0:16:37.61,Bilingual,,0,0,0,,如果不是，去看“谁提交，谁运行”那一章\N{\fs33\c&H00C8C0B8&\bord1.4}if not, see the chapter Who submits, who runs.
+Dialogue: 0,0:16:37.93,0:16:40.10,Bilingual,,0,0,0,,可是 import TensorFlow 失败了\N{\fs33\c&H00C8C0B8&\bord1.4}But importing TensorFlow fails:
+Dialogue: 0,0:16:40.10,0:16:43.26,Bilingual,,0,0,0,,这个 container 只提交任务，从不训练\N{\fs33\c&H00C8C0B8&\bord1.4}this container submits jobs, it never trains.
+Dialogue: 0,0:16:46.00,0:16:48.92,Bilingual,,0,0,0,,先看 setup.py；暂停一下，打开它\N{\fs33\c&H00C8C0B8&\bord1.4}Review setup.py; pause and open it.
+Dialogue: 0,0:16:49.24,0:16:52.51,Bilingual,,0,0,0,,它就是 pip 安装 tar 包时看的铭牌\N{\fs33\c&H00C8C0B8&\bord1.4}It is the label pip uses to install the tarball.
+Dialogue: 0,0:16:52.83,0:16:58.50,Bilingual,,0,0,0,,唯一声明的依赖是 wandb，pin 在 0.15.11\N{\fs33\c&H00C8C0B8&\bord1.4}The only declared dependency is wandb, pinned to 0.15.11.
+Dialogue: 0,0:16:58.82,0:17:02.35,Bilingual,,0,0,0,,它的 find packages 调用能找到 trainer 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Its find_packages() call finds the trainer folder
+Dialogue: 0,0:17:02.35,0:17:06.81,Bilingual,,0,0,0,,因为这个目录有自己的 init 文件，所以装好之后\N{\fs33\c&H00C8C0B8&\bord1.4}because the folder has its own __init__.py, so once installed,
+Dialogue: 0,0:17:06.81,0:17:08.89,Bilingual,,0,0,0,,python -m trainer.task 就能跑\N{\fs33\c&H00C8C0B8&\bord1.4}python -m trainer.task works.
+Dialogue: 0,0:17:09.21,0:17:12.03,Bilingual,,0,0,0,,TensorFlow 和 scikit-learn 都没有声明\N{\fs33\c&H00C8C0B8&\bord1.4}TensorFlow and scikit-learn are not declared:
+Dialogue: 0,0:17:12.03,0:17:15.55,Bilingual,,0,0,0,,默认它们来自 Google 提供的 image\N{\fs33\c&H00C8C0B8&\bord1.4}they are assumed to come from the image Google provides,
+Dialogue: 0,0:17:15.55,0:17:18.62,Bilingual,,0,0,0,,后面有一章会看到 tar 包里没有它们\N{\fs33\c&H00C8C0B8&\bord1.4}and a later chapter shows the tarball lacks them.
+Dialogue: 0,0:17:18.94,0:17:21.95,Bilingual,,0,0,0,,而 requests 只是因为 wandb 需要它才被带进来的\N{\fs33\c&H00C8C0B8&\bord1.4}Requests only arrives because wandb needs it.
+Dialogue: 0,0:17:22.18,0:17:25.38,Bilingual,,0,0,0,,接着看 task.py；暂停一下，打开它\N{\fs33\c&H00C8C0B8&\bord1.4}Review task.py next; pause and open it.
+Dialogue: 0,0:17:25.70,0:17:27.87,Bilingual,,0,0,0,,现在 notebook 里的选项都成了命令行参数\N{\fs33\c&H00C8C0B8&\bord1.4}The notebook choices are flags now,
+Dialogue: 0,0:17:27.87,0:17:31.80,Bilingual,,0,0,0,,而密钥参数默认是文本 16：记住这一点\N{\fs33\c&H00C8C0B8&\bord1.4}and the --wandb_key flag defaults to the text 16: remember that.
+Dialogue: 0,0:17:32.12,0:17:37.61,Bilingual,,0,0,0,,数据来自一个 GitHub release，因为任务看不到你的笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}The data comes from one GitHub release, since the job cannot see your laptop,
+Dialogue: 0,0:17:37.61,0:17:40.68,Bilingual,,0,0,0,,而 W&B 的登录在下载之后才运行\N{\fs33\c&H00C8C0B8&\bord1.4}and the W&B login runs after that download.
+Dialogue: 0,0:17:40.92,0:17:45.54,Bilingual,,0,0,0,,现在打包：在 container 里跑 sh package-trainer.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Now pack it: run sh package-trainer.sh inside the container;
+Dialogue: 0,0:17:45.54,0:17:47.14,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run it.
+Dialogue: 0,0:17:47.36,0:17:50.29,Bilingual,,0,0,0,,命令 tar 列出了八个条目，而上传失败了\N{\fs33\c&H00C8C0B8&\bord1.4}Tar lists eight entries, and the upload fails:
+Dialogue: 0,0:17:50.29,0:17:52.71,Bilingual,,0,0,0,,我们的占位 bucket 并不存在\N{\fs33\c&H00C8C0B8&\bord1.4}our placeholder bucket does not exist.
+Dialogue: 0,0:17:53.03,0:17:57.19,Bilingual,,0,0,0,,第 4 行用的是固定的文件名，所以每次上传都会覆盖上一次\N{\fs33\c&H00C8C0B8&\bord1.4}Line 4 uses a fixed name, so each upload overwrites the last.
+Dialogue: 0,0:17:58.03,0:18:01.55,Bilingual,,0,0,0,,额外检查：这个 tar 包是 4016 字节\N{\fs33\c&H00C8C0B8&\bord1.4}Extra checks: the tarball is 4,016 bytes.
+Dialogue: 0,0:18:01.87,0:18:06.26,Bilingual,,0,0,0,,在我们的 Linux 引擎上，它属于 root，因为是 container 写的\N{\fs33\c&H00C8C0B8&\bord1.4}On our Linux engine it belongs to root, because the container wrote it;
+Dialogue: 0,0:18:06.26,0:18:08.02,Bilingual,,0,0,0,,在 Docker Desktop 上，它属于你\N{\fs33\c&H00C8C0B8&\bord1.4}on Docker Desktop, to you.
+Dialogue: 0,0:18:08.34,0:18:10.03,Bilingual,,0,0,0,,不管哪种情况，Git 都会忽略它\N{\fs33\c&H00C8C0B8&\bord1.4}Git ignores it either way.
+Dialogue: 0,0:18:10.27,0:18:11.87,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:18:11.93,0:18:14.13,Bilingual,,0,0,0,,你改了 task.py 里的一个错字\N{\fs33\c&H00C8C0B8&\bord1.4}You fix a typo in task.py.
+Dialogue: 0,0:18:14.45,0:18:18.12,Bilingual,,0,0,0,,你是重新构建 image，再跑一次打包脚本，还是两个都做？\N{\fs33\c&H00C8C0B8&\bord1.4}Do you rebuild the image, run the package script again, or both?
+Dialogue: 0,0:18:24.97,0:18:26.57,Bilingual,,0,0,0,,只要重跑打包脚本\N{\fs33\c&H00C8C0B8&\bord1.4}Only the package script.
+Dialogue: 0,0:18:26.82,0:18:29.67,Bilingual,,0,0,0,,Vertex AI 运行的是你 bucket 里的 tar 包\N{\fs33\c&H00C8C0B8&\bord1.4}Vertex AI runs the tarball in your bucket,
+Dialogue: 0,0:18:29.67,0:18:31.64,Bilingual,,0,0,0,,你的 image 从来不会被带过去\N{\fs33\c&H00C8C0B8&\bord1.4}and your image never travels.
+Dialogue: 0,0:18:31.96,0:18:35.68,Bilingual,,0,0,0,,驾驶舱挂载了你的代码目录，所以已经能看到这次修改\N{\fs33\c&H00C8C0B8&\bord1.4}The cockpit mounts your code folder, so it already sees the edit.
+Dialogue: 0,0:18:36.00,0:18:40.01,Bilingual,,0,0,0,,金色标签：tar 包存在你的 bucket 里，而且很小\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: the tarball is stored in your bucket, and it is tiny.
+Dialogue: 0,0:18:41.65,0:18:44.94,Bilingual,,0,0,0,,再看 cli.sh；暂停一下，打开它\N{\fs33\c&H00C8C0B8&\bord1.4}Review cli.sh; pause and open it.
+Dialogue: 0,0:18:45.26,0:18:47.83,Bilingual,,0,0,0,,它用随机的十六进制串给任务命名\N{\fs33\c&H00C8C0B8&\bord1.4}It names the job with random hex,
+Dialogue: 0,0:18:47.83,0:18:52.27,Bilingual,,0,0,0,,申请一台 n1-standard-4 机器，并设定一个 GPU image\N{\fs33\c&H00C8C0B8&\bord1.4}asks for one n1-standard-4 machine, and sets a GPU image.
+Dialogue: 0,0:18:52.59,0:18:56.95,Bilingual,,0,0,0,,然后它指向 bucket 里你的 tar 包和要运行的模块\N{\fs33\c&H00C8C0B8&\bord1.4}Then it points at your tarball in the bucket and the module to run,
+Dialogue: 0,0:18:56.95,0:19:00.27,Bilingual,,0,0,0,,再拼出参数，最后是你的 W&B 密钥\N{\fs33\c&H00C8C0B8&\bord1.4}and builds the arguments, ending with your W&B key.
+Dialogue: 0,0:19:00.52,0:19:04.07,Bilingual,,0,0,0,,再往下，GPU 那一段被注释掉了\N{\fs33\c&H00C8C0B8&\bord1.4}Further down, the GPU block is commented out
+Dialogue: 0,0:19:04.07,0:19:09.33,Bilingual,,0,0,0,,第 31 行换成 CPU image，所以只有 CPU 那条命令会运行\N{\fs33\c&H00C8C0B8&\bord1.4}and line 31 swaps in the CPU image, so only the CPU command runs.
+Dialogue: 0,0:19:09.65,0:19:13.58,Bilingual,,0,0,0,,有一个小疏漏：README 先讲 GPU\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the README shows GPU first and CPU
+Dialogue: 0,0:19:13.58,0:19:17.52,Bilingual,,0,0,0,,把 CPU 写成可选，可这个脚本本来就在 CPU 上跑\N{\fs33\c&H00C8C0B8&\bord1.4}as optional, but the script already runs on CPU.
+Dialogue: 0,0:19:17.77,0:19:21.65,Bilingual,,0,0,0,,先看金色标签：一旦任务的机器分配好\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag first: once the job's machine is provisioned,
+Dialogue: 0,0:19:21.65,0:19:24.49,Bilingual,,0,0,0,,你的项目就一直付费，直到脚本退出\N{\fs33\c&H00C8C0B8&\bord1.4}your project pays until the script exits.
+Dialogue: 0,0:19:24.81,0:19:26.89,Bilingual,,0,0,0,,确认你的密钥长度是 40\N{\fs33\c&H00C8C0B8&\bord1.4}Check that your key length is 40;
+Dialogue: 0,0:19:26.89,0:19:31.51,Bilingual,,0,0,0,,如果不是，先看下一章“谁提交，谁运行”，再提交\N{\fs33\c&H00C8C0B8&\bord1.4}if not, watch the next chapter, Who submits, who runs, before you submit.
+Dialogue: 0,0:19:31.83,0:19:35.28,Bilingual,,0,0,0,,现在跑 sh cli.sh；暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Now sh cli.sh; pause and run it.
+Dialogue: 0,0:19:35.60,0:19:40.62,Bilingual,,0,0,0,,第一行是真的：us-central1 的 Vertex AI endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}The first line is real: the Vertex AI endpoint in us-central1.
+Dialogue: 0,0:19:40.94,0:19:44.32,Bilingual,,0,0,0,,然后它停下了，没有激活的账号，因为密钥从来没加载过\N{\fs33\c&H00C8C0B8&\bord1.4}Then it stops with no active account, because the key
+Dialogue: 0,0:19:44.32,0:19:47.19,Bilingual,,0,0,0,,额外跑一下 gcloud auth list，就能确认\N{\fs33\c&H00C8C0B8&\bord1.4}never loaded; an extra auth list confirms it.
+Dialogue: 0,0:19:47.51,0:19:50.98,Bilingual,,0,0,0,,换成你的密钥，gcloud 会报告任务已创建\N{\fs33\c&H00C8C0B8&\bord1.4}With your key, gcloud reports the job as created.
+Dialogue: 0,0:19:51.22,0:19:55.65,Bilingual,,0,0,0,,额外用 sh -x 跟踪一遍，能看到它想发出去的任务\N{\fs33\c&H00C8C0B8&\bord1.4}An extra trace with sh -x shows the job it tried to send.
+Dialogue: 0,0:19:55.97,0:20:00.11,Bilingual,,0,0,0,,GPU image 先被设好，然后被 CPU image 覆盖\N{\fs33\c&H00C8C0B8&\bord1.4}The GPU image is set, then overridden by the CPU image.
+Dialogue: 0,0:20:00.43,0:20:02.03,Bilingual,,0,0,0,,然后是完整的命令\N{\fs33\c&H00C8C0B8&\bord1.4}Then the full command.
+Dialogue: 0,0:20:02.12,0:20:05.33,Bilingual,,0,0,0,,这个 worker pool spec 就是这个任务的机器订单\N{\fs33\c&H00C8C0B8&\bord1.4}The worker pool spec is the job's machine order:
+Dialogue: 0,0:20:05.33,0:20:09.67,Bilingual,,0,0,0,,机器类型、一个副本，也就是一台机器，再加上 image 和模块\N{\fs33\c&H00C8C0B8&\bord1.4}machine type, one replica, meaning one machine, image and module.
+Dialogue: 0,0:20:09.99,0:20:14.51,Bilingual,,0,0,0,,最后是参数，结尾是明文的 W&B 密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Last come the arguments, ending with your W&B key in plain text.
+Dialogue: 0,0:20:14.97,0:20:16.57,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:20:16.63,0:20:20.39,Bilingual,,0,0,0,,你的 W&B 密钥现在成了任务参数的一部分\N{\fs33\c&H00C8C0B8&\bord1.4}Your W&B key is now part of the job's arguments.
+Dialogue: 0,0:20:20.71,0:20:22.31,Bilingual,,0,0,0,,以后谁能看到它？\N{\fs33\c&H00C8C0B8&\bord1.4}Who can see it later?
+Dialogue: 0,0:20:30.87,0:20:36.19,Bilingual,,0,0,0,,这个项目里能查看任务的任何人，因为任务规格会保存它的参数\N{\fs33\c&H00C8C0B8&\bord1.4}Anyone who can view jobs in this project, because the job spec keeps its arguments,
+Dialogue: 0,0:20:36.19,0:20:38.76,Bilingual,,0,0,0,,要是你直接敲在命令里，还有你的 shell 历史\N{\fs33\c&H00C8C0B8&\bord1.4}plus your shell history if typed inline.
+Dialogue: 0,0:20:39.08,0:20:42.40,Bilingual,,0,0,0,,用一把专用的密钥，结束时轮换掉\N{\fs33\c&H00C8C0B8&\bord1.4}Use a dedicated key and rotate it at the end;
+Dialogue: 0,0:20:42.40,0:20:44.84,Bilingual,,0,0,0,,练习里用的是 Secret Manager\N{\fs33\c&H00C8C0B8&\bord1.4}the exercises use Secret Manager.
+Dialogue: 0,0:20:45.08,0:20:49.26,Bilingual,,0,0,0,,另一种出错的方式：在一个从没 export 过密钥的终端里\N{\fs33\c&H00C8C0B8&\bord1.4}The other way it goes wrong: a terminal where the key was never exported.
+Dialogue: 0,0:20:49.58,0:20:54.11,Bilingual,,0,0,0,,进去之后，它的长度是 0，参数的结尾是一个空的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Inside, its length is 0, and the arguments end with an empty key.
+Dialogue: 0,0:20:54.43,0:20:58.54,Bilingual,,0,0,0,,所以任务会先下载数据，然后才在登录时失败\N{\fs33\c&H00C8C0B8&\bord1.4}So the job would download its data, and only then fail at login.
+Dialogue: 0,0:20:58.86,0:21:04.18,Bilingual,,0,0,0,,退出、export，再重新开始；先退出旧的驾驶舱，名字还被它占着\N{\fs33\c&H00C8C0B8&\bord1.4}Exit, export, and start again; first exit any old cockpit, which holds the name.
+Dialogue: 0,0:21:05.77,0:21:08.18,Bilingual,,0,0,0,,每个任务都有三枚徽章参与\N{\fs33\c&H00C8C0B8&\bord1.4}Three badges take part in every job.
+Dialogue: 0,0:21:08.50,0:21:12.25,Bilingual,,0,0,0,,第一枚是你的密钥文件，属于 model-trainer 这个服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}The first is your key file, for the model-trainer service account.
+Dialogue: 0,0:21:12.57,0:21:16.97,Bilingual,,0,0,0,,它的三个角色让它能写你的 bucket、创建任务：它负责提交\N{\fs33\c&H00C8C0B8&\bord1.4}Its three roles let it write to your bucket and create jobs: it submits.
+Dialogue: 0,0:21:17.20,0:21:21.50,Bilingual,,0,0,0,,第三枚是你的 W&B 密钥，进的完全是另一栋楼\N{\fs33\c&H00C8C0B8&\bord1.4}The third is your W&B key, for a different building altogether,
+Dialogue: 0,0:21:21.50,0:21:24.43,Bilingual,,0,0,0,,靠手动放进任务的参数里带过去\N{\fs33\c&H00C8C0B8&\bord1.4}carried by hand inside the job's arguments.
+Dialogue: 0,0:21:24.75,0:21:26.89,Bilingual,,0,0,0,,中间那根挂绳还空着\N{\fs33\c&H00C8C0B8&\bord1.4}The middle lanyard is still empty.
+Dialogue: 0,0:21:27.13,0:21:28.73,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:21:28.80,0:21:32.22,Bilingual,,0,0,0,,任务从你的私有 bucket 安装你的包\N{\fs33\c&H00C8C0B8&\bord1.4}The job installs your package from your private bucket,
+Dialogue: 0,0:21:32.22,0:21:35.98,Bilingual,,0,0,0,,可你的密钥文件从没离开过你的笔记本。这是怎么做到的？\N{\fs33\c&H00C8C0B8&\bord1.4}but your key file never left your laptop. How?
+Dialogue: 0,0:21:44.65,0:21:48.76,Bilingual,,0,0,0,,第二枚徽章：你项目的 Vertex AI 服务代理\N{\fs33\c&H00C8C0B8&\bord1.4}The second badge: your project's Vertex AI service agent,
+Dialogue: 0,0:21:48.76,0:21:51.13,Bilingual,,0,0,0,,一个由 Google 管理的服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}a service account Google manages.
+Dialogue: 0,0:21:51.45,0:21:56.40,Bilingual,,0,0,0,,任务默认以它的身份运行，它能打开同一个项目里的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}By default the job runs as it, and it can open buckets in the same project.
+Dialogue: 0,0:21:56.72,0:21:58.79,Bilingual,,0,0,0,,你的密钥只证明了是谁提交的\N{\fs33\c&H00C8C0B8&\bord1.4}Your key only proved who submitted.
+Dialogue: 0,0:21:59.11,0:22:02.00,Bilingual,,0,0,0,,如果任务访问你的 bucket 时报 403\N{\fs33\c&H00C8C0B8&\bord1.4}If a job ever gets a 403 on your bucket,
+Dialogue: 0,0:22:02.00,0:22:04.66,Bilingual,,0,0,0,,就要给这个身份授予访问权限\N{\fs33\c&H00C8C0B8&\bord1.4}that is the identity to grant access.
+Dialogue: 0,0:22:05.30,0:22:06.30,Bilingual,,0,0,0,,在 Vertex 上\N{\fs33\c&H00C8C0B8&\bord1.4}On Vertex,
+Dialogue: 0,0:22:06.30,0:22:09.99,Bilingual,,0,0,0,,任务的第一步是把你的 tar 包安装进 Google 的 image\N{\fs33\c&H00C8C0B8&\bord1.4}the job's first step installs your tarball into Google's image.
+Dialogue: 0,0:22:10.31,0:22:11.96,Bilingual,,0,0,0,,我们这里跑不了 Vertex\N{\fs33\c&H00C8C0B8&\bord1.4}We can't run Vertex here,
+Dialogue: 0,0:22:11.96,0:22:15.77,Bilingual,,0,0,0,,所以在笔记本上把这一步重跑一遍，标成替身\N{\fs33\c&H00C8C0B8&\bord1.4}so we rerun that step on the laptop, tagged as a stand-in.
+Dialogue: 0,0:22:16.09,0:22:19.27,Bilingual,,0,0,0,,在一个普通的 Python 3.10 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}In a plain Python 3.10 container,
+Dialogue: 0,0:22:19.27,0:22:24.95,Bilingual,,0,0,0,,pip 安装这个 tar 包：你的包，加上 wandb 0.15.11\N{\fs33\c&H00C8C0B8&\bord1.4}pip installs the tarball: your package, plus wandb 0.15.11.
+Dialogue: 0,0:22:25.18,0:22:29.33,Bilingual,,0,0,0,,额外跑一下 pip list：有 wandb、requests 和它们的辅助依赖\N{\fs33\c&H00C8C0B8&\bord1.4}An extra pip list shows wandb, requests and their helpers,
+Dialogue: 0,0:22:29.33,0:22:32.05,Bilingual,,0,0,0,,但没有 TensorFlow，也没有 scikit-learn\N{\fs33\c&H00C8C0B8&\bord1.4}but no TensorFlow and no scikit-learn.
+Dialogue: 0,0:22:32.37,0:22:35.31,Bilingual,,0,0,0,,训练脚本指望预构建的 image 提供这些\N{\fs33\c&H00C8C0B8&\bord1.4}The trainer counts on the prebuilt image for those,
+Dialogue: 0,0:22:35.31,0:22:37.09,Bilingual,,0,0,0,,而我们没有把它拉下来检查\N{\fs33\c&H00C8C0B8&\bord1.4}which we did not pull to check.
+Dialogue: 0,0:22:37.41,0:22:40.27,Bilingual,,0,0,0,,没有它，训练脚本连帮助信息都打不出来\N{\fs33\c&H00C8C0B8&\bord1.4}Without it, the trainer cannot even print its help.
+Dialogue: 0,0:22:42.00,0:22:47.55,Bilingual,,0,0,0,,然后是训练脚本里 W&B 的第一步，第 153 行，用三个密钥试一试\N{\fs33\c&H00C8C0B8&\bord1.4}Then the trainer's first W&B step, line 153, with three keys.
+Dialogue: 0,0:22:47.87,0:22:52.65,Bilingual,,0,0,0,,上一章那个空的密钥，报 api key not configured\N{\fs33\c&H00C8C0B8&\bord1.4}The empty key from the last chapter fails with api_key not configured,
+Dialogue: 0,0:22:52.65,0:22:57.64,Bilingual,,0,0,0,,而在 Vertex 上，这发生在数据下载之后，用的是计费的机器时间\N{\fs33\c&H00C8C0B8&\bord1.4}and on Vertex that comes after the data download, on billed machine time.
+Dialogue: 0,0:22:57.96,0:22:59.96,Bilingual,,0,0,0,,默认的 16 会失败，报\N{\fs33\c&H00C8C0B8&\bord1.4}The default of 16 fails:
+Dialogue: 0,0:22:59.96,0:23:03.97,Bilingual,,0,0,0,,API key must be 40 characters long, yours was 2\N{\fs33\c&H00C8C0B8&\bord1.4}API key must be 40 characters long, yours was 2.
+Dialogue: 0,0:23:04.29,0:23:09.20,Bilingual,,0,0,0,,我们 40 个字符的占位密钥，能通过离线的长度检查，仅此而已\N{\fs33\c&H00C8C0B8&\bord1.4}Our 40 character placeholder passes the offline length check, and nothing more.
+Dialogue: 0,0:23:09.75,0:23:12.16,Bilingual,,0,0,0,,还有一点：这个老的 wandb pin\N{\fs33\c&H00C8C0B8&\bord1.4}One more: this old wandb pin
+Dialogue: 0,0:23:12.16,0:23:15.96,Bilingual,,0,0,0,,只接受正好 40 个字符，47 个就会失败\N{\fs33\c&H00C8C0B8&\bord1.4}accepts exactly 40 characters, and 47 fails.
+Dialogue: 0,0:23:16.28,0:23:20.12,Bilingual,,0,0,0,,我们没法确认 W&B 现在发的密钥是什么格式\N{\fs33\c&H00C8C0B8&\bord1.4}We could not check which key format W&B gives out today.
+Dialogue: 0,0:23:20.44,0:23:24.64,Bilingual,,0,0,0,,如果你的不一样，这个 pin 会拒绝它，所以提交之前先检查\N{\fs33\c&H00C8C0B8&\bord1.4}If yours differs, this pin refuses it, so check before you submit.
+Dialogue: 0,0:23:24.96,0:23:26.93,Bilingual,,0,0,0,,有一个办法，这里没有测试过\N{\fs33\c&H00C8C0B8&\bord1.4}One fix, untested here:
+Dialogue: 0,0:23:26.93,0:23:31.46,Bilingual,,0,0,0,,把 setup.py 里 wandb 的 pin 升到当前的版本\N{\fs33\c&H00C8C0B8&\bord1.4}raise the wandb pin in setup.py to a current release,
+Dialogue: 0,0:23:31.46,0:23:35.65,Bilingual,,0,0,0,,再跑一次 sh package-trainer.sh，然后提交\N{\fs33\c&H00C8C0B8&\bord1.4}run sh package-trainer.sh again, and then submit.
+Dialogue: 0,0:23:37.28,0:23:39.51,Bilingual,,0,0,0,,要查看任务，打开 Vertex AI\N{\fs33\c&H00C8C0B8&\bord1.4}To view jobs, open Vertex AI,
+Dialogue: 0,0:23:39.51,0:23:41.97,Bilingual,,0,0,0,,再点 Training，再点 Custom jobs\N{\fs33\c&H00C8C0B8&\bord1.4}then Training, then Custom jobs;
+Dialogue: 0,0:23:41.97,0:23:43.90,Bilingual,,0,0,0,,暂停一下，找找你的\N{\fs33\c&H00C8C0B8&\bord1.4}pause and look for yours.
+Dialogue: 0,0:23:44.22,0:23:48.44,Bilingual,,0,0,0,,它是一个自定义任务，不是训练 pipeline，所以要去那个标签页找\N{\fs33\c&H00C8C0B8&\bord1.4}It is a custom job, not a training pipeline, so look on that tab.
+Dialogue: 0,0:23:48.76,0:23:51.33,Bilingual,,0,0,0,,打开你的任务，点它的日志链接\N{\fs33\c&H00C8C0B8&\bord1.4}Open your job and follow its logs link;
+Dialogue: 0,0:23:51.33,0:23:53.97,Bilingual,,0,0,0,,等那行 Training Job Complete 出现\N{\fs33\c&H00C8C0B8&\bord1.4}wait for the line Training Job Complete.
+Dialogue: 0,0:23:54.20,0:23:55.80,Bilingual,,0,0,0,,任务会打印什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What will the job print?
+Dialogue: 0,0:23:55.93,0:23:59.54,Bilingual,,0,0,0,,这期视频没有任何任务日志，所以这里给出的是它的样子\N{\fs33\c&H00C8C0B8&\bord1.4}No job log exists for this video, so here is its shape,
+Dialogue: 0,0:23:59.54,0:24:02.03,Bilingual,,0,0,0,,按代码自己的 print 语句拼出来的\N{\fs33\c&H00C8C0B8&\bord1.4}built from the code's own print lines.
+Dialogue: 0,0:24:02.35,0:24:06.10,Bilingual,,0,0,0,,这些数量是两个 notebook 用同样的代码打印出来的\N{\fs33\c&H00C8C0B8&\bord1.4}The counts are the ones both notebooks printed for the same code.
+Dialogue: 0,0:24:06.35,0:24:08.69,Bilingual,,0,0,0,,打印 label 的那一行没有固定的顺序\N{\fs33\c&H00C8C0B8&\bord1.4}The labels line has no fixed order,
+Dialogue: 0,0:24:08.69,0:24:12.24,Bilingual,,0,0,0,,两个 notebook 就能说明这一点，而且也没有保存 label 映射\N{\fs33\c&H00C8C0B8&\bord1.4}as the two notebooks show, and no label map is saved.
+Dialogue: 0,0:24:12.56,0:24:14.66,Bilingual,,0,0,0,,这段 summary 最后多出来一个 None\N{\fs33\c&H00C8C0B8&\bord1.4}The summary ends with a stray None,
+Dialogue: 0,0:24:14.66,0:24:17.36,Bilingual,,0,0,0,,因为代码打印的是 summary 的返回值\N{\fs33\c&H00C8C0B8&\bord1.4}because the code prints what summary returns.
+Dialogue: 0,0:24:17.68,0:24:21.81,Bilingual,,0,0,0,,训练本身在这里是一段空白，没有 epoch、loss，也没有时间\N{\fs33\c&H00C8C0B8&\bord1.4}Training itself is a gap here, with no epochs, loss or times,
+Dialogue: 0,0:24:21.81,0:24:24.25,Bilingual,,0,0,0,,然后是那行 Training Job Complete\N{\fs33\c&H00C8C0B8&\bord1.4}then the line Training Job Complete.
+Dialogue: 0,0:24:24.48,0:24:28.07,Bilingual,,0,0,0,,要查看指标，README 让你去 W&B 的项目\N{\fs33\c&H00C8C0B8&\bord1.4}To view metrics, the README sends you to the W&B
+Dialogue: 0,0:24:28.07,0:24:30.61,Bilingual,,0,0,0,,cheese-training-vertex-ai\N{\fs33\c&H00C8C0B8&\bord1.4}project cheese-training-vertex-ai.
+Dialogue: 0,0:24:30.93,0:24:34.87,Bilingual,,0,0,0,,它承诺训练指标会被自动追踪、自动更新\N{\fs33\c&H00C8C0B8&\bord1.4}It promises training metrics, tracked and updated automatically.
+Dialogue: 0,0:24:35.19,0:24:37.41,Bilingual,,0,0,0,,说得客气点，用这份代码做不到\N{\fs33\c&H00C8C0B8&\bord1.4}To put it kindly, not with this code.
+Dialogue: 0,0:24:37.73,0:24:42.00,Bilingual,,0,0,0,,按 task.py 的写法，以模型命名的那个 run 有 config\N{\fs33\c&H00C8C0B8&\bord1.4}From task.py, the run named after the model gets its config,
+Dialogue: 0,0:24:42.00,0:24:47.69,Bilingual,,0,0,0,,包括执行时间，还有系统图表，而它的曲线位置一直是空的\N{\fs33\c&H00C8C0B8&\bord1.4}including the execution time, and system charts, and its curve slots stay empty.
+Dialogue: 0,0:24:48.01,0:24:49.91,Bilingual,,0,0,0,,暂停一下，打开你的项目\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and open your project.
+Dialogue: 0,0:24:50.15,0:24:53.18,Bilingual,,0,0,0,,来想一个问题，用课上列的七样\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder, with the lecture's list of seven.
+Dialogue: 0,0:24:53.50,0:24:55.89,Bilingual,,0,0,0,,这个 run 实际存下了哪几样？\N{\fs33\c&H00C8C0B8&\bord1.4}Which of them does this run actually keep?
+Dialogue: 0,0:25:04.73,0:25:06.61,Bilingual,,0,0,0,,模型和它的设置，有\N{\fs33\c&H00C8C0B8&\bord1.4}The model and its settings, yes.
+Dialogue: 0,0:25:06.93,0:25:13.35,Bilingual,,0,0,0,,环境只算一部分：有系统图表，而 image 的 tag 写在 cli.sh 里\N{\fs33\c&H00C8C0B8&\bord1.4}The environment only partly: system charts, while the image tag sits in cli.sh.
+Dialogue: 0,0:25:13.67,0:25:17.41,Bilingual,,0,0,0,,指标，没有：执行时间进了 config\N{\fs33\c&H00C8C0B8&\bord1.4}Metrics, none: the execution time goes into the config.
+Dialogue: 0,0:25:17.73,0:25:19.45,Bilingual,,0,0,0,,日志有，权重没有\N{\fs33\c&H00C8C0B8&\bord1.4}Logs yes, weights no.
+Dialogue: 0,0:25:19.77,0:25:21.37,Bilingual,,0,0,0,,代码、数据和笔记，没有\N{\fs33\c&H00C8C0B8&\bord1.4}Code, data and notes, no:
+Dialogue: 0,0:25:21.37,0:25:24.66,Bilingual,,0,0,0,,没有 commit，一个固定的 zip 包，还有一次没有随机种子的划分\N{\fs33\c&H00C8C0B8&\bord1.4}no commit, a fixed zip, and an unseeded split.
+Dialogue: 0,0:25:24.98,0:25:29.71,Bilingual,,0,0,0,,notebook A 的那个目录没有 commit，没有划分，也没有笔记\N{\fs33\c&H00C8C0B8&\bord1.4}The folder from notebook A has no commit, no split and no notes either.
+Dialogue: 0,0:25:30.03,0:25:33.41,Bilingual,,0,0,0,,所以结论是：这些表选不出哪种做法更好\N{\fs33\c&H00C8C0B8&\bord1.4}So the verdict: these tables cannot crown a recipe.
+Dialogue: 0,0:25:33.73,0:25:37.61,Bilingual,,0,0,0,,给划分加上随机种子，对齐 epoch，记下代码版本，然后再比较\N{\fs33\c&H00C8C0B8&\bord1.4}Seed the split, match the epochs, keep the code version, then compare.
+Dialogue: 0,0:25:37.93,0:25:40.27,Bilingual,,0,0,0,,练习 1 会加一个小小的 callback\N{\fs33\c&H00C8C0B8&\bord1.4}Exercise 1 adds a small callback.
+Dialogue: 0,0:25:41.32,0:25:44.80,Bilingual,,0,0,0,,现在反过来看 README 那个可选的 CPU 步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Now the reverse of the README's optional CPU step:
+Dialogue: 0,0:25:44.80,0:25:47.38,Bilingual,,0,0,0,,要在 GPU 上训练，需要什么？\N{\fs33\c&H00C8C0B8&\bord1.4}what would it take to train on a GPU?
+Dialogue: 0,0:25:47.70,0:25:49.40,Bilingual,,0,0,0,,三个开关必须一致\N{\fs33\c&H00C8C0B8&\bord1.4}Three switches must agree.
+Dialogue: 0,0:25:49.72,0:25:53.22,Bilingual,,0,0,0,,加速器：worker pool spec 里的一块 T4\N{\fs33\c&H00C8C0B8&\bord1.4}The accelerator: one T4 in the worker pool spec.
+Dialogue: 0,0:25:53.54,0:25:56.47,Bilingual,,0,0,0,,image：为 GPU 构建的 TensorFlow\N{\fs33\c&H00C8C0B8&\bord1.4}The image: TensorFlow built for GPUs,
+Dialogue: 0,0:25:56.47,0:25:58.77,Bilingual,,0,0,0,,带 CUDA，也就是 GPU 的库\N{\fs33\c&H00C8C0B8&\bord1.4}with CUDA, the GPU libraries.
+Dialogue: 0,0:25:59.09,0:26:02.65,Bilingual,,0,0,0,,还有配额：这个区域里给自定义训练用的 T4\N{\fs33\c&H00C8C0B8&\bord1.4}And the quota: T4s for custom training in this region.
+Dialogue: 0,0:26:02.97,0:26:05.32,Bilingual,,0,0,0,,芯片只在三个都打开时才会亮\N{\fs33\c&H00C8C0B8&\bord1.4}The chip lights only when all three are on.
+Dialogue: 0,0:26:06.28,0:26:09.70,Bilingual,,0,0,0,,配额就是准备工作那一章里在控制台提交的申请\N{\fs33\c&H00C8C0B8&\bord1.4}The quota is the console request from the setup chapter.
+Dialogue: 0,0:26:10.02,0:26:13.95,Bilingual,,0,0,0,,额外检查显示，Google 两个 GPU image 都还在提供\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check shows Google still serves both GPU images,
+Dialogue: 0,0:26:13.95,0:26:15.67,Bilingual,,0,0,0,,这是录制时的情况\N{\fs33\c&H00C8C0B8&\bord1.4}at the time of recording.
+Dialogue: 0,0:26:15.92,0:26:20.57,Bilingual,,0,0,0,,要切换，就取消 GPU 那一段的注释，再把 CPU 那一段注释掉\N{\fs33\c&H00C8C0B8&\bord1.4}To switch, uncomment the GPU block and comment out the CPU block.
+Dialogue: 0,0:26:20.89,0:26:24.68,Bilingual,,0,0,0,,两段都留着，你就会提交两个同名的任务\N{\fs33\c&H00C8C0B8&\bord1.4}Leave both active, and you submit two jobs with the same name.
+Dialogue: 0,0:26:24.93,0:26:29.30,Bilingual,,0,0,0,,在这里，GPU 那一段会和我们提交 CPU 任务时一样失败\N{\fs33\c&H00C8C0B8&\bord1.4}Here the GPU block would fail the same way as our CPU submit did,
+Dialogue: 0,0:26:29.30,0:26:34.47,Bilingual,,0,0,0,,因为没有激活的账号，所以没有新东西可看，我们也不造假\N{\fs33\c&H00C8C0B8&\bord1.4}with no active account, so there is nothing new to show, and nothing we fake.
+Dialogue: 0,0:26:34.72,0:26:40.50,Bilingual,,0,0,0,,金色标签：GPU 会增加费用，只要它挂着，不管用没用\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: a GPU adds to the bill for as long as it is attached, used or not.
+Dialogue: 0,0:26:40.73,0:26:42.33,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:26:42.40,0:26:44.96,Bilingual,,0,0,0,,你在 CPU 那一段里加上加速器\N{\fs33\c&H00C8C0B8&\bord1.4}You add the accelerator to the CPU block.
+Dialogue: 0,0:26:45.28,0:26:49.95,Bilingual,,0,0,0,,任务跑起来了，日志里 GPU Available 后面是一个空列表\N{\fs33\c&H00C8C0B8&\bord1.4}The job runs, and its log says GPU Available: [], an empty list.
+Dialogue: 0,0:26:50.27,0:26:51.87,Bilingual,,0,0,0,,为什么？\N{\fs33\c&H00C8C0B8&\bord1.4}Why?
+Dialogue: 0,0:26:57.83,0:27:01.59,Bilingual,,0,0,0,,第 31 行设的是 CPU image，里面没有 CUDA\N{\fs33\c&H00C8C0B8&\bord1.4}Line 31 sets a CPU image, which has no CUDA.
+Dialogue: 0,0:27:01.91,0:27:04.83,Bilingual,,0,0,0,,这块 T4 挂着、闲着，照样计费\N{\fs33\c&H00C8C0B8&\bord1.4}The T4 is attached, idle, and still billed.
+Dialogue: 0,0:27:05.15,0:27:07.28,Bilingual,,0,0,0,,练习 5 让你自己试一试\N{\fs33\c&H00C8C0B8&\bord1.4}Exercise 5 lets you try it.
+Dialogue: 0,0:27:08.33,0:27:13.15,Bilingual,,0,0,0,,课上讲的最后一个想法是多 GPU 训练，有三种形态\N{\fs33\c&H00C8C0B8&\bord1.4}The last idea of the lecture is multi-GPU training, in three shapes:
+Dialogue: 0,0:27:13.15,0:27:18.32,Bilingual,,0,0,0,,一台机器一块 GPU，一台机器多块 GPU，以及多台机器\N{\fs33\c&H00C8C0B8&\bord1.4}one machine with one GPU, one machine with several, and several machines.
+Dialogue: 0,0:27:18.64,0:27:21.30,Bilingual,,0,0,0,,今天讲中间那种形态，也就是 MirroredStrategy\N{\fs33\c&H00C8C0B8&\bord1.4}Today is the middle one, the mirrored strategy.
+Dialogue: 0,0:27:21.62,0:27:26.77,Bilingual,,0,0,0,,单 GPU 的训练脚本也会创建一个，但只是用来数 GPU\N{\fs33\c&H00C8C0B8&\bord1.4}The single-GPU trainer also creates one, but only to count GPUs.
+Dialogue: 0,0:27:27.00,0:27:28.53,Bilingual,,0,0,0,,思路是这样的\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the idea.
+Dialogue: 0,0:27:28.58,0:27:33.08,Bilingual,,0,0,0,,每块 GPU 上都有一份一模一样的模型拷贝，叫作副本\N{\fs33\c&H00C8C0B8&\bord1.4}Each GPU holds an identical copy of the model, called a replica.
+Dialogue: 0,0:27:33.40,0:27:38.76,Bilingual,,0,0,0,,64 的全局 batch，也就是一步的量，被分成两半，每半 32\N{\fs33\c&H00C8C0B8&\bord1.4}A global batch of 64, one step's worth, splits into two halves of 32.
+Dialogue: 0,0:27:39.08,0:27:41.93,Bilingual,,0,0,0,,每块 GPU 在自己那一半上算梯度\N{\fs33\c&H00C8C0B8&\bord1.4}Each GPU computes gradients on its half.
+Dialogue: 0,0:27:42.25,0:27:45.53,Bilingual,,0,0,0,,两份梯度通过一条叫 all-reduce 的连线取平均\N{\fs33\c&H00C8C0B8&\bord1.4}The two are averaged across a link called all-reduce,
+Dialogue: 0,0:27:45.53,0:27:49.19,Bilingual,,0,0,0,,两份拷贝走同样的一步，所以一直保持一致\N{\fs33\c&H00C8C0B8&\bord1.4}and both copies take the same step, so they stay identical.
+Dialogue: 0,0:27:49.51,0:27:52.98,Bilingual,,0,0,0,,在 strategy.scope 里创建的变量会被复制\N{\fs33\c&H00C8C0B8&\bord1.4}Variables created inside the scope are mirrored,
+Dialogue: 0,0:27:52.98,0:27:54.72,Bilingual,,0,0,0,,每块 GPU 一份同步的拷贝\N{\fs33\c&H00C8C0B8&\bord1.4}one synced copy per GPU;
+Dialogue: 0,0:27:54.72,0:27:57.46,Bilingual,,0,0,0,,在外面构建的模型不会被复制\N{\fs33\c&H00C8C0B8&\bord1.4}a model built outside is not mirrored.
+Dialogue: 0,0:27:57.70,0:28:03.82,Bilingual,,0,0,0,,先看 cli-multi-gpu.sh，按 README 的顺序；暂停一下，打开它\N{\fs33\c&H00C8C0B8&\bord1.4}Review cli-multi-gpu.sh first, in README order; pause and open it.
+Dialogue: 0,0:28:04.14,0:28:07.41,Bilingual,,0,0,0,,它申请一台 n1-standard-32 机器\N{\fs33\c&H00C8C0B8&\bord1.4}It asks for one n1-standard-32 machine
+Dialogue: 0,0:28:07.41,0:28:09.73,Bilingual,,0,0,0,,带两块 T4，训练 5 个 epoch\N{\fs33\c&H00C8C0B8&\bord1.4}with two T4s, for 5 epochs.
+Dialogue: 0,0:28:10.05,0:28:14.98,Bilingual,,0,0,0,,有一个小疏漏：它的 TensorFlow image 比较老\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: its TensorFlow image is older,
+Dialogue: 0,0:28:14.98,0:28:18.22,Bilingual,,0,0,0,,是 2.14，而 cli.sh 用的是 2.17\N{\fs33\c&H00C8C0B8&\bord1.4}2.14, where cli.sh uses 2.17.
+Dialogue: 0,0:28:18.47,0:28:22.22,Bilingual,,0,0,0,,然后看多 GPU 训练脚本；暂停一下，打开它\N{\fs33\c&H00C8C0B8&\bord1.4}Then review the multi-GPU trainer; pause and open it.
+Dialogue: 0,0:28:22.54,0:28:24.72,Bilingual,,0,0,0,,这就是课上讲的三处改动\N{\fs33\c&H00C8C0B8&\bord1.4}These are the lecture's three changes.
+Dialogue: 0,0:28:25.04,0:28:27.00,Bilingual,,0,0,0,,它创建 MirroredStrategy\N{\fs33\c&H00C8C0B8&\bord1.4}It creates the mirrored strategy.
+Dialogue: 0,0:28:27.32,0:28:30.75,Bilingual,,0,0,0,,它把 batch 大小乘以副本数\N{\fs33\c&H00C8C0B8&\bord1.4}It multiplies the batch size by the number of replicas.
+Dialogue: 0,0:28:31.07,0:28:35.28,Bilingual,,0,0,0,,并且在 strategy.scope 里构建、编译模型\N{\fs33\c&H00C8C0B8&\bord1.4}And it builds and compiles the model inside the scope of the strategy.
+Dialogue: 0,0:28:35.60,0:28:37.30,Bilingual,,0,0,0,,而 model.fit 没变\N{\fs33\c&H00C8C0B8&\bord1.4}model.fit is unchanged.
+Dialogue: 0,0:28:37.55,0:28:39.15,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:28:39.21,0:28:45.17,Bilingual,,0,0,0,,两块 GPU，batch 大小参数是 32，一共 936 张训练图片\N{\fs33\c&H00C8C0B8&\bord1.4}Two GPUs, --batch_size=32, and 936 training images.
+Dialogue: 0,0:28:45.49,0:28:50.18,Bilingual,,0,0,0,,每个 epoch 有多少步，每块 GPU 每一步看到多少张图片？\N{\fs33\c&H00C8C0B8&\bord1.4}How many steps per epoch, and how many images does each GPU see per step?
+Dialogue: 0,0:28:59.02,0:29:03.95,Bilingual,,0,0,0,,全局 batch 是 64，所以是 15 步，最后一步不满\N{\fs33\c&H00C8C0B8&\bord1.4}The global batch is 64, so 15 steps, the last one partial,
+Dialogue: 0,0:29:03.95,0:29:07.36,Bilingual,,0,0,0,,每个完整的步里每块 GPU 拿 32 张\N{\fs33\c&H00C8C0B8&\bord1.4}and 32 images per GPU on each full step.
+Dialogue: 0,0:29:07.68,0:29:09.10,Bilingual,,0,0,0,,有两点要注意\N{\fs33\c&H00C8C0B8&\bord1.4}Two caveats.
+Dialogue: 0,0:29:09.15,0:29:13.82,Bilingual,,0,0,0,,学习率还是 0.001，而 batch 翻了一倍\N{\fs33\c&H00C8C0B8&\bord1.4}The learning rate stays at 0.001 while the batch doubles.
+Dialogue: 0,0:29:14.14,0:29:16.46,Bilingual,,0,0,0,,而且两块 GPU 不会快一倍\N{\fs33\c&H00C8C0B8&\bord1.4}And two GPUs are not twice as fast,
+Dialogue: 0,0:29:16.46,0:29:20.12,Bilingual,,0,0,0,,因为启动、拉取 image 和下载都不会变短\N{\fs33\c&H00C8C0B8&\bord1.4}because start-up, image pull and download don't shrink.
+Dialogue: 0,0:29:20.35,0:29:26.52,Bilingual,,0,0,0,,你需要所在区域里自定义训练的配额：两块 T4 和 32 个虚拟 CPU\N{\fs33\c&H00C8C0B8&\bord1.4}You need quota for two T4s and 32 virtual CPUs of custom training in your region.
+Dialogue: 0,0:29:26.84,0:29:32.38,Bilingual,,0,0,0,,金色标签：这是这节课最大的机器，所以先看价目页\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: this is the biggest machine of the lecture, so check the pricing page first.
+Dialogue: 0,0:29:32.70,0:29:38.25,Bilingual,,0,0,0,,如果你的配额批下来了，暂停一下，跑 sh cli-multi-gpu.sh\N{\fs33\c&H00C8C0B8&\bord1.4}If your quota came through, pause and run sh cli-multi-gpu.sh.
+Dialogue: 0,0:29:38.57,0:29:42.69,Bilingual,,0,0,0,,在这里，它和 cli.sh 一样失败，没有激活的账号\N{\fs33\c&H00C8C0B8&\bord1.4}Here it fails like cli.sh, with no active account.
+Dialogue: 0,0:29:43.73,0:29:47.82,Bilingual,,0,0,0,,还有一种 README 从没提过的启动方式\N{\fs33\c&H00C8C0B8&\bord1.4}One launcher the README never mentions is cli.py,
+Dialogue: 0,0:29:47.82,0:29:49.58,Bilingual,,0,0,0,,cli.py，走 Python SDK 的路线\N{\fs33\c&H00C8C0B8&\bord1.4}the Python SDK route.
+Dialogue: 0,0:29:49.90,0:29:52.56,Bilingual,,0,0,0,,额外跑一下，它马上就失败了\N{\fs33\c&H00C8C0B8&\bord1.4}As an extra run, it fails at once,
+Dialogue: 0,0:29:52.56,0:29:56.41,Bilingual,,0,0,0,,因为只有 cli.sh 设置了 region 变量\N{\fs33\c&H00C8C0B8&\bord1.4}because only cli.sh sets the GCP_REGION variable.
+Dialogue: 0,0:29:56.73,0:29:59.52,Bilingual,,0,0,0,,把它 export 之后，它又卡在缺失的密钥文件上\N{\fs33\c&H00C8C0B8&\bord1.4}Export it, and it fails at the missing key file.
+Dialogue: 0,0:30:02.45,0:30:04.18,Bilingual,,0,0,0,,那训练好的模型在哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}And where is the trained model?
+Dialogue: 0,0:30:04.50,0:30:08.85,Bilingual,,0,0,0,,脚本结束时，机器被删掉，权重也跟着没了\N{\fs33\c&H00C8C0B8&\bord1.4}When the script ends, the machine is deleted, and the weights with it:
+Dialogue: 0,0:30:08.85,0:30:12.71,Bilingual,,0,0,0,,没有任何地方调用 model.save，model dir 参数也被忽略了\N{\fs33\c&H00C8C0B8&\bord1.4}nothing calls model.save, and the --model-dir flag is ignored.
+Dialogue: 0,0:30:13.03,0:30:18.13,Bilingual,,0,0,0,,第 15 讲会把模型存进 bucket；练习 4 今天就做\N{\fs33\c&H00C8C0B8&\bord1.4}Lecture 15 saves the model to a bucket; exercise 4 does it today.
+Dialogue: 0,0:30:18.37,0:30:21.31,Bilingual,,0,0,0,,该收尾了；暂停一下，照着清单一项项做\N{\fs33\c&H00C8C0B8&\bord1.4}Time to shut down; pause and work through the list.
+Dialogue: 0,0:30:21.63,0:30:27.39,Bilingual,,0,0,0,,在驾驶舱里或者控制台上，确认没有自定义任务还在运行或者排队\N{\fs33\c&H00C8C0B8&\bord1.4}From inside the cockpit, or in the console, make sure no custom job is running or pending.
+Dialogue: 0,0:30:27.71,0:30:30.53,Bilingual,,0,0,0,,也把 tar 包和实验目录删掉\N{\fs33\c&H00C8C0B8&\bord1.4}Remove the tarball and experiment folders too.
+Dialogue: 0,0:30:30.85,0:30:34.30,Bilingual,,0,0,0,,然后 exit；额外跑一下 docker ps，什么都没剩\N{\fs33\c&H00C8C0B8&\bord1.4}Then exit; an extra docker ps shows nothing left.
+Dialogue: 0,0:30:34.62,0:30:39.08,Bilingual,,0,0,0,,结束最后一个 W&B run，断开 Colab 的运行时\N{\fs33\c&H00C8C0B8&\bord1.4}Finish the last W&B run, and disconnect the Colab runtimes.
+Dialogue: 0,0:30:39.40,0:30:42.72,Bilingual,,0,0,0,,学期结束时，删掉 model-trainer 的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}At the end of term, delete the model-trainer key
+Dialogue: 0,0:30:42.72,0:30:46.10,Bilingual,,0,0,0,,并轮换你的 W&B 密钥，因为它跟着任务出去过\N{\fs33\c&H00C8C0B8&\bord1.4}and rotate your W&B key, which traveled in a job.
+Dialogue: 0,0:30:46.35,0:30:48.14,Bilingual,,0,0,0,,整节课都在一张地图上\N{\fs33\c&H00C8C0B8&\bord1.4}The whole lecture on one map.
+Dialogue: 0,0:30:48.46,0:30:51.15,Bilingual,,0,0,0,,一个 run 有多大用处，取决于它存下了什么\N{\fs33\c&H00C8C0B8&\bord1.4}A run is only as useful as what it keeps.
+Dialogue: 0,0:30:51.47,0:30:55.03,Bilingual,,0,0,0,,曲线要靠 callback；config 要放进 wandb.init\N{\fs33\c&H00C8C0B8&\bord1.4}Curves need a callback; config goes into wandb.init.
+Dialogue: 0,0:30:55.35,0:30:58.36,Bilingual,,0,0,0,,只有 tar 包会被带过去，装进 Google 的 image\N{\fs33\c&H00C8C0B8&\bord1.4}Only the tarball travels, into Google's image,
+Dialogue: 0,0:30:58.36,0:31:01.75,Bilingual,,0,0,0,,以服务代理的身份运行，你的密钥就在它的参数里\N{\fs33\c&H00C8C0B8&\bord1.4}run as the service agent, your key in its arguments.
+Dialogue: 0,0:31:02.07,0:31:07.49,Bilingual,,0,0,0,,一块 GPU 要三个开关；两块 GPU 分开 batch，再平均梯度\N{\fs33\c&H00C8C0B8&\bord1.4}One GPU needs three switches; two GPUs split the batch and average gradients.
+Dialogue: 0,0:31:09.32,0:31:11.32,Bilingual,,0,0,0,,五道自测题\N{\fs33\c&H00C8C0B8&\bord1.4}5 questions to test yourself.
+Dialogue: 0,0:31:11.64,0:31:13.92,Bilingual,,0,0,0,,第一题：两张表都没写下来的是什么？\N{\fs33\c&H00C8C0B8&\bord1.4}One: what did neither table write down?
+Dialogue: 0,0:31:14.24,0:31:17.83,Bilingual,,0,0,0,,第二题：什么会被带到 Vertex AI，什么从来不会？\N{\fs33\c&H00C8C0B8&\bord1.4}Two: what travels to Vertex AI, and what never does?
+Dialogue: 0,0:31:18.15,0:31:20.37,Bilingual,,0,0,0,,第三题：为什么 config 是空的？\N{\fs33\c&H00C8C0B8&\bord1.4}Three: why is the config empty?
+Dialogue: 0,0:31:20.69,0:31:24.08,Bilingual,,0,0,0,,第四题：谁提交，谁运行，你的密钥最后到了哪里？\N{\fs33\c&H00C8C0B8&\bord1.4}Four: who submits, who runs, and where does your key end up?
+Dialogue: 0,0:31:24.40,0:31:26.76,Bilingual,,0,0,0,,第五题：用两块 GPU 时，什么被分开\N{\fs33\c&H00C8C0B8&\bord1.4}Five: with two GPUs, what is split,
+Dialogue: 0,0:31:26.76,0:31:29.39,Bilingual,,0,0,0,,什么被平均，什么在 strategy.scope 里创建？\N{\fs33\c&H00C8C0B8&\bord1.4}averaged, and created inside the scope?
+Dialogue: 0,0:31:29.63,0:31:31.68,Bilingual,,0,0,0,,答案在练习里\N{\fs33\c&H00C8C0B8&\bord1.4}Answers are in the exercises.
+Dialogue: 0,0:31:32.00,0:31:35.73,Bilingual,,0,0,0,,接下来，第 14 讲把 container 部署成服务，不用自己管服务器\N{\fs33\c&H00C8C0B8&\bord1.4}Next, lecture 14 serves containers without servers,
+Dialogue: 0,0:31:35.73,0:31:39.60,Bilingual,,0,0,0,,第 15 讲会保存这个模型，并把各个步骤串起来\N{\fs33\c&H00C8C0B8&\bord1.4}and lecture 15 saves this model and chains the steps.
+Dialogue: 0,0:31:39.92,0:31:43.18,Bilingual,,0,0,0,,硬件租到了，还有一份记录，写着你租它做了什么\N{\fs33\c&H00C8C0B8&\bord1.4}Hardware rented, and a log of what you rented it for.

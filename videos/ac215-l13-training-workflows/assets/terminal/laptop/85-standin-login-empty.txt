@@ -1,0 +1,12 @@
+$ docker run --rm --network none trainer-standin python -c "import wandb; wandb.login(key='')"
+wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/local/lib/python3.10/site-packages/wandb/sdk/wandb_login.py", line 77, in login
+    configured = _login(**kwargs)
+  File "/usr/local/lib/python3.10/site-packages/wandb/sdk/wandb_login.py", line 298, in _login
+    wlogin.prompt_api_key()
+  File "/usr/local/lib/python3.10/site-packages/wandb/sdk/wandb_login.py", line 228, in prompt_api_key
+    raise UsageError("api_key not configured (no-tty). call " + directive)
+wandb.errors.UsageError: api_key not configured (no-tty). call wandb.login(key=[your_api_key])
+[exit 1]

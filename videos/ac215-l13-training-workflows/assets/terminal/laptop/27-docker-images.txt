@@ -1,0 +1,4 @@
+$ docker image ls model-training-cli
+IMAGE                       ID             DISK USAGE   CONTENT SIZE   EXTRA
+model-training-cli:latest   abed4b87e878       2.59GB          539MB        
+[exit 0]

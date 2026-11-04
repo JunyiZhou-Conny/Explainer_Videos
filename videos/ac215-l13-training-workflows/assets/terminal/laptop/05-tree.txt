@@ -1,0 +1,7 @@
+$ tree -L 1 .
+.
+├── model-training
+└── secrets
+
+3 directories, 0 files
+[exit 0]
