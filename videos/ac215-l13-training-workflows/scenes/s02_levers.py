@@ -124,8 +124,8 @@ class LeversAndRecord(VoiceScene):
                 vo.wait_until(anchor)
                 self.play(FadeIn(d, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("Today we pull the third one")
-            self.play(Rotate(third.needle, angle=-0.62 * PI, about_point=piv),
-                      third.needle.animate.set_color(TURN), third.pivot.animate.set_color(TURN),
+            self.play(third.needle.animate.rotate(-0.62 * PI, about_point=piv).set_color(TURN),
+                      third.pivot.animate.set_color(TURN),
                       Transform(third.arc, lit_arc), third.ticks.animate.set_color(TURN),
                       third.title.animate.set_color(TURN), run_time=1.0)
             vo.wait_until("you rent hardware")

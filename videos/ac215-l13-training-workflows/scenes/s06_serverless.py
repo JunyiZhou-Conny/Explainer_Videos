@@ -272,7 +272,7 @@ class RentTheMachine(VoiceScene):
             vo.wait_until("Which machines in this picture")
             self.play(LaggedStart(*[Create(rings[k]) for k in ("nbA", "nbB", "cockpit", "cpu", "gpu")],
                                   lag_ratio=0.2), run_time=1.2)
-        qc = quick_predict(self, QUICK_TEXT)
+        qc = quick_predict(self, QUICK_TEXT, center=(0, -1.9))     # low: the ringed machines stay visible
 
         # ========================================================== 6. the answer
         never = grey_chip("never · proved in scene 9").move_to([0, -1.75, 0]).align_to([-6.5, 0, 0], LEFT)

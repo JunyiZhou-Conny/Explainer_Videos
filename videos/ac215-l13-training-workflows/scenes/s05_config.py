@@ -236,12 +236,16 @@ class ThreeLines(VoiceScene):
         pa = code("package/trainer/task.py", 312, 322).move_to([-0.6, 0.3, 0])
         ba = line_bar(pa.code, 315 - 312, PASS)
         ta = check_mark(0.5, PASS).next_to(pa, RIGHT, buff=0.35)
-        pb = code("package/trainer/task.py", 335, 338).move_to([-0.4, 0.6, 0])
+        pb = code("package/trainer/task.py", 335, 338).move_to([-0.4, 0, 0])
+        pb.shift(UP * (2.7 - pb.get_top()[1]))   # top of the frame: it stays while the diff joins below
         bb = VGroup(line_bar(pb.code, 336 - 335, PASS), line_bar(pb.code, 338 - 335, PASS))
         tb = check_mark(0.5, PASS).next_to(pb, RIGHT, buff=0.3)
         pd = code("model-training-history/88f3374.diff", 30, 36).move_to([0, 0.9, 0])
         bd = line_bar(pd.code, 34 - 30, ERR, 0.3)
         note_c = card(list(COMMIT_NOTE), size=20).next_to(pd, DOWN, buff=0.35)
+        # the diff first joins under pb ("But the middle line is gone"), then moves up when pb leaves
+        d_low = UP * (pb.get_bottom()[1] - 0.35 - pd.get_top()[1])
+        VGroup(pd, bd).shift(d_low)
 
         led = RunLedger("B", columns=("run", "config", "system charts"),
                         rows=[(f"{WB_PROJECT_REPO} · repo run", "logged", "logged")], tag_=False,
@@ -264,16 +268,15 @@ class ThreeLines(VoiceScene):
             vo.wait_until("config inside wandb init")
             self.play(FadeIn(ba), Create(ta), run_time=0.7)
             vo.wait_until("then update and finish")
-            self.play(FadeOut(VGroup(pa, ba, ta), shift=UP * 0.3), run_time=0.5)
+            self.play(FadeOut(VGroup(pa, ba, ta), shift=UP * 0.3), FadeIn(pb, shift=UP * 0.2), run_time=0.6)
             self.remove(pa, ba, ta)
-            self.play(FadeIn(pb, shift=UP * 0.2), run_time=0.5)
             self.play(FadeIn(bb), Create(tb), run_time=0.6)
             vo.wait_until("But the middle line is gone")
-            self.play(FadeOut(VGroup(pb, bb, tb), shift=UP * 0.3), run_time=0.5)
-            self.remove(pb, bb, tb)
             self.play(FadeIn(pd, shift=UP * 0.2), run_time=0.6)
             self.play(FadeIn(bd), Indicate(pd.code.code_lines[34 - 30], color=ERR, scale_factor=1.05), run_time=0.8)
             vo.wait_until("One commit in October 2025")
+            self.play(FadeOut(VGroup(pb, bb, tb), shift=UP * 0.3), VGroup(pd, bd).animate.shift(-d_low), run_time=0.6)
+            self.remove(pb, bb, tb)
             self.play(FadeIn(note_c, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("So its runs get config")
             self.play(FadeOut(VGroup(pd, bd, note_c), shift=UP * 0.3), run_time=0.5)

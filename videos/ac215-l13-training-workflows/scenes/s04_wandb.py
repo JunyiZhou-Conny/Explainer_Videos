@@ -256,6 +256,12 @@ class SharedAxis(VoiceScene):
         yt2 = your_turn().next_to(sec.frame, DOWN, buff=0.35).align_to(sec.frame, RIGHT)
         c34 = notebook_cell("B", (603, 606), (614, 615), size=20,
                             cuts={606: "wandb.login(key=wandb_key)", 615: "(<team>)"})
+        # script: the login lines are tagged as notebook B's Colab login (never job output, S12)
+        t34 = nb_recorded_tag("B", "recorded · notebook B, cell 34 (Colab)")
+        t34.move_to(c34.tag).align_to(c34.tag, RIGHT)
+        c34.remove(c34.tag)
+        c34.add(t34)
+        c34.tag = t34
         top_left(c34, -c34.width / 2, TOP - 0.4)
         on_sw = toggle_switch(True).move_to(sec.switch)
 
@@ -303,6 +309,8 @@ class SharedAxis(VoiceScene):
         slots = led.slots(slot_w=2.8)
         ax_lab = slots.axis[3]                 # 'epoch · one shared axis': clear of the gap the pipe rises in
         ax_lab.shift(RIGHT * (slots.axis[0].get_left()[0] + 0.15 - ax_lab.get_left()[0]))
+        slots.axis[1].align_to(slots.axis[0], LEFT)    # '1' starts at the axis: clear of the pipe's corner
+        slots.axis[2].align_to(slots.axis[0], RIGHT)
         proj_body = VGroup(led.header, *led.rows, slots)
         proj = RoundedRectangle(width=proj_body.width + 0.7, height=proj_body.height + 0.5, corner_radius=0.14,
                                 stroke_color=CLOUD, stroke_width=2.5).move_to(proj_body)
@@ -406,7 +414,7 @@ class SharedAxis(VoiceScene):
             vo.wait_until("code that model fit calls after every epoch")
             self.play(FadeOut(VGroup(fit38, fit42, none42), shift=UP * 0.2), run_time=0.5)
             self.remove(fit38, fit42, none42)
-            self.play(FadeIn(VGroup(led.header, *led.rows, slots, cv), shift=DOWN * 0.2), FadeIn(low_code, shift=UP * 0.2),
+            self.play(FadeIn(VGroup(led.header, *led.rows, slots), shift=DOWN * 0.2), FadeIn(low_code, shift=UP * 0.2),
                       run_time=0.7)
             self.play(low.line(715).animate.set_color(TURN), run_time=0.3)
             self.play(Create(cb), run_time=1.0)
@@ -420,7 +428,7 @@ class SharedAxis(VoiceScene):
                 dot = Dot(radius=0.08, color=TOOL).move_to(pts[0])
                 self.play(MoveAlongPath(dot, cb.core), run_time=0.8, rate_func=linear)
                 self.remove(dot)
-            self.play(FadeIn(summ_g, shift=LEFT * 0.2), Indicate(cv, color=INK, scale_factor=1.03), run_time=0.7)
+            self.play(FadeIn(summ_g, shift=LEFT * 0.2), Create(cv), run_time=0.9)   # curves only once the pipe delivers
             vo.wait_until("Without one, wandb init gives you system charts")
             self.play(FadeIn(sys_card, shift=LEFT * 0.2), run_time=0.6)
             vo.wait_until("never your curves")
@@ -436,10 +444,18 @@ class SharedAxis(VoiceScene):
         id_chip.next_to(c52.frame, RIGHT, buff=0.4).align_to(c52.frame, UP)
         fin = finish_cell()
         fin.move_to([6.35 - fin.width / 2, 0, 0]).align_to(c52.frame, DOWN)
+        # the curves keep their pipe: model.fit's panel leaves, so the pipe now ends at a PURPLE
+        # 'WandbCallback · cell 38' label under the rows (curves exist only where a pipe arrives)
+        y6 = (led.rows[-1].frame.get_bottom()[1] + c52.frame.get_top()[1]) / 2
+        cb_lab = VGroup(mono("WandbCallback", 20, TOOL), label("· cell 38", 20, S.GREY)).arrange(RIGHT, buff=0.15)
+        cb_lab.move_to([gx - 0.25 - cb_lab.width / 2, y6, 0])
+        assert cb_lab.get_left()[0] > LEFT_X - 0.05, cb_lab.get_left()
+        cb6 = pipe([[cb_lab.get_right()[0] + 0.08, y6, 0], [gx, y6, 0], [gx, slot2.get_center()[1], 0],
+                    slot2.get_left() + LEFT * 0.03], TOOL, 4)
 
         with self.voiceover(SAY[6]) as vo:
-            old = VGroup(low, rec, dep, cb, sys_card, summ_g, r2)
-            self.play(FadeOut(old), run_time=0.5)
+            old = VGroup(low, rec, dep, sys_card, summ_g, r2)
+            self.play(FadeOut(old), ReplacementTransform(cb, cb6), FadeIn(cb_lab), run_time=0.5)
             self.remove(old, *old)
             vo.wait_until("Both MobileNet runs share one name")
             both = VGroup(led.rows[0].frame, led.rows[1].frame)
@@ -492,7 +508,7 @@ class SharedAxis(VoiceScene):
         assert chips7.get_bottom()[1] > -3.55, chips7.get_bottom()
 
         with self.voiceover(SAY[7]) as vo:
-            old = VGroup(led.header, *led.rows, merged, slots, cv, lab, c52, fin)
+            old = VGroup(led.header, *led.rows, merged, slots, cv, cb6, cb_lab, lab, c52, fin)
             self.play(FadeOut(old, shift=UP * 0.2), track(tr, 5), run_time=0.6)
             self.remove(old, *old)
             vo.wait_until("Cell 55 builds the second table")

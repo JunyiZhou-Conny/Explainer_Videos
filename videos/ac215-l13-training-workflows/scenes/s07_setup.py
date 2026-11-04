@@ -135,8 +135,12 @@ class KeysAndBucket(VoiceScene):
             for n, s in zip(range(7, 24), rows03):
                 items.append((s, TURN) if n in YELLOW_ROWS else (s, S.GREY) if n in PNG_ROWS else s)
             self.play(FadeIn(png, shift=UP * 0.1), run_time=0.4)
-            out(self, t, items, run_time=0.9, lag=0.06)
-            self.wait(0.6)
+            # two pages: the 11-row box cannot hold 17 rows; page 1 (rows 7-16, under the command) holds
+            # long enough to read the cli files, page 2 scrolls in the rest
+            out(self, t, items[:10], run_time=0.5, lag=0.04)
+            self.wait(1.3)
+            out(self, t, items[10:], run_time=0.4, lag=0.05)
+            self.wait(0.9)
 
         # ========================================================== 1. Vertex AI API (C2), GPU quota (C3)
         api = console(("search", "Vertex AI API"), 8.0, 2.9).move_to([-1.2, 0.95, 0])
@@ -291,7 +295,8 @@ class KeysAndBucket(VoiceScene):
             self.play(FadeIn(sdr), FadeIn(fdl, shift=DOWN * 0.2), run_time=0.5)
             vo.wait_until("saved in secrets")
             self.play(fdl.animate.move_to(fkey), run_time=0.7)
-            self.play(FadeOut(fdl), FadeIn(fkey), run_time=0.4)
+            self.play(FadeOut(fdl), run_time=0.2)
+            self.play(FadeIn(fkey), run_time=0.3)
             self.remove(fdl)
             vo.wait_until("Pause and create yours")
             self.play(FadeIn(yt3, shift=UP * 0.1), run_time=0.3)
