@@ -66,6 +66,9 @@ class Hook(VoiceScene):
         ia, ib = ta.find(FINE_TUNED), tb.find(FINE_TUNED)
         assert (ia, ib) == (0, 1), (ia, ib)
         assert tb.cell(ib, "accuracy").original_text == "62.93%"
+        # "also at 68.97" is B's winner (row 0, the frozen run), not the fine-tuned row
+        assert ta.cell(ia, "accuracy").original_text == tb.cell(0, "accuracy").original_text == "68.97%"
+        assert len(ta.rows) == len(tb.rows) == 5
         photos = f"{int(DATASET_SIZE):,}"
         same = grey_chip(f"same pipeline · same {photos} photos · same five models")
         legend = grey_chip("train_base True = fine-tuned · False = frozen")
@@ -78,11 +81,18 @@ class Hook(VoiceScene):
             flash_tag(self, tb.tag, INK)
             vo.wait_until("the same data pipeline")
             self.play(FadeIn(same, shift=UP * 0.15), run_time=0.6)
+            vo.wait_until("the same five models")
+            names = [t.rows[i].cells["name"] for i in range(len(ta.rows)) for t in (ta, tb)]
+            self.play(each(names, INK, scale=1.05, lag=0.08), run_time=1.4)
             vo.wait_until("Notebook A crowns")
             self.play(Create(ra), run_time=0.6)
             self.play(FadeIn(legend, shift=UP * 0.15), run_time=0.5)
+            vo.wait_until("at 68.97 percent")
+            self.play(Indicate(ta.cell(ia, "accuracy"), color=TURN, scale_factor=1.15), run_time=0.9)
             vo.wait_until("Notebook B crowns")
             self.play(Create(rb), run_time=0.6)
+            vo.wait_until("also at 68.97")
+            self.play(Indicate(tb.cell(0, "accuracy"), color=TURN, scale_factor=1.15), run_time=0.9)
             vo.wait_until("and puts the fine-tuned one at 62.93")
             self.play(each(list(tb.rows[ib].cells.values()), INK, scale=1.08, lag=0.1), run_time=0.9)
 
@@ -100,6 +110,8 @@ class Hook(VoiceScene):
             self.remove(*chips)
             vo.wait_until("So which recipe is better")
             self.play(FadeIn(qc, shift=DOWN * 0.3), run_time=0.8)
+            vo.wait_until("can you even tell what was different")
+            self.play(Indicate(qc.text[1], color=TURN, scale_factor=1.06), run_time=1.0)
             vo.wait_until("One clue is visible")
             pa.next_to(ea, UP, buff=0.08)
             pb.next_to(eb, UP, buff=0.08)
