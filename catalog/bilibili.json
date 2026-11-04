@@ -141,6 +141,11 @@
       "bvid": "BV1yXx96oEAL",
       "title": "AC215 第11讲跟练 · 数据标注与版本管理：Label Studio、CORS、DVC 与 gcsfuse",
       "pubdate": 1793786379
+    },
+    "ac215-l13-training-workflows": {
+      "bvid": "BV1aRxR65EJa",
+      "title": "AC215 第13讲跟练 · 高级训练流程：W&B 实验追踪、Vertex AI 无服务器训练与多 GPU",
+      "pubdate": 1793813235
     }
   },
   "unmatched": []
