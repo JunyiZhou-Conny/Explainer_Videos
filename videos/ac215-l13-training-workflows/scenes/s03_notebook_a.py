@@ -7,7 +7,8 @@ Beats (script.md, ## S03; one voiceover block each):
 1. A2: cell 15's download line (nbA:318, cut after the release path), cell 17's output (nbA:352–353)
    with a YELLOW "remember this order" sticky. A3: cell 26 (nbA:432–433, 436, 439 → 445–447), the three
    counts light in turn, ▶ your turn.
-2. The code stays; line 433 and the three counts glow. PONDER 8 s.
+2. Cell 26 refolds into a narrow panel on the left (20 pt); line 433 and the three counts glow.
+   PONDER 8 s, the card beside the panel.
 3. Both `test_size=test_percent` turn RED; a bar of 1,156 tiles splits 116 (test) off, then 104
    (validation) off the remaining 1,040, 936 left; `erratum` + "same lines in task.py:134–146".
 4. A4: cell 31 (nbA:527–528) makes the ExperimentFolder; cell 12's five save/open lines (nbA:242, 245,
@@ -68,6 +69,62 @@ def helper_cell(size: float = 20) -> VGroup:
     ill.move_to(fr.get_corner(UR) + np.array([-0.2 - ill.width / 2, -0.32, 0]))
     g = VGroup(fr, head, rows, ill)
     g.frame, g.header, g.rows, g.ill = fr, head, rows, ill
+    return g
+
+
+def fold(s: str, limit: int, indent: int = 4) -> list[str]:
+    """Greedy word wrap at spaces, continuation rows indented (the text itself is unchanged)."""
+    rows, cur = [], ""
+    for w in s.split(" "):
+        pad = " " * indent if rows else ""
+        if cur and len(pad + cur + " " + w) > limit:
+            rows.append(pad + cur)
+            cur = w
+        else:
+            cur = f"{cur} {w}" if cur else w
+    rows.append((" " * indent if rows else "") + cur)
+    return rows
+
+
+def narrow_cell26(limit: int = 38, size: float = 20) -> VGroup:
+    """Cell 26 (nbA:432–433, 436, 439 → 445–447) drawn like notebook_cell but folded at `limit`
+    characters (notebook_cell folds at 73 at 20 pt), so it fits beside the ponder card at 20 pt.
+    Text unchanged, only the row breaks move. .frame .rows .line(n) .sub(n, text)"""
+    items = []                                     # (n, text, is_output)
+    for n in (432, 433, 436, 439):
+        items += [(n, p, False) for p in fold(nb_line("A", n), limit)]
+    items += [(n, nb_line("A", n), True) for n in (445, 446, 447)]
+    pitch = line_pitch(size)
+    rows, index = VGroup(), {}
+    for i, (n, s, out) in enumerate(items):
+        r = mono_line(s, size, OUTPUT if out else INK)
+        r.shift(np.array([-r.strut.get_left()[0], -i * pitch - r.strut.get_center()[1], 0]))
+        rows.add(r)
+        index.setdefault(n, []).append(r)
+    head = label(f"notebook A · cell {nb_cell('A', 432)}", CAPTION, S.GREY)
+    ill = illustration_tag()      # in the header row (inside the frame): saves a row
+    w = max(rows.width + 0.8, head.width + ill.width + 0.9)
+    fr = RoundedRectangle(width=w, height=rows.height + 0.95, corner_radius=0.14, stroke_color=CLOUD,
+                          stroke_width=2.5).set_fill(S.GREY_DARKER, 1)
+    head.move_to(fr.get_corner(UL) + np.array([0.3 + head.width / 2, -0.3, 0]))
+    ill.move_to(fr.get_corner(UR) + np.array([-0.2 - ill.width / 2, -0.3, 0]))
+    rows.move_to(fr).align_to(fr, LEFT).shift(RIGHT * 0.4).align_to(fr, DOWN).shift(UP * 0.2)
+    outs = [r for (_, _, o), r in zip(items, rows) if o]
+    top = outs[0].strut.get_top()[1] + 0.08
+    bot = outs[-1].strut.get_bottom()[1] - 0.08
+    well = Rectangle(width=w - 0.3, height=top - bot, stroke_width=0).set_fill(TERM_BG, 1)
+    well.move_to([fr.get_center()[0], (top + bot) / 2, 0])
+    tg = nb_recorded_tag("A").next_to(fr, RIGHT, buff=0.12).align_to(fr, DOWN)   # beside: no row below
+    g = VGroup(fr, head, ill, well, rows, tg)
+    g.frame, g.rows = fr, rows
+    g.line = lambda n: VGroup(*index[n])
+
+    def sub(n, text):
+        for r in index[n]:
+            if text in r.text:
+                return substring(r, text)
+        raise ValueError(f"{text!r} not on a single row of notebook A:{n}")
+    g.sub = sub
     return g
 
 
@@ -158,23 +215,29 @@ class FolderTracker(VoiceScene):
             flash_tag(self, yt1, TURN)
 
         # ========================================================== 2. ponder: 0.2, yet 104 of 1,156
+        # The ponder card quotes line 433 and the counts: cell 26 refolds at 38 characters (still
+        # 20 pt) into a narrow panel on the left, so the card sits beside it, not over it.
+        nc = narrow_cell26()
+        nc.shift(np.array([-6.55 - nc.frame.get_left()[0], TOP - nc.frame.get_top()[1], 0]))
+        ncounts = [nc.line(n) for n in (445, 446, 447)]
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(yt1), run_time=0.4)
-            self.remove(yt1)
+            self.play(FadeOut(yt1), FadeOut(c26, shift=LEFT * 0.3), run_time=0.5)
+            self.remove(yt1, c26)
+            self.play(FadeIn(nc, shift=LEFT * 0.3), run_time=0.5)
             vo.wait_until("The cell sets the validation percent")
-            r433 = ring(c26.line(433), TURN, buff=0.07)
+            r433 = ring(nc.line(433), TURN, buff=0.07)
             self.play(Create(r433), run_time=0.7)
             vo.wait_until("to 0.2")
-            self.play(Indicate(c26.sub(433, "0.2"), color=TURN, scale_factor=1.2), run_time=0.7)
+            self.play(Indicate(nc.sub(433, "0.2"), color=TURN, scale_factor=1.2), run_time=0.7)
             vo.wait_until("yet validation is 104")
-            r446 = ring(c26.line(446), TURN, buff=0.06)
+            r446 = ring(nc.line(446), TURN, buff=0.06)
             self.play(Create(r446), run_time=0.6)
             vo.wait_until("What did the code actually do")
-            self.play(each(counts, TURN, scale=1.06, lag=0.25), run_time=1.2)
-        pc = ponder(self, PONDER_SPLIT, seconds=8)
+            self.play(each(ncounts, TURN, scale=1.06, lag=0.25), run_time=1.2)
+        pc = ponder(self, PONDER_SPLIT, seconds=8, center=(3.72, 0.35), width=5.7)
 
         # ========================================================== 3. both splits use test_percent
-        reds = [c26.sub(n, "test_size=test_percent") for n in (436, 439)]
+        reds = [nc.sub(436, "test_size=test_percent"), nc.sub(439, "test_size=test_percent")]
         cols = 289                        # 289 × 4 = 1,156 tiles, split by whole columns
         bar = VGroup(*[Rectangle(width=0.03, height=0.11, stroke_width=0).set_fill(S.GREY, 0.45)
                        for _ in range(4 * cols)]).arrange_in_grid(rows=4, cols=cols, buff=0.008)
@@ -203,8 +266,8 @@ class FolderTracker(VoiceScene):
             top_left(small, -small.width / 2)
             for n in (436, 439):
                 small.sub(n, "test_size=test_percent").set_color(ERR)
-            self.play(FadeOut(c26, shift=UP * 0.2), run_time=0.5)
-            self.remove(c26)
+            self.play(FadeOut(nc, shift=UP * 0.2), run_time=0.5)
+            self.remove(nc)
             self.play(FadeIn(small, shift=UP * 0.2), run_time=0.5)
             self.play(FadeIn(bar, lag_ratio=0.002), FadeIn(whole), run_time=0.8)
             vo.wait_until("is 116 for testing")

@@ -11,7 +11,7 @@ Beats (script.md, ## S05; one voiceover block each):
    C38 (2-8, 9, …, 16-17; 16-17 RED), then C38b (3-4, …, 16-17; 17 GREEN). The strip shrinks to 3
    rows and V3 replays with config inside init: fill → write_update → finish ('Config · 5 keys').
 5. nbB:705 `wandb.run.save("test")` + GREY chip "uploads files matching test · does not save the run".
-6. The repo: task.py 312-322 and 335-338 (GREEN ticks), the 88f3374 diff (line 34 RED) + the commit
+6. The repo (tracker note: preview of the model-training repo, cloned later): task.py 312-322 and 335-338 (GREEN ticks), the 88f3374 diff (line 34 RED) + the commit
    chip, then the repo run's row (V2, illustration) with its curve slot a GREY ghost; exercise 1 chip.
    Fade to an empty frame.
 """
@@ -32,6 +32,7 @@ BASELINE = (("# Training Params", True), ("learning_rate = 0.001", False), ("bat
             ("    train_data, epochs=epochs,", False), (")", False))
 # the three lines slide 15 adds: (insert at row index, text, call-out index in THREE_LINES)
 INSERTS = ((8, "wandb.init(...)", 0), (12, "    callbacks=[WandbCallback()],", 1), (14, "wandb.run.finish()", 2))
+REPO_NOTE = "repo preview · cloned later"   # model-training code; the clone comes in S07
 COMMIT_NOTE = ("2025-10-15 · “removed ca;llback”",
                "51 min after 1c03dd5 moved the image to TF 2.17 · no reason given")
 
@@ -117,7 +118,7 @@ class ThreeLines(VoiceScene):
 
         # ========================================================== 1. notebook B's real cell 38
         cell = notebook_cell("B", (696, 705), "…", 732, hi={698: TURN, 704: S.GREY, 705: S.GREY, 732: TURN})
-        cell.move_to([0, -0.4, 0])
+        cell.move_to([-0.8, -0.4, 0])   # left: the ponder card sits right of lines 698-703 (QA 08:01)
         late = [cell.rows[-2], cell.rows[-1]]          # '…' and nbB:732, joining in block 2
         for m in late:
             cell.rows.remove(m)
@@ -148,7 +149,11 @@ class ThreeLines(VoiceScene):
             self.play(LaggedStart(*[FadeIn(m, shift=UP * 0.15) for m in late], lag_ratio=0.3), run_time=0.7)
             vo.wait_until("what does the run's config hold")
             self.play(Indicate(cell.line(732), color=TURN, scale_factor=1.06), run_time=0.8)
-        pc = ponder(self, PONDER_CONFIG, seconds=8)
+        # beside the assignment block, above line 732: the lines the question is about stay visible
+        pc = ponder(self, PONDER_CONFIG, seconds=8, center=(3.5, -1.15), width=6.0)
+        assert pc.get_left()[0] > cell.line(699).get_right()[0] + 0.15
+        assert pc.get_bottom()[1] > cell.line(732).get_top()[1] + 0.05
+        assert pc.get_top()[1] < cell.line(697).get_bottom()[1] - 0.05 and pc.get_right()[0] < 6.6
 
         # ========================================================== 3. V3: the name moves
         def keep_family():
@@ -262,8 +267,10 @@ class ThreeLines(VoiceScene):
 
         with self.voiceover(SAY[6]) as vo:
             gone = VGroup(c705, save_chip, rt)
-            self.play(FadeOut(gone, shift=UP * 0.2), run_time=0.5)
+            # the tracker says this block is the repo, not notebook B, and that the clone comes later (QA 08:54)
+            self.play(FadeOut(gone, shift=UP * 0.2), track(tr, 4, note_=REPO_NOTE), run_time=0.5)
             self.remove(*gone)
+            assert tr.caption.get_right()[0] < ref.get_left()[0] - 0.1
             self.play(FadeIn(pa, shift=UP * 0.2), run_time=0.7)
             vo.wait_until("config inside wandb init")
             self.play(FadeIn(ba), Create(ta), run_time=0.7)

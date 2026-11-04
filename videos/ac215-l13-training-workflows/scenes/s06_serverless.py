@@ -29,13 +29,14 @@ from explainer.scene import VoiceScene
 
 from common import (CLOUD, FLAGS, IMAGE, INK, NARRATION, OWNED, ROUTE, SAY_COUNT, SYSTEM, TURN, TarballTrip,
                     TrainingMap, band, card, code, dashed_chip, each, flag_chip, grey_chip, illustration_tag,
-                    job_tile, label, lref, meter_run, meter_stop, note, outline_box, parcel, plan_tag, quick_predict,
+                    job_tile, label, lref, meter_run, meter_stop, note, outline_box, parcel, plan_tag, ponder_card,
                     ring, strike)
 from common import console as console_window
 from explainer import style as S
 
 SAY = NARRATION["S06"]
-QUICK_TEXT = "Your laptop has no GPU and no TensorFlow.\nWhich machines here will ever\nimport TensorFlow?"
+QUICK_TEXT = "Your laptop has no GPU and no TensorFlow.\nWhich machines here will ever import TensorFlow?"
+LIFT = 0.35      # beat 5: the map rises so the low QUICK card clears its bottom row (laptop, job tiles)
 SIDEBAR_ENTRIES = (("Workbench", "notebooks"), ("Training", "jobs"), ("Pipelines", "workflows"))
 TASK_CUTS = {97: ("github.com/", "releases/", "releases/")}     # keeps 'github.com/…releases/…'
 
@@ -70,6 +71,27 @@ def step_dot(n: int) -> VGroup:
     """A small GREY circle with the step number."""
     c = Circle(radius=0.2, stroke_color=S.GREY, stroke_width=2.5).set_fill(S.BG, 1)
     return VGroup(c, label(str(n), 20, INK).move_to(c))
+
+
+def low_quick(scene, question: str, bottom: float = -3.58, width: float = 12.0, seconds: float = 4) -> VGroup:
+    """QUICK(4 s) drawn like common.quick_predict (opaque frame, 'Quick predict' header, draining bar)
+    with tighter padding, its bottom edge at `bottom`: it fits under the lifted map (top ≈ −1.2)."""
+    src = ponder_card(question, width=width)
+    yellow = src[0].get_stroke_color()
+    q = src[2]
+    hd = S.text("Quick predict", S.SMALL_SIZE, TURN, weight="BOLD")
+    body = VGroup(hd, q).arrange(DOWN, buff=0.2)
+    fr = RoundedRectangle(width=width, height=body.height + 0.7, corner_radius=0.2, stroke_color=yellow,
+                          stroke_width=3).set_fill(S.BG, 1)
+    fr.move_to([0, bottom + fr.height / 2, 0])
+    body.move_to(fr).shift(UP * 0.15)
+    bar = Line(fr.get_corner(DL) + RIGHT * 0.3 + UP * 0.22, fr.get_corner(DR) + LEFT * 0.3 + UP * 0.22,
+               color=yellow, stroke_width=4)
+    c = VGroup(fr, hd, q, bar)
+    scene.play(FadeIn(c, scale=0.95), run_time=0.6)
+    target = bar.copy().scale(0.001, about_point=bar.get_start())
+    scene.play(bar.animate(rate_func=linear).become(target), run_time=seconds)
+    return c
 
 
 class RentTheMachine(VoiceScene):
@@ -265,14 +287,19 @@ class RentTheMachine(VoiceScene):
         for k, t, tb in (("cpu", P["cpu_tile"], tabs[0]), ("gpu", P["gpu_tile"], tabs[1])):
             rings[k] = ring(VGroup(t.frame, tb), INK, buff=0.05, dashed=True)
 
+        for r in rings.values():
+            r.shift(UP * LIFT)
+
         with self.voiceover(SAY[5]) as vo:
-            vo.wait_until("Your laptop has no GPU")
-            self.play(FadeOut(VGroup(card2, stays, hring)), Create(rings["laptop"]), run_time=0.7)
+            lift = Group(*[x for x in self.mobjects if x not in (ref, card2, stays, hring)])
+            self.play(FadeOut(VGroup(card2, stays, hring)), lift.animate.shift(UP * LIFT), run_time=0.8)
             self.remove(card2, stays, hring)
+            vo.wait_until("Your laptop has no GPU")
+            self.play(Create(rings["laptop"]), run_time=0.6)
             vo.wait_until("Which machines in this picture")
             self.play(LaggedStart(*[Create(rings[k]) for k in ("nbA", "nbB", "cockpit", "cpu", "gpu")],
                                   lag_ratio=0.2), run_time=1.2)
-        qc = quick_predict(self, QUICK_TEXT, center=(0, -1.9))     # low: the ringed machines stay visible
+        qc = low_quick(self, QUICK_TEXT)     # under the lifted map: the ringed machines stay visible
 
         # ========================================================== 6. the answer
         never = grey_chip("never · proved in scene 9").move_to([0, -1.75, 0]).align_to([-6.5, 0, 0], LEFT)

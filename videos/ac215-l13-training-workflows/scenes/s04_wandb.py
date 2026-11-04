@@ -38,7 +38,8 @@ from common import *  # noqa: F403
 from explainer import style as S
 
 SAY = NARRATION["S04"]
-PONDER_CURVES = "Five runs in one project, but only one\nhas loss and accuracy curves.\nWhat do the other four lack?"
+# two lines (script.md breaks it in three): the wide card sits under the two model.fit panels
+PONDER_CURVES = "Five runs in one project, but only one has loss and accuracy curves.\nWhat do the other four lack?"
 TOP = 2.75                     # pictures stay under the tracker / lecture tag
 LEFT_X = -6.35
 DOTS = "••••••••••••"            # a key is always a row of dots (never key material)
@@ -95,6 +96,43 @@ def quoted_cell(which: str, items, size: float = 20, indent: int | None = None, 
     g.frame, g.header, g.rows, g.ill = fr, head, rows, ill
     g.line = lambda n: index[n]
     return g
+
+
+RUN_ID = "<run-id>"
+
+
+def show_run_id(cell, n: int) -> VGroup:
+    """Line n's URL ends 'runs/…' (mask() hides the 8-character id): show the placeholder
+    'runs/<run-id>' instead, so the viewer sees where a run ID sits. Re-lays the row and widens the
+    frame and the output well to fit (the tags are re-aligned to the frame's right)."""
+    for r in cell.line(n):
+        if r.text.endswith("runs/…"):
+            break
+    else:
+        raise ValueError(f"no 'runs/…' on line {n}")
+    nr = mono_line(r.text[:-1] + RUN_ID, r.pt, r.glyphs[0].get_fill_color())
+    nr.shift(r.strut.get_left() - nr.strut.get_left())
+    nr.n, nr.is_output = r.n, r.is_output
+    for grp in (cell.rows, cell.line(n)):
+        grp.submobjects[grp.submobjects.index(r)] = nr
+    if r in cell.out_rows:
+        cell.out_rows[cell.out_rows.index(r)] = nr
+    old = cell.frame
+    w = max(old.width, cell.rows.get_right()[0] + 0.4 - old.get_left()[0])
+    fr = RoundedRectangle(width=w, height=old.height, corner_radius=0.14, stroke_color=CLOUD,
+                          stroke_width=2.5).set_fill(S.GREY_DARKER, 1)
+    fr.move_to(old).align_to(old, LEFT)
+    cell.submobjects[cell.submobjects.index(old)] = fr
+    cell.frame = fr
+    if cell.well is not None:
+        wl = Rectangle(width=w - 0.3, height=cell.well.height, stroke_width=0).set_fill(TERM_BG, 1)
+        wl.move_to([fr.get_center()[0], cell.well.get_center()[1], 0])
+        cell.submobjects[cell.submobjects.index(cell.well)] = wl
+        cell.well = wl
+    for t in (cell.tag, cell.ill):
+        if t is not None:
+            t.align_to(fr, RIGHT)
+    return cell
 
 
 def in_header(cell, *tags):
@@ -286,9 +324,8 @@ class SharedAxis(VoiceScene):
             flash_tag(self, yt2, TURN)
             vo.wait_until("Cell 34 signs in with it")
             old = VGroup(page, sec, nr, yt2)
-            self.play(FadeOut(old, shift=UP * 0.2), run_time=0.5)
+            self.play(FadeOut(old, shift=UP * 0.2), FadeIn(c34, shift=UP * 0.2), run_time=0.5)
             self.remove(old, *old)
-            self.play(FadeIn(c34, shift=UP * 0.2), run_time=0.6)
             self.play(c34.sub(605, "'WandB'").animate.set_color(TURN), run_time=0.4)
             self.play(each([c34.line(614), c34.line(615)], INK, scale=1.03, lag=0.3), run_time=0.9)
 
@@ -319,6 +356,7 @@ class SharedAxis(VoiceScene):
                                                              "mobilenetv2_train_base_True")
 
         with self.voiceover(SAY[3]) as vo:
+            self.wait(1.2)                       # cell 34's stored lines stay readable ~3 s
             self.play(FadeOut(c34, shift=UP * 0.2), track(tr, 4), run_time=0.6)
             self.remove(c34)
             self.play(FadeIn(c38, shift=UP * 0.2), run_time=0.6)
@@ -362,7 +400,8 @@ class SharedAxis(VoiceScene):
             self.play(FadeIn(fit38, shift=RIGHT * 0.2), FadeIn(fit42, shift=LEFT * 0.2), run_time=0.7)
             vo.wait_until("Something to ponder")
             self.play(each([fit38.line(710), fit42.line(940)], INK, scale=1.04, lag=0.3), run_time=0.8)
-        pc = ponder(self, PONDER_CURVES, seconds=6)
+        pc = ponder(self, PONDER_CURVES, seconds=6, center=(0, -2.25), width=11.5)
+        assert pc.get_top()[1] < pair.get_bottom()[1] - 0.1 and pc.get_bottom()[1] > -3.6, (pc.get_top(), pc.get_bottom())
 
         # ========================================================== 5. the answer: a callback; the pipe
         l715 = fit38.line(715)
@@ -437,13 +476,21 @@ class SharedAxis(VoiceScene):
         # ========================================================== 6. one shared name; the run nobody finishes
         lab, collapse = led.collapse(0, 1, "mobilenetv2_train_base")
         c52 = notebook_cell("B", 1629, size=20, wrap=True)
+        show_run_id(c52, 1629)
         in_header(c52, c52.ill)
         c52.move_to([LEFT_X + c52.width / 2, 0, 0]).align_to(low.frame, DOWN).shift(UP * c52.tag.height)
-        url = c52.sub(1629, "runs/…")
-        id_chip = grey_chip("tell runs apart by run id")
-        id_chip.next_to(c52.frame, RIGHT, buff=0.4).align_to(c52.frame, UP)
+        url = c52.sub(1629, RUN_ID)
+        # the chip and the extra cell sit right of the ledger, above cell 52 (the frame is too wide
+        # for them beside it); clear of the axis labels (x < 0.9) and of the frame below
+        id_chip = grey_chip("run ID = the last part of the URL")
+        id_chip.next_to(c52.frame, UP, buff=0.15)
+        id_chip.shift(RIGHT * (6.35 - id_chip.get_right()[0]))
         fin = finish_cell()
-        fin.move_to([6.35 - fin.width / 2, 0, 0]).align_to(c52.frame, DOWN)
+        fin.next_to(c52.frame, UP, buff=0.15)
+        fin.shift(RIGHT * (6.35 - fin.get_right()[0]))
+        assert id_chip.get_left()[0] > slots.get_right()[0] + 0.2 and fin.get_left()[0] > slots.get_right()[0] + 0.2, (
+            id_chip.get_left(), fin.get_left(), slots.get_right(), c52.frame.get_right())
+        assert c52.frame.get_right()[0] < 6.6 and fin.get_top()[1] < TOP, (c52.frame.get_right(), fin.get_top())
         # the curves keep their pipe: model.fit's panel leaves, so the pipe now ends at a PURPLE
         # 'WandbCallback · cell 38' label under the rows (curves exist only where a pipe arrives)
         y6 = (led.rows[-1].frame.get_bottom()[1] + c52.frame.get_top()[1]) / 2
