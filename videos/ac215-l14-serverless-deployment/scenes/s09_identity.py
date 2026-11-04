@@ -48,7 +48,7 @@ from common import _door
 SAY = NARRATION["S09"]
 
 FORM_UL = np.array([-6.45, 2.72, 0])                 # forms hang from here, under the tracker
-FORM_W = 7.5                                         # left column: x -6.45 .. 1.05
+FORM_W = 7.8                                         # left column: x -6.45 .. 1.35
 PONDER_Q = "The service allows public access.\nDoes that let it call Agent Platform?"
 PARKED_Q = "To speak, the app must call an API that asks who is calling.\nWho is it?"   # S08's card
 
@@ -94,6 +94,14 @@ def recorded_rows(file: str, n: int, rows, source: str, size: float = 22) -> VGr
 
 
 class RuntimeIdentity(VoiceScene):
+    def flash(self, *mobs, color=TURN, run_time: float = 0.8, extra=()):
+        """A YELLOW ring that draws round each of `mobs` and fades (Indicate would fill a door or a
+        field box solid)."""
+        rs = [ring(m, color, buff=0.1, stroke=4) for m in mobs]
+        self.play(*[Create(r) for r in rs], *extra, run_time=run_time * 0.55)
+        self.play(*[FadeOut(r) for r in rs], run_time=run_time * 0.45)
+        self.remove(*rs)
+
     def construct(self):
         assert len(SAY) == SAY_COUNT["S09"] == 9, len(SAY)
         gc_rows = readme_rows(412, 419)
@@ -133,8 +141,7 @@ class RuntimeIdentity(VoiceScene):
             self.play(dim.animate.set_opacity(0.3), run_time=0.4)
             d.heal(self)
             vo.wait_until("The first door")
-            self.play(Indicate(d.left_door, color=TURN, scale_factor=1.25), Indicate(d.ll, color=TURN),
-                      run_time=0.8)
+            self.flash(d.left_door, extra=[Indicate(d.ll, color=TURN)])
             d.heal(self)
             vo.wait_until("is Allow public access")
             self.play(Indicate(d.switch, color=OWN, scale_factor=1.1), run_time=0.6)
@@ -175,13 +182,12 @@ class RuntimeIdentity(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(pc), run_time=0.4)
             vo.wait_until("That door only admits callers")
-            self.play(Indicate(d.left_door, color=TURN, scale_factor=1.25), run_time=0.6)
+            self.flash(d.left_door, run_time=0.6)
             self.play(d.switch.animate.set_opacity(0.35), d.ll.animate.set_color(S.GREY), run_time=0.5)
             d.heal(self)
             vo.wait_until("Calling out goes through")
             d.call_out(self, ok=False, run_time=0.9)
-            self.play(Indicate(d.right_door, color=TURN, scale_factor=1.25), Indicate(d.rl, color=TURN),
-                      run_time=0.7)
+            self.flash(d.right_door, extra=[Indicate(d.rl, color=TURN)], run_time=0.7)
             d.heal(self)
             vo.wait_until("until you attach one")
             d.default_badge(self, run_time=0.6)
@@ -223,6 +229,7 @@ class RuntimeIdentity(VoiceScene):
             self.play(Indicate(f4.path_text, color=TURN, scale_factor=1.05), run_time=0.7)
             vo.wait_until("enable the Agent Platform API")
             self.play(f4.press(0), run_time=0.7)
+            self.add(ill4)
             self.play(Create(enabled), Indicate(m_cloud, color=CLOUD, scale_factor=1.05),
                       FadeIn(sid_chip, shift=UP * 0.1), run_time=0.7)
             vo.wait_until("the console's current name")
@@ -242,10 +249,12 @@ class RuntimeIdentity(VoiceScene):
         email = VGroup(em_lab, em).arrange(DOWN, buff=0.1, aligned_edge=LEFT).move_to([0, -2.95, 0])
         m_badge = badge(RUNTIME_SA).move_to(M_BADGE)
         with self.voiceover(SAY[5]) as vo:
+            self.add(ill4)
             self.play(track(tr, 2), ReplacementTransform(f4, f5), ReplacementTransform(ill4, ill5),
                       FadeOut(VGroup(sid_chip, vtx, enabled)), run_time=0.8)
             vo.wait_until("create a service account")
             self.play(track(tr, 3), f5.fill(0, "Translation demo runtime"), run_time=0.9)
+            self.add(ill5)
             vo.wait_until("with the ID")
             self.play(FadeIn(ws, shift=UP * 0.2), run_time=0.4)
             self.play(ws.animate.move_to(f5.rows[1].field).set_opacity(0), f5.fill(1, RUNTIME_SA),
@@ -276,14 +285,18 @@ class RuntimeIdentity(VoiceScene):
         assert p.get_bottom()[1] > -3.55 and p.get_right()[0] < r2.get_left()[0] - 0.2, (p.get_bottom(), p.get_right())
         assert r2.get_bottom()[1] > -2.0 and r2.get_right()[0] < 6.55
         with self.voiceover(SAY[6]) as vo:
+            self.add(ill5)
             self.play(track(tr, 4), ReplacementTransform(f5, f6), ReplacementTransform(ill5, ill6),
                       FadeOut(email), run_time=0.8)
             vo.wait_until("Agent Platform User lets it")
             self.play(f6.fill(0, "Agent Platform User"), run_time=0.7)
+            self.add(ill6)
             self.play(FadeIn(r1, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("Service Usage Consumer lets it")
             self.play(f6.press(1), run_time=0.6)
+            self.add(ill6)
             self.play(f6.fill(2, "Service Usage Consumer"), run_time=0.7)
+            self.add(ill6)
             self.play(FadeIn(r2, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("the project whose quota")
             self.play(Indicate(r2.text[1], color=COST, scale_factor=1.08), run_time=0.8)
@@ -293,12 +306,13 @@ class RuntimeIdentity(VoiceScene):
             self.play(FadeIn(bar), *[g.animate.set_color(TURN) for g in span], run_time=0.6)
             self.add(p, bar)
             vo.wait_until("Leave both principal fields")
+            self.add(ill6)
             self.play(FadeOut(VGroup(p, bar)), ReplacementTransform(f6, f7), ReplacementTransform(ill6, ill7),
                       run_time=0.8)
-            self.play(Indicate(f7.rows[0].field, color=TURN, scale_factor=1.04),
-                      Indicate(f7.rows[1].field, color=TURN, scale_factor=1.04), run_time=0.7)
+            self.flash(f7.rows[0].field, f7.rows[1].field, run_time=0.8)
             vo.wait_until("and select Done")
             self.play(f7.press(2), run_time=0.7)
+            self.add(ill7)
 
         # ========================================================== 7. step 5: the email; no key; the recording
         note_rows = VGroup(mono(RUNTIME_SA, 20, INK), mono("@" + WEB_EMAIL.split("@", 1)[1], 20, INK))
@@ -307,7 +321,7 @@ class RuntimeIdentity(VoiceScene):
         email_note.move_to(FORM_UL, aligned_edge=UL)
         rm380 = readme_card(380, "You do not need to create or download a key.")
         rm380.next_to(email_note, DOWN, buff=0.3).align_to(email_note, LEFT)
-        key = crossed_key(0.7).move_to([2.4, -2.45, 0])
+        key = crossed_key(0.9).move_to([2.3, -2.45, 0])
         l3 = dashed_chip("L3 · secrets/…json key").next_to(key, RIGHT, buff=0.35)
         rec = recorded_rows("part3-speech-recorded", 2,
                             ["Filtered result: runtime account Enabled, No keys;", "open its row"],
@@ -327,7 +341,9 @@ class RuntimeIdentity(VoiceScene):
             vo.wait_until("in lecture 3")
             self.play(FadeIn(l3, shift=LEFT * 0.4), run_time=0.6)
             vo.wait_until("here none exists")
-            self.play(l3.animate.set_opacity(0.35), Indicate(key.cross, color=ERR, scale_factor=1.2),
+            l3_x = strike(l3, S.GREY)
+            self.play(Create(l3_x), l3.text.animate.set_opacity(0.45),
+                      Indicate(key.cross, color=ERR, scale_factor=1.2),
                       run_time=0.7)
             vo.wait_until("The recording shows")
             self.play(FadeIn(rec, shift=UP * 0.1), run_time=0.6)
@@ -344,7 +360,7 @@ class RuntimeIdentity(VoiceScene):
         groups = [gc_rows[0:1], gc_rows[1:3], gc_rows[3:5], gc_rows[5:8]]
         anchors = ["enables the API", "creates the account", "and adds the two roles", None]
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(email_note, rm380, key, l3, rec, yt, m_door, m_lab, m_badge, m_cloud,
+            self.play(FadeOut(VGroup(email_note, rm380, key, l3, l3_x, rec, yt, m_door, m_lab, m_badge, m_cloud,
                                      r1, r2)), track(tr, 4, "gcloud"), run_time=0.6)
             self.play(FadeIn(gt, shift=UP * 0.15), run_time=0.4)
             typed = []
@@ -359,7 +375,7 @@ class RuntimeIdentity(VoiceScene):
             rings = [ring(substring(r, "add-iam-policy-binding"), SHARED) for r in binds]
             short = [r for r in all_rows if getattr(r, "text", "").strip() == gc_rows[6].strip()]
             assert len(short) == 1
-            pw = chip("project-wide", SHARED, size=20)
+            pw = row_tag("project-wide", SHARED)
             beside(pw, short[0], buff=0.45)
             vo.wait_until("both bindings are on the whole project")
             self.play(*[Create(rg) for rg in rings], run_time=0.6)
