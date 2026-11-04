@@ -1,0 +1,2259 @@
+1
+00:00:00,000 --> 00:00:04,505
+Two notebooks from this lecture,
+run by the instructors:
+
+2
+00:00:04,505 --> 00:00:06,381
+the same data pipeline,
+
+3
+00:00:06,381 --> 00:00:10,539
+the same 1,156 cheese photos,
+the same five models.
+
+4
+00:00:10,859 --> 00:00:16,363
+Notebook A crowns the fine-tuned MobileNet,
+at 68.97 percent.
+
+5
+00:00:16,683 --> 00:00:20,473
+Notebook B crowns the frozen MobileNet,
+
+6
+00:00:20,473 --> 00:00:26,304
+also at 68.97 percent,
+and puts the fine-tuned one at 62.93.
+
+7
+00:00:26,550 --> 00:00:29,729
+So which recipe is better,
+fine-tuning or freezing?
+
+8
+00:00:30,049 --> 00:00:33,569
+And from these two tables, can you even tell
+what was different?
+
+9
+00:00:33,889 --> 00:00:36,811
+One clue is visible:
+look at the epochs column.
+
+10
+00:00:37,131 --> 00:00:38,411
+Hold that question.
+
+11
+00:00:38,731 --> 00:00:40,751
+Part of the answer is in the table,
+
+12
+00:00:40,751 --> 00:00:43,809
+and part of it is in what the table never
+wrote down.
+
+13
+00:00:44,050 --> 00:00:46,781
+Then the fine-tuned MobileNet leaves Colab.
+
+14
+00:00:47,101 --> 00:00:49,588
+It gets packed into a 4 kilobyte tarball
+
+15
+00:00:49,588 --> 00:00:54,375
+and trains on a machine you rent
+for the length of one job, from one command.
+
+16
+00:00:54,695 --> 00:00:57,170
+That command carries your W&B key.
+
+17
+00:00:57,417 --> 00:01:02,149
+To follow along you need two
+Colab copies with a free T4 GPU,
+
+18
+00:01:02,149 --> 00:01:07,657
+a free account on W&B, Docker,
+and a Google Cloud project with billing.
+
+19
+00:01:07,977 --> 00:01:13,993
+Vertex AI jobs cost money while they run;
+gold tags mark each point, without amounts.
+
+20
+00:01:14,313 --> 00:01:18,857
+A yellow tag means pause and run it,
+and the study guide has every command.
+
+21
+00:01:19,177 --> 00:01:23,678
+Today's two words, from the lecture:
+reproducibility and accountability.
+
+22
+00:01:24,717 --> 00:01:28,452
+The lecture starts from three levers
+for better deep learning:
+
+23
+00:01:28,452 --> 00:01:31,224
+more data, better models,
+and faster hardware.
+
+24
+00:01:31,544 --> 00:01:34,338
+Today we pull the third one:
+you rent hardware.
+
+25
+00:01:34,658 --> 00:01:37,368
+And you add the bookkeeping that shows
+whether it helped.
+
+26
+00:01:37,617 --> 00:01:39,252
+On the Cheese App roadmap,
+
+27
+00:01:39,252 --> 00:01:43,718
+the dashed box around experiment tracking
+and baseline models is today.
+
+28
+00:01:44,038 --> 00:01:46,726
+Your third milestone asks for exactly this.
+
+29
+00:01:46,967 --> 00:01:49,250
+Where does each piece of an experiment go?
+
+30
+00:01:49,570 --> 00:01:54,017
+Code to GitHub,
+data to the versioning from lecture 11,
+
+31
+00:01:54,017 --> 00:01:58,060
+and the environment
+to pyproject.toml and uv.lock.
+
+32
+00:01:58,380 --> 00:02:01,047
+Weights, metrics and logs have no home yet.
+
+33
+00:02:01,367 --> 00:02:04,138
+A complete run should keep seven things:
+
+34
+00:02:04,138 --> 00:02:08,364
+environment, code, data, model,
+metrics, artifacts and notes.
+
+35
+00:02:08,600 --> 00:02:13,976
+The course uses Weights & Biases,
+W&B for short, which is hosted for you.
+
+36
+00:02:14,296 --> 00:02:18,307
+MLflow is the usual choice
+if you must host it yourself.
+
+37
+00:02:18,550 --> 00:02:19,659
+Here is the map.
+
+38
+00:02:19,979 --> 00:02:24,966
+On top, the Colab lane:
+notebook A fills a folder and uploads it,
+
+39
+00:02:24,966 --> 00:02:27,958
+and notebook B streams its runs to W&B.
+
+40
+00:02:28,278 --> 00:02:32,257
+Below, the repo lane:
+your laptop packs the code,
+
+41
+00:02:32,257 --> 00:02:37,537
+a bucket holds it, Vertex AI runs it,
+and the run reports to W&B.
+
+42
+00:02:37,857 --> 00:02:39,265
+Today we light both.
+
+43
+00:02:40,300 --> 00:02:43,842
+Open notebook A from the course page,
+save a copy,
+
+44
+00:02:43,842 --> 00:02:47,596
+and switch the runtime to a GPU;
+pause and set it up.
+
+45
+00:02:47,916 --> 00:02:52,311
+Its stored outputs show the instructors' run
+on one Tesla T4.
+
+46
+00:02:53,667 --> 00:02:55,606
+Run the dataset cells:
+
+47
+00:02:55,606 --> 00:03:01,070
+1,156 photos from one GitHub release,
+with four cheese labels.
+
+48
+00:03:01,390 --> 00:03:02,670
+Remember their order.
+
+49
+00:03:02,990 --> 00:03:09,987
+Then the split: 936 to train,
+104 to validate, 116 to test.
+
+50
+00:03:10,307 --> 00:03:11,565
+Pause and run them.
+
+51
+00:03:11,800 --> 00:03:13,144
+Something to ponder.
+
+52
+00:03:13,464 --> 00:03:22,253
+The cell sets validation_percent to 0.2,
+yet validation is 104 out of 1,156.
+
+53
+00:03:22,573 --> 00:03:24,323
+What did the code actually do?
+
+54
+00:03:33,167 --> 00:03:35,130
+Both splits use test_percent.
+
+55
+00:03:35,450 --> 00:03:39,840
+10 percent of 1,156 is 116 for testing,
+
+56
+00:03:39,840 --> 00:03:47,268
+then 10 percent of the remaining 1,040
+is 104, the validation set.
+
+57
+00:03:47,588 --> 00:03:50,447
+A small slip, copied into the repo trainer.
+
+58
+00:03:50,683 --> 00:03:52,240
+Now the home-made tracker.
+
+59
+00:03:52,560 --> 00:03:56,592
+Cell 31 makes a folder named
+after the current Unix time.
+
+60
+00:03:56,912 --> 00:04:01,816
+After each model trains, the helper
+from cell 12 drops five files into it:
+
+61
+00:04:01,816 --> 00:04:06,256
+the model, its weights, its structure,
+its history and its metrics.
+
+62
+00:04:06,576 --> 00:04:08,582
+Pause and train the five models.
+
+63
+00:04:09,367 --> 00:04:12,913
+Cell 54 gathers the metric files
+into one table,
+
+64
+00:04:12,913 --> 00:04:16,459
+and cell 56 picks its top row
+as the best model;
+
+65
+00:04:16,459 --> 00:04:19,266
+pause and run through the predictions.
+
+66
+00:04:19,586 --> 00:04:23,713
+A small slip:
+accuracy becomes text before sorting,
+
+67
+00:04:23,713 --> 00:04:25,332
+so it sorts strings;
+
+68
+00:04:25,332 --> 00:04:28,524
+9.5 percent would rank above 68 percent.
+
+69
+00:04:28,767 --> 00:04:30,260
+Here is a first answer.
+
+70
+00:04:30,580 --> 00:04:36,191
+The folder keeps settings and scores,
+but not which 116 photos were the test set.
+
+71
+00:04:36,511 --> 00:04:41,460
+The split has no seed,
+so every run is graded on a different 116.
+
+72
+00:04:41,780 --> 00:04:44,326
+One photo is worth 0.86 points,
+
+73
+00:04:44,326 --> 00:04:48,351
+and the winner
+in notebook A leads by two photos.
+
+74
+00:04:48,600 --> 00:04:55,640
+Sign in with cell 62, put your own project
+and bucket into cell 63, and run cell 66.
+
+75
+00:04:55,960 --> 00:04:57,549
+Any bucket of yours works;
+
+76
+00:04:57,549 --> 00:04:58,848
+if you have none yet,
+
+77
+00:04:58,848 --> 00:05:02,253
+skip this upload and come back
+after the setup chapter.
+
+78
+00:05:02,573 --> 00:05:03,725
+Pause and run it.
+
+79
+00:05:04,045 --> 00:05:07,579
+A gold tag:
+those files now sit in your bucket,
+
+80
+00:05:07,579 --> 00:05:11,640
+10 to 104 megabytes of weights per model,
+plus a copy.
+
+81
+00:05:12,683 --> 00:05:14,752
+Notebook B adds W&B.
+
+82
+00:05:15,072 --> 00:05:19,638
+Its first cell installs it,
+and the -U flag means whatever is newest.
+
+83
+00:05:19,958 --> 00:05:27,223
+An extra check in our signed-out stand-in
+shows 0.31.0 at the time of recording,
+
+84
+00:05:27,223 --> 00:05:30,219
+while the stored run used 0.22.2.
+
+85
+00:05:30,539 --> 00:05:31,691
+Pause and run it.
+
+86
+00:05:31,933 --> 00:05:35,933
+The data cells, through cell 32,
+match notebook A,
+
+87
+00:05:35,933 --> 00:05:41,213
+but one also downloads a zip
+of about 510 megabytes you never use.
+
+88
+00:05:41,533 --> 00:05:44,413
+You may delete that line;
+then pause and run them.
+
+89
+00:05:44,650 --> 00:05:48,703
+Copy your API key
+from the user settings on W&B.
+
+90
+00:05:49,023 --> 00:05:54,336
+In Colab, open the key icon
+and add a secret named exactly as on screen,
+
+91
+00:05:54,336 --> 00:05:56,106
+with notebook access on.
+
+92
+00:05:56,426 --> 00:05:57,813
+Pause and add yours.
+
+93
+00:05:58,133 --> 00:06:00,074
+Cell 34 signs in with it.
+
+94
+00:06:00,316 --> 00:06:02,812
+Now pause and run the five training cells.
+
+95
+00:06:03,132 --> 00:06:07,548
+Each starts its run with wandb.init
+in one project, cheese-app-demo.
+
+96
+00:06:07,868 --> 00:06:12,690
+In the ledger, the five rows
+become five runs on one shared epoch axis.
+
+97
+00:06:12,933 --> 00:06:15,216
+But only the 2_block run shows curves.
+
+98
+00:06:15,536 --> 00:06:18,138
+Compare its model.fit call
+with another cell's.
+
+99
+00:06:18,458 --> 00:06:21,146
+Something to ponder:
+what do the other four lack?
+
+100
+00:06:27,983 --> 00:06:31,695
+A callback:
+code that model.fit calls after every epoch.
+
+101
+00:06:32,015 --> 00:06:35,604
+Only the 2_block cell
+passes the W&B callback,
+
+102
+00:06:35,604 --> 00:06:39,738
+so only its loss and accuracy arrive,
+epoch by epoch.
+
+103
+00:06:40,058 --> 00:06:43,099
+Without one,
+wandb.init gives you system charts,
+
+104
+00:06:43,099 --> 00:06:44,239
+never your curves.
+
+105
+00:06:44,483 --> 00:06:48,920
+Both MobileNet runs share one name,
+so tell them apart by run ID.
+
+106
+00:06:49,240 --> 00:06:54,766
+No cell finishes the last run,
+so add wandb.finish after cell 52, an extra.
+
+107
+00:06:55,500 --> 00:06:59,105
+Cell 55 builds the second table
+from the opening.
+
+108
+00:06:59,425 --> 00:07:04,262
+The fine-tuned MobileNet trained 10 epochs
+here and 15 in notebook A:
+
+109
+00:07:04,262 --> 00:07:05,804
+not a fair comparison.
+
+110
+00:07:06,124 --> 00:07:12,343
+Now the frozen MobileNet,
+with the same settings and epochs:
+
+111
+00:07:12,343 --> 00:07:15,660
+67.24 in notebook A, 68.97 here.
+
+112
+00:07:15,980 --> 00:07:20,268
+Two photos apart by chance alone:
+the size of the winning margin.
+
+113
+00:07:20,516 --> 00:07:27,016
+To upload, edit the bucket and project
+inside cell 13 and run cell 13 again,
+
+114
+00:07:27,016 --> 00:07:30,607
+then run cells 64 and 66; pause and do it.
+
+115
+00:07:35,150 --> 00:07:39,715
+The lecture shows the pattern as three lines
+around unchanged training code.
+
+116
+00:07:40,035 --> 00:07:41,977
+Start the run with wandb.init.
+
+117
+00:07:42,297 --> 00:07:45,454
+Watch the model
+with a callback inside model.fit.
+
+118
+00:07:45,774 --> 00:07:47,715
+And finish the run when training ends.
+
+119
+00:07:47,950 --> 00:07:49,806
+Now notebook B's real cell.
+
+120
+00:07:50,126 --> 00:07:54,093
+It starts the run,
+then assigns a dictionary to wandb.config,
+
+121
+00:07:54,093 --> 00:07:56,825
+renames the run, and calls wandb.run.save.
+
+122
+00:07:57,067 --> 00:07:58,411
+Something to ponder.
+
+123
+00:07:58,731 --> 00:08:02,869
+After that assignment,
+and a later update with the execution time,
+
+124
+00:08:02,869 --> 00:08:04,875
+what does the run's config hold?
+
+125
+00:08:13,717 --> 00:08:14,805
+Watch the name.
+
+126
+00:08:15,125 --> 00:08:20,330
+The call wandb.init points the name
+wandb.config at the run's config drawer.
+
+127
+00:08:20,650 --> 00:08:23,105
+The assignment does not fill that drawer;
+
+128
+00:08:23,105 --> 00:08:25,920
+it moves the name onto a new,
+loose dictionary.
+
+129
+00:08:26,240 --> 00:08:31,167
+The update then writes into the loose one,
+and the run finishes with its drawer empty.
+
+130
+00:08:31,417 --> 00:08:35,961
+The proof, on today's W&B in offline mode,
+as our stand-in.
+
+131
+00:08:36,281 --> 00:08:39,993
+The name points at a plain dict,
+and the run's config is empty.
+
+132
+00:08:40,313 --> 00:08:43,953
+The fix passes the dictionary
+to wandb.init itself,
+
+133
+00:08:43,953 --> 00:08:48,163
+and the config holds all four keys
+plus the execution time.
+
+134
+00:08:51,650 --> 00:08:56,068
+The call wandb.run.save with the word
+test uploads files matching test;
+
+135
+00:08:56,068 --> 00:08:57,623
+it does not save the run.
+
+136
+00:08:57,867 --> 00:09:01,737
+The repo's trainer gets the first
+and last lines right:
+
+137
+00:09:01,737 --> 00:09:05,184
+config inside wandb.init,
+then update and finish.
+
+138
+00:09:05,504 --> 00:09:07,104
+But the middle line is gone.
+
+139
+00:09:07,424 --> 00:09:11,291
+One commit
+in October 2025 removed the callback,
+
+140
+00:09:11,291 --> 00:09:12,822
+without saying why.
+
+141
+00:09:13,142 --> 00:09:17,133
+So its runs get config and system charts,
+and no curves;
+
+142
+00:09:17,133 --> 00:09:19,627
+exercise 1 adds the callback again.
+
+143
+00:09:20,667 --> 00:09:26,086
+The second half of the lecture is Vertex AI,
+Google Cloud's machine learning platform.
+
+144
+00:09:26,406 --> 00:09:30,021
+Three console entries matter:
+Workbench for notebooks,
+
+145
+00:09:30,021 --> 00:09:33,168
+Training for jobs,
+and Pipelines for workflows.
+
+146
+00:09:33,488 --> 00:09:38,672
+Today is Training, on the custom jobs tab;
+lecture 15 uses Pipelines.
+
+147
+00:09:38,917 --> 00:09:42,906
+Serverless training means you rent
+the hardware only for the training step.
+
+148
+00:09:43,226 --> 00:09:46,896
+Nobody sets up a server,
+and billing stops when the step ends.
+
+149
+00:09:47,216 --> 00:09:50,586
+There is still a machine;
+you just don't manage its lifetime.
+
+150
+00:09:50,834 --> 00:09:54,173
+Step one:
+move the notebook code into a Python file,
+
+151
+00:09:54,173 --> 00:09:56,935
+and turn its hard-coded choices into flags.
+
+152
+00:09:57,255 --> 00:10:00,693
+The flags
+are epochs, batch size and model name,
+
+153
+00:10:00,693 --> 00:10:03,058
+plus train_base and your W&B key.
+
+154
+00:10:03,300 --> 00:10:05,972
+Step two packs that file into a tarball,
+
+155
+00:10:05,972 --> 00:10:09,380
+one compressed archive,
+and uploads it to a bucket.
+
+156
+00:10:09,700 --> 00:10:15,165
+Step three runs from what the lecture
+calls the Model Trainer CLI Container,
+
+157
+00:10:15,165 --> 00:10:19,193
+our cockpit on your laptop:
+it asks Vertex AI for a job.
+
+158
+00:10:19,513 --> 00:10:24,420
+Vertex AI then starts a machine,
+CPU only or with one T4.
+
+159
+00:10:24,740 --> 00:10:28,858
+It loads Google's prebuilt TensorFlow image,
+installs your tarball,
+
+160
+00:10:28,858 --> 00:10:32,484
+runs your trainer with your flags,
+and deletes the machine.
+
+161
+00:10:32,734 --> 00:10:35,017
+Two facts drive everything after this.
+
+162
+00:10:35,337 --> 00:10:39,245
+The job cannot see your laptop:
+its data comes from the internet,
+
+163
+00:10:39,245 --> 00:10:42,974
+and anything it should keep
+must be written somewhere durable.
+
+164
+00:10:43,294 --> 00:10:45,704
+And the image is Google's, not yours.
+
+165
+00:10:45,950 --> 00:10:47,230
+A quick prediction.
+
+166
+00:10:47,550 --> 00:10:50,878
+Your laptop has no GPU and no TensorFlow.
+
+167
+00:10:51,198 --> 00:10:54,782
+Which machines in this picture
+will ever import TensorFlow?
+
+168
+00:10:59,617 --> 00:11:04,353
+Two: the Colab runtime,
+and the container inside each Vertex job.
+
+169
+00:11:04,673 --> 00:11:08,449
+Never the cockpit on your laptop;
+the tarball chapter proves it.
+
+170
+00:11:09,483 --> 00:11:13,472
+Clone the model-training repo
+and move into it; pause and run it.
+
+171
+00:11:13,792 --> 00:11:16,907
+Two extras show the course pin
+and the repo's files.
+
+172
+00:11:24,316 --> 00:11:27,687
+In the console, enable the Vertex AI API.
+
+173
+00:11:28,007 --> 00:11:31,484
+Then request GPU quota,
+an allowance per region.
+
+174
+00:11:31,804 --> 00:11:37,798
+Filter for custom model training,
+pick T4 GPUs, include us-central1,
+
+175
+00:11:37,798 --> 00:11:41,852
+where cli.sh runs,
+set a new limit and submit.
+
+176
+00:11:42,172 --> 00:11:43,452
+Pause and do both.
+
+177
+00:11:43,772 --> 00:11:50,108
+Approval may take hours or be refused;
+cli.sh runs on CPU without it.
+
+178
+00:11:50,350 --> 00:11:55,512
+Next, a secrets folder beside the repo,
+never inside it; pause and make it.
+
+179
+00:11:58,866 --> 00:12:00,427
+Then the identity:
+
+180
+00:12:00,427 --> 00:12:04,848
+a service account model-trainer
+with Storage Admin,
+
+181
+00:12:04,848 --> 00:12:08,780
+AI Platform Admin
+and Vertex AI Administrator,
+
+182
+00:12:08,780 --> 00:12:13,565
+and one JSON key saved
+in secrets as model-trainer.json.
+
+183
+00:12:13,885 --> 00:12:15,400
+Pause and create yours.
+
+184
+00:12:19,300 --> 00:12:20,537
+One honest note.
+
+185
+00:12:20,857 --> 00:12:24,763
+This recording machine
+has no Google credentials,
+
+186
+00:12:24,763 --> 00:12:27,791
+no W&B account, no GPU and no browser.
+
+187
+00:12:28,111 --> 00:12:31,900
+The key in that listing
+is an obviously invalid stand-in,
+
+188
+00:12:31,900 --> 00:12:34,425
+moved out before the container starts.
+
+189
+00:12:34,745 --> 00:12:38,470
+So each cloud step shows
+the failure a misplaced key gives,
+
+190
+00:12:38,470 --> 00:12:40,868
+and successes come from named sources.
+
+191
+00:12:41,116 --> 00:12:44,529
+Then create a bucket with your own name;
+pause and create it.
+
+192
+00:12:44,849 --> 00:12:46,355
+Two extras show why:
+
+193
+00:12:46,355 --> 00:12:49,894
+our placeholder returns 404,
+it exists nowhere,
+
+194
+00:12:49,894 --> 00:12:54,641
+while the README's name returns 401,
+it belongs to someone else.
+
+195
+00:12:54,961 --> 00:12:59,015
+A gold tag: the bucket stores
+your code and experiment folders.
+
+196
+00:12:59,250 --> 00:13:00,842
+Last, copy your W&B key
+
+197
+00:13:00,842 --> 00:13:04,925
+and export it in the terminal
+you'll use for the container.
+
+198
+00:13:05,245 --> 00:13:06,418
+Pause and do it.
+
+199
+00:13:06,738 --> 00:13:10,471
+An extra echo prints its length,
+40 for our placeholder.
+
+200
+00:13:10,791 --> 00:13:12,230
+It must not be zero,
+
+201
+00:13:12,230 --> 00:13:15,826
+and the trainer's pinned wandb
+accepts exactly 40.
+
+202
+00:13:16,146 --> 00:13:18,800
+If yours is a different length, keep going,
+
+203
+00:13:18,800 --> 00:13:23,058
+but watch the chapter Who submits,
+who runs, before you submit a job.
+
+204
+00:13:24,133 --> 00:13:25,477
+Something to ponder.
+
+205
+00:13:25,797 --> 00:13:29,573
+You exported the key, closed that terminal,
+and opened a new one.
+
+206
+00:13:29,893 --> 00:13:31,792
+What does the same echo print now?
+
+207
+00:13:38,633 --> 00:13:43,156
+Zero: an exported variable exists only
+in that shell and its children.
+
+208
+00:13:43,476 --> 00:13:46,932
+Part 1 is done: the key is set,
+the bucket has a name.
+
+209
+00:13:47,252 --> 00:13:50,366
+Next, we build the cockpit,
+and today it won't build.
+
+210
+00:13:52,200 --> 00:13:57,000
+Part 2 ships the trainer: build the cockpit,
+pack the code, send one job.
+
+211
+00:13:57,320 --> 00:14:02,203
+Put your bucket and project
+on lines 8 and 9 of docker-shell.sh;
+
+212
+00:14:02,203 --> 00:14:03,805
+pause and edit yours.
+
+213
+00:14:05,050 --> 00:14:09,445
+A small slip: the README's copy
+of this script is not the real file.
+
+214
+00:14:09,765 --> 00:14:13,467
+It has notes in brackets
+and an older line for Apple chips,
+
+215
+00:14:13,467 --> 00:14:15,098
+so edit the script itself.
+
+216
+00:14:15,418 --> 00:14:19,557
+It builds
+for amd64 and mounts your code and secrets.
+
+217
+00:14:19,800 --> 00:14:23,660
+Now run sh docker-shell.sh
+from inside the repo;
+
+218
+00:14:23,660 --> 00:14:25,027
+pause and run it.
+
+219
+00:14:25,347 --> 00:14:27,672
+Today it fails at step 2 of 14.
+
+220
+00:14:27,992 --> 00:14:32,774
+All 22 packages return 404 Not Found
+from the Debian mirror,
+
+221
+00:14:32,774 --> 00:14:35,245
+and the build stops at line 18.
+
+222
+00:14:35,565 --> 00:14:40,152
+The script's set -e, exit on error,
+then stops it before docker run.
+
+223
+00:14:40,400 --> 00:14:41,744
+Something to ponder.
+
+224
+00:14:42,064 --> 00:14:46,416
+Every error says 404 from the Debian mirror,
+and your internet works.
+
+225
+00:14:46,736 --> 00:14:49,211
+Which line of the Dockerfile
+picks your Debian?
+
+226
+00:14:58,050 --> 00:14:59,565
+Line 2, the FROM line.
+
+227
+00:14:59,885 --> 00:15:01,340
+Bullseye is Debian 11,
+
+228
+00:15:01,340 --> 00:15:06,893
+and at the time of recording its security
+mirror lists packages it no longer serves;
+
+229
+00:15:06,893 --> 00:15:08,546
+they moved to an archive.
+
+230
+00:15:08,866 --> 00:15:13,241
+The first fix, an extra,
+switches the base to bookworm, Debian 12;
+
+231
+00:15:13,241 --> 00:15:14,434
+pause and make it.
+
+232
+00:15:14,783 --> 00:15:16,255
+Pause and run it again.
+
+233
+00:15:16,575 --> 00:15:18,415
+Now it stops at step 8:
+
+234
+00:15:18,415 --> 00:15:22,222
+google-cloud-sdk
+has no installation candidate,
+
+235
+00:15:22,222 --> 00:15:24,895
+and google-cloud-cli replaces it.
+
+236
+00:15:25,215 --> 00:15:27,178
+Google renamed its apt package.
+
+237
+00:15:27,417 --> 00:15:29,882
+The second fix, also an extra:
+
+238
+00:15:29,882 --> 00:15:35,140
+install google-cloud-cli instead,
+on line 37; pause and make it.
+
+239
+00:15:35,460 --> 00:15:38,468
+An extra git diff shows
+everything you changed:
+
+240
+00:15:38,468 --> 00:15:41,603
+your two values, the two fixes,
+and nothing else.
+
+241
+00:15:41,850 --> 00:15:46,806
+Pause and run it a third time:
+it builds, about 5 minutes here,
+
+242
+00:15:46,806 --> 00:15:50,661
+longer on Apple Silicon,
+where amd64 is emulated.
+
+243
+00:15:50,981 --> 00:15:52,458
+The banner says running,
+
+244
+00:15:52,458 --> 00:15:55,781
+then gcloud cannot open the key file:
+our missing key.
+
+245
+00:15:56,101 --> 00:15:59,130
+With yours,
+this line confirms the service account.
+
+246
+00:15:59,450 --> 00:16:03,887
+The script carries on anyway,
+because the entrypoint has no set -e.
+
+247
+00:16:04,133 --> 00:16:09,701
+The architecture is x86_64, on a Mac too;
+the versions are on screen.
+
+248
+00:16:10,021 --> 00:16:14,080
+A small slip:
+activated is printed before the activation,
+
+249
+00:16:14,080 --> 00:16:15,504
+a label, not a fact.
+
+250
+00:16:17,150 --> 00:16:19,774
+Inside the cockpit, a few extra checks.
+
+251
+00:16:20,094 --> 00:16:22,675
+/secrets is empty, our sandbox.
+
+252
+00:16:22,995 --> 00:16:28,286
+Project, bucket and key came through;
+gcloud, gsutil and uv are here.
+
+253
+00:16:28,606 --> 00:16:30,198
+Pause and check yours:
+
+254
+00:16:30,198 --> 00:16:34,322
+the last number should be 40
+for this wandb pin, never 0;
+
+255
+00:16:34,322 --> 00:16:37,609
+if not,
+see the chapter Who submits, who runs.
+
+256
+00:16:37,929 --> 00:16:40,104
+But importing TensorFlow fails:
+
+257
+00:16:40,104 --> 00:16:43,262
+this container submits jobs,
+it never trains.
+
+258
+00:16:46,000 --> 00:16:48,923
+Review setup.py; pause and open it.
+
+259
+00:16:49,243 --> 00:16:52,507
+It is the label pip uses
+to install the tarball.
+
+260
+00:16:52,827 --> 00:16:58,501
+The only declared dependency is wandb,
+pinned to 0.15.11.
+
+261
+00:16:58,821 --> 00:17:02,346
+Its find_packages()
+call finds the trainer folder
+
+262
+00:17:02,346 --> 00:17:05,438
+because the folder has its own __init__.py,
+
+263
+00:17:05,438 --> 00:17:08,891
+so once installed,
+python -m trainer.task works.
+
+264
+00:17:09,211 --> 00:17:12,033
+TensorFlow and scikit-learn
+are not declared:
+
+265
+00:17:12,033 --> 00:17:15,546
+they are assumed to come
+from the image Google provides,
+
+266
+00:17:15,546 --> 00:17:18,619
+and a later chapter shows
+the tarball lacks them.
+
+267
+00:17:18,939 --> 00:17:21,947
+Requests only arrives
+because wandb needs it.
+
+268
+00:17:22,183 --> 00:17:25,383
+Review task.py next; pause and open it.
+
+269
+00:17:25,703 --> 00:17:27,860
+The notebook choices are flags now,
+
+270
+00:17:27,860 --> 00:17:31,804
+and the --wandb_key flag defaults
+to the text 16: remember that.
+
+271
+00:17:32,124 --> 00:17:37,613
+The data comes from one GitHub release,
+since the job cannot see your laptop,
+
+272
+00:17:37,613 --> 00:17:40,679
+and the W&B login runs after that download.
+
+273
+00:17:40,917 --> 00:17:45,688
+Now pack it: run sh
+package-trainer.sh inside the container;
+
+274
+00:17:45,688 --> 00:17:47,040
+pause and run it.
+
+275
+00:17:47,360 --> 00:17:50,292
+Tar lists eight entries,
+and the upload fails:
+
+276
+00:17:50,292 --> 00:17:52,714
+our placeholder bucket does not exist.
+
+277
+00:17:53,034 --> 00:17:57,194
+Line 4 uses a fixed name,
+so each upload overwrites the last.
+
+278
+00:17:58,033 --> 00:18:01,553
+Extra checks: the tarball is 4,016 bytes.
+
+279
+00:18:01,873 --> 00:18:06,370
+On our Linux engine it belongs to root,
+because the container wrote it;
+
+280
+00:18:06,370 --> 00:18:08,017
+on Docker Desktop, to you.
+
+281
+00:18:08,337 --> 00:18:10,023
+Git ignores it either way.
+
+282
+00:18:10,267 --> 00:18:11,611
+Something to ponder.
+
+283
+00:18:11,931 --> 00:18:14,128
+You fix a typo in task.py.
+
+284
+00:18:14,448 --> 00:18:18,117
+Do you rebuild the image,
+run the package script again, or both?
+
+285
+00:18:24,967 --> 00:18:26,503
+Only the package script.
+
+286
+00:18:26,823 --> 00:18:31,644
+Vertex AI runs the tarball in your bucket,
+and your image never travels.
+
+287
+00:18:31,964 --> 00:18:35,676
+The cockpit mounts your code folder,
+so it already sees the edit.
+
+288
+00:18:35,996 --> 00:18:40,007
+A gold tag: the tarball is stored
+in your bucket, and it is tiny.
+
+289
+00:18:41,650 --> 00:18:44,935
+Review cli.sh; pause and open it.
+
+290
+00:18:45,255 --> 00:18:47,829
+It names the job with random hex,
+
+291
+00:18:47,829 --> 00:18:52,274
+asks for one n1-standard-4 machine,
+and sets a GPU image.
+
+292
+00:18:52,594 --> 00:18:56,955
+Then it points at your tarball in the bucket
+and the module to run,
+
+293
+00:18:56,955 --> 00:19:00,274
+and builds the arguments,
+ending with your W&B key.
+
+294
+00:19:00,517 --> 00:19:06,984
+Further down, the GPU block is commented out
+and line 31 swaps in the CPU image,
+
+295
+00:19:06,984 --> 00:19:09,328
+so only the CPU command runs.
+
+296
+00:19:09,648 --> 00:19:14,649
+A small slip: the README shows GPU first
+and CPU as optional,
+
+297
+00:19:14,649 --> 00:19:17,519
+but the script already runs on CPU.
+
+298
+00:19:17,767 --> 00:19:21,647
+A gold tag first:
+once the job's machine is provisioned,
+
+299
+00:19:21,647 --> 00:19:24,487
+your project pays until the script exits.
+
+300
+00:19:24,807 --> 00:19:26,893
+Check that your key length is 40;
+
+301
+00:19:26,893 --> 00:19:31,506
+if not, watch the next chapter,
+Who submits, who runs, before you submit.
+
+302
+00:19:31,826 --> 00:19:35,282
+Now sh cli.sh; pause and run it.
+
+303
+00:19:35,602 --> 00:19:40,615
+The first line is real:
+the Vertex AI endpoint in us-central1.
+
+304
+00:19:40,935 --> 00:19:45,209
+Then it stops with no active account,
+because the key never loaded;
+
+305
+00:19:45,209 --> 00:19:47,186
+an extra auth list confirms it.
+
+306
+00:19:47,506 --> 00:19:50,983
+With your key,
+gcloud reports the job as created.
+
+307
+00:19:51,217 --> 00:19:55,654
+An extra trace with sh -x
+shows the job it tried to send.
+
+308
+00:19:55,974 --> 00:20:00,113
+The GPU image is set,
+then overridden by the CPU image.
+
+309
+00:20:00,433 --> 00:20:01,798
+Then the full command.
+
+310
+00:20:02,118 --> 00:20:05,326
+The worker pool spec
+is the job's machine order:
+
+311
+00:20:05,326 --> 00:20:09,670
+machine type, one replica,
+meaning one machine, image and module.
+
+312
+00:20:09,990 --> 00:20:14,513
+Last come the arguments,
+ending with your W&B key in plain text.
+
+313
+00:20:14,967 --> 00:20:16,311
+Something to ponder.
+
+314
+00:20:16,631 --> 00:20:20,386
+Your W&B key is now
+part of the job's arguments.
+
+315
+00:20:20,706 --> 00:20:22,028
+Who can see it later?
+
+316
+00:20:30,867 --> 00:20:33,498
+Anyone who can view jobs in this project,
+
+317
+00:20:33,498 --> 00:20:38,760
+because the job spec keeps its arguments,
+plus your shell history if typed inline.
+
+318
+00:20:39,080 --> 00:20:42,403
+Use a dedicated key
+and rotate it at the end;
+
+319
+00:20:42,403 --> 00:20:44,840
+the exercises use Secret Manager.
+
+320
+00:20:45,083 --> 00:20:49,264
+The other way it goes wrong:
+a terminal where the key was never exported.
+
+321
+00:20:49,584 --> 00:20:54,107
+Inside, its length is 0,
+and the arguments end with an empty key.
+
+322
+00:20:54,427 --> 00:20:58,544
+So the job would download its data,
+and only then fail at login.
+
+323
+00:20:58,864 --> 00:21:00,882
+Exit, export, and start again;
+
+324
+00:21:00,882 --> 00:21:04,177
+first exit any old cockpit,
+which holds the name.
+
+325
+00:21:05,767 --> 00:21:08,178
+Three badges take part in every job.
+
+326
+00:21:08,498 --> 00:21:12,252
+The first is your key file,
+for the model-trainer service account.
+
+327
+00:21:12,572 --> 00:21:16,967
+Its three roles let it write
+to your bucket and create jobs: it submits.
+
+328
+00:21:17,200 --> 00:21:21,498
+The third is your W&B key,
+for a different building altogether,
+
+329
+00:21:21,498 --> 00:21:24,432
+carried by hand inside the job's arguments.
+
+330
+00:21:24,752 --> 00:21:26,886
+The middle lanyard is still empty.
+
+331
+00:21:27,134 --> 00:21:28,478
+Something to ponder.
+
+332
+00:21:28,798 --> 00:21:32,220
+The job installs your package
+from your private bucket,
+
+333
+00:21:32,220 --> 00:21:35,816
+but your key file never left your laptop.
+How?
+
+334
+00:21:44,650 --> 00:21:48,757
+The second badge:
+your project's Vertex AI service agent,
+
+335
+00:21:48,757 --> 00:21:51,135
+a service account Google manages.
+
+336
+00:21:51,455 --> 00:21:56,405
+By default the job runs as it,
+and it can open buckets in the same project.
+
+337
+00:21:56,725 --> 00:21:58,794
+Your key only proved who submitted.
+
+338
+00:21:59,114 --> 00:22:04,661
+If a job ever gets a 403 on your bucket,
+that is the identity to grant access.
+
+339
+00:22:05,300 --> 00:22:09,993
+On Vertex, the job's first step installs
+your tarball into Google's image.
+
+340
+00:22:10,313 --> 00:22:11,958
+We can't run Vertex here,
+
+341
+00:22:11,958 --> 00:22:15,775
+so we rerun that step on the laptop,
+tagged as a stand-in.
+
+342
+00:22:16,095 --> 00:22:21,772
+In a plain Python 3.10 container,
+pip installs the tarball:
+
+343
+00:22:21,772 --> 00:22:24,948
+your package, plus wandb 0.15.11.
+
+344
+00:22:25,184 --> 00:22:29,334
+An extra pip list shows wandb,
+requests and their helpers,
+
+345
+00:22:29,334 --> 00:22:32,053
+but no TensorFlow and no scikit-learn.
+
+346
+00:22:32,373 --> 00:22:35,305
+The trainer counts
+on the prebuilt image for those,
+
+347
+00:22:35,305 --> 00:22:37,088
+which we did not pull to check.
+
+348
+00:22:37,408 --> 00:22:40,266
+Without it,
+the trainer cannot even print its help.
+
+349
+00:22:42,000 --> 00:22:47,547
+Then the trainer's first W&B step, line 153,
+with three keys.
+
+350
+00:22:47,867 --> 00:22:52,649
+The empty key from the last chapter
+fails with api_key not configured,
+
+351
+00:22:52,649 --> 00:22:56,043
+and on Vertex that comes
+after the data download,
+
+352
+00:22:56,043 --> 00:22:57,637
+on billed machine time.
+
+353
+00:22:57,957 --> 00:22:59,962
+The default of 16 fails:
+
+354
+00:22:59,962 --> 00:23:03,973
+API key must be 40 characters long,
+yours was 2.
+
+355
+00:23:04,293 --> 00:23:08,130
+Our 40 character placeholder
+passes the offline length check,
+
+356
+00:23:08,130 --> 00:23:09,200
+and nothing more.
+
+357
+00:23:09,750 --> 00:23:15,958
+One more: this old wandb pin accepts
+exactly 40 characters, and 47 fails.
+
+358
+00:23:16,278 --> 00:23:20,118
+We could not check
+which key format W&B gives out today.
+
+359
+00:23:20,438 --> 00:23:24,641
+If yours differs, this pin refuses it,
+so check before you submit.
+
+360
+00:23:24,961 --> 00:23:26,937
+One fix, untested here:
+
+361
+00:23:26,937 --> 00:23:31,492
+raise the wandb pin in setup.py
+to a current release,
+
+362
+00:23:31,492 --> 00:23:35,649
+run sh package-trainer.sh again,
+and then submit.
+
+363
+00:23:37,283 --> 00:23:43,896
+To view jobs, open Vertex AI, then Training,
+then Custom jobs; pause and look for yours.
+
+364
+00:23:44,216 --> 00:23:48,440
+It is a custom job, not a training pipeline,
+so look on that tab.
+
+365
+00:23:48,760 --> 00:23:53,966
+Open your job and follow its logs link;
+wait for the line Training Job Complete.
+
+366
+00:23:54,200 --> 00:23:55,608
+What will the job print?
+
+367
+00:23:55,928 --> 00:23:59,536
+No job log exists for this video,
+so here is its shape,
+
+368
+00:23:59,536 --> 00:24:02,029
+built from the code's own print lines.
+
+369
+00:24:02,349 --> 00:24:06,104
+The counts are the ones both notebooks
+printed for the same code.
+
+370
+00:24:06,350 --> 00:24:08,692
+The labels line has no fixed order,
+
+371
+00:24:08,692 --> 00:24:12,238
+as the two notebooks show,
+and no label map is saved.
+
+372
+00:24:12,558 --> 00:24:14,658
+The summary ends with a stray None,
+
+373
+00:24:14,658 --> 00:24:17,358
+because the code prints
+what summary returns.
+
+374
+00:24:17,678 --> 00:24:20,794
+Training itself is a gap here,
+with no epochs,
+
+375
+00:24:20,794 --> 00:24:24,248
+loss or times,
+then the line Training Job Complete.
+
+376
+00:24:24,483 --> 00:24:25,678
+To view metrics,
+
+377
+00:24:25,678 --> 00:24:30,606
+the README sends you to the W&B
+project cheese-training-vertex-ai.
+
+378
+00:24:30,926 --> 00:24:34,872
+It promises training
+metrics, tracked and updated automatically.
+
+379
+00:24:35,192 --> 00:24:37,411
+To put it kindly, not with this code.
+
+380
+00:24:37,731 --> 00:24:42,032
+From task.py, the run named
+after the model gets its config,
+
+381
+00:24:42,032 --> 00:24:44,111
+including the execution time,
+
+382
+00:24:44,111 --> 00:24:47,694
+and system charts,
+and its curve slots stay empty.
+
+383
+00:24:48,014 --> 00:24:49,912
+Pause and open your project.
+
+384
+00:24:50,150 --> 00:24:53,179
+Something to ponder,
+with the lecture's list of seven.
+
+385
+00:24:53,499 --> 00:24:55,888
+Which of them does this run actually keep?
+
+386
+00:25:04,733 --> 00:25:06,610
+The model and its settings, yes.
+
+387
+00:25:06,930 --> 00:25:13,352
+The environment only partly: system charts,
+while the image tag sits in cli.sh.
+
+388
+00:25:13,672 --> 00:25:17,405
+Metrics, none:
+the execution time goes into the config.
+
+389
+00:25:17,725 --> 00:25:19,453
+Logs yes, weights no.
+
+390
+00:25:19,773 --> 00:25:24,658
+Code, data and notes, no: no commit,
+a fixed zip, and an unseeded split.
+
+391
+00:25:24,978 --> 00:25:29,714
+The folder from notebook A has no commit,
+no split and no notes either.
+
+392
+00:25:30,034 --> 00:25:33,405
+So the verdict:
+these tables cannot crown a recipe.
+
+393
+00:25:33,725 --> 00:25:37,608
+Seed the split, match the epochs,
+keep the code version, then compare.
+
+394
+00:25:37,928 --> 00:25:40,274
+Exercise 1 adds a small callback.
+
+395
+00:25:41,317 --> 00:25:44,799
+Now the reverse
+of the README's optional CPU step:
+
+396
+00:25:44,799 --> 00:25:47,376
+what would it take to train on a GPU?
+
+397
+00:25:47,696 --> 00:25:49,402
+Three switches must agree.
+
+398
+00:25:49,722 --> 00:25:53,221
+The accelerator:
+one T4 in the worker pool spec.
+
+399
+00:25:53,541 --> 00:25:58,768
+The image: TensorFlow built for GPUs,
+with CUDA, the GPU libraries.
+
+400
+00:25:59,088 --> 00:26:02,650
+And the quota:
+T4s for custom training in this region.
+
+401
+00:26:02,970 --> 00:26:05,317
+The chip lights only when all three are on.
+
+402
+00:26:06,284 --> 00:26:09,697
+The quota is the console request
+from the setup chapter.
+
+403
+00:26:10,017 --> 00:26:13,946
+An extra check shows Google
+still serves both GPU images,
+
+404
+00:26:13,946 --> 00:26:15,670
+at the time of recording.
+
+405
+00:26:15,917 --> 00:26:20,568
+To switch, uncomment the GPU
+block and comment out the CPU block.
+
+406
+00:26:20,888 --> 00:26:24,685
+Leave both active,
+and you submit two jobs with the same name.
+
+407
+00:26:24,934 --> 00:26:29,299
+Here the GPU block would fail the same way
+as our CPU submit did,
+
+408
+00:26:29,299 --> 00:26:30,864
+with no active account,
+
+409
+00:26:30,864 --> 00:26:34,470
+so there is nothing new to show,
+and nothing we fake.
+
+410
+00:26:34,717 --> 00:26:40,498
+A gold tag: a GPU adds to the bill
+for as long as it is attached, used or not.
+
+411
+00:26:40,734 --> 00:26:42,078
+Something to ponder.
+
+412
+00:26:42,398 --> 00:26:44,958
+You add the accelerator to the CPU block.
+
+413
+00:26:45,278 --> 00:26:49,061
+The job runs,
+and its log says GPU Available:
+
+414
+00:26:49,061 --> 00:26:50,995
+[], an empty list. Why?
+
+415
+00:26:57,834 --> 00:27:01,589
+Line 31 sets a CPU image, which has no CUDA.
+
+416
+00:27:01,909 --> 00:27:04,831
+The T4 is attached, idle, and still billed.
+
+417
+00:27:05,151 --> 00:27:07,284
+Exercise 5 lets you try it.
+
+418
+00:27:08,333 --> 00:27:13,148
+The last idea of the lecture
+is multi-GPU training, in three shapes:
+
+419
+00:27:13,148 --> 00:27:14,943
+one machine with one GPU,
+
+420
+00:27:14,943 --> 00:27:18,317
+one machine with several,
+and several machines.
+
+421
+00:27:18,637 --> 00:27:21,304
+Today is the middle one,
+the mirrored strategy.
+
+422
+00:27:21,624 --> 00:27:26,765
+The single-GPU trainer also creates one,
+but only to count GPUs.
+
+423
+00:27:27,000 --> 00:27:28,259
+Here is the idea.
+
+424
+00:27:28,579 --> 00:27:33,080
+Each GPU holds an identical copy
+of the model, called a replica.
+
+425
+00:27:33,400 --> 00:27:38,755
+A global batch of 64, one step's worth,
+splits into two halves of 32.
+
+426
+00:27:39,075 --> 00:27:41,933
+Each GPU computes gradients on its half.
+
+427
+00:27:42,253 --> 00:27:45,535
+The two are averaged
+across a link called all-reduce,
+
+428
+00:27:45,535 --> 00:27:49,187
+and both copies take the same step,
+so they stay identical.
+
+429
+00:27:49,507 --> 00:27:54,740
+Variables created inside the scope
+are mirrored, one synced copy per GPU;
+
+430
+00:27:54,740 --> 00:27:57,464
+a model built outside is not mirrored.
+
+431
+00:27:57,700 --> 00:28:03,823
+Review cli-multi-gpu.sh first,
+in README order; pause and open it.
+
+432
+00:28:04,143 --> 00:28:09,732
+It asks for one n1-standard-32 machine
+with two T4s, for 5 epochs.
+
+433
+00:28:10,052 --> 00:28:18,222
+A small slip: its TensorFlow image
+is older, 2.14, where cli.sh uses 2.17.
+
+434
+00:28:18,466 --> 00:28:22,221
+Then review the multi-GPU trainer;
+pause and open it.
+
+435
+00:28:22,541 --> 00:28:24,717
+These are the lecture's three changes.
+
+436
+00:28:25,037 --> 00:28:26,999
+It creates the mirrored strategy.
+
+437
+00:28:27,319 --> 00:28:30,754
+It multiplies the batch size
+by the number of replicas.
+
+438
+00:28:31,074 --> 00:28:35,277
+And it builds and compiles the model
+inside the scope of the strategy.
+
+439
+00:28:35,597 --> 00:28:37,304
+model.fit is unchanged.
+
+440
+00:28:37,550 --> 00:28:38,894
+Something to ponder.
+
+441
+00:28:39,214 --> 00:28:45,166
+Two GPUs, --batch_size=32,
+and 936 training images.
+
+442
+00:28:45,486 --> 00:28:47,116
+How many steps per epoch,
+
+443
+00:28:47,116 --> 00:28:50,179
+and how many images
+does each GPU see per step?
+
+444
+00:28:59,016 --> 00:29:03,953
+The global batch is 64,
+so 15 steps, the last one partial,
+
+445
+00:29:03,953 --> 00:29:07,357
+and 32 images per GPU on each full step.
+
+446
+00:29:07,677 --> 00:29:08,829
+Two caveats.
+
+447
+00:29:09,149 --> 00:29:13,821
+The learning rate stays at 0.001
+while the batch doubles.
+
+448
+00:29:14,141 --> 00:29:16,465
+And two GPUs are not twice as fast,
+
+449
+00:29:16,465 --> 00:29:20,115
+because start-up,
+image pull and download don't shrink.
+
+450
+00:29:20,350 --> 00:29:22,354
+You need quota for two T4s
+
+451
+00:29:22,354 --> 00:29:26,515
+and 32 virtual CPUs of custom
+training in your region.
+
+452
+00:29:26,835 --> 00:29:30,342
+A gold tag:
+this is the biggest machine of the lecture,
+
+453
+00:29:30,342 --> 00:29:32,382
+so check the pricing page first.
+
+454
+00:29:32,702 --> 00:29:38,249
+If your quota came through,
+pause and run sh cli-multi-gpu.sh.
+
+455
+00:29:38,569 --> 00:29:42,686
+Here it fails like cli.sh,
+with no active account.
+
+456
+00:29:43,733 --> 00:29:49,578
+One launcher the README never mentions
+is cli.py, the Python SDK route.
+
+457
+00:29:49,898 --> 00:29:52,564
+As an extra run, it fails at once,
+
+458
+00:29:52,564 --> 00:29:56,405
+because only cli.sh sets
+the GCP_REGION variable.
+
+459
+00:29:56,725 --> 00:29:59,520
+Export it,
+and it fails at the missing key file.
+
+460
+00:30:02,450 --> 00:30:04,178
+And where is the trained model?
+
+461
+00:30:04,498 --> 00:30:07,339
+When the script ends,
+the machine is deleted,
+
+462
+00:30:07,339 --> 00:30:08,854
+and the weights with it:
+
+463
+00:30:08,854 --> 00:30:12,711
+nothing calls model.save,
+and the --model-dir flag is ignored.
+
+464
+00:30:13,031 --> 00:30:18,130
+Lecture 15 saves the model to a bucket;
+exercise 4 does it today.
+
+465
+00:30:18,366 --> 00:30:21,310
+Time to shut down;
+pause and work through the list.
+
+466
+00:30:21,630 --> 00:30:24,413
+From inside the cockpit, or in the console,
+
+467
+00:30:24,413 --> 00:30:27,390
+make sure no custom job
+is running or pending.
+
+468
+00:30:27,710 --> 00:30:30,526
+Remove the tarball
+and experiment folders too.
+
+469
+00:30:30,846 --> 00:30:34,302
+Then exit;
+an extra docker ps shows nothing left.
+
+470
+00:30:34,622 --> 00:30:39,081
+Finish the last W&B run,
+and disconnect the Colab runtimes.
+
+471
+00:30:39,401 --> 00:30:42,762
+At the end of term,
+delete the model-trainer key
+
+472
+00:30:42,762 --> 00:30:44,443
+and rotate your W&B key,
+
+473
+00:30:44,443 --> 00:30:46,100
+which traveled in a job.
+
+474
+00:30:46,350 --> 00:30:48,142
+The whole lecture on one map.
+
+475
+00:30:48,462 --> 00:30:51,150
+A run is only as useful as what it keeps.
+
+476
+00:30:51,470 --> 00:30:55,033
+Curves need a callback;
+config goes into wandb.init.
+
+477
+00:30:55,353 --> 00:30:58,357
+Only the tarball travels,
+into Google's image,
+
+478
+00:30:58,357 --> 00:31:01,753
+run as the service agent,
+your key in its arguments.
+
+479
+00:31:02,073 --> 00:31:04,141
+One GPU needs three switches;
+
+480
+00:31:04,141 --> 00:31:07,491
+two GPUs split
+the batch and average gradients.
+
+481
+00:31:09,316 --> 00:31:11,321
+5 questions to test yourself.
+
+482
+00:31:11,641 --> 00:31:13,924
+One: what did neither table write down?
+
+483
+00:31:14,244 --> 00:31:17,828
+Two: what travels to Vertex AI,
+and what never does?
+
+484
+00:31:18,148 --> 00:31:20,367
+Three: why is the config empty?
+
+485
+00:31:20,687 --> 00:31:24,079
+Four: who submits, who runs,
+and where does your key end up?
+
+486
+00:31:24,399 --> 00:31:29,391
+Five: with two GPUs, what is split,
+averaged, and created inside the scope?
+
+487
+00:31:29,633 --> 00:31:31,681
+Answers are in the exercises.
+
+488
+00:31:32,001 --> 00:31:35,726
+Next, lecture 14 serves
+containers without servers,
+
+489
+00:31:35,726 --> 00:31:39,596
+and lecture 15 saves this model
+and chains the steps.
+
+490
+00:31:39,916 --> 00:31:43,180
+Hardware rented,
+and a log of what you rented it for.
+
