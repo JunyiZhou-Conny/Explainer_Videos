@@ -1,0 +1,8 @@
+00:00 It works on localhost
+01:17 One app, four ways to deploy it
+02:42 Before you begin: project, region, clone
+04:21 Part 1: write a function
+06:21 What runs your function?
+08:08 Call it with a query string
+10:08 Part 2: the prebuilt app on your laptop
+12:39 Deploy the same image
