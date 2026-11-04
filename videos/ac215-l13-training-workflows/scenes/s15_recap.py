@@ -297,7 +297,9 @@ class Recap(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref), FadeIn(t), FadeIn(note0, shift=DOWN * 0.15), run_time=0.7)
-            istep(self, t, c60.line(42))
+            ln0 = istep(self, t, c60.line(42))
+            vo.wait_until("the Python SDK route")
+            self.play(Indicate(substring(ln0, "cli.py"), color=TURN, scale_factor=1.1), run_time=0.7)
             vo.wait_until("As an extra run")
             self.play(FadeIn(ex, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, ex, INK)
@@ -308,12 +310,12 @@ class Recap(VoiceScene):
             self.play(FadeIn(bar7), Indicate(r1[-1], color=ERR, scale_factor=1.03), run_time=0.6)
             vo.wait_until("Export it")
             istep(self, t, c60.line(49))
+            self.play(FadeOut(VGroup(p7, bar7), shift=UP * 0.15), FadeIn(sdk, shift=DOWN * 0.15), run_time=0.6)
+            self.remove(p7, bar7)
             istep(self, t, c60.line(50))
             vo.wait_until("it fails at the missing key file")
             r2 = out(self, t, e2[:3] + [(e2[3], ERR)], wrap=True)
-            self.play(FadeOut(VGroup(p7, bar7), shift=UP * 0.15), run_time=0.4)
-            self.remove(p7, bar7)
-            self.play(FadeIn(sdk, shift=DOWN * 0.15), Indicate(r2[-1], color=ERR, scale_factor=1.02), run_time=0.7)
+            self.play(Indicate(r2[-2:], color=ERR, scale_factor=1.02), run_time=0.7)
 
         # ========================================================== 1. where is the trained model?
         vm = TarballTrip.vm(mini=True, center=(-3.6, 1.25))
@@ -331,8 +333,9 @@ class Recap(VoiceScene):
         q_mark = label("?", 24, ERR).move_to(art_cell)
         art = VGroup(art_lab, VGroup(art_cell, q_mark)).arrange(RIGHT, buff=0.2)
         art.move_to([-3.6, 0.25, 0])
-        l15 = dashed_chip("L15 · saves the model to a bucket").move_to([0, -0.5, 0], aligned_edge=LEFT)
+        l15 = dashed_chip("L15 · saves the model to a bucket").next_to(c_flags, DOWN, buff=0.45, aligned_edge=LEFT)
         ex4 = grey_chip("exercise 4: today").next_to(l15, DOWN, buff=0.2, aligned_edge=LEFT)
+        assert ex4.get_bottom()[1] > p27.get_top()[1] + 0.1, (ex4.get_bottom(), p27.get_top())
 
         with self.voiceover(SAY[1]) as vo:
             self.keep_only(ref, shift=DOWN * 0.2)
@@ -342,19 +345,19 @@ class Recap(VoiceScene):
             self.play(vm.pip(), vm.run(), run_time=0.7)
             vo.wait_until("When the script ends")
             self.play(vm.dissolve(), run_time=1.6)
+            self.remove(vm.meter, *vm.meter.get_family())   # the stopped needle lingers otherwise
             ghost = vm.ghost
             vo.wait_until("and the weights with it")
             self.play(ghost.animate.shift(UP * 0.3), run_time=0.6)
-            self.play(ghost[0].frame.animate.set_stroke(opacity=0.45), ghost[1].animate.set_opacity(0.5),
+            self.play(ghost[0].frame.animate.set_stroke(opacity=0.6), ghost[1].animate.set_opacity(0.75),
                       FadeIn(art, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("nothing calls model save")
-            self.play(FadeIn(er, shift=LEFT * 0.1), FadeIn(c_save, shift=LEFT * 0.15), run_time=0.6)
+            self.play(FadeIn(er, shift=LEFT * 0.1), FadeIn(c_save, shift=LEFT * 0.15), FadeIn(p27, shift=UP * 0.15),
+                      run_time=0.6)
             vo.wait_until("and the model dir flag is ignored")
-            self.play(FadeIn(p27, shift=UP * 0.15), run_time=0.6)
-            self.play(FadeIn(bars27), FadeIn(c_flags, shift=LEFT * 0.15), run_time=0.6)
+            self.play(FadeIn(bars27[0]), FadeIn(c_flags, shift=LEFT * 0.15), run_time=0.6)
+            self.play(FadeIn(bars27[1]), run_time=0.4)
             vo.wait_until("Lecture 15 saves the model")
-            self.play(FadeOut(VGroup(p27, bars27), shift=DOWN * 0.2), run_time=0.5)
-            self.remove(p27, bars27)
             ar = arrow(ghost.get_right(), l15.get_left(), FUTURE, buff=0.15)
             ar_d = DashedVMobject(ar, num_dashes=14)
             self.play(Create(ar_d), FadeIn(l15, shift=LEFT * 0.15), run_time=0.8)
@@ -418,6 +421,9 @@ class Recap(VoiceScene):
         fr3 = gold_frame(page3, frame_w=12.9)
         fr3.move_to([0, 2.65 - fr3.height / 2, 0])
         page3.move_to(fr3).align_to(fr3, LEFT).shift(RIGHT * 0.35)
+        def below(fr):
+            return [fr.get_right()[0] - yt.width / 2, fr.get_bottom()[1] - 0.12 - yt.height / 2, 0]
+
         for pg in (page2, page3):
             assert pg.width < 12.3, pg.width
 
@@ -437,28 +443,30 @@ class Recap(VoiceScene):
             self.play(FadeIn(it2, shift=RIGHT * 0.2), run_time=0.7)
             vo.wait_until("Then exit")
             self.play(FadeOut(VGroup(it1, it2, it3, hd1), shift=UP * 0.2), Transform(fr1, fr2),
-                      yt.animate.move_to([fr2.get_right()[0] - 0.25 - yt.width / 2, it4.get_center()[1], 0]),
+                      yt.animate.move_to(below(fr2)),
                       track(tr, 2), run_time=0.7)
             self.remove(it1, it2, it3, hd1)
             self.play(FadeIn(it4, shift=RIGHT * 0.2), FadeIn(t2), run_time=0.6)
-            ln = type_cmd(self, t2, "docker ps -a")
+            ln = type_cmd(self, t2, "docker ps -a", type_time=0.5)
             pin(self, ln, beside(extra_row(), ln))
             o90 = out(self, t2, [(r, S.GREY) for r in squeeze(capture("90").at(2))])
             pin(self, o90[-1], beside(row_tag("nothing listed · --rm"), o90[-1]))
-            ln2 = type_cmd(self, t2, "docker image ls")
+            ln2 = type_cmd(self, t2, "docker image ls", type_time=0.5)
             pin(self, ln2, beside(extra_row(), ln2))
-            o91 = out(self, t2, img_rows)
+            o91 = out(self, t2, img_rows, run_time=0.5)
             tm = on_bar(t2, time_row())
             self.play(FadeIn(tm), run_time=0.4)
             gb = ring(substring(o91[1], "2.59GB"), TURN, buff=0.05)
             self.play(Create(gb), run_time=0.5)
-            vo.wait_until("Finish the last W and B run")
+            self.wait(0.8)
             self.play(FadeOut(VGroup(t2, tm, gb, *t2.lines), shift=DOWN * 0.2), run_time=0.5)
             self.remove(t2, tm, gb, *t2.lines)
-            self.play(Transform(fr1, fr2_full), FadeIn(disk, shift=UP * 0.15), run_time=0.7)
-            self.wait(0.6)
-            self.play(FadeOut(VGroup(it4, disk), shift=UP * 0.2), Transform(fr1, fr3),
-                      yt.animate.move_to([fr3.get_right()[0] - 0.25 - yt.width / 2, it5.get_center()[1], 0]),
+            self.play(Transform(fr1, fr2_full), FadeIn(disk, shift=UP * 0.15), yt.animate.move_to(below(fr2_full)),
+                      run_time=0.7)
+            self.play(Indicate(disk[0][1], color=INK, scale_factor=1.04), run_time=0.8)
+            self.wait(1.4)   # the disk rows get a moment even though the narration has moved on
+            vo.wait_until("Finish the last W and B run")
+            self.play(FadeOut(VGroup(it4, disk), shift=UP * 0.2), Transform(fr1, fr3), yt.animate.move_to(below(fr3)),
                       track(tr, 3), run_time=0.7)
             self.remove(it4, disk)
             self.play(FadeIn(it5, shift=RIGHT * 0.2), run_time=0.6)
@@ -542,7 +550,12 @@ class Recap(VoiceScene):
             self.play(FadeIn(gpus, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("average gradients")
             self.play(Create(link), FadeIn(link_t), run_time=0.7)
-            self.play(m.all_dark(), FadeOut(VGroup(sws, gpus, link, link_t), shift=DOWN * 0.15), run_time=1.2)
+            st = m.stamp_
+            st_dim = st.copy()
+            st_dim.box.set_stroke(S.GREY_DARK)
+            st_dim.text.set_color(S.GREY)
+            m.stamp_ = None   # all_dark() would fill the stamp's box GREY_DARK over its words
+            self.play(m.all_dark(), Transform(st, st_dim), FadeOut(VGroup(sws, gpus, link, link_t), shift=DOWN * 0.15), run_time=1.2)
             self.remove(sws, gpus, link, link_t)
 
         # ========================================================== 4. test yourself

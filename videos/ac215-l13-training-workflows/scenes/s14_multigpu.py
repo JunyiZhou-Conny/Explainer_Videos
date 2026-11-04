@@ -101,8 +101,28 @@ def batch_targets(n: int, per: int = GLOBAL, cols: int = 8, side: float = 0.07, 
     return pts, frames
 
 
+def _skip(p) -> int:
+    """Rows the code block dropped: a window that starts on a blank line (task_multi_gpu.py:290) keeps
+    it in .source but not in .code_lines, so line_bar()/code_span() index one row too far."""
+    src = p.code.source.split("\n")
+    off = len(src) - len(p.code.code_lines)
+    assert off == 0 or (off == 1 and src[0].strip() == ""), (off, src[0])
+    return off
+
+
 def bars(p, ks, color, opacity: float = 0.22) -> VGroup:
-    return VGroup(*[line_bar(p.code, k, color, opacity) for k in ks])
+    """Translucent bars over rows k (k = file line - first) of code panel p."""
+    off = _skip(p)
+    return VGroup(*[line_bar(p.code, k - off, color, opacity) for k in ks])
+
+
+def span(p, k: int, sub: str) -> VGroup:
+    """code_span() for row k (k = file line - first), corrected for a dropped leading blank row."""
+    off = _skip(p)
+    line = p.code.source.split("\n")[k]
+    i = line.index(sub)
+    start = len("".join(line[:i].split()))
+    return VGroup(*p.code.code_lines[k - off][start:start + len("".join(sub.split()))])
 
 
 class TwoGpusOneModel(VoiceScene):
@@ -133,12 +153,11 @@ class TwoGpusOneModel(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref), run_time=0.5)
-            vo.wait_until("one machine with one GPU")
-            self.play(FadeIn(rows[0], shift=RIGHT * 0.2), run_time=0.6)
-            vo.wait_until("one machine with several")
-            self.play(FadeIn(rows[1], shift=RIGHT * 0.2), run_time=0.6)
-            vo.wait_until("and several machines")
-            self.play(FadeIn(rows[2], shift=RIGHT * 0.2), run_time=0.6)
+            vo.wait_until("in three shapes")
+            self.play(LaggedStart(*[FadeIn(r[0], shift=RIGHT * 0.2) for r in rows], lag_ratio=0.3), run_time=1.0)
+            for r, anchor in zip(rows, ("one machine with one GPU", "one machine with several", "and several machines")):
+                vo.wait_until(anchor)
+                self.play(FadeIn(r[1], shift=RIGHT * 0.15), FadeIn(r[2], shift=LEFT * 0.15), run_time=0.6)
             vo.wait_until("Today is the middle one")
             self.play(FadeIn(ld.here, shift=LEFT * 0.2), run_time=0.5)
             flash_tag(self, ld.here, TURN)
@@ -160,7 +179,6 @@ class TwoGpusOneModel(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             self.keep_only(ref)
-            vo.wait_until("Each GPU holds")
             self.play(FadeIn(mr.box), FadeIn(g0, shift=UP * 0.15), FadeIn(g1, shift=UP * 0.15), run_time=0.8)
             vo.wait_until("called a replica")
             self.play(each([g0.net, g1.net], INK, scale=1.12, lag=0.3), run_time=0.9)
@@ -168,7 +186,10 @@ class TwoGpusOneModel(VoiceScene):
             self.play(FadeIn(mr.batch, shift=RIGHT * 0.2), FadeIn(mr.batch_label), run_time=0.7)
             self.add(mr)
             vo.wait_until("splits into two halves")
-            self.play(mr.split_batch(run_time=1.4))
+            split = mr.split_batch(run_time=1.4)
+            for n_, g_ in zip(mr.n32, mr.gpus):     # common.py puts '32' over the T4 chip's pins
+                n_.move_to(g_.chip.get_center() + RIGHT * 0.62)
+            self.play(split)
             vo.wait_until("Each GPU computes gradients")
             self.play(mr.grads(run_time=1.0))
             vo.wait_until("The two are averaged")
@@ -284,7 +305,7 @@ class TwoGpusOneModel(VoiceScene):
             self.play(FadeOut(VGroup(u1, bg)), FadeIn(u2), run_time=0.5)
             self.remove(u1, bg)
             bg2 = bars(u2, [3, 10], OWNED)
-            self.play(FadeIn(bg2), Indicate(code_span(u2.code, 10, "global_batch_size"), color=OWNED,
+            self.play(FadeIn(bg2), Indicate(span(u2, 10, "global_batch_size"), color=OWNED,
                                             scale_factor=1.08), run_time=0.7)
             vo.wait_until("And it builds and compiles")
             self.play(FadeOut(VGroup(u2, bg2, nw, calls[1])), FadeIn(u3), FadeIn(calls[2], shift=RIGHT * 0.15),
@@ -403,14 +424,15 @@ class TwoGpusOneModel(VoiceScene):
 
         t = term(P_COCKPIT, rows=5)
         r170 = readme_card(170)
-        r170.move_to([6.5 - r170.width / 2, 2.3, 0])
+        r170.move_to([6.5 - r170.width / 2, 2.2, 0])
         fresh = container_note()
         fresh.next_to(r170, DOWN, buff=0.2).align_to(r170, RIGHT)
         opt = grey_chip("optional · only with GPU quota")
         opt.move_to([6.5 - opt.width / 2, t.box.get_top()[1] + 0.35, 0])
         s30 = note("bucket, key and package: already done · only the launch script changes", S.GREY, 20)
-        s30.move_to([-6.4 + s30.width / 2, t.box.get_top()[1] + 0.35, 0])
-        assert s30.get_right()[0] < opt.get_left()[0] - 0.2, (s30.get_right(), opt.get_left())
+        s30.move_to([-6.4 + s30.width / 2, t.box.get_top()[1] + 1.0, 0])
+        assert s30.get_bottom()[1] > opt.get_top()[1] + 0.1 and s30.get_top()[1] < fresh.get_bottom()[1] - 0.1, \
+            (s30.get_bottom(), opt.get_top(), fresh.get_bottom())
         assert fresh.get_bottom()[1] > opt.get_top()[1] + 0.1 and r170.get_top()[1] < 2.8, \
             (fresh.get_bottom(), opt.get_top(), r170.get_top())
 
