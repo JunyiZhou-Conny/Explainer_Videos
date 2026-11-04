@@ -234,33 +234,33 @@ class CallTheEndpoint(VoiceScene):
             self.play(FadeOut(q), ReplacementTransform(panel, hp), FadeIn(rec5, shift=DOWN * 0.15),
                       FadeIn(tab, shift=UP * 0.2), FadeIn(xtab), track(tr, 3, "local stand-in"), run_time=0.8)
             type_cmd(self, tab, c25.cmd, type_time=1.0)
+            prov = QueryToArgs(show_query=False)
+            prov.remove(prov.base)
+            pv = prov.provider(self, hp, cloud_at=(3.6, 0.25), run_time=1.0)
             vo.wait_until("and so does the stand-in")
             r25 = out(self, tab, c25.at(2), run_time=0.3)
             self.play(Indicate(r25[0], color=TURN, scale_factor=1.1),
                       Indicate(rec5.body, color=TURN, scale_factor=1.05), run_time=0.7)
             self.add(tab)
-            prov = QueryToArgs(show_query=False)
-            prov.remove(prov.base)
-            pv = prov.provider(self, hp, cloud_at=(3.6, 0.25), run_time=1.0)
             vo.wait_until("Step 4")
             self.play(track(tr, 4, "local stand-in"), run_time=0.4)
 
             def ask(cap, tt):
                 ln = type_cmd(self, tab, cap.cmd, type_time=tt)
-                self.play(*[g.animate.set_color(ROUTE) for g in dest_value(ln)], run_time=0.2)
-                self.add(tab)
                 dot = Dot(radius=0.1, color=SHARED).move_to(pv.out_arrow.get_start())
                 self.add(dot)
-                self.play(MoveAlongPath(dot, Line(pv.out_arrow.get_start(), pv.out_arrow.get_end())),
-                          run_time=0.3)
+                self.play(*[g.animate.set_color(ROUTE) for g in dest_value(ln)],
+                          MoveAlongPath(dot, Line(pv.out_arrow.get_start(), pv.out_arrow.get_end())),
+                          run_time=0.25)
+                self.add(tab)
                 self.play(MoveAlongPath(dot, Line(pv.back_arrow.get_start(), pv.back_arrow.get_end())),
-                          run_time=0.3)
+                          run_time=0.2)
                 self.remove(dot)
                 return out(self, tab, cap.at(2), run_time=0.3)
 
-            ask(c26, 1.0)
-            ask(c27, 0.6)
-            r28 = ask(c28, 0.6)
+            ask(c26, 0.7)
+            ask(c27, 0.5)
+            r28 = ask(c28, 0.5)
             vo.wait_until("Pause and try")
             yt = beside(turn_row(), r28[0], buff=0.6)
             pin(self, r28[0], yt)
@@ -279,12 +279,13 @@ class CallTheEndpoint(VoiceScene):
             self.remove(*tab.lines)
             self.play(FadeIn(ck, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("one endpoint")
-            self.play(Indicate(ck.body[0], color=TURN, scale_factor=1.04), run_time=0.9)
+            self.play(ck.body[0].animate.set_color(TURN), ck.body[1].animate.set_opacity(0.4), run_time=0.6)
             vo.wait_until("no redeploy")
-            self.play(Indicate(ck.body[1], color=TURN, scale_factor=1.04), run_time=0.9)
+            ul = Underline(VGroup(*ck.body[0][-17:-1]), color=TURN, buff=0.04, stroke_width=3)
+            self.play(Create(ul), run_time=0.6)
             vo.wait_until("are languages")
-            self.play(Indicate(ck.body[2], color=TURN, scale_factor=1.04), FadeIn(sc, shift=UP * 0.1),
-                      FadeIn(pn, shift=UP * 0.1), run_time=0.8)
+            self.play(ck.body[0].animate.set_color(INK), FadeOut(ul), ck.body[2].animate.set_color(TURN),
+                      FadeIn(sc, shift=UP * 0.1), FadeIn(pn, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("not regions")
             st = strike(pn, ERR)
             self.play(Create(st), run_time=0.5)
@@ -427,10 +428,10 @@ class CallTheEndpoint(VoiceScene):
             self.play(FadeIn(fnc, shift=DOWN * 0.1), Create(frg), run_time=0.5)
             vo.wait_until("with a real-format ID")
             self.play(FadeOut(frg), run_time=0.2)
-            ex = type_cmd(self, gt, c18.cmd_lines[0], type_time=0.6)
+            ex = type_cmd(self, gt, c18.cmd_lines[0], type_time=0.4)
             xr = beside(row_tag("extra · a valid-format stand-in, still a placeholder"), ex, buff=0.4)
-            pin(self, ex, xr)
-            type_lines(self, gt, c18.cmd_lines[1:], type_time=0.45)
+            pin(self, ex, xr, run_time=0.3)
+            type_lines(self, gt, c18.cmd_lines[1:], type_time=0.25)
             vo.wait_until("it asks you to sign in")
             out(self, gt, [(s, ERR) for s in c18.at(6, 7, 9)], wrap=True, run_time=0.6)
             self.play(Indicate(gt.find("gcloud auth login"), color=ERR, scale_factor=1.06), run_time=0.7)
@@ -454,25 +455,40 @@ class CallTheEndpoint(VoiceScene):
             u = type_cmd(self, tab, c24.cmd_lines[0], type_time=0.6)
             ut = beside(row_tag("stand-in URL"), u, buff=0.4)
             pin(self, u, ut)
-            typed = type_lines(self, tab, c24.cmd_lines[1:], type_time=0.5)
-            r24 = out(self, tab, c24.at(5), run_time=0.4)
-            vo.wait_until("and answered")
+            typed = type_lines(self, tab, c24.cmd_lines[1:], type_time=0.4)
             # V4 in reverse, small: the three --data-urlencode values join into one query string
-            vals = []
-            for ln, v in ((typed[1], "text=Good afternoon everyone"), (typed[2], "src=en"), (typed[2], "dest=fr")):
-                vals.append(substring(ln, v))
-            pairs = [mono_line(v, 22, ROUTE) for v in ("text=Good afternoon everyone", "src=en", "dest=fr")]
+            texts = ("text=Good afternoon everyone", "src=en", "dest=fr")
+            vals = [substring(typed[1], texts[0]), substring(typed[2], texts[1]), substring(typed[2], texts[2])]
+            pairs = [mono_line(v, 22, ROUTE) for v in texts]
             for k, pl in enumerate(pairs):
                 pl.shift(np.array([-6.2, 2.0 - 0.55 * k, 0]) - pl.strut.get_left())
             cps = [VGroup(*[g.copy() for g in v]) for v in vals]
             self.add(*cps)
-            self.play(*[Transform(c, VGroup(*p.glyphs)) for c, p in zip(cps, pairs)], run_time=0.8)
+            self.play(*[Transform(c, VGroup(*p.glyphs)) for c, p in zip(cps, pairs)], run_time=0.6)
             self.remove(*cps)
             self.add(*pairs)
-            self.wait(0.4)
             qline = mono_line(QUERY, 22, ROUTE)
             qline.shift(np.array([-6.2, 1.45, 0]) - qline.strut.get_left())
-            self.play(ReplacementTransform(VGroup(*pairs), qline), run_time=0.9)
+            moves, used = [], set()
+            for pl, v in zip(pairs, texts):
+                enc = v.replace(" ", "%20")
+                o = QUERY.index(enc)
+                i_src, j = 0, 0
+                for ch in v:                      # walk the decoded pair against its encoded form
+                    if ch == " ":
+                        j += 3
+                        continue
+                    g_dst = glyph_range(qline, o + j, o + j + 1)[0]
+                    moves.append(ReplacementTransform(pl.glyphs[i_src], g_dst))
+                    used.add(id(g_dst))
+                    i_src += 1
+                    j += 1
+            rest = [g for g in qline.glyphs if id(g) not in used]
+            self.play(*moves, *[FadeIn(g, scale=0.6) for g in rest], run_time=0.8)
+            self.remove(*pairs)
+            self.add(qline)
+            vo.wait_until("and answered")
+            r24 = out(self, tab, c24.at(5), run_time=0.4)
             self.play(Indicate(r24[0], color=TURN, scale_factor=1.1), run_time=0.7)
             self.add(tab)
 

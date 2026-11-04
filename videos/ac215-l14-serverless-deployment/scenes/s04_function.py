@@ -51,7 +51,7 @@ REGION_VALUE = f"{REGION} ({REGION_CITY})"
 RUNTIME = "Python 3.12"
 SIGNATURE = "translate(text, dest='en', src='auto')"     # googletrans 4.0.0rc1 (digest, SLIDES Conflict 3)
 SLIDE_CALL = "translate(text, src, dest)"
-EDITOR_TOP = 2.25                                        # top of the editor body / code panel
+EDITOR_TOP = 2.15                                        # top of the editor body / code panel
 
 
 # ------------------------------------------------------------------ pictures of this scene
@@ -255,9 +255,13 @@ class WriteAFunction(VoiceScene):
         nc = name_card().move_to([3.4, 1.15, 0])
         nc_tag = erratum_tag().move_to(nc.frame.get_corner(UR) + np.array([-0.75, 0, 0]))
         link = grey_chip("the slide's link still lands here").next_to(nc, DOWN, buff=0.25)
-        rc = readme_card(99, VGroup(label("open", 22, INK), label("Cloud Run → Services", 22, INK, weight=BOLD),
-                                    label("and select", 22, INK), label("Write a function", 22, INK, weight=BOLD)
-                                    ).arrange(RIGHT, buff=0.14))
+        words = VGroup(label("open", 22, INK), label("Cloud Run → Services", 22, INK, weight=BOLD),
+                       label("and select", 22, INK), label("Write a function", 22, INK, weight=BOLD)
+                       ).arrange(RIGHT, buff=0.14)
+        base = words[2][0].get_bottom()[1]                # baseline: "a" of "and select"
+        for w in words:                                   # "open" has a descender: sit it on the baseline
+            w.shift(UP * (base - w[0].get_bottom()[1]))
+        rc = readme_card(99, words)
         rc.move_to([0, -2.6, 0])
 
         with self.voiceover(SAY[1]) as vo:
@@ -300,14 +304,15 @@ class WriteAFunction(VoiceScene):
         ws = worksheet_card(FUNCTION, "function").move_to([f.frame.get_x(), -3.05, 0])
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(nc, nc_tag, nc_x, link, rc)),
-                      ReplacementTransform(cl, mini), FadeIn(tr, shift=DOWN * 0.15), run_time=0.8)
-            self.play(FadeIn(svc, shift=UP * 0.1), FadeIn(ill_s), run_time=0.5)
-            self.play(svc.press(0), FadeIn(narrow, shift=LEFT * 0.1), run_time=0.8)
-            vo.wait_until("if it asks")
+            self.play(FadeOut(VGroup(nc, nc_tag, nc_x, link, rc)), ReplacementTransform(cl, mini),
+                      FadeIn(tr, shift=DOWN * 0.15), FadeIn(svc, shift=UP * 0.1), FadeIn(ill_s),
+                      FadeIn(narrow, shift=LEFT * 0.1), run_time=0.8)
+            self.play(svc.press(0), run_time=0.8)
+            vo.wait_until("Enable the APIs")
             self.play(FadeOut(narrow), ReplacementTransform(svc, f), ReplacementTransform(ill_s, ill),
-                      run_time=0.6)
-            self.play(track(tr, 2), FadeIn(dlg, scale=0.95), FadeIn(if_asked, shift=LEFT * 0.1), run_time=0.5)
+                      run_time=0.5)
+            self.play(track(tr, 2), FadeIn(dlg, scale=0.95), FadeIn(if_asked, shift=LEFT * 0.1), run_time=0.4)
+            vo.wait_until("if it asks")
             self.play(Indicate(dlg.button, color=TURN, scale_factor=1.08), run_time=0.7)
             vo.wait_until("Name the service")
             self.play(FadeOut(dlg), FadeOut(if_asked), track(tr, 3), FadeIn(ws, shift=UP * 0.2), run_time=0.6)
@@ -358,8 +363,8 @@ class WriteAFunction(VoiceScene):
             flash_tag(self, yt, TURN)
             vo.wait_until("A gold tag")
             self.play(FadeIn(cost1, shift=UP * 0.1), run_time=0.5)
-            vo.wait_until("and every deploy runs a build")
             self.play(FadeIn(cost2, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("and every deploy runs a build")
             flash_tag(self, cost1, COST)
 
         # ========================================================== 5. main.py: decorator, name, three args
@@ -416,7 +421,13 @@ class WriteAFunction(VoiceScene):
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(tabs, ro, *bars, *unders)), FadeTransform(ref2, ref3), run_time=0.5)
-            self.play(FadeOut(p, shift=DOWN * 0.6), FadeIn(p6, shift=DOWN * 0.6), run_time=0.8)
+            # lines 7-12 travel to the new panel (same text); lines 3-4 leave; the frame follows
+            self.play(FadeOut(VGroup(*p.code.code_lines[:4], p.header)), run_time=0.3)
+            self.play(ReplacementTransform(p.code.background, p6.code.background),
+                      *[ReplacementTransform(p.code.code_lines[4 + i], p6.code.code_lines[i]) for i in range(6)],
+                      FadeIn(p6.header, shift=DOWN * 0.3), run_time=0.8)
+            self.remove(p)
+            self.add(p6)
             self.play(FadeIn(sk, shift=RIGHT * 0.2), FadeIn(sk_tag), run_time=0.6)
             vo.wait_until("passes source second")
             self.play(FadeIn(nt, shift=DOWN * 0.1), run_time=0.5)
@@ -519,11 +530,11 @@ class WriteAFunction(VoiceScene):
             vo.wait_until("is the short version")
             self.play(item3.animate.set_color(S.GREY), run_time=0.4)
             vo.wait_until("The console wants the file")
-            self.play(TransformFromCopy(item3, trio[0]), run_time=0.6)
+            self.play(FadeIn(trio[0], target_position=item3[1], scale=0.6), run_time=0.6)
             vo.wait_until("its dependencies")
-            self.play(TransformFromCopy(item3, trio[1]), run_time=0.6)
+            self.play(FadeIn(trio[1], target_position=item3[1], scale=0.6), run_time=0.6)
             vo.wait_until("and the name of the function")
-            self.play(TransformFromCopy(item3, trio[2]), run_time=0.6)
+            self.play(FadeIn(trio[2], target_position=item3[1], scale=0.6), run_time=0.6)
             self.play(each(list(trio), OWN, scale=1.06, lag=0.2), run_time=0.8)
 
         self.play(FadeOut(VGroup(cl2, e3, trio, tr, ref4)), run_time=0.8)

@@ -171,7 +171,7 @@ class Hook(VoiceScene):
             self.play(FadeIn(mate, shift=LEFT * 1.0), FadeIn(mate_bar), FadeIn(ill_mate), run_time=0.8)
             vo.wait_until("On their laptop")
             fly = me_bar.url.copy()
-            self.play(fly.animate(path_arc=-0.8).move_to(mate_url), run_time=0.9)
+            self.play(fly.animate(path_arc=-0.35).move_to(mate_url), run_time=0.9)   # low arc: clear of the tags
             self.remove(fly)
             self.play(ShowIncreasingSubsets(mate_url, rate_func=linear), run_time=0.6)
             self.play(FadeIn(mate_sock), run_time=0.4)
@@ -181,7 +181,7 @@ class Hook(VoiceScene):
             vo.wait_until("because localhost always means")
             self.play(FadeIn(rc, shift=UP * 0.2), run_time=0.7)
             self.play(Indicate(body[0][1], color=ROUTE, scale_factor=1.1), run_time=0.8)
-            self.play(Indicate(mate.screen, color=INK, scale_factor=1.02), run_time=0.8)
+            self.play(mate.screen.animate.set_stroke(INK, width=6), rate_func=there_and_back, run_time=0.8)
             vo.wait_until("and nothing runs on theirs")
             self.play(Indicate(nothing, color=ERR, scale_factor=1.12), run_time=0.8)
 

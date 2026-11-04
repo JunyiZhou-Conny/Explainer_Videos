@@ -16,15 +16,16 @@ Beats (script.md "## S03"; one voiceover block each):
    laptop/01: 2; `cd serverless-deployment` → no output, the prompt changes; TRACKER [BB] 4 · extra:
    `git log -1 --format='%H %ci %s'` (extra) → laptop/02: 2 (wrapped), the hash head and
    `2026-10-22` YELLOW; ▶ your turn on the title bar.
-4. TRACKER [BB] 4 · extra. `ls` (extra) → laptop/03: 2–12; the 2025 root files dim GREY, tag
-   `erratum` + chip "2025 files · the README never uses them · don't build this Dockerfile";
+4. TRACKER [BB] 4 · extra. `ls` (extra) → laptop/03: 2–12; the 2025 root files dim GREY, row tags
+   "erratum · don't build this Dockerfile" (Dockerfile row) + "2025 files · the README never uses
+   them" (cli.py row; one long chip ran into the panel edge);
    `tutorial` YELLOW. `ls tutorial …` (extra) → laptop/04: 32–34, 13–21; function/'s two files GREEN
    + "part 1", app/'s Dockerfile and translation_demo TEAL + "the image of parts 2–4".
 5. TRACKER [BB] 5. Title → `laptop · gcloud`. README card (lines 66–72). TRACKER [BB] 5 · extra:
    `gcloud auth list` (extra) → gcloud/03: 3 GREY. `gcloud auth login` (README:74), no output panel,
    GREY chip "browser sign-in · no output shown". A GREY card "gcloud's own login" with a PURPLE
    gcloud chip; an outlined dashed card "the app's identity · part 3" stays empty.
-6. TRACKER [BB] 5. The seven exports (laptop/05 lines 1–7, type_time 0.5 each), then the echo
+6. TRACKER [BB] 5. The seven exports (laptop/05 lines 1–7, type_time 0.3 each, to keep up with the words), then the echo
    (extra) → laptop/05: 9–11. `YOUR_PROJECT_ID` of line 1 pulses YELLOW + "put your real project ID
    here"; `${PROJECT_ID}` in lines 6–7 and `YOUR_PROJECT_ID` in the echoed emails turn PINK, joined
    by a PINK thread (a PINK underline that travels from each source to its echoed value). ▶ your turn.
@@ -240,10 +241,10 @@ class BeforeYouBegin(VoiceScene):
             pin(self, ln.rows[0] if hasattr(ln, "rows") else ln,
                 beside(extra_row("its spelling"), ln.rows[0] if hasattr(ln, "rows") else ln))
             vo.wait_until("and so is the git log")
-            type_cmd(self, t, "cd serverless-deployment", type_time=0.6)
+            type_cmd(self, t, "cd serverless-deployment", type_time=0.45)
             cd_prompt(self, t, P_REPO)
             self.play(track(tr, 4, True), run_time=0.4)
-            lg = type_cmd(self, t, c02.cmd, type_time=0.9)
+            lg = type_cmd(self, t, c02.cmd, type_time=0.7)
             pin(self, lg, beside(extra_row(), lg))
             rows = out(self, t, c02.at(2), wrap=True)
             self.play(*recolor(substring(rows[0], DIGEST_HEAD), TURN),
@@ -269,31 +270,32 @@ class BeforeYouBegin(VoiceScene):
             vo.wait_until("including main.py and a Dockerfile")
             self.play(*[a for n in ROOT_OLD for a in recolor(by_name[n].glyphs, S.GREY)], run_time=0.7)
             self.add(t)
-            et = beside(row_tag("erratum", S.GREY), by_name["Dockerfile"], min_x=-2.6)
+            et = beside(row_tag("erratum · don't build this Dockerfile", S.GREY), by_name["Dockerfile"], min_x=-2.6)
             pin(self, by_name["Dockerfile"], et)
-            note_ = beside(row_tag("2025 files · the README never uses them · don't build this Dockerfile",
-                                   S.GREY), by_name["cli.py"], min_x=-2.6)
+            note_ = beside(row_tag("2025 files · the README never uses them", S.GREY), by_name["cli.py"], min_x=-2.6)
             pin(self, by_name["cli.py"], note_)
             vo.wait_until("don't build them")
-            flash_tag(self, note_, INK)
+            flash_tag(self, et, INK)
             vo.wait_until("Today's work sits under tutorial")
             self.play(*recolor(by_name["tutorial"].glyphs, TURN), run_time=0.5)
             self.add(t)
-            vo.wait_until("function for part 1")
-            type_cmd(self, t, c04.cmd, type_time=1.0)
+            type_cmd(self, t, c04.cmd, type_time=0.9)
             xb = on_bar(t, extra_row())
-            self.play(FadeIn(xb, shift=LEFT * 0.1), run_time=0.4)
-            fn = out(self, t, c04.at((32, 34)), run_time=0.5)
-            self.play(*[a for r in fn[1:] for a in recolor(r.glyphs, OWN)], run_time=0.5)
+            self.play(FadeIn(xb, shift=LEFT * 0.1), run_time=0.3)
+            vo.wait_until("function for part 1")
+            fn = out(self, t, c04.at((32, 34)), run_time=0.4)
+            p1t = beside(row_tag("part 1", OWN), fn[0], min_x=-1.0)
+            pin(self, fn[0], p1t, run_time=0.5,       # colour and chip in one move (keeps up with the words)
+                anim=AnimationGroup(FadeIn(p1t, shift=LEFT * 0.1), *[a for r in fn[1:] for a in recolor(r.glyphs, OWN)]))
             self.add(t)
-            pin(self, fn[0], beside(row_tag("part 1", OWN), fn[0], min_x=-1.0))
             vo.wait_until("app for the image")
-            app = out(self, t, c04.at((13, 21)), run_time=0.7)
+            app = out(self, t, c04.at((13, 21)), run_time=0.6)
             names = {r.text: r for r in app}
-            self.play(*recolor(names["Dockerfile"].glyphs, IMAGE), *recolor(names["translation_demo"].glyphs, IMAGE),
-                      run_time=0.5)
+            imt = beside(row_tag("the image of parts 2–4", IMAGE), app[0], min_x=-1.0)
+            pin(self, app[0], imt, run_time=0.5,
+                anim=AnimationGroup(FadeIn(imt, shift=LEFT * 0.1), *recolor(names["Dockerfile"].glyphs, IMAGE),
+                                    *recolor(names["translation_demo"].glyphs, IMAGE)))
             self.add(t)
-            pin(self, app[0], beside(row_tag("the image of parts 2–4", IMAGE), app[0], min_x=-1.0))
 
         # ========================================================== 5. terminal setup: gcloud's own login
         rc2 = readme_card((66, 72), "Terminal setup — run once before using any gcloud command boxes")
@@ -308,16 +310,14 @@ class BeforeYouBegin(VoiceScene):
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(xb), run_time=0.3)
             t.clear(self)
-            resize(self, t, 6, extra=[track(tr, 5)])
-            self.play(retitle(t, T_GCLOUD), run_time=0.5)
-            self.play(FadeIn(rc2, shift=DOWN * 0.15), run_time=0.5)
-            self.play(track(tr, 5, True), run_time=0.4)
-            la = type_cmd(self, t, c03g.cmd, type_time=0.6)
+            resize(self, t, 6, extra=[track(tr, 5, True)], run_time=0.6)
+            self.play(retitle(t, T_GCLOUD), FadeIn(rc2, shift=DOWN * 0.15), run_time=0.5)
+            la = type_cmd(self, t, c03g.cmd, type_time=0.5)
             pin(self, la, beside(extra_row(), la))
             nores = out(self, t, c03g.at(3), color=S.GREY)
             vo.wait_until("starting with gcloud auth login")
-            self.play(track(tr, 5), run_time=0.4)
-            lo = type_cmd(self, t, login, type_time=0.7)
+            self.play(track(tr, 5), run_time=0.3)
+            lo = type_cmd(self, t, login, type_time=0.6)
             bs = grey_chip("browser sign-in · no output shown")
             under_term(t, bs)
             self.play(FadeIn(bs, shift=DOWN * 0.1), each(list(substring(lo, "login")), TURN, lag=0.1), run_time=0.7)
@@ -335,17 +335,17 @@ class BeforeYouBegin(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(rc2, own, app_id, bs)), run_time=0.4)
             t.clear(self)
-            resize(self, t, 13)
+            resize(self, t, 13, run_time=0.6)
             typed = []
             for i, row in enumerate(c05.cmd_lines[:7]):
-                typed.append(type_cmd(self, t, row, type_time=0.5))
+                typed.append(type_cmd(self, t, row, type_time=0.3))
                 if i == 0:
                     r0 = _row_with(typed[0], PROJECT_PH)
                     self.play(*recolor(substring(r0, PROJECT_PH), TURN), run_time=0.4)
                     self.add(t)
                     pin(self, r0, beside(row_tag("put your real project ID here", TURN), r0))
             self.play(track(tr, 5, True), run_time=0.3)
-            ec = type_cmd(self, t, c05.cmd_lines[7], type_time=0.5)
+            ec = type_cmd(self, t, c05.cmd_lines[7], type_time=0.4)
             pin(self, _last(ec), beside(extra_row(), _last(ec)))
             em = out(self, t, c05.at((9, 11)))
             srcs = [substring(_row_with(typed[k], "${PROJECT_ID}"), "${PROJECT_ID}") for k in (5, 6)]

@@ -99,6 +99,30 @@ def fail_lookup(scene, b, name: str = "translate", run_time: float = 1.0):
     return VGroup(path, lab, mk)
 
 
+def low_stamp(scene, b, text: str = "pip install · build time, not per request", run_time: float = 0.5):
+    """PLAYS: BuildLine.stamp, but 0.45 under the build box (at the default 0.25 its left end touches
+    the corner of the entry-point card)."""
+    ch = chip(text, OWN, size=20).next_to(b.build.frame, DOWN, buff=0.45)
+    b.stamp_ = ch
+    b.show(scene, ch, anims=[FadeIn(ch, scale=1.2)], run_time=run_time)
+    return ch
+
+
+def open_lid_left(scene, g, text: str = "Google built one", run_time: float = 1.2):
+    """PLAYS: DeployGrid.open_lid, with the GREY chip LEFT of the cell under its row label (inside the
+    cell it covers the top of the dashed instance)."""
+    cl = g.cells[1][0]
+    inst = cl.glyph[0]
+    lid = Line(inst.get_corner(UL), inst.get_corner(UR), color=CLOUD, stroke_width=4)
+    box_ = image_block(None, 0.42, 0.32).next_to(cl.what, RIGHT, buff=0.08)
+    ch = grey_chip(text).next_to(cl.frame, LEFT, buff=0.2).align_to(cl.frame, DOWN).shift(UP * 0.08)
+    g.show(scene, lid, run_time=0.2)
+    g.lid = VGroup(box_, ch)
+    scene.play(Rotate(lid, angle=0.5, about_point=lid.get_start()), run_time=run_time * 0.4)
+    g.show(scene, box_, ch, anims=[GrowFromCenter(box_), FadeIn(ch)], run_time=run_time * 0.4)
+    g.drop(scene, lid, run_time=0.2)
+
+
 class InsideTheFunction(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S05"] == 9, len(SAY)
@@ -107,9 +131,11 @@ class InsideTheFunction(VoiceScene):
         tr = tracker_12(4, "under the hood")
         ref = lref("10–11")
         qc = quote_card().move_to(UP * 0.3)
+        hq = label("What runs your function?", 36, INK).move_to(UP * 2.05)
         er = erratum_tag().next_to(qc.frame, DOWN, buff=0.75).align_to(qc.frame, RIGHT)
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(tr), FadeIn(ref), run_time=0.6)
+            self.play(FadeIn(tr), FadeIn(ref), FadeIn(hq, shift=DOWN * 0.15), run_time=0.6)
+            self.play(Indicate(hq, color=INK, scale_factor=1.06), run_time=0.8)
             vo.wait_until("The lecture says")
             self.play(FadeIn(qc, shift=UP * 0.2), run_time=0.7)
             self.play(FadeIn(er), run_time=0.4)
@@ -130,11 +156,11 @@ class InsideTheFunction(VoiceScene):
         b.remove(b.revision, b.rev_label)          # the revision appears when Cloud Run starts it
         rec = recorded_card("part1-function-recorded", 12, "function GIF").move_to(DOWN * 2.75)
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(qc, er, ul, tb, tl)), run_time=0.5)
+            self.play(FadeOut(VGroup(hq, qc, er, ul, tb, tl)), run_time=0.5)
             self.play(FadeIn(b), run_time=0.7)
             b.feed(self, run_time=1.3)
             vo.wait_until("It installs the requirements")
-            b.stamp(self, run_time=0.6)
+            low_stamp(self, b, run_time=0.6)
             vo.wait_until("configures the Functions Framework")
             self.play(Indicate(b.build.frame, color=TOOL, scale_factor=1.05), run_time=0.8)
             b.heal(self)
@@ -190,7 +216,7 @@ class InsideTheFunction(VoiceScene):
             self.play(FadeOut(icon), FadeIn(g), run_time=0.6)
             self.play(g.light(1, 0), run_time=0.5)
             vo.wait_until("has a container inside")
-            g.open_lid(self, run_time=1.2)
+            open_lid_left(self, g, run_time=1.2)
             vo.wait_until("That is why")
             src = g.lid[0]
             ar = arrow(src.get_bottom(), shelf.image.get_top(), IMAGE, buff=0.1)
@@ -293,11 +319,11 @@ class InsideTheFunction(VoiceScene):
             vo.wait_until("a function named translate")
             r_t = next(r for r in rows28 if "'translate'" in r.text)
             self.play(*[gl.animate.set_color(ERR) for gl in substring(r_t, "'translate'")], run_time=0.4)
-            self.add(t2)
+            self.add(t2, xb2)                       # xb2 last: the title bar would cover it
             vo.wait_until("but it found")
             r_h = next(r for r in rows28 if "'hello_http'" in r.text)
             self.play(*[gl.animate.set_color(OWN) for gl in substring(r_h, "'hello_http'")], run_time=0.4)
-            self.add(t2)
+            self.add(t2, xb2)
 
         # ========================================================== 8. where do you look? (1 of 3)
         wl = WhereToLook().move_to([-3.6, 0.95, 0])

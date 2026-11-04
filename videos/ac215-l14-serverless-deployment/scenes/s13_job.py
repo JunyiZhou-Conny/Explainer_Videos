@@ -174,11 +174,11 @@ class CommandAndArgs(VoiceScene):
         # ========================================================== 1. per-bucket grants; the web account needs neither
         veil = Rectangle(width=13.1, height=6.4, stroke_width=0).set_fill(S.BG, 0.82).move_to([0, -0.36, 0])
 
-        def grant_form(bkt, role):
+        def grant_form(bkt):
             f = wide_form("Grant access", [("Role", ""), ("button", "Save")], "New principals", JOB_EMAIL,
                           path=f"{bkt} → Permissions")
             return f.move_to([0, -0.3, 0])
-        g_in, g_out = grant_form(IN_BUCKET, "Storage Object Viewer"), grant_form(OUT_BUCKET, "Storage Object Creator")
+        g_in, g_out = grant_form(IN_BUCKET), grant_form(OUT_BUCKET)
         ill_in, ill_out = ill_for(g_in), ill_for(g_out)
         assert g_in.frame.get_top()[1] < TRACK_BOTTOM - 0.05 and g_in.width < 13.0
         with self.voiceover(SAY[1]) as vo:
@@ -199,8 +199,11 @@ class CommandAndArgs(VoiceScene):
             cre = board.grant(self, "output", run_time=0.7)
             vo.wait_until("which adds files")
             note = grey_chip("create · not list, open or overwrite")
-            note.next_to(cre, DOWN, buff=0.2).align_to(cre, RIGHT)
-            assert note.get_left()[0] > board.job.roles.get_right()[0] - 3 and note.get_bottom()[1] > -3.55
+            note.next_to(cre, DOWN, buff=0.2)
+            note.shift(RIGHT * (board.buckets["output"].get_left()[0] - 0.2 - note.get_right()[0]))
+            assert note.get_top()[1] < board.job.roles.get_bottom()[1] - 0.1 or \
+                note.get_left()[0] > board.job.roles.get_right()[0] + 0.1, note.get_corner(UL)
+            assert note.get_bottom()[1] > -3.55
             board.show(self, note, run_time=0.5)
             self.play(Indicate(note, color=INK, scale_factor=1.05), run_time=0.6)
             vo.wait_until("The web account needs neither")
@@ -284,7 +287,7 @@ class CommandAndArgs(VoiceScene):
             self.play(FadeIn(jobs, shift=UP * 0.1), FadeIn(ill_j), run_time=0.4)
             vo.wait_until("Deploy container opens Create job")
             self.play(jobs.press(0), run_time=0.6)
-            self.play(ReplacementTransform(jobs, cj), ReplacementTransform(ill_j, ill_c), run_time=0.6)
+            self.play(FadeOut(VGroup(jobs, ill_j)), FadeIn(cj, shift=UP * 0.1), FadeIn(ill_c), run_time=0.6)
             self.play(Indicate(cj.title_text, color=TURN, scale_factor=1.06), run_time=0.5)
             vo.wait_until("The same image")
             self.play(track(tr43, 2), FadeIn(same, shift=UP * 0.1), run_time=0.4)
@@ -321,7 +324,7 @@ class CommandAndArgs(VoiceScene):
             self.play(ReplacementTransform(fs.rows[0].value, py), run_time=0.5)
             fs.rows[0].value = py
             fs.rows[0].add(py)
-            self.add(fs)
+            self.add(fs, ill_s)
             self.play(Indicate(py, color=INK, scale_factor=1.15), run_time=0.5)
             vo.wait_until("It fills the entrypoint slot")
             self.play(FadeIn(cs, shift=UP * 0.1), run_time=0.5)
@@ -334,15 +337,15 @@ class CommandAndArgs(VoiceScene):
         # ========================================================== 6. eleven argument chips take CMD's place; argv
         fa = console_form("Edit Container · Settings", [("Container arguments", "")], form_w=7.4)
         fa.move_to([-6.45, -1.68, 0], aligned_edge=UL)
-        ill_a = ill_for(fa)
+        ill_a = illustration_tag().next_to(fa.frame, RIGHT, buff=0.2).align_to(fa.frame, UP)
         enter = grey_chip("one value, then Enter · eleven times").next_to(fa.frame, RIGHT, buff=0.2)
         enter.align_to(fa.rows[0].field, DOWN)
         assert enter.get_right()[0] < 6.55, enter.get_right()
         up = 2.75 - cs.block.get_top()[1]
         assert fa.frame.get_bottom()[1] > -3.55, fa.frame.get_bottom()
         with self.voiceover(SAY[6]) as vo:
-            self.play(track(tr43, 5), FadeOut(hc), ReplacementTransform(fs, fa), ReplacementTransform(ill_s, ill_a),
-                      cs.animate.shift(UP * up), run_time=0.8)
+            self.play(track(tr43, 5), FadeOut(VGroup(hc, fs, ill_s)), cs.animate.shift(UP * up), run_time=0.7)
+            self.play(FadeIn(fa, shift=UP * 0.1), FadeIn(ill_a), run_time=0.4)
             self.play(fa.fill(0, "-m"), FadeIn(enter, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("each its own chip")
             self.play(Indicate(fa.rows[0].value, color=INK, scale_factor=1.3), run_time=0.6)
@@ -355,10 +358,9 @@ class CommandAndArgs(VoiceScene):
             self.play(FadeOut(v6), run_time=0.2)
             chips = cs.add_args(self, ARGS, run_time=6.2)
             assert cs.block.get_bottom()[1] > fa.frame.get_top()[1] + 0.05, (cs.block.get_bottom(), fa.frame.get_top())
-            gs_out = [c for c in chips if c.value.startswith("gs://") and OUT_BUCKET in c.value][0]
-            ry = chip("replace with yours", TURN, size=20).next_to(gs_out, RIGHT, buff=0.3)
-            ry.next_to(gs_out, RIGHT, buff=0.2)
-            assert ry.get_right()[0] < cs.block.get_right()[0] - 0.1, ry.get_right()
+            ry = chip("replace with yours", TURN, size=20)      # under the block, beside the form's tag
+            ry.move_to([6.45 - ry.width / 2, ill_a.get_center()[1], 0])
+            assert ry.get_left()[0] > ill_a.get_right()[0] + 0.2 and ry.get_top()[1] < cs.block.get_bottom()[1] - 0.05
             self.play(FadeIn(ry, shift=LEFT * 0.1),
                       *[Indicate(c, color=TURN, scale_factor=1.05) for c in chips if c.value.startswith("gs://")],
                       run_time=0.6)
@@ -401,7 +403,7 @@ class CommandAndArgs(VoiceScene):
             self.play(fv.fill(2, SPEECH_LOCATION), run_time=0.4)
             self.play(fv.press(3), FadeIn(dn, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("a task timeout of 5 minutes")
-            self.play(track(tr43, 7), FadeOut(dn), ReplacementTransform(fv, fc), ReplacementTransform(ill_v, ill_c2),
+            self.play(track(tr43, 7), FadeOut(VGroup(dn, fv, ill_v)), FadeIn(fc, shift=UP * 0.1), FadeIn(ill_c2),
                       run_time=0.6)
             self.play(fc.fill(0, "5", TURN), fc.fill(1, "minute"), run_time=0.5)
             vo.wait_until("and 0 retries")
@@ -410,14 +412,14 @@ class CommandAndArgs(VoiceScene):
             self.play(FadeIn(cost, shift=UP * 0.1), run_time=0.5)
             self.play(Indicate(cost, color=COST, scale_factor=1.04), run_time=0.6)
             vo.wait_until("On Security")
-            self.play(track(tr43, 8), FadeOut(cost), ReplacementTransform(fc, fsec),
-                      ReplacementTransform(ill_c2, ill_sec), run_time=0.6)
+            self.play(track(tr43, 8), FadeOut(VGroup(cost, fc, ill_c2)), FadeIn(fsec, shift=UP * 0.1),
+                      FadeIn(ill_sec), run_time=0.6)
             vo.wait_until("choose the job's account by its email")
             self.play(fsec.fill(0, JOB_EMAIL), run_time=0.8)
             self.play(FadeIn(sel, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Leave Execute job immediately unchecked")
-            self.play(track(tr43, 9), FadeOut(sel), ReplacementTransform(fsec, fcr),
-                      ReplacementTransform(ill_sec, ill_cr), run_time=0.6)
+            self.play(track(tr43, 9), FadeOut(VGroup(sel, fsec, ill_sec)), FadeIn(fcr, shift=UP * 0.1),
+                      FadeIn(ill_cr), run_time=0.6)
             self.play(Indicate(fcr.rows[0].mark, color=TURN, scale_factor=1.5), run_time=0.6)
             vo.wait_until("then select Create")
             self.play(fcr.press(1), run_time=0.6)
@@ -454,11 +456,12 @@ class CommandAndArgs(VoiceScene):
             self.play(Indicate(endr, color=ERR, scale_factor=1.08), run_time=0.6)
             rc8.move_to([0, (t8.box.get_top()[1] + BOTTOM) / 2, 0])
             self.play(FadeOut(VGroup(t8, ex8, lead, endr)), FadeIn(rc8, shift=UP * 0.1), run_time=0.6)
+            self.play(Indicate(rc8.body, color=TURN, scale_factor=1.04), run_time=0.8)
 
         # ========================================================== 9. the other mistake: no command (PONDER)
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(rc8), run_time=0.4)
             vo.wait_until("You fill all eleven argument chips")
+            self.play(FadeOut(rc8), run_time=0.4)
             cs2.reset(self, ARGS_SHORT, run_time=1.0)
             self.play(Indicate(cs2.arg_chips, color=INK, scale_factor=1.03), run_time=0.6)
             vo.wait_until("but leave Container command empty")
@@ -495,6 +498,7 @@ class CommandAndArgs(VoiceScene):
             self.play(Indicate(substring(e10[-1], "executable file not found"), color=ERR, scale_factor=1.05),
                       run_time=0.6)
             self.add(t10)
+            self.wait(1.0)
 
         # ========================================================== 11. nothing changed: a server until the timeout
         ls = LifecycleStrips(show=("job",))
@@ -530,15 +534,15 @@ class CommandAndArgs(VoiceScene):
             cr = chip_row(ARGS_SHORT, max_w=12.6)          # the --args value split at its commas (gs:// elided)
             cr.rows.move_to([-6.45 + cr.rows.width / 2, gt12.box.get_top()[1] + 0.25 + cr.rows.height / 2, 0])
             assert cr.rows.get_top()[1] < TRACK_BOTTOM - 0.05, (cr.rows.get_top(), gt12.box.get_top())
-            rgs = [ring(r, ROUTE, buff=0.04) for r in args_rows]
+            rgs = [ring(VGroup(*args_rows), ROUTE, buff=0.05)]
             self.play(*[Create(r) for r in rgs], run_time=0.4)
             self.play(LaggedStart(*[FadeIn(c, shift=UP * 0.3) for c in cr.chips], lag_ratio=0.15), run_time=1.2)
             vo.wait_until("with command python")
             cmdrow = row_with(typed12, "--command=python")
             rp = ring(substring(cmdrow, "--command=python"), TURN, buff=0.04)
-            under_term(gt12, hc12)
-            hc12.align_to(cr.rows, DOWN).align_to(gt12.box, RIGHT)
-            self.play(Create(rp), FadeIn(hc12, shift=DOWN * 0.1), run_time=0.5)
+            hc12.move_to([0, cr.rows.get_center()[1], 0])      # takes the chips' place: no room for both
+            self.play(Create(rp), run_time=0.4)
+            self.play(FadeOut(VGroup(*cr.chips), shift=UP * 0.2), FadeIn(hc12, shift=UP * 0.2), run_time=0.6)
             self.add(gt12, *rgs, rp)
             self.wait(0.8)
 

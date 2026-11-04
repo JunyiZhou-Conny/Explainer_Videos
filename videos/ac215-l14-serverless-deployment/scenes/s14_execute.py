@@ -347,16 +347,16 @@ class ExecuteAndCollect(VoiceScene):
             af.flash_receipt(self, 0, run_time=0.8)
             self.play(FadeIn(neq, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Files without a manifest")
-            self.play(FadeOut(VGroup(ex0, neq)), run_time=0.3)
+            self.play(FadeOut(VGroup(ex0, neq)), FadeOut(ref), run_time=0.3)
             af.clear(self, 0, run_time=0.3)
             af.files(self, 0, fail_after=2, run_time=1.2)
-            self.play(FadeIn(rc5, shift=UP * 0.1), FadeOut(ref), run_time=0.5)
+            self.play(FadeIn(rc5, shift=UP * 0.1), run_time=0.4)
 
         # ========================================================== 6. PONDER: run it again — overwritten?
         with self.voiceover(SAY[6]) as vo:
+            vo.wait_until("with the same arguments")
             self.play(FadeOut(rc5), run_time=0.3)
             af.clear(self, 0, run_time=0.3)
-            vo.wait_until("Execute the same job again")
             af.files(self, 0, run_time=1.2)
             vo.wait_until("Is the first result overwritten")
             self.play(Indicate(af.attempts[0], color=TURN, scale_factor=1.04), run_time=0.6)

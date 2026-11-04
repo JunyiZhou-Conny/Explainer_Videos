@@ -38,6 +38,7 @@ from explainer import style as S
 
 SAY = NARRATION["S02"]
 GRID_UP = 0.35          # the grid sits a little higher so the README table fits under it (beat 5)
+CHIP_NUDGE = 0.12       # part chips 1 and 2 pushed apart (DeployGrid.parts() leaves them touching)
 
 
 # ------------------------------------------------------------------ pictures of this scene
@@ -148,10 +149,11 @@ def part_chips(g: DeployGrid) -> list:
     texts = ("1 Deploy a function", "2 Deploy a web app", "3 Add speech", "4 Run a job")
     chips = [chip(t, CLOUD, size=20) for t in texts]
     top = g.cells[1][0].frame.get_bottom()[1] - 0.18
-    chips[0].move_to([g.cells[1][0].frame.get_center()[0], top - chips[0].height / 2, 0])
+    # both columns' chips are wider than their cells: nudge them apart so chips 1 and 2 don't touch
+    chips[0].move_to([g.cells[1][0].frame.get_center()[0] - CHIP_NUDGE, top - chips[0].height / 2, 0])
     y = top
     for c in chips[1:]:
-        c.move_to([g.cells[1][1].frame.get_center()[0], y - c.height / 2, 0])
+        c.move_to([g.cells[1][1].frame.get_center()[0] + CHIP_NUDGE, y - c.height / 2, 0])
         y -= c.height + 0.1
     return chips
 
@@ -205,7 +207,7 @@ class FourWays(VoiceScene):
             vo.wait_until("and milestone 3 asks")
             self.play(GrowArrow(link), FadeIn(ms, shift=DOWN * 0.15), run_time=0.7)
             vo.wait_until("Cloud Functions or Cloud Run")
-            self.play(Indicate(ms.body[1], color=INK, scale_factor=1.06), run_time=0.9)
+            self.play(Indicate(ms.body[1], color=TURN, scale_factor=1.06), run_time=0.9)
 
         # ========================================================== 2. slides 8-9: what serverless means
         pics = [blink_instance(), rack(0.9), three_steps()]
@@ -288,19 +290,20 @@ class FourWays(VoiceScene):
         tb = readme_table()
         tb.move_to([0.0, -3.55 + tb.height / 2, 0])
         chips = part_chips(g)
-        job = tag("job", S.GREY).next_to(chips[3], RIGHT, buff=0.12)
+        job = tag("job", S.GREY).next_to(chips[3], LEFT, buff=0.15)   # left: on the right it would touch x = 6.6
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeIn(tb, shift=UP * 0.6), run_time=0.8)
             self.play(LaggedStart(*[Indicate(p, color=INK, scale_factor=1.08) for p in tb.parts], lag_ratio=0.25),
                       run_time=1.2)
             vo.wait_until("Part 1 hands over a file")
-            self.play(FadeOut(VGroup(tb.frame, tb.head, tb.colheads, tb.ideas)), run_time=0.5)
+            # the ideas column leaves first; the card frame keeps holding Parts 2-4 until they move too
             g.show(self, chips[0], anims=[ReplacementTransform(tb.parts[0], chips[0])], run_time=0.8,
-                   extra=[Indicate(g.cols[0], color=OWN, scale_factor=1.1)])
+                   extra=[FadeOut(VGroup(tb.colheads, tb.ideas)), Indicate(g.cols[0], color=OWN, scale_factor=1.1)])
             vo.wait_until("Parts 2 to 4")
             g.show(self, *chips[1:], anims=[LaggedStart(*[ReplacementTransform(tb.parts[i], chips[i])
                                                           for i in (1, 2, 3)], lag_ratio=0.2)],
-                   run_time=1.0, extra=[Indicate(g.cols[1], color=S.TEAL, scale_factor=1.1)])
+                   run_time=1.0, extra=[FadeOut(VGroup(tb.frame, tb.head)),
+                                        Indicate(g.cols[1], color=S.TEAL, scale_factor=1.1)])
             self.remove(*tb.get_family())
             g.part_chips = chips
             g.heal(self)
@@ -308,7 +311,7 @@ class FourWays(VoiceScene):
             self.play(g.pulse_part(1), g.pulse_part(2), run_time=0.8)
             g.heal(self)
             vo.wait_until("then as a job")
-            g.show(self, job, anims=[FadeIn(job, shift=LEFT * 0.15)], run_time=0.5, extra=[g.pulse_part(3)])
+            g.show(self, job, anims=[FadeIn(job, shift=RIGHT * 0.15)], run_time=0.5, extra=[g.pulse_part(3)])
 
         # ========================================================== 6. the application code around the model
         icon = grid_icon(0.36).move_to([5.95, -3.0, 0])
