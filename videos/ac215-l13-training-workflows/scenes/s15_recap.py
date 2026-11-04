@@ -626,8 +626,8 @@ class Recap(VoiceScene):
             vo.wait_until("Hardware rented")
             self.keep_only(ref, run_time=0.6)
             self.play(LaggedStart(*[FadeIn(d, shift=UP * 0.2) for d in dials], lag_ratio=0.2), run_time=0.8)
-            self.play(Rotate(third.needle, angle=-0.62 * PI, about_point=piv),
-                      third.needle.animate.set_color(TURN), third.pivot.animate.set_color(TURN),
+            swung = third.needle.copy().set_color(TURN).rotate(-0.62 * PI, about_point=piv)
+            self.play(Transform(third.needle, swung, path_arc=-0.62 * PI), third.pivot.animate.set_color(TURN),
                       third.arc.animate.set_stroke(TURN, 6), third.ticks.animate.set_color(TURN),
                       third.title.animate.set_color(TURN), run_time=0.9)
             vo.wait_until("and a log of what you rented it for")
