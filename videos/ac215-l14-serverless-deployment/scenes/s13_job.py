@@ -64,8 +64,8 @@ SAY = NARRATION["S13"]
 
 FORM_UL = np.array([-6.45, 2.72, 0])                 # forms hang from here, under the tracker
 REGION_VALUE = f"{REGION} ({REGION_CITY})"         # as S08 fills it
-PONDER_Q = ("You fill all eleven argument chips\nbut leave Container command empty.\n"
-            "What does the container try to run?")
+PONDER_Q = ("You fill all eleven argument chips but leave Container command empty.\n"
+            "What does the container try to run?")      # script.md's 3 rows as 2: the block stays visible
 HELP_CHIP = "gcloud help: --command = Entrypoint"    # gcloud/07:22-23
 
 
@@ -442,7 +442,7 @@ class CommandAndArgs(VoiceScene):
             self.play(Indicate(fat, color=INK, scale_factor=1.03), run_time=0.5)
             vo.wait_until("and Python looks for a module")
             self.play(FadeIn(t8, shift=UP * 0.15), FadeIn(ex8), run_time=0.4)
-            type_capture(self, t8, c44, type_time=0.9)
+            type_cmd(self, t8, c44.cmd, type_time=1.2, soft=True)    # soft-wrapped like a real terminal
             errs = out(self, t8, [from_phrase(c44.line(2), "(ModuleNotFoundError")], wrap=True, color=ERR,
                        run_time=0.5)
             vo.wait_until("The name is cut at the first dot")
@@ -464,11 +464,11 @@ class CommandAndArgs(VoiceScene):
             vo.wait_until("but leave Container command empty")
             self.play(Indicate(cs2.entry_content, color=TURN, scale_factor=1.6),
                       Indicate(cs2.entry_name, color=TURN, scale_factor=1.1), run_time=0.8)
-        pc = ponder(self, PONDER_Q, 8, center=(0, -2.05))
+        pc = ponder(self, PONDER_Q, 8, center=(0, -2.28), width=12.6)
         assert pc.get_top()[1] < cs2.block.get_bottom()[1] - 0.05, (pc.get_top(), cs2.block.get_bottom())
 
         # ========================================================== 10. -m becomes the program; Docker's analogue
-        t10 = term(P_REPO, 5, T_LAPTOP, size=20)
+        t10 = term(P_REPO, 4, T_LAPTOP, size=20)
         assert cs2.block.get_bottom()[1] > t10.box.get_top()[1] + 0.2, (cs2.block.get_bottom(), t10.box.get_top())
         an = on_bar(t10, row_tag("extra · Docker's analogue"))
         with self.voiceover(SAY[10]) as vo:
@@ -476,10 +476,18 @@ class CommandAndArgs(VoiceScene):
             vo.wait_until("The arguments replace the default command")
             self.play(Indicate(cs2.cmd_name, color=TURN, scale_factor=1.15), run_time=0.6)
             vo.wait_until("with no entrypoint, dash m becomes the program")
-            cs2.no_command(self, run_time=1.0)
+            # by hand (CommandSlots.no_command's chip move is overridden by its colour animations)
+            first = cs2.arg_chips[0]
+            tgt = first.copy().move_to(cs2.entry_slot).align_to(cs2.entry_slot, LEFT).shift(RIGHT * 0.15)
+            prog = label("program?", 20, ERR)
+            prog.next_to(tgt, RIGHT, buff=0.3)
+            cs2.drop(self, cs2.entry_content, extra=[first.animate.move_to(tgt)], run_time=0.7)
+            self.play(first[0].animate.set_stroke(ERR), first[1].animate.set_color(ERR), run_time=0.4)
+            cs2.heal(self)
+            cs2.show(self, prog, run_time=0.4)
             vo.wait_until("Docker's version fails")
             self.play(track(tr43, 4, "Docker's analogue"), FadeIn(t10, shift=UP * 0.15), FadeIn(an), run_time=0.5)
-            type_capture(self, t10, c45, type_time=0.8)
+            type_cmd(self, t10, c45.cmd, type_time=1.1, soft=True)
             e10 = out(self, t10, [from_phrase(c45.line(2), "exec:")], wrap=True, color=ERR, run_time=0.4)
             x127 = beside(row_tag("exit 127", ERR), e10[-1])
             pin(self, e10[-1], x127)
@@ -495,7 +503,7 @@ class CommandAndArgs(VoiceScene):
         assert both.get_right()[0] < 6.55, both.get_right()
         rc11 = readme_card(1044, "Job starts a server instead of finishing · Command python and\n"
                                  "separate batch arguments", size=20)
-        rc11.move_to([0, -2.95, 0])
+        rc11.move_to([0, BOTTOM + rc11.height / 2 + 0.02, 0])
         with self.voiceover(SAY[11]) as vo:
             self.play(track(tr43, 4), FadeOut(VGroup(cs2, t10, an)), run_time=0.6)
             self.remove(cs2, t10)
@@ -510,7 +518,7 @@ class CommandAndArgs(VoiceScene):
                       FadeIn(rc11, shift=UP * 0.1), run_time=0.7)
 
         # ========================================================== 12. the gcloud alternative (README:816-821)
-        gt12 = term(P_REPO, 11, T_GCLOUD, size=20)
+        gt12 = term(P_REPO, 10, T_GCLOUD, size=20)
         hc12 = grey_chip(HELP_CHIP)
         with self.voiceover(SAY[12]) as vo:
             self.play(FadeOut(VGroup(ls, both, rc11)), track(tr43, 9, "gcloud"), run_time=0.5)
@@ -519,8 +527,7 @@ class CommandAndArgs(VoiceScene):
             typed12 = type_lines(self, gt12, rows_43, type_time=0.45)
             vo.wait_until("the same eleven values")
             args_rows = [r for r in rows_of(typed12[3])]
-            cr = chip_row(ARGS, max_w=12.4)
-            cr.rows.move_to([0, 0, 0])
+            cr = chip_row(ARGS_SHORT, max_w=12.6)          # the --args value split at its commas (gs:// elided)
             cr.rows.move_to([-6.45 + cr.rows.width / 2, gt12.box.get_top()[1] + 0.25 + cr.rows.height / 2, 0])
             assert cr.rows.get_top()[1] < TRACK_BOTTOM - 0.05, (cr.rows.get_top(), gt12.box.get_top())
             rgs = [ring(r, ROUTE, buff=0.04) for r in args_rows]

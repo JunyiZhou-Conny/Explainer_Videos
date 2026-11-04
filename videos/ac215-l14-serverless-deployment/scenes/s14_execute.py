@@ -174,7 +174,7 @@ class ExecuteAndCollect(VoiceScene):
                       run_time=0.7)
 
         # ========================================================== 1. what a red mark would mean: an honest exit 1
-        t1 = term(P_REPO, 7, T_LAPTOP, size=20)
+        t1 = term(P_REPO, 8, T_LAPTOP, size=20)
         ex1 = on_bar(t1, extra_row())
         up1 = 2.15 - ls.job_strip.segs.get_center()[1]
         cp = code(MAIN_PY, 59, 61, font_size=20, dedent=True)
@@ -230,9 +230,9 @@ class ExecuteAndCollect(VoiceScene):
             self.play(Indicate(ls.job_strip.inst, color=S.GREY, scale_factor=1.15), FadeIn(nourl, shift=UP * 0.1),
                       run_time=0.7)
             vo.wait_until("Its last output")
-            self.play(FadeOut(VGroup(tasks, ill2, rc2, nourl, ls)), run_time=0.5)
+            self.play(FadeOut(VGroup(tasks, ill2, rc2, nourl, ls)), FadeIn(lp, shift=UP * 0.1), FadeIn(lill),
+                      run_time=0.7)
             self.remove(ls)
-            self.play(FadeIn(lp, shift=UP * 0.1), FadeIn(lill), run_time=0.6)
             self.play(FadeIn(shape, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("with the output and manifest locations")
             b_uri = VGroup(line_bar(lp.code, 1, ROUTE, 0.3), line_bar(lp.code, 2, ROUTE, 0.3))
@@ -258,6 +258,7 @@ class ExecuteAndCollect(VoiceScene):
             af.show(self, yours, anims=[FadeIn(yours, shift=LEFT * 0.1)], run_time=0.4)
             vo.wait_until("Inside is a folder")
             col = af.attempt(self, ATTEMPT + "/", run_time=0.7)
+            col.add(col.files)      # workaround: files() parks rows in col.files before col holds it
             rt = recorded_tag("README:860").next_to(col.name, RIGHT, buff=0.3)
             rnd = grey_chip("a random name").next_to(rt, RIGHT, buff=0.25)
             assert rnd.get_right()[0] < af.frame.get_right()[0] - 0.15, rnd.get_right()
@@ -294,9 +295,8 @@ class ExecuteAndCollect(VoiceScene):
             (order.get_right(), stamp.get_bottom())
         assert order.get_top()[1] < sp.get_bottom()[1] - 0.1, (order.get_top(), sp.get_bottom())
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(af), run_time=0.4)
+            self.play(FadeOut(af), FadeIn(sp, shift=UP * 0.1), run_time=0.6)
             self.remove(af)
-            self.play(FadeIn(sp, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Each upload is create-only")
             b46 = line_bar(sp.code, 1, OWN, 0.3)
             gm = code_span(sp.code, 10, "if_generation_match=0")
@@ -333,10 +333,9 @@ class ExecuteAndCollect(VoiceScene):
         rc5.move_to([2.55, af.frame.get_center()[1] - 0.3, 0])
         assert rc5.get_right()[0] < 6.55 and neq.get_right()[0] < af.frame.get_right()[0] - 0.1
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(sp, b48, f_txt, f_wav, stamp, f_man, rcpt)), run_time=0.4)
-            for m in (tb_head, *descs):
+            for m in (tb_head, *descs, rt):
                 af._detach(m)
-            self.play(FadeIn(af), run_time=0.5)
+            self.play(FadeOut(VGroup(sp, b48, f_txt, f_wav, stamp, f_man, rcpt)), FadeIn(af), run_time=0.6)
             vo.wait_until("the third place to look")
             self.play(FadeIn(wl, shift=LEFT * 0.15), run_time=0.5)
             wl.fill(self, 2, "the job's logs and manifest", run_time=0.6)
@@ -371,21 +370,33 @@ class ExecuteAndCollect(VoiceScene):
         assert uu.get_left()[0] > tr.get_right()[0] + 0.1 and uu.get_bottom()[1] > af.frame.get_top()[1] + 0.03, \
             (uu.get_left(), tr.get_right(), uu.get_bottom())
         retry = cost_tag("a retry = paid work again · retries 0")
-        retry.move_to([0, (af.frame.get_bottom()[1] + BOTTOM) / 2 - 0.05, 0])
+        retry.move_to([af.frame.get_right()[0] - retry.width / 2, (af.frame.get_bottom()[1] + BOTTOM) / 2, 0])
+        shield = Polygon([0, 0.25, 0], [0.22, 0.15, 0], [0.18, -0.15, 0], [0, -0.28, 0], [-0.18, -0.15, 0],
+                         [-0.22, 0.15, 0], stroke_color=OWN, stroke_width=3).set_fill(OWN, 0.25)
+        sh_chip = ok_chip("create only")
+        sh_row = VGroup(shield, sh_chip).arrange(RIGHT, buff=0.15)
+        sh_row.move_to([0, retry.get_center()[1], 0]).align_to(af.attempts[0].folder, LEFT)
+        assert sh_row.get_right()[0] < retry.get_left()[0] - 0.3 and sh_row.get_bottom()[1] > -3.55, \
+            (sh_row.get_right(), retry.get_left())
+        assert sh_row.get_top()[1] < af.frame.get_bottom()[1] - 0.05, (sh_row.get_top(), af.frame.get_bottom())
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(pc), run_time=0.4)
             vo.wait_until("A new attempt folder lands beside the first")
             c2 = af.attempt(self, "<attempt>/", run_time=0.7)
+            c2.add(c2.files)        # (same workaround as above)
             self.play(FadeIn(uu, shift=DOWN * 0.1), run_time=0.4)
             af.files(self, 1, run_time=1.6)
             vo.wait_until("and create-only uploads cannot overwrite")
-            af.shield(self, 0, run_time=0.6)
+            files0 = af.attempts[0].files
+            lock = Line(files0.get_corner(UL) + LEFT * 0.12, files0.get_corner(DL) + LEFT * 0.12, color=OWN, stroke_width=5)
+            af.show(self, lock, sh_row, anims=[Create(lock), FadeIn(sh_row, shift=UP * 0.1)], run_time=0.6)
+            self.play(Indicate(files0, color=OWN, scale_factor=1.04), run_time=0.6)
             vo.wait_until("But it is not exactly once")
             self.play(Indicate(VGroup(af.attempts[0].name, c2.name), color=TURN, scale_factor=1.05), run_time=0.6)
             vo.wait_until("a retry repeats paid work")
             self.play(FadeIn(retry, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("which is why retries are 0")
-            self.play(Indicate(retry, color=COST, scale_factor=1.04), run_time=0.6)
+            flash_tag(self, retry, COST)
 
         # ========================================================== 8. step 5: download; your turn; what one execution bills
         ol = object_list(f"Buckets → {OUT_BUCKET} → run-001", ATTEMPT + "/", AttemptFolders.FILES)
@@ -394,15 +405,16 @@ class ExecuteAndCollect(VoiceScene):
         rec10 = recorded_card("part4-job-recorded", 10, "results GIF", size=20)
         rec10.next_to(ol, DOWN, buff=0.35).align_to(ol, LEFT)
         media = grey_chip("speech.wav · media tab · ⋮ → Download")
-        media.next_to(ol.frame, RIGHT, buff=0.35).align_to(ol.rows[1], UP).shift(UP * 0.1)
+        media.next_to(rec10, DOWN, buff=0.3).align_to(rec10, LEFT)
         yt = your_turn().next_to(rec10, RIGHT, buff=0.4)
         cost = cost_tag("one execution = its task's running time + one TTS call · check the pricing page")
         cost.move_to([0, -3.1, 0])
         assert media.get_right()[0] < 6.55 and yt.get_right()[0] < 6.55, (media.get_right(), yt.get_right())
-        assert cost.get_top()[1] < rec10.get_bottom()[1] - 0.15, (cost.get_top(), rec10.get_bottom())
+        assert cost.get_top()[1] < media.get_bottom()[1] - 0.15, (cost.get_top(), media.get_bottom())
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(af, uu, retry)), track(tr, 5), run_time=0.5)
             self.remove(af)
+            af._detach(sh_row)                         # the chip under the bucket stays behind
             self.play(FadeIn(ol, shift=UP * 0.1), FadeIn(ill8), run_time=0.5)
             vo.wait_until("download the text and the audio")
             self.play(Indicate(ol.rows[0].dl, color=TURN, scale_factor=1.4), run_time=0.5)
@@ -415,12 +427,12 @@ class ExecuteAndCollect(VoiceScene):
             vo.wait_until("A gold tag")
             self.play(FadeIn(cost, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("plus one speech call")
-            self.play(Indicate(cost, color=COST, scale_factor=1.03), run_time=0.6)
+            flash_tag(self, cost, COST)
 
         # ========================================================== 9. the gcloud alternative (README:872-876)
         gt = term(P_REPO, 8, T_GCLOUD, size=20)
         npc = no_panel_chip()
-        wchip = grey_chip("--wait waits · does not stream app logs", mono_font=False)
+        wchip = grey_chip("waits · does not stream app logs")
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(VGroup(ol, ill8, rec10, media, yt, cost)), track(tr, 1, "gcloud"), run_time=0.5)
             self.play(FadeIn(gt, shift=UP * 0.15), run_time=0.4)
@@ -444,8 +456,7 @@ class ExecuteAndCollect(VoiceScene):
         rc10 = readme_card((850, 851), "Checkpoint: the task finished, the process stopped,\n"
                                        "and its files remain in Storage.", size=22)
         rc10.move_to([6.45 - rc10.width / 2, 2.78 - rc10.height / 2, 0])
-        if rc10.get_left()[0] < tr.get_right()[0] + 0.15:
-            rc10.move_to(FORM_UL + DOWN * 0.1, aligned_edge=UL)
+        assert rc10.get_left()[0] > tracker_44(5).get_right()[0] + 0.15, rc10.get_left()
         ls.shift(np.array([-js.get_center()[0], rc10.get_bottom()[1] - 0.5 - js.get_top()[1], 0]))
         af.move_to([0, BOTTOM + 0.05 + af.height / 2, 0])
         assert af.get_top()[1] < rc10.get_bottom()[1] - 0.1, (af.get_top(), rc10.get_bottom())
