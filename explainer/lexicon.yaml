@@ -407,3 +407,7 @@ gsutil: {ipa: "dʒˌiːˈɛs jˈuːtɪl", say: "G-S util"}
 to 0.77: {ipa: "tə zˈiəɹoʊ pɔɪnt sˈɛvən sˈɛvən", say: "to zero point seven seven"}
 "49.4": {ipa: "fˈɔːɹɾi nˈaɪn pɔɪnt fˈɔːɹ", say: "forty-nine point four"}
 "1.84": {ipa: "wˈʌn pɔɪnt ˈeɪt fˈɔːɹ", say: "one point eight four"}
+# L13 whole-video QA (ASR): "copied" heard as "cop it" (kˈɑːpɪd); a sentence-initial "Two GPUs," loses its plural z.
+# L13-only multi-word keys, so other videos' "copied" / "GPUs" are untouched.
+"slip, copied": {ipa: "slˈɪp, kˈɑːpid", say: "slip, copyd"}
+Two GPUs: {ipa: "tˈuː dʒˌiːpˌiːjˈuːz", say: "Two G P Use"}
