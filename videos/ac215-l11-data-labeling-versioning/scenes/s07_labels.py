@@ -592,7 +592,7 @@ class LabelsAndTokens(VoiceScene):
         self.play(ir.animate.set_color(S.GREY), FadeIn(err8, shift=UP * 0.1), FadeIn(chip8, shift=UP * 0.1),
                   run_time=0.6)
         self.play(Create(under(ir, S.GREY, stroke=3)), run_time=0.5)
-        self.wait(1.2)
+        self.wait(3.2)      # unspoken beat: give the typo chip time to be read
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

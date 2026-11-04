@@ -240,6 +240,8 @@ class CorsOnTheBucket(VoiceScene):
             self.play(FadeIn(r165, shift=DOWN * 0.15), FadeIn(names, shift=LEFT * 0.15), FadeIn(ref), run_time=0.6)
             ln = type_cmd(self, t, c41.cmd, type_time=0.6)
             r41 = out(self, t, out41, run_time=1.2)
+            bld = beside(row_tag("first build ≈ 2–3 min"), r41[0])
+            self.play(FadeIn(bld, shift=LEFT * 0.1), run_time=0.4)
             t.set_prompt(PROMPT_CLI)
             pr = bare_prompt(self, t)
             vo.wait_until("The ID in the prompt")
@@ -259,7 +261,7 @@ class CorsOnTheBucket(VoiceScene):
             self.play(each([substring(v29, "Python 3.12.15"), substring(v30, "uv 0.13.5")], INK, scale=1.08, lag=0.3),
                       GrowFromCenter(br), FadeIn(tm, shift=LEFT * 0.1), run_time=0.9)
             vo.wait_until("Pause and do both")
-            marks = VGroup(dif, ach, br, tm, r165, names)
+            marks = VGroup(dif, ach, br, tm, r165, names, bld)
             self.play(FadeOut(marks), run_time=0.4)
             drop(self, marks)
             resize(self, t, 3, run_time=0.6)

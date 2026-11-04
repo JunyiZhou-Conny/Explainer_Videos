@@ -285,6 +285,7 @@ class WhoTouchesBytes(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             gone = VGroup(tgt, ill_t, env, t2, hd2, tg2)
+            self.wait(1.2)          # hold the target's RED message: it turned RED as block 1 ended
             self.play(FadeOut(gone), FadeOut(VGroup(*t2.lines)), run_time=0.5)
             drop(self, gone, *t2.lines)
             self.play(FadeIn(hcard.frame, scale=0.97), FadeIn(hcard.head), run_time=0.6)
@@ -346,13 +347,14 @@ class WhoTouchesBytes(VoiceScene):
             self.play(FadeIn(p_src, shift=RIGHT * 0.2), FadeIn(p_tgt, shift=RIGHT * 0.2), FadeIn(ill3),
                       FadeIn(bk, shift=LEFT * 0.2), run_time=0.7)
             vo.wait_until("add both storages")
-            self.play(each([p_src.btns[0].text, p_tgt.btns[0].text], TURN, scale=1.1, lag=0.5), run_time=1.0)
+            self.play(each([p_src.btns[0].text, p_tgt.btns[0].text], TURN, scale=1.1, lag=0.5),
+                      FadeIn(rec, shift=UP * 0.15), run_time=1.0)    # the recorded tag up ≥ 4 s
             vo.wait_until("and click sync")
             self.play(Indicate(p_src.btns[1].text, color=TURN, scale_factor=1.12),
                       Indicate(bk.drawers["cheeses_unlabeled/"].text, color=CLOUD, scale_factor=1.06), run_time=0.6)
             src_pt = bk.drawers["cheeses_unlabeled/"].get_center()
             self.play(LaggedStart(*[FadeIn(c, target_position=src_pt, scale=0.5) for c in cs], lag_ratio=0.04),
-                      FadeIn(rec, shift=UP * 0.15), run_time=1.3)
+                      run_time=1.3)
             vo.wait_until("one task per photo")
             self.play(FadeIn(n21, shift=UP * 0.15), run_time=0.5)
             self.play(Indicate(n21.text, color=INK, scale_factor=1.08), run_time=0.5)
@@ -377,7 +379,7 @@ class WhoTouchesBytes(VoiceScene):
         v2 = SignedTicket()
         # the vault is the README's bucket name (script: V2 'cheese-app-data-demo'); the forms said
         # your-bucket-placeholder, so say once that the README's name is an example
-        nm = grey_chip(NAME_CHIP).next_to(v2.host, DOWN, buff=0.2).align_to(v2.vault.frame, RIGHT)
+        nm = grey_chip(NAME_CHIP).next_to(v2.frame, DOWN, buff=0.25).align_to(v2.vault.frame, RIGHT)  # clear of the laptop frame
 
         with self.voiceover(SAY[4]) as vo:
             gone = VGroup(t3, hd3, tg3, ours, yt)
