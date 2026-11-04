@@ -205,15 +205,16 @@ class CommandAndArgs(VoiceScene):
                 note.get_left()[0] > board.job.roles.get_right()[0] + 0.1, note.get_corner(UL)
             assert note.get_bottom()[1] > -3.55
             board.show(self, note, run_time=0.5)
-            self.play(Indicate(note, color=INK, scale_factor=1.05), run_time=0.6)
+            self.play(Indicate(note.text, color=INK, scale_factor=1.05), run_time=0.6)
             vo.wait_until("The web account needs neither")
             self.play(track(tr, 5), run_time=0.4)
             web_note = board.web_note(self, run_time=0.5)
-            self.play(Indicate(board.web.badge, color=CLOUD, scale_factor=1.06), run_time=0.6)
+            self.play(Indicate(board.web.badge.text, color=CLOUD, scale_factor=1.06), run_time=0.6)
 
         # ========================================================== 2. checkpoint: your own identity needs rights too
-        body2 = ("Checkpoint: … Your own console/CLI identity needs separate\n"
-                 "permission to upload passages, launch executions, and read results.")
+        body2 = ("Checkpoint: … Your own console/CLI identity\n"     # three rows: the card stays
+                 "needs separate permission to upload passages,\n"   # left of the Viewer grant
+                 "launch executions, and read results.")
         rc = readme_card((692, 694), body2, size=20).move_to(FORM_UL, aligned_edge=UL)
         me = you("you").move_to([-5.7, -2.65, 0])
         verbs = ("upload", "execute", "see results")
@@ -225,6 +226,7 @@ class CommandAndArgs(VoiceScene):
             arrows.add(a)
             words.add(label(w, 20, S.GREY).next_to([-3.6, y, 0], RIGHT, buff=0.15))
         yt = your_turn()
+        assert rc.get_right()[0] < board.grants["input"][1].get_left()[0] - 0.15, (rc.get_right(), board.grants["input"][1].get_left())
         assert rc.get_right()[0] < 6.5 and rc.get_bottom()[1] > board.job.badge.get_top()[1] + 0.05, rc.get_corner(DR)
         assert words.get_top()[1] < board.job.roles.get_bottom()[1] - 0.1, (words.get_top(), board.job.roles.get_bottom())
         with self.voiceover(SAY[2]) as vo:
@@ -235,7 +237,7 @@ class CommandAndArgs(VoiceScene):
             vo.wait_until("to upload, execute and see results")
             for a, w in zip(arrows, words):
                 self.play(GrowArrow(a), FadeIn(w, shift=RIGHT * 0.1), run_time=0.45)
-            self.play(Indicate(rc.body[1], color=TURN, scale_factor=1.03), run_time=0.7)
+            self.play(Indicate(rc.body[1:], color=TURN, scale_factor=1.03), run_time=0.7)
             vo.wait_until("Pause and create the account")
             yt.next_to(words, RIGHT, buff=0.6).align_to(words, DOWN)
             assert yt.get_right()[0] < board.grants["output"][1].get_left()[0] + 2.5
@@ -325,7 +327,7 @@ class CommandAndArgs(VoiceScene):
             fs.rows[0].value = py
             fs.rows[0].add(py)
             self.add(fs, ill_s)
-            self.play(Indicate(py, color=INK, scale_factor=1.15), run_time=0.5)
+            self.play(Indicate(py.text, color=TURN, scale_factor=1.15), run_time=0.5)
             vo.wait_until("It fills the entrypoint slot")
             self.play(FadeIn(cs, shift=UP * 0.1), run_time=0.5)
             self.play(Indicate(cs.entry_content, color=TURN, scale_factor=1.4), run_time=0.5)
@@ -362,10 +364,12 @@ class CommandAndArgs(VoiceScene):
             ry.move_to([6.45 - ry.width / 2, ill_a.get_center()[1], 0])
             assert ry.get_left()[0] > ill_a.get_right()[0] + 0.2 and ry.get_top()[1] < cs.block.get_bottom()[1] - 0.05
             self.play(FadeIn(ry, shift=LEFT * 0.1),
-                      *[Indicate(c, color=TURN, scale_factor=1.05) for c in chips if c.value.startswith("gs://")],
+                      *[Indicate(c.text, color=TURN, scale_factor=1.05) for c in chips if c.value.startswith("gs://")],
                       run_time=0.6)
             vo.wait_until("Each chip is one item")
             self.play(FadeOut(VGroup(fa, ill_a, ry, enter)), run_time=0.4)
+            for c in [cs.command_chip, *cs.arg_chips]:     # above the slots conveyor() fades (they
+                c.set_z_index(5)                           # are re-added on top and would veil them)
             cs.conveyor(self, run_time=1.1)
             ns = grey_chip("no shell · one chip = one argv element").next_to(cs.block, DOWN, buff=0.3)
             assert ns.get_bottom()[1] > -3.55
@@ -410,7 +414,7 @@ class CommandAndArgs(VoiceScene):
             self.play(fc.fill(2, "0", TURN), run_time=0.4)
             vo.wait_until("because a retry repeats paid work")
             self.play(FadeIn(cost, shift=UP * 0.1), run_time=0.5)
-            self.play(Indicate(cost, color=COST, scale_factor=1.04), run_time=0.6)
+            self.play(Indicate(cost.text, color=COST, scale_factor=1.04), run_time=0.6)
             vo.wait_until("On Security")
             self.play(track(tr43, 8), FadeOut(VGroup(cost, fc, ill_c2)), FadeIn(fsec, shift=UP * 0.1),
                       FadeIn(ill_sec), run_time=0.6)
@@ -441,7 +445,7 @@ class CommandAndArgs(VoiceScene):
             vo.wait_until("Paste all eleven into one chip")
             fat = cs2.one_chip(self, run_time=1.0)
             assert cs2.block.get_bottom()[1] > t8.box.get_top()[1] + 0.2, (cs2.block.get_bottom(), t8.box.get_top())
-            self.play(Indicate(fat, color=INK, scale_factor=1.03), run_time=0.5)
+            self.play(Indicate(fat.rows, color=TURN, scale_factor=1.03), run_time=0.5)
             vo.wait_until("and Python looks for a module")
             self.play(FadeIn(t8, shift=UP * 0.15), FadeIn(ex8), run_time=0.4)
             type_cmd(self, t8, c44.cmd, type_time=1.2, soft=True)    # soft-wrapped like a real terminal
@@ -463,7 +467,7 @@ class CommandAndArgs(VoiceScene):
             vo.wait_until("You fill all eleven argument chips")
             self.play(FadeOut(rc8), run_time=0.4)
             cs2.reset(self, ARGS_SHORT, run_time=1.0)
-            self.play(Indicate(cs2.arg_chips, color=INK, scale_factor=1.03), run_time=0.6)
+            self.play(Indicate(VGroup(*[c.text for c in cs2.arg_chips]), color=TURN, scale_factor=1.03), run_time=0.6)
             vo.wait_until("but leave Container command empty")
             self.play(Indicate(cs2.entry_content, color=TURN, scale_factor=1.6),
                       Indicate(cs2.entry_name, color=TURN, scale_factor=1.1), run_time=0.8)
@@ -502,6 +506,10 @@ class CommandAndArgs(VoiceScene):
 
         # ========================================================== 11. nothing changed: a server until the timeout
         ls = LifecycleStrips(show=("job",))
+        js = ls.job_strip
+        for m in (js.segs, js.edge, js.exit_label):        # no batch run to show: endless() drops them
+            m.set_opacity(0)
+        srv = ls.cmds[0].copy()                             # 'serve' takes the job row's 'batch' place
         both = grey_chip("command and arguments left as the image's default: serve")
         both.next_to(ls.image, RIGHT, buff=0.4)
         assert both.get_right()[0] < 6.55, both.get_right()
@@ -513,8 +521,11 @@ class CommandAndArgs(VoiceScene):
             self.remove(cs2, t10)
             self.play(FadeIn(ls), FadeIn(both, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("the job starts the web server")
-            self.play(Indicate(ls.cmds[0], color=TURN, scale_factor=1.3), ls.cmds[1].animate.set_opacity(0.35),
-                      run_time=0.6)
+            self.play(Indicate(ls.cmds[0], color=TURN, scale_factor=1.3), run_time=0.6)
+            self.add(srv)
+            self.play(srv.animate.move_to(ls.cmds[1]).align_to(ls.cmds[1], LEFT),
+                      ls.cmds[1].animate.set_opacity(0), run_time=0.6)
+            ls.add(srv)
             ls.endless(self, run_time=2.6)
             assert rc11.get_top()[1] < ls.wall[1].get_bottom()[1] - 0.05, (rc11.get_top(), ls.wall[1].get_bottom())
             vo.wait_until("until the timeout fails it")

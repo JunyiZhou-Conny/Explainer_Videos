@@ -175,7 +175,7 @@ class RuntimeIdentity(VoiceScene):
             d.show(self, q_arrow, anims=[Create(q_arrow)], run_time=0.8)
             d.show(self, qm, run_time=0.3)
             d.out_arrow = VGroup(q_arrow, qm)
-        pc = ponder(self, PONDER_Q, seconds=6, center=(0, -1.2))
+        pc = ponder(self, PONDER_Q, seconds=6, center=(0, -2.12))   # below the doors' labels
 
         # ========================================================== 3. no: the other door, the default account
         normally = grey_chip("normally, until you attach one")
@@ -288,6 +288,7 @@ class RuntimeIdentity(VoiceScene):
             self.add(ill5)
             self.play(track(tr, 4), ReplacementTransform(f5, f6), ReplacementTransform(ill5, ill6),
                       FadeOut(email), run_time=0.8)
+            self.add(ill6)
             vo.wait_until("Agent Platform User lets it")
             self.play(f6.fill(0, "Agent Platform User"), run_time=0.7)
             self.add(ill6)
@@ -309,6 +310,7 @@ class RuntimeIdentity(VoiceScene):
             self.add(ill6)
             self.play(FadeOut(VGroup(p, bar)), ReplacementTransform(f6, f7), ReplacementTransform(ill6, ill7),
                       run_time=0.8)
+            self.add(ill7)
             self.flash(f7.rows[0].field, f7.rows[1].field, run_time=0.8)
             vo.wait_until("and select Done")
             self.play(f7.press(2), run_time=0.7)
@@ -341,8 +343,8 @@ class RuntimeIdentity(VoiceScene):
             vo.wait_until("in lecture 3")
             self.play(FadeIn(l3, shift=LEFT * 0.4), run_time=0.6)
             vo.wait_until("here none exists")
-            l3_x = strike(l3, S.GREY)
-            self.play(Create(l3_x), l3.text.animate.set_opacity(0.45),
+            l3_x = strike(l3.text, S.GREY, stroke=2)   # thin: the words stay legible
+            self.play(Create(l3_x), l3.text.animate.set_opacity(0.8),
                       Indicate(key.cross, color=ERR, scale_factor=1.2),
                       run_time=0.7)
             vo.wait_until("The recording shows")

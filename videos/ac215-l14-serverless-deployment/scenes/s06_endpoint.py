@@ -264,7 +264,7 @@ class CallTheEndpoint(VoiceScene):
             vo.wait_until("Pause and try")
             yt = beside(turn_row(), r28[0], buff=0.6)
             pin(self, r28[0], yt)
-            self.wait(1.5)
+            self.wait(1.2)
 
         # ========================================================== 4. the checkpoint
         ck = readme_card((171, 173), "Checkpoint: the same endpoint accepts different inputs without a redeploy.\n"
@@ -428,6 +428,7 @@ class CallTheEndpoint(VoiceScene):
             self.play(FadeIn(fnc, shift=DOWN * 0.1), Create(frg), run_time=0.5)
             vo.wait_until("with a real-format ID")
             self.play(FadeOut(frg), run_time=0.2)
+            gt.clear(self, run_time=0.3)          # a fresh screen: the second deploy types without scrolling
             ex = type_cmd(self, gt, c18.cmd_lines[0], type_time=0.4)
             xr = beside(row_tag("extra · a valid-format stand-in, still a placeholder"), ex, buff=0.4)
             pin(self, ex, xr, run_time=0.3)

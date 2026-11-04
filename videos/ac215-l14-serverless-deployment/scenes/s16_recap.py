@@ -337,7 +337,8 @@ class CleanUpRecap(VoiceScene):
             g.split_job(self, run_time=0.5)
             g.parts(self, run_time=0.6)
             vo.wait_until("Part 1 handed over a file")
-            self.play(g.pulse_part(0), run_time=0.6)
+            # lower the file cell's instance a little so the lid's chip clears its top edge
+            self.play(g.pulse_part(0), g.cells[1][0].glyph.animate.shift(DOWN * 0.12), run_time=0.6)
             g.open_lid(self, "by Cloud Build", run_time=1.0)
             vo.wait_until("and Cloud Build made the image")
             self.play(Indicate(g.lid[1].text, color=INK, scale_factor=1.12), run_time=0.6)
@@ -485,8 +486,9 @@ class CleanUpRecap(VoiceScene):
                     self.play(FadeIn(qcards[0], shift=UP * 0.15), FadeIn(gi), run_time=0.6)
                 else:
                     self.play(FadeOut(cur_q, shift=LEFT * 0.4), FadeOut(cur_i), FadeOut(counters[k - 1]),
-                              FadeIn(qcards[k], shift=LEFT * 0.4), FadeIn(icons[k]), FadeIn(counters[k]),
-                              run_time=0.7)
+                              run_time=0.35)
+                    self.play(FadeIn(qcards[k], shift=LEFT * 0.4), FadeIn(icons[k]), FadeIn(counters[k]),
+                              run_time=0.45)
                 cur_q, cur_i = qcards[k], icons[k]
                 if k == 0:
                     vo.wait_until("What do you hand over")
@@ -495,11 +497,15 @@ class CleanUpRecap(VoiceScene):
                     vo.wait_until("make the meter run")
                     self.play(mi.fill_bar.animate(rate_func=there_and_back).stretch(1.8, 0, about_edge=LEFT),
                               run_time=1.0)
+                    vo.wait_until("and what does a minimum instance buy")
+                    self.play(Indicate(qcards[1].body[2], color=TURN, scale_factor=1.06), run_time=0.8)
                 elif k == 2:
                     vo.wait_until("who may call it")
                     self.play(Indicate(di.left, color=TURN, scale_factor=1.25), run_time=0.7)
                     vo.wait_until("and who it runs as")
                     self.play(Indicate(di.right, color=TURN, scale_factor=1.25), run_time=0.7)
+                    vo.wait_until("and why is no key file needed")
+                    self.play(Indicate(qcards[2].body[2], color=TURN, scale_factor=1.06), run_time=0.8)
                 elif k == 3:
                     vo.wait_until("eleven separate arguments")
                     self.play(each([c.text for c in cr.chips], TURN, scale=1.06, lag=0.08), run_time=1.2)
@@ -507,7 +513,7 @@ class CleanUpRecap(VoiceScene):
                     vo.wait_until("name the lecture's three downsides")
                     self.play(each([c.body for c in cc], ERR, scale=1.12, lag=0.4), run_time=1.4)
                     self.play(FadeIn(ans, shift=UP * 0.1), run_time=0.5)
-        self.wait(1.0)
+        self.wait(0.6)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)
 

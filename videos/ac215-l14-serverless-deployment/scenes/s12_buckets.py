@@ -188,17 +188,18 @@ class JobAndBuckets(VoiceScene):
         segs = js.segs
         y13 = -2.85
         l13 = VGroup()
-        for k, s in enumerate(("start", "train", "save")):
-            fr = segs[k].frame
-            r = DashedVMobject(RoundedRectangle(width=fr.width, height=0.55, corner_radius=0.08),
-                               num_dashes=30).set_stroke(PAST, 2)
-            r.move_to([fr.get_center()[0], y13, 0])
+        # start ↔ take input, train ↔ translate + speak, save ↔ save, exit ↔ exit (the pairs pulse together)
+        for (a, b), s in zip(((0, 0), (1, 2), (3, 3)), ("start", "train", "save")):
+            x0, x1 = segs[a].frame.get_left()[0], segs[b].frame.get_right()[0]
+            r = DashedVMobject(RoundedRectangle(width=x1 - x0, height=0.55, corner_radius=0.08),
+                               num_dashes=30 if a == b else 50).set_stroke(PAST, 2)
+            r.move_to([(x0 + x1) / 2, y13, 0])
             t = label(s, 20, PAST).move_to(r)
             l13.add(VGroup(r, t))
         e13 = DashedLine([js.edge.get_center()[0], y13 + 0.4, 0], [js.edge.get_center()[0], y13 - 0.4, 0],
                          color=PAST, stroke_width=5)
-        x13 = label("exit", 20, PAST).next_to(segs[3].frame, DOWN, buff=0.0).move_to(
-            [segs[3].frame.get_center()[0], y13, 0])
+        x13 = label("exit", 20, PAST).next_to(e13, RIGHT, buff=0.12)
+        assert x13.get_right()[0] < 6.55, x13.get_right()
         last = dashed_chip("LAST WEEK · Vertex AI training job (L13)").move_to([0, -2.1, 0])
         last.align_to(segs[0].frame, LEFT)
         strip13 = VGroup(l13, e13, x13)

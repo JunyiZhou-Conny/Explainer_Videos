@@ -93,8 +93,17 @@ def color_sub(scene, t, rows, sub, color, run_time: float = 0.4, occurrence: int
     """PLAYS: colour substring `sub` of the row that holds it, then re-seat the terminal."""
     r = row_with(rows, sub)
     scene.play(*[g.animate.set_color(color) for g in substring(r, sub, occurrence)], run_time=run_time)
-    scene.add(t)
+    reseat(scene, t)
     return r
+
+
+def reseat(scene, t):
+    """Re-seat terminal t as one mobject, then put the title-bar tags (scene.bar_tags) back on top:
+    re-adding the terminal alone draws its bar over them and they vanish."""
+    scene.add(t)
+    for m in getattr(scene, "bar_tags", []):
+        if m in scene.mobjects:
+            scene.add(m)
 
 
 def seat(pe):
@@ -146,6 +155,19 @@ def ghost(scene, cs, text: str = "your arguments", run_time: float = 2.0):
                run_time=run_time * 0.35)
     scene.remove(g)
     cs.heal(scene)
+
+
+def sigint(scene, pe, run_time: float = 1.2):
+    """PLAYS: PortEnvelope.sigint() with the arrow straight down into the process and 'SIGINT' beside
+    it, inside the container (the shared version puts the label on the box's top border)."""
+    top = pe.proc.frame.get_top()
+    a = Arrow(top + UP * 0.75, top, buff=0.05, color=INK, stroke_width=3, tip_length=0.18)
+    lab = mono("SIGINT", 20, INK).next_to(a.get_start(), RIGHT, buff=0.12).shift(DOWN * 0.12)
+    pe.show(scene, a, lab, anims=[GrowArrow(a), FadeIn(lab)], run_time=run_time * 0.4)
+    parts = [pe.proc] + [m for m in (pe.slots, getattr(pe, "wire", None)) if m is not None]
+    pe.drop(scene, *parts, a, lab, run_time=run_time * 0.6)
+    pe.wire = None
+    pe.proc = pe.slots = None
 
 
 def right_at(m, y: float, right: float = 6.35):
@@ -211,7 +233,8 @@ class RunTheImage(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(r_rm, r_p, r_i, yt)), FadeOut(pe1), run_time=0.5)
             resize(self, t, 12, run_time=0.7)
-            out(self, t, c10.at((3, 5), "…", (15, 17)), wrap=True, run_time=0.9)
+            out(self, t, c10.at((3, 5), "…", (15, 16)), wrap=True, run_time=0.9)   # 17 waits for the card
+            room(self, t, 2)              # two free rows under the digest for the README card
             dg_row = row_with(t.lines, DIGEST)
             self.play(*[g.animate.set_color(TURN) for g in substring(dg_row, DIGEST)], run_time=0.4)
             self.add(t)
@@ -239,7 +262,7 @@ class RunTheImage(VoiceScene):
         # ========================================================== 3. gunicorn listens on 0.0.0.0:8080
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(card1069, same, arch)), run_time=0.4)
-            rows = out(self, t, c10.at((18, 22)), wrap=True, run_time=0.9, lag=0.12)
+            rows = out(self, t, c10.at((17, 22)), wrap=True, run_time=0.9, lag=0.12)
             vo.wait_until("port 8080")
             r19 = color_sub(self, t, rows, "http://0.0.0.0:8080", ROUTE)
             nxt = t.lines.submobjects[list(t.lines.submobjects).index(r19) + 1]
@@ -258,6 +281,7 @@ class RunTheImage(VoiceScene):
         tab = term(P_REPO, 4, T_TAB, size=20)
         xb = on_bar(tab, extra_row())
         cs = CommandSlots().move_to([0, 0.9, 0])
+        self.bar_tags = [xb]
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(ctl), run_time=0.3)
             unpin(self, nxt, ev)
@@ -273,7 +297,8 @@ class RunTheImage(VoiceScene):
                       TransformFromCopy(r16[0], VGroup(cs.entry_name, cs.entry_content)),
                       TransformFromCopy(r16[1], VGroup(cs.cmd_name, cs.cmd_content)), run_time=1.2)
             self.remove(*cs.get_family())
-            self.add(cs, tab)
+            self.add(cs)
+            reseat(self, tab)
             vo.wait_until("an empty entrypoint")
             self.play(Indicate(cs.entry_content, color=INK, scale_factor=1.3), run_time=0.7)
             cs.heal(self)
@@ -318,7 +343,8 @@ class RunTheImage(VoiceScene):
             pe.execvp(self, run_time=0.9)
             vo.wait_until("1 worker")
             sp = code_span(panel.code, 3, '"--workers", "1", "--threads", "4"')
-            self.play(*[g.animate.set_color(OWN) for g in sp], run_time=0.4)
+            self.play(*[g.animate.set_color(OWN) for g in sp], FadeOut(VGroup(b23, b24)), run_time=0.4)
+            self.remove(b23, b24)
             self.add(panel)
             pe.threads(self, 4, run_time=0.6)
 
@@ -329,7 +355,7 @@ class RunTheImage(VoiceScene):
         for m in list(tab.lines):
             tab.lines.remove(m)
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(panel), FadeOut(VGroup(b23, b24)), FadeOut(cmd_chip), track(tr, 1, True),
+            self.play(FadeOut(panel), FadeOut(cmd_chip), track(tr, 1, True),
                       run_time=0.4)
             self.play(pe.animate.shift(np.array([1.0, 3.05, 0])), run_time=0.6)
             seat(pe)
@@ -340,7 +366,7 @@ class RunTheImage(VoiceScene):
             vo.wait_until("Docker top shows")
             self.play(*[g.animate.set_color(TURN) for r in rows13[1:] for g in substring(r, "{gunicorn}")],
                       run_time=0.5)
-            self.add(tab)
+            reseat(self, tab)
             self.play(Indicate(pe.proc.frame, color=TOOL, scale_factor=1.04), run_time=0.6)
             pe.heal(self)
             vo.wait_until("Docker ps shows")
@@ -383,7 +409,7 @@ class RunTheImage(VoiceScene):
             r_p3 = row_with(r6, "part 3</button>")
             self.play(*[g.animate.set_color(TURN) for g in substring(r_pa, r_pa.text[r_pa.text.index("Play audio"):])],
                       *[g.animate.set_color(TURN) for g in substring(r_p3, "part 3")], run_time=0.3)
-            self.add(tab)
+            reseat(self, tab)
             self.play(page.press("audio", S.GREY), run_time=0.7)
             page.heal(self)
 
@@ -413,6 +439,7 @@ class RunTheImage(VoiceScene):
             color_sub(self, tab, r21, "\\u00e0", TURN, run_time=0.3)
             vo.wait_until("once the browser decodes")
             bs = on_bar(tab, row_tag("the browser shows: à", TURN))
+            self.bar_tags = [xb, bs]
             self.play(FadeOut(xb), FadeIn(bs), run_time=0.4)
             sec = card(["captured during a second", "run of the same command", "(laptop/20)"], size=20)
             sec.next_to(page.frame, RIGHT, buff=0.2).align_to(page.frame, DOWN)
@@ -431,10 +458,11 @@ class RunTheImage(VoiceScene):
             type_cmd(self, tab, c26.cmd, 0.8, soft=True)
             out(self, tab, c26.at(2, 4), run_time=0.3, color=ERR)
             get = chip("GET · the query string", ROUTE, size=20)
-            right_at(get, 2.25)
+            gy = ill.get_bottom()[1] - 0.25 - get.height / 2
+            right_at(get, gy)
             self.play(FadeIn(get, shift=LEFT * 0.2), run_time=0.3)
-            self.play(get.animate.move_to([right_x + get.width / 2 + 0.05, 2.1, 0]), run_time=0.35)
-            self.play(get.animate.move_to([right_x + 0.4 + get.width / 2, 2.1, 0]).set_color(ERR), run_time=0.35)
+            self.play(get.animate.move_to([right_x + get.width / 2 + 0.05, gy, 0]), run_time=0.35)
+            self.play(get.animate.move_to([right_x + 0.4 + get.width / 2, gy, 0]).set_color(ERR), run_time=0.35)
             vo.wait_until("405 here")
             e405 = err_chip("405 · method not allowed", mono_font=False).next_to(get, DOWN, buff=0.12)
             e405.align_to(get, LEFT)
@@ -445,12 +473,14 @@ class RunTheImage(VoiceScene):
             type_cmd(self, tab, c25.cmd, 0.6, soft=True)
             out(self, tab, c25.at(2, 4), run_time=0.3, color=ERR)
             vo.wait_until("A made-up language")
-            xx = right_at(chip('dest: "xx"', ROUTE, size=20, font=MONO), 0.78)
-            self.play(FadeIn(xx, shift=LEFT * 0.2), run_time=0.25)
-            self.play(xx.animate.move_to([right_x + xx.width / 2 + 0.05, 0.78, 0]), run_time=0.3)
+            xx = chip('dest: "xx"', ROUTE, size=20, font=MONO)
+            xy = e405.get_bottom()[1] - 0.3 - xx.height / 2
+            right_at(xx, xy)
+            self.play(FadeIn(xx, shift=LEFT * 0.2), FadeOut(sec), run_time=0.25)   # the card has been up ~10 s
+            self.play(xx.animate.move_to([right_x + xx.width / 2 + 0.05, xy, 0]), run_time=0.3)
             e400 = err_chip("400", mono_font=False)
-            e400.move_to([right_x + 0.4 + xx.width + 0.15 + e400.width / 2, 0.78, 0])
-            self.play(xx.animate.move_to([right_x + 0.4 + xx.width / 2, 0.78, 0]).set_color(ERR),
+            e400.move_to([right_x + 0.4 + xx.width + 0.15 + e400.width / 2, xy, 0])
+            self.play(xx.animate.move_to([right_x + 0.4 + xx.width / 2, xy, 0]).set_color(ERR),
                       FadeIn(e400, shift=LEFT * 0.1), run_time=0.35)
 
         # ========================================================== 10. step 4: speech 503; Ctrl+C
@@ -459,7 +489,7 @@ class RunTheImage(VoiceScene):
         shelf[1].next_to(shelf[0], DOWN, buff=0.05)
         shelf.add(label("the laptop's images", 20, S.GREY).next_to(shelf[1], DOWN, buff=0.1))
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(get, e405, xx, e400, sec)), track(tr, 4, False), run_time=0.5)
+            self.play(FadeOut(VGroup(get, e405, xx, e400)), track(tr, 4, False), run_time=0.5)
             self.play(page.press("audio", S.GREY), run_time=0.8)
             page.heal(self)
             vo.wait_until("and its request")
@@ -468,7 +498,7 @@ class RunTheImage(VoiceScene):
             r24 = out(self, tab, c24.at(2, 4), wrap=True, run_time=0.4, color=ERR)
             vo.wait_until("speech is disabled")
             self.play(Indicate(row_with(r24, "[HTTP 503]"), color=ERR, scale_factor=1.1), run_time=0.6)
-            self.add(tab)
+            reseat(self, tab)
             vo.wait_until("Stop with Control C")
             # back to the first terminal; the container picture returns at the same place as before
             pe.remove(*knock_parts)                     # the 8080 knock stays in its beat
@@ -481,7 +511,7 @@ class RunTheImage(VoiceScene):
             self.play(FadeIn(mp, shift=UP * 0.1), run_time=0.4)
             pe.drop(self, pe.env, run_time=0.3)
             pe.env = None
-            pe.sigint(self, run_time=1.2)
+            sigint(self, pe, run_time=1.2)
             shelf.move_to(pe.box)
             rm = grey_chip("--rm: container removed · image kept", mono_font=False).move_to(mp)
             gone = [m for m in (pe.box, pe.blabel, pe.env, pe.ear_, pe.pipe, pe.pipe_label, pe.door)

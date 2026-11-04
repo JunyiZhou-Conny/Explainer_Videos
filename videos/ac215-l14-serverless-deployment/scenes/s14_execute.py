@@ -108,7 +108,7 @@ def log_panel() -> VGroup:
         if len(s) > 70:
             s = cut(s, "<attempt>/")
         shown.append(s)
-    p = code_panel("\n".join(shown), "task logs · the shape", 1, "json", font_size=20)
+    p = code_panel("\n".join(shown), "task logs · the shape", 1, "text", font_size=20)
     p.header.submobjects[1].set_opacity(0)          # no 'lines a–b': this is a shape, not a file
     for k, s in enumerate(shown):
         if s.endswith("…"):
@@ -196,8 +196,9 @@ class ExecuteAndCollect(VoiceScene):
             pin(self, e1[-1], beside(row_tag("exit 1", ERR), e1[-1]))
             ls.run_job(self, fail_at=2, run_time=1.0)
             vo.wait_until("an honest failure")
-            self.play(FadeOut(VGroup(t1, ex1)), FadeIn(cp, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeOut(VGroup(t1, ex1)), run_time=0.3)
             self.remove(t1)
+            self.play(FadeIn(cp, shift=UP * 0.1), run_time=0.4)
             self.play(FadeIn(bar59), Indicate(cp.code.code_lines[0], color=TURN, scale_factor=1.02), run_time=0.6)
             vo.wait_until("so History tells the truth")
             ls.reset_job(self, run_time=0.3)
@@ -230,9 +231,9 @@ class ExecuteAndCollect(VoiceScene):
             self.play(Indicate(ls.job_strip.inst, color=S.GREY, scale_factor=1.15), FadeIn(nourl, shift=UP * 0.1),
                       run_time=0.7)
             vo.wait_until("Its last output")
-            self.play(FadeOut(VGroup(tasks, ill2, rc2, nourl, ls)), FadeIn(lp, shift=UP * 0.1), FadeIn(lill),
-                      run_time=0.7)
+            self.play(FadeOut(VGroup(tasks, ill2, rc2, nourl, ls)), run_time=0.35)
             self.remove(ls)
+            self.play(FadeIn(lp, shift=UP * 0.1), FadeIn(lill), run_time=0.45)
             self.play(FadeIn(shape, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("with the output and manifest locations")
             b_uri = VGroup(line_bar(lp.code, 1, ROUTE, 0.3), line_bar(lp.code, 2, ROUTE, 0.3))
@@ -265,7 +266,7 @@ class ExecuteAndCollect(VoiceScene):
             af.show(self, rt, rnd, run_time=0.5)
             vo.wait_until("Step 4")
             af.drop(self, yours, rnd, extra=[track(tr, 4)], run_time=0.4)
-            af.files(self, 0, run_time=2.4)
+            af.files(self, 0, run_time=1.6)
             tb_head = label("README.md · lines 838–842", 20, S.GREY)
             descs = VGroup()
             for row, d in zip(col.files, TABLE):
@@ -277,9 +278,13 @@ class ExecuteAndCollect(VoiceScene):
             if tb_head.get_bottom()[1] < col.folder.get_top()[1] + 0.02 and tb_head.get_left()[0] < rt.get_right()[0]:
                 tb_head.next_to(descs, DOWN, buff=0.2).align_to(descs, LEFT)
             assert descs.get_right()[0] < af.frame.get_right()[0] - 0.15, descs.get_right()
-            af.show(self, tb_head, *descs, anims=[FadeIn(tb_head), LaggedStart(*[FadeIn(d, shift=LEFT * 0.1)
-                                                                                for d in descs], lag_ratio=0.3)],
-                    run_time=0.9)
+            for k, (phrase, d) in enumerate(zip(("translated dot txt", "speech dot wav", "and manifest dot json"),
+                                                 descs)):
+                vo.wait_until(phrase)
+                row = col.files[k]
+                head = [tb_head] if k == 0 else []
+                af.show(self, *head, d, anims=[FadeIn(m, shift=LEFT * 0.1) for m in (*head, d)]
+                        + [Indicate(row, color=TURN, scale_factor=1.08)], run_time=0.7)
 
         # ========================================================== 4. the order: create-only uploads, manifest last
         sp = code(STORAGE_PY, 45, 55, font_size=20, dedent=True,
@@ -295,8 +300,9 @@ class ExecuteAndCollect(VoiceScene):
             (order.get_right(), stamp.get_bottom())
         assert order.get_top()[1] < sp.get_bottom()[1] - 0.1, (order.get_top(), sp.get_bottom())
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(af), FadeIn(sp, shift=UP * 0.1), run_time=0.6)
+            self.play(FadeOut(af), run_time=0.3)
             self.remove(af)
+            self.play(FadeIn(sp, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Each upload is create-only")
             b46 = line_bar(sp.code, 1, OWN, 0.3)
             gm = code_span(sp.code, 10, "if_generation_match=0")
@@ -323,8 +329,8 @@ class ExecuteAndCollect(VoiceScene):
         wl.slots[0].frame.set_stroke(TURN)
         wl.slots[1].frame.set_stroke(TURN)
         wl.add(w0, w1)
-        wl.move_to([af.frame.get_right()[0] - 0.25 - wl.width / 2 + 0.6, af.frame.get_center()[1] - 0.15, 0])
-        assert wl.get_right()[0] < 6.55
+        wl.move_to([af.frame.get_right()[0] - 0.25 - wl.width / 2, af.frame.get_center()[1] - 0.15, 0])
+        assert wl.get_right()[0] < af.frame.get_right()[0] - 0.1 and wl.get_bottom()[1] > af.frame.get_bottom()[1] + 0.1
         ex0 = VGroup(check_glyph(0.4, OWN, 6), mono("exit 0", 22, INK)).arrange(RIGHT, buff=0.2)
         ex0.move_to([2.4, af.frame.get_center()[1] + 0.6, 0])
         neq = grey_chip("exit 0 ≠ work complete").next_to(ex0, DOWN, buff=0.35)
@@ -360,8 +366,9 @@ class ExecuteAndCollect(VoiceScene):
             af.files(self, 0, run_time=1.2)
             vo.wait_until("Is the first result overwritten")
             self.play(Indicate(af.attempts[0], color=TURN, scale_factor=1.04), run_time=0.6)
-        pc = ponder(self, PONDER_Q, 6, center=(2.75, af.frame.get_center()[1] - 0.2), width=7.0)
-        assert pc.get_left()[0] > af.attempts[0].get_right()[0] + 0.1 and pc.get_right()[0] < 6.55, \
+        pc = ponder(self, PONDER_Q, 6, center=(af.frame.get_right()[0] - 0.2 - 3.3, af.frame.get_center()[1] - 0.2),
+                    width=6.6)
+        assert pc.get_left()[0] > af.attempts[0].get_right()[0] + 0.1 and pc.get_right()[0] < af.frame.get_right()[0] - 0.1, \
             (pc.get_left(), af.attempts[0].get_right())
 
         # ========================================================== 7. a new folder beside the first; not exactly once

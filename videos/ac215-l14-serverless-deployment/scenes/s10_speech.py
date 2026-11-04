@@ -332,6 +332,7 @@ class EnableSpeech(VoiceScene):
         roll = VGroup(stages, ticks)
         roll_card = card([roll], S.GREY, head="README.md · lines 453–454 · wait for")
         roll_card.move_to(FORM_UL, aligned_edge=UL)
+        roll.remove(ticks)                             # laid out in the card, drawn one by one later
         with self.voiceover(SAY[4]) as vo:
             vo.wait_until("View diff and redeploy")
             self.play(track(tr, 4), Indicate(et.diff_btn, color=TURN, scale_factor=1.08), run_time=0.6)
@@ -353,6 +354,7 @@ class EnableSpeech(VoiceScene):
             self.play(FadeIn(roll_card, shift=UP * 0.1), run_time=0.4)
             for tk in ticks:
                 self.play(Create(tk), run_time=0.35)
+            self.wait(0.5)
 
         # ========================================================== 5. the speech path (illustration)
         y0 = 0.9
@@ -388,7 +390,7 @@ class EnableSpeech(VoiceScene):
         assert model.get_right()[0] < 6.55 and tk.get_right()[0] < cl.get_left()[0]
         assert wav_path.get_top()[1] < PIC_TOP + 0.05 and nb_t.get_right()[0] < 6.55
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(roll_card, replaced, m_svc, m_door, m_badge, hook,
+            self.play(FadeOut(VGroup(roll_card, ticks, replaced, m_svc, m_door, m_badge, hook,
                                      inst2, rev2, m_cloud)), run_time=0.5)
             vo.wait_until("Here is the speech path")
             self.play(FadeIn(br), FadeIn(ibox), FadeIn(cont), FadeIn(cl), FadeIn(ill5), run_time=0.6)
@@ -450,7 +452,7 @@ class EnableSpeech(VoiceScene):
             self.add(wp)
             page.enable_speech(self, run_time=0.6)
             vo.wait_until("Then Translate and Play audio")
-            self.play(FadeOut(wp), run_time=0.3)
+            self.play(FadeOut(wp), FadeOut(flag_card), run_time=0.3)
             page.type_in(self, run_time=0.6)
             page.set_dest(self, "fr", run_time=0.3)
             page.translate(self, run_time=0.6)
@@ -493,7 +495,7 @@ class EnableSpeech(VoiceScene):
         mrow = VGroup(mp, msrc).arrange(RIGHT, buff=0.35).next_to(sp, DOWN, buff=0.25)
         assert mrow.width < 12.9 and mrow.get_bottom()[1] > -3.0, (mrow.width, mrow.get_bottom())
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(page, page_ill, flag_card, rec, ct, yt)), run_time=0.5)
+            self.play(FadeOut(VGroup(page, page_ill, rec, ct, yt)), run_time=0.5)
             vo.wait_until("Step 7: if it fails")
             self.play(track(tr, 7), FadeIn(rc7, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("check the message and the logs")

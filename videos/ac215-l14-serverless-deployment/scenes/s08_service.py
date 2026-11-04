@@ -95,12 +95,12 @@ def form_at(f: VGroup) -> VGroup:
 
 
 def ill_on(f: VGroup) -> VGroup:
-    """The illustration tag right of a form's top (or on its top edge, right, for a wide form): never
-    under the tracker's caption."""
+    """The illustration tag right of a form's top (or inside its top-right corner, beside the header,
+    for a wide form): never under the tracker's caption, never straddling the form's border."""
     tg = illustration_tag()
     if f.frame.get_right()[0] + 0.2 + tg.width <= 6.5:
         return tg.next_to(f.frame, RIGHT, buff=0.2).align_to(f.frame, UP)
-    return tg.move_to(f.frame.get_corner(UR) + np.array([-0.95, 0, 0]))
+    return tg.move_to(f.frame.get_corner(UR) + np.array([-tg.width / 2 - 0.2, -tg.height / 2 - 0.15, 0]))
 
 
 def row_with(rows, sub):
@@ -199,6 +199,7 @@ class DeployTheImage(VoiceScene):
             self.play(svc.press(0), run_time=0.8)
             vo.wait_until("and choose Deploy one revision")
             self.play(ReplacementTransform(svc, fa), ReplacementTransform(ill_s, ill_a), run_time=0.7)
+            self.add(ill_a)                          # the tag sits inside the wide form: keep it on top
             self.play(Indicate(fa.rows[0].text, color=TURN, scale_factor=1.05), run_time=0.7)
             vo.wait_until("Paste the same image")
             self.play(track(tr, 2), FadeIn(ghost, shift=UP * 0.15), run_time=0.5)
@@ -366,6 +367,13 @@ class DeployTheImage(VoiceScene):
                       LaggedStart(*[Indicate(d, color=ROUTE, scale_factor=1.4) for d in pool2.waiting],
                                   lag_ratio=0.08), run_time=1.0)
             pool2.heal(self)
+            vo.wait_until("How many instances start")
+            self.play(LaggedStart(*[Indicate(d, color=TURN, scale_factor=1.3) for d in pool2.waiting[:8]],
+                                  lag_ratio=0.1), run_time=1.0)
+            pool2.heal(self)
+            vo.wait_until("what happens to the last two")
+            self.play(*[Indicate(d, color=TURN, scale_factor=1.5) for d in pool2.waiting[8:]], run_time=0.8)
+            pool2.heal(self)
         pc = ponder(self, PONDER_Q, seconds=8, center=(0.9, 0.2))
 
         # ========================================================== 7. the answer: two instances, eight slots
@@ -435,6 +443,7 @@ class DeployTheImage(VoiceScene):
         # ========================================================== 9. no build this time
         icon = grid_icon(0.7).move_to([-4.6, 0.7, 0])
         cell = icon.cells[1][1]
+        cell_lab = label("container · serverless", 20, TURN).next_to(icon, DOWN, buff=0.25)
         cb_box = RoundedRectangle(width=2.8, height=1.5, corner_radius=0.14, stroke_color=TOOL,
                                   stroke_width=3).set_fill(TOOL, 0.12)
         cb_text = label("Cloud Build", 22, INK).move_to(cb_box)
@@ -447,7 +456,8 @@ class DeployTheImage(VoiceScene):
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(VGroup(r56, rev, rev_card, rmc, yt)), run_time=0.5)
             self.play(FadeIn(icon, scale=0.8), FadeIn(cb, scale=0.95), run_time=0.5)
-            self.play(cell.frame.animate.set_stroke(TURN, 4), cell.fill.animate.set_fill(TURN, 0.25), run_time=0.5)
+            self.play(cell.frame.animate.set_stroke(TURN, 4), cell.fill.animate.set_fill(TURN, 0.25),
+                      FadeIn(cell_lab, shift=UP * 0.1), run_time=0.5)
             self.play(FadeOut(cb_box), FadeIn(cb_dash), cb_text.animate.set_color(S.GREY).set_opacity(0.5),
                       Create(cb_x), FadeIn(cb_lab), run_time=0.7)
             self.play(FadeIn(rm314, shift=UP * 0.1), run_time=0.5)
@@ -469,7 +479,7 @@ class DeployTheImage(VoiceScene):
         tab = tab_term(5)
         tab.shift(UP * 0.0)
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(icon, cb, cb_dash, cb_x, cb_lab, rm314)), run_time=0.4)
+            self.play(FadeOut(VGroup(icon, cell_lab, cb, cb_dash, cb_x, cb_lab, rm314)), run_time=0.4)
             self.play(FadeIn(blk), FadeIn(blk_lab), FadeIn(note, shift=DOWN * 0.1), FadeIn(tag_lab),
                       track(tr, 10, True), FadeIn(tab, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("a movable label")

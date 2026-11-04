@@ -180,7 +180,11 @@ class FromTheTerminal(VoiceScene):
             ex = type_lines(self, t, c09.cmd_lines[:2], type_time=0.5)
             vo.wait_until("Save a short passage")
             self.play(track(tr, 2), FadeIn(rc1, shift=DOWN * 0.1), run_time=0.5)
+            vo.wait_until("under 5,000 characters")
             self.play(FadeIn(short, shift=LEFT * 0.1), run_time=0.4)
+            vo.wait_until("as passage dot txt")
+            self.play(Indicate(rc1, color=INK, scale_factor=1.04), run_time=0.7)
+            self.add(rc1)
             vo.wait_until("or copy the sample")
             cpl = type_cmd(self, t, CP_SAMPLE, type_time=0.6)
             pin(self, cpl, beside(row_tag("extra · or write your own"), cpl, buff=0.3))
@@ -222,12 +226,16 @@ class FromTheTerminal(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(setup, rc1, short)), track(tr, 3), run_time=0.5)
             t.clear(self, run_time=0.3)
-            type_lines(self, t, rows_x, type_time=0.6)
+            type_lines(self, t, rows_x, type_time=0.42)
             self.play(FadeIn(npc2, shift=DOWN * 0.1), FadeIn(yt2), run_time=0.4)
             vo.wait_until("They replace the whole argument list")
             self.play(FadeOut(VGroup(t, npc2, yt2)), run_time=0.4)
             self.remove(t)
             self.play(FadeIn(cs, shift=DOWN * 0.1), run_time=0.5)
+            # the saved values first (run-001, fr), so the swap shows what became what
+            self.play(each([cs.arg_chips[i].text for i in (4, 8, 10)], INK, scale=1.12, lag=0.15),
+                      run_time=0.6)
+            self.add(cs)
             # sizes now known: the new row grows the slot only if it wraps differently
             cs.swap_args(self, new_args, hi=(4, 8, 10), run_time=1.2)
             assert cs.block.get_bottom()[1] > -1.6, cs.block.get_bottom()
@@ -269,7 +277,7 @@ class FromTheTerminal(VoiceScene):
             self.play(FadeOut(VGroup(wall, nm)), FadeIn(dflt, shift=UP * 0.2), FadeIn(note, shift=LEFT * 0.1),
                       run_time=0.6)
             self.play(Indicate(dflt.text, color=INK, scale_factor=1.15), run_time=0.7)
-            self.wait(1.2)
+            self.wait(0.7)
 
         # ========================================================== 3. download run-002
         for m in list(t.lines):
