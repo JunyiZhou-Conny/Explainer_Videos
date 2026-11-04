@@ -1,0 +1,2 @@
+$ docker network disconnect cheese-app-network llm-rag-chromadb
+[exit 0]

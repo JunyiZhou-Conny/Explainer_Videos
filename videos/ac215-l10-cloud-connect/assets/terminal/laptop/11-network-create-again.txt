@@ -1,0 +1,2 @@
+$ docker network inspect cheese-app-network >/dev/null 2>&1 || docker network create cheese-app-network
+[exit 0]

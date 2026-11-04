@@ -1,0 +1,6 @@
+$ ls -la docker-volumes/chromadb
+total 192
+drwxr-sr-x    2 root     root          4096 Oct 20 01:45 .
+drwxr-sr-x    3 root     root          4096 Oct 19 22:11 ..
+-rw-r--r--    1 root     root        188416 Oct 20 01:45 chroma.sqlite3
+[exit 0]

@@ -1,0 +1,1394 @@
+1
+00:00:00,000 --> 00:00:02,944
+Here is a cheese chatbot,
+running on your laptop.
+
+2
+00:00:03,264 --> 00:00:05,461
+You ask it how Tolminc cheese is made.
+
+3
+00:00:05,781 --> 00:00:09,536
+An answer appears,
+with ten book passages as references.
+
+4
+00:00:09,783 --> 00:00:13,004
+Behind that one answer,
+your browser makes three calls.
+
+5
+00:00:13,324 --> 00:00:19,767
+Two go to a Python server on port 9000,
+and one goes to a database on port 8000.
+
+6
+00:00:20,087 --> 00:00:23,458
+Behind both server calls,
+Google does the heavy lifting.
+
+7
+00:00:23,778 --> 00:00:25,655
+So who checks that it is really you?
+
+8
+00:00:25,975 --> 00:00:29,794
+And how does a web page find
+a database inside a container?
+
+9
+00:00:30,033 --> 00:00:32,038
+Three small riddles hide in this app.
+
+10
+00:00:32,358 --> 00:00:37,862
+The flag -p 3200:3000 has two numbers; why?
+
+11
+00:00:38,182 --> 00:00:41,446
+And localhost:9000: which machine is that?
+
+12
+00:00:41,766 --> 00:00:45,692
+And llm-rag-chromadb is only a name;
+where is its address?
+
+13
+00:00:46,012 --> 00:00:47,910
+Each one gets its answer today.
+
+14
+00:00:48,230 --> 00:00:52,817
+Then the real question arrives:
+once anything can knock, who is allowed in?
+
+15
+00:00:53,067 --> 00:00:56,542
+To follow
+along you need your clone of cheese-app-v0,
+
+16
+00:00:56,542 --> 00:01:00,214
+Docker Desktop,
+and a Google Cloud project with billing.
+
+17
+00:01:00,534 --> 00:01:04,069
+This lecture makes real,
+paid calls to Vertex AI;
+
+18
+00:01:04,069 --> 00:01:05,971
+a gold tag marks each one,
+
+19
+00:01:05,971 --> 00:01:09,408
+and the video ends
+by shutting everything down.
+
+20
+00:01:09,728 --> 00:01:13,602
+The tracker in the top left
+follows the README in six stages,
+
+21
+00:01:13,602 --> 00:01:15,062
+from setup to shutdown.
+
+22
+00:01:15,382 --> 00:01:18,372
+A yellow your-turn tag
+means pause and run it,
+
+23
+00:01:18,372 --> 00:01:22,336
+and a gray extra tag marks a check
+that is not in the README.
+
+24
+00:01:22,656 --> 00:01:25,664
+Every command is in the study guide,
+linked below.
+
+25
+00:01:26,700 --> 00:01:29,473
+First, the map,
+which stays with us all lecture.
+
+26
+00:01:29,793 --> 00:01:31,435
+Your laptop is one house,
+
+27
+00:01:31,435 --> 00:01:34,391
+and every house
+has its own loopback address,
+
+28
+00:01:34,391 --> 00:01:37,175
+localhost, which always means this machine.
+
+29
+00:01:37,495 --> 00:01:41,164
+Docker lays two private streets inside it,
+one per network.
+
+30
+00:01:41,484 --> 00:01:43,761
+Three services will stand on them:
+
+31
+00:01:43,761 --> 00:01:48,716
+the vector database with its loader,
+the API server, and the web frontend.
+
+32
+00:01:49,036 --> 00:01:51,596
+Each house lights up
+when its container starts.
+
+33
+00:01:51,833 --> 00:01:55,609
+Your browser stands on the laptop floor,
+outside every street.
+
+34
+00:01:55,929 --> 00:01:59,940
+Across the public street sits
+Google's building, with a guarded door.
+
+35
+00:02:00,260 --> 00:02:01,646
+Now, who calls whom?
+
+36
+00:02:01,966 --> 00:02:04,313
+The loader calls Google and the database.
+
+37
+00:02:04,633 --> 00:02:06,382
+The API calls Google.
+
+38
+00:02:06,702 --> 00:02:08,644
+Your browser calls everything else.
+
+39
+00:02:08,964 --> 00:02:13,529
+And the API never talks to the database;
+the README says so itself.
+
+40
+00:02:13,849 --> 00:02:16,431
+Part 2 shows why the browser does so much.
+
+41
+00:02:16,667 --> 00:02:17,776
+Time to type.
+
+42
+00:02:18,096 --> 00:02:20,574
+The README's prerequisites are short:
+
+43
+00:02:20,574 --> 00:02:23,856
+have Docker installed,
+and clone this repository.
+
+44
+00:02:24,176 --> 00:02:27,803
+The README gives no address,
+so here is the repo's address.
+
+45
+00:02:28,123 --> 00:02:29,467
+Pause, and clone it.
+
+46
+00:02:32,633 --> 00:02:36,852
+An extra git log shows
+the commit this video uses,
+
+47
+00:02:36,852 --> 00:02:38,793
+from October 8th, 2026;
+
+48
+00:02:38,793 --> 00:02:41,956
+if yours is newer, details may differ.
+
+49
+00:02:42,276 --> 00:02:45,665
+An extra listing shows llm-rag, api-service,
+
+50
+00:02:45,665 --> 00:02:49,209
+and frontend-ai-chatbot:
+one folder per house.
+
+51
+00:02:49,450 --> 00:02:50,602
+One small gap.
+
+52
+00:02:50,922 --> 00:02:54,110
+The app's own home page
+animates a hosted version,
+
+53
+00:02:54,110 --> 00:02:56,469
+with a web server on a cloud machine.
+
+54
+00:02:56,789 --> 00:02:59,903
+The files for that setup
+were deleted from the repo.
+
+55
+00:03:00,223 --> 00:03:04,490
+You are running the local version,
+and this map draws exactly what you run.
+
+56
+00:03:05,533 --> 00:03:09,309
+The second prerequisite creates an identity,
+but not for you.
+
+57
+00:03:09,629 --> 00:03:12,509
+A service account
+is an identity for software.
+
+58
+00:03:12,829 --> 00:03:17,437
+Its email looks like this badge: llm-
+service-account@your-gcp-
+project.iam.gserviceaccount.com.
+
+59
+00:03:17,757 --> 00:03:21,128
+Code wears it to call Google,
+with no login screen.
+
+60
+00:03:22,016 --> 00:03:24,981
+A metered public call gets an API key.
+
+61
+00:03:25,301 --> 00:03:28,402
+An app acting
+for a consenting user gets OAuth,
+
+62
+00:03:28,402 --> 00:03:30,315
+the Sign in with Google flow.
+
+63
+00:03:30,635 --> 00:03:33,528
+Our code calls Vertex AI
+in your own project,
+
+64
+00:03:33,528 --> 00:03:35,392
+so it gets a service account.
+
+65
+00:03:35,712 --> 00:03:40,149
+The rule's last line says
+code outside Google should use federation.
+
+66
+00:03:40,469 --> 00:03:45,717
+That needs someone to vouch for your code,
+as GitHub does for code in GitHub Actions.
+
+67
+00:03:46,037 --> 00:03:50,006
+A laptop has nobody,
+so the course hands you a key file instead.
+
+68
+00:03:50,250 --> 00:03:53,429
+Open IAM & Admin, then Service accounts.
+
+69
+00:03:53,749 --> 00:03:56,266
+Create one named llm-service-account.
+
+70
+00:03:56,586 --> 00:03:59,705
+Grant it two roles, bundles of permissions:
+
+71
+00:03:59,705 --> 00:04:03,839
+Storage Admin,
+and Gemini Enterprise Agent Platform User.
+
+72
+00:04:04,159 --> 00:04:07,596
+The second role
+was formerly called Vertex AI User;
+
+73
+00:04:07,596 --> 00:04:09,685
+it is the same role underneath.
+
+74
+00:04:10,005 --> 00:04:11,519
+Pause and create yours.
+
+75
+00:04:11,766 --> 00:04:13,281
+Two notes on the slides.
+
+76
+00:04:13,601 --> 00:04:17,547
+The slides' demo account,
+with one storage role, is next week's.
+
+77
+00:04:17,867 --> 00:04:19,977
+And this app never touches storage;
+
+78
+00:04:19,977 --> 00:04:23,051
+that role rides
+along from the fine-tuning lecture.
+
+79
+00:04:23,371 --> 00:04:25,910
+Grant both anyway, as the README says.
+
+80
+00:04:26,230 --> 00:04:31,880
+The lecture's rule, least privilege, meaning
+only the access you need, would grant less;
+
+81
+00:04:31,880 --> 00:04:33,420
+part 2 comes back to it.
+
+82
+00:04:33,666 --> 00:04:38,658
+On the account's Keys tab, add a key,
+choose JSON, and a file downloads.
+
+83
+00:04:38,978 --> 00:04:40,386
+Pause and make yours.
+
+84
+00:04:40,706 --> 00:04:42,133
+Inside are your project,
+
+85
+00:04:42,133 --> 00:04:45,463
+the account's email,
+a token address, and a private key.
+
+86
+00:04:45,783 --> 00:04:48,087
+That private key is the whole secret.
+
+87
+00:04:48,407 --> 00:04:50,875
+It is one factor, something you have:
+
+88
+00:04:50,875 --> 00:04:55,277
+it works anywhere, with no second step,
+until deleted or disabled.
+
+89
+00:04:55,597 --> 00:04:58,754
+Treat this file like a password,
+never like config.
+
+90
+00:04:59,800 --> 00:05:03,043
+The README says to copy the key
+into a secrets folder.
+
+91
+00:05:03,363 --> 00:05:04,363
+Which one?
+
+92
+00:05:04,557 --> 00:05:07,181
+The API's script answers on line 8.
+
+93
+00:05:07,501 --> 00:05:10,637
+The path starts where you run it,
+in api-service.
+
+94
+00:05:10,957 --> 00:05:14,221
+It climbs up twice
+and lands on the secrets folder,
+
+95
+00:05:14,221 --> 00:05:16,205
+beside the repo, not inside it.
+
+96
+00:05:16,450 --> 00:05:21,975
+Then a -v flag mounts that host folder
+at /secrets, inside the container.
+
+97
+00:05:22,295 --> 00:05:27,337
+The GOOGLE_APPLICATION_CREDENTIALS variable,
+which tells Google's library
+
+98
+00:05:27,337 --> 00:05:31,895
+where the key is, points to /secrets,
+a path inside the container.
+
+99
+00:05:32,215 --> 00:05:34,068
+Two filesystems, one folder,
+
+100
+00:05:34,068 --> 00:05:37,442
+and that variable only makes
+sense after the mount.
+
+101
+00:05:37,683 --> 00:05:42,175
+The loader's compose file builds
+the same portal from its own folder:
+
+102
+00:05:42,175 --> 00:05:43,998
+up two levels, same secrets.
+
+103
+00:05:44,318 --> 00:05:49,374
+The lecture's slide climbs only once,
+because its repos sit one level shallower.
+
+104
+00:05:49,694 --> 00:05:52,403
+Always count the climbs
+from where the script sits.
+
+105
+00:05:52,650 --> 00:05:55,971
+Make the folder beside your clone,
+as an extra,
+
+106
+00:05:55,971 --> 00:06:00,565
+then move the download
+in and rename it llm-service-account.json.
+
+107
+00:06:00,885 --> 00:06:05,557
+Check that name:
+hidden extensions can leave .json.json.
+
+108
+00:06:05,877 --> 00:06:08,735
+An extra tree view shows
+the README's layout.
+
+109
+00:06:09,055 --> 00:06:10,293
+Pause and match it.
+
+110
+00:06:16,917 --> 00:06:18,105
+Now a quiet trap:
+
+111
+00:06:18,105 --> 00:06:21,248
+the repo's gitignore
+has no rule for secrets.
+
+112
+00:06:21,568 --> 00:06:24,191
+Nothing protects a key inside the repo.
+
+113
+00:06:24,433 --> 00:06:25,777
+Something to ponder.
+
+114
+00:06:26,097 --> 00:06:29,408
+Suppose you save the key inside the repo,
+
+115
+00:06:29,408 --> 00:06:34,737
+in cheese-app-v0/secrets,
+and run the API script from api-service.
+
+116
+00:06:35,057 --> 00:06:36,344
+What is in /secrets,
+
+117
+00:06:36,344 --> 00:06:39,239
+and what happens
+on the first embedding call?
+
+118
+00:06:48,083 --> 00:06:52,072
+The cursor still climbs twice,
+to a folder that does not exist.
+
+119
+00:06:52,392 --> 00:06:56,744
+Docker does not complain;
+it silently creates that folder, empty.
+
+120
+00:06:57,064 --> 00:06:58,614
+So /secrets is empty,
+
+121
+00:06:58,614 --> 00:07:03,488
+and the first embedding call fails
+with a DefaultCredentialsError:
+
+122
+00:07:03,488 --> 00:07:04,595
+file not found.
+
+123
+00:07:04,915 --> 00:07:08,499
+Meanwhile your key sits
+in a git tree that nothing protects.
+
+124
+00:07:09,533 --> 00:07:12,200
+Last prerequisite: the Docker network.
+
+125
+00:07:12,520 --> 00:07:17,298
+The README's command inspects it quietly,
+and creates it only if that fails.
+
+126
+00:07:17,618 --> 00:07:18,770
+Pause and run it.
+
+127
+00:07:19,016 --> 00:07:21,747
+What happens
+if you run it again, as an extra?
+
+128
+00:07:22,067 --> 00:07:24,669
+Nothing: no error, no second network.
+
+129
+00:07:24,989 --> 00:07:28,616
+A command that is safe
+to run twice is called idempotent.
+
+130
+00:07:28,936 --> 00:07:30,152
+Remember this shape.
+
+131
+00:07:30,433 --> 00:07:35,361
+In llm-rag, the shell script ships
+with a default project that is not yours.
+
+132
+00:07:35,681 --> 00:07:39,634
+Update the GCP_PROJECT variable
+to your own project ID;
+
+133
+00:07:39,634 --> 00:07:42,508
+we use the sed tool, you use any editor.
+
+134
+00:07:42,828 --> 00:07:44,086
+Pause and edit it.
+
+135
+00:07:44,600 --> 00:07:48,419
+Now the README's command:
+sh docker-shell.sh.
+
+136
+00:07:48,739 --> 00:07:49,891
+Pause and run it.
+
+137
+00:07:50,211 --> 00:07:54,402
+Compose pulls Chroma,
+creates a network called llm-rag-network,
+
+138
+00:07:54,402 --> 00:07:56,397
+and starts the database on it.
+
+139
+00:07:56,717 --> 00:07:59,811
+Every service in this file
+joins it automatically.
+
+140
+00:08:00,131 --> 00:08:03,446
+The line that says
+pull access denied is harmless:
+
+141
+00:08:03,446 --> 00:08:07,555
+that image is not on Docker Hub,
+so Compose builds it locally.
+
+142
+00:08:07,875 --> 00:08:13,805
+The container's architecture is x86 here;
+Apple Silicon says aarch64.
+
+143
+00:08:14,050 --> 00:08:15,842
+Two extra checks inside.
+
+144
+00:08:16,162 --> 00:08:19,575
+The key file shows up in /secrets,
+through the portal.
+
+145
+00:08:19,895 --> 00:08:24,233
+And both variables are set,
+copied by Compose from the launching script,
+
+146
+00:08:24,233 --> 00:08:26,402
+which is why you always start there.
+
+147
+00:08:26,650 --> 00:08:28,954
+One honest note about this recording.
+
+148
+00:08:29,274 --> 00:08:31,471
+This machine has no Google account.
+
+149
+00:08:31,791 --> 00:08:35,653
+The key file you just saw
+is an obviously invalid stand-in.
+
+150
+00:08:35,973 --> 00:08:39,030
+It is there so the folder
+listings match the README,
+
+151
+00:08:39,030 --> 00:08:41,498
+and it was removed before the cloud steps.
+
+152
+00:08:41,818 --> 00:08:46,746
+So from here on, every cloud call fails
+exactly the way a missing key fails.
+
+153
+00:08:47,066 --> 00:08:49,732
+It is the most common
+mistake in this lecture,
+
+154
+00:08:49,732 --> 00:08:50,949
+so learn it on sight.
+
+155
+00:08:51,269 --> 00:08:55,194
+Every success you should expect
+is tagged recorded, with its source.
+
+156
+00:08:56,233 --> 00:09:00,469
+Inside the container,
+the README's first command does three jobs:
+
+157
+00:09:00,469 --> 00:09:03,401
+it chunks, embeds and loads,
+with char-split.
+
+158
+00:09:03,721 --> 00:09:06,324
+The ID in the prompt changes every run.
+
+159
+00:09:06,644 --> 00:09:11,977
+Chunking runs for real: 11 books,
+and the Tolminc book becomes 24 chunks.
+
+160
+00:09:12,216 --> 00:09:13,560
+A gold tag first.
+
+161
+00:09:13,880 --> 00:09:17,955
+The embed step sends every chunk
+to Google's embedding model,
+
+162
+00:09:17,955 --> 00:09:22,029
+about 7 million characters across both runs,
+by our estimate.
+
+163
+00:09:22,349 --> 00:09:25,635
+That bills your project;
+check the current pricing page.
+
+164
+00:09:25,883 --> 00:09:27,086
+The embed step stops
+
+165
+00:09:27,086 --> 00:09:29,851
+while building the header
+named Authorization.
+
+166
+00:09:30,171 --> 00:09:33,041
+Despite the name,
+it carries proof of who you are,
+
+167
+00:09:33,041 --> 00:09:34,992
+a bearer token, which needs a key.
+
+168
+00:09:35,312 --> 00:09:38,811
+DefaultCredentialsError:
+the key file was not found.
+
+169
+00:09:39,131 --> 00:09:40,401
+No key, no token:
+
+170
+00:09:40,401 --> 00:09:43,910
+the first cloud request dies
+at authentication.
+
+171
+00:09:44,230 --> 00:09:46,000
+The next scene builds that chain.
+
+172
+00:09:46,250 --> 00:09:50,067
+With a real key, the run continues:
+it embeds every book,
+
+173
+00:09:50,067 --> 00:09:53,951
+creates the char-split-collection,
+and finishes inserting.
+
+174
+00:09:54,271 --> 00:09:57,173
+Pause and run it;
+with your key, it takes a while.
+
+175
+00:09:57,493 --> 00:10:04,240
+If instead you see a 403 saying the API
+is disabled, enable the Vertex AI API;
+
+176
+00:10:04,240 --> 00:10:07,007
+the IAM scene shows the command.
+
+177
+00:10:07,250 --> 00:10:10,578
+The second command does the same
+with recursive-split.
+
+178
+00:10:10,898 --> 00:10:13,138
+Pause and run it, then type exit.
+
+179
+00:10:13,458 --> 00:10:18,286
+An extra count
+shows 8,248 chunks for char-split
+
+180
+00:10:18,286 --> 00:10:24,018
+and 14,228 for recursive-split,
+at the time of recording.
+
+181
+00:10:24,338 --> 00:10:26,638
+Recursive split makes more chunks,
+
+182
+00:10:26,638 --> 00:10:30,290
+mostly from a default overlap of up
+to 200 characters,
+
+183
+00:10:30,290 --> 00:10:33,063
+and it cuts at paragraph and word breaks.
+
+184
+00:10:33,300 --> 00:10:36,564
+The chunk files land on your laptop
+through the app mount.
+
+185
+00:10:36,884 --> 00:10:38,484
+One small slip shows here.
+
+186
+00:10:38,804 --> 00:10:42,928
+A book title is cut at its first dot,
+so its chunks get no author,
+
+187
+00:10:42,928 --> 00:10:45,865
+and the agent's author
+filter never finds them.
+
+188
+00:10:46,185 --> 00:10:48,809
+The fix is a Python function, splitext.
+
+189
+00:10:49,129 --> 00:10:51,178
+Last, one real Tolminc chunk:
+
+190
+00:10:51,178 --> 00:10:54,356
+the kind of passage the chat hands
+to Gemini.
+
+191
+00:10:55,800 --> 00:11:00,095
+The README says ChromaDB
+keeps running after you exit,
+
+192
+00:11:00,095 --> 00:11:03,992
+and an extra docker ps confirms it,
+on port 8000.
+
+193
+00:11:04,312 --> 00:11:10,435
+An extra curl asks for its version:
+1.0.0, at the time of recording.
+
+194
+00:11:10,755 --> 00:11:12,653
+Stopping it comes at the very end.
+
+195
+00:11:15,500 --> 00:11:16,652
+So what failed?
+
+196
+00:11:16,972 --> 00:11:18,784
+The loader's Google client,
+
+197
+00:11:18,784 --> 00:11:23,415
+like the API's, is built from a project
+and a location, nothing else.
+
+198
+00:11:23,735 --> 00:11:26,883
+No code in this repo opens the key file;
+
+199
+00:11:26,883 --> 00:11:33,100
+a library does, by a convention called
+application default credentials, or ADC.
+
+200
+00:11:33,333 --> 00:11:35,936
+ADC looks in three places, in order.
+
+201
+00:11:36,256 --> 00:11:40,234
+First, the file named
+by the GOOGLE_APPLICATION_CREDENTIALS
+
+202
+00:11:40,234 --> 00:11:43,808
+variable: a service account key,
+as in this tutorial.
+
+203
+00:11:44,128 --> 00:11:48,842
+Second, a login file the gcloud
+tool writes for you, as a person.
+
+204
+00:11:49,162 --> 00:11:53,706
+Third, the metadata server,
+when your code runs inside Google's cloud.
+
+205
+00:11:54,026 --> 00:11:58,400
+ADC moves to the next place
+only when the one before is not set.
+
+206
+00:11:58,720 --> 00:12:02,240
+Inside these containers,
+only the first place exists.
+
+207
+00:12:02,483 --> 00:12:05,871
+The library writes a small note,
+a JSON Web Token,
+
+208
+00:12:05,871 --> 00:12:08,243
+and signs it with your private key.
+
+209
+00:12:08,563 --> 00:12:13,000
+It sends that note to Google's token desk,
+at the address in your key file.
+
+210
+00:12:13,320 --> 00:12:15,469
+Google holds the matching public key,
+
+211
+00:12:15,469 --> 00:12:19,187
+so it checks your signature
+without ever seeing the private one.
+
+212
+00:12:19,507 --> 00:12:22,878
+Back comes an access token,
+valid for about an hour.
+
+213
+00:12:23,198 --> 00:12:26,526
+That token rides on every request
+as a bearer header.
+
+214
+00:12:26,846 --> 00:12:31,646
+Your private key never leaves your machine;
+only the short-lived ticket travels.
+
+215
+00:12:31,883 --> 00:12:34,848
+When the hour runs out,
+the library gets a new one.
+
+216
+00:12:35,168 --> 00:12:38,716
+The lecture's OAuth diagram ends
+at this same desk,
+
+217
+00:12:38,716 --> 00:12:41,846
+minus the consent screen:
+no person is there.
+
+218
+00:12:42,083 --> 00:12:44,152
+Here is ADC caught in the act.
+
+219
+00:12:44,472 --> 00:12:46,149
+With /secrets empty,
+
+220
+00:12:46,149 --> 00:12:50,424
+an extra one-line Python check asks ADC
+who we are.
+
+221
+00:12:50,744 --> 00:12:53,772
+The variable is set, so ADC opens that path,
+
+222
+00:12:53,772 --> 00:12:57,763
+finds no file, and stops right there,
+with the same error.
+
+223
+00:12:58,083 --> 00:13:01,390
+A wrong path never falls back
+to the other two places.
+
+224
+00:13:01,710 --> 00:13:05,209
+With your key in place,
+it names your service account instead.
+
+225
+00:13:05,450 --> 00:13:06,644
+One common mix-up:
+
+226
+00:13:06,644 --> 00:13:11,618
+setting that variable on your Mac
+authenticates nothing inside a container,
+
+227
+00:13:11,618 --> 00:13:13,343
+where the path must exist.
+
+228
+00:13:13,663 --> 00:13:16,204
+That is why the scripts
+set a container path,
+
+229
+00:13:16,204 --> 00:13:18,293
+and mount the host folder separately.
+
+230
+00:13:19,617 --> 00:13:21,942
+Authentication proved who your code is.
+
+231
+00:13:22,262 --> 00:13:25,142
+Authorization decides
+what it may do, and where.
+
+232
+00:13:25,462 --> 00:13:30,476
+Google calls this IAM:
+a grid of identities, roles, and resources.
+
+233
+00:13:30,796 --> 00:13:34,808
+Your service account holds
+the Gemini user role in your project,
+
+234
+00:13:34,808 --> 00:13:36,940
+and that green cell does the work.
+
+235
+00:13:37,260 --> 00:13:41,612
+Storage Admin sits beside it,
+granted but never used by this app.
+
+236
+00:13:41,850 --> 00:13:43,791
+Three requests test three cells.
+
+237
+00:13:44,111 --> 00:13:46,760
+IAM checks the resource the request names;
+
+238
+00:13:46,760 --> 00:13:51,365
+for an embedding, the client writes
+that name from your project variable.
+
+239
+00:13:51,685 --> 00:13:54,074
+An embedding in your own project is allowed.
+
+240
+00:13:54,394 --> 00:13:58,221
+The same call
+with the script's unedited default project
+
+241
+00:13:58,221 --> 00:14:02,458
+is refused with a 403,
+because your account has no role there.
+
+242
+00:14:02,778 --> 00:14:04,634
+That is why you edit both scripts.
+
+243
+00:14:04,954 --> 00:14:07,066
+The third arrow waits for part 2.
+
+244
+00:14:07,300 --> 00:14:11,420
+A DefaultCredentialsError,
+or a 401, means no valid token:
+
+245
+00:14:11,420 --> 00:14:14,617
+check the path, the mount,
+and the file name.
+
+246
+00:14:14,937 --> 00:14:19,204
+A 403 means authentication worked,
+but authorization failed.
+
+247
+00:14:19,524 --> 00:14:22,737
+The cause:
+a missing role, the wrong project,
+
+248
+00:14:22,737 --> 00:14:24,879
+or an API that is not enabled.
+
+249
+00:14:25,117 --> 00:14:27,536
+That last cause is a small gap:
+
+250
+00:14:27,536 --> 00:14:31,282
+no README here says
+to enable the Vertex AI API.
+
+251
+00:14:31,602 --> 00:14:37,256
+If you never did, the 403 says so,
+and one extra gcloud command fixes it.
+
+252
+00:14:37,500 --> 00:14:38,844
+Something to ponder.
+
+253
+00:14:39,164 --> 00:14:40,871
+Your key works for embeddings.
+
+254
+00:14:41,191 --> 00:14:43,660
+Now you paste the instructor's endpoint,
+
+255
+00:14:43,660 --> 00:14:46,439
+which begins with projects
+and a long number.
+
+256
+00:14:46,759 --> 00:14:49,578
+Which part decides whose IAM is checked:
+
+257
+00:14:49,578 --> 00:14:51,078
+the project variable,
+
+258
+00:14:51,078 --> 00:14:54,652
+the project inside your key,
+or the endpoint path?
+
+259
+00:15:03,500 --> 00:15:04,500
+The path.
+
+260
+00:15:04,609 --> 00:15:08,535
+Not the key's project:
+that only says where the badge was issued.
+
+261
+00:15:08,855 --> 00:15:09,956
+Not the variable:
+
+262
+00:15:09,956 --> 00:15:13,975
+the endpoint path already names a project,
+and that name wins.
+
+263
+00:15:14,295 --> 00:15:18,548
+It is someone else's project,
+where your account has no role,
+
+264
+00:15:18,548 --> 00:15:20,780
+so it is a 403; part 2 draws it.
+
+265
+00:15:25,067 --> 00:15:27,584
+Last stretch of part 1, the API.
+
+266
+00:15:27,904 --> 00:15:32,022
+In the api-service folder,
+make the second project-name edit.
+
+267
+00:15:32,342 --> 00:15:33,515
+Pause and do it.
+
+268
+00:15:34,917 --> 00:15:38,586
+Then the README's command,
+sh docker-shell.sh.
+
+269
+00:15:38,906 --> 00:15:40,058
+Pause and run it.
+
+270
+00:15:40,378 --> 00:15:43,258
+It dies at once: the network already exists.
+
+271
+00:15:43,684 --> 00:15:46,863
+This is the biggest slip in the repo,
+and not your fault.
+
+272
+00:15:47,183 --> 00:15:51,311
+Line 14 creates the network unconditionally,
+and set -e,
+
+273
+00:15:51,311 --> 00:15:54,777
+on line 4,
+stops the script at the first error.
+
+274
+00:15:55,097 --> 00:15:57,618
+So it fails whenever the network exists,
+
+275
+00:15:57,618 --> 00:16:00,580
+even right after the README's
+own network step.
+
+276
+00:16:00,900 --> 00:16:03,392
+The fix is the shape you met earlier:
+
+277
+00:16:03,392 --> 00:16:06,895
+make line 14 the README's
+inspect-or-create command.
+
+278
+00:16:07,215 --> 00:16:11,353
+Pause and make that edit in your editor;
+the sed is ours, an extra.
+
+279
+00:16:11,600 --> 00:16:12,901
+Run the script again.
+
+280
+00:16:13,221 --> 00:16:17,637
+The first build installs 170 pinned packages
+from Pipfile.lock,
+
+281
+00:16:17,637 --> 00:16:21,563
+which took about three minutes
+at the time of recording.
+
+282
+00:16:21,883 --> 00:16:23,611
+You land in the pipenv shell.
+
+283
+00:16:23,931 --> 00:16:30,073
+Type uvicorn_server,
+and the API starts on port 9000,
+
+284
+00:16:30,073 --> 00:16:32,507
+listening on 0.0.0.0.
+
+285
+00:16:32,827 --> 00:16:34,128
+Pause and run both.
+
+286
+00:16:37,017 --> 00:16:40,522
+The server started cleanly
+with an empty secrets folder,
+
+287
+00:16:40,522 --> 00:16:45,529
+because the Google client does not look
+for credentials until its first request.
+
+288
+00:16:45,849 --> 00:16:47,299
+In a second terminal,
+
+289
+00:16:47,299 --> 00:16:50,820
+an extra curl asks for an embedding
+and gets a 500.
+
+290
+00:16:51,140 --> 00:16:54,387
+The server log shows the same
+DefaultCredentialsError,
+
+291
+00:16:54,387 --> 00:16:56,793
+raised while building the bearer header.
+
+292
+00:16:57,113 --> 00:17:00,270
+A green startup
+is not an authenticated startup.
+
+293
+00:17:00,850 --> 00:17:07,037
+With a real key, the same request returns
+a list of 256 numbers, the embedding.
+
+294
+00:17:07,357 --> 00:17:11,218
+That length must match the loader's,
+or the database queries fail.
+
+295
+00:17:11,538 --> 00:17:14,461
+And the whole chain lights up,
+through to a 200.
+
+296
+00:17:14,700 --> 00:17:20,353
+The README's last step here:
+open localhost:9000/docs in your browser.
+
+297
+00:17:20,673 --> 00:17:21,761
+Pause and look.
+
+298
+00:17:22,081 --> 00:17:23,956
+Extra curls show the docs page
+
+299
+00:17:23,956 --> 00:17:27,458
+and the README's five routes,
+plus one more at the root.
+
+300
+00:17:30,417 --> 00:17:34,798
+On your machine, with a real key,
+the auth chain is now complete,
+
+301
+00:17:34,798 --> 00:17:37,158
+and the API answers on your laptop.
+
+302
+00:17:37,478 --> 00:17:38,566
+Leave it running.
+
+303
+00:17:38,886 --> 00:17:40,756
+Part 2 asks two questions:
+
+304
+00:17:40,756 --> 00:17:44,497
+how does a web page find this API,
+and who else can?
+

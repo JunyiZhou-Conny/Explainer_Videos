@@ -1,0 +1,4 @@
+$ wc -l outputs/chunks-char-split-*.jsonl | tail -1; wc -l outputs/chunks-recursive-split-*.jsonl | tail -1
+     8248 total
+    14228 total
+[exit 0]

@@ -1,0 +1,226 @@
+[Script Info]
+Title: AC215 · L10, part 2: ports, Docker DNS, CORS, and what survives
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:04.29,Bilingual,,0,0,0,,第二部分从地址讲起；这一段的每条命令都是额外的\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 starts with addresses; every command in this scene is an extra.
+Dialogue: 0,0:00:04.61,0:00:10.18,Bilingual,,0,0,0,,加载器按名字拨数据库：llm-rag-chromadb:8000\N{\fs33\c&H00C8C0B8&\bord1.4}The loader dials the database by name: llm-rag-chromadb:8000.
+Dialogue: 0,0:00:10.50,0:00:15.32,Bilingual,,0,0,0,,你的浏览器会打给 localhost:8000，穿过笔记本墙上的一扇门\N{\fs33\c&H00C8C0B8&\bord1.4}Your browser will ring localhost:8000, through a door in the laptop wall.
+Dialogue: 0,0:00:15.64,0:00:17.43,Bilingual,,0,0,0,,一个服务器，两个地址\N{\fs33\c&H00C8C0B8&\bord1.4}One server, two addresses.
+Dialogue: 0,0:00:17.75,0:00:19.35,Bilingual,,0,0,0,,为什么它们不能互换？\N{\fs33\c&H00C8C0B8&\bord1.4}Why can they not swap?
+Dialogue: 0,0:00:19.42,0:00:22.92,Bilingual,,0,0,0,,每个 container 都是自己的一栋房子，有自己的 localhost\N{\fs33\c&H00C8C0B8&\bord1.4}Each container is its own house, with its own localhost.
+Dialogue: 0,0:00:23.24,0:00:26.67,Bilingual,,0,0,0,,在 container 里面，localhost 指的就是这个 container\N{\fs33\c&H00C8C0B8&\bord1.4}Inside a container, localhost means that container.
+Dialogue: 0,0:00:26.99,0:00:30.68,Bilingual,,0,0,0,,名字靠的是 Docker DNS，也就是每条街上的一本电话簿\N{\fs33\c&H00C8C0B8&\bord1.4}Names work through Docker DNS, a phone book on each street.
+Dialogue: 0,0:00:31.00,0:00:35.16,Bilingual,,0,0,0,,IP 地址在 container 重启时会变，名字却不会\N{\fs33\c&H00C8C0B8&\bord1.4}IP addresses change when containers restart, but names do not.
+Dialogue: 0,0:00:35.48,0:00:39.75,Bilingual,,0,0,0,,这次额外的 inspect 显示了 API 在它那条街上的 IP 地址\N{\fs33\c&H00C8C0B8&\bord1.4}This extra inspect shows the API's IP address on its street.
+Dialogue: 0,0:00:40.07,0:00:44.70,Bilingual,,0,0,0,,你的会不一样，这正是重点：拨名字，不要拨 IP 地址\N{\fs33\c&H00C8C0B8&\bord1.4}Yours will differ, which is the point: dial names, not IP addresses.
+Dialogue: 0,0:00:45.02,0:00:48.75,Bilingual,,0,0,0,,而你的笔记本不在任何一条街上，所以它没有电话簿\N{\fs33\c&H00C8C0B8&\bord1.4}And your laptop is not on any street, so it has no phone book:
+Dialogue: 0,0:00:48.75,0:00:51.16,Bilingual,,0,0,0,,这个名字对你的浏览器毫无意义\N{\fs33\c&H00C8C0B8&\bord1.4}that name means nothing to your browser.
+Dialogue: 0,0:00:51.40,0:00:52.72,Bilingual,,0,0,0,,现在来证明\N{\fs33\c&H00C8C0B8&\bord1.4}Now the proof.
+Dialogue: 0,0:00:52.76,0:00:57.01,Bilingual,,0,0,0,,从 API container 里面，按名字问数据库\N{\fs33\c&H00C8C0B8&\bord1.4}From inside the API container, ask for the database by name.
+Dialogue: 0,0:00:57.33,0:00:59.93,Bilingual,,0,0,0,,回答是：Name or service not known\N{\fs33\c&H00C8C0B8&\bord1.4}The answer: Name or service not known.
+Dialogue: 0,0:01:00.25,0:01:03.32,Bilingual,,0,0,0,,API 那条街的电话簿里，没有这个名字的条目\N{\fs33\c&H00C8C0B8&\bord1.4}The API's street has no entry for that name.
+Dialogue: 0,0:01:03.57,0:01:05.17,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:01:05.23,0:01:08.94,Bilingual,,0,0,0,,假设你想让 API 自己去查询数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Suppose you want the API itself to query the database.
+Dialogue: 0,0:01:09.26,0:01:13.76,Bilingual,,0,0,0,,它会用什么地址，地图上又要改什么，这个名字才能解析？\N{\fs33\c&H00C8C0B8&\bord1.4}What address would it use, and what must change on the map for that name to resolve?
+Dialogue: 0,0:01:22.60,0:01:25.46,Bilingual,,0,0,0,,把数据库也放到 API 那条街上，用一条额外的命令\N{\fs33\c&H00C8C0B8&\bord1.4}Put the database on the API's street as well,
+Dialogue: 0,0:01:25.46,0:01:30.92,Bilingual,,0,0,0,,docker network connect，同一个名字就会答出 Chroma 的版本\N{\fs33\c&H00C8C0B8&\bord1.4}with an extra docker network connect, and the same name answers with Chroma's version.
+Dialogue: 0,0:01:31.24,0:01:33.67,Bilingual,,0,0,0,,Docker DNS 在共用的街道上就管用\N{\fs33\c&H00C8C0B8&\bord1.4}Docker DNS works on a shared street.
+Dialogue: 0,0:01:33.99,0:01:37.45,Bilingual,,0,0,0,,那在 API 里面访问 localhost:8000 呢？\N{\fs33\c&H00C8C0B8&\bord1.4}And localhost:8000, from inside the API?
+Dialogue: 0,0:01:37.77,0:01:39.37,Bilingual,,0,0,0,,Connection refused\N{\fs33\c&H00C8C0B8&\bord1.4}Connection refused.
+Dialogue: 0,0:01:39.50,0:01:43.08,Bilingual,,0,0,0,,在 API 里面，8000 上没有任何东西在监听\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the API, nothing listens on 8000.
+Dialogue: 0,0:01:43.32,0:01:46.22,Bilingual,,0,0,0,,然后把它断开：刚才只是个实验\N{\fs33\c&H00C8C0B8&\bord1.4}Then disconnect it: that was only an experiment.
+Dialogue: 0,0:01:46.54,0:01:48.84,Bilingual,,0,0,0,,这个应用里没有任何东西需要这条捷径\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing in this app needs that shortcut,
+Dialogue: 0,0:01:48.84,0:01:50.98,Bilingual,,0,0,0,,因为每个调用都是浏览器发的\N{\fs33\c&H00C8C0B8&\bord1.4}because the browser makes every call.
+Dialogue: 0,0:01:51.30,0:01:55.31,Bilingual,,0,0,0,,有一个小疏漏：前端的配置还在把 docs 路径\N{\fs33\c&H00C8C0B8&\bord1.4}One small slip: the frontend's config still forwards its docs
+Dialogue: 0,0:01:55.31,0:01:58.59,Bilingual,,0,0,0,,转发给一个这里并不存在的 container 名\N{\fs33\c&H00C8C0B8&\bord1.4}path to a container name that does not exist here.
+Dialogue: 0,0:01:58.91,0:02:04.67,Bilingual,,0,0,0,,API 文档请用 localhost:9000/docs，照 README 说的\N{\fs33\c&H00C8C0B8&\bord1.4}For the API docs, use localhost:9000/docs, as the README says.
+Dialogue: 0,0:02:06.22,0:02:10.80,Bilingual,,0,0,0,,让 API 继续跑着，在前端目录里打开一个新终端\N{\fs33\c&H00C8C0B8&\bord1.4}Leave the API running, and open a new terminal in the frontend folder.
+Dialogue: 0,0:02:11.12,0:02:13.45,Bilingual,,0,0,0,,运行它的 shell 脚本；暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Run its shell script; pause and do it.
+Dialogue: 0,0:02:13.77,0:02:18.19,Bilingual,,0,0,0,,这个 image 只有 Node 和一个 shell，所以 npm 要你自己跑\N{\fs33\c&H00C8C0B8&\bord1.4}The image holds just Node and a shell, so you run npm yourself;
+Dialogue: 0,0:02:18.19,0:02:20.51,Bilingual,,0,0,0,,井号表示你是 root\N{\fs33\c&H00C8C0B8&\bord1.4}the hash sign means you are root.
+Dialogue: 0,0:02:20.75,0:02:28.47,Bilingual,,0,0,0,,接着是 npm install：录制时装了 773 个包，外加一些弃用警告\N{\fs33\c&H00C8C0B8&\bord1.4}Then npm install: 773 packages at the time of recording, plus deprecation warnings.
+Dialogue: 0,0:02:28.79,0:02:31.06,Bilingual,,0,0,0,,它们通过挂载落到你的目录里\N{\fs33\c&H00C8C0B8&\bord1.4}They land in your folder through the mount,
+Dialogue: 0,0:02:31.06,0:02:34.32,Bilingual,,0,0,0,,所以我们录制时可以退出再进来，也不会丢\N{\fs33\c&H00C8C0B8&\bord1.4}so our capture could step out and back in without losing them.
+Dialogue: 0,0:02:34.64,0:02:36.30,Bilingual,,0,0,0,,然后运行：npm run dev\N{\fs33\c&H00C8C0B8&\bord1.4}Then npm run dev.
+Dialogue: 0,0:02:36.62,0:02:42.33,Bilingual,,0,0,0,,Next.js 服务器显示 Ready，录制时版本是 14.2.4\N{\fs33\c&H00C8C0B8&\bord1.4}The Next.js server says ready, version 14.2.4 at the time of recording,
+Dialogue: 0,0:02:42.33,0:02:47.95,Bilingual,,0,0,0,,还打印出那行谁都会上当的：Local: http://localhost:3000\N{\fs33\c&H00C8C0B8&\bord1.4}and prints the line that fools everyone: Local: http://localhost:3000.
+Dialogue: 0,0:02:48.27,0:02:49.77,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:02:49.82,0:02:52.42,Bilingual,,0,0,0,,在第二个终端里，做三个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}In a second terminal, three extra checks.
+Dialogue: 0,0:02:52.74,0:02:57.09,Bilingual,,0,0,0,,先预测一下：在你的笔记本上，localhost:3000 会有回应吗？\N{\fs33\c&H00C8C0B8&\bord1.4}First, predict: will localhost:3000 answer from your laptop?
+Dialogue: 0,0:02:57.41,0:02:59.14,Bilingual,,0,0,0,,不会，连不上\N{\fs33\c&H00C8C0B8&\bord1.4}No, it fails to connect.
+Dialogue: 0,0:02:59.46,0:03:03.64,Bilingual,,0,0,0,,从你的笔记本访问 localhost:3200，回应的是 RAG 应用\N{\fs33\c&H00C8C0B8&\bord1.4}From your laptop, localhost:3200 answers with the RAG app.
+Dialogue: 0,0:03:03.96,0:03:08.97,Bilingual,,0,0,0,,而在 container 里面，localhost:3000 回应的是同一个页面\N{\fs33\c&H00C8C0B8&\bord1.4}And from inside the container, localhost:3000 answers with the same page.
+Dialogue: 0,0:03:09.29,0:03:14.58,Bilingual,,0,0,0,,现在在浏览器里打开 localhost:3200；README 建议用 Chrome\N{\fs33\c&H00C8C0B8&\bord1.4}Now open localhost:3200 in your browser; the README suggests Chrome.
+Dialogue: 0,0:03:14.90,0:03:16.18,Bilingual,,0,0,0,,暂停一下，看一看\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and look.
+Dialogue: 0,0:03:16.23,0:03:17.74,Bilingual,,0,0,0,,这就是隧道\N{\fs33\c&H00C8C0B8&\bord1.4}That is the tunnel.
+Dialogue: 0,0:03:17.79,0:03:21.10,Bilingual,,0,0,0,,参数 -p 3200:3000 的意思是\N{\fs33\c&H00C8C0B8&\bord1.4}The flag -p 3200:3000 means
+Dialogue: 0,0:03:21.10,0:03:26.86,Bilingual,,0,0,0,,host port 3200 转发到 container port 3000\N{\fs33\c&H00C8C0B8&\bord1.4}host port 3200 forwards to container port 3000.
+Dialogue: 0,0:03:27.18,0:03:31.20,Bilingual,,0,0,0,,Next.js 服务器在它自己的房子里监听 3000\N{\fs33\c&H00C8C0B8&\bord1.4}The Next server listens on 3000 inside its own house,
+Dialogue: 0,0:03:31.20,0:03:34.24,Bilingual,,0,0,0,,而你的浏览器在外面敲 3200 的门\N{\fs33\c&H00C8C0B8&\bord1.4}and your browser knocks on 3200 outside.
+Dialogue: 0,0:03:34.56,0:03:36.35,Bilingual,,0,0,0,,一个服务器，两个地址\N{\fs33\c&H00C8C0B8&\bord1.4}One server, two addresses.
+Dialogue: 0,0:03:36.67,0:03:39.44,Bilingual,,0,0,0,,额外跑一下 docker ps，能看到同一扇门\N{\fs33\c&H00C8C0B8&\bord1.4}An extra docker ps shows the same door.
+Dialogue: 0,0:03:40.47,0:03:42.28,Bilingual,,0,0,0,,所有 port 号分成三段\N{\fs33\c&H00C8C0B8&\bord1.4}Port numbers come in three bands.
+Dialogue: 0,0:03:42.60,0:03:46.72,Bilingual,,0,0,0,,低段的属于系统，比如 80 和 443\N{\fs33\c&H00C8C0B8&\bord1.4}The low ones belong to the system, like 80 and 443.
+Dialogue: 0,0:03:47.04,0:03:53.25,Bilingual,,0,0,0,,你自己的从中段挑：3000、3200、8000 和 9000\N{\fs33\c&H00C8C0B8&\bord1.4}Pick yours from the middle band: 3000, 3200, 8000, and 9000.
+Dialogue: 0,0:03:53.57,0:03:56.94,Bilingual,,0,0,0,,高段放的是出站调用用的临时 port\N{\fs33\c&H00C8C0B8&\bord1.4}The top band holds throw-away ports for outgoing calls.
+Dialogue: 0,0:03:57.18,0:04:03.09,Bilingual,,0,0,0,,0.0.0.0 已经出现两次了，说的是两件不同的事\N{\fs33\c&H00C8C0B8&\bord1.4}0.0.0.0 has now appeared twice, as two different facts.
+Dialogue: 0,0:04:03.41,0:04:07.44,Bilingual,,0,0,0,,在 container 里面，隧道到达的是临街的一侧\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the container, the tunnel arrives at the street side,
+Dialogue: 0,0:04:07.44,0:04:11.54,Bilingual,,0,0,0,,而不是回环接口，所以 API 服务器在每一侧都监听\N{\fs33\c&H00C8C0B8&\bord1.4}not at the loopback, so the API server listens on every side.
+Dialogue: 0,0:04:11.86,0:04:16.38,Bilingual,,0,0,0,,Docker 会在你笔记本的每一侧都发布，除非你加一个前缀\N{\fs33\c&H00C8C0B8&\bord1.4}Docker publishes on every side of your laptop, unless you add a prefix.
+Dialogue: 0,0:04:16.70,0:04:21.28,Bilingual,,0,0,0,,讲 port 的那一讲在 port 前面写了 127.0.0.1\N{\fs33\c&H00C8C0B8&\bord1.4}The ports lecture wrote 127.0.0.1 before its port,
+Dialogue: 0,0:04:21.28,0:04:23.57,Bilingual,,0,0,0,,这个应用却没写\N{\fs33\c&H00C8C0B8&\bord1.4}but this app writes none.
+Dialogue: 0,0:04:23.89,0:04:28.31,Bilingual,,0,0,0,,所以这些门也朝着你的 Wi-Fi，同一个网络上的任何人都能来敲门\N{\fs33\c&H00C8C0B8&\bord1.4}So these doors face your Wi-Fi too, and anyone on that network can knock.
+Dialogue: 0,0:04:28.63,0:04:34.60,Bilingual,,0,0,0,,在 host port 前面加上 127.0.0.1，就能关上那一侧\N{\fs33\c&H00C8C0B8&\bord1.4}Adding 127.0.0.1 before the host port closes that side.
+Dialogue: 0,0:04:36.25,0:04:40.37,Bilingual,,0,0,0,,这个配置被打包进浏览器下载的 JavaScript 里\N{\fs33\c&H00C8C0B8&\bord1.4}This setting, baked into the JavaScript your browser downloads,
+Dialogue: 0,0:04:40.37,0:04:42.52,Bilingual,,0,0,0,,告诉页面 API 的地址\N{\fs33\c&H00C8C0B8&\bord1.4}gives the page the API's address.
+Dialogue: 0,0:04:42.84,0:04:45.79,Bilingual,,0,0,0,,所以它必须是你的浏览器能访问到的地址\N{\fs33\c&H00C8C0B8&\bord1.4}So it must be one your browser can reach:
+Dialogue: 0,0:04:45.79,0:04:48.60,Bilingual,,0,0,0,,localhost:9000，绝不能是 container 名\N{\fs33\c&H00C8C0B8&\bord1.4}localhost:9000, never a container name.
+Dialogue: 0,0:04:48.85,0:04:53.01,Bilingual,,0,0,0,,5 步里的第 1 步是文本分块，在你的浏览器里跑，不产生费用\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1 of 5, text chunking, runs in your browser, with no bill.
+Dialogue: 0,0:04:53.33,0:04:57.77,Bilingual,,0,0,0,,第 2 步是数据库界面，连到 localhost:8000\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2, the database UI, connects to localhost:8000.
+Dialogue: 0,0:04:58.09,0:04:59.69,Bilingual,,0,0,0,,暂停一下，两个都试试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try both.
+Dialogue: 0,0:04:59.77,0:05:03.46,Bilingual,,0,0,0,,我们额外列出来的是空的；你的会显示两个 collection\N{\fs33\c&H00C8C0B8&\bord1.4}Our extra listing is empty; yours shows two collections.
+Dialogue: 0,0:05:03.70,0:05:06.01,Bilingual,,0,0,0,,第 3 步是对话，带一个金色标签\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3, the chat, has a gold tag:
+Dialogue: 0,0:05:06.01,0:05:09.44,Bilingual,,0,0,0,,每个问题一次 embedding，加一次 Gemini 回答\N{\fs33\c&H00C8C0B8&\bord1.4}one embedding and one Gemini answer per question.
+Dialogue: 0,0:05:09.76,0:05:12.10,Bilingual,,0,0,0,,暂停一下，选一个 collection，问一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, pick a collection, and ask one.
+Dialogue: 0,0:05:12.40,0:05:14.62,Bilingual,,0,0,0,,在你的机器上，它会发起三次调用\N{\fs33\c&H00C8C0B8&\bord1.4}On your machine, it makes three calls.
+Dialogue: 0,0:05:14.94,0:05:19.91,Bilingual,,0,0,0,,第一个调用：API 去问 Google，拿回 256 个数\N{\fs33\c&H00C8C0B8&\bord1.4}Call one: the API asks Google, and 256 numbers come back.
+Dialogue: 0,0:05:20.97,0:05:24.23,Bilingual,,0,0,0,,第二个调用向数据库要 10 个最近的 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}Call two asks the database for the 10 nearest chunks.
+Dialogue: 0,0:05:24.55,0:05:27.72,Bilingual,,0,0,0,,一个 origin 由协议、主机和 port 组成\N{\fs33\c&H00C8C0B8&\bord1.4}An origin is scheme, host and port,
+Dialogue: 0,0:05:27.72,0:05:32.17,Bilingual,,0,0,0,,所以来自 3200 的页面去调 8000，就是跨域\N{\fs33\c&H00C8C0B8&\bord1.4}so a page from 3200 calling 8000 crosses origins.
+Dialogue: 0,0:05:32.42,0:05:37.24,Bilingual,,0,0,0,,默认情况下，浏览器不让页面看到来自别的 origin 的回复\N{\fs33\c&H00C8C0B8&\bord1.4}By default, a browser will not let a page see replies from another origin.
+Dialogue: 0,0:05:37.56,0:05:40.60,Bilingual,,0,0,0,,服务器可以放行指定的 origin，这就是 CORS\N{\fs33\c&H00C8C0B8&\bord1.4}A server can allow named origins; that is CORS,
+Dialogue: 0,0:05:40.60,0:05:44.56,Bilingual,,0,0,0,,它能防止别的网站读取你本地的服务\N{\fs33\c&H00C8C0B8&\bord1.4}and it keeps other websites from reading your local services.
+Dialogue: 0,0:05:44.88,0:05:48.61,Bilingual,,0,0,0,,所以浏览器先发一个预检请求，带上页面的 origin\N{\fs33\c&H00C8C0B8&\bord1.4}So the browser first sends a preflight with the page's origin.
+Dialogue: 0,0:05:48.93,0:05:54.10,Bilingual,,0,0,0,,数据库查它的白名单，上面是课程的网站和 localhost:3200\N{\fs33\c&H00C8C0B8&\bord1.4}The database checks its guest list, the course's site and localhost:3200,
+Dialogue: 0,0:05:54.10,0:05:56.29,Bilingual,,0,0,0,,然后返回一张通行证，或者什么都不给\N{\fs33\c&H00C8C0B8&\bord1.4}and returns a pass, or nothing.
+Dialogue: 0,0:05:56.61,0:05:59.79,Bilingual,,0,0,0,,你的浏览器就是保安：没有通行证，就没有查询\N{\fs33\c&H00C8C0B8&\bord1.4}Your browser is the bouncer: no pass, no query.
+Dialogue: 0,0:06:02.07,0:06:07.32,Bilingual,,0,0,0,,第三个调用把问题和 10 个 chunk 发给 API，回答随后返回\N{\fs33\c&H00C8C0B8&\bord1.4}Call three sends the question and ten chunks to the API, and the answer returns.
+Dialogue: 0,0:06:07.64,0:06:10.60,Bilingual,,0,0,0,,额外用 curl 自己写一个 Origin 请求头\N{\fs33\c&H00C8C0B8&\bord1.4}An extra curl writes its own Origin header.
+Dialogue: 0,0:06:10.92,0:06:15.76,Bilingual,,0,0,0,,两个预检请求都拿到 200 OK，但只有 3200 拿到了通行证\N{\fs33\c&H00C8C0B8&\bord1.4}Both preflights get 200 OK, but only 3200 gets a pass;
+Dialogue: 0,0:06:15.76,0:06:18.90,Bilingual,,0,0,0,,对浏览器来说，没有通行证就是拒绝\N{\fs33\c&H00C8C0B8&\bord1.4}to a browser, no pass is a refusal.
+Dialogue: 0,0:06:21.43,0:06:23.03,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:06:23.10,0:06:26.36,Bilingual,,0,0,0,,你把前端重新发布到 port 3300\N{\fs33\c&H00C8C0B8&\bord1.4}You republish the frontend on port 3300.
+Dialogue: 0,0:06:26.68,0:06:29.50,Bilingual,,0,0,0,,三个调用里哪一个会失败，curl 又在不在乎？\N{\fs33\c&H00C8C0B8&\bord1.4}Which of the three calls fails, and does curl care?
+Dialogue: 0,0:06:38.33,0:06:41.70,Bilingual,,0,0,0,,第一个调用能成功：API 允许任何 origin\N{\fs33\c&H00C8C0B8&\bord1.4}Call one works: the API allows any origin.
+Dialogue: 0,0:06:42.02,0:06:44.18,Bilingual,,0,0,0,,第二个调用根本出不了浏览器\N{\fs33\c&H00C8C0B8&\bord1.4}Call two never leaves the browser.
+Dialogue: 0,0:06:44.50,0:06:47.08,Bilingual,,0,0,0,,第三个调用在等它，所以永远不会发出去\N{\fs33\c&H00C8C0B8&\bord1.4}Call three waits for it, so it is never sent.
+Dialogue: 0,0:06:47.40,0:06:49.00,Bilingual,,0,0,0,,而 curl 对这一切都不理会\N{\fs33\c&H00C8C0B8&\bord1.4}And curl ignores it all.
+Dialogue: 0,0:06:49.26,0:06:55.27,Bilingual,,0,0,0,,CORS 由浏览器执行，由服务器配置，按页面的 origin 来判断\N{\fs33\c&H00C8C0B8&\bord1.4}CORS is enforced by the browser, configured by the server, and keyed on the page's origin.
+Dialogue: 0,0:06:55.59,0:07:03.25,Bilingual,,0,0,0,,就连 127.0.0.1:3200 和 localhost:3200 也是不同的 origin\N{\fs33\c&H00C8C0B8&\bord1.4}Even 127.0.0.1:3200 is a different origin from localhost:3200,
+Dialogue: 0,0:07:03.25,0:07:06.84,Bilingual,,0,0,0,,所以要用 localhost 打开这个应用\N{\fs33\c&H00C8C0B8&\bord1.4}so open the app at localhost.
+Dialogue: 0,0:07:07.08,0:07:11.44,Bilingual,,0,0,0,,要看的是一个回答和 10 条参考来源，带着书名、作者和距离\N{\fs33\c&H00C8C0B8&\bord1.4}Look for an answer and ten references, with book, author and distance.
+Dialogue: 0,0:07:11.76,0:07:15.32,Bilingual,,0,0,0,,最后想一点：CORS 决定的是哪个页面能看到回复\N{\fs33\c&H00C8C0B8&\bord1.4}Last thought: CORS decides which page may see a reply;
+Dialogue: 0,0:07:15.32,0:07:17.56,Bilingual,,0,0,0,,这里没有任何东西决定谁能调用\N{\fs33\c&H00C8C0B8&\bord1.4}nothing here decides who may call.
+Dialogue: 0,0:07:17.88,0:07:20.94,Bilingual,,0,0,0,,一个没有任何保护、用你的密钥花钱的 AI endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}An unprotected AI endpoint, spending your key,
+Dialogue: 0,0:07:20.94,0:07:22.68,Bilingual,,0,0,0,,正跑在你的笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}is running on your laptop.
+Dialogue: 0,0:07:24.22,0:07:29.36,Bilingual,,0,0,0,,第 4 步是奶酪专家 agent：还是对话的三个调用，只多了一个变化\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4 is the cheese expert agent: the chat's three calls, with one twist.
+Dialogue: 0,0:07:29.68,0:07:35.12,Bilingual,,0,0,0,,Gemini 先挑一个检索工具：按作者搜索，或者按内容搜索\N{\fs33\c&H00C8C0B8&\bord1.4}Gemini first picks a retrieval tool: search by author, or search by content.
+Dialogue: 0,0:07:35.44,0:07:38.62,Bilingual,,0,0,0,,API 把搜索文本变成一个 embedding\N{\fs33\c&H00C8C0B8&\bord1.4}The API turns the search text into an embedding.
+Dialogue: 0,0:07:38.94,0:07:41.51,Bilingual,,0,0,0,,然后你的浏览器查询数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Then your browser queries the database,
+Dialogue: 0,0:07:41.51,0:07:44.48,Bilingual,,0,0,0,,按作者过滤，前提是 Gemini 选了那个工具\N{\fs33\c&H00C8C0B8&\bord1.4}filtered by author if Gemini chose that tool.
+Dialogue: 0,0:07:44.80,0:07:50.56,Bilingual,,0,0,0,,API 最多循环五次，Gemini 还可能调用服务器上的趣闻工具\N{\fs33\c&H00C8C0B8&\bord1.4}The API loops up to five times, and Gemini may call a fun fact tool on the server.
+Dialogue: 0,0:07:50.88,0:07:54.36,Bilingual,,0,0,0,,金色标签：一个 agent 问题要花一次 embedding 调用\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: one agent question costs one embedding
+Dialogue: 0,0:07:54.36,0:07:56.86,Bilingual,,0,0,0,,外加 3 到 7 次生成调用\N{\fs33\c&H00C8C0B8&\bord1.4}and three to seven generation calls.
+Dialogue: 0,0:07:57.18,0:07:59.74,Bilingual,,0,0,0,,暂停一下，选一个 collection，随便问它点什么\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, pick a collection, and ask it something.
+Dialogue: 0,0:07:59.98,0:08:03.87,Bilingual,,0,0,0,,要看的是一个回答，结尾有一段高亮的趣闻\N{\fs33\c&H00C8C0B8&\bord1.4}Look for an answer ending in a highlighted fun fact paragraph.
+Dialogue: 0,0:08:04.10,0:08:06.70,Bilingual,,0,0,0,,第 5 步是微调过的奶酪模型\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5 is the fine-tuned cheese model.
+Dialogue: 0,0:08:07.02,0:08:09.89,Bilingual,,0,0,0,,README 说要换成你自己的 endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}The README says to swap in your own endpoint,
+Dialogue: 0,0:08:09.89,0:08:13.08,Bilingual,,0,0,0,,就是你在第 8 讲微调时打印出来的那个\N{\fs33\c&H00C8C0B8&\bord1.4}the one your fine-tuning run printed in lecture 8.
+Dialogue: 0,0:08:13.40,0:08:15.00,Bilingual,,0,0,0,,暂停一下，贴上你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and paste yours.
+Dialogue: 0,0:08:15.19,0:08:20.23,Bilingual,,0,0,0,,服务器会自己重新加载，因为这个文件在 api 目录下面\N{\fs33\c&H00C8C0B8&\bord1.4}The server reloads by itself, because this file sits under the api folder.
+Dialogue: 0,0:08:20.55,0:08:23.95,Bilingual,,0,0,0,,它旁边的 agent 工具文件没有被监视\N{\fs33\c&H00C8C0B8&\bord1.4}Its neighbor, the agent tools file, is not watched;
+Dialogue: 0,0:08:23.95,0:08:27.55,Bilingual,,0,0,0,,至于那个文件，要按 Ctrl-C，再把服务器重新启动\N{\fs33\c&H00C8C0B8&\bord1.4}for that one, press Ctrl-C and start the server again.
+Dialogue: 0,0:08:27.78,0:08:33.39,Bilingual,,0,0,0,,然后打开 localhost:3200/finetunechat，问同一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Then open localhost:3200/finetunechat and ask the same question.
+Dialogue: 0,0:08:33.71,0:08:35.95,Bilingual,,0,0,0,,第一部分的那个谜题，在这里揭晓答案\N{\fs33\c&H00C8C0B8&\bord1.4}Here the part 1 puzzle gets its answer.
+Dialogue: 0,0:08:36.27,0:08:41.35,Bilingual,,0,0,0,,用默认值的话，endpoint 路径指向授课老师的项目\N{\fs33\c&H00C8C0B8&\bord1.4}With the default, the endpoint path points into the instructor's project,
+Dialogue: 0,0:08:41.35,0:08:43.51,Bilingual,,0,0,0,,你的账号在那里没有角色\N{\fs33\c&H00C8C0B8&\bord1.4}where your account has no role,
+Dialogue: 0,0:08:43.51,0:08:46.15,Bilingual,,0,0,0,,所以预计会是 403，或者“找不到”的错误\N{\fs33\c&H00C8C0B8&\bord1.4}so expect a 403, or a not-found error.
+Dialogue: 0,0:08:46.47,0:08:49.04,Bilingual,,0,0,0,,这个调用还用了第二个客户端\N{\fs33\c&H00C8C0B8&\bord1.4}This call also uses a second client,
+Dialogue: 0,0:08:49.04,0:08:52.53,Bilingual,,0,0,0,,位于 us 区域，因为微调过的模型需要它\N{\fs33\c&H00C8C0B8&\bord1.4}in the us location, because tuned models need it.
+Dialogue: 0,0:08:52.85,0:08:55.56,Bilingual,,0,0,0,,最后一个金色标签：调用微调过的模型\N{\fs33\c&H00C8C0B8&\bord1.4}A final gold tag: calls to a tuned model
+Dialogue: 0,0:08:55.56,0:08:58.95,Bilingual,,0,0,0,,费用记在拥有这个 endpoint 的项目上\N{\fs33\c&H00C8C0B8&\bord1.4}are billed to whichever project owns the endpoint.
+Dialogue: 0,0:08:59.27,0:09:00.54,Bilingual,,0,0,0,,暂停一下，试一试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try it;
+Dialogue: 0,0:09:00.54,0:09:03.51,Bilingual,,0,0,0,,没有你自己的 endpoint 的话，预计会是 403\N{\fs33\c&H00C8C0B8&\bord1.4}without your own endpoint, expect a 403,
+Dialogue: 0,0:09:03.51,0:09:05.11,Bilingual,,0,0,0,,或者“找不到”的错误\N{\fs33\c&H00C8C0B8&\bord1.4}or a not-found error.
+Dialogue: 0,0:09:05.39,0:09:08.31,Bilingual,,0,0,0,,要是你自己的 endpoint 返回 404\N{\fs33\c&H00C8C0B8&\bord1.4}If your own endpoint returns 404 instead,
+Dialogue: 0,0:09:08.31,0:09:11.22,Bilingual,,0,0,0,,请看学习指南里关于基础地址的说明\N{\fs33\c&H00C8C0B8&\bord1.4}see the base URL note in the study guide.
+Dialogue: 0,0:09:12.27,0:09:14.76,Bilingual,,0,0,0,,该关掉了，看看什么能留下来\N{\fs33\c&H00C8C0B8&\bord1.4}Time to shut down, and see what survives.
+Dialogue: 0,0:09:15.08,0:09:19.99,Bilingual,,0,0,0,,在 API 和前端的终端里，按 Ctrl-C，然后输入 exit\N{\fs33\c&H00C8C0B8&\bord1.4}In the API and frontend terminals, press Ctrl-C, then type exit.
+Dialogue: 0,0:09:20.31,0:09:21.75,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it.
+Dialogue: 0,0:09:21.80,0:09:24.39,Bilingual,,0,0,0,,两个 container 都是用 --rm 跑的\N{\fs33\c&H00C8C0B8&\bord1.4}Both containers ran with --rm,
+Dialogue: 0,0:09:24.39,0:09:28.80,Bilingual,,0,0,0,,所以额外跑一下 docker ps，只剩下数据库\N{\fs33\c&H00C8C0B8&\bord1.4}so an extra docker ps shows only the database left.
+Dialogue: 0,0:09:29.03,0:09:32.58,Bilingual,,0,0,0,,现在是 README 的停止命令 docker compose down\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README's stop command, docker compose down,
+Dialogue: 0,0:09:32.58,0:09:34.18,Bilingual,,0,0,0,,在 llm-rag 里运行\N{\fs33\c&H00C8C0B8&\bord1.4}inside llm-rag.
+Dialogue: 0,0:09:34.26,0:09:35.68,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:09:35.73,0:09:38.29,Bilingual,,0,0,0,,数据库和它的网络都被删掉了\N{\fs33\c&H00C8C0B8&\bord1.4}The database and its network are removed.
+Dialogue: 0,0:09:38.61,0:09:40.99,Bilingual,,0,0,0,,两条警告说变量没有设置\N{\fs33\c&H00C8C0B8&\bord1.4}Two warnings say variables are not set,
+Dialogue: 0,0:09:40.99,0:09:43.73,Bilingual,,0,0,0,,因为我们是在 shell 脚本之外跑的这条命令\N{\fs33\c&H00C8C0B8&\bord1.4}because we ran this outside the shell script,
+Dialogue: 0,0:09:43.73,0:09:46.59,Bilingual,,0,0,0,,Compose 就用你 shell 里的值来填这些空\N{\fs33\c&H00C8C0B8&\bord1.4}and Compose fills those blanks from your shell.
+Dialogue: 0,0:09:46.91,0:09:50.26,Bilingual,,0,0,0,,这就是第一部分讲的那个机制，这次在现实里撞上了\N{\fs33\c&H00C8C0B8&\bord1.4}That is the mechanism from part 1, caught in the wild.
+Dialogue: 0,0:09:50.58,0:09:55.23,Bilingual,,0,0,0,,来想一个问题：数据库没了，可你的 embedding 也没了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: the database is gone, but are your embeddings gone too?
+Dialogue: 0,0:09:55.55,0:09:57.15,Bilingual,,0,0,0,,那什么才会让它们消失？\N{\fs33\c&H00C8C0B8&\bord1.4}And what would make them gone?
+Dialogue: 0,0:10:03.95,0:10:08.81,Bilingual,,0,0,0,,不会。额外列一下目录，可以看到数据库文件还在磁盘上\N{\fs33\c&H00C8C0B8&\bord1.4}No. An extra listing shows the database file still on disk,
+Dialogue: 0,0:10:08.81,0:10:13.27,Bilingual,,0,0,0,,在你笔记本上的一个目录里，挂载到 container 里的 /data\N{\fs33\c&H00C8C0B8&\bord1.4}in a folder on your laptop, mounted into the container at /data.
+Dialogue: 0,0:10:13.59,0:10:16.47,Bilingual,,0,0,0,,一个个 container 来来去去，挂载的目录却留下来\N{\fs33\c&H00C8C0B8&\bord1.4}Containers come and go; mounted folders stay.
+Dialogue: 0,0:10:16.79,0:10:21.02,Bilingual,,0,0,0,,额外重启一次，数据库就在同一个目录上重新回来了\N{\fs33\c&H00C8C0B8&\bord1.4}An extra restart brings the database back over that same folder.
+Dialogue: 0,0:10:21.34,0:10:25.43,Bilingual,,0,0,0,,删掉 docker-volumes 目录，才会丢掉你的 embedding\N{\fs33\c&H00C8C0B8&\bord1.4}Deleting the docker-volumes folder is what loses your embeddings.
+Dialogue: 0,0:10:25.75,0:10:27.63,Bilingual,,0,0,0,,重新加载一次也能干净地重建\N{\fs33\c&H00C8C0B8&\bord1.4}A fresh load rebuilds cleanly,
+Dialogue: 0,0:10:27.63,0:10:31.51,Bilingual,,0,0,0,,因为加载器会先删掉、再重新创建每个 collection\N{\fs33\c&H00C8C0B8&\bord1.4}because the loader deletes and then recreates each collection.
+Dialogue: 0,0:10:31.75,0:10:35.65,Bilingual,,0,0,0,,挂载目录的云端版本就是 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}The cloud version of a mounted folder is a storage bucket,
+Dialogue: 0,0:10:35.65,0:10:38.34,Bilingual,,0,0,0,,一个任何有权限的机器都能看到的目录\N{\fs33\c&H00C8C0B8&\bord1.4}a folder any authorized machine can see.
+Dialogue: 0,0:10:38.66,0:10:41.05,Bilingual,,0,0,0,,它的目录其实只是名字前缀\N{\fs33\c&H00C8C0B8&\bord1.4}Its folders are only name prefixes.
+Dialogue: 0,0:10:41.37,0:10:45.79,Bilingual,,0,0,0,,存储客户端没有传入密钥路径，所以 ADC 会找到同一个密钥\N{\fs33\c&H00C8C0B8&\bord1.4}The storage client takes no key path, so ADC finds the same key,
+Dialogue: 0,0:10:45.79,0:10:49.37,Bilingual,,0,0,0,,再由一个存储角色允许它往 bucket 里写\N{\fs33\c&H00C8C0B8&\bord1.4}and a storage role allows it to write to the bucket.
+Dialogue: 0,0:10:49.62,0:10:54.21,Bilingual,,0,0,0,,这个应用从不调用 bucket，所以 Storage Admin 一直是灰的\N{\fs33\c&H00C8C0B8&\bord1.4}This app never calls a bucket, which is why Storage Admin sat gray;
+Dialogue: 0,0:10:54.21,0:10:55.81,Bilingual,,0,0,0,,下节课会用到一个\N{\fs33\c&H00C8C0B8&\bord1.4}next lecture uses one.
+Dialogue: 0,0:10:56.04,0:10:57.72,Bilingual,,0,0,0,,课上给了四条规则\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture gives four rules.
+Dialogue: 0,0:10:58.04,0:11:00.60,Bilingual,,0,0,0,,只授予对象管理员角色，不要给完整的管理员角色\N{\fs33\c&H00C8C0B8&\bord1.4}Grant object admin, not full admin.
+Dialogue: 0,0:11:00.84,0:11:02.44,Bilingual,,0,0,0,,让 bucket 保持私有\N{\fs33\c&H00C8C0B8&\bord1.4}Keep buckets private.
+Dialogue: 0,0:11:02.63,0:11:04.81,Bilingual,,0,0,0,,给它们全球唯一的名字加上前缀\N{\fs33\c&H00C8C0B8&\bord1.4}Prefix their globally unique names.
+Dialogue: 0,0:11:05.13,0:11:09.76,Bilingual,,0,0,0,,还有，不再需要的就删掉，因为存储和下载都要花钱\N{\fs33\c&H00C8C0B8&\bord1.4}And delete what you no longer need, because storage and downloads cost money.
+Dialogue: 0,0:11:10.80,0:11:14.38,Bilingual,,0,0,0,,如果你试过重启，就再跑一次：docker compose down\N{\fs33\c&H00C8C0B8&\bord1.4}If you tried the restart, run docker compose down once more.
+Dialogue: 0,0:11:14.70,0:11:17.52,Bilingual,,0,0,0,,额外跑一条命令，删掉共用的网络\N{\fs33\c&H00C8C0B8&\bord1.4}An extra command removes the shared network.
+Dialogue: 0,0:11:17.84,0:11:19.82,Bilingual,,0,0,0,,暂停一下，把你的机器收拾干净\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and leave your machine clean.
+Dialogue: 0,0:11:20.07,0:11:22.31,Bilingual,,0,0,0,,这一讲在云上什么都没启动\N{\fs33\c&H00C8C0B8&\bord1.4}This lecture started nothing in the cloud.
+Dialogue: 0,0:11:22.63,0:11:26.51,Bilingual,,0,0,0,,留下来的是密钥，而泄露的密钥会花掉你的钱\N{\fs33\c&H00C8C0B8&\bord1.4}What stays behind is the key, and a leaked key can spend your money.
+Dialogue: 0,0:11:26.83,0:11:30.05,Bilingual,,0,0,0,,不再用的密钥要删掉，连同它们的本地文件\N{\fs33\c&H00C8C0B8&\bord1.4}Delete keys you no longer use, and their local files.
+Dialogue: 0,0:11:30.37,0:11:33.78,Bilingual,,0,0,0,,如果有密钥被推到了 GitHub，马上在 IAM 里删掉它\N{\fs33\c&H00C8C0B8&\bord1.4}If one reaches GitHub, delete it in IAM at once;
+Dialogue: 0,0:11:33.78,0:11:37.54,Bilingual,,0,0,0,,上节课那个检测私钥的 hook 会先拦住它\N{\fs33\c&H00C8C0B8&\bord1.4}last lecture's private key hook would catch it first,
+Dialogue: 0,0:11:37.54,0:11:39.24,Bilingual,,0,0,0,,前提是你把它加进了自己的 repo\N{\fs33\c&H00C8C0B8&\bord1.4}once added to your repo.
+Dialogue: 0,0:11:39.48,0:11:41.42,Bilingual,,0,0,0,,整节课，放在一张地图上\N{\fs33\c&H00C8C0B8&\bord1.4}The whole lecture, on one map.
+Dialogue: 0,0:11:41.74,0:11:43.39,Bilingual,,0,0,0,,你代码的工牌和密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Your code's badge and key
+Dialogue: 0,0:11:43.39,0:11:46.35,Bilingual,,0,0,0,,在 Google 的令牌柜台换来一张一小时有效的票\N{\fs33\c&H00C8C0B8&\bord1.4}buy a one-hour ticket at Google's token desk.
+Dialogue: 0,0:11:46.67,0:11:49.98,Bilingual,,0,0,0,,一个 IAM 格子让这个工牌能调用 Gemini\N{\fs33\c&H00C8C0B8&\bord1.4}One IAM cell lets that badge call Gemini.
+Dialogue: 0,0:11:50.30,0:11:52.67,Bilingual,,0,0,0,,一个挂载把密钥送到 /secrets\N{\fs33\c&H00C8C0B8&\bord1.4}A mount carries the key to /secrets.
+Dialogue: 0,0:11:52.99,0:11:54.84,Bilingual,,0,0,0,,各个 container 拨名字\N{\fs33\c&H00C8C0B8&\bord1.4}Containers dial names;
+Dialogue: 0,0:11:54.84,0:12:00.07,Bilingual,,0,0,0,,你的浏览器拨 localhost，穿过 3200 到 3000 这样的门\N{\fs33\c&H00C8C0B8&\bord1.4}your browser dials localhost, through doors like 3200 to 3000,
+Dialogue: 0,0:12:00.07,0:12:02.01,Bilingual,,0,0,0,,这些门也对你的 Wi-Fi 敞开\N{\fs33\c&H00C8C0B8&\bord1.4}open to your Wi-Fi too.
+Dialogue: 0,0:12:02.33,0:12:05.74,Bilingual,,0,0,0,,浏览器经过 CORS 保安，把三个调用串在一起\N{\fs33\c&H00C8C0B8&\bord1.4}The browser stitches three calls past the CORS bouncer,
+Dialogue: 0,0:12:05.74,0:12:08.47,Bilingual,,0,0,0,,向量则留在一个挂载的目录里\N{\fs33\c&H00C8C0B8&\bord1.4}and the vectors survive in a mounted folder.
+Dialogue: 0,0:12:09.62,0:12:11.81,Bilingual,,0,0,0,,出了问题，先找它在哪一层\N{\fs33\c&H00C8C0B8&\bord1.4}When something breaks, find its layer.
+Dialogue: 0,0:12:12.13,0:12:14.76,Bilingual,,0,0,0,,凭据错误：路径或者挂载\N{\fs33\c&H00C8C0B8&\bord1.4}A credentials error: the path or the mount.
+Dialogue: 0,0:12:15.08,0:12:17.45,Bilingual,,0,0,0,,401：没有有效的令牌\N{\fs33\c&H00C8C0B8&\bord1.4}A 401: no valid token.
+Dialogue: 0,0:12:17.77,0:12:20.94,Bilingual,,0,0,0,,403：角色、项目，或者 API\N{\fs33\c&H00C8C0B8&\bord1.4}A 403: role, project, or API.
+Dialogue: 0,0:12:21.26,0:12:23.18,Bilingual,,0,0,0,,一行 CORS 报错：origin\N{\fs33\c&H00C8C0B8&\bord1.4}A CORS line: the origin.
+Dialogue: 0,0:12:23.50,0:12:25.28,Bilingual,,0,0,0,,被占用的 port：门\N{\fs33\c&H00C8C0B8&\bord1.4}A taken port: the doors.
+Dialogue: 0,0:12:25.60,0:12:27.75,Bilingual,,0,0,0,,脚本挂了：第 14 行\N{\fs33\c&H00C8C0B8&\bord1.4}A dying script: line 14.
+Dialogue: 0,0:12:28.00,0:12:30.00,Bilingual,,0,0,0,,五道自测题\N{\fs33\c&H00C8C0B8&\bord1.4}5 questions to test yourself.
+Dialogue: 0,0:12:30.32,0:12:34.68,Bilingual,,0,0,0,,第一题：ADC 找的三个位置；这个教程填的是哪一个？\N{\fs33\c&H00C8C0B8&\bord1.4}One: the three places ADC looks; which does this tutorial fill?
+Dialogue: 0,0:12:35.00,0:12:37.99,Bilingual,,0,0,0,,第二题：为什么是 /secrets，而不是你的 Mac？第三题\N{\fs33\c&H00C8C0B8&\bord1.4}Two: why /secrets, not your Mac? Three:
+Dialogue: 0,0:12:37.99,0:12:42.10,Bilingual,,0,0,0,,加载器的名字和你浏览器的 localhost，为什么不能互换？\N{\fs33\c&H00C8C0B8&\bord1.4}why can the loader's name and your browser's localhost not swap?
+Dialogue: 0,0:12:42.42,0:12:43.97,Bilingual,,0,0,0,,第四题：在 port 3300 上\N{\fs33\c&H00C8C0B8&\bord1.4}Four: on port 3300,
+Dialogue: 0,0:12:43.97,0:12:48.37,Bilingual,,0,0,0,,哪个调用最先出问题，API 又为什么没事？\N{\fs33\c&H00C8C0B8&\bord1.4}which call breaks first, and why does the API survive?
+Dialogue: 0,0:12:48.69,0:12:52.83,Bilingual,,0,0,0,,第五题：403 有三种原因；你怎么区分它们？\N{\fs33\c&H00C8C0B8&\bord1.4}Five: a 403 has three causes; how do you tell them apart?
+Dialogue: 0,0:12:53.07,0:12:56.76,Bilingual,,0,0,0,,答案在练习里，命令在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}Answers are in the exercises, commands in the study guide.
+Dialogue: 0,0:12:57.08,0:12:59.46,Bilingual,,0,0,0,,下节课：一个新的服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}Next lecture: a new service account,
+Dialogue: 0,0:12:59.46,0:13:02.24,Bilingual,,0,0,0,,以及带着自己 CORS 白名单的真正的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}and real buckets with their own CORS list.
