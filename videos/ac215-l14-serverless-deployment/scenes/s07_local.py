@@ -431,12 +431,12 @@ class RunTheImage(VoiceScene):
             type_cmd(self, tab, c26.cmd, 0.8, soft=True)
             out(self, tab, c26.at(2, 4), run_time=0.3, color=ERR)
             get = chip("GET · the query string", ROUTE, size=20)
-            right_at(get, 2.15)
+            right_at(get, 2.25)
             self.play(FadeIn(get, shift=LEFT * 0.2), run_time=0.3)
-            self.play(get.animate.move_to([right_x + get.width / 2 + 0.05, 2.0, 0]), run_time=0.35)
-            self.play(get.animate.move_to([right_x + 0.4 + get.width / 2, 2.0, 0]).set_color(ERR), run_time=0.35)
+            self.play(get.animate.move_to([right_x + get.width / 2 + 0.05, 2.1, 0]), run_time=0.35)
+            self.play(get.animate.move_to([right_x + 0.4 + get.width / 2, 2.1, 0]).set_color(ERR), run_time=0.35)
             vo.wait_until("405 here")
-            e405 = err_chip("405 · method not allowed", mono_font=False).next_to(get, DOWN, buff=0.15)
+            e405 = err_chip("405 · method not allowed", mono_font=False).next_to(get, DOWN, buff=0.12)
             e405.align_to(get, LEFT)
             self.play(FadeIn(e405, shift=UP * 0.1), run_time=0.3)
             vo.wait_until("this app wants JSON posts")
@@ -445,12 +445,12 @@ class RunTheImage(VoiceScene):
             type_cmd(self, tab, c25.cmd, 0.6, soft=True)
             out(self, tab, c25.at(2, 4), run_time=0.3, color=ERR)
             vo.wait_until("A made-up language")
-            xx = right_at(chip('dest: "xx"', ROUTE, size=20, font=MONO), 0.7)
+            xx = right_at(chip('dest: "xx"', ROUTE, size=20, font=MONO), 0.78)
             self.play(FadeIn(xx, shift=LEFT * 0.2), run_time=0.25)
-            self.play(xx.animate.move_to([right_x + xx.width / 2 + 0.05, 0.7, 0]), run_time=0.3)
+            self.play(xx.animate.move_to([right_x + xx.width / 2 + 0.05, 0.78, 0]), run_time=0.3)
             e400 = err_chip("400", mono_font=False)
-            e400.move_to([right_x + 0.4 + xx.width + 0.15 + e400.width / 2, 0.7, 0])
-            self.play(xx.animate.move_to([right_x + 0.4 + xx.width / 2, 0.7, 0]).set_color(ERR),
+            e400.move_to([right_x + 0.4 + xx.width + 0.15 + e400.width / 2, 0.78, 0])
+            self.play(xx.animate.move_to([right_x + 0.4 + xx.width / 2, 0.78, 0]).set_color(ERR),
                       FadeIn(e400, shift=LEFT * 0.1), run_time=0.35)
 
         # ========================================================== 10. step 4: speech 503; Ctrl+C
@@ -537,7 +537,7 @@ class RunTheImage(VoiceScene):
             pe2.repipe(self, "8086", "9090", run_time=0.8)
             vo.wait_until("and it answers")
             type_capture(self, t, c35, type_time=0.7)
-            r35 = out(self, t, c35.at(2), run_time=0.3, color=OWN)
+            out(self, t, c35.at(2), run_time=0.3, color=OWN)
             pe2.knock(self, "9090", ok=True, run_time=1.0)
             vo.wait_until("The right-hand number")
             rp = ring(pe2.pipe_label[-4:], ROUTE)
@@ -548,7 +548,6 @@ class RunTheImage(VoiceScene):
             pe2.heal(self)
             type_capture(self, t, c36, type_time=0.6)
             out(self, t, c36.at(2), run_time=0.3)
-            del r35
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

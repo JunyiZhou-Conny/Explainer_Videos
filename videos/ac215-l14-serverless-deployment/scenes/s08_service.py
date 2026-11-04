@@ -205,8 +205,8 @@ class DeployTheImage(VoiceScene):
             self.play(fa.fill(1, IMAGE_REF), run_time=0.8)
             img_val = img_row.value
             src = ghost_rows[1]
-            thread = CubicBezier(src.get_top() + UP * 0.05, src.get_top() + UP * 1.0,
-                                 img_val.get_bottom() + DOWN * 1.0, img_val.get_bottom() + DOWN * 0.05)
+            thread = CubicBezier(src.get_right() + RIGHT * 0.12, src.get_right() + np.array([1.0, 1.2, 0]),
+                                 img_val.get_right() + np.array([1.3, -0.6, 0]), img_val.get_right() + RIGHT * 0.12)
             thread.set_stroke(ROUTE, 3)
             self.play(Create(thread), run_time=0.6)
             self.play(Indicate(img_val, color=ROUTE, scale_factor=1.03),
@@ -254,8 +254,8 @@ class DeployTheImage(VoiceScene):
                                   path="Containers, Networking, Security", form_w=7.6))
         ill_d = ill_on(fd)
         # V5's envelope, small: a TEAL container with its PINK ear; Cloud Run writes PORT and knocks
-        cbox = RoundedRectangle(width=3.0, height=1.9, corner_radius=0.12, stroke_color=IMAGE,
-                                stroke_width=3).set_fill(IMAGE, 0.08).move_to([4.85, 0.3, 0])
+        cbox = RoundedRectangle(width=3.3, height=2.4, corner_radius=0.12, stroke_color=IMAGE,
+                                stroke_width=3).set_fill(IMAGE, 0.08).move_to([4.75, 0.3, 0])
         clab = label("container", 20, IMAGE).move_to(cbox.get_corner(DR) + np.array([-0.85, 0.25, 0]))
         e = ear("0.0.0.0:8080")
         e.glyph.move_to([cbox.get_left()[0] + 0.12, cbox.get_center()[1] - 0.2, 0])
@@ -360,9 +360,11 @@ class DeployTheImage(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(strip, sl, sw, promise, costs)), FadeOut(ref2), run_time=0.6)
             self.remove(strip)
-            vo.wait_until("Ten people press Translate")
             pool2.line_up(self, 10, run_time=0.8)
-            self.play(Indicate(pool2.req_label, color=TURN, scale_factor=1.1), run_time=0.7)
+            vo.wait_until("Ten people press Translate")
+            self.play(Indicate(pool2.req_label, color=TURN, scale_factor=1.1),
+                      LaggedStart(*[Indicate(d, color=ROUTE, scale_factor=1.4) for d in pool2.waiting],
+                                  lag_ratio=0.08), run_time=1.0)
             pool2.heal(self)
         pc = ponder(self, PONDER_Q, seconds=8, center=(0.9, 0.2))
 
@@ -476,7 +478,9 @@ class DeployTheImage(VoiceScene):
             typed = type_capture(self, tab, c15, type_time=1.0)
             vo.wait_until("the revision keeps the digest")
             r15 = out(self, tab, c15.at(2), wrap=True, run_time=0.4, color=OWN)
-            self.play(TransformFromCopy(r15[0], serial), FadeIn(dig_lab), run_time=0.8)
+            self.play(*[Indicate(r, color=OWN, scale_factor=1.03) for r in r15],
+                      FadeIn(serial, shift=UP * 0.3), FadeIn(dig_lab), run_time=0.8)
+            self.add(tab)
             self.play(FadeIn(rv, scale=0.9), FadeIn(rv_lab), run_time=0.4)
             sc = serial.copy()
             self.play(sc.animate.move_to(rv), run_time=0.7)
@@ -525,7 +529,8 @@ class DeployTheImage(VoiceScene):
                            size=24).move_to([0, -2.55, 0])
         with self.voiceover(SAY[12]) as vo:
             self.play(FadeOut(VGroup(gt, gchips, npc, *rings)), track(tr, 10, False), run_time=0.6)
-            self.remove(*[m for m in self.mobjects if m is not tr])
+            self.remove(*self.mobjects)
+            self.add(tr)
             self.play(FadeIn(page, shift=UP * 0.15), FadeIn(ill_p), run_time=0.6)
             vo.wait_until("at a public URL")
             self.play(Indicate(page.url, color=CLOUD, scale_factor=1.06), run_time=0.7)
