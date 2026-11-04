@@ -1,0 +1,3 @@
+$ sh docker-shell.sh
+Error response from daemon: network with name cheese-app-network already exists
+[exit 1]

@@ -1,0 +1,11 @@
+$ curl -s -D - -o /dev/null -X OPTIONS -H 'Origin: http://localhost:3200' -H 'Access-Control-Request-Method: POST' http://localhost:8000/api/v2/tenants/default_tenant/databases/default_database/collections
+HTTP/1.1 200 OK
+vary: origin, access-control-request-method, access-control-request-headers
+access-control-allow-methods: *
+access-control-allow-headers: *
+access-control-allow-origin: http://localhost:3200
+allow: POST,GET,HEAD
+content-length: 0
+date: Tue, 20 Oct 2026 01:48:28 GMT
+
+[exit 0]

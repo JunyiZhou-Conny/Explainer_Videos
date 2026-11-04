@@ -1,0 +1,47 @@
+# Chinese (zh-CN) metadata for ac215-l10-cloud-connect (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 端口, 存储桶, 数据卷, 服务账号（Service Account）,
+# 应用默认凭据（ADC）, 智能体（agent）; A4), the English colon structure kept, commands, tools, addresses and status
+# codes as they are (localhost, IAM, CORS, Docker DNS, bearer token, JSON), the core-concept chapters with their
+# English short name for search (Service Account, ADC, CORS), and S15 sharing L1-L9's Chinese for the same English
+# title. 跟练 = follow-along.
+# The title agrees with video.yaml's publish.title_zh ("AC215 第10讲跟练 · 连接云端：Service Account 认证、Docker
+# 网络与 CORS"), in the series pattern of the other meta.yaml titles; the Bilibili upload itself uses
+# publish.title_zh.
+# SERIES RULE (A10): no title, chapter or description names the instructor; the fifth UI step is "the fine-tuned
+# cheese model", as the narration says it.
+# meta.yaml is not read by `explainer.i18n check`, so brackets are fine here.
+title: "AC215 · 第 10 讲：连接云端——服务账号（Service Account）认证、Docker 网络与 CORS（跟练：cheese-app-v0）"
+
+parts:
+  part1: "AC215 · 第 10 讲（上）：服务账号、ADC 与 IAM——从 JSON 密钥到 bearer token"
+  part2: "AC215 · 第 10 讲（下）：端口、Docker DNS、CORS，以及什么能留下来"
+
+chapters:
+  s01_hook: "三通电话，一个问题"
+  s02_map: "一台笔记本，三个容器，一朵云"
+  s03_identity: "给代码一个身份：服务账号（Service Account）"
+  s04_secrets: "两个文件系统，一个目录"
+  s05_vectordb: "一个网络、一个 compose 文件、一个跑起来的 Chroma"
+  s06_chunks: "分块免费，向量化要密钥"
+  s07_adc: "应用默认凭据（ADC）：从密钥文件到 bearer token"
+  s08_iam: "IAM：这个身份能在这里做这件事吗？"
+  s09_api: "跑起 API，闯过第 14 行"
+  s10_names: "名字不是 localhost"
+  s11_frontend: "一个服务器，两个地址"
+  s12_browser: "浏览器才是集成者（CORS）"
+  s13_agent: "智能体（agent），以及一个不属于你的模型"
+  s14_persist: "什么能留下：现在靠数据卷，下次靠存储桶"
+  s15_recap: "收尾、回顾和下节预告"
+
+# Two or three sentences (rule H2), written register, consistent with video.yaml's publish.description_zh but
+# without the instructor's name (A10). Facts: README Prerequisites (Setup GCP Service Account, Create the Docker
+# Network), Build the Vector DB, Run API Service Container, Run Frontend Container and the five UI steps of
+# dlops-io/cheese-app-v0 at cb6fb94 (2026-10-08); captures dated 2026-10-19/20 (ASSETS.md) on a machine without a
+# Google account, so the cloud successes are shown as recorded with their sources; the embedding build and every
+# chat, agent and tuned-model question bill the viewer's project (GOLD tags, shutdown checklist in S14-S15);
+# 5 pause-and-ponder cards (S04, S08, S10, S12, S14) and 5 recap questions (S15). Paste the chapter timestamps
+# from output/chapters.txt under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 10 讲“连接云端：网络、身份验证与存储”的跟练视频。照着 dlops-io/cheese-app-v0 的 README，创建服务账号（Service Account）并授予角色，把 JSON 密钥放进所有仓库之外的 secrets 目录，用绑定挂载把它送到容器里的 /secrets；看应用默认凭据（ADC）按顺序查找的三个位置，以及密钥怎样换成一小时有效的 bearer token、私钥却从不离开你的电脑，再用“身份 × 角色 × 资源”的 IAM 格子读懂每一个 403；随后在 Docker 网络上跑起 ChromaDB、FastAPI 和 Next.js 三个容器（包括 api-service 脚本在网络已存在时中断的真实坑和修法），分清容器名靠 Docker DNS、浏览器却只认 localhost，弄懂 -p 3200:3000 的两个端口号和 0.0.0.0 为什么让这些端口也朝着你的 Wi-Fi，跟着浏览器亲自发出的三个跨域调用看 CORS 白名单怎样放行和拦截，最后验证 docker compose down 之后向量数据为什么还在，以及下一讲的存储桶。英文旁白，配中文和中英双语字幕；README 的每条命令都按原样、按顺序出现，终端输出录于 2026-10-19/20，录制机器没有 Google 账号，所以云端调用成功的结果以录制记录的形式展示并注明出处；本讲的 Vertex AI 调用会向你自己的项目计费，视频用金色标签标出每个计费点，结尾有完整的收尾清单。

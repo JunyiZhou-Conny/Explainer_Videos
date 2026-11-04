@@ -1,0 +1,1494 @@
+1
+00:00:00,000 --> 00:00:02,944
+这是一个奶酪聊天机器人，跑在你的笔记本上
+Here is a cheese chatbot, running on your laptop.
+
+2
+00:00:03,264 --> 00:00:05,461
+你问它 Tolminc 奶酪是怎么做的
+You ask it how Tolminc cheese is made.
+
+3
+00:00:05,781 --> 00:00:09,536
+答案出来了，附带 10 段书里的原文作为参考来源
+An answer appears, with ten book passages as references.
+
+4
+00:00:09,783 --> 00:00:13,004
+在这一个回答背后，你的浏览器发起了三次调用
+Behind that one answer, your browser makes three calls.
+
+5
+00:00:13,324 --> 00:00:16,505
+其中两次打到 port 9000 上的一个 Python 服务器
+Two go to a Python server on port 9000,
+
+6
+00:00:16,505 --> 00:00:19,767
+一次打到 port 8000 上的一个数据库
+and one goes to a database on port 8000.
+
+7
+00:00:20,087 --> 00:00:23,458
+这两个服务器调用的背后，都是 Google 在干重活
+Behind both server calls, Google does the heavy lifting.
+
+8
+00:00:23,778 --> 00:00:25,655
+那么，谁来确认真的是你？
+So who checks that it is really you?
+
+9
+00:00:25,975 --> 00:00:29,794
+还有，网页怎么找到 container 里的数据库？
+And how does a web page find a database inside a container?
+
+10
+00:00:30,033 --> 00:00:32,038
+这个应用里藏着三个小谜题
+Three small riddles hide in this app.
+
+11
+00:00:32,358 --> 00:00:37,862
+参数 -p 3200:3000 里有两个数字，为什么？
+The flag -p 3200:3000 has two numbers; why?
+
+12
+00:00:38,182 --> 00:00:41,446
+还有这里的 localhost:9000，指的是哪台机器？
+And localhost:9000: which machine is that?
+
+13
+00:00:41,766 --> 00:00:45,692
+而 llm-rag-chromadb 只是一个名字，它的地址在哪儿？
+And llm-rag-chromadb is only a name; where is its address?
+
+14
+00:00:46,012 --> 00:00:47,910
+每个谜题今天都会揭晓答案
+Each one gets its answer today.
+
+15
+00:00:48,230 --> 00:00:52,817
+然后真正的问题来了：既然谁都能来敲门，谁才能进来？
+Then the real question arrives: once anything can knock, who is allowed in?
+
+16
+00:00:53,067 --> 00:00:57,591
+跟着做需要你 clone 的 cheese-app-v0、Docker Desktop
+To follow along you need your clone of cheese-app-v0, Docker Desktop,
+
+17
+00:00:57,591 --> 00:01:00,214
+以及一个开通了结算的 Google Cloud 项目
+and a Google Cloud project with billing.
+
+18
+00:01:00,534 --> 00:01:04,069
+这一讲会真的发起付费的 Vertex AI 调用
+This lecture makes real, paid calls to Vertex AI;
+
+19
+00:01:04,069 --> 00:01:09,408
+每一处都有金色标签标出，视频最后会把一切都关掉
+a gold tag marks each one, and the video ends by shutting everything down.
+
+20
+00:01:09,728 --> 00:01:15,062
+左上角的进度条按六个阶段跟着 README 走，从准备一直到关闭
+The tracker in the top left follows the README in six stages, from setup to shutdown.
+
+21
+00:01:15,382 --> 00:01:18,372
+看到黄色的 your turn 标签，就暂停，自己跑一遍
+A yellow your-turn tag means pause and run it,
+
+22
+00:01:18,372 --> 00:01:22,336
+灰色的 extra 标签表示这个检查 README 里没有
+and a gray extra tag marks a check that is not in the README.
+
+23
+00:01:22,656 --> 00:01:25,664
+每条命令都在学习指南里，链接在下方
+Every command is in the study guide, linked below.
+
+24
+00:01:26,700 --> 00:01:29,473
+首先是地图，它会陪我们走完这一讲
+First, the map, which stays with us all lecture.
+
+25
+00:01:29,793 --> 00:01:31,412
+你的笔记本是一栋房子
+Your laptop is one house,
+
+26
+00:01:31,412 --> 00:01:37,175
+每栋房子都有自己的回环地址 localhost，它永远指这台机器
+and every house has its own loopback address, localhost, which always means this machine.
+
+27
+00:01:37,495 --> 00:01:41,164
+Docker 在里面铺了两条私有的街道，一个网络一条
+Docker lays two private streets inside it, one per network.
+
+28
+00:01:41,484 --> 00:01:43,761
+会有三个服务站在这些街上
+Three services will stand on them:
+
+29
+00:01:43,761 --> 00:01:48,716
+向量数据库和它的加载器、API 服务器，还有网页前端
+the vector database with its loader, the API server, and the web frontend.
+
+30
+00:01:49,036 --> 00:01:51,596
+每栋房子都会在它的 container 启动时亮起来
+Each house lights up when its container starts.
+
+31
+00:01:51,833 --> 00:01:55,609
+你的浏览器站在笔记本的地面上，不在任何一条街上
+Your browser stands on the laptop floor, outside every street.
+
+32
+00:01:55,929 --> 00:01:59,940
+公共街道对面是 Google 的大楼，门口有人把守
+Across the public street sits Google's building, with a guarded door.
+
+33
+00:02:00,260 --> 00:02:01,860
+那么，谁打给谁？
+Now, who calls whom?
+
+34
+00:02:01,966 --> 00:02:04,313
+加载器打给 Google 和数据库
+The loader calls Google and the database.
+
+35
+00:02:04,633 --> 00:02:06,382
+API 打给 Google
+The API calls Google.
+
+36
+00:02:06,702 --> 00:02:08,644
+你的浏览器打给其余所有服务
+Your browser calls everything else.
+
+37
+00:02:08,964 --> 00:02:13,529
+而 API 从不和数据库说话；README 自己就是这么写的
+And the API never talks to the database; the README says so itself.
+
+38
+00:02:13,849 --> 00:02:16,431
+第二部分会讲为什么浏览器要干这么多活
+Part 2 shows why the browser does so much.
+
+39
+00:02:16,667 --> 00:02:18,046
+该动手敲了
+Time to type.
+
+40
+00:02:18,096 --> 00:02:23,856
+README 的前置条件很短：装好 Docker，再 clone 这个仓库
+The README's prerequisites are short: have Docker installed, and clone this repository.
+
+41
+00:02:24,176 --> 00:02:27,803
+README 没给地址，所以这里给出 repo 的地址
+The README gives no address, so here is the repo's address.
+
+42
+00:02:28,123 --> 00:02:29,723
+暂停一下，把它 clone 下来
+Pause, and clone it.
+
+43
+00:02:32,633 --> 00:02:36,833
+额外跑一下 git log，可以看到这个视频用的 commit
+An extra git log shows the commit this video uses,
+
+44
+00:02:36,833 --> 00:02:38,764
+日期是 2026 年 10 月 8 日
+from October 8th, 2026;
+
+45
+00:02:38,764 --> 00:02:41,956
+你的要是更新，细节可能不一样
+if yours is newer, details may differ.
+
+46
+00:02:42,276 --> 00:02:43,623
+再额外列一下目录
+An extra listing
+
+47
+00:02:43,623 --> 00:02:47,573
+llm-rag、api-service 和 frontend-ai-chatbot
+shows llm-rag, api-service, and frontend-ai-chatbot:
+
+48
+00:02:47,573 --> 00:02:49,209
+一栋房子一个目录
+one folder per house.
+
+49
+00:02:49,450 --> 00:02:50,872
+有一个小疏漏
+One small gap.
+
+50
+00:02:50,922 --> 00:02:54,110
+这个应用自己的主页上，动画演示的是一个托管版本
+The app's own home page animates a hosted version,
+
+51
+00:02:54,110 --> 00:02:56,469
+Web 服务器跑在一台云端机器上
+with a web server on a cloud machine.
+
+52
+00:02:56,789 --> 00:02:59,903
+那套部署的文件已经从 repo 里删掉了
+The files for that setup were deleted from the repo.
+
+53
+00:03:00,223 --> 00:03:04,490
+你跑的是本地版本，而这张地图画的正是你跑的东西
+You are running the local version, and this map draws exactly what you run.
+
+54
+00:03:05,533 --> 00:03:09,309
+第二个前置条件是创建一个身份，但不是给你用的
+The second prerequisite creates an identity, but not for you.
+
+55
+00:03:09,629 --> 00:03:12,509
+服务账号就是给软件用的身份
+A service account is an identity for software.
+
+56
+00:03:12,829 --> 00:03:17,437
+它的邮箱就像这张工牌：llm-service-account，后面是你的项目
+Its email looks like this badge: llm-service-account@your-gcp-project.iam.gserviceaccount.com.
+
+57
+00:03:17,757 --> 00:03:21,128
+代码戴着它去调用 Google，不需要登录界面
+Code wears it to call Google, with no login screen.
+
+58
+00:03:22,016 --> 00:03:24,981
+按量计费的公开调用用 API key
+A metered public call gets an API key.
+
+59
+00:03:25,301 --> 00:03:28,382
+替一个同意授权的用户办事的应用，用 OAuth
+An app acting for a consenting user gets OAuth,
+
+60
+00:03:28,382 --> 00:03:30,315
+也就是用 Google 账号登录的那套流程
+the Sign in with Google flow.
+
+61
+00:03:30,635 --> 00:03:35,392
+我们的代码在你自己的项目里调用 Vertex AI，所以它用服务账号
+Our code calls Vertex AI in your own project, so it gets a service account.
+
+62
+00:03:35,712 --> 00:03:40,149
+规则最后一行说，Google 之外的代码应该用身份联合
+The rule's last line says code outside Google should use federation.
+
+63
+00:03:40,469 --> 00:03:43,028
+这需要有人为你的代码担保
+That needs someone to vouch for your code,
+
+64
+00:03:43,028 --> 00:03:45,717
+就像 GitHub 为 GitHub Actions 里的代码担保那样
+as GitHub does for code in GitHub Actions.
+
+65
+00:03:46,037 --> 00:03:50,006
+笔记本没有人来担保，所以课程改为直接给你一个密钥文件
+A laptop has nobody, so the course hands you a key file instead.
+
+66
+00:03:50,250 --> 00:03:53,429
+打开 IAM & Admin，再进 Service accounts
+Open IAM & Admin, then Service accounts.
+
+67
+00:03:53,749 --> 00:03:56,266
+建一个，名字叫 llm-service-account
+Create one named llm-service-account.
+
+68
+00:03:56,586 --> 00:04:00,793
+给它授予两个角色，也就是权限的集合：Storage Admin
+Grant it two roles, bundles of permissions: Storage Admin,
+
+69
+00:04:00,793 --> 00:04:03,839
+和 Gemini Enterprise Agent Platform User
+and Gemini Enterprise Agent Platform User.
+
+70
+00:04:04,159 --> 00:04:09,685
+第二个角色以前叫 Vertex AI User，本质上还是同一个角色
+The second role was formerly called Vertex AI User; it is the same role underneath.
+
+71
+00:04:10,005 --> 00:04:11,605
+暂停一下，建一个你自己的
+Pause and create yours.
+
+72
+00:04:11,766 --> 00:04:13,366
+关于课件，说两点
+Two notes on the slides.
+
+73
+00:04:13,601 --> 00:04:17,547
+课件里那个只有一个存储角色的演示账号，是下周的
+The slides' demo account, with one storage role, is next week's.
+
+74
+00:04:17,867 --> 00:04:23,051
+而且这个应用从来不碰存储；那个角色是从微调那一讲带过来的
+And this app never touches storage; that role rides along from the fine-tuning lecture.
+
+75
+00:04:23,371 --> 00:04:25,910
+不过两个都要授予，照 README 说的做
+Grant both anyway, as the README says.
+
+76
+00:04:26,230 --> 00:04:30,366
+课上的规则是最小权限，意思是只给你需要的权限
+The lecture's rule, least privilege, meaning only the access you need,
+
+77
+00:04:30,366 --> 00:04:31,866
+照它来会授予得更少
+would grant less;
+
+78
+00:04:31,866 --> 00:04:33,466
+第二部分还会回到这一点
+part 2 comes back to it.
+
+79
+00:04:33,666 --> 00:04:36,268
+在这个账号的 KEYS 标签页添加一个密钥
+On the account's Keys tab, add a key,
+
+80
+00:04:36,268 --> 00:04:38,658
+选 JSON，就会下载一个文件
+choose JSON, and a file downloads.
+
+81
+00:04:38,978 --> 00:04:40,578
+暂停一下，做一个你自己的
+Pause and make yours.
+
+82
+00:04:40,706 --> 00:04:45,463
+里面有你的项目、这个账号的邮箱、一个令牌地址，还有一个私钥
+Inside are your project, the account's email, a token address, and a private key.
+
+83
+00:04:45,783 --> 00:04:48,087
+这个私钥就是全部的秘密
+That private key is the whole secret.
+
+84
+00:04:48,407 --> 00:04:50,875
+它只是单一因素，属于你持有的东西
+It is one factor, something you have:
+
+85
+00:04:50,875 --> 00:04:55,277
+在哪儿都能用，不需要第二步，直到被删除或停用
+it works anywhere, with no second step, until deleted or disabled.
+
+86
+00:04:55,597 --> 00:04:58,754
+把这个文件当密码看待，绝不要当配置
+Treat this file like a password, never like config.
+
+87
+00:04:59,800 --> 00:05:03,043
+README 说把密钥复制到一个 secrets 目录
+The README says to copy the key into a secrets folder.
+
+88
+00:05:03,363 --> 00:05:07,181
+哪一个？API 的脚本在第 8 行给出了答案
+Which one? The API's script answers on line 8.
+
+89
+00:05:07,501 --> 00:05:10,637
+路径从你运行它的地方开始，也就是 api-service
+The path starts where you run it, in api-service.
+
+90
+00:05:10,957 --> 00:05:14,221
+它往上爬两级，落在 secrets 目录
+It climbs up twice and lands on the secrets folder,
+
+91
+00:05:14,221 --> 00:05:16,205
+就在 repo 旁边，而不是里面
+beside the repo, not inside it.
+
+92
+00:05:16,450 --> 00:05:20,364
+接着，一个 -v 参数把这个宿主机目录挂载到 /secrets
+Then a -v flag mounts that host folder at /secrets,
+
+93
+00:05:20,364 --> 00:05:21,975
+在 container 里面
+inside the container.
+
+94
+00:05:22,295 --> 00:05:25,356
+Google application credentials 这个变量
+The GOOGLE_APPLICATION_CREDENTIALS variable,
+
+95
+00:05:25,356 --> 00:05:28,556
+告诉 Google 的库密钥在哪儿
+which tells Google's library where the key is,
+
+96
+00:05:28,556 --> 00:05:31,895
+它指向 /secrets，一个 container 里的路径
+points to /secrets, a path inside the container.
+
+97
+00:05:32,215 --> 00:05:37,442
+两个文件系统，一个目录，而这个变量只有在挂载之后才有意义
+Two filesystems, one folder, and that variable only makes sense after the mount.
+
+98
+00:05:37,683 --> 00:05:40,808
+加载器的 compose 文件搭了同一个传送门
+The loader's compose file builds the same portal
+
+99
+00:05:40,808 --> 00:05:43,998
+从自己的目录出发：往上两级，同一个 secrets 目录
+from its own folder: up two levels, same secrets.
+
+100
+00:05:44,318 --> 00:05:49,374
+课件上的那一页只往上爬一级，因为它的 repo 浅一层
+The lecture's slide climbs only once, because its repos sit one level shallower.
+
+101
+00:05:49,694 --> 00:05:52,403
+永远要数清往上爬了几级，从脚本所在的位置数起
+Always count the climbs from where the script sits.
+
+102
+00:05:52,650 --> 00:05:55,971
+在你的 clone 旁边建好这个目录，这是额外步骤
+Make the folder beside your clone, as an extra,
+
+103
+00:05:55,971 --> 00:06:00,565
+然后把下载的文件移进去，改名为 llm-service-account.json
+then move the download in and rename it llm-service-account.json.
+
+104
+00:06:00,885 --> 00:06:05,557
+检查一下名字：隐藏的扩展名可能让它变成 .json.json
+Check that name: hidden extensions can leave .json.json.
+
+105
+00:06:05,877 --> 00:06:08,735
+额外用 tree 看一下，是 README 里的目录结构
+An extra tree view shows the README's layout.
+
+106
+00:06:09,055 --> 00:06:10,655
+暂停一下，把你的也摆成这样
+Pause and match it.
+
+107
+00:06:16,917 --> 00:06:18,317
+接下来是一个不显眼的陷阱
+Now a quiet trap:
+
+108
+00:06:18,317 --> 00:06:21,567
+这个 repo 的 .gitignore 里没有任何关于 secrets 的规则
+the repo's gitignore has no rule for secrets.
+
+109
+00:06:21,617 --> 00:06:24,191
+没有任何东西保护放在 repo 里面的密钥
+Nothing protects a key inside the repo.
+
+110
+00:06:24,433 --> 00:06:26,033
+来想一个问题
+Something to ponder.
+
+111
+00:06:26,097 --> 00:06:31,507
+假设你把密钥存在 repo 里面，也就是 cheese-app-v0/secrets
+Suppose you save the key inside the repo, in cheese-app-v0/secrets,
+
+112
+00:06:31,507 --> 00:06:34,737
+然后在 api-service 里运行 API 脚本
+and run the API script from api-service.
+
+113
+00:06:35,057 --> 00:06:39,239
+这时 /secrets 里有什么，第一次 embedding 调用又会怎样？
+What is in /secrets, and what happens on the first embedding call?
+
+114
+00:06:48,083 --> 00:06:52,072
+路径还是往上爬两级，爬到一个不存在的目录
+The cursor still climbs twice, to a folder that does not exist.
+
+115
+00:06:52,392 --> 00:06:56,744
+Docker 不会抱怨；它会悄悄地创建这个目录，空的
+Docker does not complain; it silently creates that folder, empty.
+
+116
+00:06:57,064 --> 00:07:01,159
+所以 /secrets 是空的，第一次 embedding 调用会失败
+So /secrets is empty, and the first embedding call fails
+
+117
+00:07:01,159 --> 00:07:04,595
+报 DefaultCredentialsError：找不到文件
+with a DefaultCredentialsError: file not found.
+
+118
+00:07:04,915 --> 00:07:08,499
+而你的密钥正躺在一个没有任何保护的 git 目录树里
+Meanwhile your key sits in a git tree that nothing protects.
+
+119
+00:07:09,533 --> 00:07:12,200
+最后一个前置条件：Docker 网络
+Last prerequisite: the Docker network.
+
+120
+00:07:12,520 --> 00:07:17,298
+README 的命令先悄悄检查它，只有检查失败才创建
+The README's command inspects it quietly, and creates it only if that fails.
+
+121
+00:07:17,618 --> 00:07:18,966
+暂停一下，自己跑一遍
+Pause and run it.
+
+122
+00:07:19,016 --> 00:07:21,747
+额外再跑一次会怎样？
+What happens if you run it again, as an extra?
+
+123
+00:07:22,067 --> 00:07:24,669
+什么都不会发生：不报错，也不会多出第二个网络
+Nothing: no error, no second network.
+
+124
+00:07:24,989 --> 00:07:28,616
+一条跑两次也安全的命令，叫作幂等的
+A command that is safe to run twice is called idempotent.
+
+125
+00:07:28,936 --> 00:07:30,383
+记住这个套路
+Remember this shape.
+
+126
+00:07:30,433 --> 00:07:34,014
+在 llm-rag 里，shell 脚本自带一个默认项目
+In llm-rag, the shell script ships with a default project
+
+127
+00:07:34,014 --> 00:07:35,614
+而那不是你的项目
+that is not yours.
+
+128
+00:07:35,681 --> 00:07:39,634
+把 GCP project 这个变量改成你自己的项目 ID
+Update the GCP_PROJECT variable to your own project ID;
+
+129
+00:07:39,634 --> 00:07:42,508
+我们用 sed，你用任何编辑器都行
+we use the sed tool, you use any editor.
+
+130
+00:07:42,828 --> 00:07:44,428
+暂停一下，改好它
+Pause and edit it.
+
+131
+00:07:44,600 --> 00:07:48,419
+现在是 README 的命令：sh docker-shell.sh
+Now the README's command: sh docker-shell.sh.
+
+132
+00:07:48,739 --> 00:07:50,161
+暂停一下，自己跑一遍
+Pause and run it.
+
+133
+00:07:50,211 --> 00:07:51,711
+Compose 拉取 Chroma
+Compose pulls Chroma,
+
+134
+00:07:51,711 --> 00:07:56,397
+创建一个叫 llm-rag-network 的网络，然后在上面启动数据库
+creates a network called llm-rag-network, and starts the database on it.
+
+135
+00:07:56,717 --> 00:07:59,811
+这个文件里的每个服务都会自动加入它
+Every service in this file joins it automatically.
+
+136
+00:08:00,131 --> 00:08:03,446
+那行 pull access denied 是无害的
+The line that says pull access denied is harmless:
+
+137
+00:08:03,446 --> 00:08:07,555
+这个 image 不在 Docker Hub 上，所以 Compose 在本地构建它
+that image is not on Docker Hub, so Compose builds it locally.
+
+138
+00:08:07,875 --> 00:08:11,451
+这里 container 的架构是 x86
+The container's architecture is x86 here;
+
+139
+00:08:11,451 --> 00:08:13,805
+Apple Silicon 上会显示 aarch64
+Apple Silicon says aarch64.
+
+140
+00:08:14,050 --> 00:08:15,842
+在里面做两个额外检查
+Two extra checks inside.
+
+141
+00:08:16,162 --> 00:08:19,575
+密钥文件出现在 /secrets 里，是穿过传送门来的
+The key file shows up in /secrets, through the portal.
+
+142
+00:08:19,895 --> 00:08:24,233
+两个变量也都设好了，是 Compose 从启动它的脚本那里复制过来的
+And both variables are set, copied by Compose from the launching script,
+
+143
+00:08:24,233 --> 00:08:26,402
+所以永远要从这个脚本启动
+which is why you always start there.
+
+144
+00:08:26,650 --> 00:08:28,954
+关于这次录制，如实说一句
+One honest note about this recording.
+
+145
+00:08:29,274 --> 00:08:31,471
+这台机器没有 Google 账号
+This machine has no Google account.
+
+146
+00:08:31,791 --> 00:08:35,653
+你刚才看到的密钥文件，是一个明显无效的替身
+The key file you just saw is an obviously invalid stand-in.
+
+147
+00:08:35,973 --> 00:08:41,498
+放它是为了让目录列表和 README 对得上，云端步骤之前就删掉了
+It is there so the folder listings match the README, and it was removed before the cloud steps.
+
+148
+00:08:41,818 --> 00:08:44,898
+所以从这里开始，每个云端调用的失败方式
+So from here on, every cloud call fails exactly the way a missing key fails.
+
+149
+00:08:44,898 --> 00:08:46,746
+都和缺少密钥时一模一样
+So from here on, every cloud call fails exactly the way a missing key fails.
+
+150
+00:08:47,066 --> 00:08:50,949
+这是这一讲最常见的错误，所以一眼就要认出来
+It is the most common mistake in this lecture, so learn it on sight.
+
+151
+00:08:51,269 --> 00:08:55,194
+你接下来该看到的每一个成功结果，都标着 recorded，并注明出处
+Every success you should expect is tagged recorded, with its source.
+
+152
+00:08:56,233 --> 00:09:00,469
+进了 container，README 的第一条命令做三件事
+Inside the container, the README's first command does three jobs:
+
+153
+00:09:00,469 --> 00:09:03,401
+用 char-split 分块、向量化、加载
+it chunks, embeds and loads, with char-split.
+
+154
+00:09:03,721 --> 00:09:06,324
+提示符里的 ID 每次运行都会变
+The ID in the prompt changes every run.
+
+155
+00:09:06,644 --> 00:09:11,977
+分块是真的跑了：11 本书，Tolminc 那本书切成了 24 个 chunk
+Chunking runs for real: 11 books, and the Tolminc book becomes 24 chunks.
+
+156
+00:09:12,216 --> 00:09:13,816
+先看一个金色标签
+A gold tag first.
+
+157
+00:09:13,880 --> 00:09:17,955
+向量化这一步会把每个 chunk 发给 Google 的 embedding 模型
+The embed step sends every chunk to Google's embedding model,
+
+158
+00:09:17,955 --> 00:09:22,029
+两次运行加起来大约 700 万个字符，这是我们的估算
+about 7 million characters across both runs, by our estimate.
+
+159
+00:09:22,349 --> 00:09:25,635
+这会向你的项目计费；请查看当前的价目页
+That bills your project; check the current pricing page.
+
+160
+00:09:25,883 --> 00:09:29,851
+向量化这一步在构建名为 Authorization 的请求头时停了下来
+The embed step stops while building the header named Authorization.
+
+161
+00:09:30,171 --> 00:09:31,171
+别看它叫这个名字
+Despite the name,
+
+162
+00:09:31,171 --> 00:09:33,953
+它装的其实是你的身份证明，也就是一个 bearer token
+it carries proof of who you are, a bearer token,
+
+163
+00:09:33,953 --> 00:09:35,262
+而这需要密钥
+which needs a key.
+
+164
+00:09:35,312 --> 00:09:38,811
+DefaultCredentialsError：找不到密钥文件
+DefaultCredentialsError: the key file was not found.
+
+165
+00:09:39,131 --> 00:09:43,910
+没有密钥就没有令牌：第一个云端请求死在了身份验证这一步
+No key, no token: the first cloud request dies at authentication.
+
+166
+00:09:44,230 --> 00:09:46,000
+下一段就来搭这条链
+The next scene builds that chain.
+
+167
+00:09:46,250 --> 00:09:48,594
+有真实密钥的话，运行会继续
+With a real key, the run continues:
+
+168
+00:09:48,594 --> 00:09:53,951
+向量化每一本书，创建 char-split-collection，最后完成插入
+it embeds every book, creates the char-split-collection, and finishes inserting.
+
+169
+00:09:54,271 --> 00:09:57,173
+暂停一下，自己跑一遍；用你的密钥，这要花一阵子
+Pause and run it; with your key, it takes a while.
+
+170
+00:09:57,493 --> 00:10:04,240
+如果你看到的是 403，说 API 没有启用，就启用 Vertex AI API
+If instead you see a 403 saying the API is disabled, enable the Vertex AI API;
+
+171
+00:10:04,240 --> 00:10:07,007
+讲 IAM 的那一段会给出命令
+the IAM scene shows the command.
+
+172
+00:10:07,250 --> 00:10:10,578
+第二条命令用 recursive-split 做同样的事
+The second command does the same with recursive-split.
+
+173
+00:10:10,898 --> 00:10:13,138
+暂停一下，自己跑一遍，然后输入 exit
+Pause and run it, then type exit.
+
+174
+00:10:13,458 --> 00:10:18,286
+额外数一下：char-split 有 8248 个 chunk
+An extra count shows 8,248 chunks for char-split
+
+175
+00:10:18,286 --> 00:10:24,018
+recursive-split 有 14228 个，这是录制时的数字
+and 14,228 for recursive-split, at the time of recording.
+
+176
+00:10:24,338 --> 00:10:26,638
+递归切分产生的 chunk 更多
+Recursive split makes more chunks,
+
+177
+00:10:26,638 --> 00:10:30,290
+主要是因为默认最多 200 个字符的重叠
+mostly from a default overlap of up to 200 characters,
+
+178
+00:10:30,290 --> 00:10:33,063
+而且它在段落和单词之间的断点处切
+and it cuts at paragraph and word breaks.
+
+179
+00:10:33,300 --> 00:10:36,564
+这些 chunk 文件通过 /app 这个挂载落到你的笔记本上
+The chunk files land on your laptop through the app mount.
+
+180
+00:10:36,884 --> 00:10:38,484
+这里有一个小疏漏
+One small slip shows here.
+
+181
+00:10:38,804 --> 00:10:42,928
+书名在第一个点处被截断了，所以它的 chunk 没有作者
+A book title is cut at its first dot, so its chunks get no author,
+
+182
+00:10:42,928 --> 00:10:45,865
+agent 的作者过滤永远找不到它们
+and the agent's author filter never finds them.
+
+183
+00:10:46,185 --> 00:10:48,809
+修法是一个 Python 函数：splitext
+The fix is a Python function, splitext.
+
+184
+00:10:49,129 --> 00:10:51,178
+最后，看一个真实的 Tolminc chunk
+Last, one real Tolminc chunk:
+
+185
+00:10:51,178 --> 00:10:54,356
+就是对话交给 Gemini 的那种段落
+the kind of passage the chat hands to Gemini.
+
+186
+00:10:55,800 --> 00:11:00,095
+README 说 ChromaDB 在你退出之后还会继续跑
+The README says ChromaDB keeps running after you exit,
+
+187
+00:11:00,095 --> 00:11:03,992
+额外跑一下 docker ps 就能确认，就在 port 8000 上
+and an extra docker ps confirms it, on port 8000.
+
+188
+00:11:04,312 --> 00:11:10,435
+再额外 curl 一下它的版本：录制时是 1.0.0
+An extra curl asks for its version: 1.0.0, at the time of recording.
+
+189
+00:11:10,755 --> 00:11:12,653
+关掉它放在最后
+Stopping it comes at the very end.
+
+190
+00:11:15,500 --> 00:11:16,922
+那么，到底是什么失败了？
+So what failed?
+
+191
+00:11:16,972 --> 00:11:19,858
+加载器的 Google 客户端和 API 的一样
+The loader's Google client, like the API's,
+
+192
+00:11:19,858 --> 00:11:23,415
+只用一个项目和一个区域来构建，别的什么都没有
+is built from a project and a location, nothing else.
+
+193
+00:11:23,735 --> 00:11:26,883
+这个 repo 里没有代码去打开密钥文件
+No code in this repo opens the key file;
+
+194
+00:11:26,883 --> 00:11:33,100
+打开它的是一个库，靠的是一个叫应用默认凭据的约定，简称 ADC
+a library does, by a convention called application default credentials, or ADC.
+
+195
+00:11:33,333 --> 00:11:35,936
+ADC 按顺序看三个位置
+ADC looks in three places, in order.
+
+196
+00:11:36,256 --> 00:11:40,909
+第一，Google application credentials 这个变量指定的文件
+First, the file named by the GOOGLE_APPLICATION_CREDENTIALS variable:
+
+197
+00:11:40,909 --> 00:11:43,808
+一个服务账号密钥，就像这个教程里的
+a service account key, as in this tutorial.
+
+198
+00:11:44,128 --> 00:11:48,842
+第二，gcloud 工具为你本人写的一个登录文件
+Second, a login file the gcloud tool writes for you, as a person.
+
+199
+00:11:49,162 --> 00:11:53,706
+第三，元数据服务器，在你的代码跑在 Google 的云里时才有
+Third, the metadata server, when your code runs inside Google's cloud.
+
+200
+00:11:54,026 --> 00:11:58,400
+ADC 转到下一个位置，只有一种情况：前一个没有设置
+ADC moves to the next place only when the one before is not set.
+
+201
+00:11:58,720 --> 00:12:02,240
+在这些 container 里，只有第一个位置存在
+Inside these containers, only the first place exists.
+
+202
+00:12:02,483 --> 00:12:06,814
+这个库写一张小纸条，也就是一个 JSON Web Token
+The library writes a small note, a JSON Web Token, and signs it with your private key.
+
+203
+00:12:06,814 --> 00:12:08,414
+用你的私钥签名
+The library writes a small note, a JSON Web Token, and signs it with your private key.
+
+204
+00:12:08,563 --> 00:12:11,081
+它把这张纸条送到 Google 的令牌柜台
+It sends that note to Google's token desk,
+
+205
+00:12:11,081 --> 00:12:13,000
+地址就写在你的密钥文件里
+at the address in your key file.
+
+206
+00:12:13,320 --> 00:12:15,469
+Google 手里有配对的公钥
+Google holds the matching public key,
+
+207
+00:12:15,469 --> 00:12:19,187
+所以不用看到私钥，就能验证你的签名
+so it checks your signature without ever seeing the private one.
+
+208
+00:12:19,507 --> 00:12:22,878
+换回来的是一个访问令牌，有效期大约一小时
+Back comes an access token, valid for about an hour.
+
+209
+00:12:23,198 --> 00:12:26,526
+这个令牌跟着每个请求走，作为 bearer 请求头
+That token rides on every request as a bearer header.
+
+210
+00:12:26,846 --> 00:12:31,646
+你的私钥从不离开你的电脑；在路上跑的只有那张短期有效的票
+Your private key never leaves your machine; only the short-lived ticket travels.
+
+211
+00:12:31,883 --> 00:12:34,848
+一小时用完，库会再换一个新的
+When the hour runs out, the library gets a new one.
+
+212
+00:12:35,168 --> 00:12:38,716
+课上那张 OAuth 图也终止在同一个柜台
+The lecture's OAuth diagram ends at this same desk,
+
+213
+00:12:38,716 --> 00:12:41,846
+只是少了授权同意页面：这里没有人
+minus the consent screen: no person is there.
+
+214
+00:12:42,083 --> 00:12:44,152
+来看 ADC 被抓个现行
+Here is ADC caught in the act.
+
+215
+00:12:44,472 --> 00:12:46,149
+在 /secrets 为空的情况下
+With /secrets empty,
+
+216
+00:12:46,149 --> 00:12:50,424
+额外用一行 Python 检查问 ADC 我们是谁
+an extra one-line Python check asks ADC who we are.
+
+217
+00:12:50,744 --> 00:12:53,772
+变量设了，所以 ADC 打开那个路径
+The variable is set, so ADC opens that path,
+
+218
+00:12:53,772 --> 00:12:57,763
+找不到文件，就停在那里，报同一个错误
+finds no file, and stops right there, with the same error.
+
+219
+00:12:58,083 --> 00:13:01,390
+错误的路径永远不会退回到另外两个位置
+A wrong path never falls back to the other two places.
+
+220
+00:13:01,710 --> 00:13:05,209
+密钥放好了，它就会说出你的服务账号
+With your key in place, it names your service account instead.
+
+221
+00:13:05,450 --> 00:13:08,870
+一个常见的误解：在你的 Mac 上设这个变量
+One common mix-up: setting that variable on your Mac
+
+222
+00:13:08,870 --> 00:13:13,343
+对 container 里面的身份验证毫无作用，那里这个路径必须存在
+authenticates nothing inside a container, where the path must exist.
+
+223
+00:13:13,663 --> 00:13:18,293
+所以脚本设的是 container 里的路径，再单独挂载宿主机目录
+That is why the scripts set a container path, and mount the host folder separately.
+
+224
+00:13:19,617 --> 00:13:21,942
+身份验证证明了你的代码是谁
+Authentication proved who your code is.
+
+225
+00:13:22,262 --> 00:13:25,142
+授权决定它能做什么，在哪里做
+Authorization decides what it may do, and where.
+
+226
+00:13:25,462 --> 00:13:30,476
+Google 把这叫 IAM：一个由身份、角色和资源组成的格子
+Google calls this IAM: a grid of identities, roles, and resources.
+
+227
+00:13:30,796 --> 00:13:34,808
+你的服务账号在你的项目里持有 Gemini 用户这个角色
+Your service account holds the Gemini user role in your project,
+
+228
+00:13:34,808 --> 00:13:36,940
+真正起作用的是那个绿色的格子
+and that green cell does the work.
+
+229
+00:13:37,260 --> 00:13:41,612
+Storage Admin 在它旁边，授予了，但这个应用从来没用过
+Storage Admin sits beside it, granted but never used by this app.
+
+230
+00:13:41,850 --> 00:13:43,791
+三个请求检验三个格子
+Three requests test three cells.
+
+231
+00:13:44,111 --> 00:13:46,442
+IAM 检查的是请求里点名的资源
+IAM checks the resource the request names;
+
+232
+00:13:46,442 --> 00:13:47,929
+对 embedding 来说
+for an embedding,
+
+233
+00:13:47,929 --> 00:13:51,365
+这个名字是客户端根据你的 GCP project 这个变量写出来的
+the client writes that name from your project variable.
+
+234
+00:13:51,685 --> 00:13:54,074
+在你自己项目里的 embedding 是允许的
+An embedding in your own project is allowed.
+
+235
+00:13:54,394 --> 00:13:58,221
+同样的调用换成脚本里没改过的默认项目
+The same call with the script's unedited default project
+
+236
+00:13:58,221 --> 00:14:02,458
+会以 403 被拒绝，因为你的账号在那里没有角色
+is refused with a 403, because your account has no role there.
+
+237
+00:14:02,778 --> 00:14:04,634
+所以两个脚本都要改
+That is why you edit both scripts.
+
+238
+00:14:04,954 --> 00:14:07,066
+第三根箭头留到第二部分
+The third arrow waits for part 2.
+
+239
+00:14:07,300 --> 00:14:09,857
+DefaultCredentialsError 或者 401
+A DefaultCredentialsError, or a 401,
+
+240
+00:14:09,857 --> 00:14:14,617
+意思是没有有效的令牌：检查路径、挂载和文件名
+means no valid token: check the path, the mount, and the file name.
+
+241
+00:14:14,937 --> 00:14:19,204
+403 的意思是身份验证通过了，但授权失败了
+A 403 means authentication worked, but authorization failed.
+
+242
+00:14:19,524 --> 00:14:24,879
+原因：缺了角色、项目不对，或者 API 没有启用
+The cause: a missing role, the wrong project, or an API that is not enabled.
+
+243
+00:14:25,117 --> 00:14:27,536
+最后这个原因是一个小疏漏
+That last cause is a small gap:
+
+244
+00:14:27,536 --> 00:14:31,282
+这里没有哪个 README 说要启用 Vertex AI API
+no README here says to enable the Vertex AI API.
+
+245
+00:14:31,602 --> 00:14:34,272
+如果你从没启用过，403 会直接说出来
+If you never did, the 403 says so,
+
+246
+00:14:34,272 --> 00:14:37,256
+一条额外的 gcloud 命令就能修好
+and one extra gcloud command fixes it.
+
+247
+00:14:37,500 --> 00:14:39,100
+来想一个问题
+Something to ponder.
+
+248
+00:14:39,164 --> 00:14:41,058
+你的密钥用来做 embedding 没问题
+Your key works for embeddings.
+
+249
+00:14:41,191 --> 00:14:43,660
+现在你贴上授课老师的 endpoint
+Now you paste the instructor's endpoint,
+
+250
+00:14:43,660 --> 00:14:46,439
+它以 projects 和一长串数字开头
+which begins with projects and a long number.
+
+251
+00:14:46,759 --> 00:14:49,578
+哪一部分决定检查谁的 IAM
+Which part decides whose IAM is checked:
+
+252
+00:14:49,578 --> 00:14:54,652
+GCP project 这个变量、密钥里的项目，还是 endpoint 路径？
+the project variable, the project inside your key, or the endpoint path?
+
+253
+00:15:03,500 --> 00:15:08,535
+是路径。不是密钥里的项目：那只说明工牌是在哪儿签发的
+The path. Not the key's project: that only says where the badge was issued.
+
+254
+00:15:08,855 --> 00:15:09,956
+也不是那个变量
+Not the variable:
+
+255
+00:15:09,956 --> 00:15:13,975
+endpoint 路径本身已经点名了一个项目，以这个名字为准
+the endpoint path already names a project, and that name wins.
+
+256
+00:15:14,295 --> 00:15:19,280
+那是别人的项目，你的账号在那里没有角色，所以是 403
+It is someone else's project, where your account has no role, so it is a 403;
+
+257
+00:15:19,280 --> 00:15:20,880
+第二部分会把它画出来
+part 2 draws it.
+
+258
+00:15:25,067 --> 00:15:27,584
+第一部分的最后一段：API
+Last stretch of part 1, the API.
+
+259
+00:15:27,904 --> 00:15:32,022
+在 api-service 目录里，做第二处项目名的修改
+In the api-service folder, make the second project-name edit.
+
+260
+00:15:32,342 --> 00:15:33,942
+暂停一下，照着做
+Pause and do it.
+
+261
+00:15:34,917 --> 00:15:38,586
+然后是 README 的命令：sh docker-shell.sh
+Then the README's command, sh docker-shell.sh.
+
+262
+00:15:38,906 --> 00:15:40,328
+暂停一下，自己跑一遍
+Pause and run it.
+
+263
+00:15:40,378 --> 00:15:43,258
+它马上就挂了：网络已经存在
+It dies at once: the network already exists.
+
+264
+00:15:43,684 --> 00:15:46,863
+这是这个 repo 里最大的疏漏，不是你的错
+This is the biggest slip in the repo, and not your fault.
+
+265
+00:15:47,183 --> 00:15:50,427
+第 14 行无条件地创建网络
+Line 14 creates the network unconditionally,
+
+266
+00:15:50,427 --> 00:15:54,777
+而第 4 行的 set -e 会让脚本在第一个错误处停下
+and set -e, on line 4, stops the script at the first error.
+
+267
+00:15:55,097 --> 00:15:57,618
+所以它一碰到网络已经存在就会失败
+So it fails whenever the network exists,
+
+268
+00:15:57,618 --> 00:16:00,580
+哪怕刚跑完 README 自己建网络的那一步
+even right after the README's own network step.
+
+269
+00:16:00,900 --> 00:16:03,392
+修法就是前面见过的那个套路
+The fix is the shape you met earlier:
+
+270
+00:16:03,392 --> 00:16:06,895
+把第 14 行换成 README 那条先检查、不存在再创建的命令
+make line 14 the README's inspect-or-create command.
+
+271
+00:16:07,215 --> 00:16:11,353
+暂停一下，在你的编辑器里改好；sed 是我们的做法，算额外步骤
+Pause and make that edit in your editor; the sed is ours, an extra.
+
+272
+00:16:11,600 --> 00:16:13,171
+再跑一次脚本
+Run the script again.
+
+273
+00:16:13,221 --> 00:16:17,637
+第一次构建会从 Pipfile.lock 安装 170 个 pin 住的包
+The first build installs 170 pinned packages from Pipfile.lock,
+
+274
+00:16:17,637 --> 00:16:21,563
+这在录制时花了大约三分钟
+which took about three minutes at the time of recording.
+
+275
+00:16:21,883 --> 00:16:23,611
+你会进到 pipenv shell 里
+You land in the pipenv shell.
+
+276
+00:16:23,931 --> 00:16:26,249
+输入 uvicorn server
+Type uvicorn_server,
+
+277
+00:16:26,249 --> 00:16:32,507
+API 就在 port 9000 上启动，监听 0.0.0.0
+and the API starts on port 9000, listening on 0.0.0.0.
+
+278
+00:16:32,827 --> 00:16:34,427
+暂停一下，两条都跑一遍
+Pause and run both.
+
+279
+00:16:37,017 --> 00:16:40,522
+服务器在 secrets 目录为空的情况下也顺利启动了
+The server started cleanly with an empty secrets folder,
+
+280
+00:16:40,522 --> 00:16:45,529
+因为 Google 客户端要到第一个请求时才去找凭据
+because the Google client does not look for credentials until its first request.
+
+281
+00:16:45,849 --> 00:16:47,299
+在第二个终端里
+In a second terminal,
+
+282
+00:16:47,299 --> 00:16:50,820
+额外用 curl 请求一个 embedding，得到的是 500
+an extra curl asks for an embedding and gets a 500.
+
+283
+00:16:51,140 --> 00:16:54,387
+服务器日志里是同一个 DefaultCredentialsError
+The server log shows the same DefaultCredentialsError,
+
+284
+00:16:54,387 --> 00:16:56,793
+在构建 bearer 请求头时抛出
+raised while building the bearer header.
+
+285
+00:16:57,113 --> 00:17:00,270
+启动是绿的，不代表身份验证过了
+A green startup is not an authenticated startup.
+
+286
+00:17:00,850 --> 00:17:05,537
+有真实密钥的话，同样的请求会返回一个 256 个数的列表
+With a real key, the same request returns a list of 256 numbers,
+
+287
+00:17:05,537 --> 00:17:07,137
+也就是 embedding
+the embedding.
+
+288
+00:17:07,357 --> 00:17:11,218
+这个长度必须和加载器的一致，否则数据库查询会失败
+That length must match the loader's, or the database queries fail.
+
+289
+00:17:11,538 --> 00:17:14,461
+整条链也会一路亮起来，一直到 200
+And the whole chain lights up, through to a 200.
+
+290
+00:17:14,700 --> 00:17:16,994
+README 在这里的最后一步
+The README's last step here:
+
+291
+00:17:16,994 --> 00:17:20,353
+在浏览器里打开 localhost:9000/docs
+open localhost:9000/docs in your browser.
+
+292
+00:17:20,673 --> 00:17:22,031
+暂停一下，看一看
+Pause and look.
+
+293
+00:17:22,081 --> 00:17:25,832
+额外跑几次 curl，能看到文档页和 README 里的五个路由
+Extra curls show the docs page and the README's five routes,
+
+294
+00:17:25,832 --> 00:17:27,458
+外加根路径上的一个
+plus one more at the root.
+
+295
+00:17:30,417 --> 00:17:32,641
+在你的机器上，有真实密钥的话
+On your machine, with a real key,
+
+296
+00:17:32,641 --> 00:17:37,158
+身份验证的链条现在就完整了，API 在你的笔记本上应答
+the auth chain is now complete, and the API answers on your laptop.
+
+297
+00:17:37,478 --> 00:17:38,836
+让它一直跑着
+Leave it running.
+
+298
+00:17:38,886 --> 00:17:40,756
+第二部分问两个问题
+Part 2 asks two questions:
+
+299
+00:17:40,756 --> 00:17:44,497
+网页怎么找到这个 API，还有谁也能找到它？
+how does a web page find this API, and who else can?

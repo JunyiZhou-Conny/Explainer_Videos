@@ -1,0 +1,9 @@
+00:00 Three phone calls, one question
+01:26 One laptop, three containers, one cloud
+03:05 An identity for code
+04:59 Two filesystems, one folder
+07:09 A network, a compose file, a running Chroma
+08:56 Chunks for free, embeddings need a key
+11:15 ADC: from key file to bearer token
+13:19 IAM: may this identity do this, here?
+15:25 Run the API, and survive line 14

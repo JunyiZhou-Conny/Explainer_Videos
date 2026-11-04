@@ -1,0 +1,525 @@
+[Script Info]
+Title: AC215 · Lecture 10 — Connecting to the cloud: one key, three containers, one browser (follow-along: cheese-app-v0)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:02.94,Bilingual,,0,0,0,,这是一个奶酪聊天机器人，跑在你的笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}Here is a cheese chatbot, running on your laptop.
+Dialogue: 0,0:00:03.26,0:00:05.46,Bilingual,,0,0,0,,你问它 Tolminc 奶酪是怎么做的\N{\fs33\c&H00C8C0B8&\bord1.4}You ask it how Tolminc cheese is made.
+Dialogue: 0,0:00:05.78,0:00:09.54,Bilingual,,0,0,0,,答案出来了，附带 10 段书里的原文作为参考来源\N{\fs33\c&H00C8C0B8&\bord1.4}An answer appears, with ten book passages as references.
+Dialogue: 0,0:00:09.78,0:00:13.00,Bilingual,,0,0,0,,在这一个回答背后，你的浏览器发起了三次调用\N{\fs33\c&H00C8C0B8&\bord1.4}Behind that one answer, your browser makes three calls.
+Dialogue: 0,0:00:13.32,0:00:16.50,Bilingual,,0,0,0,,其中两次打到 port 9000 上的一个 Python 服务器\N{\fs33\c&H00C8C0B8&\bord1.4}Two go to a Python server on port 9000,
+Dialogue: 0,0:00:16.50,0:00:19.77,Bilingual,,0,0,0,,一次打到 port 8000 上的一个数据库\N{\fs33\c&H00C8C0B8&\bord1.4}and one goes to a database on port 8000.
+Dialogue: 0,0:00:20.09,0:00:23.46,Bilingual,,0,0,0,,这两个服务器调用的背后，都是 Google 在干重活\N{\fs33\c&H00C8C0B8&\bord1.4}Behind both server calls, Google does the heavy lifting.
+Dialogue: 0,0:00:23.78,0:00:25.66,Bilingual,,0,0,0,,那么，谁来确认真的是你？\N{\fs33\c&H00C8C0B8&\bord1.4}So who checks that it is really you?
+Dialogue: 0,0:00:25.98,0:00:29.79,Bilingual,,0,0,0,,还有，网页怎么找到 container 里的数据库？\N{\fs33\c&H00C8C0B8&\bord1.4}And how does a web page find a database inside a container?
+Dialogue: 0,0:00:30.03,0:00:32.04,Bilingual,,0,0,0,,这个应用里藏着三个小谜题\N{\fs33\c&H00C8C0B8&\bord1.4}Three small riddles hide in this app.
+Dialogue: 0,0:00:32.36,0:00:37.86,Bilingual,,0,0,0,,参数 -p 3200:3000 里有两个数字，为什么？\N{\fs33\c&H00C8C0B8&\bord1.4}The flag -p 3200:3000 has two numbers; why?
+Dialogue: 0,0:00:38.18,0:00:41.45,Bilingual,,0,0,0,,还有这里的 localhost:9000，指的是哪台机器？\N{\fs33\c&H00C8C0B8&\bord1.4}And localhost:9000: which machine is that?
+Dialogue: 0,0:00:41.77,0:00:45.69,Bilingual,,0,0,0,,而 llm-rag-chromadb 只是一个名字，它的地址在哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}And llm-rag-chromadb is only a name; where is its address?
+Dialogue: 0,0:00:46.01,0:00:47.91,Bilingual,,0,0,0,,每个谜题今天都会揭晓答案\N{\fs33\c&H00C8C0B8&\bord1.4}Each one gets its answer today.
+Dialogue: 0,0:00:48.23,0:00:52.82,Bilingual,,0,0,0,,然后真正的问题来了：既然谁都能来敲门，谁才能进来？\N{\fs33\c&H00C8C0B8&\bord1.4}Then the real question arrives: once anything can knock, who is allowed in?
+Dialogue: 0,0:00:53.07,0:00:57.59,Bilingual,,0,0,0,,跟着做需要你 clone 的 cheese-app-v0、Docker Desktop\N{\fs33\c&H00C8C0B8&\bord1.4}To follow along you need your clone of cheese-app-v0, Docker Desktop,
+Dialogue: 0,0:00:57.59,0:01:00.21,Bilingual,,0,0,0,,以及一个开通了结算的 Google Cloud 项目\N{\fs33\c&H00C8C0B8&\bord1.4}and a Google Cloud project with billing.
+Dialogue: 0,0:01:00.53,0:01:04.07,Bilingual,,0,0,0,,这一讲会真的发起付费的 Vertex AI 调用\N{\fs33\c&H00C8C0B8&\bord1.4}This lecture makes real, paid calls to Vertex AI;
+Dialogue: 0,0:01:04.07,0:01:09.41,Bilingual,,0,0,0,,每一处都有金色标签标出，视频最后会把一切都关掉\N{\fs33\c&H00C8C0B8&\bord1.4}a gold tag marks each one, and the video ends by shutting everything down.
+Dialogue: 0,0:01:09.73,0:01:15.06,Bilingual,,0,0,0,,左上角的进度条按六个阶段跟着 README 走，从准备一直到关闭\N{\fs33\c&H00C8C0B8&\bord1.4}The tracker in the top left follows the README in six stages, from setup to shutdown.
+Dialogue: 0,0:01:15.38,0:01:18.37,Bilingual,,0,0,0,,看到黄色的 your turn 标签，就暂停，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}A yellow your-turn tag means pause and run it,
+Dialogue: 0,0:01:18.37,0:01:22.34,Bilingual,,0,0,0,,灰色的 extra 标签表示这个检查 README 里没有\N{\fs33\c&H00C8C0B8&\bord1.4}and a gray extra tag marks a check that is not in the README.
+Dialogue: 0,0:01:22.66,0:01:25.66,Bilingual,,0,0,0,,每条命令都在学习指南里，链接在下方\N{\fs33\c&H00C8C0B8&\bord1.4}Every command is in the study guide, linked below.
+Dialogue: 0,0:01:26.70,0:01:29.47,Bilingual,,0,0,0,,首先是地图，它会陪我们走完这一讲\N{\fs33\c&H00C8C0B8&\bord1.4}First, the map, which stays with us all lecture.
+Dialogue: 0,0:01:29.79,0:01:31.41,Bilingual,,0,0,0,,你的笔记本是一栋房子\N{\fs33\c&H00C8C0B8&\bord1.4}Your laptop is one house,
+Dialogue: 0,0:01:31.41,0:01:37.18,Bilingual,,0,0,0,,每栋房子都有自己的回环地址 localhost，它永远指这台机器\N{\fs33\c&H00C8C0B8&\bord1.4}and every house has its own loopback address, localhost, which always means this machine.
+Dialogue: 0,0:01:37.50,0:01:41.16,Bilingual,,0,0,0,,Docker 在里面铺了两条私有的街道，一个网络一条\N{\fs33\c&H00C8C0B8&\bord1.4}Docker lays two private streets inside it, one per network.
+Dialogue: 0,0:01:41.48,0:01:43.76,Bilingual,,0,0,0,,会有三个服务站在这些街上\N{\fs33\c&H00C8C0B8&\bord1.4}Three services will stand on them:
+Dialogue: 0,0:01:43.76,0:01:48.72,Bilingual,,0,0,0,,向量数据库和它的加载器、API 服务器，还有网页前端\N{\fs33\c&H00C8C0B8&\bord1.4}the vector database with its loader, the API server, and the web frontend.
+Dialogue: 0,0:01:49.04,0:01:51.60,Bilingual,,0,0,0,,每栋房子都会在它的 container 启动时亮起来\N{\fs33\c&H00C8C0B8&\bord1.4}Each house lights up when its container starts.
+Dialogue: 0,0:01:51.83,0:01:55.61,Bilingual,,0,0,0,,你的浏览器站在笔记本的地面上，不在任何一条街上\N{\fs33\c&H00C8C0B8&\bord1.4}Your browser stands on the laptop floor, outside every street.
+Dialogue: 0,0:01:55.93,0:01:59.94,Bilingual,,0,0,0,,公共街道对面是 Google 的大楼，门口有人把守\N{\fs33\c&H00C8C0B8&\bord1.4}Across the public street sits Google's building, with a guarded door.
+Dialogue: 0,0:02:00.26,0:02:01.86,Bilingual,,0,0,0,,那么，谁打给谁？\N{\fs33\c&H00C8C0B8&\bord1.4}Now, who calls whom?
+Dialogue: 0,0:02:01.97,0:02:04.31,Bilingual,,0,0,0,,加载器打给 Google 和数据库\N{\fs33\c&H00C8C0B8&\bord1.4}The loader calls Google and the database.
+Dialogue: 0,0:02:04.63,0:02:06.38,Bilingual,,0,0,0,,API 打给 Google\N{\fs33\c&H00C8C0B8&\bord1.4}The API calls Google.
+Dialogue: 0,0:02:06.70,0:02:08.64,Bilingual,,0,0,0,,你的浏览器打给其余所有服务\N{\fs33\c&H00C8C0B8&\bord1.4}Your browser calls everything else.
+Dialogue: 0,0:02:08.96,0:02:13.53,Bilingual,,0,0,0,,而 API 从不和数据库说话；README 自己就是这么写的\N{\fs33\c&H00C8C0B8&\bord1.4}And the API never talks to the database; the README says so itself.
+Dialogue: 0,0:02:13.85,0:02:16.43,Bilingual,,0,0,0,,第二部分会讲为什么浏览器要干这么多活\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 shows why the browser does so much.
+Dialogue: 0,0:02:16.67,0:02:18.05,Bilingual,,0,0,0,,该动手敲了\N{\fs33\c&H00C8C0B8&\bord1.4}Time to type.
+Dialogue: 0,0:02:18.10,0:02:23.86,Bilingual,,0,0,0,,README 的前置条件很短：装好 Docker，再 clone 这个仓库\N{\fs33\c&H00C8C0B8&\bord1.4}The README's prerequisites are short: have Docker installed, and clone this repository.
+Dialogue: 0,0:02:24.18,0:02:27.80,Bilingual,,0,0,0,,README 没给地址，所以这里给出 repo 的地址\N{\fs33\c&H00C8C0B8&\bord1.4}The README gives no address, so here is the repo's address.
+Dialogue: 0,0:02:28.12,0:02:29.72,Bilingual,,0,0,0,,暂停一下，把它 clone 下来\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and clone it.
+Dialogue: 0,0:02:32.63,0:02:36.83,Bilingual,,0,0,0,,额外跑一下 git log，可以看到这个视频用的 commit\N{\fs33\c&H00C8C0B8&\bord1.4}An extra git log shows the commit this video uses,
+Dialogue: 0,0:02:36.83,0:02:38.76,Bilingual,,0,0,0,,日期是 2026 年 10 月 8 日\N{\fs33\c&H00C8C0B8&\bord1.4}from October 8th, 2026;
+Dialogue: 0,0:02:38.76,0:02:41.96,Bilingual,,0,0,0,,你的要是更新，细节可能不一样\N{\fs33\c&H00C8C0B8&\bord1.4}if yours is newer, details may differ.
+Dialogue: 0,0:02:42.28,0:02:43.62,Bilingual,,0,0,0,,再额外列一下目录\N{\fs33\c&H00C8C0B8&\bord1.4}An extra listing
+Dialogue: 0,0:02:43.62,0:02:47.57,Bilingual,,0,0,0,,llm-rag、api-service 和 frontend-ai-chatbot\N{\fs33\c&H00C8C0B8&\bord1.4}shows llm-rag, api-service, and frontend-ai-chatbot:
+Dialogue: 0,0:02:47.57,0:02:49.21,Bilingual,,0,0,0,,一栋房子一个目录\N{\fs33\c&H00C8C0B8&\bord1.4}one folder per house.
+Dialogue: 0,0:02:49.45,0:02:50.87,Bilingual,,0,0,0,,有一个小疏漏\N{\fs33\c&H00C8C0B8&\bord1.4}One small gap.
+Dialogue: 0,0:02:50.92,0:02:54.11,Bilingual,,0,0,0,,这个应用自己的主页上，动画演示的是一个托管版本\N{\fs33\c&H00C8C0B8&\bord1.4}The app's own home page animates a hosted version,
+Dialogue: 0,0:02:54.11,0:02:56.47,Bilingual,,0,0,0,,Web 服务器跑在一台云端机器上\N{\fs33\c&H00C8C0B8&\bord1.4}with a web server on a cloud machine.
+Dialogue: 0,0:02:56.79,0:02:59.90,Bilingual,,0,0,0,,那套部署的文件已经从 repo 里删掉了\N{\fs33\c&H00C8C0B8&\bord1.4}The files for that setup were deleted from the repo.
+Dialogue: 0,0:03:00.22,0:03:04.49,Bilingual,,0,0,0,,你跑的是本地版本，而这张地图画的正是你跑的东西\N{\fs33\c&H00C8C0B8&\bord1.4}You are running the local version, and this map draws exactly what you run.
+Dialogue: 0,0:03:05.53,0:03:09.31,Bilingual,,0,0,0,,第二个前置条件是创建一个身份，但不是给你用的\N{\fs33\c&H00C8C0B8&\bord1.4}The second prerequisite creates an identity, but not for you.
+Dialogue: 0,0:03:09.63,0:03:12.51,Bilingual,,0,0,0,,服务账号就是给软件用的身份\N{\fs33\c&H00C8C0B8&\bord1.4}A service account is an identity for software.
+Dialogue: 0,0:03:12.83,0:03:17.44,Bilingual,,0,0,0,,它的邮箱就像这张工牌：llm-service-account，后面是你的项目\N{\fs33\c&H00C8C0B8&\bord1.4}Its email looks like this badge: llm-service-account@your-gcp-project.iam.gserviceaccount.com.
+Dialogue: 0,0:03:17.76,0:03:21.13,Bilingual,,0,0,0,,代码戴着它去调用 Google，不需要登录界面\N{\fs33\c&H00C8C0B8&\bord1.4}Code wears it to call Google, with no login screen.
+Dialogue: 0,0:03:22.02,0:03:24.98,Bilingual,,0,0,0,,按量计费的公开调用用 API key\N{\fs33\c&H00C8C0B8&\bord1.4}A metered public call gets an API key.
+Dialogue: 0,0:03:25.30,0:03:28.38,Bilingual,,0,0,0,,替一个同意授权的用户办事的应用，用 OAuth\N{\fs33\c&H00C8C0B8&\bord1.4}An app acting for a consenting user gets OAuth,
+Dialogue: 0,0:03:28.38,0:03:30.32,Bilingual,,0,0,0,,也就是用 Google 账号登录的那套流程\N{\fs33\c&H00C8C0B8&\bord1.4}the Sign in with Google flow.
+Dialogue: 0,0:03:30.64,0:03:35.39,Bilingual,,0,0,0,,我们的代码在你自己的项目里调用 Vertex AI，所以它用服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}Our code calls Vertex AI in your own project, so it gets a service account.
+Dialogue: 0,0:03:35.71,0:03:40.15,Bilingual,,0,0,0,,规则最后一行说，Google 之外的代码应该用身份联合\N{\fs33\c&H00C8C0B8&\bord1.4}The rule's last line says code outside Google should use federation.
+Dialogue: 0,0:03:40.47,0:03:43.03,Bilingual,,0,0,0,,这需要有人为你的代码担保\N{\fs33\c&H00C8C0B8&\bord1.4}That needs someone to vouch for your code,
+Dialogue: 0,0:03:43.03,0:03:45.72,Bilingual,,0,0,0,,就像 GitHub 为 GitHub Actions 里的代码担保那样\N{\fs33\c&H00C8C0B8&\bord1.4}as GitHub does for code in GitHub Actions.
+Dialogue: 0,0:03:46.04,0:03:50.01,Bilingual,,0,0,0,,笔记本没有人来担保，所以课程改为直接给你一个密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}A laptop has nobody, so the course hands you a key file instead.
+Dialogue: 0,0:03:50.25,0:03:53.43,Bilingual,,0,0,0,,打开 IAM & Admin，再进 Service accounts\N{\fs33\c&H00C8C0B8&\bord1.4}Open IAM & Admin, then Service accounts.
+Dialogue: 0,0:03:53.75,0:03:56.27,Bilingual,,0,0,0,,建一个，名字叫 llm-service-account\N{\fs33\c&H00C8C0B8&\bord1.4}Create one named llm-service-account.
+Dialogue: 0,0:03:56.59,0:04:00.79,Bilingual,,0,0,0,,给它授予两个角色，也就是权限的集合：Storage Admin\N{\fs33\c&H00C8C0B8&\bord1.4}Grant it two roles, bundles of permissions: Storage Admin,
+Dialogue: 0,0:04:00.79,0:04:03.84,Bilingual,,0,0,0,,和 Gemini Enterprise Agent Platform User\N{\fs33\c&H00C8C0B8&\bord1.4}and Gemini Enterprise Agent Platform User.
+Dialogue: 0,0:04:04.16,0:04:09.69,Bilingual,,0,0,0,,第二个角色以前叫 Vertex AI User，本质上还是同一个角色\N{\fs33\c&H00C8C0B8&\bord1.4}The second role was formerly called Vertex AI User; it is the same role underneath.
+Dialogue: 0,0:04:10.01,0:04:11.61,Bilingual,,0,0,0,,暂停一下，建一个你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and create yours.
+Dialogue: 0,0:04:11.77,0:04:13.37,Bilingual,,0,0,0,,关于课件，说两点\N{\fs33\c&H00C8C0B8&\bord1.4}Two notes on the slides.
+Dialogue: 0,0:04:13.60,0:04:17.55,Bilingual,,0,0,0,,课件里那个只有一个存储角色的演示账号，是下周的\N{\fs33\c&H00C8C0B8&\bord1.4}The slides' demo account, with one storage role, is next week's.
+Dialogue: 0,0:04:17.87,0:04:23.05,Bilingual,,0,0,0,,而且这个应用从来不碰存储；那个角色是从微调那一讲带过来的\N{\fs33\c&H00C8C0B8&\bord1.4}And this app never touches storage; that role rides along from the fine-tuning lecture.
+Dialogue: 0,0:04:23.37,0:04:25.91,Bilingual,,0,0,0,,不过两个都要授予，照 README 说的做\N{\fs33\c&H00C8C0B8&\bord1.4}Grant both anyway, as the README says.
+Dialogue: 0,0:04:26.23,0:04:30.37,Bilingual,,0,0,0,,课上的规则是最小权限，意思是只给你需要的权限\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's rule, least privilege, meaning only the access you need,
+Dialogue: 0,0:04:30.37,0:04:31.87,Bilingual,,0,0,0,,照它来会授予得更少\N{\fs33\c&H00C8C0B8&\bord1.4}would grant less;
+Dialogue: 0,0:04:31.87,0:04:33.47,Bilingual,,0,0,0,,第二部分还会回到这一点\N{\fs33\c&H00C8C0B8&\bord1.4}part 2 comes back to it.
+Dialogue: 0,0:04:33.67,0:04:36.27,Bilingual,,0,0,0,,在这个账号的 KEYS 标签页添加一个密钥\N{\fs33\c&H00C8C0B8&\bord1.4}On the account's Keys tab, add a key,
+Dialogue: 0,0:04:36.27,0:04:38.66,Bilingual,,0,0,0,,选 JSON，就会下载一个文件\N{\fs33\c&H00C8C0B8&\bord1.4}choose JSON, and a file downloads.
+Dialogue: 0,0:04:38.98,0:04:40.58,Bilingual,,0,0,0,,暂停一下，做一个你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and make yours.
+Dialogue: 0,0:04:40.71,0:04:45.46,Bilingual,,0,0,0,,里面有你的项目、这个账号的邮箱、一个令牌地址，还有一个私钥\N{\fs33\c&H00C8C0B8&\bord1.4}Inside are your project, the account's email, a token address, and a private key.
+Dialogue: 0,0:04:45.78,0:04:48.09,Bilingual,,0,0,0,,这个私钥就是全部的秘密\N{\fs33\c&H00C8C0B8&\bord1.4}That private key is the whole secret.
+Dialogue: 0,0:04:48.41,0:04:50.88,Bilingual,,0,0,0,,它只是单一因素，属于你持有的东西\N{\fs33\c&H00C8C0B8&\bord1.4}It is one factor, something you have:
+Dialogue: 0,0:04:50.88,0:04:55.28,Bilingual,,0,0,0,,在哪儿都能用，不需要第二步，直到被删除或停用\N{\fs33\c&H00C8C0B8&\bord1.4}it works anywhere, with no second step, until deleted or disabled.
+Dialogue: 0,0:04:55.60,0:04:58.75,Bilingual,,0,0,0,,把这个文件当密码看待，绝不要当配置\N{\fs33\c&H00C8C0B8&\bord1.4}Treat this file like a password, never like config.
+Dialogue: 0,0:04:59.80,0:05:03.04,Bilingual,,0,0,0,,README 说把密钥复制到一个 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}The README says to copy the key into a secrets folder.
+Dialogue: 0,0:05:03.36,0:05:07.18,Bilingual,,0,0,0,,哪一个？API 的脚本在第 8 行给出了答案\N{\fs33\c&H00C8C0B8&\bord1.4}Which one? The API's script answers on line 8.
+Dialogue: 0,0:05:07.50,0:05:10.64,Bilingual,,0,0,0,,路径从你运行它的地方开始，也就是 api-service\N{\fs33\c&H00C8C0B8&\bord1.4}The path starts where you run it, in api-service.
+Dialogue: 0,0:05:10.96,0:05:14.22,Bilingual,,0,0,0,,它往上爬两级，落在 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}It climbs up twice and lands on the secrets folder,
+Dialogue: 0,0:05:14.22,0:05:16.21,Bilingual,,0,0,0,,就在 repo 旁边，而不是里面\N{\fs33\c&H00C8C0B8&\bord1.4}beside the repo, not inside it.
+Dialogue: 0,0:05:16.45,0:05:20.36,Bilingual,,0,0,0,,接着，一个 -v 参数把这个宿主机目录挂载到 /secrets\N{\fs33\c&H00C8C0B8&\bord1.4}Then a -v flag mounts that host folder at /secrets,
+Dialogue: 0,0:05:20.36,0:05:21.98,Bilingual,,0,0,0,,在 container 里面\N{\fs33\c&H00C8C0B8&\bord1.4}inside the container.
+Dialogue: 0,0:05:22.30,0:05:25.36,Bilingual,,0,0,0,,Google application credentials 这个变量\N{\fs33\c&H00C8C0B8&\bord1.4}The GOOGLE_APPLICATION_CREDENTIALS variable,
+Dialogue: 0,0:05:25.36,0:05:28.56,Bilingual,,0,0,0,,告诉 Google 的库密钥在哪儿\N{\fs33\c&H00C8C0B8&\bord1.4}which tells Google's library where the key is,
+Dialogue: 0,0:05:28.56,0:05:31.90,Bilingual,,0,0,0,,它指向 /secrets，一个 container 里的路径\N{\fs33\c&H00C8C0B8&\bord1.4}points to /secrets, a path inside the container.
+Dialogue: 0,0:05:32.22,0:05:37.44,Bilingual,,0,0,0,,两个文件系统，一个目录，而这个变量只有在挂载之后才有意义\N{\fs33\c&H00C8C0B8&\bord1.4}Two filesystems, one folder, and that variable only makes sense after the mount.
+Dialogue: 0,0:05:37.68,0:05:40.81,Bilingual,,0,0,0,,加载器的 compose 文件搭了同一个传送门\N{\fs33\c&H00C8C0B8&\bord1.4}The loader's compose file builds the same portal
+Dialogue: 0,0:05:40.81,0:05:44.00,Bilingual,,0,0,0,,从自己的目录出发：往上两级，同一个 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}from its own folder: up two levels, same secrets.
+Dialogue: 0,0:05:44.32,0:05:49.37,Bilingual,,0,0,0,,课件上的那一页只往上爬一级，因为它的 repo 浅一层\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's slide climbs only once, because its repos sit one level shallower.
+Dialogue: 0,0:05:49.69,0:05:52.40,Bilingual,,0,0,0,,永远要数清往上爬了几级，从脚本所在的位置数起\N{\fs33\c&H00C8C0B8&\bord1.4}Always count the climbs from where the script sits.
+Dialogue: 0,0:05:52.65,0:05:55.97,Bilingual,,0,0,0,,在你的 clone 旁边建好这个目录，这是额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Make the folder beside your clone, as an extra,
+Dialogue: 0,0:05:55.97,0:06:00.57,Bilingual,,0,0,0,,然后把下载的文件移进去，改名为 llm-service-account.json\N{\fs33\c&H00C8C0B8&\bord1.4}then move the download in and rename it llm-service-account.json.
+Dialogue: 0,0:06:00.89,0:06:05.56,Bilingual,,0,0,0,,检查一下名字：隐藏的扩展名可能让它变成 .json.json\N{\fs33\c&H00C8C0B8&\bord1.4}Check that name: hidden extensions can leave .json.json.
+Dialogue: 0,0:06:05.88,0:06:08.74,Bilingual,,0,0,0,,额外用 tree 看一下，是 README 里的目录结构\N{\fs33\c&H00C8C0B8&\bord1.4}An extra tree view shows the README's layout.
+Dialogue: 0,0:06:09.06,0:06:10.66,Bilingual,,0,0,0,,暂停一下，把你的也摆成这样\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and match it.
+Dialogue: 0,0:06:16.92,0:06:18.32,Bilingual,,0,0,0,,接下来是一个不显眼的陷阱\N{\fs33\c&H00C8C0B8&\bord1.4}Now a quiet trap:
+Dialogue: 0,0:06:18.32,0:06:21.57,Bilingual,,0,0,0,,这个 repo 的 .gitignore 里没有任何关于 secrets 的规则\N{\fs33\c&H00C8C0B8&\bord1.4}the repo's gitignore has no rule for secrets.
+Dialogue: 0,0:06:21.62,0:06:24.19,Bilingual,,0,0,0,,没有任何东西保护放在 repo 里面的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing protects a key inside the repo.
+Dialogue: 0,0:06:24.43,0:06:26.03,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:06:26.10,0:06:31.51,Bilingual,,0,0,0,,假设你把密钥存在 repo 里面，也就是 cheese-app-v0/secrets\N{\fs33\c&H00C8C0B8&\bord1.4}Suppose you save the key inside the repo, in cheese-app-v0/secrets,
+Dialogue: 0,0:06:31.51,0:06:34.74,Bilingual,,0,0,0,,然后在 api-service 里运行 API 脚本\N{\fs33\c&H00C8C0B8&\bord1.4}and run the API script from api-service.
+Dialogue: 0,0:06:35.06,0:06:39.24,Bilingual,,0,0,0,,这时 /secrets 里有什么，第一次 embedding 调用又会怎样？\N{\fs33\c&H00C8C0B8&\bord1.4}What is in /secrets, and what happens on the first embedding call?
+Dialogue: 0,0:06:48.08,0:06:52.07,Bilingual,,0,0,0,,路径还是往上爬两级，爬到一个不存在的目录\N{\fs33\c&H00C8C0B8&\bord1.4}The cursor still climbs twice, to a folder that does not exist.
+Dialogue: 0,0:06:52.39,0:06:56.74,Bilingual,,0,0,0,,Docker 不会抱怨；它会悄悄地创建这个目录，空的\N{\fs33\c&H00C8C0B8&\bord1.4}Docker does not complain; it silently creates that folder, empty.
+Dialogue: 0,0:06:57.06,0:07:01.16,Bilingual,,0,0,0,,所以 /secrets 是空的，第一次 embedding 调用会失败\N{\fs33\c&H00C8C0B8&\bord1.4}So /secrets is empty, and the first embedding call fails
+Dialogue: 0,0:07:01.16,0:07:04.60,Bilingual,,0,0,0,,报 DefaultCredentialsError：找不到文件\N{\fs33\c&H00C8C0B8&\bord1.4}with a DefaultCredentialsError: file not found.
+Dialogue: 0,0:07:04.92,0:07:08.50,Bilingual,,0,0,0,,而你的密钥正躺在一个没有任何保护的 git 目录树里\N{\fs33\c&H00C8C0B8&\bord1.4}Meanwhile your key sits in a git tree that nothing protects.
+Dialogue: 0,0:07:09.53,0:07:12.20,Bilingual,,0,0,0,,最后一个前置条件：Docker 网络\N{\fs33\c&H00C8C0B8&\bord1.4}Last prerequisite: the Docker network.
+Dialogue: 0,0:07:12.52,0:07:17.30,Bilingual,,0,0,0,,README 的命令先悄悄检查它，只有检查失败才创建\N{\fs33\c&H00C8C0B8&\bord1.4}The README's command inspects it quietly, and creates it only if that fails.
+Dialogue: 0,0:07:17.62,0:07:18.97,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:07:19.02,0:07:21.75,Bilingual,,0,0,0,,额外再跑一次会怎样？\N{\fs33\c&H00C8C0B8&\bord1.4}What happens if you run it again, as an extra?
+Dialogue: 0,0:07:22.07,0:07:24.67,Bilingual,,0,0,0,,什么都不会发生：不报错，也不会多出第二个网络\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing: no error, no second network.
+Dialogue: 0,0:07:24.99,0:07:28.62,Bilingual,,0,0,0,,一条跑两次也安全的命令，叫作幂等的\N{\fs33\c&H00C8C0B8&\bord1.4}A command that is safe to run twice is called idempotent.
+Dialogue: 0,0:07:28.94,0:07:30.38,Bilingual,,0,0,0,,记住这个套路\N{\fs33\c&H00C8C0B8&\bord1.4}Remember this shape.
+Dialogue: 0,0:07:30.43,0:07:34.01,Bilingual,,0,0,0,,在 llm-rag 里，shell 脚本自带一个默认项目\N{\fs33\c&H00C8C0B8&\bord1.4}In llm-rag, the shell script ships with a default project
+Dialogue: 0,0:07:34.01,0:07:35.61,Bilingual,,0,0,0,,而那不是你的项目\N{\fs33\c&H00C8C0B8&\bord1.4}that is not yours.
+Dialogue: 0,0:07:35.68,0:07:39.63,Bilingual,,0,0,0,,把 GCP project 这个变量改成你自己的项目 ID\N{\fs33\c&H00C8C0B8&\bord1.4}Update the GCP_PROJECT variable to your own project ID;
+Dialogue: 0,0:07:39.63,0:07:42.51,Bilingual,,0,0,0,,我们用 sed，你用任何编辑器都行\N{\fs33\c&H00C8C0B8&\bord1.4}we use the sed tool, you use any editor.
+Dialogue: 0,0:07:42.83,0:07:44.43,Bilingual,,0,0,0,,暂停一下，改好它\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and edit it.
+Dialogue: 0,0:07:44.60,0:07:48.42,Bilingual,,0,0,0,,现在是 README 的命令：sh docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README's command: sh docker-shell.sh.
+Dialogue: 0,0:07:48.74,0:07:50.16,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:07:50.21,0:07:51.71,Bilingual,,0,0,0,,Compose 拉取 Chroma\N{\fs33\c&H00C8C0B8&\bord1.4}Compose pulls Chroma,
+Dialogue: 0,0:07:51.71,0:07:56.40,Bilingual,,0,0,0,,创建一个叫 llm-rag-network 的网络，然后在上面启动数据库\N{\fs33\c&H00C8C0B8&\bord1.4}creates a network called llm-rag-network, and starts the database on it.
+Dialogue: 0,0:07:56.72,0:07:59.81,Bilingual,,0,0,0,,这个文件里的每个服务都会自动加入它\N{\fs33\c&H00C8C0B8&\bord1.4}Every service in this file joins it automatically.
+Dialogue: 0,0:08:00.13,0:08:03.45,Bilingual,,0,0,0,,那行 pull access denied 是无害的\N{\fs33\c&H00C8C0B8&\bord1.4}The line that says pull access denied is harmless:
+Dialogue: 0,0:08:03.45,0:08:07.56,Bilingual,,0,0,0,,这个 image 不在 Docker Hub 上，所以 Compose 在本地构建它\N{\fs33\c&H00C8C0B8&\bord1.4}that image is not on Docker Hub, so Compose builds it locally.
+Dialogue: 0,0:08:07.88,0:08:11.45,Bilingual,,0,0,0,,这里 container 的架构是 x86\N{\fs33\c&H00C8C0B8&\bord1.4}The container's architecture is x86 here;
+Dialogue: 0,0:08:11.45,0:08:13.81,Bilingual,,0,0,0,,Apple Silicon 上会显示 aarch64\N{\fs33\c&H00C8C0B8&\bord1.4}Apple Silicon says aarch64.
+Dialogue: 0,0:08:14.05,0:08:15.84,Bilingual,,0,0,0,,在里面做两个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}Two extra checks inside.
+Dialogue: 0,0:08:16.16,0:08:19.58,Bilingual,,0,0,0,,密钥文件出现在 /secrets 里，是穿过传送门来的\N{\fs33\c&H00C8C0B8&\bord1.4}The key file shows up in /secrets, through the portal.
+Dialogue: 0,0:08:19.90,0:08:24.23,Bilingual,,0,0,0,,两个变量也都设好了，是 Compose 从启动它的脚本那里复制过来的\N{\fs33\c&H00C8C0B8&\bord1.4}And both variables are set, copied by Compose from the launching script,
+Dialogue: 0,0:08:24.23,0:08:26.40,Bilingual,,0,0,0,,所以永远要从这个脚本启动\N{\fs33\c&H00C8C0B8&\bord1.4}which is why you always start there.
+Dialogue: 0,0:08:26.65,0:08:28.95,Bilingual,,0,0,0,,关于这次录制，如实说一句\N{\fs33\c&H00C8C0B8&\bord1.4}One honest note about this recording.
+Dialogue: 0,0:08:29.27,0:08:31.47,Bilingual,,0,0,0,,这台机器没有 Google 账号\N{\fs33\c&H00C8C0B8&\bord1.4}This machine has no Google account.
+Dialogue: 0,0:08:31.79,0:08:35.65,Bilingual,,0,0,0,,你刚才看到的密钥文件，是一个明显无效的替身\N{\fs33\c&H00C8C0B8&\bord1.4}The key file you just saw is an obviously invalid stand-in.
+Dialogue: 0,0:08:35.97,0:08:41.50,Bilingual,,0,0,0,,放它是为了让目录列表和 README 对得上，云端步骤之前就删掉了\N{\fs33\c&H00C8C0B8&\bord1.4}It is there so the folder listings match the README, and it was removed before the cloud steps.
+Dialogue: 0,0:08:41.82,0:08:44.90,Bilingual,,0,0,0,,所以从这里开始，每个云端调用的失败方式\N{\fs33\c&H00C8C0B8&\bord1.4}So from here on, every cloud call fails exactly the way a missing key fails.
+Dialogue: 0,0:08:44.90,0:08:46.75,Bilingual,,0,0,0,,都和缺少密钥时一模一样\N{\fs33\c&H00C8C0B8&\bord1.4}So from here on, every cloud call fails exactly the way a missing key fails.
+Dialogue: 0,0:08:47.07,0:08:50.95,Bilingual,,0,0,0,,这是这一讲最常见的错误，所以一眼就要认出来\N{\fs33\c&H00C8C0B8&\bord1.4}It is the most common mistake in this lecture, so learn it on sight.
+Dialogue: 0,0:08:51.27,0:08:55.19,Bilingual,,0,0,0,,你接下来该看到的每一个成功结果，都标着 recorded，并注明出处\N{\fs33\c&H00C8C0B8&\bord1.4}Every success you should expect is tagged recorded, with its source.
+Dialogue: 0,0:08:56.23,0:09:00.47,Bilingual,,0,0,0,,进了 container，README 的第一条命令做三件事\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the container, the README's first command does three jobs:
+Dialogue: 0,0:09:00.47,0:09:03.40,Bilingual,,0,0,0,,用 char-split 分块、向量化、加载\N{\fs33\c&H00C8C0B8&\bord1.4}it chunks, embeds and loads, with char-split.
+Dialogue: 0,0:09:03.72,0:09:06.32,Bilingual,,0,0,0,,提示符里的 ID 每次运行都会变\N{\fs33\c&H00C8C0B8&\bord1.4}The ID in the prompt changes every run.
+Dialogue: 0,0:09:06.64,0:09:11.98,Bilingual,,0,0,0,,分块是真的跑了：11 本书，Tolminc 那本书切成了 24 个 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}Chunking runs for real: 11 books, and the Tolminc book becomes 24 chunks.
+Dialogue: 0,0:09:12.22,0:09:13.82,Bilingual,,0,0,0,,先看一个金色标签\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag first.
+Dialogue: 0,0:09:13.88,0:09:17.95,Bilingual,,0,0,0,,向量化这一步会把每个 chunk 发给 Google 的 embedding 模型\N{\fs33\c&H00C8C0B8&\bord1.4}The embed step sends every chunk to Google's embedding model,
+Dialogue: 0,0:09:17.95,0:09:22.03,Bilingual,,0,0,0,,两次运行加起来大约 700 万个字符，这是我们的估算\N{\fs33\c&H00C8C0B8&\bord1.4}about 7 million characters across both runs, by our estimate.
+Dialogue: 0,0:09:22.35,0:09:25.64,Bilingual,,0,0,0,,这会向你的项目计费；请查看当前的价目页\N{\fs33\c&H00C8C0B8&\bord1.4}That bills your project; check the current pricing page.
+Dialogue: 0,0:09:25.88,0:09:29.85,Bilingual,,0,0,0,,向量化这一步在构建名为 Authorization 的请求头时停了下来\N{\fs33\c&H00C8C0B8&\bord1.4}The embed step stops while building the header named Authorization.
+Dialogue: 0,0:09:30.17,0:09:31.17,Bilingual,,0,0,0,,别看它叫这个名字\N{\fs33\c&H00C8C0B8&\bord1.4}Despite the name,
+Dialogue: 0,0:09:31.17,0:09:33.95,Bilingual,,0,0,0,,它装的其实是你的身份证明，也就是一个 bearer token\N{\fs33\c&H00C8C0B8&\bord1.4}it carries proof of who you are, a bearer token,
+Dialogue: 0,0:09:33.95,0:09:35.26,Bilingual,,0,0,0,,而这需要密钥\N{\fs33\c&H00C8C0B8&\bord1.4}which needs a key.
+Dialogue: 0,0:09:35.31,0:09:38.81,Bilingual,,0,0,0,,DefaultCredentialsError：找不到密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}DefaultCredentialsError: the key file was not found.
+Dialogue: 0,0:09:39.13,0:09:43.91,Bilingual,,0,0,0,,没有密钥就没有令牌：第一个云端请求死在了身份验证这一步\N{\fs33\c&H00C8C0B8&\bord1.4}No key, no token: the first cloud request dies at authentication.
+Dialogue: 0,0:09:44.23,0:09:46.00,Bilingual,,0,0,0,,下一段就来搭这条链\N{\fs33\c&H00C8C0B8&\bord1.4}The next scene builds that chain.
+Dialogue: 0,0:09:46.25,0:09:48.59,Bilingual,,0,0,0,,有真实密钥的话，运行会继续\N{\fs33\c&H00C8C0B8&\bord1.4}With a real key, the run continues:
+Dialogue: 0,0:09:48.59,0:09:53.95,Bilingual,,0,0,0,,向量化每一本书，创建 char-split-collection，最后完成插入\N{\fs33\c&H00C8C0B8&\bord1.4}it embeds every book, creates the char-split-collection, and finishes inserting.
+Dialogue: 0,0:09:54.27,0:09:57.17,Bilingual,,0,0,0,,暂停一下，自己跑一遍；用你的密钥，这要花一阵子\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it; with your key, it takes a while.
+Dialogue: 0,0:09:57.49,0:10:04.24,Bilingual,,0,0,0,,如果你看到的是 403，说 API 没有启用，就启用 Vertex AI API\N{\fs33\c&H00C8C0B8&\bord1.4}If instead you see a 403 saying the API is disabled, enable the Vertex AI API;
+Dialogue: 0,0:10:04.24,0:10:07.01,Bilingual,,0,0,0,,讲 IAM 的那一段会给出命令\N{\fs33\c&H00C8C0B8&\bord1.4}the IAM scene shows the command.
+Dialogue: 0,0:10:07.25,0:10:10.58,Bilingual,,0,0,0,,第二条命令用 recursive-split 做同样的事\N{\fs33\c&H00C8C0B8&\bord1.4}The second command does the same with recursive-split.
+Dialogue: 0,0:10:10.90,0:10:13.14,Bilingual,,0,0,0,,暂停一下，自己跑一遍，然后输入 exit\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it, then type exit.
+Dialogue: 0,0:10:13.46,0:10:18.29,Bilingual,,0,0,0,,额外数一下：char-split 有 8248 个 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}An extra count shows 8,248 chunks for char-split
+Dialogue: 0,0:10:18.29,0:10:24.02,Bilingual,,0,0,0,,recursive-split 有 14228 个，这是录制时的数字\N{\fs33\c&H00C8C0B8&\bord1.4}and 14,228 for recursive-split, at the time of recording.
+Dialogue: 0,0:10:24.34,0:10:26.64,Bilingual,,0,0,0,,递归切分产生的 chunk 更多\N{\fs33\c&H00C8C0B8&\bord1.4}Recursive split makes more chunks,
+Dialogue: 0,0:10:26.64,0:10:30.29,Bilingual,,0,0,0,,主要是因为默认最多 200 个字符的重叠\N{\fs33\c&H00C8C0B8&\bord1.4}mostly from a default overlap of up to 200 characters,
+Dialogue: 0,0:10:30.29,0:10:33.06,Bilingual,,0,0,0,,而且它在段落和单词之间的断点处切\N{\fs33\c&H00C8C0B8&\bord1.4}and it cuts at paragraph and word breaks.
+Dialogue: 0,0:10:33.30,0:10:36.56,Bilingual,,0,0,0,,这些 chunk 文件通过 /app 这个挂载落到你的笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}The chunk files land on your laptop through the app mount.
+Dialogue: 0,0:10:36.88,0:10:38.48,Bilingual,,0,0,0,,这里有一个小疏漏\N{\fs33\c&H00C8C0B8&\bord1.4}One small slip shows here.
+Dialogue: 0,0:10:38.80,0:10:42.93,Bilingual,,0,0,0,,书名在第一个点处被截断了，所以它的 chunk 没有作者\N{\fs33\c&H00C8C0B8&\bord1.4}A book title is cut at its first dot, so its chunks get no author,
+Dialogue: 0,0:10:42.93,0:10:45.87,Bilingual,,0,0,0,,agent 的作者过滤永远找不到它们\N{\fs33\c&H00C8C0B8&\bord1.4}and the agent's author filter never finds them.
+Dialogue: 0,0:10:46.19,0:10:48.81,Bilingual,,0,0,0,,修法是一个 Python 函数：splitext\N{\fs33\c&H00C8C0B8&\bord1.4}The fix is a Python function, splitext.
+Dialogue: 0,0:10:49.13,0:10:51.18,Bilingual,,0,0,0,,最后，看一个真实的 Tolminc chunk\N{\fs33\c&H00C8C0B8&\bord1.4}Last, one real Tolminc chunk:
+Dialogue: 0,0:10:51.18,0:10:54.36,Bilingual,,0,0,0,,就是对话交给 Gemini 的那种段落\N{\fs33\c&H00C8C0B8&\bord1.4}the kind of passage the chat hands to Gemini.
+Dialogue: 0,0:10:55.80,0:11:00.10,Bilingual,,0,0,0,,README 说 ChromaDB 在你退出之后还会继续跑\N{\fs33\c&H00C8C0B8&\bord1.4}The README says ChromaDB keeps running after you exit,
+Dialogue: 0,0:11:00.10,0:11:03.99,Bilingual,,0,0,0,,额外跑一下 docker ps 就能确认，就在 port 8000 上\N{\fs33\c&H00C8C0B8&\bord1.4}and an extra docker ps confirms it, on port 8000.
+Dialogue: 0,0:11:04.31,0:11:10.44,Bilingual,,0,0,0,,再额外 curl 一下它的版本：录制时是 1.0.0\N{\fs33\c&H00C8C0B8&\bord1.4}An extra curl asks for its version: 1.0.0, at the time of recording.
+Dialogue: 0,0:11:10.76,0:11:12.65,Bilingual,,0,0,0,,关掉它放在最后\N{\fs33\c&H00C8C0B8&\bord1.4}Stopping it comes at the very end.
+Dialogue: 0,0:11:15.50,0:11:16.92,Bilingual,,0,0,0,,那么，到底是什么失败了？\N{\fs33\c&H00C8C0B8&\bord1.4}So what failed?
+Dialogue: 0,0:11:16.97,0:11:19.86,Bilingual,,0,0,0,,加载器的 Google 客户端和 API 的一样\N{\fs33\c&H00C8C0B8&\bord1.4}The loader's Google client, like the API's,
+Dialogue: 0,0:11:19.86,0:11:23.42,Bilingual,,0,0,0,,只用一个项目和一个区域来构建，别的什么都没有\N{\fs33\c&H00C8C0B8&\bord1.4}is built from a project and a location, nothing else.
+Dialogue: 0,0:11:23.74,0:11:26.88,Bilingual,,0,0,0,,这个 repo 里没有代码去打开密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}No code in this repo opens the key file;
+Dialogue: 0,0:11:26.88,0:11:33.10,Bilingual,,0,0,0,,打开它的是一个库，靠的是一个叫应用默认凭据的约定，简称 ADC\N{\fs33\c&H00C8C0B8&\bord1.4}a library does, by a convention called application default credentials, or ADC.
+Dialogue: 0,0:11:33.33,0:11:35.94,Bilingual,,0,0,0,,ADC 按顺序看三个位置\N{\fs33\c&H00C8C0B8&\bord1.4}ADC looks in three places, in order.
+Dialogue: 0,0:11:36.26,0:11:40.91,Bilingual,,0,0,0,,第一，Google application credentials 这个变量指定的文件\N{\fs33\c&H00C8C0B8&\bord1.4}First, the file named by the GOOGLE_APPLICATION_CREDENTIALS variable:
+Dialogue: 0,0:11:40.91,0:11:43.81,Bilingual,,0,0,0,,一个服务账号密钥，就像这个教程里的\N{\fs33\c&H00C8C0B8&\bord1.4}a service account key, as in this tutorial.
+Dialogue: 0,0:11:44.13,0:11:48.84,Bilingual,,0,0,0,,第二，gcloud 工具为你本人写的一个登录文件\N{\fs33\c&H00C8C0B8&\bord1.4}Second, a login file the gcloud tool writes for you, as a person.
+Dialogue: 0,0:11:49.16,0:11:53.71,Bilingual,,0,0,0,,第三，元数据服务器，在你的代码跑在 Google 的云里时才有\N{\fs33\c&H00C8C0B8&\bord1.4}Third, the metadata server, when your code runs inside Google's cloud.
+Dialogue: 0,0:11:54.03,0:11:58.40,Bilingual,,0,0,0,,ADC 转到下一个位置，只有一种情况：前一个没有设置\N{\fs33\c&H00C8C0B8&\bord1.4}ADC moves to the next place only when the one before is not set.
+Dialogue: 0,0:11:58.72,0:12:02.24,Bilingual,,0,0,0,,在这些 container 里，只有第一个位置存在\N{\fs33\c&H00C8C0B8&\bord1.4}Inside these containers, only the first place exists.
+Dialogue: 0,0:12:02.48,0:12:06.81,Bilingual,,0,0,0,,这个库写一张小纸条，也就是一个 JSON Web Token\N{\fs33\c&H00C8C0B8&\bord1.4}The library writes a small note, a JSON Web Token, and signs it with your private key.
+Dialogue: 0,0:12:06.81,0:12:08.41,Bilingual,,0,0,0,,用你的私钥签名\N{\fs33\c&H00C8C0B8&\bord1.4}The library writes a small note, a JSON Web Token, and signs it with your private key.
+Dialogue: 0,0:12:08.56,0:12:11.08,Bilingual,,0,0,0,,它把这张纸条送到 Google 的令牌柜台\N{\fs33\c&H00C8C0B8&\bord1.4}It sends that note to Google's token desk,
+Dialogue: 0,0:12:11.08,0:12:13.00,Bilingual,,0,0,0,,地址就写在你的密钥文件里\N{\fs33\c&H00C8C0B8&\bord1.4}at the address in your key file.
+Dialogue: 0,0:12:13.32,0:12:15.47,Bilingual,,0,0,0,,Google 手里有配对的公钥\N{\fs33\c&H00C8C0B8&\bord1.4}Google holds the matching public key,
+Dialogue: 0,0:12:15.47,0:12:19.19,Bilingual,,0,0,0,,所以不用看到私钥，就能验证你的签名\N{\fs33\c&H00C8C0B8&\bord1.4}so it checks your signature without ever seeing the private one.
+Dialogue: 0,0:12:19.51,0:12:22.88,Bilingual,,0,0,0,,换回来的是一个访问令牌，有效期大约一小时\N{\fs33\c&H00C8C0B8&\bord1.4}Back comes an access token, valid for about an hour.
+Dialogue: 0,0:12:23.20,0:12:26.53,Bilingual,,0,0,0,,这个令牌跟着每个请求走，作为 bearer 请求头\N{\fs33\c&H00C8C0B8&\bord1.4}That token rides on every request as a bearer header.
+Dialogue: 0,0:12:26.85,0:12:31.65,Bilingual,,0,0,0,,你的私钥从不离开你的电脑；在路上跑的只有那张短期有效的票\N{\fs33\c&H00C8C0B8&\bord1.4}Your private key never leaves your machine; only the short-lived ticket travels.
+Dialogue: 0,0:12:31.88,0:12:34.85,Bilingual,,0,0,0,,一小时用完，库会再换一个新的\N{\fs33\c&H00C8C0B8&\bord1.4}When the hour runs out, the library gets a new one.
+Dialogue: 0,0:12:35.17,0:12:38.72,Bilingual,,0,0,0,,课上那张 OAuth 图也终止在同一个柜台\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's OAuth diagram ends at this same desk,
+Dialogue: 0,0:12:38.72,0:12:41.85,Bilingual,,0,0,0,,只是少了授权同意页面：这里没有人\N{\fs33\c&H00C8C0B8&\bord1.4}minus the consent screen: no person is there.
+Dialogue: 0,0:12:42.08,0:12:44.15,Bilingual,,0,0,0,,来看 ADC 被抓个现行\N{\fs33\c&H00C8C0B8&\bord1.4}Here is ADC caught in the act.
+Dialogue: 0,0:12:44.47,0:12:46.15,Bilingual,,0,0,0,,在 /secrets 为空的情况下\N{\fs33\c&H00C8C0B8&\bord1.4}With /secrets empty,
+Dialogue: 0,0:12:46.15,0:12:50.42,Bilingual,,0,0,0,,额外用一行 Python 检查问 ADC 我们是谁\N{\fs33\c&H00C8C0B8&\bord1.4}an extra one-line Python check asks ADC who we are.
+Dialogue: 0,0:12:50.74,0:12:53.77,Bilingual,,0,0,0,,变量设了，所以 ADC 打开那个路径\N{\fs33\c&H00C8C0B8&\bord1.4}The variable is set, so ADC opens that path,
+Dialogue: 0,0:12:53.77,0:12:57.76,Bilingual,,0,0,0,,找不到文件，就停在那里，报同一个错误\N{\fs33\c&H00C8C0B8&\bord1.4}finds no file, and stops right there, with the same error.
+Dialogue: 0,0:12:58.08,0:13:01.39,Bilingual,,0,0,0,,错误的路径永远不会退回到另外两个位置\N{\fs33\c&H00C8C0B8&\bord1.4}A wrong path never falls back to the other two places.
+Dialogue: 0,0:13:01.71,0:13:05.21,Bilingual,,0,0,0,,密钥放好了，它就会说出你的服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}With your key in place, it names your service account instead.
+Dialogue: 0,0:13:05.45,0:13:08.87,Bilingual,,0,0,0,,一个常见的误解：在你的 Mac 上设这个变量\N{\fs33\c&H00C8C0B8&\bord1.4}One common mix-up: setting that variable on your Mac
+Dialogue: 0,0:13:08.87,0:13:13.34,Bilingual,,0,0,0,,对 container 里面的身份验证毫无作用，那里这个路径必须存在\N{\fs33\c&H00C8C0B8&\bord1.4}authenticates nothing inside a container, where the path must exist.
+Dialogue: 0,0:13:13.66,0:13:18.29,Bilingual,,0,0,0,,所以脚本设的是 container 里的路径，再单独挂载宿主机目录\N{\fs33\c&H00C8C0B8&\bord1.4}That is why the scripts set a container path, and mount the host folder separately.
+Dialogue: 0,0:13:19.62,0:13:21.94,Bilingual,,0,0,0,,身份验证证明了你的代码是谁\N{\fs33\c&H00C8C0B8&\bord1.4}Authentication proved who your code is.
+Dialogue: 0,0:13:22.26,0:13:25.14,Bilingual,,0,0,0,,授权决定它能做什么，在哪里做\N{\fs33\c&H00C8C0B8&\bord1.4}Authorization decides what it may do, and where.
+Dialogue: 0,0:13:25.46,0:13:30.48,Bilingual,,0,0,0,,Google 把这叫 IAM：一个由身份、角色和资源组成的格子\N{\fs33\c&H00C8C0B8&\bord1.4}Google calls this IAM: a grid of identities, roles, and resources.
+Dialogue: 0,0:13:30.80,0:13:34.81,Bilingual,,0,0,0,,你的服务账号在你的项目里持有 Gemini 用户这个角色\N{\fs33\c&H00C8C0B8&\bord1.4}Your service account holds the Gemini user role in your project,
+Dialogue: 0,0:13:34.81,0:13:36.94,Bilingual,,0,0,0,,真正起作用的是那个绿色的格子\N{\fs33\c&H00C8C0B8&\bord1.4}and that green cell does the work.
+Dialogue: 0,0:13:37.26,0:13:41.61,Bilingual,,0,0,0,,Storage Admin 在它旁边，授予了，但这个应用从来没用过\N{\fs33\c&H00C8C0B8&\bord1.4}Storage Admin sits beside it, granted but never used by this app.
+Dialogue: 0,0:13:41.85,0:13:43.79,Bilingual,,0,0,0,,三个请求检验三个格子\N{\fs33\c&H00C8C0B8&\bord1.4}Three requests test three cells.
+Dialogue: 0,0:13:44.11,0:13:46.44,Bilingual,,0,0,0,,IAM 检查的是请求里点名的资源\N{\fs33\c&H00C8C0B8&\bord1.4}IAM checks the resource the request names;
+Dialogue: 0,0:13:46.44,0:13:47.93,Bilingual,,0,0,0,,对 embedding 来说\N{\fs33\c&H00C8C0B8&\bord1.4}for an embedding,
+Dialogue: 0,0:13:47.93,0:13:51.36,Bilingual,,0,0,0,,这个名字是客户端根据你的 GCP project 这个变量写出来的\N{\fs33\c&H00C8C0B8&\bord1.4}the client writes that name from your project variable.
+Dialogue: 0,0:13:51.68,0:13:54.07,Bilingual,,0,0,0,,在你自己项目里的 embedding 是允许的\N{\fs33\c&H00C8C0B8&\bord1.4}An embedding in your own project is allowed.
+Dialogue: 0,0:13:54.39,0:13:58.22,Bilingual,,0,0,0,,同样的调用换成脚本里没改过的默认项目\N{\fs33\c&H00C8C0B8&\bord1.4}The same call with the script's unedited default project
+Dialogue: 0,0:13:58.22,0:14:02.46,Bilingual,,0,0,0,,会以 403 被拒绝，因为你的账号在那里没有角色\N{\fs33\c&H00C8C0B8&\bord1.4}is refused with a 403, because your account has no role there.
+Dialogue: 0,0:14:02.78,0:14:04.63,Bilingual,,0,0,0,,所以两个脚本都要改\N{\fs33\c&H00C8C0B8&\bord1.4}That is why you edit both scripts.
+Dialogue: 0,0:14:04.95,0:14:07.07,Bilingual,,0,0,0,,第三根箭头留到第二部分\N{\fs33\c&H00C8C0B8&\bord1.4}The third arrow waits for part 2.
+Dialogue: 0,0:14:07.30,0:14:09.86,Bilingual,,0,0,0,,DefaultCredentialsError 或者 401\N{\fs33\c&H00C8C0B8&\bord1.4}A DefaultCredentialsError, or a 401,
+Dialogue: 0,0:14:09.86,0:14:14.62,Bilingual,,0,0,0,,意思是没有有效的令牌：检查路径、挂载和文件名\N{\fs33\c&H00C8C0B8&\bord1.4}means no valid token: check the path, the mount, and the file name.
+Dialogue: 0,0:14:14.94,0:14:19.20,Bilingual,,0,0,0,,403 的意思是身份验证通过了，但授权失败了\N{\fs33\c&H00C8C0B8&\bord1.4}A 403 means authentication worked, but authorization failed.
+Dialogue: 0,0:14:19.52,0:14:24.88,Bilingual,,0,0,0,,原因：缺了角色、项目不对，或者 API 没有启用\N{\fs33\c&H00C8C0B8&\bord1.4}The cause: a missing role, the wrong project, or an API that is not enabled.
+Dialogue: 0,0:14:25.12,0:14:27.54,Bilingual,,0,0,0,,最后这个原因是一个小疏漏\N{\fs33\c&H00C8C0B8&\bord1.4}That last cause is a small gap:
+Dialogue: 0,0:14:27.54,0:14:31.28,Bilingual,,0,0,0,,这里没有哪个 README 说要启用 Vertex AI API\N{\fs33\c&H00C8C0B8&\bord1.4}no README here says to enable the Vertex AI API.
+Dialogue: 0,0:14:31.60,0:14:34.27,Bilingual,,0,0,0,,如果你从没启用过，403 会直接说出来\N{\fs33\c&H00C8C0B8&\bord1.4}If you never did, the 403 says so,
+Dialogue: 0,0:14:34.27,0:14:37.26,Bilingual,,0,0,0,,一条额外的 gcloud 命令就能修好\N{\fs33\c&H00C8C0B8&\bord1.4}and one extra gcloud command fixes it.
+Dialogue: 0,0:14:37.50,0:14:39.10,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:14:39.16,0:14:41.06,Bilingual,,0,0,0,,你的密钥用来做 embedding 没问题\N{\fs33\c&H00C8C0B8&\bord1.4}Your key works for embeddings.
+Dialogue: 0,0:14:41.19,0:14:43.66,Bilingual,,0,0,0,,现在你贴上授课老师的 endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}Now you paste the instructor's endpoint,
+Dialogue: 0,0:14:43.66,0:14:46.44,Bilingual,,0,0,0,,它以 projects 和一长串数字开头\N{\fs33\c&H00C8C0B8&\bord1.4}which begins with projects and a long number.
+Dialogue: 0,0:14:46.76,0:14:49.58,Bilingual,,0,0,0,,哪一部分决定检查谁的 IAM\N{\fs33\c&H00C8C0B8&\bord1.4}Which part decides whose IAM is checked:
+Dialogue: 0,0:14:49.58,0:14:54.65,Bilingual,,0,0,0,,GCP project 这个变量、密钥里的项目，还是 endpoint 路径？\N{\fs33\c&H00C8C0B8&\bord1.4}the project variable, the project inside your key, or the endpoint path?
+Dialogue: 0,0:15:03.50,0:15:08.53,Bilingual,,0,0,0,,是路径。不是密钥里的项目：那只说明工牌是在哪儿签发的\N{\fs33\c&H00C8C0B8&\bord1.4}The path. Not the key's project: that only says where the badge was issued.
+Dialogue: 0,0:15:08.85,0:15:09.96,Bilingual,,0,0,0,,也不是那个变量\N{\fs33\c&H00C8C0B8&\bord1.4}Not the variable:
+Dialogue: 0,0:15:09.96,0:15:13.97,Bilingual,,0,0,0,,endpoint 路径本身已经点名了一个项目，以这个名字为准\N{\fs33\c&H00C8C0B8&\bord1.4}the endpoint path already names a project, and that name wins.
+Dialogue: 0,0:15:14.29,0:15:19.28,Bilingual,,0,0,0,,那是别人的项目，你的账号在那里没有角色，所以是 403\N{\fs33\c&H00C8C0B8&\bord1.4}It is someone else's project, where your account has no role, so it is a 403;
+Dialogue: 0,0:15:19.28,0:15:20.88,Bilingual,,0,0,0,,第二部分会把它画出来\N{\fs33\c&H00C8C0B8&\bord1.4}part 2 draws it.
+Dialogue: 0,0:15:25.07,0:15:27.58,Bilingual,,0,0,0,,第一部分的最后一段：API\N{\fs33\c&H00C8C0B8&\bord1.4}Last stretch of part 1, the API.
+Dialogue: 0,0:15:27.90,0:15:32.02,Bilingual,,0,0,0,,在 api-service 目录里，做第二处项目名的修改\N{\fs33\c&H00C8C0B8&\bord1.4}In the api-service folder, make the second project-name edit.
+Dialogue: 0,0:15:32.34,0:15:33.94,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it.
+Dialogue: 0,0:15:34.92,0:15:38.59,Bilingual,,0,0,0,,然后是 README 的命令：sh docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Then the README's command, sh docker-shell.sh.
+Dialogue: 0,0:15:38.91,0:15:40.33,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:15:40.38,0:15:43.26,Bilingual,,0,0,0,,它马上就挂了：网络已经存在\N{\fs33\c&H00C8C0B8&\bord1.4}It dies at once: the network already exists.
+Dialogue: 0,0:15:43.68,0:15:46.86,Bilingual,,0,0,0,,这是这个 repo 里最大的疏漏，不是你的错\N{\fs33\c&H00C8C0B8&\bord1.4}This is the biggest slip in the repo, and not your fault.
+Dialogue: 0,0:15:47.18,0:15:50.43,Bilingual,,0,0,0,,第 14 行无条件地创建网络\N{\fs33\c&H00C8C0B8&\bord1.4}Line 14 creates the network unconditionally,
+Dialogue: 0,0:15:50.43,0:15:54.78,Bilingual,,0,0,0,,而第 4 行的 set -e 会让脚本在第一个错误处停下\N{\fs33\c&H00C8C0B8&\bord1.4}and set -e, on line 4, stops the script at the first error.
+Dialogue: 0,0:15:55.10,0:15:57.62,Bilingual,,0,0,0,,所以它一碰到网络已经存在就会失败\N{\fs33\c&H00C8C0B8&\bord1.4}So it fails whenever the network exists,
+Dialogue: 0,0:15:57.62,0:16:00.58,Bilingual,,0,0,0,,哪怕刚跑完 README 自己建网络的那一步\N{\fs33\c&H00C8C0B8&\bord1.4}even right after the README's own network step.
+Dialogue: 0,0:16:00.90,0:16:03.39,Bilingual,,0,0,0,,修法就是前面见过的那个套路\N{\fs33\c&H00C8C0B8&\bord1.4}The fix is the shape you met earlier:
+Dialogue: 0,0:16:03.39,0:16:06.89,Bilingual,,0,0,0,,把第 14 行换成 README 那条先检查、不存在再创建的命令\N{\fs33\c&H00C8C0B8&\bord1.4}make line 14 the README's inspect-or-create command.
+Dialogue: 0,0:16:07.21,0:16:11.35,Bilingual,,0,0,0,,暂停一下，在你的编辑器里改好；sed 是我们的做法，算额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and make that edit in your editor; the sed is ours, an extra.
+Dialogue: 0,0:16:11.60,0:16:13.17,Bilingual,,0,0,0,,再跑一次脚本\N{\fs33\c&H00C8C0B8&\bord1.4}Run the script again.
+Dialogue: 0,0:16:13.22,0:16:17.64,Bilingual,,0,0,0,,第一次构建会从 Pipfile.lock 安装 170 个 pin 住的包\N{\fs33\c&H00C8C0B8&\bord1.4}The first build installs 170 pinned packages from Pipfile.lock,
+Dialogue: 0,0:16:17.64,0:16:21.56,Bilingual,,0,0,0,,这在录制时花了大约三分钟\N{\fs33\c&H00C8C0B8&\bord1.4}which took about three minutes at the time of recording.
+Dialogue: 0,0:16:21.88,0:16:23.61,Bilingual,,0,0,0,,你会进到 pipenv shell 里\N{\fs33\c&H00C8C0B8&\bord1.4}You land in the pipenv shell.
+Dialogue: 0,0:16:23.93,0:16:26.25,Bilingual,,0,0,0,,输入 uvicorn server\N{\fs33\c&H00C8C0B8&\bord1.4}Type uvicorn_server,
+Dialogue: 0,0:16:26.25,0:16:32.51,Bilingual,,0,0,0,,API 就在 port 9000 上启动，监听 0.0.0.0\N{\fs33\c&H00C8C0B8&\bord1.4}and the API starts on port 9000, listening on 0.0.0.0.
+Dialogue: 0,0:16:32.83,0:16:34.43,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:16:37.02,0:16:40.52,Bilingual,,0,0,0,,服务器在 secrets 目录为空的情况下也顺利启动了\N{\fs33\c&H00C8C0B8&\bord1.4}The server started cleanly with an empty secrets folder,
+Dialogue: 0,0:16:40.52,0:16:45.53,Bilingual,,0,0,0,,因为 Google 客户端要到第一个请求时才去找凭据\N{\fs33\c&H00C8C0B8&\bord1.4}because the Google client does not look for credentials until its first request.
+Dialogue: 0,0:16:45.85,0:16:47.30,Bilingual,,0,0,0,,在第二个终端里\N{\fs33\c&H00C8C0B8&\bord1.4}In a second terminal,
+Dialogue: 0,0:16:47.30,0:16:50.82,Bilingual,,0,0,0,,额外用 curl 请求一个 embedding，得到的是 500\N{\fs33\c&H00C8C0B8&\bord1.4}an extra curl asks for an embedding and gets a 500.
+Dialogue: 0,0:16:51.14,0:16:54.39,Bilingual,,0,0,0,,服务器日志里是同一个 DefaultCredentialsError\N{\fs33\c&H00C8C0B8&\bord1.4}The server log shows the same DefaultCredentialsError,
+Dialogue: 0,0:16:54.39,0:16:56.79,Bilingual,,0,0,0,,在构建 bearer 请求头时抛出\N{\fs33\c&H00C8C0B8&\bord1.4}raised while building the bearer header.
+Dialogue: 0,0:16:57.11,0:17:00.27,Bilingual,,0,0,0,,启动是绿的，不代表身份验证过了\N{\fs33\c&H00C8C0B8&\bord1.4}A green startup is not an authenticated startup.
+Dialogue: 0,0:17:00.85,0:17:05.54,Bilingual,,0,0,0,,有真实密钥的话，同样的请求会返回一个 256 个数的列表\N{\fs33\c&H00C8C0B8&\bord1.4}With a real key, the same request returns a list of 256 numbers,
+Dialogue: 0,0:17:05.54,0:17:07.14,Bilingual,,0,0,0,,也就是 embedding\N{\fs33\c&H00C8C0B8&\bord1.4}the embedding.
+Dialogue: 0,0:17:07.36,0:17:11.22,Bilingual,,0,0,0,,这个长度必须和加载器的一致，否则数据库查询会失败\N{\fs33\c&H00C8C0B8&\bord1.4}That length must match the loader's, or the database queries fail.
+Dialogue: 0,0:17:11.54,0:17:14.46,Bilingual,,0,0,0,,整条链也会一路亮起来，一直到 200\N{\fs33\c&H00C8C0B8&\bord1.4}And the whole chain lights up, through to a 200.
+Dialogue: 0,0:17:14.70,0:17:16.99,Bilingual,,0,0,0,,README 在这里的最后一步\N{\fs33\c&H00C8C0B8&\bord1.4}The README's last step here:
+Dialogue: 0,0:17:16.99,0:17:20.35,Bilingual,,0,0,0,,在浏览器里打开 localhost:9000/docs\N{\fs33\c&H00C8C0B8&\bord1.4}open localhost:9000/docs in your browser.
+Dialogue: 0,0:17:20.67,0:17:22.03,Bilingual,,0,0,0,,暂停一下，看一看\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and look.
+Dialogue: 0,0:17:22.08,0:17:25.83,Bilingual,,0,0,0,,额外跑几次 curl，能看到文档页和 README 里的五个路由\N{\fs33\c&H00C8C0B8&\bord1.4}Extra curls show the docs page and the README's five routes,
+Dialogue: 0,0:17:25.83,0:17:27.46,Bilingual,,0,0,0,,外加根路径上的一个\N{\fs33\c&H00C8C0B8&\bord1.4}plus one more at the root.
+Dialogue: 0,0:17:30.42,0:17:32.64,Bilingual,,0,0,0,,在你的机器上，有真实密钥的话\N{\fs33\c&H00C8C0B8&\bord1.4}On your machine, with a real key,
+Dialogue: 0,0:17:32.64,0:17:37.16,Bilingual,,0,0,0,,身份验证的链条现在就完整了，API 在你的笔记本上应答\N{\fs33\c&H00C8C0B8&\bord1.4}the auth chain is now complete, and the API answers on your laptop.
+Dialogue: 0,0:17:37.48,0:17:38.84,Bilingual,,0,0,0,,让它一直跑着\N{\fs33\c&H00C8C0B8&\bord1.4}Leave it running.
+Dialogue: 0,0:17:38.89,0:17:40.76,Bilingual,,0,0,0,,第二部分问两个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 asks two questions:
+Dialogue: 0,0:17:40.76,0:17:44.50,Bilingual,,0,0,0,,网页怎么找到这个 API，还有谁也能找到它？\N{\fs33\c&H00C8C0B8&\bord1.4}how does a web page find this API, and who else can?
+Dialogue: 0,0:17:46.73,0:17:51.02,Bilingual,,0,0,0,,第二部分从地址讲起；这一段的每条命令都是额外的\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 starts with addresses; every command in this scene is an extra.
+Dialogue: 0,0:17:51.34,0:17:56.91,Bilingual,,0,0,0,,加载器按名字拨数据库：llm-rag-chromadb:8000\N{\fs33\c&H00C8C0B8&\bord1.4}The loader dials the database by name: llm-rag-chromadb:8000.
+Dialogue: 0,0:17:57.23,0:18:02.05,Bilingual,,0,0,0,,你的浏览器会打给 localhost:8000，穿过笔记本墙上的一扇门\N{\fs33\c&H00C8C0B8&\bord1.4}Your browser will ring localhost:8000, through a door in the laptop wall.
+Dialogue: 0,0:18:02.37,0:18:04.16,Bilingual,,0,0,0,,一个服务器，两个地址\N{\fs33\c&H00C8C0B8&\bord1.4}One server, two addresses.
+Dialogue: 0,0:18:04.48,0:18:06.08,Bilingual,,0,0,0,,为什么它们不能互换？\N{\fs33\c&H00C8C0B8&\bord1.4}Why can they not swap?
+Dialogue: 0,0:18:06.15,0:18:09.65,Bilingual,,0,0,0,,每个 container 都是自己的一栋房子，有自己的 localhost\N{\fs33\c&H00C8C0B8&\bord1.4}Each container is its own house, with its own localhost.
+Dialogue: 0,0:18:09.97,0:18:13.40,Bilingual,,0,0,0,,在 container 里面，localhost 指的就是这个 container\N{\fs33\c&H00C8C0B8&\bord1.4}Inside a container, localhost means that container.
+Dialogue: 0,0:18:13.72,0:18:17.41,Bilingual,,0,0,0,,名字靠的是 Docker DNS，也就是每条街上的一本电话簿\N{\fs33\c&H00C8C0B8&\bord1.4}Names work through Docker DNS, a phone book on each street.
+Dialogue: 0,0:18:17.73,0:18:21.89,Bilingual,,0,0,0,,IP 地址在 container 重启时会变，名字却不会\N{\fs33\c&H00C8C0B8&\bord1.4}IP addresses change when containers restart, but names do not.
+Dialogue: 0,0:18:22.21,0:18:26.48,Bilingual,,0,0,0,,这次额外的 inspect 显示了 API 在它那条街上的 IP 地址\N{\fs33\c&H00C8C0B8&\bord1.4}This extra inspect shows the API's IP address on its street.
+Dialogue: 0,0:18:26.80,0:18:31.43,Bilingual,,0,0,0,,你的会不一样，这正是重点：拨名字，不要拨 IP 地址\N{\fs33\c&H00C8C0B8&\bord1.4}Yours will differ, which is the point: dial names, not IP addresses.
+Dialogue: 0,0:18:31.75,0:18:35.48,Bilingual,,0,0,0,,而你的笔记本不在任何一条街上，所以它没有电话簿\N{\fs33\c&H00C8C0B8&\bord1.4}And your laptop is not on any street, so it has no phone book:
+Dialogue: 0,0:18:35.48,0:18:37.89,Bilingual,,0,0,0,,这个名字对你的浏览器毫无意义\N{\fs33\c&H00C8C0B8&\bord1.4}that name means nothing to your browser.
+Dialogue: 0,0:18:38.13,0:18:39.45,Bilingual,,0,0,0,,现在来证明\N{\fs33\c&H00C8C0B8&\bord1.4}Now the proof.
+Dialogue: 0,0:18:39.50,0:18:43.74,Bilingual,,0,0,0,,从 API container 里面，按名字问数据库\N{\fs33\c&H00C8C0B8&\bord1.4}From inside the API container, ask for the database by name.
+Dialogue: 0,0:18:44.06,0:18:46.67,Bilingual,,0,0,0,,回答是：Name or service not known\N{\fs33\c&H00C8C0B8&\bord1.4}The answer: Name or service not known.
+Dialogue: 0,0:18:46.99,0:18:50.06,Bilingual,,0,0,0,,API 那条街的电话簿里，没有这个名字的条目\N{\fs33\c&H00C8C0B8&\bord1.4}The API's street has no entry for that name.
+Dialogue: 0,0:18:50.30,0:18:51.90,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:18:51.96,0:18:55.68,Bilingual,,0,0,0,,假设你想让 API 自己去查询数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Suppose you want the API itself to query the database.
+Dialogue: 0,0:18:56.00,0:19:00.50,Bilingual,,0,0,0,,它会用什么地址，地图上又要改什么，这个名字才能解析？\N{\fs33\c&H00C8C0B8&\bord1.4}What address would it use, and what must change on the map for that name to resolve?
+Dialogue: 0,0:19:09.33,0:19:12.19,Bilingual,,0,0,0,,把数据库也放到 API 那条街上，用一条额外的命令\N{\fs33\c&H00C8C0B8&\bord1.4}Put the database on the API's street as well,
+Dialogue: 0,0:19:12.19,0:19:17.65,Bilingual,,0,0,0,,docker network connect，同一个名字就会答出 Chroma 的版本\N{\fs33\c&H00C8C0B8&\bord1.4}with an extra docker network connect, and the same name answers with Chroma's version.
+Dialogue: 0,0:19:17.97,0:19:20.41,Bilingual,,0,0,0,,Docker DNS 在共用的街道上就管用\N{\fs33\c&H00C8C0B8&\bord1.4}Docker DNS works on a shared street.
+Dialogue: 0,0:19:20.73,0:19:24.18,Bilingual,,0,0,0,,那在 API 里面访问 localhost:8000 呢？\N{\fs33\c&H00C8C0B8&\bord1.4}And localhost:8000, from inside the API?
+Dialogue: 0,0:19:24.50,0:19:26.10,Bilingual,,0,0,0,,Connection refused\N{\fs33\c&H00C8C0B8&\bord1.4}Connection refused.
+Dialogue: 0,0:19:26.23,0:19:29.81,Bilingual,,0,0,0,,在 API 里面，8000 上没有任何东西在监听\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the API, nothing listens on 8000.
+Dialogue: 0,0:19:30.05,0:19:32.95,Bilingual,,0,0,0,,然后把它断开：刚才只是个实验\N{\fs33\c&H00C8C0B8&\bord1.4}Then disconnect it: that was only an experiment.
+Dialogue: 0,0:19:33.27,0:19:35.58,Bilingual,,0,0,0,,这个应用里没有任何东西需要这条捷径\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing in this app needs that shortcut,
+Dialogue: 0,0:19:35.58,0:19:37.71,Bilingual,,0,0,0,,因为每个调用都是浏览器发的\N{\fs33\c&H00C8C0B8&\bord1.4}because the browser makes every call.
+Dialogue: 0,0:19:38.03,0:19:42.04,Bilingual,,0,0,0,,有一个小疏漏：前端的配置还在把 docs 路径\N{\fs33\c&H00C8C0B8&\bord1.4}One small slip: the frontend's config still forwards its docs
+Dialogue: 0,0:19:42.04,0:19:45.33,Bilingual,,0,0,0,,转发给一个这里并不存在的 container 名\N{\fs33\c&H00C8C0B8&\bord1.4}path to a container name that does not exist here.
+Dialogue: 0,0:19:45.65,0:19:51.40,Bilingual,,0,0,0,,API 文档请用 localhost:9000/docs，照 README 说的\N{\fs33\c&H00C8C0B8&\bord1.4}For the API docs, use localhost:9000/docs, as the README says.
+Dialogue: 0,0:19:52.95,0:19:57.54,Bilingual,,0,0,0,,让 API 继续跑着，在前端目录里打开一个新终端\N{\fs33\c&H00C8C0B8&\bord1.4}Leave the API running, and open a new terminal in the frontend folder.
+Dialogue: 0,0:19:57.86,0:20:00.18,Bilingual,,0,0,0,,运行它的 shell 脚本；暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Run its shell script; pause and do it.
+Dialogue: 0,0:20:00.50,0:20:04.93,Bilingual,,0,0,0,,这个 image 只有 Node 和一个 shell，所以 npm 要你自己跑\N{\fs33\c&H00C8C0B8&\bord1.4}The image holds just Node and a shell, so you run npm yourself;
+Dialogue: 0,0:20:04.93,0:20:07.24,Bilingual,,0,0,0,,井号表示你是 root\N{\fs33\c&H00C8C0B8&\bord1.4}the hash sign means you are root.
+Dialogue: 0,0:20:07.48,0:20:15.21,Bilingual,,0,0,0,,接着是 npm install：录制时装了 773 个包，外加一些弃用警告\N{\fs33\c&H00C8C0B8&\bord1.4}Then npm install: 773 packages at the time of recording, plus deprecation warnings.
+Dialogue: 0,0:20:15.53,0:20:17.79,Bilingual,,0,0,0,,它们通过挂载落到你的目录里\N{\fs33\c&H00C8C0B8&\bord1.4}They land in your folder through the mount,
+Dialogue: 0,0:20:17.79,0:20:21.05,Bilingual,,0,0,0,,所以我们录制时可以退出再进来，也不会丢\N{\fs33\c&H00C8C0B8&\bord1.4}so our capture could step out and back in without losing them.
+Dialogue: 0,0:20:21.37,0:20:23.04,Bilingual,,0,0,0,,然后运行：npm run dev\N{\fs33\c&H00C8C0B8&\bord1.4}Then npm run dev.
+Dialogue: 0,0:20:23.36,0:20:29.06,Bilingual,,0,0,0,,Next.js 服务器显示 Ready，录制时版本是 14.2.4\N{\fs33\c&H00C8C0B8&\bord1.4}The Next.js server says ready, version 14.2.4 at the time of recording,
+Dialogue: 0,0:20:29.06,0:20:34.68,Bilingual,,0,0,0,,还打印出那行谁都会上当的：Local: http://localhost:3000\N{\fs33\c&H00C8C0B8&\bord1.4}and prints the line that fools everyone: Local: http://localhost:3000.
+Dialogue: 0,0:20:35.00,0:20:36.50,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:20:36.55,0:20:39.15,Bilingual,,0,0,0,,在第二个终端里，做三个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}In a second terminal, three extra checks.
+Dialogue: 0,0:20:39.47,0:20:43.83,Bilingual,,0,0,0,,先预测一下：在你的笔记本上，localhost:3000 会有回应吗？\N{\fs33\c&H00C8C0B8&\bord1.4}First, predict: will localhost:3000 answer from your laptop?
+Dialogue: 0,0:20:44.15,0:20:45.87,Bilingual,,0,0,0,,不会，连不上\N{\fs33\c&H00C8C0B8&\bord1.4}No, it fails to connect.
+Dialogue: 0,0:20:46.19,0:20:50.37,Bilingual,,0,0,0,,从你的笔记本访问 localhost:3200，回应的是 RAG 应用\N{\fs33\c&H00C8C0B8&\bord1.4}From your laptop, localhost:3200 answers with the RAG app.
+Dialogue: 0,0:20:50.69,0:20:55.71,Bilingual,,0,0,0,,而在 container 里面，localhost:3000 回应的是同一个页面\N{\fs33\c&H00C8C0B8&\bord1.4}And from inside the container, localhost:3000 answers with the same page.
+Dialogue: 0,0:20:56.03,0:21:01.32,Bilingual,,0,0,0,,现在在浏览器里打开 localhost:3200；README 建议用 Chrome\N{\fs33\c&H00C8C0B8&\bord1.4}Now open localhost:3200 in your browser; the README suggests Chrome.
+Dialogue: 0,0:21:01.64,0:21:02.92,Bilingual,,0,0,0,,暂停一下，看一看\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and look.
+Dialogue: 0,0:21:02.97,0:21:04.47,Bilingual,,0,0,0,,这就是隧道\N{\fs33\c&H00C8C0B8&\bord1.4}That is the tunnel.
+Dialogue: 0,0:21:04.52,0:21:07.83,Bilingual,,0,0,0,,参数 -p 3200:3000 的意思是\N{\fs33\c&H00C8C0B8&\bord1.4}The flag -p 3200:3000 means
+Dialogue: 0,0:21:07.83,0:21:13.59,Bilingual,,0,0,0,,host port 3200 转发到 container port 3000\N{\fs33\c&H00C8C0B8&\bord1.4}host port 3200 forwards to container port 3000.
+Dialogue: 0,0:21:13.91,0:21:17.94,Bilingual,,0,0,0,,Next.js 服务器在它自己的房子里监听 3000\N{\fs33\c&H00C8C0B8&\bord1.4}The Next server listens on 3000 inside its own house,
+Dialogue: 0,0:21:17.94,0:21:20.97,Bilingual,,0,0,0,,而你的浏览器在外面敲 3200 的门\N{\fs33\c&H00C8C0B8&\bord1.4}and your browser knocks on 3200 outside.
+Dialogue: 0,0:21:21.29,0:21:23.08,Bilingual,,0,0,0,,一个服务器，两个地址\N{\fs33\c&H00C8C0B8&\bord1.4}One server, two addresses.
+Dialogue: 0,0:21:23.40,0:21:26.18,Bilingual,,0,0,0,,额外跑一下 docker ps，能看到同一扇门\N{\fs33\c&H00C8C0B8&\bord1.4}An extra docker ps shows the same door.
+Dialogue: 0,0:21:27.20,0:21:29.01,Bilingual,,0,0,0,,所有 port 号分成三段\N{\fs33\c&H00C8C0B8&\bord1.4}Port numbers come in three bands.
+Dialogue: 0,0:21:29.33,0:21:33.45,Bilingual,,0,0,0,,低段的属于系统，比如 80 和 443\N{\fs33\c&H00C8C0B8&\bord1.4}The low ones belong to the system, like 80 and 443.
+Dialogue: 0,0:21:33.77,0:21:39.98,Bilingual,,0,0,0,,你自己的从中段挑：3000、3200、8000 和 9000\N{\fs33\c&H00C8C0B8&\bord1.4}Pick yours from the middle band: 3000, 3200, 8000, and 9000.
+Dialogue: 0,0:21:40.30,0:21:43.67,Bilingual,,0,0,0,,高段放的是出站调用用的临时 port\N{\fs33\c&H00C8C0B8&\bord1.4}The top band holds throw-away ports for outgoing calls.
+Dialogue: 0,0:21:43.92,0:21:49.83,Bilingual,,0,0,0,,0.0.0.0 已经出现两次了，说的是两件不同的事\N{\fs33\c&H00C8C0B8&\bord1.4}0.0.0.0 has now appeared twice, as two different facts.
+Dialogue: 0,0:21:50.15,0:21:54.18,Bilingual,,0,0,0,,在 container 里面，隧道到达的是临街的一侧\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the container, the tunnel arrives at the street side,
+Dialogue: 0,0:21:54.18,0:21:58.27,Bilingual,,0,0,0,,而不是回环接口，所以 API 服务器在每一侧都监听\N{\fs33\c&H00C8C0B8&\bord1.4}not at the loopback, so the API server listens on every side.
+Dialogue: 0,0:21:58.59,0:22:03.12,Bilingual,,0,0,0,,Docker 会在你笔记本的每一侧都发布，除非你加一个前缀\N{\fs33\c&H00C8C0B8&\bord1.4}Docker publishes on every side of your laptop, unless you add a prefix.
+Dialogue: 0,0:22:03.44,0:22:08.02,Bilingual,,0,0,0,,讲 port 的那一讲在 port 前面写了 127.0.0.1\N{\fs33\c&H00C8C0B8&\bord1.4}The ports lecture wrote 127.0.0.1 before its port,
+Dialogue: 0,0:22:08.02,0:22:10.31,Bilingual,,0,0,0,,这个应用却没写\N{\fs33\c&H00C8C0B8&\bord1.4}but this app writes none.
+Dialogue: 0,0:22:10.63,0:22:15.04,Bilingual,,0,0,0,,所以这些门也朝着你的 Wi-Fi，同一个网络上的任何人都能来敲门\N{\fs33\c&H00C8C0B8&\bord1.4}So these doors face your Wi-Fi too, and anyone on that network can knock.
+Dialogue: 0,0:22:15.36,0:22:21.34,Bilingual,,0,0,0,,在 host port 前面加上 127.0.0.1，就能关上那一侧\N{\fs33\c&H00C8C0B8&\bord1.4}Adding 127.0.0.1 before the host port closes that side.
+Dialogue: 0,0:22:22.98,0:22:27.10,Bilingual,,0,0,0,,这个配置被打包进浏览器下载的 JavaScript 里\N{\fs33\c&H00C8C0B8&\bord1.4}This setting, baked into the JavaScript your browser downloads,
+Dialogue: 0,0:22:27.10,0:22:29.26,Bilingual,,0,0,0,,告诉页面 API 的地址\N{\fs33\c&H00C8C0B8&\bord1.4}gives the page the API's address.
+Dialogue: 0,0:22:29.58,0:22:32.53,Bilingual,,0,0,0,,所以它必须是你的浏览器能访问到的地址\N{\fs33\c&H00C8C0B8&\bord1.4}So it must be one your browser can reach:
+Dialogue: 0,0:22:32.53,0:22:35.34,Bilingual,,0,0,0,,localhost:9000，绝不能是 container 名\N{\fs33\c&H00C8C0B8&\bord1.4}localhost:9000, never a container name.
+Dialogue: 0,0:22:35.58,0:22:39.74,Bilingual,,0,0,0,,5 步里的第 1 步是文本分块，在你的浏览器里跑，不产生费用\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1 of 5, text chunking, runs in your browser, with no bill.
+Dialogue: 0,0:22:40.06,0:22:44.50,Bilingual,,0,0,0,,第 2 步是数据库界面，连到 localhost:8000\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2, the database UI, connects to localhost:8000.
+Dialogue: 0,0:22:44.82,0:22:46.42,Bilingual,,0,0,0,,暂停一下，两个都试试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try both.
+Dialogue: 0,0:22:46.51,0:22:50.20,Bilingual,,0,0,0,,我们额外列出来的是空的；你的会显示两个 collection\N{\fs33\c&H00C8C0B8&\bord1.4}Our extra listing is empty; yours shows two collections.
+Dialogue: 0,0:22:50.43,0:22:52.74,Bilingual,,0,0,0,,第 3 步是对话，带一个金色标签\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3, the chat, has a gold tag:
+Dialogue: 0,0:22:52.74,0:22:56.17,Bilingual,,0,0,0,,每个问题一次 embedding，加一次 Gemini 回答\N{\fs33\c&H00C8C0B8&\bord1.4}one embedding and one Gemini answer per question.
+Dialogue: 0,0:22:56.49,0:22:58.83,Bilingual,,0,0,0,,暂停一下，选一个 collection，问一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, pick a collection, and ask one.
+Dialogue: 0,0:22:59.14,0:23:01.36,Bilingual,,0,0,0,,在你的机器上，它会发起三次调用\N{\fs33\c&H00C8C0B8&\bord1.4}On your machine, it makes three calls.
+Dialogue: 0,0:23:01.68,0:23:06.65,Bilingual,,0,0,0,,第一个调用：API 去问 Google，拿回 256 个数\N{\fs33\c&H00C8C0B8&\bord1.4}Call one: the API asks Google, and 256 numbers come back.
+Dialogue: 0,0:23:07.70,0:23:10.96,Bilingual,,0,0,0,,第二个调用向数据库要 10 个最近的 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}Call two asks the database for the 10 nearest chunks.
+Dialogue: 0,0:23:11.28,0:23:14.46,Bilingual,,0,0,0,,一个 origin 由协议、主机和 port 组成\N{\fs33\c&H00C8C0B8&\bord1.4}An origin is scheme, host and port,
+Dialogue: 0,0:23:14.46,0:23:18.90,Bilingual,,0,0,0,,所以来自 3200 的页面去调 8000，就是跨域\N{\fs33\c&H00C8C0B8&\bord1.4}so a page from 3200 calling 8000 crosses origins.
+Dialogue: 0,0:23:19.15,0:23:23.97,Bilingual,,0,0,0,,默认情况下，浏览器不让页面看到来自别的 origin 的回复\N{\fs33\c&H00C8C0B8&\bord1.4}By default, a browser will not let a page see replies from another origin.
+Dialogue: 0,0:23:24.29,0:23:27.34,Bilingual,,0,0,0,,服务器可以放行指定的 origin，这就是 CORS\N{\fs33\c&H00C8C0B8&\bord1.4}A server can allow named origins; that is CORS,
+Dialogue: 0,0:23:27.34,0:23:31.29,Bilingual,,0,0,0,,它能防止别的网站读取你本地的服务\N{\fs33\c&H00C8C0B8&\bord1.4}and it keeps other websites from reading your local services.
+Dialogue: 0,0:23:31.61,0:23:35.34,Bilingual,,0,0,0,,所以浏览器先发一个预检请求，带上页面的 origin\N{\fs33\c&H00C8C0B8&\bord1.4}So the browser first sends a preflight with the page's origin.
+Dialogue: 0,0:23:35.66,0:23:40.83,Bilingual,,0,0,0,,数据库查它的白名单，上面是课程的网站和 localhost:3200\N{\fs33\c&H00C8C0B8&\bord1.4}The database checks its guest list, the course's site and localhost:3200,
+Dialogue: 0,0:23:40.83,0:23:43.02,Bilingual,,0,0,0,,然后返回一张通行证，或者什么都不给\N{\fs33\c&H00C8C0B8&\bord1.4}and returns a pass, or nothing.
+Dialogue: 0,0:23:43.34,0:23:46.52,Bilingual,,0,0,0,,你的浏览器就是保安：没有通行证，就没有查询\N{\fs33\c&H00C8C0B8&\bord1.4}Your browser is the bouncer: no pass, no query.
+Dialogue: 0,0:23:48.80,0:23:54.05,Bilingual,,0,0,0,,第三个调用把问题和 10 个 chunk 发给 API，回答随后返回\N{\fs33\c&H00C8C0B8&\bord1.4}Call three sends the question and ten chunks to the API, and the answer returns.
+Dialogue: 0,0:23:54.37,0:23:57.33,Bilingual,,0,0,0,,额外用 curl 自己写一个 Origin 请求头\N{\fs33\c&H00C8C0B8&\bord1.4}An extra curl writes its own Origin header.
+Dialogue: 0,0:23:57.65,0:24:02.49,Bilingual,,0,0,0,,两个预检请求都拿到 200 OK，但只有 3200 拿到了通行证\N{\fs33\c&H00C8C0B8&\bord1.4}Both preflights get 200 OK, but only 3200 gets a pass;
+Dialogue: 0,0:24:02.49,0:24:05.63,Bilingual,,0,0,0,,对浏览器来说，没有通行证就是拒绝\N{\fs33\c&H00C8C0B8&\bord1.4}to a browser, no pass is a refusal.
+Dialogue: 0,0:24:08.17,0:24:09.77,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:24:09.83,0:24:13.09,Bilingual,,0,0,0,,你把前端重新发布到 port 3300\N{\fs33\c&H00C8C0B8&\bord1.4}You republish the frontend on port 3300.
+Dialogue: 0,0:24:13.41,0:24:16.23,Bilingual,,0,0,0,,三个调用里哪一个会失败，curl 又在不在乎？\N{\fs33\c&H00C8C0B8&\bord1.4}Which of the three calls fails, and does curl care?
+Dialogue: 0,0:24:25.07,0:24:28.44,Bilingual,,0,0,0,,第一个调用能成功：API 允许任何 origin\N{\fs33\c&H00C8C0B8&\bord1.4}Call one works: the API allows any origin.
+Dialogue: 0,0:24:28.76,0:24:30.91,Bilingual,,0,0,0,,第二个调用根本出不了浏览器\N{\fs33\c&H00C8C0B8&\bord1.4}Call two never leaves the browser.
+Dialogue: 0,0:24:31.23,0:24:33.81,Bilingual,,0,0,0,,第三个调用在等它，所以永远不会发出去\N{\fs33\c&H00C8C0B8&\bord1.4}Call three waits for it, so it is never sent.
+Dialogue: 0,0:24:34.13,0:24:35.73,Bilingual,,0,0,0,,而 curl 对这一切都不理会\N{\fs33\c&H00C8C0B8&\bord1.4}And curl ignores it all.
+Dialogue: 0,0:24:35.99,0:24:42.01,Bilingual,,0,0,0,,CORS 由浏览器执行，由服务器配置，按页面的 origin 来判断\N{\fs33\c&H00C8C0B8&\bord1.4}CORS is enforced by the browser, configured by the server, and keyed on the page's origin.
+Dialogue: 0,0:24:42.33,0:24:49.99,Bilingual,,0,0,0,,就连 127.0.0.1:3200 和 localhost:3200 也是不同的 origin\N{\fs33\c&H00C8C0B8&\bord1.4}Even 127.0.0.1:3200 is a different origin from localhost:3200,
+Dialogue: 0,0:24:49.99,0:24:53.57,Bilingual,,0,0,0,,所以要用 localhost 打开这个应用\N{\fs33\c&H00C8C0B8&\bord1.4}so open the app at localhost.
+Dialogue: 0,0:24:53.82,0:24:58.17,Bilingual,,0,0,0,,要看的是一个回答和 10 条参考来源，带着书名、作者和距离\N{\fs33\c&H00C8C0B8&\bord1.4}Look for an answer and ten references, with book, author and distance.
+Dialogue: 0,0:24:58.49,0:25:02.05,Bilingual,,0,0,0,,最后想一点：CORS 决定的是哪个页面能看到回复\N{\fs33\c&H00C8C0B8&\bord1.4}Last thought: CORS decides which page may see a reply;
+Dialogue: 0,0:25:02.05,0:25:04.29,Bilingual,,0,0,0,,这里没有任何东西决定谁能调用\N{\fs33\c&H00C8C0B8&\bord1.4}nothing here decides who may call.
+Dialogue: 0,0:25:04.61,0:25:07.68,Bilingual,,0,0,0,,一个没有任何保护、用你的密钥花钱的 AI endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}An unprotected AI endpoint, spending your key,
+Dialogue: 0,0:25:07.68,0:25:09.41,Bilingual,,0,0,0,,正跑在你的笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}is running on your laptop.
+Dialogue: 0,0:25:10.95,0:25:16.09,Bilingual,,0,0,0,,第 4 步是奶酪专家 agent：还是对话的三个调用，只多了一个变化\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4 is the cheese expert agent: the chat's three calls, with one twist.
+Dialogue: 0,0:25:16.41,0:25:21.85,Bilingual,,0,0,0,,Gemini 先挑一个检索工具：按作者搜索，或者按内容搜索\N{\fs33\c&H00C8C0B8&\bord1.4}Gemini first picks a retrieval tool: search by author, or search by content.
+Dialogue: 0,0:25:22.17,0:25:25.35,Bilingual,,0,0,0,,API 把搜索文本变成一个 embedding\N{\fs33\c&H00C8C0B8&\bord1.4}The API turns the search text into an embedding.
+Dialogue: 0,0:25:25.67,0:25:28.25,Bilingual,,0,0,0,,然后你的浏览器查询数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Then your browser queries the database,
+Dialogue: 0,0:25:28.25,0:25:31.22,Bilingual,,0,0,0,,按作者过滤，前提是 Gemini 选了那个工具\N{\fs33\c&H00C8C0B8&\bord1.4}filtered by author if Gemini chose that tool.
+Dialogue: 0,0:25:31.54,0:25:37.30,Bilingual,,0,0,0,,API 最多循环五次，Gemini 还可能调用服务器上的趣闻工具\N{\fs33\c&H00C8C0B8&\bord1.4}The API loops up to five times, and Gemini may call a fun fact tool on the server.
+Dialogue: 0,0:25:37.62,0:25:41.09,Bilingual,,0,0,0,,金色标签：一个 agent 问题要花一次 embedding 调用\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: one agent question costs one embedding
+Dialogue: 0,0:25:41.09,0:25:43.59,Bilingual,,0,0,0,,外加 3 到 7 次生成调用\N{\fs33\c&H00C8C0B8&\bord1.4}and three to seven generation calls.
+Dialogue: 0,0:25:43.91,0:25:46.47,Bilingual,,0,0,0,,暂停一下，选一个 collection，随便问它点什么\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, pick a collection, and ask it something.
+Dialogue: 0,0:25:46.72,0:25:50.60,Bilingual,,0,0,0,,要看的是一个回答，结尾有一段高亮的趣闻\N{\fs33\c&H00C8C0B8&\bord1.4}Look for an answer ending in a highlighted fun fact paragraph.
+Dialogue: 0,0:25:50.83,0:25:53.44,Bilingual,,0,0,0,,第 5 步是微调过的奶酪模型\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5 is the fine-tuned cheese model.
+Dialogue: 0,0:25:53.76,0:25:56.63,Bilingual,,0,0,0,,README 说要换成你自己的 endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}The README says to swap in your own endpoint,
+Dialogue: 0,0:25:56.63,0:25:59.81,Bilingual,,0,0,0,,就是你在第 8 讲微调时打印出来的那个\N{\fs33\c&H00C8C0B8&\bord1.4}the one your fine-tuning run printed in lecture 8.
+Dialogue: 0,0:26:00.13,0:26:01.73,Bilingual,,0,0,0,,暂停一下，贴上你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and paste yours.
+Dialogue: 0,0:26:01.93,0:26:06.96,Bilingual,,0,0,0,,服务器会自己重新加载，因为这个文件在 api 目录下面\N{\fs33\c&H00C8C0B8&\bord1.4}The server reloads by itself, because this file sits under the api folder.
+Dialogue: 0,0:26:07.28,0:26:10.68,Bilingual,,0,0,0,,它旁边的 agent 工具文件没有被监视\N{\fs33\c&H00C8C0B8&\bord1.4}Its neighbor, the agent tools file, is not watched;
+Dialogue: 0,0:26:10.68,0:26:14.28,Bilingual,,0,0,0,,至于那个文件，要按 Ctrl-C，再把服务器重新启动\N{\fs33\c&H00C8C0B8&\bord1.4}for that one, press Ctrl-C and start the server again.
+Dialogue: 0,0:26:14.52,0:26:20.13,Bilingual,,0,0,0,,然后打开 localhost:3200/finetunechat，问同一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Then open localhost:3200/finetunechat and ask the same question.
+Dialogue: 0,0:26:20.45,0:26:22.69,Bilingual,,0,0,0,,第一部分的那个谜题，在这里揭晓答案\N{\fs33\c&H00C8C0B8&\bord1.4}Here the part 1 puzzle gets its answer.
+Dialogue: 0,0:26:23.01,0:26:28.09,Bilingual,,0,0,0,,用默认值的话，endpoint 路径指向授课老师的项目\N{\fs33\c&H00C8C0B8&\bord1.4}With the default, the endpoint path points into the instructor's project,
+Dialogue: 0,0:26:28.09,0:26:30.24,Bilingual,,0,0,0,,你的账号在那里没有角色\N{\fs33\c&H00C8C0B8&\bord1.4}where your account has no role,
+Dialogue: 0,0:26:30.24,0:26:32.89,Bilingual,,0,0,0,,所以预计会是 403，或者“找不到”的错误\N{\fs33\c&H00C8C0B8&\bord1.4}so expect a 403, or a not-found error.
+Dialogue: 0,0:26:33.21,0:26:35.77,Bilingual,,0,0,0,,这个调用还用了第二个客户端\N{\fs33\c&H00C8C0B8&\bord1.4}This call also uses a second client,
+Dialogue: 0,0:26:35.77,0:26:39.26,Bilingual,,0,0,0,,位于 us 区域，因为微调过的模型需要它\N{\fs33\c&H00C8C0B8&\bord1.4}in the us location, because tuned models need it.
+Dialogue: 0,0:26:39.58,0:26:42.30,Bilingual,,0,0,0,,最后一个金色标签：调用微调过的模型\N{\fs33\c&H00C8C0B8&\bord1.4}A final gold tag: calls to a tuned model
+Dialogue: 0,0:26:42.30,0:26:45.69,Bilingual,,0,0,0,,费用记在拥有这个 endpoint 的项目上\N{\fs33\c&H00C8C0B8&\bord1.4}are billed to whichever project owns the endpoint.
+Dialogue: 0,0:26:46.01,0:26:47.27,Bilingual,,0,0,0,,暂停一下，试一试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try it;
+Dialogue: 0,0:26:47.27,0:26:50.25,Bilingual,,0,0,0,,没有你自己的 endpoint 的话，预计会是 403\N{\fs33\c&H00C8C0B8&\bord1.4}without your own endpoint, expect a 403,
+Dialogue: 0,0:26:50.25,0:26:51.85,Bilingual,,0,0,0,,或者“找不到”的错误\N{\fs33\c&H00C8C0B8&\bord1.4}or a not-found error.
+Dialogue: 0,0:26:52.13,0:26:55.04,Bilingual,,0,0,0,,要是你自己的 endpoint 返回 404\N{\fs33\c&H00C8C0B8&\bord1.4}If your own endpoint returns 404 instead,
+Dialogue: 0,0:26:55.04,0:26:57.95,Bilingual,,0,0,0,,请看学习指南里关于基础地址的说明\N{\fs33\c&H00C8C0B8&\bord1.4}see the base URL note in the study guide.
+Dialogue: 0,0:26:59.00,0:27:01.50,Bilingual,,0,0,0,,该关掉了，看看什么能留下来\N{\fs33\c&H00C8C0B8&\bord1.4}Time to shut down, and see what survives.
+Dialogue: 0,0:27:01.82,0:27:06.72,Bilingual,,0,0,0,,在 API 和前端的终端里，按 Ctrl-C，然后输入 exit\N{\fs33\c&H00C8C0B8&\bord1.4}In the API and frontend terminals, press Ctrl-C, then type exit.
+Dialogue: 0,0:27:07.04,0:27:08.49,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it.
+Dialogue: 0,0:27:08.54,0:27:11.13,Bilingual,,0,0,0,,两个 container 都是用 --rm 跑的\N{\fs33\c&H00C8C0B8&\bord1.4}Both containers ran with --rm,
+Dialogue: 0,0:27:11.13,0:27:15.53,Bilingual,,0,0,0,,所以额外跑一下 docker ps，只剩下数据库\N{\fs33\c&H00C8C0B8&\bord1.4}so an extra docker ps shows only the database left.
+Dialogue: 0,0:27:15.77,0:27:19.32,Bilingual,,0,0,0,,现在是 README 的停止命令 docker compose down\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README's stop command, docker compose down,
+Dialogue: 0,0:27:19.32,0:27:20.92,Bilingual,,0,0,0,,在 llm-rag 里运行\N{\fs33\c&H00C8C0B8&\bord1.4}inside llm-rag.
+Dialogue: 0,0:27:20.99,0:27:22.42,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:27:22.47,0:27:25.03,Bilingual,,0,0,0,,数据库和它的网络都被删掉了\N{\fs33\c&H00C8C0B8&\bord1.4}The database and its network are removed.
+Dialogue: 0,0:27:25.35,0:27:27.72,Bilingual,,0,0,0,,两条警告说变量没有设置\N{\fs33\c&H00C8C0B8&\bord1.4}Two warnings say variables are not set,
+Dialogue: 0,0:27:27.72,0:27:30.46,Bilingual,,0,0,0,,因为我们是在 shell 脚本之外跑的这条命令\N{\fs33\c&H00C8C0B8&\bord1.4}because we ran this outside the shell script,
+Dialogue: 0,0:27:30.46,0:27:33.32,Bilingual,,0,0,0,,Compose 就用你 shell 里的值来填这些空\N{\fs33\c&H00C8C0B8&\bord1.4}and Compose fills those blanks from your shell.
+Dialogue: 0,0:27:33.64,0:27:36.99,Bilingual,,0,0,0,,这就是第一部分讲的那个机制，这次在现实里撞上了\N{\fs33\c&H00C8C0B8&\bord1.4}That is the mechanism from part 1, caught in the wild.
+Dialogue: 0,0:27:37.31,0:27:41.96,Bilingual,,0,0,0,,来想一个问题：数据库没了，可你的 embedding 也没了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: the database is gone, but are your embeddings gone too?
+Dialogue: 0,0:27:42.28,0:27:43.88,Bilingual,,0,0,0,,那什么才会让它们消失？\N{\fs33\c&H00C8C0B8&\bord1.4}And what would make them gone?
+Dialogue: 0,0:27:50.68,0:27:55.54,Bilingual,,0,0,0,,不会。额外列一下目录，可以看到数据库文件还在磁盘上\N{\fs33\c&H00C8C0B8&\bord1.4}No. An extra listing shows the database file still on disk,
+Dialogue: 0,0:27:55.54,0:28:00.01,Bilingual,,0,0,0,,在你笔记本上的一个目录里，挂载到 container 里的 /data\N{\fs33\c&H00C8C0B8&\bord1.4}in a folder on your laptop, mounted into the container at /data.
+Dialogue: 0,0:28:00.33,0:28:03.21,Bilingual,,0,0,0,,一个个 container 来来去去，挂载的目录却留下来\N{\fs33\c&H00C8C0B8&\bord1.4}Containers come and go; mounted folders stay.
+Dialogue: 0,0:28:03.53,0:28:07.75,Bilingual,,0,0,0,,额外重启一次，数据库就在同一个目录上重新回来了\N{\fs33\c&H00C8C0B8&\bord1.4}An extra restart brings the database back over that same folder.
+Dialogue: 0,0:28:08.07,0:28:12.17,Bilingual,,0,0,0,,删掉 docker-volumes 目录，才会丢掉你的 embedding\N{\fs33\c&H00C8C0B8&\bord1.4}Deleting the docker-volumes folder is what loses your embeddings.
+Dialogue: 0,0:28:12.49,0:28:14.36,Bilingual,,0,0,0,,重新加载一次也能干净地重建\N{\fs33\c&H00C8C0B8&\bord1.4}A fresh load rebuilds cleanly,
+Dialogue: 0,0:28:14.36,0:28:18.25,Bilingual,,0,0,0,,因为加载器会先删掉、再重新创建每个 collection\N{\fs33\c&H00C8C0B8&\bord1.4}because the loader deletes and then recreates each collection.
+Dialogue: 0,0:28:18.48,0:28:22.38,Bilingual,,0,0,0,,挂载目录的云端版本就是 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}The cloud version of a mounted folder is a storage bucket,
+Dialogue: 0,0:28:22.38,0:28:25.08,Bilingual,,0,0,0,,一个任何有权限的机器都能看到的目录\N{\fs33\c&H00C8C0B8&\bord1.4}a folder any authorized machine can see.
+Dialogue: 0,0:28:25.40,0:28:27.78,Bilingual,,0,0,0,,它的目录其实只是名字前缀\N{\fs33\c&H00C8C0B8&\bord1.4}Its folders are only name prefixes.
+Dialogue: 0,0:28:28.10,0:28:32.52,Bilingual,,0,0,0,,存储客户端没有传入密钥路径，所以 ADC 会找到同一个密钥\N{\fs33\c&H00C8C0B8&\bord1.4}The storage client takes no key path, so ADC finds the same key,
+Dialogue: 0,0:28:32.52,0:28:36.11,Bilingual,,0,0,0,,再由一个存储角色允许它往 bucket 里写\N{\fs33\c&H00C8C0B8&\bord1.4}and a storage role allows it to write to the bucket.
+Dialogue: 0,0:28:36.35,0:28:40.94,Bilingual,,0,0,0,,这个应用从不调用 bucket，所以 Storage Admin 一直是灰的\N{\fs33\c&H00C8C0B8&\bord1.4}This app never calls a bucket, which is why Storage Admin sat gray;
+Dialogue: 0,0:28:40.94,0:28:42.54,Bilingual,,0,0,0,,下节课会用到一个\N{\fs33\c&H00C8C0B8&\bord1.4}next lecture uses one.
+Dialogue: 0,0:28:42.77,0:28:44.46,Bilingual,,0,0,0,,课上给了四条规则\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture gives four rules.
+Dialogue: 0,0:28:44.78,0:28:47.33,Bilingual,,0,0,0,,只授予对象管理员角色，不要给完整的管理员角色\N{\fs33\c&H00C8C0B8&\bord1.4}Grant object admin, not full admin.
+Dialogue: 0,0:28:47.57,0:28:49.17,Bilingual,,0,0,0,,让 bucket 保持私有\N{\fs33\c&H00C8C0B8&\bord1.4}Keep buckets private.
+Dialogue: 0,0:28:49.36,0:28:51.54,Bilingual,,0,0,0,,给它们全球唯一的名字加上前缀\N{\fs33\c&H00C8C0B8&\bord1.4}Prefix their globally unique names.
+Dialogue: 0,0:28:51.86,0:28:56.49,Bilingual,,0,0,0,,还有，不再需要的就删掉，因为存储和下载都要花钱\N{\fs33\c&H00C8C0B8&\bord1.4}And delete what you no longer need, because storage and downloads cost money.
+Dialogue: 0,0:28:57.53,0:29:01.12,Bilingual,,0,0,0,,如果你试过重启，就再跑一次：docker compose down\N{\fs33\c&H00C8C0B8&\bord1.4}If you tried the restart, run docker compose down once more.
+Dialogue: 0,0:29:01.44,0:29:04.25,Bilingual,,0,0,0,,额外跑一条命令，删掉共用的网络\N{\fs33\c&H00C8C0B8&\bord1.4}An extra command removes the shared network.
+Dialogue: 0,0:29:04.57,0:29:06.56,Bilingual,,0,0,0,,暂停一下，把你的机器收拾干净\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and leave your machine clean.
+Dialogue: 0,0:29:06.80,0:29:09.04,Bilingual,,0,0,0,,这一讲在云上什么都没启动\N{\fs33\c&H00C8C0B8&\bord1.4}This lecture started nothing in the cloud.
+Dialogue: 0,0:29:09.36,0:29:13.24,Bilingual,,0,0,0,,留下来的是密钥，而泄露的密钥会花掉你的钱\N{\fs33\c&H00C8C0B8&\bord1.4}What stays behind is the key, and a leaked key can spend your money.
+Dialogue: 0,0:29:13.56,0:29:16.78,Bilingual,,0,0,0,,不再用的密钥要删掉，连同它们的本地文件\N{\fs33\c&H00C8C0B8&\bord1.4}Delete keys you no longer use, and their local files.
+Dialogue: 0,0:29:17.10,0:29:20.51,Bilingual,,0,0,0,,如果有密钥被推到了 GitHub，马上在 IAM 里删掉它\N{\fs33\c&H00C8C0B8&\bord1.4}If one reaches GitHub, delete it in IAM at once;
+Dialogue: 0,0:29:20.51,0:29:24.27,Bilingual,,0,0,0,,上节课那个检测私钥的 hook 会先拦住它\N{\fs33\c&H00C8C0B8&\bord1.4}last lecture's private key hook would catch it first,
+Dialogue: 0,0:29:24.27,0:29:25.98,Bilingual,,0,0,0,,前提是你把它加进了自己的 repo\N{\fs33\c&H00C8C0B8&\bord1.4}once added to your repo.
+Dialogue: 0,0:29:26.22,0:29:28.16,Bilingual,,0,0,0,,整节课，放在一张地图上\N{\fs33\c&H00C8C0B8&\bord1.4}The whole lecture, on one map.
+Dialogue: 0,0:29:28.48,0:29:30.12,Bilingual,,0,0,0,,你代码的工牌和密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Your code's badge and key
+Dialogue: 0,0:29:30.12,0:29:33.09,Bilingual,,0,0,0,,在 Google 的令牌柜台换来一张一小时有效的票\N{\fs33\c&H00C8C0B8&\bord1.4}buy a one-hour ticket at Google's token desk.
+Dialogue: 0,0:29:33.41,0:29:36.71,Bilingual,,0,0,0,,一个 IAM 格子让这个工牌能调用 Gemini\N{\fs33\c&H00C8C0B8&\bord1.4}One IAM cell lets that badge call Gemini.
+Dialogue: 0,0:29:37.03,0:29:39.40,Bilingual,,0,0,0,,一个挂载把密钥送到 /secrets\N{\fs33\c&H00C8C0B8&\bord1.4}A mount carries the key to /secrets.
+Dialogue: 0,0:29:39.72,0:29:41.58,Bilingual,,0,0,0,,各个 container 拨名字\N{\fs33\c&H00C8C0B8&\bord1.4}Containers dial names;
+Dialogue: 0,0:29:41.58,0:29:46.80,Bilingual,,0,0,0,,你的浏览器拨 localhost，穿过 3200 到 3000 这样的门\N{\fs33\c&H00C8C0B8&\bord1.4}your browser dials localhost, through doors like 3200 to 3000,
+Dialogue: 0,0:29:46.80,0:29:48.74,Bilingual,,0,0,0,,这些门也对你的 Wi-Fi 敞开\N{\fs33\c&H00C8C0B8&\bord1.4}open to your Wi-Fi too.
+Dialogue: 0,0:29:49.06,0:29:52.48,Bilingual,,0,0,0,,浏览器经过 CORS 保安，把三个调用串在一起\N{\fs33\c&H00C8C0B8&\bord1.4}The browser stitches three calls past the CORS bouncer,
+Dialogue: 0,0:29:52.48,0:29:55.21,Bilingual,,0,0,0,,向量则留在一个挂载的目录里\N{\fs33\c&H00C8C0B8&\bord1.4}and the vectors survive in a mounted folder.
+Dialogue: 0,0:29:56.35,0:29:58.55,Bilingual,,0,0,0,,出了问题，先找它在哪一层\N{\fs33\c&H00C8C0B8&\bord1.4}When something breaks, find its layer.
+Dialogue: 0,0:29:58.87,0:30:01.49,Bilingual,,0,0,0,,凭据错误：路径或者挂载\N{\fs33\c&H00C8C0B8&\bord1.4}A credentials error: the path or the mount.
+Dialogue: 0,0:30:01.81,0:30:04.18,Bilingual,,0,0,0,,401：没有有效的令牌\N{\fs33\c&H00C8C0B8&\bord1.4}A 401: no valid token.
+Dialogue: 0,0:30:04.50,0:30:07.68,Bilingual,,0,0,0,,403：角色、项目，或者 API\N{\fs33\c&H00C8C0B8&\bord1.4}A 403: role, project, or API.
+Dialogue: 0,0:30:08.00,0:30:09.92,Bilingual,,0,0,0,,一行 CORS 报错：origin\N{\fs33\c&H00C8C0B8&\bord1.4}A CORS line: the origin.
+Dialogue: 0,0:30:10.24,0:30:12.01,Bilingual,,0,0,0,,被占用的 port：门\N{\fs33\c&H00C8C0B8&\bord1.4}A taken port: the doors.
+Dialogue: 0,0:30:12.33,0:30:14.48,Bilingual,,0,0,0,,脚本挂了：第 14 行\N{\fs33\c&H00C8C0B8&\bord1.4}A dying script: line 14.
+Dialogue: 0,0:30:14.73,0:30:16.74,Bilingual,,0,0,0,,五道自测题\N{\fs33\c&H00C8C0B8&\bord1.4}5 questions to test yourself.
+Dialogue: 0,0:30:17.06,0:30:21.41,Bilingual,,0,0,0,,第一题：ADC 找的三个位置；这个教程填的是哪一个？\N{\fs33\c&H00C8C0B8&\bord1.4}One: the three places ADC looks; which does this tutorial fill?
+Dialogue: 0,0:30:21.73,0:30:24.72,Bilingual,,0,0,0,,第二题：为什么是 /secrets，而不是你的 Mac？第三题\N{\fs33\c&H00C8C0B8&\bord1.4}Two: why /secrets, not your Mac? Three:
+Dialogue: 0,0:30:24.72,0:30:28.83,Bilingual,,0,0,0,,加载器的名字和你浏览器的 localhost，为什么不能互换？\N{\fs33\c&H00C8C0B8&\bord1.4}why can the loader's name and your browser's localhost not swap?
+Dialogue: 0,0:30:29.15,0:30:30.70,Bilingual,,0,0,0,,第四题：在 port 3300 上\N{\fs33\c&H00C8C0B8&\bord1.4}Four: on port 3300,
+Dialogue: 0,0:30:30.70,0:30:35.11,Bilingual,,0,0,0,,哪个调用最先出问题，API 又为什么没事？\N{\fs33\c&H00C8C0B8&\bord1.4}which call breaks first, and why does the API survive?
+Dialogue: 0,0:30:35.43,0:30:39.57,Bilingual,,0,0,0,,第五题：403 有三种原因；你怎么区分它们？\N{\fs33\c&H00C8C0B8&\bord1.4}Five: a 403 has three causes; how do you tell them apart?
+Dialogue: 0,0:30:39.80,0:30:43.49,Bilingual,,0,0,0,,答案在练习里，命令在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}Answers are in the exercises, commands in the study guide.
+Dialogue: 0,0:30:43.81,0:30:46.19,Bilingual,,0,0,0,,下节课：一个新的服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}Next lecture: a new service account,
+Dialogue: 0,0:30:46.19,0:30:48.97,Bilingual,,0,0,0,,以及带着自己 CORS 白名单的真正的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}and real buckets with their own CORS list.
