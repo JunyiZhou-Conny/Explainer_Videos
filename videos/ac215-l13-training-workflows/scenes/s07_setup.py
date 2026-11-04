@@ -51,6 +51,14 @@ def ls_cols(lines):
     return [f"{r[0]}  {r[4].rjust(w)}  {r[5]} {r[6]} {r[7]}  {r[8]}" for r in rows]
 
 
+def text_part(txt, sub):
+    """The glyphs of `sub` in a label (Text has no glyphs for spaces)."""
+    s, k = txt.text, "".join(sub.split())          # Text.text holds the glyphs only, no spaces
+    assert len(s) == len(txt.submobjects), (s, len(txt.submobjects))
+    a = s.index(k)
+    return VGroup(*txt.submobjects[a:a + len(k)])
+
+
 def top_left(m, x=-6.3, y=2.7):
     m.shift(np.array([x - m.get_left()[0], y - m.get_top()[1], 0]))
     return m
@@ -140,7 +148,7 @@ class KeysAndBucket(VoiceScene):
             out(self, t, items[:10], run_time=0.5, lag=0.04)
             self.wait(1.3)
             out(self, t, items[10:], run_time=0.4, lag=0.05)
-            self.wait(0.9)
+            self.wait(3.0)      # page 2 holds the files the next scenes use: long enough to compare
 
         # ========================================================== 1. Vertex AI API (C2), GPU quota (C3)
         api = console(("search", "Vertex AI API"), 8.0, 2.9).move_to([-1.2, 0.95, 0])
@@ -282,7 +290,7 @@ class KeysAndBucket(VoiceScene):
         c06 = capture("06")
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(track(tr, 5), run_time=0.5)
+            unpin(self, o5[2], yt2, track(tr, 5), run_time=0.5)   # step 4's cue leaves with step 4
             vo.wait_until("a service account called model trainer")
             self.play(FadeOut(mp), FadeIn(sa, shift=UP * 0.15), FadeIn(sa_ill), run_time=0.6)
             self.remove(mp)
@@ -301,6 +309,7 @@ class KeysAndBucket(VoiceScene):
             vo.wait_until("Pause and create yours")
             self.play(FadeIn(yt3, shift=UP * 0.1), run_time=0.3)
             flash_tag(self, yt3, TURN, run_time=0.6)
+            self.wait(1.5)      # the card and its cue hold through "Pause and create yours"
             old = VGroup(sa, sa_ill, create, roles, menu, sdr, fkey, yt3)
             self.play(FadeOut(old, shift=UP * 0.2), track(tr, 5, extra=True), run_time=0.5)
             self.remove(old, *old)
@@ -328,11 +337,15 @@ class KeysAndBucket(VoiceScene):
             self.play(FadeIn(hc.frame), FadeIn(hc.head), track(tr, 5), run_time=0.5)
             vo.wait_until("This recording machine")
             self.play(FadeIn(hc.body[0], shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("no W and B account")
             self.play(FadeIn(hc.body[1], shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("no GPU")
+            self.play(Indicate(text_part(hc.body[1], "no GPU"), color=TURN, scale_factor=1.1), run_time=0.6)
             vo.wait_until("The key in that listing")
             self.play(FadeIn(hc.body[2], shift=UP * 0.1), run_time=0.5)
             flash_tag(self, si, INK, run_time=0.6)
-            self.play(FadeIn(hc.body[3], shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("moved out before the container starts")
+            self.play(FadeIn(hc.body[3], shift=UP * 0.1), Indicate(kr, color=TURN, scale_factor=1.08), run_time=0.6)
             vo.wait_until("So each cloud step")
             self.play(FadeOut(VGroup(t, *t.lines, kr), shift=DOWN * 0.2), FadeIn(hc.body[4], shift=UP * 0.1),
                       run_time=0.6)
@@ -415,7 +428,7 @@ class KeysAndBucket(VoiceScene):
         ph = grey_chip("README: ... = your key · ours: an obvious placeholder")
         why = card(["40: the placeholder's length · the check: not 0",
                     "and the trainer's pinned wandb 0.15.11 accepts only 40",
-                    "(scene 11: 84:14, 87:14)"], size=20)
+                    "(shown in scene 11)"], size=20)
         rs = VGroup(card(["keep it out of your shell history:",
                           mono("read -rs WANDB_KEY && export WANDB_KEY", 20, INK), "(bash, zsh)"], size=20),
                     extra_tag("not captured")).arrange(RIGHT, buff=0.25, aligned_edge=UP)

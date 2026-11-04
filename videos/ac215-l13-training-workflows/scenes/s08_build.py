@@ -119,6 +119,11 @@ def big_line(caption: str, text: str, size: float = 26) -> VGroup:
     return g
 
 
+def soft_rows(t, cmd: str) -> int:
+    """Rows a command takes when type_cmd(..., soft=True) types it at P_REPO in terminal t."""
+    return -(-len(P_REPO + " " + cmd) // t.max_chars)
+
+
 def note_beside(p, k: int, mob, buff: float = 0.45):
     """Put `mob` right of line k (0-based) of code panel p."""
     ln = p.code.code_lines[k]
@@ -169,9 +174,12 @@ class TwoFixes(VoiceScene):
         pid = grey_chip("project ID, not its name · keep gs://")
         pid.next_to(rp2, DOWN, buff=0.2).align_to(rp1, LEFT)
         ed = grey_chip("our editor; use yours · this sed -i is GNU syntax · macOS sed: sed -i ''")
-        ed.next_to(t.box, UP, buff=0.15).align_to(t.box, RIGHT)
+        top10 = strip_top(10)                      # the terminal grown for the sed (4 rows) + its 5 lines
+        ed.move_to([t.box.get_right()[0] - ed.width / 2, top10 + 0.15 + ed.height / 2, 0])
         assert pid.get_right()[0] < 6.55 and rc93.get_bottom()[1] > same.get_top()[1] + 0.05
-        assert pid.get_bottom()[1] > max(ed.get_top()[1], same.get_top()[1]) + 0.05, (pid.get_bottom(), ed.get_top())
+        assert pid.get_bottom()[1] > same.get_top()[1] + 0.05, (pid.get_bottom(), same.get_top())
+        assert ed.get_top()[1] < TRACK_BOTTOM - 0.1, ed.get_top()
+        assert soft_rows(t, c20.cmd) + 5 <= 9, soft_rows(t, c20.cmd)
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(mp), FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref), run_time=0.8)
@@ -195,10 +203,12 @@ class TwoFixes(VoiceScene):
             self.play(each([glyphs_of(rows93[1], rows93[1].original_text.strip()),
                             glyphs_of(rows93[3], rows93[3].original_text.strip())], TURN, scale=1.06),
                       FadeIn(rp1, shift=LEFT * 0.1), FadeIn(rp2, shift=LEFT * 0.1), run_time=0.8)
-            vo.wait_until("lines 8 and 9 of docker-shell.sh")
             self.play(FadeIn(pid, shift=UP * 0.1), run_time=0.4)
-            self.play(FadeOut(same, shift=UP * 0.1), FadeIn(ed, shift=UP * 0.1), run_time=0.4)
-            self.remove(same)
+            vo.wait_until("lines 8 and 9 of docker-shell.sh")
+            # the card leaves, the terminal grows: the prompt, the whole sed and its 5 lines share the frame
+            gone0 = VGroup(rc93, rp1, rp2, pid, same)
+            resize(self, t, 10, run_time=0.6, extra=(FadeOut(gone0, shift=UP * 0.1), FadeIn(ed, shift=UP * 0.1)))
+            self.remove(gone0, *gone0)
             type_cmd(self, t, c20.cmd, type_time=1.4, soft=True)
             o20 = out(self, t, [c20.line(2), c20.line(3), c20.line(4), (c20.line(5), OWNED), (c20.line(6), OWNED)],
                       run_time=0.5)
@@ -260,7 +270,7 @@ class TwoFixes(VoiceScene):
         # ========================================================== 2. sh docker-shell.sh fails at step 2 (D2)
         rc114 = readme_card((114, 115), size=20)
         rc114.move_to([-6.3 + rc114.width / 2, 2.75 - rc114.height / 2, 0])
-        t = laptop_term(8, P_REPO)
+        t = term(P_REPO, 8, T_LAPTOP, size=20)    # 20 pt from here on: the sed edits 22/24 fit 2-3 rows
         se = code("docker-shell.sh", 3)
         all404 = grey_chip("22 packages · all 404")
         right_x = 6.4
@@ -299,8 +309,9 @@ class TwoFixes(VoiceScene):
             assert len(o3)
 
         # ========================================================== 3. the strip, the cracked cockpit, PONDER
-        cm = corner_map()
+        cm = corner_map().shift(UP * 0.3)          # clear of the 4-row strip fix 1 needs
         cr = cm.crack()
+        assert cm.get_bottom()[1] > strip_top(4, 20) + 0.1, cm.get_bottom()
 
         with self.voiceover(SAY[3]) as vo:
             self.keep_only(tr, ref, t, *t.lines, all404, run_time=0.4)
@@ -323,7 +334,8 @@ class TwoFixes(VoiceScene):
         mtag = recording_tag().next_to(mirror, RIGHT, buff=0.2).align_to(mirror, DOWN)
         assert mtag.get_right()[0] < 6.55 and mirror.get_bottom()[1] > -1.35, (mtag.get_right(), mirror.get_bottom())
         ed2 = grey_chip("our editor; use yours · macOS sed: sed -i ''")
-        ed2.move_to([6.4 - ed2.width / 2, -1.1, 0])
+        ed2.move_to([6.3 - ed2.width / 2, strip_top(4, 20) + 0.15 + ed2.height / 2, 0])
+        assert ed2.get_left()[0] > cm.get_right()[0] + 0.2 and soft_rows(t, c22.cmd) == 2
         nl2 = big_line("your new line 2", c22.line(3))
         nl2.move_to([-2.9 + nl2.width / 2, 1.3, 0])
 
@@ -341,9 +353,10 @@ class TwoFixes(VoiceScene):
             vo.wait_until("The first fix, an extra")
             self.play(FadeOut(VGroup(mirror, mtag), shift=DOWN * 0.1), track(tr, 2, extra="fix 1"), run_time=0.5)
             self.remove(mirror, mtag)
+            resize(self, t, 4, run_time=0.4)        # 2 command rows + 2 output rows: all of fix 1 at once
             ex4 = on_bar(t, extra_row())
             self.play(FadeIn(ex4), FadeIn(ed2, shift=UP * 0.1), run_time=0.4)
-            type_cmd(self, t, c22.cmd, type_time=1.0)
+            type_cmd(self, t, c22.cmd, type_time=1.0, soft=True)
             o22 = out(self, t, [c22.line(2), (c22.line(3), OWNED)], run_time=0.4)
             vo.wait_until("switches the base to bookworm")
             src = substring(o22[-1], c22.line(3)).copy()
@@ -391,19 +404,22 @@ class TwoFixes(VoiceScene):
             self.play(FadeIn(ren, shift=DOWN * 0.1), run_time=0.5)
 
         # ========================================================== 6. fix 2 (extra); the diff (extra)
-        cm2 = layered_map("apt · google-cloud-sdk")
-        cr1 = cm.crack()[1]
+        cm2 = layered_map("apt · google-cloud-sdk").shift(UP * 1.0)   # clear of the 6-row strip fix 2 needs
+        cr1 = cm2.crack()[1]
+        assert cm2.get_top()[1] <= PIC_TOP + 0.01 and cm2.get_bottom()[1] > strip_top(6, 20) + 0.1, cm2.get_bottom()
+        assert soft_rows(t, c24.cmd) == 3, soft_rows(t, c24.cmd)
         apt_new = band("apt · google-cloud-cli", SYSTEM, 2.85, 0.34, 20).move_to(cm2.apt)
         nl37 = big_line("your new line 37", c24.line(4).strip(), size=22)
         nl37.move_to([-2.9 + nl37.width / 2, 1.5, 0])
         assert nl37.get_right()[0] < 6.55, nl37.get_right()
         ed3 = grey_chip("our editor; use yours · macOS sed: sed -i ''")
-        ed3.move_to([6.4 - ed3.width / 2, -1.1, 0])
+        ed3.move_to([6.3 - ed3.width / 2, strip_top(6, 20) + 0.15 + ed3.height / 2, 0])
+        assert ed3.get_top()[1] < nl37.get_bottom()[1] - 0.1, (ed3.get_top(), nl37.get_bottom())
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(sc, ren), shift=UP * 0.15), track(tr, 2, extra="fix 2"), run_time=0.5)
             self.remove(sc, ren, *sc, *ren)
-            resize(self, t, 3, run_time=0.5)
+            resize(self, t, 6, run_time=0.5)        # 3 command rows + 3 output rows: all of fix 2 at once
             self.play(FadeIn(cm2, shift=UP * 0.1), FadeIn(cr1), run_time=0.5)
             self.play(Indicate(cm2.apt.text, color=ERR, scale_factor=1.1), run_time=0.6)
             ex6 = on_bar(t, extra_row())

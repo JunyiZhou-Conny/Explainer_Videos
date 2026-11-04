@@ -323,13 +323,13 @@ class InsideTheTarball(VoiceScene):
             istep(self, t4, c30.line(55), type_time=0.4)
             o11 = out(self, t4, tar_cols(c30.at((56, 63))), run_time=0.5, lag=0.05)
             self.play(substring(o11[2], "10253").animate.set_color(TURN), run_time=0.4)
-            self.wait(1.0)      # the listing stays readable before the host strip replaces it
+            self.wait(2.5)      # the eight-entry listing stays readable (~3 s) before the host strip replaces it
             vo.wait_until("On our Linux engine it belongs to root")
             self.play(FadeOut(VGroup(t4, ex4, *t4.lines)), FadeIn(h4), run_time=0.4)
             self.remove(t4, ex4, *t4.lines)
-            type_cmd(self, h4, c31.cmd, type_time=0.9, soft=True)
+            type_cmd(self, h4, c31.cmd, type_time=0.6, soft=True)   # brisk: the strip starts ~1.5 s into the sentence
             self.play(FadeIn(exh4), run_time=0.2)
-            o12 = out(self, h4, [squash(s) for s in c31.at((2, 5))], run_time=0.4)
+            o12 = out(self, h4, [squash(s) for s in c31.at((2, 5))], run_time=0.3)
             root = substring(o12[0], "root")
             self.play(root.animate.set_color(TURN), run_time=0.3)
             own.next_to(h4.box, UP, buff=0.15).align_to(h4.box, LEFT)
