@@ -449,498 +449,498 @@ Something to ponder: on your laptop, the same folder is empty.
 Is the mount broken?
 
 91
-00:05:20,166 --> 00:05:25,322
-没有。两个挂载都只存在于 container 里面。你的笔记本看到的
-No. Both mounts exist only inside the container. Your laptop
+00:05:20,166 --> 00:05:24,113
+没有。两个挂载都只存在于 container 里面
+No. Both mounts exist only inside the container.
 
 92
-00:05:25,322 --> 00:05:29,505
-是 entrypoint 通过 repo 的挂载建出来的空目录
-sees the empty folder the entrypoint made through the repo mount;
+00:05:24,433 --> 00:05:27,637
+你的笔记本，看到的是 entrypoint
+Your laptop sees the empty folder the entrypoint
 
 93
+00:05:27,637 --> 00:05:29,505
+通过 repo 的挂载建出来的空目录
+made through the repo mount;
+
+94
 00:05:29,505 --> 00:05:32,241
 额外列一下就能看到，它属于 root
 an extra listing shows it, owned by root.
 
-94
+95
 00:05:35,800 --> 00:05:38,723
 在 container 里面跑：dvc init
 Inside the container, run dvc init.
 
-95
+96
 00:05:39,043 --> 00:05:44,120
 在 Linux 上它可能会停下：仓库路径不属于当前用户
 On Linux it may stop: the repository path is not owned by the current user.
 
-96
+97
 00:05:44,440 --> 00:05:47,615
 你在里面是 root，而 repo 在磁盘上属于你
 You are root inside, the repo is yours on disk,
 
-97
+98
 00:05:47,615 --> 00:05:50,520
 所以 git 拒绝了，留下一个半成品目录
 so git refuses, leaving a half-made folder.
 
-98
+99
 00:05:50,767 --> 00:05:52,840
 修法是一个额外步骤，只针对 Linux
 The fix is an extra, for Linux:
 
-99
+100
 00:05:52,840 --> 00:05:55,716
 在你的笔记本上删掉那些半成品文件
 on your laptop, remove the half-made files.
 
-100
+101
 00:05:56,036 --> 00:05:59,748
 然后把 /app 标成安全目录，写进你的 git 配置
 Then mark /app as a safe directory in your git config.
 
-101
+102
 00:06:00,068 --> 00:06:03,290
 再启动一次 container，dvc init 就成功了
 Start the container again, and dvc init works.
 
-102
+103
 00:06:03,610 --> 00:06:05,210
 暂停一下，自己跑一遍
 Pause and run it.
 
-103
+104
 00:06:05,983 --> 00:06:08,325
 如果你 clone 的是 main，就会停在这里
 If you cloned main, it stops here:
 
-104
+105
 00:06:08,325 --> 00:06:14,388
 DVC 已经配置好了，remote 被拒绝，配置还指向课程的 bucket
 DVC is already set up, the remote is refused, and the config points at the class bucket.
 
-105
+106
 00:06:14,708 --> 00:06:16,283
 从 starter 开始
 Start from the starter.
 
-106
+107
 00:06:16,333 --> 00:06:20,350
 然后把 DVC 指向你 bucket 里的 DVC store 目录
 Then point DVC at the dvc_store folder in your bucket,
 
-107
+108
 00:06:20,350 --> 00:06:21,986
 作为它的默认 remote
 as its default remote.
 
-108
+109
 00:06:22,306 --> 00:06:23,906
 暂停一下，加上它
 Pause and add it.
 
-109
+110
 00:06:26,300 --> 00:06:29,116
 来看 dvc add 会对照片做什么
 Here is what dvc add will do with photos.
 
-110
+111
 00:06:29,436 --> 00:06:32,081
 它用 MD5 给每张照片算指纹
 It fingerprints each photo with MD5.
 
-111
+112
 00:06:32,401 --> 00:06:35,589
 它把一份副本按这个指纹放进缓存
 It files a copy in its cache under that fingerprint,
 
-112
+113
 00:06:35,589 --> 00:06:38,225
 放在用指纹前 2 个字符命名的架子上
 on a shelf named by the first 2 characters.
 
-113
+114
 00:06:38,545 --> 00:06:42,518
 然后它给一个 manifest 算指纹，也就是指纹和文件名的列表
 Then it fingerprints a manifest, the list of fingerprints and names,
 
-114
+115
 00:06:42,518 --> 00:06:47,719
 再把这个指纹写进指针文件，在 git 里由它代替这个目录
 and writes that fingerprint into the pointer file, which stands in for the folder in git.
 
-115
+116
 00:06:49,633 --> 00:06:53,638
 第二个陷阱：挂载失败了，所以目录是空的
 A second trap: the mount failed, so the folder is empty,
 
-116
+117
 00:06:53,638 --> 00:06:57,356
 而 dvc add 照样高高兴兴地做出一个 0 个文件的版本
 and dvc add happily makes a version with zero files.
 
-117
+118
 00:06:58,117 --> 00:07:03,022
 没有挂载 bucket，我们的替身就把四张照片复制进笔记本上的目录
 With no bucket mounted, our stand-in copies four photos into the laptop folder,
 
-118
+119
 00:07:03,022 --> 00:07:07,120
 container 通过 repo 的挂载能看到它们，我们再 add 一次
 which the container sees through the repo mount, and we add again.
 
-119
+120
 00:07:07,440 --> 00:07:11,898
 现在指针文件写着 4 个文件，整个目录一个指纹
 Now the pointer file says 4 files and one fingerprint for the folder.
 
-120
+121
 00:07:12,218 --> 00:07:13,818
 暂停一下，add 你自己的
 Pause and add yours.
 
-121
+122
 00:07:17,650 --> 00:07:21,362
 缓存里能看到这些架子，还有之前那个空版本
 The cache shows those shelves, plus the empty version from before.
 
-122
+123
 00:07:26,067 --> 00:07:31,251
 所以一行字能锁定 600 KB：它给指纹的列表算指纹
 So one line pins 600 kilobytes: it fingerprints the list of fingerprints.
 
-123
-00:07:31,571 --> 00:07:35,595
-而授课老师在课程 repo 里打的 tag
+124
+00:07:31,571 --> 00:07:35,892
+而授课老师在课程 repo 里打的 tag 存的是同一个指纹
 And the instructor's tag in the class repo holds the same fingerprint,
 
-124
-00:07:35,595 --> 00:07:37,373
-存的是同一个指纹，一个字符都不差
+125
+00:07:35,892 --> 00:07:37,492
+一个字符都不差
 character for character.
 
-125
+126
 00:07:38,717 --> 00:07:40,317
 来想一个问题
 Something to ponder.
 
-126
+127
 00:07:40,381 --> 00:07:43,581
 你把 Image 2 改名叫 brie 2，再 add 一次
 You give Image_2 the new name brie_2, and add again.
 
-127
+128
 00:07:43,901 --> 00:07:49,725
 哪个会变：是照片的指纹，manifest 的指纹，大小，还是文件数？
 Which changes: the photo fingerprint, the manifest fingerprint, the size, or the file count?
 
-128
+129
 00:07:58,567 --> 00:08:02,428
 只有 manifest 的指纹变了，因为列表里有一个名字变了
 Only the manifest fingerprint, because one name in the list changed.
 
-129
+130
 00:08:02,748 --> 00:08:06,972
 开头那两个目录正好反过来：名字一样，字节是新的
 The opening's two folders were the reverse: same names, new bytes.
 
-130
+131
 00:08:07,292 --> 00:08:10,610
 而且 DVC 存的是整个文件，不是差异
 And DVC stores whole files, not differences;
 
-131
+132
 00:08:10,610 --> 00:08:14,908
 改一个像素，就是一个新指纹、一份新副本
 one changed pixel means a new fingerprint and a new copy.
 
-132
+133
 00:08:16,550 --> 00:08:18,214
 接下来是 dvc push
 Next, dvc push.
 
-133
+134
 00:08:18,534 --> 00:08:19,956
 暂停一下，自己跑一遍
 Pause and run it.
 
-134
+135
 00:08:20,006 --> 00:08:22,033
 这里没有凭据，失败了
 Here it fails without credentials.
 
-135
+136
 00:08:22,353 --> 00:08:24,354
 为了展示 push 会上传什么
 To show what a push uploads,
 
-136
+137
 00:08:24,354 --> 00:08:27,641
 额外 push 到一个本地的替身 remote
 an extra push goes to a local stand-in remote:
 
-137
+138
 00:08:27,641 --> 00:08:31,142
 推送了 5 个文件，四张照片加上 manifest
 5 files pushed, the four photos and the manifest.
 
-138
+139
 00:08:31,383 --> 00:08:34,711
 在你的 bucket 里，DVC store 现在和缓存一模一样
 In your bucket, the dvc_store now mirrors the cache.
 
-139
+140
 00:08:35,031 --> 00:08:39,959
 金色标签：照片的第二份副本，仍然每月不到一美分
 A gold tag: a second copy of the photos, still a fraction of a cent a month.
 
-140
+141
 00:08:40,279 --> 00:08:45,248
 所以现在这些字节在三个地方：你上传到的 images 目录
 So the bytes now sit in three places: the images folder you upload to,
 
-141
+142
 00:08:45,248 --> 00:08:48,514
 还有你磁盘上由 dvc add 填满的缓存
 and the cache on your disk, filled by dvc add.
 
-142
+143
 00:08:48,834 --> 00:08:53,676
 第三个是 DVC store，那里每个文件都用它的指纹命名
 The third is the dvc_store, where every file is named by its fingerprint.
 
-143
+144
 00:08:53,996 --> 00:08:55,958
 这个 images 目录可以变
 The images folder can change;
 
-144
+145
 00:08:55,958 --> 00:09:00,354
 DVC store 从不覆盖，因为新的字节会有新的名字
 the dvc_store never overwrites, because new bytes get a new name.
 
-145
+146
 00:09:00,600 --> 00:09:02,733
 现在在 container 外面用 git
 Now git, outside the container.
 
-146
+147
 00:09:03,053 --> 00:09:07,988
 这里 git status 显示 dvc init 已经暂存好的 DVC 文件
 Here, git status shows the DVC files that dvc init already staged,
 
-147
+148
 00:09:07,988 --> 00:09:11,053
 新的指针文件，还有你的两处改动
 the new pointer file, and your two edits.
 
-148
+149
 00:09:11,373 --> 00:09:14,977
-接着 add 再 commit：6 个小文本文件
+接着 add 再 commit：6 个小文本文件、没有照片
 Add and commit: 6 small text files and no photos,
 
-149
+150
 00:09:14,977 --> 00:09:19,096
-没有照片，因为 .gitignore 文件把数据集目录排除了
+因为 .gitignore 文件把数据集目录排除了
 because the .gitignore file excludes the dataset folder.
 
-150
+151
 00:09:19,333 --> 00:09:22,909
-给这个 commit 打上 dataset v20 这个 tag
+给这个 commit 打上 dataset v20 这个 tag 作为永久的名字
 Tag the commit as dataset_v20, a permanent name,
 
-151
+152
 00:09:22,909 --> 00:09:25,964
-一个永久的名字，再把分支和 tag 一起 push
+再把分支和 tag 一起 push
 and push the branch and the tag together;
 
-152
+153
 00:09:25,964 --> 00:09:28,720
 atomic 的意思是两个都到，或者都不到
 atomic means both arrive, or neither.
 
-153
+154
 00:09:29,040 --> 00:09:30,568
 暂停一下，把它们跑一遍
 Pause and run them.
 
-154
+155
 00:09:30,618 --> 00:09:34,309
 额外看一下 log，能看到这个 tag，它锁定了这六行
 An extra log shows the tag, which pins these six lines.
 
-155
+156
 00:09:36,433 --> 00:09:39,305
 额外和授课老师的 tag 做一次 diff
 An extra diff against the instructor's tag:
 
-156
+157
 00:09:39,305 --> 00:09:43,046
 完全一样，同样的字节，同样的指纹，在任何机器上都一样
 identical, same bytes, same fingerprint, on any machine.
 
-157
+158
 00:09:43,366 --> 00:09:47,718
 整个诀窍就在这儿：git 保存的是指纹列表的指纹
 That is the whole trick: git keeps the fingerprint of a list of fingerprints.
 
-158
+159
 00:09:48,038 --> 00:09:51,132
 一根绳子从 tag 一直通到你 bucket 里的字节
 A rope leads from the tag to the bytes in your bucket.
 
-159
+160
 00:09:51,367 --> 00:09:54,308
 README 提醒说这个 tag 可能已经被占用
 The README warns that this tag may be taken;
 
-160
+161
 00:09:54,308 --> 00:09:58,386
 这只适用于 fork，你的新 repo 一个 tag 都没有
 that applies only to a fork, and your fresh repo has no tags.
 
-161
+162
 00:09:58,706 --> 00:10:03,201
 它的表格总结得很清楚：git 管代码和小小的 DVC 文件
 Its table sums it up: git holds code and small DVC files,
 
-162
+163
 00:10:03,201 --> 00:10:07,538
 DVC 跟踪数据集，bucket 存各个版本
 DVC tracks the dataset, the bucket stores the versions.
 
-163
+164
 00:10:07,858 --> 00:10:11,003
 README 接下来要在 Colab 里查看第 20 版
 The README now opens Colab for version 20;
 
-164
+165
 00:10:11,003 --> 00:10:15,196
 我们等第 21 版做完，再一次看两个版本
 we'll do that once, for both versions, after version 21.
 
-165
+166
 00:10:17,433 --> 00:10:19,033
 现在做第二个版本
 Now a second version.
 
-166
+167
 00:10:19,225 --> 00:10:22,457
 上传几张新照片到 images 目录
 Upload a few more photos to the images folder;
 
-167
+168
 00:10:22,457 --> 00:10:24,985
 我们的替身复制进去一张：Image 5
 our stand-in copies in one, Image_5.
 
-168
+169
 00:10:25,305 --> 00:10:29,064
 用真的 bucket 时，挂载可能要过一会儿才能发现新文件
 With a real bucket, the mount can take a little while to notice,
 
-169
+170
 00:10:29,064 --> 00:10:30,664
 所以先列一下再 add
 so list before you add.
 
-170
+171
 00:10:30,745 --> 00:10:32,622
 暂停一下，上传一两张
 Pause and upload one or two.
 
-171
+172
 00:10:32,866 --> 00:10:34,466
 来想一个问题
 Something to ponder.
 
-172
+173
 00:10:34,530 --> 00:10:38,541
 四张照片已经在 DVC store 里了，你再加一张
 Four photos are already in the dvc_store, and you add one.
 
-173
+174
 00:10:38,861 --> 00:10:41,613
 这时 dvc push 会上传多少个对象？
 How many objects will dvc push upload?
 
-174
+175
 00:10:50,450 --> 00:10:52,861
 两个：新照片和一个新的 manifest
 Two: the new photo and a new manifest.
 
-175
+176
 00:10:53,181 --> 00:10:56,075
 再启动 container，列一下目录，然后 add
 Start the container again, list the folder, and add it;
 
-176
+177
 00:10:56,075 --> 00:10:57,675
 暂停一下，把它们跑一遍
 pause and run them.
 
-177
+178
 00:10:57,895 --> 00:11:01,138
 结果是 5 个文件，还有一个新的 manifest 指纹
 It gives 5 files and a new manifest fingerprint.
 
-178
+179
 00:11:01,458 --> 00:11:06,876
 课程的 v21 版本指纹不一样，因为它的第五张照片是另一张图
 The class version 21 has a different one, because its fifth photo was another image.
 
-179
+180
 00:11:10,616 --> 00:11:13,240
 然后是 dvc push；暂停一下，自己跑一遍
 Then dvc push; pause and run it.
 
-180
+181
 00:11:13,560 --> 00:11:16,382
 这里本地替身显示推送了 2 个文件
 Here the local stand-in shows 2 files pushed,
 
-181
+182
 00:11:16,382 --> 00:11:19,704
 因为四张旧照片已经在架子上了
 because the four old photos are already on the shelf.
 
-182
+183
 00:11:20,024 --> 00:11:22,648
 这就是课上承诺的省下来的空间
 That is the saved space the lecture promised.
 
-183
+184
 00:11:22,883 --> 00:11:26,688
 回到你的笔记本上，再来那五条 git 命令
 Back on your laptop, the five git commands again:
 
-184
+185
 00:11:26,688 --> 00:11:29,328
 status 只显示指针文件改了
 status shows only the pointer file
 
-185
+186
 00:11:29,328 --> 00:11:33,443
 然后 add、commit、打 dataset v21 这个 tag，再 push
 changed; then add, commit, tag dataset_v21, and push.
 
-186
+187
 00:11:33,763 --> 00:11:35,292
 暂停一下，把它们跑一遍
 Pause and run them.
 
-187
+188
 00:11:35,342 --> 00:11:38,499
 额外做一次 diff，整个改动只有三行
 An extra diff shows the whole change in three lines.
 
-188
-00:11:44,766 --> 00:11:47,812
-这个 starter 分支里留着一份旧版 README
-The starter branch keeps an older README that adds the remote again at this point.
-
 189
-00:11:47,812 --> 00:11:49,694
-在这一步又加一次 remote
+00:11:44,766 --> 00:11:49,694
+这个 starter 分支里的旧版 README 在这一步又加一次 remote
 The starter branch keeps an older README that adds the remote again at this point.
 
 190

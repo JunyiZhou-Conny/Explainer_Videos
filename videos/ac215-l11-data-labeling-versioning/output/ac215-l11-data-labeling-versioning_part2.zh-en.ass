@@ -102,8 +102,9 @@ Dialogue: 0,0:04:57.97,0:05:01.38,Bilingual,,0,0,0,,所以今天的规则是：�
 Dialogue: 0,0:05:01.63,0:05:05.30,Bilingual,,0,0,0,,有了真的密钥，里面的目录会列出你的四张照片\N{\fs33\c&H00C8C0B8&\bord1.4}With a real key, the folder inside lists your four photos.
 Dialogue: 0,0:05:05.62,0:05:09.59,Bilingual,,0,0,0,,来想一个问题：在你的笔记本上，同一个目录是空的\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: on your laptop, the same folder is empty.
 Dialogue: 0,0:05:09.91,0:05:11.51,Bilingual,,0,0,0,,挂载坏了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Is the mount broken?
-Dialogue: 0,0:05:20.17,0:05:25.32,Bilingual,,0,0,0,,没有。两个挂载都只存在于 container 里面。你的笔记本看到的\N{\fs33\c&H00C8C0B8&\bord1.4}No. Both mounts exist only inside the container. Your laptop
-Dialogue: 0,0:05:25.32,0:05:29.51,Bilingual,,0,0,0,,是 entrypoint 通过 repo 的挂载建出来的空目录\N{\fs33\c&H00C8C0B8&\bord1.4}sees the empty folder the entrypoint made through the repo mount;
+Dialogue: 0,0:05:20.17,0:05:24.11,Bilingual,,0,0,0,,没有。两个挂载都只存在于 container 里面\N{\fs33\c&H00C8C0B8&\bord1.4}No. Both mounts exist only inside the container.
+Dialogue: 0,0:05:24.43,0:05:27.64,Bilingual,,0,0,0,,你的笔记本，看到的是 entrypoint\N{\fs33\c&H00C8C0B8&\bord1.4}Your laptop sees the empty folder the entrypoint
+Dialogue: 0,0:05:27.64,0:05:29.51,Bilingual,,0,0,0,,通过 repo 的挂载建出来的空目录\N{\fs33\c&H00C8C0B8&\bord1.4}made through the repo mount;
 Dialogue: 0,0:05:29.51,0:05:32.24,Bilingual,,0,0,0,,额外列一下就能看到，它属于 root\N{\fs33\c&H00C8C0B8&\bord1.4}an extra listing shows it, owned by root.
 Dialogue: 0,0:05:35.80,0:05:38.72,Bilingual,,0,0,0,,在 container 里面跑：dvc init\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the container, run dvc init.
 Dialogue: 0,0:05:39.04,0:05:44.12,Bilingual,,0,0,0,,在 Linux 上它可能会停下：仓库路径不属于当前用户\N{\fs33\c&H00C8C0B8&\bord1.4}On Linux it may stop: the repository path is not owned by the current user.
@@ -134,8 +135,8 @@ Dialogue: 0,0:07:07.44,0:07:11.90,Bilingual,,0,0,0,,现在指针文件写着 4 �
 Dialogue: 0,0:07:12.22,0:07:13.82,Bilingual,,0,0,0,,暂停一下，add 你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and add yours.
 Dialogue: 0,0:07:17.65,0:07:21.36,Bilingual,,0,0,0,,缓存里能看到这些架子，还有之前那个空版本\N{\fs33\c&H00C8C0B8&\bord1.4}The cache shows those shelves, plus the empty version from before.
 Dialogue: 0,0:07:26.07,0:07:31.25,Bilingual,,0,0,0,,所以一行字能锁定 600 KB：它给指纹的列表算指纹\N{\fs33\c&H00C8C0B8&\bord1.4}So one line pins 600 kilobytes: it fingerprints the list of fingerprints.
-Dialogue: 0,0:07:31.57,0:07:35.60,Bilingual,,0,0,0,,而授课老师在课程 repo 里打的 tag\N{\fs33\c&H00C8C0B8&\bord1.4}And the instructor's tag in the class repo holds the same fingerprint,
-Dialogue: 0,0:07:35.60,0:07:37.37,Bilingual,,0,0,0,,存的是同一个指纹，一个字符都不差\N{\fs33\c&H00C8C0B8&\bord1.4}character for character.
+Dialogue: 0,0:07:31.57,0:07:35.89,Bilingual,,0,0,0,,而授课老师在课程 repo 里打的 tag 存的是同一个指纹\N{\fs33\c&H00C8C0B8&\bord1.4}And the instructor's tag in the class repo holds the same fingerprint,
+Dialogue: 0,0:07:35.89,0:07:37.49,Bilingual,,0,0,0,,一个字符都不差\N{\fs33\c&H00C8C0B8&\bord1.4}character for character.
 Dialogue: 0,0:07:38.72,0:07:40.32,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
 Dialogue: 0,0:07:40.38,0:07:43.58,Bilingual,,0,0,0,,你把 Image 2 改名叫 brie 2，再 add 一次\N{\fs33\c&H00C8C0B8&\bord1.4}You give Image_2 the new name brie_2, and add again.
 Dialogue: 0,0:07:43.90,0:07:49.72,Bilingual,,0,0,0,,哪个会变：是照片的指纹，manifest 的指纹，大小，还是文件数？\N{\fs33\c&H00C8C0B8&\bord1.4}Which changes: the photo fingerprint, the manifest fingerprint, the size, or the file count?
@@ -159,10 +160,10 @@ Dialogue: 0,0:08:55.96,0:09:00.35,Bilingual,,0,0,0,,DVC store 从不覆盖，因
 Dialogue: 0,0:09:00.60,0:09:02.73,Bilingual,,0,0,0,,现在在 container 外面用 git\N{\fs33\c&H00C8C0B8&\bord1.4}Now git, outside the container.
 Dialogue: 0,0:09:03.05,0:09:07.99,Bilingual,,0,0,0,,这里 git status 显示 dvc init 已经暂存好的 DVC 文件\N{\fs33\c&H00C8C0B8&\bord1.4}Here, git status shows the DVC files that dvc init already staged,
 Dialogue: 0,0:09:07.99,0:09:11.05,Bilingual,,0,0,0,,新的指针文件，还有你的两处改动\N{\fs33\c&H00C8C0B8&\bord1.4}the new pointer file, and your two edits.
-Dialogue: 0,0:09:11.37,0:09:14.98,Bilingual,,0,0,0,,接着 add 再 commit：6 个小文本文件\N{\fs33\c&H00C8C0B8&\bord1.4}Add and commit: 6 small text files and no photos,
-Dialogue: 0,0:09:14.98,0:09:19.10,Bilingual,,0,0,0,,没有照片，因为 .gitignore 文件把数据集目录排除了\N{\fs33\c&H00C8C0B8&\bord1.4}because the .gitignore file excludes the dataset folder.
-Dialogue: 0,0:09:19.33,0:09:22.91,Bilingual,,0,0,0,,给这个 commit 打上 dataset v20 这个 tag\N{\fs33\c&H00C8C0B8&\bord1.4}Tag the commit as dataset_v20, a permanent name,
-Dialogue: 0,0:09:22.91,0:09:25.96,Bilingual,,0,0,0,,一个永久的名字，再把分支和 tag 一起 push\N{\fs33\c&H00C8C0B8&\bord1.4}and push the branch and the tag together;
+Dialogue: 0,0:09:11.37,0:09:14.98,Bilingual,,0,0,0,,接着 add 再 commit：6 个小文本文件、没有照片\N{\fs33\c&H00C8C0B8&\bord1.4}Add and commit: 6 small text files and no photos,
+Dialogue: 0,0:09:14.98,0:09:19.10,Bilingual,,0,0,0,,因为 .gitignore 文件把数据集目录排除了\N{\fs33\c&H00C8C0B8&\bord1.4}because the .gitignore file excludes the dataset folder.
+Dialogue: 0,0:09:19.33,0:09:22.91,Bilingual,,0,0,0,,给这个 commit 打上 dataset v20 这个 tag 作为永久的名字\N{\fs33\c&H00C8C0B8&\bord1.4}Tag the commit as dataset_v20, a permanent name,
+Dialogue: 0,0:09:22.91,0:09:25.96,Bilingual,,0,0,0,,再把分支和 tag 一起 push\N{\fs33\c&H00C8C0B8&\bord1.4}and push the branch and the tag together;
 Dialogue: 0,0:09:25.96,0:09:28.72,Bilingual,,0,0,0,,atomic 的意思是两个都到，或者都不到\N{\fs33\c&H00C8C0B8&\bord1.4}atomic means both arrive, or neither.
 Dialogue: 0,0:09:29.04,0:09:30.57,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
 Dialogue: 0,0:09:30.62,0:09:34.31,Bilingual,,0,0,0,,额外看一下 log，能看到这个 tag，它锁定了这六行\N{\fs33\c&H00C8C0B8&\bord1.4}An extra log shows the tag, which pins these six lines.
@@ -199,8 +200,7 @@ Dialogue: 0,0:11:26.69,0:11:29.33,Bilingual,,0,0,0,,status 只显示指针文件
 Dialogue: 0,0:11:29.33,0:11:33.44,Bilingual,,0,0,0,,然后 add、commit、打 dataset v21 这个 tag，再 push\N{\fs33\c&H00C8C0B8&\bord1.4}changed; then add, commit, tag dataset_v21, and push.
 Dialogue: 0,0:11:33.76,0:11:35.29,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
 Dialogue: 0,0:11:35.34,0:11:38.50,Bilingual,,0,0,0,,额外做一次 diff，整个改动只有三行\N{\fs33\c&H00C8C0B8&\bord1.4}An extra diff shows the whole change in three lines.
-Dialogue: 0,0:11:44.77,0:11:47.81,Bilingual,,0,0,0,,这个 starter 分支里留着一份旧版 README\N{\fs33\c&H00C8C0B8&\bord1.4}The starter branch keeps an older README that adds the remote again at this point.
-Dialogue: 0,0:11:47.81,0:11:49.69,Bilingual,,0,0,0,,在这一步又加一次 remote\N{\fs33\c&H00C8C0B8&\bord1.4}The starter branch keeps an older README that adds the remote again at this point.
+Dialogue: 0,0:11:44.77,0:11:49.69,Bilingual,,0,0,0,,这个 starter 分支里的旧版 README 在这一步又加一次 remote\N{\fs33\c&H00C8C0B8&\bord1.4}The starter branch keeps an older README that adds the remote again at this point.
 Dialogue: 0,0:11:50.01,0:11:52.96,Bilingual,,0,0,0,,这会失败：remote origin 已经存在\N{\fs33\c&H00C8C0B8&\bord1.4}That fails: remote origin already exists.
 Dialogue: 0,0:11:53.28,0:11:55.52,Bilingual,,0,0,0,,课程 pin 住的那版 README 说不要这么做\N{\fs33\c&H00C8C0B8&\bord1.4}The pinned README says not to.
 Dialogue: 0,0:11:55.57,0:11:59.70,Bilingual,,0,0,0,,再做一个额外的实验，只看，不要在真的挂载上跑\N{\fs33\c&H00C8C0B8&\bord1.4}One extra experiment, to watch, not to run on a real mount:
