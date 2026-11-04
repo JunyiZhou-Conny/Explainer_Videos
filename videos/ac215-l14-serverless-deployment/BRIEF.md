@@ -312,7 +312,7 @@ Notation:
   screen. README excerpts are code panels of `README.md`.
 - CONSOLE = a schematic console form, tagged `illustration`, with the README's field values. Never a
   screenshot, never a logo.
-- `lecture_ref(14, "a–b")` per AC215_SERIES rule 9, with spans from SLIDES.md §5.
+- `lecture_ref(14, "a–b")` per AC215_SERIES rule 9, with spans from SLIDES.md §1.
 
 ### Part 1 · Hand over code, hand over an image
 

@@ -149,7 +149,7 @@ Conventions
   each cost tag says what bills, and "check the pricing page".
 - `LECTURE 14 · a–b` in a SHOW line: from that block on, the GREY `lecture_ref(14, "a–b")` tag
   (`explainer.devops`) sits top right ("Lecture 14 · slides a–b"; "slide" for one), until a SHOW
-  changes or removes it. Spans from SLIDES.md §5 as assigned in the BRIEF. Every lecture picture is
+  changes or removes it. Spans from SLIDES.md §1 as assigned in the BRIEF. Every lecture picture is
   our own redrawing in series colours with the slide's structure and terms: no slide image, QR
   code, logo, meme or screenshot; slide 10's colour code is not copied (both grid rows BLUE; a
   solid rack for a VM, a dashed outline for serverless).
