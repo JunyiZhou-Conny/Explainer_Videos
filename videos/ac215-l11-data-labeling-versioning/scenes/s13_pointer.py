@@ -405,6 +405,7 @@ class PointerAndBytes(VoiceScene):
             self.play(Indicate(tbl.rows[2], color=TOOL, scale_factor=1.04), run_time=0.6)
             vo.wait_until("the bucket stores the versions")
             self.play(Indicate(tbl.rows[3], color=CLOUD, scale_factor=1.04), run_time=0.6)
+            vo.wait_until("The README now opens Colab")
             self.play(track(tr, 6), FadeIn(colab_n, shift=UP * 0.15), run_time=0.6)
 
         self.wait(1.2)

@@ -536,7 +536,7 @@ found."` RED. Laptop prompt `student@laptop:~/data-labeling$`: `docker exec data
 lines 138–146: prefix `cheeses_labeled`; on "where labels go", a WHITE envelope icon on it), its
 *Check Connection*, `extra · stand-in` → TERM(laptop/31: 3; wrap), `"Error validating storage
 connection"` RED. No ▶ here: block 4's single ▶ is the checkpoint for both forms.
-SAY: Then click Check Connection. Here it fails: file not found. An extra listing shows why: slash secrets inside Label Studio is empty. The target storage, where labels go, with the prefix cheeses labeled, fails too, with a vaguer message.
+SAY: Then click Check Connection. Here it fails: file not found. An extra listing shows why: slash secrets inside Label Studio is empty, on purpose, as you will hear in a moment; yours should pass. The target storage, where labels go, with the prefix cheeses labeled, fails too, with a vaguer message.
 
 SHOW: The honest card (GREY), its three lines building on their sentences: "This recording machine
 has no Google account, no bucket, no browser and no SSH route to GitHub." · "The key in the folder
@@ -718,7 +718,7 @@ TERM(laptop/50: 2); `docker ps` → TERM(laptop/51: 2; squeeze), empty. `▶ you
 "docker-compose: not found? docker compose run --rm --service-ports data-label-cli") →
 TERM(laptop/52: 26, …, 30; wrap); line 26 GREY "harmless", line 30 RED. On V7 a ghost of the
 stopped house still holds its name tag.
-SAY: The README's extra section runs both containers from one compose file. Leave the command line container with exit, stop Label Studio, and check with docker ps; pause and do it. Then run sh docker-shell-compose.sh. Here it stops on a name conflict: docker stop leaves the container behind, still holding its name.
+SAY: The README's extra section runs both containers from one compose file. Leave the command line container with exit, stop Label Studio, and check with docker ps; pause and do it. First put your bucket name on line 17 of docker-compose.yml as well. Then run sh docker-shell-compose.sh. Here it stops on a name conflict: docker stop leaves the container behind, still holding its name.
 
 SHOW: TRACKER E2 · extra. `docker rm data-label-studio` (extra) → TERM(laptop/53: 2); the ghost
 vanishes. TRACKER E2: `sh docker-shell-compose.sh` → TERM(laptop/54: 28–30); V1's compose overlay
@@ -1086,7 +1086,7 @@ SHOW: A kind card, tag `erratum`: README card (`README.md · line 321`), "this t
 (README.md lines 256–260): Git · code and small DVC metadata files / DVC · large dataset files /
 GCS · where DVC stores dataset versions. TRACKER J6: a GREY note "Colab: view dataset_v20 → scene
 15 views both versions" (README.md lines 324–328). Fade out.
-SAY: The README warns that this tag may be taken; that applies only to a fork, and your fresh repo has no tags. Its table sums it up: git holds code and small DVC files, DVC tracks the dataset, the bucket stores the versions.
+SAY: The README warns that this tag may be taken; that applies only to a fork, and your fresh repo has no tags. Its table sums it up: git holds code and small DVC files, DVC tracks the dataset, the bucket stores the versions. The README now opens Colab for version 20; we'll do that once, for both versions, after version 21.
 
 ---
 

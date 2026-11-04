@@ -36,7 +36,7 @@ S01:
 - en: "Here is a better answer: one short line. In part 2 you will compute this exact string on your own laptop from 4 cheese photos. It will match the instructor's tag in the class repo, character for character. How can one line pin down about 600 kilobytes of photos?"
   zh:
   - "更好的答案是：一行字。"
-  - "第二部分里，你会在自己的笔记本上，用 4 张奶酪照片算出这个一模一样的字符串。"
+  - "第二部分里，你会算出这个一模一样的字符串，就在自己的笔记本上，用 4 张奶酪照片。"
   - "它会和授课老师在课程 repo 里打的 tag 对上，一个字符都不差。"
   - "一行字，怎么能锁定大约 600 KB 的照片？"
 - en: "And before that, when someone clicks gouda, where does that word actually go?"
@@ -44,7 +44,7 @@ S01:
   - "在那之前，有人点了 gouda，这个词到底去了哪儿？"
 - en: "To follow along you need Docker Desktop, a Google Cloud project with billing and your own bucket, and a GitHub account. This lecture stores a few megabytes in the cloud, and gold tags mark where. The tracker in the top left follows both READMEs. A yellow your-turn tag means pause and run it; a gray extra tag marks a check that is not in the README. Every command is in the study guide."
   zh:
-  - "跟着做，你需要 Docker Desktop、一个开通了结算的 Google Cloud 项目和你自己的 bucket，还有一个 GitHub 账号。"
+  - "跟着做，你需要：Docker Desktop，一个开通了结算的 Google Cloud 项目和你自己的 bucket，还有一个 GitHub 账号。"
   - "这一讲会在云端存几 MB 数据，金色标签会标出在哪儿。"
   - "左上角的进度条跟着两份 README 走。"
   - "看到黄色的 your turn 标签，就暂停，自己跑一遍；灰色的 extra 标签表示这个检查 README 里没有。"
@@ -74,7 +74,7 @@ S02:
 - en: "Clone the data-labeling repo and move into it; pause and run it. Give Docker more than 4 gigabytes of memory, as the README asks; the setting is now under Settings, Resources."
   zh:
   - "把 data-labeling 这个 repo clone 下来，再进去；暂停一下，自己跑一遍。"
-  - "给 Docker 超过 4 GB 的内存，README 是这么要求的；这个设置现在在 Settings 里的 Resources 下面。"
+  - "给 Docker 超过 4 GB 的内存，README 是这么要求的；这个设置现在在 Settings 的 Resources 下面。"
 - en: "An extra git log shows this video's commit, from October 2025; an extra listing shows the scripts, cli.py and three pictures."
   zh:
   - "额外跑一下 git log，能看到这个视频用的 commit，是 2025 年 10 月的；再额外列一下目录，有几个脚本、cli.py 和三张图。"
@@ -86,7 +86,7 @@ S03:
 - en: "Now the key. In the console, create a service account named data-service-account, with the Storage Admin role. Then create one JSON key, saved in your secrets folder as data-service-account dot json. This role is broader than needed: it covers every bucket in the project. Pause and create yours."
   zh:
   - "现在是密钥。"
-  - "在控制台里建一个服务账号，名字叫 data-service-account，角色是 Storage Admin。"
+  - "在控制台里，建一个服务账号，名字叫 data-service-account，角色是 Storage Admin。"
   - "然后建一个 JSON 密钥，存进你的 secrets 目录，文件名是 data-service-account.json。"
   - "这个角色的权限比需要的大：它覆盖项目里的每一个 bucket。"
   - "暂停一下，建一个你自己的。"
@@ -134,7 +134,7 @@ S03:
 S04:
 - en: "The README runs Label Studio from a ready-made image, in your own container, so no outside labeling service sees your photos. Its script creates the network only if it is missing, and removes any old container with that name."
   zh:
-  - "README 用一个现成的 image，在你自己的 container 里跑 Label Studio，所以没有任何外部的标注服务能看到你的照片。"
+  - "README 跑 Label Studio 用的是一个现成的 image，在你自己的 container 里，所以没有任何外部的标注服务能看到你的照片。"
   - "它的脚本只在网络不存在时才创建网络，还会删掉同名的旧 container。"
 - en: "Then one docker run, flag by flag. The flag dash d runs it in the background, and the network flag puts it on a private street. Then dash p, 8080 colon 8080, publishes the port: a door in your laptop wall. Two dash v flags mount a database folder and your secrets; the dash e lines set the login and key path."
   zh:
@@ -162,7 +162,7 @@ S04:
   zh:
   - "看日志。"
   - "Label Studio 自己说明了原因：它的数据目录不可写。"
-  - "它以用户 1001 运行，可 Docker 是以 root 身份创建这个缺失的目录的。"
+  - "它以用户 1001 运行，可这个缺失的目录是 Docker 以 root 身份创建的。"
 - en: "The fix is an extra, for Linux; Docker Desktop for Mac normally avoids this. Give the folder to user 1001 with sudo chown, run the script again, and now it stays up. On Linux, pause and do the same."
   zh:
   - "修法是一个额外步骤，只针对 Linux；Mac 上的 Docker Desktop 一般不会遇到。"
@@ -195,16 +195,16 @@ S05:
   - "Use the README's values: Google Cloud Storage, your bucket, the prefix cheeses_unlabeled, and pre-signed URLs on."
   - null
   - null
-- en: "Then click Check Connection. Here it fails: file not found. An extra listing shows why: slash secrets inside Label Studio is empty. The target storage, where labels go, with the prefix cheeses labeled, fails too, with a vaguer message."
+- en: "Then click Check Connection. Here it fails: file not found. An extra listing shows why: slash secrets inside Label Studio is empty, on purpose, as you will hear in a moment; yours should pass. The target storage, where labels go, with the prefix cheeses labeled, fails too, with a vaguer message."
   zh:
   - "然后点 Check Connection。"
   - "这里失败了：找不到文件。"
-  - "额外列一下目录就知道原因：Label Studio 里面的 /secrets 是空的。"
+  - "额外列一下目录就知道原因：Label Studio 里面的 /secrets 是空的，这是故意的，等一下就会说到；你的应该能通过。"
   - "存放 label 的 target storage，前缀是 cheeses labeled，也失败了，报错更含糊。"
   en_display:
   - null
   - null
-  - "An extra listing shows why: /secrets inside Label Studio is empty."
+  - "An extra listing shows why: /secrets inside Label Studio is empty, on purpose, as you will hear in a moment; yours should pass."
   - "The target storage, where labels go, with the prefix cheeses_labeled, fails too, with a vaguer message."
 - en: "One honest note about this recording. This machine has no Google account, no bucket, no browser, and no SSH route to GitHub. The key in the folder listings is an obviously invalid stand-in, moved out before every cloud step. So each cloud step here fails exactly the way a misplaced key fails. That is the most common mistake in this lecture. Every success you should expect is tagged recorded, with its source, and clicks and uploads are replayed locally, tagged stand-in."
   zh:
@@ -239,7 +239,7 @@ S06:
   zh:
   - "页面来自 localhost:8080，照片来自 Google 的存储地址：这是另一个 origin。"
   - "页面自己的代码去取照片时，像 Label Studio 这样，你的浏览器把响应交给这段代码，只有一个前提：它带着允许这个 origin 的响应头。"
-  - "Google 加上这个响应头，也只有一个前提：bucket 有它自己的 CORS 规则。"
+  - "Google 只在 bucket 有自己的 CORS 规则时，才加上这个响应头。"
   en_display:
   - "The page comes from localhost:8080, the photo from Google's storage address: a different origin."
   - null
@@ -357,10 +357,11 @@ S07:
   - null
   - null
 S08:
-- en: "The README's extra section runs both containers from one compose file. Leave the command line container with exit, stop Label Studio, and check with docker ps; pause and do it. Then run sh docker-shell-compose.sh. Here it stops on a name conflict: docker stop leaves the container behind, still holding its name."
+- en: "The README's extra section runs both containers from one compose file. Leave the command line container with exit, stop Label Studio, and check with docker ps; pause and do it. First put your bucket name on line 17 of docker-compose.yml as well. Then run sh docker-shell-compose.sh. Here it stops on a name conflict: docker stop leaves the container behind, still holding its name."
   zh:
-  - "README 的 Extra 一节用一个 compose 文件跑起两个 container。"
+  - "README 的 Extra 一节把两个 container 一起跑起来，用的是一个 compose 文件。"
   - "用 exit 退出命令行 container，停掉 Label Studio，再用 docker ps 检查；暂停一下，照着做。"
+  - "先把你的 bucket 名字也填到 docker-compose.yml 的第 17 行。"
   - "然后跑 sh docker-shell-compose.sh。"
   - "这里它因为名字冲突停下了：docker stop 会把 container 留在那儿，名字还被它占着。"
 - en: "An extra docker rm frees the name; pause, remove it, and run the compose script again. This time Compose creates Label Studio plus a one-off command line container."

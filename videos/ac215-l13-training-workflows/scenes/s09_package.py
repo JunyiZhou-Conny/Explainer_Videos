@@ -129,7 +129,7 @@ class InsideTheTarball(VoiceScene):
             self.play(FadeIn(mp), run_time=0.5)
             self.play(mp.stamp_on(), run_time=0.6)
             self.play(Indicate(mp.stamp_.text, color=INK, scale_factor=1.08), run_time=0.6)
-            h = term(P_REPO, rows=3)
+            h = term(P_REPO, rows=3, size=20)     # 72 characters a row: the command fits on one
             exh = on_bar(h, extra_row())
             tmh = on_bar(h, time_row()).next_to(exh, LEFT, buff=0.15)
             self.play(FadeOut(VGroup(t, ex0, *t.lines)), FadeIn(h), run_time=0.4)
@@ -235,8 +235,10 @@ class InsideTheTarball(VoiceScene):
 
         # ========================================================== 3. pack it (E3)
         pk = TarballTrip.pack()
+        pk.shift(UP * 0.5)          # the setup.py label clears the fresh-cockpit chip above the strip
         s3 = term(P_COCKPIT, rows=3)
-        fresh = container_note().next_to(s3.box, UP, buff=0.12).align_to(s3.box, RIGHT)
+        fresh = container_note()
+        fresh.move_to([6.55 - fresh.width / 2, 2.45, 0])     # clear of the setup.py label
         notice = grey_chip("new notice · harmless")
         bk_box = RoundedRectangle(width=4.4, height=1.6, corner_radius=0.14, stroke_color=CLOUD,
                                   stroke_width=3).set_fill(CLOUD, 0.08).move_to([4.0, 0.55, 0])
@@ -245,16 +247,17 @@ class InsideTheTarball(VoiceScene):
         bkt = VGroup(bk_box, bk_t, bk_k)
         p5 = code("package-trainer.sh", 1, 4)
         p5.move_to([0, 0, 0])
-        put_top_left(p5, -p5.width / 2, 2.65)
+        put_top_left(p5, -p5.width / 2, 2.75)
         fixed = grey_chip("fixed name · a new upload overwrites the old one")
-        fixed.next_to(p5, DOWN, buff=0.2).align_to(p5, RIGHT)
-        rc = readme_card((128, 129)).next_to(fixed, DOWN, buff=0.3).align_to(p5, LEFT)
+        fixed.next_to(p5, DOWN, buff=0.16).align_to(p5, RIGHT)
+        rc = readme_card((128, 129)).next_to(fixed, DOWN, buff=0.16).align_to(p5, LEFT)
         yb = VGroup(label("with your bucket:", 20, S.GREY), mono("gsutil ls $GCS_BUCKET_URI", 20, INK),
                     label("lists", 20, S.GREY), mono(TARBALL, 20, INK)).arrange(RIGHT, buff=0.15)
         yb_box = RoundedRectangle(width=yb.width + 0.5, height=0.52, corner_radius=0.2, stroke_color=S.GREY,
                                   stroke_width=2.5).set_fill(S.GREY, 0.16)
         yb.move_to(yb_box)
-        ybc = VGroup(yb_box, yb).next_to(rc, DOWN, buff=0.3).align_to(p5, LEFT)
+        ybc = VGroup(yb_box, yb).next_to(rc, DOWN, buff=0.16).align_to(p5, LEFT)
+        assert ybc.get_bottom()[1] > -3.6, ybc.get_bottom()
 
         with self.voiceover(SAY[3]) as vo:
             self.keep_only(tr, ref)
@@ -315,14 +318,15 @@ class InsideTheTarball(VoiceScene):
             o10 = out(self, t4, c30.at(54), run_time=0.3)
             vo.wait_until("the tarball is 4,016 bytes")
             b4016 = substring(o10[0], TARBALL_BYTES)
-            self.play(b4016.animate.set_color(TURN), Indicate(b4016, color=TURN, scale_factor=1.2), run_time=0.6)
+            self.play(b4016.animate.set_color(TURN), run_time=0.3)
+            self.play(Indicate(b4016, color=TURN, scale_factor=1.2), run_time=0.6)
             istep(self, t4, c30.line(55), type_time=0.4)
             o11 = out(self, t4, tar_cols(c30.at((56, 63))), run_time=0.5, lag=0.05)
             self.play(substring(o11[2], "10253").animate.set_color(TURN), run_time=0.4)
             vo.wait_until("On our Linux engine it belongs to root")
             self.play(FadeOut(VGroup(t4, ex4, *t4.lines)), FadeIn(h4), run_time=0.4)
             self.remove(t4, ex4, *t4.lines)
-            type_cmd(self, h4, c31.cmd, type_time=0.9)
+            type_cmd(self, h4, c31.cmd, type_time=0.9, soft=True)
             self.play(FadeIn(exh4), run_time=0.2)
             o12 = out(self, h4, [squash(s) for s in c31.at((2, 5))], run_time=0.4)
             root = substring(o12[0], "root")
@@ -352,7 +356,7 @@ class InsideTheTarball(VoiceScene):
             self.play(Indicate(code_c.text, color=INK, scale_factor=1.06), run_time=0.6)
             vo.wait_until("Do you rebuild the image")
             self.play(Indicate(ck, color=IMAGE, scale_factor=1.04), run_time=0.6)
-        pc = ponder(self, PONDER_TYPO, seconds=6, center=(1.75, -2.35), width=8.2)
+        pc = ponder(self, PONDER_TYPO, seconds=6, center=(1.9, -1.72), width=8.0)
 
         # ========================================================== 6. the answer
         opts = VGroup(grey_chip("rebuild the image"), grey_chip("sh package-trainer.sh", mono_font=True),

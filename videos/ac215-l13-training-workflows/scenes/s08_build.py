@@ -9,8 +9,8 @@ Beats (script.md, ## S08; one voiceover block each):
    GNU/macOS) → 20:2–6, lines 5–6 GREEN; ▶ your turn.
 1. A kind card tagged erratum: README cards 100–101 and 110, chip "the README's listing is not the
    file · edit docker-shell.sh itself". Then CODE(docker-shell.sh: 13–24): 14 YELLOW, 17 GREY, 18–19
-   TEAL with GREY → TEAL notes "your code → /app", "secrets → /secrets", the four -e lines one note,
-   "no -p · it serves nothing" on the image line.
+   TEAL with two GREY → TEAL notes under the panel ("your code → /app", "secrets → /secrets"), the four
+   -e lines one note, "no -p · it serves nothing" on the docker run line.
 2. D2: README card 114–115; sh docker-shell.sh, ▶ your turn → 21: 23, …, 65–70 (RED), …, 166 (RED), …,
    181–188 (184–185 RED); "22 packages · all 404"; CODE(docker-shell.sh: 3) flashes on "set dash e".
 3. The terminal shrinks to a strip; V1's laptop corner (cockpit lit) appears and cracks RED. PONDER 8 s.
@@ -168,8 +168,10 @@ class TwoFixes(VoiceScene):
         rp2 = replace_chip().next_to(rows93[2], RIGHT, buff=0.35).align_to(rp1, LEFT)
         pid = grey_chip("project ID, not its name · keep gs://")
         pid.next_to(rp2, DOWN, buff=0.2).align_to(rp1, LEFT)
-        assert pid.get_right()[0] < 6.55 and rc93.get_bottom()[1] > same.get_top()[1] + 0.05
         ed = grey_chip("our editor; use yours · this sed -i is GNU syntax · macOS sed: sed -i ''")
+        ed.next_to(t.box, UP, buff=0.15).align_to(t.box, RIGHT)
+        assert pid.get_right()[0] < 6.55 and rc93.get_bottom()[1] > same.get_top()[1] + 0.05
+        assert pid.get_bottom()[1] > max(ed.get_top()[1], same.get_top()[1]) + 0.05, (pid.get_bottom(), ed.get_top())
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(mp), FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref), run_time=0.8)
@@ -195,13 +197,8 @@ class TwoFixes(VoiceScene):
                       FadeIn(rp1, shift=LEFT * 0.1), FadeIn(rp2, shift=LEFT * 0.1), run_time=0.8)
             vo.wait_until("lines 8 and 9 of docker-shell.sh")
             self.play(FadeIn(pid, shift=UP * 0.1), run_time=0.4)
-            self.wait(0.6)
-            gone = VGroup(rc93, rp1, rp2, pid, same)
-            self.play(FadeOut(gone, shift=UP * 0.2), run_time=0.4)
-            self.remove(gone, *gone)
-            resize(self, t, 9, run_time=0.5)
-            ed.next_to(t.box, UP, buff=0.15).align_to(t.box, RIGHT)
-            self.play(FadeIn(ed, shift=UP * 0.1), run_time=0.3)
+            self.play(FadeOut(same, shift=UP * 0.1), FadeIn(ed, shift=UP * 0.1), run_time=0.4)
+            self.remove(same)
             type_cmd(self, t, c20.cmd, type_time=1.4, soft=True)
             o20 = out(self, t, [c20.line(2), c20.line(3), c20.line(4), (c20.line(5), OWNED), (c20.line(6), OWNED)],
                       run_time=0.5)
@@ -227,14 +224,16 @@ class TwoFixes(VoiceScene):
         p.move_to([0, 2.72 - p.height / 2, 0])
         b14, b17 = line_bar(p.code, 1, TURN, 0.22), line_bar(p.code, 4, grey, 0.22)
         b18, b19 = line_bar(p.code, 5, IMAGE, 0.2), line_bar(p.code, 6, IMAGE, 0.2)
-        n18 = note_beside(p, 5, flow_note("your code", "/app"))
-        n19 = note_beside(p, 6, flow_note("secrets", "/secrets")).align_to(n18, LEFT)
-        env = grey_chip("four -e: the key path, project, bucket, W&B key")
-        env.move_to([6.35 - env.width / 2, p.code.code_lines[9].get_center()[1], 0])
-        nop = note_beside(p, 11, grey_chip("no -p · it serves nothing"))
+        n18 = flow_note("your code", "/app")
+        n19 = flow_note("secrets", "/secrets")
+        VGroup(n18, n19).arrange(RIGHT, buff=0.6).next_to(p, DOWN, buff=0.25).align_to(p.code, LEFT).shift(RIGHT * 0.3)
+        assert n19.get_bottom()[1] > -3.55, n19.get_bottom()
+        env = grey_chip("four -e: key path, project, bucket, W&B key")
+        env.move_to([6.35 - env.width / 2, p.code.code_lines[10].get_center()[1], 0])
+        nop = note_beside(p, 4, grey_chip("no -p · it serves nothing"))
         for m_ in (n18, n19, env, nop):
             assert m_.get_right()[0] < 6.55, m_.get_right()
-        assert env.get_left()[0] > p.code.code_lines[9].get_right()[0] + 0.2
+        assert env.get_left()[0] > p.code.code_lines[9].get_right()[0] + 0.1, env.get_left()
 
         with self.voiceover(SAY[1]) as vo:
             self.keep_only(tr, ref)
@@ -287,10 +286,10 @@ class TwoFixes(VoiceScene):
             vo.wait_until("the build stops at line 18")
             out(self, t, [(c21.line(166), ERR), ("…", grey)], wrap=True, run_time=0.3)
             fr = [c21.line(181), c21.line(182), c21.line(183), (c21.line(184), ERR), (c21.line(185), ERR),
-                  c21.line(186), c21.line(187), c21.line(188)]
+                  c21.line(186), c21.line(187)]
             o3 = out(self, t, fr, wrap=True, run_time=0.6)
-            self.play(Indicate(substring(t.find("Dockerfile:18"), "Dockerfile:18"), color=ERR, scale_factor=1.2),
-                      run_time=0.6)
+            self.play(Indicate(substring(o3[0], "Dockerfile:18"), color=ERR, scale_factor=1.2), run_time=0.6)
+            out(self, t, [c21.line(188)], wrap=True, run_time=0.4)
             vo.wait_until("The script's set dash e")
             self.play(FadeIn(se, shift=DOWN * 0.1), run_time=0.4)
             self.play(Indicate(code_span(se.code, 0, "set -e"), color=TURN, scale_factor=1.2), run_time=0.7)
@@ -341,7 +340,7 @@ class TwoFixes(VoiceScene):
             self.remove(mirror, mtag)
             ex4 = on_bar(t, extra_row())
             self.play(FadeIn(ex4), FadeIn(ed2, shift=UP * 0.1), run_time=0.4)
-            type_cmd(self, t, c22.cmd, type_time=1.0, soft=True)
+            type_cmd(self, t, c22.cmd, type_time=1.0)
             o22 = out(self, t, [c22.line(2), (c22.line(3), OWNED)], run_time=0.4)
             vo.wait_until("switches the base to bookworm")
             src = substring(o22[-1], c22.line(3)).copy()
@@ -392,7 +391,7 @@ class TwoFixes(VoiceScene):
         cm2 = layered_map("apt · google-cloud-sdk")
         cr1 = cm.crack()[1]
         apt_new = band("apt · google-cloud-cli", SYSTEM, 2.85, 0.34, 20).move_to(cm2.apt)
-        nl37 = big_line("your new line 37", c24.line(4).strip(), size=24)
+        nl37 = big_line("your new line 37", c24.line(4).strip(), size=22)
         nl37.move_to([-2.9 + nl37.width / 2, 1.5, 0])
         assert nl37.get_right()[0] < 6.55, nl37.get_right()
         ed3 = grey_chip("our editor; use yours · macOS sed: sed -i ''")
@@ -424,8 +423,8 @@ class TwoFixes(VoiceScene):
             ex6b = on_bar(t, extra_row())
             self.play(FadeIn(ex6b), run_time=0.3)
             type_cmd(self, t, c25.cmd, type_time=0.6)
-            o25 = out(self, t, c25.at((2, 4)) + [("…", grey)] + c25.at(11, 12) + [("…", grey)] + c25.at(20, 21),
-                      wrap=True, run_time=0.7)
+            o25 = out(self, t, c25.at((2, 4)) + [("…", grey), (c25.line(11), grey), (c25.line(12), OWNED), ("…", grey),
+                                                 (c25.line(20), grey), (c25.line(21), OWNED)], wrap=True, run_time=0.7)
             vo.wait_until("your two values")
             stat = substring(o25[2], c25.line(4).strip())
             self.play(stat.animate.set_color(TURN), run_time=0.4)
@@ -453,8 +452,8 @@ class TwoFixes(VoiceScene):
             flash_tag(self, yt7, TURN, run_time=0.6)
             vo.wait_until("it builds")
             o7 = out(self, t, [squash(BUILD_LINE)], run_time=0.4)
-            tt = beside(time_row(), o7[0])
-            pin(self, o7[0], tt, run_time=0.3)
+            tt = on_bar(t, time_row())
+            self.play(FadeIn(tt), run_time=0.3)
             self.play(Indicate(substring(o7[0], "FINISHED"), color=PASS, scale_factor=1.2), run_time=0.6)
             vo.wait_until("longer on Apple Silicon")
             self.play(FadeIn(slow, shift=DOWN * 0.1), run_time=0.4)
@@ -473,8 +472,8 @@ class TwoFixes(VoiceScene):
             o36 = out(self, t, [c26.line(36)], run_time=0.3)
             self.play(Indicate(substring(o36[0], c26.line(36)), color=INK, scale_factor=1.06), run_time=0.5)
             vo.wait_until("because the entrypoint has no set dash e")
-            self.play(FadeOut(VGroup(slow, honest), shift=UP * 0.1), run_time=0.3)
-            self.remove(slow, honest)
+            self.play(FadeOut(VGroup(slow, honest, tt), shift=UP * 0.1), run_time=0.3)
+            self.remove(slow, honest, tt)
             resize(self, t, 3, run_time=0.5)
             self.play(FadeIn(cm3, shift=UP * 0.1), run_time=0.5)
             self.play(cm3.solid(), run_time=0.8)
@@ -488,8 +487,8 @@ class TwoFixes(VoiceScene):
         ep.move_to([0, 2.72 - ep.height / 2, 0])
         b13, b19 = line_bar(ep.code, 0, TURN, 0.22), line_bar(ep.code, 6, TURN, 0.22)
         er8 = erratum_tag().move_to(ep.header).align_to(ep.code, RIGHT).shift(LEFT * 0.1)
-        fact = card(["a label, not a fact"], size=22)
-        fact.next_to(ep, DOWN, buff=0.25).align_to(ep, RIGHT)
+        fact = grey_chip("a label, not a fact", size=22)
+        fact.next_to(ep, DOWN, buff=0.15).align_to(ep, RIGHT)
         assert fact.get_bottom()[1] > t.box.get_top()[1] + 0.05, (fact.get_bottom(), t.box.get_top())
 
         with self.voiceover(SAY[8]) as vo:
@@ -508,8 +507,8 @@ class TwoFixes(VoiceScene):
             self.play(FadeOut(mac), FadeIn(rid, shift=UP * 0.1), run_time=0.4)
             self.remove(mac)
             vo.wait_until("A small slip")
-            self.play(FadeOut(cm3, shift=UP * 0.15), run_time=0.4)
-            self.remove(cm3)
+            self.play(FadeOut(VGroup(cm3, rid), shift=UP * 0.15), run_time=0.4)
+            self.remove(cm3, rid)
             self.play(FadeIn(ep, shift=UP * 0.1), FadeIn(er8), run_time=0.5)
             vo.wait_until("activated is printed")
             self.play(FadeIn(b13), Indicate(code_span(ep.code, 0, "activated"), color=TURN, scale_factor=1.1),

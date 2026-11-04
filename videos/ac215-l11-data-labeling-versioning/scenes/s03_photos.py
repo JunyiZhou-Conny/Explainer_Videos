@@ -199,9 +199,10 @@ class KeyAndPhotos(VoiceScene):
             unpin(self, frow, cap5)
             unpin(self, frow, st)
             unpin(self, ln, xt)
-            self.play(Indicate(rc.body[0], color=INK, scale_factor=1.04), run_time=0.6)
-            vo.wait_until("we use curl")
-            self.play(FadeIn(curl_chip, shift=LEFT * 0.2), run_time=0.4)
+            # no wait for "we use curl": the folded command + output need ~3 s, and the narration reaches
+            # "Then extract the zip" only ~2.5 s after "we use curl" (the ring then flashed for 0.5 s).
+            self.play(Indicate(rc.body[0], color=INK, scale_factor=1.04), FadeIn(curl_chip, shift=LEFT * 0.2),
+                      run_time=0.6)
             t.fold = curl_fold(t, c07.cmd)
             try:
                 cl = type_cmd(self, t, c07.cmd, type_time=1.2)
