@@ -428,7 +428,7 @@ class KeysAndBucket(VoiceScene):
         ph = grey_chip("README: ... = your key · ours: an obvious placeholder")
         why = card(["40: the placeholder's length · the check: not 0",
                     "and the trainer's pinned wandb 0.15.11 accepts only 40",
-                    "(shown in scene 11)"], size=20)
+                    "not 40? see the chapter Who submits, who runs"], size=20)
         rs = VGroup(card(["keep it out of your shell history:",
                           mono("read -rs WANDB_KEY && export WANDB_KEY", 20, INK), "(bash, zsh)"], size=20),
                     extra_tag("not captured")).arrange(RIGHT, buff=0.25, aligned_edge=UP)
@@ -463,10 +463,16 @@ class KeysAndBucket(VoiceScene):
             vo.wait_until("It must not be zero")
             top_left(why, rc80.get_left()[0], 2.75)
             rs.next_to(why, DOWN, buff=0.2).align_to(why, LEFT)
-            self.play(FadeOut(VGroup(rc80, ph), shift=UP * 0.2), FadeIn(why, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeOut(VGroup(rc80, ph), shift=UP * 0.2),
+                      *[FadeIn(m, shift=UP * 0.15) for m in (why.frame, why.body[0], why.body[1])], run_time=0.6)
             self.remove(rc80, ph)
             vo.wait_until("accepts exactly 40")
             self.play(Indicate(why.body[1], color=KEY, scale_factor=1.03), FadeIn(rs, shift=UP * 0.1), run_time=0.7)
+            vo.wait_until("If yours is a different length")
+            self.play(FadeIn(why.body[2], shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("watch the chapter")
+            self.play(Indicate(why.body[2], color=TURN, scale_factor=1.03), run_time=0.7)
+            vo.wait_until("before you submit a job")
             self.play(FadeOut(VGroup(why, rs)), FadeOut(r40), run_time=0.4)
             self.remove(why, rs, r40)
             resize(self, t6, 3, run_time=0.5, extra=[ex6.animate.shift(DOWN * 2 * t6.pitch)])

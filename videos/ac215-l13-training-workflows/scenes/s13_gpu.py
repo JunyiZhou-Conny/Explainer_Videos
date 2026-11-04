@@ -11,7 +11,7 @@ Beats (script.md, ## S13; one voiceover block each):
 2. CODE(cli.sh: 21-37) as two 12-line windows: 22-27 uncomment (YELLOW, the '#' fade), 30-37 comment
    out (GREY). Then the V6 replay with both blocks live: two tiles with the same name, RED chip.
 3. A GREY honest card: no GPU quota, no account here; the GPU block runs the same create command
-   that failed in scene 10; nothing new to show, nothing faked.
+   that failed for our CPU submit; nothing new to show, nothing faked.
 4. The board, all three on, chip lit; the GOLD cost tag on the T4 chip (no amounts).
 5. CODE(cli.sh: 30-37) with accelerator-type drawn into line 36 (GREY dashed, "a thought
    experiment"); PONDER 6 s.
@@ -136,7 +136,7 @@ class ThreeSwitches(VoiceScene):
         reg[0].add(check_mark(0.22, TURN, 4).move_to(reg[0]))
         qcol = VGroup(t4, reg).arrange(DOWN, aligned_edge=LEFT, buff=0.25)
         qcol.move_to(qp.content).align_to(qp.content, LEFT).shift(RIGHT * 0.25)
-        from7 = grey_chip("scene 7's request").next_to(qp.frame, LEFT, buff=0.3)
+        from7 = grey_chip("the setup chapter's request").next_to(qp.frame, LEFT, buff=0.3)
         quota_page = VGroup(qp, q_ill, qcol)
         link = Line(sw["quota"].value.get_bottom() + DOWN * 0.08, qp.frame.get_top(), color=TURN, stroke_width=3)
         assert qp.get_bottom()[1] > -3.5 and qp.get_right()[0] < 6.5 and from7.get_left()[0] > -6.5
@@ -213,7 +213,7 @@ class ThreeSwitches(VoiceScene):
         # ========================================================== 3. the honest card
         honest = card(["no GPU quota, no account here",
                        "the GPU block runs the same gcloud ai custom-jobs create",
-                       "that failed in scene 10",
+                       "that failed for our CPU submit",
                        "nothing new to show, nothing faked"], size=24)
         honest.move_to([0, 0.4, 0])
         cmd_glyphs = honest.body[1]

@@ -196,7 +196,7 @@ class InsideTheTarball(VoiceScene):
                                cuts={46: "default=10,", 49: "default=16,", 52: 'default="16",'}))
         yt2 = your_turn().next_to(p2, RIGHT, buff=0.3).align_to(p2, UP)
         bar52 = line_bar(p2.code, 7, TURN)
-        s11 = row_tag("scene 11", S.GREY).next_to(p2, RIGHT, buff=0.3).set_y(p2.code.code_lines[7].get_center()[1])
+        s11 = row_tag("→ Who submits", S.GREY).next_to(p2, RIGHT, buff=0.3).set_y(p2.code.code_lines[7].get_center()[1])
         flags_ = [code_span(p2.code, k, s) for k, s in ((1, '"--epochs"'), (4, '"--batch_size"'), (7, '"--wandb_key"'))]
         p3 = code("package/trainer/task.py", 96, 100, font_size=20, cuts={97: ("releases/", "cheese_4")})
         p3.move_to([0, 0, 0])

@@ -23,7 +23,7 @@ Beats (script.md, ## S11; one voiceover block each):
    scikit-learn"; 09 (plain extra, live manifest check) → 09:2–3, at the time of recording; strip
    under a picture: the stand-in's ORANGE slot empty (dashed), Google's tf-cpu band with the ORANGE
    layer, "expected in tf-cpu.2-17 · not verified here". 83 → 83: 2, …, 7–9, line 9 RED.
-6. CODE(task.py: 152–153); one terminal, three keys: 85:2 RED (chip: the empty key from scene 10 …),
+6. CODE(task.py: 152–153); one terminal, three keys: 85:2 RED (chip: the empty key from the last chapter …),
    84: …, 14 RED (chip: the default "16"), 86:4 YELLOW (chip: length check only …).
 7. 87: …, 14, "yours was 47" RED; GREY card on the pin. Fade out.
 """
@@ -325,7 +325,7 @@ class WhoRunsIt(VoiceScene):
         p153 = code("package/trainer/task.py", 152, 153)
         p153.move_to([-6.4 + p153.width / 2, 2.6 - p153.height / 2, 0])
         bar153 = line_bar(p153.code, 1, TURN)
-        ch_empty = lines_chip("the empty key from scene 10 ·", "on Vertex: after the download,", "on billed machine time")
+        ch_empty = lines_chip("the empty key from the last chapter ·", "on Vertex: after the download,", "on billed machine time")
         ch_16 = grey_chip('the default "16"')
         ch_ph = lines_chip("length check only · offline ·", "nothing asked W&B")
         for c_ in (ch_empty, ch_16, ch_ph):
@@ -362,10 +362,13 @@ class WhoRunsIt(VoiceScene):
 
         # ========================================================== 7. this pin: exactly 40
         pin_card = card(["wandb 0.15.11 accepts exactly 40 characters", "today's key format: not checked",
-                         "a different length: this pin refuses it", "check before you submit"], size=22)
+                         "a different length: this pin refuses it", "check before you submit",
+                         "untested fix: raise the pin in setup.py, repackage"], size=22)
 
         with self.voiceover(SAY[7]) as vo:
             self.clear(h, ch_ph)
+            # five rows of 87 output; the shorter terminal leaves the 5-line card a clear gap above it
+            resize(self, h, 6, run_time=0.4, extra=[sr.animate.shift(DOWN * 2 * h.pitch)])
             type_cmd(self, h, c87.cmd, type_time=0.8, soft=True)
             o87 = out(self, h, ["…", c87.line(14)], run_time=0.3)
             vo.wait_until("and 47 fails")
@@ -373,12 +376,16 @@ class WhoRunsIt(VoiceScene):
             self.play(Indicate(substring(o87[-1], "yours was 47"), color=ERR, scale_factor=1.1), run_time=0.5)
             vo.wait_until("We could not check")
             pin_card.move_to([0, (h.box.get_top()[1] + 2.8) / 2, 0])
+            assert pin_card.get_bottom()[1] > h.box.get_top()[1] + 0.2, (pin_card.get_bottom(), h.box.get_top())
             self.play(FadeOut(VGroup(p153, bar153)), FadeIn(pin_card, shift=UP * 0.15), run_time=0.6)
             self.remove(p153, bar153)
             vo.wait_until("If yours differs")
             self.play(Indicate(pin_card.body[2], color=INK, scale_factor=1.04), run_time=0.6)
             vo.wait_until("so check before you submit")
             self.play(pin_card.body[3].animate.set_color(TURN), run_time=0.5)
+            vo.wait_until("One fix, untested here")
+            self.play(pin_card.body[4].animate.set_color(TURN), run_time=0.4)
+            self.play(Indicate(pin_card.body[4], color=TURN, scale_factor=1.04), run_time=0.6)
         self.wait(0.6)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)

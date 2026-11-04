@@ -1,0 +1,161 @@
+## image
+$ docker image inspect --format 'Os/Arch: {{.Os}}/{{.Architecture}}  User: {{.Config.User}}  Entrypoint: {{json .Config.Entrypoint}}  Cmd: {{json .Config.Cmd}}' l14ex/translation-demo:local
+Os/Arch: linux/amd64  User: app  Entrypoint: null  Cmd: ["python","-m","translation_demo","serve"]
+[exit 0]
+
+## B1: PORT=9090 with the pipe still at 8080, then the fix
+$ docker run -d --name l14ex-port --rm -e PORT=9090 -p 18086:8080 l14ex/translation-demo:local >/dev/null; echo started
+started
+[exit 0]
+
+$ curl -sS http://localhost:18086/
+curl: (52) Empty reply from server
+[exit 52]
+
+$ docker logs l14ex-port 2>&1 | grep -E 'Starting|Listening'
+[2026-11-04 10:56:44 +0000] [1] [INFO] Starting gunicorn 26.2.0
+[2026-11-04 10:56:44 +0000] [1] [INFO] Listening at: http://0.0.0.0:9090 (1)
+[exit 0]
+
+$ docker stop l14ex-port >/dev/null; echo stopped
+stopped
+[exit 0]
+
+$ docker run -d --name l14ex-port --rm -e PORT=9090 -p 18086:9090 l14ex/translation-demo:local >/dev/null; echo started
+started
+[exit 0]
+
+$ curl -s http://localhost:18086/ | grep -o '<title>.*</title>'
+<title>Translate · AC215</title>
+[exit 0]
+
+$ docker stop l14ex-port >/dev/null; echo stopped
+stopped
+[exit 0]
+
+## B3: the job argv, as a plan (no API call, no upload)
+$ docker run --rm --network none l14ex/translation-demo:local python -m translation_demo batch --plan --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage.txt --src en --dest fr --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/
+{
+  "status": "plan_only",
+  "input_characters": null,
+  "input_uri": "gs://YOUR_INPUT_BUCKET/run-001/passage.txt",
+  "source_language": "en",
+  "destination_language": "fr",
+  "output_uri": "gs://YOUR_OUTPUT_BUCKET/run-001/",
+  "steps": [
+    "Read the passage",
+    "Translate the complete passage",
+    "Synthesize speech with Agent Platform",
+    "Save text, audio, and completion manifest to a unique attempt prefix",
+    "Exit"
+  ],
+  "implemented": true
+}
+[exit 0]
+
+## B4: an override that leaves out --dest
+$ docker run --rm --network none l14ex/translation-demo:local python -m translation_demo batch --plan --input-uri gs://YOUR_INPUT_BUCKET/run-002/passage.txt --src en --output-uri gs://YOUR_OUTPUT_BUCKET/run-002/ | grep -E 'source_language|destination_language'
+  "source_language": "en",
+  "destination_language": "fr",
+[exit 0]
+
+## C3: the four startup mistakes, side by side
+$ docker run --rm --network none l14ex/translation-demo:local python; echo "exit status: $?"
+exit status: 0
+[exit 0]
+
+$ docker run --rm --network none l14ex/translation-demo:local -m translation_demo batch --plan --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage.txt --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/; echo "exit status: $?"
+docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: exec: "-m": executable file not found in $PATH
+
+Run 'docker run --help' for more information
+exit status: 127
+[exit 0]
+
+$ docker run --rm --network none l14ex/translation-demo:local python '-m translation_demo batch --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage.txt --src en --dest fr --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/'; echo "exit status: $?"
+/usr/local/bin/python: Error while finding module specification for ' translation_demo batch --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage.txt --src en --dest fr --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/' (ModuleNotFoundError: No module named ' translation_demo batch --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage')
+exit status: 1
+[exit 0]
+
+$ docker run -d --name l14ex-neither --network none l14ex/translation-demo:local >/dev/null; echo started
+started
+[exit 0]
+
+$ docker inspect -f 'running after 15 s: {{.State.Running}}' l14ex-neither; docker logs l14ex-neither 2>&1 | grep -E 'Listening'
+running after 15 s: true
+[2026-11-04 10:56:54 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+[exit 0]
+
+$ docker stop l14ex-neither >/dev/null; docker rm l14ex-neither >/dev/null; echo removed
+removed
+[exit 0]
+
+## C4: arguments the program refuses before any cloud call (exit 2)
+$ docker run --rm --network none l14ex/translation-demo:local python -m translation_demo batch --plan --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage.txt --dest xx --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/ 2>&1 | tail -1
+__main__.py: error: Choose a supported destination language.
+[exit 0]
+
+$ docker run --rm --network none l14ex/translation-demo:local python -m translation_demo batch --plan --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage.txt --dest xx --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/ >/dev/null 2>&1; echo "exit status: $?"
+exit status: 2
+[exit 0]
+
+$ docker run --rm --network none l14ex/translation-demo:local python -m translation_demo batch --plan --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage.txt --output-uri gs://YOUR_OUTPUT_BUCKET 2>&1 | tail -1
+__main__.py: error: A bucket and an object path or output prefix are required.
+[exit 0]
+
+$ docker run --rm --network none l14ex/translation-demo:local python -m translation_demo batch --plan --input-uri YOUR_INPUT_BUCKET/run-001/passage.txt --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/ 2>&1 | tail -1
+__main__.py: error: Use a gs://bucket/object-or-prefix URI.
+[exit 0]
+
+$ docker run --rm --network none l14ex/translation-demo:local sh -c 'python -c "print(\"a\" * 5001)" > /tmp/long.txt && python -m translation_demo batch --plan --text-file /tmp/long.txt --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/' 2>&1 | tail -1
+__main__.py: error: Use at most 5,000 characters for this demo.
+[exit 0]
+
+$ docker run --rm --network none l14ex/translation-demo:local python -m translation_demo batch --plan --text-file examples/passage.txt --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/ | grep input_characters
+  "input_characters": 131,
+[exit 0]
+
+## C5-C7, B5: the web app, offline (requests sent from inside the container with Python; no translation call)
+$ ENABLE_SPEECH=unset: the page's speech button
+<button id="speech-button" type="button" disabled title="Enable speech with Agent Platform credentials in part 3">Play audio · enable in part 3</button>
+[exit 0]
+
+$ ENABLE_SPEECH=true: the page's speech button
+<button id="speech-button" type="button" disabled title="Translate some text first">Play audio</button>
+[exit 0]
+
+$ ENABLE_SPEECH=True: the page's speech button
+<button id="speech-button" type="button" disabled title="Translate some text first">Play audio</button>
+[exit 0]
+
+$ ENABLE_SPEECH=yes: the page's speech button
+<button id="speech-button" type="button" disabled title="Translate some text first">Play audio</button>
+[exit 0]
+
+$ ENABLE_SPEECH=on: the page's speech button
+<button id="speech-button" type="button" disabled title="Enable speech with Agent Platform credentials in part 3">Play audio · enable in part 3</button>
+[exit 0]
+
+$ ENABLE_SPEECH=true, GOOGLE_CLOUD_PROJECT not set: POST /api/speech {"text": "Bonjour à tous", "dest": "fr"}
+503 {"error":"Set GOOGLE_CLOUD_PROJECT to the project authorized for Agent Platform."}
+
+[exit 0]
+
+$ all three variables, no identity: POST /api/speech {"text": "Bonjour à tous", "dest": "fr"}
+503 {"error":"Google credentials are unavailable. Configure local ADC or attach an authorized runtime service account."}
+
+[exit 0]
+
+$ all three variables: POST /api/speech with 2,001 x "é" (4,002 UTF-8 bytes)
+400 {"error":"Use at most 4,000 UTF-8 bytes for this short speech demo."}
+
+[exit 0]
+
+$ all three variables: POST /api/speech {"text": "Bonjour", "dest": "xx"}
+400 {"error":"Choose a supported destination language."}
+
+[exit 0]
+
+$ docker ps -a --filter name=l14ex- --format '{{.Names}}' | wc -l
+0
+[exit 0]
+

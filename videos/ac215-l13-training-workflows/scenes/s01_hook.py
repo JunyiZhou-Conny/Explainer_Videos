@@ -141,7 +141,7 @@ class Hook(VoiceScene):
         pc = parcel("4 KB tarball", OWNED, 22, 0.9, 0.62).move_to([-0.2, 1.05, 0])
         tile = job_tile("CPU, RAM", False, 22, 2.6, 2.2).move_to([4.2, 0.9, 0])
         strip = term(P_COCKPIT, rows=3)
-        prev = preview_tag("preview · scene 10").next_to(strip.box, UP, buff=0.12).align_to(strip.box, RIGHT)
+        prev = preview_tag("preview · chapter One command").next_to(strip.box, UP, buff=0.12).align_to(strip.box, RIGHT)
         line75 = capture("40").line(75)
         rows = at_commas(from_(line75, "--model_name"), strip.max_chars)
         key = "--wandb_key=" + line75.split("--wandb_key=", 1)[1]

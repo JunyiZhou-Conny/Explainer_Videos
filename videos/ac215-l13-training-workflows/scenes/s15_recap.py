@@ -5,7 +5,7 @@ right, whole scene.
 0. A cockpit terminal (chip "our capture: a fresh cockpit", every command `extra`): `python cli.py`
    → laptop/60: 43, …, 47–48 (48 RED); CODE(cli.py: 7) above. `export GCP_REGION=us-central1` (no
    output), `python cli.py` → 60: 51–52, …, 119 (wrapped, RED). The code panel gives way to the GREY
-   chip "the Python SDK route · L15 · sends no --wandb_key (scene 11: yours was 2)".
+   chip "the Python SDK route · L15 · sends no --wandb_key (Who submits: yours was 2)".
 1. V4 step 5 (the miniature VM): it runs, the script exits, the VM dissolves, the meter stops, the
    trained weights are left as a GREY-dashed ghost that drifts up. `erratum` chips "nothing calls
    model.save" and "--model-dir and --lr: parsed, never used" with CODE(task.py: 27–30); the run
@@ -41,7 +41,7 @@ from explainer import style as S
 
 SAY = NARRATION["S15"]
 
-SDK_NOTE = "the Python SDK route · L15 · sends no --wandb_key (scene 11: yours was 2)"
+SDK_NOTE = "the Python SDK route · L15 · sends no --wandb_key (Who submits: yours was 2)"
 SEVEN_COLS = ("environment", "code", "data", "model", "metrics", "artifacts", "notes")
 QUESTIONS = (
     ("two tables", ("Notebooks A and B crowned different MobileNets.",

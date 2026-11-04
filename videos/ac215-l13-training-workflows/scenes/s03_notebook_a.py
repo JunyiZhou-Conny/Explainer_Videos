@@ -454,7 +454,7 @@ class FolderTracker(VoiceScene):
         assert rtags[0].get_bottom()[1] > rtags[1].get_top()[1] - 0.02, "replace tags overlap"
         c66 = notebook_cell("A", 1437, (1439, 1442), "…", size=20)
         top_left(c66, -c66.width / 2)
-        b_chip = grey_chip("your bucket: one from lecture 11, or create it now · scene 7 shows how")
+        b_chip = grey_chip("your bucket: one from lecture 11 · none yet? skip this upload until the setup chapter")
         b_chip.next_to(c66, DOWN, buff=0.3).align_to(c66.frame, LEFT)
         yt7 = your_turn().next_to(b_chip, DOWN, buff=0.25).align_to(b_chip, LEFT)
         mp = TrainingMap.at("S03")

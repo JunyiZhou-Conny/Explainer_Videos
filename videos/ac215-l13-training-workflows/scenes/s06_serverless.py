@@ -19,8 +19,8 @@ Beats (script.md, ## S06; one voiceover block each). No tracker; lref("18–24")
    CODE task.py: 96–100 small, 'anything to keep → somewhere durable'); 'the image that runs is
    Google's' (ORANGE 'Google' tabs on the job containers; the cockpit stays put).
 5. All machines outlined; QUICK(4 s).
-6. The answer: Colab runtimes and the job containers turn GREEN; the cockpit gets 'never · proved in
-   scene 9'. Fade to an empty frame.
+6. The answer: Colab runtimes and the job containers turn GREEN; the cockpit gets 'never · the tarball
+   chapter proves it'. Fade to an empty frame.
 """
 
 from manim import *  # noqa: I001  (manim first, then common: common must win)
@@ -302,7 +302,7 @@ class RentTheMachine(VoiceScene):
         qc = low_quick(self, QUICK_TEXT)     # under the lifted map: the ringed machines stay visible
 
         # ========================================================== 6. the answer
-        never = grey_chip("never · proved in scene 9").move_to([0, -1.75, 0]).align_to([-6.5, 0, 0], LEFT)
+        never = grey_chip("never · the tarball chapter proves it").move_to([0, -1.75, 0]).align_to([-6.5, 0, 0], LEFT)
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(qc), FadeOut(rings["laptop"]), run_time=0.5)

@@ -248,7 +248,7 @@ class OneCommand(VoiceScene):
         gold = cost_tag("the job's VM bills while it is up: from provisioning until the script exits\n"
                         "see the Vertex AI pricing page")
         gold.move_to([0, -2.05, 0])
-        k40 = grey_chip("scene 9's check: the last number · 40 for wandb 0.15.11")
+        k40 = grey_chip("last chapter's check: the last number · 40 for wandb 0.15.11")
         k40.next_to(gold, DOWN, buff=0.2)
         assert gold.get_top()[1] < -1.36 and k40.get_bottom()[1] > -3.58, (gold.get_top(), k40.get_bottom())
         words = mp.labels("submit")

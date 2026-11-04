@@ -1,0 +1,26 @@
+$ date -u +%Y-%m-%dT%H:%MZ; docker version --format "client {{.Client.Version}} / engine {{.Server.Version}}"
+2026-11-04T10:53Z
+client 29.8.2 / engine 29.8.2
+[exit 0]
+
+$ docker images --digests cgumb/ac215-translation-demo
+REPOSITORY   TAG       DIGEST    IMAGE ID   CREATED   SIZE
+[exit 0]
+
+$ docker pull -q cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+Error response from daemon: unknown: failed to resolve reference "docker.io/cgumb/ac215-translation-demo:lecture14-agent-platform-20261022": unexpected status from HEAD request to https://registry-1.docker.io/v2/cgumb/ac215-translation-demo/manifests/lecture14-agent-platform-20261022: 429 Too Many Requests
+[exit 1]
+
+$ docker pull cgumb/ac215-translation-demo@sha256:c17b6db09f7402febb582bf327920ec9ca4eee113f5ddefa38e9da5619dbe72e
+Error response from daemon: unknown: failed to resolve reference "docker.io/cgumb/ac215-translation-demo@sha256:c17b6db09f7402febb582bf327920ec9ca4eee113f5ddefa38e9da5619dbe72e": unexpected status from HEAD request to https://registry-1.docker.io/v2/cgumb/ac215-translation-demo/manifests/sha256:c17b6db09f7402febb582bf327920ec9ca4eee113f5ddefa38e9da5619dbe72e: 429 Too Many Requests
+[exit 1]
+
+$ docker images --digests cgumb/ac215-translation-demo
+REPOSITORY   TAG       DIGEST    IMAGE ID   CREATED   SIZE
+[exit 0]
+
+$ docker image inspect --format '{{.Id}} {{.Os}}/{{.Architecture}} {{json .RepoDigests}}' cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+
+Error response from daemon: No such image: cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+[exit 1]
+

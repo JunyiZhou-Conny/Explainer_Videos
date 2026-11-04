@@ -1,0 +1,389 @@
+# zh narration for S01-S08 (part 1, group g1: the hook and the map, before you begin, Part 1's function, what runs
+# it, calling it with a query string, the prebuilt image on the laptop, the same image deployed as a service),
+# sentence-aligned to script.md: one zh sentence per English sentence (explainer.voice.split_sentences; 79 SAY lines,
+# 174 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (A9, D9): conditions, purposes
+# and time clauses stay where the English puts them (S06[6], S08[5] open with the condition, as the English does).
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (rule A6):
+# hello_http -> hello 下划线 http; translation_demo serve -> translation demo serve; Ctrl+C -> Ctrl-C.
+# Error messages the SAY paraphrases are translated (A13): main.py 里应该有一个叫 translate 的函数，但它找到的是
+# hello 下划线 http; 方法不允许 (405); 语音已关闭 (503); 连接被重置. Status codes stay as digits.
+# The instructor rule (A16): the narration of S01-S08 names no instructor (the lecture -> 课上, the slides -> 课件).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: hello_http in S04[5],
+# S04[8], S05[5], S05[7]; %20 in S06[2]; zh-cn in S06[3]; amd64 in S07[2]; translation_demo serve in S07[4];
+# Ctrl+C in S07[10]); null = the SAY text.
+S01:
+- en: "Here is a translation page running on your laptop. Type good afternoon everyone, choose French, press Translate, and it answers: Bonjour à tous."
+  zh:
+  - "这是一个在你笔记本上跑着的翻译页面。"
+  - "输入 good afternoon everyone，选法语，点 Translate，它就回答：Bonjour à tous。"
+- en: "Now send the address to a classmate. On their laptop, localhost 8086 finds nothing, because localhost always means this machine, and nothing runs on theirs."
+  zh:
+  - "现在把地址发给一个同学。"
+  - "在同学的笔记本上，localhost 8086 什么也找不到，因为 localhost 永远指这台机器，而他那台上什么都没跑。"
+- en: "Lecture 1 gave one fix: rent a virtual machine. The page gets a public address, but the machine is billed all night, while nobody translates anything."
+  zh:
+  - "第 1 讲给过一个办法：租一台虚拟机。"
+  - "页面有了公网地址，可机器整晚都在计费，而根本没人在翻译。"
+- en: "So here is today's question. Can this page have a public URL, and cost nothing while nobody is using it?"
+  zh:
+  - "所以今天的问题是这个。"
+  - "这个页面能不能有一个公网 URL，没人用的时候又一分钱不花？"
+- en: "That is the promise of serverless. A copy of your app appears when a request arrives and disappears when the traffic stops. By the end, the same image also runs as a job. It takes a passage from a private bucket, speaks it in French, saves its files and exits."
+  zh:
+  - "这就是 serverless 的承诺。"
+  - "你应用的一个副本在请求来时出现，在流量停下时消失。"
+  - "到最后，同一个 image 还会作为一个 job 来跑。"
+  - "它从一个私有 bucket 里取一段文字，用法语读出来，保存文件，然后退出。"
+- en: "To follow along, have your clone, Docker, the gcloud tool and your own project with billing ready."
+  zh:
+  - "要跟着做，先准备好你的 clone、Docker、gcloud 命令行工具，还有你自己开通了结算的项目。"
+- en: "A tracker in the corner names the README step, and a yellow tag, your turn, means pause and run it. Follow the console steps first; the gcloud boxes are alternatives, not extra steps."
+  zh:
+  - "角落里的进度条标出 README 的哪一步，黄色的 your turn 标签表示暂停一下，自己跑一遍。"
+  - "先照着控制台的步骤做；gcloud 命令框是替代做法，不是额外的步骤。"
+S02:
+- en: "First, where this lecture sits: inside the prototype phase of the course project, where deployment begins."
+  zh:
+  - "先看这一讲的位置：在课程项目的原型阶段里，部署就从这里开始。"
+- en: "Of the Cheese App's four parts, three are done. Model deploy is left, and milestone 3 asks you to deploy your model or API with Cloud Functions or Cloud Run."
+  zh:
+  - "Cheese App 的四个部分，已经做完三个。"
+  - "还剩模型部署，里程碑 3 要求你用 Cloud Functions 或 Cloud Run，部署你的模型或 API。"
+- en: "The lecture's serverless: code runs only when needed, no servers to set up, and costly hardware only for the step that needs it."
+  zh:
+  - "课上讲的 serverless：代码只在需要时运行，不用搭服务器，昂贵的硬件只给需要它的那一步。"
+- en: "Last week's Vertex AI training job was one case; today, functions and Cloud Run; next week, endpoints and pipelines."
+  zh:
+  - "上周的 Vertex AI 训练任务就是一例；今天讲函数和 Cloud Run；下周讲 endpoint 和 pipeline。"
+- en: "Its map is one app, four ways to deploy it. Across, what you hand over, a code file or a container; down, where it runs, a rented machine or serverless. Lectures 1 and 2 filled the top row; today fills the bottom."
+  zh:
+  - "它的地图是一个应用，四种部署方式。"
+  - "横着看你交出的是什么，一个代码文件还是一个 container；竖着看它在哪儿跑，一台租来的机器还是 serverless。"
+  - "第 1 讲和第 2 讲填了上面一行；今天填下面一行。"
+- en: "The README's four parts sit in that bottom row. Part 1 hands over a file. Parts 2 to 4 hand over one image, first as a web service, then as a job."
+  zh:
+  - "README 的四个部分都在下面这一行里。"
+  - "第 1 部分交出的是一个文件。"
+  - "第 2 到第 4 部分交出的是一个 image，先作为 web service，再作为 job。"
+- en: "And notice what we deploy. Not the translation model, which an outside service runs, but the application code around it. Your Cheese App backend will play that role."
+  zh:
+  - "再注意我们部署的是什么。"
+  - "部署的不是翻译模型，那是一个外部服务在跑，而是它外面的应用代码。"
+  - "你的 Cheese App 后端会扮演这个角色。"
+- en: "Two small notes. The course page links to sections the rewritten README no longer has, so start at the top. And we follow the README the course link serves now, not the older commit in the course map."
+  zh:
+  - "两个小提示。"
+  - "课程页面链接到的几节，重写后的 README 已经没有了，所以从头开始。"
+  - "而且我们跟的是课程链接现在指向的 README，不是课程地图里那个旧的 commit。"
+S03:
+- en: "Before you begin. Select your course project and check its project ID, not just its display name; the command boxes need the ID. Confirm billing is on and that you may create these resources; if not, ask course staff first."
+  zh:
+  - "开始之前。"
+  - "选好你的课程项目，核对它的项目 ID，不要只看显示名称；命令框里要的是 ID。"
+  - "确认结算已开通，而且你有权限创建这些资源；如果没有，先问课程组。"
+- en: "Choose a region: the README uses Toronto. The speech model later uses us-central1, a separate setting for part 3."
+  zh:
+  - "选一个区域：README 用的是多伦多。"
+  - "后面的语音模型用 us-central1，这是第 3 部分里一个单独的设置。"
+- en: "The worksheet names what you will create: the function, the web service, the job, two runtime accounts, and two buckets you name in part 4."
+  zh:
+  - "工作表列出了你要建的东西：这个函数、web service、job、两个运行时账号，还有第 4 部分里你自己起名的两个 bucket。"
+- en: "Step 4: clone the repository. The README says clone or download, so our git clone is extra, and so is the git log showing the commit we follow. Pause and clone it."
+  zh:
+  - "第 4 步：把 repo clone 下来。"
+  - "README 写的是 clone 或下载，所以我们的 git clone 是额外的，显示我们所跟 commit 的 git log 也是。"
+  - "暂停一下，clone 下来。"
+- en: "An extra listing shows older files at the root, including main.py and a Dockerfile, which the README never uses; don't build them. Today's work sits under tutorial: function for part 1, app for the image."
+  zh:
+  - "额外列一下目录，根目录下有一些旧文件，包括 main.py 和一个 Dockerfile，README 从来不用它们；别去构建。"
+  - "今天的内容都在 tutorial 下面：第 1 部分用 function 目录，image 用 app 目录。"
+- en: "Then the terminal setup, starting with gcloud auth login, a browser sign-in; an extra auth list shows no accounts yet. It logs in the gcloud tool, not the app; the app's identity comes in part 3."
+  zh:
+  - "然后是终端设置，先跑 gcloud auth login，这是浏览器登录；额外跑一下 auth list，现在还没有账号。"
+  - "它登录的是 gcloud 命令行工具，不是应用；应用的身份第 3 部分再说。"
+- en: "Seven exports follow: project, region, image, two names and two account emails built from your project ID. Pause and run them with your real ID."
+  zh:
+  - "接下来是七条 export：项目、区域、image、两个名字，还有用你的项目 ID 拼出来的两个账号邮箱。"
+  - "暂停一下，用你真实的 ID 把它们跑一遍。"
+- en: "About this recording: this machine has no Google account and no project. So every gcloud box runs until its first honest error, the console is drawn, and cloud results come from the README's own recording."
+  zh:
+  - "关于这次录制：这台机器没有 Google 账号，也没有项目。"
+  - "所以每个 gcloud 命令框，都跑到它遇到的第一个真实报错为止，控制台是画出来的，云端的结果来自 README 自己的录制记录。"
+S04:
+- en: "Part 1: a function. The lecture calls it lightweight code that an event starts, like a file upload, a database change, or today, an HTTP request. It is billed while it runs and scales by itself."
+  zh:
+  - "第 1 部分：一个函数。"
+  - "课上说它是一段由事件触发的轻量代码，比如一次文件上传、一次数据库变更，或者今天的 HTTP 请求。"
+  - "它只在运行时计费，而且会自己扩缩。"
+- en: "Its four steps: open the console, enable the APIs, write a Python file, deploy. One name has changed: Cloud Functions are now Cloud Run functions, so the README starts at Cloud Run, Services, Write a function."
+  zh:
+  - "它的四步：打开控制台、启用 API、写一个 Python 文件、部署。"
+  - "有一个名字变了：Cloud Functions 现在叫 Cloud Run functions，所以 README 从 Cloud Run、Services、Write a function 开始。"
+- en: "That opens Create service. Enable the APIs if it asks. Name the service translate-function and choose your region."
+  zh:
+  - "这会打开 Create service。"
+  - "如果它提示，就启用 API。"
+  - "把 service 命名为 translate-function，再选你的区域。"
+- en: "For the runtime, pick Python 3.12; the older README said 3.10. Choose Allow public access, so anyone with the URL may call it, then Create."
+  zh:
+  - "运行时选 Python 3.12；旧版 README 写的是 3.10。"
+  - "选 Allow public access，这样谁拿到 URL 都能调用它，然后点 Create。"
+- en: "Open the Source editor; pause and create yours. A gold tag: the function bills as a Cloud Run service, and every deploy runs a build."
+  zh:
+  - "打开 Source editor；暂停一下，建一个你自己的。"
+  - "金色标签：这个函数按 Cloud Run service 计费，每次部署都会跑一次构建。"
+- en: "Replace main.py with the tutorial's handler. The decorator marks an HTTP function called hello underscore HTTP. It takes text, source and destination from the request, each with a default."
+  zh:
+  - "把 main.py 换成教程的处理函数。"
+  - "装饰器把它标成一个叫 hello 下划线 http 的 HTTP 函数。"
+  - "它从请求里取 text、source 和 destination，每个都有默认值。"
+  en_display:
+  - null
+  - "The decorator marks an HTTP function called hello_http."
+  - null
+- en: "Beside it, the lecture's sketch passes source second, by position. In this library the second slot is the destination, so source and destination would swap; the handler passes them by name."
+  zh:
+  - "旁边，课件上的示意代码按位置把 source 放在第二个。"
+  - "在这个库里，第二个位置是 destination，所以 source 和 destination 会对调；这个处理函数是按名字传的。"
+- en: "Replace the requirements file with two exact pins. The newer googletrans is asynchronous and would break this simple handler."
+  zh:
+  - "把 requirements 文件换成两个精确的 pin。"
+  - "新版的 googletrans 是异步的，会把这个简单的处理函数弄坏。"
+- en: "Set the Function entry point to hello underscore HTTP. In the README's words, it is the Python function the framework should call, not the file name or service name. Select Save and redeploy and wait for the revision. Pause and do it."
+  zh:
+  - "把 Function entry point 设成 hello 下划线 http。"
+  - "用 README 的话说，它是框架应该调用的那个 Python 函数，不是文件名，也不是 service 名称。"
+  - "点 Save and redeploy，等 revision 就绪。"
+  - "暂停一下，照着做。"
+  en_display:
+  - "Set the Function entry point to hello_http."
+  - null
+  - null
+  - null
+- en: "So the slide's step, create a Python file, is the short version. The console wants the file, its dependencies and the name of the function to call."
+  zh:
+  - "所以课件上那一步，创建一个 Python 文件，是简化版。"
+  - "控制台要的是文件、它的依赖，还有要调用的函数名。"
+S05:
+- en: "What runs your function? The lecture says you manage no servers or containers, and that is true: you don't manage them. But Google builds a container anyway."
+  zh:
+  - "是什么在运行你的函数？"
+  - "课上说你不用管理服务器或 container，这没错：你确实不用管它们。"
+  - "但 Google 照样会构建一个 container。"
+- en: "Save sends your three inputs to Cloud Build. It installs the requirements once, at build time, configures the Functions Framework, and publishes an image to Artifact Registry. Cloud Run starts a revision from that image."
+  zh:
+  - "点 Save 会把你的三样输入交给 Cloud Build。"
+  - "它在构建时把依赖装一次，配置好 Functions Framework，再把一个 image 发布到 Artifact Registry。"
+  - "Cloud Run 用这个 image 启动一个 revision。"
+- en: "In each instance, the Functions Framework runs a small Flask app under gunicorn, on every interface, at the port Cloud Run provides. On each request, it looks up your function by the entry point name and calls it."
+  zh:
+  - "在每个实例里，Functions Framework 用 gunicorn，跑一个小的 Flask 应用，监听所有网络接口，用的是 Cloud Run 给的 port。"
+  - "每来一个请求，它就按入口点的名字找到你的函数，然后调用它。"
+- en: "So the lecture's file cell has a container inside. That is why there is an image to clean up at the end."
+  zh:
+  - "所以课上那个代码文件的格子里，其实装着一个 container。"
+  - "也正因为这样，最后才会有一个 image 要清理。"
+- en: "This layer also runs on your laptop, as an extra local stand-in. The same two pins install the Functions Framework, Flask, gunicorn and googletrans, as the build does."
+  zh:
+  - "这一层也能在你的笔记本上跑，作为额外的本地替身。"
+  - "同样的两个 pin 会装上 Functions Framework、Flask、gunicorn 和 googletrans，和构建时一样。"
+- en: "Start it with target hello underscore HTTP, and it prints nothing while it serves. That silence is normal: the framework logs only errors."
+  zh:
+  - "把 target 设成 hello 下划线 http 启动它，它运行期间什么都不打印。"
+  - "这种安静是正常的：这个框架只记录错误。"
+  en_display:
+  - "Start it with target hello_http, and it prints nothing while it serves."
+  - null
+- en: "You paste main.py but type translate as the entry point. Does the build fail? If not, what fails, and where would you see it?"
+  zh:
+  - "你贴了 main.py，入口点却填了 translate。"
+  - "构建会失败吗？"
+  - "如果不会，那是什么失败了，你会在哪儿看到？"
+- en: "Installing the requirements works; they are fine. But the deployment fails. When the new revision starts, the framework looks for the name: main.py should contain a function named translate, but it found hello underscore HTTP."
+  zh:
+  - "装依赖没问题；它们没错。"
+  - "但部署失败了。"
+  - "新的 revision 启动时，框架去找这个名字：main.py 里应该有一个叫 translate 的函数，但它找到的是 hello 下划线 http。"
+  en_display:
+  - null
+  - null
+  - "When the new revision starts, the framework looks for the name: main.py should contain a function named translate, but it found hello_http."
+- en: "On Cloud Run, you find this in the logs, not in your code. That is the first of three places to look."
+  zh:
+  - "在 Cloud Run 上，这要去日志里找，不在你的代码里。"
+  - "这是三个要看的地方里的第一个。"
+S06:
+- en: "Step 1: in service details, copy the URL near the top; the build page is not your app's address."
+  zh:
+  - "第 1 步：在 service details 里，复制顶部的 URL；构建页面不是你应用的地址。"
+- en: "Step 2: open it with no arguments; the README's recording shows the default in Spanish: Bienvenido a AC215. Our local stand-in, the same handler under the same framework, agrees."
+  zh:
+  - "第 2 步：不带参数打开它；README 的录制记录显示默认是西班牙语：Bienvenido a AC215。"
+  - "我们的本地替身，同一个处理函数跑在同一个框架下，结果一致。"
+- en: "Step 3: append the query string. The question mark begins it, ampersands split the pairs, and percent 20 is an encoded space. Each pair fills one line of the handler, and its default steps aside."
+  zh:
+  - "第 3 步：加上查询字符串。"
+  - "问号是它的开头，& 符号分隔每一对，%20 是编码后的空格。"
+  - "每一对填进处理函数的一行，那一行的默认值就让开了。"
+  en_display:
+  - null
+  - "The question mark begins it, ampersands split the pairs, and %20 is an encoded space."
+  - null
+- en: "The recording shows Bonjour à tous, and so does the stand-in. Step 4: try Greek, Hindi, or Z H dash C N for simplified Chinese. Pause and try a few."
+  zh:
+  - "录制记录显示 Bonjour à tous，替身也一样。"
+  - "第 4 步：试试希腊语、印地语，或者用 zh-cn 试简体中文。"
+  - "暂停一下，多试几个。"
+  en_display:
+  - null
+  - "Step 4: try Greek, Hindi, or zh-cn for simplified Chinese."
+  - null
+- en: "The checkpoint: one endpoint, different inputs, no redeploy; and source and destination are languages, not regions."
+  zh:
+  - "检查点：一个 endpoint，不同的输入，不用重新部署；而且 source 和 destination 是语言，不是区域。"
+- en: "Step 5: open Observability, Logs. The recording found its French request with status 200."
+  zh:
+  - "第 5 步：打开 Observability 下的 Logs。"
+  - "录制记录里找到了那条法语请求，状态码 200。"
+- en: "While we recorded, the provider timed out once: the client got status 500, and the server log showed the timeout, raised from line 12 of main.py. A retry soon after worked."
+  zh:
+  - "我们录制时，服务方超时过一次：客户端收到状态码 500，服务器日志里有这次超时，是从 main.py 第 12 行抛出的。"
+  - "过了一会儿重试就成功了。"
+- en: "The README warns: the googletrans library wraps an unofficial outside service, so check the logs, not a finished build."
+  zh:
+  - "README 提醒：googletrans 这个库包装的是一个非官方的外部服务，所以要看日志，别只看构建成功没有。"
+- en: "Now the gcloud alternative. In a new project it may first ask to enable APIs or create a repository; answer yes. With the placeholder, the deploy stops at the project ID check; with a real-format ID, it asks you to sign in first."
+  zh:
+  - "再看 gcloud 替代做法。"
+  - "在新项目里，它可能先要你启用 API 或创建一个仓库；都选是。"
+  - "用占位符时，部署停在项目 ID 检查；换成格式正确的 ID，它会先要你登录。"
+- en: "The next line stores the URL; the curl lines ran unchanged against the stand-in and answered Bonjour à tous."
+  zh:
+  - "下一行把 URL 存起来；这几行 curl 原样对着替身跑，回答的也是 Bonjour à tous。"
+- en: "From the README's More detail box: a cold start starts an instance of your app, not necessarily a new machine. No fixed idle time predicts it."
+  zh:
+  - "README 的 More detail 框里说：冷启动启动的是你应用的一个实例，不一定是一台新机器。"
+  - "没有哪个固定的空闲时长能预测它。"
+S07:
+- en: "Part 2. Now imagine a containerized web app already working on your laptop. Sharing localhost shares nothing, so we deploy that same image."
+  zh:
+  - "第 2 部分。"
+  - "现在想象一个容器化的 web 应用，已经在你的笔记本上跑通了。"
+  - "分享 localhost 等于什么都没分享，所以我们把同一个 image 部署上去。"
+- en: "Step 1, with Docker running: docker run, remove when done, publish port 8086 to 8080, and the tutorial's public image. Pause and run it."
+  zh:
+  - "第 1 步，先把 Docker 跑起来：docker run，用完就删，把 port 8086 发布到 8080，再加上教程的公开 image。"
+  - "暂停一下，自己跑一遍。"
+- en: "The digest equals the README's: same bytes, same digest. The image is built for A M D 64, which Cloud Run needs; on Apple Silicon it runs under emulation."
+  zh:
+  - "这个 digest 和 README 里的一样：同样的字节，同样的 digest。"
+  - "这个 image 是为 amd64 构建的，Cloud Run 需要的就是它；在 Apple Silicon 上它会模拟运行。"
+  en_display:
+  - null
+  - "The image is built for amd64, which Cloud Run needs; on Apple Silicon it runs under emulation."
+- en: "Then gunicorn listens on 0.0.0.0, port 8080: every network interface, so connections from outside the container reach it."
+  zh:
+  - "然后 gunicorn 监听 0.0.0.0 的 port 8080：也就是所有网络接口，这样 container 外面来的连接才能到它。"
+- en: "How did Python turn into gunicorn? First, the image has two start-up slots: an empty entrypoint, and a command, translation demo serve. Docker runs the entrypoint, then the command, and arguments you pass replace the command; part 4 depends on this."
+  zh:
+  - "Python 是怎么变成 gunicorn 的？"
+  - "首先，这个 image 有两个启动位置：一个空的 entrypoint，和一个命令，translation demo serve。"
+  - "Docker 先运行 entrypoint，再运行命令，你传的参数会替换命令；第 4 部分就靠这一点。"
+  en_display:
+  - null
+  - "First, the image has two start-up slots: an empty entrypoint, and a command, translation_demo serve."
+  - null
+- en: "That command takes its port from the PORT variable and replaces itself with gunicorn: 1 worker, 4 threads."
+  zh:
+  - "这个命令从 PORT 变量里取 port，然后把自己替换成 gunicorn：1 个 worker，4 个线程。"
+- en: "Extra checks agree. Docker top shows only gunicorn, a master and a worker; no Python is left. Docker ps shows the door, 8086 outside and 8080 inside, so 8080 on the laptop is refused."
+  zh:
+  - "额外检查也对得上。"
+  - "命令 docker top 只显示 gunicorn，一个 master 和一个 worker；一个 Python 进程都不剩。"
+  - "命令 docker ps 显示了这扇门：外面是 8086，里面是 8080，所以笔记本上的 8080 会被拒绝。"
+- en: "Step 2: open localhost 8086. An extra curl shows status 200 from gunicorn, the title, and the disabled Play audio button."
+  zh:
+  - "第 2 步：打开 localhost 8086。"
+  - "额外跑一下 curl，可以看到 gunicorn 返回的状态码 200、页面标题，还有被禁用的 Play audio 按钮。"
+- en: "Step 3: translate. The button sends JSON in a post request and gets back Bonjour à tous, once the browser decodes that escape. Pause and try it."
+  zh:
+  - "第 3 步：翻译。"
+  - "这个按钮用一个 POST 请求发送 JSON，拿回 Bonjour à tous，前提是浏览器把那个转义解码出来。"
+  - "暂停一下，试一试。"
+- en: "The query string from part 1 gets 405 here, method not allowed: this app wants JSON posts. A made-up language gets 400."
+  zh:
+  - "第 1 部分的查询字符串在这里得到 405，方法不允许：这个应用要的是 JSON 的 POST 请求。"
+  - "编造一种语言，得到的是 400。"
+- en: "Step 4: Play audio is disabled, and its request gets 503: speech is disabled. Stop with Control C; gunicorn is the main process, so it shuts down cleanly."
+  zh:
+  - "第 4 步：Play audio 是禁用的，它的请求得到 503：语音已关闭。"
+  - "用 Ctrl-C 停掉；gunicorn 是主进程，所以它会干净地退出。"
+  en_display:
+  - null
+  - "Stop with Ctrl+C; gunicorn is the main process, so it shuts down cleanly."
+- en: "One extra experiment: set PORT to 9090 but keep the pipe at 8080, and the connection resets; the log shows gunicorn on 9090."
+  zh:
+  - "再做一个额外实验：把 PORT 设成 9090，但管道还接在 8080，连接就被重置了；日志显示 gunicorn 在 9090 上。"
+- en: "Pipe to 9090 instead, and it answers. The right-hand number must be where the app listens."
+  zh:
+  - "改成把管道接到 9090，它就回答了。"
+  - "右边那个数字必须是应用监听的地方。"
+S08:
+- en: "The lecture's Cloud Run runs a whole container, as a service or a job. Its steps: open Cloud Run, enable the APIs, deploy an image."
+  zh:
+  - "课上讲的 Cloud Run 跑的是整个 container，作为 service 或者 job。"
+  - "它的步骤：打开 Cloud Run、启用 API、部署一个 image。"
+- en: "Open Cloud Run, Services, Deploy container, and choose Deploy one revision from an existing container image. Paste the same image, name it translation-demo, and choose your region."
+  zh:
+  - "打开 Cloud Run 里 Services 下的 Deploy container，选择：Deploy one revision from an existing container image。"
+  - "粘贴同一个 image，命名为 translation-demo，再选你的区域。"
+- en: "Select Allow public access and Request-based billing. Under scaling, minimum 0 instances and maximum 2."
+  zh:
+  - "选 Allow public access 和 Request-based billing。"
+  - "扩缩设置里，最小实例数 0，最大实例数 2。"
+- en: "In the container settings: port 8080, 512 mebibytes, 1 CPU, and the command left alone; Cloud Run sets PORT and knocks on it. Then a 120 second timeout and 4 concurrent requests per instance."
+  zh:
+  - "在 container 设置里：port 8080，512 MiB，1 个 CPU，命令不动；Cloud Run 会设置 PORT，再去敲这扇门。"
+  - "然后是 120 秒的超时，每个实例 4 个并发请求。"
+- en: "Why 4? Each instance runs gunicorn with 4 threads, so it never gets more than it can serve."
+  zh:
+  - "为什么是 4？"
+  - "每个实例跑的 gunicorn 有 4 个线程，所以它收到的请求永远不会超过它能处理的。"
+- en: "With request-based billing and a minimum of 0, the meter moves only while requests are served. That is the lecture's promise: pay only when your code runs. A minimum of 1, or instance-based billing, bills idle time too."
+  zh:
+  - "按请求计费、最小实例数为 0 时，计价器只在处理请求的时候走。"
+  - "这就是课上的承诺：只在代码运行时付钱。"
+  - "最小实例数设成 1，或者按实例计费，空闲时间也会计费。"
+- en: "Concurrency 4, maximum 2 instances. Ten people press Translate at once. How many instances start, and what happens to the last two?"
+  zh:
+  - "并发数 4，最大实例数 2。"
+  - "十个人同时点 Translate。"
+  - "会启动几个实例，最后两个会怎样？"
+- en: "Two instances, the ceiling, with 8 slots. The other two wait for a free slot and can be refused. Raise the maximum, or raise concurrency together with the threads; a higher minimum doesn't help."
+  zh:
+  - "两个实例，到上限了，一共 8 个空位。"
+  - "另外两个要等空位，还可能被拒绝。"
+  - "调高最大实例数，或者把并发数和线程数一起调高；调高最小实例数没用。"
+- en: "Select Create; the recording shows the public page answering Bonjour à tous, speech still disabled. Then check Revision History and Logs. A revision is a deployed version of the image and its settings. Pause and deploy yours."
+  zh:
+  - "点 Create；录制记录显示公开页面回答 Bonjour à tous，语音还是关着的。"
+  - "然后看 Revision History 和 Logs。"
+  - "一个 revision，就是 image 加上它的设置部署出去的一个版本。"
+  - "暂停一下，部署你自己的。"
+- en: "Nothing was built this time."
+  zh:
+  - "这次什么都没构建。"
+- en: "The console took a tag, a movable label; the revision keeps the digest, a fixed fingerprint. To reproduce a deployment later, deploy by digest."
+  zh:
+  - "控制台拿到的是一个 tag，一个可以移动的标签；revision 记住的是 digest，一个固定的指纹。"
+  - "以后要复现一次部署，就按 digest 部署。"
+- en: "The gcloud alternative sets the same values in one command."
+  zh:
+  - "用 gcloud 的替代做法，一条命令就设好同样的值。"
+- en: "First half done: your laptop's page at a public URL. But Play audio still waits: to speak, the app must call an API that asks who is calling. Who is it?"
+  zh:
+  - "上半场完成：你笔记本上的页面有了公网 URL。"
+  - "但 Play audio 还在等：要说话，应用得调用一个会问调用方是谁的 API。"
+  - "那是谁？"
