@@ -1,0 +1,77 @@
+id: ac215-l11-data-labeling-versioning
+title: "AC215 · Lecture 11 — Data labeling and versioning: a label is a record, a version is a fingerprint (follow-along: data-labeling + data-versioning)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 11
+  lecture_title: "Data Labeling, Versioning and Monitoring"
+  ed: https://edstem.org/us/courses/97373/lessons/166036/
+  repos:
+    - {repo: dlops-io/data-labeling, branch: main, commit: 03c3e277abeee2cdaf4c1a8149c11c9fd259577d,
+       sections: ["Prerequisites", "Setup GCP Credentials", "Prepare Dataset", "Run Label Studio Container",
+                  "Setup Label Studio", "Enable cross-origin resource sharing (CORS)", "Annotate Data",
+                  "View Annotations in GCS Bucket", "View Annotations using CLI",
+                  "Extra: Using docker-compose to run both containers", "Docker Cleanup"]}
+    # Part B instructions: the README at the course map's pin (route S in ASSETS.md) ...
+    - {repo: dlops-io/data-versioning, branch: main, commit: b240b1a03e0abd1964b689ea68e35f0990a33ebc,
+       sections: ["Prepare Docker and Create Your Repository", "Set Up GCP Storage and Credentials",
+                  "Start the DVC Container (incl. About docker-entrypoint.sh)", "Create and View Dataset Versions",
+                  "Create an Updated Dataset Version: dataset_v21", "Docker Cleanup"]}
+    # ... run on the starter code it tells you to clone, plus the one-line Dockerfile fix (line 36:
+    # google-cloud-sdk -> google-cloud-cli, as main's ebf09c8 did):
+    - {repo: dlops-io/data-versioning, branch: data-versioning-ac215, commit: 23762e49ae890af40757c93356fae6cf2e526db2,
+       sections: ["starter code for the README above (cloned, .git removed, Dockerfile:36 fixed)"]}
+    # context only (the erratum beat): today's README says to clone main (route T, refusals captured)
+    - {repo: dlops-io/data-versioning, branch: main, commit: 2515e5efb82073b565e9a21016dd5295d44c9d2c,
+       sections: ["context only: README as of 2026-10-13 (clone main; dvc init / remote add refuse, push targets the class bucket)"]}
+  colab: https://colab.research.google.com/drive/1RRQ1SlHq5lKK76R8LoQdi5LjCnND3jTq   # linked from README @ b240b1a
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L11-data-labeling-versioning.md
+audience: "AC215 student who has done L1-L10 (a GCP project, Docker images and containers, Compose, networks and published ports, the L10 service-account key, ADC and CORS), new to labeling tools, signed URLs, FUSE-mounted buckets, content-addressed storage and DVC; watching with their own clones of data-labeling and data-versioning open, a GCP project with billing, their own bucket(s) and a GitHub account — this lecture stores a few MB in GCS (GOLD tags + teardown checklist in the video), no Vertex AI calls"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,         cls: Hook,             title: "Same names, different data?"}
+  - {file: scenes/s02_map.py,          cls: TwoStations,      title: "Two stations, two buckets"}
+  - {file: scenes/s03_photos.py,       cls: KeyAndPhotos,     title: "A key, 21 photos and a bucket"}
+  - {file: scenes/s04_studio.py,       cls: StudioInABox,     title: "A whole web app in one docker run"}
+  - {file: scenes/s05_storage.py,      cls: WhoTouchesBytes,  title: "Who touches the bytes?"}
+  - {file: scenes/s06_cors.py,         cls: CorsOnTheBucket,  title: "CORS: the bouncer, configured on the bucket"}
+  - {file: scenes/s07_labels.py,       cls: LabelsAndTokens,  title: "A label is a record; read it back by name"}
+  - {file: scenes/s08_compose.py,      cls: ComposeAndClean,  title: "Both containers in one file, and a clean exit"}
+  - {file: scenes/s09_repo.py,         cls: YourOwnRepo,      title: "A repo of your own, from the starter"}
+  - {file: scenes/s10_bucket.py,       cls: BucketAsFolder,   title: "A bucket that looks like a folder"}
+  - {file: scenes/s11_build.py,        cls: StarterFix,       title: "The starter that no longer builds"}
+  - {file: scenes/s12_fingerprints.py, cls: Fingerprints,     title: "Files named by their fingerprint"}
+  - {file: scenes/s13_pointer.py,      cls: PointerAndBytes,  title: "A pointer in git, the bytes in a bucket"}
+  - {file: scenes/s14_v21.py,          cls: SecondVersion,    title: "One more photo: what moves?"}
+  - {file: scenes/s15_colab.py,        cls: TimeTravel,       title: "Time travel from anywhere"}
+  - {file: scenes/s16_recap.py,        cls: Recap,            title: "Monitoring, teardown and recap"}
+parts:
+  - id: part1
+    title: "AC215 · L11, part 1: Label Studio in Docker — signed URLs, CORS on a bucket, labels as records"
+    scenes: [s01_hook, s02_map, s03_photos, s04_studio, s05_storage, s06_cors, s07_labels, s08_compose]
+  - id: part2
+    title: "AC215 · L11, part 2: DVC — a mounted bucket, content-addressed files, tags you can time-travel to"
+    scenes: [s09_repo, s10_bucket, s11_build, s12_fingerprints, s13_pointer, s14_v21, s15_colab, s16_recap]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker)
+publish:
+  title_zh: "AC215 第11讲跟练 · 数据标注与版本管理：Label Studio、CORS、DVC 与 gcsfuse"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 11 讲教程的逐条命令跟练：上半场照着 dlops-io/data-labeling 的 README，
+    用一条 docker run 在本地跑起 Label Studio，看 source / target storage 和 pre-signed URL 怎样让浏览器直接从 GCS 取图、
+    为什么要在 bucket 上配置 CORS，理解一条标注其实是一条 JSON 记录，用容器名 DNS 和 API token 从 CLI 容器读回标注
+    （包括 Label Studio 1.23 默认关闭 legacy token 导致的 401 和修法），再试一遍 docker-compose 的 Extra。
+    下半场照着 dlops-io/data-versioning：从 data-versioning-ac215 starter 建自己的仓库（含 Dockerfile 一行修复），
+    用 gcsfuse 和 bind mount 把 bucket 挂成文件夹，看 dvc add 怎样按 md5 指纹存文件、.dvc 指针文件进 git、数据本身进 dvc_store，
+    打 dataset_v20 / v21 两个 tag，推送时只多传两个对象，最后在 Colab 里用 dvc get --rev 回到任意版本。
+    边看边暂停，在自己的电脑上跑每一条命令；本讲会在 GCS 里存少量数据，视频用金色标签标出计费点，结尾有完整收尾清单。
+    英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/data-labeling
+    教程仓库：https://github.com/dlops-io/data-versioning
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L11-data-labeling-versioning.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, 数据标注, Label Studio, 数据版本管理, DVC, CORS, GCS, 哈佛, 教程跟练]
+  tid: 231

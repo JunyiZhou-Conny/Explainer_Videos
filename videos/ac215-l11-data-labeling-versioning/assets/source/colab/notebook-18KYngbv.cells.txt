@@ -1,0 +1,127 @@
+Extract (cell sources + stored outputs, metadata dropped) of the Colab notebook https://colab.research.google.com/drive/18KYngbvVQGYu_1LK61M7xh6XI1_KskXL (linked from data-versioning README @ 2515e5e), downloaded 2026-10-23. EDITED: a teaching assistant's GitHub user name in cells 13, 15 and 19 reads YOUR_GITHUB_USERNAME here, and the author line in cell 0 reads <course instructor>; see ASSETS.md.
+
+===== cell 0 · markdown
+<h1 style="padding-top: 25px;padding-bottom: 25px;text-align: left; padding-left: 10px; background-color: #DDDDDD;
+    color: black;"> <img style="float: left; padding-right: 10px;" src="https://raw.githubusercontent.com/Harvard-IACS/2018-CS109A/master/content/styles/iacs.png" height="50px"> <a href='https://harvard-iacs.github.io/2023-AC215/' target='_blank'><strong><font color="#A41034">AC215: Productionizing AI (MLOps)</font></strong></a></h1>
+
+# **<font color="#A41034">Tutorial - Data Pipelines, Labeling, Versioning, Cloud Storage</font>**
+
+**Harvard University**<br/>
+**Fall 2025**<br/>
+**Instructor:**<br/>
+<course instructor>
+
+<hr style="height:2pt">
+
+===== cell 1 · markdown
+## **<font color="#A41034">Tutorial Outline</font>**
+
+===== cell 2 · markdown
+## **Learning Objectives**
+
+By the end of this notebook, you will be:
+* Familiar with data version from a DVC repo
+
+
+## **Tutorial Content**
+
+In order to run this tutorial you should have completed [Data Labeling & Versioning](https://github.com/dlops-io/data-labeling) steps.
+
+- View data from a remote DVC repo
+- Retrieve data from a remote DVC repo
+- Retrieve a specifi data version from DVC
+
+===== cell 3 · markdown
+## **<font color="#A41034">Setup Notebook</font>**
+
+===== cell 4 · markdown
+**Copy & setup Colab**
+
+===== cell 5 · markdown
+1) Select "File" menu and pick "Save a copy in Drive"
+
+===== cell 6 · markdown
+**Installs**
+
+===== cell 7 · code · execution_count None
+!pip install dvc dvc-gs
+
+===== cell 8 · markdown
+**Imports**
+
+===== cell 9 · code · execution_count 2
+import os
+import cv2
+import numpy as np
+import pandas as pd
+
+# Colab auth
+from google.colab import auth
+from google.cloud import storage
+
+===== cell 10 · markdown
+## **<font color="#A41034">Authenticate</font>**
+
+Here we authenticate your Google account that has access to your GCS bucket
+
+===== cell 11 · code · execution_count 4
+# This step is required for DVC in colab to access your Bucket
+auth.authenticate_user()
+
+===== cell 12 · markdown
+## **View Remote Data**
+
+To view a DVC repository, listing data files and directories tracked by DVC alongside the remaining Git repo contents.
+
+[dvc list reference](https://dvc.org/doc/command-reference/list)
+
+
+Create a fine-grained Person Access Token on Github (this will be used as your github password):
+https://github.com/settings/personal-access-tokens
+
+Give access to only the private repo we are working with.
+
+For Permissions, choose Content and it should be Read-only.
+
+===== cell 13 · code · execution_count None
+# Replace github url with your url
+!dvc list -R https://github.com/YOUR_GITHUB_USERNAME/data-versioning.git
+
+===== cell 14 · markdown
+## **Retrieving Data**
+
+Once DVC-tracked data are stored remotely, they can be downloaded with dvc get when needed.
+
+[dvc get reference](https://dvc.org/doc/command-reference/get)
+
+===== cell 15 · code · execution_count None
+!rm -rf cheese_dataset
+!dvc get https://github.com/YOUR_GITHUB_USERNAME/data-versioning cheese_dataset --force --rev dataset_v20
+
+===== cell 16 · code · execution_count 10
+# Check the dataset
+print("Number of items:",len(os.listdir("cheese_dataset")))
+----- stored output
+Number of items: 13
+
+===== cell 17 · markdown
+Add some new photos to the images folder in your GCS Bucket to see the changes in different dataset versions
+
+Or you can delete pictures too if you want to see the change.
+
+===== cell 18 · markdown
+## **Retrieve a different data version**
+
+===== cell 19 · code · execution_count None
+!rm -rf cheese_dataset
+!dvc get https://github.com/YOUR_GITHUB_USERNAME/data-versioning cheese_dataset --force --quiet --rev dataset_v21
+
+===== cell 20 · code · execution_count 12
+# Check the dataset
+print("Number of items:",len(os.listdir("cheese_dataset")))
+----- stored output
+Number of items: 9
+
+===== cell 21 · code · execution_count None
+
+

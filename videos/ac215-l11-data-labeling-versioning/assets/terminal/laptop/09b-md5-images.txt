@@ -1,0 +1,13 @@
+$ md5sum cheeses_unlabeled/Image_1.jpg cheeses_unlabeled/Image_2.jpg cheeses_unlabeled/Image_3.jpg cheeses_unlabeled/Image_4.jpg cheeses_unlabeled/Image_5.jpg; wc -c cheeses_unlabeled/Image_1.jpg cheeses_unlabeled/Image_2.jpg cheeses_unlabeled/Image_3.jpg cheeses_unlabeled/Image_4.jpg cheeses_unlabeled/Image_5.jpg
+5b53853e667c8a76121fdc475996c895  cheeses_unlabeled/Image_1.jpg
+ba044df258bd989cbbe84513f14e3616  cheeses_unlabeled/Image_2.jpg
+91f482c401e72de8e5ac26ea30ea0d65  cheeses_unlabeled/Image_3.jpg
+5b85cf7e33ecf86f3808d0b7b3f4f62e  cheeses_unlabeled/Image_4.jpg
+54081d12ca64ef34c3fbebc0d055ea45  cheeses_unlabeled/Image_5.jpg
+   247775 cheeses_unlabeled/Image_1.jpg
+   111394 cheeses_unlabeled/Image_2.jpg
+   108076 cheeses_unlabeled/Image_3.jpg
+   143856 cheeses_unlabeled/Image_4.jpg
+   101473 cheeses_unlabeled/Image_5.jpg
+   712574 total
+[exit 0]

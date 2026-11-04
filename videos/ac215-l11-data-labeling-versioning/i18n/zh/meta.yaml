@@ -1,0 +1,50 @@
+# Chinese (zh-CN) metadata for ac215-l11-data-labeling-versioning (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 仓库, 标签, 存储桶, 数据标注, 数据版本管理,
+# 预签名 URL, 指针文件; A13), the English colon structure kept, commands, tools and file names as they are
+# (docker run, Label Studio, CORS, DVC, gcsfuse, Colab), the core-concept chapters with their English short name
+# for search (CORS, MD5, label), and S16 in the series' 收尾 pattern. 跟练 = follow-along.
+# The title agrees with video.yaml's publish.title_zh ("AC215 第11讲跟练 · 数据标注与版本管理：Label Studio、CORS、
+# DVC 与 gcsfuse"), in the series pattern of the other meta.yaml titles; the Bilibili upload itself uses
+# publish.title_zh.
+# SERIES RULE (A17): no title, chapter or description names the instructor (the narration's "the instructor";
+# the class repo and the class bucket are 课程的仓库 / 课程的存储桶).
+# meta.yaml is not read by `explainer.i18n check`, so brackets are fine here.
+title: "AC215 · 第 11 讲：数据标注与版本管理——Label Studio、CORS、DVC 与 gcsfuse（跟练：data-labeling + data-versioning）"
+
+parts:
+  part1: "AC215 · 第 11 讲（上）：容器里的 Label Studio——预签名 URL、存储桶上的 CORS、标注即记录"
+  part2: "AC215 · 第 11 讲（下）：DVC——挂载的存储桶、按内容寻址的文件、可以时间旅行的标签"
+
+chapters:
+  s01_hook: "名字一样，数据不一样？"
+  s02_map: "两个站，两个存储桶"
+  s03_photos: "一个密钥、21 张照片和一个存储桶"
+  s04_studio: "一条 docker run 跑起整个 Web 应用"
+  s05_storage: "谁在碰这些字节？"
+  s06_cors: "CORS：配置在存储桶上的保安"
+  s07_labels: "一条标签（label）就是一条记录：按名字读回来"
+  s08_compose: "两个容器写进一个文件，再干净地退出"
+  s09_repo: "从 starter 建一个你自己的仓库"
+  s10_bucket: "看起来像目录的存储桶"
+  s11_build: "再也构建不了的 starter"
+  s12_fingerprints: "按指纹命名的文件（MD5）"
+  s13_pointer: "指针在 git 里，字节在存储桶里"
+  s14_v21: "再加一张照片：什么会动？"
+  s15_colab: "从任何地方做时间旅行"
+  s16_recap: "监控、收尾与回顾"
+
+# Two or three sentences (rule H2), written register, consistent with video.yaml's publish.description_zh but
+# without the instructor's name (A17). Facts: data-labeling README @ 03c3e27 (Prerequisites, Setup GCP Credentials,
+# Prepare Dataset, Run Label Studio Container, Setup Label Studio, CORS, Annotate Data, View Annotations in the
+# GCS bucket and with the CLI, the docker-compose Extra, Docker Cleanup) and data-versioning README @ b240b1a run on
+# the data-versioning-ac215 starter @ 23762e4 with the Dockerfile line 36 fix (google-cloud-sdk → google-cloud-cli);
+# captures on a machine without a Google account, so the cloud successes are shown as recorded with their sources
+# and Label Studio's clicks as its own API calls tagged stand-in; Label Studio 1.23.0 (legacy-token 401 and fix),
+# DVC 3.63.0 (lock file); a few MB of GCS storage (GOLD tags, shutdown checklist in S16); 10 pause-and-ponder
+# cards, 2 quick predicts and 5 recap questions. Paste the chapter timestamps from output/chapters.txt under it
+# when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 11 讲“数据标注、版本管理与监控”的跟练视频。上半部分照着 dlops-io/data-labeling 的 README，用一条 docker run 在本地容器里跑起 Label Studio（包括 Linux 上数据目录归 root 所有导致容器退出的修法），配置 source / target storage，看清是谁在碰照片的字节：Label Studio 用密钥列出存储桶并签发预签名 URL，浏览器拿着这张“票”直接从 GCS 取图，所以 CORS 规则要配置在存储桶上；再弄懂一条标注在磁盘上其实是一条指回原图的 JSON 记录，用容器名和 Docker DNS 从命令行容器读回标注（包括 Label Studio 1.23 默认关闭 legacy token 导致的 401 和修法），最后试一遍 docker-compose 的 Extra 并清理。下半部分照着 dlops-io/data-versioning：从 data-versioning-ac215 starter 建你自己的私有仓库（含 Dockerfile 第 36 行的一词修复），看 gcsfuse 和 bind mount 怎样把存储桶挂成目录、为什么宿主机上的目录是空的，预测 dvc add 怎样按 MD5 指纹把文件放上缓存的“架子”、写出 manifest 和六行的 .dvc 指针文件，打 dataset_v20 / dataset_v21 两个标签、第二次推送只多传两个对象，再在 Colab 里用 dvc get --rev 回到任意版本，并以监控收尾。
+  英文旁白，配中文和中英双语字幕；README 的每条命令都按原样、按顺序出现，录制机器没有 Google 账号，所以云端操作成功的结果以录制记录的形式展示并注明出处，Label Studio 的点击以它自己的 API 调用重放。本讲会在你自己的项目里存放少量 GCS 数据，视频用金色标签标出每个计费点，结尾有完整的收尾清单；在还有标签要用的时候，绝不要删除 dvc_store。

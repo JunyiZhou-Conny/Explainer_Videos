@@ -1,0 +1,12 @@
+$ ls -la docker-volumes docker-volumes/label-studio
+docker-volumes:
+total 12
+drwxr-sr-x    3 root     root          4096 Oct 23 11:44 .
+drwxr-sr-x    4 student  student       4096 Oct 23 11:44 ..
+drwxr-sr-x    2 root     root          4096 Oct 23 11:44 label-studio
+
+docker-volumes/label-studio:
+total 8
+drwxr-sr-x    2 root     root          4096 Oct 23 11:44 .
+drwxr-sr-x    3 root     root          4096 Oct 23 11:44 ..
+[exit 0]
