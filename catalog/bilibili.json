@@ -131,6 +131,11 @@
       "bvid": "BV1z8xU6TE41",
       "title": "AC215 第9讲跟练 · CI 与单元测试：pytest、pre-commit，提交前的质量门",
       "pubdate": 1793741227
+    },
+    "ac215-l10-cloud-connect": {
+      "bvid": "BV1TjxD6REvQ",
+      "title": "AC215 第10讲跟练 · 连接云端：Service Account 认证、Docker 网络与 CORS",
+      "pubdate": 1793761105
     }
   },
   "unmatched": []
