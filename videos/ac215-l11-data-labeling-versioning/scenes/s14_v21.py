@@ -272,32 +272,33 @@ class SecondVersion(VoiceScene):
             type_cmd(self, t, c106.cmd, type_time=0.2)
             bare_prompt(self, t)
             vo.wait_until("commit")
-            type_cmd(self, t, c107.cmd, type_time=0.4, soft=True)
+            type_cmd(self, t, c107.cmd, type_time=0.3, soft=True)
             out(self, t, c107.at((2, 3)), run_time=0.3)
-            self.play(tg.bead(2), run_time=0.4)
+            self.play(tg.bead(2), run_time=0.35)
             vo.wait_until("tag dataset v21")
-            type_cmd(self, t, c108.cmd, type_time=0.5, soft=True)
-            bare_prompt(self, t)
-            self.play(tg.plant("dataset_v21"), FadeIn(tg.dirs["v21"]), FadeIn(tg.blobs[IMAGES[4]]), run_time=0.6)
+            type_cmd(self, t, c108.cmd, type_time=0.35, soft=True)
+            # no bare prompt after the tag: the push is typed on the next prompt straight away
+            self.play(tg.plant("dataset_v21"), FadeIn(tg.dirs["v21"]), FadeIn(tg.blobs[IMAGES[4]]), run_time=0.5)
             vo.wait_until("and push")
-            ln_gp = type_cmd(self, t, push_cmd, type_time=0.4)
+            ln_gp = type_cmd(self, t, push_cmd, type_time=0.3)
             vo.wait_until("Pause and run them")
-            # the narration runs ahead here: ▶, the v21 rope and V6's exit fit before "An extra diff" ends
+            # the narration runs ahead here: ▶, the v21 rope and V6's exit fit so the diff prints by "three lines"
             yt4 = beside(turn_row(), ln_gp)
-            pin(self, ln_gp, yt4, run_time=0.5,
+            pin(self, ln_gp, yt4, run_time=0.4,
                 anim=AnimationGroup(FadeIn(yt4, shift=LEFT * 0.1), Create(rope.main)))
-            flash_tag(self, yt4, TURN, 1.15, 0.9,
+            flash_tag(self, yt4, TURN, 1.15, 0.8,
                       LaggedStart(*[Create(f) for f in rope.fans], lag_ratio=0.15),
                       each([tg.blobs[n].text for n in IMAGES[:4]], PASS, scale=1.12))
             v6_all = VGroup(*v6_base, tg.beads[2], tg.bead_labels[2], tg.flags["dataset_v21"], tg.dirs["v21"],
                             tg.blobs[IMAGES[4]], rope)
             unpin(self, ln_gp, yt4, FadeOut(v6_all), run_time=0.3)
             self.remove(*v6_all.get_family())
+            xb4 = extra_row()
             resize(self, t, 11, extra=[track(tr, 4, extra=True)], run_time=0.5)
-            xb4 = on_bar(t, extra_row())
+            on_bar(t, xb4)
             vo.wait_until("An extra diff")
-            self.play(FadeIn(xb4, shift=LEFT * 0.1), run_time=0.2)
-            type_cmd(self, t, c110.cmd, type_time=0.4)
+            self.play(FadeIn(xb4, shift=LEFT * 0.1), run_time=0.15)
+            type_cmd(self, t, c110.cmd, type_time=0.3)
             r110 = out(self, t, [c110.line(7)] + [(x, y) for x in c110.at((8, 13))] + c110.at((14, 15)), run_time=0.6)
             vo.wait_until("the whole change in three lines")
             self.play(each(list(r110[1:4]), INK, scale=1.04), run_time=0.7)

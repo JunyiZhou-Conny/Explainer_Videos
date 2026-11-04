@@ -189,7 +189,8 @@ class WhoRunsIt(VoiceScene):
             self.play(Indicate(tb.badges[1].portrait, color=SYSTEM, scale_factor=1.2), run_time=0.6)
             vo.wait_until("By default the job runs as it")
             self.play(FadeIn(job, scale=0.8), run_time=0.4)
-            self.play(TransformFromCopy(tb.badges[1].frame, ap[0]), FadeIn(ap[1:]), run_time=0.8)
+            self.play(Indicate(tb.badges[1].portrait, color=SYSTEM, scale_factor=1.15), FadeIn(ap, scale=1.6),
+                      run_time=0.8)
             vo.wait_until("and it can open buckets in the same project")
             self.play(GrowArrow(a_open), bk[0].animate.set_stroke(width=3).set_fill(CLOUD, 0.12), run_time=0.7)
             self.play(Indicate(bk[1], color=SYSTEM, scale_factor=1.1), run_time=0.5)
@@ -279,6 +280,8 @@ class WhoRunsIt(VoiceScene):
             self.clear(h)
             type_cmd(self, h, c81.cmd, type_time=0.6)
             out(self, h, c81.at(2), run_time=0.3)
+            self.wait(0.4)
+            self.clear(h)
             type_cmd(self, h, c82.cmd, type_time=0.5)
             vo.wait_until("An extra pip list")
             o82 = out(self, h, pl, run_time=0.6, lag=0.05)
@@ -354,8 +357,7 @@ class WhoRunsIt(VoiceScene):
                          "a different length: this pin refuses it", "check before you submit"], size=22)
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(ch_ph), run_time=0.3)
-            self.remove(ch_ph)
+            self.clear(h, ch_ph)
             type_cmd(self, h, c87.cmd, type_time=0.8, soft=True)
             o87 = out(self, h, ["…", c87.line(14)], run_time=0.3)
             vo.wait_until("and 47 fails")

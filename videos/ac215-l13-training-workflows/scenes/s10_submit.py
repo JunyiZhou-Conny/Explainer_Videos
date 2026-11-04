@@ -461,11 +461,14 @@ class OneCommand(VoiceScene):
             resize(self, nt, 3, run_time=0.5, extra=[ex6.animate.shift(DOWN * 6 * nt.pitch),
                                                        fix.animate.shift(DOWN * 6 * nt.pitch)])
             up = 0.62 - nt.box.get_bottom()[1]
-            self.play(VGroup(nt, *nt.lines, ex6, fix).animate.shift(UP * up), FadeIn(st), run_time=0.5)
+            gap_y = (st.box.get_top()[1] + 0.62) / 2      # between the two strips, below the lecture ref
+            self.play(VGroup(nt, *nt.lines, ex6).animate.shift(UP * up), FadeIn(st),
+                      fix.animate.move_to([-6.5 + fix.width / 2, gap_y, 0]), run_time=0.5)
             self.play(FadeIn(ex7), run_time=0.2)
             type_cmd(self, st, c71.cmd, type_time=0.5)
             out(self, st, [c71.line(34)], wrap=True, color=ERR, run_time=0.4)
-            fixed.move_to([6.5 - fixed.width / 2, (st.box.get_top()[1] + nt.box.get_bottom()[1]) / 2, 0])
+            fixed.move_to([6.5 - fixed.width / 2, gap_y, 0])
+            assert fix.get_right()[0] < fixed.get_left()[0] - 0.2, (fix.get_right(), fixed.get_left())
             self.play(FadeIn(fixed, shift=UP * 0.1), run_time=0.4)
             self.play(Indicate(fixed.text, color=INK, scale_factor=1.05), run_time=0.5)
         self.wait(0.5)

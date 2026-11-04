@@ -343,12 +343,12 @@ class Fingerprints(VoiceScene):
             fly = pred.text.copy()
             self.play(fly.animate.move_to(md5f, aligned_edge=LEFT), run_time=0.9)
             md5f.set_opacity(1)
+            md5f[0].set_opacity(0)    # keep steady()'s invisible strut hidden
             self.remove(fly)
             self.add(pc)
             vo.wait_until("which stands in for the folder in git")
             gb = hs.git_box(pc)
-            self.play(FadeOut(dir_chip), FadeIn(gb.box), run_time=0.5)
-            self.remove(dir_chip)
+            self.play(FadeIn(gb.box), run_time=0.5)
             self.play(FadeIn(gb.text, shift=UP * 0.1), Indicate(pc.head, color=POINTER, scale_factor=1.08), run_time=0.6)
 
         # ========================================================== 5. J3: the second trap, an empty version
@@ -362,11 +362,12 @@ class Fingerprints(VoiceScene):
             return [hs, *rows, *slips, pc, gb]
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(track(tr, 3), run_time=0.4)
+            self.play(track(tr, 3), FadeOut(dir_chip), run_time=0.4)   # the .dir chip stays to the end of V5
+            self.remove(dir_chip)
             istep(self, t, c93.line(70), type_time=0.3)
             out(self, t, [*edge(c93.line(71)), c93.line(73), c93.line(75)], run_time=0.5)
             vo.wait_until("the mount failed")
-            empty_chip.next_to(hs.machine, DOWN, buff=0.25).shift(RIGHT * 0.15)
+            empty_chip.next_to(hs.machine, DOWN, buff=0.25).shift(RIGHT * 0.3)   # clear of the git box
             self.play(FadeIn(empty_chip, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("so the folder is empty")
             e = hs.empty_run(self)

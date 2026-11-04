@@ -43,6 +43,7 @@ SAY = NARRATION["S08"]
 PONDER_Q = "After docker system prune,\nis your labeled project gone?"
 STOP_CHIP = "README: docker stop <container_name_or_id>"
 NAMES_CHIP = "the README names the script"
+LINE17_CHIP = "first: docker-compose.yml line 17"
 STRAY_CHIP = "the stray line, explained"
 EDIT_CHIP = "edit this one too"
 NET_CHIP = "next time: docker-shell.sh first"
@@ -148,9 +149,14 @@ class ComposeAndClean(VoiceScene):
             yt0 = on_bar(t, turn_row())
             self.play(FadeOut(ch0), FadeIn(yt0), run_time=0.4)
             flash_tag(self, yt0, TURN)
+            vo.wait_until("First put your bucket name on line 17")
+            ch17 = on_bar(t, row_tag(LINE17_CHIP))
+            self.play(FadeOut(yt0), FadeIn(ch17, shift=LEFT * 0.1), run_time=0.4)
+            self.remove(yt0)
             vo.wait_until("Then run sh docker-shell-compose.sh")
             ch1 = on_bar(t, row_tag(NAMES_CHIP))
-            self.play(FadeOut(yt0), FadeIn(ch1), track(tr, 2), run_time=0.5)
+            self.play(FadeOut(ch17), FadeIn(ch1), track(tr, 2), run_time=0.5)
+            self.remove(ch17)
             type_cmd(self, t, c52.cmd, type_time=0.8)
             self.play(FadeIn(hint, shift=LEFT * 0.15), Indicate(rc.rows[1][1], color=TURN, scale_factor=1.06),
                       run_time=0.6)

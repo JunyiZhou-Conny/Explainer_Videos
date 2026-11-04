@@ -253,6 +253,7 @@ class TimeTravel(VoiceScene):
         cls_chip = dashed_chip("class bucket").next_to(tg2.store.frame, UP, buff=0.12).align_to(tg2.store.frame, RIGHT)
         lt = term(P_LAPTOP_HOME, rows=11, title=T_LAPTOP, size=20)
         lxt = on_bar(lt, extra_row())
+        anon_chip = grey_chip("extra · the class bucket, asked anonymously").next_to(lt.box, UP, buff=0.15).align_to(lt.box, LEFT)
 
         with self.voiceover(SAY[2]) as vo:
             gone = VGroup(fr1, page2)
@@ -292,7 +293,7 @@ class TimeTravel(VoiceScene):
             gone = VGroup(t, *t.lines, xt, tg2.colab, tg2.store, tg2.dirs["class"], cls_chip, stop)
             self.play(FadeOut(gone), run_time=0.5)
             self.remove(*gone.get_family())
-            self.play(FadeIn(lt), FadeIn(lxt), run_time=0.4)
+            self.play(FadeIn(lt), FadeIn(lxt), FadeIn(anon_chip, shift=DOWN * 0.1), run_time=0.4)
             type_cmd(self, lt, c122.cmd, type_time=0.8, soft=True)
             r122 = out(self, lt, [(s, ERR) for s in soft(c122.at(4, 5), lt.max_chars)], run_time=0.5)
             self.play(Indicate(substring(r122[0], "401"), color=ERR, scale_factor=1.3), run_time=0.6)
@@ -339,7 +340,7 @@ class TimeTravel(VoiceScene):
         assert pill.get_left()[0] > priv.get_right()[0] + 0.2 and yt.get_left()[0] > priv.get_right()[0] + 0.2
 
         with self.voiceover(SAY[3]) as vo:
-            gone = VGroup(lt, *lt.lines, lxt)
+            gone = VGroup(lt, *lt.lines, lxt, anon_chip)
             self.play(FadeOut(gone), run_time=0.4)
             self.remove(*gone.get_family())
             self.play(FadeIn(rec, shift=UP * 0.15), FadeIn(rtag), run_time=0.6)
