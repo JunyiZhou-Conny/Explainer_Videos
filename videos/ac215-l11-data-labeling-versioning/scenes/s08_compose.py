@@ -92,9 +92,11 @@ def readme_compose_card() -> VGroup:
 
 
 def compose_hint() -> VGroup:
-    """GREY card: the Compose v2 spelling of the script's last line, for a machine without the
-    `docker-compose` binary (docker-shell-compose.sh:11)."""
-    return card([label("docker-compose: not found?", 20, INK), mono("docker compose run --rm", 20, INK),
+    """GREY card: the Compose v2 spelling of the script's last line (docker-shell-compose.sh:12), for a
+    machine without the `docker-compose` binary: edit that line, keep running the script (it also
+    creates the network and builds the image). Folded with ` \\` so it pastes as one command."""
+    return card([label("docker-compose: not found?", 20, INK), label("edit the script's last line to:", 20, INK),
+                 mono("docker compose run --rm \\", 20, INK),
                  mono("  --service-ports data-label-cli", 20, INK)], size=20, buff=0.1)
 
 
@@ -176,8 +178,9 @@ class ComposeAndClean(VoiceScene):
         # ========================================================== 1. docker rm; compose again
         bl = sm.blanket()
         c95 = readme_card(95, mono(readme(95), 20, INK))
-        c95.move_to([6.1 - c95.width / 2, -0.66, 0])
-        stray = grey_chip(STRAY_CHIP).next_to(c95, LEFT, buff=0.25)
+        stray = grey_chip(STRAY_CHIP)
+        VGroup(c95, stray).arrange(RIGHT, buff=0.3).move_to([0, 0.75, 0])   # V1's band: the laptop floor
+        # (1.07 tall) cannot hold the card, so it takes the picture's place once the drape has played
 
         with self.voiceover(SAY[1]) as vo:
             xt1 = on_bar(t, extra_row())
@@ -204,6 +207,9 @@ class ComposeAndClean(VoiceScene):
             r29 = out(self, t, [(x, TURN) for x in c54.at((29, 30))], run_time=0.5)
             self.play(sm.join_cli(), run_time=0.7)
             self.play(Create(bl.box), FadeIn(bl.text, shift=DOWN * 0.1), run_time=0.8)
+            pic = VGroup(sm, sm.cli, bl)
+            self.play(FadeOut(pic), run_time=0.4)
+            drop(self, pic)
             self.play(FadeIn(c95, shift=LEFT * 0.15), FadeIn(stray, shift=LEFT * 0.15), run_time=0.6)
             self.play(Indicate(c95.body, color=TURN, scale_factor=1.08), run_time=0.6)
 
@@ -223,7 +229,7 @@ class ComposeAndClean(VoiceScene):
             r38 = out(self, t, [(x, ERR) for x in c54.at(38)], run_time=0.4)
             self.play(Indicate(r38[0], color=ERR, scale_factor=1.1), run_time=0.6)
             vo.wait_until("compose keeps its own copy")
-            gone = VGroup(sm, sm.cli, bl, c95, stray)
+            gone = VGroup(c95, stray)
             self.play(FadeOut(gone), run_time=0.5)
             drop(self, gone)
             self.play(FadeIn(p17, shift=UP * 0.15), run_time=0.6)
@@ -417,9 +423,10 @@ class ComposeAndClean(VoiceScene):
             self.play(substring(db, "1001").animate.set_color(ROOT), FadeIn(hs, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("and prune never touches folders you mount")
             path = substring(rows_of(ln64)[-1], "docker-volumes/label-studio")
-            self.play(Create(under(path, INK, stroke=3)), run_time=0.6)
+            ul = under(path, INK, stroke=3)
+            self.play(Create(ul), run_time=0.6)
             vo.wait_until("But the photos they point at can change")
-            gone = VGroup(t6, hs, xt6)
+            gone = VGroup(t6, hs, xt6, ul)
             self.play(FadeOut(gone), FadeOut(VGroup(*t6.lines)), run_time=0.5)
             drop(self, gone, *t6.lines)
             self.play(FadeIn(m), run_time=0.6)

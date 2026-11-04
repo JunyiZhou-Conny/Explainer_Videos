@@ -17,7 +17,8 @@ Beats (script.md, ## S10; one voiceover block each):
    (held through the pause: the narration leaves only ~1 s between the folders and "A small gap").
 3. TRACKER I1. `cd data-versioning` (no output). CODE(starter docker-shell.sh 5–10) lines 7–9 RED,
    with a GREY README note (lines 201–205) on it (no room for a card beside the panel). The strip grows: the sed edit typed (editor tag) →
-   85: 2–7, lines 4–6 GREEN; GREY chip over lines 5–6 'passed in · read by nothing' + erratum tag;
+   85: 2–7 (typed during 'replace …'), lines 4–6 GREEN; a GREY chip right of 5–6
+   'passed in · read by nothing' + erratum tag (stacked) on 'Only the bucket name';
    ▶ your turn.
 4. README card (215–230). V4 (FuseMount) built stage by stage over a strip of the starter's
    docker-entrypoint.sh lines 8, 10 (whole, two rows) and 13: Authenticate (key into line 10's
@@ -208,8 +209,10 @@ class BucketAsFolder(VoiceScene):
             vo.wait_until("as an extra tree view shows")
             self.play(FadeOut(c140, shift=UP * 0.15), track(tr, extra=True), run_time=0.4)
             self.remove(c140)
-            resize(self, t, 13, run_time=0.6)
-            ln84 = type_cmd(self, t, c84.cmd, type_time=0.8)
+            # a clean 14-row box: the 2 command rows + the 12 output rows, so the command stays on top
+            resize(self, t, 14, keep=[], run_time=0.6)
+            bare_prompt(self, t)
+            type_cmd(self, t, c84.cmd, type_time=0.8)
             xt = on_bar(t, extra_row())
             self.play(FadeIn(xt, shift=LEFT * 0.1), run_time=0.3)
             out(self, t, tree_out, run_time=0.7)
@@ -334,30 +337,31 @@ class BucketAsFolder(VoiceScene):
             cd_prompt(self, t, P_VERSIONING, run_time=0.4)
             self.play(FadeIn(p5, shift=UP * 0.15), FadeIn(n201), run_time=0.5)
             vo.wait_until("replace the bucket, project and zone")
-            self.play(LaggedStart(*[FadeIn(b) for b in bars5], lag_ratio=0.3), run_time=0.8)
-            self.play(Indicate(n201, color=INK, scale_factor=1.05), run_time=0.6)
-            vo.wait_until("Only the bucket name is ever used")
-            # said here, shown here: project and zone go GREY under the chip; the bucket line stays lit
-            unused = VGroup(grey_chip("passed in · read by nothing"), erratum_tag()).arrange(RIGHT, buff=0.12)
-            unused.next_to(p5, UP, buff=0.12).align_to(p5, RIGHT)
-            self.play(FadeOut(n201), FadeIn(unused, shift=DOWN * 0.1),
-                      *[b.animate.set_color(S.GREY) for b in bars5[1:]], run_time=0.6)
-            self.wait(0.5)
-            self.play(FadeOut(VGroup(p5, *bars5)), run_time=0.35)
+            self.play(LaggedStart(*[FadeIn(b) for b in bars5], lag_ratio=0.3),
+                      Indicate(n201, color=INK, scale_factor=1.05), run_time=0.8)
+            # the edit is typed while the sentence runs, so its output is up for "Only the bucket name"
+            self.play(FadeOut(VGroup(p5, n201, *bars5)), run_time=0.35)
             self.remove(p5, n201, *bars5)
             resize(self, t, 11, run_time=0.5)
             ed = on_bar(t, editor_row())
             self.play(FadeIn(ed, shift=LEFT * 0.1), run_time=0.3)
-            type_cmd(self, t, c85.cmd, type_time=1.2, soft=True)
+            type_cmd(self, t, c85.cmd, type_time=0.8, soft=True)
             r85 = out(self, t, o85, run_time=0.5)
-            ymid = (r85[3].strut.get_center()[1] + r85[4].strut.get_center()[1]) / 2
+            # GREY chip right of the project and zone rows (below the bucket row's glyphs); the erratum tag
+            # stacked under its right end, past the credentials row's text (side by side they pass the box)
+            unused = VGroup(grey_chip("passed in · read by nothing"), erratum_tag()).arrange(
+                DOWN, buff=0.06, aligned_edge=RIGHT)
             xr = max(substring(r, r.text).get_right()[0] for r in (r85[3], r85[4]))
-            self.play(*[r85[k].animate.set_color(PASS) for k in (2, 3, 4)],
-                      unused.animate.move_to([min(xr + 0.4, 6.5 - unused.width) + unused.width / 2, ymid, 0]),
+            y_top = r85[2].strut.get_center()[1] - 0.24
+            unused.move_to([xr + 0.4 + unused.width / 2, y_top - unused.height / 2, 0])
+            assert unused.get_right()[0] < t.box.get_right()[0] - 0.1, unused.get_right()
+            assert not any(covers_text(u, r) for u in unused for r in r85), "chip hides output"
+            vo.wait_until("Only the bucket name is ever used")
+            self.play(*[r85[k].animate.set_color(PASS) for k in (2, 3, 4)], FadeIn(unused, shift=LEFT * 0.1),
                       run_time=0.6)
             vo.wait_until("Pause and edit it")
             beside(yt3, r85[2], buff=0.5)
-            self.play(FadeIn(yt3, shift=LEFT * 0.1), run_time=0.4)
+            self.play(FadeIn(yt3, shift=LEFT * 0.1), Indicate(r85[2], color=PASS, scale_factor=1.03), run_time=0.4)
             flash_tag(self, yt3, TURN)
 
         # ========================================================== 4. the entrypoint's four stages

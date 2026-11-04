@@ -78,7 +78,8 @@ class ThreeLines(VoiceScene):
             return fr
 
         frame = frame_for(len(rows))
-        head = label("slide 14, redrawn", CAPTION, S.GREY).next_to(frame, UP, buff=0.1).align_to(frame, LEFT)
+        head = label("slide 14, redrawn", CAPTION, S.GREY)
+        head.move_to([frame.get_right()[0] + 0.35 + head.width / 2, frame.get_top()[1] - 0.25, 0])
         head15 = label("slide 15, redrawn", CAPTION, S.GREY).move_to(head)
         attached = {}
         callouts = []
@@ -150,7 +151,11 @@ class ThreeLines(VoiceScene):
         pc = ponder(self, PONDER_CONFIG, seconds=8)
 
         # ========================================================== 3. V3: the name moves
+        def keep_family():
+            return set(tr.get_family()) | set(ref.get_family())
+
         cb = ConfigBinding()
+        cb.shift(DOWN * 0.6)            # full frame in this block (no strip): centre it under the tracker
         init_inside(cb, "wandb.init(project=…)")
 
         with self.voiceover(SAY[3]) as vo:
@@ -172,17 +177,18 @@ class ThreeLines(VoiceScene):
 
         # ========================================================== 4. the proof, then the replay
         t = colab_term(11)
-        tags = VGroup(grey_chip("W&B offline mode · today's wandb"), standin_tag()).arrange(RIGHT, buff=0.2)
-        on_bar(t, tags)
+        st = on_bar(t, standin_row())
+        offline = grey_chip("W&B offline mode · today's wandb").next_to(t.box, UP, buff=0.15).align_to(t.box, LEFT)
         c38, c38b = capture("C38"), capture("C38b")
         cb2 = ConfigBinding()
         init_inside(cb2, "wandb.init(config={…})")
 
         with self.voiceover(SAY[4]) as vo:
-            old = Group(*[m for m in self.mobjects if m not in (tr, ref)])
+            old = Group(*[m for m in self.mobjects if m not in keep_family()])
             self.play(FadeOut(old), run_time=0.6)
             self.remove(*old)
-            self.play(FadeIn(t), FadeIn(tags, shift=LEFT * 0.15), track(tr, 4, extra="local stand-in"),
+            self.play(FadeIn(t), FadeIn(st, shift=LEFT * 0.15), FadeIn(offline, shift=UP * 0.1),
+                      track(tr, 4, extra="local stand-in"),
                       run_time=0.7)
             assert tr.caption.get_right()[0] < ref.get_left()[0]
             type_cmd(self, t, c38.cmd)
@@ -201,7 +207,9 @@ class ThreeLines(VoiceScene):
             o17b = out(self, t, [(c38b.line(17), PASS)], wrap=True)
             self.play(each(list(o17b), PASS, scale=1.04, lag=0.15), run_time=0.8)
             dh = (11 - 3) * t.pitch
-            resize(self, t, 3, keep=3, extra=[tags.animate.shift(DOWN * dh)])
+            self.play(FadeOut(offline), run_time=0.3)
+            self.remove(offline)
+            resize(self, t, 3, keep=3, extra=[st.animate.shift(DOWN * dh)])
             self.play(FadeIn(cb2), run_time=0.5)
             self.play(cb2.bind(run_time=1.0))
             self.play(cb2.fill())
@@ -214,7 +222,7 @@ class ThreeLines(VoiceScene):
         save_chip.next_to(c705.frame, DOWN, buff=0.45)
 
         with self.voiceover(SAY[5]) as vo:
-            old = Group(*[m for m in self.mobjects if m not in (tr, ref)])
+            old = Group(*[m for m in self.mobjects if m not in keep_family()])
             self.play(FadeOut(old), track(tr, 4), run_time=0.6)
             self.remove(*old)
             self.play(FadeIn(c705, shift=UP * 0.2), run_time=0.6)
@@ -240,7 +248,7 @@ class ThreeLines(VoiceScene):
                         header="W&B · the repo's runs")
         slot_w = 2.6
         span = led.width + 0.25 + slot_w
-        led.move_to([-span / 2 + led.width / 2, 0.9, 0])
+        led.move_to([-span / 2 + led.width / 2, 0.5, 0])
         sl = led.slots(slot_w)
         ghost = sl.boxes[0]
         curves_h = label("curves", 20, S.GREY).move_to([ghost.get_center()[0], led.heads[0].get_center()[1], 0])

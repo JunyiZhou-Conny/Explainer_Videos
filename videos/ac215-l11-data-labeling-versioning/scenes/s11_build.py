@@ -2,13 +2,14 @@
 
 Beats (script.md, ## S11; one voiceover block each):
 0. TRACKER I2. README card (data-versioning README 234–238, "Make sure you are inside the
-   data-versioning folder: cd data-versioning") + GREY chip "already inside since scene 9 · this
+   data-versioning folder: cd data-versioning") + GREY chip "already inside since scene 10 · this
    line is for a new terminal". TRACKER I3: `sh docker-shell.sh` → 86: 2, …, 1075–1081, …, 1125 cut
    after "failed to solve:" (wrap); 1075 and 1078–1079 YELLOW, 1081 RED; ▶ your turn.
 1. Erratum card: CODE(starter Dockerfile:36), `google-cloud-sdk` RED, caption "Google renamed the
    apt package · main fixed line 36 in ebf09c8 · the starter branch never got it". TRACKER I3 ·
-   extra row: a strip types 87's sed (soft wrap; tags `extra`, "our editor; use yours · this sed -i
-   is GNU syntax") → 87: 2, shown large with `google-cloud-cli` GREEN, "your new line 36"; ▶.
+   extra row: a strip types 87's sed (' \\' folds before the quoted edit and after '&&'; tags
+   `extra`, "our editor; use yours · this sed -i is GNU syntax") → 87: 2, shown large with
+   `google-cloud-cli` GREEN, "your new line 36"; ▶.
 2. TRACKER I3: `sh docker-shell.sh` (▶) → 88: 2–3 (squashed), …, 27–31; chips on 3 and 30. Then V4
    replays broken, one stage per printed line: 32 (gcloud side note RED, key crossed), 39 from
    "failed to detect credentials" (gcsfuse pipe stops short), 41 (YELLOW sign 'GCS bucket mounted'
@@ -36,7 +37,7 @@ DV = "data-versioning"
 ENTRY = "data-versioning@data-versioning-ac215/docker-entrypoint.sh"
 DOCKERFILE = "data-versioning@data-versioning-ac215/Dockerfile"
 TS = 20                       # terminal size in this scene (72 characters a row)
-ALREADY = "already inside since scene 9 · this line is for a new terminal"
+ALREADY = "already inside since scene 10 · this line is for a new terminal"
 RENAMED = ("Google renamed the apt package", "main fixed line 36 in ebf09c8",
            "the starter branch never got it")
 GNU = "our editor; use yours · this sed -i is GNU syntax"
@@ -47,6 +48,22 @@ def words(*parts, size: float = 20, color=INK) -> VGroup:
     """One row of label/mono pieces: plain strings are label font, ('x', 'mono') pieces mono."""
     ms = [mono(p[0], size, color) if isinstance(p, tuple) else label(p, size, color) for p in parts]
     return VGroup(*ms).arrange(RIGHT, buff=0.12)
+
+
+def fold_before(t, *marks: str):
+    """A fold for terminal t that breaks a command with ' \\' right before each of `marks` (spaces
+    outside quotes), the next row indented by 4: rows paste back as one valid shell command."""
+    def fold(text: str, first_prefix: int = 0) -> list[str]:
+        rows, cur = [], text
+        for m in marks:
+            i = cur.index(" " + m, first_prefix if not rows else 0)
+            rows.append(cur[:i] + " \\")
+            cur = "    " + cur[i + 1:]
+        rows.append(cur)
+        assert all(len(r) <= t.max_chars for r in rows), rows
+        assert " ".join(r.removesuffix(" \\").strip() for r in rows) == text.strip(), rows
+        return rows
+    return fold
 
 
 def band_mid(t) -> float:
@@ -109,11 +126,11 @@ class StarterFix(VoiceScene):
         er.move_to([p36.get_right()[0] - er.width / 2, p36.header.get_center()[1], 0])
         kind = card(list(RENAMED), S.GREY, size=22).next_to(p36, DOWN, buff=0.35)
         c87 = capture("87")
-        s = term(P_VERSIONING, rows=3, size=TS)
+        s = term(P_VERSIONING, rows=4, size=TS)   # 3 folded command rows + its output
         xt = on_bar(s, extra_row())
         gnu = grey_chip(GNU)
         new36 = c87.line(2)
-        big = mono(new36.strip(), 24, INK, t2c={"google-cloud-cli": PASS}).move_to([0, 0.15, 0])
+        big = mono(new36.strip(), 24, INK, t2c={"google-cloud-cli": PASS}).move_to([0, 0.45, 0])
         cap36 = note("your new line 36", INK, 22).next_to(big, DOWN, buff=0.2)
 
         with self.voiceover(SAY[1]) as vo:
@@ -131,7 +148,9 @@ class StarterFix(VoiceScene):
             self.play(FadeOut(kind), FadeIn(s, shift=UP * 0.2), track(tr, 3, extra="row"), run_time=0.6)
             self.remove(kind)
             gnu.next_to(s.box, UP, buff=0.15).align_to(s.box, RIGHT)
-            type_cmd(self, s, c87.cmd, type_time=1.2, soft=True)
+            s.fold = fold_before(s, "'36s/", "sed -n")
+            type_cmd(self, s, c87.cmd, type_time=1.2)
+            del s.fold
             vo.wait_until("as an extra")
             self.play(FadeIn(xt, shift=LEFT * 0.1), FadeIn(gnu, shift=UP * 0.1), run_time=0.5)
             r87 = out(self, s, [new36], run_time=0.3)[-1]

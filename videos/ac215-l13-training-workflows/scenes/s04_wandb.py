@@ -97,6 +97,17 @@ def quoted_cell(which: str, items, size: float = 20, indent: int | None = None, 
     return g
 
 
+def in_header(cell, *tags):
+    """Move tags (illustration, recorded) into a notebook cell's header row, right-aligned inside its
+    frame: no tag sticks out above a panel that sits under the ledger."""
+    x = cell.frame.get_right()[0] - 0.15
+    y = cell.header.get_center()[1]
+    for t in tags:
+        t.move_to([x - t.width / 2, y, 0])
+        x -= t.width + 0.15
+    return cell
+
+
 def toggle_switch(on: bool = False) -> VGroup:
     """A schematic on/off switch (GREY off, GREEN on). .track .knob"""
     tr_ = RoundedRectangle(width=0.62, height=0.32, corner_radius=0.16, stroke_color=PASS if on else S.GREY,
@@ -215,7 +226,7 @@ class SharedAxis(VoiceScene):
         top_left(c16, y=same.get_bottom()[1] - 0.45)
         r375 = c16.line(375)
         zip_ = substring(r375, "experiments.zip")
-        st = strike(r375, S.GREY, stroke=3)
+        st = strike(r375, S.GREY, stroke=2.5)
         zip_chip = grey_chip("about 510 MB you never use · you may delete this line")
         zip_chip.next_to(c16.frame, DOWN, buff=0.35).align_to(c16.frame, LEFT)
         yt1 = your_turn().next_to(zip_chip, DOWN, buff=0.3).align_to(zip_chip, LEFT)
@@ -231,7 +242,7 @@ class SharedAxis(VoiceScene):
             vo.wait_until("of about 510 megabytes")
             self.play(FadeIn(zip_chip, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("You may delete that line")
-            self.play(Create(st), r375.animate.set_opacity(0.45), run_time=0.7)
+            self.play(Create(st), r375.glyphs.animate.set_opacity(0.55), run_time=0.7)
             vo.wait_until("then pause and run them")
             self.play(FadeIn(yt1, shift=UP * 0.15), run_time=0.4)
             flash_tag(self, yt1, TURN)
@@ -284,11 +295,14 @@ class SharedAxis(VoiceScene):
         bld.move_to([0, -3.5, 0], aligned_edge=DOWN)
         led = RunLedger("B", columns=("name",), frame=False, tag_=False, header="project · " + WB_PROJECT_NB,
                         row_h=0.43)
-        led.remove(led.heads)
+        for m in led.submobjects:
+            if led.heads in m.submobjects:
+                m.remove(led.heads)
         led.header.set_color(CLOUD)
-        slots = led.slots(slot_w=3.4)
-        proj_body = VGroup(led.header, *led.rows, slots)
-        led.move_to([-1.05, -0.95, 0])         # riders: the slots follow
+        led.move_to([-1.05, -0.95, 0])
+        slots = led.slots(slot_w=2.8)
+        ax_lab = slots.axis[3]                 # 'epoch · one shared axis': clear of the gap the pipe rises in
+        ax_lab.shift(RIGHT * (slots.axis[0].get_left()[0] + 0.15 - ax_lab.get_left()[0]))
         proj_body = VGroup(led.header, *led.rows, slots)
         proj = RoundedRectangle(width=proj_body.width + 0.7, height=proj_body.height + 0.5, corner_radius=0.14,
                                 stroke_color=CLOUD, stroke_width=2.5).move_to(proj_body)
@@ -322,7 +336,7 @@ class SharedAxis(VoiceScene):
         cv = RunLedger.curves(slots.boxes[i2])
         r2 = led.ring_row(i2, TURN)
         ghosts = [slots.boxes[i] for i in range(5) if i != i2]
-        fit38 = quoted_cell("B", list(range(710, 717)), indent=2)
+        fit38 = quoted_cell("B", [710, 711, 712, 713, 714, (715, ("WandbCallback(", ")],")), 716], indent=2)
         fit42 = quoted_cell("B", list(range(940, 946)), indent=2)
         pair = VGroup(fit38, fit42).arrange(RIGHT, buff=0.25, aligned_edge=UP)
         top_left(pair, -pair.width / 2, TOP - 0.15)
@@ -349,21 +363,20 @@ class SharedAxis(VoiceScene):
         # the ledger returns higher (no building), over cell 38's model.fit at the bottom
         dx, dy = LEFT_X - led.rows[0].frame.get_left()[0], TOP - led.header.get_top()[1]
         led.shift(np.array([dx, dy, 0]))
-        for m in (slots, cv, r2):
+        for m in (slots, cv):
             m.shift(np.array([dx, dy, 0]))
         low = notebook_cell("B", 710, "…", 715, 782, size=20, tag_=False, cuts={782: "WandbCallback is deprecated"})
         low.move_to([0, BOTTOM, 0], aligned_edge=DOWN)
-        rec = nb_recorded_tag("B").next_to(low.frame, UP, buff=0.08).align_to(low.ill, LEFT).shift(LEFT * 0.15)
-        rec.shift(RIGHT * (low.ill.get_left()[0] - 0.15 - rec.get_right()[0]))
-        assert slots.axis.get_bottom()[1] > low.ill.get_top()[1] or slots.axis.get_right()[0] < low.ill.get_left()[0]
+        rec = nb_recorded_tag("B")
+        in_header(low, low.ill, rec)
         low_out = VGroup(low.well, *low.out_rows)
         low_code = VGroup(low.frame, low.header, low.ill, *low.code_rows)
         fit_g = low.sub(710, "model.fit")
         slot2 = slots.boxes[i2]
         gx = slot2.get_left()[0] - 0.13          # the gap between the row frames and the slots
-        ya = (slots.axis.get_bottom()[1] + low.frame.get_top()[1]) / 2 + 0.05
-        ya = max(ya, low.frame.get_top()[1] + 0.2)
-        pts = [fit_g.get_top() + UP * 0.05, [fit_g.get_center()[0], ya, 0], [gx, ya, 0],
+        assert fit_g.get_left()[0] + 0.1 < gx < fit_g.get_right()[0] - 0.1, (fit_g.get_left(), gx)
+        assert slots.axis.get_bottom()[1] > low.frame.get_top()[1] + 0.1, "the ledger reaches the panel"
+        pts = [[gx, fit_g.get_top()[1] + 0.05, 0],
                [gx, slot2.get_center()[1], 0], slot2.get_left() + LEFT * 0.03]
         cb = pipe(pts, TOOL, 4)
         dep = grey_chip("deprecated · harmless here")
@@ -377,12 +390,12 @@ class SharedAxis(VoiceScene):
             row[1].align_to(summ[1][1], LEFT)
         summ_tag = nb_recorded_tag("B")
         summ_g = VGroup(summ, summ_tag).arrange(DOWN, aligned_edge=LEFT, buff=0.15)
-        rx = slots.boxes[0].get_right()[0] + 0.45
-        summ_g.move_to([rx + summ_g.width / 2, slot2.get_center()[1] - 0.1, 0])
+        rx = slots.boxes[0].get_right()[0] + 0.35
+        summ_g.move_to([rx + summ_g.width / 2, 0, 0]).align_to(led.header, UP)
         sys_card = card(["system charts =", "the machine's CPU · GPU · memory", "over time"], size=20)
-        sys_card.move_to([rx + sys_card.width / 2, 0, 0]).align_to(led.header, UP)
+        sys_card.move_to([rx + sys_card.width / 2, 0, 0]).align_to(summ_g, UP).shift(DOWN * (summ_g.height + 0.35))
         assert sys_card.get_right()[0] < 6.6 and summ_g.get_right()[0] < 6.6, (sys_card.get_right(), summ_g.get_right())
-        assert sys_card.get_bottom()[1] > summ_g.get_top()[1], "system card over the summary"
+        assert sys_card.get_bottom()[1] > low.ill.get_top()[1] + 0.1, sys_card.get_bottom()
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(pc), run_time=0.4)
@@ -416,6 +429,7 @@ class SharedAxis(VoiceScene):
         # ========================================================== 6. one shared name; the run nobody finishes
         lab, collapse = led.collapse(0, 1, "mobilenetv2_train_base")
         c52 = notebook_cell("B", 1629, size=20, wrap=True)
+        in_header(c52, c52.ill)
         c52.move_to([LEFT_X + c52.width / 2, 0, 0]).align_to(low.frame, DOWN).shift(UP * c52.tag.height)
         url = c52.sub(1629, "runs/…")
         id_chip = grey_chip("tell runs apart by run id")
@@ -428,7 +442,16 @@ class SharedAxis(VoiceScene):
             self.play(FadeOut(old), run_time=0.5)
             self.remove(old, *old)
             vo.wait_until("Both MobileNet runs share one name")
-            self.play(collapse, run_time=1.0)
+            both = VGroup(led.rows[0].frame, led.rows[1].frame)
+            merged = RoundedRectangle(width=both.width, height=both.height, corner_radius=0.06, stroke_color=RUN,
+                                      stroke_width=1.5, stroke_opacity=0.55).move_to(both)
+            self.play(collapse, ReplacementTransform(both, merged), run_time=1.0)
+            for k in (0, 1):
+                led.rows[k].remove(led.rows[k].frame)
+            for k in (0, 1):
+                nm = led.rows[k].cells["name"]
+                led.rows[k].remove(nm)
+                self.remove(nm)
             self.play(FadeIn(c52, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("so tell them apart by run ID")
             self.play(FadeIn(id_chip, shift=LEFT * 0.15), run_time=0.4)
@@ -463,12 +486,13 @@ class SharedAxis(VoiceScene):
         same_c = grey_chip("same settings · 15 epochs · 2 photos apart")
         unit = VGroup(label("1 photo = 0.86 points", 22, INK), mono("(1/116)", 20, S.GREY)).arrange(RIGHT, buff=0.2)
         more = grey_chip("run cells 55–60 too · pause at the next step")
-        chips7 = VGroup(unfair, same_c, unit, more).arrange(DOWN, buff=0.28)
+        chips7 = VGroup(VGroup(unfair, same_c).arrange(RIGHT, buff=0.4),
+                        VGroup(unit, more).arrange(RIGHT, buff=0.4)).arrange(DOWN, buff=0.3)
         chips7.next_to(VGroup(ta, tb), DOWN, buff=0.4)
         assert chips7.get_bottom()[1] > -3.55, chips7.get_bottom()
 
         with self.voiceover(SAY[7]) as vo:
-            old = VGroup(led.header, *led.rows, slots, cv, lab, c52, fin)
+            old = VGroup(led.header, *led.rows, merged, slots, cv, lab, c52, fin)
             self.play(FadeOut(old, shift=UP * 0.2), track(tr, 5), run_time=0.6)
             self.remove(old, *old)
             vo.wait_until("Cell 55 builds the second table")
@@ -508,10 +532,10 @@ class SharedAxis(VoiceScene):
         rchips[1].next_to(c13.frame, DOWN, buff=0.12).align_to(c13.frame, RIGHT)
         again = grey_chip("edited? run cell 13 again").next_to(c13.frame, DOWN, buff=0.12).align_to(c13.frame, LEFT)
         c64 = notebook_cell("B", 1819, 1820, size=20)
-        top_left(c64, y=again.get_bottom()[1] - 0.6)
+        top_left(c64, y=TOP - 0.4)
         no_out = grey_chip("cells 64 and 66: no stored output").next_to(c64.frame, RIGHT, buff=0.4)
-        slide16 = grey_chip("the lecture's dashboard screenshot shows an earlier project · yours says cheese")
-        slide16.next_to(c64.frame, DOWN, buff=0.35).align_to(c64.frame, LEFT)
+        slide16 = card(["the lecture's dashboard screenshot shows an earlier project", "yours says cheese"], size=20)
+        slide16.next_to(c64, DOWN, buff=0.6).align_to(c64.frame, LEFT)
         yt8 = your_turn().next_to(no_out, DOWN, buff=0.3).align_to(no_out, LEFT)
         assert slide16.get_right()[0] < 6.6 and slide16.get_bottom()[1] > -3.55
         mp = TrainingMap.at("S04")
@@ -526,12 +550,17 @@ class SharedAxis(VoiceScene):
             vo.wait_until("and run cell 13 again")
             self.play(FadeIn(again, shift=UP * 0.15), run_time=0.4)
             vo.wait_until("then run cells 64 and 66")
+            c13_g = VGroup(c13, *nrings, *rchips, again)
+            self.play(FadeOut(c13_g, shift=UP * 0.2), run_time=0.5)
+            self.remove(c13_g, *c13_g)
             self.play(FadeIn(c64, shift=UP * 0.2), FadeIn(no_out, shift=LEFT * 0.15), run_time=0.6)
+            self.play(FadeIn(slide16, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("pause and do it")
-            self.play(FadeIn(yt8, shift=UP * 0.15), FadeIn(slide16, shift=UP * 0.15), run_time=0.5)
+            self.play(FadeIn(yt8, shift=UP * 0.15), run_time=0.4)
             flash_tag(self, yt8, TURN)
 
-        old = VGroup(c13, *nrings, *rchips, again, c64, no_out, slide16, yt8)
+        self.play(Indicate(slide16.body, color=INK, scale_factor=1.03), run_time=0.8)
+        old = VGroup(c64, no_out, slide16, yt8)
         self.play(FadeOut(old, shift=UP * 0.2), FadeIn(mp), run_time=0.8)
         self.remove(old, *old)
         self.play(mp.light("nbB"), run_time=0.5)

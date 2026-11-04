@@ -428,7 +428,9 @@ class YourOwnRepo(VoiceScene):
             bare_prompt(self, t)
             type_cmd(self, t, c82.cmd, type_time=0.4)
             r82 = out(self, t, c82.at((2, 3)), run_time=0.4)
-            dc = beside(differ_chip(), r82[0], buff=0.4)
+            # a slim chip (pad_y 0.03): the stock chip is taller than a terminal row and its
+            # top border ran through the descenders of the `git commit` row above (QA 17:22)
+            dc = beside(chip("yours will differ", S.GREY, size=20, pad_y=0.03), r82[0], buff=0.4)
             pin(self, r82[0], dc)
             vo.wait_until("and push")
             ln_push = type_cmd(self, t, push, type_time=0.4)
