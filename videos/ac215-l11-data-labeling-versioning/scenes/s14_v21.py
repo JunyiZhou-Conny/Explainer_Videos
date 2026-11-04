@@ -24,7 +24,8 @@ Beats (script.md, ## S14; one voiceover block each):
    yours differ"); git tag -n → 112: 2–3.
 5. TRACKER K4 · extra. RED kind card: starter README line 148 (+ erratum tag); the strip types the
    remote add (extra; folds) → 113: 2 RED; README card line 372 "Do not add it again here."
-6. TRACKER K4 · extra · stand-in. V6 back; `git checkout dataset_v20 -- …` → 114: 2, cursor on
+6. TRACKER K4 · extra · stand-in. V6 back, an ERR row tag "watch only · not on your mount"
+   on the bar left of the title, before the first command; `git checkout dataset_v20 -- …` → 114: 2, cursor on
    dataset_v20; re-entry 115; `dvc checkout` → 49; `ls` → 51 (four GREEN); `exit`; `git checkout
    main -- …` (no output), cursor on dataset_v21; re-entry 117; `dvc checkout` → 49; `ls` → 51 (five
    GREEN). A GREY `.dvc/cache` box feeds the folder (not dvc_store/). On "With a real mount", V6 goes
@@ -46,6 +47,7 @@ ANSWER = "two: the new photo + a new manifest"
 CLASS_NOTE = f"the class v21: {short(CLASS_V21['md5'])} · a different fifth photo"
 SHELF_NOTE = "already on the shelf"
 COUNT_NOTE = "2 pushed, not 6"
+WATCH_ONLY = "watch only · not on your mount"
 REAL_MOUNT = ("real mount: dvc checkout writes to images/ in your bucket",
               "v20 deletes Image_5.jpg there · main writes it back")
 
@@ -270,32 +272,31 @@ class SecondVersion(VoiceScene):
             type_cmd(self, t, c106.cmd, type_time=0.2)
             bare_prompt(self, t)
             vo.wait_until("commit")
-            type_cmd(self, t, c107.cmd, type_time=0.5, soft=True)
-            out(self, t, c107.at((2, 3)), run_time=0.4)
-            self.play(tg.bead(2), run_time=0.5)
+            type_cmd(self, t, c107.cmd, type_time=0.4, soft=True)
+            out(self, t, c107.at((2, 3)), run_time=0.3)
+            self.play(tg.bead(2), run_time=0.4)
             vo.wait_until("tag dataset v21")
-            type_cmd(self, t, c108.cmd, type_time=0.6, soft=True)
+            type_cmd(self, t, c108.cmd, type_time=0.5, soft=True)
             bare_prompt(self, t)
-            self.play(tg.plant("dataset_v21"), run_time=0.6)
+            self.play(tg.plant("dataset_v21"), FadeIn(tg.dirs["v21"]), FadeIn(tg.blobs[IMAGES[4]]), run_time=0.6)
             vo.wait_until("and push")
-            ln_gp = type_cmd(self, t, push_cmd, type_time=0.5)
+            ln_gp = type_cmd(self, t, push_cmd, type_time=0.4)
             vo.wait_until("Pause and run them")
+            # the narration runs ahead here: ▶, the v21 rope and V6's exit fit before "An extra diff" ends
             yt4 = beside(turn_row(), ln_gp)
-            pin(self, ln_gp, yt4)
-            flash_tag(self, yt4, TURN)
-            self.play(FadeIn(tg.dirs["v21"]), FadeIn(tg.blobs[IMAGES[4]]), run_time=0.4)
-            self.play(Create(rope.main), run_time=0.6)
-            self.play(LaggedStart(*[Create(f) for f in rope.fans], lag_ratio=0.15), run_time=0.7)
-            self.play(each([tg.blobs[n].text for n in IMAGES[:4]], PASS, scale=1.12), run_time=0.8)
-            vo.wait_until("An extra diff")
-            unpin(self, ln_gp, yt4)
+            pin(self, ln_gp, yt4, run_time=0.5,
+                anim=AnimationGroup(FadeIn(yt4, shift=LEFT * 0.1), Create(rope.main)))
+            flash_tag(self, yt4, TURN, 1.15, 0.9,
+                      LaggedStart(*[Create(f) for f in rope.fans], lag_ratio=0.15),
+                      each([tg.blobs[n].text for n in IMAGES[:4]], PASS, scale=1.12))
             v6_all = VGroup(*v6_base, tg.beads[2], tg.bead_labels[2], tg.flags["dataset_v21"], tg.dirs["v21"],
                             tg.blobs[IMAGES[4]], rope)
-            self.play(FadeOut(v6_all), track(tr, 4, extra=True), run_time=0.4)
+            unpin(self, ln_gp, yt4, FadeOut(v6_all), run_time=0.3)
             self.remove(*v6_all.get_family())
-            resize(self, t, 11, run_time=0.5)
+            resize(self, t, 11, extra=[track(tr, 4, extra=True)], run_time=0.5)
             xb4 = on_bar(t, extra_row())
-            self.play(FadeIn(xb4, shift=LEFT * 0.1), run_time=0.3)
+            vo.wait_until("An extra diff")
+            self.play(FadeIn(xb4, shift=LEFT * 0.1), run_time=0.2)
             type_cmd(self, t, c110.cmd, type_time=0.4)
             r110 = out(self, t, [c110.line(7)] + [(x, y) for x in c110.at((8, 13))] + c110.at((14, 15)), run_time=0.6)
             vo.wait_until("the whole change in three lines")
@@ -310,6 +311,7 @@ class SecondVersion(VoiceScene):
             type_cmd(self, t, c112.cmd, type_time=0.2)
             r112 = out(self, t, c112.at((2, 3)), run_time=0.4)
             self.play(Indicate(r112[1], color=PASS, scale_factor=1.04), run_time=0.6)
+            self.wait(1.5)                                    # hold the tag list before block 5 clears it
 
         # ========================================================== 5. K4 · extra: the old README's remote add
         old = VGroup(label("Add a remote origin", 22, INK),
@@ -366,7 +368,12 @@ class SecondVersion(VoiceScene):
             self.play(FadeOut(gone), track(tr, 4, extra="stand-in"), run_time=0.5)
             self.remove(*gone.get_family())
             sb6 = on_bar(t, standin_row())
-            self.play(FadeIn(v6_back), FadeIn(sb6, shift=LEFT * 0.1), run_time=0.6)
+            watch = row_tag(WATCH_ONLY, ERR)
+            # on the title bar's left half (the right half holds the title's end and the stand-in tag)
+            watch.move_to([t.title.get_left()[0] - 0.3 - watch.width / 2, sb6.get_y(), 0])
+            assert watch.get_left()[0] > t.dots.get_right()[0] + 0.2, "the watch tag would cover the dots"
+            self.play(FadeIn(v6_back), FadeIn(sb6, shift=LEFT * 0.1), FadeIn(watch, shift=LEFT * 0.1), run_time=0.6)
+            flash_tag(self, watch, ERR)
             vo.wait_until("check out the old pointer file")
             type_cmd(self, t, c114.cmd, type_time=0.6)
             out(self, t, c114.at(2), run_time=0.3)

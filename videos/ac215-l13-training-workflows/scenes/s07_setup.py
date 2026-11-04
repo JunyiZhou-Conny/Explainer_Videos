@@ -76,7 +76,9 @@ def tick_box(on=True, color=TURN):
 
 class KeysAndBucket(VoiceScene):
     def keep_only(self, *keep, run_time=0.6, shift=UP * 0.2):
-        gone = [m for m in self.mobjects if m not in keep]
+        # by family: after a play, the tracker's parts can sit on the scene as separate top-level mobjects
+        fam = {id(x) for k in keep for x in k.get_family()}
+        gone = [m for m in self.mobjects if not any(id(x) in fam for x in m.get_family())]
         if gone:
             self.play(FadeOut(Group(*gone), shift=shift), run_time=run_time)
             self.remove(*gone)
@@ -125,15 +127,16 @@ class KeysAndBucket(VoiceScene):
             pinc = beside(row_tag("the course pin"), lg[-1])
             pin(self, lg[-1], pinc, run_time=0.3)
             vo.wait_until("the repo's files")
-            type_cmd(self, t, c03.cmd, type_time=0.4)
+            type_cmd(self, t, c03.cmd, type_time=0.3)
+            png = grey_chip("screenshots and a diagram · redrawn in this video")
+            png.next_to(t.box, UP, buff=0.12).align_to(t.box, RIGHT)
             rows03 = ls_cols(c03.at((7, 23)))
             items = []
             for n, s in zip(range(7, 24), rows03):
                 items.append((s, TURN) if n in YELLOW_ROWS else (s, S.GREY) if n in PNG_ROWS else s)
-            out(self, t, items, run_time=1.0, lag=0.06)
-            png = grey_chip("screenshots and a diagram · redrawn in this video")
-            png.next_to(t.box, UP, buff=0.12).align_to(t.box, RIGHT)
             self.play(FadeIn(png, shift=UP * 0.1), run_time=0.4)
+            out(self, t, items, run_time=0.9, lag=0.06)
+            self.wait(0.6)
 
         # ========================================================== 1. Vertex AI API (C2), GPU quota (C3)
         api = console(("search", "Vertex AI API"), 8.0, 2.9).move_to([-1.2, 0.95, 0])
@@ -269,18 +272,17 @@ class KeysAndBucket(VoiceScene):
         sdr = drawer("secrets/", KEY, 22, glyph=True, mono_font=True, drawer_w=3.0).move_to([4.6, -0.2, 0])
         fdl = file_card("private key · JSON", KEY).move_to([4.6, 1.6, 0])
         fkey = file_card(KEY_FILE, KEY).move_to(sdr.get_center() + DOWN * 0.75)
-        yt3 = your_turn().next_to(fkey, DOWN, buff=0.25)
+        yt3 = your_turn().next_to(sdr, UP, buff=0.3)
         assert fdl.get_right()[0] < 6.6 and fkey.get_right()[0] < 6.6 and fkey.get_left()[0] > sa.get_right()[0]
         assert sacol.get_bottom()[1] > sa.frame.get_bottom()[1] + 0.1, sacol.get_bottom()
         c06 = capture("06")
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(mp), track(tr, 5), run_time=0.5)
-            self.remove(mp)
-            self.play(FadeIn(sa, shift=UP * 0.15), FadeIn(sa_ill), run_time=0.5)
+            self.play(track(tr, 5), run_time=0.5)
             vo.wait_until("a service account called model trainer")
-            self.play(FadeIn(create, shift=RIGHT * 0.15), run_time=0.5)
-            vo.wait_until("with Storage Admin")
+            self.play(FadeOut(mp), FadeIn(sa, shift=UP * 0.15), FadeIn(sa_ill), run_time=0.6)
+            self.remove(mp)
+            self.play(FadeIn(create, shift=RIGHT * 0.15), run_time=0.4)
             for r, anchor in zip(roles, ("with Storage Admin", "AI Platform Admin", "Vertex AI Administrator")):
                 vo.wait_until(anchor)
                 self.play(FadeIn(r, shift=UP * 0.1), run_time=0.35)
@@ -300,10 +302,10 @@ class KeysAndBucket(VoiceScene):
             resize(self, t, 6, run_time=0.5)
             lsd = type_cmd(self, t, c06.cmd, type_time=0.4)
             pin(self, lsd, beside(extra_row(), lsd), run_time=0.2)
-            o6 = out(self, t, [c06.line(2)] + ls_cols(c06.at((3, 5))), run_time=0.5)
+            o6 = out(self, t, [c06.line(2)] + ls_cols(c06.at((3, 5))), run_time=0.4)
             kr = ring(substring(o6[-1], KEY_FILE), TURN, buff=0.05)
-            self.play(Create(kr), run_time=0.4)
             si = beside(row_tag("stand-in"), o6[-1])
+            self.play(Create(kr), run_time=0.3)
             pin(self, o6[-1], si, run_time=0.3)
 
         # ========================================================== 4. one honest note
@@ -311,23 +313,25 @@ class KeysAndBucket(VoiceScene):
                  "The key in that listing is an obviously invalid stand-in,",
                  "moved out before the first container start.",
                  "Every cloud step shows the failure a misplaced key gives."]
-        hc = card(lines, head="one honest note", size=24).move_to([0, 0.75, 0])
+        hc = card(lines, head="one honest note", size=22, buff=0.1)
+        hc.move_to([0, 2.7 - hc.height / 2, 0])
+        assert hc.get_bottom()[1] > t.box.get_top()[1] + 0.1, (hc.get_bottom(), t.box.get_top())
         chips4 = VGroup(recorded_tag("recorded · source named"), standin_tag()).arrange(RIGHT, buff=0.35)
         chips4.next_to(hc, DOWN, buff=0.35)
-        assert hc.get_top()[1] < 2.8 and chips4.get_bottom()[1] > -3.5
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(t, *t.lines, kr), shift=DOWN * 0.2), track(tr, 5), run_time=0.6)
-            self.remove(t, *t.lines, kr)
-            self.play(FadeIn(hc.frame), FadeIn(hc.head), run_time=0.5)
+            self.play(FadeIn(hc.frame), FadeIn(hc.head), track(tr, 5), run_time=0.5)
             vo.wait_until("This recording machine")
             self.play(FadeIn(hc.body[0], shift=UP * 0.1), run_time=0.5)
             self.play(FadeIn(hc.body[1], shift=UP * 0.1), run_time=0.5)
             vo.wait_until("The key in that listing")
             self.play(FadeIn(hc.body[2], shift=UP * 0.1), run_time=0.5)
+            flash_tag(self, si, INK, run_time=0.6)
             self.play(FadeIn(hc.body[3], shift=UP * 0.1), run_time=0.5)
             vo.wait_until("So each cloud step")
-            self.play(FadeIn(hc.body[4], shift=UP * 0.1), run_time=0.5)
+            self.play(FadeOut(VGroup(t, *t.lines, kr), shift=DOWN * 0.2), FadeIn(hc.body[4], shift=UP * 0.1),
+                      run_time=0.6)
+            self.remove(t, *t.lines, kr)
             vo.wait_until("successes come from named sources")
             self.play(LaggedStart(*[FadeIn(c, shift=UP * 0.15) for c in chips4], lag_ratio=0.3), run_time=0.7)
 
@@ -447,7 +451,7 @@ class KeysAndBucket(VoiceScene):
             self.play(Indicate(why.body[1], color=KEY, scale_factor=1.03), FadeIn(rs, shift=UP * 0.1), run_time=0.7)
             self.play(FadeOut(VGroup(why, rs)), FadeOut(r40), run_time=0.4)
             self.remove(why, rs, r40)
-            resize(self, t6, 3, run_time=0.5)
+            resize(self, t6, 3, run_time=0.5, extra=[ex6.animate.shift(DOWN * 2 * t6.pitch)])
             self.play(FadeIn(mp), run_time=0.4)
             self.play(mp.light("laptop"), mp.reveal("key"), run_time=0.6)
             self.play(mp.unlight("laptop"), run_time=0.4)
@@ -456,11 +460,9 @@ class KeysAndBucket(VoiceScene):
         nt = new_term(3)
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(mp), run_time=0.4)
-            self.remove(mp)
             vo.wait_until("closed that terminal")
-            self.play(FadeOut(VGroup(t6, *t6.lines, ex6), shift=DOWN * 0.3), run_time=0.5)
-            self.remove(t6, *t6.lines, ex6)
+            self.play(FadeOut(mp), FadeOut(VGroup(t6, *t6.lines, ex6), shift=DOWN * 0.3), run_time=0.6)
+            self.remove(mp, t6, *t6.lines, ex6)
             vo.wait_until("and opened a new one")
             nt.shift(RIGHT * 14)
             self.play(nt.animate.shift(LEFT * 14), run_time=0.7)
@@ -499,11 +501,13 @@ class KeysAndBucket(VoiceScene):
             vo.wait_until("the bucket has a name")
             self.play(Indicate(mp.parts["bucket"][1], color=CLOUD, scale_factor=1.1), run_time=0.6)
             vo.wait_until("Next, we build the cockpit")
+            self.play(FadeIn(nxt, shift=UP * 0.15), run_time=0.5)
             for _ in range(2):
                 self.play(mp.light("cockpit", run_time=0.25))
                 self.play(mp.unlight("cockpit", run_time=0.25))
             vo.wait_until("today it won't build")
-            self.play(FadeIn(nxt, shift=UP * 0.15), run_time=0.6)
+            self.play(Indicate(nxt, color=TURN, scale_factor=1.04), run_time=0.8)
+        self.wait(0.8)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

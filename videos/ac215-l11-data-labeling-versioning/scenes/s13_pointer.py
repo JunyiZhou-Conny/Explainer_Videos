@@ -6,7 +6,8 @@ Beats (script.md, ## S13; one voiceover block each):
    `dvc remote add --local standin …` (no output; the prompt returns), `dvc push -r standin` →
    95: 79–81, `5 files pushed` YELLOW; chip "4 photos + 1 manifest · any remote prints this summary".
 1. The terminal shrinks to a 3-row strip. `.dvc/cache` (GREY) and `dvc_store/` (BLUE, `illustration`)
-   side by side, both listing files/md5/ 5b/ ba/ 91/ 5b/ 89/…dir (95:65–69); each slip copies across
+   side by side, both listing files/md5/ 5b/ (two files) 89/…dir 91/ ba/ (95:65–69, find|sort); the
+   cache also holds the GREY d7/ empty version (95:70), not pushed; each of the 5 slips copies across
    under a PURPLE `dvc push`. GOLD cost tag. Then V6's three homes, one per anchor; GREY chip
    "slide 33: no local copy · DVC keeps one" under the cache; on "never overwrites" S08's YELLOW
    parked card flies in and gets a GREEN check.
@@ -61,17 +62,24 @@ def s13_words(*parts, size: float = 20, color=INK) -> VGroup:
     return VGroup(*ms).arrange(RIGHT, buff=0.12, aligned_edge=DOWN)
 
 
-def shelf_box(title: str, colour, box_w: float = 4.6) -> VGroup:
-    """A drawn store (the cache or dvc_store/): title, 'files/md5/', five rows 'aa/ [md5…]' in the
-    order of the script's SHOW line (5b ba 91 5b 89….dir). .frame .title .sub .rows .slips"""
+def shelf_box(title: str, colour, box_w: float = 4.6, empty: bool = False) -> VGroup:
+    """A drawn store (the cache or dvc_store/): title, 'files/md5/', one row per aisle in find|sort
+    order (95:65-70: 5b 89 91 ba), each slip named like HashShelf files it (h[2:8] + '…', + '.dir'),
+    the two 5b files sharing one aisle. empty=True adds the GREY d7/ row (the empty version of 93:82,
+    in the cache, never pushed: '5 files pushed'). .frame .title .sub .rows .slips .aisles{a: row}"""
     tt = mono(title, 22, colour)
     sub = mono("files/md5/", 20, S.GREY)
-    rows, slips = VGroup(), VGroup()
-    for h in [MD5[n] for n in PUSHED] + [V20["md5"]]:
-        a = mono(aisle(h), 20, HASH)
-        s = slip(short(h))
-        rows.add(VGroup(a, s).arrange(RIGHT, buff=0.2))
-        slips.add(s)
+    rows, slips, aisles = VGroup(), VGroup(), {}
+    by = {}
+    for h in [MD5[n] for n in PUSHED] + [V20["md5"]] + ([EMPTY["md5"]] if empty else []):
+        by.setdefault(aisle(h), []).append(h)
+    for a in sorted(by):
+        c = S.GREY if empty and a == aisle(EMPTY["md5"]) else HASH
+        ss = [slip(h[2:8] + "…" + (".dir" if h.endswith(".dir") else ""), c) for h in sorted(by[a])]
+        row = VGroup(mono(a, 20, c), *ss).arrange(RIGHT, buff=0.2)
+        rows.add(row)
+        slips.add(*ss)
+        aisles[a] = row
     rows.arrange(DOWN, aligned_edge=LEFT, buff=0.07)
     body = VGroup(tt, sub, rows).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
     rows.shift(RIGHT * 0.35)
@@ -79,7 +87,7 @@ def shelf_box(title: str, colour, box_w: float = 4.6) -> VGroup:
                           stroke_width=3).set_fill(colour, 0.07)
     body.move_to(fr).align_to(fr, LEFT).shift(RIGHT * 0.3)
     g = VGroup(fr, body)
-    g.frame, g.title, g.sub, g.rows, g.slips = fr, tt, sub, rows, slips
+    g.frame, g.title, g.sub, g.rows, g.slips, g.aisles = fr, tt, sub, rows, slips, aisles
     return g
 
 
@@ -148,7 +156,7 @@ class PointerAndBytes(VoiceScene):
             flash_tag(self, pchip, INK)
 
         # ========================================================== 1. the cache's mirror, the three homes
-        cache = shelf_box(".dvc/cache", LAPTOP).move_to([-3.9, 0.0, 0]).align_to(np.array([0, 2.75, 0]), UP)
+        cache = shelf_box(".dvc/cache", LAPTOP, empty=True).move_to([-3.9, 0.0, 0]).align_to(np.array([0, 2.75, 0]), UP)
         store = shelf_box("dvc_store/", CLOUD).move_to([3.9, 0.0, 0]).align_to(np.array([0, 2.75, 0]), UP)
         ill = illustration_tag()
         ill.move_to([store.frame.get_right()[0] - 0.2 - ill.width / 2, store.title.get_center()[1], 0])
@@ -170,7 +178,7 @@ class PointerAndBytes(VoiceScene):
             vo.wait_until("the DVC store now mirrors the cache")
             self.play(FadeIn(store.frame), FadeIn(store.title), FadeIn(store.sub), FadeIn(ill),
                       GrowArrow(dvc_arrow), FadeIn(dvc_chip), run_time=0.6)
-            self.play(LaggedStart(*[TransformFromCopy(a, b) for a, b in zip(cache.rows, store.rows)],
+            self.play(LaggedStart(*[TransformFromCopy(cache.aisles[a], b) for a, b in store.aisles.items()],
                                   lag_ratio=0.25), run_time=1.6)
             vo.wait_until("A gold tag")
             self.play(FadeIn(bill, shift=UP * 0.15), run_time=0.5)
@@ -240,7 +248,7 @@ class PointerAndBytes(VoiceScene):
             resize(self, t, 8, keep=2, run_time=0.5)
             type_cmd(self, t, c97.cmd, type_time=0.2)
             bare_prompt(self, t)
-            ln98 = type_cmd(self, t, c98.cmd, type_time=0.6, soft=True)
+            ln98 = type_cmd(self, t, c98.cmd, type_time=0.6)
             r98 = out(self, t, c98.at((2, 7)), run_time=0.5)
             vo.wait_until("6 small text files")
             c_chip.next_to(t.box, UP, buff=0.15).align_to(t.box, RIGHT)
@@ -262,6 +270,8 @@ class PointerAndBytes(VoiceScene):
         fl = tg.flags["dataset_v20"]
         atom = card([label(ATOMIC[0], 20, S.GREY), label(ATOMIC[1], 20, INK), label(ATOMIC[2], 20, INK)],
                     size=20).move_to([3.3, 1.35, 0])
+        five = card([mono(c, 20, INK) for c in (c96.cmd, c97.cmd, c98.cmd, c99.cmd, push_cmd)], S.GREY, size=20,
+                    head="the five git commands · pause and run them", buff=0.1)
 
         with self.voiceover(SAY[3]) as vo:
             gone = VGroup(gi, gi_chip, c_chip)
@@ -270,7 +280,7 @@ class PointerAndBytes(VoiceScene):
             resize(self, t, 3, run_time=0.5)
             self.play(Create(tg.line), FadeIn(tg.beads[0], scale=0.5), FadeIn(tg.bead_labels[0]), run_time=0.6)
             self.play(tg.bead(1), run_time=0.5)
-            ln99 = type_cmd(self, t, c99.cmd, type_time=0.6, soft=True)
+            ln99 = type_cmd(self, t, c99.cmd, type_time=0.6)
             vo.wait_until("a permanent name")
             bare_prompt(self, t)
             self.play(tg.plant("dataset_v20"), run_time=0.7)
@@ -281,22 +291,27 @@ class PointerAndBytes(VoiceScene):
             self.play(FadeIn(atom, shift=LEFT * 0.2), run_time=0.5)
             self.play(Indicate(atom.body[1], color=INK, scale_factor=1.04), run_time=0.6)
             vo.wait_until("Pause and run them")
+            # all five commands on screen at the cue (the strip keeps only the push): GREY card
+            # between the timeline and the strip, until the log's output is read
+            top = min(m.get_bottom()[1] for m in (tg.bead_labels[0], tg.bead_labels[1]))
+            five.move_to([0, (top + t.box.get_top()[1]) / 2, 0])
+            self.play(FadeOut(atom), FadeIn(five, shift=UP * 0.15), run_time=0.5)
+            self.remove(atom)
             yt3 = beside(turn_row(), lnp)
             pin(self, lnp, yt3)
             flash_tag(self, yt3, TURN)
             vo.wait_until("An extra log shows the tag")
             unpin(self, lnp, yt3)
-            self.play(FadeOut(atom), track(tr, 5, extra=True), run_time=0.4)
-            self.remove(atom)
+            self.play(track(tr, 5, extra=True), run_time=0.4)
             type_cmd(self, t, c101.cmd, type_time=0.4)
             r101 = out(self, t, c101.at((2, 3)), wrap=True, run_time=0.4)
             self.play(substring(r101[0], "tag: dataset_v20").animate.set_color(PASS), run_time=0.4)
-            dch = differ_chip("our hashes · yours differ").next_to(t.box, UP, buff=0.15).align_to(t.box, RIGHT)
+            dch = differ_chip("our hashes · yours differ").align_to(t.box, RIGHT).set_y(tg.line.get_center()[1])
             self.play(FadeIn(dch, shift=DOWN * 0.1), Indicate(fl.text, color=POINTER, scale_factor=1.1),
                       run_time=0.5)
             vo.wait_until("which pins these six lines")
-            self.play(FadeOut(dch), run_time=0.3)
-            self.remove(dch)
+            self.play(FadeOut(VGroup(dch, five)), run_time=0.3)
+            self.remove(*dch.get_family(), *five.get_family())
             resize(self, t, 8, keep=0, run_time=0.5)
             type_cmd(self, t, c102.cmd, type_time=0.4)
             r102 = out(self, t, c102.at((2, 7)), run_time=0.6)

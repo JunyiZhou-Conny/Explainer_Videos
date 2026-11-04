@@ -172,6 +172,15 @@ class Fingerprints(VoiceScene):
         box_n = note("inside the container").next_to(g_etc, DOWN, buff=0.1)
         cfg_g = VGroup(cfg, a_cfg, host_n, box_n)
         opt = grey_chip("opt out: dvc config core.analytics false", mono_font=False)
+        # the two laptop commands of the fix, pinned until the ▶ (folded as Terminal.type folds)
+        fix = card([mono(s, 20, INK) for s in ("sudo rm -rf .dvc .dvcignore \\", "  && ls -A",
+                                                 "git config --global --add \\", "  safe.directory /app \\",
+                                                 "  && cat ~/.gitconfig")],
+                   LAPTOP, size=20, buff=0.08, head="on your laptop · extra · Linux")
+        for i in (1, 3, 4):           # Text drops leading spaces: indent the folded continuations by hand
+            fix.body[i].shift(RIGHT * 0.35)
+        assert c91.cmd == "sudo rm -rf .dvc .dvcignore && ls -A", c91.cmd
+        assert c92.cmd == "git config --global --add safe.directory /app && cat ~/.gitconfig", c92.cmd
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(pic), run_time=0.4)
@@ -186,7 +195,7 @@ class Fingerprints(VoiceScene):
             t.set_prompt(P_VERSIONING)
             vo.wait_until("remove the half-made files")
             type_cmd(self, t, c91.cmd, type_time=0.5)
-            out(self, t, c91.at((2, 10)), run_time=0.6)
+            out(self, t, c91.at((2, 3), "…"), run_time=0.4)   # .dvc gone; the command stays on screen
             vo.wait_until("Then mark slash app")
             type_cmd(self, t, c92.cmd, type_time=0.6)
             out(self, t, c92.at((2, 4)) + [(x, PASS) for x in c92.at((5, 6))], run_time=0.5)
@@ -202,6 +211,9 @@ class Fingerprints(VoiceScene):
             vo.wait_until("Start the container again")
             self.play(FadeOut(VGroup(p23, cfg_g, xt1)), track(tr, 1), run_time=0.4)
             self.remove(p23, cfg_g, xt1)
+            resize(self, t, 6, keep=2, run_time=0.4)
+            above(fix, t, side=LEFT)
+            self.play(FadeIn(fix, shift=UP * 0.1), run_time=0.4)
             reenter(self, t, "93", type_time=0.3)
             re93 = above(reentry_chip(), t, side=RIGHT)
             self.play(FadeIn(re93, shift=UP * 0.1), run_time=0.3)
@@ -224,8 +236,8 @@ class Fingerprints(VoiceScene):
         cls = dashed_chip("the class bucket")
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(t, opt)), run_time=0.4)
-            self.remove(t, *t.lines, opt)
+            self.play(FadeOut(VGroup(t, opt, fix)), run_time=0.4)
+            self.remove(t, *t.lines, opt, fix)
             self.play(FadeIn(s2, shift=UP * 0.2), FadeIn(rt, shift=UP * 0.1), run_time=0.5)
             istep(self, s2, c145.line(46), type_time=0.3)
             vo.wait_until("DVC is already set up")
@@ -319,7 +331,9 @@ class Fingerprints(VoiceScene):
             self.play(each(list(mf.rows), INK, scale=1.06, lag=0.2), run_time=1.0)
             pred = hs.hash_manifest(self, mf, predict=True)
             self.remove(*mf.get_family())
-            dir_chip.move_to(chips4[0])
+            # inside the cache rack, under its shelves (where path_chip sat): the pointer card never reaches it
+            dir_chip.move_to([hs.rack.frame.get_right()[0] - dir_chip.width / 2 - 0.15,
+                              hs.rack.frame.get_bottom()[1] + 0.35, 0])
             self.play(FadeIn(dir_chip, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("and writes that fingerprint into the pointer file")
             pc = hs.pointer(predict=True)

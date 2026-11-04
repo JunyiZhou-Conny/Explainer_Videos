@@ -109,8 +109,8 @@ Dialogue: 0,0:05:22.30,0:05:25.36,Bilingual,,0,0,0,,Google application credentia
 Dialogue: 0,0:05:25.36,0:05:28.56,Bilingual,,0,0,0,,告诉 Google 的库密钥在哪儿\N{\fs33\c&H00C8C0B8&\bord1.4}which tells Google's library where the key is,
 Dialogue: 0,0:05:28.56,0:05:31.90,Bilingual,,0,0,0,,它指向 /secrets，一个 container 里的路径\N{\fs33\c&H00C8C0B8&\bord1.4}points to /secrets, a path inside the container.
 Dialogue: 0,0:05:32.22,0:05:37.44,Bilingual,,0,0,0,,两个文件系统，一个目录，而这个变量只有在挂载之后才有意义\N{\fs33\c&H00C8C0B8&\bord1.4}Two filesystems, one folder, and that variable only makes sense after the mount.
-Dialogue: 0,0:05:37.68,0:05:40.81,Bilingual,,0,0,0,,加载器的 compose 文件从自己的目录出发\N{\fs33\c&H00C8C0B8&\bord1.4}The loader's compose file builds the same portal
-Dialogue: 0,0:05:40.81,0:05:44.00,Bilingual,,0,0,0,,搭了同一个传送门：往上两级，同一个 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}from its own folder: up two levels, same secrets.
+Dialogue: 0,0:05:37.68,0:05:40.81,Bilingual,,0,0,0,,加载器的 compose 文件搭了同一个传送门\N{\fs33\c&H00C8C0B8&\bord1.4}The loader's compose file builds the same portal
+Dialogue: 0,0:05:40.81,0:05:44.00,Bilingual,,0,0,0,,从自己的目录出发：往上两级，同一个 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}from its own folder: up two levels, same secrets.
 Dialogue: 0,0:05:44.32,0:05:49.37,Bilingual,,0,0,0,,课件上的那一页只往上爬一级，因为它的 repo 浅一层\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's slide climbs only once, because its repos sit one level shallower.
 Dialogue: 0,0:05:49.69,0:05:52.40,Bilingual,,0,0,0,,永远要数清往上爬了几级，从脚本所在的位置数起\N{\fs33\c&H00C8C0B8&\bord1.4}Always count the climbs from where the script sits.
 Dialogue: 0,0:05:52.65,0:05:55.97,Bilingual,,0,0,0,,在你的 clone 旁边建好这个目录，这是额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Make the folder beside your clone, as an extra,

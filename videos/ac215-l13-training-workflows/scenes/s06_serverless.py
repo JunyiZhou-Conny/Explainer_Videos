@@ -59,6 +59,13 @@ def inner_box(tile) -> RoundedRectangle:
                             stroke_color=IMAGE, stroke_width=2.5).move_to(fr)
 
 
+def google_tab() -> VGroup:
+    """The ORANGE 'Google' band on a job's container, on an opaque backing (the tile edge runs under it)."""
+    b = band("Google", SYSTEM, 0.9, 0.32, 20)
+    bk = RoundedRectangle(width=0.9, height=0.32, corner_radius=0.06, stroke_width=0).set_fill(S.BG, 1).move_to(b)
+    return VGroup(bk, b)
+
+
 def step_dot(n: int) -> VGroup:
     """A small GREY circle with the step number."""
     c = Circle(radius=0.2, stroke_color=S.GREY, stroke_width=2.5).set_fill(S.BG, 1)
@@ -115,7 +122,6 @@ class RentTheMachine(VoiceScene):
             old = VGroup(win, ill, gcp_note, *rows, tab, l15)
             self.play(FadeOut(old), run_time=0.6)
             self.remove(*old)
-            vo.wait_until("you rent the hardware")
             self.play(FadeIn(tile, scale=0.9), run_time=0.7)
             self.play(meter_run(tile.meter), FadeIn(step_t), FadeIn(bar_box), run_time=0.8)
             vo.wait_until("only for the training step")
@@ -147,11 +153,11 @@ class RentTheMachine(VoiceScene):
             self.play(FadeIn(head1, shift=RIGHT * 0.2), FadeIn(trip, shift=UP * 0.2), run_time=0.8)
             vo.wait_until("and turn its hard-coded choices into flags")
             self.play(trip.peel(), run_time=1.8)
+            self.play(FadeIn(slide_chip, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("The flags are epochs")
             self.play(each(trip.task.rows[:3], OWNED, scale=1.1, lag=0.25), run_time=1.2)
             vo.wait_until("plus train base")
             self.play(trip.more(), run_time=1.0)
-            self.play(FadeIn(slide_chip, shift=UP * 0.15), run_time=0.5)
 
         # ========================================================== 3. V1 as a plan, then V4 step 4 in miniature
         m = TrainingMap.at("S06")
@@ -223,7 +229,7 @@ class RentTheMachine(VoiceScene):
         # ========================================================== 4. two facts: no laptop, Google's image
         panel = code("package/trainer/task.py", 96, 100, font_size=20, cuts=TASK_CUTS)
         keep = grey_chip("anything to keep → somewhere durable", color=INK)
-        card1 = card(["the job can't see your laptop", panel, keep], size=24, buff=0.25)
+        card1 = card(["the job can't see your laptop", panel, keep], size=24, buff=0.25, card_w=7.65)
         card1.move_to([0, 0, 0]).align_to([-6.5, 0, 0], LEFT).align_to([0, 2.75, 0], UP)
         card1.body.remove(keep)
         net = grey_chip("internet · a GitHub release").move_to([2.27, -2.1, 0])
@@ -231,7 +237,7 @@ class RentTheMachine(VoiceScene):
                      tip_length=0.2)
         url = panel.code.code_lines[1]
         card2 = card(["the image that runs is Google's"], size=24).move_to([2.3, -2.1, 0])
-        tabs = VGroup(*[band("Google", SYSTEM, 0.9, 0.32, 20).move_to([t.frame.get_left()[0] + 0.5, t.frame.get_top()[1] + 0.04, 0])
+        tabs = VGroup(*[google_tab().move_to([t.frame.get_left()[0] + 0.5, t.frame.get_top()[1] + 0.04, 0])
                         for t in (P["cpu_tile"], P["gpu_tile"])])
         stays = note("your image · stays on the laptop", INK).move_to([0, -1.75, 0]).align_to([-6.5, 0, 0], LEFT)
         hring = ring(P["cockpit"], S.GREY, buff=0.1)
@@ -255,7 +261,9 @@ class RentTheMachine(VoiceScene):
         # ========================================================== 5. quick predict: who imports TensorFlow?
         outlined = {"nbA": P["nbA"], "nbB": P["nbB"], "laptop": m.laptop_frame, "cockpit": P["cockpit"],
                     "cpu": P["cpu_tile"].frame, "gpu": P["gpu_tile"].frame}
-        rings = {k: ring(v, INK, buff=0.1, dashed=True) for k, v in outlined.items()}
+        rings = {k: ring(v, INK, buff=0.1, dashed=True) for k, v in outlined.items() if k not in ("cpu", "gpu")}
+        for k, t, tb in (("cpu", P["cpu_tile"], tabs[0]), ("gpu", P["gpu_tile"], tabs[1])):
+            rings[k] = ring(VGroup(t.frame, tb), INK, buff=0.05, dashed=True)
 
         with self.voiceover(SAY[5]) as vo:
             vo.wait_until("Your laptop has no GPU")

@@ -485,12 +485,12 @@ Two filesystems, one folder, and that variable only makes sense after the mount.
 
 98
 00:05:37,683 --> 00:05:40,808
-加载器的 compose 文件从自己的目录出发
+加载器的 compose 文件搭了同一个传送门
 The loader's compose file builds the same portal
 
 99
 00:05:40,808 --> 00:05:43,998
-搭了同一个传送门：往上两级，同一个 secrets 目录
+从自己的目录出发：往上两级，同一个 secrets 目录
 from its own folder: up two levels, same secrets.
 
 100
