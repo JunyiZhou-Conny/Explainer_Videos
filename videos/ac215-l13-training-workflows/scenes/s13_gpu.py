@@ -206,7 +206,7 @@ class ThreeSwitches(VoiceScene):
             self.remove(w2, y2, g2, co)
             self.play(FadeIn(tw.tiles[0], shift=RIGHT * 0.2), run_time=0.5)
             vo.wait_until("two jobs with the same name")
-            self.play(TransformFromCopy(tw.tiles[0], tw.tiles[1]), run_time=0.7)
+            self.play(FadeIn(tw.tiles[1], shift=LEFT * 0.3), run_time=0.7)   # a sliding copy garbled both names
             self.play(FadeIn(tw.chip, shift=UP * 0.15), run_time=0.5)
             self.play(Indicate(tw.chip.text, color=ERR, scale_factor=1.1), run_time=0.6)
 
@@ -221,9 +221,10 @@ class ThreeSwitches(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             self.keep_only(tr, ref)
             self.play(FadeIn(honest, scale=0.97), run_time=0.6)
+            vo.wait_until("the same way as in scene 10")
+            self.play(Indicate(VGroup(cmd_glyphs, honest.body[2]), color=INK, scale_factor=1.04), run_time=0.8)
             vo.wait_until("with no active account")
             self.play(Indicate(honest.body[0], color=INK, scale_factor=1.06), run_time=0.7)
-            self.play(Indicate(cmd_glyphs, color=INK, scale_factor=1.04), run_time=0.7)
             vo.wait_until("nothing new to show")
             self.play(Indicate(honest.body[3], color=INK, scale_factor=1.06), run_time=0.8)
 

@@ -135,7 +135,7 @@ class WhatTheJobSays(VoiceScene):
             self.play(FadeIn(logs, shift=UP * 0.1), Create(logs_u), run_time=0.6)
             self.play(Indicate(logs, color=ROUTE, scale_factor=1.15), run_time=0.6)
             vo.wait_until("wait for the line training job complete")
-            lk = route(logs.get_top() + UP * 0.05, done.get_bottom() + DOWN * 0.05)
+            lk = route(logs.get_right() + RIGHT * 0.08, done[0].get_left() + LEFT * 0.08)
             self.play(Create(lk), FadeIn(done, shift=UP * 0.15), run_time=0.8)
 
         # ========================================================== 1. the log's shape
@@ -152,7 +152,7 @@ class WhatTheJobSays(VoiceScene):
                                stroke_width=2.5).set_fill(S.GREY_DARKER, 1).move_to([0, -0.55, 0])
         pan.set_z_index(-1)          # the Labels row slides back over it
         gut_h = mono("task.py", 20, S.GREY)
-        gut_h.move_to([GUTTER_X - gut_h.width / 2 + 0.1, y0 + 0.4, 0])
+        gut_h.move_to([0, y0 + 0.36, 0]).align_to(pan, LEFT).shift(RIGHT * 0.25)
         pan_t = label("job log · its shape", CAPTION, S.GREY).next_to(gut_h, RIGHT, buff=0.6)
         pan_h = VGroup(gut_h, pan_t)
         log_ill = illustration_tag(LOG_TAG).next_to(pan, UP, buff=0.1).align_to(pan, RIGHT)
@@ -293,7 +293,9 @@ class WhatTheJobSays(VoiceScene):
         cp = code("package/trainer/task.py", 326, 331, font_size=20)
         nocb = grey_chip("no callbacks=", mono_font=True).next_to(slots_, DOWN, buff=0.15).align_to(slots_, RIGHT)
         cp.next_to(nocb, DOWN, buff=0.15).align_to(slots_, RIGHT)
-        yt3 = your_turn().next_to(cp, LEFT, buff=0.3).align_to(cp, DOWN)
+        yt3 = your_turn().next_to(nocb, LEFT, buff=0.3)
+        prj_r = ring(prj, TURN, buff=0.06)
+        promise_u = under(promise, INK, stroke=2)
 
         with self.voiceover(SAY[3]) as vo:
             old = VGroup(pan, pan_h, log_ill, *keep, r269, block, r308, none_c, none_r, gap, gap_t, gap_src, r333, r341,
@@ -302,17 +304,18 @@ class WhatTheJobSays(VoiceScene):
             self.remove(*old)
             self.play(FadeIn(rc2, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("the W and B project")
-            self.play(Indicate(prj, color=TURN, scale_factor=1.04), run_time=0.8)
+            self.play(Create(prj_r), run_time=0.6)
             vo.wait_until("It promises training metrics")
-            self.play(Indicate(promise, color=INK, scale_factor=1.03), run_time=0.8)
+            self.play(Create(promise_u), run_time=0.8)
             vo.wait_until("To put it kindly")
             self.play(FadeIn(err2, shift=UP * 0.15), FadeIn(nwc, shift=UP * 0.15), run_time=0.6)
             flash_tag(self, err2, INK)
             vo.wait_until("From task.py")
-            self.play(FadeOut(VGroup(rc2, err2, nwc), shift=UP * 0.2), run_time=0.5)
-            self.remove(rc2, err2, nwc)
+            self.play(FadeOut(VGroup(rc2, err2, nwc, prj_r, promise_u), shift=UP * 0.2), Create(rrow),
+                      FadeIn(rl, shift=RIGHT * 0.15), FadeIn(row_ill), run_time=0.8)
+            self.remove(rc2, err2, nwc, prj_r, promise_u)
             vo.wait_until("the run named after the model")
-            self.play(Create(rrow), FadeIn(rl, shift=RIGHT * 0.15), FadeIn(row_ill), run_time=0.8)
+            self.play(Indicate(rname, color=TURN, scale_factor=1.04), run_time=0.6)
             self.play(FadeIn(src_n, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("gets its config")
             self.play(FadeIn(cfg_h), LaggedStart(*[FadeIn(c, shift=RIGHT * 0.2) for c in chips_], lag_ratio=0.2),

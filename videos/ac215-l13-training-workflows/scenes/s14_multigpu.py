@@ -153,8 +153,11 @@ class TwoGpusOneModel(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref), run_time=0.5)
-            vo.wait_until("in three shapes")
+            vo.wait_until("is multi-GPU training")
             self.play(LaggedStart(*[FadeIn(r[0], shift=RIGHT * 0.2) for r in rows], lag_ratio=0.3), run_time=1.0)
+            vo.wait_until("in three shapes")
+            self.play(LaggedStart(*[ShowPassingFlash(r[0].copy().set_fill(opacity=0).set_stroke(INK, 5), time_width=0.6)
+                                    for r in rows], lag_ratio=0.25), run_time=1.0)
             for r, anchor in zip(rows, ("one machine with one GPU", "one machine with several", "and several machines")):
                 vo.wait_until(anchor)
                 self.play(FadeIn(r[1], shift=RIGHT * 0.15), FadeIn(r[2], shift=LEFT * 0.15), run_time=0.6)
@@ -332,7 +335,7 @@ class TwoGpusOneModel(VoiceScene):
         mr4 = MirroredReplicas()
         gpus = VGroup(*mr4.gpus).copy()
         gpus.move_to([3.2, 0.5, 0])
-        stack = tile_stack(N_TRAIN).move_to([-3.9, 0.7, 0])
+        stack = tile_stack(N_TRAIN).move_to([-3.9, -0.15, 0])     # clear of beat 5's line-293 panel
         n_lbl = note(f"{N_TRAIN} training images", INK, 22).next_to(stack, DOWN, buff=0.2)
         bs = flag_chip("--batch_size=32").next_to(gpus, DOWN, buff=0.3)
         assert gpus.get_right()[0] < 6.5 and stack.get_left()[0] > -6.5 and n_lbl.get_bottom()[1] > -3.5
@@ -363,6 +366,7 @@ class TwoGpusOneModel(VoiceScene):
         cfg_head = note("wandb.init config · task_multi_gpu.py lines 324–334", S.GREY, 20)
         cfg = VGroup(cfg_head, flag_chip("batch_size"), flag_chip("global_batch_size")).arrange(RIGHT, buff=0.3)
         cfg.move_to([0, -2.85, 0])
+        assert stack.get_top()[1] < p293.get_bottom()[1] - 0.2, (stack.get_top(), p293.get_bottom())
         assert eq.get_right()[0] < 6.5 and frames.get_left()[0] > -6.5 and frames.get_right()[0] < 6.5, \
             (eq.get_right(), frames.get_left(), frames.get_right())
         assert cfg.get_left()[0] > -6.5 and cfg.get_right()[0] < 6.5, cfg.width
@@ -386,7 +390,10 @@ class TwoGpusOneModel(VoiceScene):
             vo.wait_until("and 32 images per GPU")
             first = VGroup(*stack[:GLOBAL])
             top32, bot32 = VGroup(*stack[:32]), VGroup(*stack[32:GLOBAL])
-            self.play(top32.animate.set_fill(CLOUD, 1), bot32.animate.set_fill(S.TEAL, 1), run_time=0.6)
+            half = DashedLine([frames[0].get_left()[0] + 0.03, (top32.get_bottom()[1] + bot32.get_top()[1]) / 2, 0],
+                              [frames[0].get_right()[0] - 0.03, (top32.get_bottom()[1] + bot32.get_top()[1]) / 2, 0],
+                              color=S.YELLOW, stroke_width=3, dash_length=0.05)
+            self.play(Create(half), each([top32, bot32], TURN, scale=1.06, lag=0.3), run_time=0.8)
             per_gpu.next_to(first, UP, buff=0.3).align_to(frames[0], LEFT)
             self.play(FadeIn(per_gpu, shift=DOWN * 0.1), Create(ring(frames[0], TURN, buff=0.04)), run_time=0.6)
             self.play(FadeIn(cfg, shift=UP * 0.15), run_time=0.6)

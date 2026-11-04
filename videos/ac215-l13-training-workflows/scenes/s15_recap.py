@@ -344,6 +344,8 @@ class Recap(VoiceScene):
             self.play(vm.unwrap(), run_time=0.7)
             self.play(vm.pip(), vm.run(), run_time=0.7)
             vo.wait_until("When the script ends")
+            gw = vm.ghost[1].width + 0.4   # common's 1.6-wide box is narrower than its words at 20 pt
+            vm.ghost.submobjects[0] = outline_box(max(1.6, gw), 0.6, FUTURE, solid=False).move_to(vm.ghost[1])
             self.play(vm.dissolve(), run_time=1.6)
             self.remove(vm.meter, *vm.meter.get_family())   # the stopped needle lingers otherwise
             ghost = vm.ghost
@@ -550,6 +552,7 @@ class Recap(VoiceScene):
             self.play(FadeIn(gpus, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("average gradients")
             self.play(Create(link), FadeIn(link_t), run_time=0.7)
+            self.wait(1.2)   # the all-reduce link holds before the map goes dark
             st = m.stamp_
             st_dim = st.copy()
             st_dim.box.set_stroke(S.GREY_DARK)
@@ -568,6 +571,9 @@ class Recap(VoiceScene):
         items = VGroup(*[label(f"{i + 1} · {QUESTIONS[i][0]}", 24, INK) for i in range(5)])
         items.arrange(DOWN, aligned_edge=LEFT, buff=0.32).move_to([-6.2, 0.9, 0], aligned_edge=LEFT)
         items.align_to(np.array([0, 1.75, 0]), UP)
+        y0 = items[0][0].get_center()[1]
+        for i, it in enumerate(items):   # an even pitch (descenders made the arranged gaps uneven)
+            it.shift(UP * (y0 - 0.62 * i - it[0].get_center()[1]))
         anchors = ("One: what did neither", "Two: what travels", "Three: why is the config", "Four: who submits",
                    "Five: with two GPUs")
 
@@ -585,7 +591,9 @@ class Recap(VoiceScene):
                 if cur is not None:
                     self.remove(cur)
                 cur = panels[i]
-                self.play(Indicate(cur.thumb[1], color=TURN, scale_factor=1.04), run_time=0.7)
+                fr_ = cur.thumb[0]   # Indicate floods the filled thumbnail shapes: flash its frame
+                self.play(fr_.animate.set_stroke(TURN, 3), run_time=0.35)
+                self.play(fr_.animate.set_stroke(S.GREY_DARK, 2), run_time=0.35)
 
         # ========================================================== 5. answers, next, close on the dials
         foot1 = grey_chip("Answers: exercises.md", size=22)
