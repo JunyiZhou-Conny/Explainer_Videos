@@ -354,6 +354,17 @@ implicit dirs: {ipa: "ɪmplˈɪsɪt dˈɜːz", say: "implicit durs"}
 gouda: {ipa: "ɡˈuːdə", say: "GOO-da"}
 parmigiano: {ipa: "pˌɑːɹmɪdʒˈɑːnoʊ", say: "par-mi-JAH-no"}
 data-service-account: {ipa: "dˈeɪɾə sˈɜːvɪs ɐkˈaʊnt", say: "data service account"}
+# L11 whole-video QA (ASR): "dataset" is flapped to "day-ruh-set" (heard "dare set"): L11-only phrases, never a bare key
+"next dataset version": {ipa: "nˈɛkst dˈeɪtə sˌɛt vˈɜːʒən", say: "next data set version"}
+"cheese dataset": {ipa: "tʃˈiːz dˈeɪtə sˌɛt", say: "cheese data set"}
+"tracks the dataset": {ipa: "tɹˈæks ðə dˈeɪtə sˌɛt", say: "tracks the data set"}
+"labeled dataset": {ipa: "lˈeɪbəld dˈeɪtə sˌɛt", say: "labeled data set"}
+"dataset v20": {ipa: "dˈeɪtə sˌɛt vˈiː twˈɛnti", say: "data set v twenty"}
+"dataset v21": {ipa: "dˈeɪtə sˌɛt vˈiː twˈɛnti wˈʌn", say: "data set v twenty-one"}
+"dataset v25": {ipa: "dˈeɪtə sˌɛt vˈiː twˈɛnti fˈaɪv", say: "data set v twenty-five"}
+"Mac metadata": {ipa: "mˈæk mˈɛtədˌeɪtə", say: "Mac meta-data"}
+gcsfuse: {ipa: "dʒˌiːsˌiːˈɛs fjˈuːz", say: "G-C-S fuse"}
+"dvc init": {ipa: "dˌiːvˌiːsˈiː ɪnˈɪt", say: "D-V-C in-IT"}
 # AC215 L13 (videos/ac215-l13-training-workflows); verified against Kokoro af_heart phonemes.
 # Every spoken decimal is keyed: phonemizer splits a sentence-final chunk at its first "." (decimal point).
 "0.31.0": {ipa: "zˈiəɹoʊ pɔɪnt θˈɜːɾi wˈʌn pɔɪnt zˈiəɹoʊ", say: "zero point thirty-one point zero"}
