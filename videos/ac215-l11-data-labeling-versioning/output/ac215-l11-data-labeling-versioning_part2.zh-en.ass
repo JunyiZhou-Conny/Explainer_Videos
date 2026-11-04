@@ -1,0 +1,270 @@
+[Script Info]
+Title: AC215 · L11, part 2: DVC — a mounted bucket, content-addressed files, tags you can time-travel to
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:02.67,Bilingual,,0,0,0,,第二部分：把模型看到的照片冻结下来\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2: freezing which photos a model saw.
+Dialogue: 0,0:00:02.99,0:00:06.59,Bilingual,,0,0,0,,只用 git 的话，每个照片版本都会被复制进每一个 clone\N{\fs33\c&H00C8C0B8&\bord1.4}Git alone would copy every photo version into every clone.
+Dialogue: 0,0:00:06.91,0:00:10.97,Bilingual,,0,0,0,,课上的四种做法里，我们搭的是基于文件的做法\N{\fs33\c&H00C8C0B8&\bord1.4}Of the lecture's four approaches, we build the file-based one:
+Dialogue: 0,0:00:10.97,0:00:15.74,Bilingual,,0,0,0,,git 给一个记着指纹的小文件做版本管理，bucket 存照片\N{\fs33\c&H00C8C0B8&\bord1.4}git versions a small file of fingerprints, and a bucket holds the photos.
+Dialogue: 0,0:00:16.06,0:00:17.66,Bilingual,,0,0,0,,用的工具是 DVC\N{\fs33\c&H00C8C0B8&\bord1.4}The tool is DVC.
+Dialogue: 0,0:00:19.87,0:00:21.57,Bilingual,,0,0,0,,先退到上一级目录\N{\fs33\c&H00C8C0B8&\bord1.4}First, move up one folder,
+Dialogue: 0,0:00:21.57,0:00:25.18,Bilingual,,0,0,0,,让新的 clone 和 data-labeling、secrets 放在一起\N{\fs33\c&H00C8C0B8&\bord1.4}so the new clone sits beside data-labeling and secrets.
+Dialogue: 0,0:00:25.50,0:00:29.57,Bilingual,,0,0,0,,这份 data-versioning 的 README 一开头也是那三条清理命令\N{\fs33\c&H00C8C0B8&\bord1.4}The data-versioning README starts with the same three cleanup commands.
+Dialogue: 0,0:00:29.89,0:00:31.49,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
+Dialogue: 0,0:00:35.50,0:00:38.08,Bilingual,,0,0,0,,然后 clone README 指定的 starter 分支\N{\fs33\c&H00C8C0B8&\bord1.4}Then clone the starter branch the README names.
+Dialogue: 0,0:00:38.40,0:00:41.63,Bilingual,,0,0,0,,它的 SSH 命令需要你在 GitHub 上配好 SSH 密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Its SSH command needs your key on GitHub,
+Dialogue: 0,0:00:41.63,0:00:44.31,Bilingual,,0,0,0,,而这台机器没有 SSH 通道\N{\fs33\c&H00C8C0B8&\bord1.4}and this machine has no SSH route.
+Dialogue: 0,0:00:44.63,0:00:49.09,Bilingual,,0,0,0,,所以同一个分支改走 HTTPS，README 也允许这样做\N{\fs33\c&H00C8C0B8&\bord1.4}So the same branch comes over HTTPS, which the README allows.
+Dialogue: 0,0:00:49.41,0:00:51.14,Bilingual,,0,0,0,,暂停一下，clone 下来，再进去\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, clone it, and move in.
+Dialogue: 0,0:00:54.75,0:01:00.10,Bilingual,,0,0,0,,有一点要说明：上课那天 README 改了，现在它让你 clone main\N{\fs33\c&H00C8C0B8&\bord1.4}One note: on the day of the lecture the README changed, and it now says to clone main.
+Dialogue: 0,0:01:00.42,0:01:04.56,Bilingual,,0,0,0,,这个分支会把授课老师做好的 DVC 文件一起带过来\N{\fs33\c&H00C8C0B8&\bord1.4}That branch brings the instructor's finished DVC files along,
+Dialogue: 0,0:01:04.56,0:01:06.65,Bilingual,,0,0,0,,额外再 clone 一份就能看到\N{\fs33\c&H00C8C0B8&\bord1.4}as an extra second clone shows.
+Dialogue: 0,0:01:06.97,0:01:09.96,Bilingual,,0,0,0,,这个视频跟的是课程 pin 住的那版 README\N{\fs33\c&H00C8C0B8&\bord1.4}This video follows the course's pinned README:
+Dialogue: 0,0:01:09.96,0:01:12.09,Bilingual,,0,0,0,,starter 分支，外加一处修复\N{\fs33\c&H00C8C0B8&\bord1.4}the starter branch, plus one fix.
+Dialogue: 0,0:01:12.33,0:01:17.12,Bilingual,,0,0,0,,删掉旧的 git 历史，这样代码就不再和课程的 repo 绑在一起\N{\fs33\c&H00C8C0B8&\bord1.4}Remove the old git history, so the code is no longer tied to the class repo,
+Dialogue: 0,0:01:17.12,0:01:19.01,Bilingual,,0,0,0,,再用 git init 重新开始\N{\fs33\c&H00C8C0B8&\bord1.4}and start fresh with git init.
+Dialogue: 0,0:01:19.33,0:01:20.90,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:01:20.95,0:01:25.32,Bilingual,,0,0,0,,Git 的提示里提到了 master，所以下一步要给分支改名\N{\fs33\c&H00C8C0B8&\bord1.4}Git's hint mentions master, which is why the branch gets renamed next.
+Dialogue: 0,0:01:27.33,0:01:31.85,Bilingual,,0,0,0,,在 GitHub 上建一个空的私有 repo，叫 data-versioning\N{\fs33\c&H00C8C0B8&\bord1.4}On GitHub, create an empty private repo called data-versioning,
+Dialogue: 0,0:01:31.85,0:01:34.93,Bilingual,,0,0,0,,不要 README、许可证，也不要 .gitignore 文件\N{\fs33\c&H00C8C0B8&\bord1.4}with no README, license or .gitignore file.
+Dialogue: 0,0:01:35.25,0:01:36.78,Bilingual,,0,0,0,,然后是五条命令\N{\fs33\c&H00C8C0B8&\bord1.4}Then the five commands:
+Dialogue: 0,0:01:36.78,0:01:41.18,Bilingual,,0,0,0,,改分支名、把你的 repo 加为 origin、add、commit、push\N{\fs33\c&H00C8C0B8&\bord1.4}rename the branch, add your repo as origin, add, commit, and push.
+Dialogue: 0,0:01:41.50,0:01:43.03,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
+Dialogue: 0,0:01:43.08,0:01:46.06,Bilingual,,0,0,0,,你的 repo 现在在 main 上显示 7 个文件\N{\fs33\c&H00C8C0B8&\bord1.4}Your repo now shows the 7 files on main.
+Dialogue: 0,0:01:48.80,0:01:51.55,Bilingual,,0,0,0,,一个 bucket 只存有名字的对象，别的什么都不存\N{\fs33\c&H00C8C0B8&\bord1.4}A bucket stores named objects, nothing else.
+Dialogue: 0,0:01:51.87,0:01:55.65,Bilingual,,0,0,0,,再加上版本管理之类的工具，课上就把它叫做数据湖\N{\fs33\c&H00C8C0B8&\bord1.4}Add tools, like versioning, and the lecture calls it a data lake.
+Dialogue: 0,0:01:55.97,0:01:59.79,Bilingual,,0,0,0,,它的目录只是共同的名字前缀，这就埋下了一个陷阱\N{\fs33\c&H00C8C0B8&\bord1.4}Its folders are only shared name prefixes, which sets a trap.
+Dialogue: 0,0:02:00.67,0:02:04.79,Bilingual,,0,0,0,,第一部分的 secrets 目录已经在这个 repo 旁边了\N{\fs33\c&H00C8C0B8&\bord1.4}The secrets folder from part 1 already sits beside this repo,
+Dialogue: 0,0:02:04.79,0:02:06.68,Bilingual,,0,0,0,,额外用 tree 看一下就能看到\N{\fs33\c&H00C8C0B8&\bord1.4}as an extra tree view shows.
+Dialogue: 0,0:02:07.00,0:02:11.06,Bilingual,,0,0,0,,README 要的是同一个服务账号和密钥，所以两个都直接复用\N{\fs33\c&H00C8C0B8&\bord1.4}The README wants the same service account and key, so reuse both.
+Dialogue: 0,0:02:14.28,0:02:19.30,Bilingual,,0,0,0,,在你的 bucket 里，用控制台建两个目录：DVC store 和 images\N{\fs33\c&H00C8C0B8&\bord1.4}In your bucket, create two folders in the console: dvc_store and images.
+Dialogue: 0,0:02:19.62,0:02:20.71,Bilingual,,0,0,0,,有一个小疏漏\N{\fs33\c&H00C8C0B8&\bord1.4}A small gap:
+Dialogue: 0,0:02:20.71,0:02:25.44,Bilingual,,0,0,0,,课程的 README 从没说要把第一批照片放进 images 目录\N{\fs33\c&H00C8C0B8&\bord1.4}the course's README never says to put the first photos into the images folder,
+Dialogue: 0,0:02:25.44,0:02:27.38,Bilingual,,0,0,0,,后面却说再加一些\N{\fs33\c&H00C8C0B8&\bord1.4}yet later it says to add more.
+Dialogue: 0,0:02:27.70,0:02:30.77,Bilingual,,0,0,0,,所以把 zip 里的 Image 1 到 Image 4 上传上去\N{\fs33\c&H00C8C0B8&\bord1.4}So upload Image_1 through Image_4 from the zip.
+Dialogue: 0,0:02:31.09,0:02:32.69,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it.
+Dialogue: 0,0:02:34.90,0:02:36.40,Bilingual,,0,0,0,,在 docker-shell.sh 里\N{\fs33\c&H00C8C0B8&\bord1.4}In docker-shell.sh,
+Dialogue: 0,0:02:36.40,0:02:39.89,Bilingual,,0,0,0,,把 bucket、项目和可用区换成你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}replace the bucket, project and zone with yours.
+Dialogue: 0,0:02:40.21,0:02:42.32,Bilingual,,0,0,0,,真正用到的只有 bucket 名字\N{\fs33\c&H00C8C0B8&\bord1.4}Only the bucket name is ever used.
+Dialogue: 0,0:02:42.64,0:02:44.10,Bilingual,,0,0,0,,暂停一下，改好它\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and edit it.
+Dialogue: 0,0:02:44.15,0:02:47.67,Bilingual,,0,0,0,,这个 entrypoint 会跑课上画的四个阶段\N{\fs33\c&H00C8C0B8&\bord1.4}The entrypoint runs the four stages the lecture draws.
+Dialogue: 0,0:02:47.99,0:02:49.59,Bilingual,,0,0,0,,用密钥做身份验证\N{\fs33\c&H00C8C0B8&\bord1.4}Authenticate with the key.
+Dialogue: 0,0:02:49.89,0:02:53.20,Bilingual,,0,0,0,,把整个 bucket 挂载成一个目录，用的是 gcsfuse\N{\fs33\c&H00C8C0B8&\bord1.4}Mount the whole bucket as a folder, with gcsfuse.
+Dialogue: 0,0:02:53.52,0:02:57.87,Bilingual,,0,0,0,,把它的 images 目录绑定到应用要的路径上：cheese dataset\N{\fs33\c&H00C8C0B8&\bord1.4}Bind its images folder to the path the app expects, cheese_dataset.
+Dialogue: 0,0:02:58.19,0:03:02.40,Bilingual,,0,0,0,,然后使用数据：DVC 把这个目录当本地目录用\N{\fs33\c&H00C8C0B8&\bord1.4}Then use the data: DVC works on that folder as if it were local,
+Dialogue: 0,0:03:02.40,0:03:05.23,Bilingual,,0,0,0,,而每个文件其实都是从 bucket 取来的\N{\fs33\c&H00C8C0B8&\bord1.4}while each file is fetched from the bucket.
+Dialogue: 0,0:03:05.62,0:03:10.61,Bilingual,,0,0,0,,课上把挂载那一行拆开讲：工具、密钥文件、bucket、挂载点\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture takes the mount line apart: tool, key file, bucket, mount point.
+Dialogue: 0,0:03:10.93,0:03:13.89,Bilingual,,0,0,0,,有一个参数没传，--implicit-dirs\N{\fs33\c&H00C8C0B8&\bord1.4}One flag is not passed, --implicit-dirs,
+Dialogue: 0,0:03:13.89,0:03:19.50,Bilingual,,0,0,0,,所以 gcsfuse 只显示控制台建的目录，它们会留下一个标记对象\N{\fs33\c&H00C8C0B8&\bord1.4}so gcsfuse only shows folders the console made, which leave a marker object.
+Dialogue: 0,0:03:19.82,0:03:21.15,Bilingual,,0,0,0,,这就是那个陷阱\N{\fs33\c&H00C8C0B8&\bord1.4}That was the trap.
+Dialogue: 0,0:03:21.20,0:03:22.92,Bilingual,,0,0,0,,注意这两个 bind mount\N{\fs33\c&H00C8C0B8&\bord1.4}Note the two bind mounts:
+Dialogue: 0,0:03:22.92,0:03:26.03,Bilingual,,0,0,0,,-v 把你笔记本上的 repo 接到 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}-v joins your laptop's repo to the container,
+Dialogue: 0,0:03:26.03,0:03:29.54,Bilingual,,0,0,0,,里面那个则把 bucket 的 images 目录接进来\N{\fs33\c&H00C8C0B8&\bord1.4}and the inner one joins the bucket's images folder.
+Dialogue: 0,0:03:29.78,0:03:32.86,Bilingual,,0,0,0,,挂载需要 fuse 设备和挂载权限\N{\fs33\c&H00C8C0B8&\bord1.4}Mounting needs the fuse device and mount rights,
+Dialogue: 0,0:03:32.86,0:03:36.25,Bilingual,,0,0,0,,所以要加 --privileged 参数和多加的那个 capability\N{\fs33\c&H00C8C0B8&\bord1.4}hence the --privileged flag and the extra capability.
+Dialogue: 0,0:03:36.57,0:03:40.11,Bilingual,,0,0,0,,脚本还会挂载你的 repo、secrets 和 git 配置\N{\fs33\c&H00C8C0B8&\bord1.4}The script also mounts your repo, secrets and git config.
+Dialogue: 0,0:03:40.43,0:03:42.41,Bilingual,,0,0,0,,先把 git 配好，再做第一次运行\N{\fs33\c&H00C8C0B8&\bord1.4}Set up git before the first run,
+Dialogue: 0,0:03:42.41,0:03:44.89,Bilingual,,0,0,0,,不然 Docker 会在那个位置建一个目录\N{\fs33\c&H00C8C0B8&\bord1.4}or Docker creates a folder in its place.
+Dialogue: 0,0:03:45.93,0:03:49.37,Bilingual,,0,0,0,,你已经在 data-versioning 目录里了\N{\fs33\c&H00C8C0B8&\bord1.4}You are already in the data-versioning folder,
+Dialogue: 0,0:03:49.37,0:03:51.31,Bilingual,,0,0,0,,所以跑：sh docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}so run sh docker-shell.sh.
+Dialogue: 0,0:03:51.63,0:03:53.05,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:03:53.10,0:03:55.84,Bilingual,,0,0,0,,在 starter 分支上，构建直接挂了\N{\fs33\c&H00C8C0B8&\bord1.4}On the starter branch, the build dies:
+Dialogue: 0,0:03:55.84,0:03:59.80,Bilingual,,0,0,0,,包 google-cloud-sdk 没有可安装的候选版本\N{\fs33\c&H00C8C0B8&\bord1.4}package google-cloud-sdk has no installation candidate.
+Dialogue: 0,0:04:00.12,0:04:04.13,Bilingual,,0,0,0,,报错里甚至点出了替代品：google-cloud-cli\N{\fs33\c&H00C8C0B8&\bord1.4}The message even names the replacement, google-cloud-cli.
+Dialogue: 0,0:04:04.37,0:04:08.46,Bilingual,,0,0,0,,有一个小疏漏，不是你的错：Google 给这个包改了名\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip, and not your fault: Google renamed the package,
+Dialogue: 0,0:04:08.46,0:04:12.81,Bilingual,,0,0,0,,main 分支修了第 36 行，starter 却一直没修\N{\fs33\c&H00C8C0B8&\bord1.4}the main branch fixed line 36, and the starter never got the fix.
+Dialogue: 0,0:04:13.13,0:04:15.89,Bilingual,,0,0,0,,你也照样改这一个词，这是额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Make the same one-word change, as an extra.
+Dialogue: 0,0:04:16.21,0:04:17.81,Bilingual,,0,0,0,,暂停一下，改好它\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and edit it.
+Dialogue: 0,0:04:18.68,0:04:20.28,Bilingual,,0,0,0,,暂停一下，再跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it again.
+Dialogue: 0,0:04:20.48,0:04:22.08,Bilingual,,0,0,0,,第一次构建比较慢\N{\fs33\c&H00C8C0B8&\bord1.4}The first build is slow.
+Dialogue: 0,0:04:22.35,0:04:23.91,Bilingual,,0,0,0,,然后 entrypoint 开始跑\N{\fs33\c&H00C8C0B8&\bord1.4}Then the entrypoint runs,
+Dialogue: 0,0:04:23.91,0:04:27.02,Bilingual,,0,0,0,,每个阶段失败的方式都和缺了密钥时一样\N{\fs33\c&H00C8C0B8&\bord1.4}and every stage fails the way a missing key fails.
+Dialogue: 0,0:04:27.34,0:04:30.21,Bilingual,,0,0,0,,gcloud 工具找不到密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}The gcloud tool cannot find the key file,
+Dialogue: 0,0:04:30.21,0:04:33.85,Bilingual,,0,0,0,,gcsfuse 也找不到，所以 bucket 根本没挂载上\N{\fs33\c&H00C8C0B8&\bord1.4}and neither can gcsfuse, so the bucket never mounts.
+Dialogue: 0,0:04:34.17,0:04:36.27,Bilingual,,0,0,0,,可下一行却写着 bucket 已挂载\N{\fs33\c&H00C8C0B8&\bord1.4}Yet the next line says bucket mounted,
+Dialogue: 0,0:04:36.27,0:04:38.69,Bilingual,,0,0,0,,因为脚本不管怎样都会打印这一行\N{\fs33\c&H00C8C0B8&\bord1.4}because the script prints it no matter what.
+Dialogue: 0,0:04:39.01,0:04:42.77,Bilingual,,0,0,0,,接着 bind mount 失败了：特殊设备不存在\N{\fs33\c&H00C8C0B8&\bord1.4}Then the bind mount fails: special device does not exist.
+Dialogue: 0,0:04:43.02,0:04:44.93,Bilingual,,0,0,0,,可你还是拿到了一个 root 提示符\N{\fs33\c&H00C8C0B8&\bord1.4}And still you get a root prompt,
+Dialogue: 0,0:04:44.93,0:04:47.73,Bilingual,,0,0,0,,因为 entrypoint 遇到错误不会停\N{\fs33\c&H00C8C0B8&\bord1.4}because the entrypoint does not stop at errors.
+Dialogue: 0,0:04:48.05,0:04:52.66,Bilingual,,0,0,0,,额外检查：cheese dataset 目录是空的\N{\fs33\c&H00C8C0B8&\bord1.4}Extra checks: the cheese_dataset folder is empty,
+Dialogue: 0,0:04:52.66,0:04:57.65,Bilingual,,0,0,0,,装的是 DVC 3.63.0，由 lock 文件 pin 住\N{\fs33\c&H00C8C0B8&\bord1.4}and DVC 3.63.0 is installed, pinned by the lock file.
+Dialogue: 0,0:04:57.97,0:05:01.38,Bilingual,,0,0,0,,所以今天的规则是：先列一下目录，再 add 它\N{\fs33\c&H00C8C0B8&\bord1.4}So the rule for today: list the folder before you add it.
+Dialogue: 0,0:05:01.63,0:05:05.30,Bilingual,,0,0,0,,有了真的密钥，里面的目录会列出你的四张照片\N{\fs33\c&H00C8C0B8&\bord1.4}With a real key, the folder inside lists your four photos.
+Dialogue: 0,0:05:05.62,0:05:09.59,Bilingual,,0,0,0,,来想一个问题：在你的笔记本上，同一个目录是空的\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: on your laptop, the same folder is empty.
+Dialogue: 0,0:05:09.91,0:05:11.51,Bilingual,,0,0,0,,挂载坏了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Is the mount broken?
+Dialogue: 0,0:05:20.17,0:05:25.32,Bilingual,,0,0,0,,没有。两个挂载都只存在于 container 里面。你的笔记本看到的\N{\fs33\c&H00C8C0B8&\bord1.4}No. Both mounts exist only inside the container. Your laptop
+Dialogue: 0,0:05:25.32,0:05:29.51,Bilingual,,0,0,0,,是 entrypoint 通过 repo 的挂载建出来的空目录\N{\fs33\c&H00C8C0B8&\bord1.4}sees the empty folder the entrypoint made through the repo mount;
+Dialogue: 0,0:05:29.51,0:05:32.24,Bilingual,,0,0,0,,额外列一下就能看到，它属于 root\N{\fs33\c&H00C8C0B8&\bord1.4}an extra listing shows it, owned by root.
+Dialogue: 0,0:05:35.80,0:05:38.72,Bilingual,,0,0,0,,在 container 里面跑：dvc init\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the container, run dvc init.
+Dialogue: 0,0:05:39.04,0:05:44.12,Bilingual,,0,0,0,,在 Linux 上它可能会停下：仓库路径不属于当前用户\N{\fs33\c&H00C8C0B8&\bord1.4}On Linux it may stop: the repository path is not owned by the current user.
+Dialogue: 0,0:05:44.44,0:05:47.62,Bilingual,,0,0,0,,你在里面是 root，而 repo 在磁盘上属于你\N{\fs33\c&H00C8C0B8&\bord1.4}You are root inside, the repo is yours on disk,
+Dialogue: 0,0:05:47.62,0:05:50.52,Bilingual,,0,0,0,,所以 git 拒绝了，留下一个半成品目录\N{\fs33\c&H00C8C0B8&\bord1.4}so git refuses, leaving a half-made folder.
+Dialogue: 0,0:05:50.77,0:05:52.84,Bilingual,,0,0,0,,修法是一个额外步骤，只针对 Linux\N{\fs33\c&H00C8C0B8&\bord1.4}The fix is an extra, for Linux:
+Dialogue: 0,0:05:52.84,0:05:55.72,Bilingual,,0,0,0,,在你的笔记本上删掉那些半成品文件\N{\fs33\c&H00C8C0B8&\bord1.4}on your laptop, remove the half-made files.
+Dialogue: 0,0:05:56.04,0:05:59.75,Bilingual,,0,0,0,,然后把 /app 标成安全目录，写进你的 git 配置\N{\fs33\c&H00C8C0B8&\bord1.4}Then mark /app as a safe directory in your git config.
+Dialogue: 0,0:06:00.07,0:06:03.29,Bilingual,,0,0,0,,再启动一次 container，dvc init 就成功了\N{\fs33\c&H00C8C0B8&\bord1.4}Start the container again, and dvc init works.
+Dialogue: 0,0:06:03.61,0:06:05.21,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:06:05.98,0:06:08.33,Bilingual,,0,0,0,,如果你 clone 的是 main，就会停在这里\N{\fs33\c&H00C8C0B8&\bord1.4}If you cloned main, it stops here:
+Dialogue: 0,0:06:08.33,0:06:14.39,Bilingual,,0,0,0,,DVC 已经配置好了，remote 被拒绝，配置还指向课程的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}DVC is already set up, the remote is refused, and the config points at the class bucket.
+Dialogue: 0,0:06:14.71,0:06:16.28,Bilingual,,0,0,0,,从 starter 开始\N{\fs33\c&H00C8C0B8&\bord1.4}Start from the starter.
+Dialogue: 0,0:06:16.33,0:06:20.35,Bilingual,,0,0,0,,然后把 DVC 指向你 bucket 里的 DVC store 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Then point DVC at the dvc_store folder in your bucket,
+Dialogue: 0,0:06:20.35,0:06:21.99,Bilingual,,0,0,0,,作为它的默认 remote\N{\fs33\c&H00C8C0B8&\bord1.4}as its default remote.
+Dialogue: 0,0:06:22.31,0:06:23.91,Bilingual,,0,0,0,,暂停一下，加上它\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and add it.
+Dialogue: 0,0:06:26.30,0:06:29.12,Bilingual,,0,0,0,,来看 dvc add 会对照片做什么\N{\fs33\c&H00C8C0B8&\bord1.4}Here is what dvc add will do with photos.
+Dialogue: 0,0:06:29.44,0:06:32.08,Bilingual,,0,0,0,,它用 MD5 给每张照片算指纹\N{\fs33\c&H00C8C0B8&\bord1.4}It fingerprints each photo with MD5.
+Dialogue: 0,0:06:32.40,0:06:35.59,Bilingual,,0,0,0,,它把一份副本按这个指纹放进缓存\N{\fs33\c&H00C8C0B8&\bord1.4}It files a copy in its cache under that fingerprint,
+Dialogue: 0,0:06:35.59,0:06:38.22,Bilingual,,0,0,0,,放在用指纹前 2 个字符命名的架子上\N{\fs33\c&H00C8C0B8&\bord1.4}on a shelf named by the first 2 characters.
+Dialogue: 0,0:06:38.54,0:06:42.52,Bilingual,,0,0,0,,然后它给一个 manifest 算指纹，也就是指纹和文件名的列表\N{\fs33\c&H00C8C0B8&\bord1.4}Then it fingerprints a manifest, the list of fingerprints and names,
+Dialogue: 0,0:06:42.52,0:06:47.72,Bilingual,,0,0,0,,再把这个指纹写进指针文件，在 git 里由它代替这个目录\N{\fs33\c&H00C8C0B8&\bord1.4}and writes that fingerprint into the pointer file, which stands in for the folder in git.
+Dialogue: 0,0:06:49.63,0:06:53.64,Bilingual,,0,0,0,,第二个陷阱：挂载失败了，所以目录是空的\N{\fs33\c&H00C8C0B8&\bord1.4}A second trap: the mount failed, so the folder is empty,
+Dialogue: 0,0:06:53.64,0:06:57.36,Bilingual,,0,0,0,,而 dvc add 照样高高兴兴地做出一个 0 个文件的版本\N{\fs33\c&H00C8C0B8&\bord1.4}and dvc add happily makes a version with zero files.
+Dialogue: 0,0:06:58.12,0:07:03.02,Bilingual,,0,0,0,,没有挂载 bucket，我们的替身就把四张照片复制进笔记本上的目录\N{\fs33\c&H00C8C0B8&\bord1.4}With no bucket mounted, our stand-in copies four photos into the laptop folder,
+Dialogue: 0,0:07:03.02,0:07:07.12,Bilingual,,0,0,0,,container 通过 repo 的挂载能看到它们，我们再 add 一次\N{\fs33\c&H00C8C0B8&\bord1.4}which the container sees through the repo mount, and we add again.
+Dialogue: 0,0:07:07.44,0:07:11.90,Bilingual,,0,0,0,,现在指针文件写着 4 个文件，整个目录一个指纹\N{\fs33\c&H00C8C0B8&\bord1.4}Now the pointer file says 4 files and one fingerprint for the folder.
+Dialogue: 0,0:07:12.22,0:07:13.82,Bilingual,,0,0,0,,暂停一下，add 你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and add yours.
+Dialogue: 0,0:07:17.65,0:07:21.36,Bilingual,,0,0,0,,缓存里能看到这些架子，还有之前那个空版本\N{\fs33\c&H00C8C0B8&\bord1.4}The cache shows those shelves, plus the empty version from before.
+Dialogue: 0,0:07:26.07,0:07:31.25,Bilingual,,0,0,0,,所以一行字能锁定 600 KB：它给指纹的列表算指纹\N{\fs33\c&H00C8C0B8&\bord1.4}So one line pins 600 kilobytes: it fingerprints the list of fingerprints.
+Dialogue: 0,0:07:31.57,0:07:35.60,Bilingual,,0,0,0,,而授课老师在课程 repo 里打的 tag\N{\fs33\c&H00C8C0B8&\bord1.4}And the instructor's tag in the class repo holds the same fingerprint,
+Dialogue: 0,0:07:35.60,0:07:37.37,Bilingual,,0,0,0,,存的是同一个指纹，一个字符都不差\N{\fs33\c&H00C8C0B8&\bord1.4}character for character.
+Dialogue: 0,0:07:38.72,0:07:40.32,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:07:40.38,0:07:43.58,Bilingual,,0,0,0,,你把 Image 2 改名叫 brie 2，再 add 一次\N{\fs33\c&H00C8C0B8&\bord1.4}You give Image_2 the new name brie_2, and add again.
+Dialogue: 0,0:07:43.90,0:07:49.72,Bilingual,,0,0,0,,哪个会变：是照片的指纹，manifest 的指纹，大小，还是文件数？\N{\fs33\c&H00C8C0B8&\bord1.4}Which changes: the photo fingerprint, the manifest fingerprint, the size, or the file count?
+Dialogue: 0,0:07:58.57,0:08:02.43,Bilingual,,0,0,0,,只有 manifest 的指纹变了，因为列表里有一个名字变了\N{\fs33\c&H00C8C0B8&\bord1.4}Only the manifest fingerprint, because one name in the list changed.
+Dialogue: 0,0:08:02.75,0:08:06.97,Bilingual,,0,0,0,,开头那两个目录正好反过来：名字一样，字节是新的\N{\fs33\c&H00C8C0B8&\bord1.4}The opening's two folders were the reverse: same names, new bytes.
+Dialogue: 0,0:08:07.29,0:08:10.61,Bilingual,,0,0,0,,而且 DVC 存的是整个文件，不是差异\N{\fs33\c&H00C8C0B8&\bord1.4}And DVC stores whole files, not differences;
+Dialogue: 0,0:08:10.61,0:08:14.91,Bilingual,,0,0,0,,改一个像素，就是一个新指纹、一份新副本\N{\fs33\c&H00C8C0B8&\bord1.4}one changed pixel means a new fingerprint and a new copy.
+Dialogue: 0,0:08:16.55,0:08:18.21,Bilingual,,0,0,0,,接下来是 dvc push\N{\fs33\c&H00C8C0B8&\bord1.4}Next, dvc push.
+Dialogue: 0,0:08:18.53,0:08:19.96,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:08:20.01,0:08:22.03,Bilingual,,0,0,0,,这里没有凭据，失败了\N{\fs33\c&H00C8C0B8&\bord1.4}Here it fails without credentials.
+Dialogue: 0,0:08:22.35,0:08:24.35,Bilingual,,0,0,0,,为了展示 push 会上传什么\N{\fs33\c&H00C8C0B8&\bord1.4}To show what a push uploads,
+Dialogue: 0,0:08:24.35,0:08:27.64,Bilingual,,0,0,0,,额外 push 到一个本地的替身 remote\N{\fs33\c&H00C8C0B8&\bord1.4}an extra push goes to a local stand-in remote:
+Dialogue: 0,0:08:27.64,0:08:31.14,Bilingual,,0,0,0,,推送了 5 个文件，四张照片加上 manifest\N{\fs33\c&H00C8C0B8&\bord1.4}5 files pushed, the four photos and the manifest.
+Dialogue: 0,0:08:31.38,0:08:34.71,Bilingual,,0,0,0,,在你的 bucket 里，DVC store 现在和缓存一模一样\N{\fs33\c&H00C8C0B8&\bord1.4}In your bucket, the dvc_store now mirrors the cache.
+Dialogue: 0,0:08:35.03,0:08:39.96,Bilingual,,0,0,0,,金色标签：照片的第二份副本，仍然每月不到一美分\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: a second copy of the photos, still a fraction of a cent a month.
+Dialogue: 0,0:08:40.28,0:08:45.25,Bilingual,,0,0,0,,所以现在这些字节在三个地方：你上传到的 images 目录\N{\fs33\c&H00C8C0B8&\bord1.4}So the bytes now sit in three places: the images folder you upload to,
+Dialogue: 0,0:08:45.25,0:08:48.51,Bilingual,,0,0,0,,还有你磁盘上由 dvc add 填满的缓存\N{\fs33\c&H00C8C0B8&\bord1.4}and the cache on your disk, filled by dvc add.
+Dialogue: 0,0:08:48.83,0:08:53.68,Bilingual,,0,0,0,,第三个是 DVC store，那里每个文件都用它的指纹命名\N{\fs33\c&H00C8C0B8&\bord1.4}The third is the dvc_store, where every file is named by its fingerprint.
+Dialogue: 0,0:08:54.00,0:08:55.96,Bilingual,,0,0,0,,这个 images 目录可以变\N{\fs33\c&H00C8C0B8&\bord1.4}The images folder can change;
+Dialogue: 0,0:08:55.96,0:09:00.35,Bilingual,,0,0,0,,DVC store 从不覆盖，因为新的字节会有新的名字\N{\fs33\c&H00C8C0B8&\bord1.4}the dvc_store never overwrites, because new bytes get a new name.
+Dialogue: 0,0:09:00.60,0:09:02.73,Bilingual,,0,0,0,,现在在 container 外面用 git\N{\fs33\c&H00C8C0B8&\bord1.4}Now git, outside the container.
+Dialogue: 0,0:09:03.05,0:09:07.99,Bilingual,,0,0,0,,这里 git status 显示 dvc init 已经暂存好的 DVC 文件\N{\fs33\c&H00C8C0B8&\bord1.4}Here, git status shows the DVC files that dvc init already staged,
+Dialogue: 0,0:09:07.99,0:09:11.05,Bilingual,,0,0,0,,新的指针文件，还有你的两处改动\N{\fs33\c&H00C8C0B8&\bord1.4}the new pointer file, and your two edits.
+Dialogue: 0,0:09:11.37,0:09:14.98,Bilingual,,0,0,0,,接着 add 再 commit：6 个小文本文件\N{\fs33\c&H00C8C0B8&\bord1.4}Add and commit: 6 small text files and no photos,
+Dialogue: 0,0:09:14.98,0:09:19.10,Bilingual,,0,0,0,,没有照片，因为 .gitignore 文件把数据集目录排除了\N{\fs33\c&H00C8C0B8&\bord1.4}because the .gitignore file excludes the dataset folder.
+Dialogue: 0,0:09:19.33,0:09:22.91,Bilingual,,0,0,0,,给这个 commit 打上 dataset v20 这个 tag\N{\fs33\c&H00C8C0B8&\bord1.4}Tag the commit as dataset_v20, a permanent name,
+Dialogue: 0,0:09:22.91,0:09:25.96,Bilingual,,0,0,0,,一个永久的名字，再把分支和 tag 一起 push\N{\fs33\c&H00C8C0B8&\bord1.4}and push the branch and the tag together;
+Dialogue: 0,0:09:25.96,0:09:28.72,Bilingual,,0,0,0,,atomic 的意思是两个都到，或者都不到\N{\fs33\c&H00C8C0B8&\bord1.4}atomic means both arrive, or neither.
+Dialogue: 0,0:09:29.04,0:09:30.57,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
+Dialogue: 0,0:09:30.62,0:09:34.31,Bilingual,,0,0,0,,额外看一下 log，能看到这个 tag，它锁定了这六行\N{\fs33\c&H00C8C0B8&\bord1.4}An extra log shows the tag, which pins these six lines.
+Dialogue: 0,0:09:36.43,0:09:39.31,Bilingual,,0,0,0,,额外和授课老师的 tag 做一次 diff\N{\fs33\c&H00C8C0B8&\bord1.4}An extra diff against the instructor's tag:
+Dialogue: 0,0:09:39.31,0:09:43.05,Bilingual,,0,0,0,,完全一样，同样的字节，同样的指纹，在任何机器上都一样\N{\fs33\c&H00C8C0B8&\bord1.4}identical, same bytes, same fingerprint, on any machine.
+Dialogue: 0,0:09:43.37,0:09:47.72,Bilingual,,0,0,0,,整个诀窍就在这儿：git 保存的是指纹列表的指纹\N{\fs33\c&H00C8C0B8&\bord1.4}That is the whole trick: git keeps the fingerprint of a list of fingerprints.
+Dialogue: 0,0:09:48.04,0:09:51.13,Bilingual,,0,0,0,,一根绳子从 tag 一直通到你 bucket 里的字节\N{\fs33\c&H00C8C0B8&\bord1.4}A rope leads from the tag to the bytes in your bucket.
+Dialogue: 0,0:09:51.37,0:09:54.31,Bilingual,,0,0,0,,README 提醒说这个 tag 可能已经被占用\N{\fs33\c&H00C8C0B8&\bord1.4}The README warns that this tag may be taken;
+Dialogue: 0,0:09:54.31,0:09:58.39,Bilingual,,0,0,0,,这只适用于 fork，你的新 repo 一个 tag 都没有\N{\fs33\c&H00C8C0B8&\bord1.4}that applies only to a fork, and your fresh repo has no tags.
+Dialogue: 0,0:09:58.71,0:10:03.20,Bilingual,,0,0,0,,它的表格总结得很清楚：git 管代码和小小的 DVC 文件\N{\fs33\c&H00C8C0B8&\bord1.4}Its table sums it up: git holds code and small DVC files,
+Dialogue: 0,0:10:03.20,0:10:07.54,Bilingual,,0,0,0,,DVC 跟踪数据集，bucket 存各个版本\N{\fs33\c&H00C8C0B8&\bord1.4}DVC tracks the dataset, the bucket stores the versions.
+Dialogue: 0,0:10:07.86,0:10:11.00,Bilingual,,0,0,0,,README 接下来要在 Colab 里查看第 20 版\N{\fs33\c&H00C8C0B8&\bord1.4}The README now opens Colab for version 20;
+Dialogue: 0,0:10:11.00,0:10:15.20,Bilingual,,0,0,0,,我们等第 21 版做完，再一次看两个版本\N{\fs33\c&H00C8C0B8&\bord1.4}we'll do that once, for both versions, after version 21.
+Dialogue: 0,0:10:17.43,0:10:19.03,Bilingual,,0,0,0,,现在做第二个版本\N{\fs33\c&H00C8C0B8&\bord1.4}Now a second version.
+Dialogue: 0,0:10:19.23,0:10:22.46,Bilingual,,0,0,0,,上传几张新照片到 images 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Upload a few more photos to the images folder;
+Dialogue: 0,0:10:22.46,0:10:24.99,Bilingual,,0,0,0,,我们的替身复制进去一张：Image 5\N{\fs33\c&H00C8C0B8&\bord1.4}our stand-in copies in one, Image_5.
+Dialogue: 0,0:10:25.31,0:10:29.06,Bilingual,,0,0,0,,用真的 bucket 时，挂载可能要过一会儿才能发现新文件\N{\fs33\c&H00C8C0B8&\bord1.4}With a real bucket, the mount can take a little while to notice,
+Dialogue: 0,0:10:29.06,0:10:30.66,Bilingual,,0,0,0,,所以先列一下再 add\N{\fs33\c&H00C8C0B8&\bord1.4}so list before you add.
+Dialogue: 0,0:10:30.75,0:10:32.62,Bilingual,,0,0,0,,暂停一下，上传一两张\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and upload one or two.
+Dialogue: 0,0:10:32.87,0:10:34.47,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:10:34.53,0:10:38.54,Bilingual,,0,0,0,,四张照片已经在 DVC store 里了，你再加一张\N{\fs33\c&H00C8C0B8&\bord1.4}Four photos are already in the dvc_store, and you add one.
+Dialogue: 0,0:10:38.86,0:10:41.61,Bilingual,,0,0,0,,这时 dvc push 会上传多少个对象？\N{\fs33\c&H00C8C0B8&\bord1.4}How many objects will dvc push upload?
+Dialogue: 0,0:10:50.45,0:10:52.86,Bilingual,,0,0,0,,两个：新照片和一个新的 manifest\N{\fs33\c&H00C8C0B8&\bord1.4}Two: the new photo and a new manifest.
+Dialogue: 0,0:10:53.18,0:10:56.08,Bilingual,,0,0,0,,再启动 container，列一下目录，然后 add\N{\fs33\c&H00C8C0B8&\bord1.4}Start the container again, list the folder, and add it;
+Dialogue: 0,0:10:56.08,0:10:57.68,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run them.
+Dialogue: 0,0:10:57.90,0:11:01.14,Bilingual,,0,0,0,,结果是 5 个文件，还有一个新的 manifest 指纹\N{\fs33\c&H00C8C0B8&\bord1.4}It gives 5 files and a new manifest fingerprint.
+Dialogue: 0,0:11:01.46,0:11:06.88,Bilingual,,0,0,0,,课程的 v21 版本指纹不一样，因为它的第五张照片是另一张图\N{\fs33\c&H00C8C0B8&\bord1.4}The class version 21 has a different one, because its fifth photo was another image.
+Dialogue: 0,0:11:10.62,0:11:13.24,Bilingual,,0,0,0,,然后是 dvc push；暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Then dvc push; pause and run it.
+Dialogue: 0,0:11:13.56,0:11:16.38,Bilingual,,0,0,0,,这里本地替身显示推送了 2 个文件\N{\fs33\c&H00C8C0B8&\bord1.4}Here the local stand-in shows 2 files pushed,
+Dialogue: 0,0:11:16.38,0:11:19.70,Bilingual,,0,0,0,,因为四张旧照片已经在架子上了\N{\fs33\c&H00C8C0B8&\bord1.4}because the four old photos are already on the shelf.
+Dialogue: 0,0:11:20.02,0:11:22.65,Bilingual,,0,0,0,,这就是课上承诺的省下来的空间\N{\fs33\c&H00C8C0B8&\bord1.4}That is the saved space the lecture promised.
+Dialogue: 0,0:11:22.88,0:11:26.69,Bilingual,,0,0,0,,回到你的笔记本上，再来那五条 git 命令\N{\fs33\c&H00C8C0B8&\bord1.4}Back on your laptop, the five git commands again:
+Dialogue: 0,0:11:26.69,0:11:29.33,Bilingual,,0,0,0,,status 只显示指针文件改了\N{\fs33\c&H00C8C0B8&\bord1.4}status shows only the pointer file
+Dialogue: 0,0:11:29.33,0:11:33.44,Bilingual,,0,0,0,,然后 add、commit、打 dataset v21 这个 tag，再 push\N{\fs33\c&H00C8C0B8&\bord1.4}changed; then add, commit, tag dataset_v21, and push.
+Dialogue: 0,0:11:33.76,0:11:35.29,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
+Dialogue: 0,0:11:35.34,0:11:38.50,Bilingual,,0,0,0,,额外做一次 diff，整个改动只有三行\N{\fs33\c&H00C8C0B8&\bord1.4}An extra diff shows the whole change in three lines.
+Dialogue: 0,0:11:44.77,0:11:47.81,Bilingual,,0,0,0,,这个 starter 分支里留着一份旧版 README\N{\fs33\c&H00C8C0B8&\bord1.4}The starter branch keeps an older README that adds the remote again at this point.
+Dialogue: 0,0:11:47.81,0:11:49.69,Bilingual,,0,0,0,,在这一步又加一次 remote\N{\fs33\c&H00C8C0B8&\bord1.4}The starter branch keeps an older README that adds the remote again at this point.
+Dialogue: 0,0:11:50.01,0:11:52.96,Bilingual,,0,0,0,,这会失败：remote origin 已经存在\N{\fs33\c&H00C8C0B8&\bord1.4}That fails: remote origin already exists.
+Dialogue: 0,0:11:53.28,0:11:55.52,Bilingual,,0,0,0,,课程 pin 住的那版 README 说不要这么做\N{\fs33\c&H00C8C0B8&\bord1.4}The pinned README says not to.
+Dialogue: 0,0:11:55.57,0:11:59.70,Bilingual,,0,0,0,,再做一个额外的实验，只看，不要在真的挂载上跑\N{\fs33\c&H00C8C0B8&\bord1.4}One extra experiment, to watch, not to run on a real mount:
+Dialogue: 0,0:11:59.70,0:12:04.19,Bilingual,,0,0,0,,在我们的替身目录上，用 git checkout 出旧的指针文件\N{\fs33\c&H00C8C0B8&\bord1.4}on our stand-in folder, check out the old pointer file with git,
+Dialogue: 0,0:12:04.19,0:12:08.18,Bilingual,,0,0,0,,跑 dvc checkout，目录里又变回四张照片\N{\fs33\c&H00C8C0B8&\bord1.4}run dvc checkout, and the folder holds four photos again.
+Dialogue: 0,0:12:08.50,0:12:11.51,Bilingual,,0,0,0,,回到 main，又是五张，来自磁盘上的缓存\N{\fs33\c&H00C8C0B8&\bord1.4}Back to main, and five, from the cache on disk.
+Dialogue: 0,0:12:11.83,0:12:15.67,Bilingual,,0,0,0,,用真的挂载时，这个目录就是你 bucket 的 images 目录\N{\fs33\c&H00C8C0B8&\bord1.4}With a real mount, this folder is your bucket's images folder,
+Dialogue: 0,0:12:15.67,0:12:18.53,Bilingual,,0,0,0,,所以 checkout 会在那里删除并重写照片\N{\fs33\c&H00C8C0B8&\bord1.4}so checkout deletes and rewrites photos there.
+Dialogue: 0,0:12:22.70,0:12:24.66,Bilingual,,0,0,0,,现在来看从任何地方做时间旅行\N{\fs33\c&H00C8C0B8&\bord1.4}Now, time travel from anywhere:
+Dialogue: 0,0:12:24.66,0:12:30.72,Bilingual,,0,0,0,,这是课上的说法，指回到之前的某个版本，前提是它的文件还保留着\N{\fs33\c&H00C8C0B8&\bord1.4}the lecture's phrase for reaching an earlier version, which works only while its files are kept.
+Dialogue: 0,0:12:31.04,0:12:34.50,Bilingual,,0,0,0,,命令 dvc get 带上一个 tag，就会顺着这根绳子走\N{\fs33\c&H00C8C0B8&\bord1.4}The command dvc get, with a tag, walks the rope.
+Dialogue: 0,0:12:34.82,0:12:36.82,Bilingual,,0,0,0,,它在那个 tag 上 clone 这个 repo\N{\fs33\c&H00C8C0B8&\bord1.4}It clones the repo at that tag,
+Dialogue: 0,0:12:36.82,0:12:39.79,Bilingual,,0,0,0,,读那个 commit 的配置找到 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}reads that commit's config to find the bucket,
+Dialogue: 0,0:12:39.79,0:12:42.56,Bilingual,,0,0,0,,然后取 manifest，再取照片\N{\fs33\c&H00C8C0B8&\bord1.4}then fetches the manifest, then the photos.
+Dialogue: 0,0:12:42.80,0:12:45.94,Bilingual,,0,0,0,,打开 README 里的 notebook，保存一份副本\N{\fs33\c&H00C8C0B8&\bord1.4}Open the notebook from the README and save a copy.
+Dialogue: 0,0:12:46.26,0:12:51.06,Bilingual,,0,0,0,,装 DVC、加载库，再用你的 Google 账号登录\N{\fs33\c&H00C8C0B8&\bord1.4}Install DVC, load the libraries, and sign in with your Google account.
+Dialogue: 0,0:12:51.38,0:12:54.72,Bilingual,,0,0,0,,然后列出一个 repo，取一个版本，数一数文件\N{\fs33\c&H00C8C0B8&\bord1.4}Then list a repo, fetch a version, and count the files.
+Dialogue: 0,0:12:54.97,0:12:57.54,Bilingual,,0,0,0,,我们的替身没有登录\N{\fs33\c&H00C8C0B8&\bord1.4}Our stand-in is not signed in,
+Dialogue: 0,0:12:57.54,0:13:02.95,Bilingual,,0,0,0,,而 pip 给它装了一个更新的 DVC，录制时是 3.67.1\N{\fs33\c&H00C8C0B8&\bord1.4}and pip gives it a newer DVC, 3.67.1, at the time of recording.
+Dialogue: 0,0:13:03.27,0:13:07.15,Bilingual,,0,0,0,,列出课程的 repo 时报了 401，看看是在哪儿\N{\fs33\c&H00C8C0B8&\bord1.4}Listing the class repo fails with a 401, and look where:
+Dialogue: 0,0:13:07.15,0:13:12.20,Bilingual,,0,0,0,,在 manifest 那一步，因为 DVC 先取列表，按绳子的顺序来\N{\fs33\c&H00C8C0B8&\bord1.4}at the manifest, because DVC fetches the list first, in the rope's order.
+Dialogue: 0,0:13:14.92,0:13:19.67,Bilingual,,0,0,0,,授课老师登录后的那次运行，在课程 repo 上列出五个文件\N{\fs33\c&H00C8C0B8&\bord1.4}The instructor's signed-in run lists five files on the class repo,
+Dialogue: 0,0:13:19.67,0:13:22.92,Bilingual,,0,0,0,,和它的 v21 版本是同一组，数出来是 5\N{\fs33\c&H00C8C0B8&\bord1.4}the same set as its version 21, and counts 5.
+Dialogue: 0,0:13:23.24,0:13:26.48,Bilingual,,0,0,0,,你的账号多半访问不了课程的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}Your account probably cannot access the class bucket,
+Dialogue: 0,0:13:26.48,0:13:27.98,Bilingual,,0,0,0,,所以用你自己的 repo\N{\fs33\c&H00C8C0B8&\bord1.4}so use your repo:
+Dialogue: 0,0:13:27.98,0:13:30.14,Bilingual,,0,0,0,,换掉地址和 tag\N{\fs33\c&H00C8C0B8&\bord1.4}replace the address and the tag;
+Dialogue: 0,0:13:30.14,0:13:31.77,Bilingual,,0,0,0,,你的 v20 版本会得到 4\N{\fs33\c&H00C8C0B8&\bord1.4}your version 20 gives 4.
+Dialogue: 0,0:13:32.09,0:13:33.52,Bilingual,,0,0,0,,你的 repo 是私有的\N{\fs33\c&H00C8C0B8&\bord1.4}Your repo is private,
+Dialogue: 0,0:13:33.52,0:13:37.04,Bilingual,,0,0,0,,所以要在地址里放一个访问令牌，或者把它设成公开\N{\fs33\c&H00C8C0B8&\bord1.4}so put an access token in the address, or make it public.
+Dialogue: 0,0:13:37.36,0:13:38.96,Bilingual,,0,0,0,,暂停一下，一步步做完\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and work through it.
+Dialogue: 0,0:13:39.55,0:13:41.15,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:13:41.21,0:13:46.31,Bilingual,,0,0,0,,第 19 个单元格悄悄地要 dataset v25，什么都没打印\N{\fs33\c&H00C8C0B8&\bord1.4}Cell 19 asks quietly for dataset_v25, and prints nothing.
+Dialogue: 0,0:13:46.63,0:13:48.23,Bilingual,,0,0,0,,它成功了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Did it work?
+Dialogue: 0,0:13:54.45,0:13:57.93,Bilingual,,0,0,0,,没有。下一个单元格失败了：没有这个目录\N{\fs33\c&H00C8C0B8&\bord1.4}No. The next cell fails: no such folder.
+Dialogue: 0,0:13:58.25,0:14:02.39,Bilingual,,0,0,0,,去掉 --quiet 参数，错误就出来了：未知的 Git 修订版本\N{\fs33\c&H00C8C0B8&\bord1.4}Without the --quiet flag, the error appears: unknown Git revision.
+Dialogue: 0,0:14:02.71,0:14:07.29,Bilingual,,0,0,0,,课程的 repo 只有 v20、v21 和 v30 这几个 tag\N{\fs33\c&H00C8C0B8&\bord1.4}The class repo only has tags v20, v21 and v30.
+Dialogue: 0,0:14:07.61,0:14:11.00,Bilingual,,0,0,0,,存下来的计数 3 是以前某次运行留下的\N{\fs33\c&H00C8C0B8&\bord1.4}The stored count of 3 is left over from an older run;
+Dialogue: 0,0:14:11.00,0:14:13.18,Bilingual,,0,0,0,,--quiet 参数连错误也一起藏起来了\N{\fs33\c&H00C8C0B8&\bord1.4}the --quiet flag hides errors too.
+Dialogue: 0,0:14:15.22,0:14:18.20,Bilingual,,0,0,0,,快速预测一下：三个问题，三个工具\N{\fs33\c&H00C8C0B8&\bord1.4}A quick prediction: three questions, three tools.
+Dialogue: 0,0:14:18.52,0:14:22.30,Bilingual,,0,0,0,,把 Delta Lake 或 Iceberg、DVC 和 lakeFS 配对上去\N{\fs33\c&H00C8C0B8&\bord1.4}Match Delta Lake or Iceberg, DVC, and lakeFS.
+Dialogue: 0,0:14:27.13,0:14:30.31,Bilingual,,0,0,0,,DVC、lakeFS，然后是表格式\N{\fs33\c&H00C8C0B8&\bord1.4}DVC, lakeFS, then the table formats.
+Dialogue: 0,0:14:30.63,0:14:35.62,Bilingual,,0,0,0,,没有统一的标准；你的项目里程碑接受这样的轻量工具\N{\fs33\c&H00C8C0B8&\bord1.4}There is no single standard; your project milestone accepts a light tool like this.
+Dialogue: 0,0:14:35.87,0:14:41.75,Bilingual,,0,0,0,,课上最后讲监控：盯住质量、新鲜度、漂移、成本和出错的步骤\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture ends with monitoring: watch quality, freshness, drift, cost and broken steps.
+Dialogue: 0,0:14:42.07,0:14:46.47,Bilingual,,0,0,0,,版本管理告诉你改了什么；监控告诉你有东西变了\N{\fs33\c&H00C8C0B8&\bord1.4}Versioning tells you what changed; monitoring tells you that something changed.
+Dialogue: 0,0:14:46.72,0:14:48.11,Bilingual,,0,0,0,,放在一张地图上看\N{\fs33\c&H00C8C0B8&\bord1.4}On one map:
+Dialogue: 0,0:14:48.11,0:14:51.96,Bilingual,,0,0,0,,Label Studio 跑在 container 里，替照片签票\N{\fs33\c&H00C8C0B8&\bord1.4}Label Studio runs in a container and signs tickets for the photos.
+Dialogue: 0,0:14:52.28,0:14:55.66,Bilingual,,0,0,0,,配在 bucket 上的一条规则，让浏览器的保安放行\N{\fs33\c&H00C8C0B8&\bord1.4}A rule on the bucket satisfies the browser's bouncer.
+Dialogue: 0,0:14:55.98,0:14:59.86,Bilingual,,0,0,0,,每条 label 是一张小纸条；挂载的 bucket 给 DVC 供数据\N{\fs33\c&H00C8C0B8&\bord1.4}Labels are small notes; a mounted bucket feeds DVC.
+Dialogue: 0,0:15:00.18,0:15:03.89,Bilingual,,0,0,0,,照片按指纹归档；一个 tag 锁定这份列表\N{\fs33\c&H00C8C0B8&\bord1.4}Photos are filed by fingerprint; a tag pins the list.
+Dialogue: 0,0:15:04.21,0:15:07.94,Bilingual,,0,0,0,,所以周一的照片用一次 dvc get 就能拿回来\N{\fs33\c&H00C8C0B8&\bord1.4}So Monday's photos come back with one dvc get;
+Dialogue: 0,0:15:07.94,0:15:10.61,Bilingual,,0,0,0,,它们的 label 会在练习 E7 里接上\N{\fs33\c&H00C8C0B8&\bord1.4}their labels join in exercise E7.
+Dialogue: 0,0:15:10.85,0:15:12.85,Bilingual,,0,0,0,,五道自测题\N{\fs33\c&H00C8C0B8&\bord1.4}5 questions to test yourself.
+Dialogue: 0,0:15:13.17,0:15:17.70,Bilingual,,0,0,0,,第一题：谁去取照片，bucket 为什么需要它的 CORS 规则？\N{\fs33\c&H00C8C0B8&\bord1.4}One: who fetches the photos, and why does the bucket need its CORS rule?
+Dialogue: 0,0:15:18.02,0:15:20.64,Bilingual,,0,0,0,,第二题：命令行 container 和你的浏览器\N{\fs33\c&H00C8C0B8&\bord1.4}Two: why can't the command line container
+Dialogue: 0,0:15:20.64,0:15:22.69,Bilingual,,0,0,0,,为什么不能互换地址？\N{\fs33\c&H00C8C0B8&\bord1.4}and your browser swap addresses?
+Dialogue: 0,0:15:23.01,0:15:26.91,Bilingual,,0,0,0,,第三题：指针文件里有什么，改名时什么会变？\N{\fs33\c&H00C8C0B8&\bord1.4}Three: what is in the pointer file, and what changes on a rename?
+Dialogue: 0,0:15:27.23,0:15:29.56,Bilingual,,0,0,0,,第四题：push 之后，字节都在哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}Four: where do the bytes sit after a push?
+Dialogue: 0,0:15:29.88,0:15:33.91,Bilingual,,0,0,0,,第五题：没有 DVC store，dvc get 会怎样？\N{\fs33\c&H00C8C0B8&\bord1.4}Five: without the dvc_store, what does dvc get do?
+Dialogue: 0,0:15:38.93,0:15:42.47,Bilingual,,0,0,0,,清理就是 README 的三条命令；暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Cleanup is the README's three commands; pause and run them.
+Dialogue: 0,0:15:42.79,0:15:46.85,Bilingual,,0,0,0,,如果你保留标注用的 bucket，就用 -r 删掉它的 CORS 规则\N{\fs33\c&H00C8C0B8&\bord1.4}If you keep the labeling bucket, remove its CORS rule with -r.
+Dialogue: 0,0:15:47.17,0:15:50.00,Bilingual,,0,0,0,,每个 bucket 都会一直花钱，直到你删掉它\N{\fs33\c&H00C8C0B8&\bord1.4}Buckets cost money until you delete them,
+Dialogue: 0,0:15:50.00,0:15:54.34,Bilingual,,0,0,0,,但绝不要删 DVC store，只要还有哪个 tag 要用\N{\fs33\c&H00C8C0B8&\bord1.4}but never delete the dvc_store while any tag should still work;
+Dialogue: 0,0:15:54.34,0:15:56.00,Bilingual,,0,0,0,,一个 tag 只是一个指针\N{\fs33\c&H00C8C0B8&\bord1.4}a tag is only a pointer.
+Dialogue: 0,0:15:56.32,0:16:00.03,Bilingual,,0,0,0,,把密钥和它的 JSON 文件删掉，等课程结束的时候\N{\fs33\c&H00C8C0B8&\bord1.4}Delete the key and its JSON file when the course is done.
+Dialogue: 0,0:16:00.27,0:16:02.31,Bilingual,,0,0,0,,答案在练习里\N{\fs33\c&H00C8C0B8&\bord1.4}Answers are in the exercises.
+Dialogue: 0,0:16:02.63,0:16:05.21,Bilingual,,0,0,0,,第 13 讲用一个准备好的 zip 来训练\N{\fs33\c&H00C8C0B8&\bord1.4}Lecture 13 trains from a prepared zip;
+Dialogue: 0,0:16:05.21,0:16:08.61,Bilingual,,0,0,0,,要是用打了 tag 的版本，那次运行就能复现\N{\fs33\c&H00C8C0B8&\bord1.4}a tagged version would make that run reproducible.

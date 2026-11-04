@@ -1,0 +1,274 @@
+[Script Info]
+Title: AC215 · L11, part 1: Label Studio in Docker — signed URLs, CORS on a bucket, labels as records
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:05.25,Bilingual,,0,0,0,,两个目录，都叫 cheese dataset，文件名一样，数量也一样\N{\fs33\c&H00C8C0B8&\bord1.4}Two folders, both called cheese_dataset, with the same file names and the same count.
+Dialogue: 0,0:00:05.57,0:00:08.28,Bilingual,,0,0,0,,周一你在其中一个上训练了模型\N{\fs33\c&H00C8C0B8&\bord1.4}On Monday you trained a model on one of them.
+Dialogue: 0,0:00:08.60,0:00:12.08,Bilingual,,0,0,0,,周五模型变差了，可谁都没动过代码\N{\fs33\c&H00C8C0B8&\bord1.4}On Friday the model got worse, and nobody touched the code.
+Dialogue: 0,0:00:12.40,0:00:15.49,Bilingual,,0,0,0,,那么，这个模型看到的是哪些照片、带着哪些 label？\N{\fs33\c&H00C8C0B8&\bord1.4}So which photos, with which labels, did that model see?
+Dialogue: 0,0:00:15.81,0:00:17.81,Bilingual,,0,0,0,,还能把它们一模一样地拿回来吗？\N{\fs33\c&H00C8C0B8&\bord1.4}And can you get exactly those back?
+Dialogue: 0,0:00:18.05,0:00:20.61,Bilingual,,0,0,0,,我们大多数人靠文件名来回答\N{\fs33\c&H00C8C0B8&\bord1.4}Most of us answer with file names:
+Dialogue: 0,0:00:20.61,0:00:24.07,Bilingual,,0,0,0,,final、final 第 2 版、final final 第 3 版\N{\fs33\c&H00C8C0B8&\bord1.4}final, final version 2, final final version 3,
+Dialogue: 0,0:00:24.07,0:00:26.92,Bilingual,,0,0,0,,直到没人知道哪个才是 final\N{\fs33\c&H00C8C0B8&\bord1.4}until nobody knows which one is final.
+Dialogue: 0,0:00:27.17,0:00:29.77,Bilingual,,0,0,0,,更好的答案是：一行字\N{\fs33\c&H00C8C0B8&\bord1.4}Here is a better answer: one short line.
+Dialogue: 0,0:00:30.09,0:00:33.08,Bilingual,,0,0,0,,第二部分里，你会算出这个一模一样的字符串\N{\fs33\c&H00C8C0B8&\bord1.4}In part 2 you will compute this exact string
+Dialogue: 0,0:00:33.08,0:00:35.81,Bilingual,,0,0,0,,就在自己的笔记本上，用 4 张奶酪照片\N{\fs33\c&H00C8C0B8&\bord1.4}on your own laptop from 4 cheese photos.
+Dialogue: 0,0:00:36.13,0:00:40.67,Bilingual,,0,0,0,,它会和授课老师在课程 repo 里打的 tag 对上，一个字符都不差\N{\fs33\c&H00C8C0B8&\bord1.4}It will match the instructor's tag in the class repo, character for character.
+Dialogue: 0,0:00:40.99,0:00:44.96,Bilingual,,0,0,0,,一行字，怎么能锁定大约 600 KB 的照片？\N{\fs33\c&H00C8C0B8&\bord1.4}How can one line pin down about 600 kilobytes of photos?
+Dialogue: 0,0:00:45.20,0:00:49.49,Bilingual,,0,0,0,,在那之前，有人点了 gouda，这个词到底去了哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}And before that, when someone clicks gouda, where does that word actually go?
+Dialogue: 0,0:00:49.73,0:00:52.25,Bilingual,,0,0,0,,跟着做，你需要：Docker Desktop\N{\fs33\c&H00C8C0B8&\bord1.4}To follow along you need Docker Desktop,
+Dialogue: 0,0:00:52.25,0:00:55.73,Bilingual,,0,0,0,,一个开通了结算的 Google Cloud 项目和你自己的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}a Google Cloud project with billing and your own bucket,
+Dialogue: 0,0:00:55.73,0:00:57.33,Bilingual,,0,0,0,,还有一个 GitHub 账号\N{\fs33\c&H00C8C0B8&\bord1.4}and a GitHub account.
+Dialogue: 0,0:00:57.41,0:01:02.08,Bilingual,,0,0,0,,这一讲会在云端存几 MB 数据，金色标签会标出在哪儿\N{\fs33\c&H00C8C0B8&\bord1.4}This lecture stores a few megabytes in the cloud, and gold tags mark where.
+Dialogue: 0,0:01:02.40,0:01:05.28,Bilingual,,0,0,0,,左上角的进度条跟着两份 README 走\N{\fs33\c&H00C8C0B8&\bord1.4}The tracker in the top left follows both READMEs.
+Dialogue: 0,0:01:05.60,0:01:08.76,Bilingual,,0,0,0,,看到黄色的 your turn 标签，就暂停，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}A yellow your-turn tag means pause and run it;
+Dialogue: 0,0:01:08.76,0:01:12.67,Bilingual,,0,0,0,,灰色的 extra 标签表示这个检查 README 里没有\N{\fs33\c&H00C8C0B8&\bord1.4}a gray extra tag marks a check that is not in the README.
+Dialogue: 0,0:01:12.99,0:01:15.12,Bilingual,,0,0,0,,每条命令都在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}Every command is in the study guide.
+Dialogue: 0,0:01:16.17,0:01:17.55,Bilingual,,0,0,0,,先看地图\N{\fs33\c&H00C8C0B8&\bord1.4}First, the map.
+Dialogue: 0,0:01:17.60,0:01:21.70,Bilingual,,0,0,0,,课上先画未标注的奶酪照片，再画标注好的\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture draws unlabeled cheese photos, then labeled ones,
+Dialogue: 0,0:01:21.70,0:01:25.00,Bilingual,,0,0,0,,然后是训练，中间的箭头在问怎么做到\N{\fs33\c&H00C8C0B8&\bord1.4}then training, and the arrow in between asks how.
+Dialogue: 0,0:01:25.32,0:01:29.69,Bilingual,,0,0,0,,这些 label 就是 ground truth：模型从中学习，也拿它来评分\N{\fs33\c&H00C8C0B8&\bord1.4}Labels are the ground truth a model learns from and is graded against.
+Dialogue: 0,0:01:30.01,0:01:34.39,Bilingual,,0,0,0,,模型犯的错，标注之后，会进入下一个数据集版本\N{\fs33\c&H00C8C0B8&\bord1.4}The model's mistakes, once labeled, go into the next dataset version.
+Dialogue: 0,0:01:34.63,0:01:38.66,Bilingual,,0,0,0,,下面是这一讲要搭的两个站。第一部分是标注站\N{\fs33\c&H00C8C0B8&\bord1.4}Underneath, the two stations this lecture builds. Part 1
+Dialogue: 0,0:01:38.66,0:01:43.32,Bilingual,,0,0,0,,Label Studio 和一个小小的命令行 container\N{\fs33\c&H00C8C0B8&\bord1.4}is the labeling station: Label Studio and a small command line container,
+Dialogue: 0,0:01:43.32,0:01:45.98,Bilingual,,0,0,0,,再加一个放照片和 label 的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}with one bucket for photos and labels.
+Dialogue: 0,0:01:46.30,0:01:50.19,Bilingual,,0,0,0,,第二部分是版本管理站：一个 DVC container、一个有\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 is the versioning station: one DVC container,
+Dialogue: 0,0:01:50.19,0:01:53.78,Bilingual,,0,0,0,,两个目录的 bucket、你自己的 GitHub repo\N{\fs33\c&H00C8C0B8&\bord1.4}a bucket with two folders, your own GitHub repo,
+Dialogue: 0,0:01:53.78,0:01:55.80,Bilingual,,0,0,0,,还有用来查看版本的 Colab\N{\fs33\c&H00C8C0B8&\bord1.4}and Colab to view versions.
+Dialogue: 0,0:01:56.12,0:02:00.21,Bilingual,,0,0,0,,代码还没把这两半连起来；练习 E7 会连\N{\fs33\c&H00C8C0B8&\bord1.4}The code does not connect the halves yet; exercise E7 does.
+Dialogue: 0,0:02:00.45,0:02:02.56,Bilingual,,0,0,0,,现在来做课上的回顾小测\N{\fs33\c&H00C8C0B8&\bord1.4}Now, the lecture's recall quiz.
+Dialogue: 0,0:02:02.88,0:02:06.09,Bilingual,,0,0,0,,Docker 网络、云端凭据、Docker Compose\N{\fs33\c&H00C8C0B8&\bord1.4}Docker network, cloud credentials, Docker Compose:
+Dialogue: 0,0:02:06.09,0:02:08.28,Bilingual,,0,0,0,,今天它们各自会出现在哪里？\N{\fs33\c&H00C8C0B8&\bord1.4}where will each one show up today?
+Dialogue: 0,0:02:17.12,0:02:21.45,Bilingual,,0,0,0,,有了网络，命令行 container 就能按名字调用 Label Studio\N{\fs33\c&H00C8C0B8&\bord1.4}The network lets the command line container call Label Studio by name.
+Dialogue: 0,0:02:21.77,0:02:25.82,Bilingual,,0,0,0,,凭据就是一个密钥文件，挂载进每个 container\N{\fs33\c&H00C8C0B8&\bord1.4}The credentials are one key file, mounted into every container.
+Dialogue: 0,0:02:26.14,0:02:28.83,Bilingual,,0,0,0,,Compose 则是 README 的 Extra 一节\N{\fs33\c&H00C8C0B8&\bord1.4}And Compose is the README's extra section,
+Dialogue: 0,0:02:28.83,0:02:31.26,Bilingual,,0,0,0,,它把两个 container 一起启动\N{\fs33\c&H00C8C0B8&\bord1.4}which starts both containers together.
+Dialogue: 0,0:02:31.50,0:02:34.37,Bilingual,,0,0,0,,把 data-labeling 这个 repo clone 下来，再进去\N{\fs33\c&H00C8C0B8&\bord1.4}Clone the data-labeling repo and move into it;
+Dialogue: 0,0:02:34.37,0:02:35.84,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run it.
+Dialogue: 0,0:02:35.89,0:02:40.30,Bilingual,,0,0,0,,给 Docker 超过 4 GB 的内存，README 是这么要求的\N{\fs33\c&H00C8C0B8&\bord1.4}Give Docker more than 4 gigabytes of memory, as the README asks;
+Dialogue: 0,0:02:40.30,0:02:43.40,Bilingual,,0,0,0,,这个设置现在在 Settings 的 Resources 下面\N{\fs33\c&H00C8C0B8&\bord1.4}the setting is now under Settings, Resources.
+Dialogue: 0,0:02:43.65,0:02:47.37,Bilingual,,0,0,0,,额外跑一下 git log，能看到这个视频用的 commit\N{\fs33\c&H00C8C0B8&\bord1.4}An extra git log shows this video's commit,
+Dialogue: 0,0:02:47.37,0:02:48.93,Bilingual,,0,0,0,,是 2025 年 10 月的\N{\fs33\c&H00C8C0B8&\bord1.4}from October 2025;
+Dialogue: 0,0:02:48.93,0:02:54.30,Bilingual,,0,0,0,,再额外列一下目录，有几个脚本、cli.py 和三张图\N{\fs33\c&H00C8C0B8&\bord1.4}an extra listing shows the scripts, cli.py and three pictures.
+Dialogue: 0,0:02:57.58,0:03:01.89,Bilingual,,0,0,0,,接下来是 secrets 目录，放在 repo 旁边，绝不放在里面\N{\fs33\c&H00C8C0B8&\bord1.4}Next, the secrets folder, beside the repo and never inside it;
+Dialogue: 0,0:03:01.89,0:03:03.77,Bilingual,,0,0,0,,今天两个 repo 都用它\N{\fs33\c&H00C8C0B8&\bord1.4}it serves both repos today.
+Dialogue: 0,0:03:04.09,0:03:07.74,Bilingual,,0,0,0,,暂停一下，建好它；额外用 tree 看一下，和 README 一致\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and make it; an extra tree view matches the README.
+Dialogue: 0,0:03:14.20,0:03:15.52,Bilingual,,0,0,0,,现在是密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Now the key.
+Dialogue: 0,0:03:15.56,0:03:18.10,Bilingual,,0,0,0,,在控制台里，建一个服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}In the console, create a service account
+Dialogue: 0,0:03:18.10,0:03:21.64,Bilingual,,0,0,0,,名字叫 data-service-account，角色是 Storage Admin\N{\fs33\c&H00C8C0B8&\bord1.4}named data-service-account, with the Storage Admin role.
+Dialogue: 0,0:03:21.96,0:03:26.30,Bilingual,,0,0,0,,然后建一个 JSON 密钥，存进你的 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Then create one JSON key, saved in your secrets folder
+Dialogue: 0,0:03:26.30,0:03:28.62,Bilingual,,0,0,0,,文件名是 data-service-account.json\N{\fs33\c&H00C8C0B8&\bord1.4}as data-service-account.json.
+Dialogue: 0,0:03:28.94,0:03:33.38,Bilingual,,0,0,0,,这个角色的权限比需要的大：它覆盖项目里的每一个 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}This role is broader than needed: it covers every bucket in the project.
+Dialogue: 0,0:03:33.70,0:03:35.30,Bilingual,,0,0,0,,暂停一下，建一个你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and create yours.
+Dialogue: 0,0:03:35.45,0:03:38.10,Bilingual,,0,0,0,,额外列一下目录，密钥已经就位\N{\fs33\c&H00C8C0B8&\bord1.4}An extra listing shows the key in place:
+Dialogue: 0,0:03:38.10,0:03:41.34,Bilingual,,0,0,0,,这是一个替身，到 Source storage 那一步再解释\N{\fs33\c&H00C8C0B8&\bord1.4}a stand-in, explained at the Source storage step.
+Dialogue: 0,0:03:41.58,0:03:44.92,Bilingual,,0,0,0,,从 README 的链接下载未标注的照片\N{\fs33\c&H00C8C0B8&\bord1.4}Download the unlabeled photos from the README link;
+Dialogue: 0,0:03:44.92,0:03:47.34,Bilingual,,0,0,0,,我们用 curl，用浏览器也行\N{\fs33\c&H00C8C0B8&\bord1.4}we use curl, and a browser works too.
+Dialogue: 0,0:03:47.66,0:03:49.26,Bilingual,,0,0,0,,然后解压这个 zip\N{\fs33\c&H00C8C0B8&\bord1.4}Then extract the zip.
+Dialogue: 0,0:03:49.41,0:03:50.96,Bilingual,,0,0,0,,暂停一下，两件都做了\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do both.
+Dialogue: 0,0:03:51.01,0:03:55.09,Bilingual,,0,0,0,,注意，每张图片都在一个隐藏的 Mac 目录里有个双胞胎\N{\fs33\c&H00C8C0B8&\bord1.4}Notice that every image comes with a twin in a hidden Mac folder.
+Dialogue: 0,0:03:55.33,0:03:58.47,Bilingual,,0,0,0,,快速预测一下：这个 zip 里有 42 个文件\N{\fs33\c&H00C8C0B8&\bord1.4}A quick prediction: the zip held 42 files.
+Dialogue: 0,0:03:58.79,0:04:01.01,Bilingual,,0,0,0,,Label Studio 应该建多少个 task？\N{\fs33\c&H00C8C0B8&\bord1.4}How many tasks should Label Studio make?
+Dialogue: 0,0:04:05.85,0:04:11.68,Bilingual,,0,0,0,,21 个。额外数一下：21 张图片，其中一张是 PNG\N{\fs33\c&H00C8C0B8&\bord1.4}21. An extra count shows 21 images, one of them a PNG,
+Dialogue: 0,0:04:11.68,0:04:14.13,Bilingual,,0,0,0,,另外还有 21 个 Mac 元数据文件\N{\fs33\c&H00C8C0B8&\bord1.4}plus 21 Mac metadata files.
+Dialogue: 0,0:04:14.45,0:04:18.42,Bilingual,,0,0,0,,只上传图片，不然你会得到 21 个坏掉的 task\N{\fs33\c&H00C8C0B8&\bord1.4}Upload only the images, or you get 21 broken tasks.
+Dialogue: 0,0:04:18.74,0:04:23.30,Bilingual,,0,0,0,,课上把这叫做数据整理：在垃圾文件变成 task 之前就把它们去掉\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture calls this curation, dropping junk before it becomes a task.
+Dialogue: 0,0:04:23.55,0:04:25.38,Bilingual,,0,0,0,,再来一个额外检查，为第二部分准备\N{\fs33\c&H00C8C0B8&\bord1.4}One more extra, for part 2:
+Dialogue: 0,0:04:25.38,0:04:29.16,Bilingual,,0,0,0,,每张照片的指纹，只由它的字节算出来\N{\fs33\c&H00C8C0B8&\bord1.4}each photo's fingerprint, computed from its bytes alone.
+Dialogue: 0,0:04:29.48,0:04:33.83,Bilingual,,0,0,0,,同样的字节，同样的字符串；改一个字节，它就完全变了\N{\fs33\c&H00C8C0B8&\bord1.4}Same bytes, same string; change one byte, and it changes completely.
+Dialogue: 0,0:04:34.15,0:04:35.75,Bilingual,,0,0,0,,记住第一个\N{\fs33\c&H00C8C0B8&\bord1.4}Remember the first one.
+Dialogue: 0,0:04:35.95,0:04:38.72,Bilingual,,0,0,0,,然后用你自己起的名字建 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}Then create your bucket with a name of your own,
+Dialogue: 0,0:04:38.72,0:04:41.37,Bilingual,,0,0,0,,因为名字是全局唯一的，其他保持默认设置\N{\fs33\c&H00C8C0B8&\bord1.4}since names are global, and keep the defaults.
+Dialogue: 0,0:04:41.69,0:04:45.57,Bilingual,,0,0,0,,再加两个目录，cheeses unlabeled 和 cheeses labeled\N{\fs33\c&H00C8C0B8&\bord1.4}Add two folders, cheeses_unlabeled and cheeses_labeled,
+Dialogue: 0,0:04:45.57,0:04:48.39,Bilingual,,0,0,0,,把 21 张图片上传到第一个里\N{\fs33\c&H00C8C0B8&\bord1.4}and upload the 21 images into the first.
+Dialogue: 0,0:04:48.71,0:04:50.31,Bilingual,,0,0,0,,暂停一下，把它配好\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and set it up.
+Dialogue: 0,0:04:50.37,0:04:54.38,Bilingual,,0,0,0,,金色标签：存储费用从这里开始，每月不到一美分\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: storage starts here, a fraction of a cent a month.
+Dialogue: 0,0:04:55.42,0:04:59.00,Bilingual,,0,0,0,,README 跑 Label Studio 用的是一个现成的 image\N{\fs33\c&H00C8C0B8&\bord1.4}The README runs Label Studio from a ready-made image,
+Dialogue: 0,0:04:59.00,0:05:00.50,Bilingual,,0,0,0,,在你自己的 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}in your own container,
+Dialogue: 0,0:05:00.50,0:05:03.76,Bilingual,,0,0,0,,所以没有任何外部的标注服务能看到你的照片\N{\fs33\c&H00C8C0B8&\bord1.4}so no outside labeling service sees your photos.
+Dialogue: 0,0:05:04.08,0:05:07.19,Bilingual,,0,0,0,,它的脚本只在网络不存在时才创建网络\N{\fs33\c&H00C8C0B8&\bord1.4}Its script creates the network only if it is missing,
+Dialogue: 0,0:05:07.19,0:05:09.84,Bilingual,,0,0,0,,还会删掉同名的旧 container\N{\fs33\c&H00C8C0B8&\bord1.4}and removes any old container with that name.
+Dialogue: 0,0:05:10.08,0:05:12.64,Bilingual,,0,0,0,,然后是一条 docker run，一个参数一个参数地看\N{\fs33\c&H00C8C0B8&\bord1.4}Then one docker run, flag by flag.
+Dialogue: 0,0:05:12.86,0:05:15.26,Bilingual,,0,0,0,,参数 -d 让它在后台运行\N{\fs33\c&H00C8C0B8&\bord1.4}The flag -d runs it in the background,
+Dialogue: 0,0:05:15.26,0:05:18.36,Bilingual,,0,0,0,,--network 参数把它放到一条私有的街道上\N{\fs33\c&H00C8C0B8&\bord1.4}and the network flag puts it on a private street.
+Dialogue: 0,0:05:18.68,0:05:24.97,Bilingual,,0,0,0,,然后，-p 8080:8080 发布这个 port：笔记本墙上的一扇门\N{\fs33\c&H00C8C0B8&\bord1.4}Then -p 8080:8080 publishes the port: a door in your laptop wall.
+Dialogue: 0,0:05:25.29,0:05:29.62,Bilingual,,0,0,0,,两个 -v 参数挂载一个数据库目录和你的 secrets\N{\fs33\c&H00C8C0B8&\bord1.4}Two -v flags mount a database folder and your secrets;
+Dialogue: 0,0:05:29.62,0:05:32.82,Bilingual,,0,0,0,,-e 这几行设置登录信息和密钥路径\N{\fs33\c&H00C8C0B8&\bord1.4}the -e lines set the login and key path.
+Dialogue: 0,0:05:34.27,0:05:38.66,Bilingual,,0,0,0,,暂停一下，跑 sh docker-shell.sh；它会拉取 image\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run sh docker-shell.sh; it pulls the image.
+Dialogue: 0,0:05:38.98,0:05:42.31,Bilingual,,0,0,0,,然后是 README 的检查，docker container ls\N{\fs33\c&H00C8C0B8&\bord1.4}Then the README's check, docker container ls:
+Dialogue: 0,0:05:42.31,0:05:44.08,Bilingual,,0,0,0,,状态是 Up，port 8080 已发布\N{\fs33\c&H00C8C0B8&\bord1.4}up, port 8080 published.
+Dialogue: 0,0:05:44.32,0:05:48.95,Bilingual,,0,0,0,,可是 25 秒后加一个额外的 -a 再看一次：Exited\N{\fs33\c&H00C8C0B8&\bord1.4}But look again 25 seconds later, with an extra -a: exited.
+Dialogue: 0,0:05:49.27,0:05:51.66,Bilingual,,0,0,0,,来想一个问题：你先看哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: where do you look first?
+Dialogue: 0,0:05:58.50,0:06:04.41,Bilingual,,0,0,0,,看日志。Label Studio 自己说明了原因：它的数据目录不可写\N{\fs33\c&H00C8C0B8&\bord1.4}The logs. Label Studio explains itself: its data folder is not writable.
+Dialogue: 0,0:06:04.73,0:06:06.31,Bilingual,,0,0,0,,它以用户 1001 运行\N{\fs33\c&H00C8C0B8&\bord1.4}It runs as user 1001,
+Dialogue: 0,0:06:06.31,0:06:09.76,Bilingual,,0,0,0,,可这个缺失的目录是 Docker 以 root 身份创建的\N{\fs33\c&H00C8C0B8&\bord1.4}but Docker created the missing folder as root.
+Dialogue: 0,0:06:13.50,0:06:15.68,Bilingual,,0,0,0,,修法是一个额外步骤，只针对 Linux\N{\fs33\c&H00C8C0B8&\bord1.4}The fix is an extra, for Linux;
+Dialogue: 0,0:06:15.68,0:06:18.77,Bilingual,,0,0,0,,Mac 上的 Docker Desktop 一般不会遇到\N{\fs33\c&H00C8C0B8&\bord1.4}Docker Desktop for Mac normally avoids this.
+Dialogue: 0,0:06:19.09,0:06:22.37,Bilingual,,0,0,0,,用 sudo chown 把目录交给用户 1001\N{\fs33\c&H00C8C0B8&\bord1.4}Give the folder to user 1001 with sudo chown,
+Dialogue: 0,0:06:22.37,0:06:25.42,Bilingual,,0,0,0,,再跑一次脚本，这次它就一直保持运行了\N{\fs33\c&H00C8C0B8&\bord1.4}run the script again, and now it stays up.
+Dialogue: 0,0:06:25.74,0:06:27.88,Bilingual,,0,0,0,,在 Linux 上，暂停一下，照样做一遍\N{\fs33\c&H00C8C0B8&\bord1.4}On Linux, pause and do the same.
+Dialogue: 0,0:06:29.08,0:06:34.41,Bilingual,,0,0,0,,额外检查：日志里有个框，提示有 1.23.2 版本\N{\fs33\c&H00C8C0B8&\bord1.4}Extra checks: the logs show a box offering version 1.23.2,
+Dialogue: 0,0:06:34.41,0:06:40.37,Bilingual,,0,0,0,,比这个 image 新，这个 image 录制时跑的是 1.23.0\N{\fs33\c&H00C8C0B8&\bord1.4}newer than this image, which ran 1.23.0 at the time of recording.
+Dialogue: 0,0:06:40.69,0:06:43.25,Bilingual,,0,0,0,,它的 tag 是 latest，所以你的可能不一样\N{\fs33\c&H00C8C0B8&\bord1.4}The tag is latest, so yours may differ.
+Dialogue: 0,0:06:46.15,0:06:48.29,Bilingual,,0,0,0,,打开 localhost:8080\N{\fs33\c&H00C8C0B8&\bord1.4}Open localhost:8080 and log
+Dialogue: 0,0:06:48.29,0:06:53.85,Bilingual,,0,0,0,,用你脚本第 19 行和第 20 行里的用户名和密码登录\N{\fs33\c&H00C8C0B8&\bord1.4}in with the username and password from lines 19 and 20 of your script.
+Dialogue: 0,0:06:54.17,0:06:57.82,Bilingual,,0,0,0,,建一个项目，用 Image Classification 模板\N{\fs33\c&H00C8C0B8&\bord1.4}Create a project with the Image Classification template,
+Dialogue: 0,0:06:57.82,0:07:01.27,Bilingual,,0,0,0,,选项是 brie、gouda、gruyere 和 parmigiano\N{\fs33\c&H00C8C0B8&\bord1.4}with the choices brie, gouda, gruyere and parmigiano.
+Dialogue: 0,0:07:01.59,0:07:03.04,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it.
+Dialogue: 0,0:07:03.09,0:07:07.00,Bilingual,,0,0,0,,下方是我们的替身调用，重放了页面发出的请求\N{\fs33\c&H00C8C0B8&\bord1.4}Underneath, our stand-in calls replay the page's requests:
+Dialogue: 0,0:07:07.00,0:07:10.70,Bilingual,,0,0,0,,我们已经登录，项目 1 里有四种奶酪\N{\fs33\c&H00C8C0B8&\bord1.4}we are logged in, and project 1 holds the four cheeses.
+Dialogue: 0,0:07:13.25,0:07:16.63,Bilingual,,0,0,0,,回到项目里，打开 Settings，再进 Cloud Storage\N{\fs33\c&H00C8C0B8&\bord1.4}Back in the project, open Settings, then Cloud Storage,
+Dialogue: 0,0:07:16.63,0:07:19.76,Bilingual,,0,0,0,,添加 source storage，也就是照片的来源\N{\fs33\c&H00C8C0B8&\bord1.4}and add source storage, where the photos come from.
+Dialogue: 0,0:07:20.08,0:07:21.78,Bilingual,,0,0,0,,用 README 给的值\N{\fs33\c&H00C8C0B8&\bord1.4}Use the README's values:
+Dialogue: 0,0:07:21.78,0:07:24.19,Bilingual,,0,0,0,,Google Cloud Storage、你的 bucket、前缀\N{\fs33\c&H00C8C0B8&\bord1.4}Google Cloud Storage, your bucket,
+Dialogue: 0,0:07:24.19,0:07:26.25,Bilingual,,0,0,0,,cheeses unlabeled\N{\fs33\c&H00C8C0B8&\bord1.4}the prefix cheeses_unlabeled,
+Dialogue: 0,0:07:26.25,0:07:27.88,Bilingual,,0,0,0,,打开 pre-signed URL\N{\fs33\c&H00C8C0B8&\bord1.4}and pre-signed URLs on.
+Dialogue: 0,0:07:28.20,0:07:30.57,Bilingual,,0,0,0,,要是少了某个复选框，继续就行\N{\fs33\c&H00C8C0B8&\bord1.4}If a checkbox is missing, carry on.
+Dialogue: 0,0:07:30.89,0:07:35.50,Bilingual,,0,0,0,,凭据留空：意思是用 container 里已经有的那个密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Leave the credentials empty: that means the key the container already has.
+Dialogue: 0,0:07:35.75,0:07:37.41,Bilingual,,0,0,0,,然后点 Check Connection\N{\fs33\c&H00C8C0B8&\bord1.4}Then click Check Connection.
+Dialogue: 0,0:07:37.73,0:07:39.82,Bilingual,,0,0,0,,这里失败了：找不到文件\N{\fs33\c&H00C8C0B8&\bord1.4}Here it fails: file not found.
+Dialogue: 0,0:07:40.14,0:07:42.22,Bilingual,,0,0,0,,额外列一下目录就知道原因\N{\fs33\c&H00C8C0B8&\bord1.4}An extra listing shows why:
+Dialogue: 0,0:07:42.22,0:07:46.05,Bilingual,,0,0,0,,Label Studio 里面的 /secrets 是空的\N{\fs33\c&H00C8C0B8&\bord1.4}/secrets inside Label Studio is empty, on purpose,
+Dialogue: 0,0:07:46.05,0:07:48.28,Bilingual,,0,0,0,,这是故意的，等一下就会说到\N{\fs33\c&H00C8C0B8&\bord1.4}as you will hear in a moment;
+Dialogue: 0,0:07:48.28,0:07:49.88,Bilingual,,0,0,0,,你的应该能通过\N{\fs33\c&H00C8C0B8&\bord1.4}yours should pass.
+Dialogue: 0,0:07:49.98,0:07:52.23,Bilingual,,0,0,0,,存放 label 的 target storage\N{\fs33\c&H00C8C0B8&\bord1.4}The target storage, where labels go,
+Dialogue: 0,0:07:52.23,0:07:56.36,Bilingual,,0,0,0,,前缀是 cheeses labeled，也失败了，报错更含糊\N{\fs33\c&H00C8C0B8&\bord1.4}with the prefix cheeses_labeled, fails too, with a vaguer message.
+Dialogue: 0,0:07:56.60,0:07:58.90,Bilingual,,0,0,0,,关于这次录制，如实说一句\N{\fs33\c&H00C8C0B8&\bord1.4}One honest note about this recording.
+Dialogue: 0,0:07:59.22,0:08:02.69,Bilingual,,0,0,0,,这台机器没有 Google 账号，没有 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}This machine has no Google account, no bucket,
+Dialogue: 0,0:08:02.69,0:08:05.62,Bilingual,,0,0,0,,没有浏览器，也没有通往 GitHub 的 SSH 通道\N{\fs33\c&H00C8C0B8&\bord1.4}no browser, and no SSH route to GitHub.
+Dialogue: 0,0:08:05.94,0:08:10.28,Bilingual,,0,0,0,,目录列表里的密钥是一个明显无效的替身\N{\fs33\c&H00C8C0B8&\bord1.4}The key in the folder listings is an obviously invalid stand-in,
+Dialogue: 0,0:08:10.28,0:08:12.58,Bilingual,,0,0,0,,每个云端步骤之前都会移走\N{\fs33\c&H00C8C0B8&\bord1.4}moved out before every cloud step.
+Dialogue: 0,0:08:12.90,0:08:17.34,Bilingual,,0,0,0,,所以这里每一个云端步骤失败的方式，都和密钥放错位置时一模一样\N{\fs33\c&H00C8C0B8&\bord1.4}So each cloud step here fails exactly the way a misplaced key fails.
+Dialogue: 0,0:08:17.66,0:08:20.30,Bilingual,,0,0,0,,这正是这一讲里最常见的错误\N{\fs33\c&H00C8C0B8&\bord1.4}That is the most common mistake in this lecture.
+Dialogue: 0,0:08:20.62,0:08:24.73,Bilingual,,0,0,0,,你应该看到的每个成功结果都标着 recorded，并注明出处\N{\fs33\c&H00C8C0B8&\bord1.4}Every success you should expect is tagged recorded, with its source,
+Dialogue: 0,0:08:24.73,0:08:28.41,Bilingual,,0,0,0,,点击和上传则在本地重放，标着 stand-in\N{\fs33\c&H00C8C0B8&\bord1.4}and clicks and uploads are replayed locally, tagged stand-in.
+Dialogue: 0,0:08:28.65,0:08:32.34,Bilingual,,0,0,0,,有了真的密钥，两个存储都加上，点 Sync\N{\fs33\c&H00C8C0B8&\bord1.4}With a real key, add both storages and click Sync:
+Dialogue: 0,0:08:32.34,0:08:34.62,Bilingual,,0,0,0,,一张照片一个 task，你那边是 21 个\N{\fs33\c&H00C8C0B8&\bord1.4}one task per photo, 21 for you.
+Dialogue: 0,0:08:34.94,0:08:38.87,Bilingual,,0,0,0,,我们的替身导入了 3 个 task，地址也是同一类的\N{\fs33\c&H00C8C0B8&\bord1.4}Our stand-in imports 3 tasks with the same kind of addresses.
+Dialogue: 0,0:08:39.19,0:08:41.05,Bilingual,,0,0,0,,暂停一下，两个都加上，再点 Sync\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, add both, and sync.
+Dialogue: 0,0:08:41.18,0:08:42.83,Bilingual,,0,0,0,,那么，谁在碰这些照片？\N{\fs33\c&H00C8C0B8&\bord1.4}So who touches the photos?
+Dialogue: 0,0:08:43.15,0:08:46.46,Bilingual,,0,0,0,,Label Studio 拿着密钥，列出 bucket 里的东西\N{\fs33\c&H00C8C0B8&\bord1.4}Label Studio holds the key and lists the bucket;
+Dialogue: 0,0:08:46.46,0:08:48.46,Bilingual,,0,0,0,,你的浏览器请求 task 1\N{\fs33\c&H00C8C0B8&\bord1.4}your browser asks for task 1.
+Dialogue: 0,0:08:48.78,0:08:52.12,Bilingual,,0,0,0,,来想一个问题：你的浏览器从没见过密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: your browser never sees the key,
+Dialogue: 0,0:08:52.12,0:08:54.33,Bilingual,,0,0,0,,它怎么能显示一张私有的照片？\N{\fs33\c&H00C8C0B8&\bord1.4}so how can it show a private photo?
+Dialogue: 0,0:09:03.17,0:09:04.74,Bilingual,,0,0,0,,靠一张签了名的票\N{\fs33\c&H00C8C0B8&\bord1.4}With a signed ticket.
+Dialogue: 0,0:09:04.79,0:09:07.42,Bilingual,,0,0,0,,Label Studio 不中转照片\N{\fs33\c&H00C8C0B8&\bord1.4}Label Studio does not relay the photos;
+Dialogue: 0,0:09:07.42,0:09:12.83,Bilingual,,0,0,0,,它用密钥给一个网址签名：只许看一张照片，只在很短的时间里有效\N{\fs33\c&H00C8C0B8&\bord1.4}it signs a web address with the key: permission for one photo, for a short time.
+Dialogue: 0,0:09:13.15,0:09:15.99,Bilingual,,0,0,0,,你的浏览器拿着这张票直接去找 Google\N{\fs33\c&H00C8C0B8&\bord1.4}Your browser carries that ticket straight to Google,
+Dialogue: 0,0:09:15.99,0:09:17.91,Bilingual,,0,0,0,,密钥一直留在 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}and the key stays in the container.
+Dialogue: 0,0:09:18.23,0:09:21.98,Bilingual,,0,0,0,,接着缩略图坏掉了，README 也提醒了你：是 CORS 的问题\N{\fs33\c&H00C8C0B8&\bord1.4}Then the thumbnails break, and the README warns you: it is CORS.
+Dialogue: 0,0:09:25.02,0:09:27.43,Bilingual,,0,0,0,,页面来自 localhost:8080\N{\fs33\c&H00C8C0B8&\bord1.4}The page comes from localhost:8080,
+Dialogue: 0,0:09:27.43,0:09:31.57,Bilingual,,0,0,0,,照片来自 Google 的存储地址：这是另一个 origin\N{\fs33\c&H00C8C0B8&\bord1.4}the photo from Google's storage address: a different origin.
+Dialogue: 0,0:09:31.89,0:09:36.06,Bilingual,,0,0,0,,页面自己的代码去取照片时，像 Label Studio 这样\N{\fs33\c&H00C8C0B8&\bord1.4}When the page's own code fetches the photo, as Label Studio does,
+Dialogue: 0,0:09:36.06,0:09:39.88,Bilingual,,0,0,0,,你的浏览器把响应交给这段代码，只有一个前提\N{\fs33\c&H00C8C0B8&\bord1.4}your browser hands the answer over only if it carries a header
+Dialogue: 0,0:09:39.88,0:09:41.59,Bilingual,,0,0,0,,它带着允许这个 origin 的响应头\N{\fs33\c&H00C8C0B8&\bord1.4}that allows this origin.
+Dialogue: 0,0:09:41.91,0:09:46.05,Bilingual,,0,0,0,,Google 只在 bucket 有自己的 CORS 规则时，才加上这个响应头\N{\fs33\c&H00C8C0B8&\bord1.4}Google adds that header only if the bucket has its own CORS rule.
+Dialogue: 0,0:09:46.30,0:09:50.01,Bilingual,,0,0,0,,有一个小疏漏：README 把问题归到反向 DNS 查询上\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the README blames a reverse DNS lookup,
+Dialogue: 0,0:09:50.01,0:09:52.74,Bilingual,,0,0,0,,其实原因就是这条同源规则\N{\fs33\c&H00C8C0B8&\bord1.4}but the cause is that same-origin rule.
+Dialogue: 0,0:09:52.98,0:09:55.82,Bilingual,,0,0,0,,README 用第二个 container 来设置这条规则\N{\fs33\c&H00C8C0B8&\bord1.4}The README sets the rule from a second container.
+Dialogue: 0,0:09:56.14,0:10:00.76,Bilingual,,0,0,0,,把你的 bucket 名字写到 docker-shell-CLI.sh 的第 23 行\N{\fs33\c&H00C8C0B8&\bord1.4}Put your bucket name on line 23 of docker-shell-CLI.sh,
+Dialogue: 0,0:10:00.76,0:10:02.43,Bilingual,,0,0,0,,再用 sh 运行它\N{\fs33\c&H00C8C0B8&\bord1.4}then run it with sh.
+Dialogue: 0,0:10:02.75,0:10:05.87,Bilingual,,0,0,0,,提示符里的 ID 每次运行都会变\N{\fs33\c&H00C8C0B8&\bord1.4}The ID in the prompt changes every run,
+Dialogue: 0,0:10:05.87,0:10:10.58,Bilingual,,0,0,0,,Apple Silicon 上显示 aarch64，这台机器上显示的是 x86\N{\fs33\c&H00C8C0B8&\bord1.4}and Apple Silicon says aarch64 where this machine says x86.
+Dialogue: 0,0:10:10.90,0:10:12.50,Bilingual,,0,0,0,,暂停一下，两件都做了\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do both.
+Dialogue: 0,0:10:14.55,0:10:16.89,Bilingual,,0,0,0,,这个 container 加入同一条街道\N{\fs33\c&H00C8C0B8&\bord1.4}This container joins the same street and calls Label Studio by name, not localhost.
+Dialogue: 0,0:10:16.89,0:10:20.20,Bilingual,,0,0,0,,按名字调用 Label Studio，而不是 localhost\N{\fs33\c&H00C8C0B8&\bord1.4}This container joins the same street and calls Label Studio by name, not localhost.
+Dialogue: 0,0:10:20.52,0:10:23.94,Bilingual,,0,0,0,,它按目录名挂载这个 repo，所以别改这个名字\N{\fs33\c&H00C8C0B8&\bord1.4}It mounts the repo by its folder name, so keep that name.
+Dialogue: 0,0:10:24.18,0:10:27.97,Bilingual,,0,0,0,,在里面先跑 python cli.py -c，再跑 -m\N{\fs33\c&H00C8C0B8&\bord1.4}Inside, run python cli.py -c, then -m;
+Dialogue: 0,0:10:27.97,0:10:29.86,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run them.
+Dialogue: 0,0:10:30.18,0:10:35.92,Bilingual,,0,0,0,,这里两条都卡在存储客户端：找不到文件，因为 ADC 在找密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Here both stop at the storage client: file not found, because ADC looks for the key.
+Dialogue: 0,0:10:36.24,0:10:40.81,Bilingual,,0,0,0,,代码构造一条规则：任意 origin、只允许 GET、max age 一小时\N{\fs33\c&H00C8C0B8&\bord1.4}The code builds one rule, any origin, GET only, max age one hour,
+Dialogue: 0,0:10:40.81,0:10:42.42,Bilingual,,0,0,0,,然后 patch 到 bucket 上\N{\fs33\c&H00C8C0B8&\bord1.4}and patches the bucket.
+Dialogue: 0,0:10:42.67,0:10:47.49,Bilingual,,0,0,0,,有了真的密钥，-c 会打印这条规则，-m 会打印 bucket 的设置\N{\fs33\c&H00C8C0B8&\bord1.4}With a real key, -c prints the rule, and -m prints the bucket settings.
+Dialogue: 0,0:10:47.81,0:10:50.58,Bilingual,,0,0,0,,这下响应头来了，缩略图也加载出来了\N{\fs33\c&H00C8C0B8&\bord1.4}Now the header arrives and the thumbnails load.
+Dialogue: 0,0:10:50.90,0:10:53.62,Bilingual,,0,0,0,,这个 max age 只缓存预检请求\N{\fs33\c&H00C8C0B8&\bord1.4}The max age only caches preflight checks,
+Dialogue: 0,0:10:53.62,0:10:56.28,Bilingual,,0,0,0,,而普通的图片请求从来不发预检请求\N{\fs33\c&H00C8C0B8&\bord1.4}which a plain image request never makes.
+Dialogue: 0,0:10:56.52,0:10:58.12,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:10:58.18,0:11:02.15,Bilingual,,0,0,0,,你跑了 -c 也刷新了，缩略图还是坏的\N{\fs33\c&H00C8C0B8&\bord1.4}You ran -c and refreshed, and the thumbnails are still broken.
+Dialogue: 0,0:11:02.47,0:11:04.07,Bilingual,,0,0,0,,说出两个嫌疑点\N{\fs33\c&H00C8C0B8&\bord1.4}Name two suspects.
+Dialogue: 0,0:11:12.72,0:11:14.68,Bilingual,,0,0,0,,第一个：规则没加到你的 bucket 上\N{\fs33\c&H00C8C0B8&\bord1.4}One: the rule missed your bucket.
+Dialogue: 0,0:11:15.00,0:11:19.30,Bilingual,,0,0,0,,要么 -c 失败了，要么第 23 行写的是你的另一个 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}-c failed, or line 23 names another bucket of yours;
+Dialogue: 0,0:11:19.30,0:11:21.70,Bilingual,,0,0,0,,-m 会显示哪个 bucket 拿到了规则\N{\fs33\c&H00C8C0B8&\bord1.4}-m shows which bucket got it.
+Dialogue: 0,0:11:22.02,0:11:25.56,Bilingual,,0,0,0,,第二个：你的浏览器用了缓存的响应；强制刷新一下\N{\fs33\c&H00C8C0B8&\bord1.4}Two: your browser reused cached answers; hard refresh.
+Dialogue: 0,0:11:25.88,0:11:27.88,Bilingual,,0,0,0,,而 curl 从来没遇到过保安\N{\fs33\c&H00C8C0B8&\bord1.4}And curl never met a bouncer:
+Dialogue: 0,0:11:27.88,0:11:30.85,Bilingual,,0,0,0,,CORS 是浏览器的规则，不是访问控制\N{\fs33\c&H00C8C0B8&\bord1.4}CORS is a browser rule, not access control.
+Dialogue: 0,0:11:31.90,0:11:33.30,Bilingual,,0,0,0,,回到 Label Studio\N{\fs33\c&H00C8C0B8&\bord1.4}Back in Label Studio,
+Dialogue: 0,0:11:33.30,0:11:36.42,Bilingual,,0,0,0,,点开一个 task，选一种奶酪，然后点 Submit\N{\fs33\c&H00C8C0B8&\bord1.4}click a task, pick a cheese, and submit; repeat
+Dialogue: 0,0:11:36.42,0:11:38.90,Bilingual,,0,0,0,,重复几次。暂停一下，标注几张\N{\fs33\c&H00C8C0B8&\bord1.4}for a few. Pause and label some.
+Dialogue: 0,0:11:39.22,0:11:42.85,Bilingual,,0,0,0,,一次点击会变成什么，用替身调用来看\N{\fs33\c&H00C8C0B8&\bord1.4}Here is what one click becomes, as a stand-in call:
+Dialogue: 0,0:11:42.85,0:11:46.77,Bilingual,,0,0,0,,一个小小的 JSON 文档，result 里写着 choices 是 gouda\N{\fs33\c&H00C8C0B8&\bord1.4}a small JSON document whose result says choices, gouda.
+Dialogue: 0,0:11:47.02,0:11:49.51,Bilingual,,0,0,0,,Label Studio 把它存进自己的数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Label Studio saves it in its database,
+Dialogue: 0,0:11:49.51,0:11:53.19,Bilingual,,0,0,0,,target storage 再往 cheeses labeled 里写一份副本\N{\fs33\c&H00C8C0B8&\bord1.4}and the target storage writes a copy to cheeses_labeled,
+Dialogue: 0,0:11:53.19,0:11:56.21,Bilingual,,0,0,0,,指回那张从没移动过的照片\N{\fs33\c&H00C8C0B8&\bord1.4}pointing back at the photo, which never moved.
+Dialogue: 0,0:11:56.53,0:11:59.05,Bilingual,,0,0,0,,课件把照片按行分了类，但在磁盘上\N{\fs33\c&H00C8C0B8&\bord1.4}The slide sorts photos into rows,
+Dialogue: 0,0:11:59.05,0:12:02.17,Bilingual,,0,0,0,,一条 label 就是一张 JSON 小纸条\N{\fs33\c&H00C8C0B8&\bord1.4}but on disk a label is a small JSON note,
+Dialogue: 0,0:12:02.17,0:12:05.45,Bilingual,,0,0,0,,标注好的数据集就是照片加上小纸条\N{\fs33\c&H00C8C0B8&\bord1.4}and a labeled dataset is photos plus notes.
+Dialogue: 0,0:12:05.77,0:12:10.12,Bilingual,,0,0,0,,在控制台里，这个目录里每条标注对应一个 JSON 文件\N{\fs33\c&H00C8C0B8&\bord1.4}In the console, that folder shows one JSON file per annotation.
+Dialogue: 0,0:12:10.44,0:12:12.13,Bilingual,,0,0,0,,打开一个就能看到这张小纸条\N{\fs33\c&H00C8C0B8&\bord1.4}Open one to see the note.
+Dialogue: 0,0:12:14.57,0:12:17.90,Bilingual,,0,0,0,,命令行 container 按名字调用 Label Studio\N{\fs33\c&H00C8C0B8&\bord1.4}The command line container calls Label Studio by name.
+Dialogue: 0,0:12:18.22,0:12:22.29,Bilingual,,0,0,0,,来想一个问题：要是它的地址写成 localhost:8080 呢？\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: what if its address were localhost:8080?
+Dialogue: 0,0:12:29.13,0:12:31.65,Bilingual,,0,0,0,,连不上：在 container 里面\N{\fs33\c&H00C8C0B8&\bord1.4}It cannot connect: inside a container,
+Dialogue: 0,0:12:31.65,0:12:35.30,Bilingual,,0,0,0,,localhost 指的就是这个 container，那里什么都没在监听\N{\fs33\c&H00C8C0B8&\bord1.4}localhost is that container, and nothing listens there.
+Dialogue: 0,0:12:35.62,0:12:37.98,Bilingual,,0,0,0,,名字能用，是因为 Docker 网络维护着\N{\fs33\c&H00C8C0B8&\bord1.4}The name works, because the Docker network
+Dialogue: 0,0:12:37.98,0:12:40.12,Bilingual,,0,0,0,,一本 container 名字的电话簿\N{\fs33\c&H00C8C0B8&\bord1.4}keeps a phone book of container names.
+Dialogue: 0,0:12:40.37,0:12:42.46,Bilingual,,0,0,0,,要从代码里列出 label\N{\fs33\c&H00C8C0B8&\bord1.4}To list labels from code,
+Dialogue: 0,0:12:42.46,0:12:46.39,Bilingual,,0,0,0,,先从 Account & Settings 复制你的访问令牌\N{\fs33\c&H00C8C0B8&\bord1.4}copy your access token from Account & Settings,
+Dialogue: 0,0:12:46.39,0:12:51.74,Bilingual,,0,0,0,,再跑 README 的命令：python cli.py -p -k，后面跟你的令牌\N{\fs33\c&H00C8C0B8&\bord1.4}then run the README command: python cli.py -p -k and your token.
+Dialogue: 0,0:12:52.06,0:12:53.52,Bilingual,,0,0,0,,暂停一下，试一试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try it.
+Dialogue: 0,0:12:53.57,0:12:57.62,Bilingual,,0,0,0,,在 Label Studio 1.23.0 上它会报 401\N{\fs33\c&H00C8C0B8&\bord1.4}On Label Studio 1.23.0 it fails with a 401;
+Dialogue: 0,0:12:57.62,0:13:04.96,Bilingual,,0,0,0,,我们这边的报错说，这个组织已经停用了 legacy token 身份验证\N{\fs33\c&H00C8C0B8&\bord1.4}ours says legacy token authentication has been disabled for this organization.
+Dialogue: 0,0:13:05.20,0:13:09.23,Bilingual,,0,0,0,,额外检查一下就知道原因：这个版本有两种令牌\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check shows why: this version has two kinds of token.
+Dialogue: 0,0:13:09.55,0:13:13.31,Bilingual,,0,0,0,,页面默认显示较新的 personal token\N{\fs33\c&H00C8C0B8&\bord1.4}The page shows a newer personal token by default,
+Dialogue: 0,0:13:13.31,0:13:18.15,Bilingual,,0,0,0,,legacy 那种是关掉的，而 cli.py 只认 legacy\N{\fs33\c&H00C8C0B8&\bord1.4}the legacy kind is switched off, and cli.py speaks only legacy.
+Dialogue: 0,0:13:19.88,0:13:23.71,Bilingual,,0,0,0,,修法：在 Organization 的 API Tokens Settings\N{\fs33\c&H00C8C0B8&\bord1.4}The fix: in Organization, API Tokens Settings,
+Dialogue: 0,0:13:23.71,0:13:25.45,Bilingual,,0,0,0,,里启用 legacy token\N{\fs33\c&H00C8C0B8&\bord1.4}enable legacy tokens.
+Dialogue: 0,0:13:25.77,0:13:29.06,Bilingual,,0,0,0,,然后复制 legacy token，不是 personal token\N{\fs33\c&H00C8C0B8&\bord1.4}Then copy the legacy token, not the personal one.
+Dialogue: 0,0:13:29.38,0:13:30.98,Bilingual,,0,0,0,,暂停一下，两件都做了\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do both.
+Dialogue: 0,0:13:32.90,0:13:36.78,Bilingual,,0,0,0,,再跑一次 -p，它列出了项目 1：Cheese labels\N{\fs33\c&H00C8C0B8&\bord1.4}Run -p again, and it lists project 1, Cheese labels.
+Dialogue: 0,0:13:37.10,0:13:39.03,Bilingual,,0,0,0,,然后带上你的令牌跑 -t\N{\fs33\c&H00C8C0B8&\bord1.4}Then -t with your token:
+Dialogue: 0,0:13:39.03,0:13:41.93,Bilingual,,0,0,0,,我们的替身里是 3 个 task，你那边是 21 个\N{\fs33\c&H00C8C0B8&\bord1.4}3 tasks in our stand-in, 21 for you;
+Dialogue: 0,0:13:41.93,0:13:44.42,Bilingual,,0,0,0,,我们的有一张标注成了 gouda\N{\fs33\c&H00C8C0B8&\bord1.4}ours has one labeled, as gouda.
+Dialogue: 0,0:13:44.74,0:13:46.31,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:13:46.36,0:13:49.97,Bilingual,,0,0,0,,README 的示例写的是 amanita；格式是一样的\N{\fs33\c&H00C8C0B8&\bord1.4}The README's sample says amanita; the format is the same.
+Dialogue: 0,0:13:57.80,0:14:00.89,Bilingual,,0,0,0,,README 的 Extra 一节把两个 container 一起跑起来\N{\fs33\c&H00C8C0B8&\bord1.4}The README's extra section runs both containers
+Dialogue: 0,0:14:00.89,0:14:02.49,Bilingual,,0,0,0,,用的是一个 compose 文件\N{\fs33\c&H00C8C0B8&\bord1.4}from one compose file.
+Dialogue: 0,0:14:02.71,0:14:05.82,Bilingual,,0,0,0,,用 exit 退出命令行 container\N{\fs33\c&H00C8C0B8&\bord1.4}Leave the command line container with exit,
+Dialogue: 0,0:14:05.82,0:14:08.92,Bilingual,,0,0,0,,停掉 Label Studio，再用 docker ps 检查\N{\fs33\c&H00C8C0B8&\bord1.4}stop Label Studio, and check with docker ps;
+Dialogue: 0,0:14:08.92,0:14:10.42,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}pause and do it.
+Dialogue: 0,0:14:10.47,0:14:15.72,Bilingual,,0,0,0,,先把你的 bucket 名字也填到 docker-compose.yml 的第 17 行\N{\fs33\c&H00C8C0B8&\bord1.4}First put your bucket name on line 17 of docker-compose.yml as well.
+Dialogue: 0,0:14:16.04,0:14:18.91,Bilingual,,0,0,0,,然后跑 sh docker-shell-compose.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Then run sh docker-shell-compose.sh;
+Dialogue: 0,0:14:18.91,0:14:24.64,Bilingual,,0,0,0,,如果找不到这个命令，就用卡片上的 docker compose 写法\N{\fs33\c&H00C8C0B8&\bord1.4}if docker-compose is not found, use the docker compose form on the card.
+Dialogue: 0,0:14:24.96,0:14:27.10,Bilingual,,0,0,0,,这里它因为名字冲突停下了\N{\fs33\c&H00C8C0B8&\bord1.4}Here it stops on a name conflict:
+Dialogue: 0,0:14:27.10,0:14:31.25,Bilingual,,0,0,0,,docker stop 会把 container 留在那儿，名字还被它占着\N{\fs33\c&H00C8C0B8&\bord1.4}docker stop leaves the container behind, still holding its name.
+Dialogue: 0,0:14:31.50,0:14:33.87,Bilingual,,0,0,0,,额外跑一下 docker rm 把名字腾出来\N{\fs33\c&H00C8C0B8&\bord1.4}An extra docker rm frees the name;
+Dialogue: 0,0:14:33.87,0:14:37.43,Bilingual,,0,0,0,,暂停一下，删掉它，再跑一次 compose 脚本\N{\fs33\c&H00C8C0B8&\bord1.4}pause, remove it, and run the compose script again.
+Dialogue: 0,0:14:37.75,0:14:40.28,Bilingual,,0,0,0,,这次 Compose 创建了 Label Studio\N{\fs33\c&H00C8C0B8&\bord1.4}This time Compose creates Label Studio
+Dialogue: 0,0:14:40.28,0:14:42.81,Bilingual,,0,0,0,,外加一个一次性的命令行 container\N{\fs33\c&H00C8C0B8&\bord1.4}plus a one-off command line container.
+Dialogue: 0,0:14:44.32,0:14:47.99,Bilingual,,0,0,0,,额外用 echo 打印出来的，是 README 里的 bucket 名字\N{\fs33\c&H00C8C0B8&\bord1.4}An extra echo prints the README's bucket name:
+Dialogue: 0,0:14:47.99,0:14:50.15,Bilingual,,0,0,0,,compose 自己存了一份\N{\fs33\c&H00C8C0B8&\bord1.4}compose keeps its own copy,
+Dialogue: 0,0:14:50.15,0:14:54.07,Bilingual,,0,0,0,,在 docker-compose.yml 的第 17 行，所以这里也要改\N{\fs33\c&H00C8C0B8&\bord1.4}on line 17 of docker-compose.yml, so edit it too.
+Dialogue: 0,0:14:54.30,0:14:56.24,Bilingual,,0,0,0,,而第一次调用被拒绝了\N{\fs33\c&H00C8C0B8&\bord1.4}And the first call is refused:
+Dialogue: 0,0:14:56.24,0:14:59.40,Bilingual,,0,0,0,,depends on 这个设置会先启动 Label Studio\N{\fs33\c&H00C8C0B8&\bord1.4}the depends_on setting starts Label Studio first,
+Dialogue: 0,0:14:59.40,0:15:01.66,Bilingual,,0,0,0,,但不会等到它开始监听\N{\fs33\c&H00C8C0B8&\bord1.4}but does not wait until it listens.
+Dialogue: 0,0:15:01.98,0:15:03.64,Bilingual,,0,0,0,,额外加一个等待循环之后\N{\fs33\c&H00C8C0B8&\bord1.4}After an extra wait loop,
+Dialogue: 0,0:15:03.64,0:15:07.23,Bilingual,,0,0,0,,项目 1 回来了，因为挂载的是同一个目录\N{\fs33\c&H00C8C0B8&\bord1.4}project 1 is back, because the same folder is mounted.
+Dialogue: 0,0:15:10.20,0:15:14.23,Bilingual,,0,0,0,,Label Studio 一直在跑，你退出命令行 container 之后也一样\N{\fs33\c&H00C8C0B8&\bord1.4}Label Studio keeps running after you exit the command line container.
+Dialogue: 0,0:15:14.55,0:15:18.47,Bilingual,,0,0,0,,然后是 README 的清理：列出、停止、prune，再列出 image\N{\fs33\c&H00C8C0B8&\bord1.4}Then the README's cleanup: list, stop, prune, and list the images;
+Dialogue: 0,0:15:18.47,0:15:20.07,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run them.
+Dialogue: 0,0:15:20.29,0:15:25.84,Bilingual,,0,0,0,,这次 prune 把网络也删了，所以下次要先跑 docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}The prune also removed the network, so next time run docker-shell.sh first.
+Dialogue: 0,0:15:29.25,0:15:32.36,Bilingual,,0,0,0,,来想一个问题：跑完 docker system prune\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: after docker system prune,
+Dialogue: 0,0:15:32.36,0:15:34.28,Bilingual,,0,0,0,,你标注好的项目没了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}is your labeled project gone?
+Dialogue: 0,0:15:41.13,0:15:47.51,Bilingual,,0,0,0,,没有。数据库文件还在挂载的目录里，prune 从不碰你挂载的目录\N{\fs33\c&H00C8C0B8&\bord1.4}No. The database file is still in the mounted folder, and prune never touches folders you mount.
+Dialogue: 0,0:15:47.83,0:15:52.44,Bilingual,,0,0,0,,可它们指向的照片可能被悄悄换掉：同样的名字，新的图片\N{\fs33\c&H00C8C0B8&\bord1.4}But the photos they point at can change under them: same name, new picture.
+Dialogue: 0,0:15:52.76,0:15:56.09,Bilingual,,0,0,0,,那么，一个模型看过的到底是哪些照片，怎么把它准确地冻结下来？\N{\fs33\c&H00C8C0B8&\bord1.4}So how do you freeze exactly which photos a model saw?
+Dialogue: 0,0:15:56.28,0:15:57.88,Bilingual,,0,0,0,,这就是第二部分\N{\fs33\c&H00C8C0B8&\bord1.4}That is part 2.

@@ -1,8 +1,8 @@
 00:00 Same names, different data?
-01:15 Two stations, two buckets
+01:16 Two stations, two buckets
 03:14 A key, 21 photos and a bucket
-04:54 A whole web app in one docker run
+04:55 A whole web app in one docker run
 07:13 Who touches the bytes?
-09:20 CORS: the bouncer, configured on the bucket
-11:27 A label is a record; read it back by name
-13:50 Both containers in one file, and a clean exit
+09:25 CORS: the bouncer, configured on the bucket
+11:31 A label is a record; read it back by name
+13:57 Both containers in one file, and a clean exit
