@@ -31,7 +31,7 @@ from manim import *  # noqa: I001  (manim first, then common: common must win)
 
 from explainer.scene import VoiceScene
 
-from common import (CLOUD, COST, ERR, INK, NARRATION, OWN, PAST, ROUTE, SAY_COUNT, SHARED, TURN, CAPTION,
+from common import (CLOUD, COST, ERR, INK, NARRATION, OWN, PAST, SAY_COUNT, SHARED, TURN,
                     DeployGrid, box, card, check_glyph, chip, cross_glyph, cloud_shape, erratum_tag, grid_icon, instance,
                     label, lref, mono, outline_box, rack, readme, readme_card, strike, tag)
 from explainer import style as S
