@@ -99,6 +99,27 @@ def fail_lookup(scene, b, name: str = "translate", run_time: float = 1.0):
     return VGroup(path, lab, mk)
 
 
+def type_wordwrap(scene, t, cmd: str, type_time: float):
+    """PLAYS: type_cmd with a soft wrap at the last space that fits each row (the space stays at the
+    row's end, so the rows join back to the exact command, no ' \\'): a path is never cut in two."""
+    def fold(text: str, first_prefix: int = 0) -> list[str]:
+        n, rows, cur = t.max_chars, [], text
+        while len(cur) > n:
+            cut = cur.rfind(" ", max(first_prefix - 1, 0) if not rows else 0, n)   # the space after the prompt counts
+            cut = n if cut <= 0 else cut + 1
+            rows.append(cur[:cut])
+            cur = cur[cut:]
+        return rows + [cur]
+    t.fold = fold
+    try:
+        ln = type_cmd(scene, t, cmd, type_time=type_time, soft=False)
+    finally:
+        del t.fold
+    if hasattr(ln, "rows"):
+        assert "".join(r.text for r in ln.rows) == t.prompt + " " + cmd, "wrap must join back"
+    return ln
+
+
 def low_stamp(scene, b, text: str = "pip install · build time, not per request", run_time: float = 0.5):
     """PLAYS: BuildLine.stamp, but 0.45 under the build box (at the default 0.25 its left end touches
     the corner of the entry-point card)."""
@@ -254,7 +275,7 @@ class InsideTheFunction(VoiceScene):
             self.play(FadeOut(vch), run_time=0.3)
             type_cmd(self, t, "cd tutorial/function", type_time=0.7)
             cd_prompt(self, t, P_FUNC)
-            ff = type_cmd(self, t, c22.cmd, type_time=1.2, soft=True)     # a real terminal soft-wraps
+            ff = type_wordwrap(self, t, c22.cmd, type_time=1.2)   # wraps at a space: the path stays whole
             vo.wait_until("and it prints nothing")
             cur = Rectangle(width=0.16, height=0.3, stroke_width=0).set_fill(INK, 0.8)
             last = rows_of(ff)[-1]
@@ -271,7 +292,7 @@ class InsideTheFunction(VoiceScene):
         # ========================================================== 6. PONDER: a wrong entry point
         b2 = BuildLine()
         b2.remove(b2.a2)                            # the build has not run: no arrow to the shelf yet
-        b2.shift(UP * 0.75)
+        b2.shift(UP * 1.2)                          # up for the ponder card under it; back to 0.75 in block 7
         b2.build.frame.set_stroke(opacity=0.35).set_fill(opacity=0.04)
         b2.build.text.set_opacity(0.4)
         with self.voiceover(SAY[6]) as vo:
@@ -283,13 +304,15 @@ class InsideTheFunction(VoiceScene):
             vo.wait_until("Does the build fail?")
             self.play(Indicate(b2.inputs.entry.text, color=INK, scale_factor=1.1), run_time=0.8)
             b2.heal(self)
-        pc = ponder(self, PONDER_Q, seconds=8)
+            self.play(FadeOut(t, shift=DOWN * 0.2), run_time=0.4)   # the card sits where the strip was
+        pc = ponder(self, PONDER_Q, seconds=8, center=(0, -1.85))
 
         # ========================================================== 7. the answer
         c29 = capture("dev/29")
         rmc = grey_chip("README:1038 lists entry point under Function build fails")
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(pc), run_time=0.4)
+            self.play(FadeOut(pc), b2.animate.shift(DOWN * 0.45), run_time=0.4)
+            self.play(FadeIn(t, shift=UP * 0.2), run_time=0.4)    # the dev shell strip, server still running
             self.play(b2.build.frame.animate.set_stroke(opacity=1).set_fill(opacity=0.12),
                       b2.build.text.animate.set_opacity(1), run_time=0.4)
             b2.heal(self)
@@ -313,7 +336,7 @@ class InsideTheFunction(VoiceScene):
             xb2 = on_bar(t2, extra_row("local stand-in"))
             self.play(FadeOut(VGroup(b2, rmc)), FadeOut(t, shift=DOWN * 0.3), run_time=0.5)
             self.play(FadeIn(t2, shift=UP * 0.2), FadeIn(xb2), run_time=0.5)
-            type_cmd(self, t2, c29.cmd, type_time=1.3, soft=True)
+            type_wordwrap(self, t2, c29.cmd, type_time=1.3)
             out(self, t2, c29.at(2, "…"), run_time=0.3)
             rows28 = out(self, t2, c29.at(28), wrap=True, run_time=0.5)
             vo.wait_until("a function named translate")

@@ -170,6 +170,27 @@ def sigint(scene, pe, run_time: float = 1.2):
     pe.proc = pe.slots = None
 
 
+def regrow(scene, t, rows: int, tags=(), keep=None, extra=(), run_time: float = 0.6):
+    """PLAYS: resize() the second-tab strip and carry its title-bar tags (on scene) with the bar.
+    keep=0 clears it first, so the next command starts on the top row."""
+    ref = term(P_REPO, rows, T_TAB, size=t.size)
+    dy = ref.box.get_top()[1] - t.box.get_top()[1]
+    return resize(scene, t, rows, keep=keep, run_time=run_time,
+                  extra=[*[m.animate.shift(UP * dy) for m in tags], *extra])
+
+
+def app_box() -> VGroup:
+    """The app as the server sees it: gunicorn on localhost:8086 with its one translate route."""
+    head = label("the app · gunicorn on :8086", 20, S.GREY)
+    route = mono("POST /api/translate · JSON", 20, INK)
+    body = VGroup(head, route).arrange(DOWN, buff=0.3)
+    fr = RoundedRectangle(width=body.width + 0.6, height=body.height + 0.6, corner_radius=0.14,
+                          stroke_color=TOOL, stroke_width=2.5).set_fill(PANEL, 1).move_to(body)
+    g = VGroup(fr, body)
+    g.frame, g.route = fr, route
+    return g
+
+
 def right_at(m, y: float, right: float = 6.35):
     """Put m with its right edge at `right` and its centre at height y."""
     return m.move_to([right - m.width / 2, y, 0])
@@ -253,7 +274,7 @@ class RunTheImage(VoiceScene):
             right_at(same, card1069.head.get_center()[1], card1069.frame.get_right()[0] - 0.15)
             self.play(FadeIn(same, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("The image is built for")
-            arch = grey_chip("linux/amd64 · Apple Silicon: emulated · Cloud Run needs amd64")
+            arch = grey_chip("linux/amd64 · Apple Silicon: a platform WARNING prints first · harmless, it runs emulated")
             under_term(t, arch)
             self.play(FadeIn(arch, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("on Apple Silicon")
@@ -350,10 +371,11 @@ class RunTheImage(VoiceScene):
 
         # ========================================================== 6. extra checks: docker top, ps, curl :8080
         c13, c12, c14 = capture("laptop/13"), capture("laptop/12"), capture("laptop/14")
-        top_lines = [c13.line(2)] + [cut(from_phrase(c13.line(n), "{gunicorn}"), "/usr/local/bin/gunicorn")
+        top_lines = [c13.line(2)] + [cut(from_phrase(c13.line(n), "{gunicorn}"), "--threads 4")
                                      for n in (3, 4)]
-        for m in list(tab.lines):
-            tab.lines.remove(m)
+        tab = term(P_REPO, 6, T_TAB, size=20)       # six rows: the command and both processes
+        xb = on_bar(tab, extra_row())
+        self.bar_tags = [xb]
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(panel), FadeOut(cmd_chip), track(tr, 1, True),
                       run_time=0.4)
@@ -362,14 +384,24 @@ class RunTheImage(VoiceScene):
             pe.heal(self)
             self.play(FadeIn(tab, shift=UP * 0.2), FadeIn(xb), run_time=0.4)
             type_capture(self, tab, c13, type_time=0.8)
-            rows13 = out(self, tab, top_lines, run_time=0.5)
+            rows13 = out(self, tab, top_lines, wrap=True, run_time=0.5)
             vo.wait_until("Docker top shows")
-            self.play(*[g.animate.set_color(TURN) for r in rows13[1:] for g in substring(r, "{gunicorn}")],
-                      run_time=0.5)
+            self.play(*[g.animate.set_color(TURN) for r in rows13[1:] if "{gunicorn}" in r.text
+                        for g in substring(r, "{gunicorn}")], run_time=0.5)
             reseat(self, tab)
             self.play(Indicate(pe.proc.frame, color=TOOL, scale_factor=1.04), run_time=0.6)
             pe.heal(self)
+            r_thr = ring(substring(row_with(rows13, "--threads 4"), "--threads 4"), OWN)
+            self.play(Create(r_thr), run_time=0.5)
+            vo.wait_until("no Python is left")
+            py_row = row_with(rows13, "python3.12")
+            r_py = ring(substring(py_row, "/usr/local/bin/python3.12"), S.GREY, dashed=True)
+            interp = card(["the interpreter running gunicorn ·", "python -m translation_demo is gone"],
+                          size=20)
+            interp.move_to([-6.35 + interp.width / 2, 1.9, 0])
+            self.play(Create(r_py), FadeIn(interp, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Docker ps shows")
+            self.play(FadeOut(VGroup(r_thr, r_py, interp)), run_time=0.3)
             type_capture(self, tab, c12, type_time=0.9)
             rows12 = out(self, tab, c12.at(2, 3), wrap=True, run_time=0.5)
             color_sub(self, tab, rows12, "0.0.0.0:8086->8080/tcp", ROUTE)
@@ -387,7 +419,7 @@ class RunTheImage(VoiceScene):
         page.shift(-page.frame.get_center() + np.array([-2.3, 0.84, 0]))
         ill = illustration_tag().next_to(page.frame, RIGHT, buff=0.2).align_to(page.frame, UP)
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(pe), track(tr, 2, False), run_time=0.6)
+            regrow(self, tab, 4, tags=[xb], extra=[FadeOut(pe), track(tr, 2, False)], run_time=0.6)
             self.play(FadeIn(page, shift=UP * 0.2), FadeIn(ill), run_time=0.7)
             self.play(Indicate(page.url, color=ROUTE, scale_factor=1.1), run_time=0.7)
             page.heal(self)
@@ -416,7 +448,7 @@ class RunTheImage(VoiceScene):
         # ========================================================== 8. step 3: translate (a JSON POST)
         c21 = capture("laptop/21")
         idx = code(INDEX, 76, 80, font_size=20, dedent=True, cuts={78: "JSON.stringify({text:"})
-        idx.move_to([0, 0.75, 0])
+        idx.move_to([0, 1.5, 0])                    # above the 7-row strip
         with self.voiceover(SAY[8]) as vo:
             self.play(track(tr, 3, False), run_time=0.4)
             page.type_in(self, run_time=0.8)
@@ -432,18 +464,20 @@ class RunTheImage(VoiceScene):
             env.move_to([spans[1].get_right()[0] + 0.3 + env.width / 2, idx.get_bottom()[1] - 0.1, 0])
             self.play(FadeIn(env, shift=DOWN * 0.2), run_time=0.3)
             self.play(env.animate.move_to([6.35 - env.width / 2, idx.get_bottom()[1] - 0.1, 0]), run_time=0.6)
-            self.play(track(tr, 3, True), FadeOut(env), run_time=0.3)
+            # the strip grows to 7 rows and clears: the whole command and its [HTTP 200] stay in view
+            regrow(self, tab, 7, tags=[xb], keep=0, extra=[track(tr, 3, True), FadeOut(env)], run_time=0.4)
             type_cmd(self, tab, c21.cmd, 0.9, soft=True)    # quoted JSON: wraps like a real terminal
             r21 = out(self, tab, c21.at(2, 4), run_time=0.3)
             vo.wait_until("and gets back")
             color_sub(self, tab, r21, "\\u00e0", TURN, run_time=0.3)
             vo.wait_until("once the browser decodes")
+            sec = card(["captured during a second", "run of the same command", "(laptop/20)"], size=20)
+            sec.next_to(page.frame, RIGHT, buff=0.2).align_to(page.frame, DOWN)
+            regrow(self, tab, 4, tags=[xb], run_time=0.5,
+                   extra=[FadeOut(idx), FadeIn(page), FadeIn(ill), FadeIn(sec, shift=UP * 0.1)])
             bs = on_bar(tab, row_tag("the browser shows: à", TURN))
             self.bar_tags = [xb, bs]
             self.play(FadeOut(xb), FadeIn(bs), run_time=0.4)
-            sec = card(["captured during a second", "run of the same command", "(laptop/20)"], size=20)
-            sec.next_to(page.frame, RIGHT, buff=0.2).align_to(page.frame, DOWN)
-            self.play(FadeOut(idx), FadeIn(page), FadeIn(ill), FadeIn(sec, shift=UP * 0.1), run_time=0.5)
             page.translate(self, "Bonjour à tous", run_time=0.8)
             yt2 = your_turn().next_to(ill, DOWN, buff=0.3).align_to(ill, LEFT)
             vo.wait_until("Pause and try it")
@@ -452,13 +486,19 @@ class RunTheImage(VoiceScene):
 
         # ========================================================== 9. V4's contrast: 405 and 400
         c26, c25 = capture("laptop/26"), capture("laptop/25")
-        right_x = page.frame.get_right()[0]
+        app = app_box()
+        app.move_to([-6.3 + app.width / 2, 1.75, 0])
+        right_x = app.frame.get_right()[0]
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(yt2), FadeOut(bs), FadeIn(xb), run_time=0.3)
+            self.bar_tags = [xb]
+            # the page steps back for the app; the strip grows to 7 rows and clears for each command
+            regrow(self, tab, 7, tags=[xb], keep=0, run_time=0.5,
+                   extra=[FadeOut(page), FadeOut(ill), FadeOut(sec), FadeIn(app)])
             type_cmd(self, tab, c26.cmd, 0.8, soft=True)
             out(self, tab, c26.at(2, 4), run_time=0.3, color=ERR)
             get = chip("GET · the query string", ROUTE, size=20)
-            gy = ill.get_bottom()[1] - 0.25 - get.height / 2
+            gy = app.frame.get_top()[1] - get.height / 2
             right_at(get, gy)
             self.play(FadeIn(get, shift=LEFT * 0.2), run_time=0.3)
             self.play(get.animate.move_to([right_x + get.width / 2 + 0.05, gy, 0]), run_time=0.35)
@@ -468,15 +508,16 @@ class RunTheImage(VoiceScene):
             e405.align_to(get, LEFT)
             self.play(FadeIn(e405, shift=UP * 0.1), run_time=0.3)
             vo.wait_until("this app wants JSON posts")
-            self.play(Indicate(page.translate_btn.text, color=ROUTE, scale_factor=1.12), run_time=0.6)
-            page.heal(self)
+            self.play(Indicate(app.route, color=ROUTE, scale_factor=1.08), run_time=0.6)
+            self.add(app)
+            resize(self, tab, 7, keep=0, run_time=0.3)
             type_cmd(self, tab, c25.cmd, 0.6, soft=True)
             out(self, tab, c25.at(2, 4), run_time=0.3, color=ERR)
             vo.wait_until("A made-up language")
             xx = chip('dest: "xx"', ROUTE, size=20, font=MONO)
             xy = e405.get_bottom()[1] - 0.3 - xx.height / 2
             right_at(xx, xy)
-            self.play(FadeIn(xx, shift=LEFT * 0.2), FadeOut(sec), run_time=0.25)   # the card has been up ~10 s
+            self.play(FadeIn(xx, shift=LEFT * 0.2), run_time=0.25)
             self.play(xx.animate.move_to([right_x + xx.width / 2 + 0.05, xy, 0]), run_time=0.3)
             e400 = err_chip("400", mono_font=False)
             e400.move_to([right_x + 0.4 + xx.width + 0.15 + e400.width / 2, xy, 0])
@@ -488,12 +529,14 @@ class RunTheImage(VoiceScene):
         shelf = VGroup(image_block("image", 2.2), Line(LEFT * 1.4, RIGHT * 1.4, color=S.GREY, stroke_width=4))
         shelf[1].next_to(shelf[0], DOWN, buff=0.05)
         shelf.add(label("the laptop's images", 20, S.GREY).next_to(shelf[1], DOWN, buff=0.1))
+        ab = page.audio_btn.copy().move_to(app.frame)
+        ill2 = illustration_tag().next_to(ab, RIGHT, buff=0.3)
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(get, e405, xx, e400)), track(tr, 4, False), run_time=0.5)
-            self.play(page.press("audio", S.GREY), run_time=0.8)
-            page.heal(self)
+            self.play(FadeOut(VGroup(get, e405, xx, e400)), FadeOut(app), FadeIn(ab), FadeIn(ill2),
+                      track(tr, 4, False), run_time=0.5)
+            self.play(Indicate(ab, color=S.GREY, scale_factor=1.08), run_time=0.8)
             vo.wait_until("and its request")
-            self.play(track(tr, 4, True), run_time=0.3)
+            resize(self, tab, 7, keep=0, extra=[track(tr, 4, True)], run_time=0.3)
             type_cmd(self, tab, c24.cmd, 1.0, soft=True)
             r24 = out(self, tab, c24.at(2, 4), wrap=True, run_time=0.4, color=ERR)
             vo.wait_until("speech is disabled")
@@ -502,7 +545,7 @@ class RunTheImage(VoiceScene):
             vo.wait_until("Stop with Control C")
             # back to the first terminal; the container picture returns at the same place as before
             pe.remove(*knock_parts)                     # the 8080 knock stays in its beat
-            self.play(FadeOut(page), FadeOut(ill), FadeOut(tab), FadeOut(xb), track(tr, 4, False),
+            self.play(FadeOut(ab), FadeOut(ill2), FadeOut(tab), FadeOut(xb), track(tr, 4, False),
                       run_time=0.5)
             self.play(FadeIn(t), FadeIn(pe), run_time=0.5)
             out(self, t, c10.at((23, 26)), wrap=True, run_time=0.7)

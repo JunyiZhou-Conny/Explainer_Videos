@@ -376,6 +376,8 @@ class WriteAFunction(VoiceScene):
         bars = [line_bar(p.code, k, TURN) for k in (6, 7, 8)]
         dflt = [code_span(p.code, k, s) for k, s in ((6, '"Welcome to AC215"'), (7, '"en"'), (8, '"es"'))]
         unders = [under(d, S.GREY, stroke=3) for d in dflt]
+        deco_bar = line_bar(p.code, 4, TURN)
+        name_ring = ring(VGroup(*name8), OWN)
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(yt, cost1, cost2)), run_time=0.4)
@@ -384,11 +386,14 @@ class WriteAFunction(VoiceScene):
             vo.wait_until("with the tutorial's handler")
             self.play(FadeOut(VGroup(body, sample), shift=LEFT * 0.4), FadeIn(p, shift=LEFT * 0.6), run_time=0.9)
             vo.wait_until("The decorator")
-            self.play(*[g.animate.set_color(TURN) for g in deco], run_time=0.6)
-            self.add(p)
+            # syntax colours already match TURN/OWN: emphasise with a bar and a ring instead
+            self.play(FadeIn(deco_bar), *[g.animate.set_color(TURN) for g in deco], run_time=0.6)
+            self.add(p, deco_bar)  # re-adding the panel would cover the bar: keep it on top
             vo.wait_until("hello underscore HTTP")
-            self.play(*[g.animate.set_color(OWN) for g in name8], run_time=0.6)
-            self.add(p)
+            self.play(Create(name_ring), *[g.animate.set_color(OWN) for g in name8], run_time=0.6)
+            self.add(p, deco_bar, name_ring)
+            self.play(Indicate(VGroup(*name8), color=OWN, scale_factor=1.15), run_time=0.7)
+            self.add(p, deco_bar, name_ring)
             vo.wait_until("It takes text")
             self.play(FadeIn(bars[0]), run_time=0.4)
             vo.wait_until("source and")
@@ -420,7 +425,7 @@ class WriteAFunction(VoiceScene):
         kw = [code_span(p6.code, 5, "src=source"), code_span(p6.code, 5, "dest=destination")]
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(tabs, ro, *bars, *unders)), FadeTransform(ref2, ref3), run_time=0.5)
+            self.play(FadeOut(VGroup(tabs, ro, deco_bar, name_ring, *bars, *unders)), FadeTransform(ref2, ref3), run_time=0.5)
             # lines 7-12 travel to the new panel (same text); lines 3-4 leave; the frame follows
             self.play(FadeOut(VGroup(*p.code.code_lines[:4], p.header)), run_time=0.3)
             self.play(ReplacementTransform(p.code.background, p6.code.background),

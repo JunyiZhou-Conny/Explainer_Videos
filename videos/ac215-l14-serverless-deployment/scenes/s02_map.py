@@ -57,10 +57,10 @@ def roadmap() -> VGroup:
                          ("Deployment, scaling & automation", 0.2, 6.6 - 0.05, -0.45)):
         b = box(x1 - x0, 0.5, S.GREY, fill_opacity=0.15).move_to([(x0 + x1) / 2, y, 0])
         t = label(s, 20, INK).move_to(b)
-        if x1 > 2.0:            # the long bar: its words start right of the Prototype box
-            t.move_to([2.17, y, 0], aligned_edge=LEFT)
+        if x1 > 2.0:            # the long bar: its words start clear of the Prototype box (edge x = 1.9),
+            t.move_to([2.25, y, 0], aligned_edge=LEFT)   # also at the peak of the Indicate in beat 0
         bars.add(VGroup(b, t))
-    here = outline_box(3.9, 3.3, TURN, solid=False, stroke=3).move_to([0, 0.75, 0])
+    here = outline_box(3.8, 3.3, TURN, solid=False, stroke=3).move_to([0, 0.75, 0])
     ch = tag("you are here", TURN).next_to(here, DOWN, buff=0.15)
     g = VGroup(arr, phases, bounds, bars, here, ch).shift(DOWN * 0.45)
     g.arrow, g.phases, g.bounds, g.bars, g.here, g.chip = arr, phases, bounds, bars, here, ch
@@ -184,7 +184,7 @@ class FourWays(VoiceScene):
                       run_time=0.8)
             vo.wait_until("where deployment begins")
             self.play(GrowFromEdge(rm.bars[2], LEFT), run_time=0.8)
-            self.play(Indicate(rm.bars[2][1], color=TURN, scale_factor=1.06), run_time=0.8)
+            self.play(Indicate(rm.bars[2][1], color=TURN, scale_factor=1.03), run_time=0.8)   # 1.06 pushed it into the box
 
         # ========================================================== 1. slide 6: three parts done, deploy left
         tl = tiles()

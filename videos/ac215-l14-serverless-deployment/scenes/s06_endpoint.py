@@ -176,7 +176,7 @@ class CallTheEndpoint(VoiceScene):
         rec3 = recorded_card("part1-function-recorded", 3, "function GIF").move_to([-1.0, 0.45, 0])
         rec3.align_to(bw.frame, LEFT)
         c23 = capture("dev/23")
-        tab = tab_term(TAB_ROWS, P_HOME)
+        tab = tab_term(TAB_ROWS, P_FUNC)
         xtab = bar_tag(tab)
         with self.voiceover(SAY[1]) as vo:
             url_copy = form.rows[0].value.copy()
@@ -228,7 +228,7 @@ class CallTheEndpoint(VoiceScene):
         hp = handler_panel().move_to([-3.2, 0.25, 0])
         rec5 = recorded_card("part1-function-recorded", 5, "README:182-183").move_to([-1.5, 2.25, 0])
         c25, c26, c27, c28 = (capture(f"dev/{n}") for n in (25, 26, 27, 28))
-        tab = tab_term(TAB_ROWS, P_HOME)
+        tab = tab_term(TAB_ROWS, P_FUNC)
         xtab = bar_tag(tab)
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(q), ReplacementTransform(panel, hp), FadeIn(rec5, shift=DOWN * 0.15),
@@ -318,7 +318,7 @@ class CallTheEndpoint(VoiceScene):
         # ========================================================== 6. the provider timed out once
         p28 = capture("dev/provider-timeout/28")
         p22 = capture("dev/provider-timeout/22")
-        tab = tab_term(6, P_HOME)
+        tab = tab_term(6, P_FUNC)
         xtab = bar_tag(tab)
         kc = grey_chip("our first recording run · kept on purpose")
         under_term(tab, kc)
@@ -440,7 +440,7 @@ class CallTheEndpoint(VoiceScene):
 
         # ========================================================== 9. store the URL, curl the stand-in
         c24 = capture("dev/24")
-        tab = tab_term(5, P_HOME)
+        tab = tab_term(7, P_FUNC)                 # 7: the soft-wrapped FUNCTION_URL row stays in view
         xtab = bar_tag(tab)
         with self.voiceover(SAY[9]) as vo:
             type_lines(self, gt, readme_rows(200, 201), type_time=0.6)
@@ -453,7 +453,7 @@ class CallTheEndpoint(VoiceScene):
                       track(tr, 3, "gcloud · local stand-in"), run_time=0.5)
             self.remove(*gt.lines)
             self.play(FadeIn(tab, shift=UP * 0.2), FadeIn(xtab), run_time=0.4)
-            u = type_cmd(self, tab, c24.cmd_lines[0], type_time=0.6)
+            u = type_cmd(self, tab, c24.cmd_lines[0], type_time=0.6, soft=True)  # a real terminal soft-wraps; never fold inside FUNCTION_URL
             ut = beside(row_tag("stand-in URL"), u, buff=0.4)
             pin(self, u, ut)
             typed = type_lines(self, tab, c24.cmd_lines[1:], type_time=0.4)

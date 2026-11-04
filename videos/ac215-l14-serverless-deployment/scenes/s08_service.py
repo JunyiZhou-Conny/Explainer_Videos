@@ -522,9 +522,10 @@ class DeployTheImage(VoiceScene):
                 rings.append(rg)
                 self.play(Create(rg), gc.box.animate.set_stroke(TURN), gc.text.animate.set_color(TURN),
                           run_time=0.35)
-                self.add(gt, rg)
+                self.add(gt, *rings)  # every ring so far stays above the re-seated terminal
             under_term(gt, npc)
             self.play(FadeIn(npc, shift=UP * 0.1), run_time=0.4)
+            self.wait(2.5)  # hold: the only copyable form of all of 2.2's settings (QA)
 
         # ========================================================== 12. a public URL; the parked question
         page = TranslatePage(SERVICE_URL, CLOUD).move_to([0, 0.75, 0])

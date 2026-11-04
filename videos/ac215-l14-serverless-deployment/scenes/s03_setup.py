@@ -358,10 +358,20 @@ class BeforeYouBegin(VoiceScene):
             self.play(*[TransformFromCopy(a, b, path_arc=-0.5) for a, b in zip(u_src, u_dst)],
                       *[a for g in dsts for a in recolor(g, ROUTE)], run_time=0.9)
             self.add(t, threads)
+            # the pause view: the seven exports in one place (the 13-row terminal has scrolled three off)
+            sheet = exports_card(c05.cmd_lines[:7])
+            sheet.move_to([0, -1.3, 0], aligned_edge=DOWN)
+            assert sheet.get_top()[1] < 2.85, sheet.get_top()      # clear of the tracker
+            pid_tag = row_tag("put your real project ID here", TURN)
+            pid_tag.next_to(sheet.rows[0], RIGHT, buff=0.45)
+            yt2 = turn_row().move_to(sheet.head).align_to(sheet.frame, RIGHT).shift(LEFT * 0.28)
             vo.wait_until("Pause and run them")
-            yt2 = on_bar(t, turn_row())
-            self.play(FadeIn(yt2, shift=LEFT * 0.1), run_time=0.4)
+            self.play(FadeOut(threads), run_time=0.25)
+            resize(self, t, 3, keep=list(em), extra=[FadeIn(sheet, shift=DOWN * 0.15)], run_time=0.7)
+            self.play(FadeIn(pid_tag, shift=LEFT * 0.1), FadeIn(yt2, shift=LEFT * 0.1),
+                      *recolor(substring(sheet.rows[0], PROJECT_PH), TURN), run_time=0.4)
             flash_tag(self, yt2, TURN)
+        self.wait(1.2)                                    # hold the pause view a beat
 
         # ========================================================== 7. about this recording
         head = label("This recording machine: no Google account · no project", 28, INK)
@@ -383,8 +393,7 @@ class BeforeYouBegin(VoiceScene):
         phrases = ("every gcloud box runs", "the console is drawn", "and cloud results come from")
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(threads), FadeOut(yt2), track(tr, 5), run_time=0.4)
-            resize(self, t, 3)
+            self.play(FadeOut(VGroup(sheet, pid_tag, yt2)), track(tr, 5), run_time=0.5)
             vo.wait_until("this machine has no Google account")
             self.play(FadeIn(frame7, scale=0.97), FadeIn(head, shift=DOWN * 0.1), run_time=0.7)
             for r, ph in zip(rows7, phrases):
@@ -397,6 +406,38 @@ class BeforeYouBegin(VoiceScene):
 
 # ------------------------------------------------------------------ small helpers
 DIGEST_HEAD = "46cc62fd8b1a"
+FOLD_AT = 66                                    # characters a 20 pt card row holds inside the frame
+
+
+def export_rows(cmds) -> list[str]:
+    """The exports as card rows: one row each, or (too long for a row) folded after '=' with a
+    trailing backslash and the value on the next row, unindented, so the two rows join back to the
+    same shell command."""
+    rows = []
+    for c in cmds:
+        if len(c) <= FOLD_AT:
+            rows.append(c)
+        else:
+            name, value = c.split("=", 1)
+            assert len(value) <= FOLD_AT, c
+            rows += [name + "=\\", value]
+    return rows
+
+
+def exports_card(cmds) -> VGroup:
+    """README:75-81 (= laptop/05 lines 1-7) as a GREY README card, 20 pt mono, the long values folded
+    after '=' (GREY backslash); ${PROJECT_ID} PINK, as the thread left it. .frame .head .rows"""
+    texts = export_rows(cmds)
+    assert "".join(r[:-1] if r.endswith("\\") else r + "\n" for r in texts) == "\n".join(cmds) + "\n"
+    rows = VGroup(*[mono_line(r, 20, INK) for r in texts]).arrange(DOWN, aligned_edge=LEFT, buff=0.03)
+    for r in rows:
+        if r.text.endswith("\\"):
+            substring(r, "\\").set_color(S.GREY)
+        if "${PROJECT_ID}" in r.text:
+            substring(r, "${PROJECT_ID}").set_color(ROUTE)
+    card_ = readme_card((75, 81), rows)
+    card_.rows = rows
+    return card_
 
 
 def _last(line):
