@@ -27,7 +27,7 @@ Beats (script.md "## S03"; one voiceover block each):
 6. TRACKER [BB] 5. The seven exports (laptop/05 lines 1–7, type_time 0.5 each), then the echo
    (extra) → laptop/05: 9–11. `YOUR_PROJECT_ID` of line 1 pulses YELLOW + "put your real project ID
    here"; `${PROJECT_ID}` in lines 6–7 and `YOUR_PROJECT_ID` in the echoed emails turn PINK, joined
-   by a PINK thread. ▶ your turn.
+   by a PINK thread (a PINK underline that travels from each source to its echoed value). ▶ your turn.
 7. The terminal shrinks to a 3-row strip. A GREY card: "This recording machine: no Google account ·
    no project"; three lines write in, one per phrase (gcloud boxes / console `illustration` / cloud
    results `recorded`). Everything fades: empty frame.
@@ -134,13 +134,6 @@ def identity_card(text: str, icon=None, dashed: bool = False) -> VGroup:
     return g
 
 
-def thread(a, b) -> VMobject:
-    """A thin dashed PINK thread from glyphs a down to glyphs b (an arc through the right)."""
-    p, q = a.get_bottom() + DOWN * 0.02, b.get_top() + UP * 0.02
-    arc = ArcBetweenPoints(p, q, angle=-0.6)
-    return DashedVMobject(arc, num_dashes=14, dashed_ratio=0.6).set_stroke(ROUTE, 2.5)
-
-
 def recolor(glyphs, color):
     """ANIMs: colour glyphs one by one (never animate the substring group itself: split trap)."""
     return [g.animate.set_color(color) for g in glyphs]
@@ -180,7 +173,7 @@ class BeforeYouBegin(VoiceScene):
             self.play(FadeIn(staff, shift=UP * 0.1), run_time=0.6)
 
         # ========================================================== 1. the region
-        line_y = 0.9
+        line_y = 0.5
         rline = Line([-6.2, line_y, 0], [6.2, line_y, 0], color=S.GREY, stroke_width=3)
         rword = label("regions", 22, S.GREY).next_to(rline, UP, buff=0.15).align_to(rline, LEFT)
         p1 = region_pin(f"{REGION} · {REGION_CITY}")
@@ -188,7 +181,7 @@ class BeforeYouBegin(VoiceScene):
         for p, x in ((p1, -3.45), (p2, 3.2)):
             p.pin.move_to([x, line_y + 0.27, 0])        # the tip stands on the line
             p.text.next_to(p.pin, DOWN, buff=0.45).set_x(x)
-        two = grey_chip("two different settings").move_to([0, -0.9, 0])
+        two = grey_chip("two different settings").move_to([0, line_y - 1.75, 0])
         two_l = arrow(two.get_left() + LEFT * 0.05, p1.text.get_bottom() + DOWN * 0.08 + RIGHT * 1.2)
         two_r = arrow(two.get_right() + RIGHT * 0.05, p2.text.get_bottom() + DOWN * 0.08 + LEFT * 1.2)
 
@@ -209,8 +202,11 @@ class BeforeYouBegin(VoiceScene):
         ws = readme_card((46, 55), body)
         ws.move_to([0, 2.75 - ws.height / 2, 0])
         strip = worksheet_strip()
-        strip.move_to([0, BOTTOM + strip.height / 2 + 0.1, 0])
         cards = strip.cards
+        rows2 = VGroup(VGroup(*[cards[k] for k in ("function", "web service", "web account")]).arrange(RIGHT, buff=0.2),
+                       VGroup(*[cards[k] for k in ("job", "job account", "input", "output")]).arrange(RIGHT, buff=0.12))
+        rows2.arrange(DOWN, buff=0.2)                    # two rows (the helper's wrap leaves one card alone)
+        strip.move_to([0, BOTTOM + strip.height / 2 + 0.05, 0])
         order = (("the function", ["function"], [0]), ("the web service", ["web service"], [1]),
                  ("the job", ["job"], [3]), ("two runtime accounts", ["web account", "job account"], [2, 4]),
                  ("and two buckets", ["input", "output"], [5, 6]))
@@ -222,13 +218,13 @@ class BeforeYouBegin(VoiceScene):
                 vo.wait_until(phrase)
                 self.play(*[TransformFromCopy(body.values[i], cards[k]) for k, i in zip(keys, idx)],
                           *[Indicate(body.values[i], color=CLOUD, scale_factor=1.05) for i in idx], run_time=0.8)
-            self.play(FadeOut(ws, shift=UP * 0.2), strip.animate.move_to([0, 0.2, 0]), run_time=0.8)
+            self.play(FadeOut(ws, shift=UP * 0.2), run_time=0.6)
 
         # ========================================================== 3. clone (extra spelling) + git log
         t = laptop_term(9, P_HOME)
-        rc = readme_card((38, 39), "Clone or download the repository. Use the repository root\n"
-                                   "as the working directory for terminal examples. …")
-        rc.move_to([-6.5, 2.72, 0], aligned_edge=UL).shift(DOWN * 0.15)
+        rc = readme_card((38, 39), "Clone or download the repository.\n"
+                                   "Use the repository root as the working directory …")
+        rc.move_to([-6.5, 2.75, 0], aligned_edge=UL)
         no_cmd = grey_chip("the README spells no command").next_to(rc, RIGHT, buff=0.3)
         c01, c02 = capture("laptop/01"), capture("laptop/02")
         assert c01.cmd == CLONE, c01.cmd
@@ -284,8 +280,9 @@ class BeforeYouBegin(VoiceScene):
             self.play(*recolor(by_name["tutorial"].glyphs, TURN), run_time=0.5)
             self.add(t)
             vo.wait_until("function for part 1")
-            lt = type_cmd(self, t, c04.cmd, type_time=1.0)
-            pin(self, _last(lt), beside(extra_row(), _last(lt)))
+            type_cmd(self, t, c04.cmd, type_time=1.0)
+            xb = on_bar(t, extra_row())
+            self.play(FadeIn(xb, shift=LEFT * 0.1), run_time=0.4)
             fn = out(self, t, c04.at((32, 34)), run_time=0.5)
             self.play(*[a for r in fn[1:] for a in recolor(r.glyphs, OWN)], run_time=0.5)
             self.add(t)
@@ -309,6 +306,7 @@ class BeforeYouBegin(VoiceScene):
         VGroup(own, app_id).arrange(RIGHT, buff=0.6).move_to([0, 1.0, 0])
 
         with self.voiceover(SAY[5]) as vo:
+            self.play(FadeOut(xb), run_time=0.3)
             t.clear(self)
             resize(self, t, 6, extra=[track(tr, 5)])
             self.play(retitle(t, T_GCLOUD), run_time=0.5)
@@ -352,23 +350,27 @@ class BeforeYouBegin(VoiceScene):
             em = out(self, t, c05.at((9, 11)))
             srcs = [substring(_row_with(typed[k], "${PROJECT_ID}"), "${PROJECT_ID}") for k in (5, 6)]
             dsts = [substring(em[k], PROJECT_PH) for k in (0, 1)]
-            threads = VGroup(*[thread(a, b) for a, b in zip(srcs, dsts)])
-            self.play(*[a for g in srcs + dsts for a in recolor(g, ROUTE)], run_time=0.5)
-            self.play(Create(threads), run_time=0.8)
-            self.add(t)
+            u_src = [under(g, ROUTE, stroke=3) for g in srcs]
+            u_dst = [under(g, ROUTE, stroke=3) for g in dsts]
+            threads = VGroup(*u_src, *u_dst)
+            self.play(*[a for g in srcs for a in recolor(g, ROUTE)], *[Create(u) for u in u_src], run_time=0.5)
+            self.add(t, *u_src)                           # re-seat the terminal, keep the marks over it
+            self.play(*[TransformFromCopy(a, b, path_arc=-0.5) for a, b in zip(u_src, u_dst)],
+                      *[a for g in dsts for a in recolor(g, ROUTE)], run_time=0.9)
+            self.add(t, threads)
             vo.wait_until("Pause and run them")
             yt2 = on_bar(t, turn_row())
             self.play(FadeIn(yt2, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, yt2, TURN)
 
         # ========================================================== 7. about this recording
-        head = label("This recording machine: no Google account · no project", 24, INK)
+        head = label("This recording machine: no Google account · no project", 28, INK)
         rows7 = [
-            VGroup(label("gcloud boxes", 22, INK), label("→", 22, S.GREY),
-                   label("run to their first honest error", 22, INK)),
-            VGroup(label("console", 22, INK), label("→", 22, S.GREY), label("drawn", 22, INK), illustration_tag()),
-            VGroup(label("cloud results", 22, INK), label("→", 22, S.GREY),
-                   label("quoted from the README's recording", 22, INK), recorded_tag()),
+            VGroup(label("gcloud boxes", 24, INK), label("→", 24, S.GREY),
+                   label("run to their first honest error", 24, INK)),
+            VGroup(label("console", 24, INK), label("→", 24, S.GREY), label("drawn", 24, INK), illustration_tag()),
+            VGroup(label("cloud results", 24, INK), label("→", 24, S.GREY),
+                   label("quoted from the README's recording", 24, INK), recorded_tag()),
         ]
         for r in rows7:
             r.arrange(RIGHT, buff=0.2)
@@ -381,7 +383,7 @@ class BeforeYouBegin(VoiceScene):
         phrases = ("every gcloud box runs", "the console is drawn", "and cloud results come from")
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(threads), FadeOut(yt2), run_time=0.4)
+            self.play(FadeOut(threads), FadeOut(yt2), track(tr, 5), run_time=0.4)
             resize(self, t, 3)
             vo.wait_until("this machine has no Google account")
             self.play(FadeIn(frame7, scale=0.97), FadeIn(head, shift=DOWN * 0.1), run_time=0.7)
