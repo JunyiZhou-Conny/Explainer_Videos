@@ -1,0 +1,8 @@
+00:00 The cockpit that won't build: two one-line fixes
+02:24 What goes in the tarball
+04:45 One command, and a key inside it
+07:08 Who submits, who runs
+09:26 What the job prints, what W&B can show
+11:30 Three switches for one GPU
+12:55 Two GPUs, one model
+15:31 The missing model, teardown and recap
