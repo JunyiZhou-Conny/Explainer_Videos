@@ -113,9 +113,13 @@ class LeversAndRecord(VoiceScene):
         piv = third.pivot.get_center()
         ledger = ledger_icon().move_to([5.75, 1.15, 0])
         lit_arc = third.arc.copy().set_stroke(TURN, 6)
+        lev_head = label("three levers for better deep learning", 26, S.GREY).move_to([-6.4, 2.55, 0],
+                                                                                    aligned_edge=LEFT)
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref), run_time=0.5)
+            vo.wait_until("three levers")
+            self.play(FadeIn(lev_head, shift=RIGHT * 0.2), run_time=0.5)
             for d, anchor in zip(dials, ("more data", "better models", "and faster hardware")):
                 vo.wait_until(anchor)
                 self.play(FadeIn(d, shift=UP * 0.2), run_time=0.6)
@@ -149,7 +153,7 @@ class LeversAndRecord(VoiceScene):
         road = VGroup(arrow_body, phase_words, seps, *bars, tb)
 
         with self.voiceover(SAY[1]) as vo:
-            gone = VGroup(*dials, ledger)
+            gone = VGroup(*dials, ledger, lev_head)
             self.play(FadeOut(gone, shift=DOWN * 0.2), run_time=0.5)
             self.remove(*gone)
             self.play(FadeIn(arrow_body), FadeIn(phase_words), Create(seps), run_time=0.6)
