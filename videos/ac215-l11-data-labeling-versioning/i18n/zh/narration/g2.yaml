@@ -313,9 +313,9 @@ S14:
   - "这个 starter 分支里留着一份旧版 README，在这一步又加一次 remote。"
   - "这会失败：remote origin 已经存在。"
   - "课程 pin 住的那版 README 说不要这么做。"
-- en: "One extra experiment, on our stand-in folder: check out the old pointer file with git, run dvc checkout, and the folder holds four photos again. Back to main, and five, from the cache on disk. With a real mount, this folder is your bucket's images folder, so checkout deletes and rewrites photos there."
+- en: "One extra experiment, to watch, not to run on a real mount: on our stand-in folder, check out the old pointer file with git, run dvc checkout, and the folder holds four photos again. Back to main, and five, from the cache on disk. With a real mount, this folder is your bucket's images folder, so checkout deletes and rewrites photos there."
   zh:
-  - "再做一个额外的实验，在我们的替身目录上：用 git checkout 出旧的指针文件，跑 dvc checkout，目录里又变回四张照片。"
+  - "再做一个额外的实验，只看，不要在真的挂载上跑：在我们的替身目录上，用 git checkout 出旧的指针文件，跑 dvc checkout，目录里又变回四张照片。"
   - "回到 main，又是五张，来自磁盘上的缓存。"
   - "用真的挂载时，这个目录就是你 bucket 的 images 目录，所以 checkout 会在那里删除并重写照片。"
 S15:

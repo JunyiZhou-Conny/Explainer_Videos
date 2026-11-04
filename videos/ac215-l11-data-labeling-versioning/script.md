@@ -411,8 +411,8 @@ SAY: Now the key. In the console, create a service account named data-service-ac
 
 SHOW: TRACKER A3 · extra. Terminal, prompt `student@laptop:~$`. It types `ls -la secrets` (extra)
 → TERM(laptop/06: 2–5); the file name highlighted (not its size); a GREY tag `stand-in` on line 5
-with the caption "explained in scene 5".
-SAY: An extra listing shows the key in place: a stand-in, explained in scene 5.
+with the caption "explained at Source storage".
+SAY: An extra listing shows the key in place: a stand-in, explained at the Source storage step.
 
 SHOW: TRACKER A4. A README card (`README.md · lines 62–65`): "Download the unlabeled data from
 here · Extract the zip file". It types
@@ -718,7 +718,7 @@ TERM(laptop/50: 2); `docker ps` → TERM(laptop/51: 2; squeeze), empty. `▶ you
 "docker-compose: not found? docker compose run --rm --service-ports data-label-cli") →
 TERM(laptop/52: 26, …, 30; wrap); line 26 GREY "harmless", line 30 RED. On V7 a ghost of the
 stopped house still holds its name tag.
-SAY: The README's extra section runs both containers from one compose file. Leave the command line container with exit, stop Label Studio, and check with docker ps; pause and do it. First put your bucket name on line 17 of docker-compose.yml as well. Then run sh docker-shell-compose.sh. Here it stops on a name conflict: docker stop leaves the container behind, still holding its name.
+SAY: The README's extra section runs both containers from one compose file. Leave the command line container with exit, stop Label Studio, and check with docker ps; pause and do it. First put your bucket name on line 17 of docker-compose.yml as well. Then run sh docker-shell-compose.sh; if docker-compose is not found, use the docker compose form on the card. Here it stops on a name conflict: docker stop leaves the container behind, still holding its name.
 
 SHOW: TRACKER E2 · extra. `docker rm data-label-studio` (extra) → TERM(laptop/53: 2); the ghost
 vanishes. TRACKER E2: `sh docker-shell-compose.sh` → TERM(laptop/54: 28–30); V1's compose overlay
@@ -1145,7 +1145,7 @@ TERM(laptop/117: 51), five names GREEN. On V6 a GREY cursor hops from flag to fl
 from the GREY `.dvc/cache`, not the bucket. On "With a real mount", a GREY chip: "real mount: dvc
 checkout writes to images/ in your bucket · v20 deletes Image_5.jpg there · main writes it back".
 Fade out.
-SAY: One extra experiment, on our stand-in folder: check out the old pointer file with git, run dvc checkout, and the folder holds four photos again. Back to main, and five, from the cache on disk. With a real mount, this folder is your bucket's images folder, so checkout deletes and rewrites photos there.
+SAY: One extra experiment, to watch, not to run on a real mount: on our stand-in folder, check out the old pointer file with git, run dvc checkout, and the folder holds four photos again. Back to main, and five, from the cache on disk. With a real mount, this folder is your bucket's images folder, so checkout deletes and rewrites photos there.
 
 ---
 

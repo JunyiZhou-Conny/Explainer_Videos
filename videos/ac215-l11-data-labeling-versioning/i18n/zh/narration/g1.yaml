@@ -96,9 +96,9 @@ S03:
   - "Then create one JSON key, saved in your secrets folder as data-service-account.json."
   - null
   - null
-- en: "An extra listing shows the key in place: a stand-in, explained in scene 5."
+- en: "An extra listing shows the key in place: a stand-in, explained at the Source storage step."
   zh:
-  - "额外列一下目录，密钥已经就位：这是一个替身，第 5 个场景会解释。"
+  - "额外列一下目录，密钥已经就位：这是一个替身，到 Source storage 那一步再解释。"
 - en: "Download the unlabeled photos from the README link; we use curl, and a browser works too. Then extract the zip. Pause and do both. Notice that every image comes with a twin in a hidden Mac folder."
   zh:
   - "从 README 的链接下载未标注的照片；我们用 curl，用浏览器也行。"
@@ -357,12 +357,12 @@ S07:
   - null
   - null
 S08:
-- en: "The README's extra section runs both containers from one compose file. Leave the command line container with exit, stop Label Studio, and check with docker ps; pause and do it. First put your bucket name on line 17 of docker-compose.yml as well. Then run sh docker-shell-compose.sh. Here it stops on a name conflict: docker stop leaves the container behind, still holding its name."
+- en: "The README's extra section runs both containers from one compose file. Leave the command line container with exit, stop Label Studio, and check with docker ps; pause and do it. First put your bucket name on line 17 of docker-compose.yml as well. Then run sh docker-shell-compose.sh; if docker-compose is not found, use the docker compose form on the card. Here it stops on a name conflict: docker stop leaves the container behind, still holding its name."
   zh:
   - "README 的 Extra 一节把两个 container 一起跑起来，用的是一个 compose 文件。"
   - "用 exit 退出命令行 container，停掉 Label Studio，再用 docker ps 检查；暂停一下，照着做。"
   - "先把你的 bucket 名字也填到 docker-compose.yml 的第 17 行。"
-  - "然后跑 sh docker-shell-compose.sh。"
+  - "然后跑 sh docker-shell-compose.sh；如果找不到这个命令，就用卡片上的 docker compose 写法。"
   - "这里它因为名字冲突停下了：docker stop 会把 container 留在那儿，名字还被它占着。"
 - en: "An extra docker rm frees the name; pause, remove it, and run the compose script again. This time Compose creates Label Studio plus a one-off command line container."
   zh:
