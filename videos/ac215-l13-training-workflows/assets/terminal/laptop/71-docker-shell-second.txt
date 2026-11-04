@@ -1,0 +1,37 @@
+$ sh docker-shell.sh
+
+[+] Building 0.7s (19/19) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 2.15kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.13-slim-bookworm                             0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [ 1/14] FROM docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea1  0.1s
+ => => resolve docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea136  0.1s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 3.26kB                                                                      0.0s
+ => CACHED [ 2/14] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificate  0.0s
+ => CACHED [ 3/14] RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.clou  0.0s
+ => CACHED [ 4/14] RUN install -m 0755 -d /etc/apt/keyrings                                              0.0s
+ => CACHED [ 5/14] RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/  0.0s
+ => CACHED [ 6/14] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                            0.0s
+ => CACHED [ 7/14] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docke  0.0s
+ => CACHED [ 8/14] RUN apt-get update &&     apt-get install -y google-cloud-cli jq docker-ce            0.0s
+ => CACHED [ 9/14] RUN pip install uv                                                                    0.0s
+ => CACHED [10/14] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)  0.0s
+ => CACHED [11/14] WORKDIR /app                                                                          0.0s
+ => CACHED [12/14] COPY --chown=app:app pyproject.toml uv.lock* ./                                       0.0s
+ => CACHED [13/14] RUN uv sync --frozen                                                                  0.0s
+ => CACHED [14/14] COPY --chown=app:app . ./                                                             0.0s
+ => exporting to image                                                                                   0.2s
+ => => exporting layers                                                                                  0.0s
+ => => exporting manifest sha256:4d17293f7f4779e984c735550b1d2192adf4741b5a03b56c8e92677fe2c550d3        0.0s
+ => => exporting config sha256:8e01a2a6bcaed3f973f32c2631047ec45a9a8834f5db158ff37ff8a6877af94a          0.0s
+ => => exporting attestation manifest sha256:4b6102a92288e932e36beedc60a194a59000874810e0bdfe69bdc5547f  0.0s
+ => => exporting manifest list sha256:13d89e20697dff68060fa779455263987ba3f95022f4d27b09bb81fe2af348c3   0.0s
+ => => naming to docker.io/library/model-training-cli:latest                                             0.0s
+ => => unpacking to docker.io/library/model-training-cli:latest                                          0.0s
+docker: Error response from daemon: Conflict. The container name "/model-training-cli" is already in use by container "a645379bd591fafa38b1817fef3540dee87130921a2dac19345313d5f393d780". You have to remove (or rename) that container to be able to reuse that name.
+
+Run 'docker run --help' for more information
+[exit 125]

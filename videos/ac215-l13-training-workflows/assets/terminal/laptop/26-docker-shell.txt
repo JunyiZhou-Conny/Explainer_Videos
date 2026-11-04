@@ -1,0 +1,72 @@
+$ sh docker-shell.sh
+
+[+] Building 314.2s (19/19) FINISHED                                                           docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 2.15kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.13-slim-bookworm                             0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [ 1/14] FROM docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea1  0.1s
+ => => resolve docker.io/library/python:3.13-slim-bookworm@sha256:bc7fb531d8f53fa00cc8cca81d902acbea136  0.1s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 4.95kB                                                                      0.0s
+ => CACHED [ 2/14] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificate  0.0s
+ => CACHED [ 3/14] RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.clou  0.0s
+ => CACHED [ 4/14] RUN install -m 0755 -d /etc/apt/keyrings                                              0.0s
+ => CACHED [ 5/14] RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/  0.0s
+ => CACHED [ 6/14] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                            0.0s
+ => CACHED [ 7/14] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docke  0.0s
+ => [ 8/14] RUN apt-get update &&     apt-get install -y google-cloud-cli jq docker-ce                 139.4s
+ => [ 9/14] RUN pip install uv                                                                          10.9s
+ => [10/14] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)" &&     0.9s
+ => [11/14] WORKDIR /app                                                                                 0.1s
+ => [12/14] COPY --chown=app:app pyproject.toml uv.lock* ./                                              0.1s
+ => [13/14] RUN uv sync --frozen                                                                         5.7s
+ => [14/14] COPY --chown=app:app . ./                                                                    0.3s
+ => exporting to image                                                                                 154.9s
+ => => exporting layers                                                                                104.7s
+ => => exporting manifest sha256:ba213d94f2cc4d684bd0f89b0fd7366822450edac3bc16b1f26a46899480b359        0.1s
+ => => exporting config sha256:925356f405a5d006717d972c7e44491427910e4483a92eec9000a48decc9085a          0.1s
+ => => exporting attestation manifest sha256:45da31681b2e2a35102c32b8305bbf68f7a38a08d0372fa3566400b777  0.0s
+ => => exporting manifest list sha256:abed4b87e8789670f398f6b3846c7c96e7c14061e83b4e778c578ffaf97fb286   0.0s
+ => => naming to docker.io/library/model-training-cli:latest                                             0.0s
+ => => unpacking to docker.io/library/model-training-cli:latest                                         49.9s
+Container is running!!!
+ERROR: (gcloud.auth.activate-service-account) Unable to read file [/secrets/model-trainer.json]: [Errno 2] No such file or directory: '/secrets/model-trainer.json'
+Updated property [core/project].
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.13.17
+UV version: uv 0.13.5 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+root@44bbacf7e181:/app# ls -la /secrets
+total 8
+drwxr-sr-x 2 app  app  4096 Oct 23 12:20 .
+drwxr-xr-x 1 root root 4096 Oct 23 12:28 ..
+root@44bbacf7e181:/app# echo $GCP_PROJECT $GCS_BUCKET_URI ${#WANDB_KEY}
+your-gcp-project gs://your-bucket-placeholder 40
+root@44bbacf7e181:/app# which python gcloud gsutil uv
+/.venv/bin/python
+/usr/bin/gcloud
+/usr/bin/gsutil
+/usr/local/bin/uv
+root@44bbacf7e181:/app# gcloud --version
+Google Cloud SDK 590.0.0
+alpha 2026.10.16
+beta 2026.10.16
+bq 2.1.40
+bundled-python3-unix 3.14.8
+core 2026.10.16
+gcloud-crc32c 1.0.0
+gsutil 5.37
+preview 2026.10.16
+root@44bbacf7e181:/app# python -c "import google.cloud.aiplatform as aip; print(aip.__version__)"
+1.120.0
+root@44bbacf7e181:/app# python -c "import tensorflow"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import tensorflow
+ModuleNotFoundError: No module named 'tensorflow'
+root@44bbacf7e181:/app# exit
+exit
+[exit 1]

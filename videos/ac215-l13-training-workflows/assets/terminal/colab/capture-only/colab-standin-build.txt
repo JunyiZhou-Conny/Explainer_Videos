@@ -1,0 +1,45 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 427B done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim-bookworm
+#2 DONE 0.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.1s
+
+#4 [internal] load build context
+#4 DONE 0.0s
+
+#5 [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#5 resolve docker.io/library/python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258 0.1s done
+#5 DONE 0.1s
+
+#4 [internal] load build context
+#4 transferring context: 187.25kB 0.0s done
+#4 DONE 0.1s
+
+#6 [2/4] COPY capture-ca.crt /usr/local/share/ca-certificates/capture-ca.crt
+#6 CACHED
+
+#7 [3/4] RUN cat /usr/local/share/ca-certificates/capture-ca.crt >> /etc/ssl/certs/ca-certificates.crt  && mkdir /content
+#7 DONE 0.2s
+
+#8 [4/4] WORKDIR /content
+#8 DONE 0.0s
+
+#9 exporting to image
+#9 exporting layers
+#9 exporting layers 0.2s done
+#9 exporting manifest sha256:1e01590a52c1d716cb3e5f37f1107388c50bb709bc927fa1a41d20d892c9bc3f
+#9 exporting manifest sha256:1e01590a52c1d716cb3e5f37f1107388c50bb709bc927fa1a41d20d892c9bc3f 0.0s done
+#9 exporting config sha256:7d3bb24d596e0f53982c5241fa86da91ccf21be2d49c61d7156056f48c7551c9 0.0s done
+#9 exporting attestation manifest sha256:2bc215e0db8f35519881265c9cc2e32ae02a7383af1fc53aef24e84cadc44166 0.0s done
+#9 exporting manifest list sha256:f9f5e2cb451f1ef377978c72754d033f55f7bd681aac840a327e76eb0bdf26e9
+#9 exporting manifest list sha256:f9f5e2cb451f1ef377978c72754d033f55f7bd681aac840a327e76eb0bdf26e9 0.0s done
+#9 naming to docker.io/library/l13-colab-standin:latest done
+#9 unpacking to docker.io/library/l13-colab-standin:latest 0.1s done
+#9 DONE 0.5s

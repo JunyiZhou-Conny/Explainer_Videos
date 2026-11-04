@@ -1,0 +1,15 @@
+$ docker run --rm --network none trainer-standin python -c "import wandb; wandb.login(key='PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000_LONGER')"
+wandb: Network error (ProxyError), entering retry loop.
+wandb: W&B API key is configured. Use `wandb login --relogin` to force relogin
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/local/lib/python3.10/site-packages/wandb/sdk/wandb_login.py", line 77, in login
+    configured = _login(**kwargs)
+  File "/usr/local/lib/python3.10/site-packages/wandb/sdk/wandb_login.py", line 292, in _login
+    wlogin.configure_api_key(key)
+  File "/usr/local/lib/python3.10/site-packages/wandb/sdk/wandb_login.py", line 176, in configure_api_key
+    apikey.write_key(self._settings, key)
+  File "/usr/local/lib/python3.10/site-packages/wandb/sdk/lib/apikey.py", line 239, in write_key
+    raise ValueError("API key must be 40 characters long, yours was %s" % len(key))
+ValueError: API key must be 40 characters long, yours was 47
+[exit 1]

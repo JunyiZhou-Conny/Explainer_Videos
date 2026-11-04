@@ -1,0 +1,86 @@
+id: ac215-l13-training-workflows
+title: "AC215 · Lecture 13 — Advanced training workflows: a run is a record, a job is a rented machine (follow-along: model-training + two Colab notebooks)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 13
+  lecture_title: "Advanced Training Workflows: experiment tracking (W&B), multi-GPU, serverless training (Vertex AI)"
+  ed: https://edstem.org/us/courses/97373/lessons/166038/
+  repos:
+    # the whole README; run with two one-line Dockerfile fixes the README does not contain
+    # (Dockerfile:2 -> python:3.13-slim-bookworm, Dockerfile:37 -> google-cloud-cli; BRIEF errata 1-2)
+    - {repo: dlops-io/model-training, branch: main, commit: b9aee1cc1923dd1f673093ad3ff5bb023049b4ff,
+       sections: ["Prerequisites", "Setup Environments (Clone the github repository, API's to enable in GCP for Project, Setup GPU Quotas)",
+                  "Setup GCP Credentials (Create a local secrets folder, Setup GCP Service Account)", "Create GCS Bucket",
+                  "Get WandB Account API Key", "Run Container (Run docker-shell.sh)",
+                  "Package & Upload Python Code (Review Trainer Code, Run sh package-trainer.sh)",
+                  "Create Jobs in Vertex AI", "OPTIONAL:Create Jobs in Vertex AI using CPU", "View Jobs in Vertex AI",
+                  "View Training Metrics", "OPTIONAL: Multi GPU Training"]}
+    # context only: the older Ubuntu + Pipenv branch (digest §7); the history diffs quoted in S05/S10
+    # (88f3374 "removed ca;llback", 1c03dd5 "Updated TF image", 3efb2d5 "Updated cli to default to CPU")
+    # are commits on main, kept in assets/source/model-training-history/.
+    - {repo: dlops-io/model-training, branch: pipenv, commit: fdc1f57ff1c2f5997b12db8e2cade127df3d73c0,
+       sections: ["context only: the pre-uv version (ubuntu:20.04 + Pipenv, TF 2.14 images)"]}
+  colab:
+    # notebooks have no commit: extracts of the copies used are in assets/source/colab/ (downloaded
+    # 2026-10-23, md5 equal to the digest's); their stored outputs are shown tagged "recorded".
+    - {name: "Notebook A · Cheese Classification Models", url: "https://colab.research.google.com/drive/1h6xRhjILxaUosXlZ5ZC1NZbP0AOHALTl?usp=sharing",
+       sections: ["Setup Notebook", "Dataset", "Build Data Pipelines", "Image Classification Models",
+                  "Experiment Results", "Upload Experiment to Cloud Storage"]}
+    - {name: "Notebook B · Experiment Tracking with W&B", url: "https://colab.research.google.com/drive/1aAE5vR9r6Syh4heZboDbQNZS048VToxS?usp=sharing",
+       sections: ["Setup Notebook", "Dataset", "Build Data Pipelines", "Image Classification Models (with W&B)",
+                  "Experiment Results", "Upload Experiment to Cloud Storage"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L13-training-workflows.md
+audience: "AC215 student who has done L1-L11 (a GCP project with billing, Docker images and docker-shell.sh scripts with bind mounts, Colab training from L8, the L10 service-account key in a sibling secrets/ folder, buckets, L11's versioned dataset), new to experiment tracking, W&B, Python packaging for training, Vertex AI custom jobs, GPU quotas and multi-GPU data parallelism; watching with two Colab copies (notebooks A and B), a clone of model-training, a W&B account (free tier) and a GCP project — this lecture's Vertex AI jobs bill the project while they run (GOLD tags without amounts + teardown checklist in the video)"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+# Scene classes must not collide with the set-piece classes in scenes/common.py:
+# TrainingMap, RunLedger, ConfigBinding, TarballTrip, ThreeBadges, GpuSwitchboard, MirroredReplicas.
+scenes:
+  - {file: scenes/s01_hook.py,       cls: Hook,             title: "Two tables, two winners"}
+  - {file: scenes/s02_levers.py,     cls: LeversAndRecord,  title: "Three levers and a missing row"}
+  - {file: scenes/s03_notebook_a.py, cls: FolderTracker,    title: "A tracker made of folders"}
+  - {file: scenes/s04_wandb.py,      cls: SharedAxis,       title: "Runs on a shared axis"}
+  - {file: scenes/s05_config.py,     cls: ThreeLines,       title: "Three lines, and an assignment that goes nowhere"}
+  - {file: scenes/s06_serverless.py, cls: RentTheMachine,   title: "Rent the machine, not the server"}
+  - {file: scenes/s07_setup.py,      cls: KeysAndBucket,    title: "A project, two keys and a bucket"}
+  - {file: scenes/s08_build.py,      cls: TwoFixes,         title: "The cockpit that won't build: two one-line fixes"}
+  - {file: scenes/s09_package.py,    cls: InsideTheTarball, title: "What goes in the tarball"}
+  - {file: scenes/s10_submit.py,     cls: OneCommand,       title: "One command, and a key inside it"}
+  - {file: scenes/s11_identity.py,   cls: WhoRunsIt,        title: "Who submits, who runs"}
+  - {file: scenes/s12_logs.py,       cls: WhatTheJobSays,   title: "What the job prints, what W&B can show"}
+  - {file: scenes/s13_gpu.py,        cls: ThreeSwitches,    title: "Three switches for one GPU"}
+  - {file: scenes/s14_multigpu.py,   cls: TwoGpusOneModel,  title: "Two GPUs, one model"}
+  - {file: scenes/s15_recap.py,      cls: Recap,            title: "The missing model, teardown and recap"}
+parts:
+  - id: part1
+    title: "AC215 · L13, part 1: experiment tracking — a folder of runs, W&B, and the setup for serverless training"
+    scenes: [s01_hook, s02_levers, s03_notebook_a, s04_wandb, s05_config, s06_serverless, s07_setup]
+  - id: part2
+    title: "AC215 · L13, part 2: Vertex AI custom jobs — build, package, submit, identities, GPUs and MirroredStrategy"
+    scenes: [s08_build, s09_package, s10_submit, s11_identity, s12_logs, s13_gpu, s14_multigpu, s15_recap]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker)
+publish:
+  title_zh: "AC215 第13讲跟练 · 高级训练流程：W&B 实验追踪、Vertex AI 无服务器训练与多 GPU"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 13 讲教程的逐条命令跟练：上半场在 Colab 里跟着两个 notebook 训练五个 cheese 分类模型，
+    先看手写的 experiment_<时间戳>/ 文件夹怎样记录每个 run、为什么同一个 notebook 的两份运行结果选出了不同的最佳模型，
+    再用 Weights & Biases（W&B）把 run 放到同一条坐标轴上：为什么只有带 callback 的 run 有曲线、为什么 wandb.config = {...} 会让 config 变成空的，
+    以及 init / callback / finish 三行的正确写法；然后讲清 serverless training 的思路，照着 dlops-io/model-training 的 README
+    准备 Vertex AI API、GPU quota、service account、bucket 和 W&B key。
+    下半场构建本地 model-training-cli 容器（包括今天会遇到的两处 Dockerfile 报错和两行修复），证明它只负责提交、从不训练；
+    把 trainer 打包成 trainer.tar.gz 上传到 GCS，用 sh cli.sh 提交 Vertex AI custom job，用 sh -x 看清 W&B key 怎样藏在 --args 里，
+    分清提交 job 的身份和运行 job 的身份，看 job 能打印什么、W&B 能显示什么，再看 GPU 需要一致的三个开关，
+    以及 MirroredStrategy 的数据并行：拆分 global batch、all-reduce 梯度、在 strategy.scope() 里建模型。
+    边看边暂停，在自己的电脑上跑每一条命令；本讲的 Vertex AI 训练任务在运行期间会产生实际费用，视频用金色标签标出每个计费点（不写具体金额，请以官方价格页为准），结尾有完整收尾清单。
+    英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/model-training
+    Colab Notebook A：https://colab.research.google.com/drive/1h6xRhjILxaUosXlZ5ZC1NZbP0AOHALTl
+    Colab Notebook B：https://colab.research.google.com/drive/1aAE5vR9r6Syh4heZboDbQNZS048VToxS
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L13-training-workflows.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, 实验追踪, Weights & Biases, Vertex AI, 无服务器训练, 多GPU, TensorFlow, 哈佛, 教程跟练]
+  tid: 231

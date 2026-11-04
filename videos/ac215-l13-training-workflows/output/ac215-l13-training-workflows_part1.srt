@@ -1,0 +1,966 @@
+1
+00:00:00,000 --> 00:00:04,505
+Two notebooks from this lecture,
+run by the instructors:
+
+2
+00:00:04,505 --> 00:00:06,381
+the same data pipeline,
+
+3
+00:00:06,381 --> 00:00:10,539
+the same 1,156 cheese photos,
+the same five models.
+
+4
+00:00:10,859 --> 00:00:16,363
+Notebook A crowns the fine-tuned MobileNet,
+at 68.97 percent.
+
+5
+00:00:16,683 --> 00:00:20,473
+Notebook B crowns the frozen MobileNet,
+
+6
+00:00:20,473 --> 00:00:26,304
+also at 68.97 percent,
+and puts the fine-tuned one at 62.93.
+
+7
+00:00:26,550 --> 00:00:29,729
+So which recipe is better,
+fine-tuning or freezing?
+
+8
+00:00:30,049 --> 00:00:33,569
+And from these two tables, can you even tell
+what was different?
+
+9
+00:00:33,889 --> 00:00:36,811
+One clue is visible:
+look at the epochs column.
+
+10
+00:00:37,131 --> 00:00:38,411
+Hold that question.
+
+11
+00:00:38,731 --> 00:00:40,751
+Part of the answer is in the table,
+
+12
+00:00:40,751 --> 00:00:43,809
+and part of it is in what the table never
+wrote down.
+
+13
+00:00:44,050 --> 00:00:46,781
+Then the fine-tuned MobileNet leaves Colab.
+
+14
+00:00:47,101 --> 00:00:49,588
+It gets packed into a 4 kilobyte tarball
+
+15
+00:00:49,588 --> 00:00:54,375
+and trains on a machine you rent
+for the length of one job, from one command.
+
+16
+00:00:54,695 --> 00:00:57,170
+That command carries your W&B key.
+
+17
+00:00:57,417 --> 00:01:02,149
+To follow along you need two
+Colab copies with a free T4 GPU,
+
+18
+00:01:02,149 --> 00:01:07,657
+a free account on W&B, Docker,
+and a Google Cloud project with billing.
+
+19
+00:01:07,977 --> 00:01:13,993
+Vertex AI jobs cost money while they run;
+gold tags mark each point, without amounts.
+
+20
+00:01:14,313 --> 00:01:18,857
+A yellow tag means pause and run it,
+and the study guide has every command.
+
+21
+00:01:19,177 --> 00:01:23,678
+Today's two words, from the lecture:
+reproducibility and accountability.
+
+22
+00:01:24,717 --> 00:01:28,452
+The lecture starts from three levers
+for better deep learning:
+
+23
+00:01:28,452 --> 00:01:31,224
+more data, better models,
+and faster hardware.
+
+24
+00:01:31,544 --> 00:01:34,338
+Today we pull the third one:
+you rent hardware.
+
+25
+00:01:34,658 --> 00:01:37,368
+And you add the bookkeeping that shows
+whether it helped.
+
+26
+00:01:37,617 --> 00:01:39,252
+On the Cheese App roadmap,
+
+27
+00:01:39,252 --> 00:01:43,718
+the dashed box around experiment tracking
+and baseline models is today.
+
+28
+00:01:44,038 --> 00:01:46,726
+Your third milestone asks for exactly this.
+
+29
+00:01:46,967 --> 00:01:49,250
+Where does each piece of an experiment go?
+
+30
+00:01:49,570 --> 00:01:54,017
+Code to GitHub,
+data to the versioning from lecture 11,
+
+31
+00:01:54,017 --> 00:01:58,060
+and the environment
+to pyproject.toml and uv.lock.
+
+32
+00:01:58,380 --> 00:02:01,047
+Weights, metrics and logs have no home yet.
+
+33
+00:02:01,367 --> 00:02:04,138
+A complete run should keep seven things:
+
+34
+00:02:04,138 --> 00:02:08,364
+environment, code, data, model,
+metrics, artifacts and notes.
+
+35
+00:02:08,600 --> 00:02:13,976
+The course uses Weights & Biases,
+W&B for short, which is hosted for you.
+
+36
+00:02:14,296 --> 00:02:18,307
+MLflow is the usual choice
+if you must host it yourself.
+
+37
+00:02:18,550 --> 00:02:19,659
+Here is the map.
+
+38
+00:02:19,979 --> 00:02:24,966
+On top, the Colab lane:
+notebook A fills a folder and uploads it,
+
+39
+00:02:24,966 --> 00:02:27,958
+and notebook B streams its runs to W&B.
+
+40
+00:02:28,278 --> 00:02:32,257
+Below, the repo lane:
+your laptop packs the code,
+
+41
+00:02:32,257 --> 00:02:37,537
+a bucket holds it, Vertex AI runs it,
+and the run reports to W&B.
+
+42
+00:02:37,857 --> 00:02:39,265
+Today we light both.
+
+43
+00:02:40,300 --> 00:02:43,842
+Open notebook A from the course page,
+save a copy,
+
+44
+00:02:43,842 --> 00:02:47,596
+and switch the runtime to a GPU;
+pause and set it up.
+
+45
+00:02:47,916 --> 00:02:52,311
+Its stored outputs show the instructors' run
+on one Tesla T4.
+
+46
+00:02:53,667 --> 00:02:55,606
+Run the dataset cells:
+
+47
+00:02:55,606 --> 00:03:01,070
+1,156 photos from one GitHub release,
+with four cheese labels.
+
+48
+00:03:01,390 --> 00:03:02,670
+Remember their order.
+
+49
+00:03:02,990 --> 00:03:09,987
+Then the split: 936 to train,
+104 to validate, 116 to test.
+
+50
+00:03:10,307 --> 00:03:11,565
+Pause and run them.
+
+51
+00:03:11,800 --> 00:03:13,144
+Something to ponder.
+
+52
+00:03:13,464 --> 00:03:22,253
+The cell sets validation_percent to 0.2,
+yet validation is 104 out of 1,156.
+
+53
+00:03:22,573 --> 00:03:24,323
+What did the code actually do?
+
+54
+00:03:33,167 --> 00:03:35,130
+Both splits use test_percent.
+
+55
+00:03:35,450 --> 00:03:39,840
+10 percent of 1,156 is 116 for testing,
+
+56
+00:03:39,840 --> 00:03:47,268
+then 10 percent of the remaining 1,040
+is 104, the validation set.
+
+57
+00:03:47,588 --> 00:03:50,447
+A small slip, copied into the repo trainer.
+
+58
+00:03:50,683 --> 00:03:52,240
+Now the home-made tracker.
+
+59
+00:03:52,560 --> 00:03:56,592
+Cell 31 makes a folder named
+after the current Unix time.
+
+60
+00:03:56,912 --> 00:04:01,816
+After each model trains, the helper
+from cell 12 drops five files into it:
+
+61
+00:04:01,816 --> 00:04:06,256
+the model, its weights, its structure,
+its history and its metrics.
+
+62
+00:04:06,576 --> 00:04:08,582
+Pause and train the five models.
+
+63
+00:04:09,367 --> 00:04:12,913
+Cell 54 gathers the metric files
+into one table,
+
+64
+00:04:12,913 --> 00:04:16,459
+and cell 56 picks its top row
+as the best model;
+
+65
+00:04:16,459 --> 00:04:19,266
+pause and run through the predictions.
+
+66
+00:04:19,586 --> 00:04:23,713
+A small slip:
+accuracy becomes text before sorting,
+
+67
+00:04:23,713 --> 00:04:25,332
+so it sorts strings;
+
+68
+00:04:25,332 --> 00:04:28,524
+9.5 percent would rank above 68 percent.
+
+69
+00:04:28,767 --> 00:04:30,260
+Here is a first answer.
+
+70
+00:04:30,580 --> 00:04:36,191
+The folder keeps settings and scores,
+but not which 116 photos were the test set.
+
+71
+00:04:36,511 --> 00:04:41,460
+The split has no seed,
+so every run is graded on a different 116.
+
+72
+00:04:41,780 --> 00:04:44,326
+One photo is worth 0.86 points,
+
+73
+00:04:44,326 --> 00:04:48,351
+and the winner
+in notebook A leads by two photos.
+
+74
+00:04:48,600 --> 00:04:55,640
+Sign in with cell 62, put your own project
+and bucket into cell 63, and run cell 66.
+
+75
+00:04:55,960 --> 00:04:57,549
+Any bucket of yours works;
+
+76
+00:04:57,549 --> 00:04:58,848
+if you have none yet,
+
+77
+00:04:58,848 --> 00:05:02,253
+skip this upload and come back
+after the setup chapter.
+
+78
+00:05:02,573 --> 00:05:03,725
+Pause and run it.
+
+79
+00:05:04,045 --> 00:05:07,579
+A gold tag:
+those files now sit in your bucket,
+
+80
+00:05:07,579 --> 00:05:11,640
+10 to 104 megabytes of weights per model,
+plus a copy.
+
+81
+00:05:12,683 --> 00:05:14,752
+Notebook B adds W&B.
+
+82
+00:05:15,072 --> 00:05:19,638
+Its first cell installs it,
+and the -U flag means whatever is newest.
+
+83
+00:05:19,958 --> 00:05:27,223
+An extra check in our signed-out stand-in
+shows 0.31.0 at the time of recording,
+
+84
+00:05:27,223 --> 00:05:30,219
+while the stored run used 0.22.2.
+
+85
+00:05:30,539 --> 00:05:31,691
+Pause and run it.
+
+86
+00:05:31,933 --> 00:05:35,933
+The data cells, through cell 32,
+match notebook A,
+
+87
+00:05:35,933 --> 00:05:41,213
+but one also downloads a zip
+of about 510 megabytes you never use.
+
+88
+00:05:41,533 --> 00:05:44,413
+You may delete that line;
+then pause and run them.
+
+89
+00:05:44,650 --> 00:05:48,703
+Copy your API key
+from the user settings on W&B.
+
+90
+00:05:49,023 --> 00:05:54,336
+In Colab, open the key icon
+and add a secret named exactly as on screen,
+
+91
+00:05:54,336 --> 00:05:56,106
+with notebook access on.
+
+92
+00:05:56,426 --> 00:05:57,813
+Pause and add yours.
+
+93
+00:05:58,133 --> 00:06:00,074
+Cell 34 signs in with it.
+
+94
+00:06:00,316 --> 00:06:02,812
+Now pause and run the five training cells.
+
+95
+00:06:03,132 --> 00:06:07,548
+Each starts its run with wandb.init
+in one project, cheese-app-demo.
+
+96
+00:06:07,868 --> 00:06:12,690
+In the ledger, the five rows
+become five runs on one shared epoch axis.
+
+97
+00:06:12,933 --> 00:06:15,216
+But only the 2_block run shows curves.
+
+98
+00:06:15,536 --> 00:06:18,138
+Compare its model.fit call
+with another cell's.
+
+99
+00:06:18,458 --> 00:06:21,146
+Something to ponder:
+what do the other four lack?
+
+100
+00:06:27,983 --> 00:06:31,695
+A callback:
+code that model.fit calls after every epoch.
+
+101
+00:06:32,015 --> 00:06:35,604
+Only the 2_block cell
+passes the W&B callback,
+
+102
+00:06:35,604 --> 00:06:39,738
+so only its loss and accuracy arrive,
+epoch by epoch.
+
+103
+00:06:40,058 --> 00:06:43,099
+Without one,
+wandb.init gives you system charts,
+
+104
+00:06:43,099 --> 00:06:44,239
+never your curves.
+
+105
+00:06:44,483 --> 00:06:48,920
+Both MobileNet runs share one name,
+so tell them apart by run ID.
+
+106
+00:06:49,240 --> 00:06:54,766
+No cell finishes the last run,
+so add wandb.finish after cell 52, an extra.
+
+107
+00:06:55,500 --> 00:06:59,105
+Cell 55 builds the second table
+from the opening.
+
+108
+00:06:59,425 --> 00:07:04,262
+The fine-tuned MobileNet trained 10 epochs
+here and 15 in notebook A:
+
+109
+00:07:04,262 --> 00:07:05,804
+not a fair comparison.
+
+110
+00:07:06,124 --> 00:07:12,343
+Now the frozen MobileNet,
+with the same settings and epochs:
+
+111
+00:07:12,343 --> 00:07:15,660
+67.24 in notebook A, 68.97 here.
+
+112
+00:07:15,980 --> 00:07:20,268
+Two photos apart by chance alone:
+the size of the winning margin.
+
+113
+00:07:20,516 --> 00:07:27,016
+To upload, edit the bucket and project
+inside cell 13 and run cell 13 again,
+
+114
+00:07:27,016 --> 00:07:30,607
+then run cells 64 and 66; pause and do it.
+
+115
+00:07:35,150 --> 00:07:39,715
+The lecture shows the pattern as three lines
+around unchanged training code.
+
+116
+00:07:40,035 --> 00:07:41,977
+Start the run with wandb.init.
+
+117
+00:07:42,297 --> 00:07:45,454
+Watch the model
+with a callback inside model.fit.
+
+118
+00:07:45,774 --> 00:07:47,715
+And finish the run when training ends.
+
+119
+00:07:47,950 --> 00:07:49,806
+Now notebook B's real cell.
+
+120
+00:07:50,126 --> 00:07:54,093
+It starts the run,
+then assigns a dictionary to wandb.config,
+
+121
+00:07:54,093 --> 00:07:56,825
+renames the run, and calls wandb.run.save.
+
+122
+00:07:57,067 --> 00:07:58,411
+Something to ponder.
+
+123
+00:07:58,731 --> 00:08:02,869
+After that assignment,
+and a later update with the execution time,
+
+124
+00:08:02,869 --> 00:08:04,875
+what does the run's config hold?
+
+125
+00:08:13,717 --> 00:08:14,805
+Watch the name.
+
+126
+00:08:15,125 --> 00:08:20,330
+The call wandb.init points the name
+wandb.config at the run's config drawer.
+
+127
+00:08:20,650 --> 00:08:23,105
+The assignment does not fill that drawer;
+
+128
+00:08:23,105 --> 00:08:25,920
+it moves the name onto a new,
+loose dictionary.
+
+129
+00:08:26,240 --> 00:08:31,167
+The update then writes into the loose one,
+and the run finishes with its drawer empty.
+
+130
+00:08:31,417 --> 00:08:35,961
+The proof, on today's W&B in offline mode,
+as our stand-in.
+
+131
+00:08:36,281 --> 00:08:39,993
+The name points at a plain dict,
+and the run's config is empty.
+
+132
+00:08:40,313 --> 00:08:43,953
+The fix passes the dictionary
+to wandb.init itself,
+
+133
+00:08:43,953 --> 00:08:48,163
+and the config holds all four keys
+plus the execution time.
+
+134
+00:08:51,650 --> 00:08:56,068
+The call wandb.run.save with the word
+test uploads files matching test;
+
+135
+00:08:56,068 --> 00:08:57,623
+it does not save the run.
+
+136
+00:08:57,867 --> 00:09:01,737
+The repo's trainer gets the first
+and last lines right:
+
+137
+00:09:01,737 --> 00:09:05,184
+config inside wandb.init,
+then update and finish.
+
+138
+00:09:05,504 --> 00:09:07,104
+But the middle line is gone.
+
+139
+00:09:07,424 --> 00:09:11,291
+One commit
+in October 2025 removed the callback,
+
+140
+00:09:11,291 --> 00:09:12,822
+without saying why.
+
+141
+00:09:13,142 --> 00:09:17,133
+So its runs get config and system charts,
+and no curves;
+
+142
+00:09:17,133 --> 00:09:19,627
+exercise 1 adds the callback again.
+
+143
+00:09:20,667 --> 00:09:26,086
+The second half of the lecture is Vertex AI,
+Google Cloud's machine learning platform.
+
+144
+00:09:26,406 --> 00:09:30,021
+Three console entries matter:
+Workbench for notebooks,
+
+145
+00:09:30,021 --> 00:09:33,168
+Training for jobs,
+and Pipelines for workflows.
+
+146
+00:09:33,488 --> 00:09:38,672
+Today is Training, on the custom jobs tab;
+lecture 15 uses Pipelines.
+
+147
+00:09:38,917 --> 00:09:42,906
+Serverless training means you rent
+the hardware only for the training step.
+
+148
+00:09:43,226 --> 00:09:46,896
+Nobody sets up a server,
+and billing stops when the step ends.
+
+149
+00:09:47,216 --> 00:09:50,586
+There is still a machine;
+you just don't manage its lifetime.
+
+150
+00:09:50,834 --> 00:09:54,173
+Step one:
+move the notebook code into a Python file,
+
+151
+00:09:54,173 --> 00:09:56,935
+and turn its hard-coded choices into flags.
+
+152
+00:09:57,255 --> 00:10:00,693
+The flags
+are epochs, batch size and model name,
+
+153
+00:10:00,693 --> 00:10:03,058
+plus train_base and your W&B key.
+
+154
+00:10:03,300 --> 00:10:05,972
+Step two packs that file into a tarball,
+
+155
+00:10:05,972 --> 00:10:09,380
+one compressed archive,
+and uploads it to a bucket.
+
+156
+00:10:09,700 --> 00:10:15,165
+Step three runs from what the lecture
+calls the Model Trainer CLI Container,
+
+157
+00:10:15,165 --> 00:10:19,193
+our cockpit on your laptop:
+it asks Vertex AI for a job.
+
+158
+00:10:19,513 --> 00:10:24,420
+Vertex AI then starts a machine,
+CPU only or with one T4.
+
+159
+00:10:24,740 --> 00:10:28,858
+It loads Google's prebuilt TensorFlow image,
+installs your tarball,
+
+160
+00:10:28,858 --> 00:10:32,484
+runs your trainer with your flags,
+and deletes the machine.
+
+161
+00:10:32,734 --> 00:10:35,017
+Two facts drive everything after this.
+
+162
+00:10:35,337 --> 00:10:39,245
+The job cannot see your laptop:
+its data comes from the internet,
+
+163
+00:10:39,245 --> 00:10:42,974
+and anything it should keep
+must be written somewhere durable.
+
+164
+00:10:43,294 --> 00:10:45,704
+And the image is Google's, not yours.
+
+165
+00:10:45,950 --> 00:10:47,230
+A quick prediction.
+
+166
+00:10:47,550 --> 00:10:50,878
+Your laptop has no GPU and no TensorFlow.
+
+167
+00:10:51,198 --> 00:10:54,782
+Which machines in this picture
+will ever import TensorFlow?
+
+168
+00:10:59,617 --> 00:11:04,353
+Two: the Colab runtime,
+and the container inside each Vertex job.
+
+169
+00:11:04,673 --> 00:11:08,449
+Never the cockpit on your laptop;
+the tarball chapter proves it.
+
+170
+00:11:09,483 --> 00:11:13,472
+Clone the model-training repo
+and move into it; pause and run it.
+
+171
+00:11:13,792 --> 00:11:16,907
+Two extras show the course pin
+and the repo's files.
+
+172
+00:11:24,316 --> 00:11:27,687
+In the console, enable the Vertex AI API.
+
+173
+00:11:28,007 --> 00:11:31,484
+Then request GPU quota,
+an allowance per region.
+
+174
+00:11:31,804 --> 00:11:37,798
+Filter for custom model training,
+pick T4 GPUs, include us-central1,
+
+175
+00:11:37,798 --> 00:11:41,852
+where cli.sh runs,
+set a new limit and submit.
+
+176
+00:11:42,172 --> 00:11:43,452
+Pause and do both.
+
+177
+00:11:43,772 --> 00:11:50,108
+Approval may take hours or be refused;
+cli.sh runs on CPU without it.
+
+178
+00:11:50,350 --> 00:11:55,512
+Next, a secrets folder beside the repo,
+never inside it; pause and make it.
+
+179
+00:11:58,866 --> 00:12:00,427
+Then the identity:
+
+180
+00:12:00,427 --> 00:12:04,848
+a service account model-trainer
+with Storage Admin,
+
+181
+00:12:04,848 --> 00:12:08,780
+AI Platform Admin
+and Vertex AI Administrator,
+
+182
+00:12:08,780 --> 00:12:13,565
+and one JSON key saved
+in secrets as model-trainer.json.
+
+183
+00:12:13,885 --> 00:12:15,400
+Pause and create yours.
+
+184
+00:12:19,300 --> 00:12:20,537
+One honest note.
+
+185
+00:12:20,857 --> 00:12:24,763
+This recording machine
+has no Google credentials,
+
+186
+00:12:24,763 --> 00:12:27,791
+no W&B account, no GPU and no browser.
+
+187
+00:12:28,111 --> 00:12:31,900
+The key in that listing
+is an obviously invalid stand-in,
+
+188
+00:12:31,900 --> 00:12:34,425
+moved out before the container starts.
+
+189
+00:12:34,745 --> 00:12:38,470
+So each cloud step shows
+the failure a misplaced key gives,
+
+190
+00:12:38,470 --> 00:12:40,868
+and successes come from named sources.
+
+191
+00:12:41,116 --> 00:12:44,529
+Then create a bucket with your own name;
+pause and create it.
+
+192
+00:12:44,849 --> 00:12:46,355
+Two extras show why:
+
+193
+00:12:46,355 --> 00:12:49,894
+our placeholder returns 404,
+it exists nowhere,
+
+194
+00:12:49,894 --> 00:12:54,641
+while the README's name returns 401,
+it belongs to someone else.
+
+195
+00:12:54,961 --> 00:12:59,015
+A gold tag: the bucket stores
+your code and experiment folders.
+
+196
+00:12:59,250 --> 00:13:00,842
+Last, copy your W&B key
+
+197
+00:13:00,842 --> 00:13:04,925
+and export it in the terminal
+you'll use for the container.
+
+198
+00:13:05,245 --> 00:13:06,418
+Pause and do it.
+
+199
+00:13:06,738 --> 00:13:10,471
+An extra echo prints its length,
+40 for our placeholder.
+
+200
+00:13:10,791 --> 00:13:12,230
+It must not be zero,
+
+201
+00:13:12,230 --> 00:13:15,826
+and the trainer's pinned wandb
+accepts exactly 40.
+
+202
+00:13:16,146 --> 00:13:18,800
+If yours is a different length, keep going,
+
+203
+00:13:18,800 --> 00:13:23,058
+but watch the chapter Who submits,
+who runs, before you submit a job.
+
+204
+00:13:24,133 --> 00:13:25,477
+Something to ponder.
+
+205
+00:13:25,797 --> 00:13:29,573
+You exported the key, closed that terminal,
+and opened a new one.
+
+206
+00:13:29,893 --> 00:13:31,792
+What does the same echo print now?
+
+207
+00:13:38,633 --> 00:13:43,156
+Zero: an exported variable exists only
+in that shell and its children.
+
+208
+00:13:43,476 --> 00:13:46,932
+Part 1 is done: the key is set,
+the bucket has a name.
+
+209
+00:13:47,252 --> 00:13:50,366
+Next, we build the cockpit,
+and today it won't build.
+
