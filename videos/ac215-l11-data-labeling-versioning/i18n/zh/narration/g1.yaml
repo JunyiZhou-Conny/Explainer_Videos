@@ -59,8 +59,8 @@ S02:
 - en: "Underneath, the two stations this lecture builds. Part 1 is the labeling station: Label Studio and a small command line container, with one bucket for photos and labels. Part 2 is the versioning station: one DVC container, a bucket with two folders, your own GitHub repo, and Colab to view versions. The code does not connect the halves yet; exercise E7 does."
   zh:
   - "下面是这一讲要搭的两个站。"
-  - "第一部分是标注站：Label Studio 和一个小小的命令行 container，再加一个放照片和 label 的 bucket。"
-  - "第二部分是版本管理站：一个 DVC container、一个有两个目录的 bucket、你自己的 GitHub repo，还有用来查看版本的 Colab。"
+  - "第一部分：标注站，Label Studio 和一个小小的命令行 container，再加一个放照片和 label 的 bucket。"
+  - "第二部分是版本管理站：一个 DVC container，一个带两个目录的 bucket，你自己的 GitHub repo，还有用来查看版本的 Colab。"
   - "代码还没把这两半连起来；练习 E7 会连。"
 - en: "Now, the lecture's recall quiz. Docker network, cloud credentials, Docker Compose: where will each one show up today?"
   zh:
@@ -187,7 +187,7 @@ S05:
 - en: "Back in the project, open settings, then cloud storage, and add source storage, where the photos come from. Use the README's values: Google Cloud Storage, your bucket, the prefix cheeses unlabeled, and pre-signed URLs on. If a checkbox is missing, carry on. Leave the credentials empty: that means the key the container already has."
   zh:
   - "回到项目里，打开 Settings，再进 Cloud Storage，添加 source storage，也就是照片的来源。"
-  - "用 README 给的值：Google Cloud Storage、你的 bucket、前缀 cheeses unlabeled，打开 pre-signed URL。"
+  - "用 README 给的值：Google Cloud Storage、你的 bucket、cheeses unlabeled 这个前缀，打开 pre-signed URL。"
   - "要是少了某个复选框，继续就行。"
   - "凭据留空：意思是用 container 里已经有的那个密钥。"
   en_display:
@@ -199,7 +199,7 @@ S05:
   zh:
   - "然后点 Check Connection。"
   - "这里失败了：找不到文件。"
-  - "额外列一下目录就知道原因：Label Studio 里面的 /secrets 是空的，这是故意的，等一下就会说到；你的应该能通过。"
+  - "额外列一下目录就知道原因：Label Studio 里面的 /secrets 是故意空着的，等一下就会说到；你的应该能通过。"
   - "存放 label 的 target storage，前缀是 cheeses labeled，也失败了，报错更含糊。"
   en_display:
   - null
@@ -238,7 +238,7 @@ S06:
 - en: "The page comes from localhost 8080, the photo from Google's storage address: a different origin. When the page's own code fetches the photo, as Label Studio does, your browser hands the answer over only if it carries a header that allows this origin. Google adds that header only if the bucket has its own CORS rule."
   zh:
   - "页面来自 localhost:8080，照片来自 Google 的存储地址：这是另一个 origin。"
-  - "页面自己的代码去取照片时，像 Label Studio 这样，你的浏览器把响应交给这段代码，只有一个前提：它带着允许这个 origin 的响应头。"
+  - "页面自己的代码去取照片时，像 Label Studio 这样，你的浏览器把响应交给这段代码，前提是它带着一个响应头，允许这个 origin。"
   - "Google 只在 bucket 有自己的 CORS 规则时，才加上这个响应头。"
   en_display:
   - "The page comes from localhost:8080, the photo from Google's storage address: a different origin."
@@ -255,7 +255,7 @@ S06:
   - "暂停一下，两件都做了。"
 - en: "This container joins the same street and calls Label Studio by name, not localhost. It mounts the repo by its folder name, so keep that name."
   zh:
-  - "这个 container 加入同一条街道，按名字调用 Label Studio，而不是 localhost。"
+  - "这个 container 加入同一条街道并按名字调用 Label Studio 而不是 localhost。"
   - "它按目录名挂载这个 repo，所以别改这个名字。"
 - en: "Inside, run python cli.py dash c, then dash m; pause and run them. Here both stop at the storage client: file not found, because ADC looks for the key. The code builds one rule, any origin, GET only, max age one hour, and patches the bucket."
   zh:
@@ -304,7 +304,7 @@ S07:
 - en: "Label Studio saves it in its database, and the target storage writes a copy to cheeses labeled, pointing back at the photo, which never moved. The slide sorts photos into rows, but on disk a label is a small JSON note, and a labeled dataset is photos plus notes. In the console, that folder shows one JSON file per annotation. Open one to see the note."
   zh:
   - "Label Studio 把它存进自己的数据库，target storage 再往 cheeses labeled 里写一份副本，指回那张从没移动过的照片。"
-  - "课件把照片按行分了类，但在磁盘上，一条 label 就是一张 JSON 小纸条，标注好的数据集就是照片加上小纸条。"
+  - "课件把照片按行分了类，但磁盘上一条 label 就是一张 JSON 小纸条，标注好的数据集就是照片加上小纸条。"
   - "在控制台里，这个目录里每条标注对应一个 JSON 文件。"
   - "打开一个就能看到这张小纸条。"
   en_display:

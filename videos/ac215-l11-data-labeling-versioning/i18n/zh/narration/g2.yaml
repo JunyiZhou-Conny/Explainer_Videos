@@ -155,7 +155,7 @@ S11:
   zh:
   - "没有。"
   - "两个挂载都只存在于 container 里面。"
-  - "你的笔记本看到的，是 entrypoint 通过 repo 的挂载建出来的空目录；额外列一下就能看到，它属于 root。"
+  - "你的笔记本，看到的是 entrypoint 通过 repo 的挂载建出来的空目录；额外列一下就能看到，它属于 root。"
 S12:
 - en: "Inside the container, run dvc init. On Linux it may stop: the repository path is not owned by the current user. You are root inside, the repo is yours on disk, so git refuses, leaving a half-made folder."
   zh:
@@ -204,7 +204,7 @@ S12:
 - en: "So one line pins 600 kilobytes: it fingerprints the list of fingerprints. And the instructor's tag in the class repo holds the same fingerprint, character for character."
   zh:
   - "所以一行字能锁定 600 KB：它给指纹的列表算指纹。"
-  - "而授课老师在课程 repo 里打的 tag，存的是同一个指纹，一个字符都不差。"
+  - "而授课老师在课程 repo 里打的 tag 存的是同一个指纹，一个字符都不差。"
 - en: "Something to ponder. You give Image 2 the new name brie 2, and add again. Which changes: the photo fingerprint, the manifest fingerprint, the size, or the file count?"
   zh:
   - "来想一个问题。"
@@ -243,14 +243,14 @@ S13:
   zh:
   - "现在在 container 外面用 git。"
   - "这里 git status 显示 dvc init 已经暂存好的 DVC 文件，新的指针文件，还有你的两处改动。"
-  - "接着 add 再 commit：6 个小文本文件，没有照片，因为 .gitignore 文件把数据集目录排除了。"
+  - "接着 add 再 commit：6 个小文本文件、没有照片，因为 .gitignore 文件把数据集目录排除了。"
   en_display:
   - null
   - null
   - "Add and commit: 6 small text files and no photos, because the .gitignore file excludes the dataset folder."
 - en: "Tag the commit as dataset v20, a permanent name, and push the branch and the tag together; atomic means both arrive, or neither. Pause and run them. An extra log shows the tag, which pins these six lines."
   zh:
-  - "给这个 commit 打上 dataset v20 这个 tag，一个永久的名字，再把分支和 tag 一起 push；atomic 的意思是两个都到，或者都不到。"
+  - "给这个 commit 打上 dataset v20 这个 tag 作为永久的名字，再把分支和 tag 一起 push；atomic 的意思是两个都到，或者都不到。"
   - "暂停一下，把它们跑一遍。"
   - "额外看一下 log，能看到这个 tag，它锁定了这六行。"
   en_display:
@@ -310,7 +310,7 @@ S14:
   - null
 - en: "The starter branch keeps an older README that adds the remote again at this point. That fails: remote origin already exists. The pinned README says not to."
   zh:
-  - "这个 starter 分支里留着一份旧版 README，在这一步又加一次 remote。"
+  - "这个 starter 分支里的旧版 README 在这一步又加一次 remote。"
   - "这会失败：remote origin 已经存在。"
   - "课程 pin 住的那版 README 说不要这么做。"
 - en: "One extra experiment, to watch, not to run on a real mount: on our stand-in folder, check out the old pointer file with git, run dvc checkout, and the folder holds four photos again. Back to main, and five, from the cache on disk. With a real mount, this folder is your bucket's images folder, so checkout deletes and rewrites photos there."
