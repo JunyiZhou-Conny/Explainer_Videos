@@ -1,0 +1,10 @@
+$ ls -A
+.git
+.gitignore
+Dockerfile
+README.md
+docker-entrypoint.sh
+docker-shell.sh
+pyproject.toml
+uv.lock
+[exit 0]

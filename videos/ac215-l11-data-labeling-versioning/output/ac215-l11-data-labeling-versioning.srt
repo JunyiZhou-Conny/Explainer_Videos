@@ -1,0 +1,2316 @@
+1
+00:00:00,000 --> 00:00:05,248
+Two folders, both called cheese_dataset,
+with the same file names and the same count.
+
+2
+00:00:05,568 --> 00:00:08,277
+On Monday you trained a model
+on one of them.
+
+3
+00:00:08,597 --> 00:00:12,075
+On Friday the model got worse,
+and nobody touched the code.
+
+4
+00:00:12,395 --> 00:00:15,488
+So which photos, with which labels,
+did that model see?
+
+5
+00:00:15,808 --> 00:00:17,813
+And can you get exactly those back?
+
+6
+00:00:18,050 --> 00:00:22,376
+Most of us answer with file names:
+final, final version 2,
+
+7
+00:00:22,376 --> 00:00:26,925
+final final version 3,
+until nobody knows which one is final.
+
+8
+00:00:27,167 --> 00:00:29,770
+Here is a better answer: one short line.
+
+9
+00:00:30,090 --> 00:00:35,807
+In part 2 you will compute this exact string
+on your own laptop from 4 cheese photos.
+
+10
+00:00:36,127 --> 00:00:40,671
+It will match the instructor's tag
+in the class repo, character for character.
+
+11
+00:00:40,991 --> 00:00:44,959
+How can one line pin down
+about 600 kilobytes of photos?
+
+12
+00:00:45,200 --> 00:00:49,488
+And before that, when someone clicks gouda,
+where does that word actually go?
+
+13
+00:00:49,733 --> 00:00:52,228
+To follow along you need Docker Desktop,
+
+14
+00:00:52,228 --> 00:00:57,093
+a Google Cloud project with billing
+and your own bucket, and a GitHub account.
+
+15
+00:00:57,413 --> 00:01:00,507
+This lecture stores a few megabytes
+in the cloud,
+
+16
+00:01:00,507 --> 00:01:02,085
+and gold tags mark where.
+
+17
+00:01:02,405 --> 00:01:05,285
+The tracker in the top
+left follows both READMEs.
+
+18
+00:01:05,605 --> 00:01:08,758
+A yellow your-turn tag
+means pause and run it;
+
+19
+00:01:08,758 --> 00:01:12,666
+a gray extra tag marks a check
+that is not in the README.
+
+20
+00:01:12,986 --> 00:01:15,120
+Every command is in the study guide.
+
+21
+00:01:16,167 --> 00:01:17,276
+First, the map.
+
+22
+00:01:17,596 --> 00:01:21,701
+The lecture draws unlabeled cheese photos,
+then labeled ones,
+
+23
+00:01:21,701 --> 00:01:24,999
+then training,
+and the arrow in between asks how.
+
+24
+00:01:25,319 --> 00:01:29,692
+Labels are the ground truth a model
+learns from and is graded against.
+
+25
+00:01:30,012 --> 00:01:31,362
+The model's mistakes,
+
+26
+00:01:31,362 --> 00:01:34,386
+once labeled,
+go into the next dataset version.
+
+27
+00:01:34,634 --> 00:01:37,450
+Underneath,
+the two stations this lecture builds.
+
+28
+00:01:37,770 --> 00:01:43,338
+Part 1 is the labeling station: Label Studio
+and a small command line container,
+
+29
+00:01:43,338 --> 00:01:45,983
+with one bucket for photos and labels.
+
+30
+00:01:46,303 --> 00:01:50,160
+Part 2 is the versioning station:
+one DVC container,
+
+31
+00:01:50,160 --> 00:01:53,767
+a bucket with two folders,
+your own GitHub repo,
+
+32
+00:01:53,767 --> 00:01:55,797
+and Colab to view versions.
+
+33
+00:01:56,117 --> 00:02:00,212
+The code does not connect the halves yet;
+exercise E7 does.
+
+34
+00:02:00,450 --> 00:02:02,562
+Now, the lecture's recall quiz.
+
+35
+00:02:02,882 --> 00:02:06,095
+Docker network,
+cloud credentials, Docker Compose:
+
+36
+00:02:06,095 --> 00:02:08,280
+where will each one show up today?
+
+37
+00:02:17,117 --> 00:02:21,448
+The network lets the command line
+container call Label Studio by name.
+
+38
+00:02:21,768 --> 00:02:25,821
+The credentials are one key file,
+mounted into every container.
+
+39
+00:02:26,141 --> 00:02:31,261
+And Compose is the README's extra section,
+which starts both containers together.
+
+40
+00:02:31,500 --> 00:02:35,575
+Clone the data-labeling repo
+and move into it; pause and run it.
+
+41
+00:02:35,895 --> 00:02:40,304
+Give Docker more than 4 gigabytes of memory,
+as the README asks;
+
+42
+00:02:40,304 --> 00:02:43,404
+the setting is now under Settings,
+Resources.
+
+43
+00:02:43,650 --> 00:02:48,973
+An extra git log shows this video's commit,
+from October 2025;
+
+44
+00:02:48,973 --> 00:02:54,296
+an extra listing shows the scripts,
+cli.py and three pictures.
+
+45
+00:02:57,584 --> 00:03:01,894
+Next, the secrets folder,
+beside the repo and never inside it;
+
+46
+00:03:01,894 --> 00:03:03,771
+it serves both repos today.
+
+47
+00:03:04,091 --> 00:03:07,738
+Pause and make it;
+an extra tree view matches the README.
+
+48
+00:03:14,200 --> 00:03:15,245
+Now the key.
+
+49
+00:03:15,565 --> 00:03:19,872
+In the console, create a service account
+named data-service-account,
+
+50
+00:03:19,872 --> 00:03:21,645
+with the Storage Admin role.
+
+51
+00:03:21,965 --> 00:03:23,970
+Then create one JSON key,
+
+52
+00:03:23,970 --> 00:03:28,621
+saved in your secrets folder
+as data-service-account.json.
+
+53
+00:03:28,941 --> 00:03:33,379
+This role is broader than needed:
+it covers every bucket in the project.
+
+54
+00:03:33,699 --> 00:03:35,213
+Pause and create yours.
+
+55
+00:03:35,450 --> 00:03:38,096
+An extra listing shows the key in place:
+
+56
+00:03:38,096 --> 00:03:41,338
+a stand-in,
+explained at the Source storage step.
+
+57
+00:03:41,583 --> 00:03:44,921
+Download the unlabeled photos
+from the README link;
+
+58
+00:03:44,921 --> 00:03:47,343
+we use curl, and a browser works too.
+
+59
+00:03:47,663 --> 00:03:49,092
+Then extract the zip.
+
+60
+00:03:49,412 --> 00:03:50,692
+Pause and do both.
+
+61
+00:03:51,012 --> 00:03:55,087
+Notice that every image comes
+with a twin in a hidden Mac folder.
+
+62
+00:03:55,333 --> 00:03:58,469
+A quick prediction: the zip held 42 files.
+
+63
+00:03:58,789 --> 00:04:01,008
+How many tasks should Label Studio make?
+
+64
+00:04:05,850 --> 00:04:06,850
+21.
+
+65
+00:04:07,151 --> 00:04:09,960
+An extra count shows 21 images,
+
+66
+00:04:09,960 --> 00:04:14,127
+one of them a PNG,
+plus 21 Mac metadata files.
+
+67
+00:04:14,447 --> 00:04:18,415
+Upload only the images,
+or you get 21 broken tasks.
+
+68
+00:04:18,735 --> 00:04:23,301
+The lecture calls this curation,
+dropping junk before it becomes a task.
+
+69
+00:04:23,550 --> 00:04:25,375
+One more extra, for part 2:
+
+70
+00:04:25,375 --> 00:04:29,161
+each photo's fingerprint,
+computed from its bytes alone.
+
+71
+00:04:29,481 --> 00:04:33,833
+Same bytes, same string;
+change one byte, and it changes completely.
+
+72
+00:04:34,153 --> 00:04:35,561
+Remember the first one.
+
+73
+00:04:35,950 --> 00:04:38,717
+Then create your bucket
+with a name of your own,
+
+74
+00:04:38,717 --> 00:04:41,369
+since names are global,
+and keep the defaults.
+
+75
+00:04:41,689 --> 00:04:45,567
+Add two folders, cheeses_unlabeled
+and cheeses_labeled,
+
+76
+00:04:45,567 --> 00:04:48,387
+and upload the 21 images into the first.
+
+77
+00:04:48,707 --> 00:04:50,051
+Pause and set it up.
+
+78
+00:04:50,371 --> 00:04:54,382
+A gold tag: storage starts here,
+a fraction of a cent a month.
+
+79
+00:04:55,417 --> 00:04:58,982
+The README runs Label Studio
+from a ready-made image,
+
+80
+00:04:58,982 --> 00:05:00,483
+in your own container,
+
+81
+00:05:00,483 --> 00:05:03,758
+so no outside labeling
+service sees your photos.
+
+82
+00:05:04,078 --> 00:05:07,193
+Its script creates the network
+only if it is missing,
+
+83
+00:05:07,193 --> 00:05:09,838
+and removes any old container
+with that name.
+
+84
+00:05:10,084 --> 00:05:12,537
+Then one docker run, flag by flag.
+
+85
+00:05:12,857 --> 00:05:15,261
+The flag -d runs it in the background,
+
+86
+00:05:15,261 --> 00:05:18,361
+and the network flag puts it
+on a private street.
+
+87
+00:05:18,681 --> 00:05:24,975
+Then -p 8080:8080 publishes the port:
+a door in your laptop wall.
+
+88
+00:05:25,295 --> 00:05:29,620
+Two -v flags mount a database folder
+and your secrets;
+
+89
+00:05:29,620 --> 00:05:32,825
+the -e lines set the login and key path.
+
+90
+00:05:34,267 --> 00:05:38,662
+Pause and run sh docker-shell.sh;
+it pulls the image.
+
+91
+00:05:38,982 --> 00:05:42,306
+Then the README's check,
+docker container ls:
+
+92
+00:05:42,306 --> 00:05:44,080
+up, port 8080 published.
+
+93
+00:05:44,317 --> 00:05:48,946
+But look again 25 seconds later,
+with an extra -a: exited.
+
+94
+00:05:49,266 --> 00:05:51,656
+Something to ponder:
+where do you look first?
+
+95
+00:05:58,500 --> 00:05:59,500
+The logs.
+
+96
+00:05:59,780 --> 00:06:04,409
+Label Studio explains itself:
+its data folder is not writable.
+
+97
+00:06:04,729 --> 00:06:06,307
+It runs as user 1001,
+
+98
+00:06:06,307 --> 00:06:09,764
+but Docker created
+the missing folder as root.
+
+99
+00:06:13,500 --> 00:06:18,769
+The fix is an extra, for Linux;
+Docker Desktop for Mac normally avoids this.
+
+100
+00:06:19,089 --> 00:06:22,366
+Give the folder
+to user 1001 with sudo chown,
+
+101
+00:06:22,366 --> 00:06:25,425
+run the script again, and now it stays up.
+
+102
+00:06:25,745 --> 00:06:27,879
+On Linux, pause and do the same.
+
+103
+00:06:29,084 --> 00:06:34,405
+Extra checks:
+the logs show a box offering version 1.23.2,
+
+104
+00:06:34,405 --> 00:06:40,369
+newer than this image,
+which ran 1.23.0 at the time of recording.
+
+105
+00:06:40,689 --> 00:06:43,249
+The tag is latest, so yours may differ.
+
+106
+00:06:46,150 --> 00:06:49,960
+Open localhost:8080 and log
+in with the username
+
+107
+00:06:49,960 --> 00:06:53,851
+and password
+from lines 19 and 20 of your script.
+
+108
+00:06:54,171 --> 00:06:57,820
+Create a project
+with the Image Classification template,
+
+109
+00:06:57,820 --> 00:07:01,275
+with the choices brie,
+gouda, gruyere and parmigiano.
+
+110
+00:07:01,595 --> 00:07:02,769
+Pause and do it.
+
+111
+00:07:03,089 --> 00:07:06,998
+Underneath, our stand-in calls
+replay the page's requests:
+
+112
+00:07:06,998 --> 00:07:10,705
+we are logged in,
+and project 1 holds the four cheeses.
+
+113
+00:07:13,250 --> 00:07:16,626
+Back in the project,
+open Settings, then Cloud Storage,
+
+114
+00:07:16,626 --> 00:07:19,757
+and add source storage,
+where the photos come from.
+
+115
+00:07:20,077 --> 00:07:24,190
+Use the README's values:
+Google Cloud Storage, your bucket,
+
+116
+00:07:24,190 --> 00:07:27,885
+the prefix cheeses_unlabeled,
+and pre-signed URLs on.
+
+117
+00:07:28,205 --> 00:07:30,573
+If a checkbox is missing, carry on.
+
+118
+00:07:30,893 --> 00:07:32,660
+Leave the credentials empty:
+
+119
+00:07:32,660 --> 00:07:35,501
+that means the key
+the container already has.
+
+120
+00:07:35,750 --> 00:07:37,414
+Then click Check Connection.
+
+121
+00:07:37,734 --> 00:07:39,825
+Here it fails: file not found.
+
+122
+00:07:40,145 --> 00:07:45,129
+An extra listing shows why:
+/secrets inside Label Studio is empty,
+
+123
+00:07:45,129 --> 00:07:49,659
+on purpose, as you will hear in a moment;
+yours should pass.
+
+124
+00:07:49,979 --> 00:07:52,230
+The target storage, where labels go,
+
+125
+00:07:52,230 --> 00:07:56,358
+with the prefix cheeses_labeled,
+fails too, with a vaguer message.
+
+126
+00:07:56,600 --> 00:07:58,904
+One honest note about this recording.
+
+127
+00:07:59,224 --> 00:08:02,688
+This machine has no Google account,
+no bucket,
+
+128
+00:08:02,688 --> 00:08:05,624
+no browser, and no SSH route to GitHub.
+
+129
+00:08:05,944 --> 00:08:10,277
+The key in the folder listings
+is an obviously invalid stand-in,
+
+130
+00:08:10,277 --> 00:08:12,579
+moved out before every cloud step.
+
+131
+00:08:12,899 --> 00:08:17,336
+So each cloud step here fails
+exactly the way a misplaced key fails.
+
+132
+00:08:17,656 --> 00:08:20,301
+That is the most common
+mistake in this lecture.
+
+133
+00:08:20,621 --> 00:08:24,726
+Every success you should expect
+is tagged recorded, with its source,
+
+134
+00:08:24,726 --> 00:08:28,408
+and clicks and uploads are replayed locally,
+tagged stand-in.
+
+135
+00:08:28,650 --> 00:08:32,337
+With a real key,
+add both storages and click Sync:
+
+136
+00:08:32,337 --> 00:08:34,623
+one task per photo, 21 for you.
+
+137
+00:08:34,943 --> 00:08:38,869
+Our stand-in imports 3 tasks
+with the same kind of addresses.
+
+138
+00:08:39,189 --> 00:08:40,938
+Pause, add both, and sync.
+
+139
+00:08:41,183 --> 00:08:42,826
+So who touches the photos?
+
+140
+00:08:43,146 --> 00:08:46,457
+Label Studio holds the key
+and lists the bucket;
+
+141
+00:08:46,457 --> 00:08:48,458
+your browser asks for task 1.
+
+142
+00:08:48,778 --> 00:08:52,119
+Something to ponder:
+your browser never sees the key,
+
+143
+00:08:52,119 --> 00:08:54,325
+so how can it show a private photo?
+
+144
+00:09:03,167 --> 00:09:04,468
+With a signed ticket.
+
+145
+00:09:04,788 --> 00:09:07,424
+Label Studio does not relay the photos;
+
+146
+00:09:07,424 --> 00:09:12,831
+it signs a web address with the key:
+permission for one photo, for a short time.
+
+147
+00:09:13,151 --> 00:09:15,994
+Your browser carries
+that ticket straight to Google,
+
+148
+00:09:15,994 --> 00:09:17,908
+and the key stays in the container.
+
+149
+00:09:18,228 --> 00:09:21,983
+Then the thumbnails break,
+and the README warns you: it is CORS.
+
+150
+00:09:25,017 --> 00:09:27,429
+The page comes from localhost:8080,
+
+151
+00:09:27,429 --> 00:09:31,566
+the photo from Google's storage address:
+a different origin.
+
+152
+00:09:31,886 --> 00:09:36,867
+When the page's own code fetches the photo,
+as Label Studio does, your browser
+
+153
+00:09:36,867 --> 00:09:41,593
+hands the answer over only if it carries
+a header that allows this origin.
+
+154
+00:09:41,913 --> 00:09:46,052
+Google adds that header
+only if the bucket has its own CORS rule.
+
+155
+00:09:46,300 --> 00:09:50,011
+A small slip:
+the README blames a reverse DNS lookup,
+
+156
+00:09:50,011 --> 00:09:52,743
+but the cause is that same-origin rule.
+
+157
+00:09:52,984 --> 00:09:55,821
+The README sets the rule
+from a second container.
+
+158
+00:09:56,141 --> 00:10:00,756
+Put your bucket name
+on line 23 of docker-shell-CLI.sh,
+
+159
+00:10:00,756 --> 00:10:02,435
+then run it with sh.
+
+160
+00:10:02,755 --> 00:10:05,870
+The ID in the prompt changes every run,
+
+161
+00:10:05,870 --> 00:10:10,584
+and Apple Silicon says aarch64
+where this machine says x86.
+
+162
+00:10:10,904 --> 00:10:12,184
+Pause and do both.
+
+163
+00:10:14,550 --> 00:10:18,617
+This container joins
+the same street and calls Label Studio
+
+164
+00:10:18,617 --> 00:10:20,203
+by name, not localhost.
+
+165
+00:10:20,523 --> 00:10:23,937
+It mounts the repo by its folder name,
+so keep that name.
+
+166
+00:10:24,184 --> 00:10:29,859
+Inside, run python cli.py -c, then -m;
+pause and run them.
+
+167
+00:10:30,179 --> 00:10:32,737
+Here both stop at the storage client:
+
+168
+00:10:32,737 --> 00:10:35,917
+file not found,
+because ADC looks for the key.
+
+169
+00:10:36,237 --> 00:10:38,838
+The code builds one rule, any origin,
+
+170
+00:10:38,838 --> 00:10:42,424
+GET only, max age one hour,
+and patches the bucket.
+
+171
+00:10:42,667 --> 00:10:47,488
+With a real key, -c prints the rule,
+and -m prints the bucket settings.
+
+172
+00:10:47,808 --> 00:10:50,582
+Now the header arrives
+and the thumbnails load.
+
+173
+00:10:50,902 --> 00:10:56,278
+The max age only caches preflight checks,
+which a plain image request never makes.
+
+174
+00:10:56,517 --> 00:10:57,861
+Something to ponder.
+
+175
+00:10:58,181 --> 00:11:02,149
+You ran -c and refreshed,
+and the thumbnails are still broken.
+
+176
+00:11:02,469 --> 00:11:03,877
+Name two suspects.
+
+177
+00:11:12,717 --> 00:11:14,680
+One: the rule missed your bucket.
+
+178
+00:11:15,000 --> 00:11:19,300
+-c failed,
+or line 23 names another bucket of yours;
+
+179
+00:11:19,300 --> 00:11:21,698
+-m shows which bucket got it.
+
+180
+00:11:22,018 --> 00:11:25,560
+Two: your browser reused cached answers;
+hard refresh.
+
+181
+00:11:25,880 --> 00:11:30,850
+And curl never met a bouncer:
+CORS is a browser rule, not access control.
+
+182
+00:11:31,900 --> 00:11:37,084
+Back in Label Studio, click a task,
+pick a cheese, and submit; repeat for a few.
+
+183
+00:11:37,404 --> 00:11:38,897
+Pause and label some.
+
+184
+00:11:39,217 --> 00:11:42,851
+Here is what one click becomes,
+as a stand-in call:
+
+185
+00:11:42,851 --> 00:11:46,769
+a small JSON document
+whose result says choices, gouda.
+
+186
+00:11:47,017 --> 00:11:49,513
+Label Studio saves it in its database,
+
+187
+00:11:49,513 --> 00:11:53,191
+and the target storage writes a copy
+to cheeses_labeled,
+
+188
+00:11:53,191 --> 00:11:56,212
+pointing back at the photo,
+which never moved.
+
+189
+00:11:56,532 --> 00:12:02,200
+The slide sorts photos into rows,
+but on disk a label is a small JSON note,
+
+190
+00:12:02,200 --> 00:12:05,449
+and a labeled dataset is photos plus notes.
+
+191
+00:12:05,769 --> 00:12:10,121
+In the console, that folder
+shows one JSON file per annotation.
+
+192
+00:12:10,441 --> 00:12:12,126
+Open one to see the note.
+
+193
+00:12:14,567 --> 00:12:17,895
+The command line container
+calls Label Studio by name.
+
+194
+00:12:18,215 --> 00:12:22,289
+Something to ponder:
+what if its address were localhost:8080?
+
+195
+00:12:29,133 --> 00:12:31,652
+It cannot connect: inside a container,
+
+196
+00:12:31,652 --> 00:12:35,298
+localhost is that container,
+and nothing listens there.
+
+197
+00:12:35,618 --> 00:12:40,120
+The name works, because the Docker network
+keeps a phone book of container names.
+
+198
+00:12:40,367 --> 00:12:42,471
+To list labels from code,
+
+199
+00:12:42,471 --> 00:12:46,426
+copy your access token
+from Account & Settings,
+
+200
+00:12:46,426 --> 00:12:51,738
+then run the README command:
+python cli.py -p -k and your token.
+
+201
+00:12:52,058 --> 00:12:53,252
+Pause and try it.
+
+202
+00:12:53,572 --> 00:12:57,620
+On Label Studio 1.23.0 it fails with a 401;
+
+203
+00:12:57,620 --> 00:13:04,964
+ours says legacy token authentication
+has been disabled for this organization.
+
+204
+00:13:05,200 --> 00:13:09,232
+An extra check shows why:
+this version has two kinds of token.
+
+205
+00:13:09,552 --> 00:13:13,313
+The page shows a newer
+personal token by default,
+
+206
+00:13:13,313 --> 00:13:18,149
+the legacy kind is switched off,
+and cli.py speaks only legacy.
+
+207
+00:13:19,883 --> 00:13:23,706
+The fix:
+in Organization, API Tokens Settings,
+
+208
+00:13:23,706 --> 00:13:25,451
+enable legacy tokens.
+
+209
+00:13:25,771 --> 00:13:29,056
+Then copy the legacy token,
+not the personal one.
+
+210
+00:13:29,376 --> 00:13:30,657
+Pause and do both.
+
+211
+00:13:32,900 --> 00:13:36,783
+Run -p again, and it lists project 1,
+Cheese labels.
+
+212
+00:13:37,103 --> 00:13:41,954
+Then -t with your token:
+3 tasks in our stand-in, 21 for you;
+
+213
+00:13:41,954 --> 00:13:44,420
+ours has one labeled, as gouda.
+
+214
+00:13:44,740 --> 00:13:46,041
+Pause and run both.
+
+215
+00:13:46,361 --> 00:13:49,967
+The README's sample says amanita;
+the format is the same.
+
+216
+00:13:57,800 --> 00:14:02,387
+The README's extra section runs
+both containers from one compose file.
+
+217
+00:14:02,707 --> 00:14:05,785
+Leave the command line container with exit,
+
+218
+00:14:05,785 --> 00:14:10,152
+stop Label Studio, and check with docker ps;
+pause and do it.
+
+219
+00:14:10,472 --> 00:14:15,720
+First put your bucket name
+on line 17 of docker-compose.yml as well.
+
+220
+00:14:16,040 --> 00:14:18,906
+Then run sh docker-shell-compose.sh;
+
+221
+00:14:18,906 --> 00:14:24,637
+if docker-compose is not found,
+use the docker compose form on the card.
+
+222
+00:14:24,957 --> 00:14:27,098
+Here it stops on a name conflict:
+
+223
+00:14:27,098 --> 00:14:31,251
+docker stop leaves the container behind,
+still holding its name.
+
+224
+00:14:31,500 --> 00:14:33,872
+An extra docker rm frees the name;
+
+225
+00:14:33,872 --> 00:14:37,431
+pause, remove it,
+and run the compose script again.
+
+226
+00:14:37,751 --> 00:14:42,807
+This time Compose creates Label Studio
+plus a one-off command line container.
+
+227
+00:14:44,317 --> 00:14:47,963
+An extra echo prints
+the README's bucket name:
+
+228
+00:14:47,963 --> 00:14:50,131
+compose keeps its own copy,
+
+229
+00:14:50,131 --> 00:14:54,066
+on line 17 of docker-compose.yml,
+so edit it too.
+
+230
+00:14:54,300 --> 00:14:56,220
+And the first call is refused:
+
+231
+00:14:56,220 --> 00:14:59,393
+the depends_on setting
+starts Label Studio first,
+
+232
+00:14:59,393 --> 00:15:01,660
+but does not wait until it listens.
+
+233
+00:15:01,980 --> 00:15:07,228
+After an extra wait loop, project 1 is back,
+because the same folder is mounted.
+
+234
+00:15:10,200 --> 00:15:14,232
+Label Studio keeps running
+after you exit the command line container.
+
+235
+00:15:14,552 --> 00:15:16,210
+Then the README's cleanup:
+
+236
+00:15:16,210 --> 00:15:19,971
+list, stop, prune, and list the images;
+pause and run them.
+
+237
+00:15:20,291 --> 00:15:25,837
+The prune also removed the network,
+so next time run docker-shell.sh first.
+
+238
+00:15:29,250 --> 00:15:30,575
+Something to ponder:
+
+239
+00:15:30,575 --> 00:15:34,285
+after docker system prune,
+is your labeled project gone?
+
+240
+00:15:41,133 --> 00:15:45,040
+No. The database file
+is still in the mounted folder,
+
+241
+00:15:45,040 --> 00:15:47,512
+and prune never touches folders you mount.
+
+242
+00:15:47,832 --> 00:15:51,008
+But the photos they point
+at can change under them:
+
+243
+00:15:51,008 --> 00:15:52,440
+same name, new picture.
+
+244
+00:15:52,760 --> 00:15:55,960
+So how do you freeze exactly
+which photos a model saw?
+
+245
+00:15:56,280 --> 00:15:57,560
+That is part 2.
+
+246
+00:15:58,600 --> 00:16:01,267
+Part 2: freezing which photos a model saw.
+
+247
+00:16:01,587 --> 00:16:05,192
+Git alone would copy every photo
+version into every clone.
+
+248
+00:16:05,512 --> 00:16:09,568
+Of the lecture's four approaches,
+we build the file-based one:
+
+249
+00:16:09,568 --> 00:16:14,344
+git versions a small file of fingerprints,
+and a bucket holds the photos.
+
+250
+00:16:14,664 --> 00:16:16,221
+The tool is DVC.
+
+251
+00:16:18,467 --> 00:16:20,172
+First, move up one folder,
+
+252
+00:16:20,172 --> 00:16:23,779
+so the new clone sits beside
+data-labeling and secrets.
+
+253
+00:16:24,099 --> 00:16:28,174
+The data-versioning README starts
+with the same three cleanup commands.
+
+254
+00:16:28,494 --> 00:16:29,752
+Pause and run them.
+
+255
+00:16:34,100 --> 00:16:36,681
+Then clone the starter
+branch the README names.
+
+256
+00:16:37,001 --> 00:16:42,911
+Its SSH command needs your key on GitHub,
+and this machine has no SSH route.
+
+257
+00:16:43,231 --> 00:16:47,689
+So the same branch comes over HTTPS,
+which the README allows.
+
+258
+00:16:48,009 --> 00:16:49,737
+Pause, clone it, and move in.
+
+259
+00:16:53,350 --> 00:16:56,815
+One note: on the day of the lecture
+the README changed,
+
+260
+00:16:56,815 --> 00:16:58,705
+and it now says to clone main.
+
+261
+00:16:59,025 --> 00:17:03,155
+That branch brings
+the instructor's finished DVC files along,
+
+262
+00:17:03,155 --> 00:17:05,254
+as an extra second clone shows.
+
+263
+00:17:05,574 --> 00:17:08,555
+This video follows
+the course's pinned README:
+
+264
+00:17:08,555 --> 00:17:10,694
+the starter branch, plus one fix.
+
+265
+00:17:10,933 --> 00:17:12,656
+Remove the old git history,
+
+266
+00:17:12,656 --> 00:17:15,720
+so the code is no longer tied
+to the class repo,
+
+267
+00:17:15,720 --> 00:17:17,610
+and start fresh with git init.
+
+268
+00:17:17,930 --> 00:17:19,232
+Pause and run both.
+
+269
+00:17:19,552 --> 00:17:23,925
+Git's hint mentions master,
+which is why the branch gets renamed next.
+
+270
+00:17:25,933 --> 00:17:30,447
+On GitHub, create an empty private repo
+called data-versioning,
+
+271
+00:17:30,447 --> 00:17:33,528
+with no README, license or .gitignore file.
+
+272
+00:17:33,848 --> 00:17:36,646
+Then the five commands: rename the branch,
+
+273
+00:17:36,646 --> 00:17:39,778
+add your repo as origin,
+add, commit, and push.
+
+274
+00:17:40,098 --> 00:17:41,357
+Pause and run them.
+
+275
+00:17:41,677 --> 00:17:44,664
+Your repo now shows the 7 files on main.
+
+276
+00:17:47,400 --> 00:17:50,152
+A bucket stores named objects, nothing else.
+
+277
+00:17:50,472 --> 00:17:54,248
+Add tools, like versioning,
+and the lecture calls it a data lake.
+
+278
+00:17:54,568 --> 00:17:58,387
+Its folders are only shared name prefixes,
+which sets a trap.
+
+279
+00:17:59,267 --> 00:18:03,390
+The secrets folder
+from part 1 already sits beside this repo,
+
+280
+00:18:03,390 --> 00:18:05,283
+as an extra tree view shows.
+
+281
+00:18:05,603 --> 00:18:09,656
+The README wants the same service account
+and key, so reuse both.
+
+282
+00:18:12,883 --> 00:18:16,413
+In your bucket,
+create two folders in the console:
+
+283
+00:18:16,413 --> 00:18:17,896
+dvc_store and images.
+
+284
+00:18:18,216 --> 00:18:22,516
+A small gap: the course's README
+never says to put the first photos
+
+285
+00:18:22,516 --> 00:18:25,982
+into the images folder,
+yet later it says to add more.
+
+286
+00:18:26,302 --> 00:18:29,374
+So upload Image_1
+through Image_4 from the zip.
+
+287
+00:18:29,694 --> 00:18:30,867
+Pause and do it.
+
+288
+00:18:33,500 --> 00:18:34,916
+In docker-shell.sh,
+
+289
+00:18:34,916 --> 00:18:38,492
+replace the bucket, project and zone
+with yours.
+
+290
+00:18:38,812 --> 00:18:40,924
+Only the bucket name is ever used.
+
+291
+00:18:41,244 --> 00:18:42,503
+Pause and edit it.
+
+292
+00:18:42,750 --> 00:18:46,270
+The entrypoint runs
+the four stages the lecture draws.
+
+293
+00:18:46,590 --> 00:18:48,169
+Authenticate with the key.
+
+294
+00:18:48,489 --> 00:18:51,795
+Mount the whole bucket as a folder,
+with gcsfuse.
+
+295
+00:18:52,115 --> 00:18:56,467
+Bind its images folder
+to the path the app expects, cheese_dataset.
+
+296
+00:18:56,787 --> 00:18:57,990
+Then use the data:
+
+297
+00:18:57,990 --> 00:19:00,998
+DVC works on that folder
+as if it were local,
+
+298
+00:19:00,998 --> 00:19:03,827
+while each file is fetched from the bucket.
+
+299
+00:19:04,217 --> 00:19:09,209
+The lecture takes the mount line apart:
+tool, key file, bucket, mount point.
+
+300
+00:19:09,529 --> 00:19:12,486
+One flag is not passed, --implicit-dirs,
+
+301
+00:19:12,486 --> 00:19:16,007
+so gcsfuse only shows
+folders the console made,
+
+302
+00:19:16,007 --> 00:19:18,105
+which leave a marker object.
+
+303
+00:19:18,425 --> 00:19:19,555
+That was the trap.
+
+304
+00:19:19,800 --> 00:19:21,534
+Note the two bind mounts:
+
+305
+00:19:21,534 --> 00:19:24,654
+-v joins your laptop's repo
+to the container,
+
+306
+00:19:24,654 --> 00:19:28,141
+and the inner one joins
+the bucket's images folder.
+
+307
+00:19:28,383 --> 00:19:31,455
+Mounting needs the fuse
+device and mount rights,
+
+308
+00:19:31,455 --> 00:19:34,847
+hence the --privileged flag
+and the extra capability.
+
+309
+00:19:35,167 --> 00:19:38,708
+The script also mounts
+your repo, secrets and git config.
+
+310
+00:19:39,028 --> 00:19:43,487
+Set up git before the first run,
+or Docker creates a folder in its place.
+
+311
+00:19:44,533 --> 00:19:47,968
+You are already
+in the data-versioning folder,
+
+312
+00:19:47,968 --> 00:19:49,909
+so run sh docker-shell.sh.
+
+313
+00:19:50,229 --> 00:19:51,381
+Pause and run it.
+
+314
+00:19:51,701 --> 00:19:54,439
+On the starter branch, the build dies:
+
+315
+00:19:54,439 --> 00:19:58,400
+package google-cloud-sdk
+has no installation candidate.
+
+316
+00:19:58,720 --> 00:20:02,730
+The message even names the replacement,
+google-cloud-cli.
+
+317
+00:20:02,966 --> 00:20:07,056
+A small slip, and not your fault:
+Google renamed the package,
+
+318
+00:20:07,056 --> 00:20:11,414
+the main branch fixed line 36,
+and the starter never got the fix.
+
+319
+00:20:11,734 --> 00:20:14,486
+Make the same one-word change, as an extra.
+
+320
+00:20:14,806 --> 00:20:16,065
+Pause and edit it.
+
+321
+00:20:17,283 --> 00:20:18,755
+Pause and run it again.
+
+322
+00:20:19,075 --> 00:20:20,632
+The first build is slow.
+
+323
+00:20:20,952 --> 00:20:22,510
+Then the entrypoint runs,
+
+324
+00:20:22,510 --> 00:20:25,624
+and every stage fails
+the way a missing key fails.
+
+325
+00:20:25,944 --> 00:20:28,813
+The gcloud tool cannot find the key file,
+
+326
+00:20:28,813 --> 00:20:32,451
+and neither can gcsfuse,
+so the bucket never mounts.
+
+327
+00:20:32,771 --> 00:20:37,294
+Yet the next line says bucket mounted,
+because the script prints it no matter what.
+
+328
+00:20:37,614 --> 00:20:41,368
+Then the bind mount fails:
+special device does not exist.
+
+329
+00:20:41,616 --> 00:20:43,526
+And still you get a root prompt,
+
+330
+00:20:43,526 --> 00:20:46,331
+because the entrypoint
+does not stop at errors.
+
+331
+00:20:46,651 --> 00:20:51,263
+Extra checks:
+the cheese_dataset folder is empty,
+
+332
+00:20:51,263 --> 00:20:56,251
+and DVC 3.63.0 is installed,
+pinned by the lock file.
+
+333
+00:20:56,571 --> 00:20:59,984
+So the rule for today:
+list the folder before you add it.
+
+334
+00:21:00,233 --> 00:21:03,902
+With a real key,
+the folder inside lists your four photos.
+
+335
+00:21:04,222 --> 00:21:08,190
+Something to ponder:
+on your laptop, the same folder is empty.
+
+336
+00:21:08,510 --> 00:21:09,918
+Is the mount broken?
+
+337
+00:21:18,766 --> 00:21:22,713
+No.
+Both mounts exist only inside the container.
+
+338
+00:21:23,033 --> 00:21:28,128
+Your laptop sees the empty folder
+the entrypoint made through the repo mount;
+
+339
+00:21:28,128 --> 00:21:30,841
+an extra listing shows it, owned by root.
+
+340
+00:21:34,400 --> 00:21:37,323
+Inside the container, run dvc init.
+
+341
+00:21:37,643 --> 00:21:39,084
+On Linux it may stop:
+
+342
+00:21:39,084 --> 00:21:42,720
+the repository path
+is not owned by the current user.
+
+343
+00:21:43,040 --> 00:21:46,215
+You are root inside,
+the repo is yours on disk,
+
+344
+00:21:46,215 --> 00:21:49,120
+so git refuses, leaving a half-made folder.
+
+345
+00:21:49,367 --> 00:21:54,316
+The fix is an extra, for Linux:
+on your laptop, remove the half-made files.
+
+346
+00:21:54,636 --> 00:21:58,348
+Then mark /app as a safe
+directory in your git config.
+
+347
+00:21:58,668 --> 00:22:01,890
+Start the container again,
+and dvc init works.
+
+348
+00:22:02,210 --> 00:22:03,361
+Pause and run it.
+
+349
+00:22:04,583 --> 00:22:08,510
+If you cloned main, it stops here:
+DVC is already set up,
+
+350
+00:22:08,510 --> 00:22:12,988
+the remote is refused,
+and the config points at the class bucket.
+
+351
+00:22:13,308 --> 00:22:14,695
+Start from the starter.
+
+352
+00:22:14,933 --> 00:22:20,586
+Then point DVC at the dvc_store folder
+in your bucket, as its default remote.
+
+353
+00:22:20,906 --> 00:22:22,059
+Pause and add it.
+
+354
+00:22:24,900 --> 00:22:27,716
+Here is what dvc add will do with photos.
+
+355
+00:22:28,036 --> 00:22:30,681
+It fingerprints each photo with MD5.
+
+356
+00:22:31,001 --> 00:22:34,189
+It files a copy in its cache
+under that fingerprint,
+
+357
+00:22:34,189 --> 00:22:36,825
+on a shelf named by the first 2 characters.
+
+358
+00:22:37,145 --> 00:22:41,144
+Then it fingerprints a manifest,
+the list of fingerprints and names,
+
+359
+00:22:41,144 --> 00:22:44,084
+and writes that fingerprint
+into the pointer file,
+
+360
+00:22:44,084 --> 00:22:46,319
+which stands in for the folder in git.
+
+361
+00:22:48,233 --> 00:22:52,238
+A second trap: the mount failed,
+so the folder is empty,
+
+362
+00:22:52,238 --> 00:22:55,956
+and dvc add happily makes a version
+with zero files.
+
+363
+00:22:56,717 --> 00:22:58,163
+With no bucket mounted,
+
+364
+00:22:58,163 --> 00:23:01,622
+our stand-in copies four photos
+into the laptop folder,
+
+365
+00:23:01,622 --> 00:23:04,648
+which the container sees
+through the repo mount,
+
+366
+00:23:04,648 --> 00:23:05,720
+and we add again.
+
+367
+00:23:06,040 --> 00:23:10,498
+Now the pointer file says 4 files
+and one fingerprint for the folder.
+
+368
+00:23:10,818 --> 00:23:12,205
+Pause and add yours.
+
+369
+00:23:16,250 --> 00:23:19,962
+The cache shows those shelves,
+plus the empty version from before.
+
+370
+00:23:24,667 --> 00:23:29,851
+So one line pins 600 kilobytes:
+it fingerprints the list of fingerprints.
+
+371
+00:23:30,171 --> 00:23:34,492
+And the instructor's tag in the class
+repo holds the same fingerprint,
+
+372
+00:23:34,492 --> 00:23:35,973
+character for character.
+
+373
+00:23:37,317 --> 00:23:38,661
+Something to ponder.
+
+374
+00:23:38,981 --> 00:23:42,181
+You give Image_2 the new name brie_2,
+and add again.
+
+375
+00:23:42,501 --> 00:23:47,173
+Which changes: the photo fingerprint,
+the manifest fingerprint, the size,
+
+376
+00:23:47,173 --> 00:23:48,325
+or the file count?
+
+377
+00:23:57,167 --> 00:24:01,028
+Only the manifest fingerprint,
+because one name in the list changed.
+
+378
+00:24:01,348 --> 00:24:05,572
+The opening's two folders were the reverse:
+same names, new bytes.
+
+379
+00:24:05,892 --> 00:24:09,210
+And DVC stores whole files, not differences;
+
+380
+00:24:09,210 --> 00:24:13,508
+one changed pixel means a new fingerprint
+and a new copy.
+
+381
+00:24:15,150 --> 00:24:16,814
+Next, dvc push.
+
+382
+00:24:17,134 --> 00:24:18,286
+Pause and run it.
+
+383
+00:24:18,606 --> 00:24:20,633
+Here it fails without credentials.
+
+384
+00:24:20,953 --> 00:24:22,964
+To show what a push uploads,
+
+385
+00:24:22,964 --> 00:24:26,269
+an extra push goes
+to a local stand-in remote:
+
+386
+00:24:26,269 --> 00:24:29,742
+5 files pushed,
+the four photos and the manifest.
+
+387
+00:24:29,983 --> 00:24:33,311
+In your bucket,
+the dvc_store now mirrors the cache.
+
+388
+00:24:33,631 --> 00:24:38,559
+A gold tag: a second copy of the photos,
+still a fraction of a cent a month.
+
+389
+00:24:38,879 --> 00:24:43,848
+So the bytes now sit in three places:
+the images folder you upload to,
+
+390
+00:24:43,848 --> 00:24:47,114
+and the cache on your disk,
+filled by dvc add.
+
+391
+00:24:47,434 --> 00:24:49,250
+The third is the dvc_store,
+
+392
+00:24:49,250 --> 00:24:52,276
+where every file is named
+by its fingerprint.
+
+393
+00:24:52,596 --> 00:24:54,558
+The images folder can change;
+
+394
+00:24:54,558 --> 00:24:58,954
+the dvc_store never overwrites,
+because new bytes get a new name.
+
+395
+00:24:59,200 --> 00:25:01,333
+Now git, outside the container.
+
+396
+00:25:01,653 --> 00:25:06,588
+Here, git status shows the DVC files
+that dvc init already staged,
+
+397
+00:25:06,588 --> 00:25:09,653
+the new pointer file, and your two edits.
+
+398
+00:25:09,973 --> 00:25:13,577
+Add and commit:
+6 small text files and no photos,
+
+399
+00:25:13,577 --> 00:25:17,696
+because the .gitignore file
+excludes the dataset folder.
+
+400
+00:25:17,933 --> 00:25:21,481
+Tag the commit as dataset_v20,
+a permanent name,
+
+401
+00:25:21,481 --> 00:25:27,320
+and push the branch and the tag together;
+atomic means both arrive, or neither.
+
+402
+00:25:27,640 --> 00:25:28,898
+Pause and run them.
+
+403
+00:25:29,218 --> 00:25:32,909
+An extra log shows the tag,
+which pins these six lines.
+
+404
+00:25:35,033 --> 00:25:37,905
+An extra diff against the instructor's tag:
+
+405
+00:25:37,905 --> 00:25:41,646
+identical, same bytes, same fingerprint,
+on any machine.
+
+406
+00:25:41,966 --> 00:25:43,340
+That is the whole trick:
+
+407
+00:25:43,340 --> 00:25:46,318
+git keeps the fingerprint
+of a list of fingerprints.
+
+408
+00:25:46,638 --> 00:25:49,732
+A rope leads from the tag
+to the bytes in your bucket.
+
+409
+00:25:49,967 --> 00:25:52,908
+The README warns that this tag may be taken;
+
+410
+00:25:52,908 --> 00:25:56,986
+that applies only to a fork,
+and your fresh repo has no tags.
+
+411
+00:25:57,306 --> 00:26:01,801
+Its table sums it up:
+git holds code and small DVC files,
+
+412
+00:26:01,801 --> 00:26:06,138
+DVC tracks the dataset,
+the bucket stores the versions.
+
+413
+00:26:06,458 --> 00:26:09,603
+The README now opens Colab for version 20;
+
+414
+00:26:09,603 --> 00:26:13,796
+we'll do that once,
+for both versions, after version 21.
+
+415
+00:26:16,033 --> 00:26:17,505
+Now a second version.
+
+416
+00:26:17,825 --> 00:26:21,057
+Upload a few more photos
+to the images folder;
+
+417
+00:26:21,057 --> 00:26:23,585
+our stand-in copies in one, Image_5.
+
+418
+00:26:23,905 --> 00:26:26,671
+With a real bucket,
+the mount can take a little
+
+419
+00:26:26,671 --> 00:26:29,025
+while to notice, so list before you add.
+
+420
+00:26:29,345 --> 00:26:31,222
+Pause and upload one or two.
+
+421
+00:26:31,466 --> 00:26:32,810
+Something to ponder.
+
+422
+00:26:33,130 --> 00:26:37,141
+Four photos are already in the dvc_store,
+and you add one.
+
+423
+00:26:37,461 --> 00:26:40,213
+How many objects will dvc push upload?
+
+424
+00:26:49,050 --> 00:26:51,461
+Two: the new photo and a new manifest.
+
+425
+00:26:51,781 --> 00:26:56,175
+Start the container again, list the folder,
+and add it; pause and run them.
+
+426
+00:26:56,495 --> 00:26:59,738
+It gives 5 files
+and a new manifest fingerprint.
+
+427
+00:27:00,058 --> 00:27:05,476
+The class version 21 has a different one,
+because its fifth photo was another image.
+
+428
+00:27:09,216 --> 00:27:11,840
+Then dvc push; pause and run it.
+
+429
+00:27:12,160 --> 00:27:14,982
+Here the local stand-in
+shows 2 files pushed,
+
+430
+00:27:14,982 --> 00:27:18,304
+because the four old photos
+are already on the shelf.
+
+431
+00:27:18,624 --> 00:27:21,248
+That is the saved space
+the lecture promised.
+
+432
+00:27:21,483 --> 00:27:25,260
+Back on your laptop,
+the five git commands again:
+
+433
+00:27:25,260 --> 00:27:32,043
+status shows only the pointer file changed;
+then add, commit, tag dataset_v21, and push.
+
+434
+00:27:32,363 --> 00:27:33,622
+Pause and run them.
+
+435
+00:27:33,942 --> 00:27:37,099
+An extra diff shows the whole change
+in three lines.
+
+436
+00:27:43,366 --> 00:27:48,294
+The starter branch keeps an older README
+that adds the remote again at this point.
+
+437
+00:27:48,614 --> 00:27:51,558
+That fails: remote origin already exists.
+
+438
+00:27:51,878 --> 00:27:53,756
+The pinned README says not to.
+
+439
+00:27:54,000 --> 00:27:58,189
+One extra experiment, to watch,
+not to run on a real mount:
+
+440
+00:27:58,189 --> 00:28:02,733
+on our stand-in folder,
+check out the old pointer file with git,
+
+441
+00:28:02,733 --> 00:28:06,779
+run dvc checkout,
+and the folder holds four photos again.
+
+442
+00:28:07,099 --> 00:28:10,107
+Back to main, and five,
+from the cache on disk.
+
+443
+00:28:10,427 --> 00:28:14,272
+With a real mount,
+this folder is your bucket's images folder,
+
+444
+00:28:14,272 --> 00:28:17,125
+so checkout deletes and rewrites
+photos there.
+
+445
+00:28:21,300 --> 00:28:23,273
+Now, time travel from anywhere:
+
+446
+00:28:23,273 --> 00:28:26,647
+the lecture's phrase
+for reaching an earlier version,
+
+447
+00:28:26,647 --> 00:28:29,321
+which works only while its files are kept.
+
+448
+00:28:29,641 --> 00:28:33,097
+The command dvc get,
+with a tag, walks the rope.
+
+449
+00:28:33,417 --> 00:28:38,409
+It clones the repo at that tag, reads
+that commit's config to find the bucket,
+
+450
+00:28:38,409 --> 00:28:41,161
+then fetches the manifest, then the photos.
+
+451
+00:28:41,400 --> 00:28:44,536
+Open the notebook from the README
+and save a copy.
+
+452
+00:28:44,856 --> 00:28:49,656
+Install DVC, load the libraries,
+and sign in with your Google account.
+
+453
+00:28:49,976 --> 00:28:53,325
+Then list a repo, fetch a version,
+and count the files.
+
+454
+00:28:53,567 --> 00:28:56,141
+Our stand-in is not signed in,
+
+455
+00:28:56,141 --> 00:29:01,546
+and pip gives it a newer DVC, 3.67.1,
+at the time of recording.
+
+456
+00:29:01,866 --> 00:29:05,746
+Listing the class repo fails with a 401,
+and look where:
+
+457
+00:29:05,746 --> 00:29:09,399
+at the manifest,
+because DVC fetches the list first,
+
+458
+00:29:09,399 --> 00:29:10,804
+in the rope's order.
+
+459
+00:29:13,517 --> 00:29:18,274
+The instructor's signed-in run
+lists five files on the class repo,
+
+460
+00:29:18,274 --> 00:29:21,517
+the same set as its version 21,
+and counts 5.
+
+461
+00:29:21,837 --> 00:29:25,421
+Your account probably
+cannot access the class bucket,
+
+462
+00:29:25,421 --> 00:29:26,570
+so use your repo:
+
+463
+00:29:26,570 --> 00:29:30,370
+replace the address and the tag;
+your version 20 gives 4.
+
+464
+00:29:30,690 --> 00:29:32,023
+Your repo is private,
+
+465
+00:29:32,023 --> 00:29:35,640
+so put an access token in the address,
+or make it public.
+
+466
+00:29:35,960 --> 00:29:37,453
+Pause and work through it.
+
+467
+00:29:38,150 --> 00:29:39,494
+Something to ponder.
+
+468
+00:29:39,814 --> 00:29:46,214
+Cell 19 asks quietly for dataset_v25,
+and prints nothing. Did it work?
+
+469
+00:29:53,050 --> 00:29:56,527
+No. The next cell fails: no such folder.
+
+470
+00:29:56,847 --> 00:30:00,986
+Without the --quiet flag, the error appears:
+unknown Git revision.
+
+471
+00:30:01,306 --> 00:30:05,893
+The class repo only
+has tags v20, v21 and v30.
+
+472
+00:30:06,213 --> 00:30:09,605
+The stored count of 3 is left
+over from an older run;
+
+473
+00:30:09,605 --> 00:30:11,781
+the --quiet flag hides errors too.
+
+474
+00:30:13,817 --> 00:30:16,804
+A quick prediction:
+three questions, three tools.
+
+475
+00:30:17,124 --> 00:30:20,900
+Match Delta Lake or Iceberg, DVC,
+and lakeFS.
+
+476
+00:30:25,734 --> 00:30:28,913
+DVC, lakeFS, then the table formats.
+
+477
+00:30:29,233 --> 00:30:30,937
+There is no single standard;
+
+478
+00:30:30,937 --> 00:30:34,224
+your project milestone
+accepts a light tool like this.
+
+479
+00:30:34,467 --> 00:30:36,675
+The lecture ends with monitoring:
+
+480
+00:30:36,675 --> 00:30:40,355
+watch quality,
+freshness, drift, cost and broken steps.
+
+481
+00:30:40,675 --> 00:30:45,070
+Versioning tells you what changed;
+monitoring tells you that something changed.
+
+482
+00:30:45,317 --> 00:30:50,565
+On one map: Label Studio runs in a container
+and signs tickets for the photos.
+
+483
+00:30:50,885 --> 00:30:54,256
+A rule on the bucket satisfies
+the browser's bouncer.
+
+484
+00:30:54,576 --> 00:30:58,458
+Labels are small notes;
+a mounted bucket feeds DVC.
+
+485
+00:30:58,778 --> 00:31:02,490
+Photos are filed by fingerprint;
+a tag pins the list.
+
+486
+00:31:02,810 --> 00:31:06,536
+So Monday's photos come back
+with one dvc get;
+
+487
+00:31:06,536 --> 00:31:09,210
+their labels join in exercise E7.
+
+488
+00:31:09,450 --> 00:31:11,455
+5 questions to test yourself.
+
+489
+00:31:11,775 --> 00:31:16,298
+One: who fetches the photos,
+and why does the bucket need its CORS rule?
+
+490
+00:31:16,618 --> 00:31:21,290
+Two: why can't the command line container
+and your browser swap addresses?
+
+491
+00:31:21,610 --> 00:31:25,514
+Three: what is in the pointer file,
+and what changes on a rename?
+
+492
+00:31:25,834 --> 00:31:28,159
+Four: where do the bytes sit after a push?
+
+493
+00:31:28,479 --> 00:31:32,512
+Five: without the dvc_store,
+what does dvc get do?
+
+494
+00:31:37,534 --> 00:31:41,075
+Cleanup is the README's three commands;
+pause and run them.
+
+495
+00:31:41,395 --> 00:31:45,449
+If you keep the labeling bucket,
+remove its CORS rule with -r.
+
+496
+00:31:45,769 --> 00:31:48,576
+Buckets cost money until you delete them,
+
+497
+00:31:48,576 --> 00:31:52,939
+but never delete the dvc_store
+while any tag should still work;
+
+498
+00:31:52,939 --> 00:31:54,601
+a tag is only a pointer.
+
+499
+00:31:54,921 --> 00:31:58,632
+Delete the key and its JSON file
+when the course is done.
+
+500
+00:31:58,867 --> 00:32:00,915
+Answers are in the exercises.
+
+501
+00:32:01,235 --> 00:32:03,814
+Lecture 13 trains from a prepared zip;
+
+502
+00:32:03,814 --> 00:32:07,208
+a tagged version would make
+that run reproducible.
+

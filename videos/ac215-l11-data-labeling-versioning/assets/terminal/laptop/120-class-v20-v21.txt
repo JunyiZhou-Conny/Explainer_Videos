@@ -1,0 +1,15 @@
+$ git -C class-data-versioning show dataset_v20:cheese_dataset.dvc; echo ---; git -C class-data-versioning show dataset_v21:cheese_dataset.dvc
+outs:
+- md5: 89db50de27acfd6822faabc3da39b0a8.dir
+  size: 611101
+  nfiles: 4
+  hash: md5
+  path: cheese_dataset
+---
+outs:
+- md5: 3280f8f9629451704dca3f792534e1f5.dir
+  size: 785481
+  nfiles: 5
+  hash: md5
+  path: cheese_dataset
+[exit 0]

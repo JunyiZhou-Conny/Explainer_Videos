@@ -1,0 +1,7 @@
+$ git config --global --add safe.directory /app && cat ~/.gitconfig
+[user]
+	name = student
+	email = student@example.com
+[safe]
+	directory = /app
+[exit 0]

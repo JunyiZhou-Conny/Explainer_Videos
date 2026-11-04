@@ -1,0 +1,31 @@
+$ sh docker-shell-compose.sh
+
+[+] Building 0.5s (11/11) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 1.48kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim-bookworm                             0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [1/6] FROM docker.io/library/python:3.12-slim-bookworm@sha256:07d3bc5e4542eb7433fa994970b5905e5f119  0.1s
+ => => resolve docker.io/library/python:3.12-slim-bookworm@sha256:07d3bc5e4542eb7433fa994970b5905e5f119  0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 2.82kB                                                                      0.0s
+ => CACHED [2/6] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &&     0.0s
+ => CACHED [3/6] WORKDIR /app                                                                            0.0s
+ => CACHED [4/6] COPY --chown=app:app pyproject.toml uv.lock* ./                                         0.0s
+ => CACHED [5/6] RUN uv sync --frozen                                                                    0.0s
+ => CACHED [6/6] COPY --chown=app:app . ./                                                               0.0s
+ => exporting to image                                                                                   0.2s
+ => => exporting layers                                                                                  0.0s
+ => => exporting manifest sha256:97e8099647d4ec2e81f6ed516dc470157ef1b39827f517dd5af35a88dd6b5ee4        0.0s
+ => => exporting config sha256:f716bf8544f0277577f6ff90fb1543c4f149c394299e4af82c17dd319fee1dad          0.0s
+ => => exporting attestation manifest sha256:bd3808404bf5829d7e118144ed32ca5fc907c854204c602ab3e580c7d6  0.0s
+ => => exporting manifest list sha256:f3e99a4bbde073722688747074b3d5f04e89e384e3313fa32a89411b2deca391   0.0s
+ => => naming to docker.io/library/data-label-cli:latest                                                 0.0s
+ => => unpacking to docker.io/library/data-label-cli:latest                                              0.0s
+WARN[0000] /home/student/data-labeling/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion
+[+] run 1/2
+ ⠋ Container data-label-studio Creating                                                                   0.0s
+ ✘ service:data-label-studio:1 Error response from daemon: Conflict. The container name "/data-label-s... 0.0s
+Error response from daemon: Conflict. The container name "/data-label-studio" is already in use by container "c2262b88f410c1211d8d95aafb9aae7d2eea68a96f168bf932c5a8dcdac65ced". You have to remove (or rename) that container to be able to reuse that name.
+[exit 1]

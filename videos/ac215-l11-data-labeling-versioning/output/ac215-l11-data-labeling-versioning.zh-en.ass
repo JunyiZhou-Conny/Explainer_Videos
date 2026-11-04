@@ -1,0 +1,527 @@
+[Script Info]
+Title: AC215 · Lecture 11 — Data labeling and versioning: a label is a record, a version is a fingerprint (follow-along: data-labeling + data-versioning)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:05.25,Bilingual,,0,0,0,,两个目录，都叫 cheese dataset，文件名一样，数量也一样\N{\fs33\c&H00C8C0B8&\bord1.4}Two folders, both called cheese_dataset, with the same file names and the same count.
+Dialogue: 0,0:00:05.57,0:00:08.28,Bilingual,,0,0,0,,周一你在其中一个上训练了模型\N{\fs33\c&H00C8C0B8&\bord1.4}On Monday you trained a model on one of them.
+Dialogue: 0,0:00:08.60,0:00:12.08,Bilingual,,0,0,0,,周五模型变差了，可谁都没动过代码\N{\fs33\c&H00C8C0B8&\bord1.4}On Friday the model got worse, and nobody touched the code.
+Dialogue: 0,0:00:12.40,0:00:15.49,Bilingual,,0,0,0,,那么，这个模型看到的是哪些照片、带着哪些 label？\N{\fs33\c&H00C8C0B8&\bord1.4}So which photos, with which labels, did that model see?
+Dialogue: 0,0:00:15.81,0:00:17.81,Bilingual,,0,0,0,,还能把它们一模一样地拿回来吗？\N{\fs33\c&H00C8C0B8&\bord1.4}And can you get exactly those back?
+Dialogue: 0,0:00:18.05,0:00:20.61,Bilingual,,0,0,0,,我们大多数人靠文件名来回答\N{\fs33\c&H00C8C0B8&\bord1.4}Most of us answer with file names:
+Dialogue: 0,0:00:20.61,0:00:24.07,Bilingual,,0,0,0,,final、final 第 2 版、final final 第 3 版\N{\fs33\c&H00C8C0B8&\bord1.4}final, final version 2, final final version 3,
+Dialogue: 0,0:00:24.07,0:00:26.92,Bilingual,,0,0,0,,直到没人知道哪个才是 final\N{\fs33\c&H00C8C0B8&\bord1.4}until nobody knows which one is final.
+Dialogue: 0,0:00:27.17,0:00:29.77,Bilingual,,0,0,0,,更好的答案是：一行字\N{\fs33\c&H00C8C0B8&\bord1.4}Here is a better answer: one short line.
+Dialogue: 0,0:00:30.09,0:00:33.08,Bilingual,,0,0,0,,第二部分里，你会算出这个一模一样的字符串\N{\fs33\c&H00C8C0B8&\bord1.4}In part 2 you will compute this exact string
+Dialogue: 0,0:00:33.08,0:00:35.81,Bilingual,,0,0,0,,就在自己的笔记本上，用 4 张奶酪照片\N{\fs33\c&H00C8C0B8&\bord1.4}on your own laptop from 4 cheese photos.
+Dialogue: 0,0:00:36.13,0:00:40.67,Bilingual,,0,0,0,,它会和授课老师在课程 repo 里打的 tag 对上，一个字符都不差\N{\fs33\c&H00C8C0B8&\bord1.4}It will match the instructor's tag in the class repo, character for character.
+Dialogue: 0,0:00:40.99,0:00:44.96,Bilingual,,0,0,0,,一行字，怎么能锁定大约 600 KB 的照片？\N{\fs33\c&H00C8C0B8&\bord1.4}How can one line pin down about 600 kilobytes of photos?
+Dialogue: 0,0:00:45.20,0:00:49.49,Bilingual,,0,0,0,,在那之前，有人点了 gouda，这个词到底去了哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}And before that, when someone clicks gouda, where does that word actually go?
+Dialogue: 0,0:00:49.73,0:00:52.25,Bilingual,,0,0,0,,跟着做，你需要：Docker Desktop\N{\fs33\c&H00C8C0B8&\bord1.4}To follow along you need Docker Desktop,
+Dialogue: 0,0:00:52.25,0:00:55.73,Bilingual,,0,0,0,,一个开通了结算的 Google Cloud 项目和你自己的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}a Google Cloud project with billing and your own bucket,
+Dialogue: 0,0:00:55.73,0:00:57.33,Bilingual,,0,0,0,,还有一个 GitHub 账号\N{\fs33\c&H00C8C0B8&\bord1.4}and a GitHub account.
+Dialogue: 0,0:00:57.41,0:01:02.08,Bilingual,,0,0,0,,这一讲会在云端存几 MB 数据，金色标签会标出在哪儿\N{\fs33\c&H00C8C0B8&\bord1.4}This lecture stores a few megabytes in the cloud, and gold tags mark where.
+Dialogue: 0,0:01:02.40,0:01:05.28,Bilingual,,0,0,0,,左上角的进度条跟着两份 README 走\N{\fs33\c&H00C8C0B8&\bord1.4}The tracker in the top left follows both READMEs.
+Dialogue: 0,0:01:05.60,0:01:08.76,Bilingual,,0,0,0,,看到黄色的 your turn 标签，就暂停，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}A yellow your-turn tag means pause and run it;
+Dialogue: 0,0:01:08.76,0:01:12.67,Bilingual,,0,0,0,,灰色的 extra 标签表示这个检查 README 里没有\N{\fs33\c&H00C8C0B8&\bord1.4}a gray extra tag marks a check that is not in the README.
+Dialogue: 0,0:01:12.99,0:01:15.12,Bilingual,,0,0,0,,每条命令都在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}Every command is in the study guide.
+Dialogue: 0,0:01:16.17,0:01:17.55,Bilingual,,0,0,0,,先看地图\N{\fs33\c&H00C8C0B8&\bord1.4}First, the map.
+Dialogue: 0,0:01:17.60,0:01:21.70,Bilingual,,0,0,0,,课上先画未标注的奶酪照片，再画标注好的\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture draws unlabeled cheese photos, then labeled ones,
+Dialogue: 0,0:01:21.70,0:01:25.00,Bilingual,,0,0,0,,然后是训练，中间的箭头在问怎么做到\N{\fs33\c&H00C8C0B8&\bord1.4}then training, and the arrow in between asks how.
+Dialogue: 0,0:01:25.32,0:01:29.69,Bilingual,,0,0,0,,这些 label 就是 ground truth：模型从中学习，也拿它来评分\N{\fs33\c&H00C8C0B8&\bord1.4}Labels are the ground truth a model learns from and is graded against.
+Dialogue: 0,0:01:30.01,0:01:34.39,Bilingual,,0,0,0,,模型犯的错，标注之后，会进入下一个数据集版本\N{\fs33\c&H00C8C0B8&\bord1.4}The model's mistakes, once labeled, go into the next dataset version.
+Dialogue: 0,0:01:34.63,0:01:38.21,Bilingual,,0,0,0,,下面是这一讲要搭的两个站。第一部分\N{\fs33\c&H00C8C0B8&\bord1.4}Underneath, the two stations this lecture builds. Part 1
+Dialogue: 0,0:01:38.21,0:01:43.32,Bilingual,,0,0,0,,标注站，Label Studio 和一个小小的命令行 container\N{\fs33\c&H00C8C0B8&\bord1.4}is the labeling station: Label Studio and a small command line container,
+Dialogue: 0,0:01:43.32,0:01:45.98,Bilingual,,0,0,0,,再加一个放照片和 label 的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}with one bucket for photos and labels.
+Dialogue: 0,0:01:46.30,0:01:50.19,Bilingual,,0,0,0,,第二部分是版本管理站：一个 DVC container\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 is the versioning station: one DVC container,
+Dialogue: 0,0:01:50.19,0:01:52.13,Bilingual,,0,0,0,,一个带两个目录的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}a bucket with two folders,
+Dialogue: 0,0:01:52.13,0:01:55.80,Bilingual,,0,0,0,,你自己的 GitHub repo，还有用来查看版本的 Colab\N{\fs33\c&H00C8C0B8&\bord1.4}your own GitHub repo, and Colab to view versions.
+Dialogue: 0,0:01:56.12,0:02:00.21,Bilingual,,0,0,0,,代码还没把这两半连起来；练习 E7 会连\N{\fs33\c&H00C8C0B8&\bord1.4}The code does not connect the halves yet; exercise E7 does.
+Dialogue: 0,0:02:00.45,0:02:02.56,Bilingual,,0,0,0,,现在来做课上的回顾小测\N{\fs33\c&H00C8C0B8&\bord1.4}Now, the lecture's recall quiz.
+Dialogue: 0,0:02:02.88,0:02:06.09,Bilingual,,0,0,0,,Docker 网络、云端凭据、Docker Compose\N{\fs33\c&H00C8C0B8&\bord1.4}Docker network, cloud credentials, Docker Compose:
+Dialogue: 0,0:02:06.09,0:02:08.28,Bilingual,,0,0,0,,今天它们各自会出现在哪里？\N{\fs33\c&H00C8C0B8&\bord1.4}where will each one show up today?
+Dialogue: 0,0:02:17.12,0:02:21.45,Bilingual,,0,0,0,,有了网络，命令行 container 就能按名字调用 Label Studio\N{\fs33\c&H00C8C0B8&\bord1.4}The network lets the command line container call Label Studio by name.
+Dialogue: 0,0:02:21.77,0:02:25.82,Bilingual,,0,0,0,,凭据就是一个密钥文件，挂载进每个 container\N{\fs33\c&H00C8C0B8&\bord1.4}The credentials are one key file, mounted into every container.
+Dialogue: 0,0:02:26.14,0:02:28.83,Bilingual,,0,0,0,,Compose 则是 README 的 Extra 一节\N{\fs33\c&H00C8C0B8&\bord1.4}And Compose is the README's extra section,
+Dialogue: 0,0:02:28.83,0:02:31.26,Bilingual,,0,0,0,,它把两个 container 一起启动\N{\fs33\c&H00C8C0B8&\bord1.4}which starts both containers together.
+Dialogue: 0,0:02:31.50,0:02:34.37,Bilingual,,0,0,0,,把 data-labeling 这个 repo clone 下来，再进去\N{\fs33\c&H00C8C0B8&\bord1.4}Clone the data-labeling repo and move into it;
+Dialogue: 0,0:02:34.37,0:02:35.84,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run it.
+Dialogue: 0,0:02:35.89,0:02:40.30,Bilingual,,0,0,0,,给 Docker 超过 4 GB 的内存，README 是这么要求的\N{\fs33\c&H00C8C0B8&\bord1.4}Give Docker more than 4 gigabytes of memory, as the README asks;
+Dialogue: 0,0:02:40.30,0:02:43.40,Bilingual,,0,0,0,,这个设置现在在 Settings 的 Resources 下面\N{\fs33\c&H00C8C0B8&\bord1.4}the setting is now under Settings, Resources.
+Dialogue: 0,0:02:43.65,0:02:47.37,Bilingual,,0,0,0,,额外跑一下 git log，能看到这个视频用的 commit\N{\fs33\c&H00C8C0B8&\bord1.4}An extra git log shows this video's commit,
+Dialogue: 0,0:02:47.37,0:02:48.93,Bilingual,,0,0,0,,是 2025 年 10 月的\N{\fs33\c&H00C8C0B8&\bord1.4}from October 2025;
+Dialogue: 0,0:02:48.93,0:02:54.30,Bilingual,,0,0,0,,再额外列一下目录，有几个脚本、cli.py 和三张图\N{\fs33\c&H00C8C0B8&\bord1.4}an extra listing shows the scripts, cli.py and three pictures.
+Dialogue: 0,0:02:57.58,0:03:01.89,Bilingual,,0,0,0,,接下来是 secrets 目录，放在 repo 旁边，绝不放在里面\N{\fs33\c&H00C8C0B8&\bord1.4}Next, the secrets folder, beside the repo and never inside it;
+Dialogue: 0,0:03:01.89,0:03:03.77,Bilingual,,0,0,0,,今天两个 repo 都用它\N{\fs33\c&H00C8C0B8&\bord1.4}it serves both repos today.
+Dialogue: 0,0:03:04.09,0:03:07.74,Bilingual,,0,0,0,,暂停一下，建好它；额外用 tree 看一下，和 README 一致\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and make it; an extra tree view matches the README.
+Dialogue: 0,0:03:14.20,0:03:15.52,Bilingual,,0,0,0,,现在是密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Now the key.
+Dialogue: 0,0:03:15.56,0:03:18.10,Bilingual,,0,0,0,,在控制台里，建一个服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}In the console, create a service account
+Dialogue: 0,0:03:18.10,0:03:21.64,Bilingual,,0,0,0,,名字叫 data-service-account，角色是 Storage Admin\N{\fs33\c&H00C8C0B8&\bord1.4}named data-service-account, with the Storage Admin role.
+Dialogue: 0,0:03:21.96,0:03:26.30,Bilingual,,0,0,0,,然后建一个 JSON 密钥，存进你的 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Then create one JSON key, saved in your secrets folder
+Dialogue: 0,0:03:26.30,0:03:28.62,Bilingual,,0,0,0,,文件名是 data-service-account.json\N{\fs33\c&H00C8C0B8&\bord1.4}as data-service-account.json.
+Dialogue: 0,0:03:28.94,0:03:33.38,Bilingual,,0,0,0,,这个角色的权限比需要的大：它覆盖项目里的每一个 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}This role is broader than needed: it covers every bucket in the project.
+Dialogue: 0,0:03:33.70,0:03:35.30,Bilingual,,0,0,0,,暂停一下，建一个你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and create yours.
+Dialogue: 0,0:03:35.45,0:03:38.10,Bilingual,,0,0,0,,额外列一下目录，密钥已经就位\N{\fs33\c&H00C8C0B8&\bord1.4}An extra listing shows the key in place:
+Dialogue: 0,0:03:38.10,0:03:41.34,Bilingual,,0,0,0,,这是一个替身，到 Source storage 那一步再解释\N{\fs33\c&H00C8C0B8&\bord1.4}a stand-in, explained at the Source storage step.
+Dialogue: 0,0:03:41.58,0:03:44.92,Bilingual,,0,0,0,,从 README 的链接下载未标注的照片\N{\fs33\c&H00C8C0B8&\bord1.4}Download the unlabeled photos from the README link;
+Dialogue: 0,0:03:44.92,0:03:47.34,Bilingual,,0,0,0,,我们用 curl，用浏览器也行\N{\fs33\c&H00C8C0B8&\bord1.4}we use curl, and a browser works too.
+Dialogue: 0,0:03:47.66,0:03:49.26,Bilingual,,0,0,0,,然后解压这个 zip\N{\fs33\c&H00C8C0B8&\bord1.4}Then extract the zip.
+Dialogue: 0,0:03:49.41,0:03:50.96,Bilingual,,0,0,0,,暂停一下，两件都做了\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do both.
+Dialogue: 0,0:03:51.01,0:03:55.09,Bilingual,,0,0,0,,注意，每张图片都在一个隐藏的 Mac 目录里有个双胞胎\N{\fs33\c&H00C8C0B8&\bord1.4}Notice that every image comes with a twin in a hidden Mac folder.
+Dialogue: 0,0:03:55.33,0:03:58.47,Bilingual,,0,0,0,,快速预测一下：这个 zip 里有 42 个文件\N{\fs33\c&H00C8C0B8&\bord1.4}A quick prediction: the zip held 42 files.
+Dialogue: 0,0:03:58.79,0:04:01.01,Bilingual,,0,0,0,,Label Studio 应该建多少个 task？\N{\fs33\c&H00C8C0B8&\bord1.4}How many tasks should Label Studio make?
+Dialogue: 0,0:04:05.85,0:04:11.68,Bilingual,,0,0,0,,21 个。额外数一下：21 张图片，其中一张是 PNG\N{\fs33\c&H00C8C0B8&\bord1.4}21. An extra count shows 21 images, one of them a PNG,
+Dialogue: 0,0:04:11.68,0:04:14.13,Bilingual,,0,0,0,,另外还有 21 个 Mac 元数据文件\N{\fs33\c&H00C8C0B8&\bord1.4}plus 21 Mac metadata files.
+Dialogue: 0,0:04:14.45,0:04:18.42,Bilingual,,0,0,0,,只上传图片，不然你会得到 21 个坏掉的 task\N{\fs33\c&H00C8C0B8&\bord1.4}Upload only the images, or you get 21 broken tasks.
+Dialogue: 0,0:04:18.74,0:04:23.30,Bilingual,,0,0,0,,课上把这叫做数据整理：在垃圾文件变成 task 之前就把它们去掉\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture calls this curation, dropping junk before it becomes a task.
+Dialogue: 0,0:04:23.55,0:04:25.38,Bilingual,,0,0,0,,再来一个额外检查，为第二部分准备\N{\fs33\c&H00C8C0B8&\bord1.4}One more extra, for part 2:
+Dialogue: 0,0:04:25.38,0:04:29.16,Bilingual,,0,0,0,,每张照片的指纹，只由它的字节算出来\N{\fs33\c&H00C8C0B8&\bord1.4}each photo's fingerprint, computed from its bytes alone.
+Dialogue: 0,0:04:29.48,0:04:33.83,Bilingual,,0,0,0,,同样的字节，同样的字符串；改一个字节，它就完全变了\N{\fs33\c&H00C8C0B8&\bord1.4}Same bytes, same string; change one byte, and it changes completely.
+Dialogue: 0,0:04:34.15,0:04:35.75,Bilingual,,0,0,0,,记住第一个\N{\fs33\c&H00C8C0B8&\bord1.4}Remember the first one.
+Dialogue: 0,0:04:35.95,0:04:38.72,Bilingual,,0,0,0,,然后用你自己起的名字建 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}Then create your bucket with a name of your own,
+Dialogue: 0,0:04:38.72,0:04:41.37,Bilingual,,0,0,0,,因为名字是全局唯一的，其他保持默认设置\N{\fs33\c&H00C8C0B8&\bord1.4}since names are global, and keep the defaults.
+Dialogue: 0,0:04:41.69,0:04:45.57,Bilingual,,0,0,0,,再加两个目录，cheeses unlabeled 和 cheeses labeled\N{\fs33\c&H00C8C0B8&\bord1.4}Add two folders, cheeses_unlabeled and cheeses_labeled,
+Dialogue: 0,0:04:45.57,0:04:48.39,Bilingual,,0,0,0,,把 21 张图片上传到第一个里\N{\fs33\c&H00C8C0B8&\bord1.4}and upload the 21 images into the first.
+Dialogue: 0,0:04:48.71,0:04:50.31,Bilingual,,0,0,0,,暂停一下，把它配好\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and set it up.
+Dialogue: 0,0:04:50.37,0:04:54.38,Bilingual,,0,0,0,,金色标签：存储费用从这里开始，每月不到一美分\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: storage starts here, a fraction of a cent a month.
+Dialogue: 0,0:04:55.42,0:04:59.00,Bilingual,,0,0,0,,README 跑 Label Studio 用的是一个现成的 image\N{\fs33\c&H00C8C0B8&\bord1.4}The README runs Label Studio from a ready-made image,
+Dialogue: 0,0:04:59.00,0:05:00.50,Bilingual,,0,0,0,,在你自己的 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}in your own container,
+Dialogue: 0,0:05:00.50,0:05:03.76,Bilingual,,0,0,0,,所以没有任何外部的标注服务能看到你的照片\N{\fs33\c&H00C8C0B8&\bord1.4}so no outside labeling service sees your photos.
+Dialogue: 0,0:05:04.08,0:05:07.19,Bilingual,,0,0,0,,它的脚本只在网络不存在时才创建网络\N{\fs33\c&H00C8C0B8&\bord1.4}Its script creates the network only if it is missing,
+Dialogue: 0,0:05:07.19,0:05:09.84,Bilingual,,0,0,0,,还会删掉同名的旧 container\N{\fs33\c&H00C8C0B8&\bord1.4}and removes any old container with that name.
+Dialogue: 0,0:05:10.08,0:05:12.64,Bilingual,,0,0,0,,然后是一条 docker run，一个参数一个参数地看\N{\fs33\c&H00C8C0B8&\bord1.4}Then one docker run, flag by flag.
+Dialogue: 0,0:05:12.86,0:05:15.26,Bilingual,,0,0,0,,参数 -d 让它在后台运行\N{\fs33\c&H00C8C0B8&\bord1.4}The flag -d runs it in the background,
+Dialogue: 0,0:05:15.26,0:05:18.36,Bilingual,,0,0,0,,--network 参数把它放到一条私有的街道上\N{\fs33\c&H00C8C0B8&\bord1.4}and the network flag puts it on a private street.
+Dialogue: 0,0:05:18.68,0:05:24.97,Bilingual,,0,0,0,,然后，-p 8080:8080 发布这个 port：笔记本墙上的一扇门\N{\fs33\c&H00C8C0B8&\bord1.4}Then -p 8080:8080 publishes the port: a door in your laptop wall.
+Dialogue: 0,0:05:25.29,0:05:29.62,Bilingual,,0,0,0,,两个 -v 参数挂载一个数据库目录和你的 secrets\N{\fs33\c&H00C8C0B8&\bord1.4}Two -v flags mount a database folder and your secrets;
+Dialogue: 0,0:05:29.62,0:05:32.82,Bilingual,,0,0,0,,-e 这几行设置登录信息和密钥路径\N{\fs33\c&H00C8C0B8&\bord1.4}the -e lines set the login and key path.
+Dialogue: 0,0:05:34.27,0:05:38.66,Bilingual,,0,0,0,,暂停一下，跑 sh docker-shell.sh；它会拉取 image\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run sh docker-shell.sh; it pulls the image.
+Dialogue: 0,0:05:38.98,0:05:42.31,Bilingual,,0,0,0,,然后是 README 的检查，docker container ls\N{\fs33\c&H00C8C0B8&\bord1.4}Then the README's check, docker container ls:
+Dialogue: 0,0:05:42.31,0:05:44.08,Bilingual,,0,0,0,,状态是 Up，port 8080 已发布\N{\fs33\c&H00C8C0B8&\bord1.4}up, port 8080 published.
+Dialogue: 0,0:05:44.32,0:05:48.95,Bilingual,,0,0,0,,可是 25 秒后加一个额外的 -a 再看一次：Exited\N{\fs33\c&H00C8C0B8&\bord1.4}But look again 25 seconds later, with an extra -a: exited.
+Dialogue: 0,0:05:49.27,0:05:51.66,Bilingual,,0,0,0,,来想一个问题：你先看哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: where do you look first?
+Dialogue: 0,0:05:58.50,0:06:04.41,Bilingual,,0,0,0,,看日志。Label Studio 自己说明了原因：它的数据目录不可写\N{\fs33\c&H00C8C0B8&\bord1.4}The logs. Label Studio explains itself: its data folder is not writable.
+Dialogue: 0,0:06:04.73,0:06:06.31,Bilingual,,0,0,0,,它以用户 1001 运行\N{\fs33\c&H00C8C0B8&\bord1.4}It runs as user 1001,
+Dialogue: 0,0:06:06.31,0:06:09.76,Bilingual,,0,0,0,,可这个缺失的目录是 Docker 以 root 身份创建的\N{\fs33\c&H00C8C0B8&\bord1.4}but Docker created the missing folder as root.
+Dialogue: 0,0:06:13.50,0:06:15.68,Bilingual,,0,0,0,,修法是一个额外步骤，只针对 Linux\N{\fs33\c&H00C8C0B8&\bord1.4}The fix is an extra, for Linux;
+Dialogue: 0,0:06:15.68,0:06:18.77,Bilingual,,0,0,0,,Mac 上的 Docker Desktop 一般不会遇到\N{\fs33\c&H00C8C0B8&\bord1.4}Docker Desktop for Mac normally avoids this.
+Dialogue: 0,0:06:19.09,0:06:22.37,Bilingual,,0,0,0,,用 sudo chown 把目录交给用户 1001\N{\fs33\c&H00C8C0B8&\bord1.4}Give the folder to user 1001 with sudo chown,
+Dialogue: 0,0:06:22.37,0:06:25.42,Bilingual,,0,0,0,,再跑一次脚本，这次它就一直保持运行了\N{\fs33\c&H00C8C0B8&\bord1.4}run the script again, and now it stays up.
+Dialogue: 0,0:06:25.74,0:06:27.88,Bilingual,,0,0,0,,在 Linux 上，暂停一下，照样做一遍\N{\fs33\c&H00C8C0B8&\bord1.4}On Linux, pause and do the same.
+Dialogue: 0,0:06:29.08,0:06:34.41,Bilingual,,0,0,0,,额外检查：日志里有个框，提示有 1.23.2 版本\N{\fs33\c&H00C8C0B8&\bord1.4}Extra checks: the logs show a box offering version 1.23.2,
+Dialogue: 0,0:06:34.41,0:06:40.37,Bilingual,,0,0,0,,比这个 image 新，这个 image 录制时跑的是 1.23.0\N{\fs33\c&H00C8C0B8&\bord1.4}newer than this image, which ran 1.23.0 at the time of recording.
+Dialogue: 0,0:06:40.69,0:06:43.25,Bilingual,,0,0,0,,它的 tag 是 latest，所以你的可能不一样\N{\fs33\c&H00C8C0B8&\bord1.4}The tag is latest, so yours may differ.
+Dialogue: 0,0:06:46.15,0:06:48.29,Bilingual,,0,0,0,,打开 localhost:8080\N{\fs33\c&H00C8C0B8&\bord1.4}Open localhost:8080 and log
+Dialogue: 0,0:06:48.29,0:06:53.85,Bilingual,,0,0,0,,用你脚本第 19 行和第 20 行里的用户名和密码登录\N{\fs33\c&H00C8C0B8&\bord1.4}in with the username and password from lines 19 and 20 of your script.
+Dialogue: 0,0:06:54.17,0:06:57.82,Bilingual,,0,0,0,,建一个项目，用 Image Classification 模板\N{\fs33\c&H00C8C0B8&\bord1.4}Create a project with the Image Classification template,
+Dialogue: 0,0:06:57.82,0:07:01.27,Bilingual,,0,0,0,,选项是 brie、gouda、gruyere 和 parmigiano\N{\fs33\c&H00C8C0B8&\bord1.4}with the choices brie, gouda, gruyere and parmigiano.
+Dialogue: 0,0:07:01.59,0:07:03.04,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it.
+Dialogue: 0,0:07:03.09,0:07:07.00,Bilingual,,0,0,0,,下方是我们的替身调用，重放了页面发出的请求\N{\fs33\c&H00C8C0B8&\bord1.4}Underneath, our stand-in calls replay the page's requests:
+Dialogue: 0,0:07:07.00,0:07:10.70,Bilingual,,0,0,0,,我们已经登录，项目 1 里有四种奶酪\N{\fs33\c&H00C8C0B8&\bord1.4}we are logged in, and project 1 holds the four cheeses.
+Dialogue: 0,0:07:13.25,0:07:16.63,Bilingual,,0,0,0,,回到项目里，打开 Settings，再进 Cloud Storage\N{\fs33\c&H00C8C0B8&\bord1.4}Back in the project, open Settings, then Cloud Storage,
+Dialogue: 0,0:07:16.63,0:07:19.76,Bilingual,,0,0,0,,添加 source storage，也就是照片的来源\N{\fs33\c&H00C8C0B8&\bord1.4}and add source storage, where the photos come from.
+Dialogue: 0,0:07:20.08,0:07:24.19,Bilingual,,0,0,0,,用 README 给的值：Google Cloud Storage、你的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}Use the README's values: Google Cloud Storage, your bucket,
+Dialogue: 0,0:07:24.19,0:07:27.88,Bilingual,,0,0,0,,cheeses unlabeled 这个前缀，打开 pre-signed URL\N{\fs33\c&H00C8C0B8&\bord1.4}the prefix cheeses_unlabeled, and pre-signed URLs on.
+Dialogue: 0,0:07:28.20,0:07:30.57,Bilingual,,0,0,0,,要是少了某个复选框，继续就行\N{\fs33\c&H00C8C0B8&\bord1.4}If a checkbox is missing, carry on.
+Dialogue: 0,0:07:30.89,0:07:35.50,Bilingual,,0,0,0,,凭据留空：意思是用 container 里已经有的那个密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Leave the credentials empty: that means the key the container already has.
+Dialogue: 0,0:07:35.75,0:07:37.41,Bilingual,,0,0,0,,然后点 Check Connection\N{\fs33\c&H00C8C0B8&\bord1.4}Then click Check Connection.
+Dialogue: 0,0:07:37.73,0:07:39.82,Bilingual,,0,0,0,,这里失败了：找不到文件\N{\fs33\c&H00C8C0B8&\bord1.4}Here it fails: file not found.
+Dialogue: 0,0:07:40.14,0:07:42.20,Bilingual,,0,0,0,,额外列一下目录就知道原因\N{\fs33\c&H00C8C0B8&\bord1.4}An extra listing shows why:
+Dialogue: 0,0:07:42.20,0:07:48.26,Bilingual,,0,0,0,,Label Studio 里面的 /secrets 是故意空着的，等一下就会说到\N{\fs33\c&H00C8C0B8&\bord1.4}/secrets inside Label Studio is empty, on purpose, as you will hear in a moment;
+Dialogue: 0,0:07:48.26,0:07:49.86,Bilingual,,0,0,0,,你的应该能通过\N{\fs33\c&H00C8C0B8&\bord1.4}yours should pass.
+Dialogue: 0,0:07:49.98,0:07:52.23,Bilingual,,0,0,0,,存放 label 的 target storage\N{\fs33\c&H00C8C0B8&\bord1.4}The target storage, where labels go,
+Dialogue: 0,0:07:52.23,0:07:56.36,Bilingual,,0,0,0,,前缀是 cheeses labeled，也失败了，报错更含糊\N{\fs33\c&H00C8C0B8&\bord1.4}with the prefix cheeses_labeled, fails too, with a vaguer message.
+Dialogue: 0,0:07:56.60,0:07:58.90,Bilingual,,0,0,0,,关于这次录制，如实说一句\N{\fs33\c&H00C8C0B8&\bord1.4}One honest note about this recording.
+Dialogue: 0,0:07:59.22,0:08:02.69,Bilingual,,0,0,0,,这台机器没有 Google 账号，没有 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}This machine has no Google account, no bucket,
+Dialogue: 0,0:08:02.69,0:08:05.62,Bilingual,,0,0,0,,没有浏览器，也没有通往 GitHub 的 SSH 通道\N{\fs33\c&H00C8C0B8&\bord1.4}no browser, and no SSH route to GitHub.
+Dialogue: 0,0:08:05.94,0:08:10.28,Bilingual,,0,0,0,,目录列表里的密钥是一个明显无效的替身\N{\fs33\c&H00C8C0B8&\bord1.4}The key in the folder listings is an obviously invalid stand-in,
+Dialogue: 0,0:08:10.28,0:08:12.58,Bilingual,,0,0,0,,每个云端步骤之前都会移走\N{\fs33\c&H00C8C0B8&\bord1.4}moved out before every cloud step.
+Dialogue: 0,0:08:12.90,0:08:17.34,Bilingual,,0,0,0,,所以这里每一个云端步骤失败的方式，都和密钥放错位置时一模一样\N{\fs33\c&H00C8C0B8&\bord1.4}So each cloud step here fails exactly the way a misplaced key fails.
+Dialogue: 0,0:08:17.66,0:08:20.30,Bilingual,,0,0,0,,这正是这一讲里最常见的错误\N{\fs33\c&H00C8C0B8&\bord1.4}That is the most common mistake in this lecture.
+Dialogue: 0,0:08:20.62,0:08:24.73,Bilingual,,0,0,0,,你应该看到的每个成功结果都标着 recorded，并注明出处\N{\fs33\c&H00C8C0B8&\bord1.4}Every success you should expect is tagged recorded, with its source,
+Dialogue: 0,0:08:24.73,0:08:28.41,Bilingual,,0,0,0,,点击和上传则在本地重放，标着 stand-in\N{\fs33\c&H00C8C0B8&\bord1.4}and clicks and uploads are replayed locally, tagged stand-in.
+Dialogue: 0,0:08:28.65,0:08:32.34,Bilingual,,0,0,0,,有了真的密钥，两个存储都加上，点 Sync\N{\fs33\c&H00C8C0B8&\bord1.4}With a real key, add both storages and click Sync:
+Dialogue: 0,0:08:32.34,0:08:34.62,Bilingual,,0,0,0,,一张照片一个 task，你那边是 21 个\N{\fs33\c&H00C8C0B8&\bord1.4}one task per photo, 21 for you.
+Dialogue: 0,0:08:34.94,0:08:38.87,Bilingual,,0,0,0,,我们的替身导入了 3 个 task，地址也是同一类的\N{\fs33\c&H00C8C0B8&\bord1.4}Our stand-in imports 3 tasks with the same kind of addresses.
+Dialogue: 0,0:08:39.19,0:08:41.05,Bilingual,,0,0,0,,暂停一下，两个都加上，再点 Sync\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, add both, and sync.
+Dialogue: 0,0:08:41.18,0:08:42.83,Bilingual,,0,0,0,,那么，谁在碰这些照片？\N{\fs33\c&H00C8C0B8&\bord1.4}So who touches the photos?
+Dialogue: 0,0:08:43.15,0:08:46.46,Bilingual,,0,0,0,,Label Studio 拿着密钥，列出 bucket 里的东西\N{\fs33\c&H00C8C0B8&\bord1.4}Label Studio holds the key and lists the bucket;
+Dialogue: 0,0:08:46.46,0:08:48.46,Bilingual,,0,0,0,,你的浏览器请求 task 1\N{\fs33\c&H00C8C0B8&\bord1.4}your browser asks for task 1.
+Dialogue: 0,0:08:48.78,0:08:52.12,Bilingual,,0,0,0,,来想一个问题：你的浏览器从没见过密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: your browser never sees the key,
+Dialogue: 0,0:08:52.12,0:08:54.33,Bilingual,,0,0,0,,它怎么能显示一张私有的照片？\N{\fs33\c&H00C8C0B8&\bord1.4}so how can it show a private photo?
+Dialogue: 0,0:09:03.17,0:09:04.74,Bilingual,,0,0,0,,靠一张签了名的票\N{\fs33\c&H00C8C0B8&\bord1.4}With a signed ticket.
+Dialogue: 0,0:09:04.79,0:09:07.42,Bilingual,,0,0,0,,Label Studio 不中转照片\N{\fs33\c&H00C8C0B8&\bord1.4}Label Studio does not relay the photos;
+Dialogue: 0,0:09:07.42,0:09:12.83,Bilingual,,0,0,0,,它用密钥给一个网址签名：只许看一张照片，只在很短的时间里有效\N{\fs33\c&H00C8C0B8&\bord1.4}it signs a web address with the key: permission for one photo, for a short time.
+Dialogue: 0,0:09:13.15,0:09:15.99,Bilingual,,0,0,0,,你的浏览器拿着这张票直接去找 Google\N{\fs33\c&H00C8C0B8&\bord1.4}Your browser carries that ticket straight to Google,
+Dialogue: 0,0:09:15.99,0:09:17.91,Bilingual,,0,0,0,,密钥一直留在 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}and the key stays in the container.
+Dialogue: 0,0:09:18.23,0:09:21.98,Bilingual,,0,0,0,,接着缩略图坏掉了，README 也提醒了你：是 CORS 的问题\N{\fs33\c&H00C8C0B8&\bord1.4}Then the thumbnails break, and the README warns you: it is CORS.
+Dialogue: 0,0:09:25.02,0:09:27.43,Bilingual,,0,0,0,,页面来自 localhost:8080\N{\fs33\c&H00C8C0B8&\bord1.4}The page comes from localhost:8080,
+Dialogue: 0,0:09:27.43,0:09:31.57,Bilingual,,0,0,0,,照片来自 Google 的存储地址：这是另一个 origin\N{\fs33\c&H00C8C0B8&\bord1.4}the photo from Google's storage address: a different origin.
+Dialogue: 0,0:09:31.89,0:09:36.06,Bilingual,,0,0,0,,页面自己的代码去取照片时，像 Label Studio 这样\N{\fs33\c&H00C8C0B8&\bord1.4}When the page's own code fetches the photo, as Label Studio does,
+Dialogue: 0,0:09:36.06,0:09:37.93,Bilingual,,0,0,0,,你的浏览器把响应交给这段代码\N{\fs33\c&H00C8C0B8&\bord1.4}your browser hands the answer
+Dialogue: 0,0:09:37.93,0:09:41.59,Bilingual,,0,0,0,,前提是它带着一个响应头，允许这个 origin\N{\fs33\c&H00C8C0B8&\bord1.4}over only if it carries a header that allows this origin.
+Dialogue: 0,0:09:41.91,0:09:46.05,Bilingual,,0,0,0,,Google 只在 bucket 有自己的 CORS 规则时，才加上这个响应头\N{\fs33\c&H00C8C0B8&\bord1.4}Google adds that header only if the bucket has its own CORS rule.
+Dialogue: 0,0:09:46.30,0:09:50.01,Bilingual,,0,0,0,,有一个小疏漏：README 把问题归到反向 DNS 查询上\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the README blames a reverse DNS lookup,
+Dialogue: 0,0:09:50.01,0:09:52.74,Bilingual,,0,0,0,,其实原因就是这条同源规则\N{\fs33\c&H00C8C0B8&\bord1.4}but the cause is that same-origin rule.
+Dialogue: 0,0:09:52.98,0:09:55.82,Bilingual,,0,0,0,,README 用第二个 container 来设置这条规则\N{\fs33\c&H00C8C0B8&\bord1.4}The README sets the rule from a second container.
+Dialogue: 0,0:09:56.14,0:10:00.76,Bilingual,,0,0,0,,把你的 bucket 名字写到 docker-shell-CLI.sh 的第 23 行\N{\fs33\c&H00C8C0B8&\bord1.4}Put your bucket name on line 23 of docker-shell-CLI.sh,
+Dialogue: 0,0:10:00.76,0:10:02.43,Bilingual,,0,0,0,,再用 sh 运行它\N{\fs33\c&H00C8C0B8&\bord1.4}then run it with sh.
+Dialogue: 0,0:10:02.75,0:10:05.87,Bilingual,,0,0,0,,提示符里的 ID 每次运行都会变\N{\fs33\c&H00C8C0B8&\bord1.4}The ID in the prompt changes every run,
+Dialogue: 0,0:10:05.87,0:10:10.58,Bilingual,,0,0,0,,Apple Silicon 上显示 aarch64，这台机器上显示的是 x86\N{\fs33\c&H00C8C0B8&\bord1.4}and Apple Silicon says aarch64 where this machine says x86.
+Dialogue: 0,0:10:10.90,0:10:12.50,Bilingual,,0,0,0,,暂停一下，两件都做了\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do both.
+Dialogue: 0,0:10:14.55,0:10:17.72,Bilingual,,0,0,0,,这个 container 加入同一条街道并按名字\N{\fs33\c&H00C8C0B8&\bord1.4}This container joins the same street and calls
+Dialogue: 0,0:10:17.72,0:10:20.20,Bilingual,,0,0,0,,调用 Label Studio 而不是 localhost\N{\fs33\c&H00C8C0B8&\bord1.4}Label Studio by name, not localhost.
+Dialogue: 0,0:10:20.52,0:10:23.94,Bilingual,,0,0,0,,它按目录名挂载这个 repo，所以别改这个名字\N{\fs33\c&H00C8C0B8&\bord1.4}It mounts the repo by its folder name, so keep that name.
+Dialogue: 0,0:10:24.18,0:10:27.97,Bilingual,,0,0,0,,在里面先跑 python cli.py -c，再跑 -m\N{\fs33\c&H00C8C0B8&\bord1.4}Inside, run python cli.py -c, then -m;
+Dialogue: 0,0:10:27.97,0:10:29.86,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run them.
+Dialogue: 0,0:10:30.18,0:10:35.92,Bilingual,,0,0,0,,这里两条都卡在存储客户端：找不到文件，因为 ADC 在找密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Here both stop at the storage client: file not found, because ADC looks for the key.
+Dialogue: 0,0:10:36.24,0:10:40.81,Bilingual,,0,0,0,,代码构造一条规则：任意 origin、只允许 GET、max age 一小时\N{\fs33\c&H00C8C0B8&\bord1.4}The code builds one rule, any origin, GET only, max age one hour,
+Dialogue: 0,0:10:40.81,0:10:42.42,Bilingual,,0,0,0,,然后 patch 到 bucket 上\N{\fs33\c&H00C8C0B8&\bord1.4}and patches the bucket.
+Dialogue: 0,0:10:42.67,0:10:47.49,Bilingual,,0,0,0,,有了真的密钥，-c 会打印这条规则，-m 会打印 bucket 的设置\N{\fs33\c&H00C8C0B8&\bord1.4}With a real key, -c prints the rule, and -m prints the bucket settings.
+Dialogue: 0,0:10:47.81,0:10:50.58,Bilingual,,0,0,0,,这下响应头来了，缩略图也加载出来了\N{\fs33\c&H00C8C0B8&\bord1.4}Now the header arrives and the thumbnails load.
+Dialogue: 0,0:10:50.90,0:10:53.62,Bilingual,,0,0,0,,这个 max age 只缓存预检请求\N{\fs33\c&H00C8C0B8&\bord1.4}The max age only caches preflight checks,
+Dialogue: 0,0:10:53.62,0:10:56.28,Bilingual,,0,0,0,,而普通的图片请求从来不发预检请求\N{\fs33\c&H00C8C0B8&\bord1.4}which a plain image request never makes.
+Dialogue: 0,0:10:56.52,0:10:58.12,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:10:58.18,0:11:02.15,Bilingual,,0,0,0,,你跑了 -c 也刷新了，缩略图还是坏的\N{\fs33\c&H00C8C0B8&\bord1.4}You ran -c and refreshed, and the thumbnails are still broken.
+Dialogue: 0,0:11:02.47,0:11:04.07,Bilingual,,0,0,0,,说出两个嫌疑点\N{\fs33\c&H00C8C0B8&\bord1.4}Name two suspects.
+Dialogue: 0,0:11:12.72,0:11:14.68,Bilingual,,0,0,0,,第一个：规则没加到你的 bucket 上\N{\fs33\c&H00C8C0B8&\bord1.4}One: the rule missed your bucket.
+Dialogue: 0,0:11:15.00,0:11:19.30,Bilingual,,0,0,0,,要么 -c 失败了，要么第 23 行写的是你的另一个 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}-c failed, or line 23 names another bucket of yours;
+Dialogue: 0,0:11:19.30,0:11:21.70,Bilingual,,0,0,0,,-m 会显示哪个 bucket 拿到了规则\N{\fs33\c&H00C8C0B8&\bord1.4}-m shows which bucket got it.
+Dialogue: 0,0:11:22.02,0:11:25.56,Bilingual,,0,0,0,,第二个：你的浏览器用了缓存的响应；强制刷新一下\N{\fs33\c&H00C8C0B8&\bord1.4}Two: your browser reused cached answers; hard refresh.
+Dialogue: 0,0:11:25.88,0:11:27.88,Bilingual,,0,0,0,,而 curl 从来没遇到过保安\N{\fs33\c&H00C8C0B8&\bord1.4}And curl never met a bouncer:
+Dialogue: 0,0:11:27.88,0:11:30.85,Bilingual,,0,0,0,,CORS 是浏览器的规则，不是访问控制\N{\fs33\c&H00C8C0B8&\bord1.4}CORS is a browser rule, not access control.
+Dialogue: 0,0:11:31.90,0:11:33.30,Bilingual,,0,0,0,,回到 Label Studio\N{\fs33\c&H00C8C0B8&\bord1.4}Back in Label Studio,
+Dialogue: 0,0:11:33.30,0:11:36.42,Bilingual,,0,0,0,,点开一个 task，选一种奶酪，然后点 Submit\N{\fs33\c&H00C8C0B8&\bord1.4}click a task, pick a cheese, and submit; repeat
+Dialogue: 0,0:11:36.42,0:11:38.90,Bilingual,,0,0,0,,重复几次。暂停一下，标注几张\N{\fs33\c&H00C8C0B8&\bord1.4}for a few. Pause and label some.
+Dialogue: 0,0:11:39.22,0:11:42.85,Bilingual,,0,0,0,,一次点击会变成什么，用替身调用来看\N{\fs33\c&H00C8C0B8&\bord1.4}Here is what one click becomes, as a stand-in call:
+Dialogue: 0,0:11:42.85,0:11:46.77,Bilingual,,0,0,0,,一个小小的 JSON 文档，result 里写着 choices 是 gouda\N{\fs33\c&H00C8C0B8&\bord1.4}a small JSON document whose result says choices, gouda.
+Dialogue: 0,0:11:47.02,0:11:49.51,Bilingual,,0,0,0,,Label Studio 把它存进自己的数据库\N{\fs33\c&H00C8C0B8&\bord1.4}Label Studio saves it in its database,
+Dialogue: 0,0:11:49.51,0:11:53.19,Bilingual,,0,0,0,,target storage 再往 cheeses labeled 里写一份副本\N{\fs33\c&H00C8C0B8&\bord1.4}and the target storage writes a copy to cheeses_labeled,
+Dialogue: 0,0:11:53.19,0:11:56.21,Bilingual,,0,0,0,,指回那张从没移动过的照片\N{\fs33\c&H00C8C0B8&\bord1.4}pointing back at the photo, which never moved.
+Dialogue: 0,0:11:56.53,0:11:59.05,Bilingual,,0,0,0,,课件把照片按行分了类\N{\fs33\c&H00C8C0B8&\bord1.4}The slide sorts photos into rows,
+Dialogue: 0,0:11:59.05,0:12:02.17,Bilingual,,0,0,0,,但磁盘上一条 label 就是一张 JSON 小纸条\N{\fs33\c&H00C8C0B8&\bord1.4}but on disk a label is a small JSON note,
+Dialogue: 0,0:12:02.17,0:12:05.45,Bilingual,,0,0,0,,标注好的数据集就是照片加上小纸条\N{\fs33\c&H00C8C0B8&\bord1.4}and a labeled dataset is photos plus notes.
+Dialogue: 0,0:12:05.77,0:12:10.12,Bilingual,,0,0,0,,在控制台里，这个目录里每条标注对应一个 JSON 文件\N{\fs33\c&H00C8C0B8&\bord1.4}In the console, that folder shows one JSON file per annotation.
+Dialogue: 0,0:12:10.44,0:12:12.13,Bilingual,,0,0,0,,打开一个就能看到这张小纸条\N{\fs33\c&H00C8C0B8&\bord1.4}Open one to see the note.
+Dialogue: 0,0:12:14.57,0:12:17.90,Bilingual,,0,0,0,,命令行 container 按名字调用 Label Studio\N{\fs33\c&H00C8C0B8&\bord1.4}The command line container calls Label Studio by name.
+Dialogue: 0,0:12:18.22,0:12:22.29,Bilingual,,0,0,0,,来想一个问题：要是它的地址写成 localhost:8080 呢？\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: what if its address were localhost:8080?
+Dialogue: 0,0:12:29.13,0:12:31.65,Bilingual,,0,0,0,,连不上：在 container 里面\N{\fs33\c&H00C8C0B8&\bord1.4}It cannot connect: inside a container,
+Dialogue: 0,0:12:31.65,0:12:35.30,Bilingual,,0,0,0,,localhost 指的就是这个 container，那里什么都没在监听\N{\fs33\c&H00C8C0B8&\bord1.4}localhost is that container, and nothing listens there.
+Dialogue: 0,0:12:35.62,0:12:37.98,Bilingual,,0,0,0,,名字能用，是因为 Docker 网络维护着\N{\fs33\c&H00C8C0B8&\bord1.4}The name works, because the Docker network
+Dialogue: 0,0:12:37.98,0:12:40.12,Bilingual,,0,0,0,,一本 container 名字的电话簿\N{\fs33\c&H00C8C0B8&\bord1.4}keeps a phone book of container names.
+Dialogue: 0,0:12:40.37,0:12:42.46,Bilingual,,0,0,0,,要从代码里列出 label\N{\fs33\c&H00C8C0B8&\bord1.4}To list labels from code,
+Dialogue: 0,0:12:42.46,0:12:46.39,Bilingual,,0,0,0,,先从 Account & Settings 复制你的访问令牌\N{\fs33\c&H00C8C0B8&\bord1.4}copy your access token from Account & Settings,
+Dialogue: 0,0:12:46.39,0:12:51.74,Bilingual,,0,0,0,,再跑 README 的命令：python cli.py -p -k，后面跟你的令牌\N{\fs33\c&H00C8C0B8&\bord1.4}then run the README command: python cli.py -p -k and your token.
+Dialogue: 0,0:12:52.06,0:12:53.52,Bilingual,,0,0,0,,暂停一下，试一试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try it.
+Dialogue: 0,0:12:53.57,0:12:57.62,Bilingual,,0,0,0,,在 Label Studio 1.23.0 上它会报 401\N{\fs33\c&H00C8C0B8&\bord1.4}On Label Studio 1.23.0 it fails with a 401;
+Dialogue: 0,0:12:57.62,0:13:04.96,Bilingual,,0,0,0,,我们这边的报错说，这个组织已经停用了 legacy token 身份验证\N{\fs33\c&H00C8C0B8&\bord1.4}ours says legacy token authentication has been disabled for this organization.
+Dialogue: 0,0:13:05.20,0:13:09.23,Bilingual,,0,0,0,,额外检查一下就知道原因：这个版本有两种令牌\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check shows why: this version has two kinds of token.
+Dialogue: 0,0:13:09.55,0:13:13.31,Bilingual,,0,0,0,,页面默认显示较新的 personal token\N{\fs33\c&H00C8C0B8&\bord1.4}The page shows a newer personal token by default,
+Dialogue: 0,0:13:13.31,0:13:18.15,Bilingual,,0,0,0,,legacy 那种是关掉的，而 cli.py 只认 legacy\N{\fs33\c&H00C8C0B8&\bord1.4}the legacy kind is switched off, and cli.py speaks only legacy.
+Dialogue: 0,0:13:19.88,0:13:23.71,Bilingual,,0,0,0,,修法：在 Organization 的 API Tokens Settings\N{\fs33\c&H00C8C0B8&\bord1.4}The fix: in Organization, API Tokens Settings,
+Dialogue: 0,0:13:23.71,0:13:25.45,Bilingual,,0,0,0,,里启用 legacy token\N{\fs33\c&H00C8C0B8&\bord1.4}enable legacy tokens.
+Dialogue: 0,0:13:25.77,0:13:29.06,Bilingual,,0,0,0,,然后复制 legacy token，不是 personal token\N{\fs33\c&H00C8C0B8&\bord1.4}Then copy the legacy token, not the personal one.
+Dialogue: 0,0:13:29.38,0:13:30.98,Bilingual,,0,0,0,,暂停一下，两件都做了\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do both.
+Dialogue: 0,0:13:32.90,0:13:36.78,Bilingual,,0,0,0,,再跑一次 -p，它列出了项目 1：Cheese labels\N{\fs33\c&H00C8C0B8&\bord1.4}Run -p again, and it lists project 1, Cheese labels.
+Dialogue: 0,0:13:37.10,0:13:39.03,Bilingual,,0,0,0,,然后带上你的令牌跑 -t\N{\fs33\c&H00C8C0B8&\bord1.4}Then -t with your token:
+Dialogue: 0,0:13:39.03,0:13:41.93,Bilingual,,0,0,0,,我们的替身里是 3 个 task，你那边是 21 个\N{\fs33\c&H00C8C0B8&\bord1.4}3 tasks in our stand-in, 21 for you;
+Dialogue: 0,0:13:41.93,0:13:44.42,Bilingual,,0,0,0,,我们的有一张标注成了 gouda\N{\fs33\c&H00C8C0B8&\bord1.4}ours has one labeled, as gouda.
+Dialogue: 0,0:13:44.74,0:13:46.31,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:13:46.36,0:13:49.97,Bilingual,,0,0,0,,README 的示例写的是 amanita；格式是一样的\N{\fs33\c&H00C8C0B8&\bord1.4}The README's sample says amanita; the format is the same.
+Dialogue: 0,0:13:57.80,0:14:00.89,Bilingual,,0,0,0,,README 的 Extra 一节把两个 container 一起跑起来\N{\fs33\c&H00C8C0B8&\bord1.4}The README's extra section runs both containers
+Dialogue: 0,0:14:00.89,0:14:02.49,Bilingual,,0,0,0,,用的是一个 compose 文件\N{\fs33\c&H00C8C0B8&\bord1.4}from one compose file.
+Dialogue: 0,0:14:02.71,0:14:05.82,Bilingual,,0,0,0,,用 exit 退出命令行 container\N{\fs33\c&H00C8C0B8&\bord1.4}Leave the command line container with exit,
+Dialogue: 0,0:14:05.82,0:14:08.92,Bilingual,,0,0,0,,停掉 Label Studio，再用 docker ps 检查\N{\fs33\c&H00C8C0B8&\bord1.4}stop Label Studio, and check with docker ps;
+Dialogue: 0,0:14:08.92,0:14:10.42,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}pause and do it.
+Dialogue: 0,0:14:10.47,0:14:15.72,Bilingual,,0,0,0,,先把你的 bucket 名字也填到 docker-compose.yml 的第 17 行\N{\fs33\c&H00C8C0B8&\bord1.4}First put your bucket name on line 17 of docker-compose.yml as well.
+Dialogue: 0,0:14:16.04,0:14:18.91,Bilingual,,0,0,0,,然后跑 sh docker-shell-compose.sh\N{\fs33\c&H00C8C0B8&\bord1.4}Then run sh docker-shell-compose.sh;
+Dialogue: 0,0:14:18.91,0:14:24.64,Bilingual,,0,0,0,,如果找不到这个命令，就用卡片上的 docker compose 写法\N{\fs33\c&H00C8C0B8&\bord1.4}if docker-compose is not found, use the docker compose form on the card.
+Dialogue: 0,0:14:24.96,0:14:27.10,Bilingual,,0,0,0,,这里它因为名字冲突停下了\N{\fs33\c&H00C8C0B8&\bord1.4}Here it stops on a name conflict:
+Dialogue: 0,0:14:27.10,0:14:31.25,Bilingual,,0,0,0,,docker stop 会把 container 留在那儿，名字还被它占着\N{\fs33\c&H00C8C0B8&\bord1.4}docker stop leaves the container behind, still holding its name.
+Dialogue: 0,0:14:31.50,0:14:33.87,Bilingual,,0,0,0,,额外跑一下 docker rm 把名字腾出来\N{\fs33\c&H00C8C0B8&\bord1.4}An extra docker rm frees the name;
+Dialogue: 0,0:14:33.87,0:14:37.43,Bilingual,,0,0,0,,暂停一下，删掉它，再跑一次 compose 脚本\N{\fs33\c&H00C8C0B8&\bord1.4}pause, remove it, and run the compose script again.
+Dialogue: 0,0:14:37.75,0:14:40.28,Bilingual,,0,0,0,,这次 Compose 创建了 Label Studio\N{\fs33\c&H00C8C0B8&\bord1.4}This time Compose creates Label Studio
+Dialogue: 0,0:14:40.28,0:14:42.81,Bilingual,,0,0,0,,外加一个一次性的命令行 container\N{\fs33\c&H00C8C0B8&\bord1.4}plus a one-off command line container.
+Dialogue: 0,0:14:44.32,0:14:47.99,Bilingual,,0,0,0,,额外用 echo 打印出来的，是 README 里的 bucket 名字\N{\fs33\c&H00C8C0B8&\bord1.4}An extra echo prints the README's bucket name:
+Dialogue: 0,0:14:47.99,0:14:50.15,Bilingual,,0,0,0,,compose 自己存了一份\N{\fs33\c&H00C8C0B8&\bord1.4}compose keeps its own copy,
+Dialogue: 0,0:14:50.15,0:14:54.07,Bilingual,,0,0,0,,在 docker-compose.yml 的第 17 行，所以这里也要改\N{\fs33\c&H00C8C0B8&\bord1.4}on line 17 of docker-compose.yml, so edit it too.
+Dialogue: 0,0:14:54.30,0:14:56.24,Bilingual,,0,0,0,,而第一次调用被拒绝了\N{\fs33\c&H00C8C0B8&\bord1.4}And the first call is refused:
+Dialogue: 0,0:14:56.24,0:14:59.40,Bilingual,,0,0,0,,depends on 这个设置会先启动 Label Studio\N{\fs33\c&H00C8C0B8&\bord1.4}the depends_on setting starts Label Studio first,
+Dialogue: 0,0:14:59.40,0:15:01.66,Bilingual,,0,0,0,,但不会等到它开始监听\N{\fs33\c&H00C8C0B8&\bord1.4}but does not wait until it listens.
+Dialogue: 0,0:15:01.98,0:15:03.64,Bilingual,,0,0,0,,额外加一个等待循环之后\N{\fs33\c&H00C8C0B8&\bord1.4}After an extra wait loop,
+Dialogue: 0,0:15:03.64,0:15:07.23,Bilingual,,0,0,0,,项目 1 回来了，因为挂载的是同一个目录\N{\fs33\c&H00C8C0B8&\bord1.4}project 1 is back, because the same folder is mounted.
+Dialogue: 0,0:15:10.20,0:15:14.23,Bilingual,,0,0,0,,Label Studio 一直在跑，你退出命令行 container 之后也一样\N{\fs33\c&H00C8C0B8&\bord1.4}Label Studio keeps running after you exit the command line container.
+Dialogue: 0,0:15:14.55,0:15:18.47,Bilingual,,0,0,0,,然后是 README 的清理：列出、停止、prune，再列出 image\N{\fs33\c&H00C8C0B8&\bord1.4}Then the README's cleanup: list, stop, prune, and list the images;
+Dialogue: 0,0:15:18.47,0:15:20.07,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run them.
+Dialogue: 0,0:15:20.29,0:15:25.84,Bilingual,,0,0,0,,这次 prune 把网络也删了，所以下次要先跑 docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}The prune also removed the network, so next time run docker-shell.sh first.
+Dialogue: 0,0:15:29.25,0:15:32.36,Bilingual,,0,0,0,,来想一个问题：跑完 docker system prune\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: after docker system prune,
+Dialogue: 0,0:15:32.36,0:15:34.28,Bilingual,,0,0,0,,你标注好的项目没了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}is your labeled project gone?
+Dialogue: 0,0:15:41.13,0:15:47.51,Bilingual,,0,0,0,,没有。数据库文件还在挂载的目录里，prune 从不碰你挂载的目录\N{\fs33\c&H00C8C0B8&\bord1.4}No. The database file is still in the mounted folder, and prune never touches folders you mount.
+Dialogue: 0,0:15:47.83,0:15:52.44,Bilingual,,0,0,0,,可它们指向的照片可能被悄悄换掉：同样的名字，新的图片\N{\fs33\c&H00C8C0B8&\bord1.4}But the photos they point at can change under them: same name, new picture.
+Dialogue: 0,0:15:52.76,0:15:56.09,Bilingual,,0,0,0,,那么，一个模型看过的到底是哪些照片，怎么把它准确地冻结下来？\N{\fs33\c&H00C8C0B8&\bord1.4}So how do you freeze exactly which photos a model saw?
+Dialogue: 0,0:15:56.28,0:15:57.88,Bilingual,,0,0,0,,这就是第二部分\N{\fs33\c&H00C8C0B8&\bord1.4}That is part 2.
+Dialogue: 0,0:15:58.60,0:16:01.27,Bilingual,,0,0,0,,第二部分：把模型看到的照片冻结下来\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2: freezing which photos a model saw.
+Dialogue: 0,0:16:01.59,0:16:05.19,Bilingual,,0,0,0,,只用 git 的话，每个照片版本都会被复制进每一个 clone\N{\fs33\c&H00C8C0B8&\bord1.4}Git alone would copy every photo version into every clone.
+Dialogue: 0,0:16:05.51,0:16:09.57,Bilingual,,0,0,0,,课上的四种做法里，我们搭的是基于文件的做法\N{\fs33\c&H00C8C0B8&\bord1.4}Of the lecture's four approaches, we build the file-based one:
+Dialogue: 0,0:16:09.57,0:16:14.34,Bilingual,,0,0,0,,git 给一个记着指纹的小文件做版本管理，bucket 存照片\N{\fs33\c&H00C8C0B8&\bord1.4}git versions a small file of fingerprints, and a bucket holds the photos.
+Dialogue: 0,0:16:14.66,0:16:16.26,Bilingual,,0,0,0,,用的工具是 DVC\N{\fs33\c&H00C8C0B8&\bord1.4}The tool is DVC.
+Dialogue: 0,0:16:18.47,0:16:20.17,Bilingual,,0,0,0,,先退到上一级目录\N{\fs33\c&H00C8C0B8&\bord1.4}First, move up one folder,
+Dialogue: 0,0:16:20.17,0:16:23.78,Bilingual,,0,0,0,,让新的 clone 和 data-labeling、secrets 放在一起\N{\fs33\c&H00C8C0B8&\bord1.4}so the new clone sits beside data-labeling and secrets.
+Dialogue: 0,0:16:24.10,0:16:28.17,Bilingual,,0,0,0,,这份 data-versioning 的 README 一开头也是那三条清理命令\N{\fs33\c&H00C8C0B8&\bord1.4}The data-versioning README starts with the same three cleanup commands.
+Dialogue: 0,0:16:28.49,0:16:30.09,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
+Dialogue: 0,0:16:34.10,0:16:36.68,Bilingual,,0,0,0,,然后 clone README 指定的 starter 分支\N{\fs33\c&H00C8C0B8&\bord1.4}Then clone the starter branch the README names.
+Dialogue: 0,0:16:37.00,0:16:40.23,Bilingual,,0,0,0,,它的 SSH 命令需要你在 GitHub 上配好 SSH 密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Its SSH command needs your key on GitHub,
+Dialogue: 0,0:16:40.23,0:16:42.91,Bilingual,,0,0,0,,而这台机器没有 SSH 通道\N{\fs33\c&H00C8C0B8&\bord1.4}and this machine has no SSH route.
+Dialogue: 0,0:16:43.23,0:16:47.69,Bilingual,,0,0,0,,所以同一个分支改走 HTTPS，README 也允许这样做\N{\fs33\c&H00C8C0B8&\bord1.4}So the same branch comes over HTTPS, which the README allows.
+Dialogue: 0,0:16:48.01,0:16:49.74,Bilingual,,0,0,0,,暂停一下，clone 下来，再进去\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, clone it, and move in.
+Dialogue: 0,0:16:53.35,0:16:58.70,Bilingual,,0,0,0,,有一点要说明：上课那天 README 改了，现在它让你 clone main\N{\fs33\c&H00C8C0B8&\bord1.4}One note: on the day of the lecture the README changed, and it now says to clone main.
+Dialogue: 0,0:16:59.02,0:17:03.16,Bilingual,,0,0,0,,这个分支会把授课老师做好的 DVC 文件一起带过来\N{\fs33\c&H00C8C0B8&\bord1.4}That branch brings the instructor's finished DVC files along,
+Dialogue: 0,0:17:03.16,0:17:05.25,Bilingual,,0,0,0,,额外再 clone 一份就能看到\N{\fs33\c&H00C8C0B8&\bord1.4}as an extra second clone shows.
+Dialogue: 0,0:17:05.57,0:17:08.56,Bilingual,,0,0,0,,这个视频跟的是课程 pin 住的那版 README\N{\fs33\c&H00C8C0B8&\bord1.4}This video follows the course's pinned README:
+Dialogue: 0,0:17:08.56,0:17:10.69,Bilingual,,0,0,0,,starter 分支，外加一处修复\N{\fs33\c&H00C8C0B8&\bord1.4}the starter branch, plus one fix.
+Dialogue: 0,0:17:10.93,0:17:15.72,Bilingual,,0,0,0,,删掉旧的 git 历史，这样代码就不再和课程的 repo 绑在一起\N{\fs33\c&H00C8C0B8&\bord1.4}Remove the old git history, so the code is no longer tied to the class repo,
+Dialogue: 0,0:17:15.72,0:17:17.61,Bilingual,,0,0,0,,再用 git init 重新开始\N{\fs33\c&H00C8C0B8&\bord1.4}and start fresh with git init.
+Dialogue: 0,0:17:17.93,0:17:19.50,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:17:19.55,0:17:23.92,Bilingual,,0,0,0,,Git 的提示里提到了 master，所以下一步要给分支改名\N{\fs33\c&H00C8C0B8&\bord1.4}Git's hint mentions master, which is why the branch gets renamed next.
+Dialogue: 0,0:17:25.93,0:17:30.45,Bilingual,,0,0,0,,在 GitHub 上建一个空的私有 repo，叫 data-versioning\N{\fs33\c&H00C8C0B8&\bord1.4}On GitHub, create an empty private repo called data-versioning,
+Dialogue: 0,0:17:30.45,0:17:33.53,Bilingual,,0,0,0,,不要 README、许可证，也不要 .gitignore 文件\N{\fs33\c&H00C8C0B8&\bord1.4}with no README, license or .gitignore file.
+Dialogue: 0,0:17:33.85,0:17:35.38,Bilingual,,0,0,0,,然后是五条命令\N{\fs33\c&H00C8C0B8&\bord1.4}Then the five commands:
+Dialogue: 0,0:17:35.38,0:17:39.78,Bilingual,,0,0,0,,改分支名、把你的 repo 加为 origin、add、commit、push\N{\fs33\c&H00C8C0B8&\bord1.4}rename the branch, add your repo as origin, add, commit, and push.
+Dialogue: 0,0:17:40.10,0:17:41.63,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
+Dialogue: 0,0:17:41.68,0:17:44.66,Bilingual,,0,0,0,,你的 repo 现在在 main 上显示 7 个文件\N{\fs33\c&H00C8C0B8&\bord1.4}Your repo now shows the 7 files on main.
+Dialogue: 0,0:17:47.40,0:17:50.15,Bilingual,,0,0,0,,一个 bucket 只存有名字的对象，别的什么都不存\N{\fs33\c&H00C8C0B8&\bord1.4}A bucket stores named objects, nothing else.
+Dialogue: 0,0:17:50.47,0:17:54.25,Bilingual,,0,0,0,,再加上版本管理之类的工具，课上就把它叫做数据湖\N{\fs33\c&H00C8C0B8&\bord1.4}Add tools, like versioning, and the lecture calls it a data lake.
+Dialogue: 0,0:17:54.57,0:17:58.39,Bilingual,,0,0,0,,它的目录只是共同的名字前缀，这就埋下了一个陷阱\N{\fs33\c&H00C8C0B8&\bord1.4}Its folders are only shared name prefixes, which sets a trap.
+Dialogue: 0,0:17:59.27,0:18:03.39,Bilingual,,0,0,0,,第一部分的 secrets 目录已经在这个 repo 旁边了\N{\fs33\c&H00C8C0B8&\bord1.4}The secrets folder from part 1 already sits beside this repo,
+Dialogue: 0,0:18:03.39,0:18:05.28,Bilingual,,0,0,0,,额外用 tree 看一下就能看到\N{\fs33\c&H00C8C0B8&\bord1.4}as an extra tree view shows.
+Dialogue: 0,0:18:05.60,0:18:09.66,Bilingual,,0,0,0,,README 要的是同一个服务账号和密钥，所以两个都直接复用\N{\fs33\c&H00C8C0B8&\bord1.4}The README wants the same service account and key, so reuse both.
+Dialogue: 0,0:18:12.88,0:18:17.90,Bilingual,,0,0,0,,在你的 bucket 里，用控制台建两个目录：DVC store 和 images\N{\fs33\c&H00C8C0B8&\bord1.4}In your bucket, create two folders in the console: dvc_store and images.
+Dialogue: 0,0:18:18.22,0:18:19.31,Bilingual,,0,0,0,,有一个小疏漏\N{\fs33\c&H00C8C0B8&\bord1.4}A small gap:
+Dialogue: 0,0:18:19.31,0:18:24.04,Bilingual,,0,0,0,,课程的 README 从没说要把第一批照片放进 images 目录\N{\fs33\c&H00C8C0B8&\bord1.4}the course's README never says to put the first photos into the images folder,
+Dialogue: 0,0:18:24.04,0:18:25.98,Bilingual,,0,0,0,,后面却说再加一些\N{\fs33\c&H00C8C0B8&\bord1.4}yet later it says to add more.
+Dialogue: 0,0:18:26.30,0:18:29.37,Bilingual,,0,0,0,,所以把 zip 里的 Image 1 到 Image 4 上传上去\N{\fs33\c&H00C8C0B8&\bord1.4}So upload Image_1 through Image_4 from the zip.
+Dialogue: 0,0:18:29.69,0:18:31.29,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it.
+Dialogue: 0,0:18:33.50,0:18:35.00,Bilingual,,0,0,0,,在 docker-shell.sh 里\N{\fs33\c&H00C8C0B8&\bord1.4}In docker-shell.sh,
+Dialogue: 0,0:18:35.00,0:18:38.49,Bilingual,,0,0,0,,把 bucket、项目和可用区换成你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}replace the bucket, project and zone with yours.
+Dialogue: 0,0:18:38.81,0:18:40.92,Bilingual,,0,0,0,,真正用到的只有 bucket 名字\N{\fs33\c&H00C8C0B8&\bord1.4}Only the bucket name is ever used.
+Dialogue: 0,0:18:41.24,0:18:42.70,Bilingual,,0,0,0,,暂停一下，改好它\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and edit it.
+Dialogue: 0,0:18:42.75,0:18:46.27,Bilingual,,0,0,0,,这个 entrypoint 会跑课上画的四个阶段\N{\fs33\c&H00C8C0B8&\bord1.4}The entrypoint runs the four stages the lecture draws.
+Dialogue: 0,0:18:46.59,0:18:48.19,Bilingual,,0,0,0,,用密钥做身份验证\N{\fs33\c&H00C8C0B8&\bord1.4}Authenticate with the key.
+Dialogue: 0,0:18:48.49,0:18:51.79,Bilingual,,0,0,0,,把整个 bucket 挂载成一个目录，用的是 gcsfuse\N{\fs33\c&H00C8C0B8&\bord1.4}Mount the whole bucket as a folder, with gcsfuse.
+Dialogue: 0,0:18:52.11,0:18:56.47,Bilingual,,0,0,0,,把它的 images 目录绑定到应用要的路径上：cheese dataset\N{\fs33\c&H00C8C0B8&\bord1.4}Bind its images folder to the path the app expects, cheese_dataset.
+Dialogue: 0,0:18:56.79,0:19:01.00,Bilingual,,0,0,0,,然后使用数据：DVC 把这个目录当本地目录用\N{\fs33\c&H00C8C0B8&\bord1.4}Then use the data: DVC works on that folder as if it were local,
+Dialogue: 0,0:19:01.00,0:19:03.83,Bilingual,,0,0,0,,而每个文件其实都是从 bucket 取来的\N{\fs33\c&H00C8C0B8&\bord1.4}while each file is fetched from the bucket.
+Dialogue: 0,0:19:04.22,0:19:09.21,Bilingual,,0,0,0,,课上把挂载那一行拆开讲：工具、密钥文件、bucket、挂载点\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture takes the mount line apart: tool, key file, bucket, mount point.
+Dialogue: 0,0:19:09.53,0:19:12.49,Bilingual,,0,0,0,,有一个参数没传，--implicit-dirs\N{\fs33\c&H00C8C0B8&\bord1.4}One flag is not passed, --implicit-dirs,
+Dialogue: 0,0:19:12.49,0:19:18.10,Bilingual,,0,0,0,,所以 gcsfuse 只显示控制台建的目录，它们会留下一个标记对象\N{\fs33\c&H00C8C0B8&\bord1.4}so gcsfuse only shows folders the console made, which leave a marker object.
+Dialogue: 0,0:19:18.42,0:19:19.75,Bilingual,,0,0,0,,这就是那个陷阱\N{\fs33\c&H00C8C0B8&\bord1.4}That was the trap.
+Dialogue: 0,0:19:19.80,0:19:21.52,Bilingual,,0,0,0,,注意这两个 bind mount\N{\fs33\c&H00C8C0B8&\bord1.4}Note the two bind mounts:
+Dialogue: 0,0:19:21.52,0:19:24.63,Bilingual,,0,0,0,,-v 把你笔记本上的 repo 接到 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}-v joins your laptop's repo to the container,
+Dialogue: 0,0:19:24.63,0:19:28.14,Bilingual,,0,0,0,,里面那个则把 bucket 的 images 目录接进来\N{\fs33\c&H00C8C0B8&\bord1.4}and the inner one joins the bucket's images folder.
+Dialogue: 0,0:19:28.38,0:19:31.46,Bilingual,,0,0,0,,挂载需要 fuse 设备和挂载权限\N{\fs33\c&H00C8C0B8&\bord1.4}Mounting needs the fuse device and mount rights,
+Dialogue: 0,0:19:31.46,0:19:34.85,Bilingual,,0,0,0,,所以要加 --privileged 参数和多加的那个 capability\N{\fs33\c&H00C8C0B8&\bord1.4}hence the --privileged flag and the extra capability.
+Dialogue: 0,0:19:35.17,0:19:38.71,Bilingual,,0,0,0,,脚本还会挂载你的 repo、secrets 和 git 配置\N{\fs33\c&H00C8C0B8&\bord1.4}The script also mounts your repo, secrets and git config.
+Dialogue: 0,0:19:39.03,0:19:41.01,Bilingual,,0,0,0,,先把 git 配好，再做第一次运行\N{\fs33\c&H00C8C0B8&\bord1.4}Set up git before the first run,
+Dialogue: 0,0:19:41.01,0:19:43.49,Bilingual,,0,0,0,,不然 Docker 会在那个位置建一个目录\N{\fs33\c&H00C8C0B8&\bord1.4}or Docker creates a folder in its place.
+Dialogue: 0,0:19:44.53,0:19:47.97,Bilingual,,0,0,0,,你已经在 data-versioning 目录里了\N{\fs33\c&H00C8C0B8&\bord1.4}You are already in the data-versioning folder,
+Dialogue: 0,0:19:47.97,0:19:49.91,Bilingual,,0,0,0,,所以跑：sh docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}so run sh docker-shell.sh.
+Dialogue: 0,0:19:50.23,0:19:51.65,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:19:51.70,0:19:54.44,Bilingual,,0,0,0,,在 starter 分支上，构建直接挂了\N{\fs33\c&H00C8C0B8&\bord1.4}On the starter branch, the build dies:
+Dialogue: 0,0:19:54.44,0:19:58.40,Bilingual,,0,0,0,,包 google-cloud-sdk 没有可安装的候选版本\N{\fs33\c&H00C8C0B8&\bord1.4}package google-cloud-sdk has no installation candidate.
+Dialogue: 0,0:19:58.72,0:20:02.73,Bilingual,,0,0,0,,报错里甚至点出了替代品：google-cloud-cli\N{\fs33\c&H00C8C0B8&\bord1.4}The message even names the replacement, google-cloud-cli.
+Dialogue: 0,0:20:02.97,0:20:07.06,Bilingual,,0,0,0,,有一个小疏漏，不是你的错：Google 给这个包改了名\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip, and not your fault: Google renamed the package,
+Dialogue: 0,0:20:07.06,0:20:11.41,Bilingual,,0,0,0,,main 分支修了第 36 行，starter 却一直没修\N{\fs33\c&H00C8C0B8&\bord1.4}the main branch fixed line 36, and the starter never got the fix.
+Dialogue: 0,0:20:11.73,0:20:14.49,Bilingual,,0,0,0,,你也照样改这一个词，这是额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Make the same one-word change, as an extra.
+Dialogue: 0,0:20:14.81,0:20:16.41,Bilingual,,0,0,0,,暂停一下，改好它\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and edit it.
+Dialogue: 0,0:20:17.28,0:20:18.88,Bilingual,,0,0,0,,暂停一下，再跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it again.
+Dialogue: 0,0:20:19.08,0:20:20.68,Bilingual,,0,0,0,,第一次构建比较慢\N{\fs33\c&H00C8C0B8&\bord1.4}The first build is slow.
+Dialogue: 0,0:20:20.95,0:20:22.51,Bilingual,,0,0,0,,然后 entrypoint 开始跑\N{\fs33\c&H00C8C0B8&\bord1.4}Then the entrypoint runs,
+Dialogue: 0,0:20:22.51,0:20:25.62,Bilingual,,0,0,0,,每个阶段失败的方式都和缺了密钥时一样\N{\fs33\c&H00C8C0B8&\bord1.4}and every stage fails the way a missing key fails.
+Dialogue: 0,0:20:25.94,0:20:28.81,Bilingual,,0,0,0,,gcloud 工具找不到密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}The gcloud tool cannot find the key file,
+Dialogue: 0,0:20:28.81,0:20:32.45,Bilingual,,0,0,0,,gcsfuse 也找不到，所以 bucket 根本没挂载上\N{\fs33\c&H00C8C0B8&\bord1.4}and neither can gcsfuse, so the bucket never mounts.
+Dialogue: 0,0:20:32.77,0:20:34.87,Bilingual,,0,0,0,,可下一行却写着 bucket 已挂载\N{\fs33\c&H00C8C0B8&\bord1.4}Yet the next line says bucket mounted,
+Dialogue: 0,0:20:34.87,0:20:37.29,Bilingual,,0,0,0,,因为脚本不管怎样都会打印这一行\N{\fs33\c&H00C8C0B8&\bord1.4}because the script prints it no matter what.
+Dialogue: 0,0:20:37.61,0:20:41.37,Bilingual,,0,0,0,,接着 bind mount 失败了：特殊设备不存在\N{\fs33\c&H00C8C0B8&\bord1.4}Then the bind mount fails: special device does not exist.
+Dialogue: 0,0:20:41.62,0:20:43.53,Bilingual,,0,0,0,,可你还是拿到了一个 root 提示符\N{\fs33\c&H00C8C0B8&\bord1.4}And still you get a root prompt,
+Dialogue: 0,0:20:43.53,0:20:46.33,Bilingual,,0,0,0,,因为 entrypoint 遇到错误不会停\N{\fs33\c&H00C8C0B8&\bord1.4}because the entrypoint does not stop at errors.
+Dialogue: 0,0:20:46.65,0:20:51.26,Bilingual,,0,0,0,,额外检查：cheese dataset 目录是空的\N{\fs33\c&H00C8C0B8&\bord1.4}Extra checks: the cheese_dataset folder is empty,
+Dialogue: 0,0:20:51.26,0:20:56.25,Bilingual,,0,0,0,,装的是 DVC 3.63.0，由 lock 文件 pin 住\N{\fs33\c&H00C8C0B8&\bord1.4}and DVC 3.63.0 is installed, pinned by the lock file.
+Dialogue: 0,0:20:56.57,0:20:59.98,Bilingual,,0,0,0,,所以今天的规则是：先列一下目录，再 add 它\N{\fs33\c&H00C8C0B8&\bord1.4}So the rule for today: list the folder before you add it.
+Dialogue: 0,0:21:00.23,0:21:03.90,Bilingual,,0,0,0,,有了真的密钥，里面的目录会列出你的四张照片\N{\fs33\c&H00C8C0B8&\bord1.4}With a real key, the folder inside lists your four photos.
+Dialogue: 0,0:21:04.22,0:21:08.19,Bilingual,,0,0,0,,来想一个问题：在你的笔记本上，同一个目录是空的\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: on your laptop, the same folder is empty.
+Dialogue: 0,0:21:08.51,0:21:10.11,Bilingual,,0,0,0,,挂载坏了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Is the mount broken?
+Dialogue: 0,0:21:18.77,0:21:22.71,Bilingual,,0,0,0,,没有。两个挂载都只存在于 container 里面\N{\fs33\c&H00C8C0B8&\bord1.4}No. Both mounts exist only inside the container.
+Dialogue: 0,0:21:23.03,0:21:26.24,Bilingual,,0,0,0,,你的笔记本，看到的是 entrypoint\N{\fs33\c&H00C8C0B8&\bord1.4}Your laptop sees the empty folder the entrypoint
+Dialogue: 0,0:21:26.24,0:21:28.11,Bilingual,,0,0,0,,通过 repo 的挂载建出来的空目录\N{\fs33\c&H00C8C0B8&\bord1.4}made through the repo mount;
+Dialogue: 0,0:21:28.11,0:21:30.84,Bilingual,,0,0,0,,额外列一下就能看到，它属于 root\N{\fs33\c&H00C8C0B8&\bord1.4}an extra listing shows it, owned by root.
+Dialogue: 0,0:21:34.40,0:21:37.32,Bilingual,,0,0,0,,在 container 里面跑：dvc init\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the container, run dvc init.
+Dialogue: 0,0:21:37.64,0:21:42.72,Bilingual,,0,0,0,,在 Linux 上它可能会停下：仓库路径不属于当前用户\N{\fs33\c&H00C8C0B8&\bord1.4}On Linux it may stop: the repository path is not owned by the current user.
+Dialogue: 0,0:21:43.04,0:21:46.22,Bilingual,,0,0,0,,你在里面是 root，而 repo 在磁盘上属于你\N{\fs33\c&H00C8C0B8&\bord1.4}You are root inside, the repo is yours on disk,
+Dialogue: 0,0:21:46.22,0:21:49.12,Bilingual,,0,0,0,,所以 git 拒绝了，留下一个半成品目录\N{\fs33\c&H00C8C0B8&\bord1.4}so git refuses, leaving a half-made folder.
+Dialogue: 0,0:21:49.37,0:21:51.44,Bilingual,,0,0,0,,修法是一个额外步骤，只针对 Linux\N{\fs33\c&H00C8C0B8&\bord1.4}The fix is an extra, for Linux:
+Dialogue: 0,0:21:51.44,0:21:54.32,Bilingual,,0,0,0,,在你的笔记本上删掉那些半成品文件\N{\fs33\c&H00C8C0B8&\bord1.4}on your laptop, remove the half-made files.
+Dialogue: 0,0:21:54.64,0:21:58.35,Bilingual,,0,0,0,,然后把 /app 标成安全目录，写进你的 git 配置\N{\fs33\c&H00C8C0B8&\bord1.4}Then mark /app as a safe directory in your git config.
+Dialogue: 0,0:21:58.67,0:22:01.89,Bilingual,,0,0,0,,再启动一次 container，dvc init 就成功了\N{\fs33\c&H00C8C0B8&\bord1.4}Start the container again, and dvc init works.
+Dialogue: 0,0:22:02.21,0:22:03.81,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:22:04.58,0:22:06.93,Bilingual,,0,0,0,,如果你 clone 的是 main，就会停在这里\N{\fs33\c&H00C8C0B8&\bord1.4}If you cloned main, it stops here:
+Dialogue: 0,0:22:06.93,0:22:12.99,Bilingual,,0,0,0,,DVC 已经配置好了，remote 被拒绝，配置还指向课程的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}DVC is already set up, the remote is refused, and the config points at the class bucket.
+Dialogue: 0,0:22:13.31,0:22:14.88,Bilingual,,0,0,0,,从 starter 开始\N{\fs33\c&H00C8C0B8&\bord1.4}Start from the starter.
+Dialogue: 0,0:22:14.93,0:22:18.95,Bilingual,,0,0,0,,然后把 DVC 指向你 bucket 里的 DVC store 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Then point DVC at the dvc_store folder in your bucket,
+Dialogue: 0,0:22:18.95,0:22:20.59,Bilingual,,0,0,0,,作为它的默认 remote\N{\fs33\c&H00C8C0B8&\bord1.4}as its default remote.
+Dialogue: 0,0:22:20.91,0:22:22.51,Bilingual,,0,0,0,,暂停一下，加上它\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and add it.
+Dialogue: 0,0:22:24.90,0:22:27.72,Bilingual,,0,0,0,,来看 dvc add 会对照片做什么\N{\fs33\c&H00C8C0B8&\bord1.4}Here is what dvc add will do with photos.
+Dialogue: 0,0:22:28.04,0:22:30.68,Bilingual,,0,0,0,,它用 MD5 给每张照片算指纹\N{\fs33\c&H00C8C0B8&\bord1.4}It fingerprints each photo with MD5.
+Dialogue: 0,0:22:31.00,0:22:34.19,Bilingual,,0,0,0,,它把一份副本按这个指纹放进缓存\N{\fs33\c&H00C8C0B8&\bord1.4}It files a copy in its cache under that fingerprint,
+Dialogue: 0,0:22:34.19,0:22:36.82,Bilingual,,0,0,0,,放在用指纹前 2 个字符命名的架子上\N{\fs33\c&H00C8C0B8&\bord1.4}on a shelf named by the first 2 characters.
+Dialogue: 0,0:22:37.14,0:22:41.12,Bilingual,,0,0,0,,然后它给一个 manifest 算指纹，也就是指纹和文件名的列表\N{\fs33\c&H00C8C0B8&\bord1.4}Then it fingerprints a manifest, the list of fingerprints and names,
+Dialogue: 0,0:22:41.12,0:22:46.32,Bilingual,,0,0,0,,再把这个指纹写进指针文件，在 git 里由它代替这个目录\N{\fs33\c&H00C8C0B8&\bord1.4}and writes that fingerprint into the pointer file, which stands in for the folder in git.
+Dialogue: 0,0:22:48.23,0:22:52.24,Bilingual,,0,0,0,,第二个陷阱：挂载失败了，所以目录是空的\N{\fs33\c&H00C8C0B8&\bord1.4}A second trap: the mount failed, so the folder is empty,
+Dialogue: 0,0:22:52.24,0:22:55.96,Bilingual,,0,0,0,,而 dvc add 照样高高兴兴地做出一个 0 个文件的版本\N{\fs33\c&H00C8C0B8&\bord1.4}and dvc add happily makes a version with zero files.
+Dialogue: 0,0:22:56.72,0:23:01.62,Bilingual,,0,0,0,,没有挂载 bucket，我们的替身就把四张照片复制进笔记本上的目录\N{\fs33\c&H00C8C0B8&\bord1.4}With no bucket mounted, our stand-in copies four photos into the laptop folder,
+Dialogue: 0,0:23:01.62,0:23:05.72,Bilingual,,0,0,0,,container 通过 repo 的挂载能看到它们，我们再 add 一次\N{\fs33\c&H00C8C0B8&\bord1.4}which the container sees through the repo mount, and we add again.
+Dialogue: 0,0:23:06.04,0:23:10.50,Bilingual,,0,0,0,,现在指针文件写着 4 个文件，整个目录一个指纹\N{\fs33\c&H00C8C0B8&\bord1.4}Now the pointer file says 4 files and one fingerprint for the folder.
+Dialogue: 0,0:23:10.82,0:23:12.42,Bilingual,,0,0,0,,暂停一下，add 你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and add yours.
+Dialogue: 0,0:23:16.25,0:23:19.96,Bilingual,,0,0,0,,缓存里能看到这些架子，还有之前那个空版本\N{\fs33\c&H00C8C0B8&\bord1.4}The cache shows those shelves, plus the empty version from before.
+Dialogue: 0,0:23:24.67,0:23:29.85,Bilingual,,0,0,0,,所以一行字能锁定 600 KB：它给指纹的列表算指纹\N{\fs33\c&H00C8C0B8&\bord1.4}So one line pins 600 kilobytes: it fingerprints the list of fingerprints.
+Dialogue: 0,0:23:30.17,0:23:34.49,Bilingual,,0,0,0,,而授课老师在课程 repo 里打的 tag 存的是同一个指纹\N{\fs33\c&H00C8C0B8&\bord1.4}And the instructor's tag in the class repo holds the same fingerprint,
+Dialogue: 0,0:23:34.49,0:23:36.09,Bilingual,,0,0,0,,一个字符都不差\N{\fs33\c&H00C8C0B8&\bord1.4}character for character.
+Dialogue: 0,0:23:37.32,0:23:38.92,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:23:38.98,0:23:42.18,Bilingual,,0,0,0,,你把 Image 2 改名叫 brie 2，再 add 一次\N{\fs33\c&H00C8C0B8&\bord1.4}You give Image_2 the new name brie_2, and add again.
+Dialogue: 0,0:23:42.50,0:23:48.32,Bilingual,,0,0,0,,哪个会变：是照片的指纹，manifest 的指纹，大小，还是文件数？\N{\fs33\c&H00C8C0B8&\bord1.4}Which changes: the photo fingerprint, the manifest fingerprint, the size, or the file count?
+Dialogue: 0,0:23:57.17,0:24:01.03,Bilingual,,0,0,0,,只有 manifest 的指纹变了，因为列表里有一个名字变了\N{\fs33\c&H00C8C0B8&\bord1.4}Only the manifest fingerprint, because one name in the list changed.
+Dialogue: 0,0:24:01.35,0:24:05.57,Bilingual,,0,0,0,,开头那两个目录正好反过来：名字一样，字节是新的\N{\fs33\c&H00C8C0B8&\bord1.4}The opening's two folders were the reverse: same names, new bytes.
+Dialogue: 0,0:24:05.89,0:24:09.21,Bilingual,,0,0,0,,而且 DVC 存的是整个文件，不是差异\N{\fs33\c&H00C8C0B8&\bord1.4}And DVC stores whole files, not differences;
+Dialogue: 0,0:24:09.21,0:24:13.51,Bilingual,,0,0,0,,改一个像素，就是一个新指纹、一份新副本\N{\fs33\c&H00C8C0B8&\bord1.4}one changed pixel means a new fingerprint and a new copy.
+Dialogue: 0,0:24:15.15,0:24:16.81,Bilingual,,0,0,0,,接下来是 dvc push\N{\fs33\c&H00C8C0B8&\bord1.4}Next, dvc push.
+Dialogue: 0,0:24:17.13,0:24:18.56,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:24:18.61,0:24:20.63,Bilingual,,0,0,0,,这里没有凭据，失败了\N{\fs33\c&H00C8C0B8&\bord1.4}Here it fails without credentials.
+Dialogue: 0,0:24:20.95,0:24:22.95,Bilingual,,0,0,0,,为了展示 push 会上传什么\N{\fs33\c&H00C8C0B8&\bord1.4}To show what a push uploads,
+Dialogue: 0,0:24:22.95,0:24:26.24,Bilingual,,0,0,0,,额外 push 到一个本地的替身 remote\N{\fs33\c&H00C8C0B8&\bord1.4}an extra push goes to a local stand-in remote:
+Dialogue: 0,0:24:26.24,0:24:29.74,Bilingual,,0,0,0,,推送了 5 个文件，四张照片加上 manifest\N{\fs33\c&H00C8C0B8&\bord1.4}5 files pushed, the four photos and the manifest.
+Dialogue: 0,0:24:29.98,0:24:33.31,Bilingual,,0,0,0,,在你的 bucket 里，DVC store 现在和缓存一模一样\N{\fs33\c&H00C8C0B8&\bord1.4}In your bucket, the dvc_store now mirrors the cache.
+Dialogue: 0,0:24:33.63,0:24:38.56,Bilingual,,0,0,0,,金色标签：照片的第二份副本，仍然每月不到一美分\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: a second copy of the photos, still a fraction of a cent a month.
+Dialogue: 0,0:24:38.88,0:24:43.85,Bilingual,,0,0,0,,所以现在这些字节在三个地方：你上传到的 images 目录\N{\fs33\c&H00C8C0B8&\bord1.4}So the bytes now sit in three places: the images folder you upload to,
+Dialogue: 0,0:24:43.85,0:24:47.11,Bilingual,,0,0,0,,还有你磁盘上由 dvc add 填满的缓存\N{\fs33\c&H00C8C0B8&\bord1.4}and the cache on your disk, filled by dvc add.
+Dialogue: 0,0:24:47.43,0:24:52.28,Bilingual,,0,0,0,,第三个是 DVC store，那里每个文件都用它的指纹命名\N{\fs33\c&H00C8C0B8&\bord1.4}The third is the dvc_store, where every file is named by its fingerprint.
+Dialogue: 0,0:24:52.60,0:24:54.56,Bilingual,,0,0,0,,这个 images 目录可以变\N{\fs33\c&H00C8C0B8&\bord1.4}The images folder can change;
+Dialogue: 0,0:24:54.56,0:24:58.95,Bilingual,,0,0,0,,DVC store 从不覆盖，因为新的字节会有新的名字\N{\fs33\c&H00C8C0B8&\bord1.4}the dvc_store never overwrites, because new bytes get a new name.
+Dialogue: 0,0:24:59.20,0:25:01.33,Bilingual,,0,0,0,,现在在 container 外面用 git\N{\fs33\c&H00C8C0B8&\bord1.4}Now git, outside the container.
+Dialogue: 0,0:25:01.65,0:25:06.59,Bilingual,,0,0,0,,这里 git status 显示 dvc init 已经暂存好的 DVC 文件\N{\fs33\c&H00C8C0B8&\bord1.4}Here, git status shows the DVC files that dvc init already staged,
+Dialogue: 0,0:25:06.59,0:25:09.65,Bilingual,,0,0,0,,新的指针文件，还有你的两处改动\N{\fs33\c&H00C8C0B8&\bord1.4}the new pointer file, and your two edits.
+Dialogue: 0,0:25:09.97,0:25:13.58,Bilingual,,0,0,0,,接着 add 再 commit：6 个小文本文件、没有照片\N{\fs33\c&H00C8C0B8&\bord1.4}Add and commit: 6 small text files and no photos,
+Dialogue: 0,0:25:13.58,0:25:17.70,Bilingual,,0,0,0,,因为 .gitignore 文件把数据集目录排除了\N{\fs33\c&H00C8C0B8&\bord1.4}because the .gitignore file excludes the dataset folder.
+Dialogue: 0,0:25:17.93,0:25:21.51,Bilingual,,0,0,0,,给这个 commit 打上 dataset v20 这个 tag 作为永久的名字\N{\fs33\c&H00C8C0B8&\bord1.4}Tag the commit as dataset_v20, a permanent name,
+Dialogue: 0,0:25:21.51,0:25:24.56,Bilingual,,0,0,0,,再把分支和 tag 一起 push\N{\fs33\c&H00C8C0B8&\bord1.4}and push the branch and the tag together;
+Dialogue: 0,0:25:24.56,0:25:27.32,Bilingual,,0,0,0,,atomic 的意思是两个都到，或者都不到\N{\fs33\c&H00C8C0B8&\bord1.4}atomic means both arrive, or neither.
+Dialogue: 0,0:25:27.64,0:25:29.17,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
+Dialogue: 0,0:25:29.22,0:25:32.91,Bilingual,,0,0,0,,额外看一下 log，能看到这个 tag，它锁定了这六行\N{\fs33\c&H00C8C0B8&\bord1.4}An extra log shows the tag, which pins these six lines.
+Dialogue: 0,0:25:35.03,0:25:37.91,Bilingual,,0,0,0,,额外和授课老师的 tag 做一次 diff\N{\fs33\c&H00C8C0B8&\bord1.4}An extra diff against the instructor's tag:
+Dialogue: 0,0:25:37.91,0:25:41.65,Bilingual,,0,0,0,,完全一样，同样的字节，同样的指纹，在任何机器上都一样\N{\fs33\c&H00C8C0B8&\bord1.4}identical, same bytes, same fingerprint, on any machine.
+Dialogue: 0,0:25:41.97,0:25:46.32,Bilingual,,0,0,0,,整个诀窍就在这儿：git 保存的是指纹列表的指纹\N{\fs33\c&H00C8C0B8&\bord1.4}That is the whole trick: git keeps the fingerprint of a list of fingerprints.
+Dialogue: 0,0:25:46.64,0:25:49.73,Bilingual,,0,0,0,,一根绳子从 tag 一直通到你 bucket 里的字节\N{\fs33\c&H00C8C0B8&\bord1.4}A rope leads from the tag to the bytes in your bucket.
+Dialogue: 0,0:25:49.97,0:25:52.91,Bilingual,,0,0,0,,README 提醒说这个 tag 可能已经被占用\N{\fs33\c&H00C8C0B8&\bord1.4}The README warns that this tag may be taken;
+Dialogue: 0,0:25:52.91,0:25:56.99,Bilingual,,0,0,0,,这只适用于 fork，你的新 repo 一个 tag 都没有\N{\fs33\c&H00C8C0B8&\bord1.4}that applies only to a fork, and your fresh repo has no tags.
+Dialogue: 0,0:25:57.31,0:26:01.80,Bilingual,,0,0,0,,它的表格总结得很清楚：git 管代码和小小的 DVC 文件\N{\fs33\c&H00C8C0B8&\bord1.4}Its table sums it up: git holds code and small DVC files,
+Dialogue: 0,0:26:01.80,0:26:06.14,Bilingual,,0,0,0,,DVC 跟踪数据集，bucket 存各个版本\N{\fs33\c&H00C8C0B8&\bord1.4}DVC tracks the dataset, the bucket stores the versions.
+Dialogue: 0,0:26:06.46,0:26:09.60,Bilingual,,0,0,0,,README 接下来要在 Colab 里查看第 20 版\N{\fs33\c&H00C8C0B8&\bord1.4}The README now opens Colab for version 20;
+Dialogue: 0,0:26:09.60,0:26:13.80,Bilingual,,0,0,0,,我们等第 21 版做完，再一次看两个版本\N{\fs33\c&H00C8C0B8&\bord1.4}we'll do that once, for both versions, after version 21.
+Dialogue: 0,0:26:16.03,0:26:17.63,Bilingual,,0,0,0,,现在做第二个版本\N{\fs33\c&H00C8C0B8&\bord1.4}Now a second version.
+Dialogue: 0,0:26:17.83,0:26:21.06,Bilingual,,0,0,0,,上传几张新照片到 images 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Upload a few more photos to the images folder;
+Dialogue: 0,0:26:21.06,0:26:23.59,Bilingual,,0,0,0,,我们的替身复制进去一张：Image 5\N{\fs33\c&H00C8C0B8&\bord1.4}our stand-in copies in one, Image_5.
+Dialogue: 0,0:26:23.91,0:26:27.66,Bilingual,,0,0,0,,用真的 bucket 时，挂载可能要过一会儿才能发现新文件\N{\fs33\c&H00C8C0B8&\bord1.4}With a real bucket, the mount can take a little while to notice,
+Dialogue: 0,0:26:27.66,0:26:29.26,Bilingual,,0,0,0,,所以先列一下再 add\N{\fs33\c&H00C8C0B8&\bord1.4}so list before you add.
+Dialogue: 0,0:26:29.35,0:26:31.22,Bilingual,,0,0,0,,暂停一下，上传一两张\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and upload one or two.
+Dialogue: 0,0:26:31.47,0:26:33.07,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:26:33.13,0:26:37.14,Bilingual,,0,0,0,,四张照片已经在 DVC store 里了，你再加一张\N{\fs33\c&H00C8C0B8&\bord1.4}Four photos are already in the dvc_store, and you add one.
+Dialogue: 0,0:26:37.46,0:26:40.21,Bilingual,,0,0,0,,这时 dvc push 会上传多少个对象？\N{\fs33\c&H00C8C0B8&\bord1.4}How many objects will dvc push upload?
+Dialogue: 0,0:26:49.05,0:26:51.46,Bilingual,,0,0,0,,两个：新照片和一个新的 manifest\N{\fs33\c&H00C8C0B8&\bord1.4}Two: the new photo and a new manifest.
+Dialogue: 0,0:26:51.78,0:26:54.68,Bilingual,,0,0,0,,再启动 container，列一下目录，然后 add\N{\fs33\c&H00C8C0B8&\bord1.4}Start the container again, list the folder, and add it;
+Dialogue: 0,0:26:54.68,0:26:56.28,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run them.
+Dialogue: 0,0:26:56.50,0:26:59.74,Bilingual,,0,0,0,,结果是 5 个文件，还有一个新的 manifest 指纹\N{\fs33\c&H00C8C0B8&\bord1.4}It gives 5 files and a new manifest fingerprint.
+Dialogue: 0,0:27:00.06,0:27:05.48,Bilingual,,0,0,0,,课程的 v21 版本指纹不一样，因为它的第五张照片是另一张图\N{\fs33\c&H00C8C0B8&\bord1.4}The class version 21 has a different one, because its fifth photo was another image.
+Dialogue: 0,0:27:09.22,0:27:11.84,Bilingual,,0,0,0,,然后是 dvc push；暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Then dvc push; pause and run it.
+Dialogue: 0,0:27:12.16,0:27:14.98,Bilingual,,0,0,0,,这里本地替身显示推送了 2 个文件\N{\fs33\c&H00C8C0B8&\bord1.4}Here the local stand-in shows 2 files pushed,
+Dialogue: 0,0:27:14.98,0:27:18.30,Bilingual,,0,0,0,,因为四张旧照片已经在架子上了\N{\fs33\c&H00C8C0B8&\bord1.4}because the four old photos are already on the shelf.
+Dialogue: 0,0:27:18.62,0:27:21.25,Bilingual,,0,0,0,,这就是课上承诺的省下来的空间\N{\fs33\c&H00C8C0B8&\bord1.4}That is the saved space the lecture promised.
+Dialogue: 0,0:27:21.48,0:27:25.29,Bilingual,,0,0,0,,回到你的笔记本上，再来那五条 git 命令\N{\fs33\c&H00C8C0B8&\bord1.4}Back on your laptop, the five git commands again:
+Dialogue: 0,0:27:25.29,0:27:27.93,Bilingual,,0,0,0,,status 只显示指针文件改了\N{\fs33\c&H00C8C0B8&\bord1.4}status shows only the pointer file
+Dialogue: 0,0:27:27.93,0:27:32.04,Bilingual,,0,0,0,,然后 add、commit、打 dataset v21 这个 tag，再 push\N{\fs33\c&H00C8C0B8&\bord1.4}changed; then add, commit, tag dataset_v21, and push.
+Dialogue: 0,0:27:32.36,0:27:33.89,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
+Dialogue: 0,0:27:33.94,0:27:37.10,Bilingual,,0,0,0,,额外做一次 diff，整个改动只有三行\N{\fs33\c&H00C8C0B8&\bord1.4}An extra diff shows the whole change in three lines.
+Dialogue: 0,0:27:43.37,0:27:48.29,Bilingual,,0,0,0,,这个 starter 分支里的旧版 README 在这一步又加一次 remote\N{\fs33\c&H00C8C0B8&\bord1.4}The starter branch keeps an older README that adds the remote again at this point.
+Dialogue: 0,0:27:48.61,0:27:51.56,Bilingual,,0,0,0,,这会失败：remote origin 已经存在\N{\fs33\c&H00C8C0B8&\bord1.4}That fails: remote origin already exists.
+Dialogue: 0,0:27:51.88,0:27:54.12,Bilingual,,0,0,0,,课程 pin 住的那版 README 说不要这么做\N{\fs33\c&H00C8C0B8&\bord1.4}The pinned README says not to.
+Dialogue: 0,0:27:54.17,0:27:58.30,Bilingual,,0,0,0,,再做一个额外的实验，只看，不要在真的挂载上跑\N{\fs33\c&H00C8C0B8&\bord1.4}One extra experiment, to watch, not to run on a real mount:
+Dialogue: 0,0:27:58.30,0:28:02.79,Bilingual,,0,0,0,,在我们的替身目录上，用 git checkout 出旧的指针文件\N{\fs33\c&H00C8C0B8&\bord1.4}on our stand-in folder, check out the old pointer file with git,
+Dialogue: 0,0:28:02.79,0:28:06.78,Bilingual,,0,0,0,,跑 dvc checkout，目录里又变回四张照片\N{\fs33\c&H00C8C0B8&\bord1.4}run dvc checkout, and the folder holds four photos again.
+Dialogue: 0,0:28:07.10,0:28:10.11,Bilingual,,0,0,0,,回到 main，又是五张，来自磁盘上的缓存\N{\fs33\c&H00C8C0B8&\bord1.4}Back to main, and five, from the cache on disk.
+Dialogue: 0,0:28:10.43,0:28:14.27,Bilingual,,0,0,0,,用真的挂载时，这个目录就是你 bucket 的 images 目录\N{\fs33\c&H00C8C0B8&\bord1.4}With a real mount, this folder is your bucket's images folder,
+Dialogue: 0,0:28:14.27,0:28:17.13,Bilingual,,0,0,0,,所以 checkout 会在那里删除并重写照片\N{\fs33\c&H00C8C0B8&\bord1.4}so checkout deletes and rewrites photos there.
+Dialogue: 0,0:28:21.30,0:28:23.26,Bilingual,,0,0,0,,现在来看从任何地方做时间旅行\N{\fs33\c&H00C8C0B8&\bord1.4}Now, time travel from anywhere:
+Dialogue: 0,0:28:23.26,0:28:29.32,Bilingual,,0,0,0,,这是课上的说法，指回到之前的某个版本，前提是它的文件还保留着\N{\fs33\c&H00C8C0B8&\bord1.4}the lecture's phrase for reaching an earlier version, which works only while its files are kept.
+Dialogue: 0,0:28:29.64,0:28:33.10,Bilingual,,0,0,0,,命令 dvc get 带上一个 tag，就会顺着这根绳子走\N{\fs33\c&H00C8C0B8&\bord1.4}The command dvc get, with a tag, walks the rope.
+Dialogue: 0,0:28:33.42,0:28:35.42,Bilingual,,0,0,0,,它在那个 tag 上 clone 这个 repo\N{\fs33\c&H00C8C0B8&\bord1.4}It clones the repo at that tag,
+Dialogue: 0,0:28:35.42,0:28:38.39,Bilingual,,0,0,0,,读那个 commit 的配置找到 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}reads that commit's config to find the bucket,
+Dialogue: 0,0:28:38.39,0:28:41.16,Bilingual,,0,0,0,,然后取 manifest，再取照片\N{\fs33\c&H00C8C0B8&\bord1.4}then fetches the manifest, then the photos.
+Dialogue: 0,0:28:41.40,0:28:44.54,Bilingual,,0,0,0,,打开 README 里的 notebook，保存一份副本\N{\fs33\c&H00C8C0B8&\bord1.4}Open the notebook from the README and save a copy.
+Dialogue: 0,0:28:44.86,0:28:49.66,Bilingual,,0,0,0,,装 DVC、加载库，再用你的 Google 账号登录\N{\fs33\c&H00C8C0B8&\bord1.4}Install DVC, load the libraries, and sign in with your Google account.
+Dialogue: 0,0:28:49.98,0:28:53.32,Bilingual,,0,0,0,,然后列出一个 repo，取一个版本，数一数文件\N{\fs33\c&H00C8C0B8&\bord1.4}Then list a repo, fetch a version, and count the files.
+Dialogue: 0,0:28:53.57,0:28:56.14,Bilingual,,0,0,0,,我们的替身没有登录\N{\fs33\c&H00C8C0B8&\bord1.4}Our stand-in is not signed in,
+Dialogue: 0,0:28:56.14,0:29:01.55,Bilingual,,0,0,0,,而 pip 给它装了一个更新的 DVC，录制时是 3.67.1\N{\fs33\c&H00C8C0B8&\bord1.4}and pip gives it a newer DVC, 3.67.1, at the time of recording.
+Dialogue: 0,0:29:01.87,0:29:05.75,Bilingual,,0,0,0,,列出课程的 repo 时报了 401，看看是在哪儿\N{\fs33\c&H00C8C0B8&\bord1.4}Listing the class repo fails with a 401, and look where:
+Dialogue: 0,0:29:05.75,0:29:10.80,Bilingual,,0,0,0,,在 manifest 那一步，因为 DVC 先取列表，按绳子的顺序来\N{\fs33\c&H00C8C0B8&\bord1.4}at the manifest, because DVC fetches the list first, in the rope's order.
+Dialogue: 0,0:29:13.52,0:29:18.27,Bilingual,,0,0,0,,授课老师登录后的那次运行，在课程 repo 上列出五个文件\N{\fs33\c&H00C8C0B8&\bord1.4}The instructor's signed-in run lists five files on the class repo,
+Dialogue: 0,0:29:18.27,0:29:21.52,Bilingual,,0,0,0,,和它的 v21 版本是同一组，数出来是 5\N{\fs33\c&H00C8C0B8&\bord1.4}the same set as its version 21, and counts 5.
+Dialogue: 0,0:29:21.84,0:29:25.08,Bilingual,,0,0,0,,你的账号多半访问不了课程的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}Your account probably cannot access the class bucket,
+Dialogue: 0,0:29:25.08,0:29:26.58,Bilingual,,0,0,0,,所以用你自己的 repo\N{\fs33\c&H00C8C0B8&\bord1.4}so use your repo:
+Dialogue: 0,0:29:26.58,0:29:28.74,Bilingual,,0,0,0,,换掉地址和 tag\N{\fs33\c&H00C8C0B8&\bord1.4}replace the address and the tag;
+Dialogue: 0,0:29:28.74,0:29:30.37,Bilingual,,0,0,0,,你的 v20 版本会得到 4\N{\fs33\c&H00C8C0B8&\bord1.4}your version 20 gives 4.
+Dialogue: 0,0:29:30.69,0:29:32.12,Bilingual,,0,0,0,,你的 repo 是私有的\N{\fs33\c&H00C8C0B8&\bord1.4}Your repo is private,
+Dialogue: 0,0:29:32.12,0:29:35.64,Bilingual,,0,0,0,,所以要在地址里放一个访问令牌，或者把它设成公开\N{\fs33\c&H00C8C0B8&\bord1.4}so put an access token in the address, or make it public.
+Dialogue: 0,0:29:35.96,0:29:37.56,Bilingual,,0,0,0,,暂停一下，一步步做完\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and work through it.
+Dialogue: 0,0:29:38.15,0:29:39.75,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:29:39.81,0:29:44.91,Bilingual,,0,0,0,,第 19 个单元格悄悄地要 dataset v25，什么都没打印\N{\fs33\c&H00C8C0B8&\bord1.4}Cell 19 asks quietly for dataset_v25, and prints nothing.
+Dialogue: 0,0:29:45.23,0:29:46.83,Bilingual,,0,0,0,,它成功了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Did it work?
+Dialogue: 0,0:29:53.05,0:29:56.53,Bilingual,,0,0,0,,没有。下一个单元格失败了：没有这个目录\N{\fs33\c&H00C8C0B8&\bord1.4}No. The next cell fails: no such folder.
+Dialogue: 0,0:29:56.85,0:30:00.99,Bilingual,,0,0,0,,去掉 --quiet 参数，错误就出来了：未知的 Git 修订版本\N{\fs33\c&H00C8C0B8&\bord1.4}Without the --quiet flag, the error appears: unknown Git revision.
+Dialogue: 0,0:30:01.31,0:30:05.89,Bilingual,,0,0,0,,课程的 repo 只有 v20、v21 和 v30 这几个 tag\N{\fs33\c&H00C8C0B8&\bord1.4}The class repo only has tags v20, v21 and v30.
+Dialogue: 0,0:30:06.21,0:30:09.60,Bilingual,,0,0,0,,存下来的计数 3 是以前某次运行留下的\N{\fs33\c&H00C8C0B8&\bord1.4}The stored count of 3 is left over from an older run;
+Dialogue: 0,0:30:09.60,0:30:11.78,Bilingual,,0,0,0,,--quiet 参数连错误也一起藏起来了\N{\fs33\c&H00C8C0B8&\bord1.4}the --quiet flag hides errors too.
+Dialogue: 0,0:30:13.82,0:30:16.80,Bilingual,,0,0,0,,快速预测一下：三个问题，三个工具\N{\fs33\c&H00C8C0B8&\bord1.4}A quick prediction: three questions, three tools.
+Dialogue: 0,0:30:17.12,0:30:20.90,Bilingual,,0,0,0,,把 Delta Lake 或 Iceberg、DVC 和 lakeFS 配对上去\N{\fs33\c&H00C8C0B8&\bord1.4}Match Delta Lake or Iceberg, DVC, and lakeFS.
+Dialogue: 0,0:30:25.73,0:30:28.91,Bilingual,,0,0,0,,DVC、lakeFS，然后是表格式\N{\fs33\c&H00C8C0B8&\bord1.4}DVC, lakeFS, then the table formats.
+Dialogue: 0,0:30:29.23,0:30:34.22,Bilingual,,0,0,0,,没有统一的标准；你的项目里程碑接受这样的轻量工具\N{\fs33\c&H00C8C0B8&\bord1.4}There is no single standard; your project milestone accepts a light tool like this.
+Dialogue: 0,0:30:34.47,0:30:40.35,Bilingual,,0,0,0,,课上最后讲监控：盯住质量、新鲜度、漂移、成本和出错的步骤\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture ends with monitoring: watch quality, freshness, drift, cost and broken steps.
+Dialogue: 0,0:30:40.67,0:30:45.07,Bilingual,,0,0,0,,版本管理告诉你改了什么；监控告诉你有东西变了\N{\fs33\c&H00C8C0B8&\bord1.4}Versioning tells you what changed; monitoring tells you that something changed.
+Dialogue: 0,0:30:45.32,0:30:46.71,Bilingual,,0,0,0,,放在一张地图上看\N{\fs33\c&H00C8C0B8&\bord1.4}On one map:
+Dialogue: 0,0:30:46.71,0:30:50.56,Bilingual,,0,0,0,,Label Studio 跑在 container 里，替照片签票\N{\fs33\c&H00C8C0B8&\bord1.4}Label Studio runs in a container and signs tickets for the photos.
+Dialogue: 0,0:30:50.88,0:30:54.26,Bilingual,,0,0,0,,配在 bucket 上的一条规则，让浏览器的保安放行\N{\fs33\c&H00C8C0B8&\bord1.4}A rule on the bucket satisfies the browser's bouncer.
+Dialogue: 0,0:30:54.58,0:30:58.46,Bilingual,,0,0,0,,每条 label 是一张小纸条；挂载的 bucket 给 DVC 供数据\N{\fs33\c&H00C8C0B8&\bord1.4}Labels are small notes; a mounted bucket feeds DVC.
+Dialogue: 0,0:30:58.78,0:31:02.49,Bilingual,,0,0,0,,照片按指纹归档；一个 tag 锁定这份列表\N{\fs33\c&H00C8C0B8&\bord1.4}Photos are filed by fingerprint; a tag pins the list.
+Dialogue: 0,0:31:02.81,0:31:06.54,Bilingual,,0,0,0,,所以周一的照片用一次 dvc get 就能拿回来\N{\fs33\c&H00C8C0B8&\bord1.4}So Monday's photos come back with one dvc get;
+Dialogue: 0,0:31:06.54,0:31:09.21,Bilingual,,0,0,0,,它们的 label 会在练习 E7 里接上\N{\fs33\c&H00C8C0B8&\bord1.4}their labels join in exercise E7.
+Dialogue: 0,0:31:09.45,0:31:11.45,Bilingual,,0,0,0,,五道自测题\N{\fs33\c&H00C8C0B8&\bord1.4}5 questions to test yourself.
+Dialogue: 0,0:31:11.77,0:31:16.30,Bilingual,,0,0,0,,第一题：谁去取照片，bucket 为什么需要它的 CORS 规则？\N{\fs33\c&H00C8C0B8&\bord1.4}One: who fetches the photos, and why does the bucket need its CORS rule?
+Dialogue: 0,0:31:16.62,0:31:19.24,Bilingual,,0,0,0,,第二题：命令行 container 和你的浏览器\N{\fs33\c&H00C8C0B8&\bord1.4}Two: why can't the command line container
+Dialogue: 0,0:31:19.24,0:31:21.29,Bilingual,,0,0,0,,为什么不能互换地址？\N{\fs33\c&H00C8C0B8&\bord1.4}and your browser swap addresses?
+Dialogue: 0,0:31:21.61,0:31:25.51,Bilingual,,0,0,0,,第三题：指针文件里有什么，改名时什么会变？\N{\fs33\c&H00C8C0B8&\bord1.4}Three: what is in the pointer file, and what changes on a rename?
+Dialogue: 0,0:31:25.83,0:31:28.16,Bilingual,,0,0,0,,第四题：push 之后，字节都在哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}Four: where do the bytes sit after a push?
+Dialogue: 0,0:31:28.48,0:31:32.51,Bilingual,,0,0,0,,第五题：没有 DVC store，dvc get 会怎样？\N{\fs33\c&H00C8C0B8&\bord1.4}Five: without the dvc_store, what does dvc get do?
+Dialogue: 0,0:31:37.53,0:31:41.07,Bilingual,,0,0,0,,清理就是 README 的三条命令；暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Cleanup is the README's three commands; pause and run them.
+Dialogue: 0,0:31:41.39,0:31:45.45,Bilingual,,0,0,0,,如果你保留标注用的 bucket，就用 -r 删掉它的 CORS 规则\N{\fs33\c&H00C8C0B8&\bord1.4}If you keep the labeling bucket, remove its CORS rule with -r.
+Dialogue: 0,0:31:45.77,0:31:48.60,Bilingual,,0,0,0,,每个 bucket 都会一直花钱，直到你删掉它\N{\fs33\c&H00C8C0B8&\bord1.4}Buckets cost money until you delete them,
+Dialogue: 0,0:31:48.60,0:31:52.94,Bilingual,,0,0,0,,但绝不要删 DVC store，只要还有哪个 tag 要用\N{\fs33\c&H00C8C0B8&\bord1.4}but never delete the dvc_store while any tag should still work;
+Dialogue: 0,0:31:52.94,0:31:54.60,Bilingual,,0,0,0,,一个 tag 只是一个指针\N{\fs33\c&H00C8C0B8&\bord1.4}a tag is only a pointer.
+Dialogue: 0,0:31:54.92,0:31:58.63,Bilingual,,0,0,0,,把密钥和它的 JSON 文件删掉，等课程结束的时候\N{\fs33\c&H00C8C0B8&\bord1.4}Delete the key and its JSON file when the course is done.
+Dialogue: 0,0:31:58.87,0:32:00.91,Bilingual,,0,0,0,,答案在练习里\N{\fs33\c&H00C8C0B8&\bord1.4}Answers are in the exercises.
+Dialogue: 0,0:32:01.23,0:32:03.81,Bilingual,,0,0,0,,第 13 讲用一个准备好的 zip 来训练\N{\fs33\c&H00C8C0B8&\bord1.4}Lecture 13 trains from a prepared zip;
+Dialogue: 0,0:32:03.81,0:32:07.21,Bilingual,,0,0,0,,要是用打了 tag 的版本，那次运行就能复现\N{\fs33\c&H00C8C0B8&\bord1.4}a tagged version would make that run reproducible.

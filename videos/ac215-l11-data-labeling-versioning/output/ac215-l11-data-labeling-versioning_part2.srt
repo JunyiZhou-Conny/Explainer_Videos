@@ -1,0 +1,1182 @@
+1
+00:00:00,000 --> 00:00:02,667
+Part 2: freezing which photos a model saw.
+
+2
+00:00:02,987 --> 00:00:06,592
+Git alone would copy every photo
+version into every clone.
+
+3
+00:00:06,912 --> 00:00:10,968
+Of the lecture's four approaches,
+we build the file-based one:
+
+4
+00:00:10,968 --> 00:00:15,744
+git versions a small file of fingerprints,
+and a bucket holds the photos.
+
+5
+00:00:16,064 --> 00:00:17,621
+The tool is DVC.
+
+6
+00:00:19,867 --> 00:00:21,572
+First, move up one folder,
+
+7
+00:00:21,572 --> 00:00:25,179
+so the new clone sits beside
+data-labeling and secrets.
+
+8
+00:00:25,499 --> 00:00:29,574
+The data-versioning README starts
+with the same three cleanup commands.
+
+9
+00:00:29,894 --> 00:00:31,152
+Pause and run them.
+
+10
+00:00:35,500 --> 00:00:38,081
+Then clone the starter
+branch the README names.
+
+11
+00:00:38,401 --> 00:00:44,311
+Its SSH command needs your key on GitHub,
+and this machine has no SSH route.
+
+12
+00:00:44,631 --> 00:00:49,089
+So the same branch comes over HTTPS,
+which the README allows.
+
+13
+00:00:49,409 --> 00:00:51,137
+Pause, clone it, and move in.
+
+14
+00:00:54,750 --> 00:00:58,215
+One note: on the day of the lecture
+the README changed,
+
+15
+00:00:58,215 --> 00:01:00,105
+and it now says to clone main.
+
+16
+00:01:00,425 --> 00:01:04,555
+That branch brings
+the instructor's finished DVC files along,
+
+17
+00:01:04,555 --> 00:01:06,654
+as an extra second clone shows.
+
+18
+00:01:06,974 --> 00:01:09,955
+This video follows
+the course's pinned README:
+
+19
+00:01:09,955 --> 00:01:12,094
+the starter branch, plus one fix.
+
+20
+00:01:12,333 --> 00:01:14,056
+Remove the old git history,
+
+21
+00:01:14,056 --> 00:01:17,120
+so the code is no longer tied
+to the class repo,
+
+22
+00:01:17,120 --> 00:01:19,010
+and start fresh with git init.
+
+23
+00:01:19,330 --> 00:01:20,632
+Pause and run both.
+
+24
+00:01:20,952 --> 00:01:25,325
+Git's hint mentions master,
+which is why the branch gets renamed next.
+
+25
+00:01:27,333 --> 00:01:31,847
+On GitHub, create an empty private repo
+called data-versioning,
+
+26
+00:01:31,847 --> 00:01:34,928
+with no README, license or .gitignore file.
+
+27
+00:01:35,248 --> 00:01:38,046
+Then the five commands: rename the branch,
+
+28
+00:01:38,046 --> 00:01:41,178
+add your repo as origin,
+add, commit, and push.
+
+29
+00:01:41,498 --> 00:01:42,757
+Pause and run them.
+
+30
+00:01:43,077 --> 00:01:46,064
+Your repo now shows the 7 files on main.
+
+31
+00:01:48,800 --> 00:01:51,552
+A bucket stores named objects, nothing else.
+
+32
+00:01:51,872 --> 00:01:55,648
+Add tools, like versioning,
+and the lecture calls it a data lake.
+
+33
+00:01:55,968 --> 00:01:59,787
+Its folders are only shared name prefixes,
+which sets a trap.
+
+34
+00:02:00,667 --> 00:02:04,790
+The secrets folder
+from part 1 already sits beside this repo,
+
+35
+00:02:04,790 --> 00:02:06,683
+as an extra tree view shows.
+
+36
+00:02:07,003 --> 00:02:11,056
+The README wants the same service account
+and key, so reuse both.
+
+37
+00:02:14,283 --> 00:02:17,813
+In your bucket,
+create two folders in the console:
+
+38
+00:02:17,813 --> 00:02:19,296
+dvc_store and images.
+
+39
+00:02:19,616 --> 00:02:23,916
+A small gap: the course's README
+never says to put the first photos
+
+40
+00:02:23,916 --> 00:02:27,382
+into the images folder,
+yet later it says to add more.
+
+41
+00:02:27,702 --> 00:02:30,774
+So upload Image_1
+through Image_4 from the zip.
+
+42
+00:02:31,094 --> 00:02:32,267
+Pause and do it.
+
+43
+00:02:34,900 --> 00:02:36,316
+In docker-shell.sh,
+
+44
+00:02:36,316 --> 00:02:39,892
+replace the bucket, project and zone
+with yours.
+
+45
+00:02:40,212 --> 00:02:42,324
+Only the bucket name is ever used.
+
+46
+00:02:42,644 --> 00:02:43,903
+Pause and edit it.
+
+47
+00:02:44,150 --> 00:02:47,670
+The entrypoint runs
+the four stages the lecture draws.
+
+48
+00:02:47,990 --> 00:02:49,569
+Authenticate with the key.
+
+49
+00:02:49,889 --> 00:02:53,195
+Mount the whole bucket as a folder,
+with gcsfuse.
+
+50
+00:02:53,515 --> 00:02:57,867
+Bind its images folder
+to the path the app expects, cheese_dataset.
+
+51
+00:02:58,187 --> 00:02:59,390
+Then use the data:
+
+52
+00:02:59,390 --> 00:03:02,398
+DVC works on that folder
+as if it were local,
+
+53
+00:03:02,398 --> 00:03:05,227
+while each file is fetched from the bucket.
+
+54
+00:03:05,617 --> 00:03:10,609
+The lecture takes the mount line apart:
+tool, key file, bucket, mount point.
+
+55
+00:03:10,929 --> 00:03:13,886
+One flag is not passed, --implicit-dirs,
+
+56
+00:03:13,886 --> 00:03:17,407
+so gcsfuse only shows
+folders the console made,
+
+57
+00:03:17,407 --> 00:03:19,505
+which leave a marker object.
+
+58
+00:03:19,825 --> 00:03:20,955
+That was the trap.
+
+59
+00:03:21,200 --> 00:03:22,934
+Note the two bind mounts:
+
+60
+00:03:22,934 --> 00:03:26,054
+-v joins your laptop's repo
+to the container,
+
+61
+00:03:26,054 --> 00:03:29,541
+and the inner one joins
+the bucket's images folder.
+
+62
+00:03:29,783 --> 00:03:32,855
+Mounting needs the fuse
+device and mount rights,
+
+63
+00:03:32,855 --> 00:03:36,247
+hence the --privileged flag
+and the extra capability.
+
+64
+00:03:36,567 --> 00:03:40,108
+The script also mounts
+your repo, secrets and git config.
+
+65
+00:03:40,428 --> 00:03:44,887
+Set up git before the first run,
+or Docker creates a folder in its place.
+
+66
+00:03:45,933 --> 00:03:49,368
+You are already
+in the data-versioning folder,
+
+67
+00:03:49,368 --> 00:03:51,309
+so run sh docker-shell.sh.
+
+68
+00:03:51,629 --> 00:03:52,781
+Pause and run it.
+
+69
+00:03:53,101 --> 00:03:55,839
+On the starter branch, the build dies:
+
+70
+00:03:55,839 --> 00:03:59,800
+package google-cloud-sdk
+has no installation candidate.
+
+71
+00:04:00,120 --> 00:04:04,130
+The message even names the replacement,
+google-cloud-cli.
+
+72
+00:04:04,366 --> 00:04:08,456
+A small slip, and not your fault:
+Google renamed the package,
+
+73
+00:04:08,456 --> 00:04:12,814
+the main branch fixed line 36,
+and the starter never got the fix.
+
+74
+00:04:13,134 --> 00:04:15,886
+Make the same one-word change, as an extra.
+
+75
+00:04:16,206 --> 00:04:17,465
+Pause and edit it.
+
+76
+00:04:18,683 --> 00:04:20,155
+Pause and run it again.
+
+77
+00:04:20,475 --> 00:04:22,032
+The first build is slow.
+
+78
+00:04:22,352 --> 00:04:23,910
+Then the entrypoint runs,
+
+79
+00:04:23,910 --> 00:04:27,024
+and every stage fails
+the way a missing key fails.
+
+80
+00:04:27,344 --> 00:04:30,213
+The gcloud tool cannot find the key file,
+
+81
+00:04:30,213 --> 00:04:33,851
+and neither can gcsfuse,
+so the bucket never mounts.
+
+82
+00:04:34,171 --> 00:04:38,694
+Yet the next line says bucket mounted,
+because the script prints it no matter what.
+
+83
+00:04:39,014 --> 00:04:42,768
+Then the bind mount fails:
+special device does not exist.
+
+84
+00:04:43,016 --> 00:04:44,926
+And still you get a root prompt,
+
+85
+00:04:44,926 --> 00:04:47,731
+because the entrypoint
+does not stop at errors.
+
+86
+00:04:48,051 --> 00:04:52,663
+Extra checks:
+the cheese_dataset folder is empty,
+
+87
+00:04:52,663 --> 00:04:57,651
+and DVC 3.63.0 is installed,
+pinned by the lock file.
+
+88
+00:04:57,971 --> 00:05:01,384
+So the rule for today:
+list the folder before you add it.
+
+89
+00:05:01,633 --> 00:05:05,302
+With a real key,
+the folder inside lists your four photos.
+
+90
+00:05:05,622 --> 00:05:09,590
+Something to ponder:
+on your laptop, the same folder is empty.
+
+91
+00:05:09,910 --> 00:05:11,318
+Is the mount broken?
+
+92
+00:05:20,166 --> 00:05:24,113
+No.
+Both mounts exist only inside the container.
+
+93
+00:05:24,433 --> 00:05:29,528
+Your laptop sees the empty folder
+the entrypoint made through the repo mount;
+
+94
+00:05:29,528 --> 00:05:32,241
+an extra listing shows it, owned by root.
+
+95
+00:05:35,800 --> 00:05:38,723
+Inside the container, run dvc init.
+
+96
+00:05:39,043 --> 00:05:40,484
+On Linux it may stop:
+
+97
+00:05:40,484 --> 00:05:44,120
+the repository path
+is not owned by the current user.
+
+98
+00:05:44,440 --> 00:05:47,615
+You are root inside,
+the repo is yours on disk,
+
+99
+00:05:47,615 --> 00:05:50,520
+so git refuses, leaving a half-made folder.
+
+100
+00:05:50,767 --> 00:05:55,716
+The fix is an extra, for Linux:
+on your laptop, remove the half-made files.
+
+101
+00:05:56,036 --> 00:05:59,748
+Then mark /app as a safe
+directory in your git config.
+
+102
+00:06:00,068 --> 00:06:03,290
+Start the container again,
+and dvc init works.
+
+103
+00:06:03,610 --> 00:06:04,761
+Pause and run it.
+
+104
+00:06:05,983 --> 00:06:09,910
+If you cloned main, it stops here:
+DVC is already set up,
+
+105
+00:06:09,910 --> 00:06:14,388
+the remote is refused,
+and the config points at the class bucket.
+
+106
+00:06:14,708 --> 00:06:16,095
+Start from the starter.
+
+107
+00:06:16,333 --> 00:06:21,986
+Then point DVC at the dvc_store folder
+in your bucket, as its default remote.
+
+108
+00:06:22,306 --> 00:06:23,459
+Pause and add it.
+
+109
+00:06:26,300 --> 00:06:29,116
+Here is what dvc add will do with photos.
+
+110
+00:06:29,436 --> 00:06:32,081
+It fingerprints each photo with MD5.
+
+111
+00:06:32,401 --> 00:06:35,589
+It files a copy in its cache
+under that fingerprint,
+
+112
+00:06:35,589 --> 00:06:38,225
+on a shelf named by the first 2 characters.
+
+113
+00:06:38,545 --> 00:06:42,544
+Then it fingerprints a manifest,
+the list of fingerprints and names,
+
+114
+00:06:42,544 --> 00:06:45,484
+and writes that fingerprint
+into the pointer file,
+
+115
+00:06:45,484 --> 00:06:47,719
+which stands in for the folder in git.
+
+116
+00:06:49,633 --> 00:06:53,638
+A second trap: the mount failed,
+so the folder is empty,
+
+117
+00:06:53,638 --> 00:06:57,356
+and dvc add happily makes a version
+with zero files.
+
+118
+00:06:58,117 --> 00:06:59,563
+With no bucket mounted,
+
+119
+00:06:59,563 --> 00:07:03,022
+our stand-in copies four photos
+into the laptop folder,
+
+120
+00:07:03,022 --> 00:07:06,048
+which the container sees
+through the repo mount,
+
+121
+00:07:06,048 --> 00:07:07,120
+and we add again.
+
+122
+00:07:07,440 --> 00:07:11,898
+Now the pointer file says 4 files
+and one fingerprint for the folder.
+
+123
+00:07:12,218 --> 00:07:13,605
+Pause and add yours.
+
+124
+00:07:17,650 --> 00:07:21,362
+The cache shows those shelves,
+plus the empty version from before.
+
+125
+00:07:26,067 --> 00:07:31,251
+So one line pins 600 kilobytes:
+it fingerprints the list of fingerprints.
+
+126
+00:07:31,571 --> 00:07:35,892
+And the instructor's tag in the class
+repo holds the same fingerprint,
+
+127
+00:07:35,892 --> 00:07:37,373
+character for character.
+
+128
+00:07:38,717 --> 00:07:40,061
+Something to ponder.
+
+129
+00:07:40,381 --> 00:07:43,581
+You give Image_2 the new name brie_2,
+and add again.
+
+130
+00:07:43,901 --> 00:07:48,573
+Which changes: the photo fingerprint,
+the manifest fingerprint, the size,
+
+131
+00:07:48,573 --> 00:07:49,725
+or the file count?
+
+132
+00:07:58,567 --> 00:08:02,428
+Only the manifest fingerprint,
+because one name in the list changed.
+
+133
+00:08:02,748 --> 00:08:06,972
+The opening's two folders were the reverse:
+same names, new bytes.
+
+134
+00:08:07,292 --> 00:08:10,610
+And DVC stores whole files, not differences;
+
+135
+00:08:10,610 --> 00:08:14,908
+one changed pixel means a new fingerprint
+and a new copy.
+
+136
+00:08:16,550 --> 00:08:18,214
+Next, dvc push.
+
+137
+00:08:18,534 --> 00:08:19,686
+Pause and run it.
+
+138
+00:08:20,006 --> 00:08:22,033
+Here it fails without credentials.
+
+139
+00:08:22,353 --> 00:08:24,364
+To show what a push uploads,
+
+140
+00:08:24,364 --> 00:08:27,669
+an extra push goes
+to a local stand-in remote:
+
+141
+00:08:27,669 --> 00:08:31,142
+5 files pushed,
+the four photos and the manifest.
+
+142
+00:08:31,383 --> 00:08:34,711
+In your bucket,
+the dvc_store now mirrors the cache.
+
+143
+00:08:35,031 --> 00:08:39,959
+A gold tag: a second copy of the photos,
+still a fraction of a cent a month.
+
+144
+00:08:40,279 --> 00:08:45,248
+So the bytes now sit in three places:
+the images folder you upload to,
+
+145
+00:08:45,248 --> 00:08:48,514
+and the cache on your disk,
+filled by dvc add.
+
+146
+00:08:48,834 --> 00:08:50,650
+The third is the dvc_store,
+
+147
+00:08:50,650 --> 00:08:53,676
+where every file is named
+by its fingerprint.
+
+148
+00:08:53,996 --> 00:08:55,958
+The images folder can change;
+
+149
+00:08:55,958 --> 00:09:00,354
+the dvc_store never overwrites,
+because new bytes get a new name.
+
+150
+00:09:00,600 --> 00:09:02,733
+Now git, outside the container.
+
+151
+00:09:03,053 --> 00:09:07,988
+Here, git status shows the DVC files
+that dvc init already staged,
+
+152
+00:09:07,988 --> 00:09:11,053
+the new pointer file, and your two edits.
+
+153
+00:09:11,373 --> 00:09:14,977
+Add and commit:
+6 small text files and no photos,
+
+154
+00:09:14,977 --> 00:09:19,096
+because the .gitignore file
+excludes the dataset folder.
+
+155
+00:09:19,333 --> 00:09:22,881
+Tag the commit as dataset_v20,
+a permanent name,
+
+156
+00:09:22,881 --> 00:09:28,720
+and push the branch and the tag together;
+atomic means both arrive, or neither.
+
+157
+00:09:29,040 --> 00:09:30,298
+Pause and run them.
+
+158
+00:09:30,618 --> 00:09:34,309
+An extra log shows the tag,
+which pins these six lines.
+
+159
+00:09:36,433 --> 00:09:39,305
+An extra diff against the instructor's tag:
+
+160
+00:09:39,305 --> 00:09:43,046
+identical, same bytes, same fingerprint,
+on any machine.
+
+161
+00:09:43,366 --> 00:09:44,740
+That is the whole trick:
+
+162
+00:09:44,740 --> 00:09:47,718
+git keeps the fingerprint
+of a list of fingerprints.
+
+163
+00:09:48,038 --> 00:09:51,132
+A rope leads from the tag
+to the bytes in your bucket.
+
+164
+00:09:51,367 --> 00:09:54,308
+The README warns that this tag may be taken;
+
+165
+00:09:54,308 --> 00:09:58,386
+that applies only to a fork,
+and your fresh repo has no tags.
+
+166
+00:09:58,706 --> 00:10:03,201
+Its table sums it up:
+git holds code and small DVC files,
+
+167
+00:10:03,201 --> 00:10:07,538
+DVC tracks the dataset,
+the bucket stores the versions.
+
+168
+00:10:07,858 --> 00:10:11,003
+The README now opens Colab for version 20;
+
+169
+00:10:11,003 --> 00:10:15,196
+we'll do that once,
+for both versions, after version 21.
+
+170
+00:10:17,433 --> 00:10:18,905
+Now a second version.
+
+171
+00:10:19,225 --> 00:10:22,457
+Upload a few more photos
+to the images folder;
+
+172
+00:10:22,457 --> 00:10:24,985
+our stand-in copies in one, Image_5.
+
+173
+00:10:25,305 --> 00:10:28,071
+With a real bucket,
+the mount can take a little
+
+174
+00:10:28,071 --> 00:10:30,425
+while to notice, so list before you add.
+
+175
+00:10:30,745 --> 00:10:32,622
+Pause and upload one or two.
+
+176
+00:10:32,866 --> 00:10:34,210
+Something to ponder.
+
+177
+00:10:34,530 --> 00:10:38,541
+Four photos are already in the dvc_store,
+and you add one.
+
+178
+00:10:38,861 --> 00:10:41,613
+How many objects will dvc push upload?
+
+179
+00:10:50,450 --> 00:10:52,861
+Two: the new photo and a new manifest.
+
+180
+00:10:53,181 --> 00:10:57,575
+Start the container again, list the folder,
+and add it; pause and run them.
+
+181
+00:10:57,895 --> 00:11:01,138
+It gives 5 files
+and a new manifest fingerprint.
+
+182
+00:11:01,458 --> 00:11:06,876
+The class version 21 has a different one,
+because its fifth photo was another image.
+
+183
+00:11:10,616 --> 00:11:13,240
+Then dvc push; pause and run it.
+
+184
+00:11:13,560 --> 00:11:16,382
+Here the local stand-in
+shows 2 files pushed,
+
+185
+00:11:16,382 --> 00:11:19,704
+because the four old photos
+are already on the shelf.
+
+186
+00:11:20,024 --> 00:11:22,648
+That is the saved space
+the lecture promised.
+
+187
+00:11:22,883 --> 00:11:26,660
+Back on your laptop,
+the five git commands again:
+
+188
+00:11:26,660 --> 00:11:33,443
+status shows only the pointer file changed;
+then add, commit, tag dataset_v21, and push.
+
+189
+00:11:33,763 --> 00:11:35,022
+Pause and run them.
+
+190
+00:11:35,342 --> 00:11:38,499
+An extra diff shows the whole change
+in three lines.
+
+191
+00:11:44,766 --> 00:11:49,694
+The starter branch keeps an older README
+that adds the remote again at this point.
+
+192
+00:11:50,014 --> 00:11:52,958
+That fails: remote origin already exists.
+
+193
+00:11:53,278 --> 00:11:55,156
+The pinned README says not to.
+
+194
+00:11:55,400 --> 00:11:59,589
+One extra experiment, to watch,
+not to run on a real mount:
+
+195
+00:11:59,589 --> 00:12:04,133
+on our stand-in folder,
+check out the old pointer file with git,
+
+196
+00:12:04,133 --> 00:12:08,179
+run dvc checkout,
+and the folder holds four photos again.
+
+197
+00:12:08,499 --> 00:12:11,507
+Back to main, and five,
+from the cache on disk.
+
+198
+00:12:11,827 --> 00:12:15,672
+With a real mount,
+this folder is your bucket's images folder,
+
+199
+00:12:15,672 --> 00:12:18,525
+so checkout deletes and rewrites
+photos there.
+
+200
+00:12:22,700 --> 00:12:24,673
+Now, time travel from anywhere:
+
+201
+00:12:24,673 --> 00:12:28,047
+the lecture's phrase
+for reaching an earlier version,
+
+202
+00:12:28,047 --> 00:12:30,721
+which works only while its files are kept.
+
+203
+00:12:31,041 --> 00:12:34,497
+The command dvc get,
+with a tag, walks the rope.
+
+204
+00:12:34,817 --> 00:12:39,809
+It clones the repo at that tag, reads
+that commit's config to find the bucket,
+
+205
+00:12:39,809 --> 00:12:42,561
+then fetches the manifest, then the photos.
+
+206
+00:12:42,800 --> 00:12:45,936
+Open the notebook from the README
+and save a copy.
+
+207
+00:12:46,256 --> 00:12:51,056
+Install DVC, load the libraries,
+and sign in with your Google account.
+
+208
+00:12:51,376 --> 00:12:54,725
+Then list a repo, fetch a version,
+and count the files.
+
+209
+00:12:54,967 --> 00:12:57,541
+Our stand-in is not signed in,
+
+210
+00:12:57,541 --> 00:13:02,946
+and pip gives it a newer DVC, 3.67.1,
+at the time of recording.
+
+211
+00:13:03,266 --> 00:13:07,146
+Listing the class repo fails with a 401,
+and look where:
+
+212
+00:13:07,146 --> 00:13:10,799
+at the manifest,
+because DVC fetches the list first,
+
+213
+00:13:10,799 --> 00:13:12,204
+in the rope's order.
+
+214
+00:13:14,917 --> 00:13:19,674
+The instructor's signed-in run
+lists five files on the class repo,
+
+215
+00:13:19,674 --> 00:13:22,917
+the same set as its version 21,
+and counts 5.
+
+216
+00:13:23,237 --> 00:13:26,821
+Your account probably
+cannot access the class bucket,
+
+217
+00:13:26,821 --> 00:13:27,970
+so use your repo:
+
+218
+00:13:27,970 --> 00:13:31,770
+replace the address and the tag;
+your version 20 gives 4.
+
+219
+00:13:32,090 --> 00:13:33,423
+Your repo is private,
+
+220
+00:13:33,423 --> 00:13:37,040
+so put an access token in the address,
+or make it public.
+
+221
+00:13:37,360 --> 00:13:38,853
+Pause and work through it.
+
+222
+00:13:39,550 --> 00:13:40,894
+Something to ponder.
+
+223
+00:13:41,214 --> 00:13:47,614
+Cell 19 asks quietly for dataset_v25,
+and prints nothing. Did it work?
+
+224
+00:13:54,450 --> 00:13:57,927
+No. The next cell fails: no such folder.
+
+225
+00:13:58,247 --> 00:14:02,386
+Without the --quiet flag, the error appears:
+unknown Git revision.
+
+226
+00:14:02,706 --> 00:14:07,293
+The class repo only
+has tags v20, v21 and v30.
+
+227
+00:14:07,613 --> 00:14:11,005
+The stored count of 3 is left
+over from an older run;
+
+228
+00:14:11,005 --> 00:14:13,181
+the --quiet flag hides errors too.
+
+229
+00:14:15,217 --> 00:14:18,204
+A quick prediction:
+three questions, three tools.
+
+230
+00:14:18,524 --> 00:14:22,300
+Match Delta Lake or Iceberg, DVC,
+and lakeFS.
+
+231
+00:14:27,134 --> 00:14:30,313
+DVC, lakeFS, then the table formats.
+
+232
+00:14:30,633 --> 00:14:32,337
+There is no single standard;
+
+233
+00:14:32,337 --> 00:14:35,624
+your project milestone
+accepts a light tool like this.
+
+234
+00:14:35,867 --> 00:14:38,075
+The lecture ends with monitoring:
+
+235
+00:14:38,075 --> 00:14:41,755
+watch quality,
+freshness, drift, cost and broken steps.
+
+236
+00:14:42,075 --> 00:14:46,470
+Versioning tells you what changed;
+monitoring tells you that something changed.
+
+237
+00:14:46,717 --> 00:14:51,965
+On one map: Label Studio runs in a container
+and signs tickets for the photos.
+
+238
+00:14:52,285 --> 00:14:55,656
+A rule on the bucket satisfies
+the browser's bouncer.
+
+239
+00:14:55,976 --> 00:14:59,858
+Labels are small notes;
+a mounted bucket feeds DVC.
+
+240
+00:15:00,178 --> 00:15:03,890
+Photos are filed by fingerprint;
+a tag pins the list.
+
+241
+00:15:04,210 --> 00:15:07,936
+So Monday's photos come back
+with one dvc get;
+
+242
+00:15:07,936 --> 00:15:10,610
+their labels join in exercise E7.
+
+243
+00:15:10,850 --> 00:15:12,855
+5 questions to test yourself.
+
+244
+00:15:13,175 --> 00:15:17,698
+One: who fetches the photos,
+and why does the bucket need its CORS rule?
+
+245
+00:15:18,018 --> 00:15:22,690
+Two: why can't the command line container
+and your browser swap addresses?
+
+246
+00:15:23,010 --> 00:15:26,914
+Three: what is in the pointer file,
+and what changes on a rename?
+
+247
+00:15:27,234 --> 00:15:29,559
+Four: where do the bytes sit after a push?
+
+248
+00:15:29,879 --> 00:15:33,912
+Five: without the dvc_store,
+what does dvc get do?
+
+249
+00:15:38,934 --> 00:15:42,475
+Cleanup is the README's three commands;
+pause and run them.
+
+250
+00:15:42,795 --> 00:15:46,849
+If you keep the labeling bucket,
+remove its CORS rule with -r.
+
+251
+00:15:47,169 --> 00:15:49,976
+Buckets cost money until you delete them,
+
+252
+00:15:49,976 --> 00:15:54,339
+but never delete the dvc_store
+while any tag should still work;
+
+253
+00:15:54,339 --> 00:15:56,001
+a tag is only a pointer.
+
+254
+00:15:56,321 --> 00:16:00,032
+Delete the key and its JSON file
+when the course is done.
+
+255
+00:16:00,267 --> 00:16:02,315
+Answers are in the exercises.
+
+256
+00:16:02,635 --> 00:16:05,214
+Lecture 13 trains from a prepared zip;
+
+257
+00:16:05,214 --> 00:16:08,608
+a tagged version would make
+that run reproducible.
+

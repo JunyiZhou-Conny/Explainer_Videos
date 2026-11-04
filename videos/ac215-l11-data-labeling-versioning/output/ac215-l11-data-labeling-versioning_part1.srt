@@ -1,0 +1,1134 @@
+1
+00:00:00,000 --> 00:00:05,248
+Two folders, both called cheese_dataset,
+with the same file names and the same count.
+
+2
+00:00:05,568 --> 00:00:08,277
+On Monday you trained a model
+on one of them.
+
+3
+00:00:08,597 --> 00:00:12,075
+On Friday the model got worse,
+and nobody touched the code.
+
+4
+00:00:12,395 --> 00:00:15,488
+So which photos, with which labels,
+did that model see?
+
+5
+00:00:15,808 --> 00:00:17,813
+And can you get exactly those back?
+
+6
+00:00:18,050 --> 00:00:22,376
+Most of us answer with file names:
+final, final version 2,
+
+7
+00:00:22,376 --> 00:00:26,925
+final final version 3,
+until nobody knows which one is final.
+
+8
+00:00:27,167 --> 00:00:29,770
+Here is a better answer: one short line.
+
+9
+00:00:30,090 --> 00:00:35,807
+In part 2 you will compute this exact string
+on your own laptop from 4 cheese photos.
+
+10
+00:00:36,127 --> 00:00:40,671
+It will match the instructor's tag
+in the class repo, character for character.
+
+11
+00:00:40,991 --> 00:00:44,959
+How can one line pin down
+about 600 kilobytes of photos?
+
+12
+00:00:45,200 --> 00:00:49,488
+And before that, when someone clicks gouda,
+where does that word actually go?
+
+13
+00:00:49,733 --> 00:00:52,228
+To follow along you need Docker Desktop,
+
+14
+00:00:52,228 --> 00:00:57,093
+a Google Cloud project with billing
+and your own bucket, and a GitHub account.
+
+15
+00:00:57,413 --> 00:01:00,507
+This lecture stores a few megabytes
+in the cloud,
+
+16
+00:01:00,507 --> 00:01:02,085
+and gold tags mark where.
+
+17
+00:01:02,405 --> 00:01:05,285
+The tracker in the top
+left follows both READMEs.
+
+18
+00:01:05,605 --> 00:01:08,758
+A yellow your-turn tag
+means pause and run it;
+
+19
+00:01:08,758 --> 00:01:12,666
+a gray extra tag marks a check
+that is not in the README.
+
+20
+00:01:12,986 --> 00:01:15,120
+Every command is in the study guide.
+
+21
+00:01:16,167 --> 00:01:17,276
+First, the map.
+
+22
+00:01:17,596 --> 00:01:21,701
+The lecture draws unlabeled cheese photos,
+then labeled ones,
+
+23
+00:01:21,701 --> 00:01:24,999
+then training,
+and the arrow in between asks how.
+
+24
+00:01:25,319 --> 00:01:29,692
+Labels are the ground truth a model
+learns from and is graded against.
+
+25
+00:01:30,012 --> 00:01:31,362
+The model's mistakes,
+
+26
+00:01:31,362 --> 00:01:34,386
+once labeled,
+go into the next dataset version.
+
+27
+00:01:34,634 --> 00:01:37,450
+Underneath,
+the two stations this lecture builds.
+
+28
+00:01:37,770 --> 00:01:43,338
+Part 1 is the labeling station: Label Studio
+and a small command line container,
+
+29
+00:01:43,338 --> 00:01:45,983
+with one bucket for photos and labels.
+
+30
+00:01:46,303 --> 00:01:50,160
+Part 2 is the versioning station:
+one DVC container,
+
+31
+00:01:50,160 --> 00:01:53,767
+a bucket with two folders,
+your own GitHub repo,
+
+32
+00:01:53,767 --> 00:01:55,797
+and Colab to view versions.
+
+33
+00:01:56,117 --> 00:02:00,212
+The code does not connect the halves yet;
+exercise E7 does.
+
+34
+00:02:00,450 --> 00:02:02,562
+Now, the lecture's recall quiz.
+
+35
+00:02:02,882 --> 00:02:06,095
+Docker network,
+cloud credentials, Docker Compose:
+
+36
+00:02:06,095 --> 00:02:08,280
+where will each one show up today?
+
+37
+00:02:17,117 --> 00:02:21,448
+The network lets the command line
+container call Label Studio by name.
+
+38
+00:02:21,768 --> 00:02:25,821
+The credentials are one key file,
+mounted into every container.
+
+39
+00:02:26,141 --> 00:02:31,261
+And Compose is the README's extra section,
+which starts both containers together.
+
+40
+00:02:31,500 --> 00:02:35,575
+Clone the data-labeling repo
+and move into it; pause and run it.
+
+41
+00:02:35,895 --> 00:02:40,304
+Give Docker more than 4 gigabytes of memory,
+as the README asks;
+
+42
+00:02:40,304 --> 00:02:43,404
+the setting is now under Settings,
+Resources.
+
+43
+00:02:43,650 --> 00:02:48,973
+An extra git log shows this video's commit,
+from October 2025;
+
+44
+00:02:48,973 --> 00:02:54,296
+an extra listing shows the scripts,
+cli.py and three pictures.
+
+45
+00:02:57,584 --> 00:03:01,894
+Next, the secrets folder,
+beside the repo and never inside it;
+
+46
+00:03:01,894 --> 00:03:03,771
+it serves both repos today.
+
+47
+00:03:04,091 --> 00:03:07,738
+Pause and make it;
+an extra tree view matches the README.
+
+48
+00:03:14,200 --> 00:03:15,245
+Now the key.
+
+49
+00:03:15,565 --> 00:03:19,872
+In the console, create a service account
+named data-service-account,
+
+50
+00:03:19,872 --> 00:03:21,645
+with the Storage Admin role.
+
+51
+00:03:21,965 --> 00:03:23,970
+Then create one JSON key,
+
+52
+00:03:23,970 --> 00:03:28,621
+saved in your secrets folder
+as data-service-account.json.
+
+53
+00:03:28,941 --> 00:03:33,379
+This role is broader than needed:
+it covers every bucket in the project.
+
+54
+00:03:33,699 --> 00:03:35,213
+Pause and create yours.
+
+55
+00:03:35,450 --> 00:03:38,096
+An extra listing shows the key in place:
+
+56
+00:03:38,096 --> 00:03:41,338
+a stand-in,
+explained at the Source storage step.
+
+57
+00:03:41,583 --> 00:03:44,921
+Download the unlabeled photos
+from the README link;
+
+58
+00:03:44,921 --> 00:03:47,343
+we use curl, and a browser works too.
+
+59
+00:03:47,663 --> 00:03:49,092
+Then extract the zip.
+
+60
+00:03:49,412 --> 00:03:50,692
+Pause and do both.
+
+61
+00:03:51,012 --> 00:03:55,087
+Notice that every image comes
+with a twin in a hidden Mac folder.
+
+62
+00:03:55,333 --> 00:03:58,469
+A quick prediction: the zip held 42 files.
+
+63
+00:03:58,789 --> 00:04:01,008
+How many tasks should Label Studio make?
+
+64
+00:04:05,850 --> 00:04:06,850
+21.
+
+65
+00:04:07,151 --> 00:04:09,960
+An extra count shows 21 images,
+
+66
+00:04:09,960 --> 00:04:14,127
+one of them a PNG,
+plus 21 Mac metadata files.
+
+67
+00:04:14,447 --> 00:04:18,415
+Upload only the images,
+or you get 21 broken tasks.
+
+68
+00:04:18,735 --> 00:04:23,301
+The lecture calls this curation,
+dropping junk before it becomes a task.
+
+69
+00:04:23,550 --> 00:04:25,375
+One more extra, for part 2:
+
+70
+00:04:25,375 --> 00:04:29,161
+each photo's fingerprint,
+computed from its bytes alone.
+
+71
+00:04:29,481 --> 00:04:33,833
+Same bytes, same string;
+change one byte, and it changes completely.
+
+72
+00:04:34,153 --> 00:04:35,561
+Remember the first one.
+
+73
+00:04:35,950 --> 00:04:38,717
+Then create your bucket
+with a name of your own,
+
+74
+00:04:38,717 --> 00:04:41,369
+since names are global,
+and keep the defaults.
+
+75
+00:04:41,689 --> 00:04:45,567
+Add two folders, cheeses_unlabeled
+and cheeses_labeled,
+
+76
+00:04:45,567 --> 00:04:48,387
+and upload the 21 images into the first.
+
+77
+00:04:48,707 --> 00:04:50,051
+Pause and set it up.
+
+78
+00:04:50,371 --> 00:04:54,382
+A gold tag: storage starts here,
+a fraction of a cent a month.
+
+79
+00:04:55,417 --> 00:04:58,982
+The README runs Label Studio
+from a ready-made image,
+
+80
+00:04:58,982 --> 00:05:00,483
+in your own container,
+
+81
+00:05:00,483 --> 00:05:03,758
+so no outside labeling
+service sees your photos.
+
+82
+00:05:04,078 --> 00:05:07,193
+Its script creates the network
+only if it is missing,
+
+83
+00:05:07,193 --> 00:05:09,838
+and removes any old container
+with that name.
+
+84
+00:05:10,084 --> 00:05:12,537
+Then one docker run, flag by flag.
+
+85
+00:05:12,857 --> 00:05:15,261
+The flag -d runs it in the background,
+
+86
+00:05:15,261 --> 00:05:18,361
+and the network flag puts it
+on a private street.
+
+87
+00:05:18,681 --> 00:05:24,975
+Then -p 8080:8080 publishes the port:
+a door in your laptop wall.
+
+88
+00:05:25,295 --> 00:05:29,620
+Two -v flags mount a database folder
+and your secrets;
+
+89
+00:05:29,620 --> 00:05:32,825
+the -e lines set the login and key path.
+
+90
+00:05:34,267 --> 00:05:38,662
+Pause and run sh docker-shell.sh;
+it pulls the image.
+
+91
+00:05:38,982 --> 00:05:42,306
+Then the README's check,
+docker container ls:
+
+92
+00:05:42,306 --> 00:05:44,080
+up, port 8080 published.
+
+93
+00:05:44,317 --> 00:05:48,946
+But look again 25 seconds later,
+with an extra -a: exited.
+
+94
+00:05:49,266 --> 00:05:51,656
+Something to ponder:
+where do you look first?
+
+95
+00:05:58,500 --> 00:05:59,500
+The logs.
+
+96
+00:05:59,780 --> 00:06:04,409
+Label Studio explains itself:
+its data folder is not writable.
+
+97
+00:06:04,729 --> 00:06:06,307
+It runs as user 1001,
+
+98
+00:06:06,307 --> 00:06:09,764
+but Docker created
+the missing folder as root.
+
+99
+00:06:13,500 --> 00:06:18,769
+The fix is an extra, for Linux;
+Docker Desktop for Mac normally avoids this.
+
+100
+00:06:19,089 --> 00:06:22,366
+Give the folder
+to user 1001 with sudo chown,
+
+101
+00:06:22,366 --> 00:06:25,425
+run the script again, and now it stays up.
+
+102
+00:06:25,745 --> 00:06:27,879
+On Linux, pause and do the same.
+
+103
+00:06:29,084 --> 00:06:34,405
+Extra checks:
+the logs show a box offering version 1.23.2,
+
+104
+00:06:34,405 --> 00:06:40,369
+newer than this image,
+which ran 1.23.0 at the time of recording.
+
+105
+00:06:40,689 --> 00:06:43,249
+The tag is latest, so yours may differ.
+
+106
+00:06:46,150 --> 00:06:49,960
+Open localhost:8080 and log
+in with the username
+
+107
+00:06:49,960 --> 00:06:53,851
+and password
+from lines 19 and 20 of your script.
+
+108
+00:06:54,171 --> 00:06:57,820
+Create a project
+with the Image Classification template,
+
+109
+00:06:57,820 --> 00:07:01,275
+with the choices brie,
+gouda, gruyere and parmigiano.
+
+110
+00:07:01,595 --> 00:07:02,769
+Pause and do it.
+
+111
+00:07:03,089 --> 00:07:06,998
+Underneath, our stand-in calls
+replay the page's requests:
+
+112
+00:07:06,998 --> 00:07:10,705
+we are logged in,
+and project 1 holds the four cheeses.
+
+113
+00:07:13,250 --> 00:07:16,626
+Back in the project,
+open Settings, then Cloud Storage,
+
+114
+00:07:16,626 --> 00:07:19,757
+and add source storage,
+where the photos come from.
+
+115
+00:07:20,077 --> 00:07:24,190
+Use the README's values:
+Google Cloud Storage, your bucket,
+
+116
+00:07:24,190 --> 00:07:27,885
+the prefix cheeses_unlabeled,
+and pre-signed URLs on.
+
+117
+00:07:28,205 --> 00:07:30,573
+If a checkbox is missing, carry on.
+
+118
+00:07:30,893 --> 00:07:32,660
+Leave the credentials empty:
+
+119
+00:07:32,660 --> 00:07:35,501
+that means the key
+the container already has.
+
+120
+00:07:35,750 --> 00:07:37,414
+Then click Check Connection.
+
+121
+00:07:37,734 --> 00:07:39,825
+Here it fails: file not found.
+
+122
+00:07:40,145 --> 00:07:45,129
+An extra listing shows why:
+/secrets inside Label Studio is empty,
+
+123
+00:07:45,129 --> 00:07:49,659
+on purpose, as you will hear in a moment;
+yours should pass.
+
+124
+00:07:49,979 --> 00:07:52,230
+The target storage, where labels go,
+
+125
+00:07:52,230 --> 00:07:56,358
+with the prefix cheeses_labeled,
+fails too, with a vaguer message.
+
+126
+00:07:56,600 --> 00:07:58,904
+One honest note about this recording.
+
+127
+00:07:59,224 --> 00:08:02,688
+This machine has no Google account,
+no bucket,
+
+128
+00:08:02,688 --> 00:08:05,624
+no browser, and no SSH route to GitHub.
+
+129
+00:08:05,944 --> 00:08:10,277
+The key in the folder listings
+is an obviously invalid stand-in,
+
+130
+00:08:10,277 --> 00:08:12,579
+moved out before every cloud step.
+
+131
+00:08:12,899 --> 00:08:17,336
+So each cloud step here fails
+exactly the way a misplaced key fails.
+
+132
+00:08:17,656 --> 00:08:20,301
+That is the most common
+mistake in this lecture.
+
+133
+00:08:20,621 --> 00:08:24,726
+Every success you should expect
+is tagged recorded, with its source,
+
+134
+00:08:24,726 --> 00:08:28,408
+and clicks and uploads are replayed locally,
+tagged stand-in.
+
+135
+00:08:28,650 --> 00:08:32,337
+With a real key,
+add both storages and click Sync:
+
+136
+00:08:32,337 --> 00:08:34,623
+one task per photo, 21 for you.
+
+137
+00:08:34,943 --> 00:08:38,869
+Our stand-in imports 3 tasks
+with the same kind of addresses.
+
+138
+00:08:39,189 --> 00:08:40,938
+Pause, add both, and sync.
+
+139
+00:08:41,183 --> 00:08:42,826
+So who touches the photos?
+
+140
+00:08:43,146 --> 00:08:46,457
+Label Studio holds the key
+and lists the bucket;
+
+141
+00:08:46,457 --> 00:08:48,458
+your browser asks for task 1.
+
+142
+00:08:48,778 --> 00:08:52,119
+Something to ponder:
+your browser never sees the key,
+
+143
+00:08:52,119 --> 00:08:54,325
+so how can it show a private photo?
+
+144
+00:09:03,167 --> 00:09:04,468
+With a signed ticket.
+
+145
+00:09:04,788 --> 00:09:07,424
+Label Studio does not relay the photos;
+
+146
+00:09:07,424 --> 00:09:12,831
+it signs a web address with the key:
+permission for one photo, for a short time.
+
+147
+00:09:13,151 --> 00:09:15,994
+Your browser carries
+that ticket straight to Google,
+
+148
+00:09:15,994 --> 00:09:17,908
+and the key stays in the container.
+
+149
+00:09:18,228 --> 00:09:21,983
+Then the thumbnails break,
+and the README warns you: it is CORS.
+
+150
+00:09:25,017 --> 00:09:27,429
+The page comes from localhost:8080,
+
+151
+00:09:27,429 --> 00:09:31,566
+the photo from Google's storage address:
+a different origin.
+
+152
+00:09:31,886 --> 00:09:36,867
+When the page's own code fetches the photo,
+as Label Studio does, your browser
+
+153
+00:09:36,867 --> 00:09:41,593
+hands the answer over only if it carries
+a header that allows this origin.
+
+154
+00:09:41,913 --> 00:09:46,052
+Google adds that header
+only if the bucket has its own CORS rule.
+
+155
+00:09:46,300 --> 00:09:50,011
+A small slip:
+the README blames a reverse DNS lookup,
+
+156
+00:09:50,011 --> 00:09:52,743
+but the cause is that same-origin rule.
+
+157
+00:09:52,984 --> 00:09:55,821
+The README sets the rule
+from a second container.
+
+158
+00:09:56,141 --> 00:10:00,756
+Put your bucket name
+on line 23 of docker-shell-CLI.sh,
+
+159
+00:10:00,756 --> 00:10:02,435
+then run it with sh.
+
+160
+00:10:02,755 --> 00:10:05,870
+The ID in the prompt changes every run,
+
+161
+00:10:05,870 --> 00:10:10,584
+and Apple Silicon says aarch64
+where this machine says x86.
+
+162
+00:10:10,904 --> 00:10:12,184
+Pause and do both.
+
+163
+00:10:14,550 --> 00:10:18,617
+This container joins
+the same street and calls Label Studio
+
+164
+00:10:18,617 --> 00:10:20,203
+by name, not localhost.
+
+165
+00:10:20,523 --> 00:10:23,937
+It mounts the repo by its folder name,
+so keep that name.
+
+166
+00:10:24,184 --> 00:10:29,859
+Inside, run python cli.py -c, then -m;
+pause and run them.
+
+167
+00:10:30,179 --> 00:10:32,737
+Here both stop at the storage client:
+
+168
+00:10:32,737 --> 00:10:35,917
+file not found,
+because ADC looks for the key.
+
+169
+00:10:36,237 --> 00:10:38,838
+The code builds one rule, any origin,
+
+170
+00:10:38,838 --> 00:10:42,424
+GET only, max age one hour,
+and patches the bucket.
+
+171
+00:10:42,667 --> 00:10:47,488
+With a real key, -c prints the rule,
+and -m prints the bucket settings.
+
+172
+00:10:47,808 --> 00:10:50,582
+Now the header arrives
+and the thumbnails load.
+
+173
+00:10:50,902 --> 00:10:56,278
+The max age only caches preflight checks,
+which a plain image request never makes.
+
+174
+00:10:56,517 --> 00:10:57,861
+Something to ponder.
+
+175
+00:10:58,181 --> 00:11:02,149
+You ran -c and refreshed,
+and the thumbnails are still broken.
+
+176
+00:11:02,469 --> 00:11:03,877
+Name two suspects.
+
+177
+00:11:12,717 --> 00:11:14,680
+One: the rule missed your bucket.
+
+178
+00:11:15,000 --> 00:11:19,300
+-c failed,
+or line 23 names another bucket of yours;
+
+179
+00:11:19,300 --> 00:11:21,698
+-m shows which bucket got it.
+
+180
+00:11:22,018 --> 00:11:25,560
+Two: your browser reused cached answers;
+hard refresh.
+
+181
+00:11:25,880 --> 00:11:30,850
+And curl never met a bouncer:
+CORS is a browser rule, not access control.
+
+182
+00:11:31,900 --> 00:11:37,084
+Back in Label Studio, click a task,
+pick a cheese, and submit; repeat for a few.
+
+183
+00:11:37,404 --> 00:11:38,897
+Pause and label some.
+
+184
+00:11:39,217 --> 00:11:42,851
+Here is what one click becomes,
+as a stand-in call:
+
+185
+00:11:42,851 --> 00:11:46,769
+a small JSON document
+whose result says choices, gouda.
+
+186
+00:11:47,017 --> 00:11:49,513
+Label Studio saves it in its database,
+
+187
+00:11:49,513 --> 00:11:53,191
+and the target storage writes a copy
+to cheeses_labeled,
+
+188
+00:11:53,191 --> 00:11:56,212
+pointing back at the photo,
+which never moved.
+
+189
+00:11:56,532 --> 00:12:02,200
+The slide sorts photos into rows,
+but on disk a label is a small JSON note,
+
+190
+00:12:02,200 --> 00:12:05,449
+and a labeled dataset is photos plus notes.
+
+191
+00:12:05,769 --> 00:12:10,121
+In the console, that folder
+shows one JSON file per annotation.
+
+192
+00:12:10,441 --> 00:12:12,126
+Open one to see the note.
+
+193
+00:12:14,567 --> 00:12:17,895
+The command line container
+calls Label Studio by name.
+
+194
+00:12:18,215 --> 00:12:22,289
+Something to ponder:
+what if its address were localhost:8080?
+
+195
+00:12:29,133 --> 00:12:31,652
+It cannot connect: inside a container,
+
+196
+00:12:31,652 --> 00:12:35,298
+localhost is that container,
+and nothing listens there.
+
+197
+00:12:35,618 --> 00:12:40,120
+The name works, because the Docker network
+keeps a phone book of container names.
+
+198
+00:12:40,367 --> 00:12:42,471
+To list labels from code,
+
+199
+00:12:42,471 --> 00:12:46,426
+copy your access token
+from Account & Settings,
+
+200
+00:12:46,426 --> 00:12:51,738
+then run the README command:
+python cli.py -p -k and your token.
+
+201
+00:12:52,058 --> 00:12:53,252
+Pause and try it.
+
+202
+00:12:53,572 --> 00:12:57,620
+On Label Studio 1.23.0 it fails with a 401;
+
+203
+00:12:57,620 --> 00:13:04,964
+ours says legacy token authentication
+has been disabled for this organization.
+
+204
+00:13:05,200 --> 00:13:09,232
+An extra check shows why:
+this version has two kinds of token.
+
+205
+00:13:09,552 --> 00:13:13,313
+The page shows a newer
+personal token by default,
+
+206
+00:13:13,313 --> 00:13:18,149
+the legacy kind is switched off,
+and cli.py speaks only legacy.
+
+207
+00:13:19,883 --> 00:13:23,706
+The fix:
+in Organization, API Tokens Settings,
+
+208
+00:13:23,706 --> 00:13:25,451
+enable legacy tokens.
+
+209
+00:13:25,771 --> 00:13:29,056
+Then copy the legacy token,
+not the personal one.
+
+210
+00:13:29,376 --> 00:13:30,657
+Pause and do both.
+
+211
+00:13:32,900 --> 00:13:36,783
+Run -p again, and it lists project 1,
+Cheese labels.
+
+212
+00:13:37,103 --> 00:13:41,954
+Then -t with your token:
+3 tasks in our stand-in, 21 for you;
+
+213
+00:13:41,954 --> 00:13:44,420
+ours has one labeled, as gouda.
+
+214
+00:13:44,740 --> 00:13:46,041
+Pause and run both.
+
+215
+00:13:46,361 --> 00:13:49,967
+The README's sample says amanita;
+the format is the same.
+
+216
+00:13:57,800 --> 00:14:02,387
+The README's extra section runs
+both containers from one compose file.
+
+217
+00:14:02,707 --> 00:14:05,785
+Leave the command line container with exit,
+
+218
+00:14:05,785 --> 00:14:10,152
+stop Label Studio, and check with docker ps;
+pause and do it.
+
+219
+00:14:10,472 --> 00:14:15,720
+First put your bucket name
+on line 17 of docker-compose.yml as well.
+
+220
+00:14:16,040 --> 00:14:18,906
+Then run sh docker-shell-compose.sh;
+
+221
+00:14:18,906 --> 00:14:24,637
+if docker-compose is not found,
+use the docker compose form on the card.
+
+222
+00:14:24,957 --> 00:14:27,098
+Here it stops on a name conflict:
+
+223
+00:14:27,098 --> 00:14:31,251
+docker stop leaves the container behind,
+still holding its name.
+
+224
+00:14:31,500 --> 00:14:33,872
+An extra docker rm frees the name;
+
+225
+00:14:33,872 --> 00:14:37,431
+pause, remove it,
+and run the compose script again.
+
+226
+00:14:37,751 --> 00:14:42,807
+This time Compose creates Label Studio
+plus a one-off command line container.
+
+227
+00:14:44,317 --> 00:14:47,963
+An extra echo prints
+the README's bucket name:
+
+228
+00:14:47,963 --> 00:14:50,131
+compose keeps its own copy,
+
+229
+00:14:50,131 --> 00:14:54,066
+on line 17 of docker-compose.yml,
+so edit it too.
+
+230
+00:14:54,300 --> 00:14:56,220
+And the first call is refused:
+
+231
+00:14:56,220 --> 00:14:59,393
+the depends_on setting
+starts Label Studio first,
+
+232
+00:14:59,393 --> 00:15:01,660
+but does not wait until it listens.
+
+233
+00:15:01,980 --> 00:15:07,228
+After an extra wait loop, project 1 is back,
+because the same folder is mounted.
+
+234
+00:15:10,200 --> 00:15:14,232
+Label Studio keeps running
+after you exit the command line container.
+
+235
+00:15:14,552 --> 00:15:16,210
+Then the README's cleanup:
+
+236
+00:15:16,210 --> 00:15:19,971
+list, stop, prune, and list the images;
+pause and run them.
+
+237
+00:15:20,291 --> 00:15:25,837
+The prune also removed the network,
+so next time run docker-shell.sh first.
+
+238
+00:15:29,250 --> 00:15:30,575
+Something to ponder:
+
+239
+00:15:30,575 --> 00:15:34,285
+after docker system prune,
+is your labeled project gone?
+
+240
+00:15:41,133 --> 00:15:45,040
+No. The database file
+is still in the mounted folder,
+
+241
+00:15:45,040 --> 00:15:47,512
+and prune never touches folders you mount.
+
+242
+00:15:47,832 --> 00:15:51,008
+But the photos they point
+at can change under them:
+
+243
+00:15:51,008 --> 00:15:52,440
+same name, new picture.
+
+244
+00:15:52,760 --> 00:15:55,960
+So how do you freeze exactly
+which photos a model saw?
+
+245
+00:15:56,280 --> 00:15:57,560
+That is part 2.
+

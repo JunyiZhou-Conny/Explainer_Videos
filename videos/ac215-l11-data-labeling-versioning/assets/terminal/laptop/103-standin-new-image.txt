@@ -1,0 +1,10 @@
+$ sudo cp ../cheeses_unlabeled/Image_5.jpg cheese_dataset/ && ls -la cheese_dataset
+total 716
+drwxr-sr-x    2 root     student       4096 Oct 23 12:02 .
+drwxr-sr-x    5 student  student       4096 Oct 23 12:01 ..
+-rw-r--r--    1 root     student     247775 Oct 23 12:01 Image_1.jpg
+-rw-r--r--    1 root     student     111394 Oct 23 12:01 Image_2.jpg
+-rw-r--r--    1 root     student     108076 Oct 23 12:01 Image_3.jpg
+-rw-r--r--    1 root     student     143856 Oct 23 12:01 Image_4.jpg
+-rw-r--r--    1 root     student     101473 Oct 23 12:02 Image_5.jpg
+[exit 0]

@@ -1,0 +1,1284 @@
+1
+00:00:00,000 --> 00:00:05,248
+两个目录，都叫 cheese dataset，文件名一样，数量也一样
+Two folders, both called cheese_dataset, with the same file names and the same count.
+
+2
+00:00:05,568 --> 00:00:08,277
+周一你在其中一个上训练了模型
+On Monday you trained a model on one of them.
+
+3
+00:00:08,597 --> 00:00:12,075
+周五模型变差了，可谁都没动过代码
+On Friday the model got worse, and nobody touched the code.
+
+4
+00:00:12,395 --> 00:00:15,488
+那么，这个模型看到的是哪些照片、带着哪些 label？
+So which photos, with which labels, did that model see?
+
+5
+00:00:15,808 --> 00:00:17,813
+还能把它们一模一样地拿回来吗？
+And can you get exactly those back?
+
+6
+00:00:18,050 --> 00:00:20,607
+我们大多数人靠文件名来回答
+Most of us answer with file names:
+
+7
+00:00:20,607 --> 00:00:24,067
+final、final 第 2 版、final final 第 3 版
+final, final version 2, final final version 3,
+
+8
+00:00:24,067 --> 00:00:26,925
+直到没人知道哪个才是 final
+until nobody knows which one is final.
+
+9
+00:00:27,167 --> 00:00:29,770
+更好的答案是：一行字
+Here is a better answer: one short line.
+
+10
+00:00:30,090 --> 00:00:33,085
+第二部分里，你会算出这个一模一样的字符串
+In part 2 you will compute this exact string
+
+11
+00:00:33,085 --> 00:00:35,807
+就在自己的笔记本上，用 4 张奶酪照片
+on your own laptop from 4 cheese photos.
+
+12
+00:00:36,127 --> 00:00:40,671
+它会和授课老师在课程 repo 里打的 tag 对上，一个字符都不差
+It will match the instructor's tag in the class repo, character for character.
+
+13
+00:00:40,991 --> 00:00:44,959
+一行字，怎么能锁定大约 600 KB 的照片？
+How can one line pin down about 600 kilobytes of photos?
+
+14
+00:00:45,200 --> 00:00:49,488
+在那之前，有人点了 gouda，这个词到底去了哪儿？
+And before that, when someone clicks gouda, where does that word actually go?
+
+15
+00:00:49,733 --> 00:00:52,249
+跟着做，你需要：Docker Desktop
+To follow along you need Docker Desktop,
+
+16
+00:00:52,249 --> 00:00:55,730
+一个开通了结算的 Google Cloud 项目和你自己的 bucket
+a Google Cloud project with billing and your own bucket,
+
+17
+00:00:55,730 --> 00:00:57,330
+还有一个 GitHub 账号
+and a GitHub account.
+
+18
+00:00:57,413 --> 00:01:02,085
+这一讲会在云端存几 MB 数据，金色标签会标出在哪儿
+This lecture stores a few megabytes in the cloud, and gold tags mark where.
+
+19
+00:01:02,405 --> 00:01:05,285
+左上角的进度条跟着两份 README 走
+The tracker in the top left follows both READMEs.
+
+20
+00:01:05,605 --> 00:01:08,758
+看到黄色的 your turn 标签，就暂停，自己跑一遍
+A yellow your-turn tag means pause and run it;
+
+21
+00:01:08,758 --> 00:01:12,666
+灰色的 extra 标签表示这个检查 README 里没有
+a gray extra tag marks a check that is not in the README.
+
+22
+00:01:12,986 --> 00:01:15,120
+每条命令都在学习指南里
+Every command is in the study guide.
+
+23
+00:01:16,167 --> 00:01:17,546
+先看地图
+First, the map.
+
+24
+00:01:17,596 --> 00:01:21,701
+课上先画未标注的奶酪照片，再画标注好的
+The lecture draws unlabeled cheese photos, then labeled ones,
+
+25
+00:01:21,701 --> 00:01:24,999
+然后是训练，中间的箭头在问怎么做到
+then training, and the arrow in between asks how.
+
+26
+00:01:25,319 --> 00:01:29,692
+这些 label 就是 ground truth：模型从中学习，也拿它来评分
+Labels are the ground truth a model learns from and is graded against.
+
+27
+00:01:30,012 --> 00:01:34,386
+模型犯的错，标注之后，会进入下一个数据集版本
+The model's mistakes, once labeled, go into the next dataset version.
+
+28
+00:01:34,634 --> 00:01:38,214
+下面是这一讲要搭的两个站。第一部分
+Underneath, the two stations this lecture builds. Part 1
+
+29
+00:01:38,214 --> 00:01:43,315
+标注站，Label Studio 和一个小小的命令行 container
+is the labeling station: Label Studio and a small command line container,
+
+30
+00:01:43,315 --> 00:01:45,983
+再加一个放照片和 label 的 bucket
+with one bucket for photos and labels.
+
+31
+00:01:46,303 --> 00:01:50,190
+第二部分是版本管理站：一个 DVC container
+Part 2 is the versioning station: one DVC container,
+
+32
+00:01:50,190 --> 00:01:52,134
+一个带两个目录的 bucket
+a bucket with two folders,
+
+33
+00:01:52,134 --> 00:01:55,797
+你自己的 GitHub repo，还有用来查看版本的 Colab
+your own GitHub repo, and Colab to view versions.
+
+34
+00:01:56,117 --> 00:02:00,212
+代码还没把这两半连起来；练习 E7 会连
+The code does not connect the halves yet; exercise E7 does.
+
+35
+00:02:00,450 --> 00:02:02,562
+现在来做课上的回顾小测
+Now, the lecture's recall quiz.
+
+36
+00:02:02,882 --> 00:02:06,095
+Docker 网络、云端凭据、Docker Compose
+Docker network, cloud credentials, Docker Compose:
+
+37
+00:02:06,095 --> 00:02:08,280
+今天它们各自会出现在哪里？
+where will each one show up today?
+
+38
+00:02:17,117 --> 00:02:21,448
+有了网络，命令行 container 就能按名字调用 Label Studio
+The network lets the command line container call Label Studio by name.
+
+39
+00:02:21,768 --> 00:02:25,821
+凭据就是一个密钥文件，挂载进每个 container
+The credentials are one key file, mounted into every container.
+
+40
+00:02:26,141 --> 00:02:28,829
+Compose 则是 README 的 Extra 一节
+And Compose is the README's extra section,
+
+41
+00:02:28,829 --> 00:02:31,261
+它把两个 container 一起启动
+which starts both containers together.
+
+42
+00:02:31,500 --> 00:02:34,371
+把 data-labeling 这个 repo clone 下来，再进去
+Clone the data-labeling repo and move into it;
+
+43
+00:02:34,371 --> 00:02:35,845
+暂停一下，自己跑一遍
+pause and run it.
+
+44
+00:02:35,895 --> 00:02:40,304
+给 Docker 超过 4 GB 的内存，README 是这么要求的
+Give Docker more than 4 gigabytes of memory, as the README asks;
+
+45
+00:02:40,304 --> 00:02:43,404
+这个设置现在在 Settings 的 Resources 下面
+the setting is now under Settings, Resources.
+
+46
+00:02:43,650 --> 00:02:47,371
+额外跑一下 git log，能看到这个视频用的 commit
+An extra git log shows this video's commit,
+
+47
+00:02:47,371 --> 00:02:48,929
+是 2025 年 10 月的
+from October 2025;
+
+48
+00:02:48,929 --> 00:02:54,296
+再额外列一下目录，有几个脚本、cli.py 和三张图
+an extra listing shows the scripts, cli.py and three pictures.
+
+49
+00:02:57,584 --> 00:03:01,894
+接下来是 secrets 目录，放在 repo 旁边，绝不放在里面
+Next, the secrets folder, beside the repo and never inside it;
+
+50
+00:03:01,894 --> 00:03:03,771
+今天两个 repo 都用它
+it serves both repos today.
+
+51
+00:03:04,091 --> 00:03:07,738
+暂停一下，建好它；额外用 tree 看一下，和 README 一致
+Pause and make it; an extra tree view matches the README.
+
+52
+00:03:14,200 --> 00:03:15,515
+现在是密钥
+Now the key.
+
+53
+00:03:15,565 --> 00:03:18,098
+在控制台里，建一个服务账号
+In the console, create a service account
+
+54
+00:03:18,098 --> 00:03:21,645
+名字叫 data-service-account，角色是 Storage Admin
+named data-service-account, with the Storage Admin role.
+
+55
+00:03:21,965 --> 00:03:26,295
+然后建一个 JSON 密钥，存进你的 secrets 目录
+Then create one JSON key, saved in your secrets folder
+
+56
+00:03:26,295 --> 00:03:28,621
+文件名是 data-service-account.json
+as data-service-account.json.
+
+57
+00:03:28,941 --> 00:03:33,379
+这个角色的权限比需要的大：它覆盖项目里的每一个 bucket
+This role is broader than needed: it covers every bucket in the project.
+
+58
+00:03:33,699 --> 00:03:35,299
+暂停一下，建一个你自己的
+Pause and create yours.
+
+59
+00:03:35,450 --> 00:03:38,096
+额外列一下目录，密钥已经就位
+An extra listing shows the key in place:
+
+60
+00:03:38,096 --> 00:03:41,338
+这是一个替身，到 Source storage 那一步再解释
+a stand-in, explained at the Source storage step.
+
+61
+00:03:41,583 --> 00:03:44,921
+从 README 的链接下载未标注的照片
+Download the unlabeled photos from the README link;
+
+62
+00:03:44,921 --> 00:03:47,343
+我们用 curl，用浏览器也行
+we use curl, and a browser works too.
+
+63
+00:03:47,663 --> 00:03:49,263
+然后解压这个 zip
+Then extract the zip.
+
+64
+00:03:49,412 --> 00:03:50,962
+暂停一下，两件都做了
+Pause and do both.
+
+65
+00:03:51,012 --> 00:03:55,087
+注意，每张图片都在一个隐藏的 Mac 目录里有个双胞胎
+Notice that every image comes with a twin in a hidden Mac folder.
+
+66
+00:03:55,333 --> 00:03:58,469
+快速预测一下：这个 zip 里有 42 个文件
+A quick prediction: the zip held 42 files.
+
+67
+00:03:58,789 --> 00:04:01,008
+Label Studio 应该建多少个 task？
+How many tasks should Label Studio make?
+
+68
+00:04:05,850 --> 00:04:11,681
+21 个。额外数一下：21 张图片，其中一张是 PNG
+21. An extra count shows 21 images, one of them a PNG,
+
+69
+00:04:11,681 --> 00:04:14,127
+另外还有 21 个 Mac 元数据文件
+plus 21 Mac metadata files.
+
+70
+00:04:14,447 --> 00:04:18,415
+只上传图片，不然你会得到 21 个坏掉的 task
+Upload only the images, or you get 21 broken tasks.
+
+71
+00:04:18,735 --> 00:04:23,301
+课上把这叫做数据整理：在垃圾文件变成 task 之前就把它们去掉
+The lecture calls this curation, dropping junk before it becomes a task.
+
+72
+00:04:23,550 --> 00:04:25,375
+再来一个额外检查，为第二部分准备
+One more extra, for part 2:
+
+73
+00:04:25,375 --> 00:04:29,161
+每张照片的指纹，只由它的字节算出来
+each photo's fingerprint, computed from its bytes alone.
+
+74
+00:04:29,481 --> 00:04:33,833
+同样的字节，同样的字符串；改一个字节，它就完全变了
+Same bytes, same string; change one byte, and it changes completely.
+
+75
+00:04:34,153 --> 00:04:35,753
+记住第一个
+Remember the first one.
+
+76
+00:04:35,950 --> 00:04:38,717
+然后用你自己起的名字建 bucket
+Then create your bucket with a name of your own,
+
+77
+00:04:38,717 --> 00:04:41,369
+因为名字是全局唯一的，其他保持默认设置
+since names are global, and keep the defaults.
+
+78
+00:04:41,689 --> 00:04:45,567
+再加两个目录，cheeses unlabeled 和 cheeses labeled
+Add two folders, cheeses_unlabeled and cheeses_labeled,
+
+79
+00:04:45,567 --> 00:04:48,387
+把 21 张图片上传到第一个里
+and upload the 21 images into the first.
+
+80
+00:04:48,707 --> 00:04:50,307
+暂停一下，把它配好
+Pause and set it up.
+
+81
+00:04:50,371 --> 00:04:54,382
+金色标签：存储费用从这里开始，每月不到一美分
+A gold tag: storage starts here, a fraction of a cent a month.
+
+82
+00:04:55,417 --> 00:04:59,003
+README 跑 Label Studio 用的是一个现成的 image
+The README runs Label Studio from a ready-made image,
+
+83
+00:04:59,003 --> 00:05:00,503
+在你自己的 container 里
+in your own container,
+
+84
+00:05:00,503 --> 00:05:03,758
+所以没有任何外部的标注服务能看到你的照片
+so no outside labeling service sees your photos.
+
+85
+00:05:04,078 --> 00:05:07,193
+它的脚本只在网络不存在时才创建网络
+Its script creates the network only if it is missing,
+
+86
+00:05:07,193 --> 00:05:09,838
+还会删掉同名的旧 container
+and removes any old container with that name.
+
+87
+00:05:10,084 --> 00:05:12,645
+然后是一条 docker run，一个参数一个参数地看
+Then one docker run, flag by flag.
+
+88
+00:05:12,857 --> 00:05:15,261
+参数 -d 让它在后台运行
+The flag -d runs it in the background,
+
+89
+00:05:15,261 --> 00:05:18,361
+--network 参数把它放到一条私有的街道上
+and the network flag puts it on a private street.
+
+90
+00:05:18,681 --> 00:05:24,975
+然后，-p 8080:8080 发布这个 port：笔记本墙上的一扇门
+Then -p 8080:8080 publishes the port: a door in your laptop wall.
+
+91
+00:05:25,295 --> 00:05:29,620
+两个 -v 参数挂载一个数据库目录和你的 secrets
+Two -v flags mount a database folder and your secrets;
+
+92
+00:05:29,620 --> 00:05:32,825
+-e 这几行设置登录信息和密钥路径
+the -e lines set the login and key path.
+
+93
+00:05:34,267 --> 00:05:38,662
+暂停一下，跑 sh docker-shell.sh；它会拉取 image
+Pause and run sh docker-shell.sh; it pulls the image.
+
+94
+00:05:38,982 --> 00:05:42,306
+然后是 README 的检查，docker container ls
+Then the README's check, docker container ls:
+
+95
+00:05:42,306 --> 00:05:44,080
+状态是 Up，port 8080 已发布
+up, port 8080 published.
+
+96
+00:05:44,317 --> 00:05:48,946
+可是 25 秒后加一个额外的 -a 再看一次：Exited
+But look again 25 seconds later, with an extra -a: exited.
+
+97
+00:05:49,266 --> 00:05:51,656
+来想一个问题：你先看哪儿？
+Something to ponder: where do you look first?
+
+98
+00:05:58,500 --> 00:06:04,409
+看日志。Label Studio 自己说明了原因：它的数据目录不可写
+The logs. Label Studio explains itself: its data folder is not writable.
+
+99
+00:06:04,729 --> 00:06:06,307
+它以用户 1001 运行
+It runs as user 1001,
+
+100
+00:06:06,307 --> 00:06:09,764
+可这个缺失的目录是 Docker 以 root 身份创建的
+but Docker created the missing folder as root.
+
+101
+00:06:13,500 --> 00:06:15,678
+修法是一个额外步骤，只针对 Linux
+The fix is an extra, for Linux;
+
+102
+00:06:15,678 --> 00:06:18,769
+Mac 上的 Docker Desktop 一般不会遇到
+Docker Desktop for Mac normally avoids this.
+
+103
+00:06:19,089 --> 00:06:22,366
+用 sudo chown 把目录交给用户 1001
+Give the folder to user 1001 with sudo chown,
+
+104
+00:06:22,366 --> 00:06:25,425
+再跑一次脚本，这次它就一直保持运行了
+run the script again, and now it stays up.
+
+105
+00:06:25,745 --> 00:06:27,879
+在 Linux 上，暂停一下，照样做一遍
+On Linux, pause and do the same.
+
+106
+00:06:29,084 --> 00:06:34,405
+额外检查：日志里有个框，提示有 1.23.2 版本
+Extra checks: the logs show a box offering version 1.23.2,
+
+107
+00:06:34,405 --> 00:06:40,369
+比这个 image 新，这个 image 录制时跑的是 1.23.0
+newer than this image, which ran 1.23.0 at the time of recording.
+
+108
+00:06:40,689 --> 00:06:43,249
+它的 tag 是 latest，所以你的可能不一样
+The tag is latest, so yours may differ.
+
+109
+00:06:46,150 --> 00:06:48,293
+打开 localhost:8080
+Open localhost:8080 and log
+
+110
+00:06:48,293 --> 00:06:53,851
+用你脚本第 19 行和第 20 行里的用户名和密码登录
+in with the username and password from lines 19 and 20 of your script.
+
+111
+00:06:54,171 --> 00:06:57,820
+建一个项目，用 Image Classification 模板
+Create a project with the Image Classification template,
+
+112
+00:06:57,820 --> 00:07:01,275
+选项是 brie、gouda、gruyere 和 parmigiano
+with the choices brie, gouda, gruyere and parmigiano.
+
+113
+00:07:01,595 --> 00:07:03,039
+暂停一下，照着做
+Pause and do it.
+
+114
+00:07:03,089 --> 00:07:06,998
+下方是我们的替身调用，重放了页面发出的请求
+Underneath, our stand-in calls replay the page's requests:
+
+115
+00:07:06,998 --> 00:07:10,705
+我们已经登录，项目 1 里有四种奶酪
+we are logged in, and project 1 holds the four cheeses.
+
+116
+00:07:13,250 --> 00:07:16,626
+回到项目里，打开 Settings，再进 Cloud Storage
+Back in the project, open Settings, then Cloud Storage,
+
+117
+00:07:16,626 --> 00:07:19,757
+添加 source storage，也就是照片的来源
+and add source storage, where the photos come from.
+
+118
+00:07:20,077 --> 00:07:24,190
+用 README 给的值：Google Cloud Storage、你的 bucket
+Use the README's values: Google Cloud Storage, your bucket,
+
+119
+00:07:24,190 --> 00:07:27,885
+cheeses unlabeled 这个前缀，打开 pre-signed URL
+the prefix cheeses_unlabeled, and pre-signed URLs on.
+
+120
+00:07:28,205 --> 00:07:30,573
+要是少了某个复选框，继续就行
+If a checkbox is missing, carry on.
+
+121
+00:07:30,893 --> 00:07:35,501
+凭据留空：意思是用 container 里已经有的那个密钥
+Leave the credentials empty: that means the key the container already has.
+
+122
+00:07:35,750 --> 00:07:37,414
+然后点 Check Connection
+Then click Check Connection.
+
+123
+00:07:37,734 --> 00:07:39,825
+这里失败了：找不到文件
+Here it fails: file not found.
+
+124
+00:07:40,145 --> 00:07:42,200
+额外列一下目录就知道原因
+An extra listing shows why:
+
+125
+00:07:42,200 --> 00:07:48,259
+Label Studio 里面的 /secrets 是故意空着的，等一下就会说到
+/secrets inside Label Studio is empty, on purpose, as you will hear in a moment;
+
+126
+00:07:48,259 --> 00:07:49,859
+你的应该能通过
+yours should pass.
+
+127
+00:07:49,979 --> 00:07:52,230
+存放 label 的 target storage
+The target storage, where labels go,
+
+128
+00:07:52,230 --> 00:07:56,358
+前缀是 cheeses labeled，也失败了，报错更含糊
+with the prefix cheeses_labeled, fails too, with a vaguer message.
+
+129
+00:07:56,600 --> 00:07:58,904
+关于这次录制，如实说一句
+One honest note about this recording.
+
+130
+00:07:59,224 --> 00:08:02,688
+这台机器没有 Google 账号，没有 bucket
+This machine has no Google account, no bucket,
+
+131
+00:08:02,688 --> 00:08:05,624
+没有浏览器，也没有通往 GitHub 的 SSH 通道
+no browser, and no SSH route to GitHub.
+
+132
+00:08:05,944 --> 00:08:10,277
+目录列表里的密钥是一个明显无效的替身
+The key in the folder listings is an obviously invalid stand-in,
+
+133
+00:08:10,277 --> 00:08:12,579
+每个云端步骤之前都会移走
+moved out before every cloud step.
+
+134
+00:08:12,899 --> 00:08:17,336
+所以这里每一个云端步骤失败的方式，都和密钥放错位置时一模一样
+So each cloud step here fails exactly the way a misplaced key fails.
+
+135
+00:08:17,656 --> 00:08:20,301
+这正是这一讲里最常见的错误
+That is the most common mistake in this lecture.
+
+136
+00:08:20,621 --> 00:08:24,726
+你应该看到的每个成功结果都标着 recorded，并注明出处
+Every success you should expect is tagged recorded, with its source,
+
+137
+00:08:24,726 --> 00:08:28,408
+点击和上传则在本地重放，标着 stand-in
+and clicks and uploads are replayed locally, tagged stand-in.
+
+138
+00:08:28,650 --> 00:08:32,337
+有了真的密钥，两个存储都加上，点 Sync
+With a real key, add both storages and click Sync:
+
+139
+00:08:32,337 --> 00:08:34,623
+一张照片一个 task，你那边是 21 个
+one task per photo, 21 for you.
+
+140
+00:08:34,943 --> 00:08:38,869
+我们的替身导入了 3 个 task，地址也是同一类的
+Our stand-in imports 3 tasks with the same kind of addresses.
+
+141
+00:08:39,189 --> 00:08:41,050
+暂停一下，两个都加上，再点 Sync
+Pause, add both, and sync.
+
+142
+00:08:41,183 --> 00:08:42,826
+那么，谁在碰这些照片？
+So who touches the photos?
+
+143
+00:08:43,146 --> 00:08:46,457
+Label Studio 拿着密钥，列出 bucket 里的东西
+Label Studio holds the key and lists the bucket;
+
+144
+00:08:46,457 --> 00:08:48,458
+你的浏览器请求 task 1
+your browser asks for task 1.
+
+145
+00:08:48,778 --> 00:08:52,119
+来想一个问题：你的浏览器从没见过密钥
+Something to ponder: your browser never sees the key,
+
+146
+00:08:52,119 --> 00:08:54,325
+它怎么能显示一张私有的照片？
+so how can it show a private photo?
+
+147
+00:09:03,167 --> 00:09:04,738
+靠一张签了名的票
+With a signed ticket.
+
+148
+00:09:04,788 --> 00:09:07,424
+Label Studio 不中转照片
+Label Studio does not relay the photos;
+
+149
+00:09:07,424 --> 00:09:12,831
+它用密钥给一个网址签名：只许看一张照片，只在很短的时间里有效
+it signs a web address with the key: permission for one photo, for a short time.
+
+150
+00:09:13,151 --> 00:09:15,994
+你的浏览器拿着这张票直接去找 Google
+Your browser carries that ticket straight to Google,
+
+151
+00:09:15,994 --> 00:09:17,908
+密钥一直留在 container 里
+and the key stays in the container.
+
+152
+00:09:18,228 --> 00:09:21,983
+接着缩略图坏掉了，README 也提醒了你：是 CORS 的问题
+Then the thumbnails break, and the README warns you: it is CORS.
+
+153
+00:09:25,017 --> 00:09:27,429
+页面来自 localhost:8080
+The page comes from localhost:8080,
+
+154
+00:09:27,429 --> 00:09:31,566
+照片来自 Google 的存储地址：这是另一个 origin
+the photo from Google's storage address: a different origin.
+
+155
+00:09:31,886 --> 00:09:36,064
+页面自己的代码去取照片时，像 Label Studio 这样
+When the page's own code fetches the photo, as Label Studio does,
+
+156
+00:09:36,064 --> 00:09:37,928
+你的浏览器把响应交给这段代码
+your browser hands the answer
+
+157
+00:09:37,928 --> 00:09:41,593
+前提是它带着一个响应头，允许这个 origin
+over only if it carries a header that allows this origin.
+
+158
+00:09:41,913 --> 00:09:46,052
+Google 只在 bucket 有自己的 CORS 规则时，才加上这个响应头
+Google adds that header only if the bucket has its own CORS rule.
+
+159
+00:09:46,300 --> 00:09:50,011
+有一个小疏漏：README 把问题归到反向 DNS 查询上
+A small slip: the README blames a reverse DNS lookup,
+
+160
+00:09:50,011 --> 00:09:52,743
+其实原因就是这条同源规则
+but the cause is that same-origin rule.
+
+161
+00:09:52,984 --> 00:09:55,821
+README 用第二个 container 来设置这条规则
+The README sets the rule from a second container.
+
+162
+00:09:56,141 --> 00:10:00,756
+把你的 bucket 名字写到 docker-shell-CLI.sh 的第 23 行
+Put your bucket name on line 23 of docker-shell-CLI.sh,
+
+163
+00:10:00,756 --> 00:10:02,435
+再用 sh 运行它
+then run it with sh.
+
+164
+00:10:02,755 --> 00:10:05,870
+提示符里的 ID 每次运行都会变
+The ID in the prompt changes every run,
+
+165
+00:10:05,870 --> 00:10:10,584
+Apple Silicon 上显示 aarch64，这台机器上显示的是 x86
+and Apple Silicon says aarch64 where this machine says x86.
+
+166
+00:10:10,904 --> 00:10:12,504
+暂停一下，两件都做了
+Pause and do both.
+
+167
+00:10:14,550 --> 00:10:17,721
+这个 container 加入同一条街道并按名字
+This container joins the same street and calls
+
+168
+00:10:17,721 --> 00:10:20,203
+调用 Label Studio 而不是 localhost
+Label Studio by name, not localhost.
+
+169
+00:10:20,523 --> 00:10:23,937
+它按目录名挂载这个 repo，所以别改这个名字
+It mounts the repo by its folder name, so keep that name.
+
+170
+00:10:24,184 --> 00:10:27,967
+在里面先跑 python cli.py -c，再跑 -m
+Inside, run python cli.py -c, then -m;
+
+171
+00:10:27,967 --> 00:10:29,859
+暂停一下，把它们跑一遍
+pause and run them.
+
+172
+00:10:30,179 --> 00:10:35,917
+这里两条都卡在存储客户端：找不到文件，因为 ADC 在找密钥
+Here both stop at the storage client: file not found, because ADC looks for the key.
+
+173
+00:10:36,237 --> 00:10:40,807
+代码构造一条规则：任意 origin、只允许 GET、max age 一小时
+The code builds one rule, any origin, GET only, max age one hour,
+
+174
+00:10:40,807 --> 00:10:42,424
+然后 patch 到 bucket 上
+and patches the bucket.
+
+175
+00:10:42,667 --> 00:10:47,488
+有了真的密钥，-c 会打印这条规则，-m 会打印 bucket 的设置
+With a real key, -c prints the rule, and -m prints the bucket settings.
+
+176
+00:10:47,808 --> 00:10:50,582
+这下响应头来了，缩略图也加载出来了
+Now the header arrives and the thumbnails load.
+
+177
+00:10:50,902 --> 00:10:53,623
+这个 max age 只缓存预检请求
+The max age only caches preflight checks,
+
+178
+00:10:53,623 --> 00:10:56,278
+而普通的图片请求从来不发预检请求
+which a plain image request never makes.
+
+179
+00:10:56,517 --> 00:10:58,117
+来想一个问题
+Something to ponder.
+
+180
+00:10:58,181 --> 00:11:02,149
+你跑了 -c 也刷新了，缩略图还是坏的
+You ran -c and refreshed, and the thumbnails are still broken.
+
+181
+00:11:02,469 --> 00:11:04,069
+说出两个嫌疑点
+Name two suspects.
+
+182
+00:11:12,717 --> 00:11:14,680
+第一个：规则没加到你的 bucket 上
+One: the rule missed your bucket.
+
+183
+00:11:15,000 --> 00:11:19,300
+要么 -c 失败了，要么第 23 行写的是你的另一个 bucket
+-c failed, or line 23 names another bucket of yours;
+
+184
+00:11:19,300 --> 00:11:21,698
+-m 会显示哪个 bucket 拿到了规则
+-m shows which bucket got it.
+
+185
+00:11:22,018 --> 00:11:25,560
+第二个：你的浏览器用了缓存的响应；强制刷新一下
+Two: your browser reused cached answers; hard refresh.
+
+186
+00:11:25,880 --> 00:11:27,881
+而 curl 从来没遇到过保安
+And curl never met a bouncer:
+
+187
+00:11:27,881 --> 00:11:30,850
+CORS 是浏览器的规则，不是访问控制
+CORS is a browser rule, not access control.
+
+188
+00:11:31,900 --> 00:11:33,296
+回到 Label Studio
+Back in Label Studio,
+
+189
+00:11:33,296 --> 00:11:36,419
+点开一个 task，选一种奶酪，然后点 Submit
+click a task, pick a cheese, and submit; repeat
+
+190
+00:11:36,419 --> 00:11:38,897
+重复几次。暂停一下，标注几张
+for a few. Pause and label some.
+
+191
+00:11:39,217 --> 00:11:42,851
+一次点击会变成什么，用替身调用来看
+Here is what one click becomes, as a stand-in call:
+
+192
+00:11:42,851 --> 00:11:46,769
+一个小小的 JSON 文档，result 里写着 choices 是 gouda
+a small JSON document whose result says choices, gouda.
+
+193
+00:11:47,017 --> 00:11:49,513
+Label Studio 把它存进自己的数据库
+Label Studio saves it in its database,
+
+194
+00:11:49,513 --> 00:11:53,191
+target storage 再往 cheeses labeled 里写一份副本
+and the target storage writes a copy to cheeses_labeled,
+
+195
+00:11:53,191 --> 00:11:56,212
+指回那张从没移动过的照片
+pointing back at the photo, which never moved.
+
+196
+00:11:56,532 --> 00:11:59,047
+课件把照片按行分了类
+The slide sorts photos into rows,
+
+197
+00:11:59,047 --> 00:12:02,172
+但磁盘上一条 label 就是一张 JSON 小纸条
+but on disk a label is a small JSON note,
+
+198
+00:12:02,172 --> 00:12:05,449
+标注好的数据集就是照片加上小纸条
+and a labeled dataset is photos plus notes.
+
+199
+00:12:05,769 --> 00:12:10,121
+在控制台里，这个目录里每条标注对应一个 JSON 文件
+In the console, that folder shows one JSON file per annotation.
+
+200
+00:12:10,441 --> 00:12:12,126
+打开一个就能看到这张小纸条
+Open one to see the note.
+
+201
+00:12:14,567 --> 00:12:17,895
+命令行 container 按名字调用 Label Studio
+The command line container calls Label Studio by name.
+
+202
+00:12:18,215 --> 00:12:22,289
+来想一个问题：要是它的地址写成 localhost:8080 呢？
+Something to ponder: what if its address were localhost:8080?
+
+203
+00:12:29,133 --> 00:12:31,652
+连不上：在 container 里面
+It cannot connect: inside a container,
+
+204
+00:12:31,652 --> 00:12:35,298
+localhost 指的就是这个 container，那里什么都没在监听
+localhost is that container, and nothing listens there.
+
+205
+00:12:35,618 --> 00:12:37,982
+名字能用，是因为 Docker 网络维护着
+The name works, because the Docker network
+
+206
+00:12:37,982 --> 00:12:40,120
+一本 container 名字的电话簿
+keeps a phone book of container names.
+
+207
+00:12:40,367 --> 00:12:42,457
+要从代码里列出 label
+To list labels from code,
+
+208
+00:12:42,457 --> 00:12:46,387
+先从 Account & Settings 复制你的访问令牌
+copy your access token from Account & Settings,
+
+209
+00:12:46,387 --> 00:12:51,738
+再跑 README 的命令：python cli.py -p -k，后面跟你的令牌
+then run the README command: python cli.py -p -k and your token.
+
+210
+00:12:52,058 --> 00:12:53,522
+暂停一下，试一试
+Pause and try it.
+
+211
+00:12:53,572 --> 00:12:57,620
+在 Label Studio 1.23.0 上它会报 401
+On Label Studio 1.23.0 it fails with a 401;
+
+212
+00:12:57,620 --> 00:13:04,964
+我们这边的报错说，这个组织已经停用了 legacy token 身份验证
+ours says legacy token authentication has been disabled for this organization.
+
+213
+00:13:05,200 --> 00:13:09,232
+额外检查一下就知道原因：这个版本有两种令牌
+An extra check shows why: this version has two kinds of token.
+
+214
+00:13:09,552 --> 00:13:13,313
+页面默认显示较新的 personal token
+The page shows a newer personal token by default,
+
+215
+00:13:13,313 --> 00:13:18,149
+legacy 那种是关掉的，而 cli.py 只认 legacy
+the legacy kind is switched off, and cli.py speaks only legacy.
+
+216
+00:13:19,883 --> 00:13:23,706
+修法：在 Organization 的 API Tokens Settings
+The fix: in Organization, API Tokens Settings,
+
+217
+00:13:23,706 --> 00:13:25,451
+里启用 legacy token
+enable legacy tokens.
+
+218
+00:13:25,771 --> 00:13:29,056
+然后复制 legacy token，不是 personal token
+Then copy the legacy token, not the personal one.
+
+219
+00:13:29,376 --> 00:13:30,976
+暂停一下，两件都做了
+Pause and do both.
+
+220
+00:13:32,900 --> 00:13:36,783
+再跑一次 -p，它列出了项目 1：Cheese labels
+Run -p again, and it lists project 1, Cheese labels.
+
+221
+00:13:37,103 --> 00:13:39,033
+然后带上你的令牌跑 -t
+Then -t with your token:
+
+222
+00:13:39,033 --> 00:13:41,927
+我们的替身里是 3 个 task，你那边是 21 个
+3 tasks in our stand-in, 21 for you;
+
+223
+00:13:41,927 --> 00:13:44,420
+我们的有一张标注成了 gouda
+ours has one labeled, as gouda.
+
+224
+00:13:44,740 --> 00:13:46,311
+暂停一下，两条都跑一遍
+Pause and run both.
+
+225
+00:13:46,361 --> 00:13:49,967
+README 的示例写的是 amanita；格式是一样的
+The README's sample says amanita; the format is the same.
+
+226
+00:13:57,800 --> 00:14:00,893
+README 的 Extra 一节把两个 container 一起跑起来
+The README's extra section runs both containers
+
+227
+00:14:00,893 --> 00:14:02,493
+用的是一个 compose 文件
+from one compose file.
+
+228
+00:14:02,707 --> 00:14:05,815
+用 exit 退出命令行 container
+Leave the command line container with exit,
+
+229
+00:14:05,815 --> 00:14:08,922
+停掉 Label Studio，再用 docker ps 检查
+stop Label Studio, and check with docker ps;
+
+230
+00:14:08,922 --> 00:14:10,422
+暂停一下，照着做
+pause and do it.
+
+231
+00:14:10,472 --> 00:14:15,720
+先把你的 bucket 名字也填到 docker-compose.yml 的第 17 行
+First put your bucket name on line 17 of docker-compose.yml as well.
+
+232
+00:14:16,040 --> 00:14:18,906
+然后跑 sh docker-shell-compose.sh
+Then run sh docker-shell-compose.sh;
+
+233
+00:14:18,906 --> 00:14:24,637
+如果找不到这个命令，就用卡片上的 docker compose 写法
+if docker-compose is not found, use the docker compose form on the card.
+
+234
+00:14:24,957 --> 00:14:27,098
+这里它因为名字冲突停下了
+Here it stops on a name conflict:
+
+235
+00:14:27,098 --> 00:14:31,251
+docker stop 会把 container 留在那儿，名字还被它占着
+docker stop leaves the container behind, still holding its name.
+
+236
+00:14:31,500 --> 00:14:33,872
+额外跑一下 docker rm 把名字腾出来
+An extra docker rm frees the name;
+
+237
+00:14:33,872 --> 00:14:37,431
+暂停一下，删掉它，再跑一次 compose 脚本
+pause, remove it, and run the compose script again.
+
+238
+00:14:37,751 --> 00:14:40,279
+这次 Compose 创建了 Label Studio
+This time Compose creates Label Studio
+
+239
+00:14:40,279 --> 00:14:42,807
+外加一个一次性的命令行 container
+plus a one-off command line container.
+
+240
+00:14:44,317 --> 00:14:47,993
+额外用 echo 打印出来的，是 README 里的 bucket 名字
+An extra echo prints the README's bucket name:
+
+241
+00:14:47,993 --> 00:14:50,150
+compose 自己存了一份
+compose keeps its own copy,
+
+242
+00:14:50,150 --> 00:14:54,066
+在 docker-compose.yml 的第 17 行，所以这里也要改
+on line 17 of docker-compose.yml, so edit it too.
+
+243
+00:14:54,300 --> 00:14:56,237
+而第一次调用被拒绝了
+And the first call is refused:
+
+244
+00:14:56,237 --> 00:14:59,400
+depends on 这个设置会先启动 Label Studio
+the depends_on setting starts Label Studio first,
+
+245
+00:14:59,400 --> 00:15:01,660
+但不会等到它开始监听
+but does not wait until it listens.
+
+246
+00:15:01,980 --> 00:15:03,641
+额外加一个等待循环之后
+After an extra wait loop,
+
+247
+00:15:03,641 --> 00:15:07,228
+项目 1 回来了，因为挂载的是同一个目录
+project 1 is back, because the same folder is mounted.
+
+248
+00:15:10,200 --> 00:15:14,232
+Label Studio 一直在跑，你退出命令行 container 之后也一样
+Label Studio keeps running after you exit the command line container.
+
+249
+00:15:14,552 --> 00:15:18,471
+然后是 README 的清理：列出、停止、prune，再列出 image
+Then the README's cleanup: list, stop, prune, and list the images;
+
+250
+00:15:18,471 --> 00:15:20,071
+暂停一下，把它们跑一遍
+pause and run them.
+
+251
+00:15:20,291 --> 00:15:25,837
+这次 prune 把网络也删了，所以下次要先跑 docker-shell.sh
+The prune also removed the network, so next time run docker-shell.sh first.
+
+252
+00:15:29,250 --> 00:15:32,364
+来想一个问题：跑完 docker system prune
+Something to ponder: after docker system prune,
+
+253
+00:15:32,364 --> 00:15:34,285
+你标注好的项目没了吗？
+is your labeled project gone?
+
+254
+00:15:41,133 --> 00:15:47,512
+没有。数据库文件还在挂载的目录里，prune 从不碰你挂载的目录
+No. The database file is still in the mounted folder, and prune never touches folders you mount.
+
+255
+00:15:47,832 --> 00:15:52,440
+可它们指向的照片可能被悄悄换掉：同样的名字，新的图片
+But the photos they point at can change under them: same name, new picture.
+
+256
+00:15:52,760 --> 00:15:56,093
+那么，一个模型看过的到底是哪些照片，怎么把它准确地冻结下来？
+So how do you freeze exactly which photos a model saw?
+
+257
+00:15:56,280 --> 00:15:57,880
+这就是第二部分
+That is part 2.

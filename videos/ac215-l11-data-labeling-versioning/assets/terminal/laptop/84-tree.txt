@@ -1,0 +1,29 @@
+$ tree -L 2 -I 'cheeses_unlabeled|__MACOSX|ls-api|*.zip' .
+.
+├── data-labeling
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── cheeses-labels.png
+│   ├── cli.py
+│   ├── data-labeling-flow.png
+│   ├── docker-compose.yml
+│   ├── docker-entrypoint.sh
+│   ├── docker-shell-CLI.sh
+│   ├── docker-shell-compose.sh
+│   ├── docker-shell.sh
+│   ├── docker-volumes
+│   ├── pipeline-flow.png
+│   ├── pyproject.toml
+│   └── uv.lock
+├── data-versioning
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── docker-entrypoint.sh
+│   ├── docker-shell.sh
+│   ├── pyproject.toml
+│   └── uv.lock
+└── secrets
+    └── data-service-account.json
+
+5 directories, 20 files
+[exit 0]

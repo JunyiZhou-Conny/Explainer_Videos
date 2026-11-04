@@ -1,0 +1,5 @@
+$ git log --oneline --decorate
+46483f8 (HEAD -> main, tag: dataset_v21) Add images to cheese dataset
+b841355 (tag: dataset_v20) Track initial cheese dataset with DVC
+0e04cc8 Initial commit
+[exit 0]

@@ -1,0 +1,3 @@
+$ rm -f /tmp/ls.cookies; curl -s -c /tmp/ls.cookies -o /dev/null http://localhost:8080/user/login/; CSRF=$(awk '$6=="csrftoken"{print $7}' /tmp/ls.cookies); curl -s -b /tmp/ls.cookies -c /tmp/ls.cookies -o /dev/null -w '%{http_code} -> %{redirect_url}\n' -H 'Referer: http://localhost:8080/user/login/' --data-urlencode csrfmiddlewaretoken=$CSRF --data-urlencode email=student@example.com --data-urlencode password=awesome http://localhost:8080/user/login/
+302 -> http://localhost:8080/
+[exit 0]
