@@ -488,7 +488,7 @@ class TwoFixes(VoiceScene):
         ep.move_to([0, 2.72 - ep.height / 2, 0])
         b13, b19 = line_bar(ep.code, 0, TURN, 0.2), line_bar(ep.code, 6, TURN, 0.2)
         er8 = erratum_tag().move_to(ep.header).align_to(ep.code, RIGHT).shift(LEFT * 0.1)
-        fact = grey_chip("a label, not a fact", size=22)
+        fact = grey_chip("a label, not a fact")
         fact.move_to(er8).next_to(er8, LEFT, buff=0.3, coor_mask=np.array([1, 0, 0]))
         top5 = t.box.get_bottom()[1] + 5 * 0.403 + 0.85          # the strip grown to 5 rows (term() docstring)
         assert ep.get_bottom()[1] > top5 + 0.05, (ep.get_bottom(), top5)

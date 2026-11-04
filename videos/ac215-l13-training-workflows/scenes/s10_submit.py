@@ -1,17 +1,17 @@
 """S10 · One command, and a key inside it — tracker F1 → F3 (note) → F2, lecture_ref 22, 24–25.
 
 Beats (script.md, ## S10; one voiceover block each):
-0. F1. CODE(cli.sh: 5–19) as two 10-line windows (5–14, 10–19; 20 pt) with a WHITE cursor bar; line 9
+0. F1. CODE(cli.sh: 5–19) as two 8-line windows (5–12, 12–19; 20 pt) with a WHITE cursor bar; line 9
    (the GPU image) YELLOW, line 10 a PINK route to the tarball in a small bucket, line 19's
    `--wandb_key=$WANDB_KEY` outlined GREEN; ▶ your turn. Under the window V4 step 3's job-spec card
    assembles one chip per spoken item (TarballTrip.spec()'s chips, words from laptop/40:77); the image
    slot stays dashed until line 31.
-1. CODE(cli.sh: 21–37) as two windows (21–30, 28–37): 22–27 GREY (commented), 31 YELLOW (the image
+1. CODE(cli.sh: 21–37) as two windows (21–28, 30–37): 22–27 GREY (commented), 31 YELLOW (the image
    chip fills in: tf-cpu), 32–37 outlined. Then README cards 152–154 (erratum, "already done in cli.sh ·
    commit 3efb2d5") and 136–142 ("may be out of date · …", not spoken); tracker F3 · already the default.
 2. F2. The card collapses into a spec glyph; V1 (TrainingMap.at("S10")): GOLD cost tag, the glyph rides
    the submit route to Vertex AI, a BLUE job tile with a GOLD meter; the key-length chip. Then the
-   cockpit (laptop/40, fresh-cockpit chip, README card 150): sh cli.sh → 43 GREEN, 44 RED; ▶ your
+   cockpit (laptop/40, fresh-cockpit chip, README card 150): sh cli.sh → 43 GREEN, 44 RED, …, 47; ▶ your
    turn; V5 preview: the empty key-file lanyard; F2 · extra gcloud auth list → 58 RED; "with your key"
    chip (no panel).
 3. F2 · extra. sh -x cli.sh → 64–66, 69 (YELLOW, then overridden by 76), 75, 76, 77 folded; the strip
@@ -253,7 +253,7 @@ class OneCommand(VoiceScene):
         assert gold.get_top()[1] < -1.36 and k40.get_bottom()[1] > -3.58, (gold.get_top(), k40.get_bottom())
         words = mp.labels("submit")
 
-        t = term(P_COCKPIT, rows=6)
+        t = term(P_COCKPIT, rows=7)
         fresh = container_note()
         r150 = readme_card(150)
         tb0 = ThreeBadges()
@@ -261,7 +261,8 @@ class OneCommand(VoiceScene):
         r150.move_to([6.5 - r150.width / 2, 2.35, 0])
         fresh.next_to(r150, DOWN, buff=0.22).align_to(r150, RIGHT)
         yours = grey_chip("with your key: gcloud reports the job as created")
-        yours.move_to([6.5 - yours.width / 2, 0.25, 0])
+        yours.next_to(fresh, DOWN, buff=0.14).align_to(fresh, RIGHT)
+        assert yours.get_bottom()[1] > t.box.get_top()[1] + 0.08, (yours.get_bottom(), t.box.get_top())
         assert ghost.get_right()[0] < fresh.get_left()[0] and ghost.get_bottom()[1] > t.box.get_top()[1], \
             (ghost.get_right(), fresh.get_left(), ghost.get_bottom(), t.box.get_top())
 
@@ -302,6 +303,7 @@ class OneCommand(VoiceScene):
             vo.wait_until("Then it stops with no active account")
             o2 = out(self, t, [c40.line(44)], wrap=True, color=ERR, run_time=0.4)
             self.play(Indicate(VGroup(*o2), color=ERR, scale_factor=1.02), run_time=0.5)
+            out(self, t, ["…", c40.line(47)], run_time=0.3)       # TERM(40: 43–44, …, 47)
             vo.wait_until("because the key never loaded")
             self.add(tb0)
             self.play(tb0.lanyard(0), run_time=0.5)
