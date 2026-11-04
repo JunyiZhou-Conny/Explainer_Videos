@@ -107,9 +107,50 @@ def first_ear(pe, port: str = "8080"):
     """The container ear the way PortEnvelope.envelope() places it, without the envelope."""
     e = ear(port, size=pe.size)
     e.glyph.move_to([pe.box.get_left()[0] + 0.12, pe.ear_y, 0])
-    e.text.next_to(e.glyph, DOWN, buff=0.15).align_to(e.glyph, RIGHT).shift(LEFT * 0.2)
+    e.text.next_to(e.glyph, DOWN, buff=0.15).align_to(e.glyph, RIGHT).shift(LEFT * 0.35)
     pe.ear_ = e
     return e
+
+
+def env_group(port: str, writer: str, pe):
+    """The envelope 'PORT=<port>' with its writer's name to its RIGHT (PortEnvelope.envelope puts
+    the name on the left, on top of the box's 'container' label)."""
+    col, who = {"image": (IMAGE, "image ENV"), "you": (YOU, "you · -e")}[writer]
+    env = envelope(f"PORT={port}", col).move_to(pe.p(0.95, 0.95))
+    wl = label(who, 20, col).next_to(env, RIGHT, buff=0.12)
+    return VGroup(env, wl)
+
+
+def env_in(scene, pe, port: str = "8080", writer: str = "image", run_time: float = 1.0):
+    """PLAYS: PortEnvelope.envelope() with the writer's name on the right and the ear's address
+    clear of the box edge: the envelope arrives, then the PINK ear and its wire to the process."""
+    g = env_group(port, writer, pe)
+    pe.env = g
+    pe.show(scene, g, anims=[FadeIn(g[0], shift=DOWN * 0.3), FadeIn(g[1])], run_time=run_time * 0.5)
+    e = first_ear(pe, f"0.0.0.0:{port}")
+    wire = Line(e.glyph.get_right(), pe.proc.frame.get_left(), color=ROUTE, stroke_width=3)
+    pe.show(scene, e, wire, anims=[FadeIn(e, scale=0.6), Create(wire)], run_time=run_time * 0.5)
+    pe.wire = wire
+
+
+def ghost(scene, cs, text: str = "your arguments", run_time: float = 2.0):
+    """PLAYS: a GREY dashed ghost chip slides into the CMD slot and pushes the old CMD aside, then
+    everything reverts (CommandSlots.ghost_args fills the dashed chip solid GREY over its word)."""
+    g = dashed_chip(text, S.GREY)
+    g.move_to(cs.cmd_slot).align_to(cs.cmd_slot, LEFT).shift(RIGHT * 0.15)
+    old = cs.cmd_content
+    scene.play(FadeIn(g, shift=RIGHT * 1.5), old.animate.shift(RIGHT * 2.6).set_opacity(0.2),
+               run_time=run_time * 0.45)
+    scene.wait(run_time * 0.2)
+    scene.play(FadeOut(g, shift=LEFT * 0.6), old.animate.shift(LEFT * 2.6).set_opacity(1),
+               run_time=run_time * 0.35)
+    scene.remove(g)
+    cs.heal(scene)
+
+
+def right_at(m, y: float, right: float = 6.35):
+    """Put m with its right edge at `right` and its centre at height y."""
+    return m.move_to([right - m.width / 2, y, 0])
 
 
 class RunTheImage(VoiceScene):
@@ -184,8 +225,9 @@ class RunTheImage(VoiceScene):
             pairs = [AnimationGroup(a[i].animate.set_color(OWN), readme_dg[i].animate.set_color(OWN))
                      for i in range(len(a))]
             self.play(LaggedStart(*pairs, lag_ratio=0.08), run_time=2.2)
-            self.add(t)
-            same = ok_chip("same bytes, same digest").next_to(card1069, DOWN, buff=0.15).align_to(card1069, RIGHT)
+            self.add(t, card1069)
+            same = ok_chip("same bytes, same digest")
+            right_at(same, card1069.head.get_center()[1], card1069.frame.get_right()[0] - 0.15)
             self.play(FadeIn(same, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("The image is built for")
             arch = grey_chip("linux/amd64 · Apple Silicon: emulated · Cloud Run needs amd64")
@@ -213,7 +255,7 @@ class RunTheImage(VoiceScene):
 
         # ========================================================== 4. V5 a: the image's two start-up slots
         c16 = capture("laptop/16")
-        tab = tab_term(4)
+        tab = term(P_REPO, 4, T_TAB, size=20)
         xb = on_bar(tab, extra_row())
         cs = CommandSlots().move_to([0, 0.9, 0])
         with self.voiceover(SAY[4]) as vo:
@@ -222,7 +264,8 @@ class RunTheImage(VoiceScene):
             resize(self, t, 4, run_time=0.6)
             self.play(FadeOut(t, shift=DOWN * 0.3), track(tr, 1, True), run_time=0.5)
             self.play(FadeIn(tab, shift=UP * 0.2), FadeIn(xb), run_time=0.5)
-            type_capture(self, tab, c16, type_time=0.35)
+            for i, row in enumerate(c16.cmd_lines):        # one command over six rows; row 6 soft-wraps
+                type_cmd(self, tab, row, 0.35, prompt=(i == 0), soft=(i == 5))
             r16 = out(self, tab, c16.at(11, 12, 17), run_time=0.5)
             vo.wait_until("the image has two start-up slots")
             frame_parts = VGroup(cs.block, cs.blabel, cs.entry_slot, cs.cmd_slot)
@@ -238,12 +281,12 @@ class RunTheImage(VoiceScene):
             self.play(Indicate(cs.cmd_content, color=IMAGE, scale_factor=1.08), run_time=0.8)
             cs.heal(self)
             vo.wait_until("Docker runs the entrypoint")
-            self.play(Indicate(cs.entry_slot, color=INK, scale_factor=1.04), run_time=0.6)
+            self.play(Indicate(cs.entry_name, color=INK, scale_factor=1.15), run_time=0.6)
             cs.heal(self)
-            self.play(Indicate(cs.cmd_slot, color=IMAGE, scale_factor=1.04), run_time=0.6)
+            self.play(Indicate(cs.cmd_name, color=IMAGE, scale_factor=1.2), run_time=0.6)
             cs.heal(self)
             vo.wait_until("and arguments you pass")
-            cs.ghost_args(self, run_time=2.0)
+            ghost(self, cs, run_time=2.0)
             vo.wait_until("part 4 depends")
             p4 = chip("part 4", TURN, size=20).next_to(cs.block, UP, buff=0.12).align_to(cs.block, RIGHT)
             self.play(FadeIn(p4, shift=DOWN * 0.1), run_time=0.4)
@@ -258,13 +301,17 @@ class RunTheImage(VoiceScene):
         pe.shift(-pe.ref.get_center() + np.array([-0.2, -2.05, 0]))
         seat(pe)
         with self.voiceover(SAY[5]) as vo:
-            self.play(ReplacementTransform(cs, cmd_chip), FadeOut(p4), track(tr, 1, False), run_time=0.8)
+            cmd = cs.cmd_content
+            cs.remove(cmd)
+            self.add(cmd)
+            self.play(FadeOut(cs), ReplacementTransform(cmd, cmd_chip), FadeOut(p4), track(tr, 1, False),
+                      run_time=0.8)
             self.play(FadeIn(panel, shift=UP * 0.15), FadeIn(pe), run_time=0.6)
             pe.start(self, run_time=0.5)
             vo.wait_until("takes its port")
             b23 = line_bar(panel.code, 1, TURN, 0.22)
             self.play(FadeIn(b23), run_time=0.3)
-            pe.envelope(self, "8080", "image", run_time=1.0)
+            env_in(self, pe, "8080", "image", run_time=1.0)
             vo.wait_until("replaces itself")
             b24 = line_bar(panel.code, 2, TURN, 0.22)
             self.play(FadeIn(b24), run_time=0.3)
@@ -283,7 +330,8 @@ class RunTheImage(VoiceScene):
             tab.lines.remove(m)
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(panel), FadeOut(VGroup(b23, b24)), FadeOut(cmd_chip), track(tr, 1, True),
-                      pe.animate.shift(np.array([1.0, 3.05, 0])), run_time=0.8)
+                      run_time=0.4)
+            self.play(pe.animate.shift(np.array([1.0, 3.05, 0])), run_time=0.6)
             seat(pe)
             pe.heal(self)
             self.play(FadeIn(tab, shift=UP * 0.2), FadeIn(xb), run_time=0.4)
@@ -310,11 +358,10 @@ class RunTheImage(VoiceScene):
         # ========================================================== 7. step 2: open localhost:8086
         c11 = capture("laptop/11")
         page = TranslatePage(url=LOCAL)
-        page.shift(-page.frame.get_center() + np.array([-2.3, 0.75, 0]))
+        page.shift(-page.frame.get_center() + np.array([-2.3, 0.84, 0]))
         ill = illustration_tag().next_to(page.frame, RIGHT, buff=0.2).align_to(page.frame, UP)
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(pe), track(tr, 2, False), run_time=0.6)
-            resize(self, tab, 3, run_time=0.5, extra=[xb.animate.shift(DOWN * tab.pitch)])
             self.play(FadeIn(page, shift=UP * 0.2), FadeIn(ill), run_time=0.7)
             self.play(Indicate(page.url, color=ROUTE, scale_factor=1.1), run_time=0.7)
             page.heal(self)
@@ -332,7 +379,11 @@ class RunTheImage(VoiceScene):
             vo.wait_until("and the disabled")
             r6 = out(self, tab, c11.at(6), wrap=True, run_time=0.4)
             color_sub(self, tab, r6, "disabled", TURN, run_time=0.3)
-            color_sub(self, tab, r6, "Play audio · enable in part 3", TURN, run_time=0.3)
+            r_pa = row_with(r6, "Play audio")          # the 72-character rows split the button's label
+            r_p3 = row_with(r6, "part 3</button>")
+            self.play(*[g.animate.set_color(TURN) for g in substring(r_pa, r_pa.text[r_pa.text.index("Play audio"):])],
+                      *[g.animate.set_color(TURN) for g in substring(r_p3, "part 3")], run_time=0.3)
+            self.add(tab)
             self.play(page.press("audio", S.GREY), run_time=0.7)
             page.heal(self)
 
@@ -342,32 +393,32 @@ class RunTheImage(VoiceScene):
         idx.move_to([0, 0.75, 0])
         with self.voiceover(SAY[8]) as vo:
             self.play(track(tr, 3, False), run_time=0.4)
-            page.type_in(self, run_time=1.0)
-            page.set_dest(self, "fr", run_time=0.5)
+            page.type_in(self, run_time=0.8)
+            page.set_dest(self, "fr", run_time=0.4)
             vo.wait_until("The button sends JSON")
-            self.play(page.press("translate"), run_time=0.6)
+            self.play(page.press("translate"), run_time=0.5)
             page.heal(self)
-            self.play(FadeOut(page), FadeOut(ill), FadeIn(idx, shift=UP * 0.1), run_time=0.6)
+            self.play(FadeOut(page), FadeOut(ill), FadeIn(idx, shift=UP * 0.1), run_time=0.5)
             spans = [code_span(idx.code, 1, "method: 'POST'"), code_span(idx.code, 2, "JSON.stringify")]
-            self.play(*[g.animate.set_color(ROUTE) for s in spans for g in s], run_time=0.4)
+            self.play(*[g.animate.set_color(ROUTE) for s in spans for g in s], run_time=0.3)
             self.add(idx)
-            env = envelope("{text, src, dest}", ROUTE).move_to(spans[1].get_center() + DOWN * 0.1)
-            self.play(FadeIn(env, scale=0.6), run_time=0.3)
-            self.play(env.animate.move_to([5.2, idx.get_bottom()[1] - 0.05, 0]), run_time=0.8)
+            env = envelope("{text, src, dest}", ROUTE)
+            env.move_to([spans[1].get_right()[0] + 0.3 + env.width / 2, idx.get_bottom()[1] - 0.1, 0])
+            self.play(FadeIn(env, shift=DOWN * 0.2), run_time=0.3)
+            self.play(env.animate.move_to([6.35 - env.width / 2, idx.get_bottom()[1] - 0.1, 0]), run_time=0.6)
             self.play(track(tr, 3, True), FadeOut(env), run_time=0.3)
-            type_capture(self, tab, c21, type_time=1.0)
-            r21 = out(self, tab, c21.at(2, 4), run_time=0.4)
+            type_cmd(self, tab, c21.cmd, 0.9, soft=True)    # quoted JSON: wraps like a real terminal
+            r21 = out(self, tab, c21.at(2, 4), run_time=0.3)
             vo.wait_until("and gets back")
             color_sub(self, tab, r21, "\\u00e0", TURN, run_time=0.3)
             vo.wait_until("once the browser decodes")
             bs = on_bar(tab, row_tag("the browser shows: à", TURN))
             self.play(FadeOut(xb), FadeIn(bs), run_time=0.4)
-            self.play(FadeOut(idx), FadeIn(page), FadeIn(ill), run_time=0.6)
-            page.translate(self, "Bonjour à tous", run_time=0.9)
-            sec = card(["captured during a second run", "of the same command (laptop/20)"], size=20)
+            sec = card(["captured during a second", "run of the same command", "(laptop/20)"], size=20)
             sec.next_to(page.frame, RIGHT, buff=0.2).align_to(page.frame, DOWN)
+            self.play(FadeOut(idx), FadeIn(page), FadeIn(ill), FadeIn(sec, shift=UP * 0.1), run_time=0.5)
+            page.translate(self, "Bonjour à tous", run_time=0.8)
             yt2 = your_turn().next_to(ill, DOWN, buff=0.3).align_to(ill, LEFT)
-            self.play(FadeIn(sec, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Pause and try it")
             self.play(FadeIn(yt2, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, yt2)
@@ -376,30 +427,31 @@ class RunTheImage(VoiceScene):
         c26, c25 = capture("laptop/26"), capture("laptop/25")
         right_x = page.frame.get_right()[0]
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(sec, yt2)), FadeOut(bs), FadeIn(xb), run_time=0.4)
+            self.play(FadeOut(yt2), FadeOut(bs), FadeIn(xb), run_time=0.3)
+            type_cmd(self, tab, c26.cmd, 0.8, soft=True)
+            out(self, tab, c26.at(2, 4), run_time=0.3, color=ERR)
             get = chip("GET · the query string", ROUTE, size=20)
-            get.move_to([5.0, 1.6, 0])
-            self.play(FadeIn(get, shift=LEFT * 0.2), run_time=0.4)
-            self.play(get.animate.move_to([right_x + get.width / 2 + 0.05, 0.9, 0]), run_time=0.5)
-            self.play(get.animate.move_to([4.4, 0.6, 0]).set_color(ERR), run_time=0.5)
-            type_capture(self, tab, c26, type_time=1.0)
-            out(self, tab, c26.at(2, 4), run_time=0.4, color=ERR)
+            right_at(get, 2.15)
+            self.play(FadeIn(get, shift=LEFT * 0.2), run_time=0.3)
+            self.play(get.animate.move_to([right_x + get.width / 2 + 0.05, 2.0, 0]), run_time=0.35)
+            self.play(get.animate.move_to([right_x + 0.4 + get.width / 2, 2.0, 0]).set_color(ERR), run_time=0.35)
             vo.wait_until("405 here")
-            e405 = err_chip("405 · method not allowed", mono_font=False).next_to(get, DOWN, buff=0.2)
-            self.play(FadeIn(e405, shift=UP * 0.1), run_time=0.4)
+            e405 = err_chip("405 · method not allowed", mono_font=False).next_to(get, DOWN, buff=0.15)
+            e405.align_to(get, LEFT)
+            self.play(FadeIn(e405, shift=UP * 0.1), run_time=0.3)
             vo.wait_until("this app wants JSON posts")
-            self.play(Indicate(page.translate_btn.text, color=ROUTE, scale_factor=1.12), run_time=0.7)
+            self.play(Indicate(page.translate_btn.text, color=ROUTE, scale_factor=1.12), run_time=0.6)
             page.heal(self)
+            type_cmd(self, tab, c25.cmd, 0.6, soft=True)
+            out(self, tab, c25.at(2, 4), run_time=0.3, color=ERR)
             vo.wait_until("A made-up language")
-            xx = chip('POST · dest: "xx"', ROUTE, size=20, font=MONO).move_to([4.6, -0.6, 0])
-            self.play(FadeIn(xx, shift=LEFT * 0.2), run_time=0.3)
-            self.play(xx.animate.move_to([right_x + xx.width / 2 + 0.05, -0.4, 0]), run_time=0.4)
-            self.play(xx.animate.move_to([4.4, -0.75, 0]).set_color(ERR), run_time=0.4)
-            type_capture(self, tab, c25, type_time=0.9)
-            out(self, tab, c25.at(2, 4), run_time=0.4, color=ERR)
-            e400 = err_chip("400", mono_font=False).next_to(xx, RIGHT, buff=0.15)
-            keep_inside(e400)
-            self.play(FadeIn(e400, shift=LEFT * 0.1), run_time=0.4)
+            xx = right_at(chip('dest: "xx"', ROUTE, size=20, font=MONO), 0.7)
+            self.play(FadeIn(xx, shift=LEFT * 0.2), run_time=0.25)
+            self.play(xx.animate.move_to([right_x + xx.width / 2 + 0.05, 0.7, 0]), run_time=0.3)
+            e400 = err_chip("400", mono_font=False)
+            e400.move_to([right_x + 0.4 + xx.width + 0.15 + e400.width / 2, 0.7, 0])
+            self.play(xx.animate.move_to([right_x + 0.4 + xx.width / 2, 0.7, 0]).set_color(ERR),
+                      FadeIn(e400, shift=LEFT * 0.1), run_time=0.35)
 
         # ========================================================== 10. step 4: speech 503; Ctrl+C
         c24 = capture("laptop/24")
@@ -407,12 +459,12 @@ class RunTheImage(VoiceScene):
         shelf[1].next_to(shelf[0], DOWN, buff=0.05)
         shelf.add(label("the laptop's images", 20, S.GREY).next_to(shelf[1], DOWN, buff=0.1))
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(get, e405, xx, e400)), track(tr, 4, False), run_time=0.5)
+            self.play(FadeOut(VGroup(get, e405, xx, e400, sec)), track(tr, 4, False), run_time=0.5)
             self.play(page.press("audio", S.GREY), run_time=0.8)
             page.heal(self)
             vo.wait_until("and its request")
             self.play(track(tr, 4, True), run_time=0.3)
-            type_capture(self, tab, c24, type_time=1.0)
+            type_cmd(self, tab, c24.cmd, 1.0, soft=True)
             r24 = out(self, tab, c24.at(2, 4), wrap=True, run_time=0.4, color=ERR)
             vo.wait_until("speech is disabled")
             self.play(Indicate(row_with(r24, "[HTTP 503]"), color=ERR, scale_factor=1.1), run_time=0.6)
@@ -427,6 +479,8 @@ class RunTheImage(VoiceScene):
             vo.wait_until("gunicorn is the main process")
             mp = grey_chip("main process · gets the signal").move_to([pe.box.get_center()[0], -0.8, 0])
             self.play(FadeIn(mp, shift=UP * 0.1), run_time=0.4)
+            pe.drop(self, pe.env, run_time=0.3)
+            pe.env = None
             pe.sigint(self, run_time=1.2)
             shelf.move_to(pe.box)
             rm = grey_chip("--rm: container removed · image kept", mono_font=False).move_to(mp)
@@ -443,16 +497,15 @@ class RunTheImage(VoiceScene):
         q = _Quiet()
         pe2.start(q, "gunicorn")
         pe2.threads(q, 4)
-        pe2.envelope(q, "8080", "image")
+        env_in(q, pe2, "8080", "image")
         pe2.wall(q)
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(rm), track(tr, 4, True), run_time=0.4)
             type_capture(self, t, c30, type_time=1.2)
-            self.play(FadeOut(shelf), FadeOut(pe), FadeIn(pe2), run_time=0.7)
+            self.play(FadeOut(shelf), run_time=0.3)
+            self.play(FadeOut(pe), FadeIn(pe2), run_time=0.5)
             vo.wait_until("set PORT to 9090")
-            new_env = VGroup(envelope("PORT=9090", YOU), label("you · -e", 20, YOU))
-            new_env[1].next_to(new_env[0], LEFT, buff=0.15)
-            new_env.move_to(pe2.env, aligned_edge=RIGHT)
+            new_env = env_group("9090", "you", pe2)
             pe2.swap(self, pe2.env, new_env, run_time=0.6)
             pe2.env = new_env
             pe2.move_ear(self, "9090", run_time=0.8)
@@ -466,7 +519,8 @@ class RunTheImage(VoiceScene):
             end = pe2.pipe.get_end()
             self.add(d)
             self.play(d.animate.move_to(end), run_time=0.6)
-            rs = err_chip("connection reset", mono_font=False).next_to(end, UP, buff=0.2)
+            rs = err_chip("connection reset", mono_font=False)
+            rs.move_to([pe2.wall_[0].get_center()[0] - 0.3 - rs.width / 2, pe2.ear_y - 0.65, 0])
             self.play(d.animate.set_color(ERR), FadeIn(rs), run_time=0.4)
             vo.wait_until("the log shows")
             type_capture(self, t, c32, type_time=0.7)

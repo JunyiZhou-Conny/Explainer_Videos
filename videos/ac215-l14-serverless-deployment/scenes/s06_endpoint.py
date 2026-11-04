@@ -53,7 +53,7 @@ from manim import *  # noqa: I001  (manim first, then common: common must win)
 from explainer.scene import VoiceScene
 
 from common import *  # noqa: F401,F403
-from common import _soft_fold
+from common import _poly, _soft_fold
 
 SAY = NARRATION["S06"]
 
@@ -71,10 +71,10 @@ def copy_icon(s: float = 0.22, color=S.GREY) -> VGroup:
 
 def build_page() -> VGroup:
     """A GREY-dashed 'build details' page (schematic: a title and text-free bars). .title"""
-    fr = outline_box(3.4, 2.2, S.GREY, solid=False)
+    fr = outline_box(3.0, 2.2, S.GREY, solid=False)
     t = label("build details", 22, S.GREY).move_to(fr.get_top() + DOWN * 0.38)
     bars = VGroup(*[Rectangle(width=w, height=0.12, stroke_width=0).set_fill(S.GREY_DARK, 1)
-                    for w in (2.5, 1.8, 2.2, 1.4)]).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
+                    for w in (2.3, 1.7, 2.0, 1.3)]).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
     bars.next_to(t, DOWN, buff=0.32)
     g = VGroup(fr, t, bars)
     g.title = t
@@ -110,6 +110,12 @@ def logs_panel(panel_w: float = 6.2) -> VGroup:
     return g
 
 
+def bar_tag(t: Terminal, kind="local stand-in") -> VGroup:
+    """The row-sized 'extra · …' tag on terminal t's title bar, drawn above the terminal (z 3), so
+    re-seating the terminal with self.add(t) never hides it."""
+    return on_bar(t, extra_row(kind)).set_z_index(3)
+
+
 def preset_cmd(t: Terminal, cmd: str, soft: bool = True):
     """Place an already-typed command on terminal t without animation (the server that has been
     running since S05): soft-wrapped at the row edge like a real terminal. Returns its rows."""
@@ -143,12 +149,12 @@ class CallTheEndpoint(VoiceScene):
 
         # ========================================================== 0. copy the URL
         tr = tracker_13(1)
-        form = console_form(f"{FUNCTION} · service details", [("URL", FUNCTION_URL)], form_w=7.4)
-        form.move_to([-2.15, 0.9, 0])
+        form = console_form(f"{FUNCTION} · service details", [("URL", FUNCTION_URL)], form_w=9.2)
+        form.move_to([-1.75, 0.9, 0])
         field = form.rows[0].field
-        cp = copy_icon().move_to(field.get_right() + LEFT * 0.32)
+        cp = copy_icon().next_to(form.rows[0].value, RIGHT, buff=0.3)
         ill = illustration_tag().next_to(form.frame, DOWN, buff=0.15).align_to(form.frame, LEFT)
-        bp = build_page().move_to([4.55, 0.9, 0])
+        bp = build_page().move_to([4.85, 0.9, 0])
         nh = err_chip("not here", mono_font=False).next_to(bp, DOWN, buff=0.2)
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr), run_time=0.6)
@@ -171,7 +177,7 @@ class CallTheEndpoint(VoiceScene):
         rec3.align_to(bw.frame, LEFT)
         c23 = capture("dev/23")
         tab = tab_term(TAB_ROWS, P_HOME)
-        xtab = on_bar(tab, extra_row("local stand-in"))
+        xtab = bar_tag(tab)
         with self.voiceover(SAY[1]) as vo:
             url_copy = form.rows[0].value.copy()
             self.add(url_copy)
@@ -195,8 +201,6 @@ class CallTheEndpoint(VoiceScene):
 
         # ========================================================== 2. V4: the query string
         q = QueryToArgs(show_query=False)
-        q.base.align_to(bw.address, LEFT)
-        q.query.align_to(bw.address, LEFT)
         panel = code("tutorial/function/main.py", 9, 12, font_size=20).move_to([0, -2.3, 0])
         ref11 = lref("11")
         with self.voiceover(SAY[2]) as vo:
@@ -225,44 +229,42 @@ class CallTheEndpoint(VoiceScene):
         rec5 = recorded_card("part1-function-recorded", 5, "README:182-183").move_to([-1.5, 2.25, 0])
         c25, c26, c27, c28 = (capture(f"dev/{n}") for n in (25, 26, 27, 28))
         tab = tab_term(TAB_ROWS, P_HOME)
-        xtab = on_bar(tab, extra_row("local stand-in"))
+        xtab = bar_tag(tab)
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(q), ReplacementTransform(panel, hp), run_time=0.8)
-            self.play(FadeIn(rec5, shift=DOWN * 0.15), run_time=0.5)
+            self.play(FadeOut(q), ReplacementTransform(panel, hp), FadeIn(rec5, shift=DOWN * 0.15),
+                      FadeIn(tab, shift=UP * 0.2), FadeIn(xtab), track(tr, 3, "local stand-in"), run_time=0.8)
+            type_cmd(self, tab, c25.cmd, type_time=1.0)
             vo.wait_until("and so does the stand-in")
-            self.play(FadeIn(tab, shift=UP * 0.2), FadeIn(xtab), track(tr, 3, "local stand-in"), run_time=0.5)
-            type_cmd(self, tab, c25.cmd, type_time=1.2)
-            r25 = out(self, tab, c25.at(2), run_time=0.4)
+            r25 = out(self, tab, c25.at(2), run_time=0.3)
             self.play(Indicate(r25[0], color=TURN, scale_factor=1.1),
-                      Indicate(rec5.body, color=TURN, scale_factor=1.05), run_time=0.8)
+                      Indicate(rec5.body, color=TURN, scale_factor=1.05), run_time=0.7)
             self.add(tab)
-            vo.wait_until("Step 4")
-            self.play(track(tr, 4, "local stand-in"), run_time=0.5)
             prov = QueryToArgs(show_query=False)
             prov.remove(prov.base)
-            pv = prov.provider(self, hp, cloud_at=(3.6, 0.25), run_time=1.2)
+            pv = prov.provider(self, hp, cloud_at=(3.6, 0.25), run_time=1.0)
+            vo.wait_until("Step 4")
+            self.play(track(tr, 4, "local stand-in"), run_time=0.4)
 
             def ask(cap, tt):
                 ln = type_cmd(self, tab, cap.cmd, type_time=tt)
-                self.play(*[g.animate.set_color(ROUTE) for g in dest_value(ln)], run_time=0.25)
+                self.play(*[g.animate.set_color(ROUTE) for g in dest_value(ln)], run_time=0.2)
                 self.add(tab)
                 dot = Dot(radius=0.1, color=SHARED).move_to(pv.out_arrow.get_start())
                 self.add(dot)
                 self.play(MoveAlongPath(dot, Line(pv.out_arrow.get_start(), pv.out_arrow.get_end())),
-                          run_time=0.45)
+                          run_time=0.3)
                 self.play(MoveAlongPath(dot, Line(pv.back_arrow.get_start(), pv.back_arrow.get_end())),
-                          run_time=0.45)
+                          run_time=0.3)
                 self.remove(dot)
-                return out(self, tab, cap.at(2), run_time=0.35)
+                return out(self, tab, cap.at(2), run_time=0.3)
 
-            vo.wait_until("try Greek")
-            ask(c26, None)
-            vo.wait_until("Hindi")
+            ask(c26, 1.0)
             ask(c27, 0.6)
             r28 = ask(c28, 0.6)
             vo.wait_until("Pause and try")
             yt = beside(turn_row(), r28[0], buff=0.6)
             pin(self, r28[0], yt)
+            self.wait(1.5)
 
         # ========================================================== 4. the checkpoint
         ck = readme_card((171, 173), "Checkpoint: the same endpoint accepts different inputs without a redeploy.\n"
@@ -271,9 +273,9 @@ class CallTheEndpoint(VoiceScene):
                          size=22).move_to([0, 1.2, 0])
         sc = grey_chip("src=en", mono_font=True)
         pn = region_pin(REGION, CLOUD)
-        pair = VGroup(sc, pn).arrange(RIGHT, buff=1.4).move_to([0, -1.1, 0])
+        VGroup(sc, pn).arrange(RIGHT, buff=1.4).move_to([0, -1.1, 0])
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(rec5, prov, hp, xtab)), FadeOut(tab, shift=DOWN * 0.3), run_time=0.5)
+            self.play(FadeOut(VGroup(rec5, prov, hp, xtab, ref11)), FadeOut(tab, shift=DOWN * 0.3), run_time=0.5)
             self.remove(*tab.lines)
             self.play(FadeIn(ck, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("one endpoint")
@@ -281,11 +283,12 @@ class CallTheEndpoint(VoiceScene):
             vo.wait_until("no redeploy")
             self.play(Indicate(ck.body[1], color=TURN, scale_factor=1.04), run_time=0.9)
             vo.wait_until("are languages")
-            self.play(Indicate(ck.body[2], color=TURN, scale_factor=1.04), FadeIn(sc, shift=UP * 0.1), run_time=0.8)
+            self.play(Indicate(ck.body[2], color=TURN, scale_factor=1.04), FadeIn(sc, shift=UP * 0.1),
+                      FadeIn(pn, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("not regions")
-            self.play(FadeIn(pn, shift=UP * 0.1), run_time=0.4)
             st = strike(pn, ERR)
             self.play(Create(st), run_time=0.5)
+            self.wait(0.6)
 
         # ========================================================== 5. the logs
         lp = logs_panel().move_to([-3.25, 0.95, 0])
@@ -315,11 +318,11 @@ class CallTheEndpoint(VoiceScene):
         p28 = capture("dev/provider-timeout/28")
         p22 = capture("dev/provider-timeout/22")
         tab = tab_term(6, P_HOME)
-        xtab = on_bar(tab, extra_row("local stand-in"))
+        xtab = bar_tag(tab)
         kc = grey_chip("our first recording run · kept on purpose")
         under_term(tab, kc)
         srv = term(P_FUNC, 10, T_DEV, size=20)
-        xsrv = on_bar(srv, extra_row("local stand-in"))
+        xsrv = bar_tag(srv)
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(lp, lill, rec10, wl)), track(tr, 5, "local stand-in"), run_time=0.5)
             self.play(FadeIn(tab, shift=UP * 0.2), FadeIn(xtab), FadeIn(kc, shift=DOWN * 0.1), run_time=0.5)
@@ -353,11 +356,17 @@ class CallTheEndpoint(VoiceScene):
             yel = list(substring(r25a, 'main.py",')) + list(r25b.glyphs)
             self.play(*[g.animate.set_color(TURN) for g in yel], run_time=0.5)
             self.add(srv)
-            mini = handler_panel().move_to([-3.4, 1.95, 0])
-            ar = arrow(substring(r25b, "line 12").get_top(), mini.get_bottom() + RIGHT * 0.6, TURN, buff=0.06)
-            self.play(FadeIn(mini, shift=DOWN * 0.1), GrowArrow(ar), run_time=0.7)
-            self.play(Indicate(mini.code, color=TURN, scale_factor=1.04), run_time=0.7)
-            self.add(mini)
+            mini = handler_panel()
+            mini.move_to([-5.95 + mini.width / 2, 1.95, 0])
+            l12 = substring(r25b, "line 12")
+            xo = srv.box.get_left()[0] - 0.2
+            ar = _poly([l12.get_left() + LEFT * 0.08, [xo, l12.get_center()[1], 0],
+                        [xo, mini.get_center()[1], 0], [mini.get_left()[0] - 0.04, mini.get_center()[1], 0]],
+                       TURN, stroke=3)
+            self.play(FadeIn(mini, shift=DOWN * 0.1), Create(ar.line), run_time=0.7)
+            self.play(FadeIn(ar.tip_arrow), run_time=0.2)
+            mb = line_bar(mini.code, 0, TURN, opacity=0.22)
+            self.play(FadeIn(mb), run_time=0.6)
             vo.wait_until("A retry soon after")
             rt = ok_chip("retried: " + capture("dev/28").at(2)[0]).move_to([3.4, 1.95, 0])
             self.play(FadeIn(rt, shift=LEFT * 0.15), run_time=0.5)
@@ -370,7 +379,7 @@ class CallTheEndpoint(VoiceScene):
         chips = VGroup(grey_chip("unofficial"), grey_chip("not Google Cloud's API"),
                        grey_chip("not yours · can rate-limit or change")).arrange(RIGHT, buff=0.3)
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(srv, xsrv, mini, ar, rt)), run_time=0.5)
+            self.play(FadeOut(VGroup(srv, xsrv, mini, mb, ar, rt)), track(tr, 5), run_time=0.5)
             self.remove(*srv.lines)
             self.play(FadeIn(warn, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("the googletrans library")
@@ -414,7 +423,8 @@ class CallTheEndpoint(VoiceScene):
             fnc.move_to(slot2 + LEFT * fnc.width / 2)
             fspan = substring(fn_line, "--function=hello_http")
             frg = ring(fspan, OWN, buff=0.05)
-            self.play(FadeOut(fc), FadeIn(fnc, shift=DOWN * 0.1), Create(frg), run_time=0.6)
+            self.play(FadeOut(fc), run_time=0.3)
+            self.play(FadeIn(fnc, shift=DOWN * 0.1), Create(frg), run_time=0.5)
             vo.wait_until("with a real-format ID")
             self.play(FadeOut(frg), run_time=0.2)
             ex = type_cmd(self, gt, c18.cmd_lines[0], type_time=0.6)
@@ -429,12 +439,13 @@ class CallTheEndpoint(VoiceScene):
         # ========================================================== 9. store the URL, curl the stand-in
         c24 = capture("dev/24")
         tab = tab_term(5, P_HOME)
-        xtab = on_bar(tab, extra_row("local stand-in"))
+        xtab = bar_tag(tab)
         with self.voiceover(SAY[9]) as vo:
             type_lines(self, gt, readme_rows(200, 201), type_time=0.6)
             npc = no_panel_chip("needs your project · stores the URL · no output")
             npc.move_to(slot2 + LEFT * npc.width / 2)
-            self.play(FadeOut(fnc), FadeIn(npc, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeOut(fnc), run_time=0.3)
+            self.play(FadeIn(npc, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("the curl lines")
             self.play(FadeOut(VGroup(npc, hc)), FadeOut(gt, shift=DOWN * 0.3),
                       track(tr, 3, "gcloud · local stand-in"), run_time=0.5)
@@ -458,6 +469,7 @@ class CallTheEndpoint(VoiceScene):
             self.play(*[Transform(c, VGroup(*p.glyphs)) for c, p in zip(cps, pairs)], run_time=0.8)
             self.remove(*cps)
             self.add(*pairs)
+            self.wait(0.4)
             qline = mono_line(QUERY, 22, ROUTE)
             qline.shift(np.array([-6.2, 1.45, 0]) - qline.strut.get_left())
             self.play(ReplacementTransform(VGroup(*pairs), qline), run_time=0.9)
@@ -466,7 +478,7 @@ class CallTheEndpoint(VoiceScene):
 
         # ========================================================== 10. More detail: cold starts
         ref16 = lref("16")
-        srv = dev_term(4, P_FUNC)
+        srv = term(P_FUNC, 5, T_DEV, size=20)
         c22 = capture("dev/22")
         preset_cmd(srv, c22.cmd)
         md = readme_card((219, 223), "A cold start initializes an instance of the built application;\n"
@@ -483,12 +495,12 @@ class CallTheEndpoint(VoiceScene):
         p1x, p2x = x0 + 0.5, x1 - 0.6
         with self.voiceover(SAY[10]) as vo:
             self.play(FadeOut(VGroup(tab, xtab, qline)), track(tr, 5, "local stand-in"),
-                      ReplacementTransform(ref11, ref16), run_time=0.5)
+                      FadeIn(ref16), run_time=0.5)
             self.remove(*tab.lines)
             self.play(FadeIn(srv, shift=UP * 0.2), run_time=0.4)
             out(self, srv, c22.at(2), run_time=0.3)
             cdl = type_cmd(self, srv, "cd ../..", type_time=0.5)
-            cx = beside(extra_row(), cdl, buff=0.4)
+            cx = beside(extra_row(), cdl, buff=0.2)
             pin(self, cdl, cx)
             cd_prompt(self, srv, P_REPO)
             vo.wait_until("a cold start starts")
@@ -502,7 +514,7 @@ class CallTheEndpoint(VoiceScene):
             self.play(FadeIn(inst1, scale=0.8), FadeIn(pf, scale=0.5), FadeIn(csl), run_time=0.5)
             vo.wait_until("not necessarily a new machine")
             self.play(Indicate(md.body[1], color=TURN, scale_factor=1.03), FadeOut(inst1), FadeOut(pf),
-                      run_time=0.9)
+                      FadeOut(csl), run_time=0.9)
             vo.wait_until("No fixed idle time")
             gap = DashedLine([p1x + 0.2, yax + 0.25, 0], [p2x - 0.2, yax + 0.25, 0], color=S.GREY,
                              stroke_width=2)
@@ -512,7 +524,7 @@ class CallTheEndpoint(VoiceScene):
             d2 = pulse_dot().move_to([p2x, yax, 0])
             inst2 = instance(0.9, 0.6).next_to(d2, UP, buff=0.25)
             csl2 = csl.copy().next_to(inst2, UP, buff=0.12)
-            self.play(FadeIn(d2, scale=0.5), FadeOut(csl), run_time=0.3)
+            self.play(FadeIn(d2, scale=0.5), run_time=0.3)
             self.play(FadeIn(inst2, scale=0.8), FadeIn(csl2), run_time=0.5)
             self.wait(0.6)
 
