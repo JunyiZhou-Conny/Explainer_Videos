@@ -136,6 +136,11 @@
       "bvid": "BV1TjxD6REvQ",
       "title": "AC215 第10讲跟练 · 连接云端：Service Account 认证、Docker 网络与 CORS",
       "pubdate": 1793761105
+    },
+    "ac215-l11-data-labeling-versioning": {
+      "bvid": "BV1yXx96oEAL",
+      "title": "AC215 第11讲跟练 · 数据标注与版本管理：Label Studio、CORS、DVC 与 gcsfuse",
+      "pubdate": 1793786379
     }
   },
   "unmatched": []
