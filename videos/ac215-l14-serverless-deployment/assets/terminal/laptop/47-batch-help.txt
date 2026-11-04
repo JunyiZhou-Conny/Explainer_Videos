@@ -1,0 +1,17 @@
+$ docker run --rm cgumb/ac215-translation-demo:lecture14-agent-platform-20261022 python -m translation_demo batch --help
+usage: __main__.py batch [-h] (--text-file TEXT_FILE | --input-uri INPUT_URI)
+                         [--src SRC] [--dest DEST] --output-uri OUTPUT_URI
+                         [--plan]
+
+options:
+  -h, --help            show this help message and exit
+  --text-file TEXT_FILE
+                        A UTF-8 file available inside the container
+  --input-uri INPUT_URI
+                        A UTF-8 object in Cloud Storage
+  --src SRC
+  --dest DEST
+  --output-uri OUTPUT_URI
+                        A fresh gs://bucket/prefix
+  --plan                Show the plan without API calls or uploads
+[exit 0]

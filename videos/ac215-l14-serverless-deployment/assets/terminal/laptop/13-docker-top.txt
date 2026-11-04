@@ -1,0 +1,5 @@
+$ docker top $(docker ps -q) -o pid,user,args
+PID                 USER                COMMAND
+438                 student             {gunicorn} /usr/local/bin/python3.12 /usr/local/bin/gunicorn --bind 0.0.0.0:8080 --workers 1 --threads 4 --timeout 90 translation_demo.web:create_app()
+468                 student             {gunicorn} /usr/local/bin/python3.12 /usr/local/bin/gunicorn --bind 0.0.0.0:8080 --workers 1 --threads 4 --timeout 90 translation_demo.web:create_app()
+[exit 0]

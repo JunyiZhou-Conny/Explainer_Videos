@@ -333,9 +333,9 @@ class WhatTheJobSays(VoiceScene):
             flash_tag(self, yt3, TURN)
 
         # ========================================================== 4. slide 9's seven items (PONDER 9)
-        rr = RunRecord(cell_w=1.8)
+        rr = RunRecord(cell_w=1.88)      # widest pitch inside x ±6.6: each note fits its column
         rr.move_to([0, 0, 0])
-        rr.shift(UP * (2.7 - rr.get_top()[1]))
+        rr.shift(UP * (0.8 - rr.boxes.get_center()[1]))      # the cells mid-frame; folder card below
         heads = list(rr.heads)
         boxes = list(rr.boxes)
 
@@ -356,7 +356,7 @@ class WhatTheJobSays(VoiceScene):
 
         # ========================================================== 5. the answer, the folder, the verdict
         m_model = rr.mark("model", "yes", "hyper-\nparameters")
-        m_env = rr.mark("environment", "partly", "system charts\nrun metadata\nnot the image tag\n(cli.sh)")
+        m_env = rr.mark("environment", "partly", "system charts\nrun metadata ·\nnot the image\ntag (cli.sh)")
         m_met = rr.mark("metrics", "no", "execution_time\nin config ·\nno metric\nlogged")
         m_art = rr.mark("artifacts", "partly", "logs ✓ ·\nweights ✗")
         ab = rr.cells["artifacts"]
@@ -396,6 +396,8 @@ class WhatTheJobSays(VoiceScene):
         verdict.move_to(qmark).align_to(qmark, LEFT)
         ex = VGroup(grey_chip("exercise 1: a LambdaCallback"), grey_chip("exercise 3: seed the split"))
         ex.arrange(RIGHT, buff=0.4).next_to(qrow, DOWN, buff=0.3).set_x(0)
+        stack = VGroup(ta, tb, qrow, verdict, ex, ga, gb)
+        stack.shift(UP * ((2.7 - 3.4) / 2 - stack.get_center()[1]))     # centred between the tracker and y=-3.4
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(pc), run_time=0.4)
@@ -404,7 +406,7 @@ class WhatTheJobSays(VoiceScene):
             vo.wait_until("The environment only partly")
             self.play(FadeIn(m_env), run_time=0.6)
             vo.wait_until("while the image tag sits in cli.sh")
-            self.play(Indicate(m_env.words[2], color=INK, scale_factor=1.05), run_time=0.7)
+            self.play(Indicate(m_env.words[2:], color=INK, scale_factor=1.05), run_time=0.7)
             vo.wait_until("Metrics, none")
             self.play(FadeIn(m_met), run_time=0.6)
             vo.wait_until("Logs yes, weights no")

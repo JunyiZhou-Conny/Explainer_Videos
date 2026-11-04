@@ -30,7 +30,7 @@ from common import *  # noqa: F403
 from explainer import style as S
 
 SAY = NARRATION["S10"]
-PONDER_KEY = "Your W&B key is now part of the\njob's arguments. Who can read it later?"
+PONDER_KEY = "Your W&B key is now part of the\njob's arguments. Who can see it later?"
 C26 = ("--worker-pool-spec=", "accelerator-type", "$ACCELERATOR_TYPE,")
 CUTS_A = {9: ('"', "tf-gpu")}
 CUTS_B = {14: '"us-central1"', 17: "mobilenetv2,", 18: "mobilenetv2,",
@@ -287,7 +287,7 @@ class OneCommand(VoiceScene):
             vo.wait_until("Check that your key length is 40")
             self.play(FadeIn(k40, shift=UP * 0.1), Indicate(mp.parts["key"], color=OWNED, scale_factor=1.1),
                       run_time=0.6)
-            vo.wait_until("watch scene 11 before you submit")
+            vo.wait_until("watch the next chapter")
             self.play(Indicate(k40.text, color=INK, scale_factor=1.05), run_time=0.6)
             vo.wait_until("Now sh cli.sh")
             self.keep_only(tr, ref, run_time=0.5)

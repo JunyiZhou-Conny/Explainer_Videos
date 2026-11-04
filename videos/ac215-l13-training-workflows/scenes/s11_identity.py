@@ -292,7 +292,10 @@ class WhoRunsIt(VoiceScene):
             nott.next_to(h.box, UP, buff=0.15).align_to(h.box, RIGHT)
             self.play(FadeIn(nott, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("The trainer counts on the prebuilt image")
-            self.play(track(tr, 2, extra=True), run_time=0.4)
+            # 09 checks Google's real image: plain `extra`, not a stand-in — the bar tag says so too
+            sr_x = on_bar(h, extra_row())
+            self.play(track(tr, 2, extra=True), FadeTransform(sr, sr_x), run_time=0.4)
+            sr = sr_x
             self.clear(h, nott)
             type_cmd(self, h, c09.cmd, type_time=0.9, soft=True)
             o09 = out(self, h, c09.at(2, 3), run_time=0.3)
@@ -306,7 +309,9 @@ class WhoRunsIt(VoiceScene):
             self.play(FadeIn(gexp, shift=UP * 0.1), Indicate(slot, color=SYSTEM, scale_factor=1.08), run_time=0.6)
             vo.wait_until("Without it")
             pic = VGroup(sd2, slot, mt, gimg, glay, gt, gexp)
-            self.play(track(tr, 2, extra="local stand-in"), FadeOut(pic), run_time=0.4)
+            sr_s = on_bar(h, standin_row())
+            self.play(track(tr, 2, extra="local stand-in"), FadeTransform(sr, sr_s), FadeOut(pic), run_time=0.4)
+            sr = sr_s
             self.remove(*pic)
             self.clear(h)
             resize(self, h, 8, run_time=0.4, extra=[sr.animate.shift(UP * 5 * h.pitch)])
@@ -314,6 +319,7 @@ class WhoRunsIt(VoiceScene):
             o83 = out(self, h, [c83.line(2), "…", *c83.at((7, 8)), (c83.line(9), ERR)], wrap=True, run_time=0.5)
             vo.wait_until("cannot even print its help")
             self.play(Indicate(o83[-1], color=ERR, scale_factor=1.04), run_time=0.6)
+        self.wait(1.5)          # the traceback stays readable before beat 6 clears the terminal
 
         # ========================================================== 6. three keys at line 153
         p153 = code("package/trainer/task.py", 152, 153)
@@ -331,7 +337,7 @@ class WhoRunsIt(VoiceScene):
             self.play(FadeIn(p153, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("line 153")
             self.play(FadeIn(bar153), run_time=0.4)
-            vo.wait_until("The empty key from scene 10")
+            vo.wait_until("The empty key from the last chapter")
             type_cmd(self, h, c85.cmd, type_time=0.7, soft=True)
             o85 = out(self, h, [(c85.line(2), ERR)], wrap=True, run_time=0.3)
             self.play(FadeIn(ch_empty, shift=UP * 0.1), run_time=0.4)

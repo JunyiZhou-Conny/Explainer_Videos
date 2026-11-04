@@ -1,0 +1,20 @@
+$ ls -la; ls results 2>&1
+total 140
+drwxr-xr-x 6 student student  4096 Nov  4 09:34 .
+drwx------ 1 student student  4096 Nov  4 09:34 ..
+drwxr-xr-x 8 student student  4096 Nov  4 09:34 .git
+-rw-r--r-- 1 student student   924 Nov  4 09:34 .gitignore
+-rwxr-xr-x 1 student student  1440 Nov  4 09:34 Dockerfile
+-rw-r--r-- 1 student student 49796 Nov  4 09:34 README.md
+-rw-r--r-- 1 student student  1318 Nov  4 09:34 cli.py
+-rw-r--r-- 1 student student   417 Nov  4 09:34 docker-entrypoint.sh
+-rwxr-xr-x 1 student student   427 Nov  4 09:34 docker-shell.sh
+drwxr-xr-x 2 student student  4096 Nov  4 09:34 docs
+drwxr-xr-x 3 student student  4096 Nov  4 09:34 images
+-rw-r--r-- 1 student student   747 Nov  4 09:34 main.py
+-rw-r--r-- 1 student student   131 Nov  4 09:34 passage.txt
+-rw-r--r-- 1 student student   235 Nov  4 09:34 pyproject.toml
+drwxr-xr-x 6 student student  4096 Nov  4 09:34 tutorial
+-rw-r--r-- 1 student student 31602 Nov  4 09:34 uv.lock
+ls: cannot access 'results': No such file or directory
+[exit 2]

@@ -221,7 +221,7 @@ class ThreeSwitches(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             self.keep_only(tr, ref)
             self.play(FadeIn(honest, scale=0.97), run_time=0.6)
-            vo.wait_until("the same way as in scene 10")
+            vo.wait_until("the same way as our CPU submit did")
             self.play(Indicate(VGroup(cmd_glyphs, honest.body[2]), color=INK, scale_factor=1.04), run_time=0.8)
             vo.wait_until("with no active account")
             self.play(Indicate(honest.body[0], color=INK, scale_factor=1.06), run_time=0.7)

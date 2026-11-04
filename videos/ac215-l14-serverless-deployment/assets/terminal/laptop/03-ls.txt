@@ -1,0 +1,13 @@
+$ ls
+Dockerfile
+README.md
+cli.py
+docker-entrypoint.sh
+docker-shell.sh
+docs
+images
+main.py
+pyproject.toml
+tutorial
+uv.lock
+[exit 0]

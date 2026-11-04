@@ -1,0 +1,5 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' 'http://localhost:8086/api/translate?text=Good%20afternoon%20everyone&src=en&dest=fr' | tail -3
+<p>The method is not allowed for the requested URL.</p>
+
+[HTTP 405]
+[exit 0]

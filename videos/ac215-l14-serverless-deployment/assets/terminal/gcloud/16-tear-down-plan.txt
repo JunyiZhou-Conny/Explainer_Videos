@@ -1,0 +1,7 @@
+$ python tutorial/tear_down.py \
+  --project=YOUR_PROJECT_ID \
+  --manifest=./local-state/lecture14-demo.json \
+  --delete-objects
+Stopped: Invalid project: YOUR_PROJECT_ID
+Keep the manifest for recovery; later steps were not run.
+[exit 1]

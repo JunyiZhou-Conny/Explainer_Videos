@@ -127,7 +127,7 @@ terms:
   note: 'copy → 拷贝 (A8, never 副本). billing → 结算 (L11).'
 - en: 'cost money while they run / gold tags mark each point, without amounts / a yellow tag / the study guide'
   zh_subtitle: '花钱 / 金色标签 / 黄色标签 / 学习指南'
-  first_use: 'S01[3]：Vertex AI 任务运行时会花钱；金色标签标出每一个计费点，不写金额。'
+  first_use: 'S01[3]：Vertex AI 任务在运行期间会花钱；金色标签标出每一个计费点，不写金额。'
   note: 'A yellow tag means pause and run it, and the study guide has every command → 黄色标签的意思是：暂停一下，自己跑一遍；每条命令都在学习指南里 (D6).'
 - en: 'two words from the lecture / reproducibility / accountability'
   zh_subtitle: '可复现 / 可追责'

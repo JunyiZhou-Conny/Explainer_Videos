@@ -1,0 +1,7 @@
+$ python tutorial/spin_up.py \
+  --project=YOUR_PROJECT_ID \
+  --prefix=lecture14-demo \
+  --manifest=./local-state/lecture14-demo.json
+Stopped: Invalid project: YOUR_PROJECT_ID
+Keep the manifest for recovery; later steps were not run.
+[exit 1]

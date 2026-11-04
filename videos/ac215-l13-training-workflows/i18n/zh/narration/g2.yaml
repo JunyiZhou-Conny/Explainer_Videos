@@ -21,11 +21,11 @@ S08:
 - en: "Part 2 ships the trainer: build the cockpit, pack the code, send one job. Put your bucket and project on lines 8 and 9 of docker-shell.sh; pause and edit yours."
   zh:
   - "第二部分要把训练脚本送出去：构建驾驶舱，打包代码，发一个任务。"
-  - "把你的 bucket 和项目填到 docker-shell.sh 的第 8 行和第 9 行；暂停一下，改成你自己的。"
+  - "把你的 bucket 和项目填进 docker-shell.sh 第 8、9 行；暂停一下，改成你自己的。"
 - en: "A small slip: the README's copy of this script is not the real file. It has notes in brackets and an older line for Apple chips, so edit the script itself. It builds for amd64 and mounts your code and secrets."
   zh:
   - "有一个小疏漏：README 里贴的这份脚本，不是真正的文件。"
-  - "它有方括号里的注释，还有一行给 Apple 芯片的旧写法，所以要改脚本文件本身。"
+  - "它有方括号里的注释，还有一行旧写法是给 Apple 芯片用的，所以要改脚本文件本身。"
   - "它按 amd64 构建，并挂载你的代码和 secrets。"
 - en: "Now run sh docker-shell.sh from inside the repo; pause and run it. Today it fails at step 2 of 14. All 22 packages return 404 Not Found from the Debian mirror, and the build stops at line 18. The script's set dash e, exit on error, then stops it before docker run."
   zh:
@@ -76,12 +76,12 @@ S08:
   - "The architecture is x86_64, on a Mac too; the versions are on screen."
   - null
 S09:
-- en: "Inside the cockpit, a few extra checks. Slash secrets is empty, our sandbox. Project, bucket and key came through; gcloud, gsutil and uv are here. Pause and check yours: the last number must be 40, not 0. But importing TensorFlow fails: this container submits jobs, it never trains."
+- en: "Inside the cockpit, a few extra checks. Slash secrets is empty, our sandbox. Project, bucket and key came through; gcloud, gsutil and uv are here. Pause and check yours: the last number should be 40 for this wandb pin, never 0; if not, see the chapter Who submits, who runs. But importing TensorFlow fails: this container submits jobs, it never trains."
   zh:
   - "在驾驶舱里做几个额外检查。"
   - "/secrets 是空的，这是我们的沙盒。"
   - "项目、bucket 和密钥都传进来了；gcloud、gsutil 和 uv 都在。"
-  - "暂停一下，检查你的：最后那个数必须是 40，不是 0。"
+  - "暂停一下，检查你的：最后那个数，对这个 wandb pin 应该是 40，绝不能是 0；如果不是，去看“谁提交，谁运行”那一章。"
   - "可是 import TensorFlow 失败了：这个 container 只提交任务，从不训练。"
   en_display:
   - null
@@ -89,13 +89,13 @@ S09:
   - null
   - null
   - null
-- en: "Review setup.py; pause and open it. It is the label pip uses to install the tarball. The only declared dependency is wandb, pinned to 0.15.11. Its find packages call finds the trainer folder because the folder has its own init file, so once installed, python dash m trainer dot task works. TensorFlow and scikit-learn are not declared: they are assumed to come from the image Google provides, and scene 11 shows the tarball lacks them. Requests only arrives because wandb needs it."
+- en: "Review setup.py; pause and open it. It is the label pip uses to install the tarball. The only declared dependency is wandb, pinned to 0.15.11. Its find packages call finds the trainer folder because the folder has its own init file, so once installed, python dash m trainer dot task works. TensorFlow and scikit-learn are not declared: they are assumed to come from the image Google provides, and a later chapter shows the tarball lacks them. Requests only arrives because wandb needs it."
   zh:
   - "先看 setup.py；暂停一下，打开它。"
   - "它就是 pip 安装 tar 包时看的铭牌。"
   - "唯一声明的依赖是 wandb，pin 在 0.15.11。"
   - "它的 find packages 调用能找到 trainer 目录，因为这个目录有自己的 init 文件，所以装好之后，python -m trainer.task 就能跑。"
-  - "TensorFlow 和 scikit-learn 都没有声明：默认它们来自 Google 提供的 image，第 11 个场景会看到 tar 包里没有它们。"
+  - "TensorFlow 和 scikit-learn 都没有声明：默认它们来自 Google 提供的 image，后面有一章会看到 tar 包里没有它们。"
   - "而 requests 只是因为 wandb 需要它才被带进来的。"
   en_display:
   - null
@@ -148,10 +148,10 @@ S10:
   zh:
   - "再往下，GPU 那一段被注释掉了，第 31 行换成 CPU image，所以只有 CPU 那条命令会运行。"
   - "有一个小疏漏：README 先讲 GPU，把 CPU 写成可选，可这个脚本本来就在 CPU 上跑。"
-- en: "A gold tag first: once the job's machine is provisioned, your project pays until the script exits. Check that your key length is 40; if not, watch scene 11 before you submit. Now sh cli.sh; pause and run it. The first line is real: the Vertex AI endpoint in us-central1. Then it stops with no active account, because the key never loaded; an extra auth list confirms it. With your key, gcloud reports the job as created."
+- en: "A gold tag first: once the job's machine is provisioned, your project pays until the script exits. Check that your key length is 40; if not, watch the next chapter, Who submits, who runs, before you submit. Now sh cli.sh; pause and run it. The first line is real: the Vertex AI endpoint in us-central1. Then it stops with no active account, because the key never loaded; an extra auth list confirms it. With your key, gcloud reports the job as created."
   zh:
   - "先看金色标签：一旦任务的机器分配好，你的项目就一直付费，直到脚本退出。"
-  - "确认你的密钥长度是 40；如果不是，先看第 11 个场景，再提交。"
+  - "确认你的密钥长度是 40；如果不是，先看下一章“谁提交，谁运行”，再提交。"
   - "现在跑 sh cli.sh；暂停一下，自己跑一遍。"
   - "第一行是真的：us-central1 的 Vertex AI endpoint。"
   - "然后它停下了，没有激活的账号，因为密钥从来没加载过；额外跑一下 gcloud auth list，就能确认。"
@@ -180,7 +180,7 @@ S10:
   - null
 - en: "Anyone who can view jobs in this project, because the job spec keeps its arguments, plus your shell history if typed inline. Use a dedicated key and rotate it at the end; the exercises use Secret Manager."
   zh:
-  - "这个项目里能查看任务的任何人，因为任务规格会保存它的参数；还有你的 shell 历史，要是你直接敲在命令里的话。"
+  - "这个项目里能查看任务的任何人，因为任务规格会保存它的参数；要是你直接敲在命令里，还有你的 shell 历史。"
   - "用一把专用的密钥，结束时轮换掉；练习里用的是 Secret Manager。"
 - en: "The other way it goes wrong: a terminal where the key was never exported. Inside, its length is 0, and the arguments end with an empty key. So the job would download its data, and only then fail at login. Exit, export, and start again; first exit any old cockpit, which holds the name."
   zh:
@@ -226,25 +226,27 @@ S11:
   - "额外跑一下 pip list：有 wandb、requests 和它们的辅助依赖，但没有 TensorFlow，也没有 scikit-learn。"
   - "训练脚本指望预构建的 image 提供这些，而我们没有把它拉下来检查。"
   - "没有它，训练脚本连帮助信息都打不出来。"
-- en: "Then the trainer's first W and B step, line 153, with three keys. The empty key from scene 10 fails with api key not configured, and on Vertex that comes after the data download, on billed machine time. The default of 16 fails: API key must be 40 characters long, yours was 2. Our 40 character placeholder passes the offline length check, and nothing more."
+- en: "Then the trainer's first W and B step, line 153, with three keys. The empty key from the last chapter fails with api key not configured, and on Vertex that comes after the data download, on billed machine time. The default of 16 fails: API key must be 40 characters long, yours was 2. Our 40 character placeholder passes the offline length check, and nothing more."
   zh:
   - "然后是训练脚本里 W&B 的第一步，第 153 行，用三个密钥试一试。"
-  - "第 10 个场景里那个空的密钥，报 api key not configured，而在 Vertex 上，这发生在数据下载之后，用的是计费的机器时间。"
+  - "上一章那个空的密钥，报 api key not configured，而在 Vertex 上，这发生在数据下载之后，用的是计费的机器时间。"
   - "默认的 16 会失败，报：API key must be 40 characters long, yours was 2。"
-  - "我们 40 个字符的占位密钥能通过离线的长度检查，仅此而已。"
+  - "我们 40 个字符的占位密钥，能通过离线的长度检查，仅此而已。"
   en_display:
   - "Then the trainer's first W&B step, line 153, with three keys."
-  - "The empty key from scene 10 fails with api_key not configured, and on Vertex that comes after the data download, on billed machine time."
+  - "The empty key from the last chapter fails with api_key not configured, and on Vertex that comes after the data download, on billed machine time."
   - null
   - null
-- en: "One more: this old wandb pin accepts exactly 40 characters, and 47 fails. We could not check which key format W and B gives out today. If yours differs, this pin refuses it, so check before you submit."
+- en: "One more: this old wandb pin accepts exactly 40 characters, and 47 fails. We could not check which key format W and B gives out today. If yours differs, this pin refuses it, so check before you submit. One fix, untested here: raise the wandb pin in setup.py to a current release, run sh package-trainer.sh again, and then submit."
   zh:
-  - "还有一点：这个老的 wandb pin 只接受正好 40 个字符，47 个就会失败。"
+  - "还有一点：这个老的 wandb pin，只接受正好 40 个字符，47 个就会失败。"
   - "我们没法确认 W&B 现在发的密钥是什么格式。"
   - "如果你的不一样，这个 pin 会拒绝它，所以提交之前先检查。"
+  - "有一个办法，这里没有测试过：把 setup.py 里 wandb 的 pin 升到当前的版本，再跑一次 sh package-trainer.sh，然后提交。"
   en_display:
   - null
   - "We could not check which key format W&B gives out today."
+  - null
   - null
 S12:
 - en: "To view jobs, open Vertex AI, then Training, then Custom jobs; pause and look for yours. It is a custom job, not a training pipeline, so look on that tab. Open your job and follow its logs link; wait for the line training job complete."
@@ -294,7 +296,7 @@ S12:
   - "指标，没有：执行时间进了 config。"
   - "日志有，权重没有。"
   - "代码、数据和笔记，没有：没有 commit，一个固定的 zip 包，还有一次没有随机种子的划分。"
-  - "来自 notebook A 的那个目录，也没有 commit、没有划分，也没有笔记。"
+  - "notebook A 的那个目录没有 commit，没有划分，也没有笔记。"
   - "所以结论是：这些表选不出哪种做法更好。"
   - "给划分加上随机种子，对齐 epoch，记下代码版本，然后再比较。"
   - "练习 1 会加一个小小的 callback。"
@@ -307,17 +309,17 @@ S13:
   - "image：为 GPU 构建的 TensorFlow，带 CUDA，也就是 GPU 的库。"
   - "还有配额：这个区域里给自定义训练用的 T4。"
   - "芯片只在三个都打开时才会亮。"
-- en: "The quota is the console request from scene 7. An extra check shows Google still serves both GPU images, at the time of recording."
+- en: "The quota is the console request from the setup chapter. An extra check shows Google still serves both GPU images, at the time of recording."
   zh:
-  - "配额就是第 7 个场景里在控制台提交的申请。"
-  - "额外检查显示，Google 还在提供这两个 GPU image，这是录制时的情况。"
+  - "配额就是准备工作那一章里在控制台提交的申请。"
+  - "额外检查显示，Google 两个 GPU image 都还在提供，这是录制时的情况。"
 - en: "To switch, uncomment the GPU block and comment out the CPU block. Leave both active, and you submit two jobs with the same name."
   zh:
   - "要切换，就取消 GPU 那一段的注释，再把 CPU 那一段注释掉。"
   - "两段都留着，你就会提交两个同名的任务。"
-- en: "Here the GPU block would fail the same way as in scene 10, with no active account, so there is nothing new to show, and nothing we fake."
+- en: "Here the GPU block would fail the same way as our CPU submit did, with no active account, so there is nothing new to show, and nothing we fake."
   zh:
-  - "在这里，GPU 那一段会和第 10 个场景一样失败，因为没有激活的账号，所以没有新东西可看，我们也不造假。"
+  - "在这里，GPU 那一段会和我们提交 CPU 任务时一样失败，因为没有激活的账号，所以没有新东西可看，我们也不造假。"
 - en: "A gold tag: a GPU adds to the bill for as long as it is attached, used or not."
   zh:
   - "金色标签：GPU 会增加费用，只要它挂着，不管用没用。"
@@ -446,9 +448,9 @@ S15:
   - "第二题：什么会被带到 Vertex AI，什么从来不会？"
   - "第三题：为什么 config 是空的？"
   - "第四题：谁提交，谁运行，你的密钥最后到了哪里？"
-  - "第五题：用两块 GPU 时，什么被分开、什么被平均、什么在 strategy.scope 里创建？"
+  - "第五题：用两块 GPU 时，什么被分开，什么被平均，什么在 strategy.scope 里创建？"
 - en: "Answers are in the exercises. Next, lecture 14 serves containers without servers, and lecture 15 saves this model and chains the steps. Hardware rented, and a log of what you rented it for."
   zh:
   - "答案在练习里。"
-  - "接下来，第 14 讲不用自己管服务器就把 container 部署成服务，第 15 讲会保存这个模型，并把各个步骤串起来。"
+  - "接下来，第 14 讲把 container 部署成服务，不用自己管服务器；第 15 讲会保存这个模型，并把各个步骤串起来。"
   - "硬件租到了，还有一份记录，写着你租它做了什么。"

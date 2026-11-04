@@ -1,0 +1,13 @@
+# RECORDED, not captured here: what the tutorial documents for Part 4.4-4.6 (job execution and results), quoted from dlops-io/serverless-deployment @ 46cc62f -- README.md:830-842, 850-852, 859-860, 963-964, 991-993 and tutorial/gif_steps.json ("job-execution-results.gif", "terminal-job-steps.gif", "terminal-job-helper.gif" captions). Executing a Cloud Run job needs a project and credentials, which the capture sandbox does not have; ../laptop/41-47 run the same image's batch command locally, ../gcloud/10-11, 19 the helper.
+Created job → History: no executions yet                                  [job-execution-results.gif caption 1]
+History shows translation-audio-hq9f5 succeeded                           [caption 4; README.md:859 "a fresh console execution, `translation-audio-hq9f5`"]
+Task logs show status complete and the output URIs                        [caption 6; README.md:832-833 "The logs show completion, the execution ID, and its exact output_uri. The job exits; it does not provide a web URL."]
+Open run-001 in the output bucket / Open the attempt reported in the logs [captions 12-13; README.md:860 "its own `run-001/de2f41…/` output folder"]
+Check text, audio, and manifest files                                     [caption 14]
+  translated.txt   The complete translated passage                        [README.md:836-842, the README's table]
+  speech.wav       Its generated audio
+  manifest.json    Completion status and output locations
+The text download opens the complete French translation                   [caption 19]
+Checkpoint: "the task finished, the process stopped, and its files remain in Storage"   [README.md:850-851]
+Terminal (4.5): Upload the passage / Execute the job with overrides / Download the results   [terminal-job-steps.gif captions; README.md:963-964: "upload, successful Spanish job execution, and download"]
+Helper (4.6): "It prints Downloaded results only after finding a complete manifest."         [README.md:992-993]

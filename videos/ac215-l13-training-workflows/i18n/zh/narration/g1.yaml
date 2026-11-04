@@ -39,8 +39,8 @@ S01:
   - "That command carries your W&B key."
 - en: "To follow along you need two Colab copies with a free T4 GPU, a free account on W and B, Docker, and a Google Cloud project with billing. Vertex AI jobs cost money while they run; gold tags mark each point, without amounts. A yellow tag means pause and run it, and the study guide has every command. Today's two words, from the lecture: reproducibility and accountability."
   zh:
-  - "跟着做，你需要两份 Colab 拷贝，带免费的 T4 GPU，一个免费的 W&B 账号、Docker，以及一个开通了结算的 Google Cloud 项目。"
-  - "Vertex AI 任务运行时会花钱；金色标签标出每一个计费点，不写金额。"
+  - "跟着做，你需要两份带免费 T4 GPU 的 Colab 拷贝，一个免费的 W&B 账号、Docker，以及一个开通了结算的 Google Cloud 项目。"
+  - "Vertex AI 任务在运行期间会花钱；金色标签标出每一个计费点，不写金额。"
   - "黄色标签的意思是：暂停一下，自己跑一遍；每条命令都在学习指南里。"
   - "今天的两个关键词，来自课上：可复现和可追责。"
   en_display:
@@ -127,10 +127,10 @@ S03:
   - "这个目录存了设置和分数，却没存哪 116 张照片是测试集。"
   - "划分没有随机种子，所以每次运行都拿不同的 116 张来评分。"
   - "一张照片值 0.86 个百分点，而 notebook A 的冠军只领先两张照片。"
-- en: "Sign in with cell 62, put your own project and bucket into cell 63, and run cell 66. Any bucket of yours works; scene 7 creates one. Pause and run it. A gold tag: those files now sit in your bucket, 10 to 104 megabytes of weights per model, plus a copy."
+- en: "Sign in with cell 62, put your own project and bucket into cell 63, and run cell 66. Any bucket of yours works; if you have none yet, skip this upload and come back after the setup chapter. Pause and run it. A gold tag: those files now sit in your bucket, 10 to 104 megabytes of weights per model, plus a copy."
   zh:
   - "用第 62 个单元格登录，在第 63 个单元格里填上你自己的项目和 bucket，再跑第 66 个单元格。"
-  - "你的任何一个 bucket 都行；第 7 个场景会建一个。"
+  - "你的任何一个 bucket 都行；要是还没有，先跳过这次上传，等准备工作那一章建好再回来。"
   - "暂停一下，自己跑一遍。"
   - "金色标签：这些文件现在放在你的 bucket 里，每个模型 10 到 104 MB 的权重，外加一份拷贝。"
 S04:
@@ -147,7 +147,7 @@ S04:
   - null
 - en: "The data cells, through cell 32, match notebook A, but one also downloads a zip of about 510 megabytes you never use. You may delete that line; then pause and run them."
   zh:
-  - "数据相关的单元格，一直到第 32 个，都和 notebook A 一样，但其中一个还会下载一个大约 510 MB、你根本用不上的 zip 包。"
+  - "数据相关的单元格，一直到第 32 个，都和 notebook A 一样，但其中一个还会下载一个 zip 包，大约 510 MB，你根本用不上。"
   - "你可以删掉那一行，然后暂停一下，把它们跑一遍。"
 - en: "Copy your API key from the user settings on W and B. In Colab, open the key icon and add a secret named exactly as on screen, with notebook access on. Pause and add yours. Cell 34 signs in with it."
   zh:
@@ -202,7 +202,7 @@ S04:
   - "光凭运气就差了两张照片：正好是冠军领先的差距。"
 - en: "To upload, edit the bucket and project inside cell 13 and run cell 13 again, then run cells 64 and 66; pause and do it."
   zh:
-  - "要上传的话，改第 13 个单元格里的 bucket 和项目，再跑一次第 13 个单元格，然后跑第 64 和第 66 个单元格；暂停一下，照着做。"
+  - "要上传的话，改第 13 个单元格里的 bucket 和项目并重跑它，然后跑第 64 和第 66 个单元格；暂停一下，照着做。"
 S05:
 - en: "The lecture shows the pattern as three lines around unchanged training code. Start the run with wandb init. Watch the model with a callback inside model fit. And finish the run when training ends."
   zh:
@@ -296,10 +296,10 @@ S06:
   - "快速预测一下。"
   - "你的笔记本没有 GPU，也没有 TensorFlow。"
   - "这张图里，哪些机器会 import TensorFlow？"
-- en: "Two: the Colab runtime, and the container inside each Vertex job. Never the cockpit on your laptop; scene 9 proves it."
+- en: "Two: the Colab runtime, and the container inside each Vertex job. Never the cockpit on your laptop; the tarball chapter proves it."
   zh:
   - "两个：Colab 运行时，以及每个 Vertex 任务里的 container。"
-  - "从来不是你笔记本上的驾驶舱；第 9 个场景会证明这一点。"
+  - "从来不是你笔记本上的驾驶舱；讲 tar 包的那一章会证明这一点。"
 S07:
 - en: "Clone the model training repo and move into it; pause and run it. Two extras show the course pin and the repo's files."
   zh:
@@ -323,7 +323,7 @@ S07:
   - "然后是身份：一个叫 model-trainer 的服务账号，角色是 Storage Admin、AI Platform Admin 和 Vertex AI Administrator，再在 secrets 里存一个 JSON 密钥：model-trainer.json。"
   - "暂停一下，建一个你自己的。"
   en_display:
-  - "Then the identity: a service account called model-trainer, with Storage Admin, AI Platform Admin and Vertex AI Administrator, and one JSON key saved in secrets as model-trainer.json."
+  - "Then the identity: a service account model-trainer with Storage Admin, AI Platform Admin and Vertex AI Administrator, and one JSON key saved in secrets as model-trainer.json."
   - null
 - en: "One honest note. This recording machine has no Google credentials, no W and B account, no GPU and no browser. The key in that listing is an obviously invalid stand-in, moved out before the container starts. So each cloud step shows the failure a misplaced key gives, and successes come from named sources."
   zh:
@@ -341,14 +341,16 @@ S07:
   - "然后用你自己的名字建一个 bucket；暂停一下，建好它。"
   - "两个额外检查说明了原因：我们的占位名返回 404，它根本不存在；而 README 里的名字返回 401，它属于别人。"
   - "金色标签：这个 bucket 存着你的代码和实验目录。"
-- en: "Last, copy your W and B key and export it in the terminal you'll use for the container. Pause and do it. An extra echo prints its length, 40 for our placeholder. It must not be zero, and the trainer's pinned wandb accepts exactly 40."
+- en: "Last, copy your W and B key and export it in the terminal you'll use for the container. Pause and do it. An extra echo prints its length, 40 for our placeholder. It must not be zero, and the trainer's pinned wandb accepts exactly 40. If yours is a different length, keep going, but watch the chapter Who submits, who runs, before you submit a job."
   zh:
-  - "最后，复制你的 W&B 密钥，在你要用来起 container 的那个终端里 export 它。"
+  - "最后，复制你的 W&B 密钥，在起 container 要用的那个终端里 export 它。"
   - "暂停一下，照着做。"
   - "额外用 echo 打印它的长度，我们的占位密钥是 40。"
-  - "它不能是 0，而且训练脚本 pin 住的 wandb 只接受正好 40 个字符。"
+  - "它不能是 0；训练脚本 pin 住的 wandb，只接受正好 40 个字符。"
+  - "如果你的长度不一样，先继续往下做，但提交任务之前，要先看“谁提交，谁运行”那一章。"
   en_display:
   - "Last, copy your W&B key and export it in the terminal you'll use for the container."
+  - null
   - null
   - null
   - null
@@ -359,6 +361,6 @@ S07:
   - "同样的 echo 现在会打印什么？"
 - en: "Zero: an exported variable exists only in that shell and its children. Part 1 is done: the key is set, the bucket has a name. Next, we build the cockpit, and today it won't build."
   zh:
-  - "0：export 过的变量只存在于那个 shell 和它的子进程里。"
+  - "0：export 过的变量，只存在于那个 shell 和它的子进程里。"
   - "第一部分完成了：密钥设好了，bucket 也有名字了。"
   - "接下来我们构建驾驶舱，而今天它构建不了。"

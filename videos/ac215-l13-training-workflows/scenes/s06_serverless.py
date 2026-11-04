@@ -314,7 +314,7 @@ class RentTheMachine(VoiceScene):
                       cpu_c.animate.set_stroke(OWNED, 3), gpu_c.animate.set_stroke(OWNED, 3), run_time=0.7)
             vo.wait_until("Never the cockpit")
             self.play(rings["cockpit"].animate.set_color(S.GREY), FadeIn(never, shift=UP * 0.15), run_time=0.6)
-            vo.wait_until("scene 9 proves it")
+            vo.wait_until("the tarball chapter proves it")
             self.play(Indicate(never.text, color=INK, scale_factor=1.08), run_time=0.8)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)

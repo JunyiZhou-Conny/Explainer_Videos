@@ -1,0 +1,3 @@
+$ docker stop port-demo
+port-demo
+[exit 0]

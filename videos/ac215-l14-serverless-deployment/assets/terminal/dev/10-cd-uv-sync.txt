@@ -1,0 +1,56 @@
+$ cd tutorial/app
+uv sync --frozen
+Using CPython 3.12.15 interpreter at: /usr/local/bin/python3
+Creating virtual environment at: .venv
+   Building ac215-translation-demo @ file:///home/student/serverless-deployment/tutorial/app
+Downloading cryptography (4.5MiB)
+Downloading hstspreload (1.2MiB)
+   Building googletrans==4.0.0rc1
+ Downloaded hstspreload
+ Downloaded cryptography
+      Built googletrans==4.0.0rc1
+      Built ac215-translation-demo @ file:///home/student/serverless-deployment/tutorial/app
+Prepared 41 packages in 4.01s
+Installed 41 packages in 259ms
+ + ac215-translation-demo==0.1.0 (from file:///home/student/serverless-deployment/tutorial/app)
+ + blinker==1.9.0
+ + certifi==2026.10.19
+ + cffi==2.1.1
+ + chardet==3.0.4
+ + charset-normalizer==3.5.2
+ + click==8.5.0
+ + cryptography==50.0.2
+ + flask==3.1.3
+ + google-api-core==2.42.0
+ + google-auth==2.62.0
+ + google-cloud-core==2.8.0
+ + google-cloud-storage==3.17.1
+ + google-crc32c==1.9.0
+ + google-resumable-media==2.11.0
+ + googleapis-common-protos==1.75.5
+ + googletrans==4.0.0rc1
+ + gunicorn==26.2.0
+ + h11==0.9.0
+ + h2==3.2.0
+ + hpack==3.0.0
+ + hstspreload==2025.1.1
+ + httpcore==0.9.1
+ + httpx==0.13.3
+ + hyperframe==5.2.0
+ + idna==2.10
+ + itsdangerous==2.2.0
+ + jinja2==3.1.6
+ + markupsafe==3.0.4
+ + opentelemetry-api==1.45.1
+ + proto-plus==1.29.0
+ + protobuf==7.36.2
+ + pyasn1==0.6.4
+ + pyasn1-modules==0.4.2
+ + pycparser==3.11
+ + requests==2.34.2
+ + rfc3986==1.5.0
+ + sniffio==1.3.1
+ + typing-extensions==4.16.0
+ + urllib3==2.8.0
+ + werkzeug==3.1.9
+[exit 0]

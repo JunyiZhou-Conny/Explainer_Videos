@@ -1,0 +1,7 @@
+$ python tutorial/tear_down.py \
+  --project=your-project-id \
+  --manifest=./local-state/lecture14-demo.json \
+  --delete-objects
+Stopped: [Errno 2] No such file or directory: 'local-state/lecture14-demo.json'
+Keep the manifest for recovery; later steps were not run.
+[exit 1]

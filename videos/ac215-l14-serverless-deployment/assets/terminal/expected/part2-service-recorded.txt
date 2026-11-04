@@ -1,0 +1,9 @@
+# RECORDED, not captured here: what the tutorial documents for Part 2.2 (Cloud Run service from the public image), quoted from dlops-io/serverless-deployment @ 46cc62f -- README.md:291-296, 314-315 and tutorial/gif_steps.json ("container-setup.gif" captions, the console rehearsal). The same image's local run is captured in ../laptop/10-26.
+Create submitted: Cloud Run provisions the public web service             [gif_steps.json, container-setup.gif caption 11]
+Creation completed: open the public service URL                           [caption 12]
+The public web app returns Bonjour à tous; speech is still disabled       [caption 14]
+Service details → Revision History: inspect the ready revision           [caption 15]
+Inspect a POST /api/translate entry: HTTP status 200                      [caption 17]
+Security confirms Allow public access for this service                    [caption 18]
+"A revision is a deployed version of the service's image and configuration."   [README.md:295-296]
+Checkpoint: "this deployment did not need to build our source"           [README.md:314-315]

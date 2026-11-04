@@ -402,7 +402,7 @@ GREY chip "your bucket: one from lecture 11, or create it now · scene 7 shows h
 1438 is not shown) and a `…`. `▶ your turn`. V1's Colab lane: notebook A → folder → bucket lights.
 GOLD `cost_tag()`: "stored in your bucket · weights of 10–104 MB per model (the table's model_size),
 plus a .keras copy of each". Fade out.
-SAY: Sign in with cell 62, put your own project and bucket into cell 63, and run cell 66. Any bucket of yours works; scene 7 creates one. Pause and run it. A gold tag: those files now sit in your bucket, 10 to 104 megabytes of weights per model, plus a copy.
+SAY: Sign in with cell 62, put your own project and bucket into cell 63, and run cell 66. Any bucket of yours works; if you have none yet, skip this upload and come back after the setup chapter. Pause and run it. A gold tag: those files now sit in your bucket, 10 to 104 megabytes of weights per model, plus a copy.
 
 ---
 
@@ -564,7 +564,7 @@ SAY: A quick prediction. Your laptop has no GPU and no TensorFlow. Which machine
 
 SHOW: The answer: the Colab runtime and the Vertex job's container light GREEN; the cockpit gets a
 GREY "never · proved in scene 9" chip. Fade out.
-SAY: Two: the Colab runtime, and the container inside each Vertex job. Never the cockpit on your laptop; scene 9 proves it.
+SAY: Two: the Colab runtime, and the container inside each Vertex job. Never the cockpit on your laptop; the tarball chapter proves it.
 
 ---
 
@@ -634,7 +634,7 @@ the check: not 0 · and the trainer's pinned wandb 0.15.11 accepts only 40 (scen
 `87:14`)". `▶ your turn`. An optional GREY chip, tagged `extra · not captured`: "keep it out of
 your shell history: `read -rs WANDB_KEY && export WANDB_KEY` (bash, zsh)". On V1 a GREEN key chip
 settles in the laptop's shell.
-SAY: Last, copy your W and B key and export it in the terminal you'll use for the container. Pause and do it. An extra echo prints its length, 40 for our placeholder. It must not be zero, and the trainer's pinned wandb accepts exactly 40.
+SAY: Last, copy your W and B key and export it in the terminal you'll use for the container. Pause and do it. An extra echo prints its length, 40 for our placeholder. It must not be zero, and the trainer's pinned wandb accepts exactly 40. If yours is a different length, keep going, but watch the chapter Who submits, who runs, before you submit a job.
 
 SHOW: A second terminal slides in (title `laptop · new terminal`, prompt `student@laptop:~$`),
 empty.
@@ -738,7 +738,7 @@ google.cloud.aiplatform as aip; print(aip.__version__)"` (extra; folds) → TERM
 (extra) → TERM(laptop/26: 66, …, 69), line 69 RED. V1's cockpit gets its stamp: "submits · never
 trains". A host strip (`student@laptop:~/model-training$`): `docker image ls model-training-cli`
 (extra) → TERM(laptop/27: 2–3; squeeze), `2.59GB` with `at the time of recording`.
-SAY: Inside the cockpit, a few extra checks. Slash secrets is empty, our sandbox. Project, bucket and key came through; gcloud, gsutil and uv are here. Pause and check yours: the last number must be 40, not 0. But importing TensorFlow fails: this container submits jobs, it never trains.
+SAY: Inside the cockpit, a few extra checks. Slash secrets is empty, our sandbox. Project, bucket and key came through; gcloud, gsutil and uv are here. Pause and check yours: the last number should be 40 for this wandb pin, never 0; if not, see the chapter Who submits, who runs. But importing TensorFlow fails: this container submits jobs, it never trains.
 
 SHOW: TRACKER E1. CODE(package/setup.py: 5–13): line 5 `REQUIRED_PACKAGES = ["wandb==0.15.11"]`
 GREEN; line 11 `packages=find_packages(),` YELLOW → V4: a GREEN `trainer/` folder with
@@ -747,7 +747,7 @@ GREEN; line 11 `packages=find_packages(),` YELLOW → V4: a GREEN `trainer/` fol
 tf-cpu.2-17 · not verified here"; a GREY chip beside the GREEN pin: "requests: via wandb". A small
 GREY chip (slides vs code): "uv.lock pins the cockpit, not the trainer". `▶ your turn` (open the
 file).
-SAY: Review setup.py; pause and open it. It is the label pip uses to install the tarball. The only declared dependency is wandb, pinned to 0.15.11. Its find packages call finds the trainer folder because the folder has its own init file, so once installed, python dash m trainer dot task works. TensorFlow and scikit-learn are not declared: they are assumed to come from the image Google provides, and scene 11 shows the tarball lacks them. Requests only arrives because wandb needs it.
+SAY: Review setup.py; pause and open it. It is the label pip uses to install the tarball. The only declared dependency is wandb, pinned to 0.15.11. Its find packages call finds the trainer folder because the folder has its own init file, so once installed, python dash m trainer dot task works. TensorFlow and scikit-learn are not declared: they are assumed to come from the image Google provides, and a later chapter shows the tarball lacks them. Requests only arrives because wandb needs it.
 
 SHOW: TRACKER E2. CODE(package/trainer/task.py: 45–54): line 52 `default="16"` YELLOW, pin "scene
 11". Then two small panels: CODE(package/trainer/task.py: 96–100) (chip "from a GitHub release ·
@@ -815,7 +815,7 @@ TERM(laptop/40: 43–44, …, 47); line 43 `Using endpoint [https://us-central1-
 GREEN, line 44 RED. `▶ your turn`. TRACKER F2 · extra: `gcloud auth list` (extra) →
 TERM(laptop/40: 58), RED. On V5's preview the GREEN key-file badge is missing from the cockpit's
 lanyard. A GREY chip, no panel: "with your key: gcloud reports the job as created".
-SAY: A gold tag first: once the job's machine is provisioned, your project pays until the script exits. Check that your key length is 40; if not, watch scene 11 before you submit. Now sh cli.sh; pause and run it. The first line is real: the Vertex AI endpoint in us-central1. Then it stops with no active account, because the key never loaded; an extra auth list confirms it. With your key, gcloud reports the job as created.
+SAY: A gold tag first: once the job's machine is provisioned, your project pays until the script exits. Check that your key length is 40; if not, watch the next chapter, Who submits, who runs, before you submit. Now sh cli.sh; pause and run it. The first line is real: the Vertex AI endpoint in us-central1. Then it stops with no active account, because the key never loaded; an extra auth list confirms it. With your key, gcloud reports the job as created.
 
 SHOW: TRACKER F2 · extra. It types `sh -x cli.sh` (extra) → TERM(laptop/40: 64–66, 69, 75–77 wrap)
 — the hex in 65–66 and 77 rendered `<12 hex>`; line 69 (the GPU image) YELLOW, then line 76 (the
@@ -905,13 +905,13 @@ printed before the check, is not shown), line 14 RED, chip "the default `\"16\"`
 wandb.login(key='PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000')"` → TERM(laptop/86: 4), YELLOW (not
 GREEN), chip "length check only · offline · nothing asked W&B". (Each command is typed in full,
 folded, small.)
-SAY: Then the trainer's first W and B step, line 153, with three keys. The empty key from scene 10 fails with api key not configured, and on Vertex that comes after the data download, on billed machine time. The default of 16 fails: API key must be 40 characters long, yours was 2. Our 40 character placeholder passes the offline length check, and nothing more.
+SAY: Then the trainer's first W and B step, line 153, with three keys. The empty key from the last chapter fails with api key not configured, and on Vertex that comes after the data download, on billed machine time. The default of 16 fails: API key must be 40 characters long, yours was 2. Our 40 character placeholder passes the offline length check, and nothing more.
 
 SHOW: One more strip: `… wandb.login(key='PLACEHOLDER_NOT_A_REAL_WANDB_KEY_0000000_LONGER')"`
 (extra; folds) → TERM(laptop/87: 14), `yours was 47` RED. A GREY card: "wandb 0.15.11 accepts
 exactly 40 characters · today's key format: not checked · a different length: this pin refuses
 it · check before you submit". Fade out.
-SAY: One more: this old wandb pin accepts exactly 40 characters, and 47 fails. We could not check which key format W and B gives out today. If yours differs, this pin refuses it, so check before you submit.
+SAY: One more: this old wandb pin accepts exactly 40 characters, and 47 fails. We could not check which key format W and B gives out today. If yours differs, this pin refuses it, so check before you submit. One fix, untested here: raise the wandb pin in setup.py to a current release, run sh package-trainer.sh again, and then submit.
 
 ---
 
@@ -982,7 +982,7 @@ SAY: Now the reverse of the README's optional CPU step: what would it take to tr
 SHOW: The quota page from S07 (`illustration`) flashes by the quota switch. TRACKER F3 · extra:
 cockpit-free laptop strip, the long loop of TERM laptop/09's line 1 (extra; folds; small) →
 TERM(laptop/09: 2–7), the three sizes with `at the time of recording` (on screen, not spoken).
-SAY: The quota is the console request from scene 7. An extra check shows Google still serves both GPU images, at the time of recording.
+SAY: The quota is the console request from the setup chapter. An extra check shows Google still serves both GPU images, at the time of recording.
 
 SHOW: CODE(cli.sh: 21–37): lines 22–27 uncomment (YELLOW), lines 30–37 comment out (GREY). V6
 replay: with both blocks left live, two job tiles appear with the same name
@@ -991,7 +991,7 @@ SAY: To switch, uncomment the GPU block and comment out the CPU block. Leave bot
 
 SHOW: A GREY honest card: "no GPU quota, no account here · the GPU block runs the same
 gcloud ai custom-jobs create that failed in scene 10 · nothing new to show, nothing faked".
-SAY: Here the GPU block would fail the same way as in scene 10, with no active account, so there is nothing new to show, and nothing we fake.
+SAY: Here the GPU block would fail the same way as our CPU submit did, with no active account, so there is nothing new to show, and nothing we fake.
 
 SHOW: GOLD `cost_tag()` on the T4 chip: "a GPU adds to the bill while it is attached, used or not ·
 see the Vertex AI pricing page".

@@ -1,0 +1,8 @@
+$ date -u '+%Y-%m-%d %H:%M UTC'; uname -sm; . /etc/os-release; echo $PRETTY_NAME; python3 --version; git --version; which uv; echo which-uv-exit:$?
+2026-11-04 09:30 UTC
+Linux x86_64
+Debian GNU/Linux 12 (bookworm)
+Python 3.12.15
+git version 2.39.5
+which-uv-exit:1
+[exit 0]

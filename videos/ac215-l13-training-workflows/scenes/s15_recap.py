@@ -316,6 +316,7 @@ class Recap(VoiceScene):
             vo.wait_until("it fails at the missing key file")
             r2 = out(self, t, e2[:3] + [(e2[3], ERR)], wrap=True)
             self.play(Indicate(r2[-2:], color=ERR, scale_factor=1.02), run_time=0.7)
+            self.wait(1.5)  # QA 29:26: let the missing-key error be read before the cut
 
         # ========================================================== 1. where is the trained model?
         vm = TarballTrip.vm(mini=True, center=(-3.6, 1.25))

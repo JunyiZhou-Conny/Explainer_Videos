@@ -105,7 +105,7 @@ class InsideTheTarball(VoiceScene):
             out(self, t, c26.at((49, 52)), run_time=0.4)
             vo.wait_until("Pause and check yours")
             flash_tag(self, yt, TURN, run_time=0.5)
-            vo.wait_until("the last number must be 40")
+            vo.wait_until("the last number should be 40")
             r40 = ring(forty, TURN, buff=0.06)
             self.play(Create(r40), FadeIn(zero, shift=UP * 0.1), run_time=0.5)
             istep(self, t, c26.line(53), type_time=0.4)
@@ -184,7 +184,7 @@ class InsideTheTarball(VoiceScene):
             self.play(FadeIn(layer, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("they are assumed to come")
             self.play(FadeIn(err1, shift=LEFT * 0.1), FadeIn(exp_, shift=UP * 0.1), run_time=0.5)
-            vo.wait_until("and scene 11 shows")
+            vo.wait_until("and a later chapter shows")
             flash_tag(self, err1, SYSTEM, run_time=0.5)
             self.play(FadeIn(uvl, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Requests only arrives")
@@ -323,7 +323,7 @@ class InsideTheTarball(VoiceScene):
             istep(self, t4, c30.line(55), type_time=0.4)
             o11 = out(self, t4, tar_cols(c30.at((56, 63))), run_time=0.5, lag=0.05)
             self.play(substring(o11[2], "10253").animate.set_color(TURN), run_time=0.4)
-            self.wait(2.5)      # the eight-entry listing stays readable (~3 s) before the host strip replaces it
+            self.wait(1.8)      # the eight-entry listing stays readable (~3 s) before the host strip replaces it
             vo.wait_until("On our Linux engine it belongs to root")
             self.play(FadeOut(VGroup(t4, ex4, *t4.lines)), FadeIn(h4), run_time=0.4)
             self.remove(t4, ex4, *t4.lines)

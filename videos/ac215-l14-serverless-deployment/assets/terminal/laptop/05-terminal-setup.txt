@@ -1,0 +1,12 @@
+$ export PROJECT_ID=YOUR_PROJECT_ID
+export REGION=northamerica-northeast2
+export IMAGE=cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+export WEB_SERVICE=translation-demo
+export JOB_NAME=translation-audio
+export WEB_EMAIL="translation-demo-runtime@${PROJECT_ID}.iam.gserviceaccount.com"
+export JOB_EMAIL="translation-audio-job@${PROJECT_ID}.iam.gserviceaccount.com"
+echo "$WEB_EMAIL"; echo "$JOB_EMAIL"; echo "$IMAGE"
+translation-demo-runtime@YOUR_PROJECT_ID.iam.gserviceaccount.com
+translation-audio-job@YOUR_PROJECT_ID.iam.gserviceaccount.com
+cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+[exit 0]

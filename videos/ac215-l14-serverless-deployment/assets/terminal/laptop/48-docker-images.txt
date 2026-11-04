@@ -1,0 +1,5 @@
+$ docker images; docker ps -a
+IMAGE                                                            ID             DISK USAGE   CONTENT SIZE   EXTRA
+cgumb/ac215-translation-demo:lecture14-agent-platform-20261022   f50c08e71be0        260MB         62.3MB        
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[exit 0]

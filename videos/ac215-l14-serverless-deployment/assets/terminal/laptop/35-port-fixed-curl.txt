@@ -1,0 +1,3 @@
+$ curl -s http://localhost:8086/ | grep -o '<title>.*</title>'
+<title>Translate · AC215</title>
+[exit 0]

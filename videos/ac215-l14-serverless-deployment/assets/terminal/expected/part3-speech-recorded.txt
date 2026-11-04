@@ -1,0 +1,13 @@
+# RECORDED, not captured here: what the tutorial documents for Part 3 (runtime identity + Gemini speech), quoted from dlops-io/serverless-deployment @ 46cc62f -- README.md:380, 453-462 and tutorial/gif_steps.json ("identity-create.gif", "identity-impersonation.gif", "identity-speech-settings.gif", "web-translation-speech.gif" captions). The rehearsal's own project ID in one caption is replaced by <your project ID>. Speech needs a Google identity with Agent Platform access, which the capture sandbox does not have: ../dev/14 and ../laptop/43 capture the app's honest "Google credentials are unavailable" failure instead.
+Filtered result: runtime account Enabled, No keys; open its row            [identity-create.gif caption 10; README.md:380 "You do not need to create or download a key."]
+Grant access is scoped to this runtime service account                    [identity-impersonation.gif caption 4]
+Filtered result: Token Creator on this account; inherited project roles  [identity-impersonation.gif caption 8]
+ENABLE_SPEECH=true; select Add variable for the next setting              [identity-speech-settings.gif caption 5]
+GOOGLE_CLOUD_PROJECT=<your project ID>; add the location setting          [caption 6]
+GOOGLE_CLOUD_LOCATION=us-central1                                         [caption 7]
+Review the new identity and all three variables; select Deploy changes    [caption 9]
+All deployment stages completed; the service is healthy                   [caption 11]
+Reload the public app, enter text and select Translate                    [web-translation-speech.gif caption 1]
+Translation complete: select Play audio                                   [caption 2]
+The player shows Pause: generated French audio is playing                 [caption 4]
+Checkpoint: the app calls an authenticated API as its attached account; the audio returns to the browser; no bucket is used in this part.   [README.md:460-462, paraphrased in the README's order]

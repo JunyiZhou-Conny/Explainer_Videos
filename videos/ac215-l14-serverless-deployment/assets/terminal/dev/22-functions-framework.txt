@@ -1,0 +1,3 @@
+$ ~/fn-venv/bin/functions-framework --target hello_http
+^C
+[exit 0]

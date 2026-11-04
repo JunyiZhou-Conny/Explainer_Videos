@@ -1,0 +1,27 @@
+$ python tutorial/run_job.py --help
+usage: run_job.py [-h] --project PROJECT [--region REGION] [--job JOB]
+                  --input-bucket INPUT_BUCKET --output-bucket OUTPUT_BUCKET
+                  [--src SRC] [--dest DEST] [--download-dir DOWNLOAD_DIR]
+                  [--no-download] [--dry-run]
+                  text_file
+
+Upload a local passage, execute an existing Cloud Run job, download outputs.
+
+positional arguments:
+  text_file             A short local UTF-8 passage
+
+options:
+  -h, --help            show this help message and exit
+  --project PROJECT
+  --region REGION
+  --job JOB
+  --input-bucket INPUT_BUCKET
+                        Bucket name, without gs://
+  --output-bucket OUTPUT_BUCKET
+                        Bucket name, without gs://
+  --src SRC
+  --dest DEST
+  --download-dir DOWNLOAD_DIR
+  --no-download         Leave results in Storage
+  --dry-run             Print commands; upload and execute nothing
+[exit 0]

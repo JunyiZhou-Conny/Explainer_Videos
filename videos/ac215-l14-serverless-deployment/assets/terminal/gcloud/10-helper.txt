@@ -1,0 +1,15 @@
+$ python tutorial/run_job.py ./passage.txt \
+  --project="$PROJECT_ID" --region="$REGION" --job="$JOB_NAME" \
+  --input-bucket="$INPUT_BUCKET" --output-bucket="$OUTPUT_BUCKET" \
+  --src=en --dest=fr --download-dir=./results
+$ gcloud storage cp /home/student/serverless-deployment/passage.txt gs://YOUR_INPUT_BUCKET/run-20261104-093454-e2f3270ddd46/passage.txt --project=YOUR_PROJECT_ID --quiet
+ERROR: (gcloud) The project property must be set to a valid project ID, not the project name [YOUR_PROJECT_ID]
+To set your project, run:
+
+  $ gcloud config set project PROJECT_ID
+
+or to unset it, run:
+
+  $ gcloud config unset project
+Helper stopped: gcloud failed with exit status 1. Later steps were not run.
+[exit 1]

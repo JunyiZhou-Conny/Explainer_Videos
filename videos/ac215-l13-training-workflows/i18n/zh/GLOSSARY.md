@@ -103,7 +103,7 @@
 | packed into a 4 kilobyte tarball / a machine you rent for the length of one job / from one command | Colab / tar 包 / 4 KB / 租 / 任务 / 命令 | S01[2]：它被打进一个 4 KB 的 tar 包，在一台只租一个任务那么久的机器上训练，只用一条命令。 | tarball → tar 包 (exam); job → 任务 (exam, L08); rent → 租 (A5). |
 | W and B / W&B / Weights and Biases / your W and B key | W&B / Weights & Biases / W&B 密钥 | S01[2]：这条命令里带着你的 W&B 密钥。 | The SAY writes W and B; the Chinese line and en_display write W&B (D4). First full name in S02[3]: 课程用的是 Weights & Biases，简称 W&B，它帮你托管。 key → 密钥 (L06's OpenAI 密钥), except W&B's own API key (S04[2]). |
 | follow along / a free T4 GPU / a free account on W and B / a Google Cloud project with billing | 跟着做 / 拷贝 / 免费的 T4 GPU / W&B 账号 / 开通了结算的 Google Cloud 项目 | S01[3]：跟着做，你需要两份 Colab 拷贝，带免费的 T4 GPU，一个免费的 W&B 账号、Docker，以及一个开通了结算的 Google Cloud 项目。 | copy → 拷贝 (A8, never 副本). billing → 结算 (L11). |
-| cost money while they run / gold tags mark each point, without amounts / a yellow tag / the study guide | 花钱 / 金色标签 / 黄色标签 / 学习指南 | S01[3]：Vertex AI 任务运行时会花钱；金色标签标出每一个计费点，不写金额。 | A yellow tag means pause and run it, and the study guide has every command → 黄色标签的意思是：暂停一下，自己跑一遍；每条命令都在学习指南里 (D6). |
+| cost money while they run / gold tags mark each point, without amounts / a yellow tag / the study guide | 花钱 / 金色标签 / 黄色标签 / 学习指南 | S01[3]：Vertex AI 任务在运行期间会花钱；金色标签标出每一个计费点，不写金额。 | A yellow tag means pause and run it, and the study guide has every command → 黄色标签的意思是：暂停一下，自己跑一遍；每条命令都在学习指南里 (D6). |
 | two words from the lecture / reproducibility / accountability | 可复现 / 可追责 | S01[3]：今天的两个关键词，来自课上：可复现和可追责。 | The words are on screen in English (A11); the Chinese line says them in Chinese (exam). |
 
 ### S02 三个杠杆和缺了位置的一行 / Three levers and a missing row

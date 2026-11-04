@@ -1,0 +1,20 @@
+$ ls -a; ls local-state results 2>&1
+.
+..
+.git
+.gitignore
+Dockerfile
+README.md
+cli.py
+docker-entrypoint.sh
+docker-shell.sh
+docs
+images
+main.py
+passage.txt
+pyproject.toml
+tutorial
+uv.lock
+ls: cannot access 'local-state': No such file or directory
+ls: cannot access 'results': No such file or directory
+[exit 2]

@@ -1,0 +1,3 @@
+$ docker run -d --name port-demo --rm -e PORT=9090 -p 8086:8080 cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+adb41257f56c9ecd0daa35ca6d91ac39643c24ed4f1755489a79ef5cb483e631
+[exit 0]
