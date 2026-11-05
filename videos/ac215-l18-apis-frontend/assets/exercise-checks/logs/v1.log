@@ -1,0 +1,150 @@
+### B1: --host 127.0.0.1 instead of 0.0.0.0
+$ docker run -d --name l18ex-v1 -p 19000:9000 -v $SCRATCH/v1:/app l18ex/py312:check uvicorn api.service:app --host 127.0.0.1 --port 9000 >/dev/null; sleep 3; docker logs l18ex-v1 2>&1 | grep 'Uvicorn running'
+INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
+[exit 0]
+
+$ docker exec l18ex-v1 curl -sS http://localhost:9000/
+{"message":"Welcome to AC215"}[exit 0]
+
+$ curl -sS http://localhost:19000/
+curl: (56) Recv failure: Connection reset by peer
+[exit 56]
+
+$ docker port l18ex-v1
+9000/tcp -> 0.0.0.0:19000
+[exit 0]
+
+$ docker rm -f l18ex-v1 >/dev/null
+[exit 0]
+
+$ docker run -d --name l18ex-v1 -p 19000:9000 -v $SCRATCH/v1:/app l18ex/py312:check uvicorn api.service:app --host 0.0.0.0 --port 9000 >/dev/null; sleep 3; docker logs l18ex-v1 2>&1 | grep 'Uvicorn running'
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+[exit 0]
+
+$ curl -sS http://localhost:19000/
+{"message":"Welcome to AC215"}[exit 0]
+
+$ docker rm -f l18ex-v1 >/dev/null
+[exit 0]
+
+### B2, B3: the README's square_root, plus a path parameter (README's uvicorn line, --reload)
+$ docker run -d --name l18ex-v1 -p 19000:9000 -v $SCRATCH/v1:/app l18ex/py312:check uvicorn api.service:app --host 0.0.0.0 --port 9000 --log-level debug --reload --reload-dir api/ >/dev/null; sleep 3; docker logs l18ex-v1 2>&1 | grep -E 'Uvicorn running|reloader'
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+INFO:     Started reloader process [1] using StatReload
+[exit 0]
+
+$ docker logs l18ex-v1 2>&1 | grep -E 'StatReload detected|Application startup complete' | tail -2
+WARNING:  StatReload detected changes in 'api/service.py'. Reloading...
+INFO:     Application startup complete.
+[exit 0]
+
+$ curl -sS 'http://localhost:19000/hypot/3?y=4'; echo; curl -sS http://localhost:19000/hypot/3; echo; curl -sS -w ' [HTTP %{http_code}]' http://localhost:19000/hypot/abc
+5.0
+3.0
+{"detail":[{"type":"float_parsing","loc":["path","x"],"msg":"Input should be a valid number, unable to parse string as a number","input":"abc"}]} [HTTP 422][exit 0]
+
+$ curl -sS http://localhost:19000/openapi.json | python3 -c 'import json,sys; p=json.load(sys.stdin)["paths"]["/hypot/{x}"]["get"]["parameters"]; [print(q["name"], q["in"], "required" if q.get("required") else "optional", q["schema"]) for q in p]'
+x path required {'type': 'number', 'title': 'X'}
+y query optional {'type': 'number', 'default': 0, 'title': 'Y'}
+[exit 0]
+
+$ curl -sS -i 'http://localhost:19000/square_root?x=3&y=4' | tr -d '\r' | grep -iE '^(HTTP|location)'
+HTTP/1.1 307 Temporary Redirect
+location: http://localhost:19000/square_root/?x=3&y=4
+[exit 0]
+
+$ curl -sS -L -w ' [HTTP %{http_code}, %{num_redirects} redirect]' 'http://localhost:19000/square_root?x=3&y=4'
+5.0 [HTTP 200, 1 redirect][exit 0]
+
+$ curl -sS -w ' [HTTP %{http_code}]' 'http://localhost:19000/square_root/?x=abc'
+{"detail":[{"type":"float_parsing","loc":["query","x"],"msg":"Input should be a valid number, unable to parse string as a number","input":"abc"}]} [HTTP 422][exit 0]
+
+$ curl -sS -i -X POST 'http://localhost:19000/square_root?x=3&y=4' | tr -d '\r' | grep -iE '^(HTTP|location)'
+HTTP/1.1 307 Temporary Redirect
+location: http://localhost:19000/square_root/?x=3&y=4
+[exit 0]
+
+$ curl -sS -L -X POST -w ' [HTTP %{http_code}, %{num_redirects} redirect]' 'http://localhost:19000/square_root?x=3&y=4'
+{"detail":"Method Not Allowed"} [HTTP 405, 1 redirect][exit 0]
+
+### B4: a slow route as async def vs def (two requests at the same time)
+$ s=$(date +%s.%N); curl -s localhost:19000/slow_async >/dev/null & curl -s localhost:19000/slow_async >/dev/null & wait; python3 -c "print('two requests to /slow_async took %.1f s' % ($(date +%s.%N) - $s))"
+two requests to /slow_async took 4.0 s
+[exit 0]
+
+$ s=$(date +%s.%N); curl -s localhost:19000/slow_def >/dev/null & curl -s localhost:19000/slow_def >/dev/null & wait; python3 -c "print('two requests to /slow_def took %.1f s' % ($(date +%s.%N) - $s))"
+two requests to /slow_def took 2.0 s
+[exit 0]
+
+### C6: CORS on v1 (CORSMiddleware allow_origins=['*']), and an unhandled error
+$ curl -sS -i -H 'Origin: http://localhost:8080' http://localhost:19000/ | tr -d '\r' | grep -iE '^(HTTP|access-control)'
+HTTP/1.1 200 OK
+access-control-allow-origin: *
+[exit 0]
+
+$ curl -sS -i -X OPTIONS -H 'Origin: http://localhost:8080' -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: content-type,x-session-id' http://localhost:19000/square_root/ | tr -d '\r' | grep -iE '^(HTTP|access-control)'
+HTTP/1.1 200 OK
+access-control-allow-origin: *
+access-control-allow-methods: DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
+access-control-max-age: 600
+access-control-allow-headers: content-type,x-session-id
+[exit 0]
+
+$ curl -sS -i -H 'Origin: http://localhost:8080' http://localhost:19000/handled | tr -d '\r' | grep -iE '^(HTTP|access-control|\{)'
+HTTP/1.1 500 Internal Server Error
+access-control-allow-origin: *
+{"detail":"handled error"}
+[exit 0]
+
+$ curl -sS -i -H 'Origin: http://localhost:8080' http://localhost:19000/boom | tr -d '\r' | grep -iE '^(HTTP|access-control|Internal)'
+HTTP/1.1 500 Internal Server Error
+Internal Server Error
+[exit 0]
+
+$ docker logs l18ex-v1 2>&1 | grep -E 'ZeroDivisionError|GET /boom'
+INFO:     172.17.0.1:44788 - "GET /boom HTTP/1.1" 500 Internal Server Error
+ZeroDivisionError: division by zero
+[exit 0]
+
+### C6: the same app without the middleware (service.py lines 7-14 removed, the way main has no CORS)
+$ grep -c CORSMiddleware $W/api/service.py
+1
+[exit 0]
+
+$ curl -sS -i -H 'Origin: http://localhost:8080' http://localhost:19000/ | tr -d '\r' | grep -iE '^(HTTP|access-control)'
+HTTP/1.1 200 OK
+[exit 0]
+
+$ curl -sS -i -X OPTIONS -H 'Origin: http://localhost:8080' -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: content-type,x-session-id' http://localhost:19000/square_root/ | tr -d '\r' | grep -iE '^(HTTP|access-control|allow)'
+HTTP/1.1 405 Method Not Allowed
+allow: GET
+[exit 0]
+
+$ docker logs l18ex-v1 2>&1 | grep -E '"(GET|POST|OPTIONS) ' | sed -E 's/^INFO: +[0-9.:]+ - //'
+"GET /hypot/3?y=4 HTTP/1.1" 200 OK
+"GET /hypot/3 HTTP/1.1" 200 OK
+"GET /hypot/abc HTTP/1.1" 422 Unprocessable Entity
+"GET /openapi.json HTTP/1.1" 200 OK
+"GET /square_root?x=3&y=4 HTTP/1.1" 307 Temporary Redirect
+"GET /square_root?x=3&y=4 HTTP/1.1" 307 Temporary Redirect
+"GET /square_root/?x=3&y=4 HTTP/1.1" 200 OK
+"GET /square_root/?x=abc HTTP/1.1" 422 Unprocessable Entity
+"POST /square_root?x=3&y=4 HTTP/1.1" 307 Temporary Redirect
+"POST /square_root?x=3&y=4 HTTP/1.1" 307 Temporary Redirect
+"POST /square_root/?x=3&y=4 HTTP/1.1" 405 Method Not Allowed
+"GET /slow_async HTTP/1.1" 200 OK
+"GET /slow_async HTTP/1.1" 200 OK
+"GET /slow_def HTTP/1.1" 200 OK
+"GET /slow_def HTTP/1.1" 200 OK
+"GET / HTTP/1.1" 200 OK
+"OPTIONS /square_root/ HTTP/1.1" 200 OK
+"GET /handled HTTP/1.1" 500 Internal Server Error
+"GET /boom HTTP/1.1" 500 Internal Server Error
+"GET / HTTP/1.1" 200 OK
+"OPTIONS /square_root/ HTTP/1.1" 405 Method Not Allowed
+[exit 0]
+
+$ docker rm -f l18ex-v1 >/dev/null; docker ps -a --filter name=l18ex- --format '{{.Names}}' | wc -l
+0
+[exit 0]
+

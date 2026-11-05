@@ -1,0 +1,17 @@
+$ docker run -dit --name l18ex-shell python:3.13-slim-bookworm bash -c 'api_server() { echo uvicorn would start here; }; export -f api_server; exec /bin/bash' >/dev/null && echo started
+started
+[exit 0]
+
+$ docker exec l18ex-shell bash -c 'tr "\\0" "\\n" < /proc/1/environ | grep -A1 BASH_FUNC_api_server'
+BASH_FUNC_api_server%%=() {  echo uvicorn would start here
+}
+[exit 0]
+
+$ docker exec l18ex-shell bash -c 'type api_server'
+bash: line 1: type: api_server: not found
+[exit 1]
+
+$ docker rm -f l18ex-shell >/dev/null; docker ps -a --filter name=l18ex- --format '{{.Names}}' | wc -l
+0
+[exit 0]
+

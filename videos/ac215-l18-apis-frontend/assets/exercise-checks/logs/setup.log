@@ -1,0 +1,33 @@
+$ date -u; docker version --format 'Docker {{.Server.Version}}'
+Thu Nov  5 15:31:05 UTC 2026
+Docker 29.8.2
+[exit 0]
+
+$ docker build -q --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY --build-arg https_proxy=$HTTPS_PROXY -t l18ex/py312:check -f <logs>/py312-check.Dockerfile $SCRATCH/py312
+sha256:b4bd61237000e3461749e58f15e64f4bff4ac92618136b21ab343ab804565480
+[exit 0]
+
+$ docker run --rm l18ex/py312:check sh -c 'python --version; pip list 2>/dev/null | grep -iE "^(fastapi|starlette|pydantic|uvicorn) "'
+Python 3.12.16
+fastapi           0.120.4
+pydantic          2.12.3
+starlette         0.49.3
+uvicorn           0.38.0
+[exit 0]
+
+$ docker build -q --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY --build-arg https_proxy=$HTTPS_PROXY -t l18ex/api313:check -f <logs>/api313-check.Dockerfile $SCRATCH/api313
+sha256:54d7d1fa913e6e8628d047a89800026711d4a110db8e50c4a251df26a9a7a46a
+[exit 0]
+
+$ docker run --rm l18ex/api313:check sh -c 'python --version; pip list 2>/dev/null | grep -iE "^(fastapi|starlette|pydantic|uvicorn|chromadb-client|google-genai|pytest|numpy|tensorflow.*) "'
+Python 3.13.18
+chromadb-client                          1.5.9
+fastapi                                  0.162.0
+google-genai                             2.34.0
+numpy                                    2.5.4
+pydantic                                 2.14.2
+pytest                                   9.2.0
+starlette                                1.10.0
+uvicorn                                  0.54.0
+[exit 0]
+
