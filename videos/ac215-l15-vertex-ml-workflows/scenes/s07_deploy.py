@@ -21,7 +21,7 @@ Beats (script.md "## S07", one voiceover block each):
     on "That one call creates all three". The dashed card turns into the solid BLUE Model card; the
     machine slot Transforms into the endpoint configuration card (AllTraffic · ml.m5.xlarge ·
     count 1 · weight 1) and the endpoint plate `…-endpoint-<timestamp>` with its machine and dial;
-    GREY chip "shape from the part 2 Lambda".
+    GREY chip "part 2 code spells these fields out" (QA: Lambda not yet introduced).
  4  V5 and the panel go (the terminal needs the frame). 8-row terminal at (app) app@<id>:/app$:
     `python cli.py --deploy` (▶ your turn) -> TERM(laptop/28: 52, 58, …, 78, 83, …, 308); 83 and
     308 RED. GREY card above: "with your keys · 5–10 min (README A:127)" / "the endpoint name ·
@@ -243,7 +243,7 @@ class ModelToEndpoint(VoiceScene):
         # ========================================================== 3. deploy(): all three objects
         p3 = code("A/cli.py", 164, 171, font_size=20, cuts=CUTS3)
         c3 = p3.code
-        lam = grey_chip("configuration shape: from the part 2 Lambda")
+        lam = grey_chip("part 2 code spells these fields out")
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(rg2), FadeOut(link2), FadeOut(callout), FadeOut(chips2), FadeOut(rec2),

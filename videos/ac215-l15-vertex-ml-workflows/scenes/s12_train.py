@@ -193,7 +193,7 @@ class TrainLocally(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.2), FadeIn(t), FadeIn(exit_c, shift=DOWN * 0.1), run_time=0.6)
-            type_cmd(self, t, "cd ../model-training", type_time=0.5, soft=True)
+            type_cmd(self, t, "cd ../model-training", type_time=0.5)
             cd_prompt(self, t, P_SRC("model-training"), run_time=0.4)
             type_cmd(self, t, C70.cmd, type_time=0.4)
             vo.wait_until("Same A R M 64 line")
@@ -515,9 +515,9 @@ class TrainLocally(VoiceScene):
             sk = strike(md)
             self.play(Indicate(md, color=ERR, scale_factor=1.1), run_time=0.5)
             self.play(Create(sk), run_time=0.4)
-            vo.wait_until("The trainer does it")
             ar6 = arrow(np.array([md.get_center()[0], rc.get_bottom()[1], 0]), mt.get_top(), color=S.GREY)
             self.play(GrowArrow(ar6), FadeIn(mt, shift=UP * 0.1), run_time=0.6)
+            vo.wait_until("The trainer does it")
             self.play(Indicate(mt, color=OWN, scale_factor=1.08), run_time=0.6)
 
         # ========================================================== 7. step 3: package the trainer
@@ -538,7 +538,7 @@ class TrainLocally(VoiceScene):
             vo.wait_until("packs the package folder")
             pk_bars = VGroup(line_bar(pk.code, 1, TOOL, 0.22), line_bar(pk.code, 2, TOOL, 0.22))
             self.play(FadeIn(pk_bars), run_time=0.3)
-            out(self, t, OUT_PKG, run_time=0.8, lag=0.1)
+            out(self, t, [OUT_PKG[0], "…", OUT_PKG[-1]], run_time=0.6, lag=0.1)   # the command stays on screen
             vo.wait_until("and copies it to S3")
             self.play(code_span(pk.code, 3, "$S3_PACKAGE_URI/cheese-app-trainer.tar.gz").animate.set_color(ROUTE),
                       FadeIn(ct7, shift=DOWN * 0.1), run_time=0.5)

@@ -4,7 +4,9 @@ Beats (script.md "## S01", one voiceover block each; no tracker until the sample
 0. Black frame. Two full-width panels stacked. Top: RECORDED(expected/md-predict-readme.txt: 7-10),
    tag `recorded · README A:137–147` (brie-2, three numbers, `... 2`, `Label:    brie`). Bottom: a
    5-row `laptop` strip printing TERM(laptop/47: 23-26) (brie-1, four numbers, `... 2`, `Label:
-   brie`), tag `extra · local stand-in, not SageMaker` on its title bar. A YELLOW mono chip above
+   brie`), tag `extra · local stand-in, not SageMaker` on its title bar. Each panel's `Image:` row
+   carries a small WHITE photo glyph + its file name (brie-2.jpg / brie-1.jpg) at the row's right;
+   on "what cheese is in this photo" both glyphs Indicate (QA 00:00). A YELLOW mono chip above
    the top panel types `python cli.py --predict`. On "Both answers on screen" a GREY chip
    `cli.py · predict()` links both panels; on "And both answers say brie" both `brie`s glow GREEN.
 1. The link chip goes. YELLOW rings count the numbers of each printed predictions list (the
@@ -21,10 +23,11 @@ Beats (script.md "## S01", one voiceover block each; no tracker until the sample
    them, a BLUE "pipeline" frame closes around all four.
 4. Clear to a checklist of four GREY chips, one per phrase; a BLUE "first AWS lecture" badge on
    the first chip.
-5. The chips fade. Sample YELLOW tracker (README A › Run Container · step 1 of 5) top-left with a
-   GREY chip "eleven small trackers · two READMEs" under it; a 3-row laptop strip (GREY "preview"
-   on its bar) types laptop/13's `aws configure` and a YELLOW `▶ your turn` row tag pulses beside
-   it. On "Every command" a GREY card "study guide: every command + real outputs". Everything
+5. The chips fade. Sample YELLOW tracker (README A › Setup Environments · step 1 of 5: Clone repo)
+   top-left with a GREY chip "eleven small trackers · two READMEs" under it; a 3-row laptop strip
+   (GREY "preview" on its bar, home prompt) types laptop/10's `git clone …` (soft-wrapped) and a
+   YELLOW `▶ your turn` row tag pulses beside it (QA 01:00: the first step a viewer can run now;
+   `aws configure` needs the S03 keys). On "Every command" a GREY card "study guide: every command + real outputs". Everything
    fades; empty frame.
 """
 
@@ -46,8 +49,8 @@ assert LOCAL[0] == "Image: data/brie-1.jpg" and LOCAL[3].startswith("Label:") an
 NUM_RE = re.compile(r"\d\.\d+")
 assert len(NUM_RE.findall(TOP[2])) == 3 and TOP[2].endswith("] 2"), TOP[2]
 assert len(NUM_RE.findall(LOCAL[2])) == 4 and LOCAL[2].endswith("] 2"), LOCAL[2]
-CONFIGURE = capture("laptop/13")
-assert CONFIGURE.cmd == "aws configure", CONFIGURE.cmd
+CLONE = capture("laptop/10")                     # the first step a viewer can run right now
+assert CLONE.cmd == "git clone https://github.com/dlops-io/model-deployment-aws.git", CLONE.cmd
 CHECKLIST = ("AWS account + billing", "AWS CLI v2", "Docker",
              "both clones: model-deployment-aws · ml-workflow-aws")
 CHIP_CUES = ("you need an AWS account", "the AWS CLI", "Docker", "and both repositories")
@@ -83,6 +86,12 @@ def fixed_tracker(key: str, step: int) -> VGroup:
     return tr
 
 
+def photo_tag(name: str) -> VGroup:
+    """A small photo glyph + its file name, one terminal row tall."""
+    g = VGroup(file_glyph(0.32, INK), mono(name, 20, INK)).arrange(RIGHT, buff=0.14)
+    return g
+
+
 def big(n: int) -> Text:
     return label(str(n), 48, TURN)
 
@@ -106,11 +115,22 @@ class Hook(VoiceScene):
         assert cmd.get_top()[1] <= 3.55, cmd.get_top()
         assert top.frame.get_bottom()[1] > t.box.get_top()[1] + 1.0, (top.frame.get_bottom(), t.box.get_top())
 
+        X_PHOTO = 4.6                                          # right of each short Image: row
+        ph_top = photo_tag("brie-2.jpg").move_to([X_PHOTO, top.rows[0].get_center()[1], 0])
+        assert ph_top.get_left()[0] > top.rows[0].get_right()[0] + 0.5 and ph_top.get_right()[0] < top.frame.get_right()[0] - 0.2
+
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(top.frame), FadeIn(top.body), FadeIn(top.tag), run_time=0.8)
+            self.play(FadeIn(top.frame), FadeIn(top.body), FadeIn(top.tag), FadeIn(ph_top, shift=LEFT * 0.2),
+                      run_time=0.8)
             self.play(FadeIn(t), FadeIn(stand), run_time=0.6)
             rows = out(self, t, LOCAL, wrap=True, run_time=0.8)
             assert len(rows) == 5, [r.text for r in rows]
+            ph_bot = photo_tag("brie-1.jpg").move_to([X_PHOTO, rows[0].strut.get_center()[1], 0])
+            assert ph_bot.get_left()[0] > rows[0].get_right()[0] + 0.5 and ph_bot.get_right()[0] < t.box.get_right()[0] - 0.2
+            self.play(FadeIn(ph_bot, shift=LEFT * 0.2), run_time=0.4)
+            vo.wait_until("what cheese is in this photo")
+            self.play(Indicate(ph_top, color=TURN, scale_factor=1.2),
+                      Indicate(ph_bot, color=TURN, scale_factor=1.2), run_time=0.9)
             self.play(FadeIn(cmd.box), run_time=0.3)
             self.play(ShowIncreasingSubsets(cmd.text, rate_func=linear), run_time=0.9)
             vo.wait_until("Both answers on screen")
@@ -125,10 +145,10 @@ class Hook(VoiceScene):
             brie_top = text_glyphs(top.rows[3], "brie")
             brie_bot = glyph_range(rows[4], rows[4].text.index("brie"), rows[4].text.index("brie") + 4)
             self.play(brie_top.animate.set_color(OWN), brie_bot.animate.set_color(OWN), run_time=0.4)
-            self.add(top, t, stand)                            # re-seat both panels (split trap)
+            self.add(top, t, stand, ph_top, ph_bot)            # re-seat both panels (split trap)
             self.play(Indicate(brie_top, color=OWN, scale_factor=1.25),
                       Indicate(brie_bot, color=OWN, scale_factor=1.25), run_time=0.9)
-            self.add(top, t, stand)                            # the bar tag stays above the (opaque) box
+            self.add(top, t, stand, ph_top, ph_bot)            # the bar tag stays above the (opaque) box
 
         # ========================================================== 1. count: three or four?
         list_top, list_bot = top.rows[2], rows[3]
@@ -171,7 +191,7 @@ class Hook(VoiceScene):
         # ========================================================== 2. three pieces behind an endpoint
         v = ThreeObjects(slots=False)
         lr = lref("11")
-        hook_all = VGroup(top, t, stand, cmd, *rings_top, *rings_bot, big3, big4, neq, q)
+        hook_all = VGroup(top, t, stand, ph_top, ph_bot, cmd, *rings_top, *rings_bot, big3, big4, neq, q)
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(hook_all, shift=LEFT * 1.5), run_time=0.8)
@@ -234,9 +254,9 @@ class Hook(VoiceScene):
             self.play(Indicate(badge.text, color=CLOUD, scale_factor=1.1), run_time=0.8)
 
         # ========================================================== 5. how to read the video
-        tr = fixed_tracker("A2", 1)
+        tr = fixed_tracker("A1", 1)
         eleven = grey_chip("eleven small trackers · two READMEs").next_to(tr, DOWN, buff=0.25).align_to(tr, LEFT)
-        st = strip_term(P_MD)
+        st = strip_term(P_HOME)                               # the clone runs before the folder exists
         prev = row_tag("preview")
         on_bar(st, prev)
         guide = card(["study guide: every command + real outputs"], size=24)
@@ -249,7 +269,7 @@ class Hook(VoiceScene):
             self.play(Indicate(tr.caption, color=TURN, scale_factor=1.06), FadeIn(eleven), run_time=0.8)
             vo.wait_until("and a yellow tag")
             self.play(FadeIn(st), FadeIn(prev), run_time=0.5)
-            line = type_cmd(self, st, CONFIGURE.cmd, type_time=0.6)
+            line = type_cmd(self, st, CLONE.cmd, type_time=0.9, soft=True)
             yt = beside(turn_row(), line)
             pin(self, line, yt)
             flash_tag(self, yt)

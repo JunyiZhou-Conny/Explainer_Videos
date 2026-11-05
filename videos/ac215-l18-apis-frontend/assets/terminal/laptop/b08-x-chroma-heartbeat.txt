@@ -1,0 +1,4 @@
+$ curl -s http://localhost:8000/api/v2/heartbeat; echo; curl -s http://localhost:8000/api/v2/version; echo
+{"nanosecond heartbeat":1793886432272948513}
+"1.0.0"
+[exit 0]

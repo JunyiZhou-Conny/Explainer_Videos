@@ -13,9 +13,9 @@ Beats (script.md "## S04", one voiceover block each):
     line 49 RED. Picture above (right): a TEAL arm64 chip (the image's programs) -> a GREY x86_64
     chip (your laptop's CPU), a RED cross on the arrow.
  3  TRACKER A2 5 · extra. CODE(docker-shell.sh: 16-19) on top: line 19 RED bar + chip "M1/2 chip
-    macs use this line", line 17 GREEN bar. On "Swap them" the `#` travels from line 17 to line
-    19; the laptop/21 sed (extra) is typed -> TERM(laptop/21: 2-4); GREEN row chip "fix 1 · plain
-    build line". The panel gives way to three platform chips, one per phrase.
+    macs use this line", line 17 GREEN bar. On "Swap them" the laptop/21 sed (extra) is typed
+    -> TERM(laptop/21: 2-4), then the `#` travels from line 17 to line 19 (cause before effect);
+    GREEN row chip "fix 1 · plain build line". The panel gives way to three platform chips, one per phrase.
  4  TRACKER A2 5. All picture: CODE(Pipfile: 8-17) left (line 12 tensorflow GREEN bar, line 10
     sagemaker = "*" ORANGE bar); right: CODE(.gitignore: 67-68), line 68 GREY + chip "keeps a lock
     out of the repository"; CODE(Dockerfile: 52-55), line 52 PINK, line 55 ORANGE + chip "the lock
@@ -34,13 +34,15 @@ Beats (script.md "## S04", one voiceover block each):
  9  Scrim and card go; the shelves step aside. TRACKER A2 5 · extra: 6-row terminal types laptop/24
     -> TERM(laptop/24: 9-12), line 10 RED, line 11 GREEN. V2: GREEN wall at 3.0, the dot jumps
     back to 2.257.7; the terminal leaves, the shelves return and the imports land GREEN in the 2.x
-    shelf; caption "a constraint is not a pin (L1)", chip "fix 2", ▶ your turn.
+    shelf; chip "fix 2". On "Pause and make both fixes" the shelves give way to a GREEN checklist
+    card (fix 1 docker-shell.sh line 17 on / 19 off, fix 2 Pipfile sagemaker = "<3"); caption "a
+    constraint is not a pin (L1)", ▶ your turn.
 10  V2 fades. TRACKER A2 5. 12-row terminal types `sh docker-shell.sh` -> TERM(laptop/25: 3, …, 23,
     …, 29-30, 32 wrap, 33; whitespace runs squeezed), line 3 + "at the time of recording", line
     23 YELLOW, line 32 RED; the container prompt (app) app@<id>:/app$ with chip "the id changes
     every run".
-11  TRACKER A2 5 · extra. Clear; at the container prompt: python --version; which … -> 36;
-    pip list … (folds) -> 45, 47; echo … -> 49 (wrap). Versions + "at the time of recording";
+11  TRACKER A2 5 · extra. Clear; the terminal grows to 13 rows; at the container prompt:
+    python --version; which … -> 36, … (the paths); pip list … (folds) -> …, 45, …, 47; echo … -> 49 (wrap). Versions + "at the time of recording";
     GREY chip "deprecation warnings ahead: not the error" above the terminal.
 12  TRACKER A2 5 · extra. Clear; `python cli.py --help` -> TERM(laptop/25: 73, 75, 78-83); the
     Google words ORANGE, tag `erratum` + chip "kept from the Google version · the commands are
@@ -260,18 +262,20 @@ class TwoFixes(VoiceScene):
             self.play(Indicate(cl[1], color=OWN, scale_factor=1.04), run_time=0.7)
             self.add(p3, bar19, bar17)
             vo.wait_until("Swap them")
+            ln = type_cmd(self, t, C21.cmd, type_time=1.8, soft=True)
+            ex3 = on_bar(t, extra_row())
+            self.bar(ex3)
+            # the cause first (the sed and its output), then the effect: the `#` hops 17 -> 19
             hash_ = cl[1][0]
             hop = np.array([cl[3][0].get_left()[0] - hash_.get_left()[0],
                             cl[3].get_center()[1] - cl[1].get_center()[1], 0])
+            r21 = out(self, t, OUT21, run_time=0.5)
             self.play(hash_.animate(path_arc=-PI / 2).shift(hop),
                       VGroup(*cl[1][1:]).animate.shift(LEFT * dx).set_color(INK),
                       VGroup(*cl[3]).animate.shift(RIGHT * dx).set_color("#D9D3B8"),
                       run_time=1.0)
             self.add(p3, bar19, bar17)
-            ln = type_cmd(self, t, C21.cmd, type_time=1.8, soft=True)
-            ex3 = on_bar(t, extra_row())
-            self.bar(ex3)
-            r21 = out(self, t, OUT21, run_time=0.5)
+            self.reseat()
             vo.wait_until("fix 1, an extra")
             f1 = beside(row_tag("fix 1 · plain build line", OWN), r21[0])
             pin(self, r21[0], f1)
@@ -450,6 +454,16 @@ class TwoFixes(VoiceScene):
         assert t.box.get_top()[1] < v.ticks.get_bottom()[1] - 0.2
         f2 = ok_chip("fix 2", size=22)
         yt9 = your_turn()
+        todo = card([VGroup(label("fix 1", 24, OWN), mono("docker-shell.sh", 22, INK),
+                            label("line 17 on, line 19 off: the", 24, INK), mono("#", 22, INK),
+                            label("moves", 24, INK)).arrange(RIGHT, buff=0.2),
+                     VGroup(label("fix 2", 24, OWN), mono("Pipfile", 22, INK),
+                            mono('sagemaker = "<3"', 22, OWN)).arrange(RIGHT, buff=0.2)],
+                    color=OWN, buff=0.28)
+        todo.body[1][1].align_to(todo.body[0][1], LEFT)
+        todo.body[1][2].next_to(todo.body[1][1], RIGHT, buff=0.3)
+        todo.move_to([0, -0.95, 0])
+        assert todo.get_left()[0] > -6.5 and todo.get_right()[0] < 6.5, (todo.get_left(), todo.get_right())
 
         with self.voiceover(SAY[9]) as vo:
             v.drop(self, v.shelf2, v.shelf3, v.src, v.import_arrows, extra=[FadeOut(side8)], run_time=0.6)
@@ -468,10 +482,15 @@ class TwoFixes(VoiceScene):
             v.shelves(self, run_time=0.5)
             self.imports_ok(v)
             vo.wait_until("Pause and make both fixes")
+            # the shelves give way to a checklist of BOTH fixes (fix 1 was last on screen in beat 3)
+            v.drop(self, v.shelf2, v.shelf3, v.src, v.import_arrows, run_time=0.4)
+            v.shelf2 = v.shelf3 = v.src = v.import_arrows = None
             cap = v.caption(self, run_time=0.4)
+            assert todo.get_top()[1] < v.ticks.get_bottom()[1] - 0.2 and todo.get_bottom()[1] > cap.get_top()[1] + 0.2, \
+                (todo.get_top(), v.ticks.get_bottom(), todo.get_bottom(), cap.get_top())
             yt9.next_to(cap, RIGHT, buff=0.4)
             keep_inside(yt9)
-            v.show(self, yt9, run_time=0.4)
+            v.show(self, todo, yt9, run_time=0.5)
             flash_tag(self, yt9)
             v.heal(self)
 
@@ -502,20 +521,21 @@ class TwoFixes(VoiceScene):
             pin(self, pl, idc)
 
         # ========================================================== 11. inside: versions and values
-        dep = under_term(t, grey_chip("deprecation warnings ahead: not the error"))
-
         with self.voiceover(SAY[11]) as vo:
             flash_tag(self, idc)
             self.reseat()
             self.wipe(track(tr, 5, True))
+            resize(self, t, 13, run_time=0.4)          # room for the '…' folds (the which paths, pip rows)
+            dep = under_term(t, grey_chip("deprecation warnings ahead: not the error"))
+            assert dep.get_top()[1] < TRACK_BOTTOM - 0.05, dep.get_top()
             ln = type_cmd(self, t, TYPED[0], type_time=0.9)
             pin(self, ln, beside(extra_row(), ln))
-            r36 = out(self, t, C25.at(36), run_time=0.3)
+            r36 = out(self, t, C25.at(36) + ["…"], run_time=0.3)      # … = the three `which` paths
             vo.wait_until("Python 3.9")
             self.play(Indicate(r36[0], color=TURN, scale_factor=1.08), run_time=0.5)
             self.add(t)
             type_cmd(self, t, TYPED[1], type_time=1.2, soft=True)
-            r45 = out(self, t, C25.at(45, 47), run_time=0.4)
+            r45 = out(self, t, ["…"] + C25.at(45) + ["…"] + C25.at(47), run_time=0.4)[1::2]
             vo.wait_until("SageMaker version 2")
             self.paint(r45[0], "2.257.7", OWN)
             pin(self, r45[0], beside(time_row(), r45[0]))

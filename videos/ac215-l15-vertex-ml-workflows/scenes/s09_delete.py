@@ -17,7 +17,7 @@ Beats (script.md "## S09", one voiceover block each):
  2  TRACKER A4 2 · extra: `aws sagemaker delete-endpoint --endpoint-name cheese-endpoint-placeholder`
     -> TERM(laptop/32: 3 wrap) RED. TRACKER A4 2. The README card turns into three numbered chips
     "1 endpoint · 2 endpoint config · 3 model" on "Delete in this order"; the README's other two lines
-    are typed as written (brackets struck GREY) on "its configuration" / "the model"; GREY chips
+    are typed as written (brackets faded and crossed out GREY, QA 15:15) on "its configuration" / "the model"; GREY chips
     "your own name · needs your account · no output shown" and "names: aws sagemaker
     list-endpoint-configs · aws sagemaker list-models".
  3  TRACKER A4 3. A fresh 7-row terminal at (app) app@<id>:/app$ types `python cli.py --delete` ->
@@ -158,16 +158,20 @@ def rows_card(rows, lines, repo: str = "A") -> VGroup:
 def strike_brackets(scene, line, color=S.GREY):
     """PLAYS: strike the '<' and '>' of every placeholder in a typed (maybe folded) line; the strikes
     become parts of their rows (they scroll with them)."""
-    marks = []
+    marks, glyphs = [], []
     for row in rows_of(line):
         for i, ch in enumerate(row.text):
             if ch in "<>":
                 g = glyph_range(row, i, i + 1)
-                s_ = Line(g.get_corner(DL) + LEFT * 0.03, g.get_corner(UR) + RIGHT * 0.03, color=color,
-                          stroke_width=4)
-                marks.append((row, s_))
+                c, h, w = g.get_center(), g.height * 0.75 + 0.06, g.width * 0.5 + 0.04   # a bold cross
+                for sx in (1, -1):
+                    s_ = Line(c + np.array([-sx * w, h, 0]), c + np.array([sx * w, -h, 0]), color=color,
+                              stroke_width=6)
+                    marks.append((row, s_))
+                glyphs.append(g)
     assert marks, line
-    scene.play(*[Create(s_) for _, s_ in marks], run_time=0.4)
+    # QA 15:15: a thin slash read as a normal '<' '>'; the brackets now fade out under a bold cross
+    scene.play(*[Create(s_) for _, s_ in marks], *[g.animate.set_opacity(0.18) for g in glyphs], run_time=0.5)
     for row, s_ in marks:
         attach(scene, row, s_)
     return [s_ for _, s_ in marks]

@@ -22,7 +22,8 @@ Beats (script.md "## S10"; one voiceover block each):
    into the next (illustration): "AWS services" (B:20–24; the domain row's dashed mini-graph
    flickers on "where you will watch the pipeline"; first-form chip "labels from the README …") →
    "S3 › Create bucket" (B:30, ORANGE "[REPLACE …]") → "IAM › Users › Create user" (B:36–43:
-   ml-workflow-user, four ORANGE policy chips).
+   ml-workflow-user, four ORANGE policy chips); the bucket note becomes an ORANGE chip "bucket:
+   cheese-app-ml-workflow-demo → yours" under the user form until the block ends.
 5. TRACKER B1 5. The form becomes "ml-workflow-user › Security credentials" (B:46–49): CLI radio,
    Create access key, Download .csv file; a GREY .csv icon falls into a GREY laptop (no values).
    GOLD cost tag on "stay in your account", pulsing once on "check them".
@@ -97,6 +98,19 @@ def checks_form(title, rows_spec, path=None, form_w=8.6):
             c = chip(r.text.text, SHARED, size=20, font=MONO)
             r.text.set_opacity(0)
             chips.add(c)
+    # the chips are taller than the label rows console_form spaces them for: give each check row an
+    # invisible strut of the chip's height, re-stack the rows (≥ 0.1 between adjacent chip outlines)
+    # and re-fit the frame and the separator around them
+    ch = max(c.height for c in chips) - 0.1
+    for r in f.rows:
+        if getattr(r, "kind", "") == "check":
+            r.add(Rectangle(width=0.01, height=ch, stroke_opacity=0, fill_opacity=0).move_to(r.text))
+    head, sep = f[2], f[1]
+    f.rows.arrange(DOWN, buff=0.2, aligned_edge=LEFT)
+    body = VGroup(head, f.rows).arrange(DOWN, aligned_edge=LEFT, buff=0.3)
+    f.frame.stretch_to_fit_height(body.height + 0.6)
+    body.move_to(f.frame).align_to(f.frame, LEFT).shift(RIGHT * 0.3)
+    sep.move_to([f.frame.get_center()[0], head.get_bottom()[1] - 0.15, 0])
     return f, place_chips(f, chips)
 
 
@@ -275,8 +289,12 @@ class FourTerminals(VoiceScene):
                                                ("check", "AmazonEC2ContainerRegistryFullAccess"),
                                                ("check", "AWSLambda_FullAccess"),
                                                ("button", "Create user")], path="IAM › Users", form_w=7.6)
-        uf.move_to([0.6, -0.4, 0])
+        uf.move_to([0.6, -0.1, 0])                   # taller since the chip rows were re-spaced
         place_chips(uf, pols)
+        # the bucket stays on screen under the user form (README B:30's "[REPLACE …]" was only ~1.5 s)
+        bchip = chip(f"bucket: {BUCKET_B} → yours", SHARED, size=20)
+        bchip.next_to(uf, DOWN, buff=0.12).align_to(uf, LEFT)
+        assert bchip.get_bottom()[1] >= -3.6 and uf.get_top()[1] < TRACK_BOTTOM - 0.1, (bchip.get_bottom(), uf.get_top())
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(t), FadeOut(tturn), FadeOut(ex52), track(tr, 2), run_time=0.5)
@@ -302,7 +320,7 @@ class FourTerminals(VoiceScene):
             self.play(Indicate(bf.rows[0].value, color=TURN, scale_factor=1.04),
                       Indicate(bf.rows[1].text, color=SHARED, scale_factor=1.04), run_time=0.7)
             vo.wait_until("and a user named ml workflow user")
-            self.play(track(tr, 4), ReplacementTransform(bf, uf),
+            self.play(track(tr, 4), ReplacementTransform(bf, uf), TransformFromCopy(bf.rows[1], bchip),
                       ill.animate.move_to(top_right_tag(uf, ill.copy()).get_center()), run_time=0.7)
             self.bring_to_front(ill)
             self.play(uf.fill(0, USER_B), run_time=0.7)
@@ -328,7 +346,7 @@ class FourTerminals(VoiceScene):
         cost = cost_tag("quick setup · Studio domain · bucket · check at clean-up")
         cost.move_to([0, -3.15, 0])
         with self.voiceover(SAY[5]) as vo:
-            self.play(track(tr, 5), FadeOut(pols), ReplacementTransform(uf, kf),
+            self.play(track(tr, 5), FadeOut(pols), FadeOut(bchip), ReplacementTransform(uf, kf),
                       ill.animate.move_to(top_right_tag(kf, ill.copy()).get_center()), run_time=0.8)
             self.bring_to_front(ill)
             self.play(FadeIn(lap), FadeIn(lap_cap), run_time=0.5)

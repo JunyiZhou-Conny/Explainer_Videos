@@ -1,0 +1,10 @@
+$ ls; ls src
+README.md
+docs
+images
+src
+api-service
+docker-compose.yml
+frontend-react
+vector-db
+[exit 0]

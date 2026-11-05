@@ -38,7 +38,7 @@ Beats (script.md "## S06", one voiceover block each):
     YELLOW on every line.
  6  TRACKER A3 1 · extra. The version chips go; 8-row terminal. laptop/44's line 1 (extra) ->
     TERM(laptop/44: 2–4): ` M Pipfile` and ` M docker-shell.sh` YELLOW + row tag "your two
-    edits", line 4 GREY. On "In your account": `aws s3 ls s3://<your-bucket>/ --recursive` (extra;
+    edits", line 4 GREY. On "In your account": `aws s3 ls s3://your-models-bucket-placeholder/ --recursive` (extra;
     README A:187) + row tag "extra · README A:187 · needs your account · no output shown"; a PINK
     dot reaches the bucket; the PINK dashed URI s3://<bucket>/…/model.tar.gz under it with "with
     your keys"; on "and storage bills" the GOLD cost tag "the tarball in S3 · storage". Fade to an
@@ -85,7 +85,8 @@ assert all(" 1/" in s for s in OUT42), OUT42
 OUT44 = C44.at((2, 4))
 assert OUT44[0] == " M Pipfile" and OUT44[1] == " M docker-shell.sh" and OUT44[2].startswith(".gitignore:33:artifacts/")
 
-AWS_LS = "aws s3 ls s3://<your-bucket>/ --recursive"   # script.md S06 block 6 (extra; README A:187)
+AWS_LS = "aws s3 ls s3://your-models-bucket-placeholder/ --recursive"  # script.md S06 block 6 (extra; README A:187);
+# bracket-free bucket (the docker-shell.sh value): `<your-bucket>` is a shell redirection, the S09 erratum
 assert "Verify the model.tar.gz was uploaded" in readme(187, "A")
 
 README_ROWS = (["Run ", ("python cli.py --prepare", "mono"), ", this will:"],
@@ -414,7 +415,16 @@ class PrepareArtifact(VoiceScene):
             self.reseat()
             vo.wait_until("In your account")
             ln = type_cmd(self, t, AWS_LS, type_time=0.8)
-            pin(self, ln, beside(row_tag("extra · README A:187 · needs your account · no output shown"), ln))
+            # the bracket-free bucket fills its row, so the chip takes the row below (where output
+            # would be): the oldest row scrolls off, and the chip rides with the command's last row
+            room(self, t, 1)
+            last = ln.rows[-1] if hasattr(ln, "rows") else ln
+            ls_tag = row_tag("extra · README A:187 · your bucket name · needs your account · no output shown")
+            ls_tag.next_to(last, DOWN, buff=0, aligned_edge=LEFT)
+            ls_tag.move_to([ls_tag.get_center()[0], last.get_center()[1] - t.pitch, 0])
+            keep_inside(ls_tag)
+            assert ls_tag.get_bottom()[1] > t.box.get_bottom()[1] and ls_tag.get_right()[0] < t.box.get_right()[0], ls_tag
+            pin(self, ln, ls_tag)
             dot = pulse_dot(ROUTE, 0.11).move_to(v.nodes[4].frame.get_right())
             self.play(FadeIn(dot), run_time=0.2)
             self.play(dot.animate.move_to(v.nodes[5].frame.get_left()), run_time=0.6)

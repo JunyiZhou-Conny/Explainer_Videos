@@ -1,0 +1,28 @@
+$ curl -s http://localhost:9000/api/openapi.json | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["info"]); [print(m.upper().ljust(6), p) for p,v in d["paths"].items() for m in v]'
+{'title': 'Cheese App API', 'version': '0.1.0'}
+GET    /api/status
+GET    /api/square_root
+GET    /api/newsletters
+GET    /api/newsletters/{newsletter_id}
+GET    /api/newsletters/image/{image_name}
+GET    /api/podcasts
+GET    /api/podcasts/{podcast_id}
+GET    /api/podcasts/audio/{audio_name}
+GET    /api/llm/chats
+POST   /api/llm/chats
+GET    /api/llm/chats/{chat_id}
+POST   /api/llm/chats/{chat_id}
+GET    /api/llm/images/{chat_id}/{message_id}.png
+GET    /api/llm-cnn/chats
+POST   /api/llm-cnn/chats
+GET    /api/llm-cnn/chats/{chat_id}
+POST   /api/llm-cnn/chats/{chat_id}
+GET    /api/llm-cnn/images/{chat_id}/{message_id}.png
+GET    /api/llm-rag/chats
+POST   /api/llm-rag/chats
+GET    /api/llm-rag/chats/{chat_id}
+POST   /api/llm-rag/chats/{chat_id}
+GET    /api/llm-rag/images/{chat_id}/{message_id}.png
+GET    /healthz
+GET    /readyz
+[exit 0]

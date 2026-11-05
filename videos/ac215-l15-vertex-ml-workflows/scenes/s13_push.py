@@ -38,6 +38,8 @@ Beats (script.md "## S13", one voiceover block each):
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
 
+import re
+
 from explainer.devops import code_panel
 from explainer.scene import VoiceScene
 
@@ -110,6 +112,25 @@ def cli_panel() -> VGroup:
         for occ in (0, 1):
             code_span(p.code, k, "…", occ).set_color(S.GREY)
     return p
+
+
+def type_ph(scene, t, cmd: str, type_time=None):
+    """type_cmd() with each <…> placeholder kept whole: the fold never breaks inside '<USER NAME>'
+    (README B:162 spells it as one name). The spaces inside <…> are hidden from Terminal.fold."""
+    base = t.fold
+
+    def fold(text: str, first_prefix: int = 0) -> list[str]:
+        hid = re.sub(r"<[^<>]*>", lambda mt: mt.group(0).replace(" ", "\u00a0"), text)
+        return [r.replace("\u00a0", " ") for r in base(hid, first_prefix=first_prefix)]
+
+    t.fold = fold
+    try:
+        ln = type_cmd(scene, t, cmd, type_time=type_time, soft=False)
+    finally:
+        del t.fold
+    for r in rows_of(ln):
+        assert re.fullmatch(r"[^<>]*(<[^<>]*>[^<>]*)*", r.text.rstrip(" \\")), r.text   # no <… split
+    return ln
 
 
 def fixed_tracker(key: str, step=None, extra=False) -> VGroup:
@@ -259,6 +280,10 @@ class PushToECR(VoiceScene):
         ecr = shelf("your ECR", CLOUD, dashed=False, h=1.2).move_to([4.95, 1.85, 0])
         hub_name = name_tag(["<USER NAME>/<IMAGE_NAME>"])
         hub_name.move_to([-3.9 + hub_name.width / 2, 1.12 - hub_name.height / 2, 0])
+        # step 5 pulls <you>/$REPO: the Docker Hub image must carry the repository's name
+        nm_c = chip("IMAGE_NAME = cheese-app-data-collector", TURN, size=20)
+        nm_c.next_to(hub_name, RIGHT, buff=0.1)
+        assert nm_c.get_right()[0] < 6.55 and nm_c.get_top()[1] < 1.25 - 0.05, (nm_c.get_right(), nm_c.get_top())
         assert hub_name.get_top()[1] < hub.get_bottom()[1] - 0.05 and hub_name.get_left()[0] > lap.get_right()[0], \
             (hub_name.get_top(), hub.get_bottom(), lap.get_right())
         up_r = route(lap.screen.get_right() + RIGHT * 0.1 + UP * 0.1, hub.frame.get_left() + LEFT * 0.08 + UP * 0.15,
@@ -292,18 +317,21 @@ class PushToECR(VoiceScene):
             type_cmd(self, t, "cd ../data-collector", type_time=0.4)
             cd_prompt(self, t, P_SRC("data-collector"), run_time=0.4)
             self.play(track(tr, 1), run_time=0.3)
-            ln = type_cmd(self, t, HUB[0], type_time=0.55)
+            ln = type_ph(self, t, HUB[0], type_time=0.55)
             tok = self.find(ln, "-p <ACCESS TOKEN>")
             rg = ring(tok, SHARED)
             self.play(Create(rg), FadeOut(exit_c), FadeIn(tok_c, shift=DOWN * 0.1), track(tr, 2), run_time=0.45)
             attach(self, [r for r in rows_of(ln) if "-p <ACCESS TOKEN>" in r.text][0], rg)   # scrolls with its row
             self.reseat()
-            type_cmd(self, t, HUB[1], type_time=0.5)
-            self.play(FadeIn(hub_name, shift=UP * 0.1), Indicate(cb, color=IMAGE, scale_factor=1.2), run_time=0.5)
+            type_ph(self, t, HUB[1], type_time=0.5)
+            self.play(FadeIn(hub_name, shift=UP * 0.1), Indicate(cb, color=IMAGE, scale_factor=1.2),
+                      FadeIn(nm_c, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("The Mac line builds")
-            ln = type_cmd(self, t, HUB[2], type_time=0.6)
+            # the login row scrolls out with the next command: its note leaves first
+            self.play(FadeOut(tok_c), run_time=0.25)
+            ln = type_ph(self, t, HUB[2], type_time=0.6)
             mac = on_bar(t, row_tag("M1/2 Macs"))
-            self.play(self.find(ln, "amd64/v2").animate.set_color(TURN), FadeOut(tok_c),
+            self.play(self.find(ln, "amd64/v2").animate.set_color(TURN),
                       FadeIn(amd_c, shift=DOWN * 0.1), FadeIn(mac), run_time=0.45)
             self.bar_tags.append(mac)
             self.reseat()
@@ -311,7 +339,7 @@ class PushToECR(VoiceScene):
             self.play(Indicate(amd_c.text, color=TURN, scale_factor=1.06), FadeIn(skip_c, shift=DOWN * 0.1),
                       run_time=0.6)
             self.play(track(tr, 3), run_time=0.3)
-            type_cmd(self, t, HUB[3], type_time=0.45)
+            type_ph(self, t, HUB[3], type_time=0.45)
             hub_cb = cb.copy()
             self.add(hub_cb)
             self.play(Create(up_r), FadeOut(amd_c), FadeIn(np_hub, shift=DOWN * 0.1), run_time=0.4)
@@ -319,7 +347,8 @@ class PushToECR(VoiceScene):
 
         # ========================================================== 3. step 4: five variables
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(np_hub), FadeOut(skip_c), FadeOut(up_r), *self.unbar_anims(), track(tr, 4), run_time=0.4)
+            self.play(FadeOut(np_hub), FadeOut(skip_c), FadeOut(up_r), FadeOut(nm_c), *self.unbar_anims(), track(tr, 4),
+                      run_time=0.4)
             self.resize(7, keep=0)
             assert t.box.get_top()[1] < hub_name.get_bottom()[1] - 0.2, t.box.get_top()
             for row in C80.cmd_lines:
@@ -399,9 +428,12 @@ class PushToECR(VoiceScene):
                 under_term(t, c)
             type_cmd(self, t, PULL, type_time=0.5)
             self.play(Indicate(cb, color=IMAGE, scale_factor=1.2), FadeOut(dn_r), FadeIn(np5, shift=DOWN * 0.1),
-                      run_time=0.4)
+                      FadeIn(nm_c, shift=LEFT * 0.1), run_time=0.4)
+            self.play(Indicate(self.find(t.lines[-1], "$REPO"), color=TURN, scale_factor=1.1),
+                      Indicate(nm_c.text, color=TURN, scale_factor=1.05), run_time=0.7)
+            self.reseat()
             vo.wait_until("Step 6 creates the repository")
-            self.play(FadeOut(np5), track(tr, 6, True), run_time=0.3)
+            self.play(FadeOut(np5), FadeOut(nm_c), track(tr, 6, True), run_time=0.3)
             type_cmd(self, t, C81.cmd_lines[0], type_time=0.45)
             ex_tag = on_bar(t, extra_row())
             self.play(FadeIn(ex_tag), FadeIn(cap_c, shift=DOWN * 0.1), run_time=0.35)

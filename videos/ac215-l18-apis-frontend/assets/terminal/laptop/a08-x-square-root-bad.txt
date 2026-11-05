@@ -1,0 +1,4 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' 'http://localhost:9000/square_root/?x=abc'
+{"detail":[{"type":"float_parsing","loc":["query","x"],"msg":"Input should be a valid number, unable to parse string as a number","input":"abc"}]}
+[HTTP 422]
+[exit 0]

@@ -1,0 +1,21 @@
+$ ls -la ~/persistent-folder ~/persistent-folder/experiments; ls ~/persistent-folder/experiments/*/
+/home/student/persistent-folder:
+total 12
+drwxr-sr-x    3 student  student       4096 Nov  5 13:49 .
+drwxr-sr-x    7 student  student       4096 Nov  5 13:46 ..
+drwxr-sr-x    4 student  student       4096 Nov  5 13:49 experiments
+
+/home/student/persistent-folder/experiments:
+total 8856
+drwxr-sr-x    4 student  student       4096 Nov  5 13:49 .
+drwxr-sr-x    3 student  student       4096 Nov  5 13:49 ..
+drwxr-sr-x    3 student  student       4096 Nov  5 13:49 __MACOSX
+drwxr-sr-x    2 student  student       4096 Nov  5 13:49 experiment_1760994796
+-rw-r--r--    1 student  student    9049515 Nov  5 13:49 experiment_1760994796.zip
+/home/student/persistent-folder/experiments/__MACOSX/:
+experiment_1760994796
+
+/home/student/persistent-folder/experiments/experiment_1760994796/:
+data_details.json
+mobilenetv2_train_base_True.keras
+[exit 0]

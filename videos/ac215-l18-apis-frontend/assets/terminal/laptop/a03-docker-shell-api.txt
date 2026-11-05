@@ -1,0 +1,71 @@
+$ sh docker-shell.sh
+
+[+] Building 49.9s (11/11) FINISHED                                                  docker:default
+ => [internal] load build definition from Dockerfile                                           0.0s
+ => => transferring dockerfile: 1.42kB                                                         0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim-bookworm                   0.0s
+ => [internal] load .dockerignore                                                              0.0s
+ => => transferring context: 2B                                                                0.0s
+ => [1/6] FROM docker.io/library/python:3.12-slim-bookworm@sha256:86ed110a955b8e392f627da1b39  2.3s
+ => => resolve docker.io/library/python:3.12-slim-bookworm@sha256:86ed110a955b8e392f627da1b39  0.0s
+ => => extracting sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3      1.4s
+ => => extracting sha256:a47be7bff94f52aefb243d8b245b01c74976150bb88de60875c5eb7ac964f91e      0.2s
+ => => extracting sha256:8691b22c22a3e005c632ab6bc07b085b98dae9cc02d1d84de175849f997439c7      0.5s
+ => => extracting sha256:88d15687540999237909e04714b1393c610db9dc2e13d82acd6356fa9bf8f092      0.0s
+ => => extracting sha256:ac5b60009cb4723012f2e3b27100307cf403b194c461dc575ceaeec7a030e4c2      0.0s
+ => => extracting sha256:c46452a9eca6345573eeba4d403ac85fa4c4add213481cb954675bfc48489e62      0.0s
+ => [internal] load build context                                                              0.0s
+ => => transferring context: 167.23kB                                                          0.0s
+ => [2/6] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &  23.7s
+ => [3/6] WORKDIR /app                                                                         0.1s
+ => [4/6] COPY --chown=app:app pyproject.toml uv.lock* ./                                      0.0s
+ => [5/6] RUN uv sync --frozen                                                                 1.9s
+ => [6/6] COPY --chown=app:app . ./                                                            0.1s
+ => exporting to image                                                                        21.6s
+ => => exporting layers                                                                       16.7s
+ => => exporting manifest sha256:a5636fad3c0156e85772d10fcf14aa61b02be850041db51f90a575d29fc9  0.0s
+ => => exporting config sha256:2c8eaa23e596b54c951ddba24c904bfb717c788601913498aa64a8b5da5dee  0.0s
+ => => exporting attestation manifest sha256:546e9bd95087c55e060e109dcd254082393a1387bb9e4eca  0.0s
+ => => exporting manifest list sha256:0ea118e4c49ca58fc7c6632d108d102d6b55f67aad45fce04bd6c20  0.0s
+ => => naming to docker.io/library/cheese-app-api-service:latest                               0.0s
+ => => unpacking to docker.io/library/cheese-app-api-service:latest                            4.8s
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.16
+UV version: uv 0.13.7 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+app@20a498fecc6f:/app$ uvicorn api.service:app --host 0.0.0.0 --port 9000 --log-level debug --reload --reload-dir api/ "$@"
+INFO:     Will watch for changes in these directories: ['/app/api']
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+INFO:     Started reloader process [12] using StatReload
+INFO:     Started server process [14]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     172.18.0.1:57600 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.0.1:57602 - "GET / HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'api/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [14]
+INFO:     Started server process [15]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     172.18.0.1:54518 - "GET /square_root/ HTTP/1.1" 200 OK
+INFO:     172.18.0.1:54532 - "GET /square_root/ HTTP/1.1" 200 OK
+INFO:     172.18.0.1:54534 - "GET /square_root/?x=2&y=10 HTTP/1.1" 200 OK
+INFO:     172.18.0.1:54542 - "GET /square_root/?x=abc HTTP/1.1" 422 Unprocessable Entity
+INFO:     172.18.0.1:54550 - "GET /square_root HTTP/1.1" 307 Temporary Redirect
+INFO:     172.18.0.1:54556 - "GET /docs HTTP/1.1" 200 OK
+INFO:     172.18.0.1:54568 - "GET /openapi.json HTTP/1.1" 200 OK
+^C
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15]
+INFO:     Stopping reloader process [12]
+app@20a498fecc6f:/app$
+app@20a498fecc6f:/app$ exit
+exit
+[exit 0]

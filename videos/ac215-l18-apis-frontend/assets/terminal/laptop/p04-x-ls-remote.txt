@@ -1,0 +1,12 @@
+$ git ls-remote https://github.com/dlops-io/cheese-app-v2.git; git ls-remote https://github.com/dlops-io/cheese-app-v1.git
+447b5c3c2c06d724e86dddf70e1a244dbe3d7c47	HEAD
+14f2a1420b43e9f24e977a9e67b53d7e2614013d	refs/heads/2025
+447b5c3c2c06d724e86dddf70e1a244dbe3d7c47	refs/heads/main
+adaa2acd0106b4dc6e8674e53e99e38f1ba84f95	refs/heads/pipenv
+55ffda8025c62d46b454fb04f7cbc4a588479bc8	refs/heads/work/shivas
+3b9a2d12b2d2f9de1ae3291f966ae9465c2768fe	refs/pull/1/head
+55ffda8025c62d46b454fb04f7cbc4a588479bc8	refs/pull/2/head
+ce03a1029dd6f655a86e3e3edc99bb5938f0cbf8	HEAD
+ce03a1029dd6f655a86e3e3edc99bb5938f0cbf8	refs/heads/main
+348d00107784dc023377ddfec0f5c9fa468ed2c2	refs/heads/pipenv
+[exit 0]

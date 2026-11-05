@@ -134,6 +134,32 @@ def fixed_tracker(key: str, step=None, extra=False) -> VGroup:
     return tr
 
 
+def pin_cmd(t: Terminal, cmd) -> VGroup:
+    """Keep a typed command's rows at the top of terminal t: they leave t.lines (so room() never
+    scrolls them) and the output area becomes the rows below them. Undo with unpin_cmd()."""
+    rows = rows_of(cmd)
+    assert list(t.lines.submobjects[:len(rows)]) == rows, "pin_cmd(): the command must be the top rows"
+    for r in rows:
+        t.lines.remove(r)
+    k = len(rows)
+    t.pinned = VGroup(*rows)
+    t.add(t.pinned)
+    t.rows -= k
+    base = t._slot
+    t._slot = lambda i: base(i + k)
+    return t.pinned
+
+
+def unpin_cmd(scene, t: Terminal) -> VGroup:
+    """Undo pin_cmd(): the terminal gets its full height back; returns the pinned rows (fade them)."""
+    g = t.pinned
+    t.remove(g)
+    t.rows += len(g)
+    del t._slot
+    del t.pinned
+    return g
+
+
 def text_chip(parts, color=S.GREY) -> VGroup:
     """A 20 pt chip (common.grey_chip's look) of mixed label / mono parts. .box .text"""
     t = VGroup(*[mono(x, 20, INK) if k == "mono" else label(x, 20, INK) for x, k in parts])
@@ -336,13 +362,16 @@ class CollectAndClean(VoiceScene):
             self.play(FadeOut(VGroup(ep, b4, b5, b7, gnote)), FadeOut(v), FadeOut(lt), track(tr, 2), run_time=0.6)
             self.play(FadeIn(t), run_time=0.4)
             cmd = type_cmd(self, t, SEARCH, type_time=2.0)
+            # the typed command stays pinned on rows 1-3 while the 16 output rows scroll under it
+            # (QA 19:11/19:14: 3 + 16 rows do not fit 12, and the command must be copied exactly)
+            pin_cmd(t, cmd)
             self.bar(yt3)
+            out(self, t, OUT60[:1], wrap=True, run_time=0.4)   # the CLI echoes its arguments at once
             vo.wait_until("four cheeses")
             self.play(FadeIn(q_chip, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("ten images each")
             self.play(FadeIn(ctrl_c, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("It scrapes the web")
-            out(self, t, OUT60[:1], wrap=True, run_time=0.4)
             out(self, t, OUT60[1:6], run_time=0.8, lag=0.15)
             vo.wait_until("writes four folders")
             out(self, t, OUT60[6:13], run_time=1.0, lag=0.15)
@@ -380,7 +409,9 @@ class CollectAndClean(VoiceScene):
             self.play(Indicate(nb.text, color=TURN, scale_factor=1.05), run_time=0.6)
             vo.wait_until("An extra listing")
             ex4 = on_bar(t, extra_row())
-            self.wipe(FadeOut(nb), track(tr, 3, True), *self.unbar_anims(), FadeIn(ex4))
+            pinned = unpin_cmd(self, t)
+            self.wipe(FadeOut(pinned), FadeOut(nb), track(tr, 3, True), *self.unbar_anims(), FadeIn(ex4))
+            self.remove(pinned, *pinned)
             self.bar_tags.append(ex4)
             self.reseat()
             type_cmd(self, t, LOOP, type_time=0.9)

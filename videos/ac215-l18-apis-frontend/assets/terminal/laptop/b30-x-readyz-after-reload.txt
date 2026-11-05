@@ -1,0 +1,4 @@
+$ curl -s -i http://localhost:9000/readyz | sed -n '1p;$p'
+HTTP/1.1 200 OK
+{"ok":true}
+[exit 0]

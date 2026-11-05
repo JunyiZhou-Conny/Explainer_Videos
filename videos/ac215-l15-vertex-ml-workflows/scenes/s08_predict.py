@@ -35,11 +35,12 @@ Beats (script.md "## S08", one voiceover block each):
     attribute · loads anyway", 7's "success: OK" GREEN; on "It loads version 1" "version: 1" and
     "AVAILABLE" GREEN.
  5  The box and chip go; the terminal grows to 13 rows. laptop/47's line 1 (cut) -> TERM(laptop/47:
-    21 wrap GREY, 23–26 wrap, 28–31 wrap); four small GREEN bars beside each `[…] k` row; brie and
+    21 wrap GREY, 23–26 wrap, 28–31 wrap), the GREY chip "extra · full command in the study guide"
+    above the terminal (gives way to block 6's chip); four small GREEN bars beside each `[…] k` row; brie and
     gruyere flash on their words.
  6  TERM(laptop/47: 33–36 wrap): 33 YELLOW, 36 RED, the 0.977 bar towers in RED; GREY chip
     "released model · its metrics file: accuracy 0.724" above the terminal.
- 7  TRACKER A3 3. The hook returns: RECORDED(expected/md-predict-readme.txt: 7–8, 12–15) on top, a
+ 7  TRACKER A3 3. The hook returns: RECORDED(expected/md-predict-readme.txt: 7–8, …, 12–15) on top, a
     3-row strip with TERM(laptop/47: 43, 45–46) (title-bar tag "extra · local stand-in, not
     SageMaker") below; a big YELLOW "3" beside the recorded `[…] 0` row and a big "4" beside the
     stand-in's `[…] 3` row. Between them a small GREEN-dashed artifact slot: on "different
@@ -102,6 +103,8 @@ assert OUT47_H[0] == "Image: data/gouda-2.jpeg" and OUT47_H[1].endswith("] 3"), 
 C48_OUT = C48.at(2)
 assert C48.cmd == "docker rm -f cheese-serving" and C48_OUT == ["cheese-serving"]
 
+REC = recorded((7, 8)) + ["…"] + recorded((12, 15))     # lines 9–11 (brie's [...] 2, Label) skipped: one '…' row
+assert REC[2] == "…" and REC[3] == "Image: data/gouda-1.jpg"
 REC = recorded((7, 8), (12, 15))
 assert REC[0] == "Image: data/brie-2.jpg" and REC[4].endswith("] 0") and REC[5].split() == ["Label:", "gouda"], REC
 
@@ -154,6 +157,25 @@ def on_baseline(t: Text, x: float, y: float) -> Text:
     j = next(i for i, ch in enumerate(t.text) if ch in "aceimnorsuvwxz")
     t.move_to([x, t.get_center()[1], 0])
     return t.shift(UP * (y - t[j].get_bottom()[1]))
+
+
+def gap_card(parts, size: float = 20, wrap: int = 72) -> VGroup:
+    """common.recorded_card() with a '…' row between non-adjacent ranges of the expected file
+    (QA: README lines 9-11 are skipped, so the panel must not read as one contiguous excerpt).
+    Same frame, body, tag and fields. .frame .body .tag .rows"""
+    rows = []
+    for k, r in enumerate(parts):
+        if k:
+            rows.append(mono("…", size, INK))           # as the terminals print a skip
+        rows += [mono(x, size, INK) for x in soft(recorded(r), wrap)]
+    body = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.1)      # 0.14 in common: the extra row must leave room for the slot
+    frame = box(body.width + 0.7, body.height + 0.75, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
+    body.move_to(frame).align_to(frame, LEFT).shift(RIGHT * 0.35 + DOWN * 0.1)
+    tg = recorded_tag("README A:137–147")
+    tg.move_to(frame.get_corner(UR) + np.array([-tg.width / 2 - 0.2, 0, 0]))
+    g = VGroup(frame, body, tg)
+    g.frame, g.body, g.tag, g.rows = frame, body, tg, list(body)
+    return g
 
 
 def model_card(text: str, color, dashed: bool) -> VGroup:
@@ -427,10 +449,16 @@ class AskTheEndpoint(VoiceScene):
             self.reseat()
 
         # ========================================================== 5. the same predict(): four numbers
+        guide = grey_chip("extra · full command in the study guide")
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(teal), FadeOut(same), run_time=0.4)
             resize(self, t, 13, keep=2, extra=[self.bar_tags[0].animate.shift(UP * t.pitch * 2)])
             type_cmd(self, t, CMD47, type_time=0.8)
+            under_term(t, guide)                 # the cut command: where to read it whole (QA)
+            assert guide.get_top()[1] < PIC_TOP and (guide.get_left()[0] > tr.get_right()[0] + 0.2
+                                                     or guide.get_top()[1] < tr.get_bottom()[1] - 0.05), \
+                (guide.get_top(), guide.get_left(), tr.get_right(), tr.get_bottom())
+            self.play(FadeIn(guide, shift=DOWN * 0.1), run_time=0.4)
             out(self, t, [(L47_21, S.GREY)], wrap=True, run_time=0.4)
             vo.wait_until("Brie comes back brie")
             rB = out(self, t, OUT47_B, wrap=True, run_time=0.5)
@@ -464,11 +492,12 @@ class AskTheEndpoint(VoiceScene):
             self.play(Indicate(rP[-1], color=ERR, scale_factor=1.06), run_time=0.7)
             self.reseat()
             vo.wait_until("Its own metrics file")
-            self.play(FadeIn(acc, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeOut(guide), FadeIn(acc, shift=DOWN * 0.1), run_time=0.5)
             flash_tag(self, acc, color=INK)
 
         # ========================================================== 7. the hook, answered
-        rec = recorded_card([(7, 8), (12, 15)], size=20, wrap=72)
+        rec = gap_card([(7, 8), (12, 15)], size=20, wrap=72)
+        assert [r.text for r in rec.rows][2] == "…" and rec.rows[5].text.endswith("]0"), [r.text for r in rec.rows]
         rec.move_to([-6.4 + rec.width / 2, 2.6 - rec.frame.height / 2, 0])
         s = term(P_MD, rows=3, size=SIZE)
         self.t2 = s
@@ -486,7 +515,7 @@ class AskTheEndpoint(VoiceScene):
         assert new_c.get_right()[0] < slot.get_right()[0] - 0.05 and err7.get_right()[0] < 6.55, \
             (new_c.get_right(), slot.get_right(), err7.get_right())
         assert rec.tag.get_left()[0] > tr.get_right()[0] + 0.2 or rec.tag.get_top()[1] < TRACK_BOTTOM
-        r14 = rec.rows[4]
+        r14 = rec.rows[5]
         big3 = label("3", 40, TURN).next_to(r14, RIGHT, buff=0.6)
 
         with self.voiceover(SAY[7]) as vo:
@@ -506,7 +535,7 @@ class AskTheEndpoint(VoiceScene):
             vo.wait_until("with three classes")
             self.play(Indicate(big3, color=TURN, scale_factor=1.3), run_time=0.5)
             vo.wait_until("and another label order")
-            self.play(Indicate(rec.rows[5], color=TURN, scale_factor=1.1), Indicate(rec.rows[4], color=TURN,
+            self.play(Indicate(rec.rows[6], color=TURN, scale_factor=1.1), Indicate(rec.rows[5], color=TURN,
                       scale_factor=1.05), run_time=0.6)
             self.add(rec, big3)                 # re-seat the card; the big 3 stays on top of its fill
             vo.wait_until("A small gap")

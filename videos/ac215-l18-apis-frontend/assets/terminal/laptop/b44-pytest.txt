@@ -1,0 +1,19 @@
+$ ./docker-shell.sh
+Container 'cheese-app-api-service' is already running. Shelling into it...
+app@2c5c0b0e4f8c:/app$ pytest
+======================================= test session starts ========================================
+platform linux -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0
+cachedir: /home/app/.cache/cheese-app-api/pytest
+rootdir: /app
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1
+collected 26 items
+
+tests/test_chat.py .................                                                         [ 65%]
+tests/test_service.py .........                                                              [100%]
+
+======================================== 26 passed in 0.51s ========================================
+app@2c5c0b0e4f8c:/app$ exit
+exit
+[exit 0]

@@ -1,0 +1,7 @@
+$ curl -s -i -H 'Origin: http://localhost:8080' 'http://localhost:9000/api/newsletters?limit=1' | grep -i -E 'HTTP/|access-control|content-type'; curl -s -i -X OPTIONS -H 'Origin: http://localhost:8080' -H 'Access-Control-Request-Method: POST' http://localhost:9000/api/llm/chats | grep -i -E 'HTTP/|access-control|allow'
+HTTP/1.1 200 OK
+content-type: application/json
+HTTP/1.1 405 Method Not Allowed
+allow: GET
+{"detail":"Method Not Allowed"}
+[exit 0]

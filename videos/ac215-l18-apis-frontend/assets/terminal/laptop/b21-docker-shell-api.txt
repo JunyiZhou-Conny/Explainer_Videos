@@ -1,0 +1,622 @@
+$ ./docker-shell.sh
+Building cheese-app-api-service (Dockerfile.dev)...
+[+] Building 136.2s (10/10) FINISHED                                                 docker:default
+ => [internal] load build definition from Dockerfile.dev                                       0.0s
+ => => transferring dockerfile: 585B                                                           0.0s
+ => [internal] load metadata for docker.io/library/python:3.13-slim-bookworm                   0.0s
+ => [internal] load .dockerignore                                                              0.0s
+ => => transferring context: 131B                                                              0.0s
+ => CACHED [1/5] FROM docker.io/library/python:3.13-slim-bookworm@sha256:9b81caa30624b67250fb  0.0s
+ => => resolve docker.io/library/python:3.13-slim-bookworm@sha256:9b81caa30624b67250fb55e4ef1  0.0s
+ => [internal] load build context                                                              0.0s
+ => => transferring context: 122.86kB                                                          0.0s
+ => [2/5] RUN pip install --no-cache-dir uv==0.13.6 &&     useradd -ms /bin/bash app -d /home  4.7s
+ => [3/5] WORKDIR /app                                                                         0.0s
+ => [4/5] COPY pyproject.toml uv.lock ./                                                       0.0s
+ => [5/5] RUN uv sync --frozen                                                                21.1s
+ => exporting to image                                                                       109.9s
+ => => exporting layers                                                                       89.5s
+ => => exporting manifest sha256:9c8c540503385fdc40eb98d8ecb31892c766d2e89987719633d267c82222  0.0s
+ => => exporting config sha256:5e4491dc1f3c6a19401f6bafb168909f75cdeccbf1713429c7cdff2c241b5d  0.0s
+ => => exporting attestation manifest sha256:3687fe2e45d54ecec59932071541b60da1e4d61b4f8bbfb6  0.0s
+ => => exporting manifest list sha256:f8800d2cf69d55a4fa7c6b288d73662bf200fb034afd60598260a63  0.0s
+ => => naming to docker.io/library/cheese-app-api-service:latest                               0.0s
+ => => unpacking to docker.io/library/cheese-app-api-service:latest                           20.4s
+Container is running!!!
+Architecture: x86_64
+Python version: Python 3.13.18
+UV version: uv 0.13.6 (x86_64-unknown-linux-gnu)
+Checked 84 packages in 4ms
+
+The following commands are available:
+    api_server
+        Run the API server: http://localhost:9000/api/docs
+    pytest
+        Run the tests
+
+app@2c5c0b0e4f8c:/app$ api_server
+INFO:     Will watch for changes in these directories: ['/app/api']
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+INFO:     Started reloader process [16] using StatReload
+INFO:     Started server process [18]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793886575.694067      23 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+I0000 00:00:1793886575.739240      23 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+INFO:     172.19.0.1:60550 - "GET /healthz HTTP/1.1" 200 OK
+INFO:     172.19.0.1:60566 - "GET /healthz HTTP/1.1" 200 OK
+INFO:     172.19.0.1:60578 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+INFO:     172.19.0.1:60584 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+INFO:     172.19.0.1:60590 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+INFO:     172.19.0.1:60598 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+INFO:     172.19.0.1:60614 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+INFO:     172.19.0.1:60618 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793886580.381077      23 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+INFO:     172.19.0.1:60632 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+INFO:     172.19.0.1:60646 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+INFO:     172.19.0.1:58716 - "GET /readyz HTTP/1.1" 503 Service Unavailable
+INFO:     172.19.0.1:58732 - "GET /readyz HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58736 - "GET /readyz HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58740 - "GET / HTTP/1.1" 404 Not Found
+INFO:     172.19.0.1:58752 - "GET /docs HTTP/1.1" 404 Not Found
+WARNING:  StatReload detected changes in 'api/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [18]
+INFO:     Started server process [35]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793886586.566933      40 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+I0000 00:00:1793886586.610086      40 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793886587.987456      40 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+INFO:     172.19.0.1:58760 - "GET /api/square_root HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58768 - "GET /api/square_root HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58776 - "GET /api/square_root?x=3&y=4 HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58784 - "GET /readyz HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58796 - "GET /readyz HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58810 - "GET /api/docs HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58814 - "GET /api/openapi.json HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58826 - "GET /api/newsletters?limit=2 HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58840 - "GET /api/newsletters/does-not-exist HTTP/1.1" 404 Not Found
+INFO:     172.19.0.1:58850 - "GET /api/podcasts HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58856 - "GET /api/podcasts/audio/9f2b7e84-5623-4029-bcfd-f99f2d7611e8-EN.mp3 HTTP/1.1" 200 OK
+INFO:     172.19.0.1:58862 - "POST /api/llm/chats HTTP/1.1" 422 Unprocessable Content
+INFO:     172.19.0.1:58874 - "POST /api/llm/chats HTTP/1.1" 422 Unprocessable Content
+INFO:     172.19.0.1:58886 - "POST /api/llm/chats HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/app/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1194, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/telemetry/_asgi.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/routing.py", line 683, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 2811, in app
+    await route.handle(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1839, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 2894, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1865, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1328, in handle
+    await effective_context.app(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 166, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 152, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 745, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 374, in run_endpoint_function
+    return await run_in_threadpool(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+        _run_sync_endpoint, function=dependant.call, arguments=values
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/telemetry/_api.py", line 244, in _run_sync_endpoint
+    return function(**arguments)
+  File "/app/api/routers/chat.py", line 67, in start_chat
+    return add_turn(chat, message, x_session_id)
+  File "/app/api/routers/chat.py", line 40, in add_turn
+    reply = respond(chat_manager, chat["messages"], user_message)
+  File "/app/api/utils/llm_utils.py", line 94, in respond
+    return {"role": "assistant", "content": ask_gemini(SYSTEM_INSTRUCTION, history, message_parts(message))}
+                                            ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/api/utils/llm_utils.py", line 84, in ask_gemini
+    text = chat.send_message(parts).text
+           ~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/chats.py", line 339, in send_message
+    response = self._modules.generate_content(
+        model=self._model,
+        contents=contents_to_model,  # type: ignore[arg-type]
+        config=parsed_config,
+    )
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/models.py", line 6328, in generate_content
+    return self._generate_content_with_continuation(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        model=model, contents=contents, config=parsed_config
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/models.py", line 6211, in _generate_content_with_continuation
+    response = self._generate_content(
+        model=model, contents=contents, config=call_config
+    )
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/models.py", line 4750, in _generate_content
+    response = self._api_client.request(
+        'post', path, request_dict, http_options
+    )
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 2073, in request
+    response = self._request(http_request, http_options, stream=False)
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 1849, in _request
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ~~~~~~~~~~~~~~~~~^^
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/concurrent/futures/_base.py", line 453, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/concurrent/futures/_base.py", line 402, in __get_result
+    raise self._exception
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 1779, in _request_once
+    http_request.headers['Authorization'] = f'Bearer {self._access_token()}'
+                                                      ~~~~~~~~~~~~~~~~~~^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 1623, in _access_token
+    return get_token_from_credentials(self, self._credentials)  # type: ignore[no-any-return]
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 2870, in get_token_from_credentials
+    refresh_auth(credentials)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 339, in refresh_auth
+    credentials.refresh(Request())  # type: ignore[no-untyped-call]
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/auth/credentials.py", line 519, in refresh
+    self._perform_refresh_token(request)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/service_account.py", line 462, in _perform_refresh_token
+    access_token, expiry, _ = _client.jwt_grant(
+                              ~~~~~~~~~~~~~~~~~^
+        request, self._token_uri, assertion
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/_client.py", line 309, in jwt_grant
+    response_data = _token_endpoint_request(
+        request,
+    ...<5 lines>...
+        },
+    )
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/_client.py", line 280, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/_client.py", line 75, in _handle_error_response
+    raise exceptions.RefreshError(
+        error_details, response_data, retryable=retryable_error
+    )
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid grant: account not found', {'error': 'invalid_grant', 'error_description': 'Invalid grant: account not found'})
+I0000 00:00:1793886592.427807      50 service.cc:153] XLA service 0x7feb440a35e0 initialized for platform Host (this does not guarantee that XLA will be used). Devices:
+I0000 00:00:1793886592.427894      50 service.cc:161]   StreamExecutor [0]: Host, Default Version (Driver: 0.0.0; Runtime: 0.0.0; Toolkit: 0.0.0; DNN: 0.0.0)
+I0000 00:00:1793886592.460149      50 dump_mlir_util.cc:269] disabling MLIR crash reproducer, set env var `MLIR_CRASH_REPRODUCER_DIRECTORY` to enable.
+I0000 00:00:1793886593.560917      50 device_compiler.h:208] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
+INFO:     172.19.0.1:58900 - "POST /api/llm-cnn/chats HTTP/1.1" 200 OK
+INFO:     172.19.0.1:35474 - "POST /api/llm-rag/chats HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/app/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1194, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/telemetry/_asgi.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/routing.py", line 683, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 2811, in app
+    await route.handle(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1839, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 2894, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1865, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1328, in handle
+    await effective_context.app(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 166, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 152, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 745, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 374, in run_endpoint_function
+    return await run_in_threadpool(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+        _run_sync_endpoint, function=dependant.call, arguments=values
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/telemetry/_api.py", line 244, in _run_sync_endpoint
+    return function(**arguments)
+  File "/app/api/routers/chat.py", line 67, in start_chat
+    return add_turn(chat, message, x_session_id)
+  File "/app/api/routers/chat.py", line 40, in add_turn
+    reply = respond(chat_manager, chat["messages"], user_message)
+  File "/app/api/utils/llm_rag_utils.py", line 73, in respond
+    chunks = "\n".join(find_chunks(message["content"]))
+                       ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/app/api/utils/llm_rag_utils.py", line 58, in find_chunks
+    embedding = generate_query_embedding(query)
+  File "/app/api/utils/llm_rag_utils.py", line 47, in generate_query_embedding
+    response = llm_client.models.embed_content(
+        model=settings.EMBEDDING_MODEL,
+        contents=query,
+        config=types.EmbedContentConfig(output_dimensionality=settings.EMBEDDING_DIMENSION),
+    )
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/models.py", line 6185, in embed_content
+    return self._embed_content(
+           ~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        config=config,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/models.py", line 4979, in _embed_content
+    response = self._api_client.request(
+        'post', path, request_dict, http_options
+    )
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 2073, in request
+    response = self._request(http_request, http_options, stream=False)
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 1849, in _request
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ~~~~~~~~~~~~~~~~~^^
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/concurrent/futures/_base.py", line 453, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/concurrent/futures/_base.py", line 402, in __get_result
+    raise self._exception
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 1779, in _request_once
+    http_request.headers['Authorization'] = f'Bearer {self._access_token()}'
+                                                      ~~~~~~~~~~~~~~~~~~^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 1623, in _access_token
+    return get_token_from_credentials(self, self._credentials)  # type: ignore[no-any-return]
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 2870, in get_token_from_credentials
+    refresh_auth(credentials)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 339, in refresh_auth
+    credentials.refresh(Request())  # type: ignore[no-untyped-call]
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/auth/credentials.py", line 519, in refresh
+    self._perform_refresh_token(request)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/service_account.py", line 462, in _perform_refresh_token
+    access_token, expiry, _ = _client.jwt_grant(
+                              ~~~~~~~~~~~~~~~~~^
+        request, self._token_uri, assertion
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/_client.py", line 309, in jwt_grant
+    response_data = _token_endpoint_request(
+        request,
+    ...<5 lines>...
+        },
+    )
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/_client.py", line 280, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/_client.py", line 75, in _handle_error_response
+    raise exceptions.RefreshError(
+        error_details, response_data, retryable=retryable_error
+    )
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid grant: account not found', {'error': 'invalid_grant', 'error_description': 'Invalid grant: account not found'})
+INFO:     172.19.0.1:35480 - "GET /api/llm-cnn/chats HTTP/1.1" 200 OK
+INFO:     172.19.0.1:35484 - "GET /api/llm-cnn/chats HTTP/1.1" 200 OK
+INFO:     172.19.0.1:35492 - "GET /api/newsletters?limit=1 HTTP/1.1" 200 OK
+INFO:     172.19.0.1:35494 - "OPTIONS /api/llm/chats HTTP/1.1" 405 Method Not Allowed
+INFO:     172.19.0.4:53408 - "GET /api/newsletters?limit=2 HTTP/1.1" 200 OK
+INFO:     172.19.0.4:53424 - "POST /api/llm/chats HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/app/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1194, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/telemetry/_asgi.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/routing.py", line 683, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 2811, in app
+    await route.handle(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1839, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 2894, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1865, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1328, in handle
+    await effective_context.app(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 166, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 152, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 745, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 374, in run_endpoint_function
+    return await run_in_threadpool(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+        _run_sync_endpoint, function=dependant.call, arguments=values
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/home/app/.venv/lib/python3.13/site-packages/fastapi/telemetry/_api.py", line 244, in _run_sync_endpoint
+    return function(**arguments)
+  File "/app/api/routers/chat.py", line 67, in start_chat
+    return add_turn(chat, message, x_session_id)
+  File "/app/api/routers/chat.py", line 40, in add_turn
+    reply = respond(chat_manager, chat["messages"], user_message)
+  File "/app/api/utils/llm_utils.py", line 94, in respond
+    return {"role": "assistant", "content": ask_gemini(SYSTEM_INSTRUCTION, history, message_parts(message))}
+                                            ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/api/utils/llm_utils.py", line 84, in ask_gemini
+    text = chat.send_message(parts).text
+           ~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/chats.py", line 339, in send_message
+    response = self._modules.generate_content(
+        model=self._model,
+        contents=contents_to_model,  # type: ignore[arg-type]
+        config=parsed_config,
+    )
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/models.py", line 6328, in generate_content
+    return self._generate_content_with_continuation(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        model=model, contents=contents, config=parsed_config
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/models.py", line 6211, in _generate_content_with_continuation
+    response = self._generate_content(
+        model=model, contents=contents, config=call_config
+    )
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/models.py", line 4750, in _generate_content
+    response = self._api_client.request(
+        'post', path, request_dict, http_options
+    )
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 2073, in request
+    response = self._request(http_request, http_options, stream=False)
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 1849, in _request
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ~~~~~~~~~~~~~~~~~^^
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/concurrent/futures/_base.py", line 453, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/concurrent/futures/_base.py", line 402, in __get_result
+    raise self._exception
+  File "/home/app/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 1779, in _request_once
+    http_request.headers['Authorization'] = f'Bearer {self._access_token()}'
+                                                      ~~~~~~~~~~~~~~~~~~^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 1623, in _access_token
+    return get_token_from_credentials(self, self._credentials)  # type: ignore[no-any-return]
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 2870, in get_token_from_credentials
+    refresh_auth(credentials)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/genai/_api_client.py", line 339, in refresh_auth
+    credentials.refresh(Request())  # type: ignore[no-untyped-call]
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/auth/credentials.py", line 519, in refresh
+    self._perform_refresh_token(request)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/service_account.py", line 462, in _perform_refresh_token
+    access_token, expiry, _ = _client.jwt_grant(
+                              ~~~~~~~~~~~~~~~~~^
+        request, self._token_uri, assertion
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/_client.py", line 309, in jwt_grant
+    response_data = _token_endpoint_request(
+        request,
+    ...<5 lines>...
+        },
+    )
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/_client.py", line 280, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.13/site-packages/google/oauth2/_client.py", line 75, in _handle_error_response
+    raise exceptions.RefreshError(
+        error_details, response_data, retryable=retryable_error
+    )
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid grant: account not found', {'error': 'invalid_grant', 'error_description': 'Invalid grant: account not found'})
+INFO:     172.19.0.4:53436 - "POST /api/llm-cnn/chats HTTP/1.1" 200 OK
+INFO:     172.19.0.4:53450 - "GET /api/newsletters?limit=1 HTTP/1.1" 200 OK
+INFO:     172.19.0.4:40678 - "GET /api/newsletters?limit=1 HTTP/1.1" 200 OK
+^C
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [35]
+INFO:     Stopping reloader process [16]
+app@2c5c0b0e4f8c:/app$
+app@2c5c0b0e4f8c:/app$ exit
+exit
+[exit 0]

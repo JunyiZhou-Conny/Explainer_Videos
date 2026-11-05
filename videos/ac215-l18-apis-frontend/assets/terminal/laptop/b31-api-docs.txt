@@ -1,0 +1,5 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' http://localhost:9000/api/docs | grep -E '<title>|openapi.json|HTTP'
+    <title>Cheese App API - Swagger UI</title>
+        url: '/api/openapi.json',
+[HTTP 200]
+[exit 0]

@@ -1,0 +1,5 @@
+$ for u in /newsletters /chat?model=llm-rag /assets/; do printf '%-22s ' $u; curl -s -o /dev/null -w '%{http_code} %{content_type}\n' http://localhost:8080$u; done
+/newsletters           200 text/html
+/chat?model=llm-rag    200 text/html
+/assets/               404 text/html
+[exit 0]

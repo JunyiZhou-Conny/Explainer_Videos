@@ -1,0 +1,4 @@
+$ docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}'
+NAMES                    IMAGE                    PORTS
+cheese-app-api-service   cheese-app-api-service   0.0.0.0:9000->9000/tcp
+[exit 0]

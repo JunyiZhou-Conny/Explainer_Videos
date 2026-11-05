@@ -1,0 +1,4 @@
+$ docker network disconnect cheese-app-network cheese-app-api-service; curl -s -w '\n[HTTP %{http_code}]\n' 'http://localhost:3000/api/newsletters?limit=2'; docker network connect cheese-app-network cheese-app-api-service
+
+[HTTP 502]
+[exit 0]

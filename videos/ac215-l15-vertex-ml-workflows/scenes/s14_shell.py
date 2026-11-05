@@ -3,7 +3,8 @@ slides 32-33 and 36 redrawn, V2 and V7 reprised).
 
 Beats (script.md "## S14", one voiceover block each):
  0  TRACKER B6 (appears, 3 dots) -> step 1. 3-row strip at ~/ml-workflow-aws/src/data-processor:
-    `cd ../workflow` (chip "exit the container first · this runs on your laptop") -> prompt. V2's
+    `cd ../workflow` (chip "still on your laptop · from data-processor to workflow": S13 ends on the
+    laptop, so script.md's "exit the container first" would send a newcomer out of nothing) -> prompt. V2's
     version line (StarVsPin) above, lit ORANGE by `sagemaker = "*"`, chip "before your first sh
     docker-shell.sh here". The lock that never boards: two GREEN file cards (`Pipfile`,
     `Pipfile.lock · 2.250.0`) on the GREY laptop; a TEAL `cheese-app-workflow` image; a PINK ADD
@@ -11,7 +12,9 @@ Beats (script.md "## S14", one voiceover block each):
     the lock bounces off the image wall (RED cross). The PURPLE resolver drops V2's dot at 3.29
     (ORANGE).
  1  TRACKER B6 1 · extra · check. The strip grows to 7 rows: laptop/85 line 1 (bar tag "extra ·
-    check") -> TERM(laptop/85: 10) `sagemaker==3.29.0` RED; laptop/89 line 1 -> TERM(laptop/89: 9334
+    check") -> TERM(laptop/85: 10) `sagemaker==3.29.0` RED; on "the imports failing" TERM(laptop/86: 9
+    cut, 10) `ModuleNotFoundError: No module named 'sagemaker.processing'` RED, row tag "import check
+    · on 3.29.0" (the narration's picture; its long command is not typed); laptop/89 line 1 -> TERM(laptop/89: 9334
     from "Pipfile.lock not found") RED. TRACKER B6 1 · extra: laptop/88 line 1 (the sed fix + git
     diff) -> TERM(laptop/88: 10-11), ▶ your turn. V2: GREEN wall at 3.0 + `sagemaker = "<3"`, the dot
     jumps back to 2.257.7.
@@ -51,7 +54,7 @@ SAY = NARRATION["S14"]
 SIZE = 20                                     # terminal font: 72 characters a row
 
 # ------------------------------------------------------------------ the real sources (checked)
-C85, C88, C89, C90 = capture("85"), capture("88"), capture("89"), capture("90")
+C85, C86, C88, C89, C90 = capture("85"), capture("86"), capture("88"), capture("89"), capture("90")
 assert C85.cmd.startswith("docker run --rm --tmpfs /tmp:exec,size=4g") and C85.cmd.endswith("sagemaker boto3")
 L85 = C85.at(10)
 assert L85 == ["  sagemaker==3.29.0"], L85
@@ -61,6 +64,10 @@ assert L89 == "…Pipfile.lock not found, creating...", L89
 assert C88.cmd == """sed -i 's/^sagemaker = "\\*"/sagemaker = "<3"/' Pipfile && git diff Pipfile"""
 L88 = C88.at(10, 11)
 assert L88 == ['-sagemaker = "*"', '+sagemaker = "<3"'], L88
+assert "sagemaker==3.29.0" in C86.cmd and "sagemaker_import_check.sh" in C86.cmd
+L86 = [cut(C86.line(9), "import"), C86.line(10)]
+assert L86 == [">>> from sagemaker.processing import…",
+               "ModuleNotFoundError: No module named 'sagemaker.processing'"], L86
 ADD87 = capture("87").at(3)[0]
 assert ADD87 == "40:ADD --chown=app:app Pipfile /app/", ADD87
 assert C90.cmd == "sh docker-shell.sh"
@@ -172,7 +179,7 @@ class WorkflowShell(VoiceScene):
         tr = fixed_tracker("B6")
         t = term(P_SRC("data-processor"), rows=3, size=SIZE)
         self.t = t
-        exit_c = grey_chip("exit the container first · this runs on your laptop")
+        exit_c = grey_chip("still on your laptop · from data-processor to workflow")
         under_term(t, exit_c)
 
         v = StarVsPin().shift(UP * 0.3)
@@ -238,6 +245,11 @@ class WorkflowShell(VoiceScene):
             self.bar(on_bar(t, extra_row("check")))
             type_cmd(self, t, C85.cmd, type_time=0.8)
             r85 = out(self, t, [(L85[0], ERR)], run_time=0.4)
+            self.reseat()
+            vo.wait_until("the imports failing")
+            r86 = out(self, t, [L86[0], (L86[1], ERR)], run_time=0.4)    # laptop/86: 9-10, its long command untyped
+            pin(self, r86[0], beside(row_tag("import check · on 3.29.0"), r86[0]))
+            self.play(Indicate(r86[1], color=ERR, scale_factor=1.05), run_time=0.6)
             self.reseat()
             type_cmd(self, t, C89.cmd, type_time=0.6)
             r89 = out(self, t, [(L89, ERR)], run_time=0.4)

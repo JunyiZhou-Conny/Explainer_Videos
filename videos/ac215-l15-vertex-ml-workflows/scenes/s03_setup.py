@@ -44,8 +44,8 @@ Beats (script.md "## S03"; one voiceover block each):
    docker-shell.sh 22–28 (20 pt, three lines cut) at the right, lines lighting with the arrows:
    line 24's PINK -v arrow (plus a visible PINK arc drawer → /home/app/.aws) copies the drawer in; three GREY export cards; lines 25–27 YELLOW as the
    three PINK -e arrows pass; on "So exported keys" the two key cards hit the wall and drop.
-   `erratum` tag + card "use option 1 · or add -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY".
-   Fade to empty.
+   `erratum` tag + card "use option 1 · or add -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY · in
+   docker-shell.sh, before $IMAGE_NAME" right after the fall (line 28 lights); a 2 s hold; fade to empty.
 """
 
 from manim import *  # noqa: I001  (manim first, then common: common must win)
@@ -442,7 +442,10 @@ class UserRoleBucket(VoiceScene):
         r1 = VGroup(label("or add", 22, INK), mono("-e AWS_ACCESS_KEY_ID", 20, ROUTE)).arrange(RIGHT, buff=0.15)
         r2 = VGroup(label("or add", 22, INK).set_opacity(0), mono("-e AWS_SECRET_ACCESS_KEY", 20, ROUTE)) \
             .arrange(RIGHT, buff=0.15)
-        fix_rows = [label("use option 1", 22, INK), r1, r2]
+        r3 = VGroup(label("in docker-shell.sh, before", 22, INK), mono("$IMAGE_NAME", 20, INK)) \
+            .arrange(RIGHT, buff=0.15)
+        fix_rows = [label("use option 1", 22, INK), r1, r2, r3]
+        bar28 = line_bar(cp.code, 6, TURN, 0.22)
         fix = card(fix_rows)
         fix.next_to(cp, DOWN, buff=0.45).align_to(cp, RIGHT)
         err_t.next_to(fix, UP, buff=0.08).align_to(fix, LEFT)
@@ -476,12 +479,17 @@ class UserRoleBucket(VoiceScene):
                       run_time=0.5)
             vo.wait_until("So exported keys fall off at the wall")
             v.fall_off(self, cards[:2], run_time=1.4)
-            vo.wait_until("Use option 1")
+            # the fix card comes in as soon as the keys have fallen (not on the last words), so the
+            # two flags and where they go stay readable; it then holds before the scene's fade
             self.play(FadeIn(err_t, shift=DOWN * 0.1), FadeIn(fix, shift=UP * 0.1),
                       *[FadeOut(bars_[k]) for k in (25, 26, 27)], run_time=0.6)
+            vo.wait_until("Use option 1")
+            self.play(Indicate(fix_rows[0], color=TURN, scale_factor=1.06), run_time=0.6)
             vo.wait_until("or add the keys with dash e")
             self.play(Indicate(fix_rows[1][1], color=ROUTE, scale_factor=1.06),
-                      Indicate(fix_rows[2][1], color=ROUTE, scale_factor=1.06), run_time=0.8)
+                      Indicate(fix_rows[2][1], color=ROUTE, scale_factor=1.06), FadeIn(bar28), run_time=0.8)
+            self.play(Indicate(fix_rows[3][1], color=TURN, scale_factor=1.06), run_time=0.6)
+        self.wait(2.0)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.6)
         self.remove(*self.mobjects)

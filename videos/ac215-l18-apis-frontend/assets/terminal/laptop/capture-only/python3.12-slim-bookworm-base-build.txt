@@ -1,0 +1,22 @@
+$ docker build -t python:3.12-slim-bookworm /tmp/tmp.cabILB
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 740B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim-bookworm
+#2 ERROR: unexpected status from HEAD request to https://registry-1.docker.io/v2/library/python/manifests/3.12-slim-bookworm: 429 Too Many Requests
+------
+ > [internal] load metadata for docker.io/library/python:3.12-slim-bookworm:
+------
+Dockerfile:3
+--------------------
+   1 |     # capture-only, NOT part of the tutorial: python:3.12-slim-bookworm + the recording proxy's CA, https Debian
+   2 |     # sources and the CA env vars, re-tagged under the same name so the tutorial Dockerfile builds unchanged.
+   3 | >>> FROM python:3.12-slim-bookworm
+   4 |     COPY capture-ca.crt /usr/local/share/ca-certificates/capture-ca.crt
+   5 |     RUN cat /usr/local/share/ca-certificates/capture-ca.crt >> /etc/ssl/certs/ca-certificates.crt \
+--------------------
+ERROR: failed to build: failed to solve: python:3.12-slim-bookworm: failed to resolve source metadata for docker.io/library/python:3.12-slim-bookworm: unexpected status from HEAD request to https://registry-1.docker.io/v2/library/python/manifests/3.12-slim-bookworm: 429 Too Many Requests
+[exit 1]

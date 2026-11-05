@@ -1,0 +1,4 @@
+$ curl -s -I http://localhost:8080/main.js | grep -i -E 'HTTP/|cache-control'
+HTTP/1.1 200 OK
+cache-control: max-age=3600
+[exit 0]
