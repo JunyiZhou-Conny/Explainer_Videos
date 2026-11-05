@@ -1,0 +1,139 @@
+$ python --version; python -m pip list 2>/dev/null | grep -i -E "^(sagemaker|boto3|botocore) "
+Python 3.11.18
+boto3                     1.43.124
+botocore                  1.43.124
+sagemaker                 2.257.7
+[exit 0]
+
+$ python -c "import inspect; from sagemaker.lambda_helper import Lambda; print(\"Lambda(...) runtime default:\", inspect.signature(Lambda.__init__).parameters[\"runtime\"].default)"
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /root/.config/sagemaker/config.yaml
+Lambda(...) runtime default: python3.8
+[exit 0]
+
+$ grep -n "config_options = {\"EndpointConfigName\": name" /venv/lib/python3.11/site-packages/sagemaker/session.py; grep -n "variant_name=\"AllTraffic\"" /venv/lib/python3.11/site-packages/sagemaker/session.py | head -1
+6359:        config_options = {"EndpointConfigName": name, "ProductionVariants": production_variants}
+8366:    variant_name="AllTraffic",
+[exit 0]
+
+$ cd /tmp && python /checks/pipe_variants.py original 2>&1 | grep -v -E 'INFO|Warning|warn|migration|deprecat|^ *$|PipelineSession|Popping out|Using derived'
+Defining SageMaker Pipeline
+Steps in the definition, in list order: ['DataCollector', 'DataProcessor', 'ModelTraining', 'CreateModel-CreateModel', 'DeployModel']
+  DataCollector            references: -  DependsOn: -
+  DataProcessor            references: ['DataCollector']  DependsOn: -
+  ModelTraining            references: ['DataProcessor']  DependsOn: -
+  CreateModel-CreateModel  references: ['ModelTraining']  DependsOn: -
+  DeployModel              references: ['CreateModel-CreateModel']  DependsOn: -
+  can start in wave 1: ['DataCollector']
+  can start in wave 2: ['DataProcessor']
+  can start in wave 3: ['ModelTraining']
+  can start in wave 4: ['CreateModel-CreateModel']
+  can start in wave 5: ['DeployModel']
+[check stub] Pipeline.upsert() and start() NOT sent: no AWS account
+[exit 0]
+
+$ cd /tmp && python /checks/pipe_variants.py reversed 2>&1 | grep -v -E 'INFO|Warning|warn|migration|deprecat|^ *$|PipelineSession|Popping out|Using derived'
+edit: steps=[step_collect, step_process, step_train, step_create_m -> steps=[step_deploy_lambda, step_create_model, step_train, st
+Defining SageMaker Pipeline
+Steps in the definition, in list order: ['DeployModel', 'CreateModel-CreateModel', 'ModelTraining', 'DataProcessor', 'DataCollector']
+  DeployModel              references: ['CreateModel-CreateModel']  DependsOn: -
+  CreateModel-CreateModel  references: ['ModelTraining']  DependsOn: -
+  ModelTraining            references: ['DataProcessor']  DependsOn: -
+  DataProcessor            references: ['DataCollector']  DependsOn: -
+  DataCollector            references: -  DependsOn: -
+  can start in wave 1: ['DataCollector']
+  can start in wave 2: ['DataProcessor']
+  can start in wave 3: ['ModelTraining']
+  can start in wave 4: ['CreateModel-CreateModel']
+  can start in wave 5: ['DeployModel']
+[check stub] Pipeline.upsert() and start() NOT sent: no AWS account
+[exit 0]
+
+$ cd /tmp && python /checks/pipe_variants.py literal 2>&1 | grep -v -E 'INFO|Warning|warn|migration|deprecat|^ *$|PipelineSession|Popping out|Using derived'
+edit: step_process.properties.ProcessingOutputConfig .Outputs["tfr -> f"s3://{S3_BUCKET_NAME}/tfrecords"
+Defining SageMaker Pipeline
+Steps in the definition, in list order: ['DataCollector', 'DataProcessor', 'ModelTraining', 'CreateModel-CreateModel', 'DeployModel']
+  DataCollector            references: -  DependsOn: -
+  DataProcessor            references: ['DataCollector']  DependsOn: -
+  ModelTraining            references: -  DependsOn: -
+  CreateModel-CreateModel  references: ['ModelTraining']  DependsOn: -
+  DeployModel              references: ['CreateModel-CreateModel']  DependsOn: -
+  can start in wave 1: ['DataCollector', 'ModelTraining']
+  can start in wave 2: ['CreateModel-CreateModel', 'DataProcessor']
+  can start in wave 3: ['DeployModel']
+[check stub] Pipeline.upsert() and start() NOT sent: no AWS account
+[exit 0]
+
+$ cd /tmp && python /checks/pipe_variants.py literal+depends_on 2>&1 | grep -v -E 'INFO|Warning|warn|migration|deprecat|^ *$|PipelineSession|Popping out|Using derived'
+edit: step_process.properties.ProcessingOutputConfig .Outputs["tfr -> f"s3://{S3_BUCKET_NAME}/tfrecords"
+edit: name="ModelTraining", -> name="ModelTraining", depends_on=[step_process],
+Defining SageMaker Pipeline
+Steps in the definition, in list order: ['DataCollector', 'DataProcessor', 'ModelTraining', 'CreateModel-CreateModel', 'DeployModel']
+  DataCollector            references: -  DependsOn: -
+  DataProcessor            references: ['DataCollector']  DependsOn: -
+  ModelTraining            references: -  DependsOn: ['DataProcessor']
+  CreateModel-CreateModel  references: ['ModelTraining']  DependsOn: -
+  DeployModel              references: ['CreateModel-CreateModel']  DependsOn: -
+  can start in wave 1: ['DataCollector']
+  can start in wave 2: ['DataProcessor']
+  can start in wave 3: ['ModelTraining']
+  can start in wave 4: ['CreateModel-CreateModel']
+  can start in wave 5: ['DeployModel']
+[check stub] Pipeline.upsert() and start() NOT sent: no AWS account
+[exit 0]
+
+$ cd /tmp && python /checks/flags.py
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /root/.config/sagemaker/config.yaml
+$ python cli.py --prepare --deploy    # /md/cli.py
+Prepare model and save model to GCS Bucket
+  -> prepare() would run
+$ python cli.py --test    # /md/cli.py
+$ python cli.py --data_collector --data_processor    # /wf/cli.py
+CLI Arguments: Namespace(data_collector=True, data_processor=True, model_training=False, model_deploy=False, pipeline=False)
+  -> data_collector() would run
+Data Processor
+  -> data_processor() would run
+[exit 0]
+
+$ cd /tmp && python /checks/delete_sim.py
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /root/.config/sagemaker/config.yaml
+before: endpoints ['model-mobilenetv2-train-base-True-v1-endpoint-20261105000001', 'model-mobilenetv2-train-base-True-v1-endpoint-20261105000002']
+endpoint_config.json names: model-mobilenetv2-train-base-True-v1-endpoint-20261105000002
+Deleting endpoint: model-mobilenetv2-train-base-True-v1-endpoint-20261105000002
+  [sagemaker] delete_endpoint(EndpointName='model-mobilenetv2-train-base-True-v1-endpoint-20261105000002')
+  [sagemaker] get_paginator(op='list_endpoint_configs')
+Deleting endpoint config: model-mobilenetv2-train-base-True-v1-endpoint-20261105000001
+  [sagemaker] delete_endpoint_config(EndpointConfigName='model-mobilenetv2-train-base-True-v1-endpoint-20261105000001')
+Deleting endpoint config: model-mobilenetv2-train-base-True-v1-endpoint-20261105000002
+  [sagemaker] delete_endpoint_config(EndpointConfigName='model-mobilenetv2-train-base-True-v1-endpoint-20261105000002')
+Deleting model: model-mobilenetv2-train-base-True-v1
+  [sagemaker] delete_model(ModelName='model-mobilenetv2-train-base-True-v1')
+Deleting S3 artifacts s3://your-models-bucket-placeholder/model-mobilenetv2_train_base_True.v1/
+  [s3] get_paginator(op='list_objects_v2')
+  [s3] delete_objects(Bucket='your-models-bucket-placeholder', Keys=['model-mobilenetv2_train_base_True.v1/model.tar.gz'])
+Removed endpoint_config.json
+after:  endpoints ['model-mobilenetv2-train-base-True-v1-endpoint-20261105000001']
+        endpoint configs none | models none | S3 objects none
+endpoint_config.json still there: False
+[exit 0]
+
+$ cd /tmp && python /checks/lambda_sim.py
+existing endpoints: none
+  create_endpoint_config(EndpointConfigName=cheese-app-endpoint-config-<time>, ModelName='pipelines-placeholder-CreateModel', InstanceType='ml.m5.large')
+  list_endpoints(NameContains='cheese-app-endpoint') -> []
+  create_endpoint(EndpointName='cheese-app-endpoint')
+  -> returned "Endpoint Created/Updated Successfully"
+existing endpoints: ['cheese-app-endpoint']
+  create_endpoint_config(EndpointConfigName=cheese-app-endpoint-config-<time>, ModelName='pipelines-placeholder-CreateModel', InstanceType='ml.m5.large')
+  list_endpoints(NameContains='cheese-app-endpoint') -> ['cheese-app-endpoint']
+  update_endpoint(EndpointName='cheese-app-endpoint')
+  -> returned "Endpoint Created/Updated Successfully"
+existing endpoints: ['cheese-app-endpoint-ab12cd34']
+  create_endpoint_config(EndpointConfigName=cheese-app-endpoint-config-<time>, ModelName='pipelines-placeholder-CreateModel', InstanceType='ml.m5.large')
+  list_endpoints(NameContains='cheese-app-endpoint') -> ['cheese-app-endpoint-ab12cd34']
+  update_endpoint(EndpointName='cheese-app-endpoint')
+  -> ClientError: ValidationException - [stand-in] no endpoint named cheese-app-endpoint
+[exit 0]
+

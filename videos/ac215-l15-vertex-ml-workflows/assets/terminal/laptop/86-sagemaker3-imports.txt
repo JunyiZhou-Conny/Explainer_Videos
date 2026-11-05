@@ -1,0 +1,15 @@
+$ docker run --rm -v /capture/helpers:/helpers:ro python:3.11-slim sh /helpers/sagemaker_import_check.sh 'sagemaker==3.29.0 sagemaker-core==2.29.0 sagemaker-train==1.29.0 sagemaker-serve==1.29.0 sagemaker-mlops==1.29.0' 'from sagemaker.processing import ProcessingInput, ProcessingOutput, Processor' 'from sagemaker.workflow.pipeline import Pipeline' 'from sagemaker.tensorflow import TensorFlow'
+sagemaker       3.29.0
+sagemaker-core  2.29.0
+sagemaker-mlops 1.29.0
+sagemaker-serve 1.29.0
+sagemaker-train 1.29.0
+sagemaker is a namespace package: ['/usr/local/lib/python3.11/site-packages/sagemaker']
+its modules: ['ai_registry', 'core', 'lineage', 'mlops', 'serve', 'train']
+>>> from sagemaker.processing import ProcessingInput, ProcessingOutput, Processor
+ModuleNotFoundError: No module named 'sagemaker.processing'
+>>> from sagemaker.workflow.pipeline import Pipeline
+ModuleNotFoundError: No module named 'sagemaker.workflow'
+>>> from sagemaker.tensorflow import TensorFlow
+ModuleNotFoundError: No module named 'sagemaker.tensorflow'
+[exit 0]

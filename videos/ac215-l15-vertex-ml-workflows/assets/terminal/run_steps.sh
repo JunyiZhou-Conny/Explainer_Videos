@@ -25,6 +25,8 @@
 #   mw-push   "Build & Push Images": the ECR variable block                     -> 80-84
 #   mw-flow   workflow: what its unpinned Pipfile resolves today, the pin, the container:
 #             --data_collector, --pipeline, the four component flags              -> 85-94
+#   mw-lock   87 alone (re-run)
+#   mw-dag    extra: the pipeline's JSON definition, built offline                -> 92
 #   mw-end    extras: what is left on the laptop                                -> 95-99
 # Steps marked "extra" are not in the README; they are checks the video uses.
 OUT=$1; SEG=$2
@@ -129,8 +131,8 @@ md-setup)
   step 12-ls "ls -la; ls data"                      # extra
   cd ~
   # "AWS Services to Enable", "Create AWS IAM User", "Create SageMaker Execution Role", "Create S3
-  # Bucket" (README:12-50): console clicks -> illustration (ASSETS.md). No AWS account here.
-  # "Option 1: AWS CLI Configuration (Recommended)" (README:62-74): aws configure. There are NO
+  # Bucket" (README:12-52): console clicks -> illustration (ASSETS.md). No AWS account here.
+  # "Option 1: AWS CLI Configuration (Recommended)" (README:64-75): aws configure. There are NO
   # keys in this recording: the two key prompts are answered with Enter (left empty), region and
   # output as the README says.
   PTY_COLS=100 PTY_ROWS=30 istep 13-aws-configure "aws configure" \
@@ -138,20 +140,20 @@ md-setup)
     'AWS Secret Access Key \[None\]: $' '' \
     'Default region name \[None\]: $' 'us-east-1' \
     'Default output format \[None\]: $' 'json'
-  step 14-aws-files "ls -la ~/.aws; cat ~/.aws/config"   # extra: README:74 "This will create ~/.aws/credentials and ~/.aws/config"
+  step 14-aws-files "ls -la ~/.aws; cat ~/.aws/config"   # extra: README:75 "This will create ~/.aws/credentials and ~/.aws/config"
   step 15-sts-no-keys "aws sts get-caller-identity"      # extra: the first thing the container will try (docker-entrypoint.sh:7)
-  # "Option 2: Environment Variables" (README:76-82), verbatim (the README's own placeholders), then
+  # "Option 2: Environment Variables" (README:77-83), verbatim (the README's own placeholders), then
   # what AWS answers to them (extra)
   step 16-option2-exports "export AWS_ACCESS_KEY_ID=your_access_key_id
 export AWS_SECRET_ACCESS_KEY=your_secret_access_key
 export AWS_REGION=us-east-1
 aws sts get-caller-identity"
-  # "Update Configuration" (README:84-90): edit docker-shell.sh (sed is the editor). Placeholder
+  # "Update Configuration" (README:85-90): edit docker-shell.sh (sed is the editor). Placeholder
   # bucket and role, region as the README; the original line 8 holds a real-looking account id,
   # which no capture prints.
   cd model-deployment-aws
   step 17-edit-docker-shell "sed -i -e 's|^export S3_MODELS_BUCKET_NAME=.*|export S3_MODELS_BUCKET_NAME=\"$PH_BUCKET_MD\"|' -e 's|^export SAGEMAKER_ROLE=.*|export SAGEMAKER_ROLE=\"$PH_ROLE\"|' docker-shell.sh && sed -n '5,9p' docker-shell.sh"
-  # "Quick Start Commands" (README:92-107), 1. Build and run the container
+  # "Quick Start Commands" (README:92-108), 1. Build and run the container (README:97-99)
   step 18-chmod "chmod +x docker-shell.sh"
   step 19-ls-l "ls -l docker-shell.sh"   # extra
   ;;
@@ -160,13 +162,13 @@ md-shell)
   # capture-only: a re-run starts from the pinned files plus 17's edit (silent)
   git checkout -q -- docker-shell.sh Pipfile
   sed -i -e "s|^export S3_MODELS_BUCKET_NAME=.*|export S3_MODELS_BUCKET_NAME=\"$PH_BUCKET_MD\"|" -e "s|^export SAGEMAKER_ROLE=.*|export SAGEMAKER_ROLE=\"$PH_ROLE\"|" docker-shell.sh
-  # README:97 "sh docker-shell.sh", as written: docker-shell.sh:21 builds --platform=linux/arm64/v8
+  # README:99 "sh docker-shell.sh", as written: docker-shell.sh:19 builds --platform=linux/arm64/v8
   # ("M1/2 chip macs use this line"). This laptop is x86_64 with no arm64 emulation installed.
   arm64_attempt 20-docker-shell-arm64 ubuntu:20.04
-  # extra: the script's own other line (docker-shell.sh:19, commented out) for a non-Apple-silicon
+  # extra: the script's own other line (docker-shell.sh:17, commented out) for a non-Apple-silicon
   # machine: comment the arm64 line, uncomment the plain one
   step 21-use-plain-build "sed -i -e 's|^docker build -t \$IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .|#&|' -e 's|^#docker build -t \$IMAGE_NAME -f Dockerfile .|docker build -t \$IMAGE_NAME -f Dockerfile .|' docker-shell.sh && sed -n '17,21p' docker-shell.sh"
-  # README:97 again, unchanged Pipfile: NOT kept. On this recording machine the build's
+  # README:99 again, unchanged Pipfile: NOT kept. On this recording machine the build's
   # `RUN cd /app && pipenv lock && pipenv sync` (Dockerfile:55) ran for 13+ minutes and filled the
   # disk (several GB of downloads, source builds). Why, in two small extras (ASSETS.md):
   # what the resolver picks today on the image's Python 3.9 ...
@@ -176,7 +178,7 @@ md-shell)
   step 23-sagemaker3-imports "docker run --rm -v /capture/helpers:/helpers:ro python:3.9-slim sh /helpers/sagemaker_import_check.sh 'sagemaker==3.13.1 sagemaker-core==2.13.1 sagemaker-train==1.13.1 sagemaker-serve==1.13.1 sagemaker-mlops==1.13.1' 'import sagemaker; from sagemaker.tensorflow import TensorFlowModel' 'from sagemaker import get_execution_role' 'from sagemaker.serializers import JSONSerializer'"
   # extra, the fix a student needs today: pin the SDK below version 3 in the Pipfile
   step 24-pin-sagemaker "sed -i 's/^sagemaker = \"\\*\"/sagemaker = \"<3\"/' Pipfile && git diff Pipfile"
-  # README:97 a third time (with the pin), then extras typed inside the container
+  # README:99 a third time (with the pin), then extras typed inside the container
   PTY_TIMEOUT=3600 hub_retry istep 25-docker-shell "sh docker-shell.sh" \
     "$P_APP" 'python --version; which python pipenv aws' \
     "$P_APP" 'pip list 2>/dev/null | grep -i -E "^(tensorflow|keras|sagemaker|sagemaker-core|boto3|numpy|pillow) "' \
@@ -185,15 +187,15 @@ md-shell)
     "$P_APP" 'python cli.py --help' \
     "$P_APP" 'exit'
   step 26-docker-images "docker image ls model-deployment-cli-aws"   # extra
-  # README:100 / "Prepare Model for Deployment" (README:109-117)
+  # README:102 / "Prepare Model for Deployment" (README:110-117)
   PTY_TIMEOUT=900 istep 27-prepare "sh docker-shell.sh" "$P_APP" 'python cli.py --prepare' "$P_APP" 'ls -la artifacts' "$P_APP" 'exit'
-  # README:101 / "Upload & Deploy Model to SageMaker" (README:119-129)
+  # README:103 / "Upload & Deploy Model to SageMaker" (README:119-129)
   PTY_TIMEOUT=900 istep 28-deploy "sh docker-shell.sh" "$P_APP" 'python cli.py --deploy' "$P_APP" 'exit'
-  # README:102 / "Test Predictions" (README:131-147)
+  # README:104 / "Test Predictions" (README:131-148)
   PTY_TIMEOUT=900 istep 29-predict "sh docker-shell.sh" "$P_APP" 'python cli.py --predict' "$P_APP" 'exit'
-  # README:104-105 / "Using the CLI Script" (README:168-179)
+  # README:106-107 / "Using the CLI Script" (README:166-176)
   PTY_TIMEOUT=900 istep 30-delete "sh docker-shell.sh" "$P_APP" 'python cli.py --delete' "$P_APP" 'exit'
-  # "Using AWS CLI" (README:160-165), on the laptop: first exactly as written (the <...> are
+  # "Using AWS CLI" (README:159-164), on the laptop: first exactly as written (the <...> are
   # placeholders the shell reads as redirections), then with a placeholder endpoint name (extra)
   step 31-aws-cli-delete-as-written "aws sagemaker delete-endpoint --endpoint-name <your-endpoint-name>"
   step 32-aws-cli-delete "aws sagemaker delete-endpoint --endpoint-name cheese-endpoint-placeholder"
@@ -266,7 +268,7 @@ mw-coll)
 mw-proc)
   cd ml-workflow-aws/src/data-processor
   git checkout -q -- docker-shell.sh Pipfile   # capture-only: a re-run starts from the pinned files
-  # README:113 sh docker-shell.sh, as written (docker-shell.sh:33 --platform=linux/arm64/v8)
+  # README:113 sh docker-shell.sh, as written (docker-shell.sh:31 --platform=linux/arm64/v8)
   arm64_attempt 65-processor-docker-shell-arm64 python:3.11-slim
   step 66-use-plain-build "sed -i -e 's|^docker build -t \$IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .|#&|' -e 's|^#docker build -t \$IMAGE_NAME -f Dockerfile .|docker build -t \$IMAGE_NAME -f Dockerfile .|' docker-shell.sh && sed -n '29,34p' docker-shell.sh"   # extra
   # extra: the build line docker-shell.sh now runs (line 29), alone and without a terminal, so the
@@ -285,7 +287,7 @@ mw-proc)
 mw-train)
   cd ml-workflow-aws/src/model-training
   git checkout -q -- docker-shell.sh Pipfile   # capture-only: a re-run starts from the pinned files
-  # README:131 sh docker-shell.sh, as written (docker-shell.sh:33 --platform=linux/arm64/v8)
+  # README:131 sh docker-shell.sh, as written (docker-shell.sh:32 --platform=linux/arm64/v8)
   arm64_attempt 70-training-docker-shell-arm64 python:3.11-slim
   step 71-use-plain-build "sed -i -e 's|^docker build -t \$IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .|#&|' -e 's|^#docker build -t \$IMAGE_NAME -f Dockerfile .|docker build -t \$IMAGE_NAME -f Dockerfile .|' docker-shell.sh && sed -n '29,34p' docker-shell.sh"   # extra
   # extra: the build line alone, plain log (as 67)
@@ -320,18 +322,18 @@ mw-flow)
   cd ml-workflow-aws/src/workflow
   git checkout -q -- docker-shell.sh Pipfile Dockerfile   # capture-only: a re-run starts from the pinned files
   # "Automate Running Data Collector Container" (README:210-224): sh docker-shell.sh in
-  # src/workflow. Its Dockerfile copies only the Pipfile (Dockerfile:38) and runs `pipenv install`
-  # (:40), so the committed Pipfile.lock (sagemaker 2.250.0) is NOT used: the image resolves
+  # src/workflow. Its Dockerfile copies only the Pipfile (Dockerfile:40) and runs `pipenv install`
+  # (:42), so the committed Pipfile.lock (sagemaker 2.250.0) is NOT used: the image resolves
   # `sagemaker = "*"` afresh. Unchanged, that build is not kept here (several GB, as in 22); what
   # it resolves today on the image's Python 3.11, and what that does to cli.py's imports
   # (cli.py:12-22), in two extras:
   capture_only_bases python:3.11-slim
   step 85-resolve-today "docker run --rm --tmpfs /tmp:exec,size=4g -v /capture/helpers:/helpers:ro python:3.11-slim sh /helpers/resolve_check.sh sagemaker boto3"
   step 86-sagemaker3-imports "docker run --rm -v /capture/helpers:/helpers:ro python:3.11-slim sh /helpers/sagemaker_import_check.sh 'sagemaker==3.29.0 sagemaker-core==2.29.0 sagemaker-train==1.29.0 sagemaker-serve==1.29.0 sagemaker-mlops==1.29.0' 'from sagemaker.processing import ProcessingInput, ProcessingOutput, Processor' 'from sagemaker.workflow.pipeline import Pipeline' 'from sagemaker.tensorflow import TensorFlow'"
-  step 87-committed-lock "grep -n -A1 '\"sagemaker\": {' Pipfile.lock | head -4; sed -n '36,40p' Dockerfile"   # extra
+  step 87-committed-lock "python3 -c 'import json; d = json.load(open(\"Pipfile.lock\"))[\"default\"]; print(\"Pipfile.lock pins sagemaker\", d[\"sagemaker\"][\"version\"], \"and boto3\", d[\"boto3\"][\"version\"])'; grep -n 'ADD\|RUN pipenv' Dockerfile"   # extra
   # extra, the same fix as 24: pin the SDK below version 3
   step 88-pin-sagemaker "sed -i 's/^sagemaker = \"\\*\"/sagemaker = \"<3\"/' Pipfile && git diff Pipfile"
-  # extra: the build line docker-shell.sh runs (line 32, --platform=linux/amd64), alone, plain log
+  # extra: the build line docker-shell.sh runs (line 29, --platform=linux/amd64), alone, plain log
   PTY_TIMEOUT=3600 hub_retry step 89-workflow-build "docker build -t cheese-app-workflow --platform=linux/amd64 -f Dockerfile ."
   # README:218 sh docker-shell.sh (with the pin); README:223 python cli.py --data_collector;
   # "SageMaker Pipelines" (README:226-248): --pipeline and the four component flags; + extras
@@ -345,6 +347,17 @@ mw-flow)
     "$P_APP" 'python cli.py --model_deploy' \
     "$P_APP" 'exit'
   step 91-workflow-image "docker image ls cheese-app-workflow"   # extra
+  ;;
+mw-lock)   # 87 alone (re-run)
+  cd ml-workflow-aws/src/workflow
+  step 87-committed-lock "python3 -c 'import json; d = json.load(open(\"Pipfile.lock\"))[\"default\"]; print(\"Pipfile.lock pins sagemaker\", d[\"sagemaker\"][\"version\"], \"and boto3\", d[\"boto3\"][\"version\"])'; grep -n 'ADD\|RUN pipenv' Dockerfile"   # extra
+  ;;
+mw-dag)
+  cd ml-workflow-aws/src/workflow
+  # extra (capture-only helper, ASSETS.md): the pipeline cli.py's pipeline() defines, as the JSON
+  # SageMaker would receive (Pipeline.definition()), built in the tutorial's own workflow image (with
+  # 88's pin). Account lookups answer with the placeholder 000000000000; nothing is sent or created.
+  step 92-pipeline-definition "docker run --rm --entrypoint pipenv -v \"\$PWD\":/app -v /capture/helpers:/helpers:ro -e AWS_ACCESS_KEY_ID=\$(aws configure get aws_access_key_id) -e AWS_SECRET_ACCESS_KEY=\$(aws configure get aws_secret_access_key) -e AWS_REGION=us-east-1 -e S3_BUCKET_NAME=cheese-app-ml-workflow-demo -e S3_PACKAGE_URI=s3://cheese-app-ml-workflow-demo cheese-app-workflow run python /helpers/pipeline_offline.py"
   ;;
 mw-end)
   step 95-docker-ps "docker ps -a"   # extra: --rm left nothing running

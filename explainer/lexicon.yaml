@@ -425,3 +425,23 @@ Bienvenido a AC215: {ipa: "bjˌɛnbeɪnˈiːdoʊ ɑː ˌeɪsˈiː tˈuː fˈɪft
 A M D 64: {ipa: "ˌeɪ ˌɛm dˈiː sˈɪksti fˈɔːɹ", say: "A M D sixty-four"}
 same digest: {ipa: "sˈeɪm dˈaɪdʒɛst", say: "same DYE-jest"}
 by digest: {ipa: "baɪ dˈaɪdʒɛst", say: "by DYE-jest"}
+# AC215 L15 (spoken review of the full follow-along, videos/ac215-l15-vertex-ml-workflows). Lower-case
+# "aws" before a command is read "awes" and careonex-e0 says a bare "aws": phrase keys only. "S3 URI" is a
+# phrase because L13/L14 say a bare "URI". The other keys appear in no other video's SAY (grep -w,
+# 2026-11-05). "A R N", "A R M 64", "A B testing": the spelled "A" was read as the article "uh".
+aws configure: {ipa: "ˌeɪdˌʌbəljuːˈɛs kənfˈɪɡjɚ", say: "A W S configure"}
+aws sagemaker: {ipa: "ˌeɪdˌʌbəljuːˈɛs sˈeɪdʒ mˈeɪkɚ", say: "A W S sagemaker"}
+A R N: {ipa: "ˌeɪ ˌɑːɹ ˈɛn", say: "A R N"}
+A R M 64: {ipa: "ˌeɪ ˌɑːɹ ˈɛm sˈɪksti fˈɔːɹ", say: "A R M sixty-four"}
+A B testing: {ipa: "ˌeɪ bˈiː tˈɛstɪŋ", say: "A B testing"}
+"2.13": {ipa: "tˈuː pɔɪnt θˈɜːtiːn", say: "two point thirteen"}
+"2.18": {ipa: "tˈuː pɔɪnt eɪtˈiːn", say: "two point eighteen"}
+"2.20": {ipa: "tˈuː pɔɪnt twˈɛnti", say: "two point twenty"}
+TFRecord: {ipa: "tˌiːˈɛf ɹˈɛkɚd", say: "T F record"}
+TFRecords: {ipa: "tˌiːˈɛf ɹˈɛkɚdz", say: "T F records"}
+tfrecords: {ipa: "tˌiːˈɛf ɹˈɛkɚdz", say: "T F records"}
+S3 URI: {ipa: "ˈɛs θɹˈiː jˌuː ˌɑːɹ ˈaɪ", say: "S3 U R I"}
+upsert: {ipa: "ˈʌpsɜːt", say: "UP-sert"}
+Upsert: {ipa: "ˈʌpsɜːt", say: "UP-sert"}
+upserts: {ipa: "ˈʌpsɜːts", say: "UP-serts"}
+or updates: {ipa: "ɔːɹ ʌpdˈeɪts", say: "or up-DATES"}

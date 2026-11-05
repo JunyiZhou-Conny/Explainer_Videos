@@ -1,0 +1,81 @@
+id: ac215-l15-vertex-ml-workflows
+title: "AC215 · Lecture 15 — ML workflows: deploy one model, then automate the pipeline on SageMaker (follow-along: model-deployment-aws + ml-workflow-aws)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 15
+  lecture_title: "ML Workflows with Vertex AI"
+  ed: https://edstem.org/us/courses/97373/lessons/166040/
+  repos:
+    # Series decision (Conny): L15 follows the AWS pair, not the GCP repos of the course map.
+    # Both pins re-checked with git ls-remote on 2026-11-05 (HEAD = main); see ASSETS.md "Which commits".
+    # Run with two one-line fixes the READMEs do not contain (BRIEF errata 1-2): sagemaker = "<3" in the
+    # Pipfiles, and the scripts' plain docker build line instead of --platform=linux/arm64/v8.
+    - {repo: dlops-io/model-deployment-aws, branch: main, commit: 077f4dbc7b13ccef208c65a8e29489331261029e,
+       sections: ["Setup Environments (Clone the github repository, AWS Services to Enable, AWS Credentials, Create S3 Bucket)",
+                  "Run Container (Configure AWS Credentials, Update Configuration, Quick Start Commands)",
+                  "Prepare Model for Deployment", "Upload & Deploy Model to SageMaker", "Test Predictions",
+                  "Clean Up Resources"]}
+    - {repo: dlops-io/ml-workflow-aws, branch: main, commit: f165c6e17895d3d6c33a150d349f4b2649c807db,
+       sections: ["Setup Environments (Clone the github repository, AWS Services, Create S3 Bucket, Setup AWS Credentials)",
+                  "Run Data Collector Container & Test CLI", "Run Data Processor Container & Test CLI",
+                  "Run Model Training Container & Test CLI", "Build & Push Images",
+                  "Automate Running Data Collector Container", "Cheese App: SageMaker Pipelines"]}
+    # context only: the GCP tutorials the course map and the lecture slides name (mentioned once, in S02's bridge)
+    - {repo: dlops-io/model-deployment, branch: main, commit: 3fbf63f1030f762ad3b3b1c6e376144083306eda,
+       sections: ["context only: the Vertex AI version of Part A"]}
+    - {repo: dlops-io/ml-workflow, branch: main, commit: 972ffbb5cb148f9fa6256e7137300dff2b174e2e,
+       sections: ["context only: the Vertex AI Pipelines version of Part B"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L15-vertex-ml-workflows.md
+audience: "AC215 student who has done L1-L14 (Docker images and docker-shell.sh scripts with bind mounts, pipenv and lockfiles, the cheese collector/processor/TFRecords, the L13 trainer package and managed training job, L14's Cloud Run), new to AWS: IAM users, access keys and roles, S3, SageMaker models, endpoint configurations and endpoints, ECR, Lambda and SageMaker Pipelines; watching with clones of model-deployment-aws and ml-workflow-aws open, Docker running, the AWS CLI v2 installed and their own AWS account with billing — this lecture's endpoints, jobs and pipeline steps bill (GOLD tags without amounts + teardown checklist in the video)"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+# Scene classes must not collide with the set-piece classes in scenes/common.py:
+# IdentityBadges, StarVsPin, TwoPipes, ArtifactTrip, ThreeObjects, ManualToPipeline, CallableImage, ReferenceDAG.
+scenes:
+  - {file: scenes/s01_hook.py,      cls: Hook,            title: "Three numbers or four?"}
+  - {file: scenes/s02_map.py,       cls: LectureMap,      title: "Where we are, in AWS words"}
+  - {file: scenes/s03_setup.py,     cls: UserRoleBucket,  title: "A user, a role and a bucket"}
+  - {file: scenes/s04_build.py,     cls: TwoFixes,        title: "The CLI container: two one-line fixes"}
+  - {file: scenes/s05_signature.py, cls: FrontDoor,       title: "Where does preprocessing live?"}
+  - {file: scenes/s06_prepare.py,   cls: PrepareArtifact, title: "--prepare: a SavedModel in a tarball"}
+  - {file: scenes/s07_deploy.py,    cls: ModelToEndpoint, title: "--deploy: model, endpoint configuration, endpoint"}
+  - {file: scenes/s08_predict.py,   cls: AskTheEndpoint,  title: "--predict: 150,528 numbers per photo"}
+  - {file: scenes/s09_delete.py,    cls: TurnOffTheMeter, title: "--delete: turn off the meter"}
+  - {file: scenes/s10_workflow.py,  cls: FourTerminals,   title: "From four terminals to one workflow"}
+  - {file: scenes/s11_collect.py,   cls: CollectAndClean, title: "Collector and processor, by hand"}
+  - {file: scenes/s12_train.py,     cls: TrainLocally,    title: "Train locally, sign the model"}
+  - {file: scenes/s13_push.py,      cls: PushToECR,       title: "Build and push: your own registry"}
+  - {file: scenes/s14_shell.py,     cls: WorkflowShell,   title: "The workflow container and one processing job"}
+  - {file: scenes/s15_pipeline.py,  cls: PropertyDAG,     title: "A pipeline drawn by references"}
+  - {file: scenes/s16_recap.py,     cls: TeardownRecap,   title: "Tear down, recap, test yourself"}
+parts:
+  - id: part1
+    title: "AC215 · L15, part 1: deploy one model — a SageMaker model, an endpoint and the request (model-deployment-aws)"
+    scenes: [s01_hook, s02_map, s03_setup, s04_build, s05_signature, s06_prepare, s07_deploy, s08_predict, s09_delete]
+  - id: part2
+    title: "AC215 · L15, part 2: automate the workflow — four containers, ECR and a SageMaker Pipeline (ml-workflow-aws)"
+    scenes: [s10_workflow, s11_collect, s12_train, s13_push, s14_shell, s15_pipeline, s16_recap]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker)
+publish:
+  title_zh: "AC215 第15讲跟练 · ML 工作流：在 AWS SageMaker 上部署模型，再用 SageMaker Pipelines 自动化整条流程"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 15 讲（ML Workflows with Vertex AI）教程的逐条命令跟练。课件讲的是 Vertex AI，本视频跟着课程的 AWS 版教程做，并逐一对照两边的名词。
+    上半场照着 dlops-io/model-deployment-aws 的 README：IAM user、access key、SageMaker execution role 和 S3 bucket，用 aws configure 配置凭证，
+    构建 CLI 容器时遇到的两处今天才有的问题（arm64 构建行和未固定版本的 sagemaker 解析成 SDK 3）以及两行修复；
+    看清 --prepare 产出的 SavedModel、版本文件夹 1/ 和 model.tar.gz，预处理放在客户端还是模型里（serving signature），
+    --deploy 创建的 Model、endpoint configuration 和 endpoint，--predict 每张照片发送的 150,528 个数字，以及 --delete 漏掉的 endpoint。
+    下半场照着 dlops-io/ml-workflow-aws：从四个人守着四个终端到一条自动化 workflow，手动运行 data collector、data processor 和 model training 三个容器，
+    把镜像推到自己的 ECR，在 workflow 容器里提交 SageMaker Processing job，最后读懂由 property reference 连成的五步 SageMaker Pipeline：缓存、Lambda 部署和数据在 bucket 里怎样流动。
+    本次录制没有 AWS 账号：本地步骤全部真实运行，云端调用停在真实的第一个报错处，云端结果只用 README 的记录或明确标注的本地替代展示，从不伪造。
+    边看边暂停，在自己的电脑上跑每一条命令；本讲的 endpoint、训练和处理任务会产生实际费用，视频用金色标签标出每个计费点（不写具体金额，请以官方价格页为准），结尾有完整收尾清单。
+    英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/model-deployment-aws
+    教程仓库：https://github.com/dlops-io/ml-workflow-aws
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L15-vertex-ml-workflows.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, AWS, SageMaker, SageMaker Pipelines, 模型部署, 机器学习工作流, Docker, 哈佛, 教程跟练]
+  tid: 231

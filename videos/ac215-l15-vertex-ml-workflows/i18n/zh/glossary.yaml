@@ -1,0 +1,1231 @@
+# Chinese (zh-CN) glossary and translation rules for ac215-l15-vertex-ml-workflows (AC215 lecture 15, ML Workflows:
+# model deployment and ML pipelines; the FULL follow-along, slide by slide and README step by step, of the AWS
+# tutorials dlops-io/model-deployment-aws (README A, main @ 077f4db) and dlops-io/ml-workflow-aws (README B, main @
+# f165c6e), both re-checked with git ls-remote on 2026-11-05 (ASSETS.md "Which commits"); the lecture's slides speak
+# Vertex AI on Google Cloud, the video follows the course's AWS version by series decision), code-switching version,
+# SUBTITLES ONLY. Audience: Chinese-speaking AC215 grad students who read technical English fluently; register of a
+# Chinese MLOps TA running a lab section.
+# Precedents and sources of the shared decisions: the series pilot videos/ac215-l01-vms-venvs/i18n/zh (repo, clone,
+# commit, pin, lock 文件, 约束, 解析器, 计价器, 计费, 结算, 录制时, root, shell, Pipfile / pipenv as is); the container
+# lectures L2-L4 (container, image, tag, Dockerfile, 构建, 拉取, 清理); L3 (服务账号, 密钥, 凭据, bucket, 替身); L6 (区域);
+# L8 (endpoint, 客户端, 缓存, 挂载, epoch, 坑); L10 (IAM, 令牌, 身份); L11 (label, entrypoint, the erratum phrase 一个小
+# 疏漏); L13 (训练任务, 训练脚本, tar 包, 模拟运行, notebook, release, 划分, 准确率); L14 (角色, 挂上, 实例, serverless,
+# 缩容到零, 以…的身份运行, 占位符, 真实报错, 额外列一下目录, the file layout this one follows); and the sibling exam edition
+# videos/ac215-l15-exam (pipeline, registry, DAG, SDK, CLI, 签名, 服务签名, 预处理, 缩放, 浮点数, 模型注册表, 地址, 遥控器,
+# 工厂 / 配方, 属性, 引用, 步骤, 边, 图, 工作流管理, 托管, 调度, 数据采集器, 数据处理器, 经验法则, 触发). Every form they fixed
+# is kept where it agrees with this video's captures. What is new here is AWS: IAM 用户, 策略, 访问密钥, ARN, 账号 ID, 域,
+# 快速设置, endpoint 配置, ECR 仓库, Lambda 步骤, 处理任务, 属性引用, and the kept-English push, upsert, stub, socket.
+# BRIEF.md's "Chinese glossary heads-up" asked to keep user, role, access key, policy, endpoint configuration, step,
+# Processing job, Training job, property reference, cache and signature in English; series consistency and AWS's
+# Chinese console win for those (GLOSSARY.md 关键决定), the rest of the heads-up is followed.
+# There is NO Chinese voice in this series (docs/AC215_SERIES.md rule 8): the Chinese lines are subtitles on the
+# English timing (the bilingual band of output/<id>.zh-en.mp4, <id>.zh.srt, <id>.zh-en.srt / .ass). So no say:,
+# no anchors, no readings, no durations: only display rules. `python -m explainer.i18n check` still applies its voice
+# hygiene to the displayed line (brackets, maths symbols, letter_letter names, Latin words not listed here, a missing
+# half-width space): rules A10, B3 and D3 are how the Chinese line stays clean without say:.
+# SERIES RULE: the instructor's name never appears in a subtitle, a title or the description (A17).
+# Human-readable copy in Chinese: GLOSSARY.md (keep the two in sync; its term tables come from this file's data).
+# terms[].zh_subtitle = the display form (Chinese subtitle line; titles use the written forms of A8);
+# terms[].first_use = an example sentence for the translators, as SNN[k]：<one Chinese sentence for one English
+# sentence of SAY block k of scene SNN, k from 0>; terms[].note = usage (English → Chinese), the rule tags, and
+# "More:" further example sentences. Together first_use and the More: sentences give one checked draft for each of
+# the script's 390 sentences, labelled by block (not by position inside the block); the narration files reuse them.
+# rules are tagged [A1]..[I3]: A terms, B typography, C numbers, D narration file, G subtitles, H titles and
+# companions, I toolkit notes. (L1's E on-screen strings and F voice rules do not apply: nothing on screen is
+# translated in this series, and there is no voice.)
+# Read by: python -m explainer.i18n check (Latin words allowed in the Chinese line: every Latin word of zh_subtitle
+# and first_use, plus allowed_spoken_latin, which lists the words as the checker's regex [A-Za-z][A-Za-z'.-]* cuts
+# them: us-east-1 is us-east-, ml.m5.xlarge is ml.m and xlarge, arm64 is arm, python3 is python, --prepare is
+# prepare) and explainer/subtitles.py, for EVERY video (2-3 word English phrases of `en` are kept on one English line;
+# 2-7 character Chinese headwords of zh_subtitle are registered in jieba, so zh_subtitle holds terms, not phrases).
+video: ac215-l15-vertex-ml-workflows
+lang: zh-CN (mainland Simplified Chinese)
+audience: 'Chinese-speaking AC215 (MLOps & LLMOps) grad students who know Python and basic ML, read technical English fluently,
+  did L1-L14 (Docker images and docker-shell.sh scripts with bind mounts, pipenv and lock files, the cheese collector, processor
+  and TFRecords, the L13 trainer package and managed training job, L14''s Cloud Run), saw Lecture 15 (which speaks Vertex
+  AI), and are new to AWS: IAM users, access keys and roles, S3, SageMaker models, endpoint configurations and endpoints,
+  ECR, Lambda and SageMaker Pipelines; they follow along with clones of model-deployment-aws and ml-workflow-aws open, Docker
+  running, the AWS CLI v2 installed and their own AWS account with billing, pausing to run every step (this lecture''s endpoints,
+  jobs and pipeline steps bill). Register of a Chinese MLOps TA running a lab section.'
+voice: none          # subtitles only (video.yaml: Chinese = i18n/zh/narration/*.yaml on the English timing)
+policy: 'The Mandarin of a Chinese MLOps TA walking a lab section through the steps, code-switching only where such a speaker
+  really does, written as subtitles under an English narration. The viewers already say 把 repo clone 下来, 起一个 container, 构建
+  image, 打 tag, 建一个 bucket, 调一个 endpoint, 跑一条 pipeline, pin 住版本, 看 lock 文件; this lecture, the series'' first on AWS, adds
+  一个 IAM 用户和一个角色, 访问密钥, 复制 ARN, 一个 S3 bucket, endpoint 配置, push 到 ECR, upsert pipeline 的定义, 换成一个 stub. Every choice passes
+  three tests: what is said in a real lab section; the standard, searchable Chinese name (AWS''s Chinese console and docs:
+  IAM 用户, 角色, 策略, 访问密钥, 区域, 域, 快速设置, 停用, 实例; TensorFlow and the Chinese ML literature: 签名, 预处理, 缩放, 归一化, 浮点数, 概率, 准确率, 计算图,
+  权重, 导出; the workflow literature: 编排器, 工作流管理, 托管, 调度, 缓存, 属性引用, 步骤, 边); and consistency with the series (L1-L14 and the sibling
+  exam edition ac215-l15-exam: every form they fixed is kept where it agrees with this video''s captures). (1) Artifacts verbatim:
+  what the viewer types or matches on screen (commands, flags, file and folder names, user, role and bucket names, the pipeline''s
+  step names, console labels, the model''s labels, short printed errors, regions and instance types, README headings when
+  named as headings) is copied letter for letter, never translated, inflected or quoted; names the checker rejects (underscores,
+  < > + and brackets) are written the way the narration says them (A10) and the English line shows the literal (D4). Nothing
+  on screen is translated in this series: terminals, code panels, README cards, RECORDED panels, the schematic console forms,
+  the V1-V8 set pieces, tags, trackers, the lecture tags (which live only as long as their redrawn picture), chips and the
+  pause-and-ponder cards stay English; only the narration is. (2) Lab-speech English, a closed list (A1 c). (3) Everything
+  else in standard Chinese (A3-A7). (4) The video''s pictures by meaning, one word each: 计价器 (the meter), 墙 (the container
+  wall the exports fall off), 前门 (the model''s signature as a front door), 遥控器 (the SDK, the lecture''s remote control), 工厂
+  / 配方 (the lecture''s factory and recipe), 这条线 (the client-to-endpoint wire), 职责卡片 (the lecture''s duty cards). (5) Written
+  register for titles, meta.yaml and companion docs (A8). (6) The bilingual band puts the English sentence under every Chinese
+  line, so the Chinese line carries no glosses and no brackets. (7) The toolkit''s constraints are part of the policy: one
+  Chinese sentence per English sentence (139 blocks, 390 sentences), a checker-clean display line (D3), an en_display wherever
+  the SAY spells an artifact out as words (D4), the English clause order kept (D9). Mainland Simplified Chinese; relaxed,
+  clear lab-section speech, never slangy. SERIES RULE: the instructor''s name never appears in a subtitle, a title or the
+  description (A17).'
+rules:
+- '[A1] Code-switching scope. English stays in three places only. (a) Artifacts, copied letter for letter: commands as typed
+  or named (git clone, git log, git status, aws configure, aws sagemaker list-endpoints, chmod, sh docker-shell.sh, bash docker-shell.sh,
+  sh package-trainer.sh, pipenv lock, export, python cli.py --prepare / --deploy / --predict / --delete / --clean / --train
+  / --pipeline, the search command), file and folder names (cli.py, docker-shell.sh, package-trainer.sh, Pipfile, Pipfile.lock,
+  Dockerfile, model.tar.gz, raw.zip, clean.zip, tfrecords.zip, artifacts, variables, persistent, /persistent/model, /persistent/model/1,
+  src, workflow, package), names the viewer creates or matches (model-deployment, ml-workflow-user, SageMakerExecutionRole,
+  CheeseAppSageMakerExecutionRole, CheeseAppLambdaExecutionRole, ml-workflow-aws, cheese-app-endpoint, the step names DataCollector,
+  CreateModel, DeployModel and the declared output raw-data), console labels and buttons the SAY names (Endpoints, Delete,
+  Training, Training jobs, Processing, Processing jobs, Build, ML Pipelines), README headings named as headings (Run Container),
+  short printed errors and messages (exec format error, Unable to locate credentials, AWS not configured, Permission denied),
+  regions and instance types (us-east-1, ml.m5.xlarge, ml.t3.medium), architectures (arm64, amd64), the model''s labels (brie,
+  gruyere, gouda, parmigiano), json (the typed output format), the key Enter, versions (Python 3.9, TensorFlow 2.18 / 2.20,
+  Serving 2.13, SageMaker 版本 2 / 3), the on-screen tags when the narration names them (your turn). (b) Products, organisations
+  and the course: AC215, AWS, S3, IAM, SageMaker, SageMaker AI, SageMaker Pipelines, Unified Studio, ECR, Lambda, Docker,
+  Docker Hub, Docker Desktop, TensorFlow, TensorFlow Serving, Kubeflow, Vertex AI, Vertex AI Pipelines, Google Cloud, Cloud
+  Run, GitHub, Git, Python, PyTorch, CUDA, Ubuntu, Debian, Linux, Mac, Apple Silicon, Intel, README, Cheese App, and the format
+  and data names SavedModel, TFRecord(s), JSON, YAML, JPEG, RGB, DSL, ARN, URI, S3 URI, CSV (written .csv 文件). (c) A closed
+  list of words Chinese engineers say in English in a lab section: from L1-L14 and the exam edition repo, clone, commit, pin,
+  container, image, tag, Dockerfile, bucket, endpoint, entrypoint, pipeline, registry, notebook, release, label, epoch, shell,
+  root, serverless, SDK, CLI, URL, URI, API, ID, IAM; new in L15 push (push 一个 image; the README''s Build & Push), upsert
+  (the SDK call; 插入或更新 is stiff), stub (the S3 capture stub; 桩 is unknown in lab speech; ≠ 替身), socket (the mounted Docker
+  socket), processor (the SDK''s Processor object, S14 only; ≠ 数据处理器). A word joins (c) only if lab speech really uses the
+  English and the Chinese is stiff, ambiguous or collides with another term. Never English for flavour: user, role, policy,
+  access key, key, credentials, token, region, domain, account, trust, signature, preprocessing, artifact, cache, step, property
+  reference, edge, graph, orchestrator, workflow, processing job, training job, endpoint configuration (the configuration
+  part), instance, model registry, stand-in, emulation, resolver, constraint and everything in A3-A7 are Chinese.'
+- '[A2] container, image, registry, as L2-L14 and the exam edition. The subtitles say container, image, registry (起一个 container;
+  同一个 image; 基础 image; 推理 image; ECR registry), measure word 个; titles, chapter names, meta.yaml and companion docs write
+  容器, 镜像, 镜像仓库（registry） (A8). build → 构建 (at build time → 构建时; the plain build → 普通的构建; the unpinned build → 没 pin 的构建);
+  push stays (A1 c: 构建并 push; push 到平台能拉取的 registry); pull → 拉取; tag stays (打 tag; Tag only adds a second name to the same
+  image → 打 tag 只是给同一个 image 加第二个名字); the base image → 基础 image; the serving container / the AWS serving image → 负责推理的 container
+  / AWS 的推理 image; the workflow container → workflow container; the CLI container → CLI container (written CLI 容器); the ECR
+  repository → 仓库 / ECR 仓库 (≠ repo, A11); emulation → 模拟运行 (L13, L14); Intel style laptop → Intel 架构的笔记本; your laptop → 你的笔记本
+  (never 电脑 alone); the Docker socket → Docker 的 socket; is mounted → 挂进来了 / 挂载 (L8); bind mount / the shared folder → 共享目录.'
+- '[A3] The AWS identity words (new in the series; AWS''s Chinese console and docs, kept consistent with L3, L10, L14). IAM
+  user → IAM 用户 (user → 用户: the users and roles you no longer need → 不再需要的用户和角色); role → 角色 (L14; IAM 角色; a role named SageMakerExecutionRole
+  → 一个叫 SageMakerExecutionRole 的角色); policy → 策略 (three policies → 三个策略; the SageMaker and S3 policies → SageMaker 和 S3 的策略;
+  the AWS-managed policy names are screen only); attach → 挂上; access key → 访问密钥 (Create access keys and save both → 创建访问密钥，两个都存好;
+  deactivate → 停用); key → 密钥 (L1, L3, L14: the user key → 用户的密钥; your two keys → 你的两个密钥; a key on your laptop → 笔记本上的一把密钥;
+  fake key → 假密钥; placeholder key → 占位密钥); credentials → 凭据 (L3: no credentials → 没有凭据; cannot find credentials → 找不到凭据);
+  token → 令牌 (L10, L11, L14: the fake token → 假的令牌); ARN stays (A R N, en_display ARN; never 资源名称 in a subtitle); trusted
+  by SageMaker → 信任 SageMaker; acts as the role → 以这个角色的身份运行 (L14''s runs as); signs each request → 给每个请求签名 (a verb, S03 only;
+  ≠ the model''s 签名, A11); identity → 身份 (two identities → 两个身份; which identity → 哪个身份); account → 账号 (series and mainland
+  form, A16; AWS''s console says 账户: the series wins; your account → 你的账号; account number → 账号 ID; the account lookup → 账号查询);
+  the who am I call / check → 身份查询 / 身份检查 (en_display aws sts get-caller-identity); region → 区域 (L6, L14); domain → 域 (the
+  SageMaker AI domain → SageMaker AI 域; a Unified Studio domain → 一个 Unified Studio 域); quick setup → 快速设置; the AWS console
+  → AWS 控制台 / 控制台 (L14); console work → 控制台操作; billing → 结算 (an account with billing → 开通了结算的账号), the act → 计费 (bills → 在计费;
+  still bill → 还在计费); a name of your own → 你自己的名字; unique across all of AWS → 在整个 AWS 里都是唯一的; never put keys in a script →
+  永远不要把密钥写进脚本; option 1 / option 2 → 选项 1 / 选项 2 (the README''s two ways to supply keys); the exports → 那些 export (A1 a: export
+  is the command); fall off at the wall → 到墙那里就掉了; rejects → 拒绝.'
+- '[A4] The deployment words (Part 1; exam edition where it agrees). preprocessing → 预处理 (where does preprocessing happen
+  → 预处理放在哪里做); the client → 客户端; resize → 缩放 (to 224 by 224 → 缩放到 224 乘 224); normalize → 归一化; converts to RGB → 转成 RGB; divides
+  by 255 → 除以 255; decode → 解码; floats → 浮点数; raw photo / raw bytes → 原始照片 / 原始字节; a batch of JPEG strings → 一批 JPEG 字符串;
+  signature → 签名 (exam; written 服务签名); the model''s front door → 模型的前门 (one picture word, S05 and S12); the serving default
+  → serving default (A10); the signature change → 签名变化 / 签名的变化; the SavedModel format → SavedModel 格式; the graph → 计算图; named
+  entry points → 有名字的入口 (≠ 入口点 and entrypoint, A11); weights → 权重; export → 导出; the tarball → tar 包 (L13); the artifact →
+  产物 (模型产物; same code, different artifact → 代码一样，产物不同); deploy (the CLI step) stays as the SAY''s short name, the act → 部署;
+  the SageMaker Model → 模型 (SageMaker 里的模型; a plain model → 一个普通的模型); endpoint configuration → endpoint 配置 (its configuration
+  → 它的配置; written 端点配置（endpoint configuration）); endpoint stays (the address you call → 你要调用的地址); instance → 实例 (one instance
+  of type ml.m5.xlarge → 一个 ml.m5.xlarge 类型的实例); timestamp → 时间戳; framework version → 框架版本; a model registry → 模型注册表 (exam''s
+  written form); serverless stays (no server for you to manage → 不用你管服务器); billing around the clock → 全天候在计费; zero traffic
+  → 流量是零; scale to zero → 缩容到零 (L14); a model endpoint / a general container service → 模型 endpoint / 通用的 container 服务; versioning
+  → 版本管理; A B testing → A/B 测试; monitoring → 监控; roll back → 回滚; rule of thumb → 经验法则; probabilities → 概率; arg max → argmax;
+  accuracy → 准确率; metrics file → 指标文件; index 0 → 索引 0; color channels → 颜色通道; a local stand-in → 本地替身 (L3, L14); the meter
+  → 计价器 (L1, L14); turn off the meter → 关掉计价器; naming convention → 命名约定; delete → 删除 (the slides'' one word); angle brackets
+  → 尖括号; redirection → 重定向; placeholder → 占位符.'
+- '[A5] The build words (S04, S11-S14; L1''s vocabulary). Pipfile, Pipfile.lock and pipenv verbatim; the lock file → lock
+  文件 (L1, never 锁文件); lock (the act) → 锁定 (locking and installing packages → 锁定依赖、安装包); pin stays (pinned to one version →
+  pin 到一个版本; needs no pin → 不需要 pin; the unpinned build → 没 pin 的构建); star → 星号 (en_display "*"; the star problem → 星号的问题);
+  a constraint, not a pin → 约束，不是 pin (L1); the resolver → 解析器; resolve → 解析; the newest release that installs → 能装上的最新版本;
+  release (a PyPI release) → 发布版 (≠ a GitHub release, which stays release: S06); less than 3 → 小于 3 (en_display "<3"); fix
+  1 / fix 2 → 修复 1 / 修复 2; two one-line fixes → 两处一行修复; swap them → 把两行对调 / 对调; comment out → 注释掉; rewritten package → 重写过的包;
+  modules → 模块; the imports → 导入 (fail at import → 在导入时失败; at import time → 导入时); deprecation warnings → 弃用警告; ran out of
+  disk → 磁盘满了; the help text → 帮助文本; the test flag → 测试参数 (flag → 参数, L14); about 4 gigabytes → 大约 4 GB; executable → 可执行的;
+  the RUN line → RUN 那一行; exec format error stays.'
+- '[A6] The workflow words (Part 2; exam edition and L13). stage → 阶段 (the four stages of the Cheese App); step → 步骤 / 一步
+  (the README''s steps → 第 n 步); the collector / processor / training stages → 数据采集器 / 数据处理器 / 模型训练 (采集器 / 处理器 after the first
+  mention in a block; Data collector, step 1 → 数据采集器，第 1 步); orchestrator → 编排器; workflow management → 工作流管理; repeatable →
+  可重复; managed → 托管; cluster → 集群; scheduling → 调度; execute → 执行; automate → 自动化; this flow → 这个流程; a person at a terminal
+  → 一个人守着一个终端; the entry point script → entrypoint 脚本 (L11, L13, L14: Docker''s slot) ; a switch → 开关; development mode /
+  production mode → 开发模式 / 生产模式; a callable container → 可调用的 container (exam); a root shell → 一个 root shell; scrape → 抓取;
+  zips them → 打成 zip 包; a duplicate finder → 查重工具 (never named); remove duplicates → 去重; split → 划分 (32 for training and 8
+  for validation → 32 张训练、8 张验证); the duty cards → 职责卡片; search queries → 搜索词; local training → 本地训练; the last layer → 最后一层;
+  outputs → 输出; classes → 类别; a target → 目标; the app user → app 用户; owner → 所有者; job: series form 任务 (L13, exam): a training
+  job → 训练任务, a SageMaker Processing job → 处理任务, for every job → 给每个任务用, runs the job → 运行这个任务; the console labels Training
+  jobs and Processing jobs stay; the SDK is your remote control → SDK 就是你的遥控器 (exam); a processor (the SDK object) → processor
+  (A1 c, S14 only); its entry point (the Processor''s entrypoint argument) → 它的 entrypoint; the banner → 横幅; the bracket note
+  → 方括号注释; the URI starts with a dot → URI 以一个点开头; or true → || true (D4); exits with zero → 以 0 退出 (L14).'
+- '[A7] The pipeline words (S15; the exam edition''s vocabulary). pipeline stays (一条 pipeline; the whole pipeline → 整条 pipeline);
+  step → 步骤 (five steps → 五个步骤; a processing step → 处理步骤; the model step → 模型步骤; the Lambda step → Lambda 步骤); the SageMaker
+  step classes → SageMaker 的步骤类; property → 属性; reference → 引用; property reference → 属性引用 (never 字符串: Not a string: a reference
+  → 不是字符串，而是一个引用); edge → 边 (draws an edge → 画出一条边); graph → 图; caching / cache → 缓存 (L8; for 30 days → 30 天); a declared
+  output → 声明的输出; the list of steps → 步骤列表; the run order → 运行顺序; a schedule → 时间表 (≠ 调度, S10); the Kubeflow DSL → Kubeflow
+  的 DSL; wired by dot output → 用 .output 连起来; compiled to YAML → 编译成 YAML; the JSON definition → JSON 定义; upsert stays (A1
+  c; Upsert opens S15[7] capitalised as in the English); built offline and never sent → 离线生成、从没发出去; each edge a get on a property
+  → 每条边都是对某个属性的一次 Get (Get as in the JSON); a Lambda, a small function AWS runs on demand → 一个 Lambda，也就是 AWS 按需运行的小函数; the
+  deploy Lambda → 负责部署的 Lambda; creates or updates → 创建或更新; files travel by fixed names through the bucket → 文件按固定的名字经过 bucket
+  传递; a green DeployModel → 绿色的 DeployModel; the Lambda asked → Lambda 发出了请求; in service → 进入服务状态 (InService on screen only);
+  test each component → 测试每个组件 (≠ the exam''s kfp component); the factory / the recipe → 工厂 / 配方 (exam); triggers → 触发.'
+- '[A8] Written vs spoken pairs. Subtitles say repo / clone / container / image / registry / bucket / endpoint / pipeline
+  / push / upsert / stub; titles, chapter names, meta.yaml and companion docs write 仓库 / 克隆 / 容器 / 镜像 / 镜像仓库（registry）/ 存储桶
+  / 端点（endpoint）/ pipeline / 推送 / upsert（插入或更新）/ 桩（stub）, with the English in brackets at the first use of a core concept
+  (brackets are fine outside the narration): 端点配置（endpoint configuration）, 服务签名（serving signature）, 属性引用（property reference）,
+  处理任务（Processing job）, 训练任务, 执行角色（execution role）, IAM 用户, 访问密钥, 策略, 模型产物（model artifact）, 编排器（orchestrator）. 预处理, 角色, 策略,
+  访问密钥, 凭据, 实例, 计价器, 缓存 are the same in both. ML Workflows → 机器学习工作流; follow-along → 跟练; pipeline, DAG, SageMaker, S3, ECR
+  and Lambda stay in writing too.'
+- '[A9] Writing artifacts. Copied verbatim (case, dots, slashes, hyphens unchanged); never translated, inflected, quoted,
+  put in 《》 or code formatting. Add a Chinese head noun where it helps: artifacts 目录, variables 目录, persistent 目录, workflow
+  目录, package 目录, cli.py 第 73 行, endpoint config 那个 JSON 文件, search 命令, docker 命令, data collector 参数, RUN 那一行, Delete 按钮 (only
+  if the SAY implies a button), SageMakerExecutionRole 这个角色. Never start a sentence with a lower-case artifact or kept-English
+  word (repo, clone, container, image, tag, bucket, endpoint, entrypoint, pipeline, registry, push, upsert, stub, socket,
+  processor, serverless, export, chmod, tar, sh, git, python, deploy, prepare, predict, delete, brie, gouda, parmigiano, cheese-app-endpoint,
+  ml-workflow-aws, model.tar.gz, us-east-1, ml.m5.xlarge, --prepare): put a Chinese word first (在 endpoint 后面……; 而 endpoint
+  变成了……; 这次 delete……; 其中 prepare……; 照片是 brie……; 这个 entrypoint 脚本……; 那个 release ……; 在 tar 包里……; 然后这个 pipeline……). A capitalised
+  name, product, console label or code word may open a sentence (AWS, SageMaker, S3, IAM, ECR, Lambda, Docker, Git, Python,
+  README, SavedModel, CreateModel, DataCollector, Upsert, Cheese App), and so may a number that opens the English sentence
+  (224 乘 224 乘 3：……; 40 张图片……).'
+- '[A10] Artifacts the checker rejects. With no say:, the checker reads the display line as speech and rejects letter_letter
+  names, = < > + and brackets of any kind. So these are never copied into the Chinese line; they are written the way the narration
+  says them, and the English line shows the literal through en_display (D4). Table: --data_collector → data collector 参数 (带上
+  data collector 参数，跑 python cli.py; never --data collector, which a viewer could type); endpoint_config.json → endpoint config
+  那个 JSON 文件; saved_model.pb → saved model 那个 pb 文件; serving_default → serving default; get_execution_role → get execution
+  role; num_classes is never written (line 68 says three classes → 第 68 行写的是三个类别); "*" → 星号; "<3" → 小于 3; A/B testing → A/B
+  测试 (/ is accepted); times (×) → 乘; plus → 加上; the README''s angle-bracket placeholders and [REPLACE WITH …] notes are never
+  written (→ 占位符 / 方括号注释). Kept literally because the checker accepts them: --prepare / --deploy / --predict / --delete /
+  --clean / --train / --pipeline, -e, || true, /persistent/model, /persistent/model/1, model.tar.gz, raw.zip, clean.zip, tfrecords.zip,
+  cheese-app-endpoint, raw-data, ml.m5.xlarge, ml.t3.medium, us-east-1, arm64, amd64, python3, .csv, 98%, 72%. Placeholder
+  values, account ids, ARNs with ids, keys and tokens are never written (C2).'
+- '[A11] Words to keep apart. 签名 (the model''s signature, a noun, S05, S06, S08, S12) ≠ 给请求签名 (the laptop signs requests,
+  a verb, S03 only). 有名字的入口 (a SavedModel''s named entry points, S06) ≠ 入口点 (L14''s function entry point; not used) ≠ entrypoint
+  (Docker''s ENTRYPOINT: the entrypoint 脚本 of S11, the Processor''s entrypoint of S14). repo (a git repository you clone)
+  ≠ 仓库 (an ECR repository, S13, S16). processor (the SDK object, S14) ≠ 数据处理器 / 处理器 (the pipeline stage) ≠ 处理步骤 (a pipeline
+  step) ≠ 处理任务 (the Processing job it runs). 任务 (a SageMaker job: 训练任务, 处理任务) ≠ 步骤 (a pipeline step, a README step) ≠ 这件事
+  (a job in prose: gives this job to model deploy → 把这件事交给了模型部署). 模型 (a model; the SageMaker Model) ≠ 模型产物 (the artifact)
+  ≠ 模型注册表 (a model registry, S07[1]) ≠ registry (an image registry, ECR, S13). endpoint ≠ endpoint 配置 (endpoint configuration)
+  ≠ 配置 alone (its configuration, after the first mention) ≠ config 文件 (the AWS CLI''s ~/.aws/config, S03). 时间表 (a schedule,
+  S15) ≠ 调度 (scheduling, S10). release (a GitHub release, S06) ≠ 发布版 (a PyPI release, S04). stub (S06''s capture stub) ≠ 替身
+  (S08''s TF Serving stand-in). 组件 (README B''s components, S15) ≠ the exam''s kfp component. 参数: arguments and flags alike
+  (L14: --wait 参数; the search arguments → 搜索参数; no arguments → 没有参数) ≠ 开关 (the entrypoint''s switch). 疏漏 (a gap or slip in
+  the README or code, the erratum phrase) ≠ 报错 (an error message) ≠ 失败 (a step that fails). 删除 (delete) ≠ 停用 (deactivate an
+  access key) ≠ 清空 (empty a bucket). 选项 (option 1 / 2 of the README) ≠ 方式 (Way 1-3 of the clean-up). 计费 (bills) ≠ 结算 (billing
+  set up on the account). 第 n 部分 (the video''s parts) ≠ README 的小节 (named by heading).'
+- '[A12] Errors and terminal words. Short printed errors and messages stay as printed (the viewer matches them): exec format
+  error, Unable to locate credentials (capitalised as printed; the SAY''s unable to locate credentials), AWS not configured,
+  Permission denied (with /persistent/model). What the SAY paraphrases is Chinese: no credentials → 没有凭据; cannot find credentials
+  → 找不到凭据; AWS rejects our placeholder key / the fake token and the fake key → AWS 拒绝了我们的占位密钥 / 假的令牌和假的密钥; a shell error →
+  一个 shell 报错; prints two errors → 打印两个报错; the imports find nothing → 导入什么都找不到; the imports failing → 导入失败; saving fails →
+  保存失败了; the upload fails → 上传失败了; its honest first error → 它遇到的第一个真实报错 (L14); real errors → 真实的报错; Deprecation warnings are
+  not the error → 弃用警告不是问题所在. The class names NoCredentialsError, InvalidClientTokenId, InvalidAccessKeyId, ModuleNotFoundError,
+  PermissionError and the message not a valid identifier stay on screen only. exits with zero → 以 0 退出.'
+- '[A13] Register: a TA running a lab section. Short instructions, colloquial verbs (装, 跑, 删, 敲, 改, 贴, 填, 点, 选, 拷, 建, 推, 拉,
+  对调, 收尾); the viewer is 你 (never 您, 大家, 同学们); 我们 is us at recording time (我们的停在第 168 行; 我们的假密钥; 我们没有密钥). Chinese word order
+  inside a clause; restructure freely inside a sentence, but keep the English order of clauses (D9). No translationese: no
+  让我们… (use 先… / 我们来…), no 这就是为什么… (use 所以…), few 被 passives, no chains of 一个…的. No internet slang. Carry the spoken rhythm
+  by meaning: First, where this lecture sits → 先看这一讲的位置; Same ideas, different names → 思路一样，名字不同; Why two identities? → 为什么要两个身份？;
+  Something to ponder → 想一想; Here is what it made → 来看它生成了什么; Now the opening puzzle → 现在回到开头的谜题; Two notes → 两点说明; Why a
+  shell? → 为什么是一个 shell？; One honest caveat → 如实说明一点; Before you leave, clean up → 走之前，先收尾清理; That is part 1 → 这就是第 1 部分;
+  Part 2. → 第 2 部分。'
+- '[A14] Precision, errata, the honest framing and ponders. Translate hedges and quantifiers exactly: only 只, every 每个 / 每次
+  / 每一步, all 全部, exactly 一字不差 / 准确的, never 永远不 / 从不, still 还 / 仍然, again 又 / 再, at once 马上, about 大约, almost 将近, yet another
+  又一个新的. at the time of recording → 录制时, never dropped. Counts, line numbers, durations, sizes and percentages match the screen
+  (C1). Ours vs yours is kept (我们的 … / 你的 …; With yours / With keys → 用你的密钥 / 有密钥时). Errata use one phrase, as L5, L9-L14:
+  A small gap / A small slip → 有一个小疏漏 (a subtler gap → 还有一个更隐蔽的疏漏); the slip is stated as plainly as the English, never as
+  anyone''s fault. The kind slide-versus-tutorial notes (S02[4]: the lecture speaks Vertex AI on Google Cloud, the course
+  ships an AWS version and we follow it; S07[1]: the lecture and both READMEs say model registry, the code creates a plain
+  model; S05[6] and S12[6]: the README''s wording about the signature; S15[0]/S15[8]: the slides'' Kubeflow DSL and four steps)
+  are said as plainly as the English, never as a correction. The honest framing of S02[6] (no AWS account; laptop steps real;
+  every AWS call stops at its honest first error; README output or a tagged local stand-in; never a faked success) and S15[9]
+  (one honest caveat) is said plainly, never apologetic and never hidden. Never imply a cloud step happened: with keys → 有密钥时
+  / 用你的密钥 (conditional), would → 会. Never: serverless = 缩容到零 or 按请求计费 for this endpoint; the step list called the run order;
+  a property reference called a string; a green DeployModel called a working endpoint. Ponders (four, Conny''s 2026-10-21
+  density decision): P1 S04[5] must not say 最新版本, 版本 3, 解析器, 约束 or pin; P2 S08[1] must not say 150528, a product or a size;
+  P3 S09[4] must not say 一个, 更早的 or 只; P4 S15[5] must not say 不会, 引用 or 边. The reveal answers with the question''s own measure
+  or verb (还有几个 → 一个。; 会变吗 → 不会。).'
+- '[A15] The screen stays English. This series translates the narration only: terminal output and prompts, code panels (comments
+  included), README cards and the RECORDED panel, the trackers (README A › Setup Environments, step k of N), the lecture tags
+  (Lecture 15 · slides a–b, which fade with their redrawn picture), the tags (your turn, extra and its variants, illustration,
+  recorded · README A:137–147, erratum, at the time of recording, the GOLD cost tags), chips (needs your account · no output
+  shown, our capture: a fresh container per step · stay in yours, labels from the README · if yours differ, look for the same
+  field), the schematic console forms, the V1-V8 set pieces, the pipeline step states and the pause-and-ponder and test-yourself
+  cards are all English, and the scenes need no language changes. When the narration names an on-screen tag, label or colour,
+  the subtitle names it as the screen shows it or by its colour (黄色的 your turn 标签; 绿色的 DeployModel). Everything the narration
+  says in its own words is translated: the tracker → 进度条; an extra → 额外 (an extra listing → 额外列一下目录; extra checks → 额外检查;
+  Two extras → 两个额外检查; An extra, built offline → 一个额外的东西，离线生成); a local stand-in → 本地替身; the README output → README 的输出; the
+  study guide → 学习指南; the exercises → 练习.'
+- '[A16] Mainland Simplified Chinese only: 默认, 程序, 代码, 文件, 目录, 账号, 用户, 密钥, 凭据, 令牌, 策略, 区域, 实例, 网络, 脚本, 视频, 信息, 配置, 进程, 对象,
+  函数, 参数, 变量, 内存, 日志, 部署, 浏览器, 存储, 磁盘, 缓存, 数据; never 預設, 程式, 程式碼, 檔案, 資料夾, 帳號, 使用者, 金鑰, 憑證, 權杖, 原則, 實例, 網路, 腳本, 影片, 訊息, 組態,
+  物件, 函式, 引數, 變數, 記憶體, 日誌, 快取, 資料. AWS''s own Chinese console uses 账户 for account: the series'' 账号 wins.'
+- '[A17] The lecture, the course and the slides. Course: AC215; lecture n → 第 n 讲 (lecture 14 → 第 14 讲; lecture 1 → 第 1 讲;
+  lecture 23 → 第 23 讲); the lecture → 课上 (The lecture warns → 课上提醒; the lecture''s rule of thumb → 它的经验法则; the fix from the
+  lecture → 课上的修复; the lecture deployment picture → 课上部署图); the slides → 课件 (the slides shout one word → 课件上就喊了一个词); last
+  week → 上周; this video → 这个视频; part 1 / part 2 (the video''s halves) → 第 1 部分 / 第 2 部分; the part 2 trainer / scripts → 第
+  2 部分的训练脚本 / 脚本; the course project → 课程项目; the prototype phase → 原型阶段; the Cheese App → Cheese App; the tile Model deploy
+  → 模型部署; both READMEs → 两份 README; README A / README B are never said (the trackers show them); the tutorial → 教程; the AWS
+  version of both tutorials → 两个教程的 AWS 版本; the study guide → 学习指南; the exercises → 练习. SERIES RULE: the instructor''s name
+  never appears in a subtitle, a title, a chapter name or the description; this SAY never mentions the instructor; if a later
+  edit does, the instructor → 授课老师, and the masked ‹instructor› of the screen is never written. The course credit line of
+  video.yaml''s publish block is the only place a name may appear.'
+- '[A18] The series list (the ac215-video skill''s list) in this video: container and image throughout; Dockerfile (S03, S04,
+  S14); bucket (S01-S04, S06, S10, S11, S13, S15, S16); endpoint (S01, S02, S07-S09, S15, S16); pipeline (S01-S03, S10, S15,
+  S16); repo (S01, S10, S11, S14); commit (S03, S12, S14); pin (S04, S12, S16); registry (S13); tag (S13); entrypoint (S11,
+  S14); lock 文件 (S04, S12, S14). volume, venv, PATH, port, prompt, embedding, agent, LoRA, CI are not in this script (the
+  four aws configure prompts → 提示; the Docker socket stays socket); push is (S13).'
+- '[B1] Spacing. One half-width space between Chinese and Latin letters, digits or artifacts (第 15 讲, 第 1 步, 第 73 行, 40 张图片,
+  13 分钟, 4 GB, 98%, 3 个颜色通道, 修复 1, 版本 3, 跑 sh docker-shell.sh, 一个 IAM 用户). The checker reports a missing space on every displayed
+  sentence. Spaces inside an artifact stay as they are (SageMaker Pipelines, Unified Studio, Docker Desktop, sh docker-shell.sh);
+  never add one inside an artifact. No space next to full-width punctuation (……exec format error。; ……AWS not configured。).
+  Never fake a no-break space with U+00A0 / U+202F.'
+- '[B2] Punctuation. Full-width ，。、；：？！“”…… in Chinese text, also next to artifacts. Lists use 、 (S3、SageMaker 和 IAM; 下载，然后验证、去重、转成
+  TFRecords). Console paths the SAY reads with commas are joined with 下面的 / 、 (Training, then Training jobs → Training 下面的
+  Training jobs; SageMaker, Endpoints → SageMaker、Endpoints). No brackets of any kind (（） () 《》 【】 [] <>): the checker rejects
+  them on a line with no say:, and the bilingual band needs no gloss. “” only for a translated quotation; artifacts, labels
+  and tag names are never quoted. No 。？！ inside one Chinese sentence (one per English sentence): use ，；： instead; an ASCII
+  ? or ! never appears in a Chinese line. Questions keep ？.'
+- '[B3] Symbols the checker rejects (= < > + → ← ^ ≤ ≥ × ÷ ≈, == != +=, a digit followed by !, brackets, letter_letter): never
+  in the Chinese line; written in words (A10): 224 by 224 by 3 → 224 乘 224 乘 3; 224 times 224 times 3 → 224 乘 224 乘 3; plus
+  → 加上; less than 3 → 小于 3. Allowed and kept as on screen: . in file names and versions (cli.py, model.tar.gz, 2.13, ml.m5.xlarge),
+  - in names and flags (us-east-1, cheese-app-endpoint, --prepare, -e), / in paths and A/B, | in || true, % in 98%, the leading
+  dot of .output and .csv. No clause ending in 种 followed by ，。！？ (哪种奶酪, 四种奶酪, 两种部署方式 and 三种方式 are fine).'
+- '[C1] Numbers in display text. Arabic digits for everything that echoes the screen, the terminal, the code, the README or
+  the slides, and for every count the SAY writes as a digit: steps (第 1 步 … 第 11 步; 第 2 到第 5 步), lines (第 17 行, 第 19 行, 第
+  32 行, 第 68 行, 第 73 行, 第 168 行), durations (40 秒, 将近 7 分钟, 13 分钟, 5 到 10 分钟, 30 天), sizes (224 乘 224, 3 个颜色通道, 4 GB, 几 MB),
+  counts on screen (14 个 CUDA 包, 40 张图片, 32 张训练, 8 张验证, 4, index 0 → 索引 0, labels 0-3), percentages (98%, 72%), 150528 (no
+  thousands separator, as L8 and L14; the English line keeps 150,528), versions, fix 1 / fix 2, option 1 / option 2, way 1-3
+  → 方式 1 / 2 / 3, lectures (第 1 讲, 第 13 讲, 第 14 讲, 第 23 讲), parts (第 1 部分, 第 2 部分). Chinese numerals for small narrative counts
+  the SAY spells as words: 三样东西, 三个数 / 四个数, 两个答案, 四个阶段, 四个部分, 三个已经做完, 两个身份, 三个策略, 四个策略, 两个角色, 四个提示, 两个密钥, 三条 export, 两个额外检查,
+  两处修复, 两处改动, 四件事, 三种方式, 三条 AWS CLI 命令, 五张照片 / 失败了五次, 四个概率, 两次 deploy / 一次 delete, 一个。 (the P3 answer), 四条命令, 四个目录, 四种奶酪,
+  每种十张, 五个变量, 两个报错, 五个步骤, 两步, 四个都停在那一行, 一个 epoch, 一台机器, 八张示例照片. When the English uses a digit for a count, follow the English
+  (3 color channels → 3 个颜色通道; change it to 4 → 改成 4; 40 images → 40 张图片).'
+- '[C2] Units, versions, money and identifiers. 40 seconds → 40 秒; 13 minutes → 13 分钟; almost 7 minutes → 将近 7 分钟; 30 days
+  → 30 天; 4 gigabytes → 4 GB; a few megabytes → 几 MB. Versions only as the SAY says them (Python 3.9, TensorFlow 2.18 / 2.20,
+  Serving 2.13, framework version 2.13 → 框架版本 2.13, SageMaker SDK version 3 → SageMaker SDK 版本 3, SageMaker version 2 → SageMaker
+  版本 2); no patch version. No prices, free-tier numbers or currency amounts anywhere (costs money → 在花钱; bills → 在计费; the
+  GOLD tags are screen only). Hashes, commit ids, container ids, account ids, ARNs with ids, access keys, tokens, bucket names,
+  endpoint timestamps and placeholder values are never written in a Chinese line.'
+- '[D1] Sentence alignment (explainer/i18n.py). One entry per SAY line of script.md in narration/*.yaml (139 blocks); `en`
+  byte-equal to the SAY line; `zh` has exactly one item per English sentence as split by explainer.voice.split_sentences (390
+  in this script: 210 in S01-S09, 180 in S10-S16; per scene S01 16, S02 21, S03 29, S04 35, S05 20, S06 19, S07 22, S08 25,
+  S09 23, S10 26, S11 29, S12 28, S13 17, S14 22, S15 34, S16 24). Restructure only inside a sentence; never merge or split.
+  Short sentences keep their own item: Part 2. → 第 2 部分。; One. → 一个。; No. → 不会。; Two notes. → 两点说明。; Run step 5 again. → 再跑一次第
+  5 步。; Why a shell? → 为什么是一个 shell？; Step 1: python cli.py dash dash prepare. → 第 1 步：python cli.py --prepare。; Build and
+  push. → 构建并 push。; Something to ponder. → 想一想。; Test yourself. → 自测一下。. Run python -m explainer.i18n check videos/ac215-l15-vertex-ml-workflows
+  --lang zh until it prints OK. The example sentences of this file (first_use and the note''s further examples) cover all
+  390 sentences, labelled by block (SNN[k]), not by position inside the block: put them in the English order.'
+- '[D2] No say:, no anchors. There is no Chinese voice: never write say: (the display line is the only text) and never write
+  anchors: (they only place animation beats for a Chinese-voiced render). The subtitles are timed by the English audio; the
+  toolkit pairs each Chinese sentence with its English sentence by position.'
+- '[D3] A checker-clean display line. With no say:, every displayed sentence must pass explainer.i18n.spoken_problems: no
+  brackets (B2), no maths symbols (B3), no letter_letter names (A10), no ! after a digit, no clause ending in 种 followed by
+  ，。！？, a half-width space between Hanzi and Latin letters or digits (B1), each sentence ending in 。！？ or ……, and every Latin
+  word listed in this glossary (zh_subtitle, first_use or allowed_spoken_latin). The checker cuts words with [A-Za-z][A-Za-z''.-]*
+  and ignores one-letter words: us-east-1 is us-east-, ml.m5.xlarge is ml.m and xlarge, arm64 is arm, amd64 is amd, python3
+  is python, tfrecords.zip stays whole, --prepare is prepare, /persistent/model is persistent and model, 98% has no word.
+  A Latin word it reports is either English to translate (usually) or a missing artifact: add the artifact, cut the same way,
+  to allowed_spoken_latin and to its term. Plurals and inflections are left out on purpose (no endpoints, buckets, roles,
+  policies, images, containers, steps, keys, upserts): a plural it reports is an English inflection to drop. Console labels
+  and product names with their own plural are the only exceptions (Endpoints, Training jobs, Processing jobs, ML Pipelines,
+  SageMaker Pipelines, Vertex AI Pipelines, TFRecords).'
+- '[D4] The English line (en_display). In the bilingual band the English line shows the SAY sentence, which spells artifacts
+  out for the voice. Every such sentence gets an en_display item with the literal on-screen form, otherwise word for word
+  the SAY sentence; null for the other sentences of the block. Table (script.md "Subtitle display"): dash dash prepare / deploy
+  / predict / delete / clean / train / pipeline → --prepare …; dash dash data collector → --data_collector; star → "*"; less
+  than 3 → "<3"; or true → || true; slash persistent slash model (slash 1) → /persistent/model(/1); model dot tar dot G Z
+  → model.tar.gz; endpoint config dot JSON → endpoint_config.json; raw dot zip, clean dot zip, tfrecords dot zip → raw.zip,
+  clean.zip, tfrecords.zip; saved model dot P B → saved_model.pb; A R N → ARN; A R M 64 → arm64; A M D 64 → amd64; C S V →
+  .csv; M L M5 extra large → ml.m5.xlarge; M L T3 medium → ml.t3.medium; arg max → argmax; R G B → RGB; D S L → DSL; python
+  3 → python3; the who am I call → aws sts get-caller-identity; cheese app endpoint → cheese-app-endpoint; the git ignore
+  file → the .gitignore file; dash e → -e; A B testing → A/B testing; model deployment (the user) → model-deployment; ml workflow
+  user → ml-workflow-user; clone ml workflow AWS → ml-workflow-aws; SageMaker Execution Role → SageMakerExecutionRole; Cheese
+  App SageMaker / Lambda Execution Role → CheeseAppSageMakerExecutionRole / CheeseAppLambdaExecutionRole; data collector,
+  deploy model, create model (S15 step names) → DataCollector, DeployModel, CreateModel; raw data (the declared output) →
+  raw-data; one hundred fifty thousand, five hundred twenty-eight → 150,528. Proposed for the narration step (keep consistent):
+  aws sagemaker list endpoints → aws sagemaker list-endpoints (S09[5]). The English video''s own .srt is unaffected.'
+- '[D5] Content parity. Each Chinese sentence translates its English sentence only: no added commands, flags, glosses, Chinese
+  screen names or explanations; kept-English words get no Chinese explanation (the English line is right below); ponder questions
+  get no answers (A14). Head words A9 needs (这个, 那个, 命令, 参数, 目录, 文件) carry no content. An extra in the English is 额外.'
+- '[D6] Fixed patterns (L9-L14''s, extended). A tracker in the corner names the README step, and a yellow tag, your turn,
+  means pause and run it. → 角落里的进度条标出 README 的哪一步，黄色的 your turn 标签表示暂停一下，自己跑一遍。 Pause and run it. → 暂停一下，跑一遍。 Pause and run
+  yours. → 暂停一下，跑你的。 Pause and clone it. → 暂停一下，clone 下来。 Pause and make yours print it. → 暂停一下，让你的也打印出来。 Pause and make both
+  fixes. → 暂停一下，把两处修复都做好。 Pause and run python cli.py dash dash deploy. → 暂停一下，跑 python cli.py --deploy。 pause here (for two
+  small fixes) → 在这里暂停一下（，做两处小修复） Step n: → 第 n 步： Steps n and m → 第 n 步和第 m 步 Steps n to m → 第 n 到第 m 步 A small gap: / A
+  small slip: → 有一个小疏漏： An extra listing → 额外列一下目录 Two extras: → 两个额外检查： Something to ponder. → 想一想。 With keys, … / With yours,
+  … → 有密钥时，…… / 用你的密钥，…… Ours stops … → 我们的停在…… / 我们的马上就停了 Test yourself. → 自测一下。 at the time of recording → 录制时 Before you
+  leave, clean up. → 走之前，先收尾清理。'
+- '[D7] Files. narration/g1.yaml = S01-S09 (part 1: deploy one model, README A; 75 blocks, 210 sentences), narration/g2.yaml
+  = S10-S16 (part 2: automate the workflow, README B; 64 blocks, 180 sentences), the parts of video.yaml; each starts with
+  a comment header (what it covers, the rules it applies: A10 spoken forms of rejected artifacts, A12 printed vs paraphrased
+  errors, D4 en_display, A14 ponders and errata, A17 the instructor rule, no say:/anchors) and keeps the script order. Strings
+  in double quotes; YAML-escape a literal double quote or backslash (the en_display \"*\" and \"<3\").'
+- '[D8] Length on the English timing. The Chinese is read while the English plays; the band switches where the English cues
+  switch. Each Chinese sentence should read in about the time the English sentence is heard: at most about 2 units per English
+  word (a Hanzi counts 1, a Latin letter 0.55), so drop redundant connectives and repeated subjects, never content. Long artifacts
+  cost length too (CheeseAppSageMakerExecutionRole 17.6 units, CheeseAppLambdaExecutionRole 15.4, SageMakerExecutionRole 12.1,
+  cheese-app-endpoint 10.5, Unified Studio 7.7, SageMaker Pipelines 10.5, Unable to locate credentials 15.4): don''t repeat
+  them where the English doesn''t; after the first mention use a short reference (这个角色, 这个 endpoint, 这个任务, 它).'
+- '[D9] Keep the English clause order (a series lesson, ac215-video skill). The toolkit pairs Chinese and English clause by
+  clause, so a Chinese sentence that puts a condition first when the English puts it last swaps meaning between two neighbouring
+  cues. Conditions, purposes and time adverbials sit where the English has them: Don''t go on until they do → 别往下走，直到它们打印出来;
+  With your keys, it creates the bucket, or reuses yours if it already exists → 有你的密钥时，它会创建 bucket，如果已经存在，就复用你的; create a
+  bucket with a name of your own, because bucket names are unique → 用你自己的名字建一个 bucket，因为 bucket 名……都是唯一的; You ran four commands
+  by hand to deploy one model → 你手动跑了四条命令，部署了一个模型; It is still one machine, billing around the clock, even with zero traffic
+  → 它仍然是一台机器，全天候在计费，哪怕流量是零. Where the English opens with if, with, without, before or when (S04[10], S06[2], S13[4], S14[0],
+  S15[11]), the Chinese does too.'
+- '[G1] Widths. Bilingual band: a Chinese line holds at most 30 units, the English line 96 characters; the Chinese-only sidecar
+  (.zh.srt) holds 22 units a line, 2 lines a cue. Write clauses of at most about 24 units, separated by ，；：、, so the splitter
+  has clean places to cut; avoid a clause longer than 30 units with no punctuation. Give the long role names and printed messages
+  a clause of their own; the long S01[2], S02[6], S03[5], S07[3], S10[8], S13[3] and S15[4] sentences get a comma at every
+  English clause break.'
+- '[G2] Cue endings: the toolkit drops a cue-final 。，、；： and keeps ？！…… and a closing ” (subtitles.strip_end). Do not end
+  a sentence on an artifact plus a full stop if a Chinese word can close it (……写进两个真实的 TFRecord 文件。 reads better than ……TFRecord。);
+  printed messages (exec format error, AWS not configured, Unable to locate credentials) may close a sentence as the English
+  does.'
+- '[G3] Never split a name or a command. The splitter treats a space between two Latin words in a Chinese line as a good cut,
+  so SageMaker Pipelines, Unified Studio, TensorFlow Serving, Docker Desktop, Docker Hub, Training jobs, Processing jobs,
+  ML Pipelines, sh docker-shell.sh, python cli.py --prepare, aws configure, aws sagemaker list-endpoints, exec format error
+  or Unable to locate credentials could land on two lines. Put such names at the end of a clause, after a full-width colon
+  or 、, with little Chinese around them, at most one long name per cue, and check every such cue in the rendered .zh.srt.'
+- '[H1] Titles (meta.yaml). Video, part and chapter titles in the written register (A8: 容器, 镜像, 仓库, 存储桶, 端点, 端点配置, 镜像仓库, 服务签名,
+  属性引用, 处理任务); questions keep their question mark; the English colon structure is kept (--prepare：tar 包里的 SavedModel; --delete：关掉计价器);
+  commands, flags and names stay as they are (--prepare, --deploy, --predict, --delete, ECR, SageMaker); meta.yaml is not
+  checked, so brackets are fine there. The video title follows the series pattern AC215 · 第 n 讲：…（跟练：…）and agrees in substance
+  with video.yaml''s publish.title_zh (ML 工作流：在 AWS SageMaker 上部署模型，再用 SageMaker Pipelines 自动化整条流程); the part titles name
+  README A and README B''s repos. ML Workflows → 机器学习工作流 (the exam edition''s Vertex AI 上的机器学习工作流 names the lecture; this
+  video follows AWS, so the title says SageMaker). Core-concept chapters carry the English short name once for search where
+  the Chinese is not the usual search word (端点配置（endpoint configuration）, 服务签名（serving signature）, 属性引用（property reference）,
+  处理任务（Processing job）). The recap chapter keeps the series'' 收尾 pattern. No title names the instructor (A17).'
+- '[H2] Description (Bilibili / YouTube): two or three sentences, written register, this glossary''s terms: the AC215 lecture
+  15 follow-along, slide by slide, of dlops-io/model-deployment-aws (README A @ 077f4db) and dlops-io/ml-workflow-aws (README
+  B @ f165c6e), with the slides'' Vertex AI words mapped onto AWS; what the viewer does and learns (part 1: IAM user, access
+  key, execution role and S3 bucket, the two one-line fixes, where preprocessing sits and the serving signature, --prepare''s
+  SavedModel in model.tar.gz, --deploy''s model, endpoint configuration and endpoint, --predict''s 150,528 numbers, --delete
+  and the endpoint it misses; part 2: the collector, processor and trainer containers by hand, pushing to your own ECR, a
+  Processing job from the workflow container, the five-step SageMaker Pipeline drawn by property references, caching and the
+  deploy Lambda, clean-up); English narration with Chinese and bilingual subtitles; a recording machine without an AWS account
+  (cloud steps up to their first real error, cloud answers from the README''s record or a tagged local stand-in, never faked),
+  billable resources in the viewer''s account (gold tags, a clean-up checklist). Consistent with video.yaml''s publish.description_zh,
+  but never a person''s name (A17).'
+- '[H3] Companions: i18n/zh/README.md (and exercises.md / digest.md if made) are translated with this glossary in the written
+  register (A8); brackets and underscores are fine there (not checked). Headings and <summary>答案</summary> are translated.
+  A term table at the end: English | the term used here | common variants (IAM user: IAM 用户 / IAM 使用者; role: 角色; policy: 策略
+  / 权限策略; access key: 访问密钥 / AK/SK; endpoint: 端点 / 终端节点; endpoint configuration: 端点配置 / 终端节点配置; signature: 服务签名 / 签名; preprocessing:
+  预处理; model artifact: 模型产物 / 模型工件; caching: 缓存; property reference: 属性引用; Processing job: 处理任务 / 处理作业; training job: 训练任务
+  / 训练作业; orchestrator: 编排器; upsert: upsert / 插入或更新; registry: 镜像仓库 / 注册表; constraint: 约束; resolver: 解析器 / 依赖解析器).'
+- '[H4] Code and commands stay byte-identical in the companions: code blocks, commands, file names and inline `code` are unchanged;
+  only # comments and the prose around them are translated.'
+- '[I1] (request, open since L3) explainer.i18n check applies its voice hygiene (_SPOKEN_BAD: brackets, maths symbols, letter_letter
+  names, the 种 rule) to the display line when a sentence has no say:. For a subtitles-only video (this series; video.yaml
+  has no languages.zh.voice and this glossary says voice: none) those checks guard nothing and force A10 and B3 (here: --data_collector,
+  endpoint_config.json, saved_model.pb, serving_default, get_execution_role, "*", "<3", ×). Proposal: skip _SPOKEN_BAD for
+  display-only sentences when the glossary''s voice is none (keep the Latin-word, spacing and sentence-end checks).'
+- '[I2] (todo, from L1 I3) explainer/subtitles.py''s _cuts treats a space between Latin words in a Chinese line as a good
+  cut, so console labels, product names and commands can be split (G3). Proposal: in a Chinese line, treat a run of Latin
+  tokens separated only by spaces as unbreakable unless it alone exceeds a line.'
+- '[I3] (note) explainer/subtitles.py reads every video''s glossary.yaml: the 2-3 word English alternatives of each term''s
+  en field are kept on one English line, and the 2-7 character Chinese headwords of zh_subtitle are registered in jieba, in
+  every video''s subtitles. The en and zh_subtitle fields of this file therefore list real terms only (no sentences); example
+  phrases live in first_use and note.'
+terms:
+- en: what cheese is in this photo / predict code / the same predict code in cli.py / brie
+  zh_subtitle: 照片 / 预测代码 / brie / cli.py
+  first_use: S01[0]：两个答案都来自 cli.py 里同一段预测代码。
+  note: 'A1 a: the four labels brie, gruyere, gouda, parmigiano stay as the code prints them (lower case, never translated,
+    never opening a sentence: A9). predict code → 预测代码; the predict function → 预测函数 (S08). 哪种奶酪 is fine (B3: 种 is not followed
+    by punctuation). More: S01[0]：这里有一个问模型的问题：这张照片里是哪种奶酪？ S01[0]：而且两个答案都说是 brie。'
+- en: count the numbers / the README output / this recording / one model cannot give both
+  zh_subtitle: README / 录制 / 模型
+  first_use: S01[1]：上面那个是 README 的输出，里面有三个数。
+  note: 'A14: the puzzle is only posed here; the answer (a different artifact) waits for S08[7]. this recording → 这次录制 (L14).
+    The top answer, the README output, holds three → 上面那个是 README 的输出，里面有三个数. More: S01[1]：现在数一数这些数字。 S01[1]：下面那个来自这次录制，有四个数。
+    S01[1]：一个模型不可能给出两种结果。 S01[1]：那么，endpoint 后面到底是哪个模型，还有些什么？'
+- en: endpoint / behind an endpoint / three pieces / artifact / machine / who pays / meter
+  zh_subtitle: endpoint / 三样东西 / 产物 / 机器 / 计价器
+  first_use: S01[2]：在 endpoint 后面有三样东西：一个产物，决定是哪个模型；一个 container，决定用什么跑它；还有一台机器，决定在哪里跑、谁来付钱。
+  note: 'A1 c: endpoint stays (L8, exam). artifact → 产物 (the model artifact → 模型产物; the trained model artifacts → 训练出来的模型产物,
+    S15[3]); never 工件. meter → 计价器 (L1, L14). The three pieces are 三样东西 throughout (S07[0], S16[3], S16[6]). More: S01[2]：机器旁边的计价器一直在走，哪怕一个请求都没来。'
+- en: part 2 / by hand / the four stages of the Cheese App / one pipeline / the cloud runs it for you
+  zh_subtitle: 第 2 部分 / 手动 / 阶段 / Cheese App / pipeline
+  first_use: S01[3]：在第 2 部分，我们不再手动跑这些步骤。
+  note: 'A17: the video''s parts → 第 1 部分 / 第 2 部分 (part 1 of this video, That is part 1, Part 2.); the README''s sections
+    are named by their headings (A15). pipeline stays (L13, exam); measure word 条. stage → 阶段; step → 步骤 / 一步. More: S01[3]：Cheese
+    App 的四个阶段会变成一条 pipeline，由云端替你运行。'
+- en: AWS account with billing / the AWS CLI / both repositories cloned / our first lecture on AWS
+  zh_subtitle: AWS 账号 / 结算 / AWS CLI / repo
+  first_use: S01[4]：要跟着做，你需要一个开通了结算的 AWS 账号、AWS CLI、Docker，还要把两个 repo 都 clone 下来。
+  note: 'A3: account → 账号 (series, mainland; AWS''s Chinese console says 账户, but the series form wins: A16); billing → 结算
+    (a project / account with billing, L1, L14), the act → 计费. CLI stays (exam A1 c); the AWS CLI → AWS CLI. both repositories
+    → 两个 repo. More: S01[4]：这是我们第一次讲 AWS。'
+- en: tracker / README step / yellow tag / your turn / study guide
+  zh_subtitle: 进度条 / your turn 标签 / 学习指南
+  first_use: S01[5]：角落里的进度条标出 README 的哪一步，黄色的 your turn 标签表示暂停一下，自己跑一遍。
+  note: 'D6, as L2-L14 (fixed pattern). The tag text your turn stays as on screen (A15). More: S01[5]：每条命令也都写在学习指南里。'
+- en: where this lecture sits / course project / prototype phase / four parts of the Cheese App / Model deploy
+  zh_subtitle: 原型阶段 / 课程项目 / 模型部署
+  first_use: S02[0]：先看这一讲的位置。
+  note: 'A17 (L14): course project → 课程项目; prototype phase → 原型阶段. The tile Model deploy is said by meaning: 模型部署 (L14-exam
+    form). still open → 还没做. More: S02[0]：课程项目现在处于原型阶段，Cheese App 的四个部分里已经做完三个。 S02[0]：模型部署还没做。'
+- en: tile / fills that tile / connects all four
+  zh_subtitle: 格
+  first_use: S02[1]：这个视频的第 1 部分填上这一格。
+  note: 'tile → 格 / 这一格 (L14''s map cells). More: S02[1]：第 2 部分把四个全部连起来。'
+- en: last week / lecture 14 / containers on Cloud Run / serves a trained model
+  zh_subtitle: 上周 / 第 14 讲 / Cloud Run / 训练好的模型
+  first_use: S02[2]：上周，第 14 讲把 container 部署到了 Cloud Run 上。
+  note: 'A17: lecture n → 第 n 讲; last week → 上周. serves → 对外提供 / 提供服务; never 服务 alone as a verb. More: S02[2]：今天，container
+    用来对外提供一个训练好的模型。'
+- en: the lecture maps its console / notebooks / training from lecture 13 / online prediction / pipelines
+  zh_subtitle: 控制台 / notebook / 在线预测
+  first_use: S02[3]：课上把控制台对应到课程上：notebook、第 13 讲的训练，还有今天的两项：在线预测和 pipeline。
+  note: 'notebook stays (L13); online prediction → 在线预测 (Vertex AI''s Chinese docs). D3: no plurals (notebook, pipeline).
+    LECTURE tags are screen only (A15).'
+- en: Vertex AI on Google Cloud / AWS version of both tutorials / same ideas, different names
+  zh_subtitle: Vertex AI / AWS 版本 / 教程 / 思路
+  first_use: S02[4]：课上讲的是 Google Cloud 上的 Vertex AI。
+  note: 'A14, A17: the kind note (the slides speak Vertex AI, the tutorial is AWS) is said as plainly as the English, never
+    as a correction. L1''s AWS 版本 (the cheese app''s AWS version) is the same phrase. More: S02[4]：这门课也提供了两个教程的 AWS 版本，我们跟的就是它。
+    S02[4]：思路一样，名字不同。 S02[4]：每遇到一个，我都会指出来。'
+- en: a Google Cloud bucket becomes S3 / service account key / IAM user / a key on your laptop / a role in the cloud / a configuration
+    plus an endpoint
+  zh_subtitle: S3 / 服务账号 / 密钥 / IAM 用户 / 角色 / endpoint 配置
+  first_use: S02[5]：Google Cloud 的 bucket 变成了 S3。
+  note: 'A3: service account → 服务账号 (L3); key → 密钥 (L1, L3, L14); IAM user → IAM 用户 (AWS''s Chinese docs; user → 用户); role
+    → 角色 (L14, AWS''s Chinese docs: IAM 角色). B3: plus → 加上 (no +). A9: the sentence cannot open with endpoint, so 而 first.
+    More: S02[5]：服务账号的密钥变成了一个 IAM 用户，密钥放在你的笔记本上，再加上云端的一个角色。 S02[5]：而 endpoint 变成了一份配置加上一个 endpoint。'
+- en: this recording / no AWS account / honest first error / README output / tagged local stand-in / never a faked success
+  zh_subtitle: AWS 账号 / 报错 / 本地替身 / 伪造
+  first_use: S02[6]：关于这次录制，有一点要说明：它没有 AWS 账号。
+  note: 'A14: the honest framing is said plainly, never apologetic and never hidden (L14 S03[7]). its honest first error →
+    它遇到的第一个真实报错 (L14). stand-in → 替身, local stand-in → 本地替身 (L3, L14). More: S02[6]：在你笔记本上跑的每一步都是真的。 S02[6]：每个 AWS 调用都停在它遇到的第一个真实报错上，就像这个。
+    S02[6]：云端本来会回答的地方，你看到的是 README 的输出，或者标好的本地替身。 S02[6]：从不伪造成功。'
+- en: versions at the time of recording
+  zh_subtitle: 录制时 / 版本
+  first_use: S02[7]：录制时的版本都在画面上。
+  note: 'A14: at the time of recording → 录制时, never dropped (L1-L14).'
+- en: clone the repository / clone or download / our git clone is extra / git log / the commit we follow
+  zh_subtitle: git clone / git log / commit / 额外
+  first_use: S03[0]：README 写的是 clone 或者下载，所以我们的 git clone 是额外的，显示我们所跟 commit 的 git log 也是。
+  note: 'A1 c, D6: Pause and clone it → 暂停一下，clone 下来 (L14). extra → 额外 (A15). The commit hash is never written (C2). More:
+    S03[0]：第 1 步：clone 这个 repo。 S03[0]：暂停一下，clone 下来。'
+- en: an extra listing / the CLI / a Dockerfile / a Pipfile / eight sample photos / docker-shell.sh, already executable
+  zh_subtitle: 额外 / Pipfile / 示例照片 / docker-shell.sh / 可执行
+  first_use: S03[1]：额外列一下目录：CLI、一个 Dockerfile、一个 Pipfile、八张示例照片，还有 docker-shell.sh，已经是可执行的。
+  note: 'D6 (L14): An extra listing → 额外列一下目录. Pipfile, Dockerfile, docker-shell.sh verbatim (A1 a).'
+- en: AWS console / IAM user / model deployment (the user) / policies / broader than this code needs / access keys / save
+    both
+  zh_subtitle: 控制台 / IAM 用户 / model-deployment / 策略 / 访问密钥
+  first_use: S03[2]：然后创建一个叫 model-deployment 的 IAM 用户，挂上三个策略。
+  note: 'A3: policy → 策略 (AWS''s Chinese console: IAM 策略, AWS 托管策略); attach → 挂上 (L14); access key → 访问密钥 (AWS''s Chinese
+    docs; the series'' 密钥). D4: en_display model deployment → model-deployment. The policy names (AmazonS3FullAccess …) are
+    on screen only. More: S03[2]：第 2 步和第 3 步在 AWS 控制台里做。 S03[2]：确认你能用 S3、SageMaker 和 IAM。 S03[2]：第三个策略的权限比这段代码需要的更宽。 S03[2]：创建访问密钥，两个都存好。'
+- en: role / SageMaker Execution Role / trusted by SageMaker / the SageMaker and S3 policies / ARN
+  zh_subtitle: 角色 / SageMakerExecutionRole / 信任 / ARN
+  first_use: S03[3]：第 4 步创建一个叫 SageMakerExecutionRole 的角色，信任 SageMaker，挂上 SageMaker 和 S3 的策略。
+  note: 'A3, D4: en_display SageMaker Execution Role → SageMakerExecutionRole, A R N → ARN; the Chinese line writes the literals
+    (one CamelCase word, G3-safe). trusted by → 信任. ARN stays (never 资源名称 in a subtitle). More: S03[3]：复制它的 ARN。'
+- en: two identities / signs each request with the user key / acts as the role / the key stays on your laptop
+  zh_subtitle: 身份 / 用户密钥 / 签名
+  first_use: S03[4]：为什么要两个身份？
+  note: 'A3, A11: signs a request → 给请求签名 (a verb, here only) ≠ the model''s signature → 签名 / 前门 (a noun, S05, S12): the context
+    keeps them apart. acts as / runs as the role → 以这个角色的身份运行 (L14 runs as). your laptop → 你的笔记本 (series). More: S03[4]：你的笔记本用用户的密钥给每个请求签名，而你之后创建的
+    endpoint 以这个角色的身份运行。 S03[4]：密钥只留在你的笔记本上。'
+- en: bucket / a name of your own / unique across all of AWS / storage bills / never put keys in a script / never commit them
+    to Git
+  zh_subtitle: bucket / 唯一 / 存储 / 计费 / Git
+  first_use: S03[5]：第 5 步，然后暂停：用你自己的名字建一个 bucket，因为 bucket 名在整个 AWS 里都是唯一的。
+  note: 'A1 c: bucket stays (L3); S3 is the product (an S3 bucket → 一个 S3 bucket). D9: the because-clause stays last, as in
+    the English. The GOLD cost tag is screen only (no amount, C2). More: S03[5]：只要里面放着文件，存储就在计费。 S03[5]：而且就像 README 提醒的，永远不要把密钥写进脚本，也永远不要把它们
+    commit 到 Git。'
+- en: Run Container / aws configure / four prompts / paste your two keys / press Enter twice / us-east-1 / json
+  zh_subtitle: Run Container / aws configure / 提示 / Enter / us-east-1 / json
+  first_use: S03[6]：Run Container 的第 1 步：aws configure。
+  note: 'A15: README headings named as headings stay (Run Container, Setup Environments). A9: aws configure never opens a
+    sentence. The key Enter stays (L14). More: S03[6]：接着会出现四个提示。 S03[6]：你把两个密钥贴进去。 S03[6]：我们没有密钥，所以按两次 Enter，再输入 us-east-1
+    和 json。'
+- en: two extras / only the config file exists / the who am I call / cannot find credentials / prints your account
+  zh_subtitle: config 文件 / 身份查询 / 凭据 / 账号
+  first_use: S03[7]：两个额外检查：只有 config 文件存在，因为我们没输入密钥；身份查询那一步也找不到凭据。
+  note: 'D4: en_display the who am I call → aws sts get-caller-identity; the Chinese says 身份查询 (S03) / 身份检查 (S14, the banner''s
+    who am I check) / 账号查询 (S13, the account lookup). credentials → 凭据 (L3). More: S03[7]：用你的密钥，它会打印出你的账号。 S03[7]：暂停一下，让你的也打印出来。'
+- en: option 2 / three exports in your shell / AWS rejects our placeholder key
+  zh_subtitle: 选项 2 / export / shell / 占位符
+  first_use: S03[8]：第 2 步还给了第二个选项：在你的 shell 里做三条 export。
+  note: 'A1 a: export is the shell command (三条 export; the exports → 那些 export); shell stays (L1). option 1 / option 2 → 选项
+    1 / 选项 2 (README''s Option 1 / Option 2). rejects → 拒绝 (the script never says invalid). More: S03[8]：AWS 拒绝了我们的占位密钥。'
+- en: a subtler gap / passes only the region, the bucket and the role / exported keys fall off at the wall / dash e
+  zh_subtitle: 疏漏 / 区域 / 墙 / -e
+  first_use: S03[9]：还有一个更隐蔽的疏漏：脚本只把区域、bucket 和角色传进 container。
+  note: 'A14: a gap → 疏漏 (series erratum word; a small gap → 有一个小疏漏). wall → 墙 (the container wall of V1/V3, one word). D4:
+    en_display dash e → -e. region → 区域 (L6, L14). More: S03[9]：所以 export 的密钥到墙那里就掉了。 S03[9]：用选项 1，或者用 -e 把密钥加进去。'
+- en: edit docker-shell.sh / your bucket / the ARN of your role / your region / placeholders
+  zh_subtitle: docker-shell.sh / 占位符
+  first_use: S04[0]：第 3 步：在 docker-shell.sh 里填上你的 bucket、你那个角色的 ARN 和你的区域。
+  note: 'A9: file names verbatim; placeholder → 占位符 (L14). The placeholder values themselves are never written (C2). More:
+    S04[0]：我们的是占位符。'
+- en: chmod / prints nothing / already executable
+  zh_subtitle: chmod / 可执行
+  first_use: S04[1]：第 4 步，chmod，什么都不打印。
+  note: 'chmod verbatim, never opening a sentence (A9). More: S04[1]：额外列一下目录，可以看到脚本本来就是可执行的。'
+- en: sh docker-shell.sh / base image / ARM 64 / the first RUN line / exec format error / Intel style laptop
+  zh_subtitle: 基础 image / arm64 / RUN / exec format error / Intel 架构
+  first_use: S04[2]：第 5 步：sh docker-shell.sh。
+  note: 'A12: exec format error stays as printed (short terminal text the viewer matches). D4: en_display A R M 64 → arm64.
+    base image → 基础 image; the RUN line → RUN 那一行 / 第一行 RUN. Intel style → Intel 架构的. More: S04[2]：它拉取 arm64 的基础 image，然后停在第一行
+    RUN 上：exec format error。 S04[2]：我们这台 Intel 架构的笔记本运行不了那些程序。'
+- en: the fix is in the script / line 19 / Apple silicon Macs / line 17, commented out / the plain build / swap them / fix
+    1 / slow emulation
+  zh_subtitle: 修复 1 / Apple Silicon / 注释掉 / 对调 / 模拟运行
+  first_use: S04[3]：修复就在脚本里。
+  note: 'Apple Silicon as L13/L14 write it (the SAY''s Apple silicon is the same product). emulation → 模拟运行 (L13, L14). comment
+    out → 注释掉 (L13). fix 1 / fix 2 → 修复 1 / 修复 2 (digits, C1). More: S04[3]：第 19 行是给 Apple Silicon 的 Mac 用的，第 17 行被注释掉了，是普通的构建。
+    S04[3]：把两行对调：修复 1，额外的一步。 S04[3]：在 Apple Silicon 上，原来那一行没问题。 S04[3]：在别的机器上，它意味着很慢的模拟运行，或者这个报错。'
+- en: Pipfile / pinned to one version / star / any version / no lock is used / Git ignores the lock file / pipenv lock at
+    build time
+  zh_subtitle: Pipfile / pin / 星号 / lock 文件 / pipenv lock / 构建时
+  first_use: S04[4]：TensorFlow 被 pin 到一个版本，可 SageMaker 写的是星号：任何版本都行。
+  note: 'A5: star → 星号 (en_display star → "*"); pin stays (L1: pin 到一个版本, 约束不是 pin); the lock file → lock 文件 (L1). Git ignores
+    … → Git 忽略了 …; the git ignore file → .gitignore 文件 (en_display) is never needed in the Chinese. More: S04[4]：现在看 Pipfile。
+    S04[4]：而且没用 lock 文件：Git 忽略了 lock 文件，Dockerfile 在构建时跑 pipenv lock。'
+- en: something to ponder / the code worked when it was written / nobody changed a line / fail at import
+  zh_subtitle: 想一想 / 导入
+  first_use: S04[5]：想一想。
+  note: 'A14, ponder P1: the line under the card asks without answering: never 最新版本, 版本 3, 解析器, 约束 or pin here. Something
+    to ponder → 想一想 (L13). import (the act) → 导入; the Python keyword on screen stays. More: S04[5]：代码写的时候是能用的，也没人改过一行。 S04[5]：为什么今天
+    cli.py 在导入时就失败了？'
+- en: a constraint, not a pin / as in lecture 1 / the resolver / the newest release that installs / SageMaker SDK version
+    3 / PyTorch / 14 CUDA packages
+  zh_subtitle: 约束 / 解析器 / 最新版本 / SageMaker SDK / PyTorch / CUDA
+  first_use: S04[6]：星号是约束，不是 pin，和第 1 讲一样：解析器会选能装上的最新版本。
+  note: 'L1: constraint → 约束, a constraint is not a pin → 约束不是 pin, resolver → 解析器, package → 包. version n → 版本 n (SageMaker
+    版本 2, SDK 版本 3; C2: only the major version is said). More: S04[6]：录制时，在 Python 3.9 上，那就是 SageMaker SDK 版本 3，还带着 PyTorch
+    和 14 个 CUDA 包。'
+- en: rewritten package / modules cli.py imports / tensorflow module / serializers / get execution role / the imports find
+    nothing
+  zh_subtitle: 重写 / 模块 / tensorflow 模块 / serializers / get execution role
+  first_use: S04[7]：版本 3 是一个重写过的包，没有 cli.py 导入的那些模块：没有 tensorflow 模块，没有 serializers，也没有 get execution role。
+  note: 'A10: get_execution_role → get execution role (the SAY''s form; the checker rejects the underscore). serializers and
+    tensorflow are module names (lower case, never opening a sentence). More: S04[7]：导入什么都找不到。'
+- en: the unpinned build / ran 13 minutes / ran out of disk / fail at the first import
+  zh_subtitle: 磁盘
+  first_use: S04[8]：在这里，没 pin 的构建跑了 13 分钟，然后磁盘满了。
+  note: 'C1: 13 分钟. unpinned → 没 pin 的. More: S04[8]：在你的笔记本上它会构建完成，然后在第一次导入时失败。'
+- en: fix 2 / less than 3 / the last version 2 release / make both fixes
+  zh_subtitle: 修复 2 / 小于 3 / 发布版
+  first_use: S04[9]：修复 2，也是额外的：把星号改成小于 3。
+  note: 'A10, B3: less than 3 → 小于 3 (en_display "<3"; < is rejected in the Chinese line). release → 发布版 (a PyPI release);
+    a GitHub release stays release (L13, S06). More: S04[9]：解析器停在最后一个版本 2 的发布版上，导入就正常了。 S04[9]：暂停一下，把两处修复都做好。'
+- en: run step 5 again / almost 7 minutes / locking and installing packages / the AWS check fails / the shell still opens
+  zh_subtitle: 锁定 / 安装 / AWS 检查 / shell
+  first_use: S04[10]：再跑一次第 5 步。
+  note: 'L1: lock (the act) → 锁定. D9: the without-clause first as the English. More: S04[10]：将近 7 分钟构建完成，大部分时间在锁定依赖、安装包。 S04[10]：没有密钥，AWS
+    检查失败了，但 shell 还是打开了。'
+- en: inside / Python 3.9 / SageMaker version 2 / TensorFlow 2.18 / the three values from the script / deprecation warnings
+  zh_subtitle: 弃用警告
+  first_use: S04[11]：进去以后，额外检查显示 Python 3.9、SageMaker 版本 2 和 TensorFlow 2.18，还有脚本里的三个值。
+  note: 'deprecation warning → 弃用警告. Versions as on screen (C2). More: S04[11]：弃用警告不是问题所在。'
+- en: a small slip / the help text / GCS bucket / the test flag does nothing / about 4 gigabytes
+  zh_subtitle: 小疏漏 / 帮助文本 / GCS bucket / 4 GB
+  first_use: S04[12]：有一个小疏漏：帮助文本里还写着 GCS bucket 和 Vertex AI，测试参数也什么都不做。
+  note: 'A14: A small slip / A small gap → 有一个小疏漏 (the series'' one erratum phrase, L5, L9-L14). flag → 参数 (L14). 4 gigabytes
+    → 4 GB (C2). More: S04[12]：命令都是 AWS 的。 S04[12]：这个 image 大约 4 GB。'
+- en: where does preprocessing happen / a design question / resize / normalize / cell by cell / production endpoint / the
+    raw photo
+  zh_subtitle: 预处理 / 设计问题 / 缩放 / 归一化 / 原始照片 / 生产环境
+  first_use: S05[0]：在准备模型之前，先看课上的一个设计问题：预处理放在哪里做？
+  note: 'exam: preprocessing → 预处理, resize → 缩放; cell → 单元格 (L06, L13); normalize → 归一化. More: S05[0]：在 notebook 里，你一个单元格一个单元格地缩放、归一化。
+    S05[0]：生产环境的 endpoint 应该接收原始照片，自己把这些都做完。'
+- en: the client does it / converts it to RGB / 224 by 224 / divides by 255 / sends the numbers as JSON
+  zh_subtitle: 客户端 / RGB / 224 乘 224 / 除以 255 / JSON
+  first_use: S05[1]：在这个教程里，是客户端来做。
+  note: 'client → 客户端 (L8, exam). B3: 224 by 224 → 224 乘 224 (exam). D4: en_display R G B → RGB. More: S05[1]：预测代码打开照片，转成
+    RGB，再缩放到 224 乘 224。 S05[1]：然后除以 255，把这些数字作为 JSON 发出去。'
+- en: the model's front door / signature / floats / any number by 224 by 224 by 3 / four numbers per photo / your side of
+    the wire
+  zh_subtitle: 前门 / 签名 / 浮点数 / 形状
+  first_use: S05[2]：一个额外检查读出了模型的前门，TensorFlow 管它叫签名。
+  note: 'A4: signature → 签名 (exam; written 服务签名), the picture front door → 前门 (one word, S05 and S12). floats → 浮点数 (exam).
+    the wire → 这条线 (the client-to-endpoint line of the picture). More: S05[2]：它接收浮点数，形状是任意数量乘 224 乘 224 乘 3，每张照片给出四个数。 S05[2]：预处理在这条线你的这一边。'
+- en: client-side brittleness / repeat those steps exactly / a phone app / confident nonsense / roll back / version
+  zh_subtitle: 客户端 / 脆弱性 / 手机应用 / 回滚 / 版本管理
+  first_use: S05[3]：课上点出了风险：客户端的脆弱性。
+  note: 'versioning → 版本管理 (L11, L13); roll back → 回滚. More: S05[3]：每个客户端都必须一模一样地重复这些步骤，一个忘了除以 255 的手机应用，会得到很有把握的胡说。 S05[3]：模型里只放一份，也更容易回滚和做版本管理。'
+- en: the fix from the lecture / the part 2 trainer / the preprocess function / decodes the JPEG / converts it to floats
+  zh_subtitle: 训练脚本 / 预处理函数 / 解码 / JPEG
+  first_use: S05[4]：课上的修复在第 2 部分的训练脚本里。
+  note: 'trainer → 训练脚本 (L13: the repo''s trainer). decode → 解码 (exam). JPEG stays. More: S05[4]：预处理函数把 JPEG 解码，转成浮点数，再缩放。'
+- en: a function marked as the model's front door / a batch of JPEG strings / the serving default / raw bytes in / one score
+    per class out
+  zh_subtitle: 一批 / 字符串 / serving default / 字节 / 分数 / 类别
+  first_use: S05[5]：一个被标成模型前门的函数，接收一批 JPEG 字符串，逐个处理，再调用模型。
+  note: 'A10: serving_default → serving default (the SAY''s form; on screen the literal). a batch of → 一批 (never batch here:
+    batch is L8''s training batch). class → 类别; score → 分数 (exam). More: S05[5]：它被保存为 serving default。 S05[5]：输入原始字节，每个类别输出一个分数。'
+- en: one trap to avoid / the SavedModel format / a change of format / the change of signature
+  zh_subtitle: 坑 / SavedModel / 格式
+  first_use: S05[6]：有一个坑要避开。
+  note: 'trap → 坑 (L07, L08). SavedModel stays (TensorFlow''s format name). the prepare step → prepare 这一步 (A9: never opening
+    a sentence). More: S05[6]：README 说 prepare 这一步会把模型转成 SavedModel 格式。 S05[6]：那是格式的变化，不是课上讲的签名的变化。'
+- en: python cli.py --prepare / download / convert / pack / model.tar.gz / upload to your bucket / the lecture deployment
+    picture
+  zh_subtitle: python cli.py --prepare / model.tar.gz / 上传 / 部署图
+  first_use: S06[0]：第 1 步：python cli.py --prepare。
+  note: 'D4: en_display python cli.py dash dash prepare → python cli.py --prepare, model dot tar dot G Z → model.tar.gz; the
+    Chinese line writes the literals (the checker accepts them). After the first mention the SAY says prepare / the prepare
+    step → prepare 这一步. More: S06[0]：README 列了四件事。 S06[0]：从 GitHub 下载模型，转成 SavedModel 格式，打包成 model.tar.gz，再上传到你的 bucket。 S06[0]：这些是课上部署图里的第
+    1 步和第 3 步。 S06[0]：第 2 步，也就是签名的变化，不在第 1 部分里。'
+- en: no credentials / line 73 of cli.py / creates the bucket / the artifacts folder / nothing was downloaded
+  zh_subtitle: 没有凭据 / 第 73 行 / artifacts 目录
+  first_use: S06[1]：暂停一下，跑一遍。
+  note: 'A12: no credentials (the SAY''s paraphrase of NoCredentialsError) → 没有凭据; the class name stays on screen. folder
+    → 目录 (series). More: S06[1]：我们的马上就停了：没有凭据，在 cli.py 第 73 行，那一行创建 bucket。 S06[1]：而且 artifacts 目录不存在，所以什么都没下载。'
+- en: a small gap in the README / creates the bucket before it downloads anything / reuses yours if it already exists
+  zh_subtitle: 小疏漏 / 复用
+  first_use: S06[2]：README 里有一个小疏漏：代码在下载任何东西之前就先创建 bucket，清单里没提这一步。
+  note: 'A14 erratum phrase. reuse → 复用 (exam). D9: the if-clause stays last, as the English. More: S06[2]：有你的密钥时，它会创建 bucket，如果已经存在，就复用你的。'
+- en: an extra / stub / sends nothing / the release zip / the model is exported / nothing reaches AWS
+  zh_subtitle: stub / release / zip 包 / 导出
+  first_use: S06[3]：为了展示接下来的事，做一个额外实验：同一个 prepare 函数，把 S3 换成一个什么都不发送的 stub。
+  note: 'A1 c: stub stays (the tag extra · capture stub; 桩 is unknown in lab speech) ≠ stand-in → 替身 (the TF Serving stand-in,
+    S08). release stays (L13: a GitHub release). export → 导出. More: S06[3]：那个 release 的 zip 包下载下来了，模型被导出，stub 拦下了上传。 S06[3]：什么都没到达
+    AWS。'
+- en: here is what it made / a SavedModel is a folder / the graph / its named entry points / saved model dot P B / the weights
+    / a variables folder
+  zh_subtitle: 计算图 / 入口 / 权重 / variables 目录
+  first_use: S06[4]：来看它生成了什么。
+  note: 'A10: saved_model.pb → saved model 那个 pb 文件 (en_display saved model dot P B → saved_model.pb). A11: the SavedModel''s
+    named entry points → 有名字的入口 ≠ 入口点 (L14''s function entry point) ≠ entrypoint (Docker''s). More: S06[4]：SavedModel 是一个目录：计算图和它那些有名字的入口在
+    saved model 那个 pb 文件里，权重在 variables 目录里。'
+- en: a folder named 1 / TensorFlow Serving / by name, then version / the tarball / at its top
+  zh_subtitle: TensorFlow Serving / 版本 / tar 包 / 顶层
+  first_use: S06[5]：代码把它放在一个叫 1 的目录里，因为 TensorFlow Serving 先按名字、再按版本找模型。
+  note: 'tarball → tar 包 (L13). TensorFlow Serving stays. More: S06[5]：在 tar 包里，顶层就是这个目录。'
+- en: git status / your two edits / Git ignores the artifacts folder / in your account / storage bills while it exists
+  zh_subtitle: git status / 改动 / 存储
+  first_use: S06[6]：额外跑一个 git status，能看到你的两处改动，Git 也忽略了 artifacts 目录。
+  note: 'edits → 改动. D9: while-clause last, as the English. More: S06[6]：在你的账号里，tar 包现在放在 S3 上，只要它存在，存储就在计费。'
+- en: 'step 2: deploy / describes a TensorFlow model / the serving container / plus the role / nothing exists in AWS yet'
+  zh_subtitle: deploy / 推理 / TensorFlow 模型
+  first_use: S07[0]：第 2 步：deploy。
+  note: 'deploy (the CLI step, the SAY''s short name) stays; the act is 部署. the serving container → 负责推理的 container; the AWS
+    serving image → AWS 的推理 image (S08). More: S07[0]：还记得开头那三样东西。 S07[0]：在代码里，它先描述一个 TensorFlow 模型：S3 里的 tar 包、负责推理的 container，再加上角色。
+    S07[0]：这时 AWS 里还什么都没有。'
+- en: a model registry / both READMEs / a plain model in SageMaker
+  zh_subtitle: 模型注册表 / 普通的模型
+  first_use: S07[1]：课上在这里把模型上传到模型注册表。
+  note: 'A4: a model registry (generic, lower case in the SAY) → 模型注册表 (the exam''s written form of Model Registry); a SageMaker
+    Model → 模型 (SageMaker 里的模型). The kind slide-versus-code note, said plainly (A14). More: S07[1]：两份 README 也都写着模型注册表，但代码在
+    SageMaker 里建的只是一个普通的模型。'
+- en: you never write an image name / the SDK picks / the AWS TensorFlow Serving image / framework version 2.13 / exported
+    by TensorFlow 2.18 / Serving 2.13 loads it
+  zh_subtitle: image / SDK / 框架版本 / Serving 2.13
+  first_use: S07[2]：你从来不写 image 名：SDK 根据框架版本 2.13 选出 AWS 的 TensorFlow Serving image。
+  note: 'SDK stays (exam). Versions as the SAY says them (C2). More: S07[2]：我们的模型是用 TensorFlow 2.18 导出的。 S07[2]：在第 3 步，一个本地检查会显示
+    Serving 2.13 能加载它。'
+- en: one instance of type ml.m5.xlarge / a name with a timestamp / one call creates all three / endpoint configuration /
+    names the machine and the model / the address you call
+  zh_subtitle: 实例 / ml.m5.xlarge / 时间戳 / endpoint 配置 / 地址
+  first_use: S07[3]：然后 deploy，用一个 ml.m5.xlarge 类型的实例，名字带时间戳。
+  note: 'A4: endpoint configuration → endpoint 配置 (written 端点配置（endpoint configuration）); never 终端节点 in a subtitle. instance
+    → 实例 (L14). D4: en_display M L M5 extra large → ml.m5.xlarge. address → 地址 (exam). More: S07[3]：这一次调用就创建了全部三样：SageMaker
+    里的模型；一份 endpoint 配置，写明用哪台机器、哪个模型；还有 endpoint，也就是你要调用的地址。'
+- en: python cli.py --deploy / line 168 / the deploy call / 5 to 10 minutes / prints the endpoint name / endpoint config dot
+    JSON
+  zh_subtitle: python cli.py --deploy / 第 168 行 / JSON 文件
+  first_use: S07[4]：暂停一下，跑 python cli.py --deploy。
+  note: 'A10: endpoint_config.json → endpoint config 那个 JSON 文件 (en_display endpoint config dot JSON → endpoint_config.json).
+    C1: 5 到 10 分钟. More: S07[4]：我们的停在第 168 行，也就是 deploy 调用：没有凭据。 S07[4]：用你的密钥，README 说要 5 到 10 分钟，然后打印出 endpoint 名，并保存到 endpoint
+    config 那个 JSON 文件里。'
+- en: serverless / no server for you to manage / one machine, billing around the clock / zero traffic / Cloud Run in lecture
+    14 / scale to zero
+  zh_subtitle: serverless / 服务器 / 全天候计费 / 流量 / 缩容到零
+  first_use: S07[5]：课上把这个叫 serverless，意思是不用你管服务器。
+  note: 'A4, A14 (L14): serverless stays; scale to zero → 缩容到零; traffic → 流量. Never write 按请求计费 or 缩容到零 as true of this endpoint.
+    More: S07[5]：它仍然是一台机器，全天候在计费，哪怕流量是零。 S07[5]：和第 14 讲的 Cloud Run 不同，照代码这样创建的 endpoint 不会缩容到零。'
+- en: two ways to serve / a model endpoint / versioning / A B testing / monitoring / a general container service / build the
+    rest yourself
+  zh_subtitle: 部署方式 / A/B 测试 / 监控 / container
+  first_use: S07[6]：课上比较了两种部署方式。
+  note: 'D4: en_display A B testing → A/B testing; the Chinese writes A/B 测试 (/ is accepted). B3: 两种部署方式 is fine (种 not before
+    punctuation). More: S07[6]：模型 endpoint 直接部署训练好的模型，版本管理、A/B 测试和监控都现成可用。 S07[6]：像 Cloud Run 这样的通用 container 服务什么都能跑，其余的你自己搭。'
+- en: rule of thumb / an endpoint to serve a trained model / a container service when the model is one part of a larger app
+    / those features go unused
+  zh_subtitle: 经验法则 / 功能
+  first_use: S07[7]：它的经验法则：要部署训练好的模型，就用 endpoint；模型只是更大应用的一部分时，用 container 服务。
+  note: 'rule of thumb → 经验法则 (exam). D9: the when-clause of the English is short; the Chinese keeps the two halves in the
+    English order. More: S07[7]：在这里，这些功能都没用上。'
+- en: python cli.py --predict / finds no endpoint config dot JSON / falls back to a default name / five photos / unable to
+    locate credentials
+  zh_subtitle: python cli.py --predict / 默认名字 / Unable to locate credentials
+  first_use: S08[0]：第 3 步：python cli.py --predict。
+  note: 'A12: the printed message Unable to locate credentials stays as printed (capitalised as on screen); exec format error,
+    AWS not configured and Permission denied likewise. Paraphrases (no credentials) are Chinese: 没有凭据. More: S08[0]：我们的找不到
+    endpoint config 那个 JSON 文件，就退回到一个默认名字。 S08[0]：它挑了五张照片，失败了五次：Unable to locate credentials。 S08[0]：暂停一下，跑你的。'
+- en: each try would send one photo / 3 color channels / how many numbers travel to the endpoint
+  zh_subtitle: 颜色通道 / 传到
+  first_use: S08[1]：每次尝试会发送一张照片。
+  note: 'A14, ponder P2: never the product, 150528 or a size in the line under the card. color channel → 颜色通道. More: S08[1]：客户端把它缩放到
+    224 乘 224，有 3 个颜色通道。 S08[1]：为了这一张照片，有多少个数字要传到 endpoint？'
+- en: 224 times 224 times 3 / 150,528 floats / as text in JSON / a few megabytes per photo / a signature that takes bytes
+  zh_subtitle: 150528 / 浮点数 / 文本 / MB
+  first_use: S08[2]：224 乘 224 乘 3：150528 个浮点数。
+  note: 'C1: 150528 with no thousands separator (L8, L14: 5000, 24576); times → 乘 (B3, no ×). megabytes → MB (C2). D4: en_display
+    one hundred fifty thousand, five hundred twenty-eight → 150,528. More: S08[2]：Python 把每一个都写成 JSON 里的文本，所以每张照片有好几 MB。 S08[2]：一个接收字节的签名，会直接发送
+    JPEG 本身。'
+- en: a list of four probabilities / arg max / looks it up / 0 parmigiano, 1 gruyere, 2 brie, 3 gouda
+  zh_subtitle: 概率 / argmax / parmigiano / gruyere / gouda
+  first_use: S08[3]：答案是一个包含四个概率的列表。
+  note: 'D4: en_display arg max → argmax; the Chinese writes argmax. probability → 概率. More: S08[3]：代码用 argmax 取最大的那个，再去查表：0
+    是 parmigiano，1 是 gruyere，2 是 brie，3 是 gouda。'
+- en: an extra local stand-in, not SageMaker / the AWS serving image runs TensorFlow Serving / the public Serving 2.13 image
+    / our export / loads version 1
+  zh_subtitle: 本地替身 / 推理 image / 导出
+  first_use: S08[4]：为了看到真实的回答，我们用一个额外的本地替身，不是 SageMaker。
+  note: 'A15: the tag extra · local stand-in, not SageMaker stays on screen; the SAY''s words are Chinese (L14). More: S08[4]：AWS
+    的推理 image 里跑的是 TensorFlow Serving，所以我们在导出的模型上启动了公开的 Serving 2.13 image。 S08[4]：它加载了版本 1。'
+- en: the same predict function / the same JSON / comes back brie / four numbers each
+  zh_subtitle: 预测函数
+  first_use: S08[5]：然后同一个预测函数把同样的 JSON 发给它。
+  note: 'A9: a label never opens a sentence (Brie comes back brie → 照片是 brie，回来的就是 brie). More: S08[5]：照片是 brie，回来的就是 brie；照片是
+    gruyere，回来的就是 gruyere，每次都是四个数。'
+- en: parmigiano comes back brie / at 98 percent / a real mistake of the released model / its own metrics file / about 72
+    percent accuracy
+  zh_subtitle: 准确率 / 指标文件 / 98%
+  first_use: S08[6]：而 parmigiano 回来的是 brie，98%。
+  note: 'accuracy → 准确率 (L13, exam); metrics → 指标 (L13). C1: 98%, 72%. More: S08[6]：这是发布出来的模型真实犯下的错误。 S08[6]：它自己的指标文件写的准确率大约是
+    72%。'
+- en: the opening puzzle / same code, different artifact / an older model / three classes / another label order / index 0
+  zh_subtitle: 谜题 / 产物 / label 顺序 / 索引
+  first_use: S08[7]：现在回到开头的谜题。
+  note: 'label stays (L11, L13). index → 索引. A14 erratum phrase. More: S08[7]：代码一样，产物不同：README 的输出来自一个更旧的模型，有三个类别，label 顺序也不一样。
+    S08[7]：有一个小疏漏：应该是四个数，索引 0 是 parmigiano。'
+- en: an extra command removes the stand-in / it never touched AWS
+  zh_subtitle: 替身
+  first_use: S08[8]：一条额外的命令删掉了这个替身。
+  note: 'More: S08[8]：它从没碰过 AWS。'
+- en: 'costs money while it is up / the slides shout one word: delete / three ways / Way 1, the console / SageMaker, Endpoints
+    / Delete'
+  zh_subtitle: 删除 / 方式 1 / Endpoints / Delete
+  first_use: S09[0]：课上提醒，endpoint 只要开着就在花钱，课件上就喊了一个词：删除。
+  note: 'A15: console labels and buttons the SAY names stay (Endpoints, Delete); the README''s Way 1/2/3 → 方式 1 / 2 / 3. the
+    slides → 课件 (A17). More: S09[0]：README 给了三种方式，哪一种都行。 S09[0]：方式 1，控制台：SageMaker、Endpoints，选中你的，点 Delete。'
+- en: three AWS CLI commands / typed exactly as written / a shell error / angle brackets / placeholders / redirection
+  zh_subtitle: 尖括号 / 占位符 / 重定向 / shell
+  first_use: S09[1]：方式 2 给了三条 AWS CLI 命令。
+  note: 'A12: a shell error → 一个 shell 报错. angle brackets → 尖括号 (words only: B2). More: S09[1]：照着原样输入，第一条就是一个 shell 报错：尖括号是占位符，shell
+    把它们当成了重定向。'
+- en: type your own names, without brackets / delete in this order / the endpoint, then its configuration, then the model
+  zh_subtitle: 顺序 / 配置
+  first_use: S09[2]：有一个小疏漏：输入你自己的名字，不带尖括号。
+  note: 'its configuration → 它的配置 (the endpoint configuration, short). More: S09[2]：然后我们的失败了：没有凭据。 S09[2]：按这个顺序删：先 endpoint，再它的配置，最后是模型。'
+- en: python cli.py --delete / its first SageMaker call / the endpoint named in the JSON file / matching configurations /
+    by naming convention / the tarball in S3
+  zh_subtitle: python cli.py --delete / 命名约定
+  first_use: S09[3]：方式 3：python cli.py --delete 停在它的第一个 SageMaker 调用上。
+  note: 'naming convention → 命名约定. More: S09[3]：暂停一下，跑一遍。 S09[3]：有密钥时，它删除 JSON 文件里记着的那个 endpoint。 S09[3]：然后按命名约定删掉匹配的配置和模型，最后是
+    S3 里的 tar 包。'
+- en: a new endpoint with a new timestamp / keeps only the last name / deploy twice, delete once / how many endpoints still
+    bill
+  zh_subtitle: 时间戳 / 计费
+  first_use: S09[4]：每次 deploy 都会建一个新的 endpoint，带新的时间戳，可 JSON 文件只记着最后一个名字。
+  note: 'A14, ponder P3: the question line never says 一个, 更早的, 只删 or the answer. More: S09[4]：你跑了两次 deploy，然后跑了一次 delete。
+    S09[4]：还有几个 endpoint 在计费？'
+- en: One / delete removes only the endpoint the file names / the older one keeps running / aws sagemaker list-endpoints /
+    confirm in the console
+  zh_subtitle: 确认
+  first_use: S09[5]：一个。
+  note: 'A14: the reveal answers with the question''s own measure (还有几个 → 一个). The SAY''s aws sagemaker list endpoints is
+    the command on screen: write the literal list-endpoints (D4: en_display list endpoints → list-endpoints, decided in the
+    narration step). More: S09[5]：这次 delete 只删掉文件里记着的那个 endpoint。 S09[5]：更早的那个还在运行。 S09[5]：用 aws sagemaker list-endpoints
+    检查，再到控制台确认。'
+- en: that is part 1 / four commands by hand / four stages before that / who runs all of them, in the right order, every time
+  zh_subtitle: 第 1 部分 / 命令 / 顺序
+  first_use: S09[6]：这就是第 1 部分。
+  note: 'D9: the English clause order is kept (You ran four commands by hand to deploy one model → 你手动跑了四条命令，部署了一个模型). More:
+    S09[6]：你手动跑了四条命令，部署了一个模型。 S09[6]：在这之前，Cheese App 还有四个阶段。 S09[6]：谁来把它们全部跑完，按正确的顺序，每一次都这样？'
+- en: Part 2 / the lecture draws the problem / four stages / a person at a terminal / execute these steps / automate this
+    flow
+  zh_subtitle: 第 2 部分 / 终端 / 执行 / 自动化 / 流程
+  first_use: S10[0]：第 2 部分。
+  note: 'exam: execute → 执行, automate → 自动化, this flow → 这个流程. More: S10[0]：课上画出了问题：四个阶段，每个阶段由一个人守着一个终端来跑。 S10[0]：这些步骤怎么执行？
+    S10[0]：这个流程能不能自动化？'
+- en: orchestrator / Vertex AI Pipelines / Kubeflow / SageMaker Pipelines / managed steps in a graph
+  zh_subtitle: 编排器 / Vertex AI Pipelines / Kubeflow / SageMaker Pipelines / 托管 / 图
+  first_use: S10[1]：答案是一个编排器。
+  note: 'orchestrator → 编排器; managed → 托管 (exam); graph → 图 (exam). G3: one product name per clause. More: S10[1]：课上用的是基于
+    Kubeflow 的 Vertex AI Pipelines。 S10[1]：这个教程用的是 SageMaker Pipelines，同样是把托管的步骤放进一张图里。'
+- en: workflow management / runs the steps in order / repeatable / gives each step its machine / shows it / scheduling / lecture
+    23 / no cluster
+  zh_subtitle: 工作流管理 / 可重复 / 调度 / 集群
+  first_use: S10[2]：工作流管理按顺序运行这些步骤，让每次运行都可重复，给每一步分配机器，还把过程展示出来。
+  note: 'exam: workflow management → 工作流管理, scheduling → 调度. cluster → 集群. More: S10[2]：这个 repo 覆盖了这四项。 S10[2]：调度要等到第 23 讲。
+    S10[2]：而且它是托管的：不用你自己运维集群。'
+- en: Setup, step 1 / clone ml workflow AWS / our git clone is extra again / an extra tree / four folders under source / three
+    stages and the workflow
+  zh_subtitle: ml-workflow-aws / 目录树 / src / workflow
+  first_use: S10[3]：环境设置，第 1 步：clone ml-workflow-aws。
+  note: 'D4: en_display clone ml workflow AWS → ml-workflow-aws; the folder the SAY calls source is src on screen. The workflow
+    folder → workflow 目录 (S14). More: S10[3]：我们的 git clone 又是额外的。 S10[3]：额外的目录树显示 src 下面有四个目录：三个阶段，加上 workflow。'
+- en: console work / quick setup for SageMaker AI / Unified Studio domain / watch the pipeline / ml workflow user / four policies
+  zh_subtitle: 控制台操作 / 快速设置 / SageMaker AI / Unified Studio / 域 / ml-workflow-user
+  first_use: S10[4]：第 2 到第 5 步都是控制台操作：SageMaker AI 的快速设置，再加一个 Unified Studio 域，之后你在那里看 pipeline。
+  note: 'A3: domain → 域 (AWS''s Chinese docs: SageMaker 域); quick setup → 快速设置. D4: en_display ml workflow user → ml-workflow-user.
+    More: S10[4]：然后是你的 bucket，和一个叫 ml-workflow-user、挂了四个策略的用户。'
+- en: an access key for the command line / download the CSV file / quick setup and the Studio domain stay in your account
+    / check them when you clean up
+  zh_subtitle: 访问密钥 / .csv 文件 / 收尾清理
+  first_use: S10[5]：为命令行创建一个访问密钥，下载 .csv 文件。
+  note: 'D4: en_display C S V → .csv. clean up → 收尾清理 / 清理 (series). More: S10[5]：快速设置和 Studio 域会留在你的账号里：收尾清理时记得检查。'
+- en: install the AWS CLI / paste the two values from the CSV / obviously fake placeholders / real errors
+  zh_subtitle: 占位符 / 报错
+  first_use: S10[6]：第 6 步和第 7 步：安装 AWS CLI，然后 aws configure，把 .csv 里的两个值贴进去。
+  note: 'More: S10[6]：从这里开始，我们输入的是明显是假的占位符，所以 AWS 回的是真实的报错。'
+- en: tests the configuration / rejects the fake token and the fake key / prints your account and your buckets / don't go
+    on until they do
+  zh_subtitle: 令牌 / 配置
+  first_use: S10[7]：第 8 步测试配置。
+  note: 'A3: token → 令牌 (L10, L11, L14). D9: until-clause last, as the English. More: S10[7]：AWS 自己拒绝了假的令牌和假的密钥。 S10[7]：用你的密钥，这两条会打印出你的账号和你的
+    bucket。 S10[7]：别往下走，直到它们打印出来。'
+- en: two roles / Cheese App SageMaker Execution Role / Cheese App Lambda Execution Role / for every job / builds each ARN
+    from your account number and the exact role name
+  zh_subtitle: CheeseAppSageMakerExecutionRole / CheeseAppLambdaExecutionRole / 账号 ID / 角色名
+  first_use: S10[8]：第 9 步创建两个角色：CheeseAppSageMakerExecutionRole，给每个任务用；还有 CheeseAppLambdaExecutionRole。
+  note: 'D4: en_display Cheese App SageMaker Execution Role → CheeseAppSageMakerExecutionRole, … Lambda … → CheeseAppLambdaExecutionRole;
+    G1, G3: one long role name per clause. job → 任务 (A6). account number → 账号 ID. More: S10[8]：代码用你的账号 ID 和准确的角色名拼出每个 ARN，所以名字要一字不差，在这里暂停一下。'
+- en: Data collector / all four part 2 scripts / name the bucket from the README / put yours in each one / AWS not configured
+  zh_subtitle: 数据采集器 / 脚本 / AWS not configured
+  first_use: S11[0]：数据采集器，第 1 步。
+  note: 'exam: collector / processor → 数据采集器 / 数据处理器 (采集器 / 处理器 after the first in a block). A12: AWS not configured stays
+    as printed. More: S11[0]：先说一个小疏漏：第 2 部分的四个脚本写的都是 README 里的 bucket 名，所以每个都要换成你的。 S11[0]：然后在这个目录里跑 sh docker-shell.sh。 S11[0]：没有密钥，脚本自己就停了：AWS
+    not configured。'
+- en: with keys / builds in 40 seconds / a root shell / builds for AMD 64 / Apple silicon emulates / Ubuntu or Debian / sh
+    is dash / skips the key check / bash docker-shell.sh
+  zh_subtitle: root shell / amd64 / Ubuntu / Debian / sh / dash / bash
+  first_use: S11[1]：有密钥时，它 40 秒就构建完，打开一个 root shell。
+  note: 'root stays (L1, L13); sh / dash / bash are programs (verbatim, never opening a sentence). D4: en_display A M D 64
+    → amd64. Two notes → 两点说明. More: S11[1]：两点说明。 S11[1]：这个脚本为 amd64 构建，Apple Silicon 上要模拟运行。 S11[1]：在 Ubuntu 或 Debian 上，sh
+    就是 dash，它会跳过密钥检查，所以要跑 bash docker-shell.sh。'
+- en: why a shell / the entry point script / a switch / no arguments / development mode / arguments / production mode / callable
+    container
+  zh_subtitle: entrypoint 脚本 / 开关 / 参数 / 开发模式 / 生产模式 / 可调用
+  first_use: S11[2]：为什么是一个 shell？
+  note: 'A11: the entry point script (docker-entrypoint.sh, Docker''s ENTRYPOINT) → entrypoint 脚本 (L11, L13, L14: entrypoint
+    stays) ≠ 入口 (S06). callable → 可调用的 (exam). switch → 开关 (L14). A9: entrypoint is lower case and never opens a sentence
+    (这个 entrypoint 脚本……). More: S11[2]：这个 entrypoint 脚本里有一个开关。 S11[2]：没有参数：它就打开 bash，也就是开发模式，你现在就在这里。 S11[2]：有参数：它就运行它们然后退出，也就是生产模式。
+    S11[2]：课上把这叫作可调用的 container。'
+- en: the search command / four cheeses, ten images each / scrapes the web / writes four folders / zips them / raw dot zip
+  zh_subtitle: search / 抓取 / zip 包 / raw.zip
+  first_use: S11[3]：第 2 步：search 命令，四种奶酪，每种十张图片。
+  note: 'scrape → 抓取. D4: en_display raw dot zip → raw.zip. The scraped sites are never named. More: S11[3]：它从网上抓取图片，写出四个目录，打成
+    zip 包，再尝试上传 raw.zip。 S11[3]：AWS 拒绝了我们的假密钥。'
+- en: check your bucket / cannot pass here / 40 images on disk / a root-owned persistent folder / beside the clones
+  zh_subtitle: 磁盘 / persistent 目录
+  first_use: S11[4]：第 3 步，检查你的 bucket，在这里过不去。
+  note: 'the persistent folder → persistent 目录 (persistent-folder on screen); root-owned → 属于 root 的. More: S11[4]：额外列一下目录，磁盘上有
+    40 张图片。 S11[4]：在笔记本上，clone 下来的 repo 旁边出现了一个属于 root 的 persistent 目录。'
+- en: Data processor / the ARM 64 line fails again / the same swap fixes it
+  zh_subtitle: 数据处理器 / 对调
+  first_use: S11[5]：数据处理器，第 1 步：arm64 那一行又失败了，同样对调一下就好。
+  note: ''
+- en: python cli.py --clean / a duplicate finder / checks each label / finds none among these 40 / clean dot zip
+  zh_subtitle: 查重工具 / 重复 / clean.zip
+  first_use: S11[6]：第 2 步：python cli.py --clean。
+  note: 'the tool (difPy) is never named; duplicate finder → 查重工具. More: S11[6]：一个查重工具检查每个 label，在这 40 张里一张重复的都没找到，clean.zip
+    的上传也失败了。 S11[6]：暂停一下，跑一遍。'
+- en: dash dash prepare / split into 32 for training and 8 for validation / two real TFRecord files / step 5 finds them only
+    on disk
+  zh_subtitle: 划分 / 训练 / 验证 / TFRecord
+  first_use: S11[7]：第 3 步和第 4 步：检查你的 bucket，然后 --prepare。
+  note: 'split → 划分 (L13). TFRecord / TFRecords stay (format names). More: S11[7]：40 张图片全部划分成 32 张训练、8 张验证，写进两个真实的 TFRecord
+    文件。 S11[7]：上传又失败了。 S11[7]：第 5 步只能在磁盘上找到它们。'
+- en: the duty cards from the lecture / download / verify / remove duplicates / convert to TFRecords / the labels are the
+    folder names / your search queries
+  zh_subtitle: 职责卡片 / 去重 / 搜索词 / TFRecords
+  first_use: S11[8]：课上的职责卡片都对得上：下载，然后验证、去重、转成 TFRecords。
+  note: 'remove duplicates → 去重 (L08). search queries → 搜索词. More: S11[8]：四个 label 就是目录名，也就是你的搜索词，所以要一字不差地输入。'
+- en: Model training / same ARM 64 line, same swap / installs from its committed lock / needs no pin
+  zh_subtitle: 模型训练 / pin
+  first_use: S12[0]：模型训练，第 1 步。
+  note: 'More: S12[0]：同样是 arm64 那一行，同样对调。 S12[0]：这个 image 按 commit 进 repo 的 lock 文件安装，用的是 SageMaker 版本 2，所以不需要 pin。'
+- en: local training / TensorFlow 2.20 on the CPU / the shared folder / the last layer / three outputs / one epoch / its accuracy
+    means nothing yet
+  zh_subtitle: 本地训练 / CPU / 共享目录 / 最后一层 / 输出 / epoch
+  first_use: S12[1]：第 2 步，本地训练。
+  note: 'epoch stays (L8, L13). layer → 层 (L8). More: S12[1]：CPU 上的 TensorFlow 2.20 通过共享目录，找到了数据处理器生成的 TFRecords。 S12[1]：看最后一层：三个输出。
+    S12[1]：跑了一个 epoch。 S12[1]：它的准确率现在还说明不了什么。'
+- en: saving fails / permission denied / slash persistent slash model / two small fixes
+  zh_subtitle: Permission denied / /persistent/model
+  first_use: S12[2]：然后保存失败了：Permission denied，/persistent/model。
+  note: 'A12: Permission denied stays as printed. D4: en_display slash persistent slash model → /persistent/model; the Chinese
+    writes the path literally (/ is accepted). More: S12[2]：在这里暂停一下，做两处小修复。'
+- en: line 68 / three classes / four labels / gouda gets no target / change it to 4
+  zh_subtitle: 第 68 行 / 类别 / 目标
+  first_use: S12[3]：第一处，第 68 行写的是三个类别，可数据有四个 label，所以 gouda 没有对应的目标。
+  note: 'A10: num_classes is never written (the SAY says three classes). More: S12[3]：把它改成 4。'
+- en: Docker created the persistent folder as root / this container runs as the app user / exit / create the folder yourself
+    / change its owner / Docker Desktop on a Mac
+  zh_subtitle: app 用户 / 所有者 / Docker Desktop / Linux
+  first_use: S12[4]：第二处，在 Linux 上，Docker 以 root 身份创建了 persistent 目录，而这个 container 以 app 用户运行。
+  note: 'owner → 所有者 (chown on screen only). More: S12[4]：退出，在你的笔记本上自己创建这个目录，或者改它的所有者。 S12[4]：然后再跑一次第 2 步。 S12[4]：Mac 上的 Docker
+    Desktop 不会遇到这个问题。'
+- en: slash persistent slash model slash 1 / the SageMaker model folder inside a training job
+  zh_subtitle: /persistent/model/1 / 训练任务 / 模型目录
+  first_use: S12[5]：它会写到 /persistent/model/1：也就是你笔记本上的 persistent 目录，或者训练任务里 SageMaker 的模型目录。
+  note: 'A6: training job → 训练任务 (L13). D4: en_display → /persistent/model/1.'
+- en: the signature change from the lecture / decode, convert, resize, inside the model / gives this job to model deploy /
+    the trainer does it
+  zh_subtitle: 签名变化 / 训练脚本
+  first_use: S12[6]：就在保存之前，是课上讲的签名变化：解码、转换、缩放，都放在模型里。
+  note: 'A11: this job (a task in prose) → 这件事 (never 任务 here). More: S12[6]：有一个小疏漏：README 把这件事交给了模型部署。 S12[6]：其实是训练脚本做的。'
+- en: sh package-trainer.sh / packs the package folder / copies it to S3 / the tar file is real / the upload fails
+  zh_subtitle: sh package-trainer.sh / package 目录 / tar 文件
+  first_use: S12[7]：第 3 步：sh package-trainer.sh 把 package 目录打包，再拷到 S3。
+  note: 'L13: package-trainer.sh verbatim. More: S12[7]：这个 tar 文件是真的。 S12[7]：上传因为我们的假密钥失败了。'
+- en: python cli.py --train / asks AWS who you are / to build the role ARN / starts a training job / returns at once
+  zh_subtitle: python cli.py --train / 训练任务
+  first_use: S12[8]：第 4 步：python cli.py --train。
+  note: 'More: S12[8]：它问 AWS 你是谁，用来拼出角色的 ARN，然后就停在那里。 S12[8]：有密钥时，它会在 ml.m5.xlarge 上启动一个训练任务，并且马上返回。'
+- en: watch it in the console / Training, then Training jobs / its name starts with cheese
+  zh_subtitle: Training / Training jobs
+  first_use: S12[9]：第 5 步：在控制台里看，Training 下面的 Training jobs。
+  note: 'A15: console paths joined with 下面的 (L14: Observability 下的 Logs). More: S12[9]：它的名字以 cheese 开头。'
+- en: Build and push / already been done for you / the ECR registry of your own account / push them yourself, once each
+  zh_subtitle: push / ECR / registry
+  first_use: S13[0]：构建并 push。
+  note: 'A1 c: push stays (lab speech: push 一个 image; the README''s Build & Push); pull → 拉取 (L2). registry stays (L2, exam);
+    written 镜像仓库（registry）. More: S13[0]：README 说这一步已经替你做好了。 S13[0]：有一个小疏漏：workflow 的代码从你自己账号的 ECR registry 拉取这两个 image，所以你得自己
+    push，每个一次。'
+- en: the second step the lecture gives for your own containers / a registry the platform can pull from
+  zh_subtitle: 平台 / 拉取
+  first_use: S13[1]：这正是课上给你自己的 container 列出的第二步：把 image push 到平台能拉取的 registry。
+  note: ''
+- en: Docker Hub / log in, build, push / the Mac line builds AMD 64 / SageMaker runs that
+  zh_subtitle: Docker Hub / 登录
+  first_use: S13[2]：第 1 到第 3 步走 Docker Hub：登录、构建、push。
+  note: 'More: S13[2]：Mac 那一行构建 amd64，因为 SageMaker 跑的就是它。'
+- en: five variables / pasted exactly as written / export rejects the bracket note / the region is still set / the account
+    lookup fails / the URI starts with a dot
+  zh_subtitle: 变量 / 方括号注释 / 账号查询 / URI / 点
+  first_use: S13[3]：第 4 步设置五个变量。
+  note: 'A12: not a valid identifier stays on screen; the SAY''s paraphrase is Chinese. URI stays (L14). bracket note → 方括号注释.
+    More: S13[3]：照原样贴进去，第一行会打印两个报错，因为 export 不接受那段方括号注释，不过区域还是设上了。 S13[3]：账号查询因为我们的假密钥失败了，URI 就以一个点开头。'
+- en: paste only the value / if your URI starts with a dot / fix your keys first
+  zh_subtitle: 值
+  first_use: S13[4]：所以只贴值：us-east-1。
+  note: 'D9: the if-clause first, as the English. More: S13[4]：如果你的 URI 以点开头，就说明账号查询失败了：先修好你的密钥。'
+- en: pulls your image / creates the repository / or true / hides the error / exits with zero
+  zh_subtitle: 仓库 / || true / 退出
+  first_use: S13[5]：第 5 步拉取你的 image。
+  note: 'A11: the ECR repository → 仓库 (L14: an Artifact Registry repository) ≠ repo (the git repository). D4: en_display or
+    true → || true; the Chinese writes the literal (| is accepted). exits with zero → 以 0 退出 (L14). More: S13[5]：第 6 步创建仓库，结尾的
+    || true 把报错藏起来了：命令以 0 退出。'
+- en: log Docker in to ECR / tag the image / push it / list it / print the URI / tag only adds a second name / no docker command
+    / repeat for the processor image
+  zh_subtitle: tag / 打 tag / docker 命令
+  first_use: S13[6]：第 7 到第 11 步：让 Docker 登录 ECR，给 image 打 tag，push，列出来，再打印 URI。
+  note: 'tag stays (L2): 打 tag. the docker command → docker 命令 (lower case, the program). More: S13[6]：打 tag 只是给同一个 image
+    加第二个名字。 S13[6]：在你的笔记本上跑，别在 workflow container 里跑，那里没有 docker 命令。 S13[6]：然后对数据处理器的 image 再做一遍。'
+- en: Automate the data collector / the workflow folder / the star problem returns / a lock is committed / copies only the
+    Pipfile / would resolve version 3
+  zh_subtitle: workflow 目录 / 星号
+  first_use: S14[0]：自动化数据采集器，第 1 步，在 workflow 目录里。
+  note: 'A15: README B''s heading Automate Running Data Collector Container is said by meaning (自动化数据采集器). resolve → 解析 (L1).
+    More: S14[0]：在你跑 sh docker-shell.sh 之前，星号的问题又回来了。 S14[0]：虽然 commit 了一个 lock 文件，可 Dockerfile 只复制 Pipfile，所以构建会解析出版本 3。'
+- en: the checks show the imports failing / the same fix first / less than 3
+  zh_subtitle: 导入
+  first_use: S14[1]：检查结果显示导入失败了。
+  note: 'More: S14[1]：所以先做同样的修复：小于 3。'
+- en: the banner / region and bucket / the who am I check fails / no docker command / the socket is mounted / no docker program
+  zh_subtitle: 横幅 / socket / 挂载 / docker 程序
+  first_use: S14[2]：现在跑 sh docker-shell.sh。
+  note: 'socket stays (the Docker socket; mounted → 挂载, L8). banner → 横幅. More: S14[2]：横幅显示区域和 bucket，身份检查失败了。 S14[2]：额外检查：现在是
+    SageMaker 版本 2，而且没有 docker 命令。 S14[2]：Docker 的 socket 挂进来了，但里面没有 docker 程序。'
+- en: the SDK is your remote control / your Python asks, and AWS machines run
+  zh_subtitle: 遥控器
+  first_use: S14[3]：从这里开始，SDK 就是你的遥控器，课上就是这么说的。
+  note: 'remote control → 遥控器 (exam). More: S14[3]：你的 Python 发出请求，AWS 的机器去跑。'
+- en: python cli.py dash dash data collector / line 32 / a lookup of your account at the top of the file / before the function
+    even starts / every flag needs a working key at import time
+  zh_subtitle: data collector 参数 / 第 32 行 / 导入时
+  first_use: S14[4]：第 2 步：带上 data collector 参数，跑 python cli.py。
+  note: 'A10: --data_collector → data collector 参数 (en_display dash dash data collector → --data_collector); never --data
+    collector, which a viewer could type. at import time → 导入时. More: S14[4]：它停在第 32 行，那是文件顶部对你账号的一次查询，函数还没开始。 S14[4]：这个 CLI
+    的每个参数在导入时都需要一个能用的密钥。'
+- en: builds a processor from your ECR image / one ml.t3.medium / its entry point is python3 with the collector cli.py / the
+    search arguments / waits, showing the logs
+  zh_subtitle: processor / ml.t3.medium / entrypoint / python3 / 日志
+  first_use: S14[5]：有密钥时，它用你 ECR 里的 image 建一个 processor，跑在一台 ml.t3.medium 上。
+  note: 'A11: processor (the SDK''s Processor object, lower case, never opening a sentence) ≠ 数据处理器 (the pipeline stage).
+    entry point (the Processor''s entrypoint argument, Docker''s slot) → entrypoint. D4: en_display M L T3 medium → ml.t3.medium,
+    python 3 → python3. the job → 这个任务 (A6). More: S14[5]：它的 entrypoint 是 python3 加上采集器的 cli.py。 S14[5]：然后带着搜索参数运行这个任务，一边等一边显示日志。'
+- en: production mode / SageMaker puts its own command in front of the arguments / a machine you never log in to / acts as
+    the role, not with your key
+  zh_subtitle: 生产模式 / 命令 / 登录
+  first_use: S14[6]：这就是生产模式。
+  note: 'A3: acts as the role → 以角色的身份运行 (S03). More: S14[6]：SageMaker 在参数前面放上它自己的命令。 S14[6]：同一个 image，同一个 cli.py，跑在一台你从来不用登录的机器上。
+    S14[6]：这个任务以角色的身份运行，用的不是你的密钥。'
+- en: Processing, then Processing jobs / processing job
+  zh_subtitle: Processing / Processing jobs / 处理任务
+  first_use: S14[7]：第 3 步：在 Processing 下面的 Processing jobs 里看。
+  note: 'A6: a SageMaker Processing job (concept) → 处理任务, beside 训练任务 (L13); the console labels Processing, Processing jobs
+    stay. Written 处理任务（Processing job）.'
+- en: the whole pipeline / the Kubeflow DSL / wired by dot output / compiled to YAML / SageMaker step classes / property references
+  zh_subtitle: DSL / .output / YAML / 编译 / 步骤类 / 属性引用
+  first_use: S15[0]：现在看整条 pipeline。
+  note: 'A7 (exam): property → 属性, reference → 引用, property reference → 属性引用 (never 字符串); compile → 编译. D4: en_display D S
+    L → DSL, dot output → .output. More: S15[0]：课件用 Kubeflow 的 DSL 写步骤，用 .output 连起来，再编译成 YAML。 S15[0]：这里是 SageMaker 的步骤类、属性引用和
+    JSON。'
+- en: caching / for 30 days / a processing step named data collector / one declared output / raw data
+  zh_subtitle: 缓存 / 处理步骤 / DataCollector / 输出 / raw-data
+  first_use: S15[1]：首先是缓存，30 天。
+  note: 'A7: caching / cache → 缓存 (L8). processing step → 处理步骤 (a pipeline step) ≠ 处理任务 (the job it starts). D4: en_display
+    data collector → DataCollector, raw data → raw-data. More: S15[1]：第一步是一个叫 DataCollector 的处理步骤，声明了一个输出：raw-data。'
+- en: 'takes as input a property of the collector / its raw data output, S3 URI / not a string: a reference / draws an edge'
+  zh_subtitle: 属性 / S3 URI / 字符串 / 引用 / 边
+  first_use: S15[2]：第二步是数据处理器，它的输入是采集器的一个属性：它的 raw-data 输出的 S3 URI。
+  note: 'edge → 边 (exam). S3 URI stays (L14: URI). More: S15[2]：不是字符串，而是一个引用，它画出一条边。'
+- en: training takes the TFRecords output of the processor / the model step / the trained model artifacts / one more edge
+  zh_subtitle: 模型步骤 / 模型产物
+  first_use: S15[3]：训练用同样的方式拿处理器的 TFRecords 输出，模型步骤拿训练出来的模型产物。
+  note: 'artifacts → 产物 (S01). More: S15[3]：每个引用都多画出一条边。'
+- en: the Lambda step named deploy model / takes the model name / lists all five steps / creates the deploy Lambda from your
+    laptop / upserts its definition / starts it
+  zh_subtitle: Lambda 步骤 / DeployModel / upsert / 定义
+  first_use: S15[4]：最后，叫 DeployModel 的 Lambda 步骤从模型步骤拿模型名。
+  note: 'A1 c: upsert stays (the SDK method; 插入或更新 is stiff); never opening a sentence in lower case, Upsert capitalised as
+    in S15[7]. the deploy Lambda → 负责部署的 Lambda. D4: en_display deploy model → DeployModel. More: S15[4]：然后这个 pipeline 列出全部五个步骤，从你的笔记本创建负责部署的
+    Lambda，upsert 它的定义，再启动它。'
+- en: reverse the list of steps / the Pipeline call / does the run order change
+  zh_subtitle: 步骤列表 / 运行顺序 / Pipeline
+  first_use: S15[5]：想一想。
+  note: 'A14, ponder P4: the question line never says 不会, 引用 or 边. Pipeline (the class) stays. More: S15[5]：把 Pipeline 调用里的步骤列表倒过来。
+    S15[5]：运行顺序会变吗？'
+- en: No / the order comes from the references / each input names the output of another step / a set of steps, not a schedule
+  zh_subtitle: 时间表
+  first_use: S15[6]：不会。
+  note: 'A14: the reveal answers with the question''s verb (会变吗 → 不会). schedule (here) → 时间表 ≠ scheduling → 调度 (S10). More:
+    S15[6]：顺序来自引用：每个输入都指向另一个步骤的输出。 S15[6]：这个列表是一组步骤，不是一份时间表。'
+- en: an extra, built offline and never sent / the JSON definition from the SDK / each edge a get on a property / upsert sends
+    this
+  zh_subtitle: 离线 / Get
+  first_use: S15[7]：一个额外的东西，离线生成、从没发出去：SDK 生成的 JSON 定义。
+  note: 'Get as in the JSON on screen. offline → 离线. A15: the tag extra · built offline, not sent stays on screen. More: S15[7]：五个步骤，每条边都是对另一个步骤某个属性的一次
+    Get。 S15[7]：Upsert 发送的就是它。'
+- en: the lecture draws four steps / deploy splits in two / create model / a Lambda, a small function AWS runs on demand /
+    creates or updates the endpoint
+  zh_subtitle: CreateModel / Lambda / 按需 / 函数
+  first_use: S15[8]：课上画的是四个步骤。
+  note: 'Lambda stays (product); a Lambda function → Lambda 函数 (S16). D4: en_display create model → CreateModel. More: S15[8]：在这里，部署拆成了两步。
+    S15[8]：CreateModel 创建模型，而一个 Lambda，也就是 AWS 按需运行的小函数，负责创建或更新 endpoint。'
+- en: one honest caveat / files also travel by fixed names through the bucket / raw, clean and tfrecords dot zip / how the
+    training job finds its data
+  zh_subtitle: 如实说明 / tfrecords.zip
+  first_use: S15[9]：如实说明一点。
+  note: 'A14: the honest caveat is said plainly (L13''s 如实说一句). D4: en_display raw, clean and tfrecords dot zip → raw.zip,
+    clean.zip and tfrecords.zip (decide in the narration step). More: S15[9]：边决定顺序，但文件也会按固定的名字经过 bucket 传递：raw、clean 和 tfrecords.zip。
+    S15[9]：没有账号，我们没法检查训练任务在 SageMaker 上是怎么找到它的数据的。'
+- en: python cli.py --pipeline / prints that the pipeline started / Unified Studio / Build / ML Pipelines / this graph
+  zh_subtitle: python cli.py --pipeline / Build / ML Pipelines
+  first_use: S15[10]：第 1 步：python cli.py --pipeline 停在同样的第 32 行。
+  note: 'A15: console labels Build, ML Pipelines stay. More: S15[10]：有密钥时，它会打印 pipeline 已经启动。 S15[10]：第 2 步：在 Unified Studio
+    里，Build 下面的 ML Pipelines，你会看到这张图。'
+- en: if every step succeeds / caching skips unchanged steps for 30 days / won't scrape again / a green deploy model / the
+    Lambda asked / in service
+  zh_subtitle: 绿色 / 服务状态
+  first_use: S15[11]：如果每一步都成功，缓存会在 30 天内跳过没变的步骤，所以采集器不会再抓取一遍。
+  note: 'A14 precision: a green DeployModel never means a working endpoint. in service → 进入服务状态 (InService on screen only).
+    More: S15[11]：而且绿色的 DeployModel 只说明 Lambda 发出了请求：要等到 endpoint 进入服务状态。'
+- en: tests each component with its own flag / all four stop at that line / yet another endpoint
+  zh_subtitle: 组件
+  first_use: S15[12]：第 3 步用各自的参数分别测试每个组件。
+  note: 'A11: component (README B''s Test components, generic) → 组件 ≠ the exam''s kfp component (kept English there; not in
+    this video). More: S15[12]：在这里，四个都停在那一行。 S15[12]：有密钥时，模型部署又会建一个新的 endpoint。'
+- en: before you leave, clean up / list your endpoints / delete every one / the timestamped ones / cheese app endpoint / configurations
+    and models
+  zh_subtitle: 收尾清理 / cheese-app-endpoint
+  first_use: S16[0]：走之前，先收尾清理。
+  note: 'D4: en_display cheese app endpoint → cheese-app-endpoint (exam). More: S16[0]：列出你的 endpoint，全部删掉：第 1 部分那些带时间戳的，还有
+    cheese-app-endpoint。 S16[0]：然后删掉它们的配置和模型。'
+- en: empty and delete both buckets / the two ECR repositories / the deploy Lambda functions / the cheese pipeline
+  zh_subtitle: 清空 / ECR 仓库 / Lambda 函数
+  first_use: S16[1]：清空并删除两个 bucket。
+  note: 'More: S16[1]：删除两个 ECR 仓库、负责部署的 Lambda 函数，还有 cheese 的 pipeline。'
+- en: deactivate and delete the access keys / the users and roles you no longer need / the SageMaker AI domain / the Unified
+    Studio domain
+  zh_subtitle: 停用 / 域
+  first_use: S16[2]：停用并删除访问密钥，还有不再需要的用户和角色。
+  note: 'deactivate → 停用 (AWS''s Chinese console). More: S16[2]：最后，检查你创建的 SageMaker AI 域和 Unified Studio 域。'
+- en: the lecture ends on a factory / your Python is the recipe / today's pictures / a star is not a pin / references draw
+    the edges
+  zh_subtitle: 工厂 / 配方
+  first_use: S16[3]：课上最后讲的是一座工厂：你的 Python 是配方，SageMaker Pipelines 来运行它。
+  note: 'recipe → 配方 (exam). A9: a sentence never opens with endpoint. More: S16[3]：今天的几幅图：笔记本上的一把密钥，云端的一个角色。 S16[3]：星号不是
+    pin。 S16[3]：预处理放在客户端，或者放在模型里。 S16[3]：站在 endpoint 背后的是三样东西，而引用画出了边。'
+- en: part 1 in four commands / prepare packs the model / deploy builds the model, configuration and endpoint / predict sends
+    the numbers / delete turns off the meter
+  zh_subtitle: 命令 / 计价器
+  first_use: S16[4]：在它下面，是用四条命令走完的第 1 部分。
+  note: 'A9: the four CLI steps are lower case and never open a sentence (其中 / 而 first). More: S16[4]：其中 prepare 打包模型，deploy
+    建出模型、配置和 endpoint。 S16[4]：而 predict 发送那些数字，delete 关掉计价器。'
+- en: test yourself / which identity does each use / why do the option 2 exports never reach the part 1 container
+  zh_subtitle: 自测 / 身份
+  first_use: S16[5]：自测一下。
+  note: 'D6: Test yourself → 自测一下 (L14). The questions are answered nowhere in i18n/zh. More: S16[5]：你的笔记本和 endpoint 都会访问
+    S3：各自用的是哪个身份？ S16[5]：为什么选项 2 的 export 永远到不了第 1 部分的 container？'
+- en: name the three things deploy creates / which one is the address / which one bills while nobody calls it / why move it
+    into the model
+  zh_subtitle: 三样东西
+  first_use: S16[6]：说出 deploy 创建的三样东西。
+  note: 'More: S16[6]：哪一个是地址，哪一个在没人调用时也在计费？ S16[6]：预处理在第 1 部分里放在哪里，在第 2 部分的训练脚本里又放在哪里，为什么要挪进模型？'
+- en: which lines make training wait for the processor / two one-line fixes / which would an Apple silicon Mac skip / the
+    exercises / lecture 23 triggers the pipeline from GitHub
+  zh_subtitle: 修复 / 练习 / 触发
+  first_use: S16[7]：哪几行让训练等着数据处理器？
+  note: 'trigger → 触发 (exam). exercises → 练习 (L13). More: S16[7]：今天需要哪两处一行修复，Apple Silicon 的 Mac 会跳过哪一处？ S16[7]：答案在练习里，第 23
+    讲会从 GitHub 触发这个 pipeline。'
+- en: 'products: AWS / S3 / SageMaker / SageMaker AI / SageMaker Pipelines / Unified Studio / IAM / ECR / Lambda / Docker
+    / Docker Hub / Docker Desktop / TensorFlow / TensorFlow Serving / Kubeflow / Vertex AI / Google Cloud / Cloud Run / GitHub
+    / Git / Python / PyTorch / CUDA'
+  zh_subtitle: AWS / S3 / SageMaker / SageMaker AI / SageMaker Pipelines / Unified Studio / IAM / ECR / Lambda / Docker /
+    Docker Hub / Docker Desktop / TensorFlow / TensorFlow Serving / Kubeflow / Vertex AI / Google Cloud / Cloud Run / GitHub
+    / Git / Python / PyTorch / CUDA
+  note: 'A1 b: products keep Latin script and may open a sentence; G3: a multi-word product name (SageMaker Pipelines, Unified
+    Studio, TensorFlow Serving, Docker Hub, Docker Desktop, Vertex AI Pipelines) sits at a clause end or after full-width
+    punctuation.'
+- en: 'written register: container / image / repository / bucket / registry / endpoint / endpoint configuration / pipeline
+    / signature / property reference / Processing job / IAM user / role / policy / access key'
+  zh_subtitle: 容器 / 镜像 / 仓库 / 存储桶 / 镜像仓库 / 端点 / 端点配置 / pipeline / 服务签名 / 属性引用 / 处理任务 / IAM 用户 / 角色 / 策略 / 访问密钥
+  note: 'A8: titles, chapter names, meta.yaml and companion docs only; the subtitles keep the kept-English words of A1 c.'
+allowed_spoken_latin:
+- AK
+- API
+- cheese
+- configuration
+- CSV
+- DAG
+- Endpoint
+- get-caller-identity
+- gitignore
+- GZ
+- InService
+- kfp
+- list-endpoints
+- Mac
+- Macs
+- Model
+- Option
+- pb
+- Processor
+- pull
+- raw
+- sagemaker
+- saved
+- silicon
+- SK
+- sts
+- Upsert
+- URL
+- Way
+- x86

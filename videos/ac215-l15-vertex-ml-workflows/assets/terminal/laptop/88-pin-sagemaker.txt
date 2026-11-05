@@ -1,0 +1,15 @@
+$ sed -i 's/^sagemaker = "\*"/sagemaker = "<3"/' Pipfile && git diff Pipfile
+diff --git a/src/workflow/Pipfile b/src/workflow/Pipfile
+index ef10747..3abcd97 100755
+--- a/src/workflow/Pipfile
++++ b/src/workflow/Pipfile
+@@ -6,7 +6,7 @@ verify_ssl = true
+ [dev-packages]
+ 
+ [packages]
+-sagemaker = "*"
++sagemaker = "<3"
+ boto3 = "*"
+ 
+ [requires]
+[exit 0]
