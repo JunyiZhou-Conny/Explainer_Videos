@@ -336,9 +336,11 @@ class PropertyDAG(VoiceScene):
             self.play(lam.animate.move_to(sm_b.get_top() + UP * 0.38), run_time=0.8)
             vo.wait_until("upserts its definition")
             self.paint(p320, 6, "sm_pipeline.upsert(role_arn=role)", TOOL)
+            self.add(bar322)                                     # paint() re-seats the panel over the bar
             self.play(GrowArrow(a_up), FadeIn(up_t), run_time=0.6)
             vo.wait_until("and starts it")
             self.paint(p320, 7, "sm_pipeline.start()", TOOL)
+            self.add(bar322)
             self.play(GrowArrow(a_st), FadeIn(st_t), run_time=0.6)
             self.play(Indicate(sm_t, color=CLOUD, scale_factor=1.08), run_time=0.6)
 
@@ -353,7 +355,7 @@ class PropertyDAG(VoiceScene):
         assert dim.get_left()[0] > lst.get_right()[0] + 0.1, (dim.get_left(), lst.get_right())
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(p320, bar322, pic33, lam, a_up, a_st, up_t, st_t)), FadeOut(lt33), run_time=0.5)
+            self.play(FadeOut(VGroup(bar322, p320, pic33, lam, a_up, a_st, up_t, st_t)), FadeOut(lt33), run_time=0.5)
             self.play(FadeIn(lst, shift=DOWN * 0.15), FadeIn(dim), run_time=0.6)
             vo.wait_until("Reverse the list")
             self.play(Indicate(lst, color=TURN, scale_factor=1.04), run_time=0.8)
@@ -495,7 +497,9 @@ class PropertyDAG(VoiceScene):
                       lam8.animate.move_to(lam8_up), run_time=0.6)
             self.paint(pdml, 8, "sm_client.create_endpoint(", TURN, run_time=0.4)
             self.paint(pdml, 2, "sm_client.update_endpoint(", TURN, run_time=0.4)
-            self.play(FadeOut(cfg1, shift=UP * 0.3), FadeIn(cfg2, shift=UP * 0.3), run_time=0.7)
+            bars_dml = VGroup(line_bar(pdml.code, 2, TURN, 0.2), line_bar(pdml.code, 8, TURN, 0.2))
+            self.play(FadeIn(bars_dml), run_time=0.3)
+            self.play(FadeOut(cfg1, shift=UP * 0.3), FadeIn(cfg2, shift=UP * 0.3), run_time=0.5)
             self.play(Indicate(plate.text, color=CLOUD, scale_factor=1.06), run_time=0.5)
 
         # ========================================================== 9. the shared drawer
@@ -505,7 +509,7 @@ class PropertyDAG(VoiceScene):
         note_c.move_to([6.45 - note_c.width / 2, 1.75, 0])
 
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(pdml, plate, cfg2, cfg_a, lam8)), run_time=0.5)
+            self.play(FadeOut(VGroup(bars_dml, pdml, plate, cfg2, cfg_a, lam8)), run_time=0.5)
             v.ref.shift(np.array([0.0, 0.0, 0.0]) - v.ref.get_center())   # back to its own layout: row y 0.6
             v.relayout(self, "row", run_time=0.8)
             vo.wait_until("The edges set the order")
@@ -518,12 +522,16 @@ class PropertyDAG(VoiceScene):
             assert VGroup(ref1, ref2).get_bottom()[1] > -3.58 and VGroup(ref1, ref2).get_right()[0] < 6.6, \
                 VGroup(ref1, ref2).get_corner(DR)
             self.play(FadeIn(ref1, shift=UP * 0.1), FadeIn(ref2, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("raw, clean and")
             self.play(LaggedStart(*[Indicate(f, color=INK, scale_factor=1.1) for f in v.files_g], lag_ratio=0.3),
                       run_time=1.0)
             v.heal(self)
             vo.wait_until("We could not check")
             v.unknown(self, 2, "? not verified here")
             self.play(Indicate(v.unknown_chip, color=INK, scale_factor=1.06), run_time=0.6)
+            v.heal(self)
+            vo.wait_until("how the training job")
+            self.play(Indicate(v.boxes[2].text, color=TURN, scale_factor=1.1), run_time=0.6)
             v.heal(self)
             assert note_c.get_bottom()[1] > v.boxes[4].get_top()[1] + 0.1
             assert note_c.get_left()[0] > v.unknown_chip.get_right()[0] + 0.1, note_c.get_left()
@@ -598,7 +606,6 @@ class PropertyDAG(VoiceScene):
                 g2.states(self, {i: "running"}, run_time=0.3)
                 g2.states(self, {i: "succeeded"}, run_time=0.3)
             g2.states(self, {4: "running"}, run_time=0.3)
-            self.play(FadeIn(cost1, shift=LEFT * 0.1), FadeIn(cost2, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("caching skips")
             self.play(FadeIn(rerun, shift=LEFT * 0.1), run_time=0.4)
             a0 = g2.state(0, "cached", run_time=0.6)
@@ -607,6 +614,7 @@ class PropertyDAG(VoiceScene):
             g2.heal(self)
             self.play(Indicate(g2.boxes[0].text, color=S.GREY, scale_factor=1.1), run_time=0.5)
             g2.heal(self)
+            self.play(FadeIn(cost1, shift=LEFT * 0.1), run_time=0.5)          # what each run costs
             vo.wait_until("And a green deploy model")
             g2.states(self, {4: "succeeded"}, run_time=0.5)
             self.play(GrowArrow(pa), FadeIn(plate2), run_time=0.5)
@@ -614,13 +622,14 @@ class PropertyDAG(VoiceScene):
             vo.wait_until("wait until the endpoint")
             self.play(FadeIn(wait_c, shift=LEFT * 0.1), run_time=0.4)
             self.play(Indicate(wait_c.text, color=TURN, scale_factor=1.08), run_time=0.6)
+            self.play(FadeIn(cost2, shift=LEFT * 0.1), run_time=0.5)
             self.play(Indicate(cost2.text, color=COST, scale_factor=1.04), run_time=0.6)
 
         # ========================================================== 12. step 3: each component's flag
         t = term(P_APP, rows=9, size=SIZE)
         each_c = card(["each flag: its own step, as a separate job",
-                       "--model_deploy makes another endpoint · delete it before",
-                       "the next --pipeline, or DeployModel fails (from the code, not run)"], S.GREY, size=20)
+                       "--model_deploy makes another endpoint (from the code, not run)",
+                       "delete it before the next --pipeline, or DeployModel fails"], S.GREY, size=20)
         each_c.next_to(t.box, UP, buff=0.2).align_to(t.box, LEFT)
         assert each_c.get_top()[1] < TRACK_BOTTOM - 0.05 and each_c.get_right()[0] < 6.6, each_c.get_corner(UR)
 
