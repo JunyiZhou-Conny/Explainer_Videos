@@ -43,7 +43,7 @@ S01:
   - "Cheese App 的四个阶段会变成一条 pipeline，由云端替你运行。"
 - en: "To follow along, you need an AWS account with billing, the AWS CLI, Docker, and both repositories cloned. This is our first lecture on AWS."
   zh:
-  - "要跟着做，你需要一个开通了结算的 AWS 账号、AWS CLI、Docker，还要把两个 repo 都 clone 下来。"
+  - "要跟着做，你需要：开通了结算的 AWS 账号、AWS CLI、Docker，还要把两个 repo 都 clone 下来。"
   - "这是我们第一次讲 AWS。"
 - en: "A tracker in the corner names the README step, and a yellow tag, your turn, means pause and run it. Every command is also in the study guide."
   zh:
@@ -62,7 +62,7 @@ S02:
 - en: "Last week, lecture 14 put containers on Cloud Run. Today, the container serves a trained model."
   zh:
   - "上周，第 14 讲把 container 部署到了 Cloud Run 上。"
-  - "今天，container 里跑的是一个训练好的模型，对外提供服务。"
+  - "今天，container 对外提供一个训练好的模型。"
 - en: "The lecture maps its console onto the course: notebooks, training from lecture 13, and today's two, online prediction and pipelines."
   zh:
   - "课上把控制台的各个部分和课程对应起来：notebook、第 13 讲的训练，还有今天的两项：在线预测和 pipeline。"
@@ -81,7 +81,7 @@ S02:
   zh:
   - "关于这次录制，有一点要说明：录制用的环境没有 AWS 账号。"
   - "在你笔记本上跑的每一步都是真的。"
-  - "每个 AWS 调用都停在它遇到的第一个真实报错上，就像这个。"
+  - "每个 AWS 调用，都停在它遇到的第一个真实报错上，就像这个。"
   - "云端本来会回答的地方，你看到的是 README 的输出，或者标好的本地替身。"
   - "绝不假装成功。"
 - en: "Versions at the time of recording are on screen."
@@ -100,7 +100,7 @@ S03:
   zh:
   - "第 2 步和第 3 步在 AWS 控制台里做。"
   - "确认你能用 S3、SageMaker 和 IAM。"
-  - "然后创建一个叫 model-deployment 的 IAM 用户，挂上三个策略。"
+  - "然后创建一个 IAM 用户，叫 model-deployment，挂上三个策略。"
   - "第三个策略的权限比这段代码需要的更宽。"
   - "创建访问密钥，两个都存好。"
   en_display:
@@ -157,7 +157,7 @@ S03:
 S04:
 - en: "Step 3: edit docker-shell.sh with your bucket, the A R N of your role, and your region. Ours are placeholders."
   zh:
-  - "第 3 步：在 docker-shell.sh 里填上你的 bucket、你那个角色的 ARN 和你的区域。"
+  - "第 3 步：在 docker-shell.sh 里填上你的 bucket，你那个角色的 ARN 和你的区域。"
   - "我们的是占位符。"
   en_display:
   - "Step 3: edit docker-shell.sh with your bucket, the ARN of your role, and your region."
@@ -205,7 +205,7 @@ S04:
   - null
 - en: "Version 3 is a rewritten package, without the modules cli.py imports: no tensorflow module, no serializers, no get execution role. The imports find nothing."
   zh:
-  - "版本 3 是一个重写过的包，没有 cli.py 导入的那些模块：没有 tensorflow 模块，没有 serializers，也没有 get execution role。"
+  - "版本 3 是一个重写过的包，缺了 cli.py 导入的那些模块：没有 tensorflow 模块、serializers，也没有 get execution role。"
   - "导入什么都找不到。"
   en_display:
   - "Version 3 is a rewritten package, without the modules cli.py imports: no tensorflow module, no serializers, no get_execution_role."
@@ -230,7 +230,7 @@ S04:
   - "没有密钥，AWS 检查失败了，但 shell 还是打开了。"
 - en: "Inside, extras show Python 3.9, SageMaker version 2 and TensorFlow 2.18, and the three values from the script. Deprecation warnings are not the error."
   zh:
-  - "进去以后，额外检查显示 Python 3.9、SageMaker 版本 2 和 TensorFlow 2.18，还有脚本里的三个值。"
+  - "进去以后，额外检查显示 Python 3.9，SageMaker 版本 2 和 TensorFlow 2.18，还有脚本里的三个值。"
   - "弃用警告不是问题所在。"
 - en: "A small slip: the help text still says GCS bucket and Vertex AI, and the test flag does nothing. The commands are the AWS ones. The image is about 4 gigabytes."
   zh:
@@ -268,7 +268,7 @@ S05:
   - "预处理函数把 JPEG 解码，转成浮点数，再缩放。"
 - en: "A function marked as the model's front door takes a batch of JPEG strings, prepares each one, and calls the model. It is saved as the serving default. Raw bytes in, one score per class out."
   zh:
-  - "一个被标成模型前门的函数，接收一批 JPEG 字符串，逐个处理，再调用模型。"
+  - "一个被标成模型前门的函数接收一批 JPEG 字符串，逐个处理，再调用模型。"
   - "它被保存为 serving default。"
   - "输入原始字节，每个类别输出一个分数。"
   en_display:
@@ -301,17 +301,17 @@ S06:
   - "而且 artifacts 目录不存在，所以什么都没下载。"
 - en: "A small gap in the README: the code creates the bucket before it downloads anything, a step the list does not mention. With your keys, it creates the bucket, or reuses yours if it already exists."
   zh:
-  - "README 里有一个小疏漏：代码在下载任何东西之前就先创建 bucket，清单里没提这一步。"
+  - "README 里有一个小疏漏：代码先创建 bucket，再下载东西，清单里没提这一步。"
   - "有你的密钥时，它会创建 bucket，如果已经存在，就复用你的。"
 - en: "To show what comes next, an extra: the same prepare function, with S3 replaced by a stub that sends nothing. The release zip downloads, the model is exported, and the stub stops the upload. Nothing reaches AWS."
   zh:
   - "为了展示接下来的事，做一个额外实验：同一个 prepare 函数，把 S3 换成一个什么都不发送的 stub。"
-  - "那个 release 的 zip 包下载下来了，模型被导出，stub 拦下了上传。"
+  - "release 的 zip 包下载下来，模型导出了，而 stub 拦下了上传。"
   - "什么都没到达 AWS。"
 - en: "Here is what it made. A SavedModel is a folder: the graph and its named entry points in saved model dot P B, and the weights in a variables folder."
   zh:
   - "来看它生成了什么。"
-  - "SavedModel 是一个目录：计算图和它那些有名字的入口在 saved model 那个 pb 文件里，权重在 variables 目录里。"
+  - "SavedModel 是一个目录：计算图和有名字的入口，在 saved model 那个 pb 文件里；权重在 variables 目录里。"
   en_display:
   - null
   - "A SavedModel is a folder: the graph and its named entry points in saved_model.pb, and the weights in a variables folder."
@@ -333,15 +333,15 @@ S07:
 - en: "The lecture uploads to a model registry here. Both READMEs say model registry too, but the code creates a plain model in SageMaker."
   zh:
   - "课上在这里把模型上传到模型注册表。"
-  - "两份 README 也都写着模型注册表，但代码在 SageMaker 里建的只是一个普通的模型。"
+  - "两份 README 也都写着模型注册表，但代码只在 SageMaker 里建了一个普通的模型。"
 - en: "You never write an image name: the SDK picks the AWS TensorFlow Serving image from framework version 2.13. Our model was exported by TensorFlow 2.18. In step 3, a local check shows that Serving 2.13 loads it."
   zh:
-  - "你不用自己写 image 名：SDK 根据框架版本 2.13 选出 AWS 的 TensorFlow Serving image。"
+  - "你不用自己写 image 名：SDK 会选出 AWS 的 TensorFlow Serving image，依据是框架版本 2.13。"
   - "我们的模型是用 TensorFlow 2.18 导出的。"
   - "在第 3 步，一个本地检查会显示 Serving 2.13 能加载它。"
 - en: "Then deploy, with one instance of type M L M5 extra large, under a name with a timestamp. That one call creates all three: the model in SageMaker, an endpoint configuration, which names the machine and the model, and the endpoint, the address you call."
   zh:
-  - "然后 deploy，用一个 ml.m5.xlarge 类型的实例，名字带时间戳。"
+  - "然后 deploy，实例是一台 ml.m5.xlarge，名字带时间戳。"
   - "这一次调用就创建了全部三样：SageMaker 里的模型；一份 endpoint 配置，写明用哪台机器、哪个模型；还有 endpoint，也就是你要调用的地址。"
   en_display:
   - "Then deploy, with one instance of type ml.m5.xlarge, under a name with a timestamp."
@@ -364,7 +364,7 @@ S07:
   zh:
   - "课上比较了两种部署方式。"
   - "模型 endpoint 直接部署训练好的模型，版本管理、A/B 测试和监控都现成可用。"
-  - "像 Cloud Run 这样的通用 container 服务什么都能跑，其余的你自己搭。"
+  - "Cloud Run 这类通用 container 服务，什么都能跑，其余自己搭。"
   en_display:
   - null
   - "A model endpoint deploys a trained model directly, with versioning, A/B testing and monitoring available."
@@ -377,13 +377,13 @@ S08:
 - en: "Step 3: python cli.py dash dash predict. Ours finds no endpoint config dot JSON and falls back to a default name. It picks five photos and fails five times: unable to locate credentials. Pause and run yours."
   zh:
   - "第 3 步：python cli.py --predict。"
-  - "我们的找不到 endpoint config 那个 JSON 文件，就退回到一个默认名字。"
+  - "没找到 endpoint config 那个 JSON 文件，我们的就退回到一个默认名字。"
   - "它挑了五张照片，失败了五次：Unable to locate credentials。"
   - "暂停一下，跑你的。"
   en_display:
   - "Step 3: python cli.py --predict."
   - "Ours finds no endpoint_config.json and falls back to a default name."
-  - null
+  - "It picks five photos and fails five times: Unable to locate credentials."
   - null
 - en: "Each try would send one photo. The client resizes it to 224 by 224, with 3 color channels. How many numbers travel to the endpoint for that one photo?"
   zh:
@@ -430,10 +430,11 @@ S08:
   - "一条额外的命令删掉了这个替身。"
   - "它从没碰过 AWS。"
 S09:
-- en: "The lecture warns that an endpoint costs money while it is up, and the slides shout one word: delete. The README gives three ways, and any one will do. Way 1, the console: SageMaker, Endpoints, select yours, Delete."
+- en: "The lecture warns that an endpoint costs money while it is up, and the slides shout one word: delete. The README gives three ways. Any one stops the endpoint, but only the third also removes the tarball. Way 1, the console: SageMaker, Endpoints, select yours, Delete."
   zh:
   - "课上提醒，endpoint 只要开着就在花钱，课件上就喊了一个词：删除。"
-  - "README 给了三种方式，哪一种都行。"
+  - "README 给了三种方式。"
+  - "哪一种都能停掉 endpoint，但只有第三种还会删掉 tar 包。"
   - "方式 1，控制台：SageMaker、Endpoints，选中你的，点 Delete。"
 - en: "Way 2 gives three AWS CLI commands. Typed exactly as written, the first one is a shell error: the angle brackets are placeholders, and the shell takes them as a redirection."
   zh:
@@ -457,7 +458,7 @@ S09:
   - null
 - en: "Each deploy makes a new endpoint with a new timestamp, but the JSON file keeps only the last name. You ran deploy twice, then delete once. How many endpoints still bill?"
   zh:
-  - "每次 deploy 都会建一个新的 endpoint，带新的时间戳，可 JSON 文件只记着最后一个名字。"
+  - "每次 deploy 都会建一个新 endpoint，时间戳也是新的，可 JSON 文件只记着最后一个名字。"
   - "你跑了两次 deploy，然后跑了一次 delete。"
   - "还有几个 endpoint 在计费？"
 - en: "One. Delete removes only the endpoint the file names. The older one keeps running. Check with aws sagemaker list endpoints, and confirm in the console."

@@ -240,21 +240,18 @@ class WorkflowShell(VoiceScene):
         # ========================================================== 1. the checks · the same fix
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(band), FadeOut(xmark), FadeOut(before_c), track(tr, 1, "check"), run_time=0.5)
-            self.resize(7, keep=1)
+            self.resize(7, keep=1, run_time=0.5)              # block 1 is tight: imports, then the fix
             assert t.box.get_top()[1] < v.ticks.get_bottom()[1] - 0.1, (t.box.get_top(), v.ticks.get_bottom())
             self.bar(on_bar(t, extra_row("check")))
-            type_cmd(self, t, C85.cmd, type_time=0.8)
-            r85 = out(self, t, [(L85[0], ERR)], run_time=0.4)
+            type_cmd(self, t, C85.cmd, type_time=0.6)
+            out(self, t, [(L85[0], ERR)], run_time=0.3)
             self.reseat()
             vo.wait_until("the imports failing")
-            r86 = out(self, t, [L86[0], (L86[1], ERR)], run_time=0.4)    # laptop/86: 9-10, its long command untyped
-            pin(self, r86[0], beside(row_tag("import check · on 3.29.0"), r86[0]))
-            self.play(Indicate(r86[1], color=ERR, scale_factor=1.05), run_time=0.6)
+            r86 = out(self, t, [L86[0], (L86[1], ERR)], run_time=0.3)    # laptop/86: 9-10, its long command untyped
+            pin(self, r86[0], beside(row_tag("import check · on 3.29.0"), r86[0]), run_time=0.3)
             self.reseat()
-            type_cmd(self, t, C89.cmd, type_time=0.6)
-            r89 = out(self, t, [(L89, ERR)], run_time=0.4)
-            self.play(Indicate(r85[0], color=ERR, scale_factor=1.06), Indicate(r89[0], color=ERR, scale_factor=1.04),
-                      run_time=0.7)
+            type_cmd(self, t, C89.cmd, type_time=0.4)
+            out(self, t, [(L89, ERR)], run_time=0.3)
             self.reseat()
             vo.wait_until("So make the same fix")
             self.play(track(tr, 1, True), *self.unbar_anims(), run_time=0.4)
@@ -512,10 +509,11 @@ class WorkflowShell(VoiceScene):
         tgs, self.bar_tags = self.bar_tags, []
         return [FadeOut(tg) for tg in tgs]
 
-    def resize(self, rows: int, keep=None):
+    def resize(self, rows: int, keep=None, run_time: float = 0.8):
         """common.resize() with the title-bar tags riding along."""
         dy = (rows - self.t.rows) * self.t.pitch
-        resize(self, self.t, rows, keep=keep, extra=[tg.animate.shift(UP * dy) for tg in self.bar_tags])
+        resize(self, self.t, rows, keep=keep, extra=[tg.animate.shift(UP * dy) for tg in self.bar_tags],
+               run_time=run_time)
 
     def wipe(self, *extra, run_time: float = 0.4):
         """PLAYS: the terminal's rows fade out (with `extra` alongside) and leave it for good."""

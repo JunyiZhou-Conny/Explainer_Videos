@@ -21,8 +21,9 @@ Beats (script.md "## S09", one voiceover block each):
     "your own name · needs your account · no output shown" and "names: aws sagemaker
     list-endpoint-configs · aws sagemaker list-models".
  3  TRACKER A4 3. A fresh 7-row terminal at (app) app@<id>:/app$ types `python cli.py --delete` ->
-    TERM(laptop/30: 52, …, 74, 79, …, 260); 79 and 260 RED; ▶ your turn + GREY chip "the only way
-    that also removes the tarball · README A:171–174". On "With keys" the terminal goes and V5 comes
+    TERM(laptop/30: 52, …, 74, 79, …, 260); 79 and 260 RED; GREY chip "the only way that also
+    removes the tarball" with the README card (A:171–174, up the whole terminal beat, QA 14:46),
+    pulsed with ▶ your turn. On "With keys" the terminal goes and V5 comes
     back in its deployed state (Model card, endpoint configuration, endpoint with its dial); a code
     strip under it follows the clean-up line by line: cli.py 258–259 as the endpoint goes (the meter
     stops), 272–273 as the configuration goes, 285–286 as the Model card goes, 290–291 as the
@@ -330,6 +331,8 @@ class TurnOffTheMeter(VoiceScene):
                       track(tr, 3), run_time=0.6)
             self.remove(t)
             self.play(FadeIn(t3), FadeIn(rc3, shift=DOWN * 0.15), run_time=0.5)
+            self.play(FadeIn(only, shift=UP * 0.1), Indicate(rc3.body, color=INK, scale_factor=1.02),
+                      run_time=0.5)     # QA 14:46: the chip stays up the whole terminal beat, not 1.5 s
             l30 = type_cmd(self, t3, CMD30, type_time=0.8)
             vo.wait_until("stops at its first SageMaker call")
             r30 = out(self, t3, [OUT30[0], OUT30[1], OUT30[2], (OUT30[3], ERR), OUT30[4], (OUT30[5], ERR)],
@@ -338,7 +341,7 @@ class TurnOffTheMeter(VoiceScene):
             self.add(t3)
             vo.wait_until("Pause and run it")
             pin(self, l30, beside(turn_row(), l30))
-            self.play(FadeIn(only, shift=UP * 0.1), run_time=0.4)
+            self.play(Indicate(only, color=TURN, scale_factor=1.05), run_time=0.5)
             vo.wait_until("With keys")
             self.play(FadeOut(t3), FadeOut(only), FadeOut(rc3), run_time=0.5)
             self.remove(t3)

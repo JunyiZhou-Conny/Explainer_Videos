@@ -39,7 +39,7 @@ Beats (script.md "## S06", one voiceover block each):
  6  TRACKER A3 1 · extra. The version chips go; 8-row terminal. laptop/44's line 1 (extra) ->
     TERM(laptop/44: 2–4): ` M Pipfile` and ` M docker-shell.sh` YELLOW + row tag "your two
     edits", line 4 GREY. On "In your account": `aws s3 ls s3://your-models-bucket-placeholder/ --recursive` (extra;
-    README A:187) + row tag "extra · README A:187 · needs your account · no output shown"; a PINK
+    README A:187) + row tag "extra · README A:187 · your bucket name · needs your account · no output shown"; a PINK
     dot reaches the bucket; the PINK dashed URI s3://<bucket>/…/model.tar.gz under it with "with
     your keys"; on "and storage bills" the GOLD cost tag "the tarball in S3 · storage". Fade to an
     empty frame.

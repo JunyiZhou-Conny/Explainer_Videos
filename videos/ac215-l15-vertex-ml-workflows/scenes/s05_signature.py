@@ -11,8 +11,8 @@ Beats (script.md "## S05", one voiceover block each):
     222; the ÷ 255 gear with line 223 and the photo becomes the 224 × 224 × 3 cube; on "sends" the
     wire and the endpoint appear, the cube rides to the door, line 225 PINK.
  2  TRACKER A2 5 · extra (undimmed). The code leaves; a 5-row strip (20 pt) types laptop/43's
-    command (cut) -> TERM(laptop/43: 13-15, 18-20); its bar tag says the check reads the
-    --prepare stand-in's export (S06), so there is nothing to run yet; DT_FLOAT and (-1, 224, 224, 3) YELLOW, then
+    command (cut) -> TERM(laptop/43: 13-15, 18-20); its bar tag "extra · run after --prepare
+    (next scene)": the check reads the --prepare stand-in's export (S06), nothing to run yet; DT_FLOAT and (-1, 224, 224, 3) YELLOW, then
     (-1, 4) GREEN. The door gets its label inputs['input'] · floats (-1, 224, 224, 3); four bars
     come out of the back. "your side of the wire": the client zone flashes.
  3  LECTURE 15 · 13. The strip leaves, the tracker dims. Under the pipe: the three client cards
@@ -213,9 +213,10 @@ class FrontDoor(VoiceScene):
         self.t = t
         assert t.box.get_top()[1] < v.zone.get_bottom()[1] - 0.15, (t.box.get_top(), v.zone.get_bottom())
         # laptop/43 reads the export that the --prepare stand-in (S06) writes: say so on the bar
-        ex2 = on_bar(t, row_tag([("extra · reads the", "label"), ("--prepare", "mono"),
-                                 ("export (next scene) · nothing to run yet", "label")]))
-        assert ex2.get_left()[0] > t.box.get_left()[0] + 1.6, ex2.get_left()     # clear of the bar title
+        # (short enough to stay right of the centred "laptop" bar title: the longer wording covered it)
+        ex2 = on_bar(t, row_tag([("extra · run after", "label"), ("--prepare", "mono"),
+                                 ("(next scene)", "label")]))
+        assert ex2.get_left()[0] > t.title.get_right()[0] + 0.2, (ex2.get_left(), t.title.get_right())
         ex2_l, ex2_m = ex2.text[0], ex2.text[1]          # the mono flag sits high: share the baseline
         ex2_m.shift(UP * (ex2_l[-1].get_bottom()[1] - ex2_m[-1].get_bottom()[1]))
 

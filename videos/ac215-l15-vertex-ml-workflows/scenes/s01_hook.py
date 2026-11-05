@@ -9,7 +9,8 @@ Beats (script.md "## S01", one voiceover block each; no tracker until the sample
    on "what cheese is in this photo" both glyphs Indicate (QA 00:00). A YELLOW mono chip above
    the top panel types `python cli.py --predict`. On "Both answers on screen" a GREY chip
    `cli.py · predict()` links both panels; on "And both answers say brie" both `brie`s glow GREEN.
-1. The link chip goes. YELLOW rings count the numbers of each printed predictions list (the
+1. The link chip goes; a GREY chip "two brie photos · count the numbers, not the values" holds the
+   gap until the question card (QA 00:00: two files, one "this photo"). YELLOW rings count the numbers of each printed predictions list (the
    `[…] 2` row, one row in both panels) while a big YELLOW counter at the panel's right edge ticks
    1, 2, 3 (top) and 1, 2, 3, 4 (bottom); a RED "≠" pulses between the big 3 and 4. A YELLOW
    question card settles between the panels: "What is behind an endpoint?"
@@ -159,9 +160,14 @@ class Hook(VoiceScene):
         q = question_card("What is behind an endpoint?")
         q.move_to([-0.6, gap_y, 0])
         neq = label("≠", 48, ERR).move_to([X_BIG, gap_y, 0])
+        # QA 00:00 (narration says "this photo", the panels show two files): the 3-vs-4 is the
+        # model, not the photo. Holds the gap until the question card takes it.
+        two = grey_chip("two brie photos · count the numbers, not the values").move_to([-0.6, gap_y, 0])
+        assert two.get_left()[0] >= -6.5 and two.get_right()[0] < X_BIG - 0.6, (two.get_left(), two.get_right())
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(link), FadeOut(l_up), FadeOut(l_dn), run_time=0.5)
+            self.play(FadeIn(two, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("The top answer")
             rings_top, cnt = [], None
             for k, g in enumerate(nums_top, 1):
@@ -185,6 +191,7 @@ class Hook(VoiceScene):
             self.play(Indicate(neq, color=ERR, scale_factor=1.3), Indicate(big3, color=TURN),
                       Indicate(big4, color=TURN), run_time=0.9)
             vo.wait_until("So which model")
+            self.play(FadeOut(two), run_time=0.3)
             self.play(FadeIn(q, shift=UP * 0.2), run_time=0.7)
             self.play(Indicate(q.body, color=TURN, scale_factor=1.06), run_time=0.8)
 

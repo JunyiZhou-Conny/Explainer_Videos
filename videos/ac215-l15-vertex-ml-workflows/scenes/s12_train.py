@@ -20,8 +20,8 @@ Beats (script.md "## S12", one voiceover block each):
     bars, gouda's slot a RED dashed stub; after the fix, (None, 4) and a fourth GREEN bar.
  4  TERM(laptop/61: 9) as a one-line strip (root root … persistent-folder ORANGE); under it the
     ORANGE root-owned folder, a RED lock, the TEAL container with its badge "app · uid 1000"
-    (laptop/73:13); tag erratum, chip "fix B". On "Exit": the picture leaves, the fix B chip moves to the corner of the fix B card, which fades in around it (create
-    the folder yourself · or sudo chown … · uid 1000 · Docker Desktop on a Mac: not needed) and a
+    (laptop/73:13); tag erratum, chip "fix B". On "Exit": the picture leaves, the fix B chip moves to the corner of the fix B card, which fades in around it (sudo
+    chown … · fresh clone: create the folder before the first docker-shell.sh · uid 1000 · Docker Desktop on a Mac: not needed) and a
     5-row host strip: `sudo chown -R $USER ../../../persistent-folder`, `sh docker-shell.sh`, the
     container prompt and the step 2 command again; GREY chip "after the fixes · not captured";
     ▶ your turn on the bar. "Docker Desktop on a Mac" lights the card's last line.
@@ -351,9 +351,9 @@ class TrainLocally(VoiceScene):
         assert VGroup(fb2, er4).get_bottom()[1] > -3.4
         mac = label("Docker Desktop on a Mac: not needed", 20, S.GREY)
         card_b = card([
-            VGroup(label("create", 20, INK), mono("persistent-folder", 20, INK),
-                   label("yourself before the first", 20, INK), mono("docker-shell.sh", 20, INK)).arrange(RIGHT, buff=0.12),
-            VGroup(label("or", 20, INK), mono(CHOWN, 20, INK)).arrange(RIGHT, buff=0.16),
+            mono(CHOWN, 20, INK),                                    # now: the folder already exists
+            VGroup(label("fresh clone:", 20, S.GREY), label("create", 20, INK), mono("persistent-folder", 20, INK),
+                   label("before the first", 20, INK), mono("docker-shell.sh", 20, INK)).arrange(RIGHT, buff=0.12),
             VGroup(label("works when your uid is 1000", 20, INK), mono("(id -u)", 20, INK)).arrange(RIGHT, buff=0.12),
             mac,
         ], color=TURN, head="fix B · on your laptop", size=20, buff=0.14)
@@ -383,8 +383,10 @@ class TrainLocally(VoiceScene):
             self.play(FadeIn(h), run_time=0.4)
             self.t = h
             type_cmd(self, h, CHOWN, type_time=0.9, soft=True)
-            vo.wait_until("or change its owner")
-            self.play(Indicate(card_b.body[1], color=TURN, scale_factor=1.05), run_time=0.6)
+            vo.wait_until("change its owner with")
+            self.play(Indicate(card_b.body[0], color=TURN, scale_factor=1.05), run_time=0.6)
+            vo.wait_until("On a fresh clone")
+            self.play(Indicate(card_b.body[1], color=TURN, scale_factor=1.04), run_time=0.6)
             vo.wait_until("Then run step 2 again")
             type_cmd(self, h, C73.cmd, type_time=0.4)
             self.play(FadeIn(nc, shift=DOWN * 0.1), run_time=0.3)
@@ -513,10 +515,9 @@ class TrainLocally(VoiceScene):
             self.play(FadeIn(rc, shift=DOWN * 0.2), FadeIn(er6, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("the README gives this job to model deploy")
             sk = strike(md)
-            self.play(Indicate(md, color=ERR, scale_factor=1.1), run_time=0.5)
-            self.play(Create(sk), run_time=0.4)
+            self.play(Indicate(md, color=ERR, scale_factor=1.1), Create(sk), run_time=0.5)
             ar6 = arrow(np.array([md.get_center()[0], rc.get_bottom()[1], 0]), mt.get_top(), color=S.GREY)
-            self.play(GrowArrow(ar6), FadeIn(mt, shift=UP * 0.1), run_time=0.6)
+            self.play(GrowArrow(ar6), FadeIn(mt, shift=UP * 0.1), run_time=0.5)   # the correction: ~3 s on screen
             vo.wait_until("The trainer does it")
             self.play(Indicate(mt, color=OWN, scale_factor=1.08), run_time=0.6)
 

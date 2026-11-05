@@ -433,7 +433,7 @@ class PushToECR(VoiceScene):
                       Indicate(nm_c.text, color=TURN, scale_factor=1.05), run_time=0.7)
             self.reseat()
             vo.wait_until("Step 6 creates the repository")
-            self.play(FadeOut(np5), FadeOut(nm_c), track(tr, 6, True), run_time=0.3)
+            self.play(FadeOut(np5), track(tr, 6, True), run_time=0.3)
             type_cmd(self, t, C81.cmd_lines[0], type_time=0.45)
             ex_tag = on_bar(t, extra_row())
             self.play(FadeIn(ex_tag), FadeIn(cap_c, shift=DOWN * 0.1), run_time=0.35)
@@ -478,8 +478,10 @@ class PushToECR(VoiceScene):
             type_cmd(self, t, LOGIN[0], type_time=0.4)
             type_cmd(self, t, LOGIN[1], type_time=0.5, prompt=False)
             self.play(track(tr, 8), run_time=0.25)
-            type_cmd(self, t, TAG_C, type_time=0.5)
-            self.play(FadeIn(ecr_name, shift=UP * 0.15), track(tr, 9), run_time=0.4)
+            tl = type_cmd(self, t, TAG_C, type_time=0.5)
+            self.play(FadeIn(ecr_name, shift=UP * 0.15), track(tr, 9),
+                      Indicate(self.find(tl, "$REPO"), color=TURN, scale_factor=1.1), run_time=0.4)
+            self.reseat()
             type_cmd(self, t, PUSH_C, type_time=0.35)
             ecr_cb = cb.copy()
             self.add(ecr_cb)
@@ -495,7 +497,7 @@ class PushToECR(VoiceScene):
             self.play(Indicate(cb, color=IMAGE, scale_factor=1.25),
                       Indicate(names, color=IMAGE, scale_factor=1.04), run_time=0.8)
             vo.wait_until("Run them on your laptop")
-            self.play(FadeOut(np6), FadeIn(lap_c, shift=DOWN * 0.1), Indicate(lap, color=INK, scale_factor=1.06),
+            self.play(FadeOut(np6), FadeOut(nm_c), FadeIn(lap_c, shift=DOWN * 0.1), Indicate(lap, color=INK, scale_factor=1.06),
                       run_time=0.6)
             vo.wait_until("which has no docker")
             self.play(Indicate(lap_c.text, color=INK, scale_factor=1.05), run_time=0.7)

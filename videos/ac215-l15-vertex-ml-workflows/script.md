@@ -780,7 +780,7 @@ endpoint with its GOLD meter running large; a GOLD word card "DELETE" (no image)
 Then a GREY chip "three ways · pick one" (README A:154, 159, 166 are alternatives), and
 CONSOLE("SageMaker › Endpoints", A:154-157): a list row "your endpoint" selected, a **Delete** button
 pulses (no `▶ your turn` here: it sits on way 3).
-SAY: The lecture warns that an endpoint costs money while it is up, and the slides shout one word: delete. The README gives three ways, and any one will do. Way 1, the console: SageMaker, Endpoints, select yours, Delete.
+SAY: The lecture warns that an endpoint costs money while it is up, and the slides shout one word: delete. The README gives three ways. Any one stops the endpoint, but only the third also removes the tarball. Way 1, the console: SageMaker, Endpoints, select yours, Delete.
 
 SHOW: TRACKER A4 2. Full-width terminal, prompt `student@laptop:~/model-deployment-aws$`, GREY chip
 "in the container, or a second terminal on your laptop" (the Part A image has `aws`, laptop/25:39). A
@@ -998,7 +998,7 @@ needed". Tag `erratum`. On "Exit", a host strip (`student@laptop:~/ml-workflow-a
 types `sudo chown -R $USER ../../../persistent-folder`, then `sh docker-shell.sh` and the step 2
 training command again, both with a GREY chip "after the fixes · not captured"; `▶ your turn` on the
 strip.
-SAY: Second, on Linux, Docker created the persistent folder as root, and this container runs as the app user. Exit, and on your laptop create the folder yourself, or change its owner. Then run step 2 again. Docker Desktop on a Mac avoids this.
+SAY: Second, on Linux, Docker created the persistent folder as root, and this container runs as the app user. Exit, and on your laptop change its owner with the chown command on the card. On a fresh clone, create the folder yourself before the first docker-shell.sh. Then run step 2 again. Docker Desktop on a Mac avoids this.
 
 SHOW: CODE(src/model-training/package/trainer/task.py: 303–312): line 310 `os.path.join("/persistent",
 "model", "1")` GREEN, line 307 `os.path.join(sm_model_dir, "1")` BLUE; GREY chip "the save after
@@ -1232,7 +1232,7 @@ A GREY chip, tag `erratum`: "if upsert fails on the Lambda runtime: add `runtime
 Unified Studio › Build › ML Pipelines", B:234): the five-box graph redrawn from laptop/92 (not the
 README's screenshots), the fourth box labelled `CreateModel-CreateModel` (the SDK adds the suffix),
 all boxes pending.
-SAY: Step 1: python cli.py dash dash pipeline stops at the same line 32. With keys, it prints that the pipeline started. Step 2: in Unified Studio, under Build, ML Pipelines, you would see this graph.
+SAY: Step 1: python cli.py dash dash pipeline stops at the same line 32. With keys, it prints that the pipeline started. If instead upsert fails on the Lambda runtime, add runtime equals python 3.12 to the Lambda call, line 297. Step 2: in Unified Studio, under Build, ML Pipelines, you would see this graph.
 
 SHOW: TRACKER B7 2. The console graph runs as an illustration (tag `illustration · not run here`):
 boxes go YELLOW then GREEN ✓ in turn;

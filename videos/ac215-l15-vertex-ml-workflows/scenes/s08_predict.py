@@ -103,8 +103,8 @@ assert OUT47_H[0] == "Image: data/gouda-2.jpeg" and OUT47_H[1].endswith("] 3"), 
 C48_OUT = C48.at(2)
 assert C48.cmd == "docker rm -f cheese-serving" and C48_OUT == ["cheese-serving"]
 
-REC = recorded((7, 8)) + ["…"] + recorded((12, 15))     # lines 9–11 (brie's [...] 2, Label) skipped: one '…' row
-assert REC[2] == "…" and REC[3] == "Image: data/gouda-1.jpg"
+REC_GAP = recorded((7, 8)) + ["…"] + recorded((12, 15))  # lines 9–11 (brie's [...] 2, Label) skipped: one '…' row
+assert REC_GAP[2] == "…" and REC_GAP[3] == "Image: data/gouda-1.jpg"
 REC = recorded((7, 8), (12, 15))
 assert REC[0] == "Image: data/brie-2.jpg" and REC[4].endswith("] 0") and REC[5].split() == ["Label:", "gouda"], REC
 
@@ -165,8 +165,14 @@ def gap_card(parts, size: float = 20, wrap: int = 72) -> VGroup:
     Same frame, body, tag and fields. .frame .body .tag .rows"""
     rows = []
     for k, r in enumerate(parts):
-        if k:
-            rows.append(mono("…", size, INK))           # as the terminals print a skip
+        if k:                                           # as the terminals print a skip
+            e = mono("…", size, INK)
+            strut = Rectangle(width=e.width, height=mono("Label", size).height * 0.75,
+                              stroke_width=0, fill_opacity=0)
+            e.move_to(strut)                            # a short row of its own: the dots stand clear
+            row = VGroup(strut, e)                      # of both neighbours, not glued under 'Result'
+            row.text = "…"
+            rows.append(row)
         rows += [mono(x, size, INK) for x in soft(recorded(r), wrap)]
     body = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.1)      # 0.14 in common: the extra row must leave room for the slot
     frame = box(body.width + 0.7, body.height + 0.75, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)

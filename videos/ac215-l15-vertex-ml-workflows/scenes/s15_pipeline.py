@@ -99,6 +99,10 @@ T100 = C90.typed(100)
 assert T100 == "python cli.py --pipeline"
 L90_108 = C90.line(108)
 assert L90_108 == "INFO:botocore.credentials:Found credentials in environment variables."
+L90_110 = unbox(C90.line(110)).strip()
+assert L90_110 == "/app/cli.py:32 in <module>", L90_110
+L90_115 = unbox(C90.line(115)).strip()
+assert L90_115 == "❱  32 ACCOUNT_ID = sts_client.get_caller_identity()['Account']", L90_115
 L90_153 = C90.at(153, 154)
 assert L90_153[0].startswith("ClientError: An error occurred (InvalidClientTokenId)")
 COMPONENTS = [(45, 98), (155, 208), (210, 263), (265, 318)]   # (typed line, its last error line)
@@ -163,6 +167,20 @@ def model_card_icon(text: str = "Model") -> VGroup:
     return VGroup(b, row)
 
 
+def folded_line(path: str, n: int, at: str, font_size: float = 20) -> VGroup:
+    """CODE(path: n) with the one source line folded over two rows before `at` (the text unchanged,
+    the second row indented 4), header 'line n' (code() would count two lines)."""
+    src = excerpt(path, n, n).strip()
+    k = src.index(at)
+    p = code_panel(src[:k] + "\n    " + src[k:], shown_path(path), n, "python", font_size=font_size)
+    where = p.header[1]
+    new = label(f"· line {n}", CAPTION, S.GREY).move_to(where, aligned_edge=LEFT)
+    p.header.remove(where)
+    p.header.add(new)
+    assert p.width < 2 * SAFE_X - 0.1, p.width
+    return p
+
+
 class PropertyDAG(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S15"] == 13, len(SAY)
@@ -224,6 +242,11 @@ class PropertyDAG(VoiceScene):
         p180 = at_tl(code(CLI, 180, 191, font_size=20, dedent=True, cuts={186: '"brie cheese",'}))
         assert p180.get_right()[0] < min(b.get_left()[0] for b in v.boxes) - 0.15, p180.get_right()
         assert p180.get_bottom()[1] > -3.55
+        assert excerpt(CLI, 185, 185).strip() == '"--nums", "50",' and '"--nums","10",' in excerpt(CLI, 66, 66)
+        nums_c = grey_chip("pipeline: 50 per cheese · standalone collector: 10")
+        nums_c.next_to(p180, DOWN, buff=0.2).align_to(p180, LEFT)
+        assert nums_c.get_bottom()[1] > -3.55 and nums_c.get_right()[0] < min(b.get_left()[0] for b in v.boxes) - 0.1, \
+            nums_c.get_corner(DR)
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(pic0), FadeOut(lt), run_time=0.5)
@@ -238,7 +261,10 @@ class PropertyDAG(VoiceScene):
             self.play(FadeOut(p165), run_time=0.4)
             self.play(FadeIn(p180, shift=RIGHT * 0.2), run_time=0.6)
             self.paint(p180, 1, 'name="DataCollector"', TURN)
-            self.play(Indicate(v.boxes[0].text, color=TURN, scale_factor=1.12), run_time=0.6)
+            self.play(Indicate(v.boxes[0].text, color=TURN, scale_factor=1.12),
+                      code_span(p180.code, 5, '"50"').animate.set_color(TURN),
+                      FadeIn(nums_c, shift=UP * 0.1), run_time=0.6)     # 50 here, 10 in S14's run
+            self.add(p180)
             v.heal(self)
             vo.wait_until("with one declared output")
             self.paint(p180, 10, "ProcessingOutput(", ROUTE)
@@ -259,7 +285,7 @@ class PropertyDAG(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             v.uncache(self)
-            self.play(FadeOut(p180), v.animate.shift(RIGHT * DX + DOWN * 0.35), run_time=0.8)
+            self.play(FadeOut(p180), FadeOut(nums_c), v.animate.shift(RIGHT * DX + DOWN * 0.35), run_time=0.8)
             v.heal(self)
             assert p219.get_right()[0] < min(b.get_left()[0] for b in v.boxes) - 0.1, p219.get_right()
             self.play(Indicate(v.boxes[1].text, color=TURN, scale_factor=1.12), run_time=0.6)
@@ -280,7 +306,7 @@ class PropertyDAG(VoiceScene):
 
         # ========================================================== 3. two more references
         p266 = at_bl(code(CLI, 266, 267, font_size=20, dedent=True, cuts={266: "step_process.properties"}))
-        p277 = at_bl(code(CLI, 277, 277, font_size=20, dedent=True, cuts={277: "ModelArtifacts"}))
+        p277 = at_bl(folded_line(CLI, 277, ".S3ModelArtifacts"))
         for p in (p266, p277):
             assert p.get_right()[0] < min(b.get_left()[0] for b in v.boxes) - 0.1, p.get_right()
 
@@ -293,7 +319,9 @@ class PropertyDAG(VoiceScene):
             vo.wait_until("and the model step")
             self.play(FadeOut(p266), run_time=0.3)
             self.play(FadeIn(p277, shift=UP * 0.2), run_time=0.5)
-            self.paint(p277, 0, "step_train.properties.ModelArtifacts", ROUTE)
+            self.play(code_span(p277.code, 0, "step_train.properties.ModelArtifacts").animate.set_color(ROUTE),
+                      code_span(p277.code, 1, ".S3ModelArtifacts").animate.set_color(ROUTE), run_time=0.5)
+            self.add(p277)
             v.edge(self, 2, run_time=1.2)
             vo.wait_until("Each reference")
             v.pulse(self)
@@ -539,13 +567,13 @@ class PropertyDAG(VoiceScene):
             v.pulse(self)
 
         # ========================================================== 10. step 1: --pipeline · step 2: console
-        t = term(P_APP, rows=6, size=SIZE)
+        t = term(P_APP, rows=8, size=SIZE)
         keys_c = grey_chip("with keys: SageMaker Pipeline started: <ARN> · no output shown")
         err_card = card(["if upsert fails on the Lambda runtime: add", 'runtime="python3.12" to Lambda(...) (cli.py:297)',
                          "from the code, not run"], S.GREY, size=20)
         et = erratum_tag()
-        keys_c.next_to(t.box, UP, buff=0.2).align_to(t.box, LEFT)
-        err_card.next_to(keys_c, UP, buff=0.25).align_to(t.box, LEFT)
+        keys_c.next_to(t.box, UP, buff=0.15).align_to(t.box, LEFT)
+        err_card.next_to(keys_c, UP, buff=0.2).align_to(t.box, LEFT)
         et.next_to(err_card, RIGHT, buff=0.3).align_to(err_card, UP)
         assert err_card.get_top()[1] < TRACK_BOTTOM - 0.05 and et.get_right()[0] < 6.6, (err_card.get_top(), et.get_right())
 
@@ -569,10 +597,12 @@ class PropertyDAG(VoiceScene):
             ln = type_cmd(self, t, T100, type_time=0.6)
             pin(self, ln, beside(turn_row(), ln))
             vo.wait_until("stops at the same line 32")
-            out(self, t, [L90_108, "…"] + [(s, ERR) for s in L90_153], wrap=True, run_time=0.6)
+            out(self, t, [L90_108, L90_110, (L90_115, ERR), "…"] + [(s, ERR) for s in L90_153], wrap=True,
+                run_time=0.6)
             self.reseat()
             vo.wait_until("With keys")
             self.play(FadeIn(keys_c, shift=UP * 0.1), run_time=0.4)
+            vo.wait_until("If instead upsert fails")
             self.play(FadeIn(err_card, shift=UP * 0.1), FadeIn(et), run_time=0.5)
             self.play(Indicate(err_card.body[1], color=TURN, scale_factor=1.04), run_time=0.6)
             vo.wait_until("Step 2:")
@@ -618,11 +648,10 @@ class PropertyDAG(VoiceScene):
             vo.wait_until("And a green deploy model")
             g2.states(self, {4: "succeeded"}, run_time=0.5)
             self.play(GrowArrow(pa), FadeIn(plate2), run_time=0.5)
-            self.play(FadeIn(creating, shift=UP * 0.1), run_time=0.4)
+            self.play(FadeIn(creating, shift=UP * 0.1), FadeIn(cost2, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("wait until the endpoint")
             self.play(FadeIn(wait_c, shift=LEFT * 0.1), run_time=0.4)
             self.play(Indicate(wait_c.text, color=TURN, scale_factor=1.08), run_time=0.6)
-            self.play(FadeIn(cost2, shift=LEFT * 0.1), run_time=0.5)
             self.play(Indicate(cost2.text, color=COST, scale_factor=1.04), run_time=0.6)
 
         # ========================================================== 12. step 3: each component's flag

@@ -5,7 +5,7 @@ Ends part 2 on an empty frame.
 Beats (script.md "## S16"; one voiceover block each):
 0. LECTURE 15 · 41. The GOLD "DELETE" word card returns small (top left). The GOLD clean-up card
    (cost tag "billed until deleted") builds line by line: item 1 "aws sagemaker list-endpoints →
-   delete every endpoint: Part A's timestamped ones, cheese-app-endpoint, cheese-app-endpoint-…;
+   delete every endpoint: part 1's timestamped ones, cheese-app-endpoint, cheese-app-endpoint-…;
    then their endpoint configurations and models" writes in clause by clause and ticks.
 1. LECTURE (held). Items 2 (empty and delete both buckets), 3 (the two ECR repositories) and 4 (the
    sagemaker-deploy-model-lambda-… functions and cheese-pipeline) write in and tick as spoken.
@@ -18,7 +18,7 @@ Beats (script.md "## S16"; one voiceover block each):
    thumbnails of today's set pieces appear in a row, each tile lighting YELLOW as it is named: V1
    (key on the laptop, hard hat in the cloud), V2 (star ≠ pin), V3 (the two pipes), V5 (three
    pieces + meter), V8 (steps joined by PINK reference edges).
-4. Under the thumbnails, Part A's mini-chain: --prepare (slide 12 · steps 1 and 3) → --deploy
+4. Under the thumbnails, part 1's mini-chain: --prepare (slide 12 · steps 1 and 3) → --deploy
    (steps 4–5) → --predict → --delete, each with a small V4/V5 icon, lighting as named.
 5. Clear (the corner icon goes too). YELLOW heading "Test yourself · 1/5" and question card 1.
 6. Card 1 Transforms into card 2, card 2 into card 3, on the sentence starts.
@@ -43,15 +43,14 @@ QUESTIONS = (
     (("Your laptop and the SageMaker endpoint both reach S3.",),
      ("Which identity does each use?",),
      ("And why do Option 2's exported keys",),
-     ("never reach the Part A container?",)),
+     ("never reach the part 1 container?",)),
     (("Name the three things", ("--deploy", "m"), "creates."),
      ("Which is the address,",),
      ("and which bills while nobody calls it?",)),
-    (("Where does preprocessing sit in Part A,",),
-     ("and where in the Part B trainer?",),
+    (("Where does preprocessing sit in part 1,",),
+     ("and where in the part 2 trainer?",),
      ("Give the lecture's two reasons to put it in the model.",)),
-    (("Which lines make", ("ModelTraining", "m"), "wait for", ("DataProcessor", "m"), "?"),
-     ("What would a literal", ("s3://…/tfrecords", "m"), "string change?")),
+    (("Which lines make", ("ModelTraining", "m"), "wait for", ("DataProcessor", "m"), "?"),),
     (("Which two one-line fixes did today's tutorial need,",),
      ("and which one would an Apple-silicon Mac not need?",)),
 )
@@ -85,7 +84,7 @@ def clean_card() -> VGroup:
     g7 = S.GREY
     rows = [
         parts_row(n("1"), ("aws sagemaker list-endpoints", "m"), "→ delete every endpoint:"),
-        parts_row("Part A's timestamped ones,", ("cheese-app-endpoint", "m"), ",", ("cheese-app-endpoint-…", "m"),
+        parts_row("part 1's timestamped ones,", ("cheese-app-endpoint", "m"), ",", ("cheese-app-endpoint-…", "m"),
                   ";"),
         parts_row("then their endpoint configurations and models"),
         parts_row(n("2"), "empty and delete both buckets"),
@@ -209,7 +208,7 @@ def tiles(contents, tile_w: float = 2.3, tile_h: float = 1.45, gap: float = 0.25
 
 
 def mini_icon(kind: str) -> VGroup:
-    """Text-free icons for Part A's four commands (V4 tarball, V5 trio, request bars, stopped meter)."""
+    """Text-free icons for part 1's four commands (V4 tarball, V5 trio, request bars, stopped meter)."""
     if kind == "prepare":
         return VGroup(file_icon(None, OWN, h=0.42))
     if kind == "deploy":
@@ -342,7 +341,7 @@ class TeardownRecap(VoiceScene):
             vo.wait_until("and references draw the edges")
             self.play(light(4, 3))
 
-        # ========================================================== 4. Part A in four commands
+        # ========================================================== 4. part 1 in four commands
         kinds = ("prepare", "deploy", "predict", "delete")
         notes = ("slide 12 · steps 1 and 3", "steps 4–5", None, None)
         xs = (-4.8, -1.6, 1.6, 4.8)
