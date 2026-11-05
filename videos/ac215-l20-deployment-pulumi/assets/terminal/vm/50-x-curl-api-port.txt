@@ -1,0 +1,4 @@
+$ curl -s http://localhost:9000/; echo; curl -s http://localhost/api-service/openapi.json | head -c 160; echo
+{"message":"Welcome to AC215"}
+{"openapi":"3.1.0","info":{"title":"API Server","description":"API Server","version":"v1"},"servers":[{"url":"/api-service"}],"paths":{"/":{"get":{"summary":"Ge
+[exit 0]

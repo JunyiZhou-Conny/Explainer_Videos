@@ -1,0 +1,8 @@
+$ sudo docker images; sudo du -sh /var/lib/docker
+IMAGE                                    ID             DISK USAGE   CONTENT SIZE   EXTRA
+chromadb/chroma:latest                   a221f3391b5e        640MB             0B   U    
+dlops/cheese-app-api-service:latest      63d9a315d9f5       5.07GB             0B   U    
+dlops/cheese-app-frontend-react:latest   d3102127aade        232MB             0B   U    
+nginx:stable                             53d8f012a1a7        163MB             0B   U    
+14G	/var/lib/docker
+[exit 0]

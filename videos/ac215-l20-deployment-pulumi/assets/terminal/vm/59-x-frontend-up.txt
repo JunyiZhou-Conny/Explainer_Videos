@@ -1,0 +1,10 @@
+$ sudo docker start frontend nginx; sleep 3; sudo docker ps --format 'table {{.Names}}\t{{.Status}}'; curl -s -o /dev/null -w 'http://localhost/ -> %{http_code}\n' http://localhost/
+frontend
+nginx
+NAMES                  STATUS
+nginx                  Up 3 seconds
+frontend               Up 3 seconds
+api-service            Up 10 minutes
+cheese-app-vector-db   Up 16 minutes
+http://localhost/ -> 200
+[exit 0]

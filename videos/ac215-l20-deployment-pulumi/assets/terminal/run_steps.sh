@@ -39,6 +39,27 @@ readme() { sed -n "$1,$2p" "$README"; }   # readme <first> <last>: README lines,
 wait_http() {  # wait_http <url> <seconds>: quiet readiness probe (capture-only, not shown)
   local i; for i in $(seq "$2"); do curl -s -o /dev/null --max-time 5 "$1" && return 0; sleep 1; done; return 1
 }
+make_key() {  # make_key <account>: capture-only, see the comment inside
+  # There is NO real key here. A throwaway RSA key, generated now for no account and never written to
+  # the repository, makes a well-formed service-account key file, so gcloud and Google's libraries load
+  # it and the first real call fails where a student's would succeed (ASSETS.md, "What cannot run here").
+  mkdir -p "$OUT/capture-only" ~/secrets
+  openssl genrsa -out /tmp/throwaway.pem 2048 2>/dev/null
+  ACCT=$1 python3 - <<'PYEOF'
+import json, os
+acct = os.environ["ACCT"]
+info = {"type": "service_account", "project_id": "your-gcp-project",
+        "private_key_id": "0000000000000000000000000000000000000000",
+        "private_key": open("/tmp/throwaway.pem").read(),
+        "client_email": f"{acct}@your-gcp-project.iam.gserviceaccount.com",
+        "client_id": "000000000000000000000", "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token"}
+json.dump(info, open(os.path.expanduser(f"~/secrets/{acct}.json"), "w"), indent=2)
+info["private_key"] = "<a throwaway RSA key generated at capture time for no account; not committed>"
+json.dump(info, open(os.environ["OUT"] + f"/capture-only/placeholder-{acct}.json", "w"), indent=2)
+PYEOF
+  rm -f /tmp/throwaway.pem
+}
 CTRLC=$'\x03'
 DOCKER="docker"; case $SEG in vm*) DOCKER="sudo docker";; esac
 capture_only_retag() {  # capture_only_retag <image> [base]: recording sandbox only (CAPTURE_CA set)
@@ -49,6 +70,7 @@ capture_only_retag() {  # capture_only_retag <image> [base]: recording sandbox o
   [ -n "$CAPTURE_CA" ] || return 0
   local img=$1 kind=${2:-app} d user safe
   d=$(mktemp -d); cp "$CAPTURE_CA" "$d/capture-ca.crt"; chmod 644 "$d/capture-ca.crt"
+  $DOCKER image inspect "$img" >/dev/null 2>&1 || $DOCKER pull -q "$img" >/dev/null
   user=$($DOCKER image inspect -f '{{.Config.User}}' "$img")
   safe=$(echo "$img" | tr '/:' '__')
   {
@@ -157,20 +179,163 @@ vm5)
   step 49-x-curl-api-via-nginx "curl -s -i http://localhost/api-service/; echo; curl -s -i http://localhost/api-service/status; echo"
   step 50-x-curl-api-port "curl -s http://localhost:9000/; echo; curl -s http://localhost/api-service/openapi.json | head -c 160; echo"
   step 51-x-nginx-logs "sudo docker logs nginx 2>&1 | tail -6"
-  # README.md:370-382 (written for the Pulumi VM; the container names are the same here)
-  step 52-container-ls "$(readme 372 372)"
+  ;;
+vm6)
+  PY_PROMPT='app@[0-9a-f]+:/app\$ $'
+  # README.md:371-383 (written for the Pulumi VM; the container names are the same here)
+  step 52-container-ls "$(readme 373 373)"
   CUE=/tmp/l20-cue
   rm -f $CUE; ( sleep 5; touch $CUE ) &
-  istep 53-logs-api-service "$(readme 373 373)" "file:$CUE" "$CTRLC"
+  istep 53-logs-api-service "$(readme 374 374)" "file:$CUE" "$CTRLC"
   rm -f $CUE; ( sleep 5; touch $CUE ) &
-  istep 54-logs-frontend "$(readme 374 374)" "file:$CUE" "$CTRLC"
+  istep 54-logs-frontend "$(readme 375 375)" "file:$CUE" "$CTRLC"
   rm -f $CUE; ( sleep 5; touch $CUE ) &
-  istep 55-logs-nginx "$(readme 375 375)" "file:$CUE" "$CTRLC"
-  istep 56-exec-api-service "$(readme 380 380)" "$PY_PROMPT" "ls" "$PY_PROMPT" "exit"
-  istep 57-exec-nginx "$(readme 381 381)" '# $' "nginx -v" '# $' "exit"
+  istep 55-logs-nginx "$(readme 376 376)" "file:$CUE" "$CTRLC"
+  istep 56-exec-api-service "$(readme 381 381)" "$PY_PROMPT" "ls" "$PY_PROMPT" "exit"
+  istep 57-exec-nginx "$(readme 382 382)" '# $' "nginx -v" '# $' "exit"
   # extra (digest gotchas 11/12): a stopped frontend takes nginx down with it
   step 58-x-frontend-down "sudo docker stop frontend; sudo docker restart nginx; sleep 3; sudo docker ps -a --format 'table {{.Names}}\t{{.Status}}'; sudo docker logs nginx 2>&1 | tail -2; curl -s -o /dev/null -w 'http://localhost/ -> %{http_code}\n' http://localhost/"
   step 59-x-frontend-up "sudo docker start frontend nginx; sleep 3; sudo docker ps --format 'table {{.Names}}\t{{.Status}}'; curl -s -o /dev/null -w 'http://localhost/ -> %{http_code}\n' http://localhost/"
   step 60-x-images "sudo docker images; sudo du -sh /var/lib/docker"
+  ;;
+# ------------------------------------------------------------------------------------------------
+pre)
+  step p00-x-env "date -u '+%Y-%m-%d %H:%M UTC'; uname -sm; docker version --format 'Docker client {{.Client.Version}}, engine {{.Server.Version}}'; docker buildx version; git --version; docker images"
+  # the README has no clone command (the course's repos are cloned in its setup); the usual one
+  step p01-clone "git clone https://github.com/dlops-io/cheese-app-v3.git"
+  step p02-x-git-log "git -C cheese-app-v3 log -1 --format='%H %ci %s'; git -C cheese-app-v3 branch -r | sed 's|work/[a-z]*|work/‹staff›|'"
+  step p03-x-ls-remote "git ls-remote https://github.com/dlops-io/cheese-app-v3.git | sed 's|refs/heads/work/[a-z]*|refs/heads/work/‹staff›|'"
+  # README.md:236-259: the two key files go into the secrets folder next to the repo
+  step p04-mkdir-secrets "mkdir -p secrets"
+  make_key deployment
+  make_key gcp-service
+  step p05-x-tree "ls -la; ls -la secrets; ls cheese-app-v3/src cheese-app-v3/src/deployment"
+  capture_only_retag python:3.13-slim-bullseye base
+  capture_only_retag node:20-alpine base
+  ;;
+# ------------------------------------------------------------------------------------------------
+hubprep)
+  # capture-only (recording sandbox): docker-hub.sh's builder is a docker-container BuildKit, which
+  # pulls its base images itself (not from the laptop's image store) and does not trust the recording
+  # proxy's CA. A buildkitd default config (picked up by `docker buildx create`, so docker-hub.sh runs
+  # unchanged) gives it that CA for registries and a local mirror (registry:2 on localhost:5000) that
+  # serves the CA-re-tagged node:20-alpine, so `apk add`/`npm ci` inside the build trust it too.
+  mkdir -p "$OUT/capture-only" ~/.docker/buildx
+  docker buildx rm multi-arch >/dev/null 2>&1; docker buildx use default
+  docker rm -f l20-mirror >/dev/null 2>&1
+  step capture-only/mirror-start "docker run -d --name l20-mirror -p 5000:5000 registry:2 >/dev/null && sleep 2 && docker tag node:20-alpine localhost:5000/library/node:20-alpine && docker push -q localhost:5000/library/node:20-alpine"
+  cp "$CAPTURE_CA" ~/.docker/buildx/capture-ca.crt
+  { echo '# capture-only, NOT part of the tutorial (see ASSETS.md)'
+    echo '[registry."docker.io"]'
+    echo '  mirrors = ["localhost:5000"]'
+    echo "  ca = [\"$HOME/.docker/buildx/capture-ca.crt\"]"
+    echo '[registry."localhost:5000"]'
+    echo '  http = true'; } > ~/.docker/buildx/buildkitd.default.toml
+  cp ~/.docker/buildx/buildkitd.default.toml "$OUT/capture-only/buildkitd.default.toml"
+  ;;
+# ------------------------------------------------------------------------------------------------
+partA)
+  # README.md:18-21 "Push Docker Images to Docker Hub": typed as printed, placeholders included
+  step a01-docker-login "$(readme 21 21 | sed 's/^.*: `//; s/`$//')"
+  # README.md:28-31 "Build, Tag & Push frontend-react": inside the folder, sh docker-hub.sh
+  cd cheese-app-v3/src/frontend-react
+  step a02-frontend-docker-hub "sh docker-hub.sh"
+  step a03-x-buildx-ls "docker buildx ls"
+  cd ~
+  ;;
+# ------------------------------------------------------------------------------------------------
+partA2)
+  # extras (digest gotcha 3): after docker-hub.sh, `multi-arch` (docker-container driver) is the
+  # current builder in every terminal, and a plain `docker build` no longer lands in `docker images`
+  d=$(mktemp -d); printf 'FROM node:20-alpine\nCMD ["node", "--version"]\n' > $d/Dockerfile
+  step a04-x-build-after-hub "cd $d && docker build -q -t hello-node . ; docker run --rm hello-node"
+  step a05-x-buildx-use-default "docker buildx use default; docker buildx ls | head -3"
+  step a06-x-build-default "cd $d && docker build -q -t hello-node . >/dev/null; docker run --rm hello-node; docker rmi -f hello-node >/dev/null"
+  rm -rf $d
+  ;;
+# ------------------------------------------------------------------------------------------------
+partB)
+  cd cheese-app-v3/src/deployment
+  # README.md:265-267: "Go into docker-shell.sh and change GCP_PROJECT to your project id" (a placeholder)
+  step b01-set-project "sed -i 's/\"ac215-project\" # Change/\"your-gcp-project\" # Change/' docker-shell.sh; grep -n 'GCP_PROJECT=' docker-shell.sh"
+  # README.md:268 "Run sh docker-shell.sh", in a terminal. On 2026-11-05 the image does not build:
+  # Debian 11 (bullseye) security updates have moved to archive.debian.org (ASSETS.md)
+  istep b02-docker-shell "sh docker-shell.sh"
+  cd ~
+  ;;
+# ------------------------------------------------------------------------------------------------
+partB2)
+  cd cheese-app-v3/src/deployment
+  # extra: the fix the video shows, a newer Debian base (bookworm) on Dockerfile:4
+  step b02a-x-fix-base "sed -i 's/^FROM python:3.13-slim-bullseye/FROM python:3.13-slim-bookworm/' Dockerfile; grep -n '^FROM' Dockerfile; git diff --stat"
+  capture_only_retag python:3.13-slim-bookworm base
+  CUE=/tmp/l20-cue-shell; rm -f $CUE
+  # README.md:268 again: it stays open (at its prompt) until $CUE exists
+  istep b02b-docker-shell-bookworm "sh docker-shell.sh" "file:$CUE" "exit" &
+  SHELL_PID=$!
+  for i in $(seq 1800); do docker top cheese-app-deployment -eo args 2>/dev/null | grep -qx '/bin/bash' && break; sleep 1; done
+  sleep 2
+  C=cheese-app-deployment
+  cstep() {  # cstep <name> <workdir> <command>: typed at the container's prompt (docker exec, same container)
+    local name=$1 wd=$2; shift 2
+    { echo "\$ $*"; docker exec -w "$wd" $C bash -c "$*" 2>&1 | sed 's/\x1b\[[0-9;]*m//g'; echo "[exit ${PIPESTATUS[0]}]"; } | mask > "$OUT/$name.txt"
+  }
+  ctstep() {  # ctstep <name> <workdir> <shown command> <exec'd command> [<regex> <typed>]...: the same, in a terminal
+    local name=$1 wd=$2 shown=$3 cmd=$4; shift 4
+    local args=()
+    while [ $# -gt 0 ]; do args+=(--expect "$1" --send "$2"); shift 2; done
+    { echo "\$ $shown"
+      python3 "$HERE/ptyrun.py" --cols 100 --rows 40 --timeout 600 "${args[@]}" -- docker exec -it -w "$wd" $C bash -c "$cmd"
+      echo "[exit $?]"; } | mask > "$OUT/$name.txt"
+  }
+  # README.md:270-278 "Check versions of tools" + "gcloud auth list"
+  cstep b03-gcloud-version /app "$(readme 272 272)"
+  cstep b04-pulumi-version /app "$(readme 273 273)"
+  cstep b05-kubectl-version /app "$(readme 274 274)"
+  cstep b06-gcloud-auth-list /app "gcloud auth list"
+  cstep b07-x-env /app "env | grep -E '^(GCP_|GOOGLE_|PULUMI_|USE_GKE)' | sort; ls -la /secrets; python --version; uv --version; which docker ssh; docker ps --format '{{.Names}}'"
+  # README.md:283-291 "Configuring OS Login for service account": the template line, then the example
+  cstep b08-oslogin-template /app "$(readme 286 286)"
+  cstep b09-oslogin-example /app "$(readme 290 290)"
+  # README.md:294-298 "Create SSH key for service account" (empty passphrase: Enter twice)
+  ctstep b10-ssh-keygen /secrets "$(readme 295 297)" "ssh-keygen -f ssh-key-deployment" "passphrase" "" "passphrase" ""
+  cstep b11-x-ls-keys /secrets "ls -la /secrets"
+  # README.md:300-303 "Providing public SSH keys to instances"
+  cstep b12-oslogin-ssh-keys-add /app "$(readme 302 302)"
+  # README.md:318-322 "Deployment Setup": inventory.yml
+  cstep b13-x-inventory /app "ls inventory.yml; find / -name inventory.yml -not -path '/proc/*' 2>/dev/null | head -3"
+  # README.md:327-345 "Build and Push Docker Containers to Google Artifact Registry", verbatim
+  ctstep b14-images-stack-init /app/deploy_images "cd deploy_images
+$(readme 332 332)" "$(readme 332 332)" "(token|ENTER)" "$CTRLC"
+  cstep b15-images-config-set /app/deploy_images "$(readme 333 333)"
+  cstep b16-images-preview /app/deploy_images "$(readme 339 339)"
+  cstep b17-images-up /app/deploy_images "$(readme 344 344)"
+  # README.md:347-367 "Create Compute Instance (VM) & Deploy Containers", verbatim
+  cstep b18-vm-stack-init /app/deploy_single_vm "$(readme 352 352)"
+  for l in 353 354 355; do cstep b19-vm-config-set-$((l-352)) /app/deploy_single_vm "$(readme $l $l)"; done
+  cstep b20-vm-preview /app/deploy_single_vm "$(readme 361 361)"
+  cstep b21-vm-up /app/deploy_single_vm "$(readme 366 366)"
+  # README.md:387-390 "Delete the Compute Instance / Persistent disk"
+  cstep b22-destroy /app/deploy_single_vm "$(readme 389 389)"
+  # extras: the same programs on Pulumi's local file backend (`pulumi login --local`), which needs no
+  # cloud account, so each one runs up to its first call that needs Google (ASSETS.md)
+  FRONT='urn:pulumi:dev::deploy-images::docker-build:index:Image::build-cheese-app-frontend-react'
+  cstep b30-x-login-local /app/deploy_images "pulumi login --local"
+  cstep b31-x-images-stack-init /app/deploy_images "$(readme 332 332)"
+  cstep b32-x-images-config-set /app/deploy_images "$(readme 333 333)"
+  cstep b33-x-images-config /app/deploy_images "pulumi config; cat Pulumi.dev.yaml; pulumi stack ls"
+  cstep b34-x-images-preview-frontend /app/deploy_images "pulumi preview --stack dev --refresh --target '$FRONT'"
+  cstep b35-x-images-up-frontend /app/deploy_images "pulumi up --stack dev --refresh -y --target '$FRONT'"
+  cstep b36-x-images-after /app/deploy_images "pulumi stack ls; pulumi stack output; docker images"
+  cstep b40-x-vm-stack-init /app/deploy_single_vm "$(readme 352 352)"
+  for l in 353 354 355; do cstep b41-x-vm-config-set-$((l-352)) /app/deploy_single_vm "$(readme $l $l)"; done
+  cstep b42-x-vm-config /app/deploy_single_vm "pulumi config"
+  cstep b43-x-vm-preview /app/deploy_single_vm "$(readme 361 361)"
+  cstep b44-x-vm-up /app/deploy_single_vm "$(readme 366 366)"
+  cstep b45-x-destroy /app/deploy_single_vm "$(readme 389 389)"
+  cstep b46-x-stacks-on-disk /app "pulumi stack ls --all; ls -R ~/.pulumi/stacks 2>/dev/null | head; ls /app/pulumi-plugins | head; git -C /app status --short 2>&1 | head"
+  touch $CUE
+  wait $SHELL_PID
+  cd ~
   ;;
 esac

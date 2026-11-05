@@ -1,0 +1,23 @@
+$ sh docker-shell.sh
+Container 'cheese-app-deployment' is not running. Building and starting new container...
+[+] Building 0.2s (2/2) FINISHED                                                     docker:default
+ => [internal] load build definition from Dockerfile                                           0.0s
+ => => transferring dockerfile: 2.77kB                                                         0.0s
+ => ERROR [internal] load metadata for docker.io/library/python:3.13-slim-bookworm             0.2s
+------
+ > [internal] load metadata for docker.io/library/python:3.13-slim-bookworm:
+------
+Dockerfile:4
+--------------------
+   2 |
+   3 |     # Use the official Python image as the base with Python 3.13
+   4 | >>> FROM python:3.13-slim-bookworm
+   5 |
+   6 |     # Set the environment variable for non-interactive installations
+--------------------
+ERROR: failed to build: failed to solve: python:3.13-slim-bookworm: failed to resolve source metadata for docker.io/library/python:3.13-slim-bookworm: unexpected status from HEAD request to https://registry-1.docker.io/v2/library/python/manifests/3.13-slim-bookworm: 429 Too Many Requests
+Unable to find image 'cheese-app-deployment:latest' locally
+docker: Error response from daemon: pull access denied for cheese-app-deployment, repository does not exist or may require 'docker login': denied: requested access to the resource is denied
+
+Run 'docker run --help' for more information
+[exit 125]

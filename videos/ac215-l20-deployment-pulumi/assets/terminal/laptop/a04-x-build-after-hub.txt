@@ -1,0 +1,4 @@
+$ cd /tmp/tmp.ldgMkC && docker build -q -t hello-node . ; docker run --rm hello-node
+sha256:6064a227b740ed6318be46eb5d73ff7fdb360653ba6e47a41b2ea57b80f17e01
+v20.20.2
+[exit 0]

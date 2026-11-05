@@ -1,0 +1,3 @@
+$ docker build -q -t python:3.13-slim-bullseye /tmp/tmp.BGIENO
+sha256:94b659afc87a1d5cb3a24fe7352525e96656a19e28d6fa68633fa21732cc95b8
+[exit 0]

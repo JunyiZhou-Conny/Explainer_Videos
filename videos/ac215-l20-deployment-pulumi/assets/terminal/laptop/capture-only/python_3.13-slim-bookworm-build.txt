@@ -1,0 +1,10 @@
+$ docker build -q -t python:3.13-slim-bookworm /tmp/tmp.jjKNgO
+Dockerfile:2
+--------------------
+   1 |     # capture-only, NOT part of the tutorial: python:3.13-slim-bookworm + the recording proxy's CA, re-tagged as python:3.13-slim-bookworm
+   2 | >>> FROM python:3.13-slim-bookworm
+   3 |     USER root
+   4 |     COPY capture-ca.crt /usr/local/share/capture-ca.crt
+--------------------
+ERROR: failed to build: failed to solve: python:3.13-slim-bookworm: failed to resolve source metadata for docker.io/library/python:3.13-slim-bookworm: unexpected status from HEAD request to https://registry-1.docker.io/v2/library/python/manifests/3.13-slim-bookworm: 429 Too Many Requests
+[exit 1]

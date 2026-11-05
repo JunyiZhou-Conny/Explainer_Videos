@@ -1,0 +1,6 @@
+$ sudo docker exec -it nginx /bin/bash
+root@225928af4aee:/# nginx -v
+nginx version: nginx/1.30.6
+root@225928af4aee:/# exit
+exit
+[exit 0]

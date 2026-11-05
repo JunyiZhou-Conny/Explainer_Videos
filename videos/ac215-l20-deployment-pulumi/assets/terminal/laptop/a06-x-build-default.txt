@@ -1,0 +1,3 @@
+$ cd /tmp/tmp.ldgMkC && docker build -q -t hello-node . >/dev/null; docker run --rm hello-node; docker rmi -f hello-node >/dev/null
+v20.20.2
+[exit 0]

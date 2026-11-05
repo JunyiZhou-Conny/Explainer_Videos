@@ -1,0 +1,255 @@
+$ sh docker-hub.sh
+Docker Username: dlops
+Building production image...
+Creating new multi-arch builder...
+multi-arch
+Building multi-arch image...
+#0 building with "multi-arch" instance using docker-container driver
+
+#1 [internal] booting buildkit
+#1 pulling image moby/buildkit:buildx-stable-1
+#1 pulling image moby/buildkit:buildx-stable-1 8.2s done
+#1 creating container buildx_buildkit_multi-arch0
+#1 creating container buildx_buildkit_multi-arch0 0.8s done
+#1 DONE 9.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.42kB done
+#2 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1.6
+#3 DONE 0.8s
+
+#4 docker-image://docker.io/docker/dockerfile:1.6@sha256:ac85f380a63b13dfcefa89046420e1781752bab202122f8f50032edf31be0021
+#4 resolve docker.io/docker/dockerfile:1.6@sha256:ac85f380a63b13dfcefa89046420e1781752bab202122f8f50032edf31be0021 done
+#4 sha256:9d9c93f4b00be908ab694a4df732570bced3b8a96b7515d70ff93402179ad232 7.34MB / 11.80MB 0.2s
+#4 sha256:9d9c93f4b00be908ab694a4df732570bced3b8a96b7515d70ff93402179ad232 11.80MB / 11.80MB 0.2s done
+#4 extracting sha256:9d9c93f4b00be908ab694a4df732570bced3b8a96b7515d70ff93402179ad232 0.1s done
+#4 DONE 0.3s
+
+#5 [internal] load metadata for docker.io/library/node:20-alpine
+#5 DONE 0.0s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 2B done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 1.50MB 0.0s done
+#7 DONE 0.0s
+
+#8 [base 1/3] FROM docker.io/library/node:20-alpine@sha256:36f36a786b36779ab4a8af9b3ded5f15e3ba417b21c2672200c06e9387a55c8c
+#8 resolve docker.io/library/node:20-alpine@sha256:36f36a786b36779ab4a8af9b3ded5f15e3ba417b21c2672200c06e9387a55c8c done
+#8 sha256:97418b32288878e43388fc3cbd1c81716415f6785c0dd5d6eadce1e02af8bea1 233.77kB / 233.77kB 0.0s done
+#8 sha256:285447f4a4abc5f9ac891f3e0428917e99c36a0203f5330fb3238f6807a12111 108.55kB / 108.55kB done
+#8 sha256:fff4e2c1b189bf87d63ad8bd07f7f4eb288d6f2b6a07a8bb44c60e8c075d2096 445B / 445B 0.0s done
+#8 sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122 1.26MB / 1.26MB 0.0s done
+#8 sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb 3.86MB / 3.86MB 0.0s done
+#8 extracting sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb
+#8 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 43.23MB / 43.23MB 0.1s done
+#8 extracting sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb 0.1s done
+#8 extracting sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287
+#8 extracting sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 1.0s done
+#8 DONE 1.3s
+
+#8 [base 1/3] FROM docker.io/library/node:20-alpine@sha256:36f36a786b36779ab4a8af9b3ded5f15e3ba417b21c2672200c06e9387a55c8c
+#8 extracting sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122 0.0s done
+#8 extracting sha256:fff4e2c1b189bf87d63ad8bd07f7f4eb288d6f2b6a07a8bb44c60e8c075d2096 done
+#8 extracting sha256:285447f4a4abc5f9ac891f3e0428917e99c36a0203f5330fb3238f6807a12111 done
+#8 extracting sha256:97418b32288878e43388fc3cbd1c81716415f6785c0dd5d6eadce1e02af8bea1 done
+#8 DONE 1.3s
+
+#9 [base 2/3] WORKDIR /app
+#9 DONE 0.2s
+
+#10 [base 3/3] RUN apk add --no-cache libc6-compat
+#10 0.742 (1/3) Installing musl-obstack (1.2.3-r2)
+#10 0.780 (2/3) Installing libucontext (1.3.3-r0)
+#10 0.820 (3/3) Installing gcompat (1.1.0-r4)
+#10 0.857 OK: 11.0 MiB in 21 packages
+#10 DONE 0.9s
+
+#11 [runner 1/5] WORKDIR /app
+#11 DONE 0.0s
+
+#12 [deps 1/2] COPY package.json package-lock.json ./
+#12 DONE 0.0s
+
+#13 [runner 2/5] RUN addgroup -g 1001 -S nodejs     && adduser -S nextjs -u 1001
+#13 DONE 0.1s
+
+#14 [deps 2/2] RUN --mount=type=cache,id=npm-cache,target=/root/.npm     npm ci
+#14 3.158 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#14 4.170 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#14 5.341 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#14 5.363 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#14 5.638 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#14 7.608 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#14 58.01 
+#14 58.01 added 567 packages, and audited 568 packages in 58s
+#14 58.01 
+#14 58.01 252 packages are looking for funding
+#14 58.01   run `npm fund` for details
+#14 58.31 
+#14 58.31 28 vulnerabilities (8 moderate, 17 high, 3 critical)
+#14 58.31 
+#14 58.31 To address issues that do not require attention, run:
+#14 58.31   npm audit fix
+#14 58.31 
+#14 58.31 To address all issues (including breaking changes), run:
+#14 58.31   npm audit fix --force
+#14 58.31 
+#14 58.31 Run `npm audit` for details.
+#14 58.31 npm notice
+#14 58.31 npm notice New major version of npm available! 10.8.2 -> 12.2.2
+#14 58.31 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+#14 58.31 npm notice To update run: npm install -g npm@12.2.2
+#14 58.31 npm notice
+#14 DONE 59.2s
+
+#15 [builder 1/4] COPY --from=deps /app/node_modules ./node_modules
+#15 DONE 7.0s
+
+#16 [builder 2/4] COPY . .
+#16 DONE 0.2s
+
+#17 [builder 3/4] COPY .env.production .env
+#17 DONE 0.0s
+
+#18 [builder 4/4] RUN npm run build
+#18 0.468 
+#18 0.468 > react-app-nextjs@1.0.0 build
+#18 0.468 > next build
+#18 0.468 
+#18 1.115    ▲ Next.js 15.0.2
+#18 1.115    - Environments: .env.production, .env
+#18 1.115 
+#18 1.130    Creating an optimized production build ...
+#18 4.162 Browserslist: browsers data (caniuse-lite) is 25 months old. Please run:
+#18 4.162   npx update-browserslist-db@latest
+#18 4.162   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+#18 21.78  ✓ Compiled successfully
+#18 21.78    Linting and checking validity of types ...
+#18 21.93    Collecting page data ...
+#18 24.45    Generating static pages (0/7) ...
+#18 25.02    Generating static pages (1/7) 
+#18 25.06 BASE_API_URL: /api-service
+#18 25.06    Generating static pages (3/7) 
+#18 25.18    Generating static pages (5/7) 
+#18 25.19  ✓ Generating static pages (7/7)
+#18 25.74    Finalizing page optimization ...
+#18 25.74    Collecting build traces ...
+#18 38.35 
+#18 38.35 Route (app)                              Size     First Load JS
+#18 38.35 ┌ ƒ /                                    3.65 kB         164 kB
+#18 38.35 ├ ƒ /_not-found                          897 B           101 kB
+#18 38.35 ├ ƒ /chat                                140 kB          285 kB
+#18 38.35 ├ ƒ /newsletters                         2.6 kB          137 kB
+#18 38.35 └ ƒ /podcasts                            3.06 kB         163 kB
+#18 38.35 + First Load JS shared by all            99.7 kB
+#18 38.35   ├ chunks/215-a3f73414e7a53249.js       45.2 kB
+#18 38.35   ├ chunks/4bd1b696-a68be980f5bb30a7.js  52.6 kB
+#18 38.35   └ other shared chunks (total)          1.94 kB
+#18 38.35 
+#18 38.35 
+#18 38.35 ƒ  (Dynamic)  server-rendered on demand
+#18 38.35 
+#18 38.42 npm notice
+#18 38.42 npm notice New major version of npm available! 10.8.2 -> 12.2.2
+#18 38.42 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+#18 38.42 npm notice To update run: npm install -g npm@12.2.2
+#18 38.42 npm notice
+#18 DONE 38.6s
+
+#19 [runner 3/5] COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+#19 DONE 0.0s
+
+#20 [runner 4/5] COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+#20 DONE 0.3s
+
+#21 [runner 5/5] COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+#21 DONE 0.0s
+WARNING: No output specified with docker-container driver. Build result will only remain in the build cache. To push result image into registry use --push or to load image into docker use --load
+Pushing multi-arch image to registry...
+#0 building with "multi-arch" instance using docker-container driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.42kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.6
+#2 DONE 0.2s
+
+#3 docker-image://docker.io/docker/dockerfile:1.6@sha256:ac85f380a63b13dfcefa89046420e1781752bab202122f8f50032edf31be0021
+#3 resolve docker.io/docker/dockerfile:1.6@sha256:ac85f380a63b13dfcefa89046420e1781752bab202122f8f50032edf31be0021 done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/node:20-alpine
+#4 DONE 0.0s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 2B done
+#5 DONE 0.0s
+
+#6 [base 1/3] FROM docker.io/library/node:20-alpine@sha256:36f36a786b36779ab4a8af9b3ded5f15e3ba417b21c2672200c06e9387a55c8c
+#6 resolve docker.io/library/node:20-alpine@sha256:36f36a786b36779ab4a8af9b3ded5f15e3ba417b21c2672200c06e9387a55c8c done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 3.14kB done
+#7 DONE 0.0s
+
+#8 [builder 3/4] COPY .env.production .env
+#8 CACHED
+
+#9 [builder 2/4] COPY . .
+#9 CACHED
+
+#10 [deps 2/2] RUN --mount=type=cache,id=npm-cache,target=/root/.npm     npm ci
+#10 CACHED
+
+#11 [base 3/3] RUN apk add --no-cache libc6-compat
+#11 CACHED
+
+#12 [runner 1/5] WORKDIR /app
+#12 CACHED
+
+#13 [runner 3/5] COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+#13 CACHED
+
+#14 [base 2/3] WORKDIR /app
+#14 CACHED
+
+#15 [runner 2/5] RUN addgroup -g 1001 -S nodejs     && adduser -S nextjs -u 1001
+#15 CACHED
+
+#16 [builder 4/4] RUN npm run build
+#16 CACHED
+
+#17 [builder 1/4] COPY --from=deps /app/node_modules ./node_modules
+#17 CACHED
+
+#18 [deps 1/2] COPY package.json package-lock.json ./
+#18 CACHED
+
+#19 [runner 4/5] COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+#19 CACHED
+
+#20 [runner 5/5] COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+#20 CACHED
+
+#21 exporting to image
+#21 exporting layers
+#21 exporting layers 1.9s done
+#21 exporting manifest sha256:d0dbb97ce53f2065d439095ab6b7d484c82d13c4b459ef2c698a1ba432ce3a04 done
+#21 exporting config sha256:8f254994083496871142633a77e9b70f0699065bf79c1bdb0f181c2b3d41553d done
+#21 exporting attestation manifest sha256:b85aa67fe8ee620bd5439ffac1ba81513a1fe71647ee2dec2c513ea8cb29af12 done
+#21 exporting manifest list sha256:4e1f68386dbeecb38598e8415e0b604d623f1f7bcc13c53d6477e80cd3f8eb2c done
+#21 pushing layers
+#21 pushing layers 0.6s done
+#21 ERROR: failed to push dlops/cheese-app-frontend-react: push access denied, repository does not exist or may require authorization: server message: insufficient_scope: authorization failed
+------
+ > exporting to image:
+------
+ERROR: failed to build: failed to solve: failed to push dlops/cheese-app-frontend-react: push access denied, repository does not exist or may require authorization: server message: insufficient_scope: authorization failed
+[exit 1]

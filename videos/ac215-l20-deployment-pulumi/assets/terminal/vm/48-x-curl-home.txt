@@ -1,0 +1,11 @@
+$ curl -s -i http://localhost/ | head -8; curl -s http://localhost/ | grep -o '<title>[^<]*</title>'
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 05 Nov 2026 22:14:17 GMT
+Content-Type: text/html; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch, Accept-Encoding
+link: </_next/image?url=%2Fassets%2Fcheese-platter.png&w=3840&q=75>; rel=preload; as="image"; imagesrcset="/_next/image?url=%2Fassets%2Fcheese-platter.png&w=640&q=75 640w%2C /_next/image?url=%2Fassets%2Fcheese-platter.png&w=750&q=75 750w%2C /_next/image?url=%2Fassets%2Fcheese-platter.png&w=828&q=75 828w%2C /_next/image?url=%2Fassets%2Fcheese-platter.png&w=1080&q=75 1080w%2C /_next/image?url=%2Fassets%2Fcheese-platter.png&w=1200&q=75 1200w%2C /_next/image?url=%2Fassets%2Fcheese-platter.png&w=1920&q=75 1920w%2C /_next/image?url=%2Fassets%2Fcheese-platter.png&w=2048&q=75 2048w%2C /_next/image?url=%2Fassets%2Fcheese-platter.png&w=3840&q=75 3840w"; imagesizes="(max-width: 768px) 100vw%2C (max-width: 1200px) 400px"
+<title>Formaggio</title>
+[exit 0]

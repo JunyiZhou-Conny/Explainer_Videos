@@ -1,0 +1,6 @@
+$ sed -i 's/^FROM python:3.13-slim-bullseye/FROM python:3.13-slim-bookworm/' Dockerfile; grep -n '^FROM' Dockerfile; git diff --stat
+4:FROM python:3.13-slim-bookworm
+ src/deployment/Dockerfile      | 2 +-
+ src/deployment/docker-shell.sh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+[exit 0]
