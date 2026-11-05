@@ -465,10 +465,14 @@ class ScreensToRoutes(VoiceScene):
         with self.voiceover(SAY[5]) as vo:
             rt.probes(self, run_time=0.4)
             ry = rt.nodes["readyz"]
-            lp = lamp("amber", 0.17).move_to([ry.get_left()[0] + 0.25, ry.get_bottom()[1] - 0.3, 0])
-            assert lp.get_top()[1] < ry.get_bottom()[1] + 0.02, (lp.get_top(), ry.get_bottom())
+            # the lamp hangs from the readyz leaf itself (left end: the /api -> square_root edge
+            # crosses just right of it) and the leaf's outline takes the lamp's colour
+            lp = lamp("amber", 0.17)
+            lp.move_to([ry.get_left()[0] + 0.3, ry.get_bottom()[1] - 0.04 - lp.height / 2, 0])
+            assert lp.get_top()[1] < ry.get_bottom()[1] - 0.01, (lp.get_top(), ry.get_bottom())
             assert lp.get_bottom()[1] > rt.nodes["api"].get_top()[1] + 0.02
-            rt.show(self, lp, anims=[FadeIn(lp, scale=1.3)], run_time=0.4)
+            rt.show(self, lp, anims=[FadeIn(lp, scale=1.3)], run_time=0.4,
+                    extra=[ry.box.animate.set_stroke(AMBER)])
             # the reload: the app starts again (the model loads), then startup completes
             out(self, ut, B21.at(70, 71) + [(B21.line(72), OWN)], run_time=0.5)
             vo.wait_until("and readyz is back to 200")
@@ -476,7 +480,10 @@ class ScreensToRoutes(VoiceScene):
             type_capture(self, tab, B30, type_time=0.45)
             bar_tag(self, tab, extra_row())
             out(self, tab, [(s, OWN) for s in B30.at(2, 3)], run_time=0.5)
-            lp = rt.swap(self, lp, lamp("green", 0.17).move_to(lp), run_time=0.5)
+            lp = rt.swap(self, lp, lamp("green", 0.17).move_to(lp), run_time=0.5,
+                         extra=[ry.box.animate.set_stroke(OWN)])
+            self.play(Indicate(ry, color=OWN, scale_factor=1.15), Indicate(lp, color=OWN, scale_factor=1.3),
+                      run_time=0.6)
 
         # ========================================================== 6. step 6: try the route
         br = Browser("localhost:9000/api/square_root", win_w=6.3, win_h=1.55)
@@ -511,6 +518,7 @@ class ScreensToRoutes(VoiceScene):
             # the docs check and the extra listing fold onto 2 and 5 rows: the strip grows over the tree
             # for them, then shrinks back under it for the leaves
             self.play(FadeOut(turn6), FadeOut(rt), *unbar(tab), run_time=0.4)
+            ry.box.set_stroke(ROUTE)                     # the readyz leaf back to a plain route
             clear_lines(self, tab)
             resize(self, tab, 10, run_time=0.5)
             type_capture(self, tab, B31, type_time=0.6)

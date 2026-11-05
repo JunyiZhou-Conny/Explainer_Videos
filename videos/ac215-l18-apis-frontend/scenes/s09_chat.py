@@ -14,18 +14,20 @@ Beats (script.md "## S09", one voiceover block each):
    opens, the bubble fills, two rows (user, assistant) append, the file flashes ("saves") and the
    bubble empties ("forgets").
 2. Tracker [B] 9 · extra. CODE(chat.py: 19–23) under V7 (line 20's regex cut, line 21's "str, "
-   elided), line 21 YELLOW, X-Session-ID PINK. The panel gives way to a 4-row `second tab` strip (bar
-   tag extra): b36 (folds) → b36:2 wrap, 3 (missing … X-Session-ID YELLOW, 422 RED); the envelope
-   without a key bounces RED, 422 chip. b37 → b37:2–3; an empty envelope bounces, 422.
-3. Strip: b39 (folds) → b39:2 from "\"role\":\"cnn\"" (wrap), 3; prediction_label … 58.22 YELLOW,
-   [HTTP 200] GREEN. Chips: "photo step: offline" under the browser, "photo payload:
-   news-letters/assets/blue-cheese.jpg" (the repo's own photo). The PURPLE CNN box under the API
+   elided), line 21 YELLOW, X-Session-ID PINK. The panel gives way to a 6-row `second tab` strip (bar
+   tag extra): b36 (folds with ' \', 5 rows, held whole) → b36:2 wrap, 3 (missing … X-Session-ID
+   YELLOW, 422 RED); the envelope without a key bounces (outline RED, under the API's name), 422 chip
+   above the API box. b37 (folds, held) → b37:2–3; an empty envelope bounces, 422.
+3. Strip (6 rows): b39 (folds, 6 rows, held whole) → the strip shrinks to 4 keeping its -H/-d rows →
+   b39:2 from "\"role\":\"cnn\"" (wrap), 3; prediction_label … 58.22 YELLOW, [HTTP 200] GREEN.
+   Chips: "photo step: offline" above the API box, the body of /tmp/identify.json
+   {"image": "<base64 of news-letters/assets/blue-cheese.jpg>"} (the repo's own photo). The PURPLE CNN box under the API
    answers "a guess"; on "A follow-up question" the payload chip gives way to a GREY dashed arrow to a
    dashed chip "follow-up question → Gemini" (never taken).
 4. Strip: extra b42 (folds) → b42:2–3 (wrap): llm-cnn/ and .json GREEN, the UUIDs GREY. V7's file
    now holds the identify chat (user: a photo · cnn: parmigiano, 58.22), its path flashes; the GREEN
    folder llm-cnn/images/ with a photo lands under it.
-5. Strip: extra b38 (folds); on "and here it stops" a PINK arrow API → BLUE dashed "Vertex AI ·
+5. Strip grows to 6: extra b38 (folds, held whole); on "and here it stops" it shrinks to 4 and a PINK arrow API → BLUE dashed "Vertex AI ·
    Gemini" cloud, GOLD cost tag "with your key: billed", a RED cross at the cloud; b38:2–3 RED. On
    "The API's terminal shows why" the strip becomes the uvicorn terminal (`laptop`): b21:92 (wrap,
    the POST … 500 RED), …, 174 (GREY: line 67, in start_chat); on "the same invalid grant" …, 261 (RED,
@@ -43,9 +45,10 @@ Beats (script.md "## S09", one voiceover block each):
    prompt of b44:3 `pytest` → b44:5, 11, 13–14, 16 (wrap), line 16 GREEN; a GREEN "26 passed" badge
    grows out of it; ▶ your turn and "at the time of recording" on the bar.
 9. The terminal goes; V5's laptop (API and vector-db boxes, cable) appears and the badge settles on
-   the API box. A README card (README.md · line 145) "Keep this container running." The empty GREY
-   browser at localhost:3000 (illustration); a PINK dashed arrow leaves the page and stops at a YELLOW
-   "?" before the 9000 door. Fade; empty frame.
+   the API box (opaque backing: the edge does not strike it through). A README card (README.md · line
+   145) "Keep this container running." The empty GREY browser at localhost:3000 (illustration); a PINK
+   dashed arrow leaves the page and stops well short of the laptop, a YELLOW "?" right after it; on
+   "so how does that reach 9000" the "?" and the 9000 door pulse; held 1.5 s. Fade; empty frame.
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)
@@ -103,12 +106,50 @@ assert len(R134.split("\n")) == 5
 CF_DOWN = DOWN * 0.3           # V7 alone (beat 1): a little under the middle
 CF_UP = UP * 0.85              # from beat 2 on V7 sits higher (net +0.55), so a 4-row 20 pt strip fits under it
 STRIP_ROWS, STRIP_PT = 4, 20
+TALL_ROWS = 6                  # the strip while a folded extra (b36-b39: 5-6 rows) is typed and held in full
 
 
 # ------------------------------------------------------------------ local helpers
-def strip(prompt=P_V2_API, title=T_TAB) -> Terminal:
+def strip(prompt=P_V2_API, title=T_TAB, rows: int = STRIP_ROWS) -> Terminal:
     """The house strip for this scene: 4 rows at 20 pt (72 characters), full width, on BOTTOM."""
-    return term(prompt, STRIP_ROWS, title, size=STRIP_PT)
+    return term(prompt, rows, title, size=STRIP_PT)
+
+
+def regrow(scene, t: Terminal, rows: int, keep=None, run_time: float = 0.5):
+    """PLAYS: resize() the strip (bottom edge kept), its title-bar tag riding along with the bar."""
+    dy = strip(rows=rows).box.get_top()[1] - t.box.get_top()[1]
+    tg = getattr(t, "bar_tag", None)
+    extra = [tg.animate.shift(UP * dy)] if tg is not None else []
+    resize(scene, t, rows, keep=keep, extra=extra, run_time=run_time)
+    scene.add(t)
+
+
+def bounce(scene, cf, text: str, key: bool, code: str = "422", run_time: float = 1.0):
+    """PLAYS: cf.post(ok=False) kept clear of the API's name: the envelope (key on its left) travels
+    low, into the bottom of the API box under its name, and bounces back with only its outline and
+    text turning RED (the fill stays dark). The RED `code` chip lands above the API box (the strip
+    is tall here). Returns the chip (a mark of cf)."""
+    env = envelope(text, ROUTE)
+    lead = 0.05
+    if key:
+        kg = key_glyph(0.35, ROUTE, dashed=False).next_to(env, LEFT, buff=0.06)
+        env.add(kg)
+    y = cf.api.frame.get_bottom()[1] + 0.36
+    env.move_to([cf.browser.frame.get_right()[0] + lead + env.width / 2, y, 0])
+    scene.add(env)
+    scene.play(env.animate.shift(RIGHT * 0.3), run_time=run_time * 0.4)
+    back = env.copy().shift(LEFT * 0.35 + DOWN * 0.18)
+    back.set_stroke(ERR)
+    back.text.set_color(ERR)
+    back.body.set_fill(S.BG, 1)
+    scene.play(Transform(env, back), run_time=run_time * 0.3)
+    e = err_chip(code)
+    e.move_to([cf.api.frame.get_left()[0] + e.width / 2, cf.api.frame.get_top()[1] + 0.12 + e.height / 2, 0])
+    scene.play(FadeOut(env), FadeIn(e), run_time=run_time * 0.3)
+    scene.remove(env)
+    cf.marks.add(e)
+    cf.heal(scene)
+    return e
 
 
 def bar_tag(scene, t: Terminal, tg, left: bool = False):
@@ -272,7 +313,7 @@ class ChatIsAFile(VoiceScene):
         # ========================================================== 2. extras: no key, no message -> 422
         p19 = code(CHAT, 19, 23, font_size=20, cuts=CUT20, elide=ELIDE21)
         p19.move_to([0, 0, 0]).align_to([0, BOTTOM + 0.05, 0], DOWN)
-        t = strip()
+        t = strip(rows=TALL_ROWS)
         with self.voiceover(SAY[2]) as vo:
             self.play(track(trk, 9, True), FadeOut(uuid), cf.animate.shift(CF_UP), ill.animate.shift(CF_UP),
                       run_time=0.6)
@@ -286,31 +327,47 @@ class ChatIsAFile(VoiceScene):
             vo.wait_until("no session ID")
             self.play(FadeOut(VGroup(p19, bar21)), FadeIn(t), run_time=0.5)
             bar_tag(self, t, extra_row())
-            type_cmd(self, t, B36.cmd, type_time=0.9, soft=True)
+            type_cmd(self, t, B36.cmd, type_time=1.4, soft=False)    # folds with ' \\' into 5 of the 6 rows
+            self.wait(1.6)                                           # the whole command, held to read
             rows = out(self, t, B36.at(2), wrap=True)
             paint(self, t, across(rows, '"missing"') + across(rows, '"X-Session-ID"'), TURN)
             out(self, t, [(B36.line(3), ERR)])
-            e1 = cf.post(self, "message", key=False, code="422", run_time=1.0)
-            type_cmd(self, t, B37.cmd, type_time=0.9, soft=True)
+            e1 = bounce(self, cf, "message", key=False, code="422")
+            clear_lines(self, t)
+            type_cmd(self, t, B37.cmd, type_time=1.4, soft=False)
+            self.wait(1.6)
             out(self, t, [B37.line(2), (B37.line(3), ERR)])
             cf.drop(self, e1, run_time=0.3)
-            cf.post(self, "{}", key=True, ok=False, code="422", run_time=1.0)
+            bounce(self, cf, "{}", key=True, code="422")
 
         # ========================================================== 3. extra: Identify, offline
-        offline = grey_chip("photo step: offline").next_to(cf.browser.frame, DOWN, buff=0.15)
-        offline.align_to(cf.browser.frame, LEFT)
-        payload = VGroup(label("photo payload:", 20, S.GREY), mono("news-letters/assets/blue-cheese.jpg", 20, INK))
-        payload.arrange(RIGHT, buff=0.15)
+        # the tall strip covers the band under V7 while b39 is typed: the chip sits above the API box
+        offline = grey_chip("photo step: offline")
+        offline.move_to([cf.api.frame.get_right()[0] - 0.45 - offline.width / 2,
+                         cf.api.frame.get_top()[1] + 0.12 + offline.height / 2, 0])
+        assert offline.get_left()[0] > cf.browser.frame.get_right()[0] + 0.1, offline.get_left()
+        assert offline.get_right()[0] < cf.bubble.get_left()[0] - 0.05, (offline.get_right(), cf.bubble.get_left())
+        # the body of -d @/tmp/identify.json (run_steps.sh:294 builds it with one python3 line, capture-only)
+        payload = VGroup(
+            VGroup(mono("/tmp/identify.json", 20, INK), label("holds the photo payload:", 20, S.GREY)).arrange(RIGHT, buff=0.15),
+            mono('{"image": "<base64 of news-letters/assets/blue-cheese.jpg>"}', 20, INK),
+        ).arrange(DOWN, buff=0.12, aligned_edge=LEFT)
         pbox = outline_box(payload.width + 0.4, payload.height + 0.3, S.GREY, solid=True)
         payload = VGroup(pbox, payload.move_to(pbox))
-        payload.move_to([SAFE_X - 0.1 - payload.width / 2, -0.6, 0])
+        band_top = cf.browser.frame.get_bottom()[1]
+        band_low = strip().box.get_top()[1]
+        payload.move_to([0, (band_top + band_low) / 2, 0])
+        assert payload.get_top()[1] < band_top - 0.03 and payload.get_bottom()[1] > band_low + 0.03, payload.get_bottom()
+        assert payload.width < 2 * SAFE_X - 0.2, payload.width
         with self.voiceover(SAY[3]) as vo:
             clear_lines(self, t)
             cf.drop(self, *list(cf.marks), run_time=0.3)
             self.play(FadeIn(offline, shift=UP * 0.1), run_time=0.4)
-            type_cmd(self, t, B39.cmd, soft=True)
+            type_cmd(self, t, B39.cmd, type_time=1.6, soft=False)   # 6 folded rows: the whole strip
+            self.wait(1.4)
             vo.wait_until("We send the repository's own")
-            self.play(FadeIn(payload, shift=LEFT * 0.15), run_time=0.5)
+            regrow(self, t, STRIP_ROWS, keep=2)                       # -H X-Session-ID, -d @/tmp/identify.json
+            self.play(FadeIn(payload, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("and the CNN guesses parmigiano")
             rows = out(self, t, [B39_2], wrap=True)
             self.play(FadeOut(payload), run_time=0.3)
@@ -366,9 +423,12 @@ class ChatIsAFile(VoiceScene):
         assert exp.get_top()[1] < cost.get_bottom()[1] - 0.05, (exp.get_top(), cost.get_bottom())
         with self.voiceover(SAY[5]) as vo:
             clear_lines(self, t)
-            type_cmd(self, t, B38.cmd, soft=True)
+            cf.drop(self, *list(cf.marks), run_time=0.3)              # the images folder is in the tall strip's way
+            regrow(self, t, TALL_ROWS)
+            type_cmd(self, t, B38.cmd, type_time=1.6, soft=False)   # 6 folded rows: the whole strip
+            self.wait(1.4)
             vo.wait_until("and here it stops")
-            cf.drop(self, *list(cf.marks), run_time=0.3)
+            regrow(self, t, STRIP_ROWS, keep=2)                       # -H X-Session-ID, -d '{"content": ...}'
             self.play(FadeIn(cl), GrowArrow(g_arrow), FadeIn(cost), run_time=0.8)
             self.play(FadeIn(cross, scale=1.3), g_arrow.animate.set_color(ERR), run_time=0.5)
             vo.wait_until("Internal Server Error")
@@ -486,19 +546,24 @@ class ChatIsAFile(VoiceScene):
         b_target = api_box.get_top() + RIGHT * 0.45
         start = tr.browser.at(-0.35, 0.0)
         start[1] = tr.net.row_y("api")
-        stop = np.array([tr.divider.get_x() - 0.22, start[1], 0])
+        stop = np.array([tr.divider.get_x() - 0.7, start[1], 0])   # clearly short of the laptop: the way is open
         call = DashedVMobject(Arrow(start, stop, buff=0.02, color=ROUTE, stroke_width=4, tip_length=0.18,
                                     max_tip_length_to_length_ratio=0.35), num_dashes=7).set_stroke(ROUTE, 4)
-        q = label("?", 36, TURN).move_to([tr.divider.get_x() + 0.12, start[1], 0])
+        q = label("?", 36, TURN).move_to([(stop[0] + tr.divider.get_x()) / 2, start[1], 0])
         assert q.get_right()[0] < tr.net.door_point("api")[0] - 0.05, (q.get_right(), tr.net.door_point("api"))
         btag = illustration_tag().next_to(tr.browser.frame, UP, buff=0.12).align_to(tr.browser.frame, LEFT)
+        # the badge sits ON the box's top edge: an opaque backing keeps the edge from striking it through
+        backing = badge.box.copy().set_stroke(width=0).set_fill(S.BG, 1)
+        badge.add_to_back(backing)
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(nt), FadeIn(tr.net), run_time=0.7)
             self.add(badge)                          # in front of the laptop's opaque frame
             self.play(badge.animate.move_to(b_target), run_time=0.7)
             self.play(FadeIn(keep, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("The API is ready")
-            self.play(Indicate(badge, color=OWN, scale_factor=1.1), tr.net.door_pulse("api"), run_time=0.8)
+            self.play(Indicate(VGroup(badge.box, badge.text), color=OWN, scale_factor=1.1), tr.net.door_pulse("api"),
+                      run_time=0.8)
+            self.add(badge)
             vo.wait_until("but nobody can use it from a browser yet")
             self.play(FadeIn(tr.browser), FadeIn(tr.divider), FadeIn(btag), run_time=0.6)
             self.remove(badge)
@@ -508,9 +573,10 @@ class ChatIsAFile(VoiceScene):
             self.play(Indicate(tr.browser.address, color=ROUTE, scale_factor=1.15), run_time=0.6)
             tr.heal(self)
             tr.show(self, call, anims=[Create(call)], run_time=0.8, into=tr.marks)
+            tr.show(self, q, anims=[FadeIn(q, scale=1.4)], run_time=0.5, into=tr.marks)
             vo.wait_until("so how does that reach 9000")
-            tr.show(self, q, anims=[FadeIn(q, scale=1.4)], extra=[tr.net.door_pulse("api")], run_time=0.7,
-                    into=tr.marks)
-            self.wait(0.8)
+            self.play(Indicate(q, color=TURN, scale_factor=1.3), tr.net.door_pulse("api"), run_time=0.8)
+            tr.heal(self)
+            self.wait(1.5)
             self.play(FadeOut(VGroup(tr, btag, keep)), FadeOut(trk), run_time=0.8)
         self.wait(0.3)

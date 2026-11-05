@@ -148,6 +148,19 @@ def strip_at(rows: int, title: str, prompt: str = P_LAPTOP, size: float = 20, bo
     return t
 
 
+def cable_walks(net):
+    """QA 20:20: the courier's walks stop on the cable at the API's row instead of running into the API
+    box over its 'uvicorn' chip (common.py's path ends at the box's right side). Scene-local override
+    of net._walk_path; the same points as common.py without the last one."""
+    def path(back: bool):
+        x_c = net.p(net.CABLE_X, 0)[0]
+        pts = [net.courier.get_center(), [x_c, net.row_y("front"), 0], [x_c, net.row_y("api"), 0]]
+        if back:
+            pts = pts[::-1]
+        return VMobject().set_points_as_corners([np.array(p, dtype=float) for p in pts])
+    net._walk_path = path
+
+
 class OneOrigin(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S11"] == 9, len(SAY)
@@ -156,6 +169,7 @@ class OneOrigin(VoiceScene):
         tr = RequestTrace("localhost:3000", rows=("front", "api", "vdb"), front="react", courier="?",
                           caption=False, browser_w=4.1).shift(UP * SHIFT_UP)
         net = tr.net
+        cable_walks(net)
         ill = illustration_tag().next_to(tr.browser, DOWN, buff=0.1).align_to(tr.browser, LEFT)
         assert tr.get_top()[1] <= 2.86, tr.get_top()
         assert net.frame.get_left()[0] > trk.get_right()[0], (net.frame.get_left(), trk.get_right())
@@ -193,14 +207,17 @@ class OneOrigin(VoiceScene):
             vo.wait_until("with the session ID")
             b34 = line_bar(pa.code, 1, ROUTE)
             self.play(FadeIn(b34), code_span(pa.code, 1, "'X-Session-ID'").animate.set_color(ROUTE),
-                      run_time=0.5)
+                      run_time=0.4)
             self.add(pa, b44, b34)
-            vo.wait_until("from local storage")
+            self.wait(0.3)
+            # QA 20:03: lines 17-24 come in on "with the session ID" (not "from local storage"), so the
+            # localStorage panel holds ~3.5 s instead of ~1.5 s
             self.play(FadeOut(VGroup(pa, b44, b34, rel)), FadeIn(pb, shift=UP * 0.15), run_time=0.6)
             ls = VGroup(*[code_span(pb.code, k, "localStorage") for k in (2, 5)])
+            vo.wait_until("from local storage")
             self.play(ls.animate.set_color(TURN), run_time=0.4)
             self.add(pb)
-            self.play(Indicate(ls, color=TURN, scale_factor=1.12), run_time=0.7)
+            self.play(Indicate(ls, color=TURN, scale_factor=1.05), run_time=0.7)
             self.add(pb)
 
         # ========================================================== 1. vite.config.js: the courier
@@ -256,22 +273,23 @@ class OneOrigin(VoiceScene):
             assert dc.get_right()[0] < bk.get_left()[0] - 0.1 or dc.get_bottom()[1] > bk.get_top()[1] + 0.1, \
                 (dc.get_bottom(), bk.get_top())
             vo.wait_until("carries each slash api request")
-            self.play(net.book_light(1), run_time=0.5)
+            self.play(net.book_light(1), run_time=0.4)
             net.heal(self)
-            tr.hop(self, 3.5, run_time=0.7)
-            vo.wait_until("across the network")
+            tr.hop(self, 3.5, run_time=0.6)
             tr.hop(self, 4, "api", run_time=0.4)
-            tr.hop(self, 5, "api", run_time=0.4)
-            net.drop(self, bk, run_time=0.3, extra=[FadeOut(dc)])
+            # QA 20:27: the strip (and d04's command) is in before "That is why uvicorn answered", so the
+            # proof lands on its sentence; the reply (hop 5) travels back as the output prints
+            tagS = on_bar(tS, extra_row())
+            tS.add(tagS)
+            net.drop(self, bk, run_time=0.4, extra=[FadeOut(dc), FadeIn(tS, shift=UP * 0.2)])
             net.book = None
-            self.play(FadeIn(tS, shift=UP * 0.2), run_time=0.4)
-            tagS = bar_tag(self, tS, extra_row())
-            type_capture(self, tS, D04, type_time=0.4)
+            type_capture(self, tS, D04, type_time=0.25)
             vo.wait_until("That is why uvicorn answered")
             o2 = out(self, tS, D04.at(2, 5), run_time=0.4)
             srv = o2[1]
             assert srv.text == "server: uvicorn"
             self.play(srv.animate.set_color(TURN), run_time=0.3)
+            tr.hop(self, 5, "api", run_time=0.4)
             self.play(Indicate(srv, color=TURN, scale_factor=1.08), net.boxes["api"].animate(
                 rate_func=there_and_back).set_stroke(TURN, width=6), run_time=0.7)
             self.add(tS)
@@ -427,6 +445,11 @@ class OneOrigin(VoiceScene):
         qrow = grey_chip("How is Tolminc cheese made?")
         cost = cost_tag("Gemini · with your key: billed")
         turn = your_turn()
+        idn = card(["identify.json: a photo, made off camera",
+                    "in the app: the camera button"], S.GREY, size=20)
+        idn.next_to(illc, DOWN, buff=0.15).align_to(illc, LEFT)          # between the tag and the cost tag
+        assert idn.get_right()[0] < SAFE_X, idn.get_right()
+        assert idn.get_bottom()[1] > bc.frame.get_bottom()[1] + 0.75, (idn.get_bottom(), bc.frame.get_bottom())
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(tT, tV, rc)), track(trk, 5), run_time=0.5)
             self.play(FadeIn(tr), FadeIn(ill), run_time=0.5)
@@ -450,16 +473,18 @@ class OneOrigin(VoiceScene):
             tr.heal(self)
             del call7
             vo.wait_until("In chat, Identify")
-            self.play(FadeOut(tr), FadeOut(ill), run_time=0.4)
-            self.play(FadeIn(bc), FadeIn(illc), FadeIn(tC, shift=UP * 0.2), run_time=0.5)
+            tC.add(on_bar(tC, extra_row()))
+            self.play(FadeOut(tr), FadeOut(ill), FadeIn(bc), FadeIn(illc), FadeIn(tC, shift=UP * 0.2), run_time=0.6)
             bc.fill(self, [modes], run_time=0.3)
-            bar_tag(self, tC, extra_row())
             self.play(modes[1].animate.set_color(TURN), run_time=0.3)
             type_capture(self, tC, D07, type_time=0.2)
+            # QA 21:35: the viewer cannot copy -d @/tmp/identify.json; say what it is and the app's route
+            self.play(FadeIn(idn, shift=LEFT * 0.1), run_time=0.4)
             o7 = out(self, tC, [(D07.line(3), OWN)], run_time=0.3)
             self.play(Indicate(o7[0], color=OWN), modes[1].box.animate.set_stroke(OWN), run_time=0.5)
             self.add(tC)
             bc.heal(self)
+            self.wait(1.0)                                   # QA 21:38: [HTTP 200] holds before d06 scrolls it
             vo.wait_until("Ask, and Cheese books")
             cost.next_to(bc.frame, RIGHT, buff=0.2).align_to(bc.frame, DOWN).shift(UP * 0.1)
             assert cost.get_right()[0] < SAFE_X, cost.get_right()
@@ -479,7 +504,7 @@ class OneOrigin(VoiceScene):
             bc.heal(self)
             vo.wait_until("Pause and click through")
             turn.next_to(bc.frame, RIGHT, buff=0.2).align_to(bc.frame, UP).shift(DOWN * 0.6)
-            self.play(FadeIn(turn, shift=LEFT * 0.1), run_time=0.4)
+            self.play(FadeOut(idn), FadeIn(turn, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, turn, TURN)
 
         # ========================================================== 8. the code table; npm run check

@@ -1,0 +1,220 @@
+$ pulumi up --stack dev --refresh -y --target 'urn:pulumi:dev::deploy-images::docker-build:index:Image::build-cheese-app-frontend-react'
+Previewing update (dev):
+
+ +  pulumi:pulumi:Stack deploy-images-dev create 
+@ previewing update....
+ +  docker-build:index:Image build-cheese-app-frontend-react create 
+ +  docker-build:index:Image build-cheese-app-frontend-react create warning: Skipping preview build because some inputs are unknown.
+ +  pulumi:pulumi:Stack deploy-images-dev create 
+Diagnostics:
+  docker-build:index:Image (build-cheese-app-frontend-react):
+    warning: Skipping preview build because some inputs are unknown.
+
+Outputs:
+    cheese-app-api-service-ref    : [unknown]
+    cheese-app-api-service-tags   : [unknown]
+    cheese-app-frontend-react-ref : [unknown]
+    cheese-app-frontend-react-tags: [
+        [0]: "us-docker.pkg.dev/ac215-project/cheese-app-repository/cheese-app-frontend-react:20261105233502"
+    ]
+    cheese-app-vector-db-cli-ref  : [unknown]
+    cheese-app-vector-db-cli-tags : [unknown]
+
+Resources:
+    + 2 to create
+    2 unchanged
+
+Updating (dev):
+
+ +  pulumi:pulumi:Stack deploy-images-dev creating (0s) 
+@ updating....
+ +  docker-build:index:Image build-cheese-app-frontend-react creating (0s) 
+@ updating.....
+ +  docker-build:index:Image build-cheese-app-frontend-react creating (1s) error: failed to solve: failed to resolve source metadata for docker.io/docker/dockerfile:1.6: failed to do request: Head "https://registry-1.docker.io/v2/docker/dockerfile/manifests/1.6": tls: failed to verify certificate: x509: certificate signed by unknown authority
+ +  docker-build:index:Image build-cheese-app-frontend-react **creating failed** error: failed to solve: failed to resolve source metadata for docker.io/docker/dockerfile:1.6: failed to do request: Head "https://registry-1.docker.io/v2/docker/dockerfile/manifests/1.6": tls: failed to verify certificate: x509: certificate signed by unknown authority
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) error: update failed
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) Traceback (most recent call last):
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1084, in do_rpc_call
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     return monitor.RegisterResource(req)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)            ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/home/app/.venv/lib/python3.13/site-packages/grpc/_channel.py", line 1166, in __call__
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     return _end_unary_response_blocking(state, call, False, None)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/home/app/.venv/lib/python3.13/site-packages/grpc/_channel.py", line 996, in _end_unary_response_blocking
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     raise _InactiveRpcError(state)  # pytype: disable=not-instantiable
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) 	status = StatusCode.UNAVAILABLE
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) 	details = "resource monitor shut down while waiting on step's done channel"
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) 	debug_error_string = "UNKNOWN:Error received from peer  {grpc_status:14, grpc_message:"resource monitor shut down while waiting on step\'s done channel"}"
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) >
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) During handling of the above exception, another exception occurred:
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) Traceback (most recent call last):
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/rpc_manager.py", line 73, in rpc_wrapper
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     result = await rpc
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)              ^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1088, in do_register
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     resp = await asyncio.get_event_loop().run_in_executor(None, do_rpc_call)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     result = self.fn(*self.args, **self.kwargs)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1086, in do_rpc_call
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     handle_grpc_error(exn)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     ~~~~~~~~~~~~~~~~~^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/settings.py", line 324, in handle_grpc_error
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     raise grpc_error_to_exception(exn)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) pulumi.errors.RunError: Resource monitor has terminated, shutting down
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) During handling of the above exception, another exception occurred:
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) Traceback (most recent call last):
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/root/.pulumi/bin/pulumi-language-python-exec", line 232, in <module>
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     loop.run_until_complete(coro)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 713, in run_until_complete
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     self.run_forever()
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     ~~~~~~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 684, in run_forever
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     self._run_once()
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     ~~~~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/asyncio/base_events.py", line 2061, in _run_once
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     handle._run()
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     ~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/asyncio/events.py", line 89, in _run
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     self._context.run(self._callback, *self._args)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/rpc_manager.py", line 77, in rpc_wrapper
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     log.debug(traceback.format_exc())
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)               ~~~~~~~~~~~~~~~~~~~~^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/traceback.py", line 212, in format_exc
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     return "".join(format_exception(sys.exception(), limit=limit, chain=chain))
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)                    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/traceback.py", line 154, in format_exception
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     te = TracebackException(type(value), value, tb, limit=limit, compact=True)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/traceback.py", line 1051, in __init__
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     self.stack = StackSummary._extract_from_extended_frame_gen(
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)         _walk_tb_with_full_positions(exc_traceback),
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)         limit=limit, lookup_lines=lookup_lines,
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)         capture_locals=capture_locals)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/traceback.py", line 475, in _extract_from_extended_frame_gen
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     for f, (lineno, end_lineno, colno, end_colno) in frame_gen:
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)                                                      ^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/traceback.py", line 407, in _walk_tb_with_full_positions
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     positions = _get_code_position(tb.tb_frame.f_code, tb.tb_lasti)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/traceback.py", line 421, in _get_code_position
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     return next(itertools.islice(positions_gen, instruction_index // 2, None))
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) KeyboardInterrupt
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) During handling of the above exception, another exception occurred:
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) Traceback (most recent call last):
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/root/.pulumi/bin/pulumi-language-python-exec", line 244, in <module>
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     executor.shutdown(wait=True)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 239, in shutdown
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     t.join()
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     ~~~~~~^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)   File "/usr/local/lib/python3.13/threading.py", line 1095, in join
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     self._handle.join(timeout)
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s)     ~~~~~~~~~~~~~~~~~^^^^^^^^^
+ +  pulumi:pulumi:Stack deploy-images-dev creating (2s) KeyboardInterrupt
+ +  pulumi:pulumi:Stack deploy-images-dev **creating failed** 1 error; 84 messages
+Diagnostics:
+  pulumi:pulumi:Stack (deploy-images-dev):
+    error: update failed
+
+    Traceback (most recent call last):
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1084, in do_rpc_call
+        return monitor.RegisterResource(req)
+               ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+      File "/home/app/.venv/lib/python3.13/site-packages/grpc/_channel.py", line 1166, in __call__
+        return _end_unary_response_blocking(state, call, False, None)
+      File "/home/app/.venv/lib/python3.13/site-packages/grpc/_channel.py", line 996, in _end_unary_response_blocking
+        raise _InactiveRpcError(state)  # pytype: disable=not-instantiable
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:
+    	status = StatusCode.UNAVAILABLE
+    	details = "resource monitor shut down while waiting on step's done channel"
+    	debug_error_string = "UNKNOWN:Error received from peer  {grpc_status:14, grpc_message:"resource monitor shut down while waiting on step\'s done channel"}"
+    >
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/rpc_manager.py", line 73, in rpc_wrapper
+        result = await rpc
+                 ^^^^^^^^^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1088, in do_register
+        resp = await asyncio.get_event_loop().run_in_executor(None, do_rpc_call)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+        result = self.fn(*self.args, **self.kwargs)
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/resource.py", line 1086, in do_rpc_call
+        handle_grpc_error(exn)
+        ~~~~~~~~~~~~~~~~~^^^^^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/settings.py", line 324, in handle_grpc_error
+        raise grpc_error_to_exception(exn)
+    pulumi.errors.RunError: Resource monitor has terminated, shutting down
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/root/.pulumi/bin/pulumi-language-python-exec", line 232, in <module>
+        loop.run_until_complete(coro)
+        ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 713, in run_until_complete
+        self.run_forever()
+        ~~~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 684, in run_forever
+        self._run_once()
+        ~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/base_events.py", line 2061, in _run_once
+        handle._run()
+        ~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/asyncio/events.py", line 89, in _run
+        self._context.run(self._callback, *self._args)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/app/.venv/lib/python3.13/site-packages/pulumi/runtime/rpc_manager.py", line 77, in rpc_wrapper
+        log.debug(traceback.format_exc())
+                  ~~~~~~~~~~~~~~~~~~~~^^
+      File "/usr/local/lib/python3.13/traceback.py", line 212, in format_exc
+        return "".join(format_exception(sys.exception(), limit=limit, chain=chain))
+                       ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/traceback.py", line 154, in format_exception
+        te = TracebackException(type(value), value, tb, limit=limit, compact=True)
+      File "/usr/local/lib/python3.13/traceback.py", line 1051, in __init__
+        self.stack = StackSummary._extract_from_extended_frame_gen(
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+            _walk_tb_with_full_positions(exc_traceback),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            limit=limit, lookup_lines=lookup_lines,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            capture_locals=capture_locals)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/traceback.py", line 475, in _extract_from_extended_frame_gen
+        for f, (lineno, end_lineno, colno, end_colno) in frame_gen:
+                                                         ^^^^^^^^^
+      File "/usr/local/lib/python3.13/traceback.py", line 407, in _walk_tb_with_full_positions
+        positions = _get_code_position(tb.tb_frame.f_code, tb.tb_lasti)
+      File "/usr/local/lib/python3.13/traceback.py", line 421, in _get_code_position
+        return next(itertools.islice(positions_gen, instruction_index // 2, None))
+    KeyboardInterrupt
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/root/.pulumi/bin/pulumi-language-python-exec", line 244, in <module>
+        executor.shutdown(wait=True)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+      File "/usr/local/lib/python3.13/concurrent/futures/thread.py", line 239, in shutdown
+        t.join()
+        ~~~~~~^^
+      File "/usr/local/lib/python3.13/threading.py", line 1095, in join
+        self._handle.join(timeout)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^
+    KeyboardInterrupt
+
+  docker-build:index:Image (build-cheese-app-frontend-react):
+    error: failed to solve: failed to resolve source metadata for docker.io/docker/dockerfile:1.6: failed to do request: Head "https://registry-1.docker.io/v2/docker/dockerfile/manifests/1.6": tls: failed to verify certificate: x509: certificate signed by unknown authority
+
+Resources:
+    + 1 created
+    2 unchanged
+    2 errored
+
+Duration: 3s
+
+[exit 1]

@@ -111,12 +111,15 @@ def checklist() -> VGroup:
     col = VGroup(*items).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
     dk = disk_chip()
     dk.next_to(ITEMS[4][2], RIGHT, buff=0.3)
+    # the chip is taller than a text row: item 6 moves down so the chip clears its text
+    items[5].shift(DOWN * max(0, items[5].get_top()[1] - dk.get_bottom()[1] + 0.12))
     inner = VGroup(head, col).arrange(DOWN, aligned_edge=LEFT, buff=0.28)
     w = max(inner.width, VGroup(col, dk).width) + 0.7
     fr = outline_box(w, inner.height + 0.6, COST, solid=True, fill_opacity=0.08)
     fr.fill.set_fill(S.GREY_DARKER, 1)
     inner.move_to(fr).align_to(fr, LEFT).shift(RIGHT * 0.35)
     dk.next_to(ITEMS[4][2], RIGHT, buff=0.3)
+    assert dk.get_bottom()[1] > items[5].get_top()[1] + 0.1, (dk.get_bottom(), items[5].get_top())
     g = VGroup(fr, head, *items)
     g.frame, g.head, g.items, g.boxes, g.disk = fr, head, items, boxes, dk
     return g
@@ -207,17 +210,43 @@ class RecapMap(ArchitectureMap):
             DOWN, buff=0.06).next_to(c, DOWN, buff=0.12)
         self.ready_chip, self.not_ready_mark = c, VGroup(st, cap)
         self.add(c, st, cap)
+        # S13's end state: NGINX's slot holds the GREY 'vector-db-loader · exited 0', the two NGINX
+        # edges and their HTTP 3000 / 9000 labels are gone (dev has no NGINX). NGINX and its edges are
+        # kept aside: rise() puts NGINX back, dash('nginx') brings its edges back with it, GREY.
+        ng = self.boxes["nginx"]
+        e1, e2 = cl.submobjects[2], cl.submobjects[3]
+        self._ng_parts = (e1, e2, self.ports["3000"], self.ports["9000"])
+        for m in (ng, *self._ng_parts):
+            cl.remove(m)
+        ld = cbox(["vector-db-loader"], mono("vector-db-loader", self.size).width + 0.35, ng.frame.height,
+                  size=self.size)
+        ld.name.move_to(ld.frame).set_color(S.GREY)
+        ld.frame.set_stroke(S.GREY, width=3)
+        ld.move_to(ng)
+        ex = label("exited 0", 20, S.GREY).next_to(ld, DOWN, buff=0.06)
+        self.loader = VGroup(ld, ex)
+        cl.add(self.loader)
+        ng.frame.set_stroke(S.GREY, width=3).set_fill(S.BG, 1)
+        ng.name.set_color(S.GREY)
         return self
 
     def rise(self, scene, run_time: float = 1.2):
         """PLAYS: the laptop becomes the BLUE cluster again (title back), the other layers return."""
         anims = self._restore_anims()
         anims.append(self.cluster_frame.animate.set_stroke(CLOUD).set_fill(tint(CLOUD, 0.06), 1))
-        boxes = [b for b in self.boxes.values()]
+        boxes = [b for k, b in self.boxes.items() if k != "nginx"]      # the four from S13 (loader too)
+        boxes.insert(0, self.loader)
         anims.append(LaggedStart(*[b.animate(rate_func=there_and_back).shift(UP * 0.18) for b in boxes],
                                  lag_ratio=0.15))
         scene.play(*anims, run_time=run_time * 0.7)
         self.heal(scene)
+        # the loader has done its job; NGINX, the production front, takes its slot GREY (not built yet)
+        ng, ld = self.boxes["nginx"], self.loader
+        self._detach(ld)
+        scene.add(ld)
+        self.show(scene, ng, anims=[FadeOut(ld, shift=DOWN * 0.1), FadeIn(ng, shift=DOWN * 0.1)],
+                  run_time=run_time * 0.35, into=self.layers["cluster"])
+        scene.remove(ld)
         new_t = VGroup(label("compute instance /", 20, S.GREY), label("Kubernetes cluster", 20, S.GREY)
                        ).arrange(DOWN, buff=0.04).move_to(self.cluster_title)
         self.cluster_title = self.swap(scene, self.cluster_title, new_t, run_time=run_time * 0.3)
@@ -229,6 +258,13 @@ class RecapMap(ArchitectureMap):
         if b is not None:                         # the box's own outline becomes dashed
             r = ring(b.frame, PAST, buff=0, stroke=3, dashed=True)
             dim = [b.frame.animate.set_stroke(opacity=0).set_fill(S.BG, 1), b.name.animate.set_color(S.GREY)]
+            if key == "nginx" and getattr(self, "_ng_parts", None):   # its two edges return, GREY
+                parts = [m.set_color(S.GREY).set_opacity(0.6) for m in self._ng_parts]
+                self._ng_parts = None
+                cl = self.layers["cluster"]
+                self.show(scene, r, *parts, anims=[*dim, Create(r), *[FadeIn(m) for m in parts]],
+                          run_time=run_time, into=cl)
+                return r
         else:                                     # a dashed outline round the part (the disk: not its NFS edge)
             m = self.layers[key]
             r = ring(m[0] if key == "disk" else m, PAST, buff=0.05, stroke=3, dashed=True)
@@ -448,6 +484,9 @@ class Recap(VoiceScene):
                     self.play(si[1].animate(rate_func=there_and_back).set_stroke(TURN, width=7), run_time=0.8)
                     vo.wait_until("and why does square root")
                     self.play(Indicate(qcards[1].body[2], color=TURN, scale_factor=1.06), run_time=0.8)
+                    vo.wait_until("without a slash")
+                    self.play(Circumscribe(qcards[1].body[2], color=TURN, buff=0.08), run_time=1.0)
+                    self.play(Indicate(si[2], color=TURN, scale_factor=1.3), run_time=0.7)
                 elif k == 2:
                     vo.wait_until("healthz and")
                     self.play(Indicate(li[0], color=OWN, scale_factor=1.2), run_time=0.7)

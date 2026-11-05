@@ -1,0 +1,9 @@
+$ for i in library/python:3.13-slim-bookworm docker/dockerfile:1.6; do docker image inspect ${i#library/} >/dev/null 2>&1 || { docker pull -q mirror.gcr.io/$i && docker tag mirror.gcr.io/$i ${i#library/}; }; done; docker images --digests | grep -E 'python|dockerfile'
+mirror.gcr.io/library/python:3.13-slim-bookworm
+mirror.gcr.io/docker/dockerfile:1.6
+python                            3.13-slim-bullseye   <none>                                                                    94b659afc87a   26 minutes ago   121MB
+python                            3.13-slim-bookworm   <none>                                                                    c7ea9065843c   15 hours ago     120MB
+mirror.gcr.io/library/python      3.13-slim-bookworm   sha256:a5a7017efc5969e00ae2b91c8eb0631049a569652aa4ffc4501769049ae45c72   c7ea9065843c   15 hours ago     120MB
+docker/dockerfile                 1.6                  <none>                                                                    a17ee7fff8f5   3 years ago      23.6MB
+mirror.gcr.io/docker/dockerfile   1.6                  sha256:ac85f380a63b13dfcefa89046420e1781752bab202122f8f50032edf31be0021   a17ee7fff8f5   3 years ago      23.6MB
+[exit 0]

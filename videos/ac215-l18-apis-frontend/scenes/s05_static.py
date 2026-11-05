@@ -340,7 +340,7 @@ class StaticPages(VoiceScene):
             tr.heal(self)
             vo.wait_until("a file comes back")
             arr5 = tr.hop(self, 5, "front", run_time=0.7)
-            fly = file_icon("index.html", OWN).move_to(files[0])
+            fly = file_icon(None, OWN).move_to(files[0].glyph)     # the glyph only: a label would cross hop 5's circle
             self.add(fly)
             self.play(fly.animate.move_to(arr5.get_start()), run_time=0.5)
             self.play(MoveAlongPath(fly, arr5.copy()), run_time=0.8)
@@ -479,12 +479,12 @@ class StaticPages(VoiceScene):
             o26 = out(self, tab, A26.at((2, 4)), wrap=True, run_time=0.3)
             under_term(tab, check)
             self.play(FadeIn(check, shift=DOWN * 0.1), run_time=0.3)
-            # the two servers' own terminals, one after the other, above the tab
+            # the two servers' own terminals, one after the other, above the tab, each held ~2 s
             vo.wait_until("press Control C")
             self.play(track(trk, 2), run_time=0.4)
-            prev = None
-            for title, cap, lines_a, n_exit, last in ((T_LAPTOP, A03, [62], 69, 70),
-                                                       (T_NEW, A20B, [57, 58], 60, 61)):
+            prev = None          # two stacked 3-row strips do not fit above the tab: one after the other,
+            for k, (title, cap, lines_a, n_exit, last) in enumerate(((T_LAPTOP, A03, [62], 69, 70),
+                                                                     (T_NEW, A20B, [57, 58], 60, 61))):
                 s = term(container_prompt(cap, n_exit), rows=3, title=title, size=20, place=False)
                 s.shift(np.array([0, check.get_top()[1] + 0.12 - s.box.get_bottom()[1], 0]))
                 assert s.box.get_bottom()[1] > check.get_top()[1] + 0.05 and s.box.get_top()[1] < TRACK_BOTTOM - 0.05
@@ -494,10 +494,10 @@ class StaticPages(VoiceScene):
                     run_time=0.25)
                 type_at(self, s, cap, n_exit, type_time=0.25)
                 out(self, s, [cap.line(last)], run_time=0.25)
-                self.wait(0.2)
+                self.wait(1.0 if k == 0 else 0.8)      # each held ~2 s: the follow-along action is readable
                 prev = s
-            self.play(FadeOut(prev, shift=UP * 0.15), run_time=0.3)
             vo.wait_until("The container list is then empty")
+            self.play(FadeOut(prev, shift=UP * 0.15), run_time=0.3)
             clear_bar(self, tab)
             type_capture(self, tab, A30, type_time=0.6)
             hdr = out(self, tab, A30.at(2), run_time=0.4)[0]

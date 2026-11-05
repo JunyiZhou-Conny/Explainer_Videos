@@ -289,6 +289,58 @@ def route_map() -> VGroup:
     return g
 
 
+def _spans(s: str, size: float, color) -> VGroup:
+    """One row of a markdown cell: prose in the label font, `code` spans in mono, same baseline
+    strut (steady), a word gap only where the source has a space."""
+    parts = s.split("`")
+    pieces, gaps, between = [], [], ""
+    for i, p in enumerate(parts):
+        if not p.strip():
+            between += p
+            continue
+        if pieces:
+            spaced = " " in (between + p[:1])
+            gaps.append(0.13 if spaced else 0.03)
+        pieces.append(steady(p.strip(), size, color, mono_font=bool(i % 2)))
+        between = p[-1:]
+    g = VGroup(*pieces)
+    for k in range(1, len(pieces)):
+        pieces[k].next_to(pieces[k - 1], RIGHT, buff=gaps[k - 1])
+        pieces[k].align_to(pieces[k - 1], DOWN)
+    return g
+
+
+FIX_INK = interpolate_color(ManimColor(S.GREY), ManimColor(INK), 0.55)  # the fix line: lighter than GREY on the card fill
+
+
+def trouble_card(nums, source: str, size: float = 20, card_w: float = 12.4) -> VGroup:
+    """RECORDED(expected/04-troubleshooting.txt: nums) as table rows: each README row is the symptom
+    in WHITE, then an indented light-grey '→' and the fix (one sentence per line), code spans in mono, a gap
+    between rows. Same frame and tag as quote_card. .frame .body (one VGroup per README row) .tag"""
+    rows = []
+    for raw in recorded("04", *nums, plain=False):
+        cells = [c.strip() for c in raw.strip().strip("|").split("|")]
+        assert len(cells) == 2, raw
+        sym, fix = cells
+        sentences = [x for x in re.split(r"(?<=\.) (?=[A-Z])", fix) if x]
+        top = _spans(sym, size, INK)
+        fx = VGroup(*[_spans(x, size, FIX_INK) for x in sentences]).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+        arr = label("→", size, FIX_INK)
+        arr.next_to(fx[0], LEFT, buff=0.15).set_y(fx[0].get_center()[1])
+        fix_g = VGroup(arr, fx)
+        fix_g.next_to(top, DOWN, buff=0.12).align_to(top, LEFT).shift(RIGHT * 0.45)
+        rows.append(VGroup(top, fix_g))
+    body = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.34)
+    frame = box(card_w, body.height + 0.75, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
+    body.move_to(frame).align_to(frame, LEFT).shift(RIGHT * 0.35 + DOWN * 0.06)
+    assert body.width < card_w - 0.6, body.width
+    tg = tag("recorded" + f" · {source}", S.GREY)
+    tg.move_to(frame.get_corner(UR) + np.array([-tg.width / 2 - 0.2, 0, 0]))
+    g = VGroup(frame, body, tg)
+    g.frame, g.body, g.tag = frame, body, tg
+    return g
+
+
 class AliveAndReady(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S07"] == 11, len(SAY)
@@ -566,7 +618,7 @@ class AliveAndReady(VoiceScene):
         # ========================================================== 8. extra: version 1 habits fail; the route map
         rmap = route_map()
         assert rmap.get_top()[1] < PIC_TOP, rmap.get_top()
-        rec = quote_card("04", [9, 10, 14], kind="recorded", source="README:228–229, 233", size=20, width_chars=88)
+        rec = trouble_card([9, 10, 14], source="README:228–229, 233")
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(lap, lap_t, fold, model, once, rst)), run_time=0.4)
             clear_bar(self, tab)
@@ -596,10 +648,13 @@ class AliveAndReady(VoiceScene):
         self.play(FadeOut(rmap), FadeOut(tab), run_time=0.5)
         rec.move_to([0, (PIC_TOP - SAFE_Y) / 2, 0])
         assert rec.get_bottom()[1] > -SAFE_Y + 0.05 and rec.get_top()[1] < PIC_TOP + 0.05, rec.get_top()
-        self.play(FadeIn(rec, shift=UP * 0.15), run_time=0.5)
+        # no narration here: the card holds ~7.5 s, one README row at a time (symptom, then its fix)
+        self.play(FadeIn(rec.frame), FadeIn(rec.tag), run_time=0.5)
         for r in rec.body:
-            self.play(Indicate(r, color=INK, scale_factor=1.02), run_time=0.8)
-        self.wait(0.8)
+            self.play(FadeIn(r[0], shift=RIGHT * 0.1), run_time=0.5)
+            self.play(FadeIn(r[1], shift=RIGHT * 0.1), run_time=0.5)
+            self.wait(1.2)
+        self.wait(1.4)
 
         # ========================================================== 9. PONDER: restart or wait?
         with self.voiceover(SAY[9]) as vo:

@@ -1,0 +1,8 @@
+# capture-only, NOT part of the tutorial (see ASSETS.md)
+[registry."docker.io"]
+  mirrors = ["172.18.0.1:5000"]
+  ca = ["/root/capture-ca.crt"]
+[registry."172.18.0.1:5000"]
+  http = true
+[registry."us-docker.pkg.dev"]
+  ca = ["/root/capture-ca.crt"]

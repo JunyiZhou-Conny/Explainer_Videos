@@ -1,6 +1,6 @@
 """S15 · Last year's pages: CORS and the preflight (AC215 L18, part 2). Tracker [T24] "README @ branch
 2025 › Tutorial (24): Simple Frontend App" (caption "branch 2025 · 14f2a14") 1 → 6, '· extra' in the
-last beat. Lecture: 18 · 24–26 (Frontend) in beats 2–5, 18 · 27 (Frontend) in beats 6–8, off from 9.
+last beat. Lecture: 18 · 24–26 (Frontend) from "second trip" (beat 2) to beat 5, 18 · 27 (Frontend) in beats 6–8, off from 9.
 
 Beats (script.md "## S15", one voiceover block each):
 0. Tracker [T24] 1. A `laptop · new terminal` (10 rows, prompt student@laptop:~$): `cd
@@ -37,7 +37,8 @@ Beats (script.md "## S15", one voiceover block each):
    their words.
 8. The API's `laptop · new terminal` log (10 rows): c11:81, 82, 85 (wrap), …, 146 → OPTIONS 200 GREEN,
    POST /llm/chats/ 307 PINK, 500 RED. Then a 13-row `second tab`: extra c28 (folds) → c28:2, 6–8,
-   13–14 (wrap); line 13 access-control-allow-origin: * YELLOW on the 500 (RED).
+   13–14 (wrap); over the log (flashed on "the same Gemini error") a GREY tag "recorded without a key · with yours: the retired
+   model fails" (S14's erratum: a viewer's own key meets the retired 2025 model, not invalid_grant); line 13 access-control-allow-origin: * YELLOW on the 500 (RED).
 9. Lecture off. Two panels with neutral captions: "2025: page on 8080 → API on 9000" (text-free V1
    icon with the ORANGE checkpoint) and "main: page on 3000 → Vite → API" (the courier icon). Under both
    the GREY line "CORS: the browser's rule, about the server's permission · curl and /api/docs never
@@ -332,7 +333,7 @@ class CorsPreflight(VoiceScene):
         assert tr.get_top()[1] < ref.get_bottom()[1] - 0.1 and net.frame.get_left()[0] > trk.get_right()[0] - 2.0
         with self.voiceover(SAY[2]) as vo:
             clear_lines(self, tab, FadeOut(bw1), FadeOut(ill1), run_time=0.4)
-            self.play(track(trk, 5), FadeIn(ref), run_time=0.5)
+            self.play(track(trk, 5), run_time=0.5)
             clear_bar(self, tab)
             resize(self, tab, 10, run_time=0.5)
             ln = type_capture(self, tab, C23, type_time=0.8)[-1]
@@ -354,7 +355,7 @@ class CorsPreflight(VoiceScene):
             resize(self, tab, 3, keep=[base] + [r for r in o3 if r is not base][:2], run_time=0.5)
             bar_tag(self, tab, extra_row())
             assert tab.box.get_top()[1] < tr.get_bottom()[1] - 0.05, (tab.box.get_top(), tr.get_bottom())
-            self.play(FadeIn(tr), FadeIn(ill), run_time=0.6)
+            self.play(FadeIn(tr), FadeIn(ill), FadeIn(ref), run_time=0.6)     # the tag comes with its picture
             vo.wait_until("the page came from 8080")
             a1 = tr._req_arrow("front")
             tr.show(self, a1, anims=[GrowArrow(a1)], into=tr.marks, run_time=0.5)
@@ -541,6 +542,11 @@ class CorsPreflight(VoiceScene):
         log8 = strip_at(container_prompt(C11, 153), 10, T_NEW)
         tab8 = strip_at(P_V2_SIMPLE, 13, T_TAB)
         assert tab8.box.get_top()[1] < TRACK_BOTTOM - 0.1, tab8.box.get_top()
+        # the recording had no key (invalid_grant); a viewer's key meets S14's retired 2025 model instead.
+        # It comes with the log (the Gemini-error window alone is ~2 s) and flashes on "the same Gemini error".
+        nokey = under_term(log8, row_tag("recorded without a key · with yours: the retired model fails"))
+        assert nokey.get_top()[1] < TRACK_BOTTOM - 0.1 and nokey.get_left()[0] > -SAFE_X, nokey.get_corner(UL)
+        log8.add(nokey)                          # it leaves with the log
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(tab7), FadeIn(log8, shift=UP * 0.2), run_time=0.5)
             o8 = out(self, log8, [(C11.line(81), OWN)] + C11.at(82) + soft([C11.line(85)], log8.max_chars)
@@ -560,6 +566,8 @@ class CorsPreflight(VoiceScene):
             r85 = rows_from(o8, "Error generating response", 3)
             self.play(*[r.animate.set_color(ERR) for r in r85], run_time=0.4)
             self.play(*[Indicate(r, color=ERR, scale_factor=1.03) for r in r85], run_time=0.6)
+            self.add(log8)
+            flash_tag(self, nokey, S.GREY)
             self.add(log8)
             vo.wait_until("That 500 carries")
             self.play(FadeOut(log8), FadeIn(tab8, shift=UP * 0.2), run_time=0.5)

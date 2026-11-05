@@ -446,6 +446,7 @@ class ComposeUp(VoiceScene):
                       [cut(F04_PS.line(n), "Up 9 seconds") for n in (3, 4, 5)] + [F04_PS.line(6).rstrip()],
                       run_time=0.6)
             recolor(self, tab, o5c[-1], "Exited (0)", OWN)
+            self.wait(1.2)  # hold the Exited (0) proof before step 4 clears the tab
         del o5, o5b
 
         # ========================================================== 6. Step 4: open 3000 and the API docs; README says 900

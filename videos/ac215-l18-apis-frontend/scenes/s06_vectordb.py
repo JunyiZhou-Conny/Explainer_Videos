@@ -17,8 +17,8 @@ Beats (script.md "## S06", one voiceover block each):
    does not call Google"; on "the first Google call fails" one PINK arrow out to the BLUE Vertex AI
    cloud with a RED "account not found" at its tip.
 3. Tracker [SE] 4. The `laptop` terminal (11 rows, prompt ~/cheese-app-v2) with the GREY chip
-   "cd ~/cheese-app-v2" above it. It types b03's sed line (title-bar tag extra, chip "or edit both
-   files") and `git diff` → b03:3 (cut), 4, 7, 11–12, 16 (cut), 17, 20, 24–25; on "Ours shows a
+   "cd ~/cheese-app-v2" above it. It types b03's sed line (title-bar tag extra; GREY chips
+   "your-gcp-project → your own project ID" and "on a Mac: sed -i '' … · or edit both files" (BSD sed)) and `git diff` → b03:3 (cut), 4, 7, 11–12, 16 (cut), 17, 20, 24–25; on "Ours shows a
    placeholder" `your-gcp-project` GREEN on the + lines.
 4. Tracker [SE] → [V] 1, lecture_ref 45 (APIs). The terminal clears and shrinks to a 3-row strip;
    a small GREY card "slide 45 (APIs) · step 1: make sure the vector database is running". It types
@@ -36,7 +36,9 @@ Beats (script.md "## S06", one voiceover block each):
    (wrap), …, 197 (wrap), 208 (wrap). A YELLOW counter above the terminal sums the eleven "Finished
    inserting" numbers (b06:65 … 208) book by book and lands on 14,356 GREEN. ▶ your turn on the bar.
 7. The terminal shrinks to a strip; a `laptop · second tab` (4 rows) comes in at the top while the
-   counter slides down between the two; the tab types b09 (title-bar tag extra) → b09:25–27; a GREY
+   counter slides down between the two; the tab types b09 (folded at its first ';'; title-bar tag extra)
+   → a GREY '…' row for b09:2–24 (row tag "23 names: 1 zip + 11 chunk files + 11 embedding files" on
+   "chunks and embeddings"), then b09:25–27; a GREY
    dashed card "Lecture 5 · chunk → embed" slides in beside the counter, and a dashed arrow from it
    up to the row tag "downloaded, not recomputed" beside `78.8M outputs` (which flashes).
 8. Tracker [V] 4. Tab, card and counter go; the terminal grows to 10 rows and types the --chat line
@@ -58,6 +60,7 @@ from manim import *  # noqa: F401,F403  (manim first, then common: common's name
 from explainer.scene import VoiceScene
 
 from common import *  # noqa: F401,F403
+from explainer.devops import box as _box
 
 SAY = NARRATION["S06"]
 
@@ -191,6 +194,25 @@ def recolor(scene, row, sub: str, color, run_time: float = 0.4):
     scene.play(substring(row, sub).animate.set_color(color), run_time=run_time)
 
 
+def mixed_chip(parts, color=S.GREY, size: float = 20) -> VGroup:
+    """A grey_chip whose text mixes label and mono parts: [(text, 'label'|'mono'), ...]. .box .text"""
+    t = VGroup(*[mono(x, size, INK) if k == "mono" else label(x, size, INK) for x, k in parts])
+    t.arrange(RIGHT, buff=0.12)
+    h = mono("|", size).height + 2 * 0.12
+    b = _box(t.width + 2 * 0.24, h, color, fill_opacity=0.16, radius=h / 2.6)
+    t.move_to(b)
+    g = VGroup(b, t)
+    g.box, g.text = b, t
+    return g
+
+
+def b09_fold(text: str, first_prefix: int = 0) -> list[str]:
+    """b09's command folded at its first ';' (a ' \\' after ';' pastes back as the same command),
+    not inside 'head -30' as Terminal.fold would."""
+    k = text.index("; ") + 1
+    return [text[:k] + " \\", "    " + text[k + 1:]]
+
+
 def chunk_counter(value: int, color=TURN) -> VGroup:
     """The counter: a GREY 'chunks loaded' label over a big mono number."""
     num = mono(f"{value:,}", 36, color)
@@ -318,9 +340,13 @@ class VectorDb(VoiceScene):
         trk = tracker_se(4)
         t = term(P_V2, rows=11, title=T_LAPTOP, size=20)
         cdc = grey_chip("cd ~/cheese-app-v2", mono_font=True).next_to(t.box, UP, buff=0.14).align_to(t.box, LEFT)
-        edc = grey_chip("or edit both files")
-        under_term(t, edc, buff=0.14)
+        phc = mixed_chip([(PROJECT_PH, "mono"), ("→ your own project ID", "label")])
+        under_term(t, phc, buff=0.14)
+        mac = mixed_chip([("on a Mac:", "label"), ("sed -i '' …", "mono"), ("· or edit both files", "label")])
+        mac.next_to(phc, UP, buff=0.12).align_to(t.box, RIGHT)
         assert cdc.get_top()[1] < TRACK_BOTTOM - 0.05, cdc.get_top()
+        assert phc.get_left()[0] > cdc.get_right()[0] + 0.3, (phc.get_left(), cdc.get_right())
+        assert mac.get_top()[1] < SAFE_Y - 0.1 and mac.get_left()[0] > 0.2, mac.get_corner(UL)   # right of the tracker
         diff = [cut(B03.line(3), "api-service/docker-shell.sh"), B03.line(4), B03.line(7),
                 B03.line(11), B03.line(12), cut(B03.line(16), "vector-db/docker-shell.sh"),
                 B03.line(17), B03.line(20), B03.line(24), B03.line(25)]
@@ -330,12 +356,13 @@ class VectorDb(VoiceScene):
             self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(t), FadeIn(cdc, shift=DOWN * 0.1), run_time=0.5)
             sed_ln = type_capture(self, t, B03, type_time=0.6)
             bar_tag(self, t, extra_row())
-            self.play(FadeIn(edc, shift=DOWN * 0.1), run_time=0.3)
+            self.play(FadeIn(phc, shift=DOWN * 0.1), FadeIn(mac, shift=DOWN * 0.1), run_time=0.4)
             rows3 = out(self, t, diff, run_time=0.7)
             vo.wait_until("Ours shows a placeholder")
             plus = [r for r in rows3 if r.text.startswith("+export")]
             self.play(*[substring(r, PROJECT_PH).animate.set_color(OWN) for r in plus], run_time=0.4)
-            self.play(*[Indicate(substring(r, PROJECT_PH), color=OWN, scale_factor=1.08) for r in plus], run_time=0.6)
+            self.play(*[Indicate(substring(r, PROJECT_PH), color=OWN, scale_factor=1.08) for r in plus],
+                      Indicate(phc.text, color=OWN, scale_factor=1.06), run_time=0.6)
             self.add(t)
         del sed_ln
 
@@ -347,7 +374,7 @@ class VectorDb(VoiceScene):
         slide = card(["step 1: make sure the vector database is running"], head="slide 45 (APIs)", size=24)
         slide.move_to([0, 0.6, 0])
         with self.voiceover(SAY[4]) as vo:
-            clear_bar(self, t, FadeOut(cdc), FadeOut(edc))
+            clear_bar(self, t, FadeOut(cdc), FadeOut(phc), FadeOut(mac))
             clear_lines(self, t)
             swap_tracker(self, trk, trk2)
             trk = trk2
@@ -442,7 +469,7 @@ class VectorDb(VoiceScene):
         del o53
 
         # ========================================================== 7. the RAG lecture's outputs, downloaded
-        tab = term(P_V2_VDB, rows=5, title=T_TAB, size=20, place=False)
+        tab = term(P_V2_VDB, rows=6, title=T_TAB, size=20, place=False)
         tab.shift(np.array([-tab.box.get_center()[0], 2.7 - tab.box.get_top()[1], 0]))      # the tab on top
         l5 = dashed_chip("Lecture 5 · chunk → embed", size=22)
         with self.voiceover(SAY[7]) as vo:
@@ -453,21 +480,29 @@ class VectorDb(VoiceScene):
             cnt_to.shift(RIGHT * (6.45 - cnt_to.get_right()[0]))
             assert cnt_to.get_top()[1] < tab.box.get_bottom()[1] - 0.1 and cnt_to.get_bottom()[1] > t.box.get_top()[1] + 0.1
             self.play(FadeIn(tab, shift=DOWN * 0.15), Transform(cnt, cnt_to), run_time=0.5)
-            ln9 = type_capture(self, tab, B09, type_time=0.6)[0]
+            tab.fold = b09_fold
+            try:
+                ln9 = type_capture(self, tab, B09, type_time=0.6)[0]
+            finally:
+                del tab.fold
             mark_extra(self, tab, ln9)
-            o9 = out(self, tab, B09.at((25, 27)), run_time=0.4)
+            # b09:2–24 (the 23 names head prints) are cut to one GREY '…' row that says what they are
+            o9 = out(self, tab, [("…", S.GREY)] + B09.at((25, 27)), run_time=0.4)
             vo.wait_until("the RAG lecture")
             l5.move_to([1.7, cnt.get_center()[1], 0])
             assert l5.get_right()[0] < cnt.get_left()[0] - 0.2, (l5.get_right(), cnt.get_left())
             self.play(FadeIn(l5, shift=RIGHT * 0.4), run_time=0.5)
+            vo.wait_until("chunks and embeddings")
+            names = row_tag("23 names: 1 zip + 11 chunk files + 11 embedding files")
+            pin(self, o9[0], beside(names, o9[0], buff=0.4))
             vo.wait_until("downloaded")
             dn = row_tag("downloaded, not recomputed")
-            pin(self, o9[1], beside(dn, o9[1], min_x=0.0))
-            assert o9[2].strut.get_right()[0] < dn.get_left()[0] - 0.3, "the arrow must pass clear of b09:27"
+            pin(self, o9[2], beside(dn, o9[2], min_x=0.0))
+            assert o9[3].strut.get_right()[0] < dn.get_left()[0] - 0.3, "the arrow must pass clear of b09:27"
             arr = DashedVMobject(Arrow(l5.get_top(), dn.get_bottom() + DOWN * 0.02, buff=0.06, color=S.GREY,
                                        stroke_width=3, tip_length=0.18), num_dashes=10).set_stroke(S.GREY, 3)
             self.play(Create(arr), run_time=0.5)
-            self.play(Indicate(substring(o9[1], "outputs"), color=TURN, scale_factor=1.1), run_time=0.6)
+            self.play(Indicate(substring(o9[2], "outputs"), color=TURN, scale_factor=1.1), run_time=0.6)
             self.add(tab)
 
         # ========================================================== 8. step 3: chat, and the first Google call

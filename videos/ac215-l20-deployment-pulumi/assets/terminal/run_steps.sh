@@ -5,14 +5,19 @@
 # README.md:N = dlops-io/cheese-app-v3 @ 3ecef56 (main), mounted read-only at /source/README.md;
 # multi-line README commands are read from those exact lines, so they run byte for byte as printed.
 # Segments (file prefix = part of the video):
-#   vm1    (vm/0x)  "Deployment to GCP (Manual)", on the VM: get-docker.sh, docker --version
-#   vm2    (vm/1x-6x) the rest of the manual deployment on the VM: folders, secret, network, vector-db,
-#                   loader, api-service, frontend, nginx.conf, nginx; then the URLs and the README's
-#                   later "SSH into the server" commands (README.md:371-383), on this VM
+#   vm1    (vm/0x)  "Deployment to GCP (Manual)" on the VM: get-docker.sh, docker --version
+#   vm2    (vm/1x-2x) folders, secret, network, vector-db (chroma), the loader
+#   vm3/vm4/vm4b (vm/3x) api-service (vm4: capture-only CA re-tag after vm3's TLS crash, README run again)
+#   vm5    (vm/38-51) interactive variant, frontend, nginx.conf, nginx, the URLs
+#   vm6    (vm/52-60) the README's "SSH into the server" commands (README.md:371-383) + extras
 #   pre    (laptop/p..) clone, the commits, the sibling secrets/ folder, capture-only base images
-#   partA  (laptop/a..) the laptop half of "Deployment to GCP (Manual)": docker login, docker-hub.sh
-#   partB  (laptop/b..) "Deployment to GCP (Single VM Instance)": docker-shell.sh, the tool checks,
-#                   SSH setup, both Pulumi projects, destroy
+#   hubprep (capture-only) CA + local mirror for docker-hub.sh's docker-container BuildKit
+#   partA  (laptop/a01-a03) docker login, frontend-react's docker-hub.sh; partA2 (a04-a06) builder extras
+#   partB  (laptop/b01-b02) "Deployment to GCP (Single VM Instance)": docker-shell.sh as committed (fails)
+#   partB2 (b02a-b02b) fix 1 (bookworm base), docker-shell.sh again (fails at the gcloud packages)
+#   partB3 (b02c-b02d, then b03-b46) fix 2, docker-shell.sh builds; the README's commands in its shell
+#   partB4 capture-only resume of partB3's commands (see capture.sh); partB5 (b35b/b36b) the image
+#          stack's `pulumi up` with the provider's BuildKit given the proxy CA
 # Steps whose name contains "-x-" are extras (not README steps): checks the video uses.
 # capture-only work (proxy CA, placeholder keys, waiting for a port) is never shown as a README step.
 OUT=$1; SEG=$2; export OUT
@@ -59,6 +64,67 @@ info["private_key"] = "<a throwaway RSA key generated at capture time for no acc
 json.dump(info, open(os.environ["OUT"] + f"/capture-only/placeholder-{acct}.json", "w"), indent=2)
 PYEOF
   rm -f /tmp/throwaway.pem
+}
+partB_commands() {  # the README's commands at the deployment container's prompt (partB3; partB4 resumes)
+  C=cheese-app-deployment
+  cstep() {  # cstep <name> <workdir> <command>: typed at the container's prompt (docker exec, same container)
+    local name=$1 wd=$2; shift 2
+    { echo "\$ $*"; docker exec -w "$wd" $C bash -c "$*" 2>&1 | sed 's/\x1b\[[0-9;]*m//g'; echo "[exit ${PIPESTATUS[0]}]"; } | mask > "$OUT/$name.txt"
+  }
+  ctstep() {  # ctstep <name> <workdir> <shown command> <exec'd command> [<regex> <typed>]...: the same, in a terminal
+    local name=$1 wd=$2 shown=$3 cmd=$4; shift 4
+    local args=()
+    while [ $# -gt 0 ]; do args+=(--expect "$1" --send "$2"); shift 2; done
+    { echo "\$ $shown"
+      python3 "$HERE/ptyrun.py" --cols 100 --rows 40 --timeout 600 "${args[@]}" -- docker exec -it -w "$wd" $C bash -c "$cmd"
+      echo "[exit $?]"; } | mask > "$OUT/$name.txt"
+  }
+  # README.md:270-278 "Check versions of tools" + "gcloud auth list"
+  cstep b03-gcloud-version /app "$(readme 272 272)"
+  cstep b04-pulumi-version /app "$(readme 273 273)"
+  cstep b05-kubectl-version /app "$(readme 274 274)"
+  cstep b06-gcloud-auth-list /app "gcloud auth list"
+  cstep b07-x-env /app "env | grep -E '^(GCP_|GOOGLE_|PULUMI_|USE_GKE)' | sort; ls -la /secrets; python --version; uv --version; which docker ssh; docker ps --format '{{.Names}}'"
+  # README.md:283-291 "Configuring OS Login for service account": the template line, then the example
+  cstep b08-oslogin-template /app "$(readme 286 286)"
+  cstep b09-oslogin-example /app "$(readme 290 290)"
+  # README.md:294-298 "Create SSH key for service account" (empty passphrase: Enter twice)
+  ctstep b10-ssh-keygen /secrets "$(readme 295 297)" "ssh-keygen -f ssh-key-deployment" "passphrase" "" "passphrase" ""
+  cstep b11-x-ls-keys /secrets "ls -la /secrets"
+  # README.md:300-303 "Providing public SSH keys to instances"
+  cstep b12-oslogin-ssh-keys-add /app "$(readme 302 302)"
+  # README.md:318-322 "Deployment Setup": inventory.yml
+  cstep b13-x-inventory /app "ls inventory.yml; find / -name inventory.yml -not -path '/proc/*' 2>/dev/null | head -3"
+  # README.md:327-345 "Build and Push Docker Containers to Google Artifact Registry", verbatim
+  ctstep b14-images-stack-init /app/deploy_images "cd deploy_images
+$(readme 332 332)" "$(readme 332 332)" "(token|ENTER)" "$CTRLC"
+  cstep b15-images-config-set /app/deploy_images "$(readme 333 333)"
+  cstep b16-images-preview /app/deploy_images "$(readme 339 339)"
+  cstep b17-images-up /app/deploy_images "$(readme 344 344)"
+  # README.md:347-367 "Create Compute Instance (VM) & Deploy Containers", verbatim
+  cstep b18-vm-stack-init /app/deploy_single_vm "$(readme 352 352)"
+  for l in 353 354 355; do cstep b19-vm-config-set-$((l-352)) /app/deploy_single_vm "$(readme $l $l)"; done
+  cstep b20-vm-preview /app/deploy_single_vm "$(readme 361 361)"
+  cstep b21-vm-up /app/deploy_single_vm "$(readme 366 366)"
+  # README.md:387-390 "Delete the Compute Instance / Persistent disk"
+  cstep b22-destroy /app/deploy_single_vm "$(readme 389 389)"
+  # extras: the same programs on Pulumi's local file backend (`pulumi login --local`), which needs no
+  # cloud account, so each one runs up to its first call that needs Google (ASSETS.md)
+  FRONT='urn:pulumi:dev::deploy-images::docker-build:index:Image::build-cheese-app-frontend-react'
+  cstep b30-x-login-local /app/deploy_images "pulumi login --local"
+  cstep b31-x-images-stack-init /app/deploy_images "$(readme 332 332)"
+  cstep b32-x-images-config-set /app/deploy_images "$(readme 333 333)"
+  cstep b33-x-images-config /app/deploy_images "pulumi config; cat Pulumi.dev.yaml; pulumi stack ls"
+  cstep b34-x-images-preview-frontend /app/deploy_images "pulumi preview --stack dev --refresh --target '$FRONT'"
+  cstep b35-x-images-up-frontend /app/deploy_images "pulumi up --stack dev --refresh -y --target '$FRONT'"
+  cstep b36-x-images-after /app/deploy_images "pulumi stack ls; pulumi stack output; docker images"
+  cstep b40-x-vm-stack-init /app/deploy_single_vm "$(readme 352 352)"
+  for l in 353 354 355; do cstep b41-x-vm-config-set-$((l-352)) /app/deploy_single_vm "$(readme $l $l)"; done
+  cstep b42-x-vm-config /app/deploy_single_vm "pulumi config"
+  cstep b43-x-vm-preview /app/deploy_single_vm "$(readme 361 361)"
+  cstep b44-x-vm-up /app/deploy_single_vm "$(readme 366 366)"
+  cstep b45-x-destroy /app/deploy_single_vm "$(readme 389 389)"
+  cstep b46-x-stacks-on-disk /app "pulumi stack ls --all; ls -R ~/.pulumi/stacks 2>/dev/null | head; ls /app/pulumi-plugins | head; git -C /app status --short 2>&1 | head"
 }
 CTRLC=$'\x03'
 DOCKER="docker"; case $SEG in vm*) DOCKER="sudo docker";; esac
@@ -268,74 +334,55 @@ partB2)
   cd cheese-app-v3/src/deployment
   # extra: the fix the video shows, a newer Debian base (bookworm) on Dockerfile:4
   step b02a-x-fix-base "sed -i 's/^FROM python:3.13-slim-bullseye/FROM python:3.13-slim-bookworm/' Dockerfile; grep -n '^FROM' Dockerfile; git diff --stat"
+  # capture-only: Docker Hub's anonymous pull limit (the sandbox's egress IP is shared) answered 429,
+  # so the two images this build and the frontend build start FROM come from Google's Docker Hub
+  # mirror (mirror.gcr.io, same digests), tagged under their Docker Hub names
+  step capture-only/hub-mirror-pulls "for i in library/python:3.13-slim-bookworm docker/dockerfile:1.6; do docker image inspect \${i#library/} >/dev/null 2>&1 || { docker pull -q mirror.gcr.io/\$i && docker tag mirror.gcr.io/\$i \${i#library/}; }; done; docker images --digests | grep -E 'python|dockerfile'"
   capture_only_retag python:3.13-slim-bookworm base
+  # README.md:268 again: the base now installs, and the next apt step fails (gcloud's package renamed)
+  istep b02b-docker-shell-bookworm "sh docker-shell.sh"
+  cd ~
+  ;;
+# ------------------------------------------------------------------------------------------------
+partB3)
+  cd cheese-app-v3/src/deployment
+  # extra: the second fix, the package names Google's apt repository uses now (Dockerfile:30)
+  step b02c-x-fix-gcloud-packages "sed -i 's/google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin/google-cloud-cli google-cloud-cli-gke-gcloud-auth-plugin/' Dockerfile; git diff Dockerfile"
   CUE=/tmp/l20-cue-shell; rm -f $CUE
-  # README.md:268 again: it stays open (at its prompt) until $CUE exists
-  istep b02b-docker-shell-bookworm "sh docker-shell.sh" "file:$CUE" "exit" &
+  # README.md:268 a third time: it builds; the shell stays open (at its prompt) until $CUE exists
+  istep b02d-docker-shell-fixed "sh docker-shell.sh" "file:$CUE" "exit" &
   SHELL_PID=$!
-  for i in $(seq 1800); do docker top cheese-app-deployment -eo args 2>/dev/null | grep -qx '/bin/bash' && break; sleep 1; done
+  for i in $(seq 1800); do docker top cheese-app-deployment -eo pid,args 2>/dev/null | awk '{print $NF}' | grep -qx '/bin/bash' && break; sleep 1; done
   sleep 2
-  C=cheese-app-deployment
-  cstep() {  # cstep <name> <workdir> <command>: typed at the container's prompt (docker exec, same container)
-    local name=$1 wd=$2; shift 2
-    { echo "\$ $*"; docker exec -w "$wd" $C bash -c "$*" 2>&1 | sed 's/\x1b\[[0-9;]*m//g'; echo "[exit ${PIPESTATUS[0]}]"; } | mask > "$OUT/$name.txt"
-  }
-  ctstep() {  # ctstep <name> <workdir> <shown command> <exec'd command> [<regex> <typed>]...: the same, in a terminal
-    local name=$1 wd=$2 shown=$3 cmd=$4; shift 4
-    local args=()
-    while [ $# -gt 0 ]; do args+=(--expect "$1" --send "$2"); shift 2; done
-    { echo "\$ $shown"
-      python3 "$HERE/ptyrun.py" --cols 100 --rows 40 --timeout 600 "${args[@]}" -- docker exec -it -w "$wd" $C bash -c "$cmd"
-      echo "[exit $?]"; } | mask > "$OUT/$name.txt"
-  }
-  # README.md:270-278 "Check versions of tools" + "gcloud auth list"
-  cstep b03-gcloud-version /app "$(readme 272 272)"
-  cstep b04-pulumi-version /app "$(readme 273 273)"
-  cstep b05-kubectl-version /app "$(readme 274 274)"
-  cstep b06-gcloud-auth-list /app "gcloud auth list"
-  cstep b07-x-env /app "env | grep -E '^(GCP_|GOOGLE_|PULUMI_|USE_GKE)' | sort; ls -la /secrets; python --version; uv --version; which docker ssh; docker ps --format '{{.Names}}'"
-  # README.md:283-291 "Configuring OS Login for service account": the template line, then the example
-  cstep b08-oslogin-template /app "$(readme 286 286)"
-  cstep b09-oslogin-example /app "$(readme 290 290)"
-  # README.md:294-298 "Create SSH key for service account" (empty passphrase: Enter twice)
-  ctstep b10-ssh-keygen /secrets "$(readme 295 297)" "ssh-keygen -f ssh-key-deployment" "passphrase" "" "passphrase" ""
-  cstep b11-x-ls-keys /secrets "ls -la /secrets"
-  # README.md:300-303 "Providing public SSH keys to instances"
-  cstep b12-oslogin-ssh-keys-add /app "$(readme 302 302)"
-  # README.md:318-322 "Deployment Setup": inventory.yml
-  cstep b13-x-inventory /app "ls inventory.yml; find / -name inventory.yml -not -path '/proc/*' 2>/dev/null | head -3"
-  # README.md:327-345 "Build and Push Docker Containers to Google Artifact Registry", verbatim
-  ctstep b14-images-stack-init /app/deploy_images "cd deploy_images
-$(readme 332 332)" "$(readme 332 332)" "(token|ENTER)" "$CTRLC"
-  cstep b15-images-config-set /app/deploy_images "$(readme 333 333)"
-  cstep b16-images-preview /app/deploy_images "$(readme 339 339)"
-  cstep b17-images-up /app/deploy_images "$(readme 344 344)"
-  # README.md:347-367 "Create Compute Instance (VM) & Deploy Containers", verbatim
-  cstep b18-vm-stack-init /app/deploy_single_vm "$(readme 352 352)"
-  for l in 353 354 355; do cstep b19-vm-config-set-$((l-352)) /app/deploy_single_vm "$(readme $l $l)"; done
-  cstep b20-vm-preview /app/deploy_single_vm "$(readme 361 361)"
-  cstep b21-vm-up /app/deploy_single_vm "$(readme 366 366)"
-  # README.md:387-390 "Delete the Compute Instance / Persistent disk"
-  cstep b22-destroy /app/deploy_single_vm "$(readme 389 389)"
-  # extras: the same programs on Pulumi's local file backend (`pulumi login --local`), which needs no
-  # cloud account, so each one runs up to its first call that needs Google (ASSETS.md)
-  FRONT='urn:pulumi:dev::deploy-images::docker-build:index:Image::build-cheese-app-frontend-react'
-  cstep b30-x-login-local /app/deploy_images "pulumi login --local"
-  cstep b31-x-images-stack-init /app/deploy_images "$(readme 332 332)"
-  cstep b32-x-images-config-set /app/deploy_images "$(readme 333 333)"
-  cstep b33-x-images-config /app/deploy_images "pulumi config; cat Pulumi.dev.yaml; pulumi stack ls"
-  cstep b34-x-images-preview-frontend /app/deploy_images "pulumi preview --stack dev --refresh --target '$FRONT'"
-  cstep b35-x-images-up-frontend /app/deploy_images "pulumi up --stack dev --refresh -y --target '$FRONT'"
-  cstep b36-x-images-after /app/deploy_images "pulumi stack ls; pulumi stack output; docker images"
-  cstep b40-x-vm-stack-init /app/deploy_single_vm "$(readme 352 352)"
-  for l in 353 354 355; do cstep b41-x-vm-config-set-$((l-352)) /app/deploy_single_vm "$(readme $l $l)"; done
-  cstep b42-x-vm-config /app/deploy_single_vm "pulumi config"
-  cstep b43-x-vm-preview /app/deploy_single_vm "$(readme 361 361)"
-  cstep b44-x-vm-up /app/deploy_single_vm "$(readme 366 366)"
-  cstep b45-x-destroy /app/deploy_single_vm "$(readme 389 389)"
-  cstep b46-x-stacks-on-disk /app "pulumi stack ls --all; ls -R ~/.pulumi/stacks 2>/dev/null | head; ls /app/pulumi-plugins | head; git -C /app status --short 2>&1 | head"
+  partB_commands
   touch $CUE
   wait $SHELL_PID
   cd ~
+  ;;
+# ------------------------------------------------------------------------------------------------
+partB5)
+  # capture-only: b35's build stopped at x509 because pulumi-docker-build created its own
+  # docker-container BuildKit ("wonderful_wilbur", from inside the deployment container), which does
+  # not trust the recording proxy's CA. Give root's buildx in that container the same default config
+  # as hubprep (CA + the local node:20-alpine mirror, reached at the laptop's bridge gateway), drop
+  # that builder, and run the same `pulumi up` again (b35b; without --refresh: after the failed create,
+  # the refresh step refuses a --target that is not in the stack yet).
+  C=cheese-app-deployment
+  GWL=$(docker network inspect bridge --format '{{(index .IPAM.Config 0).Gateway}}')
+  docker cp "$CAPTURE_CA" $C:/root/capture-ca.crt
+  docker exec $C sh -c "mkdir -p /root/.docker/buildx && printf '%s\n' '# capture-only, NOT part of the tutorial (see ASSETS.md)' '[registry.\"docker.io\"]' '  mirrors = [\"$GWL:5000\"]' '  ca = [\"/root/capture-ca.crt\"]' '[registry.\"$GWL:5000\"]' '  http = true' '[registry.\"us-docker.pkg.dev\"]' '  ca = [\"/root/capture-ca.crt\"]' > /root/.docker/buildx/buildkitd.default.toml"
+  docker exec $C cat /root/.docker/buildx/buildkitd.default.toml > "$OUT/capture-only/deployment-buildkitd.default.toml"
+  step capture-only/drop-provider-builder "docker exec $C sh -c 'for b in \$(docker buildx ls --format \"{{.Name}}\" | grep -v \"^default\$\"); do docker buildx rm \$b; done'"
+  FRONT='urn:pulumi:dev::deploy-images::docker-build:index:Image::build-cheese-app-frontend-react'
+  { echo "\$ pulumi up --stack dev -y --target '$FRONT'"; docker exec -w /app/deploy_images $C bash -c "pulumi up --stack dev -y --target '$FRONT'" 2>&1 | sed 's/\x1b\[[0-9;]*m//g'; echo "[exit ${PIPESTATUS[0]}]"; } | mask > "$OUT/b35b-x-images-up-frontend-build.txt"
+  { echo '$ pulumi stack ls; pulumi stack output; docker images | head -4'; docker exec -w /app/deploy_images $C bash -c 'pulumi stack ls; pulumi stack output; docker images | head -4' 2>&1; echo "[exit $?]"; } > "$OUT/b36b-x-images-after.txt"
+  ;;
+# ------------------------------------------------------------------------------------------------
+partB4)
+  # capture-only resume: partB3's readiness probe used `docker top -eo args`, which this engine
+  # refuses ("Couldn't find PID field"); its shell (b02d) was left open and these commands ran in it
+  CUE=/tmp/l20-cue-shell
+  partB_commands
+  touch $CUE
   ;;
 esac

@@ -3,7 +3,7 @@ Production images" (caption note "earlier README · extra") 1 → 5; every comma
 Lecture tag: APIs slide 42 (beat 6 only).
 
 Beats (script.md "## S12", one voiceover block each):
-0. TRACKER [P] 1. V1 (localhost:3000, the frontend and API boxes on the GREEN cable, courier "Vite").
+0. TRACKER [P] head and the note "earlier README · extra", no step lit until beat 3. V1 (localhost:3000, the frontend and API boxes on the GREEN cable, courier "Vite").
    On "who serves" the Vite courier is struck GREY and a "?" sits beside it; on "Nginx does" the "?"
    becomes a PURPLE "nginx" chip. V1 leaves; the README card (e98fa55 README · lines 197–201) with
    the tag "erratum · removed from today's README", and a GREY chip "files still in main:
@@ -17,7 +17,8 @@ Beats (script.md "## S12", one voiceover block each):
    a PINK "/api/…" envelope rides down to the API. Then CODE(…: 23–32): line 31 GREEN, and the page
    addresses /newsletters, /chat → index.html (GREEN); on "only a missing asset" lines 23–26 GREY
    and "/assets/…" → a GREY "404".
-3. A 10-row "laptop · new terminal" at the Vite container's prompt: d02:88 (^C), d02:91 typed at its
+3. A 10-row "laptop · new terminal" at the Vite container's prompt; TRACKER [P] 1 on "Stop the dev
+   server": d02:88 (^C), d02:91 typed at its
    container prompt, d02:92. TRACKER [P] 2: at ~/cheese-app-v2/src/frontend-react it types
    `docker build -t cheese-app-frontend-react:prod .` → d20: 2, 4, …, 101, 103, 120, …, 123, 133;
    101 and 123 TEAL.
@@ -38,8 +39,9 @@ Beats (script.md "## S12", one voiceover block each):
    prompt, 621; the API box goes dark; a GREY chip "the pytest shell: exit too". The prod box comes
    back alone on the cable, about to start. PONDER (6 s).
 8. The card leaves; the browser goes and the laptop slides left. The strip (new terminal) types
-   e01:1 (extra) → e01: 11 (from "[emerg]", wrapped, RED; line 8 left out: the 3-row strip would
-   scroll the command away); the prod box flashes RED.
+   e01:1 (extra) → e01: 11 (from "[emerg]", wrapped, RED; line 8 left out: it would scroll the
+   command away); the prod box flashes RED. Before it types, the tracker leaves (beat 8 is extra), the
+   picture rises 0.6 into its place and the strip grows to 5 rows: command and error stay together.
    CODE(nginx.conf.template: 14) top right, `proxy_pass ${API_URL};` RED; the API's stub leaves the
    cable; the nginx courier sends "cheese-app-api-service ?" to the network's phone book (only
    cheese-app-vector-db in it): RED "not found". A GREEN chip "start the API first". Fade; empty
@@ -153,7 +155,7 @@ def addr_row(path: str, target) -> VGroup:
     return VGroup(a, ar, target).arrange(RIGHT, buff=0.15)
 
 
-def tracker_p_fixed(step: int) -> ReadmeTracker:
+def tracker_p_fixed(step: int | None) -> ReadmeTracker:
     """tracker_p(step) with its 'README @ e98fa55 › Production images' head put back above the dots.
     common.tracker() re-arranges the head of a 'README @ ref' tracker with VGroup.arrange(), which
     re-centres it at the origin (y 0.13, mid-frame): the head is moved back to where a plain
@@ -165,6 +167,12 @@ def tracker_p_fixed(step: int) -> ReadmeTracker:
     place_tracker(tr)
     assert abs((tr.head.get_y() - tr.dots.get_y()) - off) < 1e-6 and tr.get_top()[1] <= TRACK_TOP + 1e-6
     assert tr.get_bottom()[1] > TRACK_BOTTOM - 0.05, tr.get_bottom()
+    if step is None:
+        # no step lit yet (beats 0-2 explain the files): the caption is only the GREY note
+        # 'earlier README · extra'; track(trk, 1) cross-fades it to 'step 1 of 5: Stop dev · …'
+        tr.remove(tr.caption)
+        tr.caption = steady(NOTES["P"], tr.size, S.GREY).next_to(tr.dots, RIGHT, buff=0.25)
+        tr.add(tr.caption)
     return tr
 
 
@@ -173,7 +181,7 @@ class NginxImage(VoiceScene):
         assert len(SAY) == SAY_COUNT["S12"] == 9, len(SAY)
 
         # ========================================================== 0. who serves in production? the README card
-        trk = tracker_p_fixed(1)
+        trk = tracker_p_fixed(None)
         tr = RequestTrace("localhost:3000", rows=("front", "api"), front="react", courier="Vite", caption=False)
         net = tr.net
         vite = net.courier
@@ -331,6 +339,7 @@ class NginxImage(VoiceScene):
             self.play(FadeOut(VGroup(p2b, b4, b5, mp, rows2)), run_time=0.5)
             self.play(FadeIn(t, shift=UP * 0.2), run_time=0.5)
             vo.wait_until("Stop the dev server")
+            self.play(track(trk, 1), run_time=0.4)
             out(self, t, D02.at(88), run_time=0.3)
             type_at(self, t, D02, 91, type_time=0.4)
             out(self, t, D02.at(92), run_time=0.3)
@@ -539,8 +548,21 @@ class NginxImage(VoiceScene):
         # ========================================================== 8. host not found in upstream: start the API first
         p8 = code(TPL, 14, 14, font_size=20, dedent=True, shown="nginx.conf.template")
         ok8 = ok_chip("start the API first", size=22)
+        # the strip grows to 5 rows so e01's 3 command rows and its 2 [emerg] rows stay on screen together:
+        # the tracker (all 5 README steps done; this beat is extra) leaves and the picture rises into its
+        # place, clear of the taller strip
+        up8 = 0.6
+        assert tr6.get_top()[1] + up8 < SAFE_Y - 0.2, tr6.get_top()
+        ref8 = Terminal(prompt=s7.prompt, width=s7.box.width, rows=5, size=s7.size, title=s7.title.text)
+        ref8.shift(UP * (s7.box.get_bottom()[1] - ref8.box.get_bottom()[1]))
+        assert ref8.box.get_top()[1] < tr6.get_bottom()[1] + up8 - 0.1, (ref8.box.get_top(), tr6.get_bottom())
+        tag8 = s7.bar_tag
+        dy8 = (ref8.box.get_top()[1] - s7.bar_h / 2) - tag8.get_y()
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(card7), run_time=0.4)
+            self.play(FadeOut(trk), tr6.animate.shift(UP * up8), run_time=0.4)
+            tr6.heal(self)
+            resize(self, s7, 5, extra=[tag8.animate.shift(UP * dy8)], run_time=0.4)
             vo.wait_until("It exits at once")
             l8 = type_capture(self, s7, E01, type_time=0.8)[0]
             pin(self, l8, beside(extra_row(), l8, buff=0.4))
@@ -557,7 +579,7 @@ class NginxImage(VoiceScene):
             self.play(n6.animate.shift(RIGHT * dx), run_time=0.6)
             tr6.heal(self)
             x_r = n6.frame.get_right()[0] + 0.3
-            p8.move_to([(x_r + SAFE_X) / 2, 0, 0]).align_to([0, PIC_TOP - 0.05, 0], UP)
+            p8.move_to([(x_r + SAFE_X) / 2, 0, 0]).align_to([0, n6.get_top()[1] - 0.05, 0], UP)
             assert p8.get_left()[0] > x_r - 0.01 and p8.get_right()[0] < SAFE_X - 0.05, (p8.get_left(), p8.get_right())
             self.play(FadeIn(p8, shift=LEFT * 0.15), run_time=0.4)
             self.play(code_span(p8.code, 0, "proxy_pass ${API_URL};").animate.set_color(ERR), run_time=0.4)
@@ -583,5 +605,5 @@ class NginxImage(VoiceScene):
             self.play(FadeIn(ok8, shift=LEFT * 0.1), run_time=0.6)
             self.play(Indicate(ok8.text, color=OWN, scale_factor=1.1), run_time=0.6)
 
-        self.play(FadeOut(VGroup(tr6, p8, q8, nf, ok8, look)), FadeOut(s7), FadeOut(trk), run_time=0.7)
+        self.play(FadeOut(VGroup(tr6, p8, q8, nf, ok8, look)), FadeOut(s7), run_time=0.7)
         self.wait(0.3)

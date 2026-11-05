@@ -19,11 +19,11 @@ Beats (script.md "## S01", one voiceover block each):
    three strips fade; a YELLOW card settles in the centre: "The page talks to 3000. / The answer
    comes from 9000. / Who carried it?"
 3. lecture_ref(18, "27 (Frontend)"). The card becomes a one-line strip top-left. V1 RequestTrace at
-   full size (`localhost:3000/chat`, frontend-react 3000, api-service 9000, vector-db 8000, the BLUE
-   dashed cloud 'Vertex AI · Gemini'; GREY `illustration` tag over the browser). Circles 1–6 light
-   along the PINK arrows, each with its phrase (1–3 to the frontend, 4 in the API, 5 back from the
-   3000 door, 6 the page). Then a PURPLE "?" pops up in the frontend box and circle 3½ ("the
-   courier") walks the cable to the API.
+   full size (`localhost:3000/chat`, frontend-react 3000 with no ':5173' label (the inner port waits
+   for S10), api-service 9000, vector-db 8000, the BLUE dashed cloud 'Vertex AI · Gemini'; GREY
+   `illustration` tag over the browser). Circles 1–6 light along the PINK arrows, each with its
+   phrase (1–3 to the frontend, 4 in the API, 5 back from the 3000 door, 6 the page). Then a PURPLE
+   "?" pops up in the frontend box and circle 3½ ("the courier") walks the cable to the API.
 4. lecture_ref(18, "19–21 (APIs)"). The trace fades except its three port numbers; V2
    ArchitectureMap appears as a GREY ghost with only the cluster drawn; on "the same three ports"
    the numbers fly onto the cluster's PINK edge labels. GREEN "App is ready!", then a RED strike and
@@ -205,7 +205,9 @@ class Hook(VoiceScene):
         ref1 = lref("27 (Frontend)")
         strip_q = question_card("From 3000 to 9000: who carried it?", size=22)
         strip_q.move_to([-6.5 + strip_q.width / 2, TOP - strip_q.height / 2, 0])
-        tr = RequestTrace("localhost:3000/chat", rows=("front", "api", "vdb"), front="react", cloud=True)
+        tr = RequestTrace("localhost:3000/chat", rows=("front", "api", "vdb"), front="react", cloud=True,
+                          doors={"front": ("3000", None)})   # no ':5173' yet: the inner port is S10's
+        assert "front" not in tr.net.ports
         tr.shift(UP * 0.15)
         ill = illustration_tag().next_to(tr.browser, UP, buff=0.12).align_to(tr.browser, LEFT)
         assert strip_q.get_right()[0] < ref1.get_left()[0] - 0.2

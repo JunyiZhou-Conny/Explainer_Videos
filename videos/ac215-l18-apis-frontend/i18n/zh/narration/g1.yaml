@@ -60,7 +60,7 @@ S02:
   - "开发者、用户、GitHub 和 Colab 在云外，Vertex AI 在云里，每个箭头都标着它的协议和 port。"
 - en: "Then come a bucket, a registry of images and a persistent disk. On the right sits a cluster: NGINX in front, the app on 3000, the API on 9000, the vector database on 8000."
   zh:
-  - "接着是一个 bucket、一个存 image 的 registry 和一块持久化磁盘。"
+  - "接着是一个 bucket，一个存 image 的 registry 和一块持久化磁盘。"
   - "右边是一个集群：最前面是 NGINX，应用在 3000，API 在 9000，向量数据库在 8000。"
 - en: "Today, that whole right-hand side runs on your laptop."
   zh:
@@ -68,7 +68,7 @@ S02:
 - en: "The lecture's folder rule: one Git folder per app, one folder per service under src, and secrets outside the Git folder. Version 1 even keeps empty folders for the services it does not run; version 2 holds only its three."
   zh:
   - "课上的目录规则：每个应用一个 Git 目录，src 下每个服务一个目录，secrets 放在 Git 目录之外。"
-  - "v1 甚至给它不跑的服务也留了空目录；v2 只放它自己的三个。"
+  - "v1 甚至留着空目录，给它不跑的服务；v2 只放它自己的三个。"
 - en: "Steps 1 and 2: clone both repositories. The READMEs say clone or download; git clone is our spelling. Pause and clone them."
   zh:
   - "第 1、2 步：把两个 repo 都 clone 下来。"
@@ -87,7 +87,7 @@ S02:
   zh:
   - "有一件事在我们录制当天变了：v2 的 main 分支动了两次。"
   - "我们跟着你今天 clone 到的 main 分支走。"
-  - "课上讲的简单前端现在放在一个叫 2025 的分支上，我们最后会去看。"
+  - "课上讲的简单前端现在在 2025 分支上，我们最后会去看。"
 S03:
 - en: "A browser sends a request; a server sends a response. A port picks which program gets it: public sites leave the default 80 and 443 out of the address; ours show the port."
   zh:
@@ -206,9 +206,10 @@ S04:
 - en: "Without the trailing slash, FastAPI answers 307 and points to the slash version."
   zh:
   - "不带结尾的斜杠，FastAPI 会返回 307，指向带斜杠的版本。"
-- en: "The server's log shows each request with its status: 200, 200, 200, 422, 307."
+- en: "The server's log shows each request with its status. 200, 200, 200, 422, 307."
   zh:
-  - "服务器日志列出每个请求和它的状态码：200、200、200、422、307。"
+  - "服务器日志列出每个请求和它的状态码。"
+  - "200、200、200、422、307。"
 - en: "Step 8: open slash docs. FastAPI built this page from your code: x and y appear as numbers, with their defaults, and you can try a call right there."
   zh:
   - "第 8 步：打开 /docs。"
@@ -326,14 +327,18 @@ S06:
 - en: "Step 3: chat. The first Google call, embedding the question, fails here: invalid grant, account not found. With your key, an answer from the books appears instead."
   zh:
   - "第 3 步：chat。"
-  - "第一次 Google 调用，也就是给问题做 embedding，在这里失败了：Invalid grant: account not found。"
+  - "第一次 Google 调用，也就是给问题做 embedding，在这里失败了，报错是：Invalid grant: account not found。"
   - "有了你的密钥，这里出现的就是一个来自这些书的回答。"
+  en_display:
+  - null
+  - "The first Google call, embedding the question, fails here: Invalid grant: account not found."
+  - null
 - en: "A small note: chat always asks its own fixed question, how is cheese made; there is no place to type yours. To ask another, edit that line in cli dot py."
   zh:
   - "说明一点：chat 总是问它自己固定的那个问题，How is cheese made，没有地方让你输入自己的问题。"
   - "想问别的，就改 cli.py 里的那一行。"
   en_display:
-  - null
+  - 'A small note: chat always asks its own fixed question, "How is cheese made?", and there is no place to type yours.'
   - "To ask another, edit that line in cli.py."
 - en: "Step 4: exit. Chroma keeps running on 8000, as an extra docker ps shows, and the network's phone book now turns its name into an address."
   zh:
@@ -513,8 +518,12 @@ S09:
 - en: "Ask mode calls Gemini, and here it stops: Internal Server Error, status 500. The API's terminal shows why: the same invalid grant, account not found. With your key, Gemini's answer has this shape."
   zh:
   - "Ask 模式会调用 Gemini，到这里就停了：Internal Server Error，状态码 500。"
-  - "API 的终端说明了原因：还是那个 Invalid grant: account not found。"
+  - "API 的终端说明了原因，报错还是那个：Invalid grant: account not found。"
   - "有了你的密钥，Gemini 的回答就是这个形状。"
+  en_display:
+  - null
+  - "The API's terminal shows why: the same Invalid grant: account not found."
+  - null
 - en: "A small note: the README's table covers Gemini 403 and 404, reported as 502. A key Google cannot sign in with fails earlier, as a plain 500, so check the API's terminal first."
   zh:
   - "说明一点：README 的表格讲的是 Gemini 返回 403 和 404，报成 502。"
@@ -526,7 +535,7 @@ S09:
   - "而用普通 def 写的路由在线程里跑，所以一个慢的回答不会阻塞其他请求。"
 - en: "Last, the tests: in a second terminal, in the same folder, docker-shell.sh again opens a shell in the running container. Run pytest: 26 passed. Pause and run it."
   zh:
-  - "最后是测试：在第二个终端里，同一个目录下，再运行 docker-shell.sh，会在正在跑的 container 里开一个 shell。"
+  - "最后是测试：在第二个终端里，在同一个目录下再运行 docker-shell.sh，会在正在跑的 container 里开一个 shell。"
   - "运行 pytest：26 passed。"
   - "暂停一下，自己跑一遍。"
 - en: "Keep this container running. The API is ready, but nobody can use it from a browser yet. In part 2 the browser talks to port 3000, so how does that reach 9000?"

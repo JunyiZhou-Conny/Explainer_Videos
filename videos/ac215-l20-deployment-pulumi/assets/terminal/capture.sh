@@ -1,8 +1,11 @@
 #!/bin/bash
 # Re-capture the L20 terminal transcripts (needs Docker and privileged containers).
-#   bash assets/terminal/capture.sh relay vm-setup vm1 vm-dockerd vm2 vm-teardown
-#   bash assets/terminal/capture.sh relay laptop-setup pre partA partB laptop-teardown
+#   bash assets/terminal/capture.sh relay vm-setup vm1 vm-dockerd vm2 vm3 vm4 vm4b vm5 vm6 vm-teardown
+#   bash assets/terminal/capture.sh relay laptop-setup pre hubprep partA partA2 partB partB2 partB3 partB5 laptop-teardown
 #   docker rm -f l20-relay
+# (As recorded on 2026-11-05: vm3's api-service crashed on the proxy's TLS, so vm4 re-tags it and
+# runs the README command again; partB3's readiness probe hung, so partB4 ran its commands in the
+# shell it had left open, see ASSETS.md. With the fixed probe, partB3 alone does both.)
 # Each segment is one call of run_steps.sh (see its header); the containers persist between calls, so
 # the capture can run in parts.
 #

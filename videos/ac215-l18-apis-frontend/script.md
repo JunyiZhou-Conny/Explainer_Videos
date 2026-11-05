@@ -579,7 +579,7 @@ SAY: Without the trailing slash, FastAPI answers 307 and points to the slash ver
 
 SHOW: The uvicorn strip: TERM(a03: 55–59); the status column of each line writes in colour (200
 GREEN ×3, 422 RED, 307 PINK); IPs and ports stay GREY.
-SAY: The server's log shows each request with its status: 200, 200, 200, 422, 307.
+SAY: The server's log shows each request with its status. 200, 200, 200, 422, 307.
 
 SHOW: TRACKER [A] 8. Strip: `curl -s http://localhost:9000/docs | grep -E '<title>|openapi.json|swagger'`
 (extra) → TERM(a10: 3, 6); `<title>API Server - Swagger UI</title>` and `url: '/openapi.json'`
@@ -1056,7 +1056,7 @@ about 4 s.
 TRACKER [R] 7. A terminal `laptop · new terminal`, prompt `…/src/frontend-react$`, types
 `./docker-shell.sh` → TERM(d12: 2); at the prompt it types `npm run check` → TERM(d12: 6, 9, 11,
 24–25, 27); line 6 YELLOW; line 25 `dist/assets/index-….js` GREEN (hash not read). Fade; empty frame.
-SAY: The README's code table names the files we just saw; pause to match each one. Then, in a second terminal in the same folder, npm run check: a lint, a format check and a production build. That build is what production serves.
+SAY: The README's code table names the files we just saw; pause to match each one. Then, in a second terminal in the same folder, docker-shell.sh again opens a shell in the running container; run npm run check: a lint, a format check and a production build. That build is what production serves.
 
 ---
 
@@ -1218,7 +1218,7 @@ prompt (line 33) `python cli.py --download --load --chunk_type recursive-split` 
 197), with S06's counter flashing to **14,356** at once, and a GREY chip "your folder still holds
 main's data · output may differ slightly". Extra: line 1 of `c07` (folds) → TERM(c07: 2–3),
 `chromadb/chroma:latest` YELLOW with "at the time of recording". Then TERM(c06: 198) (the `exit`).
-SAY: Vector DB steps 1 to 3, as the 2025 README spells them, end in the same load: 14,356 chunks. Its Chroma image is tagged latest and still works. Leave with exit; Chroma keeps running.
+SAY: Vector DB steps 1 to 3, from the folder above cheese app v2, as the 2025 README spells them, end in the same load: 14,356 chunks. Its Chroma image is tagged latest and still works. Leave with exit; Chroma keeps running.
 
 SHOW: TRACKER [T23] 4. A new terminal strip titled `laptop · new terminal`, prompt `student@laptop:~$`
 (the folder that holds both clones): `cd cheese-app-v2/src/api-service` →

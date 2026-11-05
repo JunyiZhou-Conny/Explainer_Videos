@@ -86,7 +86,7 @@ S11:
   en_display:
   - null
   - null
-  - "Here, every call in api.js goes to a relative path starting with /api, with the session ID from local storage."
+  - "Here, every call in api.js goes to a relative path starting with /api, with the session ID from localStorage."
 - en: "And vite dot config dot js holds the courier: a proxy rule that forwards slash api to cheese app API service, port 9000, by container name."
   zh:
   - "而 vite.config.js 里放着那个信使：一条代理规则，把 /api 转发到 cheese-app-api-service 的 port 9000，按的是 container 名字。"
@@ -108,7 +108,7 @@ S11:
 - en: "So, a quick test. Could the page's JavaScript call the API by its container name, port 9000, directly?"
   zh:
   - "那么，快速测一下。"
-  - "页面的 JavaScript 能不能用 container 名字和 port 9000，直接调用 API？"
+  - "页面的 JavaScript 能不能按 container 名字调用 API，用 port 9000，直接调？"
 - en: "No. The JavaScript runs in your browser, on the laptop, and the laptop's DNS knows no container names. Only code inside the network can use them: the Vite proxy, nginx, the API."
   zh:
   - "不能。"
@@ -123,10 +123,10 @@ S11:
   - "Review the app：首页、播客和简报都经过 API 加载，Recent 标签页在刷新后还留着你的聊天。"
   - "在聊天里，Identify 经过代理能用；Ask，还有问 Tolminc 的 Cheese books，都得到同样的 500。"
   - "暂停一下，挨个点一遍。"
-- en: "The README's code table names the files we just saw; pause to match each one. Then, in a second terminal in the same folder, npm run check: a lint, a format check and a production build. That build is what production serves."
+- en: "The README's code table names the files we just saw; pause to match each one. Then, in a second terminal in the same folder, docker-shell.sh again opens a shell in the running container; run npm run check: a lint, a format check and a production build. That build is what production serves."
   zh:
   - "README 的代码表列出了我们刚看过的文件；暂停一下，逐个对上。"
-  - "然后在第二个终端里，同一个目录下，跑 npm run check：一次 lint、一次格式检查和一次生产构建。"
+  - "然后在第二个终端里，在同一个目录下再运行 docker-shell.sh，会在正在跑的 container 里开一个 shell；在里面跑 npm run check：一次 lint、一次格式检查和一次生产构建。"
   - "生产环境提供的就是这次构建的结果。"
 S12:
 - en: "In production, Vite does not run, so who serves the files and forwards slash api? Nginx does. Today's README dropped this section on the recording day, but its files are still in main, so we run the earlier README's commands, marked extra."
@@ -260,11 +260,15 @@ S14:
   en_display:
   - "An extra log shows last year's commit, with frontend-simple."
   - "Its vector-db script wants a second key name, so copy your key under it, and set your project ID again."
-- en: "Vector DB steps 1 to 3, as the 2025 README spells them, end in the same load: 14,356 chunks. Its Chroma image is tagged latest and still works. Leave with exit; Chroma keeps running."
+- en: "Vector DB steps 1 to 3, from the folder above cheese app v2, as the 2025 README spells them, end in the same load: 14,356 chunks. Its Chroma image is tagged latest and still works. Leave with exit; Chroma keeps running."
   zh:
-  - "Vector DB 的第 1 到 3 步，照 2025 分支 README 的写法，最后是同样的加载：14,356 个 chunk。"
+  - "Vector DB 的第 1 到 3 步，从 cheese-app-v2 的上一级目录开始，照 2025 分支 README 的写法，最后是同样的加载：14,356 个 chunk。"
   - "它的 Chroma image 的 tag 是 latest，现在还能用。"
   - "用 exit 退出；Chroma 还在跑。"
+  en_display:
+  - "Vector DB steps 1 to 3, from the folder above cheese-app-v2, as the 2025 README spells them, end in the same load: 14,356 chunks."
+  - null
+  - null
 - en: "Backend steps 1, 2 and 4, in a new terminal from the folder that holds both clones: change into the API folder, sh docker-shell.sh, and uvicorn server. Pause and start it."
   zh:
   - "Backend 的第 1、2、4 步，在一个新终端里，从放着两个 clone 的目录开始：进到 API 目录，sh docker-shell.sh，然后 uvicorn server。"
@@ -323,10 +327,10 @@ S15:
 - en: "An extra curl sends what the browser sends. The API answers with access control allow origin, star: permission granted."
   zh:
   - "额外用 curl 发送浏览器会发的东西。"
-  - "API 的回答里带着 access-control-allow-origin，星号：许可了。"
+  - "API 的回答里带着 access-control-allow-origin，星号，许可了。"
   en_display:
   - null
-  - "The API answers with access-control-allow-origin: *: permission granted."
+  - "The API answers with access-control-allow-origin *, permission granted."
 - en: "First comes 307, then 200: the paths differ by one slash, an extra round trip."
   zh:
   - "先是 307，然后是 200：两个路径差一个斜杠，多跑了一趟。"
@@ -339,7 +343,7 @@ S15:
   - null
 - en: "A JSON post with a custom header makes the browser ask first, with an OPTIONS request. The answer allows any origin, these methods and these two headers, for 600 seconds."
   zh:
-  - "一个带自定义请求头的 JSON POST 请求，会让浏览器先问一声，用一个 OPTIONS 请求。"
+  - "一个带自定义请求头的 JSON POST 请求会让浏览器先问一声，用的是一个 OPTIONS 请求。"
   - "回答允许任何 origin、这些方法和这两个请求头，有效 600 秒。"
 - en: "The log: OPTIONS 200, then the post bounces with 307 and ends in 500, the same Gemini error. That 500 carries the permission header too, so the browser shows the real error."
   zh:
@@ -369,7 +373,7 @@ S16:
 - en: "Before you go, a cleanup checklist, all done once already. Exit every container, compose down, back to main, prune after checking its list; then remove the node modules volume and big images by name. Your key stays in secrets."
   zh:
   - "走之前，一份清理清单，每一项前面都做过一次。"
-  - "退出每个 container，compose down，切回 main 分支，先看清单再 prune；然后按名字删掉 node modules 这个 volume 和大 image。"
+  - "退出每个 container、compose down、切回 main 分支，先看清单再 prune；然后按名字删掉 node modules 这个 volume 和大 image。"
   - "你的密钥留在 secrets 里。"
   en_display:
   - null

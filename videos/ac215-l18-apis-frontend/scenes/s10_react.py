@@ -25,8 +25,8 @@ Beats (script.md "## S10", one voiceover block each):
    line 59 `<footer` → the footer. LECTURE off at the end.
 6. Tracker [R] 1. A 3-row `laptop · new terminal` strip at ~/cheese-app-v2 types `cd
    src/frontend-react` (d01, the prompt changes); tracker [R] 2, `./docker-shell.sh` (d02:1).
-   CODE(frontend-react/docker-shell.sh: 14–23) on the left, a small V5 on the right (the API box on
-   the GREEN cable): line 19 GREEN, line 20 ORANGE (an ORANGE chip "named volume" under the frontend
+   CODE(frontend-react/docker-shell.sh: 14–23) on the left, a small V5 on the right (the laptop frame,
+   the API box and a dimmed vector-db box on the GREEN cable, as in beat 0 and S11): line 19 GREEN, line 20 ORANGE (an ORANGE chip "named volume" under the frontend
    box), line 21 PINK (the frontend box comes in behind door 3000, ':5173'), line 22 GREEN (its stub
    joins the cable). ▶ your turn on the title bar.
 7. The panel and the drawing go; the terminal grows to 10 rows: d02:2–3 (cut), …, 21–25, 27
@@ -163,29 +163,42 @@ def strip_flash(scene, rect, text=None, color=TURN, *extra, run_time: float = 0.
 
 
 def mini_net():
-    """Beats 6 and 8: a small V5 on the right (x 1.6 .. 6.4): the API box behind door 9000 on the
-    GREEN cable; the frontend row (door 3000, ':5173', box), its stub and the ORANGE 'named volume'
-    chip are built here and shown on their phrases.
-    .api .api_door .api_tun .cable .stub_api .label .front .door .tunnel .port .stub .vol"""
+    """Beats 6 and 8: a compact V5 on the right, in the same shape as the opening's and S11's laptop: the
+    GREY frame 'your laptop' (x 2.35 .. 6.55, its left wall carrying the doors), the API box behind door
+    9000 and the vector-db box behind door 8000 (dimmed: not part of this step) on the GREEN cable; the
+    frontend row on top (door 3000, ':5173', box), its stub and the ORANGE 'named volume' chip are built
+    here and shown on their phrases.
+    .frame .title .api .api_door .api_tun .vdb .cable .stub_api .label .front .door .tunnel .port .stub .vol"""
     g = VGroup()
-    cx = 6.3
-    yf, ya = 1.75, -0.05
+    cx, wall = 6.3, 2.35
+    yf, ya, yv = 1.92, 0.44, -0.54
+    frame = RoundedRectangle(width=4.2, height=4.18, corner_radius=0.16, stroke_color=LAPTOP,
+                             stroke_width=3).set_fill(S.BG, 1)
+    frame.move_to([wall + 2.1, 2.78 - 4.18 / 2, 0])
+    title = label("your laptop", 20, LAPTOP).align_to(frame, UR).shift(np.array([-0.18, -0.12, 0]))
     api = cbox(("cheese-app-", "api-service"), 2.7, 0.84).move_to([4.45, ya, 0])
     front = cbox(("cheese-app-", "frontend-react"), 2.7, 0.84).move_to([4.45, yf, 0])
-    cable = Line([cx, yf + 0.3, 0], [cx, ya - 0.3, 0], color=NET, stroke_width=6)
+    vbox = cbox(("cheese-app-", "vector-db"), 2.7, 0.84).move_to([4.45, yv, 0])
+    cable = Line([cx, yf + 0.3, 0], [cx, yv - 0.3, 0], color=NET, stroke_width=6)
     stub_api = Line(api.get_right(), [cx, ya, 0], color=NET, stroke_width=5)
     stub = Line(front.get_right(), [cx, yf, 0], color=NET, stroke_width=5)
-    lab = mono(NETWORK, 20, NET).next_to(api, DOWN, buff=0.22)
+    lab = mono(NETWORK, 20, NET).next_to(vbox, DOWN, buff=0.12)
     lab.shift(RIGHT * (cx + 0.1 - lab.get_right()[0]))
-    api_door = door("9000").move_to([2.35, ya, 0])
+    api_door = door("9000").move_to([wall, ya, 0])
     api_tun = Line(api_door.get_right(), api.get_left(), color=ROUTE, stroke_width=4)
-    dr = door("3000").move_to([2.35, yf, 0])
+    v_door = door("8000").move_to([wall, yv, 0])
+    v_tun = Line(v_door.get_right(), vbox.get_left(), color=ROUTE, stroke_width=4)
+    v_stub = Line(vbox.get_right(), [cx, yv, 0], color=NET, stroke_width=5)
+    vdb = VGroup(v_tun, v_stub, v_door, vbox)
+    vdb.fade(0.6)
+    dr = door("3000").move_to([wall, yf, 0])
     tun = Line(dr.get_right(), front.get_left(), color=ROUTE, stroke_width=4)
     port = mono(":5173", 20, ROUTE).next_to(front.frame.get_corner(UL), UP, buff=0.04)
     port.align_to(front.frame, LEFT).shift(RIGHT * 0.12)
     vol = chip("named volume", SHARED, size=20)
     vol.move_to([front.get_x(), (front.get_bottom()[1] + api.get_top()[1]) / 2, 0])
-    g.add(cable, stub_api, api_tun, api_door, api, lab)
+    g.add(frame, title, cable, stub_api, api_tun, vdb, api_door, api, lab)
+    g.frame, g.title, g.vdb = frame, title, vdb
     g.api, g.api_door, g.api_tun, g.cable, g.stub_api, g.label = api, api_door, api_tun, cable, stub_api, lab
     g.front, g.door, g.tunnel, g.port, g.stub, g.vol = front, dr, tun, port, stub, vol
     return g
@@ -416,7 +429,12 @@ class ReactShell(VoiceScene):
         assert pd.get_bottom()[1] > t.box.get_top()[1] + 0.05, (pd.get_bottom(), t.box.get_top())
         assert pd.get_right()[0] < mn.door.get_left()[0] - 0.1, (pd.get_right(), mn.door.get_left())
         assert mn.label.get_bottom()[1] > t.box.get_top()[1] + 0.05, mn.label.get_bottom()
-        assert mn.port.get_top()[1] < PIC_TOP, mn.port.get_top()
+        assert mn.port.get_top()[1] < mn.frame.get_top()[1] - 0.08 and mn.port.get_right()[0] < mn.title.get_left()[0] - 0.2, mn.port.get_top()
+        assert mn.frame.get_top()[1] < PIC_TOP, mn.frame.get_top()
+        assert mn.front.get_top()[1] < mn.title.get_bottom()[1] - 0.04, (mn.front.get_top(), mn.title.get_bottom())
+        assert mn.label.get_bottom()[1] > mn.frame.get_bottom()[1] + 0.05, mn.label.get_bottom()
+        assert mn.frame.get_bottom()[1] > t.box.get_top()[1] + 0.1, mn.frame.get_bottom()
+        assert mn.frame.get_right()[0] < SAFE_X, mn.frame.get_right()
         assert mn.vol.get_top()[1] < mn.front.get_bottom()[1] - 0.05 and mn.vol.get_bottom()[1] > mn.api.get_top()[1] + 0.05
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(pa, pb, bh, bf, bo)), FadeOut(sh), run_time=0.5)

@@ -354,8 +354,10 @@ class Branch2025(VoiceScene):
         # ========================================================== 3. Tutorial (23) vector DB: the same load
         trk = tracker_t23_fixed(1)
         above = grey_chip("from the folder above cheese-app-v2")
-        compose = card([label("docker-compose: command not found? the same step, Compose v2:", 20, INK),
-                        mono(f"docker compose run --rm --service-ports {C_CLI}", 20, INK)], buff=0.14)
+        # Compose v2 fallback: edit the script's last line (a bare `docker compose run` in the shell
+        # would miss GCP_PROJECT / GOOGLE_APPLICATION_CREDENTIALS, which only docker-shell.sh exports)
+        compose = card([label("docker-compose: command not found? In docker-shell.sh, make the last line", 20, INK),
+                        mono("docker compose run --rm --service-ports $IMAGE_NAME", 20, INK)], buff=0.14)
         compose.move_to([0, 1.95, 0])
         cnt = chunk_counter(CHUNKS)
         main_data = grey_chip("your folder still holds main's data · output may differ slightly")
@@ -378,8 +380,9 @@ class Branch2025(VoiceScene):
             self.play(FadeIn(compose, shift=DOWN * 0.1), run_time=0.4)
             out(self, t, [cut(C06.line(3), "FINISHED"), "…", cut(C06.line(22), "Pulled"),
                           (cut(C06.line(23), "Created"), CONTAINER)] + C06.at((26, 30)), run_time=0.7)
-            self.play(track(trk, 3), FadeOut(compose), run_time=0.4)
+            self.play(track(trk, 3), run_time=0.4)
             type_at(self, t, C06, 33, type_time=0.7)
+            self.play(FadeOut(compose), run_time=0.3)
             o6 = out(self, t, [C06.line(41), "…", (C06.line(197), OWN)], wrap=True, run_time=0.5)
             cnt.move_to([0, (t.box.get_top()[1] + PIC_TOP) / 2, 0]).shift(RIGHT * (6.45 - cnt.get_right()[0]))
             main_data.move_to([-6.45 + main_data.width / 2, cnt[1].get_center()[1], 0])
@@ -537,7 +540,10 @@ class Branch2025(VoiceScene):
             dont.next_to(err6b, DOWN, buff=0.2).align_to(err6b, LEFT)
             self.play(FadeTransform(cA, cB), Transform(err6, err6b), run_time=0.6)
             self.bring_to_front(err6)
-            ln = type_capture(self, tab, C14, type_time=0.9)[-1]
+            # one long line whose quoted python is longer than a row: soft-wrap at the row edge like a
+            # real terminal (the rows join back to the exact command; no ' \\' inside the quotes)
+            assert len(C14.cmd_lines) == 1
+            ln = type_cmd(self, tab, C14.cmd_lines[0], type_time=0.9, soft=True)
             mark_extra(self, tab, ln)
             o14 = out(self, tab, C14.at((3, 9)), run_time=0.5)
             self.play(*[r.animate.set_color(TURN) for r in o14[1:5]], run_time=0.4)

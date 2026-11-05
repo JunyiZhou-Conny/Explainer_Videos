@@ -1,0 +1,3 @@
+$ pulumi preview --stack dev --refresh
+error: PULUMI_ACCESS_TOKEN must be set for login during non-interactive CLI sessions
+[exit 3]

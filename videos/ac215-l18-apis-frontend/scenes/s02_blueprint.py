@@ -75,6 +75,7 @@ CARD_18 = md_plain(readme_lines(18, 18, V1)).removeprefix("• ")   # the README
 assert CARD_18 == "Clone or download from here", CARD_18
 
 TREE_SIZE = 20
+GCP_RIGHT = 1.55        # S02 beat 3: the GCP boundary's right edge once the cluster has left it
 
 
 def grey_glyphs(tree):
@@ -302,6 +303,21 @@ class Blueprint(VoiceScene):
             m.shown.remove("title")
             m.drop(self, title, extra=[FadeOut(ref2)], run_time=0.4)
             vo.wait_until("that whole right-hand side")
+            # The cluster lifts out of the BLUE boundary and slides down to the bottom right; the GCP
+            # boundary closes behind it (right edge left of the laptop); the cloud's edges into it (NFS,
+            # the users' HTTP/HTTPS 80) go with it.
+            cl = m.layers["cluster"]
+            gcp_fr = m.layers["gcp"][0]
+            disk_l, e = m.layers["disk"], m.layers["edges"]
+            lift, slide = UP * 0.2 + RIGHT * 0.12, DOWN * 0.55
+            gcp_new = box(GCP_RIGHT - gcp_fr.get_left()[0], gcp_fr.height, CLOUD, dashed=True)
+            gcp_new.align_to(gcp_fr, LEFT).align_to(gcp_fr, UP)
+            m.drop(self, disk_l[1], disk_l[2], e.users_edge, e.users_label, run_time=0.5,
+                   extra=[cl.animate.shift(lift), Transform(gcp_fr, gcp_new)])
+            self.play(cl.animate.shift(slide), run_time=0.6)
+            m.heal(self)
+            assert m.cluster_frame.get_left()[0] > gcp_fr.get_right()[0] + 0.2, "laptop vs GCP"
+            assert m.cluster_frame.get_right()[0] < 6.6 and m.cluster_frame.get_bottom()[1] > -3.6
             m.to_laptop(self, run_time=1.2)
             self.play(FadeIn(aws, shift=DOWN * 0.15), run_time=0.4)
             vo.wait_until("runs on your laptop")

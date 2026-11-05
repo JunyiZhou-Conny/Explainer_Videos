@@ -316,7 +316,8 @@ class ServerAndApp(VoiceScene):
                  (A03.line(32), OWN)] + A03.at((33, 37))
         v = ServerAppDiagram().shift(V3_AT)
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(panel, rm_ring, v_bars, p_ring, tunnel)), run_time=0.4)
+            # "Step 3" opens the block: the tracker moves first, the step-2 build log then scrolls in
+            self.play(FadeOut(VGroup(panel, rm_ring, v_bars, p_ring, tunnel)), track(trk, 3), run_time=0.4)
             t.remove(turn)
             self.play(FadeOut(turn), run_time=0.2)
             resize(self, t, 11, run_time=0.5)
@@ -326,7 +327,6 @@ class ServerAndApp(VoiceScene):
             pin(self, r35, beside(time_row(), r35, buff=0.4))
             pin(self, r33, beside(row_tag("your prompt shows your own user · on a Mac: aarch64"), r33, buff=0.4))
             vo.wait_until("the README's long uvicorn line")
-            self.play(track(trk, 3), run_time=0.4)
             uv = type_at(self, t, A03, 38, type_time=1.6)
             uv_rows = rows_of(uv)
             assert len(uv_rows) == 2, [r.text for r in uv_rows]
@@ -405,7 +405,14 @@ class ServerAndApp(VoiceScene):
         p5.shift(np.array([-6.45 - p5.get_left()[0], 2.25 - p5.code.get_top()[1], 0]))
         bar5 = line_bar(p5.code, 0, TOOL, 0.3)
         p5.add(bar5)
-        cors = ring(VGroup(*[p5.code.code_lines[k] for k in range(3, 10)]), S.GREY, buff=0.1)
+        # lines 8-14 only: the top edge runs midway between line 7 ('# Enable CORSMiddleware') and line 8
+        c_lines = VGroup(*[p5.code.code_lines[k] for k in range(3, 10)])
+        c_top = (p5.code.code_lines[2].get_bottom()[1] + p5.code.code_lines[3].get_top()[1]) / 2
+        c_bot = p5.code.code_lines[9].get_bottom()[1] - 0.06
+        cors = RoundedRectangle(width=c_lines.width + 0.2, height=c_top - c_bot, corner_radius=0.08,
+                                stroke_color=S.GREY, stroke_width=3).move_to([c_lines.get_x(), (c_top + c_bot) / 2, 0])
+        assert c_top < p5.code.code_lines[2].get_bottom()[1] - 0.02, (c_top, p5.code.code_lines[2].get_bottom())
+        assert cors.get_bottom()[1] > p5.code.background.get_bottom()[1] + 0.02, (cors.get_bottom(), p5.code.background.get_bottom())
         end2 = grey_chip("part 2's ending").next_to(cors, DOWN, buff=0.18).align_to(cors, LEFT)
         p17 = code(SVC, 17, 20, font_size=20, shown="api/service.py")
         p17.move_to([-6.45 + p17.width / 2, -3.5 + p17.height / 2, 0])
@@ -419,8 +426,21 @@ class ServerAndApp(VoiceScene):
             v.eth0 = v.lo = v.badge = v.host = None
             v.binds = VGroup()
             v.add(v.binds)
+            # the container's empty left strip (the plates are gone) narrows so the opaque panel
+            # never covers its wall; it widens again (unseen) before V3 returns in beat 12
+            full_box = v.container.copy().shift(shift_v)
+            c_left = p5.get_right()[0] + 0.15
+            narrow = RoundedRectangle(width=full_box.get_right()[0] - c_left, height=full_box.height,
+                                      corner_radius=0.16, stroke_color=CONTAINER, stroke_width=3)
+            narrow.set_fill(tint(CONTAINER, 0.08), 1).move_to([(c_left + full_box.get_right()[0]) / 2,
+                                                               full_box.get_y(), 0])
+            title_dx = c_left - full_box.get_left()[0]
+            assert narrow.get_left()[0] < v.socket.get_left()[0] + shift_v[0] - 0.3, (narrow.get_left(), v.socket.get_left())
             self.play(v.animate.shift(shift_v), run_time=0.6)
+            self.play(v.container.animate.become(narrow), v.title.animate.shift(RIGHT * title_dx), run_time=0.5)
             self.play(FadeIn(p5, shift=RIGHT * 0.2), run_time=0.6)
+            assert p5.get_right()[0] < v.container.get_left()[0] - 0.1, (p5.get_right(), v.container.get_left())
+            assert v.title.get_right()[0] < v.container.get_right()[0] - 0.1, (v.title.get_right(), v.container.get_right())
             assert p5.get_right()[0] < v.socket.get_left()[0] - 0.05, (p5.get_right(), v.socket.get_left())
             assert p5.header.get_right()[0] < v.title.get_left()[0] - 0.1, (p5.header.get_right(), v.title.get_left())
             assert p5.code.get_top()[1] < v.title.get_bottom()[1] - 0.03, (p5.code.get_top(), v.title.get_bottom())
@@ -532,6 +552,8 @@ class ServerAndApp(VoiceScene):
         curl_i = VGroup(curl_box, curl_t)
         with self.voiceover(SAY[12]) as vo:
             self.play(FadeOut(VGroup(tr, ill, tie, old_b, old_t, notes)), FadeOut(ref2), run_time=0.6)
+            v.container.become(full_box)            # off screen since beat 9: back to the full wall
+            v.title.shift(LEFT * title_dx)
             eth0 = door("eth0", color=S.GREY, size=v.size).move_to(v.p(-4.5, 0.55))
             lo = door("lo · 127.0.0.1", color=S.GREY, size=v.size, mono_font=False).move_to(v.p(-3.2, -1.55))
             self.play(FadeIn(v), FadeIn(eth0), FadeIn(lo), run_time=0.7)
@@ -565,7 +587,16 @@ class ServerAndApp(VoiceScene):
             q_out = label("?", 26, ROUTE).next_to(a_out, UP, buff=0.1)
             self.play(FadeIn(b_icon, shift=RIGHT * 0.2), run_time=0.4)
             self.play(Create(a_out), FadeIn(q_out), run_time=0.6)
-        card = ponder(self, PONDER_Q, seconds=8, center=(0, -1.45))
+        # the card covers only the app card / routes (not asked about); lo, curl, eth0, the badge, the
+        # socket and both '?' arrows stay visible on the left. Its words stay >= 20 pt.
+        pc_left = v.socket.get_right()[0] + 0.12
+        pc_w = 6.6 - pc_left
+        probe = ponder_card(PONDER_Q, width=pc_w)
+        pt = probe[2].width / S.text(PONDER_Q, line_spacing=1.1).width * S.BODY_SIZE
+        assert pt >= 20, pt
+        pc_y = v.u_title.get_bottom()[1] - 0.12 - probe.height / 2
+        assert pc_y - probe.height / 2 > -3.6, (pc_y, probe.height)
+        card = ponder(self, PONDER_Q, seconds=8, center=((pc_left + 6.6) / 2, pc_y), width=pc_w)
 
         # one group, the card last: it stays above the picture while everything fades
         self.play(FadeOut(VGroup(v, b_icon, curl_i, a_in, q_in, a_out, q_out, card)), FadeOut(trk), run_time=0.8)
