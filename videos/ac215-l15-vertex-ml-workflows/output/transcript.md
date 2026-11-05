@@ -30,7 +30,7 @@ Two extras: only the config file exists, since we typed no keys, and the who am 
 Step 2 offers a second option: three exports in your shell. AWS rejects our placeholder key.
 There is a subtler gap: the script passes only the region, the bucket and the role into the container. So exported keys fall off at the wall. Use option 1, or add the keys with dash e.
 
-## 04:34 — The CLI container: two one-line fixes
+## 04:37 — The CLI container: two one-line fixes
 Step 3: edit docker-shell.sh with your bucket, the A R N of your role, and your region. Ours are placeholders.
 Step 4, chmod, prints nothing. An extra listing shows the script was already executable.
 Step 5: sh docker-shell.sh. It pulls the base image for A R M 64, then stops at the first RUN line: exec format error. Our Intel style laptop cannot run those programs.
@@ -45,7 +45,7 @@ Run step 5 again. It builds in almost 7 minutes, mostly locking and installing p
 Inside, extras show Python 3.9, SageMaker version 2 and TensorFlow 2.18, and the three values from the script. Deprecation warnings are not the error.
 A small slip: the help text still says GCS bucket and Vertex AI, and the test flag does nothing. The commands are the AWS ones. The image is about 4 gigabytes.
 
-## 07:19 — Where does preprocessing live?
+## 07:22 — Where does preprocessing live?
 Before we prepare the model, a design question from the lecture: where does preprocessing happen? In a notebook, you resize and normalize cell by cell. A production endpoint should take the raw photo and do all of that itself.
 In this tutorial, the client does it. The predict code opens the photo, converts it to R G B and resizes it to 224 by 224. Then it divides by 255 and sends the numbers as JSON.
 An extra check reads the model's front door, which TensorFlow calls a signature. It takes floats, shaped any number by 224 by 224 by 3, and gives four numbers per photo. Preprocessing sits on your side of the wire.
@@ -54,7 +54,7 @@ The fix from the lecture sits in the part 2 trainer. The preprocess function dec
 A function marked as the model's front door takes a batch of JPEG strings, prepares each one, and calls the model. It is saved as the serving default. Raw bytes in, one score per class out.
 One trap to avoid. The README says the prepare step converts the model to the SavedModel format. That is a change of format, not the change of signature from the lecture.
 
-## 08:57 — --prepare: a SavedModel in a tarball
+## 09:01 — --prepare: a SavedModel in a tarball
 Step 1: python cli.py dash dash prepare. The README lists four things. Download the model from GitHub, convert it to the SavedModel format, pack it as model dot tar dot G Z, and upload it to your bucket. Those are steps 1 and 3 of the lecture deployment picture. Step 2, the signature change, is not in part 1.
 Pause and run it. Ours stops right away: no credentials, at line 73 of cli.py, which creates the bucket. And the artifacts folder does not exist, so nothing was downloaded.
 A small gap in the README: the code creates the bucket before it downloads anything, a step the list does not mention. With your keys, it creates the bucket, or reuses yours if it already exists.
@@ -63,7 +63,7 @@ Here is what it made. A SavedModel is a folder: the graph and its named entry po
 The code puts it in a folder named 1, because TensorFlow Serving finds models by name, then version. The tarball holds that folder at its top.
 An extra git status shows your two edits, and Git ignores the artifacts folder. In your account, the tarball now sits in S3, and storage bills while it exists.
 
-## 10:38 — --deploy: model, endpoint configuration, endpoint
+## 10:41 — --deploy: model, endpoint configuration, endpoint
 Step 2: deploy. Remember the three pieces from the start. In code, it first describes a TensorFlow model: the tarball in S3 and the serving container, plus the role. Nothing exists in AWS yet.
 The lecture uploads to a model registry here. Both READMEs say model registry too, but the code creates a plain model in SageMaker.
 You never write an image name: the SDK picks the AWS TensorFlow Serving image from framework version 2.13. Our model was exported by TensorFlow 2.18. In step 3, a local check shows that Serving 2.13 loads it.
@@ -73,7 +73,7 @@ The lecture calls this serverless, meaning no server for you to manage. It is st
 The lecture compares two ways to serve. A model endpoint deploys a trained model directly, with versioning, A B testing and monitoring available. A general container service like Cloud Run runs anything, and you build the rest yourself.
 Its rule of thumb: an endpoint to serve a trained model, a container service when the model is one part of a larger app. Here, those features go unused.
 
-## 12:38 — --predict: 150,528 numbers per photo
+## 12:42 — --predict: 150,528 numbers per photo
 Step 3: python cli.py dash dash predict. Ours finds no endpoint config dot JSON and falls back to a default name. It picks five photos and fails five times: unable to locate credentials. Pause and run yours.
 Each try would send one photo. The client resizes it to 224 by 224, with 3 color channels. How many numbers travel to the endpoint for that one photo?
 224 times 224 times 3: one hundred fifty thousand, five hundred twenty-eight floats. Python writes each one as text in JSON, so a few megabytes per photo. A signature that takes bytes would send the JPEG itself.
@@ -84,8 +84,8 @@ And parmigiano comes back brie, at 98 percent. That is a real mistake of the rel
 Now the opening puzzle. Same code, different artifact: the README output came from an older model, with three classes and another label order. A small gap: expect four numbers, and index 0 is parmigiano.
 An extra command removes the stand-in. It never touched AWS.
 
-## 14:39 — --delete: turn off the meter
-The lecture warns that an endpoint costs money while it is up, and the slides shout one word: delete. The README gives three ways, and any one will do. Way 1, the console: SageMaker, Endpoints, select yours, Delete.
+## 14:43 — --delete: turn off the meter
+The lecture warns that an endpoint costs money while it is up, and the slides shout one word: delete. The README gives three ways. Any one stops the endpoint, but only the third also removes the tarball. Way 1, the console: SageMaker, Endpoints, select yours, Delete.
 Way 2 gives three AWS CLI commands. Typed exactly as written, the first one is a shell error: the angle brackets are placeholders, and the shell takes them as a redirection.
 A small gap: type your own names, without brackets. Ours then fails: no credentials. Delete in this order: the endpoint, then its configuration, then the model.
 Way 3: python cli.py dash dash delete stops at its first SageMaker call. Pause and run it. With keys, it deletes the endpoint named in the JSON file. Then come matching configurations and the model, by naming convention, then the tarball in S3.
@@ -93,7 +93,7 @@ Each deploy makes a new endpoint with a new timestamp, but the JSON file keeps o
 One. Delete removes only the endpoint the file names. The older one keeps running. Check with aws sagemaker list endpoints, and confirm in the console.
 That is part 1. You ran four commands by hand to deploy one model. The Cheese App has four stages before that. Who runs all of them, in the right order, every time?
 
-## 16:19 — From four terminals to one workflow
+## 16:27 — From four terminals to one workflow
 Part 2. The lecture draws the problem: four stages, each run by a person at a terminal. How do we execute these steps? And can we automate this flow?
 The answer is an orchestrator. The lecture uses Vertex AI Pipelines, on Kubeflow. This tutorial uses SageMaker Pipelines, the same idea of managed steps in a graph.
 Workflow management runs the steps in order, makes a run repeatable, gives each step its machine, and shows it. This repo covers those four. Scheduling waits for lecture 23. And it is managed: no cluster for you to run.
@@ -104,7 +104,7 @@ Steps 6 and 7: install the AWS CLI, then aws configure, and paste the two values
 Step 8 tests the configuration. AWS itself rejects the fake token and the fake key. With yours, these print your account and your buckets. Don't go on until they do.
 Step 9 creates two roles: Cheese App SageMaker Execution Role, for every job, and Cheese App Lambda Execution Role. The code builds each A R N from your account number and the exact role name, so spell them exactly, and pause here.
 
-## 18:19 — Collector and processor, by hand
+## 18:27 — Collector and processor, by hand
 Data collector, step 1. A small gap first: all four part 2 scripts name the bucket from the README, so put yours in each one. Then, in this folder, run sh docker-shell.sh. Without keys, the script stops itself: AWS not configured.
 With keys, it builds in 40 seconds and opens a root shell. Two notes. This script builds for A M D 64, which Apple silicon emulates. And on Ubuntu or Debian, sh is dash, which skips the key check, so run bash docker-shell.sh.
 Why a shell? The entry point script has a switch. No arguments: it opens bash, development mode, where you are now. Arguments: it runs them and exits, production mode. The lecture calls that a callable container.
@@ -115,19 +115,19 @@ Step 2: python cli.py dash dash clean. A duplicate finder checks each label, fin
 Steps 3 and 4: check your bucket, then dash dash prepare. All 40 images split into 32 for training and 8 for validation, in two real TFRecord files. The upload fails again. Step 5 finds them only on disk.
 The duty cards from the lecture match: download, then verify, remove duplicates and convert to TFRecords. And the four labels are just the folder names: your search queries, so type them exactly.
 
-## 20:26 — Train locally, sign the model
+## 20:34 — Train locally, sign the model
 Model training, step 1. Same A R M 64 line, same swap. This image installs from its committed lock, with SageMaker version 2, so it needs no pin.
 Step 2, local training. TensorFlow 2.20 on the CPU finds the TFRecords from the processor, through the shared folder. Look at the last layer: three outputs. One epoch runs. Its accuracy means nothing yet.
 Then saving fails: permission denied, slash persistent slash model. Pause here for two small fixes.
 First, line 68 says three classes, while the data has four labels, so gouda gets no target. Change it to 4.
-Second, on Linux, Docker created the persistent folder as root, and this container runs as the app user. Exit, and on your laptop create the folder yourself, or change its owner. Then run step 2 again. Docker Desktop on a Mac avoids this.
+Second, on Linux, Docker created the persistent folder as root, and this container runs as the app user. Exit, and on your laptop change its owner with the chown command on the card. On a fresh clone, create the folder yourself before the first docker-shell.sh. Then run step 2 again. Docker Desktop on a Mac avoids this.
 It would write to slash persistent slash model slash 1: the persistent folder on your laptop, or the SageMaker model folder inside a training job.
 Just before the save sits the signature change from the lecture: decode, convert, resize, inside the model. A small slip: the README gives this job to model deploy. The trainer does it.
 Step 3: sh package-trainer.sh packs the package folder and copies it to S3. The tar file is real. The upload fails on our fake key.
 Step 4: python cli.py dash dash train. It asks AWS who you are, to build the role A R N, and stops there. With keys, it starts a training job on M L M5 extra large, and returns at once.
 Step 5: watch it in the console, under Training, then Training jobs. Its name starts with cheese.
 
-## 22:22 — Build and push: your own registry
+## 22:35 — Build and push: your own registry
 Build and push. The README says this step has already been done for you. A small gap: the workflow code pulls both images from the ECR registry of your own account, so you push them yourself, once each.
 That is the second step the lecture gives for your own containers: push the images to a registry the platform can pull from.
 Steps 1 to 3 go through Docker Hub: log in, build, push. The Mac line builds A M D 64, because SageMaker runs that.
@@ -136,7 +136,7 @@ So paste only the value, us-east-1. And if your URI starts with a dot, the accou
 Step 5 pulls your image. Step 6 creates the repository, and the or true at the end hides the error: the command exits with zero.
 Steps 7 to 11 log Docker in to ECR, tag the image, push it, list it, and print the URI. Tag only adds a second name to the same image. Run them on your laptop, not in the workflow container, which has no docker command. Then repeat for the processor image.
 
-## 23:49 — The workflow container and one processing job
+## 24:03 — The workflow container and one processing job
 Automate the data collector, step 1, in the workflow folder. Before you run sh docker-shell.sh, the star problem returns. A lock is committed, but the Dockerfile copies only the Pipfile, so the build would resolve version 3.
 The checks show the imports failing. So make the same fix first: less than 3.
 Now run sh docker-shell.sh. The banner shows region and bucket, and the who am I check fails. Extras: SageMaker version 2 now, and no docker command. The socket is mounted, but no docker program is inside.
@@ -146,7 +146,7 @@ With keys, it builds a processor from your ECR image, on one M L T3 medium. Its 
 This is production mode. SageMaker puts its own command in front of the arguments. Same image, same cli.py, on a machine you never log in to. The job acts as the role, not with your key.
 Step 3: watch it under Processing, then Processing jobs.
 
-## 25:32 — A pipeline drawn by references
+## 25:45 — A pipeline drawn by references
 Now the whole pipeline. The slides write steps in the Kubeflow D S L, wired by dot output and compiled to YAML. Here: SageMaker step classes, property references and JSON.
 First, caching, for 30 days. The first step is a processing step named data collector, with one declared output, raw data.
 The second step, the processor, takes as input a property of the collector: its raw data output, S3 URI. Not a string: a reference, and it draws an edge.
@@ -157,11 +157,11 @@ No. The order comes from the references: each input names the output of another 
 An extra, built offline and never sent: the JSON definition from the SDK. Five steps, each edge a get on a property of another step. Upsert sends this.
 The lecture draws four steps. Here, deploy splits in two. Create model makes the model, and a Lambda, a small function AWS runs on demand, creates or updates the endpoint.
 One honest caveat. The edges set the order, but files also travel by fixed names through the bucket: raw, clean and tfrecords dot zip. We could not check, without an account, how the training job finds its data on SageMaker.
-Step 1: python cli.py dash dash pipeline stops at the same line 32. With keys, it prints that the pipeline started. Step 2: in Unified Studio, under Build, ML Pipelines, you would see this graph.
+Step 1: python cli.py dash dash pipeline stops at the same line 32. With keys, it prints that the pipeline started. If instead upsert fails on the Lambda runtime, add runtime equals python 3.12 to the Lambda call, line 297. Step 2: in Unified Studio, under Build, ML Pipelines, you would see this graph.
 If every step succeeds, caching skips unchanged steps for 30 days, so the collector won't scrape again. And a green deploy model only means the Lambda asked: wait until the endpoint is in service.
 Step 3 tests each component with its own flag. Here, all four stop at that line. With keys, model deploy makes yet another endpoint.
 
-## 28:17 — Tear down, recap, test yourself
+## 28:39 — Tear down, recap, test yourself
 Before you leave, clean up. List your endpoints and delete every one: the timestamped ones from part 1, and cheese app endpoint. Then delete their configurations and models.
 Empty and delete both buckets. Delete the two ECR repositories, the deploy Lambda functions, and the cheese pipeline.
 Deactivate and delete the access keys, and the users and roles you no longer need. Finally, check the SageMaker AI domain and the Unified Studio domain you created.

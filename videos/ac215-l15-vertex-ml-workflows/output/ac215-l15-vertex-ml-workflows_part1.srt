@@ -1,0 +1,1251 @@
+1
+00:00:00,000 --> 00:00:03,691
+Here is a question for a model:
+what cheese is in this photo?
+
+2
+00:00:04,011 --> 00:00:09,323
+Both answers on screen come
+from the same predict code in cli.py.
+
+3
+00:00:09,643 --> 00:00:11,307
+And both answers say brie.
+
+4
+00:00:11,550 --> 00:00:12,937
+Now count the numbers.
+
+5
+00:00:13,257 --> 00:00:16,115
+The top answer,
+the README output, holds three.
+
+6
+00:00:16,435 --> 00:00:19,145
+The bottom one,
+from this recording, holds four.
+
+7
+00:00:19,465 --> 00:00:21,321
+One model cannot give both.
+
+8
+00:00:21,641 --> 00:00:25,246
+So which model is behind an endpoint,
+and what else is there?
+
+9
+00:00:25,483 --> 00:00:29,581
+Behind an endpoint sit three pieces:
+an artifact, which model;
+
+10
+00:00:29,581 --> 00:00:34,208
+a container, what runs it;
+and a machine, where it runs, and who pays.
+
+11
+00:00:34,528 --> 00:00:38,326
+The meter beside the machine keeps running
+while no request arrives.
+
+12
+00:00:39,733 --> 00:00:42,805
+In part 2,
+we stop running these steps by hand.
+
+13
+00:00:43,125 --> 00:00:46,490
+The four stages of the Cheese App
+become one pipeline
+
+14
+00:00:46,490 --> 00:00:48,267
+that the cloud runs for you.
+
+15
+00:00:48,517 --> 00:00:52,748
+To follow along,
+you need an AWS account with billing,
+
+16
+00:00:52,748 --> 00:00:56,666
+the AWS CLI, Docker,
+and both repositories cloned.
+
+17
+00:00:56,986 --> 00:00:59,631
+This is our first lecture on AWS.
+
+18
+00:00:59,867 --> 00:01:02,701
+A tracker in the corner
+names the README step,
+
+19
+00:01:02,701 --> 00:01:05,904
+and a yellow tag,
+your turn, means pause and run it.
+
+20
+00:01:06,224 --> 00:01:08,763
+Every command is also in the study guide.
+
+21
+00:01:10,100 --> 00:01:11,892
+First, where this lecture sits.
+
+22
+00:01:12,212 --> 00:01:14,855
+The course project
+is in its prototype phase,
+
+23
+00:01:14,855 --> 00:01:18,143
+and of the four parts of the Cheese App,
+three are done.
+
+24
+00:01:18,463 --> 00:01:20,297
+Model deploy is still open.
+
+25
+00:01:20,533 --> 00:01:22,816
+Part 1 of this video fills that tile.
+
+26
+00:01:23,136 --> 00:01:24,864
+Part 2 connects all four.
+
+27
+00:01:25,100 --> 00:01:28,769
+Last week,
+lecture 14 put containers on Cloud Run.
+
+28
+00:01:29,089 --> 00:01:31,713
+Today, the container serves a trained model.
+
+29
+00:01:31,950 --> 00:01:35,044
+The lecture maps its console
+onto the course:
+
+30
+00:01:35,044 --> 00:01:37,520
+notebooks, training from lecture 13,
+
+31
+00:01:37,520 --> 00:01:40,889
+and today's two,
+online prediction and pipelines.
+
+32
+00:01:41,133 --> 00:01:44,674
+The lecture is written
+for Vertex AI on Google Cloud.
+
+33
+00:01:44,994 --> 00:01:49,036
+This course also ships an AWS
+version of both tutorials,
+
+34
+00:01:49,036 --> 00:01:51,202
+and that is the one we follow.
+
+35
+00:01:51,522 --> 00:01:53,442
+Same ideas, different names.
+
+36
+00:01:53,762 --> 00:01:55,768
+I'll point out each one as we meet it.
+
+37
+00:01:56,017 --> 00:01:58,342
+A Google Cloud bucket becomes S3.
+
+38
+00:01:58,662 --> 00:02:03,264
+A service account key becomes an IAM user
+with a key on your laptop,
+
+39
+00:02:03,264 --> 00:02:04,956
+plus a role in the cloud.
+
+40
+00:02:05,276 --> 00:02:09,030
+And an endpoint becomes
+a configuration plus an endpoint.
+
+41
+00:02:09,267 --> 00:02:13,342
+One thing about this recording:
+it has no AWS account.
+
+42
+00:02:13,662 --> 00:02:16,392
+Every step that runs on your laptop is real.
+
+43
+00:02:16,712 --> 00:02:21,150
+Every AWS call stops
+at its honest first error, like this one.
+
+44
+00:02:21,470 --> 00:02:23,184
+Where the cloud would answer,
+
+45
+00:02:23,184 --> 00:02:26,376
+you see the README output,
+or a tagged local stand-in.
+
+46
+00:02:26,696 --> 00:02:28,232
+Never a faked success.
+
+47
+00:02:28,467 --> 00:02:31,219
+Versions at the time
+of recording are on screen.
+
+48
+00:02:33,367 --> 00:02:35,756
+Step 1: clone the repository.
+
+49
+00:02:36,076 --> 00:02:40,172
+The README says clone or download,
+so our git clone is extra,
+
+50
+00:02:40,172 --> 00:02:43,799
+and so is the git log
+that shows the commit we follow.
+
+51
+00:02:44,119 --> 00:02:45,378
+Pause and clone it.
+
+52
+00:02:45,617 --> 00:02:49,522
+An extra listing:
+the CLI, a Dockerfile, a Pipfile,
+
+53
+00:02:49,522 --> 00:02:54,193
+eight sample photos,
+and docker-shell.sh, already executable.
+
+54
+00:02:54,434 --> 00:02:57,591
+Steps 2 and 3 are in the AWS console.
+
+55
+00:02:57,911 --> 00:03:01,474
+Check that you can use
+S3, SageMaker and IAM.
+
+56
+00:03:01,794 --> 00:03:06,615
+Then create an IAM user called
+model-deployment, with three policies.
+
+57
+00:03:06,935 --> 00:03:09,154
+The third is broader than this code needs.
+
+58
+00:03:09,474 --> 00:03:11,607
+Create access keys and save both.
+
+59
+00:03:12,150 --> 00:03:16,250
+Step 4 creates a role named
+SageMakerExecutionRole,
+
+60
+00:03:16,250 --> 00:03:20,833
+trusted by SageMaker,
+with the SageMaker and S3 policies.
+
+61
+00:03:21,153 --> 00:03:22,561
+Copy its ARN.
+
+62
+00:03:22,800 --> 00:03:24,208
+Why two identities?
+
+63
+00:03:24,528 --> 00:03:27,779
+Your laptop signs each request
+with the user key,
+
+64
+00:03:27,779 --> 00:03:31,163
+and the endpoint you create
+later acts as the role.
+
+65
+00:03:31,483 --> 00:03:33,232
+The key stays on your laptop.
+
+66
+00:03:33,467 --> 00:03:37,830
+Step 5, then pause:
+create a bucket with a name of your own,
+
+67
+00:03:37,830 --> 00:03:41,467
+because bucket names are unique
+across all of AWS.
+
+68
+00:03:41,787 --> 00:03:44,027
+Storage bills while files sit in it.
+
+69
+00:03:44,347 --> 00:03:47,675
+And as the README warns,
+never put keys in a script,
+
+70
+00:03:47,675 --> 00:03:49,531
+and never commit them to Git.
+
+71
+00:03:49,767 --> 00:03:53,202
+Run Container, step 1: aws configure.
+
+72
+00:03:53,522 --> 00:03:54,972
+Then come four prompts.
+
+73
+00:03:55,292 --> 00:03:56,807
+You paste your two keys.
+
+74
+00:03:57,127 --> 00:04:02,055
+We have none, so we press Enter twice,
+then type us-east-1 and json.
+
+75
+00:04:02,300 --> 00:04:06,543
+Two extras: only the config file exists,
+since we typed no keys,
+
+76
+00:04:06,543 --> 00:04:10,257
+and aws sts get-caller-identity
+cannot find credentials.
+
+77
+00:04:10,577 --> 00:04:12,689
+With your keys, it prints your account.
+
+78
+00:04:13,009 --> 00:04:14,738
+Pause and make yours print it.
+
+79
+00:04:14,984 --> 00:04:18,781
+Step 2 offers a second option:
+three exports in your shell.
+
+80
+00:04:19,101 --> 00:04:21,853
+AWS rejects our placeholder key.
+
+81
+00:04:22,100 --> 00:04:25,640
+There is a subtler gap:
+the script passes only the region,
+
+82
+00:04:25,640 --> 00:04:28,265
+the bucket and the role into the container.
+
+83
+00:04:28,585 --> 00:04:30,783
+So exported keys fall off at the wall.
+
+84
+00:04:31,103 --> 00:04:34,004
+Use option 1, or add the keys with -e.
+
+85
+00:04:37,333 --> 00:04:40,757
+Step 3:
+edit docker-shell.sh with your bucket,
+
+86
+00:04:40,757 --> 00:04:43,584
+the ARN of your role, and your region.
+
+87
+00:04:43,904 --> 00:04:45,440
+Ours are placeholders.
+
+88
+00:04:45,833 --> 00:04:48,308
+Step 4, chmod, prints nothing.
+
+89
+00:04:48,628 --> 00:04:52,404
+An extra listing shows
+the script was already executable.
+
+90
+00:04:52,650 --> 00:04:55,530
+Step 5: sh docker-shell.sh.
+
+91
+00:04:55,850 --> 00:05:01,299
+It pulls the base image for arm64,
+then stops at the first RUN line:
+
+92
+00:05:01,299 --> 00:05:02,741
+exec format error.
+
+93
+00:05:03,061 --> 00:05:06,367
+Our Intel style laptop
+cannot run those programs.
+
+94
+00:05:06,616 --> 00:05:08,152
+The fix is in the script.
+
+95
+00:05:08,472 --> 00:05:11,150
+Line 19 is for Apple silicon Macs,
+
+96
+00:05:11,150 --> 00:05:14,851
+and line 17,
+commented out, is the plain build.
+
+97
+00:05:15,171 --> 00:05:17,197
+Swap them: fix 1, an extra.
+
+98
+00:05:17,517 --> 00:05:20,333
+On Apple silicon the original line works.
+
+99
+00:05:20,653 --> 00:05:23,555
+Elsewhere it means slow emulation,
+or this error.
+
+100
+00:05:23,816 --> 00:05:25,309
+Now look at the Pipfile.
+
+101
+00:05:25,629 --> 00:05:30,536
+TensorFlow is pinned to one version,
+but SageMaker says "*": any version.
+
+102
+00:05:30,856 --> 00:05:34,195
+And no lock is used:
+Git ignores the lock file,
+
+103
+00:05:34,195 --> 00:05:37,747
+and the Dockerfile runs
+pipenv lock at build time.
+
+104
+00:05:37,983 --> 00:05:39,327
+Something to ponder.
+
+105
+00:05:39,647 --> 00:05:43,060
+The code worked when it was written,
+and nobody changed a line.
+
+106
+00:05:43,380 --> 00:05:46,388
+Why does cli.py fail at import today?
+
+107
+00:05:55,233 --> 00:05:58,561
+"*" is a constraint,
+not a pin, as in lecture 1:
+
+108
+00:05:58,561 --> 00:06:02,166
+the resolver takes the newest release
+that installs.
+
+109
+00:06:02,486 --> 00:06:05,964
+At the time of recording, on Python 3.9,
+
+110
+00:06:05,964 --> 00:06:11,788
+that is SageMaker SDK version 3,
+with PyTorch and 14 CUDA packages.
+
+111
+00:06:12,033 --> 00:06:17,796
+Version 3 is a rewritten package,
+without the modules cli.py imports:
+
+112
+00:06:17,796 --> 00:06:22,806
+no tensorflow module, no serializers,
+no get_execution_role.
+
+113
+00:06:23,126 --> 00:06:24,641
+The imports find nothing.
+
+114
+00:06:24,883 --> 00:06:28,915
+Here, the unpinned build ran 13 minutes,
+then ran out of disk.
+
+115
+00:06:29,235 --> 00:06:33,032
+On your laptop it would finish,
+then fail at the first import.
+
+116
+00:06:33,266 --> 00:06:36,999
+Fix 2, also an extra: change "*" to "<3".
+
+117
+00:06:37,319 --> 00:06:40,381
+The resolver stops
+at the last version 2 release,
+
+118
+00:06:40,381 --> 00:06:41,693
+and the imports work.
+
+119
+00:06:42,013 --> 00:06:43,784
+Pause and make both fixes.
+
+120
+00:06:45,316 --> 00:06:46,767
+Run step 5 again.
+
+121
+00:06:47,087 --> 00:06:51,780
+It builds in almost 7 minutes,
+mostly locking and installing packages.
+
+122
+00:06:52,100 --> 00:06:56,324
+The AWS check fails without keys,
+but the shell still opens.
+
+123
+00:06:56,566 --> 00:07:02,767
+Inside, extras show Python 3.9,
+SageMaker version 2 and TensorFlow 2.18,
+
+124
+00:07:02,767 --> 00:07:05,953
+and the three values from the script.
+
+125
+00:07:06,273 --> 00:07:08,726
+Deprecation warnings are not the error.
+
+126
+00:07:08,966 --> 00:07:13,680
+A small slip: the help text
+still says GCS bucket and Vertex AI,
+
+127
+00:07:13,680 --> 00:07:15,963
+and the test flag does nothing.
+
+128
+00:07:16,283 --> 00:07:18,630
+The commands are the AWS ones.
+
+129
+00:07:18,950 --> 00:07:21,169
+The image is about 4 gigabytes.
+
+130
+00:07:22,517 --> 00:07:26,328
+Before we prepare the model,
+a design question from the lecture:
+
+131
+00:07:26,328 --> 00:07:28,234
+where does preprocessing happen?
+
+132
+00:07:28,554 --> 00:07:31,797
+In a notebook,
+you resize and normalize cell by cell.
+
+133
+00:07:32,117 --> 00:07:34,905
+A production endpoint
+should take the raw photo
+
+134
+00:07:34,905 --> 00:07:36,448
+and do all of that itself.
+
+135
+00:07:37,100 --> 00:07:39,404
+In this tutorial, the client does it.
+
+136
+00:07:39,724 --> 00:07:43,200
+The predict code opens the photo,
+
+137
+00:07:43,200 --> 00:07:48,257
+converts it to RGB
+and resizes it to 224 by 224.
+
+138
+00:07:48,577 --> 00:07:53,442
+Then it divides
+by 255 and sends the numbers as JSON.
+
+139
+00:07:53,684 --> 00:07:58,591
+An extra check reads the model's front door,
+which TensorFlow calls a signature.
+
+140
+00:07:58,911 --> 00:08:03,916
+It takes floats,
+shaped any number by 224 by 224 by 3,
+
+141
+00:08:03,916 --> 00:08:06,975
+and gives four numbers per photo.
+
+142
+00:08:07,295 --> 00:08:09,982
+Preprocessing sits on your side of the wire.
+
+143
+00:08:10,217 --> 00:08:13,396
+The lecture names the risk:
+client-side brittleness.
+
+144
+00:08:13,716 --> 00:08:17,188
+Every client must repeat
+those steps exactly,
+
+145
+00:08:17,188 --> 00:08:22,590
+and a phone app that forgets to divide
+by 255 gets confident nonsense.
+
+146
+00:08:22,910 --> 00:08:27,348
+One copy inside the model
+is also easier to roll back and version.
+
+147
+00:08:27,584 --> 00:08:30,656
+The fix from the lecture sits
+in the part 2 trainer.
+
+148
+00:08:30,976 --> 00:08:36,266
+The preprocess function decodes the JPEG,
+converts it to floats, and resizes it.
+
+149
+00:08:36,500 --> 00:08:41,110
+A function marked as the model's front
+door takes a batch of JPEG strings,
+
+150
+00:08:41,110 --> 00:08:43,540
+prepares each one, and calls the model.
+
+151
+00:08:43,860 --> 00:08:45,972
+It is saved as the serving_default.
+
+152
+00:08:46,292 --> 00:08:48,874
+Raw bytes in, one score per class out.
+
+153
+00:08:49,117 --> 00:08:50,546
+One trap to avoid.
+
+154
+00:08:50,866 --> 00:08:55,538
+The README says the prepare step converts
+the model to the SavedModel format.
+
+155
+00:08:55,858 --> 00:08:57,458
+That is a change of format,
+
+156
+00:08:57,458 --> 00:09:00,125
+not the change of signature
+from the lecture.
+
+157
+00:09:01,467 --> 00:09:05,307
+Step 1: python cli.py --prepare.
+
+158
+00:09:05,627 --> 00:09:07,312
+The README lists four things.
+
+159
+00:09:07,632 --> 00:09:12,804
+Download the model from GitHub,
+convert it to the SavedModel format,
+
+160
+00:09:12,804 --> 00:09:16,912
+pack it as model.tar.gz,
+and upload it to your bucket.
+
+161
+00:09:17,232 --> 00:09:20,966
+Those are steps 1 and 3 of the lecture
+deployment picture.
+
+162
+00:09:21,286 --> 00:09:24,656
+Step 2, the signature change,
+is not in part 1.
+
+163
+00:09:25,800 --> 00:09:26,952
+Pause and run it.
+
+164
+00:09:27,272 --> 00:09:29,215
+Ours stops right away:
+
+165
+00:09:29,215 --> 00:09:34,781
+no credentials, at line 73 of cli.py,
+which creates the bucket.
+
+166
+00:09:35,101 --> 00:09:39,198
+And the artifacts folder does not exist,
+so nothing was downloaded.
+
+167
+00:09:39,434 --> 00:09:41,137
+A small gap in the README:
+
+168
+00:09:41,137 --> 00:09:44,871
+the code creates the bucket
+before it downloads anything,
+
+169
+00:09:44,871 --> 00:09:47,007
+a step the list does not mention.
+
+170
+00:09:47,327 --> 00:09:52,255
+With your keys, it creates the bucket,
+or reuses yours if it already exists.
+
+171
+00:09:52,500 --> 00:09:56,671
+To show what comes next, an extra:
+the same prepare function,
+
+172
+00:09:56,671 --> 00:09:59,817
+with S3 replaced by a stub
+that sends nothing.
+
+173
+00:10:00,137 --> 00:10:03,207
+The release zip downloads,
+the model is exported,
+
+174
+00:10:03,207 --> 00:10:05,087
+and the stub stops the upload.
+
+175
+00:10:05,407 --> 00:10:07,370
+Nothing reaches AWS.
+
+176
+00:10:07,867 --> 00:10:09,211
+Here is what it made.
+
+177
+00:10:09,531 --> 00:10:11,370
+A SavedModel is a folder:
+
+178
+00:10:11,370 --> 00:10:15,417
+the graph and its named entry
+points in saved_model.pb,
+
+179
+00:10:15,417 --> 00:10:18,214
+and the weights in a variables folder.
+
+180
+00:10:18,450 --> 00:10:20,953
+The code puts it in a folder named 1,
+
+181
+00:10:20,953 --> 00:10:25,149
+because TensorFlow Serving finds
+models by name, then version.
+
+182
+00:10:25,469 --> 00:10:27,858
+The tarball holds that folder at its top.
+
+183
+00:10:28,900 --> 00:10:34,105
+An extra git status shows your two edits,
+and Git ignores the artifacts folder.
+
+184
+00:10:34,425 --> 00:10:39,546
+In your account, the tarball now sits in S3,
+and storage bills while it exists.
+
+185
+00:10:41,883 --> 00:10:43,419
+Step 2: deploy.
+
+186
+00:10:43,739 --> 00:10:45,979
+Remember the three pieces from the start.
+
+187
+00:10:46,299 --> 00:10:49,440
+In code,
+it first describes a TensorFlow model:
+
+188
+00:10:49,440 --> 00:10:53,382
+the tarball in S3 and the serving container,
+plus the role.
+
+189
+00:10:53,702 --> 00:10:56,048
+Nothing exists in AWS yet.
+
+190
+00:10:56,283 --> 00:10:58,950
+The lecture uploads
+to a model registry here.
+
+191
+00:10:59,270 --> 00:11:01,803
+Both READMEs say model registry too,
+
+192
+00:11:01,803 --> 00:11:05,179
+but the code creates a plain model
+in SageMaker.
+
+193
+00:11:05,416 --> 00:11:07,927
+You never write an image name:
+
+194
+00:11:07,927 --> 00:11:14,205
+the SDK picks the AWS TensorFlow Serving
+image from framework version 2.13.
+
+195
+00:11:14,525 --> 00:11:17,981
+Our model was exported by TensorFlow 2.18.
+
+196
+00:11:18,301 --> 00:11:22,611
+In step 3, a local check shows
+that Serving 2.13 loads it.
+
+197
+00:11:22,850 --> 00:11:27,234
+Then deploy,
+with one instance of type ml.m5.xlarge,
+
+198
+00:11:27,234 --> 00:11:29,762
+under a name with a timestamp.
+
+199
+00:11:30,082 --> 00:11:32,211
+That one call creates all three:
+
+200
+00:11:32,211 --> 00:11:35,537
+the model in SageMaker,
+an endpoint configuration,
+
+201
+00:11:35,537 --> 00:11:40,663
+which names the machine and the model,
+and the endpoint, the address you call.
+
+202
+00:11:40,900 --> 00:11:44,697
+Pause and run python cli.py --deploy.
+
+203
+00:11:45,017 --> 00:11:50,031
+Ours stops at line 168,
+the deploy call: no credentials.
+
+204
+00:11:50,351 --> 00:11:53,612
+With yours, the README says 5 to 10 minutes,
+
+205
+00:11:53,612 --> 00:11:58,798
+then it prints the endpoint name
+and saves it in endpoint_config.json.
+
+206
+00:11:59,033 --> 00:12:02,937
+The lecture calls this serverless,
+meaning no server for you to manage.
+
+207
+00:12:03,257 --> 00:12:04,772
+It is still one machine,
+
+208
+00:12:04,772 --> 00:12:07,865
+billing around the clock,
+even with zero traffic.
+
+209
+00:12:08,185 --> 00:12:11,562
+Unlike Cloud Run in lecture 14,
+this endpoint,
+
+210
+00:12:11,562 --> 00:12:15,012
+as the code creates it,
+does not scale to zero.
+
+211
+00:12:15,250 --> 00:12:17,383
+The lecture compares two ways to serve.
+
+212
+00:12:17,703 --> 00:12:21,047
+A model endpoint deploys
+a trained model directly,
+
+213
+00:12:21,047 --> 00:12:24,658
+with versioning,
+A/B testing and monitoring available.
+
+214
+00:12:24,978 --> 00:12:28,544
+A general container service
+like Cloud Run runs anything,
+
+215
+00:12:28,544 --> 00:12:30,546
+and you build the rest yourself.
+
+216
+00:12:30,783 --> 00:12:34,468
+Its rule of thumb:
+an endpoint to serve a trained model,
+
+217
+00:12:34,468 --> 00:12:38,612
+a container service
+when the model is one part of a larger app.
+
+218
+00:12:38,932 --> 00:12:40,895
+Here, those features go unused.
+
+219
+00:12:42,233 --> 00:12:45,966
+Step 3: python cli.py --predict.
+
+220
+00:12:46,286 --> 00:12:51,470
+Ours finds no endpoint_config.json
+and falls back to a default name.
+
+221
+00:12:51,790 --> 00:12:56,804
+It picks five photos and fails five times:
+Unable to locate credentials.
+
+222
+00:12:57,124 --> 00:12:58,596
+Pause and run yours.
+
+223
+00:12:58,833 --> 00:13:00,753
+Each try would send one photo.
+
+224
+00:13:01,073 --> 00:13:07,217
+The client resizes it to 224 by 224,
+with 3 color channels.
+
+225
+00:13:07,537 --> 00:13:10,993
+How many numbers travel
+to the endpoint for that one photo?
+
+226
+00:13:19,833 --> 00:13:27,513
+224 times 224 times 3: 150,528 floats.
+
+227
+00:13:27,833 --> 00:13:32,569
+Python writes each one as text in JSON,
+so a few megabytes per photo.
+
+228
+00:13:32,889 --> 00:13:36,409
+A signature
+that takes bytes would send the JPEG itself.
+
+229
+00:13:36,650 --> 00:13:39,317
+The answer is a list of four probabilities.
+
+230
+00:13:39,637 --> 00:13:43,951
+The code takes the largest with argmax
+and looks it up:
+
+231
+00:13:43,951 --> 00:13:47,167
+0 parmigiano, 1 gruyere, 2 brie, 3 gouda.
+
+232
+00:13:47,416 --> 00:13:48,988
+To see a real answer,
+
+233
+00:13:48,988 --> 00:13:52,429
+we use an extra local stand-in,
+not SageMaker.
+
+234
+00:13:52,749 --> 00:13:56,420
+The AWS serving image
+runs TensorFlow Serving,
+
+235
+00:13:56,420 --> 00:14:01,048
+so we started the public
+Serving 2.13 image on our export.
+
+236
+00:14:01,368 --> 00:14:02,862
+It loads version 1.
+
+237
+00:14:03,100 --> 00:14:06,961
+Then the same predict function
+sends the same JSON to it.
+
+238
+00:14:07,281 --> 00:14:08,531
+Brie comes back brie,
+
+239
+00:14:08,531 --> 00:14:11,505
+and gruyere comes back gruyere,
+four numbers each.
+
+240
+00:14:11,750 --> 00:14:15,249
+And parmigiano comes back brie,
+at 98 percent.
+
+241
+00:14:15,569 --> 00:14:18,385
+That is a real mistake
+of the released model.
+
+242
+00:14:18,705 --> 00:14:22,864
+Its own metrics file reports
+about 72 percent accuracy.
+
+243
+00:14:23,100 --> 00:14:24,615
+Now the opening puzzle.
+
+244
+00:14:24,935 --> 00:14:29,685
+Same code, different artifact:
+the README output came from an older model,
+
+245
+00:14:29,685 --> 00:14:32,444
+with three classes and another label order.
+
+246
+00:14:32,764 --> 00:14:37,308
+A small gap: expect four numbers,
+and index 0 is parmigiano.
+
+247
+00:14:37,550 --> 00:14:40,046
+An extra command removes the stand-in.
+
+248
+00:14:40,366 --> 00:14:42,328
+It never touched AWS.
+
+249
+00:14:43,567 --> 00:14:47,455
+The lecture warns
+that an endpoint costs money while it is up,
+
+250
+00:14:47,455 --> 00:14:49,839
+and the slides shout one word: delete.
+
+251
+00:14:50,159 --> 00:14:51,844
+The README gives three ways.
+
+252
+00:14:52,164 --> 00:14:56,730
+Any one stops the endpoint,
+but only the third also removes the tarball.
+
+253
+00:14:57,050 --> 00:15:01,466
+Way 1, the console:
+SageMaker, Endpoints, select yours, Delete.
+
+254
+00:15:01,767 --> 00:15:04,924
+Way 2 gives three AWS CLI commands.
+
+255
+00:15:05,244 --> 00:15:08,820
+Typed exactly as written,
+the first one is a shell error:
+
+256
+00:15:08,820 --> 00:15:13,778
+the angle brackets are placeholders,
+and the shell takes them as a redirection.
+
+257
+00:15:14,017 --> 00:15:16,961
+A small gap:
+type your own names, without brackets.
+
+258
+00:15:17,281 --> 00:15:19,777
+Ours then fails: no credentials.
+
+259
+00:15:20,097 --> 00:15:24,790
+Delete in this order: the endpoint,
+then its configuration, then the model.
+
+260
+00:15:26,567 --> 00:15:32,626
+Way 3: python cli.py --delete stops
+at its first SageMaker call.
+
+261
+00:15:32,946 --> 00:15:34,098
+Pause and run it.
+
+262
+00:15:34,418 --> 00:15:38,279
+With keys, it deletes the endpoint
+named in the JSON file.
+
+263
+00:15:38,599 --> 00:15:41,979
+Then come matching configurations
+and the model,
+
+264
+00:15:41,979 --> 00:15:45,148
+by naming convention,
+then the tarball in S3.
+
+265
+00:15:45,384 --> 00:15:49,053
+Each deploy makes a new endpoint
+with a new timestamp,
+
+266
+00:15:49,053 --> 00:15:51,976
+but the JSON file keeps only the last name.
+
+267
+00:15:52,296 --> 00:15:54,813
+You ran deploy twice, then delete once.
+
+268
+00:15:55,133 --> 00:15:56,840
+How many endpoints still bill?
+
+269
+00:16:03,684 --> 00:16:07,737
+One. Delete removes only
+the endpoint the file names.
+
+270
+00:16:08,057 --> 00:16:09,721
+The older one keeps running.
+
+271
+00:16:10,041 --> 00:16:14,798
+Check with aws sagemaker list-endpoints,
+and confirm in the console.
+
+272
+00:16:15,034 --> 00:16:16,250
+That is part 1.
+
+273
+00:16:16,570 --> 00:16:19,791
+You ran four commands
+by hand to deploy one model.
+
+274
+00:16:20,111 --> 00:16:22,735
+The Cheese App has four stages before that.
+
+275
+00:16:23,055 --> 00:16:26,170
+Who runs all of them,
+in the right order, every time?
+

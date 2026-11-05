@@ -1,9 +1,9 @@
 00:00 Three numbers or four?
 01:10 Where we are, in AWS words
 02:33 A user, a role and a bucket
-04:34 The CLI container: two one-line fixes
-07:19 Where does preprocessing live?
-08:57 --prepare: a SavedModel in a tarball
-10:38 --deploy: model, endpoint configuration, endpoint
-12:38 --predict: 150,528 numbers per photo
-14:39 --delete: turn off the meter
+04:37 The CLI container: two one-line fixes
+07:22 Where does preprocessing live?
+09:01 --prepare: a SavedModel in a tarball
+10:41 --deploy: model, endpoint configuration, endpoint
+12:42 --predict: 150,528 numbers per photo
+14:43 --delete: turn off the meter
