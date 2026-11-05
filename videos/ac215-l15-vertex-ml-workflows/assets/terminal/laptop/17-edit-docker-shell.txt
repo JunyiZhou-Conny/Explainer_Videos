@@ -1,0 +1,7 @@
+$ sed -i -e 's|^export S3_MODELS_BUCKET_NAME=.*|export S3_MODELS_BUCKET_NAME="your-models-bucket-placeholder"|' -e 's|^export SAGEMAKER_ROLE=.*|export SAGEMAKER_ROLE="arn:aws:iam::000000000000:role/SageMakerExecutionRole"|' docker-shell.sh && sed -n '5,9p' docker-shell.sh
+export IMAGE_NAME=model-deployment-cli-aws
+export BASE_DIR=$(pwd)
+export S3_MODELS_BUCKET_NAME="your-models-bucket-placeholder"
+export SAGEMAKER_ROLE="arn:aws:iam::000000000000:role/SageMakerExecutionRole"
+export AWS_REGION="us-east-1"
+[exit 0]

@@ -1,0 +1,3 @@
+$ git log -1 --format='%H %ci %s'
+077f4dbc7b13ccef208c65a8e29489331261029e 2025-08-25 17:13:00 -0300 Merge pull request #1 from dlops-io/itamar/aws-initial-commit
+[exit 0]

@@ -1,0 +1,21 @@
+$ sh docker-shell.sh
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.13kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:20.04
+#2 ERROR: no match for platform in manifest: not found
+------
+ > [internal] load metadata for docker.io/library/ubuntu:20.04:
+------
+Dockerfile:2
+--------------------
+   1 |     # Use the official Ubuntu image as the base
+   2 | >>> FROM ubuntu:20.04
+   3 |     
+   4 |     # Set the environment variable for non-interactive installations
+--------------------
+ERROR: failed to build: failed to solve: ubuntu:20.04: failed to resolve source metadata for docker.io/library/ubuntu:20.04: no match for platform in manifest: not found
+[exit 1]

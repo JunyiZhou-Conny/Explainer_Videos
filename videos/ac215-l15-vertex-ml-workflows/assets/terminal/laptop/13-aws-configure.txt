@@ -1,0 +1,9 @@
+$ aws configure
+
+Tip: You can deliver temporary credentials to the AWS CLI using your AWS Console session by running the command 'aws login'.
+
+AWS Access Key ID [None]:
+AWS Secret Access Key [None]:
+Default region name [None]: us-east-1
+Default output format [None]: json
+[exit 0]
