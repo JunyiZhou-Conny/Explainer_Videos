@@ -4,7 +4,9 @@
 #   bash assets/terminal/capture.sh pre md-setup md-shell md-local md-clean
 #   bash assets/terminal/capture.sh mw-setup mw-coll mw-proc mw-train mw-push mw-flow mw-end
 #   bash assets/terminal/capture.sh teardown
-# The laptop container persists between calls, so a long capture can run in parts (one segment
+# The laptop's Docker storage is a 9 GB tmpfs (capture-only: the sandbox's disk is too small for
+# the unpinned `pipenv lock` of model-deployment-aws, which downloads several GB while it
+# backtracks; see ASSETS.md). The laptop container persists between calls, so a long capture can run in parts (one segment
 # per call keeps each call short); `teardown` removes it and its Docker volume.
 #
 # "laptop": a fresh, empty Docker engine (docker:29.8.2-dind, x86_64) stands in for the student's
@@ -52,9 +54,12 @@ for SEG in "$@"; do
       docker rm -f l15-laptop >/dev/null 2>&1 || true
       docker volume rm l15-laptop-docker >/dev/null 2>&1 || true
       docker run -d --privileged --name l15-laptop --hostname laptop \
-        -v l15-laptop-docker:/var/lib/docker -v "$HERE":/capture:ro -v "$DEST":/out -v "$CA":/ca.crt:ro \
+        --tmpfs /var/lib/docker:rw,exec,suid,dev,size=9g -v "$HERE":/capture:ro -v "$DEST":/out -v "$CA":/ca.crt:ro \
         "${PXENV[@]}" --entrypoint sh docker:29.8.2-dind -c '
           cp /ca.crt /etc/ssl/certs/ca-certificates.crt
+          # capture-only: the classic overlay2 store keeps each image once (unpacked), not twice
+          # (compressed + unpacked) as the containerd store does; the sandbox disk is small
+          mkdir -p /etc/docker && echo "{\"features\": {\"containerd-snapshotter\": false}}" > /etc/docker/daemon.json
           exec dockerd-entrypoint.sh dockerd --host=unix:///var/run/docker.sock' >/dev/null
       docker exec -e PROXY_JSON="$PROXY_JSON" l15-laptop sh -c '
         set -e
@@ -68,11 +73,20 @@ for SEG in "$@"; do
         [ -n "$PROXY_JSON" ] && echo "$PROXY_JSON" > /home/student/.docker/config.json
         chown -R student:student /home/student; chmod 777 /out' ;;
     teardown)
-      docker rm -f l15-laptop >/dev/null; docker volume rm l15-laptop-docker >/dev/null ;;
+      docker rm -f l15-laptop >/dev/null; docker volume rm l15-laptop-docker >/dev/null 2>&1 || true ;;
     *)
+      # capture-only watchdog: the recording sandbox's disk is shared with other jobs; stop this
+      # segment's builds if free space drops below 1.5 GB (noted in capture-only/disk-watchdog.txt)
+      ( while sleep 5; do
+          docker inspect l15-laptop >/dev/null 2>&1 || exit 0
+          [ "$(df --output=avail -k / | tail -1)" -gt 1572864 ] && continue
+          mkdir -p "$DEST/capture-only"; echo "$(date -u +%FT%TZ) $SEG: free disk < 1.5 GB, builds stopped" >> "$DEST/capture-only/disk-watchdog.txt"
+          docker exec l15-laptop sh -c 'pkill -f "buildx build"; pkill -f "docker build"' ; done ) &
+      WD=$!
       docker exec -u student -w /home/student -e HOME=/home/student -e USER=student \
         -e AWS_CA_BUNDLE="$([ -n "$RELAY" ] && echo /etc/ssl/certs/ca-certificates.crt)" \
         -e CAPTURE_CA="$([ -n "$RELAY" ] && echo /ca.crt)" -e CAPTURE_HUB_WAIT="$([ -n "$RELAY" ] && echo 1)" \
-        "${PXENV[@]}" l15-laptop bash /capture/run_steps.sh /out "$SEG" ;;
+        "${PXENV[@]}" l15-laptop bash /capture/run_steps.sh /out "$SEG" || true
+      kill $WD 2>/dev/null; wait $WD 2>/dev/null || true ;;
   esac
 done

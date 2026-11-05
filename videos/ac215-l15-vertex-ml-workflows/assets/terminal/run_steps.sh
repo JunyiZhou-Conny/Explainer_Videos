@@ -9,8 +9,9 @@
 #   pre       versions, AWS CLI, capture-only base images (proxy CA)            -> 00-09
 #   md-setup  model-deployment-aws: clone, aws configure (no keys), Option 2 exports, edit
 #             docker-shell.sh, chmod                                            -> 10-19
-#   md-shell  sh docker-shell.sh as written (arm64 build), the plain build line, the container
-#             and the four cli.py commands, the README's clean-up commands       -> 20-39
+#   md-shell  sh docker-shell.sh as written (arm64 build), the plain build line, what the
+#             unpinned Pipfile resolves today (SageMaker SDK 3), the pin, the container and the
+#             four cli.py commands, the README's clean-up commands             -> 20-39
 #   md-local  extras: what --prepare builds before the upload, and the model served locally by
 #             TensorFlow Serving (a stand-in for the SageMaker endpoint)         -> 40-49
 #   md-clean  extras: remove the md images (disk)                                -> 49
@@ -22,7 +23,8 @@
 #   mw-train  model training: arm64 build, plain line, local training, package-trainer, --train
 #                                                                               -> 70-79
 #   mw-push   "Build & Push Images": the ECR variable block                     -> 80-84
-#   mw-flow   workflow container: --data_collector, --pipeline, the four component flags -> 85-94
+#   mw-flow   workflow: what its unpinned Pipfile resolves today, the pin, the container:
+#             --data_collector, --pipeline, the four component flags              -> 85-94
 #   mw-end    extras: what is left on the laptop                                -> 95-99
 # Steps marked "extra" are not in the README; they are checks the video uses.
 OUT=$1; SEG=$2
@@ -61,10 +63,13 @@ capture_only_bases() {  # recording sandbox only (CAPTURE_CA set); see ASSETS.md
   # refuses plain http. The base images of the tutorial Dockerfiles (ubuntu:20.04, python:3.11-slim)
   # are rebuilt with that proxy's CA, https apt sources and the CA env vars, then re-tagged under
   # the same names, so the tutorial Dockerfiles build unchanged.
+  # PIP_NO_CACHE_DIR keeps pip/pipenv from keeping a second copy of every wheel in the image (the
+  # sandbox's disk is small); it changes no version and no output line that a scene shows.
   [ -n "$CAPTURE_CA" ] || return 0
-  local d b; d=$(mktemp -d); cp "$CAPTURE_CA" "$d/capture-ca.crt"
+  local d b bases=("$@"); [ ${#bases[@]} -gt 0 ] || bases=(ubuntu:20.04 python:3.11-slim)
+  d=$(mktemp -d); cp "$CAPTURE_CA" "$d/capture-ca.crt"
   mkdir -p "$OUT/capture-only"
-  for b in ubuntu:20.04 python:3.11-slim; do
+  for b in "${bases[@]}"; do
     cat > "$d/Dockerfile" <<EOF
 # capture-only, NOT part of the tutorial: the recording sandbox reaches the internet through a
 # TLS-intercepting proxy that refuses plain http. Same $b plus that proxy's CA (also kept for
@@ -80,12 +85,23 @@ RUN mkdir -p /etc/ssl/certs && cat /usr/local/share/ca-certificates/capture-ca.c
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \\
     PIP_CERT=/etc/ssl/certs/ca-certificates.crt \\
     REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt \\
-    AWS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+    AWS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt \\
+    PIP_NO_CACHE_DIR=1
 EOF
     cp "$d/Dockerfile" "$OUT/capture-only/${b/:/-}-base.Dockerfile"
     hub_retry step "capture-only/${b/:/-}-base-build" "docker build -t $b $d"
   done
   rm -rf "$d"
+}
+
+arm64_attempt() {  # arm64_attempt <name> <base image>: the README's `sh docker-shell.sh` with the
+  # script's arm64 build line, on this x86_64 laptop. The capture-only re-tag of the base is
+  # amd64-only, so it is removed first (the build then pulls Docker Hub's own arm64 base, as on a
+  # student's machine) and re-made afterwards.
+  local name=$1 base=$2
+  [ -n "$CAPTURE_CA" ] && docker image rm "$base" >/dev/null 2>&1
+  PTY_TIMEOUT=900 hub_retry step "$name" "sh docker-shell.sh"
+  [ -n "$CAPTURE_CA" ] && docker image rm "$base" >/dev/null 2>&1; capture_only_bases "$base"
 }
 
 PH_BUCKET_MD=your-models-bucket-placeholder                       # capture-only names: obviously
@@ -141,33 +157,49 @@ aws sts get-caller-identity"
   ;;
 md-shell)
   cd model-deployment-aws
+  # capture-only: a re-run starts from the pinned files plus 17's edit (silent)
+  git checkout -q -- docker-shell.sh Pipfile
+  sed -i -e "s|^export S3_MODELS_BUCKET_NAME=.*|export S3_MODELS_BUCKET_NAME=\"$PH_BUCKET_MD\"|" -e "s|^export SAGEMAKER_ROLE=.*|export SAGEMAKER_ROLE=\"$PH_ROLE\"|" docker-shell.sh
   # README:97 "sh docker-shell.sh", as written: docker-shell.sh:21 builds --platform=linux/arm64/v8
   # ("M1/2 chip macs use this line"). This laptop is x86_64 with no arm64 emulation installed.
-  PTY_TIMEOUT=900 hub_retry step 20-docker-shell-arm64 "sh docker-shell.sh"
+  arm64_attempt 20-docker-shell-arm64 ubuntu:20.04
   # extra: the script's own other line (docker-shell.sh:19, commented out) for a non-Apple-silicon
   # machine: comment the arm64 line, uncomment the plain one
   step 21-use-plain-build "sed -i -e 's|^docker build -t \$IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .|#&|' -e 's|^#docker build -t \$IMAGE_NAME -f Dockerfile .|docker build -t \$IMAGE_NAME -f Dockerfile .|' docker-shell.sh && sed -n '17,21p' docker-shell.sh"
-  # README:97 again, then extras typed inside the container
-  PTY_TIMEOUT=3600 hub_retry istep 22-docker-shell "sh docker-shell.sh" \
+  # README:97 again, unchanged Pipfile: NOT kept. On this recording machine the build's
+  # `RUN cd /app && pipenv lock && pipenv sync` (Dockerfile:55) ran for 13+ minutes and filled the
+  # disk (several GB of downloads, source builds). Why, in two small extras (ASSETS.md):
+  # what the resolver picks today on the image's Python 3.9 ...
+  capture_only_bases python:3.9-slim
+  step 22-resolve-today "docker run --rm --tmpfs /tmp:exec,size=4g -v /capture/helpers:/helpers:ro python:3.9-slim sh /helpers/resolve_check.sh boto3 sagemaker pillow tensorflow==2.18.0 numpy requests"
+  # ... and what that SageMaker SDK 3 does to cli.py's imports (cli.py:20-24)
+  step 23-sagemaker3-imports "docker run --rm -v /capture/helpers:/helpers:ro python:3.9-slim sh /helpers/sagemaker_import_check.sh 'sagemaker==3.13.1 sagemaker-core==2.13.1 sagemaker-train==1.13.1 sagemaker-serve==1.13.1 sagemaker-mlops==1.13.1' 'import sagemaker; from sagemaker.tensorflow import TensorFlowModel' 'from sagemaker import get_execution_role' 'from sagemaker.serializers import JSONSerializer'"
+  # extra, the fix a student needs today: pin the SDK below version 3 in the Pipfile
+  step 24-pin-sagemaker "sed -i 's/^sagemaker = \"\\*\"/sagemaker = \"<3\"/' Pipfile && git diff Pipfile"
+  # README:97 a third time (with the pin), then extras typed inside the container
+  PTY_TIMEOUT=3600 hub_retry istep 25-docker-shell "sh docker-shell.sh" \
     "$P_APP" 'python --version; which python pipenv aws' \
-    "$P_APP" 'pip list 2>/dev/null | grep -i -E "^(tensorflow|keras|sagemaker|boto3|numpy|pillow) "' \
+    "$P_APP" 'pip list 2>/dev/null | grep -i -E "^(tensorflow|keras|sagemaker|sagemaker-core|boto3|numpy|pillow) "' \
     "$P_APP" 'echo $S3_MODELS_BUCKET_NAME $AWS_REGION $SAGEMAKER_ROLE' \
     "$P_APP" 'ls -la /home/app/.aws' \
     "$P_APP" 'python cli.py --help' \
     "$P_APP" 'exit'
-  step 23-docker-images "docker image ls model-deployment-cli-aws"   # extra
+  step 26-docker-images "docker image ls model-deployment-cli-aws"   # extra
   # README:100 / "Prepare Model for Deployment" (README:109-117)
-  PTY_TIMEOUT=900 istep 24-prepare "sh docker-shell.sh" "$P_APP" 'python cli.py --prepare' "$P_APP" 'ls -la artifacts' "$P_APP" 'exit'
+  PTY_TIMEOUT=900 istep 27-prepare "sh docker-shell.sh" "$P_APP" 'python cli.py --prepare' "$P_APP" 'ls -la artifacts' "$P_APP" 'exit'
   # README:101 / "Upload & Deploy Model to SageMaker" (README:119-129)
-  PTY_TIMEOUT=900 istep 25-deploy "sh docker-shell.sh" "$P_APP" 'python cli.py --deploy' "$P_APP" 'exit'
+  PTY_TIMEOUT=900 istep 28-deploy "sh docker-shell.sh" "$P_APP" 'python cli.py --deploy' "$P_APP" 'exit'
   # README:102 / "Test Predictions" (README:131-147)
-  PTY_TIMEOUT=900 istep 26-predict "sh docker-shell.sh" "$P_APP" 'python cli.py --predict' "$P_APP" 'exit'
+  PTY_TIMEOUT=900 istep 29-predict "sh docker-shell.sh" "$P_APP" 'python cli.py --predict' "$P_APP" 'exit'
   # README:104-105 / "Using the CLI Script" (README:168-179)
-  PTY_TIMEOUT=900 istep 27-delete "sh docker-shell.sh" "$P_APP" 'python cli.py --delete' "$P_APP" 'exit'
+  PTY_TIMEOUT=900 istep 30-delete "sh docker-shell.sh" "$P_APP" 'python cli.py --delete' "$P_APP" 'exit'
   # "Using AWS CLI" (README:160-165), on the laptop: first exactly as written (the <...> are
   # placeholders the shell reads as redirections), then with a placeholder endpoint name (extra)
-  step 28-aws-cli-delete-as-written "aws sagemaker delete-endpoint --endpoint-name <your-endpoint-name>"
-  step 29-aws-cli-delete "aws sagemaker delete-endpoint --endpoint-name cheese-endpoint-placeholder"
+  step 31-aws-cli-delete-as-written "aws sagemaker delete-endpoint --endpoint-name <your-endpoint-name>"
+  step 32-aws-cli-delete "aws sagemaker delete-endpoint --endpoint-name cheese-endpoint-placeholder"
+  ;;
+md-resolve)   # 22 alone (re-run)
+  step 22-resolve-today "docker run --rm --tmpfs /tmp:exec,size=4g -v /capture/helpers:/helpers:ro python:3.9-slim sh /helpers/resolve_check.sh boto3 sagemaker pillow tensorflow==2.18.0 numpy requests"
   ;;
 md-local)
   cd model-deployment-aws
@@ -232,8 +264,9 @@ mw-coll)
   ;;
 mw-proc)
   cd ml-workflow-aws/src/data-processor
+  git checkout -q -- docker-shell.sh Pipfile   # capture-only: a re-run starts from the pinned files
   # README:113 sh docker-shell.sh, as written (docker-shell.sh:33 --platform=linux/arm64/v8)
-  PTY_TIMEOUT=900 hub_retry step 65-processor-docker-shell-arm64 "sh docker-shell.sh"
+  arm64_attempt 65-processor-docker-shell-arm64 python:3.11-slim
   step 66-use-plain-build "sed -i -e 's|^docker build -t \$IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .|#&|' -e 's|^#docker build -t \$IMAGE_NAME -f Dockerfile .|docker build -t \$IMAGE_NAME -f Dockerfile .|' docker-shell.sh && sed -n '29,34p' docker-shell.sh"   # extra
   # README:113 again, then "Test Data Processor" (README:115-120) + extras
   PTY_TIMEOUT=3600 hub_retry istep 67-processor "sh docker-shell.sh" \
@@ -247,8 +280,9 @@ mw-proc)
   ;;
 mw-train)
   cd ml-workflow-aws/src/model-training
+  git checkout -q -- docker-shell.sh Pipfile   # capture-only: a re-run starts from the pinned files
   # README:131 sh docker-shell.sh, as written (docker-shell.sh:33 --platform=linux/arm64/v8)
-  PTY_TIMEOUT=900 hub_retry step 70-training-docker-shell-arm64 "sh docker-shell.sh"
+  arm64_attempt 70-training-docker-shell-arm64 python:3.11-slim
   step 71-use-plain-build "sed -i -e 's|^docker build -t \$IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .|#&|' -e 's|^#docker build -t \$IMAGE_NAME -f Dockerfile .|docker build -t \$IMAGE_NAME -f Dockerfile .|' docker-shell.sh && sed -n '29,34p' docker-shell.sh"   # extra
   # README:131 again; "Local Training" (README:135-136), "Remote Training" (README:137-139) + extras
   PTY_TIMEOUT=3600 hub_retry istep 72-training "sh docker-shell.sh" \
@@ -278,11 +312,23 @@ aws ecr create-repository --repository-name \"\$REPO\" --region \"\$REGION\" || 
   ;;
 mw-flow)
   cd ml-workflow-aws/src/workflow
+  git checkout -q -- docker-shell.sh Pipfile Dockerfile   # capture-only: a re-run starts from the pinned files
   # "Automate Running Data Collector Container" (README:210-224): sh docker-shell.sh in
-  # src/workflow, python cli.py --data_collector; "SageMaker Pipelines" (README:226-248):
-  # --pipeline and the four component flags; + extras
-  PTY_TIMEOUT=3600 hub_retry istep 85-workflow "sh docker-shell.sh" \
-    "$P_APP" 'python --version; pip list 2>/dev/null | grep -i -E "^(sagemaker|boto3) "; aws --version' \
+  # src/workflow. Its Dockerfile copies only the Pipfile (Dockerfile:38) and runs `pipenv install`
+  # (:40), so the committed Pipfile.lock (sagemaker 2.250.0) is NOT used: the image resolves
+  # `sagemaker = "*"` afresh. Unchanged, that build is not kept here (several GB, as in 22); what
+  # it resolves today on the image's Python 3.11, and what that does to cli.py's imports
+  # (cli.py:12-22), in two extras:
+  capture_only_bases python:3.11-slim
+  step 85-resolve-today "docker run --rm --tmpfs /tmp:exec,size=4g -v /capture/helpers:/helpers:ro python:3.11-slim sh /helpers/resolve_check.sh sagemaker boto3"
+  step 86-sagemaker3-imports "docker run --rm -v /capture/helpers:/helpers:ro python:3.11-slim sh /helpers/sagemaker_import_check.sh 'sagemaker==3.29.0 sagemaker-core==2.29.0 sagemaker-train==1.29.0 sagemaker-serve==1.29.0 sagemaker-mlops==1.29.0' 'from sagemaker.processing import ProcessingInput, ProcessingOutput, Processor' 'from sagemaker.workflow.pipeline import Pipeline' 'from sagemaker.tensorflow import TensorFlow'"
+  step 87-committed-lock "grep -n -A1 '\"sagemaker\": {' Pipfile.lock | head -4; sed -n '36,40p' Dockerfile"   # extra
+  # extra, the same fix as 24: pin the SDK below version 3
+  step 88-pin-sagemaker "sed -i 's/^sagemaker = \"\\*\"/sagemaker = \"<3\"/' Pipfile && git diff Pipfile"
+  # README:218 sh docker-shell.sh (with the pin); README:223 python cli.py --data_collector;
+  # "SageMaker Pipelines" (README:226-248): --pipeline and the four component flags; + extras
+  PTY_TIMEOUT=3600 hub_retry istep 89-workflow "sh docker-shell.sh" \
+    "$P_APP" 'python --version; pip list 2>/dev/null | grep -i -E "^(sagemaker|sagemaker-core|boto3) "; aws --version' \
     "$P_APP" 'ls /data-collector /data-processor; docker ps --format "{{.Names}} {{.Image}}"' \
     "$P_APP" 'python cli.py --data_collector' \
     "$P_APP" 'python cli.py --pipeline' \
@@ -290,7 +336,7 @@ mw-flow)
     "$P_APP" 'python cli.py --model_training' \
     "$P_APP" 'python cli.py --model_deploy' \
     "$P_APP" 'exit'
-  step 86-workflow-image "docker image ls cheese-app-workflow"   # extra
+  step 90-workflow-image "docker image ls cheese-app-workflow"   # extra
   ;;
 mw-end)
   step 95-docker-ps "docker ps -a"   # extra: --rm left nothing running

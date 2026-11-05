@@ -1,0 +1,232 @@
+$ sh docker-shell.sh
+
+[+] Building 0.0s (19/19) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 2.13kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:20.04                                          0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [ 1/14] FROM docker.io/library/ubuntu:20.04                                                          0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 2.53kB                                                                      0.0s
+ => CACHED [ 2/14] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificate  0.0s
+ => CACHED [ 3/14] RUN ARCH=$(dpkg --print-architecture) &&     if [ "$ARCH" = "arm64" ] || [ "$ARCH" =  0.0s
+ => CACHED [ 4/14] RUN install -m 0755 -d /etc/apt/keyrings                                              0.0s
+ => CACHED [ 5/14] RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/  0.0s
+ => CACHED [ 6/14] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                            0.0s
+ => CACHED [ 7/14] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docke  0.0s
+ => CACHED [ 8/14] RUN apt-get update &&     apt-get install -y jq docker-ce                             0.0s
+ => CACHED [ 9/14] RUN apt-get update &&     apt-get install -y --no-install-recommends python3.9 pytho  0.0s
+ => CACHED [10/14] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)  0.0s
+ => CACHED [11/14] WORKDIR /app                                                                          0.0s
+ => CACHED [12/14] ADD --chown=app:app Pipfile /app/                                                     0.0s
+ => CACHED [13/14] RUN cd /app && pipenv lock && pipenv sync                                             0.0s
+ => CACHED [14/14] ADD --chown=app:app . /app                                                            0.0s
+ => exporting to image                                                                                   0.0s
+ => => exporting layers                                                                                  0.0s
+ => => writing image sha256:d3dc546c0eee0147492d0d5470415abc63bb11b7fd9084bd9b0a66aa694d7fb6             0.0s
+ => => naming to docker.io/library/model-deployment-cli-aws                                              0.0s
+Container is running!!!
+Testing AWS connectivity...
+
+aws: [ERROR]: An error occurred (NoCredentials): Unable to locate credentials. You can configure credentials by running "aws login".
+Launching subshell in virtual environment...
+app@974c4bf53d84:/app$  source /home/app/.local/share/virtualenvs/app-4PlAip0Q/bin/activate
+(app) app@974c4bf53d84:/app$ python cli.py --prepare
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /home/app/.config/sagemaker/config.yaml
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/sagemaker/__init__.py:86: SageMakerV2DeprecationWarning: You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation()
+You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+2026-11-05 05:05:39.832677: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-11-05 05:05:39.833984: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:05:39.839072: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:05:39.846884: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1793855139.860482      24 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1793855139.864719      24 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-11-05 05:05:39.879743: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Prepare model and save model to GCS Bucket
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/boto3/compat.py:89: PythonDeprecationWarning: Boto3 will no longer support Python 3.9 starting April 29, 2026. To continue receiving service updates, bug fixes, and security updates please upgrade to Python 3.10 or later. More information can be found here: https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/
+  warnings.warn(warning, PythonDeprecationWarning)
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /app/cli.py:367 in <module>                                                                      │
+│                                                                                                  │
+│   364 │                                                                                          │
+│   365 │   args = parser.parse_args()                                                             │
+│   366 │                                                                                          │
+│ ❱ 367 │   main(args)                                                                             │
+│   368                                                                                            │
+│                                                                                                  │
+│ /app/cli.py:319 in main                                                                          │
+│                                                                                                  │
+│   316 │                                                                                          │
+│   317 │   if args.prepare:                                                                       │
+│   318 │   │   print("Prepare model and save model to GCS Bucket")                                │
+│ ❱ 319 │   │   prepare()                                                                          │
+│   320 │                                                                                          │
+│   321 │   elif args.deploy:                                                                      │
+│   322 │   │   print("Deploy model")                                                              │
+│                                                                                                  │
+│ /app/cli.py:73 in prepare                                                                        │
+│                                                                                                  │
+│    70 │   # Create bucket if it doesn't exist                                                    │
+│    71 │   try:                                                                                   │
+│    72 │   │   if AWS_REGION == "us-east-1":                                                      │
+│ ❱  73 │   │   │   s3_client.create_bucket(Bucket=S3_MODELS_BUCKET_NAME)                          │
+│    74 │   │   else:                                                                              │
+│    75 │   │   │   s3_client.create_bucket(                                                       │
+│    76 │   │   │   │   Bucket=S3_MODELS_BUCKET_NAME,                                              │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/client.py:6 │
+│ 06 in _api_call                                                                                  │
+│                                                                                                  │
+│    603 │   │   │   │   │   f"{py_operation_name}() only accepts keyword arguments."              │
+│    604 │   │   │   │   )                                                                         │
+│    605 │   │   │   # The "self" in this scope is referring to the BaseClient.                    │
+│ ❱  606 │   │   │   return self._make_api_call(operation_name, kwargs)                            │
+│    607 │   │                                                                                     │
+│    608 │   │   _api_call.__name__ = str(py_operation_name)                                       │
+│    609                                                                                           │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/context.py: │
+│ 123 in wrapper                                                                                   │
+│                                                                                                  │
+│   120 │   │   │   with start_as_current_context():                                               │
+│   121 │   │   │   │   if hook:                                                                   │
+│   122 │   │   │   │   │   hook()                                                                 │
+│ ❱ 123 │   │   │   │   return func(*args, **kwargs)                                               │
+│   124 │   │                                                                                      │
+│   125 │   │   return wrapper                                                                     │
+│   126                                                                                            │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/client.py:1 │
+│ 076 in _make_api_call                                                                            │
+│                                                                                                  │
+│   1073 │   │   │   │   self.meta.config, request_dict, operation_model                           │
+│   1074 │   │   │   )                                                                             │
+│   1075 │   │   │   apply_request_checksum(request_dict)                                          │
+│ ❱ 1076 │   │   │   http, parsed_response = self._make_request(                                   │
+│   1077 │   │   │   │   operation_model, request_dict, request_context                            │
+│   1078 │   │   │   )                                                                             │
+│   1079                                                                                           │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/client.py:1 │
+│ 100 in _make_request                                                                             │
+│                                                                                                  │
+│   1097 │                                                                                         │
+│   1098 │   def _make_request(self, operation_model, request_dict, request_context):              │
+│   1099 │   │   try:                                                                              │
+│ ❱ 1100 │   │   │   return self._endpoint.make_request(operation_model, request_dict)             │
+│   1101 │   │   except Exception as e:                                                            │
+│   1102 │   │   │   self.meta.events.emit(                                                        │
+│   1103 │   │   │   │   f'after-call-error.{self._service_model.service_id.hyphenize()}.{operati  │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/endpoint.py │
+│ :119 in make_request                                                                             │
+│                                                                                                  │
+│   116 │   │   │   operation_model,                                                               │
+│   117 │   │   │   request_dict,                                                                  │
+│   118 │   │   )                                                                                  │
+│ ❱ 119 │   │   return self._send_request(request_dict, operation_model)                           │
+│   120 │                                                                                          │
+│   121 │   def create_request(self, params, operation_model=None):                                │
+│   122 │   │   request = create_request_object(params)                                            │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/endpoint.py │
+│ :196 in _send_request                                                                            │
+│                                                                                                  │
+│   193 │   │   attempts = 1                                                                       │
+│   194 │   │   context = request_dict['context']                                                  │
+│   195 │   │   self._update_retries_context(context, attempts)                                    │
+│ ❱ 196 │   │   request = self.create_request(request_dict, operation_model)                       │
+│   197 │   │   success_response, exception = self._get_response(                                  │
+│   198 │   │   │   request, operation_model, context                                              │
+│   199 │   │   )                                                                                  │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/endpoint.py │
+│ :132 in create_request                                                                           │
+│                                                                                                  │
+│   129 │   │   │   )                                                                              │
+│   130 │   │   │   service_id = operation_model.service_model.service_id.hyphenize()              │
+│   131 │   │   │   event_name = f'request-created.{service_id}.{operation_model.name}'            │
+│ ❱ 132 │   │   │   self._event_emitter.emit(                                                      │
+│   133 │   │   │   │   event_name,                                                                │
+│   134 │   │   │   │   request=request,                                                           │
+│   135 │   │   │   │   operation_name=operation_model.name,                                       │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/hooks.py:41 │
+│ 2 in emit                                                                                        │
+│                                                                                                  │
+│   409 │                                                                                          │
+│   410 │   def emit(self, event_name, **kwargs):                                                  │
+│   411 │   │   aliased_event_name = self._alias_event_name(event_name)                            │
+│ ❱ 412 │   │   return self._emitter.emit(aliased_event_name, **kwargs)                            │
+│   413 │                                                                                          │
+│   414 │   def emit_until_response(self, event_name, **kwargs):                                   │
+│   415 │   │   aliased_event_name = self._alias_event_name(event_name)                            │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/hooks.py:25 │
+│ 6 in emit                                                                                        │
+│                                                                                                  │
+│   253 │   │   :return: List of (handler, response) tuples from all processed                     │
+│   254 │   │   │   │    handlers.                                                                 │
+│   255 │   │   """                                                                                │
+│ ❱ 256 │   │   return self._emit(event_name, kwargs)                                              │
+│   257 │                                                                                          │
+│   258 │   def emit_until_response(self, event_name, **kwargs):                                   │
+│   259 │   │   """                                                                                │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/hooks.py:23 │
+│ 9 in _emit                                                                                       │
+│                                                                                                  │
+│   236 │   │   responses = []                                                                     │
+│   237 │   │   for handler in handlers_to_call:                                                   │
+│   238 │   │   │   logger.debug('Event %s: calling handler %s', event_name, handler)              │
+│ ❱ 239 │   │   │   response = handler(**kwargs)                                                   │
+│   240 │   │   │   responses.append((handler, response))                                          │
+│   241 │   │   │   if stop_on_response and response is not None:                                  │
+│   242 │   │   │   │   return responses                                                           │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/signers.py: │
+│ 108 in handler                                                                                   │
+│                                                                                                  │
+│   105 │   │   # from a client's event emitter.  When a new request is created                    │
+│   106 │   │   # this method is invoked to sign the request.                                      │
+│   107 │   │   # Don't call this method directly.                                                 │
+│ ❱ 108 │   │   return self.sign(operation_name, request)                                          │
+│   109 │                                                                                          │
+│   110 │   def sign(                                                                              │
+│   111 │   │   self,                                                                              │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/signers.py: │
+│ 200 in sign                                                                                      │
+│                                                                                                  │
+│   197 │   │   │   │   else:                                                                      │
+│   198 │   │   │   │   │   raise e                                                                │
+│   199 │   │   │                                                                                  │
+│ ❱ 200 │   │   │   auth.add_auth(request)                                                         │
+│   201 │                                                                                          │
+│   202 │   def _resolve_identity_cache(self, kwargs, cache, cache_key):                           │
+│   203 │   │   kwargs['identity_cache'] = cache                                                   │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/botocore/auth.py:429 │
+│ in add_auth                                                                                      │
+│                                                                                                  │
+│    426 │                                                                                         │
+│    427 │   def add_auth(self, request):                                                          │
+│    428 │   │   if self.credentials is None:                                                      │
+│ ❱  429 │   │   │   raise NoCredentialsError()                                                    │
+│    430 │   │   datetime_now = get_current_datetime()                                             │
+│    431 │   │   request.context['timestamp'] = datetime_now.strftime(SIGV4_TIMESTAMP)             │
+│    432 │   │   # This could be a retry.  Make sure the previous                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+NoCredentialsError: Unable to locate credentials
+(app) app@974c4bf53d84:/app$ ls -la artifacts
+ls: cannot access 'artifacts': No such file or directory
+(app) app@974c4bf53d84:/app$ exit
+exit
+[exit 2]

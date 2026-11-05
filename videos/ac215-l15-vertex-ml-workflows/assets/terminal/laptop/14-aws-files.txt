@@ -1,8 +1,8 @@
 $ ls -la ~/.aws; cat ~/.aws/config
 total 12
-drwxr-sr-x    2 student  student       4096 Nov  5 04:00 .
-drwxr-sr-x    5 student  student       4096 Nov  5 04:00 ..
--rw-------    1 student  student         43 Nov  5 04:00 config
+drwxr-sr-x    2 student  student       4096 Nov  5 04:28 .
+drwxr-sr-x    5 student  student       4096 Nov  5 04:28 ..
+-rw-------    1 student  student         43 Nov  5 04:28 config
 [default]
 region = us-east-1
 output = json

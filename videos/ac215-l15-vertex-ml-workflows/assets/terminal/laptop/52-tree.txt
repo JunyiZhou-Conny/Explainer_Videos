@@ -1,0 +1,53 @@
+$ tree -a -I .git --dirsfirst .
+.
+├── images
+│   ├── ml-pipeline.png
+│   ├── sagemaker-pipeline-1.png
+│   └── sagemaker-pipeline-2.png
+├── src
+│   ├── data-collector
+│   │   ├── Dockerfile
+│   │   ├── Pipfile
+│   │   ├── Pipfile.lock
+│   │   ├── cli.py
+│   │   ├── docker-entrypoint.sh
+│   │   ├── docker-shell.sh
+│   │   └── downloader.py
+│   ├── data-processor
+│   │   ├── Dockerfile
+│   │   ├── Pipfile
+│   │   ├── cleanser.py
+│   │   ├── cli.py
+│   │   ├── docker-entrypoint.sh
+│   │   ├── docker-shell.sh
+│   │   └── tfrecords.py
+│   ├── model-training
+│   │   ├── package
+│   │   │   ├── trainer
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── task.py
+│   │   │   ├── PKG-INFO
+│   │   │   ├── setup.cfg
+│   │   │   └── setup.py
+│   │   ├── Dockerfile
+│   │   ├── Pipfile
+│   │   ├── Pipfile.lock
+│   │   ├── cli.py
+│   │   ├── docker-entrypoint.sh
+│   │   ├── docker-shell.sh
+│   │   └── package-trainer.sh
+│   └── workflow
+│       ├── Dockerfile
+│       ├── Pipfile
+│       ├── Pipfile.lock
+│       ├── cli.py
+│       ├── deploy_model_lambda.py
+│       ├── docker-entrypoint.sh
+│       ├── docker-shell.sh
+│       └── model.py
+├── .gitignore
+├── LICENSE
+└── README.md
+
+9 directories, 40 files
+[exit 0]

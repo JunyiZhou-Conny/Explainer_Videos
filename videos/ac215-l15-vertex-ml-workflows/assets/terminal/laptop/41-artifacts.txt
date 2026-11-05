@@ -1,0 +1,28 @@
+$ ls -la artifacts; find artifacts/model-mobilenetv2_train_base_True.v1 | sort; du -sh artifacts/*
+total 37768
+drwxr-sr-x    3 student  student       4096 Nov  5 05:08 .
+drwxr-sr-x    6 student  student       4096 Nov  5 05:08 ..
+-rw-r--r--    1 student  student     153962 Nov  5 05:08 mobilenetv2_train_base_True.json
+-rw-r--r--    1 student  student   10278567 Nov  5 05:08 mobilenetv2_train_base_True.keras
+-rw-r--r--    1 student  student   10121392 Nov  5 05:08 mobilenetv2_train_base_True.weights.h5
+-rw-r--r--    1 student  student   18090351 Nov  5 05:08 mobilenetv2_train_base_True.zip
+-rw-r--r--    1 student  student        230 Nov  5 05:08 mobilenetv2_train_base_True_model_metrics.json
+-rw-r--r--    1 student  student       1255 Nov  5 05:08 mobilenetv2_train_base_True_train_history.json
+drwxr-sr-x    3 student  student       4096 Nov  5 05:08 model-mobilenetv2_train_base_True.v1
+artifacts/model-mobilenetv2_train_base_True.v1
+artifacts/model-mobilenetv2_train_base_True.v1/1
+artifacts/model-mobilenetv2_train_base_True.v1/1/assets
+artifacts/model-mobilenetv2_train_base_True.v1/1/fingerprint.pb
+artifacts/model-mobilenetv2_train_base_True.v1/1/saved_model.pb
+artifacts/model-mobilenetv2_train_base_True.v1/1/variables
+artifacts/model-mobilenetv2_train_base_True.v1/1/variables/variables.data-00000-of-00001
+artifacts/model-mobilenetv2_train_base_True.v1/1/variables/variables.index
+artifacts/model-mobilenetv2_train_base_True.v1/model.tar.gz
+152.0K	artifacts/mobilenetv2_train_base_True.json
+9.8M	artifacts/mobilenetv2_train_base_True.keras
+9.7M	artifacts/mobilenetv2_train_base_True.weights.h5
+17.3M	artifacts/mobilenetv2_train_base_True.zip
+4.0K	artifacts/mobilenetv2_train_base_True_model_metrics.json
+4.0K	artifacts/mobilenetv2_train_base_True_train_history.json
+37.6M	artifacts/model-mobilenetv2_train_base_True.v1
+[exit 0]

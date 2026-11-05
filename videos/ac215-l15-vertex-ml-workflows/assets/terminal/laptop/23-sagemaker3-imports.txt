@@ -1,0 +1,15 @@
+$ docker run --rm -v /capture/helpers:/helpers:ro python:3.9-slim sh /helpers/sagemaker_import_check.sh 'sagemaker==3.13.1 sagemaker-core==2.13.1 sagemaker-train==1.13.1 sagemaker-serve==1.13.1 sagemaker-mlops==1.13.1' 'import sagemaker; from sagemaker.tensorflow import TensorFlowModel' 'from sagemaker import get_execution_role' 'from sagemaker.serializers import JSONSerializer'
+sagemaker       3.13.1
+sagemaker-core  2.13.1
+sagemaker-mlops 1.13.1
+sagemaker-serve 1.13.1
+sagemaker-train 1.13.1
+sagemaker is a namespace package: ['/usr/local/lib/python3.9/site-packages/sagemaker']
+its modules: ['ai_registry', 'core', 'lineage', 'mlops', 'serve', 'train']
+>>> import sagemaker; from sagemaker.tensorflow import TensorFlowModel
+ModuleNotFoundError: No module named 'sagemaker.tensorflow'
+>>> from sagemaker import get_execution_role
+ImportError: cannot import name 'get_execution_role' from 'sagemaker' (/usr/local/lib/python3.9/site-packages/sagemaker/__init__.py)
+>>> from sagemaker.serializers import JSONSerializer
+ModuleNotFoundError: No module named 'sagemaker.serializers'
+[exit 0]

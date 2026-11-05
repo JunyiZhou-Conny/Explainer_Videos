@@ -1,0 +1,7 @@
+$ docker image ls
+IMAGE                             ID             DISK USAGE   CONTENT SIZE   EXTRA
+model-deployment-cli-aws:latest   d3dc546c0eee       4.01GB             0B        
+python:3.11-slim                  48cbfa3bf1a0        126MB             0B        
+python:3.9-slim                   3be9212992dd        123MB             0B        
+ubuntu:20.04                      eb583914b0b9       73.2MB             0B        
+[exit 0]

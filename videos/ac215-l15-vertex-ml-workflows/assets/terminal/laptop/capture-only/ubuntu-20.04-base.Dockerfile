@@ -12,4 +12,5 @@ RUN mkdir -p /etc/ssl/certs && cat /usr/local/share/ca-certificates/capture-ca.c
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
     PIP_CERT=/etc/ssl/certs/ca-certificates.crt \
     REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt \
-    AWS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+    AWS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt \
+    PIP_NO_CACHE_DIR=1

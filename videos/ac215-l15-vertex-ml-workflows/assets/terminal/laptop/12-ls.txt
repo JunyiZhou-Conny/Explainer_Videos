@@ -1,17 +1,17 @@
 $ ls -la; ls data
 total 64
-drwxr-sr-x    5 student  student       4096 Nov  5 04:00 .
-drwxr-sr-x    4 student  student       4096 Nov  5 04:00 ..
-drwxr-sr-x    7 student  student       4096 Nov  5 04:00 .git
--rw-r--r--    1 student  student        641 Nov  5 04:00 .gitignore
--rwxr-xr-x    1 student  student       2095 Nov  5 04:00 Dockerfile
--rwxr-xr-x    1 student  student        230 Nov  5 04:00 Pipfile
--rw-r--r--    1 student  student       7138 Nov  5 04:00 README.md
--rw-r--r--    1 student  student      12818 Nov  5 04:00 cli.py
-drwxr-sr-x    2 student  student       4096 Nov  5 04:00 data
--rwxr-xr-x    1 student  student        157 Nov  5 04:00 docker-entrypoint.sh
--rwxr-xr-x    1 student  student        851 Nov  5 04:00 docker-shell.sh
-drwxr-sr-x    2 student  student       4096 Nov  5 04:00 images
+drwxr-sr-x    5 student  student       4096 Nov  5 04:28 .
+drwxr-sr-x    4 student  student       4096 Nov  5 04:28 ..
+drwxr-sr-x    7 student  student       4096 Nov  5 04:28 .git
+-rw-r--r--    1 student  student        641 Nov  5 04:28 .gitignore
+-rwxr-xr-x    1 student  student       2095 Nov  5 04:28 Dockerfile
+-rwxr-xr-x    1 student  student        230 Nov  5 04:28 Pipfile
+-rw-r--r--    1 student  student       7138 Nov  5 04:28 README.md
+-rw-r--r--    1 student  student      12818 Nov  5 04:28 cli.py
+drwxr-sr-x    2 student  student       4096 Nov  5 04:28 data
+-rwxr-xr-x    1 student  student        157 Nov  5 04:28 docker-entrypoint.sh
+-rwxr-xr-x    1 student  student        851 Nov  5 04:28 docker-shell.sh
+drwxr-sr-x    2 student  student       4096 Nov  5 04:28 images
 brie-1.jpg
 brie-2.jpg
 gouda-1.jpg

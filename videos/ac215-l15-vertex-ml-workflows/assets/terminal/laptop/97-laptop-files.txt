@@ -1,0 +1,12 @@
+$ ls -la ~ ~/persistent-folder ~/persistent-folder/dataset; cd ~/ml-workflow-aws && git status --short
+ls: /home/student/persistent-folder: No such file or directory
+ls: /home/student/persistent-folder/dataset: No such file or directory
+/home/student:
+total 20
+drwxr-sr-x    5 student  student       4096 Nov  5 04:28 .
+drwxr-xr-x    1 root     root          4096 Nov  5 04:28 ..
+drwxr-sr-x    3 student  student       4096 Nov  5 05:05 .aws
+drwxrwsrwx    3 student  student       4096 Nov  5 04:28 .docker
+drwxr-sr-x    5 student  student       4096 Nov  5 04:58 model-deployment-aws
+bash: line 1: cd: /home/student/ml-workflow-aws: No such file or directory
+[exit 1]

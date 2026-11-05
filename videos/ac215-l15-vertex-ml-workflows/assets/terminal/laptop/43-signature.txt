@@ -1,0 +1,23 @@
+$ docker run --rm --entrypoint pipenv -v "$PWD":/app model-deployment-cli-aws run saved_model_cli show --dir /app/artifacts/model-mobilenetv2_train_base_True.v1/1 --tag_set serve --signature_def serving_default
+2026-11-05 05:08:20.047073: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-11-05 05:08:20.047859: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:08:20.051077: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:08:20.058280: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1793855300.073605       1 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1793855300.078071       1 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-11-05 05:08:20.093338: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-11-05 05:08:21.660041: E external/local_xla/xla/stream_executor/cuda/cuda_driver.cc:152] failed call to cuInit: INTERNAL: CUDA error: Failed call to cuInit: UNKNOWN ERROR (303)
+The given SavedModel SignatureDef contains the following input(s):
+  inputs['input'] tensor_info:
+      dtype: DT_FLOAT
+      shape: (-1, 224, 224, 3)
+      name: serving_default_input:0
+The given SavedModel SignatureDef contains the following output(s):
+  outputs['output_0'] tensor_info:
+      dtype: DT_FLOAT
+      shape: (-1, 4)
+      name: StatefulPartitionedCall_1:0
+Method name is: tensorflow/serving/predict
+[exit 0]
