@@ -61,10 +61,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l15-vertex-ml-workflows.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l15-vertex-ml-workflows.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 30:27.2 (1827.2 s). Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l15-vertex-ml-workflows.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Release asset, not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l15-vertex-ml-workflows_part1.mp4` | part 1, DURATION_P1: deploy one model — a SageMaker model, an endpoint and the request (S01–S09). Release asset, not in Git |
-| `output/ac215-l15-vertex-ml-workflows_part2.mp4` | part 2, DURATION_P2: automate the workflow — four containers, ECR and a SageMaker Pipeline (S10–S16). Release asset, not in Git |
+| `output/ac215-l15-vertex-ml-workflows_part1.mp4` | part 1, 16:27.3 (987.3 s): deploy one model — a SageMaker model, an endpoint and the request (S01–S09). Release asset, not in Git |
+| `output/ac215-l15-vertex-ml-workflows_part2.mp4` | part 2, 14:00.0 (840.0 s): automate the workflow — four containers, ECR and a SageMaker Pipeline (S10–S16). Release asset, not in Git |
 | `output/ac215-l15-vertex-ml-workflows.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l15-vertex-ml-workflows.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l15-vertex-ml-workflows.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -83,7 +83,26 @@ and the two part cuts) are release assets.
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts). Part 1 (16:27) is chapters 00:00–14:43 below; part 2 (14:00) restarts at 00:00 with "From four terminals to one workflow", its chapters at 00:00, 02:00, 04:06, 06:08, 07:35, 09:18, 12:12.
+
+```
+00:00 Three numbers or four?
+01:10 Where we are, in AWS words
+02:33 A user, a role and a bucket
+04:37 The CLI container: two one-line fixes
+07:22 Where does preprocessing live?
+09:01 --prepare: a SavedModel in a tarball
+10:41 --deploy: model, endpoint configuration, endpoint
+12:42 --predict: 150,528 numbers per photo
+14:43 --delete: turn off the meter
+16:27 From four terminals to one workflow
+18:27 Collector and processor, by hand
+20:34 Train locally, sign the model
+22:35 Build and push: your own registry
+24:03 The workflow container and one processing job
+25:45 A pipeline drawn by references
+28:39 Tear down, recap, test yourself
+```
 
 ## What you'll learn
 
