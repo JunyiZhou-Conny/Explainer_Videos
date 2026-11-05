@@ -1,0 +1,156 @@
+$ sh docker-shell.sh
+
+[+] Building 79.0s (11/11) FINISHED                                                  docker:default
+ => [internal] load build definition from Dockerfile                                           0.0s
+ => => transferring dockerfile: 1.42kB                                                         0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim-bookworm                   0.0s
+ => [internal] load .dockerignore                                                              0.0s
+ => => transferring context: 2B                                                                0.0s
+ => CACHED [1/6] FROM docker.io/library/python:3.12-slim-bookworm                              0.0s
+ => [internal] load build context                                                              0.0s
+ => => transferring context: 1.22MB                                                            0.0s
+ => [2/6] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &  24.2s
+ => [3/6] WORKDIR /app                                                                         0.0s
+ => [4/6] COPY --chown=app:app pyproject.toml uv.lock* ./                                      0.0s
+ => [5/6] RUN uv sync --frozen                                                                37.4s
+ => [6/6] COPY --chown=app:app . ./                                                            0.1s
+ => exporting to image                                                                        17.2s
+ => => exporting layers                                                                       17.2s
+ => => writing image sha256:9c3880ac33a00b0ea9ff24333398f833b319ee54f72476ba72dd76bfa21c56f0   0.0s
+ => => naming to docker.io/library/cheese-app-api-service                                      0.0s
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.16
+UV version: uv 0.13.7 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+
+The following commands are available:
+    uvicorn_server
+        Run the Uvicorn Server
+
+app@c9f05403249e:/app$ uvicorn_server
+INFO:     Will watch for changes in these directories: ['/app/api']
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+INFO:     Started reloader process [11] using WatchFiles
+2026-11-05 14:15:21.481487: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-11-05 14:15:21.483043: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 14:15:21.486583: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 14:15:21.494848: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1793888121.511565      13 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1793888121.515953      13 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1793888121.528154      13 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1793888121.528201      13 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1793888121.528205      13 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1793888121.528207      13 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-11-05 14:15:21.532091: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Loading CNN Model...
+best_model_path: /persistent/experiments/experiment_1760994796/mobilenetv2_train_base_True.keras
+2026-11-05 14:15:39.556172: E external/local_xla/xla/stream_executor/cuda/cuda_platform.cc:51] failed call to cuInit: INTERNAL: CUDA error: Failed call to cuInit: UNKNOWN ERROR (303)
+Model: "mobilenetv2_train_base_True"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Layer (type)                         ┃ Output Shape                ┃         Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ input (InputLayer)                   │ (None, 224, 224, 3)         │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ mobilenetv2_1.00_224 (Functional)    │ (None, 7, 7, 1280)          │       2,257,984 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ global_average_pooling2d_1           │ (None, 1280)                │               0 │
+│ (GlobalAveragePooling2D)             │                             │                 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_9 (Dense)                      │ (None, 128)                 │         163,968 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ output (Dense)                       │ (None, 4)                   │             516 │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+ Total params: 2,422,470 (9.24 MB)
+ Trainable params: 2,388,356 (9.11 MB)
+ Non-trainable params: 34,112 (133.25 KB)
+ Optimizer params: 2 (12.00 B)
+None
+INFO:     Started server process [13]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     172.19.0.1:38316 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.1:34514 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.1:34520 - "GET /square_root/?x=2&y=10 HTTP/1.1" 200 OK
+INFO:     172.19.0.1:34532 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     172.19.0.1:37804 - "GET /newsletters?limit=100 HTTP/1.1" 307 Temporary Redirect
+INFO:     172.19.0.1:37804 - "GET /newsletters/?limit=100 HTTP/1.1" 200 OK
+INFO:     172.19.0.1:37816 - "OPTIONS /llm/chats HTTP/1.1" 200 OK
+INFO:     172.19.0.1:37824 - "POST /llm/chats/ HTTP/1.1" 307 Temporary Redirect
+content: How is cheese made?
+x_session_id: 00000000-0000-4000-8000-000000000001
+Error generating response: ('invalid_grant: Invalid grant: account not found', {'error': 'invalid_grant', 'error_description': 'Invalid grant: account not found'})
+Traceback (most recent call last):
+  File "/app/api/utils/llm_utils.py", line 139, in generate_chat_response
+    response = chat_session.send_message(message_parts)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/google/genai/chats.py", line 254, in send_message
+    response = self._modules.generate_content(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/google/genai/models.py", line 5020, in generate_content
+    response = self._generate_content(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/google/genai/models.py", line 3832, in _generate_content
+    response = self._api_client.request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 1331, in request
+    response = self._request(http_request, http_options, stream=False)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 1167, in _request
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 378, in iter
+    result = action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 420, in exc_check
+    raise retry_exc.reraise()
+          ^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 187, in reraise
+    raise self.last_attempt.result()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/home/app/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 1110, in _request_once
+    http_request.headers['Authorization'] = f'Bearer {self._access_token()}'
+                                                      ^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 948, in _access_token
+    refresh_auth(self._credentials)
+  File "/home/app/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 200, in refresh_auth
+    credentials.refresh(Request())  # type: ignore[no-untyped-call]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/google/auth/credentials.py", line 365, in refresh
+    self._refresh_token(request)
+  File "/home/app/.venv/lib/python3.12/site-packages/google/oauth2/service_account.py", line 457, in _refresh_token
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/app/.venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid grant: account not found', {'error': 'invalid_grant', 'error_description': 'Invalid grant: account not found'})
+INFO:     172.19.0.1:37824 - "POST /llm/chats HTTP/1.1" 500 Internal Server Error
+^C
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13]
+INFO:     Stopping reloader process [11]
+app@c9f05403249e:/app$
+app@c9f05403249e:/app$ exit
+exit
+[exit 0]

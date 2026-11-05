@@ -1,0 +1,7 @@
+$ curl -s -i http://localhost:8080/chat.html | grep -E 'HTTP/|<title>|script'
+HTTP/1.1 200 OK
+    <title>🧀 Formaggio.me</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
+    <script src="chat-main.js"></script>
+[exit 0]

@@ -3,6 +3,7 @@
 #   bash assets/terminal/capture.sh setup
 #   bash assets/terminal/capture.sh pre v1 head
 #   bash assets/terminal/capture.sh prune bases reset-v2 old
+#   bash assets/terminal/capture.sh teardown setup-classic reset-old old-run   (as recorded: see ASSETS.md)
 #   bash assets/terminal/capture.sh teardown
 # The laptop container persists between calls, so the capture can run in parts (and its engine can be
 # pruned between them: `capture.sh prune` removes every image, container and volume in it).
@@ -49,14 +50,19 @@ DEST="$HERE/laptop"; mkdir -p "$DEST"
 
 for SEG in "$@"; do
   case $SEG in
-    setup)
+    setup|setup-classic)
+      # setup-classic (capture-only, see ASSETS.md): the same engine with Docker's classic image store
+      # (overlay2) instead of the containerd image store, which keeps every big layer about twice
+      # during a build; the 2025 API image (TensorFlow + chromadb) did not fit the recording disk
+      DJSON='{}'; [ "$SEG" = setup-classic ] && DJSON='{"features":{"containerd-snapshotter":false}}'
       docker rm -f l18-laptop >/dev/null 2>&1 || true
       docker volume rm l18-laptop-docker >/dev/null 2>&1 || true
       docker run -d --privileged --name l18-laptop --hostname laptop \
         -v l18-laptop-docker:/var/lib/docker -v "$HERE":/capture:ro -v "$DEST":/out -v "$CA":/ca.crt:ro \
         -e HTTPS_PROXY="$RELAY" -e https_proxy="$RELAY" -e NO_PROXY=$NOPX -e no_proxy=$NOPX \
-        --entrypoint sh docker:29.8.2-dind -c '
+        -e DJSON="$DJSON" --entrypoint sh docker:29.8.2-dind -c '
           cp /ca.crt /etc/ssl/certs/ca-certificates.crt
+          mkdir -p /etc/docker && echo "$DJSON" > /etc/docker/daemon.json
           exec dockerd-entrypoint.sh dockerd --host=unix:///var/run/docker.sock' >/dev/null
       docker exec -e PROXY_JSON="$PROXY_JSON" l18-laptop sh -c '
         set -e

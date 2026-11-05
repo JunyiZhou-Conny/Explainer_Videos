@@ -1,0 +1,9 @@
+$ curl -s -i http://localhost:8080/newsletters.html | grep -E 'HTTP/|<title>|script'
+HTTP/1.1 200 OK
+    <title>🧀 Formaggio.me</title>
+        <!-- Subscription Box -->
+        <div class="subscription-box">
+            <form class="subscription-form">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    <script src="newsletters-main.js"></script>
+[exit 0]

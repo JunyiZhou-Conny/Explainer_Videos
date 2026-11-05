@@ -1,0 +1,5 @@
+$ git checkout -- . && git switch main && git log -1 --format='%h %s'
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+447b5c3 Merge pull request #2 from dlops-io/work/shivas
+[exit 0]

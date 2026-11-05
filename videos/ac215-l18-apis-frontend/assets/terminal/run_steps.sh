@@ -18,8 +18,10 @@
 #                447b5c3 removed from the README (the Dockerfile and nginx template are still there)
 #          (f..) "Tutorial: Setup & Run Cheese App" (docker compose up --build in src/), new in 447b5c3
 #          (e..) "Docker Cleanup" + extras
-#   old    (c..) cheese-app-v2 @ branch 2025 = 14f2a14, "Tutorial (24): Simple Frontend App" with
-#                the 2025 vector DB and API it calls (HEAD removed the section, see ASSETS.md)
+#   old    (c01-c04) switch the head clone to branch 2025 = 14f2a14 (+ the second key name, project id)
+#   old-run (c05..) "Tutorial (24): Simple Frontend App" with the 2025 vector DB and API it calls (HEAD
+#                removed the section, see ASSETS.md); reset-old (capture-only) recreates the state
+#                `old` leaves, on a new laptop
 # README.md:N = cheese-app-v1 @ ce03a10 (v1), cheese-app-v2 @ 447b5c3 (head) or @ 14f2a14 (old).
 # Steps whose name contains "-x-" are extras (not README steps): checks the video uses.
 # capture-only work (proxy CA, placeholder key, waiting for a port) is never shown as a README step.
@@ -107,6 +109,26 @@ EOF
   done
   rm -rf "$d"
 }
+make_key() {  # capture-only: see the comment inside
+  # capture-only: there is NO real key here. A throwaway RSA key, generated now for no account and
+  # never written to the repository, makes a well-formed key file, so Google's client libraries load
+  # it and the first real call fails where a student's would succeed (ASSETS.md, "What cannot run here").
+  mkdir -p "$OUT/capture-only"
+  openssl genrsa -out /tmp/throwaway.pem 2048 2>/dev/null
+  python3 - <<'EOF'
+import json
+key = open("/tmp/throwaway.pem").read()
+info = {"type": "service_account", "project_id": "your-gcp-project",
+        "private_key_id": "0000000000000000000000000000000000000000", "private_key": key,
+        "client_email": "placeholder-not-a-real-account@your-gcp-project.iam.gserviceaccount.com",
+        "client_id": "000000000000000000000", "token_uri": "https://oauth2.googleapis.com/token"}
+import os
+json.dump(info, open(os.path.expanduser("~/secrets/ml-workflow.json"), "w"), indent=2)
+info["private_key"] = "<a throwaway RSA key generated at capture time for no account; not committed>"
+json.dump(info, open(os.environ["OUT"] + "/capture-only/placeholder-key.json", "w"), indent=2)
+EOF
+  rm -f /tmp/throwaway.pem
+}
 CTRLC=$'\x03'
 PY_PROMPT='app@[0-9a-f]+:/app\$ $'          # the Python containers' prompt (user app)
 NODE_PROMPT='node@[0-9a-f]+:/app\$ $'       # the React dev container's prompt (user node)
@@ -136,24 +158,7 @@ pre)
   # v1 README.md:20-36 "Create a local secrets folder"; v2 README.md:30-50 "Create the local folders"
   # (the READMEs show the tree, not a command)
   step p05-mkdir "mkdir -p secrets persistent-folder"
-  # capture-only: there is NO real key here. A throwaway RSA key, generated now for no account and
-  # never written to the repository, makes a well-formed key file, so Google's client libraries load
-  # it and the first real call fails where a student's would succeed (ASSETS.md, "What cannot run here").
-  mkdir -p "$OUT/capture-only"
-  openssl genrsa -out /tmp/throwaway.pem 2048 2>/dev/null
-  python3 - <<'EOF'
-import json
-key = open("/tmp/throwaway.pem").read()
-info = {"type": "service_account", "project_id": "your-gcp-project",
-        "private_key_id": "0000000000000000000000000000000000000000", "private_key": key,
-        "client_email": "placeholder-not-a-real-account@your-gcp-project.iam.gserviceaccount.com",
-        "client_id": "000000000000000000000", "token_uri": "https://oauth2.googleapis.com/token"}
-import os
-json.dump(info, open(os.path.expanduser("~/secrets/ml-workflow.json"), "w"), indent=2)
-info["private_key"] = "<a throwaway RSA key generated at capture time for no account; not committed>"
-json.dump(info, open(os.environ["OUT"] + "/capture-only/placeholder-key.json", "w"), indent=2)
-EOF
-  rm -f /tmp/throwaway.pem
+  make_key
   step p06-x-tree "find . -maxdepth 3 -not -path '*/.git*' -not -path './.*' | sort | head -40; ls -la secrets persistent-folder"
   capture_only_bases
   ;;
@@ -386,6 +391,17 @@ git diff src/docker-compose.yml"
   step e04-x-left-over "docker ps -a; docker images; docker volume ls; docker network ls"
   ;;
 # ------------------------------------------------------------------------------------------------
+reset-old)
+  # capture-only: on a new laptop (capture.sh setup-classic), the state the c01-c04 steps left behind:
+  # both clones, the placeholder keys, cheese-app-v2 on branch 2025 with the project id set
+  git clone -q https://github.com/dlops-io/cheese-app-v1.git
+  git clone -q https://github.com/dlops-io/cheese-app-v2.git
+  mkdir -p secrets persistent-folder
+  make_key
+  cp secrets/ml-workflow.json secrets/llm-service-account.json
+  cd cheese-app-v2 && git switch -q 2025 && sed -i 's/"ac215-project"/"your-gcp-project"/' src/api-service/docker-shell.sh src/vector-db/docker-shell.sh
+  capture_only_bases
+  ;;
 old)
   # Tutorial (24) exists only on branch 2025 (= 14f2a14); HEAD removed it (ASSETS.md "Which commit")
   cd ~/cheese-app-v2
@@ -399,7 +415,8 @@ old)
   # 2025 vector-db script reads llm-service-account.json (digest erratum 14): the same placeholder
   step c03-x-second-key-name "cp ../secrets/ml-workflow.json ../secrets/llm-service-account.json; ls ../secrets"
   step c04-x-set-project "sed -i 's/\"ac215-project\"/\"your-gcp-project\"/' src/api-service/docker-shell.sh src/vector-db/docker-shell.sh; git diff --stat"
-  cd ~
+  ;;
+old-run)
   # --- 2025 README "Tutorial (23): Vector DB for RAG Setup" (README.md:40-65)
   step c05-cd-vector-db "cd cheese-app-v2/src/vector-db"
   cd cheese-app-v2/src/vector-db
@@ -431,7 +448,7 @@ old)
     cd cheese-app-v2/src/frontend-simple
     CUE2=/tmp/l18-cue-old-fe; rm -f $CUE2
     ( wait_http http://localhost:8080/ 900; sleep 2
-      step c22-curl-index "curl -s -i http://localhost:8080/index.html | grep -E 'HTTP/|<title>|href=\"(newsletters|chat)'"   # README:170
+      step c22-curl-index "curl -s -i http://localhost:8080/index.html | grep -E 'HTTP/|<title>|href=\"/?(newsletters|chat)'"   # README:170
       step c23-curl-newsletters-page "curl -s -i http://localhost:8080/newsletters.html | grep -E 'HTTP/|<title>|script'"   # README:174
       step c24-x-newsletters-js "grep -n 'localhost:9000\|axios' newsletters-main.js chat-main.js | head"
       # what the newsletters page's JavaScript requests, from the page's origin (the browser adds Origin)

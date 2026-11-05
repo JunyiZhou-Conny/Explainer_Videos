@@ -1,0 +1,9 @@
+$ git switch 2025
+error: Your local changes to the following files would be overwritten by checkout:
+	src/api-service/api/service.py
+	src/api-service/docker-shell.sh
+	src/docker-compose.yml
+	src/vector-db/docker-shell.sh
+Please commit your changes or stash them before you switch branches.
+Aborting
+[exit 1]
