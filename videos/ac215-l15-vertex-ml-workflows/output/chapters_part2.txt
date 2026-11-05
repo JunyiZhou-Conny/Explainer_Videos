@@ -1,0 +1,7 @@
+00:00 From four terminals to one workflow
+02:00 Collector and processor, by hand
+04:06 Train locally, sign the model
+06:02 Build and push: your own registry
+07:30 The workflow container and one processing job
+09:13 A pipeline drawn by references
+11:57 Tear down, recap, test yourself
