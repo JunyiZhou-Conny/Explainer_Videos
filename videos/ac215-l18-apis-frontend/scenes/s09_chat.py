@@ -99,7 +99,8 @@ R134 = readme_lines(134, 138)
 assert R134.split("\n")[0] == "Two things to notice in routers/chat.py:", R134
 assert len(R134.split("\n")) == 5
 
-CF_UP = UP * 0.55              # V7 sits higher, so a 4-row 20 pt strip fits under it
+CF_DOWN = DOWN * 0.3           # V7 alone (beat 1): a little under the middle
+CF_UP = UP * 0.85              # from beat 2 on V7 sits higher (net +0.55), so a 4-row 20 pt strip fits under it
 STRIP_ROWS, STRIP_PT = 4, 20
 
 
@@ -174,6 +175,11 @@ def across(rows, sub: str, occurrence: int = 0) -> VGroup:
     return out_
 
 
+def file_flash(cf):
+    """ANIM: the chat file's outline thickens and flashes YELLOW and back (the fill keeps its tint)."""
+    return cf.file.frame.animate(rate_func=there_and_back).set_stroke(TURN, 7)
+
+
 def paint(scene, t, glyphs, color, run_time: float = 0.4):
     """PLAYS: recolour glyphs of terminal t's rows, then re-seat t (split trap)."""
     scene.play(glyphs.animate.set_color(color), run_time=run_time)
@@ -223,8 +229,8 @@ class ChatIsAFile(VoiceScene):
 
         # ========================================================== 1. V7: the browser keeps the key
         cf = ChatFile()
-        cf.shift(CF_UP)
-        cf.file.shift(CF_UP)                        # the file is built but not yet a part: move it too
+        cf.shift(CF_DOWN)
+        cf.file.shift(CF_DOWN)                      # the file is built but not yet a part: move it too
         ill = illustration_tag().next_to(cf.browser.frame, UP, buff=0.12).align_to(cf.browser.frame, LEFT)
         assert ill.get_top()[1] < trk.get_bottom()[1] - 0.02, ill.get_top()
         uuid = grey_chip("a random UUID · one per browser").next_to(cf.browser.frame, DOWN, buff=0.15)
@@ -242,11 +248,14 @@ class ChatIsAFile(VoiceScene):
             vo.wait_until("The API opens that session's chat file")
             cf.post(self, "your message", run_time=1.0)
             cf.open_file(self, run_time=0.7)
+            cf.remove(cf.rows)                      # the rows draw over the file's opaque fill
+            cf.add(cf.rows)
+            cf.heal(self)
             vo.wait_until("adds your message")
             cf.remember(self, run_time=0.4)
             cf.append(self, ("user", "your message"), ("assistant", "the reply"), run_time=0.9)
             vo.wait_until("saves, and forgets")
-            self.play(Indicate(cf.file.frame, color=OWN, scale_factor=1.03), run_time=0.6)
+            self.play(file_flash(cf), run_time=0.7)
             cf.heal(self)
             vo.wait_until("and forgets")
             cf.forget(self, run_time=0.6)
@@ -254,11 +263,13 @@ class ChatIsAFile(VoiceScene):
         # ========================================================== 2. extras: no key, no message -> 422
         p19 = code(CHAT, 19, 23, font_size=20, cuts=CUT20, elide=ELIDE21)
         p19.move_to([0, 0, 0]).align_to([0, BOTTOM + 0.05, 0], DOWN)
-        assert p19.get_top()[1] < cf.get_bottom()[1] - 0.1, (p19.get_top(), cf.get_bottom())
         t = strip()
-        assert t.box.get_top()[1] < cf.get_bottom()[1] - 0.2, (t.box.get_top(), cf.get_bottom())
         with self.voiceover(SAY[2]) as vo:
-            self.play(track(trk, 9, True), FadeOut(uuid), run_time=0.5)
+            self.play(track(trk, 9, True), FadeOut(uuid), cf.animate.shift(CF_UP), ill.animate.shift(CF_UP),
+                      run_time=0.6)
+            assert p19.get_top()[1] < cf.get_bottom()[1] - 0.1, (p19.get_top(), cf.get_bottom())
+            assert t.box.get_top()[1] < cf.get_bottom()[1] - 0.05, (t.box.get_top(), cf.get_bottom())
+            assert ill.get_top()[1] < trk.get_bottom()[1] - 0.02, ill.get_top()
             bar21 = line_bar(p19.code, 2, TURN)
             self.play(FadeIn(p19, shift=UP * 0.15), run_time=0.5)
             self.play(FadeIn(bar21), code_span(p19.code, 2, '"X-Session-ID"').animate.set_color(ROUTE), run_time=0.5)
@@ -283,7 +294,7 @@ class ChatIsAFile(VoiceScene):
         payload.arrange(RIGHT, buff=0.15)
         pbox = outline_box(payload.width + 0.4, payload.height + 0.3, S.GREY, solid=True)
         payload = VGroup(pbox, payload.move_to(pbox))
-        payload.move_to([SAFE_X - 0.1 - payload.width / 2, -0.55, 0])
+        payload.move_to([SAFE_X - 0.1 - payload.width / 2, -0.6, 0])
         with self.voiceover(SAY[3]) as vo:
             clear_lines(self, t)
             cf.drop(self, *list(cf.marks), run_time=0.3)
@@ -293,16 +304,18 @@ class ChatIsAFile(VoiceScene):
             self.play(FadeIn(payload, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("and the CNN guesses parmigiano")
             rows = out(self, t, [B39_2], wrap=True)
-            cnn = cf.cnn(self, "a guess", run_time=0.6)
+            self.play(FadeOut(payload), run_time=0.3)
+            cf.cnn(self, "a guess", run_time=0.6)
             paint(self, t, across(rows, '"prediction_label":"parmigiano"'), TURN)
             vo.wait_until("at 58 percent")
             paint(self, t, across(rows, '"accuracy":58.22'), TURN)
             out(self, t, [(B39.line(3), OWN)])
             vo.wait_until("A follow-up question")
-            fu = dashed_chip("follow-up question → Gemini").move_to(payload)
+            fu = dashed_chip("follow-up question → Gemini")
+            fu.move_to([SAFE_X - 0.15 - fu.width / 2, -0.6, 0])
             fu_arrow = DashedLine(cf.api.frame.get_corner(DR) + UP * 0.15, fu.get_left() + LEFT * 0.05,
                                   color=S.GREY, stroke_width=3, dash_length=0.1)
-            self.play(FadeOut(payload), run_time=0.3)
+            assert fu.get_left()[0] > cf.marks.get_right()[0] + 0.2, (fu.get_left(), cf.marks.get_right())
             self.play(Create(fu_arrow), FadeIn(fu), run_time=0.7)
 
         # ========================================================== 4. extra: the files on disk
@@ -330,23 +343,24 @@ class ChatIsAFile(VoiceScene):
 
         # ========================================================== 5. extra: Ask -> Gemini -> 500
         cl = cloud_shape("Vertex AI\nGemini", CLOUD, cloud_w=1.8, dashed=True).move_to([4.6, -0.5, 0])
-        g_arrow = Arrow(cf.api.frame.get_bottom() + RIGHT * 0.9, cl.get_left() + RIGHT * 0.12, buff=0.05,
+        g_arrow = Arrow(cf.api.frame.get_bottom() + RIGHT * 1.2, cl.get_left() + RIGHT * 0.12, buff=0.05,
                         color=ROUTE, stroke_width=4, tip_length=0.18)
         cross = cross_glyph(0.3, ERR).move_to(g_arrow.get_end() + LEFT * 0.3 + UP * 0.28)
         cost = cost_tag("with your key: billed").next_to(cf.api.frame, DOWN, buff=0.18)
-        cost.align_to(cf.api.frame, LEFT).shift(LEFT * 0.4)
+        cost.align_to(cf.api.frame, LEFT).shift(LEFT * 0.3)
         cost_low = cost.copy().next_to(cl, DOWN, buff=0.15)
         exp = quote_card("02", (11, 15), "expected", "docs/contract.md:38–42", size=20, width_chars=80)
         exp.move_to([0, 0, 0]).align_to([-6.45, 0, 0], LEFT).align_to([0, BOTTOM, 0], DOWN)
         assert cost_low.get_left()[0] > exp.get_right()[0] + 0.1, (cost_low.get_left(), exp.get_right())
         assert cost_low.get_right()[0] < SAFE_X, cost_low.get_right()
+        assert cost.get_left()[0] > cf.browser.frame.get_right()[0] + 0.1, cost.get_left()
         assert exp.get_top()[1] < cost.get_bottom()[1] - 0.05, (exp.get_top(), cost.get_bottom())
         log = B21.at(92, 93, "…", (174, 179), "…")
         with self.voiceover(SAY[5]) as vo:
-            cf.drop(self, *list(cf.marks), run_time=0.3)
             clear_lines(self, t)
             type_cmd(self, t, B38.cmd, soft=True)
             vo.wait_until("and here it stops")
+            cf.drop(self, *list(cf.marks), run_time=0.3)
             self.play(FadeIn(cl), GrowArrow(g_arrow), FadeIn(cost), run_time=0.8)
             self.play(FadeIn(cross, scale=1.3), g_arrow.animate.set_color(ERR), run_time=0.5)
             vo.wait_until("Internal Server Error")
@@ -364,7 +378,8 @@ class ChatIsAFile(VoiceScene):
             self.add(t)
             vo.wait_until("With your key")
             self.play(FadeOut(t), Transform(cost, cost_low), run_time=0.6)
-            self.play(FadeIn(exp, shift=UP * 0.15), Indicate(cost, color=COST, scale_factor=1.1), run_time=0.7)
+            self.play(FadeIn(exp, shift=UP * 0.15), run_time=0.6)
+            flash_tag(self, cost)
             self.play(Indicate(exp.body[3], color=OWN, scale_factor=1.06), run_time=0.8)
 
         # ========================================================== 6. a small note: 403/404 -> 502, ours -> 500
@@ -374,8 +389,8 @@ class ChatIsAFile(VoiceScene):
         ok502 = VGroup(ok_chip("API answers 502"), mono("llm_utils.py:85–86", 20, S.GREY)).arrange(DOWN, buff=0.12)
         ok502.next_to(tab, RIGHT, buff=0.9)
         br = arrow(tab.get_right() + RIGHT * 0.05, ok502[0].get_left(), OWN, stroke=3, buff=0.08)
-        notin = tag("not in the table", S.GREY).move_to([-4.4, -1.75, 0])
-        e500 = err_chip("500 + RefreshError in the API terminal", mono_font=False).move_to([1.7, -1.75, 0])
+        notin = tag("not in the table", S.GREY).move_to([-4.4, -1.45, 0])
+        e500 = err_chip("500 + RefreshError in the API terminal", mono_font=False).move_to([1.7, -1.45, 0])
         to500 = arrow(notin.get_right(), e500.get_left(), S.GREY, stroke=3)
         assert ok502.get_right()[0] < SAFE_X and e500.get_right()[0] < SAFE_X, (ok502.get_right(), e500.get_right())
         assert notin.get_top()[1] < tab.get_bottom()[1] - 0.2
@@ -402,11 +417,11 @@ class ChatIsAFile(VoiceScene):
         assert notes.width < 2 * SAFE_X - 0.1 and notes.get_top()[1] < cf.get_bottom()[1] - 0.1
         hl1 = hl_bar(VGroup(notes.body[1], notes.body[2]), TURN, opacity=0.18)
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(tab, ok502, br, notin, e500, to500)), run_time=0.5)
-            self.play(FadeIn(cf), FadeIn(ill), FadeIn(notes, shift=UP * 0.15), run_time=0.7)
+            self.play(FadeOut(VGroup(tab, ok502, br, notin, e500, to500)), FadeIn(cf), FadeIn(ill),
+                      FadeIn(notes, shift=UP * 0.15), run_time=0.8)
             vo.wait_until("Each message rebuilds")
             self.play(FadeIn(hl1), run_time=0.4)
-            self.play(Indicate(cf.file.frame, color=OWN, scale_factor=1.03), run_time=0.6)
+            self.play(file_flash(cf), run_time=0.7)
             cf.heal(self)
             vo.wait_until("so any copy of the API")
             self.play(FadeOut(VGroup(notes, hl1), shift=DOWN * 0.2), run_time=0.4)
@@ -431,7 +446,7 @@ class ChatIsAFile(VoiceScene):
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(cf), FadeOut(ill), track(trk, 10), run_time=0.6)
             self.play(FadeIn(nt, shift=UP * 0.15), run_time=0.5)
-            vo.wait_until("docker-shell.sh again")
+            vo.wait_until("in the same folder")
             type_capture(self, nt, B44)
             out(self, nt, [(B44.line(2), TURN)], wrap=True)
             self.play(FadeIn(already, shift=DOWN * 0.1), run_time=0.4)
@@ -441,7 +456,7 @@ class ChatIsAFile(VoiceScene):
             rows = out(self, nt, B44.at(5, 11, (13, 14)), wrap=True, run_time=0.8)
             last = out(self, nt, [(B44.line(16), OWN)], wrap=True, run_time=0.4)
             vo.wait_until("26 passed")
-            badge = ok_chip("26 passed", size=22).move_to(already)
+            badge = ok_chip("26 passed").next_to(nt.box, UP, buff=0.18).align_to(nt.box, RIGHT)
             src = across([r for r in last if "26 passed" in r.text], "26 passed")
             self.play(FadeOut(already), TransformFromCopy(src, badge), run_time=0.8)
             self.add(nt)
@@ -458,15 +473,17 @@ class ChatIsAFile(VoiceScene):
         assert keep.get_top()[1] < tr.get_bottom()[1] - 0.1, (keep.get_top(), tr.get_bottom())
         api_box = tr.net.boxes["api"].frame
         b_target = api_box.get_top() + RIGHT * 0.45
-        start = tr.browser.at(0.55, 0.0)
+        start = tr.browser.at(-0.35, 0.0)
         start[1] = tr.net.row_y("api")
-        stop = tr.net.door_point("api") + LEFT * 0.55
+        stop = np.array([tr.divider.get_x() - 0.22, start[1], 0])
         call = DashedVMobject(Arrow(start, stop, buff=0.02, color=ROUTE, stroke_width=4, tip_length=0.18,
                                     max_tip_length_to_length_ratio=0.35), num_dashes=7).set_stroke(ROUTE, 4)
-        q = label("?", 30, TURN).move_to((stop + tr.net.door_point("api")) / 2 + UP * 0.02)
+        q = label("?", 36, TURN).move_to([tr.divider.get_x() + 0.12, start[1], 0])
+        assert q.get_right()[0] < tr.net.door_point("api")[0] - 0.05, (q.get_right(), tr.net.door_point("api"))
         btag = illustration_tag().next_to(tr.browser.frame, UP, buff=0.12).align_to(tr.browser.frame, LEFT)
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(nt), FadeIn(tr.net), run_time=0.7)
+            self.add(badge)                          # in front of the laptop's opaque frame
             self.play(badge.animate.move_to(b_target), run_time=0.7)
             self.play(FadeIn(keep, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("The API is ready")
@@ -479,10 +496,10 @@ class ChatIsAFile(VoiceScene):
             vo.wait_until("In part 2 the browser talks to port 3000")
             self.play(Indicate(tr.browser.address, color=ROUTE, scale_factor=1.15), run_time=0.6)
             tr.heal(self)
-            self.play(Create(call), run_time=0.8)
+            tr.show(self, call, anims=[Create(call)], run_time=0.8, into=tr.marks)
             vo.wait_until("so how does that reach 9000")
-            self.play(FadeIn(q, scale=1.4), tr.net.door_pulse("api"), run_time=0.7)
-            tr.heal(self)
+            tr.show(self, q, anims=[FadeIn(q, scale=1.4)], extra=[tr.net.door_pulse("api")], run_time=0.7,
+                    into=tr.marks)
             self.wait(0.8)
-            self.play(FadeOut(VGroup(tr, call, q, btag, keep)), FadeOut(trk), run_time=0.8)
+            self.play(FadeOut(VGroup(tr, btag, keep)), FadeOut(trk), run_time=0.8)
         self.wait(0.3)
