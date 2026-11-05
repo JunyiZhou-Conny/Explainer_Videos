@@ -556,6 +556,7 @@ class AliveAndReady(VoiceScene):
             self.play(FadeOut(VGroup(lap, lap_t, fold, model, once, rst)), run_time=0.4)
             clear_bar(self, tab)
             clear_lines(self, tab, run_time=0.3)
+            resize(self, tab, 7, run_time=0.4)
             assert rmap.get_bottom()[1] > tab.box.get_top()[1] + 0.1, (rmap.get_bottom(), tab.box.get_top())
             vo.wait_until("the version 1 habits fail")
             l25 = type_capture(self, tab, B25, type_time=0.8)[0]

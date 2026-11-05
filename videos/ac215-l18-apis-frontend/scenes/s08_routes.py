@@ -325,6 +325,8 @@ class ScreensToRoutes(VoiceScene):
             crs = [code_span(pc, k, "create_router") for k in (7, 8, 9)]
             self.play(FadeOut(bars), *[c.animate.set_color(TOOL) for c in crs], run_time=0.5)
             self.add(panel)
+            self.play(*[Indicate(c, color=TOOL, scale_factor=1.1) for c in crs], run_time=0.6)
+            self.add(panel)
             self.play(FadeOut(panel, shift=DOWN * 0.2), run_time=0.4)
             rt.roots(self, run_time=0.3)
             rt.branch(self, "newsletters", run_time=0.35)
@@ -454,7 +456,7 @@ class ScreensToRoutes(VoiceScene):
         with self.voiceover(SAY[5]) as vo:
             rt.probes(self, run_time=0.5)
             ry = rt.nodes["readyz"]
-            lp = lamp("amber", 0.17).move_to([ry.get_x(), ry.get_bottom()[1] - 0.3, 0])
+            lp = lamp("amber", 0.17).move_to([ry.get_left()[0] + 0.25, ry.get_bottom()[1] - 0.3, 0])
             assert lp.get_top()[1] < ry.get_bottom()[1] + 0.02, (lp.get_top(), ry.get_bottom())
             assert lp.get_bottom()[1] > rt.nodes["api"].get_top()[1] + 0.02
             rt.show(self, lp, anims=[FadeIn(lp, scale=1.3)], run_time=0.5)
