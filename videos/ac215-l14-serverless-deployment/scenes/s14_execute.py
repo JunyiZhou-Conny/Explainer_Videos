@@ -1,8 +1,8 @@
 """S14 · Execute it and collect the files — tracker [4.4] 1 → 5 (+ extra at step 1, gcloud alternative
-at step 1); lecture_ref 14 · slide 16 in blocks 0-5.
+at step 1); lecture_ref 14 · slide 16 in block 5, with the where-to-look card.
 
 Beats (script.md "## S14"; one voiceover block each):
-0. TRACKER [4.4] 1 appears; LECTURE 14 · 16. CONSOLE (README:828-830, illustration) "Cloud Run →
+0. TRACKER [4.4] 1 appears. CONSOLE (README:828-830, illustration) "Cloud Run →
    Jobs · translation-audio": Execute pulses (GREY chip "narrow toolbar: More actions ⋮"). The
    History row: RECORDED(expected/part4-job-recorded.txt: 3) with a GREEN check, tag `recorded ·
    README:859`. V7's job strip (LifecycleStrips, job only) runs its four segments to "exit 0".
@@ -159,7 +159,7 @@ class ExecuteAndCollect(VoiceScene):
         assert js.get_right()[0] < 6.55 and js.get_bottom()[1] > -3.55, js.get_corner(DR)
         assert hrow.get_bottom()[1] > js.get_top()[1] + 0.3 and hrow.get_top()[1] < f0.frame.get_bottom()[1] - 0.2
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref, shift=LEFT * 0.1), run_time=0.6)
+            self.play(FadeIn(tr, shift=DOWN * 0.15), run_time=0.6)
             vo.wait_until("open the job")
             self.play(FadeIn(f0, shift=UP * 0.1), FadeIn(ill0), run_time=0.5)
             vo.wait_until("and select Execute")
@@ -343,17 +343,17 @@ class ExecuteAndCollect(VoiceScene):
                 af._detach(m)
             self.play(FadeOut(VGroup(sp, b48, f_txt, f_wav, stamp, f_man, rcpt)), FadeIn(af), run_time=0.6)
             vo.wait_until("the third place to look")
-            self.play(FadeIn(wl, shift=LEFT * 0.15), run_time=0.5)
+            self.play(FadeIn(wl, shift=LEFT * 0.15), FadeIn(ref, shift=LEFT * 0.1), run_time=0.5)
             wl.fill(self, 2, "the job's logs and manifest", run_time=0.6)
             self.play(wl.glow(2), run_time=0.6)
             vo.wait_until("A green check says")
-            self.play(FadeOut(wl), run_time=0.4)
+            self.play(FadeOut(wl), FadeOut(ref), run_time=0.4)
             self.play(FadeIn(ex0, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("the manifest says the work is complete")
             af.flash_receipt(self, 0, run_time=0.8)
             self.play(FadeIn(neq, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Files without a manifest")
-            self.play(FadeOut(VGroup(ex0, neq)), FadeOut(ref), run_time=0.3)
+            self.play(FadeOut(VGroup(ex0, neq)), run_time=0.3)
             af.clear(self, 0, run_time=0.3)
             af.files(self, 0, fail_after=2, run_time=1.2)
             self.play(FadeIn(rc5, shift=UP * 0.1), run_time=0.4)

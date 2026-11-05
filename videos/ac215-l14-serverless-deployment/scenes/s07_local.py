@@ -237,7 +237,7 @@ class RunTheImage(VoiceScene):
         t = term(P_REPO, 4, T_LAPTOP, size=20)
         pe1 = seat(PortEnvelope().shift(UP * 1.0 + RIGHT * 0.8))
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(rc), FadeOut(icon), run_time=0.5)
+            self.play(FadeOut(rc), FadeOut(icon), FadeOut(ref), run_time=0.5)
             self.play(FadeIn(t, shift=UP * 0.2), run_time=0.5)
             typed = type_capture(self, t, c10, type_time=1.3)
             row1, row2 = rows_of(typed[0])[0], rows_of(typed[1])[0]

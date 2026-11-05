@@ -1,9 +1,9 @@
 """S13 · Command, arguments and the job's badge — tracker [4.2] 1 → 5 (+ gcloud alternative at
 step 2), then tracker [4.3] 1 → 9 (+ extra at step 5, extra · Docker's analogue at step 4, gcloud
-alternative at step 9); lecture_ref 14 in blocks 0-2.
+alternative at step 9); lecture_ref 14 in block 11, with the V7 job strip (slide 14's service | job).
 
 Beats (script.md "## S13"; one voiceover block each):
-0. TRACKER [4.2] 1 appears; LECTURE 14 · 14. CONSOLE (README:679-682, illustration) "IAM & Admin →
+0. TRACKER [4.2] 1 appears. CONSOLE (README:679-682, illustration) "IAM & Admin →
    Service Accounts · Create service account": the worksheet card `translation-audio-job` flies into
    the ID field. [4.2] 2: the form gives way to V6 BadgeBoard (the web badge with its two ORANGE
    project roles, the two BLUE buckets); the job badge forms with the same two roles; its email
@@ -45,7 +45,7 @@ Beats (script.md "## S13"; one voiceover block each):
 10. [4.3] 4 · extra · Docker's analogue: `-m` slides into the program slot and turns RED. 5-row
     terminal: laptop/45 line 1 (extra, folds) → TERM(laptop/45: 2 from "exec:", wrap) RED, row tag
     "exit 127", title-bar tag "extra · Docker's analogue".
-11. The third case: V7 LifecycleStrips (job strip); the image's own `serve` lights, `batch` dims;
+11. The third case: V7 LifecycleStrips (job strip), with LECTURE 14 · 14 until block 12; the image's own `serve` lights, `batch` dims;
     the job strip grows an ear, never reaches its edge and hits the RED wall "task timeout 5 min";
     README card (README.md · line 1044).
 12. [4.3] 9 · gcloud alternative: terminal `laptop · gcloud` (20 pt) types README:816-821 verbatim,
@@ -155,7 +155,7 @@ class CommandAndArgs(VoiceScene):
         em.move_to([-6.3, -2.35, 0], aligned_edge=UL)
         assert em.get_bottom()[1] > -3.55 and em.get_right()[0] < 1.0, em.get_corner(DR)
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(ref, shift=LEFT * 0.1), run_time=0.6)
+            self.play(FadeIn(tr, shift=DOWN * 0.15), run_time=0.6)
             self.play(FadeIn(f0, shift=UP * 0.1), FadeIn(ill0), run_time=0.5)
             vo.wait_until("Create translation-audio-job")
             self.play(FadeIn(ws, shift=UP * 0.2), run_time=0.4)
@@ -249,7 +249,7 @@ class CommandAndArgs(VoiceScene):
         assert gt.box.get_top()[1] < TRACK_BOTTOM - 0.05, gt.box.get_top()
         npc = no_panel_chip()
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(board, rc, me, arrows, words, yt, ref)), track(tr, 2, "gcloud"), run_time=0.6)
+            self.play(FadeOut(VGroup(board, rc, me, arrows, words, yt)), track(tr, 2, "gcloud"), run_time=0.6)
             self.play(FadeIn(gt, shift=UP * 0.15), run_time=0.4)
             typed = []
             for g in groups_of(rows_42):
@@ -522,7 +522,7 @@ class CommandAndArgs(VoiceScene):
         with self.voiceover(SAY[11]) as vo:
             self.play(track(tr43, 4), FadeOut(VGroup(cs2, t10, an)), run_time=0.6)
             self.remove(cs2, t10)
-            self.play(FadeIn(ls), FadeIn(both, shift=LEFT * 0.1), run_time=0.6)
+            self.play(FadeIn(ls), FadeIn(both, shift=LEFT * 0.1), FadeIn(ref, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("the job starts the web server")
             self.play(Indicate(ls.cmds[0], color=TURN, scale_factor=1.3), run_time=0.6)
             self.add(srv)
@@ -539,7 +539,7 @@ class CommandAndArgs(VoiceScene):
         gt12 = term(P_REPO, 10, T_GCLOUD, size=20)
         hc12 = grey_chip(HELP_CHIP)
         with self.voiceover(SAY[12]) as vo:
-            self.play(FadeOut(VGroup(ls, both, rc11)), track(tr43, 9, "gcloud"), run_time=0.5)
+            self.play(FadeOut(VGroup(ls, both, rc11, ref)), track(tr43, 9, "gcloud"), run_time=0.5)
             self.remove(ls)
             self.play(FadeIn(gt12, shift=UP * 0.15), run_time=0.4)
             typed12 = type_lines(self, gt12, rows_43, type_time=0.45)

@@ -254,7 +254,8 @@ class InsideTheFunction(VoiceScene):
         under_term(t, ch2)
         xb = on_bar(t, extra_row("local stand-in"))
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(g, ar, shelf, ct)), track(tr, None, "local stand-in"), run_time=0.6)
+            self.play(FadeOut(VGroup(g, ar, shelf, ct)), FadeOut(ref), track(tr, None, "local stand-in"),
+                      run_time=0.6)
             self.play(FadeIn(t), run_time=0.5)
             self.play(FadeIn(ch2, shift=DOWN * 0.1), FadeIn(xb), run_time=0.4)
             type_capture(self, t, c20, type_time=1.4)
@@ -361,7 +362,7 @@ class InsideTheFunction(VoiceScene):
             self.play(FadeIn(wl, shift=RIGHT * 0.2), run_time=0.5)
             wl.fill(self, 0, "the build and start-up logs", run_time=0.6)
             vo.wait_until("That is the first")
-            self.play(wl.glow(0), ReplacementTransform(ref, ref16), run_time=0.8)
+            self.play(wl.glow(0), FadeIn(ref16), run_time=0.8)
             self.add(wl)
             self.wait(0.6)
 

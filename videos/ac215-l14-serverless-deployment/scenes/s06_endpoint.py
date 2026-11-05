@@ -231,7 +231,7 @@ class CallTheEndpoint(VoiceScene):
         tab = tab_term(TAB_ROWS, P_FUNC)
         xtab = bar_tag(tab)
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(q), ReplacementTransform(panel, hp), FadeIn(rec5, shift=DOWN * 0.15),
+            self.play(FadeOut(q), FadeOut(ref11), ReplacementTransform(panel, hp), FadeIn(rec5, shift=DOWN * 0.15),
                       FadeIn(tab, shift=UP * 0.2), FadeIn(xtab), track(tr, 3, "local stand-in"), run_time=0.8)
             type_cmd(self, tab, c25.cmd, type_time=1.0)
             prov = QueryToArgs(show_query=False)
@@ -275,7 +275,7 @@ class CallTheEndpoint(VoiceScene):
         pn = region_pin(REGION, CLOUD)
         VGroup(sc, pn).arrange(RIGHT, buff=1.4).move_to([0, -1.1, 0])
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(rec5, prov, hp, xtab, ref11)), FadeOut(tab, shift=DOWN * 0.3), run_time=0.5)
+            self.play(FadeOut(VGroup(rec5, prov, hp, xtab)), FadeOut(tab, shift=DOWN * 0.3), run_time=0.5)
             self.remove(*tab.lines)
             self.play(FadeIn(ck, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("one endpoint")
