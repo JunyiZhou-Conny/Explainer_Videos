@@ -9,12 +9,13 @@
 # ENABLE_SPEECH / GOOGLE_CLOUD_PROJECT / GOOGLE_CLOUD_LOCATION -> ENABLE SPEECH / GOOGLE CLOUD PROJECT /
 # GOOGLE CLOUD LOCATION; translation_demo -> translation demo; run_job.py is never named (the helper -> helper 脚本).
 # Error messages the SAY paraphrases are translated (A13): 语音已关闭 (503); Google 凭据不可用 (503);
-# 找不到可执行文件. Status codes, the printed status word complete and downloaded results stay.
+# 找不到可执行文件. Status codes, the printed status word complete and Downloaded results stay.
 # The instructor rule (A16): the narration of S09-S16 names no instructor (the lecture -> 课上).
 # en_display: the English subtitle line where the SAY spells an artifact as words (rule D4:
 # --no-invoker-iam-check in S09[1]; ENABLE_SPEECH etc. in S10[3]; uv sync --frozen in S11[5]; run-001 in S12[6],
 # S12[7], S14[3]; -m, translation_demo, batch in S13[6]; -m in S13[10]; translated.txt, speech.wav, manifest.json
-# in S14[3]; passage.txt and run-002 in S15[1]; run-002 in S15[3]; speech.wav in S15[6]); null = the SAY text.
+# in S14[3]; passage.txt and run-002 in S15[1]; run-002 in S15[3]; speech.wav and Downloaded results in S15[6];
+# View diff & redeploy in S10[4]; application-default in S11[4]; --wait in S14[9]); null = the SAY text.
 S09:
 - en: "Part 3. The README separates two questions: who may call our public app, and what the running app may access."
   zh:
@@ -82,13 +83,17 @@ S10:
   - null
 - en: "Step 4: View diff and redeploy, keep Serve this revision immediately on, then Deploy changes. That makes a new revision; the old instance is replaced, not edited. Step 5: wait for the rollout."
   zh:
-  - "第 4 步：点 View diff & redeploy，保持 Serve this revision immediately 打开，再点 Deploy changes。"
+  - "第 4 步：点 View diff & redeploy，Serve this revision immediately 保持打开，再点 Deploy changes。"
   - "这会产生一个新的 revision；旧的实例是换掉，不是改掉。"
   - "第 5 步：等它上线。"
+  en_display:
+  - "Step 4: View diff & redeploy, keep Serve this revision immediately on, then Deploy changes."
+  - null
+  - null
 - en: "Here is the speech path. The app checks the flag, the size and the language, then asks Google's auth library for a token; on Cloud Run, the badge supplies it. That lookup is Application Default Credentials. Gemini speech in us-central1 sends audio straight back; no bucket."
   zh:
   - "来看语音这条链路。"
-  - "应用会检查开关、长度和语言，然后向 Google 的身份验证库要一个令牌；在 Cloud Run 上，由工牌提供。"
+  - "应用会检查开关，再查长度和语言，然后向 Google 的身份验证库要一个令牌；在 Cloud Run 上，由工牌提供。"
   - "这个查找过程就是应用默认凭据。"
   - "在 us-central1 里，Gemini 语音直接把音频发回来；不经过 bucket。"
 - en: "Step 6: reload the page, because it checks the flag when it loads. Then Translate and Play audio; the recording shows French audio playing. A gold tag: each Play audio is a paid model call."
@@ -127,6 +132,10 @@ S11:
   - "然后是两条新命令：一次 application-default login，impersonate 运行时账号，再设它的配额项目。"
   - "它和 gcloud auth login 是两回事，它的文件留在你的机器上，永远不进 Git，也不进 image。"
   - "暂停一下，登录；受限的项目可能还要给你 Service Usage Consumer。"
+  en_display:
+  - "Then two new ones: an application-default login, impersonating the runtime account, and its quota project."
+  - null
+  - null
 - en: "Step 3: change into the tutorial app folder, and run uv sync with frozen. It installs 41 packages exactly as the lock file says. An extra uv tree shows the six direct dependencies."
   zh:
   - "第 3 步：进入 tutorial 下的 app 目录，运行 uv sync --frozen。"
@@ -152,7 +161,7 @@ S12:
 - en: "Part 4. A web request has a person waiting, but a translated audio edition should take its input, translate it, speak it, save the files and exit. That is a job."
   zh:
   - "第 4 部分。"
-  - "一个 web 请求背后有人在等，但一份翻译后的有声版本应该拿到输入、翻译、朗读、保存文件，然后退出。"
+  - "一个 web 请求背后有人在等，但一份翻译后的有声版本应该拿到输入，再翻译、朗读、保存文件，然后退出。"
   - "这就是 job。"
 - en: "The lecture says a container runs as a service or as a job. Same image, two programs: serve keeps listening, with no end; batch walks four steps and exits."
   zh:
@@ -169,7 +178,7 @@ S12:
   zh:
   - "第 1 步：Cloud Storage、Buckets、Create。"
   - "第 2 步：起一个全局唯一的名字，比如你的项目 ID 加上 translation input。"
-  - "第 3 步：区域选多伦多，存储类别选 Standard，开启禁止公开访问和统一访问，软删除保持默认，然后点 Create 和 Confirm。"
+  - "第 3 步：区域选多伦多，存储类别选 Standard，开启禁止公开访问；统一访问也开启，软删除保持默认，然后点 Create 和 Confirm。"
   - "暂停一下，建好它。"
 - en: "Step 4: repeat for a separate output bucket. A gold tag: storage bills while files exist, and soft delete keeps deleted ones for a while."
   zh:
@@ -177,7 +186,7 @@ S12:
   - "金色标签：文件存在期间存储就计费，软删除还会把删掉的文件保留一段时间。"
 - en: "Step 5: create a folder named run zero zero one in the input bucket and upload the sample passage, four short lines. Step 6: copy its Storage URI. Pause, upload and copy the URI."
   zh:
-  - "第 5 步：在输入 bucket 里建一个叫 run-001 的目录，上传示例段落，四行短句。"
+  - "第 5 步：在输入 bucket 里建一个叫 run-001 的目录，把示例段落传进去，就是四行短句。"
   - "第 6 步：复制它的 Storage URI。"
   - "暂停一下，上传，再复制 URI。"
   en_display:
@@ -219,7 +228,7 @@ S13:
 - en: "Container arguments: eleven values, each its own chip, and together they take the command slot's place. Dash m, translation demo, batch, input URI and your passage, source en, destination fr, output URI and your prefix. Each chip is one item of the argument list."
   zh:
   - "Container arguments：11 个值，每个值一个 chip，合在一起占掉命令那个位置。"
-  - "-m、translation demo、batch，input URI 和你的段落，source en，destination fr，output URI 和你的前缀。"
+  - "-m、translation demo、batch、input URI 和你的段落，source en、destination fr，output URI 和你的前缀。"
   - "每个 chip 就是参数列表里的一项。"
   en_display:
   - null
@@ -303,6 +312,9 @@ S14:
   zh:
   - "用 gcloud 的替代做法，会带 --wait 执行，建一个 results 目录，再把输出拷下来。"
   - "这个 --wait 参数不会实时显示你应用的日志。"
+  en_display:
+  - "The gcloud alternative executes with --wait, makes a results folder, and copies the output down."
+  - "The --wait flag does not stream your app's logs."
 - en: "The README's checkpoint: the task finished, the process stopped, and its files remain in Storage."
   zh:
   - "README 的检查点：task 完成了，进程停了，它的文件留在 Storage 里。"
@@ -346,10 +358,10 @@ S15:
 - en: "Step 2: open the result folder and play speech dot wav. The helper prints downloaded results only after it finds a complete manifest: the receipt again."
   zh:
   - "第 2 步：打开结果目录，播放 speech.wav。"
-  - "这个 helper 脚本只有在找到完整的 manifest 之后，才会打印 downloaded results：又是回执。"
+  - "这个 helper 脚本只有在找到完整的 manifest 之后，才会打印 Downloaded results：又是回执。"
   en_display:
   - "Step 2: open the result folder and play speech.wav."
-  - null
+  - "The helper prints Downloaded results only after it finds a complete manifest: the receipt again."
 S16:
 - en: "Clean up. Step 1: download what you want to keep. Step 2: delete translate-function and translation-demo, then the job."
   zh:
@@ -358,7 +370,7 @@ S16:
   - "第 2 步：删掉 translate-function 和 translation-demo，再删 job。"
 - en: "Step 3: delete your buckets and the two runtime accounts once nothing uses them. Step 4: the function's image in Artifact Registry, still there after the service is gone. Pause and delete them all now."
   zh:
-  - "第 3 步：等没有东西再用它们，就删掉你的 bucket 和两个运行时账号。"
+  - "第 3 步：删掉你的 bucket 和两个运行时账号，前提是已经没有东西在用它们。"
   - "第 4 步：Artifact Registry 里那个函数的 image，service 删了它还在。"
   - "暂停一下，现在全部删掉。"
 - en: "Three additions. Soft-deleted files stay billable for a while; the build also leaves source archives and logs. And keep the shared public image; others use it."
@@ -384,7 +396,7 @@ S16:
   - "控制和调试受限：有三个地方可看，构建日志、service 日志，以及 job 的日志和 manifest。"
 - en: "Vendor lock-in: the image and the Functions Framework ran on your laptop; only the console, the permissions and the build are Google's."
   zh:
-  - "厂商锁定：image 和 Functions Framework 都在你的笔记本上跑过；只有控制台、权限和构建是 Google 的。"
+  - "厂商锁定：image 和 Functions Framework 都在你的笔记本上跑过；只有控制台、权限和构建才是 Google 的。"
 - en: "Next lecture: a Vertex AI endpoint for a trained model, then pipelines."
   zh:
   - "下一讲：给训练好的模型建一个 Vertex AI endpoint，然后是 pipeline。"

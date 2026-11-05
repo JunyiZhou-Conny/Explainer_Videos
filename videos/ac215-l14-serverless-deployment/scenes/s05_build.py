@@ -312,8 +312,8 @@ class InsideTheFunction(VoiceScene):
         rmc = grey_chip("README:1038 lists entry point under Function build fails")
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(pc), b2.animate.shift(DOWN * 0.45), run_time=0.4)
-            self.play(FadeIn(t, shift=UP * 0.2), run_time=0.4)    # the dev shell strip, server still running
-            self.play(b2.build.frame.animate.set_stroke(opacity=1).set_fill(opacity=0.12),
+            self.play(FadeIn(t, shift=UP * 0.2),                  # the dev shell strip, server still running
+                      b2.build.frame.animate.set_stroke(opacity=1).set_fill(opacity=0.12),
                       b2.build.text.animate.set_opacity(1), run_time=0.4)
             b2.heal(self)
             b2.feed(self, run_time=1.0)

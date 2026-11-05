@@ -499,7 +499,7 @@ lifts off the field, flies to line 8 of the code panel and clicks onto `def hell
 card (`README.md · lines 150–151`): "This is the Python function the serving framework should call,
 not the filename or service name." TRACKER [1.2] 4: **Save and redeploy** pulses; a GREY status
 line "Waiting for the revision to become ready" (README:152). `▶ your turn`.
-SAY: Set the Function entry point to hello underscore HTTP. In the README's words, it is the Python function the framework should call, not the file name or service name. Select Save and redeploy and wait for the revision. Pause and do it.
+SAY: Set the Function entry point to hello underscore HTTP. In the README's words, it is the Python function the framework should call, not the file name or service name. Select Save and redeploy and wait for the revision, a deployed version of your code and settings, to become ready. Pause and do it.
 
 SHOW: LECTURE 14 · 11–12. Slide 12's checklist returns from the right edge; its third item "create a Python file" (tag
 `erratum`) expands into three GREEN chips: `main.py`, `requirements.txt`, `entry point: hello_http`.
@@ -566,7 +566,7 @@ Function build fails". TRACKER [1.2] 4 ·
 extra · local stand-in: in the strip it types `timeout 20 ~/fn-venv/bin/functions-framework --target
 translate` (extra) → TERM(dev/29: 2, …, 28 wrap); `'translate'` and `'hello_http'` in line 28 RED
 and GREEN.
-SAY: Installing the requirements works; they are fine. But the deployment fails. When the new revision starts, the framework looks for the name: main.py should contain a function named translate, but it found hello underscore HTTP.
+SAY: Installing the requirements works; they are fine. But the deployment fails. When the new revision starts, the framework looks for the name. The file main.py should contain a function named translate. But it found hello underscore HTTP.
 
 SHOW: A GREY chip on line 28: "on Cloud Run: `/workspace/main.py` · in the logs". A small GREY
 "where do you look?" card appears with three slots; slot 1 fills: "the build and start-up logs"
@@ -690,7 +690,7 @@ SHOW: The terminal scrolls: TERM(laptop/10: 18–22). Line 19 `Listening at: htt
 PINK, a small GREY chip on it "every network interface"; line 22 `Control socket listening at …`
 with a GREY chip "recent gunicorn (25.1 and later) · 26.2.0 at the time of recording" (on screen
 only, not spoken); timestamps and PIDs stay unhighlighted.
-SAY: Then gunicorn listens on 0.0.0.0, port 8080: every network interface, so connections from outside the container reach it.
+SAY: Then gunicorn listens on 0.0.0.0, port 8080. That is every network interface, so connections from outside the container reach it.
 
 SHOW: The terminal shrinks to a strip. **V5 `PortEnvelope`, part a.** TRACKER [2.1] 1 · extra: in a
 strip `laptop · second tab`, it types the `docker image inspect --format 'Os/Arch: …'` command of

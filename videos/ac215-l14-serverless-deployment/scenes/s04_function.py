@@ -29,7 +29,8 @@ Beats (script.md "## S04"; one voiceover block each):
    async · breaks this sync handler".
 8. [1.2] 3. CONSOLE field "Function entry point" types `hello_http`; a GREEN name tag flies to line 8
    (main.py 7–8 above the form) and clicks onto `def hello_http`. README card (lines 150–151). [1.2] 4: **Save and
-   redeploy** pulses, GREY status "Waiting for the revision to become ready". ▶ your turn.
+   redeploy** pulses, GREY status "Waiting for the revision to become ready",
+   then on "a deployed version" the GREY definition "revision: your code + settings, deployed". ▶ your turn.
 9. LECTURE 14 · 11–12. The checklist returns from the right edge; item 3 (tag `erratum`) expands into
    three GREEN chips `main.py`, `requirements.txt`, `entry point: hello_http`. Fade out: empty frame.
 """
@@ -377,7 +378,7 @@ class WriteAFunction(VoiceScene):
         dflt = [code_span(p.code, k, s) for k, s in ((6, '"Welcome to AC215"'), (7, '"en"'), (8, '"es"'))]
         unders = [under(d, S.GREY, stroke=3) for d in dflt]
         deco_bar = line_bar(p.code, 4, TURN)
-        name_ring = ring(VGroup(*name8), OWN)
+        name_ring = ring(VGroup(*name8), OWN, buff=0.04)   # tight: lines 7 and 9 sit close
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(yt, cost1, cost2)), run_time=0.4)
@@ -490,6 +491,8 @@ class WriteAFunction(VoiceScene):
         rc2.move_to([6.5, ef.get_top()[1], 0], aligned_edge=UR)
         status = label("Waiting for the revision to become ready", 20, S.GREY)
         status.next_to(rc2, DOWN, buff=0.35).align_to(rc2, LEFT)
+        rev_def = label("revision: your code + settings, deployed", 20, S.GREY)
+        rev_def.next_to(status, DOWN, buff=0.2).align_to(status, LEFT)
         yt2 = your_turn().next_to(ef.rows[1], RIGHT, buff=0.5)
         line8 = p7.code.code_lines[1]
         etag = entry_tag()
@@ -515,6 +518,8 @@ class WriteAFunction(VoiceScene):
             self.play(track(tr, 4), ef.press(1), run_time=0.8)
             vo.wait_until("and wait for the revision")
             self.play(FadeIn(status, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("a deployed version")
+            self.play(FadeIn(rev_def, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Pause and do it")
             self.play(FadeIn(yt2, shift=LEFT * 0.1), run_time=0.4)
             flash_tag(self, yt2, TURN)
@@ -528,7 +533,7 @@ class WriteAFunction(VoiceScene):
         trio.next_to(cl2, DOWN, buff=0.7).align_to(cl2, LEFT).shift(RIGHT * 0.5)
 
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(p7, ef, ef_ill, rc2, status, yt2, etag, click, tabs2)), run_time=0.6)
+            self.play(FadeOut(VGroup(p7, ef, ef_ill, rc2, status, rev_def, yt2, etag, click, tabs2)), run_time=0.6)
             self.play(ReplacementTransform(mini, cl2), run_time=0.9)
             vo.wait_until("create a Python file")
             self.play(Indicate(item3, color=TURN, scale_factor=1.05), FadeIn(e3, shift=LEFT * 0.1), run_time=0.8)

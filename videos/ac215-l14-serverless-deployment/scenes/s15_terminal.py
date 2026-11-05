@@ -7,6 +7,7 @@ Beats (script.md "## S15"; one voiceover block each):
    run.jobs.runWithOverrides) …". V6 echo: a GREY "you" sends a thin GREY arrow "run with overrides
    · yours" to the BLUE job card; under the job its badge with its own chips (the two ORANGE
    project roles, the two GREEN bucket grants), GREY note "not the badge's".
+   GREY chip under the card: the role to ask for, Cloud Run Jobs Executor With Overrides (README:726).
 1. [4.5] 1: GREY chip "console only so far? run Terminal setup first" (README:921-922); terminal
    `laptop · gcloud` (20 pt) types the two exports (README:925-926 = gcloud/09:1-2). [4.5] 2: README
    card (README.md · line 929) + GREY chip "short · under 5,000 characters" (README:900-901); it
@@ -32,7 +33,8 @@ Beats (script.md "## S15"; one voiceover block each):
 5. [4.6] 1: terminal clears, types gcloud/10 lines 1-4 → TERM(gcloud/10: 5 wrap, 6 wrap, 7, 9, 11,
    13, 14 wrap; blank lines dropped); line 5's `$ gcloud storage cp` PURPLE + PURPLE chip "prints
    each command first"; run id GREY + "yours will differ"; line 14 RED. ▶ your turn on the title
-   bar; GREY chip "README.md · line 1002 · bucket names, without gs://".
+   bar; on "Pause and run it" the terminal clears and retypes the command (all 5 rows visible) for the
+   your-turn; GREY chip "README.md · line 1002 · bucket names, without gs://".
 6. [4.6] 2: a local results folder (illustration) with the attempt's three files; speech.wav plays
    as a small waveform. RECORDED(expected/part4-job-recorded.txt: 13), tag `recorded ·
    README:992-993`; CODE(tutorial/run_job.py: 66–72) dedented, 20 pt, lines 67–72 YELLOW bars;
@@ -96,6 +98,7 @@ class FromTheTerminal(VoiceScene):
         assert readme(911).startswith("Your signed-in user needs permission to execute the job **with overrides**")
         assert "`run.jobs.run` and `run.jobs.runWithOverrides`" in readme(912)
         assert "expand **Terminal setup**" in readme(921)
+        assert "**Cloud Run Jobs Executor With" in readme(726) and readme(727).startswith("Overrides**")
         assert readme(929).startswith("2. Save a new short UTF-8 passage as `passage.txt` on your laptop")
         assert "limited to 5,000" in readme(900) and readme(901).startswith("characters")
         assert "the\njob's saved defaults still point to the first French example" in excerpt("README.md", 954, 955)
@@ -135,20 +138,25 @@ class FromTheTerminal(VoiceScene):
         rc0 = readme_card((911, 914), body0)
         rc0.move_to([0, 2.75 - rc0.height / 2, 0])
         assert rc0.get_top()[1] < TRACK_BOTTOM - 0.02 or rc0.get_left()[0] > tr.get_right()[0], rc0.get_top()
+        # the role to ask for (README:726-727, section 4.2's restricted-project note)
+        role0 = grey_chip("role to ask for: Cloud Run Jobs Executor With Overrides · README:726")
+        role0.next_to(rc0, DOWN, buff=0.18).align_to(rc0, LEFT)
+        assert role0.get_right()[0] < 6.55 and role0.get_left()[0] > -6.6, role0.get_corner(DR)
         job = worksheet_card(JOB, "job").move_to([1.5, 0.15, 0])
         bdg = badge(JOB_SA).next_to(job, DOWN, buff=0.3)
         roles = VGroup(*[chip(r, SHARED, size=20) for r in BadgeBoard.ROLES]).arrange(RIGHT, buff=0.14)
         grants = VGroup(ok_chip("Viewer → input"), ok_chip("Creator → output")).arrange(RIGHT, buff=0.14)
         own = VGroup(roles, grants).arrange(DOWN, buff=0.14).next_to(bdg, DOWN, buff=0.14)
         side = VGroup(job, bdg, own)
-        side.move_to([2.3, (rc0.get_bottom()[1] - 0.3 + BOTTOM + 0.1) / 2, 0])
+        side.move_to([2.3, (role0.get_bottom()[1] - 0.3 + BOTTOM + 0.1) / 2, 0])
         me = you("you").move_to([-5.4, job.get_center()[1] - 0.1, 0])
         ar0 = arrow(me.figure.get_right() + RIGHT * 0.1, job.get_left() + LEFT * 0.1, S.GREY, stroke=3)
         lab0 = label("run with overrides · yours", 20, S.GREY).next_to(ar0, UP, buff=0.12)
         notb = label("not the badge's", 20, S.GREY).next_to(ar0, DOWN, buff=0.12)
-        assert side.get_top()[1] < rc0.get_bottom()[1] - 0.2 and own.get_bottom()[1] > -3.55, side.get_top()
+        assert side.get_top()[1] < role0.get_bottom()[1] - 0.2 and own.get_bottom()[1] > -3.55, side.get_top()
         assert own.get_right()[0] < 6.55 and own.get_left()[0] > ar0.get_left()[0], own.get_corner(DR)
         assert lab0.get_right()[0] < job.get_left()[0] - 0.05 and notb.get_right()[0] < own.get_left()[0] - 0.05
+        assert lab0.get_top()[1] < role0.get_bottom()[1] - 0.15, (lab0.get_top(), role0.get_bottom())
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), run_time=0.6)
             self.play(FadeIn(rc0, shift=DOWN * 0.1), run_time=0.6)
@@ -158,6 +166,7 @@ class FromTheTerminal(VoiceScene):
             vo.wait_until("running a job with overrides")
             self.play(FadeIn(me), FadeIn(job, shift=LEFT * 0.1), run_time=0.5)
             self.play(GrowArrow(ar0), FadeIn(lab0, shift=UP * 0.05), run_time=0.7)
+            self.play(FadeIn(role0, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("separate from the job account")
             self.play(FadeIn(bdg, scale=0.9), LaggedStart(*[FadeIn(c, shift=DOWN * 0.1) for c in [*roles, *grants]],
                                                           lag_ratio=0.25), run_time=1.0)
@@ -173,7 +182,7 @@ class FromTheTerminal(VoiceScene):
         assert short.get_right()[0] < 6.55 and rc1.get_bottom()[1] > t.box.get_top()[1] + 0.12, rc1.get_bottom()
         assert setup.get_top()[1] < TRACK_BOTTOM - 0.05 and setup.get_bottom()[1] > rc1.get_top()[1] + 0.12
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(rc0, me, ar0, lab0, notb, side)), track(tr, 1), run_time=0.6)
+            self.play(FadeOut(VGroup(rc0, role0, me, ar0, lab0, notb, side)), track(tr, 1), run_time=0.6)
             self.play(FadeIn(setup, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("Run the terminal setup first")
             self.play(FadeIn(t, shift=UP * 0.15), run_time=0.4)
@@ -187,7 +196,9 @@ class FromTheTerminal(VoiceScene):
             self.add(rc1)
             vo.wait_until("or copy the sample")
             cpl = type_cmd(self, t, CP_SAMPLE, type_time=0.6)
-            pin(self, cpl, beside(row_tag("extra · or write your own"), cpl, buff=0.3))
+            tag1 = beside(row_tag("extra · or write your own"), cpl, buff=0.15)
+            assert tag1.get_right()[0] < t.box.get_right()[0] - 0.1, (tag1.get_right(), t.box.get_right())
+            pin(self, cpl, tag1)
             bare_prompt(self, t)
             vo.wait_until("Export both bucket names")
             self.play(each([*ex], TURN, scale=1.04, lag=0.3), run_time=0.8)
@@ -364,7 +375,7 @@ class FromTheTerminal(VoiceScene):
         assert rchip.get_left()[0] > tr46.get_right()[0] + 0.15, rchip.get_left()
         assert tool5.get_left()[0] > tr46.get_right()[0] + 0.15
         diff5 = on_bar(t4, row_tag("yours will differ"))
-        yt5 = on_bar(t4, turn_row()).next_to(diff5, LEFT, buff=0.15)
+        yt5 = on_bar(t4, turn_row())
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(strip, diff4)), track(tr, 1), run_time=0.5)
             t4.clear(self, run_time=0.3)
@@ -384,9 +395,14 @@ class FromTheTerminal(VoiceScene):
             self.play(each(last, ERR, scale=1.03, lag=0.2), run_time=0.7)
             self.add(t4, diff5)
             vo.wait_until("Pause and run it")
-            self.play(FadeOut(tool5), run_time=0.3)
+            # the whole command back on screen (its first rows scrolled off under the output)
+            self.play(FadeOut(tool5), FadeOut(diff5), run_time=0.3)
+            t4.clear(self, run_time=0.3)
+            cmd5 = type_capture(self, t4, c10, type_time=0.25)
+            assert all(r.get_top()[1] < t4.box.get_top()[1] - t4.bar_h for r in cmd5), "command scrolled"
             self.play(FadeIn(rchip, shift=DOWN * 0.1), FadeIn(yt5, shift=LEFT * 0.1), run_time=0.5)
             flash_tag(self, yt5, TURN)
+            self.wait(1.0)
 
         # ========================================================== 6. open the results; the receipt again
         # phase A: the local results folder (an illustration) with the attempt's three files
@@ -416,7 +432,7 @@ class FromTheTerminal(VoiceScene):
         chip6.move_to(cp6.code.background)
         assert chip6.width < 13.0, chip6.width
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(t4, rchip, yt5, diff5)), track(tr, 2), run_time=0.6)
+            self.play(FadeOut(VGroup(t4, rchip, yt5)), track(tr, 2), run_time=0.6)
             self.remove(t4)
             vo.wait_until("open the result folder")
             self.play(FadeIn(fold, shift=DOWN * 0.1), FadeIn(ill6), run_time=0.5)

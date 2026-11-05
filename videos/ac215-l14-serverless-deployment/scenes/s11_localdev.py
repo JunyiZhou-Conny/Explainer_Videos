@@ -15,9 +15,10 @@ Beats (script.md "## S11"; one voiceover block each):
    Account Token Creator; a RED-struck "Service Account Admin · don't leave it"; Save. Then APIs &
    Services → Library → IAM Service Account Credentials API → Enable.
    RECORDED(part3-speech-recorded: 4) tagged "recorded · impersonation GIF".
-3. TRACKER [3.3] 1 · gcloud alternative. Terminal `laptop · gcloud` types README:541-545 verbatim
+3. TRACKER [3.3] 2 · opens with step 1 as commands (the SAY opens step 2 here). Terminal
+   `laptop · gcloud` types README:541-545 verbatim
    (no output panel); the three commands are bracketed, GREY chip "= step 1, as commands (README:538)".
-4. TRACKER [3.3] 2. The bracket fades; README:547-548 typed; row chip "browser sign-in · no output
+4. TRACKER [3.3] 2 (suffix cleared). The bracket fades; README:547-548 typed; row chip "browser sign-in · no output
    shown". Two GREY cards: gcloud auth login → gcloud's own login / gcloud auth application-default
    login → the app's ADC file (README:86-87). They give way to README card 551–552 and a GREY card
    (README:552-554) on the quota project / Service Usage Consumer. `▶ your turn`.
@@ -223,7 +224,9 @@ class LocalDevelopment(VoiceScene):
         # ========================================================== 3. step 2 opens with step 1 as commands
         g = term(P_REPO, 8, T_GCLOUD, size=20)
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(f2, ill2, rec)), track(tr, 1, "gcloud"), run_time=0.6)
+            # the narration opens step 2 here ("Step 2 begins with three commands that repeat step 1"):
+            # light step 2 at once; the suffix says these first rows are step 1 again (watcher 19:38)
+            self.play(FadeOut(VGroup(f2, ill2, rec)), track(tr, 2, "opens with step 1 as commands"), run_time=0.6)
             self.play(FadeIn(g, shift=UP * 0.2), run_time=0.5)
             typed = type_lines(self, g, rows_541, type_time=0.8)
             rows3 = [r for ln in typed for r in rows_of(ln)]

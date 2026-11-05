@@ -12,10 +12,11 @@ Beats (script.md "## S16"; one voiceover block each):
    storage"; the image is removed. YELLOW ▶ your turn beside the checklist.
 2. Beside the card, a GOLD card "what the README's list leaves out" (tag erratum): "soft-deleted files:
    recoverable and billable for the retention period" (docs/lifecycle.md:176-177), "the build leaves
-   source archives and logs" (docs/lifecycle.md:205-210), GREEN "keep the shared public image · others
-   use it" (README:1027-1028). Under both, GREY "optional · on your laptop · not typed" with three
+   source archives and logs" (docs/lifecycle.md:205-210). Under it, its own GREEN chip "keep the shared
+   public image · others use it", tag "README · lines 1027–1028" (README item 4 says it, so it is not
+   in the erratum card). Under the checklist, GREY "optional · on your laptop · not typed" with three
    GREY mono chips (gcloud auth application-default revoke · rm -rf ~/fn-venv · docker image rm <the
-   public image>), tag extra.
+   public image>, the last noted GREEN "removes only your laptop's copy"), tag extra.
 3. [CU] 4. README card (README.md · lines 1035–1046, Symptom | Check; long checks cut with "…"), GREY
    chip "stuck? start here"; a second GREY chip, silent: "optional: a scripted separate practice stack
    · its own names · its clean up removes only its own · gcloud/20" (README:1061-1064,
@@ -58,6 +59,7 @@ LEFT_X = -4.15             # centre of the free column left of the grid (beats 5
 GRID_RIGHT = 0.5           # the grid's shift in beats 5-7 (its row headers start at x -1.55)
 GRID_CENTRE = -1.9         # the grid's shift in beat 4 (centred)
 CHECK_W = 7.0              # widest Check text in the troubleshooting card
+CL_TOP = 2.47              # the clean-up card's top edge: its tag (centred on it) stays below TRACK_BOTTOM
 
 QUESTIONS = (
     "Place Parts 1 and 2 on the lecture's 2×2:\nwhat do you hand over, and who\nbuilds the image in each case?",
@@ -214,10 +216,11 @@ class CleanUpRecap(VoiceScene):
         # ========================================================== 0. download, delete the three runtimes
         tr = tracker_cu(1)
         cl = checklist()
-        cl.move_to([-6.5 + cl.width / 2, 2.72 - cl.height / 2, 0])
-        assert cl.get_top()[1] < TRACK_BOTTOM - 0.05, cl.get_top()
+        # the card's top edge sits low enough that the GOLD tag centred on it clears the tracker caption
+        cl.move_to([-6.5 + cl.width / 2, CL_TOP - cl.height / 2, 0])
         ctag = cost_tag("billed until deleted")
         ctag.move_to(cl.frame.get_corner(UR) + np.array([-ctag.width / 2 - 0.25, 0, 0]))
+        assert ctag.get_top()[1] < TRACK_BOTTOM - 0.05, ctag.get_top()
         ticks = [check_glyph(0.28).move_to([cl.frame.get_right()[0] - 0.35, r.get_center()[1], 0])
                  for r in cl.tick_rows]
         rx = (cl.get_right()[0] + 6.55) / 2          # centre of the column right of the card
@@ -275,13 +278,18 @@ class CleanUpRecap(VoiceScene):
             label("soft-deleted files: recoverable and", 20, INK),
             label("billable for the retention period", 20, INK),
             label("the build leaves source archives and logs", 20, INK),
-            label("keep the shared public image · others use it", 20, OWN),
         ]
         adds = card(add_rows, COST, size=20, buff=0.16, head="what the README's list leaves out")
         adds.move_to([rx, 0, 0]).align_to(cl, UP)
         etag = erratum_tag()
         etag.move_to(adds.frame.get_corner(UR) + np.array([-etag.width / 2 - 0.25, 0, 0]))
         assert adds.get_right()[0] < 6.55 and adds.get_left()[0] > cl.get_right()[0] + 0.15, (cl.get_right(), adds.width)
+        # README item 4 already says this (README:1027-1028): its own GREEN chip, not part of the erratum card
+        keep = ok_chip("keep the shared public image · others use it")
+        ktag = tag("README · lines 1027–1028", S.GREY)
+        keep.next_to(adds, DOWN, buff=0.4).align_to(adds, LEFT)
+        ktag.next_to(keep, DOWN, buff=0.1).align_to(keep, RIGHT)
+        assert keep.get_right()[0] < 6.55 and keep.get_left()[0] > cl.get_right()[0] + 0.15, keep.get_corner(UR)
         gl = VGroup(label("optional · on your laptop · not typed", 20, S.GREY), extra_tag())
         gl.arrange(RIGHT, buff=0.25)
         ch1 = VGroup(*[grey_chip(s, mono_font=True) for s in EXTRA_CMDS]).arrange(RIGHT, buff=0.2)
@@ -289,10 +297,16 @@ class CleanUpRecap(VoiceScene):
             DOWN, aligned_edge=LEFT, buff=0.1)
         dk_b = box(dk_t.width + 0.5, dk_t.height + 0.3, S.GREY, fill_opacity=0.16, radius=0.14)
         dk_t.move_to(dk_b)
-        dk = VGroup(dk_b, dk_t)
-        xb = VGroup(gl, ch1, dk).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
+        # the command removes only the local copy: say so on its first line, so it can't read as "delete the image"
+        dk_n = label("removes only your laptop's copy", 20, OWN)
+        dk_n.next_to(dk_t[0], RIGHT, buff=0.6).align_to(dk_t[0], DOWN)
+        assert dk_n.get_right()[0] < dk_b.get_right()[0] - 0.2, (dk_n.get_right(), dk_b.get_right())
+        dk = VGroup(dk_b, dk_t, dk_n)
+        xb = VGroup(gl, ch1, dk).arrange(DOWN, buff=0.1, aligned_edge=LEFT)
         xb.move_to([-6.45 + xb.width / 2, 0, 0]).align_to(cl, LEFT)
-        xb.shift(UP * (cl.get_bottom()[1] - 0.25 - xb.get_top()[1]))
+        xb.shift(UP * (cl.get_bottom()[1] - 0.2 - xb.get_top()[1]))
+        assert xb.get_top()[1] < ktag.get_bottom()[1] - 0.1 or xb[1].get_right()[0] < keep.get_left()[0], \
+            (xb.get_top(), keep.get_bottom())
         assert xb.get_bottom()[1] > -3.5 and xb.get_right()[0] < 6.55, xb.get_corner(DR)
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(yt), FadeIn(adds.frame), FadeIn(adds.head), FadeIn(etag), run_time=0.6)
@@ -300,8 +314,8 @@ class CleanUpRecap(VoiceScene):
             self.play(FadeIn(VGroup(*add_rows[:2]), shift=RIGHT * 0.15), run_time=0.6)
             vo.wait_until("the build also leaves")
             self.play(FadeIn(add_rows[2], shift=RIGHT * 0.15), run_time=0.5)
-            vo.wait_until("And keep the shared public image")
-            self.play(FadeIn(add_rows[3], shift=RIGHT * 0.15), run_time=0.5)
+            vo.wait_until("keep the shared public image")
+            self.play(FadeIn(keep, shift=UP * 0.15), FadeIn(ktag), run_time=0.5)
             self.play(FadeIn(gl, shift=UP * 0.1), run_time=0.4)
             self.play(LaggedStart(*[FadeIn(c, shift=UP * 0.1) for c in [*ch1, dk]], lag_ratio=0.3), run_time=0.9)
         self.wait(1.2)
@@ -316,7 +330,7 @@ class CleanUpRecap(VoiceScene):
         prac.next_to(tc, DOWN, buff=0.25).align_to(tc, LEFT)
         assert prac.get_bottom()[1] > -3.5 and prac.get_right()[0] < 6.55, prac.get_corner(DR)
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(cl, ctag, *ticks, adds, etag, xb)), run_time=0.5)
+            self.play(FadeOut(VGroup(cl, ctag, *ticks, adds, etag, keep, ktag, xb)), run_time=0.5)
             vo.wait_until("The README ends with")
             self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.6)
             self.play(FadeIn(stuck, shift=RIGHT * 0.15), run_time=0.4)
@@ -513,7 +527,7 @@ class CleanUpRecap(VoiceScene):
                     vo.wait_until("name the lecture's three downsides")
                     self.play(each([c.body for c in cc], ERR, scale=1.12, lag=0.4), run_time=1.4)
                     self.play(FadeIn(ans, shift=UP * 0.1), run_time=0.5)
-        self.wait(0.6)
+        self.play(Indicate(ans, color=INK, scale_factor=1.06), run_time=0.8)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)
 

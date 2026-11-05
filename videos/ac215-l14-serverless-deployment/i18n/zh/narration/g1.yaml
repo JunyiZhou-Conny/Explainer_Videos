@@ -12,12 +12,12 @@
 # The instructor rule (A16): the narration of S01-S08 names no instructor (the lecture -> 课上, the slides -> 课件).
 # en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: hello_http in S04[5],
 # S04[8], S05[5], S05[7]; %20 in S06[2]; zh-cn in S06[3]; amd64 in S07[2]; translation_demo serve in S07[4];
-# Ctrl+C in S07[10]); null = the SAY text.
+# Ctrl+C in S07[10]; docker top / docker ps in S07[6]; 512 MiB in S08[3]); null = the SAY text.
 S01:
 - en: "Here is a translation page running on your laptop. Type good afternoon everyone, choose French, press Translate, and it answers: Bonjour à tous."
   zh:
   - "这是一个在你笔记本上跑着的翻译页面。"
-  - "输入 good afternoon everyone，选法语，点 Translate，它就回答：Bonjour à tous。"
+  - "输入 good afternoon everyone，选法语，再点 Translate；它就回答：Bonjour à tous。"
 - en: "Now send the address to a classmate. On their laptop, localhost 8086 finds nothing, because localhost always means this machine, and nothing runs on theirs."
   zh:
   - "现在把地址发给一个同学。"
@@ -110,7 +110,7 @@ S03:
 - en: "About this recording: this machine has no Google account and no project. So every gcloud box runs until its first honest error, the console is drawn, and cloud results come from the README's own recording."
   zh:
   - "关于这次录制：这台机器没有 Google 账号，也没有项目。"
-  - "所以每个 gcloud 命令框，都跑到它遇到的第一个真实报错为止，控制台是画出来的，云端的结果来自 README 自己的录制记录。"
+  - "所以每个 gcloud 命令框都跑到第一个真实报错为止，控制台是画出来的；云端的结果来自 README 自己的录制记录。"
 S04:
 - en: "Part 1: a function. The lecture calls it lightweight code that an event starts, like a file upload, a database change, or today, an HTTP request. It is billed while it runs and scales by itself."
   zh:
@@ -137,7 +137,7 @@ S04:
 - en: "Replace main.py with the tutorial's handler. The decorator marks an HTTP function called hello underscore HTTP. It takes text, source and destination from the request, each with a default."
   zh:
   - "把 main.py 换成教程的处理函数。"
-  - "装饰器把它标成一个叫 hello 下划线 http 的 HTTP 函数。"
+  - "装饰器把它标成一个 HTTP 函数，名字叫 hello 下划线 http。"
   - "它从请求里取 text、source 和 destination，每个都有默认值。"
   en_display:
   - null
@@ -151,11 +151,11 @@ S04:
   zh:
   - "把 requirements 文件换成两个精确的 pin。"
   - "新版的 googletrans 是异步的，会把这个简单的处理函数弄坏。"
-- en: "Set the Function entry point to hello underscore HTTP. In the README's words, it is the Python function the framework should call, not the file name or service name. Select Save and redeploy and wait for the revision. Pause and do it."
+- en: "Set the Function entry point to hello underscore HTTP. In the README's words, it is the Python function the framework should call, not the file name or service name. Select Save and redeploy and wait for the revision, a deployed version of your code and settings, to become ready. Pause and do it."
   zh:
   - "把 Function entry point 设成 hello 下划线 http。"
   - "用 README 的话说，它是框架应该调用的那个 Python 函数，不是文件名，也不是 service 名称。"
-  - "点 Save and redeploy，等 revision 就绪。"
+  - "点 Save and redeploy，等这个 revision，也就是你的代码和设置部署出来的一个版本，变成就绪。"
   - "暂停一下，照着做。"
   en_display:
   - "Set the Function entry point to hello_http."
@@ -179,7 +179,7 @@ S05:
   - "Cloud Run 用这个 image 启动一个 revision。"
 - en: "In each instance, the Functions Framework runs a small Flask app under gunicorn, on every interface, at the port Cloud Run provides. On each request, it looks up your function by the entry point name and calls it."
   zh:
-  - "在每个实例里，Functions Framework 用 gunicorn，跑一个小的 Flask 应用，监听所有网络接口，用的是 Cloud Run 给的 port。"
+  - "在每个实例里，Functions Framework 在 gunicorn 下跑一个小的 Flask 应用，监听所有网络接口，用的是 Cloud Run 给的 port。"
   - "每来一个请求，它就按入口点的名字找到你的函数，然后调用它。"
 - en: "So the lecture's file cell has a container inside. That is why there is an image to clean up at the end."
   zh:
@@ -201,15 +201,19 @@ S05:
   - "你贴了 main.py，入口点却填了 translate。"
   - "构建会失败吗？"
   - "如果不会，那是什么失败了，你会在哪儿看到？"
-- en: "Installing the requirements works; they are fine. But the deployment fails. When the new revision starts, the framework looks for the name: main.py should contain a function named translate, but it found hello underscore HTTP."
+- en: "Installing the requirements works; they are fine. But the deployment fails. When the new revision starts, the framework looks for the name. The file main.py should contain a function named translate. But it found hello underscore HTTP."
   zh:
   - "装依赖没问题；它们没错。"
   - "但部署失败了。"
-  - "新的 revision 启动时，框架去找这个名字：main.py 里应该有一个叫 translate 的函数，但它找到的是 hello 下划线 http。"
+  - "新的 revision 启动时，框架去找这个名字。"
+  - "main.py 文件里应该有一个叫 translate 的函数。"
+  - "但它找到的是 hello 下划线 http。"
   en_display:
   - null
   - null
-  - "When the new revision starts, the framework looks for the name: main.py should contain a function named translate, but it found hello_http."
+  - null
+  - null
+  - "But it found hello_http."
 - en: "On Cloud Run, you find this in the logs, not in your code. That is the first of three places to look."
   zh:
   - "在 Cloud Run 上，这要去日志里找，不在你的代码里。"
@@ -283,9 +287,10 @@ S07:
   en_display:
   - null
   - "The image is built for amd64, which Cloud Run needs; on Apple Silicon it runs under emulation."
-- en: "Then gunicorn listens on 0.0.0.0, port 8080: every network interface, so connections from outside the container reach it."
+- en: "Then gunicorn listens on 0.0.0.0, port 8080. That is every network interface, so connections from outside the container reach it."
   zh:
-  - "然后 gunicorn 监听 0.0.0.0 的 port 8080：也就是所有网络接口，这样 container 外面来的连接才能到它。"
+  - "然后 gunicorn 监听 0.0.0.0 的 port 8080。"
+  - "这就是所有网络接口，这样 container 外面来的连接才能到它。"
 - en: "How did Python turn into gunicorn? First, the image has two start-up slots: an empty entrypoint, and a command, translation demo serve. Docker runs the entrypoint, then the command, and arguments you pass replace the command; part 4 depends on this."
   zh:
   - "Python 是怎么变成 gunicorn 的？"
@@ -303,6 +308,10 @@ S07:
   - "额外检查也对得上。"
   - "命令 docker top 只显示 gunicorn，一个 master 和一个 worker；一个 Python 进程都不剩。"
   - "命令 docker ps 显示了这扇门：外面是 8086，里面是 8080，所以笔记本上的 8080 会被拒绝。"
+  en_display:
+  - null
+  - "docker top shows only gunicorn, a master and a worker; no Python is left."
+  - "docker ps shows the door, 8086 outside and 8080 inside, so 8080 on the laptop is refused."
 - en: "Step 2: open localhost 8086. An extra curl shows status 200 from gunicorn, the title, and the disabled Play audio button."
   zh:
   - "第 2 步：打开 localhost 8086。"
@@ -347,6 +356,9 @@ S08:
   zh:
   - "在 container 设置里：port 8080，512 MiB，1 个 CPU，命令不动；Cloud Run 会设置 PORT，再去敲这扇门。"
   - "然后是 120 秒的超时，每个实例 4 个并发请求。"
+  en_display:
+  - "In the container settings: port 8080, 512 MiB, 1 CPU, and the command left alone; Cloud Run sets PORT and knocks on it."
+  - null
 - en: "Why 4? Each instance runs gunicorn with 4 threads, so it never gets more than it can serve."
   zh:
   - "为什么是 4？"

@@ -356,7 +356,7 @@ class BeforeYouBegin(VoiceScene):
             self.play(*[a for g in srcs for a in recolor(g, ROUTE)], *[Create(u) for u in u_src], run_time=0.5)
             self.add(t, *u_src)                           # re-seat the terminal, keep the marks over it
             self.play(*[TransformFromCopy(a, b, path_arc=-0.5) for a, b in zip(u_src, u_dst)],
-                      *[a for g in dsts for a in recolor(g, ROUTE)], run_time=0.9)
+                      *[a for g in dsts for a in recolor(g, ROUTE)], run_time=0.7)
             self.add(t, threads)
             # the pause view: the seven exports in one place (the 13-row terminal has scrolled three off)
             sheet = exports_card(c05.cmd_lines[:7])
@@ -366,7 +366,11 @@ class BeforeYouBegin(VoiceScene):
             pid_tag.next_to(sheet.rows[0], RIGHT, buff=0.45)
             yt2 = turn_row().move_to(sheet.head).align_to(sheet.frame, RIGHT).shift(LEFT * 0.28)
             vo.wait_until("Pause and run them")
-            self.play(FadeOut(threads), run_time=0.25)
+            gone = [ln for ln in t.lines.submobjects if ln not in list(em)]   # one fade: threads + rows
+            for ln in gone:
+                t.lines.remove(ln)
+            self.play(FadeOut(VGroup(threads, *gone)), run_time=0.25)
+            self.remove(*gone)
             resize(self, t, 3, keep=list(em), extra=[FadeIn(sheet, shift=DOWN * 0.15)], run_time=0.7)
             self.play(FadeIn(pid_tag, shift=LEFT * 0.1), FadeIn(yt2, shift=LEFT * 0.1),
                       *recolor(substring(sheet.rows[0], PROJECT_PH), TURN), run_time=0.4)

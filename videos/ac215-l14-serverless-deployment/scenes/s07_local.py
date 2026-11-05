@@ -11,8 +11,9 @@ Beats (script.md "## S07"; one voiceover block each):
    ear 8080.
 2. The terminal grows; TERM(laptop/10: 3–5, …, 15–17 wrap); the digest YELLOW; a README card
    (README.md · line 1069) slides in right under it and the two digests light character by
-   character, GREEN chip "same bytes, same digest"; GREY chip "linux/amd64 · Apple Silicon:
-   emulated · Cloud Run needs amd64".
+   character, GREEN chip "same bytes, same digest"; GREY chip "linux/amd64 · Apple Silicon: a
+   platform WARNING prints first · harmless, it runs emulated" (QA: the arm64 warning is not in
+   the amd64 capture).
 3. The terminal scrolls: TERM(laptop/10: 18–22 wrap); `http://0.0.0.0:8080` PINK + GREY row tag
    "every network interface"; GREY chip on line 22 "recent gunicorn (25.1 and later) · 26.2.0 at
    the time of recording" (on screen only); timestamps and PIDs unhighlighted.
@@ -24,8 +25,10 @@ Beats (script.md "## S07"; one voiceover block each):
    line 23 (PORT) and line 24 (os.execvp) YELLOW; the PURPLE "python" process, the envelope
    PORT=8080 (image ENV) and the PINK ear 0.0.0.0:8080; python morphs into gunicorn; line 25's
    `--workers 1 --threads 4` GREEN and four slots appear.
-6. TRACKER [2.1] 1 · extra. Strip: `docker top …` → TERM(laptop/13: 2, 3–4 from "{gunicorn}",
-   cut after the gunicorn path) with `{gunicorn}` YELLOW; `docker ps --format …` → TERM(laptop/12:
+6. TRACKER [2.1] 1 · extra. Strip (6 rows): `docker top …` → TERM(laptop/13: 2, 3–4 from
+   "{gunicorn}", cut after "--threads 4", wrap) with `{gunicorn}` YELLOW, `--threads 4` ringed
+   GREEN (S08 cites it), the interpreter path ringed GREY + GREY card "the interpreter running
+   gunicorn · python -m translation_demo is gone"; `docker ps --format …` → TERM(laptop/12:
    2–3 wrap), `0.0.0.0:8086->8080/tcp` PINK, the door returns; `curl -sS http://localhost:8080/`
    → TERM(laptop/14: 2 wrap) RED; a knock on the wall at 8080 bounces, "refused".
 7. TRACKER [2.1] 2. The drawn page (illustration) at http://localhost:8086 (README:251); strip
@@ -33,12 +36,16 @@ Beats (script.md "## S07"; one voiceover block each):
    Server: gunicorn, the title and the disabled Play audio button YELLOW; the page's button pulses.
 8. TRACKER [2.1] 3. The page: Good afternoon everyone, en → fr. The page gives way to
    CODE(index.html: 76–80) with `method: 'POST'` and `JSON.stringify` PINK; a PINK JSON envelope
-   {text, src, dest} flies out. TRACKER [2.1] 3 · extra: the laptop/21 POST → TERM(laptop/21: 2, 4);
+   {text, src, dest} flies out. TRACKER [2.1] 3 · extra: the strip grows to 7 rows and clears (each
+   extra curl below keeps its whole command and its [HTTP nnn] line in view); the laptop/21 POST →
+   TERM(laptop/21: 2, 4); the strip shrinks back to 4 rows as the page returns;
    `\\u00e0` YELLOW + row tag "the browser shows: à"; the page returns and fills Bonjour à tous.
    GREY card "captured during a second run of the same command (laptop/20)"; `▶ your turn`.
-9. V4's contrast: a PINK GET (query string) bounces off the app RED: laptop/26 → TERM(laptop/26: 2,
+9. V4's contrast: the page steps back for a PURPLE "app" box (POST /api/translate · JSON); the
+   strip grows to 7 rows; a PINK GET (query string) bounces off the app RED: laptop/26 → TERM(laptop/26: 2,
    4) RED, chip 405; the dest "xx" POST of laptop/25 → TERM(laptop/25: 2, 4) RED, chip 400.
-10. TRACKER [2.1] 4. The page's Play audio pulses GREY; the /api/speech POST of laptop/24 →
+10. TRACKER [2.1] 4. The page's Play audio button (illustration) pulses GREY; the strip clears; the
+   /api/speech POST of laptop/24 →
    TERM(laptop/24: 2, 4 wrap) RED. Back in the main terminal: TERM(laptop/10: 23–26); V5's gunicorn
    gets a SIGINT arrow straight in (chip "main process · gets the signal") and folds away; `--rm`
    sweeps the container away; the TEAL image stays on the laptop's shelf.
@@ -175,8 +182,12 @@ def regrow(scene, t, rows: int, tags=(), keep=None, extra=(), run_time: float = 
     keep=0 clears it first, so the next command starts on the top row."""
     ref = term(P_REPO, rows, T_TAB, size=t.size)
     dy = ref.box.get_top()[1] - t.box.get_top()[1]
+    shown = [m for m in tags if m in scene.mobjects]
+    for m in tags:
+        if m not in shown:                     # off screen: it simply waits at the new bar height
+            m.shift(UP * dy)
     return resize(scene, t, rows, keep=keep, run_time=run_time,
-                  extra=[*[m.animate.shift(UP * dy) for m in tags], *extra])
+                  extra=[*[m.animate.shift(UP * dy) for m in shown], *extra])
 
 
 def app_box() -> VGroup:
@@ -379,7 +390,7 @@ class RunTheImage(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(panel), FadeOut(cmd_chip), track(tr, 1, True),
                       run_time=0.4)
-            self.play(pe.animate.shift(np.array([1.0, 3.05, 0])), run_time=0.6)
+            self.play(pe.animate.shift(np.array([1.0, 3.3, 0])), run_time=0.6)   # clear of the 6-row strip
             seat(pe)
             pe.heal(self)
             self.play(FadeIn(tab, shift=UP * 0.2), FadeIn(xb), run_time=0.4)
@@ -391,15 +402,17 @@ class RunTheImage(VoiceScene):
             reseat(self, tab)
             self.play(Indicate(pe.proc.frame, color=TOOL, scale_factor=1.04), run_time=0.6)
             pe.heal(self)
-            r_thr = ring(substring(row_with(rows13, "--threads 4"), "--threads 4"), OWN)
-            self.play(Create(r_thr), run_time=0.5)
-            vo.wait_until("no Python is left")
             py_row = row_with(rows13, "python3.12")
-            r_py = ring(substring(py_row, "/usr/local/bin/python3.12"), S.GREY, dashed=True)
+            r_py = ring(substring(py_row, "/usr/local/bin/python3.12"), S.GREY)
             interp = card(["the interpreter running gunicorn ·", "python -m translation_demo is gone"],
                           size=20)
             interp.move_to([-6.35 + interp.width / 2, 1.9, 0])
             self.play(Create(r_py), FadeIn(interp, shift=UP * 0.1), run_time=0.5)
+            r_thr = ring(substring(row_with(rows13, "--threads 4"), "--threads 4"), OWN)
+            self.play(Create(r_thr), run_time=0.5)
+            vo.wait_until("no Python is left")
+            self.play(Indicate(interp.body, color=INK, scale_factor=1.04), run_time=0.7)
+            self.add(interp)
             vo.wait_until("Docker ps shows")
             self.play(FadeOut(VGroup(r_thr, r_py, interp)), run_time=0.3)
             type_capture(self, tab, c12, type_time=0.9)
@@ -448,7 +461,7 @@ class RunTheImage(VoiceScene):
         # ========================================================== 8. step 3: translate (a JSON POST)
         c21 = capture("laptop/21")
         idx = code(INDEX, 76, 80, font_size=20, dedent=True, cuts={78: "JSON.stringify({text:"})
-        idx.move_to([0, 1.5, 0])                    # above the 7-row strip
+        idx.move_to([0, 1.6, 0])                    # above the 7-row strip and its envelope
         with self.voiceover(SAY[8]) as vo:
             self.play(track(tr, 3, False), run_time=0.4)
             page.type_in(self, run_time=0.8)
@@ -456,7 +469,9 @@ class RunTheImage(VoiceScene):
             vo.wait_until("The button sends JSON")
             self.play(page.press("translate"), run_time=0.5)
             page.heal(self)
-            self.play(FadeOut(page), FadeOut(ill), FadeIn(idx, shift=UP * 0.1), run_time=0.5)
+            # the strip grows to 7 rows and clears: the whole command and its [HTTP 200] stay in view
+            regrow(self, tab, 7, tags=[xb], keep=0, run_time=0.5,
+                   extra=[FadeOut(page), FadeOut(ill), FadeIn(idx, shift=UP * 0.1)])
             spans = [code_span(idx.code, 1, "method: 'POST'"), code_span(idx.code, 2, "JSON.stringify")]
             self.play(*[g.animate.set_color(ROUTE) for s in spans for g in s], run_time=0.3)
             self.add(idx)
@@ -464,20 +479,20 @@ class RunTheImage(VoiceScene):
             env.move_to([spans[1].get_right()[0] + 0.3 + env.width / 2, idx.get_bottom()[1] - 0.1, 0])
             self.play(FadeIn(env, shift=DOWN * 0.2), run_time=0.3)
             self.play(env.animate.move_to([6.35 - env.width / 2, idx.get_bottom()[1] - 0.1, 0]), run_time=0.6)
-            # the strip grows to 7 rows and clears: the whole command and its [HTTP 200] stay in view
-            regrow(self, tab, 7, tags=[xb], keep=0, extra=[track(tr, 3, True), FadeOut(env)], run_time=0.4)
-            type_cmd(self, tab, c21.cmd, 0.9, soft=True)    # quoted JSON: wraps like a real terminal
+            self.play(track(tr, 3, True), FadeOut(env), run_time=0.3)
+            type_cmd(self, tab, c21.cmd, 0.7, soft=True)    # quoted JSON: wraps like a real terminal
             r21 = out(self, tab, c21.at(2, 4), run_time=0.3)
             vo.wait_until("and gets back")
             color_sub(self, tab, r21, "\\u00e0", TURN, run_time=0.3)
             vo.wait_until("once the browser decodes")
-            sec = card(["captured during a second", "run of the same command", "(laptop/20)"], size=20)
-            sec.next_to(page.frame, RIGHT, buff=0.2).align_to(page.frame, DOWN)
-            regrow(self, tab, 4, tags=[xb], run_time=0.5,
-                   extra=[FadeOut(idx), FadeIn(page), FadeIn(ill), FadeIn(sec, shift=UP * 0.1)])
             bs = on_bar(tab, row_tag("the browser shows: à", TURN))
             self.bar_tags = [xb, bs]
             self.play(FadeOut(xb), FadeIn(bs), run_time=0.4)
+            self.wait(0.6)                              # the command and its [HTTP 200] hold together
+            sec = card(["captured during a second", "run of the same command", "(laptop/20)"], size=20)
+            sec.next_to(page.frame, RIGHT, buff=0.2).align_to(page.frame, DOWN)
+            regrow(self, tab, 4, tags=[xb, bs], run_time=0.5,
+                   extra=[FadeOut(idx), FadeIn(page), FadeIn(ill), FadeIn(sec, shift=UP * 0.1)])
             page.translate(self, "Bonjour à tous", run_time=0.8)
             yt2 = your_turn().next_to(ill, DOWN, buff=0.3).align_to(ill, LEFT)
             vo.wait_until("Pause and try it")
@@ -532,12 +547,15 @@ class RunTheImage(VoiceScene):
         ab = page.audio_btn.copy().move_to(app.frame)
         ill2 = illustration_tag().next_to(ab, RIGHT, buff=0.3)
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(get, e405, xx, e400)), FadeOut(app), FadeIn(ab), FadeIn(ill2),
-                      track(tr, 4, False), run_time=0.5)
+            # the app box leaves before the button takes its place (a cross-fade overlaps the two)
+            self.play(FadeOut(VGroup(get, e405, xx, e400)), FadeOut(app), track(tr, 4, False),
+                      run_time=0.3)
+            self.play(FadeIn(ab), FadeIn(ill2), run_time=0.3)
             self.play(Indicate(ab, color=S.GREY, scale_factor=1.08), run_time=0.8)
+            resize(self, tab, 7, keep=0, run_time=0.3)    # typed early: the 503 pair holds > 2 s
+            type_cmd(self, tab, c24.cmd, 0.8, soft=True)
             vo.wait_until("and its request")
-            resize(self, tab, 7, keep=0, extra=[track(tr, 4, True)], run_time=0.3)
-            type_cmd(self, tab, c24.cmd, 1.0, soft=True)
+            self.play(track(tr, 4, True), run_time=0.3)
             r24 = out(self, tab, c24.at(2, 4), wrap=True, run_time=0.4, color=ERR)
             vo.wait_until("speech is disabled")
             self.play(Indicate(row_with(r24, "[HTTP 503]"), color=ERR, scale_factor=1.1), run_time=0.6)

@@ -34,7 +34,7 @@ Beats (script.md "## S10"; one voiceover block each):
    Translate, then Play audio. RECORDED(part3-speech-recorded: 12), `recorded · speech GIF`; GOLD
    cost tag "Gemini TTS · billed per Play audio · check the pricing page"; `▶ your turn`.
 7. [3.2] 7: README card (README.md · lines 457–458) and the where-to-look card (slot 2 "the service
-   logs" glows). TERM(laptop/24) returns in a small terminal, GREY chip "captured in S07: the flag
+   logs" glows). TERM(laptop/24) returns in a small terminal, GREY chip "captured in part 2: the flag
    missing" (line 2 + the [HTTP 503] line). CODE(speech.py: 108–119), lines 109 and 113 YELLOW; the
    mapping under it: "no identity / 401 / 403 / 404 → 503", "429 / others → 502" (web.py:50-53).
 8. LECTURE 14 · 16. GREY chip "limited control and debugging", then GREEN chip "the message names
@@ -454,7 +454,8 @@ class EnableSpeech(VoiceScene):
             vo.wait_until("Then Translate and Play audio")
             self.play(FadeOut(wp), FadeOut(flag_card), run_time=0.3)
             page.type_in(self, run_time=0.6)
-            page.set_dest(self, "fr", run_time=0.3)
+            page.set_dest(self, "fr", run_time=0.4)
+            self.play(Indicate(page.dest.text, color=TURN, scale_factor=1.3), run_time=0.5)
             page.translate(self, run_time=0.6)
             self.play(page.press("audio"), run_time=0.6)
             page.heal(self)
@@ -480,7 +481,7 @@ class EnableSpeech(VoiceScene):
         wl.add(w0, w1)
         assert rc7.get_right()[0] < wl.get_left()[0] - 0.1, (rc7.get_right(), wl.get_left())
         lt = term(P_REPO, 8, T_LAPTOP, size=20)
-        flag_chip = grey_chip("captured in S07: the flag missing")
+        flag_chip = grey_chip("captured in part 2: the flag missing")
         flag_chip.move_to([6.4 - flag_chip.width / 2, lt.box.get_top()[1] + 0.4, 0])
         assert flag_chip.get_bottom()[1] > lt.box.get_top()[1] and flag_chip.get_left()[0] > rc7.get_right()[0] + 0.2
         assert rc7.get_bottom()[1] > lt.box.get_top()[1] + 0.1
@@ -541,7 +542,7 @@ class EnableSpeech(VoiceScene):
             self.play(FadeIn(gt, shift=UP * 0.15), run_time=0.4)
             type_lines(self, gt, gc_rows, type_time=0.45)
             self.play(FadeIn(npc, shift=DOWN * 0.1), run_time=0.4)
-            self.wait(1.2)
+            self.wait(3.0)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)
