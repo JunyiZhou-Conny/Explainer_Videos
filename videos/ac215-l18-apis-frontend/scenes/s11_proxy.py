@@ -18,7 +18,7 @@ Beats (script.md "## S11", one voiceover block each):
    request" the API entry lights and hop 3½ (the Vite courier) walks the cable; hops 4 and 5 (back
    through 3000). The note and book go; a 4-row `second tab` strip (extra) types d04's line 1 →
    d04:2, 5, `server: uvicorn` YELLOW.
-3. The strip goes. Two PINK arrows, the page load and an API call, both land on door 3000; a PINK
+3. The strip goes. Two PINK arrows, "the page" and "/api/… calls", both land on door 3000; a PINK
    "http://localhost:3000" under the browser splits into "http" · "localhost" · "3000" (lit on
    their words); both arrows pulse with it; an ORANGE-outlined chip "same-origin policy · the
    browser's rule" stays quiet beside it; a permission-slip glyph appears right of the API box,
@@ -26,8 +26,9 @@ Beats (script.md "## S11", one voiceover block each):
 4. Everything but V1 goes; the browser holds an envelope addressed http://cheese-app-api-service:9000.
    PONDER (8 s) under the laptop.
 5. The card leaves. The envelope travels to the GREY desk "your laptop's DNS" under the browser: RED
-   "not found". The phone book returns under the laptop; on "the Vite proxy" the courier and the
-   API entry light, on "nginx" a GREY dashed chip "nginx · the next scene" lights it, on "the API"
+   "not found". The phone book returns under the laptop with a GREY dashed chip "nginx · the next
+   scene" above it; on "the Vite proxy" the courier and the
+   API entry light, on "nginx" the nginx chip, on "the API"
    the API box.
 6. Tracker [R] 4 · extra. The API is unplugged from the cable; the courier turns back with a RED 502
    and an empty envelope; the API plugs back in. V1 goes: a 5-row `second tab` (extra) types d09
@@ -133,11 +134,6 @@ def envelope2(rows, color=ROUTE, size: float = 20) -> VGroup:
     return g
 
 
-def new_parts(piece, before):
-    """The submobjects a PLAYS call added to `piece` (to drop them later)."""
-    return [m for m in piece.submobjects if m not in before]
-
-
 def bar_tag(scene, t: Terminal, tg):
     """PLAYS: a row-sized tag on the terminal's title bar."""
     on_bar(t, tg)
@@ -198,7 +194,7 @@ class OneOrigin(VoiceScene):
             b34 = line_bar(pa.code, 1, ROUTE)
             self.play(FadeIn(b34), code_span(pa.code, 1, "'X-Session-ID'").animate.set_color(ROUTE),
                       run_time=0.5)
-            self.add(pa, b34)
+            self.add(pa, b44, b34)
             vo.wait_until("from local storage")
             self.play(FadeOut(VGroup(pa, b44, b34, rel)), FadeIn(pb, shift=UP * 0.15), run_time=0.6)
             ls = VGroup(*[code_span(pb.code, k, "localStorage") for k in (2, 5)])
@@ -251,9 +247,9 @@ class OneOrigin(VoiceScene):
             vo.wait_until("localhost 3000")
             self.play(net.door_pulse("front", TURN), run_time=0.6)
             net.heal(self)
-            before = list(net.submobjects)
-            dc = net.dim_door(self, "api", "for /api/docs and curl", run_time=0.4)
-            dim_parts = new_parts(net, before)
+            net.dim_door(self, "api", None, run_time=0.4)
+            dc = grey_chip("9000 · for /api/docs and curl").next_to(net.frame, DOWN, buff=0.15).align_to(net.frame, LEFT)
+            self.play(FadeIn(dc, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Vite, in the frontend container")
             bk = net.phone_book(self, ((C_VDB, VDB_IP), (C_API, None)), at=BOOK_AT, run_time=0.5)
             assert bk.get_top()[1] < net.frame.get_bottom()[1] - 0.05 and bk.get_right()[0] < SAFE_X
@@ -266,7 +262,7 @@ class OneOrigin(VoiceScene):
             vo.wait_until("That is why uvicorn answered")
             tr.hop(self, 4, "api", run_time=0.5)
             tr.hop(self, 5, "api", run_time=0.5)
-            net.drop(self, bk, *dim_parts, run_time=0.3)
+            net.drop(self, bk, run_time=0.3, extra=[FadeOut(dc)])
             net.book = None
             self.play(FadeIn(tS, shift=UP * 0.2), run_time=0.4)
             tagS = bar_tag(self, tS, extra_row())
@@ -301,8 +297,14 @@ class OneOrigin(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(tS), run_time=0.4)
             tr.clear_hops(self, run_time=0.3)
-            tr.hop(self, 1, "front", run_time=0.5)
-            load_arrow = tr.marks[0]
+            door3 = net.door_point("front") + LEFT * 0.03
+            t_page = label("the page", 20, ROUTE).move_to(tr.browser.at(-0.35, 0.3))
+            t_api = mono("/api/… calls", 20, ROUTE).move_to(tr.browser.at(-0.25, -0.45))
+            a_page = Arrow(t_page.get_right() + RIGHT * 0.05, door3, buff=0.06, color=ROUTE, stroke_width=4,
+                           tip_length=0.18)
+            a_api = Arrow(t_api.get_right() + RIGHT * 0.05, door3, buff=0.06, color=ROUTE, stroke_width=4,
+                          tip_length=0.18)
+            self.play(FadeIn(t_page), GrowArrow(a_page), run_time=0.6)
             vo.wait_until("An origin is")
             self.play(FadeIn(url0, shift=UP * 0.1), run_time=0.4)
             self.play(ReplacementTransform(url0, oc), run_time=0.6)
@@ -310,12 +312,13 @@ class OneOrigin(VoiceScene):
                 vo.wait_until(cue)
                 self.play(Indicate(oc.parts[i], color=TURN, scale_factor=1.15), run_time=0.45)
             vo.wait_until("The page and its API calls")
-            call = tr.page_call(self, "front", run_time=0.6)
+            self.play(FadeIn(t_api), GrowArrow(a_api), run_time=0.6)
             vo.wait_until("share one origin")
-            self.play(load_arrow.animate(rate_func=there_and_back).set_stroke(TURN, width=7),
-                      call.animate(rate_func=there_and_back).set_stroke(TURN, width=7),
+            self.play(a_page.animate(rate_func=there_and_back).set_color(TURN),
+                      a_api.animate(rate_func=there_and_back).set_color(TURN),
                       Indicate(oc, color=ROUTE, scale_factor=1.08), net.door_pulse("front", ROUTE), run_time=0.9)
             tr.heal(self)
+            self.add(a_page, a_api, t_page, t_api)        # above the (opaque) browser again
             vo.wait_until("so the browser has nothing to object to")
             self.play(FadeIn(sop, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("and the API needs no permission slip")
@@ -328,8 +331,7 @@ class OneOrigin(VoiceScene):
         ev.move_to(tr.browser.at(0, -0.05))
         assert ev.width < tr.browser.page.width - 0.1, ev.width
         with self.voiceover(SAY[4]) as vo:
-            tr.clear_hops(self, run_time=0.4)
-            self.play(FadeOut(VGroup(oc, sop, sg, sg_x, nn, cc)), run_time=0.5)
+            self.play(FadeOut(VGroup(oc, sop, sg, sg_x, nn, cc, t_page, t_api, a_page, a_api)), run_time=0.5)
             vo.wait_until("Could the page's JavaScript")
             self.play(FadeIn(ev, shift=DOWN * 0.15), run_time=0.6)
             self.play(Indicate(ev.text, color=ROUTE, scale_factor=1.06), run_time=0.6)
@@ -346,6 +348,7 @@ class OneOrigin(VoiceScene):
             vo.wait_until("The JavaScript runs in your browser")
             self.play(Indicate(tr.browser.frame, color=TURN, scale_factor=1.03), run_time=0.6)
             tr.heal(self)
+            self.add(ev)
             vo.wait_until("and the laptop's DNS")
             self.play(FadeIn(desk, shift=UP * 0.1), run_time=0.4)
             self.play(ev.animate.next_to(desk, UP, buff=0.12).align_to(desk, LEFT), run_time=0.8)
@@ -357,11 +360,11 @@ class OneOrigin(VoiceScene):
             ngx.move_to([0, (net.frame.get_bottom()[1] + bk.get_top()[1]) / 2, 0]).align_to(bk, LEFT)
             assert ngx.get_top()[1] < net.frame.get_bottom()[1] - 0.05 and ngx.get_bottom()[1] > bk.get_top()[1] + 0.05
             assert ngx.get_left()[0] > nf.get_right()[0] + 0.2, (ngx.get_left(), nf.get_right())
+            self.play(FadeIn(ngx, shift=RIGHT * 0.1), run_time=0.4)
             vo.wait_until("the Vite proxy")
             self.play(Indicate(net.courier, color=TOOL, scale_factor=1.3), net.book_light(1), run_time=0.7)
             net.heal(self)
             vo.wait_until("nginx")
-            self.play(FadeIn(ngx, shift=RIGHT * 0.1), run_time=0.4)
             self.play(Indicate(ngx, color=INK, scale_factor=1.1), net.book_light(1), run_time=0.6)
             net.heal(self)
             vo.wait_until("the API")
@@ -461,7 +464,8 @@ class OneOrigin(VoiceScene):
             self.play(modes[0].box.animate.set_stroke(ERR), run_time=0.3)
             bc.heal(self)
             qrow.next_to(modes, DOWN, buff=0.25).align_to(modes, LEFT)
-            self.play(modes[2].box.animate.set_stroke(TURN), FadeIn(qrow, shift=UP * 0.1), run_time=0.4)
+            self.play(modes[2].box.animate.set_stroke(TURN), run_time=0.3)
+            bc.show(self, qrow, run_time=0.4, into=bc.rows)
             bc.heal(self)
             type_capture(self, tC, B40, type_time=0.2)
             out(self, tC, [(s, ERR) for s in B40.at((2, 3))], run_time=0.3)
@@ -478,7 +482,7 @@ class OneOrigin(VoiceScene):
         rcard.move_to([0, 0.1, 0])
         assert rcard.get_top()[1] < PIC_TOP and rcard.width < 2 * SAFE_X, (rcard.get_top(), rcard.width)
         rows = rcard.body
-        t8 = term(P_V2_REACT, rows=10, title=T_NEW)
+        t8 = term(P_V2_REACT, rows=10, title=T_NEW, size=20)      # 20 pt: the prompt + ./docker-shell.sh fit one row
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(bc, illc, tC, cost, turn, qrow)), track(trk, 6), run_time=0.6)
             self.play(FadeIn(rcard, shift=UP * 0.15), run_time=0.6)
@@ -486,7 +490,7 @@ class OneOrigin(VoiceScene):
             ticks = VGroup()
             for f in SEEN:
                 r = rows[[i for i, x in enumerate(TABLE) if x.startswith(f + " ·")][0]]
-                tk = check_glyph(0.26).next_to(r, LEFT, buff=0.1)
+                tk = check_glyph(0.26).next_to(r, RIGHT, buff=0.2)
                 ticks.add(tk)
             self.play(LaggedStart(*[FadeIn(tk, scale=1.4) for tk in ticks], lag_ratio=0.3), run_time=0.9)
             vo.wait_until("pause to match each one")

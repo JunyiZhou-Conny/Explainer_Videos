@@ -114,7 +114,7 @@ S03:
 - en: "Step 3: the README's long uvicorn line. Here, uvicorn is the server: it owns the port and speaks HTTP. FastAPI is the app inside it."
   zh:
   - "第 3 步：README 里那条长长的 uvicorn 命令。"
-  - "这里 uvicorn 是服务器：port 归它管，HTTP 也由它来说。"
+  - "这里 uvicorn 是服务器：port 归它管，HTTP 协议也由它来处理。"
   - "FastAPI 是它里面的应用。"
 - en: "The phrase api dot service colon app is an address: folder api, file service dot py, variable app."
   zh:
@@ -302,7 +302,7 @@ S06:
 - en: "Last setup step: put your project ID into both docker-shell scripts. Ours shows a placeholder."
   zh:
   - "最后一步设置：把你的项目 ID 填进两个 docker-shell 脚本。"
-  - "我们的显示的是一个占位符。"
+  - "我们这里显示的是一个占位符。"
 - en: "The lecture's first step: make sure the vector database is running. Step 1: change into src, vector db, and run docker-shell.sh. Pause and run them."
   zh:
   - "课上的第一步：确保向量数据库在跑。"

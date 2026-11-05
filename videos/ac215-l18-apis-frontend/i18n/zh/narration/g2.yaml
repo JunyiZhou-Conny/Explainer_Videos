@@ -76,7 +76,7 @@ S10:
 - en: "An extra check: every address, even one that does not exist, returns the same HTML. The browser picks the page, not the server."
   zh:
   - "一个额外检查：每个地址，哪怕是不存在的，都返回同样的 HTML。"
-  - "页面由浏览器来挑，不是服务器。"
+  - "挑页面的是浏览器，不是服务器。"
 S11:
 - en: "Now the hook's answer. In the lecture, the page's JavaScript calls the API. Here, every call in api dot js goes to a relative path starting with slash api, with the session ID from local storage."
   zh:
@@ -95,7 +95,7 @@ S11:
 - en: "So the browser only ever talks to localhost 3000. Vite, in the frontend container, carries each slash api request across the network. That is why uvicorn answered on 3000."
   zh:
   - "所以浏览器只和 localhost:3000 说话。"
-  - "Vite 在前端的 container 里，把每个 /api 请求送过网络。"
+  - "Vite 在前端的 container 里，把每个 /api 请求经网络送过去。"
   - "这就是 uvicorn 在 3000 上应答的原因。"
   en_display:
   - "So the browser only ever talks to localhost:3000."
@@ -104,7 +104,7 @@ S11:
 - en: "An origin is the scheme, the host and the port. The page and its API calls share one origin, so the browser has nothing to object to, and the API needs no permission slip."
   zh:
   - "一个 origin 就是协议、主机和 port 三样合在一起。"
-  - "页面和它的 API 调用同属一个 origin，所以浏览器没什么可反对的，API 也不需要许可条。"
+  - "页面和它的 API 调用同属一个 origin，所以浏览器没什么好拦的，API 也不需要许可条。"
 - en: "So, a quick test. Could the page's JavaScript call the API by its container name, port 9000, directly?"
   zh:
   - "那么，快速测一下。"
@@ -286,7 +286,7 @@ S14:
   - null
 - en: "Also, last year's Gemini model is retired: even with a key, its chat fails until the model and region are updated; main uses a current one."
   zh:
-  - "还有，去年的 Gemini 模型已经退役了：就算有密钥，它的聊天也会失败，直到模型和区域更新为止；main 分支用的是当前的模型。"
+  - "还有，去年的 Gemini 模型已经退役了：就算有密钥，它的聊天也会失败，得先更新模型和区域才行；main 分支用的是当前的模型。"
 - en: "And what matters next: CORS middleware that allows every origin, the permission slip main no longer needs."
   zh:
   - "还有接下来要紧的：允许所有 origin 的 CORS 中间件，也就是 main 分支已经不再需要的那张许可条。"

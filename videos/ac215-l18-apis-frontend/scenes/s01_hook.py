@@ -181,8 +181,8 @@ class Hook(VoiceScene):
         assert tC.box.get_bottom()[1] >= -3.59, tC.box.get_bottom()
         tagC = on_bar(tC, extra_row())
         with self.voiceover(SAY[2]) as vo:
-            refit(self, [(tA, 1, [srv_ln], TOP, tagA), (tB, 1, [slips[1]], topB, tagB)],
-                  extra=[FadeIn(tC, shift=UP * 0.3), FadeIn(tagC, shift=UP * 0.3)], run_time=0.7)
+            refit(self, [(tA, 1, [srv_ln], TOP, tagA), (tB, 1, [slips[1]], topB, tagB)], run_time=0.7)
+            self.play(FadeIn(tC, shift=UP * 0.3), FadeIn(tagC, shift=UP * 0.3), run_time=0.4)
             tC.add(tagC)
             cmdC = type_capture(self, tC, B43, type_time=1.3)[0]
             assert len(rows_of(cmdC)) == 7, len(rows_of(cmdC))
@@ -236,7 +236,7 @@ class Hook(VoiceScene):
         m = ArchitectureMap(built=True)
         for n in m.shown:
             if n != "cluster":
-                m.layers[n].set_color(S.GREY).fade(0.55)
+                m.layers[n].set_color(S.GREY).fade(0.72)
         cl = m.layers["cluster"]
         # in this scene the edge labels are the bare port numbers that fly over from V1 ('HTTP 3000'
         # does not fit between the cluster's frame and its arrows), and the cluster's title is one row

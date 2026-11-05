@@ -38,7 +38,8 @@ Beats (script.md "## S12", one voiceover block each):
    prompt, 621; the API box goes dark; a GREY chip "the pytest shell: exit too". The prod box comes
    back alone on the cable, about to start. PONDER (6 s).
 8. The card leaves; the browser goes and the laptop slides left. The strip (new terminal) types
-   e01:1 (extra) → e01: 8 (cut), 11 (from "[emerg]", wrapped, RED); the prod box flashes RED.
+   e01:1 (extra) → e01: 11 (from "[emerg]", wrapped, RED; line 8 left out: the 3-row strip would
+   scroll the command away); the prod box flashes RED.
    CODE(nginx.conf.template: 14) top right, `proxy_pass ${API_URL};` RED; the API's stub leaves the
    cable; the nginx courier sends "cheese-app-api-service ?" to the network's phone book (only
    cheese-app-vector-db in it): RED "not found". A GREEN chip "start the API first". Fade; empty
@@ -152,14 +153,28 @@ def addr_row(path: str, target) -> VGroup:
     return VGroup(a, ar, target).arrange(RIGHT, buff=0.15)
 
 
+def tracker_p_fixed(step: int) -> ReadmeTracker:
+    """tracker_p(step) with its 'README @ e98fa55 › Production images' head put back above the dots.
+    common.tracker() re-arranges the head of a 'README @ ref' tracker with VGroup.arrange(), which
+    re-centres it at the origin (y 0.13, mid-frame): the head is moved back to where a plain
+    tracker keeps it (the same offset over the dots as tracker_r), then the tracker is re-pinned."""
+    tr = tracker_p(step)
+    ref = tracker_r(1)
+    off = ref.head.get_y() - ref.dots.get_y()
+    tr.head.shift(UP * (tr.dots.get_y() + off - tr.head.get_y()))
+    place_tracker(tr)
+    assert abs((tr.head.get_y() - tr.dots.get_y()) - off) < 1e-6 and tr.get_top()[1] <= TRACK_TOP + 1e-6
+    assert tr.get_bottom()[1] > TRACK_BOTTOM - 0.05, tr.get_bottom()
+    return tr
+
+
 class NginxImage(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S12"] == 9, len(SAY)
 
         # ========================================================== 0. who serves in production? the README card
-        trk = tracker_p(1)
+        trk = tracker_p_fixed(1)
         tr = RequestTrace("localhost:3000", rows=("front", "api"), front="react", courier="Vite", caption=False)
-        tr.shift(UP * 0.4)
         net = tr.net
         vite = net.courier
         st0 = strike(vite, S.GREY)
@@ -221,9 +236,11 @@ class NginxImage(VoiceScene):
         node1.move_to([cx1, p1a.code.get_y(), 0])
         ngx1.move_to([cx1, p1b.code.get_y(), 0])
         assert node1.get_left()[0] > right1 + 0.3 and ngx1.get_right()[0] < SAFE_X - 0.1, (right1, ngx1.get_right())
+        arr1 = Arrow(node1.get_bottom(), ngx1.get_top(), buff=0.12, color=OWN, stroke_width=4, tip_length=0.18)
         dist1 = VGroup(folder_icon(0.36, OWN), mono("dist/", 20, OWN)).arrange(RIGHT, buff=0.12)
-        dist1.next_to(node1, DOWN, buff=0.25)
-        arr1 = Arrow(dist1.get_bottom(), ngx1.get_top(), buff=0.12, color=OWN, stroke_width=4, tip_length=0.18)
+        dist1.next_to(arr1.get_start(), RIGHT, buff=0.15).shift(DOWN * 0.3)
+        dist_end = dist1.copy().next_to(arr1.get_end(), RIGHT, buff=0.15).shift(UP * 0.3)
+        assert dist1.get_right()[0] < SAFE_X - 0.05, dist1.get_right()
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(rc, er0, files0)), run_time=0.5)
             self.play(FadeIn(p1a, shift=RIGHT * 0.2), FadeIn(p1b, shift=RIGHT * 0.2), run_time=0.7)
@@ -243,7 +260,7 @@ class NginxImage(VoiceScene):
                       code_span(p1b.code, 3, "/app/dist").animate.set_color(OWN), FadeIn(dist1, shift=DOWN * 0.1),
                       run_time=0.5)
             self.add(p1b, b2)
-            self.play(GrowArrow(arr1), dist1.animate.next_to(ngx1, UP, buff=0.2), node1.animate.set_opacity(0.35),
+            self.play(GrowArrow(arr1), dist1.animate.move_to(dist_end), node1.animate.set_opacity(0.35),
                       run_time=1.0)
             self.play(Indicate(ngx1, color=CONTAINER, scale_factor=1.08), run_time=0.6)
 
@@ -261,7 +278,9 @@ class NginxImage(VoiceScene):
         mp.move_to([(right2 + SAFE_X) / 2, 0, 0]).align_to([0, PIC_TOP - 0.1, 0], UP)
         assert mp.get_left()[0] > right2 + 0.25 and mp.get_right()[0] < SAFE_X - 0.05, (right2, mp.get_right())
         env2 = envelope("/api/…", ROUTE)
-        env2.next_to(mp.arrow, LEFT, buff=0.15).align_to(mp.front, DOWN).shift(DOWN * 0.15)
+        env2.move_to([mp.arrow.get_x() - env2.width / 2 - 0.15, mp.front.get_bottom()[1] - 0.06 - env2.height / 2, 0])
+        env_dy = (mp.front.get_bottom()[1] - mp.api.get_top()[1]) - env2.height - 0.12
+        assert env_dy > 0.1, env_dy
         ng2 = courier_chip("nginx").move_to(mp.courier).align_to(mp.front.frame, RIGHT).shift(LEFT * 0.15)
         rows2 = VGroup(addr_row("/newsletters", ok_chip("index.html", mono_font=True)),
                        addr_row("/chat", ok_chip("index.html", mono_font=True)),
@@ -286,7 +305,7 @@ class NginxImage(VoiceScene):
             vo.wait_until("slash api goes to the API container")
             self.play(code_span(p2a.code, 3, "${API_URL}").animate.set_color(ROUTE), FadeIn(env2), run_time=0.4)
             self.add(p2a, b3)
-            self.play(env2.animate.shift(DOWN * (mp.api.get_top()[1] - mp.front.get_bottom()[1] + 0.3)),
+            self.play(env2.animate.shift(DOWN * env_dy),
                       Indicate(mp.arrow, color=ROUTE, scale_factor=1.05), run_time=0.8)
             self.play(FadeOut(env2), Indicate(mp.api.name, color=TURN, scale_factor=1.1), run_time=0.5)
             self.add(mp)
@@ -426,6 +445,10 @@ class NginxImage(VoiceScene):
 
         # ========================================================== 6. LECTURE 42: only the outside changes
         ref6 = lref("42 (APIs)")
+        # lecture_ref() reads '42 (APIs)' as a range ('slides 42'): one slide reads 'slide 42' (same tag, same place)
+        assert ref6.text.text == "Lecture18·slides42(APIs)", ref6.text.text
+        ref6 = tag("Lecture 18 · slide 42 (APIs)", S.GREY)
+        ref6.move_to([6.6 - ref6.width / 2, 3.6 - ref6.height / 2, 0])
         tr6 = RequestTrace("localhost:3000", rows=("front", "api"), front="react", courier="Vite", caption=False)
         tr6.shift(UP * 0.75)
         n6 = tr6.net
@@ -491,6 +514,11 @@ class NginxImage(VoiceScene):
             vo.wait_until("It will not start")
             self.play(n6.door_pulse("front"), run_time=0.6)
             tr6.heal(self)
+            vo.wait_until("So, a quick test")
+            self.play(Indicate(n6.courier, color=TOOL, scale_factor=1.2), run_time=0.7)
+            tr6.heal(self)
+            self.play(Indicate(n6.boxes["api"].name, color=S.GREY, scale_factor=1.1), run_time=0.7)
+            tr6.heal(self)
         card7 = ponder(self, "The production frontend container\nwon't start while the API is down.\n"
                              "Why would a page server care?", seconds=6)
 
@@ -503,8 +531,8 @@ class NginxImage(VoiceScene):
             l8 = type_capture(self, s7, E01, type_time=0.8)[0]
             pin(self, l8, beside(extra_row(), l8, buff=0.4))
             err11 = from_phrase(E01.line(11), "[emerg]")
-            o9 = out(self, s7, [cut(E01.line(8), "Running envsubst on"), (err11, ERR)], wrap=True, run_time=0.5)
-            self.play(n6.light("front", ERR), *[Indicate(r, color=ERR, scale_factor=1.03) for r in o9[1:]],
+            o9 = out(self, s7, [(err11, ERR)], wrap=True, run_time=0.5)
+            self.play(n6.light("front", ERR), *[Indicate(r, color=ERR, scale_factor=1.03) for r in o9],
                       run_time=0.7)
             tr6.heal(self)
             self.add(s7)
@@ -520,13 +548,14 @@ class NginxImage(VoiceScene):
             self.play(FadeIn(p8, shift=LEFT * 0.15), run_time=0.4)
             self.play(code_span(p8.code, 0, "proxy_pass ${API_URL};").animate.set_color(ERR), run_time=0.4)
             self.add(p8)
-            book = n6.phone_book(self, entries=((C_VDB, VDB_IP),),
+            book = n6.phone_book(self, entries=((C_VDB, None),),
                                  at=((x_r + SAFE_X) / 2, p8.get_bottom()[1] - 0.25 - 0.55), run_time=0.5)
             assert book.get_left()[0] > x_r - 0.05 and book.get_right()[0] < SAFE_X - 0.05, (book.get_left(), book.get_right())
-            q8 = mono(f"{C_API} ?", 20, ROUTE)
-            q8.move_to(n6.courier.get_center() + UP * 0.38)
-            self.play(FadeIn(q8, scale=0.8), run_time=0.3)
-            self.play(q8.animate.next_to(book, DOWN, buff=0.15).align_to(book, LEFT), run_time=0.8)
+            q8 = mono(f"{C_API} ?", 20, ROUTE).next_to(book, DOWN, buff=0.15).align_to(book, LEFT)
+            look = DashedLine(n6.courier.get_top() + UP * 0.05, book.frame.get_left() + LEFT * 0.05, color=ROUTE,
+                              stroke_width=3, dash_length=0.1).add_tip(tip_length=0.14)
+            self.play(Create(look), run_time=0.6)
+            self.play(FadeIn(q8, shift=DOWN * 0.1), run_time=0.4)
             self.play(n6.book_light(0, TURN), run_time=0.6)
             tr6.heal(self)
             vo.wait_until("and the API is gone")
@@ -540,5 +569,5 @@ class NginxImage(VoiceScene):
             self.play(FadeIn(ok8, shift=LEFT * 0.1), run_time=0.6)
             self.play(Indicate(ok8.text, color=OWN, scale_factor=1.1), run_time=0.6)
 
-        self.play(FadeOut(VGroup(tr6, p8, q8, nf, ok8)), FadeOut(s7), FadeOut(trk), run_time=0.7)
+        self.play(FadeOut(VGroup(tr6, p8, q8, nf, ok8, look)), FadeOut(s7), FadeOut(trk), run_time=0.7)
         self.wait(0.3)
