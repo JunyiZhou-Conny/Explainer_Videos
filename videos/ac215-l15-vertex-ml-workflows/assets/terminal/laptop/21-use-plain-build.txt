@@ -1,0 +1,7 @@
+$ sed -i -e 's|^docker build -t $IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .|#&|' -e 's|^#docker build -t $IMAGE_NAME -f Dockerfile .|docker build -t $IMAGE_NAME -f Dockerfile .|' docker-shell.sh && sed -n '17,21p' docker-shell.sh
+docker build -t $IMAGE_NAME -f Dockerfile .
+# M1/2 chip macs use this line
+#docker build -t $IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .
+
+# Run Container
+[exit 0]

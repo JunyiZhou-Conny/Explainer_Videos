@@ -1,0 +1,78 @@
+$ sh docker-shell.sh
+
+[+] Building 0.0s (19/19) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 2.13kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:20.04                                          0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [ 1/14] FROM docker.io/library/ubuntu:20.04                                                          0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 2.53kB                                                                      0.0s
+ => CACHED [ 2/14] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificate  0.0s
+ => CACHED [ 3/14] RUN ARCH=$(dpkg --print-architecture) &&     if [ "$ARCH" = "arm64" ] || [ "$ARCH" =  0.0s
+ => CACHED [ 4/14] RUN install -m 0755 -d /etc/apt/keyrings                                              0.0s
+ => CACHED [ 5/14] RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/  0.0s
+ => CACHED [ 6/14] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                            0.0s
+ => CACHED [ 7/14] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docke  0.0s
+ => CACHED [ 8/14] RUN apt-get update &&     apt-get install -y jq docker-ce                             0.0s
+ => CACHED [ 9/14] RUN apt-get update &&     apt-get install -y --no-install-recommends python3.9 pytho  0.0s
+ => CACHED [10/14] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)  0.0s
+ => CACHED [11/14] WORKDIR /app                                                                          0.0s
+ => CACHED [12/14] ADD --chown=app:app Pipfile /app/                                                     0.0s
+ => CACHED [13/14] RUN cd /app && pipenv lock && pipenv sync                                             0.0s
+ => CACHED [14/14] ADD --chown=app:app . /app                                                            0.0s
+ => exporting to image                                                                                   0.0s
+ => => exporting layers                                                                                  0.0s
+ => => writing image sha256:d3dc546c0eee0147492d0d5470415abc63bb11b7fd9084bd9b0a66aa694d7fb6             0.0s
+ => => naming to docker.io/library/model-deployment-cli-aws                                              0.0s
+Container is running!!!
+Testing AWS connectivity...
+
+aws: [ERROR]: An error occurred (NoCredentials): Unable to locate credentials. You can configure credentials by running "aws login".
+Launching subshell in virtual environment...
+app@131d6fc3a1e7:/app$  source /home/app/.local/share/virtualenvs/app-4PlAip0Q/bin/activate
+(app) app@131d6fc3a1e7:/app$ python cli.py --predict
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /home/app/.config/sagemaker/config.yaml
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/sagemaker/__init__.py:86: SageMakerV2DeprecationWarning: You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation()
+You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+2026-11-05 05:05:55.001548: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-11-05 05:05:55.002892: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:05:55.006284: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:05:55.013313: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1793855155.027365      24 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1793855155.031765      24 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-11-05 05:05:55.047048: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Predict using endpoint
+Error: endpoint_config.json not found. Please deploy the model first.
+You can also manually set the endpoint name in the code.
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/sagemaker/base_predictor.py:140: SageMakerV2DeprecationWarning: Predictor is part of the SageMaker Python SDK v2, which is on path of deprecation. In v3, use `sagemaker.core.resources.Endpoint`.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation(
+Predictor is part of the SageMaker Python SDK v2, which is on path of deprecation. In v3, use `sagemaker.core.resources.Endpoint`.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+image_files: ['data/brie-1.jpg', 'data/gruyere-2.jpg', 'data/parmigiano-2.jpg', 'data/brie-2.jpg', 'data/parmigiano-1.jpg']
+Image: data/parmigiano-2.jpg
+Error invoking endpoint: Unable to locate credentials
+Make sure the endpoint 'model-mobilenetv2-train-base-True-v1-endpoint' exists and is in service
+Image: data/brie-2.jpg
+Error invoking endpoint: Unable to locate credentials
+Make sure the endpoint 'model-mobilenetv2-train-base-True-v1-endpoint' exists and is in service
+Image: data/brie-2.jpg
+Error invoking endpoint: Unable to locate credentials
+Make sure the endpoint 'model-mobilenetv2-train-base-True-v1-endpoint' exists and is in service
+Image: data/brie-2.jpg
+Error invoking endpoint: Unable to locate credentials
+Make sure the endpoint 'model-mobilenetv2-train-base-True-v1-endpoint' exists and is in service
+Image: data/gruyere-2.jpg
+Error invoking endpoint: Unable to locate credentials
+Make sure the endpoint 'model-mobilenetv2-train-base-True-v1-endpoint' exists and is in service
+(app) app@131d6fc3a1e7:/app$ exit
+exit
+[exit 0]

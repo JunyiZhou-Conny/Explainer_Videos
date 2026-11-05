@@ -1,0 +1,15 @@
+$ sed -i 's/^sagemaker = "\*"/sagemaker = "<3"/' Pipfile && git diff Pipfile
+diff --git a/Pipfile b/Pipfile
+index 1e96838..b9932cb 100755
+--- a/Pipfile
++++ b/Pipfile
+@@ -7,7 +7,7 @@ verify_ssl = true
+ 
+ [packages]
+ boto3 = "*"
+-sagemaker = "*"
++sagemaker = "<3"
+ pillow = "*"
+ tensorflow = "==2.18.0"
+ numpy = "*"
+[exit 0]

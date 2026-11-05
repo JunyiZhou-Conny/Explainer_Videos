@@ -1,0 +1,207 @@
+$ sh docker-shell.sh
+
+[+] Building 0.0s (11/11) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 875B                                                                     0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-slim                                      0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [1/6] FROM docker.io/library/python:3.11-slim                                                        0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 223B                                                                        0.0s
+ => CACHED [2/6] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &&     0.0s
+ => CACHED [3/6] WORKDIR /app                                                                            0.0s
+ => CACHED [4/6] ADD Pipfile /app/                                                                       0.0s
+ => CACHED [5/6] RUN pipenv lock && pipenv install --system --deploy                                     0.0s
+ => CACHED [6/6] ADD . /app                                                                              0.0s
+ => exporting to image                                                                                   0.0s
+ => => exporting layers                                                                                  0.0s
+ => => writing image sha256:1afe65137cbc8cc1d666adae0ff467eabb4970110ec098d1ec8f5106414fec85             0.0s
+ => => naming to docker.io/library/cheese-app-data-processor                                             0.0s
+root@fa32e95fc9d7:/app# python cli.py --clean
+2026-11-05 05:39:06.848728: I tensorflow/core/util/port.cc:110] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-11-05 05:39:06.850532: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:39:06.884007: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:39:06.884474: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-11-05 05:39:07.601222: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+S3_BUCKET_NAME: cheese-app-ml-workflow-demo
+Cleaning dataset
+Labels: ['parmigiano cheese', 'gruyere cheese', 'brie cheese', 'gouda cheese']
+Processing label: parmigiano cheese
+difPy preparing files: [100%]
+difPy searching files: [100%]
+Search Results:
+ {}
+
+Lower Quality Files:
+ []
+Processing label: gruyere cheese
+difPy preparing files: [100%]
+difPy searching files: [100%]
+Search Results:
+ {}
+
+Lower Quality Files:
+ []
+Processing label: brie cheese
+difPy preparing files: [100%]
+difPy searching files: [100%]
+Search Results:
+ {}
+
+Lower Quality Files:
+ []
+Processing label: gouda cheese
+difPy preparing files: [100%]
+difPy searching files: [100%]
+Search Results:
+ {}
+
+Lower Quality Files:
+ []
+Labels: ['parmigiano cheese', 'gruyere cheese', 'brie cheese', 'gouda cheese']
+uploading file /persistent/dataset/clean.zip
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/boto3/s3/transfer.py", line 452, in upload_file
+    future.result()
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/futures.py", line 111, in result
+    return self._coordinator.result()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/futures.py", line 287, in result
+    raise self._exception
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/tasks.py", line 142, in __call__
+    return self._execute_main(kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/tasks.py", line 165, in _execute_main
+    return_value = self._main(**kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/tasks.py", line 351, in _main
+    response = client.create_multipart_upload(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/botocore/client.py", line 606, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/botocore/client.py", line 1094, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.exceptions.ClientError: An error occurred (InvalidAccessKeyId) when calling the CreateMultipartUpload operation: The AWS Access Key Id you provided does not exist in our records.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/cli.py", line 129, in <module>
+    main(args)
+  File "/app/cli.py", line 68, in main
+    s3_client.upload_file(zip_file, S3_BUCKET_NAME, "clean.zip")
+  File "/usr/local/lib/python3.11/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/boto3/s3/inject.py", line 175, in upload_file
+    return transfer.upload_file(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/boto3/s3/transfer.py", line 458, in upload_file
+    raise S3UploadFailedError(
+boto3.exceptions.S3UploadFailedError: Failed to upload /persistent/dataset/clean.zip to cheese-app-ml-workflow-demo/clean.zip: An error occurred (InvalidAccessKeyId) when calling the CreateMultipartUpload operation: The AWS Access Key Id you provided does not exist in our records.
+root@fa32e95fc9d7:/app# python cli.py --prepare
+2026-11-05 05:39:12.347815: I tensorflow/core/util/port.cc:110] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-11-05 05:39:12.350007: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:39:12.387893: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:39:12.388397: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-11-05 05:39:13.136291: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+S3_BUCKET_NAME: cheese-app-ml-workflow-demo
+Prepare dataset for training
+Label Directories: ['parmigiano cheese', 'gruyere cheese', 'brie cheese', 'gouda cheese']
+Full size of the dataset: 10
+data_list: [('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_3.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_4.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_9.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_7.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_2.jpg')]
+Full size of the dataset: 20
+data_list: [('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_3.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_4.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_9.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_7.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_2.jpg')]
+Full size of the dataset: 30
+data_list: [('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_3.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_4.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_9.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_7.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_2.jpg')]
+Full size of the dataset: 40
+data_list: [('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_3.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_4.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_9.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_7.jpg'), ('parmigiano cheese', '/persistent/dataset/clean/parmigiano cheese/Image_2.jpg')]
+train_xy count: 32
+validate_xy count: 8
+Creating shard: 0  from records: 0 to 33
+/persistent/dataset/tfrecords/train_0000.tfrecords
+Total shards created: 1
+Execution time (mins) 0.007283246517181397
+Creating shard: 0  from records: 0 to 9
+/persistent/dataset/tfrecords/val_0000.tfrecords
+Total shards created: 1
+Execution time (mins) 0.003805847962697347
+uploading file /persistent/dataset/tfrecords.zip
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/boto3/s3/transfer.py", line 452, in upload_file
+    future.result()
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/futures.py", line 111, in result
+    return self._coordinator.result()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/futures.py", line 287, in result
+    raise self._exception
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/tasks.py", line 142, in __call__
+    return self._execute_main(kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/tasks.py", line 165, in _execute_main
+    return_value = self._main(**kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/upload.py", line 796, in _main
+    client.put_object(Bucket=bucket, Key=key, Body=body, **extra_args)
+  File "/usr/local/lib/python3.11/site-packages/botocore/client.py", line 606, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/botocore/client.py", line 1094, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.exceptions.ClientError: An error occurred (InvalidAccessKeyId) when calling the PutObject operation: The AWS Access Key Id you provided does not exist in our records.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/cli.py", line 129, in <module>
+    main(args)
+  File "/app/cli.py", line 95, in main
+    s3_client.upload_file(zip_file, S3_BUCKET_NAME, "tfrecords.zip")
+  File "/usr/local/lib/python3.11/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/boto3/s3/inject.py", line 175, in upload_file
+    return transfer.upload_file(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/boto3/s3/transfer.py", line 458, in upload_file
+    raise S3UploadFailedError(
+boto3.exceptions.S3UploadFailedError: Failed to upload /persistent/dataset/tfrecords.zip to cheese-app-ml-workflow-demo/tfrecords.zip: An error occurred (InvalidAccessKeyId) when calling the PutObject operation: The AWS Access Key Id you provided does not exist in our records.
+root@fa32e95fc9d7:/app# ls -la /persistent/dataset; ls -la /persistent/dataset/tfrecords
+total 33584
+drwxr-sr-x 5 root root     4096 Nov  5 05:39 .
+drwxr-sr-x 3 root root     4096 Nov  5 05:12 ..
+drwxr-sr-x 6 root root     4096 Nov  5 05:13 clean
+-rw-r--r-- 1 root root 14171510 Nov  5 05:39 clean.zip
+drwxr-sr-x 6 root root     4096 Nov  5 05:13 raw
+-rw-r--r-- 1 root root 14171510 Nov  5 05:13 raw.zip
+drwxr-sr-x 2 root root     4096 Nov  5 05:39 tfrecords
+-rw-r--r-- 1 root root  6023770 Nov  5 05:39 tfrecords.zip
+total 5896
+drwxr-sr-x 2 root root    4096 Nov  5 05:39 .
+drwxr-sr-x 5 root root    4096 Nov  5 05:39 ..
+-rw-r--r-- 1 root root 4818784 Nov  5 05:39 train_0000.tfrecords
+-rw-r--r-- 1 root root 1204696 Nov  5 05:39 val_0000.tfrecords
+root@fa32e95fc9d7:/app# for d in /persistent/dataset/clean/*; do echo "$(ls "$d" | wc -l) $d"; done
+10 /persistent/dataset/clean/brie cheese
+10 /persistent/dataset/clean/gouda cheese
+10 /persistent/dataset/clean/gruyere cheese
+10 /persistent/dataset/clean/parmigiano cheese
+root@fa32e95fc9d7:/app# pip list 2>/dev/null | grep -i -E "^(tensorflow|difpy|dask|boto3|scikit-learn) "
+boto3                        1.43.124
+dask                         2026.8.0
+difPy                        4.2.1
+scikit-learn                 1.9.1
+tensorflow                   2.13.1
+root@fa32e95fc9d7:/app# exit
+exit
+[exit 0]

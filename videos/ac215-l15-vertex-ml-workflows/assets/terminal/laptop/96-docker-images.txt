@@ -1,0 +1,8 @@
+$ docker image ls
+IMAGE                              ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-data-collector:latest   4d3309e2c6ed        600MB             0B        
+cheese-app-workflow:latest         78d7f25ee3b3       1.09GB             0B        
+python:3.11-slim                   60dff04c7ccb        127MB             0B        
+python:3.9-slim                    3be9212992dd        123MB             0B        
+ubuntu:20.04                       eb583914b0b9       73.2MB             0B        
+[exit 0]

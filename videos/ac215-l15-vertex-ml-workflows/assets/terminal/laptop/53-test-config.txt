@@ -1,0 +1,7 @@
+$ aws sts get-caller-identity
+aws s3 ls
+
+aws: [ERROR]: An error occurred (NoCredentials): Unable to locate credentials. You can configure credentials by running "aws login".
+
+aws: [ERROR]: An error occurred (NoCredentials): Unable to locate credentials. You can configure credentials by running "aws login".
+[exit 253]

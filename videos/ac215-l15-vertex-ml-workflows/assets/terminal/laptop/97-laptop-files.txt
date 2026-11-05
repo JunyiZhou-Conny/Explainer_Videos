@@ -1,0 +1,33 @@
+$ ls -la ~ ~/persistent-folder ~/persistent-folder/dataset; cd ~/ml-workflow-aws && git status --short
+/home/student:
+total 28
+drwxr-sr-x    7 student  student       4096 Nov  5 05:12 .
+drwxr-xr-x    1 root     root          4096 Nov  5 04:28 ..
+drwxr-sr-x    3 student  student       4096 Nov  5 05:11 .aws
+drwxrwsrwx    3 student  student       4096 Nov  5 04:28 .docker
+drwxr-sr-x    5 student  student       4096 Nov  5 05:11 ml-workflow-aws
+drwxr-sr-x    6 student  student       4096 Nov  5 05:08 model-deployment-aws
+drwxr-sr-x    3 root     root          4096 Nov  5 05:12 persistent-folder
+
+/home/student/persistent-folder:
+total 12
+drwxr-sr-x    3 root     root          4096 Nov  5 05:12 .
+drwxr-sr-x    7 student  student       4096 Nov  5 05:12 ..
+drwxr-sr-x    5 root     root          4096 Nov  5 05:39 dataset
+
+/home/student/persistent-folder/dataset:
+total 33584
+drwxr-sr-x    5 root     root          4096 Nov  5 05:39 .
+drwxr-sr-x    3 root     root          4096 Nov  5 05:12 ..
+drwxr-sr-x    6 root     root          4096 Nov  5 05:13 clean
+-rw-r--r--    1 root     root      14171510 Nov  5 05:39 clean.zip
+drwxr-sr-x    6 root     root          4096 Nov  5 05:13 raw
+-rw-r--r--    1 root     root      14171510 Nov  5 05:13 raw.zip
+drwxr-sr-x    2 root     root          4096 Nov  5 05:39 tfrecords
+-rw-r--r--    1 root     root       6023770 Nov  5 05:39 tfrecords.zip
+ M src/data-processor/docker-shell.sh
+ M src/model-training/docker-shell.sh
+ M src/workflow/Pipfile
+?? src/data-collector/__pycache__/
+?? src/data-processor/__pycache__/
+[exit 0]

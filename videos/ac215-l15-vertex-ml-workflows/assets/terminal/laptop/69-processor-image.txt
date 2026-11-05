@@ -1,0 +1,9 @@
+$ docker image ls cheese-app-data-processor; docker image rm cheese-app-data-processor >/dev/null; docker builder prune -af >/dev/null; docker system df
+IMAGE                              ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-data-processor:latest   1afe65137cbc       2.58GB             0B        
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          4         0         796.3MB   671.2MB (84%)
+Containers      0         0         0B        0B
+Local Volumes   0         0         0B        0B
+Build Cache     0         0         0B        0B
+[exit 0]

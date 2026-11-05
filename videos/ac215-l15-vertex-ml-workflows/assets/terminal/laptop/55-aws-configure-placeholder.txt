@@ -1,0 +1,6 @@
+$ aws configure
+AWS Access Key ID [None]: PLACEHOLDER_NOT_A_REAL_ACCESS_KEY
+AWS Secret Access Key [None]: PLACEHOLDER_NOT_A_REAL_SECRET_KEY_000000000000
+Default region name [us-east-1]:
+Default output format [json]:
+[exit 0]

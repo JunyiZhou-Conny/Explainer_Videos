@@ -1,0 +1,16 @@
+00:00 Three numbers or four?
+01:10 Where we are, in AWS words
+02:33 A user, a role and a bucket
+04:37 The CLI container: two one-line fixes
+07:22 Where does preprocessing live?
+09:01 --prepare: a SavedModel in a tarball
+10:41 --deploy: model, endpoint configuration, endpoint
+12:42 --predict: 150,528 numbers per photo
+14:43 --delete: turn off the meter
+16:27 From four terminals to one workflow
+18:27 Collector and processor, by hand
+20:34 Train locally, sign the model
+22:35 Build and push: your own registry
+24:03 The workflow container and one processing job
+25:45 A pipeline drawn by references
+28:39 Tear down, recap, test yourself

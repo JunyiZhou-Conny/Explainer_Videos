@@ -1,0 +1,4 @@
+$ docker image ls cheese-app-workflow
+IMAGE                        ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-workflow:latest   78d7f25ee3b3       1.09GB             0B        
+[exit 0]
