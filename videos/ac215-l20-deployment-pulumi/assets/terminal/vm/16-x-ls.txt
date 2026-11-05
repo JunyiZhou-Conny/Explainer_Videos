@@ -1,0 +1,12 @@
+$ ls -la
+total 56
+drwxr-xr-x 5 student student  4096 Nov  5 22:07 .
+drwxr-xr-x 1 root    root     4096 Nov  5 22:07 ..
+-rw-r--r-- 1 student student   220 May  7 20:33 .bash_logout
+-rw-r--r-- 1 student student  3526 May  7 20:33 .bashrc
+-rw-r--r-- 1 student student   807 May  7 20:33 .profile
+drwxrwxrwx 3 root    root     4096 Nov  5 22:07 conf
+-rw-r--r-- 1 student student 23866 Nov  5 22:07 get-docker.sh
+drwxrwxrwx 2 root    root     4096 Nov  5 22:07 persistent-folder
+drwxrwxrwx 2 root    root     4096 Nov  5 22:07 secrets
+[exit 0]

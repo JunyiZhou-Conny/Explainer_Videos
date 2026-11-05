@@ -1,0 +1,14 @@
+$ sudo docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}'; curl -s http://localhost:3000/ | grep -o '<title>[^<]*</title>'; sudo docker logs frontend 2>&1 | head -10
+NAMES                  IMAGE                             PORTS
+frontend               dlops/cheese-app-frontend-react   0.0.0.0:3000->3000/tcp
+api-service            dlops/cheese-app-api-service      0.0.0.0:9000->9000/tcp
+cheese-app-vector-db   chromadb/chroma                   0.0.0.0:8000->8000/tcp
+<title>Formaggio</title>
+   ▲ Next.js 15.0.2
+   - Local:        http://localhost:3000
+   - Network:      http://0.0.0.0:3000
+
+ ✓ Starting...
+ ✓ Ready in 67ms
+BASE_API_URL: /api-service
+[exit 0]

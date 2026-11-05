@@ -1,0 +1,58 @@
+$ sudo docker run -d --name api-service \
+-v "$(pwd)/persistent-folder/":/persistent \
+-v "$(pwd)/secrets/":/secrets \
+-p 9000:9000 \
+-e GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-service.json \
+-e GCS_BUCKET_NAME=cheese-app-models \
+-e GCP_PROJECT=ac215-project \
+-e CHROMADB_HOST=cheese-app-vector-db \
+-e CHROMADB_PORT=8000 \
+--network cheese-app-network dlops/cheese-app-api-service
+Unable to find image 'dlops/cheese-app-api-service:latest' locally
+latest: Pulling from dlops/cheese-app-api-service
+8e44f01296e3: Pulling fs layer
+9c936843e78d: Pulling fs layer
+5fb8885b1b19: Pulling fs layer
+446c5c2d889d: Pulling fs layer
+fe0626f0f06f: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+c395a75f0e24: Pulling fs layer
+9655c5af9cef: Pulling fs layer
+1c7ad94de92d: Pulling fs layer
+446c5c2d889d: Waiting
+fe0626f0f06f: Waiting
+4f4fb700ef54: Waiting
+c395a75f0e24: Waiting
+9655c5af9cef: Waiting
+1c7ad94de92d: Waiting
+9c936843e78d: Verifying Checksum
+9c936843e78d: Download complete
+446c5c2d889d: Verifying Checksum
+446c5c2d889d: Download complete
+5fb8885b1b19: Verifying Checksum
+5fb8885b1b19: Download complete
+4f4fb700ef54: Verifying Checksum
+4f4fb700ef54: Download complete
+8e44f01296e3: Verifying Checksum
+8e44f01296e3: Download complete
+c395a75f0e24: Verifying Checksum
+c395a75f0e24: Download complete
+1c7ad94de92d: Verifying Checksum
+1c7ad94de92d: Download complete
+8e44f01296e3: Pull complete
+9c936843e78d: Pull complete
+5fb8885b1b19: Pull complete
+446c5c2d889d: Pull complete
+fe0626f0f06f: Verifying Checksum
+fe0626f0f06f: Download complete
+fe0626f0f06f: Pull complete
+4f4fb700ef54: Pull complete
+c395a75f0e24: Pull complete
+9655c5af9cef: Verifying Checksum
+9655c5af9cef: Download complete
+9655c5af9cef: Pull complete
+1c7ad94de92d: Pull complete
+Digest: sha256:3412a2265f9bd4c605665dc4f14460f2a3f29cf880063ceb8e3563d20c26f46c
+Status: Downloaded newer image for dlops/cheese-app-api-service:latest
+fa0c5ab73b5ec6b4c4a929bbb05606a57013e2a703cf23de1abea62d522896e9
+[exit 0]

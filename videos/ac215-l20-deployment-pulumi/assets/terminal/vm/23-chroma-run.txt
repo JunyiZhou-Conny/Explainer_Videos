@@ -1,0 +1,11 @@
+$ sudo docker run -d \
+    --name cheese-app-vector-db \
+    --network cheese-app-network \
+    -p 8000:8000 \
+    -e IS_PERSISTENT=TRUE \
+    -e ANONYMIZED_TELEMETRY=FALSE \
+    -v ./docker-volumes/chromadb:/chroma/chroma \
+    --restart always \
+    chromadb/chroma
+6eb3a99fc2183859b3e997f8284d8df0ef601f096a547565ddfbce44afc79f16
+[exit 0]

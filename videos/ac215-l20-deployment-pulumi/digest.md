@@ -1,16 +1,18 @@
 # L20 · Deployment: Pulumi — tutorial digest
 
 - **Ed lesson:** https://edstem.org/us/courses/97373/lessons/166045/ (I could not open Ed; this digest is built from the course site and the repositories.)
-- **Course-site entry:** `tutorials_demo.md` → "Lecture 20: Deployment: Pulumi", with two tutorials: "Deployment of the full app to GCP (Manual)" and "Deployment to GCP with Pulumi".
+- **Course-site entry** (`harvard-iacs.github.io/2026-AC215/tutorials_demo/`, fetched live 2026-11-05): "Lecture 20: Deployment: Pulumi", with two tutorials: "Deployment of the full app to GCP (Manual)" → `cheese-app-v3?tab=readme-ov-file#deployment-to-gcp-manual`, and "Deployment to GCP with Pulumi" ("Automate the same deployment with Pulumi: build and push images to GCR, create the compute instance, provision it, and launch the containers") → `#deployment-to-gcp-single-vm-instance`. Both links point at the default branch (`main`), no branch or commit.
+- **Pins re-checked 2026-11-05 with `git ls-remote`:** `cheese-app-v3` `main` is still `3ecef56` (unchanged since 2025-11-28), so this digest follows `main` @ `3ecef56`. `cheese-app-v2` `main` moved twice on 2026-11-05 (to `e98fa55`, then `447b5c3`, a refactored app); the 2025 v2 that v3 was built from is preserved as branch `2025` = `14f2a14`. `cheese-app-v4` `main` is unchanged (`033f187`).
 - **Repositories used:**
 
 | repo | branch | commit (full hash) | commit date | role |
 |---|---|---|---|---|
 | `dlops-io/cheese-app-v3` | `main` (default) | `3ecef56fea879ac480d260c0906cd95baf05179a` | Fri Nov 28 16:00:06 2025 -0500 | **the tutorial** |
 | `dlops-io/cheese-app-v3` | `cluster-updates` | `e55178c0f66d8636d00e7deea7e744640bb8d595` | Thu Nov 20 22:45:10 2025 +0530 | K8s experiments, mostly for L22 (see §7) |
-| `dlops-io/cheese-app-v2` | `main` (default) | `14f2a1420b43e9f24e977a9e67b53d7e2614013d` | Sun Nov 16 09:16:15 2025 -0500 | the previous app version (L18), used for the v2 → v3 diff |
+| `dlops-io/cheese-app-v2` | `2025` (was `main` until 2026-11-05) | `14f2a1420b43e9f24e977a9e67b53d7e2614013d` | Sun Nov 16 09:16:15 2025 -0500 | the 2025 app version that v3 grew from, used for the v2 → v3 diff. v2 `main` is now `447b5c3` (2026-11-05, refactored; the app L18's video builds), which v3 does **not** contain (see §7) |
+| `dlops-io/cheese-app-v3` | `work/shivas` (unmerged) | `976c4bb8f5c3012bca6173312ea170cc9f21d834` | Sun Nov 1 08:32:33 2026 -0500 | **context only, not followed.** Five commits on top of `3ecef56` (2026-10-31/11-01: "refactored api-service", "refactored vector-db", "refactored frontend", "refactored for deployment", "added deploy_vm"). It deletes `deploy_single_vm/` and adds `deploy_vm/` (a startup-script VM with no SSH, stacks `cheese-app-base`/`cheese-app-images`) and `k8s/` YAML, but leaves `README.md` unchanged. The course site links `main`, so L20 follows `main` |
 | `dlops-io/cheese-app-v3` | `pipenv` | `0012c9a512b1a266f4c87fad09d84a3b52470f5b` | Wed Apr 23 08:26:16 2025 -0400 | old Ansible-based version (an ancestor of `main`), used only for the Ansible → Pulumi mapping in §7 |
-| `dlops-io/cheese-app-v4` | `main` (default) | `033f18713b9e1e7985a3080e85edab3ff01cefef` | Tue Dec 2 14:13:03 2025 -0500 | used only to confirm that v4's `deploy_images/` and `deploy_single_vm/` are identical to v3's |
+| `dlops-io/cheese-app-v4` | `main` (default) | `033f18713b9e1e7985a3080e85edab3ff01cefef` | Tue Dec 2 14:13:03 2025 -0500 | used only to confirm that v4's `deploy_images/` and `deploy_single_vm/` are identical to v3's (v4's `work/shivas` = `main`, re-checked 2026-11-05) |
 
 - **README sections covered** (in `cheese-app-v3/README.md`):
   - [`#deployment-to-gcp-manual`](https://github.com/dlops-io/cheese-app-v3?tab=readme-ov-file#deployment-to-gcp-manual), README lines 4–222
@@ -204,7 +206,7 @@ Concepts marked **[ANIMATE]** are the ones that most deserve a 3Blue1Brown-style
 ### Part A: manual deployment (README lines 4–222)
 
 **A0. Check that everything runs locally (README lines 10–16).**
-- Action: have the v2/v3 containers running locally: ChromaDB, api-service at `http://localhost:9000/docs`, frontend at `http://localhost:3000/`.
+- Action: have *this repo's* (v3) containers running locally: ChromaDB, api-service at `http://localhost:9000/docs`, frontend at `http://localhost:3000/`. If you followed L18 after 2026-11-05, your cheese-app-v2 is the refactored `main` (`447b5c3`), a different app from the one v3 deploys (§7); run v3's own `src/*/docker-shell.sh` here.
 - Checkpoint: the home page loads. Use **`http://localhost:9000/status` → `{"version":"3.0"}`** as the API check rather than `/docs`. In v3, `/docs` is served by the *outer* FastAPI app (`api/service.py:49`), which has no routes, so the page says "No operations defined in spec!". I reproduced this with a minimal FastAPI test; see §10.
 
 **A1. Log in to Docker Hub (README line 21).**
@@ -217,7 +219,7 @@ Concepts marked **[ANIMATE]** are the ones that most deserve a 3Blue1Brown-style
 - **Before running:** change `DOCKER_USERNAME="dlops"` (`src/api-service/docker-hub.sh:11`; same line in the other two scripts) to *your* Docker Hub user. Otherwise the push fails with "requested access to the resource is denied".
 - Checkpoint: the images appear under your Docker Hub account.
 - Side effect: `--use` makes `multi-arch` your default builder in every terminal. Run `docker buildx use default` afterwards (see §6).
-- Shortcut: the later `docker run` commands use the public `dlops/...` images, so you can skip this step if you only want to practise the VM part.
+- Shortcut: the later `docker run` commands use the public `dlops/...` images, so you can skip this step if you only want to practise the VM part. Those public images are older than `3ecef56`: on Docker Hub (checked 2026-11-05) each has only a `latest` tag, pushed 2025-11-20 14:21 UTC (api-service), 2025-11-15 (frontend-react) and 2025-11-16 (vector-db-cli). The api-service image was pushed before commit `37bbf20` (2025-11-20 11:27 -0500, the `ROOT_PATH` mount) and `3ecef56` (2025-11-28, `/status`), so with the public images expect `/docs` to work and `/status` to return 404 (gotcha 24). This is inferred from the push dates; I could not pull the image to confirm (Docker Hub's anonymous pull limit).
 
 **A3. Create the VM in the console (README lines 40–44).** Machine type N2D, 50 GB disk, tick "Allow HTTP traffic" and "Allow HTTPS traffic". This puts the default VPC firewall tags on the VM.
 
@@ -235,6 +237,7 @@ sudo chmod 0777 secrets
 sudo chmod -R 0777 conf
 ```
 then `echo '<___Json Key___>' > secrets/gcp-service.json` (README line 74) and `sudo docker network create cheese-app-network` (README line 80).
+- The README lists the six folder commands twice, as bullets (lines 54–59) and again as a code block (lines 61–68). Run them once. Run them, and every later command, from the same directory (your home directory after SSH): the `$(pwd)/…` and `./docker-volumes/…` mounts below are relative to it.
 - Pasting a JSON key inside single quotes works because the key contains no `'`. The `0777` permissions are demo-grade.
 
 **A6. Start ChromaDB, then load it (README lines 86–112).**
@@ -268,15 +271,16 @@ sudo docker run --rm \
 - Change `GCP_PROJECT=ac215-project` to your project. Checkpoint: the loader logs "Processing file:" lines and exits.
 
 **A7. Start api-service and frontend (README lines 118–127, 150).**
+- Change `-e GCP_PROJECT=ac215-project` (README line 124) to your project.
 - Without `-e DEV=1` the entrypoint runs production uvicorn (`src/api-service/docker-entrypoint.sh:18-20, 32-38`).
 - Optional (README lines 131–145): the interactive variant `sudo docker run --rm -ti --name api-service … -e DEV=1 …` drops you into a shell where you start the server with `uvicorn_server`. It uses the same `--name api-service`, so stop and remove the detached container first.
-- Checkpoint: `sudo docker container ls` shows `api-service` and `frontend` running. `curl localhost:9000/status` on the VM returns `{"version":"3.0"}`.
+- Checkpoint: `sudo docker container ls` shows `api-service` and `frontend` running. With an image you built from `3ecef56` (A2), `curl localhost:9000/status` on the VM returns `{"version":"3.0"}`. With the public `dlops/cheese-app-api-service` image it most likely returns `{"detail":"Not Found"}` (gotcha 24); `curl localhost:9000/` → `{"message":"Welcome to AC215"}` works with both.
 
 **A8. nginx config and container (README lines 156–219).**
 - Command (README line 219): `sudo docker run -d --name nginx -v $(pwd)/conf/nginx/nginx.conf:/etc/nginx/nginx.conf -p 80:80 --network cheese-app-network nginx:stable`
-- **Quoting bug:** the `echo '…'` in README lines 156–213 wraps a config that itself contains single quotes (the `log_format` lines 165–167). Bash closes and reopens the quoted string there, so the `log_format` line is written as `log_format  main   - []  …;` with all `$variables` dropped. I reproduced this with my own minimal string. nginx still starts, but access logs lose their fields. Fix: write the file with a quoted heredoc (`cat > conf/nginx/nginx.conf <<'EOF' … EOF`) or `scp` the repo's `src/deployment/nginx-conf/nginx/nginx.conf`.
+- **Quoting bug:** the `echo '…'` in README lines 156–213 wraps a config that itself contains single quotes (the `log_format` lines 165–167). Bash closes and reopens the quoted string there, so the `log_format` line is written as `log_format  main   - []  ` followed by two whitespace-only lines and `;`, with all `$variables` dropped. Reproduced 2026-11-05 by running README lines 156–213 verbatim with bash in a `debian:12-slim` container; `nginx -t` in `nginx:stable` (nginx/1.30.6) still reports "syntax is ok" for the mangled file, so nginx starts, but access logs lose their fields. Fix: write the file with a quoted heredoc (`cat > conf/nginx/nginx.conf <<'EOF' … EOF`) or `scp` the repo's `src/deployment/nginx-conf/nginx/nginx.conf`.
 
-**A9. Open `http://<Your VM IP Address>/` (README line 222).** The frontend loads. Chat needs the `gcp-service` key to have Vertex AI access, **and** a generative model that still exists: the code calls `gemini-2.0-flash-001`, which Google's Vertex AI model-versions page lists as retired on 2026-06-01 (see §10).
+**A9. Open `http://<Your VM IP Address>/` (README line 222).** The frontend loads. Chat needs the `gcp-service` key to have Vertex AI access, **and** a generative model that still exists: the code calls `gemini-2.0-flash-001`, which Google's model-versions page lists as retired on 2026-06-01 (see §10).
 
 **A10. Tear down (missing from README).** Delete the VM in the console. Leaving it running costs about $2/day.
 
@@ -756,19 +760,19 @@ app.mount(ROOT_PATH, api_app)
    - Symptom: `deploy_single_vm` preview fails resolving `organization/deploy-images/dev`.
    - Cause: the StackReference (`setup_containers.py:27`) needs the images stack to exist in the same backend.
    - Fix: `pulumi up` in `deploy_images` first.
-9. **`pulumi stack init dev` says it already exists.** You re-entered the container; state persists in the bucket. Use `pulumi stack select dev`. If you get `incorrect passphrase` when initialising, the committed `encryptionsalt` (`Pulumi.dev.yaml:1`) was made with a different passphrase. Deleting that line and re-initialising is safe because these config files hold no secrets. (I could not verify which passphrase the instructor used.)
+9. **`pulumi stack init dev` says it already exists.** You re-entered the container; state persists in the bucket. Use `pulumi stack select dev`. The committed `encryptionsalt` lines (`deploy_images/Pulumi.dev.yaml:1`, `deploy_single_vm/Pulumi.dev.yaml:1`, `deploy_single_vm/Pulumi.dev-test.yaml:1`) were made with the **empty** passphrase: I derived the key from each salt with an empty passphrase (PBKDF2-SHA256, 1,000,000 rounds, AES-256-GCM, Pulumi's passphrase scheme) and all three decrypt to `pulumi`. So the container's `PULUMI_CONFIG_PASSPHRASE=""` (`Dockerfile:51`) matches them and no `incorrect passphrase` error is expected. If you ever set a different passphrase, delete the `encryptionsalt` line and re-initialise; these config files hold no secrets.
 10. **Every `pulumi up` rebuilds and redeploys.**
     - Symptom: the images preview always shows `~ update ×3`, and the VM stack then replaces three containers.
     - Cause: `timestamp_tag` is `datetime.now()` (`deploy_images/__main__.py:13`).
     - Fix: accept it, or tag with a git SHA or content hash for reproducibility (Exercise 6).
 11. **nginx restarts in a loop at first boot.**
-    - Symptom: `sudo docker container logs nginx` shows `host not found in upstream "api-service:9000"`.
-    - Cause: nginx resolves upstream names at start-up, and in the Docker-provider version nginx depends only on the provider (`setup_webserver.py:38`), not on the api-service/frontend containers (the older variant did, `setup_webserver_using_command.py:44`). `restart="always"` (`setup_webserver.py:75`) makes it recover once api-service exists.
-    - Fix: wait, or add `deploy_api_service` and `deploy_frontend` to nginx's `depends_on`. This is an inference from the code; I have not reproduced it.
-12. **Frontend gone after a VM reboot.**
-    - Symptom: `/` returns 502 after `sudo reboot` while `/api-service/status` works.
-    - Cause: the frontend container has no `restart` policy (`setup_containers.py:110-129`), unlike vector-db (`:136`), api-service (`:212`) and nginx (`setup_webserver.py:75`), and unlike the command variant (`setup_containers_using_command.py:101`).
-    - Fix: add `restart="always"`.
+    - Symptom: `sudo docker container logs nginx` shows `nginx: [emerg] host not found in upstream "api-service" in /etc/nginx/nginx.conf:37` (or `"frontend" … :48`).
+    - Cause: nginx resolves every `proxy_pass` host name when it loads its config and refuses to start if one does not resolve; Docker's DNS on `appnetwork` only answers for *running* containers. In the Docker-provider version the nginx chain hangs off the provider and the network (`setup_webserver.py:38`, `:95`, `:100`), not off the api-service/frontend containers (the older variant waited for api-service, `setup_webserver_using_command.py:44`), and api-service is created last (after the loader, `setup_containers.py:245`). `restart="always"` (`setup_webserver.py:75`) makes nginx recover once both names resolve.
+    - Fix: wait, or add `deploy_api_service` and `deploy_frontend` to nginx's `depends_on`. The error text and the start-up refusal are reproduced (2026-11-05, `nginx:stable` 1.30.6 with the repo's `nginx.conf` on a Docker network where `frontend` was a stopped container); whether the race actually happens during `pulumi up` is an inference from the dependency graph.
+12. **The whole site is down after a VM reboot.**
+    - Symptom: after `sudo reboot`, `http://<ip>/` *and* `http://<ip>/api-service/status` both fail (connection refused), and `sudo docker container ls -a` shows `frontend` exited and `nginx` restarting.
+    - Cause: the frontend container has no `restart` policy (`setup_containers.py:110-129`), unlike vector-db (`:136`), api-service (`:212`) and nginx (`setup_webserver.py:75`), and unlike the command variant (`setup_containers_using_command.py:101`). So the frontend stays stopped, its name no longer resolves on `appnetwork`, and nginx refuses to start (`host not found in upstream "frontend"`, see gotcha 11) and loops on `restart=always`. The API container itself is up (`curl localhost:9000/status` on the VM works), but nothing on port 80 forwards to it.
+    - Fix: `sudo docker start frontend` (nginx then comes up on its next restart), and for good add `restart="always"` to the frontend and `pulumi up`.
 13. **Vector DB empty but no error.**
     - Symptom: RAG chat answers "not enough information" or errors, yet `pulumi up` succeeded.
     - Cause: `cli.py` wraps everything in `try/except` and prints the exception (`src/vector-db/cli.py:531, 577-579`), so the loader exits 0 even when ChromaDB wasn't ready yet. Pulumi only waits for the vector-db *container*, not readiness (`setup_containers.py:201-204`).
@@ -801,12 +805,17 @@ app.mount(ROOT_PATH, api_app)
 21. **`pulumi config set` dirties your git checkout.** `/app` is your real `src/deployment` (`docker-shell.sh:36`), so `Pulumi.dev.yaml` changes show up in `git status` and conflict when you `git pull` course updates. Commit them on your own branch or stash them.
 22. **Chat fails although the deployment succeeded.**
     - Symptom: `/api-service/status` works, but chat/RAG/agent requests fail. Expect a Vertex AI `NOT_FOUND` (404) model error in `sudo docker container logs api-service`; I have not reproduced the exact message.
-    - Cause: every LLM helper hardcodes `GENERATIVE_MODEL = "gemini-2.0-flash-001"` (`src/api-service/api/utils/llm_utils.py:22`, `llm_rag_utils.py:23`, `llm_agent_utils.py:21`, `llm_cnn_utils.py:30`). Google's Vertex AI "Model versions" page (last updated 2026-10-10) lists `gemini-2.0-flash` under *Retired models*, with retirement on 2026-06-01. `text-embedding-004` is listed as retiring 2027-04-01, so query embeddings still work for now.
-    - Fix: change `GENERATIVE_MODEL` to a current model, e.g. a `gemini-2.5-flash` version, which Google names as the replacement. Then `pulumi up` in `deploy_images` and in `deploy_single_vm`.
+    - Cause: every LLM helper hardcodes `GENERATIVE_MODEL = "gemini-2.0-flash-001"` (`src/api-service/api/utils/llm_utils.py:22`, `llm_rag_utils.py:23`, `llm_agent_utils.py:21`, `llm_cnn_utils.py:30`). Google's "Model versions and lifecycle" page (docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versions, fetched 2026-11-05, "Last updated 2026-11-05") lists `gemini-2.0-flash` under *Retired models*, retired 2026-06-01, recommended upgrade `gemini-3.5-flash-lite`. `text-embedding-004` is listed with retirement 2027-04-01, so query embeddings still work for now.
+    - Fix: change `GENERATIVE_MODEL` to a model the page lists as available (its recommended upgrade is `gemini-3.5-flash-lite`). Do **not** pick `gemini-2.5-flash`: the same page gives it a retirement date of 2026-10-20, already past. Then `pulumi up` in `deploy_images` and in `deploy_single_vm`.
 23. **ChromaDB data is not on the persistent disk.**
     - Symptom: after the `vector-db` container is replaced, the collection is empty until the loader runs again.
     - Cause: the code mounts the disk at `/chroma/chroma` and sets `IS_PERSISTENT=TRUE` (`setup_containers.py:145-156`; README lines 93–95 for Part A), and it runs the unpinned `chromadb/chroma:latest`. Chroma's own cookbook says current 1.x server images persist to **`/data`** and calls `IS_PERSISTENT` a legacy variable. The data therefore lives in the container's writable layer.
     - Fix: mount `/mnt/disk-1/chromadb` at `/data`, or pin an older 0.x image tag. In this tutorial it matters little, because the loader drops and reloads the collection on every deployment.
+24. **Part A's public images are older than the code you are reading.**
+    - Symptom: on the manual VM, `curl localhost:9000/status` returns `{"detail":"Not Found"}` and the footer shows no API version, although `service.py:34-36` has the route.
+    - Cause: README lines 103, 127 and 150 run `dlops/cheese-app-…` (tag `latest`). On Docker Hub (2026-11-05) the api-service `latest` was pushed 2025-11-20 14:21 UTC, before `/status` and the `ROOT_PATH` mount were committed (`37bbf20`, 2025-11-20 11:27 -0500; `3ecef56`, 2025-11-28). Inferred from the dates; not pulled.
+    - Fix: build and push your own images (A2, after changing `DOCKER_USERNAME`) and use `<you>/cheese-app-…` in the `docker run` lines, or check the API with `curl localhost:9000/` instead. Part B is unaffected: `deploy_images` builds from your checkout.
+25. **The deployment container runs on bullseye.** `src/deployment/Dockerfile:4` is `python:3.13-slim-bullseye` (Debian 11); the Docker apt repo it adds (`:24-26`) and the gcloud/kubectl repos follow that release. Nothing in the README depends on it, but if `apt-get update` there starts failing, this base image is the first suspect.
 
 ---
 
@@ -817,7 +826,7 @@ app.mount(ROOT_PATH, api_app)
   - L3–L4: multi-container apps and Docker networks/ports (mega-pipeline, port_toy).
   - L10: GCP auth and service accounts (cheese-app-v0).
   - L14: serverless Cloud Run, where Google ran the box for you.
-  - L18: **cheese-app-v2**, the FastAPI api-service, React frontend and ChromaDB, all *local* containers.
+  - L18: **cheese-app-v2**, the FastAPI api-service, React frontend and ChromaDB, all *local* containers. Note: v2 `main` was refactored on 2026-11-05 (L18's video follows it). v3 is still built on the **2025** v2 (branch `2025`, `14f2a14`): Next.js frontend, routes under `/api-service` behind nginx. The app you deploy here is that 2025 app plus the v3 changes below, not the one L18 now builds.
   - L19 (K8s local): its tutorial is still "coming soon" on the course site.
 - **This lecture adds:** the same app on a cloud VM, first manually and then reproducibly as code (Pulumi): registries, firewalls, disks, SSH/OS Login, reverse proxy, state and stacks.
 - **Next:**
@@ -838,7 +847,7 @@ app.mount(ROOT_PATH, api_app)
 
 Names that changed between the manual and Pulumi versions: the Docker network is `cheese-app-network` (manual) vs `appnetwork` (Pulumi), and `cheese-app-network` is reused as the *GCP VPC* name in Pulumi. The ChromaDB container is `cheese-app-vector-db` vs `vector-db`.
 
-**v2 → v3 diff** (`git diff --no-index --stat cheese-app-v2/src cheese-app-v3/src`: 46 files changed, 3716 insertions(+), 108 deletions(−)):
+**v2 → v3 diff** (v2 at `14f2a14`, now branch `2025`; `git diff --no-index --stat` of the two `src/` trees: 46 files changed, 3716 insertions(+), 108 deletions(−), re-checked 2026-11-05):
 ```
  src/deployment/**                            | NEW (Dockerfile, docker-shell.sh, docker-entrypoint.sh, docker_config.json,
                                               |      pyproject.toml/uv.lock, nginx-conf/, deploy_images/, deploy_single_vm/,
@@ -926,7 +935,7 @@ Each chapter below gives one idea, the visual, and what to show on screen.
 5. Which resources survive `pulumi destroy`, and how do you clean them up?
 6. Why must `remote.Command` scripts be idempotent, and give one example from `provision_instance.py`.
 
-**Target length:** about 30 minutes (about 4,600 spoken words at 155 wpm). The viewer should keep their local clone open at `src/deployment/` and pause at the "Pause-and-ponder" cards and before each `pulumi up`.
+**Target length:** 25–35 minutes in two parts (Part A manual / Part B Pulumi is the natural break), narration 3,900–4,300 words at the house voice (~174 wpm), 3–5 quiz-style pause-and-ponder questions with a timer (series rules, docs/AC215_SERIES.md). The viewer should keep their local clone open at `src/deployment/` and pause at the "Pause-and-ponder" cards and before each `pulumi up`.
 
 ---
 
@@ -954,10 +963,10 @@ Each chapter below gives one idea, the visual, and what to show on screen.
 6. The JSON response goes back the same way. On GKE the ingress would forward `/api-service/podcasts/...` unchanged, which is why K8s sets `ROOT_PATH=/api-service`.
 
 **E6 (conceptual + hands-on): deterministic tags.** Why does `pulumi preview` in `deploy_images` always show three updates? Change the tagging so a re-run with no code changes is a no-op.
-*Worked answer:* `timestamp_tag` comes from `datetime.now()` (`:13`), so the `tags` input differs on every run. Use something derived from the code instead. For example, read the git commit with `subprocess.check_output(["git","rev-parse","--short","HEAD"])`. Inside the deployment container this would fail as it stands: the repo's `.git` directory is not mounted (`/app` is only `src/deployment`, and the build contexts are mounted without it), and the Dockerfile never explicitly installs `git`. Mount the repo root, or compute the SHA on the host and pass it in as stack config. Alternatively, hash the build-context files. Then no code change means same tag, no diff, and no container replacement downstream. Downside: a rebuild with the same tag but changed base images won't redeploy. The `ref` export (`:34`, which includes the digest) is the most precise pin if you consume it in the VM stack.
+*Worked answer:* `timestamp_tag` comes from `datetime.now()` (`:13`), so the `tags` input differs on every run. Use something derived from the code instead. For example, read the git commit with `subprocess.check_output(["git","rev-parse","--short","HEAD"])`. Inside the deployment container this would fail as it stands: the repo's `.git` directory is not mounted (`/app` is only `src/deployment`, and the build contexts are mounted without it). The Dockerfile also never installs `git` explicitly (it may arrive only as a recommended package of `docker-ce`, `Dockerfile:30`). Mount the repo root, or compute the SHA on the host and pass it in as stack config. Alternatively, hash the build-context files. Then no code change means same tag, no diff, and no container replacement downstream. Downside: a rebuild with the same tag but changed base images won't redeploy. The `ref` export (`:34`, which includes the digest) is the most precise pin if you consume it in the VM stack.
 
 **E7 (hands-on, predict): reboot resilience.** SSH to the VM and run `sudo reboot`. After a minute, which URLs work?
-*Worked answer:* `/mnt/disk-1` is remounted from `/etc/fstab` (`provision_instance.py:50-54`). Docker restarts containers with `restart=always`: vector-db (`setup_containers.py:136`), api-service (`:212`) and nginx (`setup_webserver.py:75`). The **frontend has no restart policy** (`setup_containers.py:110-129`), so `/` returns 502 Bad Gateway, while `/api-service/status` still answers. The ephemeral IP is kept across a guest-OS reboot (unlike a stop/start). Fix: add `restart="always"` to the frontend and `pulumi up`; the preview tells you whether that container is updated or replaced.
+*Worked answer:* `/mnt/disk-1` is remounted from `/etc/fstab` (`provision_instance.py:50-54`). Docker restarts containers with `restart=always`: vector-db (`setup_containers.py:136`), api-service (`:212`) and nginx (`setup_webserver.py:75`). The **frontend has no restart policy** (`setup_containers.py:110-129`), so it stays stopped. Then nginx cannot resolve `frontend` and refuses to start (gotcha 11/12), so **neither** `/` nor `/api-service/status` answers from outside, even though api-service is running (`curl localhost:9000/status` on the VM works). The ephemeral IP is kept across a guest-OS reboot (unlike a stop/start). Fix: `sudo docker start frontend` now, and add `restart="always"` to the frontend and `pulumi up`; the preview tells you whether that container is updated or replaced.
 
 **E8 (conceptual): drift.** Someone runs `sudo docker rm -f nginx` on the VM. What do `pulumi up -y` (no refresh) and `pulumi up --refresh -y` each do?
 *Worked answer:* without `--refresh`, the diff is code vs *state*. State still says nginx exists with unchanged inputs, so Pulumi plans nothing and the site stays down. (Pulumi's Docker provider may still notice during its own reads; don't rely on it.) With `--refresh`, Pulumi first reads reality, finds the container missing, drops it from state, and the plan becomes `+ create deploy-nginx-container`. The checksum-triggered commands don't re-run, because their inputs didn't change. Takeaway: manual changes on Pulumi-managed machines create drift. Refresh, or better, make the change in code.
@@ -973,11 +982,11 @@ Each chapter below gives one idea, the visual, and what to show on screen.
 2. **"Deployment Setup" is an Ansible leftover.**
    - Evidence: README lines 318–322 ask you to edit `inventory.yml` ("Add ssh user details in inventory.yml file"). No such file exists on `main`; it is on the `pipenv` branch (`src/deployment/inventory.yml`).
    - Effect: ignore the step; the Pulumi config commands (README lines 352–355) replace it.
-3. **The course site and README say GCR; the code uses Artifact Registry.**
-   - Evidence: the course site says "build and push images to GCR" (tutorials_demo.md, L20). The code pushes to `us-docker.pkg.dev` (`deploy_images/__main__.py:15`). README line 415 is headed "…to GCR", line 524 lists "Google Container Registry API", and `docker_config.json:3` and `provision_instance.py:145` still configure `gcr.io`.
+3. **The course site (and the slides) say GCR; the code uses Artifact Registry.**
+   - Evidence: the course site's L20 entry says "build and push images to GCR" (fetched 2026-11-05). The code pushes to `us-docker.pkg.dev` (`deploy_images/__main__.py:15`), and the L20 README heading (line 327) correctly says "Google Artifact Registry". The README's later K8s sections still say GCR: line 415 is headed "…to GCR" and line 524 lists "Google Container Registry API". `docker_config.json:3` and `provision_instance.py:145` still configure `gcr.io`.
 4. **The README's API check (`/docs`) doesn't show the API in v3.**
    - Evidence: README line 14 says to open `http://localhost:9000/docs`. In v3, `api/service.py:49-50` mounts the routes into an *outer* FastAPI app, which owns `/docs` and `/openapi.json`. I verified with my own minimal FastAPI 0.120.4 / Starlette 0.49.3 app (the versions in `src/api-service/uv.lock`): with `ROOT_PATH=""`, `/openapi.json` returns `paths=[]`; with `ROOT_PATH=/api-service`, the real spec is at `/api-service/openapi.json`.
-   - Effect: on the VM, `http://<ip>/api-service/docs` serves the outer docs page, whose `/openapi.json` request then goes to the frontend. Use `/status` instead.
+   - Effect: on the VM, `http://<ip>/api-service/docs` serves the outer docs page, whose `/openapi.json` request then goes to the frontend. Use `/status` instead. (The README's check was right for the older code in the public `dlops/cheese-app-api-service` image, which predates the mount; gotcha 24.)
 5. **The manual `nginx.conf` echo mangles `log_format`.**
    - Evidence: README lines 156–213 wrap the config in single quotes, but lines 165–167 contain single quotes too. I reproduced the result with my own minimal string: `log_format  main   - []  …;`, with the variables lost.
    - Effect: harmless for routing; the access logs are useless.
@@ -989,6 +998,7 @@ Each chapter below gives one idea, the visual, and what to show on screen.
 9. **SSH key passphrase isn't mentioned.** README line 296 `ssh-keygen -f ssh-key-deployment` doesn't say to leave it empty, but nothing in the code can supply one.
 10. **The frontend container lost its restart policy in the Docker-provider refactor.**
     - Evidence: `setup_containers.py:110-129` has no `restart`; the older `setup_containers_using_command.py:101` had `--restart always`.
+    - Effect: after a VM reboot the frontend stays down and nginx cannot start, so the whole site is unreachable (gotcha 12).
 11. **nginx lost its dependency on the app containers.**
     - Evidence: `setup_webserver.py:38` depends only on `docker_provider`; the older `setup_webserver_using_command.py:44` depended on `deploy_api_service`.
 12. **The loader hides failures.**
@@ -1007,19 +1017,20 @@ Each chapter below gives one idea, the visual, and what to show on screen.
 18. **Committed config contains instructor values.** The `Pulumi.dev.yaml` files (`deploy_single_vm/Pulumi.dev.yaml:3-5`) and README commands (lines 333, 353–355, 290) use `ac215-project` and `sa_100110341521630214262`. README line 267 mentions only `docker-shell.sh`.
 19. **K8s-section leftovers in the same README** (relevant to L22): README line 529 mentions `docker-shell.bat`, which does not exist, and line 524 lists the retired Container Registry API.
 20. **The generative model is retired.**
-    - Evidence: `GENERATIVE_MODEL = "gemini-2.0-flash-001"` in `src/api-service/api/utils/llm_utils.py:22`, `llm_rag_utils.py:23`, `llm_agent_utils.py:21`, `llm_cnn_utils.py:30` (and `src/vector-db/cli.py:30`). Google's Vertex AI "Model versions" page (docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versions, last updated 2026-10-10) lists `gemini-2.0-flash` under *Retired models* with retirement date 2026-06-01. It lists `text-embedding-004` with retirement date 2027-04-01.
+    - Evidence: `GENERATIVE_MODEL = "gemini-2.0-flash-001"` in `src/api-service/api/utils/llm_utils.py:22`, `llm_rag_utils.py:23`, `llm_agent_utils.py:21`, `llm_cnn_utils.py:30` (and `src/vector-db/cli.py:30`). Google's "Model versions and lifecycle" page (docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versions, fetched 2026-11-05, "Last updated 2026-11-05") lists `gemini-2.0-flash` under *Retired models* with retirement date 2026-06-01 and recommended upgrade `gemini-3.5-flash-lite`. It lists `text-embedding-004` with retirement date 2027-04-01.
     - Effect: the deployment succeeds and `/status` works, but chat endpoints fail until the model name is updated (gotcha 22).
 21. **ChromaDB persistence path is out of date for `chromadb/chroma:latest`.**
     - Evidence: `setup_containers.py:134, 145-156` and README lines 93–97 use `IS_PERSISTENT=TRUE` plus a mount at `/chroma/chroma` on an unpinned `latest` image. Chroma's cookbook ("Running Chroma") says current server images persist to `/data` and that `IS_PERSISTENT` is a legacy variable for the v1.x Docker setup.
     - Effect: the vector data is not on `/mnt/disk-1`. The impact is low because the loader reloads the collection on every deployment.
-22. **README path shorthand.** README lines 266 and 349 say `cd into deployment`; the folder is `src/deployment`.
+22. **README path shorthand.** README line 266 says "cd into `deployment`" and line 349 says "from the `deployment` folder"; the folder is `src/deployment`.
 
 ### Open questions (could not be determined from the sources)
 - **Ed lesson content:** I could not access edstem.org. Any extra steps, slides or announcements there (e.g. creating the registry, a shared class project, pre-made keys) are unknown.
-- **Pulumi passphrase:** whether the committed `encryptionsalt` lines (`Pulumi.dev.yaml:1`) were generated with an empty passphrase. If not, `pulumi stack init dev` with `PULUMI_CONFIG_PASSPHRASE=""` will report an incorrect passphrase.
+- **Pulumi passphrase (resolved 2026-11-05):** all three committed `encryptionsalt` lines decrypt with the empty passphrase (gotcha 9).
 - **Loader under `--refresh`:** how the Docker provider treats the `rm=True`, `restart="no"` loader container (`setup_containers.py:170-205`) on later `pulumi up --refresh` runs. Most likely Pulumi sees it as deleted and re-creates it, which re-loads the collection (harmless, because `load()` drops and re-creates it at `cli.py:286-292`). Whether a very fast exit can make the create step itself report "container exited" was not verified.
 - **ChromaDB persistence path (mostly resolved, see errata 21):** Chroma's cookbook documents `/data` for current images. I did not pull the image to check which exact tag `latest` resolves to on your run date.
-- **Replacement model (see errata 20):** which `gemini-2.5-flash` version (or later) the instructor will switch to, and whether that changes answers or latency. `text-embedding-004` is listed as available until 2027-04-01. If it is replaced too, the pre-computed embeddings downloaded by `cli.py --download` (`src/vector-db/cli.py:487`) would no longer match the query embeddings.
+- **Replacement model (see errata 20):** which current model the instructor will switch to (Google recommends `gemini-3.5-flash-lite` for `gemini-2.0-flash`), and whether that changes answers or latency. `text-embedding-004` is listed as available until 2027-04-01. If it is replaced too, the pre-computed embeddings downloaded by `cli.py --download` (`src/vector-db/cli.py:487`) would no longer match the query embeddings.
 - **Pulumi uv toolchain venv:** whether Pulumi's `toolchain: uv` uses the pre-built venv at `/home/app/.venv` (`Dockerfile:8,70`) or creates its own on first run. Either way it works, but the first `pulumi up` may spend time syncing dependencies.
-- **Unpinned versions:** the Pulumi CLI installed by `curl … get.pulumi.com` (`Dockerfile:47`), Helm (installed from the `main`-branch `get-helm-3` script, `Dockerfile:44`), the gcloud SDK and docker-ce packages (`Dockerfile:30`), the kubectl *patch* version (only the minor is pinned, `K8S_MINOR=1.34`, `Dockerfile:33`), and the `chromadb/chroma:latest` and `nginx:stable` images are all unpinned. Exact behaviour on your run date may differ from Nov 2025.
-- **Upstream changes:** whether the instructor will update `cheese-app-v3` before the Fall 2026 lecture. Compare `git -C cheese-app-v3 rev-parse HEAD` with the hash at the top of this digest.
+- **Unpinned versions:** the Pulumi CLI installed by `curl … get.pulumi.com` (`Dockerfile:47`), Helm (installed from the `main`-branch `get-helm-3` script, `Dockerfile:44`), the gcloud SDK and docker-ce packages (`Dockerfile:30`), the kubectl *patch* version (only the minor is pinned, `K8S_MINOR=1.34`, `Dockerfile:33`), and the `chromadb/chroma:latest` and `nginx:stable` images are all unpinned (on 2026-11-05, `nginx:stable` is nginx/1.30.6 and Docker Hub shows `chromadb/chroma:latest` last pushed 2026-05-05). Exact behaviour on your run date may differ from Nov 2025.
+- **Upstream changes:** on 2026-11-05 `main` is still `3ecef56`, but the unmerged `work/shivas` branch (header table) shows a refactor in progress, and cheese-app-v2's `main` was replaced by the same kind of refactor that day. If `work/shivas` is merged before the lecture, `deploy_single_vm/` disappears and most of §4–§6 no longer applies. Re-run `git ls-remote https://github.com/dlops-io/cheese-app-v3` before relying on this digest.
+- **Public Part A images (gotcha 24):** confirm by pulling `dlops/cheese-app-api-service:latest` and reading `/app/api/service.py` (or `curl :9000/status`) when Docker Hub's pull limit allows.

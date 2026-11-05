@@ -1,0 +1,26 @@
+$ sudo docker run --rm -ti --name api-service \
+-v "$(pwd)/persistent-folder/":/persistent \
+-v "$(pwd)/secrets/":/secrets \
+-p 9000:9000 \
+-e GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-service.json \
+-e GCP_PROJECT=ac215-project \
+-e GCP_PROJECT_ID=ac215-project \
+-e CHROMADB_HOST=cheese-app-vector-db \
+-e CHROMADB_PORT=8000 \
+-e GCS_BUCKET_NAME=cheese-app-models \
+-e DEV=1 \
+--network cheese-app-network dlops/cheese-app-api-service
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.12
+UV version: uv 0.9.10
+Activating virtual environment...
+
+The following commands are available:
+    uvicorn_server
+        Run the Uvicorn Server
+
+app@380d00786009:/app$ exit
+exit
+[exit 0]

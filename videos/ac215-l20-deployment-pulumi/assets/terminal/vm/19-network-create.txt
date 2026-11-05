@@ -1,0 +1,3 @@
+$ sudo docker network create cheese-app-network
+570b3ab4d9c8fd58a305c478d9bb226a5202ae236a1abf5634ccf5a229110cb5
+[exit 0]

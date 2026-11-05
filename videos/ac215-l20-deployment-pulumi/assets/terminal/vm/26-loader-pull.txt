@@ -1,0 +1,48 @@
+$ sudo docker pull dlops/cheese-app-vector-db-cli
+Using default tag: latest
+latest: Pulling from dlops/cheese-app-vector-db-cli
+1adabd6b0d6b: Pulling fs layer
+bfe47a352197: Pulling fs layer
+ce1483ecde94: Pulling fs layer
+ca31570c6fa4: Pulling fs layer
+a0212894bbab: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+705b9f1188c4: Pulling fs layer
+f08d9720487d: Pulling fs layer
+042e7b137cb4: Pulling fs layer
+ca31570c6fa4: Waiting
+a0212894bbab: Waiting
+4f4fb700ef54: Waiting
+705b9f1188c4: Waiting
+f08d9720487d: Waiting
+042e7b137cb4: Waiting
+bfe47a352197: Verifying Checksum
+bfe47a352197: Download complete
+ca31570c6fa4: Verifying Checksum
+ca31570c6fa4: Download complete
+ce1483ecde94: Verifying Checksum
+ce1483ecde94: Download complete
+4f4fb700ef54: Verifying Checksum
+4f4fb700ef54: Download complete
+1adabd6b0d6b: Verifying Checksum
+1adabd6b0d6b: Download complete
+705b9f1188c4: Download complete
+1adabd6b0d6b: Pull complete
+bfe47a352197: Pull complete
+ce1483ecde94: Pull complete
+ca31570c6fa4: Pull complete
+042e7b137cb4: Verifying Checksum
+042e7b137cb4: Download complete
+a0212894bbab: Verifying Checksum
+a0212894bbab: Download complete
+f08d9720487d: Verifying Checksum
+f08d9720487d: Download complete
+a0212894bbab: Pull complete
+4f4fb700ef54: Pull complete
+705b9f1188c4: Pull complete
+f08d9720487d: Pull complete
+042e7b137cb4: Pull complete
+Digest: sha256:718f704047681d48f3cfc75e7e7ab061b5b7d03dfe550e3a36f60d996fa710f7
+Status: Downloaded newer image for dlops/cheese-app-vector-db-cli:latest
+docker.io/dlops/cheese-app-vector-db-cli:latest
+[exit 0]
