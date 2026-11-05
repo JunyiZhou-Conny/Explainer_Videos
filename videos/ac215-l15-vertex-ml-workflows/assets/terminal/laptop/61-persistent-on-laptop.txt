@@ -1,0 +1,15 @@
+$ ls -la ~; ls -la ~/persistent-folder/dataset
+total 28
+drwxr-sr-x    7 student  student       4096 Nov  5 05:12 .
+drwxr-xr-x    1 root     root          4096 Nov  5 04:28 ..
+drwxr-sr-x    3 student  student       4096 Nov  5 05:11 .aws
+drwxrwsrwx    3 student  student       4096 Nov  5 04:28 .docker
+drwxr-sr-x    5 student  student       4096 Nov  5 05:11 ml-workflow-aws
+drwxr-sr-x    6 student  student       4096 Nov  5 05:08 model-deployment-aws
+drwxr-sr-x    3 root     root          4096 Nov  5 05:12 persistent-folder
+total 13852
+drwxr-sr-x    3 root     root          4096 Nov  5 05:13 .
+drwxr-sr-x    3 root     root          4096 Nov  5 05:12 ..
+drwxr-sr-x    6 root     root          4096 Nov  5 05:13 raw
+-rw-r--r--    1 root     root      14171510 Nov  5 05:13 raw.zip
+[exit 0]

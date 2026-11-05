@@ -1,0 +1,4 @@
+$ docker image ls cheese-app-data-collector
+IMAGE                              ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-data-collector:latest   4d3309e2c6ed        600MB             0B        
+[exit 0]
