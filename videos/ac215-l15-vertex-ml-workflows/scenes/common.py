@@ -2062,7 +2062,7 @@ def json_sheet(lines, size: float = 20, color=OWN, title: str = "pipeline defini
 class IdentityBadges(_Anchored):
     """V1 · a key on the laptop, roles in the cloud (S03 built; S10, S11, S14 reprise). Full frame,
     built centred: laptop glyph (x -5.25, y 0.15), the ~/.aws drawer under it (y -1.75, 2.4 × 1.95),
-    a dashed GREY border at x 0.25 ('laptop' | 'AWS' at its top, y 2.45), the BLUE cloud region
+    a dashed GREY border at x 0.25 (top y 2.45; 'laptop' | 'AWS' flank it just above the cloud's top edge), the BLUE cloud region
     (x 0.6..6.4, y -2.7..2.3) with three badge slots (x 3.5; y 1.55, 0.85, 0.15) and a job/endpoint
     slot (3.5, -1.45); the TEAL container (when added) x -3.95..-0.15, y -2.6..0.9 with six rows
     inside (mount: 3, env_pass: 3, pass_key: 1); export cards at the top left (y 2.6..1.0). Built with parts=() for an empty start, or the default ('laptop', 'cloud').
@@ -2097,11 +2097,15 @@ class IdentityBadges(_Anchored):
         bx = self.BORDER_X
         border = DashedLine(self.p(bx, -2.75), self.p(bx, 2.45), color=S.GREY, stroke_width=2.5,
                             dash_length=0.12)
-        bl = label("laptop", 20, S.GREY).next_to(border.get_top(), DL, buff=0.08)
-        br = label("AWS", 20, CLOUD).next_to(border.get_top(), DR, buff=0.08)
-        self.border = VGroup(border, bl, br)
         cl = outline_box(5.8, 5.0, CLOUD, solid=True, fill_opacity=0.05, radius=0.3)
         cl.move_to(self.p(self.CLOUD_X, -0.2))
+        # 'laptop' | 'AWS' sit on one line just above the cloud's top edge (y 2.3), flanking the
+        # border's top: inside the corner they would collide with the request arrow and badge 0
+        bl = label("laptop", 20, S.GREY).next_to(border.get_top(), LEFT, buff=0.1)
+        br = label("AWS", 20, CLOUD).next_to(border.get_top(), RIGHT, buff=0.1)
+        br.align_to(cl, DOWN).shift(UP * (cl.height + 0.12))
+        bl.align_to(br, UP)                       # same cap line ('laptop' has a descender)
+        self.border = VGroup(border, bl, br)
         self.cloud = VGroup(cl)
         if "laptop" in parts:
             self.add(self.laptop, self.border)
