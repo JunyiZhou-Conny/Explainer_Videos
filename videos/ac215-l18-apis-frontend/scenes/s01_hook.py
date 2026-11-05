@@ -275,8 +275,11 @@ class Hook(VoiceScene):
             self.play(m.cluster_frame.animate(rate_func=there_and_back).set_stroke(TURN, width=7), run_time=1.0)
             self.add(m)
             vo.wait_until("on your laptop")
-            self.play(LaggedStart(*[Indicate(b, color=TURN, scale_factor=1.06) for b in m.boxes.values()],
-                                  lag_ratio=0.2), run_time=1.0)
+            edges = [b.frame.copy().set_fill(opacity=0) for b in m.boxes.values()]   # outline copies: the
+            self.add(*edges)                                                          # names stay on top
+            self.play(LaggedStart(*[e.animate(rate_func=there_and_back).set_stroke(TURN, width=6)
+                                    for e in edges], lag_ratio=0.2), run_time=1.0)
+            self.remove(*edges)
             self.add(m)
 
         # ========================================================== 5. what you need
