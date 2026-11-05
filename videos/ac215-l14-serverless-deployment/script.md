@@ -998,7 +998,7 @@ Credentials API → Enable". RECORDED(expected/part3-speech-recorded.txt: 4) "To
 account; inherited project roles", tag `recorded · impersonation GIF`.
 SAY: Step 1: on the runtime account, grant your own user Service Account Token Creator. Replace any preselected role, and don't leave Service Account Admin. Enable the IAM Service Account Credentials API too.
 
-SHOW: TRACKER [3.3] 1 · gcloud alternative. Terminal `laptop · gcloud` types README:541-545 verbatim,
+SHOW: TRACKER [3.3] 2 · opens with step 1 as commands. Terminal `laptop · gcloud` types README:541-545 verbatim,
 all five rows, no `…`, `type_time=0.8` per command (folding):
 `export DEVELOPER_EMAIL=YOUR_GOOGLE_ACCOUNT_EMAIL`,
 `gcloud services enable iamcredentials.googleapis.com --project="$PROJECT_ID"`,
@@ -1348,14 +1348,14 @@ Artifact Registry": V3's Artifact Registry shelf returns with the function's TEA
 GOLD tag "still billed as storage"; it is removed. `▶ your turn` beside the GOLD checklist.
 SAY: Step 3: delete your buckets and the two runtime accounts once nothing uses them. Step 4: the function's image in Artifact Registry, still there after the service is gone. Pause and delete them all now.
 
-SHOW: Three added GOLD lines under the card, tag `erratum` ("what the README's list leaves out"):
+SHOW: Two added GOLD lines under the card, tag `erratum` ("what the README's list leaves out"), then a GREEN chip "keep the shared public image · others use it" with a GREY tag "README · lines 1027–1028":
 "soft-deleted files: recoverable and billable for the retention period" (`docs/lifecycle.md:176-177`);
 "the build leaves source archives and logs" (`docs/lifecycle.md:205-210`); and a GREEN line "keep the
 shared public image · others use it" (README:1027-1028). Under them, a GREY `extra` line, chips
 only, not typed and not captured ("optional"): "on your laptop: `gcloud auth application-default
 revoke` · `docker image rm cgumb/ac215-translation-demo:lecture14-agent-platform-20261022` ·
 `rm -rf ~/fn-venv`".
-SAY: Three additions. Soft-deleted files stay billable for a while; the build also leaves source archives and logs. And keep the shared public image; others use it.
+SAY: Two additions. Soft-deleted files stay billable for a while; the build also leaves source archives and logs. And, per the README, keep the shared public image; others use it.
 
 SHOW: TRACKER [CU] 4. A README card, small (`README.md · lines 1035–1046`, the Symptom | Check
 table), GREY chip "stuck? start here". A second GREY chip, silent (README:1061-1064,

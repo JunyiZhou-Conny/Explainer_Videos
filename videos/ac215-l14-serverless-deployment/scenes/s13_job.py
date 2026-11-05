@@ -309,7 +309,7 @@ class CommandAndArgs(VoiceScene):
         # ========================================================== 5. Container command: python fills ENTRYPOINT
         fs = form_at(console_form("Edit Container · Settings",      # README:746-747: how to reach it
                                   [("Container command", ""), ("Container arguments", "")], form_w=7.6,
-                                  path="Create job → Containers, Connections, Security"))
+                                  path="Containers, Connections, Security → Containers"))
         # beside the form, not on its top edge: step 4's long tracker caption ends over that edge
         ill_s = illustration_tag().next_to(fs.frame, RIGHT, buff=0.2).align_to(fs.frame, UP)
         assert ill_s.get_top()[1] < TRACK_BOTTOM - 0.05 and ill_s.get_right()[0] < 6.55, ill_s.get_corner(UR)

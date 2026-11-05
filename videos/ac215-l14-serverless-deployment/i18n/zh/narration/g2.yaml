@@ -373,11 +373,11 @@ S16:
   - "第 3 步：删掉你的 bucket 和两个运行时账号，前提是已经没有东西在用它们。"
   - "第 4 步：Artifact Registry 里那个函数的 image，service 删了它还在。"
   - "暂停一下，现在全部删掉。"
-- en: "Three additions. Soft-deleted files stay billable for a while; the build also leaves source archives and logs. And keep the shared public image; others use it."
+- en: "Two additions. Soft-deleted files stay billable for a while; the build also leaves source archives and logs. And, per the README, keep the shared public image; others use it."
   zh:
-  - "补充三点。"
+  - "补充两点。"
   - "软删除的文件还会计费一段时间；构建还会留下源代码归档和日志。"
-  - "还有，留着那个共享的公开 image；别人也在用。"
+  - "还有，README 也说了，留着那个共享的公开 image；别人也在用。"
 - en: "Stuck on a step? The README ends with a troubleshooting table of symptoms and checks."
   zh:
   - "卡在哪一步了？"
