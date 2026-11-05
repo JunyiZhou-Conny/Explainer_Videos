@@ -190,7 +190,8 @@ class FunctionToUrl(VoiceScene):
             self.play(FadeIn(ed, shift=LEFT * 0.15), run_time=0.4)
             flash_tag(self, ed, S.GREY)
             vo.wait_until("and save")
-            self.play(FadeOut(VGroup(card1, bracket, dec_l, ed), shift=UP * 0.2), FadeIn(t), run_time=0.5)
+            self.play(FadeOut(VGroup(card1, bracket, dec_l), shift=UP * 0.2), FadeIn(t),
+                      ed.animate.move_to(under_term(t, ed.copy()).get_center()), run_time=0.6)
             gd = type_capture(self, t, A05, type_time=0.8)[0]
             pin(self, gd, beside(extra_row(), gd, buff=0.4))
             diff = [(s, OWN) if s.startswith("+") else s for s in A05.at((13, 21))]
@@ -207,7 +208,7 @@ class FunctionToUrl(VoiceScene):
         v.shift(V3_STRIP - v.ref.get_center())
         assert ut.box.get_top()[1] < v.container.get_bottom()[1] - 0.02, (ut.box.get_top(), v.container.get_bottom())
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(t), run_time=0.4)
+            self.play(FadeOut(t), FadeOut(ed), run_time=0.4)
             self.play(FadeIn(v), FadeIn(ut), run_time=0.6)
             vo.wait_until("StatReload sees the change")
             w = out(self, ut, [(A03.line(47), TURN)] + A03.at((48, 50)), run_time=0.6)
@@ -216,6 +217,9 @@ class FunctionToUrl(VoiceScene):
             self.add(ut)
             vo.wait_until("swaps in a fresh app")
             v.reload(self, ["GET / → get_index", "GET /square_root/"], run_time=1.2)
+            v.remove(eye)                    # the eye stays above the fresh (opaque) card
+            v.add(eye)
+            v.heal(self)
             out(self, ut, A03.at((51, 53)) + [(A03.line(54), OWN)], run_time=0.6)
             vo.wait_until("You restarted nothing")
             self.play(v.flash_route(1), run_time=0.8)
@@ -241,7 +245,13 @@ class FunctionToUrl(VoiceScene):
             vo.wait_until("with its trailing slash")
             self.play(Indicate(u.tokens["path"][-1], color=TURN, scale_factor=1.6), run_time=0.6)
             u.heal(self)
-            u.match(self, run_time=0.9)
+            # the path finds its function (UrlCall.match, with the arrow starting under the 'path' caption)
+            name = substring(u.sig, "square_root")
+            m_arrow = arrow(u.captions[3].get_bottom() + DOWN * 0.08, name.get_top() + UP * 0.05, ROUTE,
+                            stroke=4, buff=0.02)
+            u.show(self, m_arrow, anims=[GrowArrow(m_arrow)], run_time=0.5, into=u.marks)
+            self.play(*[g.animate.set_color(TURN) for g in (name, u.default(0), u.default(1))], run_time=0.5)
+            u.heal(self)
             vo.wait_until("No arguments")
             type_capture(self, tab, A06, type_time=0.8)
             ex3 = extra_row()
@@ -340,7 +350,7 @@ class FunctionToUrl(VoiceScene):
             self.add(lt)
 
         # ========================================================== 8. step 8: /docs
-        tab8 = term(P_V1_API, rows=4, title=T_TAB, size=20)
+        tab8 = term(P_V1_API, rows=5, title=T_TAB, size=20)
         tbl_rows = VGroup(*[mono(s, 20, INK) for s in ("GET /", "GET /square_root/")]).arrange(
             DOWN, aligned_edge=LEFT, buff=0.15)
         tbl_h = label("routes", 20, S.GREY)
@@ -359,16 +369,15 @@ class FunctionToUrl(VoiceScene):
         r_sq = VGroup(mono("GET /square_root/", 20, INK), btn).arrange(RIGHT, buff=0.5)
         r_x = label("x · number · default 1", 20, INK)
         r_y = label("y · number · default 2", 20, INK)
-        params = VGroup(r_x, r_y).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
+        pad = Rectangle(width=0.3, height=0.05, stroke_width=0, fill_opacity=0)     # indents the expanded rows
+        params = VGroup(pad, VGroup(r_x, r_y).arrange(DOWN, aligned_edge=LEFT, buff=0.14)).arrange(RIGHT, buff=0.15)
         page_rows = [r_get, r_sq, params]
         ill8 = illustration_tag()
         ex8 = extra_tag("openapi.json")
         tags8 = VGroup(ill8, ex8).arrange(RIGHT, buff=0.25).next_to(docs, UP, buff=0.08).align_to(docs, RIGHT)
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(lt), track(trk, 8), run_time=0.5)
-            self.play(FadeIn(tab8), FadeIn(tbl, shift=DOWN * 0.15), run_time=0.5)
-            vo.wait_until("open slash docs")
-            l10 = type_capture(self, tab8, A10, type_time=1.2)[0]
+            self.play(FadeOut(lt), track(trk, 8), FadeIn(tab8), FadeIn(tbl, shift=DOWN * 0.15), run_time=0.5)
+            l10 = type_capture(self, tab8, A10, type_time=1.0)[0]
             ex10 = extra_row()
             on_bar(tab8, ex10)
             self.play(FadeIn(ex10), run_time=0.3)
@@ -378,20 +387,20 @@ class FunctionToUrl(VoiceScene):
                       substring(o10[1], "url: '/openapi.json'").animate.set_color(TURN), run_time=0.5)
             self.add(tab8)
             vo.wait_until("FastAPI built this page")
-            self.play(FadeOut(tab8), run_time=0.4)
+            self.play(Indicate(substring(o10[0], "Swagger UI"), color=TURN, scale_factor=1.12), run_time=0.6)
+            self.add(tab8)
             fr_copy = docs.frame.copy()
-            self.play(ReplacementTransform(tbl_fr, fr_copy), FadeOut(tbl_in), run_time=0.8)
-            self.play(FadeIn(docs), run_time=0.4)
+            self.play(FadeOut(tab8), ReplacementTransform(tbl_fr, fr_copy), FadeOut(tbl_in), run_time=0.8)
+            self.play(FadeIn(docs), FadeIn(tags8, shift=UP * 0.1), run_time=0.4)
             self.remove(fr_copy)
-            self.play(FadeIn(tags8, shift=UP * 0.1), run_time=0.4)
-            docs.fill(self, page_rows, buff=0.18, run_time=0.6)
-            params.shift(RIGHT * 0.45)
+            docs.fill(self, page_rows, buff=0.18, run_time=0.5)
             vo.wait_until("x and y appear as numbers")
             self.play(Indicate(r_x, color=TURN, scale_factor=1.06), Indicate(r_y, color=TURN, scale_factor=1.06),
                       run_time=0.8)
             docs.heal(self)
             vo.wait_until("and you can try a call")
-            self.play(Indicate(btn, color=TURN, scale_factor=1.12), run_time=0.7)
+            self.play(Indicate(btn_t, color=TURN, scale_factor=1.15),
+                      btn[0].animate(rate_func=there_and_back).set_stroke(TURN, width=4), run_time=0.7)
             docs.heal(self)
         assert docs.get_bottom()[1] > -3.55 and tags8.get_top()[1] < 2.8, (docs.get_bottom(), tags8.get_top())
 
