@@ -1,0 +1,19 @@
+$ docker ps -a; docker images; docker volume ls; docker network ls
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+IMAGE                              ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-api-service:latest      6250368fcf24        4.2GB          790MB        
+cheese-app-frontend-react:latest   d959127001ec        331MB         81.2MB        
+cheese-app-frontend-react:prod     189c48dc039a       94.8MB         26.7MB        
+cheese-app-vector-db-cli:latest    fcc3ae6283d6        813MB          180MB        
+chromadb/chroma:1.5.9              1e0b73a187a2        826MB          176MB        
+node:20-alpine                     6b9571e6c6fc        194MB         48.7MB        
+node:24.22.1-bookworm-slim         ebd7e6f10617        331MB         81.2MB        
+python:3.12-slim-bookworm          32b0b4596ea2        186MB         45.6MB        
+python:3.13-slim-bookworm          9b81caa30624        182MB         44.6MB        
+DRIVER    VOLUME NAME
+local     cheese-app-frontend-react-node_modules
+NETWORK ID     NAME      DRIVER    SCOPE
+fd5c06498586   bridge    bridge    local
+1256d38c4a89   host      host      local
+d21f4c0c7115   none      null      local
+[exit 0]

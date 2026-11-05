@@ -1,0 +1,19 @@
+$ python --version
+Python 3.11.18
+[exit 0]
+
+$ python -m venv /w/venv-sdk && /w/venv-sdk/bin/pip install -q "sagemaker<3" && /w/venv-sdk/bin/pip list 2>/dev/null | grep -i -E "^(sagemaker|sagemaker-core|boto3|botocore|numpy) "
+boto3                     1.43.124
+botocore                  1.43.124
+numpy                     2.4.6
+sagemaker                 2.257.7
+sagemaker-core            1.0.78
+[exit 0]
+
+$ python -m venv /w/venv-tf && /w/venv-tf/bin/pip install -q tensorflow-cpu==2.20.0 keras==3.11.2 pillow && /w/venv-tf/bin/pip list 2>/dev/null | grep -i -E "^(tensorflow-cpu|tensorflow_cpu|keras|numpy|pillow) "
+keras                   3.11.2
+numpy                   2.4.6
+pillow                  13.0.0
+tensorflow_cpu          2.20.0
+[exit 0]
+

@@ -1,0 +1,28 @@
+$ docker pull tensorflow/serving:2.13.1
+2.13.1: Pulling from tensorflow/serving
+edaedc954fb5: Pulling fs layer
+6b700f3c84f7: Pulling fs layer
+b1dd9cc016d4: Pulling fs layer
+6c7c1afa706d: Pulling fs layer
+a414a7bfdcc9: Pulling fs layer
+6c7c1afa706d: Waiting
+a414a7bfdcc9: Waiting
+6b700f3c84f7: Verifying Checksum
+6b700f3c84f7: Download complete
+6c7c1afa706d: Verifying Checksum
+6c7c1afa706d: Download complete
+a414a7bfdcc9: Verifying Checksum
+a414a7bfdcc9: Download complete
+edaedc954fb5: Verifying Checksum
+edaedc954fb5: Download complete
+edaedc954fb5: Pull complete
+6b700f3c84f7: Pull complete
+b1dd9cc016d4: Verifying Checksum
+b1dd9cc016d4: Download complete
+b1dd9cc016d4: Pull complete
+6c7c1afa706d: Pull complete
+a414a7bfdcc9: Pull complete
+Digest: sha256:057ad7f532fcd295b685b57715c13a3da194725ce7d065e9c927d35f9dbcaf55
+Status: Downloaded newer image for tensorflow/serving:2.13.1
+docker.io/tensorflow/serving:2.13.1
+[exit 0]

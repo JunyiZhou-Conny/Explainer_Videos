@@ -1,0 +1,8 @@
+$ cd cheese-app-v1/src/frontend-simple && ls
+Dockerfile
+assets
+docker-shell.sh
+index.html
+main.js
+styles.css
+[exit 0]

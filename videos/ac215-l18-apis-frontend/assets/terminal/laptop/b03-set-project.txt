@@ -1,0 +1,29 @@
+$ sed -i 's/"ac215-project"/"your-gcp-project"/' src/api-service/docker-shell.sh src/vector-db/docker-shell.sh
+git diff
+diff --git a/src/api-service/docker-shell.sh b/src/api-service/docker-shell.sh
+index d6de9e8..4c10f5b 100755
+--- a/src/api-service/docker-shell.sh
++++ b/src/api-service/docker-shell.sh
+@@ -6,7 +6,7 @@ export IMAGE_NAME="cheese-app-api-service"
+ export BASE_DIR=$(pwd)
+ export SECRETS_DIR=$(pwd)/../../../secrets/
+ export PERSISTENT_DIR=$(pwd)/../../../persistent-folder/
+-export GCP_PROJECT="ac215-project" # CHANGE TO YOUR PROJECT ID
++export GCP_PROJECT="your-gcp-project" # CHANGE TO YOUR PROJECT ID
+ export CHROMADB_HOST="cheese-app-vector-db"
+ export CHROMADB_PORT=8000
+ 
+diff --git a/src/vector-db/docker-shell.sh b/src/vector-db/docker-shell.sh
+index 245ee4f..bb02231 100755
+--- a/src/vector-db/docker-shell.sh
++++ b/src/vector-db/docker-shell.sh
+@@ -3,7 +3,7 @@
+ set -e
+ 
+ export SECRETS_DIR=$(pwd)/../../../secrets/
+-export GCP_PROJECT="ac215-project" # CHANGE TO YOUR PROJECT ID
++export GCP_PROJECT="your-gcp-project" # CHANGE TO YOUR PROJECT ID
+ export GOOGLE_APPLICATION_CREDENTIALS="/secrets/ml-workflow.json"
+ export IMAGE_NAME="cheese-app-vector-db-cli"
+ 
+[exit 0]

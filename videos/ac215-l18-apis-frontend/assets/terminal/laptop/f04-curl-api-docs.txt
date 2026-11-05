@@ -1,0 +1,4 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' http://localhost:9000/api/docs | grep -E '<title>|HTTP'
+    <title>Cheese App API - Swagger UI</title>
+[HTTP 200]
+[exit 0]

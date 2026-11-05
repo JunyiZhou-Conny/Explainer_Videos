@@ -1,0 +1,10 @@
+$ docker images
+IMAGE                             ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-api-service:latest     f8800d2cf69d        4.2GB          790MB   U    
+cheese-app-vector-db-cli:latest   3f6e24bd6967        813MB          180MB        
+chromadb/chroma:1.5.9             1e0b73a187a2        826MB          176MB   U    
+node:20-alpine                    6b9571e6c6fc        194MB         48.7MB        
+node:24.22.1-bookworm-slim        ebd7e6f10617        331MB         81.2MB        
+python:3.12-slim-bookworm         32b0b4596ea2        186MB         45.6MB        
+python:3.13-slim-bookworm         9b81caa30624        182MB         44.6MB        
+[exit 0]

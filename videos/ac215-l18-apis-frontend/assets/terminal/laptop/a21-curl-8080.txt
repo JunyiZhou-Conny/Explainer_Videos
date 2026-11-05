@@ -1,0 +1,8 @@
+$ curl -s -i http://localhost:8080/ | grep -E 'HTTP/|cache-control|content-type|<title>|hero-title|main.js'
+HTTP/1.1 200 OK
+cache-control: max-age=3600
+content-type: text/html; charset=UTF-8
+    <title>Formaggio.me</title>
+            <h1 class="hero-title">🧀 Formaggio.me is here!</h1>
+    <script src="main.js"></script>
+[exit 0]

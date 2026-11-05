@@ -1,0 +1,137 @@
+$ docker build -t cheese-app-frontend-react:prod .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 677B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:24.22.1-bookworm-slim
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/nginx:1.31.8-alpine
+#3 DONE 1.3s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 79B done
+#4 DONE 0.0s
+
+#5 [build 1/6] FROM docker.io/library/node:24.22.1-bookworm-slim@sha256:ebd7e6f1061734570528773c3b7edd5c2ec5730f5346071ec104059cf797f5c7
+#5 resolve docker.io/library/node:24.22.1-bookworm-slim@sha256:ebd7e6f1061734570528773c3b7edd5c2ec5730f5346071ec104059cf797f5c7 0.0s done
+#5 CACHED
+
+#6 [internal] load build context
+#6 transferring context: 265.19kB 0.0s done
+#6 DONE 0.0s
+
+#7 [build 2/6] WORKDIR /app
+#7 DONE 0.0s
+
+#8 [build 3/6] COPY package.json package-lock.json ./
+#8 DONE 0.0s
+
+#9 [stage-1 1/3] FROM docker.io/library/nginx:1.31.8-alpine@sha256:785835ea65db4bba6f021acc0f3be91b0fef76a53fe41f8588c6698d2aed0606
+#9 resolve docker.io/library/nginx:1.31.8-alpine@sha256:785835ea65db4bba6f021acc0f3be91b0fef76a53fe41f8588c6698d2aed0606 0.0s done
+#9 sha256:b9b388a21ecfde6ac80505f23f527146a2129dfb104e79b029bbd00d4cc1a919 0B / 20.53MB 0.2s
+#9 sha256:b9b388a21ecfde6ac80505f23f527146a2129dfb104e79b029bbd00d4cc1a919 3.15MB / 20.53MB 0.3s
+#9 sha256:9b0f7dfe35b2711a17f60dadd6d4035dc0cdee152538cc5c0987029e94679548 0B / 1.40kB 0.3s
+#9 sha256:2ec5fb117ffa9a78b15fb6a78745ffc569c8da0aee9f36ace4cd67a44b1fef79 0B / 1.21kB 0.2s
+#9 sha256:26185d08a3ec318dd85a6c9f2172e714ec13cececd7f33c533b40b1689f9fedb 0B / 404B 0.2s
+#9 sha256:9b0f7dfe35b2711a17f60dadd6d4035dc0cdee152538cc5c0987029e94679548 1.40kB / 1.40kB 0.4s done
+#9 sha256:2ec5fb117ffa9a78b15fb6a78745ffc569c8da0aee9f36ace4cd67a44b1fef79 1.21kB / 1.21kB 0.4s done
+#9 sha256:b9b388a21ecfde6ac80505f23f527146a2129dfb104e79b029bbd00d4cc1a919 7.34MB / 20.53MB 0.5s
+#9 sha256:26185d08a3ec318dd85a6c9f2172e714ec13cececd7f33c533b40b1689f9fedb 404B / 404B 0.4s done
+#9 sha256:7cc330898115ce55acccb0cc1e7dd091df4410c8c5f3c540710ee0ac689f5fcb 964B / 964B 0.1s done
+#9 sha256:657023555a2a19dc6036468198bb350d2c7feaac7f2d0a3901b4dd3cb25e40c5 629B / 629B 0.1s done
+#9 sha256:7b229517ed222597277036d94892173207d01a731ab3a88eeb1de2e963a2c788 0B / 3.85MB 0.2s
+#9 sha256:b9b388a21ecfde6ac80505f23f527146a2129dfb104e79b029bbd00d4cc1a919 11.53MB / 20.53MB 0.6s
+#9 sha256:7b229517ed222597277036d94892173207d01a731ab3a88eeb1de2e963a2c788 2.10MB / 3.85MB 0.3s
+#9 sha256:12b85cff06fd7d383d36a9c96503fe049c9d4bf3dfda5cbb9ffa6ae99b9c07a6 0B / 1.94MB 0.2s
+#9 sha256:b9b388a21ecfde6ac80505f23f527146a2129dfb104e79b029bbd00d4cc1a919 17.83MB / 20.53MB 0.9s
+#9 sha256:7b229517ed222597277036d94892173207d01a731ab3a88eeb1de2e963a2c788 3.85MB / 3.85MB 0.3s done
+#9 sha256:12b85cff06fd7d383d36a9c96503fe049c9d4bf3dfda5cbb9ffa6ae99b9c07a6 1.94MB / 1.94MB 0.3s done
+#9 extracting sha256:7b229517ed222597277036d94892173207d01a731ab3a88eeb1de2e963a2c788
+#9 sha256:b9b388a21ecfde6ac80505f23f527146a2129dfb104e79b029bbd00d4cc1a919 20.53MB / 20.53MB 1.0s done
+#9 extracting sha256:7b229517ed222597277036d94892173207d01a731ab3a88eeb1de2e963a2c788 0.1s done
+#9 extracting sha256:12b85cff06fd7d383d36a9c96503fe049c9d4bf3dfda5cbb9ffa6ae99b9c07a6 0.2s done
+#9 DONE 1.2s
+
+#10 [build 4/6] RUN npm ci
+#10 ...
+
+#9 [stage-1 1/3] FROM docker.io/library/nginx:1.31.8-alpine@sha256:785835ea65db4bba6f021acc0f3be91b0fef76a53fe41f8588c6698d2aed0606
+#9 extracting sha256:657023555a2a19dc6036468198bb350d2c7feaac7f2d0a3901b4dd3cb25e40c5 0.0s done
+#9 extracting sha256:7cc330898115ce55acccb0cc1e7dd091df4410c8c5f3c540710ee0ac689f5fcb done
+#9 extracting sha256:26185d08a3ec318dd85a6c9f2172e714ec13cececd7f33c533b40b1689f9fedb done
+#9 extracting sha256:2ec5fb117ffa9a78b15fb6a78745ffc569c8da0aee9f36ace4cd67a44b1fef79 0.0s done
+#9 extracting sha256:9b0f7dfe35b2711a17f60dadd6d4035dc0cdee152538cc5c0987029e94679548 0.0s done
+#9 extracting sha256:b9b388a21ecfde6ac80505f23f527146a2129dfb104e79b029bbd00d4cc1a919 0.6s done
+#9 DONE 1.9s
+
+#11 [stage-1 2/3] COPY nginx.conf.template /etc/nginx/templates/default.conf.template
+#11 DONE 0.2s
+
+#10 [build 4/6] RUN npm ci
+#10 8.192 
+#10 8.192 added 257 packages, and audited 258 packages in 8s
+#10 8.192 
+#10 8.192 122 packages are looking for funding
+#10 8.193   run `npm fund` for details
+#10 8.199 
+#10 8.199 4 moderate severity vulnerabilities
+#10 8.199 
+#10 8.199 To address all issues (including breaking changes), run:
+#10 8.199   npm audit fix --force
+#10 8.199 
+#10 8.199 Run `npm audit` for details.
+#10 8.203 npm notice
+#10 8.203 npm notice New major version of npm available! 11.19.1 -> 12.2.2
+#10 8.203 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+#10 8.203 npm notice To update run: npm install -g npm@12.2.2
+#10 8.203 npm notice
+#10 DONE 8.6s
+
+#12 [build 5/6] COPY . .
+#12 DONE 0.1s
+
+#13 [build 6/6] RUN npm run build
+#13 0.313 
+#13 0.313 > cheese-app-frontend@2.0.0 build
+#13 0.313 > vite build
+#13 0.313 
+#13 0.671 vite v8.3.5 building client environment for production...
+#13 0.685 transforming...
+#13 1.232 ✓ 2385 modules transformed.
+#13 1.337 rendering chunks...
+#13 1.462 computing gzip size...
+#13 1.470 dist/index.html                                        0.53 kB │ gzip:   0.32 kB
+#13 1.470 dist/assets/nunito-latin-700-normal-Dort48En.woff2    16.22 kB
+#13 1.470 dist/assets/nunito-latin-400-normal-r8SDr6Up.woff2    16.31 kB
+#13 1.470 dist/assets/nunito-latin-600-normal-Br8yIETf.woff2    16.55 kB
+#13 1.470 dist/assets/baloo-2-latin-700-normal-CqTg7A15.woff2   19.43 kB
+#13 1.470 dist/assets/baloo-2-latin-600-normal-tIfxVoAe.woff2   19.49 kB
+#13 1.470 dist/assets/nunito-latin-700-normal-OcDqTBcA.woff     19.98 kB
+#13 1.470 dist/assets/nunito-latin-400-normal-DKg4f3fz.woff     20.33 kB
+#13 1.470 dist/assets/nunito-latin-600-normal-Cd0eNu1l.woff     20.49 kB
+#13 1.470 dist/assets/baloo-2-latin-700-normal-Ld3Zm3l2.woff    23.40 kB
+#13 1.470 dist/assets/baloo-2-latin-600-normal-B4tNaogw.woff    23.54 kB
+#13 1.470 dist/assets/index-Csse5MvO.css                        15.95 kB │ gzip:   4.37 kB
+#13 1.470 dist/assets/index-DQWKRz1J.js                        440.48 kB │ gzip: 137.31 kB
+#13 1.470 
+#13 1.473 ✓ built in 800ms
+#13 DONE 1.6s
+
+#14 [stage-1 3/3] COPY --from=build /app/dist /usr/share/nginx/html
+#14 DONE 0.0s
+
+#15 exporting to image
+#15 exporting layers 0.1s done
+#15 exporting manifest sha256:c0aa6f3cea2b367c4140dfdd4b5f9d86a0151666856bba9e997bebc21b5401de
+#15 exporting manifest sha256:c0aa6f3cea2b367c4140dfdd4b5f9d86a0151666856bba9e997bebc21b5401de done
+#15 exporting config sha256:d80ef4be3eff99dc54a692b879e170e34619fdac6c7c587dd3d9f709170f1ae9 done
+#15 exporting attestation manifest sha256:9df9de7ebcaf326ef1ad09aa5239e3a7124afbd5735c61ae1b2ce97e1fd80e82 done
+#15 exporting manifest list sha256:189c48dc039a5a3409339d6ded64b036cf655c7ec135abaa9534a46a9e53f2be done
+#15 naming to docker.io/library/cheese-app-frontend-react:prod done
+#15 unpacking to docker.io/library/cheese-app-frontend-react:prod
+#15 unpacking to docker.io/library/cheese-app-frontend-react:prod 0.9s done
+#15 DONE 1.1s
+[exit 0]

@@ -1,0 +1,27 @@
+$ curl -X 'GET' 'http://localhost:9000/api/newsletters?limit=2' -H 'accept: application/json' | python3 -m json.tool | cut -c1-160
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+  0      0   0      0   0      0      0      0                              0100   4969 100   4969   0      0  1.59M      0                              0100   4969 100   4969   0      0  1.58M      0                              0100   4969 100   4969   0      0  1.57M      0                              0
+[
+    {
+        "id": "9f2b7e84-2176-4029-bcfd-f99f2d7611e8",
+        "dts": 1730476705,
+        "title": "Spanish Cheese Journey",
+        "excerpt": "Take a virtual tour through Spains diverse cheese landscape, from the sharp Manchego of La Mancha to the smoky Idiaz\u00e1bal of the Basque 
+        "detail": "Spain's centuries-old cheesemaking tradition represents one of Europe's most diverse and fascinating culinary landscapes. From the sun-baked 
+        "readTime": "6 min read",
+        "category": "Regional Spotlight",
+        "image": "spanish-cheese.jpg"
+    },
+    {
+        "id": "78ff70af-c678-486c-876f-9a588a567385",
+        "dts": 1729871905,
+        "title": "The Art of Blue Cheese",
+        "excerpt": "Dive into the fascinating world of blue cheeses, from Italian Gorgonzola to French Roquefort. Understand the role of Penicillium roqueforti 
+        "detail": "At the intersection of science and gastronomy lies one of the world's most fascinating dairy creations: blue cheese. From the sharp and cream
+        "readTime": "4 min read",
+        "category": "Cheese Science",
+        "image": "blue-cheese.jpg"
+    }
+]
+[exit 0]

@@ -1,0 +1,10 @@
+$ docker ps -a; docker volume ls; docker network ls
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+DRIVER    VOLUME NAME
+local     cheese-app-frontend-react-node_modules
+NETWORK ID     NAME                 DRIVER    SCOPE
+fd5c06498586   bridge               bridge    local
+0c884cafa0c1   cheese-app-network   bridge    local
+1256d38c4a89   host                 host      local
+d21f4c0c7115   none                 null      local
+[exit 0]

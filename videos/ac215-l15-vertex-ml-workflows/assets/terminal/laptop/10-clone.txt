@@ -1,0 +1,3 @@
+$ git clone https://github.com/dlops-io/model-deployment-aws.git
+Cloning into 'model-deployment-aws'...
+[exit 0]

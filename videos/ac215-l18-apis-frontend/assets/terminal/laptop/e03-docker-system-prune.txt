@@ -1,0 +1,33 @@
+$ docker system prune
+WARNING! This will remove:
+  - all stopped containers
+  - all networks not used by at least one container
+  - all dangling images
+  - unused build cache
+
+Are you sure you want to continue? [y/N] y
+Deleted Networks:
+cheese-app-network
+
+Deleted build cache objects:
+p47raa50i5kmo47m1ekhsx226
+qiakduyv6b2k6ex66vpkxvfth
+88eta6ecktkrhv3suej6tidsc
+wxar43s2lz0zhyhqmfxgdvfd4
+f5epfprobhhexo43yz6ra2gx3
+plid8dnt7h4vteot0z1by6mjc
+9cx5fjk96vkgrncc9lm7smbch
+jpw5eswy4wpivdhp353yo3jnu
+5qibcqaj45oiewlexfjh6mk3e
+b1w78g1g3t6cufclxib7361ur
+oqqdg4f0c27n5xaqkj29wthxb
+odzejzuaakvi0tpudawt3z17s
+5na7hreo45ii37t90f8qilw5p
+ywi3ko2x0ce3zph4ggonrejcq
+umuodyr3k4ozupzwl8aoi9dnc
+a6lmiw7upxlf08prc1e0r21yi
+d34tnaoxfswm22l58jeakgox6
+b4b7zuieulaksgwqbdqbrzinv
+
+Total reclaimed space: 4.583GB
+[exit 0]

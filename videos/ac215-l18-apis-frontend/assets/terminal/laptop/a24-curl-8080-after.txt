@@ -1,0 +1,5 @@
+$ curl -s http://localhost:8080/ | grep -n -B1 -A1 'placeholder for the awesome'
+45-            <p>
+46:                This is a placeholder for the awesome cheese identification app
+47-            </p>
+[exit 0]

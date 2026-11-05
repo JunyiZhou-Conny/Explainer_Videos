@@ -1,0 +1,52 @@
+# Chinese (zh-CN) metadata for ac215-l15-vertex-ml-workflows (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 仓库, 存储桶, 端点, 端点配置, 镜像仓库, 服务签名,
+# 属性引用, 处理任务; A8), the English colon structure kept (--prepare：tar 包里的 SavedModel; --delete：关掉计价器),
+# commands, flags and names as they are (--prepare, --deploy, --predict, --delete, ECR, SageMaker, pipeline), the
+# core-concept chapters with their English short name once for search (端点配置（endpoint configuration）, 服务签名
+# （serving signature）, 处理任务（Processing job）, 属性引用（property reference）), and S16 in the series' 收尾 pattern.
+# 跟练 = follow-along; ML Workflows → 机器学习工作流 (the exam edition ac215-l15-exam names the lecture "Vertex AI 上的机器学习
+# 工作流"; this video follows the course's AWS tutorials by series decision, so the title says SageMaker).
+# The title agrees in substance with video.yaml's publish.title_zh ("AC215 第15讲跟练 · ML 工作流：在 AWS SageMaker 上部署
+# 模型，再用 SageMaker Pipelines 自动化整条流程"), in the series pattern of the other meta.yaml titles; the Bilibili upload
+# itself uses publish.title_zh. Part titles name README A's and README B's repos, as video.yaml's parts do.
+# SERIES RULE (A17): no title, chapter or description names the instructor.
+# meta.yaml is not read by `explainer.i18n check`, so brackets are fine here.
+title: "AC215 · 第 15 讲：机器学习工作流——在 SageMaker 上部署一个模型，再用 pipeline 自动化整条流程（跟练：model-deployment-aws、ml-workflow-aws）"
+
+parts:
+  part1: "AC215 · 第 15 讲（上）：部署一个模型——SageMaker 模型、端点配置与端点（model-deployment-aws）"
+  part2: "AC215 · 第 15 讲（下）：自动化工作流——四个容器、ECR 与 SageMaker Pipelines（ml-workflow-aws）"
+
+chapters:
+  s01_hook: "三个数，还是四个数？"
+  s02_map: "这一讲的位置，换成 AWS 的说法"
+  s03_setup: "一个 IAM 用户、一个角色、一个存储桶"
+  s04_build: "CLI 容器：两处一行修复"
+  s05_signature: "预处理放在哪里？服务签名（serving signature）"
+  s06_prepare: "--prepare：tar 包里的 SavedModel"
+  s07_deploy: "--deploy：模型、端点配置（endpoint configuration）、端点"
+  s08_predict: "--predict：每张照片 150,528 个数字"
+  s09_delete: "--delete：关掉计价器"
+  s10_workflow: "从四个终端到一条工作流"
+  s11_collect: "手动运行数据采集器和数据处理器"
+  s12_train: "本地训练，给模型加上签名"
+  s13_push: "构建并推送：你自己的镜像仓库 ECR"
+  s14_shell: "workflow 容器和一个处理任务（Processing job）"
+  s15_pipeline: "由属性引用（property reference）画出的 pipeline"
+  s16_recap: "收尾清理、回顾与自测"
+
+# Two or three sentences (rule H2), written register, consistent with video.yaml's publish.description_zh but
+# without the course-credit line's names (A17). Facts: README A = dlops-io/model-deployment-aws @ 077f4db, README B =
+# dlops-io/ml-workflow-aws @ f165c6e (both main, re-checked with git ls-remote on 2026-11-05); script.md v2 (S01-S16,
+# four pause-and-ponder questions, two parts); captures on a machine without an AWS account, so every AWS call stops at
+# its first real error and cloud answers come from README A's recorded output or a tagged local stand-in (the TF
+# Serving container, the S3 capture stub, the offline pipeline definition); the two one-line fixes are extras the
+# READMEs do not contain; billable endpoints, jobs, storage and pipeline steps (GOLD tags without amounts, the clean-up
+# checklist in S16). Paste the chapter timestamps from output/chapters.txt and the study-guide and tutorial links
+# (video.yaml publish.description_zh) under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 15 讲“机器学习工作流（模型部署与 ML pipeline）”的跟练视频，对照课件逐页讲解；课件讲的是 Google Cloud 上的 Vertex AI，本视频跟着课程的 AWS 版教程做，并逐一对照两边的名词。上半场照着 dlops-io/model-deployment-aws 的 README 一步一步做：建 IAM 用户、访问密钥、SageMaker 执行角色和 S3 存储桶，构建 CLI 容器时找出今天才会遇到的两处问题（arm64 构建行和未固定版本的 sagemaker 解析成 SDK 3）并各用一行修好；讲清预处理放在客户端还是模型里（服务签名），--prepare 生成的 SavedModel、版本目录 1 和 model.tar.gz，--deploy 创建的模型、端点配置（endpoint configuration）和端点，--predict 为每张照片发送的 150,528 个数字，以及 --delete 漏掉的端点。
+  下半场照着 dlops-io/ml-workflow-aws：从四个人守着四个终端到一条自动化工作流，手动运行数据采集、数据处理和模型训练三个容器，把镜像推送到你自己的 ECR，从 workflow 容器提交 SageMaker 处理任务（Processing job），最后读懂由属性引用（property reference）连成的五步 SageMaker Pipeline：缓存、负责部署的 Lambda，以及数据怎样经过存储桶流动，并逐项清理所有计费资源。
+  英文旁白，配中文和中英双语字幕；录制机器没有 AWS 账号，所以本地步骤全部真实运行，云端调用停在真实的第一个报错处，云端结果只用 README 的记录或明确标注的本地替身展示，从不伪造；本讲会在你自己的账号里产生费用，视频用金色标签标出每个计费点，结尾有完整的收尾清单。

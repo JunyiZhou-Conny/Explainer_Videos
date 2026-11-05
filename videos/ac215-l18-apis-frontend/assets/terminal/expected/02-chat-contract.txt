@@ -1,0 +1,17 @@
+# expected, NOT a capture: what a successful Gemini reply looks like, as the API contract documents it.
+# cheese-app-v2 @ 447b5c3 docs/contract.md:31-44, verbatim. No repository file, README or notebook shows
+# the text of a real Gemini answer for this app, so no answer text is shown anywhere in the video.
+## Chats
+
+- **`X-Session-ID`** is a UUID the browser creates once and keeps in `localStorage`. Use
+  `crypto.getRandomValues`, not `crypto.randomUUID()`, which needs HTTPS or localhost. Anything that
+  is not a UUID gets `422`.
+- **A message** needs `content`, `image` or both, otherwise `422`. `image` is base64, with or without
+  a `data:image/...;base64,` prefix.
+- **A chat** is `{chat_id, title, dts, messages}`.
+- **A message in a chat** is one of:
+  - `{message_id, role: "user", content, image_path?}`
+  - `{message_id, role: "assistant", content}`
+  - `{message_id, role: "cnn", results: {prediction_label, accuracy}}`
+- **In `llm-cnn` mode**, an image goes to the classifier and gets a `cnn` reply. Text goes to Gemini,
+  which knows what the classifier said.

@@ -1,0 +1,4 @@
+$ cp ../secrets/ml-workflow.json ../secrets/llm-service-account.json; ls ../secrets
+llm-service-account.json
+ml-workflow.json
+[exit 0]

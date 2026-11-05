@@ -1,0 +1,8 @@
+$ cd cheese-app-v1/src/api-service && ls
+Dockerfile
+api
+docker-entrypoint.sh
+docker-shell.sh
+pyproject.toml
+uv.lock
+[exit 0]

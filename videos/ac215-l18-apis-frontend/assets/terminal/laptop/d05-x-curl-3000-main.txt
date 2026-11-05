@@ -1,0 +1,22 @@
+$ curl -s http://localhost:3000/src/main.jsx | head -20
+const StrictMode = __vite__cjsImport0_react["StrictMode"];const createRoot = __vite__cjsImport1_reactDom_client["createRoot"];const _jsxDEV = __vite__cjsImport11_react_jsxDevRuntime["jsxDEV"];import __vite__cjsImport0_react from "/node_modules/.vite/deps/react.js?v=713dc084";
+import __vite__cjsImport1_reactDom_client from "/node_modules/.vite/deps/react-dom_client.js?v=713dc084";
+import { BrowserRouter, Route, Routes } from "/node_modules/.vite/deps/react-router.js?v=713dc084";
+import App from "/src/App.jsx";
+import Chat from "/src/routes/Chat.jsx";
+import Home from "/src/routes/Home.jsx";
+import Newsletter from "/src/routes/Newsletter.jsx";
+import Newsletters from "/src/routes/Newsletters.jsx";
+import NotFound from "/src/routes/NotFound.jsx";
+import Podcasts from "/src/routes/Podcasts.jsx";
+import "/src/styles.css";
+var _jsxFileName = "/app/src/main.jsx";
+import __vite__cjsImport11_react_jsxDevRuntime from "/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=713dc084";
+createRoot(document.getElementById("root")).render(/* @__PURE__ */ _jsxDEV(StrictMode, { children: /* @__PURE__ */ _jsxDEV(BrowserRouter, { children: /* @__PURE__ */ _jsxDEV(Routes, { children: /* @__PURE__ */ _jsxDEV(Route, {
+	element: /* @__PURE__ */ _jsxDEV(App, {}, void 0, false, {
+		fileName: _jsxFileName,
+		lineNumber: 17,
+		columnNumber: 25
+	}, this),
+	children: [
+[exit 0]

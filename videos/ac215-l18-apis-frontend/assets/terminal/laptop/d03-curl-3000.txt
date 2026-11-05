@@ -1,0 +1,30 @@
+$ curl -s -i http://localhost:3000/ | grep -v '^\s*$'
+HTTP/1.1 200 OK
+Vary: Origin
+Content-Type: text/html
+Cache-Control: no-cache
+Etag: W/"2b8-gK64x+ufMfFZKuW2REAT17pZGtM"
+Date: Thu, 05 Nov 2026 13:50:04 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Content-Length: 696
+<!doctype html>
+<html lang="en">
+  <head>
+    <script type="module">import { injectIntoGlobalHook } from "/@react-refresh";
+injectIntoGlobalHook(window);
+window.$RefreshReg$ = () => {};
+window.$RefreshSig$ = () => (type) => type;</script>
+    <script type="module" src="/@vite/client"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Discover the world of cheese through AI" />
+    <link rel="icon" type="image/png" href="/images/logo.png" />
+    <title>Formaggio</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+[exit 0]

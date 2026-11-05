@@ -1,0 +1,4 @@
+$ curl -s -i http://localhost:3000/ | grep -E 'HTTP/|<title>'
+HTTP/1.1 200 OK
+    <title>Formaggio</title>
+[exit 0]

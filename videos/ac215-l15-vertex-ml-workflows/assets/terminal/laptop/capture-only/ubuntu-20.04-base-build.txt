@@ -1,0 +1,33 @@
+$ docker build -t ubuntu:20.04 /tmp/tmp.BncMNe
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.26kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:20.04
+#2 DONE 0.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/3] FROM docker.io/library/ubuntu:20.04@sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 189.25kB done
+#5 DONE 0.0s
+
+#6 [2/3] COPY capture-ca.crt /usr/local/share/ca-certificates/capture-ca.crt
+#6 CACHED
+
+#7 [3/3] RUN mkdir -p /etc/ssl/certs && cat /usr/local/share/ca-certificates/capture-ca.crt >> /etc/ssl/certs/ca-certificates.crt  && for f in /etc/apt/sources.list /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list.d/ubuntu.sources; do       [ -f "$f" ] && sed -i -e 's|http://deb.debian.org|https://deb.debian.org|g' -e 's|http://security.debian.org|https://security.debian.org|g'         -e 's|http://archive.ubuntu.com|https://archive.ubuntu.com|g' -e 's|http://security.ubuntu.com|https://security.ubuntu.com|g' "$f";     done; true
+#7 CACHED
+
+#8 exporting to image
+#8 exporting layers done
+#8 writing image sha256:eb583914b0b9eefcf7dd57ed6030004173c4c3da40ce3685081ae9a130ac18fc done
+#8 naming to docker.io/library/ubuntu:20.04 done
+#8 DONE 0.0s
+[exit 0]

@@ -1,0 +1,6 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' http://localhost:9000/; curl -s -w '\n[HTTP %{http_code}]\n' http://localhost:9000/docs
+{"detail":"Not Found"}
+[HTTP 404]
+{"detail":"Not Found"}
+[HTTP 404]
+[exit 0]

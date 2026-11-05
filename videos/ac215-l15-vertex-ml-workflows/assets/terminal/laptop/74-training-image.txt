@@ -1,0 +1,9 @@
+$ docker image ls cheese-app-training-cli; docker image rm cheese-app-training-cli >/dev/null; docker builder prune -af >/dev/null; docker system df
+IMAGE                            ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-training-cli:latest   43adfd84b56d        2.7GB             0B        
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          4         0         796.3MB   671.2MB (84%)
+Containers      0         0         0B        0B
+Local Volumes   0         0         0B        0B
+Build Cache     0         0         0B        0B
+[exit 0]

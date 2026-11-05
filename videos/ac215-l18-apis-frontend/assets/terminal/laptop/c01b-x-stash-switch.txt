@@ -1,0 +1,5 @@
+$ git stash && git switch 2025
+Saved working directory and index state WIP on main: 447b5c3 Merge pull request #2 from dlops-io/work/shivas
+branch '2025' set up to track 'origin/2025'.
+Switched to a new branch '2025'
+[exit 0]

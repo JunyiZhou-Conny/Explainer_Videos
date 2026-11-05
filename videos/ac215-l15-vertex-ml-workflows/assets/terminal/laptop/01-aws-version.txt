@@ -1,0 +1,4 @@
+$ aws --version; which aws
+aws-cli/2.34.63 Python/3.14.10 Linux/6.18.44-fc-v236 source/x86_64.alpine.3
+/usr/bin/aws
+[exit 0]

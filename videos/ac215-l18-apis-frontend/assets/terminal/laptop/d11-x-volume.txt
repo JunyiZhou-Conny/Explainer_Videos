@@ -1,0 +1,6 @@
+$ docker volume ls; docker run --rm -v cheese-app-frontend-react-node_modules:/m --entrypoint sh cheese-app-frontend-react -c 'ls /m | wc -l; du -sh /m'
+DRIVER    VOLUME NAME
+local     cheese-app-frontend-react-node_modules
+207
+193M	/m
+[exit 0]

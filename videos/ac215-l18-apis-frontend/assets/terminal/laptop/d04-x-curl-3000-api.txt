@@ -1,0 +1,10 @@
+$ curl -s -i 'http://localhost:3000/api/newsletters?limit=2' | sed -n '1,8p'
+HTTP/1.1 200 OK
+Vary: Origin
+date: Thu, 05 Nov 2026 13:50:03 GMT
+server: uvicorn
+content-length: 4969
+content-type: application/json
+connection: close
+
+[exit 0]

@@ -1,0 +1,5 @@
+$ docker compose down
+time="2026-11-05T13:50:52Z" level=warning msg="The \"GOOGLE_APPLICATION_CREDENTIALS\" variable is not set. Defaulting to a blank string."
+time="2026-11-05T13:50:52Z" level=warning msg="The \"GCP_PROJECT\" variable is not set. Defaulting to a blank string."
+time="2026-11-05T13:50:53Z" level=warning msg="Warning: No resource found to remove for project \"vector-db\"."
+[exit 0]

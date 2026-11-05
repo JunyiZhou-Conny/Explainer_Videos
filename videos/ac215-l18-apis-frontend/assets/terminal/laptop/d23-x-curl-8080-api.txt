@@ -1,0 +1,5 @@
+$ curl -s -i 'http://localhost:8080/api/newsletters?limit=1' | grep -E 'HTTP/|Server:|content-type|"title"' | cut -c1-120
+HTTP/1.1 200 OK
+Server: nginx/1.31.8
+[{"id":"9f2b7e84-2176-4029-bcfd-f99f2d7611e8","dts":1730476705,"title":"Spanish Cheese Journey","excerpt":"Take a virtua
+[exit 0]

@@ -1,0 +1,8 @@
+$ grep -n -A3 'square_root' api/service.py; curl -s 'http://localhost:9000/square_root/?x=2&y=10'; echo
+30:@app.get("/square_root/")
+31:async def square_root(x: float = 1, y: float = 2):
+32-    z = x**2 + y**2
+33-    return z**0.5
+34-
+10.198039027185569
+[exit 0]

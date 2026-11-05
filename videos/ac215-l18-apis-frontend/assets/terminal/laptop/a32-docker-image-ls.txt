@@ -1,0 +1,9 @@
+$ docker image ls
+IMAGE                               ID             DISK USAGE   CONTENT SIZE   EXTRA
+cheese-app-api-service:latest       0ea118e4c49c        860MB          214MB        
+cheese-app-frontend-simple:latest   b870aebc2f66        218MB         55.1MB        
+node:20-alpine                      2c8b60ab1471        194MB         48.7MB        
+node:24.22.1-bookworm-slim          985ba517bfdb        331MB         81.2MB        
+python:3.12-slim-bookworm           86ed110a955b        186MB         45.6MB        
+python:3.13-slim-bookworm           51bfee939807        182MB         44.6MB        
+[exit 0]

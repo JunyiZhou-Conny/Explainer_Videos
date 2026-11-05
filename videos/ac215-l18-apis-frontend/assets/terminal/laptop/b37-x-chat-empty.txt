@@ -1,0 +1,4 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' -X POST http://localhost:9000/api/llm/chats -H 'Content-Type: application/json' -H 'X-Session-ID: 00000000-0000-4000-8000-000000000001' -d '{}'
+{"detail":"Message must contain text or an image"}
+[HTTP 422]
+[exit 0]

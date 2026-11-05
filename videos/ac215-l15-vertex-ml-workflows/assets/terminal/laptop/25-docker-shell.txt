@@ -1,0 +1,86 @@
+$ sh docker-shell.sh
+
+[+] Building 400.6s (19/19) FINISHED                                                           docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 2.13kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:20.04                                          0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [ 1/14] FROM docker.io/library/ubuntu:20.04                                                          0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 3.63kB                                                                      0.0s
+ => [ 2/14] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnup  14.9s
+ => [ 3/14] RUN ARCH=$(dpkg --print-architecture) &&     if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch  6.0s
+ => [ 4/14] RUN install -m 0755 -d /etc/apt/keyrings                                                     0.2s
+ => [ 5/14] RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/key  0.4s
+ => [ 6/14] RUN chmod a+r /etc/apt/keyrings/docker.gpg                                                   0.2s
+ => [ 7/14] RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg]   0.2s
+ => [ 8/14] RUN apt-get update &&     apt-get install -y jq docker-ce                                   21.2s
+ => [ 9/14] RUN apt-get update &&     apt-get install -y --no-install-recommends python3.9 python3-pip  13.9s
+ => [10/14] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)" &&     0.2s
+ => [11/14] WORKDIR /app                                                                                 0.0s
+ => [12/14] ADD --chown=app:app Pipfile /app/                                                            0.0s
+ => [13/14] RUN cd /app && pipenv lock && pipenv sync                                                  334.7s
+ => [14/14] ADD --chown=app:app . /app                                                                   0.0s
+ => exporting to image                                                                                   8.6s
+ => => exporting layers                                                                                  8.5s
+ => => writing image sha256:d3dc546c0eee0147492d0d5470415abc63bb11b7fd9084bd9b0a66aa694d7fb6             0.0s
+ => => naming to docker.io/library/model-deployment-cli-aws                                              0.0s
+Container is running!!!
+Testing AWS connectivity...
+
+aws: [ERROR]: An error occurred (NoCredentials): Unable to locate credentials. You can configure credentials by running "aws login".
+Launching subshell in virtual environment...
+app@6fd3f31d3da7:/app$  source /home/app/.local/share/virtualenvs/app-4PlAip0Q/bin/activate
+(app) app@6fd3f31d3da7:/app$ python --version; which python pipenv aws
+Python 3.9.5
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/bin/python
+/usr/local/bin/pipenv
+/usr/local/bin/aws
+(app) app@6fd3f31d3da7:/app$ pip list 2>/dev/null | grep -i -E "^(tensorflow|keras|sagemaker|sagemaker-core|boto3|numpy|pillow) "
+boto3                        1.42.97
+keras                        3.10.0
+numpy                        2.0.2
+pillow                       11.3.0
+sagemaker                    2.257.7
+sagemaker-core               1.0.78
+tensorflow                   2.18.0
+(app) app@6fd3f31d3da7:/app$ echo $S3_MODELS_BUCKET_NAME $AWS_REGION $SAGEMAKER_ROLE
+your-models-bucket-placeholder us-east-1 arn:aws:iam::000000000000:role/SageMakerExecutionRole
+(app) app@6fd3f31d3da7:/app$ ls -la /home/app/.aws
+total 12
+drwxr-sr-x 3 app app 4096 Nov  5 05:05 .
+drwxr-xr-x 1 app app   60 Nov  5 05:05 ..
+drwxr-sr-x 3 app app 4096 Nov  5 05:05 cli
+-rw------- 1 app app   43 Nov  5 04:28 config
+(app) app@6fd3f31d3da7:/app$ python cli.py --help
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /home/app/.config/sagemaker/config.yaml
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.9/site-packages/sagemaker/__init__.py:86: SageMakerV2DeprecationWarning: You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation()
+You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+2026-11-05 05:05:30.998196: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-11-05 05:05:30.999529: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:05:31.002863: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:05:31.010038: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1793855131.024221      28 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1793855131.028615      28 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-11-05 05:05:31.044928: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+usage: cli.py [-h] [--prepare] [--deploy] [--predict] [--test] [--delete]
+
+Data Collector CLI
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --prepare   Prepare model and save model to GCS Bucket
+  --deploy    Deploy saved model to Vertex AI
+  --predict   Make prediction using the endpoint from Vertex AI
+  --test      Test deployment to Vertex AI
+  --delete    Delete endpoint, endpoint config, model, and S3 artifacts
+(app) app@6fd3f31d3da7:/app$ exit
+exit
+[exit 0]

@@ -1,0 +1,317 @@
+$ sh docker-shell.sh
+
+[+] Building 0.0s (12/12) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 980B                                                                     0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-slim                                      0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [1/7] FROM docker.io/library/python:3.11-slim                                                        0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 486B                                                                        0.0s
+ => CACHED [2/7] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates   0.0s
+ => CACHED [3/7] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 Passw0rd)"   0.0s
+ => CACHED [4/7] WORKDIR /app                                                                            0.0s
+ => CACHED [5/7] ADD --chown=app:app Pipfile Pipfile.lock /app/                                          0.0s
+ => CACHED [6/7] RUN pipenv sync                                                                         0.0s
+ => CACHED [7/7] ADD --chown=app:app . /app                                                              0.0s
+ => exporting to image                                                                                   0.0s
+ => => exporting layers                                                                                  0.0s
+ => => writing image sha256:43adfd84b56dcb0171562a1423e1963335ac0431306fd9d059022785502de726             0.0s
+ => => naming to docker.io/library/cheese-app-training-cli                                               0.0s
+Container is running!!!
+Launching subshell in virtual environment...
+
+(app) app@caf8386567eb:/app$ python --version; pip list 2>/dev/null | grep -i -E "^(tensorflow|keras|sagemaker|boto3|awscli) "
+Python 3.11.18
+boto3                     1.40.11
+keras                     3.11.2
+sagemaker                 2.250.0
+tensorflow                2.20.0
+(app) app@caf8386567eb:/app$ ls -la /persistent /persistent/dataset
+/persistent:
+total 8
+drwxr-sr-x 3 root root 4096 Nov  5 05:12 .
+drwxr-xr-x 1 root root   40 Nov  5 05:41 ..
+drwxr-sr-x 5 root root 4096 Nov  5 05:39 dataset
+
+/persistent/dataset:
+total 33584
+drwxr-sr-x 5 root root     4096 Nov  5 05:39 .
+drwxr-sr-x 3 root root     4096 Nov  5 05:12 ..
+drwxr-sr-x 6 root root     4096 Nov  5 05:13 clean
+-rw-r--r-- 1 root root 14171510 Nov  5 05:39 clean.zip
+drwxr-sr-x 6 root root     4096 Nov  5 05:13 raw
+-rw-r--r-- 1 root root 14171510 Nov  5 05:13 raw.zip
+drwxr-sr-x 2 root root     4096 Nov  5 05:39 tfrecords
+-rw-r--r-- 1 root root  6023770 Nov  5 05:39 tfrecords.zip
+(app) app@caf8386567eb:/app$ python -m package.trainer.task --epochs=1 --batch_size=4 --bucket_name=cheese-app-ml-workflow-demo
+2026-11-05 05:41:51.708430: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+2026-11-05 05:41:51.708995: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-11-05 05:41:51.755004: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/attr_value.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/tensor.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/resource_handle.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/tensor_shape.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/types.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/full_type.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/function.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/node_def.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/op_def.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/graph.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/graph_debug_info.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/versions.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/protobuf/config.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at xla/tsl/protobuf/coordination_config.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/cost_graph.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/step_stats.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/allocation_description.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/framework/tensor_description.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/protobuf/cluster.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/google/protobuf/runtime_version.py:98: UserWarning: Protobuf gencode version 5.28.3 is exactly one major version older than the runtime version 6.31.1 at tensorflow/core/protobuf/debug.proto. Please update the gencode to avoid compatibility violations in the next runtime release.
+  warnings.warn(
+2026-11-05 05:41:53.090048: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-11-05 05:41:53.090420: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+tensorflow version 2.20.0
+Eager Execution Enabled: True
+2026-11-05 05:41:53.504877: E external/local_xla/xla/stream_executor/cuda/cuda_platform.cc:51] failed call to cuInit: INTERNAL: CUDA error: Failed call to cuInit: UNKNOWN ERROR (303)
+Number of replicas: 1
+Devices: [PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU')]
+[]
+GPU Available:  []
+All Physical Devices [PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU')]
+TFRecords found at /persistent/dataset/tfrecords
+Using tfrecords from: /persistent/dataset/tfrecords
+Start Train model
+Downloading data from https://storage.googleapis.com/tensorflow/keras-applications/mobilenet_v2/mobilenet_v2_weights_tf_dim_ordering_tf_kernels_1.0_224_no_top.h5
+9406464/9406464 ━━━━━━━━━━━━━━━━━━━━ 0s 0us/step
+Model: "mobilenetv2_train_base_False"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Layer (type)                         ┃ Output Shape                ┃         Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ mobilenetv2_1.00_224 (Functional)    │ (None, 7, 7, 1280)          │       2,257,984 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ global_average_pooling2d             │ (None, 1280)                │               0 │
+│ (GlobalAveragePooling2D)             │                             │                 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (Dense)                        │ (None, 128)                 │         163,968 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_1 (Dense)                      │ (None, 3)                   │             387 │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+ Total params: 2,422,339 (9.24 MB)
+ Trainable params: 164,355 (642.01 KB)
+ Non-trainable params: 2,257,984 (8.61 MB)
+None
+2026-11-05 05:41:58.459623: I tensorflow/core/kernels/data/tf_record_dataset_op.cc:390] TFRecordDataset `buffer_size` is unspecified, default to 262144
+      8/Unknown 4s 46ms/step - accuracy: 0.3863 - loss: 108.49502026-11-05 05:41:58.885942: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+         [[{{node IteratorGetNext}}]]
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2026-11-05 05:41:59.919403: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+         [[{{node IteratorGetNext}}]]
+8/8 ━━━━━━━━━━━━━━━━━━━━ 5s 195ms/step - accuracy: 0.4062 - loss: 108.4501 - val_accuracy: 0.6250 - val_loss: 107.7770
+Training execution time (mins) 0.07589625120162964
+Change model signature and save
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/keras/src/models/functional.py:241: UserWarning: The structure of `inputs` doesn't match the expected structure.
+Expected: keras_tensor_154
+Received: inputs=['Tensor(shape=(None, 224, 224, 3))']
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/app/package/trainer/task.py", line 312, in <module>
+    os.makedirs(ARTIFACT_URI, exist_ok=True)
+  File "<frozen os>", line 215, in makedirs
+  File "<frozen os>", line 225, in makedirs
+PermissionError: [Errno 13] Permission denied: '/persistent/model'
+(app) app@caf8386567eb:/app$ ls -laR /persistent/model
+ls: cannot access '/persistent/model': No such file or directory
+(app) app@caf8386567eb:/app$ sh package-trainer.sh
+package/
+package/trainer/
+package/trainer/task.py
+package/trainer/__init__.py
+package/setup.py
+package/setup.cfg
+package/PKG-INFO
+upload failed: ./trainer.tar.gz to s3://cheese-app-ml-workflow-demo/cheese-app-trainer.tar.gz An error occurred (InvalidAccessKeyId) when calling the PutObject operation: The AWS Access Key Id you provided does not exist in our records.
+(app) app@caf8386567eb:/app$ ls -l trainer.tar.gz
+-rw-r--r-- 1 app app 3632 Nov  5 05:42 trainer.tar.gz
+(app) app@caf8386567eb:/app$ python cli.py --train
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /home/app/.config/sagemaker/config.yaml
+Train Model
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /app/cli.py:27 in _resolve_role                                                                  │
+│                                                                                                  │
+│   24 def _resolve_role():                                                                        │
+│   25 │   # First try to get execution role from SageMaker context                                │
+│   26 │   try:                                                                                    │
+│ ❱ 27 │   │   return sagemaker.get_execution_role()                                               │
+│   28 │   except Exception:                                                                       │
+│   29 │   │   # If not in SageMaker context, derive role ARN using account ID                     │
+│   30 │   │   try:                                                                                │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/session.p │
+│ y:8252 in get_execution_role                                                                     │
+│                                                                                                  │
+│   8249 │   """                                                                                   │
+│   8250 │   if not sagemaker_session:                                                             │
+│   8251 │   │   sagemaker_session = Session()                                                     │
+│ ❱ 8252 │   arn = sagemaker_session.get_caller_identity_arn()                                     │
+│   8253 │                                                                                         │
+│   8254 │   if ":role/" in arn:                                                                   │
+│   8255 │   │   return arn                                                                        │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/session.p │
+│ y:6320 in get_caller_identity_arn                                                                │
+│                                                                                                  │
+│   6317 │   │   │   "sts",                                                                        │
+│   6318 │   │   │   region_name=self.boto_region_name,                                            │
+│   6319 │   │   │   endpoint_url=sts_regional_endpoint(self.boto_region_name),                    │
+│ ❱ 6320 │   │   ).get_caller_identity()["Arn"]                                                    │
+│   6321 │   │                                                                                     │
+│   6322 │   │   role = re.sub(r"^(.+)sts::(\d+):assumed-role/(.+?)/.*$", r"\1iam::\2:role/\3", a  │
+│   6323                                                                                           │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 602 in _api_call                                                                                 │
+│                                                                                                  │
+│    599 │   │   │   │   │   f"{py_operation_name}() only accepts keyword arguments."              │
+│    600 │   │   │   │   )                                                                         │
+│    601 │   │   │   # The "self" in this scope is referring to the BaseClient.                    │
+│ ❱  602 │   │   │   return self._make_api_call(operation_name, kwargs)                            │
+│    603 │   │                                                                                     │
+│    604 │   │   _api_call.__name__ = str(py_operation_name)                                       │
+│    605                                                                                           │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/context.py │
+│ :123 in wrapper                                                                                  │
+│                                                                                                  │
+│   120 │   │   │   with start_as_current_context():                                               │
+│   121 │   │   │   │   if hook:                                                                   │
+│   122 │   │   │   │   │   hook()                                                                 │
+│ ❱ 123 │   │   │   │   return func(*args, **kwargs)                                               │
+│   124 │   │                                                                                      │
+│   125 │   │   return wrapper                                                                     │
+│   126                                                                                            │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 1078 in _make_api_call                                                                           │
+│                                                                                                  │
+│   1075 │   │   │   │   'error_code_override'                                                     │
+│   1076 │   │   │   ) or error_info.get("Code")                                                   │
+│   1077 │   │   │   error_class = self.exceptions.from_code(error_code)                           │
+│ ❱ 1078 │   │   │   raise error_class(parsed_response, operation_name)                            │
+│   1079 │   │   else:                                                                             │
+│   1080 │   │   │   return parsed_response                                                        │
+│   1081                                                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+ClientError: An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The
+security token included in the request is invalid.
+
+During handling of the above exception, another exception occurred:
+
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /app/cli.py:32 in _resolve_role                                                                  │
+│                                                                                                  │
+│   29 │   │   # If not in SageMaker context, derive role ARN using account ID                     │
+│   30 │   │   try:                                                                                │
+│   31 │   │   │   sts_client = boto3.client('sts')                                                │
+│ ❱ 32 │   │   │   account_id = sts_client.get_caller_identity()['Account']                        │
+│   33 │   │   │   role_arn = f"arn:aws:iam::{account_id}:role/CheeseAppSageMakerExecutionRole"    │
+│   34 │   │   │   print(f"Using derived SageMaker execution role: {role_arn}")                    │
+│   35 │   │   │   return role_arn                                                                 │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 602 in _api_call                                                                                 │
+│                                                                                                  │
+│    599 │   │   │   │   │   f"{py_operation_name}() only accepts keyword arguments."              │
+│    600 │   │   │   │   )                                                                         │
+│    601 │   │   │   # The "self" in this scope is referring to the BaseClient.                    │
+│ ❱  602 │   │   │   return self._make_api_call(operation_name, kwargs)                            │
+│    603 │   │                                                                                     │
+│    604 │   │   _api_call.__name__ = str(py_operation_name)                                       │
+│    605                                                                                           │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/context.py │
+│ :123 in wrapper                                                                                  │
+│                                                                                                  │
+│   120 │   │   │   with start_as_current_context():                                               │
+│   121 │   │   │   │   if hook:                                                                   │
+│   122 │   │   │   │   │   hook()                                                                 │
+│ ❱ 123 │   │   │   │   return func(*args, **kwargs)                                               │
+│   124 │   │                                                                                      │
+│   125 │   │   return wrapper                                                                     │
+│   126                                                                                            │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 1078 in _make_api_call                                                                           │
+│                                                                                                  │
+│   1075 │   │   │   │   'error_code_override'                                                     │
+│   1076 │   │   │   ) or error_info.get("Code")                                                   │
+│   1077 │   │   │   error_class = self.exceptions.from_code(error_code)                           │
+│ ❱ 1078 │   │   │   raise error_class(parsed_response, operation_name)                            │
+│   1079 │   │   else:                                                                             │
+│   1080 │   │   │   return parsed_response                                                        │
+│   1081                                                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+ClientError: An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The
+security token included in the request is invalid.
+
+The above exception was the direct cause of the following exception:
+
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /app/cli.py:81 in <module>                                                                       │
+│                                                                                                  │
+│   78 │   parser = argparse.ArgumentParser(description="Model training CLI")                      │
+│   79 │   parser.add_argument("-t", "--train", action="store_true", help="Train model")           │
+│   80 │   args = parser.parse_args()                                                              │
+│ ❱ 81 │   main(args)                                                                              │
+│   82                                                                                             │
+│                                                                                                  │
+│ /app/cli.py:49 in main                                                                           │
+│                                                                                                  │
+│   46 │   │   # Region-aware sessions                                                             │
+│   47 │   │   boto_sess = boto3.Session(region_name=AWS_REGION)                                   │
+│   48 │   │   sm_sess = sagemaker.Session(boto_session=boto_sess)                                 │
+│ ❱ 49 │   │   role = _resolve_role()                                                              │
+│   50 │   │                                                                                       │
+│   51 │   │   job_name = f"cheese-{generate_uuid()}"                                              │
+│   52                                                                                             │
+│                                                                                                  │
+│ /app/cli.py:37 in _resolve_role                                                                  │
+│                                                                                                  │
+│   34 │   │   │   print(f"Using derived SageMaker execution role: {role_arn}")                    │
+│   35 │   │   │   return role_arn                                                                 │
+│   36 │   │   except Exception as e:                                                              │
+│ ❱ 37 │   │   │   raise RuntimeError(                                                             │
+│   38 │   │   │   │   "Unable to derive SageMaker execution role. Please ensure CheeseAppSageM    │
+│   39 │   │   │   ) from e                                                                        │
+│   40                                                                                             │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+RuntimeError: Unable to derive SageMaker execution role. Please ensure CheeseAppSageMakerExecutionRole exists
+in your AWS account.
+(app) app@caf8386567eb:/app$ exit
+exit
+[exit 1]

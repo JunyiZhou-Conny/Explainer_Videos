@@ -1,0 +1,5 @@
+$ docker stop cheese-app-vector-db; docker ps -a
+cheese-app-vector-db
+CONTAINER ID   IMAGE                    COMMAND                  CREATED         STATUS                              PORTS     NAMES
+4715e6be5237   chromadb/chroma:latest   "dumb-init -- chroma…"   2 minutes ago   Exited (0) Less than a second ago             cheese-app-vector-db
+[exit 0]

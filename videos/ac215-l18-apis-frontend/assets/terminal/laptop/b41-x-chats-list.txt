@@ -1,0 +1,26 @@
+$ curl -s http://localhost:9000/api/llm-cnn/chats -H 'X-Session-ID: 00000000-0000-4000-8000-000000000001' | python3 -m json.tool; curl -s http://localhost:9000/api/llm-cnn/chats -H 'X-Session-ID: 00000000-0000-4000-8000-000000000002'; echo
+[
+    {
+        "chat_id": "671bbeed-0fe3-4e38-ab98-21a8a46dadd0",
+        "title": "Image chat",
+        "dts": 1793886591,
+        "messages": [
+            {
+                "content": null,
+                "message_id": "61a0ecab-d457-4b45-8f43-ee2874507db6",
+                "role": "user",
+                "image_path": "images/671bbeed-0fe3-4e38-ab98-21a8a46dadd0/61a0ecab-d457-4b45-8f43-ee2874507db6.png"
+            },
+            {
+                "message_id": "73c0bffc-8a29-45a9-aae6-f2c3186a35cd",
+                "role": "cnn",
+                "results": {
+                    "prediction_label": "parmigiano",
+                    "accuracy": 58.22
+                }
+            }
+        ]
+    }
+]
+[]
+[exit 0]
