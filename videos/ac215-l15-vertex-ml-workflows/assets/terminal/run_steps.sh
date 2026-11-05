@@ -253,7 +253,8 @@ aws s3 ls"   # README:67-68 again
   ;;
 mw-coll)
   cd ml-workflow-aws/src/data-collector
-  # README:95 sh docker-shell.sh, then "Test Data Collector" (README:97-100) + extras
+  # README:95 sh docker-shell.sh, then "Test Data Collector" (README:97-100) + extras (the build is
+  # small: its terminal log is kept as it is)
   PTY_TIMEOUT=1800 hub_retry istep 60-collector "sh docker-shell.sh" \
     "$P_ROOT" 'python cli.py --search --nums 10 --query "brie cheese" "gouda cheese" "gruyere cheese" "parmigiano cheese"' \
     "$P_ROOT" 'ls /persistent/dataset; ls /persistent/dataset/raw' \
@@ -268,15 +269,18 @@ mw-proc)
   # README:113 sh docker-shell.sh, as written (docker-shell.sh:33 --platform=linux/arm64/v8)
   arm64_attempt 65-processor-docker-shell-arm64 python:3.11-slim
   step 66-use-plain-build "sed -i -e 's|^docker build -t \$IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .|#&|' -e 's|^#docker build -t \$IMAGE_NAME -f Dockerfile .|docker build -t \$IMAGE_NAME -f Dockerfile .|' docker-shell.sh && sed -n '29,34p' docker-shell.sh"   # extra
+  # extra: the build line docker-shell.sh now runs (line 29), alone and without a terminal, so the
+  # build log is plain text; the README's `sh docker-shell.sh` below then reuses its cached layers
+  PTY_TIMEOUT=3600 hub_retry step 67-processor-build "docker build -t cheese-app-data-processor -f Dockerfile ."
   # README:113 again, then "Test Data Processor" (README:115-120) + extras
-  PTY_TIMEOUT=3600 hub_retry istep 67-processor "sh docker-shell.sh" \
+  PTY_TIMEOUT=3600 hub_retry istep 68-processor "sh docker-shell.sh" \
     "$P_ROOT" 'python cli.py --clean' \
     "$P_ROOT" 'python cli.py --prepare' \
     "$P_ROOT" 'ls -la /persistent/dataset; ls -la /persistent/dataset/tfrecords' \
     "$P_ROOT" 'for d in /persistent/dataset/clean/*; do echo "$(ls "$d" | wc -l) $d"; done' \
     "$P_ROOT" 'pip list 2>/dev/null | grep -i -E "^(tensorflow|difpy|dask|boto3|scikit-learn) "' \
     "$P_ROOT" 'exit'
-  step 68-processor-image "docker image ls cheese-app-data-processor; docker image rm cheese-app-data-processor >/dev/null; docker builder prune -af >/dev/null; docker system df"   # extra (disk)
+  step 69-processor-image "docker image ls cheese-app-data-processor; docker image rm cheese-app-data-processor >/dev/null; docker builder prune -af >/dev/null; docker system df"   # extra (disk)
   ;;
 mw-train)
   cd ml-workflow-aws/src/model-training
@@ -284,8 +288,10 @@ mw-train)
   # README:131 sh docker-shell.sh, as written (docker-shell.sh:33 --platform=linux/arm64/v8)
   arm64_attempt 70-training-docker-shell-arm64 python:3.11-slim
   step 71-use-plain-build "sed -i -e 's|^docker build -t \$IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .|#&|' -e 's|^#docker build -t \$IMAGE_NAME -f Dockerfile .|docker build -t \$IMAGE_NAME -f Dockerfile .|' docker-shell.sh && sed -n '29,34p' docker-shell.sh"   # extra
+  # extra: the build line alone, plain log (as 67)
+  PTY_TIMEOUT=3600 hub_retry step 72-training-build "docker build -t cheese-app-training-cli -f Dockerfile ."
   # README:131 again; "Local Training" (README:135-136), "Remote Training" (README:137-139) + extras
-  PTY_TIMEOUT=3600 hub_retry istep 72-training "sh docker-shell.sh" \
+  PTY_TIMEOUT=3600 hub_retry istep 73-training "sh docker-shell.sh" \
     "$P_APP" 'python --version; pip list 2>/dev/null | grep -i -E "^(tensorflow|keras|sagemaker|boto3|awscli) "' \
     "$P_APP" 'ls -la /persistent /persistent/dataset' \
     "$P_APP" 'python -m package.trainer.task --epochs=1 --batch_size=4 --bucket_name=cheese-app-ml-workflow-demo' \
@@ -294,7 +300,7 @@ mw-train)
     "$P_APP" 'ls -l trainer.tar.gz' \
     "$P_APP" 'python cli.py --train' \
     "$P_APP" 'exit'
-  step 73-training-image "docker image ls cheese-app-training-cli; docker image rm cheese-app-training-cli >/dev/null; docker builder prune -af >/dev/null; docker system df"   # extra (disk)
+  step 74-training-image "docker image ls cheese-app-training-cli; docker image rm cheese-app-training-cli >/dev/null; docker builder prune -af >/dev/null; docker system df"   # extra (disk)
   ;;
 mw-push)
   # "Build & Push Images" (README:152-203): "This step has already been done for this tutorial."
@@ -325,9 +331,11 @@ mw-flow)
   step 87-committed-lock "grep -n -A1 '\"sagemaker\": {' Pipfile.lock | head -4; sed -n '36,40p' Dockerfile"   # extra
   # extra, the same fix as 24: pin the SDK below version 3
   step 88-pin-sagemaker "sed -i 's/^sagemaker = \"\\*\"/sagemaker = \"<3\"/' Pipfile && git diff Pipfile"
+  # extra: the build line docker-shell.sh runs (line 32, --platform=linux/amd64), alone, plain log
+  PTY_TIMEOUT=3600 hub_retry step 89-workflow-build "docker build -t cheese-app-workflow --platform=linux/amd64 -f Dockerfile ."
   # README:218 sh docker-shell.sh (with the pin); README:223 python cli.py --data_collector;
   # "SageMaker Pipelines" (README:226-248): --pipeline and the four component flags; + extras
-  PTY_TIMEOUT=3600 hub_retry istep 89-workflow "sh docker-shell.sh" \
+  PTY_TIMEOUT=3600 hub_retry istep 90-workflow "sh docker-shell.sh" \
     "$P_APP" 'python --version; pip list 2>/dev/null | grep -i -E "^(sagemaker|sagemaker-core|boto3) "; aws --version' \
     "$P_APP" 'ls /data-collector /data-processor; docker ps --format "{{.Names}} {{.Image}}"' \
     "$P_APP" 'python cli.py --data_collector' \
@@ -336,7 +344,7 @@ mw-flow)
     "$P_APP" 'python cli.py --model_training' \
     "$P_APP" 'python cli.py --model_deploy' \
     "$P_APP" 'exit'
-  step 90-workflow-image "docker image ls cheese-app-workflow"   # extra
+  step 91-workflow-image "docker image ls cheese-app-workflow"   # extra
   ;;
 mw-end)
   step 95-docker-ps "docker ps -a"   # extra: --rm left nothing running

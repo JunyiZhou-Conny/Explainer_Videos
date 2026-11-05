@@ -1,4 +1,4 @@
-$ docker build -t python:3.11-slim /tmp/tmp.LfFoDM
+$ docker build -t python:3.11-slim /tmp/tmp.PAfGoH
 #0 building with "default" instance using docker driver
 
 #1 [internal] load build definition from Dockerfile
@@ -6,21 +6,17 @@ $ docker build -t python:3.11-slim /tmp/tmp.LfFoDM
 #1 DONE 0.0s
 
 #2 [internal] load metadata for docker.io/library/python:3.11-slim
-#2 DONE 0.3s
+#2 DONE 0.0s
 
 #3 [internal] load .dockerignore
 #3 transferring context: 2B done
 #3 DONE 0.0s
 
-#4 [1/3] FROM docker.io/library/python:3.11-slim@sha256:db20d8506e2f15b6db39b40b6015ca46bae855dec6dd326d462cfe79ae972893
-#4 resolve docker.io/library/python:3.11-slim@sha256:db20d8506e2f15b6db39b40b6015ca46bae855dec6dd326d462cfe79ae972893 done
-#4 sha256:db20d8506e2f15b6db39b40b6015ca46bae855dec6dd326d462cfe79ae972893 10.37kB / 10.37kB done
-#4 sha256:6d10e720318bd84cc3d88af92bb5a47189222e17620a2fd214da6445e4afb679 1.75kB / 1.75kB done
-#4 sha256:de8d79606beff46114d4abd5c392116c62142cbe582f8ede92cf4a64e1a10ff5 5.49kB / 5.49kB done
+#4 [1/3] FROM docker.io/library/python:3.11-slim
 #4 DONE 0.0s
 
 #5 [internal] load build context
-#5 transferring context: 189.25kB 0.0s done
+#5 transferring context: 189.25kB done
 #5 DONE 0.0s
 
 #6 [2/3] COPY capture-ca.crt /usr/local/share/ca-certificates/capture-ca.crt
@@ -31,7 +27,7 @@ $ docker build -t python:3.11-slim /tmp/tmp.LfFoDM
 
 #8 exporting to image
 #8 exporting layers done
-#8 writing image sha256:1fb80bd9507c98b0737e6c44dafdc960a07579429839c837fec5c78c76c22fb2 done
+#8 writing image sha256:60dff04c7ccbbca657c419bae51148d22ab372ca7fc9d3da4f77cad12f505b9b done
 #8 naming to docker.io/library/python:3.11-slim done
 #8 DONE 0.0s
 [exit 0]

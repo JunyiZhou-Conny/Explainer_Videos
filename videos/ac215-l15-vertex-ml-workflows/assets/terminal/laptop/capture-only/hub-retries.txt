@@ -9,3 +9,5 @@ capture-only/python-3.9-slim-base-build: attempt 1 hit Docker Hub's rate limit, 
 capture-only/python-3.9-slim-base-build: attempt 2 hit Docker Hub's rate limit, retrying in 30 s
 capture-only/python-3.9-slim-base-build: attempt 3 hit Docker Hub's rate limit, retrying in 30 s
 capture-only/python-3.9-slim-base-build: attempt 4 hit Docker Hub's rate limit, retrying in 30 s
+capture-only/python-3.11-slim-base-build: attempt 1 hit Docker Hub's rate limit, retrying in 30 s
+capture-only/python-3.11-slim-base-build: attempt 1 hit Docker Hub's rate limit, retrying in 30 s

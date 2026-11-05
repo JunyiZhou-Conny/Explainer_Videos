@@ -1,0 +1,5 @@
+$ export REGION=us-east-1 REPO=cheese-app-data-collector
+aws ecr create-repository --repository-name "$REPO" --region "$REGION" || true
+
+aws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the CreateRepository operation: The security token included in the request is invalid.
+[exit 0]

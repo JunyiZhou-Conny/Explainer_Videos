@@ -1,0 +1,12 @@
+$ export REGION=us-east-1 [YOUR DEVELOPMENT REGION]
+export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+export REPO=cheese-app-data-collector  # or cheese-app-data-processor
+export TAG=latest
+export ECR_URI="$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPO:$TAG"
+echo "ECR URI: $ECR_URI"
+bash: line 1: export: `[YOUR': not a valid identifier
+bash: line 1: export: `REGION]': not a valid identifier
+
+aws: [ERROR]: An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The security token included in the request is invalid.
+ECR URI: .dkr.ecr.us-east-1.amazonaws.com/cheese-app-data-collector:latest
+[exit 0]
