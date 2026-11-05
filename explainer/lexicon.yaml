@@ -411,3 +411,17 @@ to 0.77: {ipa: "tə zˈiəɹoʊ pɔɪnt sˈɛvən sˈɛvən", say: "to zero poin
 # L13-only multi-word keys, so other videos' "copied" / "GPUs" are untouched.
 "slip, copied": {ipa: "slˈɪp, kˈɑːpid", say: "slip, copyd"}
 Two GPUs: {ipa: "tˈuː dʒˌiːpˌiːjˈuːz", say: "Two G P Use"}
+# AC215 L14 (spoken review of the full follow-along). Ports, status codes and the "3.3" read as in the
+# series ("eighty eighty", "four oh three"); phrase keys so only this lecture's words are hit (no other
+# video's SAY contains them; checked with grep -w on 2026-11-04). "digest" stays bare elsewhere.
+"8086": {ipa: "ˈeɪɾi ˈeɪɾi sˈɪks", say: "eighty eighty-six"}
+"9090": {ipa: "nˈaɪnti nˈaɪnti", say: "ninety ninety"}
+"405": {ipa: "fˈɔːɹ ˈoʊ fˈaɪv", say: "four oh five"}
+"503": {ipa: "fˈaɪv ˈoʊ θɹˈiː", say: "five oh three"}
+section 3.3: {ipa: "sˈɛkʃən θɹˈiː pɔɪnt θɹˈiː", say: "section three point three"}
+"Section 3.3": {ipa: "sˈɛkʃən θɹˈiː pɔɪnt θɹˈiː", say: "Section three point three"}
+Bienvenido a AC215: {ipa: "bjˌɛnbeɪnˈiːdoʊ ɑː ˌeɪsˈiː tˈuː fˈɪftiːn", say: "byen-veh-NEE-doh ah A-C two fifteen"}
+"Bonjour à tous": {ipa: "bɔːnʒˈʊɹ ɑː tˈuː", say: "bon-ZHOOR ah TOO"}
+A M D 64: {ipa: "ˌeɪ ˌɛm dˈiː sˈɪksti fˈɔːɹ", say: "A M D sixty-four"}
+same digest: {ipa: "sˈeɪm dˈaɪdʒɛst", say: "same DYE-jest"}
+by digest: {ipa: "baɪ dˈaɪdʒɛst", say: "by DYE-jest"}
