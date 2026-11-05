@@ -120,6 +120,15 @@ def _rung(s: str, color) -> VGroup:
     return VGroup(b, t)
 
 
+def span_bar(code_, k0: int, k1: int, color, opacity: float = 0.2) -> Rectangle:
+    """One translucent bar over code lines k0..k1 (0-based; line_bar() per line would overlap)."""
+    top = code_.code_lines[k0].get_top()[1] + 0.07
+    bot = code_.code_lines[k1].get_bottom()[1] - 0.07
+    bg = code_.background
+    return Rectangle(width=bg.width - 0.12, height=top - bot, stroke_width=0).set_fill(color, opacity) \
+        .move_to([bg.get_center()[0], (top + bot) / 2, 0])
+
+
 def _env(s: str) -> VGroup:
     e = envelope(s, ROUTE)
     e.body.set_fill(S.BG, 1)
@@ -160,13 +169,13 @@ class ServerAndApp(VoiceScene):
             self.play(GrowArrow(req), FadeIn(req_l), run_time=0.6)
             e_req.move_to(req.get_start())
             self.play(FadeIn(e_req, scale=0.8), run_time=0.25)
-            self.play(e_req.animate.move_to(req.get_end() + LEFT * 0.2), run_time=0.9)
+            self.play(e_req.animate.move_to(req.get_end() + LEFT * (e_req.width / 2 + 0.25)), run_time=0.9)
             self.play(FadeOut(e_req), run_time=0.2)
             vo.wait_until("a server sends a response")
             self.play(GrowArrow(res), FadeIn(res_l), run_time=0.6)
             e_res.move_to(res.get_start())
             self.play(FadeIn(e_res, scale=0.8), run_time=0.25)
-            self.play(e_res.animate.move_to(res.get_end() + RIGHT * 0.25), run_time=0.9)
+            self.play(e_res.animate.move_to(res.get_end() + RIGHT * (e_res.width / 2 + 0.1)), run_time=0.9)
             self.play(FadeOut(e_res), run_time=0.2)
             vo.wait_until("A port picks which program")
             self.play(LaggedStart(*[FadeIn(d, target_position=srv.get_right()) for d in lect], lag_ratio=0.2),
@@ -245,17 +254,18 @@ class ServerAndApp(VoiceScene):
             self.play(Indicate(card1.body, color=ERR, scale_factor=1.03), run_time=0.6)
             vo.wait_until("A small slip")
             self.play(FadeIn(slip, scale=0.9), track(trk, 1, extra=True), run_time=0.5)
-            ln2 = type_capture(self, t, A02, type_time=0.9)[0]
+            ln2 = type_capture(self, t, A02, type_time=0.7)[0]
             pin(self, ln2, beside(extra_row(), ln2, buff=0.4))
             out(self, t, A02.at((2, 7)), run_time=0.5)
             self.add(t)
+            self.wait(0.6)                       # the listing stays a moment before the strip shrinks
 
         # ========================================================== 3. step 2: docker-shell.sh
         panel = code(DS, 13, 21, font_size=20, shown="docker-shell.sh")
         panel.move_to([-6.45 + panel.width / 2, 0.75, 0])
         ln_build = code_span(panel.code, 0, "docker build")
         rm_ring = ring(code_span(panel.code, 3, "--rm"), S.GREY)
-        v_bars = VGroup(*[line_bar(panel.code, k, OWN, 0.22) for k in (4, 5, 6)])
+        v_bars = span_bar(panel.code, 4, 6, OWN, 0.22)
         p_ring = ring(code_span(panel.code, 7, "-p 9000:9000"), ROUTE)
         # the tunnel picture (right of the panel): laptop wall door 9000 -> container door 9000
         tx0 = panel.get_right()[0] + 0.35
@@ -357,7 +367,7 @@ class ServerAndApp(VoiceScene):
             vo.wait_until("Reload restarts the app")
             self.play(substring(row1, "--reload --reload-dir api/").animate.set_color(TOOL), run_time=0.5)
             self.add(t)
-            eye = eye_glyph().next_to(v.chips[0], RIGHT, buff=0.1)
+            eye = eye_glyph(0.24).next_to(v.chips[0], RIGHT, buff=0.1)
             assert eye.get_right()[0] < v.card.head.get_left()[0], (eye.get_right(), v.card.head.get_left())
             v.show(self, eye, anims=[FadeIn(eye, scale=1.4)], run_time=0.5)
             self.play(Indicate(eye, color=TOOL, scale_factor=1.25), run_time=0.6)
@@ -387,24 +397,28 @@ class ServerAndApp(VoiceScene):
 
         # ========================================================== 8. service.py: the app, CORS, one route
         p5 = code(SVC, 5, 14, font_size=20, cuts={5: "app = FastAPI("}, shown="api/service.py")
-        p5.move_to([-6.45 + p5.width / 2, 2.75 - p5.height / 2, 0])
+        # the code's top sits under V3's title row (the header's words stay left of the title)
+        p5.shift(np.array([-6.45 - p5.get_left()[0], 2.25 - p5.code.get_top()[1], 0]))
         bar5 = line_bar(p5.code, 0, TOOL, 0.3)
         p5.add(bar5)
         cors = ring(VGroup(*[p5.code.code_lines[k] for k in range(3, 10)]), S.GREY, buff=0.1)
         end2 = grey_chip("part 2's ending").next_to(cors, DOWN, buff=0.18).align_to(cors, LEFT)
         p17 = code(SVC, 17, 20, font_size=20, shown="api/service.py")
         p17.move_to([-6.45 + p17.width / 2, -3.5 + p17.height / 2, 0])
-        bars = VGroup(*[line_bar(p17.code, k, TURN, 0.22) for k in (1, 2, 3)])
-        shift_v = RIGHT * 1.5
+        bars = span_bar(p17.code, 1, 3, TURN, 0.22)
+        shift_v = RIGHT * 2.0
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(t), v.animate.shift(shift_v), run_time=0.7)
             self.play(FadeIn(p5, shift=RIGHT * 0.2), run_time=0.6)
             assert p5.get_right()[0] < v.socket.get_left()[0] - 0.05, (p5.get_right(), v.socket.get_left())
+            assert p5.header.get_right()[0] < v.title.get_left()[0] - 0.1, (p5.header.get_right(), v.title.get_left())
+            assert p5.code.get_top()[1] < v.title.get_bottom()[1] - 0.03, (p5.code.get_top(), v.title.get_bottom())
             assert end2.get_bottom()[1] > -3.55, end2.get_bottom()
             vo.wait_until("the app adds CORS middleware")
             self.play(Create(cors), FadeIn(end2, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("and one route")
-            self.play(FadeOut(cors), FadeOut(end2), ReplacementTransform(p5, p17), run_time=0.8)
+            self.play(FadeOut(cors), FadeOut(end2), FadeOut(p5, shift=DOWN * 0.2), run_time=0.5)
+            self.play(FadeIn(p17, shift=UP * 0.2), run_time=0.5)
             self.play(FadeIn(bars), run_time=0.4)
             assert p17.get_top()[1] < v.container.get_bottom()[1] - 0.05, (p17.get_top(), v.container.get_bottom())
             vo.wait_until("GET slash returns a welcome")
@@ -491,6 +505,7 @@ class ServerAndApp(VoiceScene):
             self.play(Indicate(old_t, color=OWN, scale_factor=1.06), Indicate(tr.net.inner["api"], color=TOOL),
                       run_time=0.8)
             tr.heal(self)
+            self.add(tie, old_b, old_t, notes)   # back above the laptop's opaque frame
 
         # ========================================================== 12. what if it listened on 127.0.0.1?
         b_icon = browser_icon(0.9, name="your browser")
@@ -524,7 +539,7 @@ class ServerAndApp(VoiceScene):
             self.play(Create(a_out), FadeIn(q_out), run_time=0.6)
         card = ponder(self, PONDER_Q, seconds=8, center=(0, -1.45))
 
-        self.play(FadeOut(card), FadeOut(VGroup(v, b_icon, curl_i, a_in, q_in, a_out, q_out)), FadeOut(trk),
-                  run_time=0.8)
+        # one group, the card last: it stays above the picture while everything fades
+        self.play(FadeOut(VGroup(v, b_icon, curl_i, a_in, q_in, a_out, q_out, card)), FadeOut(trk), run_time=0.8)
         self.remove(*self.mobjects)
         self.wait(0.3)

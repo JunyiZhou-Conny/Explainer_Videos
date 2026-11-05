@@ -199,7 +199,7 @@ class Blueprint(VoiceScene):
         here = DashedVMobject(RoundedRectangle(width=bar.width + 0.24, height=bar.height + 0.22,
                                                corner_radius=0.12), num_dashes=40).set_stroke(TURN, 3)
         here.move_to(bar)
-        lines_ = VGroup(*[DashedLine([x, 0.42, 0], [x, -1.15, 0], dash_length=0.08).set_stroke(S.GREY, 2)
+        lines_ = VGroup(*[DashedLine([x, 0.33, 0], [x, -1.15, 0], dash_length=0.08).set_stroke(S.GREY, 2)
                           for x in (x1, x2)])
         road = VGroup(lines_, body, phases, bar, here)
         road.move_to([0, 0.5, 0])
