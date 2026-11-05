@@ -4,3 +4,4 @@ capture-only/python3.12-slim-bookworm-base-build: attempt 1 hit Docker Hub's rat
 capture-only/python3.12-slim-bookworm-base-build: attempt 2 hit Docker Hub's rate limit, retrying in 30 s
 capture-only/python3.12-slim-bookworm-base-build: attempt 3 hit Docker Hub's rate limit, retrying in 30 s
 capture-only/python3.12-slim-bookworm-base-build: attempt 1 hit Docker Hub's rate limit, retrying in 30 s
+capture-only/python3.12-slim-bookworm-base-build: attempt 2 hit Docker Hub's rate limit, retrying in 30 s
