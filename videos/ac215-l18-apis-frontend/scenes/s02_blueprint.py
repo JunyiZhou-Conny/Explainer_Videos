@@ -78,9 +78,10 @@ TREE_SIZE = 20
 
 
 def grey_glyphs(tree):
-    """Folders on the laptop are GREY (BLUE is the cloud); names stay WHITE."""
+    """Folders on the laptop are GREY (BLUE is the cloud); names are WHITE."""
     for r in tree.rows:
         r.glyph.set_color(S.GREY)
+        r.name_text.set_color(INK)
     return tree
 
 
@@ -288,7 +289,7 @@ class Blueprint(VoiceScene):
                 vo.wait_until(cue)
                 anims = [flash_box(m.boxes[key])]
                 if port:
-                    anims.append(Indicate(m.ports[port], color=ROUTE, scale_factor=1.2))
+                    anims.append(Indicate(m.ports[port], color=ROUTE, scale_factor=1.06))   # 1.2 crossed the frame
                 self.play(*anims, run_time=0.7)
                 m.heal(self)
 
@@ -377,8 +378,8 @@ class Blueprint(VoiceScene):
         bar3 = on_bar(term(P_LAPTOP, rows=3), extra_row("our spelling")).get_center()
         bar6 = on_bar(term(P_LAPTOP, rows=6), extra_row()).get_center()
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(tree_all), FadeOut(ref4), run_time=0.6)
-            self.play(FadeIn(tr, shift=RIGHT * 0.3), FadeIn(t, shift=UP * 0.3), run_time=0.6)
+            self.play(FadeOut(tree_all), FadeOut(ref4), FadeIn(tr, shift=RIGHT * 0.3), FadeIn(t, shift=UP * 0.3),
+                      run_time=0.8)
             vo.wait_until("clone both repositories")
             c1 = type_capture(self, t, P01, type_time=1.2)[0]
             self.play(FadeIn(spell, shift=LEFT * 0.1), run_time=0.4)
@@ -461,15 +462,16 @@ class Blueprint(VoiceScene):
         main_l = Line([-4.6, y_main, 0], [2.6, y_main, 0], color=S.GREY, stroke_width=4)
         dots = VGroup(*[Dot([x, y_main, 0], radius=0.11, color=S.GREY) for x in xs])
         main_lb = mono("main", 22, INK).next_to(main_l, LEFT, buff=0.25)
-        fork = VMobject().set_points_smoothly([[-4.2, y_main, 0], [-3.7, (y_main + y_25) / 2 + 0.1, 0],
-                                               [-3.0, y_25, 0]]).set_stroke(S.GREY, 4)
-        b25_l = Line([-3.0, y_25, 0], [2.6, y_25, 0], color=S.GREY, stroke_width=4)
-        b25_lb = mono("2025", 22, INK).next_to(main_lb, DOWN, buff=0).match_y(b25_l).align_to(main_lb, RIGHT)
+        # 2025 = 14f2a14, where main stood before it moved twice: the branch forks at the first dot
+        fork = VMobject().set_points_smoothly([[xs[0], y_main, 0], [xs[0] + 0.5, (y_main + y_25) / 2 + 0.1, 0],
+                                               [xs[0] + 1.2, y_25, 0]]).set_stroke(S.GREY, 4)
+        b25_l = Line([xs[0] + 1.2, y_25, 0], [2.6, y_25, 0], color=S.GREY, stroke_width=4)
+        b25_lb = mono("2025", 22, INK).next_to(b25_l, LEFT, buff=0.25)
         ptr = VGroup(Triangle(color=TURN).set_fill(TURN, 1).scale(0.12).rotate(PI),
                      mono("main", 20, TURN)).arrange(UP, buff=0.06)
         ptr.next_to(dots[0], UP, buff=0.08)
         fs = VGroup(folder_glyph(0.28, S.GREY), mono("frontend-simple", 20, INK)).arrange(RIGHT, buff=0.12)
-        fs.next_to(Dot([-1.9, y_main, 0]), DOWN, buff=0.18)
+        fs.next_to(Dot([-2.3, y_main, 0]), DOWN, buff=0.18).align_to(Dot([-2.3, 0, 0]), LEFT)
         fs_dest = fs.copy().next_to(Dot([0.8, y_25, 0]), UP, buff=0.18)
         later = grey_chip("at the end of this video").next_to(b25_l, RIGHT, buff=0.15)
         branch = VGroup(main_l, dots, main_lb, fork, b25_l, b25_lb)
@@ -513,5 +515,6 @@ class Blueprint(VoiceScene):
             self.play(fs.animate(path_arc=-0.6).move_to(fs_dest), run_time=1.0)
             vo.wait_until("which we visit at the end")
             self.play(FadeIn(later, shift=LEFT * 0.15), Indicate(b25_lb, color=INK, scale_factor=1.15), run_time=0.6)
-            self.play(FadeOut(VGroup(pic7, t, tr)), run_time=0.7)
+        self.wait(1.0)                       # let the chip be read before the frame empties
+        self.play(FadeOut(VGroup(pic7, t, tr)), run_time=0.7)
         self.wait(0.3)
