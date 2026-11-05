@@ -50,10 +50,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l14-serverless-deployment.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l14-serverless-deployment.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 30:56.6 (1856.6 s). Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l14-serverless-deployment.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Release asset, not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l14-serverless-deployment_part1.mp4` | part 1, DURATION_P1: hand over code, hand over an image — a Cloud Run function and a service (S01–S08). Release asset, not in Git |
-| `output/ac215-l14-serverless-deployment_part2.mp4` | part 2, DURATION_P2: identity and finite work — a runtime service account, speech and a Cloud Run job (S09–S16). Release asset, not in Git |
+| `output/ac215-l14-serverless-deployment_part1.mp4` | part 1, 15:13.5 (913.5 s): hand over code, hand over an image — a Cloud Run function and a service (S01–S08). Release asset, not in Git |
+| `output/ac215-l14-serverless-deployment_part2.mp4` | part 2, 15:43.1 (943.1 s): identity and finite work — a runtime service account, speech and a Cloud Run job (S09–S16). Release asset, not in Git |
 | `output/ac215-l14-serverless-deployment.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l14-serverless-deployment.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l14-serverless-deployment.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -72,7 +72,26 @@ video and the two part cuts) are release assets.
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts). Part 1 (15:13) is chapters 00:00–12:44 below; part 2 (15:43) restarts at 00:00 with "Who may call it, and who it runs as", its chapters at 00:00, 01:50, 03:50, 05:50, 07:34, 10:04, 12:04, 13:40.
+
+```
+00:00 It works on localhost
+01:17 One app, four ways to deploy it
+02:42 Before you begin: project, region, clone
+04:22 Part 1: write a function
+06:26 What runs your function?
+08:14 Call it with a query string
+10:13 Part 2: the prebuilt app on your laptop
+12:44 Deploy the same image
+15:13 Who may call it, and who it runs as
+17:04 Attach the identity, turn on speech
+19:04 Develop locally with ADC
+21:04 Finite work: a job and two buckets
+22:48 Command, arguments and the job's badge
+25:18 Execute it and collect the files
+27:18 From the terminal, then the helper
+28:53 Clean up, and what serverless costs
+```
 
 ## What you'll learn
 
