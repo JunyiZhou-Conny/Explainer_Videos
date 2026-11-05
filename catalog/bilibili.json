@@ -146,6 +146,11 @@
       "bvid": "BV1aRxR65EJa",
       "title": "AC215 第13讲跟练 · 高级训练流程：W&B 实验追踪、Vertex AI 无服务器训练与多 GPU",
       "pubdate": 1793813235
+    },
+    "ac215-l14-serverless-deployment": {
+      "bvid": "BV1uz4t6eE45",
+      "title": "AC215 第14讲跟练 · Serverless 部署：Cloud Run function、service 与 job，一步一步部署到云端",
+      "pubdate": 1793854534
     }
   },
   "unmatched": []
