@@ -373,21 +373,19 @@ class TwoFixes(VoiceScene):
             self.resize(9)
             room(self, t, 1)
             t.type(self, C23.cmd, type_time=0.8, wrap=False)
-            r23 = out(self, t, L23, run_time=0.7)
+            r23 = out(self, t, [(x, ERR) if k in (3, 5, 7) else x for k, x in enumerate(L23)], run_time=0.7)
             vo.wait_until("without the modules")
             self.play(Indicate(substring(r23[1], "['ai_registry'"), color=TURN, scale_factor=1.08), run_time=0.7)
-            self.add(t)
+            self.reseat()
             vo.wait_until("no tensorflow module")
-            self.paint(r23[3], r23[3].text, ERR)
-            vo.wait_until("no serializers")
-            self.paint(r23[7], r23[7].text, ERR)
-            vo.wait_until("no get execution role")
-            self.paint(r23[5], r23[5].text, ERR)
-            vo.wait_until("The imports find nothing")
             self.play(FadeOut(t), *self.unbar_anims(), run_time=0.4)
             self.remove(t)
             v.shelves(self, run_time=0.6)
-            v.imports(self, ok=False, run_time=1.2)
+            vo.wait_until("no serializers")
+            v.imports(self, ok=False, run_time=1.4)
+            vo.wait_until("The imports find nothing")
+            self.play(Indicate(v.import_arrows[1], color=ERR, scale_factor=1.08), run_time=0.8)
+            v.heal(self)
 
         # ========================================================== 8. here: 13 minutes, then no disk
         scrim = Rectangle(width=13.2, height=2.8 + 3.6, stroke_width=0).set_fill(S.BG, 0.95)
@@ -495,12 +493,15 @@ class TwoFixes(VoiceScene):
             vo.wait_until("but the shell still opens")
             out(self, t, [LAUNCH25], run_time=0.3)
             pl = cd_prompt(self, t, P_APP)
-            pin(self, pl, beside(row_tag("the id changes every run"), pl))
+            idc = beside(row_tag("the id changes every run"), pl)
+            pin(self, pl, idc)
 
         # ========================================================== 11. inside: versions and values
         dep = under_term(t, grey_chip("deprecation warnings ahead: not the error"))
 
         with self.voiceover(SAY[11]) as vo:
+            flash_tag(self, idc)
+            self.reseat()
             self.wipe(track(tr, 5, True))
             ln = type_cmd(self, t, TYPED[0], type_time=0.9)
             pin(self, ln, beside(extra_row(), ln))
@@ -584,23 +585,23 @@ class TwoFixes(VoiceScene):
 
     def imports_ok(self, v, run_time: float = 1.2):
         """PLAYS: StarVsPin.imports(ok=True) drawn so that no arrow crosses a module chip: GREEN
-        arrows from the cli.py:21-23 chip end under the 2.x shelf's board, below the three modules
-        cli.py imports, and those three chips turn GREEN."""
+        arrow from the cli.py:21-23 chip ends at the 2.x shelf's board, and the three modules cli.py
+        imports turn GREEN."""
         names = ("tensorflow", "serializers", "get_execution_role")
         targets = [v.shelf2.items[n] for n in names]
         if v.src is None:
             v.src = chip("cli.py:21-23", TOOL, size=20, font=MONO).move_to(v.p(0, -2.2))
             v.show(self, v.src, run_time=0.3)
-        board_y = v.shelf2[2].get_center()[1]
-        o = v.src.get_top()
-        arrs = VGroup(*[Arrow(o, [tg.get_center()[0], board_y - 0.04, 0], buff=0.08, color=OWN,
-                              stroke_width=3, tip_length=0.16) for tg in targets])
-        v.show(self, arrs, anims=[LaggedStart(*[GrowArrow(a) for a in arrs], lag_ratio=0.2)],
-               run_time=run_time * 0.5)
+        board = v.shelf2[2]
+        o = v.src.get_left() + RIGHT * 0.15
+        end = np.array([board.get_center()[0] + 1.0, board.get_center()[1] - 0.06, 0])
+        arrs = VGroup(Arrow(o, end, buff=0.08, color=OWN, stroke_width=4, tip_length=0.18))
+        v.show(self, arrs, anims=[GrowArrow(arrs[0])], run_time=run_time * 0.4)
         self.play(*[tg[0].animate.set_stroke(OWN) for tg in targets],
-                  *[tg[1].animate.set_color(OWN) for tg in targets], run_time=run_time * 0.3)
+                  *[tg[1].animate.set_color(OWN) for tg in targets], v.src[0].animate.set_stroke(OWN),
+                  run_time=run_time * 0.3)
         v.heal(self)
-        self.play(*[Indicate(tg[1], color=OWN, scale_factor=1.08) for tg in targets], run_time=run_time * 0.4)
+        self.play(*[Indicate(tg[1], color=OWN, scale_factor=1.08) for tg in targets], run_time=run_time * 0.5)
         v.heal(self)
         v.import_arrows = arrs
 

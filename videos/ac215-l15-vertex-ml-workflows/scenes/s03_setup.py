@@ -3,8 +3,9 @@ v2 has no LECTURE mark in this scene). V1 IdentityBadges is built here.
 
 Beats (script.md "## S03"; one voiceover block each):
 0. TRACKER A1 1. Full-width 20 pt terminal `laptop`, prompt student@laptop:~$. README card (A:9–10)
-   + GREY chip "the README spells no command". `git clone …` (row tag extra) → laptop/10: 2;
-   ▶ your turn on the output row. `cd model-deployment-aws` → the prompt changes. TRACKER A1 1 ·
+   + GREY chip "the README spells no command". `git clone …` → laptop/10: 2 (typed on the first
+   sentence; its row tag extra lands on "so our git clone is extra"); ▶ your turn on the output row
+   on "Pause and clone it". `cd model-deployment-aws` → the prompt changes. TRACKER A1 1 ·
    extra: `git log -1 --format='%H %ci %s'` (extra, on the title bar) → laptop/11: 2 to "#1 from"
    (wrapped), then `…`; `077f4dbc7b13` YELLOW; chip "main · the commit we follow".
 1. TRACKER A1 1 · extra. The card goes, the terminal clears and grows to 12 rows. `ls -la; ls data`
@@ -19,7 +20,8 @@ Beats (script.md "## S03"; one voiceover block each):
 3. TRACKER A1 4. The laptop side steps aside. CONSOLE "IAM › Roles · Create role" (A:36–42) at the
    left: trusted entity SageMaker, two ORANGE policy chips, role name. The BLUE cloud draws at the
    right and the BLUE SageMakerExecutionRole badge forms in it. On "Copy its A R N": README card
-   (A:43, the ARN folded on two rows, digits GREY) + chip "AWS documentation placeholder".
+   (A:43, the ARN folded on two rows, digits GREY) + chip "AWS documentation placeholder" right of
+   it, under the cloud.
 4. V1 IdentityBadges built: the form goes, the laptop (key in the drawer) and the border return;
    PINK request arrow "signed by the user" carries the key card; the dashed "endpoint · later" box
    appears in the cloud and puts the badge on; on "stays" the key bounces off the border.
@@ -40,7 +42,7 @@ Beats (script.md "## S03"; one voiceover block each):
    who-am-I check (extra, laptop/16 line 4) → laptop/16: 6 wrapped, RED.
 9. The terminal goes. V1 returns: laptop + drawer (config + key), TEAL container; CODE
    docker-shell.sh 22–28 (20 pt, three lines cut) at the right, lines lighting with the arrows:
-   line 24's PINK -v arrow copies the drawer in; three GREY export cards; lines 25–27 YELLOW as the
+   line 24's PINK -v arrow (plus a visible PINK arc drawer → /home/app/.aws) copies the drawer in; three GREY export cards; lines 25–27 YELLOW as the
    three PINK -e arrows pass; on "So exported keys" the two key cards hit the wall and drop.
    `erratum` tag + card "use option 1 · or add -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY".
    Fade to empty.
@@ -162,7 +164,7 @@ class UserRoleBucket(VoiceScene):
             ex11 = on_bar(t, extra_row())
             o11 = out(self, t, [cut(c11.line(2), "#1 from", ellipsis=""), "…"], wrap=True, run_time=0.5)
             assert o11[0].text.startswith("077f4dbc7b13") and o11[1].text.endswith("#1 from")
-            main = grey_chip("main · the commit we follow")
+            main = row_tag("main · the commit we follow")
             beside(main, o11[-1], buff=0.3)
             self.play(*recolor(glyph_range(o11[0], 0, 12), TURN), FadeIn(ex11), FadeIn(main, shift=LEFT * 0.1),
                       run_time=0.5)
@@ -237,6 +239,7 @@ class UserRoleBucket(VoiceScene):
             vo.wait_until("Then create an IAM user")
             self.play(track(tr, 3), FadeOut(lbl), ReplacementTransform(sf, uf),
                       ill.animate.move_to(top_right_tag(uf, ill.copy()).get_center()), run_time=0.9)
+            self.bring_to_front(ill)
             self.play(uf.fill(0, USER_A), run_time=0.8)
             vo.wait_until("with three policies")
             self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * 0.1) for c in pols], lag_ratio=0.4), run_time=1.2)
@@ -265,6 +268,7 @@ class UserRoleBucket(VoiceScene):
         arn = readme_card(43, arn_body, repo="A")
         arn.move_to([-6.55 + arn.width / 2, rf.get_bottom()[1] - 0.25 - arn.height / 2, 0])
         doc = grey_chip("AWS documentation placeholder").next_to(arn, RIGHT, buff=0.25).align_to(arn, DOWN)
+        doc.set_y(-3.48 + doc.height / 2)            # under the cloud's bottom edge (y -2.7)
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(uf), FadeOut(pols), FadeOut(broad), FadeOut(flag_ln), FadeOut(ill),
@@ -382,7 +386,7 @@ class UserRoleBucket(VoiceScene):
             vo.wait_until("only the config file exists")
             o14 = out(self, t, c14.at((5, 8)), run_time=0.8)
             self.play(FadeIn(dr, shift=DOWN * 0.1), run_time=0.4)
-            self.play(TransformFromCopy(substring(o14[0], "config")[0], cfg), run_time=0.7)
+            self.play(TransformFromCopy(substring(o14[0], "config"), cfg), run_time=0.7)
             seat(self, t, ex14, dr, cfg)
             vo.wait_until("since we typed no keys")
             self.play(FadeIn(nocred, shift=LEFT * 0.1), run_time=0.5)
@@ -448,7 +452,7 @@ class UserRoleBucket(VoiceScene):
             # the piece's own -v arrow is very short here (drawer and container nearly touch): a visible
             # PINK arc from the ~/.aws drawer up into the container's /home/app/.aws row goes with it
             vv = route(v.drawer.frame.get_corner(UR) + np.array([-0.35, 0.02, 0]),
-                       v.box_c.frame.get_top() + np.array([-1.15, -0.78, 0]), arc=-0.6)
+                       v.box_c.frame.get_top() + np.array([-1.5, -0.78, 0]), arc=-0.6)
             v.show(self, vv, anims=[GrowArrow(vv)], run_time=0.5)
             v.mount(self)
             vo.wait_until("the script passes only the region")
