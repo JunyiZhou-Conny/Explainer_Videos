@@ -1,8 +1,8 @@
 00:00 Who may call it, and who it runs as
 01:50 Attach the identity, turn on speech
-03:48 Develop locally with ADC
-05:49 Finite work: a job and two buckets
-07:32 Command, arguments and the job's badge
-10:03 Execute it and collect the files
-12:03 From the terminal, then the helper
-13:36 Clean up, and what serverless costs
+03:50 Develop locally with ADC
+05:50 Finite work: a job and two buckets
+07:34 Command, arguments and the job's badge
+10:04 Execute it and collect the files
+12:04 From the terminal, then the helper
+13:40 Clean up, and what serverless costs

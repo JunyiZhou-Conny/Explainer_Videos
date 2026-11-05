@@ -1,0 +1,530 @@
+[Script Info]
+Title: AC215 · Lecture 14 — Serverless deployment: a function, a service and a job on Cloud Run (follow-along: serverless-deployment)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.31,Bilingual,,0,0,0,,这是一个在你笔记本上跑着的翻译页面\N{\fs33\c&H00C8C0B8&\bord1.4}Here is a translation page running on your laptop.
+Dialogue: 0,0:00:03.63,0:00:07.42,Bilingual,,0,0,0,,输入 good afternoon everyone，选法语，再点 Translate\N{\fs33\c&H00C8C0B8&\bord1.4}Type good afternoon everyone, choose French, press Translate,
+Dialogue: 0,0:00:07.42,0:00:09.34,Bilingual,,0,0,0,,它就回答：Bonjour à tous\N{\fs33\c&H00C8C0B8&\bord1.4}and it answers: Bonjour à tous.
+Dialogue: 0,0:00:09.58,0:00:11.57,Bilingual,,0,0,0,,现在把地址发给一个同学\N{\fs33\c&H00C8C0B8&\bord1.4}Now send the address to a classmate.
+Dialogue: 0,0:00:11.89,0:00:15.29,Bilingual,,0,0,0,,在同学的笔记本上，localhost 8086 什么也找不到\N{\fs33\c&H00C8C0B8&\bord1.4}On their laptop, localhost 8086 finds nothing,
+Dialogue: 0,0:00:15.29,0:00:20.61,Bilingual,,0,0,0,,因为 localhost 永远指这台机器，而他那台上什么都没跑\N{\fs33\c&H00C8C0B8&\bord1.4}because localhost always means this machine, and nothing runs on theirs.
+Dialogue: 0,0:00:20.85,0:00:24.22,Bilingual,,0,0,0,,第 1 讲给过一个办法：租一台虚拟机\N{\fs33\c&H00C8C0B8&\bord1.4}Lecture 1 gave one fix: rent a virtual machine.
+Dialogue: 0,0:00:24.54,0:00:26.38,Bilingual,,0,0,0,,页面有了公网地址\N{\fs33\c&H00C8C0B8&\bord1.4}The page gets a public address,
+Dialogue: 0,0:00:26.38,0:00:30.54,Bilingual,,0,0,0,,可机器整晚都在计费，而根本没人在翻译\N{\fs33\c&H00C8C0B8&\bord1.4}but the machine is billed all night, while nobody translates anything.
+Dialogue: 0,0:00:30.78,0:00:32.53,Bilingual,,0,0,0,,所以今天的问题是这个\N{\fs33\c&H00C8C0B8&\bord1.4}So here is today's question.
+Dialogue: 0,0:00:32.85,0:00:37.91,Bilingual,,0,0,0,,这个页面能不能有一个公网 URL，没人用的时候又一分钱不花？\N{\fs33\c&H00C8C0B8&\bord1.4}Can this page have a public URL, and cost nothing while nobody is using it?
+Dialogue: 0,0:00:38.15,0:00:40.09,Bilingual,,0,0,0,,这就是 serverless 的承诺\N{\fs33\c&H00C8C0B8&\bord1.4}That is the promise of serverless.
+Dialogue: 0,0:00:40.41,0:00:45.47,Bilingual,,0,0,0,,你应用的一个副本在请求来时出现，在流量停下时消失\N{\fs33\c&H00C8C0B8&\bord1.4}A copy of your app appears when a request arrives and disappears when the traffic stops.
+Dialogue: 0,0:00:45.79,0:00:49.14,Bilingual,,0,0,0,,到最后，同一个 image 还会作为一个 job 来跑\N{\fs33\c&H00C8C0B8&\bord1.4}By the end, the same image also runs as a job.
+Dialogue: 0,0:00:49.46,0:00:52.10,Bilingual,,0,0,0,,它从一个私有 bucket 里取一段文字\N{\fs33\c&H00C8C0B8&\bord1.4}It takes a passage from a private bucket,
+Dialogue: 0,0:00:52.10,0:00:55.13,Bilingual,,0,0,0,,用法语读出来，保存文件，然后退出\N{\fs33\c&H00C8C0B8&\bord1.4}speaks it in French, saves its files and exits.
+Dialogue: 0,0:00:57.17,0:01:00.70,Bilingual,,0,0,0,,要跟着做，先准备好你的 clone、Docker、gcloud 命令行工具\N{\fs33\c&H00C8C0B8&\bord1.4}To follow along, have your clone, Docker, the gcloud tool
+Dialogue: 0,0:01:00.70,0:01:03.18,Bilingual,,0,0,0,,还有你自己开通了结算的项目\N{\fs33\c&H00C8C0B8&\bord1.4}and your own project with billing ready.
+Dialogue: 0,0:01:03.42,0:01:06.25,Bilingual,,0,0,0,,角落里的进度条标出 README 的哪一步\N{\fs33\c&H00C8C0B8&\bord1.4}A tracker in the corner names the README step,
+Dialogue: 0,0:01:06.25,0:01:09.45,Bilingual,,0,0,0,,黄色的 your turn 标签表示暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}and a yellow tag, your turn, means pause and run it.
+Dialogue: 0,0:01:09.77,0:01:12.07,Bilingual,,0,0,0,,先照着控制台的步骤做\N{\fs33\c&H00C8C0B8&\bord1.4}Follow the console steps first;
+Dialogue: 0,0:01:12.07,0:01:15.85,Bilingual,,0,0,0,,gcloud 命令框是替代做法，不是额外的步骤\N{\fs33\c&H00C8C0B8&\bord1.4}the gcloud boxes are alternatives, not extra steps.
+Dialogue: 0,0:01:17.40,0:01:19.42,Bilingual,,0,0,0,,先看这一讲的位置\N{\fs33\c&H00C8C0B8&\bord1.4}First, where this lecture sits:
+Dialogue: 0,0:01:19.42,0:01:24.23,Bilingual,,0,0,0,,在课程项目的原型阶段里，部署就从这里开始\N{\fs33\c&H00C8C0B8&\bord1.4}inside the prototype phase of the course project, where deployment begins.
+Dialogue: 0,0:01:24.47,0:01:26.94,Bilingual,,0,0,0,,Cheese App 的四个部分，已经做完三个\N{\fs33\c&H00C8C0B8&\bord1.4}Of the Cheese App's four parts, three are done.
+Dialogue: 0,0:01:27.26,0:01:28.58,Bilingual,,0,0,0,,还剩模型部署\N{\fs33\c&H00C8C0B8&\bord1.4}Model deploy is left, and milestone 3 asks you to deploy your model or API with Cloud Functions or Cloud Run.
+Dialogue: 0,0:01:28.58,0:01:33.37,Bilingual,,0,0,0,,里程碑 3 要求你用 Cloud Functions 或 Cloud Run\N{\fs33\c&H00C8C0B8&\bord1.4}Model deploy is left, and milestone 3 asks you to deploy your model or API with Cloud Functions or Cloud Run.
+Dialogue: 0,0:01:33.37,0:01:35.28,Bilingual,,0,0,0,,部署你的模型或 API\N{\fs33\c&H00C8C0B8&\bord1.4}Model deploy is left, and milestone 3 asks you to deploy your model or API with Cloud Functions or Cloud Run.
+Dialogue: 0,0:01:35.52,0:01:38.97,Bilingual,,0,0,0,,课上讲的 serverless：代码只在需要时运行\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's serverless: code runs only when needed,
+Dialogue: 0,0:01:38.97,0:01:43.79,Bilingual,,0,0,0,,不用搭服务器，昂贵的硬件只给需要它的那一步\N{\fs33\c&H00C8C0B8&\bord1.4}no servers to set up, and costly hardware only for the step that needs it.
+Dialogue: 0,0:01:44.03,0:01:47.67,Bilingual,,0,0,0,,上周的 Vertex AI 训练任务就是一例\N{\fs33\c&H00C8C0B8&\bord1.4}Last week's Vertex AI training job was one case;
+Dialogue: 0,0:01:47.67,0:01:50.02,Bilingual,,0,0,0,,今天讲函数和 Cloud Run\N{\fs33\c&H00C8C0B8&\bord1.4}today, functions and Cloud Run;
+Dialogue: 0,0:01:50.02,0:01:52.67,Bilingual,,0,0,0,,下周讲 endpoint 和 pipeline\N{\fs33\c&H00C8C0B8&\bord1.4}next week, endpoints and pipelines.
+Dialogue: 0,0:01:52.92,0:01:55.71,Bilingual,,0,0,0,,它的地图是一个应用，四种部署方式\N{\fs33\c&H00C8C0B8&\bord1.4}Its map is one app, four ways to deploy it.
+Dialogue: 0,0:01:56.03,0:01:59.77,Bilingual,,0,0,0,,横着看你交出的是什么，一个代码文件还是一个 container\N{\fs33\c&H00C8C0B8&\bord1.4}Across, what you hand over, a code file or a container;
+Dialogue: 0,0:01:59.77,0:02:03.31,Bilingual,,0,0,0,,竖着看它在哪儿跑，一台租来的机器还是 serverless\N{\fs33\c&H00C8C0B8&\bord1.4}down, where it runs, a rented machine or serverless.
+Dialogue: 0,0:02:03.63,0:02:07.51,Bilingual,,0,0,0,,第 1 讲和第 2 讲填了上面一行；今天填下面一行\N{\fs33\c&H00C8C0B8&\bord1.4}Lectures 1 and 2 filled the top row; today fills the bottom.
+Dialogue: 0,0:02:07.75,0:02:10.46,Bilingual,,0,0,0,,README 的四个部分都在下面这一行里\N{\fs33\c&H00C8C0B8&\bord1.4}The README's four parts sit in that bottom row.
+Dialogue: 0,0:02:10.78,0:02:12.68,Bilingual,,0,0,0,,第 1 部分交出的是一个文件\N{\fs33\c&H00C8C0B8&\bord1.4}Part 1 hands over a file.
+Dialogue: 0,0:02:13.00,0:02:15.36,Bilingual,,0,0,0,,第 2 到第 4 部分交出的是一个 image\N{\fs33\c&H00C8C0B8&\bord1.4}Parts 2 to 4 hand over one image,
+Dialogue: 0,0:02:15.36,0:02:18.07,Bilingual,,0,0,0,,先作为 web service，再作为 job\N{\fs33\c&H00C8C0B8&\bord1.4}first as a web service, then as a job.
+Dialogue: 0,0:02:18.32,0:02:19.96,Bilingual,,0,0,0,,再注意我们部署的是什么\N{\fs33\c&H00C8C0B8&\bord1.4}And notice what we deploy.
+Dialogue: 0,0:02:20.28,0:02:23.93,Bilingual,,0,0,0,,部署的不是翻译模型，那是一个外部服务在跑\N{\fs33\c&H00C8C0B8&\bord1.4}Not the translation model, which an outside service runs,
+Dialogue: 0,0:02:23.93,0:02:26.17,Bilingual,,0,0,0,,而是它外面的应用代码\N{\fs33\c&H00C8C0B8&\bord1.4}but the application code around it.
+Dialogue: 0,0:02:26.49,0:02:28.88,Bilingual,,0,0,0,,你的 Cheese App 后端会扮演这个角色\N{\fs33\c&H00C8C0B8&\bord1.4}Your Cheese App backend will play that role.
+Dialogue: 0,0:02:29.12,0:02:30.60,Bilingual,,0,0,0,,两个小提示\N{\fs33\c&H00C8C0B8&\bord1.4}Two small notes.
+Dialogue: 0,0:02:30.65,0:02:32.15,Bilingual,,0,0,0,,课程页面链接到的几节\N{\fs33\c&H00C8C0B8&\bord1.4}The course page links
+Dialogue: 0,0:02:32.15,0:02:36.07,Bilingual,,0,0,0,,重写后的 README 已经没有了，所以从头开始\N{\fs33\c&H00C8C0B8&\bord1.4}to sections the rewritten README no longer has, so start at the top.
+Dialogue: 0,0:02:36.39,0:02:39.29,Bilingual,,0,0,0,,而且我们跟的是课程链接现在指向的 README\N{\fs33\c&H00C8C0B8&\bord1.4}And we follow the README the course link serves now,
+Dialogue: 0,0:02:39.29,0:02:41.47,Bilingual,,0,0,0,,不是课程地图里那个旧的 commit\N{\fs33\c&H00C8C0B8&\bord1.4}not the older commit in the course map.
+Dialogue: 0,0:02:42.82,0:02:44.26,Bilingual,,0,0,0,,开始之前\N{\fs33\c&H00C8C0B8&\bord1.4}Before you begin.
+Dialogue: 0,0:02:44.31,0:02:49.89,Bilingual,,0,0,0,,选好你的课程项目，核对它的项目 ID，不要只看显示名称\N{\fs33\c&H00C8C0B8&\bord1.4}Select your course project and check its project ID, not just its display name;
+Dialogue: 0,0:02:49.89,0:02:52.01,Bilingual,,0,0,0,,命令框里要的是 ID\N{\fs33\c&H00C8C0B8&\bord1.4}the command boxes need the ID.
+Dialogue: 0,0:02:52.33,0:02:56.53,Bilingual,,0,0,0,,确认结算已开通，而且你有权限创建这些资源\N{\fs33\c&H00C8C0B8&\bord1.4}Confirm billing is on and that you may create these resources;
+Dialogue: 0,0:02:56.53,0:02:58.62,Bilingual,,0,0,0,,如果没有，先问课程组\N{\fs33\c&H00C8C0B8&\bord1.4}if not, ask course staff first.
+Dialogue: 0,0:02:58.87,0:03:01.77,Bilingual,,0,0,0,,选一个区域：README 用的是多伦多\N{\fs33\c&H00C8C0B8&\bord1.4}Choose a region: the README uses Toronto.
+Dialogue: 0,0:03:02.09,0:03:04.99,Bilingual,,0,0,0,,后面的语音模型用 us-central1\N{\fs33\c&H00C8C0B8&\bord1.4}The speech model later uses us-central1,
+Dialogue: 0,0:03:04.99,0:03:07.17,Bilingual,,0,0,0,,这是第 3 部分里一个单独的设置\N{\fs33\c&H00C8C0B8&\bord1.4}a separate setting for part 3.
+Dialogue: 0,0:03:07.40,0:03:10.01,Bilingual,,0,0,0,,工作表列出了你要建的东西\N{\fs33\c&H00C8C0B8&\bord1.4}The worksheet names what you will create:
+Dialogue: 0,0:03:10.01,0:03:13.90,Bilingual,,0,0,0,,这个函数、web service、job、两个运行时账号\N{\fs33\c&H00C8C0B8&\bord1.4}the function, the web service, the job, two runtime accounts,
+Dialogue: 0,0:03:13.90,0:03:16.13,Bilingual,,0,0,0,,还有第 4 部分里你自己起名的两个 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}and two buckets you name in part 4.
+Dialogue: 0,0:03:16.37,0:03:18.71,Bilingual,,0,0,0,,第 4 步：把 repo clone 下来\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: clone the repository.
+Dialogue: 0,0:03:19.03,0:03:23.08,Bilingual,,0,0,0,,README 写的是 clone 或下载，所以我们的 git clone 是额外的\N{\fs33\c&H00C8C0B8&\bord1.4}The README says clone or download, so our git clone is extra,
+Dialogue: 0,0:03:23.08,0:03:26.46,Bilingual,,0,0,0,,显示我们所跟 commit 的 git log 也是\N{\fs33\c&H00C8C0B8&\bord1.4}and so is the git log showing the commit we follow.
+Dialogue: 0,0:03:26.78,0:03:28.23,Bilingual,,0,0,0,,暂停一下，clone 下来\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and clone it.
+Dialogue: 0,0:03:28.28,0:03:29.49,Bilingual,,0,0,0,,额外列一下目录\N{\fs33\c&H00C8C0B8&\bord1.4}An extra listing
+Dialogue: 0,0:03:29.49,0:03:34.12,Bilingual,,0,0,0,,根目录下有一些旧文件，包括 main.py 和一个 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}shows older files at the root, including main.py and a Dockerfile,
+Dialogue: 0,0:03:34.12,0:03:36.12,Bilingual,,0,0,0,,README 从来不用它们\N{\fs33\c&H00C8C0B8&\bord1.4}which the README never uses;
+Dialogue: 0,0:03:36.12,0:03:37.60,Bilingual,,0,0,0,,别去构建\N{\fs33\c&H00C8C0B8&\bord1.4}don't build them.
+Dialogue: 0,0:03:37.65,0:03:39.98,Bilingual,,0,0,0,,今天的内容都在 tutorial 下面\N{\fs33\c&H00C8C0B8&\bord1.4}Today's work sits under tutorial:
+Dialogue: 0,0:03:39.98,0:03:42.73,Bilingual,,0,0,0,,第 1 部分用 function 目录，image 用 app 目录\N{\fs33\c&H00C8C0B8&\bord1.4}function for part 1, app for the image.
+Dialogue: 0,0:03:42.98,0:03:48.22,Bilingual,,0,0,0,,然后是终端设置，先跑 gcloud auth login，这是浏览器登录\N{\fs33\c&H00C8C0B8&\bord1.4}Then the terminal setup, starting with gcloud auth login, a browser sign-in;
+Dialogue: 0,0:03:48.22,0:03:51.05,Bilingual,,0,0,0,,额外跑一下 auth list，现在还没有账号\N{\fs33\c&H00C8C0B8&\bord1.4}an extra auth list shows no accounts yet.
+Dialogue: 0,0:03:51.37,0:03:54.21,Bilingual,,0,0,0,,它登录的是 gcloud 命令行工具，不是应用\N{\fs33\c&H00C8C0B8&\bord1.4}It logs in the gcloud tool, not the app;
+Dialogue: 0,0:03:54.21,0:03:56.70,Bilingual,,0,0,0,,应用的身份第 3 部分再说\N{\fs33\c&H00C8C0B8&\bord1.4}the app's identity comes in part 3.
+Dialogue: 0,0:03:56.95,0:04:01.24,Bilingual,,0,0,0,,接下来是七条 export：项目、区域、image、两个名字\N{\fs33\c&H00C8C0B8&\bord1.4}Seven exports follow: project, region, image, two names and two account emails built from your project ID.
+Dialogue: 0,0:04:01.24,0:04:04.63,Bilingual,,0,0,0,,还有用你的项目 ID 拼出来的两个账号邮箱\N{\fs33\c&H00C8C0B8&\bord1.4}Seven exports follow: project, region, image, two names and two account emails built from your project ID.
+Dialogue: 0,0:04:04.95,0:04:07.21,Bilingual,,0,0,0,,暂停一下，用你真实的 ID 把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them with your real ID.
+Dialogue: 0,0:04:08.65,0:04:13.26,Bilingual,,0,0,0,,关于这次录制：这台机器没有 Google 账号，也没有项目\N{\fs33\c&H00C8C0B8&\bord1.4}About this recording: this machine has no Google account and no project.
+Dialogue: 0,0:04:13.58,0:04:17.22,Bilingual,,0,0,0,,所以每个 gcloud 命令框都跑到第一个真实报错为止\N{\fs33\c&H00C8C0B8&\bord1.4}So every gcloud box runs until its first honest error,
+Dialogue: 0,0:04:17.22,0:04:18.72,Bilingual,,0,0,0,,控制台是画出来的\N{\fs33\c&H00C8C0B8&\bord1.4}the console is drawn,
+Dialogue: 0,0:04:18.72,0:04:22.35,Bilingual,,0,0,0,,云端的结果来自 README 自己的录制记录\N{\fs33\c&H00C8C0B8&\bord1.4}and cloud results come from the README's own recording.
+Dialogue: 0,0:04:22.88,0:04:24.48,Bilingual,,0,0,0,,第 1 部分：一个函数\N{\fs33\c&H00C8C0B8&\bord1.4}Part 1: a function.
+Dialogue: 0,0:04:24.80,0:04:29.06,Bilingual,,0,0,0,,课上说它是一段由事件触发的轻量代码\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture calls it lightweight code that an event starts,
+Dialogue: 0,0:04:29.06,0:04:33.74,Bilingual,,0,0,0,,比如一次文件上传、一次数据库变更，或者今天的 HTTP 请求\N{\fs33\c&H00C8C0B8&\bord1.4}like a file upload, a database change, or today, an HTTP request.
+Dialogue: 0,0:04:34.06,0:04:36.79,Bilingual,,0,0,0,,它只在运行时计费，而且会自动扩缩\N{\fs33\c&H00C8C0B8&\bord1.4}It is billed while it runs and scales by itself.
+Dialogue: 0,0:04:37.30,0:04:43.17,Bilingual,,0,0,0,,它的四步：打开控制台、启用 API、写一个 Python 文件、部署\N{\fs33\c&H00C8C0B8&\bord1.4}Its four steps: open the console, enable the APIs, write a Python file, deploy.
+Dialogue: 0,0:04:43.49,0:04:45.29,Bilingual,,0,0,0,,有一个名字变了：Cloud Functions\N{\fs33\c&H00C8C0B8&\bord1.4}One name has changed:
+Dialogue: 0,0:04:45.29,0:04:47.95,Bilingual,,0,0,0,,现在叫 Cloud Run functions，所以 README\N{\fs33\c&H00C8C0B8&\bord1.4}Cloud Functions are now Cloud Run functions,
+Dialogue: 0,0:04:47.95,0:04:52.21,Bilingual,,0,0,0,,从 Cloud Run、Services、Write a function 开始\N{\fs33\c&H00C8C0B8&\bord1.4}so the README starts at Cloud Run, Services, Write a function.
+Dialogue: 0,0:04:52.45,0:04:54.14,Bilingual,,0,0,0,,这会打开 Create service\N{\fs33\c&H00C8C0B8&\bord1.4}That opens Create service.
+Dialogue: 0,0:04:54.46,0:04:56.55,Bilingual,,0,0,0,,如果它提示，就启用 API\N{\fs33\c&H00C8C0B8&\bord1.4}Enable the APIs if it asks.
+Dialogue: 0,0:04:56.87,0:05:00.36,Bilingual,,0,0,0,,把 service 命名为 translate-function，再选你的区域\N{\fs33\c&H00C8C0B8&\bord1.4}Name the service translate-function and choose your region.
+Dialogue: 0,0:05:00.60,0:05:05.85,Bilingual,,0,0,0,,运行时选 Python 3.12；旧版 README 写的是 3.10\N{\fs33\c&H00C8C0B8&\bord1.4}For the runtime, pick Python 3.12; the older README said 3.10.
+Dialogue: 0,0:05:06.17,0:05:08.00,Bilingual,,0,0,0,,选 Allow public access\N{\fs33\c&H00C8C0B8&\bord1.4}Choose Allow public access,
+Dialogue: 0,0:05:08.00,0:05:11.27,Bilingual,,0,0,0,,这样谁拿到 URL 都能调用它，然后点 Create\N{\fs33\c&H00C8C0B8&\bord1.4}so anyone with the URL may call it, then Create.
+Dialogue: 0,0:05:11.52,0:05:14.44,Bilingual,,0,0,0,,打开 Source editor；暂停一下，建一个你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Open the Source editor; pause and create yours.
+Dialogue: 0,0:05:14.76,0:05:18.48,Bilingual,,0,0,0,,金色标签：这个函数按 Cloud Run service 计费\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: the function bills as a Cloud Run service,
+Dialogue: 0,0:05:18.48,0:05:20.54,Bilingual,,0,0,0,,每次部署都会跑一次构建\N{\fs33\c&H00C8C0B8&\bord1.4}and every deploy runs a build.
+Dialogue: 0,0:05:20.78,0:05:24.00,Bilingual,,0,0,0,,把 main.py 换成教程的处理函数\N{\fs33\c&H00C8C0B8&\bord1.4}Replace main.py with the tutorial's handler.
+Dialogue: 0,0:05:24.32,0:05:29.76,Bilingual,,0,0,0,,装饰器把它标成一个 HTTP 函数，名字叫 hello 下划线 http\N{\fs33\c&H00C8C0B8&\bord1.4}The decorator marks an HTTP function called hello_http.
+Dialogue: 0,0:05:30.08,0:05:34.97,Bilingual,,0,0,0,,它从请求里取 text、source 和 destination，每个都有默认值\N{\fs33\c&H00C8C0B8&\bord1.4}It takes text, source and destination from the request, each with a default.
+Dialogue: 0,0:05:35.22,0:05:39.08,Bilingual,,0,0,0,,旁边，课件上的示意代码按位置把 source 放在第二个\N{\fs33\c&H00C8C0B8&\bord1.4}Beside it, the lecture's sketch passes source second, by position.
+Dialogue: 0,0:05:39.40,0:05:42.78,Bilingual,,0,0,0,,在这个库里，第二个位置是 destination\N{\fs33\c&H00C8C0B8&\bord1.4}In this library the second slot is the destination,
+Dialogue: 0,0:05:42.78,0:05:45.23,Bilingual,,0,0,0,,所以 source 和 destination 会对调\N{\fs33\c&H00C8C0B8&\bord1.4}so source and destination would swap;
+Dialogue: 0,0:05:45.23,0:05:47.36,Bilingual,,0,0,0,,这个处理函数是按名字传的\N{\fs33\c&H00C8C0B8&\bord1.4}the handler passes them by name.
+Dialogue: 0,0:05:47.60,0:05:50.84,Bilingual,,0,0,0,,把 requirements 文件换成两个精确的 pin\N{\fs33\c&H00C8C0B8&\bord1.4}Replace the requirements file with two exact pins.
+Dialogue: 0,0:05:51.16,0:05:55.56,Bilingual,,0,0,0,,新版的 googletrans 是异步的，会把这个简单的处理函数弄坏\N{\fs33\c&H00C8C0B8&\bord1.4}The newer googletrans is asynchronous and would break this simple handler.
+Dialogue: 0,0:05:55.80,0:05:59.75,Bilingual,,0,0,0,,把 Function entry point 设成 hello 下划线 http\N{\fs33\c&H00C8C0B8&\bord1.4}Set the Function entry point to hello_http.
+Dialogue: 0,0:06:00.07,0:06:04.56,Bilingual,,0,0,0,,用 README 的话说，它是框架应该调用的那个 Python 函数\N{\fs33\c&H00C8C0B8&\bord1.4}In the README's words, it is the Python function the framework should call,
+Dialogue: 0,0:06:04.56,0:06:06.60,Bilingual,,0,0,0,,不是文件名，也不是 service 名称\N{\fs33\c&H00C8C0B8&\bord1.4}not the file name or service name.
+Dialogue: 0,0:06:06.92,0:06:10.24,Bilingual,,0,0,0,,点 Save and redeploy，等这个 revision\N{\fs33\c&H00C8C0B8&\bord1.4}Select Save and redeploy and wait for the revision,
+Dialogue: 0,0:06:10.24,0:06:14.28,Bilingual,,0,0,0,,也就是你的代码和设置部署出来的一个版本，变成就绪\N{\fs33\c&H00C8C0B8&\bord1.4}a deployed version of your code and settings, to become ready.
+Dialogue: 0,0:06:14.60,0:06:15.97,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it.
+Dialogue: 0,0:06:16.02,0:06:19.81,Bilingual,,0,0,0,,所以课件上那一步，创建一个 Python 文件，是简化版\N{\fs33\c&H00C8C0B8&\bord1.4}So the slide's step, create a Python file, is the short version.
+Dialogue: 0,0:06:20.13,0:06:25.25,Bilingual,,0,0,0,,控制台要的是文件、它的依赖，还有要调用的函数名\N{\fs33\c&H00C8C0B8&\bord1.4}The console wants the file, its dependencies and the name of the function to call.
+Dialogue: 0,0:06:26.60,0:06:28.20,Bilingual,,0,0,0,,是什么在运行你的函数？\N{\fs33\c&H00C8C0B8&\bord1.4}What runs your function?
+Dialogue: 0,0:06:28.35,0:06:31.56,Bilingual,,0,0,0,,课上说你不用管理服务器或 container\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture says you manage no servers or containers,
+Dialogue: 0,0:06:31.56,0:06:33.98,Bilingual,,0,0,0,,这没错：你确实不用管它们\N{\fs33\c&H00C8C0B8&\bord1.4}and that is true: you don't manage them.
+Dialogue: 0,0:06:34.30,0:06:36.52,Bilingual,,0,0,0,,但 Google 照样会构建一个 container\N{\fs33\c&H00C8C0B8&\bord1.4}But Google builds a container anyway.
+Dialogue: 0,0:06:36.77,0:06:39.20,Bilingual,,0,0,0,,点 Save 会把你的三样输入交给 Cloud Build\N{\fs33\c&H00C8C0B8&\bord1.4}Save sends your three inputs to Cloud Build.
+Dialogue: 0,0:06:39.52,0:06:45.32,Bilingual,,0,0,0,,它在构建时把依赖装一次，配置好 Functions Framework\N{\fs33\c&H00C8C0B8&\bord1.4}It installs the requirements once, at build time, configures the Functions Framework,
+Dialogue: 0,0:06:45.32,0:06:48.33,Bilingual,,0,0,0,,再把一个 image 发布到 Artifact Registry\N{\fs33\c&H00C8C0B8&\bord1.4}and publishes an image to Artifact Registry.
+Dialogue: 0,0:06:48.65,0:06:51.36,Bilingual,,0,0,0,,Cloud Run 用这个 image 启动一个 revision\N{\fs33\c&H00C8C0B8&\bord1.4}Cloud Run starts a revision from that image.
+Dialogue: 0,0:06:51.60,0:06:54.41,Bilingual,,0,0,0,,在每个实例里，Functions Framework\N{\fs33\c&H00C8C0B8&\bord1.4}In each instance, the Functions Framework
+Dialogue: 0,0:06:54.41,0:06:57.01,Bilingual,,0,0,0,,在 gunicorn 下跑一个小的 Flask 应用\N{\fs33\c&H00C8C0B8&\bord1.4}runs a small Flask app under gunicorn,
+Dialogue: 0,0:06:57.01,0:07:00.50,Bilingual,,0,0,0,,监听所有网络接口，用的是 Cloud Run 给的 port\N{\fs33\c&H00C8C0B8&\bord1.4}on every interface, at the port Cloud Run provides.
+Dialogue: 0,0:07:00.82,0:07:05.64,Bilingual,,0,0,0,,每来一个请求，它就按入口点的名字找到你的函数，然后调用它\N{\fs33\c&H00C8C0B8&\bord1.4}On each request, it looks up your function by the entry point name and calls it.
+Dialogue: 0,0:07:05.88,0:07:09.02,Bilingual,,0,0,0,,所以课上那个代码文件的格子里，其实装着一个 container\N{\fs33\c&H00C8C0B8&\bord1.4}So the lecture's file cell has a container inside.
+Dialogue: 0,0:07:09.34,0:07:12.26,Bilingual,,0,0,0,,也正因为这样，最后才会有一个 image 要清理\N{\fs33\c&H00C8C0B8&\bord1.4}That is why there is an image to clean up at the end.
+Dialogue: 0,0:07:12.50,0:07:16.75,Bilingual,,0,0,0,,这一层也能在你的笔记本上跑，作为额外的本地替身\N{\fs33\c&H00C8C0B8&\bord1.4}This layer also runs on your laptop, as an extra local stand-in.
+Dialogue: 0,0:07:17.07,0:07:20.54,Bilingual,,0,0,0,,同样的两个 pin 会装上 Functions Framework\N{\fs33\c&H00C8C0B8&\bord1.4}The same two pins install the Functions Framework,
+Dialogue: 0,0:07:20.54,0:07:24.08,Bilingual,,0,0,0,,Flask、gunicorn 和 googletrans，和构建时一样\N{\fs33\c&H00C8C0B8&\bord1.4}Flask, gunicorn and googletrans, as the build does.
+Dialogue: 0,0:07:24.33,0:07:27.75,Bilingual,,0,0,0,,把 target 设成 hello 下划线 http 启动它\N{\fs33\c&H00C8C0B8&\bord1.4}Start it with target hello_http, and it prints nothing while it serves.
+Dialogue: 0,0:07:27.75,0:07:29.65,Bilingual,,0,0,0,,它运行期间什么都不打印\N{\fs33\c&H00C8C0B8&\bord1.4}Start it with target hello_http, and it prints nothing while it serves.
+Dialogue: 0,0:07:29.97,0:07:33.57,Bilingual,,0,0,0,,这种安静是正常的：这个框架只记录错误\N{\fs33\c&H00C8C0B8&\bord1.4}That silence is normal: the framework logs only errors.
+Dialogue: 0,0:07:33.82,0:07:37.76,Bilingual,,0,0,0,,你贴了 main.py，入口点却填了 translate\N{\fs33\c&H00C8C0B8&\bord1.4}You paste main.py but type translate as the entry point.
+Dialogue: 0,0:07:38.08,0:07:39.66,Bilingual,,0,0,0,,构建会失败吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Does the build fail?
+Dialogue: 0,0:07:39.71,0:07:42.27,Bilingual,,0,0,0,,如果不会，那是什么失败了，你会在哪儿看到？\N{\fs33\c&H00C8C0B8&\bord1.4}If not, what fails, and where would you see it?
+Dialogue: 0,0:07:51.10,0:07:53.98,Bilingual,,0,0,0,,装依赖没问题；它们没错\N{\fs33\c&H00C8C0B8&\bord1.4}Installing the requirements works; they are fine.
+Dialogue: 0,0:07:54.30,0:07:55.90,Bilingual,,0,0,0,,但部署失败了\N{\fs33\c&H00C8C0B8&\bord1.4}But the deployment fails.
+Dialogue: 0,0:07:56.18,0:07:59.42,Bilingual,,0,0,0,,新的 revision 启动时，框架去找这个名字\N{\fs33\c&H00C8C0B8&\bord1.4}When the new revision starts, the framework looks for the name.
+Dialogue: 0,0:07:59.74,0:08:03.77,Bilingual,,0,0,0,,main.py 文件里应该有一个叫 translate 的函数\N{\fs33\c&H00C8C0B8&\bord1.4}The file main.py should contain a function named translate.
+Dialogue: 0,0:08:04.09,0:08:06.61,Bilingual,,0,0,0,,但它找到的是 hello 下划线 http\N{\fs33\c&H00C8C0B8&\bord1.4}But it found hello_http.
+Dialogue: 0,0:08:06.85,0:08:10.31,Bilingual,,0,0,0,,在 Cloud Run 上，这要去日志里找，不在你的代码里\N{\fs33\c&H00C8C0B8&\bord1.4}On Cloud Run, you find this in the logs, not in your code.
+Dialogue: 0,0:08:10.63,0:08:12.99,Bilingual,,0,0,0,,这是三个要看的地方里的第一个\N{\fs33\c&H00C8C0B8&\bord1.4}That is the first of three places to look.
+Dialogue: 0,0:08:14.03,0:08:17.93,Bilingual,,0,0,0,,第 1 步：在 service details 里，复制顶部的 URL\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1: in service details, copy the URL near the top;
+Dialogue: 0,0:08:17.93,0:08:20.88,Bilingual,,0,0,0,,构建页面不是你应用的地址\N{\fs33\c&H00C8C0B8&\bord1.4}the build page is not your app's address.
+Dialogue: 0,0:08:21.12,0:08:23.94,Bilingual,,0,0,0,,第 2 步：不带参数打开它\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2: open it with no arguments;
+Dialogue: 0,0:08:23.94,0:08:29.93,Bilingual,,0,0,0,,README 的录制记录显示默认是西班牙语：Bienvenido a AC215\N{\fs33\c&H00C8C0B8&\bord1.4}the README's recording shows the default in Spanish: Bienvenido a AC215.
+Dialogue: 0,0:08:30.25,0:08:34.51,Bilingual,,0,0,0,,我们的本地替身，同一个处理函数跑在同一个框架下，结果一致\N{\fs33\c&H00C8C0B8&\bord1.4}Our local stand-in, the same handler under the same framework, agrees.
+Dialogue: 0,0:08:34.98,0:08:37.24,Bilingual,,0,0,0,,第 3 步：加上查询字符串\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: append the query string.
+Dialogue: 0,0:08:37.56,0:08:43.69,Bilingual,,0,0,0,,问号是它的开头，& 符号分隔每一对，%20 是编码后的空格\N{\fs33\c&H00C8C0B8&\bord1.4}The question mark begins it, ampersands split the pairs, and %20 is an encoded space.
+Dialogue: 0,0:08:44.01,0:08:48.10,Bilingual,,0,0,0,,每一对填进处理函数的一行，那一行的默认值就让开了\N{\fs33\c&H00C8C0B8&\bord1.4}Each pair fills one line of the handler, and its default steps aside.
+Dialogue: 0,0:08:48.35,0:08:51.87,Bilingual,,0,0,0,,录制记录显示 Bonjour à tous，替身也一样\N{\fs33\c&H00C8C0B8&\bord1.4}The recording shows Bonjour à tous, and so does the stand-in.
+Dialogue: 0,0:08:52.19,0:08:57.59,Bilingual,,0,0,0,,第 4 步：试试希腊语、印地语，或者用 zh-cn 试简体中文\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: try Greek, Hindi, or zh-cn for simplified Chinese.
+Dialogue: 0,0:08:57.91,0:08:59.51,Bilingual,,0,0,0,,暂停一下，多试几个\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try a few.
+Dialogue: 0,0:09:00.40,0:09:04.51,Bilingual,,0,0,0,,检查点：一个 endpoint，不同的输入，不用重新部署\N{\fs33\c&H00C8C0B8&\bord1.4}The checkpoint: one endpoint, different inputs, no redeploy;
+Dialogue: 0,0:09:04.51,0:09:08.21,Bilingual,,0,0,0,,而且 source 和 destination 是语言，不是区域\N{\fs33\c&H00C8C0B8&\bord1.4}and source and destination are languages, not regions.
+Dialogue: 0,0:09:08.48,0:09:11.24,Bilingual,,0,0,0,,第 5 步：打开 Observability 下的 Logs\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: open Observability, Logs.
+Dialogue: 0,0:09:11.56,0:09:15.12,Bilingual,,0,0,0,,录制记录里找到了那条法语请求，状态码 200\N{\fs33\c&H00C8C0B8&\bord1.4}The recording found its French request with status 200.
+Dialogue: 0,0:09:15.80,0:09:21.15,Bilingual,,0,0,0,,我们录制时，服务方超时过一次：客户端收到状态码 500\N{\fs33\c&H00C8C0B8&\bord1.4}While we recorded, the provider timed out once: the client got status 500,
+Dialogue: 0,0:09:21.15,0:09:26.21,Bilingual,,0,0,0,,服务器日志里有这次超时，是从 main.py 第 12 行抛出的\N{\fs33\c&H00C8C0B8&\bord1.4}and the server log showed the timeout, raised from line 12 of main.py.
+Dialogue: 0,0:09:26.53,0:09:28.39,Bilingual,,0,0,0,,过了一会儿重试就成功了\N{\fs33\c&H00C8C0B8&\bord1.4}A retry soon after worked.
+Dialogue: 0,0:09:28.63,0:09:29.81,Bilingual,,0,0,0,,README 提醒\N{\fs33\c&H00C8C0B8&\bord1.4}The README warns:
+Dialogue: 0,0:09:29.81,0:09:33.97,Bilingual,,0,0,0,,googletrans 这个库包装的是一个非官方的外部服务\N{\fs33\c&H00C8C0B8&\bord1.4}the googletrans library wraps an unofficial outside service,
+Dialogue: 0,0:09:33.97,0:09:36.74,Bilingual,,0,0,0,,所以要看日志，别只看构建成功没有\N{\fs33\c&H00C8C0B8&\bord1.4}so check the logs, not a finished build.
+Dialogue: 0,0:09:36.98,0:09:38.90,Bilingual,,0,0,0,,再看 gcloud 替代做法\N{\fs33\c&H00C8C0B8&\bord1.4}Now the gcloud alternative.
+Dialogue: 0,0:09:39.22,0:09:45.73,Bilingual,,0,0,0,,在新项目里，它可能先要你启用 API 或创建一个仓库；都选是\N{\fs33\c&H00C8C0B8&\bord1.4}In a new project it may first ask to enable APIs or create a repository; answer yes.
+Dialogue: 0,0:09:46.05,0:09:50.34,Bilingual,,0,0,0,,用占位符时，部署停在项目 ID 检查\N{\fs33\c&H00C8C0B8&\bord1.4}With the placeholder, the deploy stops at the project ID check;
+Dialogue: 0,0:09:50.34,0:09:53.88,Bilingual,,0,0,0,,换成格式正确的 ID，它会先要你登录\N{\fs33\c&H00C8C0B8&\bord1.4}with a real-format ID, it asks you to sign in first.
+Dialogue: 0,0:09:54.28,0:09:56.28,Bilingual,,0,0,0,,下一行把 URL 存起来\N{\fs33\c&H00C8C0B8&\bord1.4}The next line stores the URL;
+Dialogue: 0,0:09:56.28,0:10:01.64,Bilingual,,0,0,0,,这几行 curl 原样对着替身跑，回答的也是 Bonjour à tous\N{\fs33\c&H00C8C0B8&\bord1.4}the curl lines ran unchanged against the stand-in and answered Bonjour à tous.
+Dialogue: 0,0:10:02.52,0:10:04.81,Bilingual,,0,0,0,,README 的 More detail 框里说\N{\fs33\c&H00C8C0B8&\bord1.4}From the README's More detail box:
+Dialogue: 0,0:10:04.81,0:10:09.88,Bilingual,,0,0,0,,冷启动启动的是你应用的一个实例，不一定是一台新机器\N{\fs33\c&H00C8C0B8&\bord1.4}a cold start starts an instance of your app, not necessarily a new machine.
+Dialogue: 0,0:10:10.20,0:10:12.37,Bilingual,,0,0,0,,没有哪个固定的空闲时长能预测它\N{\fs33\c&H00C8C0B8&\bord1.4}No fixed idle time predicts it.
+Dialogue: 0,0:10:13.42,0:10:14.60,Bilingual,,0,0,0,,第 2 部分\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2.
+Dialogue: 0,0:10:14.65,0:10:18.86,Bilingual,,0,0,0,,现在想象一个容器化的 web 应用，已经在你的笔记本上跑通了\N{\fs33\c&H00C8C0B8&\bord1.4}Now imagine a containerized web app already working on your laptop.
+Dialogue: 0,0:10:19.18,0:10:21.24,Bilingual,,0,0,0,,分享 localhost 等于什么都没分享\N{\fs33\c&H00C8C0B8&\bord1.4}Sharing localhost shares nothing,
+Dialogue: 0,0:10:21.24,0:10:23.06,Bilingual,,0,0,0,,所以我们把同一个 image 部署上去\N{\fs33\c&H00C8C0B8&\bord1.4}so we deploy that same image.
+Dialogue: 0,0:10:23.30,0:10:27.80,Bilingual,,0,0,0,,第 1 步，先把 Docker 跑起来：docker run，用完就删\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1, with Docker running: docker run, remove when done,
+Dialogue: 0,0:10:27.80,0:10:32.39,Bilingual,,0,0,0,,把 port 8086 发布到 8080，再加上教程的公开 image\N{\fs33\c&H00C8C0B8&\bord1.4}publish port 8086 to 8080, and the tutorial's public image.
+Dialogue: 0,0:10:32.71,0:10:34.05,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:10:34.10,0:10:38.32,Bilingual,,0,0,0,,这个 digest 和 README 里的一样：同样的字节，同样的 digest\N{\fs33\c&H00C8C0B8&\bord1.4}The digest equals the README's: same bytes, same digest.
+Dialogue: 0,0:10:38.64,0:10:43.03,Bilingual,,0,0,0,,这个 image 是为 amd64 构建的，Cloud Run 需要的就是它\N{\fs33\c&H00C8C0B8&\bord1.4}The image is built for amd64, which Cloud Run needs;
+Dialogue: 0,0:10:43.03,0:10:46.49,Bilingual,,0,0,0,,在 Apple Silicon 上它会模拟运行\N{\fs33\c&H00C8C0B8&\bord1.4}on Apple Silicon it runs under emulation.
+Dialogue: 0,0:10:46.73,0:10:52.60,Bilingual,,0,0,0,,然后 gunicorn 监听 0.0.0.0 的 port 8080\N{\fs33\c&H00C8C0B8&\bord1.4}Then gunicorn listens on 0.0.0.0, port 8080.
+Dialogue: 0,0:10:52.92,0:10:57.87,Bilingual,,0,0,0,,这就是所有网络接口，这样 container 外面来的连接才能到它\N{\fs33\c&H00C8C0B8&\bord1.4}That is every network interface, so connections from outside the container reach it.
+Dialogue: 0,0:10:58.12,0:11:00.59,Bilingual,,0,0,0,,Python 是怎么变成 gunicorn 的？\N{\fs33\c&H00C8C0B8&\bord1.4}How did Python turn into gunicorn?
+Dialogue: 0,0:11:00.91,0:11:03.70,Bilingual,,0,0,0,,首先，这个 image 有两个启动位置\N{\fs33\c&H00C8C0B8&\bord1.4}First, the image has two start-up slots:
+Dialogue: 0,0:11:03.70,0:11:07.82,Bilingual,,0,0,0,,一个空的 entrypoint，和一个命令，translation demo serve\N{\fs33\c&H00C8C0B8&\bord1.4}an empty entrypoint, and a command, translation_demo serve.
+Dialogue: 0,0:11:08.14,0:11:14.43,Bilingual,,0,0,0,,Docker 先运行 entrypoint，再运行命令，你传的参数会替换命令\N{\fs33\c&H00C8C0B8&\bord1.4}Docker runs the entrypoint, then the command, and arguments you pass replace the command;
+Dialogue: 0,0:11:14.43,0:11:16.06,Bilingual,,0,0,0,,第 4 部分就靠这一点\N{\fs33\c&H00C8C0B8&\bord1.4}part 4 depends on this.
+Dialogue: 0,0:11:16.30,0:11:19.26,Bilingual,,0,0,0,,这个命令从 PORT 变量里取 port\N{\fs33\c&H00C8C0B8&\bord1.4}That command takes its port from the PORT
+Dialogue: 0,0:11:19.26,0:11:23.87,Bilingual,,0,0,0,,然后把自己替换成 gunicorn：1 个 worker，4 个线程\N{\fs33\c&H00C8C0B8&\bord1.4}variable and replaces itself with gunicorn: 1 worker, 4 threads.
+Dialogue: 0,0:11:24.12,0:11:25.72,Bilingual,,0,0,0,,额外检查也对得上\N{\fs33\c&H00C8C0B8&\bord1.4}Extra checks agree.
+Dialogue: 0,0:11:25.82,0:11:28.25,Bilingual,,0,0,0,,命令 docker top 只显示 gunicorn\N{\fs33\c&H00C8C0B8&\bord1.4}docker top shows only gunicorn,
+Dialogue: 0,0:11:28.25,0:11:29.92,Bilingual,,0,0,0,,一个 master 和一个 worker\N{\fs33\c&H00C8C0B8&\bord1.4}a master and a worker;
+Dialogue: 0,0:11:29.92,0:11:31.52,Bilingual,,0,0,0,,一个 Python 进程都不剩\N{\fs33\c&H00C8C0B8&\bord1.4}no Python is left.
+Dialogue: 0,0:11:31.69,0:11:34.59,Bilingual,,0,0,0,,命令 docker ps 显示了这扇门\N{\fs33\c&H00C8C0B8&\bord1.4}docker ps shows the door, 8086 outside and 8080 inside, so 8080 on the laptop is refused.
+Dialogue: 0,0:11:34.59,0:11:40.14,Bilingual,,0,0,0,,外面是 8086，里面是 8080，所以笔记本上的 8080 会被拒绝\N{\fs33\c&H00C8C0B8&\bord1.4}docker ps shows the door, 8086 outside and 8080 inside, so 8080 on the laptop is refused.
+Dialogue: 0,0:11:40.38,0:11:43.35,Bilingual,,0,0,0,,第 2 步：打开 localhost 8086\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2: open localhost 8086.
+Dialogue: 0,0:11:43.67,0:11:44.75,Bilingual,,0,0,0,,额外跑一下 curl\N{\fs33\c&H00C8C0B8&\bord1.4}An extra curl
+Dialogue: 0,0:11:44.75,0:11:47.93,Bilingual,,0,0,0,,可以看到 gunicorn 返回的状态码 200、页面标题\N{\fs33\c&H00C8C0B8&\bord1.4}shows status 200 from gunicorn, the title,
+Dialogue: 0,0:11:47.93,0:11:50.64,Bilingual,,0,0,0,,还有被禁用的 Play audio 按钮\N{\fs33\c&H00C8C0B8&\bord1.4}and the disabled Play audio button.
+Dialogue: 0,0:11:50.88,0:11:52.48,Bilingual,,0,0,0,,第 3 步：翻译\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: translate.
+Dialogue: 0,0:11:52.76,0:11:55.62,Bilingual,,0,0,0,,这个按钮用一个 POST 请求发送 JSON\N{\fs33\c&H00C8C0B8&\bord1.4}The button sends JSON in a post request and gets back Bonjour à tous, once the browser decodes that escape.
+Dialogue: 0,0:11:55.62,0:11:59.78,Bilingual,,0,0,0,,拿回 Bonjour à tous，不过要等浏览器把那个转义解码\N{\fs33\c&H00C8C0B8&\bord1.4}The button sends JSON in a post request and gets back Bonjour à tous, once the browser decodes that escape.
+Dialogue: 0,0:12:00.10,0:12:01.48,Bilingual,,0,0,0,,暂停一下，试一试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try it.
+Dialogue: 0,0:12:01.53,0:12:06.26,Bilingual,,0,0,0,,第 1 部分的查询字符串在这里得到 405，方法不允许\N{\fs33\c&H00C8C0B8&\bord1.4}The query string from part 1 gets 405 here, method not allowed:
+Dialogue: 0,0:12:06.26,0:12:08.21,Bilingual,,0,0,0,,这个应用要的是 JSON 的 POST 请求\N{\fs33\c&H00C8C0B8&\bord1.4}this app wants JSON posts.
+Dialogue: 0,0:12:08.53,0:12:10.69,Bilingual,,0,0,0,,编造一种语言，得到的是 400\N{\fs33\c&H00C8C0B8&\bord1.4}A made-up language gets 400.
+Dialogue: 0,0:12:10.93,0:12:17.14,Bilingual,,0,0,0,,第 4 步：Play audio 是禁用的，它的请求得到 503：语音已关闭\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: Play audio is disabled, and its request gets 503: speech is disabled.
+Dialogue: 0,0:12:17.46,0:12:22.99,Bilingual,,0,0,0,,用 Ctrl-C 停掉；gunicorn 是主进程，所以它会干净地退出\N{\fs33\c&H00C8C0B8&\bord1.4}Stop with Ctrl+C; gunicorn is the main process, so it shuts down cleanly.
+Dialogue: 0,0:12:23.23,0:12:26.42,Bilingual,,0,0,0,,再做一个额外实验：把 PORT 设成 9090\N{\fs33\c&H00C8C0B8&\bord1.4}One extra experiment: set PORT to 9090
+Dialogue: 0,0:12:26.42,0:12:30.86,Bilingual,,0,0,0,,但管道还接在 8080，连接就被重置了\N{\fs33\c&H00C8C0B8&\bord1.4}but keep the pipe at 8080, and the connection resets;
+Dialogue: 0,0:12:30.86,0:12:33.45,Bilingual,,0,0,0,,日志显示 gunicorn 在 9090 上\N{\fs33\c&H00C8C0B8&\bord1.4}the log shows gunicorn on 9090.
+Dialogue: 0,0:12:33.87,0:12:36.66,Bilingual,,0,0,0,,改成把管道接到 9090，它就回答了\N{\fs33\c&H00C8C0B8&\bord1.4}Pipe to 9090 instead, and it answers.
+Dialogue: 0,0:12:36.98,0:12:39.84,Bilingual,,0,0,0,,右边那个数字必须是应用监听的地方\N{\fs33\c&H00C8C0B8&\bord1.4}The right-hand number must be where the app listens.
+Dialogue: 0,0:12:44.43,0:12:47.43,Bilingual,,0,0,0,,课上讲的 Cloud Run 跑的是整个 container\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's Cloud Run runs a whole container,
+Dialogue: 0,0:12:47.43,0:12:49.03,Bilingual,,0,0,0,,作为 service 或者 job\N{\fs33\c&H00C8C0B8&\bord1.4}as a service or a job.
+Dialogue: 0,0:12:49.25,0:12:53.95,Bilingual,,0,0,0,,它的步骤：打开 Cloud Run、启用 API、部署一个 image\N{\fs33\c&H00C8C0B8&\bord1.4}Its steps: open Cloud Run, enable the APIs, deploy an image.
+Dialogue: 0,0:12:54.18,0:12:57.39,Bilingual,,0,0,0,,打开 Cloud Run 里 Services 下的 Deploy container，选择\N{\fs33\c&H00C8C0B8&\bord1.4}Open Cloud Run, Services, Deploy container,
+Dialogue: 0,0:12:57.39,0:13:01.80,Bilingual,,0,0,0,,Deploy one revision from an existing container image\N{\fs33\c&H00C8C0B8&\bord1.4}and choose Deploy one revision from an existing container image.
+Dialogue: 0,0:13:02.12,0:13:06.32,Bilingual,,0,0,0,,粘贴同一个 image，命名为 translation-demo，再选你的区域\N{\fs33\c&H00C8C0B8&\bord1.4}Paste the same image, name it translation-demo, and choose your region.
+Dialogue: 0,0:13:07.42,0:13:10.79,Bilingual,,0,0,0,,选 Allow public access 和 Request-based billing\N{\fs33\c&H00C8C0B8&\bord1.4}Select Allow public access and Request-based billing.
+Dialogue: 0,0:13:11.11,0:13:14.88,Bilingual,,0,0,0,,扩缩设置里，最小实例数 0，最大实例数 2\N{\fs33\c&H00C8C0B8&\bord1.4}Under scaling, minimum 0 instances and maximum 2.
+Dialogue: 0,0:13:15.13,0:13:17.44,Bilingual,,0,0,0,,在 container 设置里\N{\fs33\c&H00C8C0B8&\bord1.4}In the container settings:
+Dialogue: 0,0:13:17.44,0:13:22.22,Bilingual,,0,0,0,,port 8080，512 MiB，1 个 CPU，命令不动\N{\fs33\c&H00C8C0B8&\bord1.4}port 8080, 512 MiB, 1 CPU, and the command left alone;
+Dialogue: 0,0:13:22.22,0:13:25.50,Bilingual,,0,0,0,,Cloud Run 会设置 PORT，再去敲这扇门\N{\fs33\c&H00C8C0B8&\bord1.4}Cloud Run sets PORT and knocks on it.
+Dialogue: 0,0:13:25.82,0:13:30.94,Bilingual,,0,0,0,,然后是 120 秒的超时，每个实例 4 个并发请求\N{\fs33\c&H00C8C0B8&\bord1.4}Then a 120 second timeout and 4 concurrent requests per instance.
+Dialogue: 0,0:13:31.18,0:13:35.28,Bilingual,,0,0,0,,为什么是 4？每个实例跑的 gunicorn 有 4 个线程\N{\fs33\c&H00C8C0B8&\bord1.4}Why 4? Each instance runs gunicorn with 4 threads,
+Dialogue: 0,0:13:35.28,0:13:37.92,Bilingual,,0,0,0,,所以它收到的请求永远不会超过它能处理的\N{\fs33\c&H00C8C0B8&\bord1.4}so it never gets more than it can serve.
+Dialogue: 0,0:13:38.17,0:13:44.05,Bilingual,,0,0,0,,按请求计费、最小实例数为 0 时，计价器只在处理请求的时候走\N{\fs33\c&H00C8C0B8&\bord1.4}With request-based billing and a minimum of 0, the meter moves only while requests are served.
+Dialogue: 0,0:13:44.37,0:13:48.00,Bilingual,,0,0,0,,这就是课上的承诺：只在代码运行时付钱\N{\fs33\c&H00C8C0B8&\bord1.4}That is the lecture's promise: pay only when your code runs.
+Dialogue: 0,0:13:48.32,0:13:52.74,Bilingual,,0,0,0,,最小实例数设成 1，或者按实例计费，空闲时间也会计费\N{\fs33\c&H00C8C0B8&\bord1.4}A minimum of 1, or instance-based billing, bills idle time too.
+Dialogue: 0,0:13:53.43,0:13:56.27,Bilingual,,0,0,0,,并发数 4，最大实例数 2\N{\fs33\c&H00C8C0B8&\bord1.4}Concurrency 4, maximum 2 instances.
+Dialogue: 0,0:13:56.59,0:13:58.72,Bilingual,,0,0,0,,十个人同时点 Translate\N{\fs33\c&H00C8C0B8&\bord1.4}Ten people press Translate at once.
+Dialogue: 0,0:13:59.04,0:14:02.50,Bilingual,,0,0,0,,会启动几个实例，最后两个会怎样？\N{\fs33\c&H00C8C0B8&\bord1.4}How many instances start, and what happens to the last two?
+Dialogue: 0,0:14:11.35,0:14:14.08,Bilingual,,0,0,0,,两个实例，到上限了，一共 8 个空位\N{\fs33\c&H00C8C0B8&\bord1.4}Two instances, the ceiling, with 8 slots.
+Dialogue: 0,0:14:14.40,0:14:17.75,Bilingual,,0,0,0,,另外两个要等空位，还可能被拒绝\N{\fs33\c&H00C8C0B8&\bord1.4}The other two wait for a free slot and can be refused.
+Dialogue: 0,0:14:18.07,0:14:22.22,Bilingual,,0,0,0,,调高最大实例数，或者把并发数和线程数一起调高\N{\fs33\c&H00C8C0B8&\bord1.4}Raise the maximum, or raise concurrency together with the threads;
+Dialogue: 0,0:14:22.22,0:14:25.29,Bilingual,,0,0,0,,调高最小实例数没用。点 Create\N{\fs33\c&H00C8C0B8&\bord1.4}a higher minimum doesn't help. Select Create;
+Dialogue: 0,0:14:25.29,0:14:30.92,Bilingual,,0,0,0,,录制记录显示公开页面回答 Bonjour à tous，语音还是关着的\N{\fs33\c&H00C8C0B8&\bord1.4}the recording shows the public page answering Bonjour à tous, speech still disabled.
+Dialogue: 0,0:14:31.24,0:14:33.52,Bilingual,,0,0,0,,然后看 Revision History 和 Logs\N{\fs33\c&H00C8C0B8&\bord1.4}Then check Revision History and Logs.
+Dialogue: 0,0:14:33.84,0:14:37.75,Bilingual,,0,0,0,,一个 revision，就是 image 加上它的设置部署出去的一个版本\N{\fs33\c&H00C8C0B8&\bord1.4}A revision is a deployed version of the image and its settings.
+Dialogue: 0,0:14:38.07,0:14:39.67,Bilingual,,0,0,0,,暂停一下，部署你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and deploy yours.
+Dialogue: 0,0:14:39.85,0:14:41.51,Bilingual,,0,0,0,,这次什么都没构建\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing was built this time.
+Dialogue: 0,0:14:44.05,0:14:46.71,Bilingual,,0,0,0,,控制台拿到的是一个 tag，一个可以移动的标签\N{\fs33\c&H00C8C0B8&\bord1.4}The console took a tag, a movable label;
+Dialogue: 0,0:14:46.71,0:14:50.11,Bilingual,,0,0,0,,revision 记住的是 digest，一个固定的指纹\N{\fs33\c&H00C8C0B8&\bord1.4}the revision keeps the digest, a fixed fingerprint.
+Dialogue: 0,0:14:50.43,0:14:53.80,Bilingual,,0,0,0,,以后要复现一次部署，就按 digest 部署\N{\fs33\c&H00C8C0B8&\bord1.4}To reproduce a deployment later, deploy by digest.
+Dialogue: 0,0:14:54.03,0:14:58.07,Bilingual,,0,0,0,,用 gcloud 的替代做法，一条命令就设好同样的值\N{\fs33\c&H00C8C0B8&\bord1.4}The gcloud alternative sets the same values in one command.
+Dialogue: 0,0:15:01.03,0:15:04.72,Bilingual,,0,0,0,,上半场完成：你笔记本上的页面有了公网 URL\N{\fs33\c&H00C8C0B8&\bord1.4}First half done: your laptop's page at a public URL.
+Dialogue: 0,0:15:05.04,0:15:06.95,Bilingual,,0,0,0,,但 Play audio 还在等\N{\fs33\c&H00C8C0B8&\bord1.4}But Play audio still waits:
+Dialogue: 0,0:15:06.95,0:15:12.47,Bilingual,,0,0,0,,要说话，应用得调用一个会问调用方是谁的 API。那是谁？\N{\fs33\c&H00C8C0B8&\bord1.4}to speak, the app must call an API that asks who is calling. Who is it?
+Dialogue: 0,0:15:13.52,0:15:18.72,Bilingual,,0,0,0,,第 3 部分。README 把两个问题分开：谁可以调用我们的公开应用\N{\fs33\c&H00C8C0B8&\bord1.4}Part 3. The README separates two questions: who may call our public app,
+Dialogue: 0,0:15:18.72,0:15:20.92,Bilingual,,0,0,0,,以及运行中的应用可以访问什么\N{\fs33\c&H00C8C0B8&\bord1.4}and what the running app may access.
+Dialogue: 0,0:15:21.17,0:15:25.21,Bilingual,,0,0,0,,第一扇门，谁可以调用它，就是 Allow public access\N{\fs33\c&H00C8C0B8&\bord1.4}The first door, who may call it, is Allow public access;
+Dialogue: 0,0:15:25.21,0:15:28.10,Bilingual,,0,0,0,,gcloud 里写成 --no-invoker-iam-check\N{\fs33\c&H00C8C0B8&\bord1.4}gcloud spells it --no-invoker-iam-check.
+Dialogue: 0,0:15:28.42,0:15:33.16,Bilingual,,0,0,0,,如果组织政策禁止它，这个 URL 就返回 403\N{\fs33\c&H00C8C0B8&\bord1.4}If an organization policy forbids it, the URL answers 403.
+Dialogue: 0,0:15:34.10,0:15:35.70,Bilingual,,0,0,0,,那么，快速测一下\N{\fs33\c&H00C8C0B8&\bord1.4}So, a quick test.
+Dialogue: 0,0:15:35.76,0:15:37.94,Bilingual,,0,0,0,,这个 service 允许公开访问\N{\fs33\c&H00C8C0B8&\bord1.4}The service allows public access.
+Dialogue: 0,0:15:38.26,0:15:40.41,Bilingual,,0,0,0,,那它能因此调用 Agent Platform 吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Does that let it call Agent Platform?
+Dialogue: 0,0:15:47.25,0:15:50.15,Bilingual,,0,0,0,,不能。那扇门只放调用方进来\N{\fs33\c&H00C8C0B8&\bord1.4}No. That door only admits callers.
+Dialogue: 0,0:15:50.47,0:15:55.74,Bilingual,,0,0,0,,往外调用走的是另一扇门，用的是这个 service 运行时的身份\N{\fs33\c&H00C8C0B8&\bord1.4}Calling out goes through the other door, as whatever identity the service runs as;
+Dialogue: 0,0:15:55.74,0:16:00.69,Bilingual,,0,0,0,,在你挂上一个之前，一般就是项目的默认计算账号\N{\fs33\c&H00C8C0B8&\bord1.4}until you attach one, that is normally the project's default compute account.
+Dialogue: 0,0:16:00.93,0:16:05.55,Bilingual,,0,0,0,,第 1 步：在 API Library 里启用 Agent Platform API\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1: in the API Library, enable the Agent Platform API,
+Dialogue: 0,0:16:05.55,0:16:11.13,Bilingual,,0,0,0,,这是控制台现在对前几讲所说的 Vertex AI 的叫法\N{\fs33\c&H00C8C0B8&\bord1.4}the console's current name for what earlier lectures called Vertex AI.
+Dialogue: 0,0:16:11.37,0:16:12.57,Bilingual,,0,0,0,,第 2 和第 3 步\N{\fs33\c&H00C8C0B8&\bord1.4}Steps 2 and 3:
+Dialogue: 0,0:16:12.57,0:16:16.63,Bilingual,,0,0,0,,建一个服务账号，名字叫 Translation demo runtime\N{\fs33\c&H00C8C0B8&\bord1.4}create a service account named Translation demo runtime,
+Dialogue: 0,0:16:16.63,0:16:19.41,Bilingual,,0,0,0,,ID 是 translation-demo-runtime\N{\fs33\c&H00C8C0B8&\bord1.4}with the ID translation-demo-runtime.
+Dialogue: 0,0:16:19.77,0:16:21.37,Bilingual,,0,0,0,,第 4 步：两个角色\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: two roles.
+Dialogue: 0,0:16:21.62,0:16:24.57,Bilingual,,0,0,0,,Agent Platform User 让它可以调用模型\N{\fs33\c&H00C8C0B8&\bord1.4}Agent Platform User lets it call the model.
+Dialogue: 0,0:16:24.89,0:16:29.12,Bilingual,,0,0,0,,Service Usage Consumer 让它可以把调用记到一个配额项目上\N{\fs33\c&H00C8C0B8&\bord1.4}Service Usage Consumer lets it charge calls to a quota project:
+Dialogue: 0,0:16:29.12,0:16:32.61,Bilingual,,0,0,0,,也就是这些调用占用哪个项目的配额、记到哪个项目的账单上\N{\fs33\c&H00C8C0B8&\bord1.4}the project whose quota and bill they count against.
+Dialogue: 0,0:16:32.93,0:16:34.81,Bilingual,,0,0,0,,应用在那里填的是你的项目\N{\fs33\c&H00C8C0B8&\bord1.4}The app names your project there.
+Dialogue: 0,0:16:35.13,0:16:38.33,Bilingual,,0,0,0,,两个主账号字段都留空，点 Done\N{\fs33\c&H00C8C0B8&\bord1.4}Leave both principal fields empty and select Done.
+Dialogue: 0,0:16:38.57,0:16:40.79,Bilingual,,0,0,0,,第 5 步：记下这个账号的邮箱\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: note the account's email.
+Dialogue: 0,0:16:41.11,0:16:43.39,Bilingual,,0,0,0,,不用创建也不用下载密钥\N{\fs33\c&H00C8C0B8&\bord1.4}No key to create or download:
+Dialogue: 0,0:16:43.39,0:16:47.17,Bilingual,,0,0,0,,第 3 讲里有一个 JSON 密钥放在 secrets 目录里\N{\fs33\c&H00C8C0B8&\bord1.4}in lecture 3 a JSON key sat in a secrets folder;
+Dialogue: 0,0:16:47.17,0:16:48.77,Bilingual,,0,0,0,,这里根本没有\N{\fs33\c&H00C8C0B8&\bord1.4}here none exists.
+Dialogue: 0,0:16:48.83,0:16:53.95,Bilingual,,0,0,0,,录制记录显示账号已启用，没有密钥；暂停一下，建一个你自己的\N{\fs33\c&H00C8C0B8&\bord1.4}The recording shows the account enabled, with no keys; pause and create yours.
+Dialogue: 0,0:16:54.18,0:17:00.26,Bilingual,,0,0,0,,用 gcloud 的替代做法，会启用 API、创建账号、加上两个角色\N{\fs33\c&H00C8C0B8&\bord1.4}The gcloud alternative enables the API, creates the account, and adds the two roles;
+Dialogue: 0,0:17:00.26,0:17:03.08,Bilingual,,0,0,0,,两条绑定都在整个项目上\N{\fs33\c&H00C8C0B8&\bord1.4}both bindings are on the whole project.
+Dialogue: 0,0:17:04.12,0:17:07.06,Bilingual,,0,0,0,,挂上这个账号，需要你自己的一项权限\N{\fs33\c&H00C8C0B8&\bord1.4}Attaching the account takes a permission of yours:
+Dialogue: 0,0:17:07.06,0:17:09.24,Bilingual,,0,0,0,,这个账号上的 Service Account User\N{\fs33\c&H00C8C0B8&\bord1.4}Service Account User on that account.
+Dialogue: 0,0:17:09.56,0:17:13.38,Bilingual,,0,0,0,,这是你的部署权限，和这个账号自己的角色是两回事\N{\fs33\c&H00C8C0B8&\bord1.4}That is your deployment right, separate from the account's own roles.
+Dialogue: 0,0:17:13.62,0:17:16.86,Bilingual,,0,0,0,,第 1 步：打开 translation-demo。第 2 步\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1: open translation-demo. Step 2:
+Dialogue: 0,0:17:16.86,0:17:21.36,Bilingual,,0,0,0,,在 Security 标签页里选你的运行时账号，核对它的邮箱\N{\fs33\c&H00C8C0B8&\bord1.4}on the Security tab, choose your runtime account, and check its email.
+Dialogue: 0,0:17:22.68,0:17:27.10,Bilingual,,0,0,0,,有一个小疏漏：README 在 3.3 节里说会给这个权限\N{\fs33\c&H00C8C0B8&\bord1.4}A small gap: the README promises this access in section 3.3,
+Dialogue: 0,0:17:27.10,0:17:30.49,Bilingual,,0,0,0,,但那一节给的是 Token Creator\N{\fs33\c&H00C8C0B8&\bord1.4}but that section grants Token Creator instead.
+Dialogue: 0,0:17:30.81,0:17:35.72,Bilingual,,0,0,0,,项目所有者本来就有；在受限的项目里，去问课程组\N{\fs33\c&H00C8C0B8&\bord1.4}Project owners already have it; in a restricted project, ask course staff.
+Dialogue: 0,0:17:35.97,0:17:38.51,Bilingual,,0,0,0,,第 3 步：三个环境变量\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: three environment variables.
+Dialogue: 0,0:17:38.83,0:17:40.39,Bilingual,,0,0,0,,ENABLE SPEECH 设成 true\N{\fs33\c&H00C8C0B8&\bord1.4}ENABLE_SPEECH, true;
+Dialogue: 0,0:17:40.39,0:17:43.37,Bilingual,,0,0,0,,GOOGLE CLOUD PROJECT 设成你的项目 ID\N{\fs33\c&H00C8C0B8&\bord1.4}GOOGLE_CLOUD_PROJECT, your project ID;
+Dialogue: 0,0:17:43.37,0:17:46.42,Bilingual,,0,0,0,,GOOGLE CLOUD LOCATION 设成 us-central1\N{\fs33\c&H00C8C0B8&\bord1.4}and GOOGLE_CLOUD_LOCATION, us-central1.
+Dialogue: 0,0:17:46.74,0:17:48.74,Bilingual,,0,0,0,,这个 service 跑在多伦多\N{\fs33\c&H00C8C0B8&\bord1.4}The service runs in Toronto,
+Dialogue: 0,0:17:48.74,0:17:52.24,Bilingual,,0,0,0,,模型在 us-central1：两个不同的设置\N{\fs33\c&H00C8C0B8&\bord1.4}the model in us-central1: two different settings.
+Dialogue: 0,0:17:52.48,0:17:54.58,Bilingual,,0,0,0,,第 4 步：点 View diff & redeploy\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: View diff & redeploy,
+Dialogue: 0,0:17:54.58,0:17:57.48,Bilingual,,0,0,0,,Serve this revision immediately 保持打开\N{\fs33\c&H00C8C0B8&\bord1.4}keep Serve this revision immediately on,
+Dialogue: 0,0:17:57.48,0:17:59.08,Bilingual,,0,0,0,,再点 Deploy changes\N{\fs33\c&H00C8C0B8&\bord1.4}then Deploy changes.
+Dialogue: 0,0:17:59.25,0:18:03.75,Bilingual,,0,0,0,,这会产生一个新的 revision；旧的实例是换掉，不是改掉\N{\fs33\c&H00C8C0B8&\bord1.4}That makes a new revision; the old instance is replaced, not edited.
+Dialogue: 0,0:18:04.07,0:18:06.09,Bilingual,,0,0,0,,第 5 步：等它上线\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: wait for the rollout.
+Dialogue: 0,0:18:06.37,0:18:07.97,Bilingual,,0,0,0,,来看语音这条链路\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the speech path.
+Dialogue: 0,0:18:08.16,0:18:11.56,Bilingual,,0,0,0,,应用会检查开关，再查长度和语言\N{\fs33\c&H00C8C0B8&\bord1.4}The app checks the flag, the size and the language,
+Dialogue: 0,0:18:11.56,0:18:14.50,Bilingual,,0,0,0,,然后向 Google 的身份验证库要一个令牌\N{\fs33\c&H00C8C0B8&\bord1.4}then asks Google's auth library for a token;
+Dialogue: 0,0:18:14.50,0:18:16.91,Bilingual,,0,0,0,,在 Cloud Run 上，由工牌提供\N{\fs33\c&H00C8C0B8&\bord1.4}on Cloud Run, the badge supplies it.
+Dialogue: 0,0:18:17.23,0:18:20.25,Bilingual,,0,0,0,,这个查找过程就是应用默认凭据\N{\fs33\c&H00C8C0B8&\bord1.4}That lookup is Application Default Credentials.
+Dialogue: 0,0:18:20.57,0:18:24.57,Bilingual,,0,0,0,,在 us-central1 里，Gemini 语音直接把音频发回来\N{\fs33\c&H00C8C0B8&\bord1.4}Gemini speech in us-central1 sends audio straight back;
+Dialogue: 0,0:18:24.57,0:18:26.17,Bilingual,,0,0,0,,不经过 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}no bucket.
+Dialogue: 0,0:18:26.53,0:18:30.59,Bilingual,,0,0,0,,第 6 步：刷新页面，因为它在加载时检查开关\N{\fs33\c&H00C8C0B8&\bord1.4}Step 6: reload the page, because it checks the flag when it loads.
+Dialogue: 0,0:18:30.91,0:18:32.81,Bilingual,,0,0,0,,然后点 Translate 和 Play audio\N{\fs33\c&H00C8C0B8&\bord1.4}Then Translate and Play audio;
+Dialogue: 0,0:18:32.81,0:18:35.41,Bilingual,,0,0,0,,录制记录显示法语音频在播放\N{\fs33\c&H00C8C0B8&\bord1.4}the recording shows French audio playing.
+Dialogue: 0,0:18:35.73,0:18:39.12,Bilingual,,0,0,0,,金色标签：每点一次 Play audio，就是一次付费的模型调用\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: each Play audio is a paid model call.
+Dialogue: 0,0:18:39.37,0:18:44.70,Bilingual,,0,0,0,,第 7 步：如果失败了，先看报错信息和日志，再去改权限\N{\fs33\c&H00C8C0B8&\bord1.4}Step 7: if it fails, check the message and the logs before changing permissions.
+Dialogue: 0,0:18:45.02,0:18:49.41,Bilingual,,0,0,0,,没有开关，你会得到我们录到的 503：语音已关闭\N{\fs33\c&H00C8C0B8&\bord1.4}Without the flag, you get our captured 503: speech is disabled.
+Dialogue: 0,0:18:49.73,0:18:53.64,Bilingual,,0,0,0,,缺身份，或者调用被拒，各有各的报错信息\N{\fs33\c&H00C8C0B8&\bord1.4}A missing identity or a denied call each has its own message.
+Dialogue: 0,0:18:53.88,0:18:57.00,Bilingual,,0,0,0,,这就是控制和调试受限的问题，现在变得可以应付了\N{\fs33\c&H00C8C0B8&\bord1.4}That is limited control and debugging, made workable.
+Dialogue: 0,0:18:57.32,0:19:01.29,Bilingual,,0,0,0,,用 gcloud 的替代做法，一条命令就做同样的改动\N{\fs33\c&H00C8C0B8&\bord1.4}The gcloud alternative makes the same change in one command.
+Dialogue: 0,0:19:04.22,0:19:09.20,Bilingual,,0,0,0,,3.3 节是可选的，需要 uv：你要怎么在本地开发\N{\fs33\c&H00C8C0B8&\bord1.4}Section 3.3 is optional, and needs uv: how would you develop locally,
+Dialogue: 0,0:19:09.20,0:19:12.30,Bilingual,,0,0,0,,又不用每改一次就发布一个 image？\N{\fs33\c&H00C8C0B8&\bord1.4}without publishing an image for every edit?
+Dialogue: 0,0:19:12.62,0:19:18.01,Bilingual,,0,0,0,,有了应用默认凭据，同一份代码在 Cloud Run 上能找到令牌\N{\fs33\c&H00C8C0B8&\bord1.4}Application Default Credentials lets the same code find a token on Cloud Run
+Dialogue: 0,0:19:18.01,0:19:19.85,Bilingual,,0,0,0,,在你的笔记本上能找到文件\N{\fs33\c&H00C8C0B8&\bord1.4}and a file on your laptop.
+Dialogue: 0,0:19:20.10,0:19:24.96,Bilingual,,0,0,0,,为了测试运行时账号真实的权限，你的笔记本会 impersonate 它\N{\fs33\c&H00C8C0B8&\bord1.4}To test the runtime account's real permissions, your laptop impersonates it.
+Dialogue: 0,0:19:25.28,0:19:30.04,Bilingual,,0,0,0,,你以自己的身份登录，再以这个账号的身份拿到短期令牌\N{\fs33\c&H00C8C0B8&\bord1.4}You sign in as yourself and receive short-lived tokens as that account;
+Dialogue: 0,0:19:30.04,0:19:32.32,Bilingual,,0,0,0,,从头到尾都不下载私钥\N{\fs33\c&H00C8C0B8&\bord1.4}no private key is ever downloaded.
+Dialogue: 0,0:19:32.57,0:19:34.75,Bilingual,,0,0,0,,第 1 步：在运行时账号上\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1: on the runtime account,
+Dialogue: 0,0:19:34.75,0:19:38.26,Bilingual,,0,0,0,,给你自己的用户授予 Service Account Token Creator\N{\fs33\c&H00C8C0B8&\bord1.4}grant your own user Service Account Token Creator.
+Dialogue: 0,0:19:38.58,0:19:42.85,Bilingual,,0,0,0,,把预选的角色换掉，别留着 Service Account Admin\N{\fs33\c&H00C8C0B8&\bord1.4}Replace any preselected role, and don't leave Service Account Admin.
+Dialogue: 0,0:19:43.17,0:19:47.22,Bilingual,,0,0,0,,再启用 IAM Service Account Credentials API\N{\fs33\c&H00C8C0B8&\bord1.4}Enable the IAM Service Account Credentials API too.
+Dialogue: 0,0:19:47.47,0:19:52.02,Bilingual,,0,0,0,,第 2 步开头的三条命令，是在终端里重复第 1 步\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2 begins with three commands that repeat step 1 from the terminal;
+Dialogue: 0,0:19:52.02,0:19:54.27,Bilingual,,0,0,0,,如果你用的是控制台，就跳过它们\N{\fs33\c&H00C8C0B8&\bord1.4}if you used the console, skip them.
+Dialogue: 0,0:19:54.52,0:19:57.76,Bilingual,,0,0,0,,然后是两条新命令：一次 application-default login\N{\fs33\c&H00C8C0B8&\bord1.4}Then two new ones: an application-default login,
+Dialogue: 0,0:19:57.76,0:20:01.62,Bilingual,,0,0,0,,impersonate 运行时账号，再设它的配额项目\N{\fs33\c&H00C8C0B8&\bord1.4}impersonating the runtime account, and its quota project.
+Dialogue: 0,0:20:01.94,0:20:04.49,Bilingual,,0,0,0,,它和 gcloud auth login 是两回事\N{\fs33\c&H00C8C0B8&\bord1.4}It is separate from gcloud auth login,
+Dialogue: 0,0:20:04.49,0:20:08.66,Bilingual,,0,0,0,,它的文件留在你的机器上，永远不进 Git，也不进 image\N{\fs33\c&H00C8C0B8&\bord1.4}and its file stays on your machine, never in Git or the image.
+Dialogue: 0,0:20:08.98,0:20:10.36,Bilingual,,0,0,0,,暂停一下，登录\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and sign in;
+Dialogue: 0,0:20:10.36,0:20:15.02,Bilingual,,0,0,0,,受限的项目可能还要给你 Service Usage Consumer\N{\fs33\c&H00C8C0B8&\bord1.4}a restricted project may also need Service Usage Consumer for you.
+Dialogue: 0,0:20:15.27,0:20:18.59,Bilingual,,0,0,0,,第 3 步：进入 tutorial 下的 app 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: change into the tutorial app folder,
+Dialogue: 0,0:20:18.59,0:20:20.47,Bilingual,,0,0,0,,运行 uv sync --frozen\N{\fs33\c&H00C8C0B8&\bord1.4}and run uv sync --frozen.
+Dialogue: 0,0:20:20.79,0:20:25.38,Bilingual,,0,0,0,,它完全照着 lock 文件装了 41 个包\N{\fs33\c&H00C8C0B8&\bord1.4}It installs 41 packages exactly as the lock file says.
+Dialogue: 0,0:20:25.70,0:20:29.37,Bilingual,,0,0,0,,额外跑一下 uv tree，能看到六个直接依赖\N{\fs33\c&H00C8C0B8&\bord1.4}An extra uv tree shows the six direct dependencies.
+Dialogue: 0,0:20:29.62,0:20:32.50,Bilingual,,0,0,0,,第 4 步：在跑过 export 的那个终端里\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: in the terminal with your exports,
+Dialogue: 0,0:20:32.50,0:20:36.62,Bilingual,,0,0,0,,带上那三个变量、把 PORT 设成 8086 启动应用\N{\fs33\c&H00C8C0B8&\bord1.4}start the app with the three variables and PORT set to 8086;
+Dialogue: 0,0:20:36.62,0:20:38.47,Bilingual,,0,0,0,,这次 port 由你来设\N{\fs33\c&H00C8C0B8&\bord1.4}this time you set the port.
+Dialogue: 0,0:20:38.79,0:20:40.04,Bilingual,,0,0,0,,暂停一下，跑起来\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, run it,
+Dialogue: 0,0:20:40.04,0:20:43.63,Bilingual,,0,0,0,,然后在 localhost 8086 上翻译、点 Play audio\N{\fs33\c&H00C8C0B8&\bord1.4}then translate and Play audio at localhost 8086;
+Dialogue: 0,0:20:43.63,0:20:45.89,Bilingual,,0,0,0,,有了你的登录，它就会说话\N{\fs33\c&H00C8C0B8&\bord1.4}with your sign-in, it speaks.
+Dialogue: 0,0:20:46.13,0:20:50.49,Bilingual,,0,0,0,,额外检查：按钮现在写着 Play audio，翻译也正常\N{\fs33\c&H00C8C0B8&\bord1.4}Extra checks: the button now says Play audio, and translation works.
+Dialogue: 0,0:20:50.81,0:20:55.05,Bilingual,,0,0,0,,语音返回 503：Google 凭据不可用\N{\fs33\c&H00C8C0B8&\bord1.4}Speech answers 503: Google credentials are unavailable.
+Dialogue: 0,0:20:55.37,0:20:58.93,Bilingual,,0,0,0,,这就是缺了登录，跳过第 2 步你就会看到它\N{\fs33\c&H00C8C0B8&\bord1.4}That is the missing sign-in, what you see if you skip step 2.
+Dialogue: 0,0:20:59.58,0:21:03.15,Bilingual,,0,0,0,,第 5 步：往上退两级，回到 repo 根目录\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: go back up two levels to the repository root.
+Dialogue: 0,0:21:04.48,0:21:08.26,Bilingual,,0,0,0,,第 4 部分。一个 web 请求背后有人在等\N{\fs33\c&H00C8C0B8&\bord1.4}Part 4. A web request has a person waiting,
+Dialogue: 0,0:21:08.26,0:21:12.03,Bilingual,,0,0,0,,但一份翻译后的有声版本应该拿到输入\N{\fs33\c&H00C8C0B8&\bord1.4}but a translated audio edition should take its input,
+Dialogue: 0,0:21:12.03,0:21:15.45,Bilingual,,0,0,0,,再翻译、朗读、保存文件，然后退出\N{\fs33\c&H00C8C0B8&\bord1.4}translate it, speak it, save the files and exit.
+Dialogue: 0,0:21:15.77,0:21:17.08,Bilingual,,0,0,0,,这就是 job\N{\fs33\c&H00C8C0B8&\bord1.4}That is a job.
+Dialogue: 0,0:21:17.13,0:21:21.08,Bilingual,,0,0,0,,课上说一个 container 可以作为 service 或者 job 来跑\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture says a container runs as a service or as a job.
+Dialogue: 0,0:21:21.40,0:21:25.61,Bilingual,,0,0,0,,同一个 image，两个程序：serve 一直监听，没有尽头\N{\fs33\c&H00C8C0B8&\bord1.4}Same image, two programs: serve keeps listening, with no end;
+Dialogue: 0,0:21:25.61,0:21:27.89,Bilingual,,0,0,0,,batch 走完四步就退出\N{\fs33\c&H00C8C0B8&\bord1.4}batch walks four steps and exits.
+Dialogue: 0,0:21:29.47,0:21:35.91,Bilingual,,0,0,0,,这种形状你见过：上周的 Vertex AI 训练任务也是有限的工作\N{\fs33\c&H00C8C0B8&\bord1.4}You have seen this shape before: last week's Vertex AI training job was finite work too:
+Dialogue: 0,0:21:35.91,0:21:37.74,Bilingual,,0,0,0,,启动、训练、保存、退出\N{\fs33\c&H00C8C0B8&\bord1.4}start, train, save, exit.
+Dialogue: 0,0:21:37.98,0:21:41.99,Bilingual,,0,0,0,,一个 job 没有 URL，它的磁盘在退出时就没了\N{\fs33\c&H00C8C0B8&\bord1.4}A job has no URL, and its disk vanishes when it exits.
+Dialogue: 0,0:21:42.31,0:21:45.84,Bilingual,,0,0,0,,所以输入从 Storage 来，结果也回到那里\N{\fs33\c&H00C8C0B8&\bord1.4}So input comes from Storage and results go back there;
+Dialogue: 0,0:21:45.84,0:21:49.23,Bilingual,,0,0,0,,远程的 container 看不到你笔记本上的文件\N{\fs33\c&H00C8C0B8&\bord1.4}a remote container cannot see a file on your laptop.
+Dialogue: 0,0:21:49.47,0:21:52.24,Bilingual,,0,0,0,,第 1 步：Cloud Storage、Buckets、Create\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1: Cloud Storage, Buckets, Create.
+Dialogue: 0,0:21:52.56,0:21:54.86,Bilingual,,0,0,0,,第 2 步：起一个全局唯一的名字\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2: a globally unique name,
+Dialogue: 0,0:21:54.86,0:21:58.34,Bilingual,,0,0,0,,比如你的项目 ID 加上 translation input\N{\fs33\c&H00C8C0B8&\bord1.4}such as your project ID plus translation input.
+Dialogue: 0,0:21:58.66,0:22:01.52,Bilingual,,0,0,0,,第 3 步：区域选多伦多，存储类别选 Standard\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: region Toronto, class Standard,
+Dialogue: 0,0:22:01.52,0:22:03.36,Bilingual,,0,0,0,,开启禁止公开访问\N{\fs33\c&H00C8C0B8&\bord1.4}public access prevention,
+Dialogue: 0,0:22:03.36,0:22:07.83,Bilingual,,0,0,0,,统一访问也开启，软删除保持默认，然后点 Create 和 Confirm\N{\fs33\c&H00C8C0B8&\bord1.4}uniform access, default soft delete, then Create and Confirm.
+Dialogue: 0,0:22:08.15,0:22:09.72,Bilingual,,0,0,0,,暂停一下，建好它\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and create it.
+Dialogue: 0,0:22:09.77,0:22:12.73,Bilingual,,0,0,0,,第 4 步：再建一个单独的输出 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: repeat for a separate output bucket.
+Dialogue: 0,0:22:13.05,0:22:16.01,Bilingual,,0,0,0,,金色标签：文件存在期间存储就计费\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: storage bills while files exist,
+Dialogue: 0,0:22:16.01,0:22:19.17,Bilingual,,0,0,0,,软删除还会把删掉的文件保留一段时间\N{\fs33\c&H00C8C0B8&\bord1.4}and soft delete keeps deleted ones for a while.
+Dialogue: 0,0:22:19.42,0:22:24.21,Bilingual,,0,0,0,,第 5 步：在输入 bucket 里建一个叫 run-001 的目录\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: create a folder named run-001 in the input bucket
+Dialogue: 0,0:22:24.21,0:22:28.25,Bilingual,,0,0,0,,把示例段落传进去，就是四行短句\N{\fs33\c&H00C8C0B8&\bord1.4}and upload the sample passage, four short lines.
+Dialogue: 0,0:22:28.57,0:22:31.11,Bilingual,,0,0,0,,第 6 步：复制它的 Storage URI\N{\fs33\c&H00C8C0B8&\bord1.4}Step 6: copy its Storage URI.
+Dialogue: 0,0:22:31.43,0:22:33.90,Bilingual,,0,0,0,,暂停一下，上传，再复制 URI\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, upload and copy the URI.
+Dialogue: 0,0:22:34.15,0:22:39.12,Bilingual,,0,0,0,,这个 run-001 是你自己选的前缀，不是真的目录\N{\fs33\c&H00C8C0B8&\bord1.4}That run-001 is a prefix you chose, not a real directory.
+Dialogue: 0,0:22:39.44,0:22:40.95,Bilingual,,0,0,0,,用 gcloud 的替代做法\N{\fs33\c&H00C8C0B8&\bord1.4}The gcloud alternative
+Dialogue: 0,0:22:40.95,0:22:44.77,Bilingual,,0,0,0,,一个命令框就建好两个 bucket，再上传段落\N{\fs33\c&H00C8C0B8&\bord1.4}makes both buckets and uploads the passage in one block.
+Dialogue: 0,0:22:48.28,0:22:51.93,Bilingual,,0,0,0,,4.2 节：这个 job 有自己的身份\N{\fs33\c&H00C8C0B8&\bord1.4}Section 4.2: the job gets its own identity.
+Dialogue: 0,0:22:52.25,0:22:54.19,Bilingual,,0,0,0,,建 translation-audio-job\N{\fs33\c&H00C8C0B8&\bord1.4}Create translation-audio-job,
+Dialogue: 0,0:22:54.19,0:22:57.86,Bilingual,,0,0,0,,给它同样的两个项目级角色，记下它的邮箱\N{\fs33\c&H00C8C0B8&\bord1.4}give it the same two project roles, and note its email.
+Dialogue: 0,0:22:58.10,0:23:01.86,Bilingual,,0,0,0,,然后按 bucket 授权：输入 bucket 给 Storage Object Viewer\N{\fs33\c&H00C8C0B8&\bord1.4}Then, per bucket: Storage Object Viewer on the input,
+Dialogue: 0,0:23:01.86,0:23:04.77,Bilingual,,0,0,0,,输出 bucket 给 Storage Object Creator\N{\fs33\c&H00C8C0B8&\bord1.4}and Storage Object Creator on the output,
+Dialogue: 0,0:23:04.77,0:23:08.38,Bilingual,,0,0,0,,它能加文件，但不能列出，也不能覆盖\N{\fs33\c&H00C8C0B8&\bord1.4}which adds files but cannot list or overwrite them.
+Dialogue: 0,0:23:08.70,0:23:10.72,Bilingual,,0,0,0,,而 web service 的账号两个都不需要\N{\fs33\c&H00C8C0B8&\bord1.4}The web account needs neither.
+Dialogue: 0,0:23:10.77,0:23:15.81,Bilingual,,0,0,0,,你自己的身份要上传、执行和查看结果，各要单独的权限\N{\fs33\c&H00C8C0B8&\bord1.4}Your own identity needs separate rights to upload, execute and see results.
+Dialogue: 0,0:23:16.13,0:23:18.75,Bilingual,,0,0,0,,暂停一下，把账号和两条授权都建好\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and create the account and both grants.
+Dialogue: 0,0:23:19.00,0:23:23.27,Bilingual,,0,0,0,,用 gcloud 的替代做法，会创建账号，再加上全部四条授权\N{\fs33\c&H00C8C0B8&\bord1.4}The gcloud alternative creates the account and adds all four grants.
+Dialogue: 0,0:23:26.13,0:23:27.13,Bilingual,,0,0,0,,4.3 节\N{\fs33\c&H00C8C0B8&\bord1.4}Section 4.3:
+Dialogue: 0,0:23:27.13,0:23:32.17,Bilingual,,0,0,0,,挂上这个账号，同样要你在它上面有 Service Account User\N{\fs33\c&H00C8C0B8&\bord1.4}attaching this account again takes your Service Account User on it.
+Dialogue: 0,0:23:32.49,0:23:35.52,Bilingual,,0,0,0,,在 Cloud Run 里 Jobs 下的 Deploy container\N{\fs33\c&H00C8C0B8&\bord1.4}In Cloud Run, Jobs, Deploy container opens Create job.
+Dialogue: 0,0:23:35.52,0:23:37.07,Bilingual,,0,0,0,,会打开 Create job\N{\fs33\c&H00C8C0B8&\bord1.4}In Cloud Run, Jobs, Deploy container opens Create job.
+Dialogue: 0,0:23:37.12,0:23:40.55,Bilingual,,0,0,0,,同一个 image，名字叫 translation-audio，1 个 task\N{\fs33\c&H00C8C0B8&\bord1.4}The same image, the name translation-audio, 1 task.
+Dialogue: 0,0:23:40.82,0:23:42.02,Bilingual,,0,0,0,,Container command\N{\fs33\c&H00C8C0B8&\bord1.4}Container command:
+Dialogue: 0,0:23:42.02,0:23:44.29,Bilingual,,0,0,0,,输入 python，再按 Enter，生成一个 chip\N{\fs33\c&H00C8C0B8&\bord1.4}python, then Enter to make a chip.
+Dialogue: 0,0:23:44.44,0:23:48.20,Bilingual,,0,0,0,,它填的是 entrypoint 那个位置，这个 image 把它留空了\N{\fs33\c&H00C8C0B8&\bord1.4}It fills the entrypoint slot, which this image left empty.
+Dialogue: 0,0:23:48.43,0:23:49.74,Bilingual,,0,0,0,,Container arguments\N{\fs33\c&H00C8C0B8&\bord1.4}Container arguments:
+Dialogue: 0,0:23:49.74,0:23:55.09,Bilingual,,0,0,0,,11 个值，每个值一个 chip，合在一起占掉命令那个位置\N{\fs33\c&H00C8C0B8&\bord1.4}eleven values, each its own chip, and together they take the command slot's place.
+Dialogue: 0,0:23:55.41,0:24:00.17,Bilingual,,0,0,0,,-m、translation demo、batch、input URI 和你的段落\N{\fs33\c&H00C8C0B8&\bord1.4}-m, translation_demo, batch, input URI and your passage,
+Dialogue: 0,0:24:00.17,0:24:04.75,Bilingual,,0,0,0,,source en、destination fr，output URI 和你的前缀\N{\fs33\c&H00C8C0B8&\bord1.4}source en, destination fr, output URI and your prefix.
+Dialogue: 0,0:24:05.07,0:24:07.74,Bilingual,,0,0,0,,每个 chip 就是参数列表里的一项\N{\fs33\c&H00C8C0B8&\bord1.4}Each chip is one item of the argument list.
+Dialogue: 0,0:24:07.98,0:24:13.13,Bilingual,,0,0,0,,然后是同样的三个变量、5 分钟的 task 超时、0 次重试\N{\fs33\c&H00C8C0B8&\bord1.4}Then the same three variables, a task timeout of 5 minutes, and 0 retries,
+Dialogue: 0,0:24:13.13,0:24:15.49,Bilingual,,0,0,0,,因为一次重试会重复付费的工作\N{\fs33\c&H00C8C0B8&\bord1.4}because a retry repeats paid work.
+Dialogue: 0,0:24:15.81,0:24:19.14,Bilingual,,0,0,0,,在 Security 里，按邮箱选 job 的账号\N{\fs33\c&H00C8C0B8&\bord1.4}On Security, choose the job's account by its email.
+Dialogue: 0,0:24:19.46,0:24:23.32,Bilingual,,0,0,0,,Execute job immediately 不要勾选，然后点 Create\N{\fs33\c&H00C8C0B8&\bord1.4}Leave Execute job immediately unchecked, then select Create;
+Dialogue: 0,0:24:23.32,0:24:24.90,Bilingual,,0,0,0,,暂停一下，把它建好\N{\fs33\c&H00C8C0B8&\bord1.4}pause and build it.
+Dialogue: 0,0:24:24.95,0:24:26.91,Bilingual,,0,0,0,,把 11 个值全贴进一个 chip\N{\fs33\c&H00C8C0B8&\bord1.4}Paste all eleven into one chip,
+Dialogue: 0,0:24:26.91,0:24:31.14,Bilingual,,0,0,0,,Python 就会去找一个以这一整句为名字的模块\N{\fs33\c&H00C8C0B8&\bord1.4}and Python looks for a module with that whole sentence as its name.
+Dialogue: 0,0:24:31.46,0:24:33.36,Bilingual,,0,0,0,,名字在第一个点那里被截断\N{\fs33\c&H00C8C0B8&\bord1.4}The name is cut at the first dot.
+Dialogue: 0,0:24:35.17,0:24:36.77,Bilingual,,0,0,0,,再看另一种错误\N{\fs33\c&H00C8C0B8&\bord1.4}Now the other mistake.
+Dialogue: 0,0:24:36.96,0:24:41.46,Bilingual,,0,0,0,,你把 11 个参数 chip 都填了，却把 Container command 留空\N{\fs33\c&H00C8C0B8&\bord1.4}You fill all eleven argument chips but leave Container command empty.
+Dialogue: 0,0:24:41.78,0:24:43.64,Bilingual,,0,0,0,,这个 container 会试着运行什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What does the container try to run?
+Dialogue: 0,0:24:52.48,0:24:57.13,Bilingual,,0,0,0,,参数替换了默认命令，又没有 entrypoint\N{\fs33\c&H00C8C0B8&\bord1.4}The arguments replace the default command, and with no entrypoint,
+Dialogue: 0,0:24:57.13,0:24:58.76,Bilingual,,0,0,0,,-m 就成了要运行的程序\N{\fs33\c&H00C8C0B8&\bord1.4}-m becomes the program.
+Dialogue: 0,0:24:59.08,0:25:02.34,Bilingual,,0,0,0,,在 Docker 里复现的版本失败了：找不到可执行文件\N{\fs33\c&H00C8C0B8&\bord1.4}Docker's version fails: executable not found.
+Dialogue: 0,0:25:03.48,0:25:07.40,Bilingual,,0,0,0,,如果什么都不改，这个 job 会启动 web 服务器\N{\fs33\c&H00C8C0B8&\bord1.4}With nothing changed, the job starts the web server and waits
+Dialogue: 0,0:25:07.40,0:25:10.16,Bilingual,,0,0,0,,一直等到 5 分钟后超时把它判为失败\N{\fs33\c&H00C8C0B8&\bord1.4}until the timeout fails it after 5 minutes.
+Dialogue: 0,0:25:10.40,0:25:14.16,Bilingual,,0,0,0,,用 gcloud 的替代做法，传的是同样的 11 个值\N{\fs33\c&H00C8C0B8&\bord1.4}The gcloud alternative passes the same eleven values,
+Dialogue: 0,0:25:14.16,0:25:16.78,Bilingual,,0,0,0,,用逗号隔开，命令用 python\N{\fs33\c&H00C8C0B8&\bord1.4}comma separated, with command python.
+Dialogue: 0,0:25:18.20,0:25:22.40,Bilingual,,0,0,0,,4.4 节：打开这个 job，点 Execute\N{\fs33\c&H00C8C0B8&\bord1.4}Section 4.4: open the job and select Execute.
+Dialogue: 0,0:25:22.72,0:25:26.37,Bilingual,,0,0,0,,录制记录显示它成功了，History 里有一个绿勾\N{\fs33\c&H00C8C0B8&\bord1.4}The recording shows it succeeding, with a green check in History.
+Dialogue: 0,0:25:26.92,0:25:28.52,Bilingual,,0,0,0,,红色标记意味着什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What would a red mark mean?
+Dialogue: 0,0:25:28.75,0:25:33.20,Bilingual,,0,0,0,,我们在笔记本上额外跑了一次，不开语音开关，它以退出码 1 退出\N{\fs33\c&H00C8C0B8&\bord1.4}Our extra laptop run without the speech flag exits with status 1,
+Dialogue: 0,0:25:33.20,0:25:36.35,Bilingual,,0,0,0,,这是一次如实的失败，所以 History 说的是真话\N{\fs33\c&H00C8C0B8&\bord1.4}an honest failure, so History tells the truth.
+Dialogue: 0,0:25:37.30,0:25:40.86,Bilingual,,0,0,0,,第 2 步：打开这次执行，再点 Tasks 里的 View logs\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2: open the execution, then Tasks, View logs.
+Dialogue: 0,0:25:41.18,0:25:44.00,Bilingual,,0,0,0,,这个 job 会退出；它没有 web URL\N{\fs33\c&H00C8C0B8&\bord1.4}The job exits; it has no web URL.
+Dialogue: 0,0:25:44.32,0:25:46.69,Bilingual,,0,0,0,,它最后的输出是一段 JSON 摘要\N{\fs33\c&H00C8C0B8&\bord1.4}Its last output is a JSON summary
+Dialogue: 0,0:25:46.69,0:25:50.53,Bilingual,,0,0,0,,里面有输出和 manifest 的位置、状态 complete\N{\fs33\c&H00C8C0B8&\bord1.4}with the output and manifest locations, status complete,
+Dialogue: 0,0:25:50.53,0:25:51.92,Bilingual,,0,0,0,,还有那几个文件\N{\fs33\c&H00C8C0B8&\bord1.4}and the files.
+Dialogue: 0,0:25:51.97,0:25:56.13,Bilingual,,0,0,0,,第 3 步：打开你的输出 bucket，再打开 run-001\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: open your output bucket, then run-001.
+Dialogue: 0,0:25:56.45,0:25:58.96,Bilingual,,0,0,0,,里面是一个名字随机的目录\N{\fs33\c&H00C8C0B8&\bord1.4}Inside is a folder with a random name.
+Dialogue: 0,0:25:59.28,0:26:01.37,Bilingual,,0,0,0,,第 4 步：三个文件\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: three files:
+Dialogue: 0,0:26:01.37,0:26:06.15,Bilingual,,0,0,0,,translated.txt、speech.wav 和 manifest.json\N{\fs33\c&H00C8C0B8&\bord1.4}translated.txt, speech.wav, and manifest.json.
+Dialogue: 0,0:26:06.40,0:26:07.82,Bilingual,,0,0,0,,顺序很重要\N{\fs33\c&H00C8C0B8&\bord1.4}The order matters.
+Dialogue: 0,0:26:07.87,0:26:09.66,Bilingual,,0,0,0,,每次上传都是只创建、不覆盖\N{\fs33\c&H00C8C0B8&\bord1.4}Each upload is create-only,
+Dialogue: 0,0:26:09.66,0:26:13.04,Bilingual,,0,0,0,,而写着 complete 的 manifest 最后才写\N{\fs33\c&H00C8C0B8&\bord1.4}and the manifest, saying complete, is written last.
+Dialogue: 0,0:26:13.36,0:26:14.73,Bilingual,,0,0,0,,它就是回执\N{\fs33\c&H00C8C0B8&\bord1.4}It is the receipt.
+Dialogue: 0,0:26:14.78,0:26:16.58,Bilingual,,0,0,0,,那么，第三个要看的地方\N{\fs33\c&H00C8C0B8&\bord1.4}So, the third place to look.
+Dialogue: 0,0:26:16.90,0:26:22.46,Bilingual,,0,0,0,,绿勾说明进程以 0 退出；manifest 说明工作完成了\N{\fs33\c&H00C8C0B8&\bord1.4}A green check says the process exited with 0; the manifest says the work is complete.
+Dialogue: 0,0:26:22.78,0:26:25.28,Bilingual,,0,0,0,,没有 manifest 的文件什么都证明不了\N{\fs33\c&H00C8C0B8&\bord1.4}Files without a manifest prove nothing.
+Dialogue: 0,0:26:25.52,0:26:28.82,Bilingual,,0,0,0,,同一个 job 再执行一次，参数不变\N{\fs33\c&H00C8C0B8&\bord1.4}Execute the same job again, with the same arguments.
+Dialogue: 0,0:26:29.14,0:26:31.04,Bilingual,,0,0,0,,第一次的结果会被覆盖吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Is the first result overwritten?
+Dialogue: 0,0:26:37.88,0:26:41.75,Bilingual,,0,0,0,,不会。一个新的 attempt 目录出现在第一个旁边\N{\fs33\c&H00C8C0B8&\bord1.4}No. A new attempt folder lands beside the first,
+Dialogue: 0,0:26:41.75,0:26:44.39,Bilingual,,0,0,0,,只创建的上传也不能覆盖\N{\fs33\c&H00C8C0B8&\bord1.4}and create-only uploads cannot overwrite.
+Dialogue: 0,0:26:44.71,0:26:50.64,Bilingual,,0,0,0,,但这不是恰好一次：一次重试会重复付费的工作，所以重试设成 0\N{\fs33\c&H00C8C0B8&\bord1.4}But it is not exactly once: a retry repeats paid work, which is why retries are 0.
+Dialogue: 0,0:26:50.88,0:26:54.68,Bilingual,,0,0,0,,第 5 步：用下载图标下载文本和音频\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: download the text and the audio with the icons.
+Dialogue: 0,0:26:55.00,0:26:56.60,Bilingual,,0,0,0,,暂停一下，跑你的 job\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run your job.
+Dialogue: 0,0:26:56.86,0:27:01.74,Bilingual,,0,0,0,,金色标签：每次执行按运行时间计费，再加一次语音调用\N{\fs33\c&H00C8C0B8&\bord1.4}A gold tag: each execution bills its running time plus one speech call.
+Dialogue: 0,0:27:01.98,0:27:04.85,Bilingual,,0,0,0,,用 gcloud 的替代做法，会带 --wait 执行\N{\fs33\c&H00C8C0B8&\bord1.4}The gcloud alternative executes with --wait,
+Dialogue: 0,0:27:04.85,0:27:08.17,Bilingual,,0,0,0,,建一个 results 目录，再把输出拷下来\N{\fs33\c&H00C8C0B8&\bord1.4}makes a results folder, and copies the output down.
+Dialogue: 0,0:27:08.49,0:27:10.90,Bilingual,,0,0,0,,这个 --wait 参数不会实时显示你应用的日志\N{\fs33\c&H00C8C0B8&\bord1.4}The --wait flag does not stream your app's logs.
+Dialogue: 0,0:27:11.15,0:27:15.19,Bilingual,,0,0,0,,README 的检查点：task 完成了，进程停了\N{\fs33\c&H00C8C0B8&\bord1.4}The README's checkpoint: the task finished, the process stopped,
+Dialogue: 0,0:27:15.19,0:27:17.21,Bilingual,,0,0,0,,它的文件留在 Storage 里\N{\fs33\c&H00C8C0B8&\bord1.4}and its files remain in Storage.
+Dialogue: 0,0:27:18.25,0:27:21.47,Bilingual,,0,0,0,,4.5 节：从终端提交新的工作\N{\fs33\c&H00C8C0B8&\bord1.4}Section 4.5: new work from the terminal.
+Dialogue: 0,0:27:21.79,0:27:23.73,Bilingual,,0,0,0,,先说你自己的一项权限\N{\fs33\c&H00C8C0B8&\bord1.4}First, a permission of yours:
+Dialogue: 0,0:27:23.73,0:27:29.60,Bilingual,,0,0,0,,带覆盖参数运行 job 需要单独的权限，和 job 账号的角色无关\N{\fs33\c&H00C8C0B8&\bord1.4}running a job with overrides needs its own right, separate from the job account's roles.
+Dialogue: 0,0:27:29.83,0:27:31.54,Bilingual,,0,0,0,,到现在只用了控制台？\N{\fs33\c&H00C8C0B8&\bord1.4}Console only so far?
+Dialogue: 0,0:27:31.86,0:27:33.69,Bilingual,,0,0,0,,先把终端设置跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Run the terminal setup first.
+Dialogue: 0,0:27:34.01,0:27:37.70,Bilingual,,0,0,0,,存一段短文，不超过 5000 个字符\N{\fs33\c&H00C8C0B8&\bord1.4}Save a short passage, under 5,000 characters,
+Dialogue: 0,0:27:37.70,0:27:42.46,Bilingual,,0,0,0,,作为 repo 根目录下的 passage.txt，或者直接复制示例\N{\fs33\c&H00C8C0B8&\bord1.4}as passage.txt in the repository root, or copy the sample.
+Dialogue: 0,0:27:42.78,0:27:46.90,Bilingual,,0,0,0,,把两个 bucket 名字 export 出来，再把它上传到 run-002 下\N{\fs33\c&H00C8C0B8&\bord1.4}Export both bucket names and upload it under run-002;
+Dialogue: 0,0:27:46.90,0:27:49.55,Bilingual,,0,0,0,,它又会停在占位符那里\N{\fs33\c&H00C8C0B8&\bord1.4}it stops at the placeholder again.
+Dialogue: 0,0:27:49.78,0:27:53.09,Bilingual,,0,0,0,,第 3 步：带覆盖参数执行已有的 job\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: execute the existing job with overrides.
+Dialogue: 0,0:27:53.41,0:27:57.29,Bilingual,,0,0,0,,它们会替换整个参数列表，只对这次执行有效\N{\fs33\c&H00C8C0B8&\bord1.4}They replace the whole argument list for this execution only:
+Dialogue: 0,0:27:57.29,0:27:58.89,Bilingual,,0,0,0,,一个新路径，再加上西班牙语\N{\fs33\c&H00C8C0B8&\bord1.4}a new path and Spanish.
+Dialogue: 0,0:27:59.11,0:28:03.78,Bilingual,,0,0,0,,保存的 job 里还是法语，而且你漏掉的参数不会从它那里补上\N{\fs33\c&H00C8C0B8&\bord1.4}The saved job still says French, and a flag you leave out is not taken from it.
+Dialogue: 0,0:28:05.05,0:28:11.05,Bilingual,,0,0,0,,第 4 步：成功之后，建好 results 目录，把 run-002 拷下来\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: after it succeeds, make the results folder and copy run-002 down.
+Dialogue: 0,0:28:11.37,0:28:15.10,Bilingual,,0,0,0,,README 的录制记录显示一次成功的西班牙语执行\N{\fs33\c&H00C8C0B8&\bord1.4}The README's recording shows a successful Spanish execution.
+Dialogue: 0,0:28:15.33,0:28:18.83,Bilingual,,0,0,0,,4.6 节：helper 脚本把这三步合在一起\N{\fs33\c&H00C8C0B8&\bord1.4}Section 4.6: the helper combines all three.
+Dialogue: 0,0:28:19.15,0:28:21.37,Bilingual,,0,0,0,,额外跑一次 dry run，能看到它的计划\N{\fs33\c&H00C8C0B8&\bord1.4}An extra dry run shows its plan.
+Dialogue: 0,0:28:21.69,0:28:26.27,Bilingual,,0,0,0,,它上传到一个新的 run 目录，用时间加一段随机字符命名\N{\fs33\c&H00C8C0B8&\bord1.4}It uploads to a fresh run folder named by the time and a random part,
+Dialogue: 0,0:28:26.27,0:28:29.58,Bilingual,,0,0,0,,再带着 11 个参数执行，然后下载\N{\fs33\c&H00C8C0B8&\bord1.4}executes with the eleven arguments, and downloads.
+Dialogue: 0,0:28:29.83,0:28:34.24,Bilingual,,0,0,0,,真跑的时候，它会在运行每条 gcloud 命令之前先打印出来\N{\fs33\c&H00C8C0B8&\bord1.4}Run for real, it prints each gcloud command before running it and stops
+Dialogue: 0,0:28:34.24,0:28:35.84,Bilingual,,0,0,0,,遇到第一个失败就停\N{\fs33\c&H00C8C0B8&\bord1.4}at the first failure.
+Dialogue: 0,0:28:36.06,0:28:37.98,Bilingual,,0,0,0,,暂停一下，用你的名字跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it with your names.
+Dialogue: 0,0:28:39.95,0:28:43.79,Bilingual,,0,0,0,,第 2 步：打开结果目录，播放 speech.wav\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2: open the result folder and play speech.wav.
+Dialogue: 0,0:28:44.11,0:28:47.53,Bilingual,,0,0,0,,这个 helper 脚本只有在找到完整的 manifest 之后\N{\fs33\c&H00C8C0B8&\bord1.4}The helper prints Downloaded results only after it finds a complete manifest: the receipt again.
+Dialogue: 0,0:28:47.53,0:28:50.34,Bilingual,,0,0,0,,才会打印 Downloaded results：又是回执\N{\fs33\c&H00C8C0B8&\bord1.4}The helper prints Downloaded results only after it finds a complete manifest: the receipt again.
+Dialogue: 0,0:28:53.58,0:28:57.99,Bilingual,,0,0,0,,收尾清理。第 1 步：把想留的东西下载下来。第 2 步\N{\fs33\c&H00C8C0B8&\bord1.4}Clean up. Step 1: download what you want to keep. Step 2:
+Dialogue: 0,0:28:57.99,0:29:02.16,Bilingual,,0,0,0,,删掉 translate-function 和 translation-demo，再删 job\N{\fs33\c&H00C8C0B8&\bord1.4}delete translate-function and translation-demo, then the job.
+Dialogue: 0,0:29:02.52,0:29:06.18,Bilingual,,0,0,0,,第 3 步：删掉你的 bucket 和两个运行时账号\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: delete your buckets and the two runtime accounts
+Dialogue: 0,0:29:06.18,0:29:07.78,Bilingual,,0,0,0,,前提是已经没有东西在用它们\N{\fs33\c&H00C8C0B8&\bord1.4}once nothing uses them.
+Dialogue: 0,0:29:08.00,0:29:12.15,Bilingual,,0,0,0,,第 4 步：Artifact Registry 里那个函数的 image\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: the function's image in Artifact Registry, still there
+Dialogue: 0,0:29:12.15,0:29:13.89,Bilingual,,0,0,0,,service 删了它还在\N{\fs33\c&H00C8C0B8&\bord1.4}after the service is gone.
+Dialogue: 0,0:29:14.21,0:29:16.02,Bilingual,,0,0,0,,暂停一下，现在全部删掉\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and delete them all now.
+Dialogue: 0,0:29:16.27,0:29:17.62,Bilingual,,0,0,0,,补充两点\N{\fs33\c&H00C8C0B8&\bord1.4}Two additions.
+Dialogue: 0,0:29:17.67,0:29:23.69,Bilingual,,0,0,0,,软删除的文件还会计费一段时间；构建还会留下源代码归档和日志\N{\fs33\c&H00C8C0B8&\bord1.4}Soft-deleted files stay billable for a while; the build also leaves source archives and logs.
+Dialogue: 0,0:29:24.01,0:29:27.79,Bilingual,,0,0,0,,还有，README 也说了，留着那个共享的公开 image；别人也在用\N{\fs33\c&H00C8C0B8&\bord1.4}And, per the README, keep the shared public image; others use it.
+Dialogue: 0,0:29:29.23,0:29:30.63,Bilingual,,0,0,0,,卡在哪一步了？\N{\fs33\c&H00C8C0B8&\bord1.4}Stuck on a step?
+Dialogue: 0,0:29:30.68,0:29:34.63,Bilingual,,0,0,0,,README 最后有一张故障排查表，列出症状和检查方法\N{\fs33\c&H00C8C0B8&\bord1.4}The README ends with a troubleshooting table of symptoms and checks.
+Dialogue: 0,0:29:37.57,0:29:39.16,Bilingual,,0,0,0,,来看整张地图\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the whole map.
+Dialogue: 0,0:29:39.21,0:29:42.94,Bilingual,,0,0,0,,第 1 部分交出的是一个文件，image 由 Cloud Build 来做\N{\fs33\c&H00C8C0B8&\bord1.4}Part 1 handed over a file, and Cloud Build made the image.
+Dialogue: 0,0:29:43.26,0:29:45.78,Bilingual,,0,0,0,,第 2 到第 4 部分交出的是一个 image\N{\fs33\c&H00C8C0B8&\bord1.4}Parts 2 to 4 handed over one image:
+Dialogue: 0,0:29:45.78,0:29:50.60,Bilingual,,0,0,0,,一个能缩容到零的 service，和一个带着回执退出的 job\N{\fs33\c&H00C8C0B8&\bord1.4}a service that scales to zero, and a job that exits with a receipt.
+Dialogue: 0,0:29:50.85,0:29:53.94,Bilingual,,0,0,0,,现在看课上说的三个缺点，和我们的回答\N{\fs33\c&H00C8C0B8&\bord1.4}Now the lecture's three downsides, and our answers.
+Dialogue: 0,0:29:54.26,0:29:58.42,Bilingual,,0,0,0,,冷启动：最小实例数设成 1，能让一个实例一直热着，但要花钱\N{\fs33\c&H00C8C0B8&\bord1.4}Cold starts: a minimum of 1 keeps an instance warm, for money.
+Dialogue: 0,0:29:58.67,0:30:04.42,Bilingual,,0,0,0,,控制和调试受限：有三个地方可看，构建日志、service 日志\N{\fs33\c&H00C8C0B8&\bord1.4}Limited control and debugging: three places to look, the build logs, the service logs,
+Dialogue: 0,0:30:04.42,0:30:07.76,Bilingual,,0,0,0,,以及 job 的日志和 manifest。厂商锁定\N{\fs33\c&H00C8C0B8&\bord1.4}and the job's logs and manifest. Vendor lock-in:
+Dialogue: 0,0:30:07.76,0:30:11.39,Bilingual,,0,0,0,,image 和 Functions Framework 都在你的笔记本上跑过\N{\fs33\c&H00C8C0B8&\bord1.4}the image and the Functions Framework ran on your laptop;
+Dialogue: 0,0:30:11.39,0:30:15.27,Bilingual,,0,0,0,,只有控制台、权限和构建才是 Google 的\N{\fs33\c&H00C8C0B8&\bord1.4}only the console, the permissions and the build are Google's.
+Dialogue: 0,0:30:15.52,0:30:19.38,Bilingual,,0,0,0,,下一讲：给训练好的模型建一个 Vertex AI endpoint\N{\fs33\c&H00C8C0B8&\bord1.4}Next lecture: a Vertex AI endpoint for a trained model,
+Dialogue: 0,0:30:19.38,0:30:20.83,Bilingual,,0,0,0,,然后是 pipeline\N{\fs33\c&H00C8C0B8&\bord1.4}then pipelines.
+Dialogue: 0,0:30:20.88,0:30:22.82,Bilingual,,0,0,0,,自测一下，每道题都暂停想一想\N{\fs33\c&H00C8C0B8&\bord1.4}Test yourself, pausing on each.
+Dialogue: 0,0:30:23.14,0:30:25.98,Bilingual,,0,0,0,,第一题：把第 1 和第 2 部分放到课上的地图上\N{\fs33\c&H00C8C0B8&\bord1.4}One: place parts 1 and 2 on the lecture's map.
+Dialogue: 0,0:30:26.30,0:30:28.86,Bilingual,,0,0,0,,你交出的是什么，image 又是谁构建的？\N{\fs33\c&H00C8C0B8&\bord1.4}What do you hand over, and who builds the image?
+Dialogue: 0,0:30:29.10,0:30:33.41,Bilingual,,0,0,0,,第二题：哪两个设置会让计价器在没人用的时候也走\N{\fs33\c&H00C8C0B8&\bord1.4}Two: which two settings make the meter run while nobody uses the app,
+Dialogue: 0,0:30:33.41,0:30:35.71,Bilingual,,0,0,0,,最小实例又能买到什么？\N{\fs33\c&H00C8C0B8&\bord1.4}and what does a minimum instance buy?
+Dialogue: 0,0:30:35.95,0:30:38.45,Bilingual,,0,0,0,,第三题：谁可以调用它，它又以谁的身份运行\N{\fs33\c&H00C8C0B8&\bord1.4}Three: who may call it, and who it runs as.
+Dialogue: 0,0:30:38.77,0:30:42.31,Bilingual,,0,0,0,,各由哪个设置回答，为什么不需要密钥文件？\N{\fs33\c&H00C8C0B8&\bord1.4}Which setting answers each, and why is no key file needed?
+Dialogue: 0,0:30:42.55,0:30:46.79,Bilingual,,0,0,0,,第四题：为什么这个 job 要设一个命令和 11 个独立的参数\N{\fs33\c&H00C8C0B8&\bord1.4}Four: why does the job set a command and eleven separate arguments,
+Dialogue: 0,0:30:46.79,0:30:48.69,Bilingual,,0,0,0,,两个都不设会怎样？\N{\fs33\c&H00C8C0B8&\bord1.4}and what happens with neither?
+Dialogue: 0,0:30:48.93,0:30:52.21,Bilingual,,0,0,0,,第五题：说出课上讲的 serverless 的三个缺点\N{\fs33\c&H00C8C0B8&\bord1.4}Five: name the lecture's three downsides of serverless,
+Dialogue: 0,0:30:52.21,0:30:54.71,Bilingual,,0,0,0,,以及这个教程针对每一个给了你什么\N{\fs33\c&H00C8C0B8&\bord1.4}and what this tutorial gives you for each.
