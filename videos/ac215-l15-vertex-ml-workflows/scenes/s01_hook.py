@@ -115,7 +115,12 @@ class Hook(VoiceScene):
             self.play(ShowIncreasingSubsets(cmd.text, rate_func=linear), run_time=0.9)
             vo.wait_until("Both answers on screen")
             self.play(FadeIn(link, scale=1.1), Create(l_up), Create(l_dn), run_time=0.7)
-            self.play(Indicate(link.text, color=S.GREY, scale_factor=1.08), run_time=0.7)
+            vo.wait_until("from the same predict code")
+            # the narrated object: one predict() behind both panels (no 4 s still before "brie")
+            self.play(Indicate(link, color=S.GREY, scale_factor=1.15),
+                      Indicate(cmd.text, color=TURN, scale_factor=1.06), run_time=0.9)
+            self.play(l_up.animate(rate_func=there_and_back).set_stroke(width=6),
+                      l_dn.animate(rate_func=there_and_back).set_stroke(width=6), run_time=0.8)
             vo.wait_until("And both answers say brie")
             brie_top = text_glyphs(top.rows[3], "brie")
             brie_bot = glyph_range(rows[4], rows[4].text.index("brie"), rows[4].text.index("brie") + 4)

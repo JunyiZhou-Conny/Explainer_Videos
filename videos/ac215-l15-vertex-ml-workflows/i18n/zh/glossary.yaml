@@ -256,7 +256,7 @@ rules:
   cards are all English, and the scenes need no language changes. When the narration names an on-screen tag, label or colour,
   the subtitle names it as the screen shows it or by its colour (黄色的 your turn 标签; 绿色的 DeployModel). Everything the narration
   says in its own words is translated: the tracker → 进度条; an extra → 额外 (an extra listing → 额外列一下目录; extra checks → 额外检查;
-  Two extras → 两个额外检查; An extra, built offline → 一个额外的东西，离线生成); a local stand-in → 本地替身; the README output → README 的输出; the
+  Two extras → 两个额外检查; An extra, built offline → 额外看一样东西，离线生成); a local stand-in → 本地替身; the README output → README 的输出; the
   study guide → 学习指南; the exercises → 练习.'
 - '[A16] Mainland Simplified Chinese only: 默认, 程序, 代码, 文件, 目录, 账号, 用户, 密钥, 凭据, 令牌, 策略, 区域, 实例, 网络, 脚本, 视频, 信息, 配置, 进程, 对象,
   函数, 参数, 变量, 内存, 日志, 部署, 浏览器, 存储, 磁盘, 缓存, 数据; never 預設, 程式, 程式碼, 檔案, 資料夾, 帳號, 使用者, 金鑰, 憑證, 權杖, 原則, 實例, 網路, 腳本, 影片, 訊息, 組態,
@@ -370,9 +370,9 @@ rules:
   them where the English doesn''t; after the first mention use a short reference (这个角色, 这个 endpoint, 这个任务, 它).'
 - '[D9] Keep the English clause order (a series lesson, ac215-video skill). The toolkit pairs Chinese and English clause by
   clause, so a Chinese sentence that puts a condition first when the English puts it last swaps meaning between two neighbouring
-  cues. Conditions, purposes and time adverbials sit where the English has them: Don''t go on until they do → 别往下走，直到它们打印出来;
+  cues. Conditions, purposes and time adverbials sit where the English has them: Don''t go on until they do → 别急着往下走，等它们打印出来再说;
   With your keys, it creates the bucket, or reuses yours if it already exists → 有你的密钥时，它会创建 bucket，如果已经存在，就复用你的; create a
-  bucket with a name of your own, because bucket names are unique → 用你自己的名字建一个 bucket，因为 bucket 名……都是唯一的; You ran four commands
+  bucket with a name of your own, because bucket names are unique → 用你自己起的名字建一个 bucket，因为 bucket 名……都是唯一的; You ran four commands
   by hand to deploy one model → 你手动跑了四条命令，部署了一个模型; It is still one machine, billing around the clock, even with zero traffic
   → 它仍然是一台机器，全天候在计费，哪怕流量是零. Where the English opens with if, with, without, before or when (S04[10], S06[2], S13[4], S14[0],
   S15[11]), the Chinese does too.'
@@ -436,7 +436,7 @@ terms:
   first_use: S01[0]：两个答案都来自 cli.py 里同一段预测代码。
   note: 'A1 a: the four labels brie, gruyere, gouda, parmigiano stay as the code prints them (lower case, never translated,
     never opening a sentence: A9). predict code → 预测代码; the predict function → 预测函数 (S08). 哪种奶酪 is fine (B3: 种 is not followed
-    by punctuation). More: S01[0]：这里有一个问模型的问题：这张照片里是哪种奶酪？ S01[0]：而且两个答案都说是 brie。'
+    by punctuation). More: S01[0]：先问模型一个问题：这张照片里是哪种奶酪？ S01[0]：而且两个答案都说是 brie。'
 - en: count the numbers / the README output / this recording / one model cannot give both
   zh_subtitle: README / 录制 / 模型
   first_use: S01[1]：上面那个是 README 的输出，里面有三个数。
@@ -477,10 +477,10 @@ terms:
   zh_subtitle: 上周 / 第 14 讲 / Cloud Run / 训练好的模型
   first_use: S02[2]：上周，第 14 讲把 container 部署到了 Cloud Run 上。
   note: 'A17: lecture n → 第 n 讲; last week → 上周. serves → 对外提供 / 提供服务; never 服务 alone as a verb. More: S02[2]：今天，container
-    用来对外提供一个训练好的模型。'
+    里跑的是一个训练好的模型，对外提供服务。'
 - en: the lecture maps its console / notebooks / training from lecture 13 / online prediction / pipelines
   zh_subtitle: 控制台 / notebook / 在线预测
-  first_use: S02[3]：课上把控制台对应到课程上：notebook、第 13 讲的训练，还有今天的两项：在线预测和 pipeline。
+  first_use: S02[3]：课上把控制台的各个部分和课程对应起来：notebook、第 13 讲的训练，还有今天的两项：在线预测和 pipeline。
   note: 'notebook stays (L13); online prediction → 在线预测 (Vertex AI''s Chinese docs). D3: no plurals (notebook, pipeline).
     LECTURE tags are screen only (A15).'
 - en: Vertex AI on Google Cloud / AWS version of both tutorials / same ideas, different names
@@ -498,17 +498,17 @@ terms:
     More: S02[5]：服务账号的密钥变成了一个 IAM 用户，密钥放在你的笔记本上，再加上云端的一个角色。 S02[5]：而 endpoint 变成了一份配置加上一个 endpoint。'
 - en: this recording / no AWS account / honest first error / README output / tagged local stand-in / never a faked success
   zh_subtitle: AWS 账号 / 报错 / 本地替身 / 伪造
-  first_use: S02[6]：关于这次录制，有一点要说明：它没有 AWS 账号。
+  first_use: S02[6]：关于这次录制，有一点要说明：录制用的环境没有 AWS 账号。
   note: 'A14: the honest framing is said plainly, never apologetic and never hidden (L14 S03[7]). its honest first error →
     它遇到的第一个真实报错 (L14). stand-in → 替身, local stand-in → 本地替身 (L3, L14). More: S02[6]：在你笔记本上跑的每一步都是真的。 S02[6]：每个 AWS 调用都停在它遇到的第一个真实报错上，就像这个。
-    S02[6]：云端本来会回答的地方，你看到的是 README 的输出，或者标好的本地替身。 S02[6]：从不伪造成功。'
+    S02[6]：云端本来会回答的地方，你看到的是 README 的输出，或者标好的本地替身。 S02[6]：绝不假装成功。'
 - en: versions at the time of recording
   zh_subtitle: 录制时 / 版本
   first_use: S02[7]：录制时的版本都在画面上。
   note: 'A14: at the time of recording → 录制时, never dropped (L1-L14).'
 - en: clone the repository / clone or download / our git clone is extra / git log / the commit we follow
   zh_subtitle: git clone / git log / commit / 额外
-  first_use: S03[0]：README 写的是 clone 或者下载，所以我们的 git clone 是额外的，显示我们所跟 commit 的 git log 也是。
+  first_use: S03[0]：README 写的是 clone 或者下载，所以我们的 git clone 是额外的，用来显示我们跟的那个 commit 的 git log 也是。
   note: 'A1 c, D6: Pause and clone it → 暂停一下，clone 下来 (L14). extra → 额外 (A15). The commit hash is never written (C2). More:
     S03[0]：第 1 步：clone 这个 repo。 S03[0]：暂停一下，clone 下来。'
 - en: an extra listing / the CLI / a Dockerfile / a Pipfile / eight sample photos / docker-shell.sh, already executable
@@ -536,7 +536,7 @@ terms:
 - en: bucket / a name of your own / unique across all of AWS / storage bills / never put keys in a script / never commit them
     to Git
   zh_subtitle: bucket / 唯一 / 存储 / 计费 / Git
-  first_use: S03[5]：第 5 步，然后暂停：用你自己的名字建一个 bucket，因为 bucket 名在整个 AWS 里都是唯一的。
+  first_use: S03[5]：第 5 步，然后暂停：用你自己起的名字建一个 bucket，因为 bucket 名在整个 AWS 里都是唯一的。
   note: 'A1 c: bucket stays (L3); S3 is the product (an S3 bucket → 一个 S3 bucket). D9: the because-clause stays last, as in
     the English. The GOLD cost tag is screen only (no amount, C2). More: S03[5]：只要里面放着文件，存储就在计费。 S03[5]：而且就像 README 提醒的，永远不要把密钥写进脚本，也永远不要把它们
     commit 到 Git。'
@@ -629,7 +629,7 @@ terms:
   note: 'deprecation warning → 弃用警告. Versions as on screen (C2). More: S04[11]：弃用警告不是问题所在。'
 - en: a small slip / the help text / GCS bucket / the test flag does nothing / about 4 gigabytes
   zh_subtitle: 小疏漏 / 帮助文本 / GCS bucket / 4 GB
-  first_use: S04[12]：有一个小疏漏：帮助文本里还写着 GCS bucket 和 Vertex AI，测试参数也什么都不做。
+  first_use: S04[12]：有一个小疏漏：帮助文本里还写着 GCS bucket 和 Vertex AI，测试参数也不起任何作用。
   note: 'A14: A small slip / A small gap → 有一个小疏漏 (the series'' one erratum phrase, L5, L9-L14). flag → 参数 (L14). 4 gigabytes
     → 4 GB (C2). More: S04[12]：命令都是 AWS 的。 S04[12]：这个 image 大约 4 GB。'
 - en: where does preprocessing happen / a design question / resize / normalize / cell by cell / production endpoint / the
@@ -648,11 +648,11 @@ terms:
   zh_subtitle: 前门 / 签名 / 浮点数 / 形状
   first_use: S05[2]：一个额外检查读出了模型的前门，TensorFlow 管它叫签名。
   note: 'A4: signature → 签名 (exam; written 服务签名), the picture front door → 前门 (one word, S05 and S12). floats → 浮点数 (exam).
-    the wire → 这条线 (the client-to-endpoint line of the picture). More: S05[2]：它接收浮点数，形状是任意数量乘 224 乘 224 乘 3，每张照片给出四个数。 S05[2]：预处理在这条线你的这一边。'
+    the wire → 这条线 (the client-to-endpoint line of the picture). More: S05[2]：它接收浮点数，形状是任意数量乘 224 乘 224 乘 3，每张照片给出四个数。 S05[2]：预处理在这条线上你这一边。'
 - en: client-side brittleness / repeat those steps exactly / a phone app / confident nonsense / roll back / version
   zh_subtitle: 客户端 / 脆弱性 / 手机应用 / 回滚 / 版本管理
   first_use: S05[3]：课上点出了风险：客户端的脆弱性。
-  note: 'versioning → 版本管理 (L11, L13); roll back → 回滚. More: S05[3]：每个客户端都必须一模一样地重复这些步骤，一个忘了除以 255 的手机应用，会得到很有把握的胡说。 S05[3]：模型里只放一份，也更容易回滚和做版本管理。'
+  note: 'versioning → 版本管理 (L11, L13); roll back → 回滚. More: S05[3]：每个客户端都必须一模一样地重复这些步骤，一个忘了除以 255 的手机应用，会得到一个信心满满的错误答案。 S05[3]：模型里只放一份，也更容易回滚和做版本管理。'
 - en: the fix from the lecture / the part 2 trainer / the preprocess function / decodes the JPEG / converts it to floats
   zh_subtitle: 训练脚本 / 预处理函数 / 解码 / JPEG
   first_use: S05[4]：课上的修复在第 2 部分的训练脚本里。
@@ -721,7 +721,7 @@ terms:
 - en: you never write an image name / the SDK picks / the AWS TensorFlow Serving image / framework version 2.13 / exported
     by TensorFlow 2.18 / Serving 2.13 loads it
   zh_subtitle: image / SDK / 框架版本 / Serving 2.13
-  first_use: S07[2]：你从来不写 image 名：SDK 根据框架版本 2.13 选出 AWS 的 TensorFlow Serving image。
+  first_use: S07[2]：你不用自己写 image 名：SDK 根据框架版本 2.13 选出 AWS 的 TensorFlow Serving image。
   note: 'SDK stays (exam). Versions as the SAY says them (C2). More: S07[2]：我们的模型是用 TensorFlow 2.18 导出的。 S07[2]：在第 3 步，一个本地检查会显示
     Serving 2.13 能加载它。'
 - en: one instance of type ml.m5.xlarge / a name with a timestamp / one call creates all three / endpoint configuration /
@@ -800,7 +800,7 @@ terms:
   zh_subtitle: 谜题 / 产物 / label 顺序 / 索引
   first_use: S08[7]：现在回到开头的谜题。
   note: 'label stays (L11, L13). index → 索引. A14 erratum phrase. More: S08[7]：代码一样，产物不同：README 的输出来自一个更旧的模型，有三个类别，label 顺序也不一样。
-    S08[7]：有一个小疏漏：应该是四个数，索引 0 是 parmigiano。'
+    S08[7]：有一个小疏漏：你应该看到四个数，而且索引 0 是 parmigiano。'
 - en: an extra command removes the stand-in / it never touched AWS
   zh_subtitle: 替身
   first_use: S08[8]：一条额外的命令删掉了这个替身。
@@ -819,7 +819,7 @@ terms:
 - en: type your own names, without brackets / delete in this order / the endpoint, then its configuration, then the model
   zh_subtitle: 顺序 / 配置
   first_use: S09[2]：有一个小疏漏：输入你自己的名字，不带尖括号。
-  note: 'its configuration → 它的配置 (the endpoint configuration, short). More: S09[2]：然后我们的失败了：没有凭据。 S09[2]：按这个顺序删：先 endpoint，再它的配置，最后是模型。'
+  note: 'its configuration → 它的配置 (the endpoint configuration, short). More: S09[2]：这样改了以后，我们的还是失败了：没有凭据。 S09[2]：按这个顺序删：先 endpoint，再它的配置，最后是模型。'
 - en: python cli.py --delete / its first SageMaker call / the endpoint named in the JSON file / matching configurations /
     by naming convention / the tarball in S3
   zh_subtitle: python cli.py --delete / 命名约定
@@ -887,7 +887,7 @@ terms:
   zh_subtitle: 令牌 / 配置
   first_use: S10[7]：第 8 步测试配置。
   note: 'A3: token → 令牌 (L10, L11, L14). D9: until-clause last, as the English. More: S10[7]：AWS 自己拒绝了假的令牌和假的密钥。 S10[7]：用你的密钥，这两条会打印出你的账号和你的
-    bucket。 S10[7]：别往下走，直到它们打印出来。'
+    bucket。 S10[7]：别急着往下走，等它们打印出来再说。'
 - en: two roles / Cheese App SageMaker Execution Role / Cheese App Lambda Execution Role / for every job / builds each ARN
     from your account number and the exact role name
   zh_subtitle: CheeseAppSageMakerExecutionRole / CheeseAppLambdaExecutionRole / 账号 ID / 角色名
@@ -1110,7 +1110,7 @@ terms:
 - en: an extra, built offline and never sent / the JSON definition from the SDK / each edge a get on a property / upsert sends
     this
   zh_subtitle: 离线 / Get
-  first_use: S15[7]：一个额外的东西，离线生成、从没发出去：SDK 生成的 JSON 定义。
+  first_use: S15[7]：额外看一样东西，离线生成、从没发出去：SDK 生成的 JSON 定义。
   note: 'Get as in the JSON on screen. offline → 离线. A15: the tag extra · built offline, not sent stays on screen. More: S15[7]：五个步骤，每条边都是对另一个步骤某个属性的一次
     Get。 S15[7]：Upsert 发送的就是它。'
 - en: the lecture draws four steps / deploy splits in two / create model / a Lambda, a small function AWS runs on demand /

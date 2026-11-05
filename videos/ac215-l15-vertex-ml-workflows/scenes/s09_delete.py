@@ -270,8 +270,8 @@ class TurnOffTheMeter(VoiceScene):
         names.move_to(names_c[0])
         names_c.move_to([-6.45 + names_c.width / 2, nums.get_bottom()[1] - 0.25 - names_c.height / 2, 0])
         own.move_to([-6.45 + own.width / 2, names_c.get_bottom()[1] - 0.22 - own.height / 2, 0])
-        assert names_c.get_right()[0] < 6.55 and own.get_bottom()[1] > redir.get_top()[1] + 0.05, \
-            (names_c.get_right(), own.get_bottom(), redir.get_top())
+        assert names_c.get_right()[0] < 6.55 and own.get_bottom()[1] > t.box.get_top()[1] + 0.1, \
+            (names_c.get_right(), own.get_bottom(), t.box.get_top())
 
         with self.voiceover(SAY[2]) as vo:
             self.play(track(tr, 2, extra=True), Indicate(substring(rows_of(l31)[-1], "<your-endpoint-name>"),
@@ -280,6 +280,7 @@ class TurnOffTheMeter(VoiceScene):
             vo.wait_until("type your own names")
             type_cmd(self, t, C32.cmd, type_time=1.0)
             vo.wait_until("Ours then fails")
+            self.play(FadeOut(redir), FadeOut(err1), run_time=0.3)    # its ringed row has scrolled away
             o32 = out(self, t, [(s, ERR) for s in OUT32], wrap=True, run_time=0.6)
             vo.wait_until("no credentials")
             self.play(Indicate(substring(o32[0], "NoCredentials"), color=ERR, scale_factor=1.1), run_time=0.6)
@@ -287,7 +288,8 @@ class TurnOffTheMeter(VoiceScene):
             self.play(track(tr, 2), run_time=0.4)
             vo.wait_until("Delete in this order")
             self.play(FadeOut(where), FadeOut(rc, shift=UP * 0.2), run_time=0.4)
-            self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in nums], lag_ratio=0.3), run_time=0.7)
+            self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in nums], lag_ratio=0.3),
+                      FadeIn(names_c, shift=DOWN * 0.1), run_time=0.7)
             self.play(Indicate(nums[0], color=TURN, scale_factor=1.08), run_time=0.5)
             vo.wait_until("then its configuration")
             l2 = type_cmd(self, t, README_CLI[1], type_time=0.8)
@@ -296,8 +298,7 @@ class TurnOffTheMeter(VoiceScene):
             vo.wait_until("then the model")
             l3 = type_cmd(self, t, README_CLI[2], type_time=0.7)
             strike_brackets(self, l3)
-            self.play(Indicate(nums[2], color=TURN, scale_factor=1.08), FadeIn(names_c, shift=DOWN * 0.1),
-                      run_time=0.6)
+            self.play(Indicate(nums[2], color=TURN, scale_factor=1.08), run_time=0.6)
 
         # ========================================================== 3. way 3: python cli.py --delete
         t3 = term(P_APP, rows=7, size=SIZE)
@@ -321,7 +322,7 @@ class TurnOffTheMeter(VoiceScene):
         p_ep, p_cfg, p_mod, p_art = strip(258, 259, {259: "EndpointName="}), strip(272, 273), strip(285, 286), strip(290, 291)
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(t), FadeOut(nums), FadeOut(own), FadeOut(names_c), FadeOut(redir), FadeOut(err1),
+            self.play(FadeOut(t), FadeOut(nums), FadeOut(own), FadeOut(names_c),
                       track(tr, 3), run_time=0.6)
             self.remove(t)
             self.play(FadeIn(t3), FadeIn(rc3, shift=DOWN * 0.15), run_time=0.5)
@@ -387,8 +388,12 @@ class TurnOffTheMeter(VoiceScene):
             vo.wait_until("You ran deploy twice")
             self.play(Indicate(ep1.text, color=COST, scale_factor=1.06), Indicate(ep2.text, color=COST, scale_factor=1.06),
                       ep1.dial.sweep(0.08), ep2.dial.sweep(0.08), run_time=0.9)
+            vo.wait_until("How many endpoints still bill")
+            self.play(FadeOut(p4), FadeOut(ts_bar), FadeOut(name_bar), ep1.dial.sweep(0.05), ep2.dial.sweep(0.05),
+                      run_time=0.5)
             self.play(ep1.dial.sweep(0.1), ep2.dial.sweep(0.1), run_time=max(0.5, vo.remaining()))
-        card_p = ponder(self, PONDER_Q, seconds=6, center=(0, -0.6))
+        card_p = ponder(self, PONDER_Q, seconds=6, center=(0, -1.6))
+        assert card_p.get_top()[1] < min(old_c.get_bottom()[1], ep1.dial.get_bottom()[1]) - 0.15, (card_p.get_top(), old_c.get_bottom())
 
         # ========================================================== 5. one: the older endpoint bills on
         to2 = arrow(js.box.get_right(), ep2.plate.get_left(), S.GREY, buff=0.1)
@@ -411,10 +416,13 @@ class TurnOffTheMeter(VoiceScene):
         assert gone_c.get_right()[0] < 6.55, gone_c.get_right()
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(card_p), FadeOut(p4), FadeOut(ts_bar), FadeOut(name_bar), run_time=0.5)
+            self.play(FadeOut(card_p), run_time=0.5)
             self.remove(card_p)
             self.play(GrowArrow(to2), ep1.dial.sweep(0.05), ep2.dial.sweep(0.05), run_time=0.6)
             vo.wait_until("Delete removes only")
+            self.play(Indicate(ep2.text, color=TURN, scale_factor=1.08), ep1.dial.sweep(0.05), ep2.dial.sweep(0.05),
+                      run_time=0.6)
+            vo.wait_until("the endpoint the file names")
             ep2.dial.freeze()
             self.play(FadeOut(ep2), FadeOut(new_c), FadeOut(to2), FadeOut(js), ep1.dial.sweep(0.08), run_time=0.7)
             self.remove(ep2)

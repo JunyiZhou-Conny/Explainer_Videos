@@ -76,7 +76,7 @@ S10:
   - "第 8 步测试配置。"
   - "AWS 自己拒绝了假的令牌和假的密钥。"
   - "用你的密钥，这两条会打印出你的账号和你的 bucket。"
-  - "别往下走，直到它们打印出来。"
+  - "别急着往下走，等它们打印出来再说。"
 - en: "Step 9 creates two roles: Cheese App SageMaker Execution Role, for every job, and Cheese App Lambda Execution Role. The code builds each A R N from your account number and the exact role name, so spell them exactly, and pause here."
   zh:
   - "第 9 步创建两个角色：CheeseAppSageMakerExecutionRole，给每个任务用；还有 CheeseAppLambdaExecutionRole。"
@@ -353,7 +353,7 @@ S15:
   - "这个列表是一组步骤，不是一份时间表。"
 - en: "An extra, built offline and never sent: the JSON definition from the SDK. Five steps, each edge a get on a property of another step. Upsert sends this."
   zh:
-  - "一个额外的东西，离线生成、从没发出去：SDK 生成的 JSON 定义。"
+  - "额外看一样东西，离线生成、从没发出去：SDK 生成的 JSON 定义。"
   - "五个步骤，每条边都是对另一个步骤某个属性的一次 Get。"
   - "Upsert 发送的就是它。"
 - en: "The lecture draws four steps. Here, deploy splits in two. Create model makes the model, and a Lambda, a small function AWS runs on demand, creates or updates the endpoint."

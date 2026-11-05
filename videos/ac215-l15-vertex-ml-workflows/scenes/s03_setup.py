@@ -111,12 +111,17 @@ def checks_form(title, rows_spec, path=None, form_w=8.6, chip_color=SHARED):
     chips = VGroup()
     for r in f.rows:
         if getattr(r, "kind", "") == "check":
-            r.tick.set_color(S.GREY)
+            r.tick.set_color(S.GREY).set_opacity(0)    # ticked together with its chip (no bare ticks)
             c = chip(r.text.text, chip_color, size=20, font=MONO)
             c.move_to(r.text, aligned_edge=LEFT).shift(LEFT * 0.05)
             r.text.set_opacity(0)
             chips.add(c)
     return f, chips
+
+
+def tick_in(f):
+    """ANIMs: the ticks of the form's policy rows appear (with their chips)."""
+    return [r.tick.animate.set_opacity(1) for r in f.rows if getattr(r, "kind", "") == "check"]
 
 
 def seat(scene, t, *over):
@@ -242,7 +247,8 @@ class UserRoleBucket(VoiceScene):
             self.bring_to_front(ill)
             self.play(uf.fill(0, USER_A), run_time=0.8)
             vo.wait_until("with three policies")
-            self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * 0.1) for c in pols], lag_ratio=0.4), run_time=1.2)
+            self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * 0.1) for c in pols], lag_ratio=0.4), *tick_in(uf),
+                      run_time=1.2)
             vo.wait_until("The third is broader")
             self.play(Create(flag_ln), FadeIn(broad, shift=LEFT * 0.1), Indicate(pols[2], color=SHARED),
                       run_time=0.8)
@@ -282,7 +288,8 @@ class UserRoleBucket(VoiceScene):
             self.play(rf.fill(0, "SageMaker"), run_time=0.5)
             self.play(Indicate(rf.rows[0].value, color=CLOUD), run_time=0.6)
             vo.wait_until("with the SageMaker and S3 policies")
-            self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * 0.1) for c in rpols], lag_ratio=0.4), run_time=1.0)
+            self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * 0.1) for c in rpols], lag_ratio=0.4), *tick_in(rf),
+                      run_time=1.0)
             vo.wait_until("Copy its A R N")
             self.play(FadeIn(arn, shift=UP * 0.1), run_time=0.6)
             self.play(Indicate(substring(acct, README_ACCOUNT), color=S.GREY, scale_factor=1.08),
@@ -348,8 +355,7 @@ class UserRoleBucket(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             v.drop(self, v.cloud, *v.badges, bk, extra=[FadeOut(warn), FadeOut(cost)], run_time=0.5)
             v.badges.clear()
-            tr = swap_tracker(self, tr, trk("A2", 1))
-            self.play(FadeIn(t), run_time=0.4)
+            tr = swap_tracker(self, tr, trk("A2", 1), FadeIn(t))
             c13 = capture("13")
             type_cmd(self, t, c13.cmd, type_time=0.6)
             vo.wait_until("Then come four prompts")
@@ -425,7 +431,7 @@ class UserRoleBucket(VoiceScene):
             inv = substring(e16[-1], "invalid") if "invalid" in e16[-1].text else substring(e16[-2], "invalid")
             inv_ul = under(inv, ERR)
             self.play(Create(inv_ul), run_time=0.4)
-            seat(self, t, ex16)
+            seat(self, t, ex16, inv_ul)
 
         # ========================================================== 9. the -v drawer vs the -e wall
         cp = code("A/docker-shell.sh", 22, 28, font_size=20,
@@ -459,7 +465,15 @@ class UserRoleBucket(VoiceScene):
             self.play(FadeOut(bars_[24]), run_time=0.2)
             cards = v.exports(self)
             self.play(*[FadeIn(bars_[k]) for k in (25, 26, 27)], run_time=0.4)
-            v.env_pass(self, run_time=1.4)
+            env = v.env_pass(self, run_time=1.4)
+            # the region export is the one that passes: its card moves up over the -e arrows (out of
+            # the two key cards' fall path, right of the first card, left of the code panel); the '-e'
+            # flag moves to the arrows' right so the falling secret-key card does not cross it
+            arrs, tag_e = env[:3], env[-1]
+            reg = cards[2].copy()
+            reg.move_to([cp.get_left()[0] - 0.15 - reg.width / 2, cards[1].get_top()[1] + 0.08 + reg.height / 2, 0])
+            self.play(cards[2].animate.move_to(reg), tag_e.animate.next_to(arrs[-1], RIGHT, buff=0.12),
+                      run_time=0.5)
             vo.wait_until("So exported keys fall off at the wall")
             v.fall_off(self, cards[:2], run_time=1.4)
             vo.wait_until("Use option 1")

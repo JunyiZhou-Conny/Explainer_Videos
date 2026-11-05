@@ -327,9 +327,14 @@ class TwoFixes(VoiceScene):
         # ========================================================== 5. ponder
         with self.voiceover(SAY[5]) as vo:
             vo.wait_until("The code worked")
-            self.play(panels.animate.set_opacity(0.25), run_time=0.8)
+            bars = (pf10, pf12, gi68, df52, df55)
+            self.play(*[m.animate.set_opacity(0.25) for m in panels if m not in bars],
+                      *[b.animate.set_fill(opacity=0.06) for b in bars], run_time=0.8)
             vo.wait_until("Why does cli.py fail")
-            self.play(Indicate(pf10, color=SHARED), run_time=0.8)
+            star_ln = pf.code.code_lines[2]
+            self.play(pf10.animate.set_fill(opacity=0.3), star_ln.animate.set_opacity(1), run_time=0.5)
+            self.play(Indicate(code_span(pf.code, 2, '"*"'), color=SHARED, scale_factor=1.5), run_time=0.7)
+            self.add(*panels)
         card_p = ponder(self, PONDER_Q, seconds=8)
 
         # ========================================================== 6. V2: star is a constraint
@@ -382,13 +387,13 @@ class TwoFixes(VoiceScene):
             self.remove(t)
             v.shelves(self, run_time=0.6)
             vo.wait_until("no serializers")
-            v.imports(self, ok=False, run_time=1.4)
+            self.imports_fail(v, run_time=1.4)
             vo.wait_until("The imports find nothing")
             self.play(Indicate(v.import_arrows[1], color=ERR, scale_factor=1.08), run_time=0.8)
             v.heal(self)
 
         # ========================================================== 8. here: 13 minutes, then no disk
-        scrim = Rectangle(width=13.2, height=2.8 + 3.6, stroke_width=0).set_fill(S.BG, 0.95)
+        scrim = Rectangle(width=13.2, height=2.8 + 3.6, stroke_width=0).set_fill(S.BG, 1)
         scrim.move_to([0, (2.8 - 3.6) / 2, 0])
         note8 = card(["here: the unpinned build ran 13 min in pipenv lock,",
                       "then ran out of disk · not kept as a capture"], size=24)
@@ -549,13 +554,13 @@ class TwoFixes(VoiceScene):
             pin(self, rh[6], dn)
             vo.wait_until("The commands are the AWS ones")
             flash_tag(self, kept)
-            vo.wait_until("The image is about 4 gigabytes")
             self.wipe(FadeOut(tags12), retitle(t, "laptop · another tab"))
             t.set_prompt(P_MD)
             resize(self, t, 4, run_time=0.5)
             ln = type_cmd(self, t, C26.cmd, type_time=0.7)
             pin(self, ln, beside(extra_row(), ln))
             r26 = out(self, t, IMG26, run_time=0.4)
+            vo.wait_until("about 4 gigabytes")
             self.paint(r26[1], "4.01GB", TURN)
             pin(self, r26[1], beside(time_row(), r26[1]))
 
@@ -590,7 +595,7 @@ class TwoFixes(VoiceScene):
         names = ("tensorflow", "serializers", "get_execution_role")
         targets = [v.shelf2.items[n] for n in names]
         if v.src is None:
-            v.src = chip("cli.py:21-23", TOOL, size=20, font=MONO).move_to(v.p(0, -2.2))
+            v.src = self.src_chip(v, 1.7, -2.25)
             v.show(self, v.src, run_time=0.3)
         board = v.shelf2[2]
         o = v.src.get_left() + RIGHT * 0.15
@@ -604,6 +609,37 @@ class TwoFixes(VoiceScene):
         self.play(*[Indicate(tg[1], color=OWN, scale_factor=1.08) for tg in targets], run_time=run_time * 0.5)
         v.heal(self)
         v.import_arrows = arrs
+
+    @staticmethod
+    def src_chip(v, x: float = 0.85, y: float = -2.45) -> VGroup:
+        """The 'cli.py:21-23' chip, right of the gap so it clears the 2.x shelf's board (block 9:
+        higher and further right, clear of the caption chip StarVsPin.caption puts at y -2.95)."""
+        src = chip("cli.py:21-23", TOOL, size=20, font=MONO).move_to(v.p(x, y))
+        assert src.get_top()[1] < v.shelf2[2].get_bottom()[1] - 0.1 or \
+            src.get_left()[0] > v.shelf2[2].get_right()[0] + 0.1, (src.get_top(), v.shelf2[2].get_bottom())
+        return src
+
+    def imports_fail(self, v, run_time: float = 1.2):
+        """PLAYS: StarVsPin.imports(ok=False) drawn so that no arrow crosses a module chip: three
+        PURPLE arrows from the cli.py:21-23 chip end on the 3.x shelf's board (nothing there for
+        them), turn RED, and the 'No module named …' chip lands under the source chip."""
+        v.src = self.src_chip(v)
+        v.show(self, v.src, run_time=0.3)
+        board = v.shelf3[2]
+        o = v.src.get_top() + RIGHT * 0.3
+        ys = board.get_center()[1] - 0.06
+        ends = [np.array([v.shelf3.items[n].get_center()[0], ys, 0]) for n in ("mlops", "serve", "train")]
+        arrs = VGroup(*[Arrow(o, e, buff=0.06, color=TOOL, stroke_width=3, tip_length=0.16) for e in ends])
+        v.show(self, arrs, anims=[LaggedStart(*[GrowArrow(a) for a in arrs], lag_ratio=0.2)],
+               run_time=run_time * 0.5)
+        err = err_chip("No module named 'sagemaker.tensorflow'", size=20).next_to(v.src, DOWN, buff=0.15)
+        keep_inside(err)
+        v.show(self, err, extra=[a.animate.set_color(ERR) for a in arrs], run_time=run_time * 0.5)
+        res = VGroup(arrs, err)
+        v.remove(arrs, err)
+        v.add(res)
+        v.heal(self)
+        v.import_arrows = res
 
     def wipe(self, *extra, run_time: float = 0.4):
         """PLAYS: the terminal's rows fade out (with `extra` alongside) and leave it for good."""

@@ -7,13 +7,14 @@ Beats (script.md "## S08", one voiceover block each):
     types `python cli.py --predict` -> TERM(laptop/29: 52–54, 60 wrap, 61–63 wrap, …, 73–75 wrap).
     53 RED with the chip "no deploy · no file" beside 54; on "falls back" 60–63 print, the endpoint
     name on 63 turns GREY with a ring and the chip "fallback name" beside its second row; 62 RED.
-    On "fails five times" … 73–75 print, 74 RED, both errors flash. On "Pause" the turn tag
-    flashes and the GREY chip "fails with keys? the endpoint must be InService · README A:190–191"
-    comes in above the terminal.
+    On "fails five times" … 73–75 print, 74 RED, and the GREY chip "fails with keys? the endpoint
+    must be InService · README A:190–191" comes in above the terminal (early, so it can be read);
+    both errors flash. On "Pause" the turn tag and the chip flash.
  1  The terminal goes. LECTURE 15 · 13 with V3's left pipe (built, shifted up, never scaled): photo,
     the two gears, the TEAL cube with three edge labels (224, 224, 3), the PINK wire, the endpoint.
     The photo rides through the gears into the cube on "resizes it"; the edge labels flash on "224
-    by 224" and "3 color channels"; the cube rides the wire on "How many numbers". PONDER (8 s).
+    by 224" and "3 color channels"; the cube rides the wire on "How many numbers". PONDER (8 s):
+    a narrow card (23 pt) under the pipe, so it covers none of it.
  2  LECTURE (held). The card goes; the edge labels fly together into the YELLOW counter, which
     runs to 150,528. On "Python writes each one as text": a copy of the cube turns into a long PINK
     ribbon of digits under the pipe, labelled {"instances": [ … ]}, with the chip "JSON text · a
@@ -186,8 +187,8 @@ class AskTheEndpoint(VoiceScene):
             self.bar(turn)
             vo.wait_until("Ours finds no endpoint config")
             ra = out(self, t, [OUT29A[0], (OUT29A[1], ERR), OUT29A[2]], run_time=0.5)
-            nofile = beside(row_tag("no deploy · no file", ERR), ra[2], buff=0.35)
-            assert nofile.get_right()[0] < t.box.get_right()[0] - 0.05, nofile.get_right()
+            nofile = beside(row_tag("no deploy · no file", ERR), ra[2], buff=0.2)
+            assert nofile.get_right()[0] < t.box.get_right()[0] - 0.15, nofile.get_right()
             pin(self, ra[2], nofile)
             self.play(Indicate(substring(ra[1], "endpoint_config.json"), color=ERR, scale_factor=1.12),
                       run_time=0.6)
@@ -212,6 +213,7 @@ class AskTheEndpoint(VoiceScene):
             vo.wait_until("and fails five times")
             rc = out(self, t, ["…", OUT29C[0], (OUT29C[1], ERR), OUT29C[2]], wrap=True, run_time=0.6)
             e1, e2 = row_with(rb, "Unable to locate"), row_with(rc, "Unable to locate")
+            self.play(FadeIn(keys, shift=DOWN * 0.1), run_time=0.5)     # in early enough to be read
             vo.wait_until("unable to locate credentials")
             self.play(Indicate(substring(e1, "Unable to locate credentials"), color=ERR, scale_factor=1.08),
                       Indicate(substring(e2, "Unable to locate credentials"), color=ERR, scale_factor=1.08),
@@ -219,7 +221,7 @@ class AskTheEndpoint(VoiceScene):
             self.reseat()
             vo.wait_until("Pause and run yours")
             flash_tag(self, turn, color=TURN)
-            self.play(FadeIn(keys, shift=DOWN * 0.1), run_time=0.5)
+            flash_tag(self, keys, color=INK, scale=1.03)     # a long chip: a big scale spills past its box
 
         # ========================================================== 1. V3 left pipe + PONDER
         v = TwoPipes(built=True)
@@ -229,7 +231,7 @@ class AskTheEndpoint(VoiceScene):
         cb = v.cube_g[0]
         e_top = label("224", 20, IMAGE).next_to(cb.front, UP, buff=0.42)
         e_side = label("224", 20, IMAGE).next_to(cb, RIGHT, buff=0.1).shift(UP * 0.3)
-        e_dep = label("3", 20, IMAGE).move_to(cb.get_corner(UR) + np.array([0.12, 0.12, 0]))
+        e_dep = label("3", 20, IMAGE).move_to(cb.get_corner(UR) + np.array([0.22, 0.16, 0]))
         edges = [e_top, e_side, e_dep]
         assert e_side.get_right()[0] < v.ep[0].get_left()[0] - 0.3, e_side.get_right()
         q = ("--predict resizes one photo to\n224 × 224 with 3 color channels.\n"
@@ -264,7 +266,9 @@ class AskTheEndpoint(VoiceScene):
             self.play(FadeOut(rider), Indicate(v.door, color=TURN, scale_factor=1.1), run_time=0.4)
             self.remove(rider)
             v.heal(self)
-        card_p = ponder(self, q, 8, center=(0, -1.35))
+        card_p = ponder(self, q, 8, center=(v.get_center()[0], -1.87), width=5.2)   # 23 pt: fits under the pipe
+        assert card_p.get_top()[1] < v.get_bottom()[1] - 0.05 and card_p.get_bottom()[1] > -3.6, \
+            (card_p.get_top(), v.get_bottom(), card_p.get_bottom())
 
         # ========================================================== 2. 150,528 floats, as JSON text
         rib_lab = mono('{"instances": [ … ]}', 22, ROUTE)

@@ -126,6 +126,9 @@ class FourTerminals(VoiceScene):
         ref = lref("19–21")
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(v, lag_ratio=0.1), FadeIn(ref), run_time=1.0)
+            vo.wait_until("four stages")
+            self.play(LaggedStart(*[Indicate(tl.frame, color=INK, scale_factor=1.06) for tl in v.tiles],
+                                  lag_ratio=0.2), run_time=0.8)
             vo.wait_until("each run by a person at a terminal")
             v.people_in(self, run_time=1.0)
             vo.wait_until("How do we execute these steps?")
@@ -381,6 +384,8 @@ class FourTerminals(VoiceScene):
             fake.generate_target()
             fake.target.next_to(repl, LEFT, buff=0.3)
             self.play(MoveToTarget(fake), FadeIn(repl, shift=DOWN * 0.1), run_time=0.6)
+            vo.wait_until("we typed obviously fake placeholders")
+            self.play(Indicate(fake.text, color=SHARED, scale_factor=1.06), run_time=0.6)
             vo.wait_until("so AWS answers with real errors")
             c56 = capture("56")
             self.play(track(tr, 7, True), run_time=0.4)
@@ -446,10 +451,10 @@ class FourTerminals(VoiceScene):
             (rf.get_bottom(), bdg.get_top(), bdg.get_bottom(), cp.get_top())
         found = grey_chip("found by name")
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(t), FadeOut(tturn), FadeOut(yours), FadeOut(before), FadeOut(uls), track(tr, 9),
-                      run_time=0.5)
+            self.play(track(tr, 9), AnimationGroup(
+                AnimationGroup(FadeOut(t), FadeOut(tturn), FadeOut(yours), FadeOut(before), FadeOut(uls)),
+                AnimationGroup(FadeIn(rf, shift=UP * 0.1), FadeIn(rill)), lag_ratio=0.6), run_time=0.9)
             self.remove(t)
-            self.play(FadeIn(rf, shift=UP * 0.1), FadeIn(rill), run_time=0.6)
             self.play(rf.fill(0, ROLE_SM), run_time=0.8)
             self.play(GrowFromCenter(bdg[0]), run_time=0.6)
             vo.wait_until("and Cheese App Lambda Execution Role")
@@ -459,13 +464,14 @@ class FourTerminals(VoiceScene):
             self.play(FadeIn(cp, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("from your account number")
             acc = code_span(cp.code, 2, "{account_id}")
-            self.play(*recolor(acc, ROUTE), run_time=0.5)
-            self.add(cp)
+            acc_ul = under(acc, ROUTE)
+            self.play(*recolor(acc, ROUTE), Create(acc_ul), run_time=0.5)
+            self.add(cp, acc_ul)
             vo.wait_until("and the exact role name")
             rn = code_span(cp.code, 2, ROLE_SM)
             rn_ul = under(rn, TURN)
             self.play(*recolor(rn, TURN), Create(rn_ul), run_time=0.5)
-            self.add(cp, rn_ul)
+            self.add(cp, acc_ul, rn_ul)
             found.move_to([cp.get_right()[0] - found.width / 2, cp.header.get_center()[1] + 0.06, 0])
             self.play(FadeIn(found, shift=DOWN * 0.1), Indicate(bdg[0].text, color=TURN, scale_factor=1.05),
                       run_time=0.6)

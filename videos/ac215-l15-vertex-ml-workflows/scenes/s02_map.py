@@ -15,12 +15,13 @@ Beats (script.md "## S02"; one voiceover block each; no tracker in this scene):
 3. Slide 10. The card goes with its tag. Slide 10 redrawn as a four-row sidebar under a dashed
    'Vertex AI console' head: Workbench · notebooks, Training · L13 (GREY tick), Online prediction,
    Pipelines; on "today's two" the last two rows light YELLOW one by one.
-4. The sidebar goes with its tag. bridge_card builds: its frame and the two column heads ('the
+4. The sidebar goes with its tag. bridge_card builds: the two column heads (frame later) ('the
    lecture · Vertex AI' GREY dashed, 'this tutorial · AWS' BLUE); a GREY card under it: the course
    map's GCP repos → the two AWS repos we follow.
 5. The three bridge rows write in on their phrases (bucket → S3; service-account key → IAM user +
    access key / role, with a GREY key card and a BLUE role badge under the card; endpoint →
-   endpoint configuration + endpoint). The card folds into a text-free mini-legend icon at the lower
+   endpoint configuration + endpoint). The frame arrives with the first row. As block 6 opens, the
+   card folds into a text-free mini-legend icon at the lower
    right, which fades.
 6. A GREY card 'this recording: no AWS account' with three lines: GREEN laptop steps · real, RED AWS
    calls · honest first error, GREY cloud answers · recorded or a tagged stand-in. A 4-row strip
@@ -60,10 +61,10 @@ def roadmap() -> VGroup:
         b = box(x1 - x0, 0.5, S.GREY, fill_opacity=0.15).move_to([(x0 + x1) / 2, y, 0])
         t = label(s, 20, INK).move_to(b)
         if x1 > 2.0:            # the long bar: its words start right of the Prototype box
-            t.move_to([2.25, y, 0], aligned_edge=LEFT)
+            t.move_to([2.05, y, 0], aligned_edge=LEFT)
         bars.add(VGroup(b, t))
     here = outline_box(3.8, 2.15, TURN, solid=False, stroke=3).move_to([0, 0.28, 0])   # under the arrow
-    g = VGroup(arr, phases, bounds, bars, here).shift(DOWN * 0.55)
+    g = VGroup(arr, phases, bounds, bars, here).shift(DOWN * 0.85)
     g.arrow, g.phases, g.bounds, g.bars, g.here = arr, phases, bounds, bars, here
     return g
 
@@ -141,7 +142,7 @@ def sidebar() -> VGroup:
 
 def legend_icon() -> VGroup:
     """The bridge card folded: a text-free mini-legend icon (dashed box, three short rows)."""
-    fr = outline_box(1.0, 0.72, PAST, solid=False)
+    fr = box(1.0, 0.72, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)    # same build as bridge_card's frame
     rws = VGroup(*[VGroup(Line(LEFT * 0.3, ORIGIN, color=S.GREY, stroke_width=3),
                           Line(ORIGIN, RIGHT * 0.06, color=S.GREY, stroke_width=0),
                           Line(RIGHT * 0.1, RIGHT * 0.3, color=INK, stroke_width=3)) for _ in range(3)])
@@ -247,7 +248,7 @@ class LectureMap(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(sb, shift=DOWN * 0.3), FadeOut(ref), run_time=0.6)
             self.remove(*sb.get_family(), *ref.get_family())
-            self.play(FadeIn(bc.frame), FadeIn(bc.heads[0], shift=DOWN * 0.15), run_time=0.7)
+            self.play(FadeIn(bc.heads[0], shift=DOWN * 0.15), run_time=0.7)
             vo.wait_until("This course also ships")
             self.play(FadeIn(bc.heads[1], shift=DOWN * 0.15), FadeIn(cm.frame), FadeIn(cm1, shift=UP * 0.1),
                       run_time=0.8)
@@ -268,6 +269,11 @@ class LectureMap(VoiceScene):
         icons.next_to(bc, DOWN, buff=0.45).align_to(bc.rows[1].right, LEFT)
         icon = legend_icon().move_to([5.9, -3.0, 0])
         with self.voiceover(SAY[5]) as vo:
+            bc.frame.save_state()                       # fade the frame in BEHIND the heads (a FadeIn would
+            bc.frame.set_opacity(0)                     #   re-add it on top and hide them)
+            self.add(bc.frame)
+            self.bring_to_back(bc.frame)
+            self.play(Restore(bc.frame), run_time=0.4)
             self.play(FadeIn(bc.rows[0][0], shift=RIGHT * 0.15), run_time=0.5)
             self.play(FadeIn(bc.rows[0][1]), FadeIn(bc.rows[0][2], shift=RIGHT * 0.2), run_time=0.6)
             vo.wait_until("A service account key")
@@ -281,11 +287,6 @@ class LectureMap(VoiceScene):
             self.play(FadeIn(bc.rows[2][0], shift=RIGHT * 0.15), run_time=0.5)
             self.play(FadeIn(bc.rows[2][1]), FadeIn(bc.rows[2][2], shift=RIGHT * 0.2), run_time=0.6)
         words = VGroup(bc.heads, *bc.rows)
-        self.play(FadeOut(icons, shift=DOWN * 0.2), FadeOut(words, shift=DR * 0.5),
-                  ReplacementTransform(bc.frame, icon[0]), FadeIn(icon[1]), run_time=0.9)
-        self.remove(*bc.get_family(), *icons.get_family())
-        self.play(FadeOut(icon), run_time=0.4)
-        self.remove(*icon.get_family())
 
         # ========================================================== 6. the sandbox framing, one honest first error
         l1 = label("laptop steps · real", 22, OWN)
@@ -299,7 +300,13 @@ class LectureMap(VoiceScene):
         t = strip_term(P_HOME, rows=4)
         c15 = capture("15")
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeIn(nc.frame), FadeIn(nc.head, shift=DOWN * 0.1), run_time=0.6)
+            # the bridge card folds into its text-free mini-legend icon (box → box: a clean Transform)
+            self.play(FadeOut(icons, shift=DOWN * 0.2), FadeOut(words, shift=DOWN * 0.2), run_time=0.4)
+            self.remove(*icons.get_family(), *words.get_family())
+            self.play(ReplacementTransform(bc.frame, icon[0]), run_time=0.6)
+            self.play(FadeIn(icon[1]), run_time=0.3)
+            self.play(FadeOut(icon), FadeIn(nc.frame), FadeIn(nc.head, shift=DOWN * 0.1), run_time=0.6)
+            self.remove(*icon.get_family())
             vo.wait_until("Every step that runs")
             self.play(FadeIn(l1, shift=RIGHT * 0.2), run_time=0.5)
             self.play(Indicate(l1, color=OWN, scale_factor=1.06), run_time=0.6)

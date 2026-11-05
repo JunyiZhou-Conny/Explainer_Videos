@@ -49,4 +49,4 @@ chapters:
 description: |
   AC215（哈佛 MLOps & LLMOps）第 15 讲“机器学习工作流（模型部署与 ML pipeline）”的跟练视频，对照课件逐页讲解；课件讲的是 Google Cloud 上的 Vertex AI，本视频跟着课程的 AWS 版教程做，并逐一对照两边的名词。上半场照着 dlops-io/model-deployment-aws 的 README 一步一步做：建 IAM 用户、访问密钥、SageMaker 执行角色和 S3 存储桶，构建 CLI 容器时找出今天才会遇到的两处问题（arm64 构建行和未固定版本的 sagemaker 解析成 SDK 3）并各用一行修好；讲清预处理放在客户端还是模型里（服务签名），--prepare 生成的 SavedModel、版本目录 1 和 model.tar.gz，--deploy 创建的模型、端点配置（endpoint configuration）和端点，--predict 为每张照片发送的 150,528 个数字，以及 --delete 漏掉的端点。
   下半场照着 dlops-io/ml-workflow-aws：从四个人守着四个终端到一条自动化工作流，手动运行数据采集、数据处理和模型训练三个容器，把镜像推送到你自己的 ECR，从 workflow 容器提交 SageMaker 处理任务（Processing job），最后读懂由属性引用（property reference）连成的五步 SageMaker Pipeline：缓存、负责部署的 Lambda，以及数据怎样经过存储桶流动，并逐项清理所有计费资源。
-  英文旁白，配中文和中英双语字幕；录制机器没有 AWS 账号，所以本地步骤全部真实运行，云端调用停在真实的第一个报错处，云端结果只用 README 的记录或明确标注的本地替代展示，从不伪造；本讲会在你自己的账号里产生费用，视频用金色标签标出每个计费点，结尾有完整的收尾清单。
+  英文旁白，配中文和中英双语字幕；录制机器没有 AWS 账号，所以本地步骤全部真实运行，云端调用停在真实的第一个报错处，云端结果只用 README 的记录或明确标注的本地替身展示，从不伪造；本讲会在你自己的账号里产生费用，视频用金色标签标出每个计费点，结尾有完整的收尾清单。

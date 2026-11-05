@@ -23,7 +23,7 @@
 S01:
 - en: "Here is a question for a model: what cheese is in this photo? Both answers on screen come from the same predict code in cli.py. And both answers say brie."
   zh:
-  - "这里有一个问模型的问题：这张照片里是哪种奶酪？"
+  - "先问模型一个问题：这张照片里是哪种奶酪？"
   - "画面上的两个答案都来自 cli.py 里同一段预测代码。"
   - "而且两个答案都说是 brie。"
 - en: "Now count the numbers. The top answer, the README output, holds three. The bottom one, from this recording, holds four. One model cannot give both. So which model is behind an endpoint, and what else is there?"
@@ -62,10 +62,10 @@ S02:
 - en: "Last week, lecture 14 put containers on Cloud Run. Today, the container serves a trained model."
   zh:
   - "上周，第 14 讲把 container 部署到了 Cloud Run 上。"
-  - "今天，container 用来对外提供一个训练好的模型。"
+  - "今天，container 里跑的是一个训练好的模型，对外提供服务。"
 - en: "The lecture maps its console onto the course: notebooks, training from lecture 13, and today's two, online prediction and pipelines."
   zh:
-  - "课上把控制台对应到课程上：notebook、第 13 讲的训练，还有今天的两项：在线预测和 pipeline。"
+  - "课上把控制台的各个部分和课程对应起来：notebook、第 13 讲的训练，还有今天的两项：在线预测和 pipeline。"
 - en: "The lecture is written for Vertex AI on Google Cloud. This course also ships an AWS version of both tutorials, and that is the one we follow. Same ideas, different names. I'll point out each one as we meet it."
   zh:
   - "课上讲的是 Google Cloud 上的 Vertex AI。"
@@ -79,11 +79,11 @@ S02:
   - "而 endpoint 变成了一份配置加上一个 endpoint。"
 - en: "One thing about this recording: it has no AWS account. Every step that runs on your laptop is real. Every AWS call stops at its honest first error, like this one. Where the cloud would answer, you see the README output, or a tagged local stand-in. Never a faked success."
   zh:
-  - "关于这次录制，有一点要说明：它没有 AWS 账号。"
+  - "关于这次录制，有一点要说明：录制用的环境没有 AWS 账号。"
   - "在你笔记本上跑的每一步都是真的。"
   - "每个 AWS 调用都停在它遇到的第一个真实报错上，就像这个。"
   - "云端本来会回答的地方，你看到的是 README 的输出，或者标好的本地替身。"
-  - "从不伪造成功。"
+  - "绝不假装成功。"
 - en: "Versions at the time of recording are on screen."
   zh:
   - "录制时的版本都在画面上。"
@@ -91,7 +91,7 @@ S03:
 - en: "Step 1: clone the repository. The README says clone or download, so our git clone is extra, and so is the git log that shows the commit we follow. Pause and clone it."
   zh:
   - "第 1 步：clone 这个 repo。"
-  - "README 写的是 clone 或者下载，所以我们的 git clone 是额外的，显示我们所跟 commit 的 git log 也是。"
+  - "README 写的是 clone 或者下载，所以我们的 git clone 是额外的，用来显示我们跟的那个 commit 的 git log 也是。"
   - "暂停一下，clone 下来。"
 - en: "An extra listing: the CLI, a Dockerfile, a Pipfile, eight sample photos, and docker-shell.sh, already executable."
   zh:
@@ -123,7 +123,7 @@ S03:
   - "密钥只留在你的笔记本上。"
 - en: "Step 5, then pause: create a bucket with a name of your own, because bucket names are unique across all of AWS. Storage bills while files sit in it. And as the README warns, never put keys in a script, and never commit them to Git."
   zh:
-  - "第 5 步，然后暂停：用你自己的名字建一个 bucket，因为 bucket 名在整个 AWS 里都是唯一的。"
+  - "第 5 步，然后暂停：用你自己起的名字建一个 bucket，因为 bucket 名在整个 AWS 里都是唯一的。"
   - "只要里面放着文件，存储就在计费。"
   - "而且就像 README 提醒的，永远不要把密钥写进脚本，也永远不要把它们 commit 到 Git。"
 - en: "Run Container, step 1: aws configure. Then come four prompts. You paste your two keys. We have none, so we press Enter twice, then type us-east-1 and json."
@@ -234,7 +234,7 @@ S04:
   - "弃用警告不是问题所在。"
 - en: "A small slip: the help text still says GCS bucket and Vertex AI, and the test flag does nothing. The commands are the AWS ones. The image is about 4 gigabytes."
   zh:
-  - "有一个小疏漏：帮助文本里还写着 GCS bucket 和 Vertex AI，测试参数也什么都不做。"
+  - "有一个小疏漏：帮助文本里还写着 GCS bucket 和 Vertex AI，测试参数也不起任何作用。"
   - "命令都是 AWS 的。"
   - "这个 image 大约 4 GB。"
 S05:
@@ -256,11 +256,11 @@ S05:
   zh:
   - "一个额外检查读出了模型的前门，TensorFlow 管它叫签名。"
   - "它接收浮点数，形状是任意数量乘 224 乘 224 乘 3，每张照片给出四个数。"
-  - "预处理在这条线你的这一边。"
+  - "预处理在这条线上你这一边。"
 - en: "The lecture names the risk: client-side brittleness. Every client must repeat those steps exactly, and a phone app that forgets to divide by 255 gets confident nonsense. One copy inside the model is also easier to roll back and version."
   zh:
   - "课上点出了风险：客户端的脆弱性。"
-  - "每个客户端都必须一模一样地重复这些步骤，一个忘了除以 255 的手机应用，会得到很有把握的胡说。"
+  - "每个客户端都必须一模一样地重复这些步骤，一个忘了除以 255 的手机应用，会得到一个信心满满的错误答案。"
   - "模型里只放一份，也更容易回滚和做版本管理。"
 - en: "The fix from the lecture sits in the part 2 trainer. The preprocess function decodes the JPEG, converts it to floats, and resizes it."
   zh:
@@ -336,7 +336,7 @@ S07:
   - "两份 README 也都写着模型注册表，但代码在 SageMaker 里建的只是一个普通的模型。"
 - en: "You never write an image name: the SDK picks the AWS TensorFlow Serving image from framework version 2.13. Our model was exported by TensorFlow 2.18. In step 3, a local check shows that Serving 2.13 loads it."
   zh:
-  - "你从来不写 image 名：SDK 根据框架版本 2.13 选出 AWS 的 TensorFlow Serving image。"
+  - "你不用自己写 image 名：SDK 根据框架版本 2.13 选出 AWS 的 TensorFlow Serving image。"
   - "我们的模型是用 TensorFlow 2.18 导出的。"
   - "在第 3 步，一个本地检查会显示 Serving 2.13 能加载它。"
 - en: "Then deploy, with one instance of type M L M5 extra large, under a name with a timestamp. That one call creates all three: the model in SageMaker, an endpoint configuration, which names the machine and the model, and the endpoint, the address you call."
@@ -424,7 +424,7 @@ S08:
   zh:
   - "现在回到开头的谜题。"
   - "代码一样，产物不同：README 的输出来自一个更旧的模型，有三个类别，label 顺序也不一样。"
-  - "有一个小疏漏：应该是四个数，索引 0 是 parmigiano。"
+  - "有一个小疏漏：你应该看到四个数，而且索引 0 是 parmigiano。"
 - en: "An extra command removes the stand-in. It never touched AWS."
   zh:
   - "一条额外的命令删掉了这个替身。"
@@ -442,7 +442,7 @@ S09:
 - en: "A small gap: type your own names, without brackets. Ours then fails: no credentials. Delete in this order: the endpoint, then its configuration, then the model."
   zh:
   - "有一个小疏漏：输入你自己的名字，不带尖括号。"
-  - "然后我们的失败了：没有凭据。"
+  - "这样改了以后，我们的还是失败了：没有凭据。"
   - "按这个顺序删：先 endpoint，再它的配置，最后是模型。"
 - en: "Way 3: python cli.py dash dash delete stops at its first SageMaker call. Pause and run it. With keys, it deletes the endpoint named in the JSON file. Then come matching configurations and the model, by naming convention, then the tarball in S3."
   zh:

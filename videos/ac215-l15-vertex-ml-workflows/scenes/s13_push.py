@@ -283,44 +283,43 @@ class PushToECR(VoiceScene):
             (skip_c.get_top(), skip_c.get_left())
         assert skip_c.get_width() < 12.9
 
+        # The narration names all three steps in its first 4 s: typing runs back to back, and each
+        # note stays up until the next one takes its place (no note flashes for under a second).
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(cards), FadeOut(lt), FadeOut(legend), run_time=0.5)
-            self.play(FadeIn(lap), FadeIn(cb, scale=0.8), FadeIn(hub), FadeIn(ecr), FadeIn(t), run_time=0.7)
-            self.play(FadeIn(exit_c, shift=DOWN * 0.1), run_time=0.3)
-            type_cmd(self, t, "cd ../data-collector", type_time=0.5)
+            self.play(FadeOut(cards), FadeOut(lt), FadeOut(legend), run_time=0.4)
+            self.play(FadeIn(lap), FadeIn(cb, scale=0.8), FadeIn(hub), FadeIn(ecr), FadeIn(t),
+                      FadeIn(exit_c, shift=DOWN * 0.1), run_time=0.6)
+            type_cmd(self, t, "cd ../data-collector", type_time=0.4)
             cd_prompt(self, t, P_SRC("data-collector"), run_time=0.4)
-            self.play(FadeOut(exit_c), track(tr, 1), run_time=0.4)
-            vo.wait_until("log in, build, push")
-            ln = type_cmd(self, t, HUB[0], type_time=0.7)
+            self.play(track(tr, 1), run_time=0.3)
+            ln = type_cmd(self, t, HUB[0], type_time=0.55)
             tok = self.find(ln, "-p <ACCESS TOKEN>")
             rg = ring(tok, SHARED)
-            self.play(Create(rg), FadeIn(tok_c, shift=DOWN * 0.1), run_time=0.5)
-            self.play(Indicate(tok_c.text, color=SHARED, scale_factor=1.04), run_time=0.6)
-            self.play(FadeOut(rg), FadeOut(tok_c), track(tr, 2), run_time=0.4)
+            self.play(Create(rg), FadeOut(exit_c), FadeIn(tok_c, shift=DOWN * 0.1), track(tr, 2), run_time=0.45)
+            attach(self, [r for r in rows_of(ln) if "-p <ACCESS TOKEN>" in r.text][0], rg)   # scrolls with its row
             self.reseat()
-            type_cmd(self, t, HUB[1], type_time=0.7)
-            self.play(FadeIn(hub_name, shift=UP * 0.1), Indicate(cb, color=IMAGE, scale_factor=1.2), run_time=0.6)
+            type_cmd(self, t, HUB[1], type_time=0.5)
+            self.play(FadeIn(hub_name, shift=UP * 0.1), Indicate(cb, color=IMAGE, scale_factor=1.2), run_time=0.5)
             vo.wait_until("The Mac line builds")
-            ln = type_cmd(self, t, HUB[2], type_time=0.8)
-            self.bar(on_bar(t, row_tag("M1/2 Macs")))
-            self.play(self.find(ln, "amd64/v2").animate.set_color(TURN), FadeIn(amd_c, shift=DOWN * 0.1),
-                      run_time=0.5)
+            ln = type_cmd(self, t, HUB[2], type_time=0.6)
+            mac = on_bar(t, row_tag("M1/2 Macs"))
+            self.play(self.find(ln, "amd64/v2").animate.set_color(TURN), FadeOut(tok_c),
+                      FadeIn(amd_c, shift=DOWN * 0.1), FadeIn(mac), run_time=0.45)
+            self.bar_tags.append(mac)
             self.reseat()
             vo.wait_until("because SageMaker runs that")
-            self.play(Indicate(amd_c.text, color=TURN, scale_factor=1.06), run_time=0.6)
-            self.play(FadeOut(amd_c), *self.unbar_anims(), track(tr, 3), run_time=0.4)
-            type_cmd(self, t, HUB[3], type_time=0.6)
+            self.play(Indicate(amd_c.text, color=TURN, scale_factor=1.06), FadeIn(skip_c, shift=DOWN * 0.1),
+                      run_time=0.6)
+            self.play(track(tr, 3), run_time=0.3)
+            type_cmd(self, t, HUB[3], type_time=0.45)
             hub_cb = cb.copy()
             self.add(hub_cb)
-            self.play(Create(up_r), run_time=0.4)
-            self.play(hub_cb.animate.move_to(hub.spot()), run_time=0.9)
-            self.play(FadeIn(np_hub, shift=DOWN * 0.1), run_time=0.4)
-            self.play(FadeIn(skip_c, shift=DOWN * 0.1), run_time=0.5)
-            self.play(Indicate(skip_c.text[1], color=INK, scale_factor=1.04), run_time=0.7)
+            self.play(Create(up_r), FadeOut(amd_c), FadeIn(np_hub, shift=DOWN * 0.1), run_time=0.4)
+            self.play(hub_cb.animate.move_to(hub.spot()), run_time=0.8)
 
         # ========================================================== 3. step 4: five variables
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(np_hub), FadeOut(skip_c), FadeOut(up_r), track(tr, 4), run_time=0.4)
+            self.play(FadeOut(np_hub), FadeOut(skip_c), FadeOut(up_r), *self.unbar_anims(), track(tr, 4), run_time=0.4)
             self.resize(7, keep=0)
             assert t.box.get_top()[1] < hub_name.get_bottom()[1] - 0.2, t.box.get_top()
             for row in C80.cmd_lines:
@@ -391,26 +390,25 @@ class PushToECR(VoiceScene):
         exit_chip = VGroup(ex_b, ex_c)
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(rc169, st, er4, dot_c)), track(tr, 5), run_time=0.5)
-            self.resize(5, keep=0)
+            self.play(FadeOut(VGroup(rc169, st, er4, dot_c)), track(tr, 5), run_time=0.4)
+            # the copy comes back down while the strip grows (the pull is named in the first 2 s)
+            self.resize(5, keep=0, more=[Succession(Create(dn_r, run_time=0.3),
+                                                    hub_cb.animate(run_time=0.5).move_to(cb))])
+            self.remove(hub_cb)
             for c in (np5, cap_c, exit_chip):
                 under_term(t, c)
-            self.play(Create(dn_r), run_time=0.4)
-            self.play(hub_cb.animate.move_to(cb), run_time=0.9)
-            self.remove(hub_cb)
-            self.play(Indicate(cb, color=IMAGE, scale_factor=1.2), FadeOut(dn_r), run_time=0.5)
-            type_cmd(self, t, PULL, type_time=0.6)
-            self.play(FadeIn(np5, shift=DOWN * 0.1), run_time=0.4)
+            type_cmd(self, t, PULL, type_time=0.5)
+            self.play(Indicate(cb, color=IMAGE, scale_factor=1.2), FadeOut(dn_r), FadeIn(np5, shift=DOWN * 0.1),
+                      run_time=0.4)
             vo.wait_until("Step 6 creates the repository")
-            self.play(FadeOut(np5), track(tr, 6, True), run_time=0.4)
-            type_cmd(self, t, C81.cmd_lines[0], type_time=0.5)
-            self.bar(on_bar(t, extra_row()))
-            self.play(FadeIn(cap_c, shift=DOWN * 0.1), run_time=0.4)
-            self.play(Indicate(cap_c.text, color=INK, scale_factor=1.04), run_time=0.7)
-            self.wait(0.6)
-            self.play(FadeOut(cap_c), track(tr, 6), *self.unbar_anims(), run_time=0.4)
-            cl = type_cmd(self, t, CREATE, type_time=0.7)
-            r4 = out(self, t, [(ERR81, ERR)], wrap=True, run_time=0.5)
+            self.play(FadeOut(np5), track(tr, 6, True), run_time=0.3)
+            type_cmd(self, t, C81.cmd_lines[0], type_time=0.45)
+            ex_tag = on_bar(t, extra_row())
+            self.play(FadeIn(ex_tag), FadeIn(cap_c, shift=DOWN * 0.1), run_time=0.35)
+            self.bar_tags.append(ex_tag)
+            self.play(track(tr, 6), *self.unbar_anims(), run_time=0.3)
+            cl = type_cmd(self, t, CREATE, type_time=0.6)
+            r4 = out(self, t, [(ERR81, ERR)], wrap=True, run_time=0.45)
             vo.wait_until("and the or true at the end hides the error")
             self.play(self.find(cl, "|| true").animate.set_color(SHARED), run_time=0.4)
             self.reseat()
@@ -419,7 +417,7 @@ class PushToECR(VoiceScene):
                       run_time=0.6)
             self.reseat()
             vo.wait_until("the command exits with zero")
-            self.play(FadeIn(exit_chip, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeOut(cap_c), FadeIn(exit_chip, shift=DOWN * 0.1), run_time=0.45)
             self.play(Indicate(ex_c[0], color=INK, scale_factor=1.15), run_time=0.6)
 
         # ========================================================== 6. steps 7-11: tag, push, repeat
@@ -437,53 +435,51 @@ class PushToECR(VoiceScene):
         cost = cost_tag("ECR storage · two images · check the pricing page")
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(exit_chip), track(tr, 7), run_time=0.4)
-            self.resize(4, keep=0)
+            self.resize(4, keep=0, more=[FadeOut(exit_chip), track(tr, 7)])
             for c in (np6, lap_c, again):
                 under_term(t, c)
             assert ecr_name.get_bottom()[1] > np6.get_top()[1] + 0.05, (ecr_name.get_bottom(), np6.get_top())
             assert hub_name.get_top()[1] + 0.1 < ecr_r.get_bottom()[1] and ecr_r.get_top()[1] < hub.get_bottom()[1] - 0.05, \
                 (ecr_r.get_bottom(), ecr_r.get_top(), hub.get_bottom())
             assert ecr.get_bottom()[1] < 1.38 - 0.1, ecr.get_bottom()
-            type_cmd(self, t, LOGIN[0], type_time=0.5)
-            type_cmd(self, t, LOGIN[1], type_time=0.6, prompt=False)
-            self.play(track(tr, 8), run_time=0.3)
-            type_cmd(self, t, TAG_C, type_time=0.6)
-            self.play(FadeIn(ecr_name, shift=UP * 0.15), run_time=0.5)
-            vo.wait_until("Tag only adds a second name")
-            self.play(Indicate(cb, color=IMAGE, scale_factor=1.25),
-                      Indicate(VGroup(hub_name, ecr_name), color=IMAGE, scale_factor=1.04), run_time=0.8)
-            self.play(track(tr, 9), run_time=0.3)
-            type_cmd(self, t, PUSH_C, type_time=0.4)
+            # The narration lists all five steps in its first 6 s: the five commands type back to back.
+            type_cmd(self, t, LOGIN[0], type_time=0.4)
+            type_cmd(self, t, LOGIN[1], type_time=0.5, prompt=False)
+            self.play(track(tr, 8), run_time=0.25)
+            type_cmd(self, t, TAG_C, type_time=0.5)
+            self.play(FadeIn(ecr_name, shift=UP * 0.15), track(tr, 9), run_time=0.4)
+            type_cmd(self, t, PUSH_C, type_time=0.35)
             ecr_cb = cb.copy()
             self.add(ecr_cb)
-            self.play(Create(ecr_r), run_time=0.4)
-            self.play(ecr_cb.animate.scale(0.55).move_to(ecr_r.get_start()), run_time=0.3)
-            self.play(ecr_cb.animate.move_to(ecr_r.get_end() + LEFT * 0.2), run_time=0.9)
-            self.play(ecr_cb.animate.scale(1 / 0.55).move_to(ecr.spot()), run_time=0.4)
-            self.play(track(tr, 10), run_time=0.3)
-            type_cmd(self, t, LIST_C, type_time=0.6)
-            self.play(track(tr, 11), run_time=0.3)
-            type_cmd(self, t, ECHO_C, type_time=0.4)
-            self.play(FadeIn(np6, shift=DOWN * 0.1), run_time=0.4)
+            self.play(Create(ecr_r), ecr_cb.animate.scale(0.55).move_to(ecr_r.get_start()), run_time=0.35)
+            self.play(ecr_cb.animate.move_to(ecr_r.get_end() + LEFT * 0.2), run_time=0.7)
+            self.play(ecr_cb.animate.scale(1 / 0.55).move_to(ecr.spot()), track(tr, 10), run_time=0.35)
+            type_cmd(self, t, LIST_C, type_time=0.45)
+            self.play(track(tr, 11), run_time=0.25)
+            type_cmd(self, t, ECHO_C, type_time=0.35)
+            self.play(FadeIn(np6, shift=DOWN * 0.1), run_time=0.35)
+            vo.wait_until("Tag only adds a second name")
+            names = VGroup(hub_name.text, ecr_name.text)       # the words light up, not the tag boxes
+            self.play(Indicate(cb, color=IMAGE, scale_factor=1.25),
+                      Indicate(names, color=IMAGE, scale_factor=1.04), run_time=0.8)
             vo.wait_until("Run them on your laptop")
-            self.play(FadeOut(np6), run_time=0.3)
-            self.play(FadeIn(lap_c, shift=DOWN * 0.1), Indicate(lap, color=INK, scale_factor=1.06), run_time=0.6)
+            self.play(FadeOut(np6), FadeIn(lap_c, shift=DOWN * 0.1), Indicate(lap, color=INK, scale_factor=1.06),
+                      run_time=0.6)
+            vo.wait_until("which has no docker")
+            self.play(Indicate(lap_c.text, color=INK, scale_factor=1.05), run_time=0.7)
             vo.wait_until("Then repeat for the processor image")
             self.play(FadeOut(VGroup(lap, cb, hub, hub_cb, ecr, ecr_cb, ecr_r, hub_name, ecr_name)), FadeOut(lap_c),
-                      run_time=0.6)
-            self.play(FadeIn(rc201, shift=DOWN * 0.2), run_time=0.6)
-            self.play(Indicate(rc201.body[2], color=TURN, scale_factor=1.05), run_time=0.6)
-            self.wipe()
-            type_cmd(self, t, "cd ../data-processor", type_time=0.5)
+                      FadeIn(rc201, shift=DOWN * 0.2), run_time=0.6)
+            self.play(Indicate(rc201.body[2], color=TURN, scale_factor=1.05), run_time=0.5)
+            self.wipe(run_time=0.3)
+            type_cmd(self, t, "cd ../data-processor", type_time=0.35)
             cd_prompt(self, t, P_SRC("data-processor"), run_time=0.4)
-            type_cmd(self, t, REPO_B, type_time=0.5)
-            self.play(FadeIn(again, shift=DOWN * 0.1), run_time=0.4)
+            type_cmd(self, t, REPO_B, type_time=0.35)
             cost.next_to(rc201, DOWN, buff=0.35).align_to(rc201, LEFT)
             assert cost.get_bottom()[1] > again.get_top()[1] + 0.1, (cost.get_bottom(), again.get_top())
-            self.play(FadeIn(cost, shift=UP * 0.1), run_time=0.5)
-            self.play(Indicate(cost, color=COST, scale_factor=1.05), run_time=0.7)
-            self.wait(1.5)
+            self.play(FadeIn(again, shift=DOWN * 0.1), FadeIn(cost, shift=UP * 0.1), run_time=0.5)
+            self.play(Circumscribe(cost, color=COST, buff=0.06), run_time=0.8)
+            self.wait(1.2)
 
         self.play(FadeOut(VGroup(rc201, again, cost, t, tr)), *self.unbar_anims(), run_time=0.8)
         self.wait(0.3)
@@ -505,10 +501,10 @@ class PushToECR(VoiceScene):
         tgs, self.bar_tags = self.bar_tags, []
         return [FadeOut(tg) for tg in tgs]
 
-    def resize(self, rows: int, keep=None):
-        """common.resize() with the title-bar tags riding along."""
+    def resize(self, rows: int, keep=None, more=()):
+        """common.resize() with the title-bar tags riding along (and `more` animations alongside)."""
         dy = (rows - self.t.rows) * self.t.pitch
-        resize(self, self.t, rows, keep=keep, extra=[tg.animate.shift(UP * dy) for tg in self.bar_tags])
+        resize(self, self.t, rows, keep=keep, extra=[*[tg.animate.shift(UP * dy) for tg in self.bar_tags], *more])
 
     def wipe(self, *extra, run_time: float = 0.4):
         """PLAYS: the terminal's rows fade out (with `extra` alongside) and leave it for good."""

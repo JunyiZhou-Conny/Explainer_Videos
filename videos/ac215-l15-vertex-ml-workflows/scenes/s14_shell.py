@@ -128,6 +128,26 @@ def mono_strip(s: str, color=IMAGE) -> VGroup:
     return g
 
 
+def first_resolve(scene, v, ver: str, color, run_time: float = 1.0):
+    """PLAYS: StarVsPin.resolve() for the first dot, with the 'resolver' label top-aligned to its
+    arrow so it clears the dot's version label (which keep_inside pulls left at 3.29; requested
+    fix in the report)."""
+    assert v.dot is None
+    pt = v.x_of(ver)
+    d = Dot(pt, radius=0.13, color=color)
+    t = mono(ver, 22, color).next_to(d, UP, buff=0.42)
+    keep_inside(t)
+    arr = Arrow(pt + UP * 1.5, pt + UP * 0.2, buff=0, color=TOOL, stroke_width=4, tip_length=0.18)
+    rl = label("resolver", 20, TOOL).next_to(arr, LEFT, buff=0.1, aligned_edge=UP)
+    assert rl.get_bottom()[1] > t.get_top()[1] + 0.05, (rl.get_bottom(), t.get_top())
+    v.show(scene, arr, rl, anims=[GrowArrow(arr), FadeIn(rl)], run_time=run_time * 0.5)
+    g = VGroup(d, t)
+    v.show(scene, g, anims=[FadeIn(d, scale=0.5), FadeIn(t)], run_time=run_time * 0.5)
+    v.drop(scene, arr, rl, run_time=0.3)
+    v.dot = g
+    return g
+
+
 def remote_glyph(h: float = 0.75, color=TOOL) -> VGroup:
     """A text-free remote control: a rounded body, a big button, two small ones, and signal arcs."""
     body = RoundedRectangle(width=h * 0.48, height=h, corner_radius=h * 0.12, stroke_color=color,
@@ -161,12 +181,12 @@ class WorkflowShell(VoiceScene):
         assert before_c.get_right()[0] < 5.6 and before_c.get_top()[1] < TRACK_BOTTOM, before_c.get_top()
 
         y_band = -0.6
-        lap_box = outline_box(4.3, 1.5, LAPTOP, solid=True, fill_opacity=0.06).move_to([-4.3, y_band, 0])
+        lap_box = outline_box(4.9, 1.5, LAPTOP, solid=True, fill_opacity=0.06).move_to([-4.0, y_band, 0])
         lap_cap = label("your laptop", 20, S.GREY).next_to(lap_box, UP, buff=0.1).align_to(lap_box, LEFT)
         pf = file_card("Pipfile", OWN)
         lock = file_card("Pipfile.lock · 2.250.0", OWN)
         VGroup(pf, lock).arrange(DOWN, buff=0.14, aligned_edge=LEFT).move_to(lap_box)
-        img = image_block(None, box_w=4.9, box_h=1.5).move_to([4.0, y_band, 0])
+        img = image_block(None, box_w=4.75, box_h=1.5).move_to([4.05, y_band, 0])
         img_name = mono("cheese-app-workflow", 20, INK).move_to(img.block.get_top() + DOWN * 0.3)
         add_s = mono_strip(ADD87)
         add_s.move_to([1.0, lap_cap.get_center()[1], 0])
@@ -206,7 +226,7 @@ class WorkflowShell(VoiceScene):
             self.play(bounce(lock, lock_hit, run_time=0.9), FadeIn(xmark, scale=0.5, run_time=0.6))
             vo.wait_until("so the build would resolve")
             self.play(Indicate(pf.text, color=OWN, scale_factor=1.08), run_time=0.5)
-            v.resolve(self, "3.29.0", color=SHARED, run_time=1.2)
+            first_resolve(self, v, "3.29.0", color=SHARED, run_time=1.2)
             self.play(Indicate(v.dot, color=SHARED, scale_factor=1.25), run_time=0.6)
             v.heal(self)
 
@@ -229,10 +249,13 @@ class WorkflowShell(VoiceScene):
             self.bar(on_bar(t, extra_row()))
             ln = type_cmd(self, t, C88.cmd, type_time=0.7)
             out(self, t, [(L88[0], SHARED), (L88[1], OWN)], run_time=0.5)
-            pin(self, ln, beside(turn_row(), ln))
-            v.pin(self, run_time=1.4)
+            self.bar(on_bar(t, turn_row()))
+            v.pin(self, run_time=1.6)
             self.play(Indicate(v.pin_label, color=OWN, scale_factor=1.1), run_time=0.6)
             v.heal(self)
+            self.play(Indicate(v.dot, color=OWN, scale_factor=1.25), run_time=0.7)
+            v.heal(self)
+            self.wait(0.6)
             self.reseat()
 
         # ========================================================== 2. sh docker-shell.sh · extras
@@ -244,11 +267,12 @@ class WorkflowShell(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(v), *self.unbar_anims(), track(tr, 1), run_time=0.5)
+            self.reseat()
             self.wipe()
             self.resize(9, keep=0)
             assert t.box.get_top()[1] < sh_p.get_bottom()[1] - 0.15, (t.box.get_top(), sh_p.get_bottom())
-            ln = type_cmd(self, t, C90.cmd, type_time=0.5)
-            pin(self, ln, beside(turn_row(), ln))
+            type_cmd(self, t, C90.cmd, type_time=0.5)
+            self.bar(on_bar(t, turn_row()))
             vo.wait_until("The banner shows")
             rb = out(self, t, L90_BANNER, run_time=0.5)
             self.play(each([rb[1], rb[2]], TURN, 1.05), run_time=0.7)
@@ -348,17 +372,17 @@ class WorkflowShell(VoiceScene):
             vo.wait_until("Every flag")
             self.play(Indicate(top_c.text[1], color=TURN, scale_factor=1.08), run_time=0.7)
             self.play(Indicate(cp.code, color=ERR, scale_factor=1.02), run_time=0.7)
-            self.add(cp)
+            self.add(cp, bar32)                    # (re-seating cp alone hid the RED bar under its fill)
 
         # ========================================================== 5. with keys: the processor
         cost = cost_tag("Processing job · ml.t3.medium · while it runs")
         cost.move_to([6.45 - cost.width / 2, 2.5, 0])
         pa = code(CLI, 52, 59, font_size=20)
-        pa.move_to([-6.45 + pa.width / 2, 2.05 - pa.height / 2, 0])
+        pa.move_to([0, 0.15, 0])                  # centred: the frame's lower half was empty
         pb = code(CLI, 63, 69, font_size=20, cuts={67: '"brie cheese",'})
         pc = code(CLI, 77, 80, font_size=20)
-        pb.move_to([-6.45 + pb.width / 2, 2.05 - pb.height / 2, 0])
         pc.next_to(pb, RIGHT, buff=0.35).align_to(pb, UP)
+        VGroup(pb, pc).move_to([0, 0.15, 0])
         assert pa.get_bottom()[1] > -3.55 and pc.get_right()[0] < 6.5 and pb.get_bottom()[1] > -3.55, \
             (pa.get_bottom(), pc.get_right(), pb.get_bottom())
         assert cost.get_left()[0] > tr.get_right()[0] + 0.2 and cost.get_bottom()[1] > pa.get_top()[1] + 0.05, \
@@ -388,7 +412,7 @@ class WorkflowShell(VoiceScene):
             self.paint(pc, 2, "wait=True", TURN)
             vo.wait_until("showing the logs")
             self.paint(pc, 1, "logs=True", TURN)
-            self.play(Indicate(cost, color=COST, scale_factor=1.04), run_time=0.6)
+            flash_tag(self, cost)
 
         # ========================================================== 6. V7 reprise: production mode
         lt36 = lref("36")
@@ -396,10 +420,10 @@ class WorkflowShell(VoiceScene):
         dy = 0.35
         ci.shift(UP * dy)
         ci.pivot = ci.image.frame.get_left() + RIGHT * 0.05      # (the piece stores it at build time)
-        border = DashedVMobject(RoundedRectangle(width=13.0, height=4.55, corner_radius=0.2), num_dashes=90)
+        border = DashedVMobject(RoundedRectangle(width=13.16, height=4.55, corner_radius=0.2), num_dashes=90)
         border.set_stroke(CLOUD, 2.5).move_to([0, 0.05, 0])
         b_cap = label("SageMaker · AWS", 20, CLOUD)
-        b_cap.move_to([border.get_right()[0] - 0.25 - b_cap.width / 2, border.get_top()[1] - 0.25, 0])
+        b_cap.move_to([border.get_left()[0] + 0.25 + b_cap.width / 2, border.get_top()[1] - 0.25, 0])
         kc = key_card("access key")
         kc.move_to([-5.0, -3.1, 0])
         home_c = grey_chip("your key stays home")
@@ -409,8 +433,7 @@ class WorkflowShell(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(pb, pc)), FadeOut(cost), run_time=0.4)
             self.play(FadeIn(lt36), FadeIn(ci), Create(border), FadeIn(b_cap), run_time=0.8)
-            assert ci.get_top()[1] < b_cap.get_bottom()[1] or ci.cards["dev"].get_right()[0] < b_cap.get_left()[0], \
-                ci.get_top()
+            assert ci.image.get_top()[1] < b_cap.get_bottom()[1] - 0.2, (ci.image.get_top(), b_cap.get_bottom())
             ci.choose(self, "prod")
             vo.wait_until("SageMaker puts its own command")
             ci.plug(self, PLUG_CMD, by="SageMaker", run_time=1.6)
@@ -424,8 +447,12 @@ class WorkflowShell(VoiceScene):
             self.play(Indicate(ci.cards["prod"].rows, color=CLOUD, scale_factor=1.05), run_time=0.7)
             ci.heal(self)
             vo.wait_until("The job acts as the role")
-            ci.badge(self, ROLE_SM, run_time=0.6)
-            assert border.get_bottom()[1] < ci.badge_g.get_bottom()[1] - 0.05, ci.badge_g.get_bottom()
+            bdg = role_badge(ROLE_SM).next_to(ci.cards["prod"].frame, DOWN, buff=0.15)
+            bdg.shift(RIGHT * (border.get_right()[0] - 0.2 - bdg.get_right()[0]))   # (CallableImage.badge
+            ci.show(self, bdg, anims=[GrowFromCenter(bdg)], run_time=0.6)          #  touches the border)
+            ci.badge_g = bdg
+            assert border.get_bottom()[1] < bdg.get_bottom()[1] - 0.05, bdg.get_bottom()
+            assert bdg.get_left()[0] > ci.cmd_chip.get_right()[0] + 0.2, (bdg.get_left(), ci.cmd_chip.get_right())
             vo.wait_until("not with your key")
             self.play(FadeIn(kc, shift=UP * 0.2), run_time=0.4)
             self.play(bounce(kc, [kc.get_center()[0], border.get_bottom()[1] - 0.05 - kc.height / 2, 0], run_time=0.9))
@@ -436,8 +463,9 @@ class WorkflowShell(VoiceScene):
         form = console_form("Processing jobs", [("Name", "cheese-app-data-collector-…"), ("Status", "")],
                             form_w=9.0, path="Amazon SageMaker AI › Processing")
         form.move_to([0, 0.2, 0])
+        form.rows[1].field.set_opacity(0)          # the status is a dashed chip: only your account shows it
         st = dashed_chip("on your account")
-        st.move_to(form.rows[1].field).align_to(form.rows[1].field, LEFT).shift(RIGHT * 0.12)
+        st.move_to(form.rows[1].field).align_to(form.rows[1].field, LEFT)
         ill = illustration_tag()
         ill.next_to(form, DOWN, buff=0.2).align_to(form, RIGHT)
         assert form.get_top()[1] < TRACK_BOTTOM - 0.1 and ill.get_bottom()[1] > -3.55, form.get_top()
@@ -461,7 +489,10 @@ class WorkflowShell(VoiceScene):
         self.add(panel)
 
     def bar(self, tg):
-        """Show a title-bar tag (on_bar) and remember it, so it fades with the terminal."""
+        """Show a title-bar tag (on_bar; left of the tags already there) and remember it, so it
+        fades with the terminal."""
+        if self.bar_tags:
+            tg.next_to(self.bar_tags[-1], LEFT, buff=0.15)
         self.play(FadeIn(tg), run_time=0.3)
         self.bar_tags.append(tg)
 

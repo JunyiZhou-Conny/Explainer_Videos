@@ -20,7 +20,7 @@ Beats (script.md "## S12", one voiceover block each):
     bars, gouda's slot a RED dashed stub; after the fix, (None, 4) and a fourth GREEN bar.
  4  TERM(laptop/61: 9) as a one-line strip (root root … persistent-folder ORANGE); under it the
     ORANGE root-owned folder, a RED lock, the TEAL container with its badge "app · uid 1000"
-    (laptop/73:13); tag erratum, chip "fix B". On "Exit": the picture leaves, the fix B card (create
+    (laptop/73:13); tag erratum, chip "fix B". On "Exit": the picture leaves, the fix B chip moves to the corner of the fix B card, which fades in around it (create
     the folder yourself · or sudo chown … · uid 1000 · Docker Desktop on a Mac: not needed) and a
     5-row host strip: `sudo chown -R $USER ../../../persistent-folder`, `sh docker-shell.sh`, the
     container prompt and the step 2 command again; GREY chip "after the fixes · not captured";
@@ -44,8 +44,8 @@ Beats (script.md "## S12", one voiceover block each):
     cut) with instance_type / framework_version / py_version lit, a BLUE training-job glyph; CODE(
     cli.py: 74) with wait=False YELLOW + chip "returns at once"; GOLD cost tag "training job ·
     ml.m5.xlarge · while it runs".
- 9  TRACKER B4 5. CONSOLE("Training jobs", B:141-145), path "SageMaker AI › Training": one row
-    cheese-… with a GREY-dashed "InProgress" chip; illustration tag. Fade to empty.
+ 9  TRACKER B4 5. CONSOLE("Training jobs", B:141-145), path "SageMaker AI › Training": Name
+    cheese-… and a Status row holding a GREY-dashed "InProgress" chip; illustration tag. Fade to empty.
 """
 
 import re
@@ -158,7 +158,7 @@ def lock_glyph(h: float = 0.62, color=ERR) -> VGroup:
 
 def callout(n: int, text: str, color, mono_text: bool = False) -> VGroup:
     """Slide 14's numbered call-outs, redrawn (S05's look, 20 pt): circled number + a short label."""
-    c = Circle(radius=0.2, stroke_color=color, stroke_width=3).set_fill(S.BG, 1)
+    c = Circle(radius=0.17, stroke_color=color, stroke_width=3).set_fill(S.BG, 1)
     d = label(str(n), 20, color).move_to(c)
     t = (mono(text, 20, color) if mono_text else label(text, 20, INK))
     g = VGroup(VGroup(c, d), t).arrange(RIGHT, buff=0.18)
@@ -376,7 +376,10 @@ class TrainLocally(VoiceScene):
             self.play(Indicate(badge, color=IMAGE, scale_factor=1.12), run_time=0.5)
             self.play(FadeIn(lockg, scale=0.6), FadeIn(fb2), FadeIn(er4, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("Exit, and on your laptop")
-            self.play(FadeOut(VGroup(s61, row4, er4)), ReplacementTransform(fb2, card_b), run_time=0.6)
+            self.play(FadeOut(VGroup(s61, row4, er4)),
+                      fb2.animate.move_to(card_b.get_corner(UL) + np.array([fb2.width / 2 + 0.15, -fb2.height / 2 - 0.1, 0])),
+                      run_time=0.5)
+            self.play(FadeIn(card_b), FadeOut(fb2), run_time=0.4)        # the chip settles into its card
             self.play(FadeIn(h), run_time=0.4)
             self.t = h
             type_cmd(self, h, CHOWN, type_time=0.9, soft=True)
@@ -469,7 +472,7 @@ class TrainLocally(VoiceScene):
         assert pB.get_bottom()[1] > -3.5 and pA.get_top()[1] < pic6.get_bottom()[1] - 0.05 - 0.0 + 0.4, \
             (pB.get_bottom(), pA.get_top(), pic6.get_bottom())
         c1 = callout(1, "define preprocessing", TOOL)
-        c1.move_to([pA.code.code_lines[0].get_right()[0] + 0.5 + c1.width / 2, pA.code.code_lines[0].get_center()[1], 0])
+        c1.move_to([pA.code.code_lines[0].get_right()[0] + 0.5 + c1.width / 2, pA.code.code_lines[0].get_center()[1] + 0.03, 0])
         c2 = callout(2, "new signature: a batch of strings", ROUTE)
         c2.move_to([pB.code.code_lines[1].get_right()[0] + 0.5 + c2.width / 2, pB.code.code_lines[1].get_center()[1], 0])
         assert c1.get_right()[0] < 6.5 and c2.get_right()[0] < 6.5, (c1.get_right(), c2.get_right())
@@ -498,12 +501,12 @@ class TrainLocally(VoiceScene):
             for k, (ln, g) in enumerate(zip((1, 2, 3), gears3)):
                 self.play(Indicate(pA.code.code_lines[ln], color=TURN, scale_factor=1.04),
                           Rotate(g, PI / 2), Indicate(oplab[k], color=TURN, scale_factor=1.12), run_time=0.45)
-            self.add(pA)
+            self.add(pA, c1)                                  # c1 sits on the panel: keep it in front
             vo.wait_until("inside the model")
             self.play(GrowFromPoint(pB, mbox.get_center()), run_time=0.5)
             self.play(FadeIn(c2, shift=LEFT * 0.1),
                       code_span(pB.code, 0, "tf.string").animate.set_color(ROUTE), run_time=0.4)
-            self.add(pB)
+            self.add(pB, c2)
             self.play(Indicate(c3, color=OWN, scale_factor=1.1), door.animate.set_fill(OWN, 0.4), run_time=0.6)
             vo.wait_until("A small slip")
             self.play(FadeOut(VGroup(jp, wire, mbox, door, oprow, c3, pA, pB, c1, c2)), FadeOut(lt14), run_time=0.5)
@@ -602,12 +605,15 @@ class TrainLocally(VoiceScene):
             self.add(c74)
 
         # ========================================================== 9. step 5: the console
-        form = console_form("Training jobs", [("Name", "cheese-…"),
+        form = console_form("Training jobs", [("Name", "cheese-…"), ("Status", ""),
                                               ("note", "click the job name: details, logs, metrics")],
                             path="SageMaker AI › Training", form_w=8.6)
         form.move_to([0, 0.3, 0])
+        form.rows[1].field.set_stroke(opacity=0).set_fill(opacity=0)   # the status is a chip, not a field
         st = dashed_chip("InProgress")
-        st.move_to(form.rows[0].field.get_right() + LEFT * (st.width / 2 + 0.15))
+        st.move_to(form.rows[1].field.get_left() + RIGHT * (st.width / 2))
+        assert st.get_top()[1] < form.rows[0].field.get_bottom()[1] - 0.03, (st.get_top(), form.rows[0].field.get_bottom())
+        assert st.get_bottom()[1] > form.rows[2].get_top()[1] + 0.03, (st.get_bottom(), form.rows[2].get_top())
         il = illustration_tag().next_to(form, UP, buff=0.15).align_to(form, RIGHT)
         assert form.get_top()[1] < PIC_TOP and il.get_top()[1] < 3.55 and il.get_left()[0] > tr.get_right()[0] + 0.1
 

@@ -10,7 +10,7 @@ Beats (script.md "## S05", one voiceover block each):
     219-225) under it at 20 pt. "opens the photo" lights line 221; the resize gear arrives with line
     222; the ÷ 255 gear with line 223 and the photo becomes the 224 × 224 × 3 cube; on "sends" the
     wire and the endpoint appear, the cube rides to the door, line 225 PINK.
- 2  TRACKER A2 5 · extra (undimmed). The code leaves; a 4-row strip (20 pt) types laptop/43's
+ 2  TRACKER A2 5 · extra (undimmed). The code leaves; a 5-row strip (20 pt) types laptop/43's
     command (cut) -> TERM(laptop/43: 13-15, 18-20); DT_FLOAT and (-1, 224, 224, 3) YELLOW, then
     (-1, 4) GREEN. The door gets its label inputs['input'] · floats (-1, 224, 224, 3); four bars
     come out of the back. "your side of the wire": the client zone flashes.
@@ -21,12 +21,14 @@ Beats (script.md "## S05", one voiceover block each):
     "version". Cards, label, chips and the lecture tag leave together.
  4  LECTURE 15 · 14. Right pipe, picture only, GREY chip "part 2 · task.py": the gears cross the
     wire into the endpoint (decode_jpeg → float32 → resize, serving_default over it); callout 1
-    "define preprocessing"; the three operations light in turn.
- 5  LECTURE 15 · 14 (held). The cube becomes a stack of three JPEGs that rides the wire into the
+    "define preprocessing"; the cube becomes a stack of three JPEGs (raw bytes); the three operations
+    light in turn.
+ 5  LECTURE 15 · 14 (held). The door flashes; the JPEG stack rides the wire into the
     door (callout 2 "new signature: a batch of strings"); the gears turn; callout 3 "save as serving
     default" with serving_default flashing GREEN; "JPEG bytes" flashes and three dashed '?' bars
     come out (the class count is S12's fix A).
- 6  The picture and its lecture tag leave. README card (README.md · line 115, chip A); under it
+ 6  The picture and its lecture tag leave. README card (README.md · line 115, chip A),
+    its header flashing on "The README says"; under it
     GREEN "format change ✓" and GREY-struck "signature change". Fade to an empty frame.
 """
 
@@ -134,7 +136,8 @@ class FrontDoor(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr), FadeIn(ref13, shift=LEFT * 0.1), run_time=0.6)
-            self.play(Write(q), run_time=1.0)
+            vo.wait_until("a design question")
+            self.play(Write(q), run_time=1.4)
             vo.wait_until("where does preprocessing happen")
             self.play(Indicate(q, color=TURN, scale_factor=1.08), run_time=0.8)
             vo.wait_until("In a notebook")
@@ -205,7 +208,7 @@ class FrontDoor(VoiceScene):
         code1 = VGroup(p1, b222, b223, b225)
 
         # ========================================================== 2. the signature (extra check)
-        t = term(P_MD, rows=4, size=SIZE)
+        t = term(P_MD, rows=5, size=SIZE)       # 5 rows: DT_FLOAT stays on screen
         self.t = t
         assert t.box.get_top()[1] < v.zone.get_bottom()[1] - 0.15, (t.box.get_top(), v.zone.get_bottom())
         ex2 = on_bar(t, extra_row())
@@ -303,13 +306,18 @@ class FrontDoor(VoiceScene):
         assert VGroup(*co).get_bottom()[1] > -3.5 and VGroup(*co).get_top()[1] < -0.4
         assert VGroup(*co).get_right()[0] < p2.get_left()[0] or VGroup(*co).get_top()[1] < p2.get_bottom()[1]
 
+        stack = VGroup(*[file_glyph(0.42, INK) for _ in range(3)])
+        for k, m in enumerate(stack):
+            m.move_to(v.cube_g[0].get_center() + np.array([0.12 * k, -0.1 * k, 0]))
+
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(side3), FadeOut(ref13b), run_time=0.5)
             v.drop(self, v.bar_g)
             v.bar_g = None
             self.play(FadeIn(ref14, shift=LEFT * 0.1), FadeIn(p2, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("sits in the part 2 trainer")
-            row = v.inside(self, run_time=1.8)
+            row = v.inside(self, run_time=1.5)
+            v.swap(self, v.cube_g[0], stack, run_time=0.5)      # raw JPEG bytes, not the float cube
             vo.wait_until("The preprocess function")
             self.play(FadeIn(co[0], shift=RIGHT * 0.15), run_time=0.5)
             ops = [row[0], row[2], row[4]]
@@ -320,13 +328,11 @@ class FrontDoor(VoiceScene):
                 v.heal(self)
 
         # ========================================================== 5. a batch of JPEG strings
-        stack = VGroup(*[file_glyph(0.42, INK) for _ in range(3)])
-        for k, m in enumerate(stack):
-            m.move_to(v.cube_g[0].get_center() + np.array([0.12 * k, -0.1 * k, 0]))
         q_l = mono("?", 24, S.GREY)
 
         with self.voiceover(SAY[5]) as vo:
-            v.swap(self, v.cube_g[0], stack, run_time=0.6)
+            self.play(Indicate(v.door, color=OWN, scale_factor=1.2), run_time=0.7)
+            v.heal(self)
             vo.wait_until("takes a batch of JPEG strings")
             self.play(FadeIn(co[1], shift=RIGHT * 0.15), run_time=0.4)
             riders = stack.copy()
@@ -367,8 +373,10 @@ class FrontDoor(VoiceScene):
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(v), FadeOut(VGroup(*co)), FadeOut(p2), FadeOut(ref14), run_time=0.6)
-            vo.wait_until("The README says")
             self.play(FadeIn(rc, shift=DOWN * 0.15), run_time=0.6)
+            vo.wait_until("The README says")
+            self.play(Indicate(rc.head, color=TURN, scale_factor=1.1),
+                      run_time=0.6)
             vo.wait_until("converts the model")
             self.play(Indicate(rc.body, color=TURN, scale_factor=1.04), run_time=0.8)
             vo.wait_until("That is a change of format")

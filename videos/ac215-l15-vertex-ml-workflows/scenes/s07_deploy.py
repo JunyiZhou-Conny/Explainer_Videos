@@ -144,6 +144,10 @@ class ModelToEndpoint(VoiceScene):
                       Transform(v.slot_caps[2], faded(v.slot_caps[2], 0.4)), run_time=0.6)
             v.heal(self)
             v.model_card(self, run_time=1.2)
+            # common's role box (0.95 tall at y 0.0) pokes 0.05 under the card frame: lift it inside
+            # (requested fix in the report)
+            v.sub["role"].shift(UP * 0.08)
+            assert v.sub["role"][0].get_bottom()[1] > v.card.frame.get_bottom()[1] + 0.02
             assert v.card.get_top()[1] < PIC_TOP + 0.01 and v.card.get_bottom()[1] > p0.get_top()[1] + 0.05, \
                 (v.card.get_top(), v.card.get_bottom(), p0.get_top())
             vo.wait_until("the tarball in S3")
@@ -200,8 +204,10 @@ class ModelToEndpoint(VoiceScene):
         cl_fr = outline_box(cl_rows.width + 0.6, cl_rows.height + 0.45, IMAGE, solid=True, fill_opacity=0.1)
         cl_rows.move_to(cl_fr)
         callout = VGroup(cl_fr, cl_rows)
-        callout.move_to([-6.45 + callout.width / 2, -1.15 - callout.height / 2, 0])
-        link2 = DashedLine(cont[0].get_bottom() + DOWN * 0.1, [cont[0].get_center()[0], callout.get_top()[1] + 0.05, 0],
+        # the leader drops from the container slot's right part, clear of the role badge under it
+        x2 = cont[0].get_right()[0] - 0.6
+        callout.move_to([x2 + 0.6 - callout.width / 2, -1.15 - callout.height / 2, 0])
+        link2 = DashedLine([x2, cont[0].get_bottom()[1] - 0.1, 0], [x2, callout.get_top()[1] + 0.05, 0],
                            color=IMAGE, stroke_width=3)
         served = chip("served by 2.13", IMAGE, size=20)
         exported = ok_chip("exported by TF 2.18")
@@ -246,8 +252,13 @@ class ModelToEndpoint(VoiceScene):
             p3.move_to([-6.45 + p3.width / 2, v.card.frame.get_bottom()[1] - 0.15 - p3.height / 2, 0])
             assert p3.get_bottom()[1] > -3.58, p3.get_bottom()
             gold = block(c3, 5, 6, COST, 0.22)
+            # the outline's lower edge runs midway between ')' and 'predictor' (block()'s 0.07 pad
+            # put it on the tops of line 168's letters)
             yb = block(c3, 0, 3, TURN, 0.0)
-            yel = Rectangle(width=yb.width, height=yb.height, stroke_color=TURN, stroke_width=3).move_to(yb)
+            y_lo = (c3.code_lines[3].get_bottom()[1] + c3.code_lines[4].get_top()[1]) / 2
+            y_hi = yb.get_top()[1]
+            yel = Rectangle(width=yb.width, height=y_hi - y_lo, stroke_color=TURN, stroke_width=3) \
+                .move_to([yb.get_center()[0], (y_hi + y_lo) / 2, 0])
             self.play(FadeIn(p3, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("with one instance")
             self.play(FadeIn(gold), run_time=0.4)
@@ -353,8 +364,18 @@ class ModelToEndpoint(VoiceScene):
             v.run(self, 0.25, 0.8)
             self.play(FadeIn(cost5, shift=UP * 0.1), v.dial.sweep(0.1), run_time=0.5)
             vo.wait_until("even with zero traffic")
-            v.lane(self, run_time=0.5)
-            zc = grey_chip("0 requests").move_to([-1.0, v.lane_g[0].get_center()[1] - 0.45, 0])
+            # our own lane, 0.3 under the card (common's lane() runs at the plate's centre, 0.12 under
+            # it); it still ends in the plate
+            v._drop_lane(self)
+            ly = v.card.frame.get_bottom()[1] - 0.3
+            assert v.ep.plate.get_bottom()[1] + 0.08 < ly < v.ep.plate.get_top()[1] - 0.08, ly
+            ln5 = DashedLine([-6.3, ly, 0], [v.ep.plate.get_left()[0] - 0.1, ly, 0], color=ROUTE, stroke_width=3)
+            lt5 = label("requests", 20, ROUTE).next_to(ln5.get_start(), DOWN, buff=0.1).align_to(ln5, LEFT)
+            v.lane_g = VGroup(ln5, lt5)
+            v.show(self, v.lane_g, anims=[Create(ln5), FadeIn(lt5)], run_time=0.5)
+            zc = grey_chip("0 requests").move_to([-1.0, v.lane_g[0].get_center()[1] - 0.4, 0])
+            assert zc.get_bottom()[1] > l14_fr.get_top()[1] + 0.05 or zc.get_left()[0] > l14_fr.get_right()[0], \
+                zc.get_bottom()
             v.zero_chip = zc
             v.show(self, zc, anims=[FadeIn(zc), v.dial.sweep(0.1)], run_time=0.4)
             v.run(self, 0.2, vo.until("Unlike Cloud Run", minimum=0.5))
@@ -389,7 +410,9 @@ class ModelToEndpoint(VoiceScene):
                 vo.wait_until(phrase)
                 self.play(Write(left.rows[k]), run_time=0.5)
             vo.wait_until("A general container service")
-            self.play(Indicate(right.head, color=S.GREY, scale_factor=1.08), run_time=0.7)
+            self.play(Indicate(right.head, color=INK, scale_factor=1.1), run_time=0.8)
+            vo.wait_until("like Cloud Run")
+            self.play(Indicate(right.sub, color=INK, scale_factor=1.12), run_time=0.8)
             vo.wait_until("and you build the rest yourself")
             for k in range(3):
                 self.play(Write(right.rows[k]), run_time=0.45)
@@ -409,8 +432,12 @@ class ModelToEndpoint(VoiceScene):
 
         with self.voiceover(SAY[7]) as vo:
             self.play(Write(rule[0]), run_time=1.0)
+            vo.wait_until("an endpoint to serve")
+            self.play(Indicate(left.head, color=INK, scale_factor=1.1), run_time=0.8)
             vo.wait_until("a container service when")
             self.play(Write(rule[1]), run_time=1.0)
+            vo.wait_until("when the model is one part")
+            self.play(Indicate(right.head, color=INK, scale_factor=1.1), run_time=0.8)
             vo.wait_until("Here, those features go unused")
             self.play(FadeIn(mini, shift=UP * 0.3), run_time=0.5)
             self.play(*[FadeTransform(s.copy(), u) for s, u in zip(srcs, unused)], FadeIn(cap7), run_time=0.9)

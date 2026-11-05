@@ -29,7 +29,7 @@ Beats (script.md "## S11", one voiceover block each):
     Above it, the home folder: three folders side by side, persistent-folder ORANGE with chip
     "Docker made it · owned by root"; GREY chip "rerun from scratch: …".
  5  TRACKER B3 1 (section swap). Host terminal grows to 12 rows: `cd ../data-processor` (chip
-    "exit the container first · this runs on your laptop") -> prompt; `sh docker-shell.sh` ->
+    "exit the container first · this runs on your laptop") -> prompt (the cd folds with ' \\'); `sh docker-shell.sh` ->
     TERM(laptop/65: 50 cut, …, 71 cut) RED; TRACKER B3 1 · extra: the swap sed (extra; folds) ->
     TERM(laptop/66: 2-5), row tag "fix 1 again"; GREY chip "no Pipfile.lock here · the build
     resolves at build time" + a mono chip from laptop/67:730 and 733; `sh docker-shell.sh` -> the
@@ -247,16 +247,17 @@ class CollectAndClean(VoiceScene):
         assert dsh.width < 12.9, dsh.width
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(p13, chk)), FadeOut(dash0), run_time=0.5)
-            self.play(FadeIn(dr), FadeIn(kc), FadeIn(box_c), FadeIn(box_t), run_time=0.6)
+            self.play(FadeOut(VGroup(p13, chk)), FadeOut(dash0),
+                      FadeIn(dr), FadeIn(kc), FadeIn(box_c), FadeIn(box_t), run_time=0.4)
+            type_cmd(self, t, C60.cmd, type_time=0.35)
             ghost = kc.copy()
-            self.play(Create(rt), FadeIn(e_chip, scale=0.9), FadeIn(e_src), run_time=0.7)
-            self.play(MoveAlongPath(ghost, rt), run_time=1.0)
-            self.play(ghost.animate.move_to(box_c.get_center() + DOWN * 0.2), run_time=0.4)
-            type_cmd(self, t, C60.cmd, type_time=0.6)
             vo.wait_until("it builds in 40 seconds")
-            r3 = out(self, t, [BUILD60], run_time=0.4)
-            self.play(Indicate(substring(r3[0], "40.4s"), color=TURN, scale_factor=1.2), run_time=0.6)
+            self.play(Create(rt), FadeIn(e_chip, scale=0.9), FadeIn(e_src), MoveAlongPath(ghost, rt),
+                      run_time=0.7)
+            self.bring_to_front(ghost)                         # the key rides over the route's tip
+            r3 = out(self, t, [BUILD60], run_time=0.3)
+            self.play(Indicate(substring(r3[0], "40.4s"), color=TURN, scale_factor=1.2),
+                      ghost.animate.move_to(box_c.get_center() + DOWN * 0.2), run_time=0.5)
             self.reseat()
             vo.wait_until("and opens a root shell")
             cd_prompt(self, t, P_ROOT, color=TURN)
@@ -309,7 +310,7 @@ class CollectAndClean(VoiceScene):
             v.show(self, v.branches["dev"], v.cards["dev"],
                    anims=[GrowArrow(v.branches["dev"]), FadeIn(v.cards["dev"], shift=LEFT * 0.2)], run_time=0.7)
             vo.wait_until("development mode")
-            v.choose(self, "dev")
+            self.choose_dev(v)
             vo.wait_until("Arguments: it runs them")
             self.play(FadeIn(b7), run_time=0.3)
             v.show(self, v.branches["prod"], v.cards["prod"],
@@ -375,33 +376,36 @@ class CollectAndClean(VoiceScene):
         assert rerun.get_bottom()[1] > h.box.get_top()[1] + 0.05, (rerun.get_bottom(), h.box.get_top())
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(q_chip), FadeOut(ctrl_c), track(tr, 3), run_time=0.5)
-            self.play(FadeIn(nb, shift=DOWN * 0.1), run_time=0.4)
+            self.play(FadeOut(q_chip), FadeOut(ctrl_c), track(tr, 3), FadeIn(nb, shift=DOWN * 0.1), run_time=0.5)
             self.play(Indicate(nb.text, color=TURN, scale_factor=1.05), run_time=0.6)
             vo.wait_until("An extra listing")
-            self.wipe(FadeOut(nb), track(tr, 3, True), *self.unbar_anims())
-            type_cmd(self, t, LOOP, type_time=1.2)
-            self.bar(on_bar(t, extra_row()))
-            rl = out(self, t, OUT_LOOP, run_time=0.6)
+            ex4 = on_bar(t, extra_row())
+            self.wipe(FadeOut(nb), track(tr, 3, True), *self.unbar_anims(), FadeIn(ex4))
+            self.bar_tags.append(ex4)
+            self.reseat()
+            type_cmd(self, t, LOOP, type_time=0.9)
+            rl = out(self, t, OUT_LOOP, run_time=0.5)
             vo.wait_until("shows 40 images on disk")
-            self.play(each([substring(r, "10") for r in rl[:4]], TURN, 1.3), run_time=0.9)
+            self.play(each([substring(r, "10") for r in rl[:4]], TURN, 1.3), run_time=0.8)
             self.reseat()
             vo.wait_until("On the laptop")
-            self.play(FadeOut(t), *self.unbar_anims(), run_time=0.4)
+            ex4h = on_bar(h, extra_row())
+            self.play(FadeOut(t), *self.unbar_anims(), FadeIn(h), FadeIn(ex4h), run_time=0.4)
             self.remove(t)
             self.t = t = h
-            self.play(FadeIn(h), run_time=0.4)
-            type_cmd(self, h, C61.cmd, type_time=0.8)
-            self.bar(on_bar(h, extra_row()))
-            r61 = out(self, h, OUT61, run_time=0.5)
+            self.bar_tags.append(ex4h)
+            self.reseat()
+            type_cmd(self, h, C61.cmd, type_time=0.6)
+            r61 = out(self, h, OUT61, run_time=0.4)
             vo.wait_until("a root-owned persistent folder")
-            self.paint(r61[0], "root  root", SHARED)
-            self.paint(r61[0], "persistent-folder", SHARED)
-            self.play(FadeIn(home, shift=DOWN * 0.2), run_time=0.6)
-            self.play(FadeIn(made, shift=UP * 0.1), Indicate(f3.icon, color=SHARED, scale_factor=1.15), run_time=0.6)
+            self.play(substring(r61[0], "root  root").animate.set_color(SHARED),
+                      substring(r61[0], "persistent-folder").animate.set_color(SHARED), run_time=0.4)
+            self.reseat()
+            self.play(FadeIn(home, shift=DOWN * 0.2), run_time=0.5)
+            self.play(FadeIn(made, shift=UP * 0.1), Indicate(f3.icon, color=SHARED, scale_factor=1.15), run_time=0.5)
             vo.wait_until("appeared beside the clones")
-            self.play(Indicate(VGroup(f1.icon, f2.icon), color=INK, scale_factor=1.08), run_time=0.6)
-            self.play(FadeIn(rerun, shift=UP * 0.1), run_time=0.5)
+            self.play(Indicate(VGroup(f1.icon, f2.icon), color=INK, scale_factor=1.08), run_time=0.5)
+            self.play(FadeIn(rerun, shift=UP * 0.1), run_time=0.4)
 
         # ========================================================== 5. the processor: fix 1 again
         exit_c = grey_chip("exit the container first · this runs on your laptop")
@@ -409,29 +413,30 @@ class CollectAndClean(VoiceScene):
         lockc = chip(LOCK_LINE, S.GREY, size=20, font=MONO)
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(home, made, rerun)), *self.unbar_anims(), run_time=0.4)
-            tr = swap_tracker(self, tr, fixed_tracker("B3", 1))
-            self.resize(12, keep=0)
-            under_term(t, exit_c)
-            self.play(FadeIn(exit_c, shift=DOWN * 0.1), run_time=0.3)
-            type_cmd(self, t, "cd ../data-processor", type_time=0.5, soft=True)
-            cd_prompt(self, t, P_SRC("data-processor"), run_time=0.4)
-            type_cmd(self, t, C65.cmd, type_time=0.4)
+            tr = swap_tracker(self, tr, fixed_tracker("B3", 1), FadeOut(VGroup(home, made, rerun)),
+                              *self.unbar_anims(), run_time=0.5)
+            under_term(term(P_ROOT, rows=12, size=SIZE), exit_c)     # where the grown terminal will be
+            self.resize(12, keep=0, run_time=0.5, extra=[FadeIn(exit_c, shift=DOWN * 0.1)])
+            assert abs(exit_c.get_bottom()[1] - t.box.get_top()[1] - 0.12) < 0.02, (exit_c.get_bottom(), t.box.get_top())
+            type_cmd(self, t, "cd ../data-processor", type_time=0.4, soft=False)
+            cd_prompt(self, t, P_SRC("data-processor"), run_time=0.3)
+            type_cmd(self, t, C65.cmd, type_time=0.3)
             vo.wait_until("the A R M 64 line fails again")
-            r65 = out(self, t, [(OUT65[0], ERR), "…", (OUT65[2], ERR)], run_time=0.4)
-            self.play(Indicate(substring(r65[0], "exec format error"), color=ERR, scale_factor=1.1), run_time=0.5)
+            r65 = out(self, t, [(OUT65[0], ERR), "…", (OUT65[2], ERR)], run_time=0.3)
+            self.play(Indicate(substring(r65[0], "exec format error"), color=ERR, scale_factor=1.1), run_time=0.4)
             self.reseat()
-            vo.wait_until("and the same swap fixes it")
             self.play(FadeOut(exit_c), track(tr, 1, True), run_time=0.3)
-            type_cmd(self, t, C66.cmd, type_time=0.8, soft=True)
-            r66 = out(self, t, OUT66, run_time=0.4)
+            vo.wait_until("and the same swap fixes it")
+            type_cmd(self, t, C66.cmd, type_time=0.5, soft=True)
+            r66 = out(self, t, OUT66, run_time=0.3)
             fx = beside(row_tag("fix 1 again", OWN), r66[0])
-            pin(self, r66[0], fx, run_time=0.3)
             under_term(t, nolock)
             lockc.next_to(nolock, UP, buff=0.1).align_to(nolock, RIGHT)
-            self.play(FadeIn(nolock, shift=DOWN * 0.1), FadeIn(lockc, shift=DOWN * 0.1), run_time=0.4)
-            type_cmd(self, t, C68.cmd, type_time=0.4)
-            cd_prompt(self, t, P_ROOT, color=TURN, run_time=0.4)
+            pin(self, r66[0], fx, run_time=0.35,
+                anim=AnimationGroup(FadeIn(fx, shift=LEFT * 0.1), FadeIn(nolock, shift=DOWN * 0.1),
+                                    FadeIn(lockc, shift=DOWN * 0.1)))
+            type_cmd(self, t, C68.cmd, type_time=0.3)
+            cd_prompt(self, t, P_ROOT, color=TURN, run_time=0.3)
 
         # ========================================================== 6. step 2: --clean
         with self.voiceover(SAY[6]) as vo:
@@ -553,6 +558,16 @@ class CollectAndClean(VoiceScene):
         self.wait(0.3)
 
     # ------------------------------------------------------------------ helpers
+    def choose_dev(self, v):
+        """CallableImage.choose(self, 'dev') without its production half: choose() also animates the
+        production branch and card fill, which (built=False) are not shown yet and would pop in."""
+        target = Line(v.pivot + LEFT * 0.55, v.pivot, color=TURN, stroke_width=5).rotate(0.45, about_point=v.pivot)
+        self.play(Transform(v.switch, target), v.cards["dev"].frame.fill.animate.set_fill(opacity=0.22),
+                  v.branches["dev"].animate.set_stroke(width=5), run_time=0.6)
+        self.play(Indicate(v.cards["dev"].rows[0], color=LAPTOP, scale_factor=1.05), run_time=0.4)
+        v.mode = "dev"
+        v.heal(self)
+
     def bar(self, tg):
         """Show a title-bar tag (on_bar) and remember it, so it fades with the terminal."""
         self.play(FadeIn(tg), run_time=0.3)
@@ -562,10 +577,11 @@ class CollectAndClean(VoiceScene):
         tgs, self.bar_tags = self.bar_tags, []
         return [FadeOut(tg) for tg in tgs]
 
-    def resize(self, rows: int, keep=None):
-        """common.resize() with the title-bar tags riding along."""
+    def resize(self, rows: int, keep=None, run_time: float = 0.8, extra=()):
+        """common.resize() with the title-bar tags riding along (`extra`: animations alongside)."""
         dy = (rows - self.t.rows) * self.t.pitch
-        resize(self, self.t, rows, keep=keep, extra=[tg.animate.shift(UP * dy) for tg in self.bar_tags])
+        resize(self, self.t, rows, keep=keep, extra=[tg.animate.shift(UP * dy) for tg in self.bar_tags] + list(extra),
+               run_time=run_time)
 
     def wipe(self, *extra, run_time: float = 0.4):
         """PLAYS: the terminal's rows fade out (with `extra` alongside) and leave it for good."""

@@ -191,6 +191,9 @@ class PrepareArtifact(VoiceScene):
         t = term(P_APP, rows=7, size=SIZE)
         self.t = t
         fresh = on_bar(t, row_tag("our capture: a fresh container per step · stay in yours"))
+        if t.title is not None:     # the wide chip would cover the centred title: move it left of it
+            t.title.move_to([(t.box.get_left()[0] + 1.0 + fresh.get_left()[0]) / 2, t.title.get_y(), 0])
+            assert t.title.get_right()[0] < fresh.get_left()[0] - 0.2, (t.title.get_right(), fresh.get_left())
         assert t.box.get_top()[1] < Y_MID - 0.575 - 0.08, t.box.get_top()
 
         with self.voiceover(SAY[1]) as vo:
@@ -238,9 +241,14 @@ class PrepareArtifact(VoiceScene):
         note2 = card(["someone else's name → 'already exists',",
                       "then AccessDenied on upload · pick a unique name (README A:195–197)"], size=20)
         note2.move_to([6.5 - note2.width / 2, p1.get_bottom()[1] - 0.2 - note2.height / 2, 0])
-        lk = DashedLine(c1.code_lines[9].get_right() + RIGHT * 0.15,
-                        [c1.code_lines[9].get_right()[0] + 0.15, note2.get_top()[1], 0],
-                        color=S.GREY, stroke_width=2.5)
+        # from the end of line 80, right past the longer line 82, then down to the note (a straight
+        # drop would cross line 82's text)
+        x_lk = max(c1.code_lines[9].get_right()[0], c1.code_lines[11].get_right()[0]) + 0.3
+        y_lk = c1.code_lines[9].get_center()[1]
+        assert x_lk < min(p1.get_right()[0], note2.get_right()[0]) - 0.2, x_lk
+        lk = DashedVMobject(VMobject().set_points_as_corners(
+            [[c1.code_lines[9].get_right()[0] + 0.15, y_lk, 0], [x_lk, y_lk, 0], [x_lk, note2.get_top()[1], 0]]),
+            num_dashes=24).set_stroke(S.GREY, 2.5)
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(t), FadeOut(v), *self.unbar_anims(), run_time=0.6)
