@@ -1,0 +1,280 @@
+$ docker run --rm --entrypoint pipenv -v "$PWD":/app -v /capture/helpers:/helpers:ro -e AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id) -e AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key) -e AWS_REGION=us-east-1 -e S3_BUCKET_NAME=cheese-app-ml-workflow-demo -e S3_PACKAGE_URI=s3://cheese-app-ml-workflow-demo cheese-app-workflow run python /helpers/pipeline_offline.py
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /home/app/.config/sagemaker/config.yaml
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/__init__.py:86: SageMakerV2DeprecationWarning: You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation()
+You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+Defining SageMaker Pipeline
+INFO:botocore.credentials:Found credentials in environment variables.
+Using derived SageMaker execution role: arn:aws:iam::000000000000:role/CheeseAppSageMakerExecutionRole
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/processing.py:138: SageMakerV2DeprecationWarning: Processor is part of the SageMaker Python SDK v2, which is on path of deprecation. In v3, use `DataProcessor` (`from sagemaker.mlops.processing import DataProcessor`).
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation(
+WARNING:sagemaker.deprecations:Processor is part of the SageMaker Python SDK v2, which is on path of deprecation. In v3, use `DataProcessor` (`from sagemaker.mlops.processing import DataProcessor`).
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/estimator.py:588: SageMakerV2DeprecationWarning: TensorFlow is part of the SageMaker Python SDK v2, which is on path of deprecation. In v3, use `ModelTrainer` (`from sagemaker.train import ModelTrainer`).
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation(
+WARNING:sagemaker.deprecations:TensorFlow is part of the SageMaker Python SDK v2, which is on path of deprecation. In v3, use `ModelTrainer` (`from sagemaker.train import ModelTrainer`).
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+INFO:botocore.credentials:Found credentials in environment variables.
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/workflow/steps.py:490: UserWarning: Profiling is enabled on the provided estimator. The default profiler rule includes a timestamp which will change each time the pipeline is upserted, causing cache misses. If profiling is not needed, set disable_profiler to True on the estimator.
+  warnings.warn(msg)
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/model.py:347: SageMakerV2DeprecationWarning: TensorFlowModel is part of the SageMaker Python SDK v2, which is on path of deprecation. In v3, use `ModelBuilder` (`from sagemaker.serve import ModelBuilder`).
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation(
+WARNING:sagemaker.deprecations:TensorFlowModel is part of the SageMaker Python SDK v2, which is on path of deprecation. In v3, use `ModelBuilder` (`from sagemaker.serve import ModelBuilder`).
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/workflow/pipeline_context.py:340: UserWarning: Running within a PipelineSession, there will be No Wait, No Logs, and No Job being started.
+  warnings.warn(
+INFO:sagemaker.tensorflow.model:image_uri is not presented, retrieving image_uri based on instance_type, framework etc.
+Using derived Lambda execution role: arn:aws:iam::000000000000:role/CheeseAppLambdaExecutionRole
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/workflow/pipeline.py:119: SageMakerV2DeprecationWarning: Pipeline is part of the SageMaker Python SDK v2, which is on path of deprecation. In v3, use `Pipeline` (`from sagemaker.mlops.pipeline import Pipeline`).
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation(
+WARNING:sagemaker.deprecations:Pipeline is part of the SageMaker Python SDK v2, which is on path of deprecation. In v3, use `Pipeline` (`from sagemaker.mlops.pipeline import Pipeline`).
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+WARNING:sagemaker.workflow.utilities:Popping out 'ProcessingJobName' from the pipeline definition by default since it will be overridden at pipeline execution time. Please utilize the PipelineDefinitionConfig to persist this field in the pipeline definition if desired.
+WARNING:sagemaker.workflow.utilities:Popping out 'ProcessingJobName' from the pipeline definition by default since it will be overridden at pipeline execution time. Please utilize the PipelineDefinitionConfig to persist this field in the pipeline definition if desired.
+INFO:sagemaker.image_uris:image_uri is not presented, retrieving image_uri based on instance_type, framework etc.
+INFO:sagemaker.image_uris:image_uri is not presented, retrieving image_uri based on instance_type, framework etc.
+WARNING:sagemaker.workflow.utilities:Popping out 'TrainingJobName' from the pipeline definition by default since it will be overridden at pipeline execution time. Please utilize the PipelineDefinitionConfig to persist this field in the pipeline definition if desired.
+WARNING:sagemaker.workflow.utilities:Popping out 'ModelName' from the pipeline definition by default since it will be overridden at pipeline execution time. Please utilize the PipelineDefinitionConfig to persist this field in the pipeline definition if desired.
+{
+  "Version": "2020-12-01",
+  "Metadata": {},
+  "Parameters": [],
+  "PipelineExperimentConfig": {
+    "ExperimentName": {
+      "Get": "Execution.PipelineName"
+    },
+    "TrialName": {
+      "Get": "Execution.PipelineExecutionId"
+    }
+  },
+  "Steps": [
+    {
+      "Name": "DataCollector",
+      "Type": "Processing",
+      "Arguments": {
+        "ProcessingResources": {
+          "ClusterConfig": {
+            "InstanceType": "ml.t3.medium",
+            "InstanceCount": 1,
+            "VolumeSizeInGB": 30
+          }
+        },
+        "AppSpecification": {
+          "ImageUri": "000000000000.dkr.ecr.us-east-1.amazonaws.com/cheese-app-data-collector:latest",
+          "ContainerArguments": [
+            "--search",
+            "--nums",
+            "50",
+            "--query",
+            "brie cheese",
+            "gouda cheese",
+            "gruyere cheese",
+            "parmigiano cheese",
+            "--bucket",
+            "cheese-app-ml-workflow-demo"
+          ],
+          "ContainerEntrypoint": [
+            "python3",
+            "/app/cli.py"
+          ]
+        },
+        "RoleArn": "arn:aws:iam::000000000000:role/CheeseAppSageMakerExecutionRole",
+        "ProcessingOutputConfig": {
+          "Outputs": [
+            {
+              "OutputName": "raw-data",
+              "AppManaged": false,
+              "S3Output": {
+                "S3Uri": "s3://cheese-app-ml-workflow-demo/raw",
+                "LocalPath": "/opt/ml/processing/output",
+                "S3UploadMode": "EndOfJob"
+              }
+            }
+          ]
+        },
+        "Environment": {
+          "AWS_REGION": "us-east-1",
+          "S3_BUCKET_NAME": "cheese-app-ml-workflow-demo"
+        }
+      },
+      "CacheConfig": {
+        "Enabled": true,
+        "ExpireAfter": "30d"
+      }
+    },
+    {
+      "Name": "DataProcessor",
+      "Type": "Processing",
+      "Arguments": {
+        "ProcessingResources": {
+          "ClusterConfig": {
+            "InstanceType": "ml.t3.medium",
+            "InstanceCount": 1,
+            "VolumeSizeInGB": 30
+          }
+        },
+        "AppSpecification": {
+          "ImageUri": "000000000000.dkr.ecr.us-east-1.amazonaws.com/cheese-app-data-processor:latest",
+          "ContainerArguments": [
+            "--clean",
+            "--prepare",
+            "--bucket",
+            "cheese-app-ml-workflow-demo"
+          ],
+          "ContainerEntrypoint": [
+            "python3",
+            "/app/cli.py"
+          ]
+        },
+        "RoleArn": "arn:aws:iam::000000000000:role/CheeseAppSageMakerExecutionRole",
+        "ProcessingInputs": [
+          {
+            "InputName": "raw-data",
+            "AppManaged": false,
+            "S3Input": {
+              "S3Uri": {
+                "Get": "Steps.DataCollector.ProcessingOutputConfig.Outputs['raw-data'].S3Output.S3Uri"
+              },
+              "LocalPath": "/opt/ml/processing/input",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File",
+              "S3DataDistributionType": "FullyReplicated",
+              "S3CompressionType": "None"
+            }
+          }
+        ],
+        "ProcessingOutputConfig": {
+          "Outputs": [
+            {
+              "OutputName": "clean-data",
+              "AppManaged": false,
+              "S3Output": {
+                "S3Uri": "s3://cheese-app-ml-workflow-demo/clean",
+                "LocalPath": "/opt/ml/processing/output/clean",
+                "S3UploadMode": "EndOfJob"
+              }
+            },
+            {
+              "OutputName": "tfrecords",
+              "AppManaged": false,
+              "S3Output": {
+                "S3Uri": "s3://cheese-app-ml-workflow-demo/tfrecords",
+                "LocalPath": "/opt/ml/processing/output/tfrecords",
+                "S3UploadMode": "EndOfJob"
+              }
+            }
+          ]
+        },
+        "Environment": {
+          "AWS_REGION": "us-east-1",
+          "S3_BUCKET_NAME": "cheese-app-ml-workflow-demo"
+        }
+      },
+      "CacheConfig": {
+        "Enabled": true,
+        "ExpireAfter": "30d"
+      }
+    },
+    {
+      "Name": "ModelTraining",
+      "Type": "Training",
+      "Arguments": {
+        "AlgorithmSpecification": {
+          "TrainingInputMode": "File",
+          "TrainingImage": "763104351884.dkr.ecr.us-east-1.amazonaws.com/tensorflow-training:2.13-cpu-py310",
+          "EnableSageMakerMetricsTimeSeries": true
+        },
+        "OutputDataConfig": {
+          "S3OutputPath": "s3://cheese-app-ml-workflow-demo/model-output"
+        },
+        "StoppingCondition": {
+          "MaxRuntimeInSeconds": 86400
+        },
+        "ResourceConfig": {
+          "VolumeSizeInGB": 30,
+          "InstanceCount": 1,
+          "InstanceType": "ml.m5.xlarge"
+        },
+        "RoleArn": "arn:aws:iam::000000000000:role/CheeseAppSageMakerExecutionRole",
+        "InputDataConfig": [
+          {
+            "DataSource": {
+              "S3DataSource": {
+                "S3DataType": "S3Prefix",
+                "S3Uri": {
+                  "Get": "Steps.DataProcessor.ProcessingOutputConfig.Outputs['tfrecords'].S3Output.S3Uri"
+                },
+                "S3DataDistributionType": "FullyReplicated"
+              }
+            },
+            "ChannelName": "training"
+          }
+        ],
+        "HyperParameters": {
+          "epochs": "15",
+          "batch_size": "16",
+          "model_name": "\"mobilenetv2\"",
+          "bucket_name": "\"cheese-app-ml-workflow-demo\"",
+          "sagemaker_submit_directory": "\"s3://cheese-app-ml-workflow-demo/cheese-app-trainer.tar.gz\"",
+          "sagemaker_program": "\"package/trainer/task.py\"",
+          "sagemaker_container_log_level": "20",
+          "sagemaker_region": "\"us-east-1\"",
+          "model_dir": "\"s3://cheese-app-ml-workflow-demo/model-output/tensorflow-training-2026-11-05-05-45-51-456/model\""
+        },
+        "DebugHookConfig": {
+          "S3OutputPath": "s3://cheese-app-ml-workflow-demo/model-output",
+          "CollectionConfigurations": []
+        },
+        "ProfilerConfig": {
+          "S3OutputPath": "s3://cheese-app-ml-workflow-demo/model-output",
+          "DisableProfiler": false
+        }
+      },
+      "CacheConfig": {
+        "Enabled": true,
+        "ExpireAfter": "30d"
+      }
+    },
+    {
+      "Name": "CreateModel-CreateModel",
+      "Type": "Model",
+      "Arguments": {
+        "ExecutionRoleArn": "arn:aws:iam::000000000000:role/CheeseAppSageMakerExecutionRole",
+        "PrimaryContainer": {
+          "Image": "763104351884.dkr.ecr.us-east-1.amazonaws.com/tensorflow-inference:2.13-cpu",
+          "Environment": {},
+          "ModelDataUrl": {
+            "Get": "Steps.ModelTraining.ModelArtifacts.S3ModelArtifacts"
+          }
+        }
+      }
+    },
+    {
+      "Name": "DeployModel",
+      "Type": "Lambda",
+      "Arguments": {
+        "model_name": {
+          "Get": "Steps.CreateModel-CreateModel.ModelName"
+        },
+        "endpoint_instance_type": "ml.m5.large",
+        "endpoint_config_name": "cheese-app-endpoint-config",
+        "endpoint_name": "cheese-app-endpoint"
+      },
+      "CacheConfig": {
+        "Enabled": true,
+        "ExpireAfter": "30d"
+      },
+      "FunctionArn": "arn:aws:lambda:us-east-1:000000000000:function:sagemaker-deploy-model-lambda-k5nhnqym",
+      "OutputParameters": []
+    }
+  ]
+}
+[capture stub] Pipeline.upsert() and start() NOT sent: no AWS account in this recording
+[exit 1]

@@ -1,0 +1,6 @@
+$ python3 -c 'import json; d = json.load(open("Pipfile.lock"))["default"]; print("Pipfile.lock pins sagemaker", d["sagemaker"]["version"], "and boto3", d["boto3"]["version"])'; grep -n 'ADD\|RUN pipenv' Dockerfile
+Pipfile.lock pins sagemaker ==2.250.0 and boto3 ==1.40.11
+40:ADD --chown=app:app Pipfile /app/
+42:RUN pipenv install
+45:ADD --chown=app:app . /app
+[exit 0]

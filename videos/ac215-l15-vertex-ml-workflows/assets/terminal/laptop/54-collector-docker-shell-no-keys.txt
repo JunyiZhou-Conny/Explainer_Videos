@@ -1,0 +1,3 @@
+$ sh docker-shell.sh
+AWS not configured. Run: aws configure
+[exit 1]

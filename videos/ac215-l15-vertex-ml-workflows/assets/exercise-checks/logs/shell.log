@@ -1,0 +1,65 @@
+$ export AWS_ACCESS_KEY_ID=your_access_key_id AWS_SECRET_ACCESS_KEY=your_secret_access_key AWS_REGION=us-east-1
+S3_MODELS_BUCKET_NAME=your-models-bucket-placeholder SAGEMAKER_ROLE=arn:aws:iam::000000000000:role/SageMakerExecutionRole
+docker run --rm --network none -e AWS_REGION=$AWS_REGION -e S3_MODELS_BUCKET_NAME=$S3_MODELS_BUCKET_NAME -e SAGEMAKER_ROLE=$SAGEMAKER_ROLE debian:12 env | grep -E "^(AWS|S3|SAGEMAKER)" | sort; echo "---- with the two extra -e flags:"
+docker run --rm --network none -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION=$AWS_REGION debian:12 env | grep -E "^AWS" | sort
+AWS_REGION=us-east-1
+S3_MODELS_BUCKET_NAME=your-models-bucket-placeholder
+SAGEMAKER_ROLE=arn:aws:iam::000000000000:role/SageMakerExecutionRole
+---- with the two extra -e flags:
+AWS_ACCESS_KEY_ID=your_access_key_id
+AWS_REGION=us-east-1
+AWS_SECRET_ACCESS_KEY=your_secret_access_key
+[exit 0]
+
+$ ls -l /bin/sh; bash --version | head -1
+lrwxrwxrwx 1 root root 4 Jan  5  2023 /bin/sh -> dash
+GNU bash, version 5.2.15(1)-release (x86_64-pc-linux-gnu)
+[exit 0]
+
+$ cd /src/data-collector && sh docker-shell.sh; echo "exit status: $?"
+/tmp/bin/aws
+docker-shell.sh: 18: [[: not found
+[stand-in docker] docker build -t cheese-app-data-collector --platform=linux/amd64 -f Dockerfile .
+[stand-in docker] docker run --rm --name cheese-app-data-collector -ti -v /src/data-collector:/app -v /src/data-collector/../../../persistent-folder/:/persistent -e AWS_ACCESS_KEY_ID= -e AWS_SECRET_ACCESS_KEY= -e AWS_DEFAULT_REGION= -e S3_BUCKET_NAME=cheese-app-ml-workflow-demo cheese-app-data-collector
+exit status: 0
+[exit 0]
+
+$ cd /src/data-collector && bash docker-shell.sh; echo "exit status: $?"
+AWS not configured. Run: aws configure
+exit status: 1
+[exit 0]
+
+$ bash -c 'export REGION=us-east-1 [YOUR DEVELOPMENT REGION]; echo "export exit status: $?"; echo "REGION=$REGION"'
+bash: line 1: export: `[YOUR': not a valid identifier
+bash: line 1: export: `REGION]': not a valid identifier
+export exit status: 1
+REGION=us-east-1
+[exit 0]
+
+$ bash -c 'ACCOUNT_ID=$(false); REGION=us-east-1; REPO=cheese-app-data-collector; TAG=latest; ECR_URI="$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPO:$TAG"; echo "ECR URI: $ECR_URI"'
+ECR URI: .dkr.ecr.us-east-1.amazonaws.com/cheese-app-data-collector:latest
+[exit 0]
+
+$ bash -c 'false || true; echo "exit status after || true: $?"'
+exit status after || true: 0
+[exit 0]
+
+$ bash -c 'echo delete-endpoint --endpoint-name <your-endpoint-name>'; echo "exit status: $?"
+bash: -c: line 1: syntax error near unexpected token `newline'
+bash: -c: line 1: `echo delete-endpoint --endpoint-name <your-endpoint-name>'
+exit status: 2
+[exit 0]
+
+$ python --version; pip install -q --upgrade pip && pip --version | cut -d" " -f1,2
+Python 3.9.25
+pip 26.0.1
+[exit 0]
+
+$ pip install -q --dry-run --no-deps --ignore-installed --report - "sagemaker" | python -c "import json,sys; print(\"sagemaker   ->\", [i[\"metadata\"][\"version\"] for i in json.load(sys.stdin)[\"install\"]])"
+sagemaker   -> ['3.13.1']
+[exit 0]
+
+$ pip install -q --dry-run --no-deps --ignore-installed --report - "sagemaker<3" | python -c "import json,sys; print(\"sagemaker<3 ->\", [i[\"metadata\"][\"version\"] for i in json.load(sys.stdin)[\"install\"]])"
+sagemaker<3 -> ['2.257.7']
+[exit 0]
+

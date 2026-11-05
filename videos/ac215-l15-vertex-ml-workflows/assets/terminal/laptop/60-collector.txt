@@ -1,0 +1,666 @@
+$ sh docker-shell.sh
+
+[+] Building 40.4s (11/11) FINISHED                                                            docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 1.44kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-slim                                      0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [1/6] FROM docker.io/library/python:3.11-slim                                                        0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 24.82kB                                                                     0.0s
+ => [2/6] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &&     apt-  28.9s
+ => [3/6] WORKDIR /app                                                                                   0.0s
+ => [4/6] ADD Pipfile Pipfile.lock /app/                                                                 0.0s
+ => [5/6] RUN pipenv install --system --deploy                                                           9.7s
+ => [6/6] ADD . /app                                                                                     0.0s
+ => exporting to image                                                                                   1.7s
+ => => exporting layers                                                                                  1.7s
+ => => writing image sha256:4d3309e2c6ed1664562fb3cdc947609bf03967016feeece26bc9b28683949bb4             0.0s
+ => => naming to docker.io/library/cheese-app-data-collector                                             0.0s
+root@7ee040c53cfb:/app# python cli.py --search --nums 10 --query "brie cheese" "gouda cheese" "gruyere cheese" "parmigiano cheese"
+CLI Arguments: Namespace(search=True, nums=10, query=['brie cheese', 'gouda cheese', 'gruyere cheese', 'parmigiano cheese'], bucket='')
+S3_BUCKET_NAME: cheese-app-ml-workflow-demo
+Searching for: brie cheese
+[%] Downloading Images to /persistent/dataset/raw/brie cheese
+
+
+[!!]Indexing page: 1
+
+[%] Indexed 10 Images on Page 1.
+
+===============================================
+
+[%] Downloading Image #1 from https://cdn.cheeseconnoisseur.com/2021/05/AdobeStock_68444573-scaled.jpeg
+[%] File Downloaded !
+
+[%] Downloading Image #2 from https://thumbs.dreamstime.com/b/brie-cheese-28630504.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #3 from https://www.thespruceeats.com/thmb/3yAhuIvoBj6vLlVsmdE8sqyKsm0=/2119x1414/filters:fill(auto,1)/GettyImages-503244642-8fe5559bfe7c48dca2bc16bdc899fe18.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #4 from https://murrayscheese.imgix.net/7yhne1lgtyhotzopey9xf8lt44uf?ixlib=rails-4.3.1
+[!] Issue getting: https://murrayscheese.imgix.net/7yhne1lgtyhotzopey9xf8lt44uf?ixlib=rails-4.3.1
+[!] Error:: HTTP Error 404: Not Found
+[%] Downloading Image #4 from https://gluttodigest.com/wp-content/uploads/2021/04/brie-cheese-1024x683.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #5 from https://www.thedailymeal.com/img/gallery/the-absolute-best-accompaniments-to-serve-with-brie-cheese/intro-1680813837.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #6 from https://www.castironketo.net/wp-content/uploads/2024/02/is-brie-cheese-keto-friendly-header-image.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #7 from https://www.cooksinfo.com/wp-content/uploads/Brie-TN.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #8 from https://www.tastingtable.com/img/gallery/is-it-safe-to-eat-a-brie-cheese-rind/intro-1728941436.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #9 from https://www.tasteofhome.com/wp-content/uploads/2023/02/GettyImages-538778391-scaled-e1675460510684.jpg
+[%] File Downloaded !
+
+
+
+[!!]Indexing page: 2
+
+[%] Indexed 10 Images on Page 2.
+
+===============================================
+
+
+
+[!!]Indexing page: 3
+
+[%] Indexed 10 Images on Page 3.
+
+===============================================
+
+
+
+[!!]Indexing page: 4
+
+[%] Indexed 10 Images on Page 4.
+
+===============================================
+
+
+
+[!!]Indexing page: 5
+
+[%] Indexed 10 Images on Page 5.
+
+===============================================
+
+
+
+[!!]Indexing page: 6
+
+[%] Indexed 10 Images on Page 6.
+
+===============================================
+
+
+
+[!!]Indexing page: 7
+
+[%] Indexed 35 Images on Page 7.
+
+===============================================
+
+[%] Downloading Image #10 from https://as1.ftcdn.net/v2/jpg/09/12/56/54/1000_F_912565409_JS73A2mcQRDNqU7VF2UNENKx4d515Qcf.jpg
+[%] File Downloaded !
+
+
+
+[%] Done. Downloaded 10 images.
+Searching for: gouda cheese
+[%] Downloading Images to /persistent/dataset/raw/gouda cheese
+
+
+[!!]Indexing page: 1
+
+[%] Indexed 10 Images on Page 1.
+
+===============================================
+
+[%] Downloading Image #1 from https://cdn2.bigcommerce.com/server5900/ohhf8/product_images/uploaded_images/gouda.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #2 from https://images.eatthismuch.com/img/22_regiudici_934b639b-e0c7-4554-9b95-364dfbbb2fcd.png
+[%] File Downloaded !
+
+[%] Downloading Image #3 from https://storables.com/wp-content/uploads/2023/09/how-to-store-gouda-cheese-1695344034.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #4 from https://jooinn.com/images/gouda-cheese-8.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #5 from https://www.mashed.com/img/gallery/the-ultimate-guide-to-gouda-cheese/you-can-find-crystals-in-aged-gouda-1681226053.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #6 from https://www.cookinghub.com/wp-content/uploads/2024/05/gouda-cheese.jpg
+[Error]Invalid image, not saving https://www.cookinghub.com/wp-content/uploads/2024/05/gouda-cheese.jpg
+
+[!] Issue getting: https://www.cookinghub.com/wp-content/uploads/2024/05/gouda-cheese.jpg
+[!] Error:: Invalid image, not saving https://www.cookinghub.com/wp-content/uploads/2024/05/gouda-cheese.jpg
+
+[%] Downloading Image #6 from https://gouda-cheese.com/wp-content/uploads/2025/03/gouda-belegen-857x1024.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #7 from https://minio-api.cr.lvtd.dev/isitketo-prod/compressed_ai_product_image/gouda-cheese_ai_compressed.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #8 from https://mycheese.org/wp-content/uploads/2025/09/ChatGPT-Image-29.-Sept.-2025-15_13_57-1024x683.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #9 from https://img.freepik.com/premium-photo/close-up-hard-dutch-gouda-cheese-white-background_908985-22970.jpg?w=2000
+[%] File Downloaded !
+
+
+
+[!!]Indexing page: 2
+
+[%] Indexed 10 Images on Page 2.
+
+===============================================
+
+
+
+[!!]Indexing page: 3
+
+[%] Indexed 12 Images on Page 3.
+
+===============================================
+
+[%] Downloading Image #10 from https://mycheese.org/wp-content/uploads/2025/10/ChatGPT-Image-14.-Okt.-2025-04_37_33.jpg
+[%] File Downloaded !
+
+
+
+[%] Done. Downloaded 10 images.
+Searching for: gruyere cheese
+[%] Downloading Images to /persistent/dataset/raw/gruyere cheese
+
+
+[!!]Indexing page: 1
+
+[%] Indexed 10 Images on Page 1.
+
+===============================================
+
+[%] Downloading Image #1 from https://thecheeseatlas.com/wp-content/uploads/2020/11/Le-Gruyere.jpeg
+[%] File Downloaded !
+
+[%] Downloading Image #2 from https://www.cooksinfo.com/wp-content/uploads/Gruyere-Cheese-101.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #3 from https://www.gourmetfoodworld.com/images/Product/large/gormino-gruyere-cave-aged-12-months-1S-1506.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #4 from https://i5.walmartimages.com/seo/Emmi-Le-Gruy-re-AOP-Cheese-6-oz_676961bb-827a-442f-b703-e66c717713ae_1.4064256a03f8a34d3e3017e1bec6e8b2.jpeg
+[%] File Downloaded !
+
+[%] Downloading Image #5 from https://www.tastingtable.com/img/gallery/a-swiss-gruyere-was-crowned-the-worlds-best-cheese-for-2022/l-intro-1667495074.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #6 from https://cdn.shopify.com/s/files/1/0082/7722/9604/products/178S_Gruyere_AOP_1.jpg?v=1606692875
+[%] File Downloaded !
+
+[%] Downloading Image #7 from https://gluttodigest.com/wp-content/uploads/2021/04/gruyere-cheese.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #8 from https://bakeitwithlove.com/wp-content/uploads/2022/03/Gruyere-Cheese-Substitute-sq.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #9 from https://www.sodiaal.co.uk/uploads/images/Gruyere.png
+[!] Issue getting: https://www.sodiaal.co.uk/uploads/images/Gruyere.png
+[!] Error:: HTTP Error 403: Forbidden
+[%] Downloading Image #9 from https://www.thespruceeats.com/thmb/t51tqOb6QRSiSpYRYzy5JAF8Wj0=/960x0/filters:no_upscale():max_bytes(150000):strip_icc()/gruyere-1500-56a20eac5f9b58b7d0c61b7c.jpg
+[%] File Downloaded !
+
+
+
+[!!]Indexing page: 2
+
+[%] Indexed 10 Images on Page 2.
+
+===============================================
+
+
+
+[!!]Indexing page: 3
+
+[%] Indexed 10 Images on Page 3.
+
+===============================================
+
+
+
+[!!]Indexing page: 4
+
+[%] Indexed 10 Images on Page 4.
+
+===============================================
+
+
+
+[!!]Indexing page: 5
+
+[%] Indexed 10 Images on Page 5.
+
+===============================================
+
+
+
+[!!]Indexing page: 6
+
+[%] Indexed 10 Images on Page 6.
+
+===============================================
+
+
+
+[!!]Indexing page: 7
+
+[%] Indexed 10 Images on Page 7.
+
+===============================================
+
+
+
+[!!]Indexing page: 8
+
+[%] Indexed 10 Images on Page 8.
+
+===============================================
+
+
+
+[!!]Indexing page: 9
+
+[%] Indexed 10 Images on Page 9.
+
+===============================================
+
+
+
+[!!]Indexing page: 10
+
+[%] Indexed 10 Images on Page 10.
+
+===============================================
+
+
+
+[!!]Indexing page: 11
+
+[%] Indexed 10 Images on Page 11.
+
+===============================================
+
+
+
+[!!]Indexing page: 12
+
+[%] Indexed 10 Images on Page 12.
+
+===============================================
+
+
+
+[!!]Indexing page: 13
+
+[%] Indexed 10 Images on Page 13.
+
+===============================================
+
+
+
+[!!]Indexing page: 14
+
+[%] Indexed 10 Images on Page 14.
+
+===============================================
+
+
+
+[!!]Indexing page: 15
+
+[%] Indexed 35 Images on Page 15.
+
+===============================================
+
+[%] Downloading Image #10 from https://down-id.img.susercontent.com/file/id-11134207-822ws-mpyj91j470ujd9
+[%] File Downloaded !
+
+
+
+[%] Done. Downloaded 10 images.
+Searching for: parmigiano cheese
+[%] Downloading Images to /persistent/dataset/raw/parmigiano cheese
+
+
+[!!]Indexing page: 1
+
+[%] Indexed 10 Images on Page 1.
+
+===============================================
+
+[%] Downloading Image #1 from https://i.pinimg.com/originals/dc/83/39/dc8339cced523c991814322773c70b34.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #2 from https://m.media-amazon.com/images/I/71fNkDTp3TL._AC_.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #3 from https://cdn.apartmenttherapy.info/image/upload/v1702327365/k/Photo/Series/2023-12-what-is-parmigiano-reggiano/Kitchn_Recipes_120520232042_1.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #4 from https://sodamngouda.com/cdn/shop/products/parmigiano-reggiano_1500x.jpg?v=1649779111
+[%] File Downloaded !
+
+[%] Downloading Image #5 from https://m.media-amazon.com/images/I/71Rf-jzyqRL._AC_.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #6 from https://m.media-amazon.com/images/I/71CgSJ0wx8L.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #7 from https://m.media-amazon.com/images/I/71Vtr6RwzWL._AC_.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #8 from https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Parmigiano_Reggiano%2C_Italien%2C_Europäische_Union.jpg/800px-Parmigiano_Reggiano%2C_Italien%2C_Europäische_Union.jpg
+[!] Issue getting: https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Parmigiano_Reggiano%2C_Italien%2C_Europäische_Union.jpg/800px-Parmigiano_Reggiano%2C_Italien%2C_Europäische_Union.jpg
+[!] Error:: 'ascii' codec can't encode character '\xe4' in position 73: ordinal not in range(128)
+[%] Downloading Image #8 from https://www.mashed.com/img/gallery/parmigiano-reggiano-is-cheese-parmesan-is-window-shutters/l-intro-1680141131.jpg
+[%] File Downloaded !
+
+[%] Downloading Image #9 from https://murrayscheese.imgix.net/4p0oggnozrec6icu40yfx010fmfw?ixlib=rails-4.3.1&amp;auto=format&amp;fit=max&amp;w=3840&amp;q=80
+[%] File Downloaded !
+
+
+
+[!!]Indexing page: 2
+
+[%] Indexed 10 Images on Page 2.
+
+===============================================
+
+
+
+[!!]Indexing page: 3
+
+[%] Indexed 10 Images on Page 3.
+
+===============================================
+
+
+
+[!!]Indexing page: 4
+
+[%] Indexed 10 Images on Page 4.
+
+===============================================
+
+
+
+[!!]Indexing page: 5
+
+[%] Indexed 10 Images on Page 5.
+
+===============================================
+
+
+
+[!!]Indexing page: 6
+
+[%] Indexed 10 Images on Page 6.
+
+===============================================
+
+
+
+[!!]Indexing page: 7
+
+[%] Indexed 10 Images on Page 7.
+
+===============================================
+
+
+
+[!!]Indexing page: 8
+
+[%] Indexed 10 Images on Page 8.
+
+===============================================
+
+
+
+[!!]Indexing page: 9
+
+[%] Indexed 10 Images on Page 9.
+
+===============================================
+
+
+
+[!!]Indexing page: 10
+
+[%] Indexed 10 Images on Page 10.
+
+===============================================
+
+
+
+[!!]Indexing page: 11
+
+[%] Indexed 10 Images on Page 11.
+
+===============================================
+
+
+
+[!!]Indexing page: 12
+
+[%] Indexed 10 Images on Page 12.
+
+===============================================
+
+
+
+[!!]Indexing page: 13
+
+[%] Indexed 10 Images on Page 13.
+
+===============================================
+
+
+
+[!!]Indexing page: 14
+
+[%] Indexed 10 Images on Page 14.
+
+===============================================
+
+
+
+[!!]Indexing page: 15
+
+[%] Indexed 10 Images on Page 15.
+
+===============================================
+
+
+
+[!!]Indexing page: 16
+
+[%] Indexed 10 Images on Page 16.
+
+===============================================
+
+
+
+[!!]Indexing page: 17
+
+[%] Indexed 10 Images on Page 17.
+
+===============================================
+
+
+
+[!!]Indexing page: 18
+
+[%] Indexed 10 Images on Page 18.
+
+===============================================
+
+
+
+[!!]Indexing page: 19
+
+[%] Indexed 10 Images on Page 19.
+
+===============================================
+
+
+
+[!!]Indexing page: 20
+
+[%] Indexed 10 Images on Page 20.
+
+===============================================
+
+
+
+[!!]Indexing page: 21
+
+[%] Indexed 10 Images on Page 21.
+
+===============================================
+
+
+
+[!!]Indexing page: 22
+
+[%] Indexed 10 Images on Page 22.
+
+===============================================
+
+
+
+[!!]Indexing page: 23
+
+[%] Indexed 10 Images on Page 23.
+
+===============================================
+
+
+
+[!!]Indexing page: 24
+
+[%] Indexed 10 Images on Page 24.
+
+===============================================
+
+
+
+[!!]Indexing page: 25
+
+[%] Indexed 10 Images on Page 25.
+
+===============================================
+
+
+
+[!!]Indexing page: 26
+
+[%] Indexed 10 Images on Page 26.
+
+===============================================
+
+
+
+[!!]Indexing page: 27
+
+[%] Indexed 10 Images on Page 27.
+
+===============================================
+
+
+
+[!!]Indexing page: 28
+
+[%] Indexed 10 Images on Page 28.
+
+===============================================
+
+
+
+[!!]Indexing page: 29
+
+[%] Indexed 12 Images on Page 29.
+
+===============================================
+
+[%] Downloading Image #10 from https://images.pexels.com/photos/19024652/pexels-photo-19024652.jpeg?cs=srgb&amp;dl=pexels-csibeman-19024652.jpg&amp;fm=jpg
+[%] File Downloaded !
+
+
+
+[%] Done. Downloaded 10 images.
+uploading file /persistent/dataset/raw.zip
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/boto3/s3/transfer.py", line 372, in upload_file
+    future.result()
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/futures.py", line 111, in result
+    return self._coordinator.result()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/futures.py", line 287, in result
+    raise self._exception
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/tasks.py", line 142, in __call__
+    return self._execute_main(kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/tasks.py", line 165, in _execute_main
+    return_value = self._main(**kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/s3transfer/tasks.py", line 351, in _main
+    response = client.create_multipart_upload(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/botocore/client.py", line 1078, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.exceptions.ClientError: An error occurred (InvalidAccessKeyId) when calling the CreateMultipartUpload operation: The AWS Access Key Id you provided does not exist in our records.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/cli.py", line 96, in <module>
+    main(args)
+  File "/app/cli.py", line 65, in main
+    s3_client.upload_file(zip_file, S3_BUCKET_NAME, "raw.zip")
+  File "/usr/local/lib/python3.11/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/boto3/s3/inject.py", line 175, in upload_file
+    return transfer.upload_file(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/boto3/s3/transfer.py", line 378, in upload_file
+    raise S3UploadFailedError(
+boto3.exceptions.S3UploadFailedError: Failed to upload /persistent/dataset/raw.zip to cheese-app-ml-workflow-demo/raw.zip: An error occurred (InvalidAccessKeyId) when calling the CreateMultipartUpload operation: The AWS Access Key Id you provided does not exist in our records.
+root@7ee040c53cfb:/app# ls /persistent/dataset; ls /persistent/dataset/raw
+raw  raw.zip
+'brie cheese'  'gouda cheese'  'gruyere cheese'  'parmigiano cheese'
+root@7ee040c53cfb:/app# for d in /persistent/dataset/raw/*; do echo "$(ls "$d" | wc -l) $d"; done; ls -l /persistent/dataset/raw.zip
+10 /persistent/dataset/raw/brie cheese
+10 /persistent/dataset/raw/gouda cheese
+10 /persistent/dataset/raw/gruyere cheese
+10 /persistent/dataset/raw/parmigiano cheese
+-rw-r--r-- 1 root root 14171510 Nov  5 05:13 /persistent/dataset/raw.zip
+root@7ee040c53cfb:/app# exit
+exit
+[exit 0]

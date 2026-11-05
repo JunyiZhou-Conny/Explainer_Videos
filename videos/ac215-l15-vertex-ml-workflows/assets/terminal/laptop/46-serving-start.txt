@@ -1,0 +1,29 @@
+$ docker run -d --name cheese-serving --network host -v "$PWD/artifacts/model-mobilenetv2_train_base_True.v1":/models/cheese:ro -e MODEL_NAME=cheese tensorflow/serving:2.13.1 >/dev/null; sleep 20; docker logs cheese-serving 2>&1 | tail -15; curl -s http://localhost:8501/v1/models/cheese
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-11-05 05:08:30.228071: I external/org_tensorflow/tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:375] MLIR V1 optimization pass is not enabled
+2026-11-05 05:08:30.244384: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:231] Restoring SavedModel bundle.
+2026-11-05 05:08:30.982328: E external/org_tensorflow/tensorflow/core/framework/node_def_util.cc:676] NodeDef mentions attribute debug_name which is not in the op definition: Op<name=VarHandleOp; signature= -> resource:resource; attr=container:string,default=""; attr=shared_name:string,default=""; attr=dtype:type; attr=shape:shape; attr=allowed_devices:list(string),default=[]; is_stateful=true> This may be expected if your graph generating binary is newer  than this binary. Unknown attributes will be ignored. NodeDef: {{node Conv1/kernel_1}}
+2026-11-05 05:08:31.015748: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:215] Running initialization op on SavedModel bundle at path: /models/cheese/1
+2026-11-05 05:08:31.203856: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:314] SavedModel load for tags { serve }; Status: success: OK. Took 1042474 microseconds.
+2026-11-05 05:08:31.208489: I tensorflow_serving/servables/tensorflow/saved_model_warmup_util.cc:62] No warmup data file found at /models/cheese/1/assets.extra/tf_serving_warmup_requests
+2026-11-05 05:08:31.307846: I tensorflow_serving/core/loader_harness.cc:95] Successfully loaded servable version {name: cheese version: 1}
+2026-11-05 05:08:31.308848: I tensorflow_serving/model_servers/server_core.cc:486] Finished adding/updating models
+2026-11-05 05:08:31.308948: I tensorflow_serving/model_servers/server.cc:118] Using InsecureServerCredentials
+2026-11-05 05:08:31.308959: I tensorflow_serving/model_servers/server.cc:383] Profiler service is enabled
+2026-11-05 05:08:31.310983: I tensorflow_serving/model_servers/server.cc:409] Running gRPC ModelServer at 0.0.0.0:8500 ...
+[warn] getaddrinfo: address family for nodename not supported
+2026-11-05 05:08:31.311908: I tensorflow_serving/model_servers/server.cc:430] Exporting HTTP/REST API at:localhost:8501 ...
+[evhttp_server.cc : 245] NET_LOG: Entering the event loop ...
+{
+ "model_version_status": [
+  {
+   "version": "1",
+   "state": "AVAILABLE",
+   "status": {
+    "error_code": "OK",
+    "error_message": ""
+   }
+  }
+ ]
+}
+[exit 0]

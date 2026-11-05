@@ -1,0 +1,9 @@
+$ tar tzvf artifacts/model-mobilenetv2_train_base_True.v1/model.tar.gz
+drwxr-sr-x app/app         0 1970-01-01 00:00:00 1/
+drwxr-sr-x app/app         0 1970-01-01 00:00:00 1/assets/
+-rw-r--r-- app/app        57 1970-01-01 00:00:00 1/fingerprint.pb
+-rw-r--r-- app/app   1713230 1970-01-01 00:00:00 1/saved_model.pb
+drwxr-sr-x app/app         0 1970-01-01 00:00:00 1/variables/
+-rw-r--r-- app/app  19438488 1970-01-01 00:00:00 1/variables/variables.data-00000-of-00001
+-rw-r--r-- app/app     29718 1970-01-01 00:00:00 1/variables/variables.index
+[exit 0]

@@ -1,0 +1,4 @@
+$ docker image ls model-deployment-cli-aws
+IMAGE                             ID             DISK USAGE   CONTENT SIZE   EXTRA
+model-deployment-cli-aws:latest   d3dc546c0eee       4.01GB             0B        
+[exit 0]

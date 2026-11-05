@@ -1,0 +1,17 @@
+$ docker run --rm --tmpfs /tmp:exec,size=4g -v /capture/helpers:/helpers:ro python:3.11-slim sh /helpers/resolve_check.sh sagemaker boto3
+Python 3.11.18
+pip 26.3 from /usr/local/lib/python3.11/site-packages/pip (python 3.11)
+133 packages would be installed, among them:
+  boto3==1.43.124
+  mlflow==3.18.0
+  mlflow-skinny==3.18.0
+  mlflow-tracing==3.18.0
+  numpy==2.4.6
+  sagemaker==3.29.0
+  sagemaker-core==2.29.0
+  sagemaker-mlflow==0.5.0
+  sagemaker-mlops==1.29.0
+  sagemaker-schema-inference-artifacts==0.0.5
+  sagemaker-serve==1.29.0
+  sagemaker-train==1.29.0
+[exit 0]

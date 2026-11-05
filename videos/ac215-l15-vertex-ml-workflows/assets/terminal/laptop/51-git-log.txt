@@ -1,0 +1,3 @@
+$ git log -1 --format='%H %ci %s'
+f165c6e17895d3d6c33a150d349f4b2649c807db 2025-08-19 08:50:13 -0400 Migrate ml-workflow from GCP to AWS
+[exit 0]

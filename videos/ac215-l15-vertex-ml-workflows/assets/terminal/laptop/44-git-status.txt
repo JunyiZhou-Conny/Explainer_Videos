@@ -1,0 +1,6 @@
+$ git status --short; git check-ignore -v artifacts artifacts/model-mobilenetv2_train_base_True.v1/model.tar.gz
+ M Pipfile
+ M docker-shell.sh
+.gitignore:33:artifacts/	artifacts
+.gitignore:33:artifacts/	artifacts/model-mobilenetv2_train_base_True.v1/model.tar.gz
+[exit 0]

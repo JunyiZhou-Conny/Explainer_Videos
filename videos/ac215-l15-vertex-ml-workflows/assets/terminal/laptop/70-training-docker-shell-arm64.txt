@@ -1,0 +1,68 @@
+$ sh docker-shell.sh
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 DONE 0.0s
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 980B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.11-slim
+#2 DONE 1.2s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 132.10kB 0.0s done
+#4 DONE 0.0s
+
+#5 [1/7] FROM docker.io/library/python:3.11-slim@sha256:db20d8506e2f15b6db39b40b6015ca46bae855dec6dd326d462cfe79ae972893
+#5 resolve docker.io/library/python:3.11-slim@sha256:db20d8506e2f15b6db39b40b6015ca46bae855dec6dd326d462cfe79ae972893 done
+#5 sha256:db20d8506e2f15b6db39b40b6015ca46bae855dec6dd326d462cfe79ae972893 10.37kB / 10.37kB done
+#5 sha256:8f867a1f16776618234a2d0ef41fbb991d0bd0b142c8a95bc37456d8e47104cf 1.75kB / 1.75kB done
+#5 sha256:04f230affa8877281a7d7351193a85323e4263c0df2d3c8d93033ed46a8d8e00 5.50kB / 5.50kB done
+#5 sha256:2b70e040f7d132c8d366ee0223462552686510fb372ea5a83822973c30f19e36 0B / 30.21MB 0.1s
+#5 sha256:fd71dd7cec997a212e8fec2184b13aa5b2f7d2214deee72a1f72d77ba84dfeb5 0B / 1.27MB 0.1s
+#5 sha256:d5c8a71728fc1b352ccf46f67fbe737666cc6748da63d8e5d5790d1f800bc0fe 0B / 14.42MB 0.1s
+#5 sha256:d5c8a71728fc1b352ccf46f67fbe737666cc6748da63d8e5d5790d1f800bc0fe 6.29MB / 14.42MB 0.4s
+#5 sha256:d5c8a71728fc1b352ccf46f67fbe737666cc6748da63d8e5d5790d1f800bc0fe 8.39MB / 14.42MB 0.5s
+#5 sha256:2b70e040f7d132c8d366ee0223462552686510fb372ea5a83822973c30f19e36 6.29MB / 30.21MB 0.7s
+#5 sha256:fd71dd7cec997a212e8fec2184b13aa5b2f7d2214deee72a1f72d77ba84dfeb5 1.27MB / 1.27MB 0.6s done
+#5 sha256:d5c8a71728fc1b352ccf46f67fbe737666cc6748da63d8e5d5790d1f800bc0fe 14.42MB / 14.42MB 0.7s done
+#5 sha256:2bdd609874cf874a5478c3b3b69d1ab25d03c4625dc55dafab86d3b4edcc0657 0B / 252B 0.7s
+#5 sha256:2b70e040f7d132c8d366ee0223462552686510fb372ea5a83822973c30f19e36 11.53MB / 30.21MB 0.9s
+#5 sha256:2bdd609874cf874a5478c3b3b69d1ab25d03c4625dc55dafab86d3b4edcc0657 252B / 252B 0.7s done
+#5 sha256:2b70e040f7d132c8d366ee0223462552686510fb372ea5a83822973c30f19e36 17.83MB / 30.21MB 1.1s
+#5 sha256:2b70e040f7d132c8d366ee0223462552686510fb372ea5a83822973c30f19e36 23.07MB / 30.21MB 1.3s
+#5 sha256:2b70e040f7d132c8d366ee0223462552686510fb372ea5a83822973c30f19e36 26.21MB / 30.21MB 1.4s
+#5 sha256:2b70e040f7d132c8d366ee0223462552686510fb372ea5a83822973c30f19e36 29.36MB / 30.21MB 1.5s
+#5 extracting sha256:2b70e040f7d132c8d366ee0223462552686510fb372ea5a83822973c30f19e36
+#5 sha256:2b70e040f7d132c8d366ee0223462552686510fb372ea5a83822973c30f19e36 30.21MB / 30.21MB 1.5s done
+#5 extracting sha256:2b70e040f7d132c8d366ee0223462552686510fb372ea5a83822973c30f19e36 1.0s done
+#5 extracting sha256:fd71dd7cec997a212e8fec2184b13aa5b2f7d2214deee72a1f72d77ba84dfeb5 0.1s done
+#5 extracting sha256:d5c8a71728fc1b352ccf46f67fbe737666cc6748da63d8e5d5790d1f800bc0fe 0.1s
+#5 extracting sha256:d5c8a71728fc1b352ccf46f67fbe737666cc6748da63d8e5d5790d1f800bc0fe 0.7s done
+#5 extracting sha256:2bdd609874cf874a5478c3b3b69d1ab25d03c4625dc55dafab86d3b4edcc0657
+#5 extracting sha256:2bdd609874cf874a5478c3b3b69d1ab25d03c4625dc55dafab86d3b4edcc0657 done
+#5 DONE 3.5s
+
+#6 [2/7] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client jq unzip &&     pip install pipenv awscli
+#6 0.116 exec /bin/sh: exec format error
+#6 ERROR: process "/bin/sh -c apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client jq unzip &&     pip install pipenv awscli" did not complete successfully: exit code: 255
+------
+ > [2/7] RUN apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client jq unzip &&     pip install pipenv awscli:
+0.116 exec /bin/sh: exec format error
+------
+Dockerfile:11
+--------------------
+  10 |     # Install required dependencies
+  11 | >>> RUN apt-get update && \
+  12 | >>>     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client jq unzip && \
+  13 | >>>     pip install pipenv awscli
+  14 |     
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c apt-get update &&     apt-get install -y curl apt-transport-https ca-certificates gnupg lsb-release openssh-client jq unzip &&     pip install pipenv awscli" did not complete successfully: exit code: 255
+[exit 1]

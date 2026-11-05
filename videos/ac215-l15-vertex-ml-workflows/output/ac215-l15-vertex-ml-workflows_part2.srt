@@ -1,0 +1,1066 @@
+1
+00:00:00,000 --> 00:00:01,000
+Part 2.
+
+2
+00:00:01,237 --> 00:00:06,400
+The lecture draws the problem: four stages,
+each run by a person at a terminal.
+
+3
+00:00:06,720 --> 00:00:08,555
+How do we execute these steps?
+
+4
+00:00:08,875 --> 00:00:10,688
+And can we automate this flow?
+
+5
+00:00:10,933 --> 00:00:12,981
+The answer is an orchestrator.
+
+6
+00:00:13,301 --> 00:00:16,949
+The lecture uses Vertex AI Pipelines,
+on Kubeflow.
+
+7
+00:00:17,269 --> 00:00:22,987
+This tutorial uses SageMaker Pipelines,
+the same idea of managed steps in a graph.
+
+8
+00:00:23,233 --> 00:00:26,092
+Workflow management runs the steps in order,
+
+9
+00:00:26,092 --> 00:00:30,380
+makes a run repeatable,
+gives each step its machine, and shows it.
+
+10
+00:00:30,700 --> 00:00:32,513
+This repo covers those four.
+
+11
+00:00:32,833 --> 00:00:35,180
+Scheduling waits for lecture 23.
+
+12
+00:00:35,500 --> 00:00:38,401
+And it is managed:
+no cluster for you to run.
+
+13
+00:00:38,650 --> 00:00:42,149
+Setup, step 1: clone ml-workflow-aws.
+
+14
+00:00:42,469 --> 00:00:44,325
+Our git clone is extra again.
+
+15
+00:00:44,645 --> 00:00:47,705
+An extra tree
+shows four folders under source:
+
+16
+00:00:47,705 --> 00:00:49,701
+three stages and the workflow.
+
+17
+00:00:50,583 --> 00:00:54,923
+Steps 2 to 5 are console work:
+quick setup for SageMaker AI,
+
+18
+00:00:54,923 --> 00:00:59,479
+and a Unified Studio domain,
+where you will watch the pipeline.
+
+19
+00:00:59,799 --> 00:01:03,346
+Then your bucket,
+and a user named ml-workflow-user,
+
+20
+00:01:03,346 --> 00:01:04,642
+with four policies.
+
+21
+00:01:05,883 --> 00:01:10,342
+Create an access key for the command line,
+and download the .csv file.
+
+22
+00:01:10,662 --> 00:01:13,693
+Quick setup and the Studio domain
+stay in your account:
+
+23
+00:01:13,693 --> 00:01:15,291
+check them when you clean up.
+
+24
+00:01:15,533 --> 00:01:20,601
+Steps 6 and 7:
+install the AWS CLI, then aws configure,
+
+25
+00:01:20,601 --> 00:01:24,194
+and paste the two values from the .csv.
+
+26
+00:01:24,514 --> 00:01:28,381
+From here on,
+we typed obviously fake placeholders,
+
+27
+00:01:28,381 --> 00:01:30,808
+so AWS answers with real errors.
+
+28
+00:01:31,050 --> 00:01:33,333
+Step 8 tests the configuration.
+
+29
+00:01:33,653 --> 00:01:37,578
+AWS itself rejects the fake token
+and the fake key.
+
+30
+00:01:37,898 --> 00:01:40,735
+With yours,
+these print your account and your buckets.
+
+31
+00:01:41,055 --> 00:01:42,805
+Don't go on until they do.
+
+32
+00:01:43,050 --> 00:01:47,684
+Step 9 creates two roles:
+CheeseAppSageMakerExecutionRole,
+
+33
+00:01:47,684 --> 00:01:51,519
+for every job,
+and CheeseAppLambdaExecutionRole.
+
+34
+00:01:51,839 --> 00:01:54,990
+The code builds each ARN
+from your account number
+
+35
+00:01:54,990 --> 00:01:56,533
+and the exact role name,
+
+36
+00:01:56,533 --> 00:01:58,943
+so spell them exactly, and pause here.
+
+37
+00:02:00,517 --> 00:02:02,352
+Data collector, step 1.
+
+38
+00:02:02,672 --> 00:02:03,866
+A small gap first:
+
+39
+00:02:03,866 --> 00:02:07,627
+all four part 2 scripts name the bucket
+from the README,
+
+40
+00:02:07,627 --> 00:02:09,306
+so put yours in each one.
+
+41
+00:02:09,626 --> 00:02:13,488
+Then, in this folder,
+run sh docker-shell.sh.
+
+42
+00:02:13,808 --> 00:02:18,202
+Without keys, the script stops itself:
+AWS not configured.
+
+43
+00:02:18,450 --> 00:02:22,333
+With keys, it builds in 40 seconds
+and opens a root shell.
+
+44
+00:02:22,653 --> 00:02:23,653
+Two notes.
+
+45
+00:02:23,911 --> 00:02:28,690
+This script builds for amd64,
+which Apple silicon emulates.
+
+46
+00:02:29,010 --> 00:02:31,981
+And on Ubuntu or Debian, sh is dash,
+
+47
+00:02:31,981 --> 00:02:36,520
+which skips the key check,
+so run bash docker-shell.sh.
+
+48
+00:02:36,767 --> 00:02:37,767
+Why a shell?
+
+49
+00:02:38,047 --> 00:02:40,074
+The entry point script has a switch.
+
+50
+00:02:40,394 --> 00:02:44,682
+No arguments: it opens bash,
+development mode, where you are now.
+
+51
+00:02:45,002 --> 00:02:48,330
+Arguments: it runs them and exits,
+production mode.
+
+52
+00:02:48,650 --> 00:02:51,146
+The lecture calls that a callable container.
+
+53
+00:02:51,384 --> 00:02:55,331
+Step 2: the search command,
+four cheeses, ten images each.
+
+54
+00:02:55,651 --> 00:02:59,039
+It scrapes the web,
+writes four folders, zips them,
+
+55
+00:02:59,039 --> 00:03:00,899
+and tries to upload raw.zip.
+
+56
+00:03:01,219 --> 00:03:03,586
+AWS rejects our fake key.
+
+57
+00:03:03,834 --> 00:03:06,522
+Step 3, check your bucket, cannot pass here.
+
+58
+00:03:06,842 --> 00:03:09,893
+An extra listing shows 40 images on disk.
+
+59
+00:03:10,213 --> 00:03:14,628
+On the laptop, a root-owned persistent
+folder appeared beside the clones.
+
+60
+00:03:14,867 --> 00:03:16,880
+Data processor, step 1:
+
+61
+00:03:16,880 --> 00:03:21,694
+the arm64 line fails again,
+and the same swap fixes it.
+
+62
+00:03:22,234 --> 00:03:25,797
+Step 2: python cli.py --clean.
+
+63
+00:03:26,117 --> 00:03:28,750
+A duplicate finder checks each label,
+
+64
+00:03:28,750 --> 00:03:33,093
+finds none among these 40,
+and the upload of clean.zip fails.
+
+65
+00:03:33,413 --> 00:03:34,564
+Pause and run it.
+
+66
+00:03:34,800 --> 00:03:38,555
+Steps 3 and 4:
+check your bucket, then --prepare.
+
+67
+00:03:38,875 --> 00:03:44,180
+All 40 images split into 32 for training
+and 8 for validation,
+
+68
+00:03:44,180 --> 00:03:46,491
+in two real TFRecord files.
+
+69
+00:03:46,811 --> 00:03:48,304
+The upload fails again.
+
+70
+00:03:48,624 --> 00:03:50,950
+Step 5 finds them only on disk.
+
+71
+00:03:51,434 --> 00:03:54,100
+The duty cards from the lecture match:
+
+72
+00:03:54,100 --> 00:03:58,730
+download, then verify, remove duplicates
+and convert to TFRecords.
+
+73
+00:03:59,050 --> 00:04:01,915
+And the four labels
+are just the folder names:
+
+74
+00:04:01,915 --> 00:04:04,532
+your search queries, so type them exactly.
+
+75
+00:04:06,833 --> 00:04:08,604
+Model training, step 1.
+
+76
+00:04:08,924 --> 00:04:11,782
+Same arm64 line, same swap.
+
+77
+00:04:12,102 --> 00:04:15,098
+This image installs from its committed lock,
+
+78
+00:04:15,098 --> 00:04:18,161
+with SageMaker version 2,
+so it needs no pin.
+
+79
+00:04:18,400 --> 00:04:20,149
+Step 2, local training.
+
+80
+00:04:20,469 --> 00:04:25,688
+TensorFlow 2.20 on the CPU finds
+the TFRecords from the processor,
+
+81
+00:04:25,688 --> 00:04:27,744
+through the shared folder.
+
+82
+00:04:28,064 --> 00:04:30,432
+Look at the last layer: three outputs.
+
+83
+00:04:30,752 --> 00:04:31,989
+One epoch runs.
+
+84
+00:04:32,309 --> 00:04:34,314
+Its accuracy means nothing yet.
+
+85
+00:04:34,550 --> 00:04:39,009
+Then saving fails:
+Permission denied, /persistent/model.
+
+86
+00:04:39,329 --> 00:04:41,334
+Pause here for two small fixes.
+
+87
+00:04:41,583 --> 00:04:44,033
+First, line 68 says three classes,
+
+88
+00:04:44,033 --> 00:04:48,068
+while the data has four labels,
+so gouda gets no target.
+
+89
+00:04:48,388 --> 00:04:49,647
+Change it to 4.
+
+90
+00:04:49,883 --> 00:04:54,150
+Second, on Linux, Docker created
+the persistent folder as root,
+
+91
+00:04:54,150 --> 00:04:56,859
+and this container runs as the app user.
+
+92
+00:04:57,179 --> 00:05:01,766
+Exit, and on your laptop change its owner
+with the chown command on the card.
+
+93
+00:05:02,086 --> 00:05:07,334
+On a fresh clone, create the folder yourself
+before the first docker-shell.sh.
+
+94
+00:05:07,654 --> 00:05:09,211
+Then run step 2 again.
+
+95
+00:05:09,531 --> 00:05:12,006
+Docker Desktop on a Mac avoids this.
+
+96
+00:05:12,250 --> 00:05:17,950
+It would write to /persistent/model/1:
+the persistent folder on your laptop,
+
+97
+00:05:17,950 --> 00:05:21,850
+or the SageMaker model folder
+inside a training job.
+
+98
+00:05:22,100 --> 00:05:26,428
+Just before the save sits
+the signature change from the lecture:
+
+99
+00:05:26,428 --> 00:05:29,268
+decode, convert, resize, inside the model.
+
+100
+00:05:29,588 --> 00:05:33,385
+A small slip:
+the README gives this job to model deploy.
+
+101
+00:05:33,705 --> 00:05:34,964
+The trainer does it.
+
+102
+00:05:35,200 --> 00:05:41,301
+Step 3: sh package-trainer.sh packs
+the package folder and copies it to S3.
+
+103
+00:05:41,621 --> 00:05:43,179
+The tar file is real.
+
+104
+00:05:43,499 --> 00:05:45,461
+The upload fails on our fake key.
+
+105
+00:05:45,700 --> 00:05:49,220
+Step 4: python cli.py --train.
+
+106
+00:05:49,540 --> 00:05:54,233
+It asks AWS who you are,
+to build the role ARN, and stops there.
+
+107
+00:05:54,553 --> 00:05:58,960
+With keys,
+it starts a training job on ml.m5.xlarge,
+
+108
+00:05:58,960 --> 00:06:00,654
+and returns at once.
+
+109
+00:06:00,900 --> 00:06:05,444
+Step 5: watch it in the console,
+under Training, then Training jobs.
+
+110
+00:06:05,764 --> 00:06:07,406
+Its name starts with cheese.
+
+111
+00:06:08,750 --> 00:06:09,817
+Build and push.
+
+112
+00:06:10,137 --> 00:06:13,081
+The README says
+this step has already been done for you.
+
+113
+00:06:13,401 --> 00:06:17,407
+A small gap: the workflow code
+pulls both images from the ECR
+
+114
+00:06:17,407 --> 00:06:21,806
+registry of your own account,
+so you push them yourself, once each.
+
+115
+00:06:22,050 --> 00:06:26,285
+That is the second step the lecture
+gives for your own containers:
+
+116
+00:06:26,285 --> 00:06:29,943
+push the images
+to a registry the platform can pull from.
+
+117
+00:06:30,183 --> 00:06:34,279
+Steps 1 to 3 go through Docker Hub:
+log in, build, push.
+
+118
+00:06:34,599 --> 00:06:39,186
+The Mac line builds amd64,
+because SageMaker runs that.
+
+119
+00:06:39,833 --> 00:06:41,838
+Step 4 sets five variables.
+
+120
+00:06:42,158 --> 00:06:45,901
+Pasted exactly as written,
+the first line prints two errors,
+
+121
+00:06:45,901 --> 00:06:50,393
+because export rejects the bracket note,
+though the region is still set.
+
+122
+00:06:50,713 --> 00:06:55,215
+The account lookup fails on our fake key,
+and the URI starts with a dot.
+
+123
+00:06:55,450 --> 00:06:58,117
+So paste only the value, us-east-1.
+
+124
+00:06:58,437 --> 00:07:02,486
+And if your URI starts with a dot,
+the account lookup failed:
+
+125
+00:07:02,486 --> 00:07:03,813
+fix your keys first.
+
+126
+00:07:04,050 --> 00:07:05,799
+Step 5 pulls your image.
+
+127
+00:07:06,119 --> 00:07:11,366
+Step 6 creates the repository,
+and the || true at the end hides the error:
+
+128
+00:07:11,366 --> 00:07:13,351
+the command exits with zero.
+
+129
+00:07:13,600 --> 00:07:17,780
+Steps 7 to 11 log Docker in to ECR,
+tag the image,
+
+130
+00:07:17,780 --> 00:07:20,789
+push it, list it, and print the URI.
+
+131
+00:07:21,109 --> 00:07:24,117
+Tag only adds a second name
+to the same image.
+
+132
+00:07:24,437 --> 00:07:27,745
+Run them on your laptop,
+not in the workflow container,
+
+133
+00:07:27,745 --> 00:07:29,429
+which has no docker command.
+
+134
+00:07:29,749 --> 00:07:31,819
+Then repeat for the processor image.
+
+135
+00:07:35,833 --> 00:07:39,673
+Automate the data collector, step 1,
+in the workflow folder.
+
+136
+00:07:39,993 --> 00:07:44,729
+Before you run sh docker-shell.sh,
+the "*" problem returns.
+
+137
+00:07:45,049 --> 00:07:49,294
+A lock is committed,
+but the Dockerfile copies only the Pipfile,
+
+138
+00:07:49,294 --> 00:07:51,748
+so the build would resolve version 3.
+
+139
+00:07:51,983 --> 00:07:53,903
+The checks show the imports failing.
+
+140
+00:07:54,223 --> 00:07:57,060
+So make the same fix first: "<3".
+
+141
+00:08:03,116 --> 00:08:05,761
+Now run sh docker-shell.sh.
+
+142
+00:08:06,081 --> 00:08:09,815
+The banner shows region and bucket,
+and the who am I check fails.
+
+143
+00:08:10,135 --> 00:08:14,231
+Extras: SageMaker version 2 now,
+and no docker command.
+
+144
+00:08:14,551 --> 00:08:18,220
+The socket is mounted,
+but no docker program is inside.
+
+145
+00:08:18,466 --> 00:08:22,946
+From here, the SDK is your remote control,
+as the lecture puts it.
+
+146
+00:08:23,266 --> 00:08:26,466
+Your Python asks, and AWS machines run.
+
+147
+00:08:26,833 --> 00:08:30,908
+Step 2: python cli.py --data_collector.
+
+148
+00:08:31,228 --> 00:08:32,544
+It stops at line 32,
+
+149
+00:08:32,544 --> 00:08:35,702
+a lookup of your account
+at the top of the file,
+
+150
+00:08:35,702 --> 00:08:37,777
+before the function even starts.
+
+151
+00:08:38,097 --> 00:08:42,129
+Every flag of this CLI needs a working key
+at import time.
+
+152
+00:08:42,366 --> 00:08:48,275
+With keys, it builds a processor
+from your ECR image, on one ml.t3.medium.
+
+153
+00:08:48,595 --> 00:08:52,947
+Its entry point is python3
+with the collector cli.py.
+
+154
+00:08:53,267 --> 00:08:56,129
+Then it runs the job
+with the search arguments,
+
+155
+00:08:56,129 --> 00:08:57,833
+and waits, showing the logs.
+
+156
+00:08:58,100 --> 00:08:59,551
+This is production mode.
+
+157
+00:08:59,871 --> 00:09:03,540
+SageMaker puts its own command
+in front of the arguments.
+
+158
+00:09:03,860 --> 00:09:08,617
+Same image, same cli.py,
+on a machine you never log in to.
+
+159
+00:09:08,937 --> 00:09:11,561
+The job acts as the role, not with your key.
+
+160
+00:09:12,783 --> 00:09:16,559
+Step 3: watch it under Processing,
+then Processing jobs.
+
+161
+00:09:18,533 --> 00:09:20,026
+Now the whole pipeline.
+
+162
+00:09:20,346 --> 00:09:26,682
+The slides write steps in the Kubeflow DSL,
+wired by .output and compiled to YAML.
+
+163
+00:09:27,002 --> 00:09:31,312
+Here: SageMaker step classes,
+property references and JSON.
+
+164
+00:09:32,250 --> 00:09:34,383
+First, caching, for 30 days.
+
+165
+00:09:34,703 --> 00:09:38,445
+The first step is a processing step
+named DataCollector,
+
+166
+00:09:38,445 --> 00:09:40,783
+with one declared output, raw-data.
+
+167
+00:09:41,033 --> 00:09:46,470
+The second step, the processor,
+takes as input a property of the collector:
+
+168
+00:09:46,470 --> 00:09:48,500
+its raw-data output, S3 URI.
+
+169
+00:09:48,820 --> 00:09:51,636
+Not a string: a reference,
+and it draws an edge.
+
+170
+00:09:52,400 --> 00:09:56,660
+Training takes the TFRecords
+output of the processor the same way,
+
+171
+00:09:56,660 --> 00:10:00,080
+and the model step takes
+the trained model artifacts.
+
+172
+00:10:00,400 --> 00:10:02,554
+Each reference draws one more edge.
+
+173
+00:10:02,800 --> 00:10:08,005
+Last, the Lambda step named DeployModel
+takes the model name from the model step.
+
+174
+00:10:08,325 --> 00:10:10,849
+Then the pipeline lists all five steps,
+
+175
+00:10:10,849 --> 00:10:16,154
+creates the deploy Lambda from your laptop,
+upserts its definition, and starts it.
+
+176
+00:10:16,950 --> 00:10:18,294
+Something to ponder.
+
+177
+00:10:18,614 --> 00:10:21,174
+Reverse the list of steps
+in the Pipeline call.
+
+178
+00:10:21,494 --> 00:10:22,987
+Does the run order change?
+
+179
+00:10:31,833 --> 00:10:37,764
+No. The order comes from the references:
+each input names the output of another step.
+
+180
+00:10:38,084 --> 00:10:40,750
+The list is a set of steps, not a schedule.
+
+181
+00:10:41,000 --> 00:10:46,568
+An extra, built offline and never sent:
+the JSON definition from the SDK.
+
+182
+00:10:46,888 --> 00:10:50,280
+Five steps, each edge a get
+on a property of another step.
+
+183
+00:10:50,600 --> 00:10:51,922
+Upsert sends this.
+
+184
+00:10:53,100 --> 00:10:54,871
+The lecture draws four steps.
+
+185
+00:10:55,191 --> 00:10:57,047
+Here, deploy splits in two.
+
+186
+00:10:57,367 --> 00:11:00,636
+CreateModel makes the model, and a Lambda,
+
+187
+00:11:00,636 --> 00:11:06,006
+a small function AWS runs
+on demand, creates or updates the endpoint.
+
+188
+00:11:07,250 --> 00:11:08,679
+One honest caveat.
+
+189
+00:11:08,999 --> 00:11:10,682
+The edges set the order,
+
+190
+00:11:10,682 --> 00:11:14,608
+but files also travel
+by fixed names through the bucket:
+
+191
+00:11:14,608 --> 00:11:17,170
+raw.zip, clean.zip and tfrecords.zip.
+
+192
+00:11:17,490 --> 00:11:19,939
+We could not check, without an account,
+
+193
+00:11:19,939 --> 00:11:23,015
+how the training job finds its data
+on SageMaker.
+
+194
+00:11:23,250 --> 00:11:29,437
+Step 1: python cli.py --pipeline
+stops at the same line 32.
+
+195
+00:11:29,757 --> 00:11:32,509
+With keys,
+it prints that the pipeline started.
+
+196
+00:11:32,829 --> 00:11:37,157
+If instead upsert fails
+on the Lambda runtime,
+
+197
+00:11:37,157 --> 00:11:42,237
+add runtime="python3.12"
+to the Lambda call, line 297.
+
+198
+00:11:42,557 --> 00:11:44,385
+Step 2: in Unified Studio,
+
+199
+00:11:44,385 --> 00:11:48,039
+under Build, ML Pipelines,
+you would see this graph.
+
+200
+00:11:48,283 --> 00:11:52,632
+If every step succeeds,
+caching skips unchanged steps for 30 days,
+
+201
+00:11:52,632 --> 00:11:55,003
+so the collector won't scrape again.
+
+202
+00:11:55,323 --> 00:11:58,972
+And a green DeployModel
+only means the Lambda asked:
+
+203
+00:11:58,972 --> 00:12:01,638
+wait until the endpoint is in service.
+
+204
+00:12:01,883 --> 00:12:05,062
+Step 3 tests each component
+with its own flag.
+
+205
+00:12:05,382 --> 00:12:07,579
+Here, all four stop at that line.
+
+206
+00:12:07,899 --> 00:12:11,078
+With keys,
+model deploy makes yet another endpoint.
+
+207
+00:12:12,417 --> 00:12:14,017
+Before you leave, clean up.
+
+208
+00:12:14,337 --> 00:12:17,022
+List your endpoints and delete every one:
+
+209
+00:12:17,022 --> 00:12:20,822
+the timestamped ones from part 1,
+and cheese-app-endpoint.
+
+210
+00:12:21,142 --> 00:12:23,937
+Then delete their configurations and models.
+
+211
+00:12:24,184 --> 00:12:26,189
+Empty and delete both buckets.
+
+212
+00:12:26,509 --> 00:12:28,798
+Delete the two ECR repositories,
+
+213
+00:12:28,798 --> 00:12:32,589
+the deploy Lambda functions,
+and the cheese pipeline.
+
+214
+00:12:32,834 --> 00:12:38,082
+Deactivate and delete the access keys,
+and the users and roles you no longer need.
+
+215
+00:12:38,402 --> 00:12:44,226
+Finally, check the SageMaker AI domain
+and the Unified Studio domain you created.
+
+216
+00:12:47,067 --> 00:12:49,123
+The lecture ends on a factory:
+
+217
+00:12:49,123 --> 00:12:53,168
+your Python is the recipe,
+and SageMaker Pipelines runs it.
+
+218
+00:12:53,488 --> 00:12:57,478
+Today's pictures:
+a key on the laptop and a role in the cloud.
+
+219
+00:12:57,798 --> 00:12:59,270
+A star is not a pin.
+
+220
+00:12:59,590 --> 00:13:02,619
+Preprocessing sits in the client
+or in the model.
+
+221
+00:13:02,939 --> 00:13:07,440
+Three pieces stand behind an endpoint,
+and references draw the edges.
+
+222
+00:13:07,684 --> 00:13:09,967
+Under it, part 1 in four commands.
+
+223
+00:13:10,287 --> 00:13:11,843
+Prepare packs the model,
+
+224
+00:13:11,843 --> 00:13:15,215
+deploy builds the model,
+configuration and endpoint.
+
+225
+00:13:15,535 --> 00:13:18,884
+Predict sends the numbers,
+and delete turns off the meter.
+
+226
+00:13:19,134 --> 00:13:20,243
+Test yourself.
+
+227
+00:13:20,563 --> 00:13:25,811
+Your laptop and the endpoint both reach S3:
+which identity does each use?
+
+228
+00:13:26,131 --> 00:13:30,206
+And why do the option 2 exports
+never reach the part 1 container?
+
+229
+00:13:30,450 --> 00:13:32,605
+Name the three things deploy creates.
+
+230
+00:13:32,925 --> 00:13:36,786
+Which one is the address,
+and which one bills while nobody calls it?
+
+231
+00:13:37,106 --> 00:13:39,508
+Where does preprocessing sit in part 1,
+
+232
+00:13:39,508 --> 00:13:43,080
+and in the part 2 trainer,
+and why move it into the model?
+
+233
+00:13:43,317 --> 00:13:45,984
+Which lines make training wait
+for the processor?
+
+234
+00:13:46,304 --> 00:13:51,296
+Which two one-line fixes did today need,
+and which would an Apple silicon Mac skip?
+
+235
+00:13:51,616 --> 00:13:54,028
+The answers are in the exercises,
+
+236
+00:13:54,028 --> 00:13:57,610
+and lecture 23 triggers the pipeline
+from GitHub.
+

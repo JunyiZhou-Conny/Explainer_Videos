@@ -1,0 +1,4 @@
+$ aws sagemaker delete-endpoint --endpoint-name <your-endpoint-name>
+bash: -c: line 1: syntax error near unexpected token `newline'
+bash: -c: line 1: `aws sagemaker delete-endpoint --endpoint-name <your-endpoint-name>'
+[exit 2]

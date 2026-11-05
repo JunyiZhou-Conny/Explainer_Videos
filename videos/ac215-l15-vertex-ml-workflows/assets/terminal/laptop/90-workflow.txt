@@ -1,0 +1,322 @@
+$ sh docker-shell.sh
+
+[+] Building 0.0s (14/14) FINISHED                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 1.11kB                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-slim                                      0.0s
+ => [internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                          0.0s
+ => [1/9] FROM docker.io/library/python:3.11-slim                                                        0.0s
+ => [internal] load build context                                                                        0.0s
+ => => transferring context: 263B                                                                        0.0s
+ => CACHED [2/9] RUN apt-get update &&     apt-get install -y --no-install-recommends     curl     unzi  0.0s
+ => CACHED [3/9] RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"   0.0s
+ => CACHED [4/9] RUN pip install --no-cache-dir pipenv                                                   0.0s
+ => CACHED [5/9] RUN useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 passw0rd)"   0.0s
+ => CACHED [6/9] WORKDIR /app                                                                            0.0s
+ => CACHED [7/9] ADD --chown=app:app Pipfile /app/                                                       0.0s
+ => CACHED [8/9] RUN pipenv install                                                                      0.0s
+ => CACHED [9/9] ADD --chown=app:app . /app                                                              0.0s
+ => exporting to image                                                                                   0.0s
+ => => exporting layers                                                                                  0.0s
+ => => writing image sha256:78d7f25ee3b36b3b94b49293e648e2730b9bdd12e23afc36634aab227ae65f53             0.0s
+ => => naming to docker.io/library/cheese-app-workflow                                                   0.0s
+Container is running!!!
+AWS Region: us-east-1
+S3 Bucket: cheese-app-ml-workflow-demo
+Package URI: s3://cheese-app-ml-workflow-demo
+
+aws: [ERROR]: An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The security token included in the request is invalid.
+Launching subshell in virtual environment...
+
+(app) app@4fa2d10fae99:/app$ python --version; pip list 2>/dev/null | grep -i -E "^(sagemaker|sagemaker-core|boto3) "; aws --version
+Python 3.11.18
+boto3                     1.43.124
+sagemaker                 2.257.7
+sagemaker-core            1.0.78
+aws-cli/2.39.4 Python/3.14.8 Linux/6.18.44-fc-v236 exe/x86_64.debian.13
+(app) app@4fa2d10fae99:/app$ ls /data-collector /data-processor; docker ps --format "{{.Names}} {{.Image}}"
+/data-collector:
+Dockerfile  Pipfile  Pipfile.lock  __pycache__  cli.py  docker-entrypoint.sh  docker-shell.sh  downloader.py
+
+/data-processor:
+Dockerfile  Pipfile  __pycache__  cleanser.py  cli.py  docker-entrypoint.sh  docker-shell.sh  tfrecords.py
+bash: docker: command not found
+(app) app@4fa2d10fae99:/app$ python cli.py --data_collector
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /home/app/.config/sagemaker/config.yaml
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/__init__.py:86: SageMakerV2DeprecationWarning: You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation()
+You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+INFO:botocore.credentials:Found credentials in environment variables.
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /app/cli.py:32 in <module>                                                                       │
+│                                                                                                  │
+│    29                                                                                            │
+│    30 # Get AWS Account ID for ECR                                                               │
+│    31 sts_client = boto3.client('sts')                                                           │
+│ ❱  32 ACCOUNT_ID = sts_client.get_caller_identity()['Account']                                   │
+│    33                                                                                            │
+│    34 # ECR Docker images                                                                        │
+│    35 DATA_COLLECTOR_IMAGE = f"{ACCOUNT_ID}.dkr.ecr.{AWS_REGION}.amazonaws.com/cheese-app-data   │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 606 in _api_call                                                                                 │
+│                                                                                                  │
+│    603 │   │   │   │   │   f"{py_operation_name}() only accepts keyword arguments."              │
+│    604 │   │   │   │   )                                                                         │
+│    605 │   │   │   # The "self" in this scope is referring to the BaseClient.                    │
+│ ❱  606 │   │   │   return self._make_api_call(operation_name, kwargs)                            │
+│    607 │   │                                                                                     │
+│    608 │   │   _api_call.__name__ = str(py_operation_name)                                       │
+│    609                                                                                           │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/context.py │
+│ :123 in wrapper                                                                                  │
+│                                                                                                  │
+│   120 │   │   │   with start_as_current_context():                                               │
+│   121 │   │   │   │   if hook:                                                                   │
+│   122 │   │   │   │   │   hook()                                                                 │
+│ ❱ 123 │   │   │   │   return func(*args, **kwargs)                                               │
+│   124 │   │                                                                                      │
+│   125 │   │   return wrapper                                                                     │
+│   126                                                                                            │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 1094 in _make_api_call                                                                           │
+│                                                                                                  │
+│   1091 │   │   │   │   'error_code_override'                                                     │
+│   1092 │   │   │   ) or error_info.get("Code")                                                   │
+│   1093 │   │   │   error_class = self.exceptions.from_code(error_code)                           │
+│ ❱ 1094 │   │   │   raise error_class(parsed_response, operation_name)                            │
+│   1095 │   │   else:                                                                             │
+│   1096 │   │   │   return parsed_response                                                        │
+│   1097                                                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+ClientError: An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The
+security token included in the request is invalid.
+(app) app@4fa2d10fae99:/app$ python cli.py --pipeline
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /home/app/.config/sagemaker/config.yaml
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/__init__.py:86: SageMakerV2DeprecationWarning: You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation()
+You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+INFO:botocore.credentials:Found credentials in environment variables.
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /app/cli.py:32 in <module>                                                                       │
+│                                                                                                  │
+│    29                                                                                            │
+│    30 # Get AWS Account ID for ECR                                                               │
+│    31 sts_client = boto3.client('sts')                                                           │
+│ ❱  32 ACCOUNT_ID = sts_client.get_caller_identity()['Account']                                   │
+│    33                                                                                            │
+│    34 # ECR Docker images                                                                        │
+│    35 DATA_COLLECTOR_IMAGE = f"{ACCOUNT_ID}.dkr.ecr.{AWS_REGION}.amazonaws.com/cheese-app-data   │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 606 in _api_call                                                                                 │
+│                                                                                                  │
+│    603 │   │   │   │   │   f"{py_operation_name}() only accepts keyword arguments."              │
+│    604 │   │   │   │   )                                                                         │
+│    605 │   │   │   # The "self" in this scope is referring to the BaseClient.                    │
+│ ❱  606 │   │   │   return self._make_api_call(operation_name, kwargs)                            │
+│    607 │   │                                                                                     │
+│    608 │   │   _api_call.__name__ = str(py_operation_name)                                       │
+│    609                                                                                           │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/context.py │
+│ :123 in wrapper                                                                                  │
+│                                                                                                  │
+│   120 │   │   │   with start_as_current_context():                                               │
+│   121 │   │   │   │   if hook:                                                                   │
+│   122 │   │   │   │   │   hook()                                                                 │
+│ ❱ 123 │   │   │   │   return func(*args, **kwargs)                                               │
+│   124 │   │                                                                                      │
+│   125 │   │   return wrapper                                                                     │
+│   126                                                                                            │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 1094 in _make_api_call                                                                           │
+│                                                                                                  │
+│   1091 │   │   │   │   'error_code_override'                                                     │
+│   1092 │   │   │   ) or error_info.get("Code")                                                   │
+│   1093 │   │   │   error_class = self.exceptions.from_code(error_code)                           │
+│ ❱ 1094 │   │   │   raise error_class(parsed_response, operation_name)                            │
+│   1095 │   │   else:                                                                             │
+│   1096 │   │   │   return parsed_response                                                        │
+│   1097                                                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+ClientError: An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The
+security token included in the request is invalid.
+(app) app@4fa2d10fae99:/app$ python cli.py --data_processor
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /home/app/.config/sagemaker/config.yaml
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/__init__.py:86: SageMakerV2DeprecationWarning: You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation()
+You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+INFO:botocore.credentials:Found credentials in environment variables.
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /app/cli.py:32 in <module>                                                                       │
+│                                                                                                  │
+│    29                                                                                            │
+│    30 # Get AWS Account ID for ECR                                                               │
+│    31 sts_client = boto3.client('sts')                                                           │
+│ ❱  32 ACCOUNT_ID = sts_client.get_caller_identity()['Account']                                   │
+│    33                                                                                            │
+│    34 # ECR Docker images                                                                        │
+│    35 DATA_COLLECTOR_IMAGE = f"{ACCOUNT_ID}.dkr.ecr.{AWS_REGION}.amazonaws.com/cheese-app-data   │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 606 in _api_call                                                                                 │
+│                                                                                                  │
+│    603 │   │   │   │   │   f"{py_operation_name}() only accepts keyword arguments."              │
+│    604 │   │   │   │   )                                                                         │
+│    605 │   │   │   # The "self" in this scope is referring to the BaseClient.                    │
+│ ❱  606 │   │   │   return self._make_api_call(operation_name, kwargs)                            │
+│    607 │   │                                                                                     │
+│    608 │   │   _api_call.__name__ = str(py_operation_name)                                       │
+│    609                                                                                           │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/context.py │
+│ :123 in wrapper                                                                                  │
+│                                                                                                  │
+│   120 │   │   │   with start_as_current_context():                                               │
+│   121 │   │   │   │   if hook:                                                                   │
+│   122 │   │   │   │   │   hook()                                                                 │
+│ ❱ 123 │   │   │   │   return func(*args, **kwargs)                                               │
+│   124 │   │                                                                                      │
+│   125 │   │   return wrapper                                                                     │
+│   126                                                                                            │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 1094 in _make_api_call                                                                           │
+│                                                                                                  │
+│   1091 │   │   │   │   'error_code_override'                                                     │
+│   1092 │   │   │   ) or error_info.get("Code")                                                   │
+│   1093 │   │   │   error_class = self.exceptions.from_code(error_code)                           │
+│ ❱ 1094 │   │   │   raise error_class(parsed_response, operation_name)                            │
+│   1095 │   │   else:                                                                             │
+│   1096 │   │   │   return parsed_response                                                        │
+│   1097                                                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+ClientError: An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The
+security token included in the request is invalid.
+(app) app@4fa2d10fae99:/app$ python cli.py --model_training
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /home/app/.config/sagemaker/config.yaml
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/__init__.py:86: SageMakerV2DeprecationWarning: You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation()
+You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+INFO:botocore.credentials:Found credentials in environment variables.
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /app/cli.py:32 in <module>                                                                       │
+│                                                                                                  │
+│    29                                                                                            │
+│    30 # Get AWS Account ID for ECR                                                               │
+│    31 sts_client = boto3.client('sts')                                                           │
+│ ❱  32 ACCOUNT_ID = sts_client.get_caller_identity()['Account']                                   │
+│    33                                                                                            │
+│    34 # ECR Docker images                                                                        │
+│    35 DATA_COLLECTOR_IMAGE = f"{ACCOUNT_ID}.dkr.ecr.{AWS_REGION}.amazonaws.com/cheese-app-data   │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 606 in _api_call                                                                                 │
+│                                                                                                  │
+│    603 │   │   │   │   │   f"{py_operation_name}() only accepts keyword arguments."              │
+│    604 │   │   │   │   )                                                                         │
+│    605 │   │   │   # The "self" in this scope is referring to the BaseClient.                    │
+│ ❱  606 │   │   │   return self._make_api_call(operation_name, kwargs)                            │
+│    607 │   │                                                                                     │
+│    608 │   │   _api_call.__name__ = str(py_operation_name)                                       │
+│    609                                                                                           │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/context.py │
+│ :123 in wrapper                                                                                  │
+│                                                                                                  │
+│   120 │   │   │   with start_as_current_context():                                               │
+│   121 │   │   │   │   if hook:                                                                   │
+│   122 │   │   │   │   │   hook()                                                                 │
+│ ❱ 123 │   │   │   │   return func(*args, **kwargs)                                               │
+│   124 │   │                                                                                      │
+│   125 │   │   return wrapper                                                                     │
+│   126                                                                                            │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 1094 in _make_api_call                                                                           │
+│                                                                                                  │
+│   1091 │   │   │   │   'error_code_override'                                                     │
+│   1092 │   │   │   ) or error_info.get("Code")                                                   │
+│   1093 │   │   │   error_class = self.exceptions.from_code(error_code)                           │
+│ ❱ 1094 │   │   │   raise error_class(parsed_response, operation_name)                            │
+│   1095 │   │   else:                                                                             │
+│   1096 │   │   │   return parsed_response                                                        │
+│   1097                                                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+ClientError: An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The
+security token included in the request is invalid.
+(app) app@4fa2d10fae99:/app$ python cli.py --model_deploy
+sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /home/app/.config/sagemaker/config.yaml
+/home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/sagemaker/__init__.py:86: SageMakerV2DeprecationWarning: You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+  warn_v2_deprecation()
+You are using the SageMaker Python SDK v2, which is on path of deprecation. v3 is the actively developed major version.
+See https://github.com/aws/sagemaker-python-sdk/blob/master/migration.md for the migration guide. Set SAGEMAKER_SUPPRESS_V2_WARNING=1 to silence this warning.
+INFO:botocore.credentials:Found credentials in environment variables.
+╭─────────────────────────────── Traceback (most recent call last) ────────────────────────────────╮
+│ /app/cli.py:32 in <module>                                                                       │
+│                                                                                                  │
+│    29                                                                                            │
+│    30 # Get AWS Account ID for ECR                                                               │
+│    31 sts_client = boto3.client('sts')                                                           │
+│ ❱  32 ACCOUNT_ID = sts_client.get_caller_identity()['Account']                                   │
+│    33                                                                                            │
+│    34 # ECR Docker images                                                                        │
+│    35 DATA_COLLECTOR_IMAGE = f"{ACCOUNT_ID}.dkr.ecr.{AWS_REGION}.amazonaws.com/cheese-app-data   │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 606 in _api_call                                                                                 │
+│                                                                                                  │
+│    603 │   │   │   │   │   f"{py_operation_name}() only accepts keyword arguments."              │
+│    604 │   │   │   │   )                                                                         │
+│    605 │   │   │   # The "self" in this scope is referring to the BaseClient.                    │
+│ ❱  606 │   │   │   return self._make_api_call(operation_name, kwargs)                            │
+│    607 │   │                                                                                     │
+│    608 │   │   _api_call.__name__ = str(py_operation_name)                                       │
+│    609                                                                                           │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/context.py │
+│ :123 in wrapper                                                                                  │
+│                                                                                                  │
+│   120 │   │   │   with start_as_current_context():                                               │
+│   121 │   │   │   │   if hook:                                                                   │
+│   122 │   │   │   │   │   hook()                                                                 │
+│ ❱ 123 │   │   │   │   return func(*args, **kwargs)                                               │
+│   124 │   │                                                                                      │
+│   125 │   │   return wrapper                                                                     │
+│   126                                                                                            │
+│                                                                                                  │
+│ /home/app/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.11/site-packages/botocore/client.py: │
+│ 1094 in _make_api_call                                                                           │
+│                                                                                                  │
+│   1091 │   │   │   │   'error_code_override'                                                     │
+│   1092 │   │   │   ) or error_info.get("Code")                                                   │
+│   1093 │   │   │   error_class = self.exceptions.from_code(error_code)                           │
+│ ❱ 1094 │   │   │   raise error_class(parsed_response, operation_name)                            │
+│   1095 │   │   else:                                                                             │
+│   1096 │   │   │   return parsed_response                                                        │
+│   1097                                                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+ClientError: An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The
+security token included in the request is invalid.
+(app) app@4fa2d10fae99:/app$ exit
+exit
+[exit 1]
