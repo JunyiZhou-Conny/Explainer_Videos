@@ -271,7 +271,8 @@ Claude Code sessions (Claude) produced it. Verified facts and unclaimed reviews 
 - **Subtitles:** 30 subtitle items applied in `g1.yaml`/`g2.yaml` by the narration/subtitle fixer;
   `python -m explainer.i18n check … --lang zh` printed OK.
 - **Shared:** the S03 "AWS" label on the cloud box's top-left corner (`IdentityBadges`, `common.py:2101`) was reported
-  against `common.py`; no `common.py` fixer ran, so it is **still open** (see "Open nits").
+  against `common.py`. No QA fixer ran on `common.py`; the coordinator fixed it after the final-cut review (see "Fix
+  round after the final-cut checks").
 
 **Narration/subtitle fixer** (36 items): 31 applied, 2 applied in part, 3 nits left unchanged; two of those three were
 then fixed by verifiers in the picture (S01 "this photo": a chip; S15 `--nums 50`), one stays open (S13 "or true").
@@ -290,8 +291,7 @@ then fixed by verifiers in the picture (S01 "this photo": a chip; S15 `--nums 50
   would run ahead of its phrase); S10's bucket form itself is still up about 1.5 s (its value is carried on as a chip);
   S14's import lines land about 1 s after the phrase.
 - **S03 *draft* 03:24, the BLUE "AWS" label sits on the cloud box's corner** (director, part 1, should, the one
-  `shared` item): no `common.py` fixer ran; `common.py:2101` still places it with `next_to(border.get_top(), DR)`. It is
-  on the final cut (see "Open nits").
+  `shared` item): fixed after the final-cut review (commit `abff08c`; see "Fix round after the final-cut checks").
 - **Toolkit requests not acted on** (no `common.py` or `explainer/` fixer ran): `common.tracker()` re-centres its head
   (every scene uses a `fixed_tracker` workaround); `recorded_card()` cannot show a "…" gap (S08's local `gap_card()`);
   `Terminal.fold` splits `<…>` placeholders (S13's local `type_ph()`); `console_form` row spacing (S10); a `folds=`
@@ -316,8 +316,8 @@ then fixed by verifiers in the picture (S01 "this photo": a chip; S15 `--nums 50
     scene; every chapter start shows content.
   - `freezedetect` (picture only, −55 dB, 4 s): 59 near-static stretches, all under running narration except the four
     ponder timers (gate 3).
-  - No clipping, no persistent overlap reported (three crossfades under 0.5 s at 17:45, 23:00, 28:09; but see the S03
-    "AWS" label under "Open nits"), no garbled glyphs (a
+  - No clipping, no persistent overlap reported (three crossfades under 0.5 s at 17:45, 23:00, 28:09; the S03 "AWS" label
+    overlap found by this record's writer was fixed and re-checked in round 2), no garbled glyphs (a
     one-frame ripple at 25:01.0 not visible at 25:00.5 or 25:01.5).
   - Two low items, F1 and F2, both accepted (A1, A5).
   - No instructor name on screen; keys, accounts and ECR URIs only as placeholders.
@@ -361,13 +361,6 @@ then fixed by verifiers in the picture (S01 "this photo": a chip; S15 `--nums 50
 
 None blocks release. Each needs a narration, yaml, `script.md`, scene or toolkit change and a rebuild, which this record
 does not make.
-- **The QA `shared` should, not fixed and not flagged by the final visual check:** in S03 the BLUE "AWS" label beside
-  the laptop|AWS border sits on the cloud box's top-left corner, and the box outline runs through the letters. This
-  record's writer saw it on the final cut at 03:26 (`writer/s03_aws_label_206.png`); the QA watcher gave 03:12–03:33
-  on the draft. Fix (QA proposal): in `IdentityBadges.__init__`, place the label above the box,
-  `label("AWS", 20, CLOUD).next_to(cl, UP, buff=0.08).align_to(cl, LEFT)`, then re-render S03, the only scene that
-  instantiates `IdentityBadges` (`grep` over `scenes/s*.py`; the S10, S14 and S16 reprises named in `BRIEF.md` are
-  drawn with other code and were not looked at for this label). Not ruled on by the coordinator.
 - **ASR listen item** (`report-asr.md`): cue 454 at 26:59.0, the answer to ponder 4, "No. The order comes from the
   references" is heard as "Now, the order comes…" by both models (probability 0.53 base.en, 0.55 large-v3-turbo; every
   other word ≥ 0.99). The subtitle shows "No." Options: a listen at 26:58, or reword ("No, it doesn't.") in a later
@@ -379,8 +372,7 @@ does not make.
 - **Part 2's length:** the brief's "13:59" is the truncated video length (839.95 s); the container rounds to 14:00.0.
 - **Frame rate:** the cut is 60 fps (the 1080p60 scene renders, as in L02–L14); the repo default for new episodes is
   30 fps. The burned copy has one more video frame (109,631) than the clean cut; the audio is identical in length.
-- **Stale previews:** four `output/*_480p15*.mp4` files (2026-11-05 12:22–12:25) are the QA draft, from before the QA
-  fixes, and must not be released as deliverables.
+- **Stale previews:** the four `output/*_480p15*.mp4` QA-draft files were deleted before the episode PR.
 - **No `QA_FOLLOWUPS.md`** for L15, and no Bugbot thread was copied into the episode folder.
 
 ## Verified (final render)
@@ -482,3 +474,17 @@ All numbers are from `measured.json` and the five reports, on the files in `outp
   S14 import line (`build/final-review/verifier/`). It corrected wrong times and counts in place. It did not re-run
   ASR, the pairs reading, the tags frames or the 39 visual sheets, and did not check the instructor name on screen.
 - **Every check in this record is an agent's.**
+
+## Fix round after the final-cut checks
+
+- **S03 cloud-box labels (the QA `shared` should, missed by the round-1 visual check, found by this record's writer at
+  03:26):** in `IdentityBadges.__init__` the grey "laptop" and blue "AWS" labels now sit on one line just above the
+  cloud box's top edge (0.12 above it), so the box outline no longer runs through the letters (commit `abff08c`).
+  `IdentityBadges` is used only by S03; `explainer.check` printed OK and S03 still runs 124.2 s. S03 was re-rendered at
+  1080p and the cut re-stitched and re-burned (still 1827.2 s, 30:27).
+- **Round-2 checks on the new files** (`report-visual.md`, `report-tags.md`, `report-measured.md`; round 1 kept as
+  `report-*-round1.md`): the visual pass read all 39 sheets of the re-burned cut and confirms the labels sit above the
+  box with no overlap and no other change; all 30 lecture tags have the same in/out times as round 1 to the
+  millisecond and their 150 frames are pixel-identical to round 1; the measured checks find all four files decoding
+  with no errors and the same durations, loudness and cue counts as round 1 (file sizes differ slightly). The ASR and
+  pairs reports are from round 1: the narration and subtitles did not change.
