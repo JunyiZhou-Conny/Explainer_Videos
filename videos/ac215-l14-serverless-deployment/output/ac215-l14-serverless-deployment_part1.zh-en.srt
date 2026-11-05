@@ -434,18 +434,18 @@ It is billed while it runs and scales by itself.
 Its four steps: open the console, enable the APIs, write a Python file, deploy.
 
 88
-00:04:43,487 --> 00:04:45,293
+00:04:43,487 --> 00:04:45,189
 有一个名字变了：Cloud Functions
 One name has changed:
 
 89
-00:04:45,293 --> 00:04:47,953
-现在叫 Cloud Run functions，所以 README
+00:04:45,189 --> 00:04:48,122
+现在叫 Cloud Run functions，所以 README 一开始就进
 Cloud Functions are now Cloud Run functions,
 
 90
-00:04:47,953 --> 00:04:52,212
-从 Cloud Run、Services、Write a function 开始
+00:04:48,122 --> 00:04:52,212
+Cloud Run、Services、Write a function
 so the README starts at Cloud Run, Services, Write a function.
 
 91
@@ -1109,166 +1109,171 @@ as a service or a job.
 Its steps: open Cloud Run, enable the APIs, deploy an image.
 
 223
-00:12:54,183 --> 00:12:57,394
-打开 Cloud Run 里 Services 下的 Deploy container，选择
+00:12:54,183 --> 00:12:57,273
+打开 Cloud Run 里 Services 下的 Deploy container
 Open Cloud Run, Services, Deploy container,
 
 224
-00:12:57,394 --> 00:13:01,799
-Deploy one revision from an existing container image
-and choose Deploy one revision from an existing container image.
+00:12:57,273 --> 00:12:59,428
+再选 Deploy one revision
+and choose Deploy one revision
 
 225
+00:12:59,428 --> 00:13:01,799
+from an existing container image
+from an existing container image.
+
+226
 00:13:02,119 --> 00:13:06,322
 粘贴同一个 image，命名为 translation-demo，再选你的区域
 Paste the same image, name it translation-demo, and choose your region.
 
-226
+227
 00:13:07,416 --> 00:13:10,787
 选 Allow public access 和 Request-based billing
 Select Allow public access and Request-based billing.
 
-227
+228
 00:13:11,107 --> 00:13:14,883
 扩缩设置里，最小实例数 0，最大实例数 2
 Under scaling, minimum 0 instances and maximum 2.
 
-228
+229
 00:13:15,133 --> 00:13:17,437
 在 container 设置里
 In the container settings:
 
-229
+230
 00:13:17,437 --> 00:13:22,223
 port 8080，512 MiB，1 个 CPU，命令不动
 port 8080, 512 MiB, 1 CPU, and the command left alone;
 
-230
+231
 00:13:22,223 --> 00:13:25,501
 Cloud Run 会设置 PORT，再去敲这扇门
 Cloud Run sets PORT and knocks on it.
 
-231
+232
 00:13:25,821 --> 00:13:30,941
 然后是 120 秒的超时，每个实例 4 个并发请求
 Then a 120 second timeout and 4 concurrent requests per instance.
 
-232
+233
 00:13:31,183 --> 00:13:35,282
 为什么是 4？每个实例跑的 gunicorn 有 4 个线程
 Why 4? Each instance runs gunicorn with 4 threads,
 
-233
+234
 00:13:35,282 --> 00:13:37,924
 所以它收到的请求永远不会超过它能处理的
 so it never gets more than it can serve.
 
-234
+235
 00:13:38,166 --> 00:13:44,054
 按请求计费、最小实例数为 0 时，计价器只在处理请求的时候走
 With request-based billing and a minimum of 0, the meter moves only while requests are served.
 
-235
+236
 00:13:44,374 --> 00:13:48,001
 这就是课上的承诺：只在代码运行时付钱
 That is the lecture's promise: pay only when your code runs.
 
-236
+237
 00:13:48,321 --> 00:13:52,737
 最小实例数设成 1，或者按实例计费，空闲时间也会计费
 A minimum of 1, or instance-based billing, bills idle time too.
 
-237
+238
 00:13:53,433 --> 00:13:56,270
 并发数 4，最大实例数 2
 Concurrency 4, maximum 2 instances.
 
-238
+239
 00:13:56,590 --> 00:13:58,724
 十个人同时点 Translate
 Ten people press Translate at once.
 
-239
+240
 00:13:59,044 --> 00:14:02,500
 会启动几个实例，最后两个会怎样？
 How many instances start, and what happens to the last two?
 
-240
+241
 00:14:11,350 --> 00:14:14,081
 两个实例，到上限了，一共 8 个空位
 Two instances, the ceiling, with 8 slots.
 
-241
+242
 00:14:14,401 --> 00:14:17,750
 另外两个要等空位，还可能被拒绝
 The other two wait for a free slot and can be refused.
 
-242
+243
 00:14:18,070 --> 00:14:22,221
 调高最大实例数，或者把并发数和线程数一起调高
 Raise the maximum, or raise concurrency together with the threads;
 
-243
+244
 00:14:22,221 --> 00:14:25,289
 调高最小实例数没用。点 Create
 a higher minimum doesn't help. Select Create;
 
-244
+245
 00:14:25,289 --> 00:14:30,921
 录制记录显示公开页面回答 Bonjour à tous，语音还是关着的
 the recording shows the public page answering Bonjour à tous, speech still disabled.
 
-245
+246
 00:14:31,241 --> 00:14:33,523
 然后看 Revision History 和 Logs
 Then check Revision History and Logs.
 
-246
+247
 00:14:33,843 --> 00:14:37,747
 一个 revision，就是 image 加上它的设置部署出去的一个版本
 A revision is a deployed version of the image and its settings.
 
-247
+248
 00:14:38,067 --> 00:14:39,667
 暂停一下，部署你自己的
 Pause and deploy yours.
 
-248
+249
 00:14:39,850 --> 00:14:41,514
 这次什么都没构建
 Nothing was built this time.
 
-249
+250
 00:14:44,050 --> 00:14:46,714
 控制台拿到的是一个 tag，一个可以移动的标签
 The console took a tag, a movable label;
 
-250
+251
 00:14:46,714 --> 00:14:50,109
 revision 记住的是 digest，一个固定的指纹
 the revision keeps the digest, a fixed fingerprint.
 
-251
+252
 00:14:50,429 --> 00:14:53,799
 以后要复现一次部署，就按 digest 部署
 To reproduce a deployment later, deploy by digest.
 
-252
+253
 00:14:54,033 --> 00:14:58,065
 用 gcloud 的替代做法，一条命令就设好同样的值
 The gcloud alternative sets the same values in one command.
 
-253
+254
 00:15:01,033 --> 00:15:04,724
 上半场完成：你笔记本上的页面有了公网 URL
 First half done: your laptop's page at a public URL.
 
-254
+255
 00:15:05,044 --> 00:15:06,951
 但 Play audio 还在等
 But Play audio still waits:
 
-255
+256
 00:15:06,951 --> 00:15:12,468
 要说话，应用得调用一个会问调用方是谁的 API。那是谁？
 to speak, the app must call an API that asks who is calling. Who is it?

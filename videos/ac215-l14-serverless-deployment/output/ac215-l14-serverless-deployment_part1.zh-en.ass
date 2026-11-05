@@ -99,9 +99,9 @@ Dialogue: 0,0:04:24.80,0:04:29.06,Bilingual,,0,0,0,,课上说它是一段由事�
 Dialogue: 0,0:04:29.06,0:04:33.74,Bilingual,,0,0,0,,比如一次文件上传、一次数据库变更，或者今天的 HTTP 请求\N{\fs33\c&H00C8C0B8&\bord1.4}like a file upload, a database change, or today, an HTTP request.
 Dialogue: 0,0:04:34.06,0:04:36.79,Bilingual,,0,0,0,,它只在运行时计费，而且会自动扩缩\N{\fs33\c&H00C8C0B8&\bord1.4}It is billed while it runs and scales by itself.
 Dialogue: 0,0:04:37.30,0:04:43.17,Bilingual,,0,0,0,,它的四步：打开控制台、启用 API、写一个 Python 文件、部署\N{\fs33\c&H00C8C0B8&\bord1.4}Its four steps: open the console, enable the APIs, write a Python file, deploy.
-Dialogue: 0,0:04:43.49,0:04:45.29,Bilingual,,0,0,0,,有一个名字变了：Cloud Functions\N{\fs33\c&H00C8C0B8&\bord1.4}One name has changed:
-Dialogue: 0,0:04:45.29,0:04:47.95,Bilingual,,0,0,0,,现在叫 Cloud Run functions，所以 README\N{\fs33\c&H00C8C0B8&\bord1.4}Cloud Functions are now Cloud Run functions,
-Dialogue: 0,0:04:47.95,0:04:52.21,Bilingual,,0,0,0,,从 Cloud Run、Services、Write a function 开始\N{\fs33\c&H00C8C0B8&\bord1.4}so the README starts at Cloud Run, Services, Write a function.
+Dialogue: 0,0:04:43.49,0:04:45.19,Bilingual,,0,0,0,,有一个名字变了：Cloud Functions\N{\fs33\c&H00C8C0B8&\bord1.4}One name has changed:
+Dialogue: 0,0:04:45.19,0:04:48.12,Bilingual,,0,0,0,,现在叫 Cloud Run functions，所以 README 一开始就进\N{\fs33\c&H00C8C0B8&\bord1.4}Cloud Functions are now Cloud Run functions,
+Dialogue: 0,0:04:48.12,0:04:52.21,Bilingual,,0,0,0,,Cloud Run、Services、Write a function\N{\fs33\c&H00C8C0B8&\bord1.4}so the README starts at Cloud Run, Services, Write a function.
 Dialogue: 0,0:04:52.45,0:04:54.14,Bilingual,,0,0,0,,这会打开 Create service\N{\fs33\c&H00C8C0B8&\bord1.4}That opens Create service.
 Dialogue: 0,0:04:54.46,0:04:56.55,Bilingual,,0,0,0,,如果它提示，就启用 API\N{\fs33\c&H00C8C0B8&\bord1.4}Enable the APIs if it asks.
 Dialogue: 0,0:04:56.87,0:05:00.36,Bilingual,,0,0,0,,把 service 命名为 translate-function，再选你的区域\N{\fs33\c&H00C8C0B8&\bord1.4}Name the service translate-function and choose your region.
@@ -234,8 +234,9 @@ Dialogue: 0,0:12:36.98,0:12:39.84,Bilingual,,0,0,0,,右边那个数字必须是�
 Dialogue: 0,0:12:44.43,0:12:47.43,Bilingual,,0,0,0,,课上讲的 Cloud Run 跑的是整个 container\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's Cloud Run runs a whole container,
 Dialogue: 0,0:12:47.43,0:12:49.03,Bilingual,,0,0,0,,作为 service 或者 job\N{\fs33\c&H00C8C0B8&\bord1.4}as a service or a job.
 Dialogue: 0,0:12:49.25,0:12:53.95,Bilingual,,0,0,0,,它的步骤：打开 Cloud Run、启用 API、部署一个 image\N{\fs33\c&H00C8C0B8&\bord1.4}Its steps: open Cloud Run, enable the APIs, deploy an image.
-Dialogue: 0,0:12:54.18,0:12:57.39,Bilingual,,0,0,0,,打开 Cloud Run 里 Services 下的 Deploy container，选择\N{\fs33\c&H00C8C0B8&\bord1.4}Open Cloud Run, Services, Deploy container,
-Dialogue: 0,0:12:57.39,0:13:01.80,Bilingual,,0,0,0,,Deploy one revision from an existing container image\N{\fs33\c&H00C8C0B8&\bord1.4}and choose Deploy one revision from an existing container image.
+Dialogue: 0,0:12:54.18,0:12:57.27,Bilingual,,0,0,0,,打开 Cloud Run 里 Services 下的 Deploy container\N{\fs33\c&H00C8C0B8&\bord1.4}Open Cloud Run, Services, Deploy container,
+Dialogue: 0,0:12:57.27,0:12:59.43,Bilingual,,0,0,0,,再选 Deploy one revision\N{\fs33\c&H00C8C0B8&\bord1.4}and choose Deploy one revision
+Dialogue: 0,0:12:59.43,0:13:01.80,Bilingual,,0,0,0,,from an existing container image\N{\fs33\c&H00C8C0B8&\bord1.4}from an existing container image.
 Dialogue: 0,0:13:02.12,0:13:06.32,Bilingual,,0,0,0,,粘贴同一个 image，命名为 translation-demo，再选你的区域\N{\fs33\c&H00C8C0B8&\bord1.4}Paste the same image, name it translation-demo, and choose your region.
 Dialogue: 0,0:13:07.42,0:13:10.79,Bilingual,,0,0,0,,选 Allow public access 和 Request-based billing\N{\fs33\c&H00C8C0B8&\bord1.4}Select Allow public access and Request-based billing.
 Dialogue: 0,0:13:11.11,0:13:14.88,Bilingual,,0,0,0,,扩缩设置里，最小实例数 0，最大实例数 2\N{\fs33\c&H00C8C0B8&\bord1.4}Under scaling, minimum 0 instances and maximum 2.

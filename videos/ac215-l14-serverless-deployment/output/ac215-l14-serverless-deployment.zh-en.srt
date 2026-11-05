@@ -434,18 +434,18 @@ It is billed while it runs and scales by itself.
 Its four steps: open the console, enable the APIs, write a Python file, deploy.
 
 88
-00:04:43,487 --> 00:04:45,293
+00:04:43,487 --> 00:04:45,189
 有一个名字变了：Cloud Functions
 One name has changed:
 
 89
-00:04:45,293 --> 00:04:47,953
-现在叫 Cloud Run functions，所以 README
+00:04:45,189 --> 00:04:48,122
+现在叫 Cloud Run functions，所以 README 一开始就进
 Cloud Functions are now Cloud Run functions,
 
 90
-00:04:47,953 --> 00:04:52,212
-从 Cloud Run、Services、Write a function 开始
+00:04:48,122 --> 00:04:52,212
+Cloud Run、Services、Write a function
 so the README starts at Cloud Run, Services, Write a function.
 
 91
@@ -1109,1471 +1109,1476 @@ as a service or a job.
 Its steps: open Cloud Run, enable the APIs, deploy an image.
 
 223
-00:12:54,183 --> 00:12:57,394
-打开 Cloud Run 里 Services 下的 Deploy container，选择
+00:12:54,183 --> 00:12:57,273
+打开 Cloud Run 里 Services 下的 Deploy container
 Open Cloud Run, Services, Deploy container,
 
 224
-00:12:57,394 --> 00:13:01,799
-Deploy one revision from an existing container image
-and choose Deploy one revision from an existing container image.
+00:12:57,273 --> 00:12:59,428
+再选 Deploy one revision
+and choose Deploy one revision
 
 225
+00:12:59,428 --> 00:13:01,799
+from an existing container image
+from an existing container image.
+
+226
 00:13:02,119 --> 00:13:06,322
 粘贴同一个 image，命名为 translation-demo，再选你的区域
 Paste the same image, name it translation-demo, and choose your region.
 
-226
+227
 00:13:07,416 --> 00:13:10,787
 选 Allow public access 和 Request-based billing
 Select Allow public access and Request-based billing.
 
-227
+228
 00:13:11,107 --> 00:13:14,883
 扩缩设置里，最小实例数 0，最大实例数 2
 Under scaling, minimum 0 instances and maximum 2.
 
-228
+229
 00:13:15,133 --> 00:13:17,437
 在 container 设置里
 In the container settings:
 
-229
+230
 00:13:17,437 --> 00:13:22,223
 port 8080，512 MiB，1 个 CPU，命令不动
 port 8080, 512 MiB, 1 CPU, and the command left alone;
 
-230
+231
 00:13:22,223 --> 00:13:25,501
 Cloud Run 会设置 PORT，再去敲这扇门
 Cloud Run sets PORT and knocks on it.
 
-231
+232
 00:13:25,821 --> 00:13:30,941
 然后是 120 秒的超时，每个实例 4 个并发请求
 Then a 120 second timeout and 4 concurrent requests per instance.
 
-232
+233
 00:13:31,183 --> 00:13:35,282
 为什么是 4？每个实例跑的 gunicorn 有 4 个线程
 Why 4? Each instance runs gunicorn with 4 threads,
 
-233
+234
 00:13:35,282 --> 00:13:37,924
 所以它收到的请求永远不会超过它能处理的
 so it never gets more than it can serve.
 
-234
+235
 00:13:38,166 --> 00:13:44,054
 按请求计费、最小实例数为 0 时，计价器只在处理请求的时候走
 With request-based billing and a minimum of 0, the meter moves only while requests are served.
 
-235
+236
 00:13:44,374 --> 00:13:48,001
 这就是课上的承诺：只在代码运行时付钱
 That is the lecture's promise: pay only when your code runs.
 
-236
+237
 00:13:48,321 --> 00:13:52,737
 最小实例数设成 1，或者按实例计费，空闲时间也会计费
 A minimum of 1, or instance-based billing, bills idle time too.
 
-237
+238
 00:13:53,433 --> 00:13:56,270
 并发数 4，最大实例数 2
 Concurrency 4, maximum 2 instances.
 
-238
+239
 00:13:56,590 --> 00:13:58,724
 十个人同时点 Translate
 Ten people press Translate at once.
 
-239
+240
 00:13:59,044 --> 00:14:02,500
 会启动几个实例，最后两个会怎样？
 How many instances start, and what happens to the last two?
 
-240
+241
 00:14:11,350 --> 00:14:14,081
 两个实例，到上限了，一共 8 个空位
 Two instances, the ceiling, with 8 slots.
 
-241
+242
 00:14:14,401 --> 00:14:17,750
 另外两个要等空位，还可能被拒绝
 The other two wait for a free slot and can be refused.
 
-242
+243
 00:14:18,070 --> 00:14:22,221
 调高最大实例数，或者把并发数和线程数一起调高
 Raise the maximum, or raise concurrency together with the threads;
 
-243
+244
 00:14:22,221 --> 00:14:25,289
 调高最小实例数没用。点 Create
 a higher minimum doesn't help. Select Create;
 
-244
+245
 00:14:25,289 --> 00:14:30,921
 录制记录显示公开页面回答 Bonjour à tous，语音还是关着的
 the recording shows the public page answering Bonjour à tous, speech still disabled.
 
-245
+246
 00:14:31,241 --> 00:14:33,523
 然后看 Revision History 和 Logs
 Then check Revision History and Logs.
 
-246
+247
 00:14:33,843 --> 00:14:37,747
 一个 revision，就是 image 加上它的设置部署出去的一个版本
 A revision is a deployed version of the image and its settings.
 
-247
+248
 00:14:38,067 --> 00:14:39,667
 暂停一下，部署你自己的
 Pause and deploy yours.
 
-248
+249
 00:14:39,850 --> 00:14:41,514
 这次什么都没构建
 Nothing was built this time.
 
-249
+250
 00:14:44,050 --> 00:14:46,714
 控制台拿到的是一个 tag，一个可以移动的标签
 The console took a tag, a movable label;
 
-250
+251
 00:14:46,714 --> 00:14:50,109
 revision 记住的是 digest，一个固定的指纹
 the revision keeps the digest, a fixed fingerprint.
 
-251
+252
 00:14:50,429 --> 00:14:53,799
 以后要复现一次部署，就按 digest 部署
 To reproduce a deployment later, deploy by digest.
 
-252
+253
 00:14:54,033 --> 00:14:58,065
 用 gcloud 的替代做法，一条命令就设好同样的值
 The gcloud alternative sets the same values in one command.
 
-253
+254
 00:15:01,033 --> 00:15:04,724
 上半场完成：你笔记本上的页面有了公网 URL
 First half done: your laptop's page at a public URL.
 
-254
+255
 00:15:05,044 --> 00:15:06,951
 但 Play audio 还在等
 But Play audio still waits:
 
-255
+256
 00:15:06,951 --> 00:15:12,468
 要说话，应用得调用一个会问调用方是谁的 API。那是谁？
 to speak, the app must call an API that asks who is calling. Who is it?
 
-256
+257
 00:15:13,517 --> 00:15:18,715
 第 3 部分。README 把两个问题分开：谁可以调用我们的公开应用
 Part 3. The README separates two questions: who may call our public app,
 
-257
+258
 00:15:18,715 --> 00:15:20,920
 以及运行中的应用可以访问什么
 and what the running app may access.
 
-258
+259
 00:15:21,167 --> 00:15:25,211
 第一扇门，谁可以调用它，就是 Allow public access
 The first door, who may call it, is Allow public access;
 
-259
+260
 00:15:25,211 --> 00:15:28,100
 gcloud 里写成 --no-invoker-iam-check
 gcloud spells it --no-invoker-iam-check.
 
-260
+261
 00:15:28,420 --> 00:15:33,156
 如果组织政策禁止它，这个 URL 就返回 403
 If an organization policy forbids it, the URL answers 403.
 
-261
+262
 00:15:34,100 --> 00:15:35,700
 那么，快速测一下
 So, a quick test.
 
-262
+263
 00:15:35,764 --> 00:15:37,940
 这个 service 允许公开访问
 The service allows public access.
 
-263
+264
 00:15:38,260 --> 00:15:40,415
 那它能因此调用 Agent Platform 吗？
 Does that let it call Agent Platform?
 
-264
+265
 00:15:47,250 --> 00:15:50,151
 不能。那扇门只放调用方进来
 No. That door only admits callers.
 
-265
+266
 00:15:50,471 --> 00:15:55,741
 往外调用走的是另一扇门，用的是这个 service 运行时的身份
 Calling out goes through the other door, as whatever identity the service runs as;
 
-266
+267
 00:15:55,741 --> 00:16:00,690
 在你挂上一个之前，一般就是项目的默认计算账号
 until you attach one, that is normally the project's default compute account.
 
-267
+268
 00:16:00,934 --> 00:16:05,554
 第 1 步：在 API Library 里启用 Agent Platform API
 Step 1: in the API Library, enable the Agent Platform API,
 
-268
+269
 00:16:05,554 --> 00:16:11,131
 这是控制台现在对前几讲所说的 Vertex AI 的叫法
 the console's current name for what earlier lectures called Vertex AI.
 
-269
+270
 00:16:11,367 --> 00:16:12,565
 第 2 和第 3 步
 Steps 2 and 3:
 
-270
+271
 00:16:12,565 --> 00:16:16,628
 建一个服务账号，名字叫 Translation demo runtime
 create a service account named Translation demo runtime,
 
-271
+272
 00:16:16,628 --> 00:16:19,410
 ID 是 translation-demo-runtime
 with the ID translation-demo-runtime.
 
-272
+273
 00:16:19,767 --> 00:16:21,367
 第 4 步：两个角色
 Step 4: two roles.
 
-273
+274
 00:16:21,623 --> 00:16:24,567
 Agent Platform User 让它可以调用模型
 Agent Platform User lets it call the model.
 
-274
+275
 00:16:24,887 --> 00:16:29,118
 Service Usage Consumer 让它可以把调用记到一个配额项目上
 Service Usage Consumer lets it charge calls to a quota project:
 
-275
+276
 00:16:29,118 --> 00:16:32,610
 也就是这些调用占用哪个项目的配额、记到哪个项目的账单上
 the project whose quota and bill they count against.
 
-276
+277
 00:16:32,930 --> 00:16:34,807
 应用在那里填的是你的项目
 The app names your project there.
 
-277
+278
 00:16:35,127 --> 00:16:38,327
 两个主账号字段都留空，点 Done
 Leave both principal fields empty and select Done.
 
-278
+279
 00:16:38,567 --> 00:16:40,786
 第 5 步：记下这个账号的邮箱
 Step 5: note the account's email.
 
-279
+280
 00:16:41,106 --> 00:16:43,389
 不用创建也不用下载密钥
 No key to create or download:
 
-280
+281
 00:16:43,389 --> 00:16:47,169
 第 3 讲里有一个 JSON 密钥放在 secrets 目录里
 in lecture 3 a JSON key sat in a secrets folder;
 
-281
+282
 00:16:47,169 --> 00:16:48,769
 这里根本没有
 here none exists.
 
-282
+283
 00:16:48,828 --> 00:16:53,948
 录制记录显示账号已启用，没有密钥；暂停一下，建一个你自己的
 The recording shows the account enabled, with no keys; pause and create yours.
 
-283
+284
 00:16:54,184 --> 00:17:00,259
 用 gcloud 的替代做法，会启用 API、创建账号、加上两个角色
 The gcloud alternative enables the API, creates the account, and adds the two roles;
 
-284
+285
 00:17:00,259 --> 00:17:03,080
 两条绑定都在整个项目上
 both bindings are on the whole project.
 
-285
+286
 00:17:04,117 --> 00:17:07,059
 挂上这个账号，需要你自己的一项权限
 Attaching the account takes a permission of yours:
 
-286
+287
 00:17:07,059 --> 00:17:09,237
 这个账号上的 Service Account User
 Service Account User on that account.
 
-287
+288
 00:17:09,557 --> 00:17:13,376
 这是你的部署权限，和这个账号自己的角色是两回事
 That is your deployment right, separate from the account's own roles.
 
-288
+289
 00:17:13,617 --> 00:17:16,862
 第 1 步：打开 translation-demo。第 2 步
 Step 1: open translation-demo. Step 2:
 
-289
+290
 00:17:16,862 --> 00:17:21,361
 在 Security 标签页里选你的运行时账号，核对它的邮箱
 on the Security tab, choose your runtime account, and check its email.
 
-290
+291
 00:17:22,684 --> 00:17:27,103
 有一个小疏漏：README 在 3.3 节里说会给这个权限
 A small gap: the README promises this access in section 3.3,
 
-291
+292
 00:17:27,103 --> 00:17:30,492
 但那一节给的是 Token Creator
 but that section grants Token Creator instead.
 
-292
+293
 00:17:30,812 --> 00:17:35,718
 项目所有者本来就有；在受限的项目里，去问课程组
 Project owners already have it; in a restricted project, ask course staff.
 
-293
+294
 00:17:35,967 --> 00:17:38,506
 第 3 步：三个环境变量
 Step 3: three environment variables.
 
-294
+295
 00:17:38,826 --> 00:17:40,391
 ENABLE SPEECH 设成 true
 ENABLE_SPEECH, true;
 
-295
+296
 00:17:40,391 --> 00:17:43,366
 GOOGLE CLOUD PROJECT 设成你的项目 ID
 GOOGLE_CLOUD_PROJECT, your project ID;
 
-296
+297
 00:17:43,366 --> 00:17:46,420
 GOOGLE CLOUD LOCATION 设成 us-central1
 and GOOGLE_CLOUD_LOCATION, us-central1.
 
-297
+298
 00:17:46,740 --> 00:17:48,741
 这个 service 跑在多伦多
 The service runs in Toronto,
 
-298
+299
 00:17:48,741 --> 00:17:52,244
 模型在 us-central1：两个不同的设置
 the model in us-central1: two different settings.
 
-299
+300
 00:17:52,484 --> 00:17:54,583
 第 4 步：点 View diff & redeploy
 Step 4: View diff & redeploy,
 
-300
+301
 00:17:54,583 --> 00:17:57,479
 Serve this revision immediately 保持打开
 keep Serve this revision immediately on,
 
-301
+302
 00:17:57,479 --> 00:17:59,079
 再点 Deploy changes
 then Deploy changes.
 
-302
+303
 00:17:59,247 --> 00:18:03,748
 这会产生一个新的 revision；旧的实例是换掉，不是改掉
 That makes a new revision; the old instance is replaced, not edited.
 
-303
+304
 00:18:04,068 --> 00:18:06,094
 第 5 步：等它上线
 Step 5: wait for the rollout.
 
-304
+305
 00:18:06,367 --> 00:18:07,967
 来看语音这条链路
 Here is the speech path.
 
-305
+306
 00:18:08,159 --> 00:18:11,564
 应用会检查开关，再查长度和语言
 The app checks the flag, the size and the language,
 
-306
+307
 00:18:11,564 --> 00:18:14,502
 然后向 Google 的身份验证库要一个令牌
 then asks Google's auth library for a token;
 
-307
+308
 00:18:14,502 --> 00:18:16,906
 在 Cloud Run 上，由工牌提供
 on Cloud Run, the badge supplies it.
 
-308
+309
 00:18:17,226 --> 00:18:20,255
 这个查找过程就是应用默认凭据
 That lookup is Application Default Credentials.
 
-309
+310
 00:18:20,575 --> 00:18:24,574
 在 us-central1 里，Gemini 语音直接把音频发回来
 Gemini speech in us-central1 sends audio straight back;
 
-310
+311
 00:18:24,574 --> 00:18:26,174
 不经过 bucket
 no bucket.
 
-311
+312
 00:18:26,534 --> 00:18:30,587
 第 6 步：刷新页面，因为它在加载时检查开关
 Step 6: reload the page, because it checks the flag when it loads.
 
-312
+313
 00:18:30,907 --> 00:18:32,809
 然后点 Translate 和 Play audio
 Then Translate and Play audio;
 
-313
+314
 00:18:32,809 --> 00:18:35,409
 录制记录显示法语音频在播放
 the recording shows French audio playing.
 
-314
+315
 00:18:35,729 --> 00:18:39,120
 金色标签：每点一次 Play audio，就是一次付费的模型调用
 A gold tag: each Play audio is a paid model call.
 
-315
+316
 00:18:39,367 --> 00:18:44,700
 第 7 步：如果失败了，先看报错信息和日志，再去改权限
 Step 7: if it fails, check the message and the logs before changing permissions.
 
-316
+317
 00:18:45,020 --> 00:18:49,415
 没有开关，你会得到我们录到的 503：语音已关闭
 Without the flag, you get our captured 503: speech is disabled.
 
-317
+318
 00:18:49,735 --> 00:18:53,639
 缺身份，或者调用被拒，各有各的报错信息
 A missing identity or a denied call each has its own message.
 
-318
+319
 00:18:53,884 --> 00:18:56,999
 这就是控制和调试受限的问题，现在变得可以应付了
 That is limited control and debugging, made workable.
 
-319
+320
 00:18:57,319 --> 00:19:01,286
 用 gcloud 的替代做法，一条命令就做同样的改动
 The gcloud alternative makes the same change in one command.
 
-320
+321
 00:19:04,217 --> 00:19:09,198
 3.3 节是可选的，需要 uv：你要怎么在本地开发
 Section 3.3 is optional, and needs uv: how would you develop locally,
 
-321
+322
 00:19:09,198 --> 00:19:12,302
 又不用每改一次就发布一个 image？
 without publishing an image for every edit?
 
-322
+323
 00:19:12,622 --> 00:19:18,010
 有了应用默认凭据，同一份代码在 Cloud Run 上能找到令牌
 Application Default Credentials lets the same code find a token on Cloud Run
 
-323
+324
 00:19:18,010 --> 00:19:19,854
 在你的笔记本上能找到文件
 and a file on your laptop.
 
-324
+325
 00:19:20,100 --> 00:19:24,964
 为了测试运行时账号真实的权限，你的笔记本会 impersonate 它
 To test the runtime account's real permissions, your laptop impersonates it.
 
-325
+326
 00:19:25,284 --> 00:19:30,044
 你以自己的身份登录，再以这个账号的身份拿到短期令牌
 You sign in as yourself and receive short-lived tokens as that account;
 
-326
+327
 00:19:30,044 --> 00:19:32,324
 从头到尾都不下载私钥
 no private key is ever downloaded.
 
-327
+328
 00:19:32,567 --> 00:19:34,747
 第 1 步：在运行时账号上
 Step 1: on the runtime account,
 
-328
+329
 00:19:34,747 --> 00:19:38,263
 给你自己的用户授予 Service Account Token Creator
 grant your own user Service Account Token Creator.
 
-329
+330
 00:19:38,583 --> 00:19:42,850
 把预选的角色换掉，别留着 Service Account Admin
 Replace any preselected role, and don't leave Service Account Admin.
 
-330
+331
 00:19:43,170 --> 00:19:47,223
 再启用 IAM Service Account Credentials API
 Enable the IAM Service Account Credentials API too.
 
-331
+332
 00:19:47,467 --> 00:19:52,025
 第 2 步开头的三条命令，是在终端里重复第 1 步
 Step 2 begins with three commands that repeat step 1 from the terminal;
 
-332
+333
 00:19:52,025 --> 00:19:54,272
 如果你用的是控制台，就跳过它们
 if you used the console, skip them.
 
-333
+334
 00:19:54,517 --> 00:19:57,764
 然后是两条新命令：一次 application-default login
 Then two new ones: an application-default login,
 
-334
+335
 00:19:57,764 --> 00:20:01,621
 impersonate 运行时账号，再设它的配额项目
 impersonating the runtime account, and its quota project.
 
-335
+336
 00:20:01,941 --> 00:20:04,494
 它和 gcloud auth login 是两回事
 It is separate from gcloud auth login,
 
-336
+337
 00:20:04,494 --> 00:20:08,661
 它的文件留在你的机器上，永远不进 Git，也不进 image
 and its file stays on your machine, never in Git or the image.
 
-337
+338
 00:20:08,981 --> 00:20:10,359
 暂停一下，登录
 Pause and sign in;
 
-338
+339
 00:20:10,359 --> 00:20:15,018
 受限的项目可能还要给你 Service Usage Consumer
 a restricted project may also need Service Usage Consumer for you.
 
-339
+340
 00:20:15,267 --> 00:20:18,586
 第 3 步：进入 tutorial 下的 app 目录
 Step 3: change into the tutorial app folder,
 
-340
+341
 00:20:18,586 --> 00:20:20,472
 运行 uv sync --frozen
 and run uv sync --frozen.
 
-341
+342
 00:20:20,792 --> 00:20:25,379
 它完全照着 lock 文件装了 41 个包
 It installs 41 packages exactly as the lock file says.
 
-342
+343
 00:20:25,699 --> 00:20:29,368
 额外跑一下 uv tree，能看到六个直接依赖
 An extra uv tree shows the six direct dependencies.
 
-343
+344
 00:20:29,617 --> 00:20:32,499
 第 4 步：在跑过 export 的那个终端里
 Step 4: in the terminal with your exports,
 
-344
+345
 00:20:32,499 --> 00:20:36,617
 带上那三个变量、把 PORT 设成 8086 启动应用
 start the app with the three variables and PORT set to 8086;
 
-345
+346
 00:20:36,617 --> 00:20:38,470
 这次 port 由你来设
 this time you set the port.
 
-346
+347
 00:20:38,790 --> 00:20:40,045
 暂停一下，跑起来
 Pause, run it,
 
-347
+348
 00:20:40,045 --> 00:20:43,630
 然后在 localhost 8086 上翻译、点 Play audio
 then translate and Play audio at localhost 8086;
 
-348
+349
 00:20:43,630 --> 00:20:45,894
 有了你的登录，它就会说话
 with your sign-in, it speaks.
 
-349
+350
 00:20:46,134 --> 00:20:50,486
 额外检查：按钮现在写着 Play audio，翻译也正常
 Extra checks: the button now says Play audio, and translation works.
 
-350
+351
 00:20:50,806 --> 00:20:55,051
 语音返回 503：Google 凭据不可用
 Speech answers 503: Google credentials are unavailable.
 
-351
+352
 00:20:55,371 --> 00:20:58,934
 这就是缺了登录，跳过第 2 步你就会看到它
 That is the missing sign-in, what you see if you skip step 2.
 
-352
+353
 00:20:59,584 --> 00:21:03,146
 第 5 步：往上退两级，回到 repo 根目录
 Step 5: go back up two levels to the repository root.
 
-353
+354
 00:21:04,483 --> 00:21:08,256
 第 4 部分。一个 web 请求背后有人在等
 Part 4. A web request has a person waiting,
 
-354
+355
 00:21:08,256 --> 00:21:12,030
 但一份翻译后的有声版本应该拿到输入
 but a translated audio edition should take its input,
 
-355
+356
 00:21:12,030 --> 00:21:15,448
 再翻译、朗读、保存文件，然后退出
 translate it, speak it, save the files and exit.
 
-356
+357
 00:21:15,768 --> 00:21:17,083
 这就是 job
 That is a job.
 
-357
+358
 00:21:17,133 --> 00:21:21,080
 课上说一个 container 可以作为 service 或者 job 来跑
 The lecture says a container runs as a service or as a job.
 
-358
+359
 00:21:21,400 --> 00:21:25,609
 同一个 image，两个程序：serve 一直监听，没有尽头
 Same image, two programs: serve keeps listening, with no end;
 
-359
+360
 00:21:25,609 --> 00:21:27,885
 batch 走完四步就退出
 batch walks four steps and exits.
 
-360
+361
 00:21:29,466 --> 00:21:35,913
 这种形状你见过：上周的 Vertex AI 训练任务也是有限的工作
 You have seen this shape before: last week's Vertex AI training job was finite work too:
 
-361
+362
 00:21:35,913 --> 00:21:37,744
 启动、训练、保存、退出
 start, train, save, exit.
 
-362
+363
 00:21:37,983 --> 00:21:41,994
 一个 job 没有 URL，它的磁盘在退出时就没了
 A job has no URL, and its disk vanishes when it exits.
 
-363
+364
 00:21:42,314 --> 00:21:45,836
 所以输入从 Storage 来，结果也回到那里
 So input comes from Storage and results go back there;
 
-364
+365
 00:21:45,836 --> 00:21:49,226
 远程的 container 看不到你笔记本上的文件
 a remote container cannot see a file on your laptop.
 
-365
+366
 00:21:49,466 --> 00:21:52,239
 第 1 步：Cloud Storage、Buckets、Create
 Step 1: Cloud Storage, Buckets, Create.
 
-366
+367
 00:21:52,559 --> 00:21:54,857
 第 2 步：起一个全局唯一的名字
 Step 2: a globally unique name,
 
-367
+368
 00:21:54,857 --> 00:21:58,341
 比如你的项目 ID 加上 translation input
 such as your project ID plus translation input.
 
-368
+369
 00:21:58,661 --> 00:22:01,523
 第 3 步：区域选多伦多，存储类别选 Standard
 Step 3: region Toronto, class Standard,
 
-369
+370
 00:22:01,523 --> 00:22:03,358
 开启禁止公开访问
 public access prevention,
 
-370
+371
 00:22:03,358 --> 00:22:07,834
 统一访问也开启，软删除保持默认，然后点 Create 和 Confirm
 uniform access, default soft delete, then Create and Confirm.
 
-371
+372
 00:22:08,154 --> 00:22:09,716
 暂停一下，建好它
 Pause and create it.
 
-372
+373
 00:22:09,766 --> 00:22:12,731
 第 4 步：再建一个单独的输出 bucket
 Step 4: repeat for a separate output bucket.
 
-373
+374
 00:22:13,051 --> 00:22:16,012
 金色标签：文件存在期间存储就计费
 A gold tag: storage bills while files exist,
 
-374
+375
 00:22:16,012 --> 00:22:19,174
 软删除还会把删掉的文件保留一段时间
 and soft delete keeps deleted ones for a while.
 
-375
+376
 00:22:19,416 --> 00:22:24,211
 第 5 步：在输入 bucket 里建一个叫 run-001 的目录
 Step 5: create a folder named run-001 in the input bucket
 
-376
+377
 00:22:24,211 --> 00:22:28,248
 把示例段落传进去，就是四行短句
 and upload the sample passage, four short lines.
 
-377
+378
 00:22:28,568 --> 00:22:31,107
 第 6 步：复制它的 Storage URI
 Step 6: copy its Storage URI.
 
-378
+379
 00:22:31,427 --> 00:22:33,902
 暂停一下，上传，再复制 URI
 Pause, upload and copy the URI.
 
-379
+380
 00:22:34,150 --> 00:22:39,121
 这个 run-001 是你自己选的前缀，不是真的目录
 That run-001 is a prefix you chose, not a real directory.
 
-380
+381
 00:22:39,441 --> 00:22:40,946
 用 gcloud 的替代做法
 The gcloud alternative
 
-381
+382
 00:22:40,946 --> 00:22:44,774
 一个命令框就建好两个 bucket，再上传段落
 makes both buckets and uploads the passage in one block.
 
-382
+383
 00:22:48,283 --> 00:22:51,931
 4.2 节：这个 job 有自己的身份
 Section 4.2: the job gets its own identity.
 
-383
+384
 00:22:52,251 --> 00:22:54,188
 建 translation-audio-job
 Create translation-audio-job,
 
-384
+385
 00:22:54,188 --> 00:22:57,862
 给它同样的两个项目级角色，记下它的邮箱
 give it the same two project roles, and note its email.
 
-385
+386
 00:22:58,100 --> 00:23:01,859
 然后按 bucket 授权：输入 bucket 给 Storage Object Viewer
 Then, per bucket: Storage Object Viewer on the input,
 
-386
+387
 00:23:01,859 --> 00:23:04,767
 输出 bucket 给 Storage Object Creator
 and Storage Object Creator on the output,
 
-387
+388
 00:23:04,767 --> 00:23:08,383
 它能加文件，但不能列出，也不能覆盖
 which adds files but cannot list or overwrite them.
 
-388
+389
 00:23:08,703 --> 00:23:10,720
 而 web service 的账号两个都不需要
 The web account needs neither.
 
-389
+390
 00:23:10,770 --> 00:23:15,807
 你自己的身份要上传、执行和查看结果，各要单独的权限
 Your own identity needs separate rights to upload, execute and see results.
 
-390
+391
 00:23:16,127 --> 00:23:18,752
 暂停一下，把账号和两条授权都建好
 Pause and create the account and both grants.
 
-391
+392
 00:23:19,000 --> 00:23:23,266
 用 gcloud 的替代做法，会创建账号，再加上全部四条授权
 The gcloud alternative creates the account and adds all four grants.
 
-392
+393
 00:23:26,133 --> 00:23:27,133
 4.3 节
 Section 4.3:
 
-393
+394
 00:23:27,133 --> 00:23:32,170
 挂上这个账号，同样要你在它上面有 Service Account User
 attaching this account again takes your Service Account User on it.
 
-394
+395
 00:23:32,490 --> 00:23:35,517
 在 Cloud Run 里 Jobs 下的 Deploy container
 In Cloud Run, Jobs, Deploy container opens Create job.
 
-395
+396
 00:23:35,517 --> 00:23:37,070
 会打开 Create job
 In Cloud Run, Jobs, Deploy container opens Create job.
 
-396
+397
 00:23:37,120 --> 00:23:40,554
 同一个 image，名字叫 translation-audio，1 个 task
 The same image, the name translation-audio, 1 task.
 
-397
+398
 00:23:40,816 --> 00:23:42,018
 Container command
 Container command:
 
-398
+399
 00:23:42,018 --> 00:23:44,289
 输入 python，再按 Enter，生成一个 chip
 python, then Enter to make a chip.
 
-399
+400
 00:23:44,443 --> 00:23:48,198
 它填的是 entrypoint 那个位置，这个 image 把它留空了
 It fills the entrypoint slot, which this image left empty.
 
-400
+401
 00:23:48,433 --> 00:23:49,738
 Container arguments
 Container arguments:
 
-401
+402
 00:23:49,738 --> 00:23:55,089
 11 个值，每个值一个 chip，合在一起占掉命令那个位置
 eleven values, each its own chip, and together they take the command slot's place.
 
-402
+403
 00:23:55,409 --> 00:24:00,166
 -m、translation demo、batch、input URI 和你的段落
 -m, translation_demo, batch, input URI and your passage,
 
-403
+404
 00:24:00,166 --> 00:24:04,753
 source en、destination fr，output URI 和你的前缀
 source en, destination fr, output URI and your prefix.
 
-404
+405
 00:24:05,073 --> 00:24:07,740
 每个 chip 就是参数列表里的一项
 Each chip is one item of the argument list.
 
-405
+406
 00:24:07,983 --> 00:24:13,128
 然后是同样的三个变量、5 分钟的 task 超时、0 次重试
 Then the same three variables, a task timeout of 5 minutes, and 0 retries,
 
-406
+407
 00:24:13,128 --> 00:24:15,492
 因为一次重试会重复付费的工作
 because a retry repeats paid work.
 
-407
+408
 00:24:15,812 --> 00:24:19,140
 在 Security 里，按邮箱选 job 的账号
 On Security, choose the job's account by its email.
 
-408
+409
 00:24:19,460 --> 00:24:23,321
 Execute job immediately 不要勾选，然后点 Create
 Leave Execute job immediately unchecked, then select Create;
 
-409
+410
 00:24:23,321 --> 00:24:24,900
 暂停一下，把它建好
 pause and build it.
 
-410
+411
 00:24:24,950 --> 00:24:26,907
 把 11 个值全贴进一个 chip
 Paste all eleven into one chip,
 
-411
+412
 00:24:26,907 --> 00:24:31,137
 Python 就会去找一个以这一整句为名字的模块
 and Python looks for a module with that whole sentence as its name.
 
-412
+413
 00:24:31,457 --> 00:24:33,355
 名字在第一个点那里被截断
 The name is cut at the first dot.
 
-413
+414
 00:24:35,166 --> 00:24:36,766
 再看另一种错误
 Now the other mistake.
 
-414
+415
 00:24:36,958 --> 00:24:41,459
 你把 11 个参数 chip 都填了，却把 Container command 留空
 You fill all eleven argument chips but leave Container command empty.
 
-415
+416
 00:24:41,779 --> 00:24:43,636
 这个 container 会试着运行什么？
 What does the container try to run?
 
-416
+417
 00:24:52,483 --> 00:24:57,134
 参数替换了默认命令，又没有 entrypoint
 The arguments replace the default command, and with no entrypoint,
 
-417
+418
 00:24:57,134 --> 00:24:58,755
 -m 就成了要运行的程序
 -m becomes the program.
 
-418
+419
 00:24:59,075 --> 00:25:02,339
 在 Docker 里复现的版本失败了：找不到可执行文件
 Docker's version fails: executable not found.
 
-419
+420
 00:25:03,483 --> 00:25:07,400
 如果什么都不改，这个 job 会启动 web 服务器
 With nothing changed, the job starts the web server and waits
 
-420
+421
 00:25:07,400 --> 00:25:10,160
 一直等到 5 分钟后超时把它判为失败
 until the timeout fails it after 5 minutes.
 
-421
+422
 00:25:10,400 --> 00:25:14,156
 用 gcloud 的替代做法，传的是同样的 11 个值
 The gcloud alternative passes the same eleven values,
 
-422
+423
 00:25:14,156 --> 00:25:16,778
 用逗号隔开，命令用 python
 comma separated, with command python.
 
-423
+424
 00:25:18,200 --> 00:25:22,403
 4.4 节：打开这个 job，点 Execute
 Section 4.4: open the job and select Execute.
 
-424
+425
 00:25:22,723 --> 00:25:26,371
 录制记录显示它成功了，History 里有一个绿勾
 The recording shows it succeeding, with a green check in History.
 
-425
+426
 00:25:26,917 --> 00:25:28,517
 红色标记意味着什么？
 What would a red mark mean?
 
-426
+427
 00:25:28,752 --> 00:25:33,199
 我们在笔记本上额外跑了一次，不开语音开关，它以退出码 1 退出
 Our extra laptop run without the speech flag exits with status 1,
 
-427
+428
 00:25:33,199 --> 00:25:36,346
 这是一次如实的失败，所以 History 说的是真话
 an honest failure, so History tells the truth.
 
-428
+429
 00:25:37,300 --> 00:25:40,863
 第 2 步：打开这次执行，再点 Tasks 里的 View logs
 Step 2: open the execution, then Tasks, View logs.
 
-429
+430
 00:25:41,183 --> 00:25:43,999
 这个 job 会退出；它没有 web URL
 The job exits; it has no web URL.
 
-430
+431
 00:25:44,319 --> 00:25:46,691
 它最后的输出是一段 JSON 摘要
 Its last output is a JSON summary
 
-431
+432
 00:25:46,691 --> 00:25:50,525
 里面有输出和 manifest 的位置、状态 complete
 with the output and manifest locations, status complete,
 
-432
+433
 00:25:50,525 --> 00:25:51,917
 还有那几个文件
 and the files.
 
-433
+434
 00:25:51,967 --> 00:25:56,127
 第 3 步：打开你的输出 bucket，再打开 run-001
 Step 3: open your output bucket, then run-001.
 
-434
+435
 00:25:56,447 --> 00:25:58,964
 里面是一个名字随机的目录
 Inside is a folder with a random name.
 
-435
+436
 00:25:59,284 --> 00:26:01,366
 第 4 步：三个文件
 Step 4: three files:
 
-436
+437
 00:26:01,366 --> 00:26:06,153
 translated.txt、speech.wav 和 manifest.json
 translated.txt, speech.wav, and manifest.json.
 
-437
+438
 00:26:06,400 --> 00:26:07,822
 顺序很重要
 The order matters.
 
-438
+439
 00:26:07,872 --> 00:26:09,659
 每次上传都是只创建、不覆盖
 Each upload is create-only,
 
-439
+440
 00:26:09,659 --> 00:26:13,035
 而写着 complete 的 manifest 最后才写
 and the manifest, saying complete, is written last.
 
-440
+441
 00:26:13,355 --> 00:26:14,733
 它就是回执
 It is the receipt.
 
-441
+442
 00:26:14,783 --> 00:26:16,575
 那么，第三个要看的地方
 So, the third place to look.
 
-442
+443
 00:26:16,895 --> 00:26:22,463
 绿勾说明进程以 0 退出；manifest 说明工作完成了
 A green check says the process exited with 0; the manifest says the work is complete.
 
-443
+444
 00:26:22,783 --> 00:26:25,279
 没有 manifest 的文件什么都证明不了
 Files without a manifest prove nothing.
 
-444
+445
 00:26:25,517 --> 00:26:28,824
 同一个 job 再执行一次，参数不变
 Execute the same job again, with the same arguments.
 
-445
+446
 00:26:29,144 --> 00:26:31,042
 第一次的结果会被覆盖吗？
 Is the first result overwritten?
 
-446
+447
 00:26:37,883 --> 00:26:41,745
 不会。一个新的 attempt 目录出现在第一个旁边
 No. A new attempt folder lands beside the first,
 
-447
+448
 00:26:41,745 --> 00:26:44,390
 只创建的上传也不能覆盖
 and create-only uploads cannot overwrite.
 
-448
+449
 00:26:44,710 --> 00:26:50,641
 但这不是恰好一次：一次重试会重复付费的工作，所以重试设成 0
 But it is not exactly once: a retry repeats paid work, which is why retries are 0.
 
-449
+450
 00:26:50,883 --> 00:26:54,680
 第 5 步：用下载图标下载文本和音频
 Step 5: download the text and the audio with the icons.
 
-450
+451
 00:26:55,000 --> 00:26:56,600
 暂停一下，跑你的 job
 Pause and run your job.
 
-451
+452
 00:26:56,856 --> 00:27:01,742
 金色标签：每次执行按运行时间计费，再加一次语音调用
 A gold tag: each execution bills its running time plus one speech call.
 
-452
+453
 00:27:01,983 --> 00:27:04,849
 用 gcloud 的替代做法，会带 --wait 执行
 The gcloud alternative executes with --wait,
 
-453
+454
 00:27:04,849 --> 00:27:08,170
 建一个 results 目录，再把输出拷下来
 makes a results folder, and copies the output down.
 
-454
+455
 00:27:08,490 --> 00:27:10,901
 这个 --wait 参数不会实时显示你应用的日志
 The --wait flag does not stream your app's logs.
 
-455
+456
 00:27:11,150 --> 00:27:15,189
 README 的检查点：task 完成了，进程停了
 The README's checkpoint: the task finished, the process stopped,
 
-456
+457
 00:27:15,189 --> 00:27:17,209
 它的文件留在 Storage 里
 and its files remain in Storage.
 
-457
+458
 00:27:18,250 --> 00:27:21,471
 4.5 节：从终端提交新的工作
 Section 4.5: new work from the terminal.
 
-458
+459
 00:27:21,791 --> 00:27:23,726
 先说你自己的一项权限
 First, a permission of yours:
 
-459
+460
 00:27:23,726 --> 00:27:29,599
 带覆盖参数运行 job 需要单独的权限，和 job 账号的角色无关
 running a job with overrides needs its own right, separate from the job account's roles.
 
-460
+461
 00:27:29,833 --> 00:27:31,540
 到现在只用了控制台？
 Console only so far?
 
-461
+462
 00:27:31,860 --> 00:27:33,694
 先把终端设置跑一遍
 Run the terminal setup first.
 
-462
+463
 00:27:34,014 --> 00:27:37,705
 存一段短文，不超过 5000 个字符
 Save a short passage, under 5,000 characters,
 
-463
+464
 00:27:37,705 --> 00:27:42,462
 作为 repo 根目录下的 passage.txt，或者直接复制示例
 as passage.txt in the repository root, or copy the sample.
 
-464
+465
 00:27:42,782 --> 00:27:46,902
 把两个 bucket 名字 export 出来，再把它上传到 run-002 下
 Export both bucket names and upload it under run-002;
 
-465
+466
 00:27:46,902 --> 00:27:49,545
 它又会停在占位符那里
 it stops at the placeholder again.
 
-466
+467
 00:27:49,783 --> 00:27:53,090
 第 3 步：带覆盖参数执行已有的 job
 Step 3: execute the existing job with overrides.
 
-467
+468
 00:27:53,410 --> 00:27:57,286
 它们会替换整个参数列表，只对这次执行有效
 They replace the whole argument list for this execution only:
 
-468
+469
 00:27:57,286 --> 00:27:58,886
 一个新路径，再加上西班牙语
 a new path and Spanish.
 
-469
+470
 00:27:59,106 --> 00:28:03,778
 保存的 job 里还是法语，而且你漏掉的参数不会从它那里补上
 The saved job still says French, and a flag you leave out is not taken from it.
 
-470
+471
 00:28:05,050 --> 00:28:11,045
 第 4 步：成功之后，建好 results 目录，把 run-002 拷下来
 Step 4: after it succeeds, make the results folder and copy run-002 down.
 
-471
+472
 00:28:11,365 --> 00:28:15,098
 README 的录制记录显示一次成功的西班牙语执行
 The README's recording shows a successful Spanish execution.
 
-472
+473
 00:28:15,333 --> 00:28:18,832
 4.6 节：helper 脚本把这三步合在一起
 Section 4.6: the helper combines all three.
 
-473
+474
 00:28:19,152 --> 00:28:21,370
 额外跑一次 dry run，能看到它的计划
 An extra dry run shows its plan.
 
-474
+475
 00:28:21,690 --> 00:28:26,267
 它上传到一个新的 run 目录，用时间加一段随机字符命名
 It uploads to a fresh run folder named by the time and a random part,
 
-475
+476
 00:28:26,267 --> 00:28:29,584
 再带着 11 个参数执行，然后下载
 executes with the eleven arguments, and downloads.
 
-476
+477
 00:28:29,833 --> 00:28:34,242
 真跑的时候，它会在运行每条 gcloud 命令之前先打印出来
 Run for real, it prints each gcloud command before running it and stops
 
-477
+478
 00:28:34,242 --> 00:28:35,842
 遇到第一个失败就停
 at the first failure.
 
-478
+479
 00:28:36,062 --> 00:28:37,983
 暂停一下，用你的名字跑一遍
 Pause and run it with your names.
 
-479
+480
 00:28:39,950 --> 00:28:43,790
 第 2 步：打开结果目录，播放 speech.wav
 Step 2: open the result folder and play speech.wav.
 
-480
+481
 00:28:44,110 --> 00:28:47,530
 这个 helper 脚本只有在找到完整的 manifest 之后
 The helper prints Downloaded results only after it finds a complete manifest: the receipt again.
 
-481
+482
 00:28:47,530 --> 00:28:50,339
 才会打印 Downloaded results：又是回执
 The helper prints Downloaded results only after it finds a complete manifest: the receipt again.
 
-482
+483
 00:28:53,583 --> 00:28:57,987
 收尾清理。第 1 步：把想留的东西下载下来。第 2 步
 Clean up. Step 1: download what you want to keep. Step 2:
 
-483
+484
 00:28:57,987 --> 00:29:02,159
 删掉 translate-function 和 translation-demo，再删 job
 delete translate-function and translation-demo, then the job.
 
-484
+485
 00:29:02,516 --> 00:29:06,176
 第 3 步：删掉你的 bucket 和两个运行时账号
 Step 3: delete your buckets and the two runtime accounts
 
-485
+486
 00:29:06,176 --> 00:29:07,776
 前提是已经没有东西在用它们
 once nothing uses them.
 
-486
+487
 00:29:07,999 --> 00:29:12,148
 第 4 步：Artifact Registry 里那个函数的 image
 Step 4: the function's image in Artifact Registry, still there
 
-487
+488
 00:29:12,148 --> 00:29:13,887
 service 删了它还在
 after the service is gone.
 
-488
+489
 00:29:14,207 --> 00:29:16,020
 暂停一下，现在全部删掉
 Pause and delete them all now.
 
-489
+490
 00:29:16,266 --> 00:29:17,624
 补充两点
 Two additions.
 
-490
+491
 00:29:17,674 --> 00:29:23,690
 软删除的文件还会计费一段时间；构建还会留下源代码归档和日志
 Soft-deleted files stay billable for a while; the build also leaves source archives and logs.
 
-491
+492
 00:29:24,010 --> 00:29:27,786
 还有，README 也说了，留着那个共享的公开 image；别人也在用
 And, per the README, keep the shared public image; others use it.
 
-492
+493
 00:29:29,233 --> 00:29:30,634
 卡在哪一步了？
 Stuck on a step?
 
-493
+494
 00:29:30,684 --> 00:29:34,630
 README 最后有一张故障排查表，列出症状和检查方法
 The README ends with a troubleshooting table of symptoms and checks.
 
-494
+495
 00:29:37,566 --> 00:29:39,159
 来看整张地图
 Here is the whole map.
 
-495
+496
 00:29:39,209 --> 00:29:42,942
 第 1 部分交出的是一个文件，image 由 Cloud Build 来做
 Part 1 handed over a file, and Cloud Build made the image.
 
-496
+497
 00:29:43,262 --> 00:29:45,781
 第 2 到第 4 部分交出的是一个 image
 Parts 2 to 4 handed over one image:
 
-497
+498
 00:29:45,781 --> 00:29:50,601
 一个能缩容到零的 service，和一个带着回执退出的 job
 a service that scales to zero, and a job that exits with a receipt.
 
-498
+499
 00:29:50,850 --> 00:29:53,943
 现在看课上说的三个缺点，和我们的回答
 Now the lecture's three downsides, and our answers.
 
-499
+500
 00:29:54,263 --> 00:29:58,423
 冷启动：最小实例数设成 1，能让一个实例一直热着，但要花钱
 Cold starts: a minimum of 1 keeps an instance warm, for money.
 
-500
+501
 00:29:58,666 --> 00:30:04,420
 控制和调试受限：有三个地方可看，构建日志、service 日志
 Limited control and debugging: three places to look, the build logs, the service logs,
 
-501
+502
 00:30:04,420 --> 00:30:07,755
 以及 job 的日志和 manifest。厂商锁定
 and the job's logs and manifest. Vendor lock-in:
 
-502
+503
 00:30:07,755 --> 00:30:11,385
 image 和 Functions Framework 都在你的笔记本上跑过
 the image and the Functions Framework ran on your laptop;
 
-503
+504
 00:30:11,385 --> 00:30:15,269
 只有控制台、权限和构建才是 Google 的
 only the console, the permissions and the build are Google's.
 
-504
+505
 00:30:15,516 --> 00:30:19,380
 下一讲：给训练好的模型建一个 Vertex AI endpoint
 Next lecture: a Vertex AI endpoint for a trained model,
 
-505
+506
 00:30:19,380 --> 00:30:20,833
 然后是 pipeline
 then pipelines.
 
-506
+507
 00:30:20,883 --> 00:30:22,824
 自测一下，每道题都暂停想一想
 Test yourself, pausing on each.
 
-507
+508
 00:30:23,144 --> 00:30:25,982
 第一题：把第 1 和第 2 部分放到课上的地图上
 One: place parts 1 and 2 on the lecture's map.
 
-508
+509
 00:30:26,302 --> 00:30:28,862
 你交出的是什么，image 又是谁构建的？
 What do you hand over, and who builds the image?
 
-509
+510
 00:30:29,100 --> 00:30:33,405
 第二题：哪两个设置会让计价器在没人用的时候也走
 Two: which two settings make the meter run while nobody uses the app,
 
-510
+511
 00:30:33,405 --> 00:30:35,713
 最小实例又能买到什么？
 and what does a minimum instance buy?
 
-511
+512
 00:30:35,950 --> 00:30:38,446
 第三题：谁可以调用它，它又以谁的身份运行
 Three: who may call it, and who it runs as.
 
-512
+513
 00:30:38,766 --> 00:30:42,307
 各由哪个设置回答，为什么不需要密钥文件？
 Which setting answers each, and why is no key file needed?
 
-513
+514
 00:30:42,550 --> 00:30:46,794
 第四题：为什么这个 job 要设一个命令和 11 个独立的参数
 Four: why does the job set a command and eleven separate arguments,
 
-514
+515
 00:30:46,794 --> 00:30:48,694
 两个都不设会怎样？
 and what happens with neither?
 
-515
+516
 00:30:48,933 --> 00:30:52,211
 第五题：说出课上讲的 serverless 的三个缺点
 Five: name the lecture's three downsides of serverless,
 
-516
+517
 00:30:52,211 --> 00:30:54,714
 以及这个教程针对每一个给了你什么
 and what this tutorial gives you for each.

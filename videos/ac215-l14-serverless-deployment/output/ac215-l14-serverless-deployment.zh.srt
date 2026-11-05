@@ -306,14 +306,14 @@ image 用 app 目录
 API、写一个 Python 文件、部署
 
 69
-00:04:43,487 --> 00:04:47,157
+00:04:43,487 --> 00:04:46,821
 有一个名字变了：Cloud Functions
 现在叫 Cloud Run functions
 
 70
-00:04:47,157 --> 00:04:52,212
-所以 README 从
-Cloud Run、Services、Write a function 开始
+00:04:46,821 --> 00:04:52,212
+所以 README 一开始就进
+Cloud Run、Services、Write a function
 
 71
 00:04:52,450 --> 00:04:54,135
@@ -841,13 +841,13 @@ gunicorn 是主进程，所以它会干净地退出
 打开 Cloud Run、启用 API、部署一个 image
 
 187
-00:12:54,183 --> 00:12:57,394
+00:12:54,183 --> 00:12:57,273
 打开 Cloud Run 里 Services
-下的 Deploy container，选择
+下的 Deploy container
 
 188
-00:12:57,394 --> 00:13:01,799
-Deploy one revision
+00:12:57,273 --> 00:13:01,799
+再选 Deploy one revision
 from an existing container image
 
 189
