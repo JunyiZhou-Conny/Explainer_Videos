@@ -424,11 +424,11 @@ SHOW: No tracker yet. LECTURE 18 · 25–26 (APIs). A25 redrawn: a GREY laptop l
 right, a loop of two PINK arrows "HTTP request" (top) and "HTTP response" (bottom); an envelope
 travels the loop once. On "a port", the server grows four small doors labelled `22`, `80`, `443`
 (lecture) and, in YELLOW, the tutorial's `9000`, `8080`, `3000`, `8000`.
-SAY: First, the lecture's basics. A browser sends a request; a server sends a response. A port picks which program gets it: public sites hide 80 and 443, while our tutorial addresses show theirs.
+SAY: First, the lecture's basics. A browser sends a request; a server sends a response. A port picks which program gets it: public sites leave the default 80 and 443 out of the address, but our tutorial addresses show the port.
 
-SHOW: LECTURE 18 · 27–28 (APIs). The loop shrinks. A27's ladder as a four-step card, each step
-writing on: "API" → "Web API (over HTTP)" → "REST API (URLs + JSON)" → "FastAPI" (PURPLE). Then
-A28's picture: three GREY client chips (browser, mobile, edge) whose PINK "REST / JSON" lines merge
+SHOW: LECTURE 18 · 27–28 (APIs). The loop shrinks. A27's ladder as one chip that Transforms during
+the first sentence: "API" → "Web API (over HTTP)" → "REST API (HTTP methods: GET, POST, PUT, DELETE)"
+→ "FastAPI" (PURPLE). On "Every client", A28's picture: three GREY client chips (browser, mobile, edge) whose PINK "REST / JSON" lines merge
 into one line that crosses a dashed divider to one TEAL "API" box, which fans out to "stores",
 "databases", "models".
 SAY: In this course, an API means a REST API, built with FastAPI. Every client talks to that one API, and only the API talks to the stores.
@@ -438,7 +438,7 @@ Full-width terminal `laptop`, prompt `student@laptop:~$`. A README card (`README
 "go to the location where cheese-app-v1/api-service". It types `cd cheese-app-v1/api-service` →
 TERM(a01: 2) RED. TRACKER [A] 1 · extra: it types `cd cheese-app-v1/src/api-service && ls` (extra,
 tag `erratum` on the README card: "add src/") → TERM(a02: 2–7).
-SAY: Part 1, cheese app version 1. Step 1: go to the API folder. The README's path misses src, so this fails. A small slip: add src.
+SAY: Part 1, cheese app version 1. Step 1: go to the API folder; the README's path misses src, so this fails. A small slip: add src.
 
 SHOW: TRACKER [A] 2. The terminal shrinks to a strip; CODE(cheese-app-v1/src/api-service/docker-shell.sh:
 13–21) beside it: line 13 (`docker build`) PURPLE; on "removes itself" `--rm` (16) rings GREY; on
@@ -460,29 +460,32 @@ table.
 SAY: Step 3: the README's long uvicorn line. Here, uvicorn is the server: it owns the port and speaks HTTP. FastAPI is the app inside it.
 
 SHOW: The typed `api.service:app` splits into three PINK chips that fly onto the card: "folder
-`api/`", "file `service.py`", "variable `app`". Then on "every interface" `--host 0.0.0.0` lights;
-the socket gets a GREEN badge `0.0.0.0` and a PINK request from the tunnel walks in; beside it a
-dimmed GREY badge `127.0.0.1` is shown with the note "the container's own loopback". On "reload",
-`--reload --reload-dir api/` lights and a small eye icon watches the `api/` folder. On "the last
-part", `"$@"` lights with a GREY chip "extra arguments · none here".
-SAY: The phrase api dot service colon app is an address: folder api, file service dot py, variable app. Host 0.0.0.0 means every interface. Reload restarts the app when a file in api changes; the last part passes on extra arguments.
+`api/`", "file `service.py`", "variable `app`".
+SAY: The phrase api dot service colon app is an address: folder api, file service dot py, variable app.
+
+SHOW: On "every interface" `--host 0.0.0.0` lights. The TEAL container shows two plates: a GREY
+"lo · 127.0.0.1" inside, and a GREY "eth0" on the wall where the tunnel ends. The GREEN `0.0.0.0`
+badge on the socket draws a line to both; on "where the tunnel arrives" a PINK request walks in
+through eth0. On "reload", `--reload --reload-dir api/` lights and a small eye icon watches the
+`api/` folder. On "the last part", `"$@"` lights with a GREY chip "extra arguments · none here".
+SAY: Host 0.0.0.0 means every interface: the container's own loopback, and its network interface, where the tunnel arrives. Reload restarts the app when a file in api changes; the last part passes on extra arguments.
 
 SHOW: TERM(a03: 39–44); line 40 `Uvicorn running on http://0.0.0.0:9000` PINK, line 41
 `Started reloader process [12] using StatReload` PURPLE (PID not highlighted), line 44 GREEN.
 SAY: The log agrees: 0.0.0.0, port 9000, a reloader watching api, startup complete.
 
-SHOW: CODE(cheese-app-v1/src/api-service/api/service.py: 1–20) beside V3: line 5 (`app = FastAPI(...)`)
+SHOW: CODE(cheese-app-v1/src/api-service/api/service.py: 5–14) beside V3: line 5 (`app = FastAPI(...)`)
 PURPLE; lines 8–14 (`add_middleware(CORSMiddleware, … allow_origins=["*"] …)`) boxed GREY with a
-chip "part 2's ending"; lines 18–20 (`@app.get("/")`) YELLOW, and a row "GET / → get_index" writes
-into V3's route table.
+chip "part 2's ending". On "and one route" the panel swaps to CODE(…/service.py: 17–20): lines
+18–20 (`@app.get("/")`) YELLOW, and a row "GET / → get_index" writes into V3's route table.
 SAY: In service dot py, the app adds CORS middleware, which matters at the very end, and one route: GET slash returns a welcome.
 
-SHOW: TRACKER [A] 4. LECTURE 18 · 34–38 (APIs). **V1** returns (no frontend box): the browser
+SHOW: TRACKER [A] 4. LECTURE 18 · 34–41 (APIs). **V1** returns (no frontend box): the browser
 window at `localhost:9000`, the laptop with one TEAL `cheese-app-api-service` box. The `second tab`
 strip types `curl -s -i http://localhost:9000/` (extra: "the same request, from a terminal") →
 TERM(a04: 2, 4, 6, 8); `200 OK` GREEN, `server: uvicorn` PURPLE; the browser drawing (tag
 `illustration`) shows `{"message":"Welcome to AC215"}`. `▶ your turn`.
-SAY: Step 4: open localhost 9000; an extra curl shows the same reply: status 200 from uvicorn, and the welcome. Pause and try it.
+SAY: Step 4: open localhost 9000. An extra curl shows the same reply: status 200 from uvicorn, and the welcome. Pause and try it.
 
 SHOW: The six hops animate with this request, captions writing on: 1 the browser asks
 `localhost:9000/`; 2 the laptop forwards it to the published port (the PINK door); 3 the port is
@@ -494,8 +497,8 @@ SHOW: Inside the TEAL box the lecture's label "localhost:9000" appears in GREY (
 small GREY card "slide 37"), then morphs into "port 9000 of the container · listening on 0.0.0.0".
 SAY: One kind note: the slide labels the inside of the container localhost 9000. Take it as port 9000 of the container: uvicorn listens on 0.0.0.0.
 
-SHOW: LECTURE off. V3 alone: the socket's badge flips to `127.0.0.1`. Two dashed PINK arrows,
-unanswered: one from a small terminal icon inside the container ("curl inside"), one from the
+SHOW: LECTURE off. V3 alone, both plates kept: the socket's badge flips to `127.0.0.1` and draws
+a line to `lo` only; the `eth0` plate stays unconnected. Two dashed PINK arrows, unanswered: one from a small terminal icon inside the container ("curl inside"), one from the
 browser through the tunnel. Nothing else moves.
 PONDER(8 s, "uvicorn listens on --host 127.0.0.1\ninside the container instead.\ncurl from inside the container: works?\nYour browser on localhost:9000: works?")
 SAY: So, a quick test. If uvicorn listened on 127.0.0.1 instead, would a curl from inside the container work? And your browser on localhost 9000?
@@ -506,16 +509,17 @@ SAY: So, a quick test. If uvicorn listened on 127.0.0.1 instead, would a curl fr
 
 SHOW: TRACKER [A] 4. The card leaves. V3 runs the ponder: the inside arrow reaches the `127.0.0.1`
 loopback and gets a GREEN tick; the browser's arrow comes through the tunnel, arrives on the
-container's network interface (a GREY "eth0" plate), finds no listener and stops RED. The badge
+container's network interface (the GREY "eth0" plate drawn before the ponder), finds no listener and stops RED. The badge
 flips back to `0.0.0.0` and the arrow walks in GREEN.
 SAY: Inside, yes: the container's own loopback answers. From the browser, no: the forwarded request arrives on the container's network interface, where nothing listens. That is why the README says 0.0.0.0.
 
-SHOW: TRACKER [A] 5. LECTURE 18 · 39–41 (APIs). A small GREY card redraws A39's shape (one file,
-`@app.get(...)` over a function, "returns JSON"). A README card (`README.md · lines 52–58`) with the
+SHOW: TRACKER [A] 5. LECTURE 18 · 39–41 (APIs). (No separate A39 card: on "decorated Python
+function" the diff's `@app.get` line gets a PURPLE bracket "decorator → route".) A README card (`README.md · lines 52–58`) with the
 `square_root` snippet; a GREY chip "your editor" (the heredoc is not typed). The terminal strip
 (`second tab`, prompt `…/cheese-app-v1/src/api-service$`) types `git -C ~/cheese-app-v1 diff`
-(extra) → TERM(a05: 13–21); the `+` lines GREEN.
-SAY: Step 5: the lecture writes a route as a decorated Python function. Add the README's square root function at the end of service dot py, and save.
+(extra) → TERM(a05: 13–21); the `+` lines GREEN; on "x squared plus y squared" the diff line
+`z = x**2 + y**2` YELLOW.
+SAY: Step 5: the lecture writes a route as a decorated Python function. Add the README's square root function at the end of service dot py, and save. It returns the square root of x squared plus y squared.
 
 SHOW: The uvicorn terminal (strip above): TERM(a03: 47–54); line 47 `StatReload detected changes in
 'api/service.py'. Reloading...` YELLOW. In V3, the PURPLE app card slides out and a fresh one slides
@@ -524,21 +528,25 @@ SAY: In the server's terminal, StatReload sees the change and swaps in a fresh a
 
 SHOW: LECTURE off. TRACKER [A] 6. **V4 `RouteTree`**: the URL `http://localhost:9000/square_root/`
 splits into PINK tokens (scheme, host, port, path). The path token finds its row in the table; the
-signature `square_root(x: float = 1, y: float = 2)` lights, defaults 1 and 2 YELLOW. Strip types
+signature `square_root(x: float = 1, y: float = 2)` lights, defaults 1 and 2 YELLOW, with the
+body row `√(x² + y²)` under it. Strip types
 `curl -s http://localhost:9000/square_root/; echo` (extra) → TERM(a06: 2); the browser drawing
 shows the same number. `▶ your turn`.
 SAY: Step 6: open square root, with its trailing slash. No arguments, so the defaults 1 and 2 apply: the square root of 5. Pause and try it.
 
 SHOW: TRACKER [A] 7. The URL grows `?x=2&y=10`; the query splits into PINK chips `x=2` and `y=10`
-that fly into the signature, replacing the defaults; `10.198039027185569` folds back as JSON.
+that fly into the signature, replacing the defaults; the body row shows `√(2² + 10²)`, then
+`10.198039027185569` folds back as JSON.
 Strip: `curl -s 'http://localhost:9000/square_root/?x=2&y=10'; echo` (extra) → TERM(a07: 2).
 SAY: Step 7: add x equals 2 and y equals 10. The query string fills the function's arguments, and back comes the square root of 104.
 
 SHOW: TRACKER [A] 7 · extra. Strip: line 1 of `a08` → TERM(a08: 2 wrap, 3): `x=abc` hits the
-`float` hint and bounces RED, `float_parsing` YELLOW, `[HTTP 422]` RED. Then line 1 of `a09` →
-TERM(a09: 2, 6): the path without the slash makes a PINK U-turn on V4: `307 Temporary Redirect`,
-`location: …/square_root/`.
-SAY: Two extras. A letter instead of a number bounces off the float type hint with 422. Without the trailing slash, FastAPI answers 307 and points to the slash version.
+`float` hint and bounces RED, `float_parsing` YELLOW, `[HTTP 422]` RED.
+SAY: Two extras. A letter instead of a number bounces off the float type hint with 422.
+
+SHOW: Strip: line 1 of `a09` → TERM(a09: 2, 6): the path without the slash makes a PINK U-turn on
+V4: `307 Temporary Redirect`, `location: …/square_root/`.
+SAY: Without the trailing slash, FastAPI answers 307 and points to the slash version.
 
 SHOW: The uvicorn strip: TERM(a03: 55–59); the status column of each line writes in colour (200
 GREEN ×3, 422 RED, 307 PINK); IPs and ports stay GREY.
@@ -549,7 +557,7 @@ SHOW: TRACKER [A] 8. Strip: `curl -s http://localhost:9000/docs | grep -E '<titl
 YELLOW. V4's route table unfolds into a GREY browser drawing (tag `illustration`, address
 `localhost:9000/docs`): two rows `GET /` and `GET /square_root/`, the second expanded with "x ·
 number · default 1", "y · number · default 2" (from `a11:32–48`, chip `extra`) and a "Try it out"
-button. `▶ your turn`.
+button. (No `▶` here: the next block says "pause".)
 SAY: Step 8: open slash docs. FastAPI built this page from your code: x and y appear as numbers, with their defaults, and you can try a call right there.
 
 SHOW: The type hints in the signature glow, and two GREEN threads run from them: one to the 422
