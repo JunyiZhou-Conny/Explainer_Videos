@@ -151,6 +151,11 @@
       "bvid": "BV1uz4t6eE45",
       "title": "AC215 第14讲跟练 · Serverless 部署：Cloud Run function、service 与 job，一步一步部署到云端",
       "pubdate": 1793854534
+    },
+    "ac215-l15-vertex-ml-workflows": {
+      "bvid": "BV1cu4Y68ETq",
+      "title": "AC215 第15讲跟练 · ML 工作流：在 AWS SageMaker 上部署模型，再用 SageMaker Pipelines 自动化整条流程",
+      "pubdate": 1793907758
     }
   },
   "unmatched": [
