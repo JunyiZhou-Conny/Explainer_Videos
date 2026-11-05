@@ -27,8 +27,9 @@ Beats (script.md "## S09", one voiceover block each):
    folder llm-cnn/images/ with a photo lands under it.
 5. Strip: extra b38 (folds); on "and here it stops" a PINK arrow API → BLUE dashed "Vertex AI ·
    Gemini" cloud, GOLD cost tag "with your key: billed", a RED cross at the cloud; b38:2–3 RED. On
-   "The API's terminal shows why" the strip becomes the uvicorn terminal (`laptop`): b21:92, 93, …,
-   174–179 (GREY), …, 261 (RED, wrap). On "With your key" the strip goes, the cost tag moves under the
+   "The API's terminal shows why" the strip becomes the uvicorn terminal (`laptop`): b21:92 (wrap,
+   the POST … 500 RED), …, 174 (GREY: line 67, in start_chat); on "the same invalid grant" …, 261 (RED,
+   wrap). (Four rows cannot hold 93, 174–179 and 261 readably in the 3 s the voice gives.) On "With your key" the strip goes, the cost tag moves under the
    cloud and EXPECTED(02-chat-contract: 11–15) appears, tag expected · docs/contract.md:38–42.
 6. Tracker extra off. V7 fades. RECORDED(04-troubleshooting: 11–12), tag recorded · README:230–231;
    a GREEN chip "API answers 502" (llm_utils.py:85–86) beside the Gemini rows; under the card a GREY
@@ -186,13 +187,21 @@ def paint(scene, t, glyphs, color, run_time: float = 0.4):
     scene.add(t)
 
 
+def one_slide(slide: str) -> VGroup:
+    """lref() for ONE slide: lecture_ref() reads 'slides 27 (Frontend)' when the deck name follows the
+    number; same tag, same place, 'slide 27' (as s02 does)."""
+    g = lref(slide)
+    fixed = tag(f"Lecture 18 · slide {slide}", S.GREY)
+    return fixed.move_to([6.6 - fixed.width / 2, g.get_y(), 0])
+
+
 class ChatIsAFile(VoiceScene):
     def construct(self):
         assert len(SAY) == SAY_COUNT["S09"] == 10, len(SAY)
 
         # ========================================================== 0. slide 27 vs the two real routes
         trk = tracker_b(9)
-        ref = lref("27 (Frontend)")
+        ref = one_slide("27 (Frontend)")
         route_row = VGroup(label("route", 20, S.GREY), mono("/chat", 22, ROUTE)).arrange(RIGHT, buff=0.18)
         slide = card([route_row, label("use Gemini to generate text", 22, INK)], head="the lecture's chat handler")
         slide.move_to([0, 0, 0]).align_to([-6.5, 0, 0], LEFT).set_y(1.75)
@@ -277,12 +286,12 @@ class ChatIsAFile(VoiceScene):
             vo.wait_until("no session ID")
             self.play(FadeOut(VGroup(p19, bar21)), FadeIn(t), run_time=0.5)
             bar_tag(self, t, extra_row())
-            type_cmd(self, t, B36.cmd, soft=True)
+            type_cmd(self, t, B36.cmd, type_time=0.9, soft=True)
             rows = out(self, t, B36.at(2), wrap=True)
             paint(self, t, across(rows, '"missing"') + across(rows, '"X-Session-ID"'), TURN)
             out(self, t, [(B36.line(3), ERR)])
             e1 = cf.post(self, "message", key=False, code="422", run_time=1.0)
-            type_cmd(self, t, B37.cmd, soft=True)
+            type_cmd(self, t, B37.cmd, type_time=0.9, soft=True)
             out(self, t, [B37.line(2), (B37.line(3), ERR)])
             cf.drop(self, e1, run_time=0.3)
             cf.post(self, "{}", key=True, ok=False, code="422", run_time=1.0)
@@ -355,7 +364,6 @@ class ChatIsAFile(VoiceScene):
         assert cost_low.get_right()[0] < SAFE_X, cost_low.get_right()
         assert cost.get_left()[0] > cf.browser.frame.get_right()[0] + 0.1, cost.get_left()
         assert exp.get_top()[1] < cost.get_bottom()[1] - 0.05, (exp.get_top(), cost.get_bottom())
-        log = B21.at(92, 93, "…", (174, 179), "…")
         with self.voiceover(SAY[5]) as vo:
             clear_lines(self, t)
             type_cmd(self, t, B38.cmd, soft=True)
@@ -369,10 +377,12 @@ class ChatIsAFile(VoiceScene):
             clear_lines(self, t)
             self.play(retitle(t, T_LAPTOP), *unbar(t), run_time=0.4)
             self.add(t)
-            out(self, t, [log[0], log[1], log[2]] + [(s, S.GREY) for s in log[3:9]] + [log[9]], wrap=True,
-                chunk=STRIP_ROWS, run_time=2.0)
+            # one readable 4-row state: the failed POST, then the frame in start_chat (line 67, beat 0's panel)
+            hit = out(self, t, [B21.line(92), "…", (B21.line(174), S.GREY)], wrap=True, run_time=0.5)
+            paint(self, t, across(hit, '"POST /api/llm/chats HTTP/1.1" 500'), ERR, run_time=0.3)
             vo.wait_until("the same invalid grant")
-            rows = out(self, t, [(B21.line(261), ERR)], wrap=True, run_time=0.6)
+            clear_lines(self, t, run_time=0.2)
+            rows = out(self, t, ["…", (B21.line(261), ERR)], wrap=True, run_time=0.5)
             self.play(Indicate(across(rows, "account not found"), color=ERR,
                                scale_factor=1.05), run_time=0.8)
             self.add(t)
@@ -445,6 +455,7 @@ class ChatIsAFile(VoiceScene):
         under_term(nt, already)
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(cf), FadeOut(ill), track(trk, 10), run_time=0.6)
+            vo.wait_until("in a second terminal")
             self.play(FadeIn(nt, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("in the same folder")
             type_capture(self, nt, B44)

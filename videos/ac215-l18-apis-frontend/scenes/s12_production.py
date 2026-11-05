@@ -423,9 +423,14 @@ class NginxImage(VoiceScene):
         assert n_dev.get_left()[0] > -SAFE_X and s_dev.get_right()[0] < SAFE_X, (n_dev.get_left(), s_dev.get_right())
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(t), track(trk, 5), run_time=0.4)
-            bar_tag(self, tab, extra_row())
             clear_lines(self, tab, run_time=0.25)
-            resize(self, tab, 3, run_time=0.4)
+            # resize() moves the box and bar, not a tag on the bar: the 'extra' tag rides down with them
+            ref5 = Terminal(prompt=tab.prompt, width=tab.box.width, rows=3, size=tab.size, title=tab.title.text)
+            ref5.shift(UP * (tab.box.get_bottom()[1] - ref5.box.get_bottom()[1]))
+            tag5 = tab.bar_tag
+            dy5 = (ref5.box.get_top()[1] - tab.bar_h / 2) - tag5.get_y()
+            resize(self, tab, 3, extra=[tag5.animate.shift(UP * dy5)], run_time=0.4)
+            assert abs(tag5.get_y() - (tab.box.get_top()[1] - tab.bar_h / 2)) < 0.02, (tag5.get_y(), tab.box.get_top())
             assert chip5.get_bottom()[1] > tab.box.get_top()[1] + 0.1, (chip5.get_bottom(), tab.box.get_top())
             vo.wait_until("Compare the sizes")
             type_capture(self, tab, D27, type_time=0.6)
@@ -473,6 +478,11 @@ class NginxImage(VoiceScene):
             outer, inner, unch = tr6.outside_inside(self, run_time=0.8)
             vo.wait_until("In lecture 20")
             self.play(FadeIn(note6, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("on a cloud machine")
+            self.play(Indicate(note6.text, color=TURN, scale_factor=1.04), run_time=0.7)
+            vo.wait_until("on port 80")
+            self.play(Indicate(n6.ports["front"], color=ROUTE, scale_factor=1.3), run_time=0.6)
+            tr6.heal(self)
             vo.wait_until("the API's code and port stay the same")
             self.play(n6.door_pulse("api", OWN), Indicate(n6.inner["api"], color=OWN, scale_factor=1.15),
                       run_time=0.8)
@@ -495,7 +505,8 @@ class NginxImage(VoiceScene):
             self.play(n6.dark("front"), run_time=0.5)
             tr6.heal(self)
             vo.wait_until("stop the API too")
-            self.play(FadeOut(s7), FadeIn(s7b), run_time=0.4)
+            self.play(FadeOut(s7), run_time=0.25)
+            self.play(FadeIn(s7b), run_time=0.25)
             out(self, s7b, B21.at(613), run_time=0.3)
             type_at(self, s7b, B21, 620, type_time=0.3)
             out(self, s7b, B21.at(621), run_time=0.3)
@@ -505,8 +516,10 @@ class NginxImage(VoiceScene):
             assert pyt.get_bottom()[1] > s7b.box.get_top()[1] + 0.05, pyt.get_bottom()
             self.play(FadeIn(pyt, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("and start the production container again")
-            self.play(FadeOut(pyt), FadeOut(s7b), FadeIn(s7), run_time=0.4)
-            clear_lines(self, s7, run_time=0.2)
+            self.play(FadeOut(s7b), run_time=0.25)
+            for m in list(s7.lines):          # off screen: its old rows go before it comes back
+                s7.lines.remove(m)
+            self.play(FadeIn(s7), run_time=0.25)
             self.play(n6.normal("front"), run_time=0.5)
             tr6.heal(self)
             self.play(n6.light("front", TURN), run_time=0.4)
@@ -515,6 +528,7 @@ class NginxImage(VoiceScene):
             self.play(n6.door_pulse("front"), run_time=0.6)
             tr6.heal(self)
             vo.wait_until("So, a quick test")
+            self.play(FadeOut(pyt), run_time=0.3)
             self.play(Indicate(n6.courier, color=TOOL, scale_factor=1.2), run_time=0.7)
             tr6.heal(self)
             self.play(Indicate(n6.boxes["api"].name, color=S.GREY, scale_factor=1.1), run_time=0.7)
@@ -552,7 +566,7 @@ class NginxImage(VoiceScene):
                                  at=((x_r + SAFE_X) / 2, p8.get_bottom()[1] - 0.25 - 0.55), run_time=0.5)
             assert book.get_left()[0] > x_r - 0.05 and book.get_right()[0] < SAFE_X - 0.05, (book.get_left(), book.get_right())
             q8 = mono(f"{C_API} ?", 20, ROUTE).next_to(book, DOWN, buff=0.15).align_to(book, LEFT)
-            look = DashedLine(n6.courier.get_top() + UP * 0.05, book.frame.get_left() + LEFT * 0.05, color=ROUTE,
+            look = DashedLine(n6.courier.get_right() + RIGHT * 0.05, book.frame.get_left() + LEFT * 0.05, color=ROUTE,
                               stroke_width=3, dash_length=0.1).add_tip(tip_length=0.14)
             self.play(Create(look), run_time=0.6)
             self.play(FadeIn(q8, shift=DOWN * 0.1), run_time=0.4)

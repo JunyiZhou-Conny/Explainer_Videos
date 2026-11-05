@@ -363,10 +363,13 @@ class Recap(VoiceScene):
         ref2 = lref("19–21 (APIs)")
         m = RecapMap().laptop()
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(tr, ill, ng, org, slip), scale=0.5), FadeOut(VGroup(sq, ok)), run_time=0.7)
-            self.remove(tr, ill, ng, org, slip, sq, ok)
-            self.play(FadeIn(m), FadeIn(ref2), run_time=0.7)
+            # the trip shrinks away while the blueprint comes in (no blank frame between them); the
+            # answered hook card stays until the boxes rise
+            self.play(FadeOut(VGroup(tr, ill, ng, org, slip), scale=0.5), FadeIn(m), FadeIn(ref2), run_time=1.0)
+            self.remove(tr, ill, ng, org, slip)
             vo.wait_until("Your four boxes rise")
+            self.play(FadeOut(VGroup(sq, ok), shift=UP * 0.15), run_time=0.3)
+            self.remove(sq, ok)
             m.rise(self, run_time=1.4)
             vo.wait_until("NGINX in front")
             m.dash(self, "nginx", run_time=0.5)
@@ -383,9 +386,9 @@ class Recap(VoiceScene):
         # ========================================================== 3. your project (A46, B40–B41)
         ref46 = one_slide("46 (APIs)")
         ref40 = lref("40–41 (Frontend)")
-        pc = card(["your project: draw your solution", "and technical architecture"], S.GREY, size=24)
-        repos = VGroup(grey_chip("App Building Crash Course", size=22), grey_chip("App Building Template", size=22)
-                       ).arrange(RIGHT, buff=0.5)
+        pc = card(["your project: draw your solution", "and technical architecture"], S.GREY, size=32)
+        repos = VGroup(grey_chip("App Building Crash Course", size=28), grey_chip("App Building Template", size=28)
+                       ).arrange(RIGHT, buff=0.6)
         VGroup(pc, repos).arrange(DOWN, buff=0.6).move_to([0, 0.2, 0])
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(m), ReplacementTransform(ref2, ref46), run_time=0.6)

@@ -25,15 +25,15 @@ Beats (script.md "## S14", one voiceover block each):
    with the GREY chip "your folder still holds main's data · output may differ slightly". On "tagged
    latest": `exit` (c06:198–199), then the extra c07 → c07:2–3, `chromadb/chroma:latest` YELLOW with
    "at the time of recording"; on "Chroma keeps running" its row lights GREEN.
-4. Tracker [T23] 4. A new terminal `laptop · new terminal` (10 rows, prompt `student@laptop:~$`):
+4. Tracker [T23] 4. A new terminal `laptop · new terminal` (13 rows, prompt `student@laptop:~$`):
    `cd cheese-app-v2/src/api-service` (c10) → prompt changes; [T23] 5 `sh docker-shell.sh` → c11:3,
-   …, 20, 21–25, 28–30; [T23] 6 at the prompt (line 32) `uvicorn_server` → c11:34–35, …, 49–50, …,
+   …, 20, 21–25, 28–30 (13 rows, so the typed sh line stays in view); [T23] 6 at the prompt (line 32) `uvicorn_server` → c11:34–35, …, 49–50, …,
    67, 72, 74. ▶ your turn on the bar.
 5. `WatchFiles` YELLOW with a GREY row tag "main: StatReload"; 49–50 and 67 YELLOW before 74. The
    terminal shrinks to a strip (67, 72, 74 stay); above it a GREY README card (2025 README.md ·
    lines 82–86, tag "read along · same idea as main") and, right, V6's two lamps GREY dashed with the
    chip "no probes yet" and the chip "2025 docs: localhost:9000/docs (no /api)".
-6. Tracker [T23] 7. A `laptop · second tab` (8 rows): `curl -s -i http://localhost:9000/` (extra)
+6. Tracker [T23] 7. A `laptop · second tab` (9 rows): `curl -s -i http://localhost:9000/` (extra)
    → c12:2, 4, 8 (the JSON flashes GREEN). On "A small note": a GREY README card (lines 96–98,
    "Create Demo Routes") with the tag "erratum · already in the code", and c13 (extra) → c13:2–5, 7
    (line 30 YELLOW); on "the routers": the card becomes lines 116–118 ("Enable Cheese App API
@@ -286,7 +286,9 @@ class Branch2025(VoiceScene):
             self.play(FadeIn(dcard, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("if your disk is tight")
             self.play(cmd_rows.animate.set_color(COST), run_time=0.4)
-            self.play(Indicate(cmd_rows, color=COST, scale_factor=1.04), run_time=0.7)
+            vo.wait_until("remove main's images first")
+            self.play(Indicate(h_main[0], color=COST, scale_factor=1.15), Indicate(cmd_rows, color=COST, scale_factor=1.02),
+                      run_time=0.8)
 
         # ========================================================== 1. git switch refuses; stash, then switch
         t = term(P_V2, rows=13, title=T_LAPTOP, size=20)
@@ -411,7 +413,7 @@ class Branch2025(VoiceScene):
             self.add(t)
 
         # ========================================================== 4. Tutorial (23) backend: a new terminal, uvicorn_server
-        t2 = term(P_LAPTOP, rows=10, title=T_NEW, size=20)
+        t2 = term(P_LAPTOP, rows=13, title=T_NEW, size=20)
         with self.voiceover(SAY[4]) as vo:
             clear_bar(self, t)
             self.play(FadeOut(t), track(trk, 4), run_time=0.5)
@@ -497,7 +499,7 @@ class Branch2025(VoiceScene):
             self.wait(1.2)
 
         # ========================================================== 6. verify 9000; the README steps already done
-        tab = term(P_V2_API, rows=8, title=T_TAB, size=20)
+        tab = term(P_V2_API, rows=9, title=T_TAB, size=20)
         cA = readme_card((96, 98), R_9698, size=20, name="2025 README.md")
         cB = readme_card((116, 118), R_116, size=20, name="2025 README.md")
         err6 = erratum_tag("erratum · already in the code")
@@ -509,7 +511,7 @@ class Branch2025(VoiceScene):
             for c in (cA, cB):
                 c.move_to([-6.45 + c.width / 2, (top + PIC_TOP) / 2 - 0.05, 0])
                 assert c.get_bottom()[1] > top + 0.1 and c.get_top()[1] < PIC_TOP + 0.05, (c.get_bottom(), c.get_top(), top)
-            err6.next_to(cA, RIGHT, buff=0.3).align_to(cA, UP)
+            err6.next_to(cA, RIGHT, buff=0.45).align_to(cA, UP)
             dont.next_to(err6, DOWN, buff=0.2).align_to(err6, LEFT)
             assert dont.get_right()[0] < SAFE_X - 0.05 and err6.get_right()[0] < SAFE_X - 0.05, (dont.get_right(), err6.get_right())
             ln = type_capture(self, tab, C12, type_time=0.5)[-1]
@@ -531,7 +533,7 @@ class Branch2025(VoiceScene):
             vo.wait_until("and the routers")
             clear_bar(self, tab)
             clear_lines(self, tab, run_time=0.3)
-            err6b = err6.copy().next_to(cB, RIGHT, buff=0.3).align_to(cB, UP)
+            err6b = err6.copy().next_to(cB, RIGHT, buff=0.45).align_to(cB, UP)
             dont.next_to(err6b, DOWN, buff=0.2).align_to(err6b, LEFT)
             self.play(FadeTransform(cA, cB), Transform(err6, err6b), run_time=0.6)
             self.bring_to_front(err6)
@@ -565,7 +567,11 @@ class Branch2025(VoiceScene):
         main_lb = chip("main", S.GREY, size=24, font=MONO)
         m_now = VGroup(main_lb, ok_chip("gemini-3.8-flash · global", mono_font=True)).arrange(RIGHT, buff=0.3)
         m_now.move_to([-6.45 + m_now.width / 2, -1.2, 0])
-        m_to = m_now.copy().next_to(call, DOWN, buff=0.2)
+        m_to = m_now.copy()                     # on the arrow: the chip under it, the 'main' label under the chip
+        m_to[1].next_to(call, DOWN, buff=0.2)
+        m_to[0].next_to(m_to[1], DOWN, buff=0.12)
+        assert m_to[1].get_right()[0] < vx.get_left()[0] - 0.1 and m_to[1].get_left()[0] > api.get_right()[0] + 0.1, \
+            (m_to[1].get_left(), m_to[1].get_right(), api.get_right(), vx.get_left())
         assert m_to.get_bottom()[1] > m_now.get_top()[1] + 0.1 and err7.get_top()[1] < m_now.get_bottom()[1] - 0.2
         assert err7.get_right()[0] < SAFE_X and vx.get_right()[0] < SAFE_X, (err7.get_right(), vx.get_right())
         with self.voiceover(SAY[7]) as vo:

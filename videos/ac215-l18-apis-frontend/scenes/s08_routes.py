@@ -111,6 +111,18 @@ TREE_UP = UP * 0.75           # V4 over a 4-row 20 pt strip (strip top -1.18, st
 
 
 # ------------------------------------------------------------------ local helpers
+_lref = lref
+
+
+def lref(slides: str) -> VGroup:
+    """common.lref, but one slide reads 'slide 29 (APIs)' (lecture_ref only checks a bare number)."""
+    g = _lref(slides)
+    if slides.split()[0].isdigit():
+        g = tag(f"Lecture 18 · slide {slides}", S.GREY)
+        g.move_to([SAFE_X - g.width / 2, SAFE_Y - g.height / 2, 0])
+    return g
+
+
 class _Quiet:
     """A stand-in scene: builds a piece's state without playing anything."""
     mobjects: list = []
@@ -323,15 +335,13 @@ class ScreensToRoutes(VoiceScene):
             self.add(panel)
             vo.wait_until("Then one function stamps out")
             crs = [code_span(pc, k, "create_router") for k in (7, 8, 9)]
-            self.play(FadeOut(bars), *[c.animate.set_color(TOOL) for c in crs], run_time=0.5)
+            self.play(FadeOut(bars), *[c.animate.set_color(TOOL) for c in crs], run_time=0.4)
             self.add(panel)
-            self.play(*[Indicate(c, color=TOOL, scale_factor=1.1) for c in crs], run_time=0.6)
-            self.add(panel)
-            self.play(FadeOut(panel, shift=DOWN * 0.2), run_time=0.4)
-            rt.roots(self, run_time=0.3)
-            rt.branch(self, "newsletters", run_time=0.35)
-            rt.branch(self, "podcasts", run_time=0.35)
-            rt.stamp(self, run_time=1.6)
+            self.play(FadeOut(panel, shift=DOWN * 0.2), run_time=0.3)
+            rt.roots(self, run_time=0.25)
+            rt.branch(self, "newsletters", run_time=0.25)
+            rt.branch(self, "podcasts", run_time=0.25)
+            rt.stamp(self, run_time=1.4)
             for k, word in (("llm", "Ask"), ("llm-cnn", "Identify and"), ("llm-rag", "Cheese books")):
                 vo.wait_until(word)
                 m = label(RouteTree.MODES[k], 20, INK).move_to(rt.p(0, rt.BR_Y[k]))
@@ -424,47 +434,46 @@ class ScreensToRoutes(VoiceScene):
         diff = [(s, OWN) if s.startswith("+") else s for s in B27.at((20, 21), (24, 29))]
         ut = term(container_prompt(B21, 37), rows=4, title=T_LAPTOP, size=20)
         with self.voiceover(SAY[4]) as vo:
-            rt.drop(self, *gc.values(), plabel, run_time=0.4,
+            rt.drop(self, *gc.values(), plabel, run_time=0.3,
                     extra=[FadeOut(idea), FadeOut(err39), FadeOut(ref39), track(trk, 5)])
             rt.group_chips = {}
             for k in ("api", "newsletters"):
                 rt.nodes[k].box.set_stroke(ROUTE)
             rt.edges["newsletters"].set_color(S.GREY)
-            self.play(FadeOut(rt), FadeIn(card4, shift=DOWN * 0.15), run_time=0.6)
+            self.play(FadeOut(rt), FadeIn(card4, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("add the README's function")
-            self.play(FadeIn(ed, shift=UP * 0.1), run_time=0.4)
-            flash_tag(self, ed, S.GREY)
+            self.play(FadeIn(ed, shift=UP * 0.1), run_time=0.3)
+            flash_tag(self, ed, S.GREY, run_time=0.6)
             vo.wait_until("and save")
             self.play(FadeOut(card4, shift=UP * 0.2), FadeIn(t4),
-                      ed.animate.move_to(under_term(t4, ed.copy()).get_center()), run_time=0.6)
-            type_capture(self, t4, B27, type_time=0.7)
+                      ed.animate.move_to(under_term(t4, ed.copy()).get_center()), run_time=0.5)
+            type_capture(self, t4, B27, type_time=0.5)
             bar_tag(self, t4, extra_row())
-            out(self, t4, diff, run_time=0.8)
+            out(self, t4, diff, run_time=0.5)
             vo.wait_until("The server reloads by itself")
             rt.shift(TREE_UP)
-            self.play(FadeOut(t4), FadeOut(ed), run_time=0.4)
-            self.play(FadeIn(rt), FadeIn(ut), run_time=0.5)
-            w = out(self, ut, [(B21.line(65), TURN)], run_time=0.4)
+            self.play(FadeOut(t4), FadeOut(ed), run_time=0.3)
+            self.play(FadeIn(rt), FadeIn(ut), run_time=0.4)
+            w = out(self, ut, [(B21.line(65), TURN)], run_time=0.3)
             self.play(Indicate(substring(w[0], "StatReload detected changes"), color=TURN, scale_factor=1.05),
-                      run_time=0.6)
+                      run_time=0.5)
             self.add(ut)
-            rt.add_leaf(self, "square_root", run_time=0.6)
-            out(self, ut, B21.at(70, 71) + [(B21.line(72), OWN)], run_time=0.6)
+            rt.add_leaf(self, "square_root", run_time=0.4)
 
         # ========================================================== 5. extra: readyz again
         tab = term(P_V2_API, rows=4, title=T_TAB, size=20)
         with self.voiceover(SAY[5]) as vo:
-            rt.probes(self, run_time=0.5)
+            rt.probes(self, run_time=0.4)
             ry = rt.nodes["readyz"]
             lp = lamp("amber", 0.17).move_to([ry.get_left()[0] + 0.25, ry.get_bottom()[1] - 0.3, 0])
             assert lp.get_top()[1] < ry.get_bottom()[1] + 0.02, (lp.get_top(), ry.get_bottom())
             assert lp.get_bottom()[1] > rt.nodes["api"].get_top()[1] + 0.02
-            rt.show(self, lp, anims=[FadeIn(lp, scale=1.3)], run_time=0.5)
-            self.play(Indicate(lp, color=AMBER, scale_factor=1.25), run_time=0.6)
-            rt.heal(self)
+            rt.show(self, lp, anims=[FadeIn(lp, scale=1.3)], run_time=0.4)
+            # the reload: the app starts again (the model loads), then startup completes
+            out(self, ut, B21.at(70, 71) + [(B21.line(72), OWN)], run_time=0.5)
             vo.wait_until("and readyz is back to 200")
             self.play(FadeOut(ut), FadeIn(tab), run_time=0.4)
-            type_capture(self, tab, B30, type_time=0.6)
+            type_capture(self, tab, B30, type_time=0.45)
             bar_tag(self, tab, extra_row())
             out(self, tab, [(s, OWN) for s in B30.at(2, 3)], run_time=0.5)
             lp = rt.swap(self, lp, lamp("green", 0.17).move_to(lp), run_time=0.5)
@@ -503,8 +512,8 @@ class ScreensToRoutes(VoiceScene):
             # for them, then shrinks back under it for the leaves
             self.play(FadeOut(turn6), FadeOut(rt), *unbar(tab), run_time=0.4)
             clear_lines(self, tab)
-            resize(self, tab, 10, run_time=0.6)
-            type_capture(self, tab, B31, type_time=1.0)
+            resize(self, tab, 10, run_time=0.5)
+            type_capture(self, tab, B31, type_time=0.6)
             bar_tag(self, tab, extra_row())
             rows = out(self, tab, B31.at((2, 4)), run_time=0.5)
             oa = first_row(rows, "openapi.json")
@@ -513,12 +522,12 @@ class ScreensToRoutes(VoiceScene):
             vo.wait_until("An extra listing")
             self.play(track(trk, 7, extra=True), run_time=0.4)
             clear_lines(self, tab)
-            type_capture(self, tab, B32, type_time=1.0)
-            out(self, tab, B32.at((2, 27)), run_time=1.6, chunk=10)
+            type_capture(self, tab, B32, type_time=0.4)
+            out(self, tab, B32.at((2, 27)), run_time=0.9, chunk=10)
             vo.wait_until("the leaves of this tree")
-            resize(self, tab, 4, extra=[FadeIn(rt), *unbar(tab)], run_time=0.7)
-            cnt = rt.leaves(self, run_time=1.4)
-            self.play(Indicate(cnt, color=INK, scale_factor=1.1), run_time=0.6)
+            resize(self, tab, 4, extra=[FadeIn(rt), *unbar(tab)], run_time=0.6)
+            cnt = rt.leaves(self, run_time=1.2)
+            self.play(Indicate(cnt, color=INK, scale_factor=1.1), run_time=0.5)
             rt.heal(self)
 
         # ========================================================== 8. step 8: GET /api/newsletters
@@ -584,8 +593,22 @@ class ScreensToRoutes(VoiceScene):
             # the tree comes back at its full-frame place, without leaves and counter
             rt.extra.remove(*list(rt.extra.submobjects))
             rt.shift(-TREE_UP)
-            self.play(FadeOut(card9, shift=UP * 0.2), FadeIn(rt), run_time=0.6)
-            fs = rt.file_map(self, run_time=1.0)
+            fs = list(rt.file_map(quiet))                # built in place, silently; shown by the morph
+            assert len(fs) == 9 and fs[5].text.text == "service.py" and fs[7].text.text == "chat.py", len(fs)
+            rt.extra.remove(*fs)
+            # each README file name becomes its chip on the tree (newsletter.py, podcast.py: one row, two)
+            names = []
+            for r in tbl[1:]:
+                nm = r[0]
+                r.remove(nm)
+                names.append(nm)
+            self.add(*names)
+            targets = [fs[5], fs[6], VGroup(fs[0], fs[1]), fs[7], fs[2], fs[3], fs[4], fs[8]]
+            self.play(FadeOut(card9), FadeIn(rt), *[FadeTransform(n, t) for n, t in zip(names, targets)],
+                      run_time=1.1)
+            self.remove(*names, *fs)
+            rt.extra.add(*fs)
+            rt.heal(self)
             svc, st = fs[5], fs[6]
             rest = fs[7:]
             chat_py = [f for f in rest if hasattr(f, "text") and getattr(f.text, "text", "") == "chat.py"]

@@ -231,6 +231,32 @@ def origin_row(name: str, port: str) -> VGroup:
     return g
 
 
+def scout_hop(scene, tr, sc, bd, text: str, target: str = "api", run_time: float = 1.0):
+    """PLAYS hop 0 (as RequestTrace.hop(0)) with the scout chip `sc` and badge `bd` already waiting in
+    the page: the same chip leaves and comes back (no fade-out/fade-in of a copy), and the permission
+    slip lands a little further left/up than hop(0)'s, clear of the caption row. Returns the slip."""
+    net = tr.net
+    home = sc.get_center()
+    scene.remove(bd)
+    tr.marks.add(bd)                     # the badge stays with the hops (clear_hops takes it)
+    tr.set_caption(scene, text)
+    scene.add(sc)
+    scene.play(sc.animate.move_to(net.door_point(target) + LEFT * (sc.width / 2 + 0.12)), run_time=run_time * 0.6)
+    scene.play(net.door_pulse(target, ROUTE), run_time=0.4)
+    tr.heal(scene)
+    scene.add(sc)                        # heal() re-seats the trace on top: the scout stays in front
+    back = permission_slip("access-control-allow-origin", 20)
+    back.next_to(tr.browser.frame, DOWN, buff=0.12).align_to(tr.browser.frame, LEFT).shift(LEFT * 0.05)
+    assert back.get_left()[0] > -SAFE_X and back.get_right()[0] < tr.caption.get_left()[0] - 0.2, \
+        (back.get_corner(DR), tr.caption.get_corner(UL))
+    scene.play(sc.animate.move_to(home), run_time=run_time * 0.6)
+    scene.play(FadeOut(sc), FadeIn(back, shift=UP * 0.1), run_time=0.4)
+    scene.remove(sc)
+    tr.marks.add(back)
+    tr.heal(scene)
+    return back
+
+
 SHIFT_UP = 0.85            # V1 over a 3- or 4-row strip: it spans y -1.15 .. 2.85
 
 
@@ -245,8 +271,13 @@ class CorsPreflight(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(t0, shift=UP * 0.2), run_time=0.6)
             bare_prompt(self, t0)
+            vo.wait_until("change into")
             type_capture(self, t0, C20, type_time=0.8)
-            cd_prompt(self, t0, P_V2_SIMPLE)
+            ln0 = cd_prompt(self, t0, P_V2_SIMPLE)
+            vo.wait_until("frontend simple")
+            self.play(Indicate(substring(ln0, "cheese-app-v2/src/frontend-simple"), color=LAPTOP, scale_factor=1.08),
+                      run_time=0.7)
+            self.add(t0)
             vo.wait_until("Steps 2 and 3")
             self.play(track(trk, 2), run_time=0.4)
             type_capture(self, t0, C21, type_time=0.5)
@@ -477,11 +508,9 @@ class CorsPreflight(VoiceScene):
             self.play(ill.animate.next_to(tr.browser, UP, buff=0.1).align_to(tr.browser, LEFT), run_time=0.4)
             self.play(Indicate(ask, color=TURN, scale_factor=1.06), run_time=0.7)
             tr.heal(self)
+            self.add(bd0, sc0)                   # heal() re-seats the trace on top: the waiting scout stays in front
             vo.wait_until("makes the browser ask first")
-            self.remove(sc0, bd0)
-            slip = tr.hop(self, 0, "api", text="0 OPTIONS: ask first", run_time=1.0)
-            assert slip.get_bottom()[1] > tr.caption.get_top()[1] or slip.get_right()[0] < tr.caption.get_left()[0], \
-                (slip.get_corner(DR), tr.caption.get_corner(UL))
+            slip = scout_hop(self, tr, sc0, bd0, "0 OPTIONS first", run_time=1.0)
             self.play(Indicate(slip.text, color=ROUTE, scale_factor=1.05), run_time=0.5)
             tr.heal(self)
             tr.hop(self, 1, "api", text="1 then the POST", run_time=0.6)
@@ -526,6 +555,11 @@ class CorsPreflight(VoiceScene):
             vo.wait_until("and ends in 500")
             r146 = rows_from(o8, "POST /llm/chats HTTP", 2)
             self.play(*[Indicate(r, color=ERR, scale_factor=1.04) for r in r146], run_time=0.6)
+            self.add(log8)
+            vo.wait_until("the same Gemini error")
+            r85 = rows_from(o8, "Error generating response", 3)
+            self.play(*[r.animate.set_color(ERR) for r in r85], run_time=0.4)
+            self.play(*[Indicate(r, color=ERR, scale_factor=1.03) for r in r85], run_time=0.6)
             self.add(log8)
             vo.wait_until("That 500 carries")
             self.play(FadeOut(log8), FadeIn(tab8, shift=UP * 0.2), run_time=0.5)
@@ -577,9 +611,9 @@ class CorsPreflight(VoiceScene):
 
         # ========================================================== 10. PONDER: what changed?
         with self.voiceover(SAY[10]) as vo:
-            self.play(Indicate(caps[0], color=INK, scale_factor=1.04), run_time=0.6)
+            self.play(Indicate(caps[0], color=TURN, scale_factor=1.06), run_time=0.7)
             vo.wait_until("and this year's React app")
-            self.play(Indicate(caps[1], color=INK, scale_factor=1.04), run_time=0.6)
+            self.play(Indicate(caps[1], color=TURN, scale_factor=1.06), run_time=0.7)
             for phrase, part in (("the API", 4), ("the browser", 0), ("the origin it calls", 5)):
                 vo.wait_until(phrase)
                 self.play(*[Indicate(ic[part], color=TURN, scale_factor=1.2) for ic in icons], run_time=1.0)

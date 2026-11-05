@@ -36,15 +36,16 @@ Beats (script.md "## S07", one voiceover block each):
    on every start".
 8. The drawing goes; the tab (6 rows) types b25 → b25:2–5, the two `[HTTP 404]` RED. Above: a tiny
    route map from api/service.py:1–7: root `/` holding only the two probe lamps, a PINK `/api` branch
-   holding everything else. In the tail RECORDED(expected/04-troubleshooting.txt: 9–10, 14), tag
-   "recorded · README:228–229, 233" (no SAY).
+   holding everything else. In the tail the map and the tab leave, and RECORDED(expected/
+   04-troubleshooting.txt: 9–10, 14), tag "recorded · README:228–229, 233", stands alone (no SAY).
 9. Tracker [B] 4. Everything else goes; V6 returns frozen: /healthz GREEN, /readyz amber, the ring
    part-filled. PONDER(8 s) below it.
 10. The card leaves. The strips return; the tab types the readyz curl again → b24:2, 8 GREEN, row tag
    "about 9 s later, here"; the log adds b21:61 (GREEN); the ring fills, the readiness lamp turns
    GREEN, Chroma's heartbeat pulses. The strips go; the GREY dashed thought bubble "Kubernetes
-   (Lectures 19, 22) can use these": a load balancer sends PINK traffic only to GREEN-ready boxes,
-   and a restart arrow by the liveness lamp. Fade; empty frame.
+   (Lectures 19, 22) can use these": a load balancer fans PINK traffic only to the two GREEN-ready
+   boxes of a small stack (not the amber one), and a restart arrow inside the box, left of the liveness
+   lamp. Fade; empty frame.
 """
 
 from manim import *  # noqa: F401,F403  (manim first, then common: common's names win)

@@ -151,6 +151,17 @@ def recolor(scene, row, sub: str, color, run_time: float = 0.4):
     scene.play(substring(row, sub).animate.set_color(color), run_time=run_time)
 
 
+def strip_flash(scene, rect, text=None, color=TURN, *extra, run_time: float = 0.6):
+    """PLAYS: pulse an unfilled copy of a filled strip's outline (and flash its words): Indicate on the
+    filled strip itself paints a solid block over the words."""
+    edge = rect.copy().set_fill(opacity=0)
+    anims = [edge.animate(rate_func=there_and_back).set_stroke(color, width=6)]
+    if text is not None:
+        anims.append(Indicate(text, color=color, scale_factor=1.08))
+    scene.play(*anims, *extra, run_time=run_time)
+    scene.remove(edge)
+
+
 def mini_net():
     """Beats 6 and 8: a small V5 on the right (x 1.6 .. 6.4): the API box behind door 9000 on the
     GREEN cable; the frontend row (door 3000, ':5173', box), its stub and the ORANGE 'named volume'
@@ -243,7 +254,7 @@ class ReactShell(VoiceScene):
             self.play(FadeIn(net0), run_time=0.6)
             badge = net0.on_box(self, "api", ok_chip("26 passed"))
             vo.wait_until("The API is up on port 9000")
-            self.play(net0.door_pulse("api", OWN), Indicate(badge, color=OWN, scale_factor=1.12), run_time=0.9)
+            flash_tag(self, badge, OWN, 1.12, 0.9, net0.door_pulse("api", OWN))
             net0.heal(self)
             vo.wait_until("now a page that uses it")
             self.play(FadeIn(br0, shift=RIGHT * 0.6), FadeIn(ill0), run_time=0.6)
@@ -269,12 +280,12 @@ class ReactShell(VoiceScene):
             vo.wait_until("nothing is shared")
             sh.notes(self, run_time=1.0)
             vo.wait_until("and every click loads a whole page")
-            self.play(Indicate(pages[0][1], color=ROUTE, scale_factor=1.06), run_time=0.4)
+            strip_flash(self, pages[0][1], pages[0][2], ROUTE, run_time=0.4)
             sh.heal(self)
             sh.reload(self, 1, run_time=0.6)
             sh.reload(self, 3, run_time=0.6)
             vo.wait_until("slow")
-            self.play(Indicate(sh.note_chips[2], color=ERR, scale_factor=1.15), run_time=0.7)
+            flash_tag(self, sh.note_chips[2], ERR, 1.15, 0.7)
             sh.heal(self)
 
         # ========================================================== 2. LECTURE 32–33: one app, a framework
@@ -283,11 +294,14 @@ class ReactShell(VoiceScene):
             self.play(FadeOut(ref1), FadeIn(ref2), run_time=0.4)
             vo.wait_until("The fix")
             sh.collapse(self, run_time=1.2)
+            vo.wait_until("with a framework")
+            strip_flash(self, sh.outline, getattr(sh, "ol_title", None), TURN, run_time=0.8)
+            sh.heal(self)
             vo.wait_until("The lecture names the common ones")
             fw = sh.frameworks(self, run_time=1.0)
             react = [c for c in fw if c.text.text == "React"][0]
             vo.wait_until("and picks React")
-            self.play(Indicate(react, color=TURN, scale_factor=1.15), run_time=0.8)
+            flash_tag(self, react, TURN, 1.15, 0.8)
             sh.heal(self)
 
         # ========================================================== 3. LECTURE 35–37: components; one shell
@@ -303,11 +317,11 @@ class ReactShell(VoiceScene):
             vo.wait_until("The app is one shell")
             sh.shell(self, "Home", run_time=0.9)
             vo.wait_until("a header defined only once")
-            self.play(Indicate(sh.header, color=TURN, scale_factor=1.04), run_time=0.6)
+            strip_flash(self, sh.header[0], sh.header[1], TURN, run_time=0.6)
             sh.heal(self)
             sh.pin_header(self)
             vo.wait_until("a footer")
-            self.play(Indicate(sh.footer, color=TURN, scale_factor=1.04), run_time=0.6)
+            strip_flash(self, sh.footer[0], sh.footer[1], TURN, run_time=0.6)
             sh.heal(self)
             vo.wait_until("and in between a block")
             self.play(sh.middle.animate.set_stroke(TURN), run_time=0.3)
@@ -328,7 +342,7 @@ class ReactShell(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             row4.move_to([0, react.get_bottom()[1] - 0.2 - rr.height / 2, 0])
             assert row4.width < 2 * SAFE_X - 0.1 and row4.get_bottom()[1] > -SAFE_Y, row4.get_bottom()
-            self.play(Indicate(react, color=TURN, scale_factor=1.1), run_time=0.5)
+            flash_tag(self, react, TURN, 1.1, 0.5)
             sh.heal(self)
             self.play(FadeIn(rr, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("a development server and build tool")
@@ -370,13 +384,13 @@ class ReactShell(VoiceScene):
             self.play(FadeIn(pa, shift=RIGHT * 0.2), FadeIn(pb, shift=RIGHT * 0.2), run_time=0.6)
             vo.wait_until("the header and footer are written once")
             bh = line_bar(pa.code, 2, TURN)
-            self.play(FadeIn(bh), Indicate(sh.header, color=TURN, scale_factor=1.04), run_time=0.7)
+            strip_flash(self, sh.header[0], sh.header[1], TURN, FadeIn(bh), run_time=0.7)
             self.add(pa, bh)
             sh.heal(self)
             self.play(Indicate(sh.pin, color=TURN, scale_factor=1.3), run_time=0.6)
             sh.heal(self)
             bf = line_bar(pb.code, 7, TURN)
-            self.play(FadeIn(bf), Indicate(sh.footer, color=TURN, scale_factor=1.04), run_time=0.7)
+            strip_flash(self, sh.footer[0], sh.footer[1], TURN, FadeIn(bf), run_time=0.7)
             self.add(pb, bf)
             sh.heal(self)
             vo.wait_until("and between them sits the outlet")
@@ -407,7 +421,7 @@ class ReactShell(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(pa, pb, bh, bf, bo)), FadeOut(sh), run_time=0.5)
             self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(t, shift=UP * 0.2), FadeIn(mn), run_time=0.6)
-            self.play(Indicate(mn.api, color=OWN, scale_factor=1.04), run_time=0.7)
+            strip_flash(self, mn.api.frame, mn.api.name, OWN, run_time=0.7)
             vo.wait_until("in a new terminal")
             self.play(Indicate(t.title, color=TURN), run_time=0.6)
             self.add(t)
@@ -454,7 +468,7 @@ class ReactShell(VoiceScene):
             o7 = out(self, t, [D02.line(2), cut(D02.line(3), "FINISHED"), "…", *D02.at((21, 24))], run_time=0.6)
             vo.wait_until("Node and npm")
             pin(self, o7[5], beside(time_row(), o7[5], buff=0.5))
-            self.play(Indicate(o7[5], color=TURN, scale_factor=1.03), Indicate(o7[6], color=TURN, scale_factor=1.03),
+            self.play(Indicate(o7[5].glyphs, color=TURN, scale_factor=1.03), Indicate(o7[6].glyphs, color=TURN, scale_factor=1.03),
                       run_time=0.7)
             self.add(t)
             vo.wait_until("Your first run installs")
@@ -537,7 +551,9 @@ class ReactShell(VoiceScene):
                          tip_length=0.18)
             self.play(GrowArrow(arr9), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(m, shift=DOWN * 0.08) for m in fill9], lag_ratio=0.3), run_time=0.9)
-            self.play(Indicate(fill9, color=TOOL, scale_factor=1.03), run_time=0.6)
+            edges9 = [m.copy().set_fill(opacity=0) for m in fill9]
+            self.play(*[e.animate(rate_func=there_and_back).set_stroke(TOOL, width=6) for e in edges9], run_time=0.6)
+            self.remove(*edges9)
         del l3
 
         # ========================================================== 10. extra: every address, the same HTML

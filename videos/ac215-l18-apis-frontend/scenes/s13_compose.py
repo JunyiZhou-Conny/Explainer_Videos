@@ -219,7 +219,8 @@ class ComposeUp(VoiceScene):
             bar_tag(self, t, extra_row("or edit the file"))
             o0 = out(self, t, [F01.line(7), F01.line(11), (F01.line(12), OWN), F01.line(16), F01.line(20),
                                (F01.line(21), OWN)], run_time=0.6)
-            self.play(substring(o0[2], "your-gcp-project").animate.set_color(TURN), run_time=0.4)
+            self.play(substring(o0[2], "your-gcp-project").animate.set_color(TURN),
+                      substring(o0[5], "your-gcp-project").animate.set_color(TURN), run_time=0.4)
             self.add(t)
             vo.wait_until("It appears twice")
             self.play(Indicate(o0[2], color=OWN, scale_factor=1.03), Indicate(o0[5], color=OWN, scale_factor=1.03),
@@ -245,7 +246,7 @@ class ComposeUp(VoiceScene):
         assert row.width < 2 * SAFE_X - 0.2, row.width
         p19 = pages[19]
         # line 22 unfolded under its page: the check, and the load only if the check fails
-        labs = VGroup(label("1 check", 20, TURN), label("2 else load", 20, TURN))
+        labs = VGroup(label("1 check", 24, TURN), label("2 else load", 24, TURN))
         cmds = VGroup(mono(CHECK, 20, INK), mono(LOAD, 20, INK))
         cmds.arrange(DOWN, aligned_edge=LEFT, buff=0.22)
         for lb, c in zip(labs, cmds):
@@ -318,8 +319,10 @@ class ComposeUp(VoiceScene):
             vo.wait_until("the shell scripts set them")
             self.play(Indicate(t.bar_tag.text, color=INK, scale_factor=1.08), run_time=0.6)
             self.add(t)
-            recolor(self, t, o2b[3], "Removed", CONTAINER, Indicate(o2b[3], color=CONTAINER, scale_factor=1.03),
-                    run_time=0.6)
+            # Indicate and set_color on the same glyphs in one play keep the old colour: two plays
+            self.play(Indicate(o2b[3], color=CONTAINER, scale_factor=1.03), run_time=0.6)
+            self.add(t)
+            recolor(self, t, o2b[3], "Removed", CONTAINER, run_time=0.4)
         del o2
 
         # ========================================================== 3. Step 3: cd src; docker compose up --build
@@ -399,7 +402,10 @@ class ComposeUp(VoiceScene):
                       run_time=1.2)
             self.add(t)
             # the log continues in a strip; V2's laptop comes in above it
-            unpin(self, up, tn)
+            if rows_of(up)[-1] in t.lines:           # 'up' has scrolled off: its tag left with it
+                unpin(self, up, tn)
+            else:
+                rows_of(up)[-1].remove(tn)
             resize(self, t, 4, run_time=0.5)
             self.play(FadeIn(m, shift=LEFT * 0.2), run_time=0.5)
 
@@ -463,6 +469,7 @@ class ComposeUp(VoiceScene):
             m.heal(self)
             self.add(tab)
             vo.wait_until("and the API docs")
+            clear_lines(self, tab, run_time=0.25)
             type_capture(self, tab, F04_DOCS, type_time=0.6)
             o6b = out(self, tab, F04_DOCS.at(2, 3), run_time=0.4)
             self.play(lit(m, "api", OWN), substring(o6b[1], "200").animate.set_color(OWN), run_time=0.6)
@@ -492,7 +499,9 @@ class ComposeUp(VoiceScene):
                 self.play(*[m.dark(k, 0.5) for k in keys], run_time=0.25)
                 m.heal(self)
             vo.wait_until("then docker compose down")
+            clear_lines(self, t, run_time=0.25)
             type_capture(self, t, F10, type_time=0.4)
+            self.wait(0.3)
             out(self, t, F10.at(*REMOVED), run_time=0.4, lag=0.04)
             vo.wait_until("removes all four containers")
             self.play(LaggedStart(*[m.dark(k, 0.7) for k in REMOVED.values()], lag_ratio=0.3), run_time=1.0)

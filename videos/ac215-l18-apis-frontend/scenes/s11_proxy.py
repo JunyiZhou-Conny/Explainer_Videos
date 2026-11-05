@@ -259,14 +259,15 @@ class OneOrigin(VoiceScene):
             self.play(net.book_light(1), run_time=0.5)
             net.heal(self)
             tr.hop(self, 3.5, run_time=0.7)
-            vo.wait_until("That is why uvicorn answered")
-            tr.hop(self, 4, "api", run_time=0.5)
-            tr.hop(self, 5, "api", run_time=0.5)
+            vo.wait_until("across the network")
+            tr.hop(self, 4, "api", run_time=0.4)
+            tr.hop(self, 5, "api", run_time=0.4)
             net.drop(self, bk, run_time=0.3, extra=[FadeOut(dc)])
             net.book = None
             self.play(FadeIn(tS, shift=UP * 0.2), run_time=0.4)
             tagS = bar_tag(self, tS, extra_row())
-            type_capture(self, tS, D04, type_time=0.5)
+            type_capture(self, tS, D04, type_time=0.4)
+            vo.wait_until("That is why uvicorn answered")
             o2 = out(self, tS, D04.at(2, 5), run_time=0.4)
             srv = o2[1]
             assert srv.text == "server: uvicorn"
@@ -321,20 +322,25 @@ class OneOrigin(VoiceScene):
             self.add(a_page, a_api, t_page, t_api)        # above the (opaque) browser again
             vo.wait_until("so the browser has nothing to object to")
             self.play(FadeIn(sop, shift=LEFT * 0.1), run_time=0.5)
+            self.play(FadeIn(cc, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("and the API needs no permission slip")
             self.play(FadeIn(sg, scale=0.8), run_time=0.4)
             self.play(Create(sg_x), FadeIn(nn), run_time=0.5)
-            self.play(FadeIn(cc, shift=UP * 0.15), run_time=0.6)
 
         # ========================================================== 4. PONDER: call the name directly?
         ev = envelope2(("http://cheese-app-", "api-service:9000"))
         ev.move_to(tr.browser.at(0, -0.05))
         assert ev.width < tr.browser.page.width - 0.1, ev.width
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(oc, sop, sg, sg_x, nn, cc, t_page, t_api, a_page, a_api)), run_time=0.5)
             vo.wait_until("Could the page's JavaScript")
+            self.play(FadeOut(VGroup(oc, sop, sg, sg_x, nn, cc, t_page, t_api, a_page, a_api)), run_time=0.5)
             self.play(FadeIn(ev, shift=DOWN * 0.15), run_time=0.6)
             self.play(Indicate(ev.text, color=ROUTE, scale_factor=1.06), run_time=0.6)
+            vo.wait_until("by its container name")
+            self.play(Indicate(ev.text[0], color=ROUTE, scale_factor=1.1), run_time=0.6)
+            vo.wait_until("port 9000")
+            self.play(Indicate(ev.text[1][-4:], color=ROUTE, scale_factor=1.25), run_time=0.6)
+            self.add(ev)
         pc = ponder(self, QUESTION, 8, center=(net.frame.get_x(), net.frame.get_y()), width=7.7)
         assert pc.get_left()[0] > tr.divider.get_x() + 0.05 and pc.get_right()[0] < SAFE_X, pc.get_left()
 
@@ -346,7 +352,7 @@ class OneOrigin(VoiceScene):
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(pc), run_time=0.5)
             vo.wait_until("The JavaScript runs in your browser")
-            self.play(Indicate(tr.browser.frame, color=TURN, scale_factor=1.03), run_time=0.6)
+            self.play(tr.browser.frame.animate(rate_func=there_and_back).set_stroke(TURN, width=7), run_time=1.0)
             tr.heal(self)
             self.add(ev)
             vo.wait_until("and the laptop's DNS")
