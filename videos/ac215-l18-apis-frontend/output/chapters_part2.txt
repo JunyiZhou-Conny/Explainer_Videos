@@ -1,0 +1,7 @@
+00:00 Why a framework: React with Vite
+02:09 One origin: the Vite proxy
+04:20 Production: nginx instead of Vite
+06:21 One command, then clean up
+07:58 Tutorial 24 lives on branch 2025
+10:02 Last year's pages: CORS and the preflight
+12:34 Tear down, recap, and what's next
