@@ -1,0 +1,26 @@
+$ gcloud run jobs create --help | grep -E -A3 '^ +--(command|args|tasks|max-retries|task-timeout)\b' | grep -v '^--$' | head -50
+          --args=[ARG,...] --clear-volume-mounts --command=[COMMAND,...]
+          --cpu=CPU --depends-on=[CONTAINER,...] --gpu=GPU --image=IMAGE
+          --memory=MEMORY --remove-volume-mount=[MOUNT_PATH,...]
+          --startup-probe=[KEY=VALUE,...] --workdir=WORKDIR --clear-env-vars
+     --max-retries=MAX_RETRIES
+        Number of times a task is allowed to restart in case of failure before
+        being failed permanently. This applies per-task, not per-job. If set to
+        0, tasks will only run once and never be retried on failure.
+     --task-timeout=TASK_TIMEOUT
+        Set the maximum time (deadline) a job task attempt can run for. In the
+        case of retries, this deadline applies to each attempt of a task. If
+        the task attempt does not complete within this time, it will be killed.
+     --tasks=TASKS; default=1
+        Number of tasks that must run to completion for the execution to be
+        considered done.
+
+     --args=[ARG,...]
+        Comma-separated arguments passed to the command run by the container
+        image. If not specified and no '--command' is provided, the container
+        image's default Cmd is used. Otherwise, if not specified, no arguments
+     --command=[COMMAND,...]
+        Entrypoint for the container image. If not specified, the container
+        image's default Entrypoint is run. To reset this field to its default,
+        pass an empty string.
+[exit 0]

@@ -1,0 +1,13 @@
+# RECORDED, not captured here: what the tutorial documents for Part 1 (Cloud Run function), quoted from dlops-io/serverless-deployment @ 46cc62f -- README.md:158-159, 180-184 and tutorial/gif_steps.json ("function-deploy-test.gif" captions, the console rehearsal). No GCP project or credentials exist in the capture sandbox; the local stand-in in ../dev/22-28 runs the same handler with functions-framework 3.10.2.
+Open the service URL with no arguments:
+  Default request: English → Spanish (Bienvenido a AC215)                 [gif_steps.json, function-deploy-test.gif caption 8]
+Append ?text=Good%20afternoon%20everyone&src=en&dest=fr:
+  The translation request returned Bonjour à tous                         [README.md:182-183]
+Change dest=el:
+  the same endpoint returns Greek                                         [gif_steps.json, caption 10]
+Observability → Logs:
+  its request log showed HTTP 200                                          [README.md:183-184]
+  Find the matching French query and verify GET 200                       [gif_steps.json, caption 13]
+Build progress before the first call:
+  Building source: Google assembles the runnable image                    [gif_steps.json, caption 6]
+  All four deployment stages completed; open the service URL              [gif_steps.json, caption 7]

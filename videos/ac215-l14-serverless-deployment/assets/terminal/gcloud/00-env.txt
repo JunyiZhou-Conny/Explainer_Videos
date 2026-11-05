@@ -1,0 +1,15 @@
+$ date -u '+%Y-%m-%d %H:%M UTC'; gcloud version; python3 --version; which python python3
+2026-11-04 09:34 UTC
+Google Cloud SDK 592.0.0
+alpha 2026.10.30
+beta 2026.10.30
+bq 2.1.41
+bundled-python3-unix 3.14.9
+core 2026.10.30
+gcloud-crc32c 1.0.0
+gsutil 5.38
+preview 2026.10.30
+Python 3.13.5
+/usr/bin/python
+/usr/bin/python3
+[exit 0]

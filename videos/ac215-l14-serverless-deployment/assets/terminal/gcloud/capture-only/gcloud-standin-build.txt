@@ -1,0 +1,39 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 996B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/4] FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:slim@sha256:8a50079dfc4b164aa5e83926bef5f9b305b93e80f82d40fabd836da4830dd08e
+#4 resolve gcr.io/google.com/cloudsdktool/google-cloud-cli:slim@sha256:8a50079dfc4b164aa5e83926bef5f9b305b93e80f82d40fabd836da4830dd08e 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 189.25kB done
+#5 DONE 0.0s
+
+#6 [3/4] RUN cat /usr/local/share/ca-certificates/capture-ca.crt >> /etc/ssl/certs/ca-certificates.crt  && sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources  && rm -f /etc/apt/sources.list.d/google-cloud-sdk.list  && apt-get update -qq && apt-get install -y -qq --no-install-recommends python3 python-is-python3 >/dev/null  && cat /usr/local/share/ca-certificates/capture-ca.crt >> /etc/ssl/certs/ca-certificates.crt  && rm -rf /var/lib/apt/lists/* && useradd -m -s /bin/bash student
+#6 CACHED
+
+#7 [2/4] COPY capture-ca.crt /usr/local/share/ca-certificates/capture-ca.crt
+#7 CACHED
+
+#8 [4/4] WORKDIR /home/student
+#8 CACHED
+
+#9 exporting to image
+#9 exporting layers 0.0s done
+#9 exporting manifest sha256:1071fbfd94b417e3ce118167bb581cd2bffb51f372087dd43c94135442307c7b done
+#9 exporting config sha256:e8a99598e4d37141ebaa017b5e2d0b533ab2dbd7c09877b31c1703b641a21318 done
+#9 exporting attestation manifest sha256:78566791f98de10a8e4ecaa0a4081342c0b773dd54e578f980c54bc20b0ab57b done
+#9 exporting manifest list sha256:af67b68d17dfb9ffc8d2b4719015ea2122857ad2588cdb7167efd8ac0c466cee done
+#9 naming to docker.io/library/l14-gcloud-standin:latest done
+#9 unpacking to docker.io/library/l14-gcloud-standin:latest 0.0s done
+#9 DONE 0.1s

@@ -1,0 +1,13 @@
+$ export INPUT_BUCKET=YOUR_INPUT_BUCKET
+export OUTPUT_BUCKET=YOUR_OUTPUT_BUCKET
+gcloud storage cp ./passage.txt "gs://$INPUT_BUCKET/run-002/passage.txt" \
+  --project="$PROJECT_ID"
+ERROR: (gcloud) The project property must be set to a valid project ID, not the project name [YOUR_PROJECT_ID]
+To set your project, run:
+
+  $ gcloud config set project PROJECT_ID
+
+or to unset it, run:
+
+  $ gcloud config unset project
+[exit 1]

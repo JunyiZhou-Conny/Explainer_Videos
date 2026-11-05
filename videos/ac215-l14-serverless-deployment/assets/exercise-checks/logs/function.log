@@ -1,0 +1,46 @@
+$ python --version; python -m venv /venv && /venv/bin/pip install -q -r /fn/requirements.txt && /venv/bin/pip list 2>/dev/null | grep -iE "^(functions-framework|googletrans|flask|gunicorn|httpx) "
+Python 3.12.15
+Flask               3.1.3
+functions-framework 3.10.2
+googletrans         4.0.0rc1
+gunicorn            26.2.0
+httpx               0.13.3
+[exit 0]
+
+$ cd /fn && timeout 20 /venv/bin/functions-framework --target translate 2>&1 | tail -1
+functions_framework.exceptions.MissingTargetException: File /fn/main.py is expected to contain a function named 'translate'. Found: 'hello_http' instead
+[exit 0]
+
+$ /venv/bin/python -c "import inspect, googletrans; from googletrans import Translator; print(googletrans.__version__, Translator.translate.__qualname__ + str(inspect.signature(Translator.translate)), \"coroutine function:\", inspect.iscoroutinefunction(Translator.translate))"
+4.0.0-rc.1 Translator.translate(self, text: str, dest='en', src='auto') coroutine function: False
+[exit 0]
+
+$ python -m venv /venv2 && /venv2/bin/pip install -q functions-framework==3.10.2 googletrans==4.0.2 && /venv2/bin/python -c "
+import inspect, googletrans
+from googletrans import Translator
+print(googletrans.__version__, Translator.translate.__qualname__ + str(inspect.signature(Translator.translate)), \"coroutine function:\", inspect.iscoroutinefunction(Translator.translate))
+result = Translator().translate(\"Good afternoon everyone\", src=\"en\", dest=\"fr\")
+print(type(result).__name__)
+try:
+    print(result.text)
+except AttributeError as e:
+    print(\"AttributeError:\", e)
+finally:
+    result.close()
+"
+3.4.0 Translator.translate(self, text: Union[str, List[str]], dest: str = 'en', src: str = 'auto', **kwargs: Any) -> Union[googletrans.models.Translated, List[googletrans.models.Translated]] coroutine function: True
+coroutine
+AttributeError: 'coroutine' object has no attribute 'text'
+[exit 0]
+
+$ /venv/bin/python /tmp/echo_check.py "" "?text=Good%20afternoon%20everyone&src=en&dest=fr" "?text=Good afternoon everyone&dest=fr" "?text=Good+afternoon&dest=el" "?text=Tom%20%26%20Jerry&dest=fr" "?text=Tom & Jerry&dest=fr" "?dest=zh-cn&text=Hi&src=en" "?Dest=fr&text=Hi"
+GET / -> 200 text='Welcome to AC215' src='en' dest='es'
+GET /?text=Good%20afternoon%20everyone&src=en&dest=fr -> 200 text='Good afternoon everyone' src='en' dest='fr'
+GET /?text=Good afternoon everyone&dest=fr -> 200 text='Good afternoon everyone' src='en' dest='fr'
+GET /?text=Good+afternoon&dest=el -> 200 text='Good afternoon' src='en' dest='el'
+GET /?text=Tom%20%26%20Jerry&dest=fr -> 200 text='Tom & Jerry' src='en' dest='fr'
+GET /?text=Tom & Jerry&dest=fr -> 200 text='Tom ' src='en' dest='fr'
+GET /?dest=zh-cn&text=Hi&src=en -> 200 text='Hi' src='en' dest='zh-cn'
+GET /?Dest=fr&text=Hi -> 200 text='Hi' src='en' dest='es'
+[exit 0]
+

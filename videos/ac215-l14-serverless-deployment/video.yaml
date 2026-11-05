@@ -1,0 +1,71 @@
+id: ac215-l14-serverless-deployment
+title: "AC215 · Lecture 14 — Serverless deployment: a function, a service and a job on Cloud Run (follow-along: serverless-deployment)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 14
+  lecture_title: "Serverless Deployment: Cloud Functions, Cloud Run"
+  ed: https://edstem.org/us/courses/97373/lessons/166039/
+  repos:
+    # The README the course link serves today (HEAD of main on 2026-11-04, the four-part tutorial);
+    # the exam edition quotes the same commit. See ASSETS.md "Which commit".
+    - {repo: dlops-io/serverless-deployment, branch: main, commit: 46cc62fd8b1ac94ce733571a834b46002d8dd8c4,
+       sections: ["Before you begin", "Part 1: Deploy a translation function",
+                  "Part 2: Deploy a translation web app",
+                  "Part 3: Give the web app access to Agent Platform",
+                  "Part 4: Generate and save a translated audio edition",
+                  "Clean up after the tutorial"]}
+    # context only: the course map's older pin (the ~150-line README the slides were written against;
+    # its anchors "Running App as Cloud Function" / "Running App in Cloud Run" no longer exist on main)
+    - {repo: dlops-io/serverless-deployment, branch: main, commit: 4eaf3433a3430f51306e67247287a124d0c35710,
+       sections: ["context only: Running App as Cloud Function", "context only: Running App in Cloud Run"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L14-serverless-deployment.md
+audience: "AC215 student who has done L1-L13 (a GCP project with billing, Docker images and containers, docker run -p and PORT, a service-account key in secrets/, uv, last week's Vertex AI training job), new to Cloud Run functions, services and jobs, runtime service accounts, ADC impersonation and job outputs in Cloud Storage; watching with their own clone of serverless-deployment open, Docker running, gcloud installed and their own project selected — this lecture creates billable Cloud Run resources, buckets and Gemini TTS calls (GOLD tags + teardown checklist in the video)"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,      cls: Hook,              title: "It works on localhost"}
+  - {file: scenes/s02_map.py,       cls: FourWays,          title: "One app, four ways to deploy it"}
+  - {file: scenes/s03_setup.py,     cls: BeforeYouBegin,    title: "Before you begin: project, region, clone"}
+  - {file: scenes/s04_function.py,  cls: WriteAFunction,    title: "Part 1: write a function"}
+  - {file: scenes/s05_build.py,     cls: InsideTheFunction, title: "What runs your function?"}
+  - {file: scenes/s06_endpoint.py,  cls: CallTheEndpoint,   title: "Call it with a query string"}
+  - {file: scenes/s07_local.py,     cls: RunTheImage,       title: "Part 2: the prebuilt app on your laptop"}
+  - {file: scenes/s08_service.py,   cls: DeployTheImage,    title: "Deploy the same image"}
+  - {file: scenes/s09_identity.py,  cls: RuntimeIdentity,   title: "Who may call it, and who it runs as"}
+  - {file: scenes/s10_speech.py,    cls: EnableSpeech,      title: "Attach the identity, turn on speech"}
+  - {file: scenes/s11_localdev.py,  cls: LocalDevelopment,  title: "Develop locally with ADC"}
+  - {file: scenes/s12_buckets.py,   cls: JobAndBuckets,     title: "Finite work: a job and two buckets"}
+  - {file: scenes/s13_job.py,       cls: CommandAndArgs,    title: "Command, arguments and the job's badge"}
+  - {file: scenes/s14_execute.py,   cls: ExecuteAndCollect, title: "Execute it and collect the files"}
+  - {file: scenes/s15_terminal.py,  cls: FromTheTerminal,   title: "From the terminal, then the helper"}
+  - {file: scenes/s16_recap.py,     cls: CleanUpRecap,      title: "Clean up, and what serverless costs"}
+parts:
+  - id: part1
+    title: "AC215 · L14, part 1: hand over code, hand over an image — a Cloud Run function and a service"
+    scenes: [s01_hook, s02_map, s03_setup, s04_function, s05_build, s06_endpoint, s07_local, s08_service]
+  - id: part2
+    title: "AC215 · L14, part 2: identity and finite work — a runtime service account, speech and a Cloud Run job"
+    scenes: [s09_identity, s10_speech, s11_localdev, s12_buckets, s13_job, s14_execute, s15_terminal, s16_recap]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker)
+publish:
+  title_zh: "AC215 第14讲跟练 · Serverless 部署：Cloud Run function、service 与 job，一步一步部署到云端"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 14 讲教程的逐条命令跟练，照着 dlops-io/serverless-deployment 的 README 四个部分一步一步做：
+    上半场把一个 6 行的翻译 handler 写成 Cloud Run function（main.py、requirements.txt 和 entry point，看 Cloud Build 怎样把代码变成镜像），
+    用 query string 调用它；再用一条 docker run 在本地跑起预构建的翻译网页，讲清 PORT、0.0.0.0 和 -p 8086:8080，
+    然后把同一个镜像部署成 Cloud Run service，看懂 min/max instances、concurrency、按请求计费、revision 和 tag 与 digest。
+    下半场给服务挂上运行时 service account（不用下载 key），打开 Gemini 语音合成，用 ADC 和 impersonation 在本地开发；
+    再把同一个镜像跑成 Cloud Run job：两个私有 bucket、按桶授权、container command 与 11 个独立参数、执行后的 attempt 文件夹和 manifest，
+    最后用 gcloud 参数覆盖和 helper 脚本从终端提交任务，并逐项清理所有计费资源。
+    对照课件逐页讲解：四种部署方式、冷启动、按用量计费的前提、调试在哪里看日志、vendor lock-in。
+    边看边暂停，在自己的电脑上跑每一条命令；本讲会创建计费的云资源，视频用金色标签标出计费点，结尾有完整收尾清单。
+    英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/serverless-deployment
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L14-serverless-deployment.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, Serverless, Cloud Run, Cloud Functions, 云部署, Docker, GCP, 哈佛, 教程跟练]
+  tid: 231

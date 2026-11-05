@@ -1,0 +1,12 @@
+# ILLUSTRATION, not an output: the shape of the JSON a successful job task prints to its logs (tutorial/app/translation_demo/__main__.py:62 prints the dict that storage.py:56 returns; keys and order from storage.py:48-56, indent=2). Angle-bracket values are placeholders: <attempt> is uuid4().hex (storage.py:37-38); execution and task_attempt are Cloud Run's CLOUD_RUN_EXECUTION / CLOUD_RUN_TASK_ATTEMPT (storage.py:50-51). manifest.json holds the last four keys (status, artifacts, execution, task_attempt).
+{
+  "output_uri": "gs://YOUR_OUTPUT_BUCKET/run-001/<attempt>/",
+  "manifest_uri": "gs://YOUR_OUTPUT_BUCKET/run-001/<attempt>/manifest.json",
+  "status": "complete",
+  "artifacts": {
+    "translated.txt": "gs://YOUR_OUTPUT_BUCKET/run-001/<attempt>/translated.txt",
+    "speech.wav": "gs://YOUR_OUTPUT_BUCKET/run-001/<attempt>/speech.wav"
+  },
+  "execution": "<execution name>",
+  "task_attempt": "<attempt number>"
+}

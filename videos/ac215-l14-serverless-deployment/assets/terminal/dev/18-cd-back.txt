@@ -1,0 +1,3 @@
+$ cd ../..; pwd
+/home/student/serverless-deployment
+[exit 0]

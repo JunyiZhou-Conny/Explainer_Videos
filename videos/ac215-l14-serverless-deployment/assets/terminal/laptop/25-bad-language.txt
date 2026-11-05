@@ -1,0 +1,5 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' -X POST -H 'Content-Type: application/json' -d '{"text": "hello", "src": "en", "dest": "xx"}' http://localhost:8086/api/translate
+{"error":"Choose a supported destination language."}
+
+[HTTP 400]
+[exit 0]

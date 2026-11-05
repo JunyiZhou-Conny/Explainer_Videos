@@ -1,0 +1,12 @@
+$ gcloud run jobs execute --help | grep -E -A4 '^ +--(args|wait)\b' | grep -v '^--$' | head -30
+     --args=[ARG,...]
+        Comma-separated arguments passed to the command run by the container
+        image. If provided, an execution will be created with the input values.
+        Otherwise, the existing arguments of the job are used.
+
+       --wait
+          Wait until the execution has completed running before exiting. If not
+          set, gcloud exits successfully when the execution has started.
+
+GCLOUD WIDE FLAGS
+[exit 0]

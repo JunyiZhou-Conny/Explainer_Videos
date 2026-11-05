@@ -1,0 +1,5 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' -X POST -H 'Content-Type: application/json' -d '{"text": "Bonjour à tous", "src": "en", "dest": "fr"}' http://localhost:8086/api/speech
+{"error":"Speech is disabled. Enable it for part 3 after configuring Agent Platform access."}
+
+[HTTP 503]
+[exit 0]

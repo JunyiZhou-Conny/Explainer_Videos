@@ -1,0 +1,6 @@
+$ docker run --rm -e ENABLE_SPEECH=true -e GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID -e GOOGLE_CLOUD_LOCATION=us-central1 cgumb/ac215-translation-demo:lecture14-agent-platform-20261022 \
+  python -m translation_demo batch \
+  --text-file examples/passage.txt --src en --dest fr \
+  --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/
+Batch failed: Google credentials are unavailable. Configure local ADC or attach an authorized runtime service account.
+[exit 1]

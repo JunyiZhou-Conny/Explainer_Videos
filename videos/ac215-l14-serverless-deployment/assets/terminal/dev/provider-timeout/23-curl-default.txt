@@ -1,0 +1,4 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' http://localhost:8080/
+Bienvenido a AC215
+[HTTP 200]
+[exit 0]

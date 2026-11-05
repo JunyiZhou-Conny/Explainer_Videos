@@ -1,0 +1,6 @@
+$ docker run --rm cgumb/ac215-translation-demo:lecture14-agent-platform-20261022 \
+  python -m translation_demo batch \
+  --text-file examples/passage.txt --src en --dest fr \
+  --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/
+Batch failed: Speech is disabled. Enable it for part 3 after configuring Agent Platform access.
+[exit 1]

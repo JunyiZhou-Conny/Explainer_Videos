@@ -1,0 +1,13 @@
+$ export PROJECT_ID=YOUR_PROJECT_ID
+export REGION=northamerica-northeast2
+export IMAGE=cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+export WEB_SERVICE=translation-demo
+export JOB_NAME=translation-audio
+export WEB_EMAIL="translation-demo-runtime@${PROJECT_ID}.iam.gserviceaccount.com"
+export JOB_EMAIL="translation-audio-job@${PROJECT_ID}.iam.gserviceaccount.com"
+gcloud config list 2>&1
+[core]
+disable_usage_reporting = True
+
+Your active configuration is: [default]
+[exit 0]

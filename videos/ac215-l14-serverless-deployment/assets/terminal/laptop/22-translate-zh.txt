@@ -1,0 +1,7 @@
+$ curl -s -X POST -H 'Content-Type: application/json' -d '{"text": "Good afternoon everyone", "src": "en", "dest": "zh-cn"}' http://localhost:8086/api/translate | python3 -m json.tool --no-ensure-ascii
+{
+    "dest": "zh-cn",
+    "src": "en",
+    "text": "大家下午好"
+}
+[exit 0]

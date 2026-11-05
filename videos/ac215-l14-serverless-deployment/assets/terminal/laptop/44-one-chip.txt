@@ -1,0 +1,3 @@
+$ docker run --rm cgumb/ac215-translation-demo:lecture14-agent-platform-20261022 python '-m translation_demo batch --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage.txt --src en --dest fr --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/'
+/usr/local/bin/python: Error while finding module specification for ' translation_demo batch --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage.txt --src en --dest fr --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/' (ModuleNotFoundError: No module named ' translation_demo batch --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage')
+[exit 1]

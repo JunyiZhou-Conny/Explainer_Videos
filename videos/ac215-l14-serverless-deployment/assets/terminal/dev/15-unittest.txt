@@ -1,0 +1,24 @@
+$ uv run python -m unittest discover -s tests -v
+test_failed_upload_does_not_write_completion_manifest (test_batch.BatchContracts.test_failed_upload_does_not_write_completion_manifest) ... ok
+test_input_download_is_pinned_to_inspected_generation (test_batch.BatchContracts.test_input_download_is_pinned_to_inspected_generation) ... ok
+test_oversized_input_is_not_downloaded (test_batch.BatchContracts.test_oversized_input_is_not_downloaded) ... ok
+test_remote_batch_reuses_translation_and_speech_then_saves (test_batch.BatchContracts.test_remote_batch_reuses_translation_and_speech_then_saves) ... ok
+test_remote_plan_never_downloads_or_calls_provider (test_batch.BatchContracts.test_remote_plan_never_downloads_or_calls_provider) ... ok
+test_uploads_are_create_only_with_manifest_last (test_batch.BatchContracts.test_uploads_are_create_only_with_manifest_last) ... ok
+test_bad_input_does_not_reach_provider (test_contracts.ApplicationContracts.test_bad_input_does_not_reach_provider) ... ok
+test_batch_execution_failure_exits_unsuccessfully (test_contracts.ApplicationContracts.test_batch_execution_failure_exits_unsuccessfully) ... ok
+test_batch_plan_makes_no_provider_calls (test_contracts.ApplicationContracts.test_batch_plan_makes_no_provider_calls) ... ok
+test_speech_does_not_fake_success (test_contracts.ApplicationContracts.test_speech_does_not_fake_success) ... ok
+test_translation_returns_provider_output (test_contracts.ApplicationContracts.test_translation_returns_provider_output) ... ok
+test_ui_is_available_without_a_provider_call (test_contracts.ApplicationContracts.test_ui_is_available_without_a_provider_call) ... ok
+test_adc_call_uses_selected_project_and_language (test_speech.SpeechContracts.test_adc_call_uses_selected_project_and_language) ... ok
+test_byte_limit_is_checked_before_authentication (test_speech.SpeechContracts.test_byte_limit_is_checked_before_authentication) ... ok
+test_http_route_returns_audio_without_storage (test_speech.SpeechContracts.test_http_route_returns_audio_without_storage) ... ok
+test_missing_or_incompatible_audio_is_rejected (test_speech.SpeechContracts.test_missing_or_incompatible_audio_is_rejected) ... ok
+test_pcm_is_wrapped_in_playable_wav (test_speech.SpeechContracts.test_pcm_is_wrapped_in_playable_wav) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.096s
+
+OK
+[exit 0]

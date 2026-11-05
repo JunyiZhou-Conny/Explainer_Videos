@@ -1,0 +1,21 @@
+$ docker run --rm cgumb/ac215-translation-demo:lecture14-agent-platform-20261022 \
+  python -m translation_demo batch --plan \
+  --text-file examples/passage.txt --src en --dest fr \
+  --output-uri gs://YOUR_OUTPUT_BUCKET/fresh-run-prefix
+{
+  "status": "plan_only",
+  "input_characters": 131,
+  "input_uri": null,
+  "source_language": "en",
+  "destination_language": "fr",
+  "output_uri": "gs://YOUR_OUTPUT_BUCKET/fresh-run-prefix",
+  "steps": [
+    "Read the passage",
+    "Translate the complete passage",
+    "Synthesize speech with Agent Platform",
+    "Save text, audio, and completion manifest to a unique attempt prefix",
+    "Exit"
+  ],
+  "implemented": true
+}
+[exit 0]

@@ -1,0 +1,10 @@
+$ python3 -m venv ~/fn-venv && ~/fn-venv/bin/pip install -q -r tutorial/function/requirements.txt && ~/fn-venv/bin/pip list 2>/dev/null | grep -iE 'functions-framework|googletrans|flask|gunicorn|httpx'
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: python3 -m pip install --upgrade pip
+Flask               3.1.3
+functions-framework 3.10.2
+googletrans         4.0.0rc1
+gunicorn            26.2.0
+httpx               0.13.3
+[exit 0]
