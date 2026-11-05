@@ -1,0 +1,1185 @@
+1
+00:00:00,000 --> 00:00:01,000
+Part 3.
+
+2
+00:00:01,280 --> 00:00:03,423
+The README separates two questions:
+
+3
+00:00:03,423 --> 00:00:07,403
+who may call our public app,
+and what the running app may access.
+
+4
+00:00:07,650 --> 00:00:11,694
+The first door,
+who may call it, is Allow public access;
+
+5
+00:00:11,694 --> 00:00:14,583
+gcloud spells it --no-invoker-iam-check.
+
+6
+00:00:14,903 --> 00:00:19,639
+If an organization policy forbids it,
+the URL answers 403.
+
+7
+00:00:20,583 --> 00:00:21,927
+So, a quick test.
+
+8
+00:00:22,247 --> 00:00:24,423
+The service allows public access.
+
+9
+00:00:24,743 --> 00:00:26,898
+Does that let it call Agent Platform?
+
+10
+00:00:33,733 --> 00:00:36,634
+No. That door only admits callers.
+
+11
+00:00:36,954 --> 00:00:42,224
+Calling out goes through the other door,
+as whatever identity the service runs as;
+
+12
+00:00:42,224 --> 00:00:47,173
+until you attach one, that is normally
+the project's default compute account.
+
+13
+00:00:47,417 --> 00:00:52,038
+Step 1: in the API Library,
+enable the Agent Platform API,
+
+14
+00:00:52,038 --> 00:00:57,614
+the console's current name
+for what earlier lectures called Vertex AI.
+
+15
+00:00:57,850 --> 00:01:03,138
+Steps 2 and 3: create a service account
+named Translation demo runtime,
+
+16
+00:01:03,138 --> 00:01:05,893
+with the ID translation-demo-runtime.
+
+17
+00:01:06,250 --> 00:01:07,786
+Step 4: two roles.
+
+18
+00:01:08,106 --> 00:01:11,050
+Agent Platform User lets it call the model.
+
+19
+00:01:11,370 --> 00:01:15,601
+Service Usage Consumer lets it charge
+calls to a quota project:
+
+20
+00:01:15,601 --> 00:01:19,093
+the project whose quota
+and bill they count against.
+
+21
+00:01:19,413 --> 00:01:21,290
+The app names your project there.
+
+22
+00:01:21,610 --> 00:01:24,810
+Leave both principal fields
+empty and select Done.
+
+23
+00:01:25,050 --> 00:01:27,269
+Step 5: note the account's email.
+
+24
+00:01:27,589 --> 00:01:29,849
+No key to create or download:
+
+25
+00:01:29,849 --> 00:01:33,646
+in lecture 3 a JSON key sat
+in a secrets folder;
+
+26
+00:01:33,646 --> 00:01:34,991
+here none exists.
+
+27
+00:01:35,311 --> 00:01:40,431
+The recording shows the account enabled,
+with no keys; pause and create yours.
+
+28
+00:01:40,667 --> 00:01:46,742
+The gcloud alternative enables the API,
+creates the account, and adds the two roles;
+
+29
+00:01:46,742 --> 00:01:49,563
+both bindings are on the whole project.
+
+30
+00:01:50,600 --> 00:01:53,543
+Attaching the account
+takes a permission of yours:
+
+31
+00:01:53,543 --> 00:01:55,720
+Service Account User on that account.
+
+32
+00:01:56,040 --> 00:01:59,859
+That is your deployment right,
+separate from the account's own roles.
+
+33
+00:02:00,100 --> 00:02:02,575
+Step 1: open translation-demo.
+
+34
+00:02:02,895 --> 00:02:04,695
+Step 2: on the Security tab,
+
+35
+00:02:04,695 --> 00:02:07,844
+choose your runtime account,
+and check its email.
+
+36
+00:02:09,167 --> 00:02:13,587
+A small gap: the README promises this access
+in section 3.3,
+
+37
+00:02:13,587 --> 00:02:16,975
+but that section grants
+Token Creator instead.
+
+38
+00:02:17,295 --> 00:02:22,201
+Project owners already have it;
+in a restricted project, ask course staff.
+
+39
+00:02:22,450 --> 00:02:24,989
+Step 3: three environment variables.
+
+40
+00:02:25,309 --> 00:02:29,881
+ENABLE_SPEECH, true;
+GOOGLE_CLOUD_PROJECT, your project ID;
+
+41
+00:02:29,881 --> 00:02:32,903
+and GOOGLE_CLOUD_LOCATION, us-central1.
+
+42
+00:02:33,223 --> 00:02:37,083
+The service runs in Toronto,
+the model in us-central1:
+
+43
+00:02:37,083 --> 00:02:38,727
+two different settings.
+
+44
+00:02:38,967 --> 00:02:41,043
+Step 4: View diff & redeploy,
+
+45
+00:02:41,043 --> 00:02:45,410
+keep Serve this revision immediately on,
+then Deploy changes.
+
+46
+00:02:45,730 --> 00:02:50,231
+That makes a new revision;
+the old instance is replaced, not edited.
+
+47
+00:02:50,551 --> 00:02:52,577
+Step 5: wait for the rollout.
+
+48
+00:02:52,850 --> 00:02:54,322
+Here is the speech path.
+
+49
+00:02:54,642 --> 00:02:58,022
+The app checks the flag,
+the size and the language,
+
+50
+00:02:58,022 --> 00:03:03,389
+then asks Google's auth library for a token;
+on Cloud Run, the badge supplies it.
+
+51
+00:03:03,709 --> 00:03:06,738
+That lookup
+is Application Default Credentials.
+
+52
+00:03:07,058 --> 00:03:12,199
+Gemini speech in us-central1 sends
+audio straight back; no bucket.
+
+53
+00:03:13,017 --> 00:03:17,070
+Step 6: reload the page,
+because it checks the flag when it loads.
+
+54
+00:03:17,390 --> 00:03:21,892
+Then Translate and Play audio;
+the recording shows French audio playing.
+
+55
+00:03:22,212 --> 00:03:25,603
+A gold tag:
+each Play audio is a paid model call.
+
+56
+00:03:25,850 --> 00:03:31,183
+Step 7: if it fails, check the message
+and the logs before changing permissions.
+
+57
+00:03:31,503 --> 00:03:35,898
+Without the flag, you get our captured 503:
+speech is disabled.
+
+58
+00:03:36,218 --> 00:03:40,122
+A missing identity
+or a denied call each has its own message.
+
+59
+00:03:40,367 --> 00:03:43,482
+That is limited control and debugging,
+made workable.
+
+60
+00:03:43,802 --> 00:03:47,769
+The gcloud alternative makes the same change
+in one command.
+
+61
+00:03:50,700 --> 00:03:53,443
+Section 3.3 is optional, and needs uv:
+
+62
+00:03:53,443 --> 00:03:58,785
+how would you develop locally,
+without publishing an image for every edit?
+
+63
+00:03:59,105 --> 00:04:04,494
+Application Default Credentials lets
+the same code find a token on Cloud Run
+
+64
+00:04:04,494 --> 00:04:06,337
+and a file on your laptop.
+
+65
+00:04:06,583 --> 00:04:09,631
+To test the runtime
+account's real permissions,
+
+66
+00:04:09,631 --> 00:04:11,447
+your laptop impersonates it.
+
+67
+00:04:11,767 --> 00:04:16,527
+You sign in as yourself and receive
+short-lived tokens as that account;
+
+68
+00:04:16,527 --> 00:04:18,807
+no private key is ever downloaded.
+
+69
+00:04:19,050 --> 00:04:21,230
+Step 1: on the runtime account,
+
+70
+00:04:21,230 --> 00:04:24,746
+grant your own user
+Service Account Token Creator.
+
+71
+00:04:25,066 --> 00:04:29,333
+Replace any preselected role,
+and don't leave Service Account Admin.
+
+72
+00:04:29,653 --> 00:04:33,706
+Enable the IAM Service Account
+Credentials API too.
+
+73
+00:04:33,950 --> 00:04:38,508
+Step 2 begins with three commands
+that repeat step 1 from the terminal;
+
+74
+00:04:38,508 --> 00:04:40,755
+if you used the console, skip them.
+
+75
+00:04:41,000 --> 00:04:44,248
+Then two new ones:
+an application-default login,
+
+76
+00:04:44,248 --> 00:04:48,104
+impersonating the runtime account,
+and its quota project.
+
+77
+00:04:48,424 --> 00:04:50,978
+It is separate from gcloud auth login,
+
+78
+00:04:50,978 --> 00:04:55,144
+and its file stays on your machine,
+never in Git or the image.
+
+79
+00:04:55,464 --> 00:04:56,758
+Pause and sign in;
+
+80
+00:04:56,758 --> 00:05:01,501
+a restricted project may also need
+Service Usage Consumer for you.
+
+81
+00:05:01,750 --> 00:05:06,955
+Step 3: change into the tutorial app folder,
+and run uv sync --frozen.
+
+82
+00:05:07,275 --> 00:05:11,862
+It installs 41 packages exactly
+as the lock file says.
+
+83
+00:05:12,182 --> 00:05:15,851
+An extra uv tree shows
+the six direct dependencies.
+
+84
+00:05:16,100 --> 00:05:21,616
+Step 4: in the terminal with your exports,
+start the app with the three variables
+
+85
+00:05:21,616 --> 00:05:24,953
+and PORT set to 8086;
+this time you set the port.
+
+86
+00:05:25,273 --> 00:05:30,138
+Pause, run it, then translate
+and Play audio at localhost 8086;
+
+87
+00:05:30,138 --> 00:05:32,377
+with your sign-in, it speaks.
+
+88
+00:05:32,617 --> 00:05:35,540
+Extra checks:
+the button now says Play audio,
+
+89
+00:05:35,540 --> 00:05:36,969
+and translation works.
+
+90
+00:05:37,289 --> 00:05:41,534
+Speech answers 503:
+Google credentials are unavailable.
+
+91
+00:05:41,854 --> 00:05:45,417
+That is the missing sign-in,
+what you see if you skip step 2.
+
+92
+00:05:46,067 --> 00:05:49,629
+Step 5: go back up two levels
+to the repository root.
+
+93
+00:05:50,967 --> 00:05:51,967
+Part 4.
+
+94
+00:05:52,247 --> 00:05:54,739
+A web request has a person waiting,
+
+95
+00:05:54,739 --> 00:05:58,513
+but a translated audio edition
+should take its input,
+
+96
+00:05:58,513 --> 00:06:01,932
+translate it,
+speak it, save the files and exit.
+
+97
+00:06:02,252 --> 00:06:03,383
+That is a job.
+
+98
+00:06:03,617 --> 00:06:07,564
+The lecture says a container runs
+as a service or as a job.
+
+99
+00:06:07,884 --> 00:06:12,092
+Same image, two programs:
+serve keeps listening, with no end;
+
+100
+00:06:12,092 --> 00:06:14,369
+batch walks four steps and exits.
+
+101
+00:06:15,950 --> 00:06:18,321
+You have seen this shape before:
+
+102
+00:06:18,321 --> 00:06:22,396
+last week's Vertex AI training job
+was finite work too:
+
+103
+00:06:22,396 --> 00:06:24,228
+start, train, save, exit.
+
+104
+00:06:24,467 --> 00:06:28,478
+A job has no URL,
+and its disk vanishes when it exits.
+
+105
+00:06:28,798 --> 00:06:32,319
+So input comes
+from Storage and results go back there;
+
+106
+00:06:32,319 --> 00:06:35,710
+a remote container
+cannot see a file on your laptop.
+
+107
+00:06:35,950 --> 00:06:38,723
+Step 1: Cloud Storage, Buckets, Create.
+
+108
+00:06:39,043 --> 00:06:41,341
+Step 2: a globally unique name,
+
+109
+00:06:41,341 --> 00:06:44,825
+such as your project ID
+plus translation input.
+
+110
+00:06:45,145 --> 00:06:49,877
+Step 3: region Toronto, class Standard,
+public access prevention,
+
+111
+00:06:49,877 --> 00:06:54,318
+uniform access, default soft delete,
+then Create and Confirm.
+
+112
+00:06:54,638 --> 00:06:56,004
+Pause and create it.
+
+113
+00:06:56,250 --> 00:06:59,215
+Step 4: repeat for a separate output bucket.
+
+114
+00:06:59,535 --> 00:07:02,495
+A gold tag: storage bills while files exist,
+
+115
+00:07:02,495 --> 00:07:05,658
+and soft delete keeps
+deleted ones for a while.
+
+116
+00:07:05,900 --> 00:07:10,694
+Step 5: create a folder named
+run-001 in the input bucket
+
+117
+00:07:10,694 --> 00:07:14,732
+and upload the sample passage,
+four short lines.
+
+118
+00:07:15,052 --> 00:07:17,591
+Step 6: copy its Storage URI.
+
+119
+00:07:17,911 --> 00:07:20,386
+Pause, upload and copy the URI.
+
+120
+00:07:20,634 --> 00:07:25,605
+That run-001 is a prefix you chose,
+not a real directory.
+
+121
+00:07:25,925 --> 00:07:31,258
+The gcloud alternative makes both buckets
+and uploads the passage in one block.
+
+122
+00:07:34,767 --> 00:07:38,415
+Section 4.2: the job gets its own identity.
+
+123
+00:07:38,735 --> 00:07:40,672
+Create translation-audio-job,
+
+124
+00:07:40,672 --> 00:07:44,346
+give it the same two project roles,
+and note its email.
+
+125
+00:07:44,584 --> 00:07:48,342
+Then, per bucket:
+Storage Object Viewer on the input,
+
+126
+00:07:48,342 --> 00:07:51,250
+and Storage Object Creator on the output,
+
+127
+00:07:51,250 --> 00:07:54,867
+which adds files but cannot list
+or overwrite them.
+
+128
+00:07:55,187 --> 00:07:56,914
+The web account needs neither.
+
+129
+00:07:57,150 --> 00:08:02,291
+Your own identity needs separate rights
+to upload, execute and see results.
+
+130
+00:08:02,611 --> 00:08:05,236
+Pause and create the account
+and both grants.
+
+131
+00:08:05,484 --> 00:08:09,750
+The gcloud alternative creates the account
+and adds all four grants.
+
+132
+00:08:12,617 --> 00:08:18,654
+Section 4.3: attaching this account again
+takes your Service Account User on it.
+
+133
+00:08:18,974 --> 00:08:23,284
+In Cloud Run, Jobs, Deploy container
+opens Create job.
+
+134
+00:08:23,604 --> 00:08:27,038
+The same image,
+the name translation-audio, 1 task.
+
+135
+00:08:27,300 --> 00:08:30,607
+Container command:
+python, then Enter to make a chip.
+
+136
+00:08:30,927 --> 00:08:34,682
+It fills the entrypoint slot,
+which this image left empty.
+
+137
+00:08:34,917 --> 00:08:38,440
+Container arguments:
+eleven values, each its own chip,
+
+138
+00:08:38,440 --> 00:08:41,573
+and together they take
+the command slot's place.
+
+139
+00:08:41,893 --> 00:08:46,650
+-m, translation_demo, batch,
+input URI and your passage,
+
+140
+00:08:46,650 --> 00:08:51,237
+source en,
+destination fr, output URI and your prefix.
+
+141
+00:08:51,557 --> 00:08:54,224
+Each chip is one item of the argument list.
+
+142
+00:08:54,467 --> 00:08:58,569
+Then the same three variables,
+a task timeout of 5 minutes,
+
+143
+00:08:58,569 --> 00:09:01,976
+and 0 retries,
+because a retry repeats paid work.
+
+144
+00:09:02,296 --> 00:09:05,624
+On Security,
+choose the job's account by its email.
+
+145
+00:09:05,944 --> 00:09:11,192
+Leave Execute job immediately unchecked,
+then select Create; pause and build it.
+
+146
+00:09:11,434 --> 00:09:13,391
+Paste all eleven into one chip,
+
+147
+00:09:13,391 --> 00:09:17,621
+and Python looks for a module
+with that whole sentence as its name.
+
+148
+00:09:17,941 --> 00:09:19,839
+The name is cut at the first dot.
+
+149
+00:09:21,650 --> 00:09:23,122
+Now the other mistake.
+
+150
+00:09:23,442 --> 00:09:27,943
+You fill all eleven argument chips
+but leave Container command empty.
+
+151
+00:09:28,263 --> 00:09:30,120
+What does the container try to run?
+
+152
+00:09:38,967 --> 00:09:41,926
+The arguments replace the default command,
+
+153
+00:09:41,926 --> 00:09:45,239
+and with no entrypoint,
+-m becomes the program.
+
+154
+00:09:45,559 --> 00:09:48,823
+Docker's version fails:
+executable not found.
+
+155
+00:09:49,967 --> 00:09:51,315
+With nothing changed,
+
+156
+00:09:51,315 --> 00:09:56,644
+the job starts the web server and waits
+until the timeout fails it after 5 minutes.
+
+157
+00:09:56,884 --> 00:10:00,640
+The gcloud alternative
+passes the same eleven values,
+
+158
+00:10:00,640 --> 00:10:03,262
+comma separated, with command python.
+
+159
+00:10:04,683 --> 00:10:08,886
+Section 4.4:
+open the job and select Execute.
+
+160
+00:10:09,206 --> 00:10:12,854
+The recording shows it succeeding,
+with a green check in History.
+
+161
+00:10:13,400 --> 00:10:14,915
+What would a red mark mean?
+
+162
+00:10:15,235 --> 00:10:19,682
+Our extra laptop run
+without the speech flag exits with status 1,
+
+163
+00:10:19,682 --> 00:10:22,829
+an honest failure,
+so History tells the truth.
+
+164
+00:10:23,783 --> 00:10:27,346
+Step 2: open the execution,
+then Tasks, View logs.
+
+165
+00:10:27,666 --> 00:10:30,482
+The job exits; it has no web URL.
+
+166
+00:10:30,802 --> 00:10:35,998
+Its last output is a JSON summary
+with the output and manifest locations,
+
+167
+00:10:35,998 --> 00:10:38,204
+status complete, and the files.
+
+168
+00:10:38,450 --> 00:10:42,610
+Step 3:
+open your output bucket, then run-001.
+
+169
+00:10:42,930 --> 00:10:45,447
+Inside is a folder with a random name.
+
+170
+00:10:45,767 --> 00:10:47,849
+Step 4: three files:
+
+171
+00:10:47,849 --> 00:10:52,636
+translated.txt, speech.wav,
+and manifest.json.
+
+172
+00:10:52,883 --> 00:10:54,035
+The order matters.
+
+173
+00:10:54,355 --> 00:10:57,334
+Each upload is create-only,
+and the manifest,
+
+174
+00:10:57,334 --> 00:10:59,518
+saying complete, is written last.
+
+175
+00:10:59,838 --> 00:11:01,032
+It is the receipt.
+
+176
+00:11:01,266 --> 00:11:03,058
+So, the third place to look.
+
+177
+00:11:03,378 --> 00:11:06,361
+A green check says
+the process exited with 0;
+
+178
+00:11:06,361 --> 00:11:08,946
+the manifest says the work is complete.
+
+179
+00:11:09,266 --> 00:11:11,762
+Files without a manifest prove nothing.
+
+180
+00:11:12,000 --> 00:11:15,307
+Execute the same job again,
+with the same arguments.
+
+181
+00:11:15,627 --> 00:11:17,525
+Is the first result overwritten?
+
+182
+00:11:24,366 --> 00:11:25,340
+No.
+
+183
+00:11:25,390 --> 00:11:30,873
+A new attempt folder lands beside the first,
+and create-only uploads cannot overwrite.
+
+184
+00:11:31,193 --> 00:11:33,170
+But it is not exactly once:
+
+185
+00:11:33,170 --> 00:11:37,124
+a retry repeats paid work,
+which is why retries are 0.
+
+186
+00:11:37,366 --> 00:11:41,163
+Step 5: download the text
+and the audio with the icons.
+
+187
+00:11:41,483 --> 00:11:43,019
+Pause and run your job.
+
+188
+00:11:43,339 --> 00:11:48,225
+A gold tag: each execution bills
+its running time plus one speech call.
+
+189
+00:11:48,466 --> 00:11:51,332
+The gcloud alternative executes with --wait,
+
+190
+00:11:51,332 --> 00:11:54,653
+makes a results folder,
+and copies the output down.
+
+191
+00:11:54,973 --> 00:11:57,384
+The --wait flag
+does not stream your app's logs.
+
+192
+00:11:57,633 --> 00:11:59,148
+The README's checkpoint:
+
+193
+00:11:59,148 --> 00:12:03,692
+the task finished, the process stopped,
+and its files remain in Storage.
+
+194
+00:12:04,733 --> 00:12:07,954
+Section 4.5: new work from the terminal.
+
+195
+00:12:08,274 --> 00:12:10,234
+First, a permission of yours:
+
+196
+00:12:10,234 --> 00:12:13,546
+running a job with overrides
+needs its own right,
+
+197
+00:12:13,546 --> 00:12:16,082
+separate from the job account's roles.
+
+198
+00:12:16,316 --> 00:12:18,023
+Console only so far?
+
+199
+00:12:18,343 --> 00:12:20,177
+Run the terminal setup first.
+
+200
+00:12:20,497 --> 00:12:24,188
+Save a short passage,
+under 5,000 characters,
+
+201
+00:12:24,188 --> 00:12:28,945
+as passage.txt in the repository root,
+or copy the sample.
+
+202
+00:12:29,265 --> 00:12:33,385
+Export both bucket names
+and upload it under run-002;
+
+203
+00:12:33,385 --> 00:12:36,028
+it stops at the placeholder again.
+
+204
+00:12:36,266 --> 00:12:39,573
+Step 3:
+execute the existing job with overrides.
+
+205
+00:12:39,893 --> 00:12:43,797
+They replace the whole argument list
+for this execution only:
+
+206
+00:12:43,797 --> 00:12:45,269
+a new path and Spanish.
+
+207
+00:12:45,589 --> 00:12:47,506
+The saved job still says French,
+
+208
+00:12:47,506 --> 00:12:50,261
+and a flag you leave out
+is not taken from it.
+
+209
+00:12:51,533 --> 00:12:53,698
+Step 4: after it succeeds,
+
+210
+00:12:53,698 --> 00:12:57,528
+make the results
+folder and copy run-002 down.
+
+211
+00:12:57,848 --> 00:13:01,581
+The README's recording shows
+a successful Spanish execution.
+
+212
+00:13:01,816 --> 00:13:05,315
+Section 4.6: the helper combines all three.
+
+213
+00:13:05,635 --> 00:13:07,853
+An extra dry run shows its plan.
+
+214
+00:13:08,173 --> 00:13:12,751
+It uploads to a fresh run folder named
+by the time and a random part,
+
+215
+00:13:12,751 --> 00:13:16,067
+executes with the eleven arguments,
+and downloads.
+
+216
+00:13:16,316 --> 00:13:20,234
+Run for real, it prints each gcloud
+command before running it
+
+217
+00:13:20,234 --> 00:13:22,225
+and stops at the first failure.
+
+218
+00:13:22,545 --> 00:13:24,466
+Pause and run it with your names.
+
+219
+00:13:26,433 --> 00:13:30,273
+Step 2:
+open the result folder and play speech.wav.
+
+220
+00:13:30,593 --> 00:13:35,642
+The helper prints Downloaded results
+only after it finds a complete manifest:
+
+221
+00:13:35,642 --> 00:13:36,822
+the receipt again.
+
+222
+00:13:40,067 --> 00:13:41,067
+Clean up.
+
+223
+00:13:41,283 --> 00:13:43,672
+Step 1: download what you want to keep.
+
+224
+00:13:43,992 --> 00:13:48,643
+Step 2: delete translate-function
+and translation-demo, then the job.
+
+225
+00:13:49,000 --> 00:13:50,764
+Step 3: delete your buckets
+
+226
+00:13:50,764 --> 00:13:54,163
+and the two runtime accounts
+once nothing uses them.
+
+227
+00:13:54,483 --> 00:13:57,828
+Step 4:
+the function's image in Artifact Registry,
+
+228
+00:13:57,828 --> 00:14:00,371
+still there after the service is gone.
+
+229
+00:14:00,691 --> 00:14:02,504
+Pause and delete them all now.
+
+230
+00:14:02,750 --> 00:14:03,838
+Two additions.
+
+231
+00:14:04,158 --> 00:14:07,100
+Soft-deleted files stay
+billable for a while;
+
+232
+00:14:07,100 --> 00:14:10,174
+the build also leaves
+source archives and logs.
+
+233
+00:14:10,494 --> 00:14:14,270
+And, per the README,
+keep the shared public image; others use it.
+
+234
+00:14:15,717 --> 00:14:16,848
+Stuck on a step?
+
+235
+00:14:17,168 --> 00:14:21,114
+The README ends with a troubleshooting table
+of symptoms and checks.
+
+236
+00:14:24,050 --> 00:14:25,373
+Here is the whole map.
+
+237
+00:14:25,693 --> 00:14:29,426
+Part 1 handed over a file,
+and Cloud Build made the image.
+
+238
+00:14:29,746 --> 00:14:32,264
+Parts 2 to 4 handed over one image:
+
+239
+00:14:32,264 --> 00:14:37,085
+a service that scales to zero,
+and a job that exits with a receipt.
+
+240
+00:14:37,334 --> 00:14:40,427
+Now the lecture's three downsides,
+and our answers.
+
+241
+00:14:40,747 --> 00:14:44,907
+Cold starts: a minimum of 1 keeps
+an instance warm, for money.
+
+242
+00:14:45,150 --> 00:14:48,628
+Limited control and debugging:
+three places to look,
+
+243
+00:14:48,628 --> 00:14:53,044
+the build logs, the service logs,
+and the job's logs and manifest.
+
+244
+00:14:53,284 --> 00:14:56,886
+Vendor lock-in:
+the image and the Functions Framework ran
+
+245
+00:14:56,886 --> 00:15:01,753
+on your laptop; only the console,
+the permissions and the build are Google's.
+
+246
+00:15:02,000 --> 00:15:06,023
+Next lecture:
+a Vertex AI endpoint for a trained model,
+
+247
+00:15:06,023 --> 00:15:07,120
+then pipelines.
+
+248
+00:15:07,367 --> 00:15:09,308
+Test yourself, pausing on each.
+
+249
+00:15:09,628 --> 00:15:12,466
+One:
+place parts 1 and 2 on the lecture's map.
+
+250
+00:15:12,786 --> 00:15:15,346
+What do you hand over,
+and who builds the image?
+
+251
+00:15:15,584 --> 00:15:19,888
+Two: which two settings make the meter run
+while nobody uses the app,
+
+252
+00:15:19,888 --> 00:15:22,197
+and what does a minimum instance buy?
+
+253
+00:15:22,434 --> 00:15:24,930
+Three: who may call it, and who it runs as.
+
+254
+00:15:25,250 --> 00:15:28,791
+Which setting answers each,
+and why is no key file needed?
+
+255
+00:15:29,034 --> 00:15:33,277
+Four: why does the job set a command
+and eleven separate arguments,
+
+256
+00:15:33,277 --> 00:15:35,178
+and what happens with neither?
+
+257
+00:15:35,417 --> 00:15:38,695
+Five: name the lecture's three downsides
+of serverless,
+
+258
+00:15:38,695 --> 00:15:41,198
+and what this tutorial gives you for each.
+

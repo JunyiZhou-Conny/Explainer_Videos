@@ -1,0 +1,35 @@
+$ ls tutorial tutorial/function tutorial/app tutorial/app/translation_demo
+tutorial:
+app
+function
+gif_steps.json
+label_gifs.py
+lifecycle
+run_job.py
+spin_up.py
+tear_down.py
+tests
+
+tutorial/app:
+Dockerfile
+README.md
+examples
+pyproject.toml
+requirements.lock
+tests
+translation_demo
+uv.lock
+
+tutorial/app/translation_demo:
+__init__.py
+__main__.py
+speech.py
+storage.py
+templates
+translation.py
+web.py
+
+tutorial/function:
+main.py
+requirements.txt
+[exit 0]

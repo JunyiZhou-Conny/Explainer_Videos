@@ -1,0 +1,9 @@
+$ python tutorial/run_job.py ./passage.txt \
+  --project="$PROJECT_ID" --region="$REGION" --job="$JOB_NAME" \
+  --input-bucket="$INPUT_BUCKET" --output-bucket="$OUTPUT_BUCKET" \
+  --src=en --dest=fr --download-dir=./results --dry-run
+$ gcloud storage cp /home/student/serverless-deployment/passage.txt gs://YOUR_INPUT_BUCKET/run-20261104-093455-9d593d979e7f/passage.txt --project=YOUR_PROJECT_ID --quiet
+$ gcloud run jobs execute translation-audio --project=YOUR_PROJECT_ID --region=northamerica-northeast2 --args=-m,translation_demo,batch,--input-uri,gs://YOUR_INPUT_BUCKET/run-20261104-093455-9d593d979e7f/passage.txt,--src,en,--dest,fr,--output-uri,gs://YOUR_OUTPUT_BUCKET/run-20261104-093455-9d593d979e7f/ --wait --quiet
+Cloud outputs: gs://YOUR_OUTPUT_BUCKET/run-20261104-093455-9d593d979e7f/
+$ gcloud storage cp --recursive gs://YOUR_OUTPUT_BUCKET/run-20261104-093455-9d593d979e7f /home/student/serverless-deployment/results --project=YOUR_PROJECT_ID --quiet
+[exit 0]

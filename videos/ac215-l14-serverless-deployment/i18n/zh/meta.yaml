@@ -1,0 +1,48 @@
+# Chinese (zh-CN) metadata for ac215-l14-serverless-deployment (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 仓库, 克隆, 端口, 存储桶, 无服务器, 函数, 服务, 作业,
+# 端点; A4), the English colon structure kept (开始之前：项目、区域、克隆仓库; 第 1 部分：写一个函数), commands, tools and
+# names as they are (localhost, Cloud Run, ADC, helper), the core-concept chapters with their English short name once
+# for search (查询字符串（query string）, 服务（service）, 作业（job）), and S16 in the series' 收尾 pattern. 跟练 =
+# follow-along; Serverless Deployment → 无服务器部署 (as the exam edition ac215-l14-exam).
+# The title agrees in substance with video.yaml's publish.title_zh ("AC215 第14讲跟练 · Serverless 部署：Cloud Run
+# function、service 与 job，一步一步部署到云端"), in the series pattern of the other meta.yaml titles; the Bilibili upload
+# itself uses publish.title_zh.
+# SERIES RULE (A16): no title, chapter or description names the instructor.
+# meta.yaml is not read by `explainer.i18n check`, so brackets are fine here.
+title: "AC215 · 第 14 讲：无服务器部署——Cloud Run 上的函数、服务与作业（跟练：serverless-deployment）"
+
+parts:
+  part1: "AC215 · 第 14 讲（上）：交出代码，交出镜像——Cloud Run 函数与服务"
+  part2: "AC215 · 第 14 讲（下）：身份与有限的工作——运行时服务账号、语音合成与 Cloud Run 作业"
+
+chapters:
+  s01_hook: "在 localhost 上能跑"
+  s02_map: "一个应用，四种部署方式"
+  s03_setup: "开始之前：项目、区域、克隆仓库"
+  s04_function: "第 1 部分：写一个函数"
+  s05_build: "是什么在运行你的函数？"
+  s06_endpoint: "用查询字符串（query string）调用它"
+  s07_local: "第 2 部分：在笔记本上跑预构建的应用"
+  s08_service: "部署同一个镜像：Cloud Run 服务（service）"
+  s09_identity: "谁能调用它，它以谁的身份运行"
+  s10_speech: "挂上身份，打开语音"
+  s11_localdev: "用 ADC 在本地开发"
+  s12_buckets: "有限的工作：一个作业（job）和两个存储桶"
+  s13_job: "命令、参数和作业的工牌"
+  s14_execute: "执行，然后取回文件"
+  s15_terminal: "先用终端，再用 helper 脚本"
+  s16_recap: "收尾清理，以及无服务器的代价"
+
+# Two or three sentences (rule H2), written register, consistent with video.yaml's publish.description_zh but
+# without the course-credit line's names (A16). Facts: README @ 46cc62f (Before you begin, Parts 1-4, Clean up);
+# script.md v2 (S01-S16); captures on a machine without a Google account, so the cloud successes are shown from the
+# README's own recording and tagged; the local function stand-in and the docker checks tagged extra; billable Cloud
+# Run resources, buckets and Gemini speech calls (GOLD tags, the clean-up checklist in S16); five pause-and-ponder
+# cards and five test-yourself questions. Paste the chapter timestamps from output/chapters.txt under it when
+# uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 14 讲“无服务器部署：Cloud Functions 与 Cloud Run”的跟练视频，对照课件逐页讲解，并照着 dlops-io/serverless-deployment 的 README 从“开始之前”到收尾一步一步做：先把一个翻译处理函数部署成 Cloud Run 函数（main.py、requirements.txt 和入口点，看 Cloud Build 怎样把代码变成镜像，入口点填错时在日志里看到什么），用查询字符串调用它；再用一条 docker run 在本地跑起预构建的翻译网页，讲清 PORT、0.0.0.0 和 -p 8086:8080，把同一个镜像部署成 Cloud Run 服务，读懂最小 / 最大实例数、并发数、按请求计费、修订版本（revision）以及 tag 与 digest 的区别。
+  下半场区分“谁能调用它”和“它以谁的身份运行”：挂上不需要密钥的运行时服务账号，打开 Gemini 语音合成，用应用默认凭据（ADC）和服务账号模拟（impersonation）在本地开发；再把同一个镜像跑成 Cloud Run 作业（job）：两个私有存储桶和按桶授权、Container command 加 11 个独立参数、执行后的 attempt 目录和作为回执的 manifest，最后用 gcloud 覆盖参数和 helper 脚本从终端提交任务，逐项清理所有计费资源，并用课上的四种部署方式和三个缺点（冷启动、控制和调试受限、厂商锁定）收尾。
+  英文旁白，配中文和中英双语字幕；录制机器没有 Google 账号，所以云端操作的结果取自 README 自己的录制记录并标明出处；本讲会在你自己的项目里创建计费的云资源，视频用金色标签标出每个计费点，结尾有完整的收尾清单。

@@ -1,0 +1,32 @@
+$ python -m unittest discover -s tutorial/tests -v
+test_account_inspection_uses_authorized_active_list (test_lifecycle.LifecycleTests.test_account_inspection_uses_authorized_active_list) ... ok
+test_commands_use_argv_and_explicit_project (test_lifecycle.LifecycleTests.test_commands_use_argv_and_explicit_project) ... ok
+test_dry_run_has_no_network_or_manifest_writes (test_lifecycle.LifecycleTests.test_dry_run_has_no_network_or_manifest_writes) ... ok
+test_existing_resource_prevents_resource_creation (test_lifecycle.LifecycleTests.test_existing_resource_prevents_resource_creation) ... ok
+test_failed_create_preserves_recovery_journal (test_lifecycle.LifecycleTests.test_failed_create_preserves_recovery_journal) ... ok
+test_generic_403_is_never_retried (test_lifecycle.LifecycleTests.test_generic_403_is_never_retried) ... ok
+test_global_model_location_and_web_flags (test_lifecycle.LifecycleTests.test_global_model_location_and_web_flags) ... ok
+test_iam_propagation_retry_is_bounded_and_specific (test_lifecycle.LifecycleTests.test_iam_propagation_retry_is_bounded_and_specific) ... ok
+test_inspection_auth_failure_is_not_absence (test_lifecycle.LifecycleTests.test_inspection_auth_failure_is_not_absence) ... ok
+test_inspection_missing_resource_is_absence (test_lifecycle.LifecycleTests.test_inspection_missing_resource_is_absence) ... ok
+test_missing_resources_do_not_prevent_cleanup (test_lifecycle.LifecycleTests.test_missing_resources_do_not_prevent_cleanup) ... ok
+test_object_deletion_requires_explicit_opt_in (test_lifecycle.LifecycleTests.test_object_deletion_requires_explicit_opt_in) ... ok
+test_orphaned_binding_warning_never_mutates_policy (test_lifecycle.LifecycleTests.test_orphaned_binding_warning_never_mutates_policy) ... ok
+test_ownership_checked_for_every_resource_before_any_delete (test_lifecycle.LifecycleTests.test_ownership_checked_for_every_resource_before_any_delete) ... ok
+test_partial_setup_missing_role_binding_is_not_removed (test_lifecycle.LifecycleTests.test_partial_setup_missing_role_binding_is_not_removed) ... ok
+test_real_cloud_run_missing_messages_are_absence (test_lifecycle.LifecycleTests.test_real_cloud_run_missing_messages_are_absence) ... ok
+test_setup_checks_all_names_and_separates_runtime_permissions (test_lifecycle.LifecycleTests.test_setup_checks_all_names_and_separates_runtime_permissions) ... ok
+test_tampered_manifest_rejected_before_cloud_calls (test_lifecycle.LifecycleTests.test_tampered_manifest_rejected_before_cloud_calls) ... ok
+test_teardown_order_and_resumability (test_lifecycle.LifecycleTests.test_teardown_order_and_resumability) ... ok
+test_unlabeled_bucket_after_interrupted_setup_requires_manual_recovery (test_lifecycle.LifecycleTests.test_unlabeled_bucket_after_interrupted_setup_requires_manual_recovery) ... ok
+test_dry_run_makes_no_calls_or_directories (test_run_job.HelperContracts.test_dry_run_makes_no_calls_or_directories) ... ok
+test_execution_failure_does_not_download (test_run_job.HelperContracts.test_execution_failure_does_not_download) ... ok
+test_no_download_only_uploads_and_executes (test_run_job.HelperContracts.test_no_download_only_uploads_and_executes) ... ok
+test_success_downloads_and_checks_complete_outputs (test_run_job.HelperContracts.test_success_downloads_and_checks_complete_outputs) ... ok
+test_upload_failure_stops_before_execution (test_run_job.HelperContracts.test_upload_failure_stops_before_execution) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.126s
+
+OK
+[exit 0]

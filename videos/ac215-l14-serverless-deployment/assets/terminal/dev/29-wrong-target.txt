@@ -1,0 +1,29 @@
+$ timeout 20 ~/fn-venv/bin/functions-framework --target translate
+Traceback (most recent call last):
+  File "/home/student/fn-venv/bin/functions-framework", line 8, in <module>
+    sys.exit(_cli())
+             ^^^^^^
+  File "/home/student/fn-venv/lib/python3.12/site-packages/click/core.py", line 1631, in __call__
+    return self.main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/fn-venv/lib/python3.12/site-packages/click/core.py", line 1552, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "/home/student/fn-venv/lib/python3.12/site-packages/click/core.py", line 1415, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/fn-venv/lib/python3.12/site-packages/click/core.py", line 910, in invoke
+    return callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/fn-venv/lib/python3.12/site-packages/functions_framework/_cli.py", line 47, in _cli
+    app = create_app(target, source, signature_type)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/fn-venv/lib/python3.12/site-packages/functions_framework/__init__.py", line 406, in create_app
+    raise e from None
+  File "/home/student/fn-venv/lib/python3.12/site-packages/functions_framework/__init__.py", line 388, in create_app
+    function = _function_registry.get_user_function(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/student/fn-venv/lib/python3.12/site-packages/functions_framework/_function_registry.py", line 57, in get_user_function
+    raise MissingTargetException(
+functions_framework.exceptions.MissingTargetException: File /home/student/serverless-deployment/tutorial/function/main.py is expected to contain a function named 'translate'. Found: 'hello_http' instead
+[exit 1]

@@ -1,0 +1,20 @@
+$ export PROJECT_ID=your-project-id
+python tutorial/run_job.py ./passage.txt \
+  --project="$PROJECT_ID" --region="$REGION" --job="$JOB_NAME" \
+  --input-bucket="$INPUT_BUCKET" --output-bucket="$OUTPUT_BUCKET" \
+  --src=en --dest=fr --download-dir=./results
+$ gcloud storage cp /home/student/serverless-deployment/passage.txt gs://YOUR_INPUT_BUCKET/run-20261104-093457-364f3574333d/passage.txt --project=your-project-id --quiet
+ERROR: (gcloud.storage.cp) You do not currently have an active account selected.
+Please run:
+
+  $ gcloud auth login
+
+to obtain new credentials.
+
+If you have already logged in with a different account, run:
+
+  $ gcloud config set account ACCOUNT
+
+to select an already authenticated account to use.
+Helper stopped: gcloud failed with exit status 1. Later steps were not run.
+[exit 1]

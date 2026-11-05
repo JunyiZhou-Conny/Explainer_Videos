@@ -1,0 +1,420 @@
+# zh narration for S09-S16 (part 2, group g2: the two doors and the runtime account, speech, local development
+# with ADC, the job and its two buckets, command and arguments, executing and collecting the files, the terminal
+# and the helper, clean-up and recap), sentence-aligned to script.md: one zh sentence per English sentence
+# (explainer.voice.split_sentences; 80 SAY lines, 183 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (A9, D9): S10[7] and S13[11]
+# open with the condition, as the English does.
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (rule A6):
+# ENABLE_SPEECH / GOOGLE_CLOUD_PROJECT / GOOGLE_CLOUD_LOCATION -> ENABLE SPEECH / GOOGLE CLOUD PROJECT /
+# GOOGLE CLOUD LOCATION; translation_demo -> translation demo; run_job.py is never named (the helper -> helper 脚本).
+# Error messages the SAY paraphrases are translated (A13): 语音已关闭 (503); Google 凭据不可用 (503);
+# 找不到可执行文件. Status codes, the printed status word complete and Downloaded results stay.
+# The instructor rule (A16): the narration of S09-S16 names no instructor (the lecture -> 课上).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4:
+# --no-invoker-iam-check in S09[1]; ENABLE_SPEECH etc. in S10[3]; uv sync --frozen in S11[5]; run-001 in S12[6],
+# S12[7], S14[3]; -m, translation_demo, batch in S13[6]; -m in S13[10]; translated.txt, speech.wav, manifest.json
+# in S14[3]; passage.txt and run-002 in S15[1]; run-002 in S15[3]; speech.wav and Downloaded results in S15[6];
+# View diff & redeploy in S10[4]; application-default in S11[4]; --wait in S14[9]); null = the SAY text.
+S09:
+- en: "Part 3. The README separates two questions: who may call our public app, and what the running app may access."
+  zh:
+  - "第 3 部分。"
+  - "README 把两个问题分开：谁可以调用我们的公开应用，以及运行中的应用可以访问什么。"
+- en: "The first door, who may call it, is Allow public access; gcloud spells it no invoker IAM check. If an organization policy forbids it, the URL answers 403."
+  zh:
+  - "第一扇门，谁可以调用它，就是 Allow public access；gcloud 里写成 --no-invoker-iam-check。"
+  - "如果组织政策禁止它，这个 URL 就返回 403。"
+  en_display:
+  - "The first door, who may call it, is Allow public access; gcloud spells it --no-invoker-iam-check."
+  - null
+- en: "So, a quick test. The service allows public access. Does that let it call Agent Platform?"
+  zh:
+  - "那么，快速测一下。"
+  - "这个 service 允许公开访问。"
+  - "那它能因此调用 Agent Platform 吗？"
+- en: "No. That door only admits callers. Calling out goes through the other door, as whatever identity the service runs as; until you attach one, that is normally the project's default compute account."
+  zh:
+  - "不能。"
+  - "那扇门只放调用方进来。"
+  - "往外调用走的是另一扇门，用的是这个 service 运行时的身份；在你挂上一个之前，一般就是项目的默认计算账号。"
+- en: "Step 1: in the API Library, enable the Agent Platform API, the console's current name for what earlier lectures called Vertex AI."
+  zh:
+  - "第 1 步：在 API Library 里启用 Agent Platform API，这是控制台现在对前几讲所说的 Vertex AI 的叫法。"
+- en: "Steps 2 and 3: create a service account named Translation demo runtime, with the ID translation-demo-runtime."
+  zh:
+  - "第 2 和第 3 步：建一个服务账号，名字叫 Translation demo runtime，ID 是 translation-demo-runtime。"
+- en: "Step 4: two roles. Agent Platform User lets it call the model. Service Usage Consumer lets it charge calls to a quota project: the project whose quota and bill they count against. The app names your project there. Leave both principal fields empty and select Done."
+  zh:
+  - "第 4 步：两个角色。"
+  - "Agent Platform User 让它可以调用模型。"
+  - "Service Usage Consumer 让它可以把调用记到一个配额项目上：也就是这些调用占用哪个项目的配额、记到哪个项目的账单上。"
+  - "应用在那里填的是你的项目。"
+  - "两个主账号字段都留空，点 Done。"
+- en: "Step 5: note the account's email. No key to create or download: in lecture 3 a JSON key sat in a secrets folder; here none exists. The recording shows the account enabled, with no keys; pause and create yours."
+  zh:
+  - "第 5 步：记下这个账号的邮箱。"
+  - "不用创建也不用下载密钥：第 3 讲里有一个 JSON 密钥放在 secrets 目录里；这里根本没有。"
+  - "录制记录显示账号已启用，没有密钥；暂停一下，建一个你自己的。"
+- en: "The gcloud alternative enables the API, creates the account, and adds the two roles; both bindings are on the whole project."
+  zh:
+  - "用 gcloud 的替代做法，会启用 API、创建账号、加上两个角色；两条绑定都在整个项目上。"
+S10:
+- en: "Attaching the account takes a permission of yours: Service Account User on that account. That is your deployment right, separate from the account's own roles."
+  zh:
+  - "挂上这个账号，需要你自己的一项权限：这个账号上的 Service Account User。"
+  - "这是你的部署权限，和这个账号自己的角色是两回事。"
+- en: "Step 1: open translation-demo. Step 2: on the Security tab, choose your runtime account, and check its email."
+  zh:
+  - "第 1 步：打开 translation-demo。"
+  - "第 2 步：在 Security 标签页里选你的运行时账号，核对它的邮箱。"
+- en: "A small gap: the README promises this access in section 3.3, but that section grants Token Creator instead. Project owners already have it; in a restricted project, ask course staff."
+  zh:
+  - "有一个小疏漏：README 在 3.3 节里说会给这个权限，但那一节给的是 Token Creator。"
+  - "项目所有者本来就有；在受限的项目里，去问课程组。"
+- en: "Step 3: three environment variables. ENABLE SPEECH, true; GOOGLE CLOUD PROJECT, your project ID; and GOOGLE CLOUD LOCATION, us-central1. The service runs in Toronto, the model in us-central1: two different settings."
+  zh:
+  - "第 3 步：三个环境变量。"
+  - "ENABLE SPEECH 设成 true；GOOGLE CLOUD PROJECT 设成你的项目 ID；GOOGLE CLOUD LOCATION 设成 us-central1。"
+  - "这个 service 跑在多伦多，模型在 us-central1：两个不同的设置。"
+  en_display:
+  - null
+  - "ENABLE_SPEECH, true; GOOGLE_CLOUD_PROJECT, your project ID; and GOOGLE_CLOUD_LOCATION, us-central1."
+  - null
+- en: "Step 4: View diff and redeploy, keep Serve this revision immediately on, then Deploy changes. That makes a new revision; the old instance is replaced, not edited. Step 5: wait for the rollout."
+  zh:
+  - "第 4 步：点 View diff & redeploy，Serve this revision immediately 保持打开，再点 Deploy changes。"
+  - "这会产生一个新的 revision；旧的实例是换掉，不是改掉。"
+  - "第 5 步：等它上线。"
+  en_display:
+  - "Step 4: View diff & redeploy, keep Serve this revision immediately on, then Deploy changes."
+  - null
+  - null
+- en: "Here is the speech path. The app checks the flag, the size and the language, then asks Google's auth library for a token; on Cloud Run, the badge supplies it. That lookup is Application Default Credentials. Gemini speech in us-central1 sends audio straight back; no bucket."
+  zh:
+  - "来看语音这条链路。"
+  - "应用会检查开关，再查长度和语言，然后向 Google 的身份验证库要一个令牌；在 Cloud Run 上，由工牌提供。"
+  - "这个查找过程就是应用默认凭据。"
+  - "在 us-central1 里，Gemini 语音直接把音频发回来；不经过 bucket。"
+- en: "Step 6: reload the page, because it checks the flag when it loads. Then Translate and Play audio; the recording shows French audio playing. A gold tag: each Play audio is a paid model call."
+  zh:
+  - "第 6 步：刷新页面，因为它在加载时检查开关。"
+  - "然后点 Translate 和 Play audio；录制记录显示法语音频在播放。"
+  - "金色标签：每点一次 Play audio，就是一次付费的模型调用。"
+- en: "Step 7: if it fails, check the message and the logs before changing permissions. Without the flag, you get our captured 503: speech is disabled. A missing identity or a denied call each has its own message."
+  zh:
+  - "第 7 步：如果失败了，先看报错信息和日志，再去改权限。"
+  - "没有开关，你会得到我们录到的 503：语音已关闭。"
+  - "缺身份，或者调用被拒，各有各的报错信息。"
+- en: "That is limited control and debugging, made workable. The gcloud alternative makes the same change in one command."
+  zh:
+  - "这就是控制和调试受限的问题，现在变得可以应付了。"
+  - "用 gcloud 的替代做法，一条命令就做同样的改动。"
+S11:
+- en: "Section 3.3 is optional, and needs uv: how would you develop locally, without publishing an image for every edit? Application Default Credentials lets the same code find a token on Cloud Run and a file on your laptop."
+  zh:
+  - "3.3 节是可选的，需要 uv：你要怎么在本地开发，又不用每改一次就发布一个 image？"
+  - "有了应用默认凭据，同一份代码在 Cloud Run 上能找到令牌，在你的笔记本上能找到文件。"
+- en: "To test the runtime account's real permissions, your laptop impersonates it. You sign in as yourself and receive short-lived tokens as that account; no private key is ever downloaded."
+  zh:
+  - "为了测试运行时账号真实的权限，你的笔记本会 impersonate 它。"
+  - "你以自己的身份登录，再以这个账号的身份拿到短期令牌；从头到尾都不下载私钥。"
+- en: "Step 1: on the runtime account, grant your own user Service Account Token Creator. Replace any preselected role, and don't leave Service Account Admin. Enable the IAM Service Account Credentials API too."
+  zh:
+  - "第 1 步：在运行时账号上，给你自己的用户授予 Service Account Token Creator。"
+  - "把预选的角色换掉，别留着 Service Account Admin。"
+  - "再启用 IAM Service Account Credentials API。"
+- en: "Step 2 begins with three commands that repeat step 1 from the terminal; if you used the console, skip them."
+  zh:
+  - "第 2 步开头的三条命令，是在终端里重复第 1 步；如果你用的是控制台，就跳过它们。"
+- en: "Then two new ones: an application default login, impersonating the runtime account, and its quota project. It is separate from gcloud auth login, and its file stays on your machine, never in Git or the image. Pause and sign in; a restricted project may also need Service Usage Consumer for you."
+  zh:
+  - "然后是两条新命令：一次 application-default login，impersonate 运行时账号，再设它的配额项目。"
+  - "它和 gcloud auth login 是两回事，它的文件留在你的机器上，永远不进 Git，也不进 image。"
+  - "暂停一下，登录；受限的项目可能还要给你 Service Usage Consumer。"
+  en_display:
+  - "Then two new ones: an application-default login, impersonating the runtime account, and its quota project."
+  - null
+  - null
+- en: "Step 3: change into the tutorial app folder, and run uv sync with frozen. It installs 41 packages exactly as the lock file says. An extra uv tree shows the six direct dependencies."
+  zh:
+  - "第 3 步：进入 tutorial 下的 app 目录，运行 uv sync --frozen。"
+  - "它完全照着 lock 文件装了 41 个包。"
+  - "额外跑一下 uv tree，能看到六个直接依赖。"
+  en_display:
+  - "Step 3: change into the tutorial app folder, and run uv sync --frozen."
+  - null
+  - null
+- en: "Step 4: in the terminal with your exports, start the app with the three variables and PORT set to 8086; this time you set the port. Pause, run it, then translate and Play audio at localhost 8086; with your sign-in, it speaks."
+  zh:
+  - "第 4 步：在跑过 export 的那个终端里，带上那三个变量、把 PORT 设成 8086 启动应用；这次 port 由你来设。"
+  - "暂停一下，跑起来，然后在 localhost 8086 上翻译、点 Play audio；有了你的登录，它就会说话。"
+- en: "Extra checks: the button now says Play audio, and translation works. Speech answers 503: Google credentials are unavailable. That is the missing sign-in, what you see if you skip step 2."
+  zh:
+  - "额外检查：按钮现在写着 Play audio，翻译也正常。"
+  - "语音返回 503：Google 凭据不可用。"
+  - "这就是缺了登录，跳过第 2 步你就会看到它。"
+- en: "Step 5: go back up two levels to the repository root."
+  zh:
+  - "第 5 步：往上退两级，回到 repo 根目录。"
+S12:
+- en: "Part 4. A web request has a person waiting, but a translated audio edition should take its input, translate it, speak it, save the files and exit. That is a job."
+  zh:
+  - "第 4 部分。"
+  - "一个 web 请求背后有人在等，但一份翻译后的有声版本应该拿到输入，再翻译、朗读、保存文件，然后退出。"
+  - "这就是 job。"
+- en: "The lecture says a container runs as a service or as a job. Same image, two programs: serve keeps listening, with no end; batch walks four steps and exits."
+  zh:
+  - "课上说一个 container 可以作为 service 或者 job 来跑。"
+  - "同一个 image，两个程序：serve 一直监听，没有尽头；batch 走完四步就退出。"
+- en: "You have seen this shape before: last week's Vertex AI training job was finite work too: start, train, save, exit."
+  zh:
+  - "这种形状你见过：上周的 Vertex AI 训练任务也是有限的工作：启动、训练、保存、退出。"
+- en: "A job has no URL, and its disk vanishes when it exits. So input comes from Storage and results go back there; a remote container cannot see a file on your laptop."
+  zh:
+  - "一个 job 没有 URL，它的磁盘在退出时就没了。"
+  - "所以输入从 Storage 来，结果也回到那里；远程的 container 看不到你笔记本上的文件。"
+- en: "Step 1: Cloud Storage, Buckets, Create. Step 2: a globally unique name, such as your project ID plus translation input. Step 3: region Toronto, class Standard, public access prevention, uniform access, default soft delete, then Create and Confirm. Pause and create it."
+  zh:
+  - "第 1 步：Cloud Storage、Buckets、Create。"
+  - "第 2 步：起一个全局唯一的名字，比如你的项目 ID 加上 translation input。"
+  - "第 3 步：区域选多伦多，存储类别选 Standard，开启禁止公开访问；统一访问也开启，软删除保持默认，然后点 Create 和 Confirm。"
+  - "暂停一下，建好它。"
+- en: "Step 4: repeat for a separate output bucket. A gold tag: storage bills while files exist, and soft delete keeps deleted ones for a while."
+  zh:
+  - "第 4 步：再建一个单独的输出 bucket。"
+  - "金色标签：文件存在期间存储就计费，软删除还会把删掉的文件保留一段时间。"
+- en: "Step 5: create a folder named run zero zero one in the input bucket and upload the sample passage, four short lines. Step 6: copy its Storage URI. Pause, upload and copy the URI."
+  zh:
+  - "第 5 步：在输入 bucket 里建一个叫 run-001 的目录，把示例段落传进去，就是四行短句。"
+  - "第 6 步：复制它的 Storage URI。"
+  - "暂停一下，上传，再复制 URI。"
+  en_display:
+  - "Step 5: create a folder named run-001 in the input bucket and upload the sample passage, four short lines."
+  - null
+  - null
+- en: "That run zero zero one is a prefix you chose, not a real directory. The gcloud alternative makes both buckets and uploads the passage in one block."
+  zh:
+  - "这个 run-001 是你自己选的前缀，不是真的目录。"
+  - "用 gcloud 的替代做法，一个命令框就建好两个 bucket，再上传段落。"
+  en_display:
+  - "That run-001 is a prefix you chose, not a real directory."
+  - null
+S13:
+- en: "Section 4.2: the job gets its own identity. Create translation-audio-job, give it the same two project roles, and note its email."
+  zh:
+  - "4.2 节：这个 job 有自己的身份。"
+  - "建 translation-audio-job，给它同样的两个项目级角色，记下它的邮箱。"
+- en: "Then, per bucket: Storage Object Viewer on the input, and Storage Object Creator on the output, which adds files but cannot list or overwrite them. The web account needs neither."
+  zh:
+  - "然后按 bucket 授权：输入 bucket 给 Storage Object Viewer，输出 bucket 给 Storage Object Creator，它能加文件，但不能列出，也不能覆盖。"
+  - "而 web service 的账号两个都不需要。"
+- en: "Your own identity needs separate rights to upload, execute and see results. Pause and create the account and both grants."
+  zh:
+  - "你自己的身份要上传、执行和查看结果，各要单独的权限。"
+  - "暂停一下，把账号和两条授权都建好。"
+- en: "The gcloud alternative creates the account and adds all four grants."
+  zh:
+  - "用 gcloud 的替代做法，会创建账号，再加上全部四条授权。"
+- en: "Section 4.3: attaching this account again takes your Service Account User on it. In Cloud Run, Jobs, Deploy container opens Create job. The same image, the name translation-audio, 1 task."
+  zh:
+  - "4.3 节：挂上这个账号，同样要你在它上面有 Service Account User。"
+  - "在 Cloud Run 里 Jobs 下的 Deploy container，会打开 Create job。"
+  - "同一个 image，名字叫 translation-audio，1 个 task。"
+- en: "Container command: python, then Enter to make a chip. It fills the entrypoint slot, which this image left empty."
+  zh:
+  - "Container command：输入 python，再按 Enter，生成一个 chip。"
+  - "它填的是 entrypoint 那个位置，这个 image 把它留空了。"
+- en: "Container arguments: eleven values, each its own chip, and together they take the command slot's place. Dash m, translation demo, batch, input URI and your passage, source en, destination fr, output URI and your prefix. Each chip is one item of the argument list."
+  zh:
+  - "Container arguments：11 个值，每个值一个 chip，合在一起占掉命令那个位置。"
+  - "-m、translation demo、batch、input URI 和你的段落，source en、destination fr，output URI 和你的前缀。"
+  - "每个 chip 就是参数列表里的一项。"
+  en_display:
+  - null
+  - "-m, translation_demo, batch, input URI and your passage, source en, destination fr, output URI and your prefix."
+  - null
+- en: "Then the same three variables, a task timeout of 5 minutes, and 0 retries, because a retry repeats paid work. On Security, choose the job's account by its email. Leave Execute job immediately unchecked, then select Create; pause and build it."
+  zh:
+  - "然后是同样的三个变量、5 分钟的 task 超时、0 次重试，因为一次重试会重复付费的工作。"
+  - "在 Security 里，按邮箱选 job 的账号。"
+  - "Execute job immediately 不要勾选，然后点 Create；暂停一下，把它建好。"
+- en: "Paste all eleven into one chip, and Python looks for a module with that whole sentence as its name. The name is cut at the first dot."
+  zh:
+  - "把 11 个值全贴进一个 chip，Python 就会去找一个以这一整句为名字的模块。"
+  - "名字在第一个点那里被截断。"
+- en: "Now the other mistake. You fill all eleven argument chips but leave Container command empty. What does the container try to run?"
+  zh:
+  - "再看另一种错误。"
+  - "你把 11 个参数 chip 都填了，却把 Container command 留空。"
+  - "这个 container 会试着运行什么？"
+- en: "The arguments replace the default command, and with no entrypoint, dash m becomes the program. Docker's version fails: executable not found."
+  zh:
+  - "参数替换了默认命令，又没有 entrypoint，-m 就成了要运行的程序。"
+  - "在 Docker 里复现的版本失败了：找不到可执行文件。"
+  en_display:
+  - "The arguments replace the default command, and with no entrypoint, -m becomes the program."
+  - null
+- en: "With nothing changed, the job starts the web server and waits until the timeout fails it after 5 minutes."
+  zh:
+  - "如果什么都不改，这个 job 会启动 web 服务器，一直等到 5 分钟后超时把它判为失败。"
+- en: "The gcloud alternative passes the same eleven values, comma separated, with command python."
+  zh:
+  - "用 gcloud 的替代做法，传的是同样的 11 个值，用逗号隔开，命令用 python。"
+S14:
+- en: "Section 4.4: open the job and select Execute. The recording shows it succeeding, with a green check in History."
+  zh:
+  - "4.4 节：打开这个 job，点 Execute。"
+  - "录制记录显示它成功了，History 里有一个绿勾。"
+- en: "What would a red mark mean? Our extra laptop run without the speech flag exits with status 1, an honest failure, so History tells the truth."
+  zh:
+  - "红色标记意味着什么？"
+  - "我们在笔记本上额外跑了一次，不开语音开关，它以退出码 1 退出，这是一次如实的失败，所以 History 说的是真话。"
+- en: "Step 2: open the execution, then Tasks, View logs. The job exits; it has no web URL. Its last output is a JSON summary with the output and manifest locations, status complete, and the files."
+  zh:
+  - "第 2 步：打开这次执行，再点 Tasks 里的 View logs。"
+  - "这个 job 会退出；它没有 web URL。"
+  - "它最后的输出是一段 JSON 摘要，里面有输出和 manifest 的位置、状态 complete，还有那几个文件。"
+- en: "Step 3: open your output bucket, then run zero zero one. Inside is a folder with a random name. Step 4: three files: translated dot txt, speech dot wav, and manifest dot json."
+  zh:
+  - "第 3 步：打开你的输出 bucket，再打开 run-001。"
+  - "里面是一个名字随机的目录。"
+  - "第 4 步：三个文件：translated.txt、speech.wav 和 manifest.json。"
+  en_display:
+  - "Step 3: open your output bucket, then run-001."
+  - null
+  - "Step 4: three files: translated.txt, speech.wav, and manifest.json."
+- en: "The order matters. Each upload is create-only, and the manifest, saying complete, is written last. It is the receipt."
+  zh:
+  - "顺序很重要。"
+  - "每次上传都是只创建、不覆盖，而写着 complete 的 manifest 最后才写。"
+  - "它就是回执。"
+- en: "So, the third place to look. A green check says the process exited with 0; the manifest says the work is complete. Files without a manifest prove nothing."
+  zh:
+  - "那么，第三个要看的地方。"
+  - "绿勾说明进程以 0 退出；manifest 说明工作完成了。"
+  - "没有 manifest 的文件什么都证明不了。"
+- en: "Execute the same job again, with the same arguments. Is the first result overwritten?"
+  zh:
+  - "同一个 job 再执行一次，参数不变。"
+  - "第一次的结果会被覆盖吗？"
+- en: "No. A new attempt folder lands beside the first, and create-only uploads cannot overwrite. But it is not exactly once: a retry repeats paid work, which is why retries are 0."
+  zh:
+  - "不会。"
+  - "一个新的 attempt 目录出现在第一个旁边，只创建的上传也不能覆盖。"
+  - "但这不是恰好一次：一次重试会重复付费的工作，所以重试设成 0。"
+- en: "Step 5: download the text and the audio with the icons. Pause and run your job. A gold tag: each execution bills its running time plus one speech call."
+  zh:
+  - "第 5 步：用下载图标下载文本和音频。"
+  - "暂停一下，跑你的 job。"
+  - "金色标签：每次执行按运行时间计费，再加一次语音调用。"
+- en: "The gcloud alternative executes with wait, makes a results folder, and copies the output down. The wait flag does not stream your app's logs."
+  zh:
+  - "用 gcloud 的替代做法，会带 --wait 执行，建一个 results 目录，再把输出拷下来。"
+  - "这个 --wait 参数不会实时显示你应用的日志。"
+  en_display:
+  - "The gcloud alternative executes with --wait, makes a results folder, and copies the output down."
+  - "The --wait flag does not stream your app's logs."
+- en: "The README's checkpoint: the task finished, the process stopped, and its files remain in Storage."
+  zh:
+  - "README 的检查点：task 完成了，进程停了，它的文件留在 Storage 里。"
+S15:
+- en: "Section 4.5: new work from the terminal. First, a permission of yours: running a job with overrides needs its own right, separate from the job account's roles."
+  zh:
+  - "4.5 节：从终端提交新的工作。"
+  - "先说你自己的一项权限：带覆盖参数运行 job 需要单独的权限，和 job 账号的角色无关。"
+- en: "Console only so far? Run the terminal setup first. Save a short passage, under 5,000 characters, as passage dot txt in the repository root, or copy the sample. Export both bucket names and upload it under run zero zero two; it stops at the placeholder again."
+  zh:
+  - "到现在只用了控制台？"
+  - "先把终端设置跑一遍。"
+  - "存一段短文，不超过 5000 个字符，作为 repo 根目录下的 passage.txt，或者直接复制示例。"
+  - "把两个 bucket 名字 export 出来，再把它上传到 run-002 下；它又会停在占位符那里。"
+  en_display:
+  - null
+  - null
+  - "Save a short passage, under 5,000 characters, as passage.txt in the repository root, or copy the sample."
+  - "Export both bucket names and upload it under run-002; it stops at the placeholder again."
+- en: "Step 3: execute the existing job with overrides. They replace the whole argument list for this execution only: a new path and Spanish. The saved job still says French, and a flag you leave out is not taken from it."
+  zh:
+  - "第 3 步：带覆盖参数执行已有的 job。"
+  - "它们会替换整个参数列表，只对这次执行有效：一个新路径，再加上西班牙语。"
+  - "保存的 job 里还是法语，而且你漏掉的参数不会从它那里补上。"
+- en: "Step 4: after it succeeds, make the results folder and copy run zero zero two down. The README's recording shows a successful Spanish execution."
+  zh:
+  - "第 4 步：成功之后，建好 results 目录，把 run-002 拷下来。"
+  - "README 的录制记录显示一次成功的西班牙语执行。"
+  en_display:
+  - "Step 4: after it succeeds, make the results folder and copy run-002 down."
+  - null
+- en: "Section 4.6: the helper combines all three. An extra dry run shows its plan. It uploads to a fresh run folder named by the time and a random part, executes with the eleven arguments, and downloads."
+  zh:
+  - "4.6 节：helper 脚本把这三步合在一起。"
+  - "额外跑一次 dry run，能看到它的计划。"
+  - "它上传到一个新的 run 目录，用时间加一段随机字符命名，再带着 11 个参数执行，然后下载。"
+- en: "Run for real, it prints each gcloud command before running it and stops at the first failure. Pause and run it with your names."
+  zh:
+  - "真跑的时候，它会在运行每条 gcloud 命令之前先打印出来，遇到第一个失败就停。"
+  - "暂停一下，用你的名字跑一遍。"
+- en: "Step 2: open the result folder and play speech dot wav. The helper prints downloaded results only after it finds a complete manifest: the receipt again."
+  zh:
+  - "第 2 步：打开结果目录，播放 speech.wav。"
+  - "这个 helper 脚本只有在找到完整的 manifest 之后，才会打印 Downloaded results：又是回执。"
+  en_display:
+  - "Step 2: open the result folder and play speech.wav."
+  - "The helper prints Downloaded results only after it finds a complete manifest: the receipt again."
+S16:
+- en: "Clean up. Step 1: download what you want to keep. Step 2: delete translate-function and translation-demo, then the job."
+  zh:
+  - "收尾清理。"
+  - "第 1 步：把想留的东西下载下来。"
+  - "第 2 步：删掉 translate-function 和 translation-demo，再删 job。"
+- en: "Step 3: delete your buckets and the two runtime accounts once nothing uses them. Step 4: the function's image in Artifact Registry, still there after the service is gone. Pause and delete them all now."
+  zh:
+  - "第 3 步：删掉你的 bucket 和两个运行时账号，前提是已经没有东西在用它们。"
+  - "第 4 步：Artifact Registry 里那个函数的 image，service 删了它还在。"
+  - "暂停一下，现在全部删掉。"
+- en: "Two additions. Soft-deleted files stay billable for a while; the build also leaves source archives and logs. And, per the README, keep the shared public image; others use it."
+  zh:
+  - "补充两点。"
+  - "软删除的文件还会计费一段时间；构建还会留下源代码归档和日志。"
+  - "还有，README 也说了，留着那个共享的公开 image；别人也在用。"
+- en: "Stuck on a step? The README ends with a troubleshooting table of symptoms and checks."
+  zh:
+  - "卡在哪一步了？"
+  - "README 最后有一张故障排查表，列出症状和检查方法。"
+- en: "Here is the whole map. Part 1 handed over a file, and Cloud Build made the image. Parts 2 to 4 handed over one image: a service that scales to zero, and a job that exits with a receipt."
+  zh:
+  - "来看整张地图。"
+  - "第 1 部分交出的是一个文件，image 由 Cloud Build 来做。"
+  - "第 2 到第 4 部分交出的是一个 image：一个能缩容到零的 service，和一个带着回执退出的 job。"
+- en: "Now the lecture's three downsides, and our answers. Cold starts: a minimum of 1 keeps an instance warm, for money."
+  zh:
+  - "现在看课上说的三个缺点，和我们的回答。"
+  - "冷启动：最小实例数设成 1，能让一个实例一直热着，但要花钱。"
+- en: "Limited control and debugging: three places to look, the build logs, the service logs, and the job's logs and manifest."
+  zh:
+  - "控制和调试受限：有三个地方可看，构建日志、service 日志，以及 job 的日志和 manifest。"
+- en: "Vendor lock-in: the image and the Functions Framework ran on your laptop; only the console, the permissions and the build are Google's."
+  zh:
+  - "厂商锁定：image 和 Functions Framework 都在你的笔记本上跑过；只有控制台、权限和构建才是 Google 的。"
+- en: "Next lecture: a Vertex AI endpoint for a trained model, then pipelines."
+  zh:
+  - "下一讲：给训练好的模型建一个 Vertex AI endpoint，然后是 pipeline。"
+- en: "Test yourself, pausing on each. One: place parts 1 and 2 on the lecture's map. What do you hand over, and who builds the image?"
+  zh:
+  - "自测一下，每道题都暂停想一想。"
+  - "第一题：把第 1 和第 2 部分放到课上的地图上。"
+  - "你交出的是什么，image 又是谁构建的？"
+- en: "Two: which two settings make the meter run while nobody uses the app, and what does a minimum instance buy?"
+  zh:
+  - "第二题：哪两个设置会让计价器在没人用的时候也走，最小实例又能买到什么？"
+- en: "Three: who may call it, and who it runs as. Which setting answers each, and why is no key file needed?"
+  zh:
+  - "第三题：谁可以调用它，它又以谁的身份运行。"
+  - "各由哪个设置回答，为什么不需要密钥文件？"
+- en: "Four: why does the job set a command and eleven separate arguments, and what happens with neither?"
+  zh:
+  - "第四题：为什么这个 job 要设一个命令和 11 个独立的参数，两个都不设会怎样？"
+- en: "Five: name the lecture's three downsides of serverless, and what this tutorial gives you for each."
+  zh:
+  - "第五题：说出课上讲的 serverless 的三个缺点，以及这个教程针对每一个给了你什么。"

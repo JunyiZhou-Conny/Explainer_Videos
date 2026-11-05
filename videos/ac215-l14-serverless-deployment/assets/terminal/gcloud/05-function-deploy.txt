@@ -1,0 +1,13 @@
+$ gcloud run deploy translate-function \
+  --project="$PROJECT_ID" --region="$REGION" \
+  --source=tutorial/function --function=hello_http --base-image=python312 \
+  --no-invoker-iam-check
+ERROR: (gcloud) The project property must be set to a valid project ID, not the project name [YOUR_PROJECT_ID]
+To set your project, run:
+
+  $ gcloud config set project PROJECT_ID
+
+or to unset it, run:
+
+  $ gcloud config unset project
+[exit 1]

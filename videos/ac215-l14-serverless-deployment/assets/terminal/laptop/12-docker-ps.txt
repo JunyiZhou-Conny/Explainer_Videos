@@ -1,0 +1,4 @@
+$ docker ps --format 'table {{.Image}}\t{{.Command}}\t{{.Ports}}'
+IMAGE                                                            COMMAND                  PORTS
+cgumb/ac215-translation-demo:lecture14-agent-platform-20261022   "python -m translati…"   0.0.0.0:8086->8080/tcp
+[exit 0]

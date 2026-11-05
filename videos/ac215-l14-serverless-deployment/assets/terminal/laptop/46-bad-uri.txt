@@ -1,0 +1,4 @@
+$ docker run --rm cgumb/ac215-translation-demo:lecture14-agent-platform-20261022 python -m translation_demo batch --input-uri YOUR_INPUT_BUCKET/run-001/passage.txt --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/
+usage: __main__.py [-h] {serve,batch} ...
+__main__.py: error: Use a gs://bucket/object-or-prefix URI.
+[exit 2]

@@ -1,924 +1,1128 @@
 # L14 · Serverless Deployment: Cloud Functions, Cloud Run — tutorial digest
 
-- **Ed lesson:** https://edstem.org/us/courses/97373/lessons/166039/ (I could not open it; I used the course site source `tutorials_demo.md:188-194` instead, which links the two README sections below.)
-- **Primary repo:** `dlops-io/serverless-deployment`, branch `main`, commit `4eaf3433a3430f51306e67247287a124d0c35710`, committed 2025-10-20 21:53:06 -0400 ("updates").
-  - Legacy branch `pipenv`: commit `fb0cb7f3fe85fc5f5aad975a5b599d202c5db9b8`, 2025-03-25 18:18:10 -0400. This is the pre-`uv` code. Its `main.py`, `Dockerfile` and `docker-entrypoint.sh` match byte for byte the files inside the Docker Hub image that the README deploys (see below).
-- **README sections this lecture covers** (`tutorials_demo.md:193`):
-  - `#running-app-as-cloud-function` (README.md:5-81)
-  - `#running-app-in-cloud-run` (README.md:88-113)
-  - Bonus section in the same README that is not linked from the course site: `#setup-cloud-run-job--service-account` (README.md:121-147)
-- **Prebuilt container images the README deploys.** They are not built anywhere in the repo. I inspected them read-only through the Docker Hub registry API:
-  - `dlops/simple-translate-http:latest`. Digest `sha256:77751cec931697312d687d5011d8f05da3b6141ef1e596a3e92eb605b3442cfa`, pushed 2024-10-22, `linux/amd64` variant `v2` only, Python 3.9.17 (`python:3.9-slim-buster` base), built with **pipenv**. Its `Pipfile.lock` pins **functions-framework 3.4.0**, Flask 2.3.3, gunicorn 20.1.0, googletrans 4.0.0rc1 (not the 3.9.2 / 3.1.2 / 23.0.0 of `main`'s `uv.lock`).
-  - `dlops/simple-translate-gemini:latest`. Digest `sha256:ec05eb27230d90d5341a47667a0cd1481e800d7fa6086677f2d9724f1ade7f77`, pushed 2024-10-21, `linux/amd64` only, Python 3.11.4, pipenv. Its source code is in no public repo. I read it from the image's small `ADD . /` layer.
-- **Context repos I read** (none of them is run in this lecture):
-  - `simple-translate` main `62f821bfe09fc1c2ecb0f14354b1f205777c0efa` (2026-09-08)
-  - `port_toy` main `d190c7122fc35cc1f7e15e467d2babdfc24b5c0c` (2026-09-20)
-  - `model-training` main `b9aee1cc1923dd1f673093ad3ff5bb023049b4ff` (2025-10-16)
-  - `model-deployment` main `3fbf63f1030f762ad3b3b1c6e376144083306eda` (2025-10-23)
-  - `mega-pipeline` main `c6bbc9ba88984e1234b68ccf5cdf7c00f7e9accc` (2026-09-27)
-- **External source I checked:** GoogleCloudPlatform/functions-framework-python tag `v3.9.2`. That is the exact version locked in `uv.lock:135-136`. I read three files: `src/functions_framework/_cli.py`, `_function_registry.py` and `_http/gunicorn.py`. (Fact-check: these match byte for byte the PyPI wheel whose sha256 is pinned at `uv.lock:151`.) I also read `functions-framework 3.4.0` from PyPI (hash matches the Docker Hub image's `Pipfile.lock`), because that is what path (B) actually runs.
-- **Colab notebooks:** none for L14.
-- **AWS variant:** "Coming Soon" (`tutorials_demo.md:194`).
+- **Ed lesson:** https://edstem.org/us/courses/97373/lessons/166039/ (not accessible from here). The course
+  tutorials page (`harvard-iacs.github.io/2026-AC215/tutorials_demo/`, fetched live on 2026-11-04) lists
+  "Cloud Function" → `github.com/dlops-io/serverless-deployment#running-app-as-cloud-function` and
+  "Cloud Run" → `…#running-app-in-cloud-run`, i.e. the repo's **default branch, unpinned**. AWS variant:
+  "Coming Soon". Colab notebooks: none.
+- **Pinned commit (what this video follows): `main` @ `46cc62fd8b1ac94ce733571a834b46002d8dd8c4`**
+  (`46cc62f`, 2026-10-22 09:26:24 -0400, "Point student setup instructions to the main repository").
+  Checked on 2026-11-04 with `git ls-remote`: it is still `HEAD`/`main` on GitHub, so it is the README a
+  student reaches from the course link today. The published exam edition `videos/ac215-l14-exam/` quotes
+  the same commit.
+  - The course map (`MLOps_Learning/course/lectures.yaml:33`) and the batch `units.json` still name
+    `4eaf3433a3430f51306e67247287a124d0c35710` (2025-10-20 21:53:06 -0400, "updates"). Between the two,
+    28 commits on 2026-10-21/22 replaced the ~150-line README with a **1,079-line four-part tutorial**
+    (function → web-app service → runtime identity + speech → job with Cloud Storage) and a new app under
+    `tutorial/`. The two README anchors the course page links no longer exist (§10, erratum 1).
+  - Other branches: `codex/four-part-tutorial` @ `fadf1b9` (the rewrite's working branch; `46cc62f` is its
+    tip plus one README line), `pipenv` @ `fb0cb7f` (the 2024 code).
+- **README parts this lecture covers:** all of it. The course page's two sections ("Cloud Function", "Cloud
+  Run") now map onto Part 1 (function) and Parts 2–4 (Cloud Run service, its identity, Cloud Run job).
+  Headings: `## Before you begin` (README.md:26), `## Part 1` (91), `## Part 2` (235), `## Part 3` (355),
+  `## Part 4` (580), `## Clean up after the tutorial` (1018), `## Troubleshooting and further reading` (1030).
+- **The one container image Parts 2–4 deploy:** `cgumb/ac215-translation-demo:lecture14-agent-platform-20261022`
+  (README.md:58-60, 276-278, 741-743), a personal Docker Hub namespace (do not name its owner on screen).
+  Inspected read-only through the registry API on 2026-11-04:
+  - manifest digest `sha256:c17b6db09f7402febb582bf327920ec9ca4eee113f5ddefa38e9da5619dbe72e`, equal to the
+    digest README.md:1068-1070 and `tutorial/app/README.md:228-229` publish; single-platform `linux/amd64`
+    (no manifest list, no variant), tag pushed 2026-10-22 05:17 UTC;
+  - config: base `python:3.12-slim-bookworm` (Python 3.12.15), `ENV PYTHONUNBUFFERED=1
+    PYTHONDONTWRITEBYTECODE=1 PORT=8080`, `WORKDIR /app`, `USER app`, `EXPOSE 8080`, no ENTRYPOINT,
+    `CMD ["python","-m","translation_demo","serve"]` — the layer history is exactly `tutorial/app/Dockerfile:1-12`;
+  - its `translation_demo/*.py`, `templates/index.html`, `examples/passage.txt`, `pyproject.toml` and
+    `requirements.lock` are byte-identical to `tutorial/app/` at `46cc62f` (diffed). It also carries
+    `translation_demo/__pycache__/*.pyc` (§10, erratum 5).
+  - Two older tags exist (`lecture14-batch-50d8201`, `lecture14-ui-speech-4096c0f`, 2026-10-21); the README
+    uses neither.
+- **External code checked:** `functions-framework` **3.10.2** (the version `tutorial/function/requirements.txt:1`
+  pins), wheel from PyPI (uploaded 2026-06-17; still the latest release on 2026-11-04):
+  `src/functions_framework/_cli.py`, `_function_registry.py`, `_http/gunicorn.py`.
+- **Context repos** (none is run in this lecture): `simple-translate` `62f821b`, `port_toy` `d190c71`,
+  `mega-pipeline` `c6bbc9b`, `cheese-app-v0` `cb6fb94`, `model-training` `b9aee1c`.
+- **Slides:** `SLIDES.md` in this folder (17 slides). It was written against `4eaf343`; where it and the
+  `46cc62f` README differ, the README (and later the captures) decide what the video shows (§10, erratum 2).
 
 ---
 
 ## 1. What you build
 
-You take the Simple Translate app from Lectures 1 and 2 and turn it into a **web endpoint**. A URL like `…/?text=Good afternoon everyone&src=en&dest=fr` comes back with the translation as plain text. You deploy that endpoint two ways on Google Cloud, plus a bonus run-to-completion job that translates with Gemini instead, and none of them involves a VM.
+One translation app, deployed four ways on Google Cloud, none of them a VM you manage. The README's own
+table (README.md:12-17):
 
-- **(A) Cloud Run functions** (formerly "Cloud Functions"). You paste a Python function into the console's inline editor. Google builds a container for you and runs it.
-- **(B) Cloud Run service.** You point Cloud Run at a container image that is already built (`dlops/simple-translate-http:latest` on Docker Hub), and it serves that image.
-- **(C) Bonus: Cloud Run job.** A run-to-completion container (`dlops/simple-translate-gemini`) runs under a **service account** so that it can call Gemini on Vertex AI without any key file.
+| Part | What you do | New idea |
+|---|---|---|
+| 1 | Paste a 6-line handler into Cloud Run's function editor and call its URL with `?text=…&src=…&dest=…` | You supply **code**; Google builds the runnable image |
+| 2 | Run a prebuilt web UI on your laptop, then deploy **the same image** as a Cloud Run service | Deploy an existing container image |
+| 3 | Attach a **runtime service account** to that service and turn on "Play audio" (Gemini text-to-speech through Agent Platform) | The identity the app *runs as*, with no key file |
+| 4 | Run the same image as a Cloud Run **job**: read a passage from a private bucket, translate it, synthesize speech, write `translated.txt`, `speech.wav`, `manifest.json`, exit | Finite work whose results persist in Cloud Storage |
 
-In every case the platform starts container instances only when requests (or job executions) arrive. It scales them back to zero afterwards and bills only for the time they are busy. The repo's own code (`main.py`, `Dockerfile`, `docker-entrypoint.sh`) is the "do it yourself" version of path (A). Your container runs Google's `functions-framework`, which is exactly what the Cloud Functions platform injects for you. You can rehearse it locally with Docker.
+The README frames the point (README.md:7-10): the translation model is an external service; we deploy
+the **application code around the model** — accept input, call a model service, return a result — the
+same role the Cheese App's backend will play.
 
 ```
-                         YOUR LAPTOP (optional local rehearsal - not in README)
- +---------------------------------------------------------------------------------+
- | serverless-deployment/                                                          |
- |   sh docker-shell.sh  --docker build--> image "simple-translate" (linux/amd64/v2) |
- |   docker run -p 8080:8080 simple-translate                                       |
- |     +-------------------- container (user "app", WORKDIR /app) ---------------+ |
- |     | bash docker-entrypoint.sh                                                | |
- |     |   uv run functions-framework --target translate_http                     | |
- |     |     gunicorn  bind 0.0.0.0:$PORT (default 8080)                          | |
- |     |       Flask app -> main.translate_http(request)                          | |
- |     +--------------------------------------------^-----------------------------+ |
- |   curl "http://localhost:8080/?text=...&src=en&dest=fr" --+  (host 8080 -> 8080) |
- +---------------------------------------------------------------------------------+
+YOUR LAPTOP                                    GOOGLE CLOUD PROJECT  (Cloud Run region: northamerica-northeast2, Toronto)
++---------------------------------+
+| repo serverless-deployment/     |  Part 1   console "Write a function" (inline editor)
+|  tutorial/function/main.py  ----+--------> main.py + requirements.txt + entry point hello_http
+|  tutorial/function/requirements |            -> Cloud Build (buildpacks, base python312) -> Artifact Registry image
+|                                 |            -> Cloud Run service "translate-function"   URL https://…run.app/?text=…&src=en&dest=fr
+|                                 |                 functions-framework --target hello_http on $PORT
+| docker run --rm -p 8086:8080    |
+|   cgumb/ac215-translation-demo  |  Part 2   "Deploy container", same image (tag; digest sha256:c17b6db0…)
+|   :lecture14-agent-platform-…   +--------> Cloud Run service "translation-demo"  (public, request-based billing,
+|   -> http://localhost:8086      |            min 0 / max 2 instances, 1 CPU, 512 MiB, concurrency 4, timeout 120 s)
+|                                 |            container CMD: python -m translation_demo serve -> gunicorn 0.0.0.0:$PORT, 1 worker x 4 threads
+|                                 |  Part 3   + service account translation-demo-runtime (Agent Platform User, Service Usage Consumer)
+|                                 |            + env ENABLE_SPEECH=true, GOOGLE_CLOUD_PROJECT, GOOGLE_CLOUD_LOCATION=us-central1
+|                                 |            browser -> POST /api/speech -> ADC token (metadata server) ->
+|                                 |            us-central1-aiplatform.googleapis.com … gemini-2.5-flash-tts:generateContent -> WAV -> browser
+| (optional) ADC + impersonation  |
+|   uv run python -m              |  Part 4   Cloud Run job "translation-audio", same image, command "python",
+|   translation_demo serve        |            args -m translation_demo batch --input-uri gs://IN/run-001/passage.txt
+|                                 |                 --src en --dest fr --output-uri gs://OUT/run-001/
+| gcloud storage cp / run jobs    |            service account translation-audio-job (+ Object Viewer on IN, Object Creator on OUT)
+|   execute --args=… --wait       +--------> read passage -> translate -> speech -> write
+| python tutorial/run_job.py      |            gs://OUT/run-001/<uuid4 hex>/{translated.txt, speech.wav, manifest.json} -> exit 0
++---------------------------------+
 
-                    GOOGLE CLOUD PROJECT  (region e.g. us-central1)
- (A) Cloud Run functions                         (B) Cloud Run service
- +------------------------------+               +-----------------------------------+
- | console inline editor        |               | Docker Hub: dlops/simple-         |
- |  main.py + requirements.txt  |               |  translate-http:latest            |
- |        | upload source       |               |   (tag resolved to a digest at    |
- |        v                     |               |    deploy time)                   |
- | Cloud Build (buildpacks)     |               +----------------+------------------+
- |        | push image          |                                |
- |        v                     |                                v
- | Artifact Registry repo       |               +-----------------------------------+
- |        | deploy revision     |               | Cloud Run revision                |
- |        v                     |               |  instances 0..N, each runs        |
- | Cloud Run revision           |               |  pipenv run functions-framework   |
- |  functions-framework         |               |  --target translate_http on $PORT |
- |  --target hello_http on $PORT|               +----------------^------------------+
- +--------------^---------------+                                |
-                |  HTTPS  https://<name>-<project#>.<region>.run.app/?text=...
-                |                                                |
-        +-------+------------------------------------------------+-------+
-        | Google front end -> IAM check: does caller have roles/run.invoker?|
-        |   "Allow public access"  ==  allUsers has roles/run.invoker       |
-        +---------------------------------^---------------------------------+
-                                          |
-                               browser / curl (you)
-
-  Each instance then makes an outbound HTTPS call:
-  googletrans 4.0.0rc1 -> Google's *unofficial* web-translate endpoint (no credentials)
-
- (C) Cloud Run job (bonus)
- +----------------------------------------------------------------------------------+
- | job "simple-translate-gemini" -> task container dlops/simple-translate-gemini     |
- |   args: cli.py --text Ready+to+go+home?                                          |
- |   pipenv run python cli.py ...  --(token from metadata server, as the ATTACHED   |
- |                                    service account)--> Vertex AI Gemini API      |
- +----------------------------------------------------------------------------------+
+Every text translation (Parts 1-4) leaves Google Cloud for googletrans 4.0.0rc1's *unofficial* web endpoint
+(no credentials). Only speech (Parts 3-4) and Storage (Part 4) use a Google identity.
 ```
+
+The repo root still holds the 2025 files (`main.py`, `cli.py`, `Dockerfile`, `docker-entrypoint.sh`,
+`docker-shell.sh`, `pyproject.toml`, `uv.lock`), unchanged since `4eaf343`, which the new README never
+mentions (§10, erratum 4). Everything the README uses lives under `tutorial/`.
 
 ---
 
 ## 2. Prerequisites and costs
 
-**Accounts and local installs**
-- A GCP project with billing enabled, which you already have from Tutorial 0 / `ac215-setup`.
-- In a browser: the Cloud Console. The README is entirely click-ops. It contains no `gcloud` commands.
-- Optional (for the local rehearsal and the extensions in §4): Docker Desktop, `git`, `uv`, and the `gcloud` CLI.
-- On Apple Silicon: Docker Desktop with Rosetta/QEMU emulation, because `docker-shell.sh:11` builds `linux/amd64/v2`.
+**Accounts and local installs** (README.md:28-41)
+- Your **course project** selected in the console; check the **project ID**, not only the display name
+  (README.md:28-31). Billing enabled, and permission to create Cloud Run resources, service accounts and
+  buckets and to grant their roles (README.md:32-34).
+- A region: the README uses **Toronto, `northamerica-northeast2`** for Cloud Run and buckets; the speech model
+  uses **`us-central1`**, a separate setting introduced in Part 3 (README.md:35-37).
+- A clone of the repo; terminal examples run from the **repository root** (README.md:38-39). Docker for the
+  local demo in Part 2; Python and the Google Cloud CLI for the helper in Part 4; the console-only path needs
+  neither (README.md:39-41). `uv` only for the optional local development in Part 3 (README.md:556).
+- Worksheet of names (README.md:46-55): function service `translate-function`, web service
+  `translation-demo`, web runtime account `translation-demo-runtime`, job `translation-audio`, job runtime
+  account `translation-audio-job`, plus two globally unique bucket names you choose in Part 4.
+- **Terminal setup** (collapsed, README.md:66-89), run once before any gcloud box:
+  ```bash
+  gcloud auth login
+  export PROJECT_ID=YOUR_PROJECT_ID
+  export REGION=northamerica-northeast2
+  export IMAGE=cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+  export WEB_SERVICE=translation-demo
+  export JOB_NAME=translation-audio
+  export WEB_EMAIL="translation-demo-runtime@${PROJECT_ID}.iam.gserviceaccount.com"
+  export JOB_EMAIL="translation-audio-job@${PROJECT_ID}.iam.gserviceaccount.com"
+  ```
+  The README stresses that `gcloud auth login` sets up the **CLI** identity, not the application's ADC
+  (README.md:86-87).
+- Console first: the "Equivalent gcloud commands" boxes are **alternatives**, not extra steps (README.md:19-21).
 
-**GCP APIs to enable**
-- Path (A): the console pops up an "Enable required APIs" dialog (README.md:10-14). The screenshot `images/cloud-function-enable-apis.png` lists **Cloud Build API, Cloud Functions API, Cloud Logging API and Cloud Pub/Sub API**. That screenshot predates the move to "Cloud Run → Functions", and today's dialog may also ask for the Cloud Run Admin API and the Artifact Registry API. Click ENABLE on whatever it lists.
-- Path (B): Cloud Run Admin API (`run.googleapis.com`), which the console prompts for (README.md:93).
-- Path (C): additionally the Vertex AI API (`aiplatform.googleapis.com`).
-- CLI equivalent (not in the README):
-  `gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com cloudfunctions.googleapis.com logging.googleapis.com aiplatform.googleapis.com`
+**APIs**
+- Part 1: whatever "Write a function" prompts for (README.md:102); the gcloud path "may prompt you to enable
+  APIs or create a build repository" (README.md:191-192). `docs/lifecycle.md:70-71` lists what a fresh
+  project needs: Cloud Run, Cloud Build, Artifact Registry, Agent Platform, Cloud Storage, IAM and IAM Service
+  Account Credentials.
+- Part 3: **Agent Platform API** = `aiplatform.googleapis.com` (README.md:366-367, 383-384) — the console's
+  current name for what earlier lectures called the Vertex AI API; its user role "Agent Platform User" is
+  `roles/aiplatform.user`. Local impersonation also needs the **IAM Service Account Credentials API**
+  (`iamcredentials.googleapis.com`, README.md:524-525, 542).
+- Part 4: Cloud Storage (`storage.googleapis.com`, README.md:664; normally already on).
 
-**Service accounts, keys and secrets: where the code expects them**
-- **Paths (A) and (B) need no credentials at all.**
-  - `grep` for `secret`, `GOOGLE_`, `PORT` and `environ` across the repo finds nothing in code.
-  - `googletrans` calls a public, unauthenticated web endpoint.
-  - The repo has no `secrets/` folder and no `GOOGLE_APPLICATION_CREDENTIALS`.
-  - The only environment variables the code reads are `DEV`, read by `docker-entrypoint.sh:14`, and `PORT`/`HOST`, read implicitly by functions-framework (`_cli.py:32-33`).
-- **Path (C) needs a service account attached to the job as its runtime identity.** You do not need a JSON key (README.md:123, 134).
-  - The screenshot `images/cloud-run-job-01.png` picks a service account named `mega-pipeline`. That account lives in the instructor's project.
-  - In your own project, create one, e.g. `translate-job`, and give it **Vertex AI User** (`roles/aiplatform.user`).
-  - You, the deployer, also need **Service Account User** (`roles/iam.serviceAccountUser`) on that account in order to attach it (project Owners already have the `iam.serviceAccounts.actAs` permission it grants).
-- For local runs, the gemini image's own (unpublished) `docker-shell.sh` mounts `../secrets/` at `/secrets` and sets `GOOGLE_APPLICATION_CREDENTIALS="/secrets/mega-pipeline.json"` (image file `/docker-shell.sh:9-10,18-22`). On Cloud Run that file does not exist. The metadata server supplies the token instead, which is the point README.md:123 makes.
+**Identities, keys and secrets: where the code expects them**
+- **No key file anywhere.** Part 1 and text translation need no Google credentials at all (googletrans calls
+  a public endpoint; `tutorial/app/README.md:40-41`). Speech and Storage use **Application Default
+  Credentials**: `google.auth.default(...)` (`tutorial/app/translation_demo/speech.py:101-105`) and
+  `storage.Client(...)` (`storage.py:19-20`). On Cloud Run ADC comes from the **attached service account**;
+  locally from `gcloud auth application-default login` (optionally impersonating that account).
+- Two runtime accounts, one per workload (README.md:368-380, 677-690):
+  - `translation-demo-runtime`: **Agent Platform User** + **Service Usage Consumer** on the project; no Storage role.
+  - `translation-audio-job`: the same two roles, **Storage Object Viewer** on the input bucket only, **Storage
+    Object Creator** on the output bucket only.
+- Your own (developer) identity needs, separately (README.md:422-427, 432-434, 724-727, 911-914):
+  **Service Account User** (`iam.serviceAccounts.actAs`) on each runtime account to attach it; for local
+  impersonation **Service Account Token Creator** on the web account (README.md:519-524); to execute with
+  argument overrides `run.jobs.run` + `run.jobs.runWithOverrides` (role **Cloud Run Jobs Executor With
+  Overrides**); upload access to the input bucket and read access to the output bucket. Project Owners have
+  all of these already.
+- App configuration is environment variables, not secrets: `ENABLE_SPEECH`, `GOOGLE_CLOUD_PROJECT`,
+  `GOOGLE_CLOUD_LOCATION` (README.md:444-448, 772-776), optional `VERTEX_TTS_MODEL` (default
+  `gemini-2.5-flash-tts`) and `VERTEX_TTS_VOICE` (default `Kore`) (`speech.py:83-86`), and `PORT`
+  (`__main__.py:23`, image default 8080). Cloud Run itself injects `CLOUD_RUN_EXECUTION` and
+  `CLOUD_RUN_TASK_ATTEMPT` into job tasks, which the manifest records (`storage.py:50-51`).
 
-**What costs money, and how to shut it down.** The README has no cleanup section, so this list is added.
+**What costs money, and how to shut it down.** The README's clean-up (README.md:1018-1028) covers the first
+four rows; the rest are added.
 
-| Billable resource | Created by | How to remove |
+| Billable resource | Created in | How to remove |
 |---|---|---|
-| Cloud Run service (CPU, memory and requests while serving) | path B | Console → Cloud Run → select service → Delete, or `gcloud run services delete SERVICE --region=REGION` |
-| Cloud Run function (same billing as a Cloud Run service) plus **Cloud Build** minutes for every (re)deploy | path A | Console → Cloud Run → select the function → Delete |
-| **Artifact Registry** storage for the image Cloud Build produced for your function. It sits in an auto-created repository, typically `cloud-run-source-deploy` or `gcf-artifacts` depending on how the function was created; check Artifact Registry → Repositories | path A | Delete the image or the repository in Artifact Registry |
-| Cloud Storage bucket holding uploaded function source (auto-created, name starts with `run-sources-…` or `gcf-v2-sources-…`) | path A | Delete the bucket in Cloud Storage |
-| Cloud Run job executions (vCPU and memory seconds) plus **Gemini tokens** | path C | Delete the job; there is nothing to stop unless it is running |
-| Cloud Logging ingestion (free allotment, then per GiB) | all | Normally negligible |
+| Cloud Run function `translate-function` (Cloud Run service billing) + **Cloud Build** time for each (re)deploy | Part 1 | Cloud Run → select → Delete (README.md:1021) or `gcloud run services delete translate-function --region=$REGION` |
+| Cloud Run service `translation-demo` | Part 2 | same (README.md:1021) |
+| Cloud Run job `translation-audio` (vCPU/GiB-seconds per execution) | Part 4 | Jobs → Delete (README.md:1021-1022) or `gcloud run jobs delete …` |
+| **Artifact Registry** image the function build produced | Part 1 | README.md:1026-1028: remove "its unused image"; keep the shared repository if other work uses it (`docs/lifecycle.md:205-210`) |
+| Two buckets + objects (Standard storage; soft delete keeps deleted objects recoverable — and billable — for the default 7 days, `docs/lifecycle.md:94, 176-177`) | Part 4 | delete objects and buckets (README.md:1023-1024) |
+| **Gemini TTS** calls (per request, both the web "Play audio" and every job execution) | Parts 3–4 | stop calling; delete service/job |
+| Function source upload / build logs in Google-managed buckets [added] | Part 1 | review Cloud Storage and Artifact Registry separately (`docs/lifecycle.md:205-210`) |
+| Service accounts (free, but remove: README.md:1024-1025) | Parts 3–4 | IAM → Service Accounts → Delete, after detaching |
 
-Cost intuition (verify current prices at cloud.google.com/run/pricing):
-- With **request-based billing**, which is the default radio button in `images/cloud-run-create.png`, Cloud Run's monthly free tier has been 180,000 vCPU-seconds, 360,000 GiB-seconds and 2 million requests per billing account. This tutorial uses a tiny fraction of that.
-- The real ways to get a surprise bill:
-  - Setting **minimum instances ≥ 1**. One always-on vCPU for 30 days is 30 × 86,400 = 2,592,000 vCPU-seconds, about 14× the free tier.
-  - Choosing **instance-based billing**.
-  - Leaving images in Artifact Registry.
-  - Leaving a **public** endpoint up that someone scripts against.
+Cost intuition (verify at cloud.google.com/run/pricing; numbers said "at the time of recording"):
+- Request-based billing with min instances 0 (the README's choice, README.md:281-283) charges CPU and memory
+  only while a request is being handled, plus a per-request fee; Cloud Run's monthly free tier (for years
+  180,000 vCPU-seconds, 360,000 GiB-seconds, 2 million requests per billing account) dwarfs this tutorial.
+- The README caps the web service at **max 2 instances** (README.md:282-283) and the job at **0 retries, 5-minute
+  timeout** (README.md:778-780): the guardrails that bound a mistake.
+- Real surprise-bill routes: min instances ≥ 1 (one always-on vCPU for 30 days ≈ 2.59 M vCPU-seconds, ~14× the
+  free tier), instance-based billing, retries on a paid job (README.md:895-897), leftover images and buckets.
 
 ---
 
 ## 3. Concepts this tutorial teaches
 
 ### 3.1 Serverless = you hand over the server's lifecycle — scale to zero, scale out ★ ANIMATE
-- **Explanation:** "Serverless" does not mean there are no servers. It means you no longer decide *when* a server exists.
-  - You give the platform a unit of code (a function or a container image) plus limits (memory, CPU, maximum instances, concurrency).
-  - The platform starts instances when requests arrive, adds more as traffic grows, and removes them all when traffic stops. That last step is **scale to zero**.
-- **Mental model:** a thermostat-controlled fleet. The input is the number of in-flight requests. The output is the number of instances, ⌈in-flight / concurrency⌉ roughly, clamped between min-instances and max-instances.
-- **Analogy:** a VM is a restaurant that keeps its kitchen staffed 24/7. Serverless is a ghost kitchen that calls in cooks only when orders arrive, and sends them home when the queue is empty.
-- **Misconception:** "Serverless means stateless code is optional" or "my instance will remember the last request." Instances are disposable. Anything in memory or on the in-memory filesystem can disappear between requests. Treat each instance as an amnesiac.
+- **Explanation:** "Serverless" still runs on servers; you stop deciding *when* one exists. You hand over a
+  unit (source for a function, an image for a service or job) plus limits (CPU, memory, max instances,
+  concurrency, timeout). The platform starts instances when requests arrive, adds more under load, and removes
+  them when traffic stops (**scale to zero**). README.md:218-224: a cold start "initializes an instance of the
+  built application; it does not necessarily boot a new VM", scaling to zero "applies to app instances, while
+  Google's routing infrastructure remains available", and "there is no fixed inactivity interval" to predict
+  the next cold start.
+- **Mental model:** instances ≈ ⌈in-flight requests / concurrency⌉, clamped to [min, max]. With Part 2's
+  settings: concurrency 4, max 2 → at most 8 requests in progress at once.
+- **Analogy:** a VM is a restaurant staffed 24/7; serverless calls cooks in when orders arrive.
+- **Misconception:** "My instance remembers the last request." Successive requests can reach different
+  instances (README.md:343-344); anything in memory or on local disk may vanish. Part 4 therefore writes its
+  results to Cloud Storage, not the container's filesystem (README.md:887-891).
 
 ### 3.2 Cold starts and the min-instances knob ★ ANIMATE
-- **Explanation:** when a request arrives and no warm instance is free, Cloud Run must:
-  1. get the image ready,
-  2. start the container,
-  3. run your entrypoint, here `bash` → `uv run` (or `pipenv run` in the Docker Hub image) → Python imports Flask, gunicorn and googletrans → gunicorn binds the port,
-  4. only then hand over the request.
-
-  That added latency is the **cold start**. `images/cloud-run-create.png` shows "Minimum number of instances: 0 — Set to 1 to reduce cold starts".
-- **Mental model:** latency = cold-start tax (paid once per new instance) + per-request work. Global-scope work in the module the server loads, such as imports or a module-level `translator = Translator()` (the pattern `cli.py:11` uses; the server itself never imports `cli.py`), is paid during the cold start and then reused while the instance stays warm. Work inside the handler (`main.py:13`) is paid on every request.
-- **Analogy:** a cold engine on a winter morning. The first drive is slow, the next ones are fine, until the car sits long enough to go cold again.
-- **Misconception:** "Cold start = slow code (in the handler)." Mostly it is startup work: process launch, `uv run`'s environment check, imports and framework init, plus fetching the image. Keep the image lean too: this one installs `build-essential` (`Dockerfile:4,26`) and copies `.git` and screenshots into `/app` (no `.dockerignore`), which makes it bigger than it needs to be.
+- **Explanation:** a request with no free warm instance waits for: image ready → container start → `python -m
+  translation_demo serve` → `os.execvp("gunicorn", …)` (`__main__.py:24-26`) → gunicorn imports
+  `translation_demo.web:create_app()` and binds the port → only then the request. For the function: buildpack
+  image → functions-framework imports `main.py` and starts gunicorn. README.md:223-224: minimum-instance
+  settings "can keep capacity warm when that matters".
+- **Mental model:** latency = cold-start tax (once per new instance) + per-request work. Dependency
+  installation happens at **build time**, not per request (README.md:216). This code builds the googletrans
+  `Translator` **inside** each request (`tutorial/function/main.py:12`, `translation.py:33`) and imports
+  googletrans lazily on first use (`translation.py:29-31`), so the first translation on a new instance also
+  pays that import.
+- **Misconception:** "Cold start = slow handler code." Mostly it is process start, imports and framework
+  init. The slides list cold starts as a con of serverless (slide 16).
 
 ### 3.3 Request-based vs instance-based billing ★ ANIMATE
-- **Explanation:**
-  - **Request-based:** you pay for CPU and memory only while an instance is handling at least one request (rounded up to 100 ms), plus a per-request fee. CPU is throttled outside requests.
-  - **Instance-based:** you pay for the entire lifetime of each instance, with full CPU even between requests. Both options appear in `images/cloud-run-create.png`.
-- **Mental model:** draw requests as spikes on a timeline.
-  - VM cost is the whole rectangle under a flat line.
-  - Request-based cost is only the area under the spikes. With concurrency, overlapping spikes on one instance are billed once.
-  - Instance-based cost is the area under the "instance alive" step function.
-- **Analogy:** a taxi meter that runs only while a passenger is in the car (request-based), versus renting the car for the day (instance-based or VM).
-- **Misconception:** "Serverless is always cheaper." At steady high utilization, an always-busy VM or instance-based billing can be cheaper. Serverless wins for spiky, idle-heavy traffic, such as a student demo.
+- **Explanation:** **Request-based** (selected in README.md:281): pay CPU and memory only while an instance
+  handles at least one request, plus a per-request fee; CPU is throttled outside requests. **Instance-based**:
+  pay for each instance's whole lifetime, with CPU always on. A **job** bills its tasks' running time.
+- **Mental model:** request spikes on a timeline. VM = the whole rectangle; request-based = area under the
+  spikes (overlapping requests on one instance billed once); instance-based = area under the "instance alive"
+  step function; job = one bar from start to exit.
+- **Misconception:** "Serverless is always cheaper." At steady high load an always-on instance or VM can be.
+  It wins for spiky, idle-heavy traffic such as a class demo — and slide 11/14's "pay only while your code
+  runs" holds for compute only with these defaults (min 0, request-based).
 
 ### 3.4 Cloud Run functions vs Cloud Run services: a function is a container you did not write ★ ANIMATE
-- **Explanation:**
-  - With **functions** (path A) you hand over source plus `requirements.txt` plus an **entry-point name**. Cloud Build uses Google's buildpacks to produce a container whose process is `functions-framework --target <entry point>`, stores it in **Artifact Registry**, and deploys it on Cloud Run.
-  - With **services** (path B) you hand over a finished image, and its ENTRYPOINT can be anything that speaks HTTP on `$PORT`.
-  - This repo demonstrates that the two are the same thing underneath. `docker-entrypoint.sh:18` runs `uv run functions-framework --target translate_http`, i.e. the repo *hand-builds* the container that the functions platform would have built for you.
+- **Explanation:** Part 1 hands over **source + `requirements.txt` + an entry-point name** (README.md:150-151:
+  "the Python function the serving framework should call, not the filename or service name"). The build
+  "receives your source, uses Google's build tooling to assemble a Python environment, installs the
+  requirements, configures the Functions Framework, and publishes an application image in Artifact Registry"
+  (README.md:212-215). The gcloud equivalent makes that explicit: `gcloud run deploy translate-function
+  --source=tutorial/function --function=hello_http --base-image=python312` (README.md:195-198). The result is
+  an ordinary **Cloud Run service** whose process is functions-framework with `--target hello_http`
+  (`_cli.py:24`: `--target`, env `FUNCTION_TARGET`). Part 2 hands over a finished image whose own `CMD` starts
+  a server.
 - **Mental model:**
 
-  | | Cloud Run functions | Cloud Run service |
+  | | Part 1: Cloud Run function | Part 2: Cloud Run service from an image |
   |---|---|---|
-  | You provide | source files + dependency list + entry-point name | an OCI/Docker image |
-  | Who builds | Cloud Build + buildpacks (automatic) | you (`docker build`) |
-  | Language/runtime | Google-managed runtimes, which Google deprecates on a schedule | anything that runs in a Linux amd64 container |
-  | Who patches the OS/Python | Google | you (base image, e.g. `python:3.12-slim-bookworm`, `Dockerfile:2`) |
-  | Typical unit | one handler | a whole app (FastAPI with many routes) |
-- **Analogy:** a meal-kit service where you send the recipe and they cook it (functions), versus a food truck where you bring the fully equipped kitchen and they give you a parking spot and customers (Cloud Run).
-- **Misconception:** "Cloud Functions and Cloud Run are unrelated products." Since 2024 "Cloud Functions (2nd gen)" has been rebranded **Cloud Run functions** and runs on Cloud Run. The README's first bullet already says "Cloud Run -> Functions" (README.md:8).
+  | You provide | `main.py` + `requirements.txt` + entry point `hello_http` | image `cgumb/ac215-translation-demo:…` |
+  | Who builds | Cloud Build + buildpacks, at deploy | already built (`tutorial/app/Dockerfile`), no build at deploy (README.md:314-315) |
+  | Server process | functions-framework 3.10.2 → gunicorn | `python -m translation_demo serve` → gunicorn (`__main__.py:22-26`) |
+  | Runtime | "Python 3.12" picked in the console (README.md:104) / `--base-image=python312` | `python:3.12-slim-bookworm` (`Dockerfile:1`) |
+  | Typical unit | one handler, query-string in, text out | a whole app: HTML page + two JSON routes (`web.py:13-54`) |
+- **Analogy:** send a recipe and they cook it (function) vs bring your own food truck and they give you a
+  parking spot and customers (service).
+- **Misconception:** "Cloud Functions and Cloud Run are different products." The README creates the function
+  from **Cloud Run → Services → Write a function** (README.md:99-101); what was "Cloud Functions (2nd gen)"
+  is now "Cloud Run functions", served by Cloud Run. The slides still say "Cloud Function" and link
+  `console.cloud.google.com/functions` (slide 12).
 
-### 3.5 The container contract: `$PORT`, `0.0.0.0`, stateless, amd64 ★ ANIMATE
-- **Explanation:** for a container to run on Cloud Run it must:
-  - **listen for HTTP on the port given in the `PORT` environment variable** (default 8080), as the console itself says in `images/cloud-run-create.png`: "Should listen for HTTP requests on $PORT (default: 8080) and not rely on local state";
-  - listen on **all interfaces** (`0.0.0.0`), not on `127.0.0.1`;
-  - be built for **linux/amd64**;
-  - not rely on local disk state.
+### 3.5 The container contract: `$PORT`, `0.0.0.0`, amd64, no local state ★ ANIMATE
+- **Explanation:** a Cloud Run service container must listen for HTTP on **all interfaces** at the port in
+  the **`PORT`** env var (8080 by default), be built for **linux/amd64**, and not rely on local state. Both
+  servers in this tutorial honour it:
+  - function: `@click.option("--host", envvar="HOST", type=click.STRING, default="0.0.0.0")` and
+    `@click.option("--port", envvar="PORT", type=click.INT, default=8080)` (functions-framework 3.10.2,
+    `_cli.py:32-33`);
+  - web app: `port = int(os.environ.get("PORT", "8080"))` then `gunicorn --bind 0.0.0.0:{port}`
+    (`__main__.py:23-24`); the image also sets `ENV … PORT=8080` (`Dockerfile:2`).
+  README.md:284-287 has you verify **Container port `8080`** in the console. `EXPOSE 8080` (`Dockerfile:11`)
+  is documentation only; Cloud Run uses its container-port setting.
+- **Mental model:** Cloud Run hands the container an envelope `PORT=8080`, then knocks on that port from
+  outside; nobody answers → the revision never becomes ready.
+- **Misconception:** "`-p 8086:8080` tells Cloud Run the port." No: `-p` maps *your laptop's* 8086 to the
+  container's 8080 (README.md:246-251, Lecture 4's `port_toy`, which reads `PORT` the same way at
+  `port_toy/gateway/gateway.py:51`). Cloud Run sets `PORT` and connects to it.
 
-  functions-framework satisfies the first two automatically:
-  `@click.option("--host", envvar="HOST", type=click.STRING, default="0.0.0.0")` and
-  `@click.option("--port", envvar="PORT", type=click.INT, default=8080)` (`_cli.py:32-33`, v3.9.2).
-  The `Dockerfile` has no `EXPOSE`, and it does not need one.
-- **Mental model:** Cloud Run hands your container an envelope with `PORT=8080` written on it, then knocks on that port from *outside* the container. If nobody answers in time, the revision fails to become ready.
-- **Analogy:** a hotel assigns you a room number at check-in, and room service will only knock on that door. If you sit in a different room, or lock yourself in the bathroom (`127.0.0.1`), you get no food.
-- **Misconception:** "`-p 8080:8080` or `EXPOSE` tells Cloud Run the port." No. `-p` is a local Docker host↔container mapping (Lecture 4's `port_toy`). Cloud Run uses its **container port** setting and injects `PORT`. `port_toy/gateway/gateway.py:51` follows the same `os.environ.get("PORT", …)` pattern.
+### 3.6 Images, registries, tags vs digests
+- **Explanation:** an image is named `registry/repo:tag` (Docker Hub implied for `cgumb/…`). A **tag** is a
+  movable label; a **digest** (`sha256:…`) is the immutable content hash. The README pastes the **tag**
+  (README.md:276-278) and prints the **digest** at the end (README.md:1066-1070: "The public image's Linux
+  AMD64 digest is: `sha256:c17b6db0…`"); the optional practice-stack script deploys by digest because "a tag
+  can change later" (`docs/lifecycle.md:63-67`). A Cloud Run revision records the digest it resolved at
+  deploy time.
+- **Artifact Registry** is GCP's own registry; Part 1's build silently stores its image there
+  (README.md:214-215, 1026). Lecture 13 already pulled Google's prebuilt training images from it
+  (`model-training/cli.sh:31`, `us-docker.pkg.dev/vertex-ai/training/…`).
+- **Mental model / analogy:** a tag is a sticky note on a box, the digest the box's serial number; "the
+  latest edition" vs the ISBN.
+- **Misconception:** "If the image owner pushes a new build under the same tag, my service changes." Not
+  until you deploy a new revision. And one image, two programs: Parts 2–4 run the *same* image; only the
+  startup command differs (3.8).
 
-### 3.6 Images, registries, tags vs digests (Docker Hub vs Artifact Registry)
-- **Explanation:**
-  - An image is addressed by `registry/repo:tag`. A **tag** is a movable label. A **digest** (`sha256:…`) is the immutable content hash.
-  - When Cloud Run deploys `dlops/simple-translate-http:latest`, it resolves the tag to a digest and the revision is pinned to that digest.
-  - **Artifact Registry** is GCP's private registry (`LOCATION-docker.pkg.dev/PROJECT/REPO/IMAGE:TAG`, where LOCATION is a region such as `us-central1` or a multi-region such as `us`; `cheese-app-v3/src/deployment/deploy_images/__main__.py:15` later uses the multi-region form `us-docker.pkg.dev/{project}/{repository_name}`). Path (A) silently uses it, and it is where production images should live (IAM-controlled, close to the service, no Docker Hub rate limits).
-- **Mental model:** a tag is a sticky note on a box. The digest is the box's serial number. A deployment records the serial number.
-- **Analogy:** "the latest edition" of a textbook vs its ISBN.
-- **Misconception:** "If the instructor pushes a new `:latest`, my Cloud Run service updates." It does not, until you deploy a new revision. A related trap: a tag says nothing about *which code* is inside. `dlops/simple-translate-http:latest` today is still the 2024 pipenv build (Python 3.9.17, functions-framework 3.4.0), not the 2025 `uv` code in `main`, because nobody re-pushed the tag after the repo changed.
+### 3.7 Two IAM questions: who may *call* the app vs what the app may *access* ★ ANIMATE
+- **Explanation:** README.md:361-362: "Two permissions questions are separate: **who may call our public
+  app**, and **what the running app may access**. A service account answers the second one."
+  - **Invocation:** "Allow public access" (README.md:105, 281) lets anyone call the URL. The gcloud
+    equivalents use `--no-invoker-iam-check` (README.md:198, 323), which `docs/lifecycle.md:78-79` says
+    matches the console's **Allow public access**: the Cloud Run invoker IAM check is switched off (older
+    tutorials did this by granting `roles/run.invoker` to `allUsers`).
+  - **Runtime identity:** the service account attached under **Security** (README.md:437-439; gcloud
+    `--service-account`, README.md:491). Client libraries find it through ADC (from the metadata server) — "You
+    do not need to create or download a key" (README.md:380).
+  - **Deploy-time permission:** attaching an account needs `iam.serviceAccounts.actAs` (**Service Account
+    User**) on it — your permission, separate from the account's runtime roles (README.md:422-427, 432-434).
+  - **Least privilege per workload:** the web account gets no Storage role because its audio "goes straight to
+    the browser" (README.md:689-690); the job account gets read on the input bucket only and create on the
+    output bucket only (README.md:683-688).
+- **Mental model:** two badges: a visitor pass at the front door (invocation) and an employee badge the code
+  wears when it goes out (service account). Plus a third, yours: the right to pin a badge on someone.
+- **Misconception:** "Public means it can call Agent Platform" — or the reverse. Independent. And
+  **Service Usage Consumer** is not decoration: `speech.py:102-105` sends the project as the **quota
+  project**, which needs `serviceusage.services.use` (README.md:375-376: "the second permits API
+  quota/billing").
 
-### 3.7 Two IAM identities: who may *call* the service vs who the service *is* ★ ANIMATE (optional fifth)
-- **Explanation:**
-  - **Invocation IAM** controls who may send requests. "Allow public access" (README.md:20, 98) makes the service public; the classic mechanism (and what `gcloud run deploy --allow-unauthenticated` does) is granting `roles/run.invoker` to the special principal `allUsers`. Cloud Run also has a newer "disable invoker IAM check" switch (`--no-invoker-iam-check`) that achieves the same effect without a binding; see Step 9 for how to tell which one your service uses. The older console label in the screenshot was "Allow unauthenticated invocations". With "Require authentication", callers must present a Google-signed identity token and hold `roles/run.invoker`.
-  - **Runtime identity** is the service account the container runs *as* when it calls other Google APIs, such as Vertex AI in path (C). Client libraries get its token from the metadata server through Application Default Credentials, so no key file is involved (README.md:123).
-- **Mental model:** two badges. A visitor pass at the front door (invoker) and an employee badge the code wears when it goes out to other buildings (service account).
-- **Analogy:** the bouncer checks *your* ID at the club door, while the club's delivery driver carries the *club's* credentials when picking up supplies.
-- **Misconception:** "Making my service public also makes it able to call Vertex AI," or the reverse. The two are independent. A public service with no runtime permissions can call nothing, and a private service can have powerful runtime permissions.
+### 3.8 Services vs jobs; command vs arguments ★ ANIMATE
+- **Explanation:** README.md:582-585: a person waits for an interactive request; a program that should "read
+  its input, translate it, generate speech, save the files, and exit" is a **job**, not "an HTTP service
+  waiting for requests". A job has no URL and no port; it runs N tasks (here 1, README.md:745) and an
+  execution succeeds when every task exits 0.
+  - The image's default is the web server: `CMD ["python","-m","translation_demo","serve"]` (`Dockerfile:12`),
+    no ENTRYPOINT. In Cloud Run, **Container command** replaces the image's ENTRYPOINT and **Container
+    arguments** replace its CMD. The job sets command `python` (README.md:746-748: "This replaces the image's
+    web-server command") and eleven separate arguments (README.md:749-766), so the task runs
+    `python -m translation_demo batch --input-uri … --src en --dest fr --output-uri …`.
+  - Arguments are **individual chips** (README.md:750-753): one value per chip; Cloud Run passes each chip as
+    one argv element, with no shell in between.
+  - `gcloud run jobs execute … --args=…` replaces the **whole** argument list for that execution only; the
+    job's saved defaults still point at the first French example (README.md:954-956).
+  - Exit status is truthful: any failure prints `Batch failed: …` to stderr and `raise SystemExit(1)`
+    (`__main__.py:58-61`, comment: "A failing job must exit unsuccessfully so execution status is truthful").
+- **Mental model:** a service is a shop with opening hours; a job is a one-off delivery that ends with a
+  receipt (`manifest.json`).
+- **Misconception:** "A job is a service that happens to stop." If you leave the image's command alone, the
+  task starts gunicorn and **never exits** until the 5-minute task timeout fails it (README.md:1044: "Job
+  starts a server instead of finishing → Command `python` and separate batch arguments").
 
-### 3.8 Services vs Jobs
-- **Explanation:**
-  - A **service** is request-driven, has a URL, and runs indefinitely and elastically.
-  - A **job** runs a container to completion (no URL, no port). It runs N tasks (`images/cloud-run-job-01.png`: "Number of tasks 1") and succeeds when every task exits 0.
-  - Container **arguments** replace the image's CMD and are appended to its ENTRYPOINT (`images/cloud-run-job-02.png`: "Arguments passed to the entry point command").
-- **Mental model:** a service is a shop with opening hours. A job is a one-off delivery.
-- **Misconception:** "A job that shows *succeeded* did its work." The gemini image's `cli.py:51-52` catches every exception raised inside `main()` and just prints it, so a failed Gemini call still exits 0. (Only failures at import time, e.g. in the module-level `GenerativeModel(...)` at `cli.py:11`, which sits outside the `try`, would exit non-zero.)
+### 3.9 Application Default Credentials and impersonation (local development)
+- **Explanation:** README.md:506-514: develop locally against the real API without publishing an image per
+  edit; ADC "lets the same code discover credentials locally and on Cloud Run". To test *the runtime
+  account's* permissions locally, **impersonate** it: you sign in as yourself and obtain short-lived tokens as
+  the account (needs **Service Account Token Creator** on it, README.md:519-524), so no private key is
+  downloaded. Commands: `gcloud auth application-default login --impersonate-service-account="$WEB_EMAIL"`
+  and `gcloud auth application-default set-quota-project "$PROJECT_ID"` (README.md:547-548).
+- **Contrast with L3/L10:** `mega-pipeline` handed students a JSON key file for `secrets/`
+  (`mega-pipeline/README.md:97-99`, `ENV GOOGLE_APPLICATION_CREDENTIALS=secrets/mega-pipeline.json` at
+  README.md:195). L14 removes the key: attached identity in the cloud, impersonated ADC on the laptop.
+- **Misconception:** "`gcloud auth login` is enough." That logs in the CLI; the app reads ADC, a separate
+  file set up by `gcloud auth application-default login` (README.md:86-87, `tutorial/app/README.md:100-101`).
+  The ADC file is still a credential: keep it out of Git and images (README.md:552-553).
+
+### 3.10 Durable outputs from a finite job: unique attempt folders and a completion marker
+- **Explanation:** each task writes under `<output-uri>/<uuid4 hex>/` (`storage.py:37-38`), uploads
+  `translated.txt` and `speech.wav` with `if_generation_match=0` (create only, never overwrite;
+  `storage.py:41-47`), then writes `manifest.json` with `"status": "complete"` **last** (`storage.py:48-55`).
+  README.md:887-897: `run-001` is your chosen prefix, not an auto-numbered directory; re-executing creates a
+  new attempt folder; partial files without a manifest "do not establish success"; retries can duplicate paid
+  work. The helper only reports success after finding a complete manifest (`run_job.py:66-72`).
+- **Why Object *Creator* suffices:** the job never reads or overwrites output; create-only uploads need just
+  `storage.objects.create`. It cannot even list its own results — you read them with your identity
+  (README.md:692-693).
 
 ---
 
 ## 4. Step-by-step walkthrough
 
-> Convention: **[README]** means the action is quoted from the README. **[added]** means the step or command is not in the README; I wrote it from the code or from standard `gcloud`/`docker` usage, and it is clearly not part of the official tutorial.
+> Convention: **[README]** steps are quoted from `46cc62f` in README order; **[added]** steps are not in the
+> README. Console clicks cannot be captured here (no GCP credentials): the video draws them as `illustration`
+> with the README's field values; outputs come only from captures or from what the README records.
 
-**Step 0 — Get the code and open it next to the video [added]**
-- Action:
-  `cd ~/Desktop/AC215 && git clone https://github.com/dlops-io/serverless-deployment.git && cd serverless-deployment && git log -1 --format='%h %ci'`
-- What happens: you get `README.md`, `main.py`, `cli.py`, `Dockerfile`, `docker-entrypoint.sh`, `docker-shell.sh`, `pyproject.toml` and `uv.lock`.
-- Checkpoint: `4eaf343 2025-10-20 21:53:06 -0400`.
+**Step 0 — Before you begin [README.md:26-89]**
+- Select your course project and check its **project ID** (28-31); confirm billing and permissions (32-34);
+  choose the region — Toronto `northamerica-northeast2`; speech later uses `us-central1` (35-37); clone the
+  repo and work from its root (38-41). Fill the worksheet (46-55). Note the image (58-60).
+- Optional, for every gcloud box: the **Terminal setup** block (73-82, quoted in §2).
+- [added] `git clone https://github.com/dlops-io/serverless-deployment.git && cd serverless-deployment && git log -1 --format='%h %ci'`
+  → `46cc62f 2026-10-22 09:26:24 -0400` at the time of recording.
 
-**Step 1 — Local rehearsal of the container contract [added; uses repo scripts]**
-- Commands:
-  - `sh docker-shell.sh`. This only **builds**: the `docker run` lines are commented out (`docker-shell.sh:14-18`).
-  - `docker run --rm -ti --name simple-translate -p 8080:8080 simple-translate`
-  - In a second terminal: `curl "http://localhost:8080/?text=Good%20afternoon%20everyone&src=en&dest=fr"`
-- Under the hood:
-  1. `docker-shell.sh:11` runs `docker build -t $IMAGE_NAME --platform=linux/amd64/v2 -f Dockerfile .`.
-  2. The Dockerfile starts from `python:3.12-slim-bookworm` (`Dockerfile:2`), installs `uv`, creates user `app` (`Dockerfile:22-35`), runs `uv sync --frozen` into `/.venv` (`Dockerfile:18,45`), and sets `ENTRYPOINT ["/bin/bash","docker-entrypoint.sh"]` (`Dockerfile:51`).
-  3. At run time `docker-entrypoint.sh:3-12` prints diagnostics and activates the venv.
-  4. Because `DEV` is unset, it runs `uv run functions-framework --target translate_http` (`docker-entrypoint.sh:18`).
-  5. functions-framework loads `./main.py` (default source, `_function_registry.py:27`), finds `translate_http` (`main.py:6`) and starts gunicorn on `0.0.0.0:8080` with 1 worker and `cpu_count*4` threads (`_http/gunicorn.py:32-43`).
-- You should see:
-  - `Container is running!!!`, `Architecture: x86_64`, `Environment ready! Virtual environment activated.`, `Python version: Python 3.12.…`, `UV version: uv …` and `Activating virtual environment...` (`docker-entrypoint.sh:3-11`).
-  - Then **silence**: gunicorn's log level is `"error"` (`_http/gunicorn.py:41`).
-  - On `curl`, the container logs `request_json: None`, `request_args: ImmutableMultiDict([...])` and `Output: …` (`main.py:10-11,26`). curl prints the French text.
-- If it fails:
-  - `Bind for 0.0.0.0:8080 failed: port is already allocated`: use `-p 8081:8080` and curl port 8081.
-  - Very slow build on an M-series Mac: expected, because amd64 is emulated. For a local-only test you can use the native line `docker-shell.sh:10`, but do not push that image to Cloud Run.
-  - `500 Internal Server Error`: googletrans failed to reach or parse Google's unofficial endpoint (`main.py:25` has no `try/except`). Read the container log.
-  - Ctrl-C does nothing without `-ti`: bash is PID 1 and `docker-entrypoint.sh:18` does not `exec`. Use `docker stop simple-translate`.
+**Step 1 — Part 1.1: create the function [README.md:97-122]**
+1. Console **Cloud Run → Services → Write a function** (opens **Create service**; on a narrow window under
+   **More actions**) (99-101).
+2. Enable required APIs if prompted (102).
+3. **Service name** `translate-function`, your region (103).
+4. **Runtime** **Python 3.12** (104).
+5. **Authentication** → **Allow public access** → **Create** (105-106).
+6. Wait; open the **Source** editor; the initial service may contain sample code (107-109).
+- Under the hood: a Cloud Run service is created from Google's template and built once.
+- GIF `images/console/function-setup.gif` (111-122) — "real screenshots" with added pointer rings; API
+  enablement "conditional".
 
-**Step 2 — Open Cloud Run functions and enable the APIs [README.md:7-14]**
-- Action:
-  - "In GCP go to [Cloud Run -> Functions](https://console.cloud.google.com/functions)"
-  - Click the "{...} Write a function" button
-  - "Enable the required APIs. Click "ENABLE""
-- Under the hood: this enables the Build, Functions, Logging and Pub/Sub APIs (screenshot `images/cloud-function-enable-apis.png`). The link redirects into Cloud Run's "Create service" page with the **Function** card ("Use an inline editor to create a function", third card in `images/cloud-run-create.png`).
-- Checkpoint: the Create service form appears.
-- If it fails: billing is not linked to the project. Link a billing account first.
+**Step 2 — Part 1.2: supply the code and dependencies [README.md:124-152]**
+1. **Edit source** if read-only; replace `main.py` with `tutorial/function/main.py` (126-140):
+   ```python
+   import functions_framework
+   from googletrans import Translator
 
-**Step 3 — Configure the function [README.md:16-21]**
-- Action:
-  - "Under the Configure -> "Service Name" add a name." For example, `simple-translate`.
-  - "Under Endpoint URL -> "Runtime", select "Python 3.10"".
-  - "Under the Authentication section. Select "Allow public access"".
-  - Click "Create".
-- Under the hood: Cloud Run creates a service and deploys the console's template function (`hello_http`) through Cloud Build. "Allow public access" adds the IAM binding `allUsers → roles/run.invoker`.
-- Checkpoint: the service page opens with a Source tab containing `main.py` and `requirements.txt`.
-- If it fails:
-  - If "Python 3.10" is missing or marked deprecated (Python 3.10 reaches upstream EOL in Oct 2026), pick **Python 3.12**, which matches `pyproject.toml:6` and the versions locked in `uv.lock`.
-  - If "Allow public access" errors with an org-policy message, your project's organization blocks `allUsers` (domain-restricted sharing). Choose "Require authentication" and use Step 9.
+   @functions_framework.http
+   def hello_http(request):
+       text = request.args.get("text", "Welcome to AC215")
+       source = request.args.get("src", "en")
+       destination = request.args.get("dest", "es")
+       return Translator().translate(text, src=source, dest=destination).text
+   ```
+2. Replace `requirements.txt` (142-148):
+   ```text
+   functions-framework==3.10.2
+   googletrans==4.0.0rc1
+   ```
+3. **Function entry point** = `hello_http` (150-151).
+4. **Save and redeploy**; wait for the revision to become ready (152).
+- Under the hood: the build installs the two requirements at build time and configures functions-framework to
+  call `hello_http` (212-216).
 
-**Step 4 — Paste the code and requirements [README.md:23-68]**
-- Action: replace `main.py` with the block at README.md:24-62, and `requirements.txt` with:
+**Step 3 — Part 1.3: call the endpoint [README.md:154-233]**
+1. Copy the **URL** from **service details** (not the build details page) (156-157).
+2. Open it with no arguments → the default `"Welcome to AC215"` translated English → Spanish (158-159).
+3. Append `?text=Good%20afternoon%20everyone&src=en&dest=fr` to **your** URL (160-164).
+4. Try `dest=el`, `dest=hi`; Simplified Chinese is `dest=zh-cn` (166-167).
+5. **Observability → Logs**: find the requests, confirm HTTP **200** (168-169).
+- Checkpoint (171-173): same endpoint, different inputs, no redeploy; `?` starts the query string, `&`
+  separates parameters; `src`/`dest` are languages, not regions.
+- Recorded result (README.md:180-184): the French request returned **Bonjour à tous** with HTTP **200** in the
+  request log.
+- gcloud alternative (194-205):
+  ```bash
+  gcloud run deploy translate-function \
+    --project="$PROJECT_ID" --region="$REGION" \
+    --source=tutorial/function --function=hello_http --base-image=python312 \
+    --no-invoker-iam-check
+
+  FUNCTION_URL=$(gcloud run services describe translate-function \
+    --project="$PROJECT_ID" --region="$REGION" --format='value(status.url)')
+  curl --get "$FUNCTION_URL" \
+    --data-urlencode 'text=Good afternoon everyone' \
+    --data-urlencode 'src=en' --data-urlencode 'dest=fr'
   ```
-  functions-framework==3.*
-  googletrans==4.0.0rc1
+- "More detail" box (210-233): build vs request time, cold starts, googletrans is an external provider —
+  "inspect logs rather than treating a completed build as proof that translation worked" (228-231).
+- If it fails: build log (requirements typo, entry point ≠ `def` name → functions-framework raises
+  `File /workspace/main.py is expected to contain a function named '<target>'. Found: … instead`,
+  `_function_registry.py:57-61`; the `/workspace` path is the buildpack's app directory [added]); `403` →
+  public access not set or blocked by an org policy; `500` → googletrans failure in Logs (README.md:1037-1039).
+
+**Step 4 — Part 2.1: try the prebuilt app locally [README.md:242-268]**
+1. With Docker running (244-249):
+   ```bash
+   docker run --rm -p 8086:8080 \
+     cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+   ```
+2. Open http://localhost:8086 (251).
+3. Type a sentence, pick languages, **Translate**; the translation appears in the other box (252-253).
+4. **Play audio** is disabled (label "Play audio · enable in part 3", `index.html:51`); stop the container
+   with **Ctrl+C** (254-255).
+- Under the hood: `CMD` → `python -m translation_demo serve` → `os.execvp` replaces Python with gunicorn bound to
+  `0.0.0.0:8080`, 1 worker, 4 threads, 90 s worker timeout (`__main__.py:22-26`). Because gunicorn becomes
+  PID 1, Ctrl+C (forwarded by `docker run`) stops it cleanly. The page (`GET /`) sends `POST /api/translate`
+  with a JSON body `{text, src, dest}` (`index.html:76-80`), not a query string as in Part 1
+  (`tutorial/app/README.md:16-18`).
+- [added] extra checks for captures: `curl -s localhost:8086 | head`, `curl -s -X POST localhost:8086/api/translate
+  -H 'Content-Type: application/json' -d '{"text":"Good afternoon everyone","src":"en","dest":"fr"}'`
+  (expected JSON `{"dest":"fr","src":"en","text":"…"}`, `web.py:38`), and the same against `/api/speech`
+  (expected 503 `{"error":"Speech is disabled. …"}`, `speech.py:75-76` + `web.py:50-51`).
+
+**Step 5 — Part 2.2: deploy the same image [README.md:270-353]**
+1. **Cloud Run → Services → Deploy container** (272).
+2. **Deploy one revision from an existing container image**; **Container image URL** = the image (273-278).
+3. **Service name** `translation-demo`, your region (280).
+4. **Allow public access**, **Request-based** billing (281).
+5. **Auto scaling**, **Minimum number of instances** `0`, **Maximum number of instances** `2` (282-283).
+6. **Containers, Networking, Security → Containers → Edit Container → Settings**: verify **Container port**
+   `8080`, **Memory** **512 MiB**, **CPU** `1`; leave command and arguments; **Done** (284-287).
+7. **Requests**: **Request timeout** `120` s, **Maximum concurrent requests per instance** `4`; no speech
+   variables yet (288-290).
+8. **Create**, wait for ready (291).
+9. Open the **URL**, repeat the translation; speech still disabled (292-293).
+10. **Revision History**, then **Observability → Logs**: "A revision is a deployed version of the service's
+    image and configuration" (294-296).
+- Checkpoint (314-315): someone else can use the app; "this deployment did not need to build our source".
+- gcloud alternative (320-325):
+  ```bash
+  gcloud run deploy "$WEB_SERVICE" \
+    --project="$PROJECT_ID" --region="$REGION" --image="$IMAGE" \
+    --no-invoker-iam-check --min-instances=0 --max-instances=2 \
+    --cpu=1 --memory=512Mi --concurrency=4 --timeout=120
   ```
-- Under the hood: `@functions_framework.http` (README.md:28) registers `hello_http(request)` as an HTTP handler. `request` is a `flask.Request`. `request.args` is the parsed query string (README.md:40). Defaults are `text="Welcome to AC215. Everyone knows the moon is made out of cheese"`, `src="en"`, `dest="es"` (README.md:47-49).
-- Checkpoint: the editor shows no syntax errors, and the **Function entry point** field still says `hello_http`.
-- Note: the README function is **`hello_http`**, while the repo's `main.py:6` is **`translate_http`**. If you paste the repo's `main.py` instead, you must change the entry-point field to `translate_http`.
+  Re-running the tutorial on a service that already has speech: remove `ENABLE_SPEECH` (327-329).
+- "More detail" (334-351): why a container (packaged, tested app; control over system libraries and startup);
+  the browser keeps the page between requests, so a web UI can still scale to zero; the app is the
+  **application backend**: browser → our app → external translation provider → our app → browser.
+- Note [added]: concurrency `4` equals the gunicorn thread count (`__main__.py:25`), so Cloud Run never sends
+  an instance more requests than it has threads.
 
-**Step 5 — Deploy [README.md:70-71]**
-- Action: "Click on "Save and Deploy" to deploy the code as a CLoud Function". The button may be labelled "Save and redeploy" in today's console.
-- Under the hood: the source is uploaded → Cloud Build runs the Python buildpack (`pip install -r requirements.txt`) → the image is pushed to Artifact Registry → a new Cloud Run revision is created → traffic is shifted to it.
-- Checkpoint: a green check on the new revision after "a few minutes" (README.md:71).
-- If it fails:
-  - Open the build log link. Typical causes are a typo in `requirements.txt` and an entry-point mismatch: `MissingTargetException: File /workspace/main.py is expected to contain a function named 'hello_http'. Found: ... instead` (message format from `_function_registry.py:57-61`).
-  - Dependency resolution failures if you changed `googletrans` to a newer version (see §6).
+**Step 6 — Part 3.1: enable the API and create the app's identity [README.md:364-428]**
+1. **APIs & Services → Library → Agent Platform API** → enable if needed (366-367; already-enabled page:
+   386-395).
+2. **IAM & Admin → Service Accounts → Create service account** (368).
+3. Name `Translation demo runtime`, ID `translation-demo-runtime`; email
+   `translation-demo-runtime@YOUR_PROJECT_ID.iam.gserviceaccount.com`; optional description "Calls Gemini
+   speech for the translation app" (369-373).
+4. **Create and continue** → **Permissions (optional)**: **Agent Platform User**, **Add another role →
+   Service Usage Consumer** → **Continue** → leave **Service account users role** and **Service account
+   admins role** empty → **Done** (374-379).
+5. Record the email; no key (380).
+- gcloud alternative (411-420):
+  ```bash
+  gcloud services enable aiplatform.googleapis.com --project="$PROJECT_ID"
+  gcloud iam service-accounts create translation-demo-runtime \
+    --project="$PROJECT_ID" --display-name='Translation demo runtime'
+  gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+    --member="serviceAccount:$WEB_EMAIL" --role=roles/aiplatform.user --condition=None
+  gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+    --member="serviceAccount:$WEB_EMAIL" \
+    --role=roles/serviceusage.serviceUsageConsumer --condition=None
+  ```
 
-**Step 6 — Test the function [README.md:73-81]**
-- Action: copy the URL from the details page and append `?text=Good afternoon everyone&src=en&dest=fr`. Repeat with `dest=el` and `dest=hi` (README.md:79-81).
-  - From a terminal [added]: `curl -G "https://YOUR-URL/" --data-urlencode "text=Ready to go home?" -d src=en -d dest=hi`
-- Under the hood: the HTTPS request hits Google's front end → IAM invoker check → an instance (cold-started if none is warm) → `hello_http` → googletrans → plain-text response.
-- You should see:
-  - With no parameters: a Spanish sentence (the default `dest="es"`).
-  - With parameters: the French, Greek and Hindi text.
-  - In the **Logs** tab: the `request_json:`, `request_args:` and `Output:` lines from the `print` calls (README.md:42-43,58).
-- Note: your URL will look like `https://<name>-<project-number>.<region>.run.app` (see `images/cloud-run-create.png`). It will not match the README's `https://us-central1-ac215-project.cloudfunctions.net/simple-translate` (README.md:76), which is the old 1st-gen format.
-- If it fails:
-  - `403 Forbidden`: public access was not granted. Fix the Security/Authentication setting.
-  - `500`: check Logs for a googletrans traceback.
-  - The first call is slow: cold start.
+**Step 7 — Part 3.2: attach the identity and enable speech [README.md:430-502]**
+- Prerequisite: your identity needs **Service Account User** on the runtime account (432-434).
+1. **Cloud Run → Services → translation-demo** (436).
+2. **Security** tab → **Service account** → the runtime account; check its email (437-439).
+3. **Containers → Variables & Secrets → Environment variables**: fill **Name 1 / Value 1**, then **Add
+   variable** twice (440-448): `ENABLE_SPEECH`=`true`, `GOOGLE_CLOUD_PROJECT`=your project ID,
+   `GOOGLE_CLOUD_LOCATION`=`us-central1`.
+4. **View diff & redeploy** → **Review changes to be deployed**, keep **Serve this revision immediately** →
+   **Deploy changes** (450-452).
+5. Wait for update, revision, traffic (453-454).
+6. Reload the URL, translate English → French, **Play audio**; replay with the browser's controls (455-456).
+7. On failure: read the UI message and the service **Logs** before changing permissions (457-458).
+- Checkpoint (460-462): the app calls an authenticated API as its attached account; audio returns to the
+  browser; no bucket in this part.
+- gcloud alternative (488-493):
+  ```bash
+  gcloud run services update "$WEB_SERVICE" \
+    --project="$PROJECT_ID" --region="$REGION" \
+    --service-account="$WEB_EMAIL" \
+    --update-env-vars="ENABLE_SPEECH=true,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=us-central1"
+  ```
+  Service region ≠ model location; defaults `gemini-2.5-flash-tts`, voice `Kore` (495-498).
+- Under the hood: `POST /api/speech` with `{text, dest}` (`index.html:95-97`) → `synthesize()` checks
+  `ENABLE_SPEECH`, ≤ 4,000 UTF-8 bytes, a supported language (`speech.py:75-82`) → ADC token
+  (`speech.py:102-105`) → `POST https://us-central1-aiplatform.googleapis.com/v1beta1/projects/<project>/locations/us-central1/publishers/google/models/gemini-2.5-flash-tts:generateContent`
+  (`speech.py:91-92`) → base64 PCM (mono, 24 kHz, 16-bit) wrapped as WAV (`speech.py:38-48`) → `audio/wav`
+  back to the browser (`web.py:54`). The page's flag `speech_enabled` is rendered at page load
+  (`web.py:15`), hence "reload".
+- Failure mapping (`speech.py:108-119` → `web.py:48-53`): no credentials / 401 / 403 / 404 →
+  `SpeechConfigurationError` → HTTP **503** with e.g. "Agent Platform access denied. Check the caller
+  identity, enabled API, inference permissions, and quota project."; 429 / other errors → **502**.
 
-**Step 7 — Create a Cloud Run service from an existing image [README.md:90-103]**
-- Action:
-  - "In GCP go to [Cloud Run](https://console.cloud.google.com/run)" → "Deploy container".
-  - "If you have not enabled the required APIs, a popup will showup" (README.md:93): enable them (Cloud Run Admin API).
-  - "Select the "Deploy one revision from an existing container image" and put in the image name: `dlops/simple-translate-http:latest`"
-  - Give it a service name.
-  - "Under Authentication, select "Allow public access"" → Create.
-- CLI equivalent [added]:
-  `gcloud run deploy simple-translate-run --image=docker.io/dlops/simple-translate-http:latest --region=us-central1 --allow-unauthenticated`
-- Under the hood:
-  1. Cloud Run resolves `:latest` to digest `sha256:77751cec…`.
-  2. It creates a revision whose single container gets `PORT=8080`.
-  3. The image's entrypoint is `["/bin/bash","./docker-entrypoint.sh"]`, which runs `pipenv run functions-framework --target translate_http`. That is the image's `/app/docker-entrypoint.sh:5-10`, identical to the `pipenv` branch, **not** to `main`. The functions-framework inside is 3.4.0, whose gunicorn config is fixed at 1 worker × **1024 threads**, `timeout 0`, log level `"error"` (it ignores `THREADS`/`GUNICORN_LOG_LEVEL`); the host/port contract (`_cli.py:32-33`) is the same as in 3.9.2.
-  4. Cloud Run waits for the port to open (startup probe) and then routes traffic.
-- Checkpoint: the service shows a green check and a URL. The form matches `images/cloud-run-create.png`: request-based billing, auto scaling, min instances 0.
-- If it fails:
-  - `The user-provided container failed to start and listen on the port defined provided by the PORT=8080 environment variable…`: you changed the container port, added `DEV=1`, or used an arm64 image.
-  - An image-pull error from Docker Hub: retry, or build and push your own image to Artifact Registry (Step 11).
+**Step 8 — Part 3.3: how would you develop this locally? [README.md:504-578] (collapsed, optional)**
+1. Grant your user **Service Account Token Creator** on `translation-demo-runtime` (**Principals with access →
+   Grant access**; replace any preselected role, do not leave Service Account Admin) and enable the **IAM
+   Service Account Credentials API** (519-525).
+2. Commands (540-549):
+   ```bash
+   export DEVELOPER_EMAIL=YOUR_GOOGLE_ACCOUNT_EMAIL
+   gcloud services enable iamcredentials.googleapis.com --project="$PROJECT_ID"
+   gcloud iam service-accounts add-iam-policy-binding "$WEB_EMAIL" \
+     --project="$PROJECT_ID" --member="user:$DEVELOPER_EMAIL" \
+     --role=roles/iam.serviceAccountTokenCreator --condition=None
 
-**Step 8 — Test the service [README.md:105-113]**
-- Action: the same three query strings as Step 6, against the service URL.
-- Expected: the translated text. The **no-parameter default differs** from Step 6. The image's `main.py:15` uses `"Welcome to AC215"`, while the README function uses the longer cheese sentence.
-- Checkpoint for understanding: in the service's **Revisions** tab, note the image digest. In **Metrics**, the "instance count" drops back to 0 once the service has been idle for a while (Cloud Run may keep an idle instance around for up to about 15 minutes).
+   gcloud auth application-default login --impersonate-service-account="$WEB_EMAIL"
+   gcloud auth application-default set-quota-project "$PROJECT_ID"
+   ```
+   Browser sign-in; the ADC file stays local; you may need **Service Usage Consumer** yourself in a restricted
+   project (551-555).
+3. Run the app with uv (558-564):
+   ```bash
+   cd tutorial/app
+   uv sync --frozen
+   ENABLE_SPEECH=true GOOGLE_CLOUD_PROJECT="$PROJECT_ID" \
+     GOOGLE_CLOUD_LOCATION=us-central1 PORT=8086 \
+     uv run python -m translation_demo serve
+   ```
+   Open http://localhost:8086; edit and restart locally; `cd ../..` afterwards (566-568). Containers with
+   mounted ADC, rootless Docker, builds: `tutorial/app/README.md` (570-572, its lines 168-191).
+- Capturable here [added]: `uv sync --frozen` and `serve` with speech **off**, and the offline checks in
+  `tutorial/app/README.md:22-27` (`uv run python -m unittest discover -s tests -v`; `batch --plan`), inside a
+  container. The impersonated login and the speech call need GCP credentials and are not capturable.
 
-**Step 9 — Lock it down and call it with an identity token [added; teaches invocation IAM]**
-- Console: Service → Security → Authentication → "Require authentication". Or remove the public binding:
-  `gcloud run services remove-iam-policy-binding simple-translate-run --region=us-central1 --member=allUsers --role=roles/run.invoker`
-- First check which public-access mechanism you have: `gcloud run services get-iam-policy simple-translate-run --region=us-central1`. If `allUsers` is not listed but the URL is still public, the invoker IAM check is disabled; turn it back on with `gcloud run services update simple-translate-run --region=us-central1 --invoker-iam-check`.
-- Test:
-  - `curl -i "https://YOUR-URL/?text=hello&dest=fr"` → `403`.
-  - `curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" "https://YOUR-URL/?text=hello&dest=fr"` → `200`. This works as the project owner, because your user already has `run.invoker`.
+**Step 9 — Part 4.1: create your input and output buckets [README.md:593-675]**
+1. **Cloud Storage → Buckets → Create** (595).
+2. Globally unique input bucket name, e.g. project ID + `-translation-input`; **Continue** (596-597).
+3. Wizard (598-613): **Region** = your region; **Standard** class, hierarchical namespace unchecked; **Enforce
+   public access prevention** checked and **Uniform** access; soft delete with default retention, no object
+   versioning, no retention policy; **Create** → **Confirm** in "Public access will be prevented"; check the
+   **Configuration** tab: region, Standard, **Public access: Not public**.
+4. Repeat for the output bucket (614).
+5. Save `tutorial/app/examples/passage.txt` locally; in the input bucket **Objects → Create folder `run-001`**,
+   open it, **Upload → Upload files** → `passage.txt` (615-618).
+6. Open `passage.txt` → **Object details → Live object → Cloud Storage URI** → copy:
+   `gs://YOUR_INPUT_BUCKET/run-001/passage.txt` (619-621).
+- The sample passage (`examples/passage.txt:1-4`) is a four-line poem ("The evening rain has passed. …").
+- gcloud alternative (660-673):
+  ```bash
+  export INPUT_BUCKET=YOUR_GLOBALLY_UNIQUE_INPUT_BUCKET
+  export OUTPUT_BUCKET=YOUR_GLOBALLY_UNIQUE_OUTPUT_BUCKET
 
-**Step 10 — Bonus: Cloud Run Job with a service account [README.md:121-147]**
-- Action:
-  - "Click the "Deploy container" and pick "Job"".
-  - Container Image URL `dlops/simple-translate-gemini`.
-  - Job name.
-  - Expand "Container(s), Volumes, Connections, Security" → "SECURITY" tab → pick a service account with Vertex AI access.
-  - "Select the check box "Execute job immediately"".
-  - Without arguments the README says the job runs "using the default arguments" (README.md:141; but see §10 erratum 8).
-  - Optional arguments (README.md:142-143): "Select "CONTAINER(S)" tab and in the SETTINGS area" → "For Container arguments type in: cli.py --text Ready+to+go+home?". `images/cloud-run-job-02.png` shows this entered as **one** argument chip containing spaces.
-  - Click Create (the README does not say it, but the screenshot's button is "Create").
-- Under the hood:
-  1. The job runs the image's `/docker-entrypoint.sh` with your arguments.
-  2. That script does `args="$@"` then `pipenv run python $args`. The unquoted `$args` word-splits the single chip into `cli.py`, `--text`, `Ready+to+go+home?`, so the command becomes `python cli.py --text Ready+to+go+home?`.
-  3. `cli.py:30` turns `+` back into spaces.
-  4. Vertex AI is called **as the attached service account**. There is no key file and no `vertexai.init`; the project comes from Application Default Credentials (the metadata server) and the location falls back to the SDK default (`us-central1`). The image pins `google-cloud-aiplatform==1.70.0` in its `Pipfile.lock`.
-- Checkpoint: Jobs → your job → Executions → Logs show the `AC215` ASCII art, `Input: Ready to go home?`, then `Generated text:` and an Italian translation (default `--dest it`). **Or** they show `Error occurred while generating content: …`.
-- If it fails:
-  - `Permission 'iam.serviceaccounts.actAs' denied`: you need `roles/iam.serviceAccountUser` on that service account.
-  - `403 … aiplatform` in the logs: the service account lacks `roles/aiplatform.user`, or the Vertex AI API is not enabled.
-  - `404 … gemini-1.5-flash-001`: the hard-coded model (image `cli.py:11`) has been retired on Vertex AI (Gemini 1.5 models were retired in 2025; verify). The execution may still show **Succeeded** because the exception is swallowed (`cli.py:51-52`).
+  gcloud services enable storage.googleapis.com --project="$PROJECT_ID"
+  gcloud storage buckets create "gs://$INPUT_BUCKET" \
+    --project="$PROJECT_ID" --location="$REGION" \
+    --uniform-bucket-level-access --public-access-prevention
+  gcloud storage buckets create "gs://$OUTPUT_BUCKET" \
+    --project="$PROJECT_ID" --location="$REGION" \
+    --uniform-bucket-level-access --public-access-prevention
+  gcloud storage cp tutorial/app/examples/passage.txt \
+    "gs://$INPUT_BUCKET/run-001/passage.txt" --project="$PROJECT_ID"
+  ```
 
-**Step 11 — Extension: ship *your* build through Artifact Registry [added]**
+**Step 10 — Part 4.2: a separate identity for the job [README.md:677-729]**
+1. Create service account ID `translation-audio-job` (679-680).
+2. Grant **Agent Platform User** and **Service Usage Consumer** on the project; record the email (681-682).
+3. **Input bucket → Permissions → Grant access**: job email, **Storage Object Viewer**, **Save** (683-685).
+4. **Output bucket → Permissions → Grant access**: job email, **Storage Object Creator**, **Save** (686-688).
+5. Leave the web account unchanged (689-690).
+- Checkpoint (692-694): the job can read input, call the model and create output; your own identity needs
+  separate permission to upload, execute and read results.
+- gcloud alternative (710-722):
+  ```bash
+  gcloud iam service-accounts create translation-audio-job \
+    --project="$PROJECT_ID" --display-name='Translation audio job'
+  gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+    --member="serviceAccount:$JOB_EMAIL" --role=roles/aiplatform.user --condition=None
+  gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+    --member="serviceAccount:$JOB_EMAIL" \
+    --role=roles/serviceusage.serviceUsageConsumer --condition=None
+  gcloud storage buckets add-iam-policy-binding "gs://$INPUT_BUCKET" \
+    --member="serviceAccount:$JOB_EMAIL" --role=roles/storage.objectViewer
+  gcloud storage buckets add-iam-policy-binding "gs://$OUTPUT_BUCKET" \
+    --member="serviceAccount:$JOB_EMAIL" --role=roles/storage.objectCreator
+  ```
+  Restricted projects: Service Account User to attach; **Cloud Run Jobs Executor With Overrides** for
+  `run.jobs.runWithOverrides` (724-727).
+
+**Step 11 — Part 4.3: create the job [README.md:731-824]**
+- Prerequisite: Service Account User on the job account (733-735).
+1. **Cloud Run → Jobs → Deploy container** (page title **Create job**) (737-738).
+2. Same image URL (739-743).
+3. **Job name** `translation-audio`, region, **1 task** (745).
+4. **Containers, Connections, Security → Containers** (expand the row's chevron if collapsed) → **Edit
+   Container → Settings** → **Container command** `python`, press **Enter** to make a chip (746-748).
+5. **Container arguments**, one chip each, buckets replaced (749-766):
+   `-m` · `translation_demo` · `batch` · `--input-uri` · `gs://YOUR_INPUT_BUCKET/run-001/passage.txt` · `--src` ·
+   `en` · `--dest` · `fr` · `--output-uri` · `gs://YOUR_OUTPUT_BUCKET/run-001/`. "Do not paste the whole block
+   into one argument field."
+6. **Variables & Secrets**: the same three variables; **Done** (768-776).
+7. **Task capacity**: **Task timeout** `5` **minute**, **Number of retries per failed task** `0`; keep
+   **Memory** 512 MiB, **CPU** 1, **Number of tasks** 1 (778-780).
+8. **Security** → **Service account** `translation-audio-job@YOUR_PROJECT_ID.iam.gserviceaccount.com`, chosen by
+   its email (the selector shows the display name) (781-783).
+9. Leave **Execute job immediately** unchecked → **Create** (784-785).
+- gcloud alternative (815-822):
+  ```bash
+  gcloud run jobs create "$JOB_NAME" \
+    --project="$PROJECT_ID" --region="$REGION" --image="$IMAGE" \
+    --service-account="$JOB_EMAIL" --command=python \
+    --args="-m,translation_demo,batch,--input-uri,gs://$INPUT_BUCKET/run-001/passage.txt,--src,en,--dest,fr,--output-uri,gs://$OUTPUT_BUCKET/run-001/" \
+    --set-env-vars="ENABLE_SPEECH=true,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=us-central1" \
+    --tasks=1 --max-retries=0 --task-timeout=300 --memory=512Mi --cpu=1
+  ```
+- [added] capturable rehearsal of the same argv locally, offline (`tutorial/app/README.md:213-218`):
+  `docker run --rm cgumb/ac215-translation-demo:lecture14-agent-platform-20261022 python -m translation_demo batch --plan --text-file examples/passage.txt --src en --dest fr --output-uri gs://YOUR_OUTPUT_BUCKET/fresh-run-prefix`
+  → the JSON plan of `__main__.py:42-49` (`"status": "plan_only"`, five steps, `"implemented": true`).
+
+**Step 12 — Part 4.4: execute it and collect the files [README.md:826-907]**
+1. **Jobs → translation-audio → Execute** (narrow toolbar: **More actions ⋮**) (828-829).
+2. Wait for the green check in **History**; open the execution → **Tasks → View logs**: completion, execution
+   ID and the exact `output_uri` (830-833) — the JSON printed by `__main__.py:62`, i.e.
+   `output_uri`, `manifest_uri`, `status: complete`, `artifacts`, `execution`, `task_attempt`
+   (`storage.py:48-56`). "The job exits; it does not provide a web URL."
+3. **Cloud Storage → output bucket → run-001** → the uniquely named attempt folder (834-835).
+4. Files (836-842): `translated.txt` (the translated passage), `speech.wav` (its audio), `manifest.json`
+   (completion status and output locations).
+5. Download icons; for a WAV in a media tab **Play**, then **⋮ → Download** (844-848).
+- Checkpoint (850-852): "the task finished, the process stopped, and its files remain in Storage".
+- Recorded (README.md:859-860): execution `translation-audio-hq9f5`, attempt folder `run-001/de2f41…/`.
+- gcloud alternative (871-877):
+  ```bash
+  gcloud run jobs execute "$JOB_NAME" \
+    --project="$PROJECT_ID" --region="$REGION" --wait
+  mkdir -p results
+  gcloud storage cp --recursive "gs://$OUTPUT_BUCKET/run-001" ./results \
+    --project="$PROJECT_ID"
+  ```
+  `--wait` waits for completion but does not stream application logs (879-880).
+- "More detail" (885-905): prefixes vs folders, create-only uploads, manifest last, retries, limits (5,000
+  characters, 20,000-byte object, 4,000 UTF-8 bytes of speech input).
+
+**Step 13 — Part 4.5: submit another passage from the terminal [README.md:909-967]**
+- Prerequisite (911-914): you need `run.jobs.run` + `run.jobs.runWithOverrides`, upload on input, read on output.
+1. If you used only the console: expand **Terminal setup** and set the bucket variables (921-927):
+   ```bash
+   export INPUT_BUCKET=YOUR_INPUT_BUCKET
+   export OUTPUT_BUCKET=YOUR_OUTPUT_BUCKET
+   ```
+2. Save a new short UTF-8 `passage.txt` locally and upload it (929-934):
+   ```bash
+   gcloud storage cp ./passage.txt "gs://$INPUT_BUCKET/run-002/passage.txt" \
+     --project="$PROJECT_ID"
+   ```
+3. Execute the **existing** job with argument overrides (936-943):
+   ```bash
+   gcloud run jobs execute "$JOB_NAME" \
+     --project="$PROJECT_ID" --region="$REGION" \
+     --args="-m,translation_demo,batch,--input-uri,gs://$INPUT_BUCKET/run-002/passage.txt,--src,en,--dest,es,--output-uri,gs://$OUTPUT_BUCKET/run-002/" \
+     --wait
+   ```
+4. Download (945-951):
+   ```bash
+   mkdir -p results
+   gcloud storage cp --recursive "gs://$OUTPUT_BUCKET/run-002" ./results \
+     --project="$PROJECT_ID"
+   ```
+- Spanish this time, new input path and output prefix; overrides replace the whole argument list for this
+  execution only; use a fresh prefix per submission (953-956). "A remote container cannot read a filename on
+  your laptop" (918-919) — hence upload first.
+
+**Step 14 — Part 4.6: the helper [README.md:969-1016]**
+```bash
+python tutorial/run_job.py ./passage.txt \
+  --project="$PROJECT_ID" --region="$REGION" --job="$JOB_NAME" \
+  --input-bucket="$INPUT_BUCKET" --output-bucket="$OUTPUT_BUCKET" \
+  --src=en --dest=fr --download-dir=./results
 ```
-gcloud artifacts repositories create ac215-images --repository-format=docker --location=us-central1
-gcloud auth configure-docker us-central1-docker.pkg.dev
-docker build --platform=linux/amd64 -t us-central1-docker.pkg.dev/PROJECT_ID/ac215-images/simple-translate-http:v1 .
-docker push us-central1-docker.pkg.dev/PROJECT_ID/ac215-images/simple-translate-http:v1
-gcloud run deploy simple-translate-mine --image=us-central1-docker.pkg.dev/PROJECT_ID/ac215-images/simple-translate-http:v1 --region=us-central1 --allow-unauthenticated
-```
-- This deploys the **current `main`** code (`uv`, Python 3.12) instead of the 2024 pipenv image.
-- Use an immutable tag (`v1`, `v2`) rather than `latest`.
+(README.md:974-979.) It prints each gcloud command (`$ …`, `run_job.py:15-18`), uploads to
+`gs://IN/run-<UTC yyyymmdd-HHMMSS>-<12 hex>/passage.txt` (`run_job.py:47-49`), executes with `--args=…
+--wait --quiet` (`run_job.py:58-59`), prints `Cloud outputs: …`, downloads, and prints `Downloaded results: …`
+only after finding a complete manifest with both files (`run_job.py:60-72`; README.md:981-984, 991-993).
+Options (1000-1011): `--dry-run`, `--no-download`, `--help`; bucket **names** without `gs://`; no custom run
+name; needs only Python and a signed-in gcloud (stdlib only); on failure it stops and keeps partial files.
+- [added] capturable here: `python tutorial/run_job.py tutorial/app/examples/passage.txt --project=YOUR_PROJECT_ID
+  --input-bucket=YOUR_INPUT_BUCKET --output-bucket=YOUR_OUTPUT_BUCKET --dry-run` (prints the three commands;
+  run it in a container). The real run needs credentials.
 
-**Step 12 — Clean up [added; the README has none]**
-- Delete:
-  - the function and service (`gcloud run services delete NAME --region=us-central1`);
-  - the job (`gcloud run jobs delete NAME --region=us-central1`);
-  - the Artifact Registry repositories and images (yours, plus the auto-created one from Step 5);
-  - the auto-created source bucket in Cloud Storage.
-- Confirm in Billing → Reports over the next day.
+**Step 15 — Clean up [README.md:1018-1028]**
+1. Download results you want to keep. 2. Delete the function and web service, then the job (check names
+against the worksheet). 3. Delete input/output objects and buckets; remove the two service accounts once no
+longer attached. 4. Remove the function's unused Artifact Registry image; keep unrelated course resources and
+the shared public image.
+- [added] also: the function's source/build artifacts (`docs/lifecycle.md:205-210`), and soft-deleted bucket
+  data stays billable for its retention period (`docs/lifecycle.md:176-177`). Optional scripted practice stack
+  and teardown: `tutorial/spin_up.py` / `tutorial/tear_down.py`, dry-run unless `--apply`
+  (`docs/lifecycle.md:46-61, 149-166`; README.md:1060-1064).
+
+**Step 16 — Troubleshooting table [README.md:1033-1053]** — ten symptom → check rows, e.g. "Play audio is
+disabled → `ENABLE_SPEECH=true`, deployed revision, and page reload"; "Job starts a server instead of finishing
+→ Command `python` and separate batch arguments"; "Helper cannot launch with overrides → Your gcloud caller's
+override permission, not the runtime account's Storage role".
 
 ---
 
 ## 5. Code tour
 
 ```
-serverless-deployment/            (main @ 4eaf343)
-|- README.md               console click-path for Functions, Cloud Run service, Cloud Run job
-|- main.py                 the HTTP handler translate_http(request) -- what Cloud Run serves
-|- cli.py                  older sync CLI translator (googletrans 4.0.0rc1); never run by the entrypoint
-|- Dockerfile              python:3.12-slim-bookworm + uv; non-root user; venv at /.venv
-|- docker-entrypoint.sh    DEV=1 -> interactive bash; else run functions-framework on $PORT
-|- docker-shell.sh         builds image "simple-translate" for linux/amd64/v2 (run lines commented out)
-|- pyproject.toml          deps: art, functions-framework>=3.9.2, googletrans==4.0.0rc1; Python 3.12 only
-|- uv.lock                 exact pins (functions-framework 3.9.2, flask 3.1.2, gunicorn 23.0.0, httpx 0.13.3, ...)
-|- images/*.png            console screenshots referenced by README
-|- __pycache__/main.cpython-312.pyc   accidentally committed bytecode
-`- .gitignore              misc + leftovers (/docker-volumes, trainer.tar.gz)
+serverless-deployment/                      (main @ 46cc62f)
+|- README.md                     the four-part console-first tutorial (1,079 lines)
+|- images/console/*.gif, *.png   annotated console recordings the README embeds
+|- docs/lifecycle.md             optional scripted practice stack + teardown
+|- tutorial/
+|  |- function/main.py           Part 1 handler hello_http (12 lines)
+|  |- function/requirements.txt  functions-framework==3.10.2, googletrans==4.0.0rc1
+|  |- app/                       the image of Parts 2-4 (package translation_demo)
+|  |  |- Dockerfile, .dockerignore, pyproject.toml, requirements.lock, uv.lock
+|  |  |- translation_demo/__main__.py   CLI: serve | batch
+|  |  |- translation_demo/web.py        Flask: GET /, POST /api/translate, POST /api/speech
+|  |  |- translation_demo/translation.py  validate + googletrans
+|  |  |- translation_demo/speech.py   Gemini TTS over REST with ADC -> WAV
+|  |  |- translation_demo/storage.py  gs:// read, create-only writes, manifest
+|  |  |- translation_demo/templates/index.html   the UI
+|  |  |- examples/passage.txt, tests/, README.md (development guide)
+|  |- run_job.py                 Part 4.6 helper (stdlib + gcloud)
+|  |- spin_up.py, tear_down.py, lifecycle/   scripted stack (docs/lifecycle.md)
+|  |- gif_steps.json, label_gifs.py, tests/  recording + helper tests
+|- main.py cli.py Dockerfile docker-entrypoint.sh docker-shell.sh pyproject.toml uv.lock
+|                                2025 files, unchanged since 4eaf343, not used by the README
+`- .gitignore
 ```
 
-**`main.py:1-13`**
-```python
-from googletrans import Translator
-import functions_framework
+**`tutorial/function/main.py:7-12`** — quoted in §4 Step 2.
+- `@functions_framework.http` registers `hello_http` as an HTTP function; functions-framework later finds it by
+  the name given as target (`_cli.py:24`, `_function_registry.py:51-61`).
+- `request` is a Flask request; `request.args.get(name, default)` reads the query string with a default
+  (`"Welcome to AC215"`, `"en"`, `"es"`).
+- `Translator()` per request; `.translate(...)` is a blocking call to googletrans' unofficial endpoint (sync API
+  of 4.0.0rc1); no `try/except`, so a provider failure is an HTTP 500. Returning a `str` → 200 text body.
 
-
-@functions_framework.http
-def translate_http(request):
-    request_json = request.get_json(silent=True)
-    request_args = request.args
-
-    print("request_json:", request_json)
-    print("request_args:", request_args)
-
-    translator = Translator()
-```
-- `@functions_framework.http` registers the function in functions-framework's registry as an HTTP-signature function. The CLI's `--target translate_http` later looks it up *by name*.
-- `request` is a Flask `Request`. `get_json(silent=True)` returns `None` instead of raising when the body is not JSON. With a browser GET it is always `None`.
-- `request.args` is an immutable multi-dict of the query string.
-- The `print` calls go to stdout, and Cloud Run ships stdout to Cloud Logging. `PYTHONUNBUFFERED=1` (`Dockerfile:14`) ensures they are not lost in a buffer.
-- `Translator()` is constructed **per request**. That is cheap, but it means no HTTP connection reuse across requests (compare `cli.py:11`, which does it at module scope).
-
-**`main.py:15-28`**
-```python
-    text = "Welcome to AC215"
-    src = "en"
-    dest = "es"
-    if request_args and "text" in request_args:
-        text = request_args["text"]
-    if request_args and "src" in request_args:
-        src = request_args["src"]
-    if request_args and "dest" in request_args:
-        dest = request_args["dest"]
-
-    results = translator.translate(text, src=src, dest=dest)
-    print("Output:", results.text)
-
-    return results.text
-```
-- Each query parameter is optional and overrides a default.
-- `translator.translate(...)` is a **blocking network call** to Google's unofficial web-translate endpoint (sync API of googletrans 4.0.0rc1). It runs inside the request, so its latency is billed request time.
-- There is no `try/except`, so any network or parse error becomes an HTTP 500.
-- Returning a `str` makes Flask send `200 text/html; charset=utf-8` with that body.
-
-**`docker-entrypoint.sh:10-19`**
-```bash
-# Activate virtual environment
-echo "Activating virtual environment..."
-source /.venv/bin/activate
-
-if [ "${DEV}" = 1 ];
-then
-  exec /bin/bash
-else
-  uv run functions-framework --target translate_http
-fi
-```
-- `source /.venv/bin/activate` puts the venv on `PATH`. `uv run` would find `/.venv` anyway, through `UV_PROJECT_ENVIRONMENT` (`Dockerfile:18`).
-- `DEV=1` gives a developer shell. Never set it on Cloud Run: bash with no TTY reads EOF and exits, so nothing listens on `$PORT`.
-- The production branch launches functions-framework, which reads `PORT`/`HOST` from the environment.
-- There is no `exec` on that line, so bash stays PID 1, and SIGTERM sent on scale-down is not forwarded to gunicorn.
-- `uv run` also re-checks the lock and environment at every start, which adds cold-start time, and can trigger installs if `uv.lock` is stale (§6).
-
-**`Dockerfile:13-18`**
+**`tutorial/app/Dockerfile:1-12`**
 ```dockerfile
-# Tell Python to disable buffering so we don't lose any logs.
-ENV PYTHONUNBUFFERED=1
-
-# Tell uv to copy packages from the wheel into the site-packages
-ENV UV_LINK_MODE=copy
-ENV UV_PROJECT_ENVIRONMENT=/.venv
-```
-- The venv lives at `/.venv`, **outside** `/app`. The commented dev run (`docker-shell.sh:15`) bind-mounts your laptop folder over `/app`, and the venv survives that mount because it is not under `/app`.
-- `UV_LINK_MODE=copy` avoids hard-link warnings across filesystems.
-
-**`Dockerfile:37-51`**
-```dockerfile
-# Switch to the new user
-USER app
+FROM python:3.12-slim-bookworm
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PORT=8080
 WORKDIR /app
-
-# Copy dependency files first for better layer caching
-COPY --chown=app:app pyproject.toml uv.lock* ./
-
-# Install dependencies in a separate layer for better caching
-RUN uv sync --frozen
-
-# Copy the rest of the source code
-COPY --chown=app:app . ./
-
-# Entry point
-ENTRYPOINT ["/bin/bash","docker-entrypoint.sh"]
+COPY requirements.lock ./
+RUN pip install --no-cache-dir -r requirements.lock
+COPY pyproject.toml ./
+COPY translation_demo ./translation_demo
+COPY examples ./examples
+RUN pip install --no-cache-dir --no-deps . && useradd --uid 1000 --create-home app
+USER app
+EXPOSE 8080
+CMD ["python", "-m", "translation_demo", "serve"]
 ```
-- Running as non-root `app` (uid 1000) is fine on Cloud Run.
-- Copying the dependency files first means a code-only change reuses the cached `uv sync` layer.
-- `--frozen` installs exactly what `uv.lock` says, without checking that it matches `pyproject.toml`.
-- `COPY . ./` has no `.dockerignore`, so `.git/`, `images/` and `__pycache__/` end up in the image. The published image confirms it: `/app/.git/...` is in its last layer.
-- `ENTRYPOINT` is exec-form, so Cloud Run job "arguments" would be appended after `docker-entrypoint.sh`. This script ignores them.
+- Dependencies first (cached layer), then code: a code-only change reuses the `pip install` layer.
+- `requirements.lock` is a `uv export` of `uv.lock` (its header, lines 1-2): flask 3.1.3, google-auth 2.62.0,
+  google-cloud-storage 3.17.1, googletrans 4.0.0rc1, gunicorn 26.2.0, httpx 0.13.3, requests 2.34.2
+  (`requirements.lock:19, 25, 33, 43, 45, 57, 89`).
+- Non-root user `app` (uid 1000). `CMD`, no `ENTRYPOINT` — which is why a Cloud Run job can swap the whole
+  command line (3.8).
+- `.dockerignore:1-7` excludes `.venv`, `__pycache__`, `*.pyc`, `tests`, … at the context root.
 
-**`docker-shell.sh:6-18`**
-```bash
-export IMAGE_NAME="simple-translate"
-export BASE_DIR=$(pwd)
-
-# Build the image based on the Dockerfile
-#docker build -t $IMAGE_NAME -f Dockerfile .
-docker build -t $IMAGE_NAME --platform=linux/amd64/v2 -f Dockerfile .
-
-# Run Container
-# docker run --rm --name $IMAGE_NAME -ti \
-# -v "$BASE_DIR":/app \
-# -p 8080:8080 \
-# -e DEV=1 \
-# $IMAGE_NAME
-```
-- The build targets **amd64**, the architecture Cloud Run executes, even on an Apple Silicon Mac. `/v2` is the x86-64-v2 micro-architecture variant, which is why the Docker Hub image reports `amd64 v2`.
-- Run is disabled. Commit `cba4910` (2025-03-25) commented it out.
-- The image name is `simple-translate`, **not** `dlops/simple-translate-http`. Nothing in the repo tags or pushes the image the README deploys.
-
-**`pyproject.toml:6-11`**
-```toml
-requires-python = ">=3.12,<3.13"
-dependencies = [
-    "art>=6.5",
-    "functions-framework>=3.9.2",
-    "googletrans==4.0.0rc1",
-]
-```
-- `googletrans==4.0.0rc1` is the 2020 *synchronous* API. It drags in `httpx==0.13.3` (`uv.lock:230-231`).
-- Simple-translate (L1/L2) has since moved to `googletrans==4.0.2`, which is **async** (`simple-translate/cli.py:25-31` uses `async with Translator(...)` / `await translator.translate`). Do not mix the two.
-- `uv.lock:20-22` marks the project `source = { virtual = "." }`: the project itself is not installed as a package, only its dependencies.
-
-**`README.md:64-68` (the function's dependency list)**
-````
-* Replace the content of `requirements.txt` with the following:
-```
-functions-framework==3.*
-googletrans==4.0.0rc1
-```
-````
-- Functions use `requirements.txt` (pip), and the container uses `pyproject.toml`/`uv.lock`. Same two libraries, different manifests.
-- `art` is absent here because the function never prints ASCII art.
-
-**functions-framework v3.9.2 `src/functions_framework/_cli.py:32-33`** (external, the version locked in `uv.lock:136`)
+**`tutorial/app/translation_demo/__main__.py:9-26`** (CLI and the `serve` branch)
 ```python
-@click.option("--host", envvar="HOST", type=click.STRING, default="0.0.0.0")
-@click.option("--port", envvar="PORT", type=click.INT, default=8080)
+    commands = parser.add_subparsers(dest="command", required=True)
+    commands.add_parser("serve", help="Start the HTTP service")
+    batch = commands.add_parser("batch", help="Translate a passage, generate speech, save outputs, and exit")
+    ...
+    if args.command == "serve":
+        port = int(os.environ.get("PORT", "8080"))
+        os.execvp("gunicorn", ["gunicorn", "--bind", f"0.0.0.0:{port}",
+                              "--workers", "1", "--threads", "4", "--timeout", "90",
+                              "translation_demo.web:create_app()"])
 ```
-- This is the whole Cloud Run container contract in two lines: bind all interfaces, and take the port from `$PORT`.
-- `--target` similarly falls back to the env var `FUNCTION_TARGET` (`_cli.py:24`).
+- Docstring line 1: "One image, different startup commands: serve or batch."
+- `batch` options (lines 14-20): exactly one of `--text-file` / `--input-uri`; `--src` (default `en`),
+  `--dest` (default `fr`), required `--output-uri`, `--plan`.
+- `os.execvp` replaces the Python process with gunicorn (PID 1 in a container), so signals reach the server
+  directly. 1 worker × 4 threads; Part 2 sets Cloud Run concurrency to 4 to match.
 
-**functions-framework v3.9.2 `src/functions_framework/_http/gunicorn.py:32-43`** (external)
+**`__main__.py:51-62`** (the `batch` branch)
 ```python
-        threads = int(os.environ.get("THREADS", (os.cpu_count() or 1) * 4))
-
-        global TIMEOUT_SECONDS
-        TIMEOUT_SECONDS = int(os.environ.get("CLOUD_RUN_TIMEOUT_SECONDS", 0))
-
-        self.options = {
-            "bind": "%s:%s" % (host, port),
-            "workers": int(os.environ.get("WORKERS", 1)),
-            "threads": threads,
-            "loglevel": os.environ.get("GUNICORN_LOG_LEVEL", "error"),
-            "limit_request_line": 0,
-        }
+    try:
+        if text is None:
+            text = read_text(args.input_uri)
+        validate(text, args.src, args.dest)
+        translated = translate(text, args.src, args.dest)
+        audio, mime_type = synthesize(translated, args.dest)
+        result = save_artifacts(args.output_uri, translated, audio, mime_type)
+    except Exception as exc:
+        # A failing job must exit unsuccessfully so execution status is truthful.
+        print("Batch failed: " + str(exc), file=__import__("sys").stderr)
+        raise SystemExit(1) from exc
+    print(json.dumps(result, indent=2))
 ```
-- In production the Flask app is served by **gunicorn**: one worker process with several threads (`cpu_count × 4`).
-- So one instance processes a few requests truly concurrently. Cloud Run's "max concurrent requests per instance" setting sits on top of this.
-- The `"error"` log level is why a healthy container prints nothing.
-- This is the 3.9.2 code your own `main` build runs (Step 1, Step 11). The Docker Hub image deployed in Step 7 has functions-framework **3.4.0**, whose `GunicornApplication` hard-codes `"workers": 1, "threads": 1024, "timeout": 0, "loglevel": "error"` with no env-var overrides.
+- Read → validate → translate → speak → save → print, the five steps the `--plan` output lists
+  (`__main__.py:46-47`). Before that, `split_uri` checks both URIs (lines 32-40); a bad URI is an argparse
+  error (exit 2).
 
-**Image `dlops/simple-translate-gemini@sha256:ec05eb27…`, file `/docker-entrypoint.sh:5-14`** (read from the image layer; not in any repo)
-```bash
-args="$@"
-echo $args
+**`translation_demo/web.py:9-38`** — `create_app()`: `MAX_CONTENT_LENGTH` 32 KiB (11); `GET /` renders the
+page with `speech_enabled=enabled()` (13-15); `inputs()` requires a JSON object, defaults `src="en"`,
+`dest="fr"` (17-25); `POST /api/translate` → 400 on bad input, **502** "The translation provider could not
+complete the request." on provider failure, else JSON `{text, src, dest}` (27-38). `POST /api/speech` (40-54):
+400 / 503 / 502 by exception type, else WAV with `Cache-Control: no-store`.
 
-if [[ -z ${args} ]]; 
-then
-    pipenv shell python cli.py
-    #pipenv run python cli.py --text "Ready to go home?"
-else
-  pipenv run python $args
-fi
-```
-- The job's "Container arguments" arrive as `$@` (one argv element per argument chip).
-- `args="$@"` flattens them into one string, and the unquoted `$args` re-splits it on spaces. That is what lets the README's single chip `cli.py --text Ready+to+go+home?` become three arguments. It also means a multi-word `--text "Ready to go home?"` would break into separate words, whether typed in one chip or several.
-- That is why README.md:143 encodes spaces as `+` and the image's `cli.py:30` does `text = text.replace("+"," ")`.
-- The image sets no `WORKDIR`, so its files live at `/` (`ADD . /`) and `./docker-entrypoint.sh` resolves to `/docker-entrypoint.sh`.
+**`translation_demo/translation.py:3-34`** — nine languages (`en es fr de el hi ja zh-cn zh-tw`, 3-13);
+`validate` rejects empty text, > 5,000 characters, unsupported codes (16-24); `translate` imports
+`httpx`/googletrans lazily and sets a 20 s timeout (27-34). Comment line 29: imported "here so offline UI and
+contract checks do not load the provider".
+
+**`translation_demo/speech.py:74-124`** — see §4 Step 7. Key lines: `enabled()` accepts `1/true/yes`
+(34-35); env defaults (83-86); regional host unless `global` (91); request body asks the model to "Read the
+following text aloud, without adding commentary" with `responseModalities: ["AUDIO"]`, a locale from
+`LOCALES` (19-23) and `prebuiltVoiceConfig.voiceName` (93-100); ADC with `quota_project_id=project`
+(102-105); status mapping (112-119). The module docstring explains the REST call: it "keeps this adapter
+independent of googletrans's older httpx pin" (line 4).
+
+**`translation_demo/storage.py:10-56`** — `split_uri` requires `gs://bucket/path`, no `?`/`#` (10-16);
+`read_text` checks size ≤ 20,000 bytes and downloads with `if_generation_match` pinned to the inspected
+generation (23-30); `save_artifacts` (33-56), see 3.10.
+
+**`tutorial/run_job.py:47-72`** — see §4 Step 14. Configuration values must be plain names (no slashes or
+commas) because commas delimit `gcloud --args` (35-39).
+
+**functions-framework 3.10.2 (external)**
+- `_cli.py:24` `--target` (env `FUNCTION_TARGET`); `_cli.py:32-33` host `0.0.0.0` / port from `PORT`
+  (quoted in 3.5); `_function_registry.py:27` default source `./main.py`; `_function_registry.py:57-61` the
+  missing-target message.
+- `_http/gunicorn.py:32-41`: gunicorn with `WORKERS` (default 1) × `THREADS` (default `cpu_count × 4`),
+  log level `GUNICORN_LOG_LEVEL` (default `"error"`), `CLOUD_RUN_TIMEOUT_SECONDS`. So the function's
+  per-instance threads depend on its CPU count, while the web app fixes 4.
+
+**Root legacy files (not part of the README):** `main.py` (`translate_http`), `Dockerfile` (uv, `/.venv`),
+`docker-entrypoint.sh` (`uv run functions-framework --target translate_http`), `docker-shell.sh` (builds
+`simple-translate` for `linux/amd64/v2`). Identical to `4eaf343`; mention once, do not teach.
 
 ---
 
 ## 6. Gotchas and common errors
 
-1. **Wrong CPU architecture (Apple Silicon).**
-   - Symptom: Cloud Run deploy fails with an error that the image manifest "must support amd64/linux", or the revision logs `exec format error`.
-   - Cause: you built natively on an M-series Mac (arm64) and pushed that image yourself.
-   - Fix: build with `--platform=linux/amd64` as `docker-shell.sh:11` does, or with `docker buildx build --platform linux/amd64 …`. The course images are amd64 only (verified on Docker Hub).
-
-2. **`sh docker-shell.sh` "does nothing".**
-   - Symptom: the build finishes and you are back at your prompt with no container.
-   - Cause: the run lines are commented out (`docker-shell.sh:14-18`).
-   - Fix: run `docker run --rm -ti -p 8080:8080 simple-translate` yourself (Step 1).
-
-3. **Local port conflict.**
-   - Symptom: `Bind for 0.0.0.0:8080 failed: port is already allocated`.
-   - Cause: another container or app holds 8080.
-   - Fix: `docker ps` and stop it, or map `-p 8081:8080`. The right side must stay 8080 unless you also set `-e PORT=…`.
-
-4. **Container never becomes ready on Cloud Run.**
-   - Symptom: "The user-provided container failed to start and listen on the port defined provided by the PORT=8080 environment variable…".
-   - Causes:
-     - (a) you changed the service's container port to something the app does not listen on;
-     - (b) you set env var `DEV=1`, so `docker-entrypoint.sh:14-16` execs an interactive bash that exits immediately with no TTY (in the Docker Hub image the same branch runs `pipenv shell` instead, image `/app/docker-entrypoint.sh:5-7`, which likewise never starts the server);
-     - (c) a custom server binds `127.0.0.1`;
-     - (d) a wrong architecture.
-   - Fix: leave port 8080 and do not set `DEV`. functions-framework already binds `0.0.0.0:$PORT` (`_cli.py:32-33`).
-
-5. **Entry-point mismatch in Cloud Run functions.**
-   - Symptom: the build or start fails with `File /workspace/main.py is expected to contain a function named 'hello_http'. Found: 'translate_http' instead` (format from `_function_registry.py:57-61`).
-   - Cause: README code uses `hello_http` (README.md:29), the repo uses `translate_http` (`main.py:6`), and the console field must match.
-   - Fix: make the "Function entry point" field equal the `def` name.
-
-6. **Copying the newer googletrans.**
-   - Symptom: `AttributeError: 'coroutine' object has no attribute 'text'`, plus a "coroutine was never awaited" warning.
-   - Cause: `googletrans==4.0.2` (used in `simple-translate/pyproject.toml:9`) is async, but `main.py:25-26` uses the sync API.
-   - Fix: keep `googletrans==4.0.0rc1` (README.md:67, `pyproject.toml:10`) or rewrite the handler with `asyncio.run(...)`.
-
-7. **HTTP 500 from a perfectly deployed service.**
-   - Symptom: `Internal Server Error`, with an `httpx`/JSON traceback in Logs.
-   - Cause: googletrans scrapes Google's unofficial endpoint, which may rate-limit or block datacenter IPs or change format. Evidence: the course's own `simple-translate` added an error message to this effect in commit `62f821b` (2026-09-08), at `simple-translate/cli.py:33-37`.
-   - Fix: retry, add `try/except` that returns a 502 with a message, or swap in the official Cloud Translation API with a service account (what `mega-pipeline` does).
-
-8. **403 Forbidden on your URL.**
-   - Causes:
-     - "Require authentication" is selected;
-     - public access was blocked by an organization policy (domain-restricted sharing rejects `allUsers`);
-     - your identity token was minted for the wrong audience.
-   - Fix: choose "Allow public access" (README.md:20, 98), or call with `curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" URL` and grant teammates `roles/run.invoker`.
-
-9. **`iam.serviceaccounts.actAs` denied (Job step).**
-   - Cause: attaching a service account requires `roles/iam.serviceAccountUser` on it.
-   - Also: the README's screenshot uses `mega-pipeline`, a service account from the instructor's project that does not exist in yours.
-   - Fix: create your own service account, grant it `roles/aiplatform.user`, and grant yourself Service Account User on it.
-
-10. **Job "Succeeded" but no translation.**
-    - Cause: the image hard-codes `gemini-1.5-flash-001` (image `cli.py:11`), which has been retired. The 404 is raised by `model.generate_content` inside `main()`'s `try` (`cli.py:44`); `cli.py:51-52` catches it and prints `Error occurred while generating content: …`, so the process still exits 0.
-    - Fix: read the execution's logs, not the status badge. To modernise, rebuild with a current model name. The image source is not published, but every file is shown in §5 and §10.
-
-11. **Spaces in job arguments get mangled.**
-    - Cause: `args="$@"` then unquoted `$args` (image `/docker-entrypoint.sh:5,13`).
-    - Fix: use `+` for spaces as README.md:143 does. Splitting the arguments into separate chips does **not** help: the script joins all chips with spaces and re-splits them. Only a rebuilt image using `pipenv run python "$@"` would preserve multi-word arguments.
-
-12. **"I pushed a new image but nothing changed."**
-    - Cause: a Cloud Run revision is pinned to the digest resolved at deploy time.
-    - Fix: deploy a new revision (`gcloud run deploy … --image …:v2`), ideally with immutable tags.
-
-13. **Stale `uv.lock` makes cold starts slow or fail.**
-    - Cause: if you add a dependency to `pyproject.toml` without running `uv lock`, `uv sync --frozen` (`Dockerfile:45`) silently installs the *old* set. `uv run` (`docker-entrypoint.sh:18`) then re-resolves and installs at **container start**, needing network and time on every cold start.
-    - Fix: run `uv lock` before `docker build`. Consider `uv run --frozen`, or calling `/.venv/bin/functions-framework` directly.
-
-14. **Bloated image and leaked files.**
-    - Cause: there is no `.dockerignore`, so `COPY . ./` (`Dockerfile:48`) copies `.git/`, screenshots, `__pycache__`, and a host `.venv` if you created one. The published `dlops/simple-translate-http` image does contain `/app/.git`.
-    - Fix: add a `.dockerignore` with `.git`, `images/`, `__pycache__/`, `.venv/` and `secrets/`. Never keep key files inside the build context.
-
-15. **Runtime drift across the three paths.**
-    - The function uses Python 3.10 (README.md:19), the Docker Hub image uses Python 3.9.17 (image env `PYTHON_VERSION=3.9.17`), and the repo pins 3.12 (`pyproject.toml:6`, `Dockerfile:2`).
-    - functions-framework drifts too: whatever `3.*` resolves to at build time for the function (README.md:66), 3.4.0 in the Docker Hub image (its `Pipfile.lock`), 3.9.2 in the repo (`uv.lock:135-136`). Their gunicorn threading differs (1024 fixed threads vs `cpu_count × 4`).
-    - Symptom: something works locally (3.12) and differs in the cloud.
-    - Fix: select Python 3.12 for the function, and build and deploy your own image (Step 11).
-
-16. **Surprise charges.**
-    - Causes: min instances ≥ 1, instance-based billing, forgotten Artifact Registry images and source buckets from function builds, or a public URL being hammered.
-    - Fix: Step 12 cleanup. Set max instances low (e.g. 2–3) on student projects, and keep min instances at 0.
-
-17. **No graceful shutdown.**
-    - Cause: bash stays PID 1 because there is no `exec` at `docker-entrypoint.sh:18`. On scale-in, Cloud Run's SIGTERM is not forwarded, and the instance is killed after the grace period.
-    - Effect: harmless here because the app is stateless. In apps that flush buffers or close database connections, use `exec uv run …`.
+1. **Wrong entry point (Part 1).** `requirements` fine, build or start fails: functions-framework cannot find
+   the configured target (`_function_registry.py:57-61`). Fix: the **Function entry point** must equal the
+   `def` name, `hello_http` (README.md:150-151, 1038).
+2. **Copying the newer googletrans.** `googletrans==4.0.2` (used by `simple-translate/pyproject.toml:9`) is
+   async; with the sync handler, `.translate(...)` returns a coroutine and `.text` raises
+   `AttributeError: 'coroutine' object has no attribute 'text'`. Keep `googletrans==4.0.0rc1`
+   (`tutorial/function/requirements.txt:2`, `tutorial/app/pyproject.toml:10`).
+3. **Translation fails while everything is "green".** googletrans scrapes an unofficial Google endpoint that
+   can rate-limit or change. Function → HTTP 500; web app → 502 "The translation provider could not complete
+   the request." (`web.py:35-37`); job → `Batch failed: …`, exit 1. Check Logs, not the build status
+   (README.md:228-231, 1039).
+4. **Public access refused.** An organization policy can forbid public endpoints (`docs/lifecycle.md:18-19`);
+   the URL then answers 403. Resolve with course staff (README.md:32-34).
+5. **Wrong local port.** `docker run --rm -p 8086:8080 …` → open **8086**, not 8080 (README.md:246-251). If 8086
+   is taken, change the left number only; the right one is where gunicorn listens (`PORT`, default 8080).
+6. **"Play audio" stays disabled.** `ENABLE_SPEECH` missing or not `true/1/yes`, the change not deployed, or
+   the page not reloaded — the flag is rendered at page load (`web.py:15`; README.md:1040).
+7. **Speech denied (503 in the UI).** Runtime account not attached (the service then runs as the project's
+   default compute service account [added]), Agent Platform API off, **Service Usage Consumer** missing (the
+   code sends a quota project, `speech.py:104`), or a wrong location (README.md:1041). Message:
+   "Agent Platform access denied. Check the caller identity, enabled API, inference permissions, and quota
+   project." (`speech.py:112-113`).
+8. **Can't attach the service account.** `iam.serviceAccounts.actAs` denied → you need **Service Account
+   User** on that account (README.md:422-427, 432-434, 733-735). Its runtime roles don't give *you* anything.
+9. **`gcloud auth login` ≠ ADC.** Local speech fails with "Google credentials are unavailable…"
+   (`speech.py:108-109`) until `gcloud auth application-default login` (README.md:86-87, 547).
+   Impersonation also needs **Token Creator** + the IAM Service Account Credentials API (README.md:519-525).
+10. **Job never finishes.** Command left at the image default → gunicorn starts and waits for requests until
+    the 5-minute timeout fails the task (README.md:746-748, 1044).
+11. **Arguments pasted into one chip.** The whole block becomes a single argv element after `python`;
+    Python reads everything after `-m` in that element as one module name and fails with
+    `No module named  translation_demo batch …` (exit 1; reproduced with a local `python3`). One value per
+    chip (README.md:750-753).
+12. **Job can't read or write.** Wrong `gs://` path, or grants on the wrong account/bucket: Object Viewer on
+    *input*, Object Creator on *output*, for the **job** account (README.md:683-688, 1043).
+13. **Bucket names.** Globally unique; the helper wants **names** without `gs://` (README.md:1002) — it
+    rejects anything but `[A-Za-z0-9][A-Za-z0-9._-]*` (`run_job.py:37-39`).
+14. **Overrides need your permission.** `gcloud run jobs execute --args=…` needs `run.jobs.runWithOverrides`
+    on *your* identity (README.md:911-914, 1046).
+15. **Overrides replace all arguments.** Leaving out one flag in `--args` drops it for that execution; the
+    saved job still has the French defaults (README.md:954-956).
+16. **Empty-looking output.** Each execution writes to a new UUID folder under the prefix; success means a
+    `manifest.json` with `"status": "complete"` (README.md:887-897, 1045). Partial folders can exist after a
+    failure or retry.
+17. **Limits.** > 5,000 characters or > 20,000 bytes of input, or > 4,000 UTF-8 bytes of translated speech
+    text, is rejected (README.md:899-902; `translation.py:19-20`, `storage.py:27-28`, `speech.py:79-80`).
+18. **Region vs model location.** Cloud Run in Toronto, speech in `us-central1`; `GOOGLE_CLOUD_LOCATION` is the
+    model location, not the service region (README.md:495-498).
+19. **Surprise charges.** Min instances ≥ 1, instance-based billing, job retries, leftover buckets (soft
+    delete), function images (README.md:1018-1028; `docs/lifecycle.md:176-177, 205-210`).
 
 ---
 
 ## 7. Where this sits in the course
 
-**What earlier lectures gave you**
-- **L1–L2 (`simple-translate`):** the same translator as a CLI on a VM, then in a uv venv, then in a Docker image pushed to Docker Hub (`simple-translate/README.md:186-191`). The VM model meant *you* provisioned, patched, paid for idle time and deleted the machine (`simple-translate/README.md:62`).
-- **L3 (`mega-pipeline`):** a service-account JSON key file (`mega-pipeline.json`) placed in each component's `secrets/` folder (`mega-pipeline/README.md:95-99`) and pointed at by `ENV GOOGLE_APPLICATION_CREDENTIALS=secrets/mega-pipeline.json` (`mega-pipeline/README.md:195`).
-- **L4 (`port_toy`):** ports, published vs internal ports, and reading the port from `$PORT` (`port_toy/gateway/gateway.py:51`).
-- **L10 (`cheese-app-v0`):** the convention of a `secrets` folder outside the repo, mounted into the container at `/secrets` (`cheese-app-v0/README.md:146`: "Mount `../../secrets` into the container at `/secrets`").
-- **L13 (`model-training`):** serverless **training** (Vertex AI custom jobs, `model-training/cli.sh:32-37`, with prebuilt images from Artifact Registry `us-docker.pkg.dev/vertex-ai/training/...`, `cli.sh:31`).
+**Earlier lectures**
+- **L1–L2 (`simple-translate`):** the same translator on a VM, then in a container; "Delete your VM when you're
+  done. A running VM keeps charging even when idle." (`simple-translate/README.md:62`).
+- **L3 (`mega-pipeline`):** a service-account **JSON key** downloaded into `secrets/`
+  (`mega-pipeline/README.md:95-99`) and `ENV GOOGLE_APPLICATION_CREDENTIALS=secrets/mega-pipeline.json`
+  (README.md:195). L14 replaces the key with an attached identity and impersonated ADC.
+- **L4 (`port_toy`):** published vs container ports; reading `PORT` from the environment
+  (`port_toy/gateway/gateway.py:51`).
+- **L10 (`cheese-app-v0`):** secrets kept outside the repo, mounted at `/secrets`
+  (`cheese-app-v0/README.md:146`).
+- **L13 (`model-training`):** serverless *training*: a Vertex AI custom job with a prebuilt image from
+  `us-docker.pkg.dev/vertex-ai/training/…` (`model-training/cli.sh:31-37`). Slide 9: "Training Job (Vertex
+  AI) — LAST WEEK".
 
-**What L14 adds:** serverless **serving**.
-- HTTP functions with functions-framework.
-- The Cloud Run container contract.
-- Autoscaling, scale to zero, cold starts and request-based billing.
-- Invoker IAM vs runtime service accounts. The service account replaces the mounted JSON key once code runs in Google's cloud.
-- Jobs for run-to-completion work.
-- This is exactly what Milestone 3 asks for: "Deploy your model or API using Cloud Functions or Cloud Run" (`milestone3.md:47-51`).
+**What L14 adds:** serverless *serving* and finite work — HTTP functions (functions-framework), the Cloud
+Run container contract, scale to zero / cold starts / request-based billing, invocation vs runtime identity,
+ADC and impersonation, jobs with durable outputs in Cloud Storage. The README ties it to the Cheese App: the
+backend that "accept[s] input, call[s] a model service, and return[s] a result" (README.md:9-10); slides 5–6
+place it at the "Model Deploy" stage.
 
-**What builds on it next**
-- **L15 (`model-deployment`, `ml-workflow`):** managed model serving on Vertex AI Endpoints and Pipelines. These have the same "give Google a container or model, get an endpoint" shape, but with an ML-specific registry and serving stack.
-- **L18 (`cheese-app-v2`):** a FastAPI backend, which is a natural Cloud Run service with many routes.
-- **L20 (`cheese-app-v3` Pulumi):** pushes images to Artifact Registry programmatically (`cheese-app-v3/src/deployment/deploy_images/__main__.py:15`).
-- **L22 (Kubernetes):** you take the autoscaling knobs back into your own hands.
+**Next:** L15 (`model-deployment`, `ml-workflow`): Vertex AI endpoints and pipelines — slide 9's "Model
+Deployment (Vertex AI) / Pipeline (Vertex AI) — NEXT". L18+: the FastAPI backend that would run as a Cloud Run
+service; L22 Kubernetes takes the scaling knobs back.
 
-**Concrete diff vs the previous version of this app (`simple-translate` main → `serverless-deployment` main)**, from `git diff --no-index --stat` on the shared files (`Dockerfile.txt` compared as `Dockerfile`):
-```
- .gitignore            |  4 +-
- Dockerfile            | 36 ++++++++++++---
- cli.py                | 81 ++++++++++++---------------------
- docker-entrypoint.sh  | 19 ++++++++   (new)
- docker-shell.sh       | 13 ++++--
- main.py               | 28 ++++++++++++  (new)
- pyproject.toml        |  7 +--
- 7 files changed, 119 insertions(+), 69 deletions(-)
-```
-The meaningful changes:
-- **+ `main.py`**: the CLI becomes an HTTP handler, with query-string parameters instead of argparse flags.
-- **+ `docker-entrypoint.sh`**: the container now *serves* (functions-framework) instead of dropping you into a shell.
-- **`Dockerfile`**: non-root user `app`, venv at `/.venv`, dependency-first layer caching with `uv sync --frozen`, `ENTRYPOINT` script. The L2 solution `Dockerfile.txt` ran as root with `CMD ["-c", "source .venv/bin/activate && exec bash"]`.
-- **`pyproject.toml`**: + `functions-framework>=3.9.2`; `googletrans` pinned *back* to the sync `4.0.0rc1` (simple-translate uses async `4.0.2`); Python narrowed to 3.12.
-- **`docker-shell.sh`**: builds for `linux/amd64/v2`, with run commented out.
-
-**Within this repo, `pipenv` → `main`** (four commits on 2025-10-20: `d469a52` "upgraded to uv", `1a7798a` "removed pipfile", `212975e` "updated readme", `4eaf343` "updates"):
-- `d469a52`: Python 3.9 → 3.12; `pipenv sync` → `uv sync --frozen`; `pipenv run functions-framework` → `uv run functions-framework`; `pipenv shell` → `exec /bin/bash`.
-- `1a7798a`: `Pipfile` and `Pipfile.lock` deleted.
-- `212975e`: the README was relabelled from "Allow unauthenticated invocations" to "Allow public access", and the Functions link to "Cloud Run -> Functions".
-- `4eaf343`: added the paragraph at README.md:123 explaining why a deployed container needs a service account.
-- The Docker Hub image the README deploys was **not** rebuilt after this change.
+**What changed since `4eaf343` (for viewers who saw the old README or the slides)**
+- Old: function `hello_http` with a cheese default sentence and `functions-framework==3.*`, Python 3.10
+  runtime; Cloud Run service from `dlops/simple-translate-http:latest`; bonus job `dlops/simple-translate-gemini`
+  with argument `cli.py --text Ready+to+go+home?`.
+- New (2026-10-21/22): Python 3.12, `functions-framework==3.10.2`, Toronto region, a web UI image under
+  `cgumb/…`, speech via a runtime identity, a job with private buckets, a terminal helper, a clean-up section.
+- The old `dlops/*` images are no longer referenced.
 
 ---
 
 ## 8. Video plan (suggestion)
 
-**Hook question:** "Your translator has lived on a VM since Lecture 1, and that VM bills you every second, including 3 a.m. when nobody is translating anything. Can a server exist *only while someone is asking it a question*? And what do you have to promise Google in exchange?"
+**Hook:** a broken thing — a Cloud Run job that starts, prints nothing useful and is killed at its 5-minute
+timeout, while a "Translate" web page that worked on `localhost` is invisible to a friend. "Same image. Why
+does one run forever and the other not exist?" Answered by S12 (command vs arguments) and S07 (deploy the
+image).
 
-**Target length:** about 20 minutes (about 3,100 spoken words at 155 wpm).
+**Target length:** 25–35 minutes, two parts; ~4,000 narrated words at ~174 wpm. Part 1 = Before you begin,
+Part 1 (function), Part 2 (web service). Part 2 = Part 3 (identity, speech, ADC), Part 4 (job), clean-up.
 
-**Chapters**
-
-1. **The idle-VM problem (1.5 min).**
-   - Idea: cost should follow traffic, not wall-clock time.
-   - Visual: a 24-hour timeline with request spikes. A flat orange "VM cost" band fills the whole width. Then the band *collapses* into small blue areas under each spike ("request-based").
-   - On screen: the `simple-translate/README.md:62` "Delete your VM… keeps charging even when idle".
-
-2. **One function, three homes (2 min).**
-   - Idea: the same `translate_http(request)` will run as a function, as a container service and (in spirit) as a job.
-   - Visual:
-     - The URL `?text=Good afternoon everyone&src=en&dest=fr` splits at `?` and `&`.
-     - Each `key=value` flies into a dict labelled `request.args`.
-     - The three values slot into `text/src/dest` in `main.py:15-23`, overriding the grey defaults.
-   - On screen: `main.py:1-28`.
-
-3. **Who actually runs your function? (2.5 min).**
-   - Idea: functions-framework wraps your function in Flask, then gunicorn, then a process listening on `0.0.0.0:$PORT`.
-   - Visual: a small box `translate_http` gets wrapped by successive translucent shells: "Flask app" → "gunicorn (1 worker × N threads)" → "container" → "Cloud Run".
-   - On screen:
-     - `docker-entrypoint.sh:10-19`, `_cli.py:32-33`, `gunicorn.py:32-43`.
-     - Live: `sh docker-shell.sh`, `docker run --rm -ti -p 8080:8080 simple-translate`, then `curl "http://localhost:8080/?text=Good%20afternoon%20everyone&src=en&dest=fr"`.
-   - **Pause-and-ponder #1:** "functions-framework reads `PORT` and defaults the host to `0.0.0.0`. Suppose instead it bound `127.0.0.1:8080`. Would `curl localhost:8080` from your laptop work through `-p 8080:8080`? Would Cloud Run reach it?"
-     - Answer: no and no. Both arrive from outside the container's loopback interface.
-
-4. **Path A: Cloud Run functions in the console (3 min).**
-   - Idea: you supply source + requirements + entry point, and Google builds the container.
-   - Visual: the pasted `main.py` and `requirements.txt` slide into a "Cloud Build" gear machine. A sealed box (image) comes out, lands on an "Artifact Registry" shelf, and is then copied into a running "revision" tile.
-   - On screen:
-     - README.md:16-21 settings; the README.md:24-62 code (highlight `def hello_http`); README.md:65-68 requirements.
-     - The entry-point field.
-     - The Logs tab with the `request_args:` lines.
-
-5. **The container contract (2 min).**
-   - Idea: `$PORT`, `0.0.0.0`, amd64, stateless. Break any one and the revision never becomes ready.
-   - Visual:
-     - Cloud Run hands the container an envelope "PORT=8080".
-     - A plug labelled "arm64" fails to fit an "amd64" socket.
-     - A file written to disk evaporates when its instance fades out.
-   - On screen: the hint line in `images/cloud-run-create.png`, `docker-shell.sh:11`, and the error string "failed to start and listen on the port defined provided by the PORT=8080 environment variable".
-
-6. **Path B: deploy a container you already have (2.5 min).**
-   - Idea: Cloud Run takes any compliant image. Tags move; digests do not.
-   - Visual:
-     - A sticky note "latest" sits on box `sha256:7775…`.
-     - At deploy, a pin stabs through the *box*, not the note.
-     - Later the note peels off and moves to a new box, and the pinned revision stays put.
-   - On screen: README.md:96-99; `gcloud run deploy … --image=docker.io/dlops/simple-translate-http:latest …`; the provenance reveal (the image is the 2024 pipenv build: Python 3.9.17, `pipenv run functions-framework`).
-   - **Pause-and-ponder #2:** "The instructor pushes a fixed `dlops/simple-translate-http:latest` tomorrow. Does your service change? What single command makes it change?"
-     - Answer: no. Redeploy (`gcloud run deploy` with the same image), which re-resolves the tag.
-
-7. **Scale to zero, cold starts and the bill (3 min).**
-   - Idea: instances follow concurrency. Min-instances trades money for latency.
-   - Visual:
-     - Requests are dots streaming in from the left.
-     - Instances are rounded rectangles that "inflate" (a cold-start progress bar) when needed, take dots in parallel up to a concurrency cap, then deflate to nothing after idling.
-     - A cost meter fills only while a rectangle holds at least one dot.
-     - Then toggle "min instances = 1": one rectangle never deflates, and its meter keeps ticking.
-   - On screen: `images/cloud-run-create.png` billing and scaling section; `main.py:13` vs `cli.py:11` (per-request vs global init).
-   - **Pause-and-ponder #3:** "10 requests per second, each takes 2 s. How many requests are in flight on average? How many instances at max concurrency 80? At concurrency 1? Which costs more CPU-seconds under request-based billing?"
-     - Answer: Little's law gives L = λ·W = 20. That needs about 1 instance at concurrency 80 and about 20 at concurrency 1. Concurrency 1 bills about 20 instance-seconds per second vs about 1.
-
-8. **Who may call it, and who is it when it calls out? (2.5 min).**
-   - Idea: invoker IAM vs runtime service account; services vs jobs.
-   - Visual:
-     - A door with a bouncer checking a badge "roles/run.invoker". `allUsers` is a "come in" sign.
-     - Inside, the container clips on an employee badge (service account) from the metadata server and walks to a "Vertex AI" building.
-     - Separately, a job is a one-shot conveyor: args go in, logs come out, done.
-   - On screen:
-     - README.md:121-147; the Security tab screenshot; `curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" …`.
-     - The gemini `docker-entrypoint.sh:5-14` and why `Ready+to+go+home?` uses `+`.
-
-9. **Clean-up and recap (1.5 min).**
-   - Idea: the platform scales to zero, but your *artifacts* do not.
-   - Visual: a checklist that ticks off service, function, job, Artifact Registry images and source bucket.
-   - On screen: Step 12 commands; the recap questions.
+**Scene sketch (14 scenes; README tracker steps in brackets)**
+1. **Hook + map** (slides 1–10): the 2×2 of slide 10 (file/container × VM/serverless) with today's two cells;
+   the README's four-part table (README.md:12-17).
+2. **What serverless means** (slides 8, 11, 14, 16): scale-to-zero strip, request-based meter, cold-start bar.
+3. **Before you begin** [step 0]: project ID, region Toronto vs model `us-central1`, worksheet, terminal setup.
+4. **Part 1.1–1.2** [steps 1–2]: Write a function form (illustration); `tutorial/function/main.py:7-12`;
+   requirements; the entry point thread from field to `def`.
+5. **Inside the function** (3.4–3.5): source → Cloud Build → Artifact Registry → revision; functions-framework
+   `_cli.py:32-33`; **Ponder 1** (entry point `main` vs `hello_http`: what fails, and where?).
+6. **Part 1.3** [step 3]: URL + query string split into `request.args`; `zh-cn`; Logs 200; curl alternative.
+7. **Part 2.1** [step 4]: `docker run --rm -p 8086:8080 …` captured; the page; JSON POST vs query string;
+   speech disabled.
+8. **Part 2.2** [step 5]: Deploy container form (illustration); min 0 / max 2 / concurrency 4 ↔ 4 threads;
+   revisions; tag vs digest. **Ponder 2** (6 requests in flight, concurrency 4, max 2: how many instances, and
+   what happens to the 9th?).
+9. **Two doors** (3.7) [step 6]: who may call vs what the app may access; create `translation-demo-runtime`.
+10. **Part 3.2** [step 7]: attach + three env vars + View diff & redeploy; the speech call path; **Ponder 3**
+    (Play audio returns "Agent Platform access denied": list three causes).
+11. **Part 3.3** [step 8]: ADC + impersonation vs L3's key file; local `uv run … serve`.
+12. **Service vs job** (3.8) [steps 9–11]: buckets, job account with scoped roles, command `python` + eleven
+    chips; the never-ending job explained. **Ponder 4** (what does the task run if you set only the arguments?).
+13. **Part 4.4–4.6** [steps 12–14]: execute, logs JSON, attempt folder + manifest last; `--args` override; the
+    helper (dry-run captured).
+14. **Clean up + recap** [step 15]: checklist; seven-line recap.
 
 **Recap questions**
-1. What two things must any container do for Cloud Run to route HTTP traffic to it, and which two lines of functions-framework guarantee them?
-2. In path A you never wrote a Dockerfile. Where did the container image come from, and where is it stored?
-3. Why does "min instances = 0" both minimise cost and cause cold starts? What would you change for a demo day?
-4. What IAM binding does "Allow public access" classically create (and what newer switch can replace it)? How do you call the service after removing public access?
-5. Why will pushing a new `:latest` to Docker Hub not change a running Cloud Run service?
-6. Why does the Cloud Run Job example pass `Ready+to+go+home?` instead of `"Ready to go home?"`?
+1. What do you hand Cloud Run for a function, and for a service? Who builds the image in each case?
+2. Which two settings make the meter run while nobody is using the app?
+3. Name the two permission questions and which settings answer each in this tutorial.
+4. Why does the web account need no Storage role while the job account needs two bucket roles?
+5. Why does the job set a **command** and eleven **separate arguments**?
+6. How do you know an execution really succeeded?
 
 ---
 
 ## 9. Exercises
 
-**E1 — Change the port, predict, run (hands-on).**
-- Task: after Step 1, run `docker run --rm -ti -e PORT=9090 -p 8080:8080 simple-translate`, then `curl localhost:8080`. Predict the result first. Then fix it *without* changing `-e PORT=9090`.
-- Answer:
-  - functions-framework now binds `0.0.0.0:9090` (`_cli.py:33` reads `PORT`), while Docker forwards host 8080 → container 8080, where nothing listens. curl fails with "Empty reply from server" or a connection reset.
-  - Fix: `-p 8080:9090`. This is exactly what Cloud Run does in the other direction: it chooses `PORT` and connects to it.
+**E1 — Ports, predict then run (hands-on).** Run
+`docker run --rm -e PORT=9090 -p 8086:8080 cgumb/ac215-translation-demo:lecture14-agent-platform-20261022`, then
+`curl -s localhost:8086`. Predict first. Then fix it without removing `-e PORT=9090`.
+- Answer: `serve` binds `0.0.0.0:$PORT` = 9090 (`__main__.py:23-24`); Docker forwards host 8086 → container 8080,
+  where nothing listens, so curl gets an empty reply / reset. Fix: `-p 8086:9090`. Cloud Run does the same in
+  reverse: it chooses `PORT` and connects to it.
 
-**E2 — Global vs per-request initialisation (hands-on and conceptual).**
-- Task: move `translator = Translator()` from `main.py:13` to module scope, as `cli.py:11` does. Rebuild and run, and send 20 requests with `for i in $(seq 20); do curl -s -o /dev/null -w "%{time_total}\n" "http://localhost:8080/?text=hi&dest=fr"; done`. Which requests get faster, and what new risk did you introduce?
-- Answer:
-  - The very first request after start is not faster, because the object is now built during import, which is part of the cold start.
-  - Warm requests may get slightly faster: the object and its HTTP client are reused, so connections can be kept alive.
-  - The risk: gunicorn runs several threads per worker (`gunicorn.py:32`), so one `Translator` is now shared across concurrent requests. You must trust it to be thread-safe (or use a lock, or a per-thread instance).
-  - General rule: do expensive, *thread-safe* setup (model loading!) at global scope, so that it is paid once per instance.
+**E2 — The never-ending job (debugging).** A classmate's job created from the same image, with arguments
+filled in but **Container command** left empty, fails after exactly five minutes. Another classmate set the
+command but left the arguments empty. What does each task run?
+- Answer: Cloud Run's *arguments* replace the image's `CMD`; the image has no `ENTRYPOINT` (`Dockerfile:12`).
+  Case 1: with no command and no `ENTRYPOINT`, the first argument `-m` becomes the program to execute, so
+  the container cannot start (exact Cloud Run error text not recorded here — check the logs). Case 2: `python`
+  with no arguments and no terminal reads its program from an empty stdin and should exit 0 at once (a local
+  `python3 < /dev/null` does): a "successful" execution that wrote nothing. Only
+  command `python` + the eleven arguments runs `batch`; the five-minute case is the one where the image
+  default (`serve`) was kept (README.md:1044).
 
-**E3 — "coroutine has no attribute text" (debugging).**
-- Task: a classmate deploys path A with `requirements.txt` containing `functions-framework==3.*` and `googletrans==4.0.2`. Every request returns 500, and Logs show `AttributeError: 'coroutine' object has no attribute 'text'`. Why?
-- Answer:
-  - googletrans 4.0.2 (used by `simple-translate/pyproject.toml:9`) made `Translator.translate` async (`simple-translate/cli.py:25-31`).
-  - In the sync handler, `translator.translate(...)` returns an un-awaited coroutine, and `.text` on it fails at `results.text`.
-  - Fix: pin `googletrans==4.0.0rc1` (README.md:67), or write
-    `result = asyncio.run(_translate(text, src, dest))` with an `async def _translate` that uses `async with Translator() as t: return (await t.translate(...)).text`.
+**E3 — Create without read (conceptual).** The job account has only Storage Object **Creator** on the output
+bucket. Why does writing three files work, and why can't the job overwrite an earlier result or list the
+folder?
+- Answer: `storage.py` only creates new objects (`if_generation_match=0`, lines 46 and 54-55) under a fresh
+  UUID prefix; create needs `storage.objects.create` only. Overwrite would need delete, list needs
+  `storage.objects.list` — neither is in Object Creator. Reading results is your job, with your identity.
 
-**E4 — Entry point mismatch (debugging).**
-- Task: you paste the repo's `main.py` (function `translate_http`) into the inline editor and click deploy. The deploy fails. What is the message, and what are two fixes?
-- Answer:
-  - functions-framework cannot find the configured target: `File /workspace/main.py is expected to contain a function named 'hello_http'. Found: 'translate_http' instead` (message template `_function_registry.py:57-61`).
-  - Fix 1: set the console's "Function entry point" to `translate_http`.
-  - Fix 2: rename the function back to `hello_http`.
+**E4 — Entry point mismatch (debugging).** You paste `tutorial/function/main.py` but type `translate` in
+**Function entry point**. What message appears in the logs, and where does it come from?
+- Answer: `File /workspace/main.py is expected to contain a function named 'translate'. Found: 'hello_http'
+  instead` (format `_function_registry.py:57-61`). Fix the field, or rename the `def`.
 
-**E5 — Revision never becomes ready (debugging).**
-- Task: on your Cloud Run service built from `main` (Step 11) you add the environment variable `DEV=1` "to see more logs" and deploy. The new revision fails with "failed to start and listen on the port defined provided by the PORT=8080 environment variable". Explain with file and line.
-- Answer:
-  - `docker-entrypoint.sh:14-16`: with `DEV=1` the script runs `exec /bin/bash` instead of functions-framework.
-  - On Cloud Run there is no TTY or stdin, so bash reads EOF and exits immediately. Nothing ever listens on 8080, so the startup probe fails.
-  - Remove `DEV`. For more logs, set `GUNICORN_LOG_LEVEL=info` (`gunicorn.py:41`, functions-framework 3.9.2) or add `print`s.
-  - On the Step 7 Docker Hub image the DEV branch is `pipenv shell` (image `/app/docker-entrypoint.sh:5-7`), with the same result, and `GUNICORN_LOG_LEVEL` does nothing there because functions-framework 3.4.0 hard-codes `"loglevel": "error"`.
+**E5 — Speech denied (debugging).** After Part 3.2, **Play audio** shows "Agent Platform access denied. Check
+the caller identity, enabled API, inference permissions, and quota project." List what you check, in order.
+- Answer: which account the revision runs as (Security tab); that account's **Agent Platform User** and
+  **Service Usage Consumer** (`speech.py:104` sends a quota project); the Agent Platform API enabled;
+  `GOOGLE_CLOUD_PROJECT` = the project with those grants; `GOOGLE_CLOUD_LOCATION` where the model exists. The
+  browser sees HTTP 503 (`web.py:50-51`). README.md:457-458, 1041.
 
-**E6 — Concurrency and cost (conceptual).**
-- Task: your endpoint gets a steady 10 requests/s, and each spends 2 s waiting on the translate API. Compare max concurrency 80 vs 1 in (a) instance count and (b) billed vCPU-seconds per second under request-based billing.
-- Answer:
-  - Little's law: in-flight L = λ·W = 10 × 2 = 20.
-  - At concurrency 80, about 1 instance holds all 20, and you pay about 1 instance-second per second, because overlapping requests on one instance are billed once.
-  - At concurrency 1, about 20 instances are needed, so about 20 instance-seconds per second: roughly 20× the CPU and memory bill, plus 20× the cold starts during ramp-up.
-  - The catch, for your own `main` build (functions-framework 3.9.2): one instance only has `cpu_count×4` gunicorn threads (`gunicorn.py:32`), so if `os.cpu_count()` reports 1 (4 threads), the requests beyond 4 queue inside that instance. That is a reason to tune `THREADS` or lower Cloud Run concurrency to match. The Step 7 Docker Hub image (functions-framework 3.4.0) has a fixed 1024 threads, so it does not hit this limit.
+**E6 — Concurrency and instances (conceptual).** The web service gets 3 translations per second, each taking
+2 s (provider latency). Concurrency 4, max instances 2. How many requests are in flight, how many instances,
+and what if traffic doubles?
+- Answer: Little's law L = λ·W = 3 × 2 = 6 in flight → ⌈6/4⌉ = 2 instances (the cap). At 6 req/s, 12 in
+  flight but only 2 × 4 = 8 slots: the rest wait and some fail (Cloud Run answers 429 when no instance can take
+  a request). Raising max instances, or concurrency together with gunicorn threads (`__main__.py:25`), fixes it;
+  min instances does not.
 
-**E7 — Two identities (conceptual and IAM).**
-- Task: you switch the service to "Require authentication" and want (a) your teammate to call it and (b) the job in Step 10 to call Gemini. List the principal, the role and the resource for each grant, plus the extra grant *you* need to attach the service account.
-- Answer:
-  - (a) Principal `user:teammate@…`, role `roles/run.invoker`, on the Cloud Run service. The teammate then calls with `Authorization: Bearer $(gcloud auth print-identity-token)`.
-  - (b) Principal `serviceAccount:translate-job@PROJECT.iam.gserviceaccount.com`, role `roles/aiplatform.user`, on the project. You attach it under the job's Security tab.
-  - You need `roles/iam.serviceAccountUser` on that service account (the "actAs" permission).
-  - Neither grant implies the other.
+**E7 — Two identities and your own (conceptual).** For (a) a teammate who should deploy the job, (b) the
+job itself, (c) you testing speech locally as the web account: list principal, role, resource.
+- Answer: (a) `user:teammate@…` — Service Account User on `translation-audio-job` (+ Cloud Run deploy rights);
+  (b) `serviceAccount:translation-audio-job@PROJECT.iam.gserviceaccount.com` — Agent Platform User + Service
+  Usage Consumer on the project, Object Viewer on input, Object Creator on output; (c) your user — Service
+  Account Token Creator on `translation-demo-runtime` (+ IAM Service Account Credentials API). None implies
+  another.
 
-**E8 — Tags vs digests (hands-on with Artifact Registry).**
-- Task: do Step 11 with tag `:latest` instead of `:v1`. Change the default text in `main.py:15`, rebuild, and push `:latest` again. Reload your service URL: which text do you see? Then run `gcloud run deploy` again with the same image string and reload.
-- Answer:
-  - After the push you still see the old text, because the revision is pinned to the digest resolved at the first deploy.
-  - Re-running `gcloud run deploy` resolves `:latest` to the new digest and creates a new revision, so the new text appears.
-  - Lesson: use immutable tags (`v1`, `v2`, or the git SHA) so a revision's image is self-documenting.
+**E8 — Tag vs digest (hands-on, offline).** `docker pull` the image by tag and by
+`cgumb/ac215-translation-demo@sha256:c17b6db09f7402febb582bf327920ec9ca4eee113f5ddefa38e9da5619dbe72e`;
+compare `docker images --digests`. Which reference would you put in a deployment you must reproduce in May?
+- Answer: same bytes today; only the digest is guaranteed to stay so (README.md:1066-1070,
+  `docs/lifecycle.md:65-67`).
 
 ---
 
 ## 10. Errata and open questions
 
-**Errata (evidence-based)**
-1. **The deployed image is not this repo's code.**
-   - README.md:96 deploys `dlops/simple-translate-http:latest`. Docker Hub shows it was pushed 2024-10-22, is `linux/amd64/v2`, Python 3.9.17 and **pipenv**.
-   - Its `main.py`, `Dockerfile` and `docker-entrypoint.sh` (and `cli.py`, `Pipfile`) are identical to branch `pipenv` (I diffed them against `git show origin/pipenv:…`). Its `docker-shell.sh` differs from the branch's: the image copy still has an active `docker run … -p 8080:8080` (no `DEV=1`).
-   - Its `Pipfile.lock` runs functions-framework 3.4.0 / Flask 2.3.3 / gunicorn 20.1.0 on Python 3.9, not the 3.9.2 / 3.1.2 / 23.0.0 on Python 3.12 that `uv.lock` describes, so the gunicorn behaviour explained from 3.9.2 source (threads, `GUNICORN_LOG_LEVEL`) does not apply to the service students actually deploy.
-   - The `main` branch (uv, Python 3.12, commit `d469a52`, 2025-10-20) was never rebuilt or pushed under that name.
-   - Nothing in the repo builds that tag: `docker-shell.sh:6` names the image `simple-translate` and there is no push step.
-2. **Function name and default text differ between the README and the repo.** `hello_http` (README.md:29) vs `translate_http` (`main.py:6`). Default `"Welcome to AC215. Everyone knows the moon is made out of cheese"` (README.md:47) vs `"Welcome to AC215"` (`main.py:15`).
-3. **Three different Python versions.** Function runtime "Python 3.10" (README.md:19), Docker Hub image 3.9.17, repo `requires-python = ">=3.12,<3.13"` (`pyproject.toml:6`). Python 3.10 reaches upstream EOL in Oct 2026 and 3.9 already has.
-4. **Outdated example URLs.** `https://us-central1-ac215-project.cloudfunctions.net/simple-translate` (README.md:76) is the 1st-gen Cloud Functions format. Functions created through "Cloud Run → Functions" get `…run.app` URLs, as the README's own screenshot `images/cloud-run-create.png` shows (`https://service-name-129349313346.us-central1.run.app`). README.md:108's `…-uc.a.run.app` is the legacy Cloud Run URL format; it still works but differs from what students will see.
-5. **Screenshots disagree with the text.** README.md:20 and 98 say "Allow public access", but `images/cloud-run-create.png` shows "Allow unauthenticated invocations". README.md:135 says to tick "Execute job immediately", but `images/cloud-run-job-01.png` shows it unticked. The API-enable screenshot (`images/cloud-function-enable-apis.png`) is from the old Cloud Functions UI.
-6. **The job image's model is retired.** `dlops/simple-translate-gemini` hard-codes `gemini-1.5-flash-001` (image `cli.py:11`). Gemini 1.5 models were retired on Vertex AI in 2025 (verify on the current model-versions page). Errors are swallowed (`cli.py:51-52`), so the job can report success while failing.
-7. **The job image's source is unpublished.** README.md:131 uses `dlops/simple-translate-gemini`, whose `Dockerfile`, `Pipfile`, `cli.py` and `docker-entrypoint.sh` exist only inside the image (`ADD . /` layer, pushed 2024-10-21). Students cannot rebuild or fix it from any dlops repo.
-8. **The job's default-arguments path is dubious.** README.md:141 says the job runs "using the default arguments". With no args, the image runs `pipenv shell python cli.py` (image `docker-entrypoint.sh:10`) in a non-interactive container; `pipenv shell` is meant to spawn an interactive subshell, and the `pipenv run` form is left commented out on the next line (image `docker-entrypoint.sh:11`). I could not confirm this actually runs `cli.py`. The explicit-argument path (`pipenv run python $args`, line 13) is the reliable one.
-9. **No cleanup section.** The README never tells students to delete the function, service or job, or the Artifact Registry images and source buckets that path A creates.
-10. **Repo hygiene.**
-    - `__pycache__/main.cpython-312.pyc` is committed (added in `d469a52`).
-    - `.gitignore:3-4` carries leftovers from other tutorials (`/docker-volumes`, `trainer.tar.gz`).
-    - There is no `.dockerignore`, so the published image contains `/app/.git` (seen in its last layer).
-11. **`docker-shell.sh` no longer runs anything.** Lines 14-18 are commented out (since `cba4910`). The README never mentions `docker-shell.sh`, `Dockerfile`, `docker-entrypoint.sh` or any local test, and its only `cli.py` mention (README.md:143) refers to the gemini image's file, not the repo's. The repo's own build files are effectively undocumented.
-12. **`docker-entrypoint.sh` details.** It prints "Environment ready! Virtual environment activated." (line 6) *before* activating (line 12). It does not `exec` the server (line 18), so SIGTERM is not forwarded.
-13. **Minor typos.** An empty bullet at README.md:22; "CLoud Function" (README.md:70); "showup" (README.md:10, 93); "Give you Cloud Run" (README.md:97); "should looks like" (README.md:76, 108).
-14. **Hidden googletrans fragility.** `googletrans==4.0.0rc1` (2020, sync, unofficial endpoint) is pinned here while the L1/L2 repo moved to async `4.0.2`. Copying requirements between tutorials breaks the handler (§6 #6). There is no error handling (`main.py:25`).
+**Errata (evidence-based, `46cc62f`)**
+1. **The course links land on no section.** The tutorials page (fetched 2026-11-04) and slides 12/15 link
+   `…/serverless-deployment#running-app-as-cloud-function` and `#running-app-in-cloud-run`. Those headings
+   existed at `4eaf343`; at `46cc62f` the headings are "Part 1: Deploy a translation function" … (README.md:91,
+   235, 355, 580), so the links open the top of the README. Kind fix: "start at the top; Part 1 is the function,
+   Parts 2–4 are Cloud Run".
+2. **Slides vs today's README.** Slide 12 opens `console.cloud.google.com/functions` and says "Create a python
+   code file"; the README goes **Cloud Run → Services → Write a function** (README.md:99). Slide 10's code
+   builds one module-level `Translator()` with the long "…moon's made of cheese" default; the README handler
+   creates it per request with default `"Welcome to AC215"` (`tutorial/function/main.py:9-12`). Slide 15's
+   "Deploy Docker Image in Cloud Run" holds, but the image is now `cgumb/ac215-translation-demo:…`, and the
+   README goes on to identity, speech and a job, which the slides do not show (slide 14 mentions "service or
+   job").
+3. **The course map pins an older commit.** `MLOps_Learning/course/lectures.yaml:33` and `units.json` say
+   `4eaf343`; the course link serves `main` = `46cc62f`, whose README is a different tutorial (28 commits on
+   2026-10-21/22).
+4. **Unused 2025 files at the repo root.** `main.py`, `cli.py`, `Dockerfile`, `docker-entrypoint.sh`,
+   `docker-shell.sh`, `pyproject.toml`, `uv.lock` are unchanged from `4eaf343` and never mentioned, yet
+   README.md:38-39 says to work from the repository root — a viewer may build the root `Dockerfile` by
+   mistake. The tutorial's image is built from `tutorial/app/` (`tutorial/app/README.md:204-209`).
+5. **`.dockerignore` patterns only match at the build-context root.** `__pycache__` and `*.pyc`
+   (`tutorial/app/.dockerignore:2-3`) do not exclude `translation_demo/__pycache__/`; the published image
+   contains six `translation_demo/__pycache__/*.cpython-312.pyc` files (seen in its `COPY translation_demo`
+   layer). Harmless (they match the sources), but `**/__pycache__` is the intended pattern.
+6. **Mutable tag in the click path.** Console steps paste the tag (README.md:276-278, 741-743); the digest is
+   only at README.md:1068-1070. Deploying by `@sha256:` pins it.
+7. **Clean-up stops short.** README.md:1018-1028 covers services, job, buckets, accounts and the function's
+   image, but not soft-delete retention (data stays recoverable and billable, `docs/lifecycle.md:176-177`) or
+   the build's source archives and logs (`docs/lifecycle.md:205-210`).
+8. **"We add your developer access separately in section 3.3"** (README.md:378-379): 3.3 grants Token Creator
+   for impersonation; the **Service Account User** needed to attach the account in 3.2 (README.md:432-434) is
+   not granted by any console step — fine for project Owners, a blocker in a restricted project.
 
-**Open questions / could not determine**
-- The Ed lesson (slides, any updated instructions) was not accessible. If it differs from the README (e.g. it uses `gcloud run deploy` or Artifact Registry explicitly), prefer the lesson.
-- I could not check the exact list of APIs the current "Write a function" dialog asks for, the current button label ("Save and Deploy" vs "Save and redeploy"), or whether Python 3.10 is still offered in the runtime dropdown. They depend on today's console.
-- I could not check whether a Harvard-managed GCP organization blocks `allUsers` (domain-restricted sharing). Student-owned projects normally do not.
-- Whether today's console "Allow public access" radio adds the `allUsers → roles/run.invoker` binding or instead disables the invoker IAM check. Both make the URL public; Step 9 shows how to tell which one you got.
-- Whether googletrans' unofficial endpoint currently answers requests from Cloud Run egress IPs. The course's own 2026 change to `simple-translate/cli.py:33-37` suggests blocking or rate-limiting happens.
-- The default concurrency the console assigns to a function created via "Write a function" (80 like a service, or 1 like `gcloud functions deploy --gen2`). Check the "Maximum concurrent requests per instance" field on your deployment.
-- Which auto-created Artifact Registry repository (`cloud-run-source-deploy` vs `gcf-artifacts`) and Cloud Storage source bucket the current console flow uses. Look in your project after Step 5.
+**Open questions / could not determine here**
+- The Ed lesson (slides, any updated instructions) was not accessible.
+- Console labels and dialogs ("Write a function", "Save and redeploy", "View diff & redeploy", "Containers,
+  Networking, Security" vs "Containers, Connections, Security", the API prompts) are from the README and its
+  GIFs, not seen live; no GCP credentials here.
+- Whether the console's **Allow public access** disables the invoker IAM check or adds an `allUsers` binding
+  in every project: the repo says the former (`docs/lifecycle.md:78-79`; gcloud boxes use
+  `--no-invoker-iam-check`).
+- The default **Maximum concurrent requests per instance** the console gives a function created by "Write a
+  function" (Part 1 does not set it).
+- Which service account Part 1 and Part 2 run as before Part 3 (normally the project's default compute
+  account) and whether it has broad roles in students' projects; the README does not say.
+- Whether googletrans' unofficial endpoint answers from Cloud Run egress IPs on recording day (the README
+  warns, README.md:228-231).
+- Whether `gemini-2.5-flash-tts` and voice `Kore` stay available in `us-central1` (README.md:496-498: "Model
+  availability, language support, and quota depend on the selected model/location").
+- Free-tier figures and prices: verify on the pricing page at recording time.

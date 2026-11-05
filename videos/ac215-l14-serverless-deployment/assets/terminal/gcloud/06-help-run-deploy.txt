@@ -1,0 +1,30 @@
+$ gcloud run deploy --help | grep -E -A3 '^ +--(function|base-image|no-invoker-iam-check|source|concurrency|min-instances|max-instances)\b' | grep -v '^--$' | head -60
+     --concurrency=CONCURRENCY
+        Set the maximum number of concurrent requests allowed per container
+        instance. Leave concurrency unspecified or provide the special value
+        'default' to receive the server default value.
+     --max-instances=MAX_INSTANCES
+        The maximum number of container instances for this Revision to run or
+        'default' to remove. This setting is immutably set on each new Revision
+        and modifying its value will deploy another Revision.
+     --min-instances=MIN_INSTANCES
+        The minimum number of container instances to run for this Revision or
+        'default' to remove. This setting is immutably set on each new Revision
+        and modifying its value will deploy a another Revision. Consider using
+       --base-image=BASE_IMAGE
+          Specifies the base image to be used for automatic base image updates.
+          When deploying from source using the Google Cloud buildpacks, this
+          flag will also override the base image used for the application
+       --function=FUNCTION
+          Specifies that the deployed object is a function. If a value is
+          provided, that value is used as the entrypoint.
+
+        --source, the image must be the URI of an Artifact Registry Docker
+        repository in the Docker format
+        ($REGION-docker.pkg.dev/$PROJECT/$REPOSITORY") or
+        ($REGION-docker.pkg.dev/$PROJECT/$REPOSITORY/$IMAGE_NAME"). The image
+     --source=SOURCE
+        The location of the source to build. If a Dockerfile is present in the
+        source code directory, it will be built using that Dockerfile,
+        otherwise it will use Google Cloud buildpacks. See
+[exit 0]

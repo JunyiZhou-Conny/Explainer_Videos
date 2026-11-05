@@ -1,0 +1,5 @@
+$ docker run --rm cgumb/ac215-translation-demo:lecture14-agent-platform-20261022 -m translation_demo batch --input-uri gs://YOUR_INPUT_BUCKET/run-001/passage.txt --src en --dest fr --output-uri gs://YOUR_OUTPUT_BUCKET/run-001/
+docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: exec: "-m": executable file not found in $PATH
+
+Run 'docker run --help' for more information
+[exit 127]

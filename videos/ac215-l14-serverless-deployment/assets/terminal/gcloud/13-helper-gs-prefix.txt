@@ -1,0 +1,8 @@
+$ python tutorial/run_job.py ./passage.txt --project="$PROJECT_ID" --input-bucket="gs://$INPUT_BUCKET" --output-bucket="$OUTPUT_BUCKET" --dry-run
+usage: run_job.py [-h] --project PROJECT [--region REGION] [--job JOB]
+                  --input-bucket INPUT_BUCKET --output-bucket OUTPUT_BUCKET
+                  [--src SRC] [--dest DEST] [--download-dir DOWNLOAD_DIR]
+                  [--no-download] [--dry-run]
+                  text_file
+run_job.py: error: input-bucket must be a plain name, without slashes or commas
+[exit 2]

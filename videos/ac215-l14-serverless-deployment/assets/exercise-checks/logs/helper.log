@@ -1,0 +1,41 @@
+$ python /repo/tutorial/run_job.py ./passage.txt --project=your-project-id --region=northamerica-northeast2 --job=translation-audio --input-bucket=YOUR_INPUT_BUCKET --output-bucket=YOUR_OUTPUT_BUCKET --src=en --dest=fr --download-dir=./results --dry-run
+$ gcloud storage cp /tmp/w/passage.txt gs://YOUR_INPUT_BUCKET/run-20261104-105856-9ddfc0f01f06/passage.txt --project=your-project-id --quiet
+$ gcloud run jobs execute translation-audio --project=your-project-id --region=northamerica-northeast2 --args=-m,translation_demo,batch,--input-uri,gs://YOUR_INPUT_BUCKET/run-20261104-105856-9ddfc0f01f06/passage.txt,--src,en,--dest,fr,--output-uri,gs://YOUR_OUTPUT_BUCKET/run-20261104-105856-9ddfc0f01f06/ --wait --quiet
+Cloud outputs: gs://YOUR_OUTPUT_BUCKET/run-20261104-105856-9ddfc0f01f06/
+$ gcloud storage cp --recursive gs://YOUR_OUTPUT_BUCKET/run-20261104-105856-9ddfc0f01f06 /tmp/w/results --project=your-project-id --quiet
+[exit 0]
+
+$ python /repo/tutorial/run_job.py ./passage.txt --project=your-project-id --region=northamerica-northeast2 --job=translation-audio --input-bucket=YOUR_INPUT_BUCKET --output-bucket=YOUR_OUTPUT_BUCKET --src=en --download-dir=./results --dry-run | grep -o -- '--args=[^ ]*'
+--args=-m,translation_demo,batch,--input-uri,gs://YOUR_INPUT_BUCKET/run-20261104-105856-e7625e0a164e/passage.txt,--src,en,--dest,fr,--output-uri,gs://YOUR_OUTPUT_BUCKET/run-20261104-105856-e7625e0a164e/
+[exit 0]
+
+$ python /repo/tutorial/run_job.py ./passage.txt --project=your-project-id --region=northamerica-northeast2 --job=translation-audio --input-bucket=YOUR_INPUT_BUCKET --output-bucket=YOUR_OUTPUT_BUCKET --src=en --dest=es --no-download --dry-run
+$ gcloud storage cp /tmp/w/passage.txt gs://YOUR_INPUT_BUCKET/run-20261104-105856-ca1e704007a9/passage.txt --project=your-project-id --quiet
+$ gcloud run jobs execute translation-audio --project=your-project-id --region=northamerica-northeast2 --args=-m,translation_demo,batch,--input-uri,gs://YOUR_INPUT_BUCKET/run-20261104-105856-ca1e704007a9/passage.txt,--src,en,--dest,es,--output-uri,gs://YOUR_OUTPUT_BUCKET/run-20261104-105856-ca1e704007a9/ --wait --quiet
+Cloud outputs: gs://YOUR_OUTPUT_BUCKET/run-20261104-105856-ca1e704007a9/
+[exit 0]
+
+$ python /repo/tutorial/run_job.py ./passage.txt --project=your-project-id --input-bucket=gs://YOUR_INPUT_BUCKET --output-bucket=YOUR_OUTPUT_BUCKET --dry-run 2>&1 | tail -1
+run_job.py: error: input-bucket must be a plain name, without slashes or commas
+[exit 0]
+
+$ python /repo/tutorial/run_job.py ./passage.txt --project=your-project-id --input-bucket=YOUR_INPUT_BUCKET --output-bucket=YOUR_OUTPUT_BUCKET --dest=es,de --dry-run 2>&1 | tail -1
+run_job.py: error: dest must be a plain name, without slashes or commas
+[exit 0]
+
+$ python -c 'print("a" * 5001)' > long.txt; python /repo/tutorial/run_job.py ./long.txt --project=your-project-id --input-bucket=YOUR_INPUT_BUCKET --output-bucket=YOUR_OUTPUT_BUCKET --dry-run 2>&1 | tail -1
+run_job.py: error: Use a nonempty UTF-8 passage of at most 5,000 characters and 20,000 bytes
+[exit 0]
+
+$ command -v gcloud || echo 'no gcloud on PATH'; python /repo/tutorial/run_job.py ./passage.txt --project=your-project-id --region=northamerica-northeast2 --job=translation-audio --input-bucket=YOUR_INPUT_BUCKET --output-bucket=YOUR_OUTPUT_BUCKET --src=en --dest=fr --download-dir=./results; echo "exit status: $?"
+no gcloud on PATH
+$ gcloud storage cp /tmp/w/passage.txt gs://YOUR_INPUT_BUCKET/run-20261104-105857-7067f0befdd1/passage.txt --project=your-project-id --quiet
+Helper stopped: [Errno 2] No such file or directory: 'gcloud'
+exit status: 1
+[exit 0]
+
+$ ls -A /tmp/w
+long.txt
+passage.txt
+[exit 0]
+

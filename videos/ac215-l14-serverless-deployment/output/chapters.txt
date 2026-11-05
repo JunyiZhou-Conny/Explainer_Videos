@@ -1,0 +1,16 @@
+00:00 It works on localhost
+01:17 One app, four ways to deploy it
+02:42 Before you begin: project, region, clone
+04:22 Part 1: write a function
+06:26 What runs your function?
+08:14 Call it with a query string
+10:13 Part 2: the prebuilt app on your laptop
+12:44 Deploy the same image
+15:13 Who may call it, and who it runs as
+17:04 Attach the identity, turn on speech
+19:04 Develop locally with ADC
+21:04 Finite work: a job and two buckets
+22:48 Command, arguments and the job's badge
+25:18 Execute it and collect the files
+27:18 From the terminal, then the helper
+28:53 Clean up, and what serverless costs

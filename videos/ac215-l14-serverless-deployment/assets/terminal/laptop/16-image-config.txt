@@ -1,0 +1,18 @@
+$ docker image inspect --format 'Os/Arch: {{.Os}}/{{.Architecture}}
+User: {{.Config.User}}
+WorkingDir: {{.Config.WorkingDir}}
+ExposedPorts: {{.Config.ExposedPorts}}
+Entrypoint: {{.Config.Entrypoint}}
+Cmd: {{.Config.Cmd}}' cgumb/ac215-translation-demo:lecture14-agent-platform-20261022; docker image inspect --format '{{range .Config.Env}}{{println .}}{{end}}' cgumb/ac215-translation-demo:lecture14-agent-platform-20261022 | grep -E '^(PORT|PYTHON)'
+Os/Arch: linux/amd64
+User: app
+WorkingDir: /app
+ExposedPorts: map[8080/tcp:{}]
+Entrypoint: []
+Cmd: [python -m translation_demo serve]
+PYTHON_VERSION=3.12.15
+PYTHON_SHA256=c2c4321961fab0fb999d66e0cecf521c2ab3994c7992873ea99e306c1094fd5a
+PYTHONUNBUFFERED=1
+PYTHONDONTWRITEBYTECODE=1
+PORT=8080
+[exit 0]

@@ -1,0 +1,5 @@
+$ curl -s http://localhost:8086/ | grep -E '<title>|speech-button'
+  <title>Translate · AC215</title>
+    <button id="speech-button" type="button" disabled title="Translate some text first">Play audio</button>
+  const speechButton = document.getElementById('speech-button');
+[exit 0]

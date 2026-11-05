@@ -1,0 +1,5 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' -X POST -H 'Content-Type: application/json' -d '{"text": "Good afternoon everyone", "src": "en", "dest": "fr"}' http://localhost:8086/api/translate
+{"dest":"fr","src":"en","text":"Bonjour \u00e0 tous"}
+
+[HTTP 200]
+[exit 0]

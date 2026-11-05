@@ -1,0 +1,8 @@
+$ curl -s -i http://localhost:8086/ | grep -E 'HTTP/|Server:|Content-Type:|<title>|speech-button'
+HTTP/1.1 200 OK
+Server: gunicorn
+Content-Type: text/html; charset=utf-8
+  <title>Translate · AC215</title>
+    <button id="speech-button" type="button" disabled title="Enable speech with Agent Platform credentials in part 3">Play audio · enable in part 3</button>
+  const speechButton = document.getElementById('speech-button');
+[exit 0]

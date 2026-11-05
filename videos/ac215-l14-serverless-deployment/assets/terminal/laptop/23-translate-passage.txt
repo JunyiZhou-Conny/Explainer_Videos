@@ -1,0 +1,7 @@
+$ curl -s -X POST -H 'Content-Type: application/json' -d @/tmp/passage.json http://localhost:8086/api/translate | python3 -m json.tool --no-ensure-ascii
+{
+    "dest": "fr",
+    "src": "en",
+    "text": "La pluie du soir est passée.\nDe l’autre côté de la place, une fenêtre s’ouvre.\nQuelqu'un pose une tasse à côté d'un livre\net écoute la rue éveillée."
+}
+[exit 0]

@@ -1,0 +1,3 @@
+$ docker image inspect --format '{{index .RepoDigests 0}}' cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+cgumb/ac215-translation-demo@sha256:c17b6db09f7402febb582bf327920ec9ca4eee113f5ddefa38e9da5619dbe72e
+[exit 0]

@@ -1,0 +1,6 @@
+$ cat tutorial/app/examples/passage.txt
+The evening rain has passed.
+Across the square, a window opens.
+Someone sets a cup beside a book
+and listens to the waking street.
+[exit 0]

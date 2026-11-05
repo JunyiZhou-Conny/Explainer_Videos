@@ -1,0 +1,27 @@
+$ docker run --rm -p 8086:8080 \
+  cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+Unable to find image 'cgumb/ac215-translation-demo:lecture14-agent-platform-20261022' locally
+lecture14-agent-platform-20261022: Pulling from cgumb/ac215-translation-demo
+edf9b1e67d29: Pull complete
+f9c3de56f06f: Pull complete
+87463122edac: Pull complete
+fb02902e2fd3: Pull complete
+b52d28f2ade3: Pull complete
+fd4548892b7d: Pull complete
+0a88a5ef9689: Pull complete
+d4d3a9ea35f2: Pull complete
+69b5ab0270a8: Pull complete
+906bc7311680: Pull complete
+c259fd647b57: Pull complete
+Digest: sha256:c17b6db09f7402febb582bf327920ec9ca4eee113f5ddefa38e9da5619dbe72e
+Status: Downloaded newer image for cgumb/ac215-translation-demo:lecture14-agent-platform-20261022
+[2026-11-04 09:25:18 +0000] [1] [INFO] Starting gunicorn 26.2.0
+[2026-11-04 09:25:18 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+[2026-11-04 09:25:18 +0000] [1] [INFO] Using worker: gthread
+[2026-11-04 09:25:18 +0000] [7] [INFO] Booting worker with pid: 7
+[2026-11-04 09:25:19 +0000] [1] [INFO] Control socket listening at /home/app/.gunicorn/gunicorn.ctl
+^C
+[2026-11-04 09:25:22 +0000] [1] [INFO] Handling signal: int
+[2026-11-04 09:25:22 +0000] [7] [INFO] Worker exiting (pid: 7)
+[2026-11-04 09:25:23 +0000] [1] [INFO] Shutting down: Master
+[exit 0]
