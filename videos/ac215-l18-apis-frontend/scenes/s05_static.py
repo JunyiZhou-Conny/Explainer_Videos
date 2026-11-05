@@ -9,28 +9,31 @@ Beats (script.md "## S05", one voiceover block each):
    CODE(index.html: 4–12) and CODE(index.html: 74–75) come in at the left; each card becomes a GREY
    chip beside its line ("HTML" at <title> (10), "CSS" at the styles.css link (11), "JavaScript" at
    <script src="main.js"> (74)) and the line gets a GREY ring.
-1. Lecture tag off. Tracker [F] 1. A `laptop · new terminal` (prompt ~) types
-   `cd cheese-app-v1/frontend-simple` → a19:2 RED (wrapped); on "Same slip" the bar tag
-   "erratum · add src/", tracker 1 · extra, it types `cd cheese-app-v1/src/frontend-simple && ls`
-   (row tag extra) → a20:2–7.
-2. Tracker [F] 2; the prompt becomes ~/cheese-app-v1/src/frontend-simple; ▶ your turn on the bar on
+1. Lecture tag off. Tracker [F] 1. A README card (README.md · line 75) over a `laptop · new
+   terminal` (prompt ~) that types `cd cheese-app-v1/frontend-simple` → a19:2 RED (wrapped); on
+   "Same slip" the card takes the tag "erratum · add src/" and flashes RED, tracker 1 · extra, it
+   types `cd cheese-app-v1/src/frontend-simple && ls` (row tag extra) → a20:2–7.
+2. Tracker [F] 2; the card becomes README.md · lines 78–82 (Run sh docker-shell.sh · Start Web Server
+   · run http-server from the docker shell); the prompt becomes ~/cheese-app-v1/src/frontend-simple;
+   ▶ your turn on the bar on
    "pause"; it types `sh docker-shell.sh` → a20b:3 (cut), …, 28–29 (cut). Tracker [F] 3: at the
    container prompt of a20b:30 it types `http-server` → a20b:31, 33, 37, 45–47; 37 `Cache: 3600
    seconds` YELLOW; on "The addresses it prints" a GREY brace "container addresses" at 46–47; on "your
-   laptop uses 8080" a small picture above the terminal: the laptop wall's PINK door 8080 piped to the
+   laptop uses 8080" the card goes and a small picture comes in above the terminal: the laptop wall's PINK door 8080 piped to the
    container's door 8080.
 3. Tracker [F] 4, lecture_ref 18–23. V1 RequestTrace (browser localhost:8080, illustration; the laptop
    with the TEAL cheese-app-frontend-simple box, PURPLE http-server, and its /app folder of GREEN file
    icons index.html, main.js, styles.css). Hops 1–3; hop 4's caption "4 the function runs" turns into
    "4 a file is read" (S03's caption left as a GREY ghost) while index.html flashes; hop 5: the
    index.html file rides the response arrow back; hop 6: the page shows "Formaggio.me is here!" and
-   its subtitle. ▶ your turn under the browser on "Pause". Then the hops clear and a 4-row
+   its subtitle. ▶ your turn beside the illustration tag on "Pause". Then the hops clear and a 4-row
    `laptop · second tab` strip types a21 (extra) → a21:2–4 (cache-control YELLOW), 5–7.
 4. Tracker [F] 4 · extra. The strip types a22 (extra) → a22:2–4, line 2 YELLOW; a dashed GREY arrow
-   leaves the page toward a dashed GREY door 9000 with a "?" and the chip "part 2".
+   leaves the page toward a GREY door 9000 (on the laptop's wall) with a "?" and the dashed chip
+   "part 2".
 5. Lecture tag off. Tracker [F] 5. V1 goes; the strip shrinks to 3 rows; the README card (README.md ·
    lines 86–95) with `erratum`: <body>, the welcome line and </body> RED with the RED note "an old
-   whole body · would drop the page and its script tag", the <p> rows GREEN. On "Add only the
+   whole body · would drop the page and its script tag" beside </body>, the <p> rows GREEN. On "Add only the
    paragraph" the card goes, the GREY chip "your editor", the strip grows to 10 rows and types
    `git -C ~/cheese-app-v1 diff -- src/frontend-simple/index.html` (row tag extra) → a23:15–23, the
    + lines GREEN.
@@ -42,8 +45,8 @@ Beats (script.md "## S05", one voiceover block each):
    (wrapped at spaces), chip "check: both still running". Tracker [C1] 2: a 3-row `laptop` strip
    above prints a03:62 (^C), types exit at a03:69's prompt, prints a03:70; then the `laptop · new
    terminal` strip does the same with a20b:57–58, 60, 61. The strips go; the tab types
-   `docker container ls` → a30:2 while the two running rows of a26 slide into that empty header and
-   vanish; the chip becomes "--rm: they removed themselves".
+   `docker container ls` → a30:2; a26's table (its two running rows) slides into that empty header
+   and vanishes, and the rows close up; the chip becomes "--rm: they removed themselves".
 8. Tracker [C1] 3: the tab grows to 10 rows and types `docker system prune` → a31:2–8 (`[y/N] y`
    YELLOW), …, 17. Tracker [C1] 4: `docker image ls` → a32:2–8 (cut after DISK USAGE). Fade; empty
    frame.
@@ -150,6 +153,7 @@ def mark_extra(scene, t: Terminal, line):
     command's last row leaves no room (then it rides the bar until replaced). Returns the tag."""
     tg = beside(extra_row(), line, buff=0.4)
     if tg.get_right()[0] <= t.box.get_right()[0] - 0.1:
+        clear_bar(scene, t)
         pin(scene, line, tg)
         return tg
     old = getattr(t, "bar_tag", None)
@@ -202,6 +206,7 @@ class StaticPages(VoiceScene):
         chips = [grey_chip(s, 22) for s in ("HTML", "CSS", "JavaScript")]
         for c, s in zip(chips, spans):
             c.move_to([chip_x + c.width / 2, s.get_y(), 0])
+        chips[1].shift(RIGHT * (chips[0].width + 0.35))          # CSS beside HTML: the rows are 0.37 apart
         ties = [DashedLine(r.get_right(), c.get_left(), color=S.GREY, stroke_width=2, dash_length=0.08)
                 for r, c in zip(rings, chips)]
         with self.voiceover(SAY[0]) as vo:
@@ -209,10 +214,12 @@ class StaticPages(VoiceScene):
             vo.wait_until("a page")
             self.play(FadeIn(page, scale=0.9), run_time=0.6)
             vo.wait_until("The lecture splits a page")
-            self.play(FadeOut(page, scale=1.1), run_time=0.4)
-            for c, cue in zip(cards, ("HTML for structure", "CSS for style", "and JavaScript for behavior")):
+            self.play(Indicate(page.window, color=INK, scale_factor=1.08), run_time=0.6)
+            for i, (c, cue) in enumerate(zip(cards, ("HTML for structure", "CSS for style",
+                                                     "and JavaScript for behavior"))):
                 vo.wait_until(cue)
-                self.play(FadeIn(c, target_position=[0, 0.6, 0], scale=0.6), run_time=0.6)
+                gone = [FadeOut(page, scale=1.1)] if i == 0 else []
+                self.play(FadeIn(c, target_position=[0, 0.6, 0], scale=0.6), *gone, run_time=0.6)
             self.play(FadeIn(badge, shift=UP * 0.15), run_time=0.5)
             self.play(Indicate(badge.text, color=TOOL, scale_factor=1.06), run_time=0.6)
             vo.wait_until("In version 1")
@@ -226,15 +233,23 @@ class StaticPages(VoiceScene):
         # ========================================================== 1. step 1: the README's path misses src again
         trk = tracker_f(1)
         t = term(P_LAPTOP, rows=9, title=T_NEW, size=20)
-        slip = on_bar(t, row_tag("erratum · add src/"))
+        card1 = readme_card(75, readme_lines(75, 75, V1), size=20, name=f"{V1}/README.md")
+        card1.move_to([-6.45 + card1.width / 2, t.box.get_top()[1] + 0.3 + card1.height / 2, 0])
+        assert card1.get_top()[1] < TRACK_BOTTOM - 0.1 and card1.get_right()[0] < SAFE_X, card1.get_corner(UR)
+        slip = erratum_tag("erratum · add src/")
+        slip.move_to(card1.frame.get_corner(UR) + np.array([-slip.width / 2 - 0.2, 0, 0]))
+        card2 = readme_card((78, 82), readme_lines(78, 82, V1), size=20, name=f"{V1}/README.md")
+        card2.move_to([-6.45 + card2.width / 2, t.box.get_top()[1] + 0.3 + card2.height / 2, 0])
+        assert card2.get_top()[1] < TRACK_BOTTOM - 0.1 and card2.get_right()[0] < SAFE_X, card2.get_corner(UR)
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(p1, p2, *chips, *rings, *ties)), FadeOut(ref0), run_time=0.5)
             self.play(FadeIn(trk, shift=RIGHT * 0.3), FadeIn(t), run_time=0.5)
+            self.play(FadeIn(card1, shift=DOWN * 0.15), run_time=0.5)
             type_capture(self, t, A19, type_time=0.8)
             out(self, t, [(A19.line(2), ERR)], wrap=True, run_time=0.4)
             vo.wait_until("Same slip")
-            self.play(FadeIn(slip, shift=LEFT * 0.1), track(trk, 1, extra=True), run_time=0.5)
-            t.add(slip)
+            self.play(FadeIn(slip, scale=0.9), track(trk, 1, extra=True),
+                      Indicate(card1.body, color=ERR, scale_factor=1.03), run_time=0.6)
             ln2 = type_capture(self, t, A20, type_time=0.8)[0]
             mark_extra(self, t, ln2)
             out(self, t, A20.at((2, 7)), run_time=0.5)
@@ -250,12 +265,11 @@ class StaticPages(VoiceScene):
         lapt = label("your laptop", 20, LAPTOP).next_to(lapf.get_corner(UR), DL, buff=0.1)
         cb = cbox(("cheese-app-", "frontend-simple"), 3.4, 0.84).move_to([4.15, 1.45, 0])
         d_out = door("8080").move_to([lapf.get_left()[0], cb.get_y(), 0])
-        d_in = door("8080", color=CONTAINER).move_to([cb.get_left()[0], cb.get_y(), 0])
+        d_in = door("8080", color=CONTAINER).next_to(cb, LEFT, buff=0)
         pipe = Line(d_out.get_right(), d_in.get_left(), color=ROUTE, stroke_width=6)
         assert pipe.get_length() > 0.5, pipe.get_length()
         with self.voiceover(SAY[2]) as vo:
-            t.remove(slip)
-            self.play(FadeOut(slip), track(trk, 2), run_time=0.4)
+            self.play(FadeOut(slip), ReplacementTransform(card1, card2), track(trk, 2), run_time=0.6)
             cd_prompt(self, t, P_V1_FRONT)
             vo.wait_until("pause")
             turn = on_bar(t, turn_row())
@@ -278,7 +292,7 @@ class StaticPages(VoiceScene):
             self.play(GrowFromCenter(br), FadeIn(br_t), run_time=0.5)
             vo.wait_until("your laptop uses 8080")
             assert lapf.get_bottom()[1] > t.box.get_top()[1] + 0.05, (lapf.get_bottom(), t.box.get_top())
-            self.play(FadeIn(VGroup(lapf, lapt)), FadeIn(cb), FadeIn(d_in), run_time=0.5)
+            self.play(FadeOut(card2), FadeIn(VGroup(lapf, lapt)), FadeIn(cb), FadeIn(d_in), run_time=0.5)
             self.play(FadeIn(d_out, scale=1.3), Create(pipe), run_time=0.7)
             self.play(Indicate(d_out, color=TURN, scale_factor=1.15), run_time=0.6)
 
@@ -300,7 +314,7 @@ class StaticPages(VoiceScene):
         f_tie = Line(net.inner["front"].get_bottom(), folder.get_top(), color=CONTAINER, stroke_width=3)
         app_dir = VGroup(f_tie, folder, f_t, files)
         assert folder.get_bottom()[1] > net.frame.get_bottom()[1] + 0.1, (folder.get_bottom(), net.frame.get_bottom())
-        turn4 = your_turn().next_to(tr.browser, DOWN, buff=0.12).align_to(tr.browser, LEFT)
+        turn4 = your_turn().next_to(ill, RIGHT, buff=0.2)
         tab = term(P_LAPTOP, rows=4, title=T_TAB, size=20)
         assert tab.box.get_top()[1] < net.frame.get_bottom()[1] - 0.01, (tab.box.get_top(), net.frame.get_bottom())
         with self.voiceover(SAY[3]) as vo:
@@ -334,7 +348,8 @@ class StaticPages(VoiceScene):
             vo.wait_until("and the browser draws it")
             self.play(FadeOut(fly, scale=0.6, target_position=tr.browser.at(0, 0)), run_time=0.3)
             self.remove(fly)
-            tr.browser.fill(self, [label(HERO, 24, INK), label("Discover the world of cheese", 20, S.GREY),
+            gap = Rectangle(width=0.1, height=0.3, stroke_width=0, fill_opacity=0)
+            tr.browser.fill(self, [gap, label(HERO, 24, INK), label("Discover the world of cheese", 20, S.GREY),
                                    label("through AI", 20, S.GREY)])
             tr.hop(self, 6, run_time=0.6)
             vo.wait_until("Pause and open it")
@@ -366,7 +381,7 @@ class StaticPages(VoiceScene):
             a9 = DashedVMobject(Arrow(start, d9.get_left() + LEFT * 0.03, buff=0.04, color=S.GREY, stroke_width=4,
                                       tip_length=0.18, max_tip_length_to_length_ratio=0.35),
                                 num_dashes=9).set_stroke(S.GREY, 4)
-            q9 = label("?", 26, S.GREY).next_to(a9, DOWN, buff=0.08)
+            q9 = label("?", 26, S.GREY).move_to(a9.get_center() + UP * 0.38)
             p2c = dashed_chip("part 2").next_to(d9, RIGHT, buff=0.25)
             tr.show(self, d9, a9, q9, p2c, anims=[FadeIn(d9), Create(a9), FadeIn(q9), FadeIn(p2c)], run_time=0.9)
 
@@ -377,8 +392,9 @@ class StaticPages(VoiceScene):
         etag = erratum_tag().move_to(card5.frame.get_corner(UR) + LEFT * 0.9)
         bad_rows = [body[2], body[3], body[7]]
         good_rows = [body[4], body[5], body[6]]
-        enote = err_chip("an old whole body · would drop the page and its script tag", mono_font=False)
-        enote.next_to(body[2], RIGHT, buff=0.6)
+        enote = row_tag("an old whole body · would drop the page and its script tag", ERR)
+        enote.next_to(body[7], RIGHT, buff=0.5)            # beside '</body>' (the rows above it are short)
+        assert enote.get_left()[0] > body[6].get_right()[0] + 0.2 and enote.get_right()[0] < card5.get_right()[0]
         ed = editor_chip()
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(tr), FadeOut(ill), FadeOut(ref1), track(trk, 5), run_time=0.6)
@@ -467,7 +483,7 @@ class StaticPages(VoiceScene):
             for title, cap, lines_a, n_exit, last in ((T_LAPTOP, A03, [62], 69, 70),
                                                        (T_NEW, A20B, [57, 58], 60, 61)):
                 s = term(container_prompt(cap, n_exit), rows=3, title=title, size=20, place=False)
-                s.move_to([0, 1.5, 0])
+                s.shift(np.array([0, check.get_top()[1] + 0.12 - s.box.get_bottom()[1], 0]))
                 assert s.box.get_bottom()[1] > check.get_top()[1] + 0.05 and s.box.get_top()[1] < TRACK_BOTTOM - 0.05
                 self.play(FadeIn(s, shift=DOWN * 0.15), run_time=0.4)
                 out(self, s, [(cap.line(n), ERR if cap.line(n) == "^C" else OUTPUT) for n in lines_a],
@@ -476,15 +492,17 @@ class StaticPages(VoiceScene):
                 out(self, s, [cap.line(last)], run_time=0.3)
                 self.play(FadeOut(s, shift=UP * 0.15), run_time=0.4)
             vo.wait_until("The container list is then empty")
-            data = VGroup(*o26[1:]).copy()
-            self.add(data)
-            for m in o26[1:]:
-                m.set_opacity(0.0)
             clear_bar(self, tab)
             type_capture(self, tab, A30, type_time=0.6)
             hdr = out(self, tab, A30.at(2), run_time=0.4)[0]
-            self.play(data.animate.move_to(hdr).set_opacity(0), run_time=0.7)
-            self.remove(data)
+            data = [m for m in o26 if m in tab.lines.submobjects]
+            for m in data:
+                tab.lines.remove(m)
+            self.play(*[m.animate.move_to(hdr).set_opacity(0) for m in data], run_time=0.7)
+            self.remove(*data)
+            self.play(*[ln.animate.shift(tab._slot(i) - ln.strut.get_corner(UL))
+                        for i, ln in enumerate(tab.lines)], run_time=0.4)
+            self.add(tab)
             self.play(ReplacementTransform(check, rm_chip.move_to(check).align_to(check, RIGHT)), run_time=0.5)
             self.add(tab)
 
