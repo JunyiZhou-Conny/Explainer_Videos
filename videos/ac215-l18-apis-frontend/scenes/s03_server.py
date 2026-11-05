@@ -167,15 +167,19 @@ class ServerAndApp(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(ref0), FadeIn(lap), FadeIn(lap_l), FadeIn(srv), FadeIn(srv_l), run_time=0.7)
             self.play(GrowArrow(req), FadeIn(req_l), run_time=0.6)
-            e_req.move_to(req.get_start())
+            # the envelopes ride inside the loop (under the request arrow, over the response arrow), so
+            # they never cover the arrow labels
+            dy_req = DOWN * (e_req.height / 2 + 0.12)
+            e_req.move_to(req.get_start() + RIGHT * (e_req.width / 2 + 0.1) + dy_req)
             self.play(FadeIn(e_req, scale=0.8), run_time=0.25)
-            self.play(e_req.animate.move_to(req.get_end() + LEFT * (e_req.width / 2 + 0.25)), run_time=0.9)
+            self.play(e_req.animate.move_to(req.get_end() + LEFT * (e_req.width / 2 + 0.25) + dy_req), run_time=0.9)
             self.play(FadeOut(e_req), run_time=0.2)
             vo.wait_until("a server sends a response")
             self.play(GrowArrow(res), FadeIn(res_l), run_time=0.6)
-            e_res.move_to(res.get_start())
+            dy_res = UP * (e_res.height / 2 + 0.12)
+            e_res.move_to(res.get_start() + LEFT * (e_res.width / 2 + 0.25) + dy_res)
             self.play(FadeIn(e_res, scale=0.8), run_time=0.25)
-            self.play(e_res.animate.move_to(res.get_end() + RIGHT * (e_res.width / 2 + 0.1)), run_time=0.9)
+            self.play(e_res.animate.move_to(res.get_end() + RIGHT * (e_res.width / 2 + 0.1) + dy_res), run_time=0.9)
             self.play(FadeOut(e_res), run_time=0.2)
             vo.wait_until("A port picks which program")
             self.play(LaggedStart(*[FadeIn(d, target_position=srv.get_right()) for d in lect], lag_ratio=0.2),
@@ -408,7 +412,14 @@ class ServerAndApp(VoiceScene):
         bars = span_bar(p17.code, 1, 3, TURN, 0.22)
         shift_v = RIGHT * 2.0
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(t), v.animate.shift(shift_v), run_time=0.7)
+            # the plates, the 0.0.0.0 binding, the tick and the eye have done their job: they leave with
+            # the terminal (the opaque panel would otherwise cut them into fragments, and the eye would
+            # run into the route row). The plates come back in beat 12.
+            v.drop(self, v.eth0, v.lo, v.binds, tick1, eye, extra=[FadeOut(t)], run_time=0.5)
+            v.eth0 = v.lo = v.badge = v.host = None
+            v.binds = VGroup()
+            v.add(v.binds)
+            self.play(v.animate.shift(shift_v), run_time=0.6)
             self.play(FadeIn(p5, shift=RIGHT * 0.2), run_time=0.6)
             assert p5.get_right()[0] < v.socket.get_left()[0] - 0.05, (p5.get_right(), v.socket.get_left())
             assert p5.header.get_right()[0] < v.title.get_left()[0] - 0.1, (p5.header.get_right(), v.title.get_left())
@@ -439,8 +450,7 @@ class ServerAndApp(VoiceScene):
         assert same.get_left()[0] > tab.title.get_right()[0] + 0.05, (same.get_left(), tab.title.get_right())
         assert tab.box.get_top()[1] < tr.net.frame.get_bottom()[1] - 0.02
         with self.voiceover(SAY[9]) as vo:
-            v.remove(tick1)
-            self.play(FadeOut(VGroup(p17, bars)), FadeOut(v), FadeOut(tick1), track(trk, 4), run_time=0.6)
+            self.play(FadeOut(VGroup(p17, bars)), FadeOut(v), track(trk, 4), run_time=0.6)
             self.play(FadeIn(tr), FadeIn(ill), FadeIn(ref2), run_time=0.7)
             vo.wait_until("open localhost 9000")
             self.play(tr.browser.flash(TURN), Indicate(tr.browser.address, color=ROUTE, scale_factor=1.15),
@@ -499,6 +509,10 @@ class ServerAndApp(VoiceScene):
             vo.wait_until("the slide labels the inside")
             self.play(Create(tie), FadeIn(old_b), FadeIn(old_t), run_time=0.6)
             self.play(FadeIn(notes, shift=UP * 0.1), run_time=0.4)
+            self.wait(0.8)
+            self.play(Circumscribe(bx, color=CONTAINER, stroke_width=3, buff=0.08), run_time=1.0)
+            tr.heal(self)
+            self.add(tie, old_b, old_t, notes)
             vo.wait_until("Take it as port 9000")
             self.play(Transform(old_b, new_b), Transform(old_t, new_t), run_time=0.9)
             vo.wait_until("uvicorn listens on 0.0.0.0")
@@ -506,29 +520,43 @@ class ServerAndApp(VoiceScene):
                       run_time=0.8)
             tr.heal(self)
             self.add(tie, old_b, old_t, notes)   # back above the laptop's opaque frame
+            self.wait(1.0)
+            self.play(Circumscribe(old_b, color=CONTAINER, stroke_width=3, buff=0.06), run_time=1.1)
+            self.add(tie, old_b, old_t, notes)
 
         # ========================================================== 12. what if it listened on 127.0.0.1?
         b_icon = browser_icon(0.9, name="your browser")
-        curl_box = RoundedRectangle(width=0.95, height=0.44, corner_radius=0.08, stroke_color=S.GREY,
+        curl_box = RoundedRectangle(width=0.86, height=0.44, corner_radius=0.08, stroke_color=S.GREY,
                                     stroke_width=2.5).set_fill(TERM_BG, 1)
         curl_t = mono("curl", 20, INK).move_to(curl_box)
         curl_i = VGroup(curl_box, curl_t)
         with self.voiceover(SAY[12]) as vo:
             self.play(FadeOut(VGroup(tr, ill, tie, old_b, old_t, notes)), FadeOut(ref2), run_time=0.6)
-            self.play(FadeIn(v), run_time=0.7)
+            eth0 = door("eth0", color=S.GREY, size=v.size).move_to(v.p(-4.5, 0.55))
+            lo = door("lo · 127.0.0.1", color=S.GREY, size=v.size, mono_font=False).move_to(v.p(-3.2, -1.55))
+            self.play(FadeIn(v), FadeIn(eth0), FadeIn(lo), run_time=0.7)
+            self.remove(eth0, lo)
+            v.add(eth0, lo)
+            v.eth0, v.lo = eth0, lo
+            v.heal(self)
+            v.bind(self, "0.0.0.0", run_time=0.5)
             b_icon.move_to([-5.55, v.eth0.get_y() - 0.1, 0])
-            curl_i.move_to(v.p(-4.05, -0.62))
+            curl_i.move_to(v.p(-3.95, -0.62))
+            assert curl_i.get_left()[0] > v.container.get_left()[0] + 0.08, (curl_i.get_left(), v.container.get_left())
+            assert curl_i.get_top()[1] < v.badge.get_bottom()[1] - 0.08, (curl_i.get_top(), v.badge.get_bottom())
+            assert lo.get_bottom()[1] > v.container.get_bottom()[1] + 0.1, (lo.get_bottom(), v.container.get_bottom())
             assert b_icon.get_right()[0] < v.eth0.get_left()[0] - 0.6, (b_icon.get_right(), v.eth0.get_left())
             vo.wait_until("If uvicorn listened on 127.0.0.1")
             v.bind(self, "127.0.0.1", run_time=0.8)
             self.play(Indicate(v.badge, color=TURN, scale_factor=1.15), run_time=0.6)
             v.heal(self)
             vo.wait_until("would a curl from inside")
-            a_in = DashedVMobject(Arrow(curl_i.get_bottom() + DOWN * 0.02,
-                                        v.lo.get_left() + LEFT * 0.04, buff=0.02, color=ROUTE, stroke_width=4,
-                                        tip_length=0.16, max_tip_length_to_length_ratio=0.5),
-                                  num_dashes=5).set_stroke(ROUTE, 4)
-            q_in = label("?", 26, ROUTE).next_to(curl_i, LEFT, buff=0.12)
+            a_in = DashedVMobject(Arrow(curl_i.get_bottom() + DOWN * 0.03,
+                                        [curl_i.get_x() + 0.1, v.lo.get_top()[1] + 0.03, 0], buff=0, color=ROUTE,
+                                        stroke_width=4, tip_length=0.15, max_tip_length_to_length_ratio=0.5),
+                                  num_dashes=3).set_stroke(ROUTE, 4)
+            q_in = label("?", 26, ROUTE).next_to(a_in, LEFT, buff=0.12)
+            assert q_in.get_left()[0] > v.container.get_left()[0] + 0.05, (q_in.get_left(), v.container.get_left())
             self.play(FadeIn(curl_i, scale=1.2), run_time=0.4)
             self.play(Create(a_in), FadeIn(q_in), run_time=0.6)
             vo.wait_until("And your browser")

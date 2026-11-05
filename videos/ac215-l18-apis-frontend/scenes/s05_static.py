@@ -214,12 +214,12 @@ class StaticPages(VoiceScene):
             vo.wait_until("a page")
             self.play(FadeIn(page, scale=0.9), run_time=0.6)
             vo.wait_until("The lecture splits a page")
-            self.play(Indicate(page.window, color=INK, scale_factor=1.08), run_time=0.6)
+            self.play(page.animate.scale(1.08), rate_func=there_and_back, run_time=0.6)
             for i, (c, cue) in enumerate(zip(cards, ("HTML for structure", "CSS for style",
                                                      "and JavaScript for behavior"))):
                 vo.wait_until(cue)
                 gone = [FadeOut(page, scale=1.1)] if i == 0 else []
-                self.play(FadeIn(c, target_position=[0, 0.6, 0], scale=0.6), *gone, run_time=0.6)
+                self.play(FadeIn(c, shift=UP * 0.25, scale=0.8), *gone, run_time=0.6)
             self.play(FadeIn(badge, shift=UP * 0.15), run_time=0.5)
             self.play(Indicate(badge.text, color=TOOL, scale_factor=1.06), run_time=0.6)
             vo.wait_until("In version 1")
@@ -339,11 +339,10 @@ class StaticPages(VoiceScene):
             self.play(Indicate(files[0], color=TURN, scale_factor=1.15), run_time=0.6)
             tr.heal(self)
             vo.wait_until("a file comes back")
+            arr5 = tr.hop(self, 5, "front", run_time=0.7)
             fly = file_icon("index.html", OWN).move_to(files[0])
             self.add(fly)
-            self.play(fly.animate.move_to(net.tunnels["front"].get_end() + RIGHT * (fly.width / 2 + 0.05)),
-                      run_time=0.5)
-            arr5 = tr.hop(self, 5, "front", run_time=0.7)
+            self.play(fly.animate.move_to(arr5.get_start()), run_time=0.5)
             self.play(MoveAlongPath(fly, arr5.copy()), run_time=0.8)
             vo.wait_until("and the browser draws it")
             self.play(FadeOut(fly, scale=0.6, target_position=tr.browser.at(0, 0)), run_time=0.3)
@@ -360,12 +359,12 @@ class StaticPages(VoiceScene):
         self.play(FadeOut(ghost), FadeIn(tab, shift=UP * 0.2), run_time=0.5)
         ln21 = type_capture(self, tab, A21, type_time=1.0)[0]
         mark_extra(self, tab, ln21)
-        o21 = out(self, tab, [(A21.line(2), OWN), A21.line(3), A21.line(4)], run_time=0.5)
+        o21 = out(self, tab, [(A21.line(2), OWN), A21.line(3)], run_time=0.4)
         self.play(substring(o21[1], "max-age=3600").animate.set_color(TURN), run_time=0.4)
         self.add(tab)
-        self.wait(0.6)
-        out(self, tab, A21.at((5, 7)), run_time=0.5)
-        self.wait(0.6)
+        self.wait(0.5)
+        out(self, tab, A21.at((4, 7)), run_time=0.5)
+        self.wait(0.4)
 
         # ========================================================== 4. extra: main.js holds sample data; part 2 adds the API
         d9 = door("9000", color=S.GREY)
@@ -375,14 +374,16 @@ class StaticPages(VoiceScene):
             ln22 = type_capture(self, tab, A22, type_time=0.9)[0]
             mark_extra(self, tab, ln22)
             vo.wait_until("the podcasts are sample data")
-            out(self, tab, [(A22.line(2), TURN)] + A22.at(3, 4), run_time=0.5)
+            out(self, tab, [(A22.line(2), TURN), A22.line(3)], run_time=0.5)
             vo.wait_until("Part 2 adds")
+            out(self, tab, [A22.line(4)], run_time=0.3)
             start = tr.browser.at(0.55, -0.45)
             a9 = DashedVMobject(Arrow(start, d9.get_left() + LEFT * 0.03, buff=0.04, color=S.GREY, stroke_width=4,
                                       tip_length=0.18, max_tip_length_to_length_ratio=0.35),
                                 num_dashes=9).set_stroke(S.GREY, 4)
-            q9 = label("?", 26, S.GREY).move_to(a9.get_center() + UP * 0.38)
-            p2c = dashed_chip("part 2").next_to(d9, RIGHT, buff=0.25)
+            q9 = label("?", 26, S.GREY).next_to(d9, RIGHT, buff=0.18)      # clear of the wall line
+            p2c = dashed_chip("part 2").next_to(q9, RIGHT, buff=0.22)
+            assert p2c.get_right()[0] < folder.get_left()[0] - 0.1, (p2c.get_right(), folder.get_left())
             tr.show(self, d9, a9, q9, p2c, anims=[FadeIn(d9), Create(a9), FadeIn(q9), FadeIn(p2c)], run_time=0.9)
 
         # ========================================================== 5. step 5: add only the paragraph
@@ -413,7 +414,7 @@ class StaticPages(VoiceScene):
             self.play(*[r.animate.set_color(OWN) for r in good_rows], run_time=0.5)
             self.play(Indicate(VGroup(*good_rows), color=OWN, scale_factor=1.04), run_time=0.6)
             self.play(FadeOut(VGroup(card5, etag, enote)), run_time=0.4)
-            resize(self, tab, 10, run_time=0.6)
+            resize(self, tab, 13, run_time=0.6)
             under_term(tab, ed)
             self.play(FadeIn(ed, shift=DOWN * 0.1), run_time=0.4)
             ln23 = type_capture(self, tab, A23, type_time=1.0)[0]
@@ -466,31 +467,36 @@ class StaticPages(VoiceScene):
         check = grey_chip("check: both still running")
         rm_chip = grey_chip("--rm: they removed themselves")
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(bw), FadeOut(ill6), FadeOut(tab.lines), run_time=0.5)
-            for m in list(tab.lines):
+            gone_lines = list(tab.lines)
+            for m in gone_lines:
                 tab.lines.remove(m)
-            swap_tracker(self, trk, trk2)
+            swap_tracker(self, trk, trk2, FadeOut(bw), FadeOut(ill6), FadeOut(VGroup(*gone_lines)))
+            self.remove(*gone_lines)
             trk = trk2
-            resize(self, tab, 7, run_time=0.5)
-            ln26 = type_capture(self, tab, A26, type_time=0.9)
+            resize(self, tab, 7, run_time=0.4)
+            ln26 = type_capture(self, tab, A26, type_time=0.45)
             mark_extra(self, tab, ln26[0])
-            o26 = out(self, tab, A26.at((2, 4)), wrap=True, run_time=0.5)
+            o26 = out(self, tab, A26.at((2, 4)), wrap=True, run_time=0.3)
             under_term(tab, check)
-            self.play(FadeIn(check, shift=DOWN * 0.1), run_time=0.4)
+            self.play(FadeIn(check, shift=DOWN * 0.1), run_time=0.3)
             # the two servers' own terminals, one after the other, above the tab
             vo.wait_until("press Control C")
             self.play(track(trk, 2), run_time=0.4)
+            prev = None
             for title, cap, lines_a, n_exit, last in ((T_LAPTOP, A03, [62], 69, 70),
                                                        (T_NEW, A20B, [57, 58], 60, 61)):
                 s = term(container_prompt(cap, n_exit), rows=3, title=title, size=20, place=False)
                 s.shift(np.array([0, check.get_top()[1] + 0.12 - s.box.get_bottom()[1], 0]))
                 assert s.box.get_bottom()[1] > check.get_top()[1] + 0.05 and s.box.get_top()[1] < TRACK_BOTTOM - 0.05
-                self.play(FadeIn(s, shift=DOWN * 0.15), run_time=0.4)
+                gone = [FadeOut(prev, shift=UP * 0.15)] if prev is not None else []
+                self.play(FadeIn(s, shift=DOWN * 0.15), *gone, run_time=0.3)
                 out(self, s, [(cap.line(n), ERR if cap.line(n) == "^C" else OUTPUT) for n in lines_a],
-                    run_time=0.3)
-                type_at(self, s, cap, n_exit, type_time=0.3)
-                out(self, s, [cap.line(last)], run_time=0.3)
-                self.play(FadeOut(s, shift=UP * 0.15), run_time=0.4)
+                    run_time=0.25)
+                type_at(self, s, cap, n_exit, type_time=0.25)
+                out(self, s, [cap.line(last)], run_time=0.25)
+                self.wait(0.2)
+                prev = s
+            self.play(FadeOut(prev, shift=UP * 0.15), run_time=0.3)
             vo.wait_until("The container list is then empty")
             clear_bar(self, tab)
             type_capture(self, tab, A30, type_time=0.6)
@@ -505,6 +511,8 @@ class StaticPages(VoiceScene):
             self.add(tab)
             self.play(ReplacementTransform(check, rm_chip.move_to(check).align_to(check, RIGHT)), run_time=0.5)
             self.add(tab)
+            flash_tag(self, rm_chip, S.GREY)
+            self.wait(0.6)
 
         # ========================================================== 8. prune, then what stays
         with self.voiceover(SAY[8]) as vo:

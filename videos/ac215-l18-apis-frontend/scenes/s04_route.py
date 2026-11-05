@@ -112,6 +112,20 @@ class _Quiet:
         pass
 
 
+CARD_WIDEN = 0.2                     # the app card grows 0.2 to the left (socket's right edge is 0.37 away)
+
+
+def _widen(card, by: float = CARD_WIDEN):
+    """Give V3's app card more room: the frame grows to the left, the title follows, so the
+    api.service:app chips (aligned to the frame) clear the routes column."""
+    fr = card.frame
+    r = fr.get_right()[0]
+    fr.stretch_to_fit_width(fr.width + by)
+    fr.shift(RIGHT * (r - fr.get_right()[0]))
+    card.title.shift(LEFT * by)
+    return card
+
+
 def _first_row(rows, sub):
     for r in rows:
         if sub in r.text:
@@ -127,6 +141,9 @@ class FunctionToUrl(VoiceScene):
         trk = tracker_a(4)
         v = ServerAppDiagram()
         v.shift(V3_END - v.ref.get_center())
+        _widen(v.card)
+        v._card = lambda routes, _make=v._card: _widen(_make(routes))     # the reloaded card too
+        assert v.card.frame.get_left()[0] > v.socket.get_right()[0] + 0.12, (v.card.frame.get_left(), v.socket.get_right())
         quiet = _Quiet()                     # S03's end state, built without playing anything
         v.add_route(quiet, "GET / → get_index")
         v.split_target(quiet)
@@ -218,7 +235,11 @@ class FunctionToUrl(VoiceScene):
             vo.wait_until("swaps in a fresh app")
             v.reload(self, ["GET / → get_index", "GET /square_root/"], run_time=1.2)
             v.remove(eye)                    # the eye stays above the fresh (opaque) card
+            eye.next_to(v.chips[0], RIGHT, buff=0.1)
             v.add(eye)
+            rw = v.routes[1]
+            assert rw.get_left()[0] > v.chips[1].get_right()[0] + 0.25, (rw.get_left(), v.chips[1].get_right())
+            assert v.card.head.get_left()[0] > v.card.title.get_right()[0] + 0.25
             v.heal(self)
             out(self, ut, A03.at((51, 53)) + [(A03.line(54), OWN)], run_time=0.6)
             vo.wait_until("You restarted nothing")
@@ -324,6 +345,8 @@ class FunctionToUrl(VoiceScene):
 
         # ========================================================== 7. the server's log
         lt = term(container_prompt(A03, 38), rows=8, title=T_LAPTOP, size=20)
+        lt.shift(UP * (-0.35 - lt.box.get_y()))     # centred under the tracker: the log is the whole picture
+        assert lt.box.get_top()[1] < TRACK_BOTTOM - 0.1, (lt.box.get_top(), TRACK_BOTTOM)
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(u), FadeOut(tab), run_time=0.5)
             self.play(FadeIn(lt), run_time=0.4)
@@ -376,7 +399,8 @@ class FunctionToUrl(VoiceScene):
         ex8 = extra_tag("openapi.json")
         tags8 = VGroup(ill8, ex8).arrange(RIGHT, buff=0.25).next_to(docs, UP, buff=0.08).align_to(docs, RIGHT)
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(lt), track(trk, 8), FadeIn(tab8), FadeIn(tbl, shift=DOWN * 0.15), run_time=0.5)
+            self.play(FadeOut(lt), track(trk, 8), run_time=0.4)     # the log leaves first (it sat where the card lands)
+            self.play(FadeIn(tab8), FadeIn(tbl, shift=DOWN * 0.15), run_time=0.4)
             l10 = type_capture(self, tab8, A10, type_time=1.0)[0]
             ex10 = extra_row()
             on_bar(tab8, ex10)

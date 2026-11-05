@@ -205,27 +205,40 @@ def log_cut(n: int, room: int = 72) -> str:
     return cut(s, '" ' + s.rsplit('" ', 1)[1].split(" ")[0])
 
 
-def log_line(scene, log: Terminal, item):
-    """PLAYS: one line into the 1-row uvicorn log strip, quickly (the old line fades, the new one prints)."""
-    room(scene, log, 1, run_time=0.25)
-    log.print(scene, [item], run_time=0.14, lag=0)
+def log_line(scene, log: Terminal, item, hold: float = 0.2):
+    """PLAYS: one line into the 1-row uvicorn log strip: the old line drifts up and fades while the new
+    one fades in on the same row (one cross-fade), then holds briefly so each line can be read."""
+    s, col = (item, OUTPUT) if isinstance(item, str) else item
+    old = list(log.lines)
+    for m in old:
+        log.lines.remove(m)
+    ln = mono_line(log._cut(s), log.size, col)
+    log._place(ln, 0)
+    log.lines.add(ln)
+    anims = [FadeIn(ln, shift=UP * 0.12)]
+    if old:
+        anims.append(FadeOut(VGroup(*old), shift=UP * 0.18))
+    scene.play(*anims, run_time=0.2)
+    if old:
+        scene.remove(*old)
+    if hold > 0:
+        scene.wait(hold)
 
 
 def k8s_bubble(scene, pl: ProbeLamps, at=(0.0, -2.6), run_time: float = 1.0):
     """PLAYS: ProbeLamps.bubble() with the restart arrow LEFT of the liveness lamp (the shared one puts
     it above the lamp, on the box's title). Returns (bubble, restart arrow, the two traffic arrows)."""
     lb = tool_chip("load balancer", pl.size, mono_font=False)
-    bxs = VGroup(*[RoundedRectangle(width=0.7, height=0.42, corner_radius=0.06, stroke_color=c,
+    bxs = VGroup(*[RoundedRectangle(width=0.7, height=0.3, corner_radius=0.06, stroke_color=c,
                                     stroke_width=3).set_fill(tint(c, 0.25), 1) for c in (OWN, OWN, AMBER)])
-    bxs.arrange(RIGHT, buff=0.3)
-    grp = VGroup(lb, bxs).arrange(RIGHT, buff=0.8)
+    bxs.arrange(DOWN, buff=0.12)
+    grp = VGroup(lb, bxs).arrange(RIGHT, buff=1.0)
     arrs = VGroup(*[Arrow(lb.get_right(), b.get_left(), buff=0.06, color=ROUTE, stroke_width=3,
-                          tip_length=0.12) for b in bxs[:2]])
-    arrs[1].put_start_and_end_on(lb.get_right(), bxs[1].get_bottom() + DOWN * 0.02)
+                          tip_length=0.12, max_tip_length_to_length_ratio=0.2) for b in bxs[:2]])
     hd = label("Kubernetes (Lectures 19, 22) can use these", pl.size, S.GREY)
     content = VGroup(hd, VGroup(grp, arrs)).arrange(DOWN, buff=0.18)
     b = thought_bubble(content).move_to(pl.p(*at))
-    rs = restart_glyph().next_to(pl.lamps["healthz"], LEFT, buff=0.22)
+    rs = restart_glyph(0.15).next_to(pl.lamps["healthz"], LEFT, buff=0.08)
     pl.show(scene, b, rs, run_time=run_time, into=pl.marks)
     return b, rs, arrs
 
@@ -547,6 +560,7 @@ class AliveAndReady(VoiceScene):
             vo.wait_until("and every start reuses it")
             self.play(FadeIn(once, shift=UP * 0.1), Create(rst), run_time=0.6)
             self.play(Rotate(rst, -TAU, about_point=rst.get_center()), run_time=0.8)
+            self.wait(0.8)
 
         # ========================================================== 8. extra: version 1 habits fail; the route map
         rmap = route_map()
@@ -577,11 +591,10 @@ class AliveAndReady(VoiceScene):
             self.play(Indicate(rmap.lamps, color=TURN, scale_factor=1.05), run_time=0.6)
         # the README's own troubleshooting rows, read in the tail (no SAY)
         self.add(rmap)
-        self.play(FadeOut(rmap), run_time=0.4)
         clear_bar(self, tab)
-        resize(self, tab, 3, run_time=0.4)
-        rec.move_to([0, (tab.box.get_top()[1] + PIC_TOP) / 2, 0])
-        assert rec.get_bottom()[1] > tab.box.get_top()[1] + 0.05 and rec.get_top()[1] < PIC_TOP + 0.05, rec.get_top()
+        self.play(FadeOut(rmap), FadeOut(tab), run_time=0.5)
+        rec.move_to([0, (PIC_TOP - SAFE_Y) / 2, 0])
+        assert rec.get_bottom()[1] > -SAFE_Y + 0.05 and rec.get_top()[1] < PIC_TOP + 0.05, rec.get_top()
         self.play(FadeIn(rec, shift=UP * 0.15), run_time=0.5)
         for r in rec.body:
             self.play(Indicate(r, color=INK, scale_factor=1.02), run_time=0.8)
@@ -589,8 +602,7 @@ class AliveAndReady(VoiceScene):
 
         # ========================================================== 9. PONDER: restart or wait?
         with self.voiceover(SAY[9]) as vo:
-            clear_bar(self, tab)
-            self.play(FadeOut(rec), FadeOut(tab), track(trk, 4), run_time=0.5)
+            self.play(FadeOut(rec), track(trk, 4), run_time=0.5)
             self.play(FadeIn(pl), run_time=0.6)
             vo.wait_until("Healthz says 200")
             self.play(Indicate(pl.statuses["healthz"], color=OWN), run_time=0.6)
@@ -621,7 +633,7 @@ class AliveAndReady(VoiceScene):
             vo.wait_until("A restart would only start the loading over")
             self.play(FadeOut(tab2), FadeOut(log), run_time=0.5)
             vo.wait_until("Kubernetes")
-            bub, rs, arrs = k8s_bubble(self, pl, at=(0.0, -2.6), run_time=1.0)
+            bub, rs, arrs = k8s_bubble(self, pl, at=(0.0, -3.0), run_time=1.0)
             assert bub.get_bottom()[1] > -SAFE_Y and bub.get_top()[1] < pl.box.get_bottom()[1] + 0.01, bub.get_top()
             vo.wait_until("restart on liveness")
             self.play(Indicate(pl.lamps["healthz"], color=OWN), Rotate(rs, -TAU, about_point=rs.get_center()),

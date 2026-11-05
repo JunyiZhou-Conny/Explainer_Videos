@@ -258,13 +258,14 @@ class VectorDb(VoiceScene):
         pre = card([it1, it2, it3], head="README · Prerequisites", buff=0.3)
         pre.move_to([-6.45 + pre.width / 2, 2.6 - pre.height / 2, 0])
         ill = illustration_tag("illustration · README:13–18")
-        ill.move_to(pre.frame.get_corner(UL) + np.array([ill.width / 2 + 0.2, 0, 0]))   # left: the cost tie runs right
+        ill.next_to(pre.frame, UP, buff=0.08).align_to(pre.frame, LEFT).shift(RIGHT * 0.2)   # above: on the edge it covered the head
         cost = cost_tag("with your key: chat and embedding calls bill your project")
         cost.move_to([6.45 - cost.width / 2, 3.2, 0])       # above the card's right end (no tracker yet)
         assert cost.get_bottom()[1] > pre.get_top()[1] + 0.05, (cost.get_bottom(), pre.get_top())
-        cost_tie = DashedLine(it1.get_right() + RIGHT * 0.1, [cost.get_left()[0] + 0.4, cost.get_bottom()[1], 0],
+        cost_tie = DashedLine(it1.get_right() + RIGHT * 0.12, [it1.get_right()[0] + 0.45, cost.get_bottom()[1], 0],
                               color=COST, stroke_width=2, dash_length=0.08)
         assert cost.get_right()[0] < SAFE_X - 0.05, cost.get_right()
+        assert cost.get_left()[0] < it1.get_right()[0] + 0.25 and ill.get_top()[1] < cost.get_bottom()[1] + 0.6, cost.get_left()
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(net), run_time=0.5)
             self.play(FadeIn(pre.frame), FadeIn(pre.head), FadeIn(ill), run_time=0.5)
@@ -340,7 +341,9 @@ class VectorDb(VoiceScene):
 
         # ========================================================== 4. the lecture's first step; cd, docker-shell.sh
         trk2 = tracker_v(1)
-        ref = lref("45 (APIs)")
+        lref("45 (APIs)")                      # validates the deck name; lecture_ref() would read 'slides 45'
+        ref = tag("Lecture 18 · slide 45 (APIs)", S.GREY)
+        ref.move_to([6.6 - ref.width / 2, 3.6 - ref.height / 2, 0])
         slide = card(["step 1: make sure the vector database is running"], head="slide 45 (APIs)", size=24)
         slide.move_to([0, 0.6, 0])
         with self.voiceover(SAY[4]) as vo:
@@ -439,7 +442,7 @@ class VectorDb(VoiceScene):
         del o53
 
         # ========================================================== 7. the RAG lecture's outputs, downloaded
-        tab = term(P_V2_VDB, rows=4, title=T_TAB, size=20, place=False)
+        tab = term(P_V2_VDB, rows=5, title=T_TAB, size=20, place=False)
         tab.shift(np.array([-tab.box.get_center()[0], 2.7 - tab.box.get_top()[1], 0]))      # the tab on top
         l5 = dashed_chip("Lecture 5 · chunk → embed", size=22)
         with self.voiceover(SAY[7]) as vo:
@@ -470,10 +473,11 @@ class VectorDb(VoiceScene):
         # ========================================================== 8. step 3: chat, and the first Google call
         inset_lap = grey_chip("laptop · cli.py")
         inset_vx = cloud_shape("Vertex AI", CLOUD, cloud_w=2.2)
-        inset_lap.move_to([0.6, 2.05, 0])
-        inset_vx.move_to([5.1, 2.05, 0])
+        inset_lap.move_to([0.0, 2.05, 0])
+        inset_vx.move_to([5.3, 2.05, 0])
         icall = route(inset_lap.get_right() + RIGHT * 0.05, inset_vx.get_left() + RIGHT * 0.1, color=ROUTE)
         icost = cost_row("with your key: billed").next_to(icall, UP, buff=0.08)
+        assert icost.get_right()[0] < inset_vx.get_left()[0] - 0.05 and icost.get_left()[0] > inset_lap.get_right()[0], icost.get_right()
         ix = cross_glyph(0.28).move_to(icall.get_end() + LEFT * 0.2 + DOWN * 0.0)
         ans = grey_chip("with your key: an answer from the books")
         with self.voiceover(SAY[8]) as vo:
@@ -499,7 +503,8 @@ class VectorDb(VoiceScene):
             self.add(t)
             vo.wait_until("With your key")
             ans.next_to(t.box, UP, buff=0.14).align_to(t.box, LEFT)
-            assert ans.get_right()[0] < inset_lap.get_left()[0] - 0.1, (ans.get_right(), inset_lap.get_left())
+            assert ans.get_right()[0] < inset_lap.get_left()[0] - 0.1 or ans.get_top()[1] < inset_lap.get_bottom()[1] - 0.05, \
+                (ans.get_corner(UR), inset_lap.get_corner(DL))
             self.play(FadeIn(ans, shift=DOWN * 0.1), run_time=0.5)
             flash_tag(self, ans, S.GREY)
 
@@ -516,23 +521,32 @@ class VectorDb(VoiceScene):
             bar = line_bar(p9.code, 7, TURN)
             self.play(FadeIn(bar), q.animate.set_color(TURN), run_time=0.5)
             self.add(p9, bar)
-            fixed = grey_chip("fixed question · edit this line").next_to(q, RIGHT, buff=0.6)
+            fixed = row_tag("fixed question · edit this line")
             # on the blank line 376, right of line 375's end: no glyph under it
             above = code_span(p9.code, 5, 'collection_name = f"{method}-collection"')
             fixed.move_to([max(q.get_right()[0], above.get_right()[0]) + 0.4 + fixed.width / 2,
-                           (above.get_center()[1] + q.get_center()[1]) / 2, 0])
+                           bar.get_top()[1] + 0.01 + fixed.height / 2, 0])     # sits on line 377's bar
+            assert fixed.get_left()[0] > above.get_right()[0] + 0.2, (fixed.get_left(), above.get_right())   # past 375's end
             assert fixed.get_right()[0] < p9.get_right()[0] - 0.1, (fixed.get_right(), p9.get_right())
             vo.wait_until("there is no place to type yours")
             self.play(FadeIn(fixed, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("To ask another")
             flash_tag(self, fixed, S.GREY)
             self.play(Indicate(q, color=TURN, scale_factor=1.06), run_time=0.6)
-            self.add(p9, bar)
+            self.add(p9, bar, fixed)             # the tag stays on top of the panel
 
         # ========================================================== 10. step 4: exit; Chroma stays; the phone book
         net10 = TwoLocalhosts(rows=("vdb",), front="react", cli=True, built=True, cable=True)
+        # the strip grows to 5 rows here (b07's 2-row command + its 3 output rows stay readable together), so the
+        # laptop gets a shorter frame (3.45 instead of 4.0: only the vdb row and the phone book live in it)
         net10.shift(np.array([0.3, 0.75, 0]))
-        assert net10.frame.get_bottom()[1] > t.box.get_top()[1] + 0.1, (net10.frame.get_bottom(), t.box.get_top())
+        _bl = net10.frame.get_corner(DL)
+        net10.frame.become(RoundedRectangle(width=net10.frame.width, height=3.45, corner_radius=0.16, stroke_color=LAPTOP,
+                                            stroke_width=3).set_fill(S.BG, 1).move_to(_bl, aligned_edge=DL))
+        net10.title.align_to(net10.frame, UP).shift(DOWN * 0.12)
+        T10_TOP = BOTTOM + term(P_V2, rows=5, size=20).box.height
+        net10.shift(UP * (T10_TOP + 0.12 - net10.frame.get_bottom()[1]))
+        assert net10.frame.get_top()[1] < PIC_TOP + 0.01, net10.frame.get_top()
         hd = label(f"{NETWORK} · names", 20, NET)
         nm = mono(C_VDB, 20, INK)
         ar = label("→", 20, S.GREY)
@@ -544,7 +558,9 @@ class VectorDb(VoiceScene):
         inner.move_to(bfr).align_to(bfr, LEFT).shift(RIGHT * 0.25)
         book = VGroup(bfr, inner)
         cab = net10.cable
-        book.move_to([net10.frame.get_center()[0], 1.55, 0])
+        book.move_to([net10.frame.get_center()[0],
+                      (net10.boxes["vdb"].get_top()[1] + net10.title.get_bottom()[1]) / 2, 0])
+        assert book.get_bottom()[1] > net10.boxes["vdb"].get_top()[1] + 0.1, (book.get_bottom(), net10.boxes["vdb"].get_top())
         assert book.get_left()[0] < cab.get_x() - 0.2 < book.get_right()[0] - 0.2, (book.get_left(), cab.get_x())
         tie = Line(cab.get_top(), [cab.get_x(), book.get_bottom()[1], 0], color=NET, stroke_width=4)
         assert book.get_left()[0] > net10.frame.get_left()[0] + 0.1 and book.get_top()[1] < net10.title.get_bottom()[1] - 0.05, \
@@ -557,19 +573,19 @@ class VectorDb(VoiceScene):
             out(self, t, [B06.line(299)], run_time=0.3)
             t.set_prompt(P_V2_VDB)
             vo.wait_until("Chroma keeps running")
+            resize(self, t, 5, run_time=0.4)
+            assert abs(t.box.get_top()[1] - T10_TOP) < 0.01, (t.box.get_top(), T10_TOP)
             self.play(FadeIn(net10), run_time=0.5)
             self.play(net10.light("vdb", OWN), run_time=0.4)
             vo.wait_until("as an extra docker ps shows")
             self.play(track(trk, 5, extra=True), run_time=0.4)
             type_capture(self, t, B07, type_time=0.6)
-            self.wait(0.7)                       # the 3-row strip: let the command be read before it scrolls
             o7 = out(self, t, B07.at(2, 3), wrap=True, run_time=0.4)
             recolor(self, o7[-1], "0.0.0.0:8000->8000/tcp", ROUTE)
             self.add(t)
             self.play(net10.door_pulse("vdb", ROUTE), run_time=0.6)
             vo.wait_until("and the network's phone book")
             type_capture(self, t, B10, type_time=0.6)
-            self.wait(0.7)
             o10 = out(self, t, [B10.line(2)], run_time=0.3)
             net10.show(self, tie, bfr, hd, anims=[Create(tie), FadeIn(bfr, scale=0.9), FadeIn(hd)], run_time=0.6)
             vo.wait_until("turns its name into an address")
