@@ -120,7 +120,7 @@ S04:
 - en: "Its four steps: open the console, enable the APIs, write a Python file, deploy. One name has changed: Cloud Functions are now Cloud Run functions, so the README starts at Cloud Run, Services, Write a function."
   zh:
   - "它的四步：打开控制台、启用 API、写一个 Python 文件、部署。"
-  - "有一个名字变了：Cloud Functions 现在叫 Cloud Run functions，所以 README 从 Cloud Run、Services、Write a function 开始。"
+  - "有一个名字变了：Cloud Functions 现在叫 Cloud Run functions，所以 README 一开始就进 Cloud Run、Services、Write a function。"
 - en: "That opens Create service. Enable the APIs if it asks. Name the service translate-function and choose your region."
   zh:
   - "这会打开 Create service。"
@@ -346,7 +346,7 @@ S08:
   - "它的步骤：打开 Cloud Run、启用 API、部署一个 image。"
 - en: "Open Cloud Run, Services, Deploy container, and choose Deploy one revision from an existing container image. Paste the same image, name it translation-demo, and choose your region."
   zh:
-  - "打开 Cloud Run 里 Services 下的 Deploy container，选择：Deploy one revision from an existing container image。"
+  - "打开 Cloud Run 里 Services 下的 Deploy container，再选 Deploy one revision from an existing container image。"
   - "粘贴同一个 image，命名为 translation-demo，再选你的区域。"
 - en: "Select Allow public access and Request-based billing. Under scaling, minimum 0 instances and maximum 2."
   zh:
