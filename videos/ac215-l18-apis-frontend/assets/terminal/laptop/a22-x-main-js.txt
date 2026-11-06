@@ -1,0 +1,6 @@
+$ curl -s http://localhost:8080/main.js | grep -n -A3 'Sample Podcast Data'
+37:// Sample Podcast Data (This would normally come from an API)
+38-const podcastData = [
+39-    {
+40-        title: "Episode 1 (Halloumi) [FR]",
+[exit 0]

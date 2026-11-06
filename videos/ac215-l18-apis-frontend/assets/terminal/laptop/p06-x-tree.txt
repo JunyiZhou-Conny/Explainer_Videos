@@ -1,0 +1,42 @@
+$ find . -maxdepth 3 -not -path '*/.git*' -not -path './.*' | sort | head -40; ls -la secrets persistent-folder
+.
+./cheese-app-v1
+./cheese-app-v1/README.md
+./cheese-app-v1/images
+./cheese-app-v1/images/container-architecture.png
+./cheese-app-v1/src
+./cheese-app-v1/src/api-service
+./cheese-app-v1/src/data-collector
+./cheese-app-v1/src/data-processor
+./cheese-app-v1/src/frontend-simple
+./cheese-app-v1/src/model-deploy
+./cheese-app-v1/src/model-training
+./cheese-app-v1/src/newsletter
+./cheese-app-v1/src/podcast
+./cheese-app-v1/src/vector-db
+./cheese-app-v2
+./cheese-app-v2/README.md
+./cheese-app-v2/docs
+./cheese-app-v2/docs/contract.md
+./cheese-app-v2/images
+./cheese-app-v2/images/container-architecture-1.png
+./cheese-app-v2/images/container-architecture-2.png
+./cheese-app-v2/src
+./cheese-app-v2/src/api-service
+./cheese-app-v2/src/docker-compose.yml
+./cheese-app-v2/src/frontend-react
+./cheese-app-v2/src/vector-db
+./persistent-folder
+./secrets
+./secrets/ml-workflow.json
+persistent-folder:
+total 8
+drwxr-sr-x    2 student  student       4096 Nov  5 12:58 .
+drwxr-sr-x    7 student  student       4096 Nov  5 12:58 ..
+
+secrets:
+total 12
+drwxr-sr-x    2 student  student       4096 Nov  5 12:58 .
+drwxr-sr-x    7 student  student       4096 Nov  5 12:58 ..
+-rw-r--r--    1 student  student       2071 Nov  5 12:58 ml-workflow.json
+[exit 0]

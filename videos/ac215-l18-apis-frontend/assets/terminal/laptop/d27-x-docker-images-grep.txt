@@ -1,0 +1,4 @@
+$ docker images | grep cheese-app-frontend-react
+cheese-app-frontend-react:latest   4f3424bfabb6        331MB         81.2MB        
+cheese-app-frontend-react:prod     189c48dc039a       94.8MB         26.7MB        
+[exit 0]

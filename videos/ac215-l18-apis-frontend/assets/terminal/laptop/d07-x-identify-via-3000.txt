@@ -1,0 +1,4 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' -X POST http://localhost:3000/api/llm-cnn/chats -H 'Content-Type: application/json' -H 'X-Session-ID: 00000000-0000-4000-8000-000000000002' -d @/tmp/identify.json | cut -c1-400
+{"chat_id":"c68c6c9b-ba0f-4b36-a09d-f018a8b44f93","title":"Image chat","dts":1793886604,"messages":[{"content":null,"message_id":"9d1e032d-be28-4a62-be09-0711116c5cbc","role":"user","image_path":"images/c68c6c9b-ba0f-4b36-a09d-f018a8b44f93/9d1e032d-be28-4a62-be09-0711116c5cbc.png"},{"message_id":"3c8f93ca-54cc-4148-adc2-389e15108c7f","role":"cnn","results":{"prediction_label":"parmigiano","accurac
+[HTTP 200]
+[exit 0]

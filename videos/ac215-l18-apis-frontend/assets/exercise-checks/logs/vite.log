@@ -1,0 +1,54 @@
+$ docker build -q --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY --build-arg https_proxy=$HTTPS_PROXY -t l18ex/vite:check -f <logs>/vite-check.Dockerfile $SCRATCH/vite-ctx >/dev/null && docker run --rm l18ex/vite:check npx vite --version
+vite/8.3.5 linux-x64 node-v24.22.1
+[exit 0]
+
+$ grep proxy $SCRATCH/vite-cfg/vite.config.js
+    proxy: { '/api': process.env.API_URL || 'http://cheese-app-api-service:9000' },
+[exit 0]
+
+$ docker network create l18ex-net >/dev/null; docker run -d --name l18ex-api --network l18ex-net --network-alias cheese-app-api-service -e GCP_PROJECT=your-gcp-project -v $SCRATCH/v2/src/api-service:/app l18ex/api313:check uvicorn api.service:app --host 0.0.0.0 --port 9000 >/dev/null; docker run -d --name l18ex-vite --network l18ex-net -p 13000:5173 -v $SCRATCH/vite-cfg/vite.config.js:/app/vite.config.js:ro l18ex/vite:check npx vite >/dev/null; sleep 6; docker logs l18ex-vite 2>&1 | grep -E 'ready|Local|Network'
+  VITE v8.3.5  ready in 408 ms
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://172.18.0.3:5173/  eth0
+[exit 0]
+
+$ curl -sS -i 'localhost:13000/api/newsletters?limit=1' | tr -d '\r' | grep -iE '^(HTTP|server|content-length)'
+HTTP/1.1 200 OK
+server: uvicorn
+content-length: 2677
+[exit 0]
+
+$ docker logs l18ex-vite 2>&1 | grep -A1 'proxy error' | head -2
+[exit 0]
+
+$ docker rm -f l18ex-vite l18ex-api >/dev/null; docker network rm l18ex-net >/dev/null; echo removed
+removed
+[exit 0]
+
+$ grep proxy $SCRATCH/vite-cfg/vite.config.js
+    proxy: { '/api': 'http://localhost:9000' },
+[exit 0]
+
+$ docker network create l18ex-net >/dev/null; docker run -d --name l18ex-api --network l18ex-net --network-alias cheese-app-api-service -e GCP_PROJECT=your-gcp-project -v $SCRATCH/v2/src/api-service:/app l18ex/api313:check uvicorn api.service:app --host 0.0.0.0 --port 9000 >/dev/null; docker run -d --name l18ex-vite --network l18ex-net -p 13000:5173 -v $SCRATCH/vite-cfg/vite.config.js:/app/vite.config.js:ro l18ex/vite:check npx vite >/dev/null; sleep 6; docker logs l18ex-vite 2>&1 | grep -E 'ready|Local|Network'
+  VITE v8.3.5  ready in 288 ms
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://172.18.0.3:5173/  eth0
+[exit 0]
+
+$ curl -sS -i 'localhost:13000/api/newsletters?limit=1' | tr -d '\r' | grep -iE '^(HTTP|server|content-length)'
+HTTP/1.1 502 Bad Gateway
+[exit 0]
+
+$ docker logs l18ex-vite 2>&1 | grep -A1 'proxy error' | head -2
+3:42:28 PM [vite] http proxy error: /api/newsletters?limit=1
+Error: connect ECONNREFUSED 127.0.0.1:9000
+[exit 0]
+
+$ docker rm -f l18ex-vite l18ex-api >/dev/null; docker network rm l18ex-net >/dev/null; echo removed
+removed
+[exit 0]
+
+$ docker ps -a --filter name=l18ex- --format '{{.Names}}' | wc -l
+0
+[exit 0]
+

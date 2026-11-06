@@ -1,0 +1,25 @@
+$ sed -i 's/ac215-project/your-gcp-project/' src/docker-compose.yml
+git diff src/docker-compose.yml
+diff --git a/src/docker-compose.yml b/src/docker-compose.yml
+index 923a83f..b53e2f8 100644
+--- a/src/docker-compose.yml
++++ b/src/docker-compose.yml
+@@ -24,7 +24,7 @@ services:
+             - ../../secrets:/secrets:ro
+             - ./vector-db:/app
+         environment:
+-            GCP_PROJECT: ac215-project # CHANGE TO YOUR PROJECT ID
++            GCP_PROJECT: your-gcp-project # CHANGE TO YOUR PROJECT ID
+             GOOGLE_APPLICATION_CREDENTIALS: /secrets/ml-workflow.json
+             CHROMADB_HOST: cheese-app-vector-db
+             CHROMADB_PORT: 8000
+@@ -45,7 +45,7 @@ services:
+             - ../../secrets:/secrets:ro
+             - ../../persistent-folder:/persistent
+         environment:
+-            GCP_PROJECT: ac215-project # CHANGE TO YOUR PROJECT ID
++            GCP_PROJECT: your-gcp-project # CHANGE TO YOUR PROJECT ID
+             GOOGLE_APPLICATION_CREDENTIALS: /secrets/ml-workflow.json
+             CHROMADB_HOST: cheese-app-vector-db
+             CHROMADB_PORT: 8000
+[exit 0]

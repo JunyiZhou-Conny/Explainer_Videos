@@ -1,0 +1,9 @@
+$ curl -s -i -L -H 'Origin: http://localhost:8080' 'http://localhost:9000/newsletters?limit=100' | grep -i -E 'HTTP/|location|access-control|content-type|"title"' | cut -c1-120
+HTTP/1.1 307 Temporary Redirect
+location: http://localhost:9000/newsletters/?limit=100
+access-control-allow-origin: *
+HTTP/1.1 200 OK
+content-type: application/json
+access-control-allow-origin: *
+[{"id":"9f2b7e84-2176-4029-bcfd-f99f2d7611e8","dts":1730476705,"title":"Spanish Cheese Journey","excerpt":"Take a virtua
+[exit 0]

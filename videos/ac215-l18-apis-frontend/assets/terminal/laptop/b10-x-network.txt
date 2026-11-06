@@ -1,0 +1,4 @@
+$ docker network inspect cheese-app-network --format '{{range .Containers}}{{.Name}} {{.IPv4Address}}{{println}}{{end}}'
+cheese-app-vector-db 172.19.0.2/16
+
+[exit 0]

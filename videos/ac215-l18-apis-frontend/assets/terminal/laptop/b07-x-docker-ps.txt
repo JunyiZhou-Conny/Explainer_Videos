@@ -1,0 +1,4 @@
+$ docker ps -a --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'
+NAMES                  IMAGE                   STATUS          PORTS
+cheese-app-vector-db   chromadb/chroma:1.5.9   Up 22 seconds   0.0.0.0:8000->8000/tcp
+[exit 0]

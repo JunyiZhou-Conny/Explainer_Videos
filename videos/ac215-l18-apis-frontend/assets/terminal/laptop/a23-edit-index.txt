@@ -1,0 +1,25 @@
+$ python3 - <<'EOF'
+p = 'index.html'
+s = open(p).read()
+s = s.replace('''<p class="hero-subtitle">Discover the world of cheese through AI</p>''', '''<p class="hero-subtitle">Discover the world of cheese through AI</p>
+            <p>
+                This is a placeholder for the awesome cheese identification app
+            </p>''', 1)
+open(p, 'w').write(s)
+EOF
+git -C ~/cheese-app-v1 diff -- src/frontend-simple/index.html
+diff --git a/src/frontend-simple/index.html b/src/frontend-simple/index.html
+index e2499fb..16f40c1 100644
+--- a/src/frontend-simple/index.html
++++ b/src/frontend-simple/index.html
+@@ -42,6 +42,9 @@
+         <div class="hero-content">
+             <h1 class="hero-title">🧀 Formaggio.me is here!</h1>
+             <p class="hero-subtitle">Discover the world of cheese through AI</p>
++            <p>
++                This is a placeholder for the awesome cheese identification app
++            </p>
+         </div>
+     </section>
+ 
+[exit 0]

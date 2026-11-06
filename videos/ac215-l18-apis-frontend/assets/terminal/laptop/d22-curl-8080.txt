@@ -1,0 +1,8 @@
+$ curl -s -i http://localhost:8080/ | grep -E 'HTTP/|Server:|Content-Type|<title>|assets/'
+HTTP/1.1 200 OK
+Server: nginx/1.31.8
+Content-Type: text/html
+    <title>Formaggio</title>
+    <script type="module" crossorigin src="/assets/index-DQWKRz1J.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Csse5MvO.css">
+[exit 0]

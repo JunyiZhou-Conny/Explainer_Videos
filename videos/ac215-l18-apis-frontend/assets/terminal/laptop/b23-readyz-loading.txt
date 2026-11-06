@@ -1,0 +1,8 @@
+$ curl -s -i http://localhost:9000/readyz
+HTTP/1.1 503 Service Unavailable
+date: Thu, 05 Nov 2026 13:49:35 GMT
+server: uvicorn
+content-length: 33
+content-type: application/json
+
+{"detail":"CNN model is loading"}[exit 0]

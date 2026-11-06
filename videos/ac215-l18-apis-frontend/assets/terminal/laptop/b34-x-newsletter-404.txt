@@ -1,0 +1,4 @@
+$ curl -s -w '\n[HTTP %{http_code}]\n' http://localhost:9000/api/newsletters/does-not-exist
+{"detail":"Newsletter not found"}
+[HTTP 404]
+[exit 0]

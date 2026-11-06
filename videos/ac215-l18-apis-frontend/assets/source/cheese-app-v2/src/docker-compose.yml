@@ -1,0 +1,68 @@
+networks:
+    default:
+        name: cheese-app-network
+volumes:
+    node_modules:
+        name: cheese-app-frontend-react-node_modules
+services:
+    vector-db:
+        image: chromadb/chroma:1.5.9
+        container_name: cheese-app-vector-db
+        ports:
+            - 8000:8000
+        volumes:
+            - ./vector-db/docker-volumes/chromadb:/data
+        environment:
+            ANONYMIZED_TELEMETRY: "FALSE"
+
+    # Loads the cheese books into Chroma, then stops. Once they are there, it checks and stops at once.
+    vector-db-loader:
+        build: ./vector-db
+        image: cheese-app-vector-db-cli
+        entrypoint: [ "/bin/bash", "-c", "python cli.py --get --chunk_type recursive-split > /dev/null 2>&1 || python cli.py --download --load --chunk_type recursive-split" ]
+        volumes:
+            - ../../secrets:/secrets:ro
+            - ./vector-db:/app
+        environment:
+            GCP_PROJECT: ac215-project # CHANGE TO YOUR PROJECT ID
+            GOOGLE_APPLICATION_CREDENTIALS: /secrets/ml-workflow.json
+            CHROMADB_HOST: cheese-app-vector-db
+            CHROMADB_PORT: 8000
+        depends_on:
+            - vector-db
+
+    api-service:
+        build:
+            context: ./api-service
+            dockerfile: Dockerfile.dev
+        image: cheese-app-api-service
+        container_name: cheese-app-api-service
+        entrypoint: [ "/bin/bash", "-c", "uv sync --frozen && uvicorn api.service:app --host 0.0.0.0 --port 9000 --reload --reload-dir api/" ]
+        ports:
+            - 9000:9000
+        volumes:
+            - ./api-service:/app
+            - ../../secrets:/secrets:ro
+            - ../../persistent-folder:/persistent
+        environment:
+            GCP_PROJECT: ac215-project # CHANGE TO YOUR PROJECT ID
+            GOOGLE_APPLICATION_CREDENTIALS: /secrets/ml-workflow.json
+            CHROMADB_HOST: cheese-app-vector-db
+            CHROMADB_PORT: 8000
+        depends_on:
+            - vector-db
+
+    frontend-react:
+        build:
+            context: ./frontend-react
+            dockerfile: Dockerfile.dev
+        image: cheese-app-frontend-react
+        container_name: cheese-app-frontend-react
+        entrypoint: [ "/bin/bash", "-c", "npm install --no-fund --no-audit && npm run dev" ]
+        ports:
+            - 3000:5173
+        volumes:
+            - ./frontend-react:/app
+            - node_modules:/app/node_modules
+        depends_on:
+            - api-service

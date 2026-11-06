@@ -1,0 +1,2 @@
+$ docker compose logs vector-db-loader
+[exit 0]

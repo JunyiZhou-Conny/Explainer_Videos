@@ -2,7 +2,7 @@
 
 Source: two decks for one lecture. `L18a_apis_and_frontend_apis` (47 slides) is titled "Lecture 18:
 APIs", and `L18b_frontend` (42 slides) is titled "Lecture 18: Frontend". Both are by AC215/E115,
-Pavlos Protopapas and Shivas Jayaram, 89 slides in all. These are the instructor's lecture slides
+the course staff, 89 slides in all. These are the instructor's lecture slides
 (PDF), provided by the student for study; the PDFs are not in this repository; slide numbers are PDF
 page numbers. In this file **A*n*** means slide *n* of the APIs deck (`L18a`) and **B*n*** means
 slide *n* of the Frontend deck (`L18b`). This digest was written from both decks' extracted text and

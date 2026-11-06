@@ -1,0 +1,3 @@
+$ curl -s 'http://localhost:3000/api/newsletters?limit=1' | cut -c1-120
+[{"id":"9f2b7e84-2176-4029-bcfd-f99f2d7611e8","dts":1730476705,"title":"Spanish Cheese Journey","excerpt":"Take a virtua
+[exit 0]

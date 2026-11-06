@@ -1,0 +1,15 @@
+$ curl -s -i -L -X POST -H 'Origin: http://localhost:8080' -H 'Content-Type: application/json' -H 'X-Session-ID: 00000000-0000-4000-8000-000000000001' -d '{"content": "How is cheese made?"}' http://localhost:9000/llm/chats/ | grep -v '^\s*$' | cut -c1-300
+HTTP/1.1 307 Temporary Redirect
+date: Thu, 05 Nov 2026 14:15:53 GMT
+server: uvicorn
+content-length: 0
+location: http://localhost:9000/llm/chats
+access-control-allow-origin: *
+HTTP/1.1 500 Internal Server Error
+date: Thu, 05 Nov 2026 14:15:53 GMT
+server: uvicorn
+content-length: 178
+content-type: application/json
+access-control-allow-origin: *
+{"detail":"Failed to generate response: ('invalid_grant: Invalid grant: account not found', {'error': 'invalid_grant', 'error_description': 'Invalid grant: account not found'})"}
+[exit 0]

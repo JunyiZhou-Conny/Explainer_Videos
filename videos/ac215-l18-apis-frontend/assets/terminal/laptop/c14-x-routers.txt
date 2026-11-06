@@ -1,0 +1,28 @@
+$ sed -n '35,42p' api/service.py; curl -s http://localhost:9000/openapi.json | python3 -c 'import json,sys; [print(m.upper().ljust(6), p) for p,v in json.load(sys.stdin)["paths"].items() for m in v]'
+
+# Additional routers here
+app.include_router(newsletter.router, prefix="/newsletters")
+app.include_router(podcast.router, prefix="/podcasts")
+app.include_router(llm_chat.router, prefix="/llm")
+app.include_router(llm_cnn_chat.router, prefix="/llm-cnn")
+# app.include_router(llm_rag_chat.router, prefix="/llm-rag")
+# app.include_router(llm_agent_chat.router, prefix="/llm-agent")
+GET    /
+GET    /square_root/
+GET    /newsletters/
+GET    /newsletters/{newsletter_id}
+GET    /newsletters/image/{image_name}
+GET    /podcasts/
+GET    /podcasts/{podcast_id}
+GET    /podcasts/audio/{audio_name}
+GET    /llm/chats
+POST   /llm/chats
+GET    /llm/chats/{chat_id}
+POST   /llm/chats/{chat_id}
+GET    /llm/images/{chat_id}/{message_id}.png
+GET    /llm-cnn/chats
+POST   /llm-cnn/chats
+GET    /llm-cnn/chats/{chat_id}
+POST   /llm-cnn/chats/{chat_id}
+GET    /llm-cnn/images/{chat_id}/{message_id}.png
+[exit 0]

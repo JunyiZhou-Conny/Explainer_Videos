@@ -1,0 +1,545 @@
+# zh narration for S01-S09 (part 1, group g1, the API half: the hook, the blueprint and your folders, v1's server
+# and app, a function becomes a URL, the simple frontend, v2's vector database, the API alive then ready, screens
+# decide the routes, a chat is a file), sentence-aligned to script.md: one zh sentence per English sentence
+# (explainer.voice.split_sentences; 89 SAY lines, 197 sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of clauses (A9, D9): S03[12].1, S04[6],
+# S06[1].1, S07[2].1, S08[6].1 and S09[5].2 open as the English does.
+# Artifacts the checker does not allow in a displayed line are written as the SAY says them (rule A6):
+# square_root -> square root; get_status -> get status; api_server -> API server; x=2&y=10 -> x 等于 2，y 等于 10;
+# x=3&y=4 -> x 等于 3，y 等于 4; Ctrl+C -> Ctrl-C; access-control-allow-origin: * -> access-control-allow-origin，星号.
+# Log, code and error text the SAY quotes is copied in its screen form (A13): startup complete, Application startup
+# complete, CNN model is loading, Invalid grant: account not found, Internal Server Error, Newsletter not found,
+# How is cheese made, use Gemini to generate text, 26 passed. The lecture's spoken aside in S01[4] is translated.
+# The instructor rule (A16): the narration of S01-S09 names no instructor (the lecture -> 课上, the slide -> 课件).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: file names, paths,
+# --host / --reload, api.service:app, localhost:9000 / localhost:8080, square_root, x=2&y=10, x=3&y=4, 5.0,
+# /healthz, /readyz, /api..., get_status, api_server, persistent-folder, ml-workflow key, Ctrl+C, type y,
+# cd src/...); null = the SAY text.
+S01:
+- en: "Here is a request to port 3000, where this app's frontend runs. It asks for two newsletters and gets them. But look who answered: uvicorn, the API's server, and the API listens on port 9000."
+  zh:
+  - "这是一个发往 port 3000 的请求，这个应用的前端就跑在那里。"
+  - "它要两条简报，也拿到了。"
+  - "可你看是谁应答的：uvicorn，也就是 API 的服务器，而 API 监听的是 port 9000。"
+- en: "Last year's version of this app worked differently. Its page called port 9000 directly, and every answer carried a permission slip: access control allow origin, star."
+  zh:
+  - "这个应用去年的版本不是这样工作的。"
+  - "它的页面直接调用 port 9000，每个回答都带着一张许可条：access-control-allow-origin，星号。"
+  en_display:
+  - null
+  - "Its page called port 9000 directly, and every answer carried a permission slip: access-control-allow-origin: *."
+- en: "This year's API sends no such slip at all. So who carried the request from 3000 to 9000, and why did last year's page need permission?"
+  zh:
+  - "今年的 API 根本不发这种许可条。"
+  - "那么，是谁把请求从 3000 送到 9000 的，去年的页面又为什么需要许可？"
+- en: "The lecture draws one chat message as six numbered steps: request, forward, map into a container, run a function, respond, show it. We add one step it never draws: three and a half, the courier."
+  zh:
+  - "课上把一条聊天消息画成六个编号步骤：请求、转发、映射进 container、运行函数、响应、显示。"
+  - "我们加上课上从没画出的一步：第 3.5 步，信使。"
+- en: "Zoom out, and this is the lecture's blueprint for the whole app, with the same three ports. The lecture calls the app ready, then admits: well, not really, we need to build it. Today we build the right-hand side, on your laptop."
+  zh:
+  - "拉远一点看，这就是课上整个应用的蓝图，还是那三个端口。"
+  - "课上先说应用已经准备好了，接着又承认：其实还没有，我们得把它建出来。"
+  - "今天我们在你的笔记本上，把右半边建出来。"
+- en: "To follow along, clone both repositories, keep Docker running, and free about 10 gigabytes. Your Google key matters only for the chat answers."
+  zh:
+  - "要跟着做，先把两个 repo 都 clone 下来，让 Docker 一直开着，再腾出大约 10 GB。"
+  - "你的 Google 密钥只在聊天的回答上用得到。"
+- en: "The tracker in the corner names the README step, code panels name their file and lines, and a yellow tag, your turn, means pause and run it."
+  zh:
+  - "角落里的进度条标出 README 的哪一步，代码面板标出文件和行号，黄色的 your turn 标签表示暂停一下，自己跑一遍。"
+S02:
+- en: "First, where this lecture sits. The course project has its machine learning pipeline; what is still missing is the app: a backend API and a frontend."
+  zh:
+  - "先看这一讲在哪儿。"
+  - "课程项目已经有了它的机器学习 pipeline，还缺的是应用：一个后端 API 和一个前端。"
+- en: "The lecture draws the system as a technical architecture, the blueprint, one layer at a time. Developers, users, GitHub and Colab sit outside the cloud, Vertex AI inside, and every arrow is labeled with its protocol and port."
+  zh:
+  - "课上把系统画成一张技术架构图，也就是蓝图，一层一层地画。"
+  - "开发者、用户、GitHub 和 Colab 在云外，Vertex AI 在云里，每个箭头都标着它的协议和 port。"
+- en: "Then come a bucket, a registry of images and a persistent disk. On the right sits a cluster: NGINX in front, the app on 3000, the API on 9000, the vector database on 8000."
+  zh:
+  - "接着是一个 bucket，一个存 image 的 registry 和一块持久化磁盘。"
+  - "右边是一个集群：最前面是 NGINX，应用在 3000，API 在 9000，向量数据库在 8000。"
+- en: "Today, that whole right-hand side runs on your laptop."
+  zh:
+  - "今天，整个右半边都在你的笔记本上跑。"
+- en: "The lecture's folder rule: one Git folder per app, one folder per service under src, and secrets outside the Git folder. Version 1 even keeps empty folders for the services it does not run; version 2 holds only its three."
+  zh:
+  - "课上的目录规则：每个应用一个 Git 目录，src 下每个服务一个目录，secrets 放在 Git 目录之外。"
+  - "v1 甚至留着空目录，给它不跑的服务；v2 只放它自己的三个。"
+- en: "Steps 1 and 2: clone both repositories. The READMEs say clone or download; git clone is our spelling. Pause and clone them."
+  zh:
+  - "第 1、2 步：把两个 repo 都 clone 下来。"
+  - "README 写的是 clone 或下载，git clone 是我们的写法。"
+  - "暂停一下，clone 下来。"
+- en: "Step 3: next to the clones, create secrets and persistent folder yourself. Left to Docker on Linux, they would belong to root, and the container could not write there. Your ml workflow key goes into secrets."
+  zh:
+  - "第 3 步：在 clone 旁边，自己建好 secrets 和 persistent-folder 两个目录。"
+  - "交给 Linux 上的 Docker 去建，它们会属于 root，container 就没法往里写。"
+  - "你的 ml-workflow.json 密钥放进 secrets 目录里。"
+  en_display:
+  - "Step 3: next to the clones, create secrets and persistent-folder yourself."
+  - null
+  - "Your ml-workflow key goes into secrets."
+- en: "One thing changed on the day we recorded: the main branch of version 2 moved twice. We follow main as you clone it today. The simple frontend the lecture teaches now sits on a branch called 2025, which we visit at the end."
+  zh:
+  - "有一件事在我们录制当天变了：v2 的 main 分支动了两次。"
+  - "我们跟着你今天 clone 到的 main 分支走。"
+  - "课上讲的简单前端现在在 2025 分支上，我们最后会去看。"
+S03:
+- en: "A browser sends a request; a server sends a response. A port picks which program gets it: public sites leave the default 80 and 443 out of the address; ours show the port."
+  zh:
+  - "浏览器发出一个请求，服务器回一个响应。"
+  - "由 port 决定交给哪个程序：公开网站在地址里省掉默认的 80 和 443；我们的地址会写出 port。"
+- en: "In this course, an API means a REST API, built with FastAPI. Every client talks to that one API, and only the API talks to the stores."
+  zh:
+  - "在这门课里，API 指的是 REST API，用 FastAPI 来写。"
+  - "每个客户端都只和这一个 API 打交道，也只有 API 和各个存储打交道。"
+- en: "Part 1, cheese app version 1. Step 1: go to the API folder; the README's path misses src, so this fails. A small slip: add src."
+  zh:
+  - "第 1 部分，cheese-app-v1。"
+  - "第 1 步：进到 API 目录；README 的路径漏了 src，所以这一步会失败。"
+  - "有一个小疏漏：加上 src。"
+  en_display:
+  - "Part 1, cheese-app-v1."
+  - null
+  - null
+- en: "Step 2: sh docker-shell.sh. It builds the image, then starts a container that removes itself on exit, mounts your code, and publishes port 9000 to 9000. Pause and run it."
+  zh:
+  - "第 2 步：sh docker-shell.sh。"
+  - "它先构建 image，再启动一个退出时自动删除的 container，挂载你的代码，并把 port 9000 发布到 9000。"
+  - "暂停一下，自己跑一遍。"
+- en: "Step 3: the README's long uvicorn line. Here, uvicorn is the server: it owns the port and speaks HTTP. FastAPI is the app inside it."
+  zh:
+  - "第 3 步：README 里那条长长的 uvicorn 命令。"
+  - "这里 uvicorn 是服务器：port 归它管，HTTP 协议也由它来处理。"
+  - "FastAPI 是它里面的应用。"
+- en: "The phrase api dot service colon app is an address: folder api, file service dot py, variable app."
+  zh:
+  - "这个 api.service:app 是一个地址：api 目录，service.py 文件，app 变量。"
+  en_display:
+  - "The phrase api.service:app is an address: folder api, file service.py, variable app."
+- en: "Host 0.0.0.0 means every interface: the container's own loopback, and its network interface, where the tunnel arrives. Reload restarts the app when a file in api changes; the last part passes on extra arguments."
+  zh:
+  - "参数 --host 0.0.0.0 表示所有网络接口：container 自己的回环地址，还有它的网络接口，也就是隧道到达的地方。"
+  - "参数 --reload 在 api 目录里有文件改动时重启应用；最后那部分把额外的参数往下传。"
+  en_display:
+  - "--host 0.0.0.0 means every interface: the container's own loopback, and its network interface, where the tunnel arrives."
+  - "--reload restarts the app when a file in api changes; the last part passes on extra arguments."
+- en: "The log agrees: 0.0.0.0, port 9000, a reloader watching api, startup complete."
+  zh:
+  - "日志也对得上：0.0.0.0，port 9000，一个监视 api 目录的重载器，startup complete。"
+- en: "In service dot py, the app adds CORS middleware, which matters at the very end, and one route: GET slash returns a welcome."
+  zh:
+  - "在 service.py 里，应用加了 CORS 中间件，这个到最后才用得上，还有一个路由：GET / 返回一句欢迎语。"
+  en_display:
+  - "In service.py, the app adds CORS middleware, which matters at the very end, and one route: GET / returns a welcome."
+- en: "Step 4: open localhost 9000. An extra curl shows the same reply: status 200 from uvicorn, and the welcome. Pause and try it."
+  zh:
+  - "第 4 步：打开 localhost:9000。"
+  - "额外用 curl 也能看到同样的回答：uvicorn 返回状态码 200，还有那句欢迎语。"
+  - "暂停一下，试一试。"
+  en_display:
+  - "Step 4: open localhost:9000."
+  - null
+  - null
+- en: "That is the lecture's trip: forwarded to the published port, mapped into the container, the function runs, and the JSON comes back."
+  zh:
+  - "这就是课上的那一趟：转发到发布的 port，映射进 container，函数运行，JSON 再传回来。"
+- en: "One kind note: the slide labels the inside of the container localhost 9000. Take it as port 9000 of the container: uvicorn listens on 0.0.0.0."
+  zh:
+  - "提一句：课件把 container 内部标成 localhost:9000。"
+  - "把它理解成 container 的 port 9000 就好：uvicorn 监听的是 0.0.0.0。"
+  en_display:
+  - "One kind note: the slide labels the inside of the container localhost:9000."
+  - null
+- en: "So, a quick test. If uvicorn listened on 127.0.0.1 instead, would a curl from inside the container work? And your browser on localhost 9000?"
+  zh:
+  - "那么，快速测一下。"
+  - "如果 uvicorn 改成监听 127.0.0.1，在 container 里面用 curl 还能通吗？"
+  - "那你浏览器里的 localhost:9000 呢？"
+  en_display:
+  - null
+  - null
+  - "And your browser on localhost:9000?"
+S04:
+- en: "Inside, yes: the container's own loopback answers. From the browser, no: the forwarded request arrives on the container's network interface, where nothing listens. That is why the README says 0.0.0.0."
+  zh:
+  - "在 container 里面，可以：它自己的回环地址会应答。"
+  - "从浏览器，不行：转发过来的请求到达的是 container 的网络接口，而那里没人监听。"
+  - "这就是 README 写 0.0.0.0 的原因。"
+- en: "Step 5: the lecture writes a route as a decorated Python function. Add the README's square root function at the end of service dot py, and save. It returns the square root of x squared plus y squared."
+  zh:
+  - "第 5 步：课上把一个路由写成加了装饰器的 Python 函数。"
+  - "把 README 里的 square root 函数加到 service.py 末尾，保存。"
+  - "它返回 x 的平方加 y 的平方再开平方根。"
+  en_display:
+  - null
+  - "Add the README's square_root function at the end of service.py, and save."
+  - null
+- en: "In the server's terminal, StatReload sees the change and swaps in a fresh app. You restarted nothing."
+  zh:
+  - "在服务器的终端里，StatReload 发现了改动，换上一个新的应用。"
+  - "你什么都没重启。"
+- en: "Step 6: open square root, with its trailing slash. No arguments, so the defaults 1 and 2 apply: the square root of 5. Pause and try it."
+  zh:
+  - "第 6 步：打开 square root，带上结尾的斜杠。"
+  - "没有参数，所以用默认值 1 和 2：5 的平方根。"
+  - "暂停一下，试一试。"
+  en_display:
+  - "Step 6: open square_root, with its trailing slash."
+  - null
+  - null
+- en: "Step 7: add x equals 2 and y equals 10. The query string fills the function's arguments, and back comes the square root of 104."
+  zh:
+  - "第 7 步：加上 x 等于 2，y 等于 10。"
+  - "查询字符串填进函数的参数，返回的是 104 的平方根。"
+  en_display:
+  - "Step 7: add x=2&y=10."
+  - null
+- en: "Two extras. A letter instead of a number bounces off the float type hint with 422."
+  zh:
+  - "两个额外实验。"
+  - "用字母代替数字，会撞上 float 类型提示，被 422 弹回来。"
+- en: "Without the trailing slash, FastAPI answers 307 and points to the slash version."
+  zh:
+  - "不带结尾的斜杠，FastAPI 会返回 307，指向带斜杠的版本。"
+- en: "The server's log shows each request with its status. 200, 200, 200, 422, 307."
+  zh:
+  - "服务器日志列出每个请求和它的状态码。"
+  - "200、200、200、422、307。"
+- en: "Step 8: open slash docs. FastAPI built this page from your code: x and y appear as numbers, with their defaults, and you can try a call right there."
+  zh:
+  - "第 8 步：打开 /docs。"
+  - "FastAPI 从你的代码生成了这个页面：x 和 y 显示为数字，带着默认值，你还能直接在这里试一次调用。"
+  en_display:
+  - "Step 8: open /docs."
+  - null
+- en: "The type hints became the validation and the documentation. Pause and try one call from the docs page."
+  zh:
+  - "类型提示变成了校验，也变成了文档。"
+  - "暂停一下，在文档页上试一次调用。"
+S05:
+- en: "Now the other half of version 1: a page. The lecture splits a page into HTML for structure, CSS for style and JavaScript for behavior. In version 1, index dot html links all three."
+  zh:
+  - "现在是 v1 的另一半：一个页面。"
+  - "课上把一个页面拆成三块：HTML 管结构，CSS 管样式，JavaScript 管行为。"
+  - "在 v1 里，index.html 把三样都链接起来。"
+  en_display:
+  - null
+  - null
+  - "In version 1, index.html links all three."
+- en: "Step 1: go to the frontend folder. Same slip as before: add src."
+  zh:
+  - "第 1 步：进到前端目录。"
+  - "和前面同样的疏漏：加上 src。"
+- en: "Steps 2 and 3: pause, run sh docker-shell.sh, then http-server inside the container. It serves this folder on port 8080, with a one-hour cache. The addresses it prints are inside the container; your laptop uses 8080."
+  zh:
+  - "第 2、3 步：暂停一下，运行 sh docker-shell.sh，然后在 container 里跑 http-server。"
+  - "它在 port 8080 上提供这个目录，缓存时间一小时。"
+  - "它打印的地址都在 container 里面；你的笔记本用 8080。"
+- en: "Step 4: open localhost 8080. This is the lecture's first trip: the request reaches http-server, a file comes back, and the browser draws it. Pause and open it."
+  zh:
+  - "第 4 步：打开 localhost:8080。"
+  - "这是课上的第一趟：请求到达 http-server，传回一个文件，浏览器把它画出来。"
+  - "暂停一下，打开看看。"
+  en_display:
+  - "Step 4: open localhost:8080."
+  - null
+  - null
+- en: "An extra look at main dot js: the podcasts are sample data, which would normally come from an API. Part 2 adds that second trip."
+  zh:
+  - "额外看一眼 main.js：这些播客是示例数据，正常情况下应该来自一个 API。"
+  - "第 2 部分会加上第二趟。"
+  en_display:
+  - "An extra look at main.js: the podcasts are sample data, which would normally come from an API."
+  - null
+- en: "Step 5: add a paragraph to index dot html. A small note: the README's snippet is an old whole body, and pasting it would drop the page and its script tag. Add only the paragraph."
+  zh:
+  - "第 5 步：在 index.html 里加一个段落。"
+  - "说明一点：README 里的代码片段是一个旧的完整 body，贴进去会把页面和它的 script 标签都弄丢。"
+  - "只加那个段落。"
+  en_display:
+  - "Step 5: add a paragraph to index.html."
+  - null
+  - null
+- en: "Step 6: refresh, and the new text appears. Edits to main dot js may need a hard refresh, because http-server lets the browser cache files for an hour."
+  zh:
+  - "第 6 步：刷新，新文字就出来了。"
+  - "改了 main.js 可能需要强制刷新，因为 http-server 让浏览器把文件缓存一小时。"
+  en_display:
+  - null
+  - "Edits to main.js may need a hard refresh, because http-server lets the browser cache files for an hour."
+- en: "To clean up, press Control C and type exit in both terminals. The container list is then empty, because both removed themselves."
+  zh:
+  - "要收尾，在两个终端里都按 Ctrl-C，再输入 exit。"
+  - "这时 container 列表是空的，因为两个都自己删掉了。"
+  en_display:
+  - "To clean up, press Ctrl+C and type exit in both terminals."
+  - null
+- en: "Docker system prune asks first, so type y for yes; the image list shows what stays."
+  zh:
+  - "命令 docker system prune 会先问你，所以输入 y 确认；image 列表显示留下了什么。"
+  en_display:
+  - "docker system prune asks first, so type y; the image list shows what stays."
+S06:
+- en: "Now version 2, the real app: four containers on one Docker network. Chroma, the vector database, on 8000; a loader; the API on 9000; and the React frontend on 3000."
+  zh:
+  - "现在是 v2，真正的应用：四个 container，在同一个 Docker 网络上。"
+  - "Chroma，也就是向量数据库，在 8000；一个加载器；API 在 9000；React 前端在 3000。"
+- en: "The prerequisites: a Google Cloud project with the Vertex AI API, the ml workflow key with the Vertex AI User role, and about 10 gigabytes. With your key, chat and embedding calls bill your project."
+  zh:
+  - "前置条件：一个启用了 Vertex AI API 的 Google Cloud 项目，一个带 Vertex AI User 角色的 ml-workflow 密钥，还有大约 10 GB。"
+  - "有了你的密钥，聊天和 embedding 调用会向你的项目计费。"
+  en_display:
+  - "The prerequisites: a Google Cloud project with the Vertex AI API, the ml-workflow key with the Vertex AI User role, and about 10 gigabytes."
+  - null
+- en: "One honest note: our recording's key file is well-formed but belongs to no account. Everything that does not call Google works exactly as for you; the first Google call fails, and we show where."
+  zh:
+  - "如实说一句：我们录制用的密钥文件格式正确，但不属于任何账号。"
+  - "凡是不调用 Google 的，都和你那边完全一样；第一次 Google 调用会失败，我们会指给你看在哪儿。"
+- en: "Last setup step: put your project ID into both docker-shell scripts. Ours shows a placeholder."
+  zh:
+  - "最后一步设置：把你的项目 ID 填进两个 docker-shell 脚本。"
+  - "我们这里显示的是一个占位符。"
+- en: "The lecture's first step: make sure the vector database is running. Step 1: change into src, vector db, and run docker-shell.sh. Pause and run them."
+  zh:
+  - "课上的第一步：确保向量数据库在跑。"
+  - "第 1 步：进到 src/vector-db，运行 docker-shell.sh。"
+  - "暂停一下，跑一遍。"
+  en_display:
+  - null
+  - "Step 1: cd src/vector-db, and run docker-shell.sh."
+  - null
+- en: "The script creates the network, builds the loader, and Compose starts Chroma, publishing 8000 and keeping its data in a folder on your laptop."
+  zh:
+  - "这个脚本创建网络，构建加载器，再由 Compose 启动 Chroma，发布 8000，把数据存在你笔记本上的一个目录里。"
+- en: "Step 2, inside the container: download and load the cheese books. Eleven files, one finished line per book, 14,356 chunks in all. Pause while yours loads."
+  zh:
+  - "第 2 步，在 container 里：下载并加载奶酪书。"
+  - "一共 11 个文件，每本书一行完成信息，总共 14,356 个 chunk。"
+  - "暂停一下，等你的加载完。"
+- en: "These are the RAG lecture's chunks and embeddings, downloaded, not recomputed."
+  zh:
+  - "这些就是 RAG 那一讲的 chunk 和 embedding，是下载来的，不是重新算的。"
+- en: "Step 3: chat. The first Google call, embedding the question, fails here: invalid grant, account not found. With your key, an answer from the books appears instead."
+  zh:
+  - "第 3 步：chat。"
+  - "第一次 Google 调用，也就是给问题做 embedding，在这里失败了，报错是：Invalid grant: account not found。"
+  - "有了你的密钥，这里出现的就是一个来自这些书的回答。"
+  en_display:
+  - null
+  - "The first Google call, embedding the question, fails here: Invalid grant: account not found."
+  - null
+- en: "A small note: chat always asks its own fixed question, how is cheese made; there is no place to type yours. To ask another, edit that line in cli dot py."
+  zh:
+  - "说明一点：chat 总是问它自己固定的那个问题，How is cheese made，没有地方让你输入自己的问题。"
+  - "想问别的，就改 cli.py 里的那一行。"
+  en_display:
+  - 'A small note: chat always asks its own fixed question, "How is cheese made?", and there is no place to type yours.'
+  - "To ask another, edit that line in cli.py."
+- en: "Step 4: exit. Chroma keeps running on 8000, as an extra docker ps shows, and the network's phone book now turns its name into an address."
+  zh:
+  - "第 4 步：exit。"
+  - "Chroma 还在 8000 上跑着，额外跑一次 docker ps 就能看到，网络的电话簿现在也能把它的名字解析成地址。"
+S07:
+- en: "Backend APIs. In a new terminal, from the cheese app v2 folder: step 1, change into src, api service, and run docker-shell.sh. The first build takes a while, because of TensorFlow, so pause and start it."
+  zh:
+  - "Backend APIs。"
+  - "在一个新终端里，从 cheese-app-v2 目录开始：第 1 步，进到 src/api-service，运行 docker-shell.sh。"
+  - "第一次构建要一阵子，因为有 TensorFlow，所以暂停一下，先把它跑起来。"
+  en_display:
+  - null
+  - "In a new terminal, from the cheese-app-v2 folder: step 1, cd src/api-service, and run docker-shell.sh."
+  - null
+- en: "The banner offers two commands: API server and pytest."
+  zh:
+  - "横幅给了两个命令：API server 和 pytest。"
+  en_display:
+  - "The banner offers two commands: api_server and pytest."
+- en: "This script checks first: if the container already runs, it just opens a shell in it. Otherwise it mounts secrets without write access, mounts your persistent folder, publishes 9000, and joins the network."
+  zh:
+  - "这个脚本会先检查：如果 container 已经在跑，就直接在里面开一个 shell。"
+  - "否则，它以只读方式挂载 secrets，挂载你的 persistent-folder，发布 9000，再加入网络。"
+  en_display:
+  - null
+  - "Otherwise it mounts secrets without write access, mounts your persistent-folder, publishes 9000, and joins the network."
+- en: "Step 2: API server. It is almost the same uvicorn line as before, pointing at api dot service colon app. Pause and start it."
+  zh:
+  - "第 2 步：API server。"
+  - "它和前面那条 uvicorn 命令几乎一样，指向 api.service:app。"
+  - "暂停一下，把它启动起来。"
+  en_display:
+  - "Step 2: api_server."
+  - "It is almost the same uvicorn line as before, pointing at api.service:app."
+  - null
+- en: "Application startup complete arrives at once. Only after it do TensorFlow's lines appear, from a background thread that loads the cheese classifier."
+  zh:
+  - "Application startup complete 马上就出现了。"
+  - "在它之后，TensorFlow 的输出才出现，来自一个加载奶酪分类器的后台线程。"
+- en: "That is the design: the API answers right away while the model loads. Two probes say how far along it is: healthz and readyz."
+  zh:
+  - "这就是设计：模型在加载的时候，API 已经马上能应答。"
+  - "有两个探针告诉你进行到哪一步了：/healthz 和 /readyz。"
+  en_display:
+  - null
+  - "Two probes say how far along it is: /healthz and /readyz."
+- en: "Step 3: healthz says 200: the process is alive. Readyz says 503, CNN model is loading."
+  zh:
+  - "第 3 步：/healthz 返回 200：进程还活着。"
+  - "而 /readyz 返回 503，CNN model is loading。"
+  en_display:
+  - "Step 3: /healthz says 200: the process is alive."
+  - "/readyz says 503, CNN model is loading."
+- en: "An extra look: the model is downloaded once into your persistent folder, and every start reuses it."
+  zh:
+  - "额外看一眼：模型只下载一次，存进你的 persistent-folder，以后每次启动都复用它。"
+  en_display:
+  - "An extra look: the model is downloaded once into your persistent-folder, and every start reuses it."
+- en: "Another extra: the version 1 habits fail. Slash and slash docs answer 404; everything the browser calls is under slash api, and only the probes stay at the root."
+  zh:
+  - "再一个额外实验：v1 的习惯不管用了。"
+  - "根路径 / 和 /docs 都返回 404；浏览器调用的一切都在 /api 下面，只有探针还留在根路径。"
+  en_display:
+  - null
+  - "/ and /docs answer 404; everything the browser calls is under /api, and only the probes stay at the root."
+- en: "So, a quick test. Healthz says 200 and readyz says 503. Do you restart the container, or wait?"
+  zh:
+  - "那么，快速测一下。"
+  - "现在 /healthz 返回 200，/readyz 返回 503。"
+  - "你是重启 container，还是等一等？"
+  en_display:
+  - null
+  - "/healthz says 200 and /readyz says 503."
+  - null
+- en: "Wait: about nine seconds later, readyz says 200: the model is loaded and Chroma answers. A restart would only start the loading over. Kubernetes, which you meet in lectures 19 and 22, can use exactly these two probes: restart on liveness, send traffic on readiness."
+  zh:
+  - "等：大约 9 秒后，/readyz 返回 200：模型加载好了，Chroma 也有应答。"
+  - "重启只会让加载从头再来。"
+  - "Kubernetes，你会在第 19 讲和第 22 讲里见到，正好可以用这两个探针：看存活决定重启，看就绪决定放流量。"
+  en_display:
+  - "Wait: about nine seconds later, /readyz says 200: the model is loaded and Chroma answers."
+  - null
+  - null
+S08:
+- en: "Which routes does the API need? The lecture starts from the screens: newsletters, podcasts, and a chat that takes a photo. Each screen needs data, and each kind of data becomes a group of routes."
+  zh:
+  - "API 需要哪些路由？"
+  - "课上从页面出发：简报、播客，还有一个能接收照片的聊天。"
+  - "每个页面都需要数据，每一类数据就变成一组路由。"
+- en: "In service dot py, newsletters and podcasts get a router each under slash api. Then one function stamps out three chat routers: Ask, Identify and Cheese books. The lecture shows six groups; agent chat has no router in this repository."
+  zh:
+  - "在 service.py 里，简报和播客在 /api 下各有一个 router。"
+  - "然后由一个函数批量生成三个聊天 router：Ask、Identify 和 Cheese books。"
+  - "课上画了六组；agent 聊天在这个 repo 里没有 router。"
+  en_display:
+  - "In service.py, newsletters and podcasts get a router each under /api."
+  - null
+  - null
+- en: "The lecture also shows three places an agent can sit, with or without an MCP service. This repository has none."
+  zh:
+  - "课上还画了 agent 可以放的三个位置，有没有 MCP 服务都行。"
+  - "这个 repo 一个都没有。"
+- en: "And the slide's one-file route is the idea. The repository puts the same function in a router, mounted at slash api, newsletters."
+  zh:
+  - "课件上那个单文件路由讲的是思路。"
+  - "这个 repo 把同一个函数放进一个 router，挂在 /api/newsletters 下。"
+  en_display:
+  - null
+  - "The repository puts the same function in a router, mounted at /api/newsletters."
+- en: "Demo route: add the README's function after get status, and save. The server reloads by itself."
+  zh:
+  - "演示路由：把 README 里的函数加在 get status 后面，保存。"
+  - "服务器会自己重载。"
+  en_display:
+  - "Demo route: add the README's function after get_status, and save."
+  - null
+- en: "This loads the model again, and readyz is back to 200 shortly after."
+  zh:
+  - "这会再加载一次模型，过一会儿 /readyz 又回到 200。"
+  en_display:
+  - "This loads the model again, and /readyz is back to 200 shortly after."
+- en: "Then open slash api, square root: the square root of 5 again. With x equals 3 and y equals 4, it answers five point zero. Pause and try both."
+  zh:
+  - "然后打开 /api 下的 square root：又是 5 的平方根。"
+  - "用 x 等于 3，y 等于 4，它返回 5.0。"
+  - "暂停一下，两个都试试。"
+  en_display:
+  - "Then open /api/square_root: the square root of 5 again."
+  - "With x=3&y=4, it answers 5.0."
+  - null
+- en: "API docs: they moved to slash api, docs. An extra listing shows all 25 operations: the leaves of this tree."
+  zh:
+  - "API 文档：搬到了 /api/docs。"
+  - "额外列一下，能看到全部 25 个操作：就是这棵树的叶子。"
+  en_display:
+  - "API docs: they moved to /api/docs."
+  - null
+- en: "In the docs, pause and try get newsletters with a limit of 2. Two newsletters come back as JSON, newest first: the lecture's example, now real. An unknown ID gets 404, newsletter not found."
+  zh:
+  - "在文档页里，暂停一下，试试 get newsletters，limit 设成 2。"
+  - "两条简报以 JSON 返回，最新的在前：课上的例子，现在成了真的。"
+  - "一个不存在的 ID 会得到 404，Newsletter not found。"
+- en: "Review the code: the README's table maps each file. Service dot py builds the app, settings dot py holds every setting, the routers hold the routes, and one utils file per chat mode does the work."
+  zh:
+  - "Review the code：README 的表格逐个对应了每个文件。"
+  - "其中 service.py 构建应用，settings.py 放所有设置，router 里放路由，每种聊天模式一个 utils 文件来干活。"
+  en_display:
+  - null
+  - "service.py builds the app, settings.py holds every setting, the routers hold the routes, and one utils file per chat mode does the work."
+S09:
+- en: "The lecture's chat handler says: use Gemini to generate text. In the repository, one route starts a chat and another continues it. The real path names the mode: slash api, llm, chats."
+  zh:
+  - "课上的聊天处理函数写着：use Gemini to generate text。"
+  - "在 repo 里，一个路由开始聊天，另一个路由接着聊。"
+  - "真实的路径里带着模式：/api/llm/chats。"
+  en_display:
+  - null
+  - null
+  - "The real path names the mode: /api/llm/chats."
+- en: "How does the API remember a conversation? It does not: with every message, the browser sends a session ID, one random UUID per browser. The API opens that session's chat file, adds your message and the reply, saves, and forgets."
+  zh:
+  - "API 是怎么记住一段对话的？"
+  - "它不记：每发一条消息，浏览器都会带上一个 session ID，每个浏览器一个随机的 UUID。"
+  - "API 打开这个 session 的聊天文件，加上你的消息和回复，保存，然后就忘掉。"
+- en: "Two extras: no session ID, or an empty message, gets 422."
+  zh:
+  - "两个额外实验：没有 session ID，或者消息为空，都会得到 422。"
+- en: "Identify's photo step works fully offline. We send the repository's own blue cheese photo, and the CNN guesses parmigiano, at 58 percent. A follow-up question would go to Gemini."
+  zh:
+  - "Identify 的识图这一步完全离线。"
+  - "我们发送 repo 自带的那张蓝纹奶酪照片，CNN 猜的是 parmigiano，58%。"
+  - "追问会交给 Gemini。"
+- en: "An extra listing shows it on disk: one JSON file per chat under your session, and the photo in the mode's images folder."
+  zh:
+  - "额外列一下，就能在磁盘上看到：你的 session 下每个聊天一个 JSON 文件，照片在这个模式的 images 目录里。"
+- en: "Ask mode calls Gemini, and here it stops: Internal Server Error, status 500. The API's terminal shows why: the same invalid grant, account not found. With your key, Gemini's answer has this shape."
+  zh:
+  - "Ask 模式会调用 Gemini，到这里就停了：Internal Server Error，状态码 500。"
+  - "API 的终端说明了原因，报错还是那个：Invalid grant: account not found。"
+  - "有了你的密钥，Gemini 的回答就是这个形状。"
+  en_display:
+  - null
+  - "The API's terminal shows why: the same Invalid grant: account not found."
+  - null
+- en: "A small note: the README's table covers Gemini 403 and 404, reported as 502. A key Google cannot sign in with fails earlier, as a plain 500, so check the API's terminal first."
+  zh:
+  - "说明一点：README 的表格讲的是 Gemini 返回 403 和 404，报成 502。"
+  - "Google 没法用来登录的密钥会更早失败，就是一个普通的 500，所以先看 API 的终端。"
+- en: "Two more README notes. Each message rebuilds the conversation from the saved file, so any copy of the API can answer. And routes written with plain def run in threads, so one slow answer does not block the rest."
+  zh:
+  - "再补充 README 的两点。"
+  - "每条消息都从存下来的文件重建对话，所以 API 的任何一个副本都能回答。"
+  - "而用普通 def 写的路由在线程里跑，所以一个慢的回答不会阻塞其他请求。"
+- en: "Last, the tests: in a second terminal, in the same folder, docker-shell.sh again opens a shell in the running container. Run pytest: 26 passed. Pause and run it."
+  zh:
+  - "最后是测试：在第二个终端里，在同一个目录下再运行 docker-shell.sh，会在正在跑的 container 里开一个 shell。"
+  - "运行 pytest：26 passed。"
+  - "暂停一下，自己跑一遍。"
+- en: "Keep this container running. The API is ready, but nobody can use it from a browser yet. In part 2 the browser talks to port 3000, so how does that reach 9000?"
+  zh:
+  - "让这个 container 一直跑着。"
+  - "API 已经就绪，但还没人能从浏览器里用它。"
+  - "在第 2 部分，浏览器和 port 3000 说话，那它怎么到达 9000？"

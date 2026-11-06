@@ -1,0 +1,1379 @@
+1
+00:00:00,000 --> 00:00:04,352
+这是一个发往 port 3000 的请求，这个应用的前端就跑在那里
+Here is a request to port 3000, where this app's frontend runs.
+
+2
+00:00:04,672 --> 00:00:07,125
+它要两条简报，也拿到了
+It asks for two newsletters and gets them.
+
+3
+00:00:07,445 --> 00:00:11,537
+可你看是谁应答的：uvicorn，也就是 API 的服务器
+But look who answered: uvicorn, the API's server,
+
+4
+00:00:11,537 --> 00:00:14,293
+而 API 监听的是 port 9000
+and the API listens on port 9000.
+
+5
+00:00:14,533 --> 00:00:17,093
+这个应用去年的版本不是这样工作的
+Last year's version of this app worked differently.
+
+6
+00:00:17,413 --> 00:00:23,542
+它的页面直接调用 port 9000，每个回答都带着一张许可条
+Its page called port 9000 directly, and every answer carried a permission slip:
+
+7
+00:00:23,542 --> 00:00:25,947
+access-control-allow-origin，星号
+access-control-allow-origin: *.
+
+8
+00:00:26,183 --> 00:00:29,084
+今年的 API 根本不发这种许可条
+This year's API sends no such slip at all.
+
+9
+00:00:29,404 --> 00:00:33,186
+那么，是谁把请求从 3000 送到 9000 的
+So who carried the request from 3000 to 9000, and why
+
+10
+00:00:33,186 --> 00:00:35,826
+去年的页面又为什么需要许可？
+did last year's page need permission?
+
+11
+00:00:36,067 --> 00:00:39,911
+课上把一条聊天消息画成六个编号步骤
+The lecture draws one chat message as six numbered steps:
+
+12
+00:00:39,911 --> 00:00:44,835
+请求、转发、映射进 container、运行函数、响应、显示
+request, forward, map into a container, run a function, respond, show it.
+
+13
+00:00:45,155 --> 00:00:48,739
+我们加上课上从没画出的一步：第 3.5 步，信使
+We add one step it never draws: three and a half, the courier.
+
+14
+00:00:49,567 --> 00:00:54,772
+拉远一点看，这就是课上整个应用的蓝图，还是那三个端口
+Zoom out, and this is the lecture's blueprint for the whole app, with the same three ports.
+
+15
+00:00:55,092 --> 00:00:57,729
+课上先说应用已经准备好了，接着又承认
+The lecture calls the app ready, then admits:
+
+16
+00:00:57,729 --> 00:00:59,956
+其实还没有，我们得把它建出来
+well, not really, we need to build it.
+
+17
+00:01:00,276 --> 00:01:03,369
+今天我们在你的笔记本上，把右半边建出来
+Today we build the right-hand side, on your laptop.
+
+18
+00:01:03,617 --> 00:01:06,328
+要跟着做，先把两个 repo 都 clone 下来
+To follow along, clone both repositories,
+
+19
+00:01:06,328 --> 00:01:09,569
+让 Docker 一直开着，再腾出大约 10 GB
+keep Docker running, and free about 10 gigabytes.
+
+20
+00:01:09,889 --> 00:01:12,897
+你的 Google 密钥只在聊天的回答上用得到
+Your Google key matters only for the chat answers.
+
+21
+00:01:13,133 --> 00:01:18,741
+角落里的进度条标出 README 的哪一步，代码面板标出文件和行号
+The tracker in the corner names the README step, code panels name their file and lines,
+
+22
+00:01:18,741 --> 00:01:22,093
+黄色的 your turn 标签表示暂停一下，自己跑一遍
+and a yellow tag, your turn, means pause and run it.
+
+23
+00:01:22,633 --> 00:01:24,425
+先看这一讲在哪儿
+First, where this lecture sits.
+
+24
+00:01:24,745 --> 00:01:28,293
+课程项目已经有了它的机器学习 pipeline
+The course project has its machine learning pipeline;
+
+25
+00:01:28,293 --> 00:01:32,510
+还缺的是应用：一个后端 API 和一个前端
+what is still missing is the app: a backend API and a frontend.
+
+26
+00:01:32,750 --> 00:01:38,617
+课上把系统画成一张技术架构图，也就是蓝图，一层一层地画
+The lecture draws the system as a technical architecture, the blueprint, one layer at a time.
+
+27
+00:01:38,937 --> 00:01:43,382
+开发者、用户、GitHub 和 Colab 在云外
+Developers, users, GitHub and Colab sit outside the cloud,
+
+28
+00:01:43,382 --> 00:01:48,899
+Vertex AI 在云里，每个箭头都标着它的协议和 port
+Vertex AI inside, and every arrow is labeled with its protocol and port.
+
+29
+00:01:49,133 --> 00:01:50,343
+接着是一个 bucket
+Then come a bucket,
+
+30
+00:01:50,343 --> 00:01:53,080
+一个存 image 的 registry 和一块持久化磁盘
+a registry of images and a persistent disk.
+
+31
+00:01:53,400 --> 00:01:58,912
+右边是一个集群：最前面是 NGINX，应用在 3000
+On the right sits a cluster: NGINX in front, the app on 3000,
+
+32
+00:01:58,912 --> 00:02:02,978
+API 在 9000，向量数据库在 8000
+the API on 9000, the vector database on 8000.
+
+33
+00:02:03,216 --> 00:02:06,608
+今天，整个右半边都在你的笔记本上跑
+Today, that whole right-hand side runs on your laptop.
+
+34
+00:02:07,166 --> 00:02:10,716
+课上的目录规则：每个应用一个 Git 目录
+The lecture's folder rule: one Git folder per app,
+
+35
+00:02:10,716 --> 00:02:15,614
+src 下每个服务一个目录，secrets 放在 Git 目录之外
+one folder per service under src, and secrets outside the Git folder.
+
+36
+00:02:15,934 --> 00:02:20,917
+v1 甚至留着空目录，给它不跑的服务
+Version 1 even keeps empty folders for the services it does not run;
+
+37
+00:02:20,917 --> 00:02:23,188
+v2 只放它自己的三个
+version 2 holds only its three.
+
+38
+00:02:23,433 --> 00:02:26,462
+第 1、2 步：把两个 repo 都 clone 下来
+Steps 1 and 2: clone both repositories.
+
+39
+00:02:26,782 --> 00:02:30,686
+README 写的是 clone 或下载，git clone 是我们的写法
+The READMEs say clone or download; git clone is our spelling.
+
+40
+00:02:31,006 --> 00:02:32,583
+暂停一下，clone 下来
+Pause and clone them.
+
+41
+00:02:32,633 --> 00:02:34,456
+第 3 步：在 clone 旁边
+Step 3: next to the clones,
+
+42
+00:02:34,456 --> 00:02:37,561
+自己建好 secrets 和 persistent-folder 两个目录
+create secrets and persistent-folder yourself.
+
+43
+00:02:37,881 --> 00:02:39,465
+交给 Linux 上的 Docker 去建
+Left to Docker on Linux,
+
+44
+00:02:39,465 --> 00:02:43,086
+它们会属于 root，container 就没法往里写
+they would belong to root, and the container could not write there.
+
+45
+00:02:43,406 --> 00:02:46,201
+你的 ml-workflow.json 密钥放进 secrets 目录里
+Your ml-workflow key goes into secrets.
+
+46
+00:02:46,450 --> 00:02:51,911
+有一件事在我们录制当天变了：v2 的 main 分支动了两次
+One thing changed on the day we recorded: the main branch of version 2 moved twice.
+
+47
+00:02:52,231 --> 00:02:54,470
+我们跟着你今天 clone 到的 main 分支走
+We follow main as you clone it today.
+
+48
+00:02:54,770 --> 00:02:57,075
+课上讲的简单前端
+The simple frontend the lecture
+
+49
+00:02:57,075 --> 00:03:02,130
+现在在 2025 分支上，我们最后会去看
+teaches now sits on a branch called 2025, which we visit at the end.
+
+50
+00:03:04,367 --> 00:03:07,972
+浏览器发出一个请求，服务器回一个响应
+A browser sends a request; a server sends a response.
+
+51
+00:03:08,292 --> 00:03:10,811
+由 port 决定交给哪个程序
+A port picks which program gets it:
+
+52
+00:03:10,811 --> 00:03:15,070
+公开网站在地址里省掉默认的 80 和 443
+public sites leave the default 80 and 443 out of the address;
+
+53
+00:03:15,070 --> 00:03:16,670
+我们的地址会写出 port
+ours show the port.
+
+54
+00:03:16,817 --> 00:03:21,916
+在这门课里，API 指的是 REST API，用 FastAPI 来写
+In this course, an API means a REST API, built with FastAPI.
+
+55
+00:03:22,236 --> 00:03:24,714
+每个客户端都只和这一个 API 打交道
+Every client talks to that one API,
+
+56
+00:03:24,714 --> 00:03:27,334
+也只有 API 和各个存储打交道
+and only the API talks to the stores.
+
+57
+00:03:27,584 --> 00:03:29,739
+第 1 部分，cheese-app-v1
+Part 1, cheese-app-v1.
+
+58
+00:03:30,059 --> 00:03:32,372
+第 1 步：进到 API 目录
+Step 1: go to the API folder;
+
+59
+00:03:32,372 --> 00:03:35,883
+README 的路径漏了 src，所以这一步会失败
+the README's path misses src, so this fails.
+
+60
+00:03:36,203 --> 00:03:38,314
+有一个小疏漏：加上 src
+A small slip: add src.
+
+61
+00:03:39,000 --> 00:03:41,731
+第 2 步：sh docker-shell.sh
+Step 2: sh docker-shell.sh.
+
+62
+00:03:42,051 --> 00:03:47,533
+它先构建 image，再启动一个退出时自动删除的 container
+It builds the image, then starts a container that removes itself on exit,
+
+63
+00:03:47,533 --> 00:03:51,288
+挂载你的代码，并把 port 9000 发布到 9000
+mounts your code, and publishes port 9000 to 9000.
+
+64
+00:03:51,608 --> 00:03:52,950
+暂停一下，自己跑一遍
+Pause and run it.
+
+65
+00:03:53,000 --> 00:03:55,816
+第 3 步：README 里那条长长的 uvicorn 命令
+Step 3: the README's long uvicorn line.
+
+66
+00:03:56,136 --> 00:04:00,936
+这里 uvicorn 是服务器：port 归它管，HTTP 协议也由它来处理
+Here, uvicorn is the server: it owns the port and speaks HTTP.
+
+67
+00:04:01,256 --> 00:04:03,539
+FastAPI 是它里面的应用
+FastAPI is the app inside it.
+
+68
+00:04:03,784 --> 00:04:07,661
+这个 api.service:app 是一个地址
+The phrase api.service:app is an address:
+
+69
+00:04:07,661 --> 00:04:11,634
+api 目录，service.py 文件，app 变量
+folder api, file service.py, variable app.
+
+70
+00:04:11,884 --> 00:04:15,014
+参数 --host 0.0.0.0 表示所有网络接口
+--host 0.0.0.0 means every interface:
+
+71
+00:04:15,014 --> 00:04:17,468
+container 自己的回环地址
+the container's own loopback,
+
+72
+00:04:17,468 --> 00:04:21,868
+还有它的网络接口，也就是隧道到达的地方
+and its network interface, where the tunnel arrives.
+
+73
+00:04:22,188 --> 00:04:25,932
+参数 --reload 在 api 目录里有文件改动时重启应用
+--reload restarts the app when a file in api changes;
+
+74
+00:04:25,932 --> 00:04:28,758
+最后那部分把额外的参数往下传
+the last part passes on extra arguments.
+
+75
+00:04:29,000 --> 00:04:33,072
+日志也对得上：0.0.0.0，port 9000
+The log agrees: 0.0.0.0, port 9000,
+
+76
+00:04:33,072 --> 00:04:37,960
+一个监视 api 目录的重载器，startup complete
+a reloader watching api, startup complete.
+
+77
+00:04:38,200 --> 00:04:41,312
+在 service.py 里，应用加了 CORS 中间件
+In service.py, the app adds CORS middleware,
+
+78
+00:04:41,312 --> 00:04:46,264
+这个到最后才用得上，还有一个路由：GET / 返回一句欢迎语
+which matters at the very end, and one route: GET / returns a welcome.
+
+79
+00:04:46,500 --> 00:04:49,401
+第 4 步：打开 localhost:9000
+Step 4: open localhost:9000.
+
+80
+00:04:49,721 --> 00:04:52,344
+额外用 curl 也能看到同样的回答
+An extra curl shows the same reply:
+
+81
+00:04:52,344 --> 00:04:55,417
+uvicorn 返回状态码 200，还有那句欢迎语
+status 200 from uvicorn, and the welcome.
+
+82
+00:04:55,737 --> 00:04:57,117
+暂停一下，试一试
+Pause and try it.
+
+83
+00:04:57,167 --> 00:05:00,820
+这就是课上的那一趟：转发到发布的 port
+That is the lecture's trip: forwarded to the published port,
+
+84
+00:05:00,820 --> 00:05:05,082
+映射进 container，函数运行，JSON 再传回来
+mapped into the container, the function runs, and the JSON comes back.
+
+85
+00:05:05,934 --> 00:05:11,929
+提一句：课件把 container 内部标成 localhost:9000
+One kind note: the slide labels the inside of the container localhost:9000.
+
+86
+00:05:12,249 --> 00:05:16,751
+把它理解成 container 的 port 9000 就好
+Take it as port 9000 of the container:
+
+87
+00:05:16,751 --> 00:05:19,950
+uvicorn 监听的是 0.0.0.0
+uvicorn listens on 0.0.0.0.
+
+88
+00:05:20,184 --> 00:05:21,784
+那么，快速测一下
+So, a quick test.
+
+89
+00:05:21,848 --> 00:05:25,624
+如果 uvicorn 改成监听 127.0.0.1
+If uvicorn listened on 127.0.0.1 instead,
+
+90
+00:05:25,624 --> 00:05:29,677
+在 container 里面用 curl 还能通吗？
+would a curl from inside the container work?
+
+91
+00:05:29,997 --> 00:05:32,642
+那你浏览器里的 localhost:9000 呢？
+And your browser on localhost:9000?
+
+92
+00:05:42,583 --> 00:05:46,146
+在 container 里面，可以：它自己的回环地址会应答
+Inside, yes: the container's own loopback answers.
+
+93
+00:05:46,466 --> 00:05:47,762
+从浏览器，不行
+From the browser, no:
+
+94
+00:05:47,762 --> 00:05:51,842
+转发过来的请求到达的是 container 的网络接口
+the forwarded request arrives on the container's network interface,
+
+95
+00:05:51,842 --> 00:05:53,442
+而那里没人监听
+where nothing listens.
+
+96
+00:05:53,506 --> 00:05:58,114
+这就是 README 写 0.0.0.0 的原因
+That is why the README says 0.0.0.0.
+
+97
+00:05:58,350 --> 00:06:02,702
+第 5 步：课上把一个路由写成加了装饰器的 Python 函数
+Step 5: the lecture writes a route as a decorated Python function.
+
+98
+00:06:03,022 --> 00:06:05,401
+把 README 里的 square root 函数
+Add the README's square_root function
+
+99
+00:06:05,401 --> 00:06:07,651
+加到 service.py 末尾，保存
+at the end of service.py, and save.
+
+100
+00:06:07,971 --> 00:06:11,342
+它返回 x 的平方加 y 的平方再开平方根
+It returns the square root of x squared plus y squared.
+
+101
+00:06:11,583 --> 00:06:16,362
+在服务器的终端里，StatReload 发现了改动，换上一个新的应用
+In the server's terminal, StatReload sees the change and swaps in a fresh app.
+
+102
+00:06:16,682 --> 00:06:18,282
+你什么都没重启
+You restarted nothing.
+
+103
+00:06:18,500 --> 00:06:21,593
+第 6 步：打开 square root，带上结尾的斜杠
+Step 6: open square_root, with its trailing slash.
+
+104
+00:06:21,913 --> 00:06:26,479
+没有参数，所以用默认值 1 和 2：5 的平方根
+No arguments, so the defaults 1 and 2 apply: the square root of 5.
+
+105
+00:06:26,799 --> 00:06:28,399
+暂停一下，试一试
+Pause and try it.
+
+106
+00:06:28,483 --> 00:06:31,854
+第 7 步：加上 x 等于 2，y 等于 10
+Step 7: add x=2&y=10.
+
+107
+00:06:32,174 --> 00:06:38,168
+查询字符串填进函数的参数，返回的是 104 的平方根
+The query string fills the function's arguments, and back comes the square root of 104.
+
+108
+00:06:38,416 --> 00:06:39,753
+两个额外实验
+Two extras.
+
+109
+00:06:39,803 --> 00:06:44,923
+用字母代替数字，会撞上 float 类型提示，被 422 弹回来
+A letter instead of a number bounces off the float type hint with 422.
+
+110
+00:06:45,166 --> 00:06:51,460
+不带结尾的斜杠，FastAPI 会返回 307，指向带斜杠的版本
+Without the trailing slash, FastAPI answers 307 and points to the slash version.
+
+111
+00:06:51,700 --> 00:06:54,751
+服务器日志列出每个请求和它的状态码
+The server's log shows each request with its status.
+
+112
+00:06:55,071 --> 00:07:00,126
+200、200、200、422、307
+200, 200, 200, 422, 307.
+
+113
+00:07:00,516 --> 00:07:02,585
+第 8 步：打开 /docs
+Step 8: open /docs.
+
+114
+00:07:02,905 --> 00:07:05,627
+FastAPI 从你的代码生成了这个页面
+FastAPI built this page from your code:
+
+115
+00:07:05,627 --> 00:07:11,418
+x 和 y 显示为数字，带着默认值，你还能直接在这里试一次调用
+x and y appear as numbers, with their defaults, and you can try a call right there.
+
+116
+00:07:11,666 --> 00:07:15,293
+类型提示变成了校验，也变成了文档
+The type hints became the validation and the documentation.
+
+117
+00:07:15,613 --> 00:07:18,301
+暂停一下，在文档页上试一次调用
+Pause and try one call from the docs page.
+
+118
+00:07:19,650 --> 00:07:22,423
+现在是 v1 的另一半：一个页面
+Now the other half of version 1: a page.
+
+119
+00:07:22,743 --> 00:07:24,708
+课上把一个页面拆成三块
+The lecture splits a page
+
+120
+00:07:24,708 --> 00:07:29,975
+HTML 管结构，CSS 管样式，JavaScript 管行为
+into HTML for structure, CSS for style and JavaScript for behavior.
+
+121
+00:07:30,295 --> 00:07:33,922
+在 v1 里，index.html 把三样都链接起来
+In version 1, index.html links all three.
+
+122
+00:07:34,167 --> 00:07:36,492
+第 1 步：进到前端目录
+Step 1: go to the frontend folder.
+
+123
+00:07:36,812 --> 00:07:39,457
+和前面同样的疏漏：加上 src
+Same slip as before: add src.
+
+124
+00:07:39,700 --> 00:07:43,783
+第 2、3 步：暂停一下，运行 sh docker-shell.sh
+Steps 2 and 3: pause, run sh docker-shell.sh,
+
+125
+00:07:43,783 --> 00:07:47,231
+然后在 container 里跑 http-server
+then http-server inside the container.
+
+126
+00:07:47,551 --> 00:07:51,348
+它在 port 8080 上提供这个目录，缓存时间一小时
+It serves this folder on port 8080, with a one-hour cache.
+
+127
+00:07:51,668 --> 00:07:56,703
+它打印的地址都在 container 里面；你的笔记本用 8080
+The addresses it prints are inside the container; your laptop uses 8080.
+
+128
+00:07:56,950 --> 00:07:59,745
+第 4 步：打开 localhost:8080
+Step 4: open localhost:8080.
+
+129
+00:08:00,065 --> 00:08:04,673
+这是课上的第一趟：请求到达 http-server
+This is the lecture's first trip: the request reaches http-server,
+
+130
+00:08:04,673 --> 00:08:07,745
+传回一个文件，浏览器把它画出来
+a file comes back, and the browser draws it.
+
+131
+00:08:08,065 --> 00:08:09,665
+暂停一下，打开看看
+Pause and open it.
+
+132
+00:08:16,883 --> 00:08:21,046
+额外看一眼 main.js：这些播客是示例数据
+An extra look at main.js: the podcasts are sample data,
+
+133
+00:08:21,046 --> 00:08:23,923
+正常情况下应该来自一个 API
+which would normally come from an API.
+
+134
+00:08:24,243 --> 00:08:26,227
+第 2 部分会加上第二趟
+Part 2 adds that second trip.
+
+135
+00:08:26,467 --> 00:08:29,944
+第 5 步：在 index.html 里加一个段落
+Step 5: add a paragraph to index.html.
+
+136
+00:08:30,264 --> 00:08:33,837
+说明一点：README 里的代码片段是一个旧的完整 body
+A small note: the README's snippet is an old whole body,
+
+137
+00:08:33,837 --> 00:08:37,283
+贴进去会把页面和它的 script 标签都弄丢
+and pasting it would drop the page and its script tag.
+
+138
+00:08:37,603 --> 00:08:39,203
+只加那个段落
+Add only the paragraph.
+
+139
+00:08:43,017 --> 00:08:46,004
+第 6 步：刷新，新文字就出来了
+Step 6: refresh, and the new text appears.
+
+140
+00:08:46,324 --> 00:08:49,625
+改了 main.js 可能需要强制刷新
+Edits to main.js may need a hard refresh,
+
+141
+00:08:49,625 --> 00:08:54,537
+因为 http-server 让浏览器把文件缓存一小时
+because http-server lets the browser cache files for an hour.
+
+142
+00:08:54,783 --> 00:08:58,794
+要收尾，在两个终端里都按 Ctrl-C，再输入 exit
+To clean up, press Ctrl+C and type exit in both terminals.
+
+143
+00:08:59,114 --> 00:09:03,210
+这时 container 列表是空的，因为两个都自己删掉了
+The container list is then empty, because both removed themselves.
+
+144
+00:09:05,583 --> 00:09:08,792
+命令 docker system prune 会先问你，所以输入 y 确认
+docker system prune asks first, so type y;
+
+145
+00:09:08,792 --> 00:09:11,237
+image 列表显示留下了什么
+the image list shows what stays.
+
+146
+00:09:13,083 --> 00:09:15,120
+现在是 v2，真正的应用
+Now version 2, the real app:
+
+147
+00:09:15,120 --> 00:09:17,883
+四个 container，在同一个 Docker 网络上
+four containers on one Docker network.
+
+148
+00:09:18,203 --> 00:09:21,700
+Chroma，也就是向量数据库，在 8000
+Chroma, the vector database, on 8000;
+
+149
+00:09:21,700 --> 00:09:23,307
+一个加载器
+a loader; the API
+
+150
+00:09:23,307 --> 00:09:26,992
+API 在 9000；React 前端在 3000
+on 9000; and the React frontend on 3000.
+
+151
+00:09:27,233 --> 00:09:32,405
+前置条件：一个启用了 Vertex AI API 的 Google Cloud 项目
+The prerequisites: a Google Cloud project with the Vertex AI API,
+
+152
+00:09:32,405 --> 00:09:36,304
+一个带 Vertex AI User 角色的 ml-workflow 密钥
+the ml-workflow key with the Vertex AI User role,
+
+153
+00:09:36,304 --> 00:09:38,134
+还有大约 10 GB
+and about 10 gigabytes.
+
+154
+00:09:38,454 --> 00:09:41,953
+有了你的密钥，聊天和 embedding 调用会向你的项目计费
+With your key, chat and embedding calls bill your project.
+
+155
+00:09:42,200 --> 00:09:47,853
+如实说一句：我们录制用的密钥文件格式正确，但不属于任何账号
+One honest note: our recording's key file is well-formed but belongs to no account.
+
+156
+00:09:48,173 --> 00:09:52,044
+凡是不调用 Google 的，都和你那边完全一样
+Everything that does not call Google works exactly as for you;
+
+157
+00:09:52,044 --> 00:09:54,978
+第一次 Google 调用会失败，我们会指给你看在哪儿
+the first Google call fails, and we show where.
+
+158
+00:09:55,216 --> 00:09:59,760
+最后一步设置：把你的项目 ID 填进两个 docker-shell 脚本
+Last setup step: put your project ID into both docker-shell scripts.
+
+159
+00:10:00,080 --> 00:10:01,808
+我们这里显示的是一个占位符
+Ours shows a placeholder.
+
+160
+00:10:02,050 --> 00:10:05,869
+课上的第一步：确保向量数据库在跑
+The lecture's first step: make sure the vector database is running.
+
+161
+00:10:06,189 --> 00:10:11,778
+第 1 步：进到 src/vector-db，运行 docker-shell.sh
+Step 1: cd src/vector-db, and run docker-shell.sh.
+
+162
+00:10:12,098 --> 00:10:13,550
+暂停一下，跑一遍
+Pause and run them.
+
+163
+00:10:13,600 --> 00:10:18,691
+这个脚本创建网络，构建加载器，再由 Compose 启动 Chroma
+The script creates the network, builds the loader, and Compose starts Chroma,
+
+164
+00:10:18,691 --> 00:10:22,922
+发布 8000，把数据存在你笔记本上的一个目录里
+publishing 8000 and keeping its data in a folder on your laptop.
+
+165
+00:10:23,450 --> 00:10:27,546
+第 2 步，在 container 里：下载并加载奶酪书
+Step 2, inside the container: download and load the cheese books.
+
+166
+00:10:27,866 --> 00:10:34,010
+一共 11 个文件，每本书一行完成信息，总共 14,356 个 chunk
+Eleven files, one finished line per book, 14,356 chunks in all.
+
+167
+00:10:34,330 --> 00:10:35,930
+暂停一下，等你的加载完
+Pause while yours loads.
+
+168
+00:10:36,100 --> 00:10:39,342
+这些就是 RAG 那一讲的 chunk 和 embedding
+These are the RAG lecture's chunks and embeddings,
+
+169
+00:10:39,342 --> 00:10:41,092
+是下载来的，不是重新算的
+downloaded, not recomputed.
+
+170
+00:10:41,450 --> 00:10:42,979
+第 3 步：chat
+Step 3: chat.
+
+171
+00:10:43,029 --> 00:10:45,796
+第一次 Google 调用，也就是给问题做 embedding
+The first Google call, embedding the question,
+
+172
+00:10:45,796 --> 00:10:48,974
+在这里失败了，报错是：Invalid grant: account not found
+fails here: Invalid grant: account not found.
+
+173
+00:10:49,109 --> 00:10:53,360
+有了你的密钥，这里出现的就是一个来自这些书的回答。说明一点
+With your key, an answer from the books appears instead. A small note:
+
+174
+00:10:53,360 --> 00:10:57,368
+chat 总是问它自己固定的那个问题，How is cheese made
+chat always asks its own fixed question, "How is cheese made?",
+
+175
+00:10:57,368 --> 00:10:59,658
+没有地方让你输入自己的问题
+and there is no place to type yours.
+
+176
+00:10:59,978 --> 00:11:03,434
+想问别的，就改 cli.py 里的那一行
+To ask another, edit that line in cli.py.
+
+177
+00:11:03,683 --> 00:11:05,283
+第 4 步：exit
+Step 4: exit.
+
+178
+00:11:05,539 --> 00:11:09,576
+Chroma 还在 8000 上跑着，额外跑一次 docker ps 就能看到
+Chroma keeps running on 8000, as an extra docker ps shows,
+
+179
+00:11:09,576 --> 00:11:14,030
+网络的电话簿现在也能把它的名字解析成地址
+and the network's phone book now turns its name into an address.
+
+180
+00:11:16,450 --> 00:11:18,050
+Backend APIs
+Backend APIs.
+
+181
+00:11:18,135 --> 00:11:22,720
+在一个新终端里，从 cheese-app-v2 目录开始
+In a new terminal, from the cheese-app-v2 folder:
+
+182
+00:11:22,720 --> 00:11:27,586
+第 1 步，进到 src/api-service，运行 docker-shell.sh
+step 1, cd src/api-service, and run docker-shell.sh.
+
+183
+00:11:27,906 --> 00:11:29,672
+第一次构建要一阵子
+The first build takes a while,
+
+184
+00:11:29,672 --> 00:11:32,322
+因为有 TensorFlow，所以暂停一下，先把它跑起来
+because of TensorFlow, so pause and start it.
+
+185
+00:11:32,567 --> 00:11:36,535
+横幅给了两个命令：API server 和 pytest
+The banner offers two commands: api_server and pytest.
+
+186
+00:11:36,783 --> 00:11:38,307
+这个脚本会先检查
+This script checks first:
+
+187
+00:11:38,307 --> 00:11:41,903
+如果 container 已经在跑，就直接在里面开一个 shell
+if the container already runs, it just opens a shell in it.
+
+188
+00:11:42,223 --> 00:11:45,572
+否则，它以只读方式挂载 secrets
+Otherwise it mounts secrets without write access,
+
+189
+00:11:45,572 --> 00:11:50,287
+挂载你的 persistent-folder，发布 9000，再加入网络
+mounts your persistent-folder, publishes 9000, and joins the network.
+
+190
+00:11:50,800 --> 00:11:52,827
+第 2 步：API server
+Step 2: api_server.
+
+191
+00:11:53,147 --> 00:11:59,227
+它和前面那条 uvicorn 命令几乎一样，指向 api.service:app
+It is almost the same uvicorn line as before, pointing at api.service:app.
+
+192
+00:11:59,547 --> 00:12:01,000
+暂停一下，把它启动起来
+Pause and start it.
+
+193
+00:12:01,050 --> 00:12:03,930
+Application startup complete 马上就出现了
+Application startup complete arrives at once.
+
+194
+00:12:04,250 --> 00:12:06,984
+在它之后，TensorFlow 的输出才出现
+Only after it do TensorFlow's lines appear,
+
+195
+00:12:06,984 --> 00:12:10,671
+来自一个加载奶酪分类器的后台线程
+from a background thread that loads the cheese classifier.
+
+196
+00:12:10,917 --> 00:12:15,546
+这就是设计：模型在加载的时候，API 已经马上能应答
+That is the design: the API answers right away while the model loads.
+
+197
+00:12:15,866 --> 00:12:19,770
+有两个探针告诉你进行到哪一步了：/healthz 和 /readyz
+Two probes say how far along it is: /healthz and /readyz.
+
+198
+00:12:21,133 --> 00:12:25,208
+第 3 步：/healthz 返回 200：进程还活着
+Step 3: /healthz says 200: the process is alive.
+
+199
+00:12:25,528 --> 00:12:29,069
+而 /readyz 返回 503，CNN model is loading
+/readyz says 503, CNN model is loading.
+
+200
+00:12:34,250 --> 00:12:38,920
+额外看一眼：模型只下载一次，存进你的 persistent-folder
+An extra look: the model is downloaded once into your persistent-folder,
+
+201
+00:12:38,920 --> 00:12:40,607
+以后每次启动都复用它
+and every start reuses it.
+
+202
+00:12:41,350 --> 00:12:44,123
+再一个额外实验：v1 的习惯不管用了
+Another extra: the version 1 habits fail.
+
+203
+00:12:44,443 --> 00:12:46,392
+根路径 / 和 /docs 都返回 404
+/ and /docs answer 404;
+
+204
+00:12:46,392 --> 00:12:53,254
+浏览器调用的一切都在 /api 下面，只有探针还留在根路径
+everything the browser calls is under /api, and only the probes stay at the root.
+
+205
+00:13:02,500 --> 00:13:04,100
+那么，快速测一下
+So, a quick test.
+
+206
+00:13:04,164 --> 00:13:07,791
+现在 /healthz 返回 200，/readyz 返回 503
+/healthz says 200 and /readyz says 503.
+
+207
+00:13:08,111 --> 00:13:10,265
+你是重启 container，还是等一等？
+Do you restart the container, or wait?
+
+208
+00:13:19,100 --> 00:13:22,747
+等：大约 9 秒后，/readyz 返回 200
+Wait: about nine seconds later, /readyz says 200:
+
+209
+00:13:22,747 --> 00:13:25,649
+模型加载好了，Chroma 也有应答
+the model is loaded and Chroma answers.
+
+210
+00:13:25,969 --> 00:13:28,529
+重启只会让加载从头再来
+A restart would only start the loading over.
+
+211
+00:13:28,849 --> 00:13:32,452
+Kubernetes，你会在第 19 讲和第 22 讲里见到
+Kubernetes, which you meet in lectures 19 and 22,
+
+212
+00:13:32,452 --> 00:13:38,407
+正好可以用这两个探针：看存活决定重启，看就绪决定放流量
+can use exactly these two probes: restart on liveness, send traffic on readiness.
+
+213
+00:13:39,650 --> 00:13:41,677
+API 需要哪些路由？
+Which routes does the API need?
+
+214
+00:13:41,997 --> 00:13:47,565
+课上从页面出发：简报、播客，还有一个能接收照片的聊天
+The lecture starts from the screens: newsletters, podcasts, and a chat that takes a photo.
+
+215
+00:13:47,885 --> 00:13:52,151
+每个页面都需要数据，每一类数据就变成一组路由
+Each screen needs data, and each kind of data becomes a group of routes.
+
+216
+00:13:52,400 --> 00:13:58,181
+在 service.py 里，简报和播客在 /api 下各有一个 router
+In service.py, newsletters and podcasts get a router each under /api.
+
+217
+00:13:58,501 --> 00:14:01,859
+然后由一个函数批量生成三个聊天 router
+Then one function stamps out three chat routers:
+
+218
+00:14:01,859 --> 00:14:04,027
+Ask、Identify 和 Cheese books
+Ask, Identify and Cheese books.
+
+219
+00:14:04,347 --> 00:14:09,339
+课上画了六组；agent 聊天在这个 repo 里没有 router
+The lecture shows six groups; agent chat has no router in this repository.
+
+220
+00:14:09,583 --> 00:14:15,684
+课上还画了 agent 可以放的三个位置，有没有 MCP 服务都行
+The lecture also shows three places an agent can sit, with or without an MCP service.
+
+221
+00:14:16,004 --> 00:14:17,733
+这个 repo 一个都没有
+This repository has none.
+
+222
+00:14:17,967 --> 00:14:20,719
+课件上那个单文件路由讲的是思路
+And the slide's one-file route is the idea.
+
+223
+00:14:21,039 --> 00:14:24,909
+这个 repo 把同一个函数放进一个 router
+The repository puts the same function in a router,
+
+224
+00:14:24,909 --> 00:14:27,076
+挂在 /api/newsletters 下
+mounted at /api/newsletters.
+
+225
+00:14:27,317 --> 00:14:31,413
+演示路由：把 README 里的函数加在 get status 后面，保存
+Demo route: add the README's function after get_status, and save.
+
+226
+00:14:31,733 --> 00:14:33,631
+服务器会自己重载
+The server reloads by itself.
+
+227
+00:14:35,050 --> 00:14:39,914
+这会再加载一次模型，过一会儿 /readyz 又回到 200
+This loads the model again, and /readyz is back to 200 shortly after.
+
+228
+00:14:40,150 --> 00:14:44,481
+然后打开 /api 下的 square root：又是 5 的平方根
+Then open /api/square_root: the square root of 5 again.
+
+229
+00:14:44,801 --> 00:14:49,387
+用 x 等于 3，y 等于 4，它返回 5.0
+With x=3&y=4, it answers 5.0.
+
+230
+00:14:49,707 --> 00:14:51,267
+暂停一下，两个都试试
+Pause and try both.
+
+231
+00:14:51,317 --> 00:14:54,901
+API 文档：搬到了 /api/docs
+API docs: they moved to /api/docs.
+
+232
+00:14:55,221 --> 00:15:00,106
+额外列一下，能看到全部 25 个操作：就是这棵树的叶子
+An extra listing shows all 25 operations: the leaves of this tree.
+
+233
+00:15:00,883 --> 00:15:04,531
+在文档页里，暂停一下，试试 get newsletters，limit 设成 2
+In the docs, pause and try get newsletters with a limit of 2.
+
+234
+00:15:04,851 --> 00:15:10,419
+两条简报以 JSON 返回，最新的在前：课上的例子，现在成了真的
+Two newsletters come back as JSON, newest first: the lecture's example, now real.
+
+235
+00:15:10,739 --> 00:15:14,323
+一个不存在的 ID 会得到 404，Newsletter not found
+An unknown ID gets 404, newsletter not found.
+
+236
+00:15:14,567 --> 00:15:17,767
+Review the code：README 的表格逐个对应了每个文件
+Review the code: the README's table maps each file.
+
+237
+00:15:18,087 --> 00:15:22,236
+其中 service.py 构建应用，settings.py 放所有设置
+service.py builds the app, settings.py holds every setting,
+
+238
+00:15:22,236 --> 00:15:27,580
+router 里放路由，每种聊天模式一个 utils 文件来干活
+the routers hold the routes, and one utils file per chat mode does the work.
+
+239
+00:15:28,117 --> 00:15:32,192
+课上的聊天处理函数写着：use Gemini to generate text
+The lecture's chat handler says: use Gemini to generate text.
+
+240
+00:15:32,512 --> 00:15:36,906
+在 repo 里，一个路由开始聊天，另一个路由接着聊
+In the repository, one route starts a chat and another continues it.
+
+241
+00:15:37,226 --> 00:15:41,749
+真实的路径里带着模式：/api/llm/chats
+The real path names the mode: /api/llm/chats.
+
+242
+00:15:41,984 --> 00:15:44,864
+API 是怎么记住一段对话的？
+How does the API remember a conversation?
+
+243
+00:15:45,184 --> 00:15:49,962
+它不记：每发一条消息，浏览器都会带上一个 session ID
+It does not: with every message, the browser sends a session ID,
+
+244
+00:15:49,962 --> 00:15:52,053
+每个浏览器一个随机的 UUID
+one random UUID per browser.
+
+245
+00:15:52,373 --> 00:15:55,134
+API 打开这个 session 的聊天文件
+The API opens that session's chat file,
+
+246
+00:15:55,134 --> 00:15:58,816
+加上你的消息和回复，保存，然后就忘掉
+adds your message and the reply, saves, and forgets.
+
+247
+00:15:59,050 --> 00:16:04,448
+两个额外实验：没有 session ID，或者消息为空，都会得到 422
+Two extras: no session ID, or an empty message, gets 422.
+
+248
+00:16:13,600 --> 00:16:16,331
+Identify 的识图这一步完全离线
+Identify's photo step works fully offline.
+
+249
+00:16:16,651 --> 00:16:20,230
+我们发送 repo 自带的那张蓝纹奶酪照片
+We send the repository's own blue cheese photo,
+
+250
+00:16:20,230 --> 00:16:23,733
+CNN 猜的是 parmigiano，58%
+and the CNN guesses parmigiano, at 58 percent.
+
+251
+00:16:24,053 --> 00:16:26,720
+追问会交给 Gemini
+A follow-up question would go to Gemini.
+
+252
+00:16:26,967 --> 00:16:29,339
+额外列一下，就能在磁盘上看到
+An extra listing shows it on disk:
+
+253
+00:16:29,339 --> 00:16:32,271
+你的 session 下每个聊天一个 JSON 文件
+one JSON file per chat under your session,
+
+254
+00:16:32,271 --> 00:16:35,202
+照片在这个模式的 images 目录里
+and the photo in the mode's images folder.
+
+255
+00:16:35,484 --> 00:16:38,656
+Ask 模式会调用 Gemini，到这里就停了
+Ask mode calls Gemini, and here it stops:
+
+256
+00:16:38,656 --> 00:16:41,287
+Internal Server Error，状态码 500
+Internal Server Error, status 500.
+
+257
+00:16:41,607 --> 00:16:43,689
+API 的终端说明了原因，报错还是那个
+The API's terminal shows why:
+
+258
+00:16:43,689 --> 00:16:46,705
+Invalid grant: account not found
+the same Invalid grant: account not found.
+
+259
+00:16:47,025 --> 00:16:49,798
+有了你的密钥，Gemini 的回答就是这个形状
+With your key, Gemini's answer has this shape.
+
+260
+00:16:50,034 --> 00:16:51,313
+说明一点
+A small note:
+
+261
+00:16:51,313 --> 00:16:57,415
+README 的表格讲的是 Gemini 返回 403 和 404，报成 502
+the README's table covers Gemini 403 and 404, reported as 502.
+
+262
+00:16:57,735 --> 00:17:01,332
+Google 没法用来登录的密钥会更早失败
+A key Google cannot sign in with fails earlier,
+
+263
+00:17:01,332 --> 00:17:05,159
+就是一个普通的 500，所以先看 API 的终端
+as a plain 500, so check the API's terminal first.
+
+264
+00:17:05,400 --> 00:17:07,000
+再补充 README 的两点
+Two more README notes.
+
+265
+00:17:07,192 --> 00:17:11,252
+每条消息都从存下来的文件重建对话
+Each message rebuilds the conversation from the saved file,
+
+266
+00:17:11,252 --> 00:17:13,592
+所以 API 的任何一个副本都能回答
+so any copy of the API can answer.
+
+267
+00:17:13,912 --> 00:17:16,945
+而用普通 def 写的路由在线程里跑
+And routes written with plain def run in threads,
+
+268
+00:17:16,945 --> 00:17:19,608
+所以一个慢的回答不会阻塞其他请求
+so one slow answer does not block the rest.
+
+269
+00:17:19,850 --> 00:17:21,027
+最后是测试
+Last, the tests:
+
+270
+00:17:21,027 --> 00:17:24,044
+在第二个终端里，在同一个目录下再运行 docker-shell.sh
+in a second terminal, in the same folder,
+
+271
+00:17:24,044 --> 00:17:28,533
+会在正在跑的 container 里开一个 shell
+docker-shell.sh again opens a shell in the running container.
+
+272
+00:17:28,853 --> 00:17:31,221
+运行 pytest：26 passed
+Run pytest: 26 passed.
+
+273
+00:17:31,541 --> 00:17:33,117
+暂停一下，自己跑一遍
+Pause and run it.
+
+274
+00:17:33,167 --> 00:17:34,810
+让这个 container 一直跑着
+Keep this container running.
+
+275
+00:17:35,130 --> 00:17:39,183
+API 已经就绪，但还没人能从浏览器里用它
+The API is ready, but nobody can use it from a browser yet.
+
+276
+00:17:39,503 --> 00:17:44,922
+在第 2 部分，浏览器和 port 3000 说话，那它怎么到达 9000？
+In part 2 the browser talks to port 3000, so how does that reach 9000?
