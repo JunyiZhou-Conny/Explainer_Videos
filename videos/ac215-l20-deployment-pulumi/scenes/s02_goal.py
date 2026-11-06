@@ -69,7 +69,7 @@ def readme_body() -> VGroup:
         parts = [mono(name + ":", 22, CONTAINER)] + ([label(rest, 22, INK)] if rest else [])
         if url:
             parts.append(mono(url, 22, ROUTE))
-        return VGroup(*parts).arrange(RIGHT, buff=0.14, aligned_edge=DOWN)
+        return VGroup(*parts).arrange(RIGHT, buff=0.22 if url else 0.14, aligned_edge=DOWN)
     rows = VGroup(label("Ensure you have all your container", 22, INK),
                   label("built and works locally", 22, INK),
                   svc("vector-db", "ChromaDB is up and running"),
@@ -161,7 +161,10 @@ class TheGoal(VoiceScene):
                 n = -n                       # above a flat arrow, right of a steep one
             ga = DashedLine(e, s, color=S.GREY, stroke_width=4, dash_length=0.12)
             ga.add_tip(tip_length=0.2, tip_width=0.2)
-            ga.scale(0.65).shift(n * 0.28)   # shorter than its PINK twin, so it stays clear of the boxes
+            if np.linalg.norm(d) < 1.0:      # nginx -> api: no room beside it, so the ghost lies on its twin
+                ga.set_stroke(width=5)
+            else:
+                ga.scale(0.65).shift(n * 0.28)   # shorter than its PINK twin, so it stays clear of the boxes
             ghosts.add(ga)
         boxes4 = [P[k] for k in ("nginx", "front", "api", "vdb")]
         counts = [label(str(i + 1), 24, TURN).next_to(b.frame, LEFT, buff=0.12) for i, b in enumerate(boxes4)]
@@ -175,18 +178,19 @@ class TheGoal(VoiceScene):
                       FadeOut(ghosts), run_time=0.7)
             md.heal(self)
             vo.wait_until("The slide shows four containers")
-            for i, b in enumerate(boxes4):
-                self.play(FadeIn(counts[i], scale=1.5), b.frame.animate.set_stroke(TURN), run_time=0.3)
+            for i, b in enumerate(boxes4):      # the numbers join V1, so its re-seating keeps them on top
+                md.show(self, counts[i], anims=[FadeIn(counts[i], scale=1.5)],
+                        extra=[b.frame.animate.set_stroke(TURN)], run_time=0.3)
             self.play(*[b.frame.animate.set_stroke(CONTAINER) for b in boxes4], run_time=0.3)
             md.heal(self)
             vo.wait_until("There is a fifth")
             md.loader(self, pour=True, leave=False)
-            self.play(FadeIn(five, scale=1.5), run_time=0.3)
+            md.show(self, five, anims=[FadeIn(five, scale=1.5)], run_time=0.3)
             data = set(P["data"].submobjects)      # the pour leaves each dot top-level too: keep them in V1 only
             self.mobjects = [m for m in self.mobjects if m not in data]
             md.heal(self)
             vo.wait_until("and then leaves")
-            md.drop(self, P.pop("loader"), run_time=0.5, shift=DOWN * 0.2, extra=[FadeOut(VGroup(*counts, five))])
+            md.drop(self, P.pop("loader"), *counts, five, run_time=0.5, shift=DOWN * 0.2)
 
         # ========================================================== 2. slide 8: four manual stages
         ref8 = lref("8")

@@ -18,7 +18,7 @@ S09:
   zh:
   - "第 2 部分。"
   - "每个 Pulumi 程序说的是应该存在什么，而不是要做什么。"
-  - "这个 repo 里的一条防火墙规则：一个构造函数，compute.Firewall；一个逻辑名，allow-http；还有参数：port 80，来自任何地方，给带 http-server 标记的 VM。"
+  - "这个 repo 里的一条防火墙规则：一个构造函数，compute.Firewall；一个逻辑名，allow-http；还有参数：port 80，来源不限，作用于带 http-server 标记的 VM。"
   en_display:
   - null
   - null
@@ -203,7 +203,7 @@ S11:
 S12:
 - en: "This is the one setup the slides skip. Pulumi will log in to the VM over SSH to run scripts and drive Docker. Who logs in? The deployment service account, through OS Login."
   zh:
-  - "这是课件唯一跳过的设置。"
+  - "这是课件里唯一没讲的一项设置。"
   - "Pulumi 会通过 SSH 登录 VM，去运行脚本、驱动 Docker。"
   - "谁来登录？"
   - "deployment 服务账号，通过 OS Login。"
@@ -272,13 +272,13 @@ S13:
 - en: "Config set, preview and up all print: Pulumi access token must be set. To show them anyway, we use a local folder, pulumi login local: extra, and not for you."
   zh:
   - "config set、preview 和 up 都会打印：Pulumi access token must be set。"
-  - "为了还是能展示它们，我们用一个本地目录，pulumi login --local：额外的，不是给你用的。"
+  - "为了还是能展示它们，我们用一个本地目录，pulumi login --local：这是额外步骤，你不用照做。"
   en_display:
   - "Config set, preview and up all print: PULUMI_ACCESS_TOKEN must be set."
   - "To show them anyway, we use a local folder, pulumi login --local: extra, and not for you."
 - en: "Stack init answers created stack dev, and config set writes your project into Pulumi dot dev dot yaml."
   zh:
-  - "stack init 回答 Created stack dev，config set 把你的项目写进 Pulumi.dev.yaml。"
+  - "stack init 返回 Created stack dev，config set 把你的项目写进 Pulumi.dev.yaml。"
   en_display:
   - "Stack init answers Created stack 'dev', and config set writes your project into Pulumi.dev.yaml."
 - en: "Now the program. Line 13 makes a timestamp, down to the second, and lines 14 and 15 build the registry address."
@@ -360,7 +360,7 @@ S14:
   zh:
   - "在 -y 之前先检查计划：更新的 Ubuntu image 可能让下一次 up 变成替换 VM。"
   - "然后暂停一下，运行 up。"
-  - "从这里开始，大约每天两美元，外加磁盘和地址。"
+  - "从这里开始就要花钱了，大约每天两美元，另加磁盘和外部 IP 的费用。"
   en_display:
   - "Check the plan before -y: a newer Ubuntu image can turn the next up into a VM replacement."
   - null
@@ -386,7 +386,7 @@ S14:
 - en: "Because formatting erases. If this step ever ran again, after a new trigger or a replaced resource, plain formatting would wipe the data disk: the chat history and the model. Scripts Pulumi cannot inspect must be safe to run twice."
   zh:
   - "因为格式化会清空数据。"
-  - "如果这一步哪天又跑了一次，比如换了 trigger 或者资源被替换，直接格式化就会把数据磁盘清空：聊天记录和模型都没了。"
+  - "如果这一步哪天又跑了一次，比如 trigger 变了，或者资源被替换了，直接格式化就会把数据磁盘清空：聊天记录和模型都没了。"
   - "Pulumi 没法检查的脚本，必须跑两次也安全。"
 S15:
 - en: "Step 5: the containers. The VM program asks the images stack for its tags, through a stack reference to organization, deploy images, dev. So run up in deploy images first."
@@ -516,7 +516,7 @@ S16:
   - "课上还列了六条原则。"
   - "真正的编程语言、声明式、带预览的 state：有。"
   - "组件和测试：这里没有。"
-  - "支持很多 provider，但只用了一朵云。"
+  - "provider 可以有很多，但这里只用了一个云平台。"
 - en: "One VM is a single point of failure. Lecture 21 automates builds and tests, lecture 22 moves to Kubernetes with this toolbox, and lecture 23 runs pulumi up from GitHub Actions."
   zh:
   - "一台 VM 就是单点故障。"
@@ -539,4 +539,4 @@ S16:
   zh:
   - "六步里哪几步 Pulumi 之后能检查，哪几步它只是记得？"
   - "跑完 destroy，什么还留着？"
-  - "答案在练习和学习笔记里。"
+  - "答案在练习和学习指南里。"

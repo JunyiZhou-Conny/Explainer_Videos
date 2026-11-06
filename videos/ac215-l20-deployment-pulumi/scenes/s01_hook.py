@@ -18,7 +18,7 @@ Beats (script.md "## S01", one voiceover block each):
    Computer' with IDE / CLI, Containers and six dashed TEAL squares; the dotted BLUE GCP outline and
    the 'Compute Instance (VM)' panel; the hollow GREY arrow; nginx, API, frontend, vector DB grow;
    the PINK 'HTTP 80' door on the VM's top edge; the browser and the PINK request arrows. GREY
-   `illustration` tag bottom left. On "We build it twice" the VM outline pulses YELLOW.
+   `illustration` tag bottom left. On "by hand" and on "then as code" the VM outline pulses YELLOW.
 4. lecture_ref(20, "4–5"). The diagram slides away. Slide 4 redrawn small: GREY arrow POC /
    Prototype / MVP, dashed boundaries, staggered GREY bars; a dashed YELLOW marker moves from "Build
    Cheese App" down to "Deployment, Scaling & Automation". Under it slide 5's line: a GREY laptop
@@ -138,7 +138,7 @@ def problem_line() -> VGroup:
     return g
 
 
-def term_glyph(glyph_w: float = 2.0, color=CLOUD) -> VGroup:
+def term_glyph(glyph_w: float = 2.0, color=LAPTOP) -> VGroup:
     """A text-free terminal: box, title bar with three dots, a few GREY line stubs."""
     h = glyph_w * 0.62
     fr = RoundedRectangle(width=glyph_w, height=h, corner_radius=0.08, stroke_color=color,
@@ -250,12 +250,10 @@ class Hook(VoiceScene):
             md.door(self, on="vm")
             md.browser(self)
             md.routes(self)
-            vo.wait_until("We build it twice")
-            self.play(md.light("vm"), run_time=0.4)
-            self.play(md.normal("vm"), run_time=0.4)
-            vo.wait_until("then as code")
-            self.play(Indicate(md.parts["door80"], color=ROUTE, scale_factor=1.1), run_time=0.7)
-            md.heal(self)
+            for cue in ("by hand", "then as code"):      # one YELLOW pulse of the VM per build
+                vo.wait_until(cue)
+                self.play(md.light("vm"), run_time=0.35)
+                self.play(md.normal("vm"), run_time=0.35)
         assert md.parts["browser"].get_top()[1] < note_.get_bottom()[1] - 0.05
         assert md.parts["laptop"].get_right()[0] < ref7.get_left()[0] or \
             md.parts["laptop"].get_top()[1] < ref7.get_bottom()[1]
@@ -341,8 +339,9 @@ class Hook(VoiceScene):
         cloud = cloud_shape(None, CLOUD, cloud_w=2.0)
         lcol = VGroup(glyph, VGroup(tick, left).arrange(RIGHT, buff=0.2)).arrange(DOWN, buff=0.35)
         rcol = VGroup(cloud, VGroup(dot, right).arrange(RIGHT, buff=0.2)).arrange(DOWN, buff=0.35)
-        rcol[0].align_to(lcol[0], DOWN)
         cols = VGroup(lcol, rcol).arrange(RIGHT, buff=0.9, aligned_edge=UP)
+        rcol[0].align_to(lcol[0], DOWN)               # icons on one baseline,
+        rcol[1].match_y(lcol[1])                      # the two text rows level
         foot = label("and we say what yours prints", 22, S.GREY)
         inner = VGroup(cols, foot).arrange(DOWN, buff=0.4)
         frame = outline_box(inner.width + 0.9, inner.height + 0.8, S.GREY, solid=True, fill_opacity=0.08)
@@ -356,8 +355,8 @@ class Hook(VoiceScene):
             self.play(FadeOut(VGroup(trk, panel, tS)), run_time=0.5)
             self.play(FadeIn(glyph_start, scale=1.3), run_time=0.5)
             vo.wait_until("our recording machine has no Google account")
-            self.play(FadeIn(frame), Create(sep), ReplacementTransform(glyph_start, glyph), run_time=0.8)
-            self.play(FadeIn(cloud, shift=DOWN * 0.2), FadeIn(right[0]), run_time=0.5)
+            self.play(FadeIn(frame), ReplacementTransform(glyph_start, glyph), run_time=0.8)
+            self.play(Create(sep), FadeIn(cloud, shift=DOWN * 0.2), FadeIn(right[0]), run_time=0.5)
             vo.wait_until("What runs on a machine you own is real")
             self.play(FadeIn(left, shift=UP * 0.15), run_time=0.5)
             self.play(Create(tick), run_time=0.4)
